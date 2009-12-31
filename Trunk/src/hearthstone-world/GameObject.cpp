@@ -675,6 +675,11 @@ void GameObject::_Expire()
 	Destructor();
 }
 
+void GameObject::ExpireAndDelete()
+{
+	ExpireAndDelete(1); // Defaults to 1, so set to 1 for non delay including calls.
+}
+
 void GameObject::ExpireAndDelete(uint32 delay)
 {
 	if(m_deleted)

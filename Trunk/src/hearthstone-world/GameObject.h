@@ -193,8 +193,9 @@ public:
 	}
 	Unit* CreateTemporaryGuardian(uint32 guardian_entry,uint32 duration,float angle, Unit* u_caster, uint8 Slot);
 	void _Expire();
-	
-	void ExpireAndDelete(uint32 delay = 1);
+
+	void ExpireAndDelete();
+	void ExpireAndDelete(uint32 delay);
 
 	HEARTHSTONE_INLINE bool isQuestGiver()
 	{
