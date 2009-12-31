@@ -345,28 +345,50 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
+			Name="Config"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_socket.c"
-				>
-			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-voicechat\configfile.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\launcher.c"
+				RelativePath="..\..\src\hearthstone-voicechat\configfile.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Opcode/Socket/Packet"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_opcodes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\log.c"
+				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_packet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_socket.c"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Voice/Network"
+			>
+			<File
+				RelativePath="..\..\src\hearthstone-voicechat\network.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-voicechat\network_handlers.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-voicechat\network_handlers.h"
 				>
 			</File>
 			<File
@@ -382,52 +404,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\voice_socket.c"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_opcodes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_packet.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\common.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\configfile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\linkedlist.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\log.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\mutex.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\network.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-voicechat\network_handlers.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\hearthstone-voicechat\voice_channel.h"
 				>
 			</File>
@@ -435,7 +411,39 @@
 				RelativePath="..\..\src\hearthstone-voicechat\voice_channelmgr.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-voicechat\voice_socket.c"
+				>
+			</File>
 		</Filter>
+		<Filter
+			Name="Log"
+			>
+			<File
+				RelativePath="..\..\src\hearthstone-voicechat\log.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-voicechat\log.h"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath="..\..\src\hearthstone-voicechat\common.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-voicechat\launcher.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-voicechat\linkedlist.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-voicechat\mutex.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

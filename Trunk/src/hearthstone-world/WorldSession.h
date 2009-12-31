@@ -724,7 +724,10 @@ protected:
 	// VOICECHAT
 	void HandleEnableMicrophoneOpcode(WorldPacket & recv_data);
 	void HandleVoiceChatQueryOpcode(WorldPacket & recv_data);
-	void HandleChannelVoiceQueryOpcode(WorldPacket & recv_data);
+	void HandleChannelVoiceOnOpcode(WorldPacket & recv_data);
+	void HandleChannelWatchOpcode(WorldPacket & recv_data);
+
+	// Auto Loot Pass
 	void HandleSetAutoLootPassOpcode(WorldPacket & recv_data);
 
 	void HandleSetFriendNote(WorldPacket & recv_data);

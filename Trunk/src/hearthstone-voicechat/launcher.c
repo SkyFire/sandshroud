@@ -67,14 +67,14 @@ int main(int argc, char* argv[])
 	log_open();
 
 	// read config file
-	if( configfile_load_config("ascent-voicechat.conf") < 0 )
+	if( configfile_load_config("hearthstone-voicechat.conf") < 0 )
 	{
 		// this needs to be cmd-line overrideable
 		log_write(ERROR, "FATAL: Could not open a valid config file. Exiting.");
 		return -1;
 	}
 
-	printf("Ascent Voicechat Server\n");
+	printf("Hearthstone Voicechat Server\n");
 	printf("Starting...\n");
 
 	if( network_init() < 0 )

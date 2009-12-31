@@ -410,8 +410,13 @@ public:
 
 	HEARTHSTONE_INLINE std::string getGmClientChannel() { return GmClientChannel; }
 
+	// MOTD line 1
 	void SetMotd(const char *motd) { m_motd = motd; }
 	HEARTHSTONE_INLINE const char* GetMotd() const { return m_motd.c_str(); }
+
+	// MOTD line 2
+	void SetMotd2(const char *motd2) { m_motd2 = motd2; }
+	HEARTHSTONE_INLINE const char* GetMotd2() const { return m_motd2.c_str(); }
 
 	HEARTHSTONE_INLINE time_t GetGameTime() const { return m_gameTime; }
 
@@ -627,6 +632,7 @@ protected:
 	bool m_allowMovement;
 	bool m_gmTicketSystem;
 	std::string m_motd;
+	std::string m_motd2;
    
     uint32 realmtype;
 

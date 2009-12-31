@@ -1255,6 +1255,7 @@ void World::Rehash(bool load)
 	SetPlayerLimit(Config.MainConfig.GetIntDefault("Server", "PlayerLimit", 1000));
 
 	SetMotd(Config.MainConfig.GetStringDefault("Server", "Motd", "Hearthstone Default MOTD").c_str());
+	SetMotd2(Config.MainConfig.GetStringDefault("Server", "Motd2", "").c_str());
 	mQueueUpdateInterval = Config.MainConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
 	SetKickAFKPlayerTime(Config.MainConfig.GetIntDefault("Server", "KickAFKPlayers", 0));
 	gm_skip_attunement = Config.MainConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);

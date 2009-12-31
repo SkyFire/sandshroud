@@ -56,6 +56,7 @@
  * Only recommended under X64 builds, X86 builds will most likely run out of address space.
  * Default: Disabled
  */
+
 //#define USE_MEMORY_MAPPING_FOR_MAPS
 
 /** Enable/disable Hearthstone's Voice Chat support.
@@ -65,6 +66,7 @@
  * Also, it only works for parties. Custom chat channels are not fully supported yet.
  * However, if you want to play around with it, feel free to enable this define.
  */
+
 //#define VOICE_CHAT 1
 
 /** Enable/disable movement compression.

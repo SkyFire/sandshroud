@@ -222,6 +222,7 @@ protected:
 	PlayerInfo* m_voiceMembersList[41];
 #endif	// VOICE_CHAT
 
+public:
 	HEARTHSTONE_INLINE void SetFlag(uint8 groupflag) { m_groupFlags |= groupflag; }
 	HEARTHSTONE_INLINE void RemoveFlag(uint8 groupflag) { m_groupFlags &= ~groupflag; }
 	HEARTHSTONE_INLINE bool HasFlag(uint8 groupflag) { return (m_groupFlags & groupflag) > 0 ? true : false; }

@@ -1287,7 +1287,7 @@ void Group::SendVoiceUpdate()
 	uint32 i,j;
 	Player* pl;
 
-	WorldPacket data(SMSG_VOICE_SESSION, 100);
+	WorldPacket data(SMSG_VOICE_SESSION_ENABLE, 100);
 	data << uint32( 0x00000E9D );
 	data << uint32( 0xE2500000 );		// this appears to be constant :S
 

@@ -719,10 +719,17 @@ void WorldSession::FullLogin(Player* plr)
 	datab << uint32(0x00);
 	SendPacket(&datab);
 
-	WorldPacket datat(SMSG_MOTD, 50);
+	// Send first line of MOTD
+	WorldPacket datat(SMSG_MOTD, 100);
 	datat << uint32(0x04);
 	datat << sWorld.GetMotd();
 	SendPacket(&datat);
+
+	// Send second line of MOTD
+	WorldPacket datat2(SMSG_MOTD, 100);
+	datat2 << uint32(0x04);
+	datat2 << sWorld.GetMotd2();
+	SendPacket(&datat2);
 
 	/* world preload */
 	packetSMSG_LOGIN_VERIFY_WORLD vwpck;
