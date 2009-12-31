@@ -86,9 +86,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies=""
-				OutputFile="$(IntDir)/shared.lib"
-				AdditionalLibraryDirectories=""
+				OutputFile="$(IntDir)/Shared.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -204,7 +202,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				Description="Extracting SVN revision..."
+				CommandLine="cd $(SolutionDir)\..\src\hearthstone-shared&#x0D;&#x0A;RevisionExtractor.exe&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
