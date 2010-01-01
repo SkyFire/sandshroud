@@ -1036,7 +1036,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 		else
 			*data << uint8(0);
 	}
-
+	*data << uint64(0); // unknown
 	*data << uint8(m_ended);
 	if(m_ended)
 	{
@@ -1080,6 +1080,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 	}
 	// Have to set correct number of players sent in log since we skip invisible GMs
 	*(uint32*)&data->contents()[pos] = count;
+	*data << uint32(0); // unknown
 }
 
 void CBattleground::AddPlayer(Player* plr, uint32 team)

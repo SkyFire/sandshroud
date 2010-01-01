@@ -262,7 +262,7 @@ void Player::Init()
 		m_casted_amount[x] = 0;
 	} 
 
-	for(uint32 a = 0; a < 6; a++)
+	for(uint32 a = 0; a < 5; a++)
 	{
 		for(uint32 x = 0; x < 7; x++)
 		{	
@@ -403,10 +403,7 @@ void Player::Init()
 	m_lastMoveType = 0;
 	m_tempSummon = NULLCREATURE;
 	m_spellcomboPoints = 0;
-
-	for(uint8 i = 0; i < 3 ; ++i)
-		m_pendingBattleground[i] = NULLBATTLEGROUND;
-
+	memset( &m_pendingBattleground, 0, sizeof(CBattleground*) * 3);
 	m_deathVision = false;
 	m_retainComboPoints = false;
 	last_heal_spell = NULL;
@@ -12466,4 +12463,13 @@ void Player::SetTaximaskNode(uint32 nodeidx, bool Unset)
 		if ((GetTaximask(field)& submask) != submask)  
 			SetTaximask(field,(GetTaximask(field)|submask));
 	}
+}
+
+uint16 Player::FindQuestSlot( uint32 questid )
+{
+	for ( uint16 i = 0; i < 25; ++i )
+		if( (GetUInt32Value(PLAYER_QUEST_LOG_1_1 + i * 5)) == questid )
+			return i;
+
+	return 25;
 }
