@@ -293,35 +293,11 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 		m_session->GetPlayer()->GetSession()->SendNotification("You have been marked as a Deserter.");
 		return;
 	}
-
-	uint32 level = m_session->GetPlayer()->getLevel();
 	
-	if(level < 51 && bgtype==BATTLEGROUND_ALTERAC_VALLEY)
+	MapInfo * inf = WorldMapInfoStorage.LookupEntry(BGMapIds[bgtype]);
+	if(inf->minlevel > m_session->GetPlayer()->getLevel())
 	{
-		m_session->GetPlayer()->GetSession()->SendNotification("You have to reach level 51 before you can join Alterac Valley.");
-		return;
-	}
-
-	if(level < 11 && bgtype==BATTLEGROUND_WARSONG_GULCH)
-	{
-		m_session->GetPlayer()->GetSession()->SendNotification("You have to reach level 11 before you can join Warsong Gulch.");
-		return;
-	}
-	if(level < 21 && bgtype==BATTLEGROUND_ARATHI_BASIN)
-	{
-		m_session->GetPlayer()->GetSession()->SendNotification("You have to reach level 21 before you can join Arathi Basin.");
-		return;
-	}
-
-	if(level < 61 && bgtype==BATTLEGROUND_EYE_OF_THE_STORM)
-	{
-		m_session->GetPlayer()->GetSession()->SendNotification("You have to reach level 61 before you can join Eye of the Storm.");
-		return;
-	}
-
-	if(level < 71 && bgtype==BATTLEGROUND_STRAND_OF_THE_ANCIENTS)
-	{
-		m_session->GetPlayer()->GetSession()->SendNotification("You have to reach level 71 before you can join Strand of the Ancients.");
+		m_session->GetPlayer()->GetSession()->SendNotification("You have to reach level %u before you can join this instance.",inf->minlevel);
 		return;
 	}
 
