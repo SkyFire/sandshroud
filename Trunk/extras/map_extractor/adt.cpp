@@ -296,56 +296,15 @@ void LoadMapChunk(MPQFile & mf, chunk*_chunk)
 				//	if(z<zmin)zmin=z;
 				}
 		}
-		 else
-			if(fourcc==0x4d434e52)
+		 else if(fourcc==0x4d434e52)
 			{
-			nextpos = mf.getPos() + 0x1C0; // size fix
-
+				nextpos = mf.getPos() + 0x1C0; // size fix
 			}
-		else
-			/*if(fourcc==0x4d434c51)
+		 else if(fourcc=0xefb88b70) // map 631 fix
 			{
-				// liquid / water level
-			//	bool haswater;
-				char fcc1[5];
-				mf.read(fcc1,4);
-				flipcc(fcc1);
-				fcc1[4]=0;
-
-				if (!strcmp(fcc1,"MCSE"))
-                {
-                    for(int i=0;i<9;i++)
-                        for(int j=0;j<9;j++)
-                            _chunk->waterlevel[i][j]=-999999; // no liquid/water
-                }
-                else
-				{
-                    float maxheight;
-                    mf.read(&maxheight, 4);
-					
-                    for(int j=0;j<9;j++)
-                        for(int i=0;i<9;i++)
-                        {
-                            mf.read(&h, 4);
-                            mf.read(&h, 4);
-                            if(h > maxheight)
-                                _chunk->waterlevel[i][j]=-999999;
-                            else
-                                _chunk->waterlevel[i][j]=h;
-                        }
-
-                    if(chunkflags & 4 || chunkflags & 8)
-						_chunk->flag |=1;
-					if(chunkflags & 16)
-						_chunk->flag |=2;
-
-
-
-				}
-				
-
-			break;*/
-            if(fourcc==0x4d434c51)
+				nextpos = mf.getPos() + 0x1199;
+			}
+		else if(fourcc==0x4d434c51)
             {
                 // liquid / water level
                 //	bool haswater;
@@ -354,56 +313,24 @@ void LoadMapChunk(MPQFile & mf, chunk*_chunk)
                 flipcc(fcc1);
                 fcc1[4]=0;
                 if (strcmp(fcc1,"MCSE"))
-
-                    //	if(size)
-
-
-
-
-
                 {
                     //chunkflag
-
-
-                    mf.seekRelative(-4);
+                   mf.seekRelative(-4);
                     mf.read(&_chunk->waterlevel,4);
-
-
-
-
-
-
-
-
-
-                    /*if(chunkflags & 4 || chunkflags & 8)
-                        _chunk->flag |=1;
-                    if(chunkflags & 16)
-                        _chunk->flag |=2;*/
                     if(!_chunk->flag)
                         _chunk->flag = chunkflags;
                     else
                         printf("%02X", _chunk->flag);
-
-
-
-                }
-
-
-                break;
+                }break;
 			}else if (fourcc==0x4d434c59)
 			{
 			// texture info
 			nTextures = (int)size;
 			}else if (fourcc==0x4d43414c)
 			{
-			
 			if (nTextures<=0) 
 			continue;
 			}
-		
-
-
 		mf.seek(nextpos);
 	}
 	
