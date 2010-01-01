@@ -2197,7 +2197,7 @@ void Player::InitVisibleUpdateBits()
 	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDRANK);
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_BYTES_2);
 
-	for(uint16 i = PLAYER_QUEST_LOG_1_1; i < PLAYER_QUEST_LOG_25_2; i+=4)
+	for(uint16 i = PLAYER_QUEST_LOG_1_1; i < PLAYER_QUEST_LOG_25_2; i += 4)
 		Player::m_visibleUpdateMask.SetBit(i);
 
     for(uint16 i = 0; i < EQUIPMENT_SLOT_END; ++i)
@@ -3504,10 +3504,10 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 	// clear all fields
 	for(int i = 0; i < 25; ++i)
 	{
-		baseindex = PLAYER_QUEST_LOG_1_1 + (i * 4);
+		baseindex = PLAYER_QUEST_LOG_1_1 + (i * 5);
 		SetUInt32Value(baseindex + 0, 0);
 		SetUInt32Value(baseindex + 1, 0);
-		SetUInt32Value(baseindex + 2, 0);
+		SetUInt64Value(baseindex + 2, 0);
 		SetUInt32Value(baseindex + 3, 0);
 	}
 

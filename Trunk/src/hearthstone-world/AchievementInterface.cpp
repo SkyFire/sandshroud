@@ -46,6 +46,14 @@ AchievementInterface::~AchievementInterface()
 
 void AchievementInterface::LoadFromDB( QueryResult * pResult )
 {
+	
+	// don't allow GMs to complete achievements
+	if( m_player->GetSession()->HasGMPermissions() )
+	{
+		CharacterDatabase.Query("DELETE FROM achievements WHERE player = %u;", m_player->GetGUID());
+		return;
+	}
+
 	if( !pResult ) // We have no achievements yet. :)
 		return;
 
@@ -90,6 +98,10 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 
 void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 {
+	// don't allow GMs to save achievements
+	if( m_player->GetSession()->HasGMPermissions() )
+		return;
+
 	bool NewBuffer = false;
 	if( !buffer )
 	{

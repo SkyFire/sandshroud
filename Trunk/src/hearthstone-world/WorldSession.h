@@ -120,7 +120,8 @@ struct OpcodeHandler
 enum SessionStatus
 {
 	STATUS_AUTHED = 0,
-	STATUS_LOGGEDIN
+	STATUS_LOGGEDIN,
+	STATUS_IN_OR_LOGGINGOUT
 };
 
 struct AccountDataEntry
@@ -731,7 +732,7 @@ protected:
 	void HandleSetAutoLootPassOpcode(WorldPacket & recv_data);
 
 	void HandleSetFriendNote(WorldPacket & recv_data);
-	void Handle38C(WorldPacket & recv_data);
+	void HandleRealmSplit(WorldPacket & recv_data);
 	void HandleInrangeQuestgiverQuery(WorldPacket & recv_data);
 
 	// Misc Opcodes
@@ -793,6 +794,7 @@ private:
 	int permissioncount;
 
 	bool _loggingOut;
+	bool _recentlogout;
 	uint32 _latency;
 	uint32 client_build;
 	uint32 instanceId;

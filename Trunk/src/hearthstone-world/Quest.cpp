@@ -46,19 +46,21 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 	*data << uint32(qst->required_rep_value);		// Faction Amount
 	*data << uint32(qst->next_quest_id);			// Next Quest ID
 	*data << uint32(0);								// 3.3.0
-	*data << uint32(sQuestMgr.GenerateRewardMoney(_player, qst));	// Copper reward
 
+	*data << uint32(sQuestMgr.GenerateRewardMoney(_player, qst));	// Copper reward
 	*data << uint32(qst->required_money);			// Required Money
 	*data << uint32(qst->effect_on_player);			// Spell casted on player upon completion
 	*data << uint32(qst->reward_spell);				// Spell added to spellbook upon completion
 	*data << uint32(qst->reward_honor);				// 2.3.0 - bonus honor
+	*data << float(0);								// unknown
 	*data << uint32(qst->srcitem);					// Item given at the start of a quest (srcitem)
 	*data << uint32(qst->quest_flags);				// Quest Flags
 	*data << uint32(qst->reward_title);				// Reward Title Id - Player is givn this title upon completion
-	*data << uint32(qst->required_kill_player);		// 3.0.2
+	*data << uint64(qst->required_kill_player);		// 3.0.2
 	*data << uint32(qst->reward_talents);			// 3.0.2
-	*data << uint32(0);								//bonus arena points
-	*data << uint32(0);								//unknown
+	*data << uint32(0);								// bonus arena points
+	*data << uint32(0);								// unknown
+	*data << uint32(0);								// unknown
 
 	// (loop 4 times)
 	for(uint32 i = 0; i < 4; ++i)
@@ -89,7 +91,6 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 	*data << qst->point_x;							// Unknown
 	*data << qst->point_y;							// Unknown
 	*data << qst->point_opt;						// Unknown
-	*data << uint32(0);
 	
 	if(lci)
 	{
@@ -112,9 +113,8 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 	for(uint32 i = 0; i < 4; ++i)
 	{
 		*data << qst->required_mob[i];				// Kill mob entry ID [i]
-		*data << qst->required_mobcount[i];			// Kill mob count [i]
+		*data << uint64(qst->required_mobcount[i]);	// Kill mob count [i]
 		*data << uint32(0);							// 3.0.2
-		*data << uint32(0);
 	}
 
 	for(uint32 i = 0; i < 6; ++i)

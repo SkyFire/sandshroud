@@ -296,7 +296,7 @@ void QuestMgr::BuildOfferReward(WorldPacket *data, Quest* qst, Object* qst_giver
 		*data << qst->title;
 		*data << qst->completiontext;
 	}
-	
+
 	//uint32 a = 0, b = 0, c = 1, d = 0, e = 1;
 
 	*data << (qst->next_quest_id ? uint8(1) : uint8(0));	  // next quest shit

@@ -496,7 +496,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 {
 	CHECK_PACKET_SIZE(recv_data, 8);
-	uint8 fail = 0x3E;
+	uint8 fail = CHAR_DELETE_SUCCESS;
 
 	uint64 guid;
 	recv_data >> guid;
@@ -504,14 +504,14 @@ void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 	if(objmgr.GetPlayer((uint32)guid) != NULL)
 	{
 		// "Char deletion failed"
-		fail = 0x3F;
+		fail = CHAR_DELETE_FAILED;
 	}
 	else
 	{
 		fail = DeleteCharacter((uint32)guid);
-		OutPacket(SMSG_CHAR_DELETE, 1, &fail);
 		m_lastEnumTime = 0;
 	}
+	OutPacket(SMSG_CHAR_DELETE, 1, &fail);
 }
 
 uint8 WorldSession::DeleteCharacter(uint32 guid)
@@ -521,12 +521,12 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 	{
 		QueryResult * result = CharacterDatabase.Query("SELECT name FROM characters WHERE guid = %u AND acct = %u", (uint32)guid, _accountId);
 		if(!result)
-			return 0x3F;
+			return CHAR_DELETE_FAILED;
 
 		if(inf->guild)
 		{
 			if(inf->guild->GetGuildLeader()==inf->guid)
-				return 0x41;
+				return CHAR_DELETE_FAILED_GUILD_LEADER;
 			else
 				inf->guild->RemoveGuildMember(inf,NULL);
 		}
@@ -551,7 +551,7 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 			if( inf->arenaTeam[i] != NULL )
 			{
 				if( inf->arenaTeam[i]->m_leader == guid )
-					return 0x42;
+					return CHAR_DELETE_FAILED_ARENA_CAPTAIN;
 				else
 					inf->arenaTeam[i]->RemoveMember(inf);
 			}
@@ -570,27 +570,31 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 
 		CharacterDatabase.Execute("DELETE FROM achievements WHERE player = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM auctions WHERE owner = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM charters WHERE leaderGuid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM gm_tickets WHERE guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM guild_data WHERE playerid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM instances WHERE creator_guid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM mailbox WHERE player_guid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM playercooldowns WHERE player_guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerglyphs WHERE guid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM playeritems WHERE ownerguid=%u",(uint32)guid);
-		CharacterDatabase.Execute("DELETE FROM playerskills WHERE player_guid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM playerpets WHERE ownerguid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM playerpetspells WHERE ownerguid = %u", (uint32)guid);
-		CharacterDatabase.Execute("DELETE FROM playerpettalents WHERE ownerguid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerskills WHERE player_guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerspells WHERE guid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM playersummonspells WHERE ownerguid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playertalents WHERE guid = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM questlog WHERE player_guid = %u", (uint32)guid);
-		CharacterDatabase.Execute("DELETE FROM tutorials WHERE playerId = %u", (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM social_friends WHERE character_guid = %u OR friend_guid = %u", (uint32)guid, (uint32)guid);
 		CharacterDatabase.Execute("DELETE FROM social_ignores WHERE character_guid = %u OR ignore_guid = %u", (uint32)guid, (uint32)guid);
-
+		CharacterDatabase.Execute("DELETE FROM tutorials WHERE playerId = %u", (uint32)guid);
 
 		/* remove player info */
 		objmgr.DeletePlayerInfo((uint32)guid);
-		return 0x3E;
+		return CHAR_DELETE_SUCCESS;
 	}
 
-	return 0x3F;
+	return CHAR_DELETE_FAILED;
 }
 
 void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
@@ -614,11 +618,22 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 
 	// Check name for rule violation.
 	const char * szName=name.c_str();
-	for(uint32 x=0;x<strlen(szName);x++)
+	for(uint32 x = 0; x < strlen(szName); x++)
 	{
-		if((int)szName[x]<65||((int)szName[x]>90&&(int)szName[x]<97)||(int)szName[x]>122)
+		if((int)szName[x] < 65 || ((int)szName[x] > 90 && (int)szName[x] < 97) || (int)szName[x] > 122)
 		{
-			data << uint8(0x32);
+			if((int)szName[x] < 65)
+			{
+				data << uint8(CHAR_NAME_TOO_SHORT); // Name is too short.
+			}
+			else if((int)szName[x] > 122) // Name is too long.
+			{
+				data << uint8(CHAR_NAME_TOO_LONG);
+			}
+			else
+			{
+				data << uint8(CHAR_NAME_FAILURE); // No clue.
+			}
 			data << guid << name;
 			SendPacket(&data);
 			return;
@@ -631,7 +646,7 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 		if(result2->Fetch()[0].GetUInt32() > 0)
 		{
 			// That name is banned!
-			data << uint8(0x31);
+			data << uint8(CHAR_NAME_PROFANE);
 			data << guid << name;
 			SendPacket(&data);
 		}
@@ -641,7 +656,7 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 	// Check if name is in use.
 	if(objmgr.GetPlayerInfoByName(name.c_str()) != 0)
 	{
-		data << uint8(0x32);
+		data << uint8(CHAR_NAME_FAILURE);
 		data << guid << name;
 		SendPacket(&data);
 		return;

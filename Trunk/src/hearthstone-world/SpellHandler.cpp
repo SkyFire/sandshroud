@@ -377,7 +377,6 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleAddDynamicTargetOpcode(WorldPacket & recvPacket)
 {
-
 	DEBUG_LOG( "WORLD"," got CMSG_PET_CAST_SPELL." );
 	uint64 guid;
 	uint8 counter;

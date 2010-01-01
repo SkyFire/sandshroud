@@ -113,7 +113,7 @@ void VoiceChatHandler::OnRead(WorldPacket* pck)
 	{
 	case VOICECHAT_SMSG_PONG:
 		{
-			//printf("!! VOICECHAT PONGZ!\n"); // Spam pongz, disabled.
+			OUT_DEBUG("!! VOICECHAT PONGZ!\n");
 			m_client->last_pong = UNIXTIME;
 		}break;
 	case VOICECHAT_SMSG_CHANNEL_CREATED:
