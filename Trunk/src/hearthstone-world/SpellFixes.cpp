@@ -379,8 +379,10 @@ void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, ui
 	}
 }
 
+void ApplySingleDruidSpellFixes(SpellEntry *sp); // SpellFixes/DruidSpellFixes.cpp
 void ApplySingleSpellFixes(SpellEntry *sp)
 {
+    ApplySingleDruidSpellFixes(sp);
 	if(sp != NULL)
 	{
 		switch(sp->Id)
@@ -1323,74 +1325,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 						sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
 				}break;
 
-			//druids enrage
-			case 50334:
-				{
-						sp->AdditionalAura = 58923;
-				}break;
-
-			//Druid: Feral Swiftness
-			case 17002:
-				{
-					sp->AdditionalAura = 24867;
-				}break;
-			case 24866:
-				{
-					sp->AdditionalAura = 24864;
-				}break;
-
-			// Feral Swiftness dodge
-			case 24867:
-			case 24864:
-				{
-					sp->apply_on_shapeshift_change = true;
-				}break;
-
-			// Druid: Moonkin Form (passive)
-			case 24905: 
-				{
-						sp->procFlags = PROC_ON_SPELL_CRIT_HIT;
-				}break;
-
-			//Druid: Natural Perfection
-			case  33881:
-			case  33882:
-			case  33883:
-				{
-						sp->procFlags	=	PROC_ON_CRIT_HIT_VICTIM;
-				}break;
-
-			//Druid: Frenzied	Regeneration
-			case  22842:
-			case  22895:
-			case  22896:
-			case  26999:
-				{
-						sp->Effect[0]	=	6;
-						sp->EffectApplyAuraName[0] = SPELL_AURA_PERIODIC_TRIGGER_SPELL;
-						sp->EffectTriggerSpell[0]	=	22845;
-				}break;
-
-			// Spell 16850 Proc Chance (Celestial Focus Rank 1:
-			case  16850:
-				{
-						sp->procChance = 3;
-						sp->procFlags	=	PROC_ON_CAST_SPELL;
-				}break;
-		
-			case  16923:	
-				{
-						sp->procChance = 6;
-						sp->procFlags	=	PROC_ON_CAST_SPELL;
-				}break;
-
-			case  16924:	
-				{
-						sp->procChance = 9;
-						sp->procFlags	=	PROC_ON_CAST_SPELL;
-				}break;
-
-		
 			//paladin	-	seal of	blood
 			case  31892:
 			case  38008:
@@ -1438,21 +1372,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 						sp->EffectTriggerSpell[0]	=	31786;
 				}break;
 
-
-			//Druid: Leader	of the Pack
-			case  24932:
-					{
-						sp->Effect[1]	=	0;
-						sp->Effect[2]	=	0; //removing	strange	effects.
-					}break;
-		
-			//Druid: Improved	Leader of	the	Pack
-			case  34299:
-					{
-						sp->proc_interval	=	6000;//6 secs
-					}break;
-		
-		
 			//fix	for	the	right	Enchant	ID for Enchant Cloak - Major Resistance
 			case  27962:
 			case  36285:

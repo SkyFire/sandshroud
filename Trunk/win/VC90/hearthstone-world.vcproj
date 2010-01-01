@@ -1040,10 +1040,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\SpellFixes.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\hearthstone-world\SpellHandler.cpp"
 				>
 			</File>
@@ -1055,6 +1051,18 @@
 				RelativePath="..\..\src\hearthstone-world\SpellTarget.cpp"
 				>
 			</File>
+			<Filter
+				Name="SpellFixes"
+				>
+				<File
+					RelativePath="..\..\src\hearthstone-world\SpellFixes\DruidSpellFixes.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\SpellFixes.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Player Systems"
