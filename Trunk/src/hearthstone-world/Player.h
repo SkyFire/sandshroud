@@ -972,6 +972,7 @@ public:
 	void				RemoveQuestMob(uint32 entry);
 	void				RemoveQuestsFromLine(int skill_line);
 	void				ResetDailyQuests();
+	uint16				FindQuestSlot(uint32 questid);
 
 	//Quest related variables
 	uint32 m_questbarrier1[25];
