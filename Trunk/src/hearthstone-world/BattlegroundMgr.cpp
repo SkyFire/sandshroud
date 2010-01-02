@@ -248,12 +248,13 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	data << m_session->GetPlayer()->GetGUID();
 	data << uint8(!battlemaster);	// Joining from pvp window.
 	data << BattlegroundType;
-	data << uint16(0);		// unk
-	size_t CountPos = data.wpos();
-	data << uint32(0);		// Count, will be replaced later
 
 	if(!IS_ARENA(BattlegroundType))
  	{
+		data << uint8(0);
+		data << uint8(0);
+		size_t CountPos = data.wpos();
+		data << uint32(0);
 		/* Append the battlegrounds */
 		m_instanceLock.Acquire();
 		for(map<uint32, CBattleground* >::iterator itr = m_instances[BattlegroundType].begin(); itr != m_instances[BattlegroundType].end(); ++itr)
