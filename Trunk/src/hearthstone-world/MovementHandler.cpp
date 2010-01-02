@@ -104,7 +104,7 @@ void WorldSession::HandleMoveWorldportAckOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 {
-	uint64 guid;
+	WoWGuid guid;
 	recv_data >> guid;
 	if(guid == _player->GetGUID())
 	{
