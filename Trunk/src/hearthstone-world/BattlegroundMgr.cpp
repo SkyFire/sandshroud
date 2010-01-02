@@ -246,15 +246,15 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	uint32 Count = 0;
 	WorldPacket data(SMSG_BATTLEFIELD_LIST, 200);
 	data << m_session->GetPlayer()->GetGUID();
-	data << uint8(!battlemaster);	// Joining from pvp window.
-	data << BattlegroundType;
+	data << uint8(!battlemaster);	// from where are we joining
+	data << BattlegroundType;		//BG ID
+	data << uint8(0);				//unk 3.3
+	data << uint8(0);				//unk 3.3
+	size_t CountPos = data.wpos();
+	data << uint32(0);				//count
 
 	if(!IS_ARENA(BattlegroundType))
  	{
-		data << uint8(0);
-		data << uint8(0);
-		size_t CountPos = data.wpos();
-		data << uint32(0);
 		/* Append the battlegrounds */
 		m_instanceLock.Acquire();
 		for(map<uint32, CBattleground* >::iterator itr = m_instances[BattlegroundType].begin(); itr != m_instances[BattlegroundType].end(); ++itr)
@@ -267,12 +267,6 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 		}
 		m_instanceLock.Release();
 		*(uint32*)&data.contents()[CountPos] = Count;
-	}
-	else
-	{
-		data << uint8(0);
-		data << uint8(0);
-		data << uint32(0);
 	}
 	m_session->SendPacket(&data);
 }
