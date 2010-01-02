@@ -528,10 +528,7 @@ Player::~Player ( )
 	pTarget = NULLPLR;
 
 	if(m_Summon)
-	{
-		m_Summon->Dismiss(true);
-		m_Summon->ClearPetOwner();
-	}
+		m_Summon->Remove(true, true, false);
 
 	if (m_GM_SelectedGO)
 		m_GM_SelectedGO = NULLGOB;
