@@ -250,7 +250,7 @@ bool SymbolOfLife(uint32 i, Spell *pSpell)
 
 	uint32 creatureID = c_target->GetEntry();
 
-  // check to see we that have the correct creature and increment the quest log
+	// check to see we that have the correct creature and increment the quest log
 	if(creatureID == 17542 || creatureID == 6172)
 		sQuestMgr.OnPlayerKill(pSpell->p_caster, c_target);
 	*/
@@ -374,9 +374,9 @@ bool WinterWondervoltAura(uint32 i, Aura *pAura, bool apply)
 		uint32 displayId;
 		uint32 chance = RandomUInt(7);
 
-		if(u_caster->getGender() == 1) displayId = 15795 + chance; // female 0-7
-		else if(chance == 0)           displayId = 15687;          // male   0
-		else                           displayId = 15802 + chance; // male   1-7
+		if(u_caster->getGender() == 1)	displayId = 15795 + chance;	// female	0-7
+		else if(chance == 0)			displayId = 15687;			// male		0
+		else							displayId = 15802 + chance;	// male		1-7
 
 		u_caster->SetUInt32Value(UNIT_FIELD_DISPLAYID, displayId);
 	}
@@ -495,7 +495,7 @@ uint32 GetNewScalingMountSpellId(Aura *pAura, bool mountCanFly, uint32 regularGr
 		else // if (ridingSkill >= 225)
 			newspell = regularFlying;
 	else if(ridingSkill >= 150)
-		newspell = epicGround;                       
+		newspell = epicGround;
 	else // if (ridingSkill >= 75)
 		newspell = regularGround;
 
@@ -504,91 +504,99 @@ uint32 GetNewScalingMountSpellId(Aura *pAura, bool mountCanFly, uint32 regularGr
 
 bool BigBlizzardBear(uint32 i, Aura *pAura, bool apply)
 {
-    if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+	/*
+	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
 		return true;
 
 	if(apply)
 	{
 		uint32 newspell = GetNewScalingMountSpellId(pAura, false, 58997, 58999);
 		SpellEntry *sp = dbcSpell.LookupEntry(newspell);
-		sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-    }
+		sEventMgr.AddEvent(TO_UNIT(pAura->GetTarget()), &Unit::EventCastSpell, TO_UNIT(pAura->GetTarget()), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}*/
 
 	return true;
 }
 
 bool WingedSteed(uint32 i, Aura *pAura, bool apply)
 {
+	/*
 	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
 		return true;
 
 	if(apply)
 	{
-		PlayerPointer pPlayer = TO_PLAYER(pAura->GetTarget());
+		Player* pPlayer = TO_PLAYER(pAura->GetTarget());
 		bool isArtisanRider = pPlayer->_GetSkillLineCurrent(SKILL_RIDING) >= 300;
 		uint32 newspell = isArtisanRider ? 54727 : 54726;
 
 		SpellEntry *sp = dbcSpell.LookupEntry(newspell);
-		sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	}
+		sEventMgr.AddEvent(TO_UNIT(pAura->GetTarget()), &Unit::EventCastSpell, TO_UNIT(pAura->GetTarget()), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}*/
 
 	return true;
 }
 
 bool HeadlessHorsemanMount(uint32 i, Aura *pAura, bool apply)
 {
+	/*
 	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
 		return true;
 
 	if(apply)
 	{
 		uint32 newspell = GetNewScalingMountSpellId(pAura, true, 51621, 48024, 51617, 48023);
-        SpellEntry *sp = dbcSpell.LookupEntry(newspell);
-        sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget() , sp , EVENT_UNK, 1 , 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
-	}
+		SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+		sEventMgr.AddEvent(TO_UNIT(pAura->GetTarget()), &Unit::EventCastSpell, TO_UNIT(pAura->GetTarget()), sp , EVENT_UNK, 1 , 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
+	}*/
 
 	return true;
 }
 
 bool MagicBroomMount(uint32 i, Aura *pAura, bool apply)
 {
+	/*
 	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
 		return true;
 
 	if(apply)
 	{
 		uint32 newspell = GetNewScalingMountSpellId(pAura, true, 42680, 42683, 42667, 42668);
-        SpellEntry *sp = dbcSpell.LookupEntry(newspell);
-        sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	}
-    return true;
+		SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+		sEventMgr.AddEvent(TO_UNIT(pAura->GetTarget()), &Unit::EventCastSpell, TO_UNIT(pAura->GetTarget()), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}*/
+	return true;
 }
 
 bool MagicRoosterMount(uint32 i, Aura *pAura, bool apply)
 {
+	/*
 	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
 		return true;
 
 	if(apply)
 	{
 		SpellEntry *sp = dbcSpell.LookupEntry(66122);
-		sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	}
+		sEventMgr.AddEvent(TO_UNIT(pAura->GetTarget()), &Unit::EventCastSpell, TO_UNIT(pAura->GetTarget()), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}*/
 
 	return true;
 }
 
 bool InvincibleMount(uint32 i, Aura *pAura, bool apply)
 {
-    if (pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
-        return true;
+	/*
+	if (pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+		return true;
 
-    if (apply)
-    {
-        uint32 newspell = GetNewScalingMountSpellId(pAura, true, 72281, 72282, 72283, 72284);
-        SpellEntry *sp = dbcSpell.LookupEntry(newspell);
-        sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-    }
+	if (apply)
+	{
+		uint32 newspell = GetNewScalingMountSpellId(pAura, true, 72281, 72282, 72283, 72284);
+		SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+		sEventMgr.AddEvent(TO_UNIT(pAura->GetTarget()), &Unit::EventCastSpell, TO_UNIT(pAura->GetTarget()), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}*/
+
+	return true;
 }
 
 // ADD NEW FUNCTIONS ABOVE THIS LINE
@@ -596,37 +604,37 @@ bool InvincibleMount(uint32 i, Aura *pAura, bool apply)
 
 void SetupItemSpells_1(ScriptMgr * mgr)
 {
-	mgr->register_dummy_spell(23453, &GnomishTransporter);      // Gnomish Transporter
-	mgr->register_dummy_spell(16589, &NoggenFoggerElixr);       // Noggenfogger
-	mgr->register_dummy_spell(24430, &HallowsEndCandy);         // Hallows End Candy
-	mgr->register_dummy_spell( 8063, &DeviateFish);             // Deviate Fish
-	mgr->register_dummy_spell( 8213, &CookedDeviateFish);       // Savory Deviate Delight
-	mgr->register_dummy_spell(26074, &HolidayCheer);            // Holiday Cheer
-	mgr->register_dummy_spell(13120, &NetOMatic);               // Net-o-Matic
-	mgr->register_dummy_spell( 4130, &BanishExile);             // Essence of the Exile Quest
-	mgr->register_dummy_spell( 4131, &BanishExile);             // Essence of the Exile Quest
-	mgr->register_dummy_spell( 4132, &BanishExile);             // Essence of the Exile Quest
-	mgr->register_dummy_spell(19938, &ForemansBlackjack);       // Lazy Peons Quest
-	mgr->register_dummy_spell(39105, &NetherWraithBeacon);      // Spellfire Tailor Quest
-	mgr->register_dummy_spell( 8593, &SymbolOfLife);            // Paladin's Redemption QuestLine
-	mgr->register_dummy_spell(30458, &NighInvulnBelt);          // Nigh Invulnerability Belt
-	mgr->register_dummy_spell(25860, &ReindeerTransformation);  // Fresh Holly & Preserved Holly
-	mgr->register_dummy_spell(26469, &SummonCritterDummy);      // Snowman Kit
-	mgr->register_dummy_spell(26528, &SummonCritterDummy);      // Jingling Bell
-	mgr->register_dummy_spell(26532, &SummonCritterDummy);      // Green Helper Box
-	mgr->register_dummy_spell(26541, &SummonCritterDummy);      // Red Helper Box
-	mgr->register_dummy_spell(26275, &WinterWondervolt);        // PX-238 Winter Wondervolt Trap
-	mgr->register_dummy_aura( 26274, &WinterWondervoltAura);    // PX-238 Winter Wondervolt Transform Aura
+	mgr->register_dummy_spell(23453, &GnomishTransporter);		// Gnomish Transporter
+	mgr->register_dummy_spell(16589, &NoggenFoggerElixr);		// Noggenfogger
+	mgr->register_dummy_spell(24430, &HallowsEndCandy);			// Hallows End Candy
+	mgr->register_dummy_spell( 8063, &DeviateFish);				// Deviate Fish
+	mgr->register_dummy_spell( 8213, &CookedDeviateFish);		// Savory Deviate Delight
+	mgr->register_dummy_spell(26074, &HolidayCheer);			// Holiday Cheer
+	mgr->register_dummy_spell(13120, &NetOMatic);				// Net-o-Matic
+	mgr->register_dummy_spell( 4130, &BanishExile);				// Essence of the Exile Quest
+	mgr->register_dummy_spell( 4131, &BanishExile);				// Essence of the Exile Quest
+	mgr->register_dummy_spell( 4132, &BanishExile);				// Essence of the Exile Quest
+	mgr->register_dummy_spell(19938, &ForemansBlackjack);		// Lazy Peons Quest
+	mgr->register_dummy_spell(39105, &NetherWraithBeacon);		// Spellfire Tailor Quest
+	mgr->register_dummy_spell( 8593, &SymbolOfLife);			// Paladin's Redemption QuestLine
+	mgr->register_dummy_spell(30458, &NighInvulnBelt);			// Nigh Invulnerability Belt
+	mgr->register_dummy_spell(25860, &ReindeerTransformation);	// Fresh Holly & Preserved Holly
+	mgr->register_dummy_spell(26469, &SummonCritterDummy);		// Snowman Kit
+	mgr->register_dummy_spell(26528, &SummonCritterDummy);		// Jingling Bell
+	mgr->register_dummy_spell(26532, &SummonCritterDummy);		// Green Helper Box
+	mgr->register_dummy_spell(26541, &SummonCritterDummy);		// Red Helper Box
+	mgr->register_dummy_spell(26275, &WinterWondervolt);		// PX-238 Winter Wondervolt Trap
+	mgr->register_dummy_aura( 26274, &WinterWondervoltAura);	// PX-238 Winter Wondervolt Transform Aura
 	mgr->register_dummy_spell(32042, &ScryingCrystal);			// Violet Scrying Crystal (Quest)
 	mgr->register_dummy_spell(32001, &MinionsOfGurok);			// Minions of gurok
 	mgr->register_dummy_spell(29200, &PurifyBoarMeat);			// Purify Boar meat spell
-	mgr->register_dummy_spell(35036, &WarpRiftGenerator);       // Summon a Warp Rift in Void Ridge
-    mgr->register_dummy_aura( 58983, &BigBlizzardBear);         // Big Blizzard Bear mount 
-	mgr->register_dummy_aura( 54729, &WingedSteed);             // DK flying mount 
-	mgr->register_dummy_aura( 48025, &HeadlessHorsemanMount);   // Headless Horseman Mount 
-	mgr->register_dummy_aura( 47977, &MagicBroomMount);         // Magic Broom Mount 
-	mgr->register_dummy_aura( 65917, &MagicRoosterMount);       // Magic Rooster Mount
-    mgr->register_dummy_aura( 72286, &InvincibleMount);         // Invincible Mount (off of Arthas)
+	mgr->register_dummy_spell(35036, &WarpRiftGenerator);		// Summon a Warp Rift in Void Ridge
+	mgr->register_dummy_aura( 58983, &BigBlizzardBear);			// Big Blizzard Bear mount 
+	mgr->register_dummy_aura( 54729, &WingedSteed);				// DK flying mount 
+	mgr->register_dummy_aura( 48025, &HeadlessHorsemanMount);	// Headless Horseman Mount 
+	mgr->register_dummy_aura( 47977, &MagicBroomMount);			// Magic Broom Mount 
+	mgr->register_dummy_aura( 65917, &MagicRoosterMount);		// Magic Rooster Mount
+	mgr->register_dummy_aura( 72286, &InvincibleMount);			// Invincible Mount (off of Arthas)
 
 // REGISTER NEW DUMMY SPELLS ABOVE THIS LINE
 // *****************************************************************************

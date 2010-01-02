@@ -110,8 +110,8 @@ public:
 	const uint8 GetNewGuidLen() const { return BitCount8(guidmask); }
 	const uint8 GetNewGuidMask() const { return guidmask; }
 	const bool operator !() const { return (!oldguid); }
-	const bool operator ==(uint64 someval) const { return (oldguid==someval); }
-	const bool operator !=(uint64 someval) const { return (oldguid!=someval); }
+	const bool operator ==(uint64 someval) const { return (oldguid == someval); }
+	const bool operator !=(uint64 someval) const { return (oldguid != someval); }
 
 	void AppendField(uint8 field)
 	{
