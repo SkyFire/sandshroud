@@ -468,6 +468,129 @@ bool WarpRiftGenerator(uint32 i, Spell *pSpell)
 	return true;
 }
 
+bool MountMustFly(Player *pPlayer, AreaTable *pArea)
+{
+	if (!pPlayer || !pArea)
+		return false;
+	else
+	{
+		bool hasHighEnoughRiding = pPlayer->_GetSkillLineCurrent(SKILL_RIDING) >= 225;
+		bool isInOutlands = pArea->AreaFlags & 1024 && pPlayer->GetMapId() != 571;
+		bool isInNorthrend = pArea->AreaFlags & 1024 && pPlayer->GetMapId() == 571;
+		bool canFlyInNorthrend = pPlayer->HasSpell(54197);
+		return hasHighEnoughRiding && (isInOutlands || (isInNorthrend && canFlyInNorthrend));
+	}
+}
+
+uint32 GetNewScalingMountSpellId(Aura *pAura, bool mountCanFly, uint32 regularGround, uint32 epicGround, uint32 regularFlying = 0, uint32 epicFlying = 0)
+{
+	uint32 newspell = 0;
+	Player *pPlayer = TO_PLAYER(pAura->GetTarget());
+	AreaTable *pArea = dbcArea.LookupEntry(pPlayer->GetAreaID());
+
+	uint32 ridingSkill = pPlayer->_GetSkillLineCurrent(SKILL_RIDING);
+	if(mountCanFly && MountMustFly(pPlayer, pArea))
+		if(ridingSkill >= 300)
+			newspell = epicFlying;
+		else // if (ridingSkill >= 225)
+			newspell = regularFlying;
+	else if(ridingSkill >= 150)
+		newspell = epicGround;                       
+	else // if (ridingSkill >= 75)
+		newspell = regularGround;
+
+	return newspell;
+}
+
+bool BigBlizzardBear(uint32 i, Aura *pAura, bool apply)
+{
+    if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+		return true;
+
+	if(apply)
+	{
+		uint32 newspell = GetNewScalingMountSpellId(pAura, false, 58997, 58999);
+		SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+		sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+    }
+
+	return true;
+}
+
+bool WingedSteed(uint32 i, Aura *pAura, bool apply)
+{
+	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+		return true;
+
+	if(apply)
+	{
+		PlayerPointer pPlayer = TO_PLAYER(pAura->GetTarget());
+		bool isArtisanRider = pPlayer->_GetSkillLineCurrent(SKILL_RIDING) >= 300;
+		uint32 newspell = isArtisanRider ? 54727 : 54726;
+
+		SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+		sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}
+
+	return true;
+}
+
+bool HeadlessHorsemanMount(uint32 i, Aura *pAura, bool apply)
+{
+	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+		return true;
+
+	if(apply)
+	{
+		uint32 newspell = GetNewScalingMountSpellId(pAura, true, 51621, 48024, 51617, 48023);
+        SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+        sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget() , sp , EVENT_UNK, 1 , 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
+	}
+
+	return true;
+}
+
+bool MagicBroomMount(uint32 i, Aura *pAura, bool apply)
+{
+	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+		return true;
+
+	if(apply)
+	{
+		uint32 newspell = GetNewScalingMountSpellId(pAura, true, 42680, 42683, 42667, 42668);
+        SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+        sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}
+    return true;
+}
+
+bool MagicRoosterMount(uint32 i, Aura *pAura, bool apply)
+{
+	if(pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+		return true;
+
+	if(apply)
+	{
+		SpellEntry *sp = dbcSpell.LookupEntry(66122);
+		sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}
+
+	return true;
+}
+
+bool InvincibleMount(uint32 i, Aura *pAura, bool apply)
+{
+    if (pAura->GetTarget()->GetTypeId() != TYPEID_PLAYER)
+        return true;
+
+    if (apply)
+    {
+        uint32 newspell = GetNewScalingMountSpellId(pAura, true, 72281, 72282, 72283, 72284);
+        SpellEntry *sp = dbcSpell.LookupEntry(newspell);
+        sEventMgr.AddEvent(pAura->GetTarget(), &Unit::EventCastSpell, pAura->GetTarget(), sp, EVENT_UNK, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+    }
+}
+
 // ADD NEW FUNCTIONS ABOVE THIS LINE
 // *****************************************************************************
 
@@ -498,8 +621,12 @@ void SetupItemSpells_1(ScriptMgr * mgr)
 	mgr->register_dummy_spell(32001, &MinionsOfGurok);			// Minions of gurok
 	mgr->register_dummy_spell(29200, &PurifyBoarMeat);			// Purify Boar meat spell
 	mgr->register_dummy_spell(35036, &WarpRiftGenerator);       // Summon a Warp Rift in Void Ridge
-
-
+    mgr->register_dummy_aura( 58983, &BigBlizzardBear);         // Big Blizzard Bear mount 
+	mgr->register_dummy_aura( 54729, &WingedSteed);             // DK flying mount 
+	mgr->register_dummy_aura( 48025, &HeadlessHorsemanMount);   // Headless Horseman Mount 
+	mgr->register_dummy_aura( 47977, &MagicBroomMount);         // Magic Broom Mount 
+	mgr->register_dummy_aura( 65917, &MagicRoosterMount);       // Magic Rooster Mount
+    mgr->register_dummy_aura( 72286, &InvincibleMount);         // Invincible Mount (off of Arthas)
 
 // REGISTER NEW DUMMY SPELLS ABOVE THIS LINE
 // *****************************************************************************

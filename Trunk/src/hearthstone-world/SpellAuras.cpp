@@ -4311,7 +4311,23 @@ void Aura::SpellAuraModIncreaseSpeed(bool apply)
 
 void Aura::SpellAuraModIncreaseMountedSpeed(bool apply)
 {
-	if(apply)
+    // maybe one day this will crash...
+    if (!m_target)
+        return;
+
+    // deal with those scaling mounts that don't have other spell IDs - the ones with multiple spell IDs are handled in scripts
+	if((GetSpellId() == 68768 || GetSpellId() == 68769) && m_target->GetTypeId() == TYPEID_PLAYER)
+	{
+		if (Player *pPlayer = TO_PLAYER(m_target))
+        {
+            if(pPlayer->_GetSkillLineCurrent(SKILL_RIDING, true) >= 150)
+                mod->m_amount = 100;
+            else // if(pPlayer->_GetSkillLineCurrent(SKILL_RIDING, true) >= 75) // Assuming nobody else would have the spell...
+                mod->m_amount = 60;
+        }
+	}
+
+	if (apply)
 	{ 
 		SetPositive();
 		m_target->m_mountedspeedModifier += mod->m_amount;
