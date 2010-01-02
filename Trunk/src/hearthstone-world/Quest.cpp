@@ -59,8 +59,8 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 	*data << uint64(qst->required_kill_player);		// 3.0.2
 	*data << uint32(qst->reward_talents);			// 3.0.2
 	*data << uint32(0);								// bonus arena points
-	*data << uint32(0);								// unknown
-	*data << uint32(0);								// unknown
+	*data << uint32(0);								// Arena Points
+	*data << uint32(0);								// Arena Points Multiplicator.
 
 	// (loop 4 times)
 	for(uint32 i = 0; i < 4; ++i)
