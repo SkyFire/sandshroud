@@ -221,7 +221,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraIncreaseAllWeaponSkill,//198
 		&Aura::SpellAuraIncreaseHitRate,//199 Apply Aura: Increases Spell % To Hit (Fire, Nature, Frost)
 		&Aura::SpellAuraNULL,//200 // Increases experience earned by $s1%.  Lasts $d.
-		&Aura::SpellAuraNULL,//201 Apply Aura: Cannot be Dodged
+		&Aura::SpellAuraEnableFlight,//201 Enable Flight
 		&Aura::SpellAuraFinishingMovesCannotBeDodged,//202 // Finishing moves cannot be dodged - 32601, 44452
 		&Aura::SpellAuraReduceCritMeleeAttackDmg,//203 Apply Aura: Reduces Attacker Critical Hit Damage with Melee by %
 		&Aura::SpellAuraReduceCritRangedAttackDmg,//204 Apply Aura: Reduces Attacker Critical Hit Damage with Ranged by %
@@ -230,7 +230,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraEnableFlight,//207 set fly
 		&Aura::SpellAuraEnableFlightWithUnmountedSpeed,//208
 		&Aura::SpellAuraNULL,//209  // mod flight speed?
-		&Aura::SpellAuraNULL,//210	// commentator's command - spell 42009
+		&Aura::SpellAuraIncreaseFlightSpeed,//210	// commentator's command - spell 42009
 		&Aura::SpellAuraIncreaseFlightSpeed,//211
 		&Aura::SpellAuraIncreaseRangedAPStatPCT,//SPELL_AURA_MOD_RANGED_ATTACK_POWER_OF_INTELLECT //212 Apply Aura: Increase Ranged Atk Power by % of Intellect
 		&Aura::SpellAuraIncreaseRageFromDamageDealtPCT, //213 Apply Aura: Increase Rage from Damage Dealt by %
