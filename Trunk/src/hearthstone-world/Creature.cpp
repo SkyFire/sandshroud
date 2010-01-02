@@ -538,10 +538,9 @@ void Creature::RemoveFromWorld(bool addrespawnevent, bool free_guid)
 			Unit::RemoveFromWorld(true);
 
 		SafeDelete();
-		return;
 	}
 
-	if(IsInWorld())
+	if(this != NULL && IsInWorld())
 	{
 		uint32 delay = 0;
 		if(addrespawnevent && proto && proto->RespawnTime > 0)
@@ -906,7 +905,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	SetUInt32Value(UNIT_FIELD_BYTES_2, spawn->bytes2);
 
 	//Use proto displayid (random + gender generator), unless there is an id  specified in spawn->displayid
-	uint32 model;
+	uint32 model = 0;
 	if(!spawn->displayid)
 	{
 		uint32 gender = creature_info->GenerateModelId(&model);

@@ -793,7 +793,7 @@ void Pet::PetSafeDelete()
 	if(IsInWorld())
 	{
 		// remove from world, and delete
-		RemoveFromWorld(false, false);
+		RemoveFromWorld(false, true);
 	}
 
 	//sEventMgr.AddEvent(World::getSingletonPtr(), &World::DeleteObject, TO_OBJECT(this), EVENT_CREATURE_SAFE_DELETE, 1000, 1);

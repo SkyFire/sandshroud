@@ -268,6 +268,12 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 		m_instanceLock.Release();
 		*(uint32*)&data.contents()[CountPos] = Count;
 	}
+	else
+	{
+		data << uint8(0);
+		data << uint8(0);
+		data << uint32(0);
+	}
 	m_session->SendPacket(&data);
 }
 
