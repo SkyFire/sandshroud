@@ -1483,9 +1483,9 @@ uint32 QuestMgr::GenerateRewardMoney( Player* pl, Quest * qst )
 		return 0;
 
 	if ( pl && pl->getLevel() >= pl->GetUInt32Value(PLAYER_FIELD_MAX_LEVEL) && qst->is_repeatable == 0 )
-		return qst->reward_money + float2int32( GenerateQuestXP( pl, qst ) * sWorld.getRate( RATE_QUESTXP ) ) * 6;
+		return float2int32(qst->reward_money * sWorld.getRate(RATE_QUEST_MONEY)) + float2int32( GenerateQuestXP( pl, qst ) * sWorld.getRate( RATE_QUESTXP ) ) * 6;
 	else
-		return qst->reward_money;
+		return float2int32(qst->reward_money * sWorld.getRate(RATE_QUEST_MONEY));
 }
 
 uint32 QuestMgr::GenerateQuestXP(Player* plr, Quest *qst)	

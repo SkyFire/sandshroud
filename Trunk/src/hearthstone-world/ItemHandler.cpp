@@ -1939,7 +1939,11 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 
 			if(!gp->EnchantmentID)//this is ok in few cases
 				continue;
-				  
+
+            // can't be putting meta gems into non-meta sockets...
+            if (TargetItem->GetProto()->Sockets[i].SocketColor != GEM_META_SOCKET && gp->SocketMask == GEM_META_SOCKET)
+                continue;
+
 			if(EI)//replace gem
 				TargetItem->RemoveEnchantment(2+i);//remove previous
 			else//add gem
