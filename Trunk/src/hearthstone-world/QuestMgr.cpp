@@ -340,14 +340,14 @@ void QuestMgr::BuildOfferReward(WorldPacket *data, Quest* qst, Object* qst_giver
 	*data << uint32(0);
 	*data << GenerateRewardMoney(plr, qst);
 	*data << (qst->reward_honor * 10);
+	*data << uint32(0x08);
 	*data << float(0);
-	*data << uint32(0);
 	*data << qst->reward_spell;
 	*data << qst->effect_on_player;
 	*data << qst->reward_title;
 	*data << qst->reward_talents;
-	*data << uint32(0);
-	*data << uint32(0);
+	*data << uint32(0); // 3.3 Arena Points.
+	*data << uint32(0); // 3.3 Arena Points Mutpilier.
 
 	for(i = 0; i < 5; ++i)		// reward factions ids
 		*data << uint32(0);
@@ -523,23 +523,13 @@ void QuestMgr::BuildQuestComplete(Player* plr, Quest* qst)
 		plr->GiveXP(xp, 0, false);
 	}
 
-	WorldPacket data( SMSG_QUESTGIVER_QUEST_COMPLETE,72 );
-
-	data << qst->id;
-	data << xp;
+	WorldPacket data(SMSG_QUESTGIVER_QUEST_COMPLETE, 24);
+	data << uint32(qst->id);
+	data << uint32(xp);
 	data << uint32(GenerateRewardMoney(plr, qst));
-	data << uint32(qst->reward_honor * 10);		// Honor Points
-	data << uint32(0);						// 3.0.2
-	data << uint32(qst->count_reward_item); //Reward item count
-
-	for(uint32 i = 0; i < 4; ++i)
-	{
-		if(qst->reward_item[i])
-		{
-			data << qst->reward_item[i];
-			data << qst->reward_itemcount[i];
-		}
-	}
+	data << uint32(qst->reward_honor);
+	data << uint32(qst->reward_talents);
+	data << uint32(0);						// 3.3 Arena points
 	plr->GetSession()->SendPacket(&data);
 }
 
