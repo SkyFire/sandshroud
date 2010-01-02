@@ -76,15 +76,16 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 		*data << qst->reward_choiceitemcount[i];	// Choice Reward Item Count [i]
 	}
 
-	//3.3.0
-	for(uint32 a = 0; a < 5; ++a)		// reward factions ids
+	// 3.3 Faction Reward Stuff.
+	for(uint32 i = 0; i < 5; ++i)
 		*data << uint32(0);
 
-	for(uint32 b = 0; b < 5; ++b)		// columnid+1 QuestFactionReward.dbc?
+	for(uint32 i = 0; i < 5; ++i)
 		*data << uint32(0);
 
-	for(uint32 c = 0; c < 5; ++c)		// unk (0)
+	for(uint32 i = 0; i < 5; ++i)
 		*data << uint32(0);
+	
 	//end
 
 	*data << qst->point_mapid;						// Unknown
@@ -105,9 +106,10 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 		*data << qst->objectives;					// Objectives / description
 		*data << qst->details;						// Details
 		*data << qst->endtext;						// Subdescription
+
+		*data << uint8(0); // 3.3 Return xyz.
 	}
 
-	*data << uint8(0); //unk string
 
 	// (loop 4 times)
 	for(uint32 i = 0; i < 4; ++i)
@@ -115,6 +117,7 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 		*data << qst->required_mob[i];				// Kill mob entry ID [i]
 		*data << uint64(qst->required_mobcount[i]);	// Kill mob count [i]
 		*data << uint32(0);							// 3.0.2
+		*data << uint32(0);
 	}
 
 	for(uint32 i = 0; i < 6; ++i)
