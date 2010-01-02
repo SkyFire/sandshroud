@@ -19,13 +19,15 @@
 
 #include "StdAfx.h"
 
-//Pakcet Building
+//Packet Building
 /////////////////
 
 WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 {
 	// 2048 bytes should be more than enough. The fields cost ~200 bytes.
 	// better to allocate more at startup than have to realloc the buffer later on.
+
+	uint32 i = 0;
 
 	WorldPacket *data = new WorldPacket(SMSG_QUEST_QUERY_RESPONSE, 2048);
 	LocalizedQuest * lci = (language > 0) ? sLocalizationMgr.GetLocalizedQuest(qst->id, language) : NULL;
@@ -77,15 +79,15 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 	}
 
 	// 3.3 Faction Reward Stuff.
-	for(uint32 i = 0; i < 5; ++i)
+	for(i = 0; i < 5; ++i)
 		*data << uint32(0);
 
-	for(uint32 i = 0; i < 5; ++i)
+	for(i = 0; i < 5; ++i)
 		*data << uint32(0);
 
-	for(uint32 i = 0; i < 5; ++i)
+	for(i = 0; i < 5; ++i)
 		*data << uint32(0);
-	
+
 	//end
 
 	*data << qst->point_mapid;						// Unknown
@@ -106,10 +108,9 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 		*data << qst->objectives;					// Objectives / description
 		*data << qst->details;						// Details
 		*data << qst->endtext;						// Subdescription
-
-		*data << uint8(0); // 3.3 Return xyz.
 	}
 
+	*data << uint8(0); //unk string
 
 	// (loop 4 times)
 	for(uint32 i = 0; i < 4; ++i)
@@ -117,7 +118,6 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 		*data << qst->required_mob[i];				// Kill mob entry ID [i]
 		*data << uint64(qst->required_mobcount[i]);	// Kill mob count [i]
 		*data << uint32(0);							// 3.0.2
-		*data << uint32(0);
 	}
 
 	for(uint32 i = 0; i < 6; ++i)
