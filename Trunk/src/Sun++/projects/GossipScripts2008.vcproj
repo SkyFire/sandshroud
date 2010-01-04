@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="SunGossipScripts"
 	ProjectGUID="{9F200BBC-57C3-4F0C-8BB5-F9053E4BB4B3}"
 	Keyword="Win32Proj"
@@ -374,6 +374,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\GossipScripts\Gossip_BoreanTundra.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\GossipScripts\Gossip_Dalaran.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\GossipScripts\Gossip_DarkmoonFaire.cpp"
 				>
 			</File>
@@ -415,10 +423,6 @@
 			</File>
 			<File
 				RelativePath="..\src\GossipScripts\Gossip_Trainer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\GossipScripts\Gossip_BoreanTundra.cpp"
 				>
 			</File>
 			<File

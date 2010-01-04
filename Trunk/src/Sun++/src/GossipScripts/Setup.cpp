@@ -43,6 +43,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 	SetupDarkmoonFaireBarker(mgr);
 	SetupBoreanTundraGossip(mgr);
 	SetupWyrmrestTempleGossip(mgr);
+	SetupDalaranGossip(mgr);
 }
 
 #ifdef WIN32
