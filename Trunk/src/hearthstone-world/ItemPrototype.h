@@ -641,7 +641,7 @@ struct ItemPrototype
 	uint32 MaxCount;
 	uint32 ContainerSlots;
 	ItemStat Stats[10];
-	ItemDamage Damage[5];
+	ItemDamage Damage[2];
 	uint32 Armor;
 	uint32 HolyRes;
 	uint32 FireRes;
