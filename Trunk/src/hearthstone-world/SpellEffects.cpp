@@ -112,8 +112,8 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS]={
 		&Spell::SpellEffectStuck,						//SPELL_EFFECT_STUCK - 84
 		&Spell::SpellEffectSummonPlayer,				//SPELL_EFFECT_SUMMON_PLAYER - 85
 		&Spell::SpellEffectActivateObject,				//SPELL_EFFECT_ACTIVATE_OBJECT - 86
-		&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT1 - 87
-		&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT2 - 88
+        &Spell::SpellEffectWMODamage,					//SPELL_EFFECT_WMO_DAMAGE - 87 
+ 		&Spell::SpellEffectWMORepair,					//SPELL_EFFECT_WMO_REPAIR - 88 
 		&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT3 - 89
 		&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT4 - 90
 		&Spell::SpellEffectNULL,						//SPELL_EFFECT_THREAT_ALL - 91 UNUSED
@@ -3642,6 +3642,8 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				if(p_caster->m_bg->HookSlowLockOpen(gameObjTarget,p_caster,this))
 					return;
 
+            sHookInterface.OnSlowLockOpen(gameObjTarget,p_caster); 
+
 			uint32 spellid = !gameObjTarget->GetInfo()->Unknown1 ? 23932 : gameObjTarget->GetInfo()->Unknown1;
 			SpellEntry*en=dbcSpell.LookupEntry(spellid);
 			Spell* sp = CREATESPELL(p_caster,en,true,NULLAURA);
@@ -5920,6 +5922,17 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 
 	sEventMgr.AddEvent(gameObjTarget, &GameObject::Deactivate, EVENT_GAMEOBJECT_DEACTIVATE, GetDuration(), 1);*/
 }
+
+void Spell::SpellEffectWMODamage(uint32 i) 
+{ 
+ 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING) 
+       gameObjTarget->TakeDamage(uint32(damage)); 
+} 
+void Spell::SpellEffectWMORepair(uint32 i) 
+{ 
+ 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING) 
+ 	   gameObjTarget->Rebuild(); 
+} 
 
 void Spell::SummonTotem(uint32 i) // Summon Totem
 {

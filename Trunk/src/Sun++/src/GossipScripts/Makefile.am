@@ -23,4 +23,5 @@ Gossip_Theramore.cpp\
 Gossip_Teldrassil.cpp\
 Gossip_BoreanTundra.cpp\
 Gossip_WyrmrestTemple.cpp\
+Gossip_Dalaran.cpp\
 Setup.cpp

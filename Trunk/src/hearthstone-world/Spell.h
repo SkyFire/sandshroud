@@ -698,8 +698,8 @@ enum SpellEffects
     SPELL_EFFECT_STUCK,                     //    84
     SPELL_EFFECT_SUMMON_PLAYER,             //    85
     SPELL_EFFECT_ACTIVATE_OBJECT,           //    86
-    SPELL_EFFECT_SUMMON_TOTEM_SLOT1,        //    87    
-    SPELL_EFFECT_SUMMON_TOTEM_SLOT2,        //    88    
+	SPELL_EFFECT_WMO_DAMAGE,                //    87     
+ 	SPELL_EFFECT_WMO_REPAIR,				//    88        
     SPELL_EFFECT_SUMMON_TOTEM_SLOT3,        //    89    
     SPELL_EFFECT_SUMMON_TOTEM_SLOT4,        //    90    
     SPELL_EFFECT_THREAT_ALL,                //    91
@@ -1834,6 +1834,8 @@ public:
 	void SpellEffectStuck(uint32 i);
 	void SpellEffectSummonPlayer(uint32 i);
 	void SpellEffectActivateObject(uint32 i);
+    void SpellEffectWMODamage(uint32 i); 
+ 	void SpellEffectWMORepair(uint32 i); 
 	void SummonTotem(uint32 i);
 	void SpellEffectProficiency(uint32 i);
 	void SpellEffectSendEvent(uint32 i);

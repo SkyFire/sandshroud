@@ -57,6 +57,11 @@ enum ServerHookEvents
 	SERVER_HOOK_EVENT_ON_AREATRIGGER		= 27,
 	SERVER_HOOK_EVENT_ON_PLAYER_SAVE_TO_DB	= 28,
 	SERVER_HOOK_EVENT_ON_AURA_REMOVE		= 29,
+    SERVER_HOOK_EVENT_ON_DESTROY_BUILDING   = 30, 
+ 	SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING    = 31, 
+ 	SERVER_HOOK_EVENT_ON_MOUNT_FLYING               = 32, 
+ 	SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE    = 33, 
+ 	SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN             = 34, 
 
 	NUM_SERVER_HOOKS,
 };
@@ -100,6 +105,13 @@ typedef void(*tOnPostSpellCast)(Player* pPlayer, SpellEntry * pSpell, Unit* pTar
 typedef void(*tOnAreaTrigger)(Player* plr, uint32 areatrigger);
 typedef void(*tOnPlayerSaveToDB)(Player* pPlayer, QueryBuffer* buf);
 typedef void(*tOnAuraRemove)(Player* pPlayer, uint32 spellID);
+
+//Destructable building
+typedef void(*tOnDestroyBuilding)(GameObject* go); 
+typedef void(*tOnDamageBuilding)(GameObject* go); 
+typedef bool(*tOnMountFlying) (Player* plr); 
+typedef bool(*tOnPreAuraRemove)(Player* plr,uint32 spellID); 
+typedef void(*tOnSlowLockOpen)(GameObject* go,Player* plr); 
 
 class Spell;
 class Aura;
@@ -355,6 +367,13 @@ public:
 	void OnAreaTrigger(Player* plr, uint32 areatrigger);
 	void OnPlayerSaveToDB(Player* pPlayer, QueryBuffer* buf);
 	void OnAuraRemove(Player* pPlayer, uint32 spellID);
+
+//Destructable buildings
+	void OnDestroyBuilding(GameObject* go);
+	void OnDamageBuilding(GameObject* go);
+	bool OnMountFlying(Player* plr);
+	bool OnPreAuraRemove(Player* remover,uint32 spellID);
+	void OnSlowLockOpen(GameObject* go,Player* plr);
 };
 
 #define sScriptMgr ScriptMgr::getSingleton()

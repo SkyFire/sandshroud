@@ -991,3 +991,38 @@ void HookInterface::OnAuraRemove(Player* pPlayer, uint32 spellID)
 		(call)(pPlayer, spellID);
 	OUTER_LOOP_END
 }
+
+void HookInterface::OnDestroyBuilding(GameObject* go)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_DESTROY_BUILDING,tOnDestroyBuilding)
+		(call)(go);
+	OUTER_LOOP_END
+}
+
+void HookInterface::OnDamageBuilding(GameObject* go)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING,tOnDamageBuilding)
+		(call)(go);
+	OUTER_LOOP_END
+}
+
+bool HookInterface::OnMountFlying(Player* plr)
+{
+	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_MOUNT_FLYING,tOnMountFlying)
+		ret_val = (call)(plr);
+	OUTER_LOOP_END_COND
+}
+
+bool HookInterface::OnPreAuraRemove(Player* plr,uint32 spellID)
+{
+	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE,tOnPreAuraRemove)
+		ret_val = (call)(plr,spellID);
+	OUTER_LOOP_END_COND
+}
+
+void HookInterface::OnSlowLockOpen(GameObject* go,Player* plr)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN,tOnSlowLockOpen)
+		(call)(go,plr);
+	OUTER_LOOP_END
+}

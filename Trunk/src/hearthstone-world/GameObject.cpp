@@ -367,8 +367,14 @@ void GameObject::InitAI()
 					}
 				}
 			}
-		}break;
-	}
+            }break; 
+	 
+       case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING: 
+            { 
+		      Health = pInfo->SpellFocus + pInfo->sound5; 
+		      }break; 
+		     } 
+
 	
 	myScript = sScriptMgr.CreateAIScriptClassForGameObject(GetEntry(), this);
 
@@ -788,3 +794,52 @@ uint8 GameObject::GetState()
 {
 	return GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE);
 }
+
+//Destructable Buildings 
+void GameObject::TakeDamage(uint32 ammount) 
+{ 
+	        if(pInfo->Type != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING) 
+	                return; 
+	 
+	        if(Health > ammount) 
+	                Health -= ammount; 
+	        else if(Health < ammount) 
+                 Health = 0; 
+	 
+	        if(Health = 0) 
+	                return; 
+ 
+	        if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && !HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED)) 
+	        { 
+	                if(Health <= 0) 
+	                { 
+	                        RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED); 
+	                        SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED); 
+	                        SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->Unknown1); 
+	 
+	                        sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this)); 
+	                } 
+	        } 
+	        else if(!HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && !HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED)) 
+	        { 
+	                if(Health <= pInfo->sound5) 
+                 { 
+	                        if(pInfo->Unknown1 == 0) 
+                                Health = 0; 
+	                        else if(Health == 0) 
+	                                Health = 1; 
+	 
+ 		                        SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED); 
+ 		                        SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->sound4); 
+ 		                        sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this)); 
+ 		                } 
+ 		        } 
+ 		} 
+ 		 
+void GameObject::Rebuild() 
+ 	{ 
+ 	 RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED); 
+ 	 RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED); 
+ 	 SetUInt32Value(GAMEOBJECT_DISPLAYID, pInfo->DisplayID); 
+ 	 Health = pInfo->SpellFocus + pInfo->sound5; 
+ 	} 
