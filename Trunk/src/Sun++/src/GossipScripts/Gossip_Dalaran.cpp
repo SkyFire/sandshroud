@@ -111,7 +111,6 @@ public:
         case 9:     // Inn
 			{
                 objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 50006, Plr);
-                Menu->AddItem( 0, "Legerdemain Lounge"          , 23);
                 Menu->AddItem( 0, "Alliance Inn"         , 24);
                 Menu->AddItem( 0, "Horde Inn"          , 25);
                 Menu->AddItem( 0, "Sewers"         , 26); // Sewers 2
@@ -122,7 +121,7 @@ public:
                 objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 50007, Plr);
                 Menu->AddItem( 0, "Inn"          , 9);
                 Menu->AddItem( 0, "Bank"         , 3);
-                Menu->AddItem( 0, "Krasus' Landing"          , 7);
+                Menu->AddItem( 0, "Krasus' Landing"          , 74);
                 Menu->SendTo(Plr);
 			}break;
 
@@ -135,7 +134,7 @@ public:
                 Menu->AddItem( 0, "The Violet Hold"          , 28);
                 Menu->AddItem( 0, "Sewers"         , 22); // Sewers 1
                 Menu->AddItem( 0, "Trade District"          , 29);
-                Menu->AddItem( 0, "Krasus'Landing"          , 7);
+                Menu->AddItem( 0, "Krasus'Landing"          , 75);
                 Menu->AddItem( 0, "Antonidas Memorial"         , 30);
                 Menu->AddItem( 0, "Runeweaver Square"          , 31);
                 Menu->AddItem( 0, "The Eventide"          , 32);
@@ -561,6 +560,18 @@ public:
 			{
             Plr->Gossip_SendPOI(5665.40, 644.91, 7, 6, 0, "Staves & Wands");
 			SendQuickMenu(60056);
+            }break;
+
+        case 74:     // Krasus' Landing (mailbox) 
+			{
+            Plr->Gossip_SendPOI(5815.91, 453.64, 7, 6, 0, "Krasus' Landing");
+			SendQuickMenu(60057);
+            }break;
+
+        case 75:     // Krasus' Landing (points of interest)
+			{
+            Plr->Gossip_SendPOI(5815.91, 453.64, 7, 6, 0, "Krasus' Landing");
+			SendQuickMenu(60058);
             }break;
 
         }
