@@ -49,8 +49,8 @@ DELETE FROM `creature_proto` WHERE entry = 18625;
 DELETE FROM `creature_names` WHERE entry = 18625;
 REPLACE INTO `creature_names` (`entry`, `name`, `subname`, `info_str`, `Flags1`, `type`, `family`, `rank`, `unk4`, `spelldataid`, `male_displayid`, `female_displayid`, `male_displayid2`, `female_displayid2`, `unknown_float1`, `unknown_float2`, `civilian`, `leader`) VALUES ('18625','Dark Portal Event Trigger',' ','','0','10','0','0','0','0',169,0,0,0,'1','1','0',0);
 replace into `creature_proto` (`entry`, `minlevel`, `maxlevel`, `faction`, `minhealth`, `maxhealth`, `mana`, `scale`, `npcflags`, `attacktime`, `mindamage`, `maxdamage`, `rangedattacktime`, `rangedmindamage`, `rangedmaxdamage`, `Item1`, `Item2`, `Item3`, `respawntime`, `resistance1`, `resistance2`, `resistance3`, `resistance4`, `resistance5`, `resistance6`, `combat_reach`, `bounding_radius`, `auras`, `boss`, `money`, `invisibility_type`, `death_state`, `walk_speed`, `run_speed`, `fly_speed`, `extra_a9_flags`) values('18625','70','70','35','1000000','1000000','0','0','1758','1000','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1','1','0','0','0','0','0','2.5','8','14','0');
-REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid_go`, `channel_target_sqlid_creature`) VALUES (18625,530,'-263.719','1101.18','73.7167','4.64415',0,'169',35,33554432,0,0,0,0,0,0);
-
+REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid`, `channel_target_sqlid_creature`) 
+VALUES (18625,530,'-263.719','1101.18','73.7167','4.64415',0,'169',35,33554432,0,0,0,0,0,0);
 
 /* The Deadmines */
 
@@ -62,7 +62,7 @@ DELETE FROM `creature_spawns` WHERE `entry` = '643';
 
 -- Warlord Kalithresh
 
-REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid_go`, `channel_target_sqlid_creature`, `standstate`) VALUES
+REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid`, `channel_target_sqlid_creature`, `standstate`) VALUES
 (17954,545,'-107.059','-543.903','8.27027','5.89921',0,'17423',14,0,16908544,4097,0,0,0,0,0),
 (17954,545,'-80.7551','-550.946','8.27027','3.80482',0,'17423',14,0,16908544,4097,0,0,0,0,0),
 (17954,545,'-96.2409','-571.375','8.27027','2.3911',0,'17423',14,0,16908544,4097,0,0,0,0,0),
@@ -84,7 +84,7 @@ REPLACE INTO `creature_proto` (`entry`, `minlevel`, `maxlevel`, `faction`, `minh
 (30001, 70, 70, 35, 100000, 100000, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, '0', 0, 0, 0, 0, 2.5, 8, 14, 0);
 
 DELETE FROM `creature_spawns` WHERE entry IN (22990, 22996, 22997, 23336, 30001);
-REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid_go`, `channel_target_sqlid_creature`) VALUES 
+REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid`, `channel_target_sqlid_creature`) VALUES 
 (22990, 564, 661.563, 305.711, 271.689, 0.00628138, 4, 20681, 1858, 256, 0, 1, 0, 0, 0, 0),
 (30001, 564, 771.5, 304.7, 319, 3.10568, 0, 15294, 35, 0, 0, 0, 0, 0, 0, 0);
 
@@ -112,7 +112,7 @@ REPLACE INTO `creature_names` (`entry`, `name`, `subname`, `info_str`, `Flags1`,
 
 REPLACE INTO `creature_proto` (`entry`, `minlevel`, `maxlevel`, `faction`, `minhealth`, `maxhealth`, `mana`, `scale`, `npcflags`, `attacktime`, `mindamage`, `maxdamage`, `rangedattacktime`, `rangedmindamage`, `rangedmaxdamage`, `Item1`, `Item2`, `Item3`, `respawntime`, `resistance1`, `resistance2`, `resistance3`, `resistance4`, `resistance5`, `resistance6`, `combat_reach`, `bounding_radius`, `auras`, `boss`, `money`, `invisibility_type`, `death_state`, `walk_speed`, `run_speed`, `fly_speed`, `extra_a9_flags`) VALUES  (30002, 70, 70, 14, 100000, 100000, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, '0', 0, 0, 0, 0, 2.5, 8, 14, 0);
 
-REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid_go`, `channel_target_sqlid_creature`) VALUES (30002, 533, 3767.58, -5117.15, 174.49, 2.95544, 0, 15294, 14, 33554432, 0, 0, 0, 0, 0, 0);
+REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid`, `channel_target_sqlid_creature`) VALUES (30002, 533, 3767.58, -5117.15, 174.49, 2.95544, 0, 15294, 14, 33554432, 0, 0, 0, 0, 0, 0);
 
 REPLACE INTO `gameobject_names` (`entry`, `Type`, `DisplayID`, `Name`, `spellfocus`, `sound1`, `sound2`, `sound3`, `sound4`, `sound5`, `sound6`, `sound7`, `sound8`, `sound9`, `unknown1`, `unknown2`, `unknown3`, `unknown4`, `unknown5`, `unknown6`, `unknown7`, `unknown8`, `unknown9`, `unknown10`, `unknown11`, `unknown12`, `unknown13`, `unknown14`) VALUES 
 (181228, 0, 6675, 'KelThuzad Door', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -161,7 +161,7 @@ REPLACE INTO `creature_proto` (`entry`, `minlevel`, `maxlevel`, `faction`, `minh
 ('133338','70','70','35','1000000','1000000','0','0','1758','1000','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1','1','0','0',0,'0',0,'0','2.5','8','14',0);
 
 DELETE FROM `creature_spawns` WHERE entry IN (17376, 17474, 133338) AND map = 544;
-REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid_go`, `channel_target_sqlid_creature`, `standstate`) VALUES
+REPLACE INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid`, `channel_target_sqlid_creature`, `standstate`) VALUES
 (17376,544,'8.79722','-19.4801','2.53646','3.07178',12,'13069',114,0,16777472,4097,0,0,0,0,0),
 (17474,544,'13.1331','2.75793','-0.312492','0.264242',12,'15435',35,0,16777472,4097,0,0,0,0,0),
 (17376,544,'9.3589','23.2286','2.34895','3.89208',12,'13069',114,0,16777472,4097,0,0,0,0,0),
@@ -376,7 +376,7 @@ DELETE FROM `creature_spawns` WHERE `entry`='23035';
 -- Thuk the Defiant
 DELETE FROM `creature_spawns` WHERE `entry`='22920';
 REPLACE INTO `creature_spawns`
-   (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid_go`, `channel_target_sqlid_creature`, `standstate`)
+   (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid`, `channel_target_sqlid_creature`, `standstate`)
 VALUES
    (22920, 530, 3989.09, 6071.56, 266.417, 3.79819, 0, 20863, 35, 0, 0, 0, 0, 0, 0, 0, 0);
 

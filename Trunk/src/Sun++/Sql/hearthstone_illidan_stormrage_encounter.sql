@@ -68,7 +68,7 @@ INSERT INTO `creature_proto` (`entry`, `minlevel`, `maxlevel`, `faction`, `minhe
 # Dumping data for table 'creature_spawns'
 #
 
-INSERT INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid_go`, `channel_target_sqlid_creature`, `standstate`) VALUES
+INSERT INTO `creature_spawns` (`entry`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `movetype`, `displayid`, `faction`, `flags`, `bytes0`, `bytes1`, `bytes2`, `emote_state`, `channel_spell`, `channel_target_sqlid`, `channel_target_sqlid_creature`, `standstate`) VALUES
    (30001,564,'771.5','304.7','319','3.10568',0,'15294',35,0,0,0,0,0,0,0,0,0),
    (22990,564,'661.563','305.711','271.689','0.00628138',4,'20681',1858,256,0,0,0,1,0,0,0,0),
    (22917,564,'704.539','305.282','353.919','6.14417',0,'21135',1825,256,0,0,0,0,0,0,0,0);

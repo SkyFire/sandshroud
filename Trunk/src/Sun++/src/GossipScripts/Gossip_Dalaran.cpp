@@ -153,7 +153,7 @@ public:
 			{
                 objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 50009, Plr);
                 Menu->AddItem( 0, "Class Trainer"          , 35);
-				Menu->AddItem( 0, "Cold Weather Flying Trainer"          , 7);
+				Menu->AddItem( 0, "Cold Weather Flying Trainer"          , 76);
 				Menu->AddItem( 0, "Portal Trainer"          , 36);
 				Menu->AddItem( 0, "Profession Trainer"          , 37);
                 Menu->SendTo(Plr);
@@ -572,6 +572,12 @@ public:
 			{
             Plr->Gossip_SendPOI(5815.91, 453.64, 7, 6, 0, "Krasus' Landing");
 			SendQuickMenu(60058);
+            }break;
+
+        case 76:     // Cold weather flying trainer
+			{
+            Plr->Gossip_SendPOI(5815.91, 453.64, 7, 6, 0, "Flight Master");
+			SendQuickMenu(60059);
             }break;
 
         }
