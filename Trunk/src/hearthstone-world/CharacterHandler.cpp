@@ -820,7 +820,26 @@ void WorldSession::FullLogin(Player* plr)
 	info->m_loggedInPlayer = plr;
 
 	// account data == UI config
-	SendAccountDataTimes(PER_CHARACTER_CACHE_MASK);
+	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
+	MD5Hash md5hash;
+
+	data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
+
+	for (int i = 0; i < 8; i++) // TODO: FIX THIS!
+	{
+//		AccountDataEntry* acct_data = GetAccountData(i); // TODO: Use this correctly.
+
+		if(0xEA & (1 << i))
+		{
+			data << uint32(0);
+		}
+//		md5hash.Initialize();
+//		md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
+//		md5hash.Finalize();
+
+//		data.append(md5hash.GetDigest(), MD5_DIGEST_LENGTH);
+	}
+	SendPacket(&data);
 
 	_player->ResetTitansGrip();
 
@@ -961,7 +980,6 @@ void WorldSession::FullLogin(Player* plr)
 		plr->AddToWorld();
 
 	objmgr.AddPlayer(_player);
-	SendAccountDataTimes(GLOBAL_CACHE_MASK);
 }
 
 bool ChatHandler::HandleRenameCommand(const char * args, WorldSession * m_session)

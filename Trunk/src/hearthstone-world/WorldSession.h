@@ -760,7 +760,6 @@ public:
 	void SendAuctionList(Creature* pCreature);
 	void SendSpiritHealerRequest(Creature* pCreature);
 	void FullLogin(Player* plr);
-	void SendAccountDataTimes(uint32 mask);
 
 	float m_wLevel; // Level of water the player is currently in
 	bool m_bIsWLevelSet; // Does the m_wLevel variable contain up-to-date information about water level?
