@@ -2824,6 +2824,56 @@ void Aura::SpellAuraDummy(bool apply)
 					m_caster->RemoveOnAuraRemoveSpell(SPELL_HASH_PSYCHIC_SCREAM);
 			}
 		}break;
+	case 71903: // Shadowmourne Weapon Effect
+		{
+			if(GetCaster()->IsPlayer())
+			{
+				if(!apply)
+				{
+					TO_PLAYER(GetCaster())->RemoveAura(71905);
+					TO_PLAYER(GetCaster())->RemoveAura(72521);
+					TO_PLAYER(GetCaster())->RemoveAura(72523);
+				}
+			}
+		}break;
+
+	case 71905: // Shard Effects
+		{
+			if(GetCaster()->IsPlayer())
+			{
+				Player* plr = TO_PLAYER(GetCaster());
+				if(apply)
+				{
+					SetDuration(60000); // Set duration for stack bug reasons.
+					if(stackSize >= 1 && stackSize <= 5)
+					{
+						plr->RemoveAura(72523);
+						if(!plr->HasAura(72521))
+							plr->CastSpell(plr, 72521, false);
+					}
+					if(stackSize >= 6 && stackSize <= 9)
+					{
+						plr->RemoveAura(72521);
+						if(!plr->HasAura(72523))
+							plr->CastSpell(plr, 72523, false);						
+					}
+					if(stackSize >= 10)
+					{
+						SpellEntry* sp = dbcSpell.LookupEntry(71904);
+						plr->CastSpellAoF(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), sp, false);
+						plr->RemoveAura(72521);
+						plr->RemoveAura(72523);
+						plr->RemoveAura(71905);
+					}
+				}
+				else
+				{
+					plr->RemoveAura(72521);
+					plr->RemoveAura(72523);
+				}
+			}
+		}break;
+
 	default:
 		{
 			dummy_aura = true;
