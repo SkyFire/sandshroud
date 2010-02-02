@@ -2861,6 +2861,7 @@ void Aura::SpellAuraDummy(bool apply)
 					{
 						SpellEntry* sp = dbcSpell.LookupEntry(71904);
 						plr->CastSpellAoF(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), sp, false);
+						plr->CastSpell(plr, 73422, false);
 						plr->RemoveAura(72521);
 						plr->RemoveAura(72523);
 						plr->RemoveAura(71905);
