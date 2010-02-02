@@ -821,7 +821,7 @@ void WorldSession::FullLogin(Player* plr)
 
 	// account data == UI config
 	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
-	MD5Hash md5hash;
+//	MD5Hash md5hash;
 
 	data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
 

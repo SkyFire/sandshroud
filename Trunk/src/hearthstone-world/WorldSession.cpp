@@ -602,7 +602,11 @@ void WorldSession::InitPacketHandlerTable()
 	
 	// Account Data
 	WorldPacketHandlers[CMSG_UPDATE_ACCOUNT_DATA].handler					= &WorldSession::HandleUpdateAccountData;
+	WorldPacketHandlers[CMSG_UPDATE_ACCOUNT_DATA].status					= STATUS_AUTHED;
 	WorldPacketHandlers[CMSG_REQUEST_ACCOUNT_DATA].handler					= &WorldSession::HandleRequestAccountData;
+	WorldPacketHandlers[CMSG_REQUEST_ACCOUNT_DATA].status					= STATUS_AUTHED;
+	WorldPacketHandlers[CMSG_READY_FOR_ACCOUNT_DATA_TIMES].handler			= &WorldSession::HandleReadyForAccountDataTimes;
+	WorldPacketHandlers[CMSG_READY_FOR_ACCOUNT_DATA_TIMES].status			= STATUS_AUTHED;
 	WorldPacketHandlers[CMSG_SET_FACTION_ATWAR].handler						= &WorldSession::HandleSetAtWarOpcode;
 	WorldPacketHandlers[CMSG_SET_WATCHED_FACTION].handler					= &WorldSession::HandleSetWatchedFactionIndexOpcode;
 	WorldPacketHandlers[CMSG_TOGGLE_PVP].handler							= &WorldSession::HandleTogglePVPOpcode;

@@ -1,0 +1,1 @@
+ALTER TABLE `items` ADD `Lootgold` int(30) NOT NULL DEFAULT '0' after `ReqDisenchantSkill`;

@@ -187,10 +187,14 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 {
 	// sanity checks
 	if(!_player->IsInWorld() || !_player->GetLootGUID()) return;
-	
+
 	// lookup the object we will be looting
-	// TODO: Handle item guids
-	Object* pLootObj = _player->GetMapMgr()->_GetObject(_player->GetLootGUID());
+	Object* pLootObj = NULL;
+	if( GET_TYPE_FROM_GUID(_player->GetLootGUID()) == HIGHGUID_TYPE_ITEM )
+		pLootObj = _player->GetItemInterface()->GetItemByGUID(_player->GetLootGUID());
+	else
+		pLootObj = _player->GetMapMgr()->_GetObject(_player->GetLootGUID());
+
 	Player* plr;
 	if( pLootObj == NULL )
 		return;
@@ -886,11 +890,10 @@ void WorldSession::HandleResurrectResponseOpcode(WorldPacket & recv_data)
 void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 {
 	//OUT_DEBUG("WORLD: Received CMSG_UPDATE_ACCOUNT_DATA");
-
-	uint32 uiID;
 	if(!sWorld.m_useAccountData)
 		return;
 
+	uint32 uiID;
 	recv_data >> uiID;
 
 	if(uiID > 8)
@@ -963,9 +966,10 @@ void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
 {
 	//OUT_DEBUG("WORLD: Received CMSG_REQUEST_ACCOUNT_DATA");
 
-	uint32 id;
 	if(!sWorld.m_useAccountData)
 		return;
+
+	uint32 id;
 	recv_data >> id;
 	
 	if(id > 8)
@@ -2001,6 +2005,13 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)
 		// delete item from database, so we can't cheat
 		pItem->DeleteFromDB();
 		lootmgr.FillItemLoot(&pItem->m_loot, pItem->GetEntry());
+
+		if(pItem->GetProto()->Lootgold > 0) // Gold can be looted from items. http://www.wowhead.com/?item=45724
+			pItem->m_loot.gold = pItem->GetProto()->Lootgold;
+
+		if(pItem->m_loot.gold)
+			pItem->m_loot.gold = int32(float(pItem->m_loot.gold) * sWorld.getRate(RATE_MONEY));
+
 		pItem->m_looted = true;
 	}
 	
@@ -2185,4 +2196,24 @@ void WorldSession::HandleWorldStateUITimerUpdate(WorldPacket& recv_data)
 	WorldPacket data(SMSG_WORLD_STATE_UI_TIMER_UPDATE, 4);
 	data << (uint32)UNIXTIME;;
 	SendPacket(&data);
+}
+
+void WorldSession::HandleReadyForAccountDataTimes(WorldPacket &recv_data)
+{
+	DEBUG_LOG( "WORLD","Received CMSG_READY_FOR_ACCOUNT_DATA_TIMES" );
+
+	// account data == UI config
+	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
+
+	data << uint32(UNIXTIME) << uint8(1) << uint32(0x15);
+
+	for (int i = 0; i < 8; i++)
+	{
+		if(0x15 & (1 << i))
+		{
+			data << uint32(0);
+		}
+	}
+	SendPacket(&data);
+
 }

@@ -482,7 +482,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, bool heroic, bool disenc
 void LootMgr::FillCreatureLoot(Loot * loot,uint32 loot_id, bool heroic)
 {
 	loot->items.clear();
-	loot->gold =0;
+	loot->gold = 0;
 	
 	LootStore::iterator tab =CreatureLoot.find(loot_id);
 	if( CreatureLoot.end()==tab)
@@ -925,12 +925,14 @@ void LootRoll::PlayerRolled(Player* player, uint8 choice)
 
 void LootMgr::FillItemLoot(Loot *loot, uint32 loot_id)
 {
-	loot->items.clear ();
-	loot->gold =0;
+	loot->items.clear();
+	loot->gold = 0;
 
-	LootStore::iterator tab =ItemLoot.find(loot_id);
-	if( ItemLoot.end()==tab)return;
-	else PushLoot(&tab->second,loot,false, false);
+	LootStore::iterator tab = ItemLoot.find(loot_id);
+	if( ItemLoot.end()==tab)
+		return;
+	else
+		PushLoot(&tab->second, loot, false, false);
 }
 
 int32 LootRoll::event_GetInstanceID()

@@ -812,6 +812,7 @@ CREATE TABLE `items` (
   `socket_bonus` int(30) DEFAULT '0',
   `GemProperties` int(30) DEFAULT '0',
   `ReqDisenchantSkill` int(30) NOT NULL DEFAULT '-1',
+  `Lootgold` int(30) NOT NULL DEFAULT '0',
   `ArmorDamageModifier` int(30) NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`),
   UNIQUE KEY `entry` (`entry`)

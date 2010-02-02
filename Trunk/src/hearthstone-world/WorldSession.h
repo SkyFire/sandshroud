@@ -745,6 +745,7 @@ protected:
 	void HandleSpellClick( WorldPacket & recv_data );
 
 	//MISC
+	void HandleReadyForAccountDataTimes(WorldPacket &recv_data);
 	void HandleWorldStateUITimerUpdate( WorldPacket & recv_data );
 
 public:
