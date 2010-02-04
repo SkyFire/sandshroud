@@ -1,0 +1,52 @@
+Index: InstanceScripts/Base.cpp
+===================================================================
+--- InstanceScripts/Base.cpp	(revision 746)
++++ InstanceScripts/Base.cpp	(working copy)
+@@ -295,7 +295,7 @@
+ 
+ void MoonScriptCreatureAI::Regenerate()
+ {
+-	_unit->RegenerateHealth(false);
++	_unit->RegenerateHealth();
+ 	_unit->RegeneratePower(false);
+ }
+ 
+Index: WorldPvPScripts/ZoneHellfirePeninsula.cpp
+===================================================================
+--- WorldPvPScripts/ZoneHellfirePeninsula.cpp	(revision 746)
++++ WorldPvPScripts/ZoneHellfirePeninsula.cpp	(working copy)
+@@ -143,7 +143,7 @@
+ 		
+ 		for(; itr != itrend; ++itr)
+ 		{
+-			if( !(*itr)->IsPvPFlagged() || (*itr)->InStealth() )
++			if( !(*itr)->IsPvPFlagged() || (*itr)->IsStealth() )
+ 				is_valid = false;
+ 			else
+ 				is_valid = true;
+Index: WorldPvPScripts/ZoneTerokkarForest.cpp
+===================================================================
+--- WorldPvPScripts/ZoneTerokkarForest.cpp	(revision 746)
++++ WorldPvPScripts/ZoneTerokkarForest.cpp	(working copy)
+@@ -150,7 +150,7 @@
+ 		
+ 		for(; itr != itrend; ++itr)
+ 		{
+-			if( !(*itr)->IsPvPFlagged() || (*itr)->InStealth() )
++			if( !(*itr)->IsPvPFlagged() || (*itr)->IsStealth() )
+ 				is_valid = false;
+ 			else
+ 				is_valid = true;
+Index: WorldPvPScripts/ZoneZangarmarsh.cpp
+===================================================================
+--- WorldPvPScripts/ZoneZangarmarsh.cpp	(revision 746)
++++ WorldPvPScripts/ZoneZangarmarsh.cpp	(working copy)
+@@ -184,7 +184,7 @@
+ 		
+ 		for(; itr != itrend; ++itr)
+ 		{
+-			if( !(*itr)->IsPvPFlagged() || (*itr)->InStealth() )
++			if( !(*itr)->IsPvPFlagged() || (*itr)->IsStealth() )
+ 				is_valid = false;
+ 			else
+ 				is_valid = true;
