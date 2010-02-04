@@ -733,14 +733,6 @@
 						RelativePath="..\..\src\hearthstone-world\SpellTarget.cpp"
 						>
 					</File>
-					<Filter
-						Name="ClassSpellFixes"
-						>
-						<File
-							RelativePath="..\..\src\hearthstone-world\SpellFixes\DruidSpellFixes.cpp"
-							>
-						</File>
-					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
