@@ -379,10 +379,8 @@ void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, ui
 	}
 }
 
-void ApplySingleDruidSpellFixes(SpellEntry *sp); // SpellFixes/DruidSpellFixes.cpp
 void ApplySingleSpellFixes(SpellEntry *sp)
 {
-    ApplySingleDruidSpellFixes(sp);
 	if(sp != NULL)
 	{
 		switch(sp->Id)
