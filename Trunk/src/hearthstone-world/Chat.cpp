@@ -30,35 +30,35 @@ ChatCommand * ChatHandler::getCommandTable()
 
 ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 {
-	if(!strcmp(name, "modify"))
+	if(!stricmp(name, "modify"))
 		return _modifyCommandTable;
-	else if(!strcmp(name, "debug"))
+	else if(!stricmp(name, "debug"))
 		return _debugCommandTable;
-	else if(!strcmp(name, "waypoint"))
+	else if(!stricmp(name, "waypoint"))
 		return _waypointCommandTable;
-	else if(!strcmp(name, "gmTicket"))
+	else if(!stricmp(name, "gmTicket"))
 		return _GMTicketCommandTable;
-	else if(!strcmp(name, "gobject"))
+	else if(!stricmp(name, "gobject"))
 		return _GameObjectCommandTable;
-	else if(!strcmp(name, "battleground"))
+	else if(!stricmp(name, "battleground"))
 		return _BattlegroundCommandTable;
-	else if(!strcmp(name, "npc"))
+	else if(!stricmp(name, "npc"))
 		return _NPCCommandTable;
-	else if(!strcmp(name, "cheat"))
+	else if(!stricmp(name, "cheat"))
 		return _CheatCommandTable;
-	else if(!strcmp(name, "account"))
+	else if(!stricmp(name, "account"))
 		return _accountCommandTable;
-	else if(!strcmp(name, "pet"))
+	else if(!stricmp(name, "pet"))
 		return _petCommandTable;
-	else if(!strcmp(name, "recall"))
+	else if(!stricmp(name, "recall"))
 		return _recallCommandTable;
-	else if(!strcmp(name, "honor"))
+	else if(!stricmp(name, "honor"))
 		return _honorCommandTable;
-	else if(!strcmp(name, "guild"))
+	else if(!stricmp(name, "guild"))
 		return _GuildCommandTable;
-	else if(!strcmp(name, "title"))
+	else if(!stricmp(name, "title"))
 		return _TitleCommandTable;
-	else if(!strcmp(name, "quest"))
+	else if(!stricmp(name, "quest"))
 		return _questCommandTable;
 	return 0;
 }
@@ -1058,7 +1058,7 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 			case UNIT_FIELD_FACTIONTEMPLATE:
 				{
 					if(cr->m_spawn)
-						WorldDatabase.Execute("UPDATE creature_spawns SET faction = %u WHERE entry = %u", av, cr->m_spawn->entry);
+						WorldDatabase.Execute("UPDATE creature_spawns SET faction = %u WHERE id = %u", av, cr->m_spawn->id);
 					cr->_setFaction();
 				}break;
 			case UNIT_NPC_FLAGS:

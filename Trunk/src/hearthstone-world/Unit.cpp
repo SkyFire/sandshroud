@@ -6921,7 +6921,7 @@ void Creature::Tag(Player* plr)
 void Unit::SetPower(uint32 type, int32 value)
 {
 	uint32 maxpower = GetUInt32Value(UNIT_FIELD_MAXPOWER1 + type);
-	value = value < 0 ? 0 : value > (int32)maxpower ? maxpower : value ; 
+	value = value < 0 ? 0 : value > (int32)maxpower ? maxpower : value; 
 	SetUInt32Value(UNIT_FIELD_POWER1 + type, value);
 	SendPowerUpdate();
 }
@@ -7163,8 +7163,9 @@ void Unit::RemovePvPFlag()
 
 void Unit::SetPowerType(uint8 type)
 {
-	SetByte(UNIT_FIELD_BYTES_0,3,type);
-	if (type == POWER_TYPE_RUNIC && IsPlayer())
+	SetByte(UNIT_FIELD_BYTES_0, 3, type);
+
+	if(type == POWER_TYPE_RUNIC && IsPlayer())
 	{
 		SetFloatValue(PLAYER_RUNE_REGEN_1, 0.100000f);
 		SetFloatValue(PLAYER_RUNE_REGEN_1_1, 0.100000f);

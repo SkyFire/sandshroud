@@ -198,7 +198,7 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 	Player* plr;
 	if( pLootObj == NULL )
 		return;
-	
+
 	// is there any left? :o
 	if( pLootObj->m_loot.gold == 0 )
 		return;
@@ -250,7 +250,7 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 		StackPacket pkt(SMSG_LOOT_MONEY_NOTIFY, databuf, 50);
 		pkt << share;
 
-		for(vector<Player*  >::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+		for(vector<Player*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
 		{
 			if(((*itr)->GetUInt32Value(PLAYER_FIELD_COINAGE) + share) >= PLAYER_MAX_GOLD)
 				continue;

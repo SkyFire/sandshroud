@@ -485,7 +485,7 @@ bool ChatHandler::HandleSetBytesCommand(const char* args, WorldSession *m_sessio
 	Object* obj;
 
 	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
+	if(guid != 0)
 	{
 		if(!(obj = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid)))
 		{
