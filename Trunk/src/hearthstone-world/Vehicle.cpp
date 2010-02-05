@@ -470,7 +470,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << GetPositionZ();									// position vector 
 		data << GetOrientation();								// orientaion
 		// transport part
-		data << GetGUID();										// transport guid
+		data << GetNewGUID();									// transport guid
 		data << v.x;											// transport offsetX
 		data << v.y;											// transport offsetY
 		data << v.z;											// transport offsetZ
@@ -492,7 +492,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << GetPositionZ();									// position vector 
 		data << GetOrientation();								// orientaion
 		// transport part
-		data << GetGUID();										// transport guid
+		data << GetNewGUID();									// transport guid
 		data << v.x;											// transport offsetX
 		data << v.y;											// transport offsetY
 		data << v.z;											// transport offsetZ

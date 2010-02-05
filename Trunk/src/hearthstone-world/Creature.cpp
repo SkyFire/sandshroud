@@ -703,6 +703,22 @@ void Creature::RegenerateFocus()
 	SetUInt32Value(UNIT_FIELD_POWER3,(cur>=mm)?mm:cur);
 }
 
+void Creature::RegenerateEnergy()
+{
+	if(m_interruptRegen)
+		return;
+
+	uint32 cur = GetUInt32Value(UNIT_FIELD_POWER4);
+	uint32 mm = GetUInt32Value(UNIT_FIELD_MAXPOWER4);
+
+	if(cur >= mm)
+		return;
+
+	float amt = 1.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY];
+	cur += (uint32)amt;
+	SetUInt32Value(UNIT_FIELD_POWER4,(cur>=mm) ? mm : cur);
+}
+
 void Creature::CallScriptUpdate()
 {
 	ASSERT(_myScriptClass);

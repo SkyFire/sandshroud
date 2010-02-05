@@ -2560,6 +2560,9 @@ void Unit::RegeneratePower(bool isinterrupted)
 		case POWER_TYPE_MANA:
 			TO_CREATURE(this)->RegenerateMana(isinterrupted);
 			break;
+		case POWER_TYPE_ENERGY:
+			TO_CREATURE(this)->RegenerateEnergy();
+			break;
 		case POWER_TYPE_FOCUS:
 			TO_CREATURE(this)->RegenerateFocus();
 			break;

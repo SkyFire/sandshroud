@@ -555,6 +555,7 @@ public:
 	HEARTHSTONE_INLINE void SetCreatureName(CreatureInfo *ci) { creature_info = ci; }
 	HEARTHSTONE_INLINE Trainer* GetTrainer() { return mTrainer; }
 	void RegenerateFocus();
+	void RegenerateEnergy();
 
 	CreatureFamilyEntry * myFamily;
 	void FormationLinkUp(uint32 SqlId);
