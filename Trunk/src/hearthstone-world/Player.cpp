@@ -5904,7 +5904,7 @@ void Player::SendLoot(uint64 guid,uint8 loot_type)
 	// add to looter set
 	lootObj->m_loot.looters.insert(GetLowGUID());
 		
-	WorldPacket data, data2(28);
+	WorldPacket data, data2(32);
 	data.SetOpcode (SMSG_LOOT_RESPONSE);
    
    
@@ -6063,7 +6063,9 @@ void Player::SendLoot(uint64 guid,uint8 loot_type)
 					else
 						data2 << uint32(0);
 
+					data2 << iter->iItemsCount;
 					data2 << uint32(60000); // countdown
+					data2 << uint8(7);
 				}
 
 				Group * pGroup = m_playerInfo->m_Group;
