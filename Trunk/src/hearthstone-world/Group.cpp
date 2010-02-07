@@ -311,7 +311,11 @@ void Group::Update()
 				data << uint8(0);   // unk
 				data << uint8(sg1->GetID());
 				data << uint8(0);	// unk2
-				//data << uint64(0);	// unk3
+				if(m_GroupType & GROUP_TYPE_LFD)
+				{
+					data << uint8(0);
+					data << uint32(0);
+				}
 				data << uint64(0x500000000004BC0CULL);
 				data << uint32(0);
 				data << uint32(m_MemberCount-1);	// we don't include self
