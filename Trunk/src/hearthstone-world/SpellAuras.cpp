@@ -4895,12 +4895,12 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		}
 
 		//execute after we changed shape
-		TO_PLAYER( m_target )->EventTalentHearthOfWildChange( true );
+		TO_PLAYER( m_target )->EventTalentHeartOfWildChange( true );
 	}
 	else 
 	{
 		//execute before changing shape back
-		TO_PLAYER( m_target )->EventTalentHearthOfWildChange( false );
+		TO_PLAYER( m_target )->EventTalentHeartOfWildChange( false );
 		m_target->SetUInt32Value( UNIT_FIELD_DISPLAYID, m_target->GetUInt32Value( UNIT_FIELD_NATIVEDISPLAYID ) );				
 		if( spellId != GetSpellId() && spellId )
 		{
@@ -7704,14 +7704,14 @@ void Aura::SpellAuraModTotalStatPerc(bool apply)
 			if( m_spellProto->NameHash == SPELL_HASH_HEART_OF_THE_WILD )
 			{
 				//we should remove effect first
-				TO_PLAYER( m_target )->EventTalentHearthOfWildChange( false );
+				TO_PLAYER( m_target )->EventTalentHeartOfWildChange( false );
 				//set new value
 				if( apply )
 					TO_PLAYER( m_target )->SetTalentHearthOfWildPCT( val );
 				else
 					TO_PLAYER( m_target )->SetTalentHearthOfWildPCT( 0 ); //this happens on a talent reset
 				//reapply
-				TO_PLAYER( m_target )->EventTalentHearthOfWildChange( true );
+				TO_PLAYER( m_target )->EventTalentHeartOfWildChange( true );
 			}
 
 			if( mod->m_amount > 0 )
