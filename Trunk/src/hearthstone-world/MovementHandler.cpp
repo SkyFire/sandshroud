@@ -693,15 +693,17 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 void WorldSession::HandleMoveTimeSkippedOpcode( WorldPacket & recv_data )
 {
-	uint64 guid;
+	WoWGuid wguid;
 	uint32 time_dif;
 	uint8 buf[16];
 	StackPacket data(0x319, buf, 16);
 
-	recv_data >> guid;
+	recv_data >> wguid;
 	recv_data >> time_dif;
 
-	// ignore updates for not us
+	uint64 guid = wguid.GetOldGuid();
+
+	// Ignore updates for not us
 	if( guid != _player->GetGUID() )
 		return;
 

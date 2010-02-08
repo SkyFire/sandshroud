@@ -373,7 +373,8 @@ void Group::Update()
 					data << uint64( 0 );
 
 				data << uint8( m_LootThreshold );
-				data << uint8( m_difficulty );
+				data << uint8( m_difficulty ); // 5 Normal/Heroic.
+				data << uint8(0); // 10/25 man.
 
 				if( !(*itr1)->m_loggedInPlayer->IsInWorld() )
 					(*itr1)->m_loggedInPlayer->CopyAndSendDelayedPacket( &data );

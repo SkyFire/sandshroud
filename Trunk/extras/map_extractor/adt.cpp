@@ -296,14 +296,14 @@ void LoadMapChunk(MPQFile & mf, chunk*_chunk)
 				//	if(z<zmin)zmin=z;
 				}
 		}
-		 else if(fourcc==0x4d434e52)
-			{
-				nextpos = mf.getPos() + 0x1C0; // size fix
-			}
-		 else if(fourcc=0xefb88b70) // map 631 fix
-			{
-				nextpos = mf.getPos() + 0x1199;
-			}
+		else if(fourcc==0x4d434e52)
+		{
+			nextpos = mf.getPos() + 0x1C0; // size fix
+		}
+		else if(fourcc=0xefb88b70) // map 631 fix
+		{
+			nextpos = mf.getPos() + 0x1199;
+		}
 		else if(fourcc==0x4d434c51)
             {
                 // liquid / water level
