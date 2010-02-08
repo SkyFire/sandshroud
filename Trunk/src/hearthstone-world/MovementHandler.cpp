@@ -721,9 +721,8 @@ void WorldSession::HandleMoveNotActiveMoverOpcode( WorldPacket & recv_data )
 void WorldSession::HandleSetActiveMoverOpcode( WorldPacket & recv_data )
 {
 	// set current movement object
-	WoWGuid wguid;
-	recv_data >> wguid;
-	uint64 guid = wguid.GetOldGuid();
+	uint64 guid;
+	recv_data >> guid;
 
 	if(guid != m_MoverWoWGuid.GetOldGuid())
 	{
