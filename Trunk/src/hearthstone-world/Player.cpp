@@ -8624,6 +8624,13 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
 	}
 
 #ifdef CLUSTERING
+
+	if(GetShapeShift())
+	{
+		// Extra Check
+		SetShapeShift(GetShapeShift());
+	}
+
 	/* Clustering Version */
 	MapInfo * mi = WorldMapInfoStorage.LookupEntry(MapID);
 
@@ -8674,6 +8681,12 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
 	delete data;
 	return true;
 #else
+	if(GetShapeShift())
+	{
+		// Extra Check
+		SetShapeShift(GetShapeShift());
+	}
+
 	/* Normal Version */
 	bool force_new_world = false;
 
@@ -8694,7 +8707,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
 	}
 
 	//We are going to another map
-	if(force_new_world )
+	if(force_new_world)
 	{
 		//Do we need TBC expansion?
 		if(mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
@@ -8751,6 +8764,12 @@ void Player::SafeTeleport(MapMgr* mgr, LocationVector vec)
 	m_sentTeleportPosition = vec;
 	SetPosition(vec);
 	ResetHeartbeatCoords();
+
+	if(GetShapeShift())
+	{
+		// Extra Check
+		SetShapeShift(GetShapeShift());
+	}
 
 	if(DuelingWith != NULL)
 	{

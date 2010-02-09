@@ -1373,10 +1373,9 @@ public:
 	const uint32& GetBindZoneId( ) const { return m_bind_zoneid; }
 	HEARTHSTONE_INLINE uint8 GetShapeShift()
 	{
-		return GetByte(UNIT_FIELD_BYTES_2,3);
+		return GetByte(UNIT_FIELD_BYTES_2, 3);
 	}
 
-	
 	void delayAttackTimer(int32 delay)
 	{
 		if(!delay)
@@ -1385,12 +1384,12 @@ public:
 		m_attackTimer += delay;
 		m_attackTimer_1 += delay;
 	}
-	
+
 	void SetShapeShift(uint8 ss);
 
-    //Showing Units WayPoints
+	//Showing Units WayPoints
 	AIInterface* waypointunit;
-	
+
 	uint32 m_nextSave;
 	//Tutorials
 	uint32 GetTutorialInt(uint32 intId );
@@ -1412,7 +1411,7 @@ public:
 	void Gossip_Complete();
 	int m_lifetapbonus;
 	uint32 m_lastShotTime;
-	
+
 	bool m_bUnlimitedBreath;
 	uint32 m_UnderwaterTime;
 	uint32 m_UnderwaterState;
