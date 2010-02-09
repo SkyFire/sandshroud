@@ -1848,7 +1848,7 @@ public:
 
 	LocationVector m_last_group_position;
 	int32 m_rap_mod_pct;
-	void SummonRequest(uint32 Requestor, uint32 ZoneID, uint32 MapID, uint32 InstanceID, const LocationVector & Position);
+	void SummonRequest(Object* Requestor, uint32 ZoneID, uint32 MapID, uint32 InstanceID, const LocationVector & Position);
 	uint8 m_lastMoveType;
 #ifdef OPTIMIZED_PLAYER_SAVING
 	void save_LevelXP();
@@ -1925,7 +1925,7 @@ protected:
 	LocationVector m_summonPos;
 	uint32 m_summonInstanceId;
 	uint32 m_summonMapId;
-	uint32 m_summoner;
+	Object* m_summoner;
 
 	uint32 iActivePet;
 	void _SetCreateBits(UpdateMask *updateMask, Player* target) const;

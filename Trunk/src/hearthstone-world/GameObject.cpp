@@ -72,7 +72,7 @@ GameObject::~GameObject()
 			plr->SetSummonedObject(NULLOBJ);
 
 		if(plr == m_summoner)
-			m_summoner = NULLUNIT;
+			m_summoner = NULLOBJ;
 	}
 
 	if(m_respawnCell!=NULL)

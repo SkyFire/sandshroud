@@ -399,7 +399,8 @@ void Player::Init()
 	m_rap_mod_pct = 0;
 	m_modblockabsorbvalue = 0;
 	m_modblockvaluefromspells = 0;
-	m_summoner = m_summonInstanceId = m_summonMapId = 0;
+	m_summoner = NULLOBJ;
+	m_summonInstanceId = m_summonMapId = 0;
 	m_lastMoveType = 0;
 	m_tempSummon = NULLCREATURE;
 	m_spellcomboPoints = 0;
@@ -10026,7 +10027,7 @@ void Player::UnPossess()
 	m_session->SendPacket(&data);
 }
 
-void Player::SummonRequest(uint32 Requestor, uint32 ZoneID, uint32 MapID, uint32 InstanceID, const LocationVector & Position)
+void Player::SummonRequest(Object* Requestor, uint32 ZoneID, uint32 MapID, uint32 InstanceID, const LocationVector & Position)
 {
 	m_summonInstanceId = InstanceID;
 	m_summonPos = Position;
@@ -10034,7 +10035,7 @@ void Player::SummonRequest(uint32 Requestor, uint32 ZoneID, uint32 MapID, uint32
 	m_summonMapId = MapID;
 
 	WorldPacket data(SMSG_SUMMON_REQUEST, 16);
-	data << uint64(Requestor) << ZoneID << uint32(120000);		// 2 minutes
+	data << Requestor->GetGUID() << ZoneID << uint32(120000);		// 2 minutes
 	m_session->SendPacket(&data);
 }
 
