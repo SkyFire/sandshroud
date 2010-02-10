@@ -1268,14 +1268,14 @@ public:
 	float GetSpellTimeMod(uint32 id);
 	int GetSpellDamageMod(uint32 id);
 	int32 GetSpellManaMod(uint32 id);
-	
+
 	// Talents
 	// These functions build a specific type of A9 packet
 	uint32 __fastcall BuildCreateUpdateBlockForPlayer( ByteBuffer *data, Player* target );
 	void DestroyForPlayer( Player* target ) const;
 	void SetTalentHearthOfWildPCT(int value){hearth_of_wild_pct=value;}
 	void EventTalentHeartOfWildChange(bool apply);
-	
+
 	std::list<LoginAura> loginauras;
 
 	std::set<uint32> OnMeleeAuras;
@@ -1618,12 +1618,12 @@ public:
 	Mutex _bufferS;
 	void PushUpdateData(ByteBuffer *data, uint32 updatecount);
 	void PushUpdateData(StackBuffer *data, uint32 updatecount);
-    void PushCreationData(ByteBuffer *data, uint32 updatecount);
+	void PushCreationData(ByteBuffer *data, uint32 updatecount);
 	void PushOutOfRange(const WoWGuid & guid);
 	void ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompressionBuffer);
 	bool __fastcall CompressAndSendUpdateBuffer(uint32 size, const uint8* update_buffer, ByteBuffer *pCompressionBuffer);
 	void ClearAllPendingUpdates();
-	
+
 	uint32 GetArmorProficiency() { return armor_proficiency; }
 	uint32 GetWeaponProficiency() { return weapon_proficiency; }
 
@@ -1838,13 +1838,6 @@ public:
 		SetPlayerSpeed(SWIM, (float)4.9);
 		SetMovement(MOVE_LAND_WALK, 8);
 		SetUInt32Value(UNIT_FIELD_HEALTH, GetUInt32Value(UNIT_FIELD_MAXHEALTH) );
-	}
-
-//Full HP on first login
-	void FirstLoginHPRestore()
-	{
-		SetUInt32Value(UNIT_FIELD_HEALTH, GetUInt32Value(UNIT_FIELD_MAXHEALTH) );
-		SetUInt32Value(UNIT_FIELD_POWER1, GetUInt32Value(UNIT_FIELD_MAXPOWER1) );
 	}
 
 	void ResetSpeedHack();

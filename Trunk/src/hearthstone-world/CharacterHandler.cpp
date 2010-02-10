@@ -894,14 +894,6 @@ void WorldSession::FullLogin(Player* plr)
 
 	DEBUG_LOG( "WorldSession","Created new player for existing players (%s)", plr->GetName() );
 
-	//Make sure their HP is full on their first login
-	if(plr->m_FirstLogin)
-	plr->FirstLoginHPRestore();
-	
-	// and for DK's =)
-	//if(plr->getClass()==DEATHKNIGHT && plr->m_FirstLogin)
-	//plr->FirstLoginHPRestore();
-
 	// Login time, will be used for played time calc
 	plr->m_playedtime[2] = (uint32)UNIXTIME;
 
