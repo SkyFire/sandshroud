@@ -21,6 +21,6 @@
 #define __CONST_H__
 
 
-#define NUM_MAPS 700
+#define NUM_MAPS 750
 
 #endif
