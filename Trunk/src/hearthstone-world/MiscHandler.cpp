@@ -995,7 +995,7 @@ void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
 		if(res->sz>200)
 		{
 			data.resize( res->sz+800 );  // give us plenty of room to work with..
-			
+
 			if ( ( compress(const_cast<uint8*>(data.contents()) + (sizeof(uint32)*2), &destsize, (const uint8*)res->data, res->sz)) != Z_OK)
 			{
 				OUT_DEBUG("Error while compressing ACCOUNT_DATA");

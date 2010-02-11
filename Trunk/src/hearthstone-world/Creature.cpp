@@ -1070,17 +1070,50 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		m_useAI = false;
 	}
 
-	if(powertype == POWER_TYPE_HAPPINESS || powertype >= MAX_POWER_TYPE)
-		sLog.outError("Creature %u has an incorrect powertype.", this->GetEntry());
-
-	if(powertype == POWER_TYPE_RAGE || powertype == POWER_TYPE_RUNIC)
-		power = power*10;
-
-	SetByte(UNIT_FIELD_BYTES_0, 3, powertype);
-	SetUInt32Value(UNIT_FIELD_POWER1 + powertype, power);
-	SetUInt32Value(UNIT_FIELD_MAXPOWER1 + powertype, power);
-	if(powertype == POWER_TYPE_MANA)
-		SetUInt32Value(UNIT_FIELD_BASE_MANA, power);
+	switch(powertype)
+	{
+	case POWER_TYPE_MANA:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_MANA);
+			SetUInt32Value(UNIT_FIELD_POWER1, power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER1, power);
+			SetUInt32Value(UNIT_FIELD_BASE_MANA, power);
+		}break;
+	case POWER_TYPE_RAGE:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RAGE);
+			SetUInt32Value(UNIT_FIELD_POWER2, power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER2, power * 10);
+		}break;
+	case POWER_TYPE_FOCUS:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_FOCUS);
+			SetUInt32Value(UNIT_FIELD_POWER3, power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER3, power);
+		}break;
+	case POWER_TYPE_ENERGY:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
+			SetUInt32Value(UNIT_FIELD_POWER4, power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER4, power);
+		}break;
+	case POWER_TYPE_RUNE:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNE);
+			SetUInt32Value(UNIT_FIELD_POWER6, power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER6, power * 10);
+		}break;
+	case POWER_TYPE_RUNIC:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNIC);
+			SetUInt32Value(UNIT_FIELD_POWER7, power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER7, power);
+		}break;
+	default:
+		{
+			sLog.outError("Creature %u has an incorrect powertype.", this->GetEntry());	
+		}break;
+	}
 
 	has_combat_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_ENTER_COMBAT);
 	has_waypoint_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_RANDOM_WAYPOINT);
@@ -1255,17 +1288,50 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
 		m_useAI = false;
 	}
 
-	uint32 power = 0;
-	if(proto->Powertype == POWER_TYPE_RAGE)
-		power = proto->Power* 10;
-	else
-		power = proto->Power;
-
-	SetByte(UNIT_FIELD_BYTES_0, 3, proto->Powertype);
-	SetUInt32Value(UNIT_FIELD_POWER1 + proto->Powertype, power);
-	SetUInt32Value(UNIT_FIELD_MAXPOWER1 + proto->Powertype, power);
-	if(proto->Powertype == POWER_TYPE_MANA)
-		SetUInt32Value(UNIT_FIELD_BASE_MANA, power);
+	switch(proto->Powertype)
+	{
+	case POWER_TYPE_MANA:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_MANA);
+			SetUInt32Value(UNIT_FIELD_POWER1, proto->Power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER1, proto->Power);
+			SetUInt32Value(UNIT_FIELD_BASE_MANA, proto->Power);
+		}break;
+	case POWER_TYPE_RAGE:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RAGE);
+			SetUInt32Value(UNIT_FIELD_POWER2, proto->Power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER2, proto->Power * 10);
+		}break;
+	case POWER_TYPE_FOCUS:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_FOCUS);
+			SetUInt32Value(UNIT_FIELD_POWER3, proto->Power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER3, proto->Power);
+		}break;
+	case POWER_TYPE_ENERGY:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
+			SetUInt32Value(UNIT_FIELD_POWER4, proto->Power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER4, proto->Power);
+		}break;
+	case POWER_TYPE_RUNE:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNE);
+			SetUInt32Value(UNIT_FIELD_POWER6, proto->Power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER6, proto->Power * 10);
+		}break;
+	case POWER_TYPE_RUNIC:
+		{
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNIC);
+			SetUInt32Value(UNIT_FIELD_POWER7, proto->Power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER7, proto->Power);
+		}break;
+	default:
+		{
+			sLog.outError("Creature %u has an incorrect powertype.", this->GetEntry());	
+		}break;
+	}
 
 	has_combat_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_ENTER_COMBAT);
 	has_waypoint_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_RANDOM_WAYPOINT);

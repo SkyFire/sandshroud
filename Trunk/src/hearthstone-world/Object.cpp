@@ -43,7 +43,7 @@ Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 	m_uint32Values = 0;
 	m_objectUpdated = false;
 
-	m_valuesCount = 0;
+	m_valuesCount = OBJECT_END;
 
 	//official Values
 	m_walkSpeed = 2.5f;
