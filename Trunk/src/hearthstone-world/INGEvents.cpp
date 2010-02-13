@@ -103,7 +103,7 @@ void DayWatcherThread::LoadEventIdSettings()
 		do
 		{
 			eventid = result->Fetch()[0].GetUInt8();
-			result2 = WorldDatabase.Query("SELECT DISTINCT mapid FROM creature_spawns WHERE eventid = '%u'", eventid);
+			result2 = WorldDatabase.Query("SELECT DISTINCT map FROM creature_spawns WHERE eventid = '%u'", eventid);
 			if(result2)
 			{
 				do
@@ -112,7 +112,7 @@ void DayWatcherThread::LoadEventIdSettings()
 				}while(result2->NextRow());
 				delete result2;
 			}
-			result2 = WorldDatabase.Query("SELECT DISTINCT mapid FROM gameobject_spawns WHERE eventid = '%u'", eventid);
+			result2 = WorldDatabase.Query("SELECT DISTINCT map FROM gameobject_spawns WHERE eventid = '%u'", eventid);
 			if(result2)
 			{
 				do
