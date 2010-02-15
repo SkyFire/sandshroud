@@ -182,7 +182,7 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 				}
 			}
 
-			if(SrcSlot <  INVENTORY_KEYRING_END)
+			if(SrcSlot <  CURRENCYTOKEN_SLOT_END)
 			{
 				if((error=GetPlayer()->GetItemInterface()->CanEquipItemInSlot(SrcInvSlot, SrcSlot, DstItem->GetProto())))
 				{
@@ -226,7 +226,7 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 				}
 			}
 
-			if(DstSlot <  INVENTORY_KEYRING_END)
+			if(DstSlot <  CURRENCYTOKEN_SLOT_END)
 			{
 				if((error=GetPlayer()->GetItemInterface()->CanEquipItemInSlot(DstInvSlot, DstSlot, SrcItem->GetProto())))
 				{
@@ -427,7 +427,7 @@ void WorldSession::HandleSwapInvItemOpcode( WorldPacket & recv_data )
 	
 	if( ( error = _player->GetItemInterface()->CanEquipItemInSlot( INVENTORY_SLOT_NOT_SET, dstslot, srcitem->GetProto(), skip_combat ) ) )
 	{
-		if( dstslot < INVENTORY_KEYRING_END )
+		if( dstslot < CURRENCYTOKEN_SLOT_END )
 		{
 			_player->GetItemInterface()->BuildInventoryChangeError( srcitem, dstitem, error );
 			return;
@@ -438,7 +438,7 @@ void WorldSession::HandleSwapInvItemOpcode( WorldPacket & recv_data )
 	{
 		if((error=_player->GetItemInterface()->CanEquipItemInSlot(INVENTORY_SLOT_NOT_SET, srcslot, dstitem->GetProto(), skip_combat)))
 		{
-			if(srcslot < INVENTORY_KEYRING_END)
+			if(srcslot < CURRENCYTOKEN_SLOT_END)
 			{
 				data.Initialize( SMSG_INVENTORY_CHANGE_FAILURE );
 				data << error;
@@ -1547,7 +1547,7 @@ void WorldSession::HandleAutoStoreBagItemOpcode( WorldPacket & recv_data )
 		{
 			if((error=_player->GetItemInterface()->CanEquipItemInSlot(DstInv,  DstInv, srcitem->GetProto())))
 			{
-				if(DstInv < INVENTORY_KEYRING_END)
+				if(DstInv < CURRENCYTOKEN_SLOT_END)
 				{
 					_player->GetItemInterface()->BuildInventoryChangeError(srcitem,dstitem, error);
 					return;

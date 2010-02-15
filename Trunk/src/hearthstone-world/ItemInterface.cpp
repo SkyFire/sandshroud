@@ -351,6 +351,15 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int8 ContainerSlot, int8 slo
 		m_pOwner->ApplyItemMods( item, slot, true );
 	}
 
+	if(slot >= CURRENCYTOKEN_SLOT_START && slot < CURRENCYTOKEN_SLOT_END)
+
+	{
+
+		m_pOwner->UpdateKnownCurrencies(item->GetEntry(), true);
+
+	}
+
+
 	if( ContainerSlot == INVENTORY_SLOT_NOT_SET && slot == EQUIPMENT_SLOT_OFFHAND && item->GetProto()->Class == ITEM_CLASS_WEAPON )
 		m_pOwner->SetDuelWield(true);
 
@@ -464,7 +473,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 		}
 	}
 
-	for(i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++)
+	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		Item* item = GetInventoryItem(i);
 
@@ -555,7 +564,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		}
 	}
 
-	for(i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++)
+	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		Item* item = GetInventoryItem(i);
 
@@ -712,7 +721,7 @@ bool ItemInterface::SafeFullRemoveItemByGuid(uint64 guid)
 		}
 	}
 
-	for(i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++)
+	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		Item* item = GetInventoryItem(i);
 
@@ -933,7 +942,7 @@ uint32 ItemInterface::GetItemCount(uint32 itemid, bool IncBank)
 		}
 	}
 
-	for(i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++)
+	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		Item* item = GetInventoryItem(i);
 
@@ -1080,7 +1089,7 @@ uint32 ItemInterface::RemoveItemAmt(uint32 id, uint32 amt)
 		}
 	}
 
-	for(i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++)
+	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		Item* item = GetInventoryItem(i);
 		if (item)
@@ -1219,7 +1228,7 @@ uint32 ItemInterface::RemoveItemAmt_ProtectPointer(uint32 id, uint32 amt, Item**
 		}
 	}
 
-	for(i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++)
+	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		Item* item = GetInventoryItem(i);
 		if (item)
@@ -1401,6 +1410,7 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 	uint32 i = 0;
 	bool result2;
 	AddItemResult result3;
+	uint32 itemMaxStack;
 
 	//detect special bag item
 	if( item->GetProto()->BagFamily )
@@ -1422,6 +1432,52 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 				}
 			}
 		}
+		else if( item->GetProto()->BagFamily & ITEM_TYPE_CURRENCY )
+
+		{
+
+			for( i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++ )
+
+			{
+
+				if(m_pItems[i] == NULL)
+
+				{
+
+					result3 = SafeAddItem( item, INVENTORY_SLOT_NOT_SET, i );
+
+					if( result3 )
+
+					{
+
+						result.ContainerSlot = INVENTORY_SLOT_NOT_SET;
+
+						result.Slot = i;
+
+						result.Result = true;
+
+						m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
+
+						return ADD_ITEM_RESULT_OK;
+
+					}
+
+				}
+
+				else if( m_pItems[i]->GetProto()->ItemId == item->GetProto()->ItemId && itemMaxStack > 1 &&
+						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) < itemMaxStack  &&
+						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) <= itemMaxStack )
+					{
+						m_pItems[i]->SetUInt32Value( ITEM_FIELD_STACK_COUNT, m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) );
+						result.Slot=i;
+						result.Result=true;
+						m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
+						return ADD_ITEM_RESULT_OK;
+					}				
+
+			}
+
+		}
 		else
 		{
 			for(i=INVENTORY_SLOT_BAG_START;i<INVENTORY_SLOT_BAG_END;i++)
@@ -1441,6 +1497,7 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 								return ADD_ITEM_RESULT_OK;
 							}
 						}
+
 					}
 				}
 			}
@@ -1507,6 +1564,25 @@ uint32 ItemInterface::CalculateFreeSlots(ItemPrototype *proto)
 						count++;
 					}
 				}
+			}
+			else if(proto->BagFamily & ITEM_TYPE_CURRENCY )
+
+			{
+
+				for(uint32 i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
+
+				{
+
+					if(m_pItems[i] == NULL)
+
+					{
+
+						count++;
+
+					}
+
+				}
+
 			}
 			else
 			{
@@ -2045,6 +2121,48 @@ int8 ItemInterface::CanEquipItemInSlot(int8 DstInvSlot, int8 slot, ItemPrototype
 					return INV_ERR_ITEM_DOESNT_GO_INTO_BAG;
 			}
 		}
+	case CURRENCYTOKEN_SLOT_1:
+	case CURRENCYTOKEN_SLOT_2:	
+	case CURRENCYTOKEN_SLOT_3:	
+	case CURRENCYTOKEN_SLOT_4:		
+	case CURRENCYTOKEN_SLOT_5:	
+	case CURRENCYTOKEN_SLOT_6:		
+	case CURRENCYTOKEN_SLOT_7:		
+	case CURRENCYTOKEN_SLOT_8:		
+	case CURRENCYTOKEN_SLOT_9:		
+	case CURRENCYTOKEN_SLOT_10:		
+	case CURRENCYTOKEN_SLOT_11:		
+	case CURRENCYTOKEN_SLOT_12:		
+	case CURRENCYTOKEN_SLOT_13:		
+	case CURRENCYTOKEN_SLOT_14:		
+	case CURRENCYTOKEN_SLOT_15:		
+	case CURRENCYTOKEN_SLOT_16:		
+	case CURRENCYTOKEN_SLOT_17:	
+	case CURRENCYTOKEN_SLOT_18:	
+	case CURRENCYTOKEN_SLOT_19:	
+	case CURRENCYTOKEN_SLOT_20:	
+	case CURRENCYTOKEN_SLOT_21:		
+	case CURRENCYTOKEN_SLOT_22:	
+	case CURRENCYTOKEN_SLOT_23:		
+	case CURRENCYTOKEN_SLOT_24:		
+	case CURRENCYTOKEN_SLOT_25:		
+	case CURRENCYTOKEN_SLOT_26:		
+	case CURRENCYTOKEN_SLOT_27:		
+	case CURRENCYTOKEN_SLOT_28:		
+	case CURRENCYTOKEN_SLOT_29:		
+	case CURRENCYTOKEN_SLOT_30:		
+	case CURRENCYTOKEN_SLOT_31:		
+	case CURRENCYTOKEN_SLOT_32:		
+		{
+			if( proto->BagFamily & ITEM_TYPE_CURRENCY )
+			{
+					return 0;
+			}
+			else
+			{
+					return INV_ERR_ITEM_DOESNT_GO_INTO_BAG;
+			}
+		}
 	default:
 		return 0;
 	}
@@ -2363,8 +2481,8 @@ Item* ItemInterface::GetItemByGUID(uint64 Guid)
 		}
 	}
 
-	//Keyring
-	for(i=INVENTORY_KEYRING_START;i<INVENTORY_KEYRING_END;i++)
+	//Keyring && Currency
+	for(i=INVENTORY_KEYRING_START;i<CURRENCYTOKEN_SLOT_END;i++)
 	{
 		if(m_pItems[i] != 0)
 		{
@@ -2852,7 +2970,7 @@ void ItemInterface::mSaveItemsToDatabase(bool first, QueryBuffer * buf)
 {
 	uint32 x;
 
-	for( x = EQUIPMENT_SLOT_START; x < INVENTORY_KEYRING_END; ++x )
+	for( x = EQUIPMENT_SLOT_START; x < CURRENCYTOKEN_SLOT_END; ++x )
 	{
 		if( GetInventoryItem( x ) != NULL )
 		{
@@ -2945,6 +3063,18 @@ int8 ItemInterface::FindFreeKeyringSlot()
 	return ITEM_NO_SLOT_AVAILABLE;
 }
 
+int8 ItemInterface::FindFreeCurrencySlot()
+{
+	for( uint8 i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++ )
+	{
+		if( m_pItems[i] == NULL )
+		{
+			return i;
+		}
+	}
+	return ITEM_NO_SLOT_AVAILABLE;
+}
+
 SlotResult ItemInterface::FindFreeInventorySlot(ItemPrototype *proto)
 {
 	//special item
@@ -2957,6 +3087,19 @@ SlotResult ItemInterface::FindFreeInventorySlot(ItemPrototype *proto)
 			if( proto->BagFamily & ITEM_TYPE_KEYRING )
 			{
 				for(uint32 i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++ )
+				{
+					if( m_pItems[i] == NULL )
+					{
+						result.ContainerSlot = ITEM_NO_SLOT_AVAILABLE;
+						result.Slot = i;
+						result.Result = true;
+						return result;
+					}
+				}
+			}
+			else if( proto->BagFamily & ITEM_TYPE_CURRENCY )
+			{
+				for(uint32 i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++ )
 				{
 					if( m_pItems[i] == NULL )
 					{

@@ -7476,7 +7476,7 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 void Player::AddItemsToWorld()
 {
 	Item* pItem;
-	for(uint32 i = 0; i < INVENTORY_KEYRING_END; i++)
+	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		pItem = GetItemInterface()->GetInventoryItem(i);
 		if( pItem != NULL )
@@ -7487,6 +7487,15 @@ void Player::AddItemsToWorld()
 			{
 				_ApplyItemMods(pItem, i, true, false, true);
 			}
+
+			if(i >= CURRENCYTOKEN_SLOT_START && i < CURRENCYTOKEN_SLOT_END)
+
+			{
+
+				UpdateKnownCurrencies(pItem->GetEntry(), true);
+
+			}
+
 
 			if(pItem->IsContainer() && GetItemInterface()->IsBagSlot(i))
 			{
@@ -7511,7 +7520,7 @@ void Player::AddItemsToWorld()
 void Player::RemoveItemsFromWorld()
 {
 	Item* pItem;
-	for(uint32 i = 0; i < INVENTORY_KEYRING_END; i++)
+	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		pItem = m_ItemInterface->GetInventoryItem((int8)i);
 		if(pItem)
@@ -12522,4 +12531,23 @@ uint16 Player::FindQuestSlot( uint32 questid )
 			return i;
 
 	return 25;
+}
+
+void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
+{
+    if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
+    {
+        if(apply)
+		{
+            uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
+            uint64 newval = oldval | ( (( uint32 )1) << (ctEntry->BitIndex-1) );
+            SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+		}
+        else
+		{
+			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
+            uint64 newval = oldval & ~( (( uint32 )1) << (ctEntry->BitIndex-1) );
+            SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+		}
+    }
 }
