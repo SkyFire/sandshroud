@@ -1220,6 +1220,7 @@ void World::Rehash(bool load)
 	display_free_items = Config.MainConfig.GetBoolDefault("Server", "DisplayFreeItems", false);
 
 	StartLevel = Config.MainConfig.GetIntDefault("Server", "StartLevel", 1);
+	StartGold = Config.MainConfig.GetIntDefault("Server", "StartGold", 1);
 
 	// load regeneration rates.
 	setRate(RATE_HEALTH,Config.MainConfig.GetFloatDefault("Rates", "Health",1));
