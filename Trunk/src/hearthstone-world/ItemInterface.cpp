@@ -352,13 +352,9 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int8 ContainerSlot, int8 slo
 	}
 
 	if(slot >= CURRENCYTOKEN_SLOT_START && slot < CURRENCYTOKEN_SLOT_END)
-
 	{
-
 		m_pOwner->UpdateKnownCurrencies(item->GetEntry(), true);
-
 	}
-
 
 	if( ContainerSlot == INVENTORY_SLOT_NOT_SET && slot == EQUIPMENT_SLOT_OFFHAND && item->GetProto()->Class == ITEM_CLASS_WEAPON )
 		m_pOwner->SetDuelWield(true);
@@ -1410,7 +1406,7 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 	uint32 i = 0;
 	bool result2;
 	AddItemResult result3;
-	uint32 itemMaxStack;
+	uint32 itemMaxStack = item->GetProto()->MaxCount;
 
 	//detect special bag item
 	if( item->GetProto()->BagFamily )
@@ -1433,50 +1429,32 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 			}
 		}
 		else if( item->GetProto()->BagFamily & ITEM_TYPE_CURRENCY )
-
 		{
-
 			for( i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++ )
-
 			{
-
 				if(m_pItems[i] == NULL)
-
 				{
-
 					result3 = SafeAddItem( item, INVENTORY_SLOT_NOT_SET, i );
-
 					if( result3 )
-
 					{
-
 						result.ContainerSlot = INVENTORY_SLOT_NOT_SET;
-
 						result.Slot = i;
-
 						result.Result = true;
-
 						m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
-
 						return ADD_ITEM_RESULT_OK;
-
 					}
-
 				}
-
 				else if( m_pItems[i]->GetProto()->ItemId == item->GetProto()->ItemId && itemMaxStack > 1 &&
-						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) < itemMaxStack  &&
-						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) <= itemMaxStack )
-					{
-						m_pItems[i]->SetUInt32Value( ITEM_FIELD_STACK_COUNT, m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) );
-						result.Slot=i;
-						result.Result=true;
-						m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
-						return ADD_ITEM_RESULT_OK;
-					}				
-
+					m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) < itemMaxStack  &&
+					m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) <= itemMaxStack )
+				{
+					m_pItems[i]->SetUInt32Value( ITEM_FIELD_STACK_COUNT, m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) );
+					result.Slot=i;
+					result.Result=true;
+					m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
+					return ADD_ITEM_RESULT_OK;
+				}
 			}
-
 		}
 		else
 		{
@@ -1490,7 +1468,8 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 						{
 							uint32 r_slot;
 							result2 = TO_CONTAINER(m_pItems[i])->AddItemToFreeSlot(item, &r_slot);
-							if (result2) {
+							if (result2)
+							{
 								result.ContainerSlot = i;
 								result.Slot = r_slot;
 								result.Result = true;

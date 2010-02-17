@@ -7490,13 +7490,9 @@ void Player::AddItemsToWorld()
 			}
 
 			if(i >= CURRENCYTOKEN_SLOT_START && i < CURRENCYTOKEN_SLOT_END)
-
 			{
-
 				UpdateKnownCurrencies(pItem->GetEntry(), true);
-
 			}
-
 
 			if(pItem->IsContainer() && GetItemInterface()->IsBagSlot(i))
 			{
@@ -12536,19 +12532,19 @@ uint16 Player::FindQuestSlot( uint32 questid )
 
 void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 {
-    if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
-    {
-        if(apply)
-		{
-            uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-            uint64 newval = oldval | ( (( uint32 )1) << (ctEntry->BitIndex-1) );
-            SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
-		}
-        else
+	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
+	{
+		if(apply)
 		{
 			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-            uint64 newval = oldval & ~( (( uint32 )1) << (ctEntry->BitIndex-1) );
-            SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+			uint64 newval = oldval | ( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
+			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
 		}
-    }
+		else
+		{
+			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
+			uint64 newval = oldval & ~( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
+			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+		}
+	}
 }
