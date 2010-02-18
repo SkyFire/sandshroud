@@ -203,10 +203,8 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 		Item* item;
 		item = objmgr.CreateItem( itemid, chr);
 		item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, ((count > it->MaxCount) ? it->MaxCount : count));
-
 		if(it->Bonding==ITEM_BIND_ON_PICKUP)
 			item->SoulBind();
-
 		uint32 pr = 0;
 		uint32 sf = 0;
 		if(randomprop!=0)
@@ -241,10 +239,9 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 
 		SlotResult *lr = chr->GetItemInterface()->LastSearchResult();
 		chr->GetSession()->SendItemPushResult(item,false,true,false,true,lr->ContainerSlot,lr->Slot,item->GetUInt32Value(ITEM_FIELD_STACK_COUNT));
+
 		return true;
-	}
-	else
-	{
+	} else {
 		RedSystemMessage(m_session, "Item %d is not a valid item!",itemid);
 		return true;
 	}

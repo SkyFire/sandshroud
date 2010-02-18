@@ -246,6 +246,7 @@ void HonorHandler::RecalculateHonorFields(Player* pPlayer)
 	// Currency tab - (Blizz Placeholders)
 	pPlayer->UpdateKnownCurrencies(43307, true); //Arena Points
 	pPlayer->UpdateKnownCurrencies(43308, true); //Honor Points
+
 }
 
 bool ChatHandler::HandleAddKillCommand(const char* args, WorldSession* m_session)

@@ -352,9 +352,13 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int8 ContainerSlot, int8 slo
 	}
 
 	if(slot >= CURRENCYTOKEN_SLOT_START && slot < CURRENCYTOKEN_SLOT_END)
+
 	{
+
 		m_pOwner->UpdateKnownCurrencies(item->GetEntry(), true);
+
 	}
+
 
 	if( ContainerSlot == INVENTORY_SLOT_NOT_SET && slot == EQUIPMENT_SLOT_OFFHAND && item->GetProto()->Class == ITEM_CLASS_WEAPON )
 		m_pOwner->SetDuelWield(true);
@@ -855,7 +859,19 @@ Item* ItemInterface::FindItemLessMax(uint32 itemid, uint32 cnt, bool IncBank)
 						}
 					}
 				}
-			
+	
+	for(i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
+	{
+		Item* item = GetInventoryItem(i);
+		if (item)
+		{
+			if((item->GetEntry() == itemid && item->wrapped_item_id==0) && (item->GetProto()->MaxCount >= (item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
+			{
+				return item; 
+			}
+		}
+	}
+
 		}
 	}
 
@@ -1318,6 +1334,17 @@ int8 ItemInterface::GetInventorySlotById(uint32 ID)
 			}
 		}
 	}
+
+	for(uint32 i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++)
+	{
+		if(m_pItems[i])
+		{
+			if(m_pItems[i]->GetProto()->ItemId == ID)
+			{
+				return i;
+			}
+		}
+	}
 	return ITEM_NO_SLOT_AVAILABLE;
 }
 
@@ -1338,6 +1365,17 @@ int8 ItemInterface::GetInventorySlotByGuid(uint64 guid)
 	}
 
 	for(uint32 i=INVENTORY_KEYRING_START; i<INVENTORY_KEYRING_END; i++)
+	{
+		if(m_pItems[i])
+		{
+			if(m_pItems[i]->GetGUID() == guid)
+			{
+				return i;
+			}
+		}
+	}
+
+	for(uint32 i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++)
 	{
 		if(m_pItems[i])
 		{
@@ -1406,7 +1444,7 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 	uint32 i = 0;
 	bool result2;
 	AddItemResult result3;
-	uint32 itemMaxStack = item->GetProto()->MaxCount;
+	uint32 itemMaxStack;
 
 	//detect special bag item
 	if( item->GetProto()->BagFamily )
@@ -1432,7 +1470,10 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 		{
 			for( i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++ )
 			{
-				if(m_pItems[i] == NULL)
+				if( m_pItems[i] )
+					itemMaxStack = item->GetProto()->MaxCount;
+
+				if( m_pItems[i] == NULL )
 				{
 					result3 = SafeAddItem( item, INVENTORY_SLOT_NOT_SET, i );
 					if( result3 )
@@ -1445,16 +1486,18 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 					}
 				}
 				else if( m_pItems[i]->GetProto()->ItemId == item->GetProto()->ItemId && itemMaxStack > 1 &&
-					m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) < itemMaxStack  &&
-					m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) <= itemMaxStack )
-				{
-					m_pItems[i]->SetUInt32Value( ITEM_FIELD_STACK_COUNT, m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) );
-					result.Slot=i;
-					result.Result=true;
-					m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
-					return ADD_ITEM_RESULT_OK;
-				}
+						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) < itemMaxStack  &&
+						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) <= itemMaxStack )
+					{
+						m_pItems[i]->SetUInt32Value( ITEM_FIELD_STACK_COUNT, m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) );
+						result.Slot=i;
+						result.Result=true;
+						m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
+						return ADD_ITEM_RESULT_OK;
+					}				
+
 			}
+
 		}
 		else
 		{
@@ -1468,8 +1511,7 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 						{
 							uint32 r_slot;
 							result2 = TO_CONTAINER(m_pItems[i])->AddItemToFreeSlot(item, &r_slot);
-							if (result2)
-							{
+							if (result2) {
 								result.ContainerSlot = i;
 								result.Slot = r_slot;
 								result.Result = true;
@@ -1545,23 +1587,14 @@ uint32 ItemInterface::CalculateFreeSlots(ItemPrototype *proto)
 				}
 			}
 			else if(proto->BagFamily & ITEM_TYPE_CURRENCY )
-
 			{
-
 				for(uint32 i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
-
 				{
-
 					if(m_pItems[i] == NULL)
-
 					{
-
 						count++;
-
 					}
-
 				}
-
 			}
 			else
 			{
