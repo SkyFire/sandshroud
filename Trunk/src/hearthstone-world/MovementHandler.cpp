@@ -384,7 +384,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/* Remove Emote State                                                   */
 	/************************************************************************/
 	if(_player->m_uint32Values[UNIT_NPC_EMOTESTATE])
-		_player->SetUInt32Value(UNIT_NPC_EMOTESTATE,0);
+		_player->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
 
 	/************************************************************************/
 	/* Make sure the co-ordinates are valid.                                */
@@ -823,32 +823,39 @@ void MovementInfo::init(WorldPacket & data)
 	data >> flags >> flag16 >> time;
 	data >> x >> y >> z >> orientation;
 
-	if (flags & MOVEFLAG_TAXI)
+	if((flags & MOVEFLAG_TAXI) && (flags & MOVEFLAG_FLYING) && (data.size() == 52))
+	{
+		uint32 ignore1;
+		uint8 ignore2;
+		data >> transGuid;
+		data >> transX;
+		data >> transY;
+		data >> transZ;
+		data >> transO;
+		/* Ignore the Transportation Time and the Transportation Seat because we are on a
+		moving transport, most likely a zeppelin or a flying battleship.*/
+		data >> ignore1;
+		data >> ignore2;
+	}
+	else if (flags & MOVEFLAG_TAXI)
 	{
 		data >> transGuid >> transX >> transY >> transZ >> transO >> transTime >> transSeat;
 	}
+
 	if (flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20)
 	{
 		data >> pitch;
 	}
 
-	data >> unklast;
+	data >> FallTime;
 
 	if (flags & MOVEFLAG_FALLING || flags & MOVEFLAG_REDIRECTED)
 	{
-		data >> FallTime >> jump_sinAngle >> jump_cosAngle >> jump_xySpeed;
+		data >> jumpspeed >> jump_sinAngle >> jump_cosAngle >> jump_xySpeed;
 	}
 	if (flags & MOVEFLAG_SPLINE_MOVER)
 	{
 		data >> spline_unk;
-	}
-
-	if(data.rpos() != data.wpos())
-	{
-		if(data.rpos() + 4 == data.wpos())
-			data >> unk13;
-		else
-			OUT_DEBUG("Extra bits of movement packet left");
 	}
 }
 
@@ -867,18 +874,17 @@ void MovementInfo::write(WorldPacket & data)
 		data << pitch;
 	}
 
-	data << unklast;
+	data << FallTime;
 
 	if (flags & MOVEFLAG_FALLING || flags & MOVEFLAG_REDIRECTED)
 	{
-		data << FallTime << jump_sinAngle << jump_cosAngle << jump_xySpeed;
+		data << jumpspeed << jump_sinAngle << jump_cosAngle << jump_xySpeed;
 	}
 	if (flags & MOVEFLAG_SPLINE_MOVER)
 	{
 		data << spline_unk;
 	}
-	
-	data << unklast;
+
 	if(unk13)
 		data << unk13;
 }

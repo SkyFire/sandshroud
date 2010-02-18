@@ -1620,6 +1620,8 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 		_UpdateMaxSkillCounts();
 
 		GetAchievementInterface()->HandleAchievementCriteriaLevelUp( getLevel() );
+		SetUInt32Value(UNIT_FIELD_HEALTH,GetUInt32Value(UNIT_FIELD_MAXHEALTH));
+		SetUInt32Value(UNIT_FIELD_POWER1,GetUInt32Value(UNIT_FIELD_MAXPOWER1));
 	}
 
 	// Set the update bit
@@ -6658,7 +6660,7 @@ void Player::ResetTitansGrip()
 			offhand->RemoveFromWorld();
 			offhand->SetOwner( NULLPLR );
 			offhand->SaveToDB( INVENTORY_SLOT_NOT_SET, 0, true, NULL );
-			sMailSystem.DeliverMessage(NORMAL, GetGUID(), GetGUID(), "Your offhand item", "", 0, 0, offhand->GetUInt32Value(OBJECT_FIELD_GUID), 1, true);
+			sMailSystem.DeliverMessage(MAILTYPE_NORMAL, GetGUID(), GetGUID(), "Your offhand item", "", 0, 0, offhand->GetUInt32Value(OBJECT_FIELD_GUID), 1, true);
 			offhand->Destructor();
 		}
 		else if( !GetItemInterface()->SafeAddItem(offhand, result.ContainerSlot, result.Slot) )
@@ -7490,13 +7492,9 @@ void Player::AddItemsToWorld()
 			}
 
 			if(i >= CURRENCYTOKEN_SLOT_START && i < CURRENCYTOKEN_SLOT_END)
-
 			{
-
 				UpdateKnownCurrencies(pItem->GetEntry(), true);
-
 			}
-
 
 			if(pItem->IsContainer() && GetItemInterface()->IsBagSlot(i))
 			{
@@ -12536,19 +12534,19 @@ uint16 Player::FindQuestSlot( uint32 questid )
 
 void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 {
-    if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
-    {
-        if(apply)
-		{
-            uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-            uint64 newval = oldval | ( (( uint32 )1) << (ctEntry->BitIndex-1) );
-            SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
-		}
-        else
+	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
+	{
+		if(apply)
 		{
 			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-            uint64 newval = oldval & ~( (( uint32 )1) << (ctEntry->BitIndex-1) );
-            SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+			uint64 newval = oldval | ( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
+			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
 		}
-    }
+		else
+		{
+			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
+			uint64 newval = oldval & ~( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
+			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+		}
+	}
 }

@@ -140,6 +140,7 @@ AIInterface::~AIInterface()
 {
 	for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
 		delete (*itr);
+
 	m_spells.clear();
 
 	if( m_ChainAgroSet && m_Unit->IsCreature() )

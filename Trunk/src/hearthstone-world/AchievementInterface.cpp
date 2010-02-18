@@ -46,11 +46,10 @@ AchievementInterface::~AchievementInterface()
 
 void AchievementInterface::LoadFromDB( QueryResult * pResult )
 {
-	
 	// don't allow GMs to complete achievements
 	if( m_player->GetSession()->HasGMPermissions() )
 	{
-		CharacterDatabase.Query("DELETE FROM achievements WHERE player = %u;", m_player->GetGUID());
+		CharacterDatabase.Execute("DELETE FROM achievements WHERE player = %u;", m_player->GetGUID());
 		return;
 	}
 
@@ -298,7 +297,8 @@ bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 	if( m_player->GetSession()->HasGMPermissions() )
 		return false;
 
-	if( ad->completed ) return false;
+	if( ad->completed )
+		return false;
 
 	bool hasCompleted = false;
 	AchievementEntry * ach = dbcAchievement.LookupEntry(ad->id);
@@ -434,8 +434,9 @@ void AchievementInterface::HandleAchievementCriteriaKillCreature(uint32 killedMo
 		uint32 ReqCount = ace->kill_creature.creatureCount;
 
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
-		if(!pAchievementEntry) continue;
 
+		if(!pAchievementEntry)
+			continue;
 
 		// Wrong monster, continue on, kids.
 		if( ReqKill != killedMonster )
@@ -611,7 +612,8 @@ void AchievementInterface::HandleAchievementCriteriaLevelUp(uint32 level)
 		uint32 ReqLevel = ace->reach_level.level;
 
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
-		if(!pAchievementEntry) continue;
+		if(!pAchievementEntry)
+			continue;
 
 		if( level < ReqLevel )
 			continue;

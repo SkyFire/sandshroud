@@ -2188,8 +2188,8 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		return true;
 	}
 
-	//Are we on a transporter?
-	if(m_session->GetPlayer()->m_TransporterGUID != 0)
+	//Are we on a transporter? Disabled.
+/*	if(m_session->GetPlayer()->m_TransporterGUID != 0)
 	{
 		Transporter* t = objmgr.GetTransporter(GUID_LOPART(m_session->GetPlayer()->m_TransporterGUID));
 		t->AddNPC(entry,m_session->GetPlayer()->m_TransporterX,m_session->GetPlayer()->m_TransporterY,m_session->GetPlayer()->m_TransporterZ,m_session->GetPlayer()->GetOrientation());
@@ -2197,7 +2197,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		BlueSystemMessage(m_session, "Spawned crew-member %u on transport %u. You might need to relog.",entry,GUID_LOPART(m_session->GetPlayer()->m_TransporterGUID));
 		sGMLog.writefromsession(m_session, "spawned crew-member %u on transport %u.",entry,GUID_LOPART(m_session->GetPlayer()->m_TransporterGUID));
 		return true;
-	}
+	}*/
 	bool spVehicle = proto->vehicle_entry > 0 ? true : false;
 
 	Creature* p = NULLCREATURE;

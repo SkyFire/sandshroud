@@ -54,6 +54,7 @@ enum QuickGroupUpdateFlags
 {
 	PARTY_UPDATE_FLAG_POSITION			= 1,
 	PARTY_UPDATE_FLAG_ZONEID			= 2,
+//	GROUP_UPDATE_FLAG_VEHICLE_SEAT
 };
 
 enum GroupFlags

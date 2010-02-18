@@ -68,7 +68,7 @@ enum MovementFlags
 	MOVEFLAG_TB_PENDING_BACKWARD		= 0x100000,		// (MOVEFLAG_PENDING_BACKWARD)
 	MOVEFLAG_SWIMMING          		    = 0x200000,		//  verified
 	MOVEFLAG_FLYING_PITCH_UP	        = 0x400000,		// (half confirmed)(MOVEFLAG_PENDING_STR_RGHT)
-	MOVEFLAG_TB_MOVED					= 0x800000,		// (half confirmed) gets called when landing (MOVEFLAG_MOVED)
+	MOVEFLAG_TB_MOVED					= 0x800000,		// Send to client on entervehicle
 
 	// Byte 4 (Script Based Flags. Never reset, only turned on or off.)
 	MOVEFLAG_AIR_SUSPENSION	   	 		= 0x1000000,	// confirmed allow body air suspension(good name? lol).
@@ -160,17 +160,18 @@ public:
 	float pitch;// -1.55=looking down, 0=looking forward, +1.55=looking up
 	float jump_sinAngle;//on slip 8 is zero, on jump some other number
 	float jump_cosAngle, jump_xySpeed;//9,10 changes if you are not on foot
+	float jumpspeed;//something related to collision, CROW: Might be used for other knockback information.
 	uint32 unk11;
 	uint32 spline_unk;
 	uint8 unk13;
-	uint32 unklast;//something related to collision
 	uint16 flag16;
 
 	float x, y, z, orientation;
 	uint32 flags;
 	uint32 FallTime;
 	WoWGuid transGuid;
-	float transX, transY, transZ, transO, transTime;
+	float transX, transY, transZ, transO;
+	uint32 transTime;
 	uint8 transSeat;
 
 	void init(WorldPacket & data);
@@ -743,6 +744,7 @@ protected:
 	//Vehicles
 	void HandleVehicleDismiss(WorldPacket & recv_data);
 	void HandleSpellClick( WorldPacket & recv_data );
+	void HandleRequestSeatChange( WorldPacket & recv_data );
 
 	//MISC
 	void HandleReadyForAccountDataTimes(WorldPacket &recv_data);

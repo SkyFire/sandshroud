@@ -936,6 +936,8 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_SPELLCLICK].handler							= &WorldSession::HandleSpellClick;
 	WorldPacketHandlers[CMSG_DISMISS_CONTROLLED_VEHICLE].handler			= &WorldSession::HandleVehicleDismiss;
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_EXIT].handler					= &WorldSession::HandleVehicleDismiss;
+	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_SWITCH_SEAT].handler			= &WorldSession::HandleRequestSeatChange;
+	WorldPacketHandlers[CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE].handler	= &WorldSession::HandleRequestSeatChange;
 }
 
 void SessionLogWriter::writefromsession(WorldSession* session, const char* format, ...)

@@ -161,7 +161,21 @@ const char* spellshapeshiftformformat = "uxxxxxxxxxxxxxxxxxxxxxxxxxxxuuuuuuu";
 const char* vehicleseatentryFormat = "uuuffffffffffuuuuuufffffffuuufffuuuuuuuffuuuuuxxxxxxxxxxxx";
 const char* vehicleentryFormat = "uuffffuuuuuuuufffffffffffffffssssfufuxxx";
 
-const char* achievementfmt="niixsxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxiixixxxxxxxxxxxxxxxxxxxx";
+const char* achievementfmt=
+	"n" // Index
+	"i" // Faction
+	"i" // Mapid
+	"x" // unk.
+	"s" // Name
+	"xxxxxxxxxxxxxxx"
+	"s" // Description
+	"xxxxxxxxxxxxxxxxx"
+	"i" // Category Id
+	"i" // points
+	"x" // Order In Category
+	"i" // Flags
+	"xxxxxxxxxxxxxxxxxxxx";
+
 const char* achievementCriteriafmt="niiiiiiiisxxxxxxxxxxxxxxxxiixix";
 
 

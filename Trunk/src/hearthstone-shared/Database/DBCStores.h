@@ -31,9 +31,12 @@ struct AchievementEntry
     uint32 ID; // 0
     uint32 factionFlag; // 1 -1=all, 0=horde, 1=alliance
     uint32 mapID; // 2 -1=none
+    //uint32 unk0; // 3 Lots of 0's
     char* name; // 4
+    //uint32 unk1[14]; // 5-19
     //uint32 name_flags; // 20
-    //char *description[16]; // 21-36
+    char* description; // 21
+    //char *descriptionextra[15]; // 22-36
     //uint32 desc_flags; // 37
     uint32 categoryId; // 38
     uint32 points; // 39 reward points
@@ -1363,6 +1366,8 @@ struct VehicleSeatEntry
     int32 m_uiSkin; // 44
     uint32 m_flagsB; // 45
 	// 46-57
+
+	bool IsUsable() const { return (m_flags & 0x2000000 ? true : false); }
 };
 
 #pragma pack(pop)

@@ -34,6 +34,7 @@ const char * gAreaTriggerFormat							= "ucuusffffuu";
 const char * gCreatureNameFormat						= "usssuuuuuuuuuuuffcc";
 const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuibuufffuuic";
 const char * gCreatureProtoHeroicFormat					= "uuuuuffcuuuuuuuusu";
+const char * gCreatureVehicleProto						= "uuuuuuuuubbbbbbbbuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
 const char * gFishingFormat								= "uuu";
 const char * gGameObjectNameFormat						= "uuusuuuuuuuuuuuuuuuuuuuuuuuu";
 const char * gGraveyardFormat							= "uffffuuuux";
@@ -50,24 +51,25 @@ const char * gZoneGuardsFormat							= "uuu";
 
 /** SQLStorage symbols
  */
-SERVER_DECL SQLStorage<AchievementReward, HashMapStorageContainer<AchievementReward> >		AchievementRewardStorage;
-SERVER_DECL SQLStorage<AreaTrigger, HashMapStorageContainer<AreaTrigger> >					AreaTriggerStorage;
-SERVER_DECL SQLStorage<CreatureInfo, HashMapStorageContainer<CreatureInfo> >				CreatureNameStorage;
-SERVER_DECL SQLStorage<CreatureProto, HashMapStorageContainer<CreatureProto> >				CreatureProtoStorage;
-SERVER_DECL SQLStorage<CreatureProtoHeroic, HashMapStorageContainer<CreatureProtoHeroic> >	CreatureProtoHeroicStorage;
-SERVER_DECL SQLStorage<FishingZoneEntry, HashMapStorageContainer<FishingZoneEntry> >		FishingZoneStorage;
-SERVER_DECL SQLStorage<GameObjectInfo, HashMapStorageContainer<GameObjectInfo> >			GameObjectNameStorage;
-SERVER_DECL SQLStorage<GraveyardTeleport, HashMapStorageContainer<GraveyardTeleport> >		GraveyardStorage;
-SERVER_DECL SQLStorage<ItemPage, HashMapStorageContainer<ItemPage> >						ItemPageStorage;
-SERVER_DECL SQLStorage<ItemPrototype, ArrayStorageContainer<ItemPrototype> >				ItemPrototypeStorage;
-SERVER_DECL SQLStorage<GossipText, HashMapStorageContainer<GossipText> >					NpcTextStorage;
-SERVER_DECL SQLStorage<Quest, HashMapStorageContainer<Quest> >								QuestStorage;
-SERVER_DECL SQLStorage<TeleportCoords, HashMapStorageContainer<TeleportCoords> >			TeleportCoordStorage;
-SERVER_DECL SQLStorage<MapInfo, ArrayStorageContainer<MapInfo> >							WorldMapInfoStorage;
-SERVER_DECL SQLStorage<ZoneGuardEntry, HashMapStorageContainer<ZoneGuardEntry> >			ZoneGuardStorage;
-SERVER_DECL SQLStorage<RandomItemCreation, HashMapStorageContainer<RandomItemCreation> >	RandomItemCreationStorage;
-SERVER_DECL SQLStorage<RandomCardCreation, HashMapStorageContainer<RandomCardCreation> >	RandomCardCreationStorage;
-SERVER_DECL SQLStorage<ScrollCreation, HashMapStorageContainer<ScrollCreation> >			ScrollCreationStorage;
+SERVER_DECL SQLStorage<AchievementReward, HashMapStorageContainer<AchievementReward> >			AchievementRewardStorage;
+SERVER_DECL SQLStorage<AreaTrigger, HashMapStorageContainer<AreaTrigger> >						AreaTriggerStorage;
+SERVER_DECL SQLStorage<CreatureInfo, HashMapStorageContainer<CreatureInfo> >					CreatureNameStorage;
+SERVER_DECL SQLStorage<CreatureProto, HashMapStorageContainer<CreatureProto> >					CreatureProtoStorage;
+SERVER_DECL SQLStorage<CreatureProtoHeroic, HashMapStorageContainer<CreatureProtoHeroic> >		CreatureProtoHeroicStorage;
+SERVER_DECL SQLStorage<CreatureProtoVehicle, HashMapStorageContainer<CreatureProtoVehicle> >	CreatureProtoVehicleStorage;
+SERVER_DECL SQLStorage<FishingZoneEntry, HashMapStorageContainer<FishingZoneEntry> >			FishingZoneStorage;
+SERVER_DECL SQLStorage<GameObjectInfo, HashMapStorageContainer<GameObjectInfo> >				GameObjectNameStorage;
+SERVER_DECL SQLStorage<GraveyardTeleport, HashMapStorageContainer<GraveyardTeleport> >			GraveyardStorage;
+SERVER_DECL SQLStorage<ItemPage, HashMapStorageContainer<ItemPage> >							ItemPageStorage;
+SERVER_DECL SQLStorage<ItemPrototype, ArrayStorageContainer<ItemPrototype> >					ItemPrototypeStorage;
+SERVER_DECL SQLStorage<GossipText, HashMapStorageContainer<GossipText> >						NpcTextStorage;
+SERVER_DECL SQLStorage<Quest, HashMapStorageContainer<Quest> >									QuestStorage;
+SERVER_DECL SQLStorage<TeleportCoords, HashMapStorageContainer<TeleportCoords> >				TeleportCoordStorage;
+SERVER_DECL SQLStorage<MapInfo, ArrayStorageContainer<MapInfo> >								WorldMapInfoStorage;
+SERVER_DECL SQLStorage<ZoneGuardEntry, HashMapStorageContainer<ZoneGuardEntry> >				ZoneGuardStorage;
+SERVER_DECL SQLStorage<RandomItemCreation, HashMapStorageContainer<RandomItemCreation> >		RandomItemCreationStorage;
+SERVER_DECL SQLStorage<RandomCardCreation, HashMapStorageContainer<RandomCardCreation> >		RandomCardCreationStorage;
+SERVER_DECL SQLStorage<ScrollCreation, HashMapStorageContainer<ScrollCreation> >				ScrollCreationStorage;
 
 
 SERVER_DECL set<string> ExtraMapCreatureTables;
@@ -540,6 +542,7 @@ void Storage_FillTaskList(TaskList & tl)
 	make_task(GameObjectNameStorage, GameObjectInfo, HashMapStorageContainer, "gameobject_names", gGameObjectNameFormat);
 	make_task(CreatureProtoStorage, CreatureProto, HashMapStorageContainer, "creature_proto", gCreatureProtoFormat);
 	make_task(CreatureProtoHeroicStorage, CreatureProtoHeroic, HashMapStorageContainer, "creature_proto_heroic", gCreatureProtoHeroicFormat);
+	make_task(CreatureProtoVehicleStorage, CreatureProtoVehicle, HashMapStorageContainer, "creature_proto_vehicle", gCreatureVehicleProto);
 	make_task(AreaTriggerStorage, AreaTrigger, HashMapStorageContainer, "areatriggers", gAreaTriggerFormat);
 	make_task(ItemPageStorage, ItemPage, HashMapStorageContainer, "itempages", gItemPageFormat);
 	make_task(QuestStorage, Quest, HashMapStorageContainer, "quests", gQuestFormat);
@@ -583,6 +586,7 @@ void Storage_Cleanup()
 	CreatureNameStorage.Cleanup();
 	GameObjectNameStorage.Cleanup();
 	CreatureProtoStorage.Cleanup();
+	CreatureProtoVehicleStorage.Cleanup();
 	{
 		StorageContainerIterator<AreaTrigger> * itr = AreaTriggerStorage.MakeIterator();
 		AreaTrigger * a;

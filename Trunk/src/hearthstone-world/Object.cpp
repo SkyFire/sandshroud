@@ -114,6 +114,7 @@ Object::~Object( )
 
 void Object::Init()
 {
+
 }
 
 void Object::Destructor()
@@ -493,7 +494,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 		}
 		if(pThis && moveinfo)
 		{
-			*data << moveinfo->unklast;
+			*data << moveinfo->FallTime;
 		}
 		else
 		*data << (uint32)0; //last fall time
@@ -502,7 +503,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 		{
 			if(pThis && moveinfo)
 			{
-				*data << moveinfo->FallTime;
+				*data << moveinfo->jumpspeed;
 				*data << moveinfo->jump_sinAngle;
 				*data << moveinfo->jump_cosAngle;
 				*data << moveinfo->jump_xySpeed;
