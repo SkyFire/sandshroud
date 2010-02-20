@@ -352,11 +352,8 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int8 ContainerSlot, int8 slo
 	}
 
 	if(slot >= CURRENCYTOKEN_SLOT_START && slot < CURRENCYTOKEN_SLOT_END)
-
 	{
-
 		m_pOwner->UpdateKnownCurrencies(item->GetEntry(), true);
-
 	}
 
 
