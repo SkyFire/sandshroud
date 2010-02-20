@@ -569,6 +569,9 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	if(slot >= 8)
 		return;
 
+	if(pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_CurrentCharm)
+		return;
+
 	m_passengers[ slot ] = pPassenger;
 	pPassenger->m_inVehicleSeatId = slot;
 	/* pPassenger->m_transportGuid = GetGUID(); */
@@ -587,9 +590,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	{
 		Player* pPlayer = TO_PLAYER(pPassenger);
 		//pPlayer->Root();
-
-		if(pPlayer->m_CurrentCharm)
-			return;
 
 		//Dismount
 		if(pPlayer->m_MountSpellId)

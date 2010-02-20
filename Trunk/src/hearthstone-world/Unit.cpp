@@ -7324,8 +7324,8 @@ bool Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 		return false;
 	}
 
-//	if(m_CurrentVehicle)
-//		m_CurrentVehicle->RemovePassenger(this);
+	if(m_CurrentVehicle)
+		m_CurrentVehicle->RemovePassenger(this);
 
 	if(preferedseat == -1) // Lovely, freedom of choice
 	{
