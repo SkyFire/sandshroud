@@ -919,9 +919,14 @@ bool ChatHandler::HandleGOScale(const char* args, WorldSession* m_session)
 		return false;
 	}
 	float scale = (float)atof(args);
-	if(!scale) scale = 1;
+	//if(!scale) scale = 1;
 	go->SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
 	BlueSystemMessage(m_session, "Set scale to %.3f", scale);
+	uint32 NewGuid = m_session->GetPlayer()->GetMapMgr()->GenerateGameobjectGuid();
+	go->RemoveFromWorld(true);
+	go->SetNewGuid(NewGuid);
+	go->SaveToDB();
+	go->PushToWorld(m_session->GetPlayer()->GetMapMgr());
 	return true;
 }
 
