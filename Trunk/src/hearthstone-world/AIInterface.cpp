@@ -1965,21 +1965,21 @@ void AIInterface::UpdateMove()
 		if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
 			return; 
 
-		// check if we're returning to our respawn location. if so, reset back to default orientation.
-		if(creature->GetSpawnX() == m_destinationX && creature->GetSpawnY() == m_destinationY)
+		// check if we're returning to our respawn location. if so, reset back to default
+		// orientation
+		if(creature->GetSpawnX() == m_destinationX &&
+			creature->GetSpawnY() == m_destinationY)
 		{
-			angle = m_Unit->GetOrientation();
-			creature->SetOrientation(angle);
-		}
-		else
-		{
+			float o = creature->GetSpawnO();
+			creature->SetOrientation(o);
+		} else {
 			// Calculate the angle to our next position
 
 			float dx = (float)m_destinationX - m_Unit->GetPositionX();
 			float dy = (float)m_destinationY - m_Unit->GetPositionY();
 			if(dy != 0.0f)
 			{
-				angle = atan2(dy, dx);
+				float angle = atan2(dy, dx);
 				m_Unit->SetOrientation(angle);
 			}
 /*	Not to be used before we have some proper maps extracted with acurate water/landheights
