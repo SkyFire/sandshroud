@@ -186,17 +186,13 @@ struct CreatureProtoHeroic
 	unordered_set<uint32> start_auras;
 };
 
-struct VehProspells
-{
-	uint32 SlotSpell[6];
-};
-
 struct CreatureProtoVehicle
 {
-	uint32 vehicle_creature_entry;
-	uint32 accessoryentry[8];
-	int8 seathasspells[8];
-	VehProspells seatspells[8];
+	uint32 vehicle_creature_entry; // Entry.
+	bool healthfromdriver; // Effects only driver.
+	uint32 healthunitfromitemlev;
+	uint32 VehicleSpells[6]; // Vehicle spells.
+	uint32 accessoryentry[8]; // Accessories.
 };
 
 #pragma pack(pop)

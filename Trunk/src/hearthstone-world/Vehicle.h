@@ -40,7 +40,7 @@ public:
 	void AddPassenger(Unit* pPassenger, uint8 requestedseat);
 	void RemovePassenger(Unit* pPassenger);
 	bool HasPassenger(Unit* pPassenger);
-	void SendSlotSpells(uint32 entry, Player* plr, int8 seat);
+	void SendSpells(uint32 entry, Player* plr);
 	void setDeathState(DeathState s);
 	void SetSpeed(uint8 SpeedType, float value);
 
@@ -72,7 +72,6 @@ public:
 	//---------------------------------------
 
 	bool IsFull() { return m_passengerCount >= m_maxPassengers; }
-	bool SeatIsEnterableByPlayer(uint8 seat);
 
 	VehicleSeatEntry* m_vehicleSeats[8];
 	bool seatisusable[8];

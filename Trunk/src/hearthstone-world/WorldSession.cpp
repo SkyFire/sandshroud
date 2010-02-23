@@ -334,7 +334,11 @@ void WorldSession::LogoutPlayer(bool Save)
 
 		if( Save )
 			_player->SaveToDB(false);
-		
+
+		// send to gms
+		if( HasGMPermissions() )
+			sWorld.SendMessageToGMs(this, "GM %s (%s) is now offline. (Permissions: [%s])", _player->GetName(), GetAccountNameS(), GetPermissions());
+
 		_player->RemoveAllAuras();
 		if( _player->IsInWorld() )
 			_player->RemoveFromWorld();

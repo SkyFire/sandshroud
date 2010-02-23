@@ -2015,6 +2015,7 @@ void Player::SpawnPet(uint32 pet_number)
 		m_Summon = NULLPET;
 	}
 
+	// Crow: Should be that it recasts summon spell, but without cost.
 	Pet* pPet = objmgr.CreatePet();
 	pPet->SetInstanceID(GetInstanceID());
 	pPet->LoadFromDB(TO_PLAYER(this), itr->second);
@@ -12549,4 +12550,23 @@ void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
 		}
 	}
+}
+
+uint32 Player::GetTotalItemLevel()
+{
+	ItemInterface *Ii = GetItemInterface();
+
+	uint32 playertotalitemlevel = 0;
+
+	for(int8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
+	{
+		uint32 previoustil = playertotalitemlevel;
+		Item* item = Ii->GetInventoryItem(i);
+
+		if(!item)
+			continue;
+
+		playertotalitemlevel = previoustil + item->GetProto()->ItemLevel;
+	}
+	return playertotalitemlevel;
 }

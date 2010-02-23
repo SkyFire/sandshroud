@@ -59,14 +59,6 @@ void Vehicle::Init()
 	Creature::Init();
 }
 
-bool Vehicle::SeatIsEnterableByPlayer(uint8 seat)
-{
-	if(!m_passengers[seat] && m_vehicleSeats[seat] && seatisusable[seat] == true) // Found a slot
-		return true;
-	else
-		return false;
-}
-
 void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 {
 	m_maxPassengers = 0;
@@ -102,7 +94,8 @@ void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 
 void Vehicle::InstallAccessories()
 {
-	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+	//Disabled.
+/*	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 
 	if(!acc)
 	{
@@ -114,7 +107,7 @@ void Vehicle::InstallAccessories()
 	{
 		if(acc->accessoryentry[i] == 0 || !m_vehicleSeats[i])
 		{
-			printf("No accessory entry, or seatmap for selected seat.\n");
+//			sLog.OutError("No accessory entry, or seatmap for selected seat.\n");
 			continue;
 		}
 
@@ -142,7 +135,7 @@ void Vehicle::InstallAccessories()
 			TO_VEHICLE(pass)->InitSeats(pass->GetEntry());
 
 		pass->EnterVehicle(this, i, true);
-	}
+	}*/
 }
 
 void Vehicle::Load(CreatureProto * proto_, float x, float y, float z, float o /* = 0.0f */)
@@ -235,14 +228,11 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	return Creature::Load(spawn, mode, info);
 }
 
-void Vehicle::SendSlotSpells(uint32 entry, Player* plr, int8 seat)
+void Vehicle::SendSpells(uint32 entry, Player* plr)
 {
 	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 
 	if(!acc)
-		return;
-
-	if(acc->seathasspells[seat] == 0)
 		return;
 
 	WorldPacket data(SMSG_PET_SPELLS, 78); // uint32 = 4; (10 * 6) + 4 + 4 + 2 + 8 = 78
@@ -256,7 +246,7 @@ void Vehicle::SendSlotSpells(uint32 entry, Player* plr, int8 seat)
 	{
 //		if passive castspell (id)
 //		data << uint16(0) << uint8(0) << uint8(i+8);
-		data << uint16(acc->seatspells[seat].SlotSpell[i]) << uint8(0) << uint8(i+8);
+		data << uint16(acc->VehicleSpells[i]) << uint8(0) << uint8(i+8);
 	}
 	for(uint8 i = 6; i < 10; ++i)
 	{
@@ -343,17 +333,14 @@ void Vehicle::AddPassenger(Unit* pPassenger)
 		InitSeats(m_vehicleEntry);
 	}
 
-	printf("AddPassenger1: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
+	OUT_DEBUG("AddPassenger1: Max Vehicle Slot: %u, Max Passengers: %u", m_seatSlotMax, m_maxPassengers);
 
 	// Find an available seat
 	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
-		if(i >= 8)
-			break;
-
 		if(pPassenger->IsPlayer())
 		{
-			if(SeatIsEnterableByPlayer(i)) // Found a slot
+			if(!m_passengers[i] && m_vehicleSeats[i] && (seatisusable[i] == true)) // Found a slot
 			{
 				_AddToSlot(pPassenger, i );
 				break;
@@ -379,11 +366,12 @@ void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat)
 		sLog.outColor(TNORMAL, "\n");
 		InitSeats(m_vehicleEntry);
 	}
-	printf("AddPassenger2: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
+
+	OUT_DEBUG("AddPassenger2: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
 
 	if(requestedseat > 0)
 	{
-		if(!m_passengers[requestedseat] && m_vehicleSeats[requestedseat] && m_vehicleSeats[requestedseat]->IsUsable()) // Slot available?
+		if(!m_passengers[requestedseat] && m_vehicleSeats[requestedseat] && seatisusable[requestedseat] == true) // Slot available?
 		{
 			_AddToSlot(pPassenger, requestedseat );
 			return;
@@ -393,12 +381,9 @@ void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat)
 	{ // Find us a slot!
 		for(uint8 i = 0; i < m_seatSlotMax; ++i)
 		{
-			if(i >= 8)
-				break;
-
 			if(pPassenger->IsPlayer())
 			{
-				if(SeatIsEnterableByPlayer(i)) // Found a slot
+				if(!m_passengers[i] && m_vehicleSeats[i] && (seatisusable[i] == true)) // Found a slot
 				{
 					_AddToSlot(pPassenger, i );
 					break;
@@ -420,9 +405,6 @@ uint8 Vehicle::GetPassengerSlot(Unit* pPassenger)
 {
 	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
-		if(i >= 8)
-			break;
-
 		if( m_passengers[i] == pPassenger ) // Found a slot
 		{
 			return i;
@@ -437,8 +419,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	Vehicle* pThis = TO_VEHICLE(this);
 
 	uint8 slot = pPassenger->m_inVehicleSeatId;
-	if(slot >= 8)
-		return;
+
 	pPassenger->m_CurrentVehicle = NULL;
 	pPassenger->m_inVehicleSeatId = 0xFF;
 
@@ -501,6 +482,20 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		data << uint64(0);
 		data << uint32(0);
 		plr->GetSession()->SendPacket(&data);
+
+		CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+		if(vehicleproto && vehicleproto->healthfromdriver)
+		{
+			if(slot == 0)
+			{
+				uint32 health = GetUInt32Value(UNIT_FIELD_HEALTH);
+				uint32 maxhealth = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+				uint32 healthdiff = maxhealth - health;
+
+				SetUInt32Value(UNIT_FIELD_HEALTH, GetProto()->MaxHealth - (healthdiff/(((plr->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev)))));
+				SetUInt32Value(UNIT_FIELD_MAXHEALTH, GetProto()->MaxHealth);
+			}
+		}
 	}
 		
 	if(slot == 0)
@@ -509,7 +504,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		CombatStatus.Vanished();
 		pPassenger->SetUInt64Value( UNIT_FIELD_CHARM, 0 );
 		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, GetCharmTempVal());
-		SetUInt64Value(UNIT_FIELD_CHARMEDBY, 0);
 		/* update target faction set */
 		_setFaction();
 		UpdateOppFactionSet();
@@ -529,9 +523,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	bool haspassengers = false;
 	for(uint8 i = 0; i < m_seatSlotMax; i++)
 	{
-		if(i >= 8)
-			break;
-
 		if(m_passengers[i] != NULL)
 		{
 			haspassengers = true;
@@ -552,9 +543,6 @@ bool Vehicle::HasPassenger(Unit* pPassenger)
 {
 	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
-		if(i >= 8)
-			break;
-
 		if( m_passengers[i] == pPassenger )
 			return true;
 	}
@@ -563,11 +551,7 @@ bool Vehicle::HasPassenger(Unit* pPassenger)
 
 void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 {
-	printf("Slot: %u\n", slot);
 	assert( slot < m_seatSlotMax );
-
-	if(slot >= 8)
-		return;
 
 	if(pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_CurrentCharm)
 		return;
@@ -605,10 +589,10 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		//Dismiss any pets
 		if(pPlayer->GetSummon())
 		{
-		if(pPlayer->GetSummon()->GetUInt32Value(UNIT_CREATED_BY_SPELL) > 0)
-			pPlayer->GetSummon()->Dismiss(false);				// warlock summon -> dismiss
-		else
-			pPlayer->GetSummon()->Remove(false, true, true);	// hunter pet -> just remove for later re-call
+			if(pPlayer->GetSummon()->GetUInt32Value(UNIT_CREATED_BY_SPELL) > 0)
+				pPlayer->GetSummon()->Dismiss(false);				// warlock summon -> dismiss
+			else
+				pPlayer->GetSummon()->Remove(false, true, true);	// hunter pet -> just remove for later re-call
 		}
 
 		pPlayer->m_CurrentVehicle = TO_VEHICLE(this);
@@ -669,11 +653,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 
 		DisableAI();
 
-		// send "switch mover" packet
-		data.Initialize(SMSG_CLIENT_CONTROL_UPDATE);
-		data << GetNewGUID() << uint8(slot == 0 ? 1 : 0);
-		pPlayer->GetSession()->SendPacket(&data);
-
 		if(slot == 0)
 		{
 			SetControllingUnit(pPlayer);
@@ -682,6 +661,11 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			SetSpeed(RUN, m_runSpeed);
 			SetSpeed(FLY, m_flySpeed);
 
+			// send "switch mover" packet
+			data.Initialize(SMSG_CLIENT_CONTROL_UPDATE);
+			data << GetNewGUID() << uint8(1);
+			pPlayer->GetSession()->SendPacket(&data);
+
 			pPlayer->m_CurrentCharm = TO_VEHICLE(this);
 			pPlayer->SetUInt64Value(UNIT_FIELD_CHARM, GetGUID());
 			SetCharmTempVal(GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
@@ -689,19 +673,29 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			SetUInt64Value(UNIT_FIELD_CHARMEDBY, pPlayer->GetGUID());
 			SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE);
 
+			CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+			if(vehicleproto && vehicleproto->healthfromdriver)
+			{
+				uint32 health = GetUInt32Value(UNIT_FIELD_HEALTH);
+				uint32 maxhealth = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+				uint32 healthdiff = maxhealth - health;
+
+				SetUInt32Value(UNIT_FIELD_MAXHEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))));
+				SetUInt32Value(UNIT_FIELD_HEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))) - healthdiff);
+			}
+
 			/* update target faction set */
 			_setFaction();
 			UpdateOppFactionSet();
-		}
 
-		SendSlotSpells(GetEntry(), pPlayer, slot);
+			SendSpells(GetEntry(), pPlayer);
+		}
 
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
 		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
 		data << pPlayer->GetPosition();
 		pPlayer->GetSession()->SendPacket(&data);
 	}
-	pPassenger->UpdateVisibility();
 }
 
 /* This function changes a vehicles position server side to
@@ -711,11 +705,8 @@ of its passengers*/
 void Vehicle::MoveVehicle(float x, float y, float z, float o) //thanks andy
 {
 	SetPosition(x, y, z, o, false);
-	for (uint8 i = 0; i < m_seatSlotMax; ++i)
+	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
-		if(i >= 8)
-			break;
-
 		if(m_passengers[i] != NULL)
 		{
 			m_passengers[i]->SetPosition(x,y,z,o,false);
@@ -729,9 +720,6 @@ void Vehicle::setDeathState(DeathState s)
 
 	for (uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
-		if(i >= 8)
-			break;
-
 		if (m_passengers[i] != NULL)
 			RemovePassenger(m_passengers[i]);
 	}
@@ -820,7 +808,7 @@ leave a vehicle, it removes us server side from our current
 vehicle*/
 void WorldSession::HandleVehicleDismiss(WorldPacket & recv_data)
 {
-	if (GetPlayer() == NULL || !GetPlayer()->m_CurrentVehicle)
+	if(GetPlayer() == NULL || !GetPlayer()->m_CurrentVehicle)
 		return;
 
 	if(recv_data.rpos() != recv_data.wpos())
@@ -886,10 +874,16 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	}
 
 	uint64 guid = Vehicleguid.GetOldGuid();
-	if(RequestedSeat == GetPlayer()->GetSeatID())
-		return;
-
 	Vehicle* vehicle = GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
+
+	if(vehicle = GetPlayer()->m_CurrentVehicle)
+	{
+		if(RequestedSeat == GetPlayer()->GetSeatID())
+		{
+			OUT_DEBUG("Return, Matching Seats. Requsted: %u, current: %u", RequestedSeat, GetPlayer()->GetSeatID());
+			return;
+		}
+	}
 
 	Unit* existpassenger = vehicle->GetPassenger(RequestedSeat);
 	if(existpassenger && (existpassenger != GetPlayer()))

@@ -216,6 +216,10 @@ public:
 	AI_Spell*CreateAISpell(SpellEntry * info);
 	HEARTHSTONE_INLINE PetSpellMap* GetSpells() { return &mSpells; }
 	HEARTHSTONE_INLINE bool IsSummonedPet() { return Summon; }
+	bool IsWarlockPet()
+	{
+		return GetEntry() == 691 ? true : GetEntry() == 688 ? true : GetEntry() == 712 ? true : GetEntry() == 697 ? true : false;
+	}
 
 	void __fastcall SetAutoCastSpell(AI_Spell*sp);
 	void Rename(string NewName);

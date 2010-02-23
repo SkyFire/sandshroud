@@ -761,7 +761,7 @@ void WorldSession::FullLogin(Player* plr)
 	|------------------------------------------------|----------------|
 	|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|
 	|------------------------------------------------|----------------|
-	|02 01							               |..              |
+	|02 01							                 |..              |
 	-------------------------------------------------------------------
 	*/
 
@@ -775,11 +775,21 @@ void WorldSession::FullLogin(Player* plr)
 #endif
 
 	plr->UpdateAttackSpeed();
-	/*if(plr->getLevel()>70)
-		plr->SetUInt32Value(UNIT_FIELD_LEVEL,70);*/
 
-	// Enable trigger cheat by default
-	//plr->triggerpass_cheat = HasGMPermissions();
+	// Anti max level hack.
+	if(plr->getLevel() > 80)
+		plr->SetUInt32Value(UNIT_FIELD_LEVEL, 80);
+
+	// Enable certain GM abilities on login.
+	if(HasGMPermissions())
+	{
+		plr->m_isGmInvisible = true;
+		plr->m_invisible = true;
+		if(CanUseCommand('z'))
+		{
+			plr->triggerpass_cheat = true; // Enable for admins automatically.
+		}
+	}
 
 	// Make sure our name exists (for premade system)
 	PlayerInfo * info = objmgr.GetPlayerInfo(plr->GetLowGUID());
@@ -821,22 +831,18 @@ void WorldSession::FullLogin(Player* plr)
 
 	// account data == UI config
 	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
-//	MD5Hash md5hash;
-
+	MD5Hash md5hash;
 	data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
-
 	for (int i = 0; i < 8; i++) // TODO: FIX THIS!
 	{
-//		AccountDataEntry* acct_data = GetAccountData(i); // TODO: Use this correctly.
-
+		AccountDataEntry* acct_data = GetAccountData(i); // TODO: Use this correctly.
 		if(0xEA & (1 << i))
 		{
 			data << uint32(0);
 		}
-//		md5hash.Initialize();
-//		md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
-//		md5hash.Finalize();
-
+		md5hash.Initialize();
+		md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
+		md5hash.Finalize();
 //		data.append(md5hash.GetDigest(), MD5_DIGEST_LENGTH);
 	}
 	SendPacket(&data);
@@ -844,8 +850,7 @@ void WorldSession::FullLogin(Player* plr)
 	_player->ResetTitansGrip();
 
 	// Set TIME OF LOGIN
-	CharacterDatabase.Execute (
-		"UPDATE characters SET online = 1 WHERE guid = %u" , plr->GetLowGUID());
+	CharacterDatabase.Execute ("UPDATE characters SET online = 1 WHERE guid = %u" , plr->GetLowGUID());
 
 	bool enter_world = true;
 #ifndef CLUSTERING
@@ -926,11 +931,17 @@ void WorldSession::FullLogin(Player* plr)
 
 	// Send revision (if enabled)
 #ifdef WIN32
+	_player->BroadcastMessage("Server: %sSandshroud Aspire Hearthstone r%u-TRUNK/%s-Win-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);
+#else // WIN32
+	_player->BroadcastMessage("Server: %sSandshroud Aspire Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
+#endif // WIN32
+
+/*#ifdef WIN32
 	_player->BroadcastMessage("Server: %sAspire Hearthstone r%u-TRUNK/%s-Win-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);
-#else
+#else // WIN32
 	_player->BroadcastMessage("Server: %sAspire Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
 	//_player->BroadcastMessage("Built at %s on %s by %s@%s", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
-#endif
+#endif // WIN32*/
 
 	if(sWorld.SendStatsOnJoin)
 	{
