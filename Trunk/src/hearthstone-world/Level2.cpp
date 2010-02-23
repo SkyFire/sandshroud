@@ -919,7 +919,10 @@ bool ChatHandler::HandleGOScale(const char* args, WorldSession* m_session)
 		return false;
 	}
 	float scale = (float)atof(args);
-	//if(!scale) scale = 1;
+
+	if(!scale)
+		scale = 1; // Scale defaults to 1 on GO's, so its basically a reset.
+
 	go->SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
 	BlueSystemMessage(m_session, "Set scale to %.3f", scale);
 	uint32 NewGuid = m_session->GetPlayer()->GetMapMgr()->GenerateGameobjectGuid();
