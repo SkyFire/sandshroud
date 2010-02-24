@@ -67,7 +67,10 @@ void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 	VehicleEntry * ve = dbcVehicle.LookupEntry( vehicleEntry );
 	if(!ve)
 	{
-		OUT_DEBUG("Attempted to create non-existant vehicle %u.\n", vehicleEntry);
+		if(sLog.IsOutDevelopement())
+			printf("Attempted to create non-existant vehicle %u.\n", vehicleEntry);
+		else
+			OUT_DEBUG("Attempted to create non-existant vehicle %u.", vehicleEntry);
 		return;
 	}
 
@@ -151,7 +154,10 @@ void Vehicle::Load(CreatureProto * proto_, float x, float y, float z, float o /*
 	else
 	{
 		m_vehicleEntry = 124;
-		OUT_DEBUG("Attempted to create vehicle %u with invalid vehicle_entry, defaulting to 124, check your creature_proto table.\n", proto->Id);
+		if(sLog.IsOutDevelopement())
+			printf("Attempted to create vehicle %u with invalid vehicle_entry, defaulting to 124, check your creature_proto table.\n", proto->Id);
+		else
+			OUT_DEBUG("Attempted to create vehicle %u with invalid vehicle_entry, defaulting to 124, check your creature_proto table.", proto->Id);
 	}
 
 	m_maxPassengers = 0;
@@ -159,7 +165,10 @@ void Vehicle::Load(CreatureProto * proto_, float x, float y, float z, float o /*
 	VehicleEntry * ve = dbcVehicle.LookupEntry( m_vehicleEntry );
 	if(!ve)
 	{
-		OUT_DEBUG("Attempted to create non-existant vehicle %u.\n", GetVehicleEntry());
+		if(sLog.IsOutDevelopement())
+			printf("Attempted to create non-existant vehicle %u.\n", GetVehicleEntry());
+		else
+			OUT_DEBUG("Attempted to create non-existant vehicle %u.", GetVehicleEntry());
 		return;
 	}
 
@@ -196,7 +205,10 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	else
 	{
 		m_vehicleEntry = 124;
-		OUT_DEBUG("Attempted to create vehicle %u with invalid vehicle_entry, defaulting to 124, check your creature_proto table.\n", proto->Id);
+		if(sLog.IsOutDevelopement())
+			printf("Attempted to create vehicle %u with invalid vehicle_entry, defaulting to 124, check your creature_proto table.\n", proto->Id);
+		else
+			OUT_DEBUG("Attempted to create vehicle %u with invalid vehicle_entry, defaulting to 124, check your creature_proto table.", proto->Id);
 	}
 
 	m_maxPassengers = 0;
@@ -204,7 +216,10 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	VehicleEntry * ve = dbcVehicle.LookupEntry( m_vehicleEntry );
 	if(!ve)
 	{
-		OUT_DEBUG("Attempted to create non-existant vehicle %u.\n", GetVehicleEntry());
+		if(sLog.IsOutDevelopement())
+			printf("Attempted to create non-existant vehicle %u.\n", GetVehicleEntry());
+		else
+			OUT_DEBUG("Attempted to create non-existant vehicle %u.", GetVehicleEntry());
 		return false;
 	}
 
@@ -569,6 +584,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		pPassenger->CastSpell( pPassenger, m_mountSpell, true );
 
 	RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SELF_RES);
+
 	// This is where the real magic happens
 	if( pPassenger->IsPlayer() )
 	{
@@ -608,48 +624,24 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		pPlayer->SetPlayerStatus(TRANSFER_PENDING);
 		pPlayer->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
 
-		WorldPacket data(MSG_MOVE_TELEPORT, 68);
-		data << pPlayer->GetNewGUID();
-		data << pPlayer->m_teleportAckCounter;					// counter
-		data << uint32(MOVEFLAG_TAXI);							// transport
-		data << uint16(0);										// special flags
-		data << uint32(getMSTime());							// time
-		data << GetPositionX();									// position vector 
-		data << GetPositionY();									// position vector 
-		data << GetPositionZ();									// position vector 
-		data << GetOrientation();								// orientaion
-		// transport part
-		data << GetNewGUID();									// transport guid
-		data << v.x;											// transport offsetX
-		data << v.y;											// transport offsetY
-		data << v.z;											// transport offsetZ
-		data << uint32(0);										// transport time
-		data << uint8(slot);									// seat
-		// end of transport part
-		data << uint32(0);
-		pPlayer->SendMessageToSet(&data, false);
-
-		data.Initialize(MSG_MOVE_TELEPORT_ACK);
-		data << pPlayer->GetNewGUID();
-		data << pPlayer->m_teleportAckCounter;					// ack counter
-		pPlayer->m_teleportAckCounter++;
-		data << uint32(MOVEFLAG_TAXI);							// transport
-		data << uint16(0);										// special flags
-		data << uint32(getMSTime());							// time
-		data << GetPositionX();									// position vector 
-		data << GetPositionY();									// position vector 
-		data << GetPositionZ();									// position vector 
-		data << GetOrientation();								// orientaion
-		// transport part
-		data << GetNewGUID();									// transport guid
-		data << v.x;											// transport offsetX
-		data << v.y;											// transport offsetY
-		data << v.z;											// transport offsetZ
-		data << uint32(0);										// transport time
-		data << uint8(slot);									// seat
-		// end of transport part
-		data << uint32(0);										// fall time
-		pPlayer->GetSession()->SendPacket(&data);
+		WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
+		data << pPlayer->GetNewGUID();							// Passengerguid
+		data << GetNewGUID();									// Transporterguid (vehicleguid)
+		data << uint8(slot);									// Vehicle Seat ID
+		data << uint8(0);										// Unknown
+		data << GetPositionX() - pPlayer->GetPositionX();		// OffsetTransporterX
+		data << GetPositionY() - pPlayer->GetPositionY();		// OffsetTransporterY
+		data << GetPositionZ() - pPlayer->GetPositionZ();		// OffsetTransporterZ
+		data << getMSTime();									// Timestamp
+		data << uint8(0x04);									// Flags
+		data << float(0);										// Orientation Offset
+		data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
+		data << uint32(0);										// MoveTime
+		data << uint32(1);										// Points
+		data << v.x;											// GetTransOffsetX();
+		data << v.y;											// GetTransOffsetY();
+		data << v.z;											// GetTransOffsetZ();
+		SendMessageToSet(&data, true);
 
 		DisableAI();
 
@@ -695,6 +687,27 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
 		data << pPlayer->GetPosition();
 		pPlayer->GetSession()->SendPacket(&data);
+	}
+	else
+	{
+		WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
+		data << pPassenger->GetNewGUID();						// Passengerguid
+		data << GetNewGUID();									// Transporterguid (vehicleguid)
+		data << uint8(slot);									// Vehicle Seat ID
+		data << uint8(0);										// Unknown
+		data << GetPositionX() - pPassenger->GetPositionX();	// OffsetTransporterX
+		data << GetPositionY() - pPassenger->GetPositionY();	// OffsetTransporterY
+		data << GetPositionZ() - pPassenger->GetPositionZ();	// OffsetTransporterZ
+		data << getMSTime();									// Timestamp
+		data << uint8(0x04);									// Flags
+		data << float(0);										// Orientation Offset
+		data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
+		data << uint32(0);										// MoveTime
+		data << uint32(1);										// Points
+		data << v.x;											// GetTransOffsetX();
+		data << v.y;											// GetTransOffsetY();
+		data << v.z;											// GetTransOffsetZ();
+		SendMessageToSet(&data, true);
 	}
 }
 

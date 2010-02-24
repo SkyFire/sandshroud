@@ -1634,14 +1634,20 @@ HEARTHSTONE_INLINE uint32 RepairItemCost(Player* pPlayer, Item* pItem)
 	DurabilityCostsEntry * dcosts = dbcDurabilityCosts.LookupEntry(pItem->GetProto()->ItemLevel);
 	if(!dcosts)
 	{
-		OUT_DEBUG("Repair: Unknown item level (%u)", dcosts);
+		if(sLog.IsOutDevelopement())
+			printf("Repair: Unknown item level (%u)\n", dcosts);
+		else
+			OUT_DEBUG("Repair: Unknown item level (%u)", dcosts);
 		return 0;
 	}
 
 	DurabilityQualityEntry * dquality = dbcDurabilityQuality.LookupEntry((pItem->GetProto()->Quality + 1) * 2);
 	if(!dquality)
 	{
-		OUT_DEBUG("Repair: Unknown item quality (%u)", dquality);
+		if(sLog.IsOutDevelopement())
+			printf("Repair: Unknown item quality (%u)\n", dquality);
+		else
+			OUT_DEBUG("Repair: Unknown item quality (%u)", dquality);
 		return 0;
 	}
 

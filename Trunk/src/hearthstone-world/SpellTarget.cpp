@@ -265,7 +265,10 @@ void Spell::FillTargetMap(uint32 i)
 
 void Spell::SpellTargetNULL(uint32 i, uint32 j)
 {
-	OUT_DEBUG("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u", m_spellInfo->EffectImplicitTargetA[j], m_spellInfo->EffectImplicitTargetB[j]);
+	if(sLog.IsOutDevelopement())
+		printf("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u\n", m_spellInfo->EffectImplicitTargetA[j], m_spellInfo->EffectImplicitTargetB[j]);
+	else
+		OUT_DEBUG("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u", m_spellInfo->EffectImplicitTargetA[j], m_spellInfo->EffectImplicitTargetB[j]);
 }
 
 /// Spell Target Handling for type 0: Default targeting

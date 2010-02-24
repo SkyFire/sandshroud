@@ -4,6 +4,7 @@
 #include "Common.h"
 #include "ByteBuffer.h"
 #include "StackBuffer.h"
+#include "Log.h"
 
 class SERVER_DECL WorldPacket : public ByteBuffer
 {
@@ -30,6 +31,18 @@ protected:
 
 public:
 	int8 m_bufferPool;
+
+	void print_storage() const
+	{
+		if(sLog.m_screenLogLevel >= 5)
+		{
+			uint32 j = 1, k = 1;
+			sLog.outDebug("STORAGE_SIZE: %lu", (unsigned long)size() );
+			for(uint32 i = 0; i < size(); ++i)
+				sLog.outDebugInLine("%u - ", read<uint8>(i) );
+			sLog.outDebug(" ");
+		}
+	}
 };
 
 class SERVER_DECL StackPacket : public StackBuffer

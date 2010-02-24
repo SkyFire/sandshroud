@@ -774,10 +774,10 @@ void WorldSession::HandleSetSelectionOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleStandStateChangeOpcode( WorldPacket & recv_data )
 {
-	uint8 animstate;
+	uint32 animstate;
 	recv_data >> animstate;
 
-	_player->SetStandState(animstate);
+	_player->SetStandState(int8(animstate));
 }
 
 void WorldSession::HandleBugOpcode( WorldPacket & recv_data )

@@ -192,7 +192,10 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS]={
 
 void Spell::SpellEffectNULL(uint32 i)
 {
-	DEBUG_LOG("Spell","Unhandled spell effect %u in spell %u.",m_spellInfo->Effect[i],m_spellInfo->Id);
+	if(sLog.IsOutDevelopement())
+		printf("Unhandled spell effect %u in spell %u.\n",m_spellInfo->Effect[i],m_spellInfo->Id);
+	else
+		DEBUG_LOG("Spell","Unhandled spell effect %u in spell %u.",m_spellInfo->Effect[i],m_spellInfo->Id);
 }
 
 void Spell::SpellEffectInstantKill(uint32 i)
@@ -5944,7 +5947,10 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	CreatureInfo* ci = CreatureNameStorage.LookupEntry(entry);
 	if(!ci)
 	{
-		OUT_DEBUG("Missing totem creature entry : %u \n",entry);
+		if(sLog.IsOutDevelopement())
+			printf("Totem %u does not have any spells to cast, exiting\n",entry);
+		else
+			OUT_DEBUG("Totem %u does not have any spells to cast, exiting",entry);
 		return;
 	}
 

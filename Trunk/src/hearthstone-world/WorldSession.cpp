@@ -166,6 +166,9 @@ int WorldSession::Update(uint32 InstanceID)
 				else
 				{
 					(this->*Handler->handler)(*packet);
+
+					if(sLog.IsOutProccess() && (packet->rpos() < packet->wpos()))
+						LogUnprocessedTail(packet);
 				}
 			}
 		}
@@ -727,6 +730,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_LEARN_PREVIEW_TALENTS].handler					= &WorldSession::HandleLearnPreviewTalents;
 	WorldPacketHandlers[CMSG_UNLEARN_TALENTS].handler						= &WorldSession::HandleUnlearnTalents;
 	WorldPacketHandlers[MSG_TALENT_WIPE_CONFIRM].handler					= &WorldSession::HandleUnlearnTalents;
+	WorldPacketHandlers[CMSG_UNLEARN_SKILL].handler							= &WorldSession::HandleUnlearnSkillOpcode;
 	
 	// Combat / Duel
 	WorldPacketHandlers[CMSG_ATTACKSWING].handler							= &WorldSession::HandleAttackSwingOpcode;
@@ -873,7 +877,6 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_GMTICKET_GETTICKET].handler					= &WorldSession::HandleGMTicketGetTicketOpcode;
 	WorldPacketHandlers[CMSG_GMTICKET_SYSTEMSTATUS].handler					= &WorldSession::HandleGMTicketSystemStatusOpcode;
 	WorldPacketHandlers[CMSG_GMTICKETSYSTEM_TOGGLE].handler					= &WorldSession::HandleGMTicketToggleSystemStatusOpcode;
-	WorldPacketHandlers[CMSG_UNLEARN_SKILL].handler							= &WorldSession::HandleUnlearnSkillOpcode;
 	
 	// Meeting Stone / Instances
 	WorldPacketHandlers[CMSG_SUMMON_RESPONSE].handler						= &WorldSession::HandleSummonResponseOpcode;
@@ -942,6 +945,18 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_EXIT].handler					= &WorldSession::HandleVehicleDismiss;
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_SWITCH_SEAT].handler			= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE].handler	= &WorldSession::HandleRequestSeatChange;
+}
+
+/// Logging helper for unexpected opcodes
+void WorldSession::LogUnprocessedTail(WorldPacket *packet)
+{
+	sLog.outError( "SESSION: opcode %s (0x%.4X) has unprocessed tail data \n"
+		"The size recieved is %u while the packet size is %u\n",
+		LookupOpcodeName(packet->GetOpcode()),
+		packet->GetOpcode(),
+		packet->rpos(), packet->wpos());
+
+	packet->print_storage();
 }
 
 void SessionLogWriter::writefromsession(WorldSession* session, const char* format, ...)

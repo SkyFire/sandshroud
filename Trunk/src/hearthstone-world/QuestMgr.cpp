@@ -1089,7 +1089,10 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 			    ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(qst->reward_item[i]);
 			    if(!proto)
 			    {
-				    OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
+					if(sLog.IsOutDevelopement())
+						printf("Invalid item prototype in quest reward! ID %d, quest %d\n", qst->reward_item[i], qst->id);
+					else
+						OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
 			    }
 			    else
 			    {   
@@ -1129,7 +1132,10 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		    ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(qst->reward_choiceitem[reward_slot]);
 		    if(!proto)
 		    {
-			    OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_choiceitem[reward_slot], qst->id);
+				if(sLog.IsOutDevelopement())
+					printf("Invalid item prototype in quest reward! ID %d, quest %d\n", qst->reward_choiceitem[reward_slot], qst->id);
+				else
+					OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_choiceitem[reward_slot], qst->id);
 		    }
 		    else
 		    {
@@ -1193,7 +1199,10 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 			    ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(qst->reward_item[i]);
 			    if(!proto)
 			    {
-				    OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
+					if(sLog.IsOutDevelopement())
+						printf("Invalid item prototype in quest reward! ID %d, quest %d\n", qst->reward_item[i], qst->id);
+					else
+						OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
 			    }
 			    else
 			    {   
@@ -1233,7 +1242,10 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		    ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(qst->reward_choiceitem[reward_slot]);
 		    if(!proto)
 		    {
-			    OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_choiceitem[reward_slot], qst->id);
+				if(sLog.IsOutDevelopement())
+					printf("Invalid item prototype in quest reward! ID %d, quest %d\n", qst->reward_choiceitem[reward_slot], qst->id);
+				else
+					OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_choiceitem[reward_slot], qst->id);
 		    }
 		    else
 		    {
@@ -1816,7 +1828,12 @@ bool QuestMgr::CanStoreReward(Player* plyr, Quest *qst, uint32 reward_slot)
             slotsrequired++;
             ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(qst->reward_item[i]);
             if(!proto)
-                OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
+			{
+				if(sLog.IsOutDevelopement())
+					printf("Invalid item prototype in quest reward! ID %d, quest %d\n", qst->reward_item[i], qst->id);
+				else
+					OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
+			}
             else if(plyr->GetItemInterface()->CanReceiveItem(proto, qst->reward_itemcount[i], NULL))
 				return false;
         }

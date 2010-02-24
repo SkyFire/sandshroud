@@ -224,6 +224,9 @@ public:
 
 	void SendChatPacket(WorldPacket * data, uint32 langpos, int32 lang, WorldSession * originator);
 
+	// Process Logs
+	void LogUnprocessedTail(WorldPacket *packet);
+
 	uint32 m_currMsTime;
 	uint32 m_lastPing;
 

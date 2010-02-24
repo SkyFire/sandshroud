@@ -5005,7 +5005,10 @@ uint32 Unit::GetResistance(uint32 type)
 	if( type <= 6)
 		return GetUInt32Value(UNIT_FIELD_RESISTANCES+type);
 
-	OUT_DEBUG("Database","Creature_proto has illegal values in field \"AttackBase\" (value > 6)");
+	if(sLog.IsOutDevelopement())
+		printf("DATABASE: Creature_proto has illegal values in field \"AttackBase\" (value > 6)\n");
+	else
+		OUT_DEBUG("DATABASE: Creature_proto has illegal values in field \"AttackBase\" (value > 6)");
 	return GetUInt32Value(UNIT_FIELD_RESISTANCES);
 }
 
@@ -5017,7 +5020,10 @@ void Unit::MoveToWaypoint(uint32 wp_id)
 		WayPoint *wp = ai->getWayPoint(wp_id);
 		if(!wp)
 		{
-			OUT_DEBUG("Database","Invalid WP %u specified for spawnid %u.", wp_id, TO_CREATURE(this)->GetSQL_id());
+			if(sLog.IsOutDevelopement())
+				printf("Database: Invalid WP %u specified for spawnid %u.\n", wp_id, TO_CREATURE(this)->GetSQL_id());
+			else
+				OUT_DEBUG("Database: Invalid WP %u specified for spawnid %u.", wp_id, TO_CREATURE(this)->GetSQL_id());
 			return;
 		}
 
@@ -6232,7 +6238,10 @@ Unit* Unit::CreateTemporaryGuardian(uint32 guardian_entry,uint32 duration,float 
 	CreatureInfo * info = CreatureNameStorage.LookupEntry(guardian_entry);
 	if(!proto || !info)
 	{
-		OUT_DEBUG("Warning : Missing summon creature template %u !",guardian_entry);
+		if(sLog.IsOutDevelopement())
+			printf("Warning : Missing summon creature template %u !\n",guardian_entry);
+		else
+			OUT_DEBUG("Warning : Missing summon creature template %u !",guardian_entry);
 		return NULLUNIT;
 	}
 
@@ -7296,10 +7305,10 @@ void Unit::EnterVehicle(Vehicle * vehicle)
 	}
 }
 
-bool Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
+void Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 {
 	if(vehicle->IsVehicle() == false && vehicle->IsPlayer() == false)
-		return false;
+		return;
 
 	if(vehicle->IsPlayer())
 	{
@@ -7316,13 +7325,11 @@ bool Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 		if( preferedseat > vehicle->GetMaxSeat())
 		{
 			sLog.outDebug("Object::EnterVehicle -> Unit "I64FMT" tried to enter seat %u wich is invalid.", GetGUID(), preferedseat);
-			return false;
+			return;
 		}
 	}
 	else
-	{
-		return false;
-	}
+		return;
 
 	if(m_CurrentVehicle)
 		m_CurrentVehicle->RemovePassenger(this);
@@ -7330,7 +7337,7 @@ bool Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 	if(preferedseat == -1) // Lovely, freedom of choice
 	{
 		EnterVehicle(vehicle);
-		return true;
+		return;
 	}
 
 	if(force)
@@ -7360,7 +7367,7 @@ bool Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 		data << uint32(0);										// GetTransOffsetZ();
 		SendMessageToSet(&data, true);
 
-		return true;
+		return;
 	}
 	else
 	{
@@ -7387,9 +7394,8 @@ bool Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 			data << uint32(0);										// GetTransOffsetY();
 			data << uint32(0);										// GetTransOffsetZ();
 			SendMessageToSet(&data, true);
-
-			return true;
+			return;
 		}
 	}
-	return false;
+	return;
 }

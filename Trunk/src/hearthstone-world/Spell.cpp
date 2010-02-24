@@ -158,17 +158,17 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 
 	switch( Caster->GetTypeId() )
 	{
-		case TYPEID_PLAYER:
-        {
-		    g_caster = NULLGOB;
-		    i_caster = NULLITEM;
-		    u_caster = TO_UNIT( Caster );
+	case TYPEID_PLAYER:
+		{
+			g_caster = NULLGOB;
+			i_caster = NULLITEM;
+			u_caster = TO_UNIT( Caster );
 		    p_caster = TO_PLAYER( Caster );
 			if( p_caster->GetDuelState() == DUEL_STATE_STARTED )
 			    duelSpell = true;
         }break;
 
-		case TYPEID_UNIT:
+	case TYPEID_UNIT:
         {
 		    g_caster = NULLGOB;
 		    i_caster = NULLITEM;
@@ -178,8 +178,8 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 			    duelSpell = true;
         }break;
 
-		case TYPEID_ITEM:
-		case TYPEID_CONTAINER:
+	case TYPEID_ITEM:
+	case TYPEID_CONTAINER:
         {
 		    g_caster = NULLGOB;
 		    u_caster = NULLUNIT;
@@ -188,17 +188,22 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 			if( i_caster->GetOwner() && i_caster->GetOwner()->GetDuelState() == DUEL_STATE_STARTED )
 				duelSpell = true;
         }break;
-		
-		case TYPEID_GAMEOBJECT:
+
+	case TYPEID_GAMEOBJECT:
         {
 		    u_caster = NULLUNIT;
 		    p_caster = NULLPLR;
 		    i_caster = NULLITEM;
 		    g_caster = TO_GAMEOBJECT( Caster );
         }break;
-        default:
-            OUT_DEBUG("[DEBUG][SPELL] Incompatible object type, please report this to the dev's");
-        break;
+
+	default:
+		{
+			if(sLog.IsOutDevelopement())
+				printf("[DEBUG][SPELL] Incompatible object type, please report this to the dev's\n");
+			else
+				OUT_DEBUG("[DEBUG][SPELL] Incompatible object type, please report this to the dev's");
+		}break;
 	}
 
 	m_spellState = SPELL_STATE_NULL;
@@ -2778,11 +2783,14 @@ void Spell::HandleEffects(uint32 i)
 
 	damage = CalculateEffect(i,unitTarget);  
 	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", m_spellInfo->Effect[i], damage); 
-	
-	if( m_spellInfo->Effect[i]<TOTAL_SPELL_EFFECTS)
+
+	if( m_spellInfo->Effect[i] < TOTAL_SPELL_EFFECTS)
 		(*this.*SpellEffectsHandler[m_spellInfo->Effect[i]])(i);
 	else
-		DEBUG_LOG("Spell","Unknown effect %u spellid %u",m_spellInfo->Effect[i], m_spellInfo->Id);
+		if(sLog.IsOutDevelopement())
+			printf("Unknown spell effect %u in spell %u.\n",m_spellInfo->Effect[i],m_spellInfo->Id);
+		else
+			DEBUG_LOG("Spell","Unknown effect %u spellid %u",m_spellInfo->Effect[i], m_spellInfo->Id);
 }
 
 void Spell::HandleAddAura(uint64 guid)

@@ -1217,7 +1217,10 @@ void Pet::ApplySummonLevelAbilities()
 
 	if(stat_index < 0)
 	{
-		OUT_DEBUG("PETSTAT: No stat index found for entry %u, `%s`!", GetEntry(), creature_info->Name);
+		if(sLog.IsOutDevelopement())
+			printf("PETSTAT: No stat index found for entry %u, `%s`!\n", GetEntry(), creature_info->Name);
+		else
+			OUT_DEBUG("PETSTAT: No stat index found for entry %u, `%s`!", GetEntry(), creature_info->Name);
 		return;
 	}
 
@@ -1449,7 +1452,10 @@ void Pet::AddPetSpellToOwner(uint32 spellId)
 	
 	}
 	else
-		OUT_DEBUG("WORLD: Could not find teaching spell for spell %u", spellId);
+		if(sLog.IsOutDevelopement())
+			printf("WORLD: Could not find teaching spell for spell %u\n", spellId);
+		else
+			OUT_DEBUG("WORLD: Could not find teaching spell for spell %u", spellId);
 }
 
 uint32 Pet::GetHighestRankSpell(uint32 spellId)

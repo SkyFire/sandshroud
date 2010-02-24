@@ -1098,7 +1098,7 @@ public:
 	// Enters the passenger into an available seat
 	void EnterVehicle(Vehicle * vehicle);
 	// Enters the passenger into a prefered seat if possible
-	bool EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force);
+	void EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force);
 
 	//Pet
 	HEARTHSTONE_INLINE void SetIsPet(bool chck) { m_isPet = chck; }

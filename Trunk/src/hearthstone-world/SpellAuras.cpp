@@ -1676,7 +1676,10 @@ void Aura::SpellAuraModBaseResistancePerc(bool apply)
 
 void Aura::SpellAuraNULL(bool apply)
 {
-	 DEBUG_LOG( "Aura","Unknown Aura id %d", (uint32)mod->m_type);
+	if(sLog.IsOutDevelopement())
+		printf("Unknown Aura id %d\n", (uint32)mod->m_type);
+	else
+		DEBUG_LOG( "Aura","Unknown Aura id %d", (uint32)mod->m_type);
 }
 
 void Aura::SpellAuraBindSight(bool apply)
@@ -4790,7 +4793,10 @@ void Aura::SpellAuraModShapeshift(bool apply)
 			}
 			else
 			{
-				OUT_DEBUG("Unknown Spell with Morph Form Demon");
+				if(sLog.IsOutDevelopement())
+					printf("Unknown Spell with Morph Form Demon\n");
+				else
+					OUT_DEBUG("Unknown Spell with Morph Form Demon");
 			}
 		}break;
 
@@ -5055,7 +5061,10 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 			pts.spellId=GetSpellProto()->EffectTriggerSpell[mod->i];
 		else
 		{
-			OUT_DEBUG("Warning,trigger spell is null for spell %u",GetSpellProto()->Id);
+			if(sLog.IsOutDevelopement())
+				printf("Warning,trigger spell is null for spell %u\n",GetSpellProto()->Id);
+			else
+				OUT_DEBUG("Warning,trigger spell is null for spell %u",GetSpellProto()->Id);
 			return;
 		}
 		pts.procChance = GetSpellProto()->procChance;
@@ -7132,7 +7141,10 @@ void Aura::SpellAuraAddPctMod( bool apply )
 	uint32* AffectedGroups = GetSpellProto()->EffectSpellClassMask[mod->i];
 	if( AffectedGroups == 0 )
 	{
-		OUT_DEBUG("spell %u is missing affected groups.\n", m_spellProto->Id);
+		if(sLog.IsOutDevelopement())
+			printf("spell %u is missing affected groups.\n", m_spellProto->Id);
+		else
+			OUT_DEBUG("spell %u is missing affected groups.\n", m_spellProto->Id);
 		return;
 	}
 	//printf("!!! the AffectedGroups %u ,the smt type %u,\n",AffectedGroups,mod->m_miscValue);
@@ -7141,7 +7153,10 @@ void Aura::SpellAuraAddPctMod( bool apply )
 
 	if(modifier < 0 || modifier >= SPELL_MODIFIERS)
 	{
-		OUT_DEBUG( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer\n", modifier, GetSpellId() );
+		if(sLog.IsOutDevelopement())
+			printf("Unknown spell modifier type %u in spell %u.<<--report this line to the developer\n", modifier, GetSpellId());
+		else
+			OUT_DEBUG( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer", modifier, GetSpellId() );
 		return;
 	}
 
@@ -7434,7 +7449,10 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 				}
 			}break;
 	default:
-		OUT_DEBUG("Unknown override report to devs: %u", mod->m_miscValue);
+		if(sLog.IsOutDevelopement())
+			printf("Unknown override report to devs: %u\n", mod->m_miscValue);
+		else
+			OUT_DEBUG("Unknown override report to devs: %u", mod->m_miscValue);
 	};
 }
 
@@ -8388,7 +8406,10 @@ void Aura::SpellAuraAddFlatModifier(bool apply)
 
 	if(modifier < 0 || modifier >= SPELL_MODIFIERS)
 	{
-		OUT_DEBUG( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer\n", modifier, GetSpellId() );
+		if(sLog.IsOutDevelopement())
+			printf("Unknown spell modifier type %u in spell %u.<<--report this line to the developer\n", modifier, GetSpellId());
+		else
+			OUT_DEBUG( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer", modifier, GetSpellId() );
 		return;
 	}
 
