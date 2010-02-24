@@ -707,7 +707,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << v.x;											// GetTransOffsetX();
 		data << v.y;											// GetTransOffsetY();
 		data << v.z;											// GetTransOffsetZ();
-		SendMessageToSet(&data, true);
+		SendMessageToSet(&data, false);
 	}
 }
 
