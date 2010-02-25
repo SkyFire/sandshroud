@@ -6584,6 +6584,11 @@ void Player::SendInitialLogonPackets()
 	data << uint32(0);
 	GetSession()->SendPacket( &data );
 
+	WorldPacket ArenaSettings(SMSG_UPDATE_WORLD_STATE, 16);
+	ArenaSettings << uint32(0xC77) << uint32(sWorld.arena_progress);
+	ArenaSettings << uint32(0xF3D) << uint32(sWorld.arena_season);
+	GetSession()->SendPacket( &ArenaSettings );
+
 	DEBUG_LOG("WORLD","Sent initial logon packets for %s.", GetName());
 }
 

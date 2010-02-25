@@ -313,8 +313,7 @@ void WorldSession::HandleCharterShowListOpcode( WorldPacket & recv_data )
 void WorldSession::SendCharterRequest(Creature* pCreature)
 {
 	CHECK_INWORLD_RETURN;
-	if(pCreature && pCreature->GetEntry()==19861 ||
-		pCreature->GetEntry()==18897 || pCreature->GetEntry()==19856)
+	if( !pCreature->ArenaOrganizersFlags() )
 	{
 		WorldPacket data(SMSG_PETITION_SHOWLIST, 81);
 		uint8 tdata[73];
