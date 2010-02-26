@@ -52,7 +52,7 @@ private:
 	Item* m_pItems[MAX_INVENTORY_SLOT];
 	Item* m_pBuyBack[MAX_BUYBACK_SLOT];
 
-	AddItemResult m_AddItem(Item* item, int8 ContainerSlot, int8 slot);
+	AddItemResult m_AddItem(Item* item, int16 ContainerSlot, int16 slot);
 
 public:
 	friend class ItemIterator;
@@ -60,7 +60,7 @@ public:
 	~ItemInterface();
 
 	Player* GetOwner() { return m_pOwner; }
-	bool IsBagSlot(int8 slot);
+	bool IsBagSlot(int16 slot);
 
 	uint32 m_CreateForPlayer(ByteBuffer *data);
 	void m_DestroyForPlayer();
@@ -68,18 +68,18 @@ public:
 	void mLoadItemsFromDatabase(QueryResult * result);
 	void mSaveItemsToDatabase(bool first, QueryBuffer * buf);
 
-	Item* GetInventoryItem(int8 slot);
-	Item* GetInventoryItem(int8 ContainerSlot, int8 slot);
-	int8 GetInventorySlotById(uint32 ID);
-	int8 GetInventorySlotByGuid(uint64 guid);
-	int8 GetBagSlotByGuid(uint64 guid);
+	Item* GetInventoryItem(int16 slot);
+	Item* GetInventoryItem(int16 ContainerSlot, int16 slot);
+	int16 GetInventorySlotById(uint32 ID);
+	int16 GetInventorySlotByGuid(uint64 guid);
+	int16 GetBagSlotByGuid(uint64 guid);
 
-	Item* SafeAddItem(uint32 ItemId, int8 ContainerSlot, int8 slot);
-	AddItemResult SafeAddItem(Item* pItem, int8 ContainerSlot, int8 slot);
-	Item* SafeRemoveAndRetreiveItemFromSlot(int8 ContainerSlot, int8 slot, bool destroy); //doesnt destroy item from memory
+	Item* SafeAddItem(uint32 ItemId, int16 ContainerSlot, int16 slot);
+	AddItemResult SafeAddItem(Item* pItem, int16 ContainerSlot, int16 slot);
+	Item* SafeRemoveAndRetreiveItemFromSlot(int16 ContainerSlot, int16 slot, bool destroy); //doesnt destroy item from memory
 	Item* SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy);
 	Item* SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, bool destroy);
-	bool SafeFullRemoveItemFromSlot(int8 ContainerSlot, int8 slot); //destroys item fully
+	bool SafeFullRemoveItemFromSlot(int16 ContainerSlot, int16 slot); //destroys item fully
 	bool SafeFullRemoveItemByGuid(uint64 guid); //destroys item fully
 	AddItemResult AddItemToFreeSlot(Item* item);
 	AddItemResult AddItemToFreeBankSlot(Item* item);
@@ -111,7 +111,7 @@ public:
 	SlotResult FindAmmoBag();
 	int8 FindFreeBackPackSlot();
 	int8 FindFreeKeyringSlot();
-	int8 FindFreeCurrencySlot();
+	int16 FindFreeCurrencySlot();
 	int8 FindSpecialBag(Item* item);
 
 
@@ -123,7 +123,7 @@ public:
 
 
 	void BuildInventoryChangeError(Item* SrcItem, Item* DstItem, uint8 Error);
-	void SwapItemSlots(int8 srcslot, int8 dstslot);
+	void SwapItemSlots(int16 srcslot, int16 dstslot);
 
 	int8 GetInternalBankSlotFromPlayer(int8 islot); //converts inventory slots into 0-x numbers
 
