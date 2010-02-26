@@ -382,7 +382,7 @@ void WorldSession::HandleSwapInvItemOpcode( WorldPacket & recv_data )
 	int8 srcslot=0, dstslot=0;
 	int8 error=0;
 
-	recv_data >> srcslot >> dstslot;
+	recv_data >> dstslot >> srcslot;
 
 	if(!GetPlayer())
 		return;
