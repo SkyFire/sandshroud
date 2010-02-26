@@ -32,7 +32,7 @@ enum SpellTargetSpecification
     TARGET_SPEC_DEAD        = 2,
 };
 
-void SpellCastTargets::read( WorldPacket & data,uint64 caster )
+void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 {
 	m_unitTarget = m_itemTarget = 0;
 	m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = 0;
@@ -163,39 +163,47 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 			g_caster = NULLGOB;
 			i_caster = NULLITEM;
 			u_caster = TO_UNIT( Caster );
-		    p_caster = TO_PLAYER( Caster );
+			p_caster = TO_PLAYER( Caster );
+			v_caster = NULLVEHICLE;
+			if(Caster->IsVehicle())
+				v_caster = TO_VEHICLE( Caster );
 			if( p_caster->GetDuelState() == DUEL_STATE_STARTED )
-			    duelSpell = true;
-        }break;
+				duelSpell = true;
+		}break;
 
 	case TYPEID_UNIT:
-        {
-		    g_caster = NULLGOB;
-		    i_caster = NULLITEM;
-		    p_caster = NULLPLR;
-		    u_caster = TO_UNIT( Caster );
-		    if( u_caster->IsPet() && TO_PET( u_caster)->GetPetOwner() != NULL && TO_PET( u_caster )->GetPetOwner()->GetDuelState() == DUEL_STATE_STARTED )
-			    duelSpell = true;
-        }break;
+		{
+			g_caster = NULLGOB;
+			i_caster = NULLITEM;
+			p_caster = NULLPLR;
+			v_caster = NULLVEHICLE;
+			u_caster = TO_UNIT( Caster );
+			if(Caster->IsVehicle())
+				v_caster = TO_VEHICLE( Caster );
+			if( u_caster->IsPet() && TO_PET( u_caster)->GetPetOwner() != NULL && TO_PET( u_caster )->GetPetOwner()->GetDuelState() == DUEL_STATE_STARTED )
+				duelSpell = true;
+		}break;
 
 	case TYPEID_ITEM:
 	case TYPEID_CONTAINER:
-        {
-		    g_caster = NULLGOB;
-		    u_caster = NULLUNIT;
-		    p_caster = NULLPLR;
-		    i_caster = TO_ITEM( Caster );
+		{
+			g_caster = NULLGOB;
+			u_caster = NULLUNIT;
+			p_caster = NULLPLR;
+			v_caster = NULLVEHICLE;
+			i_caster = TO_ITEM( Caster );
 			if( i_caster->GetOwner() && i_caster->GetOwner()->GetDuelState() == DUEL_STATE_STARTED )
 				duelSpell = true;
-        }break;
+		}break;
 
 	case TYPEID_GAMEOBJECT:
-        {
-		    u_caster = NULLUNIT;
-		    p_caster = NULLPLR;
-		    i_caster = NULLITEM;
-		    g_caster = TO_GAMEOBJECT( Caster );
-        }break;
+		{
+			u_caster = NULLUNIT;
+			p_caster = NULLPLR;
+			v_caster = NULLVEHICLE;
+			i_caster = NULLITEM;
+			g_caster = TO_GAMEOBJECT( Caster );
+		}break;
 
 	default:
 		{
@@ -1111,7 +1119,7 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		SendSpellStart();
 
 		// start cooldown handler
-		if( p_caster != NULL && !p_caster->CastTimeCheat )
+		if( p_caster != NULL && !p_caster->CastTimeCheat)
 		{
 			AddStartCooldown();
 		}
@@ -1141,7 +1149,6 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 	}
 	else
 		cast( false );
-
 
 	return ccr;
 }
@@ -1935,7 +1942,7 @@ void Spell::finish()
 				if(!pTarget)
 					pTarget = p_caster->GetMapMgr()->GetUnit(p_caster->GetSelection());
 			}
-			   
+
 			if(pTarget)
 			{
 				pTarget->RemoveAura(m_spellInfo->Id, m_caster->GetGUID());
@@ -1977,7 +1984,9 @@ void Spell::finish()
 void Spell::SendCastResult(uint8 result)
 {
 	uint32 Extra = 0;
-	if(result == SPELL_CANCAST_OK) return;
+
+	if(result == SPELL_CANCAST_OK)
+		return;
 
 	SetSpellFailed();
 

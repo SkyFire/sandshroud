@@ -783,6 +783,8 @@ void WorldSession::FullLogin(Player* plr)
 	// Enable certain GM abilities on login.
 	if(HasGMPermissions())
 	{
+		plr->bGMTagOn = true;
+		plr->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);
 		plr->m_isGmInvisible = true;
 		plr->m_invisible = true;
 		if(CanUseCommand('z'))

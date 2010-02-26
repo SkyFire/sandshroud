@@ -9,25 +9,25 @@
 class SERVER_DECL WorldPacket : public ByteBuffer
 {
 public:
-    __inline WorldPacket() : ByteBuffer(), m_opcode(0), m_bufferPool(-1) { }
-    __inline WorldPacket(uint16 opcode, size_t res) : ByteBuffer(res), m_opcode(opcode), m_bufferPool(-1) {}
-    __inline WorldPacket(size_t res) : ByteBuffer(res), m_opcode(0), m_bufferPool(-1) { }
-    __inline WorldPacket(const WorldPacket &packet) : ByteBuffer(packet), m_opcode(packet.m_opcode), m_bufferPool(-1) {}
+	__inline WorldPacket() : ByteBuffer(), m_opcode(0), m_bufferPool(-1) { }
+	__inline WorldPacket(uint16 opcode, size_t res) : ByteBuffer(res), m_opcode(opcode), m_bufferPool(-1) {}
+	__inline WorldPacket(size_t res) : ByteBuffer(res), m_opcode(0), m_bufferPool(-1) { }
+	__inline WorldPacket(const WorldPacket &packet) : ByteBuffer(packet), m_opcode(packet.m_opcode), m_bufferPool(-1) {}
 
-    //! Clear packet and set opcode all in one mighty blow
-    __inline void Initialize(uint16 opcode )
-    {
-        clear();
-        m_opcode = opcode;
-    }
+	//! Clear packet and set opcode all in one mighty blow
+	__inline void Initialize(uint16 opcode )
+	{
+		clear();
+		m_opcode = opcode;
+	}
 
-    __inline uint16 GetOpcode() const { return m_opcode; }
-    __inline void SetOpcode(uint16 opcode) { m_opcode = opcode; }
+	__inline uint16 GetOpcode() const { return m_opcode; }
+	__inline void SetOpcode(uint16 opcode) { m_opcode = opcode; }
 
 	static WorldPacket* Create() { return new WorldPacket(); }
 
 protected:
-    uint16 m_opcode;
+	uint16 m_opcode;
 
 public:
 	int8 m_bufferPool;
@@ -38,9 +38,10 @@ public:
 		{
 			uint32 j = 1, k = 1;
 			sLog.outDebug("STORAGE_SIZE: %lu", (unsigned long)size() );
+			sLog.outDebugInLine("START: ");
 			for(uint32 i = 0; i < size(); ++i)
 				sLog.outDebugInLine("%u - ", read<uint8>(i) );
-			sLog.outDebug(" ");
+			sLog.outDebugInLine("END\n");
 		}
 	}
 };

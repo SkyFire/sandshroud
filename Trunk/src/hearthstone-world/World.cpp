@@ -1221,9 +1221,6 @@ void World::Rehash(bool load)
 
 	StartLevel = Config.MainConfig.GetIntDefault("Server", "StartLevel", 1);
 	StartGold = Config.MainConfig.GetIntDefault("Server", "StartGold", 1);
-	
-	arena_season = Config.MainConfig.GetIntDefault("Arena", "Season", 1);
-	arena_progress = Config.MainConfig.GetIntDefault("Arena", "Progress", 1);
 
 	// load regeneration rates.
 	setRate(RATE_HEALTH,Config.MainConfig.GetFloatDefault("Rates", "Health",1));

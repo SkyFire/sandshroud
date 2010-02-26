@@ -165,7 +165,7 @@ void Player::Init()
 	//PvPTimeoutEnabled	   = false;
 
 	//Tutorials
-	for ( int aX = 0 ; aX < 8 ; aX++ )
+	for ( int aX = 0; aX < 8; aX++ )
 		m_Tutorials[ aX ] = 0x00;
 
 	m_lootGuid			  = 0;
@@ -6584,11 +6584,6 @@ void Player::SendInitialLogonPackets()
 	data << uint32(0);
 	GetSession()->SendPacket( &data );
 
-	WorldPacket ArenaSettings(SMSG_UPDATE_WORLD_STATE, 16);
-	ArenaSettings << uint32(0xC77) << uint32(sWorld.arena_progress);
-	ArenaSettings << uint32(0xF3D) << uint32(sWorld.arena_season);
-	GetSession()->SendPacket( &ArenaSettings );
-
 	DEBUG_LOG("WORLD","Sent initial logon packets for %s.", GetName());
 }
 
@@ -7389,7 +7384,7 @@ void Player::RegenerateEnergy()
 		m_toRegen--;
 	}
 
-	SetUInt32Value(UNIT_FIELD_POWER4,(cur>=mh) ? mh : cur);
+	SetUInt32Value(UNIT_FIELD_POWER4,(cur >= mh) ? mh : cur);
 }
 
 uint32 Player::GeneratePetNumber()
@@ -7485,7 +7480,7 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 void Player::AddItemsToWorld()
 {
 	Item* pItem;
-	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; i++)
+	for(uint32 i = 0; i < INVENTORY_KEYRING_END; i++)
 	{
 		pItem = GetItemInterface()->GetInventoryItem(i);
 		if( pItem != NULL )
@@ -7495,11 +7490,6 @@ void Player::AddItemsToWorld()
 			if(i < INVENTORY_SLOT_BAG_END)	  // only equipment slots get mods.
 			{
 				_ApplyItemMods(pItem, i, true, false, true);
-			}
-
-			if(i >= CURRENCYTOKEN_SLOT_START && i < CURRENCYTOKEN_SLOT_END)
-			{
-				UpdateKnownCurrencies(pItem->GetEntry(), true);
 			}
 
 			if(pItem->IsContainer() && GetItemInterface()->IsBagSlot(i))
@@ -7525,7 +7515,7 @@ void Player::AddItemsToWorld()
 void Player::RemoveItemsFromWorld()
 {
 	Item* pItem;
-	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; i++)
+	for(uint32 i = 0; i < INVENTORY_KEYRING_END; i++)
 	{
 		pItem = m_ItemInterface->GetInventoryItem((int8)i);
 		if(pItem)
@@ -12536,25 +12526,6 @@ uint16 Player::FindQuestSlot( uint32 questid )
 			return i;
 
 	return 25;
-}
-
-void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
-{
-	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
-	{
-		if(apply)
-		{
-			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-			uint64 newval = oldval | ( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
-			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
-		}
-		else
-		{
-			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-			uint64 newval = oldval & ~( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
-			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
-		}
-	}
 }
 
 uint32 Player::GetTotalItemLevel()

@@ -111,7 +111,6 @@ public:
 	SlotResult FindAmmoBag();
 	int8 FindFreeBackPackSlot();
 	int8 FindFreeKeyringSlot();
-	int8 FindFreeCurrencySlot();
 	int8 FindSpecialBag(Item* item);
 
 

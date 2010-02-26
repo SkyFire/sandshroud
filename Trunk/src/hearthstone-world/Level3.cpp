@@ -1983,7 +1983,9 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	else
 		plr = getSelectedChar(m_session, true);
 	
-	if(!plr) return true;
+	if(!plr)
+		return true;
+
 	if(!plr->GetSession())
 	{
 		RedSystemMessage(m_session, "ERROR: this player hasn't got any session !");

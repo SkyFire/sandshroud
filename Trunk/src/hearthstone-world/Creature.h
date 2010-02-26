@@ -152,6 +152,7 @@ struct CreatureProto
 	uint32 extra_a9_flags;
 	uint32	auraimmune_flag;
 	int32 vehicle_entry;
+	uint32 SpellClickid;
 	uint8 CanMove;
 
 	/* AI Stuff */

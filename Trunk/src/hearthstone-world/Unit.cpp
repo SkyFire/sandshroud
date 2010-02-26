@@ -7295,10 +7295,10 @@ void Unit::EnterVehicle(Vehicle * vehicle)
 			data << float(0);										// Orientation Offset
 			data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
 			data << uint32(0);										// MoveTime
-			data << uint32(0);										// Points
-			data << uint32(0);										// GetTransOffsetX();
-			data << uint32(0);										// GetTransOffsetY();
-			data << uint32(0);										// GetTransOffsetZ();
+			data << uint32(1);										// Points
+			data << float(0);										// GetTransOffsetX();
+			data << float(0);										// GetTransOffsetY();
+			data << float(0);										// GetTransOffsetZ();
 			SendMessageToSet(&data, true);
 			break;
 		}
@@ -7361,10 +7361,10 @@ void Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 		data << float(0);										// Orientation Offset
 		data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
 		data << uint32(0);										// MoveTime
-		data << uint32(0);										// Points
-		data << uint32(0);										// GetTransOffsetX();
-		data << uint32(0);										// GetTransOffsetY();
-		data << uint32(0);										// GetTransOffsetZ();
+		data << uint32(1);										// Points
+		data << float(0);										// GetTransOffsetX();
+		data << float(0);										// GetTransOffsetY();
+		data << float(0);										// GetTransOffsetZ();
 		SendMessageToSet(&data, true);
 
 		return;
@@ -7389,10 +7389,10 @@ void Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 			data << float(0);										// Orientation Offset
 			data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
 			data << uint32(0);										// MoveTime
-			data << uint32(0);										// Points
-			data << uint32(0);										// GetTransOffsetX();
-			data << uint32(0);										// GetTransOffsetY();
-			data << uint32(0);										// GetTransOffsetZ();
+			data << uint32(1);										// Points
+			data << float(0);										// GetTransOffsetX();
+			data << float(0);										// GetTransOffsetY();
+			data << float(0);										// GetTransOffsetZ();
 			SendMessageToSet(&data, true);
 			return;
 		}

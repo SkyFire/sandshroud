@@ -715,9 +715,9 @@ void Creature::RegenerateEnergy()
 	if(cur >= mm)
 		return;
 
-	float amt = 1.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY];
+	float amt = 2.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY];
 	cur += (uint32)amt;
-	SetUInt32Value(UNIT_FIELD_POWER4,(cur>=mm) ? mm : cur);
+	SetUInt32Value(UNIT_FIELD_POWER4,(cur >= mm) ? mm : cur);
 }
 
 void Creature::CallScriptUpdate()

@@ -1494,6 +1494,9 @@ void WorldSession::HandleSetSheathedOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandlePlayedTimeOpcode( WorldPacket & recv_data )
 {
+	uint8 send;
+	recv_data >> send;
+
 	uint32 playedt = (uint32)UNIXTIME - _player->m_playedtime[2];
 	if(playedt)
 	{
@@ -1505,7 +1508,7 @@ void WorldSession::HandlePlayedTimeOpcode( WorldPacket & recv_data )
 	WorldPacket data(SMSG_PLAYED_TIME, 9);
 	data << (uint32)_player->m_playedtime[1];
 	data << (uint32)_player->m_playedtime[0];
-	data << uint8(0);
+	data << uint8(send);
 	SendPacket(&data);
 }
 

@@ -169,6 +169,10 @@ int WorldSession::Update(uint32 InstanceID)
 
 					if(sLog.IsOutProccess() && (packet->rpos() < packet->wpos()))
 						LogUnprocessedTail(packet);
+
+					if(Handler->status == STATUS_AUTHED)
+						if(packet->GetOpcode() != CMSG_SET_ACTIVE_VOICE_CHANNEL)
+							_recentlogout = false;
 				}
 			}
 		}
@@ -696,7 +700,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_NPC_TEXT_QUERY].handler						= &WorldSession::HandleNpcTextQueryOpcode;
 	WorldPacketHandlers[CMSG_BINDER_ACTIVATE].handler						= &WorldSession::HandleBinderActivateOpcode;
 	WorldPacketHandlers[CMSG_ACTIVATETAXIEXPRESS].handler					= &WorldSession::HandleMultipleActivateTaxiOpcode;
-	
+
 	// Item / Vendors
 	WorldPacketHandlers[CMSG_SWAP_INV_ITEM].handler							= &WorldSession::HandleSwapInvItemOpcode;
 	WorldPacketHandlers[CMSG_SWAP_ITEM].handler								= &WorldSession::HandleSwapItemOpcode;
@@ -895,9 +899,6 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_COMPLAIN].handler								= &WorldSession::HandleReportSpamOpcode;
 	WorldPacketHandlers[CMSG_WORLD_STATE_UI_TIMER_UPDATE].handler			= &WorldSession::HandleWorldStateUITimerUpdate;
 
-	// Pet Cast Spell?
-	WorldPacketHandlers[CMSG_PET_CAST_SPELL].handler						= &WorldSession::HandleAddDynamicTargetOpcode;
-
 	// Arenas
 	WorldPacketHandlers[CMSG_ARENA_TEAM_QUERY].handler						= &WorldSession::HandleArenaTeamQueryOpcode;
 	WorldPacketHandlers[CMSG_ARENA_TEAM_ROSTER].handler						= &WorldSession::HandleArenaTeamRosterOpcode;
@@ -945,6 +946,9 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_EXIT].handler					= &WorldSession::HandleVehicleDismiss;
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_SWITCH_SEAT].handler			= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE].handler	= &WorldSession::HandleRequestSeatChange;
+
+	// Minion Cast Spell
+	WorldPacketHandlers[CMSG_PET_CAST_SPELL].handler						= &WorldSession::HandleCharmForceCastSpell;
 }
 
 /// Logging helper for unexpected opcodes

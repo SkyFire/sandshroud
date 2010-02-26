@@ -1018,6 +1018,7 @@ void Item::RemoveProfessionEnchant()
 	{
 		if( itr->second.Duration != 0 )// not perm
 			continue;
+
 		if( IsGemRelated( itr->second.Enchantment ) )
 			continue;
 
@@ -1079,11 +1080,10 @@ uint32 Item::GenerateRandomSuffixFactor( ItemPrototype* m_itemProto )
 	return long2int32( value );
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // Item Links
 //////////////////////////////////////////////////////////////////////////
-static const char *g_itemQualityColours[7] = {
+static const char *g_itemQualityColours[9] = {
 	"|cff9d9d9d",		// Grey
 	"|cffffffff",		// White
 	"|cff1eff00",		// Green
@@ -1091,18 +1091,20 @@ static const char *g_itemQualityColours[7] = {
 	"|cffa335ee",		// Purple
 	"|cffff8000",		// Orange
 	"|cffe6cc80",		// Artifact
+	"|c00fce080",		// Heirloom
+	"|cff00ffff",		// Gamemaster
 };
 
 string ItemPrototype::ConstructItemLink(uint32 random_prop, uint32 random_suffix, uint32 stack)
 {
-	if( Quality > 6 )
+	if( Quality > 8 )
 		return "INVALID_ITEM";
 
 	char buf[1000];
 	char sbuf[50];
 	char rptxt[100];
 	char rstxt[100];
-	
+
 	// stack text
 	if( stack > 1 )
 		snprintf(sbuf, 50, "x%u", stack);
@@ -1132,7 +1134,7 @@ string ItemPrototype::ConstructItemLink(uint32 random_prop, uint32 random_suffix
 	// construct full link
 	snprintf(buf, 1000, "%s|Hitem:%u:0:0:0:0:0:%d:0|h[%s%s%s]%s|h|r", g_itemQualityColours[Quality], ItemId, /* suffix/prop */ random_suffix ? (-(int32)random_suffix) : random_prop, 
 		Name1, rstxt, rptxt, sbuf);
-	
+
 	return string(buf);
 }
 

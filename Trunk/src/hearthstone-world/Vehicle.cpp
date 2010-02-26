@@ -438,7 +438,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	pPassenger->m_CurrentVehicle = NULL;
 	pPassenger->m_inVehicleSeatId = 0xFF;
 
-	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION));
+	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
 	if( pPassenger->IsPlayer() )
 		pPassenger->RemoveAura(TO_PLAYER(pPassenger)->m_MountSpellId);
 
@@ -511,6 +511,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 				SetUInt32Value(UNIT_FIELD_MAXHEALTH, GetProto()->MaxHealth);
 			}
 		}
+		plr->SetPlayerStatus(NONE);
 	}
 		
 	if(slot == 0)
@@ -518,6 +519,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		m_redirectSpellPackets = NULLPLR;
 		CombatStatus.Vanished();
 		pPassenger->SetUInt64Value( UNIT_FIELD_CHARM, 0 );
+		SetUInt64Value(UNIT_FIELD_CHARMEDBY, 0);
 		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, GetCharmTempVal());
 		/* update target faction set */
 		_setFaction();
@@ -571,6 +573,12 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	if(pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_CurrentCharm)
 		return;
 
+	if(pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_isGmInvisible)
+	{
+		sChatHandler.GreenSystemMessage(TO_PLAYER(pPassenger)->GetSession(), "Please turn of invis before entering vehicle.");
+		return;
+	}
+
 	m_passengers[ slot ] = pPassenger;
 	pPassenger->m_inVehicleSeatId = slot;
 	/* pPassenger->m_transportGuid = GetGUID(); */
@@ -613,7 +621,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 
 		pPlayer->m_CurrentVehicle = TO_VEHICLE(this);
 
-		pPlayer->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION));
+		pPlayer->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
 
 		//pPlayer->ResetHeartbeatCoords();
 		pPlayer->SetUInt64Value(PLAYER_FARSIGHT, GetGUID());
@@ -687,6 +695,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
 		data << pPlayer->GetPosition();
 		pPlayer->GetSession()->SendPacket(&data);
+		pPlayer->SetPlayerStatus(NONE);
 	}
 	else
 	{
@@ -839,17 +848,40 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 	if (GetPlayer() == NULL || GetPlayer()->m_CurrentVehicle)
 		return;
 
-    CHECK_PACKET_SIZE(recv_data, 8);
+	CHECK_PACKET_SIZE(recv_data, 8);
 
-    uint64 guid;
-    recv_data >> guid;
+	uint64 guid;
+	recv_data >> guid;
 
-	Vehicle* pVehicle = GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
+	Vehicle* pVehicle = NULL;
+	Unit* unit = GetPlayer()->GetMapMgr()->GetUnit(guid);
 	Unit* pPlayer = TO_UNIT(GetPlayer());
 
-	if(!pVehicle)
+	if(!unit)
 		return;
-	
+
+	if(!unit->IsVehicle())
+	{
+		if(unit->IsCreature())
+		{
+			Creature* ctr = TO_CREATURE(unit);
+			if(ctr->GetProto()->SpellClickid)
+				ctr->CastSpell(pPlayer, ctr->GetProto()->SpellClickid, true);
+			else
+			{
+				if(sLog.IsOutDevelopement())
+					printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
+				else
+					OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
+			}
+		}
+		return;
+	}
+	else
+	{
+		pVehicle = TO_VEHICLE(unit);
+	}
+
 	if(!pVehicle->GetMaxPassengerCount())
 		return;
 

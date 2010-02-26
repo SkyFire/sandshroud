@@ -569,10 +569,6 @@ public:
 
 	bool display_free_items;
 
-	//Arena Season's
-	int arena_season;
-	int arena_progress;
-
 	//Enable/Disable specific battlegrounds/arenas
 	bool av_disabled;
 	bool wsg_disabled;

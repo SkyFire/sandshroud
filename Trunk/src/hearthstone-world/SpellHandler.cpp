@@ -375,7 +375,7 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& recv_data)
 	_player->m_onAutoShot = false;
 }
 
-void WorldSession::HandleAddDynamicTargetOpcode(WorldPacket & recvPacket)
+void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 {
 	DEBUG_LOG( "WORLD"," got CMSG_PET_CAST_SPELL." );
 	uint64 guid;
@@ -392,7 +392,7 @@ void WorldSession::HandleAddDynamicTargetOpcode(WorldPacket & recvPacket)
 	sp = dbcSpell.LookupEntry(spellid);
 
 	// Summoned Elemental's Freeze
-    if (spellid == 33395)
+    if(spellid == 33395)
 	{
 		caster = _player->m_Summon;
 		if( caster && TO_PET(caster)->GetAISpellForSpellId(spellid) == NULL )
@@ -403,20 +403,63 @@ void WorldSession::HandleAddDynamicTargetOpcode(WorldPacket & recvPacket)
 		caster = _player->m_CurrentCharm;
 		if( caster != NULL )
 		{
-			for(itr = caster->GetAIInterface()->m_spells.begin(); itr != caster->GetAIInterface()->m_spells.end(); ++itr)
+			if(caster->IsVehicle() && !caster->IsPlayer())
 			{
-				if( (*itr)->spell->Id == spellid )
-					break;
-			}
+				CreatureProtoVehicle* vehpro = CreatureProtoVehicleStorage.LookupEntry(caster->GetEntry());
+				bool hasspell = false;
 
-			if( itr == caster->GetAIInterface()->m_spells.end() )
-				return;
+				for(int i = 0; i < 6; ++i)
+				{
+					if(vehpro->VehicleSpells[i] = spellid)
+					{
+						hasspell = true;
+						break;
+					}
+				}
+				if(!hasspell)
+				{
+					WorldPacket data(SMSG_PET_CAST_FAILED, 1 + 4 + 1);
+					data << uint8(0);
+					data << uint32(spellid);
+					data << uint8(SPELL_FAILED_NOT_KNOWN);
+					SendPacket(&data); // Send packet to owner
+					return;
+				}
+			}
+			else
+			{
+				for(itr = caster->GetAIInterface()->m_spells.begin(); itr != caster->GetAIInterface()->m_spells.end(); ++itr)
+				{
+					if( (*itr)->spell->Id == spellid )
+						break;
+				}
+
+				if( itr == caster->GetAIInterface()->m_spells.end() )
+					return;
+			}
 		}
 	}
 
-	if( caster == NULL || guid != caster->GetGUID() )
+	if( caster == NULL || guid != caster->GetGUID())
+	{
+		WorldPacket data(SMSG_PET_CAST_FAILED, 1 + 4 + 1);
+		data << uint8(0);
+		data << uint32(spellid);
+		data << uint8(SPELL_FAILED_SPELL_UNAVAILABLE);
+		SendPacket(&data); // Send packet to owner
 		return;
-	
+	}
+
+	if( caster->IsVehicle() && !_player->m_CurrentVehicle)
+	{
+		WorldPacket data(SMSG_PET_CAST_FAILED, 1 + 4 + 1);
+		data << uint8(0);
+		data << uint32(spellid);
+		data << uint8(SPELL_FAILED_NOT_ON_TRANSPORT);
+		SendPacket(&data); // Send packet to owner
+		return;
+	}
+
 	targets.read(recvPacket, _player->GetGUID());
 
 	pSpell = new Spell(caster, sp, false, NULLAURA);

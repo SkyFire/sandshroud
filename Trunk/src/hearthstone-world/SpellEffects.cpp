@@ -181,7 +181,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS]={
 		&Spell::SpellEffectNULL,						// unknown - 153 // SPELL_EFFECT_CREATE_PET  misc value is creature entry
 		&Spell::SpellEffectNULL,						//154 unused
 		&Spell::SpellEffectTitanGrip,					// Titan's Grip - 155
-		&Spell::SpellEffectNULL,						//156 Add Socket
+		&Spell::SpellEffectAddPrismaticSocket,			//156 Add Socket
 		&Spell::SpellEffectCreateRandomItem,			//157 create/learn random item/spell for profession
 		&Spell::SpellEffectMilling,						//158 milling
 		&Spell::SpellEffectNULL,						//159 allow rename pet once again
@@ -4631,6 +4631,51 @@ void Spell::SpellEffectEnchantItemTemporary(uint32 i)  // Enchant Item Temporary
 		DetermineSkillUp(skill->skilline,itemTarget->GetProto()->ItemLevel);
 
 	itemTarget->m_isDirty = true;
+}
+
+void Spell::SpellEffectAddPrismaticSocket(uint32 i)
+{
+	if( p_caster == NULL)
+		return;
+
+	if(!itemTarget)
+		return;
+
+	Player* p_caster = (Player*)m_caster;
+
+	EnchantEntry* pEnchant = dbcEnchant.LookupEntry(m_spellInfo->EffectMiscValue[i]);
+	if(!pEnchant)
+		return;
+
+	bool add_socket = false;
+
+	for(uint8 i = 0; i < 3; ++i)
+	{
+		if(pEnchant->type[i] == 8)
+		{
+			add_socket = true;
+			break;
+		}
+	}
+
+	if(!add_socket)
+	{
+		return;
+	}
+
+	// Item can be in trade slot and have owner diff. from caster
+	Player* item_owner = itemTarget->GetOwner();
+	if(!item_owner)
+		return;
+
+	if(itemTarget->GetSocketsCount() >= 3)
+	{
+		item_owner->SendCastResult(this->GetSpellProto()->Id, SPELL_FAILED_MAX_SOCKETS, 0, 0);
+		return;
+	}
+
+	itemTarget->RemoveProfessionEnchant();
+	itemTarget->AddEnchantment(pEnchant, 0, true, true, false, 6); // 6 is profession slot.
 }
 
 void Spell::SpellEffectTameCreature(uint32 i)
