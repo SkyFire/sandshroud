@@ -6741,6 +6741,10 @@ void Player::ApplySpec(uint8 spec, bool init)
 			titanGrip = false;
 			ResetTitansGrip();
 		}
+		if( getClass() == DRUID )
+		{
+			SetShapeShift(0);
+		}
 
 		//Dismiss any pets
 		if(GetSummon())

@@ -4641,14 +4641,11 @@ void Spell::SpellEffectAddPrismaticSocket(uint32 i)
 	if(!itemTarget)
 		return;
 
-	Player* p_caster = (Player*)m_caster;
-
 	EnchantEntry* pEnchant = dbcEnchant.LookupEntry(m_spellInfo->EffectMiscValue[i]);
 	if(!pEnchant)
 		return;
 
 	bool add_socket = false;
-
 	for(uint8 i = 0; i < 3; ++i)
 	{
 		if(pEnchant->type[i] == 8)
@@ -4658,10 +4655,8 @@ void Spell::SpellEffectAddPrismaticSocket(uint32 i)
 		}
 	}
 
-	if(!add_socket)
-	{
+	if(!add_socket) // Wrong spell.
 		return;
-	}
 
 	// Item can be in trade slot and have owner diff. from caster
 	Player* item_owner = itemTarget->GetOwner();
@@ -4670,7 +4665,7 @@ void Spell::SpellEffectAddPrismaticSocket(uint32 i)
 
 	if(itemTarget->GetSocketsCount() >= 3)
 	{
-		item_owner->SendCastResult(this->GetSpellProto()->Id, SPELL_FAILED_MAX_SOCKETS, 0, 0);
+		SendCastResult(SPELL_FAILED_MAX_SOCKETS);
 		return;
 	}
 
@@ -7768,7 +7763,29 @@ void Spell::SpellEffectActivateTalentSpec(uint32 i)
 	if(!p_caster)
 		return;
 
+	if(p_caster->m_bg)
+	{
+		SendCastResult(SPELL_FAILED_NOT_IN_BATTLEGROUND);
+		return;
+	}
+
 	// 1 = primary, 2 = secondary
 	p_caster->ApplySpec(uint8(damage - 1), false);
 
+	// Use up all our power.
+	switch(p_caster->GetPowerType())
+	{
+	case POWER_TYPE_MANA:
+		p_caster->SetPower(POWER_TYPE_MANA, 0);
+		break;
+	case POWER_TYPE_RAGE:
+		p_caster->SetPower(POWER_TYPE_RAGE, 0);
+		break;
+	case POWER_TYPE_ENERGY:
+		p_caster->SetPower(POWER_TYPE_ENERGY, 0);
+		break;
+	case POWER_TYPE_RUNE:
+		p_caster->SetPower(POWER_TYPE_RUNE, 0);
+		break;
+	}
 }
