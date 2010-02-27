@@ -393,7 +393,7 @@ void StatDumper::DumpStats()
 		"hunter",
 		"rogue",
 		"priest",
-		NULL,
+		"deathknight",
 		"shaman",
 		"mage",
 		"warlock",

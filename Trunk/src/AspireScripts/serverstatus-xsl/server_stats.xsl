@@ -157,7 +157,7 @@
 		</tr>
 		<tr>
 			<th>Warlock: </th><td><xsl:value-of select="warlock"/></td>
-			<th> </th><td> </td>
+			<th>Death Knight: </th><td><xsl:value-of select="deathknight"/></td>
 		</tr>
 		</table>
 	</td>
@@ -198,6 +198,8 @@
 <xsl:template match="rogue">
 </xsl:template>
 <xsl:template match="priest">
+</xsl:template>
+<xsl:template match="deathknight">
 </xsl:template>
 <xsl:template match="shaman">
 </xsl:template>
@@ -310,6 +312,36 @@
 				<xsl:when test="map = 565">Gruul's Lair</xsl:when>
 				<xsl:when test="map = 566">Eye of the Storm</xsl:when>
 				<xsl:when test="map = 568">Zul'Aman</xsl:when>
+				<xsl:when test="map = 571">Northrend</xsl:when>
+				<xsl:when test="map = 573">ExteriorTest</xsl:when>
+				<xsl:when test="map = 582">Transport: Rut'theran to Auberdine</xsl:when>
+				<xsl:when test="map = 584">Transport: Menethil to Theramore</xsl:when>
+				<xsl:when test="map = 586">Transport: Exodar to Auberdine</xsl:when>
+				<xsl:when test="map = 587">Transport: Feathermoon Ferry</xsl:when>
+				<xsl:when test="map = 588">Transport: Orgrimmar to Grom'Gol</xsl:when>
+				<xsl:when test="map = 589">Transport: Menethil to Auberdine</xsl:when>
+				<xsl:when test="map = 590">Transport: Grom'Gol to Undercity</xsl:when>
+				<xsl:when test="map = 591">Transport: Undercity to Orgrimmar</xsl:when>
+				<xsl:when test="map = 592">Unknown Transport</xsl:when>
+				<xsl:when test="map = 593">Transport: Booty Bay to Ratchet</xsl:when>
+				<xsl:when test="map = 594">Transport: Howling Fjord Sister Mercy (Quest)</xsl:when>
+				<xsl:when test="map = 596">Transport: Naglfar</xsl:when>
+				<xsl:when test="map = 597">Craig Test</xsl:when>
+				<xsl:when test="map = 598">Sunwell Fix (Unused)</xsl:when>
+				<xsl:when test="map = 605">Development Land (non-weighted textures)</xsl:when>
+				<xsl:when test="map = 606">QA and DVD</xsl:when>
+				<xsl:when test="map = 609">Ebon Hold</xsl:when>
+				<xsl:when test="map = 610">Transport: Tirisfal to Vengeance Landing</xsl:when>
+				<xsl:when test="map = 612">Transport: Menethil to Valgarde</xsl:when>
+				<xsl:when test="map = 613">Transport: Orgrimmar to Warsong Hold</xsl:when>
+				<xsl:when test="map = 614">Transport: Stormwind to Valiance Keep</xsl:when>
+				<xsl:when test="map = 620">Transport: Moa'ki to Unu'pe</xsl:when>
+				<xsl:when test="map = 621">Transport: Moa'ki to Kamagua</xsl:when>
+				<xsl:when test="map = 622">Transport: Orgrim's Hammer</xsl:when>
+				<xsl:when test="map = 623">Transport: The Skybreaker</xsl:when>
+				<xsl:when test="map = 641">Transport: Alliance Airship BG</xsl:when>
+				<xsl:when test="map = 642">Transport: HordeAirshipBG</xsl:when>
+				<xsl:when test="map = 647">Transport: Orgrimmar to Thunder Bluff</xsl:when>
             </xsl:choose>
 
 			(<xsl:value-of select="map" />)</td>
@@ -382,6 +414,7 @@
 					<xsl:when test="class = 4">Rogue</xsl:when>
 
 					<xsl:when test="class = 5">Priest</xsl:when>
+					<xsl:when test="class = 6">Death Knight</xsl:when>
 					<xsl:when test="class = 7">Shaman</xsl:when>
 					<xsl:when test="class = 8">Mage</xsl:when>
 					<xsl:when test="class = 9">Warlock</xsl:when>
@@ -451,6 +484,7 @@
                <xsl:when test="class = 3">Hunter</xsl:when>
                <xsl:when test="class = 4">Rogue</xsl:when>
                <xsl:when test="class = 5">Priest</xsl:when>
+			   <xsl:when test="class = 6">Death Knight</xsl:when>
                <xsl:when test="class = 7">Shaman</xsl:when>
                <xsl:when test="class = 8">Mage</xsl:when>
                <xsl:when test="class = 9">Warlock</xsl:when>
@@ -543,6 +577,36 @@
 <xsl:when test="map = 565">Gruul's Lair</xsl:when>
 <xsl:when test="map = 566">Eye of the Storm</xsl:when>
 <xsl:when test="map = 568">Zul'Aman</xsl:when>
+<xsl:when test="map = 571">Northrend</xsl:when>
+<xsl:when test="map = 573">ExteriorTest</xsl:when>
+<xsl:when test="map = 582">Transport: Rut'theran to Auberdine</xsl:when>
+<xsl:when test="map = 584">Transport: Menethil to Theramore</xsl:when>
+<xsl:when test="map = 586">Transport: Exodar to Auberdine</xsl:when>
+<xsl:when test="map = 587">Transport: Feathermoon Ferry</xsl:when>
+<xsl:when test="map = 588">Transport: Orgrimmar to Grom'Gol</xsl:when>
+<xsl:when test="map = 589">Transport: Menethil to Auberdine</xsl:when>
+<xsl:when test="map = 590">Transport: Grom'Gol to Undercity</xsl:when>
+<xsl:when test="map = 591">Transport: Undercity to Orgrimmar</xsl:when>
+<xsl:when test="map = 592">Unknown Transport</xsl:when>
+<xsl:when test="map = 593">Transport: Booty Bay to Ratchet</xsl:when>
+<xsl:when test="map = 594">Transport: Howling Fjord Sister Mercy (Quest)</xsl:when>
+<xsl:when test="map = 596">Transport: Naglfar</xsl:when>
+<xsl:when test="map = 597">Craig Test</xsl:when>
+<xsl:when test="map = 598">Sunwell Fix (Unused)</xsl:when>
+<xsl:when test="map = 605">Development Land (non-weighted textures)</xsl:when>
+<xsl:when test="map = 606">QA and DVD</xsl:when>
+<xsl:when test="map = 609">Ebon Hold</xsl:when>
+<xsl:when test="map = 610">Transport: Tirisfal to Vengeance Landing</xsl:when>
+<xsl:when test="map = 612">Transport: Menethil to Valgarde</xsl:when>
+<xsl:when test="map = 613">Transport: Orgrimmar to Warsong Hold</xsl:when>
+<xsl:when test="map = 614">Transport: Stormwind to Valiance Keep</xsl:when>
+<xsl:when test="map = 620">Transport: Moa'ki to Unu'pe</xsl:when>
+<xsl:when test="map = 621">Transport: Moa'ki to Kamagua</xsl:when>
+<xsl:when test="map = 622">Transport: Orgrim's Hammer</xsl:when>
+<xsl:when test="map = 623">Transport: The Skybreaker</xsl:when>
+<xsl:when test="map = 641">Transport: Alliance Airship BG</xsl:when>
+<xsl:when test="map = 642">Transport: HordeAirshipBG</xsl:when>
+				<xsl:when test="map = 647">Transport: Orgrimmar to Thunder Bluff</xsl:when>
             </xsl:choose>
          </td>
 
