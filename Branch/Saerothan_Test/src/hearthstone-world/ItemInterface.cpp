@@ -3315,3 +3315,79 @@ void ItemInterface::CheckAreaItems()
 		}
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// Crow: Adds an item by id, allowing for count, random prop, and if created, will send item push created, else, recieved.
+// This was supposed to be given to Arc :|
+bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, bool created )
+{
+	if( count == 0 )
+		return false;
+
+	Player *chr = GetOwner();
+
+	// checking if the iteminterface has owner, impossible to not have one
+	if( chr == NULL )
+		return false;
+
+	ItemPrototype* it = ItemPrototypeStorage.LookupEntry(itemid);
+	if(it == NULL )
+		return false;
+
+	uint32 maxStack = it->MaxCount;
+	uint32 toadd;
+	bool freeslots = true;
+
+	while( count > 0 && freeslots )
+	{
+		if( count < maxStack )
+		{
+			// find existing item with free stack
+			Item* free_stack_item = FindItemLessMax( itemid, count, false );
+			if( free_stack_item != NULL )
+			{
+				// increase stack by new amount
+				chr->GetSession()->SendItemPushResult( free_stack_item, created ? true : false, created ? false : true, true, true, -1, -1, count);
+				free_stack_item->SetUInt32Value( ITEM_FIELD_STACK_COUNT, free_stack_item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + count );
+				free_stack_item->m_isDirty = true;
+				return true;
+			}
+		}
+
+		// create new item
+		Item *item = objmgr.CreateItem( itemid, chr );
+		if( item == NULL )
+			return false;
+
+		if( it->Bonding == ITEM_BIND_ON_PICKUP )
+				item->SoulBind();
+		
+		if( randomprop != 0 )
+		{
+			if( randomprop < 0 )
+				item->SetRandomSuffix( -randomprop );
+			else
+				item->SetRandomProperty( randomprop );
+
+			item->ApplyRandomProperties( false );
+		}
+		
+		toadd = count > maxStack ? maxStack : count;
+
+		item->SetUInt32Value( ITEM_FIELD_STACK_COUNT, toadd );
+		if( AddItemToFreeSlot( item ) )
+		{
+			SlotResult *lr = LastSearchResult();
+
+			chr->GetSession()->SendItemPushResult( item, created ? true : false, created ? false : true, true, true, lr->ContainerSlot, lr->Slot, toadd);
+			count -= toadd;
+		}
+		else
+		{
+			freeslots = false;
+			chr->GetSession()->SendNotification("No free slots were found in your inventory!");
+			item->Destructor();
+		}
+	}
+	return true;
+}
