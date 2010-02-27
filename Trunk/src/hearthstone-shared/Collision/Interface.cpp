@@ -39,4 +39,3 @@ void collision_shutdown()
 	vmgr->unloadMap(530);
 	vmgr->unloadMap(571);
 }
-
