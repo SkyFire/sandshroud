@@ -483,6 +483,15 @@ struct CharTitlesEntry
     uint32  bit_index;                                      // 36 used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
 };
 
+struct CurrencyTypesEntry
+{
+	//uint32    ID;                                       // 0 not used
+	uint32    ItemId;                                     // 1 used as real index
+	//uint32    Category;                                 // 2 may be category
+	uint32    BitIndex;                                   // 3 bit index in PLAYER_FIELD_KNOWN_CURRENCIES (1 << (index-1))
+};
+
+
 struct ItemSetEntry
 {
     uint32 id;						//1
@@ -1675,6 +1684,7 @@ public:
 
 //extern SERVER_DECL DBCStorage<AreaTriggerEntry> dbcAreaTrigger;
 extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
+extern SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypesStore;
 extern SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
 extern SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
 extern SERVER_DECL DBCStorage<Lock> dbcLock;

@@ -1234,7 +1234,7 @@ public:
 	/* Item Interface                                                       */
 	/************************************************************************/
 	HEARTHSTONE_INLINE ItemInterface* GetItemInterface() { return m_ItemInterface; } // Player Inventory Item storage
-	HEARTHSTONE_INLINE void         ApplyItemMods(Item* item, int8 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply,justdrokedown); }
+	HEARTHSTONE_INLINE void ApplyItemMods(Item* item, int16 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply,justdrokedown); }
 	// item interface variables
 	ItemInterface *     m_ItemInterface;
 
@@ -1587,6 +1587,7 @@ public:
 #endif
 	void AddItemsToWorld();
 	void RemoveItemsFromWorld();
+	void UpdateKnownCurrencies(uint32 itemId, bool apply);
 	uint32 GetTotalItemLevel();
 
 	uint32 m_ShapeShifted;
@@ -1968,7 +1969,7 @@ protected:
 	void _LoadPetSpells(QueryResult * result);
 	void _SavePet(QueryBuffer * buf);
 	void _SavePetSpells(QueryBuffer * buf);
-	void _ApplyItemMods( Item* item, int8 slot, bool apply, bool justdrokedown = false, bool skip_stat_apply = false );
+	void _ApplyItemMods( Item* item, int16 slot, bool apply, bool justdrokedown = false, bool skip_stat_apply = false );
 	void _EventAttack( bool offhand );
 	void _EventExploration();
 

@@ -25,8 +25,8 @@
 struct SlotResult
 {
 	SlotResult() { ContainerSlot = -1, Slot = -1, Result = false; }
-	int8 ContainerSlot;
-	int8 Slot;
+	int16 ContainerSlot;
+	int16 Slot;
 	bool Result;
 };
 
@@ -52,7 +52,7 @@ private:
 	Item* m_pItems[MAX_INVENTORY_SLOT];
 	Item* m_pBuyBack[MAX_BUYBACK_SLOT];
 
-	AddItemResult m_AddItem(Item* item, int8 ContainerSlot, int8 slot);
+	AddItemResult m_AddItem(Item* item, int16 ContainerSlot, int16 slot);
 
 public:
 	friend class ItemIterator;
@@ -60,7 +60,7 @@ public:
 	~ItemInterface();
 
 	Player* GetOwner() { return m_pOwner; }
-	bool IsBagSlot(int8 slot);
+	bool IsBagSlot(int16 slot);
 
 	uint32 m_CreateForPlayer(ByteBuffer *data);
 	void m_DestroyForPlayer();
@@ -68,18 +68,18 @@ public:
 	void mLoadItemsFromDatabase(QueryResult * result);
 	void mSaveItemsToDatabase(bool first, QueryBuffer * buf);
 
-	Item* GetInventoryItem(int8 slot);
-	Item* GetInventoryItem(int8 ContainerSlot, int8 slot);
-	int8 GetInventorySlotById(uint32 ID);
-	int8 GetInventorySlotByGuid(uint64 guid);
-	int8 GetBagSlotByGuid(uint64 guid);
+	Item* GetInventoryItem(int16 slot);
+	Item* GetInventoryItem(int16 ContainerSlot, int16 slot);
+	int16 GetInventorySlotById(uint32 ID);
+	int16 GetInventorySlotByGuid(uint64 guid);
+	int16 GetBagSlotByGuid(uint64 guid);
 
-	Item* SafeAddItem(uint32 ItemId, int8 ContainerSlot, int8 slot);
-	AddItemResult SafeAddItem(Item* pItem, int8 ContainerSlot, int8 slot);
-	Item* SafeRemoveAndRetreiveItemFromSlot(int8 ContainerSlot, int8 slot, bool destroy); //doesnt destroy item from memory
+	Item* SafeAddItem(uint32 ItemId, int16 ContainerSlot, int16 slot);
+	AddItemResult SafeAddItem(Item* pItem, int16 ContainerSlot, int16 slot);
+	Item* SafeRemoveAndRetreiveItemFromSlot(int16 ContainerSlot, int16 slot, bool destroy); //doesnt destroy item from memory
 	Item* SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy);
 	Item* SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, bool destroy);
-	bool SafeFullRemoveItemFromSlot(int8 ContainerSlot, int8 slot); //destroys item fully
+	bool SafeFullRemoveItemFromSlot(int16 ContainerSlot, int16 slot); //destroys item fully
 	bool SafeFullRemoveItemByGuid(uint64 guid); //destroys item fully
 	AddItemResult AddItemToFreeSlot(Item* item);
 	AddItemResult AddItemToFreeBankSlot(Item* item);
@@ -101,20 +101,19 @@ public:
 	uint32 CalculateFreeSlots(ItemPrototype *proto);
 	void ReduceItemDurability();
 
-	uint8 LastSearchItemBagSlot(){return result.ContainerSlot;}
-	uint8 LastSearchItemSlot(){return result.Slot;}
+	uint16 LastSearchItemBagSlot(){return result.ContainerSlot;}
+	uint16 LastSearchItemSlot(){return result.Slot;}
 	SlotResult *LastSearchResult(){return &result;}
 
 	//Searching functions
 	SlotResult FindFreeInventorySlot(ItemPrototype *proto);
 	SlotResult FindFreeBankSlot(ItemPrototype *proto);
 	SlotResult FindAmmoBag();
-	int8 FindFreeBackPackSlot();
-	int8 FindFreeKeyringSlot();
-	int8 FindSpecialBag(Item* item);
+	int16 FindFreeBackPackSlot();
+	int16 FindFreeKeyringSlot();
+	int16 FindSpecialBag(Item* item);
 
-
-	int8 CanEquipItemInSlot(int8 DstInvSlot, int8 slot, ItemPrototype* item, bool ignore_combat = false, bool skip_2h_check = false);
+	int16 CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemPrototype* item, bool ignore_combat = false, bool skip_2h_check = false);
 	int8 CanReceiveItem(ItemPrototype * item, uint32 amount, ItemExtendedCostEntry *ec);
 	int8 CanAffordItem(ItemPrototype * item,uint32 amount, Creature* pVendor, ItemExtendedCostEntry *ec);
 	int8 GetItemSlotByType(uint32 type);
@@ -122,9 +121,9 @@ public:
 
 
 	void BuildInventoryChangeError(Item* SrcItem, Item* DstItem, uint8 Error);
-	void SwapItemSlots(int8 srcslot, int8 dstslot);
+	void SwapItemSlots(int16 srcslot, int16 dstslot);
 
-	int8 GetInternalBankSlotFromPlayer(int8 islot); //converts inventory slots into 0-x numbers
+	int16 GetInternalBankSlotFromPlayer(int16 islot); //converts inventory slots into 0-x numbers
 
 	//buyback stuff
 	HEARTHSTONE_INLINE Item* GetBuyBack(int32 slot) 
@@ -151,7 +150,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public:
-	HEARTHSTONE_INLINE bool VerifyBagSlots(int8 ContainerSlot, int8 Slot)
+	HEARTHSTONE_INLINE bool VerifyBagSlots(int16 ContainerSlot, int16 Slot)
 	{
 		if( ContainerSlot < -1 || Slot < 0 )
 			return false;
@@ -165,9 +164,9 @@ public:
 		return true;
 	}
 
-    bool AddItemById(uint32 itemid, uint32 count, int32 randomprop);
+    bool AddItemById(uint32 itemid, uint32 count, int32 randomprop, bool created);
 
-	HEARTHSTONE_INLINE bool VerifyBagSlotsWithBank(int8 ContainerSlot, int8 Slot)
+	HEARTHSTONE_INLINE bool VerifyBagSlotsWithBank(int16 ContainerSlot, int16 Slot)
 	{
 		if( ContainerSlot < -1 || Slot < 0 )
 			return false;
@@ -181,7 +180,7 @@ public:
 		return true;
 	}
 
-	HEARTHSTONE_INLINE bool VerifyBagSlotsWithInv(int8 ContainerSlot, int8 Slot)
+	HEARTHSTONE_INLINE bool VerifyBagSlotsWithInv(int16 ContainerSlot, int16 Slot)
 	{
 		if( ContainerSlot < -1 || Slot < 0 )
 			return false;
