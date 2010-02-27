@@ -398,9 +398,9 @@ void ObjectMgr::LoadExtraItemStuff()
 		map<uint32,uint32>::iterator iter = foodItems.find(pItemPrototype->ItemId);
 		if(iter != foodItems.end())
 			ft = iter->second;
-		pItemPrototype->FoodType = ft ;
-	
-		pItemPrototype->gossip_script=NULL;
+		pItemPrototype->FoodType = ft;
+
+		pItemPrototype->gossip_script = NULL;
 
 		// forced pet entries
 		switch( pItemPrototype->ItemId )

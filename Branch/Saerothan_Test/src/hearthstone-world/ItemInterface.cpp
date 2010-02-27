@@ -263,7 +263,7 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 			{
 				//sLog.outError("bugged inventory: %u %u", m_pOwner->GetName(), item->GetGUID());
 				result = this->FindFreeInventorySlot(item->GetProto());
-				
+
 				// send message to player
 				sChatHandler.BlueSystemMessageToPlr(m_pOwner, "A duplicated item, `%s` was found in your inventory. We've attempted to add it to a free slot in your inventory, if there is none this will fail. It will be attempted again the next time you log on.",
 					item->GetProto()->Name1);
@@ -355,7 +355,6 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 	{
 		m_pOwner->UpdateKnownCurrencies(item->GetEntry(), true);
 	}
-
 
 	if( ContainerSlot == INVENTORY_SLOT_NOT_SET && slot == EQUIPMENT_SLOT_OFFHAND && item->GetProto()->Class == ITEM_CLASS_WEAPON )
 		m_pOwner->SetDuelWield(true);
@@ -845,30 +844,29 @@ Item* ItemInterface::FindItemLessMax(uint32 itemid, uint32 cnt, bool IncBank)
 		Item* item = GetInventoryItem(i);
 		if(item && item->IsContainer())
 		{
-			  for (uint32 j =0; j < item->GetProto()->ContainerSlots; j++)
+			for (uint32 j =0; j < item->GetProto()->ContainerSlots; j++)
+			{
+				Item* item2 = TO_CONTAINER(item)->GetItem(j);
+				if (item2)
 				{
-					Item* item2 = TO_CONTAINER(item)->GetItem(j);
-					if (item2)
+					if((item2->GetProto()->ItemId == itemid && item2->wrapped_item_id==0) && (item2->GetProto()->MaxCount >= (item2->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
 					{
-						if((item2->GetProto()->ItemId == itemid && item2->wrapped_item_id==0) && (item2->GetProto()->MaxCount >= (item2->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
-						{
-							return item2;
-						}
+						return item2;
 					}
 				}
-	
-	for(i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
-	{
-		Item* item = GetInventoryItem(i);
-		if (item)
-		{
-			if((item->GetEntry() == itemid && item->wrapped_item_id==0) && (item->GetProto()->MaxCount >= (item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
-			{
-				return item; 
 			}
-		}
-	}
 
+			for(i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
+			{
+				Item* item = GetInventoryItem(i);
+				if(item)
+				{
+					if((item->GetEntry() == itemid && item->wrapped_item_id==0) && (item->GetProto()->MaxCount >= (item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
+					{
+						return item;
+					}
+				}
+			}
 		}
 	}
 
@@ -1332,14 +1330,13 @@ int16 ItemInterface::GetInventorySlotById(uint32 ID)
 		}
 	}
 
-	for(uint32 i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++)
+	ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(ID);
+	if(proto->BagFamily & ITEM_TYPE_CURRENCY)
 	{
-		if(m_pItems[i])
+		CurrencyTypesEntry* store = dbcCurrencyTypesStore.LookupEntry(ID);
+		if(store)
 		{
-			if(m_pItems[i]->GetProto()->ItemId == ID)
-			{
-				return i;
-			}
+			return (CURRENCYTOKEN_SLOT_START + (store->BitIndex - 1));
 		}
 	}
 	return ITEM_NO_SLOT_AVAILABLE;
@@ -1372,14 +1369,13 @@ int16 ItemInterface::GetInventorySlotByGuid(uint64 guid)
 		}
 	}
 
-	for(uint32 i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++)
+	ItemPrototype* proto = GetItemByGUID(guid)->GetProto();
+	if(proto->BagFamily & ITEM_TYPE_CURRENCY)
 	{
-		if(m_pItems[i])
+		CurrencyTypesEntry* store = dbcCurrencyTypesStore.LookupEntry(proto->ItemId);
+		if(store)
 		{
-			if(m_pItems[i]->GetGUID() == guid)
-			{
-				return i;
-			}
+			return (CURRENCYTOKEN_SLOT_START + (store->BitIndex - 1));
 		}
 	}
 
@@ -1441,7 +1437,6 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 	uint32 i = 0;
 	bool result2;
 	AddItemResult result3;
-	uint32 itemMaxStack;
 
 	//detect special bag item
 	if( item->GetProto()->BagFamily )
@@ -1465,36 +1460,48 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 		}
 		else if( item->GetProto()->BagFamily & ITEM_TYPE_CURRENCY )
 		{
-			for( i=CURRENCYTOKEN_SLOT_START; i<CURRENCYTOKEN_SLOT_END; i++ )
+			CurrencyTypesEntry* currency = dbcCurrencyTypesStore.LookupEntry(item->GetProto()->ItemId);
+			if(currency)
 			{
-				if( m_pItems[i] )
-					itemMaxStack = item->GetProto()->MaxCount;
+				uint16 currencyslot = ((CURRENCYTOKEN_SLOT_START-1) + currency->BitIndex);
 
-				if( m_pItems[i] == NULL )
+				if(m_pItems[currencyslot])
 				{
-					result3 = SafeAddItem( item, INVENTORY_SLOT_NOT_SET, i );
-					if( result3 )
+					ItemPrototype* proto = item->GetProto();
+					uint32 stackincrease = item->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
+					uint32 currentstack = m_pItems[currencyslot]->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
+					uint32 endstack = stackincrease + currentstack;
+					if(proto->Unique)
 					{
-						result.ContainerSlot = INVENTORY_SLOT_NOT_SET;
-						result.Slot = i;
-						result.Result = true;
-						m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
-						return ADD_ITEM_RESULT_OK;
+						if(endstack > proto->Unique)
+							endstack = proto->Unique;
 					}
+					else
+						if(proto->MaxCount)
+							if(endstack > proto->MaxCount)
+								endstack = proto->MaxCount;
+
+					m_pItems[currencyslot]->SetUInt32Value(ITEM_FIELD_STACK_COUNT, endstack);
+					item = m_pItems[currencyslot];
+					m_pItems[currencyslot]->m_isDirty = true;
+
+					result.ContainerSlot = INVENTORY_SLOT_NOT_SET;
+					result.Slot = currencyslot;
+					result.Result = true;
+					return ADD_ITEM_RESULT_OK;
 				}
-				else if( m_pItems[i]->GetProto()->ItemId == item->GetProto()->ItemId && itemMaxStack > 1 &&
-						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) < itemMaxStack  &&
-						m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) <= itemMaxStack )
-					{
-						m_pItems[i]->SetUInt32Value( ITEM_FIELD_STACK_COUNT, m_pItems[i]->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + item->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) );
-						result.Slot=i;
-						result.Result=true;
-						m_pOwner->UpdateKnownCurrencies(m_pItems[i]->GetEntry(), true);
-						return ADD_ITEM_RESULT_OK;
-					}				
-
+				else
+				{
+					result3 = SafeAddItem( item, INVENTORY_SLOT_NOT_SET, currencyslot );
+				}
+				if( result3 )
+				{
+					result.ContainerSlot = INVENTORY_SLOT_NOT_SET;
+					result.Slot = currencyslot;
+					result.Result = true;
+					return ADD_ITEM_RESULT_OK;
+				}
 			}
-
 		}
 		else
 		{
@@ -1508,7 +1515,8 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 						{
 							uint32 r_slot;
 							result2 = TO_CONTAINER(m_pItems[i])->AddItemToFreeSlot(item, &r_slot);
-							if (result2) {
+							if(result2)
+							{
 								result.ContainerSlot = i;
 								result.Slot = r_slot;
 								result.Result = true;
@@ -1585,13 +1593,7 @@ uint32 ItemInterface::CalculateFreeSlots(ItemPrototype *proto)
 			}
 			else if(proto->BagFamily & ITEM_TYPE_CURRENCY )
 			{
-				for(uint32 i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
-				{
-					if(m_pItems[i] == NULL)
-					{
-						count++;
-					}
-				}
+				count++;
 			}
 			else
 			{
@@ -1645,7 +1647,7 @@ uint32 ItemInterface::CalculateFreeSlots(ItemPrototype *proto)
 //-------------------------------------------------------------------//
 //Description: finds a free slot on the backpack
 //-------------------------------------------------------------------//
-int8 ItemInterface::FindFreeBackPackSlot()
+int16 ItemInterface::FindFreeBackPackSlot()
 {
 	//search for backpack slots
 	for(int8 i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
@@ -1663,7 +1665,7 @@ int8 ItemInterface::FindFreeBackPackSlot()
 //-------------------------------------------------------------------//
 //Description: converts bank bags slot ids into player bank byte slots(0-5)
 //-------------------------------------------------------------------//
-int8 ItemInterface::GetInternalBankSlotFromPlayer(int8 islot)
+int16 ItemInterface::GetInternalBankSlotFromPlayer(int16 islot)
 {
 	switch(islot)
 	{
@@ -1703,7 +1705,7 @@ int8 ItemInterface::GetInternalBankSlotFromPlayer(int8 islot)
 //-------------------------------------------------------------------//
 //Description: checks if the item can be equiped on a specific slot
 //-------------------------------------------------------------------//
-int8 ItemInterface::CanEquipItemInSlot(int8 DstInvSlot, int8 slot, ItemPrototype* proto, bool ignore_combat /* = false */, bool skip_2h_check /* = false */)
+int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemPrototype* proto, bool ignore_combat /* = false */, bool skip_2h_check /* = false */)
 {
 	uint32 type=proto->InventoryType;
 	
@@ -3045,7 +3047,7 @@ AddItemResult ItemInterface::AddItemToFreeBankSlot(Item* item)
 	return ADD_ITEM_RESULT_ERROR;
 }
 
-int8 ItemInterface::FindSpecialBag(Item* item)
+int16 ItemInterface::FindSpecialBag(Item* item)
 {
 	for( uint32 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++ )
 	{
@@ -3060,21 +3062,9 @@ int8 ItemInterface::FindSpecialBag(Item* item)
 	return ITEM_NO_SLOT_AVAILABLE;
 }
 
-int8 ItemInterface::FindFreeKeyringSlot()
+int16 ItemInterface::FindFreeKeyringSlot()
 {
 	for( uint32 i = INVENTORY_KEYRING_START; i < INVENTORY_KEYRING_END; i++ )
-	{
-		if( m_pItems[i] == NULL )
-		{
-			return i;
-		}
-	}
-	return ITEM_NO_SLOT_AVAILABLE;
-}
-
-int16 ItemInterface::FindFreeCurrencySlot()
-{
-	for( uint16 i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++ )
 	{
 		if( m_pItems[i] == NULL )
 		{
@@ -3108,15 +3098,14 @@ SlotResult ItemInterface::FindFreeInventorySlot(ItemPrototype *proto)
 			}
 			else if( proto->BagFamily & ITEM_TYPE_CURRENCY )
 			{
-				for(uint32 i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++ )
+				CurrencyTypesEntry* store = dbcCurrencyTypesStore.LookupEntry(proto->ItemId);
+				if(store)
 				{
-					if( m_pItems[i] == NULL )
-					{
-						result.ContainerSlot = ITEM_NO_SLOT_AVAILABLE;
-						result.Slot = i;
-						result.Result = true;
-						return result;
-					}
+					result.ContainerSlot = ITEM_NO_SLOT_AVAILABLE;
+					result.Slot = ((CURRENCYTOKEN_SLOT_START - 1) + store->BitIndex);
+					printf("CurrencySlot: %u\n", ((CURRENCYTOKEN_SLOT_START - 1) + store->BitIndex));
+					result.Result = true;
+					return result;
 				}
 			}
 			else

@@ -12542,17 +12542,20 @@ void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 {
 	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
 	{
-		if(apply)
+		if(ctEntry)
 		{
-			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-			uint64 newval = oldval | ( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
-			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
-		}
-		else
-		{
-			uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
-			uint64 newval = oldval & ~( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
-			SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+			if(apply)
+			{
+				uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
+				uint64 newval = oldval | ( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
+				SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+			}
+			else
+			{
+				uint64 oldval = GetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES );
+				uint64 newval = oldval & ~( uint64((( uint32 )1) << (ctEntry->BitIndex-1)));
+				SetUInt64Value( PLAYER_FIELD_KNOWN_CURRENCIES, newval );
+			}
 		}
 	}
 }
