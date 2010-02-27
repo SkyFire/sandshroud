@@ -27,7 +27,7 @@
 	<table width="100%" border="0" cellspacing="1" cellpadding="3">
 		<tr class="head"><th colspan="4">Summit Server Status</th></tr>
 		<tr>
-			<th>Platform: </th><td><xsl:value-of select="platform"/><br />Built at <xsl:value-of select="buildhost"/></td>
+			<th>Platform: </th><td><xsl:value-of select="platform"/></td>
 			<th>Uptime: </th><td><xsl:value-of select="uptime"/></td>
 		</tr>
 		<tr>

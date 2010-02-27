@@ -314,9 +314,9 @@ void StatDumper::DumpStats()
     {
         // Dump server information.
 #ifdef WIN32
-		fprintf(f, "    <platform>Hearthstone r%u %s-Win-%s</platform>\n", BUILD_REVISION, CONFIG, ARCH);		
+		fprintf(f, "    <platform>Sandshroud Aspire Hearthstone r%u %s-Win-%s</platform>\n", BUILD_REVISION, CONFIG, ARCH);		
 #else
-		fprintf(f, "    <platform>Hearthstone r%u %s-%s </platform>\n", BUILD_REVISION, PLATFORM_TEXT, ARCH);
+		fprintf(f, "    <platform>Sandshroud Aspire Hearthstone r%u %s-%s </platform>\n", BUILD_REVISION, PLATFORM_TEXT, ARCH);
 #endif
 		//fprintf(f, "    <buildhost>%s on %s by %s@%s</buildhost>", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
 
