@@ -827,14 +827,14 @@ Item* ItemInterface::GetInventoryItem(int16 ContainerSlot, int16 slot)
 Item* ItemInterface::FindItemLessMax(uint32 itemid, uint32 cnt, bool IncBank)
 {
 	uint32 i = 0;
-	for(i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
+	for(i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
 	{
 		Item* item = GetInventoryItem(i);
 		if (item)
 		{
 			if((item->GetEntry() == itemid && item->wrapped_item_id==0) && (item->GetProto()->MaxCount >= (item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
 			{
-				return item; 
+				return item;
 			}
 		}
 	}
@@ -844,10 +844,10 @@ Item* ItemInterface::FindItemLessMax(uint32 itemid, uint32 cnt, bool IncBank)
 		Item* item = GetInventoryItem(i);
 		if(item && item->IsContainer())
 		{
-			for (uint32 j =0; j < item->GetProto()->ContainerSlots; j++)
+			for (uint32 j = 0; j < item->GetProto()->ContainerSlots; j++)
 			{
 				Item* item2 = TO_CONTAINER(item)->GetItem(j);
-				if (item2)
+				if(item2)
 				{
 					if((item2->GetProto()->ItemId == itemid && item2->wrapped_item_id==0) && (item2->GetProto()->MaxCount >= (item2->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
 					{
@@ -855,17 +855,17 @@ Item* ItemInterface::FindItemLessMax(uint32 itemid, uint32 cnt, bool IncBank)
 					}
 				}
 			}
+		}
+	}
 
-			for(i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
+	for(i = CURRENCYTOKEN_SLOT_START; i < CURRENCYTOKEN_SLOT_END; i++)
+	{
+		Item* item = GetInventoryItem(i);
+		if(item)
+		{
+			if((item->GetEntry() == itemid && item->wrapped_item_id == 0) && (item->GetProto()->MaxCount >= (item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
 			{
-				Item* item = GetInventoryItem(i);
-				if(item)
-				{
-					if((item->GetEntry() == itemid && item->wrapped_item_id==0) && (item->GetProto()->MaxCount >= (item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + cnt)))
-					{
-						return item;
-					}
-				}
+				return item;
 			}
 		}
 	}
@@ -934,18 +934,17 @@ uint32 ItemInterface::GetItemCount(uint32 itemid, bool IncBank)
 		Item* item = GetInventoryItem(i);
 		if(item && item->IsContainer())
 		{
-				for (uint32 j =0; j < item->GetProto()->ContainerSlots;j++)
+			for (uint32 j = 0; j < item->GetProto()->ContainerSlots; j++)
+			{
+				Item* item2 = TO_CONTAINER(item)->GetItem(j);
+				if (item2)
 				{
-					Item* item2 = TO_CONTAINER(item)->GetItem(j);
-					if (item2)
+					if (item2->GetEntry() == itemid && item->wrapped_item_id == 0)
 					{
-						if (item2->GetEntry() == itemid && item->wrapped_item_id==0)
-						{
-							cnt += item2->GetUInt32Value(ITEM_FIELD_STACK_COUNT) ? item2->GetUInt32Value(ITEM_FIELD_STACK_COUNT) : 1; 
-						}
+						cnt += item2->GetUInt32Value(ITEM_FIELD_STACK_COUNT) ? item2->GetUInt32Value(ITEM_FIELD_STACK_COUNT) : 1;
 					}
 				}
-			
+			}
 		}
 	}
 

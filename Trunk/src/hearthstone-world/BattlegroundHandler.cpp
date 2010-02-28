@@ -394,5 +394,3 @@ void WorldSession::HandlePVPLogDataOpcode(WorldPacket &recv_data)
 	if(_player->m_bg)
 		_player->m_bg->SendPVPData(_player);
 }
-
-
