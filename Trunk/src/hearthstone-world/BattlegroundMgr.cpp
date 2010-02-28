@@ -1013,7 +1013,6 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 		else
 			*data << uint8(0);
 	}
-	*data << uint64(0); // unknown
 	*data << uint8(m_ended);
 	if(m_ended)
 	{
@@ -1057,7 +1056,6 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 	}
 	// Have to set correct number of players sent in log since we skip invisible GMs
 	*(uint32*)&data->contents()[pos] = count;
-	*data << uint32(0); // unknown
 }
 
 void CBattleground::AddPlayer(Player* plr, uint32 team)
@@ -1516,6 +1514,7 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 		data << uint16(0x1F90);
 		data << uint32(11);
 		data << uint8(plr->m_bgRatedQueue ? 1 : 0); // Rated?
+		data << uint16(1); // 3.3
 	}
 	else
 	{
@@ -1525,6 +1524,7 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 		data << uint16(0x1F90);
 		data << plr->m_bgQueueInstanceId[queueSlot];
 		data << uint8(0);
+		data << uint16(0); // 3.3
 	}
 	
 	// Im in a BG
@@ -1533,8 +1533,6 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 		// Should've been handled already :P
 		return;
 	}
-
-	data << uint16(0); // 3.3
 
 	// We're clear to join!
 	if( plr->m_pendingBattleground[queueSlot] )
