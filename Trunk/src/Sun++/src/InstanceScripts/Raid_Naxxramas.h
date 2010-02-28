@@ -2960,10 +2960,10 @@ protected:
 
 // Frost Breath TrgiggerAI
 
-#define CN_FROST_BREATH_TRIGGER		50010	// Flying "ball" of frost energy
-#define CN_FROST_BREATH_TRIGGER2	50011	// Explosion
-#define CN_FROST_BREATH_TRIGGER3	50012	// Wing Buffet
-#define CN_CHILL_TRIGGER			50013	// Mass chill trigger (used, because we can't cast many aoe triggers on one character >_>)
+#define CN_FROST_BREATH_TRIGGER		500100	// Flying "ball" of frost energy
+#define CN_FROST_BREATH_TRIGGER2	500111	// Explosion
+#define CN_FROST_BREATH_TRIGGER3	500122	// Wing Buffet
+#define CN_CHILL_TRIGGER			500133	// Mass chill trigger (used, because we can't cast many aoe triggers on one character >_>)
 
 // Air phase spells
 #define FROST_BREATH		28524
