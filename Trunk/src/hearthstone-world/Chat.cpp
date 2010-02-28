@@ -368,7 +368,7 @@ void CommandTableStorage::Init()
 		{ "vendorremoveitem",'z', &ChatHandler::HandleItemRemoveCommand,"Removes from vendor.",		   NULL, 0, 0, 0},
 		{ "flags",	   'n', &ChatHandler::HandleNPCFlagCommand,	   "Changes NPC flags",			  NULL, 0, 0, 0},
 		{ "emote",	   'n', &ChatHandler::HandleEmoteCommand,		 ".emote - Sets emote state",	  NULL, 0, 0, 0 },
-		{ "delete",	  'n', &ChatHandler::HandleDeleteCommand,		"Deletes mob from db and world.", NULL, 0, 0, 0},
+		{ "delete",	  'n', &ChatHandler::HandleDeleteCommand,		"Deletes non-vehicle mobs from db and world.", NULL, 0, 0, 0},
 		{ "info",		'n', &ChatHandler::HandleNpcInfoCommand,	   "Displays NPC information",	   NULL, 0, 0, 0},
 		{ "addAgent",	'n', &ChatHandler::HandleAddAIAgentCommand,	".npc addAgent <agent> <procEvent> <procChance> <procCount> <spellId> <spellType> <spelltargetType> <spellCooldown> <floatMisc1> <Misc2>",NULL, 0, 0, 0},
 		{ "listAgent",   'n', &ChatHandler::HandleListAIAgentCommand,   ".npc listAgent",NULL, 0, 0, 0},

@@ -140,10 +140,8 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	if(veh)
 	{
 		SystemMessage(m_session, "Current selection is a vehicle. Use .vehicle delete instead.");
-		delete veh;
 		return true;
 	}
-	delete veh;
 
 	Creature* unit = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 	if(!unit)

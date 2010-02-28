@@ -459,7 +459,6 @@ void Creature::setDeathState(DeathState s)
 		m_deathState = s;
 	else
 	{
-
 		GetAIInterface()->SetUnitToFollow(NULLUNIT);
 
 		//despawn all summons we created
@@ -472,7 +471,7 @@ void Creature::setDeathState(DeathState s)
 			m_currentSpell->cancel();
 
 		m_deathState = CORPSE;
-		m_corpseEvent=true;
+		m_corpseEvent = true;
 	}
 }
 
