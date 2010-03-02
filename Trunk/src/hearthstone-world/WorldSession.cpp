@@ -352,9 +352,15 @@ void WorldSession::LogoutPlayer(bool Save)
 		
 		_player->m_playerInfo->m_loggedInPlayer = NULLPLR;
 
-		if( _player->m_playerInfo->m_Group != NULL )
-			_player->m_playerInfo->m_Group->Update();
-	  
+		if(_player->GetGroup()) // Init group logout checks.
+		{
+			// Remove player from the group if he is in a group and not in a raid.
+			if(!(_player->GetGroup()->GetGroupType() & GROUP_TYPE_RAID) && _socket)
+				_player->GetGroup()->RemovePlayer(_player->m_playerInfo);
+			else
+				_player->m_playerInfo->m_Group->Update();
+		}
+
 		// Remove the "player locked" flag, to allow movement on next login
 		GetPlayer()->RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER );
 

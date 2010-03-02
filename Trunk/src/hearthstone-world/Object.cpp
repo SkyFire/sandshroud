@@ -1077,6 +1077,9 @@ void Object::SetByte(uint32 index, uint32 index1,uint8 value)
 //! Set uint32 property
 void Object::SetUInt32Value( const uint32 index, const uint32 value )
 {
+	if(index > m_valuesCount)
+		printf("Index: %u, m_valuesCount: %u, Value: %u\n", index, m_valuesCount, value);
+
 	ASSERT( index < m_valuesCount );
 	// save updating when val isn't changing.
 	if(m_uint32Values[index] == value)

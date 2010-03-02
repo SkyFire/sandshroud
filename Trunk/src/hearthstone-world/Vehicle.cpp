@@ -350,6 +350,9 @@ void Vehicle::AddPassenger(Unit* pPassenger)
 
 	OUT_DEBUG("AddPassenger1: Max Vehicle Slot: %u, Max Passengers: %u", m_seatSlotMax, m_maxPassengers);
 
+	if(pPassenger->m_CurrentVehicle)
+		pPassenger->m_CurrentVehicle->RemovePassenger(pPassenger);
+
 	// Find an available seat
 	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
@@ -381,6 +384,9 @@ void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat)
 		sLog.outColor(TNORMAL, "\n");
 		InitSeats(m_vehicleEntry);
 	}
+
+	if(pPassenger->m_CurrentVehicle)
+		pPassenger->m_CurrentVehicle->RemovePassenger(pPassenger);
 
 	OUT_DEBUG("AddPassenger2: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
 
@@ -945,5 +951,6 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 			return;
 	}
 
-	GetPlayer()->EnterVehicle(vehicle, RequestedSeat, false);
+	vehicle->AddPassenger(GetPlayer(), RequestedSeat);
+//	GetPlayer()->EnterVehicle(vehicle, RequestedSeat, false);
 }

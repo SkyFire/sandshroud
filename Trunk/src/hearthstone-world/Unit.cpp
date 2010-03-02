@@ -7366,7 +7366,6 @@ void Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
 		data << float(0);										// GetTransOffsetY();
 		data << float(0);										// GetTransOffsetZ();
 		SendMessageToSet(&data, true);
-
 		return;
 	}
 	else
