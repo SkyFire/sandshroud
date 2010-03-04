@@ -126,6 +126,7 @@ enum SessionStatus
 
 struct AccountDataEntry
 {
+	time_t Time;
 	char * data;
 	uint32 sz;
 	bool bIsDirty;
@@ -250,29 +251,29 @@ public:
 
 		return (strchr(permissions,'a')!=NULL) ? true : false;
 	}
-   
+
 	bool CanUseCommand(char cmdstr);
 
-	
 	HEARTHSTONE_INLINE void SetSocket(WorldSocket *sock)
 	{
 		_socket = sock;
 	}
 	HEARTHSTONE_INLINE void SetPlayer(Player* plr) { _player = plr; }
-	
-	HEARTHSTONE_INLINE void SetAccountData(uint32 index, char* data, bool initial,uint32 sz)
+
+	HEARTHSTONE_INLINE void SetAccountData(uint32 index, char* data, bool initial, uint32 sz)
 	{
 		ASSERT(index < 8);
 		if(sAccountData[index].data)
 			delete [] sAccountData[index].data;
 		sAccountData[index].data = data;
 		sAccountData[index].sz = sz;
+		sAccountData[index].Time = UNIXTIME;
 		if(!initial && !sAccountData[index].bIsDirty)		// Mark as "changed" or "dirty"
 			sAccountData[index].bIsDirty = true;
 		else if(initial)
 			sAccountData[index].bIsDirty = false;
 	}
-	
+
 	HEARTHSTONE_INLINE AccountDataEntry* GetAccountData(uint32 index)
 	{
 		ASSERT(index < 8);
@@ -292,7 +293,7 @@ public:
 		m_lastPing = (uint32)UNIXTIME;
 		_recvQueue.Push(packet);
 	}
-	
+
 	void OutPacket(uint16 opcode, uint16 len, const void* data)
 	{
 		if(_socket && _socket->IsConnected())
@@ -300,7 +301,7 @@ public:
 	}
 
 	HEARTHSTONE_INLINE WorldSocket* GetSocket() { return _socket; }
-	
+
 	void Disconnect()
 	{
 		if(_socket && _socket->IsConnected())

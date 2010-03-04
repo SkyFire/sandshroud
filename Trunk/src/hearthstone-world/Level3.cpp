@@ -1982,7 +1982,7 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	}
 	else
 		plr = getSelectedChar(m_session, true);
-	
+
 	if(!plr)
 		return true;
 
@@ -2063,7 +2063,7 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	}
 	snprintf(playedTotal, 64, "[%d days, %d hours, %d minutes, %d seconds]", days, hours, mins, seconds);
 
-	GreenSystemMessage(m_session, "%s is a %s %s %s", plr->GetName(),
+	GreenSystemMessage(m_session, "%s[%u] is a %s %s %s", plr->GetName(), plr->GetLowGUID(),
 		(plr->getGender()?"Female":"Male"), races[plr->getRace()], classes[plr->getClass()]);
 
 	BlueSystemMessage(m_session, "%s has played %s at this level",(plr->getGender()?"She":"He"), playedLevel);

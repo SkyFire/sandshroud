@@ -283,6 +283,10 @@ void WorldSession::LogoutPlayer(bool Save)
 		// part channels
 		_player->CleanupChannels();
 
+		// Remove from vehicle for now.
+		if(_player->m_CurrentVehicle)
+			_player->m_CurrentVehicle->RemovePassenger(_player);
+
 		if( _player->m_CurrentTransporter != NULL )
 		{
 			_player->m_CurrentTransporter->RemovePlayer( _player );

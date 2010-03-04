@@ -891,7 +891,10 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 {
 	//OUT_DEBUG("WORLD: Received CMSG_UPDATE_ACCOUNT_DATA");
 	if(!sWorld.m_useAccountData)
+	{
+		recv_data.rpos(recv_data.wpos()); // Spam cleanup.
 		return;
+	}
 
 	uint32 uiID;
 	recv_data >> uiID;
@@ -903,6 +906,9 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 		return;
 	}
 
+	uint32 _time;
+	recv_data >> _time;
+
 	uint32 uiDecompressedSize;
 	recv_data >> uiDecompressedSize;
 	uLongf uid = uiDecompressedSize;
@@ -910,64 +916,76 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 	// client wants to 'erase' current entries
 	if(uiDecompressedSize == 0)
 	{
+		recv_data.rpos(recv_data.wpos());
 		SetAccountData(uiID, NULL, false,0);
+		return;
+	}
+
+	if(uiDecompressedSize > 100000)
+	{
+		recv_data.rpos(recv_data.wpos()); // Spam cleanup.
+		Disconnect();
 		return;
 	}
 
 	if(uiDecompressedSize >= 65534)
 	{
+		recv_data.rpos(recv_data.wpos()); // Spam cleanup.
 		// BLOB fields can't handle any more than this.
 		return;
 	}
 
-	size_t ReceivedPackedSize = recv_data.size() - 8;
+	size_t ReceivedPackedSize = recv_data.size() - 12;
 	char* data = new char[uiDecompressedSize+1];
-	memset(data,0,uiDecompressedSize+1);	/* fix umr here */
+	memset(data, 0, uiDecompressedSize+1);	/* fix umr here */
 
 	if(uiDecompressedSize > ReceivedPackedSize) // if packed is compressed
 	{
 		int32 ZlibResult;
 
-		ZlibResult = uncompress((uint8*)data, &uid, recv_data.contents() + 8, (uLong)ReceivedPackedSize);
-		
+		ZlibResult = uncompress((uint8*)data, &uid, recv_data.contents() + 12, (uLong)ReceivedPackedSize);
+
 		switch (ZlibResult)
 		{
 		case Z_OK:				  //0 no error decompression is OK
-			SetAccountData(uiID, data, false,uiDecompressedSize);
-			OUT_DEBUG("WORLD: Successfully decompressed account data %d for %s, and updated storage array.", uiID, GetPlayer()->GetName());
+			SetAccountData(uiID, data, false, uiDecompressedSize);
+			OUT_DEBUG("WORLD: Successfully decompressed account data %d for %s, and updated storage array.", uiID, GetPlayer() ? GetPlayer()->GetName() : GetAccountName());
 			break;
 		
-		case Z_ERRNO:			   //-1
+		case Z_ERRNO:				//-1
 		case Z_STREAM_ERROR:		//-2
-		case Z_DATA_ERROR:		  //-3
-		case Z_MEM_ERROR:		   //-4
-		case Z_BUF_ERROR:		   //-5
-		case Z_VERSION_ERROR:	   //-6
+		case Z_DATA_ERROR:			//-3
+		case Z_MEM_ERROR:			//-4
+		case Z_BUF_ERROR:			//-5
+		case Z_VERSION_ERROR:		//-6
 		{
 			delete [] data;	 
-			sLog.outString("WORLD WARNING: Decompression of account data %d for %s FAILED.", uiID, GetPlayer()->GetName());
+			sLog.outString("WORLD WARNING: Decompression of account data %d for %s FAILED.", uiID, GetPlayer() ? GetPlayer()->GetName() : GetAccountName());
 			break;
 		}
 
 		default:
 			delete [] data;	 
-			sLog.outString("WORLD WARNING: Decompression gave a unknown error: %x, of account data %d for %s FAILED.", ZlibResult, uiID, GetPlayer()->GetName());
+			sLog.outString("WORLD WARNING: Decompression gave a unknown error: %x, of account data %d for %s FAILED.", ZlibResult, uiID, GetPlayer() ? GetPlayer()->GetName() : GetAccountName());
 			break;
 		}
 	}
 	else
 	{
-		memcpy(data,recv_data.contents() + 8,uiDecompressedSize);
-		SetAccountData(uiID, data, false,uiDecompressedSize);
+		memcpy(data, recv_data.contents() + 12, uiDecompressedSize);
+		SetAccountData(uiID, data, false, uiDecompressedSize);
 	}
+	recv_data.rpos(recv_data.wpos()); // Spam cleanup for packet size checker... Because who cares about this dataz
 }
 
 void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
 {
 	//OUT_DEBUG("WORLD: Received CMSG_REQUEST_ACCOUNT_DATA");
-
 	if(!sWorld.m_useAccountData)
+	{
+		recv_data.rpos(recv_data.wpos()); // Spam cleanup for packet size checker.
 		return;
+	}
 
 	uint32 id;
 	recv_data >> id;
@@ -975,39 +993,37 @@ void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
 	if(id > 8)
 	{
 		// Shit..
-		sLog.outString("WARNING: Accountdata > 8 (%d) was requested by %s of account %d!", id, GetPlayer()->GetName(), this->GetAccountId());
+		sLog.outString("WARNING: Accountdata > 8 (%d) was requested by %s of account %d!", id, GetPlayer() ? GetPlayer()->GetName() : "UNKNOWN", this->GetAccountId());
 		return;
 	}
 
 	AccountDataEntry* res = GetAccountData(id);
-		WorldPacket data ;
-		data.SetOpcode(SMSG_UPDATE_ACCOUNT_DATA);
-		data << id;
-	// if red does not exists if ID == 7 and if there is no data send 0
-	if (!res || !res->data) // if error, send a NOTHING packet
+	uLongf destSize = compressBound(res->sz);
+	ByteBuffer bbuff;
+	bbuff.resize(destSize);
+
+	if(res->sz && compress(const_cast<uint8*>(bbuff.contents()), &destSize, (uint8*)res->data, res->sz) != Z_OK)
 	{
+		OUT_DEBUG("Error while compressing ACCOUNT_DATA");
+		return;
+	}
+
+	WorldPacket data;
+	data.SetOpcode(SMSG_UPDATE_ACCOUNT_DATA);
+	data << uint64(_player ? _player->GetGUID() : 0);
+	data << id;
+	// if red does not exists if ID == 7 and if there is no data send 0
+	if(!res || !res->data) // if error, send a NOTHING packet
+	{
+		data << (uint32)0;
 		data << (uint32)0;
 	}
 	else
 	{
+		data << uint32(res->Time);
 		data << res->sz;
-		uLongf destsize;
-		if(res->sz>200)
-		{
-			data.resize( res->sz+800 );  // give us plenty of room to work with..
-
-			if ( ( compress(const_cast<uint8*>(data.contents()) + (sizeof(uint32)*2), &destsize, (const uint8*)res->data, res->sz)) != Z_OK)
-			{
-				OUT_DEBUG("Error while compressing ACCOUNT_DATA");
-				return;
-			}
-			
-			data.resize(destsize+8);
-		}
-		else 
-			data.append(	res->data,res->sz);	
 	}
-		
+	data.append(bbuff);
 	SendPacket(&data);	
 }
 

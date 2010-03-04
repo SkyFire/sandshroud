@@ -835,17 +835,16 @@ void WorldSession::FullLogin(Player* plr)
 	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
 	MD5Hash md5hash;
 	data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
-	for (int i = 0; i < 8; i++) // TODO: FIX THIS!
+	for (int i = 0; i < 8; i++)
 	{
-		AccountDataEntry* acct_data = GetAccountData(i); // TODO: Use this correctly.
+		AccountDataEntry* acct_data = GetAccountData(i);
 		if(0xEA & (1 << i))
 		{
-			data << uint32(0);
+			data << uint32(acct_data->Time);
 		}
 		md5hash.Initialize();
 		md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
 		md5hash.Finalize();
-//		data.append(md5hash.GetDigest(), MD5_DIGEST_LENGTH);
 	}
 	SendPacket(&data);
 
@@ -888,6 +887,9 @@ void WorldSession::FullLogin(Player* plr)
 		}
 	}
 #endif
+
+	if(plr->m_CurrentVehicle)
+		plr->m_CurrentVehicle->RemovePassenger(plr);
 
 	DEBUG_LOG( "WorldSession","Player %s logged in.", plr->GetName());
 
