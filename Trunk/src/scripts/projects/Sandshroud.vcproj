@@ -22,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\..\bin\debug\script_bin"
-			IntermediateDirectory="2008_int_debug_SandshroudLUA"
+			IntermediateDirectory="2008_int_debug_SandshroudScripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -68,15 +68,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/debug/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../bin/debug/script_bin/SandshroudScripts.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin\debug"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../bin/debug/script_bin/SandshroudScripts.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/SandshroudLUA.lib"
+				ImportLibrary="$(OutDir)/SandshroudScripts.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -104,7 +104,7 @@
 		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="..\..\..\bin\debug_x64\script_bin"
-			IntermediateDirectory="2008_int_debug_SandshroudLUA_x64"
+			IntermediateDirectory="2008_int_debug_SandshroudScripts_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -151,15 +151,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/debug_x64/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../bin/debug_x64/script_bin/SandshroudScripts.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin\debug_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug_x64/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../bin/debug_x64/script_bin/SandshroudScripts.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/SandshroudLUA.lib"
+				ImportLibrary="$(OutDir)/SandshroudScripts.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -187,7 +187,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\..\bin\release\script_bin"
-			IntermediateDirectory="2008_int_release_SandshroudLUA"
+			IntermediateDirectory="2008_int_release_SandshroudScripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -229,17 +229,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../bin/release/script_bin/SandshroudScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../bin/release/script_bin/SandshroudScripts.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/SandshroudLUA.lib"
+				ImportLibrary="$(OutDir)/SandshroudScripts.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -267,7 +267,7 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory="..\..\..\bin\release_x64\script_bin"
-			IntermediateDirectory="2008_int_release_SandshroudLUA_x64"
+			IntermediateDirectory="2008_int_release_SandshroudScripts_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -310,17 +310,17 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release_x64/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../bin/release_x64/script_bin/SandshroudScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release_x64/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../bin/release_x64/script_bin/SandshroudScripts.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/SandshroudLUA.lib"
+				ImportLibrary="$(OutDir)/SandshroudScripts.lib"
 				TargetMachine="17"
 			/>
 			<Tool
