@@ -832,21 +832,38 @@ void WorldSession::FullLogin(Player* plr)
 	info->m_loggedInPlayer = plr;
 
 	// account data == UI config
-	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
-	MD5Hash md5hash;
-	data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
-	for (int i = 0; i < 8; i++)
+	if(sWorld.m_useAccountData)
 	{
-		AccountDataEntry* acct_data = GetAccountData(i);
-		if(0xEA & (1 << i))
+		WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
+		MD5Hash md5hash;
+		data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
+		for (int i = 0; i < 8; i++)
 		{
-			data << uint32(acct_data->Time);
+			AccountDataEntry* acct_data = GetAccountData(i);
+			if(0xEA & (1 << i))
+				data << uint32(acct_data->Time);
+			md5hash.Initialize();
+			md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
+			md5hash.Finalize();
 		}
-		md5hash.Initialize();
-		md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
-		md5hash.Finalize();
+		SendPacket(&data);
 	}
-	SendPacket(&data);
+	else
+	{
+		WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
+		MD5Hash md5hash;
+		data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
+		for (int i = 0; i < 8; i++)
+		{
+			AccountDataEntry* acct_data = GetAccountData(i);
+			if(0xEA & (1 << i))
+				data << uint32(0);
+			md5hash.Initialize();
+			md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
+			md5hash.Finalize();
+		}
+		SendPacket(&data);
+	}
 
 	_player->ResetTitansGrip();
 
