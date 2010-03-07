@@ -112,7 +112,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetNULL,						// 86
 	&Spell::SpellTargetAreaOfEffect87,				// 87
 	&Spell::SpellTargetNULL,						// 88
-	&Spell::SpellTargetNULL,						// 89
+	&Spell::SpellTargetNULL,						// 89 Fill Targets Trajectory // Crow: Maybe... Later.
 	&Spell::SpellTargetNULL,						// 90
 	&Spell::SpellTargetNULL,						// 91
 	&Spell::SpellTargetNULL,						// 92

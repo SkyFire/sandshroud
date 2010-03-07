@@ -5289,10 +5289,12 @@ void Unit::RemoveAurasByInterruptFlag(uint32 flag)
 
 bool Unit::HasAuraVisual(uint32 visualid)
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
-	if(m_auras[x] && m_auras[x]->GetSpellProto()->SpellVisual==visualid)
+	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
 	{
-		return true;
+		if(m_auras[x] && ((m_auras[x]->GetSpellProto()->SpellVisual[0] == visualid) || (m_auras[x]->GetSpellProto()->SpellVisual[1] == visualid)))
+		{
+			return true;
+		}
 	}
 
 	return false;

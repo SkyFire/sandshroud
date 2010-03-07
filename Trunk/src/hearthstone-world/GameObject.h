@@ -259,11 +259,11 @@ public:
 	void SetState(uint8 state);
 	uint8 GetState();
 
-	//Destructable Building 
- 	uint32 Health; 
- 	void TakeDamage(uint32 ammount); 
- 	void Rebuild(); 
- 
+	//Destructable Building
+	uint32 Health;
+	void TakeDamage(uint32 ammount);
+	void Rebuild();
+
 protected:
 
 	bool m_summonedGo;
@@ -272,7 +272,6 @@ protected:
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
 	uint32 mines_remaining; //used for mining to mark times it can be mined
-
 };
 
 #endif
