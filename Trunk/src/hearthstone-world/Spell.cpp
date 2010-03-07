@@ -150,7 +150,7 @@ void SpellCastTargets::write( StackPacket& data )
 Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 {
 	ASSERT( Caster != NULL && info != NULL );
-  
+
 	m_spellInfo = info;
 	m_caster = Caster;
 	duelSpell = false;
@@ -179,7 +179,11 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 			v_caster = NULLVEHICLE;
 			u_caster = TO_UNIT( Caster );
 			if(Caster->IsVehicle())
+			{
 				v_caster = TO_VEHICLE( Caster );
+				if(!p_caster)
+					p_caster = v_caster->m_redirectSpellPackets;
+			}
 			if( u_caster->IsPet() && TO_PET( u_caster)->GetPetOwner() != NULL && TO_PET( u_caster )->GetPetOwner()->GetDuelState() == DUEL_STATE_STARTED )
 				duelSpell = true;
 		}break;
@@ -1107,7 +1111,7 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 	}
 	else if( !m_triggeredSpell )
 	{
-		if( !HasPower() )
+		if(!HasPower())
 		{
 			SendCastResult(SPELL_FAILED_NO_POWER);
 			// in case we're out of sync
@@ -1178,7 +1182,7 @@ void Spell::cancel()
 				if(m_AreaAura)//remove of blizz and shit like this
 				{
 					
-					DynamicObject* dynObj=m_caster->GetMapMgr()->GetDynamicObject(m_caster->GetUInt32Value(UNIT_FIELD_CHANNEL_OBJECT));
+					DynamicObject* dynObj = m_caster->GetMapMgr()->GetDynamicObject(m_caster->GetUInt32Value(UNIT_FIELD_CHANNEL_OBJECT));
 					if(dynObj)
 					{
 						dynObj->RemoveFromWorld(true);
@@ -1959,7 +1963,7 @@ void Spell::finish()
 	We set current spell only if this spell has cast time or is channeling spell
 	otherwise it's instant spell and we delete it right after completion
 	*/
-	
+
 	Spell* spl = this; // feeefeee! <3
 
 	if( u_caster != NULL )
@@ -1972,7 +1976,7 @@ void Spell::finish()
 	{
 		sHookInterface.OnPostSpellCast( p_caster, GetSpellProto(), unitTarget );
 	}
-	
+
 	if( p_caster)
 	{
 		if( m_ForceConsumption || ( cancastresult == SPELL_CANCAST_OK && !GetSpellFailed() ) )
@@ -1990,7 +1994,8 @@ void Spell::SendCastResult(uint8 result)
 
 	SetSpellFailed();
 
-	if(!m_caster->IsInWorld()) return;
+	if(!m_caster->IsInWorld())
+		return;
 
 	Player* plr = p_caster;
 
@@ -2397,7 +2402,7 @@ void Spell::SendInterrupted(uint8 result)
 	if(!plr && u_caster)
 		plr = u_caster->m_redirectSpellPackets;
 
-	if(plr&&plr->IsPlayer())
+	if(plr && plr->IsPlayer())
 	{
 		data << m_caster->GetNewGUID();
 		data << uint8(extra_cast_number);
@@ -2444,16 +2449,12 @@ void Spell::SendChannelUpdate(uint32 time)
 		u_caster->SetUInt32Value(UNIT_CHANNEL_SPELL,0);
 	}
 
-	if (!p_caster)
-		return;
-
 	/*WorldPacket data(MSG_CHANNEL_UPDATE, 18);*/
 	uint8 buf[20];
 	StackPacket data(MSG_CHANNEL_UPDATE, buf, 20);
-
-	data << p_caster->GetNewGUID();
-	data << time;	
-	p_caster->SendMessageToSet(&data, true);	
+	data << m_caster->GetNewGUID();
+	data << time;
+	m_caster->SendMessageToSet(&data, true);
 }
 
 void Spell::SendChannelStart(uint32 duration)

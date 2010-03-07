@@ -2259,3 +2259,11 @@ void WorldSession::HandleReadyForAccountDataTimes(WorldPacket &recv_data)
 	SendPacket(&data);
 
 }
+
+void WorldSession::HandleFarsightOpcode(WorldPacket &recv_data)
+{
+	uint8 type;
+	recv_data >> type;
+
+	GetPlayer()->UpdateVisibility();
+}

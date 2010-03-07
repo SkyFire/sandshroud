@@ -29,6 +29,8 @@ Unit::Unit()
 	m_attackTimer_1 = 0;
 	m_duelWield = false;
 
+	memset(movement_packet, 0, sizeof(movement_packet));
+	movement_info.FallTime = 0;
 	m_ignoreArmorPct = 0.0f;
 	m_ignoreArmorPctMaceSpec = 0.0f;
 	m_fearmodifiers = 0;
@@ -4592,7 +4594,6 @@ void Unit::_UpdateSpells( uint32 time )
 
 void Unit::CastSpell( Spell* pSpell )
 {
-
 	// check if we have a spell already casting etc
 	if(m_currentSpell && pSpell != m_currentSpell)
 	{
@@ -5697,7 +5698,7 @@ void Unit::RemoveFromWorld(bool free_guid)
 				}
 			}
 			else //Brrr.. how did we end up here??
-						RemoveAuraBySlot(x);
+				RemoveAuraBySlot(x);
 		}	
 	}
 

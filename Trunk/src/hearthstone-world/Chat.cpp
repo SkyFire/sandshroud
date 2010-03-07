@@ -60,8 +60,6 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _TitleCommandTable;
 	else if(!stricmp(name, "quest"))
 		return _questCommandTable;
-	else if(!stricmp(name, "vehicle"))
-		return _vehicleCommandTable;
 	return 0;
 }
 
@@ -187,7 +185,6 @@ void CommandTableStorage::Dealloc()
 	free( _GuildCommandTable);
 	free( _TitleCommandTable);
 	free( _questCommandTable );
-	free( _vehicleCommandTable );
 	free( _commandTable );
 }
 
@@ -368,7 +365,7 @@ void CommandTableStorage::Init()
 		{ "vendorremoveitem",'z', &ChatHandler::HandleItemRemoveCommand,"Removes from vendor.",		   NULL, 0, 0, 0},
 		{ "flags",	   'n', &ChatHandler::HandleNPCFlagCommand,	   "Changes NPC flags",			  NULL, 0, 0, 0},
 		{ "emote",	   'n', &ChatHandler::HandleEmoteCommand,		 ".emote - Sets emote state",	  NULL, 0, 0, 0 },
-		{ "delete",	  'n', &ChatHandler::HandleDeleteCommand,		"Deletes non-vehicle mobs from db and world.", NULL, 0, 0, 0},
+		{ "delete",	  'n', &ChatHandler::HandleDeleteCommand,		"Deletes mobs from db and world.", NULL, 0, 0, 0},
 		{ "info",		'n', &ChatHandler::HandleNpcInfoCommand,	   "Displays NPC information",	   NULL, 0, 0, 0},
 		{ "addAgent",	'n', &ChatHandler::HandleAddAIAgentCommand,	".npc addAgent <agent> <procEvent> <procChance> <procCount> <spellId> <spellType> <spelltargetType> <spellCooldown> <floatMisc1> <Misc2>",NULL, 0, 0, 0},
 		{ "listAgent",   'n', &ChatHandler::HandleListAIAgentCommand,   ".npc listAgent",NULL, 0, 0, 0},
@@ -473,13 +470,6 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(questCommandTable, _questCommandTable);
 
-	static ChatCommand vehicleCommandTable[] =
-	{
-		{ "Delete", 'd', &ChatHandler::HandleVehicleDelete,	"Deletes targeted vehicle.",	NULL, 0, 0, 0},
-		{ NULL,		0,  NULL,										"",														NULL, 0, 0, 0},
-	};
-	dupe_command_table(vehicleCommandTable, _vehicleCommandTable);
-
 	static ChatCommand commandTable[] = {
 		//{ "renameguild", 'a', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.", NULL, 0, 0, 0 },
 		{ "masssummon", 'z', &ChatHandler::HandleMassSummonCommand, ".masssummon - Summons all players.", NULL, 0, 0, 0},
@@ -542,7 +532,6 @@ void CommandTableStorage::Init()
 		{ "recall",		'q', NULL,									 "",				 recallCommandTable, 0, 0, 0},
 		{ "guild",		'm', NULL,									 "",				 GuildCommandTable, 0, 0, 0},
 		{ "title",		'm', NULL,									 "",				 TitleCommandTable, 0, 0, 0},
-		{ "vehicle",	'v', NULL,									 "",				 vehicleCommandTable, 0, 0, 0},
 		{ "getpos"	  ,  'd', &ChatHandler::HandleGetPosCommand,		"",							   NULL, 0, 0, 0},
 		{ "clearcooldowns", 'm', &ChatHandler::HandleClearCooldownsCommand, "Clears all cooldowns for your class.", NULL, 0, 0, 0 },
 		{ "removeauras",   'm', &ChatHandler::HandleRemoveAurasCommand,   "Removes all auras from target",  NULL, 0, 0, 0},

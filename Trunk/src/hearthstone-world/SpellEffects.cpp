@@ -21,7 +21,7 @@
 
 #include "StdAfx.h"
 
-#define CREATESPELL(caster,info,triggered,aur) \
+#define CREATESPELL(caster, info, triggered, aur) \
 	new Spell( caster, info, triggered, (aur == NULL ? NULLAURA : aur));
 
 pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS]={
@@ -817,14 +817,14 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 			uint32 ClearSpellId[8] =
 			{
-			23922,  /* Shield Slam - Rank 1 */
-			23923,  /* Shield Slam - Rank 2 */
-			23924,  /* Shield Slam - Rank 3 */
-			23925,  /* Shield Slam - Rank 4 */
-			25258,  /* Shield Slam - Rank 5 */
-			30356,  /* Shield Slam - Rank 6 */
-			47487,  /* Shield Slam - Rank 7 */
-			47488,  /* Shield Slam - Rank 8 */
+				23922,  /* Shield Slam - Rank 1 */
+				23923,  /* Shield Slam - Rank 2 */
+				23924,  /* Shield Slam - Rank 3 */
+				23925,  /* Shield Slam - Rank 4 */
+				25258,  /* Shield Slam - Rank 5 */
+				30356,  /* Shield Slam - Rank 6 */
+				47487,  /* Shield Slam - Rank 7 */
+				47488,  /* Shield Slam - Rank 8 */
 			};
 
 			for(i = 0; i < 8; i++)
@@ -966,16 +966,16 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 			uint32 ClearSpellId[10] =
 			{
-			5277,  /* Evasion - Rank 1 */
-			26669, /* Evasion - Rank 2 */
-			2983,  /* Sprint  - Rank 1 */
-			8696,  /* Sprint  - Rank 2 */
-			11305, /* Sprint  - Rank 3 */
-			1856,  /* Vanish  - Rank 1 */
-			1857,  /* Vanish  - Rank 2 */
-			26889, /* Vanish  - Rank 3 */
-			14177, /* Cold Blood       */
-			36554  /* Shadowstep       */
+				5277,  /* Evasion - Rank 1 */
+				26669, /* Evasion - Rank 2 */
+				2983,  /* Sprint  - Rank 1 */
+				8696,  /* Sprint  - Rank 2 */
+				11305, /* Sprint  - Rank 3 */
+				1856,  /* Vanish  - Rank 1 */
+				1857,  /* Vanish  - Rank 2 */
+				26889, /* Vanish  - Rank 3 */
+				14177, /* Cold Blood       */
+				36554  /* Shadowstep       */
 			};
 
 			for(i = 0; i < 10; ++i)
@@ -3578,7 +3578,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			{
  				CALL_GO_SCRIPT_EVENT(gameObjTarget, OnActivate)(TO_PLAYER(p_caster));
 				CALL_INSTANCE_SCRIPT_EVENT( gameObjTarget->GetMapMgr(), OnGameObjectActivate )( gameObjTarget, p_caster );
-			};
+			}
 
 			if(sQuestMgr.OnGameObjectActivate(p_caster, gameObjTarget))
 			{
@@ -3593,7 +3593,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			loottype=LOOT_CORPSE;
 		}
 		break;
-	};
+	}
 	if( gameObjTarget != NULL && gameObjTarget->GetByte(GAMEOBJECT_BYTES_1, 1) == GAMEOBJECT_TYPE_CHEST)
 		TO_PLAYER( m_caster )->SendLoot( gameObjTarget->GetGUID(), loottype );
 }
@@ -4142,7 +4142,7 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 			break;
 		default: //u cant learn other types in game
 			return;
-	};
+	}
 
 	if( target->_HasSkillLine( skill ) )
 		target->_ModifySkillMaximum( skill, max );
@@ -4235,7 +4235,7 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 		target->addSpell( 45382 );// Scroll of Stamina
 		target->addSpell( 52738 );// Ivory Ink
 
-	};
+	}
 }
 
 void Spell::SpellEffectSummonObject(uint32 i)

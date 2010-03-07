@@ -1719,7 +1719,7 @@ public:
 	// Has power?
 	bool HasPower();
 	// Checks the caster is ready for cast
-	uint8 CanCast(bool);
+	uint8 CanCast(bool tolerate);
 	// Removes reagents, ammo, and items/charges
 	void RemoveItems();
 	// Calculates the i'th effect value
@@ -1920,6 +1920,7 @@ public:
 	void SpellTargetPositionOfTarget(uint32 i, uint32 j);
 	void SpellTargetAreaOfEffect87(uint32 i, uint32 j);
 	void SpellTargetAllTargetsInArea(uint32 i, uint32 j);
+	void SpellTargetVehicle(uint32 i, uint32 j);
 
 	uint64 static FindLowestHealthRaidMember(Player* Target, uint32 dist);
 

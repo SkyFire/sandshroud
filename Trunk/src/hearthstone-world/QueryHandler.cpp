@@ -41,7 +41,10 @@ void WorldSession::HandleNameQueryOpcode( WorldPacket & recv_data )
 	data << pguid;
 	data << uint8(0);
 	data << pn->name;
-	data << uint8(0);	   // this probably is "different realm" or something flag.
+//	if(blablabla)
+//		data << std::string("");
+//	else
+		data << uint8(0);
 	data << uint8(pn->race);
 	data << uint8(pn->gender);
 	data << uint8(pn->cl);

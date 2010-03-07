@@ -37,10 +37,12 @@ public:
 		if(sLog.m_screenLogLevel >= 5)
 		{
 			uint32 j = 1, k = 1;
-			sLog.outDebug("STORAGE_SIZE: %lu", (unsigned long)size() );
+			sLog.outDebugInLine("STORAGE_SIZE: %lu\n", (unsigned long)size() );
 			sLog.outDebugInLine("START: ");
 			for(uint32 i = 0; i < size(); ++i)
+			{
 				sLog.outDebugInLine("%u - ", read<uint8>(i) );
+			}
 			sLog.outDebugInLine("END\n");
 		}
 	}

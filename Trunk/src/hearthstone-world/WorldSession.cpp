@@ -34,7 +34,6 @@ _logoutTime(0), permissions(NULL), permissioncount(0), _loggingOut(false), insta
 	m_hasDeathKnight = false;
 	m_highestLevel = 0;
 	m_asyncQuery = false;
-	memset(movement_packet, 0, sizeof(movement_packet));
 	m_currMsTime = getMSTime();
 	bDeleted = false;
 	m_bIsWLevelSet = false;
@@ -47,7 +46,6 @@ _logoutTime(0), permissions(NULL), permissioncount(0), _loggingOut(false), insta
 	language=0;
 	m_muted = 0;
 	_side = -1;
-	movement_info.FallTime = 0;
 	m_lastEnumTime = 0;
 	m_repeatTime = 0;
 	m_repeatEmoteTime = 0;
@@ -943,12 +941,11 @@ void WorldSession::InitPacketHandlerTable()
 
 	WorldPacketHandlers[CMSG_REALM_SPLIT].handler							= &WorldSession::HandleRealmSplit;
 	WorldPacketHandlers[CMSG_REALM_SPLIT].status							= STATUS_AUTHED;
-
 	WorldPacketHandlers[CMSG_QUESTGIVER_STATUS_MULTIPLE_QUERY].handler		= &WorldSession::HandleInrangeQuestgiverQuery;
 	WorldPacketHandlers[CMSG_ALTER_APPEARANCE].handler						= &WorldSession::HandleAlterAppearance;
 	WorldPacketHandlers[CMSG_REMOVE_GLYPH].handler							= &WorldSession::HandleRemoveGlyph;
-
 	WorldPacketHandlers[CMSG_QUERY_INSPECT_ACHIEVEMENTS].handler			= &WorldSession::HandleAchievementInspect;
+	WorldPacketHandlers[CMSG_FAR_SIGHT].handler								= &WorldSession::HandleFarsightOpcode;
 
 	// Vehicles
 	WorldPacketHandlers[CMSG_SPELLCLICK].handler							= &WorldSession::HandleSpellClick;

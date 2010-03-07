@@ -160,7 +160,6 @@ class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 	ChatCommand * _commandTable;
 	ChatCommand * _GuildCommandTable;
 	ChatCommand * _TitleCommandTable;
-	ChatCommand * _vehicleCommandTable;
 
 	ChatCommand * GetSubCommandTable(const char * name);
 public:
@@ -543,9 +542,6 @@ protected:
 	bool HandleGetRepCommand(const char *args, WorldSession *m_session);
 
 	bool HandleDebugRetroactiveQuestAchievements(const char *args, WorldSession *m_session);
-
-	/// Vehicle commands
-	bool HandleVehicleDelete(const char *args, WorldSession *m_session);
 };
 
 

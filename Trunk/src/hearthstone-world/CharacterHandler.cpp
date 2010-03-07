@@ -725,8 +725,8 @@ void WorldSession::FullLogin(Player* plr)
 	m_MoverWoWGuid.Init(plr->GetGUID());
 
 	// copy to movement array
-	movement_packet[0] = m_MoverWoWGuid.GetNewGuidMask();
-	memcpy(&movement_packet[1], m_MoverWoWGuid.GetNewGuid(), m_MoverWoWGuid.GetNewGuidLen());
+	plr->movement_packet[0] = m_MoverWoWGuid.GetNewGuidMask();
+	memcpy(&plr->movement_packet[1], m_MoverWoWGuid.GetNewGuid(), m_MoverWoWGuid.GetNewGuidLen());
 
 	WorldPacket datab(MSG_SET_DUNGEON_DIFFICULTY, 20);
 	datab << plr->iInstanceType;

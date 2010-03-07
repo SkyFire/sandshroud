@@ -130,20 +130,13 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		SystemMessage(m_session, "No selection.");
 		return true;
 	}
-	if(m_session->GetPlayer()->m_TransporterGUID != 0)
-	{
-		SystemMessage(m_session, "Despawning crew-members is not supported yet (delete from database instead).");
-		return true;
-	}
+	Creature* unit = NULLUNIT;
 
-	Vehicle* veh = m_session->GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
-	if(veh)
-	{
-		SystemMessage(m_session, "Current selection is a vehicle. Use .vehicle delete instead.");
-		return true;
-	}
+	if(m_session->GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid)))
+		unit = m_session->GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
+	else
+		unit = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 
-	Creature* unit = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 	if(!unit)
 	{
 		SystemMessage(m_session, "You should select a creature.");
@@ -154,6 +147,22 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	{
 		SystemMessage(m_session, "You do not have permission to do that. Please contact higher staff for removing of saved spawns.");
 		return true;
+	}
+
+	if(unit->IsVehicle())
+	{
+		Vehicle* veh = TO_VEHICLE(unit);
+		for(int i = 0; i < 8; ++i)
+		{
+			if(!veh->GetPassenger(i))
+				continue;
+
+			// Remove any players
+			if(veh->GetPassenger(i)->IsPlayer())
+				veh->RemovePassenger(veh->GetPassenger(i));
+			else // Remove any units.
+				veh->GetPassenger(i)->RemoveFromWorld(true);
+		}
 	}
 
 	sGMLog.writefromsession(m_session, "used npc delete, sqlid %u, creature %s, pos %f %f %f",
@@ -172,6 +181,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		return true;
 
 	unit->DeleteFromDB();
+
 	if(unit->m_spawn)
 	{
 		uint32 cellx=float2int32(((_maxX-unit->m_spawn->x)/_cellSize));
@@ -197,7 +207,10 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		}
 	}
 
-	unit->Destructor();
+	if(unit->IsVehicle())
+		TO_VEHICLE(unit)->Destructor();
+	else
+		unit->Destructor();
 
 	return true;
 }
@@ -1159,21 +1172,5 @@ bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session
 	if(!crt) return true;
 
 	crt->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetOrientation());
-	return true;
-}
-
-bool ChatHandler::HandleVehicleDelete(const char *args, WorldSession *m_session)
-{
-	if(!m_session->GetPlayer()->GetSelection())
-		return false;
-
-	Unit* veh = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
-	if(!veh || !veh->IsVehicle())
-	{
-		return false;
-	}
-
-	TO_VEHICLE(veh)->SafeDelete();
-	BlueSystemMessage(m_session, "Vehicle %u deleted.", veh->GetEntry());
 	return true;
 }

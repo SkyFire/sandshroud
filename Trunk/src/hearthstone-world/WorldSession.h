@@ -152,33 +152,6 @@ typedef struct Cords {
 	float x,y,z;
 }Cords;
 
-
-class MovementInfo
-{
-public:
-	uint64 guid;
-	uint32 time;
-	float pitch;// -1.55=looking down, 0=looking forward, +1.55=looking up
-	float jump_sinAngle;//on slip 8 is zero, on jump some other number
-	float jump_cosAngle, jump_xySpeed;//9,10 changes if you are not on foot
-	float jumpspeed;//something related to collision, CROW: Might be used for other knockback information.
-	uint32 unk11;
-	uint32 spline_unk;
-	uint8 unk13;
-	uint16 flag16;
-
-	float x, y, z, orientation;
-	uint32 flags;
-	uint32 FallTime;
-	WoWGuid transGuid;
-	float transX, transY, transZ, transO;
-	uint32 transTime;
-	uint8 transSeat;
-
-	void init(WorldPacket & data);
-	void write(WorldPacket & data);
-};
-
 #define PLAYER_LOGOUT_DELAY (20*1000)		/* 20 seconds should be more than enough to gank ya. */
 
 #define CHECK_INWORLD_RETURN if(_player == NULL || !_player->IsInWorld()) { return; }
@@ -753,6 +726,7 @@ protected:
 	//MISC
 	void HandleReadyForAccountDataTimes(WorldPacket &recv_data);
 	void HandleWorldStateUITimerUpdate( WorldPacket & recv_data );
+	void HandleFarsightOpcode(WorldPacket &recv_data);
 
 public:
 	void SendTradeStatus(uint32 TradeStatus);
@@ -771,16 +745,10 @@ public:
 	float m_wLevel; // Level of water the player is currently in
 	bool m_bIsWLevelSet; // Does the m_wLevel variable contain up-to-date information about water level?
 
-	MovementInfo* GetMovementInfo() { return &movement_info; }
-
 private:
 	friend class Player;
 	Player* _player;
 	WorldSocket *_socket;
-		
-	/* Preallocated buffers for movement handlers */
-	MovementInfo movement_info;
-	uint8 movement_packet[90];
 
 	bool m_isFalling;
 

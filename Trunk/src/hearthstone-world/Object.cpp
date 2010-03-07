@@ -364,7 +364,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 	{
 		pThis = TO_PLAYER(this);
 		if(pThis->GetSession())
-			moveinfo = pThis->GetSession()->GetMovementInfo();
+			moveinfo = pThis->GetMovementInfo();
 		if(target == pThis)
 		{
 			// Updating our last speeds.

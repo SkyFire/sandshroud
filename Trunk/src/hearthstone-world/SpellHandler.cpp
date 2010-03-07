@@ -174,7 +174,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	Spell* spell(new Spell(_player, spellInfo, false, NULLAURA));
+	Spell* spell = new Spell(_player, spellInfo, false, NULLAURA);
 	spell->extra_cast_number=cn;
 	spell->m_glyphIndex = glyphIndex;
 	spell->i_caster = tmpItem;
@@ -185,11 +185,11 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 {
 	CHECK_INWORLD_RETURN;
-	if(_player->getDeathState()==CORPSE)
+	if(_player->getDeathState() == CORPSE)
 		return;
 
 	uint32 spellId;
-	uint8 cn, unk; // 3.0.2 unk
+	uint8 cn, unk; // cn: Cast count. 3.0.2 unk
 
 	recvPacket >> cn >> spellId  >> unk;
 	if(!spellId)
@@ -284,8 +284,10 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 			return;
 		}
 
-        if(_player->m_currentSpell)
-        {
+		SpellCastTargets targets(recvPacket, GetPlayer()->GetGUID());
+
+		if(_player->m_currentSpell)
+		{
 			if( _player->m_currentSpell->getState() == SPELL_STATE_CASTING )
 			{
 				// cancel the existing channel spell, cast this one
@@ -297,9 +299,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 				_player->SendCastResult(spellInfo->Id, SPELL_FAILED_SPELL_IN_PROGRESS, cn, 0);
 				return;
 			}
-        }
-
-		SpellCastTargets targets(recvPacket,GetPlayer()->GetGUID());
+		}
 
 		// some anticheat stuff
 		if( spellInfo->self_cast_only )
@@ -325,8 +325,8 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 			}
 		}
 
-		Spell* spell(new Spell(GetPlayer(), spellInfo, false, NULLAURA));
-		spell->extra_cast_number=cn;
+		Spell* spell = new Spell(GetPlayer(), spellInfo, false, NULLAURA);
+		spell->extra_cast_number = cn;
 		spell->prepare(&targets);
 	}
 }
@@ -379,20 +379,17 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 {
 	DEBUG_LOG( "WORLD"," got CMSG_PET_CAST_SPELL." );
 	uint64 guid;
-	uint8 counter;
 	uint32 spellid;
-	uint8 flags;
+	uint8 counter, flags;
 	Unit* caster;
 	SpellCastTargets targets;
-	SpellEntry *sp;
-	Spell* pSpell;
 	list<AI_Spell*>::iterator itr;
 
 	recvPacket >> guid >> counter >> spellid >> flags;
-	sp = dbcSpell.LookupEntry(spellid);
+	SpellEntry *sp = dbcSpell.LookupEntry(spellid);
 
 	// Summoned Elemental's Freeze
-    if(spellid == 33395)
+	if(spellid == 33395)
 	{
 		caster = _player->m_Summon;
 		if( caster && TO_PET(caster)->GetAISpellForSpellId(spellid) == NULL )
@@ -400,7 +397,10 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 	}
 	else
 	{
-		caster = _player->m_CurrentCharm;
+		if(_player->m_CurrentVehicle)
+			caster = _player->m_CurrentVehicle;
+		else
+			caster = _player->m_CurrentCharm;
 		if( caster != NULL )
 		{
 			if(caster->IsVehicle() && !caster->IsPlayer())
@@ -462,6 +462,6 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 
 	targets.read(recvPacket, _player->GetGUID());
 
-	pSpell = new Spell(caster, sp, false, NULLAURA);
+	Spell* pSpell = new Spell(caster, sp, false, NULLAURA);
 	pSpell->prepare(&targets);
 }

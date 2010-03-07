@@ -12006,7 +12006,7 @@ bool Player::IsFlyHackEligible()
 
 	if(GetMapId() == 369) return false; // Deeprun Tram
 
-	MovementInfo* moveInfo = GetSession()->GetMovementInfo();
+	MovementInfo* moveInfo = GetMovementInfo();
 	if(!moveInfo) return false;
 
 	uint32 moveFlags = moveInfo->flags;

@@ -329,12 +329,8 @@ void Vehicle::SafeDelete()
 
 void Vehicle::DeleteMe()
 {
-	Vehicle* pThis = TO_VEHICLE(this);
-
 	if(IsInWorld())
 		RemoveFromWorld(false, true);
-
-	pThis->DeleteFromDB();
 
 	Destructor();
 }
@@ -463,6 +459,14 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	data << uint32(0);
 	pPassenger->SendMessageToSet(&data, false);
 
+	pPassenger->movement_info.flags &= ~MOVEFLAG_TAXI;
+	pPassenger->movement_info.transX = 0;
+	pPassenger->movement_info.transY = 0;
+	pPassenger->movement_info.transZ = 0;
+	pPassenger->movement_info.transO = 0;
+	pPassenger->movement_info.transTime = 0;
+	pPassenger->movement_info.transSeat = 0;
+
 	if(pPassenger->IsPlayer())
 	{
 		Player* plr = TO_PLAYER(pPassenger);
@@ -492,7 +496,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		data << uint32(0);
 		plr->GetSession()->SendPacket(&data);
 
-		plr->SetUInt64Value( PLAYER_FARSIGHT, 0 );	
+		plr->SetUInt64Value( PLAYER_FARSIGHT, 0 );
 
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
 		data << uint32(m_vehicleSeats[slot]->m_exitUISoundID);
