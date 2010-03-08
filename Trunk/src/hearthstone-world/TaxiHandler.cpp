@@ -83,7 +83,7 @@ void WorldSession::SendTaxiList(Creature* pCreature)
 	submask = 1<<((curloc-1)%32);
 
 	// Check for known nodes
-	if (!(GetPlayer( )->GetTaximask(field) & submask))
+	if(!(GetPlayer()->GetTaximask(field) & submask))
 	{
 		GetPlayer()->SetTaximask(field, (submask | GetPlayer( )->GetTaximask(field)) );
 
@@ -93,6 +93,7 @@ void WorldSession::SendTaxiList(Creature* pCreature)
 		WorldPacket update(SMSG_TAXINODE_STATUS, 9);
 		update << guid << uint8( 1 );
 		SendPacket( &update );
+		return;
 	}
 
 	//Set Mask

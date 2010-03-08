@@ -1910,12 +1910,14 @@ void ObjectMgr::SetVendorList(uint32 Entry, std::vector<CreatureItem>* list_)
 
 void ObjectMgr::LoadCreatureWaypoints()
 {
-	QueryResult *result = WorldDatabase.Query("SELECT * FROM creature_waypoints ORDER BY spawnid,waypointid");
+	QueryResult *result = WorldDatabase.Query("SELECT * FROM creature_waypoints ORDER BY spawnid, waypointid");
 	if(!result)
 		return;
+
 	QueryResult *result2 = WorldDatabase.Query("SELECT spawnid,COUNT(waypointid) FROM creature_waypoints GROUP BY spawnid ORDER BY spawnid,waypointid");
 	if(!result2)
 		return;
+
 	uint32 lastspawnid = 0;
 
 	Field * fields;
@@ -1928,7 +1930,7 @@ void ObjectMgr::LoadCreatureWaypoints()
 	do
 	{
 		fields = result->Fetch();
-		uint32 spawnid=fields[0].GetUInt32();
+		uint32 spawnid = fields[0].GetUInt32();
 		if(!spawnid || spawnid == skipid)
 			continue;
 
@@ -2013,10 +2015,10 @@ void ObjectMgr::LoadCreatureWaypoints()
 WayPointMap*ObjectMgr::GetWayPointMap(uint32 spawnid)
 {
 	HM_NAMESPACE::hash_map<uint32,WayPointMap*>::const_iterator i;
-	i=m_waypoints.find(spawnid);
-	if(i!=m_waypoints.end())
+	i = m_waypoints.find(spawnid);
+	if(i != m_waypoints.end())
 	{
-		WayPointMap * m=i->second;
+		WayPointMap * m = i->second;
 		// we don't wanna erase from the map, because some are used more
 		// than once (for instances)
 
@@ -2030,7 +2032,7 @@ Pet* ObjectMgr::CreatePet()
 {
 	uint32 guid;
 	m_petlock.Acquire();
-	guid =++m_hiPetGuid;
+	guid = ++m_hiPetGuid;
 	m_petlock.Release();
 
 	uint64 fullguid = ((uint64)HIGHGUID_TYPE_PET << 32) | ((uint64)guid << 24) | guid;

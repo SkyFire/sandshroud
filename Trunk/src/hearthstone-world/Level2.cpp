@@ -172,53 +172,50 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	BlueSystemMessage(m_session, "Deleted creature ID %u", unit->spawnid);
 	
 	MapMgr* unitMgr = unit->GetMapMgr();
-	if(unit->IsInWorld())
-	{
-		unit->RemoveFromWorld(false,true);
-	}
-
-	if(unit->m_spawn == NULL)
-		return true;
 
 	unit->DeleteFromDB();
 
-	if(unit->m_spawn)
+	if(unit->IsInWorld())
 	{
-		uint32 cellx=float2int32(((_maxX-unit->m_spawn->x)/_cellSize));
-		uint32 celly=float2int32(((_maxY-unit->m_spawn->y)/_cellSize));
-		if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL)
+		if(unit->m_spawn)
 		{
-			CellSpawns * c = unitMgr->GetBaseMap()->GetSpawnsList(cellx, celly);
-			if( c != NULL )
+			uint32 cellx=float2int32(((_maxX-unit->m_spawn->x)/_cellSize));
+			uint32 celly=float2int32(((_maxY-unit->m_spawn->y)/_cellSize));
+			if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL)
 			{
-				CreatureSpawnList::iterator itr, itr2;
-				for(itr = c->CreatureSpawns.begin(); itr != c->CreatureSpawns.end();)
+				CellSpawns * c = unitMgr->GetBaseMap()->GetSpawnsList(cellx, celly);
+				if( c != NULL )
 				{
-					itr2 = itr;
-					++itr;
-					if((*itr2) == unit->m_spawn)
+					CreatureSpawnList::iterator itr, itr2;
+					for(itr = c->CreatureSpawns.begin(); itr != c->CreatureSpawns.end();)
 					{
-						c->CreatureSpawns.erase(itr2);
-						delete unit->m_spawn;
-						break;
+						itr2 = itr;
+						++itr;
+						if((*itr2) == unit->m_spawn)
+						{
+							c->CreatureSpawns.erase(itr2);
+							delete unit->m_spawn;
+							break;
+						}
 					}
 				}
 			}
 		}
+		unit->RemoveFromWorld(false,true);
 	}
-
-	if(unit->IsVehicle())
-		TO_VEHICLE(unit)->Destructor();
-	else
-		unit->Destructor();
-
 	return true;
 }
 
 bool ChatHandler::HandleDeMorphCommand(const char* args, WorldSession *m_session)
 {
-	m_session->GetPlayer()->DeMorph();
-	return true;
+	uint64 guid = m_session->GetPlayer()->GetSelection();
+	Unit *unit = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid);
+	if(unit)
+	{
+		unit->DeMorph();
+		return true;
+	}
+	return false;
 }
 
 bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)

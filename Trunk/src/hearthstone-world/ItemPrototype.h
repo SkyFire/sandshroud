@@ -652,9 +652,9 @@ struct ItemPrototype
 	uint32 SubClass;
 	uint32 unknown_bc;
 	char * Name1;
-	char * Name2;
-	char * Name3;
-	char * Name4;
+//	char * Name2;
+//	char * Name3;
+//	char * Name4;
 	uint32 DisplayInfoID;
 	uint32 Quality;
 	uint32 Flags;
