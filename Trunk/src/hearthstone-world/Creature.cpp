@@ -385,13 +385,9 @@ void Creature::DeleteFromDB()
 	if( m_spawn == NULL )
 		return;
 
-	if(GetAIInterface())
-		GetAIInterface()->deleteWaypoints();
-
 	WorldDatabase.Execute("DELETE FROM creature_spawns WHERE id=%u",  GetSQL_id());
 	WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid=%u",  GetSQL_id());
 }
-
 
 /////////////
 /// Quests
