@@ -458,7 +458,8 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 				TO_CREATURE(pLootTarget)->UpdateLootAnimation(_player);
 
 				// skinning
-				if( lootmgr.IsSkinnable( pLootTarget->GetEntry() ) )
+				if(!TO_CREATURE(pLootTarget)->IsPet() && !TO_CREATURE(pLootTarget)->IsSummon()
+					&& lootmgr.IsSkinnable( pLootTarget->GetEntry()))
 				{
 					pLootTarget->BuildFieldUpdatePacket( _player, UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE );
 				}
@@ -2264,6 +2265,8 @@ void WorldSession::HandleFarsightOpcode(WorldPacket &recv_data)
 {
 	uint8 type;
 	recv_data >> type;
+
+	// TODO
 
 	GetPlayer()->UpdateVisibility();
 }

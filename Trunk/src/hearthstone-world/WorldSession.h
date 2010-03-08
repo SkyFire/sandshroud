@@ -728,6 +728,9 @@ protected:
 	void HandleWorldStateUITimerUpdate( WorldPacket & recv_data );
 	void HandleFarsightOpcode(WorldPacket &recv_data);
 
+	/// Empty packets
+	void EmptyPacket(WorldPacket &recv_data);
+
 public:
 	void SendTradeStatus(uint32 TradeStatus);
 	void SendInventoryList(Creature* pCreature);
