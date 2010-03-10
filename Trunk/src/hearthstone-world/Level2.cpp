@@ -175,34 +175,40 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 
 	unit->DeleteFromDB();
 
-	if(unit->IsInWorld())
+	if(!unit->IsInWorld())
+		return true;
+
+	if(unit->m_spawn)
 	{
-		if(unit->m_spawn)
+		uint32 cellx=float2int32(((_maxX-unit->m_spawn->x)/_cellSize));
+		uint32 celly=float2int32(((_maxY-unit->m_spawn->y)/_cellSize));
+		if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL)
 		{
-			uint32 cellx=float2int32(((_maxX-unit->m_spawn->x)/_cellSize));
-			uint32 celly=float2int32(((_maxY-unit->m_spawn->y)/_cellSize));
-			if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL)
+			CellSpawns * c = unitMgr->GetBaseMap()->GetSpawnsList(cellx, celly);
+			if( c != NULL )
 			{
-				CellSpawns * c = unitMgr->GetBaseMap()->GetSpawnsList(cellx, celly);
-				if( c != NULL )
+				CreatureSpawnList::iterator itr, itr2;
+				for(itr = c->CreatureSpawns.begin(); itr != c->CreatureSpawns.end();)
 				{
-					CreatureSpawnList::iterator itr, itr2;
-					for(itr = c->CreatureSpawns.begin(); itr != c->CreatureSpawns.end();)
+					itr2 = itr;
+					++itr;
+					if((*itr2) == unit->m_spawn)
 					{
-						itr2 = itr;
-						++itr;
-						if((*itr2) == unit->m_spawn)
-						{
-							c->CreatureSpawns.erase(itr2);
-							delete unit->m_spawn;
-							break;
-						}
+						c->CreatureSpawns.erase(itr2);
+						delete unit->m_spawn;
+						break;
 					}
 				}
 			}
 		}
-		unit->RemoveFromWorld(false,true);
 	}
+	unit->RemoveFromWorld(false,true);
+
+	if(unit->IsVehicle())
+		TO_VEHICLE(unit)->Destructor();
+	else
+		unit->Destructor();
+
 	return true;
 }
 

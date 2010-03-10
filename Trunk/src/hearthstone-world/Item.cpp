@@ -1091,7 +1091,7 @@ static const char *g_itemQualityColours[9] = {
 	"|cffa335ee",		// Purple
 	"|cffff8000",		// Orange
 	"|cffe6cc80",		// Artifact
-	"|c00fce080",		// Heirloom
+	"|cffe5cc80",		// Heirloom
 	"|cff00ffff",		// Gamemaster
 };
 

@@ -44,7 +44,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm250 /MP5"
+				AdditionalOptions="/Zm256 /bigobj /MP5"
 				Optimization="0"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
@@ -114,7 +114,7 @@
 		<Configuration
 			Name="Debug|x64"
 			OutputDirectory=".\..\..\bin\Debug_x64"
-			IntermediateDirectory=".\hearthstone-world___Win32_Debug_x64"
+			IntermediateDirectory=".\hearthstone-world___x64_Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm250/bigobj"
+				AdditionalOptions="/Zm256 /bigobj /MP5"
 				Optimization="0"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
@@ -301,7 +301,7 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory=".\..\..\bin\Release_x64"
-			IntermediateDirectory=".\hearthstone-world___Win32_Release_x64"
+			IntermediateDirectory=".\hearthstone-world___x64_Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -328,7 +328,7 @@
 				AdditionalOptions="/Zm250"
 				Optimization="4"
 				InlineFunctionExpansion="2"
-				FavorSizeOrSpeed="0"
+				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;X64"
