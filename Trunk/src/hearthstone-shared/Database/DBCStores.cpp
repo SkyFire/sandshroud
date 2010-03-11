@@ -259,9 +259,9 @@ const char* achievementfmt=
 	"i" // Mapid
 	"x" // unk.
 	"s" // Name
-	"xxxxxxxxxxxxxxx"
+	"xxxxxxxxxxxxxxxx"
 	"s" // Description
-	"xxxxxxxxxxxxxxxxx"
+	"xxxxxxxxxxxxxxxx"
 	"i" // Category Id
 	"i" // points
 	"x" // Order In Category

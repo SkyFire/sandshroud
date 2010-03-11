@@ -36,7 +36,7 @@ struct AchievementEntry
     //uint32 unk1[14]; // 5-19
     //uint32 name_flags; // 20
     char* description; // 21
-    //char *descriptionextra[15]; // 22-36
+    //char *descriptionextra[14]; // 22-36
     //uint32 desc_flags; // 37
     uint32 categoryId; // 38
     uint32 points; // 39 reward points
