@@ -92,7 +92,7 @@ Object::~Object( )
 		m_phaseAura = NULLAURA;
 	}
 
-	if(m_objectTypeId != TYPEID_ITEM)
+	if(m_objectTypeId != TYPEID_ITEM && m_objectTypeId != TYPEID_CONTAINER)
 		ASSERT(!m_inQueue);
 
 	if (IsInWorld() && m_objectTypeId != TYPEID_ITEM && m_objectTypeId != TYPEID_CONTAINER)
@@ -206,7 +206,7 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 
 	case TYPEID_DYNAMICOBJECT:
 		{
-			flags = 0x0150;
+			flags = 0x0048;
 		}break;
 
 	case TYPEID_CORPSE:
@@ -473,7 +473,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 				*data << pThis->m_TransporterX << pThis->m_TransporterY << pThis->m_TransporterZ << pThis->m_TransporterO;
 				*data << pThis->m_TransporterUnk << uint8(0);
 			}
-			else if(m_objectTypeId==TYPEID_UNIT && TO_CREATURE(this)->m_transportPosition != NULL)
+			else if(m_objectTypeId == TYPEID_UNIT && TO_CREATURE(this)->m_transportPosition != NULL)
 			{
 				*data << TO_CREATURE(this)->m_transportGuid;
 				*data << uint32(HIGHGUID_TYPE_TRANSPORTER);
@@ -991,8 +991,8 @@ void Object::AddToWorld(MapMgr* pMapMgr)
 //this can only be called from the thread of mapmgr!!!
 void Object::PushToWorld(MapMgr* mgr)
 {
-	ASSERT(mgr!=NULL);
-	if(mgr==NULL)
+	ASSERT(mgr != NULL);
+	if(mgr == NULL)
 	{
 		// Reset these so session will get updated properly.
 		mSemaphoreTeleport = false;
@@ -1006,7 +1006,7 @@ void Object::PushToWorld(MapMgr* mgr)
 		return; //instance add failed
 	}
 
-	m_mapId=mgr->GetMapId();
+	m_mapId = mgr->GetMapId();
 	m_instanceId = mgr->GetInstanceID();
 
 	m_mapMgr = mgr;
