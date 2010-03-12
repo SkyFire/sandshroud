@@ -1202,7 +1202,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 			p_caster->GetGroup()->m_prayerOfMendingCount = 5;		// 5 jumpz
 			p_caster->GetGroup()->m_prayerOfMendingTarget = this->GetUnitTarget()->GetLowGUID();
-			if( p_caster->GetGroup()->m_prayerOfMendingTarget == NULL )
+			if(!p_caster->GetGroup()->m_prayerOfMendingTarget)
 				p_caster->GetGroup()->m_prayerOfMendingTarget = p_caster->GetLowGUID();
 		}break;
 	case 41637:

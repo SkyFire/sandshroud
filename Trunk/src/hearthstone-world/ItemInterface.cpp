@@ -2692,7 +2692,7 @@ void ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 	// Force GM robes on all GM's execpt 'az' status, if set in world config
 	if(m_pOwner->GetSession()->HasGMPermissions() && sWorld.gm_force_robes )
 	{
-		if( strchr(m_pOwner->GetSession()->GetPermissions(),'az')==NULL)
+		if( strchr(m_pOwner->GetSession()->GetPermissions(), 'z') == NULL)
 		{
 			//don't allow anything else then these items
 			if( dstslot < INVENTORY_SLOT_BAG_END )
