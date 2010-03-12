@@ -370,7 +370,6 @@ CREATE TABLE `groups` (
   `loot_method` tinyint(2) NOT NULL,
   `loot_threshold` tinyint(2) NOT NULL,
   `difficulty` int(30) NOT NULL DEFAULT '0',
-  `raiddifficulty` int(30) NOT NULL DEFAULT '0',
   `assistant_leader` int(30) NOT NULL DEFAULT '0',
   `main_tank` int(30) NOT NULL DEFAULT '0',
   `main_assist` int(30) NOT NULL DEFAULT '0',
@@ -923,6 +922,3 @@ CREATE TABLE `worldstate_save_data` (
   PRIMARY KEY (`setting_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records 
--- ----------------------------
