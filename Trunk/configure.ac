@@ -282,32 +282,18 @@ AC_CONFIG_FILES([
    src/hearthstone-logonserver/Makefile
    src/hearthstone-voicechat/Makefile
    src/hearthstone-realmserver/Makefile
-   src/scripts/Makefile
-   src/scripts/src/Makefile
-   src/scripts/src/GossipScripts/Makefile
-   src/scripts/src/ServerStatusPlugin/Makefile
-   src/scripts/src/SpellHandlers/Makefile
-   src/scripts/src/LUAScripting/Makefile
-   src/scripts/src/InstanceScripts/Makefile
-   src/scripts/src/Events/Makefile
+   src/sun++/src/Makefile
+   src/sun++/src/EventScripts/Makefile
+   src/sun++/src/ExtraScripts/Makefile
+   src/sun++/src/GossipScripts/Makefile
+   src/sun++/src/InstanceScripts/Makefile
+   src/sun++/src/LUAScripting/Makefile
+   src/sun++/src/MiscScripts/Makefile
+   src/sun++/src/QuestScripts/Makefile
+   src/sun++/src/ServerStatusPlugin/Makefile
+   src/sun++/src/SpellHandlers/Makefile
+   src/sun++/src/WorldPvPScripts/Makefile
    ])
-
-AC_ARG_ENABLE(sunplusplus,
-   [ --enable-sunplusplus Enable SunPlusPlus scripts],
-   [ AC_CONFIG_FILES([
-      src/sun++/src/Makefile
-      src/sun++/src/EventScripts/Makefile
-      src/sun++/src/ExtraScripts/Makefile
-      src/sun++/src/GossipScripts/Makefile
-      src/sun++/src/InstanceScripts/Makefile
-      src/sun++/src/LUAScripting/Makefile
-      src/sun++/src/MiscScripts/Makefile
-      src/sun++/src/QuestScripts/Makefile
-      src/sun++/src/ServerStatusPlugin/Makefile
-      src/sun++/src/SpellHandlers/Makefile
-      src/sun++/src/WorldPvPScripts/Makefile
-   ])
-])
 
 AC_OUTPUT
 
