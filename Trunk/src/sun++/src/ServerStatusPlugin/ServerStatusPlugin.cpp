@@ -292,7 +292,7 @@ void FillOnlineTime(uint32 Time, char * Dest)
 
 void StatDumper::DumpStats()
 {
-    if( Filename[0] == NULL )
+    if( !Filename[0] )
         return;
     FILE* f = fopen( Filename, "w" );
     if( !f )

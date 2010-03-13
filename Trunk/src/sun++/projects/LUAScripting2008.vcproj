@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="LUAScripting"
 	ProjectGUID="{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
 	RootNamespace="LUAScripting2008"
@@ -571,6 +571,14 @@
 			<File
 				RelativePath="..\src\LUAScripting\NameSpaces\FunctionTables.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
 					ExcludedFromBuild="true"

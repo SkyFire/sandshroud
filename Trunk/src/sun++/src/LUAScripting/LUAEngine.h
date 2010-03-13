@@ -31,7 +31,7 @@ class LuaEngine;
 class LuaEngineMgr;
 #ifdef ENABLE_LUA_HOOKS
 class pHookInterface;
-#endif ENABLE_LUA_HOOKS
+#endif
 
 extern LuaEngineMgr g_luaMgr;
 extern LuaEngine g_engine;

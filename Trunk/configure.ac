@@ -275,13 +275,14 @@ AC_DEFINE_UNQUOTED([CONFDIR], "${sysconfdir}", "configdir")
 AC_DEFINE_UNQUOTED([SVN_REVISION_DONE], `sh ./extract_svn_revision.sh`, [SVN revision generated])
 
 AC_CONFIG_FILES([
-   ./Makefile
+   Makefile
    src/Makefile
    src/hearthstone-shared/Makefile
    src/hearthstone-world/Makefile
    src/hearthstone-logonserver/Makefile
    src/hearthstone-voicechat/Makefile
    src/hearthstone-realmserver/Makefile
+   src/sun++/Makefile
    src/sun++/src/Makefile
    src/sun++/src/EventScripts/Makefile
    src/sun++/src/ExtraScripts/Makefile
@@ -330,13 +331,6 @@ fi
 
 echo -n "    collision: "
 if test "x$enable_collision" = "xyes" ; then
-  echo "enabled"
-else
-  echo "disabled"
-fi
-
-echo -n "        sun++: "
-if test "x$enable_sunplusplus" = "xyes" ; then
   echo "enabled"
 else
   echo "disabled"

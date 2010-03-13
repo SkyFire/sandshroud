@@ -60,7 +60,7 @@ Raid_TheObsidianSanctum.cpp \
 Raid_Ulduar.cpp \
 Raid_ZulGurub.cpp \
 Raid_Magtheridons_Lair.cpp \
-Raid_SunwellPlateau.cpp \
+./SUNWELL_PLAT/Raid_SunwellPlateau.cpp \
 Raid_WorldBosses.cpp \
 Raid_ZulAman.cpp \
 ../Common/Instance_Base.cpp \

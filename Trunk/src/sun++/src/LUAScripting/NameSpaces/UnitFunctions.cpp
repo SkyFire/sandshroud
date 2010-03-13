@@ -1517,7 +1517,7 @@ namespace luaUnit
 	{
 		CHECK_TYPEID(TYPEID_UNIT);
 		uint32 agent = luaL_checkint(L,1);
-		if(agent == NULL) return 0;
+		if(agent == 0) return 0;
 		ptr->GetAIInterface()->setCurrentAgent(AI_Agent(agent));
 		return 0;
 	}
@@ -2156,7 +2156,8 @@ namespace luaUnit
 		CHECK_TYPEID(TYPEID_PLAYER);
 		const char * name = luaL_checkstring(L,1);
 		if(name == 0 ) return 0;
-		TO_PLAYER(ptr)->SetName(string(name));
+		string new_name = name;
+		TO_PLAYER(ptr)->SetName(new_name);
 		return 0;
 	}
 	int OnUnitEvent(lua_State * L, Unit *ptr)
@@ -2205,7 +2206,7 @@ namespace luaUnit
 		return 1;
 	}
 	int GetPlayerRace(lua_State * L, Unit *ptr) {
-		char * s;
+		const char * s;
 		switch( ptr->getRace()) {
 			case RACE_HUMAN: s = "Human"; break;
 			case RACE_BLOODELF: s = "BloodElf"; break;
@@ -2226,7 +2227,10 @@ namespace luaUnit
 	{
 		CHECK_TYPEID(TYPEID_PLAYER);
 		Pet* pPet = TO_PLAYER(ptr)->GetSummon();
-		( (pPet != NULL) ? Lunar<Unit>::push(L,pPet) : lua_pushnil(L) );
+		if(pPet == NULL)
+			lua_pushnil(L);
+		else
+			Lunar<Unit>::push(L,pPet);
 		return 1;
 	}
 	int IsInParty(lua_State * L, Unit *ptr)

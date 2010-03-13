@@ -1825,7 +1825,7 @@ public:
 	void SpellEffectStuck(uint32 i);
 	void SpellEffectSummonPlayer(uint32 i);
 	void SpellEffectActivateObject(uint32 i);
-    void SpellEffectWMODamage(uint32 i); 
+	void SpellEffectWMODamage(uint32 i); 
  	void SpellEffectWMORepair(uint32 i); 
 	void SummonTotem(uint32 i);
 	void SpellEffectProficiency(uint32 i);

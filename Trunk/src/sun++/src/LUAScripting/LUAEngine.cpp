@@ -62,7 +62,322 @@ struct RegType
 /************************************************************************/
 /* SCRIPT FUNCTION TABLES                                               */
 /************************************************************************/
-#include "NameSpaces\FunctionTables.cpp"
+RegType<Item> ItemMethods[] = 
+{
+    // Item Gossip functions
+    { "GossipCreateMenu", &luaItem::GossipCreateMenu },
+	{ "GossipMenuAddItem", &luaItem::GossipMenuAddItem },
+	{ "GossipSendMenu", &luaItem::GossipSendMenu },
+	{ "GossipComplete", &luaItem::GossipComplete },
+	{ "GossipSendPOI", &luaItem::GossipSendPOI },
+	{ NULL, NULL },
+};
+
+RegType<Unit> UnitMethods[] = 
+{
+    { "GossipCreateMenu", &luaUnit::GossipCreateMenu }, 
+    { "GossipMenuAddItem", &luaUnit::GossipMenuAddItem },
+    { "GossipSendMenu", &luaUnit::GossipSendMenu },
+    { "GossipComplete", &luaUnit::GossipComplete },
+    { "GossipSendPOI", &luaUnit::GossipSendPOI },
+    { "GetName", &luaUnit::GetName },
+	{ "SendChatMessage", &luaUnit::SendChatMessage },
+	{ "MoveTo", &luaUnit::MoveTo },
+	{ "SetMovementType", &luaUnit::SetMovementType },
+	{ "CastSpell", &luaUnit::CastSpell },
+	{ "FullCastSpell", &luaUnit::FullCastSpell },
+	{ "CastSpellOnTarget", &luaUnit::CastSpellOnTarget },
+	{ "FullCastSpellOnTarget", &luaUnit::FullCastSpellOnTarget },
+	{ "SpawnCreature", &luaUnit::SpawnCreature },
+	{ "SpawnGameObject", &luaUnit::SpawnGameObject },
+	{ "GetX", &luaUnit::GetX },
+	{ "GetY", &luaUnit::GetY },
+	{ "GetZ", &luaUnit::GetZ },
+	{ "GetO", &luaUnit::GetO },
+	{ "IsPlayer", &luaUnit::IsPlayer },
+	{ "IsCreature", &luaUnit::IsCreature },
+	{ "RegisterEvent", &luaUnit::RegisterEvent },
+	{ "RemoveEvents", &luaUnit::RemoveEvents },
+	{ "BroadcastMessage", &luaUnit::SendBroadcastMessage },
+	{ "SendAreaTriggerMessage", &luaUnit::SendAreaTriggerMessage },
+	{ "MarkQuestObjectiveAsComplete", &luaUnit::MarkQuestObjectiveAsComplete },
+	{ "LearnSpell", &luaUnit::LearnSpell },
+	{ "UnlearnSpell", &luaUnit::UnlearnSpell },
+	{ "HasFinishedQuest", &luaUnit::HasFinishedQuest },
+	{ "GetItemCount", &luaUnit::GetItemCount },
+	{ "IsInCombat", &luaUnit::IsInCombat },
+	{ "GetMainTank", &luaUnit::GetMainTank },
+	{ "GetAddTank", &luaUnit::GetAddTank },
+	{ "ClearThreatList", &luaUnit::ClearThreatList },
+	{ "GetTauntedBy", &luaUnit::GetTauntedBy },
+	{ "SetTauntedBy", &luaUnit::SetTauntedBy },
+	{ "SetSoulLinkedWith", &luaUnit::SetSoulLinkedWith },
+	{ "GetSoulLinkedWith", &luaUnit::GetSoulLinkedWith },
+	{ "ChangeTarget", &luaUnit::ChangeTarget },
+	{ "GetHealthPct", &luaUnit::GetHealthPct },
+	{ "SetHealthPct", &luaUnit::SetHealthPct },
+	{ "GetManaPct", &luaUnit::GetManaPct },
+	{ "Despawn", &luaUnit::Despawn },
+	{ "GetUnitBySqlId", &luaUnit::GetUnitBySqlId },
+	{ "PlaySoundToSet", &luaUnit::PlaySoundToSet },
+	{ "RemoveAura", &luaUnit::RemoveAura },
+	{ "StopMovement", &luaUnit::StopMovement },
+	{ "Emote", &luaUnit::Emote },
+	{ "GetInstanceID", &luaUnit::GetInstanceID },
+	{ "GetClosestPlayer", &luaUnit::GetClosestPlayer },
+	{ "GetRandomPlayer", &luaUnit::GetRandomPlayer },
+	{ "GetRandomFriend", &luaUnit::GetRandomFriend },
+	{ "AddItem", &luaUnit::AddItem },
+	{ "RemoveItem", &luaUnit::RemoveItem },
+	{ "CreateCustomWaypointMap", &luaUnit::CreateCustomWaypointMap },
+	{ "CreateWaypoint", &luaUnit::CreateWaypoint },
+	{ "MoveToWaypoint", &luaUnit::MoveToWaypoint },
+	{ "DestroyCustomWaypointMap", &luaUnit::DestroyCustomWaypointMap },
+	{ "SetCombatCapable", &luaUnit::SetCombatCapable },
+	{ "SetCombatMeleeCapable", &luaUnit::SetCombatMeleeCapable },
+	{ "SetCombatRangedCapable", &luaUnit::SetCombatRangedCapable },
+	{ "SetCombatSpellCapable", &luaUnit::SetCombatSpellCapable },
+	{ "SetCombatTargetingCapable", &luaUnit::SetCombatTargetingCapable },
+	{ "SetModel", &luaUnit::SetModel },
+	{ "SetScale", &luaUnit::SetScale },
+	{ "SetFaction", &luaUnit::SetFaction },
+	{ "SetStandState",&luaUnit::SetStandState },
+	{ "Teleport" , &luaUnit::TeleportUnit },
+	{ "GetPlayerClass", &luaUnit::GetPlayerClass },
+	{ "ClearThreatList", &luaUnit::ClearHateList },
+	{ "WipeThreatList", &luaUnit::WipeHateList },
+	{ "WipeTargetList", &luaUnit::WipeTargetList },
+	{ "WipeCurrentTarget", &luaUnit::WipeCurrentTarget },
+	{ "GetHealth", &luaUnit::GetHealth },
+	{ "GetMaxHealth", &luaUnit::GetMaxHealth },
+	{ "SetHealth", &luaUnit::SetHealth },
+	{ "SetMaxHealth", &luaUnit::SetMaxHealth },
+	{ "IsPvPFlagged", &luaUnit::PvPFlagged },
+	{ "GetModel", &luaUnit::GetModel },
+	{ "GetRunSpeed", &luaUnit::GetRunSpeed },
+	{ "GetFlySpeed", &luaUnit::GetFlySpeed },
+	{ "Disconnect", &luaUnit::Disconnect },
+	{ "GetZone", &luaUnit::GetZone },
+	{ "GetMapId", &luaUnit::GetMapId },
+	{ "BroadcastWideMessage", &luaUnit::SendWideBroadcastMessage },
+	{ "IsBehind", &luaUnit::IsBehind },
+	{ "RemoveFlag", &luaUnit::RemoveFlag },
+	{ "IsFlying", &luaUnit::IsFlying },
+	{ "SetFactionStanding", &luaUnit::SetFactionStanding },
+	{ "GetLevel", &luaUnit::GetLevel },
+	{ "IsAlive", &luaUnit::IsAlive },
+	{ "IsStealthed", &luaUnit::IsStealthed },
+	{ "IsGM", &luaUnit::IsGM },
+	{ "IsAlliance", &luaUnit::IsAlliance },
+	{ "IsHorde", &luaUnit::IsHorde },
+	{ "HasAmountOfPlayers", &luaUnit::HasAmountOfPlayers },
+	{ "HasGMTagOn", &luaUnit::HasGMTagOn },
+	{ "CastSpellAoF", &luaUnit::CastSpellAoF },
+	{ "RemoveAllAuras", &luaUnit::RemoveAllAuras },
+	{ "TogglePvP", &luaUnit::TogglePvP },
+	{ "ApplyRestState", &luaUnit::ApplyRestState },
+	{ "ResurrectPlayer", &luaUnit::ResurrectPlayer },
+	{ "SetEmoteState", &luaUnit::SetEmoteState },
+	{ "GetPlayerAccountName", &luaUnit::GetPlayerAccountName },
+	{ "RemoveStealth", &luaUnit::RemoveStealth },
+	{ "SetPVPRank", &luaUnit::SetPVPRank },
+	{ "Die", &luaUnit::Die },
+	{ "SetStealth", &luaUnit::SetStealth },
+	{ "WorldQuery", &luaUnit::WorldQuery },
+	{ "CharacterQuery", &luaUnit::CharacterQuery },
+	{ "AddCreatureLoot", &luaUnit::AddCreatureLoot },
+	{ "SystemMessageToPlayer", &luaUnit::SystemMessageToPlr },
+	{ "SaveToDB", &luaUnit::SaveToDB },
+	{ "IsInvincible", &luaUnit::IsInvincible },
+	{ "IsAttacking", &luaUnit::IsAttacking },
+	{ "SetInvincible", &luaUnit::SetInvincible },
+	{ "IsInRange", &luaUnit::IsInRange },
+	{ "FinishQuest", &luaUnit::FinishQuest },
+	{ "SubtractTime", &luaUnit::SubtractTime },
+	{ "IfQuestCanBeFinished", &luaUnit::IfQuestCanBeFinished },
+	{ "SetQuestComplete", &luaUnit::SetQuestComplete },
+	{ "MoveToPlayer", &luaUnit::MoveToPlayer },
+	{ "EventCreatureYell", &luaUnit::EventCreatureYell },
+	{ "EventCreatureDelete", &luaUnit::EventCreatureDelete },
+	{ "EventCastSpell", &luaUnit::EventCastSpell },
+	{ "EventCastSpellOnSelf", &luaUnit::EventCastSpellOnSelf },
+	{ "EventPlaySound", &luaUnit::EventPlaySound },
+	{ "MonsterMove", &luaUnit::MonsterMove },
+	{ "SetPosition", &luaUnit::SetPosition },
+	{ "SetCurrentAgent", &luaUnit::SetCurrentAgent },
+	//{ "AddAISpell", &luaUnit::AddAISpell },
+	{ "RegisterAIUpdateEvent", &luaUnit::RegisterAIUpdateEvent },
+	{ "ModifyAIUpdateEvent", &luaUnit::ModifyAIUpdateEvent },
+	{ "RemoveAIUpdateEvent", &luaUnit::RemoveAIUpdateEvent },
+	{ "SetDamageDone", &luaUnit::SetDamageDone },
+	{ "GetDamageDone", &luaUnit::GetDamageDone },
+	{ "SetAIState", &luaUnit::SetAIState },
+	{ "DisableRespawn", &luaUnit::DisableRespawn },
+	{ "ModifySpeed", &luaUnit::ModifySpeed },
+	{ "SetInvisible", &luaUnit::SetInvisible },
+	{ "GetInRangePlayers", &luaUnit::GetInRangePlayers },
+	{ "GetInRangeFriends", &luaUnit::GetInRangeFriends },
+	{ "RemoveFromWorld", &luaUnit::RemoveFromWorld },
+	{ "GetCreatureNearestCoords", &luaUnit::GetCreatureNearestCoords },
+	{ "GetGameObjectNearestCoords", &luaUnit::GetGameObjectNearestCoords },
+	{ "GetUInt32Value", &luaUnit::GetUInt32Value },
+	{ "GetUInt64Value", &luaUnit::GetUInt64Value },
+	{ "IsMoving", &luaUnit::IsMoving },
+	{ "IsAttacking", &luaUnit::IsAttacking },
+	{ "GetDistance", &luaUnit::GetDistance },
+	{ "GetCurrentSpellId", &luaUnit::GetCurrentSpellId },
+	{ "GetCurrentSpellName", &luaUnit::GetCurrentSpellName },
+	{ "ModThreat", &luaUnit::ModThreat },
+	{ "RemoveThreat", &luaUnit::RemoveThreat },
+	{ "GetThreat", &luaUnit::GetThreat },
+	{ "CalcDistance", &luaUnit::CalcDistance },
+	{ "GetPowerType", &luaUnit::GetPowerType },
+	{ "SetNextTarget", &luaUnit::SetNextTarget },
+	{ "GetNextTarget", &luaUnit::GetNextTarget },
+	{ "GetSpawnX", &luaUnit::GetSpawnX },
+	{ "GetSpawnY", &luaUnit::GetSpawnY },
+	{ "GetSpawnZ", &luaUnit::GetSpawnZ },
+	{ "GetSpawnO", &luaUnit::GetSpawnO },
+	{ "GetInstanceMode", &luaUnit::GetInstanceMode },
+	{ "Root", &luaUnit::Root },
+	{ "Unroot", &luaUnit::Unroot },
+	////////////////////////////////////////
+	{ "GetSelection", &luaUnit::GetSelection },
+	{ "SendMeetingStoneQueue", &luaUnit::SendMeetingStoneQueue },
+	{ "IsInFeralForm", &luaUnit::IsInFeralForm },
+	{ "GetStanding", &luaUnit::GetStanding },
+	{ "ModStanding", &luaUnit::ModStanding },
+	{ "SetStanding", &luaUnit::SetStanding },
+	{ "SetAtWar", &luaUnit::SetAtWar },
+	//{ "IsAtWar", &luaUnit::IsAtWar },
+	{ "GetStandingRank", &luaUnit::GetStandingRank },
+	{ "UpdateInRangeSet", &luaUnit::UpdateInRangeSet },
+	{ "GetRepRankFromStanding", &luaUnit::GetRepRankFromStanding },
+	{ "GetPVPRank", &luaUnit::GetPVPRank },
+	{ "SetPVPRank", &luaUnit::SetPVPRank },
+	{ "IsGroupLeader", &luaUnit::IsGroupLeader },
+	{ "IsGroupMember", &luaUnit::IsGroupMember },
+	{ "SetBanned", &luaUnit::SetBanned },
+	{ "UnSetBanned", &luaUnit::UnSetBanned },
+	{ "SetBindPoint", &luaUnit::SetBindPoint },
+	{ "ResetTalents", &luaUnit::ResetTalents },
+	{ "GetBindPosition", &luaUnit::GetBindPosition },
+	{ "AllowFallDamage", &luaUnit::AllowFallDamage },
+	{ "GetSoulStone", &luaUnit::GetSoulStone },
+	{ "SetSoulStone", &luaUnit::SetSoulStone },
+	{ "SetReincarnate", &luaUnit::SetReincarnate },
+	{ "EjectFromInstance", &luaUnit::EjectFromInstance },
+	{ "SetPlayerName", &luaUnit::SetPlayerName },
+	{ "OnUnitEvent", &luaUnit::OnUnitEvent },
+	{ "GetRandomEnemy",& luaUnit::GetRandomEnemy },
+	/* Date : 01/05/2009 */
+	{ "GetEntry", &luaUnit::GetEntry },
+	{ "Energize", &luaUnit::Energize },
+	{ "Heal", &luaUnit::Heal },
+	{ "GetAP", &luaUnit::GetAP },
+	{ "GetPlayerRace", &luaUnit::GetPlayerRace },
+	{ "GetSummon", &luaUnit::GetSummon },
+	{ "IsInParty", &luaUnit::IsInParty },
+	{ "IsInRaid", &luaUnit::IsInRaid },
+	{ "IsCasting", &luaUnit::IsCasting },
+	{ "SetAttackTimer", &luaUnit::SetAttackTimer },
+	{ "SetDeathState", &luaUnit::SetDeathState },
+	{ "GetDeathState", &luaUnit::GetDeathState },
+	{ "GetStandState", &luaUnit::GetStandState },
+	{ "ShareHealth", &luaUnit::ShareHealth },
+	/* End Date : 01/05/2009 */
+	/* Date : 01/07/2009 */
+	{ "SetUInt32Value", &luaUnit::SetUInt32Value },
+	{ "SetUInt64Value", &luaUnit::SetUInt64Value },
+	{ "GetGUID", &luaUnit::GetGUID },
+	{ "CalcRadAngle", &luaUnit::CalcRadAngle },
+	{ "EnableFlight", &luaUnit::EnableFlight },
+	{ "DisableFlight", &luaUnit::DisableFlight },
+	{ "AttackReaction", &luaUnit::AttackReaction },
+	{ "IsInWorld", &luaUnit::IsInWorld },
+	{ "PlaySpellVisual", &luaUnit::PlaySpellVisual },
+	{ "ImmuneMechanic", &luaUnit::ImmuneMechanic },
+	/* End Date : 01/07/2009 */
+	/* Date : 01/13/2009 */
+	{ "GetCurrentWaypoint", &luaUnit::GetCurrentWaypoint },
+	{ "SetAllowedToEnterCombat", &luaUnit::SetAllowedToEnterCombat },
+	{ "GetDistanceSq",&luaUnit::GetDistanceSq },
+	{ "SetOutOfCombatRange", &luaUnit::SetOutOfCombatRange },
+	{ "SetSpawnLocation", &luaUnit::SetSpawnLocation },
+	{ "GetInRangeUnits", &luaUnit::GetInRangeUnits },
+	{ "DeleteAllWaypoints", &luaUnit::DeleteAllWaypoints },
+	{ "DeleteWaypoint", &luaUnit::DeleteWaypoint },
+	{ "ChangeWaypoint", &luaUnit::ChangeWaypoint },
+	{ "SaveInstanceToDB", &luaUnit::SaveInstanceToDB },
+	{ "ResetSavedInstances", &luaUnit::ResetSavedInstances },
+	{ NULL, NULL },
+};
+
+RegType<GameObject> GOBMethods[] = 
+{
+	{ "GetName", &luaGameObject::GetName },
+	{ "Teleport" , &luaGameObject::Teleport },
+    // Begin - GO - Gossip Functions.
+    { "GossipCreateMenu", &luaGameObject::GossipCreateMenu },
+	{ "GossipMenuAddItem", &luaGameObject::GossipMenuAddItem }, 
+	{ "GossipSendMenu", &luaGameObject::GossipSendMenu },
+	{ "GossipComplete", &luaGameObject::GossipComplete },
+	{ "GossipSendPOI", &luaGameObject::GossipSendPOI },
+	{ "AddItem", &luaGameObject::AddItem },
+	{ "GetClosestPlayer", &luaGameObject::GetClosestPlayer },
+	{ "GetZoneId", &luaGameObject::GetZoneId },
+	{ "GetItemCount", &luaGameObject::GetItemCount },
+	{ "GetSpawnX", &luaGameObject::GetSpawnX },
+	{ "GetSpawnY", &luaGameObject::GetSpawnY },
+	{ "GetSpawnZ", &luaGameObject::GetSpawnZ },
+	{ "GetSpawnO", &luaGameObject::GetSpawnO },
+	{ "GetInRangePlayersCount", &luaGameObject::GetInRangePlayersCount },
+	{ "GetEntry", &luaGameObject::GetEntry },
+	{ "GetX", &luaGameObject::GetX },
+	{ "GetY", &luaGameObject::GetY },
+	{ "GetZ", &luaGameObject::GetZ },
+	{ "GetO", &luaGameObject::GetO },
+	{ "GetInRangePlayers", &luaGameObject::GetInRangePlayers },
+	{ "GetInRangeGameObjects", &luaGameObject::GetInRangeGameObjects },
+	{ "GetInstanceID", &luaGameObject::GetInstanceID },
+	{ "GetUInt32Value", &luaGameObject::GetUInt32Value },
+	{ "GetUInt64Value", &luaGameObject::GetUInt64Value },
+	{ "GetFloatValue", &luaGameObject::GetFloatValue },
+	{ "GetGUID", &luaGameObject::GetGUID },
+	{ "Despawn", &luaGameObject::Despawn },
+	{ "IsInWorld", &luaGameObject::IsInWorld },
+	{ "IsInBack", &luaGameObject::IsInBack },
+	{ "IsInFront", &luaGameObject::IsInFront },
+	{ "SpawnCreature", &luaGameObject::SpawnCreature },
+	{ "SpawnGameObject", &luaGameObject::SpawnGameObject },
+	{ "CalcDistance", &luaGameObject::CalcDistance },
+	{ "SetO", &luaGameObject::SetOrientation },
+	{ "RemoveFromWorld", &luaGameObject::RemoveFromWorld },
+	{ "CalcRadAngle", &luaGameObject::CalcRadAngle },
+	{ "SetUInt32Value", &luaGameObject::SetUInt32Value },
+	{ "SetUInt64Value", &luaGameObject::SetUInt64Value },
+	{ "SetFloatValue", &luaGameObject::SetFloatValue },
+	{ "ModUInt32Value", &luaGameObject::ModUInt32Value },
+	{ "CastSpell", &luaGameObject::CastSpell },
+	{ "FullCastSpell", &luaGameObject::FullCastSpell },
+	{ "CastSpellOnTarget", &luaGameObject::CastSpellOnTarget },
+	{ "FullCastSpellOnTarget", &luaGameObject::FullCastSpellOnTarget },
+	{ "RegisterAIUpdateEvent", &luaGameObject::RegisterAIUpdateEvent },
+	{ "ModifyAIUpdateEvent", &luaGameObject::ModifyAIUpdateEvent },
+	{ "RemoveAIUpdateEvent", &luaGameObject::RemoveAIUpdateEvent },
+	{ "OnGameObjectEvent", &luaGameObject::OnGameObjectEvent },
+	{ "GetCreatureNearestCoords", &luaGameObject::GetCreatureNearestCoords },
+	{ "GetGameObjectNearestCoords", &luaGameObject::GetGameObjectNearestCoords },
+	/* Date : 01/09/2009 */
+	{ "SetSpawnPosition", &luaGameObject::SetSpawnPosition },
+	{ "SaveToDB", &luaGameObject::SaveToDB },
+	{ "DeleteFromDB", &luaGameObject::DeleteFromDB },
+	{ "WorldQuery", &luaGameObject::WorldQuery },
+	/* End Date : 01/09/2009 */
+
+	// End - GO - Gossip Functions.
+	{ NULL, NULL },
+};
 
 
 template<typename T> RegType<T>* GetMethodTable() { return NULL; }
@@ -442,7 +757,7 @@ void LuaEngine::OnUnitEvent(Unit *pUnit, const char * FunctionName, uint32 Event
 		return;
 	size_t pos1,pos2,pos3,pos4,pos5 = 0;
 	string pString = string(FunctionName);
-	char * key = ".";
+	const char * key = ".";
 	pos1 = pString.find(key);
 	pos2 = pString.find(key,pos1+1);
 	pos3 = pString.find(key,pos2+1);
@@ -459,7 +774,7 @@ void LuaEngine::OnUnitEvent(Unit *pUnit, const char * FunctionName, uint32 Event
 		lua_gettable(L,LUA_GLOBALSINDEX);
 		if(lua_isnil(L,-1))
 		{
-			sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n",tblname1.c_str());
+			sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n", tblname1.c_str());
 			return;
 		}
 		else if(lua_istable(L,-1))
@@ -470,7 +785,7 @@ void LuaEngine::OnUnitEvent(Unit *pUnit, const char * FunctionName, uint32 Event
 				lua_gettable(L,-2);
 				if(lua_isnil(L,-1))
 				{
-					printf("Tried to access invalid LUA table '%s' from Ascent (Unit)!\n",tblname2);
+					printf("Tried to access invalid LUA table '%s' from Ascent (Unit)!\n", tblname2.c_str());
 					return;
 				}
 				else if(lua_istable(L,-1))
@@ -481,7 +796,7 @@ void LuaEngine::OnUnitEvent(Unit *pUnit, const char * FunctionName, uint32 Event
 						lua_gettable(L,-2);
 						if(lua_isnil(L,-1))
 						{
-							sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n",tblname3.c_str());
+							sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n", tblname3.c_str());
 							return;
 						}
 						else if(lua_istable(L,-1))
@@ -653,7 +968,7 @@ void LuaEngine::OnQuestEvent(Player * QuestOwner, const char * FunctionName, uin
 	string pString = string(FunctionName);
 	size_t pos1,pos2,pos3,pos4,pos5;
 	string name1,name2,name3,name4,name5;
-	char * key = ".";
+	const char * key = ".";
 	pos1 = pString.find(key);
 	pos2 = pString.find(key,pos1+1);
 	pos3 = pString.find(key,pos2+1);
@@ -671,7 +986,7 @@ void LuaEngine::OnQuestEvent(Player * QuestOwner, const char * FunctionName, uin
 		lua_gettable(L,LUA_GLOBALSINDEX);
 		if(lua_isnil(L,-1))
 		{
-			printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name1);
+			printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name1.c_str());
 			return;
 		}
 		else if(lua_istable(L,-2))
@@ -682,7 +997,7 @@ void LuaEngine::OnQuestEvent(Player * QuestOwner, const char * FunctionName, uin
 				lua_gettable(L,-2);
 				if(lua_isnil(L,-1))
 				{
-					printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name2);
+					printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name2.c_str());
 					return;
 				}
 				else if(lua_istable(L,-1))
@@ -693,7 +1008,7 @@ void LuaEngine::OnQuestEvent(Player * QuestOwner, const char * FunctionName, uin
 						lua_gettable(L,-2);
 						if(lua_isnil(L,-1))
 						{
-							printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name3);
+							printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name3.c_str());
 							return;
 						}
 						else if(lua_istable(L,-1))
@@ -704,7 +1019,7 @@ void LuaEngine::OnQuestEvent(Player * QuestOwner, const char * FunctionName, uin
 								lua_gettable(L,-2);
 								if(lua_isnil(L,-1))
 								{
-									printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name4);
+									printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name4.c_str());
 									return;
 								}
 								else if(lua_istable(L,-1))
@@ -715,7 +1030,7 @@ void LuaEngine::OnQuestEvent(Player * QuestOwner, const char * FunctionName, uin
 										lua_gettable(L,-2);
 										if(lua_isnil(L,-1))
 										{
-											printf("Tried to access and invalid Lua function %s from Ascent(GO). \n",name5);
+											printf("Tried to access and invalid Lua function %s from Ascent(GO). \n", name5.c_str());
 											return;
 										}
 										else if(lua_istable(L,-1))
@@ -823,7 +1138,7 @@ void LuaEngine::CallFunction(Unit *pUnit, const char * FuncName)
 	if(FuncName == NULL) return;
 	size_t pos1,pos2,pos3,pos4,pos5 = 0;
 	string pString = string(FuncName);
-	char * key = ".";
+	const char * key = ".";
 	pos1 = pString.find(key);
 	pos2 = pString.find(key,pos1+1);
 	pos3 = pString.find(key,pos2+1);
@@ -840,7 +1155,7 @@ void LuaEngine::CallFunction(Unit *pUnit, const char * FuncName)
 		lua_gettable(L,LUA_GLOBALSINDEX);
 		if(lua_isnil(L,-1))
 		{
-			sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n",tblname1.c_str());
+			sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n", tblname1.c_str());
 			return;
 		}
 		else if(lua_istable(L,-1))
@@ -851,7 +1166,7 @@ void LuaEngine::CallFunction(Unit *pUnit, const char * FuncName)
 				lua_gettable(L,-2);
 				if(lua_isnil(L,-1))
 				{
-					sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n",tblname2);
+					sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n", tblname2.c_str());
 					return;
 				}
 				else if(lua_istable(L,-1))
@@ -862,7 +1177,7 @@ void LuaEngine::CallFunction(Unit *pUnit, const char * FuncName)
 						lua_gettable(L,-2);
 						if(lua_isnil(L,-1))
 						{
-							sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n",tblname3.c_str());
+							sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n", tblname3.c_str());
 							return;
 						}
 						else if(lua_istable(L,-1))
@@ -873,7 +1188,7 @@ void LuaEngine::CallFunction(Unit *pUnit, const char * FuncName)
 								lua_gettable(L,-2);
 								if(lua_isnil(L,-1))
 								{
-									sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n",tblname4.c_str());
+									sLog.outColor(TRED, "Tried to access invalid LUA table '%s' from Ascent (Unit)!\n", tblname4.c_str());
 									return;
 								}
 								else if(lua_istable(L,-1))
@@ -982,7 +1297,7 @@ void LuaEngine::OnGameObjectEvent(GameObject * pGameObject, const char * Functio
 	string pString = string(FunctionName);
 	size_t pos1,pos2,pos3,pos4,pos5;
 	string name1,name2,name3,name4,name5;
-	char * key = ".";
+	const char * key = ".";
 	pos1 = pString.find(key);
 	pos2 = pString.find(key,pos1+1);
 	pos3 = pString.find(key,pos2+1);
@@ -999,7 +1314,7 @@ void LuaEngine::OnGameObjectEvent(GameObject * pGameObject, const char * Functio
 		lua_gettable(L,LUA_GLOBALSINDEX);
 		if(lua_isnil(L,-1))
 		{
-			printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name1);
+			printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name1.c_str());
 			return;
 		}
 		else if(lua_istable(L,-2))
@@ -1010,7 +1325,7 @@ void LuaEngine::OnGameObjectEvent(GameObject * pGameObject, const char * Functio
 				lua_gettable(L,-2);
 				if(lua_isnil(L,-1))
 				{
-					printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name2);
+					printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name2.c_str());
 					return;
 				}
 				else if(lua_istable(L,-1))
@@ -1021,7 +1336,7 @@ void LuaEngine::OnGameObjectEvent(GameObject * pGameObject, const char * Functio
 						lua_gettable(L,-2);
 						if(lua_isnil(L,-1))
 						{
-							printf("Tried to access an invalid Lua table/function %s from Ascent(GO). \n",name3);
+							printf("Tried to access an invalid Lua table/function %s from Ascent(GO). \n", name3.c_str());
 							return;
 						}
 						else if(lua_istable(L,-1))
@@ -1032,7 +1347,7 @@ void LuaEngine::OnGameObjectEvent(GameObject * pGameObject, const char * Functio
 								lua_gettable(L,-2);
 								if(lua_isnil(L,-1))
 								{
-									printf("Tried to access an invalid Lua table/function %s from Ascent(GO). \n",name4);
+									printf("Tried to access an invalid Lua table/function %s from Ascent(GO). \n", name4.c_str());
 									return;
 								}
 								else if(lua_istable(L,-1))
@@ -1043,7 +1358,7 @@ void LuaEngine::OnGameObjectEvent(GameObject * pGameObject, const char * Functio
 										lua_gettable(L,-2);
 										if(lua_isnil(L,-1))
 										{
-											printf("Tried to access and invalid Lua function/function %s from Ascent(GO). \n",name5);
+											printf("Tried to access and invalid Lua function/function %s from Ascent(GO). \n", name5.c_str());
 											return;
 										}
 										else if(lua_istable(L,-1))
@@ -1176,7 +1491,7 @@ void LuaEngine::OnGossipEvent(Object *pObject, const char * FunctionName, uint32
 	string pString = string(FunctionName);
 	size_t pos1,pos2,pos3,pos4,pos5;
 	string name1,name2,name3,name4,name5;
-	char * key = ".";
+	const char * key = ".";
 	pos1 = pString.find(key);
 	pos2 = pString.find(key,pos1+1);
 	pos3 = pString.find(key,pos2+1);
@@ -1193,7 +1508,7 @@ void LuaEngine::OnGossipEvent(Object *pObject, const char * FunctionName, uint32
 		lua_gettable(L,LUA_GLOBALSINDEX);
 		if(lua_isnil(L,-1))
 		{
-			printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name1);
+			printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name1.c_str());
 			return;
 		}
 		else if(lua_istable(L,-2))
@@ -1204,7 +1519,7 @@ void LuaEngine::OnGossipEvent(Object *pObject, const char * FunctionName, uint32
 				lua_gettable(L,-2);
 				if(lua_isnil(L,-1))
 				{
-					printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name2);
+					printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name2.c_str());
 					return;
 				}
 				else if(lua_istable(L,-1))
@@ -1215,7 +1530,7 @@ void LuaEngine::OnGossipEvent(Object *pObject, const char * FunctionName, uint32
 						lua_gettable(L,-2);
 						if(lua_isnil(L,-1))
 						{
-							printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name3);
+							printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name3.c_str());
 							return;
 						}
 						else if(lua_istable(L,-1))
@@ -1226,7 +1541,7 @@ void LuaEngine::OnGossipEvent(Object *pObject, const char * FunctionName, uint32
 								lua_gettable(L,-2);
 								if(lua_isnil(L,-1))
 								{
-									printf("Tried to access an invalid Lua table %s from Ascent(GO). \n",name4);
+									printf("Tried to access an invalid Lua table %s from Ascent(GO). \n", name4.c_str());
 									return;
 								}
 								else if(lua_istable(L,-1))
@@ -1237,7 +1552,7 @@ void LuaEngine::OnGossipEvent(Object *pObject, const char * FunctionName, uint32
 										lua_gettable(L,-2);
 										if(lua_isnil(L,-1))
 										{
-											printf("Tried to access and invalid Lua function %s from Ascent(GO). \n",name5);
+											printf("Tried to access and invalid Lua function %s from Ascent(GO). \n", name5.c_str());
 											return;
 										}
 										else if(lua_istable(L,-1))
@@ -2428,7 +2743,7 @@ public:
 	void OnCombatStart(Unit *mTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_ENTER_COMBAT;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2439,7 +2754,7 @@ public:
 	void OnCombatStop(Unit *mTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_LEAVE_COMBAT;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2449,7 +2764,7 @@ public:
 	void OnTargetDied(Unit *mTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_TARGET_DIED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2460,7 +2775,7 @@ public:
 	void OnDied(Unit *mKiller)
 	{
 		uint32 evt = CREATURE_EVENT_ON_DIED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2470,7 +2785,7 @@ public:
 	void OnTargetParried(Unit *mTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_TARGET_PARRIED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2480,7 +2795,7 @@ public:
 	void OnTargetDodged(Unit *mTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_TARGET_DODGED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2490,7 +2805,7 @@ public:
 	void OnTargetBlocked(Unit *mTarget, int32 iAmount)
 	{
 		uint32 evt = CREATURE_EVENT_ON_TARGET_BLOCKED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2500,7 +2815,7 @@ public:
 	void OnTargetCritHit(Unit *mTarget, float fAmount)
 	{
 		uint32 evt = CREATURE_EVENT_ON_TARGET_CRIT_HIT;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2510,7 +2825,7 @@ public:
 	void OnParried(Unit *mTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_PARRY;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2520,7 +2835,7 @@ public:
 	void OnDodged(Unit *mTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_DODGED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2530,7 +2845,7 @@ public:
 	void OnBlocked(Unit *mTarget, int32 iAmount)
 	{
 		uint32 evt = CREATURE_EVENT_ON_BLOCKED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2540,7 +2855,7 @@ public:
 	void OnCritHit(Unit *mTarget, float fAmount)
 	{
 		uint32 evt = CREATURE_EVENT_ON_CRIT_HIT;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2550,7 +2865,7 @@ public:
 	void OnHit(Unit *mTarget, float fAmount)
 	{
 		uint32 evt = CREATURE_EVENT_ON_HIT;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2560,7 +2875,7 @@ public:
 	void OnAssistTargetDied(Unit *mAssistTarget)
 	{
 		uint32 evt = CREATURE_EVENT_ON_ASSIST_TARGET_DIED;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2570,7 +2885,7 @@ public:
 	void OnFear(Unit *mFeared, uint32 iSpellId)
 	{
 		uint32 evt = CREATURE_EVENT_ON_FEAR;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2580,7 +2895,7 @@ public:
 	void OnFlee(Unit *mFlee)
 	{
 		uint32 evt = CREATURE_EVENT_ON_FLEE;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2590,7 +2905,7 @@ public:
 	void OnCallForHelp()
 	{
 		uint32 evt = CREATURE_EVENT_ON_CALL_FOR_HELP;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2600,7 +2915,7 @@ public:
 	void OnLoad()
 	{
 		uint32 evt = CREATURE_EVENT_ON_LOAD;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2610,7 +2925,7 @@ public:
 	void OnReachWP(uint32 iWaypointId, bool bForwards)
 	{
 		uint32 evt = CREATURE_EVENT_ON_REACH_WP;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2620,7 +2935,7 @@ public:
 	void OnLootTaken(Player *pPlayer, ItemPrototype *pItemPrototype)
 	{
 		uint32 evt = CREATURE_EVENT_ON_LOOT_TAKEN;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2630,7 +2945,7 @@ public:
 	void AIUpdate()
 	{
 		uint32 evt = CREATURE_EVENT_ON_AIUPDATE;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2640,7 +2955,7 @@ public:
 	void OnEmote(Player *pPlayer, EmoteType Emote)
 	{
 		uint32 evt = CREATURE_EVENT_ON_EMOTE;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -2654,7 +2969,7 @@ public:
 	void OnDamageTaken(Unit *mAttacker, float fAmount)
 	{
 		uint32 evt = CREATURE_EVENT_ON_DAMAGE_TAKEN;
-		if( m_binding[evt].size() != NULL)
+		if( m_binding[evt].size() > 0 )
 			for(list<const char*>::iterator itr = m_binding[evt].begin(); itr != m_binding[evt].end(); itr++)
 			{
 				if( (*itr) != NULL)
@@ -3290,7 +3605,7 @@ void LuaEngineMgr::RegisterUnitEvent(uint32 Id, uint32 Event, const char * Funct
 	}
 	else
 	{
-		if( itr->second[Event].size() != NULL)
+		if( itr->second[Event].size() > 0 )
 		{
 			for(LuaUnitBinding::iterator it = itr->second[Event].begin(); it != itr->second[Event].end(); it++)
 			{
@@ -3663,6 +3978,6 @@ void LuaEngineMgr::ReloadClasses()
 #define CHECK_TYPEID_RET(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushboolean(L,0); return 0; }
 #define CHECK_TYPEID_RET_INT(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushinteger(L,0); return 0; }
 #define CHECK_PTR() if( ptr == NULL ||!ptr->IsInWorld() ) { return 0; }
-#include "NameSpaces\GameObjectFunctions.cpp"
-#include "NameSpaces\UnitFunctions.cpp"
-#include "NameSpaces\ItemFunctions.cpp"
+#include "NameSpaces/GameObjectFunctions.cpp"
+#include "NameSpaces/UnitFunctions.cpp"
+#include "NameSpaces/ItemFunctions.cpp"
