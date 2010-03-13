@@ -488,7 +488,7 @@ void AuthSocket::OnRead()
 		(this->*Handlers[Command])();
 	else
 		//Log.Notice("AuthSocket", "Unknown cmd %u", Command);
-}
+;}
 
 void AuthSocket::HandleRealmlist()
 {
