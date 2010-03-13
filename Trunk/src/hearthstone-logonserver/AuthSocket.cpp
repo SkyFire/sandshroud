@@ -487,7 +487,7 @@ void AuthSocket::OnRead()
 	if(Command < MAX_AUTH_CMD && Handlers[Command] != NULL)
 		(this->*Handlers[Command])();
 	else
-		Log.Notice("AuthSocket", "Unknown cmd %u", Command);
+		//Log.Notice("AuthSocket", "Unknown cmd %u", Command);
 }
 
 void AuthSocket::HandleRealmlist()
