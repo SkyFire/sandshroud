@@ -429,6 +429,8 @@ public:
 	void SendZoneMessage(WorldPacket *packet, uint32 zoneid, WorldSession *self = 0);
 	void SendInstanceMessage(WorldPacket *packet, uint32 instanceid, WorldSession *self = 0);
 	void SendFactionMessage(WorldPacket *packet, uint8 teamId);
+	void SendGMWorldText(const char* text, WorldSession *self = 0);
+	void SendGamemasterMessage(WorldPacket *packet, WorldSession *self = 0);
 	void SendMessageToGMs(WorldSession *self, const char * text, ...);
 
 	HEARTHSTONE_INLINE void SetStartTime(uint32 val) { m_StartTime = val; }

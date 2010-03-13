@@ -38,6 +38,19 @@ bool ChatHandler::HandleAnnounceCommand(const char* args, WorldSession *m_sessio
 	return true;
 }
 
+bool ChatHandler::HandleGMAnnounceCommand(const char* args, WorldSession *m_session)
+{
+	if(!*args)
+	{
+		printf("HandleGMAnnounceCommand !args = failed\n");
+		return false;
+	}
+
+	char GMAnnounce[1024];
+	snprintf(GMAnnounce, 1024, MSG_COLOR_RED"[Team]"MSG_COLOR_GREEN" |Hplayer:%s|h[%s]|h:"MSG_COLOR_YELLOW" %s", m_session->GetPlayer()->GetName(), m_session->GetPlayer()->GetName(), args);
+	sWorld.SendGMWorldText(GMAnnounce);
+	return true;
+}
 
 bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_session)
 {

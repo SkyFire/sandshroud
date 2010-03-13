@@ -775,6 +775,43 @@ void World::SendWorldText(const char* text, WorldSession *self)
 	sLog.outString("> %s", text);
 }
 
+void World::SendGMWorldText(const char* text, WorldSession *self)
+{
+    uint32 textLen = (uint32)strlen((char*)text) + 1;
+
+    WorldPacket data(textLen + 40);
+
+	data.Initialize(SMSG_MESSAGECHAT);
+	data << uint8(CHAT_MSG_SYSTEM);
+	data << uint32(LANG_UNIVERSAL);
+	
+	data << (uint64)0;
+	data << (uint32)0;
+	data << (uint64)0;
+
+	data << textLen;
+	data << text;
+	data << uint8(0);
+	SendGamemasterMessage(&data, self);
+}
+
+void World::SendGamemasterMessage(WorldPacket *packet, WorldSession *self)
+{
+	m_sessionlock.AcquireReadLock();
+	SessionMap::iterator itr;
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	{
+	  if (itr->second->GetPlayer() &&
+	  itr->second->GetPlayer()->IsInWorld()
+	  && itr->second != self)  // don't send to self!
+	  {
+		if(itr->second->CanUseCommand('u'))
+		itr->second->SendPacket(packet);
+	  }
+	}
+	m_sessionlock.ReleaseReadLock();
+}
+
 void World::SendWorldWideScreenText(const char *text, WorldSession *self)
 {
 	WorldPacket data(256);
