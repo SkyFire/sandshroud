@@ -486,9 +486,9 @@ void AuthSocket::OnRead()
 	last_recv = UNIXTIME;
 	if(Command < MAX_AUTH_CMD && Handlers[Command] != NULL)
 		(this->*Handlers[Command])();
-	else
-		//Log.Notice("AuthSocket", "Unknown cmd %u", Command);
-;}
+	else if(Command != 19)
+		Log.Notice("AuthSocket", "Unknown cmd %u", Command);
+}
 
 void AuthSocket::HandleRealmlist()
 {
@@ -678,9 +678,9 @@ void AuthSocket::HandleTransferResume()
 
 	GetReadBuffer().Remove(1);
 	uint64 size;
-	GetReadBuffer().Read(&size, 8);
-	if(size>=m_patch->FileSize)
-		return;
+	GetReadBuffer().Read(&size, sizeof(size));
+//	if(size >= m_patch->FileSize)
+//		return;
 
 	PatchMgr::getSingleton().BeginPatchJob(m_patch,this,(uint32)size);
 }

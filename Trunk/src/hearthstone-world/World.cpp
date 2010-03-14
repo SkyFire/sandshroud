@@ -775,39 +775,52 @@ void World::SendWorldText(const char* text, WorldSession *self)
 	sLog.outString("> %s", text);
 }
 
-void World::SendGMWorldText(const char* text, WorldSession *self)
+void World::SendGMWorldText(const char* text, bool admin)
 {
-    uint32 textLen = (uint32)strlen((char*)text) + 1;
+	uint32 textLen = (uint32)strlen((char*)text) + 1;
 
-    WorldPacket data(textLen + 40);
-
+	WorldPacket data(textLen + 40);
 	data.Initialize(SMSG_MESSAGECHAT);
 	data << uint8(CHAT_MSG_SYSTEM);
 	data << uint32(LANG_UNIVERSAL);
-	
 	data << (uint64)0;
 	data << (uint32)0;
 	data << (uint64)0;
-
 	data << textLen;
 	data << text;
 	data << uint8(0);
-	SendGamemasterMessage(&data, self);
+	if(admin)
+		SendAdministratorMessage(&data);
+	else
+		SendGamemasterMessage(&data);
 }
 
-void World::SendGamemasterMessage(WorldPacket *packet, WorldSession *self)
+void World::SendAdministratorMessage(WorldPacket *packet)
 {
 	m_sessionlock.AcquireReadLock();
 	SessionMap::iterator itr;
 	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
 	{
-	  if (itr->second->GetPlayer() &&
-	  itr->second->GetPlayer()->IsInWorld()
-	  && itr->second != self)  // don't send to self!
-	  {
-		if(itr->second->CanUseCommand('u'))
-		itr->second->SendPacket(packet);
-	  }
+		if (itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld())
+		{
+			if(itr->second->CanUseCommand('z'))
+				itr->second->SendPacket(packet);
+		}
+	}
+	m_sessionlock.ReleaseReadLock();
+}
+
+void World::SendGamemasterMessage(WorldPacket *packet)
+{
+	m_sessionlock.AcquireReadLock();
+	SessionMap::iterator itr;
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	{
+		if (itr->second->GetPlayer() &&	itr->second->GetPlayer()->IsInWorld())
+		{
+			if(itr->second->GetPermissions())
+				itr->second->SendPacket(packet);
+		}
 	}
 	m_sessionlock.ReleaseReadLock();
 }

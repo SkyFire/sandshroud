@@ -112,18 +112,25 @@ enum Languages
 #define MSG_COLOR_GREEN	 "|c1f40af20"
 #define MSG_COLOR_LIGHTRED  "|cffff6060"*/
 
-#define MSG_COLOR_LIGHTRED	  "|cffff6060"
-#define MSG_COLOR_LIGHTBLUE	 "|cff00ccff"
-#define MSG_COLOR_BLUE		  "|cff0000ff"
-#define MSG_COLOR_GREEN		 "|cff00ff00"
-#define MSG_COLOR_RED		   "|cffff0000"
-#define MSG_COLOR_GOLD		  "|cffffcc00"
-#define MSG_COLOR_GREY		  "|cff888888"
-#define MSG_COLOR_WHITE		 "|cffffffff"
-#define MSG_COLOR_SUBWHITE	  "|cffbbbbbb"
-#define MSG_COLOR_MAGENTA	   "|cffff00ff"
+#define MSG_COLOR_LIGHTRED		"|cffff6060"
+#define MSG_COLOR_LIGHTBLUE		"|cff00ccff"
+#define MSG_COLOR_BLUE			"|cff0000ff"
+#define MSG_COLOR_GREEN			"|cff00ff00"
+#define MSG_COLOR_RED			"|cffff0000"
+#define MSG_COLOR_GOLD			"|cffffcc00"
+#define MSG_COLOR_GREY			"|cff888888"
+#define MSG_COLOR_WHITE			"|cffffffff"
+#define MSG_COLOR_SUBWHITE		"|cffbbbbbb"
+#define MSG_COLOR_MAGENTA		"|cffff00ff"
 #define MSG_COLOR_YELLOW		"|cffffff00"
-#define MSG_COLOR_CYAN		  "|cff00ffff"
+#define MSG_COLOR_CYAN			"|cff00ffff"
+#define MSG_COLOR_TORQUISEBLUE	"|cff00C78C"
+#define MSG_COLOR_GREENYELLOW	"|cffADFF2F"
+#define MSG_COLOR_PURPLE		"|cffDA70D6"
+#define MSG_COLOR_ORANGEY		"|cffFF4500"
+#define MSG_COLOR_CHOCOLATE		"|cffCD661D"
+#define MSG_COLOR_IVORY			"|cff8B8B83"
+#define MSG_COLOR_LIGHTYELLOW	"|cffFFFFE0"
 
 #define CHECKSESSION if(m_session == NULL) return NULL; \
 	if(m_session->GetPlayer() == NULL) return NULL;
@@ -222,6 +229,7 @@ protected:
 	bool HandleSummonCommand(const char* args, WorldSession *m_session);
 	bool HandleAppearCommand(const char* args, WorldSession *m_session);
 	bool HandleAnnounceCommand(const char* args, WorldSession *m_session);
+	bool HandleAdminAnnounceCommand(const char* args, WorldSession *m_session);
 	bool HandleGMAnnounceCommand(const char* args, WorldSession *m_session);
 	bool HandleWAnnounceCommand(const char* args, WorldSession *m_session);
 	bool HandleGMOnCommand(const char* args, WorldSession *m_session);

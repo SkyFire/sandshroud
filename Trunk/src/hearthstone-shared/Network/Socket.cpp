@@ -122,7 +122,8 @@ void Socket::Disconnect()
 	// Call virtual ondisconnect
 	OnDisconnect();
 
-	if(!m_deleted) Delete();
+	if(!m_deleted)
+		Delete();
 }
 
 void Socket::Delete()

@@ -103,10 +103,52 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	if(  msg.find("|c") != string::npos && msg.find("|H") == string::npos )
+	if(msg.find("|c") != string::npos && msg.find("|H") == string::npos && !GetPermissions()) // Allow GM's to Color Speak.
+		return;
+
+	/* Crow
+	Crow: Die color text! You don't belong in this world!
+	ColorTxt: It was not by my hand that I am once again given flesh.
+	ColorTxt: I was called here by, Humans, who wish to pay me Tribute.
+	Crow: Tribute? You steal mens souls! And make them your slaves!
+	ColorTxt: Perhaps the same could be said of all Religions...
+	Crow: Your words are as empty as your soul...
+	Crow: Mankind ill needs a savor such as you!
+	~ColorTxt breaks wine glass~
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	This is what we need to do, in fewer lines. http://pastebin.com/QH7Sk9t4 it might expire.
+	Yea...
+	const char* message;
+	message = strchr(msg.c_str(), 'tem:'); // Only does item but meh.
+	if(message)
 	{
-			return;
-	}
+		std::istringstream reader(message);
+		std::string itemid = "";
+		int i = 0;
+		while(!reader.eof()) // Your genericness knows no bounds.
+		{
+			char commandChar;
+			reader >> commandChar;
+			if(commandChar != ':')
+				itemid[i] = commandChar;
+			else
+				break;
+			++i;
+		}
+
+		uint32 iitemid = 0;
+		sscanf(itemid.c_str(), "%u", &iitemid);
+
+		if(iitemid)
+		{
+			ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(iitemid);
+			if(!proto)
+			{
+				Disconnect();
+				return;
+			}
+		}
+	}*/
 
 	//arghhh STFU. I'm not giving you gold or items NOOB
 	switch(type)
