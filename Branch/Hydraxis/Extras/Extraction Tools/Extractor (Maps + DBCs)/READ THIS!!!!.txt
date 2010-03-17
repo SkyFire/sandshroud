@@ -1,0 +1,3 @@
+The new ad.exe now extracts both your DBCs and Maps! Just place ad.exe in your WoW Directory
+(C:\Program Files\World of Warcraft\) by default! Create a folder namedThen run ad.exe and 
+wait!

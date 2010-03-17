@@ -1,0 +1,23 @@
+/*
+ * FeatherMoonEmu by Crow@Sandshroud
+ * Sandshroud <http://www.Sandshroud.servegame.org/>
+ *
+ */
+
+#include "MemoryLeaks.h"
+
+//#include <vld.h>
+//#include <vldapi.h>
+
+#if COMPILER == MICROSOFT
+
+createFileSingleton( MemoryManager ) ;
+
+/// Catch memory leaks
+MemoryManager::MemoryManager( )
+{
+  //VLDEnable();
+}
+
+#endif
+
