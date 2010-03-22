@@ -117,19 +117,22 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	else
 		m_name.assign( myFamily->name );
 
-	// Create ourself	
+	// Create ourself
 	Create(m_name.c_str(), owner->GetMapId(), owner->GetPositionX(), owner->GetPositionY(), owner->GetPositionZ(), owner->GetOrientation());
 	SetUInt32Value(OBJECT_FIELD_ENTRY, entry);
 	SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);	// better set this one
 
 	// Fields common to both lock summons and pets
-	uint32 level = (m_Owner->GetUInt32Value( UNIT_FIELD_LEVEL ) - 5);
+	uint32 level = (m_Owner->GetUInt32Value( UNIT_FIELD_LEVEL ) + (owner->getClass() == HUNTER ? - 5 : 0));
+	if(level < 1)
+		level = 1; // Double check.
+
 	if( type & 0x2 && created_from_creature != NULL && created_from_creature->getLevel() > level)
 	{
 		level = created_from_creature->getLevel();
 	}
 
-	SetUInt32Value( UNIT_FIELD_LEVEL, level);
+	SetUInt32Value(UNIT_FIELD_LEVEL, level);
 
 	SetUInt32Value(UNIT_FIELD_DISPLAYID,  ci->Male_DisplayID);
 	SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, ci->Male_DisplayID);
