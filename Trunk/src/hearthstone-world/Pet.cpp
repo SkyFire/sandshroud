@@ -123,7 +123,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);	// better set this one
 
 	// Fields common to both lock summons and pets
-	uint32 level = (m_Owner->GetUInt32Value( UNIT_FIELD_LEVEL ) + (owner->getClass() == HUNTER ? - 5 : 0));
+	int32 level = (m_Owner->GetUInt32Value( UNIT_FIELD_LEVEL ) + (owner->getClass() == HUNTER ? - 5 : 0));
 	if(level < 1)
 		level = 1; // Double check.
 
