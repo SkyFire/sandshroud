@@ -1037,11 +1037,9 @@ void InstanceMgr::BuildSavedRaidInstancesForPlayer(Player* plr)
 
 void Instance::SaveToDB()
 {
-	printf("Saving to DB\n");
 	// don't save non-raid instances.
 	if(!dbcMap.LookupEntry(m_mapId)->israid() || m_isBattleground)
 		return;
-	printf("Saving a raid?\n");
 
 	// don't save instance if nothing is killed yet
 	if (m_killedNpcs.size() == 0)
