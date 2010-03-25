@@ -143,8 +143,12 @@ const char* spellentryFormat =
 	"u" // RequiredItemFlags
 	"uuu" // 3x Spell Effect
 	"uuu" // 3x Spell Effect Die Sides
+#ifdef PATCH_THREE_THREE_THREE
+	// EMPTY
+#else
 	"uuu" // 3x Spell Effect Base Dice
 	"fff" // 3x Spell Effect Dice per Level
+#endif
 	"fff" // 3x Spell Effect Real Points per Level
 	"iii" // 3x Spell Effect Base Points
 	"iii" // 3x Spell Effect Mechanic

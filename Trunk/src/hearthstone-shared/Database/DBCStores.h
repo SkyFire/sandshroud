@@ -20,6 +20,8 @@
 #ifndef __SPELLSTORE_H
 #define __SPELLSTORE_H
 
+//#define PATCH_THREE_THREE_THREE
+
 #include "Common.h"
 #include "DataStore.h"
 #include "Timer.h"
@@ -718,8 +720,12 @@ struct SpellEntry
 	uint32 RequiredItemFlags;               //70
 	uint32 Effect[3];                       //71 - 73
 	uint32 EffectDieSides[3];               //74 - 76
+#ifdef PATCH_THREE_THREE_THREE
+	// EMPTY!
+#else
 	uint32 EffectBaseDice[3];               //77 - 79
 	float  EffectDicePerLevel[3];           //80 - 82
+#endif
 	float  EffectRealPointsPerLevel[3];     //83 - 85
 	int32  EffectBasePoints[3];             //86 - 88
 	int32  EffectMechanic[3];               //89 - 91       Related to SpellMechanic.dbc

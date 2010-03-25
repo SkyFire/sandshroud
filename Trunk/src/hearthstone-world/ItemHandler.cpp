@@ -846,7 +846,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->PageMaterial;
 	data << itemProto->QuestId;
 	data << itemProto->LockId;
-	data << itemProto->LockMaterial;
+	data << int32(itemProto->LockMaterial);
 	data << itemProto->SheathId;
 	data << itemProto->RandomPropId;
 	data << itemProto->RandomSuffixId;
@@ -865,8 +865,8 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	}
 	data << itemProto->SocketBonus;
 	data << itemProto->GemProperties;
-	data << float(itemProto->DisenchantReqSkill);	// should be a float?
-	data << itemProto->ArmorDamageModifier;
+	data << itemProto->DisenchantReqSkill;
+	data << float(itemProto->ArmorDamageModifier);	// should be a float?
 	data << uint32(0);								// 2.4.2 Item duration in seconds
 	data << uint32(0);								// ItemLimitCategory
 	data << uint32(0);								// HolidayId.

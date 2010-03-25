@@ -19,6 +19,8 @@
 
 #include "StdAfx.h"
 
+//#define PATCH_THREE_THREE_THREE
+
 #define SPELL_CHANNEL_UPDATE_INTERVAL 1000
 
 /// externals for spell system
@@ -4228,8 +4230,13 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 
 	int32 value = 0;
 
+#ifdef PATCH_THREE_THREE_THREE
+//	float basePointsPerLevel    = m_spellInfo->EffectRealPointsPerLevel[i];
+//	float randomPointsPerLevel  = m_spellInfo->EffectDicePerLevel[i];
+#else
 	float basePointsPerLevel    = m_spellInfo->EffectRealPointsPerLevel[i];
 	float randomPointsPerLevel  = m_spellInfo->EffectDicePerLevel[i];
+#endif
 	int32 basePoints = m_spellInfo->EffectBasePoints[i] + 1;
 	int32 randomPoints = m_spellInfo->EffectDieSides[i];
 
@@ -4276,8 +4283,13 @@ exit:*/
 			diff +=m_spellInfo->maxLevel;
 		else
 			diff +=u_caster->getLevel();
+#ifdef PATCH_THREE_THREE_THREE
+//		randomPoints += float2int32(diff * randomPointsPerLevel);
+//		basePoints += float2int32(diff * basePointsPerLevel );
+#else
 		randomPoints += float2int32(diff * randomPointsPerLevel);
 		basePoints += float2int32(diff * basePointsPerLevel );
+#endif // PATCH_THREE_THREE_THREE
 	}
 
 	if(randomPoints <= 1)

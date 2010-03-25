@@ -21,6 +21,8 @@
 #include "AuthCodes.h"
 #include "svn_revision.h"
 
+//#define PATCH_THREE_THREE_THREE
+
 bool ChatHandler::HandleRenameAllCharacter(const char * args, WorldSession * m_session)
 {
 	uint32 uCount = 0;
@@ -73,7 +75,8 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 		uint32 enchantment; // added in 2.4
 	};
 
-	player_item items[20];
+	player_item items[19];
+//	player_item bags[4];
 	int8 slot;
 	int8 containerslot;
 	uint32 i;
@@ -179,9 +182,61 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 
 			res = CharacterDatabase.Query("SELECT containerslot, slot, entry, enchantments FROM playeritems WHERE ownerguid=%u", GUID_LOPART(guid));
 
+#ifdef PATCH_THREE_THREE_THREE
 			uint32 enchantid;
 			EnchantEntry * enc;
-			memset(items, 0, sizeof(player_item) * 20);
+			memset(items, 0, sizeof(player_item) * EQUIPMENT_SLOT_END);
+			if(res)
+			{
+				do
+				{
+					containerslot = res->Fetch()[0].GetInt8();
+					slot = res->Fetch()[1].GetInt8();
+					if( containerslot == -1 && slot < EQUIPMENT_SLOT_END && slot >= 0 )
+					{
+						proto = ItemPrototypeStorage.LookupEntry(res->Fetch()[2].GetUInt32());
+						if(proto)
+						{
+							// slot0 = head, slot14 = cloak
+							if(!(slot == 0 && (flags & (uint32)PLAYER_FLAG_NOHELM) != 0) && !(slot == 14 && (flags & (uint32)PLAYER_FLAG_NOCLOAK) != 0))
+							{
+								items[slot].displayid = proto->DisplayInfoID;
+								items[slot].invtype = proto->InventoryType;
+								if( slot == EQUIPMENT_SLOT_MAINHAND || slot == EQUIPMENT_SLOT_OFFHAND )
+								{
+									// get enchant visual ID
+									const char * enchant_field = res->Fetch()[3].GetString();
+									if( sscanf( enchant_field , "%u,0,0;" , (unsigned int *)&enchantid ) == 1 && enchantid > 0 )
+									{
+										enc = dbcEnchant.LookupEntry( enchantid );
+										if( enc != NULL )
+											items[slot].enchantment = enc->visual;
+										else
+											items[slot].enchantment = 0;;
+									}
+								}
+							}
+						}
+					}
+				} while(res->NextRow());
+				delete res;
+			}
+
+			for( i = 0; i < EQUIPMENT_SLOT_END; ++i )
+				data << items[i].displayid << items[i].invtype << uint32(items[i].enchantment);
+
+			for(uint8 c = 0; c < 4; ++c)
+				data << uint32(0)/*bags[i].displayid*/ << uint8(18) << uint32(0);
+			//			Displayid						  // Bag	  // Enchant
+
+			num++;
+		}
+		while( result->NextRow() );
+	}
+#else
+			uint32 enchantid;
+			EnchantEntry * enc;
+			memset(items, 0, sizeof(player_item) * INVENTORY_SLOT_BAG_END);
 			if(res)
 			{
 				do
@@ -218,13 +273,14 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 				delete res;
 			}
 
-			for( i = 0; i < 20; ++i )
+			for( i = 0; i < INVENTORY_SLOT_BAG_2; ++i )
 				data << items[i].displayid << items[i].invtype << uint32(items[i].enchantment);
 
 			num++;
 		}
 		while( result->NextRow() );
 	}
+#endif // PATCH_THREE_THREE_THREE
 
 	data.put<uint8>(0, num);
 
