@@ -2105,39 +2105,79 @@ void WorldSession::HandleToggleHelmOpcode(WorldPacket &recv_data)
 
 void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket& recv_data)
 {
-    uint32 data;
-    recv_data >> data;
+	uint32 data;
+	recv_data >> data;
 
-    if(_player->GetGroup() && _player->IsGroupLeader())
-    {
-        WorldPacket pData;
-        pData.Initialize(MSG_SET_DUNGEON_DIFFICULTY);
-        pData << data;
+	if(_player->GetGroup() && _player->IsGroupLeader())
+	{
+		WorldPacket pData;
+		pData.Initialize(MSG_SET_DUNGEON_DIFFICULTY);
+		pData << data;
 
-        _player->iInstanceType = data;
-        sInstanceMgr.ResetSavedInstances(_player);
+		_player->iInstanceType = data;
+		sInstanceMgr.ResetSavedInstances(_player);
 
-        Group * m_Group = _player->GetGroup();
+		Group * m_Group = _player->GetGroup();
 
-        m_Group->Lock();
+		m_Group->SetDifficulty(data);
+		m_Group->Lock();
 		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); ++i)
 		{
 			for(GroupMembersSet::iterator itr = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); itr != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
 			{
 				if((*itr)->m_loggedInPlayer)
 				{
-                    (*itr)->m_loggedInPlayer->iInstanceType = data;
+					(*itr)->m_loggedInPlayer->iInstanceType = data;
 					(*itr)->m_loggedInPlayer->GetSession()->SendPacket(&pData);
 				}
 			}
 		}
 		m_Group->Unlock();
-    }
-    else if(!_player->GetGroup())
-    {
-        _player->iInstanceType = data;
-        sInstanceMgr.ResetSavedInstances(_player);
-    }
+	}
+	else if(!_player->GetGroup())
+	{
+		_player->iInstanceType = data;
+		sInstanceMgr.ResetSavedInstances(_player);
+	}
+
+#ifdef OPTIMIZED_PLAYER_SAVING
+	_player->save_InstanceType();
+#endif
+}
+
+void WorldSession::HandleRaidDifficultyOpcode(WorldPacket& recv_data)
+{
+	uint32 data;
+	recv_data >> data;
+
+	if(_player->GetGroup() && _player->IsGroupLeader())
+	{
+		WorldPacket pData;
+		pData.Initialize(MSG_SET_RAID_DIFFICULTY);
+		pData << data;
+
+		_player->iRaidType = data;
+		Group * m_Group = _player->GetGroup();
+
+		m_Group->SetRaidDifficulty(data);
+		m_Group->Lock();
+		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); ++i)
+		{
+			for(GroupMembersSet::iterator itr = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); itr != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
+			{
+				if((*itr)->m_loggedInPlayer)
+				{
+					(*itr)->m_loggedInPlayer->iRaidType = data;
+					(*itr)->m_loggedInPlayer->GetSession()->SendPacket(&pData);
+				}
+			}
+		}
+		m_Group->Unlock();
+	}
+	else if(!_player->GetGroup())
+	{
+		_player->iRaidType = data;
+	}
 
 #ifdef OPTIMIZED_PLAYER_SAVING
 	_player->save_InstanceType();
@@ -2178,7 +2218,7 @@ void WorldSession::HandleSummonResponseOpcode(WorldPacket & recv_data)
 	if( _player->m_summonInstanceId != _player->GetInstanceID() )
 	{
 		// if not, are we allowed on the summoners map?
-		uint8 pReason = CheckTeleportPrerequsites(NULL, this, _player, inf);
+		uint8 pReason = CheckTeleportPrerequsites(NULL, this, _player, inf->mapid);
 		if( pReason )
 		{
 			SendNotification(NOTIFICATION_MESSAGE_NO_PERMISSION);
@@ -2247,9 +2287,7 @@ void WorldSession::HandleReadyForAccountDataTimes(WorldPacket &recv_data)
 
 	// account data == UI config
 	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
-
 	data << uint32(UNIXTIME) << uint8(1) << uint32(0x15);
-
 	for (int i = 0; i < 8; i++)
 	{
 		if(0x15 & (1 << i))
@@ -2269,4 +2307,44 @@ void WorldSession::HandleFarsightOpcode(WorldPacket &recv_data)
 	// TODO
 
 	GetPlayer()->UpdateVisibility();
+}
+
+void WorldSession::HandleGameobjReportUseOpCode( WorldPacket& recv_data )
+{
+	uint64 guid;
+	recv_data >> guid;
+	GameObject* gameobj = _player->GetMapMgr()->GetGameObject(uint32(guid));
+	if(gameobj == NULL)
+		return;
+	if(gameobj->CanActivate())
+		sQuestMgr.OnGameObjectActivate(_player, gameobj);
+	return;
+}
+
+void WorldSession::HandleTalentWipeConfirmOpcode( WorldPacket& recv_data )
+{
+	uint64 guid;
+	recv_data >> guid;
+	CHECK_INWORLD_RETURN;
+
+	uint32 playerGold = _player->GetUInt32Value( PLAYER_FIELD_COINAGE );
+	uint32 price = _player->CalcTalentResetCost(_player->GetTalentResetTimes());
+
+	if( playerGold < price )
+		return;
+
+	_player->SetTalentResetTimes(GetPlayer()->GetTalentResetTimes() + 1);
+	_player->SetUInt32Value( PLAYER_FIELD_COINAGE, playerGold - price );
+	_player->Reset_Talents();
+
+	_player->GetAchievementInterface()->HandleAchievementCriteriaTalentResetCostTotal( price );
+	_player->GetAchievementInterface()->HandleAchievementCriteriaTalentResetCount();
+
+	_player->CastSpell(_player, 14867, true);	// Spell: "Untalent Visual Effect"
+
+	WorldPacket data( MSG_TALENT_WIPE_CONFIRM, 12);	// You don't have any talent.
+	data << uint64(0);
+	data << uint32(0);
+	SendPacket( &data );
+	return;
 }

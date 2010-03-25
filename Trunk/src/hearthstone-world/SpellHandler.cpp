@@ -208,7 +208,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 
 	DEBUG_LOG("WORLD","Received cast_spell packet, spellId - %i (%s), data length = %i",
 		spellId, spellInfo->Name, recvPacket.size());
-	
+
 	// Cheat Detection only if player and not from an item
 	// this could fuck up things but meh it's needed ALOT of the newbs are using WPE now
 	// WPE allows them to mod the outgoing packet and basicly choose what ever spell they want :(

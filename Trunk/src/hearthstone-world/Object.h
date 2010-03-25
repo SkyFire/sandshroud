@@ -161,7 +161,7 @@ public:
 	HEARTHSTONE_INLINE const uint64& GetGUID() const { return *((uint64*)m_uint32Values); }
 	HEARTHSTONE_INLINE const WoWGuid& GetNewGUID() const { return m_wowGuid; }
 	HEARTHSTONE_INLINE uint32 GetEntry(){return m_uint32Values[OBJECT_FIELD_ENTRY];}
-	
+
 	HEARTHSTONE_INLINE const uint32 GetEntryFromGUID() const	{ return uint32( (*(uint64*)m_uint32Values >> 24) & 0xFFFFFFFF ); }
 	HEARTHSTONE_INLINE const uint32 GetTypeFromGUID() const { return (m_uint32Values[1] & HIGHGUID_TYPE_MASK); }
 	HEARTHSTONE_INLINE const uint32 GetUIdFromGUID() const { return (m_uint32Values[0] & LOWGUID_ENTRY_MASK); }

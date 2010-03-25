@@ -2190,16 +2190,27 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		return true;
 	}
 
-	//Are we on a transporter? Disabled.
-/*	if(m_session->GetPlayer()->m_TransporterGUID != 0)
+	//Are we on a transporter?
+	if(m_session->GetPlayer()->m_TransporterGUID != 0)
 	{
-		Transporter* t = objmgr.GetTransporter(GUID_LOPART(m_session->GetPlayer()->m_TransporterGUID));
-		t->AddNPC(entry,m_session->GetPlayer()->m_TransporterX,m_session->GetPlayer()->m_TransporterY,m_session->GetPlayer()->m_TransporterZ,m_session->GetPlayer()->GetOrientation());
-		WorldDatabase.Execute("INSERT INTO transport_creatures VALUES(%u, %u, '%f', '%f', '%f', '%f')",GUID_LOPART(m_session->GetPlayer()->m_TransporterGUID),entry,m_session->GetPlayer()->m_TransporterX,m_session->GetPlayer()->m_TransporterY,m_session->GetPlayer()->m_TransporterZ,m_session->GetPlayer()->GetOrientation());
-		BlueSystemMessage(m_session, "Spawned crew-member %u on transport %u. You might need to relog.",entry,GUID_LOPART(m_session->GetPlayer()->m_TransporterGUID));
-		sGMLog.writefromsession(m_session, "spawned crew-member %u on transport %u.",entry,GUID_LOPART(m_session->GetPlayer()->m_TransporterGUID));
-		return true;
-	}*/
+		Player* pl = m_session->GetPlayer();
+		Transporter* t = objmgr.GetTransporter(GUID_LOPART(pl->m_TransporterGUID));
+		if(t)
+		{
+			WorldDatabase.Execute("INSERT INTO transport_creatures VALUES(%u, %u, '%f', '%f', '%f', '%f')", GUID_LOPART(pl->m_TransporterGUID), entry, pl->m_TransporterX, pl->m_TransporterY, pl->m_TransporterZ, pl->GetOrientation());
+			t->AddNPC(entry, pl->m_TransporterX, pl->m_TransporterY, pl->m_TransporterZ, pl->GetOrientation());
+			BlueSystemMessage(m_session, "Spawned crew-member %u on transport %u. You might need to relog.", entry, GUID_LOPART(pl->m_TransporterGUID));
+			sGMLog.writefromsession(m_session, "spawned crew-member %u on transport %u.", entry, GUID_LOPART(pl->m_TransporterGUID));
+			return true;
+		}
+		else
+		{
+			BlueSystemMessage(m_session, "Incorrect transportguid %u. Spawn has been denied.", GUID_LOPART(pl->m_TransporterGUID));
+			return true;
+		}
+	}
+//	VehicleEntry * ve = dbcVehicle.LookupEntry( proto->vehicle_entry );
+//	bool spVehicle = (ve && proto->vehicle_entry > 0) ? true : false;
 	bool spVehicle = proto->vehicle_entry > 0 ? true : false;
 
 	Creature* p = NULLCREATURE;

@@ -1120,11 +1120,6 @@ public:
 	Vehicle* m_CurrentVehicle;
 	HEARTHSTONE_INLINE int8 GetSeatID() { return m_inVehicleSeatId; }
 
-	// Enters the passenger into an available seat
-	void EnterVehicle(Vehicle * vehicle);
-	// Enters the passenger into a prefered seat if possible
-	void EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force);
-
 	//Pet
 	HEARTHSTONE_INLINE void SetIsPet(bool chck) { m_isPet = chck; }
 	
@@ -1346,6 +1341,17 @@ public:
 	void Dismount();
 	//	custom functions for scripting
 	void SetWeaponDisplayId(uint8 slot, uint32 displayId);
+
+	//Transporters
+	bool m_lockTransportVariables;
+	uint64 m_TransporterGUID;
+	float m_TransporterX;
+	float m_TransporterY;
+	float m_TransporterZ;
+	float m_TransporterO;
+	float m_TransporterUnk;
+	LocationVector* m_transportPosition;
+	WoWGuid m_transportNewGuid;
 
 	// Movement Info.
 	MovementInfo* GetMovementInfo() { return &movement_info; }

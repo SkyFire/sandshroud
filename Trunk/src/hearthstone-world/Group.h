@@ -205,8 +205,6 @@ public:
 	HEARTHSTONE_INLINE PlayerInfo * GetMainTank() { return m_mainTank; }
 	HEARTHSTONE_INLINE PlayerInfo * GetMainAssist() { return m_mainAssist; }
 
-	void SetDifficulty(uint8 difficulty);
-	
 	/************************************************************************/
 	/* Voicechat                                                            */
 	/************************************************************************/
@@ -231,6 +229,10 @@ public:
 	HEARTHSTONE_INLINE void SetFlag(uint8 groupflag) { m_groupFlags |= groupflag; }
 	HEARTHSTONE_INLINE void RemoveFlag(uint8 groupflag) { m_groupFlags &= ~groupflag; }
 	HEARTHSTONE_INLINE bool HasFlag(uint8 groupflag) { return (m_groupFlags & groupflag) > 0 ? true : false; }
+	HEARTHSTONE_INLINE int8 GetDifficulty() { return m_difficulty; }
+	HEARTHSTONE_INLINE int8 GetRaidDifficulty() { return m_raiddifficulty; }
+	HEARTHSTONE_INLINE void SetDifficulty(uint8 diff) { m_difficulty = diff; }
+	HEARTHSTONE_INLINE void SetRaidDifficulty(uint8 diff) { m_raiddifficulty = diff; }
 
 protected:
 	PlayerInfo * m_Leader;
@@ -251,6 +253,7 @@ protected:
 	bool m_dirty;
 	bool m_updateblock;
 	uint8 m_difficulty;
+	uint8 m_raiddifficulty;
 	uint8 m_groupFlags;
 
 	// Evil prayer of mending stuff

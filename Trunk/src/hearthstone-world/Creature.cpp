@@ -97,9 +97,7 @@ Creature::Creature(uint64 guid)
 	m_base_runSpeed = m_runSpeed;
 	m_base_walkSpeed = m_walkSpeed;
 	m_noRespawn=false;
-    m_canRegenerateHP = true;
-	m_transportGuid = 0;
-	m_transportPosition = NULL;
+	m_canRegenerateHP = true;
 	BaseAttackType = SCHOOL_NORMAL;
 
 	m_taggingPlayer = m_taggingGroup = 0;

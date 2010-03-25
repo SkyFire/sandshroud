@@ -139,7 +139,7 @@ void WorldSession::HandleGroupAcceptOpcode( WorldPacket & recv_data )
 	recv_data >> serverid;
 
 	Player* player = objmgr.GetPlayer(_player->GetInviter());
-	if ( !player )
+	if(!player)
 		return;
 	
 	player->SetInviter(0);
@@ -151,18 +151,26 @@ void WorldSession::HandleGroupAcceptOpcode( WorldPacket & recv_data )
 	{
 		grp->AddMember(_player->m_playerInfo);
 		if(grp->GetLeader()->m_loggedInPlayer)
+		{
 			_player->iInstanceType = grp->GetLeader()->m_loggedInPlayer->iInstanceType;
+			_player->iRaidType = grp->GetLeader()->m_loggedInPlayer->iRaidType;
+		}
 
-        _player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &_player->iInstanceType);
+		_player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &_player->iInstanceType);
+		_player->GetSession()->OutPacket(MSG_SET_RAID_DIFFICULTY, 4, &_player->iRaidType);
 		return;
 	}
-	
+
 	// If we're this far, it means we have no existing group, and have to make one.
 	grp = new Group(true);
 	grp->AddMember(player->m_playerInfo);		// add the inviter first, therefore he is the leader
-	grp->AddMember(_player->m_playerInfo);	   // add us.
-    _player->iInstanceType = player->iInstanceType;
-    _player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &player->iInstanceType);
+	grp->AddMember(_player->m_playerInfo);		// add us.
+	grp->SetDifficulty(player->iInstanceType);	// Set our instance difficulty.
+	grp->SetRaidDifficulty(player->iRaidType);	// Set our raid difficulty.
+	_player->iInstanceType = player->iInstanceType;
+	_player->iRaidType = player->iRaidType;
+	_player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &player->iInstanceType);
+	_player->GetSession()->OutPacket(MSG_SET_RAID_DIFFICULTY, 4, &player->iRaidType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

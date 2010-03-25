@@ -425,8 +425,14 @@ Transporter::~Transporter()
 	for(TransportNPCMap::iterator itr = m_npcs.begin(); itr != m_npcs.end(); ++itr)
 	{
 		if(itr->second->GetTypeId()==TYPEID_UNIT)
+		{
 			delete TO_CREATURE( itr->second )->m_transportPosition;
-
+			TO_CREATURE( itr->second )->m_TransporterGUID = NULL;
+			TO_CREATURE( itr->second )->m_TransporterX = NULL;
+			TO_CREATURE( itr->second )->m_TransporterY = NULL;
+			TO_CREATURE( itr->second )->m_TransporterZ = NULL;
+			TO_CREATURE( itr->second )->m_TransporterO = NULL;
+		}
 		itr->second->Destructor();
 	}
 }
@@ -486,6 +492,9 @@ void Transporter::OnPushToWorld()
 
 void Transporter::AddNPC(uint32 Entry, float offsetX, float offsetY, float offsetZ, float offsetO)
 {
+	if(!this) // Lolwut.
+		return;
+
 	uint32 guid;
 	m_transportGuidGen.Acquire();
 	guid = ++m_transportGuidMax;
@@ -499,8 +508,13 @@ void Transporter::AddNPC(uint32 Entry, float offsetX, float offsetY, float offse
 	Creature* pCreature(new Creature((uint64)HIGHGUID_TYPE_TRANSPORTER<<32 | guid));
 	pCreature->Init();
 	pCreature->Load(proto, offsetX, offsetY, offsetZ, offsetO);
+	pCreature->m_TransporterX = offsetX;
+	pCreature->m_TransporterY = offsetY;
+	pCreature->m_TransporterZ = offsetZ;
+	pCreature->m_TransporterO = offsetO;
+	pCreature->m_TransporterUnk = UNIXTIME;
 	pCreature->m_transportPosition = new LocationVector(offsetX, offsetY, offsetZ, offsetO);
-	pCreature->m_transportGuid = GetUIdFromGUID();
+	pCreature->m_TransporterGUID = GetGUID();
 	pCreature->m_transportNewGuid = GetNewGUID();
 	m_npcs.insert(make_pair(guid,pCreature));
 }

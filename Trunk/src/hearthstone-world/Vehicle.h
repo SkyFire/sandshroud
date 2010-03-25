@@ -37,12 +37,13 @@ public:
 	void SafeDelete();
 	void MoveVehicle(float x, float y, float z, float o);
 	void AddPassenger(Unit* pPassenger);
-	void AddPassenger(Unit* pPassenger, uint8 requestedseat);
+	void AddPassenger(Unit* pPassenger, uint8 requestedseat, bool force = false);
 	void RemovePassenger(Unit* pPassenger);
 	bool HasPassenger(Unit* pPassenger);
 	void SendSpells(uint32 entry, Player* plr);
 	void setDeathState(DeathState s);
 	void SetSpeed(uint8 SpeedType, float value);
+	void ChangeSeats(Unit* pPassenger, uint8 seatid);
 
 	//---------------------------------------
 	// Accessors

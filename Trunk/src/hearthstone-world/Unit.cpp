@@ -55,7 +55,17 @@ Unit::Unit()
 	m_teleportAckCounter = 0;
 	m_inVehicleSeatId = 0xFF;
 	m_CurrentVehicle = NULLVEHICLE;
-	
+
+	//transport shit
+	m_transportPosition		= NULL;
+	m_TransporterGUID		= NULL;
+	m_TransporterX			= 0.0f;
+	m_TransporterY			= 0.0f;
+	m_TransporterZ			= 0.0f;
+	m_TransporterO			= 0.0f;
+	m_TransporterUnk		= 0.0f;
+	m_lockTransportVariables= false;
+
 	//DK:modifiers
 	PctRegenModifier = 0;
 	for( uint32 x = 0; x < 4; x++ )
@@ -7259,145 +7269,4 @@ void Unit::RemoveBeacons()
 	//reset this fucker
 	BeaconCaster = NULLUNIT;
 	BeaconTarget = NULLUNIT;
-}
-
-void Unit::EnterVehicle(Vehicle * vehicle)
-{
-	if(vehicle->IsVehicle() == false && vehicle->IsPlayer() == false)
-		return;
-
-	if(vehicle->IsPlayer())
-	{
-		Player* plr = TO_PLAYER(vehicle);
-		WorldPacket data( SMSG_PLAYER_VEHICLE_DATA, sizeof(plr->GetNewGUID()) +4);
-		data << WoWGuid(plr->GetNewGUID());
-		data << uint32(vehicle->GetVehicleEntry());
-		TO_PLAYER(vehicle)->GetSession()->SendPacket(&data);
-	}
-
-	if(m_CurrentVehicle)
-		m_CurrentVehicle->RemovePassenger(this);
-
-	for(int8 seat = 0; seat < vehicle->GetMaxSeat(); ++seat)
-	{
-		if(vehicle->GetPassenger(seat) == NULL) // Find free seat
-		{
-			vehicle->AddPassenger(this, seat);
-			VehicleSeatEntry* info = vehicle->m_vehicleSeats[seat];
-
-			WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
-			data << GetNewGUID();									// Passengerguid
-			data << vehicle->GetNewGUID();							// Transporterguid (vehicleguid)
-			data << uint8(seat);									// Vehicle Seat ID
-			data << uint8(0);										// Unknown
-			data << info->m_attachmentOffsetX;						// OffsetTransporterX
-			data << info->m_attachmentOffsetY;						// OffsetTransporterY
-			data << info->m_attachmentOffsetZ;						// OffsetTransporterZ
-			data << getMSTime();									// Timestamp
-			data << uint8(0x04);									// Flags
-			data << float(0);										// Orientation Offset
-			data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
-			data << uint32(0);										// MoveTime
-			data << uint32(1);										// Points
-			data << float(0);										// GetTransOffsetX();
-			data << float(0);										// GetTransOffsetY();
-			data << float(0);										// GetTransOffsetZ();
-			SendMessageToSet(&data, true);
-			break;
-		}
-	}
-}
-
-void Unit::EnterVehicle(Vehicle * vehicle, int8 preferedseat, bool force)
-{
-	if(vehicle->IsVehicle() == false && vehicle->IsPlayer() == false)
-		return;
-
-	if(vehicle->IsPlayer())
-	{
-		Player* plr = TO_PLAYER(vehicle);
-		WorldPacket data( SMSG_PLAYER_VEHICLE_DATA, sizeof(plr->GetNewGUID()) +4);
-		data << WoWGuid(plr->GetNewGUID());
-		data << uint32(vehicle->GetVehicleEntry());
-		TO_PLAYER(vehicle)->GetSession()->SendPacket(&data);
-	}
-
-	// Check if we're a vehicle trying to mount a non-player seat position
-	if(preferedseat < 8)
-	{
-		if( preferedseat > vehicle->GetMaxSeat())
-		{
-			sLog.outDebug("Object::EnterVehicle -> Unit "I64FMT" tried to enter seat %u wich is invalid.", GetGUID(), preferedseat);
-			return;
-		}
-	}
-	else
-		return;
-
-	if(m_CurrentVehicle)
-		m_CurrentVehicle->RemovePassenger(this);
-
-	if(preferedseat == -1) // Lovely, freedom of choice
-	{
-		EnterVehicle(vehicle);
-		return;
-	}
-
-	if(force)
-	{
-		if(vehicle->GetPassenger(preferedseat))
-			vehicle->RemovePassenger(vehicle->GetPassenger(preferedseat));
-
-		vehicle->AddPassenger(this, preferedseat);
-		VehicleSeatEntry* info = vehicle->m_vehicleSeats[preferedseat];
-
-		WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
-		data << GetNewGUID();									// Passengerguid
-		data << vehicle->GetNewGUID();							// Transporterguid (vehicleguid)
-		data << uint8(preferedseat);							// Vehicle Seat ID
-		data << uint8(0);										// Unknown
-		data << info->m_attachmentOffsetX;						// OffsetTransporterX
-		data << info->m_attachmentOffsetY;						// OffsetTransporterY
-		data << info->m_attachmentOffsetZ;						// OffsetTransporterZ
-		data << getMSTime();									// Timestamp
-		data << uint8(0x04);									// Flags
-		data << float(0);										// Orientation Offset
-		data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
-		data << uint32(0);										// MoveTime
-		data << uint32(1);										// Points
-		data << float(0);										// GetTransOffsetX();
-		data << float(0);										// GetTransOffsetY();
-		data << float(0);										// GetTransOffsetZ();
-		SendMessageToSet(&data, true);
-		return;
-	}
-	else
-	{
-		if(vehicle->GetPassenger(preferedseat) == NULL) // There's some room available here
-		{
-			vehicle->AddPassenger(this, preferedseat);
-			VehicleSeatEntry* info = vehicle->m_vehicleSeats[preferedseat];
-
-			WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
-			data << GetNewGUID();									// Passengerguid
-			data << vehicle->GetNewGUID();							// Transporterguid (vehicleguid)
-			data << uint8(preferedseat);							// Vehicle Seat ID
-			data << uint8(0);										// Unknown
-			data << info->m_attachmentOffsetX;						// OffsetTransporterX
-			data << info->m_attachmentOffsetY;						// OffsetTransporterY
-			data << info->m_attachmentOffsetZ;						// OffsetTransporterZ
-			data << getMSTime();									// Timestamp
-			data << uint8(0x04);									// Flags
-			data << float(0);										// Orientation Offset
-			data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
-			data << uint32(0);										// MoveTime
-			data << uint32(1);										// Points
-			data << float(0);										// GetTransOffsetX();
-			data << float(0);										// GetTransOffsetY();
-			data << float(0);										// GetTransOffsetZ();
-			SendMessageToSet(&data, true);
-			return;
-		}
-	}
-	return;
 }

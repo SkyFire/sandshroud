@@ -258,6 +258,12 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 		return;
 	}
 
+//	if(mClientBuild != sWorld.GetServerRequiredBuild())
+//	{
+//		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x14");
+//		return;
+//	}
+
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
 	
@@ -271,7 +277,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 	m_fullAccountName = new string( account );
 
 	// Set the authentication packet 
-    pAuthenticationPacket = recvPacket;
+	pAuthenticationPacket = recvPacket;
 }
 
 void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)

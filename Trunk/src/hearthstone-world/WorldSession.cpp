@@ -640,6 +640,8 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_MESSAGECHAT].handler							= &WorldSession::HandleMessagechatOpcode;
 	WorldPacketHandlers[CMSG_TEXT_EMOTE].handler							= &WorldSession::HandleTextEmoteOpcode;
 	WorldPacketHandlers[CMSG_INSPECT].handler								= &WorldSession::HandleInspectOpcode;
+	WorldPacketHandlers[CMSG_TIME_SYNC_RESP].handler						= &WorldSession::HandleTimeSyncResp;
+	WorldPacketHandlers[CMSG_GAMEOBJ_REPORT_USE].handler					= &WorldSession::HandleGameobjReportUseOpCode;
 
 	// Channels
 	WorldPacketHandlers[CMSG_JOIN_CHANNEL].handler							= &WorldSession::HandleChannelJoin;
@@ -744,7 +746,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_LEARN_TALENT].handler							= &WorldSession::HandleLearnTalentOpcode;
 	WorldPacketHandlers[CMSG_LEARN_PREVIEW_TALENTS].handler					= &WorldSession::HandleLearnPreviewTalents;
 	WorldPacketHandlers[CMSG_UNLEARN_TALENTS].handler						= &WorldSession::HandleUnlearnTalents;
-	WorldPacketHandlers[MSG_TALENT_WIPE_CONFIRM].handler					= &WorldSession::HandleUnlearnTalents;
+	WorldPacketHandlers[MSG_TALENT_WIPE_CONFIRM].handler					= &WorldSession::HandleTalentWipeConfirmOpcode;
 	WorldPacketHandlers[CMSG_UNLEARN_SKILL].handler							= &WorldSession::HandleUnlearnSkillOpcode;
 
 	// Combat / Duel
@@ -899,6 +901,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_SELF_RES].handler								= &WorldSession::HandleSelfResurrectOpcode;
 	WorldPacketHandlers[MSG_RANDOM_ROLL].handler							= &WorldSession::HandleRandomRollOpcode;
 	WorldPacketHandlers[MSG_SET_DUNGEON_DIFFICULTY].handler					= &WorldSession::HandleDungeonDifficultyOpcode;
+	WorldPacketHandlers[MSG_SET_RAID_DIFFICULTY].handler					= &WorldSession::HandleRaidDifficultyOpcode;
 
 	// Misc
 	WorldPacketHandlers[CMSG_OPEN_ITEM].handler								= &WorldSession::HandleOpenItemOpcode;
@@ -1132,8 +1135,11 @@ void WorldSession::HandleAchievementInspect(WorldPacket &recv_data)
 	}
 }
 
-uint8 WorldSession::CheckTeleportPrerequsites(AreaTrigger * pAreaTrigger, WorldSession * pSession, Player* pPlayer, MapInfo * pMapInfo)
+uint8 WorldSession::CheckTeleportPrerequsites(AreaTrigger * pAreaTrigger, WorldSession * pSession, Player* pPlayer, uint32 mapid)
 {
+	MapInfo* pMapInfo = WorldMapInfoStorage.LookupEntry(mapid);
+	MapEntry* map = dbcMap.LookupEntry(mapid);
+
 	//is this map enabled?
 	if( pMapInfo  == NULL || !pMapInfo->HasFlag(WMI_INSTANCE_ENABLED))
 		return AREA_TRIGGER_FAILURE_UNAVAILABLE;
@@ -1166,33 +1172,33 @@ uint8 WorldSession::CheckTeleportPrerequsites(AreaTrigger * pAreaTrigger, WorldS
 			return AREA_TRIGGER_FAILURE_NO_ATTUNE_I;
 
 		//Do we need to be in a group?
-		if((pMapInfo->type == INSTANCE_RAID || pMapInfo->type == INSTANCE_MULTIMODE ) && !pPlayer->GetGroup())
+		if((map->israid() || pMapInfo->type == INSTANCE_MULTIMODE ) && !pPlayer->GetGroup())
 			return AREA_TRIGGER_FAILURE_NO_GROUP;
 
 		//Does the group have to be a raid group?
-		if( pMapInfo->type == INSTANCE_RAID && pPlayer->GetGroup()->GetGroupType() != GROUP_TYPE_RAID )
+		if( map->israid() && pPlayer->GetGroup()->GetGroupType() != GROUP_TYPE_RAID )
 			return AREA_TRIGGER_FAILURE_NO_RAID;
 
 		//Are we trying to enter a non-heroic instance in heroic mode?
-		if( pPlayer->iInstanceType >= MODE_HEROIC && pMapInfo->type != INSTANCE_MULTIMODE && pMapInfo->type != INSTANCE_NULL)
+		if( pPlayer->iInstanceType >= MODE_5PLAYER_HEROIC && pMapInfo->type != INSTANCE_MULTIMODE && pMapInfo->type != INSTANCE_NULL)
+			return AREA_TRIGGER_FAILURE_NO_HEROIC;
+
+		// Need http://www.wowhead.com/?spell=46591 to enter Magisters Terrace
+		if( mapid == 585 && pPlayer->iInstanceType >= MODE_5PLAYER_HEROIC && !pPlayer->HasSpell(46591)) // Heroic Countenance
 			return AREA_TRIGGER_FAILURE_NO_HEROIC;
 
 		//Are we trying to enter a saved raid/heroic instance?
-		if( pMapInfo->type == INSTANCE_RAID || pPlayer->iInstanceType >= MODE_HEROIC && pMapInfo->type != INSTANCE_NULL )
+		if(map->israid())
 		{
 			//Raid queue, did we reach our max amt of players?
 			if( pPlayer->m_playerInfo && pMapInfo->playerlimit >= 5 && (int32)((pMapInfo->playerlimit - 5)/5) < pPlayer->m_playerInfo->subGroup)
 				return AREA_TRIGGER_FAILURE_IN_QUEUE;
 
-			// Need http://www.wowhead.com/?spell=46591 to enter Magisters Terrace
-			if( pMapInfo->mapid == 585 && pPlayer->iInstanceType >= MODE_HEROIC && !pPlayer->HasSpell(46591)) // Heroic Countenance
-				return AREA_TRIGGER_FAILURE_NO_HEROIC;
-
 			//All Heroic instances are automatically unlocked when reaching lvl 80, no keys needed here.
-			if( pPlayer->getLevel()< 80)
+			if( pPlayer->getLevel() < 80)
 			{
 				//otherwise we still need to be lvl 65 for heroic.
-				if( pPlayer->iInstanceType && pPlayer->getLevel() < uint32(pMapInfo->HasFlag(WMI_INSTANCE_XPACK_02) ? 80 : 70))
+				if( pPlayer->iRaidType && pPlayer->getLevel() < uint32(pMapInfo->HasFlag(WMI_INSTANCE_XPACK_02) ? 80 : 70))
 					return AREA_TRIGGER_FAILURE_LEVEL_HEROIC;
 
 				//and we might need a key too.
@@ -1205,4 +1211,12 @@ uint8 WorldSession::CheckTeleportPrerequsites(AreaTrigger * pAreaTrigger, WorldS
 	}
 	//Nothing more to check, should be ok
 	return AREA_TRIGGER_FAILURE_OK;
+}
+
+void WorldSession::HandleTimeSyncResp( WorldPacket & recv_data )
+{
+	uint32 counter, time_;
+	recv_data >> counter >> time_;
+
+	// This is just a response, no need to do anything... Yet.
 }

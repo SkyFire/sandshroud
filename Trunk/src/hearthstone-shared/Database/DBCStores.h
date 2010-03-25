@@ -1218,6 +1218,8 @@ struct MapEntry
 	float start_y;			// enter y coordinate (if exist single entry)
 	uint32 addon;			// 0-original maps, 1-tbc addon, 2-wotlk addon
 	uint32 maxPlayers;		// max players
+
+	bool israid() { return map_type == 2; }
 };
 
 struct ItemRandomSuffixEntry

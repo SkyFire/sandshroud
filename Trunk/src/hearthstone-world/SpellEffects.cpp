@@ -2830,11 +2830,21 @@ void Spell::SpellEffectWeapon(uint32 i)
 	case 2567:  // thrown
 		{
 			skill = SKILL_THROWN;
+			spell = SPELL_RANGED_THROW;
 		}break;
 	case 5009:  // wands
 		{
 			skill = SKILL_WANDS;
 			spell = SPELL_RANGED_GENERAL;
+		}break;
+	case 2382:  //Generic Weapon Spell
+		{
+			skill = SKILL_DODGE;
+			spell = SPELL_ATTACK;
+		}break;
+	case 9125:  //Generic Block Spell
+		{
+			skill = SKILL_BLOCK;
 		}break;
 	//case 3386:  // spears
 	//	skill = 0;   // ??!!

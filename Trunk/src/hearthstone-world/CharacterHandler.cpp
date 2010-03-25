@@ -734,6 +734,12 @@ void WorldSession::FullLogin(Player* plr)
 	datab << uint32(0x00);
 	SendPacket(&datab);
 
+	WorldPacket datac(MSG_SET_RAID_DIFFICULTY, 20);
+	datac << plr->iRaidType;
+	datac << uint32(0x01);
+	datac << uint32(0x00);
+	SendPacket(&datac);
+
 	// Send first line of MOTD
 	WorldPacket datat(SMSG_MOTD, 100);
 	datat << uint32(0x04);
@@ -972,8 +978,11 @@ void WorldSession::FullLogin(Player* plr)
 	}
 
 	// send to gms
-	if( HasGMPermissions() )
-		sWorld.SendMessageToGMs(this, "GM %s (%s) is now online. (Permissions: [%s])", _player->GetName(), GetAccountNameS(), GetPermissions());
+	if(HasGMPermissions())
+		if(CanUseCommand('z')) // Admins
+			sWorld.SendMessageToGMs(this, "Admin %s (%s) is now online.", _player->GetName(), GetAccountNameS(), GetPermissions());
+		else // Game Masters
+			sWorld.SendMessageToGMs(this, "GameMaster %s (%s) is now online.", _player->GetName(), GetAccountNameS(), GetPermissions());
 
 	//Set current RestState
 	if( plr->m_isResting) 		// We are in a resting zone, turn on Zzz

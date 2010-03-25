@@ -1445,15 +1445,7 @@ public:
 
 	HEARTHSTONE_INLINE InRangeSet::iterator GetVisibleSetBegin() { return m_visibleObjects.begin(); }
 	HEARTHSTONE_INLINE InRangeSet::iterator GetVisibleSetEnd() { return m_visibleObjects.end(); }
-	
-	//Transporters
-	bool m_lockTransportVariables;
-	uint64 m_TransporterGUID;
-	float m_TransporterX;
-	float m_TransporterY;
-	float m_TransporterZ;
-	float m_TransporterO;
-	float m_TransporterUnk;
+
 	// Misc
 	void EventReduceDrunk(bool full);
 	bool m_AllowAreaTriggerPort;
@@ -1772,6 +1764,7 @@ public:
 	bool resend_speed;
 	bool rename_pending;
 	uint32 iInstanceType;
+	uint32 iRaidType;
 	HEARTHSTONE_INLINE void SetName(string& name) { m_name = name; }
 	// spell to (delay, last time)
 	

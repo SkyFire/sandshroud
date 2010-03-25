@@ -147,6 +147,7 @@ void Object::_Create( uint32 mapid, float x, float y, float z, float ang )
 
 uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 {
+	OUT_DEBUG("Building update block for Player");
 	uint16 flags = 0;
 	uint32 flags2 = 0;
 
@@ -205,14 +206,12 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 		}break;
 
 	case TYPEID_DYNAMICOBJECT:
-		{
-			flags = 0x0048;
-		}break;
+		flags = 0x0150;
+		break;
 
 	case TYPEID_CORPSE:
-		{
-			flags = 0x0148;
-		}break;
+		flags = 0x0150;
+		break;
 	}
 
 	if(GetTypeFromGUID() == HIGHGUID_TYPE_VEHICLE)
@@ -231,7 +230,7 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 	// we shouldn't be here, under any circumstances, unless we have a wowguid..
 	ASSERT(m_wowGuid.GetNewGuidLen());
 	*data << m_wowGuid;
-	
+
 	*data << m_objectTypeId;
 
 	_BuildMovementUpdate(data, flags, flags2, target);
@@ -254,11 +253,11 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 //NOTE: it does not change fields. This is also very fast method
 WorldPacket *Object::BuildFieldUpdatePacket( uint32 index,uint32 value)
 {
-   // uint64 guidfields = GetGUID();
-   // uint8 guidmask = 0;
+	// uint64 guidfields = GetGUID();
+	// uint8 guidmask = 0;
 	WorldPacket * packet=new WorldPacket(1500);
 	packet->SetOpcode( SMSG_UPDATE_OBJECT );
-	
+
 	*packet << (uint32)1;//number of update/create blocks
 
 	*packet << (uint8) UPDATETYPE_VALUES;		// update type == update
@@ -266,13 +265,13 @@ WorldPacket *Object::BuildFieldUpdatePacket( uint32 index,uint32 value)
 
 	uint32 mBlocks = index/32+1;
 	*packet << (uint8)mBlocks;
-	
+
 	for(uint32 dword_n=mBlocks-1;dword_n;dword_n--)
 	*packet <<(uint32)0;
 
 	*packet <<(((uint32)(1))<<(index%32));
 	*packet << value;
-	
+
 	return packet;
 }
 
@@ -356,6 +355,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 {
 	ByteBuffer *splinebuf = (m_objectTypeId == TYPEID_UNIT) ? target->GetAndRemoveSplinePacket(GetGUID()) : 0;
 	uint16 flag16 = 0;	// some other flag
+
 	*data << (uint16)flags;
 
 	Player* pThis = NULLPLR;
@@ -376,7 +376,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 	{
 		if(pThis && pThis->m_TransporterGUID != 0)
 			flags2 |= 0x200;
-		else if(m_objectTypeId==TYPEID_UNIT && TO_CREATURE(this)->m_transportGuid != 0 && TO_CREATURE(this)->m_transportPosition != NULL)
+		else if(m_objectTypeId==TYPEID_UNIT && TO_CREATURE(this)->m_TransporterGUID != 0 && TO_CREATURE(this)->m_transportPosition != NULL)
 			flags2 |= 0x200;
 		else if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
 			flags2 |= 0x200;
@@ -405,7 +405,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 					flags2 |= 0x10000000;
 				}break;
 			}
-		
+
 			if( TO_UNIT(this)->GetAIInterface()->IsFlying())
 //				flags2 |= 0x800; //in 2.3 this is some state that i was not able to decode yet
 				flags2 |= 0x400; //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time 
@@ -421,9 +421,9 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			}*/
 		}
 
-		*data << (uint32)flags2;
+		*data << uint32(flags2);
 
-		*data << (uint16)flag16;
+		*data << uint16(flag16);
 
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
 
@@ -475,9 +475,9 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			}
 			else if(m_objectTypeId == TYPEID_UNIT && TO_CREATURE(this)->m_transportPosition != NULL)
 			{
-				*data << TO_CREATURE(this)->m_transportGuid;
-				*data << uint32(HIGHGUID_TYPE_TRANSPORTER);
-				*data << TO_CREATURE(this)->m_transportPosition->x << TO_CREATURE(this)->m_transportPosition->y << 
+				WoWGuid tguid(TO_CREATURE(this)->m_TransporterGUID);
+				*data << tguid;
+				*data << TO_CREATURE(this)->m_transportPosition->x << TO_CREATURE(this)->m_transportPosition->y <<
 					TO_CREATURE(this)->m_transportPosition->z << TO_CREATURE(this)->m_transportPosition->o;
 				*data << uint32(0);
 				*data << uint8(0);
@@ -487,17 +487,14 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 		if(flags2 & 0x2200000 || flag16 & 0x20) //flying/swimming, && unk sth to do with vehicles?
 		{
 			if(pThis && moveinfo)
-			{
 				*data << moveinfo->pitch;
-			}
-			*data << (float)0; //pitch
+			*data << float(0); //pitch
 		}
+
 		if(pThis && moveinfo)
-		{
 			*data << moveinfo->FallTime;
-		}
 		else
-		*data << (uint32)0; //last fall time
+			*data << uint32(0); //last fall time
 
 		if(flags2 & 0x1000) // BYTE1(flags2) & 0x10
 		{
@@ -513,19 +510,19 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			*data << (float)0;	 //cosAngle
 			*data << (float)0;	 //xySpeed
 		}
-		if( flags2 & 0x4000000 )
+		if( flags2 & MOVEFLAG_SPLINE_MOVER )
 		{
 			*data << (float)0; //unknown float
 		}
 
-		*data << m_walkSpeed;	 // walk speed
-		*data << m_runSpeed;	  // run speed
-		*data << m_backWalkSpeed; // backwards run speed
-		*data << m_swimSpeed;	 // swim speed
-		*data << m_backSwimSpeed; // backwards swim speed
+		*data << m_walkSpeed;		// walk speed
+		*data << m_runSpeed;		// run speed
+		*data << m_backWalkSpeed;	// backwards run speed
+		*data << m_swimSpeed;		// swim speed
+		*data << m_backSwimSpeed;	// backwards swim speed
 		*data << m_flySpeed;		// fly speed
 		*data << m_backFlySpeed;	// back fly speed
-		*data << m_turnRate;	  // turn rate
+		*data << m_turnRate;		// turn rate
 		*data << float(7);			//pitch rate
 
 		if(splinebuf)	// client expects that flags2 & 0x8000000 != 0 in this case
@@ -535,16 +532,16 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 		}
 	}
 	else if(flags & 0x100)
-    {
-			*data << uint8(0);                              // unk PGUID!
-			*data << (float)m_position.x;
-			*data << (float)m_position.y;
-			*data << (float)m_position.z;
-			*data << (float)m_position.x;
-			*data << (float)m_position.y;
-			*data << (float)m_position.z;
-			*data << (float)m_position.o;
-			*data << float(0);
+	{
+		*data << uint8(0);				// unk PGUID!
+		*data << float(m_position.x);
+		*data << float(m_position.y);
+		*data << float(m_position.z);
+		*data << float(m_position.x);
+		*data << float(m_position.y);
+		*data << float(m_position.z);
+		*data << float(m_position.o);
+		*data << float(0);
 	}
 	else if(flags & 0x40)
 	{
@@ -556,35 +553,33 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 		}
 		else
 		{
-			*data << (float)m_position.x;
-			*data << (float)m_position.y;
-			*data << (float)m_position.z;
+			*data << float(m_position.x);
+			*data << float(m_position.y);
+			*data << float(m_position.z);
 		}
-		*data << (float)m_position.o;
+		*data << float(m_position.o);
 	}
 
 	if(flags & 8)
-	{
 		*data << GetUInt32Value(OBJECT_FIELD_GUID);
-	}
 	
 	if(flags & 0x0010)
 		*data << GetUInt32Value(OBJECT_FIELD_GUID+1);
 
 	if(flags & 0x0004)
-	{
-		*data << uint8(0);// unknown NewGUID
-	}
+		FastGUIDPack(*data, GetUInt64Value(UNIT_FIELD_TARGET)); // Compressed target guid.
 
 	if(flags & 2)
-	{
 		*data << (uint32)getMSTime();
-	}
 
 	if (flags & 0x80) //if ((_BYTE)flags_ < 0)
-	{
-			*data << TO_VEHICLE(this)->GetVehicleEntry() << float(0.0f); //facing adjustment
-	}
+		*data << TO_VEHICLE(this)->GetVehicleEntry() << float(0.0f);
+	/* Facing adjustment
+	Crow: Maybe change orientation as the vehicle shifts to the side? Like, possibly
+	GetPositionO() + (m_veh->GetPositionO() - GetCurrentSeat()->GetOffsetO())
+	This would make the orientation shift based on the vehicles orientation changing, maybe the client would change
+	it automatically if we just put in the vehicle orientation minus the offset orientation.
+	*/
 
 	// 0x200
 	if(flags & 0x0200)
