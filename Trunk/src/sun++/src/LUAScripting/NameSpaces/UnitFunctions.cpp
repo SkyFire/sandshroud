@@ -1857,18 +1857,38 @@ namespace luaUnit
 	{
 		CHECK_TYPEID(TYPEID_PLAYER);
 		Player *plr = TO_PLAYER(ptr);
+		MapEntry* map = dbcMap.LookupEntry(plr->GetMapId());
 		if(plr->GetMapMgr()->GetMapInfo()->type != INSTANCE_NULL)
 		{
-			switch(plr->iInstanceType)
+			if(map->israid())
 			{
-			case MODE_EPIC:
-				lua_pushstring(L,"Epic");
-			case MODE_NORMAL:
-				lua_pushstring(L,"Normal");
-			case MODE_HEROIC:
-				lua_pushstring(L,"Heroic");
-			default:
-				lua_pushstring(L,"Unknown");
+				switch(plr->iRaidType)
+				{
+				case MODE_10PLAYER_NORMAL:
+					lua_pushstring(L,"Normal");
+				case MODE_25PLAYER_NORMAL:
+					lua_pushstring(L,"Normal");
+				case MODE_10PLAYER_HEROIC:
+					lua_pushstring(L,"Heroic");
+				case MODE_25PLAYER_HEROIC:
+					lua_pushstring(L,"Heroic");
+				default:
+					lua_pushstring(L,"Unknown");
+				}
+			}	
+			else
+			{
+				switch(plr->iInstanceType)
+				{
+				case MODE_5PLAYER_EPIC:
+					lua_pushstring(L,"Epic");
+				case MODE_5PLAYER_NORMAL:
+					lua_pushstring(L,"Normal");
+				case MODE_5PLAYER_HEROIC:
+					lua_pushstring(L,"Heroic");
+				default:
+					lua_pushstring(L,"Unknown");
+				}
 			}
 		}
 		return 1;

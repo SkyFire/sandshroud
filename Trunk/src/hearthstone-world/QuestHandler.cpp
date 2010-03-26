@@ -80,7 +80,6 @@ void WorldSession::HandleQuestgiverHelloOpcode( WorldPacket & recv_data )
 	CHECK_INWORLD_RETURN;
 
 	uint64 guid;
-
 	recv_data >> guid;
 
 	Creature* qst_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));

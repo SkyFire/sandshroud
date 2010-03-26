@@ -1024,12 +1024,12 @@ void WorldSession::HandleSellItemOpcode( WorldPacket & recv_data )
 	}
 
 	// Check if item can be sold
-	if( it->SellPrice == 0 || item->wrapped_item_id != 0 || it->BuyPrice == 0 )
+	if( it->SellPrice == 0 || item->wrapped_item_id != 0 /* || it->BuyPrice == 0 */)
 	{
 		SendSellItem(vendorguid, itemguid, 2);
 		return;
 	}
-	
+
 	uint32 stackcount = item->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
 	uint32 quantity = 0;
 
@@ -1043,11 +1043,11 @@ void WorldSession::HandleSellItemOpcode( WorldPacket & recv_data )
 	}
 
 	if(quantity > stackcount) quantity = stackcount; //make sure we don't over do it
-	
+
 	uint32 price = GetSellPriceForItem(it, quantity);
 
 	_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE,price);
- 
+
 	if(quantity < stackcount)
 	{
 		item->SetCount(stackcount - quantity);

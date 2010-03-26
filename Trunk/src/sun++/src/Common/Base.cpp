@@ -376,11 +376,11 @@ float MoonScriptCreatureAI::GetRangeToUnit(Unit *pUnit)
 	return _unit->CalcDistance(pUnit);
 }
 
-bool MoonScriptCreatureAI::IsHeroic()
+bool MoonScriptCreatureAI::IsHeroic() // Crow: Add correct Raid checks.
 {
 	if ( _unit->GetMapMgr() == NULLMAPMGR )
 		return false;
-	if ( _unit->GetMapMgr()->iInstanceMode != MODE_HEROIC )
+	if ( _unit->GetMapMgr()->iInstanceMode != MODE_5PLAYER_HEROIC )
 		return false;
 
 	return true;

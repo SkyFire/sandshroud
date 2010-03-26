@@ -20,8 +20,6 @@
 #ifndef _WOWCRYPT_H
 #define _WOWCRYPT_H
 
-//#define PATCH_THREE_THREE_THREE
-
 #include <stdlib.h>
 #include "../Common.h"
 #include "HMAC.h"

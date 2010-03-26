@@ -20,8 +20,6 @@
 #ifndef __SPELLSTORE_H
 #define __SPELLSTORE_H
 
-//#define PATCH_THREE_THREE_THREE
-
 #include "Common.h"
 #include "DataStore.h"
 #include "Timer.h"
@@ -720,47 +718,41 @@ struct SpellEntry
 	uint32 RequiredItemFlags;               //70
 	uint32 Effect[3];                       //71 - 73
 	uint32 EffectDieSides[3];               //74 - 76
-#ifdef PATCH_THREE_THREE_THREE
-	// EMPTY!
-#else
-	uint32 EffectBaseDice[3];               //77 - 79
-	float  EffectDicePerLevel[3];           //80 - 82
-#endif
-	float  EffectRealPointsPerLevel[3];     //83 - 85
-	int32  EffectBasePoints[3];             //86 - 88
-	int32  EffectMechanic[3];               //89 - 91       Related to SpellMechanic.dbc
-	uint32 EffectImplicitTargetA[3];        //92 - 94
-	uint32 EffectImplicitTargetB[3];        //95 - 97
-	uint32 EffectRadiusIndex[3];            //98 - 100
-	uint32 EffectApplyAuraName[3];          //101 - 103
-	uint32 EffectAmplitude[3];              //104 - 106
-	float  EffectMultipleValue[3];          //107 - 109     This value is the $ value from description
-	uint32 EffectChainTarget[3];            //110 - 112
-	uint32 EffectItemType[3];				//113 - 115
-	uint32 EffectMiscValue[3];              //116 - 118
-	uint32 EffectMiscValueB[3];             //119 - 121  2.4.3
-	uint32 EffectTriggerSpell[3];           //122 - 124
-	float  EffectPointsPerComboPoint[3];    //125 - 127
-	uint32 EffectSpellClassMask[3][3];      //128-136
-	uint32 SpellVisual[2];                  //137
-	uint32 SpellIconID;                     //139
-	uint32 activeIconID;                    //140
-	uint32 spellPriority;                   //141
-	char* Name;                             //142
-	//char* NameAlt[15];                    //143-157 not used
-	//uint32 NameFlags;                     //158 not used
-	char * Rank;                            //159
-	//char * RankAlt[15];                   //160-174 not used
-	//uint32 RankFlags;                     //175 not used
-	char * Description;						//176
-	//char * DescriptionAlt[15];			//177-191 not used
-	//uint32 DescriptionFlags;              //192 not used
-	char * BuffDescription;					//193
-	//char * BuffDescription[15];			//194-208 not used
-	//uint32 buffdescflags;                 //209 not used
-	uint32 ManaCostPercentage;              //210
-	uint32 StartRecoveryCategory;           //211
-	uint32 StartRecoveryTime;               //212
+	float  EffectRealPointsPerLevel[3];     //77 - 79
+	int32  EffectBasePoints[3];             //80 - 82
+	int32  EffectMechanic[3];               //83 - 85       Related to SpellMechanic.dbc
+	uint32 EffectImplicitTargetA[3];        //86 - 88
+	uint32 EffectImplicitTargetB[3];        //89 - 91
+	uint32 EffectRadiusIndex[3];            //92 - 94
+	uint32 EffectApplyAuraName[3];          //95 - 97
+	uint32 EffectAmplitude[3];              //98 - 100
+	float  EffectMultipleValue[3];          //101 - 103     This value is the $ value from description
+	uint32 EffectChainTarget[3];            //103 - 105
+	uint32 EffectItemType[3];				//106 - 108
+	uint32 EffectMiscValue[3];              //109 - 111
+	uint32 EffectMiscValueB[3];             //112 - 114
+	uint32 EffectTriggerSpell[3];           //115 - 117
+	float  EffectPointsPerComboPoint[3];    //118 - 120
+	uint32 EffectSpellClassMask[3][3];      //121 - 130
+	uint32 SpellVisual[2];                  //131 - 132
+	uint32 SpellIconID;                     //133
+	uint32 activeIconID;                    //134
+	uint32 spellPriority;                   //135
+	char* Name;                             //136
+	//char* NameAlt[15];                    //137-151 not used
+	//uint32 NameFlags;                     //152 not used
+	char * Rank;                            //153
+	//char * RankAlt[15];                   //154-168 not used
+	//uint32 RankFlags;                     //162 not used
+	char * Description;						//163
+	//char * DescriptionAlt[15];			//164-178 not used
+	//uint32 DescriptionFlags;              //179 not used
+	char * BuffDescription;					//180
+	//char * BuffDescription[15];			//181-195 not used
+	//uint32 buffdescflags;                 //196 not used
+	uint32 ManaCostPercentage;              //197
+	uint32 StartRecoveryCategory;           //198
+	uint32 StartRecoveryTime;               //199
 	uint32 MaxTargetLevel;                  //213
 	uint32 SpellFamilyName;                 //214
 	uint32 SpellGroupType[3];				//215-217

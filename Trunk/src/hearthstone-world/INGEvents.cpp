@@ -55,8 +55,8 @@ void MapMgr::SpawnEvent(uint8 eventId)
 					if(_cells[i][j] != 0)
 					{
 						sp = _map->GetSpawnsList(i, j);
-//						_cells[i][j]->LoadEventIdObjects(sp, eventId);
-//						_cells[i][j]->ModifyEventIdSetting(true, eventId);
+						_cells[i][j]->LoadEventIdObjects(sp, eventId);
+						_cells[i][j]->ModifyEventIdSetting(true, eventId);
 					}
 				}
 			}
@@ -440,7 +440,7 @@ void DayWatcherThread::update_event_settings(uint8 eventid, time_t activated)
 	if(activated)
 		CharacterDatabase.Execute("REPLACE INTO events_settings VALUES('%u','%u')", eventid, activated);
 	else
-		CharacterDatabase.Execute("DELETE FROM events_settings where eventid = '%u')", eventid);
+		CharacterDatabase.Execute("DELETE FROM events_settings where eventid = '%u'", eventid);
 }
 
 bool DayWatcherThread::SpawnEventId(uint8 eventId, bool activate)

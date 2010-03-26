@@ -23,8 +23,6 @@
 //#define DUMP_CLASS_SPELLS	1
 //#define DUMP_SPELL_RANKS_SQL	1
 
-//#define PATCH_THREE_THREE_THREE
-
 //ooh look how c++ this is :P
 uint32 GetTriggerSpellFromDescription(std::string delimiter, std::string desc)
 {
@@ -809,11 +807,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			case 60893:
 				{
 					sp->Effect[1]	=	0;
-#ifdef PATCH_THREE_THREE_THREE
-//					sp->EffectBaseDice[1]	=	0;
-#else
-					sp->EffectBaseDice[1]	=	0;
-#endif
 					sp->EffectBasePoints[1]	=	0;
 					sp->EffectImplicitTargetA[1]	=	0;
 					sp->EffectDieSides[1]	=	0;
@@ -2424,13 +2417,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->Effect[1] = 108;
 					sp->EffectDieSides[0] = 1;
 					sp->EffectDieSides[1] = 1;
-#ifdef PATCH_THREE_THREE_THREE
-//					sp->EffectBaseDice[0] = 1;
-//					sp->EffectBaseDice[1] = 1;
-#else
-					sp->EffectBaseDice[0] = 1;
-					sp->EffectBaseDice[1] = 1;
-#endif // PATCH_THREE_THREE_THREE
 					sp->EffectBasePoints[0] = 9;
 					sp->EffectBasePoints[1] = 9;
 					sp->EffectMiscValue[0] = 7;
@@ -2516,11 +2502,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 							sp->EffectSpellClassMask[1][2] = sp2->EffectSpellClassMask[0][2];
 							sp->EffectBasePoints[1] = sp2->EffectBasePoints[0];
 							sp->EffectDieSides[1]= sp2->EffectDieSides[0];
-#ifdef PATCH_THREE_THREE_THREE
-//							sp->EffectBaseDice[1]= sp2->EffectBaseDice[0];
-#else
-							sp->EffectBaseDice[1]= sp2->EffectBaseDice[0];
-#endif // PATCH_THREE_THREE_THREE
 						}
 				}break;
 		
@@ -3905,12 +3886,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				{
 					sp->Effect[0] = 2;
 					sp->Effect[1] = 0;
-					sp->EffectDieSides[1] = 0;
-#ifdef PATCH_THREE_THREE_THREE
-//					sp->EffectBaseDice[1] = 0;
-#else
-					sp->EffectBaseDice[1] = 0;
-#endif // PATCH_THREE_THREE_THREE
 					sp->EffectBasePoints[0] = sp->EffectBasePoints[1];
 					sp->EffectBasePoints[1] = 0;                  
 					sp->EffectImplicitTargetA[0] = 6;
@@ -5574,13 +5549,6 @@ void ApplyNormalFixes()
 					float ftemp;
 					temp = sp->Effect[col1_swap];			sp->Effect[col1_swap] = sp->Effect[col2_swap] ;						sp->Effect[col2_swap] = temp;
 					temp = sp->EffectDieSides[col1_swap];	sp->EffectDieSides[col1_swap] = sp->EffectDieSides[col2_swap] ;		sp->EffectDieSides[col2_swap] = temp;
-#ifdef PATCH_THREE_THREE_THREE
-//					temp = sp->EffectBaseDice[col1_swap];	sp->EffectBaseDice[col1_swap] = sp->EffectBaseDice[col2_swap] ;		sp->EffectBaseDice[col2_swap] = temp;
-//					ftemp = sp->EffectDicePerLevel[col1_swap];			sp->EffectDicePerLevel[col1_swap] = sp->EffectDicePerLevel[col2_swap] ;				sp->EffectDicePerLevel[col2_swap] = ftemp;
-#else
-					temp = sp->EffectBaseDice[col1_swap];	sp->EffectBaseDice[col1_swap] = sp->EffectBaseDice[col2_swap] ;		sp->EffectBaseDice[col2_swap] = temp;
-					ftemp = sp->EffectDicePerLevel[col1_swap];			sp->EffectDicePerLevel[col1_swap] = sp->EffectDicePerLevel[col2_swap] ;				sp->EffectDicePerLevel[col2_swap] = ftemp;
-#endif // PATCH_THREE_THREE_THREE
 					ftemp = sp->EffectRealPointsPerLevel[col1_swap];	sp->EffectRealPointsPerLevel[col1_swap] = sp->EffectRealPointsPerLevel[col2_swap] ;	sp->EffectRealPointsPerLevel[col2_swap] = ftemp;
 					temp = sp->EffectBasePoints[col1_swap];	sp->EffectBasePoints[col1_swap] = sp->EffectBasePoints[col2_swap] ;	sp->EffectBasePoints[col2_swap] = temp;
 					temp = sp->EffectMechanic[col1_swap];	sp->EffectMechanic[col1_swap] = sp->EffectMechanic[col2_swap] ;	sp->EffectMechanic[col2_swap] = temp;

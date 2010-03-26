@@ -37,12 +37,12 @@ OutlandScript::OutlandScript( MapMgr *pMapMgr ) : MoonInstanceScript( pMapMgr )
 {
 	// I'm lazy... slower, but simpler
 	SetCellForcedStates( -453.933472f, -28.010971f, 882.065369f, 1280.692871f );
-};
+}
 
 void OutlandScript::Destroy()
 {
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Dark Portal Event Trigger AI
@@ -74,7 +74,7 @@ DarkPortalEventTriggerAI::DarkPortalEventTriggerAI( Creature *pCreature ) : Moon
 
 	// AIUpdate registering
 	RegisterAIUpdateEvent( 1000 );
-};
+}
 
 void DarkPortalEventTriggerAI::AIUpdate()
 {
@@ -120,13 +120,13 @@ void DarkPortalEventTriggerAI::AIUpdate()
 						LastWP = mMelgr->GetWaypointCount() - 1;
 
 					mMelgr->SetWaypointToMove( LastWP );
-				};
-			};
-		};
+				}
+			}
+		}
 
 		// We set Ressed = true to prevent double ressurection
 		mResurrected = true;
-	};
+	}
 
 	// Conditions written to set special unit  *s to null
 	if ( mJusti != NULL )
@@ -134,7 +134,7 @@ void DarkPortalEventTriggerAI::AIUpdate()
 		// We set mJusti = NULL when he's in memory, but is not alive or is not in world
 		if ( !mJusti->GetUnit()->IsInWorld() || !mJusti->IsAlive() )
 			mJusti = NULL;
-	};
+	}
 
 	if ( mMelgr != NULL )
 	{
@@ -146,7 +146,7 @@ void DarkPortalEventTriggerAI::AIUpdate()
 
 			// We set Ress = true to prevent double spell casting
 			mResurrect = true;
-		};
+		}
 
 		// If Melgromm's  *is valid and unit is not alive or is not in world, but was resurrected we NULL it's  *
 		if ( ( !mMelgr->IsAlive() || !mMelgr->GetUnit()->IsInWorld() ) && mResurrect && mResurrected )
@@ -157,8 +157,8 @@ void DarkPortalEventTriggerAI::AIUpdate()
 
 			// We null  *
 			mMelgr = NULL;
-		};
-	};
+		}
+	}
 
 	// We check each 5 seconds (default setting) if special units should be spawned
 	if ( IsTimerFinished( mSpecialUnitCheckTimer ) )
@@ -173,10 +173,10 @@ void DarkPortalEventTriggerAI::AIUpdate()
 			mJusti->GetUnit()->SetUInt64Value( UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 | UNIT_FLAG_PLAYER_CONTROLLED_CREATURE );
 			mJusti->SetMoveType( Move_ForwardThenStop );
 			mJusti->SetWaypointToMove( 1 );
-		};
+		}
 
 		RemoveTimer( mJustiMoveTimer );
-	};
+	}
 
 	if ( IsTimerFinished( mMelgrMoveTimer ) )
 	{
@@ -186,10 +186,10 @@ void DarkPortalEventTriggerAI::AIUpdate()
 			mMelgr->GetUnit()->SetUInt64Value( UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 | UNIT_FLAG_PLAYER_CONTROLLED_CREATURE );
 			mMelgr->SetMoveType( Move_ForwardThenStop );
 			mMelgr->SetWaypointToMove( 1 );
-		};
+		}
 
 		RemoveTimer( mMelgrMoveTimer );
-	};
+	}
 
 	// If alliance portal unit was spawned we rise it's portal move timer to let it move naturally
 	if ( IsTimerFinished( mAllianceMoveTimer ) )
@@ -204,11 +204,11 @@ void DarkPortalEventTriggerAI::AIUpdate()
 				mAlliance->GetUnit()->SetUInt64Value( UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 | UNIT_FLAG_PLAYER_CONTROLLED_CREATURE );
 				mAlliance->SetMoveType( Move_ForwardThenStop );
 				mAlliance->SetWaypointToMove( 1 );
-			};
-		};
+			}
+		}
 
 		RemoveTimer( mAllianceMoveTimer );
-	};
+	}
 
 	// If horde portal unit was spawned we rise it's portal move timer to let it move naturally
 	if ( IsTimerFinished( mHordeMoveTimer ) )
@@ -223,11 +223,11 @@ void DarkPortalEventTriggerAI::AIUpdate()
 				mHorde->GetUnit()->SetUInt64Value( UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 | UNIT_FLAG_PLAYER_CONTROLLED_CREATURE );
 				mHorde->SetMoveType( Move_ForwardThenStop );
 				mHorde->SetWaypointToMove( 1 );
-			};
-		};
+			}
+		}
 
 		RemoveTimer( mHordeMoveTimer );
-	};
+	}
 
 	// We try to spawn units whenever timer is finihed or we hadn't spawn new unit before
 	if ( IsTimerFinished( mAllianceSummonTimer ) )
@@ -253,13 +253,13 @@ void DarkPortalEventTriggerAI::AIUpdate()
 					InfernalAI->GetUnit()->m_canRegenerateHP = false;
 					InfernalAI->GetUnit()->m_noRespawn = true;
 					mInfernalTable.insert( InfernalAI );
-				};
-			};
+				}
+			}
 
 			ResetTimer( mInfernalSummonTimer, 47000 );
 			mHasSummonedInfernals = false;
-		};
-	};
+		}
+	}
 
 	if ( IsTimerFinished( mDemonRespawnTimer ) )
 	{
@@ -270,8 +270,8 @@ void DarkPortalEventTriggerAI::AIUpdate()
 			PitCommanderAttackCmd();
 		else
 			PitCommanderSpawn();
-	};
-};
+	}
+}
 
 // Function to check Commander/Lieutenant units' states and spawn special units if needed
 void DarkPortalEventTriggerAI::SpecialUnitChecks()
@@ -301,12 +301,12 @@ void DarkPortalEventTriggerAI::SpecialUnitChecks()
 					NewWaypoint->waittime = 3000;
 
 				mJusti->AddWaypoint( NewWaypoint );
-			};
+			}
 
 			// We reset movement variable
 			mJustiMoveTimer = AddTimer( 5000 );
-		};
-	};
+		}
+	}
 
 	// If Melgr hasn't joined fight yet we check if he should
 	if ( mMelgr == NULL )
@@ -333,12 +333,12 @@ void DarkPortalEventTriggerAI::SpecialUnitChecks()
 					NewWaypoint->waittime = 3000;
 
 				mMelgr->AddWaypoint( NewWaypoint );
-			};
+			}
 
 			// We reset movement variable
 			mMelgrMoveTimer = AddTimer( 5000 );
-		};
-	};
+		}
+	}
 
 	// We reset special unit check timer to 0 to prevent check triggering every second
 	ResetTimer( mSpecialUnitCheckTimer, SPECIAL_UNIT_CHECK_TIME );
@@ -361,11 +361,11 @@ bool DarkPortalEventTriggerAI::IsRegimentFull( AIContainer pVectorSet, size_t pS
 		// If unit doesn't exist or exists, but is not alive or is not in world we return true and break loop
 		if ( SetUnit == NULL || !SetUnit->IsAlive() || !SetUnit->GetUnit()->IsInWorld() )
 			return false;
-	};
+	}
 
 	// If it comes to this point it means regiment is full and does not need replacements
 	return true;
-};
+}
 
 // Function used to check if any alliance unit should be spawned
 void DarkPortalEventTriggerAI::SpawnAllianceUnit()
@@ -388,7 +388,7 @@ void DarkPortalEventTriggerAI::SpawnAllianceUnit()
 		AIList = &mAllianceMelee;
 		UnitCoords = AMWP;
 		Pos = 10;
-	};
+	}
 
 	// Default unit to spawn is ranged combat soldier if melee regiment is full or if it's rolled
 	if ( ( Entry == 0 || Change == 2 ) && !IsRegimentFull( mAllianceRanged, 6 ) )
@@ -398,7 +398,7 @@ void DarkPortalEventTriggerAI::SpawnAllianceUnit()
 		AIList = &mAllianceRanged;
 		UnitCoords = ARWP;
 		Pos = 6;
-	};
+	}
 
 	// Default unit to spawn is caster if melee and ranged regiments are full or if it's rolled
 	if ( ( Entry == 0 || Change == 3 ) && !IsRegimentFull( mAllianceCaster, 2 ) )
@@ -408,7 +408,7 @@ void DarkPortalEventTriggerAI::SpawnAllianceUnit()
 		AIList = &mAllianceCaster;
 		UnitCoords = ACWP;
 		Pos = 2;
-	};
+	}
 
 	// No need to go through rest of code if all regiments are full
 	if ( Entry == 0 )
@@ -420,7 +420,7 @@ void DarkPortalEventTriggerAI::SpawnAllianceUnit()
 	{
 		if ( AIList->size() == 0 || ( AIList->size() > 0 && AIList->back().second != NULL ) )
 			AIList->push_back( make_pair( 0, SetUnit ) );
-	};
+	}
 
 	// We go through all positions and check units
 	for ( uint32 i = 0; i < AIList->size(); ++i )
@@ -453,8 +453,8 @@ void DarkPortalEventTriggerAI::SpawnAllianceUnit()
 					break;
 				default:
 					{
-					};
-				};
+					}
+				}
 
 				SetUnit->SetCanEnterCombat( false );
 				SetUnit->SetMoveType( Move_DontMoveWP );
@@ -474,18 +474,18 @@ void DarkPortalEventTriggerAI::SpawnAllianceUnit()
 						NewWaypoint->waittime = 3000;
 
 					SetUnit->AddWaypoint( NewWaypoint );
-				};
-			};
+				}
+			}
 
 			mAllianceMoveTimer = AddTimer( 3000 );
 			( *AIList )[ i ].first = Entry;
 			( *AIList )[ i ].second = SetUnit;
 			break;
-		};
-	};
+		}
+	}
 
 	ResetTimer( mAllianceSummonTimer, SPAWN_NEW_UNIT_PORTAL );
-};
+}
 
 // Function used to check if any horde unit should be spawned
 void DarkPortalEventTriggerAI::SpawnHordeUnit()
@@ -509,7 +509,7 @@ void DarkPortalEventTriggerAI::SpawnHordeUnit()
 		AIList = &mHordeMelee;
 		UnitCoords = HMWP;
 		Pos = 10;
-	};
+	}
 
 	// Default unit to spawn is ranged combat soldier if melee regiment is full or if it's rolled
 	if ( ( Entry == 0 || Change == 2 ) && !IsRegimentFull( mHordeRanged, 6 ) )
@@ -519,7 +519,7 @@ void DarkPortalEventTriggerAI::SpawnHordeUnit()
 		AIList = &mHordeRanged;
 		UnitCoords = HRWP;
 		Pos = 6;
-	};
+	}
 
 	// Default unit to spawn is caster if melee and ranged regiments are full or if it's rolled
 	if ( ( Entry == 0 || Change == 3 ) && !IsRegimentFull( mHordeCaster, 2 ) )
@@ -529,7 +529,7 @@ void DarkPortalEventTriggerAI::SpawnHordeUnit()
 		AIList = &mHordeCaster;
 		UnitCoords = HCWP;
 		Pos = 2;
-	};
+	}
 
 	// No need to go through rest of code if all regiments are full
 	if ( Entry == 0 )
@@ -541,7 +541,7 @@ void DarkPortalEventTriggerAI::SpawnHordeUnit()
 	{
 		if ( AIList->size() == 0 || ( AIList->size() > 0 && AIList->back().second != NULL ) )
 			AIList->push_back( make_pair( 0, SetUnit ) );
-	};
+	}
 
 	// We go through all positions and check units
 	for ( uint32 i = 0; i < AIList->size(); ++i )
@@ -574,8 +574,8 @@ void DarkPortalEventTriggerAI::SpawnHordeUnit()
 					break;
 				default:
 					{
-					};
-				};
+					}
+				}
 
 				SetUnit->SetCanEnterCombat( false );
 				SetUnit->SetMoveType( Move_DontMoveWP );
@@ -595,15 +595,15 @@ void DarkPortalEventTriggerAI::SpawnHordeUnit()
 						NewWaypoint->waittime = 3000;
 
 					SetUnit->AddWaypoint( NewWaypoint );
-				};
-			};
+				}
+			}
 
 			mHordeMoveTimer = AddTimer( 3000 );
 			( *AIList )[ i ].first = Entry;
 			( *AIList )[ i ].second = SetUnit;
 			break;
-		};
-	};
+		}
+	}
 
 	ResetTimer( mHordeSummonTimer, SPAWN_NEW_UNIT_PORTAL );
 }
@@ -619,11 +619,11 @@ void DarkPortalEventTriggerAI::AddUnitToChainAggro( Unit *pUnit )
 		mFormationChain = ChainAggroEntity::Create( TO_CREATURE( pUnit ) );
 		if ( mFormationChain == NULL )
 			return;
-	};
+	}
 	
 	mFormationChain->AddAggroEntity( TO_CREATURE( pUnit ) );
 #endif
-};
+}
 
 void DarkPortalEventTriggerAI::PitCommanderChecks()
 {
@@ -642,8 +642,8 @@ void DarkPortalEventTriggerAI::PitCommanderChecks()
 					mPitCommander = static_cast< PitCommanderAI* >( TO_CREATURE( PitCommander )->GetScript() );
 					TO_CREATURE( PitCommander )->m_noRespawn = true;
 					return;
-				};
-			};
+				}
+			}
 
 			mPitCommanderRespawnTimer = AddTimer( 1200000 );
 		}
@@ -654,9 +654,9 @@ void DarkPortalEventTriggerAI::PitCommanderChecks()
 				mPitCommander->GetUnit()->m_noRespawn = true;
 
 			RemoveTimer( mPitCommanderRespawnTimer );
-		};
-	};
-};
+		}
+	}
+}
 
 // Function used to summon infernals
 void DarkPortalEventTriggerAI::PitCommanderInfernalSummon()
@@ -674,11 +674,11 @@ void DarkPortalEventTriggerAI::PitCommanderInfernalSummon()
 
 				mInfernalTable.erase( Iter++ );
 				continue;
-			};
+			}
 
 			++Iter;
-		};
-	};
+		}
+	}
 
 	// We validate Pit Commander for further use
 	PitCommanderChecks();
@@ -694,7 +694,7 @@ void DarkPortalEventTriggerAI::PitCommanderInfernalSummon()
 		while ( i == mInfernalSpawnPointId )
 		{
 			i = RandomUInt( 1 );
-		};
+		}
 
 		// We force trigger to "throw huge fel stones" from it's actual position
 		_unit->CastSpellAoF( Infernals[ i ].mX, Infernals[ i ].mY, Infernals[ i ].mZ, dbcSpell.LookupEntry( DARK_PORTAL_EVENT_TRIGGER_SUMMON_INFERNALS2 ), true );
@@ -746,18 +746,18 @@ void DarkPortalEventTriggerAI::PitCommanderAttackCmd()
 		{
 			ScriptAI->SetMoveType( Move_ForwardThenStop );
 			ScriptAI->SetWaypointToMove( 3 );
-		};
+		}
 
 		mQueuedDemonSet.erase( Iter++ );
 		if ( Iter != mQueuedDemonSet.end() && MultiWaves )
 			++Iter;
-	};
+	}
 
 	if ( mQueuedDemonSet.size() > 0 )
 		ResetTimer( mDemonRespawnTimer, 50000 );
 	else
 		ResetTimer( mDemonRespawnTimer, 160000 );
-};
+}
 
 // Void used to spawn demons
 void DarkPortalEventTriggerAI::PitCommanderSpawn()
@@ -779,7 +779,7 @@ void DarkPortalEventTriggerAI::PitCommanderSpawn()
 		}
 		else
 			++Iter;
-	};
+	}
 
 	// We validate Pit Commander
 	PitCommanderChecks();
@@ -787,7 +787,7 @@ void DarkPortalEventTriggerAI::PitCommanderSpawn()
 	{
 		ResetTimer( mDemonRespawnTimer, 60000 );
 		return;
-	};
+	}
 
 	// We count how many demons will be spawned
 	uint32 WaveSize = 1;
@@ -799,19 +799,19 @@ void DarkPortalEventTriggerAI::PitCommanderSpawn()
 		{
 			ResetTimer( mDemonRespawnTimer, 60000 );
 			return;
-		};
+		}
 
 		WaveSize = static_cast< uint32 >( Rate );
 		if ( WaveSize < 1 )
 			WaveSize = 1;
-	};
+	}
 
 	// 1 / 4 waves will include 10 demons
 	if ( WaveSize == 1 )
 	{
 		if ( RandomUInt( 3 ) > 0 )
 			WaveSize = 2;
-	};
+	}
 
 	uint32 Entry = CN_FEL_SOLDIER;
 	for ( uint32 i = 0; i < 10; i += WaveSize )
@@ -834,8 +834,8 @@ void DarkPortalEventTriggerAI::PitCommanderSpawn()
 				break;
 			default:
 				{
-				};
-			};
+				}
+			}
 
 			ScriptAI->SetMoveType( Move_ForwardThenStop );
 			ScriptAI->GetUnit()->GetAIInterface()->m_moveBackward = true;
@@ -848,13 +848,13 @@ void DarkPortalEventTriggerAI::PitCommanderSpawn()
 			{
 				++j;
 				ScriptAI->AddWaypoint( CreateWaypoint( x, 0, Flag_Run, PitDemonPaths[ j ] ) );
-			};
+			}
 
 			mFightingDemonSet.insert( make_pair( ScriptAI, Entry ) );
 			mQueuedDemonSet.insert( make_pair( ScriptAI, Entry ) );
-		};
-	};
-};
+		}
+	}
+}
 
 // Procedure that removes all event spawns
 void DarkPortalEventTriggerAI::Destroy()
@@ -877,12 +877,12 @@ void DarkPortalEventTriggerAI::Destroy()
 				break;
 			default:
 				{
-				};
-			};
+				}
+			}
 
 			ScriptAI->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	for ( AIInfernalSet::iterator Iter = mInfernalTable.begin(); Iter != mInfernalTable.end(); ++Iter )
 	{
@@ -890,8 +890,8 @@ void DarkPortalEventTriggerAI::Destroy()
 		{
 			( *Iter )->mTriggerAI = NULL;
 			( *Iter )->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	for ( AIContainer::iterator Iter = mAllianceMelee.begin(); Iter != mAllianceMelee.end(); ++Iter )
 	{
@@ -907,12 +907,12 @@ void DarkPortalEventTriggerAI::Destroy()
 				break;
 			default:
 				{
-				};
-			};
+				}
+			}
 
 			( *Iter ).second->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	for ( AIContainer::iterator Iter = mAllianceRanged.begin(); Iter != mAllianceRanged.end(); ++Iter )
 	{
@@ -920,8 +920,8 @@ void DarkPortalEventTriggerAI::Destroy()
 		{
 			static_cast< DarnassianArcherAI* >( ( *Iter ).second )->mTriggerAI = NULL;
 			( *Iter ).second->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	for ( AIContainer::iterator Iter = mAllianceCaster.begin(); Iter != mAllianceCaster.end(); ++Iter )
 	{
@@ -929,8 +929,8 @@ void DarkPortalEventTriggerAI::Destroy()
 		{
 			static_cast< StormwindMageAI* >( ( *Iter ).second )->mTriggerAI = NULL;
 			( *Iter ).second->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	for ( AIContainer::iterator Iter = mHordeMelee.begin(); Iter != mHordeMelee.end(); ++Iter )
 	{
@@ -946,12 +946,12 @@ void DarkPortalEventTriggerAI::Destroy()
 				break;
 			default:
 				{
-				};
-			};
+				}
+			}
 
 			( *Iter ).second->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	for ( AIContainer::iterator Iter = mHordeRanged.begin(); Iter != mHordeRanged.end(); ++Iter )
 	{
@@ -959,8 +959,8 @@ void DarkPortalEventTriggerAI::Destroy()
 		{
 			static_cast< DarkspearAxeThrowerAI* >( ( *Iter ).second )->mTriggerAI = NULL;
 			( *Iter ).second->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	for ( AIContainer::iterator Iter = mHordeCaster.begin(); Iter != mHordeCaster.end(); ++Iter )
 	{
@@ -968,8 +968,8 @@ void DarkPortalEventTriggerAI::Destroy()
 		{
 			static_cast< UndercityMageAI* >( ( *Iter ).second )->mTriggerAI = NULL;
 			( ( *Iter ).second )->Despawn( 1000 );
-		};
-	};
+		}
+	}
 
 	mFightingDemonSet.clear();
 	mQueuedDemonSet.clear();
@@ -986,24 +986,24 @@ void DarkPortalEventTriggerAI::Destroy()
 		mPitCommander->mTriggerAI = NULL;
 		mPitCommander->Despawn( 1000 );
 		mPitCommander = NULL;
-	};
+	}
 
 	if ( mJusti != NULL )
 	{
 		mJusti->mTriggerAI = NULL;
 		mJusti->Despawn( 1000 );
 		mJusti = NULL;
-	};
+	}
 
 	if ( mMelgr != NULL )
 	{
 		mMelgr->mTriggerAI = NULL;
 		mMelgr->Despawn( 1000 );
 		mMelgr = NULL;
-	};
+	}
 
 	mAlliance = mHorde = NULL;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Mel Gromm Highmountain AI
@@ -1019,7 +1019,7 @@ MelGrommHighmountainAI::MelGrommHighmountainAI( Creature *pCreature ) : MoonScri
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void MelGrommHighmountainAI::OnCombatStop( Unit *pTarget )
 {
@@ -1036,8 +1036,8 @@ void MelGrommHighmountainAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void MelGrommHighmountainAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1056,12 +1056,12 @@ void MelGrommHighmountainAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void MelGrommHighmountainAI::Destroy()
 {
@@ -1071,10 +1071,10 @@ void MelGrommHighmountainAI::Destroy()
 			mTriggerAI->mMelgr = NULL;
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Orgrimmar Grunt AI
@@ -1086,7 +1086,7 @@ OrgrimmarGruntAI::OrgrimmarGruntAI( Creature *pCreature ) : MoonScriptCreatureAI
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void OrgrimmarGruntAI::OnCombatStop( Unit *pTarget )
 {
@@ -1100,8 +1100,8 @@ void OrgrimmarGruntAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void OrgrimmarGruntAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1120,12 +1120,12 @@ void OrgrimmarGruntAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void OrgrimmarGruntAI::Destroy()
 {
@@ -1140,11 +1140,11 @@ void OrgrimmarGruntAI::Destroy()
 			{
 				mTriggerAI->mHordeMelee[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
 }
@@ -1162,7 +1162,7 @@ OrgrimmarShamanAI::OrgrimmarShamanAI( Creature *pCreature ) : MoonScriptCreature
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void OrgrimmarShamanAI::OnCombatStop( Unit *pTarget )
 {
@@ -1176,8 +1176,8 @@ void OrgrimmarShamanAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void OrgrimmarShamanAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1196,12 +1196,12 @@ void OrgrimmarShamanAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void OrgrimmarShamanAI::Destroy()
 {
@@ -1216,14 +1216,14 @@ void OrgrimmarShamanAI::Destroy()
 			{
 				mTriggerAI->mHordeMelee[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Darkspear Axe Thrower AI
@@ -1235,7 +1235,7 @@ DarkspearAxeThrowerAI::DarkspearAxeThrowerAI( Creature *pCreature ) : MoonScript
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void DarkspearAxeThrowerAI::OnCombatStart( Unit *pTarget )
 {
@@ -1244,8 +1244,8 @@ void DarkspearAxeThrowerAI::OnCombatStart( Unit *pTarget )
 	{
 		SetBehavior( Behavior_Spell );
 		SetCanMove( false );
-	};
-};
+	}
+}
 
 void DarkspearAxeThrowerAI::OnCombatStop( Unit *pTarget )
 {
@@ -1259,8 +1259,8 @@ void DarkspearAxeThrowerAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void DarkspearAxeThrowerAI::AIUpdate()
 {
@@ -1272,9 +1272,9 @@ void DarkspearAxeThrowerAI::AIUpdate()
 		{
 			SetBehavior( Behavior_Spell );
 			SetCanMove( false );
-		};
-	};
-};
+		}
+	}
+}
 
 void DarkspearAxeThrowerAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1292,12 +1292,12 @@ void DarkspearAxeThrowerAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void DarkspearAxeThrowerAI::Destroy()
 {
@@ -1312,14 +1312,14 @@ void DarkspearAxeThrowerAI::Destroy()
 			{
 				mTriggerAI->mHordeRanged[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Undercity Mage AI
@@ -1333,14 +1333,14 @@ UndercityMageAI::UndercityMageAI( Creature *pCreature ) : MoonScriptCreatureAI( 
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void UndercityMageAI::OnCombatStart( Unit *pTarget )
 {
 	ParentClass::OnCombatStart( pTarget );
 	SetBehavior( Behavior_Spell );
 	SetCanMove( false );
-};
+}
 
 void UndercityMageAI::OnCombatStop( Unit *pTarget )
 {
@@ -1354,8 +1354,8 @@ void UndercityMageAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void UndercityMageAI::AIUpdate()
 {
@@ -1370,8 +1370,8 @@ void UndercityMageAI::AIUpdate()
 		}
 		else
 			_unit->GetAIInterface()->RemoveThreatByPtr( Target );
-	};
-};
+	}
+}
 
 void UndercityMageAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1390,12 +1390,12 @@ void UndercityMageAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void UndercityMageAI::Destroy()
 {
@@ -1410,14 +1410,14 @@ void UndercityMageAI::Destroy()
 			{
 				mTriggerAI->mHordeCaster[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Justinius The Harbinger AI
@@ -1434,14 +1434,14 @@ JustiniusTheHarbingerAI::JustiniusTheHarbingerAI( Creature *pCreature ) : MoonSc
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void JustiniusTheHarbingerAI::OnCombatStart( Unit *pTarget )
 {
 	ParentClass::OnCombatStart( pTarget );
 	Emote( "", Text_Yell, 9705 );
 	_unit->SetUInt32Value( UNIT_NPC_EMOTESTATE, 375 );
-};
+}
 
 void JustiniusTheHarbingerAI::OnCombatStop( Unit *pTarget )
 {
@@ -1458,8 +1458,8 @@ void JustiniusTheHarbingerAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 bool JustiniusTheHarbingerAI::CanCastConsecration()
 {
@@ -1468,13 +1468,13 @@ bool JustiniusTheHarbingerAI::CanCastConsecration()
 	{
 		if ( IsValidUnitTarget( *Iter, TargetFilter_None ) && GetRangeToUnit( TO_UNIT( *Iter ) ) <= 8.0f  )	// Set from 5 to 8 for better effect
 			TargetArray.push_back( TO_UNIT( *Iter ) );
-	};
+	}
 
 	if ( TargetArray.size() >= 5 )
 		return true;
 
 	return false;
-};
+}
 
 void JustiniusTheHarbingerAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1493,12 +1493,12 @@ void JustiniusTheHarbingerAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void JustiniusTheHarbingerAI::Destroy()
 {
@@ -1508,10 +1508,10 @@ void JustiniusTheHarbingerAI::Destroy()
 			mTriggerAI->mJusti = NULL;
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 void SpellFunc_Justinius_Consecration(SpellDesc *pThis, MoonScriptCreatureAI *pCreatureAI, Unit *pTarget, TargetType pType)
 {
@@ -1523,10 +1523,10 @@ void SpellFunc_Justinius_Consecration(SpellDesc *pThis, MoonScriptCreatureAI *pC
 			if ( pJustiniusAI->CanCastConsecration() && !pJustiniusAI->IsCasting() )	// That's just for 'freaking out' occasions
 			{
 				pJustiniusAI->CastSpellNowNoScheduling( pJustiniusAI->mConsecration );
-			};
-		};
-	};
-};
+			}
+		}
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Stormwind Soldier AI
@@ -1539,7 +1539,7 @@ StormwindSoldierAI::StormwindSoldierAI( Creature *pCreature ) : MoonScriptCreatu
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void StormwindSoldierAI::OnCombatStop( Unit *pTarget )
 {
@@ -1553,8 +1553,8 @@ void StormwindSoldierAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void StormwindSoldierAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1573,12 +1573,12 @@ void StormwindSoldierAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void StormwindSoldierAI::Destroy()
 {
@@ -1593,14 +1593,14 @@ void StormwindSoldierAI::Destroy()
 			{
 				mTriggerAI->mAllianceCaster[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Ironforge Paladin AI
@@ -1614,7 +1614,7 @@ IronforgePaladinAI::IronforgePaladinAI( Creature *pCreature ) : MoonScriptCreatu
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void IronforgePaladinAI::OnCombatStop( Unit *pTarget )
 {
@@ -1628,8 +1628,8 @@ void IronforgePaladinAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void IronforgePaladinAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1648,12 +1648,12 @@ void IronforgePaladinAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void IronforgePaladinAI::Destroy()
 {
@@ -1668,14 +1668,14 @@ void IronforgePaladinAI::Destroy()
 			{
 				mTriggerAI->mAllianceCaster[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Darnassian Archer AI
@@ -1696,8 +1696,8 @@ void DarnassianArcherAI::OnCombatStart( Unit *pTarget )
 	{
 		SetBehavior( Behavior_Spell );
 		SetCanMove( false );
-	};
-};
+	}
+}
 
 void DarnassianArcherAI::OnCombatStop( Unit *pTarget )
 {
@@ -1711,8 +1711,8 @@ void DarnassianArcherAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void DarnassianArcherAI::AIUpdate()
 {
@@ -1724,9 +1724,9 @@ void DarnassianArcherAI::AIUpdate()
 		{
 			SetBehavior( Behavior_Spell );
 			SetCanMove( false );
-		};
-	};
-};
+		}
+	}
+}
 
 void DarnassianArcherAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1744,12 +1744,12 @@ void DarnassianArcherAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void DarnassianArcherAI::Destroy()
 {
@@ -1764,14 +1764,14 @@ void DarnassianArcherAI::Destroy()
 			{
 				mTriggerAI->mAllianceRanged[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Stormwind Mage AI
@@ -1785,14 +1785,14 @@ StormwindMageAI::StormwindMageAI( Creature *pCreature ) : MoonScriptCreatureAI( 
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void StormwindMageAI::OnCombatStart( Unit *pTarget )
 {
 	ParentClass::OnCombatStart( pTarget );
 	SetBehavior( Behavior_Spell );
 	SetCanMove( false );
-};
+}
 
 void StormwindMageAI::OnCombatStop( Unit *pTarget )
 {
@@ -1806,8 +1806,8 @@ void StormwindMageAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void StormwindMageAI::AIUpdate()
 {
@@ -1822,8 +1822,8 @@ void StormwindMageAI::AIUpdate()
 		}
 		else
 			_unit->GetAIInterface()->RemoveThreatByPtr( Target );
-	};
-};
+	}
+}
 
 void StormwindMageAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1842,12 +1842,12 @@ void StormwindMageAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 			_unit->SetSpawnY( Waypoint->y );
 			_unit->SetSpawnZ( Waypoint->z );
 			_unit->SetSpawnO( Waypoint->o );
-		};
+		}
 
 		_unit->GetAIInterface()->deleteWaypoints();
 		}break;
-	};
-};
+	}
+}
 
 void StormwindMageAI::Destroy()
 {
@@ -1862,14 +1862,14 @@ void StormwindMageAI::Destroy()
 			{
 				mTriggerAI->mAllianceCaster[ i ].second = NULL;
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Pit Commander AI
@@ -1881,7 +1881,7 @@ PitCommanderAI::PitCommanderAI( Creature *pCreature ) : MoonScriptCreatureAI( pC
 	SetWieldWeapon( true );
 
 	mTriggerAI = NULL;
-};
+}
 
 void PitCommanderAI::Destroy()
 {
@@ -1891,10 +1891,10 @@ void PitCommanderAI::Destroy()
 			mTriggerAI->mPitCommander = NULL;
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Infernal Siegebreaker AI
@@ -1903,13 +1903,13 @@ InfernalSiegebreakerAI::InfernalSiegebreakerAI( Creature *pCreature ) : MoonScri
 {
 	mSuicide = AddSpell( INFERNAL_SIEGEBREAKER_SUICIDE, Target_Self, 5, 0, 0 );
 	mTriggerAI = NULL;
-};
+}
 
 void InfernalSiegebreakerAI::OnCombatStart( Unit *pTarget )
 {
 	ParentClass::OnCombatStart( pTarget );
 	mSuicide->mEnabled = false;
-};
+}
 
 void InfernalSiegebreakerAI::AIUpdate()
 {
@@ -1917,7 +1917,7 @@ void InfernalSiegebreakerAI::AIUpdate()
 		mSuicide->mEnabled = true;
 
 	ParentClass::AIUpdate();
-};
+}
 
 void InfernalSiegebreakerAI::Destroy()
 {
@@ -1930,14 +1930,14 @@ void InfernalSiegebreakerAI::Destroy()
 			{
 				mTriggerAI->mInfernalTable.erase( Iter );
 				break;
-			};
-		};
+			}
+		}
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Fel Soldier AI
@@ -1950,7 +1950,7 @@ FelSoldierAI::FelSoldierAI( Creature *pCreature ) : MoonScriptCreatureAI( pCreat
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void FelSoldierAI::OnCombatStop( Unit *pTarget )
 {
@@ -1965,8 +1965,8 @@ void FelSoldierAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void FelSoldierAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -1980,8 +1980,8 @@ void FelSoldierAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 	case 8:
 		Despawn();
 		break;
-	};
-};
+	}
+}
 
 void FelSoldierAI::Destroy()
 {
@@ -1996,10 +1996,10 @@ void FelSoldierAI::Destroy()
 			mTriggerAI->mFightingDemonSet.erase( Iter );
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////// Wrath Master AI
@@ -2010,7 +2010,7 @@ WrathMasterAI::WrathMasterAI( Creature *pCreature ) : MoonScriptCreatureAI( pCre
 
 	mTriggerAI = NULL;
 	mLastWP = 0;
-};
+}
 
 void WrathMasterAI::OnCombatStop( Unit *pTarget )
 {
@@ -2025,8 +2025,8 @@ void WrathMasterAI::OnCombatStop( Unit *pTarget )
 		SetMoveType( Move_ForwardThenStop );
 		if ( mLastWP <= WPCount - 1 )
 			SetWaypointToMove( mLastWP );
-	};
-};
+	}
+}
 
 void WrathMasterAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 {
@@ -2040,8 +2040,8 @@ void WrathMasterAI::OnReachWP( uint32 pWaypointId, bool pForwards )
 	case 8:
 		Despawn();
 		break;
-	};
-};
+	}
+}
 
 void WrathMasterAI::Destroy()
 {
@@ -2056,10 +2056,10 @@ void WrathMasterAI::Destroy()
 			mTriggerAI->mFightingDemonSet.erase( Iter );
 
 		mTriggerAI = NULL;
-	};
+	}
 
 	delete this;
-};
+}
 
 void SetupEventDarkPortal( ScriptMgr* pScriptMgr )
 {
@@ -2088,4 +2088,4 @@ void SetupEventDarkPortal( ScriptMgr* pScriptMgr )
 	pScriptMgr->register_creature_script( CN_INFERNAL_SIEGEBREAKER, &InfernalSiegebreakerAI::Create );
 	pScriptMgr->register_creature_script( CN_FEL_SOLDIER, &FelSoldierAI::Create );
 	pScriptMgr->register_creature_script( CN_WRATH_MASTER, &WrathMasterAI::Create );
-};
+}
