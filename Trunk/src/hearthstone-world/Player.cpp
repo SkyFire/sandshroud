@@ -9128,6 +9128,7 @@ void Player::OnWorldPortAck()
 	//only rezz if player is porting to a instance portal
 	MapInfo *pPMapinfo = NULL;
 	pPMapinfo = WorldMapInfoStorage.LookupEntry(GetMapId());
+	MapEntry* map = dbcMap.LookupEntry(GetMapId());
 
 	if(pPMapinfo != NULL)
 	{
@@ -9139,13 +9140,50 @@ void Player::OnWorldPortAck()
 			std::string welcome_msg;
 			welcome_msg = "Welcome to ";
 			welcome_msg += pPMapinfo->name;
+			if(map->israid())
+			{
+				switch(iInstanceType)
+				{
+				case MODE_10PLAYER_NORMAL:
+					welcome_msg += " (10 Player)";
+					break;
+				case MODE_25PLAYER_NORMAL:
+					welcome_msg += " (25 Player)";
+					break;
+				case MODE_10PLAYER_HEROIC:
+					welcome_msg += " (10 Player Heroic)";
+					break;
+				case MODE_25PLAYER_HEROIC:
+					welcome_msg += " (25 Player Heroic)";
+					break;
+				default:
+					break;
+				}
+			}
+			else
+			{
+				switch(iInstanceType)
+				{
+				case MODE_5PLAYER_NORMAL:
+					welcome_msg += " (5 Player)";
+					break;
+				case MODE_5PLAYER_HEROIC:
+					welcome_msg += " (5 Player Heroic)";
+					break;
+				case MODE_5PLAYER_EPIC:
+					welcome_msg += " (5 Player Epic)";
+					break;
+				default:
+					break;
+				}
+			}
 			welcome_msg += ". ";
 			if(pPMapinfo->type != INSTANCE_NONRAID && m_mapMgr->pInstance)
 			{
 				/*welcome_msg += "This instance is scheduled to reset on ";
 				welcome_msg += asctime(localtime(&m_mapMgr->pInstance->m_expiration));*/
-				welcome_msg += "This instance is scheduled to reset on ";
-				welcome_msg += ConvertTimeStampToDataTime((uint32)m_mapMgr->pInstance->m_expiration);
+				welcome_msg += "Instance Locks are scheduled to expire in ";
+				welcome_msg += ConvertTimeStampToString((uint32)m_mapMgr->pInstance->m_expiration - UNIXTIME);
 			}
 			sChatHandler.SystemMessage(m_session, welcome_msg.c_str());
 		}
