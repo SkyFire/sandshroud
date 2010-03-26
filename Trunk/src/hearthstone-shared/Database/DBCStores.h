@@ -718,6 +718,8 @@ struct SpellEntry
 	uint32 RequiredItemFlags;               //70
 	uint32 Effect[3];                       //71 - 73
 	uint32 EffectDieSides[3];               //74 - 76
+	uint32 EffectBaseDice[3];               //3.3.3
+	float  EffectDicePerLevel[3];           //3.3.3
 	float  EffectRealPointsPerLevel[3];     //77 - 79
 	int32  EffectBasePoints[3];             //80 - 82
 	int32  EffectMechanic[3];               //83 - 85       Related to SpellMechanic.dbc
