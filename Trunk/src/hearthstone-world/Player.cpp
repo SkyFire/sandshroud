@@ -9142,7 +9142,7 @@ void Player::OnWorldPortAck()
 			welcome_msg += pPMapinfo->name;
 			if(map->israid())
 			{
-				switch(iInstanceType)
+				switch(iRaidType)
 				{
 				case MODE_10PLAYER_NORMAL:
 					welcome_msg += " (10 Player)";
