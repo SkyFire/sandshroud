@@ -625,8 +625,9 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 				continue; // This spell should proc only from other hand attacks
 
 			uint32 spellId = itr2->spellId;
+			SpellEntry* sp = dbcSpell.LookupEntry(itr2->spellId);
 
-			if( itr2->procFlags & PROC_ON_CAST_SPELL || itr2->procFlags & PROC_ON_SPELL_LAND || itr2->procFlags & PROC_ON_CAST_SPECIFIC_SPELL || itr2->procFlags & PROC_ON_ANY_HOSTILE_ACTION ) 
+			if( itr2->procFlags & PROC_ON_CAST_SPELL || itr2->procFlags & PROC_ON_SPELL_LAND || itr2->procFlags & PROC_ON_CAST_SPECIFIC_SPELL || itr2->procFlags & PROC_ON_ANY_HOSTILE_ACTION || (itr2->procFlags & PROC_ON_PHYSICAL_ATTACK && sp->Spell_Dmg_Type & SPELL_DMG_TYPE_MELEE)) 
 			{
 				if( CastingSpell == NULL )
 					continue;
