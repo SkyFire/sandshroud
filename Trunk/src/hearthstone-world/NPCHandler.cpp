@@ -389,6 +389,7 @@ void WorldSession::SendAuctionList(Creature* auctioneer)
 	WorldPacket data(MSG_AUCTION_HELLO, 12);
 	data << auctioneer->GetGUID();
 	data << uint32(AH->GetID());
+	data << uint8(sWorld.AHEnabled ? 1 : 0);
 
 	SendPacket( &data );
 }

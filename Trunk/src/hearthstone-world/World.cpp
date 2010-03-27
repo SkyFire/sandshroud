@@ -1227,6 +1227,9 @@ void World::Rehash(bool load)
 	if(!MailSystem::getSingletonPtr())
 		new MailSystem;
 
+	if(load) // Non Rehashable.
+		AHEnabled = true; // Auto enabled.
+
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
 	vMapPath = Config.MainConfig.GetStringDefault("Terrain", "vMapPath", "vmaps");
