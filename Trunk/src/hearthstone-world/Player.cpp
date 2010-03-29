@@ -126,8 +126,8 @@ void Player::Init()
 
 	for(int i=0;i<3;i++)
 	{
-		LfgType[i]=0;
-		LfgDungeonId[i]=0;
+		LfgType[i] = 0;
+		LfgDungeonId[i] = 0;
 	}
 
 	m_Autojoin = false;
@@ -2043,7 +2043,11 @@ void Player::addSpell(uint32 spell_id)
 		
 	mSpells.insert(spell_id);
 	if(IsInWorld())
-		m_session->OutPacket(SMSG_LEARNED_SPELL, 4, &spell_id);
+	{
+		WorldPacket data(SMSG_LEARNED_SPELL, 6);
+		data << spell_id << uint16(0);
+		m_session->SendPacket(&data);
+	}
 
 	// Check if we're a deleted spell
 	iter = mDeletedSpells.find(spell_id);
@@ -3564,10 +3568,11 @@ void Player::SetQuestLogSlot(QuestLogEntry *entry, uint32 slot)
 	m_questlog[slot] = entry;
 }
 
-void Player::AddToWorld()
+void Player::AddToWorld(bool loggingin /* = false */)
 {
 	FlyCheat = false;
-	m_setflycheat=false;
+	m_setflycheat = false;
+
 	// check transporter
 	if(m_TransporterGUID && m_CurrentTransporter)
 	{
@@ -3583,7 +3588,7 @@ void Player::AddToWorld()
 
 	m_beingPushed = true;
 	Object::AddToWorld();
-	
+
 	// Add failed.
 	if(m_mapMgr == NULL)
 	{
@@ -3601,7 +3606,7 @@ void Player::AddToWorld()
 void Player::AddToWorld(MapMgr* pMapMgr)
 {
 	FlyCheat = false;
-	m_setflycheat=false;
+	m_setflycheat = false;
 	// check transporter
 	if(m_TransporterGUID && m_CurrentTransporter)
 	{
@@ -5891,12 +5896,12 @@ bool Player::HasQuestForItem(uint32 itemid)
 2-skinning/herbalism/minning
 3-Fishing
 */
-void Player::SendLoot(uint64 guid,uint8 loot_type)
+void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 {	
 	Group * m_Group = m_playerInfo->m_Group;
 	if(!IsInWorld()) return;
 	Object* lootObj;
-	
+
 	// handle items
 	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_ITEM)
 	{
@@ -6079,6 +6084,7 @@ void Player::SendLoot(uint64 guid,uint8 loot_type)
 					
 					data2.Initialize(SMSG_LOOT_START_ROLL);
 					data2 << guid;
+					data2 << mapid;
 					data2 << x;
 					data2 << uint32(iter->item.itemproto->ItemId);
 					data2 << uint32(factor);
@@ -10909,11 +10915,17 @@ void Player::EventGroupFullUpdate()
 
 void Player::EjectFromInstance()
 {
+	uint32 mapid = GetMapId();
 	if(m_bgEntryPointX && m_bgEntryPointY && m_bgEntryPointZ && !IS_INSTANCE(m_bgEntryPointMap))
-	{
 		if(SafeTeleport(m_bgEntryPointMap, m_bgEntryPointInstance, m_bgEntryPointX, m_bgEntryPointY, m_bgEntryPointZ, m_bgEntryPointO))
 			return;
-	}
+
+	MapInfo* map = WorldMapInfoStorage.LookupEntry(mapid);
+	if(map)
+		if(map->repopmapid && !IS_INSTANCE(map->repopmapid))
+			if(map->repopx && map->repopy && map->repopz)
+				if(SafeTeleport(map->repopmapid, 0, map->repopx, map->repopy, map->repopz, 0)) // Should be nearest graveyard.
+					return;
 
 	SafeTeleport(m_bind_mapid, 0, m_bind_pos_x, m_bind_pos_y, m_bind_pos_z, 0);
 }

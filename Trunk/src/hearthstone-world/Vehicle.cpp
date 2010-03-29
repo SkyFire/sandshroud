@@ -109,9 +109,12 @@ void Vehicle::InstallAccessories()
 
 	for(int i = 0; i > 8; ++i)
 	{
-		if(acc->accessoryentry[i] == 0 || !m_vehicleSeats[i])
+		if(!acc->accessoryentry[i])
+			continue;
+
+		if(!m_vehicleSeats[i])
 		{
-			sLog.outError("No accessory entry, or seatmap for selected seat.\n");
+			sLog.outError("No seatmap for selected seat.\n");
 			continue;
 		}
 		printf("Entry: %u\n", acc->accessoryentry[i]);

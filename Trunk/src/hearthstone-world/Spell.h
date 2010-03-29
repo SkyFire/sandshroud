@@ -775,7 +775,9 @@ enum SpellEffects
 	SPELL_EFFECT_UNKNOWN40,                 //    160
 	SPELL_EFFECT_SET_TALENT_SPECS_COUNT,    //    161
 	SPELL_EFFECT_ACTIVATE_TALENT_SPEC,      //    162
-	TOTAL_SPELL_EFFECTS,                    //    163
+	SPELL_EFFECT_UNKNOWN41,                 //    163
+	SPELL_EFFECT_UNKNOWN42,                 //    164
+	TOTAL_SPELL_EFFECTS                     //    165
 };
 
 

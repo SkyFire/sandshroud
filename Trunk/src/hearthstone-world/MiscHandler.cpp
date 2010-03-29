@@ -303,10 +303,10 @@ void WorldSession::HandleLootOpcode( WorldPacket & recv_data )
 
 				party->SendPacketToAll(&data);
 			}
-		}	
+		}
 	}
 
-	_player->SendLoot(guid,LOOT_CORPSE);
+	_player->SendLoot(guid, _player->GetMapId(), LOOT_CORPSE);
 }
 
 
@@ -2034,8 +2034,8 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)
 
 		pItem->m_looted = true;
 	}
-	
-	_player->SendLoot(pItem->GetGUID(), LOOT_DISENCHANTING);
+
+	_player->SendLoot(pItem->GetGUID(), _player->GetMapId(), LOOT_DISENCHANTING);
 }
 
 void WorldSession::HandleCompleteCinematic(WorldPacket &recv_data)

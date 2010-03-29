@@ -228,7 +228,6 @@ public:
 		return OWNER_CHECK_OK;
 	}
 
-
 	// has an instance expired?
 	HEARTHSTONE_INLINE bool HasInstanceExpired(Instance * pInstance)
 	{

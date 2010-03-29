@@ -79,7 +79,7 @@ enum LoginErrorCode
 	CHAR_CREATE_SUCCESS											= 0x2E,
 	CHAR_CREATE_ERROR											= 0x2F,
 	CHAR_CREATE_FAILED											= 0x30,
-	CHAR_CREATE_IN_USE											= 0x31,
+	CHAR_CREATE_NAME_IN_USE										= 0x31,
 	CHAR_CREATE_DISABLED										= 0x32,
 	CHAR_CREATE_PVP_TEAMS_VIOLATION								= 0x33,
 	CHAR_CREATE_SERVER_LIMIT									= 0x34,

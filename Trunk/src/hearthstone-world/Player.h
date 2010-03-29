@@ -265,6 +265,24 @@ enum PlayerSpeedType
     FLY	            = 6,
 };
 
+enum LFGroleflags
+{
+	LEADER		= 1,
+	TANK		= 2,
+	HEALER		= 4,
+	DAMAGE		= 8
+};
+
+/*
+Exalted			1,000	 Access to racial mounts. Capped at 999.7
+Revered			21,000	 Heroic mode keys for Outland dungeons
+Honored			12,000	 10% discount from faction vendors
+Friendly		6,000
+Neutral			3,000
+Unfriendly		3,000	 Cannot buy, sell or interact.
+Hostile			3,000	 You will always be attacked on sight
+Hated			36,000 
+*/
 enum Standing
 {
     STANDING_HATED,
@@ -524,27 +542,6 @@ const float dodgeRatio[80][12] = {
 { 0.0f, 73.5294f, 52.0833f, 75.1879f, 41.4937f, 52.0833f, 73.5294f, 52.0833f, 51.282f, 52.0833f, 0.0f, 41.6666f } // Level 80
 };
 
-/*
-Exalted	        1,000	 Access to racial mounts. Capped at 999.7
-Revered	        21,000	 Heroic mode keys for Outland dungeons
-Honored	        12,000	 10% discount from faction vendors
-Friendly	    6,000
-Neutral	        3,000
-Unfriendly	    3,000	 Cannot buy, sell or interact.
-Hostile	        3,000	 You will always be attacked on sight
-Hated	        36,000 
-*/
-enum FactionRating
-{
-	HATED,
-	HOSTILE,
-	UNFRIENDLY,
-	NEUTRAL,
-	FRIENDLY,
-	HONORED,
-	REVERED,
-	EXALTED
-};
 enum RuneTypes
 {
 	RUNE_TYPE_BLOOD			= 0,
@@ -553,6 +550,7 @@ enum RuneTypes
 	RUNE_TYPE_DEATH			= 3,
 	RUNE_TYPE_RECHARGING	= 4
 };
+
 struct FactionReputation
 {
 	int32 standing;
@@ -843,11 +841,8 @@ public:
 	void EventTimeoutLfgInviter();
 
 protected:
-
 	void _UpdateSkillFields();
-
 	SkillMap m_skills;
-
 
 	// COOLDOWNS
 	PlayerCooldownMap m_cooldownMap[NUM_COOLDOWN_TYPES];
@@ -869,7 +864,6 @@ protected:
 	// END COOLDOWNS
 
 public:
-
 	bool ok_to_remove;
 	uint64 m_spellIndexTypeTargets[NUM_SPELL_TYPE_INDEX];
 	void OnLogin();//custom stuff on player login.
@@ -881,14 +875,14 @@ public:
  	void SendDungeonDifficulty();
 	void SendRaidDifficulty();
 
-	void AddToWorld();
+	void AddToWorld(bool loggingin = false);
 	void AddToWorld(MapMgr* pMapMgr);
 	void RemoveFromWorld();
 	bool Create ( WorldPacket &data );
 	
 	void Update( uint32 time );
 	
-    void BuildFlagUpdateForNonGroupSet(uint32 index, uint32 flag);
+	void BuildFlagUpdateForNonGroupSet(uint32 index, uint32 flag);
 	std::string m_afk_reason;
 	void SetAFKReason(std::string reason) { m_afk_reason = reason; };
 	HEARTHSTONE_INLINE const char* GetName() { return m_name.c_str(); }
@@ -1246,7 +1240,7 @@ public:
 	/************************************************************************/
 	HEARTHSTONE_INLINE const uint64& GetLootGUID() const { return m_lootGuid; }
 	HEARTHSTONE_INLINE void         SetLootGUID(const uint64 &guid) { m_lootGuid = guid; }
-	void                SendLoot(uint64 guid,uint8 loot_type);
+	void                SendLoot(uint64 guid, uint32 mapid, uint8 loot_type);
 	// loot variables
 	uint64              m_lootGuid;
 	uint64              m_currentLoot;
@@ -1647,13 +1641,13 @@ public:
 	HEARTHSTONE_INLINE uint32 GetAreaID() { return m_AreaID; }
 	void SetAreaID(uint32 area) { m_AreaID = area; m_areaDBC = dbcArea.LookupEntryForced(m_AreaID); }
 	HEARTHSTONE_INLINE AreaTable *GetAreaDBC() { return m_areaDBC; }
-	
-	
+
 	std::string Lfgcomment;
 	uint16 LfgDungeonId[3];
 	uint8 LfgType[3];
 	uint16 LfmDungeonId;
 	uint8 LfmType;
+	uint32 roleflags;
 	bool m_Autojoin;
 	bool m_AutoAddMem;
 	void StopMirrorTimer(uint32 Type);
@@ -1664,7 +1658,7 @@ public:
 	time_t m_fallDisabledUntil;
 	uint32 m_honorToday;
 	uint32 m_honorYesterday;
-	
+
 	void RolloverHonor();
 	uint32 m_honorPoints;
 	uint32 m_honorRolloverTime;

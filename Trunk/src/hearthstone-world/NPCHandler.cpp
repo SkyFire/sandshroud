@@ -435,8 +435,8 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 			return;
 
 		_player->CurrentGossipMenu->BuildPacket(data);
-		uint32 count=0;//sQuestMgr.ActiveQuestsCount(TalkingWith, GetPlayer());
-		size_t pos=data.wpos();
+		uint32 count = 0;//sQuestMgr.ActiveQuestsCount(TalkingWith, GetPlayer());
+		size_t pos = data.wpos();
 		data << uint32(count);
 		for (it = TalkingWith->QuestsBegin(); it != TalkingWith->QuestsEnd(); ++it)
 		{
@@ -467,6 +467,8 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 						break;
 					}
 
+					data << uint32(0);	// 3.3.3
+					data << (*it)->qst->is_repeatable;
 					LocalizedQuest * lq = (language>0) ? sLocalizationMgr.GetLocalizedQuest((*it)->qst->id,language):NULL;
 					if(lq)
 						data << lq->Title;
@@ -475,8 +477,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 				}
 			}
 		}
-		data.wpos(pos);
-		data << count;
+		data.put(pos, count);
 		SendPacket(&data);
 		DEBUG_LOG( "WORLD"," Sent SMSG_GOSSIP_MESSAGE" );
 	}
@@ -670,12 +671,12 @@ void WorldSession::HandleBinderActivateOpcode( WorldPacket & recv_data )
 	recv_data >> guid;
 
 	Creature* pC = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	if(!pC) return;
+	if(!pC)
+		return;
 
 	SendInnkeeperBind(pC);
 	_player->bHasBindDialogOpen = false;
 }
-
 
 void WorldSession::SendInnkeeperBind(Creature* pCreature)
 {
@@ -687,10 +688,10 @@ void WorldSession::SendInnkeeperBind(Creature* pCreature)
 
 	if(!_player->bHasBindDialogOpen)
 	{
-        OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
+		OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
 
 		data.Initialize(SMSG_BINDER_CONFIRM);
-		data << pCreature->GetGUID() << _player->GetZoneId();
+		data << pCreature->GetGUID() << pCreature->GetZoneId();
 		SendPacket(&data);
 
 		_player->bHasBindDialogOpen = true;
@@ -726,8 +727,7 @@ void WorldSession::SendInnkeeperBind(Creature* pCreature)
 	data << pCreature->GetGUID() << _player->GetBindZoneId();
 	SendPacket(&data);
 
-    OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
-
+	OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
 
 	//Animate and send the spell too
 	Spell* BindSpell = (new Spell(pCreature, dbcSpell.LookupEntry( BIND_SPELL_ID ), false, NULLAURA));
@@ -738,7 +738,6 @@ void WorldSession::SendInnkeeperBind(Creature* pCreature)
 #undef ITEM_ID_HEARTH_STONE
 #undef BIND_SPELL_ID
 }
-
 
 void WorldSession::SendSpiritHealerRequest(Creature* pCreature)
 {

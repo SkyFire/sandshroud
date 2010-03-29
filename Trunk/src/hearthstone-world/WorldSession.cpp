@@ -683,7 +683,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_REQUEST_PARTY_MEMBER_STATS].handler			= &WorldSession::HandlePartyMemberStatsOpcode;
 	WorldPacketHandlers[MSG_PARTY_ASSIGNMENT].handler						= &WorldSession::HandleGroupPromote;
 
-	// LFG System
+/*	// Grouping Search System
 	WorldPacketHandlers[CMSG_SET_LFG_COMMENT].handler						= &WorldSession::HandleSetLookingForGroupComment;
 	WorldPacketHandlers[MSG_LOOKING_FOR_GROUP].handler						= &WorldSession::HandleMsgLookingForGroup;
 	WorldPacketHandlers[CMSG_SET_LOOKING_FOR_GROUP].handler					= &WorldSession::HandleSetLookingForGroup;
@@ -692,7 +692,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_LFG_CLEAR_AUTOJOIN].handler					= &WorldSession::HandleDisableAutoJoin;
 	WorldPacketHandlers[CMSG_LFM_SET_AUTOFILL].handler						= &WorldSession::HandleEnableAutoAddMembers;
 	WorldPacketHandlers[CMSG_LFM_CLEAR_AUTOFILL].handler					= &WorldSession::HandleDisableAutoAddMembers;
-	WorldPacketHandlers[CMSG_CLEAR_LOOKING_FOR_GROUP].handler				= &WorldSession::HandleLfgClear;
+	WorldPacketHandlers[CMSG_CLEAR_LOOKING_FOR_GROUP].handler				= &WorldSession::HandleLfgClear;*/
 
 	// Taxi / NPC Interaction
 	WorldPacketHandlers[CMSG_ENABLETAXI].handler							= &WorldSession::HandleTaxiQueryAvaibleNodesOpcode;
@@ -874,7 +874,7 @@ void WorldSession::InitPacketHandlerTable()
 	// Battlegrounds
 	WorldPacketHandlers[CMSG_BATTLEFIELD_PORT].handler						= &WorldSession::HandleBattlefieldPortOpcode;
 	WorldPacketHandlers[CMSG_BATTLEFIELD_STATUS].handler					= &WorldSession::HandleBattlefieldStatusOpcode;
-	WorldPacketHandlers[CMSG_BATTLEFIELD_LIST].handler						= &WorldSession::HandleBattlefieldListOpcode;
+//	WorldPacketHandlers[CMSG_BATTLEFIELD_LIST].handler						= &WorldSession::HandleBattlefieldListOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_HELLO].handler					= &WorldSession::HandleBattleMasterHelloOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_JOIN_ARENA].handler				= &WorldSession::HandleArenaJoinOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_JOIN].handler						= &WorldSession::HandleBattleMasterJoinOpcode;

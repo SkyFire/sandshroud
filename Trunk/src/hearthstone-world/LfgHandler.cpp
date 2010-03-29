@@ -173,7 +173,7 @@ void WorldSession::HandleLfgClear(WorldPacket & recvPacket)
 
 void WorldSession::HandleLfgInviteAccept(WorldPacket & recvPacket)
 {
-	CHECK_INWORLD_RETURN
+/*	CHECK_INWORLD_RETURN
 	
 	_player->PartLFGChannel();
 	if(_player->m_lfgMatch == NULL && _player->m_lfgInviterGuid == 0)
@@ -226,5 +226,5 @@ void WorldSession::HandleLfgInviteAccept(WorldPacket & recvPacket)
 		pPlayer->GetGroup()->AddMember(_player->m_playerInfo);
 	}
 	_player->m_lfgInviterGuid = 0;
-	_player->m_lfgMatch = NULL;
+	_player->m_lfgMatch = NULL;*/
 }

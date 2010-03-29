@@ -799,9 +799,7 @@ void WorldSession::FullLogin(Player* plr)
 		plr->m_isGmInvisible = true;
 		plr->m_invisible = true;
 		if(CanUseCommand('z'))
-		{
 			plr->triggerpass_cheat = true; // Enable for admins automatically.
-		}
 	}
 
 	// Make sure our name exists (for premade system)
@@ -968,13 +966,6 @@ void WorldSession::FullLogin(Player* plr)
 	_player->BroadcastMessage("Server: %sSandshroud Aspire Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
 #endif // WIN32
 
-/*#ifdef WIN32
-	_player->BroadcastMessage("Server: %sAspire Hearthstone r%u-TRUNK/%s-Win-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);
-#else // WIN32
-	_player->BroadcastMessage("Server: %sAspire Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
-	//_player->BroadcastMessage("Built at %s on %s by %s@%s", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
-#endif // WIN32*/
-
 	if(sWorld.SendStatsOnJoin)
 	{
 		_player->BroadcastMessage("Online Players: %s%u |rPeak: %s%u|r Accepted Connections: %s%u",
@@ -984,10 +975,7 @@ void WorldSession::FullLogin(Player* plr)
 
 	// send to gms
 	if(HasGMPermissions())
-		if(CanUseCommand('z')) // Admins
-			sWorld.SendMessageToGMs(this, "Admin %s (%s) is now online.", _player->GetName(), GetAccountNameS(), GetPermissions());
-		else // Game Masters
-			sWorld.SendMessageToGMs(this, "GameMaster %s (%s) is now online.", _player->GetName(), GetAccountNameS(), GetPermissions());
+		sWorld.SendMessageToGMs(this, "%s %s (%s) is now online.", CanUseCommand('z') ? "Admin" : "GameMaster", _player->GetName(), GetAccountNameS(), GetPermissions());
 
 	//Set current RestState
 	if( plr->m_isResting) 		// We are in a resting zone, turn on Zzz
@@ -1009,21 +997,22 @@ void WorldSession::FullLogin(Player* plr)
 	if(info->m_Group)
 		info->m_Group->Update();
 
-	// Retroactive: Level achievement
-	_player->GetAchievementInterface()->HandleAchievementCriteriaLevelUp( _player->getLevel() );
-	// Retroactive: Bank slots: broken atm :(
-	//_player->GetAchievementInterface()->HandleAchievementCriteriaBuyBankSlot(true);
-
-	// Send achievement data!
-	if( _player->GetAchievementInterface()->HasAchievements() )
+	if(plr->getLevel() > 10 && !GetPermissions())
 	{
-		WorldPacket * data = _player->GetAchievementInterface()->BuildAchievementData();
-		_player->CopyAndSendDelayedPacket(data);
-		delete data;
+		// Retroactive: Level achievement
+		_player->GetAchievementInterface()->HandleAchievementCriteriaLevelUp( _player->getLevel() );
+
+		// Send achievement data!
+		if( _player->GetAchievementInterface()->HasAchievements() )
+		{
+			WorldPacket * data = _player->GetAchievementInterface()->BuildAchievementData();
+			_player->CopyAndSendDelayedPacket(data);
+			delete data;
+		}
 	}
 
 	if(enter_world && !_player->GetMapMgr())
-		plr->AddToWorld();
+		plr->AddToWorld(true);
 
 	objmgr.AddPlayer(_player);
 }

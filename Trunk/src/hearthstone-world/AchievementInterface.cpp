@@ -233,11 +233,8 @@ void AchievementInterface::EventAchievementEarned(AchievementData * pData)
 {
 	pData->completed = true;
 	pData->date = (uint32)time(NULL);
-
 	AchievementEntry * ae = dbcAchievement.LookupEntry(pData->id);
-
 	GiveRewardsForAchievement(ae);
-
 	WorldPacket * data = BuildAchievementEarned(pData);
 
 	if( m_player->IsInWorld() )
@@ -388,6 +385,8 @@ bool AchievementInterface::HandleBeforeChecks(AchievementData * ad)
 	if((string(ach->description).find("Heroic Difficulty") != string::npos) || ach->ID == 4526)
 		if(m_player->iInstanceType < MODE_5PLAYER_HEROIC)
 			return false;
+	if(m_player->getLevel() < 10) // Blizzard says no.
+		return false;
 
 	return true;
 }
@@ -401,9 +400,7 @@ AchievementData* AchievementInterface::GetAchievementDataByAchievementID(uint32 
 	{
 		AchievementEntry * ae = dbcAchievement.LookupEntryForced(ID);
 		if(!ae)
-		{
 			printf("No achievement for %u!\n", ID);
-		}
 		return CreateAchievementDataEntryForAchievement(ae);
 	}
 }
@@ -413,15 +410,18 @@ void AchievementInterface::SendCriteriaUpdate(AchievementData * ad, uint32 idx)
 	ad->m_isDirty = true;
 	ad->date = (uint32)time(NULL);
 	ad->groupid = m_player->GetGroupID();
-	WorldPacket data(SMSG_CRITERIA_UPDATE, 50);
 	AchievementEntry * ae = dbcAchievement.LookupEntry(ad->id);
+	if(!ae)
+		return;
+
+	WorldPacket data(SMSG_CRITERIA_UPDATE, 50);
 	data << uint32(ae->AssociatedCriteria[idx]);
 	FastGUIDPack( data, (uint64)ad->counter[idx] );
-	data << m_player->GetNewGUID();   
+	data << m_player->GetNewGUID();
 	data << uint32(0);
 	data << uint32(unixTimeToTimeBitfields(time(NULL)));
 	data << uint32(0);
-	data << uint32(0); 
+	data << uint32(0);
 
 	if( !m_player->IsInWorld() )
 		m_player->CopyAndSendDelayedPacket(&data);
