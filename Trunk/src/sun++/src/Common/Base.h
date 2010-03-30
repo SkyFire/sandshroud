@@ -230,7 +230,7 @@ public:
 class SpellDesc
 {
 public:
-	SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, char* pText, TextType pTextType, uint32 pSoundId);
+	SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId);
 	virtual ~SpellDesc();
 
 	EmoteDesc*	AddEmote(const char* pText, TextType pType=Text_Yell, uint32 pSoundId=0);
@@ -325,8 +325,8 @@ public:
 	void					Despawn(uint32 pDelay=0, uint32 pRespawnTime=0);
 
 	//Spells
-	SpellDesc*				AddSpell(uint32 pSpellId, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0);
-	SpellDesc*				AddSpellFunc(SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0);
+	SpellDesc*				AddSpell(uint32 pSpellId, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0);
+	SpellDesc*				AddSpellFunc(SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0);
 	void					CastSpell(SpellDesc* pSpell);
 	void					CastSpellNowNoScheduling(SpellDesc* pSpell);
 	SpellDesc*				FindSpellById(uint32 pSpellId);
