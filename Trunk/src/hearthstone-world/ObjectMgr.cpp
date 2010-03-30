@@ -1423,21 +1423,21 @@ void ObjectMgr::LoadTrainers()
 	Field * fields2;
 	const char * temp;
 	size_t len;
-
 	LoadDisabledSpells();
 
 	if(!result)
 		return;
 
-
-	do 
+	do
 	{
 		Field * fields = result->Fetch();
 		uint32 entry = fields[0].GetUInt32();
-		CreatureInfo*trainer_info = CreatureNameStorage.LookupEntry(entry);
+		CreatureInfo* trainer_info = CreatureNameStorage.LookupEntry(entry);
 		if( trainer_info == NULL )
 		{
 			Log.Warning("Trainers", "NPC id for Trainer %u does not exist, skipping.", entry);
+			delete fields;
+			entry = NULL;
 			continue;
 		}
 
@@ -1504,9 +1504,9 @@ void ObjectMgr::LoadTrainers()
 			{
 				fields2 = result2->Fetch();
 				TrainerSpell ts;
-				bool abrt=false;
-				uint32 CastSpellID=fields2[1].GetUInt32();
-				uint32 LearnSpellID=fields2[2].GetUInt32();
+				bool abrt = false;
+				uint32 CastSpellID = fields2[1].GetUInt32();
+				uint32 LearnSpellID = fields2[2].GetUInt32();
 
 				ts.pCastSpell = NULL;
 				ts.pLearnSpell = NULL;
@@ -1517,7 +1517,7 @@ void ObjectMgr::LoadTrainers()
 					ts.pCastSpell = dbcSpell.LookupEntryForced( CastSpellID );
 					if( ts.pCastSpell )
 					{
-						for(int k=0;k<3;k++)
+						for(int k = 0; k < 3; ++k)
 						{
 							if(ts.pCastSpell->Effect[k]==SPELL_EFFECT_LEARN_SPELL)
 							{
@@ -2567,7 +2567,7 @@ void ObjectMgr::LoadDisabledSpells()
 	QueryResult * result = WorldDatabase.Query("SELECT * FROM spell_disable");
 	if(result)
 	{
-		do 
+		do
 		{
 			m_disabled_spells.insert( result->Fetch()[0].GetUInt32() );
 		} while(result->NextRow());

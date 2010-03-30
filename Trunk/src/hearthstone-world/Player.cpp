@@ -2204,6 +2204,8 @@ void Player::InitVisibleUpdateBits()
 		Player::m_visibleUpdateMask.SetBit(PLAYER_VISIBLE_ITEM_1_ENTRYID + offset);
 		// enchant
 		Player::m_visibleUpdateMask.SetBit(PLAYER_VISIBLE_ITEM_1_ENCHANTMENT + offset);
+
+		offset = NULL; // Nullify
 	}
 
 	Player::m_visibleUpdateMask.SetBit(PLAYER_CHOSEN_TITLE);
@@ -4570,7 +4572,7 @@ void Player::KillPlayer()
 		m_bg->HookOnPlayerDeath(TO_PLAYER(this));
 
 	EventDeath();
-	
+
 	m_session->OutPacket(SMSG_CANCEL_COMBAT);
 	m_session->OutPacket(SMSG_CANCEL_AUTO_REPEAT);
 

@@ -386,7 +386,6 @@ bool World::SetInitialWorldSettings()
 	mPrices[60] = 72000;
 
 	// Start
-
 	uint32 start_time = getMSTime();
 	if( !LoadDBCs() )
 	{
@@ -396,7 +395,6 @@ bool World::SetInitialWorldSettings()
 
 	/* Convert area table ids/flags */
 	DBCFile area;
-
 	if( !area.open( "DBC/AreaTable.dbc" ) )
 	{
 		Log.Error( "World", "Cannot find file ./DBC/AreaTable.dbc" );

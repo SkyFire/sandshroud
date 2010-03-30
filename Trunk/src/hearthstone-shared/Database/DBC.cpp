@@ -30,7 +30,8 @@ DBC::DBC() {
 	format = NULL;
 }
 
-void DBC::Load(const char *filename) {
+void DBC::Load(const char *filename)
+{
 	FILE *f = fopen(filename, "rb");
 	if(!f)
 	{
