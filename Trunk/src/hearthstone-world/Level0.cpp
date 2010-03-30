@@ -27,7 +27,7 @@
 
 bool ChatHandler::ShowHelpForCommand(WorldSession *m_session, ChatCommand *table, const char* cmd)
 {
-	for(uint32 i = 0; table[i].Name != NULL; i++)
+	for(uint32 i = 0; table[i].Name != NULL; ++i)
 	{
 		if(!hasStringAbbr(table[i].Name, cmd))
 			continue;
@@ -87,7 +87,7 @@ bool ChatHandler::HandleCommandsCommand(const char* args, WorldSession *m_sessio
 
 	output = "Available commands: \n\n";
 
-	for(uint32 i = 0; table[i].Name != NULL; i++)
+	for(uint32 i = 0; table[i].Name != NULL; ++i)
 	{
 		if(*args && !hasStringAbbr(table[i].Name, (char*)args))
 			continue;
@@ -234,7 +234,7 @@ bool ChatHandler::HandleInfoCommand(const char* args, WorldSession *m_session)
 	int avg = 0;
 	PlayerStorageMap::const_iterator itr;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
 	{
 		if(itr->second->GetSession())
 		{
@@ -407,7 +407,7 @@ bool ChatHandler::HandleRatingsCommand( const char *args , WorldSession *m_sessi
 {
 	m_session->SystemMessage("Ratings!!!");
 	Player* m_plyr = getSelectedChar(m_session, false);
-	for( uint32 i = 0; i < 24; i++ )
+	for( uint32 i = 0; i < 24; ++i )
 	{
 		m_plyr->ModUnsigned32Value( PLAYER_FIELD_COMBAT_RATING_1 + i, i );
 	}

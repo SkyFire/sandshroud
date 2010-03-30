@@ -141,7 +141,7 @@ void MapCell::RemoveObjects()
 	for(itr = _objects.begin(); itr != _objects.end();)
 	{
 		obj = (*itr);
-		itr++;
+		++itr;
 
 		if(!obj)
 			continue;
@@ -182,7 +182,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 	{
 		Vehicle* v = NULLVEHICLE;
 		Creature* c = NULLCREATURE;
-		for(CreatureSpawnList::iterator i=sp->CreatureSpawns.begin();i!=sp->CreatureSpawns.end();i++)
+		for(CreatureSpawnList::iterator i=sp->CreatureSpawns.begin();i!=sp->CreatureSpawns.end();++i)
 		{
 			if(pInstance)
 			{
@@ -253,7 +253,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 	if(sp->GOSpawns.size())//got GOs
 	{
 		GameObject* go;
-		for(GOSpawnList::iterator i=sp->GOSpawns.begin();i!=sp->GOSpawns.end();i++)
+		for(GOSpawnList::iterator i=sp->GOSpawns.begin();i!=sp->GOSpawns.end();++i)
 		{
 			if(!(*i)->eventid)
 			{

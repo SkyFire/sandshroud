@@ -846,7 +846,7 @@ void WorldSession::FullLogin(Player* plr)
 		WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
 		MD5Hash md5hash;
 		data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; ++i)
 		{
 			AccountDataEntry* acct_data = GetAccountData(i);
 			if(0xEA & (1 << i))
@@ -862,7 +862,7 @@ void WorldSession::FullLogin(Player* plr)
 		WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
 		MD5Hash md5hash;
 		data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; ++i)
 		{
 			AccountDataEntry* acct_data = GetAccountData(i);
 			if(0xEA & (1 << i))

@@ -230,7 +230,7 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 		GroupMembersSet::iterator itr;
 		SubGroup * sgrp;
 		party->getLock().Acquire();
-		for(uint32 i = 0; i < party->GetSubGroupCount(); i++)
+		for(uint32 i = 0; i < party->GetSubGroupCount(); ++i)
 		{
 			sgrp = party->GetSubGroup(i);
 			for(itr = sgrp->GetGroupMembersBegin(); itr != sgrp->GetGroupMembersEnd(); ++itr)
@@ -351,7 +351,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
                 Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
                 if( pLock )
                 {
-                    for( uint32 i=0; i < 5; i++ )
+                    for( uint32 i=0; i < 5; ++i )
                     {
                         if( pLock->locktype[i] )
                         {
@@ -1270,7 +1270,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			if(!obj->m_ritualmembers || !obj->m_ritualspell || !obj->m_ritualcaster /*|| !obj->m_ritualtarget*/)
 				return;
 
-			for(i=0;i<goinfo->SpellFocus;i++)
+			for(i=0;i<goinfo->SpellFocus;++i)
 			{
 				if(!obj->m_ritualmembers[i])
 				{
@@ -1292,7 +1292,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			{
 				obj->m_ritualspell = 0;
 				Player* plr;
-				for(i=0;i<goinfo->SpellFocus;i++)
+				for(i=0;i<goinfo->SpellFocus;++i)
 				{
 					plr = _player->GetMapMgr()->GetPlayer(obj->m_ritualmembers[i]);
 					if(plr!=NULL)
@@ -1492,13 +1492,13 @@ void WorldSession::HandleTutorialFlag( WorldPacket & recv_data )
 
 void WorldSession::HandleTutorialClear( WorldPacket & recv_data )
 {
-	for ( uint32 iI = 0; iI < 8; iI++)
+	for ( uint32 iI = 0; iI < 8; ++iI)
 		GetPlayer()->SetTutorialInt( iI, 0xFFFFFFFF );
 }
 
 void WorldSession::HandleTutorialReset( WorldPacket & recv_data )
 {
-	for ( uint32 iI = 0; iI < 8; iI++)
+	for ( uint32 iI = 0; iI < 8; ++iI)
 		GetPlayer()->SetTutorialInt( iI, 0x00000000 );
 }
 
@@ -1992,7 +1992,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)
 
 	if(lock) // locked item
 	{
-		for(int i=0;i<5;i++)
+		for(int i=0;i<5;++i)
 		{
 			if(lock->locktype[i] == 1 && lock->lockmisc[i] > 0)
 			{
@@ -2013,7 +2013,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)
 				return;
 			}
 		}
-		for(int i=0;i<5;i++)
+		for(int i=0;i<5;++i)
 			if(removeLockItems[i])
 				_player->GetItemInterface()->RemoveItemAmt(removeLockItems[i],1);
 	}
@@ -2288,7 +2288,7 @@ void WorldSession::HandleReadyForAccountDataTimes(WorldPacket &recv_data)
 	// account data == UI config
 	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
 	data << uint32(UNIXTIME) << uint8(1) << uint32(0x15);
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; ++i)
 	{
 		if(0x15 & (1 << i))
 		{

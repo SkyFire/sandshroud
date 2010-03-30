@@ -105,7 +105,7 @@ WeatherMgr::WeatherMgr()
 WeatherMgr::~WeatherMgr()
 {
 	map<uint32, WeatherInfo*>::iterator itr;
-	for( itr = m_zoneWeathers.begin(); itr != m_zoneWeathers.end(); itr++)
+	for( itr = m_zoneWeathers.begin(); itr != m_zoneWeathers.end(); ++itr)
 		itr->second->Destructor();
 	m_zoneWeathers.clear();
 }

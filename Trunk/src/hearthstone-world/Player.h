@@ -969,9 +969,7 @@ public:
 	uint16				FindQuestSlot(uint32 questid);
 
 	//Quest related variables
-	uint32 m_questbarrier1[25];
 	QuestLogEntry*		m_questlog[25];
-	uint32 m_questbarrier2[25];
 	std::set<uint32>	m_QuestGOInProgress;
 	std::set<uint32>	m_removequests;
 	std::set<uint32>	m_finishedQuests;
@@ -1216,7 +1214,7 @@ public:
 	{
 		if(m_Pets.size() == 0) return 0;
 		std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin();
-		for(;itr != m_Pets.end();itr++)
+		for(;itr != m_Pets.end();++itr)
 			if(itr->second->stablestate == STABLE_STATE_ACTIVE)
 				return itr->first;
 		return NULL;

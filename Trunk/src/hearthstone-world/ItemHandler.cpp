@@ -773,11 +773,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->Class;
 	data << itemProto->SubClass;
 	data << itemProto->unknown_bc;
-	if(li)
-		data << li->Name;
-	else
-		data << itemProto->Name1;
-
+	data << (li ? li->Name : itemProto->Name1);
 	data << uint8(0) << uint8(0) << uint8(0); // name 2,3,4
 	data << itemProto->DisplayInfoID;
 	data << itemProto->Quality;
@@ -801,14 +797,14 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->MaxCount;
 	data << itemProto->ContainerSlots;
 	data << uint32(statcount);
-	for(i = 0; i < statcount; i++)
+	for(i = 0; i < statcount; ++i)
 	{
 		data << itemProto->Stats[i].Type;
 		data << itemProto->Stats[i].Value;
 	}
 	data << uint32(0);								// 3.0.2 related to scaling stats
 	data << uint32(0);								// 3.0.2 related to scaling stats
-	for(i = 0; i < 2; i++)
+	for(i = 0; i < 2; ++i)
 	{
 		data << itemProto->Damage[i].Min;
 		data << itemProto->Damage[i].Max;
@@ -826,7 +822,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->Delay;
 	data << itemProto->AmmoType;
 	data << itemProto->Range;
-	for(i = 0; i < 5; i++)
+	for(i = 0; i < 5; ++i)
 	{
 		data << itemProto->Spells[i].Id;
 		data << itemProto->Spells[i].Trigger;
@@ -836,11 +832,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 		data << itemProto->Spells[i].CategoryCooldown;
 	}
 	data << itemProto->Bonding;
-	if(li)
-		data << li->Description;
-	else
-		data << itemProto->Description;
-
+	data << (li ? li->Description : itemProto->Description);
 	data << itemProto->PageId;
 	data << itemProto->PageLanguage;
 	data << itemProto->PageMaterial;
@@ -858,7 +850,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->BagFamily;
 	data << itemProto->TotemCategory;
 	// 3 sockets
-	for(i = 0; i < 3; i++)
+	for(i = 0; i < 3; ++i)
 	{
 		data << itemProto->Sockets[i].SocketColor;
 		data << itemProto->Sockets[i].Unk;
@@ -1710,7 +1702,7 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 
 	if( !itemguid ) 
 	{
-		for( i = 0; i < MAX_INVENTORY_SLOT; i++ )
+		for( i = 0; i < MAX_INVENTORY_SLOT; ++i )
 		{
 			pItem = _player->GetItemInterface()->GetInventoryItem( i );
 			if( pItem != NULL )
@@ -1929,7 +1921,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 	bool sockenchbelt = (TargetItem->HasEnchantment(3729) && TargetItem->GetProto()->InventoryType == 6);
 
 	bool ColorMatch = true;
-	for(uint32 i = 0; i < 3; i++)
+	for(uint32 i = 0; i < 3; ++i)
 	{
 		recvPacket >> gemguid[i];
 

@@ -375,7 +375,7 @@ void WorldSession::LogoutPlayer(bool Save)
 		{
 			std::stringstream ss;
 			ss << "UPDATE account_data SET ";
-			for(uint32 ui=0;ui<8;ui++)
+			for(uint32 ui=0;ui<8;++ui)
 			{
 				if(sAccountData[ui].bIsDirty)
 				{

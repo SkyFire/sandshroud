@@ -469,11 +469,8 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 
 					data << uint32(0);	// 3.3.3
 					data << (*it)->qst->is_repeatable;
-					LocalizedQuest * lq = (language>0) ? sLocalizationMgr.GetLocalizedQuest((*it)->qst->id,language):NULL;
-					if(lq)
-						data << lq->Title;
-					else
-						data << (*it)->qst->title;
+					LocalizedQuest * lq = (language > 0) ? sLocalizationMgr.GetLocalizedQuest((*it)->qst->id, language) : NULL;
+					data << (lq ? lq->Title : (*it)->qst->title);
 				}
 			}
 		}
@@ -622,7 +619,7 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 	
 	if(pGossip)
 	{
-		for(uint32 i=0;i<8;i++)
+		for(uint32 i=0;i<8;++i)
 		{
 			data << pGossip->Texts[i].Prob;		// prob
 			if(lnc)
@@ -650,7 +647,7 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 		for(uint32 e=0;e<6;e++)		// emotes
 			data << uint32(0x00);
 
-		for(int i=0;i<7;i++)
+		for(int i=0;i<7;++i)
 		{
 			data << float(0.0f);
 			data << uint8(0x00) << uint8(0x00);

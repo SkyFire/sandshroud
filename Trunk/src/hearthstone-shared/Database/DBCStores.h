@@ -48,7 +48,7 @@ struct AchievementEntry
     //uint32 count; // 60
     //uint32 refAchievement; // 61
 
-	uint32 AssociatedCriteria[32]; // Custom stuff
+	std::vector<uint32>* AssociatedCriteria; // Custom stuff
 	uint32 AssociatedCriteriaCount;
 };
  

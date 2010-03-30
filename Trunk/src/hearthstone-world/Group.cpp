@@ -128,7 +128,7 @@ bool SubGroup::HasMember(uint32 guid)
 
 SubGroup * Group::FindFreeSubGroup()
 {
-	for(uint32 i = 0; i < m_SubGroupCount; i++)
+	for(uint32 i = 0; i < m_SubGroupCount; ++i)
 		if(!m_SubGroups[i]->IsFull())
 			return m_SubGroups[i];
 
@@ -230,7 +230,7 @@ void Group::Update()
 
 	if( m_groupFlags & GROUP_FLAG_REMOVE_OFFLINE_PLAYERS )
 	{
-		for( i = 0; i < m_SubGroupCount; i++ )
+		for( i = 0; i < m_SubGroupCount; ++i )
 		{
 			sg1 = m_SubGroups[i];
 
@@ -272,7 +272,7 @@ void Group::Update()
 			m_Looter = pNewLeader->m_playerInfo;
 	}
 
-	for( i = 0; i < m_SubGroupCount; i++ )
+	for( i = 0; i < m_SubGroupCount; ++i )
 	{
 		sg1 = m_SubGroups[i];
 
@@ -410,7 +410,7 @@ void Group::Disband()
 	}
 
 	uint32 i = 0;
-	for(i = 0; i < m_SubGroupCount; i++)
+	for(i = 0; i < m_SubGroupCount; ++i)
 	{
 		SubGroup *sg = m_SubGroups[i];
 		sg->Disband();
@@ -470,7 +470,7 @@ Player* Group::FindFirstPlayer()
 	GroupMembersSet::iterator itr;
 	m_groupLock.Acquire();
 
-	for( uint32 i = 0; i < m_SubGroupCount; i++ )
+	for( uint32 i = 0; i < m_SubGroupCount; ++i )
 	{
 		if( m_SubGroups[i] != NULL )
 		{
@@ -560,7 +560,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 		}
 
 		//Remove some party auras.
-		for (uint32 i=0;i<MAX_POSITIVE_AURAS;i++)
+		for (uint32 i=0;i<MAX_POSITIVE_AURAS;++i)
 		{
 			if (pPlayer->m_auras[i] != NULL && 
 				pPlayer->m_auras[i]->m_areaAura && 
@@ -614,7 +614,7 @@ void Group::ExpandToRaid()
 	m_groupLock.Acquire();
 	m_SubGroupCount = 8;
 
-	for(; i < m_SubGroupCount; i++)
+	for(; i < m_SubGroupCount; ++i)
 		m_SubGroups[i] = new SubGroup(this, i);
 
 	m_GroupType = GROUP_TYPE_RAID;
@@ -638,7 +638,7 @@ void Group::SendPacketToAllButOne(WorldPacket *packet, Player* pSkipTarget)
 	GroupMembersSet::iterator itr;
 	uint32 i = 0;
 	m_groupLock.Acquire();
-	for(; i < m_SubGroupCount; i++)
+	for(; i < m_SubGroupCount; ++i)
 	{
 		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr)
 		{
@@ -655,7 +655,7 @@ void Group::SendPacketToAllButOne(StackPacket *packet, Player* pSkipTarget)
 	GroupMembersSet::iterator itr;
 	uint32 i = 0;
 	m_groupLock.Acquire();
-	for(; i < m_SubGroupCount; i++)
+	for(; i < m_SubGroupCount; ++i)
 	{
 		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr)
 		{
@@ -672,7 +672,7 @@ void Group::OutPacketToAllButOne(uint16 op, uint16 len, const void* data, Player
 	GroupMembersSet::iterator itr;
 	uint32 i = 0;
 	m_groupLock.Acquire();
-	for(; i < m_SubGroupCount; i++)
+	for(; i < m_SubGroupCount; ++i)
 	{
 		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr)
 		{
@@ -692,7 +692,7 @@ bool Group::HasMember(Player* pPlayer)
 	GroupMembersSet::iterator itr;
 	m_groupLock.Acquire();
 
-	for( uint32 i = 0; i < m_SubGroupCount; i++ )
+	for( uint32 i = 0; i < m_SubGroupCount; ++i )
 	{
 		if( m_SubGroups[i] != NULL )
 		{
@@ -715,7 +715,7 @@ bool Group::HasMember(PlayerInfo * info)
 
 	m_groupLock.Acquire();
 
-	for(; i < m_SubGroupCount; i++)
+	for(; i < m_SubGroupCount; ++i)
 	{
 		if(m_SubGroups[i]->m_GroupMembers.find(info) != m_SubGroups[i]->m_GroupMembers.end())
 		{
@@ -1390,7 +1390,7 @@ void Group::VoiceSessionReconnected()
 	SubGroup *sg2 = NULL;
 	m_groupLock.Acquire();
 
-	for( i = 0; i < m_SubGroupCount; i++ )
+	for( i = 0; i < m_SubGroupCount; ++i )
 	{
 		sg1 = m_SubGroups[i];
 

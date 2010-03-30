@@ -745,14 +745,15 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 						for( itr = m_owner->m_procSpells.begin(); itr != m_owner->m_procSpells.end(); )
 						{
 							SpellId = itr->spellId;
-							/*itr2 = itr++;*/
+							/*itr2 = itr;*/
+							/*++itr;*/
 							
 							if( SpellId == Entry->spell[c] )
 							{
 								//m_owner->m_procSpells.erase(itr2);
 								itr->deleted = true;
 							}
-							itr++;
+							++itr;
 						}
 					}
 				}break;
@@ -871,7 +872,8 @@ void Item::ApplyEnchantmentBonuses()
 	EnchantmentMap::iterator itr, itr2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end();  )
 	{
-		itr2 = itr++;
+		itr2 = itr;
+		++itr;
 		ApplyEnchantmentBonus( itr2->first, APPLY );
 	}
 }
@@ -881,7 +883,8 @@ void Item::RemoveEnchantmentBonuses()
 	EnchantmentMap::iterator itr, itr2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end(); )
 	{
-		itr2 = itr++;
+		itr2 = itr;
+		++itr;
 		ApplyEnchantmentBonus( itr2->first, REMOVE );
 	}
 }
@@ -896,7 +899,7 @@ int32 Item::FindFreeEnchantSlot( EnchantEntry* Enchantment, uint32 random_type )
 {	
 	//if(!Enchantment) return -1;
 
-   /* uint32 Slot = Enchantment->type ? 3 : 0;
+	/* uint32 Slot = Enchantment->type ? 3 : 0;
 	for(uint32 Index = ITEM_FIELD_ENCHANTMENT_09; Index < ITEM_FIELD_ENCHANTMENT_32; Index += 3)
 	{
 		if(m_uint32Values[Index] == 0) return Slot;	
@@ -988,7 +991,8 @@ void Item::RemoveAllEnchantments( bool OnlyTemporary )
 	EnchantmentMap::iterator itr, it2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end(); )
 	{
-		it2 = itr++;
+		it2 = itr;
+		++itr;
 
 		if( OnlyTemporary && it2->second.Duration == 0 ) 
 			continue;
@@ -1002,7 +1006,8 @@ void Item::RemoveRelatedEnchants( EnchantEntry* newEnchant )
 	EnchantmentMap::iterator itr,itr2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end(); )
 	{
-		itr2 = itr++;
+		itr2 = itr;
+		++itr;
 		
 		if( itr2->second.Enchantment->Id == newEnchant->Id || ( itr2->second.Enchantment->EnchantGroups > 1 && newEnchant->EnchantGroups > 1 ) )
 		{ 
@@ -1014,7 +1019,7 @@ void Item::RemoveRelatedEnchants( EnchantEntry* newEnchant )
 void Item::RemoveProfessionEnchant()
 {
 	EnchantmentMap::iterator itr;
-	for( itr = Enchantments.begin(); itr != Enchantments.end(); itr++ )
+	for( itr = Enchantments.begin(); itr != Enchantments.end(); ++itr )
 	{
 		if( itr->second.Duration != 0 )// not perm
 			continue;
@@ -1031,7 +1036,7 @@ void Item::RemoveSocketBonusEnchant()
 {
 	EnchantmentMap::iterator itr;
 	
-	for( itr = Enchantments.begin(); itr != Enchantments.end(); itr++ )
+	for( itr = Enchantments.begin(); itr != Enchantments.end(); ++itr )
 	{
 		if( itr->second.Enchantment->Id == GetProto()->SocketBonus )
 		{
@@ -1145,7 +1150,7 @@ bool ItemPrototype::ValidateItemLink(const char *szLink)
 
 bool ItemPrototype::ValidateItemSpell(uint32 SpellId)
 {
-	for(uint8 i = 0; i < 5; i++)
+	for(uint8 i = 0; i < 5; ++i)
 		if(Spells[i].Id == SpellId)
 			return true;
 	return false;

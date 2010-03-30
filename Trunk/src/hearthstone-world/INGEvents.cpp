@@ -23,7 +23,7 @@ void MapMgr::DespawnEvent(uint8 eventToRemove)
 {
 	if(_cells)
 	{
-		for (uint32 i = 0; i < _sizeX; i++)
+		for (uint32 i = 0; i < _sizeX; ++i)
 		{
 			if(_cells[i] != 0)
 			{
@@ -46,7 +46,7 @@ void MapMgr::SpawnEvent(uint8 eventId)
 	CellSpawns * sp;
 	if(_cells)
 	{
-		for (uint32 i = 0; i < _sizeX; i++)
+		for (uint32 i = 0; i < _sizeX; ++i)
 		{
 			if(_cells[i] != 0)
 			{
@@ -236,7 +236,7 @@ void MapCell::ModifyEventIdSetting(bool active, uint8 eventId)
 	for(itr = _objects.begin(); itr != _objects.end();)
 	{
 		pObject = (*itr);
-		itr++;
+		++itr;
 
 		if(!pObject)
 			continue;
@@ -360,7 +360,7 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 	for(itr = _objects.begin(); itr != _objects.end();)
 	{
 		pObject = (*itr);
-		itr++;
+		++itr;
 
 		if(!pObject)
 			continue;
@@ -472,7 +472,7 @@ bool DayWatcherThread::SpawnEventId(uint8 eventId, bool activate)
 				runEvents = true;
 				return false;
 			}
-			itr++;
+			++itr;
 		}while(itr != m_creatureEventSpawnMaps.upper_bound(eventId));
 	}
 	GameobjectEventSpawnMaps::iterator itr2 = m_gameobjectEventSpawnMaps.find(eventId);

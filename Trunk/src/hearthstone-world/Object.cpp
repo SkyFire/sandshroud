@@ -2014,7 +2014,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			if(pVictim->GetCurrentSpell())
 			{
 				Spell* spl = pVictim->GetCurrentSpell();
-				for(int i = 0; i < 3; i++)
+				for(int i = 0; i < 3; ++i)
 				{
 					if(spl->m_spellInfo->Effect[i] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
 					{

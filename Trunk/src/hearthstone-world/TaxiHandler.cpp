@@ -102,7 +102,7 @@ void WorldSession::SendTaxiList(Creature* pCreature)
 	TaxiMask[field] |= 1 << ((curloc-1)%32);
 
 	//Remove nodes unknown to player
-	for(int i = 0; i < 12; i++)
+	for(int i = 0; i < 12; ++i)
 	{
 		TaxiMask[i] &= GetPlayer( )->GetTaximask(i);
 	}
@@ -111,7 +111,7 @@ void WorldSession::SendTaxiList(Creature* pCreature)
 	data.Initialize( SMSG_SHOWTAXINODES );
 	data << uint32( 1 ) << guid;
 	data << uint32( curloc );
-	for(int i = 0; i < 12; i++)
+	for(int i = 0; i < 12; ++i)
 	{
 		data << TaxiMask[i];
 	}

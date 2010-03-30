@@ -47,7 +47,7 @@ void Container::Init()
 
 Container::~Container( )
 {
-	for(uint32 i = 0; i < m_itemProto->ContainerSlots; i++)
+	for(uint32 i = 0; i < m_itemProto->ContainerSlots; ++i)
 	{
 		if(m_Slot[i] && m_Slot[i]->GetOwner() == m_owner)
 		{
@@ -107,7 +107,7 @@ void Container::Create( uint32 itemid, Player* owner )
 int8 Container::FindFreeSlot()
 {
 	int8 TotalSlots = GetUInt32Value( CONTAINER_FIELD_NUM_SLOTS );
-	for (int8 i=0; i < TotalSlots; i++)
+	for (int8 i=0; i < TotalSlots; ++i)
 	{
 		if(!m_Slot[i]) 
 		{ 
@@ -121,7 +121,7 @@ int8 Container::FindFreeSlot()
 bool Container::HasItems()
 {
 	int8 TotalSlots = GetUInt32Value( CONTAINER_FIELD_NUM_SLOTS );
-	for (int8 i=0; i < TotalSlots; i++)
+	for (int8 i=0; i < TotalSlots; ++i)
 	{
 		if(m_Slot[i]) 
 		{ 
@@ -318,7 +318,7 @@ void Container::SaveBagToDB(int16 slot, bool first, QueryBuffer * buf)
 {
 	SaveToDB(INVENTORY_SLOT_NOT_SET, slot, first, buf);
 
-	for(uint32 i = 0; i < m_itemProto->ContainerSlots; i++)
+	for(uint32 i = 0; i < m_itemProto->ContainerSlots; ++i)
 	{
 		if (m_Slot[i] && !((m_Slot[i]->GetProto()->Flags)& 2) )
 		{

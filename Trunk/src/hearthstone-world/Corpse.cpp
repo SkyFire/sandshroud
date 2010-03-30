@@ -80,7 +80,7 @@ void Corpse::SaveToDB()
 	ss << "INSERT INTO corpses (guid, positionX, positionY, positionZ, orientation, zoneId, mapId, data, instanceId) VALUES ("
 		<< GetLowGUID() << ", '" << GetPositionX() << "', '" << GetPositionY() << "', '" << GetPositionZ() << "', '" << GetOrientation() << "', '" << GetZoneId() << "', '" << GetMapId() << "', '";
 
-	for(uint16 i = 0; i < m_valuesCount; i++ )
+	for(uint16 i = 0; i < m_valuesCount; ++i )
 		ss << GetUInt32Value(i) << " ";
 
 	ss << "', " << GetInstanceID() << " )";
@@ -118,7 +118,7 @@ void Corpse::SpawnBones()
 	SetUInt32Value(CORPSE_FIELD_FLAGS, 5);
 	SetUInt64Value(CORPSE_FIELD_OWNER, 0); // remove corpse owner association
 	//remove item association
-	for (int i = 0; i < EQUIPMENT_SLOT_END; i++)
+	for (int i = 0; i < EQUIPMENT_SLOT_END; ++i)
 	{
 		if(GetUInt32Value(CORPSE_FIELD_ITEM + i))
 			SetUInt32Value(CORPSE_FIELD_ITEM + i, 0);

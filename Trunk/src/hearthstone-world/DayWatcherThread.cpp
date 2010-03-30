@@ -214,7 +214,7 @@ bool DayWatcherThread::run()
 		if(has_timeout_expired(&local_currenttime, &local_last_eventid_time, HOURLY))
 		{
 			Log.Notice("DayWatcherThread", "Running Hourly In Game Events checks...");
-			for(EventsList::iterator itr = m_eventIdList.begin(); itr != m_eventIdList.end(); itr++)
+			for(EventsList::iterator itr = m_eventIdList.begin(); itr != m_eventIdList.end(); ++itr)
 			{
 				if(!(*itr)->eventbyhour)
 					continue;
@@ -283,7 +283,7 @@ bool DayWatcherThread::run()
 					counter = 2;
 				}
 
-				for(EventsList::iterator itr = m_eventIdList.begin(); itr != m_eventIdList.end(); itr++)
+				for(EventsList::iterator itr = m_eventIdList.begin(); itr != m_eventIdList.end(); ++itr)
 				{
 					if((*itr)->eventbyhour)
 						continue;

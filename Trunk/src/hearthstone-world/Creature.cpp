@@ -273,8 +273,9 @@ void Creature::GenerateLoot()
 		m_loot.gold = 0;
 		return;
 	}
-
-	lootmgr.FillCreatureLoot(&m_loot,GetEntry(), m_mapMgr ? (m_mapMgr->iInstanceMode > 0 ? true : false) : false);
+	MapEntry* map = dbcMap.LookupEntry(GetMapId());
+	uint8 difficulty = (m_mapMgr ? (m_mapMgr->iInstanceMode) : 0);
+	lootmgr.FillCreatureLoot(&m_loot, GetEntry(), difficulty);
 
 	// -1 , no gold; 0 calculated according level; >0 coppercoins
 	if( proto->money == -1)
@@ -1485,7 +1486,7 @@ void Creature::SetGuardWaypoints()
 	if(!GetCreatureInfo()) return;
 
 	GetAIInterface()->setMoveType(1);
-	for(int i = 1; i <= 4; i++)
+	for(int i = 1; i <= 4; ++i)
 	{
 		float ang = rand()/100.0f;
 		float ran = (rand()%(100))/10.0f;

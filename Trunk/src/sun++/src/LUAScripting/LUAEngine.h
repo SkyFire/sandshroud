@@ -257,7 +257,7 @@ public:
 		return (itr == m_item_gossipBinding.end()) ? NULL : &itr->second;
 	}
 
-    LuaGOGossipBinding * GetLuaGOGossipBinding(uint32 Id)
+	LuaGOGossipBinding * GetLuaGOGossipBinding(uint32 Id)
 	{
 		GossipGOScriptsBindingMap::iterator itr = m_go_gossipBinding.find(Id);
 		return (itr == m_go_gossipBinding.end()) ? NULL : &itr->second;
@@ -267,11 +267,15 @@ public:
 #endif
 };
 
+/************************************************************************/
+/* SCRIPT FUNCTION IMPLEMENTATION                                       */
+/************************************************************************/
+#define CHECK_TYPEID(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { return 0; }
+#define CHECK_TYPEID_RET(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushboolean(L,0); return 0; }
+#define CHECK_TYPEID_RET_INT(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushinteger(L,0); return 0; }
+#define CHECK_PTR() if( ptr == NULL ||!ptr->IsInWorld() ) { return 0; }
+#include "NameSpaces/GameObjectFunctions.cpp"
+#include "NameSpaces/UnitFunctions.cpp"
+#include "NameSpaces/ItemFunctions.cpp"
+
 #endif
-
-
-
-
-
-
-

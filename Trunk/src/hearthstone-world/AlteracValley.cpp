@@ -1782,7 +1782,7 @@ void AlteracValley::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 
 void AlteracValley::EventUpdateResources()
 {
-/*	for(uint32 i = 0; i < 2; i++)
+/*	for(uint32 i = 0; i < 2; ++i)
 	{
 		AddReinforcements( i, m_mineControl[i] );
 	}

@@ -993,68 +993,68 @@ bool ChatHandler::HandleSendpacket(const char * args, WorldSession * m_session)
 {
 #ifdef _ONLY_FOOLS_TRY_THIS_
 
-    uint32 arg_len = strlen(args);
-    char * xstring = new char [arg_len];
-    memcpy(xstring, args,arg_len);
+	uint32 arg_len = strlen(args);
+	char * xstring = new char [arg_len];
+	memcpy(xstring, args,arg_len);
 
-    for (uint32 i = 0; i < arg_len; i++)
-    {
-        if (xstring[i] == ' ')
-        {
-            xstring[i] = '\0';
-        }
-    }
+	for (uint32 i = 0; i < arg_len; ++i)
+	{
+		if (xstring[i] == ' ')
+		{
+			xstring[i] = '\0';
+		}
+	}
 
-    // we receive our packet as hex, that means we get it like ff ff ff ff
-    // the opcode consists of 2 bytes
+	// we receive our packet as hex, that means we get it like ff ff ff ff
+	// the opcode consists of 2 bytes
 
-    if (!xstring)
-    {
-        OUT_DEBUG("[Debug][Sendpacket] Packet is invalid");
-        return false;
-    }
+	if (!xstring)
+	{
+		OUT_DEBUG("[Debug][Sendpacket] Packet is invalid");
+		return false;
+	}
 
-    WorldPacket data(arg_len);
+	WorldPacket data(arg_len);
 
-    uint32 loop = 0;
-    uint16 opcodex = 0;
-    uint16 opcodez = 0;
+	uint32 loop = 0;
+	uint16 opcodex = 0;
+	uint16 opcodez = 0;
 
-    // get the opcode
-    sscanf(xstring , "%x", &opcodex);
+	// get the opcode
+	sscanf(xstring , "%x", &opcodex);
 
-    // should be around here
-    sscanf(&xstring[3] , "%x", &opcodez);
+	// should be around here
+	sscanf(&xstring[3] , "%x", &opcodez);
 
-    opcodex =  opcodex << 8;
-    opcodex |= opcodez;
-    data.Initialize(opcodex);
+	opcodex =  opcodex << 8;
+	opcodex |= opcodez;
+	data.Initialize(opcodex);
 
-    
-    int j = 3;
-    int x = 0;
-    do 
-    {
-        if (xstring[j] == '\0')
-        {
-            uint32 HexValue;
-            sscanf(&xstring[j+1], "%x", &HexValue);
-            if (HexValue > 0xFF)
-            {
-                OUT_DEBUG("[Debug][Sendpacket] Packet is invalid");
-                return false;
-            }
-            data << uint8(HexValue);
-            //j++;
-        }
-        j++;
-    } while(j < arg_len);
+	
+	int j = 3;
+	int x = 0;
+	do 
+	{
+		if (xstring[j] == '\0')
+		{
+			uint32 HexValue;
+			sscanf(&xstring[j+1], "%x", &HexValue);
+			if (HexValue > 0xFF)
+			{
+				OUT_DEBUG("[Debug][Sendpacket] Packet is invalid");
+				return false;
+			}
+			data << uint8(HexValue);
+			//j++;
+		}
+		j++;
+	} while(j < arg_len);
 
-    data.hexlike();
+	data.hexlike();
 
-    m_session->SendPacket(&data);
+	m_session->SendPacket(&data);
 
-    OUT_DEBUG("[Debug][Sendpacket] Packet was send");
+	OUT_DEBUG("[Debug][Sendpacket] Packet was send");
 #endif
-    return true;
+	return true;
 }

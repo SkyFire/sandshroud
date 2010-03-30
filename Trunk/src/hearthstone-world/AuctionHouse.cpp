@@ -243,7 +243,7 @@ void Auction::AddToPacket(WorldPacket & data)
 	data << Id;
 	data << pItem->GetEntry();
 
-	for (uint32 i = 0; i < 6; i++)
+	for (uint32 i = 0; i < 6; ++i)
 	{
 		data << pItem->GetUInt32Value(ITEM_FIELD_ENCHANTMENT_1_1 + (3 * i));   // Enchantment ID
 		data << uint32(pItem->GetEnchantmentApplytime(i));						 // Unknown / maybe ApplyTime

@@ -99,7 +99,7 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
 		return true;
 	}
 
-	for (uint32 i = 0; i < strlen(args); i++) {
+	for (uint32 i = 0; i < strlen(args); ++i) {
 		if(!isalpha(args[i]) && args[i]!=' ') {
 			SystemMessage(m_session, "Error, name can only contain chars A-Z and a-z.");
 			return true;
@@ -366,7 +366,7 @@ bool ChatHandler::HandleSaveAllCommand(const char *args, WorldSession *m_session
 	uint32 stime = now();
 	uint32 count = 0;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
 	{
 		if(itr->second->GetSession())
 		{
@@ -625,7 +625,7 @@ bool ChatHandler::HandleGOSelect(const char *args, WorldSession *m_session)
 			if(m_session->GetPlayer()->m_GM_SelectedGO == NULL)
 				bUseNext = true;
 
-			for(;;Itr++)
+			for(;;++Itr)
 			{
 				if(Itr == Itr2 && GObj == NULL && bUseNext)
 					Itr = m_session->GetPlayer()->GetInRangeSetBegin();
@@ -653,7 +653,7 @@ bool ChatHandler::HandleGOSelect(const char *args, WorldSession *m_session)
 	}
 	if(!GObj)
 	{
-		for( ; Itr != Itr2; Itr++ )
+		for( ; Itr != Itr2; ++Itr )
 		{
 			if( (*Itr)->GetTypeId() == TYPEID_GAMEOBJECT )
 			{

@@ -750,7 +750,8 @@ void AIInterface::_UpdateTargets()
 
 		for(i = m_assistTargets.begin(); i != m_assistTargets.end();)
 		{
-			i2 = i++;
+			i2 = i;
+			++i;
 			if((*i2) == NULL || (*i2)->event_GetCurrentInstanceId() != m_Unit->event_GetCurrentInstanceId() || !m_Unit->PhasedCanInteract(*i2) ||
 				!(*i2)->isAlive() || m_Unit->GetDistanceSq((*i2)) >= 2500.0f || !(*i2)->CombatStatus.IsInCombat() )
 			{
@@ -778,7 +779,8 @@ void AIInterface::_UpdateTargets()
 
 		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();)
 		{
-			it2 = itr++;
+			it2 = itr;
+			++itr;
 
 			if( it2->first->event_GetCurrentInstanceId() != m_Unit->event_GetCurrentInstanceId() || !m_Unit->PhasedCanInteract(it2->first) ||
 				!it2->first->isAlive() || m_Unit->GetDistanceSq(it2->first) >= 6400.0f )
@@ -1269,7 +1271,7 @@ bool AIInterface::HealReaction(Unit* caster, Unit* victim, uint32 amount, SpellE
 	if(m_aiTargets.find(victim) != m_aiTargets.end())
 		victimInList = 1;
 
-	/*for(i = m_aiTargets.begin(); i != m_aiTargets.end(); i++)
+	/*for(i = m_aiTargets.begin(); i != m_aiTargets.end(); ++i)
 	{
 		if(casterInList && victimInList)
 		{ // no need to check the rest, just break that
@@ -1511,7 +1513,7 @@ Unit* AIInterface::FindTargetForSpell(AI_Spell *sp)
 				m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 				return m_Unit;
 			}
-			for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
+			for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); ++i)
 			{
 				if(!(*i)->isAlive())
 				{
@@ -1585,7 +1587,7 @@ bool AIInterface::FindFriends(float dist)
 	unordered_set<Object* >::iterator itr;
 	Unit* pUnit;
 
-	for( itr = m_Unit->GetInRangeSetBegin(); itr != m_Unit->GetInRangeSetEnd(); itr++ )
+	for( itr = m_Unit->GetInRangeSetBegin(); itr != m_Unit->GetInRangeSetEnd(); ++itr )
 	{
 		if((*itr) == NULL || !(*itr)->IsInWorld() || (*itr)->GetTypeId() != TYPEID_UNIT)
 			continue;
@@ -2086,7 +2088,7 @@ void AIInterface::SendCurrentMove(Player* plyr/*uint64 guid*/)
 
 	*splineBuf << uint32(numpoints); //Spline Count	// lets try this
 
-	for(uint8 i = 0 ; i < numpoints; i++)
+	for(uint8 i = 0 ; i < numpoints; ++i)
 	{
 		*splineBuf << m_sourceX + (pointDiffX * i);
 		*splineBuf << m_sourceY + (pointDiffY * i);
@@ -2240,7 +2242,7 @@ bool AIInterface::showWayPoints(Player* pPlayer, bool Backwards)
 	m_WayPointsShowing = true;
 
 	WayPoint* wp = NULL;
-	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); itr++)
+	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); ++itr)
 	{
 		if( (*itr) != NULL )
 		{
@@ -2306,7 +2308,7 @@ bool AIInterface::hideWayPoints(Player* pPlayer)
 	// slightly better way to do this
 	uint64 guid;
 
-	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); itr++)
+	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); ++itr)
 	{
 		if( (*itr) != NULL )
 		{
@@ -2335,7 +2337,7 @@ bool AIInterface::saveWayPoints()
 	for (itr = m_waypoints->begin(); itr != m_waypoints->end();)
 	{
 		wp = (*itr);
-		itr++;
+		++itr;
 		//Save
 		ss.str("");
 		ss << "REPLACE INTO creature_waypoints ";
@@ -3550,7 +3552,7 @@ void AIInterface::CallGuards()
 		uint8 spawned = 0;
 	
 		unordered_set<Player*>::iterator hostileItr = m_Unit->GetInRangePlayerSetBegin();
-		for(; hostileItr != m_Unit->GetInRangePlayerSetEnd(); hostileItr++)
+		for(; hostileItr != m_Unit->GetInRangePlayerSetEnd(); ++hostileItr)
 		{
 			if(spawned >= 3)
 				break;

@@ -31,14 +31,14 @@ bool MailMessage::LoadFromDB(Field * fields)
 	// Create message struct
 	i = 0;
 	items.clear();
-	message_id = fields[i++].GetUInt32();
-	message_type = fields[i++].GetUInt32();
-	player_guid = fields[i++].GetUInt32();
-	sender_guid = fields[i++].GetUInt32();
-	subject = fields[i++].GetString();
-	body = fields[i++].GetString();
-	money = fields[i++].GetUInt32();
-	str = (char*)fields[i++].GetString();
+	message_id = fields[++i].GetUInt32();
+	message_type = fields[++i].GetUInt32();
+	player_guid = fields[++i].GetUInt32();
+	sender_guid = fields[++i].GetUInt32();
+	subject = fields[++i].GetString();
+	body = fields[++i].GetString();
+	money = fields[++i].GetUInt32();
+	str = (char*)fields[++i].GetString();
 	p = strchr(str, ',');
 	if( p == NULL )
 	{
@@ -60,14 +60,14 @@ bool MailMessage::LoadFromDB(Field * fields)
 		}
 	}
 
-	cod = fields[i++].GetUInt32();
-	stationary = fields[i++].GetUInt32();
-	expire_time = fields[i++].GetUInt32();
-	delivery_time = fields[i++].GetUInt32();
-	copy_made = fields[i++].GetBool();
-	read_flag = fields[i++].GetBool();
-	deleted_flag = fields[i++].GetBool();
-	returned_flag = fields[i++].GetBool();
+	cod = fields[++i].GetUInt32();
+	stationary = fields[++i].GetUInt32();
+	expire_time = fields[++i].GetUInt32();
+	delivery_time = fields[++i].GetUInt32();
+	copy_made = fields[++i].GetBool();
+	read_flag = fields[++i].GetBool();
+	deleted_flag = fields[++i].GetBool();
+	returned_flag = fields[++i].GetBool();
 
 /*
 		if( msg.deleted_flag )
@@ -242,7 +242,7 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 			if( pItem == NULL )
 				continue;
 
-			data << uint8(i++);
+			data << uint8(++i);
 			data << pItem->GetUInt32Value(OBJECT_FIELD_GUID);
 			data << pItem->GetEntry();
 
@@ -255,7 +255,7 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 
 			data << pItem->GetUInt32Value( ITEM_FIELD_RANDOM_PROPERTIES_ID );
 			if( ( (int32)pItem->GetUInt32Value( ITEM_FIELD_RANDOM_PROPERTIES_ID ) ) < 0 )
-                data << pItem->GetItemRandomSuffixFactor();
+				data << pItem->GetItemRandomSuffixFactor();
 			else
 				data << uint32( 0 );
 

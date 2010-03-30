@@ -80,7 +80,7 @@ GameObject::~GameObject()
 		m_respawnCell->_respawnObjects.erase( TO_OBJECT(this) );
 
 	if (m_summonedGo && m_summoner)
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < 4; ++i)
 			if (m_summoner->m_ObjectSlots[i] == GetUIdFromGUID())
 				m_summoner->m_ObjectSlots[i] = 0;
 
@@ -354,7 +354,7 @@ void GameObject::InitAI()
 			Lock *pLock = dbcLock.LookupEntry(GetInfo()->SpellFocus);
 			if(pLock)
 			{
-				for(uint32 i=0; i < 5; i++)
+				for(uint32 i=0; i < 5; ++i)
 				{
 					if(pLock->locktype[i])
 					{
@@ -398,7 +398,7 @@ void GameObject::InitAI()
 	
 	float r = 0;
 
-	for(uint32 i=0;i<3;i++)
+	for(uint32 i=0;i<3;++i)
 	{
 		if(sp->Effect[i])
 		{
@@ -729,7 +729,7 @@ void GameObject::OnRemoveInRangeObject(Object* pObj)
 	Object::OnRemoveInRangeObject(pObj);
 	if(m_summonedGo && m_summoner == pObj)
 	{
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < 4; ++i)
 			if (m_summoner->m_ObjectSlots[i] == GetUIdFromGUID())
 				m_summoner->m_ObjectSlots[i] = 0;
 
@@ -757,7 +757,7 @@ uint32 GameObject::GetGOReqSkill()
 
 	Lock *lock = dbcLock.LookupEntry( GetInfo()->SpellFocus );
 	if(!lock) return 0;
-	for(uint32 i=0;i<5;i++)
+	for(uint32 i=0;i<5;++i)
 		if(lock->locktype[i] == 2 && lock->minlockskill[i])
 		{
 			return lock->minlockskill[i];

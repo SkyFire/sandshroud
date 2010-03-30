@@ -1578,7 +1578,8 @@ void Pet::HandleAutoCastEvent(uint32 Type)
 
 	for(  itr = m_autoCastSpells[Type].begin(); itr != m_autoCastSpells[Type].end(); )
 	{
-		it2 = itr++;
+		it2 = itr;
+		++itr;
 		sp = *it2;
 
 		if( sp->spelltargetType == TTYPE_OWNER )
@@ -1664,7 +1665,7 @@ bool Pet::ResetTalents(bool costs)
 	{
 		PetTalentMap::iterator itr = m_talents.begin();
 
-		for ( ; itr != m_talents.end(); itr++)
+		for ( ; itr != m_talents.end(); ++itr)
 		{
 			// find our talent
 			TalentEntry *talentEntry = dbcTalent.LookupEntry( itr->first );

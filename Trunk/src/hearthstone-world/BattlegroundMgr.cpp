@@ -177,7 +177,7 @@ CBattlegroundManager::CBattlegroundManager() : EventableObject()
 
 	m_maxBattlegroundId = 0;
 
-	for (i=0; i<BATTLEGROUND_NUM_TYPES; i++)
+	for (i=0; i<BATTLEGROUND_NUM_TYPES; ++i)
 	{
 		m_instances[i].clear();
 		m_queuedGroups[i].clear();
@@ -211,7 +211,7 @@ uint32 CBattlegroundManager::GetAverageQueueTime(uint32 BgType)
 	assert(BgType < BATTLEGROUND_NUM_TYPES);
 
 	avg = m_averageQueueTimes[BgType][0];
-	for (i=1; i<10; i++)
+	for (i=1; i<10; ++i)
 	{
 		if (m_averageQueueTimes[BgType][i] == 0) break;
 
@@ -228,7 +228,7 @@ void CBattlegroundManager::AddAverageQueueTime(uint32 BgType, uint32 queueTime)
 	assert(BgType < BATTLEGROUND_NUM_TYPES);
 
 	// move the queue times one place in the array
-	for (i=0; i<9; i++)
+	for (i=0; i<9; ++i)
 	{
 		m_averageQueueTimes[BgType][i+1] = m_averageQueueTimes[BgType][i];
 	}
@@ -270,7 +270,7 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	data << uint32(0);				//count
 
 	if(!IS_ARENA(BattlegroundType))
- 	{
+	{
 		/* Append the battlegrounds */
 		m_instanceLock.Acquire();
 		for(map<uint32, CBattleground* >::iterator itr = m_instances[BattlegroundType].begin(); itr != m_instances[BattlegroundType].end(); ++itr)
@@ -1007,7 +1007,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 			teams[1] = objmgr.GetArenaTeamById(arena->m_teams[1]);
 		}
 
-		for(uint32 i=0; i<2; i++)
+		for(uint32 i=0; i<2; ++i)
 		{
 			if(m_deltaRating[i] >= 0)
 				ratingPositiveChange[i] = m_deltaRating[i];
@@ -1361,7 +1361,8 @@ void CBattlegroundManager::DeleteBattleground(CBattleground* bg)
 	list<uint32>::iterator it2;
 	for(; itr != m_queuedPlayers[i][j].end();)
 	{
-		it2 = itr++;
+		it2 = itr;
+		++itr;
 		plr = objmgr.GetPlayer(*it2);
 		if(!plr)
 		{

@@ -88,7 +88,7 @@ void CellHandler<Class>::_Init()
 	_cells = new Class**[_sizeX];
 
 	ASSERT(_cells);
-	for (uint32 i = 0; i < _sizeX; i++)
+	for (uint32 i = 0; i < _sizeX; ++i)
 	{
 		//_cells[i] = new Class*[_sizeY];
 		_cells[i]=NULL;
@@ -109,7 +109,7 @@ CellHandler<Class>::~CellHandler()
 {
 	if(_cells)
 	{
-		for (uint32 i = 0; i < _sizeX; i++)
+		for (uint32 i = 0; i < _sizeX; ++i)
 		{
 			if(!_cells[i])
 				continue;

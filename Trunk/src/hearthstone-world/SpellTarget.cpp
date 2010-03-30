@@ -375,7 +375,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 		float range=GetMaxRange(dbcSpellRange.LookupEntry(m_spellInfo->rangeIndex));//this is probably wrong
 		range*=range;
 		unordered_set<Object* >::iterator itr;
-		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 		{
 			if((*itr)->GetGUID()==m_targets.m_unitTarget)
 				continue;
@@ -859,7 +859,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 	else
 	{
 		unordered_set<Object* >::iterator itr;
-		for( itr = firstTarget->GetInRangeSetBegin(); itr != firstTarget->GetInRangeSetEnd(); itr++ )
+		for( itr = firstTarget->GetInRangeSetBegin(); itr != firstTarget->GetInRangeSetEnd(); ++itr )
 		{
 			if( !(*itr)->IsUnit() || !TO_UNIT(*itr)->isAlive())
 				continue;
@@ -916,7 +916,7 @@ void Spell::SpellTargetInFrontOfCaster2(uint32 i, uint32 j)
 {
 	unordered_set<Object* >::iterator itr;
 
-	for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 	{
 		if(!((*itr)->IsUnit()) || !TO_UNIT(*itr)->isAlive())
 			continue;

@@ -125,7 +125,7 @@ Unit::Unit()
 	m_invisible = false;
 	m_invisFlag = INVIS_FLAG_NORMAL;
 
-	for(int i = 0; i < INVIS_FLAG_TOTAL; i++)
+	for(int i = 0; i < INVIS_FLAG_TOTAL; ++i)
 		m_invisDetect[i] = 0;
 
 	m_stealthLevel = 0;
@@ -176,7 +176,7 @@ Unit::Unit()
 	RangedDamageTaken = 0;
 	AOEDmgMod = 1.0f;
 
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; ++i)
 	{
 		m_detectRangeGUID[i] = 0;
 		m_detectRangeMOD[i] = 0;
@@ -272,7 +272,7 @@ Unit::~Unit()
 
 	m_redirectSpellPackets = NULLPLR;
 
-	/*for(int i = 0; i < 4; i++)
+	/*for(int i = 0; i < 4; ++i)
 	if(m_ObjectSlots[i])
 	delete m_ObjectSlots[i];*/
 
@@ -299,12 +299,12 @@ Unit::~Unit()
 	tmpAura.clear();
 	m_DummyAuras.clear();
 
-	for(std::list<ExtraStrike*>::iterator itr = m_extraStrikeTargets.begin();itr != m_extraStrikeTargets.end();itr++)
+	for(std::list<ExtraStrike*>::iterator itr = m_extraStrikeTargets.begin();itr != m_extraStrikeTargets.end();++itr)
 		delete (*itr);
 	m_extraStrikeTargets.clear();
 
 	HM_NAMESPACE::hash_map<uint32, onAuraRemove*>::iterator itr;
-	for ( itr = m_onAuraRemoveSpells.begin() ; itr != m_onAuraRemoveSpells.end() ; itr++)
+	for ( itr = m_onAuraRemoveSpells.begin() ; itr != m_onAuraRemoveSpells.end() ; ++itr)
 	{
 		delete itr->second;
 	}
@@ -493,7 +493,7 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 		xp /= pGroup->MemberCount();
 
 		GroupMembersSet::iterator itr;
-		for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++)
+		for(uint32 i = 0; i < pGroup->GetSubGroupCount(); ++i)
 		{
 			for(itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
 			{
@@ -507,7 +507,7 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 	//we only take into count players that are near us, on same map
 	GroupMembersSet::iterator itr;
 	pGroup->Lock();
-	for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++) {
+	for(uint32 i = 0; i < pGroup->GetSubGroupCount(); ++i) {
 		for(itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
 		{
 			pGroupGuy = (*itr)->m_loggedInPlayer;
@@ -572,7 +572,7 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 
 		xp = CalculateXpToGive(pVictim, pHighLvlPlayer);
 		//i'm not sure about this formula is correct or not. Maybe some brackets are wrong placed ?
-		for(int i=0;i<active_player_count;i++)
+		for(int i=0;i<active_player_count;++i)
 			active_player_list[i]->GiveXP( float2int32(((xp*active_player_list[i]->getLevel()) / total_level)*xp_mod), pVictim->GetGUID(), true );
 	}
 }
@@ -2009,7 +2009,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 								stats[1] = GetUInt32Value(UNIT_FIELD_AGILITY);
 								stats[2] = GetUInt32Value(UNIT_FIELD_INTELLECT);
 								stats[3] = GetUInt32Value(UNIT_FIELD_SPIRIT);
-								for(uint32 i=0; i<4; i++)
+								for(uint32 i=0; i<4; ++i)
 								{
 									if(stats[i] > stats[maxstat])
 										maxstat = i;
@@ -2432,7 +2432,8 @@ void Unit::HandleProcDmgShield(uint32 flag, Unit* attacker)
 	std::list<DamageProc>::iterator i2;
 	for(i = m_damageShields.begin();i != m_damageShields.end();)     // Deal Damage to Attacker
 	{
-		i2 = i++; //we should not proc on proc.. not get here again.. not needed.Better safe then sorry.
+		i2 = i; //we should not proc on proc.. not get here again.. not needed.Better safe then sorry.
+		++i;
 		if(	((*i2).m_flags) & flag )
 		{
 			if( (*i2).m_flags & PROC_MISC )
@@ -5143,7 +5144,7 @@ void Unit::RemoveAllAreaAuras()
 	AuraList::iterator itr,it1;
 	for(itr = m_auras.begin();itr!=m_auras.end();)
 	{
-		it1 = itr++;
+		it1 = ++itr;
 		if(((*it1)->m_spellProto->Effect[0] == SPELL_EFFECT_APPLY_AREA_AURA ||
 			(*it1)->m_spellProto->Effect[1] == SPELL_EFFECT_APPLY_AREA_AURA ||
 			(*it1)->m_spellProto->Effect[2] == SPELL_EFFECT_APPLY_AREA_AURA) && (*it1)->GetCaster() != this)
@@ -5173,7 +5174,8 @@ uint32 Unit::AbsorbDamage( Object* Attacker, uint32 School, uint32* dmg, SpellEn
 			(*dmg) -= (*i)->amt;
 			abs += (*i)->amt;
 			reflect_pct += (*i)->reflect_pct;
-			j = i++;
+			j = i;
+			++i;
 
 			if( i != Absorbs[School].end() )
 			{
@@ -5228,7 +5230,7 @@ uint32 Unit::AbsorbDamage( Object* Attacker, uint32 School, uint32* dmg, SpellEn
 bool Unit::setDetectRangeMod(uint64 guid, int32 amount)
 {
 	int next_free_slot = -1;
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; ++i)
 	{
 		if(m_detectRangeGUID[i] == 0 && next_free_slot == -1)
 		{
@@ -5251,7 +5253,7 @@ bool Unit::setDetectRangeMod(uint64 guid, int32 amount)
 
 void Unit::unsetDetectRangeMod(uint64 guid)
 {
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; ++i)
 	{
 		if(m_detectRangeGUID[i] == guid)
 		{
@@ -5263,7 +5265,7 @@ void Unit::unsetDetectRangeMod(uint64 guid)
 
 int32 Unit::getDetectRangeMod(uint64 guid)
 {
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; ++i)
 	{
 		if(m_detectRangeGUID[i] == guid)
 		{
@@ -5696,7 +5698,7 @@ void Unit::RemoveFromWorld(bool free_guid)
 			si = m_auras[x]->GetSpellProto();
 			if( si != NULL)
 			{
-				for(uint8 i = 0 ; i < 3; i++)
+				for(uint8 i = 0 ; i < 3; ++i)
 				{
 					if(si->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA || si->Effect[i] == SPELL_EFFECT_APPLY_AURA_128)
 					{
@@ -6552,7 +6554,8 @@ void CombatStatusHandler::UpdateTargets()
 
 	for(; itr != m_attackTargets.end();)
 	{
-		it2 = itr++;
+		it2 = itr;
+		++itr;
 		if( it2->second <= mytm )
 		{
 			//printf("Timeout for attack target "I64FMT" on "I64FMT" expired.\n", it2->first, m_Unit->GetGUID());
@@ -6584,7 +6587,7 @@ Unit* CombatStatusHandler::GetKiller()
 	map<uint64,uint32>::iterator itr = DamageMap.begin();
 	uint64 killer_guid = 0;
 	uint32 mDamage = 0;
-	for(; itr != DamageMap.end(); itr++)
+	for(; itr != DamageMap.end(); ++itr)
 	{
 		if(itr->second > mDamage)
 		{
@@ -6785,7 +6788,7 @@ bool Unit::RemoveAllAurasByMechanic( uint32 MechanicType , uint32 MaxDispel = -1
 					}
 					else if( MechanicType == MECHANIC_ENSNARED ) // if got immunity for slow, remove some that are not in the mechanics
 					{
-						for( int i=0 ; i<3 ; i++ )
+						for( int i=0 ; i<3 ; ++i )
 						{
 							// SNARE + ROOT
 							if( m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
@@ -7065,7 +7068,7 @@ uint32 Unit::DoDamageSplitTarget(uint32 res, uint32 school_type, bool melee_dmg)
 
 void Unit::RemoveExtraStrikeTarget(SpellEntry *spell_info)
 {
-	for(std::list<ExtraStrike*>::iterator i = m_extraStrikeTargets.begin();i != m_extraStrikeTargets.end();i++)
+	for(std::list<ExtraStrike*>::iterator i = m_extraStrikeTargets.begin();i != m_extraStrikeTargets.end();++i)
 	{
 		if((*i)->deleted == false && spell_info == (*i)->spell_info)
 		{
@@ -7077,7 +7080,7 @@ void Unit::RemoveExtraStrikeTarget(SpellEntry *spell_info)
 
 void Unit::AddExtraStrikeTarget(SpellEntry *spell_info, uint32 charges)
 {
-	for(std::list<ExtraStrike*>::iterator i = m_extraStrikeTargets.begin();i != m_extraStrikeTargets.end();i++)
+	for(std::list<ExtraStrike*>::iterator i = m_extraStrikeTargets.begin();i != m_extraStrikeTargets.end();++i)
 	{
 		//a pointer check or id check ...should be the same
 		if(spell_info == (*i)->spell_info)

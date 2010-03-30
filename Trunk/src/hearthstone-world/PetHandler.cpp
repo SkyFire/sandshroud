@@ -355,7 +355,7 @@ void WorldSession::HandleStabledPetList(WorldPacket & recv_data)
 		}
 		data << uint8(STABLE_STATE_PASSIVE + i);
 		itr->second->stablestate = STABLE_STATE_PASSIVE; //if it ain't active it must be passive ;)
-		i++;
+		++i;
 		if(i>3)//we only have 4 stable slots
 			break;
 	}

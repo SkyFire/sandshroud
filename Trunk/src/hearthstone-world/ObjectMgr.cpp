@@ -178,16 +178,21 @@ ObjectMgr::~ObjectMgr()
 		
 	Log.Notice("ObjectMgr", "Deleting Profession Discoveries...");
 	std::set<ProfessionDiscovery*>::iterator itr = ProfessionDiscoveryTable.begin();
-	for ( ; itr != ProfessionDiscoveryTable.end(); itr++ )
+	for ( ; itr != ProfessionDiscoveryTable.end(); ++itr )
 		delete (*itr);	
 		
 	Log.Notice("ObjectMgr", "Deleting Achievement Cache...");
 	for(AchievementCriteriaMap::iterator itr = m_achievementCriteriaMap.begin(); itr != m_achievementCriteriaMap.end(); ++itr)
 		delete (itr->second);
 
-	Log.Notice("ObjectMgr", "Deleting Achievement Quest Map...");
-	for(map<uint32,set<Quest*>*>::iterator qitr = ZoneToQuestMap.begin(); qitr != ZoneToQuestMap.end(); ++qitr)
-		delete qitr->second;
+	Log.Notice("ObjectMgr", "Deleting Achievement Map...");
+	AchievementEntry* ae;
+	for(uint32 i = 0; i < dbcAchivementCriteria.GetNumRows(); ++i)
+	{
+		ae = dbcAchievement.LookupRow(i);
+		if(ae)
+			delete ae->AssociatedCriteria;
+	}
 
 	Log.Notice("ObjectMgr", "Deleting Pet Levelup Spells...");
 	for(PetLevelupSpellMap::iterator itr = mPetLevelupSpellMap.begin(); itr != mPetLevelupSpellMap.end(); ++itr)
@@ -203,6 +208,7 @@ void ObjectMgr::LoadAchievements()
 		AchievementEntry * ae = dbcAchievement.LookupRow(i);
 		if(ae)
 		{
+			ae->AssociatedCriteria = new vector<uint32>;
 			ae->AssociatedCriteriaCount = 0;
 		}
 	}
@@ -230,36 +236,11 @@ void ObjectMgr::LoadAchievements()
 			AchievementEntry * ae = dbcAchievement.LookupEntryForced( ace->referredAchievement );
 			if( ae )
 			{
-				if(ae->AssociatedCriteriaCount >= 32) continue;
-				ae->AssociatedCriteria[ ae->AssociatedCriteriaCount ] = ace->ID;
+				ae->AssociatedCriteria->push_back( ace->ID );
 				ae->AssociatedCriteriaCount++;
 			}
 		}
 	}
-
-	// For Achievements: Complete Quest by Zone Id
-	StorageContainerIterator<Quest> * itr = QuestStorage.MakeIterator();
-	for(; !itr->AtEnd(); itr->Inc() )
-	{
-		Quest * pQuest = itr->Get();
-		if(!pQuest) continue;
-
-		uint32 QuestZone = pQuest->zone_id;
-		map<uint32,set<Quest*>*>::iterator qitr = ZoneToQuestMap.find( QuestZone );
-		if( qitr == ZoneToQuestMap.end() )
-		{
-			// We don't have any entries for this zone yet.
-			set<Quest*>* mySet = new set<Quest*>;
-			mySet->insert( pQuest );
-			ZoneToQuestMap.insert( make_pair( QuestZone, mySet ) );
-		}
-		else
-		{
-			set<Quest*>* thisSet = qitr->second;
-			thisSet->insert( pQuest );
-		}
-	}
-	itr->Destruct();
 }
 
 //
@@ -388,7 +369,7 @@ void ObjectMgr::LoadSpellSkills()
 	uint32 i;
 //	int total = sSkillStore.GetNumRows();
 
-	for(i = 0; i < dbcSkillLineSpell.GetNumRows(); i++)
+	for(i = 0; i < dbcSkillLineSpell.GetNumRows(); ++i)
 	{
 		skilllinespell *sp = dbcSkillLineSpell.LookupRow(i);
 		if (sp)
@@ -493,11 +474,12 @@ void ObjectMgr::LoadPlayerCreateInfo()
 		return;
 	}
 
-	 if( result->GetFieldCount() < 24 )
-	 {
+	if( result->GetFieldCount() < 24 )
+	{
 		 Log.Error("PlayerCreateInfo", "Incorrect number of columns in playercreateinfo found %u, should be 24. check for sql updates", result->GetFieldCount());
+		 delete result;
 		 return;
-	 }
+	}
 
 	PlayerCreateInfo *pPlayerCreateInfo;
 
@@ -684,7 +666,6 @@ Corpse* ObjectMgr::GetCorpseByOwner(uint32 ownerguid)
 	}
 	_corpseslock.Release();
 
-
 	return rv;
 }
 
@@ -733,9 +714,7 @@ void ObjectMgr::SaveGMTicket(uint64 guid, QueryBuffer * buf)
 {
 	GM_Ticket* ticket = GetGMTicket(guid);
 	if(!ticket)
-	{
 		return;
-	}
 
 	std::stringstream ss1;
 	std::stringstream ss2;
@@ -833,10 +812,9 @@ void ObjectMgr::SetHighestGuids()
 	Log.Notice("ObjectMgr", "HighGuid(GUILD) = %u", m_hiGuildId);
 }
 
-
 uint32 ObjectMgr::GenerateMailID()
 {
-	return m_mailid++;
+	return ++m_mailid;
 }
 uint32 ObjectMgr::GenerateLowGuid(uint32 guidhigh)
 {
@@ -929,7 +907,7 @@ Player* ObjectMgr::GetPlayer(uint32 guid)
 PlayerCreateInfo* ObjectMgr::GetPlayerCreateInfo(uint8 race, uint8 class_) const
 {
 	PlayerCreateInfoMap::const_iterator itr;
-	for (itr = mPlayerCreateInfo.begin(); itr != mPlayerCreateInfo.end(); itr++)
+	for (itr = mPlayerCreateInfo.begin(); itr != mPlayerCreateInfo.end(); ++itr)
 	{
 		if( (itr->second->race == race) && (itr->second->class_ == class_) )
 			return itr->second;
@@ -972,7 +950,7 @@ Guild* ObjectMgr::GetGuild(uint32 guildId)
 Guild* ObjectMgr::GetGuildByLeaderGuid(uint64 leaderGuid)
 {
 	GuildMap::const_iterator itr;
-	for (itr = mGuild.begin();itr != mGuild.end(); itr++)
+	for (itr = mGuild.begin();itr != mGuild.end(); ++itr)
 	{
 		if( itr->second->GetGuildLeader() == leaderGuid )
 			return itr->second;
@@ -983,7 +961,7 @@ Guild* ObjectMgr::GetGuildByLeaderGuid(uint64 leaderGuid)
 Guild* ObjectMgr::GetGuildByGuildName(std::string guildName)
 {
 	GuildMap::const_iterator itr;
-	for (itr = mGuild.begin();itr != mGuild.end(); itr++)
+	for (itr = mGuild.begin();itr != mGuild.end(); ++itr)
 	{
 		if( itr->second->GetGuildName() == guildName )
 			return itr->second;
@@ -1008,13 +986,9 @@ void ObjectMgr::remGMTicket(uint64 guid)
 	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
 	{
 		if((*i)->guid == guid)
-		{
 			i = GM_TicketList.erase(i);
-		}
 		else
-		{
 			++i;
-		}
 	}
 
 	// kill from db
@@ -1023,12 +997,10 @@ void ObjectMgr::remGMTicket(uint64 guid)
 
 GM_Ticket* ObjectMgr::GetGMTicket(uint64 guid)
 {
-	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end(); i++)
+	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end(); ++i)
 	{
 		if((*i)->guid == guid)
-		{
 			return (*i);
-		}
 	}
 	return NULL;
 }
@@ -1045,6 +1017,7 @@ void ObjectMgr::LoadVendors()
 		if( result->GetFieldCount() < 6 )
 		{
 			Log.Notice("ObjectMgr", "Invalid format in vendors (%u/5) columns, not enough data to proceed.\n", result->GetFieldCount() );
+			delete result;
 			return;
 		}
 		else if( result->GetFieldCount() > 6 )
@@ -1116,9 +1089,7 @@ void ObjectMgr::LoadTotemSpells()
 	QueryResult *result = WorldDatabase.Query( "SELECT * FROM totemspells" );
 
 	if(!result)
-	{
 		return;
-	}
 
 	//TotemSpells *ts = NULL;
 	SpellEntry * sp;
@@ -1148,9 +1119,7 @@ void ObjectMgr::LoadAIThreatToSpellId()
 	QueryResult *result = WorldDatabase.Query( "SELECT * FROM ai_threattospellid" );
 
 	if(!result)
-	{
 		return;
-	}
 
 	uint32 spellid;
 	SpellEntry * sp;
@@ -1188,6 +1157,7 @@ void ObjectMgr::LoadSpellFixes()
 		if( result->GetFieldCount() != 13 )
 		{
 			Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Incorrect column count at spellfixes, skipping, please fix it.", "", NULL);
+			delete result;
 			return;
 		}
 
@@ -1225,7 +1195,7 @@ void ObjectMgr::LoadSpellFixes()
 					if ( sf_procCharges )
 						sp->procCharges = sf_procCharges;
 
-					for (i=0; i<3; i++)
+					for (i=0; i<3; ++i)
 						for (j=0; j<3; j++)
 							if (sf_effectClassMask[i][j])
 								sp->EffectSpellClassMask[i][j] = sf_effectClassMask[i][j];
@@ -1244,7 +1214,8 @@ void ObjectMgr::LoadSpellFixes()
 Item* ObjectMgr::CreateItem(uint32 entry,Player* owner)
 {
 	ItemPrototype * proto = ItemPrototypeStorage.LookupEntry(entry);
-	if(proto == 0) return NULLITEM;
+	if(!proto)
+		return NULLITEM;
 
 	if(proto->InventoryType == INVTYPE_BAG)
 	{
@@ -1287,7 +1258,7 @@ Item* ObjectMgr::LoadItem(uint64 guid)
 		}
 		delete result;
 	}
-	
+
 	return pReturn;
 }
 
@@ -1330,9 +1301,7 @@ std::list<ItemPrototype*>* ObjectMgr::GetListForItemSet(uint32 setid)
 void ObjectMgr::CorpseAddEventDespawn(Corpse* pCorpse)
 {
 	if(!pCorpse->IsInWorld())
-	{
 		pCorpse->Destructor();
-	}
 	else
 		sEventMgr.AddEvent(pCorpse->GetMapMgr(), &MapMgr::EventCorpseDespawn, pCorpse->GetGUID(), EVENT_CORPSE_DESPAWN, 600000, 1,0);
 }
@@ -1340,9 +1309,9 @@ void ObjectMgr::CorpseAddEventDespawn(Corpse* pCorpse)
 void ObjectMgr::DespawnCorpse(uint64 Guid)
 {
 	Corpse* pCorpse = objmgr.GetCorpse((uint32)Guid);
-	if(pCorpse == 0)	// Already Deleted
+	if(!pCorpse)	// Already Deleted
 		return;
-	
+
 	pCorpse->Despawn();
 	pCorpse->Destructor();
 }
@@ -1525,6 +1494,8 @@ void ObjectMgr::LoadTrainers()
 		if(result2->GetFieldCount() != 10)
 		{
 			Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Trainers table format is invalid. Please update your database.");
+			delete result;
+			delete result2;
 			return;
 		}
 		else
@@ -1862,9 +1833,7 @@ void ObjectMgr::LoadSpellOverride()
 	QueryResult *result = WorldDatabase.Query( "SELECT DISTINCT overrideId FROM spelloverride" );
 
 	if(!result)
-	{
 		return;
-	}
 
 //	int num = 0;
 //	uint32 total =(uint32) result->GetRowCount();
@@ -2141,7 +2110,9 @@ void ObjectMgr::LoadGuildCharters()
 {
 	m_hiCharterId = 0;
 	QueryResult * result = CharacterDatabase.Query("SELECT * FROM charters");
-	if(!result) return;
+	if(!result)
+		return;
+
 	do 
 	{
 		Charter * c = new Charter(result->Fetch());
@@ -2187,7 +2158,7 @@ Charter::Charter(Field * fields)
 
 	for(uint32 i = 0; i < Slots; ++i)
 	{
-		Signatures[i] = fields[f++].GetUInt32();
+		Signatures[i] = fields[++f].GetUInt32();
 		if(Signatures[i])
 		{
 			PlayerInfo * inf = objmgr.GetPlayerInfo(Signatures[i]);
@@ -2208,7 +2179,7 @@ void Charter::AddSignature(uint32 PlayerGuid)
 	if(SignatureCount >= Slots)
 		return;
 
-	SignatureCount++;
+	++SignatureCount;
 	uint32 i;
 	for(i = 0; i < Slots; ++i)
 	{
@@ -2229,7 +2200,7 @@ void Charter::RemoveSignature(uint32 PlayerGuid)
 		if(Signatures[i] == PlayerGuid)
 		{
 			Signatures[i] = 0;
-			SignatureCount--;
+			--SignatureCount;
 			SaveToDB();
 			break;
 		}
@@ -2416,7 +2387,8 @@ ReputationModifier * ObjectMgr::GetReputationModifier(uint32 entry_id, uint32 fa
 void ObjectMgr::LoadMonsterSay()
 {
 	QueryResult * result = WorldDatabase.Query("SELECT * FROM npc_monstersay");
-	if(!result) return;
+	if(!result)
+		return;
 
 	uint32 Entry, Event;
 	Field * fields = result->Fetch();
@@ -2506,7 +2478,8 @@ bool ObjectMgr::HasMonsterSay(uint32 Entry, MONSTER_SAY_EVENTS Event)
 void ObjectMgr::LoadInstanceReputationModifiers()
 {
 	QueryResult * result = WorldDatabase.Query("SELECT * FROM reputation_instance_onkill");
-	if(!result) return;
+	if(!result)
+		return;
 
 	do 
 	{
@@ -2535,8 +2508,8 @@ void ObjectMgr::LoadInstanceReputationModifiers()
 			itr->second->mods.push_back(mod);
 
 	} while(result->NextRow());
-	delete result;
 	Log.Notice("ObjectMgr", "%u instance reputation modifiers loaded.", m_reputation_instance.size());
+	delete result;
 }
 
 bool ObjectMgr::HandleInstanceReputationModifiers(Player* pPlayer, Unit* pVictim)
@@ -2629,7 +2602,7 @@ void ObjectMgr::LoadGroups()
 void ObjectMgr::LoadArenaTeams()
 {
 	QueryResult * result = CharacterDatabase.Query("SELECT * FROM arenateams");
-	if(result != NULL)
+	if(result)
 	{
 		do 
 		{
@@ -2752,7 +2725,7 @@ void ObjectMgr::ResetDailies()
 {
 	_playerslock.AcquireReadLock();
 	PlayerStorageMap::iterator itr = _players.begin();
-	for(; itr != _players.end(); itr++)
+	for(; itr != _players.end(); ++itr)
 	{
 		Player* pPlayer = itr->second;
 		uint8 eflags = 0;

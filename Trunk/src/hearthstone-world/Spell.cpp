@@ -27,9 +27,9 @@ extern pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET];
 
 enum SpellTargetSpecification
 {
-    TARGET_SPECT_NONE       = 0,
-    TARGET_SPEC_INVISIBLE   = 1,
-    TARGET_SPEC_DEAD        = 2,
+	TARGET_SPECT_NONE	   = 0,
+	TARGET_SPEC_INVISIBLE   = 1,
+	TARGET_SPEC_DEAD		= 2,
 };
 
 void SpellCastTargets::read( WorldPacket & data, uint64 caster )
@@ -103,10 +103,10 @@ void SpellCastTargets::write( WorldPacket& data )
 	data << m_targetMask;
 
 	if( m_targetMask & (TARGET_FLAG_UNIT | TARGET_FLAG_CORPSE | TARGET_FLAG_CORPSE2 | TARGET_FLAG_OBJECT | TARGET_FLAG_GLYPH) )
-        FastGUIDPack( data, m_unitTarget );
+		FastGUIDPack( data, m_unitTarget );
 
-    if( m_targetMask & ( TARGET_FLAG_ITEM | TARGET_FLAG_TRADE_ITEM ) )
-        FastGUIDPack( data, m_itemTarget );
+	if( m_targetMask & ( TARGET_FLAG_ITEM | TARGET_FLAG_TRADE_ITEM ) )
+		FastGUIDPack( data, m_itemTarget );
 
 	if( m_targetMask & TARGET_FLAG_SOURCE_LOCATION )
 		data << m_srcX << m_srcY << m_srcZ;
@@ -314,64 +314,64 @@ bool Spell::IsInvisibilitySpell()
 
 void Spell::FillSpecifiedTargetsInArea( float srcx, float srcy, float srcz, uint32 ind, uint32 specification )
 {
-    FillSpecifiedTargetsInArea( ind, srcx, srcy, srcz, GetRadius(ind), specification );
+	FillSpecifiedTargetsInArea( ind, srcx, srcy, srcz, GetRadius(ind), specification );
 }
 
 // for the moment we do invisible targets
 void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz, float range, uint32 specification)
 {
 	//TargetsList *tmpMap=&m_targetUnits[i];
-    //InStealth()
-    float r = range * range;
+	//InStealth()
+	float r = range * range;
 	//uint8 did_hit_result;
-    for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
-    {
-        // don't add objects that are not units and that are dead
-        if( !( (*itr)->IsUnit() ) || ! TO_UNIT( *itr )->isAlive())
-            continue;
-        
-        //TO_UNIT(*itr)->InStealth()
-        if( m_spellInfo->TargetCreatureType)
-        {
-            if((*itr)->GetTypeId()!= TYPEID_UNIT)
-                continue;
-            CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-            if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
-                continue;
-        }
+	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	{
+		// don't add objects that are not units and that are dead
+		if( !( (*itr)->IsUnit() ) || ! TO_UNIT( *itr )->isAlive())
+			continue;
+		
+		//TO_UNIT(*itr)->InStealth()
+		if( m_spellInfo->TargetCreatureType)
+		{
+			if((*itr)->GetTypeId()!= TYPEID_UNIT)
+				continue;
+			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
+			if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
+				continue;
+		}
 
-        if(IsInrange(srcx,srcy,srcz,(*itr),r))
-        {
-            if( u_caster != NULL )
-            {
-                if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
-                {
+		if(IsInrange(srcx,srcy,srcz,(*itr),r))
+		{
+			if( u_caster != NULL )
+			{
+				if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+				{
 					_AddTarget((TO_UNIT(*itr)), i);
-                }
+				}
 
-            }
-            else //cast from GO
-            {
-                if(g_caster && g_caster->GetUInt32Value(OBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
-                {
-                    //trap, check not to attack owner and friendly
-                    if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
-                        _AddTarget((TO_UNIT(*itr)), i);
-                }
-                else
-                    _AddTargetForced((*itr)->GetGUID(), i);
-            }
-            if( m_spellInfo->MaxTargets)
-            {
-                if( m_hitTargetCount >= m_spellInfo->MaxTargets )
-                    return;
-            }
-        }
-    }
+			}
+			else //cast from GO
+			{
+				if(g_caster && g_caster->GetUInt32Value(OBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
+				{
+					//trap, check not to attack owner and friendly
+					if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+						_AddTarget((TO_UNIT(*itr)), i);
+				}
+				else
+					_AddTargetForced((*itr)->GetGUID(), i);
+			}
+			if( m_spellInfo->MaxTargets)
+			{
+				if( m_hitTargetCount >= m_spellInfo->MaxTargets )
+					return;
+			}
+		}
+	}
 }
 void Spell::FillAllTargetsInArea(LocationVector & location,uint32 ind)
 {
-    FillAllTargetsInArea(ind,location.x,location.y,location.z,GetRadius(ind));
+	FillAllTargetsInArea(ind,location.x,location.y,location.z,GetRadius(ind));
 }
 
 void Spell::FillAllTargetsInArea(float srcx,float srcy,float srcz,uint32 ind)
@@ -385,7 +385,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range*range;
 	//uint8 did_hit_result;
-	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 	{
 		if( !( (*itr)->IsUnit() ) || ! TO_UNIT(*itr)->isAlive() || ( (*itr)->GetTypeId()==TYPEID_UNIT && TO_CREATURE(*itr)->IsTotem() ) || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
@@ -431,7 +431,7 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range * range;
 	//uint8 did_hit_result;
-	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 	{
 		if( !((*itr)->IsUnit()) || !TO_UNIT(*itr)->isAlive() || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
@@ -487,7 +487,7 @@ uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
 		}
 	}
 	float srcx = m_caster->GetPositionX(), srcy = m_caster->GetPositionY(), srcz = m_caster->GetPositionZ();
-	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 	{
 		if( !( (*itr)->IsUnit() ) || !TO_UNIT(*itr)->isAlive() || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
@@ -536,7 +536,7 @@ uint64 Spell::GetSinglePossibleFriend(uint32 i,float prange)
 		}
 	}
 	float srcx=m_caster->GetPositionX(),srcy=m_caster->GetPositionY(),srcz=m_caster->GetPositionZ();
-	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 	{
 		if( !( (*itr)->IsUnit() ) || !TO_UNIT(*itr)->isAlive() )
 			continue;
@@ -584,31 +584,31 @@ uint8 Spell::_DidHit(const Unit* target)
 
 
 	/************************************************************************/
-	/* Can't resist non-unit                                                */
+	/* Can't resist non-unit												*/
 	/************************************************************************/
 	if(!u_caster)
 		return SPELL_DID_HIT_SUCCESS;
 
 	/************************************************************************/
-	/* Can't reduce your own spells                                         */
+	/* Can't reduce your own spells										 */
 	/************************************************************************/
 	if(u_caster == u_victim)
 		return SPELL_DID_HIT_SUCCESS;
 
 	/************************************************************************/
-	/* Check if the unit is evading                                         */
+	/* Check if the unit is evading										 */
 	/************************************************************************/
 	if(u_victim->GetTypeId()==TYPEID_UNIT && u_victim->GetAIInterface()->getAIState()==STATE_EVADE)
 		return SPELL_DID_HIT_EVADE;
 
 	/************************************************************************/
-	/* Check if the target is immune to this spell school                   */
+	/* Check if the target is immune to this spell school				   */
 	/************************************************************************/
 	if(u_victim->SchoolImmunityList[m_spellInfo->School])
 		return SPELL_DID_HIT_IMMUNE;
 	
 	/*************************************************************************/
-	/* Check if the target is immune to this mechanic                        */
+	/* Check if the target is immune to this mechanic						*/
 	/*************************************************************************/
 	if(u_victim->MechanicsDispels[m_spellInfo->MechanicsType])
 	{
@@ -616,7 +616,7 @@ uint8 Spell::_DidHit(const Unit* target)
 	}
 
 	/************************************************************************/
-	/* Check if the target has a % resistance to this mechanic              */
+	/* Check if the target has a % resistance to this mechanic			  */
 	/************************************************************************/
 	if( m_spellInfo->MechanicsType < MECHANIC_COUNT)
 	{
@@ -630,7 +630,7 @@ uint8 Spell::_DidHit(const Unit* target)
 	}
 
 	/************************************************************************/
-	/* Check if the spell is a melee attack and if it was missed/parried    */
+	/* Check if the spell is a melee attack and if it was missed/parried	*/
 	/************************************************************************/
 	uint32 melee_test_result;
 	if( m_spellInfo->is_melee_spell || m_spellInfo->is_ranged_spell )
@@ -652,7 +652,7 @@ uint8 Spell::_DidHit(const Unit* target)
 	}
 
 	/************************************************************************/
-	/* Check if the spell is resisted.                                      */
+	/* Check if the spell is resisted.									  */
 	/************************************************************************/
 	if( m_spellInfo->School==0  || m_spellInfo->is_ranged_spell ) // all ranged spells are physical too...
 		return SPELL_DID_HIT_SUCCESS;
@@ -744,7 +744,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 		SM_PFValue(u_caster->SM[SMT_RADIUS][1],&r,m_spellInfo->SpellGroupType);
 	}
 	uint32 cur;
-	for(uint32 i=0;i<3;i++)
+	for(uint32 i=0;i<3;++i)
 		for(uint32 j=0;j<2;j++)
 		{
 			if(j==0)
@@ -799,7 +799,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 								//try to get most hated creature
 								TargetMap *m_aiTargets = u_caster->GetAIInterface()->GetAITargets();
 								TargetMap::iterator itr;
-								for(itr = m_aiTargets->begin(); itr != m_aiTargets->end();itr++)
+								for(itr = m_aiTargets->begin(); itr != m_aiTargets->end();++itr)
 								{
 									if( /*m_caster->GetMapMgr()->GetUnit(itr->first->GetGUID()) &&*/ itr->first->GetMapMgr() == m_caster->GetMapMgr() && 
 										itr->first->isAlive() &&
@@ -1295,7 +1295,7 @@ void Spell::cast(bool check)
 				return; 
 			}
 			
-			for(uint32 i=0;i<3;i++)
+			for(uint32 i=0;i<3;++i)
 			{
 				if( m_spellInfo->Effect[i])
 					 FillTargetMap(i);
@@ -1367,9 +1367,9 @@ void Spell::cast(bool check)
 
 			if (m_spellInfo->Flags4 & 0x8000 && m_caster->IsPlayer() && m_caster->IsInWorld())
 			{
-                /// Part of this function contains a hack fix
-                /// hack fix for shoot spells, should be some other resource for it
-                //p_caster->SendSpellCoolDown(m_spellInfo->Id, m_spellInfo->RecoveryTime ? m_spellInfo->RecoveryTime : 2300);
+				/// Part of this function contains a hack fix
+				/// hack fix for shoot spells, should be some other resource for it
+				//p_caster->SendSpellCoolDown(m_spellInfo->Id, m_spellInfo->RecoveryTime ? m_spellInfo->RecoveryTime : 2300);
 				WorldPacket data(SMSG_SPELL_COOLDOWN, 14);
 				data << m_spellInfo->Id;
 				data << p_caster->GetNewGUID();
@@ -1477,7 +1477,7 @@ void Spell::cast(bool check)
 				itemTarget = p_caster->GetItemInterface()->GetItemByGUID(m_targets.m_itemTarget);
 		}
 
-        // if the spell is not reflected
+		// if the spell is not reflected
 		SpellTargetList::iterator itr = m_targetList.begin();
 		uint32 x;
 		bool effects_done[3];
@@ -1895,7 +1895,7 @@ void Spell::finish()
 	if( u_caster != NULL )
 	{
 		u_caster->m_canMove = true;
-		// mana           channeled                                                     power type is mana
+		// mana		   channeled													 power type is mana
 		if(m_usesMana && (m_spellInfo->ChannelInterruptFlags == 0 && !m_triggeredSpell) && u_caster->GetPowerType()==POWER_TYPE_MANA)
 		{
 			/*
@@ -2022,7 +2022,7 @@ void Spell::SendCastResult(uint8 result)
 			uint16 area_id = plr->GetMapMgr()->GetAreaID( plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 			AreaGroup *GroupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
 
-			for( uint8 i = 0; i < 7; i++ )
+			for( uint8 i = 0; i < 7; ++i )
 				if( GroupEntry->AreaId[i] != 0 && GroupEntry->AreaId[i] != area_id )
 				{
 					Extra = GroupEntry->AreaId[i];
@@ -2084,7 +2084,7 @@ enum SpellStartFlags
 	SPELL_START_FLAGS_UNKNOWN19			= 0x00080000,
 	SPELL_START_FLAGS_UNKNOWN20			= 0x00100000,
 	SPELL_START_FLAGS_RUNE_UPDATE		= 0x00200000,
-    SPELL_START_FLAGS_UNKNOWN21			= 0x00400000,
+	SPELL_START_FLAGS_UNKNOWN21			= 0x00400000,
 };
 
 void Spell::SendSpellStart()
@@ -2188,12 +2188,12 @@ void Spell::SendSpellStart()
 }
 
 /************************************************************************/
-/* General Spell Go Flags, for documentation reasons                    */
+/* General Spell Go Flags, for documentation reasons					*/
 /************************************************************************/
 enum SpellGoFlags
 {
 	SPELL_GO_FLAGS_NONE					= 0x00000000,
-	SPELL_GO_FLAGS_UNKNOWN0				= 0x00000001,              // may be pending spell cast
+	SPELL_GO_FLAGS_UNKNOWN0				= 0x00000001,			  // may be pending spell cast
 	SPELL_GO_FLAGS_UNKNOWN1				= 0x00000002,
 	SPELL_GO_FLAGS_UNKNOWN2				= 0x00000004,
 	SPELL_GO_FLAGS_UNKNOWN3				= 0x00000008,
@@ -2210,7 +2210,7 @@ enum SpellGoFlags
 	SPELL_GO_FLAGS_UNKNOWN14			= 0x00004000,
 	SPELL_GO_FLAGS_UNKNOWN15			= 0x00008000,
 	SPELL_GO_FLAGS_UNKNOWN16			= 0x00010000,
-    SPELL_GO_FLAGS_UNKNOWN17			= 0x00020000,
+	SPELL_GO_FLAGS_UNKNOWN17			= 0x00020000,
 	SPELL_GO_FLAGS_UNKNOWN18			= 0x00040000,
 	SPELL_GO_FLAGS_UNKNOWN19			= 0x00080000,
 	SPELL_GO_FLAGS_UNKNOWN20			= 0x00100000,
@@ -2220,9 +2220,9 @@ enum SpellGoFlags
 
 void Spell::SendSpellGo()
 {
-    // no need to send this on passive spells
-    if( !m_caster->IsInWorld() || m_spellInfo->Attributes & 64 )
-        return;
+	// no need to send this on passive spells
+	if( !m_caster->IsInWorld() || m_spellInfo->Attributes & 64 )
+		return;
 
 	ItemPrototype* ip = NULL;
 	uint32 cast_flags = (m_triggeredSpell && !(m_spellInfo->Attributes & ATTRIBUTE_ON_NEXT_ATTACK)) ? 0x0105 : 0x0100;
@@ -2282,7 +2282,7 @@ void Spell::SendSpellGo()
 	data << getMSTime();
 
 	/************************************************************************/
-	/* spell go targets                                                     */
+	/* spell go targets													 */
 	/************************************************************************/
 	// Make sure we don't hit over 100 targets.
 	// It's fine internally, but sending it to the client will REALLY cause it to freak.
@@ -2818,7 +2818,7 @@ void Spell::HandleAddAura(uint64 guid)
 		return;
 
 	// Applying an aura to a flagged target will cause you to get flagged.
-    // self casting doesnt flag himself.
+	// self casting doesnt flag himself.
 	if(Target->IsPlayer() && p_caster && p_caster != TO_PLAYER(Target))
 	{
 		if(TO_PLAYER(Target)->IsPvPFlagged())
@@ -3364,7 +3364,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 		// check if we have the required reagents
 		if( CheckReagents && (!i_caster || (i_caster->GetProto() && i_caster->GetProto()->Flags != 268435520)) )
-			for(i=0; i<8 ;i++)
+			for(i=0; i<8 ;++i)
 			{
 				if( m_spellInfo->Reagent[i] <= 0 || m_spellInfo->ReagentCount[i] <= 0)
 					continue;
@@ -3425,7 +3425,7 @@ uint8 Spell::CanCast(bool tolerate)
 			float focusRange;
 			bool found = false;
 
-			for( unordered_set<Object*>::iterator itr = p_caster->GetInRangeSetBegin(); itr != p_caster->GetInRangeSetEnd(); itr++ )
+			for( unordered_set<Object*>::iterator itr = p_caster->GetInRangeSetBegin(); itr != p_caster->GetInRangeSetEnd(); ++itr )
 			{
 				if((*itr)->GetTypeId() != TYPEID_GAMEOBJECT)
 					continue;
@@ -3470,7 +3470,7 @@ uint8 Spell::CanCast(bool tolerate)
 			AreaGroup const* groupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
 			if( groupEntry )
 			{
-				for ( uint8 i=0; i<7; i++ )
+				for ( uint8 i=0; i<7; ++i )
 				{
 					if( groupEntry->AreaId[i] == zone_id || groupEntry->AreaId[i] == area_id )
 					{
@@ -3921,7 +3921,7 @@ uint8 Spell::CanCast(bool tolerate)
 				
 				// Removed by Supalosa and moved to 'completed cast'
 				//if(target->MechanicsDispels[m_spellInfo->MechanicsType])
-				//	return SPELL_FAILED_PREVENTED_BY_MECHANIC-1; // Why not just use 	SPELL_FAILED_DAMAGE_IMMUNE                                   = 144,
+				//	return SPELL_FAILED_PREVENTED_BY_MECHANIC-1; // Why not just use 	SPELL_FAILED_DAMAGE_IMMUNE								   = 144,
 			}
 
 			// if we're replacing a higher rank, deny it
@@ -4051,7 +4051,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 		if(target != NULL) /* -Supalosa- Shouldn't this be handled on Spell Apply? */
 		{
-			for( int i = 0; i < 3; i++ ) // if is going to cast a spell that breaks stun remove stun auras, looks a bit hacky but is the best way i can find
+			for( int i = 0; i < 3; ++i ) // if is going to cast a spell that breaks stun remove stun auras, looks a bit hacky but is the best way i can find
 			{
 				if( m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MECHANIC_IMMUNITY )
 				{
@@ -4168,7 +4168,7 @@ void Spell::RemoveItems()
 		}
 		// Expendable Item
 		else if(i_caster->GetProto()->Spells[0].Charges < 0
-		     || i_caster->GetProto()->Spells[1].Charges == -1) // hackfix for healthstones/mana gems/depleted items
+			 || i_caster->GetProto()->Spells[1].Charges == -1) // hackfix for healthstones/mana gems/depleted items
 		{
 			// if item has charges remaining -> remove 1 charge
 			if(((int32)i_caster->GetUInt32Value(ITEM_FIELD_SPELL_CHARGES)) < -1)
@@ -4201,7 +4201,7 @@ void Spell::RemoveItems()
 	}
 
 	// Reagent Removal
-	for(uint32 i=0; i<8 ;i++)
+	for(uint32 i=0; i<8 ;++i)
 	{
 		if( p_caster && m_spellInfo->Reagent[i])
 		{
@@ -4228,7 +4228,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 
 	int32 value = 0;
 
-	float basePointsPerLevel    = m_spellInfo->EffectRealPointsPerLevel[i];
+	float basePointsPerLevel	= m_spellInfo->EffectRealPointsPerLevel[i];
 	float randomPointsPerLevel  = 1;
 	int32 basePoints = m_spellInfo->EffectBasePoints[i] + 1;
 	int32 randomPoints = m_spellInfo->EffectDieSides[i];
@@ -4240,7 +4240,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 	/* Random suffix value calculation */
 	/*if(i_caster && (int32(i_caster->GetUInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID)) < 0))
 	{
-        ItemRandomSuffixEntry * si = dbcItemRandomSuffix.LookupEntry(abs(int32(i_caster->GetUInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID))));
+		ItemRandomSuffixEntry * si = dbcItemRandomSuffix.LookupEntry(abs(int32(i_caster->GetUInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID))));
 		EnchantEntry * ent;
 		uint32 j,k;
 
@@ -4389,7 +4389,7 @@ exit:*/
 			for(itrSO = itr->second->begin(); itrSO != itr->second->end(); ++itrSO)
 			{
 				//DK:FIXME->yeni bir map olu�tur
-                // Capt: WHAT THE FUCK DOES THIS MEAN....
+				// Capt: WHAT THE FUCK DOES THIS MEAN....
 				// Supa: WHAT THE FUCK DOES THIS MEAN?
 				// Crow: FOUND OUT WHAT IT MEANS! yeni bir map olu tur = map it with a new round
 				value += RandomUInt((*itrSO)->damage);
@@ -4480,8 +4480,8 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 
 void Spell::CreateItem(uint32 itemId)
 {
-    if( !itemId )
-        return;
+	if( !itemId )
+		return;
 
 	Player* 			pUnit = TO_PLAYER( m_caster );
 	Item* 			newItem = NULLITEM;
@@ -4491,7 +4491,7 @@ void Spell::CreateItem(uint32 itemId)
 
 	m_itemProto = ItemPrototypeStorage.LookupEntry( itemId );
 	if( m_itemProto == NULL )
-	    return;
+		return;
 
 	if (pUnit->GetItemInterface()->CanReceiveItem(m_itemProto, 1, NULL))
 	{
@@ -4618,7 +4618,7 @@ void Spell::Heal(int32 amount)
 	if( p_caster != NULL )
 		p_caster->last_heal_spell=m_spellInfo;
 
-    //self healing shouldn't flag himself
+	//self healing shouldn't flag himself
 	if(p_caster != NULL&& playerTarget && p_caster != playerTarget)
 	{
 		// Healing a flagged target will flag you.
@@ -4648,7 +4648,7 @@ void Spell::Heal(int32 amount)
 				uint32 GHL = float2int32(amount * 0.1f);
 				uint32 targetcnt = 0;
 				unordered_set<Object* >::iterator itr;
-				for( itr = unitTarget->GetInRangeSetBegin(); itr != unitTarget->GetInRangeSetEnd(); itr++ )
+				for( itr = unitTarget->GetInRangeSetBegin(); itr != unitTarget->GetInRangeSetEnd(); ++itr )
 				{
 					if( !(*itr)->IsUnit() || !TO_UNIT(*itr)->isAlive() || isAttackable(u_caster, (*itr), true) )
 						continue;
@@ -4921,13 +4921,13 @@ bool Spell::Reflect(Unit* refunit)
 		return false;
 
 	// if the spell to reflect is a reflect spell, do nothing.
-	for(int i=0; i<3; i++)
-    {
+	for(int i=0; i<3; ++i)
+	{
 		if( m_spellInfo->Effect[i] == 6 && (m_spellInfo->EffectApplyAuraName[i] == 74 || m_spellInfo->EffectApplyAuraName[i] == 28))
 			return false;
-    }
+	}
 
-	for(std::list<struct ReflectSpellSchool*>::iterator i = refunit->m_reflectSpellSchool.begin();i != refunit->m_reflectSpellSchool.end();i++)
+	for(std::list<struct ReflectSpellSchool*>::iterator i = refunit->m_reflectSpellSchool.begin();i != refunit->m_reflectSpellSchool.end();++i)
 	{
 		if(((*i)->school == -1 && m_spellInfo->School) || (*i)->school == (int32)m_spellInfo->School)
 		{
@@ -4935,7 +4935,7 @@ bool Spell::Reflect(Unit* refunit)
 			{
 				//the god blessed special case : mage - Frost Warding = is an augmentation to frost warding
 				if((*i)->require_aura_hash && u_caster && !u_caster->GetAuraSpellIDWithNameHash((*i)->require_aura_hash))
-                {
+				{
 					if( !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 						continue;
 
@@ -4958,7 +4958,7 @@ bool Spell::Reflect(Unit* refunit)
 					SpellCastTargets targets;
 					targets.m_unitTarget = refunit->GetGUID();
 					spell->prepare( &targets );
-                }
+				}
 				else if( (*i)->infront )
 				{
 					if( m_caster->isInFront(refunit) )
@@ -5205,11 +5205,11 @@ uint32 GetDiminishingGroup(uint32 NameHash)
 		plr = u_caster->m_redirectSpellPackets;
 	if(!plr || !plr->IsPlayer())
 		return;
-    
+	
 	// fuck bytebuffers
 	unsigned char buffer[13];
 	uint32 c = FastGUIDPack(guid, buffer, 0);
-	*(uint32*)&buffer[c] = m_spellInfo->Id;                 c += 4;
+	*(uint32*)&buffer[c] = m_spellInfo->Id;				 c += 4;
 	plr->GetSession()->OutPacket(SMSG_CLEAR_EXTRA_AURA_INFO, c, buffer);
 }*/
 

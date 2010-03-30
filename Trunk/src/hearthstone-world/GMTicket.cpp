@@ -64,7 +64,7 @@ void WorldSession::HandleGMTicketCreateOpcode(WorldPacket & recv_data)
 		uint32 unk3;
 		string unk4;
 		recv_data >> unk1; // count of something
-		for (int i = 0; i < unk1; i++)
+		for (int i = 0; i < unk1; ++i)
 		{
 			recv_data >> unk2
 			// do something with unk2

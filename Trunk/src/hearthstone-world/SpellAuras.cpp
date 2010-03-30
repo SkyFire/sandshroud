@@ -975,7 +975,7 @@ void Aura::ApplyModifiers( bool apply )
 		}
 		else
 		{
-			for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+			for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();++itr)
 			{
 				if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
 				{
@@ -1015,7 +1015,7 @@ void Aura::AddAuraVisual()
 
 	if (IsPositive())
 	{
-		for (i = 0; i < MAX_POSITIVE_AURAS; i++)
+		for (i = 0; i < MAX_POSITIVE_AURAS; ++i)
 		{
 			//if (m_target->GetUInt32Value((uint16)(UNIT_FIELD_AURA + i)) == 0)
 			if(m_target->m_auras[i] == NULL)
@@ -1027,7 +1027,7 @@ void Aura::AddAuraVisual()
 	}
 	else
 	{
-		for (i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
+		for (i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
 		{
 			//if (m_target->GetUInt32Value((uint16)(UNIT_FIELD_AURA + i)) == 0)
 			if(m_target->m_auras[i] == NULL )
@@ -1146,7 +1146,9 @@ void Aura::EventUpdateCreatureAA(float r)
 
 	for(itr = targets.begin(); itr != targets.end(); )
 	{
-		it2 = itr++;
+		it2 = itr;
+		++itr;
+
 		if((*it2) == GET_LOWGUID_PART(m_casterGuid))
 			continue;
 
@@ -1775,7 +1777,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						SpellCastTargets targets(m_target->GetGUID());
 						//this is so not good, maybe parent spell has more then dmg effect and we use it to calc our new dmg :(
 						dmg = 0;
-						for(int i=0;i<3;i++)
+						for(int i=0;i<3;++i)
 						{
 						  //dmg +=parentsp->EffectBasePoints[i]*m_spellProto->EffectBasePoints[0];
 							dmg +=spelld->CalculateEffect(i,m_target->IsUnit()? TO_UNIT(m_target):NULLUNIT)*parentsp->EffectBasePoints[0]/100;
@@ -1816,7 +1818,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 								if(it != NULL && it->GetProto())
 								{
 									dmg = 0;
-									for(int i=0;i<5;i++)
+									for(int i=0;i<5;++i)
 										if(it->GetProto()->Damage[i].Type==SCHOOL_NORMAL)
 											dmg += int32((it->GetProto()->Damage[i].Min + it->GetProto()->Damage[i].Max) / 2);
 									dmg = multiplyer * dmg /100;
@@ -2917,7 +2919,7 @@ void Aura::SpellAuraDummy(bool apply)
 
 				float range = GetMaxRange( dbcSpellRange.LookupEntry( m_spellProto->rangeIndex ) );
 				float r = range*range;
-				for( unordered_set<Object*>::iterator itr = m_target->GetInRangeSetBegin(); itr != m_target->GetInRangeSetEnd(); itr++ )
+				for( unordered_set<Object*>::iterator itr = m_target->GetInRangeSetBegin(); itr != m_target->GetInRangeSetEnd(); ++itr )
 				{
 					if( !(*itr)->IsPlayer() )
 						continue;
@@ -3120,7 +3122,7 @@ void Aura::SpellAuraModCharm(bool apply)
 			data << uint32(PET_SPELL_ATTACK);
 			data << uint32(PET_SPELL_FOLLOW);
 			data << uint32(PET_SPELL_STAY);
-			for(int i = 0; i < 4; i++)
+			for(int i = 0; i < 4; ++i)
 				data << uint32(0);
 			data << uint32(PET_SPELL_AGRESSIVE);
 			data << uint32(PET_SPELL_DEFENSIVE);
@@ -3650,7 +3652,7 @@ void Aura::SpellAuraDamageShield(bool apply)
 	}
 	else
 	{
-		for(std::list<struct DamageProc>::iterator i = m_target->m_damageShields.begin();i != m_target->m_damageShields.end();i++)
+		for(std::list<struct DamageProc>::iterator i = m_target->m_damageShields.begin();i != m_target->m_damageShields.end();++i)
 		{
 			if(i->owner==this)
 			{
@@ -4887,7 +4889,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 					}
 					else // if got immunity for slow, remove some that are not in the mechanics
 					{
-						for( int i = 0; i < 3; i++ )
+						for( int i = 0; i < 3; ++i )
 						{
 							if( m_target->m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || m_target->m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
 							{
@@ -5006,7 +5008,7 @@ void Aura::SpellAuraModSchoolImmunity(bool apply)
 		else
 			SetPositive();
 
-		for(uint32 i = 0; i < 7; i++)
+		for(uint32 i = 0; i < 7; ++i)
 		{
 			if(mod->m_miscValue & (1<<i))
 			{
@@ -5017,7 +5019,7 @@ void Aura::SpellAuraModSchoolImmunity(bool apply)
 	}
 	else
 	{
-		for(int i = 0; i < 7; i++)
+		for(int i = 0; i < 7; ++i)
 		{
 			if(mod->m_miscValue & (1<<i) &&
 				m_target->SchoolImmunityList[i] > 0)
@@ -5108,7 +5110,7 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 	}
 	else
 	{
-		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();++itr)
 		{
 			if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
 			{
@@ -5135,7 +5137,7 @@ void Aura::SpellAuraProcTriggerDamage(bool apply)
 	}
 	else
 	{
-		for(std::list<struct DamageProc>::iterator i = m_target->m_damageShields.begin();i != m_target->m_damageShields.end();i++)
+		for(std::list<struct DamageProc>::iterator i = m_target->m_damageShields.begin();i != m_target->m_damageShields.end();++i)
 		{
 			if(i->owner == this)
 			{
@@ -5266,7 +5268,7 @@ void Aura::SpellAuraModCritPerc(bool apply)
 		{
 			/*std::list<WeaponModifier>::iterator i = TO_PLAYER( m_target )->tocritchance.begin();
 
-			for(;i!=TO_PLAYER( m_target )->tocritchance.end();i++)
+			for(;i!=TO_PLAYER( m_target )->tocritchance.end();++i)
 			{
 				if((*i).spellid==GetSpellId())
 				{
@@ -6112,7 +6114,7 @@ void Aura::SpellAuraSchoolAbsorb(bool apply)
 		{
 			if (mod->m_miscValue & (((uint32)1)<<x) )
 			{
-				for(SchoolAbsorb::iterator i = m_target->Absorbs[x].begin(); i != m_target->Absorbs[x].end(); i++)
+				for(SchoolAbsorb::iterator i = m_target->Absorbs[x].begin(); i != m_target->Absorbs[x].end(); ++i)
 				{
 					if((*i)->spellid == GetSpellId() && (*i)->caster==m_casterGuid )
 					{
@@ -7289,7 +7291,7 @@ void Aura::SpellAuraAddTargetTrigger(bool apply)
 	}
 	else
 	{
-		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();++itr)
 		{
 			if(itr->parentId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
 			{
@@ -7419,14 +7421,16 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 					{
 						if(itr->first == (*itrSE)->Id)
 						{
-							itr2 = itr++;
+							itr2 = itr;
+							++itr;
+
 							plr->mSpellOverrideMap.erase(itr2);
 							break;
 						}
 					}
 					// Check if the loop above got to the end, if so it means the item wasn't found
 					// and the itr wasn't incremented so increment it now.
-					if(itrSE == itermap->second->end())      itr++;
+					if(itrSE == itermap->second->end())      ++itr;
 				}
 			}
 		}break;
@@ -8303,7 +8307,7 @@ void Aura::SpellAuraIncreaseSpellDamageByAttribute(bool apply)
 		val = -mod->realamount;
 
 	uint32 stat = 3;
-	for(uint32 i=0; i < 3; i++)
+	for(uint32 i=0; i < 3; ++i)
 	{ //bit hacky but it will work with all currently available spells
 		if (m_spellProto->EffectApplyAuraName[i] == SPELL_AURA_INCREASE_SPELL_HEALING_PCT)
 		{
@@ -8327,7 +8331,8 @@ void Aura::SpellAuraIncreaseSpellDamageByAttribute(bool apply)
 				}
 				else
 					m_target->ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + x, -mod->fixed_amount[x] );
-				
+
+				ASSERT(stat < 5);
 				TO_PLAYER( m_target )->SpellDmgDoneByAttribute[stat][x] += ((float)(val))/100;
 			}
 		}
@@ -9547,7 +9552,7 @@ uint32 Aura::GetMaxProcCharges(Unit* caster)
 
 void Aura::UpdateModAmounts()
 {
-	for(uint32 i=0; i<m_modcount; i++)
+	for(uint32 i=0; i<m_modcount; ++i)
 	{
 		Unit * m_caster = GetUnitCaster();
 		if( m_modList[i].m_baseAmount == 0 && m_caster != NULL && m_target != NULL )

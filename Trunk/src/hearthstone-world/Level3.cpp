@@ -326,7 +326,7 @@ bool ChatHandler::HandleExploreCheatCommand(const char* args, WorldSession *m_se
 	SystemMessage(m_session,  buf);
 
 
-	for (uint8 i = 0; i < 128; i++)
+	for (uint8 i = 0; i < 128; ++i)
 	{
 		if (flag != 0)
 		{
@@ -448,7 +448,7 @@ bool ChatHandler::HandleGMTicketGetAllCommand(const char* args, WorldSession *m_
 		return false;
 
 	chn->Say(m_session->GetPlayer(), "GmTicket 2", m_session->GetPlayer(), true);
-	for(GmTicketList::iterator itr = objmgr.GM_TicketList.begin(); itr != objmgr.GM_TicketList.end(); itr++)
+	for(GmTicketList::iterator itr = objmgr.GM_TicketList.begin(); itr != objmgr.GM_TicketList.end(); ++itr)
 	{
 		uint32 cont = 0;
 		uint32 zone = 0;
@@ -485,7 +485,7 @@ bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args, WorldSession *m
 
 
 	GmTicketList::iterator i;
-	for(i = objmgr.GM_TicketList.begin(); i != objmgr.GM_TicketList.end(); i++)
+	for(i = objmgr.GM_TicketList.begin(); i != objmgr.GM_TicketList.end(); ++i)
 	{
 		if(strcmp((*i)->name.c_str(), args) == 0)
 		{
@@ -509,7 +509,7 @@ bool ChatHandler::HandleGMTicketDelByIdCommand(const char* args, WorldSession *m
 
 	GmTicketList::iterator i;
 	int64 guid = -1;
-	for(i = objmgr.GM_TicketList.begin(); i != objmgr.GM_TicketList.end(); i++)
+	for(i = objmgr.GM_TicketList.begin(); i != objmgr.GM_TicketList.end(); ++i)
 	{
 		if(strcmp((*i)->name.c_str(), args) == 0)
 		{
@@ -1317,7 +1317,7 @@ bool ChatHandler::HandleGetKnownTitlesCommand(const char* args, WorldSession* m_
 		return true;
 	}
 	std::stringstream ss;
-	for(uint32 i=1;i<=TITLE_END;i++){
+	for(uint32 i=1;i<=TITLE_END;++i){
 		if(plr->HasKnownTitle(i)){
 			ss << i << " ";
 		}
@@ -1714,7 +1714,7 @@ bool ChatHandler::HandleMassSummonCommand(const char* args, WorldSession* m_sess
 	Player* summoner = m_session->GetPlayer();
 	Player* plr;
 	uint32 c=0;
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
 	{
 		plr = itr->second;
 		if(plr->GetSession() && plr->IsInWorld())
@@ -1749,7 +1749,7 @@ bool ChatHandler::HandleCastAllCommand(const char* args, WorldSession* m_session
 	}
 
 	// this makes sure no moron casts a learn spell on everybody and wrecks the server
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; ++i)
 	{
 		if (info->Effect[i] == 36) //SPELL_EFFECT_LEARN_SPELL - 36
 		{
@@ -1763,7 +1763,7 @@ bool ChatHandler::HandleCastAllCommand(const char* args, WorldSession* m_session
 
 	PlayerStorageMap::const_iterator itr;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
 	{
 		plr = itr->second;
 		if(plr->GetSession() && plr->IsInWorld())
@@ -2854,7 +2854,7 @@ bool ChatHandler::HandleDispelAllCommand(const char * args, WorldSession * m_ses
 
 	PlayerStorageMap::const_iterator itr;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
 	{
 		plr = itr->second;
 		if(plr->GetSession() && plr->IsInWorld())

@@ -357,7 +357,7 @@ void WorldSession::HandleInspectArenaStatsOpcode( WorldPacket & recv_data )
 	ArenaTeam *team;
 	uint32 i;
 
-	for( i = 0; i < 3; i++ )
+	for( i = 0; i < 3; ++i )
 	{
 		team = player->m_playerInfo->arenaTeam[i];
 		if( team != NULL )

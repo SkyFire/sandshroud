@@ -88,7 +88,7 @@ uint32 World::GetMaxLevel(Player* plr)
 void World::LogoutPlayers()
 {
 	Log.Notice("World", "Logging out players...");
-	for(SessionMap::iterator i=m_sessions.begin();i!=m_sessions.end();i++)
+	for(SessionMap::iterator i=m_sessions.begin();i!=m_sessions.end();++i)
 	{
 		(i->second)->LogoutPlayer(true);
 	}
@@ -555,13 +555,13 @@ bool World::SetInitialWorldSettings()
 		Log.Notice("World", "Backgrounding loot loading...");
 
 		// loot background loading in a lower priority thread.
-		ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<LootMgr>(LootMgr::getSingletonPtr(), &LootMgr::LoadCreatureLoot), 
+		ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<LootMgr>(LootMgr::getSingletonPtr(), &LootMgr::LoadDelayedLoot), 
 			BTE_PRIORITY_LOW));
 	}
 	else
 	{
 		Log.Notice("World", "Loading loot in foreground...");
-		lootmgr.LoadCreatureLoot();
+		lootmgr.LoadDelayedLoot();
 	}
 
 	Log.Notice("World", "Loading Channel config...");
@@ -672,7 +672,7 @@ void World::SendMessageToGMs(WorldSession *self, const char * text, ...)
 	WorldPacket *data = sChatHandler.FillSystemMessageData(buf);
 	gmList_lock.AcquireReadLock();	
 	SessionSet::iterator itr;
-	for (itr = gmList.begin(); itr != gmList.end();itr++)
+	for (itr = gmList.begin(); itr != gmList.end();++itr)
 	{
 		gm_session = (*itr);
 		if(gm_session->GetPlayer() != NULL && gm_session != self)  // dont send to self!)
@@ -687,7 +687,7 @@ void World::SendGlobalMessage(WorldPacket *packet, WorldSession *self)
 	m_sessionlock.AcquireReadLock();
 
 	SessionMap::iterator itr;
-	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
 	{
 		if (itr->second->GetPlayer() &&
 			itr->second->GetPlayer()->IsInWorld()
@@ -704,7 +704,7 @@ void World::SendFactionMessage(WorldPacket *packet, uint8 teamId)
 	m_sessionlock.AcquireReadLock();
 	SessionMap::iterator itr;
 	Player* plr;
-	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
 	{
 		plr = itr->second->GetPlayer();
 		if(!plr || !plr->IsInWorld())
@@ -721,7 +721,7 @@ void World::SendZoneMessage(WorldPacket *packet, uint32 zoneid, WorldSession *se
 	m_sessionlock.AcquireReadLock();
 
 	SessionMap::iterator itr;
-	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
 	{
 		if (itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld() && itr->second != self)  // dont send to self!
 		{
@@ -738,7 +738,7 @@ void World::SendInstanceMessage(WorldPacket *packet, uint32 instanceid, WorldSes
 	m_sessionlock.AcquireReadLock();
 
 	SessionMap::iterator itr;
-	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
 	{
 		if (itr->second->GetPlayer() &&
 			itr->second->GetPlayer()->IsInWorld()
@@ -799,7 +799,7 @@ void World::SendAdministratorMessage(WorldPacket *packet)
 {
 	m_sessionlock.AcquireReadLock();
 	SessionMap::iterator itr;
-	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
 	{
 		if (itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld())
 		{
@@ -814,7 +814,7 @@ void World::SendGamemasterMessage(WorldPacket *packet)
 {
 	m_sessionlock.AcquireReadLock();
 	SessionMap::iterator itr;
-	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
 	{
 		if (itr->second->GetPlayer() &&	itr->second->GetPlayer()->IsInWorld())
 		{
@@ -1018,7 +1018,7 @@ void World::SaveAllPlayers()
 		// Servers started and obviously runing. lets save all players.
 	uint32 mt;
 	objmgr._playerslock.AcquireReadLock();   
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
 		{
 			if(itr->second->GetSession())
 			{
@@ -1057,7 +1057,7 @@ void World::GetStats(uint32 * GMCount, float * AverageLatency)
 	int avg = 0;
 	PlayerStorageMap::const_iterator itr;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
 	{
 		if(itr->second->GetSession())
 		{
@@ -2377,7 +2377,7 @@ void World::BackupDB()
 
 	sLog.outString("Backing up character db into %s", path);
 
-	for (i=0; tables[i] != NULL; i++)
+	for (i=0; tables[i] != NULL; ++i)
 	{
 		snprintf(cmd, 1024, "mkdir -p %s", path);
 		system(cmd);
@@ -2503,7 +2503,9 @@ void NewsAnnouncer::_ReloadMessages()
 
 	for(itr = m_announcements.begin(); itr != m_announcements.end();)
 	{
-		itr2 = itr++;
+		itr2 = itr;
+		++itr;
+
 		if( db_msgs.find(itr2->second.m_id) == db_msgs.end() )
 		{
 			// message no longer exists

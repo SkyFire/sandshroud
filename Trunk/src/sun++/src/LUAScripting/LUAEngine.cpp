@@ -379,7 +379,6 @@ RegType<GameObject> GOBMethods[] =
 	{ NULL, NULL },
 };
 
-
 template<typename T> RegType<T>* GetMethodTable() { return NULL; }
 template<>
 RegType<Unit>* GetMethodTable<Unit>() { return UnitMethods; }
@@ -3970,14 +3969,3 @@ void LuaEngineMgr::ReloadClasses()
 	m_scriptMgr->register_lua_hook(m_HookInterface);
 #endif
 }
-
-/************************************************************************/
-/* SCRIPT FUNCTION IMPLEMENTATION                                       */
-/************************************************************************/
-#define CHECK_TYPEID(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { return 0; }
-#define CHECK_TYPEID_RET(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushboolean(L,0); return 0; }
-#define CHECK_TYPEID_RET_INT(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushinteger(L,0); return 0; }
-#define CHECK_PTR() if( ptr == NULL ||!ptr->IsInWorld() ) { return 0; }
-#include "NameSpaces/GameObjectFunctions.cpp"
-#include "NameSpaces/UnitFunctions.cpp"
-#include "NameSpaces/ItemFunctions.cpp"

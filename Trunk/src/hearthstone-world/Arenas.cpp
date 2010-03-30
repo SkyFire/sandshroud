@@ -27,7 +27,7 @@ Arena::Arena( MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t, uint32 players_pe
 {
 	int i;
 
-	for (i=0; i<2; i++) {
+	for (i=0; i<2; ++i) {
 		m_players[i].clear();
 		m_pendPlayers[i].clear();
 	}
@@ -511,11 +511,11 @@ void Arena::Finish()
 	sEventMgr.RemoveEvents(this, EVENT_ARENA_SHADOW_SIGHT);
 	sEventMgr.AddEvent(TO_CBATTLEGROUND(this), &CBattleground::Close, EVENT_BATTLEGROUND_CLOSE, 120000, 1,0);
 
-	for(int i = 0; i < 2; i++)
+	for(int i = 0; i < 2; ++i)
 	{
 		bool victorious = (i != m_losingteam);
 		set<Player*  >::iterator itr = m_players[i].begin();
-		for(; itr != m_players[i].end(); itr++)
+		for(; itr != m_players[i].end(); ++itr)
 		{
 			Player* plr = (Player* )(*itr);
 			plr->Root();

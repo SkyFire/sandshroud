@@ -112,7 +112,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectStuck,						//SPELL_EFFECT_STUCK - 84
 	&Spell::SpellEffectSummonPlayer,				//SPELL_EFFECT_SUMMON_PLAYER - 85
 	&Spell::SpellEffectActivateObject,				//SPELL_EFFECT_ACTIVATE_OBJECT - 86
-    &Spell::SpellEffectWMODamage,					//SPELL_EFFECT_WMO_DAMAGE - 87 
+	&Spell::SpellEffectWMODamage,					//SPELL_EFFECT_WMO_DAMAGE - 87 
 	&Spell::SpellEffectWMORepair,					//SPELL_EFFECT_WMO_REPAIR - 88 
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT3 - 89
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT4 - 90
@@ -159,7 +159,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectNULL,						// unknown - 131 // test spell
 	&Spell::SpellEffectNULL,						// unknown - 132 // no spells
 	&Spell::SpellEffectNULL,						// SPELL_EFFECT_FORGET_SPECIALIZATION - 133 // http://www.thottbot.com/s36441 // I think this is a gm/npc spell
-	&Spell::SpellEffectKillCredit,                  // SPELL_EFFECT_KILL_CREDIT - 134  misc value is creature entry
+	&Spell::SpellEffectKillCredit,				  // SPELL_EFFECT_KILL_CREDIT - 134  misc value is creature entry
 	&Spell::SpellEffectNULL,						// unknown - 135 // no spells
 	&Spell::SpellEffectRestoreHealthPct,			// Restore Health % - 136 // http://www.wowhead.com/?spell=48982
 	&Spell::SpellEffectRestoreManaPct,				// Restore Mana % - 137 // http://www.thottbot.com/s41542
@@ -303,7 +303,7 @@ void Spell::SpellEffectInstantKill(uint32 i)
 			if( unitTarget->GetEntry() != 1860 )
 				return;
 		}break;
-	case 29364:    //Encapsulate Voidwalker
+	case 29364:	//Encapsulate Voidwalker
 		{
 		if( unitTarget->GetEntry() != 16975 )
 				return;
@@ -331,7 +331,7 @@ void Spell::SpellEffectInstantKill(uint32 i)
 		{
 			return;
 		}break;
-	case 41626:    //Destroy Spirit
+	case 41626:	//Destroy Spirit
 	case 44659:
 		{
 			if( unitTarget->GetEntry() != 23109 )
@@ -829,7 +829,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				47488,  /* Shield Slam - Rank 8 */
 			};
 
-			for(i = 0; i < 8; i++)
+			for(i = 0; i < 8; ++i)
 			{
 				if( p_caster->HasSpell( ClearSpellId[i] ) )
 					p_caster->ClearCooldownForSpell( ClearSpellId[i] );
@@ -902,7 +902,9 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			for(std::list<struct ReflectSpellSchool*>::iterator i = unitTarget->m_reflectSpellSchool.begin(), i2;i != unitTarget->m_reflectSpellSchool.end();)
 				if(m_spellInfo->Id == (*i)->spellId)
 				{
-					i2 = i++;
+					i2 = i;
+					++i;
+
 					unitTarget->m_reflectSpellSchool.erase(i2);
 				}
 				else
@@ -976,8 +978,8 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				1856,  /* Vanish  - Rank 1 */
 				1857,  /* Vanish  - Rank 2 */
 				26889, /* Vanish  - Rank 3 */
-				14177, /* Cold Blood       */
-				36554  /* Shadowstep       */
+				14177, /* Cold Blood	   */
+				36554  /* Shadowstep	   */
 			};
 
 			for(i = 0; i < 10; ++i)
@@ -1120,18 +1122,19 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			int targets_got=0;
 			for(unordered_set<Object* >::iterator itr = unitTarget->GetInRangeSetBegin(), i2; itr != unitTarget->GetInRangeSetEnd(); )
 			{
-				i2 = itr++;
+				i2 = itr;
+				++itr;
 				// don't add objects that are not units and that are dead
 				if((*i2)->GetTypeId()!= TYPEID_UNIT || !TO_UNIT(*i2)->isAlive())
 					continue;
-		        
+
 				Creature* cr=TO_CREATURE((*i2));
 				if(cr->GetAIInterface()->GetNextTarget()==unitTarget)
 					targets[targets_got++]=cr;
 				if(targets_got==3)
 					break;
 			}
-			for(int i=0;i<targets_got;i++)
+			for(int i=0;i<targets_got;++i)
 			{
 				//set threat to this target so we are the msot hated
 				uint32 threat_to_him = targets[i]->GetAIInterface()->getThreatByPtr( unitTarget );
@@ -2715,7 +2718,7 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 		// Profession Discoveries
 		uint32 discovered_recipe = 0;
 		std::set<ProfessionDiscovery*>::iterator itr = objmgr.ProfessionDiscoveryTable.begin();
-		for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); itr++ )
+		for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); ++itr )
 		{
 			ProfessionDiscovery * pf = ( *itr );
 			if ( pf != NULL && m_spellInfo->Id == pf->SpellId && p_caster->_GetSkillLineCurrent( skill->skilline ) >= pf->SkillValue && !p_caster->HasSpell( pf->SpellToDiscover ) && Rand( pf->Chance ) )
@@ -2770,7 +2773,7 @@ void Spell::SpellEffectWeapon(uint32 i)
 
 	switch( this->m_spellInfo->Id )
 	{
-	case 201:    // one-handed swords
+	case 201:	// one-handed swords
 		{
 			skill = SKILL_SWORDS;
 		}break;
@@ -3388,7 +3391,7 @@ void Spell::SpellEffectTriggerMissile(uint32 i) // Trigger Missile
 
 	float spellRadius = GetRadius(i);
 
-	/*for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	/*for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 	{
 		if(!((*itr)->IsUnit()) || !(TO_UNIT(*itr))->isAlive())
 			continue;
@@ -3445,7 +3448,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 						
 				Lock *lock = dbcLock.LookupEntry( itemTarget->GetProto()->LockId );
 				if(!lock) return;
-				for(int i=0;i<5;i++)
+				for(int i=0;i<5;++i)
 					if(lock->locktype[i] == 2 && lock->minlockskill[i] && lockskill >= lock->minlockskill[i])
 					{
 						v = lock->minlockskill[i];
@@ -3464,14 +3467,14 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				if( lock == NULL )
 					return;
 
-				for(int i=0;i<5;i++)
+				for(int i=0;i<5;++i)
 				{
 					if(lock->locktype[i] == 2 && lock->minlockskill[i] && lockskill >= lock->minlockskill[i])
 					{
 						v = lock->minlockskill[i];
 						gameObjTarget->SetUInt32Value(GAMEOBJECT_FLAGS, 0);
 						gameObjTarget->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
-						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), gameObjTarget->GetMapMgr() ? (gameObjTarget->GetMapMgr()->iInstanceMode ? true : false) : false);
+						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 						loottype = LOOT_CORPSE;
 						DetermineSkillUp(SKILL_LOCKPICKING,v/5);
 						break;
@@ -3497,7 +3500,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				{
 					if( gameObjTarget->m_loot.items.size() == 0 )
 					{
-						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), gameObjTarget->GetMapMgr() ? (gameObjTarget->GetMapMgr()->iInstanceMode ? true : false) : false);
+						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 					}
 					else
 						bAlreadyUsed = true;
@@ -3539,7 +3542,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				}
 				else if( gameObjTarget->m_loot.items.size() == 0 )
 				{
-					lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), gameObjTarget->GetMapMgr() ? (gameObjTarget->GetMapMgr()->iInstanceMode ? true : false) : false);
+					lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 				}	
 				else
 					bAlreadyUsed = true;
@@ -3564,7 +3567,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				if(p_caster->m_bg->HookSlowLockOpen(gameObjTarget,p_caster,this))
 					return;
 
-            sHookInterface.OnSlowLockOpen(gameObjTarget,p_caster); 
+			sHookInterface.OnSlowLockOpen(gameObjTarget,p_caster); 
 
 			uint32 spellid = !gameObjTarget->GetInfo()->Unknown1 ? 23932 : gameObjTarget->GetInfo()->Unknown1;
 			SpellEntry*en=dbcSpell.LookupEntry(spellid);
@@ -3600,7 +3603,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 
 			if(gameObjTarget->m_loot.items.size() == 0)
 			{
-				lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), gameObjTarget->GetMapMgr() ? (gameObjTarget->GetMapMgr()->iInstanceMode ? true : false) : false);
+				lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 			}
 			loottype=LOOT_CORPSE;
 		}
@@ -3634,7 +3637,7 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 
 	if( gameObjTarget->GetByte(GAMEOBJECT_BYTES_1, 1) == GAMEOBJECT_TYPE_CHEST)
 	{
-		lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), gameObjTarget->GetMapMgr() ? (gameObjTarget->GetMapMgr()->iInstanceMode ? true : false) : false);
+		lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 		if(gameObjTarget->m_loot.items.size() > 0)
 		{
 			TO_PLAYER(caster)->SendLoot(gameObjTarget->GetGUID(), gameObjTarget->GetMapId(), LOOT_CORPSE);
@@ -3915,7 +3918,7 @@ void Spell::SpellEffectLearnSpell(uint32 i) // Learn Spell
 			playerTarget->removeSpell(17041,false,false,0); //Master Axesmith
  			break;
  		}
-		for(uint32 i=0;i<3;i++)
+		for(uint32 i=0;i<3;++i)
 			if(spellinfo->Effect[i] == SPELL_EFFECT_WEAPON ||
 			   spellinfo->Effect[i] == SPELL_EFFECT_PROFICIENCY ||
 			   spellinfo->Effect[i] == SPELL_EFFECT_DUAL_WIELD )
@@ -5066,7 +5069,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 			{
 				pAura = p_caster->m_auras[i];
 				if( pAura != NULL )
-					for( int i=0 ; i<3 ; i++ )
+					for( int i=0 ; i<3 ; ++i )
 						if( pAura->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || pAura->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
 						{
 							p_caster->RemoveAuraBySlot(i);
@@ -5888,7 +5891,7 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 void Spell::SpellEffectWMODamage(uint32 i) 
 { 
  	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING) 
-       gameObjTarget->TakeDamage(uint32(damage)); 
+	   gameObjTarget->TakeDamage(uint32(damage)); 
 } 
 void Spell::SpellEffectWMORepair(uint32 i) 
 { 
@@ -7550,7 +7553,7 @@ void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item
 	// Profession Discoveries used in Northrend Alchemy and Inscription Research plus Minor research
 	uint32 discovered_recipe = 0;
 	std::set<ProfessionDiscovery*>::iterator itr = objmgr.ProfessionDiscoveryTable.begin();
-	for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); itr++ )
+	for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); ++itr )
 	{
 		ProfessionDiscovery * pf = NULL;
 		pf = ( *itr );

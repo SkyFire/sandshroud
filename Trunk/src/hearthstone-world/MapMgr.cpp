@@ -128,7 +128,7 @@ MapMgr::~MapMgr()
 	// Remove objects
 	if(_cells)
 	{
-		for (uint32 i = 0; i < _sizeX; i++)
+		for (uint32 i = 0; i < _sizeX; ++i)
 		{
 			if(_cells[i] != 0)
 			{
@@ -1693,7 +1693,7 @@ void MapMgr::_PerformObjectDuties()
 	__player_iterator = m_PlayerStorage.begin();
 	for(; __player_iterator != m_PlayerStorage.end();)
 	{
-		ptr4 = __player_iterator->second;;
+		ptr4 = __player_iterator->second;
 		++__player_iterator;
 
 		ptr4->Update( difftime );

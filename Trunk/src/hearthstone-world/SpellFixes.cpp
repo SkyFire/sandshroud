@@ -268,7 +268,7 @@ void DumpTalentSpells()
 		return;
 	}
 
-	for(uint32 i = 0 ;i < dbcTalent.GetNumRows(); i++)
+	for(uint32 i = 0 ;i < dbcTalent.GetNumRows(); ++i)
 	{
 		TalentEntry *talent = dbcTalent.LookupRow(i);
 		if(!talent)
@@ -334,7 +334,7 @@ void GenerateNameHashesFile()
 	char spaces[fieldSize], namearray[fieldSize];
 	strcpy(namearray, prefix);
 	char* name = &namearray[prefixLen];
-	for(int i=0;i<fieldSize-1;i++)
+	for(int i=0;i<fieldSize-1;++i)
 		spaces[i] = ' ';
 	spaces[fieldSize-1] = 0;
 	uint32 nameTextLen = 0, nameLen = 0;
@@ -345,7 +345,7 @@ void GenerateNameHashesFile()
 		strncpy(name, nametext, fieldSize-prefixLen-2);	// Cut it to fit in field size
 		name[fieldSize-prefixLen-2] = 0; // in case nametext is too long and strncpy didn't copy the null
 		nameLen = (unsigned int)strlen(name);
-		for(uint32 i = 0;i<nameLen;i++)
+		for(uint32 i = 0;i<nameLen;++i)
 		{
 			if(name[i] >= 'a' && name[i] <= 'z')
 				name[i] = toupper(name[i]);
@@ -2539,7 +2539,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	
 		case  20608:	//Reincarnation
 				{
-					for(uint32 i=0;i<8;i++)
+					for(uint32 i=0;i<8;++i)
 					{
 							if(sp->Reagent[i])
 							{
@@ -5619,7 +5619,7 @@ void ApplyNormalFixes()
 		SCHOOL_ARCANE = 64
 		*/
 
-		for (i=0; i<8; i++)
+		for (i=0; i<8; ++i)
 		{
 			if (sp->School & (1<<i))
 			{
@@ -6524,7 +6524,7 @@ void ApplyNormalFixes()
 		bool spcheck = false;
 		SpellEntry *spz;
 
-		for( uint8 i = 0 ; i < 3 ; i++ )
+		for( uint8 i = 0 ; i < 3 ; ++i )
 		{
 			if (sp->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_DAMAGE ||
 				sp->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_HEAL ||
@@ -6536,7 +6536,7 @@ void ApplyNormalFixes()
 		}
 
 		//Flag for DD or DH
-		for( uint8 i = 0 ; i < 3 ; i++ )
+		for( uint8 i = 0 ; i < 3 ; ++i )
 		{
 			if ( sp->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_TRIGGER_SPELL && sp->EffectTriggerSpell[i] )
 			{
@@ -6557,7 +6557,7 @@ void ApplyNormalFixes()
 			}
 		}
 
-		for(uint8 i = 0 ; i < 3; i++)
+		for(uint8 i = 0 ; i < 3; ++i)
 		{
 			switch (sp->EffectImplicitTargetA[i])
 			{
@@ -6583,7 +6583,7 @@ void ApplyNormalFixes()
 			}	
 		}
 
-		for(uint8 i = 0 ; i < 3 ; i++)
+		for(uint8 i = 0 ; i < 3 ; ++i)
 		{
 			switch (sp->EffectImplicitTargetB[i])
 			{
@@ -6651,7 +6651,7 @@ void ApplyNormalFixes()
 			sp->spell_coef_flags = SPELL_FLAG_IS_DD_OR_DH_SPELL;
 
 		//Additional Effect (not healing or damaging)
-		for( uint8 i = 0 ; i < 3 ; i++ )
+		for( uint8 i = 0 ; i < 3 ; ++i )
 		{
 			if(sp->Effect[i] == 0)
 				continue;

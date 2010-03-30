@@ -586,7 +586,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	//Well actually this is how blizz wanted it
 	//but they couldnt get it to work xD
 	bool haspassengers = false;
-	for(uint8 i = 0; i < m_seatSlotMax; i++)
+	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
 		if(m_passengers[i] != NULL)
 		{

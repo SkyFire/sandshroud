@@ -1,7 +1,7 @@
 // Full Credits to LUAppArc.
 
 #include "StdAfx.h"
-#include "LUAEngine.h"
+#include "../LUAEngine.h"
 #include "UnitFunctions.h"
 
 
@@ -13,7 +13,8 @@ namespace luaUnit
 		int text_id = luaL_checkint(L, 1);
 		Unit *player = Lunar<Unit>::check(L,2);
  		int autosend = luaL_checkint(L, 3);
-		if(player->GetTypeId() != TYPEID_PLAYER) return 0;
+		if(player->GetTypeId() != TYPEID_PLAYER)
+			return 0;
 		Player *plr = TO_PLAYER(player);
 		objmgr.CreateGossipMenuForPlayer(&Menu, ptr->GetGUID(), text_id, plr);
 		if(autosend)
