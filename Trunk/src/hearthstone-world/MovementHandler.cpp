@@ -599,11 +599,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					_player->m_CurrentTransporter->AddPlayer(_player);
 
 				// Create a location vector with position variables.
-				LocationVector *v = NULL;
-				v->x = _player->movement_info.transX;
-				v->y = _player->movement_info.transY;
-				v->z = _player->movement_info.transZ;
-				v->o = _player->movement_info.transO;
+				LocationVector *v = new LocationVector( _player->movement_info.transX, _player->movement_info.transY, _player->movement_info.transZ, _player->movement_info.transO);
 
 				/* set variables */
 				_player->m_TransporterGUID = _player->movement_info.transGuid.GetOldGuid();
@@ -619,11 +615,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			else
 			{
 				// Create a location vector with position variables.
-				LocationVector *v = NULL;
-				v->x = _player->movement_info.transX;
-				v->y = _player->movement_info.transY;
-				v->z = _player->movement_info.transZ;
-				v->o = _player->movement_info.transO;
+				LocationVector *v = new LocationVector( _player->movement_info.transX, _player->movement_info.transY, _player->movement_info.transZ, _player->movement_info.transO);
 
 				/* no changes */
 				_player->m_TransporterUnk = _player->movement_info.transTime;
