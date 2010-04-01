@@ -863,7 +863,7 @@ CREATE TABLE `questlog_insert_queue` (
   `mob_kill1` int(20) NOT NULL DEFAULT '0',
   `mob_kill2` int(20) NOT NULL DEFAULT '0',
   `mob_kill3` int(20) NOT NULL DEFAULT '0',
-  `mob_kill4` int(20) unsigned zerofill NOT NULL DEFAULT '00000000000000000000',
+  `mob_kill4` int(20) unsigned zerofill NOT NULL DEFAULT '0',
   `slain` int(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`player_guid`,`quest_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
