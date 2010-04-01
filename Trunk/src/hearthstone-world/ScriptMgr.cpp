@@ -731,7 +731,7 @@ void GossipScript::GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, u
 	case 16:
 		{
 			GossipMenu *Menu;
-			objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), 30000, Plr);
+			objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), 14391, Plr);
 			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Purchase a Dual Talent Specialization.", 17);
 			Menu->SendTo(Plr);
 		}break;
