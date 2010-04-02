@@ -185,18 +185,6 @@ ObjectMgr::~ObjectMgr()
 	for(AchievementCriteriaMap::iterator itr = m_achievementCriteriaMap.begin(); itr != m_achievementCriteriaMap.end(); ++itr)
 		delete (itr->second);
 
-	Log.Notice("ObjectMgr", "Deleting Achievement Map...");
-	AchievementEntry* ae;
-	for(uint32 i = 0; i < dbcAchievementCriteria.GetNumRows(); ++i)
-	{
-		ae = dbcAchievement.LookupRow(i);
-		if(ae)
-			if(ae->AssociatedCriteria)
-				delete ae->AssociatedCriteria;
-			else
-				free(ae->AssociatedCriteria);
-	}
-
 	Log.Notice("ObjectMgr", "Deleting Pet Levelup Spells...");
 	for(PetLevelupSpellMap::iterator itr = mPetLevelupSpellMap.begin(); itr != mPetLevelupSpellMap.end(); ++itr)
 	{
@@ -210,10 +198,7 @@ void ObjectMgr::LoadAchievements()
 	{
 		AchievementEntry * ae = dbcAchievement.LookupRow(i);
 		if(ae)
-		{
-			ae->AssociatedCriteria = new vector<uint32>;
 			ae->AssociatedCriteriaCount = 0;
-		}
 	}
 
 	for(uint32 i = 0; i < dbcAchievementCriteria.GetNumRows(); ++i)
@@ -239,7 +224,9 @@ void ObjectMgr::LoadAchievements()
 			AchievementEntry * ae = dbcAchievement.LookupEntryForced( ace->referredAchievement );
 			if( ae )
 			{
-				ae->AssociatedCriteria->push_back(ace->ID);
+				if(ae->AssociatedCriteriaCount >= 32)
+					continue;
+				ae->AssociatedCriteria[ ae->AssociatedCriteriaCount ] = ace->ID;
 				ae->AssociatedCriteriaCount++;
 			}
 		}
