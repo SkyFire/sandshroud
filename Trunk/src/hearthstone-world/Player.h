@@ -1354,6 +1354,7 @@ public:
 	void SendTalentResetConfirm();
 	void SendPetUntrainConfirm();
 	void SendDualTalentConfirm();
+	void SendXPToggleConfirm();
 	uint32 GetTalentResetTimes() { return m_talentresettimes; }
 	HEARTHSTONE_INLINE void SetTalentResetTimes(uint32 value) { m_talentresettimes = value; }
 	void SetPlayerStatus(uint8 pStatus) { m_status = pStatus; }
@@ -1755,6 +1756,8 @@ public:
 	stringstream LoadAuras;
 	bool resend_speed;
 	bool rename_pending;
+	bool m_XPoff;
+	bool customizable;
 	uint32 iInstanceType;
 	uint32 iRaidType;
 	HEARTHSTONE_INLINE void SetName(string& name) { m_name = name; }

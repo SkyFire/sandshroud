@@ -78,7 +78,7 @@ SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
 SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
 SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
 SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
-SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchivementCriteria;
+SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
@@ -255,7 +255,7 @@ const char* achievementfmt=
 	"n" // Index
 	"i" // Faction
 	"i" // Mapid
-	"x" // unk.
+	"u" // Previous Achievement
 	"s" // Name
 	"xxxxxxxxxxxxxxxx"
 	"s" // Description
@@ -281,7 +281,7 @@ bool loader_stub(const char * filename, const char * format, bool ind, T& l, boo
 bool LoadDBCs()
 {
 	LOAD_DBC("DBC/Achievement.dbc", achievementfmt,true, dbcAchievement,true);
-	LOAD_DBC("DBC/Achievement_Criteria.dbc", achievementCriteriafmt,true,dbcAchivementCriteria,true);
+	LOAD_DBC("DBC/Achievement_Criteria.dbc", achievementCriteriafmt,true,dbcAchievementCriteria,true);
 	LOAD_DBC("DBC/AreaGroup.dbc", AreaGroupFormat, true, dbcAreaGroup, true);
 	LOAD_DBC("DBC/AreaTable.dbc", areatableFormat, true, dbcArea, true);
 //	LOAD_DBC("DBC/AreaTrigger.dbc", AreaTriggerFormat, true, dbcAreaTrigger, false);

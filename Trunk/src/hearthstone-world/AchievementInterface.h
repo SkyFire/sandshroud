@@ -210,10 +210,10 @@ public:
 	void LoadFromDB( QueryResult * pResult );
 	void SaveToDB(QueryBuffer * buffer);
 
-	
 	WorldPacket* BuildAchievementEarned(AchievementData * pData);
 	WorldPacket* BuildAchievementData(bool forInspect = false);
 
+	bool HasAchievement(uint32 ID);
 	bool HasAchievements() { return m_achivementDataMap.size() > 0; }
 
 	//----------------------------------------------------------------

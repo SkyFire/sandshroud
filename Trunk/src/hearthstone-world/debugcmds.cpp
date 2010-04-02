@@ -1045,9 +1045,9 @@ bool ChatHandler::HandleSendpacket(const char * args, WorldSession * m_session)
 				return false;
 			}
 			data << uint8(HexValue);
-			//j++;
+			//++j;
 		}
-		j++;
+		++j;
 	} while(j < arg_len);
 
 	data.hexlike();

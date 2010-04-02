@@ -328,6 +328,7 @@ protected:
 	void HandleCharEnumOpcode(WorldPacket& recvPacket);
 	void HandleCharDeleteOpcode(WorldPacket& recvPacket);
 	void HandleCharCreateOpcode(WorldPacket& recvPacket);
+	void HandleCharCustomizeOpcode(WorldPacket& recvPacket);
 	void HandlePlayerLoginOpcode(WorldPacket& recvPacket);
 
 	/// Authentification and misc opcodes (MiscHandler.cpp):

@@ -470,7 +470,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			{
 				WoWGuid wowguid(pThis->m_TransporterGUID);
 				*data << wowguid;
-				*data << pThis->m_TransporterX << pThis->m_TransporterY << pThis->m_TransporterZ << pThis->m_TransporterO;
+				*data << pThis->m_transportPosition->x << pThis->m_transportPosition->y << pThis->m_transportPosition->z << pThis->m_transportPosition->o;
 				*data << pThis->m_TransporterUnk << uint8(0);
 			}
 			else if(m_objectTypeId == TYPEID_UNIT && TO_CREATURE(this)->m_transportPosition != NULL)

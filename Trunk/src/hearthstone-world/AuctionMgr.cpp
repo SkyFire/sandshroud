@@ -25,7 +25,7 @@ void AuctionMgr::LoadAuctionHouses()
 {
 	Log.Notice("AuctionMgr", "Loading Auction Houses...");
 
-	QueryResult * res = CharacterDatabase.Query("SELECT MAX(auctionId) FROM auctions");
+	QueryResult* res = CharacterDatabase.Query("SELECT MAX(auctionId) FROM auctions");
 	if(res)
 	{
 		maxId = res->Fetch()[0].GetUInt32();

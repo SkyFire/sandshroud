@@ -39,7 +39,7 @@ bool DBCFile::open(const char*fn)
 	if(data)
 	{
 		delete [] data;
-		data=NULL;
+		data = NULL;
 	}
 	FILE*pf=fopen(fn,"rb");
 	if(!pf)return false;

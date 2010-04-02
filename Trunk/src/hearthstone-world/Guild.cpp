@@ -605,7 +605,7 @@ bool Guild::LoadFromDB(Field * f)
 			pTab->iTabId = (uint8)result->Fetch()[1].GetUInt32();
 			pTab->szTabName = (strlen(result->Fetch()[2].GetString()) > 0) ? strdup(result->Fetch()[2].GetString()) : NULL;
 			pTab->szTabIcon = (strlen(result->Fetch()[3].GetString()) > 0) ? strdup(result->Fetch()[3].GetString()) : NULL;
-			
+
 			for(uint32 i = 0; i < MAX_GUILD_BANK_SLOTS; ++i)
 				pTab->pSlots[i] = NULLITEM;
 
@@ -1301,7 +1301,7 @@ void Guild::BuyBankTab(WorldSession * pClient)
 		pTab->pSlots[i] = NULLITEM;
 	
 	pTab->szTabName=NULL;
-	pTab->szTabIcon=NULL;
+	pTab->szTabIcon="";
 
 	m_bankTabs.push_back(pTab);
 	m_bankTabCount++;

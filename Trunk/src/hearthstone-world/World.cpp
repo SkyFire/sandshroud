@@ -443,10 +443,11 @@ bool World::SetInitialWorldSettings()
 	FillSpellReplacementsTable();
 	sLog.outString("");*/
 
-#define MAKE_TASK(sp, ptr) tl.AddTask(new Task(new CallbackP0<sp>(sp::getSingletonPtr(), &sp::ptr)))
 	// Fill the task list with jobs to do.
 	TaskList tl;
 	Storage_FillTaskList(tl);
+
+#define MAKE_TASK(sp, ptr) tl.AddTask(new Task(new CallbackP0<sp>(sp::getSingletonPtr(), &sp::ptr)))
 
 	// spawn worker threads (2 * number of cpus)
 	tl.spawn();
@@ -465,15 +466,7 @@ bool World::SetInitialWorldSettings()
 	ApplyNormalFixes();
 
 	MAKE_TASK(ObjectMgr, LoadAchievements);
-	if(Config.MainConfig.GetBoolDefault("Startup", "BackgroundWaypointLoading", false))
-	{
-		ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<ObjectMgr>(ObjectMgr::getSingletonPtr(), &ObjectMgr::LoadCreatureWaypoints), 
-			BTE_PRIORITY_MED));
-	}
-	else
-	{
-		MAKE_TASK(ObjectMgr, LoadCreatureWaypoints);
-	}
+	MAKE_TASK(ObjectMgr, LoadCreatureWaypoints);
 	MAKE_TASK(ObjectMgr, LoadTrainers);
 	MAKE_TASK(ObjectMgr, LoadTotemSpells);
 	MAKE_TASK(ObjectMgr, LoadSpellOverride);
@@ -485,6 +478,7 @@ bool World::SetInitialWorldSettings()
 	MAKE_TASK(ObjectMgr, LoadPetLevelupSpellMap);
 	MAKE_TASK(AddonMgr,  LoadFromDB);
 	MAKE_TASK(ObjectMgr, SetHighestGuids);
+	MAKE_TASK(ObjectMgr, ListGuidAmounts);
 	MAKE_TASK(ObjectMgr, LoadReputationModifiers);
 	MAKE_TASK(ObjectMgr, LoadMonsterSay);
 	MAKE_TASK(WeatherMgr,LoadFromDB);
@@ -511,7 +505,7 @@ bool World::SetInitialWorldSettings()
 
 	Log.Success("World", "Database loaded in %ums.", getMSTime() - start_time);
 
-	if (sWorld.Collision)
+	if(sWorld.Collision)
 		CollideInterface.Init();
 	sScriptMgr.LoadScripts();
 
@@ -524,6 +518,7 @@ bool World::SetInitialWorldSettings()
 	// wait for them to exit, now.
 	tl.kill();
 	tl.waitForThreadsToExit();
+
 	sLog.outString("");
 	LoadNameGenData();
 
@@ -550,7 +545,7 @@ bool World::SetInitialWorldSettings()
 	m_queueUpdateTimer = mQueueUpdateInterval;
 	if(Config.MainConfig.GetBoolDefault("Startup", "BackgroundLootLoading", true))
 	{
-		Log.Notice("World", "Backgrounding loot loading...");
+		Log.Notice("World", "Background loot loading...");
 
 		// loot background loading in a lower priority thread.
 		ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<LootMgr>(LootMgr::getSingletonPtr(), &LootMgr::LoadDelayedLoot), 
@@ -586,24 +581,27 @@ bool World::SetInitialWorldSettings()
 	uint32 talent_pos;
 	uint32 talent_class;
 
-    for( uint32 i = 0; i < dbcTalent.GetNumRows(); ++i )
-    {
-        TalentEntry const* talent_info = dbcTalent.LookupRow( i );
-		if( talent_info == NULL )
+	TalentEntry const* talent_info = NULL;
+	TalentTabEntry const* tab_info = NULL;
+	for( uint32 i = 0; i < dbcTalent.GetNumRows(); ++i )
+	{
+		talent_info = dbcTalent.LookupRow( i );
+		if(!talent_info)
 			continue;
 
-		TalentTabEntry const* tab_info = dbcTalentTab.LookupEntry( talent_info->TalentTree );
-		if( tab_info == NULL )
+		tab_info = dbcTalentTab.LookupEntry( talent_info->TalentTree );
+
+		if(!tab_info)
 			continue;
 
-        talent_max_rank = 0;
-        for( uint32 j = 5; j > 0; --j )
-        {
-            if( talent_info->RankID[j - 1] )
-            {
-                talent_max_rank = j;
-                break;
-            }
+		talent_max_rank = 0;
+		for( uint32 j = 5; j > 0; --j )
+		{
+			if( talent_info->RankID[j - 1] )
+			{
+				talent_max_rank = j;
+				break;
+			}
 		}
 
 		InspectTalentTabBit[( talent_info->Row << 24 ) + ( talent_info->Col << 16 ) + talent_info->TalentID] = talent_max_rank;
@@ -612,12 +610,12 @@ bool World::SetInitialWorldSettings()
 
 	for( uint32 i = 0; i < dbcTalentTab.GetNumRows(); ++i )
 	{
-		TalentTabEntry const* tab_info = dbcTalentTab.LookupRow( i );
+		tab_info = dbcTalentTab.LookupRow(i);
 		if( tab_info == NULL )
 			continue;
 
 		talent_pos = 0;
-        
+
 		for( talent_class = 0; talent_class < 12; ++talent_class )
 		{
 			if( tab_info->ClassMask & ( 1 << talent_class ) )
@@ -629,7 +627,7 @@ bool World::SetInitialWorldSettings()
 		for( std::map< uint32, uint32 >::iterator itr = InspectTalentTabBit.begin(); itr != InspectTalentTabBit.end(); ++itr )
 		{
 			uint32 talent_id = itr->first & 0xFFFF;
-			TalentEntry const* talent_info = dbcTalent.LookupEntry( talent_id );
+			talent_info = dbcTalent.LookupEntry( talent_id );
 			if( talent_info == NULL )
 				continue;
 

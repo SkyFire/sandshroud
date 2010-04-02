@@ -3695,4 +3695,3 @@ void AIInterface::WipeCurrentTarget()
 		UnitToFollow_backup = NULLUNIT;
 }
 
-

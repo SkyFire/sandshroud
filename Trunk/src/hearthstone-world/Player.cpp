@@ -343,6 +343,8 @@ void Player::Init()
 	titanGrip = false;
 	iInstanceType = 0;
 	iRaidType = 0;
+	m_XPoff = false;
+	customizable = false;
 	memset(reputationByListId, 0, sizeof(FactionReputation*) * 128);
 
 	m_comboTarget = 0;
@@ -1065,9 +1067,9 @@ void Player::Update( uint32 p_time )
 	if(m_CurrentTransporter && !m_lockTransportVariables)
 	{
 		// Update our position, using trnasporter X/Y
-		float c_tposx = m_CurrentTransporter->GetPositionX() + m_TransporterX;
-		float c_tposy = m_CurrentTransporter->GetPositionY() + m_TransporterY;
-		float c_tposz = m_CurrentTransporter->GetPositionZ() + m_TransporterZ;
+		float c_tposx = m_CurrentTransporter->GetPositionX() + m_transportPosition->x;
+		float c_tposy = m_CurrentTransporter->GetPositionY() + m_transportPosition->y;
+		float c_tposz = m_CurrentTransporter->GetPositionZ() + m_transportPosition->z;
 		SetPosition(c_tposx, c_tposy, c_tposz, GetOrientation(), false);
 	}
 
@@ -1521,6 +1523,9 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 	if(getLevel() >= GetUInt32Value(PLAYER_FIELD_MAX_LEVEL))
 		return;
 
+	if(m_XPoff)
+		return;
+
 	uint32 restxp = xp;
 
 	//add reststate bonus
@@ -1651,7 +1656,8 @@ void Player::smsg_InitialSpells()
 	itemCount = 0;
 	for( itr = m_cooldownMap[COOLDOWN_TYPE_SPELL].begin(); itr != m_cooldownMap[COOLDOWN_TYPE_SPELL].end(); )
 	{
-		itr2 = ++itr;
+		itr2 = itr;
+		++itr;
 
 		// don't keep around expired cooldowns
 		if( itr2->second.ExpireTime < mstime || (itr2->second.ExpireTime - mstime) < 10000 )
@@ -1703,11 +1709,14 @@ void Player::smsg_InitialSpells()
 }
 void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 {
+	if(m_talentSpecsCount > 2)
+		m_talentSpecsCount = 2; // Hack fix
+
 	*data << uint32(GetUInt32Value(PLAYER_CHARACTER_POINTS1)); // Unspent talents
 	// TODO: probably shouldn't send both specs if target is not self
 	*data << uint8(m_talentSpecsCount);
 	*data << uint8(m_talentActiveSpec);
-	for(uint8 s = 0; s < m_talentSpecsCount; s++)
+	for(uint8 s = 0; s < m_talentSpecsCount; ++s)
 	{
 		PlayerSpec spec = m_specs[s];
 		// Send Talents
@@ -1726,7 +1735,8 @@ void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 			{
 				*data << uint16(spec.glyphs[i]);
 			}
-		} else
+		}
+		else
 		{
 			*data << uint8(0);	// glyphs not sent when inspecting another player
 		}
@@ -1753,7 +1763,7 @@ void Player::BuildPetTalentsInfo(WorldPacket *data)
 void Player::smsg_TalentsInfo(bool pet)
 {
 	WorldPacket data(SMSG_TALENTS_INFO, 1000);
-	data << uint8(pet?1:0);
+	data << uint8(pet ? 1 : 0);
 	if(pet)
 		BuildPetTalentsInfo(&data);
 	else	// initialize sending all info
@@ -2257,9 +2267,10 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 
 	// stat saving
 	<< "'" << m_name << "', "
-	<< uint32(getRace()) << ","
-	<< uint32(getClass()) << ","
-	<< uint32(getGender()) << ",";
+	<< uint32(getRace()) << ", "
+	<< uint32(getClass()) << ", "
+	<< uint32(getGender()) << ", "
+	<< uint32(customizable ? 1 : 0) << ",";
 
 	if(m_uint32Values[UNIT_FIELD_FACTIONTEMPLATE] != info->factiontemplate)
 		ss << m_uint32Values[UNIT_FIELD_FACTIONTEMPLATE] << ",";
@@ -2267,6 +2278,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		ss << "0,";
 
 	ss << uint32(getLevel()) << ","
+	<< uint32(m_XPoff ? 1 : 0) << ","
 	<< m_uint32Values[PLAYER_XP] << ","
 	
 	// dump exploration data
@@ -2397,12 +2409,12 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		ss << m_CurrentTaxiPath->GetID() << ", ";
 		ss << lastNode << ", ";
 		ss << GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID);
-	} else {
-		ss << "0, 0, 0";
 	}
-	
-	ss << "," << (m_CurrentTransporter ? m_CurrentTransporter->GetEntry() : (uint32)0);
-	ss << ",'" << m_TransporterX << "','" << m_TransporterY << "','" << m_TransporterZ << "'";
+	else
+		ss << "0, 0, 0";
+
+	ss << "," << (m_CurrentTransporter ? m_CurrentTransporter->GetEntry() : uint32(0));
+	ss << ",'" << m_transportPosition->x << "','" << m_transportPosition->y << "','" << m_transportPosition->z << "'";
 	ss << ",'";
 
 	// Dump deleted spell data to stringstream
@@ -2464,7 +2476,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	ss << uint32(m_talentSpecsCount) << ", ";
 
 	ss << "0)";	// force_reset_talents
-	
+
 	if(bNewCharacter)
 		CharacterDatabase.WaitExecuteNA(ss.str().c_str());
 	else
@@ -2888,11 +2900,12 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 
 	// Load name
 	m_name = get_next_field.GetString();
-   
+
 	// Load race/class from fields
 	setRace(get_next_field.GetUInt8());
 	setClass(get_next_field.GetUInt8());
 	setGender(get_next_field.GetUInt8());
+	customizable = get_next_field.GetBool();
 	uint32 cfaction = get_next_field.GetUInt32();
 	
 	// set race dbc
@@ -2942,7 +2955,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 
 	CalculateBaseStats();
 
-
+	m_XPoff = get_next_field.GetBool();
 	// set xp
 	m_uint32Values[PLAYER_XP] = get_next_field.GetUInt32();
 	
@@ -3039,7 +3052,6 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 			DEBUG_LOG("Player","loaded old style skills for player %s", m_name.c_str());
 		}
 	}
-
 
 	// set the rest of the shit
 	m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX]  = get_next_field.GetUInt32();
@@ -3189,12 +3201,12 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 			m_onTaxi = true;
 		}
 		else
-			field_index++;
+			++field_index;
 	}
 	else
 	{
-		field_index++;
-		field_index++;
+		++field_index;
+		++field_index;
 	}
 
 	m_TransporterGUID = get_next_field.GetUInt32();
@@ -3203,10 +3215,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		Transporter* t = objmgr.GetTransporter(GUID_LOPART(m_TransporterGUID));
 		m_TransporterGUID = t ? t->GetGUID() : 0;
 	}
-
-	m_TransporterX = get_next_field.GetFloat();
-	m_TransporterY = get_next_field.GetFloat();
-	m_TransporterZ = get_next_field.GetFloat();
+	m_transportPosition = new LocationVector(get_next_field.GetFloat(), get_next_field.GetFloat(), get_next_field.GetFloat());
 
 	start = (char*)get_next_field.GetString();//buff;
 	while(true)
@@ -3582,9 +3591,9 @@ void Player::AddToWorld(bool loggingin /* = false */)
 	// check transporter
 	if(m_TransporterGUID && m_CurrentTransporter)
 	{
-		SetPosition(m_CurrentTransporter->GetPositionX() + m_TransporterX,
-			m_CurrentTransporter->GetPositionY() + m_TransporterY,
-			m_CurrentTransporter->GetPositionZ() + m_TransporterZ,
+		SetPosition(m_CurrentTransporter->GetPositionX() + m_transportPosition->x,
+			m_CurrentTransporter->GetPositionY() + m_transportPosition->y,
+			m_CurrentTransporter->GetPositionZ() + m_transportPosition->z,
 			GetOrientation(), false);
 	}
 
@@ -3616,9 +3625,9 @@ void Player::AddToWorld(MapMgr* pMapMgr)
 	// check transporter
 	if(m_TransporterGUID && m_CurrentTransporter)
 	{
-		SetPosition(m_CurrentTransporter->GetPositionX() + m_TransporterX,
-			m_CurrentTransporter->GetPositionY() + m_TransporterY,
-			m_CurrentTransporter->GetPositionZ() + m_TransporterZ,
+		SetPosition(m_CurrentTransporter->GetPositionX() + m_transportPosition->x,
+			m_CurrentTransporter->GetPositionY() + m_transportPosition->y,
+			m_CurrentTransporter->GetPositionZ() + m_transportPosition->z,
 			GetOrientation(), false);
 	}
 
@@ -6142,23 +6151,27 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 
 void Player::SendDualTalentConfirm()
 {
-	uint32 talentCost = sWorld.dualTalentTrainCost;
-	// Here we should send a confirmation box, but there is no documented opcode for it
-	if( GetUInt32Value(PLAYER_FIELD_COINAGE) >= talentCost )
-	{
-		// Cast the learning spell
-		CastSpell(this, 63624, true);
-		ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32)talentCost);
-	}
-	else
-	{
-		// Not enough money!
-		sChatHandler.SystemMessage(m_session, "You must have at least %u copper to use this function.", talentCost);
-	}
+	// Cast the learning spell
+	CastSpell(this, 63624, true);
 	/*WorldPacket data();
 	data << GetGUID();
 	data << sWorld.dualTalentTrainCost;
 	GetSession()->SendPacket( &data );*/
+}
+
+void Player::SendXPToggleConfirm()
+{
+//	sChatHandler.SystemMessageToPlr(this, "XP %s.", m_XPoff ? "Disabled" : "Enabled");
+	if(m_XPoff)
+		m_XPoff = false;
+	else
+		m_XPoff = true;
+/*	std::string message = "Xp Disabled or Enabled message.";
+	WorldPacket data(SMSG_TOGGLE_XP_GAIN, 20);
+	data << GetGUID();
+	data << uint32(message.size());
+	data << message;
+	GetSession()->SendPacket(&data);*/
 }
 
 void Player::EventAllowTiggerPort(bool enable)

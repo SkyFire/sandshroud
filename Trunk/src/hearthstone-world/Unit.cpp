@@ -57,12 +57,8 @@ Unit::Unit()
 	m_CurrentVehicle = NULLVEHICLE;
 
 	//transport shit
-	m_transportPosition		= NULL;
+	m_transportPosition		= new LocationVector(0,0,0,0);
 	m_TransporterGUID		= NULL;
-	m_TransporterX			= 0.0f;
-	m_TransporterY			= 0.0f;
-	m_TransporterZ			= 0.0f;
-	m_TransporterO			= 0.0f;
 	m_TransporterUnk		= 0.0f;
 	m_lockTransportVariables= false;
 
@@ -513,12 +509,11 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 			pGroupGuy = (*itr)->m_loggedInPlayer;
 			if( pGroupGuy && 
 				pGroupGuy->isAlive() && 
-//				PlayerInGroup->GetInstanceID()==pGroupGuy->GetInstanceID() &&
 				pVictim->GetMapMgr() == pGroupGuy->GetMapMgr() && 
 				pGroupGuy->GetDistanceSq(pVictim)<100*100
 				)
 			{
-				active_player_list[active_player_count]=pGroupGuy;
+				active_player_list[active_player_count] = pGroupGuy;
 				active_player_count++;
 				total_level += pGroupGuy->getLevel();
 				if(pHighLvlPlayer)
@@ -5144,7 +5139,8 @@ void Unit::RemoveAllAreaAuras()
 	AuraList::iterator itr,it1;
 	for(itr = m_auras.begin();itr!=m_auras.end();)
 	{
-		it1 = ++itr;
+		it1 = itr;
+		++itr;
 		if(((*it1)->m_spellProto->Effect[0] == SPELL_EFFECT_APPLY_AREA_AURA ||
 			(*it1)->m_spellProto->Effect[1] == SPELL_EFFECT_APPLY_AREA_AURA ||
 			(*it1)->m_spellProto->Effect[2] == SPELL_EFFECT_APPLY_AREA_AURA) && (*it1)->GetCaster() != this)

@@ -80,9 +80,9 @@ void WorldSession::HandleMoveWorldportAckOpcode( WorldPacket & recv_data )
 	{
 		/* wow, our pc must really suck. */
 		Transporter* pTrans = _player->m_CurrentTransporter;
-		float c_tposx = pTrans->GetPositionX() + _player->m_TransporterX;
-		float c_tposy = pTrans->GetPositionY() + _player->m_TransporterY;
-		float c_tposz = pTrans->GetPositionZ() + _player->m_TransporterZ;
+		float c_tposx = pTrans->GetPositionX() + _player->m_transportPosition->x;
+		float c_tposy = pTrans->GetPositionY() + _player->m_transportPosition->y;
+		float c_tposz = pTrans->GetPositionZ() + _player->m_transportPosition->z;
 
 		WorldPacket dataw(SMSG_NEW_WORLD, 20);
 		dataw << pTrans->GetMapId() << c_tposx << c_tposy << c_tposz << _player->GetOrientation();
@@ -604,10 +604,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 				/* set variables */
 				_player->m_TransporterGUID = _player->movement_info.transGuid.GetOldGuid();
 				_player->m_TransporterUnk = _player->movement_info.transTime;
-				_player->m_TransporterX = v->x;
-				_player->m_TransporterY = v->y;
-				_player->m_TransporterZ = v->z;
-				_player->m_TransporterO = v->o;
 				_player->m_transportPosition = v;
 				_player->DelaySpeedHack(5000);
 				delete v;
@@ -619,10 +615,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 				/* no changes */
 				_player->m_TransporterUnk = _player->movement_info.transTime;
-				_player->m_TransporterX = v->x;
-				_player->m_TransporterY = v->y;
-				_player->m_TransporterZ = v->z;
-				_player->m_TransporterO = v->o;
 				_player->m_transportPosition = v;
 				delete v;
 			}

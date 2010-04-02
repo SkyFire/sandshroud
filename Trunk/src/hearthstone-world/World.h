@@ -686,7 +686,7 @@ public:
 		const char * p;
 		size_t i;
 
-		static const char * bannedCharacters = "\t\v\b\f\a\n\r\\\"\'\? <>[](){}_=+-|/!@#$%^&*~`.,0123456789\0";
+		static const char * bannedCharacters = "\t\v\b\f\a\n\r\\\"\'\?<>[](){}_=+-|/!@#$%^&*~`.,0123456789\0";
 		static const char * allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		if(m_limitedNames)
 		{

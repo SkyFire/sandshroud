@@ -137,7 +137,7 @@ public:
 		return spawns[cellx][celly];
 	}
 
-	void LoadSpawns(bool reload);//set to true to make clean up
+	void LoadSpawns(bool reload = false);//set to true to make clean up
 	uint32 CreatureSpawnCount;
 	uint32 GameObjectSpawnCount;
 

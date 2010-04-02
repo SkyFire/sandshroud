@@ -541,13 +541,14 @@ public:
 	ReputationModifier * GetReputationModifier(uint32 entry_id, uint32 faction_id);
 
 	void SetHighestGuids();
+	void ListGuidAmounts();
 	uint32 GenerateLowGuid(uint32 guidhigh);
 	uint32 GenerateMailID();
 	
 	void LoadTransporters();
 	void ProcessGameobjectQuests();
-    void AddTransport(Transporter* pTransporter);
-   
+	void AddTransport(Transporter* pTransporter);
+
 	void LoadTrainers();
 	Trainer* GetTrainer(uint32 Entry);
 
@@ -637,11 +638,11 @@ protected:
 	uint32 m_mailid;
 	// highest GUIDs, used for creating new objects
 	Mutex m_guidGenMutex;
-    union
-    {
-	    uint32 m_hiItemGuid;
-	    uint32 m_hiContainerGuid;
-    };
+	union
+	{
+		uint32 m_hiItemGuid;
+		uint32 m_hiContainerGuid;
+	};
 	uint32 m_hiGroupId;
 	uint32 m_hiCharterId;
 	RWLock m_charterLock;
@@ -660,7 +661,7 @@ protected:
 	
 	HM_NAMESPACE::hash_map<uint32,WayPointMap*> m_waypoints;//stored by spawnid
 	uint32 m_hiCreatureSpawnId;
-	
+
 	Mutex m_CreatureSpawnIdMutex;
 	Mutex m_GOSpawnIdMutex;
 

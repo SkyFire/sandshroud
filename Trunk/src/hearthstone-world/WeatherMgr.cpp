@@ -114,14 +114,15 @@ void WeatherMgr::LoadFromDB()
 {
 	//sLog.outString("  Loading Weather..."); // weather type 0= sunny / 1= fog / 2 = light_rain / 4 = rain / 8 = snow / ?? = sandstorm
 	QueryResult *result = WorldDatabase.Query( "SELECT zoneId,high_chance,high_type,med_chance,med_type,low_chance,low_type FROM weather" );
-
 	if( !result )
 		return;
 
+	Field *fields = result->Fetch();
+	WeatherInfo* wi = NULL;
 	do
 	{
-		Field *fields = result->Fetch();
-		WeatherInfo* wi(new WeatherInfo);
+		fields = result->Fetch();
+		wi = new WeatherInfo();
 		wi->m_zoneId = fields[0].GetUInt32();
 		wi->m_effectValues[0] = fields[1].GetUInt32();  // high_chance
 		wi->m_effectValues[1] = fields[2].GetUInt32();  // high_type

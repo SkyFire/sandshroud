@@ -2754,7 +2754,7 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 		return;
 	}
 
-	if(!p_caster->GetItemInterface()->AddItemById(m_spellInfo->EffectItemType[i], item_count, m_itemProto->RandomPropId ? m_itemProto->RandomPropId : 0, true))
+	if(!p_caster->GetItemInterface()->AddItemById(m_spellInfo->EffectItemType[i], (item_count > 1 ? item_count : 1 ), m_itemProto->RandomPropId ? m_itemProto->RandomPropId : 0, true))
 		return;
 
 	if(skill)
@@ -7674,7 +7674,6 @@ void Spell::SpellEffectSetTalentSpecsCount(uint32 i)
 		p_caster->ApplySpec(0, false);
 	}
 	p_caster->m_talentSpecsCount = damage;
-	
 
 	// Send update
 	p_caster->smsg_TalentsInfo(false);

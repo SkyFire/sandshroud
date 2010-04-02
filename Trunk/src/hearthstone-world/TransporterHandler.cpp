@@ -367,9 +367,9 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 			if(!plr->GetSession() || !plr->IsInWorld()) 
 				continue;
 
-			v.x = x + plr->m_TransporterX;
-			v.y = y + plr->m_TransporterY;
-			v.z = z + plr->m_TransporterZ;
+			v.x = x + plr->m_transportPosition->x;
+			v.y = y + plr->m_transportPosition->y;
+			v.z = z + plr->m_transportPosition->z;
 			v.o = plr->GetOrientation();
 
 			if(mapid == 530 && !plr->GetSession()->HasFlag(ACCOUNT_FLAG_XPACK_01))
@@ -428,10 +428,6 @@ Transporter::~Transporter()
 		{
 			delete TO_CREATURE( itr->second )->m_transportPosition;
 			TO_CREATURE( itr->second )->m_TransporterGUID = NULL;
-			TO_CREATURE( itr->second )->m_TransporterX = NULL;
-			TO_CREATURE( itr->second )->m_TransporterY = NULL;
-			TO_CREATURE( itr->second )->m_TransporterZ = NULL;
-			TO_CREATURE( itr->second )->m_TransporterO = NULL;
 		}
 		itr->second->Destructor();
 	}
@@ -449,22 +445,26 @@ void ObjectMgr::LoadTransporters()
 #endif
 	Log.Notice("ObjectMgr", "Loading Transports...");
 	QueryResult * QR = WorldDatabase.Query("SELECT entry FROM gameobject_names WHERE type = %u", GAMEOBJECT_TYPE_MO_TRANSPORT);
-	if(!QR) return;
+	if(!QR)
+		return;
 
 	int64 total = QR->GetRowCount();
-	TransportersCount=total;
+	TransportersCount = total;
+	uint32 entry = NULL;
+	Transporter* pTransporter = NULL;
 	do 
 	{
-		uint32 entry = QR->Fetch()[0].GetUInt32();
+		entry = QR->Fetch()[0].GetUInt32();
 
-		Transporter* pTransporter(new Transporter((uint64)HIGHGUID_TYPE_TRANSPORTER<<32 |entry));
+		pTransporter = new Transporter((uint64)HIGHGUID_TYPE_TRANSPORTER<<32 | entry);
 		if(!pTransporter->CreateAsTransporter(entry, ""))
 		{
 			Log.Warning("ObjectMgr","Skipped invalid transporterid %d.", entry);
 			pTransporter->Destructor();
-		}else
+		}
+		else
 		{
-            AddTransport(pTransporter);
+			AddTransport(pTransporter);
 
 			QueryResult * result2 = WorldDatabase.Query("SELECT * FROM transport_creatures WHERE transport_entry = %u", entry);
 			if(result2)
@@ -508,10 +508,6 @@ void Transporter::AddNPC(uint32 Entry, float offsetX, float offsetY, float offse
 	Creature* pCreature(new Creature((uint64)HIGHGUID_TYPE_TRANSPORTER<<32 | guid));
 	pCreature->Init();
 	pCreature->Load(proto, offsetX, offsetY, offsetZ, offsetO);
-	pCreature->m_TransporterX = offsetX;
-	pCreature->m_TransporterY = offsetY;
-	pCreature->m_TransporterZ = offsetZ;
-	pCreature->m_TransporterO = offsetO;
 	pCreature->m_TransporterUnk = UNIXTIME;
 	pCreature->m_transportPosition = new LocationVector(offsetX, offsetY, offsetZ, offsetO);
 	pCreature->m_TransporterGUID = GetGUID();

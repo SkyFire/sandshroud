@@ -2197,8 +2197,8 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		Transporter* t = objmgr.GetTransporter(GUID_LOPART(pl->m_TransporterGUID));
 		if(t)
 		{
-			WorldDatabase.Execute("INSERT INTO transport_creatures VALUES(%u, %u, '%f', '%f', '%f', '%f')", GUID_LOPART(pl->m_TransporterGUID), entry, pl->m_TransporterX, pl->m_TransporterY, pl->m_TransporterZ, pl->GetOrientation());
-			t->AddNPC(entry, pl->m_TransporterX, pl->m_TransporterY, pl->m_TransporterZ, pl->GetOrientation());
+			WorldDatabase.Execute("INSERT INTO transport_creatures VALUES(%u, %u, '%f', '%f', '%f', '%f')", GUID_LOPART(pl->m_TransporterGUID), entry, pl->m_transportPosition->x, pl->m_transportPosition->y, pl->m_transportPosition->z, pl->GetOrientation());
+			t->AddNPC(entry, pl->m_transportPosition->x, pl->m_transportPosition->y, pl->m_transportPosition->z, pl->GetOrientation());
 			BlueSystemMessage(m_session, "Spawned crew-member %u on transport %u. You might need to relog.", entry, GUID_LOPART(pl->m_TransporterGUID));
 			sGMLog.writefromsession(m_session, "spawned crew-member %u on transport %u.", entry, GUID_LOPART(pl->m_TransporterGUID));
 			return true;

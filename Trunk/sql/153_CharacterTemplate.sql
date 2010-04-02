@@ -123,8 +123,10 @@ CREATE TABLE `characters` (
   `race` tinyint(3) unsigned NOT NULL,
   `class` tinyint(3) unsigned NOT NULL,
   `gender` tinyint(3) unsigned NOT NULL,
+  `customizable` int(3) NOT NULL DEFAULT '0',
   `custom_faction` int(10) unsigned NOT NULL default '0',
   `level` tinyint(3) unsigned NOT NULL,
+  `xp_off` int(3) NOT NULL DEFAULT '0',
   `xp` int(10) unsigned NOT NULL,
   `exploration_data` longtext NOT NULL,
   `skills` longtext NOT NULL,
@@ -202,7 +204,7 @@ CREATE TABLE `characters` (
   `specs_count` tinyint(3) unsigned NOT NULL default '1',
   `need_talent_reset` int(3) NOT NULL default '0',
   PRIMARY KEY  (`guid`)
-) ENGINE=MyISAM AUTO_INCREMENT=65550 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `characters_insert_queue` */
 

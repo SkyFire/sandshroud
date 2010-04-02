@@ -3319,8 +3319,8 @@ void ItemInterface::CheckAreaItems()
 // This was supposed to be given to Arc :|
 bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, bool created )
 {
-	if( count == 0 )
-		return false;
+	if( count < 1 )
+		count = 1;
 
 	Player *chr = GetOwner();
 
@@ -3332,7 +3332,7 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 	if(it == NULL )
 		return false;
 
-	uint32 maxStack = it->MaxCount;
+	uint32 maxStack = (it->MaxCount > 0 ? it->MaxCount : 1 ); // Our database is lacking :|
 	uint32 toadd;
 	bool freeslots = true;
 
@@ -3369,7 +3369,7 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 
 			item->ApplyRandomProperties( false );
 		}
-		
+
 		toadd = count > maxStack ? maxStack : count;
 
 		item->SetUInt32Value( ITEM_FIELD_STACK_COUNT, toadd );

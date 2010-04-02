@@ -347,16 +347,16 @@ void ObjectMgr::LoadExtraItemStuff()
 {
 	map<uint32,uint32> foodItems;
 	QueryResult * result = WorldDatabase.Query("SELECT * FROM itempetfood ORDER BY entry");
+	Field *f = NULL;
 	if(result)
 	{
-		Field *f = result->Fetch();
 		do
-		{		
+		{
+			f = result->Fetch();
 			foodItems.insert( make_pair( f[0].GetUInt32(), f[1].GetUInt32() ) );
-		}
-		while(result->NextRow());
+		}while(result->NextRow());
+		delete result;
 	}
-	delete result;
 
 	StorageContainerIterator<GameObjectInfo> *gtr = GameObjectNameStorage.MakeIterator();
 	while(!gtr->AtEnd())
@@ -400,7 +400,7 @@ void ObjectMgr::LoadExtraItemStuff()
 			ft = iter->second;
 		pItemPrototype->FoodType = ft ;
 	
-		pItemPrototype->gossip_script=NULL;
+		pItemPrototype->gossip_script = NULL;
 
 		// forced pet entries
 		switch( pItemPrototype->ItemId )
@@ -523,7 +523,7 @@ void ObjectMgr::LoadExtraItemStuff()
 			break;
 		}
 
-        if(!itr->Inc())
+		if(!itr->Inc())
 			break;
 	}
 
@@ -533,7 +533,7 @@ void ObjectMgr::LoadExtraItemStuff()
 
 #define make_task(storage, itype, storagetype, tablename, format) tl.AddTask( new Task( \
 	new CallbackP2< SQLStorage< itype, storagetype< itype > >, const char *, const char *> \
-    (&storage, &SQLStorage< itype, storagetype< itype > >::Load, tablename, format) ) )
+	(&storage, &SQLStorage< itype, storagetype< itype > >::Load, tablename, format) ) )
 
 void Storage_FillTaskList(TaskList & tl)
 {

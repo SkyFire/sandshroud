@@ -501,36 +501,36 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 	recv_data >> guid >> unk24 >> option;
 
 	DEBUG_LOG("WORLD","CMSG_GOSSIP_SELECT_OPTION Option %i Guid %.8X", option, guid );
-	GossipScript * Script=NULL;
-	Object* qst_giver=NULLOBJ;
+	GossipScript* Script = NULL;
+	Object* qst_giver = NULLOBJ;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_UNIT)
 	{
 		Creature* crt = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(!crt)
 			return;
 
-		qst_giver=crt;
-		Script=crt->GetCreatureInfo()?crt->GetCreatureInfo()->gossip_script:NULL;
+		qst_giver = crt;
+		Script = crt->GetCreatureInfo() ? crt->GetCreatureInfo()->gossip_script : NULL;
 	}
-	else if(guidtype==HIGHGUID_TYPE_ITEM)
+	else if(guidtype == HIGHGUID_TYPE_ITEM)
 	{
 		Item* pitem = _player->GetItemInterface()->GetItemByGUID(guid);
-		if(pitem==NULL)
+		if(pitem == NULL)
 			return;
 
-		qst_giver=pitem;
-		Script=pitem->GetProto()->gossip_script;
+		qst_giver = pitem;
+		Script = pitem->GetProto()->gossip_script;
 	}
-	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
+	else if(guidtype == HIGHGUID_TYPE_GAMEOBJECT)
 	{
 		GameObject* gobj = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
 		if(!gobj)
 			return;
 
-		qst_giver=gobj;
-		Script=gobj->GetInfo()->gossip_script;
+		qst_giver = gobj;
+		Script = gobj->GetInfo()->gossip_script;
 	}
 
 	if(!Script||!qst_giver)
@@ -542,11 +542,21 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 		GossipMenuItem item = _player->CurrentGossipMenu->GetItem(option);
 		IntId = item.IntId;
 		Coded = item.Coded;
+		if(item.BoxMoney)
+		{
+			if(_player->GetUInt32Value(PLAYER_FIELD_COINAGE) < item.BoxMoney)
+			{
+				sChatHandler.SystemMessage(this, "You must have at least %u copper to use this function.", item.BoxMoney);
+				return;
+			}
+			else
+				_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32(item.BoxMoney)));
+		}
 	}
 
 	if(Coded)
 	{
-		if(recv_data.rpos()!=recv_data.wpos())
+		if(recv_data.rpos() != recv_data.wpos())
 			recv_data >> BoxMessage;
 
 		Script->GossipSelectOption(qst_giver, _player, option, IntId, BoxMessage.c_str());

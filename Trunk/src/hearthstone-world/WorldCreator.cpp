@@ -39,12 +39,13 @@ void InstanceMgr::Load(TaskList * l)
 {
 	new FormationMgr;
 	new WorldStateTemplateManager;
+	QueryResult *result;
 
 	sWorldStateTemplateManager.LoadFromDB();
 
 	// Create all non-instance type maps.
-	QueryResult *result = CharacterDatabase.Query( "SELECT MAX(id) FROM instances" );
-	if( result )
+	result = CharacterDatabase.Query( "SELECT MAX(id) FROM instances" );
+	if(result)
 	{
 		m_InstanceHigh = result->Fetch()[0].GetUInt32()+1;
 		delete result;
@@ -58,7 +59,7 @@ void InstanceMgr::Load(TaskList * l)
 	{
 		do 
 		{
-			if(WorldMapInfoStorage.LookupEntry(result->Fetch()[0].GetUInt32()) == NULL)
+			if(!WorldMapInfoStorage.LookupEntry(result->Fetch()[0].GetUInt32()))
 				continue;
 
 			if( result->Fetch()[0].GetUInt32() >= NUM_MAPS )
@@ -587,7 +588,7 @@ void InstanceMgr::_CreateMap(uint32 mapid)
 
 	MapInfo * inf = NULL;
 	inf = WorldMapInfoStorage.LookupEntry(mapid);
-	if(inf==NULL || m_maps[mapid]!=NULL)
+	if(!inf || m_maps[mapid])
 		return;
 
 	m_maps[mapid] = new Map(mapid, inf);
@@ -697,9 +698,9 @@ void InstanceMgr::BuildXMLStats(char * m_file)
 
 void InstanceMgr::_LoadInstances()
 {
-	MapInfo * inf;
-	Instance * in;
-	QueryResult * result;
+	MapInfo* inf;
+	Instance* in;
+	QueryResult* result;
 
 	// clear any instances that have expired.
 	Log.Notice("InstanceMgr", "Deleting Expired Instances...");
