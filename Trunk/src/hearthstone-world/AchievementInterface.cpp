@@ -35,10 +35,7 @@ AchievementInterface::~AchievementInterface()
 	{
 		std::map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
 		for(; itr != m_achivementDataMap.end(); ++itr)
-		{
-			delete [] itr->second->counter;
 			delete itr->second;
-		}
 	}
 
 	if( m_achievementInspectPacket )
@@ -299,8 +296,6 @@ AchievementData* AchievementInterface::CreateAchievementDataEntryForAchievement(
 	memset(ad, 0, sizeof(AchievementData));
 	ad->id = ae->ID;
 	ad->num_criterias = ae->AssociatedCriteriaCount;
-	ad->counter = new uint32[ae->AssociatedCriteriaCount];
-	memset(ad->counter, 0, sizeof(uint32)*ae->AssociatedCriteriaCount);
 	m_achivementDataMap.insert( make_pair( ad->id, ad ) );
 	return ad;
 }
