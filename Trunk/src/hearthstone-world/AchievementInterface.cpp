@@ -66,11 +66,6 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 
 		ad->id = achievementid;
 		ad->num_criterias = ae->AssociatedCriteriaCount;
-		if(!completed) // save us memory! don't allocate our counters unless we're actually still working. :D
-		{
-			ad->counter = new uint32[ae->AssociatedCriteriaCount];
-			memset(ad->counter, 0, sizeof(uint32)*ae->AssociatedCriteriaCount);
-		}
 		ad->completed = completed;
 		ad->criteriaprogress = fields[2].GetString();
 		ad->date = fields[3].GetUInt32();
