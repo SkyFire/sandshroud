@@ -63,11 +63,11 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 		AchievementEntry * ae = dbcAchievement.LookupEntry( achievementid );
 		AchievementData * ad = new AchievementData;
 		memset(ad, 0, sizeof(AchievementData));
+		std::string criteriaprogress = fields[2].GetString();
 
 		ad->id = achievementid;
 		ad->num_criterias = ae->AssociatedCriteriaCount;
 		ad->completed = completed;
-		ad->criteriaprogress = fields[2].GetString();
 		ad->date = fields[3].GetUInt32();
 		ad->groupid = fields[4].GetUInt64();
 
@@ -75,7 +75,7 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 			(ae->flags & ACHIEVEMENT_FLAG_REALM_FIRST_OBTAIN) || (ae->flags & ACHIEVEMENT_FLAG_REALM_FIRST_KILL))
 			m_completedRealmFirstAchievements.insert( ae->ID );
 
-		vector<string> Delim = StrSplit( ad->criteriaprogress, "," );
+		vector<string> Delim = StrSplit( criteriaprogress, "," );
 		for( uint32 i = 0; !completed && i < ae->AssociatedCriteriaCount; ++i)
 		{
 			if( i >= Delim.size() )

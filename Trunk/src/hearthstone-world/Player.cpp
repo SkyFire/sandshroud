@@ -18,8 +18,12 @@
  */
 
 #include "StdAfx.h"
+#include "AuthCodes.h"
+
 UpdateMask Player::m_visibleUpdateMask;
+
 #define COLLISION_MOUNT_CHECK_INTERVAL 1000
+
 static const uint8 baseRunes[6] = {0,0,1,1,2,2};
 static const uint32 DKNodesMask[12] = {4294967295,4093640703,830406655,0,33570816,1310944,3250593812,73752,896,67111952,0,0};//all old continents are available to DK's by default.
 
@@ -2802,7 +2806,7 @@ void Player::RemovePendingPlayer()
 {
 	if(m_session)
 	{
-		uint8 response = 0x53;		// CHAR_LOGIN_NO_CHARACTER
+		uint8 response = CHAR_LOGIN_NO_CHARACTER;
 		m_session->OutPacket(SMSG_CHARACTER_LOGIN_FAILED, 1, &response);
 		m_session->m_loggingInPlayer = NULLPLR;
 	}
@@ -2867,7 +2871,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		return;
 	}
 
-	if(GetSession() == NULL || results.size() < 8)		// should have 8 query results for aplayer load.
+	if(GetSession() == NULL || results.size() < 8)		// should have 8 query results for a player load.
 	{
 		RemovePendingPlayer();
 		return;
@@ -3054,16 +3058,16 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	}
 
 	// set the rest of the shit
-	m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX]  = get_next_field.GetUInt32();
-	m_uint32Values[ PLAYER_CHOSEN_TITLE ]					= get_next_field.GetUInt32();
+	m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX]	= get_next_field.GetUInt32();
+	m_uint32Values[ PLAYER_CHOSEN_TITLE ]				= get_next_field.GetUInt32();
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES, get_next_field.GetUInt64() );
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES1, get_next_field.GetUInt64() );
 	m_uint32Values[PLAYER_FIELD_COINAGE]				= get_next_field.GetUInt32();
-	m_uint32Values[PLAYER_AMMO_ID]					  = get_next_field.GetUInt32();
+	m_uint32Values[PLAYER_AMMO_ID]						= get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_CHARACTER_POINTS2]			= get_next_field.GetUInt32();
-	m_maxTalentPoints								= get_next_field.GetUInt16();
-	load_health										 = get_next_field.GetUInt32();
-	load_mana										   = get_next_field.GetUInt32();
+	m_maxTalentPoints									= get_next_field.GetUInt16();
+	load_health											= get_next_field.GetUInt32();
+	load_mana											= get_next_field.GetUInt32();
 	uint8 pvprank = get_next_field.GetUInt8();
 	SetUInt32Value(PLAYER_BYTES, get_next_field.GetUInt32());
 	SetUInt32Value(PLAYER_BYTES_2, get_next_field.GetUInt32());
@@ -3076,7 +3080,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	m_position.z										= get_next_field.GetFloat();
 	m_position.o										= get_next_field.GetFloat();
 
-	m_mapId											 = get_next_field.GetUInt32();
+	m_mapId												= get_next_field.GetUInt32();
 	m_zoneId											= get_next_field.GetUInt32();
 
 	// Calculate the base stats now they're all loaded
