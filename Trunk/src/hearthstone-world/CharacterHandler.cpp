@@ -730,13 +730,13 @@ void WorldSession::FullLogin(Player* plr)
 	SendPacket(&datac);
 
 	// Send first line of MOTD
-	WorldPacket datat(SMSG_MOTD, 100);
+	WorldPacket datat(SMSG_MOTD, sizeof(sWorld.GetMotd()) + 4);
 	datat << uint32(0x04);
 	datat << sWorld.GetMotd();
 	SendPacket(&datat);
 
 	// Send second line of MOTD
-	WorldPacket datat2(SMSG_MOTD, 100);
+	WorldPacket datat2(SMSG_MOTD, sizeof(sWorld.GetMotd2()) + 4);
 	datat2 << uint32(0x04);
 	datat2 << sWorld.GetMotd2();
 	SendPacket(&datat2);

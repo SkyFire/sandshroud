@@ -2802,8 +2802,8 @@ void Player::RemovePendingPlayer()
 {
 	if(m_session)
 	{
-		uint8 respons = 0x42;		// CHAR_LOGIN_NO_CHARACTER
-		m_session->OutPacket(SMSG_CHARACTER_LOGIN_FAILED, 1, &respons);
+		uint8 response = 0x53;		// CHAR_LOGIN_NO_CHARACTER
+		m_session->OutPacket(SMSG_CHARACTER_LOGIN_FAILED, 1, &response);
 		m_session->m_loggingInPlayer = NULLPLR;
 	}
 
@@ -2891,7 +2891,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		return;
 	}
 
-	uint32 banned = fields[33].GetUInt32();
+	uint32 banned = fields[35].GetUInt32();
 	if(banned && (banned < 100 || banned > (uint32)UNIXTIME))
 	{
 		RemovePendingPlayer();
