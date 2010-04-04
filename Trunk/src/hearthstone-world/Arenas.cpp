@@ -510,6 +510,7 @@ void Arena::Finish()
 	sEventMgr.RemoveEvents(this, EVENT_BATTLEGROUND_CLOSE);
 	sEventMgr.RemoveEvents(this, EVENT_ARENA_SHADOW_SIGHT);
 	sEventMgr.AddEvent(TO_CBATTLEGROUND(this), &CBattleground::Close, EVENT_BATTLEGROUND_CLOSE, 120000, 1,0);
+	SendChatMessage( CHAT_MSG_BG_SYSTEM_NEUTRAL, 0, "|cffffff00This arena will close in 2 minutes.");
 
 	for(int i = 0; i < 2; ++i)
 	{

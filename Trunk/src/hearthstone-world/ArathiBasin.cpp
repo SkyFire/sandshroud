@@ -20,8 +20,8 @@
 #include "StdAfx.h"
 
 #define BASE_RESOURCES_GAIN 10
-#define RESOURCES_WARNING_THRESHOLD 1800
-#define RESOURCES_WINVAL 2000
+#define RESOURCES_WARNING_THRESHOLD 1400
+#define RESOURCES_WINVAL 1600
 #define RESOURCES_TO_GAIN_BH 200
 #define BASE_BH_GAIN 14
 uint32 buffentrys[3] = {180380,180362,180146};
@@ -545,6 +545,7 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 					(*itr)->CastSpell((*itr), loser_spell, true);
 					(*itr)->m_bgScore.BonusHonor += m_bonusHonor;
 					HonorHandler::AddHonorPointsToPlayer((*itr), m_bonusHonor);
+					SendChatMessage( CHAT_MSG_BG_SYSTEM_NEUTRAL, 0, "|cffffff00This battleground will close in 2 minutes.");
 				}
 				else
 				{
@@ -553,6 +554,7 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 					HonorHandler::AddHonorPointsToPlayer((*itr), 2*m_bonusHonor);
 					uint32 diff = abs((int32)(m_resources[i] - m_resources[i ? 0 : 1]));
 					(*itr)->GetAchievementInterface()->HandleAchievementCriteriaWinBattleground( m_mapMgr->GetMapId(), diff, ((uint32)UNIXTIME - m_startTime) / 1000, TO_CBATTLEGROUND(this));
+					SendChatMessage( CHAT_MSG_BG_SYSTEM_NEUTRAL, 0, "|cffffff00This battleground will close in 2 minutes.");
 				}
 			}
 		}
