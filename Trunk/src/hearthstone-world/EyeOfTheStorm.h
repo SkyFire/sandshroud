@@ -83,6 +83,8 @@ protected:
 
 	GameObject* m_CPStatusGO[EOTS_TOWER_COUNT];
 	GameObject* m_CPBanner[EOTS_TOWER_COUNT];
+	GameObject* m_CPBanner2[EOTS_TOWER_COUNT];
+	GameObject* m_CPBanner3[EOTS_TOWER_COUNT];
 	GameObject* m_bubbles[2];
 	GameObject* m_EOTSbuffs[4];
 

@@ -949,7 +949,7 @@ void WorldSession::FullLogin(Player* plr)
 #else // WIN32
 	_player->BroadcastMessage("Server: %sSandshroud Aspire Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
 #endif // WIN32
-
+	_player->BroadcastMessage("%sPlease report all bugs to %shttp://mantis.sandshroud.org", MSG_COLOR_WHITE, MSG_COLOR_RED);
 	if(sWorld.SendStatsOnJoin)
 	{
 		_player->BroadcastMessage("Online Players: %s%u |rPeak: %s%u|r Accepted Connections: %s%u",
