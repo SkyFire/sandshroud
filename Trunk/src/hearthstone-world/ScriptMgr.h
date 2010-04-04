@@ -295,7 +295,7 @@ public:
 	virtual ~InstanceScript() {};
 
 	// Procedures that had been here before
-	virtual GameObject*	GetObjectForOpenLock( Player* pCaster, Spell* pSpell, SpellEntry* pSpellEntry ) { return NULLGOB; };
+	virtual GameObject *		GetObjectForOpenLock( Player* pCaster, Spell* pSpell, SpellEntry* pSpellEntry ) { return NULLGOB; };
 	virtual void				SetLockOptions( uint32 pEntryId, GameObject* pGameObject ) {};
 	virtual uint32				GetRespawnTimeForCreature( uint32 pEntryId, Creature* pCreature) { return 240000; };
 

@@ -111,15 +111,15 @@ enum GAMEOBJECT_TYPES
 
 enum GameObjectFlags
 {
- GO_FLAG_IN_USE          = 0x001,                         //disables interaction while animated 
- GO_FLAG_LOCKED          = 0x002,                         //require key, spell, event, etc to be opened. Makes "Locked" appear in tooltip 
- GO_FLAG_INTERACT_COND   = 0x004,                         //cannot interact (condition to interact) 
- GO_FLAG_TRANSPORT       = 0x008,                         //any kind of transport? Object can transport (elevator, boat, car) 
- GO_FLAG_UNK1            = 0x010,                          
- GO_FLAG_NODESPAWN       = 0x020,                         //never despawn, typically for doors, they just change state 
- GO_FLAG_TRIGGERED       = 0x040,                         //typically, summoned objects. Triggered by spell or other events 
- GO_FLAG_DAMAGED                 = 0x200, 
- GO_FLAG_DESTROYED               = 0x400, 
+	GO_FLAG_IN_USE			= 0x001,						//disables interaction while animated
+	GO_FLAG_LOCKED			= 0x002,						//require key, spell, event, etc to be opened. Makes "Locked" appear in tooltip
+	GO_FLAG_INTERACT_COND	= 0x004,						//cannot interact (condition to interact)
+	GO_FLAG_TRANSPORT		= 0x008,						//any kind of transport? Object can transport (elevator, boat, car)
+	GO_FLAG_UNK1			= 0x010,
+	GO_FLAG_NODESPAWN		= 0x020,						//never despawn, typically for doors, they just change state
+	GO_FLAG_TRIGGERED		= 0x040,						//typically, summoned objects. Triggered by spell or other events
+	GO_FLAG_DAMAGED			= 0x200,
+	GO_FLAG_DESTROYED		= 0x400,
 };
 
 enum GameObjectDynFlags
@@ -272,7 +272,7 @@ protected:
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
 	uint32 mines_remaining; //used for mining to mark times it can be mined
+
 };
 
 #endif
-

@@ -492,7 +492,7 @@ void Transporter::OnPushToWorld()
 
 void Transporter::AddNPC(uint32 Entry, float offsetX, float offsetY, float offsetZ, float offsetO)
 {
-	if(!this) // Lolwut.
+	if(!this)
 		return;
 
 	uint32 guid;

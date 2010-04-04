@@ -49,6 +49,4 @@ typedef struct AreaTrigger
 }AreaTrigger;
 #pragma pack(pop)
 
-
-
 #endif

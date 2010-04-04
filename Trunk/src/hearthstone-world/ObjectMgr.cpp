@@ -467,17 +467,16 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 	if( result->GetFieldCount() < 24 )
 	{
-		 Log.Error("PlayerCreateInfo", "Incorrect number of columns in playercreateinfo found %u, should be 24. check for sql updates", result->GetFieldCount());
-		 delete result;
-		 return;
+		Log.Error("PlayerCreateInfo", "Incorrect number of columns in playercreateinfo found %u, should be 24. check for sql updates", result->GetFieldCount());
+		delete result;
+		return;
 	}
 
 	PlayerCreateInfo *pPlayerCreateInfo;
 
-	Field *fields = NULL;
 	do
 	{
-		fields = result->Fetch();
+		Field *fields = result->Fetch();
 
 		pPlayerCreateInfo = new PlayerCreateInfo;
 
@@ -511,14 +510,13 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 		if(sk_sql)
 		{
-			Field *fields2 = NULL;
 			do 
 			{
-				fields2 = sk_sql->Fetch();
+				Field *fields = sk_sql->Fetch();
 				CreateInfo_SkillStruct tsk;
-				tsk.skillid = fields2[1].GetUInt32();
-				tsk.currentval = fields2[2].GetUInt32();
-				tsk.maxval = fields2[3].GetUInt32();
+				tsk.skillid = fields[1].GetUInt32();
+				tsk.currentval = fields[2].GetUInt32();
+				tsk.maxval = fields[3].GetUInt32();
 				pPlayerCreateInfo->skills.push_back(tsk);
 			} while(sk_sql->NextRow());
 			delete sk_sql;
@@ -539,14 +537,13 @@ void ObjectMgr::LoadPlayerCreateInfo()
 		
 		if(items_sql)
 		{
-			Field *fields3 = NULL;
 			do 
 			{
-				fields3 = items_sql->Fetch();
+				Field *fields = items_sql->Fetch();
 				CreateInfo_ItemStruct itm;
-				itm.protoid = fields3[1].GetUInt32();
-				itm.slot = fields3[2].GetUInt8();
-				itm.amount = fields3[3].GetUInt32();
+				itm.protoid = fields[1].GetUInt32();
+				itm.slot = fields[2].GetUInt8();
+				itm.amount = fields[3].GetUInt32();
 				pPlayerCreateInfo->items.push_back(itm);
 			} while(items_sql->NextRow());
 			delete items_sql;
@@ -557,15 +554,14 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 		if(bars_sql)
 		{
-			Field *fields4 = NULL;
 			do 
 			{
-				fields4 = bars_sql->Fetch();
+				Field *fields = bars_sql->Fetch();
 				CreateInfo_ActionBarStruct bar;
-				bar.button = fields4[2].GetUInt32();
-				bar.action = fields4[3].GetUInt32();
-				bar.type = fields4[4].GetUInt32();
-				bar.misc = fields4[5].GetUInt32();
+				bar.button = fields[2].GetUInt32();
+				bar.action = fields[3].GetUInt32();
+				bar.type = fields[4].GetUInt32();
+				bar.misc = fields[5].GetUInt32();
 				pPlayerCreateInfo->actionbars.push_back(bar);
 			} while(bars_sql->NextRow());
 			delete bars_sql;
@@ -615,10 +611,9 @@ Corpse* ObjectMgr::LoadCorpse(uint32 guid)
 	if( !result )
 		return NULLCORPSE;
 
-	Field *fields = NULL;
 	do
 	{
-		fields = result->Fetch();
+		Field *fields = result->Fetch();
 		pCorpse = new Corpse(HIGHGUID_TYPE_CORPSE,fields[0].GetUInt32());
 		pCorpse->Init();
 		pCorpse->SetPosition(fields[1].GetFloat(), fields[2].GetFloat(), fields[3].GetFloat(), fields[4].GetFloat());
@@ -637,6 +632,7 @@ Corpse* ObjectMgr::LoadCorpse(uint32 guid)
 	} while( result->NextRow() );
 
 	delete result;
+
 	return pCorpse;
 }
 
@@ -681,10 +677,9 @@ void ObjectMgr::LoadGMTickets()
 	if(result == 0)
 		return;
 
-	Field *fields = NULL;
 	do
 	{
-		fields = result->Fetch();
+		Field *fields = result->Fetch();
 		ticket = new GM_Ticket;
 		ticket->guid = fields[0].GetUInt32();
 		ticket->name = fields[1].GetString();
@@ -880,7 +875,7 @@ void ObjectMgr::ListGuidAmounts()
 
 uint32 ObjectMgr::GenerateMailID()
 {
-	return ++m_mailid;
+	return m_mailid++;
 }
 uint32 ObjectMgr::GenerateLowGuid(uint32 guidhigh)
 {
@@ -1091,10 +1086,9 @@ void ObjectMgr::LoadVendors()
 			Log.Notice("ObjectMgr", "Invalid format in vendors (%u/5) columns, loading anyway because we have enough data\n", result->GetFieldCount() );
 		}
 
-		Field* fields = NULL;
 		do
 		{
-			fields = result->Fetch();
+			Field *fields = result->Fetch();
 
 			itr = mVendors.find( fields[0].GetUInt32() );
 
@@ -1159,10 +1153,9 @@ void ObjectMgr::LoadTotemSpells()
 	SpellEntry * sp;
 	uint32 spellid;
 
-	Field* fields = NULL;
 	do
 	{
-		fields = result->Fetch();
+		Field *fields = result->Fetch();
 		spellid = fields[1].GetUInt32();
 		sp = dbcSpell.LookupEntry(spellid);
 		if(!spellid || !sp) continue;
@@ -1189,10 +1182,9 @@ void ObjectMgr::LoadAIThreatToSpellId()
 	uint32 spellid;
 	SpellEntry * sp;
 
-	Field* fields = NULL;
 	do
 	{
-		fields = result->Fetch();
+		Field *fields = result->Fetch();
 		spellid = fields[0].GetUInt32();
 		sp = dbcSpell.LookupEntryForced( spellid );
 		if( sp != NULL )
@@ -1229,10 +1221,9 @@ void ObjectMgr::LoadSpellFixes()
 
 		Log.Notice("ObjectMgr", "%u spell fixes from database...", result->GetRowCount());
 
-		Field* f = NULL;
 		do
 		{
-			f = result->Fetch();
+			Field *f = result->Fetch();
 			uint32 sf_spellId = f[0].GetUInt32();
 			uint32 sf_procFlags = f[1].GetUInt32();
 			uint32 sf_procChance = f[2].GetUInt32();
@@ -1251,7 +1242,7 @@ void ObjectMgr::LoadSpellFixes()
 			if( sf_spellId )
 			{
 				sp = dbcSpell.LookupEntryForced( sf_spellId );
-				if(sp)
+				if( sp != NULL )
 				{
 					if( sf_procFlags )
 						sp->procFlags = sf_procFlags;
@@ -1336,10 +1327,9 @@ void ObjectMgr::LoadCorpses(MapMgr* mgr)
 
 	if(result)
 	{
-		Field *fields = NULL;
 		do
 		{
-			fields = result->Fetch();
+			Field *fields = result->Fetch();
 			pCorpse = new Corpse(HIGHGUID_TYPE_CORPSE,fields[0].GetUInt32());
 			pCorpse->Init();
 			pCorpse->SetPosition(fields[1].GetFloat(), fields[2].GetFloat(), fields[3].GetFloat(), fields[4].GetFloat());
@@ -1625,7 +1615,7 @@ void ObjectMgr::LoadTrainers()
 					continue; //omg a bad spell !
 				}
 
-				if(ts.pCastSpell && !ts.pCastRealSpell)
+				if( ts.pCastSpell && !ts.pCastRealSpell )
 					continue;
 
 				ts.Cost = fields2[3].GetUInt32();
@@ -1913,10 +1903,9 @@ void ObjectMgr::LoadSpellOverride()
 	SpellEntry * sp;
 	uint32 spellid;
 
-	Field *fields = NULL;
 	do
 	{
-		fields = result->Fetch();
+		Field *fields = result->Fetch();
 		query.rdbuf()->str("");
 		query << "SELECT spellId FROM spelloverride WHERE overrideId = ";
 		query << fields[0].GetUInt32();
@@ -2676,7 +2665,7 @@ void ObjectMgr::LoadGroups()
 void ObjectMgr::LoadArenaTeams()
 {
 	QueryResult * result = CharacterDatabase.Query("SELECT * FROM arenateams");
-	if(result)
+	if( result != NULL )
 	{
 		do 
 		{

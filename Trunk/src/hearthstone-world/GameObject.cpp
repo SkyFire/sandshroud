@@ -807,8 +807,8 @@ uint8 GameObject::GetState()
 
 //Destructable Buildings
 void GameObject::TakeDamage(uint32 ammount)
-{ 
-	if(pInfo->Type != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING) 
+{
+	if(pInfo->Type != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
 		return;
 
 	if(Health > ammount)
@@ -818,7 +818,7 @@ void GameObject::TakeDamage(uint32 ammount)
 
 	if(Health = 0)
 		return;
- 
+
 	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && !HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED))
 	{
 		if(Health <= 0)
@@ -847,9 +847,9 @@ void GameObject::TakeDamage(uint32 ammount)
 }
 
 void GameObject::Rebuild()
-{ 
+{
 	RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED);
 	RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED);
 	SetUInt32Value(GAMEOBJECT_DISPLAYID, pInfo->DisplayID);
 	Health = pInfo->SpellFocus + pInfo->sound5;
-} 
+}

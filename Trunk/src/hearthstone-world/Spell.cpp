@@ -27,8 +27,8 @@ extern pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET];
 
 enum SpellTargetSpecification
 {
-	TARGET_SPECT_NONE	   = 0,
-	TARGET_SPEC_INVISIBLE   = 1,
+	TARGET_SPECT_NONE		= 0,
+	TARGET_SPEC_INVISIBLE	= 1,
 	TARGET_SPEC_DEAD		= 2,
 };
 
@@ -1111,7 +1111,7 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 	}
 	else if( !m_triggeredSpell )
 	{
-		if(!HasPower())
+		if( !HasPower() )
 		{
 			SendCastResult(SPELL_FAILED_NO_POWER);
 			// in case we're out of sync
@@ -1123,7 +1123,7 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		SendSpellStart();
 
 		// start cooldown handler
-		if( p_caster != NULL && !p_caster->CastTimeCheat)
+		if( p_caster != NULL && !p_caster->CastTimeCheat )
 		{
 			AddStartCooldown();
 		}
@@ -2193,7 +2193,7 @@ void Spell::SendSpellStart()
 enum SpellGoFlags
 {
 	SPELL_GO_FLAGS_NONE					= 0x00000000,
-	SPELL_GO_FLAGS_UNKNOWN0				= 0x00000001,			  // may be pending spell cast
+	SPELL_GO_FLAGS_UNKNOWN0				= 0x00000001,				// may be pending spell cast
 	SPELL_GO_FLAGS_UNKNOWN1				= 0x00000002,
 	SPELL_GO_FLAGS_UNKNOWN2				= 0x00000004,
 	SPELL_GO_FLAGS_UNKNOWN3				= 0x00000008,
@@ -2538,7 +2538,10 @@ bool Spell::HasPower()
 		return false;
 			}break;
 	}
-	
+
+	if(!m_caster)
+		return true;
+
 	int32 currentPower = m_caster->GetUInt32Value(powerField);
 	int32 cost = m_caster->GetSpellBaseCost(m_spellInfo);
 
@@ -4363,7 +4366,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 				value += RandomUInt((*itrSO)->damage);
 			}
 		}
-	 }
+	}
 
 	Unit* caster = u_caster;
 	if( i_caster != NULL && target && target->GetMapMgr() && i_caster->GetUInt64Value( ITEM_FIELD_CREATOR ) )
@@ -4451,9 +4454,9 @@ void Spell::CreateItem(uint32 itemId)
 	if( !itemId )
 		return;
 
-	Player* 			pUnit = TO_PLAYER( m_caster );
-	Item* 			newItem = NULLITEM;
-	Item* 			add = NULLITEM;
+	Player*			pUnit = TO_PLAYER( m_caster );
+	Item*			newItem = NULLITEM;
+	Item*			add = NULLITEM;
 	SlotResult		slotresult;
 	ItemPrototype*	m_itemProto;
 
@@ -4838,7 +4841,7 @@ void Spell::Heal(int32 amount)
 
 		if(unitTarget->IsInWorld() && u_caster->IsInWorld())
 			u_caster->CombatStatus.WeHealed(unitTarget);
-	}   
+	}
 }
 
 void Spell::DetermineSkillUp(uint32 skillid,uint32 targetlevel, uint32 multiplicator)
@@ -5120,7 +5123,7 @@ uint32 GetDiminishingGroup(uint32 NameHash)
 		break;
 
 
-		/*case SPELL_HASH_BANISH:					// Banish
+		/*case SPELL_HASH_BANISH:				// Banish
 		grp = 19;
 		break;
 
@@ -5177,7 +5180,7 @@ uint32 GetDiminishingGroup(uint32 NameHash)
 	// fuck bytebuffers
 	unsigned char buffer[13];
 	uint32 c = FastGUIDPack(guid, buffer, 0);
-	*(uint32*)&buffer[c] = m_spellInfo->Id;				 c += 4;
+	*(uint32*)&buffer[c] = m_spellInfo->Id;					c += 4;
 	plr->GetSession()->OutPacket(SMSG_CLEAR_EXTRA_AURA_INFO, c, buffer);
 }*/
 

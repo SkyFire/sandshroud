@@ -726,7 +726,7 @@ public:
 
 	void UpdateFlag();													// detects if we have changed combat state (in/out), and applies the flag.
 
-	HEARTHSTONE_INLINE bool IsInCombat() { return m_lastStatus; }			// checks if we are in combat or not.
+	HEARTHSTONE_INLINE bool IsInCombat() { return m_lastStatus; }		// checks if we are in combat or not.
 
 	void OnRemoveFromWorld();											// called when we are removed from world, kills all references to us.
 	
