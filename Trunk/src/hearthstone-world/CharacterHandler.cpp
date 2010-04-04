@@ -348,21 +348,6 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	//Same Faction limitation only applies to PVP and RPPVP realms :)
-	uint32 realmType = sLogonCommHandler.GetRealmType();
-	if( !HasGMPermissions() && realmType == REALM_PVP )
-	{
-		if( ((pNewChar->GetTeam()== 0) && (_side == 1)) || ((pNewChar->GetTeam()== 1) && (_side == 0)) )
-		{
-			pNewChar->ok_to_remove = true;
-			pNewChar->Destructor();
-			WorldPacket data(1);
-			data.SetOpcode(SMSG_CHAR_CREATE);
-			data << (uint8)ALL_CHARS_ON_PVP_REALM_MUST_AT_SAME_SIDE+1;
-			SendPacket( &data );
-			return;
-		}
-	}
 	pNewChar->UnSetBanned();
 	pNewChar->addSpell(22027);	  // Remove Insignia
 

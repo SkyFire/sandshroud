@@ -23,7 +23,8 @@
 
 class DBC;
 
-DBC::DBC() {
+DBC::DBC()
+{
 	tbl = NULL;
 	db = NULL;
 	loaded = false;

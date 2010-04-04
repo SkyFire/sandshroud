@@ -528,7 +528,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 							dmg += float2int32( ( p_caster->m_comboPoints * p_caster->GetAP() * 0.07f ) + ( usedpower * m_spellInfo->dmg_multiplier[1] ) );
 						else
 							dmg += float2int32( ( p_caster->m_comboPoints * p_caster->GetAP() * 0.07f ) + ( (usedpower * m_spellInfo->dmg_multiplier[1] + p_caster->GetAP()) / 410.0f ) );
-						
+
 						p_caster->ModUnsigned32Value(UNIT_FIELD_POWER4, -usedpower);
 					}
 				}break;
@@ -7668,6 +7668,9 @@ void Spell::SpellEffectSetTalentSpecsCount(uint32 i)
 	if(!p_caster)
 		return;
 
+	if(damage > 2) // Crow: DIRTY FIX!!!
+		damage = 2;
+
 	if(p_caster->m_talentActiveSpec >= damage)
 	{
 		// activate primary spec
@@ -7681,6 +7684,8 @@ void Spell::SpellEffectSetTalentSpecsCount(uint32 i)
 
 void Spell::SpellEffectActivateTalentSpec(uint32 i)
 {
+	return;
+
 	if(!p_caster)
 		return;
 
@@ -7689,9 +7694,11 @@ void Spell::SpellEffectActivateTalentSpec(uint32 i)
 		SendCastResult(SPELL_FAILED_NOT_IN_BATTLEGROUND);
 		return;
 	}
+	if(damage > 2)
+		damage = 2;
 
 	// 1 = primary, 2 = secondary
-	p_caster->ApplySpec(uint8(damage - 1), false);
+	p_caster->ApplySpec(uint8(damage), false);
 
 	// Use up all our power.
 	switch(p_caster->GetPowerType())

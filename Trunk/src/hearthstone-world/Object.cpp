@@ -43,7 +43,7 @@ Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 	m_uint32Values = 0;
 	m_objectUpdated = false;
 
-	m_valuesCount = OBJECT_END;
+	m_valuesCount = 0;
 
 	//official Values
 	m_walkSpeed = 2.5f;
@@ -215,7 +215,7 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 	}
 
 	if(GetTypeFromGUID() == HIGHGUID_TYPE_VEHICLE)
-		flags |= 0x00E0;
+		flags |= 0x0080;
 
 	if(target == this)
 	{
@@ -811,15 +811,16 @@ void Object::OutPacketToSet(uint16 Opcode, uint16 Len, const void * Data, bool s
 	int gm = ( m_objectTypeId == TYPEID_PLAYER ? TO_PLAYER(this)->m_isGmInvisible : 0 );
 	for(; itr != it_end; ++itr)
 	{
-		ASSERT((*itr)->GetSession());
-		if( gm )
+		if((*itr))
 		{
-			if( (*itr)->GetSession()->GetPermissionCount() > 0 )
+			ASSERT((*itr)->GetSession());
+			if( gm )
+			{
+				if( (*itr)->GetSession()->GetPermissionCount() > 0 )
+					(*itr)->GetSession()->OutPacket(Opcode, Len, Data);
+			}
+			else
 				(*itr)->GetSession()->OutPacket(Opcode, Len, Data);
-		}
-		else
-		{
-			(*itr)->GetSession()->OutPacket(Opcode, Len, Data);
 		}
 	}
 }

@@ -4237,38 +4237,6 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 	if(forced_basepoints[i])
 		basePoints = forced_basepoints[i];
 
-	/* Random suffix value calculation */
-	/*if(i_caster && (int32(i_caster->GetUInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID)) < 0))
-	{
-		ItemRandomSuffixEntry * si = dbcItemRandomSuffix.LookupEntry(abs(int32(i_caster->GetUInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID))));
-		EnchantEntry * ent;
-		uint32 j,k;
-
-		for(j = 0; j < 3; ++j)
-		{
-			if(si->enchantments[j] != 0)
-			{
-				ent = dbcEnchant.LookupEntry(si->enchantments[j]);
-				for(k = 0; k < 3; ++k)
-				{
-					if(ent->spell[k] == m_spellInfo->Id)
-					{
-						if(si->prefixes[k] == 0)
-							goto exit;
-						
-						value = RANDOM_SUFFIX_MAGIC_CALCULATION(si->prefixes[j], i_caster->GetItemRandomSuffixFactor());
-						
-						if(value == 0)
-							goto exit;
-
-						return value;
-					}
-				}
-			}
-		}
-	}
-exit:*/
-
 	if( u_caster != NULL )
 	{
 		int32 diff = -(int32)m_spellInfo->baseLevel;

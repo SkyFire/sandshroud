@@ -302,15 +302,12 @@ Thread * CThreadPool::StartThread(ThreadContext * ExecutionTarget)
 {
 	SetThreadName("Thread Starter");
 
-	HANDLE h;
 	Thread * t = new Thread;
-	
 	t->DeleteAfterExit = false;
 	t->ExecutionTarget = ExecutionTarget;
 	//h = (HANDLE)_beginthreadex(NULL, 0, &thread_proc, (void*)t, 0, NULL);
 	t->SetupMutex.Acquire();
-	h = CreateThread(NULL, 0, &thread_proc, (LPVOID)t, 0, (LPDWORD)&t->ControlInterface.thread_id);
-	t->ControlInterface.Setup(h);
+	t->ControlInterface.Setup(CreateThread(NULL, 0, &thread_proc, (LPVOID)t, 0, (LPDWORD)&t->ControlInterface.thread_id));
 	t->SetupMutex.Release();
 
 	return t;

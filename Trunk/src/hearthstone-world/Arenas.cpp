@@ -590,7 +590,7 @@ LocationVector Arena::GetStartingCoords(uint32 Team)
 			if(Team)
 				return LocationVector(763.56f, -274.0f, 28.27f/*3.55f*/);
 			else
-				return LocationVector(763.93f, -295.01f, 28.27f/*3.55f*/);
+				return LocationVector(763.93f, -295.01f, 30.0f/*3.55f*/);
 		}break;
 	}
 

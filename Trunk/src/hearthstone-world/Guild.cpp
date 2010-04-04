@@ -1301,10 +1301,10 @@ void Guild::BuyBankTab(WorldSession * pClient)
 		pTab->pSlots[i] = NULLITEM;
 	
 	pTab->szTabName=NULL;
-	pTab->szTabIcon="";
+	pTab->szTabIcon=NULL;
 
 	m_bankTabs.push_back(pTab);
-	m_bankTabCount++;
+	++m_bankTabCount;
 
 	CharacterDatabase.Execute("INSERT INTO guild_banktabs VALUES(%u, %u, '', '')", m_guildId, (uint32)pTab->iTabId);
 	CharacterDatabase.Execute("UPDATE guilds SET bankTabCount = %u WHERE guildId = %u", m_bankTabCount, m_guildId);

@@ -609,81 +609,83 @@ private:
 	  result = ERROR_NOT_ENOUGH_MEMORY;
 	else
 	{
-	  if (pSLM(hProcess, 0, szImg, szMod, baseAddr, size) == 0)
-		result = GetLastError();
+		if(pSLM(hProcess, 0, szImg, szMod, baseAddr, size) == 0)
+			result = GetLastError();
 	}
 	ULONGLONG fileVersion = 0;
 	if ( (m_parent != NULL) && (szImg != NULL) )
 	{
-	  // try to retrive the file-version:
-	  if ( (this->m_parent->m_options & StackWalker::RetrieveFileVersion) != 0)
-	  {
-		VS_FIXEDFILEINFO *fInfo = NULL;
-		DWORD dwHandle;
-		DWORD dwSize = GetFileVersionInfoSizeA(szImg, &dwHandle);
-		if (dwSize > 0)
+		// try to retrive the file-version:
+		if ( (this->m_parent->m_options & StackWalker::RetrieveFileVersion) != 0)
 		{
-		  LPVOID vData = malloc(dwSize);
-		  if (vData != NULL)
-		  {
-			if (GetFileVersionInfoA(szImg, dwHandle, dwSize, vData) != 0)
+			VS_FIXEDFILEINFO *fInfo = NULL;
+			DWORD dwHandle;
+			DWORD dwSize = GetFileVersionInfoSizeA(szImg, &dwHandle);
+			if (dwSize > 0)
 			{
-			  UINT len;
-			  TCHAR szSubBlock[] = _T("\\");
-			  if (VerQueryValue(vData, szSubBlock, (LPVOID*) &fInfo, &len) == 0)
-				fInfo = NULL;
-			  else
-			  {
-				fileVersion = ((ULONGLONG)fInfo->dwFileVersionLS) + ((ULONGLONG)fInfo->dwFileVersionMS << 32);
-			  }
+				LPVOID vData = malloc(dwSize);
+				if (vData != NULL)
+				{
+					if (GetFileVersionInfoA(szImg, dwHandle, dwSize, vData) != 0)
+					{
+						UINT len;
+						TCHAR szSubBlock[] = _T("\\");
+						if (VerQueryValue(vData, szSubBlock, (LPVOID*) &fInfo, &len) == 0)
+							fInfo = NULL;
+						else
+						{
+							fileVersion = ((ULONGLONG)fInfo->dwFileVersionLS) + ((ULONGLONG)fInfo->dwFileVersionMS << 32);
+						}
+					}
+					free(vData);
+				}
 			}
-			free(vData);
-		  }
 		}
-	  }
 
-	  // Retrive some additional-infos about the module
-	  IMAGEHLP_MODULE64_V2 Module;
-	  const char *szSymType = "-unknown-";
-	  if (this->GetModuleInfo(hProcess, baseAddr, &Module) != FALSE)
-	  {
-		switch(Module.SymType)
+		// Retrive some additional-infos about the module
+		IMAGEHLP_MODULE64_V2 Module;
+		const char *szSymType = "-unknown-";
+		if (this->GetModuleInfo(hProcess, baseAddr, &Module) != FALSE)
 		{
-		  case SymNone:
-			szSymType = "-nosymbols-";
-			break;
-		  case SymCoff:
-			szSymType = "COFF";
-			break;
-		  case SymCv:
-			szSymType = "CV";
-			break;
-		  case SymPdb:
-			szSymType = "PDB";
-			break;
-		  case SymExport:
-			szSymType = "-exported-";
-			break;
-		  case SymDeferred:
-			szSymType = "-deferred-";
-			break;
-		  case SymSym:
-			szSymType = "SYM";
-			break;
-		  case 8: //SymVirtual:
-			szSymType = "Virtual";
-			break;
-		  case 9: // SymDia:
-			szSymType = "DIA";
-			break;
+			switch(Module.SymType)
+			{
+			case SymNone:
+				szSymType = "-nosymbols-";
+				break;
+			case SymCoff:
+				szSymType = "COFF";
+				break;
+			case SymCv:
+				szSymType = "CV";
+				break;
+			case SymPdb:
+				szSymType = "PDB";
+				break;
+			case SymExport:
+				szSymType = "-exported-";
+				break;
+			case SymDeferred:
+				szSymType = "-deferred-";
+				break;
+			case SymSym:
+				szSymType = "SYM";
+				break;
+			case 8: //SymVirtual:
+				szSymType = "Virtual";
+				break;
+			case 9: // SymDia:
+				szSymType = "DIA";
+				break;
+			}
 		}
-	  }
-	  this->m_parent->OnLoadModule(img, mod, baseAddr, size, result, szSymType, Module.LoadedImageName, fileVersion);
+		this->m_parent->OnLoadModule(img, mod, baseAddr, size, result, szSymType, Module.LoadedImageName, fileVersion);
+		}
+		if (szImg != NULL)
+			free(szImg);
+		if (szMod != NULL)
+			free(szMod);
+		return result;
 	}
-	if (szImg != NULL) free(szImg);
-	if (szMod != NULL) free(szMod);
-	return result;
-  }
 public:
   BOOL LoadModules(HANDLE hProcess, DWORD dwProcessId)
   {

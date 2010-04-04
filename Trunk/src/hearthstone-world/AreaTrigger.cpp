@@ -97,7 +97,7 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 					return;
 
 				//do we meet the map requirements?
-				uint8 reason = CheckTeleportPrerequsites(pAreaTrigger, this, _player, pAreaTrigger->Mapid);
+				uint8 reason = CheckTeleportPrerequisites(pAreaTrigger, this, _player, pAreaTrigger->Mapid);
 				if(reason != AREA_TRIGGER_FAILURE_OK)
 				{
 					const char * pReason = AreaTriggerFailureMessages[reason];

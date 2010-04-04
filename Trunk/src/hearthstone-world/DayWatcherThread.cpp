@@ -186,7 +186,7 @@ bool DayWatcherThread::run()
 
 	while(m_threadRunning)
 	{
-		m_busy=true;
+		m_busy = true;
 		currenttime = UNIXTIME;
 		dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
 
@@ -273,11 +273,7 @@ bool DayWatcherThread::run()
 				/* If we used sWorld.SpamWaitTime, we would do counter == (sWorld.SpamWaitTime/2 + 3)
 				This would be say 30 minutes in config, so 30/2 = 15 + 2 = 17 and we set counter to 2
 				every time so 17 - 2 = 15 so 15x2 for every two minutes = 30 minutes timings.*/
-				if(counter <= 2) // First ticks
-				{
-					Log.Notice("DayWatcherThread", "Running In Game Events checks...");
-				}
-				if(counter == 17/*15 + 2*/) // Tick every 30 minutes and reset.
+				if((counter <= 2) || (counter == 17/*15 + 2*/)) // First few ticks and Tick every 30 minutes and reset.
 				{
 					Log.Notice("DayWatcherThread", "Running In Game Events checks...");
 					counter = 2;
@@ -354,7 +350,7 @@ bool DayWatcherThread::run()
 		if(m_dirty)
 			update_settings();
 
-		m_busy=false;
+		m_busy = false;
 		if(!m_threadRunning)
 			break;
 

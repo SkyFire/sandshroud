@@ -781,8 +781,8 @@ private:
 	uint32 client_build;
 	uint32 instanceId;
 	uint8 _updatecount;
-	uint8 CheckTeleportPrerequsites(AreaTrigger * pAreaTrigger, WorldSession * pSession, Player* pPlayer, uint32 mapid);
 public:
+	uint8 CheckTeleportPrerequisites(AreaTrigger * pAreaTrigger, WorldSession * pSession, Player* pPlayer, uint32 mapid);
 	static void InitPacketHandlerTable();
 	uint32 floodLines;
 	time_t floodTime;

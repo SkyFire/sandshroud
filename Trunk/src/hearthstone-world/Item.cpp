@@ -522,45 +522,6 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 	int32 Slot = Slot_;
 	m_isDirty = true;
 
-/*
-	if(Perm)
-	{
-		if(Slot_)
-		{
-			Slot=Slot_;
-		}
-		else
-        {
-			Slot = FindFreeEnchantSlot(Enchantment);
-        }
-	}
-	else
-	{
-		if(Enchantment->EnchantGroups > 1) // replaceable temp enchants
-		{
-			Slot = 1;
-			RemoveEnchantment(1);
-		}
-		else
-		{
-			Slot = FindFreeEnchantSlot(Enchantment);*/
-			/*
-			Slot = Enchantment->type ? 3 : 0;
-			 //that's 's code
-			for(uint32 Index = ITEM_FIELD_ENCHANTMENT_09; Index < ITEM_FIELD_ENCHANTMENT_32; Index += 3)
-			{
-				if(m_uint32Values[Index] == 0) break;;	
-				++Slot;
-			}
-
-			//Slot = FindFreeEnchantSlot(Enchantment);
-			// reach max of temp enchants
-			if(Slot >= 11) return -1;
-			*/
-		/*}
-	}   
-*/
-
 	// Create the enchantment struct.
 	EnchantmentInstance Instance;
 	Instance.ApplyTime = UNIXTIME;

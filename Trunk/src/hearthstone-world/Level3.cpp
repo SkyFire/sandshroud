@@ -36,7 +36,16 @@ bool ChatHandler::HandleWorldPortCommand(const char* args, WorldSession *m_sessi
 		return false;
 
 	LocationVector vec(x, y, z);
-	m_session->GetPlayer()->SafeTeleport(mapid, 0, vec);
+	if(!m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), mapid))
+		m_session->GetPlayer()->SafeTeleport(mapid, 0, vec);
+	else
+	{
+		WorldPacket data(SMSG_AREA_TRIGGER_MESSAGE, 50);
+		data << uint32(0);
+		data << "You do not reach the requirements to teleport here.";
+		data << uint8(0);
+		m_session->SendPacket(&data);
+	}
 	return true;
 }
 

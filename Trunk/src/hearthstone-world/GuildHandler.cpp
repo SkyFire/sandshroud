@@ -1706,6 +1706,7 @@ void Guild::SendGuildBank(WorldSession * pClient, GuildBankTab * pTab, int8 upda
 
 			data << uint8(j);
 			data << pItem->GetEntry();
+			data << uint32(0);
 
 			// random props
 			if( pItem->GetUInt32Value(ITEM_FIELD_RANDOM_PROPERTIES_ID) )

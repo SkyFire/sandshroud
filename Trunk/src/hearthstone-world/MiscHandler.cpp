@@ -2218,7 +2218,7 @@ void WorldSession::HandleSummonResponseOpcode(WorldPacket & recv_data)
 	if( _player->m_summonInstanceId != _player->GetInstanceID() )
 	{
 		// if not, are we allowed on the summoners map?
-		uint8 pReason = CheckTeleportPrerequsites(NULL, this, _player, inf->mapid);
+		uint8 pReason = CheckTeleportPrerequisites(NULL, this, _player, inf->mapid);
 		if( pReason )
 		{
 			SendNotification(NOTIFICATION_MESSAGE_NO_PERMISSION);

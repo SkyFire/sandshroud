@@ -46,9 +46,18 @@ bool ChatHandler::HandleRecallGoCommand(const char* args, WorldSession *m_sessio
 
 		if( strnicmp( const_cast< char* >( args ), locname, strlen( args ) ) == 0 )
 		{
-			if( m_session->GetPlayer() != NULL )
+			if(m_session->GetPlayer())
 			{
-				m_session->GetPlayer()->SafeTeleport(locmap, 0, LocationVector(x, y, z));
+				if(!m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), locmap))
+					m_session->GetPlayer()->SafeTeleport(locmap, 0, LocationVector(x, y, z));
+				else
+				{
+					WorldPacket data(SMSG_AREA_TRIGGER_MESSAGE, 50);
+					data << uint32(0);
+					data << "You do not reach the requirements to teleport here.";
+					data << uint8(0);
+					m_session->SendPacket(&data);
+				}
 				delete result;
 				return true;
 			}
@@ -202,10 +211,21 @@ bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession *
 
 		if (strnicmp((char*)location,locname,strlen(args))==0)
 		{
-			if(plr->GetInstanceID() != m_session->GetPlayer()->GetInstanceID())
-				sEventMgr.AddEvent(plr, &Player::EventSafeTeleport, locmap, uint32(0), LocationVector(x, y, z), EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			if(!m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), locmap))
+			{
+				if(plr->GetInstanceID() != m_session->GetPlayer()->GetInstanceID())
+					sEventMgr.AddEvent(plr, &Player::EventSafeTeleport, locmap, uint32(0), LocationVector(x, y, z), EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+				else
+					plr->SafeTeleport(locmap, 0, LocationVector(x, y, z));
+			}
 			else
-				plr->SafeTeleport(locmap, 0, LocationVector(x, y, z));
+			{
+				WorldPacket data(SMSG_AREA_TRIGGER_MESSAGE, 50);
+				data << uint32(0);
+				data << "You do not reach the requirements to teleport here.";
+				data << uint8(0);
+				m_session->SendPacket(&data);
+			}
 			delete result;
 			return true;
 		}

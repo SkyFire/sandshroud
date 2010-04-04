@@ -307,7 +307,7 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 
 	if ( m_session->GetPlayer()->HasActiveAura(BG_DESERTER) && !m_session->HasGMPermissions() )
 	{
-		m_session->GetPlayer()->GetSession()->SendNotification("You have been marked as a Deserter.");
+		m_session->SendNotification("You have been marked as a Deserter.");
 		return;
 	}
 	
@@ -1028,6 +1028,8 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 			*data << teams[1]->m_name;
 		else
 			*data << uint8(0);
+
+		*data << uint64(0);
 	}
 	*data << uint8(m_ended);
 	if(m_ended)
@@ -1072,6 +1074,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 	}
 	// Have to set correct number of players sent in log since we skip invisible GMs
 	*(uint32*)&data->contents()[pos] = count;
+	*data << uint32(0); // unknown
 }
 
 void CBattleground::AddPlayer(Player* plr, uint32 team)
@@ -1442,7 +1445,8 @@ void CBattleground::DistributePacketToAll(WorldPacket * packet)
 			continue;
 
 		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
-			(*itr)->GetSession()->SendPacket(packet);
+			if( (*itr) && (*itr)->GetSession() )
+				(*itr)->GetSession()->SendPacket(packet);
 	}
 	m_mainLock.Release();
 }
@@ -1456,7 +1460,8 @@ void CBattleground::DistributePacketToTeam(WorldPacket * packet, uint32 Team)
 		return;
 	}
 	for(set<Player*  >::iterator itr = m_players[Team].begin(); itr != m_players[Team].end(); ++itr)
-		(*itr)->GetSession()->SendPacket(packet);
+		if( (*itr) && (*itr)->GetSession() )
+			(*itr)->GetSession()->SendPacket(packet);
 	m_mainLock.Release();
 }
 
@@ -1710,8 +1715,8 @@ void CBattleground::RemovePlayer(Player* plr, bool logout)
 	if(!m_ended && m_players[0].size() == 0 && m_players[1].size() == 0)
 	{
 		/* create an inactive event */
-		sEventMgr.RemoveEvents(this, EVENT_BATTLEGROUND_CLOSE);						// 10mins
-		sEventMgr.AddEvent(this, &CBattleground::Close, EVENT_BATTLEGROUND_CLOSE, 600000, 1,0);
+		sEventMgr.RemoveEvents(this, EVENT_BATTLEGROUND_CLOSE);					// 2mins
+		sEventMgr.AddEvent(this, &CBattleground::Close, EVENT_BATTLEGROUND_CLOSE, 120000, 1,0);
 	}
 
 	plr->m_bgTeam=plr->GetTeam();

@@ -1672,6 +1672,8 @@ void ObjectMgr::GenerateLevelUpInfo()
 {
 	// Generate levelup information for each class.
 	PlayerCreateInfo * PCI;
+	LevelInfo* lvl0 = NULL;
+	LevelInfo* lvl = NULL;
 	for(uint32 Class = WARRIOR; Class <= DRUID; ++Class)
 	{
 		// These are empty.
@@ -1688,21 +1690,21 @@ void ObjectMgr::GenerateLevelUpInfo()
 
 			// Generate each level's information
 			uint32 MaxLevel = MAXIMUM_ATTAINABLE_LEVEL + 1;
-			LevelInfo* lvl=new LevelInfo;
-			lvl->HP = PCI->health;
-			lvl->Mana = PCI->mana;
-			lvl->Stat[0] = PCI->strength;
-			lvl->Stat[1] = PCI->ability;
-			lvl->Stat[2] = PCI->stamina;
-			lvl->Stat[3] = PCI->intellect;
-			lvl->Stat[4] = PCI->spirit;
-			lvl->XPToNextLevel = 400;
-			lvl->BaseHP = PCI->health;
-			lvl->BaseMana = PCI->mana;
-			LevelMap * lMap = new LevelMap;
+			lvl0 = new LevelInfo;
+			lvl0->HP = PCI->health;
+			lvl0->Mana = PCI->mana;
+			lvl0->Stat[0] = PCI->strength;
+			lvl0->Stat[1] = PCI->ability;
+			lvl0->Stat[2] = PCI->stamina;
+			lvl0->Stat[3] = PCI->intellect;
+			lvl0->Stat[4] = PCI->spirit;
+			lvl0->XPToNextLevel = 400;
+			lvl0->BaseHP = PCI->health;
+			lvl0->BaseMana = PCI->mana;
+			LevelMap* lMap = new LevelMap;
 
 			// Insert into map
-			lMap->insert( LevelMap::value_type( 1, lvl ) );
+			lMap->insert( LevelMap::value_type( 1, lvl0 ) );
 
 			for(uint32 Level = 2; Level < MaxLevel; ++Level)
 			{
@@ -2049,8 +2051,6 @@ void ObjectMgr::LoadCreatureWaypoints()
 	}while( result->NextRow() );
 
 	Log.Notice("ObjectMgr", "%u waypoints cached.", result->GetRowCount());
-	delete m;
-	delete wp;
 	delete result;
 	delete result2;
 }
