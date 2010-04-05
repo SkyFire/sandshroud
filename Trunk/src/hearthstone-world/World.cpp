@@ -332,7 +332,7 @@ bool World::SetInitialWorldSettings()
 	PreStartQueries();
 	CharacterDatabase.WaitExecute("UPDATE characters SET online = 0 WHERE online = 1");
 
-	Log.Notice("World", "Starting up...");  
+	Log.Notice("World", "Starting up...");
 
 	Player::InitVisibleUpdateBits();
 

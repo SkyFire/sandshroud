@@ -5546,6 +5546,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->c_is_flags |= SPELL_FLAG_CASTED_ON_ENEMIES;
 	}
 }
+
 void ApplyNormalFixes()
 {
 	//Updating spell.dbc

@@ -4232,7 +4232,6 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 	int32 value = 0;
 
 	float basePointsPerLevel	= m_spellInfo->EffectRealPointsPerLevel[i];
-	float randomPointsPerLevel  = 1;
 	int32 basePoints = m_spellInfo->EffectBasePoints[i] + 1;
 	int32 randomPoints = m_spellInfo->EffectDieSides[i];
 
@@ -4248,7 +4247,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 		else
 			diff +=u_caster->getLevel();
 		basePoints += float2int32(diff * basePointsPerLevel );
-		randomPoints += float2int32(diff * randomPointsPerLevel);
+		randomPoints += float2int32(diff);
 	}
 
 	if(randomPoints <= 1)

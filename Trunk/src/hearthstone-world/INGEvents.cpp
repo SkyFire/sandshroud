@@ -144,7 +144,7 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 					if(pInstance->m_killedNpcs.find((*i)->id) != pInstance->m_killedNpcs.end())
 						continue;
 				}
-				if((*i)->eventid && (*i)->eventid == eventId)
+				if((*i)->eventinfo && ((*i)->eventid && (*i)->eventid == eventId))
 				{
 					if(!((*i)->eventinfo->eventchangesflag & EVENTID_FLAG_SPAWN))
 						continue;
@@ -204,7 +204,7 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 			GameObject* go;
 			for(GOSpawnList::iterator i = sp->GOSpawns.begin(); i != sp->GOSpawns.end(); ++i)
 			{
-				if((*i)->eventid && (*i)->eventid == eventId)
+				if((*i)->eventinfo && ((*i)->eventid && (*i)->eventid == eventId))
 				{
 					if(!((*i)->eventinfo->eventchangesflag & EVENTID_FLAG_SPAWN))
 						continue;

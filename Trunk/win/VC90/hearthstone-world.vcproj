@@ -44,7 +44,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm256 /bigobj /MP5"
+				AdditionalOptions="/Zm256 /MP5"
 				Optimization="0"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
@@ -234,7 +234,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm256 /bigobj /MP5"
+				AdditionalOptions="/Zm250 /bigobj"
 				Optimization="0"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
@@ -328,7 +328,7 @@
 				AdditionalOptions="/Zm250"
 				Optimization="4"
 				InlineFunctionExpansion="2"
-				FavorSizeOrSpeed="1"
+				FavorSizeOrSpeed="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;X64"

@@ -300,19 +300,19 @@ void WorldSession::HandleLootMethodOpcode( WorldPacket & recv_data )
 	uint32 threshold;
 
 	recv_data >> lootMethod >> lootMaster >>threshold;
-  
+
 	if(!_player->IsGroupLeader())
 	{
 		SendPartyCommandResult(_player, 0, "", ERR_PARTY_YOU_ARE_NOT_LEADER);
 		return;
 	}
-	
-	// TODO: fix me burlex 
-	//Player* plyr = objmgr.GetPlayer((uint32)lootMaster);
-	//if(!plyr)return;
+
 	Group* pGroup = _player->GetGroup();
 	if( pGroup != NULL)
-		pGroup->SetLooter( _player, lootMethod, threshold );
+	{
+		Player* pLooter = objmgr.GetPlayer(uint32(lootMaster)) ? objmgr.GetPlayer(uint32(lootMaster)) : _player;
+		pGroup->SetLooter(pLooter , lootMethod, threshold );
+	}
 }
 
 void WorldSession::HandleMinimapPingOpcode( WorldPacket & recv_data )
@@ -359,7 +359,24 @@ void WorldSession::HandleSetPlayerIconOpcode(WorldPacket& recv_data)
 	{
 		recv_data >> guid;
 		if(icon > 7)
-			return;			// whhopes,buffer overflow :p
+			icon = 7;	// whoops, buffer overflow :p
+
+		// Null last icon
+		for(uint8 i = 0; i < 8; ++i)
+		{
+			if( pGroup->m_targetIcons[i] == guid )
+			{
+				WorldPacket data(MSG_RAID_TARGET_UPDATE, 10);
+				data << uint8(0);
+				data << uint64(0);
+				data << uint8(i);
+				data << uint64(0);
+				pGroup->SendPacketToAll(&data);
+
+				pGroup->m_targetIcons[i] = 0;
+				break;
+			}
+		}
 
 		// setting icon
 		WorldPacket data(MSG_RAID_TARGET_UPDATE, 10);
