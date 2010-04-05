@@ -88,7 +88,7 @@ bool CThreadPool::ThreadExit(Thread * t)
 
 void CThreadPool::ExecuteTask(ThreadContext * ExecutionTarget)
 {
-	Thread * t;
+	Thread* t;
 	_mutex.Acquire();
 	++_threadsRequestedSinceLastCheck;
 	--_threadsEaten;
@@ -125,13 +125,10 @@ void CThreadPool::ExecuteTask(ThreadContext * ExecutionTarget)
 
 void CThreadPool::Startup(uint8 ThreadCount)
 {
-	int i;
-	int tcount = ThreadCount;
-
-	for(i=0; i < tcount; ++i)
+	for(int i = 0; i < ThreadCount; ++i)
 		StartThread(NULL);
 
-	DEBUG_LOG("ThreadPool", "Startup, launched %u threads.", tcount);
+	DEBUG_LOG("ThreadPool", "Startup, launched %u threads.", ThreadCount);
 }
 
 void CThreadPool::ShowStats()
@@ -305,7 +302,6 @@ Thread * CThreadPool::StartThread(ThreadContext * ExecutionTarget)
 	Thread * t = new Thread;
 	t->DeleteAfterExit = false;
 	t->ExecutionTarget = ExecutionTarget;
-	//h = (HANDLE)_beginthreadex(NULL, 0, &thread_proc, (void*)t, 0, NULL);
 	t->SetupMutex.Acquire();
 	t->ControlInterface.Setup(CreateThread(NULL, 0, &thread_proc, (LPVOID)t, 0, (LPDWORD)&t->ControlInterface.thread_id));
 	t->SetupMutex.Release();

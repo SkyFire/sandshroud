@@ -1,6 +1,6 @@
 /*
- * Aspire Hearthstone
- * Copyright (C) 2008 - 2010 AspireDev <http://www.aspiredev.net/>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -545,7 +545,6 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 					(*itr)->CastSpell((*itr), loser_spell, true);
 					(*itr)->m_bgScore.BonusHonor += m_bonusHonor;
 					HonorHandler::AddHonorPointsToPlayer((*itr), m_bonusHonor);
-					SendChatMessage( CHAT_MSG_BG_SYSTEM_NEUTRAL, 0, "|cffffff00This battleground will close in 2 minutes.");
 				}
 				else
 				{
@@ -554,8 +553,8 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 					HonorHandler::AddHonorPointsToPlayer((*itr), 2*m_bonusHonor);
 					uint32 diff = abs((int32)(m_resources[i] - m_resources[i ? 0 : 1]));
 					(*itr)->GetAchievementInterface()->HandleAchievementCriteriaWinBattleground( m_mapMgr->GetMapId(), diff, ((uint32)UNIXTIME - m_startTime) / 1000, TO_CBATTLEGROUND(this));
-					SendChatMessage( CHAT_MSG_BG_SYSTEM_NEUTRAL, 0, "|cffffff00This battleground will close in 2 minutes.");
 				}
+				SendChatMessage( CHAT_MSG_BG_SYSTEM_NEUTRAL, 0, "|cffffff00This battleground will close in 2 minutes.");
 			}
 		}
 	}

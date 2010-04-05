@@ -1,6 +1,6 @@
 /*
- * Aspire Hearthstone
- * Copyright (C) 2008 - 2010 AspireDev <http://www.aspiredev.net/>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -1535,11 +1535,10 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 	CHECK_INWORLD_RETURN
 
 	uint64 guid;
-	uint32 talent_points = 61;
 	recv_data >> guid;
 
 	Player* player = _player->GetMapMgr()->GetPlayer( (uint32)guid );
-    
+
 	if( player == NULL )
 		return;
 

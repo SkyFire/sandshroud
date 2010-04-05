@@ -1,6 +1,6 @@
 /*
- * Aspire Hearthstone
- * Copyright (C) 2008 - 2010 AspireDev <http://www.aspiredev.net/>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -228,7 +228,7 @@ bool Master::Run(int argc, char ** argv)
 		return false;
 	}
 
-	if( !_StartDB() )
+	if(!_StartDB())
 	{
 		Database::CleanupLibs();
 		return false;
@@ -535,7 +535,7 @@ bool Master::_StartDB()
 	}
 
 	// Initialize it
-	if( !WorldDatabase.Initialize(hostname.c_str(), (unsigned int)port, username.c_str(),
+	if( !WorldDatabase.Initialize(hostname.c_str(), unsigned int(port), username.c_str(),
 		password.c_str(), database.c_str(), Config.MainConfig.GetIntDefault( "WorldDatabase", "ConnectionCount", 3 ), 16384 ) )
 	{
 		OUT_DEBUG( "sql: Main database initialization failed. Exiting." );

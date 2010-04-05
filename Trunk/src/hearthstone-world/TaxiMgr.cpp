@@ -1,6 +1,6 @@
 /*
- * Aspire Hearthstone
- * Copyright (C) 2008 - 2010 AspireDev <http://www.aspiredev.net/>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -453,11 +453,10 @@ bool TaxiMgr::GetGlobalTaxiNodeMask( uint32 curloc, uint32 *Mask )
 
 	for (itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); ++itr)
 	{
-		/*if( itr->second->from == curloc )
-		{*/
-			field = (uint8)((itr->second->to - 1) / 32);
-			Mask[field] |= 1 << ( (itr->second->to - 1 ) % 32 );
-		//}
+		field = (uint8)((itr->second->to - 1) / 32);
+		if(field >= 12)
+			continue;
+		Mask[field] |= 1 << ( (itr->second->to - 1 ) % 32 );
 	}
 
 	return true;

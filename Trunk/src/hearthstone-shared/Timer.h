@@ -21,7 +21,7 @@
 #define WOW_TIMER_H
 
 #ifdef WIN32
-__forceinline uint32 getMSTime() { return GetTickCount(); }
+HEARTHSTONE_INLINE uint32 getMSTime() { return GetTickCount(); }
 #else
 HEARTHSTONE_INLINE uint32 getMSTime()
 {

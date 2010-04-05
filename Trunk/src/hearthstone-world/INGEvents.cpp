@@ -1,6 +1,6 @@
 /*
- * Aspire Hearthstone
- * Copyright (C) 2008 - 2010 AspireDev <http://www.aspiredev.net/>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,7 +31,7 @@ void MapMgr::DespawnEvent(uint8 eventToRemove)
 				{
 					if(_cells[i][j] != 0)
 					{
-						_cells[i][j]->_unloadpending=false;
+						_cells[i][j]->_unloadpending = false;
 						_cells[i][j]->RemoveEventIdObjects(eventToRemove);
 						_cells[i][j]->ModifyEventIdSetting(false, eventToRemove);
 					}
@@ -250,6 +250,12 @@ void MapCell::ModifyEventIdSetting(bool active, uint8 eventId)
 					if( pObject->IsPet() )
 						continue;
 
+					if(!TO_CREATURE(pObject)->GetProto())
+						continue;
+
+					if(!TO_CREATURE(pObject)->m_spawn)
+						continue;
+
 					if(!TO_CREATURE(pObject)->m_spawn->eventinfo)
 						continue;
 
@@ -274,6 +280,12 @@ void MapCell::ModifyEventIdSetting(bool active, uint8 eventId)
 				}break;
 			case TYPEID_GAMEOBJECT:
 				{
+					if(!TO_GAMEOBJECT(pObject)->GetInfo())
+						continue;
+
+					if(!TO_GAMEOBJECT(pObject)->m_spawn)
+						continue;
+
 					if(TO_GAMEOBJECT(pObject)->m_spawn->eventid != eventId)
 						continue;
 
