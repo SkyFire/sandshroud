@@ -478,6 +478,7 @@ protected:
 	//
 	bool HandleRenameCommand(const char * args, WorldSession * m_session);
 	bool HandleForceRenameCommand(const char * args, WorldSession * m_session);
+	bool HandleRecustomizeCharCommand(const char * args, WorldSession * m_session);
 
 	//
 	bool HandleGetStandingCommand(const char * args, WorldSession * m_session);

@@ -470,7 +470,7 @@ struct BankSlotPrice
 	uint32 Price;
 };
 
-struct CharTitlesEntry
+/*struct CharTitlesEntry
 {
 	uint32 ID;											// 0, title ids
 	//uint32	  unk1;									// 1 flags?
@@ -480,7 +480,7 @@ struct CharTitlesEntry
 	//char*	   name2[16];								// 19-34, unused
 														// 35 string flag, unused
 	uint32 bit_index;									// 36 used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
-};
+};*/
 
 struct CurrencyTypesEntry
 {
@@ -505,7 +505,7 @@ struct ItemSetEntry
 	uint32 RequiredSkillAmt;		//53
 };
 
-struct ItemEntry
+/*struct ItemEntry
 {
 	uint32 ID;						// 0
 	uint32 Class;					// 1
@@ -515,7 +515,7 @@ struct ItemEntry
 	uint32 DisplayId;				// 5
 	uint32 InventoryType;			// 6
 	uint32 Sheath;					// 7
-};
+};*/
 
 struct Lock
 {
@@ -1717,7 +1717,7 @@ extern SERVER_DECL DBCStorage<CreatureFamilyEntry> dbcCreatureFamily;
 extern SERVER_DECL DBCStorage<CharClassEntry> dbcCharClass;
 extern SERVER_DECL DBCStorage<CharRaceEntry> dbcCharRace;
 extern SERVER_DECL DBCStorage<MapEntry> dbcMap;
-extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
+//extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 extern SERVER_DECL DBCStorage<ItemExtendedCostEntry> dbcItemExtendedCost;
 extern SERVER_DECL DBCStorage<ItemRandomSuffixEntry> dbcItemRandomSuffix;
 extern SERVER_DECL DBCStorage<CombatRatingDBC> dbcCombatRating;

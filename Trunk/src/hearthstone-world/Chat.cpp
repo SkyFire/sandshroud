@@ -565,6 +565,7 @@ void CommandTableStorage::Init()
 		{ "delipban", 'm', &ChatHandler::HandleIPUnBanCommand, "Deletes an address from the IP ban table: <address>", NULL, 0, 0, 0},
 		{ "renamechar", 'm', &ChatHandler::HandleRenameCommand, "Renames character x to y.", NULL, 0, 0, 0 },
 		{ "forcerenamechar", 'm', &ChatHandler::HandleForceRenameCommand, "Forces character x to rename his char next login", NULL, 0, 0, 0 },
+		{ "recustomizechar", 'm', &ChatHandler::HandleRecustomizeCharCommand, "Flags character x for character recustomization", NULL, 0, 0, 0 },
 		{ "getstanding", 'm', &ChatHandler::HandleGetStandingCommand, "Gets standing of faction %u.", NULL, 0, 0, 0 },
 		{ "setstanding", 'm', &ChatHandler::HandleSetStandingCommand, "Sets stanging of faction %u.", NULL, 0, 0, 0 },
 		{ "lookupitem", 'l', &ChatHandler::HandleLookupItemCommand, "Looks up item string x.", NULL, 0, 0, 0 },

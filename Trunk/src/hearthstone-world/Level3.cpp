@@ -2338,14 +2338,14 @@ bool ChatHandler::HandleForceRenameCommand(const char * args, WorldSession * m_s
 
 	string tmp = string(args);
 	PlayerInfo * pi = objmgr.GetPlayerInfoByName(tmp.c_str());
-	if(pi == 0)
+	if(pi == NULL)
 	{
 		RedSystemMessage(m_session, "Player with that name not found.");
 		return true;
 	}
 
 	Player* plr = objmgr.GetPlayer((uint32)pi->guid);
-	if(plr == 0)
+	if(plr == NULLPLR)
 	{
 		CharacterDatabase.Execute("UPDATE characters SET forced_rename_pending = 1 WHERE guid = %u", (uint32)pi->guid);
 	}
@@ -2359,6 +2359,37 @@ bool ChatHandler::HandleForceRenameCommand(const char * args, WorldSession * m_s
 	CharacterDatabase.Execute("INSERT INTO banned_names VALUES('%s')", CharacterDatabase.EscapeString(string(pi->name)).c_str());
 	GreenSystemMessage(m_session, "Forcing %s to rename his character next logon.", args);
 	sGMLog.writefromsession(m_session, "forced %s to rename his charater (%u)", pi->name, pi->guid);
+	return true;
+}
+
+bool ChatHandler::HandleRecustomizeCharCommand(const char * args, WorldSession * m_session)
+{
+	// prevent buffer overflow
+	if(strlen(args) > 100)
+		return false;
+
+	string tmp = string(args);
+	PlayerInfo * pi = objmgr.GetPlayerInfoByName(tmp.c_str());
+	if(pi == NULL)
+	{
+		RedSystemMessage(m_session, "Player with that name not found.");
+		return true;
+	}
+
+	Player* plr = objmgr.GetPlayer((uint32)pi->guid);
+	if(plr == NULLPLR)
+	{
+		CharacterDatabase.Execute("UPDATE characters SET customizable = 1 WHERE guid = %u", (uint32)pi->guid);
+	}
+	else
+	{
+		plr->customizable = true;
+		plr->SaveToDB(false);
+		BlueSystemMessageToPlr(plr, "%s granted you a character recustomization, please relog.", m_session->GetPlayer()->GetName());
+	}
+
+	GreenSystemMessage(m_session, "Granting %s a character recustomization on his/her next character logon.", args);
+	sGMLog.writefromsession(m_session, "Granted %s a character recustomization (%u)", pi->name, pi->guid);
 	return true;
 }
 
