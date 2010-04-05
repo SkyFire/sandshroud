@@ -55,6 +55,7 @@ World::World()
 	gm_skip_attunement = false;
 	gm_force_robes = false;
 	CheckProfessions = false;
+	AHEnabled = true;
 
 	show_gm_in_who_list = true;
 	map_unload_time=0;
@@ -1222,9 +1223,6 @@ void World::Rehash(bool load)
 
 	if(!MailSystem::getSingletonPtr())
 		new MailSystem;
-
-	if(load) // Non Rehashable.
-		AHEnabled = true; // Auto enabled.
 
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
