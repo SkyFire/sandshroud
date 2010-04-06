@@ -143,34 +143,37 @@ int WorldSession::Update(uint32 InstanceID)
 		else
 		{
 			Handler = &WorldPacketHandlers[packet->GetOpcode()];
-			if(Handler->status == STATUS_LOGGEDIN && !_player && Handler->handler != 0)
+			if(Handler->status != STATUS_IGNORED)
 			{
-				Log.Warning("WorldSession","Received unexpected/wrong state packet with opcode %s (0x%.4X)",
-					LookupOpcodeName(packet->GetOpcode()), packet->GetOpcode());
-			}
-			else if(Handler->status == STATUS_IN_OR_LOGGINGOUT && !_player && !_recentlogout && Handler->handler != 0)
-			{
-				Log.Warning("WorldSession","Received unexpected/wrong state packet with opcode %s (0x%.4X)",
-					LookupOpcodeName(packet->GetOpcode()), packet->GetOpcode());
-			}
-			else
-			{
-				// Valid Packet :>
-				if(Handler->handler == 0)
+				if(Handler->status == STATUS_LOGGEDIN && !_player && Handler->handler != 0)
 				{
-					Log.Warning("WorldSession","Received unhandled packet with opcode %s (0x%.4X)",
+					Log.Warning("WorldSession","Received unexpected/wrong state packet with opcode %s (0x%.4X)",
+						LookupOpcodeName(packet->GetOpcode()), packet->GetOpcode());
+				}
+				else if(Handler->status == STATUS_IN_OR_LOGGINGOUT && !_player && !_recentlogout && Handler->handler != 0)
+				{
+					Log.Warning("WorldSession","Received unexpected/wrong state packet with opcode %s (0x%.4X)",
 						LookupOpcodeName(packet->GetOpcode()), packet->GetOpcode());
 				}
 				else
 				{
-					(this->*Handler->handler)(*packet);
+					// Valid Packet :>
+					if(Handler->handler == 0)
+					{
+						Log.Warning("WorldSession","Received unhandled packet with opcode %s (0x%.4X)",
+							LookupOpcodeName(packet->GetOpcode()), packet->GetOpcode());
+					}
+					else
+					{
+						(this->*Handler->handler)(*packet);
 
-					if(sLog.IsOutProccess() && (packet->rpos() < packet->wpos()))
-						LogUnprocessedTail(packet);
+						if(sLog.IsOutProccess() && (packet->rpos() < packet->wpos()))
+							LogUnprocessedTail(packet);
 
-					if(Handler->status == STATUS_AUTHED)
-						if(packet->GetOpcode() != CMSG_SET_ACTIVE_VOICE_CHANNEL)
-							_recentlogout = false;
+						if(Handler->status == STATUS_AUTHED)
+							if(packet->GetOpcode() != CMSG_SET_ACTIVE_VOICE_CHANNEL)
+								_recentlogout = false;
+					}
 				}
 			}
 		}
@@ -510,7 +513,7 @@ void WorldSession::InitPacketHandlerTable()
 	for(uint32 i = 0; i < NUM_MSG_TYPES; ++i)
 	{
 		WorldPacketHandlers[i].status = STATUS_LOGGEDIN;
-		WorldPacketHandlers[i].handler = 0;
+		WorldPacketHandlers[i].handler = NULL;
 	}
 
 	// Login
