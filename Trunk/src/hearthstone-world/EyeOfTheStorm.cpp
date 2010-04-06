@@ -1015,6 +1015,7 @@ bool EyeOfTheStorm::GivePoints(uint32 team, uint32 points)
 						if( !(*itr)->GetItemInterface()->AddItemToFreeSlot(pReward) )
 						{
 							pReward->Destructor();
+							pReward = NULLGOB;
 						}
 					}
 					(*itr)->GetSession()->SendItemPushResult(pReward,true,false,true,false,res.ContainerSlot,res.Slot, item_count);

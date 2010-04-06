@@ -21,6 +21,7 @@
 
 initialiseSingleton( World );
 
+DayWatcherThread* dw = NULL;
 CharacterLoaderThread* ctl = NULL;
 
 float World::m_movementCompressThreshold;
@@ -435,7 +436,8 @@ bool World::SetInitialWorldSettings()
 	new WorldLog;
 	new ChatHandler;
 
-	ThreadPool.ExecuteTask( new DayWatcherThread() );
+	dw = new DayWatcherThread();
+	ThreadPool.ExecuteTask( dw );
 
 	// grep: this only has to be done once between version updates
 	// to re-fill the table.
@@ -991,9 +993,8 @@ void World::UpdateQueuedSessions(uint32 diff)
 		uint32 Position = 1;
 		while(iter != mQueuedSessions.end())
 		{
-			WorldSocket *tmpSocket = *iter;
+			(*iter)->UpdateQueuePosition(Position++);
 			++iter;
-			tmpSocket->UpdateQueuePosition(Position++);
 		}
 		queueMutex.Release();
 	} 
@@ -1205,6 +1206,7 @@ void TaskList::waitForThreadsToExit()
 void World::DeleteObject(Object* obj)
 {
 	obj->Destructor();
+	obj = NULLOBJ;
 }
 
 void World::Rehash(bool load)

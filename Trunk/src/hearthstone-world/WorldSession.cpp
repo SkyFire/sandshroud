@@ -401,6 +401,7 @@ void WorldSession::LogoutPlayer(bool Save)
 		_player->ObjUnlock();
 
 		_player->Destructor();
+		_player = NULLPLR;
 
 		OutPacket(SMSG_LOGOUT_COMPLETE, 0, NULL);
 		DEBUG_LOG( "WorldSession","Sent SMSG_LOGOUT_COMPLETE Message" );

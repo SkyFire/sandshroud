@@ -222,6 +222,7 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 					else
 					{
 						go->Destructor();
+						go = NULLGOB;
 					}
 				}
 			}
@@ -374,6 +375,7 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 					}break;
 				}
 			}
+			pObject = NULLOBJ;
 		}
 	}
 
@@ -427,6 +429,7 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 				pObject->RemoveFromWorld( true );
 
 			pObject->Destructor();
+			pObject = NULLOBJ;
 
 		}
 	}

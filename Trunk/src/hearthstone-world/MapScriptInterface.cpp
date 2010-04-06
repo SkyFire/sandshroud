@@ -148,6 +148,7 @@ void MapScriptInterface::DeleteCreature(Creature* ptr)
 void MapScriptInterface::DeleteGameObject(GameObject* ptr)
 {
 	ptr->Destructor();
+	ptr = NULLGOB;
 }
 
 WayPoint * StructFactory::CreateWaypoint()

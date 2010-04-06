@@ -388,7 +388,11 @@ namespace std
 }
 
 /* Use correct types for x64 platforms, too */
+typedef unsigned int uint;
+typedef unsigned long ulong;
+
 #if COMPILER != COMPILER_GNU
+
 typedef signed __int64 int64;
 typedef signed __int32 int32;
 typedef signed __int16 int16;
@@ -398,6 +402,7 @@ typedef unsigned __int64 uint64;
 typedef unsigned __int32 uint32;
 typedef unsigned __int16 uint16;
 typedef unsigned __int8 uint8;
+
 #else
 
 typedef int64_t int64;

@@ -719,6 +719,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 	}
 	GObj->Despawn(0);
 	GObj->Destructor();
+	GObj = NULLGOB;
 
 	m_session->GetPlayer()->m_GM_SelectedGO = NULLGOB;
 	return true;

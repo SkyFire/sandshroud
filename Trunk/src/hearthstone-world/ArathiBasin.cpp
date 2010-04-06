@@ -450,6 +450,7 @@ ArathiBasin::~ArathiBasin()
 			if( !m_buffs[i]->IsInWorld() )
 			{
 				m_buffs[i]->Destructor();
+				m_buffs[i] = NULLGOB;
 			}
 		}
 
@@ -459,6 +460,7 @@ ArathiBasin::~ArathiBasin()
 			if( !m_controlPoints[i]->IsInWorld() )
 			{
 				m_controlPoints[i]->Destructor();
+				m_controlPoints[i] = NULLGOB;
 			}
 		}
 
@@ -468,6 +470,7 @@ ArathiBasin::~ArathiBasin()
 			if( !m_controlPointAuras[i]->IsInWorld() )
 			{
 				m_controlPointAuras[i]->Destructor();
+				m_controlPointAuras[i] = NULLGOB;
 			}
 		}
 	}

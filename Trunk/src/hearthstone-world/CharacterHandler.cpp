@@ -345,6 +345,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 		// failed.
 		pNewChar->ok_to_remove = true;
 		pNewChar->Destructor();
+		pNewChar = NULLPLR;
 		return;
 	}
 
@@ -380,6 +381,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 
 	pNewChar->ok_to_remove = true;
 	pNewChar->Destructor();
+	pNewChar = NULLPLR;
 
 	// CHAR_CREATE_SUCCESS
 	OutPacket(SMSG_CHAR_CREATE, 1, "\x2F");

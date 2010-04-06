@@ -2465,6 +2465,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 					Spell* spell(new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA ));				
 					uint32 healamount = spell->CalculateEffect( 1, unitTarget );  
 					spell->Destructor();
+					spell = NULLSPELL;
 					new_dmg = healamount * 18 / amplitude;
 
 					unitTarget->RemoveAura( taura );
@@ -2490,6 +2491,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 						Spell* spell(new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA ));				
 						uint32 healamount = spell->CalculateEffect( 0, unitTarget );  
 						spell->Destructor();
+						spell = NULLSPELL;
 						new_dmg = healamount * 12 / amplitude;
 
 						unitTarget->RemoveAura( taura );
@@ -4472,6 +4474,7 @@ void Spell::SpellEffectEnchantItem(uint32 i) // Enchant Item Permanent
 				else
 				{
 					newItem->Destructor();
+					newItem = NULLITEM;
 				}
 				DetermineSkillUp(SKILL_ENCHANTING);
 			} 
@@ -4498,6 +4501,7 @@ void Spell::SpellEffectEnchantItem(uint32 i) // Enchant Item Permanent
 						if(!p_caster->GetItemInterface()->SafeAddItem(newItem,slotresult.ContainerSlot, slotresult.Slot))
 						{
 							newItem->Destructor();
+							newItem = NULLITEM;
 							item_count = item_count_filled;
 						}
 						else
@@ -6600,6 +6604,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 				GoSummon->RemoveFromWorld(true);
 
 			GoSummon->Destructor();
+			GoSummon = NULLGOB;
 		}
 	}
 	//create a new GoSummon
@@ -7228,6 +7233,7 @@ void Spell::SpellEffectTranformItem(uint32 i)
 	{ 
 		owner->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_BAG_FULL);
 		it->Destructor();
+		it = NULLGOB;
 	}
 }
 
@@ -7618,7 +7624,10 @@ void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item
 		if(p_caster->GetItemInterface()->SafeAddItem(newItem,slotresult.ContainerSlot, slotresult.Slot))
 			p_caster->GetSession()->SendItemPushResult(newItem,true,false,true,true,slotresult.ContainerSlot,slotresult.Slot,item_count);
 		else
+		{
 			newItem->Destructor();
+			newItem = NULLITEM;
+		}
 		
 		if(skill!= NULL)
 			DetermineSkillUp(skill->skilline);
@@ -7646,6 +7655,7 @@ void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item
 				if(!p_caster->GetItemInterface()->SafeAddItem(newItem,slotresult.ContainerSlot, slotresult.Slot))
 				{
 					newItem->Destructor();
+					newItem = NULLITEM;
 					item_count = item_count_filled;
 				}
 				else

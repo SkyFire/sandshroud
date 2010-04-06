@@ -71,6 +71,7 @@ void WorldSession::HandleDuelCancelled(WorldPacket & recv_data)
 	{
 		arbiter->RemoveFromWorld( true );
 		arbiter->Destructor();
+		arbiter = NULLGOB;
  	}
 
 	_player->DuelingWith->SetUInt64Value( PLAYER_DUEL_ARBITER, 0 );

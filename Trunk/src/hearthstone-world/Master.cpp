@@ -535,7 +535,7 @@ bool Master::_StartDB()
 	}
 
 	// Initialize it
-	if( !WorldDatabase.Initialize(hostname.c_str(), unsigned int(port), username.c_str(),
+	if( !WorldDatabase.Initialize(hostname.c_str(), uint(port), username.c_str(),
 		password.c_str(), database.c_str(), Config.MainConfig.GetIntDefault( "WorldDatabase", "ConnectionCount", 3 ), 16384 ) )
 	{
 		OUT_DEBUG( "sql: Main database initialization failed. Exiting." );

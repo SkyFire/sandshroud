@@ -420,11 +420,8 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 					flags2 |= 0x800;
 			}*/
 		}
-
 		*data << uint32(flags2);
-
 		*data << uint16(flag16);
-
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
 
 		// this stuff:

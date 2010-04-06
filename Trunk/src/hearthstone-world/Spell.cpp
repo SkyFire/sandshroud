@@ -2430,6 +2430,7 @@ void Spell::SendChannelUpdate(uint32 time)
 			{
 				dynObj->RemoveFromWorld(true);
 				dynObj->Destructor();
+				dynObj = NULLGOB;
 			}
 		}
 		if( p_caster && p_caster->IsInWorld() && p_caster->GetUInt64Value(PLAYER_FARSIGHT) )
@@ -2439,6 +2440,7 @@ void Spell::SendChannelUpdate(uint32 time)
 			{
 				dynObj->RemoveFromWorld(true);
 				dynObj->Destructor();
+				dynObj = NULLGOB;
 				p_caster->SetUInt32Value(PLAYER_FARSIGHT, 0);
 			}
 			p_caster->SetUInt64Value(PLAYER_FARSIGHT, 0);
@@ -4484,6 +4486,7 @@ void Spell::CreateItem(uint32 itemId)
 		if(!result)
 		{
 			newItem->Destructor();
+			newItem = NULLITEM;
 			return;
 		}
 

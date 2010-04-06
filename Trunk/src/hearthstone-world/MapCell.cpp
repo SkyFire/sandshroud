@@ -115,21 +115,25 @@ void MapCell::RemoveObjects()
 					_mapmgr->_reusable_guids_vehicle.push_back( pObject->GetUIdFromGUID() );
 					TO_VEHICLE(pObject)->m_respawnCell=NULL;
 					TO_VEHICLE(pObject)->Destructor();
+					pObject = NULLOBJ;
 				}
 				else if( !pObject->IsPet() )
 				{
 					_mapmgr->_reusable_guids_creature.push_back( pObject->GetUIdFromGUID() );
 					TO_CREATURE(pObject)->m_respawnCell=NULL;
 					TO_CREATURE(pObject)->Destructor();
+					pObject = NULLOBJ;
 				}
 			}break;
 
 		case TYPEID_GAMEOBJECT: {
 			TO_GAMEOBJECT(pObject)->m_respawnCell=NULL;
 			TO_GAMEOBJECT(pObject)->Destructor();
+			pObject = NULLOBJ;
 			}break;
 		default:
 			pObject->Destructor();
+			pObject = NULLOBJ;
 			break;
 
 		}
@@ -167,6 +171,7 @@ void MapCell::RemoveObjects()
 			obj->RemoveFromWorld( true );
 
 		obj->Destructor();
+		obj = NULLOBJ;
 	}
 
 	_playerCount = 0;
@@ -218,6 +223,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 					else
 					{
 						v->Destructor();
+						v = NULLVEHICLE;
 					}
 				}
 				else
@@ -244,6 +250,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 					else
 					{
 						c->Destructor();
+						c = NULLCREATURE;
 					}
 				}
 			}
@@ -269,6 +276,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 				else
 				{
 					go->Destructor();
+					go = NULLOBJ;
 				}
 			}
 		}

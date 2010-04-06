@@ -29,6 +29,7 @@ Unit::Unit()
 	m_attackTimer_1 = 0;
 	m_duelWield = false;
 
+	memset(&movement_info, 0, sizeof(MovementInfo));
 	memset(movement_packet, 0, sizeof(movement_packet));
 	movement_info.FallTime = 0;
 	m_ignoreArmorPct = 0.0f;
@@ -134,9 +135,6 @@ Unit::Unit()
 
 	m_H_regenTimer = 2000;
 	m_P_regenTimer = 2000;
-
-	//	if(GetTypeId() == TYPEID_PLAYER) //only player for now
-	//		CalculateActualArmor();
 
 	m_emoteState = 0;
 	m_oldEmote = 0;	

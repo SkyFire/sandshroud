@@ -8472,6 +8472,7 @@ void Player::EndDuel(uint8 WinCondition)
 	{
 		arbiter->RemoveFromWorld( true );
 		arbiter->Destructor();
+		arbiter = NULL;
 	}
 
 	SetUInt64Value( PLAYER_DUEL_ARBITER, 0 );

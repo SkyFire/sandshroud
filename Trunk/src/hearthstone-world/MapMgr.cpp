@@ -168,8 +168,8 @@ MapMgr::~MapMgr()
 			break;
 		default:
 			pObject->Destructor();
-
 		}
+		pObject = NULLOBJ;
 	}
 	_mapWideStaticObjects.clear();
 
@@ -184,6 +184,7 @@ MapMgr::~MapMgr()
 			pCorpse->RemoveFromWorld(false);
 
 		pCorpse->Destructor();
+		pCorpse = NULLCORPSE;
 	}
 	m_corpses.clear();
 
@@ -1770,6 +1771,7 @@ void MapMgr::EventCorpseDespawn(uint64 guid)
 
 	pCorpse->Despawn();
 	pCorpse->Destructor();
+	pCorpse = NULLCORPSE;
 }
 
 void MapMgr::TeleportPlayers()
@@ -1803,6 +1805,7 @@ void MapMgr::TeleportPlayers()
 			else
 			{
 				ptr->Destructor();
+				ptr = NULLPLR;
 				m_PlayerStorage.erase(__player_iterator);
 			}
 		}
