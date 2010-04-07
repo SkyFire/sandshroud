@@ -957,6 +957,16 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					gameObjTarget->_Expire();
 			}
 		}break;
+
+	case 51284: // Feed pet dummy for Happiness incrementation.
+		{
+			if(p_caster != NULL && p_caster->GetSummon() != NULL)
+			{
+				Pet* pet = p_caster->GetSummon();
+				float amount = ((float(damage)) * pet->GetHappinessDmgMod());
+				pet->IncreaseHappiness(amount);
+			}
+		}break;
 	/*
 		Preparation
 		When activated, this ability immediately finishes the cooldown on your Evasion, Sprint, Vanish, Cold Blood and Shadowstep abilities.
@@ -6538,26 +6548,28 @@ void Spell::SpellEffectFeedPet(uint32 i)  // Feed Pet
 	- http://petopia.brashendeavors.net/html/articles/basics_feeding.shtml */
 	int8 deltaLvl = pPet->getLevel() - itemTarget->GetProto()->ItemLevel;
 	damage /= 1000; //damage of Feed pet spell is 35000
-	if(deltaLvl > 10) damage = damage >> 1;//divide by 2
-	if(deltaLvl > 20) damage = damage >> 1;
+	if(deltaLvl > 10)
+		damage = damage >> 1;//divide by 2
+	if(deltaLvl > 20)
+		damage = damage >> 1;
 	damage *= 1000;
 
 	SpellEntry *spellInfo = dbcSpell.LookupEntry(m_spellInfo->EffectTriggerSpell[i]);
-	Spell* sp=new Spell(p_caster,spellInfo,true,NULLAURA);
+	Spell* sp = new Spell(p_caster, spellInfo, true, NULLAURA);
 	sp->forced_basepoints[0] = damage - 1;
 	SpellCastTargets tgt;
-	tgt.m_unitTarget=pPet->GetGUID();
+	tgt.m_unitTarget = pPet->GetGUID();
 	sp->prepare(&tgt);
 
-	if(itemTarget->GetUInt32Value(ITEM_FIELD_STACK_COUNT)>1)
+	if(itemTarget->GetUInt32Value(ITEM_FIELD_STACK_COUNT) > 1)
 	{
 		itemTarget->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT, -1);
-		itemTarget->m_isDirty=true;
+		itemTarget->m_isDirty = true;
 	}
 	else
 	{
 		p_caster->GetItemInterface()->SafeFullRemoveItemByGuid(itemTarget->GetGUID());
-		itemTarget=NULLITEM;
+		itemTarget = NULLITEM;
 	}
 }
 

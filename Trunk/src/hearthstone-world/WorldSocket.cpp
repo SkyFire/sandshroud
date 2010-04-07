@@ -116,10 +116,14 @@ void WorldSocket::OnDisconnect()
 
 void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 {
+/*	if(opcode != SMSG_UPDATE_OBJECT && opcode != SMSG_COMPRESSED_MOVES &&
+		opcode != SMSG_PONG && opcode != SMSG_WORLD_STATE_UI_TIMER_UPDATE && opcode != SMSG_WEATHER)
+		printf("Sent packet %s (0x%03X)\n", LookupOpcodeName(opcode), uint(opcode), uint(opcode));
+*/
 	OUTPACKET_RESULT res;
 	if( (len + 10) > WORLDSOCKET_SENDBUF_SIZE )
 	{
-		printf("WARNING: Tried to send a packet of %u bytes (which is too large) to a socket. Opcode was: %u (0x%03X)\n", (unsigned int)len, (unsigned int)opcode, (unsigned int)opcode);
+		printf("WARNING: Tried to send a packet of %u bytes (which is too large) to a socket. Opcode was: %u (0x%03X)\n", uint(len), uint(opcode), uint(opcode));
 		return;
 	}
 

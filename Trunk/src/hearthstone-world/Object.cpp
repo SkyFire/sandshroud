@@ -1071,7 +1071,7 @@ void Object::SetByte(uint32 index, uint32 index1,uint8 value)
 void Object::SetUInt32Value( const uint32 index, const uint32 value )
 {
 	if(index > m_valuesCount)
-		printf("Index: %u, m_valuesCount: %u, Value: %u\n", index, m_valuesCount, value);
+		printf("Index: %u, m_valuesCount: %u, Value: %u Test:%s\n", index, m_valuesCount, value, __FUNCTION__);
 
 	ASSERT( index < m_valuesCount );
 	// save updating when val isn't changing.
@@ -2262,13 +2262,13 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 					// dying pet looses 1 happiness level
 					if( !TO_PET( pVictim )->IsSummonedPet() )
 					{
-						uint32 hap = TO_PET( pVictim )->GetUInt32Value( UNIT_FIELD_POWER5 );
+						uint32 hap = TO_PET( pVictim )->GetHappiness();
 						hap = hap - PET_HAPPINESS_UPDATE_VALUE > 0 ? hap - PET_HAPPINESS_UPDATE_VALUE : 0;
-						TO_PET( pVictim )->SetUInt32Value( UNIT_FIELD_POWER5, hap );
+						TO_PET( pVictim )->SetHappiness(hap);
 					}
-					
+
 					TO_PET( pVictim )->DelayedRemove( false, true );
-					
+
 					//remove owner warlock soul link from caster
 					Player* owner = TO_PET( pVictim )->GetPetOwner();
 					if( owner != NULL )
