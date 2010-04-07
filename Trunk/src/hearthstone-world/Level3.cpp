@@ -2494,6 +2494,104 @@ bool ChatHandler::HandleLookupItemCommand(const char * args, WorldSession * m_se
 	return true;
 }
 
+bool ChatHandler::HandleLookupObjectCommand(const char * args, WorldSession * m_session)
+{
+	if(!*args) return false;
+
+	string x = string(args);
+	HEARTHSTONE_TOLOWER(x);
+
+	StorageContainerIterator<GameObjectInfo> * itr = GameObjectNameStorage.MakeIterator();
+
+	GreenSystemMessage(m_session, "Starting search of object `%s`...", x.c_str());
+	uint32 t = getMSTime();
+	GameObjectInfo * i;
+	uint32 count = 0;
+	string y;
+	string recout;
+	while(!itr->AtEnd())
+	{
+		i = itr->Get();
+		y = string(i->Name);
+		HEARTHSTONE_TOLOWER(y);
+		if(FindXinYString(x,y))
+		{
+			string Name;
+			std::stringstream strm;
+			strm<<i->ID;
+			const char*objectName=i->Name;
+			recout="|cfffff000Object ";
+			recout+=strm.str();
+			recout+="|cffFFFFFF: ";
+			recout+=objectName;
+			recout = recout + Name;
+			SendMultilineMessage(m_session,recout.c_str());
+			
+			++count;
+			if(count==25 || count > 25)
+			{
+				RedSystemMessage(m_session,"More than 25 results returned. aborting.");
+				break;
+			}
+		}
+		if(!itr->Inc()) break;
+	}
+	itr->Destruct();
+	if (count== 0)
+	{
+		recout="|cff00ccffNo matches found.";
+		SendMultilineMessage(m_session,recout.c_str());
+	}
+	BlueSystemMessage(m_session,"Search completed in %u ms.",getMSTime()-t);
+	return true;
+}
+
+bool ChatHandler::HandleLookupSpellCommand(const char * args, WorldSession * m_session)
+{
+	if(!*args) return false;
+
+	string x = string(args);
+	HEARTHSTONE_TOLOWER(x);
+	if(x.length() < 4)
+	{
+		RedSystemMessage(m_session, "Your search string must be at least 4 characters long.");
+		return true;
+	}
+
+	GreenSystemMessage(m_session, "Starting search of spell `%s`...", x.c_str());
+	uint32 t = getMSTime();
+	uint32 count = 0;
+	string recout;
+	char itoabuf[12];
+	for (uint32 index = 0; index < dbcSpell.GetNumRows(); ++index)
+	{
+		SpellEntry* spell = dbcSpell.LookupRow(index);
+		string y = string(spell->Name);
+		HEARTHSTONE_TOLOWER(y);
+		if(FindXinYString(x, y))
+ 		{
+ 			sprintf((char*)itoabuf,"Spell %u ",spell->Id);
+			recout = (const char*)itoabuf;
+			recout += "|cff71d5ff|Hspell:";
+			recout += (const char*)itoabuf;
+			recout += "|h[";
+			recout += spell->Name;
+			recout += "]|h|r";
+			SendMultilineMessage(m_session, recout.c_str());
+
+			++count;
+			if(count == 25)
+			{
+				RedSystemMessage(m_session, "More than 25 results returned. aborting.");
+				break;
+			}
+		}
+	}
+
+	GreenSystemMessage(m_session, "Search completed in %u ms.", getMSTime() - t);
+	return true;
+}
+
 bool ChatHandler::HandleLookupCreatureCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;

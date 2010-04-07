@@ -60,6 +60,8 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _TitleCommandTable;
 	else if(!stricmp(name, "quest"))
 		return _questCommandTable;
+	else if(!stricmp(name, "lookup"))
+		return _lookupCommandTable;
 	return 0;
 }
 
@@ -185,6 +187,7 @@ void CommandTableStorage::Dealloc()
 	free( _GuildCommandTable);
 	free( _TitleCommandTable);
 	free( _questCommandTable );
+	free( _lookupCommandTable );
 	free( _commandTable );
 }
 
@@ -446,6 +449,17 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(recallCommandTable, _recallCommandTable);
 
+	static ChatCommand lookupCommandTable[] =
+	{
+		{ "item", 'l', &ChatHandler::HandleLookupItemCommand, "Looks up item string x.", NULL, 0, 0, 0 },
+		{ "quest", 'l', &ChatHandler::HandleQuestLookupCommand, "Looks up quest string x.", NULL, 0, 0, 0 },
+		{ "creature", 'l', &ChatHandler::HandleLookupCreatureCommand, "Looks up item string x.", NULL, 0, 0, 0 },
+		{ "object", 'l', &ChatHandler::HandleLookupObjectCommand, "Looks up object string x.", NULL, 0, 0, 0 },
+		{ "spell", 'l', &ChatHandler::HandleLookupSpellCommand, "Looks up spell string x.", NULL, 0, 0, 0 },
+		{ NULL,			  0, NULL,											"",					 NULL, 0, 0, 0},
+	};
+	dupe_command_table(lookupCommandTable, _lookupCommandTable);
+
 	static ChatCommand questCommandTable[] =
 	{
 		{ "addboth",   '2', &ChatHandler::HandleQuestAddBothCommand,	"Add quest <id> to the targeted NPC as start & finish",	NULL, 0, 0, 0},
@@ -534,6 +548,7 @@ void CommandTableStorage::Init()
 		{ "recall",		'q', NULL,									 "",				 recallCommandTable, 0, 0, 0},
 		{ "guild",		'm', NULL,									 "",				 GuildCommandTable, 0, 0, 0},
 		{ "title",		'm', NULL,									 "",				 TitleCommandTable, 0, 0, 0},
+		{ "lookup",     '0', NULL,                                   "",				 lookupCommandTable, 0, 0, 0},
 		{ "getpos"	  ,  'd', &ChatHandler::HandleGetPosCommand,		"",							   NULL, 0, 0, 0},
 		{ "clearcooldowns", 'm', &ChatHandler::HandleClearCooldownsCommand, "Clears all cooldowns for your class.", NULL, 0, 0, 0 },
 		{ "removeauras",   'm', &ChatHandler::HandleRemoveAurasCommand,   "Removes all auras from target",  NULL, 0, 0, 0},
@@ -568,9 +583,6 @@ void CommandTableStorage::Init()
 		{ "recustomizechar", 'm', &ChatHandler::HandleRecustomizeCharCommand, "Flags character x for character recustomization", NULL, 0, 0, 0 },
 		{ "getstanding", 'm', &ChatHandler::HandleGetStandingCommand, "Gets standing of faction %u.", NULL, 0, 0, 0 },
 		{ "setstanding", 'm', &ChatHandler::HandleSetStandingCommand, "Sets stanging of faction %u.", NULL, 0, 0, 0 },
-		{ "lookupitem", 'l', &ChatHandler::HandleLookupItemCommand, "Looks up item string x.", NULL, 0, 0, 0 },
-		{ "lookupquest", 'l', &ChatHandler::HandleQuestLookupCommand, "Looks up quest string x.", NULL, 0, 0, 0 },
-		{ "lookupcreature", 'l', &ChatHandler::HandleLookupCreatureCommand, "Looks up item string x.", NULL, 0, 0, 0 },
 		//{ "reloadscripts", 'w', &ChatHandler::HandleReloadScriptsCommand, "Reloads GM Scripts", NULL, 0, 0, 0 },
 		{ "rehash", 'z', &ChatHandler::HandleRehashCommand, "Reloads config file.", NULL, 0, 0, 0 },
 		{ "createarenateam", 'g', &ChatHandler::HandleCreateArenaTeamCommands, "Creates arena team", NULL, 0, 0, 0 },

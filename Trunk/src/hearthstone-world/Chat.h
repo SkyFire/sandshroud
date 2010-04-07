@@ -162,6 +162,7 @@ class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 	ChatCommand * _CheatCommandTable;
 	ChatCommand * _honorCommandTable;
 	ChatCommand * _questCommandTable;
+	ChatCommand * _lookupCommandTable;
 	ChatCommand * _petCommandTable;
 	ChatCommand * _recallCommandTable;
 	ChatCommand * _commandTable;
