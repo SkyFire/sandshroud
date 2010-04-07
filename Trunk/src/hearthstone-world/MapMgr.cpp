@@ -2011,8 +2011,7 @@ Creature* MapMgr::CreateCreature(uint32 entry)
 GameObject* MapMgr::CreateGameObject(uint32 entry)
 {
 	//Validate the entry
-	GameObjectInfo *goi = NULL;
-	goi = GameObjectNameStorage.LookupEntry( entry );
+	GameObjectInfo *goi = GameObjectNameStorage.LookupEntry( entry );
 	if( goi == NULL )
 	{
 		Log.Warning("MapMgr", "Skipping CreateGameObject for entry %u due to incomplete database.", entry);

@@ -212,6 +212,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	else
 		unit->Destructor();
 
+	m_session->GetPlayer()->SetSelection(NULL);
 	return true;
 }
 
@@ -727,37 +728,40 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 
 bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 {
-	std::stringstream sstext;
+	if(!args || !m_session)
+		return false;
 
 	char* pEntryID = strtok((char*)args, " ");
 	if (!pEntryID)
 		return false;
 
-	uint32 EntryID  = atoi(pEntryID);
-	
+	uint32 EntryID = atoi(pEntryID);
+	if(GameObjectNameStorage.LookupEntry(EntryID) == NULL)
+	{
+		RedSystemMessage(m_session, "Invalid Gameobject ID(%u).", EntryID);
+		return true;
+	}
+
 	bool Save = false;
 	char* pSave = strtok(NULL, " ");
-	if (pSave)
-		Save = (atoi(pSave)>0?true:false);
-
-	OUT_DEBUG("Spawning GameObject By Entry '%u'", EntryID);
-	sstext << "Spawning GameObject By Entry '" << EntryID << "'" << '\0';
-	SystemMessage(m_session, sstext.str().c_str());
+	if(pSave)
+		Save = (atoi(pSave) > 0 ? true : false);
 
 	GameObject* go = m_session->GetPlayer()->GetMapMgr()->CreateGameObject(EntryID);
 	if(go == NULL)
 	{
-		sstext << "GameObject Info '" << EntryID << "' Not Found" << '\0';
-		SystemMessage(m_session, sstext.str().c_str());
+		RedSystemMessage(m_session, "Spawn of Gameobject(%u) failed.", EntryID);
 		return true;
 	}
-	
+
+	OUT_DEBUG("Spawning GameObject By Entry '%u'", EntryID);
 	Player* chr = m_session->GetPlayer();
 	uint32 mapid = chr->GetMapId();
 	float x = chr->GetPositionX();
 	float y = chr->GetPositionY();
 	float z = chr->GetPositionZ();
 	float o = chr->GetOrientation();
+	BlueSystemMessage(m_session, "Spawning Gameobject(%u) at (X: %f, Y: %f, Z: %f, O: %f)", EntryID, x, y, z, o);
 
 	go->SetInstanceID(chr->GetInstanceID());
 	go->CreateFromProto(EntryID,mapid,x,y,z,o,0.0f,0.0f,0.0f,0.0f);
