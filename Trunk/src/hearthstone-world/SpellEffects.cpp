@@ -6550,7 +6550,6 @@ void Spell::SpellEffectFeedPet(uint32 i)  // Feed Pet
 	SpellCastTargets tgt;
 	tgt.m_unitTarget = pPet->GetGUID();
 	sp->prepare(&tgt);
-	printf("Spellid: %u\n", m_spellInfo->EffectTriggerSpell[i]);
 
 	if(itemTarget->GetUInt32Value(ITEM_FIELD_STACK_COUNT) > 1)
 	{
