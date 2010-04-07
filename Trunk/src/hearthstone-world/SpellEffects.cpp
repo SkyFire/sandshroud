@@ -957,16 +957,6 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					gameObjTarget->_Expire();
 			}
 		}break;
-
-	case 51284: // Feed pet dummy for Happiness incrementation.
-		{
-			if(p_caster != NULL && p_caster->GetSummon() != NULL)
-			{
-				Pet* pet = p_caster->GetSummon();
-				float amount = ((float(damage)) * pet->GetHappinessDmgMod());
-				pet->IncreaseHappiness(amount);
-			}
-		}break;
 	/*
 		Preparation
 		When activated, this ability immediately finishes the cooldown on your Evasion, Sprint, Vanish, Cold Blood and Shadowstep abilities.
@@ -6560,6 +6550,7 @@ void Spell::SpellEffectFeedPet(uint32 i)  // Feed Pet
 	SpellCastTargets tgt;
 	tgt.m_unitTarget = pPet->GetGUID();
 	sp->prepare(&tgt);
+	printf("Spellid: %u\n", m_spellInfo->EffectTriggerSpell[i]);
 
 	if(itemTarget->GetUInt32Value(ITEM_FIELD_STACK_COUNT) > 1)
 	{
@@ -7690,14 +7681,9 @@ void Spell::SpellEffectSetTalentSpecsCount(uint32 i)
 	if(!p_caster)
 		return;
 
-	if(damage > 2) // Crow: DIRTY FIX!!!
-		damage = 2;
-
-	if(p_caster->m_talentActiveSpec >= damage)
-	{
-		// activate primary spec
+	if(p_caster->m_talentActiveSpec >= damage) // activate primary spec
 		p_caster->ApplySpec(0, false);
-	}
+
 	p_caster->m_talentSpecsCount = damage;
 
 	// Send update
@@ -7706,8 +7692,6 @@ void Spell::SpellEffectSetTalentSpecsCount(uint32 i)
 
 void Spell::SpellEffectActivateTalentSpec(uint32 i)
 {
-	return;
-
 	if(!p_caster)
 		return;
 
@@ -7716,11 +7700,9 @@ void Spell::SpellEffectActivateTalentSpec(uint32 i)
 		SendCastResult(SPELL_FAILED_NOT_IN_BATTLEGROUND);
 		return;
 	}
-	if(damage > 2)
-		damage = 2;
 
 	// 1 = primary, 2 = secondary
-	p_caster->ApplySpec(uint8(damage), false);
+	p_caster->ApplySpec(uint8(damage - 1), false);
 
 	// Use up all our power.
 	switch(p_caster->GetPowerType())

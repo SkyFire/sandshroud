@@ -230,7 +230,7 @@ public:
 	AI_Spell*HandleAutoCastEvent();
 	void SetAutoCast(AI_Spell*sp, bool on);
 	uint32 GetHappiness() { return GetUInt32Value(UNIT_FIELD_POWER5); };
-	void SetHappiness(float amount) { SetUInt32Value(UNIT_FIELD_POWER5, amount); };
+	void SetHappiness(float amount) { SetPower(POWER_TYPE_HAPPINESS, amount); };
 	void IncreaseHappiness(float amount) { SetHappiness(amount + GetHappiness()); };
 	float GetHappinessDmgMod() { return 0.25f * GetHappinessState() + 0.5f; };
 	const char* GetPetName() { return m_name.c_str(); }

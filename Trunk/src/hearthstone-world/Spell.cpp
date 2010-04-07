@@ -247,6 +247,7 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 	gameObjTarget = NULLGOB;
 	playerTarget = NULLPLR;
 	corpseTarget = NULLCORPSE;
+	damage = 0;
 	add_damage = 0;
 	m_Delayed = false;
 	m_ForceConsumption = false;
@@ -2796,8 +2797,10 @@ void Spell::HandleEffects(uint32 i)
 		return;
 	}
 
-	damage = CalculateEffect(i,unitTarget);  
+	damage = CalculateEffect(i, unitTarget);
 	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", m_spellInfo->Effect[i], damage); 
+//	if(p_caster)
+//		printf( "Handling Effect id = %u, damage = %d in spell %u\n", m_spellInfo->Effect[i], damage, GetSpellProto()->Id); 
 
 	if( m_spellInfo->Effect[i] < TOTAL_SPELL_EFFECTS)
 		(*this.*SpellEffectsHandler[m_spellInfo->Effect[i]])(i);
@@ -4218,22 +4221,21 @@ void Spell::RemoveItems()
 int32 Spell::CalculateEffect(uint32 i,Unit* target)
 {
 	// TODO: Add ARMOR CHECKS; Add npc that have ranged weapons use them;
-
 	// Range checks
- /*   if (m_spellInfo->Id == SPELL_RANGED_GUN) // this includes bow and gun
+/*	if(m_spellInfo->Id == SPELL_RANGED_GUN) // this includes bow and gun
 	{
 		if(!u_caster || !unitTarget)
 			return 0;
 
 		return ::CalculateDamage( u_caster, unitTarget, RANGED, m_spellInfo->SpellGroupType );
-	}
-*/
+	}*/
+
 	if( m_spellInfo->Id == 3018 )
 		m_spellInfo = dbcSpell.LookupEntry(75);
 
 	int32 value = 0;
 
-	float basePointsPerLevel	= m_spellInfo->EffectRealPointsPerLevel[i];
+	float basePointsPerLevel = m_spellInfo->EffectRealPointsPerLevel[i];
 	int32 basePoints = m_spellInfo->EffectBasePoints[i] + 1;
 	int32 randomPoints = m_spellInfo->EffectDieSides[i];
 
@@ -4245,11 +4247,17 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 	{
 		int32 diff = -(int32)m_spellInfo->baseLevel;
 		if (m_spellInfo->maxLevel && u_caster->getLevel()>m_spellInfo->maxLevel)
-			diff +=m_spellInfo->maxLevel;
+			diff += m_spellInfo->maxLevel;
 		else
-			diff +=u_caster->getLevel();
-		basePoints += float2int32(diff * basePointsPerLevel );
-		randomPoints += float2int32(diff);
+			diff += u_caster->getLevel();
+//		Crow:
+//		randomPoints += float2int32(diff * 1); // Wrong, we get random on spells without random figures, mounts, dual specs, etc.
+//		randomPoints += float2int32(diff); // Wrong, we get random on spells we shouldn't.
+//		The below is fine, but it is still incorrect.
+//		We used to grab a dice figure from the dbc but it was removed in 3.3
+//		This is fine though, we should be able to do a decent amount of damage, maybe even fix some issues.
+//		randomPoints += float2int32(diff * 0);
+		basePoints += float2int32(diff * basePointsPerLevel);
 	}
 
 	if(randomPoints <= 1)
