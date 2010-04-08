@@ -237,7 +237,7 @@ public:
 		//ASSERT(pos + sizeof(T) <= size());
 		if(pos + sizeof(T) > size())
 		{
-			sLog.outColor(TRED, "\n ERROR: Packet size is smaller than what we are trying to read. Size is %u, readsize is %u\n\r", size(), pos + sizeof(T));
+			sLog.outColor(TRED, "\nERROR: Packet size is smaller than what we are trying to read. Size is %u, readsize is %u\r\n", size(), pos + sizeof(T));
 			return (T)0;
 		}
 		else

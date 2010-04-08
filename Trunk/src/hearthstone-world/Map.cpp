@@ -165,7 +165,8 @@ void Map::LoadSpawns(bool reload /* = false */)
 			if(CheckResultLengthCreatures(result))
 			{
 				Field* fields = NULL;
-				do{
+				do
+				{
 					fields = result->Fetch();
 					CreatureSpawn * cspawn = new CreatureSpawn;
 					cspawn->id = fields[0].GetUInt32();
@@ -191,7 +192,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 					cspawn->phase = fields[20].GetInt32();
 					cspawn->vehicle = fields[21].GetInt32();
 					cspawn->eventid = fields[22].GetUInt8();
-					if(cspawn->eventid)
+					if(cspawn->eventid > 0)
 					{
 						result2 = WorldDatabase.Query("SELECT * FROM events_creature WHERE id = '%u' AND eventid = '%u'", cspawn->id, cspawn->eventid);
 						if(result2)
@@ -236,7 +237,8 @@ void Map::LoadSpawns(bool reload /* = false */)
 		if( CheckResultLengthCreatures(result) )
 		{
 			Field* fields = NULL;
-			do{
+			do
+			{
 				fields = result->Fetch();
 				CreatureSpawn * cspawn = new CreatureSpawn;
 				cspawn->id = fields[0].GetUInt32();
@@ -306,7 +308,8 @@ void Map::LoadSpawns(bool reload /* = false */)
 			if( CheckResultLengthGameObject(result) )
 			{
 				Field* fields = NULL;
-				do{
+				do
+				{
 					fields = result->Fetch();
 					GOSpawn * gspawn = new GOSpawn;
 					gspawn->entry = fields[1].GetUInt32();
@@ -326,7 +329,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 					gspawn->phase = fields[15].GetInt32();
 					gspawn->MountDisplayID = 0; //gameobjects don't mount
 					gspawn->eventid = fields[16].GetUInt8();
-					if(gspawn->eventid)
+					if(gspawn->eventid > 0)
 					{
 						result2 = WorldDatabase.Query("SELECT * FROM events_gameobject WHERE id = '%u' AND eventid = '%u'", gspawn->id, gspawn->eventid);
 						if(result2)
@@ -358,6 +361,5 @@ void Map::LoadSpawns(bool reload /* = false */)
 			delete result;
 		}
 	}
-
 	Log.Notice("Map", "%u creatures / %u gameobjects on map %u cached.", CreatureSpawnCount, GameObjectSpawnCount, _mapId);
 }

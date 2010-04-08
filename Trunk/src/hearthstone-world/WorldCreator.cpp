@@ -508,9 +508,7 @@ MapMgr* InstanceMgr::GetInstance(Object* obj)
 
 MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 {
-	MapInfo * inf = NULL;
-	inf = WorldMapInfoStorage.LookupEntry(mapid);
-
+	MapInfo* inf = WorldMapInfoStorage.LookupEntry(mapid);
 	ASSERT(inf != NULL && inf->type == INSTANCE_NULL);
 	ASSERT(mapid < NUM_MAPS && m_maps[mapid] != NULL);
 
