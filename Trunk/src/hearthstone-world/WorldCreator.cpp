@@ -451,10 +451,8 @@ MapMgr* InstanceMgr::GetInstance(Object* obj)
 
 			
 			// iterate over our instances, and see if any of them are owned/joinable by him.
-			for(itr = instancemap->begin(); itr != instancemap->end();)
+			for(itr = instancemap->begin(); itr != instancemap->end(); ++itr)
 			{
-				++itr;
-
 				// Is this our instance?
 				uint8 owns = PlayerOwnsInstance(itr->second, plr);
 				if(owns >= OWNER_CHECK_OK )
