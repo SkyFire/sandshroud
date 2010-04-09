@@ -20,7 +20,7 @@
 #ifndef _AUTHCODES_H
 #define _AUTHCODES_H
 
-// Client 3.3.0.a
+// Client 3.3.3.a
 
 enum LoginErrorCode
 {

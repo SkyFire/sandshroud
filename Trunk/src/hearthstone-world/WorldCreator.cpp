@@ -45,7 +45,7 @@ void InstanceMgr::Load(TaskList * l)
 
 	// Create all non-instance type maps.
 	result = CharacterDatabase.Query( "SELECT MAX(id) FROM instances" );
-	if(result)
+	if( result )
 	{
 		m_InstanceHigh = result->Fetch()[0].GetUInt32()+1;
 		delete result;
@@ -59,7 +59,7 @@ void InstanceMgr::Load(TaskList * l)
 	{
 		do 
 		{
-			if(!WorldMapInfoStorage.LookupEntry(result->Fetch()[0].GetUInt32()))
+			if( !WorldMapInfoStorage.LookupEntry(result->Fetch()[0].GetUInt32()) )
 				continue;
 
 			if( result->Fetch()[0].GetUInt32() >= NUM_MAPS )

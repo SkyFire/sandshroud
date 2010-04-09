@@ -20,9 +20,6 @@
  *
  */
 
-
-
-
 #ifndef EASYFUNC_H
 #define EASYFUNC_H
 

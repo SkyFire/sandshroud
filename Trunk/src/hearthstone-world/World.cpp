@@ -2452,6 +2452,8 @@ void NewsAnnouncer::_SendMessage(NewsAnnouncement *ann)
 
 	// send it to the console too
 	puts(buf);
+
+	delete data_to_send;
 }
 
 void NewsAnnouncer::_ReloadMessages()

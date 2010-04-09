@@ -54,7 +54,7 @@ public:
 	__inline StackPacket(uint16 opcode, uint8* ptr, uint32 sz) : StackBuffer(ptr, sz), m_opcode(opcode) { }
 
 	//! Clear packet and set opcode all in one mighty blow
-	__inline void Initialize(uint16 opcode)
+	__inline void Initialize( uint16 opcode )
 	{
 		StackBuffer::Clear();
 		m_opcode = opcode;

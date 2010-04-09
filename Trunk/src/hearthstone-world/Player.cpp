@@ -8746,7 +8746,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
 	}
 
 	//We are going to another map
-	if(force_new_world)
+	if( force_new_world )
 	{
 		//Do we need TBC expansion?
 		if(mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
@@ -9478,32 +9478,32 @@ void Player::SaveAuras(stringstream &ss)
 			switch(aur->m_spellProto->Id)
 			{
 			case 642:
-			case 1020:			  //divine shield 
-			case 11129:			 // Combustion 
-			case 12043:			 // Presence of mind 
-			case 16188:			 // Natures Swiftness 
-			case 17116:			 // Natures Swiftness 
-			case 23333:			 // WSG 
-			case 23335:			 // WSG 
-			case 28682:			 // Combustion proc 
-			case 31665:			 // Master of Subtlety (buff) 
-			case 32724:			 // Gold Team 
-			case 32725:			 // Green Team 
-			case 32727:			 // Arena Preparation 
-			case 32728:			 // Arena Preparation 
-			case 32071:			 // Hellfire Superority 
-			case 32049:			 // Hellfire Superority 
-			case 34936:			 // Backlash 
-			case 35076:			 // Blessing of A'dal 
-			case 35774:			 // Gold Team 
-			case 35775:			 // Green Team 
-			case 44521:			 // Preparation? 
-			case 44683:			 // Team A 
-			case 44684:			 // Team B 
-			case 45438:			 // Ice Block 
-			case 48418:			 // Master Shapeshifter Damage (buff)
-			case 48420:			 // Master Shapeshifter Critical Strike (buff)
-			case 48421:			 // Master Shapeshifter Spell Damage (buff)
+			case 1020:				//divine shield 
+			case 11129:				// Combustion 
+			case 12043:				// Presence of mind 
+			case 16188:				// Natures Swiftness 
+			case 17116:				// Natures Swiftness 
+			case 23333:				// WSG 
+			case 23335:				// WSG 
+			case 28682:				// Combustion proc 
+			case 31665:				// Master of Subtlety (buff) 
+			case 32724:				// Gold Team 
+			case 32725:				// Green Team 
+			case 32727:				// Arena Preparation 
+			case 32728:				// Arena Preparation 
+			case 32071:				// Hellfire Superority 
+			case 32049:				// Hellfire Superority 
+			case 34936:				// Backlash 
+			case 35076:				// Blessing of A'dal 
+			case 35774:				// Gold Team 
+			case 35775:				// Green Team 
+			case 44521:				// Preparation? 
+			case 44683:				// Team A 
+			case 44684:				// Team B 
+			case 45438:				// Ice Block 
+			case 48418:				// Master Shapeshifter Damage (buff)
+			case 48420:				// Master Shapeshifter Critical Strike (buff)
+			case 48421:				// Master Shapeshifter Spell Damage (buff)
 			case 48422:				// Master Shapeshifter Healing (buff)
 				skip = true;
 				break;
@@ -10667,7 +10667,7 @@ void Player::EventTalentHeartOfWildChange(bool apply)
 }
 
 /************************************************************************/
-/* New Save System													  */
+/* New Save System														*/
 /************************************************************************/
 #ifdef OPTIMIZED_PLAYER_SAVING
 
@@ -11064,7 +11064,7 @@ void Player::EventSummonPet( Pet* new_pet )
 	//new_pet->InheritSMMods(); //not required yet. We cast full spell to have visual effect too
 }
 
-//if pet/charm died or whatever hapened we should call this function
+//if pet/charm died or whatever happened we should call this function
 //!! note function might get called multiple times :P
 void Player::EventDismissPet()
 {
@@ -11615,7 +11615,7 @@ void Player::DelaySpeedHack(uint32 ms)
 }
 
 /************************************************************************/
-/* SOCIAL															   */
+/* SOCIAL																*/
 /************************************************************************/
 
 void Player::Social_AddFriend(const char * name, const char * note)

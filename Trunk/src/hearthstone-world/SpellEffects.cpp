@@ -1207,7 +1207,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 			p_caster->GetGroup()->m_prayerOfMendingCount = 5;		// 5 jumpz
 			p_caster->GetGroup()->m_prayerOfMendingTarget = this->GetUnitTarget()->GetLowGUID();
-			if(!p_caster->GetGroup()->m_prayerOfMendingTarget)
+			if( !p_caster->GetGroup()->m_prayerOfMendingTarget )
 				p_caster->GetGroup()->m_prayerOfMendingTarget = p_caster->GetLowGUID();
 		}break;
 	case 41637:
@@ -3595,7 +3595,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			{
  				CALL_GO_SCRIPT_EVENT(gameObjTarget, OnActivate)(TO_PLAYER(p_caster));
 				CALL_INSTANCE_SCRIPT_EVENT( gameObjTarget->GetMapMgr(), OnGameObjectActivate )( gameObjTarget, p_caster );
-			}
+			};
 
 			if(sQuestMgr.OnGameObjectActivate(p_caster, gameObjTarget))
 			{
@@ -3610,7 +3610,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			loottype=LOOT_CORPSE;
 		}
 		break;
-	}
+	};
 	if( gameObjTarget != NULL && gameObjTarget->GetByte(GAMEOBJECT_BYTES_1, 1) == GAMEOBJECT_TYPE_CHEST)
 		TO_PLAYER( m_caster )->SendLoot( gameObjTarget->GetGUID(), gameObjTarget->GetMapId(), loottype );
 }
@@ -3850,76 +3850,76 @@ void Spell::SpellEffectLearnSpell(uint32 i) // Learn Spell
 		playerTarget->addSpell(spellToLearn);
 		//smth is wrong here, first we add this spell to player then we may cast it on player...
 		SpellEntry *spellinfo = dbcSpell.LookupEntry(spellToLearn);
- 		//remove specializations
+		//remove specializations
 		switch(spellinfo->Id)
- 		{
+		{
 		case 26801: //Shadoweave Tailoring
 			playerTarget->removeSpell(26798,false,false,0); //Mooncloth Tailoring
 			playerTarget->removeSpell(26797,false,false,0); //Spellfire Tailoring
- 			break;
+			break;
 		case 26798: // Mooncloth Tailoring
 			playerTarget->removeSpell(26801,false,false,0); //Shadoweave Tailoring
 			playerTarget->removeSpell(26797,false,false,0); //Spellfire Tailoring
- 			break;
+			break;
 		case 26797: //Spellfire Tailoring
 			playerTarget->removeSpell(26801,false,false,0); //Shadoweave Tailoring
 			playerTarget->removeSpell(26798,false,false,0); //Mooncloth Tailoring
- 			break;
- 		case 10656: //Dragonscale Leatherworking
+			break;
+		case 10656: //Dragonscale Leatherworking
 			playerTarget->removeSpell(10658,false,false,0); //Elemental Leatherworking
 			playerTarget->removeSpell(10660,false,false,0); //Tribal Leatherworking
- 			break;
- 		case 10658: //Elemental Leatherworking
+			break;
+		case 10658: //Elemental Leatherworking
 			playerTarget->removeSpell(10656,false,false,0); //Dragonscale Leatherworking
 			playerTarget->removeSpell(10660,false,false,0); //Tribal Leatherworking
- 			break;
- 		case 10660: //Tribal Leatherworking
+			break;
+		case 10660: //Tribal Leatherworking
 			playerTarget->removeSpell(10656,false,false,0); //Dragonscale Leatherworking
 			playerTarget->removeSpell(10658,false,false,0); //Elemental Leatherworking
- 			break;
- 		case 28677: //Elixir Master
+			break;
+		case 28677: //Elixir Master
 			playerTarget->removeSpell(28675,false,false,0); //Potion Master
 			playerTarget->removeSpell(28672,false,false,0); //Transmutation Maste
- 			break;
- 		case 28675: //Potion Master
+			break;
+		case 28675: //Potion Master
 			playerTarget->removeSpell(28677,false,false,0); //Elixir Master
 			playerTarget->removeSpell(28672,false,false,0); //Transmutation Maste
- 			break;
- 		case 28672: //Transmutation Master
+			break;
+		case 28672: //Transmutation Master
 			playerTarget->removeSpell(28675,false,false,0); //Potion Master
 			playerTarget->removeSpell(28677,false,false,0); //Elixir Master
- 			break;
- 		case 20219: //Gnomish Engineer
+			break;
+		case 20219: //Gnomish Engineer
 			playerTarget->removeSpell(20222,false,false,0); //Goblin Engineer
- 			break;
- 		case 20222: //Goblin Engineer
+			break;
+		case 20222: //Goblin Engineer
 			playerTarget->removeSpell(20219,false,false,0); //Gnomish Engineer
- 			break;
- 		case 9788: //Armorsmith
+			break;
+		case 9788: //Armorsmith
 			playerTarget->removeSpell(9787,false,false,0); //Weaponsmith
 			playerTarget->removeSpell(17039,false,false,0); //Master Swordsmith
 			playerTarget->removeSpell(17040,false,false,0); //Master Hammersmith
 			playerTarget->removeSpell(17041,false,false,0); //Master Axesmith
- 			break;
- 		case 9787: //Weaponsmith
+			break;
+		case 9787: //Weaponsmith
 			playerTarget->removeSpell(9788,false,false,0); //Armorsmith
- 			break;
- 		case 17041: //Master Axesmith
+			break;
+		case 17041: //Master Axesmith
 			playerTarget->removeSpell(9788,false,false,0); //Armorsmith
 			playerTarget->removeSpell(17040,false,false,0); //Master Hammersmith
 			playerTarget->removeSpell(17039,false,false,0); //Master Swordsmith
- 			break;
- 		case 17040: //Master Hammersmith
+			break;
+		case 17040: //Master Hammersmith
 			playerTarget->removeSpell(9788,false,false,0); //Armorsmith
 			playerTarget->removeSpell(17039,false,false,0); //Master Swordsmith
 			playerTarget->removeSpell(17041,false,false,0); //Master Axesmith
- 			break;
- 		case 17039: //Master Swordsmith
+			break;
+		case 17039: //Master Swordsmith
 			playerTarget->removeSpell(9788,false,false,0); //Armorsmith
 			playerTarget->removeSpell(17040,false,false,0); //Master Hammersmith
 			playerTarget->removeSpell(17041,false,false,0); //Master Axesmith
- 			break;
- 		}
+			break;
+		}
 		for(uint32 i=0;i<3;++i)
 			if(spellinfo->Effect[i] == SPELL_EFFECT_WEAPON ||
 			   spellinfo->Effect[i] == SPELL_EFFECT_PROFICIENCY ||
@@ -4159,7 +4159,7 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 			break;
 		default: //u cant learn other types in game
 			return;
-	}
+	};
 
 	if( target->_HasSkillLine( skill ) )
 		target->_ModifySkillMaximum( skill, max );

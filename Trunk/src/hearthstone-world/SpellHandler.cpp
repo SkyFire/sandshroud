@@ -62,8 +62,8 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		if( sQuestMgr.PlayerMeetsReqs(_player, qst, false) != QMGR_QUEST_AVAILABLE || qst->min_level > _player->getLevel() )
 			return;
 
-        WorldPacket data;
-        sQuestMgr.BuildQuestDetails(&data, qst, tmpItem, 0, language, _player);
+		WorldPacket data;
+		sQuestMgr.BuildQuestDetails(&data, qst, tmpItem, 0, language, _player);
 		SendPacket(&data);
 	}
 	
@@ -237,14 +237,14 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 		{
 			//sLog.outString( "HandleSpellCast: Auto Shot-type spell cast (id %u, name %s)" , spellInfo->Id , spellInfo->Name );
 			Item* weapon = GetPlayer()->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
-			if(!weapon) 
+			if(!weapon)
 				return;
 			uint32 spellid;
 			switch(weapon->GetProto()->SubClass)
 			{
 			case 2:			 // bows
 			case 3:			 // guns
-            case 18:		 // crossbow
+			case 18:		 // crossbow
 				spellid = SPELL_RANGED_GENERAL;
 				break;
 			case 16:			// thrown
@@ -257,8 +257,8 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 				spellid = 0;
 				break;
 			}
-		   
-			if(!spellid) 
+
+			if(!spellid)
 				spellid = spellInfo->Id;
 			
 			if(!_player->m_onAutoShot)
@@ -389,7 +389,7 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 	SpellEntry *sp = dbcSpell.LookupEntry(spellid);
 
 	// Summoned Elemental's Freeze
-	if(spellid == 33395)
+	if( spellid == 33395 )
 	{
 		caster = _player->m_Summon;
 		if( caster && TO_PET(caster)->GetAISpellForSpellId(spellid) == NULL )
@@ -440,7 +440,7 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 		}
 	}
 
-	if( caster == NULL || guid != caster->GetGUID())
+	if( caster == NULL || guid != caster->GetGUID() )
 	{
 		WorldPacket data(SMSG_PET_CAST_FAILED, 1 + 4 + 1);
 		data << uint8(0);

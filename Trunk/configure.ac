@@ -1,8 +1,8 @@
 ## Process this file with autoconf to produce a configure script.
 
-AC_INIT([Hearthstone],
-        [3.6],
-        [www.hearthstone.ws],
+AC_INIT([Sandshroud],
+        [4.0],
+        [www.sandshroud.org],
         [hearthstone])
 
 AC_PREREQ(2.5)

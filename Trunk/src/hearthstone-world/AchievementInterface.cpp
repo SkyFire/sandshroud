@@ -689,11 +689,14 @@ void AchievementInterface::HandleAchievementCriteriaLevelUp(uint32 level)
 					break;
 				}
 			}
+
 			if( ReqClass && m_player->getClass() != ReqClass )
 				continue;
+
 			if( ReqRace && m_player->getRace() != ReqRace )
 				continue;
 		}
+
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
 		if(ad->completed)
@@ -710,6 +713,7 @@ void AchievementInterface::HandleAchievementCriteriaLevelUp(uint32 level)
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
@@ -732,11 +736,13 @@ void AchievementInterface::HandleAchievementCriteriaOwnItem(uint32 itemId, uint3
 		uint32 AchievementID = ace->referredAchievement;
 		uint32 ReqItemId = ace->own_item.itemID;
 		uint32 ReqItemCount = ace->own_item.itemCount;
+
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
 		if(!pAchievementEntry)
 			continue;
 		if( itemId != ReqItemId )
 			continue;
+
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
 		if( ad->completed )
@@ -753,9 +759,11 @@ void AchievementInterface::HandleAchievementCriteriaOwnItem(uint32 itemId, uint3
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
+
 	HandleAchievementCriteriaLootItem(itemId, stack);
 }
 
@@ -776,11 +784,13 @@ void AchievementInterface::HandleAchievementCriteriaLootItem(uint32 itemId, uint
 		uint32 AchievementID = ace->referredAchievement;
 		uint32 ReqItemId = ace->loot_item.itemID;
 		uint32 ReqItemCount = ace->loot_item.itemCount;
+
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
 		if(!pAchievementEntry)
 			continue;
 		if( itemId != ReqItemId )
 			continue;
+
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
 		if(ad->completed)
@@ -797,6 +807,7 @@ void AchievementInterface::HandleAchievementCriteriaLootItem(uint32 itemId, uint
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
@@ -1365,11 +1376,14 @@ void AchievementInterface::HandleAchievementCriteriaReachSkillLevel(uint32 skill
 		uint32 AchievementID = ace->referredAchievement;
 		uint32 ReqSkill = ace->reach_skill_level.skillID;
 		uint32 ReqLevel = ace->reach_skill_level.skillLevel;
+
 		if( ReqSkill != skillId )
 			continue;
+
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
 		if(!pAchievementEntry)
 			continue;
+
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
 		if(ad->completed)
@@ -1387,6 +1401,7 @@ void AchievementInterface::HandleAchievementCriteriaReachSkillLevel(uint32 skill
 				break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
@@ -1428,6 +1443,7 @@ void AchievementInterface::HandleAchievementCriteriaWinDuel()
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
@@ -1469,6 +1485,7 @@ void AchievementInterface::HandleAchievementCriteriaLoseDuel()
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
@@ -1490,8 +1507,10 @@ void AchievementInterface::HandleAchievementCriteriaKilledByCreature(uint32 kill
 		AchievementCriteriaEntry * ace = (*citr);
 		uint32 AchievementID = ace->referredAchievement;
 		uint32 ReqCreature = ace->killed_by_creature.creatureEntry;
+
 		if( ReqCreature != killedMonster )
 			continue;
+
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
 		if(!pAchievementEntry)
 			continue;
@@ -1511,6 +1530,7 @@ void AchievementInterface::HandleAchievementCriteriaKilledByCreature(uint32 kill
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
@@ -1531,6 +1551,7 @@ void AchievementInterface::HandleAchievementCriteriaKilledByPlayer()
 	{
 		AchievementCriteriaEntry * ace = (*citr);
 		uint32 AchievementID = ace->referredAchievement;
+
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
 		if(!pAchievementEntry)
 			continue;
@@ -1550,6 +1571,7 @@ void AchievementInterface::HandleAchievementCriteriaKilledByPlayer()
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
@@ -1570,6 +1592,7 @@ void AchievementInterface::HandleAchievementCriteriaDeath()
 	{
 		AchievementCriteriaEntry * ace = (*citr);
 		uint32 AchievementID = ace->referredAchievement;
+
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
 		if(!pAchievementEntry)
 			continue;
@@ -1589,9 +1612,11 @@ void AchievementInterface::HandleAchievementCriteriaDeath()
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
+
 	HandleAchievementCriteriaDeathAtMap(m_player->GetMapId());
 }
 
@@ -1634,6 +1659,7 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 				SendCriteriaUpdate(ad, i); break;
 			}
 		}
+
 		if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}

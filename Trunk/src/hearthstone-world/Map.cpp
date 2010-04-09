@@ -162,12 +162,11 @@ void Map::LoadSpawns(bool reload /* = false */)
 		result = WorldDatabase.Query("SELECT * FROM %s WHERE Map = %u",(*tableiterator).c_str(),this->_mapId);
 		if(result)
 		{
-			if(CheckResultLengthCreatures(result))
+			if(CheckResultLengthCreatures( result) )
 			{
-				Field* fields = NULL;
 				do
 				{
-					fields = result->Fetch();
+					Field * fields = result->Fetch();
 					CreatureSpawn * cspawn = new CreatureSpawn;
 					cspawn->id = fields[0].GetUInt32();
 					cspawn->form = FormationMgr::getSingleton().GetFormation(cspawn->id);
@@ -198,7 +197,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 						if(result2)
 						{
 							cspawn->eventinfo = new EventIdInfo;
-							Field* fields2 = result2->Fetch();
+							Field * fields2 = result2->Fetch();
 							cspawn->eventinfo->eventid = fields2[0].GetUInt8();
 							cspawn->eventinfo->eventchangesflag = fields2[2].GetUInt8();
 							cspawn->eventinfo->eventphase = fields2[3].GetUInt32();
@@ -225,8 +224,10 @@ void Map::LoadSpawns(bool reload /* = false */)
 					spawns[cellx][celly]->CreatureSpawns.push_back(cspawn);
 
 					++CreatureSpawnCount;
+
 				}while(result->NextRow());
 			}
+
 			delete result;
 		}
 	}
@@ -236,10 +237,9 @@ void Map::LoadSpawns(bool reload /* = false */)
 	{
 		if( CheckResultLengthCreatures(result) )
 		{
-			Field* fields = NULL;
 			do
 			{
-				fields = result->Fetch();
+				Field * fields = result->Fetch();
 				CreatureSpawn * cspawn = new CreatureSpawn;
 				cspawn->id = fields[0].GetUInt32();
 				cspawn->form = FormationMgr::getSingleton().GetFormation(cspawn->id);
@@ -266,6 +266,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 				++CreatureSpawnCount;
 			}while(result->NextRow());
 		}
+
 		delete result;
 	}
 
@@ -274,10 +275,9 @@ void Map::LoadSpawns(bool reload /* = false */)
 	{
 		if( CheckResultLengthGameObject(result) )
 		{
-			Field* fields = NULL;
 			do{
-				fields = result->Fetch();
-				GOSpawn* gspawn = new GOSpawn;
+				Field * fields = result->Fetch();
+				GOSpawn * gspawn = new GOSpawn;
 				gspawn->entry = fields[1].GetUInt32();
 				gspawn->id = fields[0].GetUInt32();
 				gspawn->x = fields[3].GetFloat();
@@ -297,6 +297,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 				++GameObjectSpawnCount;
 			}while(result->NextRow());
 		}
+
 		delete result;
 	}
 
@@ -307,10 +308,9 @@ void Map::LoadSpawns(bool reload /* = false */)
 		{
 			if( CheckResultLengthGameObject(result) )
 			{
-				Field* fields = NULL;
 				do
 				{
-					fields = result->Fetch();
+					Field * fields = result->Fetch();
 					GOSpawn * gspawn = new GOSpawn;
 					gspawn->entry = fields[1].GetUInt32();
 					gspawn->id = fields[0].GetUInt32();
@@ -335,7 +335,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 						if(result2)
 						{
 							gspawn->eventinfo = new EventIdInfo;
-							Field* fields2 = result2->Fetch();
+							Field * fields2 = result2->Fetch();
 							gspawn->eventinfo->eventid = fields2[0].GetUInt8();
 							gspawn->eventinfo->eventchangesflag = fields2[2].GetUInt8();
 							gspawn->eventinfo->eventphase = fields2[3].GetUInt32();
@@ -358,8 +358,10 @@ void Map::LoadSpawns(bool reload /* = false */)
 					++GameObjectSpawnCount;
 				}while(result->NextRow());
 			}
+
 			delete result;
 		}
 	}
 	Log.Notice("Map", "%u creatures / %u gameobjects on map %u cached.", CreatureSpawnCount, GameObjectSpawnCount, _mapId);
 }
+

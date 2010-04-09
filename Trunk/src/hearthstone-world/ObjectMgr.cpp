@@ -385,10 +385,9 @@ void ObjectMgr::LoadPlayersInfo()
 		period = (result->GetRowCount() / 20) + 1;
 		c = 0;
 
-		Field *fields = NULL;
 		do
 		{
-			fields = result->Fetch();
+			Field *fields = result->Fetch();
 			pn = new PlayerInfo;
 			memset(pn, 0, sizeof(PlayerInfo));
 			pn->guid = fields[0].GetUInt32();
@@ -1089,7 +1088,7 @@ void ObjectMgr::LoadVendors()
 
 		do
 		{
-			Field *fields = result->Fetch();
+			Field* fields = result->Fetch();
 
 			itr = mVendors.find( fields[0].GetUInt32() );
 
@@ -1224,12 +1223,13 @@ void ObjectMgr::LoadSpellFixes()
 
 		do
 		{
-			Field *f = result->Fetch();
+			Field * f = result->Fetch();
 			uint32 sf_spellId = f[0].GetUInt32();
 			uint32 sf_procFlags = f[1].GetUInt32();
 			uint32 sf_procChance = f[2].GetUInt32();
 			uint32 sf_procCharges = f[3].GetUInt32();
 			uint32 sf_effectClassMask[3][3];
+
 			sf_effectClassMask[0][0] = f[4].GetUInt32();
 			sf_effectClassMask[0][1] = f[5].GetUInt32();
 			sf_effectClassMask[0][2] = f[6].GetUInt32();
@@ -1494,10 +1494,9 @@ void ObjectMgr::LoadTrainers()
 	if(!result)
 		return;
 
-	Field* fields = NULL;
 	do
 	{
-		fields = result->Fetch();
+		Field * fields = result->Fetch();
 		uint32 entry = fields[0].GetUInt32();
 		CreatureInfo* trainer_info = CreatureNameStorage.LookupEntry(entry);
 		if(!trainer_info)
@@ -1698,7 +1697,7 @@ void ObjectMgr::GenerateLevelUpInfo()
 			lvl0->XPToNextLevel = 400;
 			lvl0->BaseHP = PCI->health;
 			lvl0->BaseMana = PCI->mana;
-			LevelMap* lMap = new LevelMap;
+			LevelMap * lMap = new LevelMap;
 
 			// Insert into map
 			lMap->insert( LevelMap::value_type( 1, lvl0 ) );

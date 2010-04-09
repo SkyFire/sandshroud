@@ -92,6 +92,7 @@ void DayWatcherThread::LoadEventIdSettings()
 		events->endhour = fields[6].GetUInt8();
 		m_eventIdList.push_back(events);
 	} while(result->NextRow());
+	delete result;
 
 	m_creatureEventSpawnMaps.clear();
 	m_gameobjectEventSpawnMaps.clear();

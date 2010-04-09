@@ -841,7 +841,9 @@ public:
 	void EventTimeoutLfgInviter();
 
 protected:
+
 	void _UpdateSkillFields();
+
 	SkillMap m_skills;
 
 	// COOLDOWNS
@@ -864,6 +866,7 @@ protected:
 	// END COOLDOWNS
 
 public:
+
 	bool ok_to_remove;
 	uint64 m_spellIndexTypeTargets[NUM_SPELL_TYPE_INDEX];
 	void OnLogin();//custom stuff on player login.
@@ -872,7 +875,7 @@ public:
 	void RemoveSpellIndexReferences(uint32 Type);
 	void SetSpellTargetType(uint32 Type, Unit* target);
 	void SendMeetingStoneQueue(uint32 DungeonId, uint8 Status);
- 	void SendDungeonDifficulty();
+	void SendDungeonDifficulty();
 	void SendRaidDifficulty();
 
 	void AddToWorld(bool loggingin = false);
@@ -893,40 +896,40 @@ public:
 	void ModifyBonuses(uint32 type,int32 val);
 	std::map<uint32, uint32> m_wratings;
 
-    /************************************************************************/
-    /* Taxi                                                                 */
-    /************************************************************************/
-    HEARTHSTONE_INLINE TaxiPath*    GetTaxiPath() { return m_CurrentTaxiPath; }
-    HEARTHSTONE_INLINE bool         GetTaxiState() { return m_onTaxi; }
-    const uint32&       GetTaximask( uint8 index ) const { return m_taximask[index]; }
-    void                LoadTaxiMask(const char* data);
-    void                TaxiStart(TaxiPath* path, uint32 modelid, uint32 start_node);
-    void                JumpToEndTaxiNode(TaxiPath * path);
-    void                EventDismount(uint32 money, float x, float y, float z);
-    void                EventTaxiInterpolate();
+	/************************************************************************/
+	/* Taxi																	*/
+	/************************************************************************/
+	HEARTHSTONE_INLINE TaxiPath*	GetTaxiPath() { return m_CurrentTaxiPath; }
+	HEARTHSTONE_INLINE bool			GetTaxiState() { return m_onTaxi; }
+	const uint32&		GetTaximask( uint8 index ) const { return m_taximask[index]; }
+	void				LoadTaxiMask(const char* data);
+	void				TaxiStart(TaxiPath* path, uint32 modelid, uint32 start_node);
+	void				JumpToEndTaxiNode(TaxiPath * path);
+	void				EventDismount(uint32 money, float x, float y, float z);
+	void				EventTaxiInterpolate();
 
-    HEARTHSTONE_INLINE void         SetTaxiState    (bool state) { m_onTaxi = state; }
-    HEARTHSTONE_INLINE void         SetTaximask     (uint8 index, uint32 value ) { m_taximask[index] = value; }
-    HEARTHSTONE_INLINE void         SetTaxiPath     (TaxiPath *path) { m_CurrentTaxiPath = path; }
-    HEARTHSTONE_INLINE void         SetTaxiPos()	{m_taxi_pos_x = m_position.x; m_taxi_pos_y = m_position.y; m_taxi_pos_z = m_position.z;}
-    HEARTHSTONE_INLINE void         UnSetTaxiPos()	{m_taxi_pos_x = 0; m_taxi_pos_y = 0; m_taxi_pos_z = 0; }
+	HEARTHSTONE_INLINE void			SetTaxiState	(bool state) { m_onTaxi = state; }
+	HEARTHSTONE_INLINE void			SetTaximask		(uint8 index, uint32 value ) { m_taximask[index] = value; }
+	HEARTHSTONE_INLINE void			SetTaxiPath		(TaxiPath *path) { m_CurrentTaxiPath = path; }
+	HEARTHSTONE_INLINE void			SetTaxiPos()	{m_taxi_pos_x = m_position.x; m_taxi_pos_y = m_position.y; m_taxi_pos_z = m_position.z;}
+	HEARTHSTONE_INLINE void			UnSetTaxiPos()	{m_taxi_pos_x = 0; m_taxi_pos_y = 0; m_taxi_pos_z = 0; }
  
 	// Taxi related variables
-	vector<TaxiPath*>   m_taxiPaths;
-    TaxiPath*           m_CurrentTaxiPath;
-    uint32              taxi_model_id;
-	uint32              lastNode;
-    uint32              m_taxi_ride_time;
-    uint32              m_taximask[12];
-    float               m_taxi_pos_x;
-    float               m_taxi_pos_y;
-    float               m_taxi_pos_z;
-    bool                m_onTaxi;
+	vector<TaxiPath*>	m_taxiPaths;
+	TaxiPath*			m_CurrentTaxiPath;
+	uint32				taxi_model_id;
+	uint32				lastNode;
+	uint32				m_taxi_ride_time;
+	uint32				m_taximask[12];
+	float				m_taxi_pos_x;
+	float				m_taxi_pos_y;
+	float				m_taxi_pos_z;
+	bool				m_onTaxi;
 	uint32				m_taxiMapChangeNode;
 
-    /************************************************************************/
-    /* Quests                                                               */
-    /************************************************************************/
+	/************************************************************************/
+	/* Quests																*/
+	/************************************************************************/
 	bool HasQuests() 
 	{
 		for(int i = 0; i < 25; ++i)
@@ -996,12 +999,12 @@ public:
 	void CalcDamage();
 	uint32 GetMainMeleeDamage(uint32 AP_owerride); //i need this for windfury
 
-    const uint64& GetSelection( ) const { return m_curSelection; }
+	const uint64& GetSelection( ) const { return m_curSelection; }
 	void SetSelection(const uint64 &guid) { m_curSelection = guid; }
 	
-    /************************************************************************/
-    /* Spells                                                               */
-    /************************************************************************/
+	/************************************************************************/
+	/* Spells																*/
+	/************************************************************************/
 	bool HasSpell(uint32 spell);
 	bool HasDeletedSpell(uint32 spell);
 	void smsg_InitialSpells();
@@ -1012,34 +1015,34 @@ public:
 	void removeSpellByHashName(uint32 hash);
 	bool removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpell, uint32 SupercededSpellID);
 
-    // PLEASE DO NOT INLINE!
-    void AddOnStrikeSpell(SpellEntry* sp, uint32 delay)
-    {
-        m_onStrikeSpells.insert( map< SpellEntry*, pair<uint32, uint32> >::value_type( sp, make_pair( delay, 0 ) ) );
-    }
-    void RemoveOnStrikeSpell(SpellEntry *sp)
-    {
-        m_onStrikeSpells.erase(sp);
-    }
-    void AddOnStrikeSpellDamage(uint32 spellid, uint32 mindmg, uint32 maxdmg)
-    {
-        OnHitSpell sp;
-        sp.spellid = spellid;
-        sp.mindmg = mindmg;
-        sp.maxdmg = maxdmg;
-        m_onStrikeSpellDmg[spellid] = sp;
-    }
-    void RemoveOnStrikeSpellDamage(uint32 spellid)
-    {
-        m_onStrikeSpellDmg.erase(spellid);
-    }
+	// PLEASE DO NOT INLINE!
+	void AddOnStrikeSpell(SpellEntry* sp, uint32 delay)
+	{
+		m_onStrikeSpells.insert( map< SpellEntry*, pair<uint32, uint32> >::value_type( sp, make_pair( delay, 0 ) ) );
+	}
+	void RemoveOnStrikeSpell(SpellEntry *sp)
+	{
+		m_onStrikeSpells.erase(sp);
+	}
+	void AddOnStrikeSpellDamage(uint32 spellid, uint32 mindmg, uint32 maxdmg)
+	{
+		OnHitSpell sp;
+		sp.spellid = spellid;
+		sp.mindmg = mindmg;
+		sp.maxdmg = maxdmg;
+		m_onStrikeSpellDmg[spellid] = sp;
+	}
+	void RemoveOnStrikeSpellDamage(uint32 spellid)
+	{
+		m_onStrikeSpellDmg.erase(spellid);
+	}
 
-    //Spells variables
-    StrikeSpellMap      m_onStrikeSpells;
-    StrikeSpellDmgMap   m_onStrikeSpellDmg;
-    SpellOverrideMap    mSpellOverrideMap;
-    SpellSet            mSpells;
-    SpellSet            mDeletedSpells;
+	//Spells variables
+	StrikeSpellMap		m_onStrikeSpells;
+	StrikeSpellDmgMap	m_onStrikeSpellDmg;
+	SpellOverrideMap	mSpellOverrideMap;
+	SpellSet			mSpells;
+	SpellSet			mDeletedSpells;
 	SpellSet			mShapeShiftSpells;
 	HM_NAMESPACE::hash_map<uint32, uint64 > mSpellsUniqueTargets;
 
@@ -1048,43 +1051,43 @@ public:
 	void CheckSpellUniqueTargets(SpellEntry *sp, uint64 guid);
 
 
-    /************************************************************************/
-    /* Actionbar                                                            */
-    /************************************************************************/
-	void                setAction(uint8 button, uint16 action, uint8 type, uint8 misc);
-	void                SendInitialActions();
-    bool                m_actionsDirty;
+	/************************************************************************/
+	/* Actionbar															*/
+	/************************************************************************/
+	void				setAction(uint8 button, uint16 action, uint8 type, uint8 misc);
+	void				SendInitialActions();
+	bool				m_actionsDirty;
 	
-    /************************************************************************/
-    /* Reputation                                                           */
-    /************************************************************************/
-	void                ModStanding(uint32 Faction, int32 Value);
-	int32               GetStanding(uint32 Faction);
-	int32               GetBaseStanding(uint32 Faction);
-	void                SetStanding(uint32 Faction, int32 Value);
-	void                SetAtWar(uint32 Faction, bool Set);
-	bool                IsAtWar(uint32 Faction);
-	Standing            GetStandingRank(uint32 Faction);
-	bool                IsHostileBasedOnReputation(FactionDBC * dbc);
-	void                UpdateInrangeSetsBasedOnReputation();
-	void                Reputation_OnKilledUnit(Unit* pUnit, bool InnerLoop);
-	void                Reputation_OnTalk(FactionDBC * dbc);
-	static Standing     GetReputationRankFromStanding(int32 Standing_);
+	/************************************************************************/
+	/* Reputation															*/
+	/************************************************************************/
+	void				ModStanding(uint32 Faction, int32 Value);
+	int32				GetStanding(uint32 Faction);
+	int32				GetBaseStanding(uint32 Faction);
+	void				SetStanding(uint32 Faction, int32 Value);
+	void				SetAtWar(uint32 Faction, bool Set);
+	bool				IsAtWar(uint32 Faction);
+	Standing			GetStandingRank(uint32 Faction);
+	bool				IsHostileBasedOnReputation(FactionDBC * dbc);
+	void				UpdateInrangeSetsBasedOnReputation();
+	void				Reputation_OnKilledUnit(Unit* pUnit, bool InnerLoop);
+	void				Reputation_OnTalk(FactionDBC * dbc);
+	static Standing		GetReputationRankFromStanding(int32 Standing_);
 	
 	bool titanGrip;
 	void ResetTitansGrip();
 	
-    /************************************************************************/
-    /* Factions                                                             */
-    /************************************************************************/
+	/************************************************************************/
+	/* Factions																*/
+	/************************************************************************/
 	void smsg_InitialFactions();
 	uint32 GetFactionId();
-    // factions variables
-    int32 pctReputationMod;
+	// factions variables
+	int32 pctReputationMod;
 
-    /************************************************************************/
-    /* PVP                                                                  */
-    /************************************************************************/
+	/************************************************************************/
+	/* PVP																	*/
+	/************************************************************************/
 	HEARTHSTONE_INLINE uint8 GetPVPRank()
 	{
 		return (uint8)((GetUInt32Value(PLAYER_BYTES_3) >> 24) & 0xFF);
@@ -1097,12 +1100,12 @@ public:
 
 
 	/************************************************************************/
-	/* Groups                                                               */
+	/* Groups																*/
 	/************************************************************************/
-	void                SetInviter(uint32 pInviter) { m_GroupInviter = pInviter; }
-	HEARTHSTONE_INLINE uint32       GetInviter() { return m_GroupInviter; }
-	HEARTHSTONE_INLINE bool         InGroup() { return (m_playerInfo->m_Group != NULL && !m_GroupInviter); }
-	bool                IsGroupLeader()
+	void							SetInviter(uint32 pInviter) { m_GroupInviter = pInviter; }
+	HEARTHSTONE_INLINE uint32		GetInviter() { return m_GroupInviter; }
+	HEARTHSTONE_INLINE bool			InGroup() { return (m_playerInfo->m_Group != NULL && !m_GroupInviter); }
+	bool							IsGroupLeader()
 	{
 		if(m_playerInfo->m_Group != NULL)
 		{
@@ -1142,19 +1145,19 @@ public:
 	uint32 m_hasInRangeGuards;
 
 	/************************************************************************/
-	/* Guilds                                                               */
+	/* Guilds																*/
 	/************************************************************************/
-	HEARTHSTONE_INLINE  bool        IsInGuild() {return (m_uint32Values[PLAYER_GUILDID] != 0) ? true : false;}
-	HEARTHSTONE_INLINE uint32       GetGuildId() { return m_uint32Values[PLAYER_GUILDID]; }
-	void                SetGuildId(uint32 guildId);
-	HEARTHSTONE_INLINE uint32       GetGuildRank() { return m_uint32Values[PLAYER_GUILDRANK]; }
-	void                SetGuildRank(uint32 guildRank);
-	uint32              GetGuildInvitersGuid() { return m_invitersGuid; }
-	void                SetGuildInvitersGuid( uint32 guid ) { m_invitersGuid = guid; }
-	void                UnSetGuildInvitersGuid() { m_invitersGuid = 0; }
+	HEARTHSTONE_INLINE bool		IsInGuild() {return (m_uint32Values[PLAYER_GUILDID] != 0) ? true : false;}
+	HEARTHSTONE_INLINE uint32	GetGuildId() { return m_uint32Values[PLAYER_GUILDID]; }
+	void						SetGuildId(uint32 guildId);
+	HEARTHSTONE_INLINE uint32	GetGuildRank() { return m_uint32Values[PLAYER_GUILDRANK]; }
+	void						SetGuildRank(uint32 guildRank);
+	uint32						GetGuildInvitersGuid() { return m_invitersGuid; }
+	void						SetGuildInvitersGuid( uint32 guid ) { m_invitersGuid = guid; }
+	void						UnSetGuildInvitersGuid() { m_invitersGuid = 0; }
 
 	/************************************************************************/
-	/* Duel                                                                 */
+	/* Duel																	*/
 	/************************************************************************/
 	void                RequestDuel(Player* pTarget);
 	void                DuelBoundaryTest();
@@ -1225,6 +1228,7 @@ public:
 	/************************************************************************/
 	/* Item Interface                                                       */
 	/************************************************************************/
+
 	HEARTHSTONE_INLINE ItemInterface* GetItemInterface() { return m_ItemInterface; } // Player Inventory Item storage
 	HEARTHSTONE_INLINE void ApplyItemMods(Item* item, int16 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply,justdrokedown); }
 	// item interface variables
@@ -1247,6 +1251,7 @@ public:
 	/************************************************************************/
 	/* World Session                                                        */
 	/************************************************************************/
+
 	HEARTHSTONE_INLINE WorldSession* GetSession() const { return m_session; }
 	void SetSession(WorldSession *s) { m_session = s; }
 	void SetBindPoint(float x, float y, float z, uint32 m, uint32 v) { m_bind_pos_x = x; m_bind_pos_y = y; m_bind_pos_z = z; m_bind_mapid = m; m_bind_zoneid = v;}
@@ -1716,12 +1721,12 @@ public:
 	******************/
 	uint32 m_pvpTimer;
 
-    HEARTHSTONE_INLINE void AddCoins( int32 coins ){ 
-        ModUnsigned32Value( PLAYER_FIELD_COINAGE , coins );
-    }
-    HEARTHSTONE_INLINE void TakeCoins( int32 coins ){ 
-        ModUnsigned32Value(PLAYER_FIELD_COINAGE, -coins);
-    }
+	HEARTHSTONE_INLINE void AddCoins( int32 coins ){ 
+		ModUnsigned32Value( PLAYER_FIELD_COINAGE , coins );
+	}
+	HEARTHSTONE_INLINE void TakeCoins( int32 coins ){ 
+		ModUnsigned32Value(PLAYER_FIELD_COINAGE, -coins);
+	}
 
 	//! Do this on /pvp off
 	HEARTHSTONE_INLINE void ResetPvPTimer();
