@@ -2186,7 +2186,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 									CastingSpell->NameHash != SPELL_HASH_HOLY_SHOCK )
 									continue;
 
-								dmg_overwrite = float2int32(GetSpellBaseCost(CastingSpell) * 0.6f);
+								dmg_overwrite = float2int32(GetSpellBaseCost(CastingSpell) * 0.3f);
 							}break;
 						//Fiery Payback
 						case 44440:
