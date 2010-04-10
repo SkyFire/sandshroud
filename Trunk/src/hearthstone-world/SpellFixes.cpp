@@ -4436,12 +4436,12 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 44543:
 			{
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
-				sp->procChance	=	5;
+				sp->procChance	=	7;
 			}break;
 		case 44545:
 			{
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
-				sp->procChance	=	10;
+				sp->procChance	=	15;
 			}break;
 
 			//Conjure Refreshment table
