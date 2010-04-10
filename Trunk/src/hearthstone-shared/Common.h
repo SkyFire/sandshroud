@@ -648,6 +648,7 @@ HEARTHSTONE_INLINE std::string HEARTHSTONE_TOLOWER_RETURN(std::string str)
 
 	return newname;
 };
+
 // returns true if the ip hits the mask, otherwise false
 bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits);
 unsigned int MakeIP(const char * str);
