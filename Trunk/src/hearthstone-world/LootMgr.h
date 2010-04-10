@@ -48,6 +48,7 @@ private:
 	Mutex mLootLock;
 	std::map<uint32, uint32> m_NeedRolls;
 	std::map<uint32, uint32> m_GreedRolls;
+	std::map<uint32, uint32> m_DisenchantRolls;
 	set<uint32> m_passRolls;
 	uint32 _groupcount;
 	uint32 _slotid;
@@ -133,8 +134,10 @@ enum PARTY_LOOT
 };
 enum PARTY_ROLL
 {
-	NEED	= 1,
-	GREED	= 2,
+	NEED		= 1,
+	GREED		= 2,
+	DISENCHANT	= 3,
+	PASS		= 4,
 };
 
 class SERVER_DECL LootMgr : public Singleton < LootMgr >
