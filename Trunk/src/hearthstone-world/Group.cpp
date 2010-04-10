@@ -1174,6 +1174,15 @@ bool Group::HasDisenchanters()
 	return allowed;
 }
 
+void Group::AddBeaconOfLightTarget(Player* Target)
+{
+	m_BeaconOfLightTargets.insert(std::make_pair(Target, 0));
+}
+void Group::RemoveBeaconOfLightTarget(Player* Target)
+{
+	m_BeaconOfLightTargets.erase(Target);
+}
+
 
 /************************************************************************/
 /* Voicechat                                                            */

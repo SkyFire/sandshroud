@@ -2056,6 +2056,24 @@ void Aura::SpellAuraDummy(bool apply)
 
 	switch(GetSpellId())
 	{
+			
+		case 53563:
+		{
+			if( apply )
+			{
+				if(_ptarget->GetGroup() != NULL)
+				{
+					_ptarget->GetGroup()->AddBeaconOfLightTarget(_ptarget);	//add me to the target list
+					//_ptarget->SetUInt32Value(UNIT_FIELD_DISPLAYID, 0);	// Set Flame DisplayID here!
+				}
+			}
+			else
+			{
+				if(_ptarget->GetGroup() != NULL)
+					_ptarget->GetGroup()->RemoveBeaconOfLightTarget(_ptarget);	//time's over
+					//SetUInt32Value(UNIT_FIELD_DISPLAYID,GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
+			}
+		}break;
 	case 13809: //Frost Traps
 		{
 
@@ -2910,35 +2928,6 @@ void Aura::SpellAuraDummy(bool apply)
 							TO_PLAYER( m_target )->UpdateStats();
 						}
 					}
-				}
-			}break;
-		case SPELL_HASH_BEACON_OF_LIGHT:
-			{//mark all targets inrange
-				if( m_caster == NULL )
-					return;
-
-				float range = GetMaxRange( dbcSpellRange.LookupEntry( m_spellProto->rangeIndex ) );
-				float r = range*range;
-				for( unordered_set<Object*>::iterator itr = m_target->GetInRangeSetBegin(); itr != m_target->GetInRangeSetEnd(); ++itr )
-				{
-					if( !(*itr)->IsPlayer() )
-						continue;
-
-					if( IsInrange( m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ(), (*itr), r ) )
-						if( !isAttackable( m_target,TO_UNIT( *itr ) ) )
-						{
-							if( apply )
-							{
-								TO_UNIT( *itr )->BeaconCaster = m_caster;
-								TO_UNIT( *itr )->BeaconTarget = m_target;
-								//just in case
-								sEventMgr.AddEvent( TO_UNIT( *itr ), &Unit::RemoveBeacons, EVENT_BEACON_REMOVE, 60*1000,1,0);
-							}else
-							{
-								TO_UNIT( *itr )->BeaconCaster = NULLUNIT;
-								TO_UNIT( *itr )->BeaconTarget = NULLUNIT;
-							}
-						}
 				}
 			}break;
 		case SPELL_HASH_EXHAUSTION:

@@ -4493,6 +4493,13 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	
 			// Insert	warlock	spell	fixes	here
 			// Demonic Knowledge
+			
+			// Beacon of the Light (Dummy Aura)
+			case 53563:
+				{
+					sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
+					sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
+				}break;
 		case 35691:
 		case 35692:
 		case 35693:

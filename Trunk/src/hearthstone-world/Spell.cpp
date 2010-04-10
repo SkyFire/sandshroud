@@ -4793,17 +4793,25 @@ void Spell::Heal(int32 amount)
 			p_caster->m_bg->UpdatePvPData();
 	}
 
-	//Beacon of Light
-	if( m_spellInfo->Id != 53652 && unitTarget->BeaconCaster && unitTarget->BeaconTarget && u_caster && u_caster == unitTarget->BeaconCaster )
-	{
-		SpellEntry *spellInfo = dbcSpell.LookupEntry( 53652 );
-		Spell* sp = NULLSPELL;
-		sp = (new Spell( unitTarget->BeaconCaster, spellInfo, true, NULLAURA ));
-		sp->forced_basepoints[0] = amount;
-		SpellCastTargets tgt;
-		tgt.m_unitTarget = unitTarget->BeaconTarget->GetGUID();
-		sp->prepare(&tgt);
-	}
+ 	//Beacon of Light
+	if(p_caster && p_caster->GetGroup() && p_caster->GetGroup()->m_BeaconOfLightTargets.empty() == false )
+ 	{
+		for(std::map<Player*, uint32>::iterator itr = p_caster->GetGroup()->m_BeaconOfLightTargets.begin(); itr != p_caster->GetGroup()->m_BeaconOfLightTargets.end(); ++itr)
+		{
+			if(itr->first != NULL)
+			{
+			Player* HealTarget = itr->first;
+
+			if((curHealth + amount) >= maxHealth)
+			{
+				HealTarget->SetUInt32Value(UNIT_FIELD_HEALTH, maxHealth);
+			} 
+			else
+				HealTarget->ModUnsigned32Value(UNIT_FIELD_HEALTH, amount);
+			SendHealSpellOnPlayer( p_caster, HealTarget, amount, critical, overheal, m_spellInfo->logsId ? m_spellInfo->logsId : (pSpellId ? pSpellId : m_spellInfo->Id) );
+			}
+		}
+ 	}
 
 	if (p_caster)
 	{
