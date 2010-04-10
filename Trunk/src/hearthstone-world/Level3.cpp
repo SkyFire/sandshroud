@@ -19,7 +19,7 @@
 
 /////////////////////////////////////////////////
 //  Admin Chat Commands
-//
+/////////////////////////////////////////////////
 
 #include "StdAfx.h"
 #include "ObjectMgr.h"
@@ -1282,10 +1282,12 @@ bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_ses
 bool ChatHandler::HandleAddTitleCommand(const char* args, WorldSession* m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr){
+	if(!plr)
+	{
 		RedSystemMessage(m_session, "This command requires selecting a player.");
 		return true;
 	}
+
 	uint32 title = args ? atoi(args) : 0;
 	if(title == 0 || title > TITLE_END)
 	{
@@ -2293,6 +2295,23 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	return true;
 }
+bool ChatHandler::HandleCreatureRespawnCommand(const char *args, WorldSession *m_session)
+{
+	Creature * cCorpse = getSelectedCreature( m_session, false );
+
+	if( cCorpse != NULL && cCorpse->IsCreature() && cCorpse->getDeathState() == CORPSE && cCorpse->GetSQL_id() != 0 )
+	{
+		sEventMgr.RemoveEvents( cCorpse, EVENT_CREATURE_RESPAWN );
+		BlueSystemMessage( m_session, "Respawning a Creature: `%s` with entry: %u on map: %u sqlid: %u", cCorpse->GetCreatureInfo()->Name, cCorpse->GetEntry(), cCorpse->GetMapMgr()->GetMapId(), cCorpse->GetSQL_id() );
+		sGMLog.writefromsession(m_session, "Respawned a Creature: `%s` with entry: %u on map: %u sqlid: %u", cCorpse->GetCreatureInfo()->Name, cCorpse->GetEntry(), cCorpse->GetMapMgr()->GetMapId(), cCorpse->GetSQL_id() );
+
+		cCorpse->Despawn(0, 1);
+		return true;
+	}
+
+	RedSystemMessage( m_session, "You must select a creature's corpse with a valid CreatureSpawn point." );
+	return true;
+}
 
 bool ChatHandler::HandleRemoveItemCommand(const char * args, WorldSession * m_session)
 {
@@ -2600,7 +2619,7 @@ bool ChatHandler::HandleLookupCreatureCommand(const char * args, WorldSession * 
 	HEARTHSTONE_TOLOWER(x);
 	if(x.length() < 4)
 	{
-		RedSystemMessage(m_session, "Your search string must be at least 5 characters long.");
+		RedSystemMessage(m_session, "Your search string must be at least 4 characters long.");
 		return true;
 	}
 
@@ -2631,6 +2650,49 @@ bool ChatHandler::HandleLookupCreatureCommand(const char * args, WorldSession * 
 	itr->Destruct();
 
 	GreenSystemMessage(m_session, "Search completed in %u ms.", getMSTime() - t);
+	return true;
+}
+
+bool ChatHandler::HandleLookupTitleCommand(const char *args, WorldSession *m_session)
+{
+	if(!*args)
+		return false;
+
+	// Create a fatty array for title names.
+	std::string TitleNames[TITLE_END] =
+	{
+		"",
+		"Private", "Corporal", "Sergeant", "Master Sergeant", "Sergeant Major", "Knight", "Knight-Lieutenant", "Knight-Captain", "Knight-Champion", "Lieutenant Commander", "Commander", "Marshal", "Field Marshal", "Grand Marshal", "Scout", "Grunt",
+		"Sergeant", "Senior Sergeant", "First Sergeant", "Stone Guard", "Blood Guard", "Legionnaire", "Centurion", "Champion", "Lieutenant General", "General", "Warlord", "High Warlord", "Gladiator", "Duelist", "Rival", "Challenger", "Scarab Lord",
+		"Conqueror", "Justicar", "Champion of the Naaru", "Merciless Gladiator", "of the Shattered Sun", "Hand of A'dal", "Vengeful Gladiator", "Battlemaster", "the Seeker", "Elder", "Flame Warden", "Flame Keeper", "the Exalted", " the Explorer",
+		"the Diplomat", "Brutal Gladiator", "Arena Master", "Salty", "Chef", "the Supreme", "of the Ten Storms", "of the Emerald Dream", "Deadly Gladiator", "Prophet", "the Malefic", "Stalker", "of the Ebon Blade", "Archmage", "Warbringer",
+		"Assassin", "Grand Master Alchemist", "Grand Master Blacksmith", "Iron Chef", "Grand Master Enchanter", "Grand Master Engineer", "Doctor", "Grand Master Angler", "Grand Master Herbalist", "Grand Master Scribe", "Grand Master Jewelcrafter",
+		"Grand Master Leatherworker", "Grand Master Miner", "Grand Master Skinner", "Grand Master Tailor", "of Quel'Thalas", "of Argus", "of Khaz Modan", "of Gnomergan", "the Lion Hearted", "Champion of Elune", "Hero of Orgrimmar", "Plainsrunner",
+		"of the Darkspear", "the Forsaken", "the Magic Seeker", "Twilight Vanquisher", "Conqueror of Naxxramas", "Hero of Northrend", "the Hallowed", "Loremaster", "of the Alliance", "of the Horde", "the Flawless Victor", "Champion of the Frozen Wastes",
+		"Ambassador", "the Argent Champion", "Guardian of Cenarius", "Brewmaster", "Merrymaker", "the Love Fool", "Matron", "Patron", "Obsidian Slayer", "of the Nightfall", "the Immortal", "the Undying", "Jenkins", "Bloodsail Admiral", "the Insane",
+		"of the Exodar", "of Darnassus", "of Ironforge", "of Stormwind", "of Orgrimmar", "of Sen'jin", "of Silvermoon", "of Thunder Bluff", "of the Undercity", "the Noble", "Crusader", "Death's Demise", "the Celestial Defender", "Conqueror of Ulduar",
+		"Champion of Ulduar", "Vanquisher", "Starcaller", "the Astral Walker", "Herald of the Titans", "Furious Gladiator", "the Pilgrim", "Relentless Gladiator", "Grand Crusader", "the Argent Defender", "the Patient", "the Light of Dawn",
+		"Bane of the Fallen King", "the Kingslayer", "of the Ashen Verdict", "Wrathful Gladiator"
+	};
+
+	string x = string(args);
+	HEARTHSTONE_TOLOWER(x);
+
+	if(x.length() < 3)
+	{
+		RedSystemMessage(m_session, "Your search string must be at least 3 characters long.");
+		return true;
+	}
+	GreenSystemMessage(m_session, "Initializing title finder.");
+	for(uint16 i = 1; i < TITLE_END; ++i)
+	{
+		std::string lowercase_name = HEARTHSTONE_TOLOWER_RETURN(TitleNames[i]);
+		if(FindXinYString(x, lowercase_name))
+		{
+			BlueSystemMessage(m_session, "Title %03u: %s", i, TitleNames[i].c_str());
+		}
+	}
+
 	return true;
 }
 

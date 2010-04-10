@@ -218,7 +218,7 @@ void CommandTableStorage::Init()
 		{ "flags" ,	 'm', NULL,	"Unit Flags",		  NULL, UNIT_FIELD_FLAGS,		   0,			  1 },
 		{ "faction",	'm', NULL,	"Faction Template",	NULL, UNIT_FIELD_FACTIONTEMPLATE, 0,			  1 },
 		{ "dynamicflags",'m',NULL,	"Dynamic Flags",	   NULL, UNIT_DYNAMIC_FLAGS,		 0,			  1 },
-		{ "talentpoints",'m',NULL,	"Talent Points",	   NULL, PLAYER_CHARACTER_POINTS1,   0,			  1 },
+		{ "talentpoints",'m', &ChatHandler::HandleModifyTPsCommand, "Talent points", NULL, 0, 0, 0 },
 		{ "happiness",	'm', NULL,	"Happiness",			 NULL, UNIT_FIELD_POWER5,	UNIT_FIELD_MAXPOWER5, 1 },
 		{ "spirit",	 'm', NULL,	"Spirit",			  NULL, UNIT_FIELD_STAT0,		   0,			  1 },
 		{ "boundingraidius",'m',NULL,  "Bounding Radius",	 NULL, UNIT_FIELD_BOUNDINGRADIUS,		 0,			  2 },
@@ -364,6 +364,7 @@ void CommandTableStorage::Init()
 
 	static ChatCommand NPCCommandTable[] =
 	{
+		{ "vendorsetadd",   'z', &ChatHandler::HandleItemSetCommand,     "Adds item set to vendor",             NULL, 0, 0, 0},
 		{ "vendoradditem",   'z', &ChatHandler::HandleItemCommand,	  "Adds to vendor",				 NULL, 0, 0, 0},
 		{ "vendorremoveitem",'z', &ChatHandler::HandleItemRemoveCommand,"Removes from vendor.",		   NULL, 0, 0, 0},
 		{ "flags",	   'n', &ChatHandler::HandleNPCFlagCommand,	   "Changes NPC flags",			  NULL, 0, 0, 0},
@@ -376,6 +377,7 @@ void CommandTableStorage::Init()
 		{ "yell",		'n', &ChatHandler::HandleMonsterYellCommand,   ".npc yell <Text> - Makes selected mob yell text <text>.", NULL, 0, 0, 0},
 		{ "come",		'n', &ChatHandler::HandleNpcComeCommand,	   ".npc come - Makes npc move to your position", NULL, 0, 0, 0 },
 		{ "return",	  'n', &ChatHandler::HandleNpcReturnCommand,	 ".npc return - Returns ncp to spawnpoint.", NULL, 0, 0, 0 },
+		{ "respawn", 'n', &ChatHandler::HandleCreatureRespawnCommand,".respawn - Respawns a dead npc from its corpse.", NULL, 0, 0, 0 },
 		{ "spawn", 'n', &ChatHandler::HandleCreatureSpawnCommand, ".npc spawn <id> <save> - Spawns npc of entry <id>", NULL, 0, 0, 0 },
 		{ "spawnlink", 'n', &ChatHandler::HandleNpcSpawnLinkCommand, ".spawnlink sqlentry", NULL, 0, 0, 0 },
 		{ "possess", 'n', &ChatHandler::HandleNpcPossessCommand, ".npc possess - Possess an npc (mind control)", NULL, 0, 0, 0 },
@@ -456,6 +458,7 @@ void CommandTableStorage::Init()
 		{ "creature", 'l', &ChatHandler::HandleLookupCreatureCommand, "Looks up item string x.", NULL, 0, 0, 0 },
 		{ "object", 'l', &ChatHandler::HandleLookupObjectCommand, "Looks up object string x.", NULL, 0, 0, 0 },
 		{ "spell", 'l', &ChatHandler::HandleLookupSpellCommand, "Looks up spell string x.", NULL, 0, 0, 0 },
+		{ "title", 'l', &ChatHandler::HandleLookupTitleCommand, "Looks up title based on inputted name.", NULL, 0, 0, 0 },
 		{ NULL,			  0, NULL,											"",					 NULL, 0, 0, 0},
 	};
 	dupe_command_table(lookupCommandTable, _lookupCommandTable);

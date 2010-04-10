@@ -149,16 +149,19 @@ void WorldSession::HandleGroupAcceptOpcode( WorldPacket & recv_data )
 
 	if(grp)
 	{
-		grp->AddMember(_player->m_playerInfo);
-		if(grp->GetLeader()->m_loggedInPlayer)
+		if(grp->AddMember(_player->m_playerInfo))
 		{
-			_player->iInstanceType = grp->GetLeader()->m_loggedInPlayer->iInstanceType;
-			_player->iRaidType = grp->GetLeader()->m_loggedInPlayer->iRaidType;
-		}
+			if(grp->GetLeader()->m_loggedInPlayer)
+			{
+				_player->iInstanceType = grp->GetLeader()->m_loggedInPlayer->iInstanceType;
+				_player->iRaidType = grp->GetLeader()->m_loggedInPlayer->iRaidType;
+			}
 
-		_player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &_player->iInstanceType);
-		_player->GetSession()->OutPacket(MSG_SET_RAID_DIFFICULTY, 4, &_player->iRaidType);
-		return;
+			_player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &_player->iInstanceType);
+			_player->GetSession()->OutPacket(MSG_SET_RAID_DIFFICULTY, 4, &_player->iRaidType);
+			return;
+		}
+		else { return; }
 	}
 
 	// If we're this far, it means we have no existing group, and have to make one.

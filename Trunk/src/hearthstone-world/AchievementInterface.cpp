@@ -206,25 +206,13 @@ void AchievementInterface::GiveRewardsForAchievement(AchievementEntry * ae)
 
 	// Define: Alliance Title
 	if(m_player->GetTeam() == ALLIANCE)
-	{
 		if( ar->AllianceTitle )
-		{
 			m_player->SetKnownTitle(ar->AllianceTitle, true);
-			// Set title to Alliance Reward, forced by Blizzard.
-			m_player->SetUInt32Value( PLAYER_CHOSEN_TITLE, ar->AllianceTitle);
-		}
-	}
 
 	// Define: Horde Title
 	if(m_player->GetTeam() == HORDE)
-	{
 		if( ar->HordeTitle )
-		{
 			m_player->SetKnownTitle(ar->HordeTitle, true);
-			// Set title to Horde Reward, forced by Blizzard.
-			m_player->SetUInt32Value( PLAYER_CHOSEN_TITLE, ar->HordeTitle);
-		}
-	}
 }
 
 void AchievementInterface::EventAchievementEarned(AchievementData * pData)

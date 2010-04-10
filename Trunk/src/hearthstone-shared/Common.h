@@ -633,12 +633,21 @@ HEARTHSTONE_INLINE void HEARTHSTONE_TOLOWER(std::string& str)
 		str[i] = (char)tolower(str[i]);
 };
 
+
 HEARTHSTONE_INLINE void HEARTHSTONE_TOUPPER(std::string& str)
 {
 	for(size_t i = 0; i < str.length(); ++i)
 		str[i] = (char)toupper(str[i]);
 };
 
+HEARTHSTONE_INLINE std::string HEARTHSTONE_TOLOWER_RETURN(std::string str)
+{
+	std::string newname = str;
+	for(size_t i = 0; i < str.length(); ++i)
+		newname[i] = (char)tolower(str[i]);
+
+	return newname;
+};
 // returns true if the ip hits the mask, otherwise false
 bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits);
 unsigned int MakeIP(const char * str);

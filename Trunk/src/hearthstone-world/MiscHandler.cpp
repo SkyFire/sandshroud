@@ -268,6 +268,9 @@ void WorldSession::HandleLootOpcode( WorldPacket & recv_data )
 	uint64 guid;
 	recv_data >> guid;
 
+	if(_player->GetMapMgr()->GetCreature(guid) && _player->GetMapMgr()->GetCreature(guid)->IsVehicle())
+		return;
+
 	if(_player->isCasting())
 		_player->InterruptCurrentSpell();
 

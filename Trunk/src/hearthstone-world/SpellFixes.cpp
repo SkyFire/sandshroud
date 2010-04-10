@@ -3597,6 +3597,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			// Seal	of Command - Holy	damage,	but	melee	mechanics	(crit	damage,	chance,	etc)
 		case  20424:
 			{
+					sp->rangeIndex = 4;
 					sp->is_melee_spell = true;
 					sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
 					sp->School = SCHOOL_HOLY;

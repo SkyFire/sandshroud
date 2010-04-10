@@ -249,7 +249,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	}
 
 	uint32 item = atoi(pitem);
-	int amount = -1;
+	int amount = 1;
 
 	char* pamount = strtok(NULL, " ");
 	if (pamount)
@@ -281,8 +281,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_session)
 {
-	char* iguid = strtok((char*)args, " ");
-	if (!iguid)
+	if (!args)
 		return false;
 
 	uint64 guid = m_session->GetPlayer()->GetSelection();
@@ -299,7 +298,12 @@ bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_sess
 		return true;
 	}
 
-	uint32 itemguid = atoi(iguid);
+	uint32 itemguid = 0;
+	if(sscanf(args, "%u", &itemguid) != 1)
+	{
+		SystemMessage(m_session, "Specify an invalid item id.");
+		return true;
+	}
 	int slot = pCreature->GetSlotByItemId(itemguid);
 
 	std::stringstream sstext;
@@ -308,7 +312,7 @@ bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_sess
 		uint32 guidlow = GUID_LOPART(guid);
 
 		std::stringstream ss;
-		ss << "DELETE FROM vendors WHERE entry = " << guidlow << " AND item = " << itemguid << '\0';
+		ss << "DELETE FROM vendors WHERE entry = " << guidlow << " AND item = " << itemguid << " LIMIT 1;";
 		WorldDatabase.Execute( ss.str().c_str() );
 
 		pCreature->RemoveVendorItem(itemguid);
@@ -1183,5 +1187,69 @@ bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session
 	if(!crt) return true;
 
 	crt->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetOrientation());
+	return true;
+}
+
+bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session)
+{
+	char* pitem = strtok((char*)args, " ");
+	if(!pitem)
+		return false;
+
+	uint64 guid = m_session->GetPlayer()->GetSelection();
+	if(guid == 0)
+	{
+		SystemMessage(m_session, "No selection.");
+		return true;
+	}
+
+	Creature* pCreature = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
+	if(!pCreature)
+	{
+		SystemMessage(m_session, "You should select a creature.");
+		return true;
+	}
+
+	uint32 item = atoi(pitem);
+	int amount = 1;
+
+	char* pamount = strtok(NULL, " ");
+	if(pamount)
+		amount = atoi(pamount);
+
+//	For Regular additem, not set.
+//	ItemPrototype* tmpItem = ItemPrototypeStorage.LookupEntry(item);   
+	ItemSetEntry* tmpItem = dbcItemSet.LookupEntry(item);
+
+	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(item);
+
+	if(!tmpItem || !l)
+	{
+		RedSystemMessage(m_session, "Invalid item set.");
+		return true;
+	}
+
+	std::stringstream sstext;
+	if(tmpItem)
+	{
+		for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); ++itr)
+		{
+		std::stringstream ss;
+		ss << "INSERT INTO vendors (entry,item,amount,max_amount,inctime) VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << (*itr)->ItemId << "', '" << amount << "', 0, 0 )" << '\0';
+		WorldDatabase.Execute( ss.str().c_str() );
+
+		pCreature->AddVendorItem((*itr)->ItemId, amount);
+
+		sstext <<"Item set '" << item << " - " << tmpItem->name << "' Added to vendor." << '\0';
+		}
+	}
+	else
+	{
+		sstext << "Item set '" << item << "' Not Found in DBC file." << '\0';
+	}
+
+	sGMLog.writefromsession(m_session, "added item set %u to vendor %u", item, pCreature->GetEntry());
+	SystemMessage(m_session,  sstext.str().c_str());
+
 	return true;
 }

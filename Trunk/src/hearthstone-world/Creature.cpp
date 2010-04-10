@@ -185,20 +185,23 @@ void Creature::OnRemoveCorpse()
 
 		DEBUG_LOG("Creature","OnRemoveCorpse Removing corpse of "I64FMT"...", GetGUID());
 
-			if((GetMapMgr()->GetMapInfo() && GetMapMgr()->GetMapInfo()->type == INSTANCE_RAID && proto && proto->boss) || m_noRespawn)
-			{
-				RemoveFromWorld(false, true);
-			}
+		if((GetMapMgr()->GetMapInfo() && GetMapMgr()->GetMapInfo()->type == INSTANCE_RAID && proto && proto->boss) || m_noRespawn)
+		{
+			RemoveFromWorld(false, true);
+		}
+		else
+		{
+			if(proto && proto->RespawnTime)
+				RemoveFromWorld(true, false);
 			else
-			{
-				if(proto && proto->RespawnTime)
-					RemoveFromWorld(true, false);
-				else
-					RemoveFromWorld(false, true);
-			}
-		
-	   
-		setDeathState(DEAD);
+				RemoveFromWorld(false, true);
+		}
+
+		if(IsVehicle())
+			TO_VEHICLE(this)->setDeathState(DEAD);
+		else
+			setDeathState(DEAD);
+
 
 		m_position = m_spawnLocation;
 	}
@@ -238,7 +241,10 @@ void Creature::OnRespawn( MapMgr* m)
 		SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DEAD);
 	}
 
-	setDeathState(ALIVE);
+	if(IsVehicle())
+		TO_VEHICLE(this)->setDeathState(ALIVE);
+	else
+		setDeathState(ALIVE);
 	GetAIInterface()->StopMovement(0); // after respawn monster can move
 	m_PickPocketed = false;
 	PushToWorld(m);
@@ -1103,8 +1109,8 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	case POWER_TYPE_RUNIC:
 		{
 			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNIC);
-			SetUInt32Value(UNIT_FIELD_POWER7, power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER7, power);
+			SetUInt32Value(UNIT_FIELD_POWER7, power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER7, power * 10);
 		}break;
 	default:
 		{

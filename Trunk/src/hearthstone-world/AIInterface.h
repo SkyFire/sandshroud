@@ -167,6 +167,7 @@ enum AiEvents
 	EVENT_WANDER,
 	EVENT_UNWANDER,
 	EVENT_UNITDIED,
+	EVENT_UNITRESPAWN,
 };
 
 struct SpellEntry;
@@ -279,6 +280,7 @@ public:
 	// Event Handler
 	void HandleEvent(uint32 event, Unit* pUnit, uint32 misc1);
 	void OnDeath(Object* pKiller);
+	void OnRespawn(Unit* unit); // We don't really need the unit anymore.
 	void AttackReaction( Unit* pUnit, uint32 damage_dealt, uint32 spellId = 0);
 	bool HealReaction(Unit* caster, Unit* victim, uint32 amount, SpellEntry * sp);
 	void Event_Summon_Elemental(uint32 summon_duration, uint32 TotemEntry, int32 ResistanceType, uint8 Slot);

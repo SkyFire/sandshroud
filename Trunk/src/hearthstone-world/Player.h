@@ -19,6 +19,7 @@
 
 #ifndef _PLAYER_H
 #define _PLAYER_H
+
 struct BGScore;
 class Channel;
 class Creature;
@@ -829,7 +830,7 @@ public:
 	void _RemoveAllSkills();
 	void _RemoveLanguages();
 	void _AddLanguages(bool All);
-	void _AdvanceAllSkills(uint32 count);
+	void _AdvanceAllSkills(uint32 count, bool skipprof = false, uint32 max = 0);
 	void _ModifySkillMaximum(uint32 SkillLine, uint32 NewMax);
 
 
@@ -2152,10 +2153,12 @@ public:
 	{
 		if(title < 1 || title > TITLE_END)
 			return false;  // Title doesn't exist
-		if(title < 64)
-			return ( GetUInt64Value( PLAYER__FIELD_KNOWN_TITLES ) & uint64(1) << title ) != (uint64) 0;
-		else
+		if(title > 127)
+			return ( GetUInt64Value( PLAYER__FIELD_KNOWN_TITLES2 ) & uint64(1) << (title - 128) ) != (uint64) 0;
+		else if(title > 63)
 			return ( GetUInt64Value( PLAYER__FIELD_KNOWN_TITLES1 ) & uint64(1) << (title - 64) ) != (uint64) 0;
+		else
+			return ( GetUInt64Value( PLAYER__FIELD_KNOWN_TITLES ) & uint64(1) << title ) != (uint64) 0;
 	}
 
 	void SetKnownTitle( int32 title, bool set );

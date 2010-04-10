@@ -527,7 +527,10 @@ Player::~Player ( )
 	pTarget = NULLPLR;
 
 	if(m_Summon)
-		m_Summon->Remove(true, true, false);
+	{
+		m_Summon->Dismiss(true);
+		m_Summon->ClearPetOwner();
+	}
 
 	if (m_GM_SelectedGO)
 		m_GM_SelectedGO = NULLGOB;
@@ -2318,6 +2321,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< m_uint32Values[PLAYER_CHOSEN_TITLE] << ","
 	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES) << ","
 	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES1) << ","
+	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES2) << ","
 	<< m_uint32Values[PLAYER_FIELD_COINAGE] << ","
 	<< m_uint32Values[PLAYER_AMMO_ID] << ","
 	<< m_uint32Values[PLAYER_CHARACTER_POINTS2] << ","
@@ -3062,6 +3066,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	m_uint32Values[ PLAYER_CHOSEN_TITLE ]				= get_next_field.GetUInt32();
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES, get_next_field.GetUInt64() );
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES1, get_next_field.GetUInt64() );
+	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES2, get_next_field.GetUInt64() );
 	m_uint32Values[PLAYER_FIELD_COINAGE]				= get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_AMMO_ID]						= get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_CHARACTER_POINTS2]			= get_next_field.GetUInt32();
@@ -3521,7 +3526,7 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 		SetUInt32Value(baseindex + 0, 0);
 		SetUInt32Value(baseindex + 1, 0);
 		SetUInt64Value(baseindex + 2, 0);
-		SetUInt32Value(baseindex + 3, 0);
+		SetUInt32Value(baseindex + 4, 0);
 	}
 
 	int slot = 0;
@@ -3927,8 +3932,6 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 	// These season pvp itemsets are interchangeable and each set group has the same
 	// bonuses if you have a full set made up of parts from any of the 3 similar sets
 	// you will get the highest sets bonus
-
-	// TODO: make a config for server so they can configure which season is active season
 
 	switch (setid)
 	{
@@ -10572,17 +10575,34 @@ void Player::_RemoveAllSkills()
 	_UpdateSkillFields();
 }
 
-void Player::_AdvanceAllSkills(uint32 count)
+void Player::_AdvanceAllSkills(uint32 count, bool skipprof /* = false */, uint32 max /* = 0 */)
 {
 	bool dirty=false;
 	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); ++itr)
 	{
 		if(itr->second.CurrentValue != itr->second.MaximumValue)
 		{
+			if((skipprof == true) && (itr->second.Skill->type == SKILL_TYPE_PROFESSION))
+				continue;
+
+			if(max != 0)
+			{
+				if(itr->second.MaximumValue > max)
+					continue;
+
+				if(max > itr->second.MaximumValue)
+					max = itr->second.MaximumValue;
+
+				if((itr->second.CurrentValue + count) >= max)
+					itr->second.CurrentValue = max;
+				dirty = true;
+				continue;
+			}
+
 			itr->second.CurrentValue += count;
 			if(itr->second.CurrentValue >= itr->second.MaximumValue)
 				itr->second.CurrentValue = itr->second.MaximumValue;
-			dirty=true;
+			dirty = true;
 		}
 	}
 
@@ -12224,9 +12244,9 @@ void Player::FullHPMP()
 }
 
 void Player::SetKnownTitle( int32 title, bool set )
-{	
+{
 	if( !( HasKnownTitle( title ) ^ set ) ||
-			title < 1 || title >= TITLE_END)
+		title < 1 || title >= TITLE_END)
 		return;
 
 	if(title == GetUInt32Value(PLAYER_CHOSEN_TITLE)) // if it's the chosen title, remove it
@@ -12234,7 +12254,12 @@ void Player::SetKnownTitle( int32 title, bool set )
 
 	uint32 field = PLAYER__FIELD_KNOWN_TITLES;
 	uint32 title2 = title;
-	if(title > 63)
+	if(title > 127)
+	{
+		field = PLAYER__FIELD_KNOWN_TITLES2;
+		title2 = title - 128;
+	}
+	else if(title > 63)
 	{
 		field = PLAYER__FIELD_KNOWN_TITLES1;
 		title2 = title - 64;

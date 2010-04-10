@@ -239,6 +239,7 @@ protected:
 	bool HandleKickCommand(const char* args, WorldSession *m_session);
 	bool HandleTaxiCheatCommand(const char* args, WorldSession *m_session);
 	bool HandleModifySpeedCommand(const char* args, WorldSession *m_session);
+	bool HandleModifyTPsCommand(const char* args, WorldSession *m_session);
 
 	// Debug Commands
 	bool HandleDebugSetPhase(const char* args, WorldSession *m_session);
@@ -315,6 +316,7 @@ protected:
 	bool HandleKillCommand(const char *args, WorldSession *m_session);
 	bool HandleKillByPlrCommand( const char *args , WorldSession *m_session );
 	bool HandleCreatureSpawnCommand(const char *args, WorldSession *m_session);
+	bool HandleCreatureRespawnCommand(const char *args, WorldSession *m_session);
 	bool HandleGOSelect(const char *args, WorldSession *m_session);
 	bool HandleGODelete(const char *args, WorldSession *m_session);
 	bool HandleGOSpawn(const char *args, WorldSession *m_session);
@@ -415,7 +417,8 @@ protected:
 	bool HandleLandCommand(const char* args, WorldSession* m_session);
 	bool HandleRemoveRessurectionSickessAuraCommand(const char *args, WorldSession *m_session);
 	bool HandleDBReloadCommand(const char* args, WorldSession* m_session);
-	
+	bool HandleItemSetCommand(const char* args, WorldSession* m_session);
+
 	// honor
 	bool HandleAddHonorCommand(const char* args, WorldSession* m_session);
 	bool HandleAddKillCommand(const char* args, WorldSession* m_session);
@@ -491,6 +494,7 @@ protected:
 	bool HandleLookupCreatureCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupObjectCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupSpellCommand(const char * args, WorldSession * m_session);
+	bool HandleLookupTitleCommand(const char * args, WorldSession * m_session);
 
 	//bool HandleReloadScriptsCommand(const char * args, WorldSession * m_session);
 	bool HandleNpcPossessCommand(const char * args, WorldSession * m_session);

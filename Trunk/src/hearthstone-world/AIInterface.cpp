@@ -523,6 +523,16 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 				}
 			}
 		}break;
+
+	case EVENT_UNITRESPAWN:
+		{
+			/* send the message */
+			if( cr != NULL )
+			{
+				if( cr->has_combat_text )
+					objmgr.HandleMonsterSayEvent( cr, MONSTER_SAY_EVENT_ON_SPAWN );
+			}
+		}break;
 	}
 }
 
@@ -1348,6 +1358,11 @@ void AIInterface::OnDeath(Object* pKiller)
 		HandleEvent(EVENT_UNITDIED, TO_UNIT(pKiller), 0);
 	else
 		HandleEvent(EVENT_UNITDIED, m_Unit, 0);
+}
+
+void AIInterface::OnRespawn(Unit* unit)
+{
+	HandleEvent(EVENT_UNITRESPAWN, unit, 0);
 }
 
 Unit* AIInterface::FindTarget()

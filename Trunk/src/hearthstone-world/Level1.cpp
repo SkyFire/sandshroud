@@ -787,3 +787,30 @@ bool ChatHandler::HandleGuildSetLeaderCommand(const char *args, WorldSession *m_
 	SystemMessage(m_session, "Guild leader changed.");
 	return true;
 }
+
+bool ChatHandler::HandleModifyTPsCommand(const char* args, WorldSession *m_session)
+{
+	if(!args)
+		return false;
+
+	Player * Pl = getSelectedChar(m_session, false);
+	if(!Pl)
+	{
+		SystemMessage(m_session, "Invalid or no target provided, please target a player to modify its talentpoints.");
+		return true;
+	}
+
+	uint32 TP1 = 0;
+
+	if(sscanf(args, "%u", &TP1) != 1)
+	{
+		SystemMessage(m_session, "Enter an amount to modify your target's specs to.");
+		return true;
+	}
+
+	if(TP1 != 0)
+		Pl->SetUInt32Value(PLAYER_CHARACTER_POINTS1, TP1);
+
+	Pl->smsg_TalentsInfo(false);
+	return true;
+}

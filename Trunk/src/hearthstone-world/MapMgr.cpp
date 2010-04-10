@@ -1842,6 +1842,8 @@ void MapMgr::EventRespawnCreature(Creature* c, MapCell * p)
 		c->m_respawnCell=NULL;
 		p->_respawnObjects.erase(itr);
 		c->OnRespawn(this);
+		if(c->GetAIInterface())
+			c->GetAIInterface()->OnRespawn(c);
 	}
 }
 
