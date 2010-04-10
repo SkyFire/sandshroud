@@ -229,7 +229,8 @@ void WorldSession::HandleAuctionListBidderItems( WorldPacket & recv_data )
 	CHECK_INWORLD_RETURN;
 
 	uint64 guid;
-	recv_data >> guid;
+	uint32 unk1, unk2;
+	recv_data >> guid >> unk1 >> unk2;
 
 	Creature* pCreature = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 	if(!pCreature || !pCreature->auctionHouse)
@@ -475,10 +476,10 @@ void WorldSession::HandleAuctionSellItem( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
 
-	uint64 guid,item;
-	uint32 bid,buyout,etime;	// etime is in minutes
+	uint64 guid, item;
+	uint32 unk, unk2, bid, buyout, etime;	// etime is in minutes
 
-	recv_data >> guid >> item;
+	recv_data >> guid >> unk >> item >> unk2;
 	recv_data >> bid >> buyout >> etime;
 
 	Creature* pCreature = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
@@ -555,6 +556,9 @@ void WorldSession::HandleAuctionSellItem( WorldPacket & recv_data )
 	data << uint32(AUCTION_CREATE);
 	data << uint32(AUCTION_ERROR_NONE);
 	SendPacket(&data);
+
+	// Re-send the owner list.
+	pCreature->auctionHouse->SendOwnerListPacket(_player, 0);
 }
 
 void WorldSession::HandleAuctionListOwnerItems( WorldPacket & recv_data )
@@ -562,7 +566,8 @@ void WorldSession::HandleAuctionListOwnerItems( WorldPacket & recv_data )
 	CHECK_INWORLD_RETURN;
 
 	uint64 guid;
-	recv_data >> guid;
+	uint32 unk;
+	recv_data >> guid >> unk;
 
 	Creature* pCreature = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 	if(!pCreature || !pCreature->auctionHouse)
