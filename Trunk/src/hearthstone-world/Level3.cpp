@@ -2936,7 +2936,8 @@ bool ChatHandler::HandleAIAgentDebugContinue(const char * args, WorldSession * m
 bool ChatHandler::HandleAIAgentDebugSkip(const char * args, WorldSession * m_session)
 {
 	uint32 count = atoi(args);
-	if(!count) return false;
+	if(!count)
+		return false;
 
 	for(uint32 i = 0; i < count; ++i)
 	{
@@ -2953,13 +2954,20 @@ bool ChatHandler::HandleRenameGuildCommand(const char* args, WorldSession *m_ses
 {
 	Player* ptarget = getSelectedChar(m_session);
 	
-	if(!*args||!ptarget)
+	if(!*args || !ptarget)
 		return false;
 		
 	char* newname = (char*)args;
-		
-	ptarget->GetGuild()->ChangeGuildName(newname);
-	SystemMessage(ptarget->GetSession(),MSG_COLOR_RED"The Name of your Guild will change after your next relog.");
+
+	Guild* guild = ptarget->GetGuild();
+	if(guild == NULL)
+	{
+		RedSystemMessage(m_session, "Target is not in a guild.");
+		return true;
+	}
+
+	guild->ChangeGuildName(newname);
+	BlueSystemMessage(ptarget->GetSession(), "The Name of your Guild has been changed to %s, please relog.", newname);
 	return true;	
 }
 
@@ -2967,11 +2975,11 @@ bool ChatHandler::HandleRenameGuildCommand(const char* args, WorldSession *m_ses
 bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || !plr->GetGuildId()) 
+	if(!plr || (plr && (plr->GetGuild() == NULL))) 
 		return false;
-		
+
 	plr->GetGuild()->RemoveGuildMember(plr->m_playerInfo,m_session);
-	SystemMessage(m_session,"Member removed succesfully.");
+	GreenSystemMessage(m_session, "Member removed succesfully.");
 	return true;
 }
 
@@ -2979,11 +2987,11 @@ bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession 
 bool ChatHandler::HandleGuildDisbandCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || !plr->GetGuildId()) 
+	if(!plr || (plr && (plr->GetGuild() == NULL))) 
 		return false;
 	
 	plr->GetGuild()->Disband();
-	SystemMessage(m_session,"Guild disbanded succesfully.");
+	GreenSystemMessage(m_session,"Guild disbanded succesfully.");
 	return true;
 }
 
@@ -2991,7 +2999,7 @@ bool ChatHandler::HandleGuildDisbandCommand(const char* args, WorldSession *m_se
 bool ChatHandler::HandleGuildMembersCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || !plr->GetGuildId()) 
+	if(!plr || (plr && (plr->GetGuild() == NULL))) 
 		return false;
 	
 	plr->GetGuild()->ListGuildMembers(m_session);	
