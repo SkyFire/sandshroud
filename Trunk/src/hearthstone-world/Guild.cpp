@@ -1628,7 +1628,7 @@ void Guild::ChangeGuildName(char* name)
 	{
 		Player* plr = itr->first->m_loggedInPlayer;
 		if(plr != NULL)
-			SendGuildInfo(plr->GetSession());
+			SendGuildQuery(plr->GetSession());
 	}
 }
 

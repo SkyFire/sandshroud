@@ -2956,8 +2956,10 @@ bool ChatHandler::HandleRenameGuildCommand(const char* args, WorldSession *m_ses
 	if(!*args||!ptarget)
 		return false;
 		
-	ptarget->GetGuild()->ChangeGuildName(const_cast<char*>(args));
-	SystemMessage(ptarget->GetSession(),MSG_COLOR_RED"The Name of your Guild will change after the next restart.");
+	char* newname = (char*)args;
+		
+	ptarget->GetGuild()->ChangeGuildName(newname);
+	SystemMessage(ptarget->GetSession(),MSG_COLOR_RED"The Name of your Guild will change after your next relog.");
 	return true;	
 }
 
@@ -2969,6 +2971,7 @@ bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession 
 		return false;
 		
 	plr->GetGuild()->RemoveGuildMember(plr->m_playerInfo,m_session);
+	SystemMessage(m_session,"Member removed succesfully.");
 	return true;
 }
 
@@ -2980,6 +2983,7 @@ bool ChatHandler::HandleGuildDisbandCommand(const char* args, WorldSession *m_se
 		return false;
 	
 	plr->GetGuild()->Disband();
+	SystemMessage(m_session,"Guild disbanded succesfully.");
 	return true;
 }
 
