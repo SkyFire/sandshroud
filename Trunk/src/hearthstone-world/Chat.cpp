@@ -307,9 +307,9 @@ void CommandTableStorage::Init()
 	static ChatCommand GuildCommandTable[] =
 	{
 		{ "create",		 'm', &ChatHandler::CreateGuildCommand,  "Creates a guild.",			   NULL, 0, 0, 0},
-		{ "rename",	   'm', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.",		 NULL, 0, 0, 0},
+		{ "rename",	   'm', &ChatHandler::HandleRenameGuildCommand, "Renames a guild Syntax:<new name>.",		 NULL, 0, 0, 0},
 		{ "members",	   'm', &ChatHandler::HandleGuildMembersCommand, "Lists guildmembers and their ranks.",	  NULL, 0, 0, 0},
-		{ "removeplayer",	   'm', &ChatHandler::HandleGuildRemovePlayerCommand, "Removes a player from a guild.",		 NULL, 0, 0, 0},
+		{ "removeplayer",	   'm', &ChatHandler::HandleGuildRemovePlayerCommand, "Removes the target from its guild.",		 NULL, 0, 0, 0},
 		{ "disband",	   'm', &ChatHandler::HandleGuildDisbandCommand, "Disbands the guild of your target.",		 NULL, 0, 0, 0},
 		{ "setleader", 'm', &ChatHandler::HandleGuildSetLeaderCommand, "Sets the guild leader of the target's guild to <player>", NULL, 0, 0, 0 },
 		{ NULL,			0, NULL,									   "",							 NULL, 0, 0  }

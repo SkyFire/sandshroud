@@ -116,12 +116,6 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-/*
-#define isalpha(c)  {isupper(c) || islower(c))
-#define isupper(c)  (c >=  'A' && c <= 'Z')
-#define islower(c)  (c >=  'a' && c <= 'z')
-*/
-
 bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();

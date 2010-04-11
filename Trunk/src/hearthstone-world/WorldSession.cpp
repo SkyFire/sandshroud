@@ -816,7 +816,6 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_GUILD_QUERY].status							= STATUS_AUTHED;
 
 	// Guild System
-	WorldPacketHandlers[CMSG_GUILD_CREATE].handler							= &WorldSession::HandleCreateGuild;
 	WorldPacketHandlers[CMSG_GUILD_INVITE].handler							= &WorldSession::HandleInviteToGuild;
 	WorldPacketHandlers[CMSG_GUILD_ACCEPT].handler							= &WorldSession::HandleGuildAccept;
 	WorldPacketHandlers[CMSG_GUILD_DECLINE].handler							= &WorldSession::HandleGuildDecline;

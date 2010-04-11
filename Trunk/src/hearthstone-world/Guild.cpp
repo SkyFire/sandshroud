@@ -1619,3 +1619,27 @@ void Guild::SendGuildInfo(WorldSession * pClient)
 
 	pClient->SendPacket(&data);	
 }
+
+void Guild::ChangeGuildName(char* name)
+{
+	m_guildName = name;
+	
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	{
+		Player* plr = itr->first->m_loggedInPlayer;
+		if(plr != NULL)
+			SendGuildInfo(plr->GetSession());
+	}
+}
+
+void Guild::ListGuildMembers(WorldSession* session)
+{
+	session->GetPlayer()->BroadcastMessage("Following Members are in the guild %s",m_guildName);
+	
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	{
+		if(itr->first != NULL)
+			session->GetPlayer()->BroadcastMessage("%s",itr->first->name);
+	}
+	
+}

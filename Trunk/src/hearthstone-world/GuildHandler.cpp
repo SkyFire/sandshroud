@@ -39,20 +39,6 @@ void WorldSession::HandleGuildQuery(WorldPacket & recv_data)
 	pGuild->SendGuildQuery(this);
 }
 
-void WorldSession::HandleCreateGuild(WorldPacket & recv_data)
-{
-}
-
-/*void WorldSession::SendGuildCommandResult(uint32 typecmd,const char *  str,uint32 cmdresult)
-{
-	WorldPacket data;
-	data.SetOpcode(SMSG_GUILD_COMMAND_RESULT);
-	data << typecmd;
-	data << str;
-	data << cmdresult;
-	SendPacket(&data);
-}*/
-
 void WorldSession::HandleInviteToGuild(WorldPacket & recv_data)
 {
 	CHECK_PACKET_SIZE(recv_data, 1);
@@ -622,9 +608,7 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 
 			c->SaveToDB();
 
-			/*WorldPacket data(45);
-			BuildItemPushResult(&data, _player->GetGUID(), ITEM_PUSH_TYPE_RECEIVE, 1, item_ids[arena_type], 0);
-			SendPacket(&data);*/
+
 			SendItemPushResult(i, false, true, false, true, _player->GetItemInterface()->LastSearchItemBagSlot(), _player->GetItemInterface()->LastSearchItemSlot(), 1);
 
 			if(!sWorld.free_arena_teams)
@@ -703,10 +687,6 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 
 			c->SaveToDB();
 
-			/*data.clear();
-			data.resize(45);
-			BuildItemPushResult(&data, _player->GetGUID(), ITEM_PUSH_TYPE_RECEIVE, 1, ITEM_ENTRY_GUILD_CHARTER, 0);
-			SendPacket(&data);*/
 			SendItemPushResult(i, false, true, false, true, _player->GetItemInterface()->LastSearchItemBagSlot(), _player->GetItemInterface()->LastSearchItemSlot(), 1);
 
 			_player->m_playerInfo->charterId[CHARTER_TYPE_GUILD] = c->GetID();

@@ -581,8 +581,7 @@ protected:
 	void HandleSetTradeGold(WorldPacket & recv_data);
 
 	// Guild
-	void HandleGuildQuery(WorldPacket & recv_data);
-	void HandleCreateGuild(WorldPacket & recv_data);				   
+	void HandleGuildQuery(WorldPacket & recv_data);			   
 	void HandleInviteToGuild(WorldPacket & recv_data);			  
 	void HandleGuildAccept(WorldPacket & recv_data);			 
 	void HandleGuildDecline(WorldPacket & recv_data);

@@ -2951,18 +2951,24 @@ bool ChatHandler::HandleAIAgentDebugSkip(const char * args, WorldSession * m_ses
 
 bool ChatHandler::HandleRenameGuildCommand(const char* args, WorldSession *m_session)
 {
-	Player* plr = getSelectedChar(m_session);
-	if(!plr || !plr->GetGuildId() || !args || !strlen(args)) return false;
-
-
-	return true;
+	Player* ptarget = getSelectedChar(m_session);
+	
+	if(!*args||!ptarget)
+		return false;
+		
+	ptarget->GetGuild()->ChangeGuildName(const_cast<char*>(args));
+	SystemMessage(ptarget->GetSession(),MSG_COLOR_RED"The Name of your Guild will change after the next restart.");
+	return true;	
 }
 
 //People seem to get stuck in guilds from time to time. This should be helpfull. -DGM
 bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || !plr->GetGuildId()) return false;
+	if(!plr || !plr->GetGuildId()) 
+		return false;
+		
+	plr->GetGuild()->RemoveGuildMember(plr->m_playerInfo,m_session);
 	return true;
 }
 
@@ -2970,7 +2976,10 @@ bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession 
 bool ChatHandler::HandleGuildDisbandCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || !plr->GetGuildId() || !args || !strlen(args)) return false;
+	if(!plr || !plr->GetGuildId()) 
+		return false;
+	
+	plr->GetGuild()->Disband();
 	return true;
 }
 
@@ -2978,7 +2987,10 @@ bool ChatHandler::HandleGuildDisbandCommand(const char* args, WorldSession *m_se
 bool ChatHandler::HandleGuildMembersCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || !plr->GetGuildId()) return false;
+	if(!plr || !plr->GetGuildId()) 
+		return false;
+	
+	plr->GetGuild()->ListGuildMembers(m_session);	
 	return true;
 }
 
