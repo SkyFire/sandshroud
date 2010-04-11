@@ -4801,6 +4801,8 @@ void Spell::Heal(int32 amount)
 			if(itr->first != NULL)
 			{
 			Player* HealTarget = itr->first;
+			if(HealTarget->GetGUID() == p_caster->GetGUID())	// don't heal ourself!
+				continue;
 
 			if((curHealth + amount) >= maxHealth)
 			{

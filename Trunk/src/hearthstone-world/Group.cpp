@@ -1176,7 +1176,8 @@ bool Group::HasDisenchanters()
 
 void Group::AddBeaconOfLightTarget(Player* Target)
 {
-	m_BeaconOfLightTargets.insert(std::make_pair(Target, 0));
+	if(m_BeaconOfLightTargets.find(Target) == m_BeaconOfLightTargets.end())	//don't add somebody twice!
+		m_BeaconOfLightTargets.insert(std::make_pair(Target, 0));
 }
 void Group::RemoveBeaconOfLightTarget(Player* Target)
 {

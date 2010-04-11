@@ -4491,15 +4491,15 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			// WARLOCK									//
 			//////////////////////////////////////////
 	
-			// Insert	warlock	spell	fixes	here
-			// Demonic Knowledge
-			
+			// Insert	warlock	spell	fixes	here			
 			// Beacon of the Light (Dummy Aura)
 			case 53563:
 				{
 					sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
+					sp->RecoveryTime = 60000;	// Hacky, but we add 1 Minute cd until we have another way of fixing this
 				}break;
+		// Demonic Knowledge
 		case 35691:
 		case 35692:
 		case 35693:
