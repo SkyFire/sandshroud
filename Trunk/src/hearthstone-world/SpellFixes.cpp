@@ -5066,7 +5066,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 48155:
 		case 48156:
 			{
-				sp->EffectApplyAuraName[0] = SPELL_AURA_PERIODIC_DAMAGE;
 				sp->EffectImplicitTargetA[0] = EFF_TARGET_SINGLE_ENEMY;
 				sp->logsId = 58381;
 			}break;

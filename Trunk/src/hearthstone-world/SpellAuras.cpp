@@ -247,7 +247,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraNULL,//224 // not used
 		&Aura::SpellAuraNULL,//225 // Prayer of Mending "Places a spell on the target that heals them for $s1 the next time they take damage.  When the heal occurs, Prayer of Mending jumps to a raid member within $a1 yards.  Jumps up to $n times and lasts $d after each jump.  This spell can only be placed on one target at a time."
 		&Aura::SpellAuraDrinkNew,//226 // used in brewfest spells, headless hoerseman
-		&Aura::SpellAuraNULL,//227 Inflicts [SPELL DAMAGE] damage to enemies in a cone in front of the caster. (based on combat range) http://www.thottbot.com/s40938
+		&Aura::SpellAuraPeriodicTriggerSpellWithValue,//227 Inflicts [SPELL DAMAGE] damage to enemies in a cone in front of the caster. (based on combat range) http://www.thottbot.com/s40938
 		&Aura::SpellAuraAuraModInvisibilityDetection,//228 Stealth Detection. http://www.thottbot.com/s34709
 		&Aura::SpellAuraReduceAOEDamageTaken,//229 Apply Aura:Reduces the damage your pet takes from area of effect attacks http://www.thottbot.com/s35694
 		&Aura::SpellAuraIncreaseMaxHealth,//230 Increase Max Health (commanding shout);
@@ -9801,4 +9801,40 @@ void Aura::SpellAuraModPetTalentPoints(bool apply)
 	if(player && player->GetSummon()!= NULL)
 		player->GetSummon()->InitTalentsForLevel();
 
+}
+
+void Aura::SpellAuraPeriodicTriggerSpellWithValue(bool apply)
+{
+	if(m_spellProto->EffectTriggerSpell[mod->i] == 0)
+		return;
+	if(apply)
+	{
+		uint32 sp = GetSpellProto()->EffectTriggerSpell[mod->i];
+		SpellEntry *spe = dbcSpell.LookupEntry(sp);
+		if(!sp || !spe)
+		{
+			return; // invalid spell
+		}
+
+		Unit *m_caster = GetUnitCaster();
+		if(!m_caster)
+		{
+			return; // invalid caster
+		}
+
+		spe->EffectBasePoints[0] = mod->m_amount; // set the base damage value
+
+		if( m_caster->GetUInt64Value( UNIT_FIELD_CHANNEL_OBJECT ) != 0 )
+		{
+			sEventMgr.AddEvent(this, &Aura::EventPeriodicTriggerSpell, spe,
+			EVENT_AURA_PERIODIC_TRIGGERSPELL,GetSpellProto()->EffectAmplitude[mod->i], 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			periodic_target = m_caster->GetUInt64Value( UNIT_FIELD_CHANNEL_OBJECT );
+		}
+		else if(m_target)
+		{
+			sEventMgr.AddEvent(this, &Aura::EventPeriodicTriggerSpell, spe,
+				EVENT_AURA_PERIODIC_TRIGGERSPELL,GetSpellProto()->EffectAmplitude[mod->i], 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			periodic_target = m_target->GetGUID();
+		}
+	}
 }
