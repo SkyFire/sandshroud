@@ -734,7 +734,7 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		return false;
 
 	uint32 EntryID = atoi(pEntryID);
-	if(GameObjectNameStorage.LookupEntry(EntryID) == NULL)
+	if((GameObjectNameStorage.LookupEntry(EntryID) == NULL) || (objmgr.SQLCheckExists("Gameobject_names", "entry", EntryID) == NULL))
 	{
 		RedSystemMessage(m_session, "Invalid Gameobject ID(%u).", EntryID);
 		return true;
@@ -782,7 +782,7 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 	gs->y = go->GetPositionY();
 	gs->z = go->GetPositionZ();
 	gs->state = go->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE);
-	gs->phase = 1;
+	gs->phase = chr->GetPhase();
 	gs->eventid = 0;
 	gs->eventinfo = NULL;
 
@@ -792,10 +792,10 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 	m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
 	go->m_spawn = gs;
 
-	if(Save == true)
+	if(Save == true) // If we're saving, create template and add index
 	{
-		// If we're saving, create template and add index
 		go->SaveToDB();
+		go->m_loadedFromDB = true;
 	}
 	return true;
 }

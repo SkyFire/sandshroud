@@ -560,6 +560,7 @@ public:
 	void LoadScrollCreation();
 	void CreateGossipMenuForPlayer(GossipMenu** Location, uint64 Guid, uint32 TextID, Player* Plr); 
 
+	QueryResult* SQLCheckExists(const char* tablename, const char* columnname, uint64 columnvalue);
 	LevelInfo * GetLevelInfo(uint32 Race, uint32 Class, uint32 Level);
 	void GenerateLevelUpInfo();
 	uint32 GetPetSpellCooldown(uint32 SpellId);

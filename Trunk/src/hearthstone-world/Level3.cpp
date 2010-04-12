@@ -2195,9 +2195,10 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
 	CreatureInfo * info = CreatureNameStorage.LookupEntry(entry);
-	if(proto == 0 || info == 0)
+	if(proto == 0 || info == 0 || (objmgr.SQLCheckExists("creature_names", "entry", entry) == NULL)
+		|| (objmgr.SQLCheckExists("creature_proto", "entry", entry) == NULL))
 	{
-		RedSystemMessage(m_session, "Invalid entry id.");
+		RedSystemMessage(m_session, "Invalid entry id(%u).", entry);
 		return true;
 	}
 

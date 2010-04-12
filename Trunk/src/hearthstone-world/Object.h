@@ -508,6 +508,7 @@ public:
 
 	bool PhasedCanInteract(Object* pObj);
 	bool HasPhase() { return m_phaseMode != 0; }
+	int32 GetPhase() { return m_phaseMode; }
 	void EnablePhase(int32 phaseMode);
 	void DisablePhase(int32 phaseMode);
 	void SetPhase(int32 phase); // Don't fucking use this.
