@@ -583,7 +583,7 @@ public:
 
 	/** Loads the block using the format string.
 	 */
-	HEARTHSTONE_INLINE void LoadBlock(Field * fields, T * Allocated)
+	HEARTHSTONE_INLINE void LoadBlock(Field * fields, T * Allocated, bool reload = false )
 	{
 		char * p = Storage<T, StorageType>::_formatString;
 		char * structpointer = (char*)Allocated;
@@ -624,10 +624,12 @@ public:
 				break;
 
 			case 's':	// Null-terminated string
-				{
+				if( reload )
+					free( *(char**)&structpointer[offset] );
+
 				*(char**)&structpointer[offset] = strdup(f->GetString());
 				offset += sizeof(char*);
-				}break;
+				break;
 
 			case 'x':	// Skip
 				break;
@@ -807,7 +809,7 @@ public:
 			Entry = fields[0].GetUInt32();
 			Allocated = Storage<T, StorageType>::_storage.LookupEntryAllocate(Entry);
 			if(Allocated)
-				LoadBlock(fields, Allocated);
+				LoadBlock(fields, Allocated, true);
 
 		} while(result->NextRow());
 		delete result;
