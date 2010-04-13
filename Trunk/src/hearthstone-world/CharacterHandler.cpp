@@ -945,12 +945,9 @@ void WorldSession::FullLogin(Player* plr)
 	// send friend list (for ignores)
 	_player->Social_SendFriendList(7);
 
-	// Send revision (if enabled)
-#ifdef WIN32
-	_player->BroadcastMessage("Server: %sSandshroud Aspire Hearthstone r%u-TRUNK/%s-Win-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);
-#else // WIN32
-	_player->BroadcastMessage("Server: %sSandshroud Aspire Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
-#endif // WIN32
+	// Send revision
+	_player->BroadcastMessage("Server: %sSandshroud Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH);
+
 	_player->BroadcastMessage("%sPlease report all bugs to %shttp://mantis.sandshroud.org", MSG_COLOR_WHITE, MSG_COLOR_RED);
 	if(sWorld.SendStatsOnJoin)
 	{
