@@ -739,7 +739,7 @@ void GossipScript::GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, u
 			GossipMenu *Menu;
 			objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), 14391, Plr);
 			// Crow: The following is wrong :| Someone find the correct box text.
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Purchase a Dual Talent Specialization.", 17, false, sWorld.dualTalentTrainCost, "Are you sure you wish to buy Dual Talent Specialization?" );
+			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Purchase a Dual Talent Specialization.", 17, false, sWorld.dualTalentTrainCost, "Are you sure you would like to purchase your second talent specialization?" );
 			Menu->SendTo(Plr);
 		}break;
 	case 17:
