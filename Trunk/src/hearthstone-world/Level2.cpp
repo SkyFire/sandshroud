@@ -734,7 +734,7 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		return false;
 
 	uint32 EntryID = atoi(pEntryID);
-	if((GameObjectNameStorage.LookupEntry(EntryID) == NULL) || (objmgr.SQLCheckExists("Gameobject_names", "entry", EntryID) == NULL))
+	if((GameObjectNameStorage.LookupEntry(EntryID) == NULL) || (objmgr.SQLCheckExists("gameobject_names", "entry", EntryID) == NULL))
 	{
 		RedSystemMessage(m_session, "Invalid Gameobject ID(%u).", EntryID);
 		return true;
