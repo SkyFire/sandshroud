@@ -47,6 +47,8 @@ enum BattleGroundTypes
 	BATTLEGROUND_NUM_TYPES		= 33,
 };
 
+#define USABLEBSGS 10
+
 struct BGScore
 {
 	uint32 KillingBlows;

@@ -1123,8 +1123,8 @@ void TaskList::spawn()
 		SYSTEM_INFO s;
 		GetSystemInfo(&s);
 		threadcount = s.dwNumberOfProcessors * 2;
-		if(threadcount>8)
-			threadcount=8;
+		if(threadcount > 8)
+			threadcount = 8;
 #endif
 	}
 	else

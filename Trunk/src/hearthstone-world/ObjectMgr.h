@@ -544,7 +544,8 @@ public:
 	void ListGuidAmounts();
 	uint32 GenerateLowGuid(uint32 guidhigh);
 	uint32 GenerateMailID();
-	
+	uint64 GenerateEquipmentSetGuid();
+
 	void LoadTransporters();
 	void ProcessGameobjectQuests();
 	void AddTransport(Transporter* pTransporter);
@@ -637,6 +638,7 @@ public:
 protected:
 	RWLock playernamelock;
 	uint32 m_mailid;
+	uint64 m_equipmentSetGuid;
 	// highest GUIDs, used for creating new objects
 	Mutex m_guidGenMutex;
 	union

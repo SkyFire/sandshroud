@@ -1349,7 +1349,7 @@ int16 ItemInterface::GetInventorySlotById(uint32 ID)
 //-------------------------------------------------------------------//
 int16 ItemInterface::GetInventorySlotByGuid(uint64 guid)
 {
-	for(uint32 i=EQUIPMENT_SLOT_START ;i<INVENTORY_SLOT_ITEM_END;++i)
+	for(uint32 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; ++i)
 	{
 		if(m_pItems[i])
 		{
@@ -1386,7 +1386,7 @@ int16 ItemInterface::GetInventorySlotByGuid(uint64 guid)
 
 int16 ItemInterface::GetBagSlotByGuid(uint64 guid)
 {
-	for(uint32 i=EQUIPMENT_SLOT_START ;i<INVENTORY_SLOT_ITEM_END;++i)
+	for(uint32 i = EQUIPMENT_SLOT_START; i < INVENTORY_SLOT_ITEM_END; ++i)
 	{
 		if(m_pItems[i])
 		{
@@ -1408,14 +1408,14 @@ int16 ItemInterface::GetBagSlotByGuid(uint64 guid)
 		}
 	}
 
-	for(uint32 i=INVENTORY_SLOT_BAG_START; i<INVENTORY_SLOT_BAG_END; ++i)
+	for(uint32 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
 	{
-		if(m_pItems[i]&&m_pItems[i]->GetTypeId()==TYPEID_CONTAINER)
+		if(m_pItems[i] && m_pItems[i]->GetTypeId() == TYPEID_CONTAINER)
 		{
 			for(uint32 j = 0; j < m_pItems[i]->GetProto()->ContainerSlots; ++j)
 			{
 				Item* inneritem = TO_CONTAINER(m_pItems[i])->GetItem(j);
-				if(inneritem && inneritem->GetGUID()==guid)
+				if(inneritem && inneritem->GetGUID() == guid)
 					return i;
 			}
 		}
@@ -1423,7 +1423,6 @@ int16 ItemInterface::GetBagSlotByGuid(uint64 guid)
 
 	return ITEM_NO_SLOT_AVAILABLE; //was changed from 0 cuz 0 is the slot for head
 }
-
 
 //-------------------------------------------------------------------//
 //Description: Adds a Item to a free slot
@@ -2678,14 +2677,14 @@ void ItemInterface::RemoveBuyBackItem(uint32 index)
 //-------------------------------------------------------------------//
 //Description: swap inventory slots
 //-------------------------------------------------------------------//
-void ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
+bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 {
 	// srcslot and dstslot are int... NULL might not be an int depending on arch where it is compiled
 	if( srcslot >= MAX_INVENTORY_SLOT || srcslot < 0 )
-		return;
+		return false;
 
 	if( dstslot >= MAX_INVENTORY_SLOT || dstslot < 0 )
-		return;
+		return false;
 
 	Item* SrcItem = GetInventoryItem( srcslot );
 	Item* DstItem = GetInventoryItem( dstslot );
@@ -2705,7 +2704,7 @@ void ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 					SrcItem->GetUInt32Value(OBJECT_FIELD_ENTRY) == 11508 ))
 				{
 					AddItemToFreeSlot(SrcItem);
-					return;
+					return true;
 				}
 			}
 		}
@@ -2719,7 +2718,7 @@ void ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 			DstItem->ModUnsigned32Value( ITEM_FIELD_STACK_COUNT, SrcItem->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) );
 			SafeFullRemoveItemFromSlot( INVENTORY_SLOT_NOT_SET, srcslot );
 			DstItem->m_isDirty = true;
-			return;
+			return true;
 		}
 		else
 		{
@@ -2734,7 +2733,7 @@ void ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 				SrcItem->ModUnsigned32Value( ITEM_FIELD_STACK_COUNT, -delta );
 				SrcItem->m_isDirty = true;
 				DstItem->m_isDirty = true;
-				return;
+				return true;
 			}
 		}
 	}
@@ -2927,6 +2926,7 @@ void ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 		else if( dstslot == EQUIPMENT_SLOT_MAINHAND || dstslot == EQUIPMENT_SLOT_OFFHAND )
 			m_pOwner->CalcDamage();
 	}
+	return true;
 }
 
 //-------------------------------------------------------------------//

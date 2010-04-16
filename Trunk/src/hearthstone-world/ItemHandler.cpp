@@ -1906,10 +1906,9 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 	CHECK_INWORLD_RETURN;
 
 	Item* TargetItem =_player->GetItemInterface()->GetItemByGUID(itemguid);
-	if(!TargetItem)
-	{
+	if(TargetItem == NULL)
 		return;
-	}
+
 	int slot = _player->GetItemInterface()->GetInventorySlotByGuid(itemguid);
 	bool apply = (slot >= 0 && slot < 19);
 	uint32 FilledSlots = 0;
@@ -1920,7 +1919,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 	bool sockenchbracer = (TargetItem->HasEnchantment(3717) && TargetItem->GetProto()->InventoryType == 9);
 	bool sockenchbelt = (TargetItem->HasEnchantment(3729) && TargetItem->GetProto()->InventoryType == 6);
 
-	bool ColorMatch = true;
+	bool ColorMatch[3];
 	for(uint32 i = 0; i < 3; ++i)
 	{
 		recvPacket >> gemguid[i];
@@ -1928,18 +1927,20 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 		if(i > ((sockenchgloves || sockenchbracer || sockenchbelt) ? TargetItem->GetSocketsCount() + 1 : TargetItem->GetSocketsCount()))
 			continue;
 
+		ColorMatch[i] = false;
+
 		EnchantmentInstance * EI = TargetItem->GetEnchantment(2+i);
 		if(EI)
 		{
 			FilledSlots++;
 			ItemPrototype * ip = ItemPrototypeStorage.LookupEntry(EI->Enchantment->GemEntry);
-			if(!ip)
+			if(ip == NULL)
 				gp = 0;
 			else
 				gp = dbcGemProperty.LookupEntry(ip->GemProperties);
 
 			if(gp && !(gp->SocketMask & TargetItem->GetProto()->Sockets[i].SocketColor) && TargetItem->GetProto()->Sockets[i].SocketColor != 0)
-				ColorMatch = false;
+				ColorMatch[i] = false;
 		}
 
 		if(gemguid[i])//add or replace gem
@@ -1949,12 +1950,12 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 			Item * it = itemi->GetItemByGUID(gemguid[i]);
 			if (apply) 
 			{
-				if( !it )
+				if( it == NULL )
 					continue;
 
 				ip = it->GetProto();
 
-				if( !ip )
+				if((ip == NULL) || (ip && (ip->GemProperties <= 0))) // Incomplete DB, but we have cached.
 					continue;
 
 				if( ip->Flags & ITEM_FLAG_UNIQUE_EQUIP && itemi->IsEquipped( ip->ItemId ) )
@@ -1962,6 +1963,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 					itemi->BuildInventoryChangeError( it, TargetItem, INV_ERR_CANT_CARRY_MORE_OF_THIS );
 					continue;
 				}
+
 				// Skill requirement
 				if( ip->RequiredSkill )
 				{
@@ -1974,20 +1976,17 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 			}
 
 			it = _player->GetItemInterface()->SafeRemoveAndRetreiveItemByGuid(gemguid[i],true);
-			if(!it)
+			if(it == NULL)
 				continue;
 
 			gp = dbcGemProperty.LookupEntry(it->GetProto()->GemProperties);
 			it->Destructor();
 
-			if(!gp)
+			if(gp == NULL)
 				continue;
 
 			if(!(gp->SocketMask & TargetItem->GetProto()->Sockets[i].SocketColor))
-				ColorMatch = false;
-
-			if(gp->SocketMask && TargetItem->GetProto()->Sockets[i].SocketColor == 0)
-				ColorMatch = true;
+				ColorMatch[i] = false;
 
 			if(!gp->EnchantmentID)//this is ok in few cases
 				continue;
@@ -2003,10 +2002,26 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 		}
 	}
 
+	bool truecolormatch = false;
+
+	for(uint32 i = 0; i < 3; ++i)
+	{
+		if(TargetItem->GetProto()->Sockets[i].SocketColor != NULL)
+		{
+			if(i <= TargetItem->GetSocketsCount())
+			{
+				if(ColorMatch[i] == true)
+					truecolormatch = true;
+				else
+					truecolormatch = false;
+			}
+		}
+	}
+
 	//Add color match bonus
 	if(TargetItem->GetProto()->SocketBonus)
 	{
-		if(ColorMatch && (FilledSlots >= TargetItem->GetSocketsCount()))
+		if(truecolormatch && (FilledSlots >= TargetItem->GetSocketsCount()))
 		{
 			if(TargetItem->HasEnchantment(TargetItem->GetProto()->SocketBonus) > 0)
 			{

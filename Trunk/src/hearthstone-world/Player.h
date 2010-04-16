@@ -707,8 +707,37 @@ enum DUEL_WINNER
 	DUEL_WINNER_KNOCKOUT,
 	DUEL_WINNER_RETREAT,
 };
+
 #define PLAYER_ATTACK_TIMEOUT_INTERVAL	5000
 #define PLAYER_FORCED_RESURECT_INTERVAL	360000 // 1000*60*6= 6 minutes 
+
+// Crow: Equipment set shit.
+enum EquipmentSetUpdateState
+{
+	EQUIPMENT_SET_UNCHANGED	= 0,
+	EQUIPMENT_SET_CHANGED	= 1,
+	EQUIPMENT_SET_NEW		= 2,
+	EQUIPMENT_SET_DELETED	= 3
+};
+
+struct EquipmentSet
+{
+	EquipmentSet() : Guid(0), state(EQUIPMENT_SET_NEW)
+	{
+		for(uint8 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+			Items[i] = 0;
+	}
+
+	uint64 Guid;
+	std::string Name;
+	std::string IconName;
+	WoWGuid Items[EQUIPMENT_SLOT_END];
+	EquipmentSetUpdateState state;
+};
+
+#define MAX_EQUIPMENT_SET_INDEX 10	// client limit
+
+typedef std::map<uint32, EquipmentSet> EquipmentSets;
 
 struct PlayerSkill
 {
@@ -1174,8 +1203,8 @@ public:
 	/************************************************************************/
 	/* Trade                                                                */
 	/************************************************************************/
-	void                SendTradeUpdate(void);
-	void         ResetTradeVariables()
+	void SendTradeUpdate(void);
+	void ResetTradeVariables()
 	{
 		mTradeGold = 0;
 		for(uint8 i = 0; i < 7; ++i)
@@ -2207,6 +2236,14 @@ public:
 	uint8 TheoreticalUseRunes(uint8 blood, uint8 frost, uint8 unholy);
 
 	uint32 m_deathRuneMasteryChance;
+
+	// Equipment Sets
+	EquipmentSets m_EquipmentSets;
+	void SendEquipmentSets();
+	void SetEquipmentSet(uint32 index, EquipmentSet eqset);
+	void DeleteEquipmentSet(uint64 setGuid);
+	void _LoadEquipmentSets(QueryResult *result);
+	void _SaveEquipmentSets();
 
 private:
 	// Stuff for "Talent Inspect"

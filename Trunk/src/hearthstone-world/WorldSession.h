@@ -732,6 +732,9 @@ protected:
 	void HandleReadyForAccountDataTimes(WorldPacket &recv_data);
 	void HandleWorldStateUITimerUpdate( WorldPacket & recv_data );
 	void HandleFarsightOpcode(WorldPacket &recv_data);
+	void HandleEquipmentSetSave(WorldPacket &recv_data);
+	void HandleEquipmentSetDelete(WorldPacket &recv_data);
+	void HandleEquipmentSetUse(WorldPacket &recv_data);
 
 	/// Empty packets
 	void EmptyPacket(WorldPacket &recv_data);

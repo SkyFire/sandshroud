@@ -72,6 +72,7 @@ public:
 	Item* GetInventoryItem(int16 ContainerSlot, int16 slot);
 	int16 GetInventorySlotById(uint32 ID);
 	int16 GetInventorySlotByGuid(uint64 guid);
+	int16 GetInventorySlotByGuid2(uint64 guid);
 	int16 GetBagSlotByGuid(uint64 guid);
 
 	Item* SafeAddItem(uint32 ItemId, int16 ContainerSlot, int16 slot);
@@ -121,7 +122,7 @@ public:
 
 
 	void BuildInventoryChangeError(Item* SrcItem, Item* DstItem, uint8 Error);
-	void SwapItemSlots(int16 srcslot, int16 dstslot);
+	bool SwapItemSlots(int16 srcslot, int16 dstslot);
 
 	int16 GetInternalBankSlotFromPlayer(int16 islot); //converts inventory slots into 0-x numbers
 

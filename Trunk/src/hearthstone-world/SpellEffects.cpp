@@ -645,7 +645,12 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 	}
 
 	// check for no more damage left (chains)
-	if( dmg < 0 ) return;
+	if( dmg < 0 )
+		return;
+
+	// Todo: Add a config option, and check for magic buffs like Tenacity.
+	if((p_caster != NULL) && dmg > 25000)
+		dmg = 10000;
 
 	// stealthed stuff
 	if( m_projectileWait && unitTarget->InStealth() )

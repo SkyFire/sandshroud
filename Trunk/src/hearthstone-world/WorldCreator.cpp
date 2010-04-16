@@ -30,7 +30,7 @@ InstanceMgr::InstanceMgr()
 {
 	memset(m_maps, 0, sizeof(Map*)* NUM_MAPS);
 	memset(m_instances, 0, sizeof(InstanceMap*) * NUM_MAPS);
-	
+
 	for(uint32 i = 0; i < NUM_MAPS; ++i)
 		m_singleMaps[i] = NULLMAPMGR;
 }

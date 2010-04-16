@@ -191,7 +191,11 @@ bool Master::Run(int argc, char ** argv)
 	Log.Line();
 
 	//use these log_level until we are fully started up.
+#ifdef _DEBUG
 	sLog.Init(-1, 3);
+#else
+	sLog.Init(-1, 2);
+#endif // _DEBUG
 
 #ifndef WIN32
 	if(geteuid() == 0 || getegid() == 0)
@@ -266,14 +270,14 @@ bool Master::Run(int argc, char ** argv)
 	}
 
 	g_bufferPool.Init();
-	sWorld.SetStartTime((uint32)UNIXTIME);
+	sWorld.SetStartTime(uint32(UNIXTIME));
 	
 	WorldRunnable * wr = new WorldRunnable();
 	ThreadPool.ExecuteTask(wr);
 
 	_HookSignals();
 
-	ConsoleThread * console = new ConsoleThread();
+	ConsoleThread* console = new ConsoleThread();
 	ThreadPool.ExecuteTask(console);
 
 	uint32 realCurrTime, realPrevTime;

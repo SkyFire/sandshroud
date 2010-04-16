@@ -790,7 +790,7 @@ void WorldSession::FullLogin(Player* plr)
 
 	// Make sure our name exists (for premade system)
 	PlayerInfo * info = objmgr.GetPlayerInfo(plr->GetLowGUID());
-	if(info == 0)
+	if(info == NULL)
 	{
 		info = new PlayerInfo;
 		memset(info, 0, sizeof(PlayerInfo));
@@ -914,6 +914,9 @@ void WorldSession::FullLogin(Player* plr)
 		OutPacket(SMSG_TRIGGER_CINEMATIC, 4, &plr->myRace->cinematic_id);
 
 	DEBUG_LOG( "WorldSession","Created new player for existing players (%s)", plr->GetName() );
+
+	// Send Inital Packets?
+	plr->OnPrePushToWorld();
 
 	// Login time, will be used for played time calc
 	plr->m_playedtime[2] = (uint32)UNIXTIME;
@@ -1199,3 +1202,201 @@ void WorldSession::HandleCharCustomizeOpcode(WorldPacket & recv_data)
 	data << uint8(facialHair);
 	SendPacket(&data);
 }
+//#define EQ_MGR_TESTING
+#ifdef EQ_MGR_TESTING
+
+void WorldSession::HandleEquipmentSetSave(WorldPacket &recv_data)
+{
+	sLog.outDebug("CMSG_EQUIPMENT_SET_SAVE");
+	WoWGuid guid;
+	recv_data >> guid;
+
+	uint32 index;
+	recv_data >> index;
+	if(index >= MAX_EQUIPMENT_SET_INDEX)	// client set slots amount
+		return;
+
+	std::string name, iconName;
+	recv_data >> name >> iconName;
+
+	EquipmentSet eqSet;
+
+	eqSet.Guid		= guid.GetOldGuid();
+	eqSet.Name		= name;
+	eqSet.IconName	= iconName;
+	eqSet.state		= EQUIPMENT_SET_NEW;
+
+	for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+	{
+		WoWGuid itemGuid;
+		recv_data >> itemGuid;
+
+		Item *item = _player->GetItemInterface()->GetInventoryItem(i);
+
+		if(!item && itemGuid)	// cheating check 1
+		{
+			eqSet.Items[i] = 0; // Give em hell.
+			continue;
+		}
+
+		if(item)
+		{
+			if(item->GetGUID() != itemGuid.GetOldGuid())	// cheating check 2
+			{
+				eqSet.Items[i] = 0; // Give em hell.
+				continue;
+			}
+		}
+
+		// Dirty business.
+		eqSet.Items[i] = itemGuid;
+	}
+
+	_player->SetEquipmentSet(index, eqSet);
+}
+
+void WorldSession::HandleEquipmentSetDelete(WorldPacket &recv_data)
+{
+	sLog.outDebug("CMSG_EQUIPMENT_SET_DELETE");
+
+	WoWGuid setGuid;
+	recv_data >> setGuid;
+	_player->DeleteEquipmentSet(setGuid.GetOldGuid());
+}
+
+void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
+{
+	sLog.outDebug("CMSG_EQUIPMENT_SET_USE");
+	bool failed = false;
+	for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+	{
+		WoWGuid itemGuid;
+		int8 SrcInvSlot;
+		uint8 SrcSlot;
+		recv_data >> itemGuid >> SrcInvSlot >> SrcSlot;
+		uint64 guid = itemGuid.GetOldGuid();
+
+		if(guid == NULL) // No need to change these, we just get feefee slot.
+			continue;
+
+		ItemInterface *ii = _player->GetItemInterface();
+		Item* item = ii->GetItemByGUID(guid);
+		if(item == NULL) // Item does not exist.
+			continue;
+
+		if(SrcSlot == (i))
+			continue;
+
+		uint16 slot = ii->GetBagSlotByGuid(guid);
+		uint16 DstSlot = (i);
+		uint16 DstInvSlot = INVENTORY_SLOT_NOT_SET; // Character :D
+
+		// Crow: Oh god.... Let the torment begin...
+		if(SrcInvSlot == INVENTORY_SLOT_NOT_SET)
+		{
+			if(!(ii->SwapItemSlots(slot, DstSlot)))
+				failed = true;
+		}
+		else
+		{
+			Item* SrcItem = ii->GetInventoryItem(SrcInvSlot, SrcSlot);
+			Item* DstItem = ii->GetInventoryItem(DstInvSlot, DstSlot);
+
+			//Check for stacking
+			if(DstItem && SrcItem->GetEntry()==DstItem->GetEntry() && SrcItem->GetProto()->MaxCount>1 && SrcItem->wrapped_item_id == 0 && DstItem->wrapped_item_id == 0)
+			{
+				uint32 total=SrcItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT)+DstItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
+				if(total<=DstItem->GetProto()->MaxCount)
+				{
+					DstItem->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT,SrcItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT));
+					DstItem->m_isDirty = true;
+					bool result = _player->GetItemInterface()->SafeFullRemoveItemFromSlot(SrcInvSlot, SrcSlot);
+					if(!result)
+					{
+						GetPlayer()->GetItemInterface()->BuildInventoryChangeError(SrcItem, DstItem, INV_ERR_ITEM_CANT_STACK);
+					}
+					continue;
+				}
+				else
+				{
+					if(DstItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) == DstItem->GetProto()->MaxCount)
+					{
+
+					}
+					else
+					{
+						int32 delta=DstItem->GetProto()->MaxCount-DstItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
+						DstItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT,DstItem->GetProto()->MaxCount);
+						SrcItem->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT,-delta);
+						SrcItem->m_isDirty = true;
+						DstItem->m_isDirty = true;
+						continue;
+					}
+				}
+			}
+		   
+			if(SrcItem)
+				SrcItem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot,SrcSlot, false);
+
+			if(DstItem)
+				DstItem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(DstInvSlot,DstSlot, false);
+
+			if(SrcItem)
+			{
+				AddItemResult result =_player->GetItemInterface()->SafeAddItem(SrcItem,DstInvSlot,DstSlot);
+				if(!result)
+				{
+					if (!_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
+					{
+						SrcItem->Destructor();
+					}
+					if (DstItem && !_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
+					{
+						DstItem->Destructor();
+					}
+					return;
+				}
+			}
+
+			if(DstItem)
+			{
+				AddItemResult result = _player->GetItemInterface()->SafeAddItem(DstItem,SrcInvSlot,SrcSlot);
+				if(!result)
+				{
+					if (SrcItem && !_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
+					{
+						SrcItem->Destructor();
+					}
+					if (!_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
+					{
+						DstItem->Destructor();
+					}
+					continue;
+				}
+			}
+		}
+	}
+
+	WorldPacket data(SMSG_EQUIPMENT_SET_USE_RESULT, 1);
+	data << uint8(0);	// 4 = failed(inventory is full)
+	SendPacket(&data);
+}
+
+#else
+
+void WorldSession::HandleEquipmentSetSave(WorldPacket &recv_data)
+{
+
+}
+
+void WorldSession::HandleEquipmentSetDelete(WorldPacket &recv_data)
+{
+
+}
+
+void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
+{
+
+}
+
+#endif // EQ_MGR_TESTING

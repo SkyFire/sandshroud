@@ -359,32 +359,24 @@ void Player::Init()
 
 	UpdateLastSpeeds();
 
-	m_resist_critical[0]=m_resist_critical[1]=0;
+	m_resist_critical[0] = m_resist_critical[1] = 0;
 	m_castFilterEnabled = false;
 
-		m_resist_critical[0]=m_resist_critical[1]=0;
-		m_castFilterEnabled = false;
-		for (uint32 x =0;x<3;x++)
-		{
-			m_resist_hit[x]=0;
-			m_skipCastCheck[x] = 0;
-			m_castFilter[x] = 0;
-		}
-		for(int i = 0; i < 6; ++i)
-		{
-			m_runes[i] = baseRunes[i];
-		}
-		m_maxTalentPoints = 0;
-		m_talentActiveSpec = 0;
-		m_talentSpecsCount = 1;
-		ok_to_remove = false;
-		trigger_on_stun = 0;
-		trigger_on_stun_chance = 100;
-		m_modphyscritdmgPCT = 0;
-		m_RootedCritChanceBonus = 0;
 
+	for (uint32 x = 0; x < 3; ++x)
+	{
+		m_resist_hit[x] = 0;
+		m_skipCastCheck[x] = 0;
+		m_castFilter[x] = 0;
+	}
 	for(int i = 0; i < 6; ++i)
+	{
 		m_runes[i] = baseRunes[i];
+	}
+
+	m_maxTalentPoints = 0;
+	m_talentActiveSpec = 0;
+	m_talentSpecsCount = 1;
 
 	ok_to_remove = false;
 	trigger_on_stun = 0;
@@ -1545,34 +1537,6 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 	UpdateRestState();
 	SendLogXPGain(guid,xp,restxp,guid == 0 ? true : false);
 
-	/*
-	uint32 curXP = GetUInt32Value(PLAYER_XP);
-	uint32 nextLvlXP = GetUInt32Value(PLAYER_NEXT_LEVEL_XP);
-	uint32 newXP = curXP + xp;
-	uint32 level = GetUInt32Value(UNIT_FIELD_LEVEL);
-	bool levelup = false;
-
-	if(m_Summon != NULL && m_Summon->GetUInt32Value(UNIT_CREATED_BY_SPELL) == 0)
-		m_Summon->GiveXP(xp);
-
-	uint32 TotalHealthGain = 0, TotalManaGain = 0;
-	uint32 cl=getClass();
-	// Check for level-up
-	while (newXP >= nextLvlXP)
-	{
-		levelup = true;
-		// Level-Up!
-		newXP -= nextLvlXP;  // reset XP to 0, but add extra from this xp add
-		level ++;	// increment the level
-		if( level > 9)
-		{
-			//Give Talent Point
-			uint32 curTalentPoints = GetUInt32Value(PLAYER_CHARACTER_POINTS1);
-			SetUInt32Value(PLAYER_CHARACTER_POINTS1,curTalentPoints+1);
-		}
-	}
-	*/
-
 	int32 newxp = m_uint32Values[PLAYER_XP] + xp;
 	int32 nextlevelxp = lvlinfo->XPToNextLevel;
 	uint32 level = m_uint32Values[UNIT_FIELD_LEVEL];
@@ -2049,7 +2013,7 @@ void Player::_LoadPetSpells(QueryResult * result)
 			spell = fields[2].GetUInt32();
 			AddSummonSpell(entry, spell);
 		}
-		while( result->NextRow() ); 
+		while( result->NextRow() );
 	}
 }
 
@@ -2503,6 +2467,9 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	// Spells
 	_SaveSpellsToDB(buf);
 
+	// Equipment Sets
+	_SaveEquipmentSets();
+
 	// Glyphs
 	_SaveGlyphsToDB(buf);
 
@@ -2855,6 +2822,9 @@ bool Player::LoadFromDB(uint32 guid)
 
 	//Spells
 	q->AddQuery("SELECT spellid FROM playerspells WHERE guid = %u", guid);
+
+	//Spells
+	q->AddQuery("SELECT * FROM equipmentsets WHERE guid = %u", guid);
 
 	// queue it!
 	m_uint32Values[OBJECT_FIELD_GUID] = guid;
@@ -3435,6 +3405,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	_LoadTalents(results[14].result);
 	_LoadGlyphs(results[15].result);
 	_LoadSpells(results[16].result);
+	_LoadEquipmentSets(results[17].result);
 	_LoadTutorials(results[1].result);
 	_LoadPlayerCooldowns(results[2].result);
 	_LoadQuestLogEntry(results[3].result);
@@ -6541,6 +6512,8 @@ void Player::SendInitialLogonPackets()
 	//Factions
 	smsg_InitialFactions();
 
+	// Sets
+	SendEquipmentSets();
 
 	/* Some minor documentation about the time field
 	MOVE THIS DOCUMENTATION TO THE WIKI
@@ -12674,6 +12647,148 @@ uint32 Player::GetTotalItemLevel()
 	return playertotalitemlevel;
 }
 
+void Player::_LoadEquipmentSets(QueryResult *result)
+{
+	if(!result)
+		return;
+
+	uint32 count = 0;
+	do
+	{
+		Field *fields = result->Fetch();
+
+		EquipmentSet eqSet;
+
+		eqSet.Guid		= fields[1].GetUInt64();
+		eqSet.Name		= fields[2].GetString();
+		eqSet.IconName	= fields[3].GetString();
+		eqSet.state		= EQUIPMENT_SET_UNCHANGED;
+
+		for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+			eqSet.Items[i].Init(fields[4+i].GetUInt64());
+
+		m_EquipmentSets[count] = eqSet;
+		++count;
+
+		if(count >= MAX_EQUIPMENT_SET_INDEX)	// client limit
+			break;
+
+	} while (result->NextRow());
+}
+
+void Player::SendEquipmentSets()
+{
+	uint32 count = 0;
+	WorldPacket data(SMSG_EQUIPMENT_SET_LIST, 4);
+	size_t count_pos = data.wpos();
+	data << uint32(count);
+	if(m_EquipmentSets.size()) // Why go through the trouble if we have nothing.
+	{
+		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+		{
+			if(itr->second.state == EQUIPMENT_SET_DELETED)
+				continue;
+
+			data << WoWGuid(itr->second.Guid);
+			data << count;
+			data << itr->second.Name;
+			data << itr->second.IconName;
+			for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+				data << itr->second.Items[i];
+
+			++count;
+		}
+		data.put<uint32>(count_pos, count);
+	}
+	GetSession()->SendPacket(&data);
+}
+
+void Player::SetEquipmentSet(uint32 index, EquipmentSet eqset)
+{
+	if(eqset.Guid != 0)
+	{
+		bool found = false;
+
+		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+		{
+			if((itr->second.Guid == eqset.Guid) && (itr->first == index))
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if(!found)	// something wrong...
+		{
+			sLog.outError("Player %s tried to save equipment set %u (index %u), but that equipment set not found!", GetName(), eqset.Guid, index);
+			return;
+		}
+	}
+
+	EquipmentSet& eqslot = m_EquipmentSets[index];
+
+	EquipmentSetUpdateState old_state = eqslot.state;
+
+	eqslot = eqset;
+
+	if(eqset.Guid == 0)
+	{
+		eqslot.Guid = objmgr.GenerateEquipmentSetGuid();
+
+		WorldPacket data(SMSG_EQUIPMENT_SET_SAVED, 4 + 1);
+		data << uint32(index);
+		data << WoWGuid(eqslot.Guid);
+		GetSession()->SendPacket(&data);
+	}
+
+	eqslot.state = (old_state == EQUIPMENT_SET_NEW ? EQUIPMENT_SET_NEW : EQUIPMENT_SET_CHANGED);
+	SendEquipmentSets();
+}
+
+void Player::DeleteEquipmentSet(uint64 setGuid)
+{
+	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+	{
+		if(itr->second.Guid == setGuid)
+		{
+			if(itr->second.state == EQUIPMENT_SET_NEW)
+				m_EquipmentSets.erase(itr);
+			else
+				itr->second.state = EQUIPMENT_SET_DELETED;
+			break;
+		}
+	}
+}
+
+void Player::_SaveEquipmentSets()
+{
+	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+	{
+		EquipmentSet& eqset = itr->second;
+		switch(eqset.state)
+		{
+			case EQUIPMENT_SET_UNCHANGED:
+				break; // nothing do
+			case EQUIPMENT_SET_CHANGED: // Todo: Use a text column and store them all in that.
+				CharacterDatabase.Execute("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
+					eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
+				eqset.state = EQUIPMENT_SET_UNCHANGED;
+				break;
+			case EQUIPMENT_SET_NEW:
+				CharacterDatabase.Execute("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
+					GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
+				eqset.state = EQUIPMENT_SET_UNCHANGED;
+				break;
+			case EQUIPMENT_SET_DELETED:
+				CharacterDatabase.Execute("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
+				m_EquipmentSets.erase(itr);
+				break;
+		}
+	}
+}
+
 bool Player::AllowDisenchantLoot()
 {
 	Group * pGroup = GetGroup();
@@ -12682,7 +12797,7 @@ bool Player::AllowDisenchantLoot()
 		if(pGroup->HasDisenchanters())
 			return true;
 	}
-	
+
 	BroadcastMessage(MSG_COLOR_RED"You need at least one enchanter in your group. You will just receive the item.");
 	return false;
- }
+}

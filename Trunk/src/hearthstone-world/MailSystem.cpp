@@ -22,7 +22,6 @@ initialiseSingleton(MailSystem);
 
 bool MailMessage::LoadFromDB(Field * fields)
 {
-//	Field * fields;
 	uint32 i;
 	char * str;
 	char * p;
@@ -222,15 +221,25 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 	else
 		data << msg->sender_guid;
 
-	data << msg->cod;			// cod
-	data << uint32(0);
-	data << msg->stationary;
-	data << msg->money;		// money
-	data << uint32(0x10);
-	data << float(float(msg->expire_time - (uint32)UNIXTIME) / 86400.0f);
-	data << uint32(0);
-	data << msg->subject;
-	data << msg->body;
+	data << uint32(0); // Cod
+//	data << msg->cod;
+	data << uint32(0); // uint32 random1
+//	data << uint32(0);
+	data << uint32(0); // Stationary
+//	data << msg->stationary;
+	data << uint32(0); // money
+//	data << msg->money; // money
+	data << uint32(0); // messagesize
+//	data << uint32(0x10);
+//	data << uint32(0); // expiredtime
+	data << uint32((msg->expire_time - uint32(UNIXTIME)) / 86400.0f);
+	data << uint32(0); // uint32 random2
+//	data << uint32(0);
+	data << uint8(0); // subject string
+//	data << msg->subject;
+//	data << uint8(0); // subjectbody string
+	std::string body = ("Long ass text dude lawl\n\n\n I be in your mailbox, eating your mailz and itemzzz.");
+	data << body; // subjectbody
 	pos = data.wpos();
 	data << uint8(0);		// item count
 
@@ -263,10 +272,10 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 			data << uint32( pItem->GetChargesLeft() );
 			data << pItem->GetUInt32Value( ITEM_FIELD_MAXDURABILITY );
 			data << pItem->GetUInt32Value( ITEM_FIELD_DURABILITY );
-			data << uint32( 0 );
-			data << uint32( 0 );
-			data << uint32( 0 );
-			data << uint32( 0 );
+			data << uint32(0);
+			data << uint32(0);
+			data << uint32(0);
+			data << uint32(0);
 			pItem->Destructor();
 		}
 		data.put< uint8 >( pos, i );

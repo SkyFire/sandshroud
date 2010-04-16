@@ -123,7 +123,7 @@ void CThreadPool::ExecuteTask(ThreadContext * ExecutionTarget)
 	_mutex.Release();
 }
 
-void CThreadPool::Startup(uint8 ThreadCount)
+void CThreadPool::Startup(uint8 ThreadCount /* = 8 */)
 {
 	for(int i = 0; i < ThreadCount; ++i)
 		StartThread(NULL);
@@ -148,12 +148,12 @@ void CThreadPool::IntegrityCheck(uint8 ThreadCount)
 	_mutex.Acquire();
 	int32 gobbled = _threadsEaten;
 
-    if(gobbled < 0)
+	if(gobbled < 0)
 	{
 		// this means we requested more threads than we had in the pool last time.
-        // spawn "gobbled" + THREAD_RESERVE extra threads.
+		// spawn "gobbled" + THREAD_RESERVE extra threads.
 		uint32 new_threads = abs(gobbled) + ThreadCount;
-		_threadsEaten=0;
+		_threadsEaten = 0;
 
 		for(uint32 i = 0; i < new_threads; ++i)
 			StartThread(NULL);
@@ -162,7 +162,7 @@ void CThreadPool::IntegrityCheck(uint8 ThreadCount)
 	}
 	else if(gobbled < ThreadCount)
 	{
-        // this means while we didn't run out of threads, we were getting damn low.
+		// this means while we didn't run out of threads, we were getting damn low.
 		// spawn enough threads to keep the reserve amount up.
 		uint32 new_threads = (THREAD_RESERVE - gobbled);
 		for(uint32 i = 0; i < new_threads; ++i)

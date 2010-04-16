@@ -918,6 +918,9 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_SET_TITLE].handler								= &WorldSession::HandleSetVisibleRankOpcode;
 	WorldPacketHandlers[CMSG_COMPLAIN].handler								= &WorldSession::HandleReportSpamOpcode;
 	WorldPacketHandlers[CMSG_WORLD_STATE_UI_TIMER_UPDATE].handler			= &WorldSession::HandleWorldStateUITimerUpdate;
+	WorldPacketHandlers[CMSG_EQUIPMENT_SET_SAVE].handler					= &WorldSession::HandleEquipmentSetSave;
+	WorldPacketHandlers[CMSG_EQUIPMENT_SET_DELETE].handler					= &WorldSession::HandleEquipmentSetDelete;
+	WorldPacketHandlers[CMSG_EQUIPMENT_SET_USE].handler						= &WorldSession::HandleEquipmentSetUse;
 
 	// Arenas
 	WorldPacketHandlers[CMSG_ARENA_TEAM_QUERY].handler						= &WorldSession::HandleArenaTeamQueryOpcode;
