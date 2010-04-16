@@ -983,15 +983,18 @@ void WorldSession::FullLogin(Player* plr)
 	if(info->m_Group)
 		info->m_Group->Update();
 
-	// Retroactive: Level achievement
-	_player->GetAchievementInterface()->HandleAchievementCriteriaLevelUp( _player->getLevel() );
-
-	// Send achievement data!
-	if( _player->GetAchievementInterface()->HasAchievements() )
+	if((_player->getLevel() >= 10) && !HasGMPermissions())
 	{
-		WorldPacket * data = _player->GetAchievementInterface()->BuildAchievementData();
-		_player->CopyAndSendDelayedPacket(data);
-		delete data;
+		// Retroactive: Level achievement
+		_player->GetAchievementInterface()->HandleAchievementCriteriaLevelUp( _player->getLevel() );
+
+		// Send achievement data!
+		if( _player->GetAchievementInterface()->HasAchievements() )
+		{
+			WorldPacket * data = _player->GetAchievementInterface()->BuildAchievementData();
+			_player->CopyAndSendDelayedPacket(data);
+			delete data;
+		}
 	}
 
 	if(enter_world && !_player->GetMapMgr())
