@@ -221,6 +221,11 @@ void AchievementInterface::EventAchievementEarned(AchievementData * pData)
 	pData->date = (uint32)time(NULL);
 	AchievementEntry * ae = dbcAchievement.LookupEntry(pData->id);
 	GiveRewardsForAchievement(ae);
+
+	if(ae->Previous_achievement != NULL)
+		if(!HasAchievement(ae->Previous_achievement))
+			EventAchievementEarned(GetAchievementDataByAchievementID(ae->Previous_achievement));
+
 	WorldPacket * data = BuildAchievementEarned(pData);
 
 	if( m_player->IsInWorld() )
@@ -357,11 +362,9 @@ bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 bool AchievementInterface::HandleBeforeChecks(AchievementData * ad)
 {
 	AchievementEntry * ach = dbcAchievement.LookupEntry(ad->id);
+	if(!ach) // Doh?
+		return false;
 
-	// Do we have the achievement that comes before?
-	if(ach->Previous_achievement)
-		if(!HasAchievement(ach->Previous_achievement))
-			return false;
 	// Difficulty checks
 	if(string(ach->description).find("25-player heroic mode") != string::npos)
 		if(m_player->iRaidType < MODE_25PLAYER_HEROIC)
