@@ -3070,7 +3070,7 @@ PetLevelupSpellSet const* ObjectMgr::GetPetLevelupSpellList(uint32 petFamily)	co
 
 QueryResult* ObjectMgr::SQLCheckExists(const char* tablename, const char* columnname, uint64 columnvalue)
 {
-	if(!tablename || !columnname || columnvalue == NULL)
+	if(!tablename || !columnname || !columnvalue)
 		return NULL;
 
 	QueryResult* result = WorldDatabase.Query("SELECT %s FROM %s WHERE %s = '%u' LIMIT 1", columnname, tablename, columnname, columnvalue);

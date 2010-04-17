@@ -954,7 +954,7 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 		{
 		case Z_OK:				  //0 no error decompression is OK
 			SetAccountData(uiID, data, false, uiDecompressedSize);
-			OUT_DEBUG("WORLD: Successfully decompressed account data %d for %s, and updated storage array.", uiID, GetPlayer() ? GetPlayer()->GetName() : GetAccountName());
+			OUT_DEBUG("WORLD: Successfully decompressed account data %d for %s, and updated storage array.", uiID, GetPlayer() ? GetPlayer()->GetName() : GetAccountName().c_str());
 			break;
 		
 		case Z_ERRNO:				//-1

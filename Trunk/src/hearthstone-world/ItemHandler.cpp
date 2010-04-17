@@ -2006,7 +2006,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 
 	for(uint32 i = 0; i < 3; ++i)
 	{
-		if(TargetItem->GetProto()->Sockets[i].SocketColor != NULL)
+		if(TargetItem->GetProto()->Sockets[i].SocketColor)
 		{
 			if(i <= TargetItem->GetSocketsCount())
 			{

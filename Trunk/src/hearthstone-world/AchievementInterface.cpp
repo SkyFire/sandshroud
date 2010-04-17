@@ -222,7 +222,7 @@ void AchievementInterface::EventAchievementEarned(AchievementData * pData)
 	AchievementEntry * ae = dbcAchievement.LookupEntry(pData->id);
 	GiveRewardsForAchievement(ae);
 
-	if(ae->Previous_achievement != NULL)
+	if(ae->Previous_achievement)
 		if(!HasAchievement(ae->Previous_achievement))
 			EventAchievementEarned(GetAchievementDataByAchievementID(ae->Previous_achievement));
 
