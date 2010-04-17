@@ -51,6 +51,11 @@
 #endif
 //#define CLUSTERING 1
 
+#ifndef ENABLE_IMPROVED_TICKETSYSTEM
+#define GM_TICKET_MY_MASTER_COMPATIBLE
+#endif
+//#undef GM_TICKET_MY_MASTER_COMPATIBLE
+
 /** Use memory mapping for map files for faster access (let OS take care of caching)
  * (currently only available under windows)
  * Only recommended under X64 builds, X86 builds will most likely run out of address space.

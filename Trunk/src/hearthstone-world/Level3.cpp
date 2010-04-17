@@ -54,7 +54,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 {
 	uint32 guid = (uint32)m_session->GetPlayer()->GetSelection();
 	Player* plr = getSelectedChar(m_session, true);
-	
+
 	if(!plr)
 	{
 		plr = m_session->GetPlayer();
@@ -147,30 +147,30 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 
 bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 {
-	if (!*args)
+	if( !*args )
 		return false;
 
-	Player* plr = getSelectedChar(m_session, true);
-	if(!plr)
+	Player* plr = getSelectedChar( m_session, true );
+	if( !plr )
 	{
 		plr = m_session->GetPlayer();
 		SystemMessage(m_session, "Auto-targeting self.");
 	}
-	if(!plr) return false;
+	if(	!plr )
+		return false;
 
-
-	if(stricmp(args, "all")==0)
+	if( stricmp( args, "all" ) == 0 )
 	{
 		sGMLog.writefromsession(m_session, "taught %s all spells.", plr->GetName());
 #include "ClassSpells.h"
 
 		uint32 c = plr->getClass();
-		for(uint32 i = 0; spellarray[c][i] != 0; ++i)
+		for( uint32 i = 0; spellarray[c][i] != 0; ++i )
 		{
 			plr->addSpell(spellarray[c][i]);
 		}
 
-		static uint32 paladinspellarray[RACE_DRAENEI+1][2] = {
+		static uint32 paladinspellarray[RACE_DRAENEI + 1][2] = {
 			{ 0 },		// RACE 0
 			{ 13819, 0 },		// HUMAN
 			{ 0 },		// ORC
@@ -267,7 +267,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 		return true;
 	}
 
-	if (plr->HasSpell(spell)) // check to see if char already knows
+	if( plr->HasSpell( spell ) ) // check to see if char already knows
 	{
 		std::string OutStr = plr->GetName();
 		OutStr += " already knows that spell.";
@@ -450,111 +450,6 @@ bool ChatHandler::HandleUnBanCharacterCommand(const char* args, WorldSession *m_
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketGetAllCommand(const char* args, WorldSession *m_session)
-{
-	Channel *chn = channelmgr.GetChannel(sWorld.getGmClientChannel().c_str(),m_session->GetPlayer());
-	if(!chn)
-		return false;
-
-	chn->Say(m_session->GetPlayer(), "GmTicket 2", m_session->GetPlayer(), true);
-	for(GmTicketList::iterator itr = objmgr.GM_TicketList.begin(); itr != objmgr.GM_TicketList.end(); ++itr)
-	{
-		uint32 cont = 0;
-		uint32 zone = 0;
-		Player* plr = objmgr.GetPlayer((uint32)(*itr)->guid);
-		/*if(plr!=NULL)
-		{
-			if(plr->IsInWorld())
-			{
-				zone = plr->GetZoneId();
-				cont = plr->GetMapId();
-			}
-		}*/
-		if( plr == NULL || !plr->IsInWorld() )
-			continue;
-
-		cont = plr->GetMapId();
-		zone = plr->GetZoneId();
-
-			std::stringstream str;
-			str << "GmTicket 0,";
-			str << (*itr)->name.c_str() << ","  << (*itr)->level << ","  << (*itr)->type << ",";
-			str << zone;
-
-			chn->Say(m_session->GetPlayer(),str.str().c_str(), m_session->GetPlayer(), true);
-	}
-
-	return true;
-}
-
-bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args, WorldSession *m_session)
-{
-	if(!*args)
-		return false;
-
-
-	GmTicketList::iterator i;
-	for(i = objmgr.GM_TicketList.begin(); i != objmgr.GM_TicketList.end(); ++i)
-	{
-		if(strcmp((*i)->name.c_str(), args) == 0)
-		{
-			Channel *chn = channelmgr.GetChannel(sWorld.getGmClientChannel().c_str(),m_session->GetPlayer());
-			if(!chn)
-				return false;
-
-			std::stringstream str;
-			str << "GmTicket 3,";
-			str << (*i)->name.c_str() << "," << (*i)->message;
-			chn->Say(m_session->GetPlayer(),str.str().c_str(), m_session->GetPlayer(), true);
-		}
-	}
-	return true;
-}
-
-bool ChatHandler::HandleGMTicketDelByIdCommand(const char* args, WorldSession *m_session)
-{
-	if(!*args)
-		return false;
-
-	GmTicketList::iterator i;
-	int64 guid = -1;
-	for(i = objmgr.GM_TicketList.begin(); i != objmgr.GM_TicketList.end(); ++i)
-	{
-		if(strcmp((*i)->name.c_str(), args) == 0)
-		{
-			guid = (int64)(*i)->guid;
-			break;
-		}
-	}
-	if(guid != -1)
-	{
-		objmgr.remGMTicket(guid);
-
-		std::stringstream str;
-		str << "GmTicket 1," << args;
-
-		Channel *chn = channelmgr.GetChannel(sWorld.getGmClientChannel().c_str(),m_session->GetPlayer());
-		if(!chn)
-			return false;
-
-		chn->Say(m_session->GetPlayer(), str.str().c_str(), NULLPLR, true);
-
-
-		Player* plr = objmgr.GetPlayer((uint32)guid);
-		if(!plr)
-			return true;
-		if(!plr->IsInWorld())
-			return true;
-
-		WorldPacket data(SMSG_GMTICKET_DELETETICKET, 4);
-		data << uint32(9);
-
-		plr->GetSession()->SendPacket( &data );
-	}
-
-	return true;
-}
-
 bool ChatHandler::HandleAddSkillCommand(const char* args, WorldSession *m_session)
 {
 	char buf[256];
@@ -657,19 +552,19 @@ bool ChatHandler::HandleIncreaseWeaponSkill(const char *args, WorldSession *m_se
 			break;
 		case 1:	// 2 handed axes
 			SubClassSkill = SKILL_2H_AXES;
-			break;		
+			break;
 		case 2:	// bows
 			SubClassSkill = SKILL_BOWS;
 			break;
 		case 3:	// guns
 			SubClassSkill = SKILL_GUNS;
-			break;		
+			break;
 		case 4:	// 1 handed mace
 			SubClassSkill = SKILL_MACES;
 			break;
 		case 5:	// 2 handed mace
 			SubClassSkill = SKILL_2H_MACES;
-			break;		
+			break;
 		case 6:	// polearms
 			SubClassSkill = SKILL_POLEARMS;
 			break;
@@ -713,7 +608,7 @@ bool ChatHandler::HandleIncreaseWeaponSkill(const char *args, WorldSession *m_se
 			SubClassSkill = SKILL_FISHING;
 			break;
 		}
-	} 
+	}
 	else
 	{
 		SubClassSkill = 162;
@@ -733,13 +628,13 @@ bool ChatHandler::HandleIncreaseWeaponSkill(const char *args, WorldSession *m_se
 	if(!pr->_HasSkillLine(skill))
 	{
 		SystemMessage(m_session, "Does not have skill line, adding.");
-		pr->_AddSkillLine(skill, 1, 300);   
-	} 
-	else 
+		pr->_AddSkillLine(skill, 1, 300);
+	}
+	else
 	{
 		pr->_AdvanceSkillLine(skill,cnt);
-	}	   
-	return true;	
+	}
+	return true;
 }
 
 
@@ -750,7 +645,7 @@ bool ChatHandler::HandleResetTalentsCommand(const char* args, WorldSession *m_se
 
 	plr->Reset_Talents();
 
-	SystemMessage(m_session, "Reset talents of %s.", plr->GetName());;
+	SystemMessage(m_session, "Reset talents of %s.", plr->GetName());
 	BlueSystemMessageToPlr(plr, "%s reset all your talents.", m_session->GetPlayer()->GetName());
 	sGMLog.writefromsession(m_session, "reset talents of %s", plr->GetName());
 	return true;
@@ -762,8 +657,8 @@ bool ChatHandler::HandleResetSpellsCommand(const char* args, WorldSession *m_ses
 	if(!plr) return true;
 
 	plr->Reset_Spells();
-	
-	SystemMessage(m_session, "Reset spells of %s to level 1.", plr->GetName());;
+
+	SystemMessage(m_session, "Reset spells of %s to level 1.", plr->GetName());
 	BlueSystemMessage(m_session, "%s reset all your spells to starting values.", m_session->GetPlayer()->GetName());
 	sGMLog.writefromsession(m_session, "reset spells of %s", plr->GetName());
 	return true;
@@ -791,23 +686,18 @@ bool ChatHandler::HandleAccountUnbanCommand(const char * args, WorldSession * m_
 {
 	if(!*args) return false;
 	char * pAccount = (char*)args;
-	
+
 	sLogonCommHandler.Account_SetBanned( pAccount, 0, "" );
 	GreenSystemMessage(m_session, "Account '%s' has been unbanned. This change will be effective immediately.", pAccount);
-	
+
 	sGMLog.writefromsession(m_session, "unbanned account %s", pAccount);
 	return true;
 }
 
 bool ChatHandler::HandleAccountBannedCommand(const char * args, WorldSession * m_session)
 {
-    if(!*args) return false;
-
-	/*char account[100];
-	uint32 banned;
-	int argc = sscanf(args, "%s %u", account, (unsigned int*)&banned);
-	if(argc != 2)
-		return false;*/
+	if(!*args)
+		return false;
 
 	char * pAccount = (char*)args;
 	char * pDuration = strchr(pAccount, ' ');
@@ -836,7 +726,7 @@ bool ChatHandler::HandleAccountBannedCommand(const char * args, WorldSession * m
 	sLogonCommHandler.LogonDatabaseReloadAccounts();*/
 	sLogonCommHandler.Account_SetBanned(pAccount, banned, pReason);
 
-	GreenSystemMessage(m_session, "Account '%s' has been banned %s%s. The change will be effective immediately.", pAccount, 
+	GreenSystemMessage(m_session, "Account '%s' has been banned %s%s. The change will be effective immediately.", pAccount,
 		timeperiod ? "until " : "forever", timeperiod ? ConvertTimeStampToDataTime(timeperiod+(uint32)UNIXTIME).c_str() : "");
 
 	sWorld.DisconnectUsersWithAccount(pAccount, m_session);
@@ -905,7 +795,7 @@ bool ChatHandler::HandleGetTransporterTime(const char* args, WorldSession* m_ses
 	data << uint32(0x00000102);
 	data << crt->GetNewGUID();
 	data << m_session->GetPlayer()->GetNewGUID();
-	
+
 	data << uint32(6);
 	data << uint8(1);
 	data << uint32(1);
@@ -1097,7 +987,8 @@ bool ChatHandler::HandleCooldownCheatCommand(const char* args, WorldSession* m_s
 bool ChatHandler::HandleGodModeCommand(const char* args, WorldSession* m_session)
 {
 	Player* plyr = getSelectedChar(m_session, true);
-	if(!plyr) return true;
+	if(!plyr)
+		return true;
 
 	bool val = plyr->GodModeCheat;
 	BlueSystemMessage(m_session, "%s godmode cheat on %s.", val ? "Deactivating" : "Activating", plyr->GetName());
@@ -1111,7 +1002,8 @@ bool ChatHandler::HandleGodModeCommand(const char* args, WorldSession* m_session
 bool ChatHandler::HandlePowerCheatCommand(const char* args, WorldSession* m_session)
 {
 	Player* plyr = getSelectedChar(m_session, true);
-	if(!plyr) return true;
+	if(!plyr)
+		return true;
 
 	bool val = plyr->PowerCheat;
 	BlueSystemMessage(m_session, "%s power cheat on %s.", val ? "Deactivating" : "Activating", plyr->GetName());
@@ -1133,7 +1025,7 @@ bool ChatHandler::HandleShowCheatsCommand(const char* args, WorldSession* m_sess
 		if(CheatVariable) \
 		active++; \
 		else \
-		inactive++; 
+		inactive++;
 
 	GreenSystemMessage(m_session, "Showing cheat status for: %s", plyr->GetName());
 	print_cheat_status("Cooldown", plyr->CooldownCheat);
@@ -1628,7 +1520,7 @@ bool ChatHandler::HandleRenamePetCommand(const char* args, WorldSession* m_sessi
 bool ChatHandler::HandleShutdownCommand(const char* args, WorldSession* m_session)
 {
 	uint32 shutdowntime = atol(args);
-	if(!args)
+	if( !args )
 		shutdowntime = 5;
 	
 	sGMLog.writefromsession(m_session, "initiated server shutdown timer %u sec", shutdowntime);
@@ -1807,7 +1699,7 @@ bool ChatHandler::HandleNpcReturnCommand(const char* args, WorldSession* m_sessi
 	float y = creature->m_spawn->y;
 	float z = creature->m_spawn->z;
 	float o = creature->m_spawn->o;
-	
+
 	// restart movement
 	creature->GetAIInterface()->SetAIState(STATE_IDLE);
 	creature->GetAIInterface()->WipeHateList();
@@ -1876,7 +1768,7 @@ bool ChatHandler::HandleFormationLink2Command(const char* args, WorldSession * m
 	slave->GetAIInterface()->m_formationLinkTarget = TO_CREATURE( m_session->GetPlayer()->linkTarget );
 	slave->GetAIInterface()->m_formationLinkSqlId = slave->GetAIInterface()->m_formationLinkTarget->GetSQL_id();
 	slave->GetAIInterface()->SetUnitToFollowAngle(ang);
-	
+
 	// add to db
 	WorldDatabase.Execute("INSERT INTO creature_formations VALUES(%u, %u, '%f', '%f')", 
 		slave->GetSQL_id(), slave->GetAIInterface()->m_formationLinkSqlId, ang, dist);
@@ -1925,7 +1817,8 @@ bool ChatHandler::HandleNullFollowCommand(const char* args, WorldSession * m_ses
 bool ChatHandler::HandleStackCheatCommand(const char* args, WorldSession * m_session)
 {
 	Player* plyr = getSelectedChar(m_session, true);
-	if(!plyr) return true;
+	if(!plyr)
+		return true;
 
 	bool val = plyr->stack_cheat;
 	BlueSystemMessage(m_session, "%s aura stack cheat on %s.", val ? "Deactivating" : "Activating", plyr->GetName());
@@ -1939,7 +1832,7 @@ bool ChatHandler::HandleStackCheatCommand(const char* args, WorldSession * m_ses
 bool ChatHandler::HandleTriggerpassCheatCommand(const char* args, WorldSession * m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
-	if (!plr)
+	if(!plr)
 		return true;
 
 	bool val = plr->triggerpass_cheat;
@@ -1967,7 +1860,7 @@ bool ChatHandler::HandleResetSkillsCommand(const char* args, WorldSession * m_se
 	{
 		se = dbcSkillLine.LookupEntry(ss->skillid);
 		if(se->type != SKILL_TYPE_LANGUAGE && ss->skillid && ss->currentval && ss->maxval)
-			plr->_AddSkillLine(ss->skillid, ss->currentval, ss->maxval);		
+			plr->_AddSkillLine(ss->skillid, ss->currentval, ss->maxval);
 	}
 	//Chances depend on stats must be in this order!
 	plr->UpdateStats();
@@ -1987,7 +1880,7 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 		plr = objmgr.GetPlayer(args, false);
 		if(!plr)
 		{
-			RedSystemMessage(m_session, "Unable to locate player %s.", args);		
+			RedSystemMessage(m_session, "Unable to locate player %s.", args);
 			return true;
 		}
 	}
@@ -2019,9 +1912,9 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	char playedTotal[64];
 
 	int seconds = (plr->GetPlayedtime())[0];
-	int mins=0;
-	int hours=0;
-	int days=0;
+	int mins= 0;
+	int hours= 0;
+	int days= 0;
 	if(seconds >= 60)
 	{
 		mins = seconds / 60;
@@ -2047,9 +1940,9 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	snprintf(playedLevel, 64, "[%d days, %d hours, %d minutes, %d seconds]", days, hours, mins, seconds);
 
 	seconds = (plr->GetPlayedtime())[1];
-	mins=0;
-	hours=0;
-	days=0;
+	mins= 0;
+	hours= 0;
+	days= 0;
 	if(seconds >= 60)
 	{
 		mins = seconds / 60;
@@ -2086,7 +1979,7 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	const char *client;
 	if(sess->HasFlag(ACCOUNT_FLAG_XPACK_02))
 		client = "Wrath of the Lich King";
-	else if (sess->HasFlag(ACCOUNT_FLAG_XPACK_01))
+	else if(sess->HasFlag(ACCOUNT_FLAG_XPACK_01))
 		client = "The Burning Crusade";
 	else
 		client = "World of Warcraft";
@@ -2296,6 +2189,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	return true;
 }
+
 bool ChatHandler::HandleCreatureRespawnCommand(const char *args, WorldSession *m_session)
 {
 	Creature * cCorpse = getSelectedCreature( m_session, false );
@@ -2326,7 +2220,8 @@ bool ChatHandler::HandleRemoveItemCommand(const char * args, WorldSession * m_se
 
 	ocount = count;
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr) return true;
+	if(!plr)
+		return true;
 
 	// loop until they're all gone.
 	int32 loop_count = 0;
@@ -2417,14 +2312,15 @@ bool ChatHandler::HandleGetStandingCommand(const char * args, WorldSession * m_s
 {
 	uint32 faction = atoi(args);
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr) return true;
+	if(!plr)
+		return true;
 
 	int32 standing = plr->GetStanding(faction);
 	int32 bstanding = plr->GetBaseStanding(faction);
 
 	GreenSystemMessage(m_session, "Reputation for faction %u:", faction);
-	SystemMessage(m_session,	  "   Base Standing: %d", bstanding);
-	BlueSystemMessage(m_session,  "   Standing: %d", standing);
+	SystemMessage(m_session, "Base Standing: %d", bstanding);
+	BlueSystemMessage(m_session, "Standing: %d", standing);
 	return true;
 }
 
@@ -2435,7 +2331,8 @@ bool ChatHandler::HandleSetStandingCommand(const char * args, WorldSession * m_s
 	if(sscanf(args, "%u %d", (unsigned int*)&faction, (unsigned int*)&standing) != 2)
 		return false;
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr) return true;;
+	if(!plr)
+		return true;
 
 	BlueSystemMessage(m_session, "Setting standing of %u to %d on %s.", faction, standing, plr->GetName());
 	plr->SetStanding(faction, standing);
@@ -2790,9 +2687,9 @@ bool ChatHandler::HandleNpcPossessCommand(const char * args, WorldSession * m_se
 bool ChatHandler::HandleNpcUnPossessCommand(const char * args, WorldSession * m_session)
 {
 	Creature* creature = getSelectedCreature(m_session);
- 	m_session->GetPlayer()->UnPossess();
+	m_session->GetPlayer()->UnPossess();
 
-	if(creature!=NULL)
+	if( creature != NULL )
 	{
 			// restart movement
 			creature->GetAIInterface()->SetAIState(STATE_IDLE);
@@ -2838,7 +2735,7 @@ bool ChatHandler::HandleAIAgentDebugBegin(const char * args, WorldSession * m_se
 	QueryResult * result = WorldDatabase.Query("SELECT DISTINCT spell FROM ai_agents");
 	if(!result) return false;
 
-	do 
+	do
 	{
 		SpellEntry * se = dbcSpell.LookupEntryForced(result->Fetch()[0].GetUInt32());
 		if(se)
@@ -2916,7 +2813,7 @@ bool ChatHandler::HandleAIAgentDebugContinue(const char * args, WorldSession * m
 		BlueSystemMessage(m_session, "Casting %u, "MSG_COLOR_SUBWHITE"%u remaining.", sp->Id, aiagent_spells.size());
 
 		map<uint32, spell_thingo>::iterator it = aiagent_extra.find(sp->Id);
-		ASSERT(it != aiagent_extra.end());
+		ASSERT( it != aiagent_extra.end() );
 
 		SpellCastTargets targets;
 		if(it->second.type == STYPE_BUFF)
@@ -2972,7 +2869,7 @@ bool ChatHandler::HandleRenameGuildCommand(const char* args, WorldSession *m_ses
 	return true;	
 }
 
-//People seem to get stuck in guilds from time to time. This should be helpfull. -DGM
+//People seem to get stuck in guilds from time to time. This should be helpful. -DGM
 bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
@@ -3022,7 +2919,7 @@ bool ChatHandler::HandleCreateArenaTeamCommands(const char * args, WorldSession 
 	switch(arena_team_type)
 	{
 	case 2:
-		real_type=0;
+		real_type= 0;
 		break;
 	case 3:
 		real_type=1;
@@ -3208,7 +3105,7 @@ bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_s
 
 bool ChatHandler::HandleFixScaleCommand(const char * args, WorldSession * m_session)
 {
-	Creature* pCreature = getSelectedCreature(m_session, true);
+	Creature * pCreature = getSelectedCreature(m_session, true);
 	if( pCreature == NULL )
 		return true;
 
@@ -3234,7 +3131,7 @@ bool ChatHandler::HandleFixScaleCommand(const char * args, WorldSession * m_sess
 
 bool ChatHandler::HandleAddTrainerSpellCommand( const char * args, WorldSession * m_session )
 {
-	Creature* pCreature = getSelectedCreature(m_session, true);
+	Creature * pCreature = getSelectedCreature(m_session, true);
 	if( pCreature == NULL )
 		return true;
 
@@ -3250,7 +3147,7 @@ bool ChatHandler::HandleAddTrainerSpellCommand( const char * args, WorldSession 
 	}
 
 	SpellEntry* pSpell = dbcSpell.LookupEntryForced(spellid);
-	if(pSpell==NULL)
+	if(pSpell== NULL)
 	{
 		RedSystemMessage(m_session, "Invalid spell.");
 		return true;
@@ -3274,7 +3171,7 @@ bool ChatHandler::HandleAddTrainerSpellCommand( const char * args, WorldSession 
 
 	pTrainer->Spells.push_back(sp);
 	pTrainer->SpellCount++;
-	
+
 	SystemMessage(m_session, "Added spell %u (%s) to trainer.", pSpell->Id, pSpell->Name);
 	sGMLog.writefromsession(m_session, "added spell %u to trainer %u", spellid, pCreature->GetEntry());
 	WorldDatabase.Execute("INSERT INTO trainer_spells VALUES(%u, %u, %u, %u, %u, %u, %u, %u, %u, %u)", 

@@ -383,6 +383,7 @@ protected:
 	void HandleGMTicketGetTicketOpcode(WorldPacket& recvPacket);
 	void HandleGMTicketSystemStatusOpcode(WorldPacket& recvPacket);
 	void HandleGMTicketToggleSystemStatusOpcode(WorldPacket& recvPacket);
+	void HandleGMTicketSurveySubmitOpcode(WorldPacket& recvPacket);
 
 	/// Opcodes implemented in QueryHandler.cpp:
 	void HandleNameQueryOpcode(WorldPacket& recvPacket);

@@ -1,5 +1,5 @@
 /*
-SQLyog Ultimate v8.32 
+SQLyog Ultimate - MySQL GUI v8.4 Beta3
 MySQL - 5.0.51a-24+lenny3-log : Database - SADB_char
 *********************************************************************
 */
@@ -123,18 +123,18 @@ CREATE TABLE `characters` (
   `race` tinyint(3) unsigned NOT NULL,
   `class` tinyint(3) unsigned NOT NULL,
   `gender` tinyint(3) unsigned NOT NULL,
-  `customizable` int(3) NOT NULL DEFAULT '0',
+  `customizable` int(3) NOT NULL default '0',
   `custom_faction` int(10) unsigned NOT NULL default '0',
   `level` tinyint(3) unsigned NOT NULL,
-  `xp_off` int(3) NOT NULL DEFAULT '0',
+  `xp_off` int(3) NOT NULL default '0',
   `xp` int(10) unsigned NOT NULL,
   `exploration_data` longtext NOT NULL,
   `skills` longtext NOT NULL,
   `watched_faction_index` bigint(30) NOT NULL default '0',
   `selected_pvp_title` int(10) unsigned NOT NULL default '0',
   `available_pvp_titles1` bigint(30) unsigned NOT NULL default '0',
-  `available_pvp_titles2` bigint(30) unsigned NOT NULL default '0',
-  `available_pvp_titles3` bigint(30) unsigned NOT NULL default '0',
+  `available_pvp_titles2` bigint(30) unsigned NOT NULL,
+  `available_pvp_titles3` bigint(30) NOT NULL default '0',
   `gold` int(10) unsigned NOT NULL default '0',
   `ammo_id` int(10) unsigned NOT NULL default '0',
   `available_prof_points` tinyint(3) unsigned NOT NULL default '0',
@@ -205,7 +205,7 @@ CREATE TABLE `characters` (
   `specs_count` tinyint(3) unsigned NOT NULL default '1',
   `need_talent_reset` int(3) NOT NULL default '0',
   PRIMARY KEY  (`guid`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=65550 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `characters_insert_queue` */
 
@@ -363,6 +363,38 @@ CREATE TABLE `corpses` (
   KEY `c` (`instanceId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+/*Table structure for table `equipmentsets` */
+
+DROP TABLE IF EXISTS `equipmentsets`;
+
+CREATE TABLE `equipmentsets` (
+  `guid` int(11) NOT NULL default '0',
+  `setguid` bigint(20) NOT NULL auto_increment,
+  `name` varchar(100) NOT NULL,
+  `iconname` varchar(100) NOT NULL,
+  `item0` int(11) NOT NULL default '0',
+  `item1` int(11) NOT NULL default '0',
+  `item2` int(11) NOT NULL default '0',
+  `item3` int(11) NOT NULL default '0',
+  `item4` int(11) NOT NULL default '0',
+  `item5` int(11) NOT NULL default '0',
+  `item6` int(11) NOT NULL default '0',
+  `item7` int(11) NOT NULL default '0',
+  `item8` int(11) NOT NULL default '0',
+  `item9` int(11) NOT NULL default '0',
+  `item10` int(11) NOT NULL default '0',
+  `item11` int(11) NOT NULL default '0',
+  `item12` int(11) NOT NULL default '0',
+  `item13` int(11) NOT NULL default '0',
+  `item14` int(11) NOT NULL default '0',
+  `item15` int(11) NOT NULL default '0',
+  `item16` int(11) NOT NULL default '0',
+  `item17` int(11) NOT NULL default '0',
+  `item18` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`setguid`),
+  UNIQUE KEY `idx_set` (`guid`,`setguid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*Table structure for table `events_settings` */
 
 DROP TABLE IF EXISTS `events_settings`;
@@ -373,54 +405,53 @@ CREATE TABLE `events_settings` (
   PRIMARY KEY  (`eventid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `equipmentsets` */
+/*Table structure for table `gm_surveys` */
 
-DROP TABLE IF EXISTS `equipmentsets`;
+DROP TABLE IF EXISTS `gm_surveys`;
 
-CREATE TABLE `equipmentsets` (
-  `guid` int(11) NOT NULL DEFAULT '0',
-  `setguid` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `iconname` varchar(100) NOT NULL,
-  `item0` int(11) NOT NULL DEFAULT '0',
-  `item1` int(11) NOT NULL DEFAULT '0',
-  `item2` int(11) NOT NULL DEFAULT '0',
-  `item3` int(11) NOT NULL DEFAULT '0',
-  `item4` int(11) NOT NULL DEFAULT '0',
-  `item5` int(11) NOT NULL DEFAULT '0',
-  `item6` int(11) NOT NULL DEFAULT '0',
-  `item7` int(11) NOT NULL DEFAULT '0',
-  `item8` int(11) NOT NULL DEFAULT '0',
-  `item9` int(11) NOT NULL DEFAULT '0',
-  `item10` int(11) NOT NULL DEFAULT '0',
-  `item11` int(11) NOT NULL DEFAULT '0',
-  `item12` int(11) NOT NULL DEFAULT '0',
-  `item13` int(11) NOT NULL DEFAULT '0',
-  `item14` int(11) NOT NULL DEFAULT '0',
-  `item15` int(11) NOT NULL DEFAULT '0',
-  `item16` int(11) NOT NULL DEFAULT '0',
-  `item17` int(11) NOT NULL DEFAULT '0',
-  `item18` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`setguid`),
-  UNIQUE KEY `idx_set` (`guid`,`setguid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE `gm_surveys` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `playerguid` int(11) unsigned NOT NULL,
+  `question1` int(11) unsigned NOT NULL default '0',
+  `answer1` int(11) unsigned NOT NULL default '0',
+  `question2` int(11) unsigned NOT NULL default '0',
+  `answer2` int(11) unsigned NOT NULL default '0',
+  `question3` int(11) unsigned NOT NULL default '0',
+  `answer3` int(11) unsigned NOT NULL default '0',
+  `question4` int(11) unsigned NOT NULL default '0',
+  `answer4` int(11) unsigned NOT NULL default '0',
+  `question5` int(11) unsigned NOT NULL default '0',
+  `answer5` int(11) unsigned NOT NULL default '0',
+  `question6` int(11) unsigned NOT NULL default '0',
+  `answer6` int(11) unsigned NOT NULL default '0',
+  `question7` int(11) unsigned NOT NULL default '0',
+  `answer7` int(11) unsigned NOT NULL default '0',
+  `comment` text collate utf8_unicode_ci NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Table structure for table `gm_tickets` */
 
 DROP TABLE IF EXISTS `gm_tickets`;
 
 CREATE TABLE `gm_tickets` (
-  `guid` int(6) NOT NULL default '0',
-  `name` varchar(32) collate utf8_unicode_ci NOT NULL default '',
-  `level` int(6) NOT NULL default '0',
-  `type` int(2) NOT NULL default '0',
+  `guid` int(11) unsigned NOT NULL,
+  `playerGuid` int(11) unsigned NOT NULL,
+  `name` varchar(32) NOT NULL default '',
+  `level` int(6) unsigned NOT NULL default '0',
+  `map` int(11) NOT NULL,
   `posX` float NOT NULL default '0',
   `posY` float NOT NULL default '0',
   `posZ` float NOT NULL default '0',
-  `message` text collate utf8_unicode_ci NOT NULL,
-  `timestamp` text collate utf8_unicode_ci,
-  PRIMARY KEY  (`guid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `message` text NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `deleted` int(1) unsigned NOT NULL default '0',
+  `assignedto` int(11) NOT NULL default '0',
+  `comment` text NOT NULL,
+  PRIMARY KEY  (`guid`),
+  UNIQUE KEY `guid` (`guid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /*Table structure for table `groups` */
 
@@ -662,7 +693,7 @@ CREATE TABLE `mailbox` (
   `returned_flag` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`message_id`),
   KEY `b` (`player_guid`)
-) ENGINE=MyISAM AUTO_INCREMENT=67 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=73 DEFAULT CHARSET=latin1;
 
 /*Table structure for table `mailbox_insert_queue` */
 
@@ -902,7 +933,7 @@ CREATE TABLE `playertalents` (
   `rank` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY  (`guid`,`spec`,`tid`,`rank`),
   UNIQUE KEY `Unique` (`guid`,`tid`,`spec`,`rank`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
 
 /*Table structure for table `prestartqueries` */
 

@@ -30,7 +30,8 @@ ObjectMgr::ObjectMgr()
 	m_hiPlayerGuid = 0;
 	m_hiCorpseGuid = 0;
 	m_hiArenaTeamId = 0;
-	m_hiGuildId=0;
+	m_hiGuildId = 0;
+	m_ticketid = 0;
 	m_equipmentSetGuid = 0;
 }
 
@@ -58,7 +59,13 @@ ObjectMgr::~ObjectMgr()
 	}
 
 	Log.Notice("ObjectMgr", "Deleting Vendors...");
-	for( VendorMap::iterator i = mVendors.begin( ); i != mVendors.end( ); ++ i ) 
+	for( VendorMap::iterator i = mVendors.begin( ); i != mVendors.end( ); ++ i )
+	{
+		delete i->second;
+	}
+
+	Log.Notice("ObjectMgr", "Deleting Spell Override...");
+	for(OverrideIdMap::iterator i = mOverrideIdMap.begin(); i != mOverrideIdMap.end(); ++i)
 	{
 		delete i->second;
 	}
@@ -163,7 +170,7 @@ ObjectMgr::~ObjectMgr()
 	Log.Notice("ObjectMgr", "Deleting Player Information...");
 	for(HM_NAMESPACE::hash_map<uint32, PlayerInfo*>::iterator itr = m_playersinfo.begin(); itr != m_playersinfo.end(); ++itr)
 	{
-		itr->second->m_Group=NULL;
+		itr->second->m_Group = NULL;
 		free(itr->second->name);
 		delete itr->second;
 	}
@@ -172,7 +179,7 @@ ObjectMgr::~ObjectMgr()
 	for(GmTicketList::iterator itr = GM_TicketList.begin(); itr != GM_TicketList.end(); ++itr)
 		delete (*itr);
 
-	Log.Notice("ObjectMgr", "Deleting Arena Teams..."); 
+	Log.Notice("ObjectMgr", "Deleting Arena Teams...");
 	for(HM_NAMESPACE::hash_map<uint32, ArenaTeam*>::iterator itr = m_arenaTeams.begin(); itr != m_arenaTeams.end(); ++itr) 
 		delete itr->second;
 		
@@ -240,7 +247,7 @@ void ObjectMgr::LoadAchievements()
 Group * ObjectMgr::GetGroupByLeader(Player* pPlayer)
 {
 	GroupMap::iterator itr;
-	Group * ret=NULL;
+	Group * ret= NULL;
 	m_groupLock.AcquireReadLock();
 	for(itr = m_groups.begin(); itr != m_groups.end(); ++itr)
 	{
@@ -258,7 +265,7 @@ Group * ObjectMgr::GetGroupByLeader(Player* pPlayer)
 Group * ObjectMgr::GetGroupById(uint32 id)
 {
 	GroupMap::iterator itr;
-	Group * ret=NULL;
+	Group * ret= NULL;
 	m_groupLock.AcquireReadLock();
 	itr = m_groups.find(id);
 	if(itr!=m_groups.end())
@@ -283,7 +290,7 @@ void ObjectMgr::DeletePlayerInfo( uint32 guid )
 		playernamelock.ReleaseWriteLock();
 		return;
 	}
-	
+
 	pl=i->second;
 	if(pl->m_Group)
 	{
@@ -405,7 +412,7 @@ void ObjectMgr::LoadPlayersInfo()
 
 			if(pn->race==RACE_HUMAN||pn->race==RACE_DWARF||pn->race==RACE_GNOME||pn->race==RACE_NIGHTELF||pn->race==RACE_DRAENEI)
 				pn->team = 0;
-			else 
+			else
 				pn->team = 1;
 
 			if( GetPlayerInfoByName(pn->name) != NULL )
@@ -414,7 +421,7 @@ void ObjectMgr::LoadPlayersInfo()
 				char temp[300];
 				snprintf(temp, 300, "%s__%X__", pn->name, pn->guid);
 				Log.Notice("ObjectMgr", "Renaming duplicate player %s to %s. (%u)", pn->name,temp,pn->guid);
-				CharacterDatabase.WaitExecute("UPDATE characters SET name = \"%s\", forced_rename_pending = 1 WHERE guid = %u",
+				CharacterDatabase.WaitExecute("UPDATE characters SET name = '%s', forced_rename_pending = 1 WHERE guid = %u",
 					CharacterDatabase.EscapeString(string(temp)).c_str(), pn->guid);
 
 				free(pn->name);
@@ -509,7 +516,7 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 		if(sk_sql)
 		{
-			do 
+			do
 			{
 				Field *fields = sk_sql->Fetch();
 				CreateInfo_SkillStruct tsk;
@@ -524,7 +531,7 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 		if(sp_sql)
 		{
-			do 
+			do
 			{
 				pPlayerCreateInfo->spell_list.insert(sp_sql->Fetch()[1].GetUInt32());
 			} while(sp_sql->NextRow());
@@ -533,10 +540,10 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 		QueryResult *items_sql = WorldDatabase.Query(
 			"SELECT * FROM playercreateinfo_items WHERE indexid=%u",pPlayerCreateInfo->index);
-		
+
 		if(items_sql)
 		{
-			do 
+			do
 			{
 				Field *fields = items_sql->Fetch();
 				CreateInfo_ItemStruct itm;
@@ -553,7 +560,7 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 		if(bars_sql)
 		{
-			do 
+			do
 			{
 				Field *fields = bars_sql->Fetch();
 				CreateInfo_ActionBarStruct bar;
@@ -583,7 +590,7 @@ void ObjectMgr::LoadGuilds()
 	{
 		uint32 period = (result->GetRowCount() / 20) + 1;
 		uint32 c = 0;
-		do 
+		do
 		{
 			Guild * pGuild = Guild::Create();
 			if(!pGuild->LoadFromDB(result->Fetch()))
@@ -671,62 +678,68 @@ void ObjectMgr::DelinkPlayerCorpses(Player* pOwner)
 
 void ObjectMgr::LoadGMTickets()
 {
-	QueryResult *result = CharacterDatabase.Query( "SELECT * FROM gm_tickets" );
+	QueryResult *result = CharacterDatabase.Query( "SELECT guid, playerGuid, name, level, map, posX, posY, posZ, message, timestamp, deleted, assignedto, comment FROM gm_tickets WHERE deleted = 0" );
 
 	GM_Ticket *ticket;
-	if(result == 0)
+	if(result == NULL)
 		return;
 
 	do
 	{
 		Field *fields = result->Fetch();
-		ticket = new GM_Ticket;
-		ticket->guid = fields[0].GetUInt32();
-		ticket->name = fields[1].GetString();
-		ticket->level = fields[2].GetUInt32();
-		ticket->type = fields[3].GetUInt32();
-		ticket->posX = fields[4].GetFloat();
-		ticket->posY = fields[5].GetFloat();
-		ticket->posZ = fields[6].GetFloat();
-		ticket->message = fields[7].GetString();
-		ticket->timestamp = fields[8].GetUInt32();
 
-		AddGMTicket(ticket,true);
+		ticket = new GM_Ticket;
+		ticket->guid = fields[0].GetUInt64();
+		ticket->playerGuid = fields[1].GetUInt64();
+		ticket->name = fields[2].GetString();
+		ticket->level = fields[3].GetUInt32();
+		ticket->map = fields[4].GetUInt32();
+		ticket->posX = fields[5].GetFloat();
+		ticket->posY = fields[6].GetFloat();
+		ticket->posZ = fields[7].GetFloat();
+		ticket->message = fields[8].GetString();
+		ticket->timestamp = fields[9].GetUInt32();
+		ticket->deleted = false;
+
+		ticket->assignedToPlayer = fields[11].GetUInt64();
+		ticket->comment = fields[12].GetString();
+
+		AddGMTicket(ticket, true);
+
 	} while( result->NextRow() );
 
-	Log.Notice("ObjectMgr", "%u GM Tickets loaded.", result->GetRowCount());
+	Log.Notice("ObjectMgr", "%u open GM Tickets loaded.", result->GetRowCount());
 	delete result;
 }
 
-void ObjectMgr::SaveGMTicket(uint64 guid, QueryBuffer * buf)
+void ObjectMgr::SaveGMTicket(GM_Ticket* ticket, QueryBuffer * buf)
 {
-	GM_Ticket* ticket = GetGMTicket(guid);
-	if(!ticket)
-		return;
-
-	std::stringstream ss1;
-	std::stringstream ss2;
-	ss1 << "DELETE FROM gm_tickets WHERE guid = " << guid << ";";
-	if( buf == NULL )
-		CharacterDatabase.Execute(ss1.str( ).c_str( ));
+	std::stringstream ss;
+	ss << "REPLACE INTO gm_tickets (`guid`, `playerGuid`, `name`, `level`, `map`, `posX`, `posY`, `posZ`, `message`, `timestamp`, `deleted`, `assignedto`, `comment`) VALUES(";
+	ss << ticket->guid << ", ";
+	ss << ticket->playerGuid << ", '";
+	ss << CharacterDatabase.EscapeString(ticket->name) << "', ";
+	ss << ticket->level << ", ";
+	ss << ticket->map << ", ";
+	ss << ticket->posX << ", ";
+	ss << ticket->posY << ", ";
+	ss << ticket->posZ << ", '";
+	ss << CharacterDatabase.EscapeString(ticket->message) << "', ";
+	ss << ticket->timestamp << ", ";
+	
+	if( ticket->deleted  )
+		ss << uint32( 1 );
 	else
-		buf->AddQueryStr(ss1.str());
+		ss << uint32( 0 );
+	ss << ",";
 
-	ss2 << "INSERT INTO gm_tickets (guid, name, level, type, posX, posY, posZ, message, timestamp) VALUES(";
-	ss2 << ticket->guid << ", '";
-	ss2 << CharacterDatabase.EscapeString(ticket->name) << "', ";
-	ss2 << ticket->level << ", ";
-	ss2 << ticket->type << ", ";
-	ss2 << ticket->posX << ", ";
-	ss2 << ticket->posY << ", ";
-	ss2 << ticket->posZ << ", '";
-	ss2 << CharacterDatabase.EscapeString(ticket->message) << "', ";
-	ss2 << ticket->timestamp << ");";
+	ss << ticket->assignedToPlayer << ", '";
+	ss << CharacterDatabase.EscapeString(ticket->comment) << "');";
 
 	if(buf == NULL)
-		CharacterDatabase.ExecuteNA(ss2.str( ).c_str( ));
+		CharacterDatabase.ExecuteNA(ss.str( ).c_str( ));
 	else
-		buf->AddQueryStr(ss2.str());
+		buf->AddQueryStr(ss.str());
 }
 
 void ObjectMgr::SetHighestGuids()
@@ -754,6 +767,20 @@ void ObjectMgr::SetHighestGuids()
 		delete result;
 	}
 
+	result = WorldDatabase.Query("SELECT MAX(id) FROM creature_spawns");
+	if(result)
+	{
+		m_hiCreatureSpawnId = result->Fetch()[0].GetUInt32();
+		delete result;
+	}
+
+	result = WorldDatabase.Query("SELECT MAX(id) FROM gameobject_spawns");
+	if(result)
+	{
+		m_hiGameObjectSpawnId = result->Fetch()[0].GetUInt32();
+		delete result;
+	}
+
 	result = CharacterDatabase.Query("SELECT MAX(group_id) FROM groups");
 	if(result)
 	{
@@ -775,17 +802,10 @@ void ObjectMgr::SetHighestGuids()
 		delete result;
 	}
 
-	result = WorldDatabase.Query("SELECT MAX(id) FROM creature_spawns");
+	result = CharacterDatabase.Query("SELECT MAX(guid) FROM gm_tickets");
 	if(result)
 	{
-		m_hiCreatureSpawnId = result->Fetch()[0].GetUInt32();
-		delete result;
-	}
-
-	result = WorldDatabase.Query("SELECT MAX(id) FROM gameobject_spawns");
-	if(result)
-	{
-		m_hiGameObjectSpawnId = result->Fetch()[0].GetUInt32();
+		m_ticketid = result->Fetch()[0].GetUInt64() + 1;
 		delete result;
 	}
 
@@ -806,14 +826,15 @@ void ObjectMgr::SetHighestGuids()
 	Log.Notice("ObjectMgr", "HighGuid(GROUP) = %u", m_hiGroupId);
 	Log.Notice("ObjectMgr", "HighGuid(CHARTER) = %u", m_hiCharterId);
 	Log.Notice("ObjectMgr", "HighGuid(GUILD) = %u", m_hiGuildId);
+	Log.Notice("ObjectMgr", "HighGuid(TICKET) = %u", m_ticketid - 1);
 	Log.Notice("ObjectMgr", "HighGuid(EQSETS) = %u", m_equipmentSetGuid);
 }
 
 void ObjectMgr::ListGuidAmounts()
 {
 	QueryResult *result;
-	uint32 amount[9];
-	std::string name[9] = {"Characters", "Player Items", "Corpses", "Groups", "Charters", "Guilds", "Creatures", "Gameobjects", "Vehicles"};
+	uint32 amount[10];
+	std::string name[10] = {"Characters", "Player Items", "Corpses", "Groups", "Charters", "Guilds", "GM Tickets", "Creatures", "Gameobjects", "Vehicles"};
 
 	result = CharacterDatabase.Query("SELECT guid FROM characters");
 	if(result)
@@ -857,29 +878,41 @@ void ObjectMgr::ListGuidAmounts()
 		delete result;
 	}
 
-	result = WorldDatabase.Query("SELECT id FROM creature_spawns");
+	result = CharacterDatabase.Query("SELECT guid FROM gm_tickets");
 	if(result)
 	{
 		amount[6] = result->GetRowCount();
 		delete result;
 	}
 
-	result = WorldDatabase.Query("SELECT id FROM gameobject_spawns");
+	result = WorldDatabase.Query("SELECT id FROM creature_spawns");
 	if(result)
 	{
 		amount[7] = result->GetRowCount();
 		delete result;
 	}
 
-	result = WorldDatabase.Query("SELECT id FROM creature_spawns WHERE vehicle > '0'");
+	result = WorldDatabase.Query("SELECT id FROM gameobject_spawns");
 	if(result)
 	{
 		amount[8] = result->GetRowCount();
 		delete result;
 	}
 
-	for(int i = 0; i < 9; ++i)
+	result = WorldDatabase.Query("SELECT id FROM creature_spawns WHERE vehicle > '0'");
+	if(result)
+	{
+		amount[9] = result->GetRowCount();
+		delete result;
+	}
+
+	for(int i = 0; i < 10; ++i)
 		Log.Notice("ObjectMgr", "Load Amount(%s) = %u", name[i].c_str(), amount[i] ? amount[i] : 0);
+}
+
+uint64 ObjectMgr::GenerateTicketID()
+{
+	return m_ticketid++;
 }
 
 uint32 ObjectMgr::GenerateMailID()
@@ -921,7 +954,7 @@ void ObjectMgr::ProcessGameobjectQuests()
 	if(result)
 	{
 		uint32 entry, text;
-		do 
+		do
 		{
 			entry = result->Fetch()[0].GetUInt32();
 			text  = result->Fetch()[1].GetUInt32();
@@ -936,9 +969,9 @@ void ObjectMgr::ProcessGameobjectQuests()
 
 Player* ObjectMgr::GetPlayer(const char* name, bool caseSensitive)
 {
-	Player* rv = NULLPLR;
+	Player * rv = NULLPLR;
 	PlayerStorageMap::const_iterator itr;
-	_playerslock.AcquireReadLock();	
+	_playerslock.AcquireReadLock();
 
 	if(!caseSensitive)
 	{
@@ -964,7 +997,7 @@ Player* ObjectMgr::GetPlayer(const char* name, bool caseSensitive)
 			}
 		}
 	}
-		
+
 	_playerslock.ReleaseReadLock();
 
 	return rv;
@@ -972,11 +1005,13 @@ Player* ObjectMgr::GetPlayer(const char* name, bool caseSensitive)
 
 Player* ObjectMgr::GetPlayer(uint32 guid)
 {
-	Player* rv = NULLPLR;
-	_playerslock.AcquireReadLock();	
+	Player * rv = NULLPLR;
+
+	_playerslock.AcquireReadLock();
 	PlayerStorageMap::const_iterator itr = _players.find(guid);
 	rv = (itr != _players.end()) ? itr->second : NULLPLR;
 	_playerslock.ReleaseReadLock();
+
 	return rv;
 }
 
@@ -1046,37 +1081,96 @@ Guild* ObjectMgr::GetGuildByGuildName(std::string guildName)
 }
 
 
-void ObjectMgr::AddGMTicket(GM_Ticket *ticket,bool startup)
+void ObjectMgr::AddGMTicket(GM_Ticket *ticket, bool startup)
 {
 	ASSERT( ticket );
 	GM_TicketList.push_back(ticket);
 
 	// save
 	if(!startup)
-		SaveGMTicket(ticket->guid, NULL);
+		SaveGMTicket(ticket, NULL);
 }
 
-//modified for vs2005 compatibility
-void ObjectMgr::remGMTicket(uint64 guid)
+void ObjectMgr::UpdateGMTicket(GM_Ticket *ticket)
+{
+	SaveGMTicket(ticket, NULL);
+}
+
+void ObjectMgr::DeleteGMTicketPermanently(uint64 ticketGuid)
 {
 	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
 	{
-		if((*i)->guid == guid)
+		if((*i)->guid == ticketGuid)
 			i = GM_TicketList.erase(i);
 		else
 			++i;
 	}
 
 	// kill from db
-	CharacterDatabase.Execute("DELETE FROM gm_tickets WHERE guid=%u", guid);
+	CharacterDatabase.Execute("DELETE FROM gm_tickets WHERE guid=%u", ticketGuid);
 }
 
-GM_Ticket* ObjectMgr::GetGMTicket(uint64 guid)
+void ObjectMgr::DeleteAllRemovedGMTickets()
 {
-	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end(); ++i)
+	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
 	{
-		if((*i)->guid == guid)
+		if((*i)->deleted)
+			i = GM_TicketList.erase(i);
+		else
+			++i;
+	}
+
+	CharacterDatabase.Execute("DELETE FROM gm_tickets WHERE deleted=1");
+}
+
+void ObjectMgr::RemoveGMTicketByPlayer(uint64 playerGuid)
+{
+	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
+	{
+		if((*i)->playerGuid == playerGuid && !(*i)->deleted)
+		{
+			(*i)->deleted = true;
+			SaveGMTicket((*i), NULL);
+		}
+		++i;
+	}
+}
+
+void ObjectMgr::RemoveGMTicket(uint64 ticketGuid)
+{
+	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
+	{
+		if((*i)->guid == ticketGuid && !(*i)->deleted)
+		{
+			(*i)->deleted = true;
+			SaveGMTicket((*i), NULL);
+		}
+		++i;
+	}
+}
+
+GM_Ticket* ObjectMgr::GetGMTicketByPlayer(uint64 playerGuid)
+{
+	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
+	{
+		if((*i)->playerGuid == playerGuid && !(*i)->deleted)
+		{
 			return (*i);
+		}
+		++i;
+	}
+	return NULL;
+}
+
+GM_Ticket* ObjectMgr::GetGMTicket(uint64 ticketGuid)
+{
+	for(GmTicketList::iterator i = GM_TicketList.begin(); i != GM_TicketList.end();)
+	{
+		if((*i)->guid == ticketGuid)
+		{
+			return (*i);
+		}
+		++i;
 	}
 	return NULL;
 }
@@ -1115,12 +1209,12 @@ void ObjectMgr::LoadVendors()
 			else
 				items = itr->second;
 
-			itm.itemid           = fields[1].GetUInt32();
-			itm.amount           = fields[2].GetUInt32();
-			itm.available_amount = fields[3].GetUInt32();
-			itm.max_amount       = fields[3].GetUInt32();
-			itm.incrtime         = fields[4].GetUInt32();
-			itm.extended_cost    = NULL;
+			itm.itemid				= fields[1].GetUInt32();
+			itm.amount				= fields[2].GetUInt32();
+			itm.available_amount	= fields[3].GetUInt32();
+			itm.max_amount			= fields[3].GetUInt32();
+			itm.incrtime			= fields[4].GetUInt32();
+			itm.extended_cost		= NULL;
 
 			uint32 ec = fields[5].GetUInt32();
 			if( ec != 0 )
@@ -1385,8 +1479,8 @@ void ObjectMgr::CorpseAddEventDespawn(Corpse* pCorpse)
 
 void ObjectMgr::DespawnCorpse(uint64 Guid)
 {
-	Corpse* pCorpse = objmgr.GetCorpse((uint32)Guid);
-	if(!pCorpse)	// Already Deleted
+	Corpse * pCorpse = objmgr.GetCorpse((uint32)Guid);
+	if(pCorpse == NULL)	// Already Deleted
 		return;
 
 	pCorpse->Despawn();
@@ -1400,7 +1494,7 @@ void ObjectMgr::CorpseCollectorUnload()
 	_corpseslock.Acquire();
 	for (itr = m_corpses.begin(); itr != m_corpses.end();)
 	{
-		Corpse* c =itr->second;
+		Corpse * c =itr->second;
 		++itr;
 		if(c->IsInWorld())
 			c->RemoveFromWorld(false);
@@ -1424,7 +1518,7 @@ void GossipMenu::AddItem(uint8 Icon, const char* Text, int32 Id, bool Coded, uin
 	if(Id > 0)
 		GossipItem.IntId = Id;
 	else
-		GossipItem.IntId = GossipItem.Id;		
+		GossipItem.IntId = GossipItem.Id;
 	GossipItem.Icon = Icon;
 	GossipItem.Coded = Coded;
 	GossipItem.BoxMoney = BoxMoney;
@@ -1504,6 +1598,7 @@ void ObjectMgr::LoadTrainers()
 	GossipText* text;
 	const char* temp;
 	size_t len;
+
 	LoadDisabledSpells();
 
 	if(!result)
@@ -1574,6 +1669,9 @@ void ObjectMgr::LoadTrainers()
 		if(result2->GetFieldCount() != 10)
 		{
 			Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Trainers table format is invalid. Please update your database.");
+			if(tr->UIMessage)
+				delete [] tr->UIMessage;
+			delete tr;
 			delete result;
 			delete result2;
 			return;
@@ -1599,9 +1697,9 @@ void ObjectMgr::LoadTrainers()
 					ts.pCastSpell = dbcSpell.LookupEntryForced( CastSpellID );
 					if( ts.pCastSpell )
 					{
-						for(int k = 0; k < 3; ++k)
+						for( int k = 0; k < 3; ++k )
 						{
-							if(ts.pCastSpell->Effect[k] == SPELL_EFFECT_LEARN_SPELL)
+							if( ts.pCastSpell->Effect[k] == SPELL_EFFECT_LEARN_SPELL )
 							{
 								ts.pCastRealSpell = dbcSpell.LookupEntryForced(ts.pCastSpell->EffectTriggerSpell[k]);
 								if( ts.pCastRealSpell == NULL )
@@ -1614,7 +1712,7 @@ void ObjectMgr::LoadTrainers()
 						}
 					}
 
-					if(abrt)
+					if( abrt )
 						continue;
 				}
 
@@ -1871,7 +1969,7 @@ void ObjectMgr::GenerateLevelUpInfo()
 			mLevelInfo.insert( LevelInfoMap::value_type( p, lMap ) );
 		}
 	}
-	Log.Notice("ObjectMgr", "%u level up informations generated.", mLevelInfo.size());
+	Log.Notice("ObjectMgr", "%u level up information generated.", mLevelInfo.size());
 }
 
 LevelInfo* ObjectMgr::GetLevelInfo(uint32 Race, uint32 Class, uint32 Level)
@@ -1939,7 +2037,7 @@ void ObjectMgr::LoadSpellOverride()
 				Field *fieldsIn = resultIn->Fetch();
 				spellid = fieldsIn[0].GetUInt32();
 				sp = dbcSpell.LookupEntry(spellid);
-				if(!spellid || !sp) 
+				if(!spellid || !sp)
 					continue;
 				list->push_back(sp);
 			}while(resultIn->NextRow());
@@ -2196,7 +2294,7 @@ void ObjectMgr::LoadGuildCharters()
 	if(!result)
 		return;
 
-	do 
+	do
 	{
 		Charter * c = new Charter(result->Fetch());
 		m_charters[c->CharterType].insert(make_pair(c->GetID(), c));
@@ -2319,6 +2417,7 @@ void Charter::SaveToDB()
 {
 	std::stringstream ss;
 	uint32 i;
+
 	ss << "REPLACE INTO charters VALUES(" << CharterId << "," << CharterType << "," << LeaderGuid << ",'" << GuildName << "'," << ItemGuid;
 
 	for(i = 0; i < Slots; ++i)
@@ -2419,7 +2518,7 @@ void ObjectMgr::LoadReputationModifierTable(const char * tablename, ReputationMo
 
 	if(result)
 	{
-		do 
+		do
 		{
 			mod.faction[0] = result->Fetch()[1].GetUInt32();
 			mod.faction[1] = result->Fetch()[2].GetUInt32();
@@ -2475,7 +2574,7 @@ void ObjectMgr::LoadMonsterSay()
 
 	uint32 Entry, Event;
 	Field * fields = result->Fetch();
-	do 
+	do
 	{
 		Entry = fields[0].GetUInt32();
 		Event = fields[1].GetUInt32();
@@ -2564,7 +2663,7 @@ void ObjectMgr::LoadInstanceReputationModifiers()
 	if(!result)
 		return;
 
-	do 
+	do
 	{
 		Field * fields = result->Fetch();
 		InstanceReputationMod mod;
@@ -2671,7 +2770,7 @@ void ObjectMgr::LoadGroups()
 	QueryResult * result = CharacterDatabase.Query("SELECT * FROM groups");
 	if(result)
 	{
-		do 
+		do
 		{
 			Group * g = new Group(false);
 			g->LoadFromDB(result->Fetch());
@@ -2687,7 +2786,7 @@ void ObjectMgr::LoadArenaTeams()
 	QueryResult * result = CharacterDatabase.Query("SELECT * FROM arenateams");
 	if( result != NULL )
 	{
-		do 
+		do
 		{
 			ArenaTeam * team = new ArenaTeam(result->Fetch());
 			AddArenaTeam(team);
@@ -2761,7 +2860,7 @@ void ObjectMgr::UpdateArenaTeamRankings()
 	for(uint32 i = 0; i < NUM_ARENA_TEAM_TYPES; ++i)
 	{
 		vector<ArenaTeam*> ranking;
-		
+
 		for(HM_NAMESPACE::hash_map<uint32,ArenaTeam*>::iterator itr = m_arenaTeamMap[i].begin(); itr != m_arenaTeamMap[i].end(); ++itr)
 			ranking.push_back(itr->second);
 

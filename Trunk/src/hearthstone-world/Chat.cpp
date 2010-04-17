@@ -78,7 +78,7 @@ void CommandTableStorage::Load()
 	QueryResult * result = WorldDatabase.Query("SELECT * FROM command_overrides");
 	if(!result) return;
 
-	do 
+	do
 	{
 		const char * name = result->Fetch()[0].GetString();
 		const char * level = result->Fetch()[1].GetString();
@@ -297,10 +297,21 @@ void CommandTableStorage::Init()
 
 	static ChatCommand GMTicketCommandTable[] =
 	{
-		{ "get",		 'c', &ChatHandler::HandleGMTicketGetAllCommand,  "Gets GM Ticket",			   NULL, 0, 0, 0},
-		{ "getId",	   'c', &ChatHandler::HandleGMTicketGetByIdCommand, "Gets GM Ticket by ID",		 NULL, 0, 0, 0},
-		{ "delId",	   'c', &ChatHandler::HandleGMTicketDelByIdCommand, "Deletes GM Ticket by ID",	  NULL, 0, 0, 0},
-		{ NULL,			0, NULL,									   "",							 NULL, 0, 0  }
+#ifdef GM_TICKET_MY_MASTER_COMPATIBLE
+		{ "get",				'c', &ChatHandler::HandleGMTicketListCommand,						"Gets GM Ticket list.",												NULL, 0, 0, 0 },
+		{ "getId",				'c', &ChatHandler::HandleGMTicketGetByIdCommand,					"Gets GM Ticket by player name.",									NULL, 0, 0, 0 },
+		{ "delId",				'c', &ChatHandler::HandleGMTicketRemoveByIdCommand,					"Deletes GM Ticket by player name.",								NULL, 0, 0, 0 },
+#else
+		{ "list",				'c', &ChatHandler::HandleGMTicketListCommand,						"Lists all active GM Tickets.",										NULL, 0, 0, 0 },
+		{ "get",				'c', &ChatHandler::HandleGMTicketGetByIdCommand,					"Gets GM Ticket with ID x.",										NULL, 0, 0, 0 },
+		{ "remove",				'c', &ChatHandler::HandleGMTicketRemoveByIdCommand,					"Removes GM Ticket with ID x.",										NULL, 0, 0, 0 },
+		{ "deletepermanent",	'z', &ChatHandler::HandleGMTicketDeletePermanentCommand,			"Deletes GM Ticket with ID x permanently.",							NULL, 0, 0, 0 },
+		{ "assign",				'c', &ChatHandler::HandleGMTicketAssignToCommand,					"Assigns GM Ticket with id x to GM y (if empty to your self).",		NULL, 0, 0, 0 },
+		{ "release",			'c', &ChatHandler::HandleGMTicketReleaseCommand,					"Releases assigned GM Ticket with ID x.",							NULL, 0, 0, 0 },
+		{ "comment",			'c', &ChatHandler::HandleGMTicketCommentCommand,					"Sets comment x to GM Ticket with ID y.",							NULL, 0, 0, 0 },
+#endif
+		{ "toggle",				'z', &ChatHandler::HandleGMTicketToggleTicketSystemStatusCommand,	"Toggles the ticket system status.",								NULL, 0, 0, 0 },
+		{ NULL,					'0', NULL,															"",																	NULL, 0, 0, 0 }
 	};
 	dupe_command_table(GMTicketCommandTable, _GMTicketCommandTable);
 

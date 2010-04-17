@@ -104,13 +104,13 @@ enum Languages
 	LANG_ZOMBIE									= 0x24,
 	LANG_GNOMISHBINARY							= 0x25,
 	LANG_GOBLINBINARY							= 0x26,
-    NUM_LANGUAGES                               = 0x27
+	NUM_LANGUAGES								= 0x27
 };
 
-/*#define MSG_COLOR_YELLOW	"|r"
-#define MSG_COLOR_RED	   "|cffff2020"
-#define MSG_COLOR_GREEN	 "|c1f40af20"
-#define MSG_COLOR_LIGHTRED  "|cffff6060"*/
+/*#define MSG_COLOR_YELLOW		"|r"
+#define MSG_COLOR_RED			"|cffff2020"
+#define MSG_COLOR_GREEN			"|c1f40af20"
+#define MSG_COLOR_LIGHTRED		"|cffff6060"*/
 
 #define MSG_COLOR_LIGHTRED		"|cffff6060"
 #define MSG_COLOR_LIGHTBLUE		"|cff00ccff"
@@ -267,7 +267,7 @@ protected:
 	bool HandleSQLQueryCommand(const char* args, WorldSession *m_session);
 	bool HandleRangeCheckCommand( const char * args , WorldSession * m_session );
 
-	//WayPoint Commands
+	// WayPoint Commands
 	bool HandleWPAddCommand(const char* args, WorldSession *m_session);
 	bool HandleWPShowCommand(const char* args, WorldSession *m_session);
 	bool HandleWPHideCommand(const char* args, WorldSession *m_session);
@@ -337,9 +337,17 @@ protected:
 	bool HandleAddGraveCommand(const char* args, WorldSession *m_session);
 	bool HandleAddSHCommand(const char* args, WorldSession *m_session);
 	bool HandleExploreCheatCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketGetAllCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketListCommand(const char* args, WorldSession *m_session);
 	bool HandleGMTicketGetByIdCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketDelByIdCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketRemoveByIdCommand(const char* args, WorldSession *m_session);
+#ifndef GM_TICKET_MY_MASTER_COMPATIBLE
+	void SendGMSurvey();
+	bool HandleGMTicketAssignToCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketReleaseCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketCommentCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketDeletePermanentCommand(const char* args, WorldSession *m_session);
+#endif
+	bool HandleGMTicketToggleTicketSystemStatusCommand(const char* args, WorldSession *m_session);
 	bool HandleAddSkillCommand(const char* args, WorldSession *m_session);
 	bool HandleAddInvItemCommand(const char* args, WorldSession *m_session);
 	bool HandleResetReputationCommand(const char* args, WorldSession *m_session);
@@ -376,7 +384,7 @@ protected:
     bool HandleGetSkillLevelCommand(const char* args, WorldSession * m_session);
     bool HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session);
     bool HandlePlayerInfo(const char* args, WorldSession * m_session);
-    
+
 	//Ban
 	bool HandleBanCharacterCommand(const char* args, WorldSession *m_session);
 	bool HandleUnBanCharacterCommand(const char* args, WorldSession *m_session);
@@ -410,7 +418,7 @@ protected:
 	bool HandlePowerCheatCommand(const char* args, WorldSession* m_session);
 	bool HandleGodModeCommand(const char* args, WorldSession* m_session);
 	bool HandleShowCheatsCommand(const char* args, WorldSession* m_session);
-	bool HandleFlySpeedCheatCommand(const char* args, WorldSession* m_session);
+	bool HandleFlySpeedCheatCommand(const char* args, WorldSession * m_session);
 	bool HandleStackCheatCommand(const char* args, WorldSession * m_session);
 	bool HandleTriggerpassCheatCommand(const char* args, WorldSession * m_session);
 	bool HandleFlyCommand(const char* args, WorldSession* m_session);
@@ -433,8 +441,8 @@ protected:
 	
 	bool HandleUnlearnCommand(const char* args, WorldSession * m_session);
 	bool HandleModifyLevelCommand(const char* args, WorldSession* m_session);
-	
-	// pet
+
+	// Pet
 	bool HandleCreatePetCommand(const char* args, WorldSession* m_session);
 	bool HandleAddPetSpellCommand(const char* args, WorldSession* m_session);
 	bool HandleRemovePetSpellCommand(const char* args, WorldSession* m_session);
@@ -445,24 +453,24 @@ protected:
 	bool HandlePetSpawnAIBot(const char * args, WorldSession * m_session);
 #endif
 
-	// shutdown
+	// Shutdown
 	bool HandleShutdownCommand(const char* args, WorldSession* m_session);
 
-	// whispers
+	// Whispers
 	bool HandleAllowWhispersCommand(const char* args, WorldSession* m_session);
 	bool HandleBlockWhispersCommand(const char* args, WorldSession* m_session);
 
-	// skills
+	// Skills
 	bool HandleAdvanceAllSkillsCommand(const char* args, WorldSession* m_session);
 
-	// kill
+	// Kill
 	bool HandleKillBySessionCommand(const char* args, WorldSession* m_session);
 	bool HandleKillByPlayerCommand(const char* args, WorldSession* m_session);
 
-	// castall
+	// Castall
 	bool HandleCastAllCommand(const char* args, WorldSession* m_session);
 
-	// recall
+	// Recall
 	bool HandleRecallListCommand(const char* args, WorldSession *m_session);
 	bool HandleRecallGoCommand(const char* args, WorldSession *m_session);
 	bool HandleRecallAddCommand(const char* args, WorldSession *m_session);
@@ -471,25 +479,25 @@ protected:
 	bool HandleGlobalPlaySoundCommand(const char* args, WorldSession * m_session);
 	bool HandleRecallPortPlayerCommand(const char* args, WorldSession * m_session);
 
-	// bans
+	// Bans
 	bool HandleIPBanCommand(const char * args, WorldSession * m_session);
 	bool HandleIPUnBanCommand(const char * args, WorldSession * m_session);
 	bool HandleAccountUnbanCommand(const char * args, WorldSession * m_session);
 
-	//
+	// Item removal
 	bool HandleRemoveItemCommand(const char * args, WorldSession * m_session);
 
-	//
+	// Rename 
 	bool HandleRenameCommand(const char * args, WorldSession * m_session);
 	bool HandleForceRenameCommand(const char * args, WorldSession * m_session);
 	bool HandleRecustomizeCharCommand(const char * args, WorldSession * m_session);
 
-	//
+	// Reputation
 	bool HandleGetStandingCommand(const char * args, WorldSession * m_session);
 	bool HandleSetStandingCommand(const char * args, WorldSession * m_session);
 	bool HandleGetBaseStandingCommand(const char * args, WorldSession * m_session);
 
-	// lookups
+	// Lookups
 	bool HandleLookupItemCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupCreatureCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupObjectCommand(const char * args, WorldSession * m_session);

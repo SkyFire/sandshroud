@@ -307,35 +307,35 @@ void Player::Init()
 	for(int i = 0; i < 25; ++i)
 		m_questlog[i] = NULL;
 
-	CurrentGossipMenu	   = NULL;
+	CurrentGossipMenu		= NULL;
 
 	ResetHeartbeatCoords();
 
 	m_AreaID				= 0;
 	m_areaDBC				= NULL;
-	m_actionsDirty		  = false;
+	m_actionsDirty			= false;
 	rageFromDamageDealt	 = 0;
 
 	m_honorToday			= 0;
 	m_honorYesterday		= 0;
-	m_honorPoints		   = 0;
+	m_honorPoints			= 0;
 	m_killsToday			= 0;
 	m_killsYesterday		= 0;
-	m_killsLifetime		 = 0;
-	m_honorless			 = false;
-	m_lastSeenWeather	   = 0;
-	m_attacking			 = false;
+	m_killsLifetime			= 0;
+	m_honorless				= false;
+	m_lastSeenWeather		= 0;
+	m_attacking				= false;
 
 	myCorpse				= NULLCORPSE;
 
-	blinked				 = false;
-	m_speedhackChances	  = 3;
-	m_explorationTimer	  = getMSTime();
-	linkTarget			  = NULLUNIT;
-	stack_cheat			 = false;
-	triggerpass_cheat = false;
-	m_pvpTimer			  = 0;
-	m_globalCooldown = 0;
+	blinked					= false;
+	m_speedhackChances		= 3;
+	m_explorationTimer		= getMSTime();
+	linkTarget				= NULLUNIT;
+	stack_cheat				= false;
+	triggerpass_cheat		= false;
+	m_pvpTimer				= 0;
+	m_globalCooldown		= 0;
 	m_lastHonorResetTime	= 0;
 	memset(&mActions, 0, PLAYER_ACTION_BUTTON_SIZE);
 	tutorialsDirty = true;
@@ -385,7 +385,7 @@ void Player::Init()
 	m_RootedCritChanceBonus = 0;
 
 	m_ModInterrMRegenPCT = 0;
-	m_ModInterrMRegen =0;
+	m_ModInterrMRegen = 0;
 	m_rap_mod_pct = 0;
 	m_modblockabsorbvalue = 0;
 	m_modblockvaluefromspells = 0;
@@ -406,15 +406,15 @@ void Player::Init()
 	memset(&m_spellIndexTypeTargets, 0, sizeof(uint64)*NUM_SPELL_TYPE_INDEX);
 	m_base_runSpeed = m_runSpeed;
 	m_base_walkSpeed = m_walkSpeed;
-	m_arenateaminviteguid=0;
-	m_arenaPoints=0;
-	m_honorRolloverTime=0;
+	m_arenateaminviteguid= 0;
+	m_arenaPoints= 0;
+	m_honorRolloverTime= 0;
 	hearth_of_wild_pct = 0;
 	raidgrouponlysent=false;
 	m_waterwalk=false;
 	m_setwaterwalk=false;
-	m_areaSpiritHealer_guid=0;
-	m_CurrentTaxiPath=NULL;
+	m_areaSpiritHealer_guid= 0;
+	m_CurrentTaxiPath= NULL;
 	m_setflycheat = false;
 	m_fallDisabledUntil = 0;
 	m_lfgMatch = NULL;
@@ -538,7 +538,7 @@ Player::~Player ( )
 
 	mTradeTarget = 0;
 
-	if(DuelingWith != NULL)
+	if( DuelingWith != NULL )
 		DuelingWith->DuelingWith = NULLPLR;
 	DuelingWith = NULLPLR;
 
@@ -693,7 +693,7 @@ bool Player::Create(WorldPacket& data )
 
 	// unpack data into member variables
 	data >> m_name;
-	
+
 	// correct capitalization
 	CapitalizeString(m_name);
 
@@ -815,7 +815,6 @@ bool Player::Create(WorldPacket& data )
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, info->factiontemplate );
 	
 	SetUInt32Value(UNIT_FIELD_BYTES_0, ( ( race ) | ( class_ << 8 ) | ( gender << 16 ) | ( powertype << 24 ) ) );
-	//UNIT_FIELD_BYTES_1	(standstate) | (unk1) | (unk2) | (attackstate)
 	if(class_ == WARRIOR)
 		SetShapeShift(FORM_BATTLESTANCE);
 
@@ -826,12 +825,14 @@ bool Player::Create(WorldPacket& data )
 	SetUInt32Value(UNIT_FIELD_STAT3, info->intellect );
 	SetUInt32Value(UNIT_FIELD_STAT4, info->spirit );
 	SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0.388999998569489f );
-	SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f   );
-	if(race != 10)
+	SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f );
+	if( race != RACE_BLOODELF )
 	{
 		SetUInt32Value(UNIT_FIELD_DISPLAYID, info->displayId + gender );
 		SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, info->displayId + gender );
-	} else	{
+	}
+	else
+	{
 		SetUInt32Value(UNIT_FIELD_DISPLAYID, info->displayId - gender );
 		SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, info->displayId - gender );
 	}
@@ -840,7 +841,6 @@ bool Player::Create(WorldPacket& data )
 	SetUInt32Value(UNIT_FIELD_ATTACK_POWER, info->attackpower );
 	SetUInt32Value(PLAYER_BYTES, ((skin) | (face << 8) | (hairStyle << 16) | (hairColor << 24)));
 	//PLAYER_BYTES_2							   GM ON/OFF	 BANKBAGSLOTS   RESTEDSTATE
-   // SetUInt32Value(PLAYER_BYTES_2, (facialHair | (0xEE << 8) | (0x01 << 16) | (0x02 << 24)));
 	SetUInt32Value(PLAYER_BYTES_2, (facialHair /*| (0xEE << 8)*/  | (0x02 << 24)));//no bank slot by default!
 
 	//PLAYER_BYTES_3						   DRUNKENSTATE				 PVPRANK
@@ -850,7 +850,7 @@ bool Player::Create(WorldPacket& data )
 	SetUInt32Value(PLAYER_CHARACTER_POINTS2,2);
 	SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 	SetUInt32Value(PLAYER_FIELD_MAX_LEVEL, sWorld.GetMaxLevel(TO_PLAYER(this)));
-  
+
 	for(uint32 x=0;x<7;x++)
 		SetFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT+x, 1.00);
 
@@ -960,6 +960,7 @@ void Player::EquipInit(PlayerCreateInfo *EquipInfo)
 		}
 	}
 }
+
 void Player::Update( uint32 p_time )
 {
 	if(!IsInWorld())
@@ -974,8 +975,8 @@ void Player::Update( uint32 p_time )
 		if(mstime >= m_attackTimer)
 			_EventAttack(false);
 
-		if(m_duelWield && mstime >= m_attackTimer_1)
-			_EventAttack(true);
+		if( m_duelWield && mstime >= m_attackTimer_1 )
+			_EventAttack( true );
 	}
 
 	if( m_onAutoShot )
@@ -998,7 +999,7 @@ void Player::Update( uint32 p_time )
 		else
 			m_AutoShotAttackTimer = 0;
 	}
-	
+
 	// Breathing
 	if( m_UnderwaterState & UNDERWATERSTATE_UNDERWATER )
 	{
@@ -1188,9 +1189,6 @@ void Player::_EventAttack( bool offhand )
 		return;
 	}
 
-	/*if( IsFeared() || IsStunned() )
-		return;*/
-
 	if( m_special_state & ( UNIT_STATE_FEAR | UNIT_STATE_CHARM | UNIT_STATE_SLEEP | UNIT_STATE_STUN | UNIT_STATE_CONFUSE ) || IsStunned() || IsFeared() )
 		return;
 
@@ -1236,9 +1234,9 @@ void Player::_EventAttack( bool offhand )
 	else
 	{
 		m_AttackMsgTimer = 0;
-		
+
 		// Set to weapon time.
-		setAttackTimer(0, offhand);		
+		setAttackTimer(0, offhand);
 
 		if(InStealth())
 		{
@@ -1249,11 +1247,11 @@ void Player::_EventAttack( bool offhand )
 		if (!GetOnMeleeSpell() || offhand)
 		{
 			Strike( pVictim, ( offhand ? OFFHAND : MELEE ), NULL, 0, 0, 0, false, false, true);
-				
-		} 
-		else 
-		{ 
-			SpellEntry *spellInfo = dbcSpell.LookupEntry(GetOnMeleeSpell());
+
+		}
+		else
+		{
+			SpellEntry *spellInfo = dbcSpell.LookupEntry( GetOnMeleeSpell() );
 			uint8 cn = m_meleespell_cn;
 			SetOnMeleeSpell(0, 0);
 			Spell* spell = NULLSPELL;
@@ -1336,9 +1334,9 @@ void Player::_EventCharmAttack()
 			if (!m_CurrentCharm->GetOnMeleeSpell())
 			{
 				m_CurrentCharm->Strike( pVictim, MELEE, NULL, 0, 0, 0, false, false, true );
-			} 
-			else 
-			{ 
+			}
+			else
+			{
 				SpellEntry *spellInfo = dbcSpell.LookupEntry(m_CurrentCharm->GetOnMeleeSpell());
 				uint8 cn = m_meleespell_cn;
 				m_CurrentCharm->SetOnMeleeSpell(0, 0);
@@ -1365,7 +1363,7 @@ void Player::EventAttackStart()
 
 void Player::EventAttackStop()
 {
-	if(m_CurrentCharm != NULL)
+	if( m_CurrentCharm != NULL )
 		sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_CHARM_ATTACK);
 
 	m_attacking = false;
@@ -1382,11 +1380,11 @@ void Player::_EventExploration()
 	if(m_position.x > _maxX || m_position.x < _minX || m_position.y > _maxY || m_position.y < _minY)
 		return;
 
-	if(GetMapMgr()->GetCellByCoords(GetPositionX(),GetPositionY()) == NULL) 
+	if(GetMapMgr()->GetCellByCoords(GetPositionX(),GetPositionY()) == NULL)
 		return;
 
 	uint16 AreaId = GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY(), GetPositionZ());
-	
+
 	if(!AreaId || AreaId == 0xFFFF)
 		return;
 	AreaTable * at = dbcArea.LookupEntry(AreaId);
@@ -1449,7 +1447,7 @@ void Player::_EventExploration()
 		if(at->ZoneId)
 		{
 			AreaTable * at2 = dbcArea.LookupEntry(at->ZoneId);
-			if(at2 && at2->AreaFlags & AREA_CITY_AREA || at2 && at2->AreaFlags & AREA_CITY)
+			if(at2 && (at2->AreaFlags & AREA_CITY_AREA || at2->AreaFlags & AREA_CITY ) )
 			{
 				if((at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1) )
 					rest_on = true;
@@ -1616,9 +1614,9 @@ void Player::smsg_InitialSpells()
 	for (sitr = mSpells.begin(); sitr != mSpells.end(); ++sitr)
 	{
 		// todo: check out when we should send 0x0 and when we should send 0xeeee
-		// this is not slot,values is always eeee or 0,seems to be cooldown
+		// this is not slot,values is always eeee or 0, seems to be cooldown
 		data << uint32(*sitr);				   // spell id
-		data << uint16(0x0000);	 
+		data << uint16(0x0000);
 	}
 
 	pos = data.wpos();
@@ -1671,13 +1669,14 @@ void Player::smsg_InitialSpells()
 		OUT_DEBUG("InitialSpells", "sending category cooldown for cat %u to %u ms", itr2->first, itr2->second.ExpireTime - mstime);
 	}
 
-	
 	*(uint16*)&data.contents()[pos] = (uint16)itemCount;
+
 	GetSession()->SendPacket(&data);
 
 	uint32 v = 0;
 	GetSession()->OutPacket(0x041d, 4, &v);
 }
+
 void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 {
 	if(m_talentSpecsCount > 2)
@@ -1747,9 +1746,9 @@ void Player::_SavePet(QueryBuffer * buf)
 {
 	// Remove any existing info
 	if(buf == NULL)
-		CharacterDatabase.Execute("DELETE FROM playerpets WHERE ownerguid=%u", GetUInt32Value(OBJECT_FIELD_GUID));
+		CharacterDatabase.Execute("DELETE FROM playerpets WHERE ownerguid = %u", GetUInt32Value(OBJECT_FIELD_GUID));
 	else
-		buf->AddQuery("DELETE FROM playerpets WHERE ownerguid=%u", GetUInt32Value(OBJECT_FIELD_GUID));
+		buf->AddQuery("DELETE FROM playerpets WHERE ownerguid = %u", GetUInt32Value(OBJECT_FIELD_GUID));
 
 	if(buf == NULL)
 		CharacterDatabase.Execute("DELETE FROM playerpetactionbar WHERE ownerguid=%u", GetLowGUID());
@@ -1843,7 +1842,7 @@ void Player::_SavePet(QueryBuffer * buf)
 }
 
 void Player::_SavePetSpells(QueryBuffer * buf)
-{	
+{
 	// Remove any existing
 	if(buf == NULL)
 		CharacterDatabase.Execute("DELETE FROM playersummonspells WHERE ownerguid=%u", GetLowGUID());
@@ -1907,7 +1906,7 @@ set<uint32>* Player::GetSummonSpells(uint32 Entry)
 
 void Player::_LoadPet(QueryResult * result)
 {
-	m_PetNumberMax=0;
+	m_PetNumberMax= 0;
 	if(!result)
 		return;
 
@@ -1939,8 +1938,8 @@ void Player::_LoadPet(QueryResult * result)
 			}
 			else
 				iActivePet = pet->number;
-		}	   
-		
+		}
+
 		if(pet->number > m_PetNumberMax)
 			m_PetNumberMax =  pet->number;
 	}while(result->NextRow());
@@ -2022,7 +2021,7 @@ void Player::addSpell(uint32 spell_id)
 	SpellSet::iterator iter = mSpells.find(spell_id);
 	if(iter != mSpells.end())
 		return;
-		
+
 	mSpells.insert(spell_id);
 	if(IsInWorld())
 	{
@@ -2190,17 +2189,6 @@ void Player::InitVisibleUpdateBits()
 	}
 
 	Player::m_visibleUpdateMask.SetBit(PLAYER_CHOSEN_TITLE);
-
-	/*for(uint16 i = PLAYER_FIELD_ARENA_TEAM_INFO_1_1; i <= PLAYER_FIELD_ARENA_TEAM_INFO_1_17; ++i)
-		Player::m_visibleUpdateMask.SetBit(i);*/
-
-	/* fuck i hate const - burlex */
-	/*if(target && target->GetGroup() == const_cast<Player* >(TO_PLAYER(this))->GetGroup() && const_cast<Player*  >(TO_PLAYER(this))->GetSubGroup() == target->GetSubGroup())
-	{
-	// quest fields are the same for party members
-	for(uint32 i = PLAYER_QUEST_LOG_1_01; i < PLAYER_QUEST_LOG_25_2; ++i)
-	Player::m_visibleUpdateMask.SetBit(i);
-	}*/
 }
 
 
@@ -2221,15 +2209,15 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	if( m_bg != NULL && IS_ARENA( m_bg->GetType() ) )
 		in_arena = true;
 
-	if(m_uint32Values[PLAYER_CHARACTER_POINTS2]>2)
-		m_uint32Values[PLAYER_CHARACTER_POINTS2]=2;
- 
+	if( m_uint32Values[PLAYER_CHARACTER_POINTS2] > 2)
+		m_uint32Values[PLAYER_CHARACTER_POINTS2] = 2;
+
 	//Calc played times
 	uint32 playedt = (uint32)UNIXTIME - m_playedtime[2];
 	m_playedtime[0] += playedt;
 	m_playedtime[1] += playedt;
 	m_playedtime[2] += playedt;
-	
+
 	std::stringstream ss;
 	ss << "REPLACE INTO characters VALUES ("
 		
@@ -2238,9 +2226,9 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 
 	// stat saving
 	<< "'" << m_name << "', "
-	<< uint32(getRace()) << ", "
-	<< uint32(getClass()) << ", "
-	<< uint32(getGender()) << ", "
+	<< uint32(getRace()) << ","
+	<< uint32(getClass()) << ","
+	<< uint32(getGender()) << ","
 	<< uint32(customizable ? 1 : 0) << ",";
 
 	if(m_uint32Values[UNIT_FIELD_FACTIONTEMPLATE] != info->factiontemplate)
@@ -2318,7 +2306,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	}
 
 	ss << m_zoneId << ", '";
-		
+
 	for(uint32 i = 0; i < 12; ++i )
 		ss << m_taximask[i] << " ";
 	ss << "', "
@@ -2337,17 +2325,17 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		ss << "1,";
 	}
 
-	ss	 
+	ss
 	<< m_bind_pos_x			 << ", "
 	<< m_bind_pos_y			 << ", "
 	<< m_bind_pos_z			 << ", "
 	<< m_bind_mapid			 << ", "
 	<< m_bind_zoneid			<< ", "
-		
+
 	<< uint32(m_isResting)	  << ", "
 	<< uint32(m_restState)	  << ", "
 	<< uint32(m_restAmount)	 << ", '"
-	  
+
 	<< uint32(m_playedtime[0])  << " "
 	<< uint32(m_playedtime[1])  << " "
 	<< uint32(playedt)		  << " ', "
@@ -2358,7 +2346,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< rename_pending		<< ","
 	<< m_arenaPoints		 << ","
 	<< (uint32)m_StableSlotCount << ",";
-	
+
 	// instances
 	if( in_arena )
 	{
@@ -2369,9 +2357,9 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		ss << m_instanceId		   << ", ";
 	}
 
-	ss << m_bgEntryPointMap	  << ", " 
-	<< m_bgEntryPointX		<< ", " 
-	<< m_bgEntryPointY		<< ", " 
+	ss << m_bgEntryPointMap	  << ", "
+	<< m_bgEntryPointX		<< ", "
+	<< m_bgEntryPointY		<< ", "
 	<< m_bgEntryPointZ		<< ", "
 	<< m_bgEntryPointO		<< ", "
 	<< m_bgEntryPointInstance << ", ";
@@ -2405,7 +2393,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		ss << int32(iter->first) << "," << int32(iter->second->flag) << "," << int32(iter->second->baseStanding) << "," << int32(iter->second->standing) << ",";
 	}
 	ss << "','";
-	
+
 	// Add player action bars
 	for(uint32 i = 0; i < PLAYER_ACTION_BUTTON_COUNT; ++i)
 	{
@@ -2483,11 +2471,13 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	_SaveTutorials(buf);
 
 	// GM Ticket
-	objmgr.SaveGMTicket(GetGUID(), buf);
+	GM_Ticket* ticket = objmgr.GetGMTicketByPlayer(GetGUID());
+	if(ticket != NULL)
+		objmgr.SaveGMTicket(ticket, buf);
 
 	// Cooldown Items
 	_SavePlayerCooldowns( buf );
-	
+
 	// Pets
 	if(getClass() == HUNTER || getClass() == WARLOCK)
 	{
