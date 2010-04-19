@@ -237,7 +237,7 @@ public:
 	}
 	void Debug(const char * source, const char * format, ...)
 	{
-		if(log_level < 3)
+		if(log_level != 3 || log_level != 6)
 			return;
 
 		LOCK_LOG;
@@ -290,6 +290,8 @@ public:
 		printf("*********************************************************************\n");
 		printf("*                        MAJOR ERROR/WARNING                        *\n");
 		printf("*                        ===================                        *\n");
+		printf("*********************************************************************\n");
+		printf("*                                                                   *\n");
 
 		for(std::vector<char*>::iterator itr = lines.begin(); itr != lines.end(); ++itr)
 		{

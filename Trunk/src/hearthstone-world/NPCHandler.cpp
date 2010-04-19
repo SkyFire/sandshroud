@@ -583,7 +583,7 @@ void WorldSession::HandleSpiritHealerActivateOpcode( WorldPacket & recv_data )
 		_player->m_resurrectHealth = _player->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/2;
 		_player->m_resurrectMana = _player->GetUInt32Value(UNIT_FIELD_MAXPOWER1)/2;
 
-		_player->ResurrectPlayer(NULLPLR);
+		_player->ResurrectPlayer();
 
 		if(_player->getLevel() > 10)
 		{
@@ -602,7 +602,7 @@ void WorldSession::HandleSpiritHealerActivateOpcode( WorldPacket & recv_data )
 		}
 	}
 	else
-		_player->ResurrectPlayer(NULLPLR);
+		_player->ResurrectPlayer();
 }
 
 //////////////////////////////////////////////////////////////

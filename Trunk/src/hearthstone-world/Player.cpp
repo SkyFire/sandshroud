@@ -4279,14 +4279,14 @@ void Player::SetMovement(uint8 pType, uint32 flag)
 		}break;
 	case MOVE_WATER_WALK:
 		{
-			m_setwaterwalk=true;
+			m_setwaterwalk = true;
 			data.SetOpcode(SMSG_MOVE_WATER_WALK);
 			data << GetNewGUID();
 			data << flag;
 		}break;
 	case MOVE_LAND_WALK:
 		{
-			m_setwaterwalk=false;
+			m_setwaterwalk = false;
 			data.SetOpcode(SMSG_MOVE_LAND_WALK);
 			data << GetNewGUID();
 			data << flag;
@@ -4433,7 +4433,7 @@ Corpse* Player::RepopRequestedPlayer()
 		m_CurrentTransporter = NULLTRANSPORT;
 		m_TransporterGUID = 0;
 
-		ResurrectPlayer(NULLPLR);
+		ResurrectPlayer();
 		RepopAtGraveyard( GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId() );
 		return NULLCORPSE;
 	}
@@ -4494,7 +4494,7 @@ Corpse* Player::RepopRequestedPlayer()
 	return ret;
 }
 
-void Player::ResurrectPlayer(Player* pResurrector)
+void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 {
 	sEventMgr.RemoveEvents(TO_PLAYER(this),EVENT_PLAYER_FORECED_RESURECT); //in case somebody resurected us before this event happened
 	if( m_resurrectHealth )
@@ -9137,7 +9137,7 @@ void Player::OnWorldPortAck()
 	if(pPMapinfo != NULL)
 	{
 		if(isDead() && pPMapinfo->type != INSTANCE_NULL && pPMapinfo->type != INSTANCE_PVP)
-				ResurrectPlayer(NULLPLR);
+				ResurrectPlayer();
 
 		if(pPMapinfo->HasFlag(WMI_INSTANCE_WELCOME) && GetMapMgr())
 		{
@@ -12199,7 +12199,7 @@ uint32 Player::GetMaxPersonalRating()
 void Player::FullHPMP()
 {
 	if( isDead() )
-		ResurrectPlayer(NULLPLR);
+		ResurrectPlayer();
 
 	SetUInt32Value(UNIT_FIELD_HEALTH, GetUInt32Value(UNIT_FIELD_MAXHEALTH));
 	SetUInt32Value(UNIT_FIELD_POWER1, GetUInt32Value(UNIT_FIELD_MAXPOWER1));

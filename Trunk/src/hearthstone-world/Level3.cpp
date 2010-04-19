@@ -285,12 +285,17 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 bool ChatHandler::HandleReviveCommand(const char* args, WorldSession *m_session)
 {
 	Player* SelectedPlayer = getSelectedChar(m_session, true);
-	if(!SelectedPlayer) return true;
+	if(!SelectedPlayer)
+		return true;
 
-	
-	SelectedPlayer->SetMovement(MOVE_UNROOT, 1);
-	SelectedPlayer->ResurrectPlayer(NULLPLR);
+	if(SelectedPlayer->m_currentMovement == MOVE_ROOT)
+		SelectedPlayer->SetMovement(MOVE_UNROOT, 1);
+	if(SelectedPlayer->GetUInt32Value(UNIT_FIELD_HEALTH) < 1)
+		SelectedPlayer->ResurrectPlayer();
+
 	SelectedPlayer->SetUInt32Value(UNIT_FIELD_HEALTH, SelectedPlayer->GetUInt32Value(UNIT_FIELD_MAXHEALTH) );
+	SelectedPlayer->SetUInt32Value(UNIT_FIELD_POWER1, SelectedPlayer->GetUInt32Value(UNIT_FIELD_MAXPOWER1) );
+	SelectedPlayer->SetUInt32Value(UNIT_FIELD_POWER4, SelectedPlayer->GetUInt32Value(UNIT_FIELD_MAXPOWER4) );
 	return true;
 }
 

@@ -1320,25 +1320,25 @@ public:
 	void LoadNamesFromDB(uint32 guid);
 	bool m_FirstLogin;
 
-    /************************************************************************/
-    /* Death system                                                         */
-    /************************************************************************/
+	/************************************************************************/
+	/* Death system                                                         */
+	/************************************************************************/
 	void SpawnCorpseBones();
 	Corpse* CreateCorpse();
 	void KillPlayer();
-	void ResurrectPlayer(Player* pResurrector);
+	void ResurrectPlayer(Player* pResurrector = NULLPLR);
 	void BuildPlayerRepop();
 	Corpse* RepopRequestedPlayer();
-	
+
 	// silly event handler
 	void EventRepopRequestedPlayer() { RepopRequestedPlayer(); }
-	
+
 	void DeathDurabilityLoss(double percent);
 	void RepopAtGraveyard(float ox, float oy, float oz, uint32 mapid);
-	
-    /************************************************************************/
-    /* Movement system                                                      */
-    /************************************************************************/
+
+	/************************************************************************/
+	/* Movement system                                                      */
+	/************************************************************************/
 	void SetMovement(uint8 pType, uint32 flag);
 	void SetPlayerSpeed(uint8 SpeedType, float value);
 	float GetPlayerSpeed(){return m_runSpeed;}
@@ -1347,10 +1347,10 @@ public:
 	uint8 m_isWaterWalking;
 	//Invisibility stuff
 	bool m_isGmInvisible;
-	
-    /************************************************************************/
-    /* Channel stuff                                                        */
-    /************************************************************************/
+
+	/************************************************************************/
+	/* Channel stuff                                                        */
+	/************************************************************************/
 	void JoinedChannel(Channel *c);
 	void LeftChannel(Channel *c);
 	void CleanupChannels();
@@ -1858,7 +1858,7 @@ public:
 
 	void RemoteRevive()
 	{
-		ResurrectPlayer(NULLPLR);
+		ResurrectPlayer();
 		SetMovement(MOVE_UNROOT, 5);
 		SetPlayerSpeed(RUN, (float)7);
 		SetPlayerSpeed(SWIM, (float)4.9);

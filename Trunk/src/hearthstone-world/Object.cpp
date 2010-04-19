@@ -95,7 +95,7 @@ Object::~Object( )
 	if(m_objectTypeId != TYPEID_ITEM && m_objectTypeId != TYPEID_CONTAINER)
 		ASSERT(!m_inQueue);
 
-	if (IsInWorld() && m_objectTypeId != TYPEID_ITEM && m_objectTypeId != TYPEID_CONTAINER)
+	if(IsInWorld() && m_objectTypeId != TYPEID_ITEM && m_objectTypeId != TYPEID_CONTAINER)
 	{
 		RemoveFromWorld(false);
 	}
@@ -104,7 +104,7 @@ Object::~Object( )
 
 	// for linux
 	m_instanceId = -1;
-	m_objectTypeId=TYPEID_UNUSED;
+	m_objectTypeId = TYPEID_UNUSED;
 
 	if( m_extensions != NULL )
 		delete m_extensions;

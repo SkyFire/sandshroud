@@ -2121,7 +2121,7 @@ void Aura::SpellAuraDummy(bool apply)
 			if(apply)
 			{
 				TO_PLAYER(m_target)->FullHPMP();
-				TO_PLAYER(m_target)->ResurrectPlayer(NULLPLR);
+				TO_PLAYER(m_target)->ResurrectPlayer();
 				m_target->SetUInt32Value( UNIT_FIELD_MAXPOWER1 + POWER_TYPE_ENERGY, 100 );
 				m_target->SetPowerType( POWER_TYPE_ENERGY );
 				

@@ -465,7 +465,7 @@ void ObjectMgr::LoadPlayerCreateInfo()
 {
 	QueryResult *result = WorldDatabase.Query( "SELECT * FROM playercreateinfo" );
 
-	if( !result )
+	if( result == NULL )
 	{
 		Log.Error("MySQL","Query failed: SELECT * FROM playercreateinfo");
 		return;
@@ -614,7 +614,7 @@ Corpse* ObjectMgr::LoadCorpse(uint32 guid)
 	Corpse* pCorpse;
 	QueryResult *result = CharacterDatabase.Query("SELECT * FROM Corpses WHERE guid =%u ", guid );
 
-	if( !result )
+	if( result == NULL )
 		return NULLCORPSE;
 
 	do
@@ -680,10 +680,10 @@ void ObjectMgr::LoadGMTickets()
 {
 	QueryResult *result = CharacterDatabase.Query( "SELECT guid, playerGuid, name, level, map, posX, posY, posZ, message, timestamp, deleted, assignedto, comment FROM gm_tickets WHERE deleted = 0" );
 
-	GM_Ticket *ticket;
 	if(result == NULL)
 		return;
 
+	GM_Ticket *ticket;
 	do
 	{
 		Field *fields = result->Fetch();
@@ -1255,7 +1255,7 @@ void ObjectMgr::LoadTotemSpells()
 	std::stringstream query;
 	QueryResult *result = WorldDatabase.Query( "SELECT * FROM totemspells" );
 
-	if(!result)
+	if(result == NULL)
 		return;
 
 	//TotemSpells *ts = NULL;
@@ -1285,7 +1285,7 @@ void ObjectMgr::LoadAIThreatToSpellId()
 {
 	QueryResult *result = WorldDatabase.Query( "SELECT * FROM ai_threattospellid" );
 
-	if(!result)
+	if(result == NULL)
 		return;
 
 	uint32 spellid;
@@ -1601,7 +1601,7 @@ void ObjectMgr::LoadTrainers()
 
 	LoadDisabledSpells();
 
-	if(!result)
+	if(result == NULL)
 		return;
 
 	do
@@ -1658,7 +1658,7 @@ void ObjectMgr::LoadTrainers()
 
 		//now load the spells
 		result2 = WorldDatabase.Query("SELECT * FROM trainer_spells where entry = '%u'", entry);
-		if(!result2)
+		if(result2 == NULL)
 		{
 			Log.Error("LoadTrainers", "Trainer without spells, entry %u.", entry);
 			if(tr->UIMessage)
@@ -2014,7 +2014,7 @@ void ObjectMgr::LoadSpellOverride()
 	std::stringstream query;
 	QueryResult *result = WorldDatabase.Query( "SELECT DISTINCT overrideId FROM spelloverride" );
 
-	if(!result)
+	if(result == NULL)
 		return;
 
 //	int num = 0;
@@ -2062,11 +2062,11 @@ void ObjectMgr::SetVendorList(uint32 Entry, std::vector<CreatureItem>* list_)
 void ObjectMgr::LoadCreatureWaypoints()
 {
 	QueryResult *result = WorldDatabase.Query("SELECT * FROM creature_waypoints ORDER BY spawnid, waypointid");
-	if(!result)
+	if(result == NULL)
 		return;
 
 	QueryResult *result2 = WorldDatabase.Query("SELECT spawnid,COUNT(waypointid) FROM creature_waypoints GROUP BY spawnid ORDER BY spawnid,waypointid");
-	if(!result2)
+	if(result2 == NULL)
 		return;
 
 	HM_NAMESPACE::hash_map<uint32,WayPointMap*>::const_iterator i;
@@ -2291,7 +2291,7 @@ void ObjectMgr::LoadGuildCharters()
 {
 	m_hiCharterId = 0;
 	QueryResult * result = CharacterDatabase.Query("SELECT * FROM charters");
-	if(!result)
+	if(result == NULL)
 		return;
 
 	do
@@ -2569,7 +2569,7 @@ ReputationModifier * ObjectMgr::GetReputationModifier(uint32 entry_id, uint32 fa
 void ObjectMgr::LoadMonsterSay()
 {
 	QueryResult * result = WorldDatabase.Query("SELECT * FROM npc_monstersay");
-	if(!result)
+	if(result == NULL)
 		return;
 
 	uint32 Entry, Event;
@@ -2660,7 +2660,7 @@ bool ObjectMgr::HasMonsterSay(uint32 Entry, MONSTER_SAY_EVENTS Event)
 void ObjectMgr::LoadInstanceReputationModifiers()
 {
 	QueryResult * result = WorldDatabase.Query("SELECT * FROM reputation_instance_onkill");
-	if(!result)
+	if(result == NULL)
 		return;
 
 	do

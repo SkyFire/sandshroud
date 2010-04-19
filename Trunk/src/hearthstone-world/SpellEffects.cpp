@@ -6206,7 +6206,7 @@ void Spell::SpellEffectSelfResurrect(uint32 i)
 	playerTarget->m_resurrectHealth = health;
 	playerTarget->m_resurrectMana = mana;
 
-	playerTarget->ResurrectPlayer(NULLPLR);
+	playerTarget->ResurrectPlayer();
 	playerTarget->m_resurrectHealth = 0;
 	playerTarget->m_resurrectMana = 0;
 	playerTarget->SetMovement(MOVE_UNROOT, 1);

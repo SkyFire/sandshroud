@@ -845,7 +845,7 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket &recv_data)
 		return;
 	}
 
-	GetPlayer()->ResurrectPlayer(NULLPLR);
+	GetPlayer()->ResurrectPlayer();
 	GetPlayer()->SetUInt32Value(UNIT_FIELD_HEALTH, GetPlayer()->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/2 );
 }
 
@@ -897,7 +897,7 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 	//OUT_DEBUG("WORLD: Received CMSG_UPDATE_ACCOUNT_DATA");
 	if(!sWorld.m_useAccountData)
 	{
-		recv_data.rpos(recv_data.wpos()); // Spam cleanup.
+		SKIP_READ_PACKET(recv_data); // Spam cleanup.
 		return;
 	}
 
@@ -921,21 +921,21 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 	// client wants to 'erase' current entries
 	if(uiDecompressedSize == 0)
 	{
-		recv_data.rpos(recv_data.wpos());
+		SKIP_READ_PACKET(recv_data);
 		SetAccountData(uiID, NULL, false,0);
 		return;
 	}
 
 	if(uiDecompressedSize > 100000)
 	{
-		recv_data.rpos(recv_data.wpos()); // Spam cleanup.
+		SKIP_READ_PACKET(recv_data); // Spam cleanup.
 		Disconnect();
 		return;
 	}
 
 	if(uiDecompressedSize >= 65534)
 	{
-		recv_data.rpos(recv_data.wpos()); // Spam cleanup.
+		SKIP_READ_PACKET(recv_data); // Spam cleanup.
 		// BLOB fields can't handle any more than this.
 		return;
 	}
@@ -956,7 +956,7 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 			SetAccountData(uiID, data, false, uiDecompressedSize);
 			OUT_DEBUG("WORLD: Successfully decompressed account data %d for %s, and updated storage array.", uiID, GetPlayer() ? GetPlayer()->GetName() : GetAccountNameS());
 			break;
-		
+
 		case Z_ERRNO:				//-1
 		case Z_STREAM_ERROR:		//-2
 		case Z_DATA_ERROR:			//-3
@@ -979,8 +979,7 @@ void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
 	{
 		memcpy(data, recv_data.contents() + 12, uiDecompressedSize);
 		SetAccountData(uiID, data, false, uiDecompressedSize);
-	}
-	recv_data.rpos(recv_data.wpos()); // Spam cleanup for packet size checker... Because who cares about this dataz
+	}SKIP_READ_PACKET(recv_data); // Spam cleanup for packet size checker... Because who cares about this dataz
 }
 
 void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
@@ -988,7 +987,7 @@ void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
 	//OUT_DEBUG("WORLD: Received CMSG_REQUEST_ACCOUNT_DATA");
 	if(!sWorld.m_useAccountData)
 	{
-		recv_data.rpos(recv_data.wpos()); // Spam cleanup for packet size checker.
+		SKIP_READ_PACKET(recv_data); // Spam cleanup for packet size checker.
 		return;
 	}
 
@@ -1010,6 +1009,7 @@ void WorldSession::HandleRequestAccountData(WorldPacket& recv_data)
 	if(res->sz && compress(const_cast<uint8*>(bbuff.contents()), &destSize, (uint8*)res->data, res->sz) != Z_OK)
 	{
 		OUT_DEBUG("Error while compressing ACCOUNT_DATA");
+		SKIP_READ_PACKET(recv_data);
 		return;
 	}
 
