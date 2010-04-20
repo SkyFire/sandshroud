@@ -1234,7 +1234,7 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 
 		pCreature->AddVendorItem((*itr)->ItemId, amount);
 
-		sstext <<"Item set '" << item << " - " << tmpItem->name << "' Added to vendor." << '\0';
+		sstext <<"Item set '" << item << "' Added to vendor." << '\0';
 		}
 	}
 	else

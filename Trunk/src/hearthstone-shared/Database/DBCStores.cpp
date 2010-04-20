@@ -23,13 +23,12 @@
 #include "DataStore.h"
 #include "NGLog.h"
 
-//SERVER_DECL DBCStorage<AreaTriggerEntry> dbcAreaTrigger;
+SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
+SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
-//SERVER_DECL DBCStorage<CharTitlesEntry> dbcCharTitlesEntry;
 SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypesStore;
 SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
 SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
-//SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
 SERVER_DECL DBCStorage<Lock> dbcLock;
 SERVER_DECL DBCStorage<SpellEntry> dbcSpell;
@@ -77,22 +76,17 @@ SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
 SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
 SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
 SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
-SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
-SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
 SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
 
 const char* SummonPropertiesfmt = "uuuuuu";
-//const char* AreaTriggerFormat = "uuffffffff";
 const char* AreaGroupFormat="niiiiiii";
-//const char* CharTitlesEntryfmt = "usxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxu";
 const char* CurrencyTypesEntryFormat = "xnxu";
-//const char* ItemFormat = "niiiiiii";
-const char* ItemSetFormat = "usxxxxxxxxxxxxxxxuuuuuuuuuuuxxxxxxxuuuuuuuuuuuuuuuuuu";
+const char* ItemSetFormat = "uxxxxxxxxxxxxxxxxxuuuuuuuuuuxxxxxxxuuuuuuuuuuuuuuuuuu";
 const char* LockFormat = "uuuuuuxxxuuuuuxxxuuuuuxxxxxxxxxxx";
-const char* EmoteEntryFormat = "uxuuuuxuxuxxxxxxxxx";
+const char* EmoteEntryFormat = "uxuxxxxxxxxxxxxxxxx";
 const char* skilllinespellFormat = "uuuuuxxuuuuuxx";
 const char* EnchantEntrYFormat = "uxuuuuuuuuuuuusxxxxxxxxxxxxxxxxuuuuxxx";
 const char* GemPropertyEntryFormat = "uuuuu";
@@ -221,23 +215,23 @@ const char* charclassFormat = "uxuxsxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 const char* creaturefamilyFormat = "ufufuuuuuxsxxxxxxxxxxxxxxxxx";
 const char* mapentryFormat =
 	"u"					// 0 id
-	"s"					// 1 name_internal
+	"x"					// 1 name_internal
 	"u"					// 2 map_type
-	"u"					// 3 is_pvp_zone
+	"x"					// 3 is_pvp_zone
 	"x"					// 4 0 or 1 for battlegrounds (not arenas)
-	"sxxxxxxxxxxxxxxxx"	// 5-21 real_name
-	"u"					// 22 linked_zone
-	"sxxxxxxxxxxxxxxxx" // 23-39 hordeIntro
-	"sxxxxxxxxxxxxxxxx" // 40-56 allianceIntro
+	"xxxxxxxxxxxxxxxxx"	// 5-21 real_name
+	"x"					// 22 linked_zone
+	"xxxxxxxxxxxxxxxxx" // 23-39 hordeIntro
+	"xxxxxxxxxxxxxxxxx" // 40-56 allianceIntro
 	"u"					// 57 multimap_id
 	"x"					// 58 unk_float (all 1 but arathi 1.25)
-	"u"					// 59 parent_map
-	"u"					// 60 start_x
-	"u"					// 61 start_y
+	"x"					// 59 parent_map
+	"x"					// 60 start_x
+	"x"					// 61 start_y
 	"x"					// 62 unk
-	"u"					// 63 addon
+	"x"					// 63 addon
 	"x"					// 64 normalReqText
-	"u";				// 65 Max players
+	"x";				// 65 Max players
 
 const char* itemrandomsuffixformat = "usxxxxxxxxxxxxxxxxxuuuuuuuuuu";
 const char* chatchannelformat = "uuxsxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
@@ -248,8 +242,8 @@ const char* barbershopstyleFormat="nusxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxuuu";
 const char* gtfloatformat = "f";
 const char* spellshapeshiftformformat = "uxxxxxxxxxxxxxxxxxxxxxxxxxxxuuuuuuu";
 
-const char* vehicleseatentryFormat = "uuuffffffffffuuuuuufffffffuuufffuuuuuuuffuuuuuxxxxxxxxxxxx";
-const char* vehicleentryFormat = "uuffffuuuuuuuufffffffffffffffssssfufuxxx";
+const char* vehicleseatentryFormat = "uuxfffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxuuxxxxxxxxxxxx";
+const char* vehicleentryFormat = "uxxxxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
 const char* achievementfmt=
 	"n" // Index
@@ -261,7 +255,7 @@ const char* achievementfmt=
 	"s" // Description
 	"xxxxxxxxxxxxxxxx"
 	"i" // Category Id
-	"i" // points
+	"x" // points
 	"x" // Order In Category
 	"i" // Flags
 	"xxxxxxxxxxxxxxxxxxxx";
@@ -280,78 +274,120 @@ bool loader_stub(const char * filename, const char * format, bool ind, T& l, boo
 
 bool LoadDBCs()
 {
+	/* Needed for: Used in loading of achievements and finding saving information and grabbing criteria
+	info to see if player deserves achievement. */
 	LOAD_DBC("DBC/Achievement.dbc", achievementfmt,true, dbcAchievement,true);
+	/* Needed for: */
 	LOAD_DBC("DBC/Achievement_Criteria.dbc", achievementCriteriafmt,true,dbcAchievementCriteria,true);
+	/* Needed for: */
 	LOAD_DBC("DBC/AreaGroup.dbc", AreaGroupFormat, true, dbcAreaGroup, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/AreaTable.dbc", areatableFormat, true, dbcArea, true);
-//	LOAD_DBC("DBC/AreaTrigger.dbc", AreaTriggerFormat, true, dbcAreaTrigger, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/AuctionHouse.dbc", auctionhousedbcFormat, true, dbcAuctionHouse, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/BankBagSlotPrices.dbc", bankslotpriceformat, true, dbcBankSlotPrices, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/BarberShopStyle.dbc", barbershopstyleFormat, true, dbcBarberShopStyle, true);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/ChatChannels.dbc", chatchannelformat, true, dbcChatChannels, true);
-	//LOAD_DBC("DBC/CharTitles.dbc", CharTitlesEntryfmt, true, dbcCharTitlesEntry, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/CurrencyTypes.dbc", CurrencyTypesEntryFormat, true, dbcCurrencyTypesStore, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/ChrClasses.dbc", charclassFormat, true, dbcCharClass, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/ChrRaces.dbc", charraceFormat, true, dbcCharRace, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/CreatureDisplayInfo.dbc", creaturedisplayFormat, true, dbcCreatureDisplayInfo, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/CreatureFamily.dbc", creaturefamilyFormat, true, dbcCreatureFamily, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/CreatureSpellData.dbc", creaturespelldataFormat, true, dbcCreatureSpellData, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/DurabilityQuality.dbc", durabilityqualityFormat, true, dbcDurabilityQuality, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/DurabilityCosts.dbc", durabilitycostsFormat, true, dbcDurabilityCosts, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/EmotesText.dbc", EmoteEntryFormat, true, dbcEmoteEntry, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/Faction.dbc", factiondbcFormat, true, dbcFaction, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/FactionTemplate.dbc", factiontemplatedbcFormat, true, dbcFactionTemplate, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/GemProperties.dbc", GemPropertyEntryFormat, true, dbcGemProperty, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/GlyphProperties.dbc", GlyphPropertyEntryFormat, true, dbcGlyphProperty, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/gtBarberShopCostBase.dbc", gtfloatformat, false, dbcBarberShopPrices, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/gtChanceToMeleeCrit.dbc", gtfloatformat, false, dbcMeleeCrit, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/gtChanceToMeleeCritBase.dbc", gtfloatformat, false, dbcMeleeCritBase, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/gtChanceToSpellCrit.dbc", gtfloatformat, false, dbcSpellCrit, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/gtChanceToSpellCritBase.dbc", gtfloatformat, false, dbcSpellCritBase, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/gtCombatRatings.dbc", gtfloatformat, false, dbcCombatRating, false);
-	LOAD_DBC("DBC/gtOCTRegenHP.dbc", gtfloatformat, false, dbcHPRegen, false); //it's not a mistake.
-	LOAD_DBC("DBC/gtOCTRegenMP.dbc", gtfloatformat, false, dbcManaRegen, false); //it's not a mistake.
-	LOAD_DBC("DBC/gtRegenHPPerSpt.dbc", gtfloatformat, false, dbcHPRegenBase, false); //it's not a mistake.
-	LOAD_DBC("DBC/gtRegenMPPerSpt.dbc", gtfloatformat, false, dbcManaRegenBase, false); //it's not a mistake.
-
-	//LOAD_DBC("DBC/Item.dbc", ItemFormat, true, dbcItem, true);
+	/* Needed for: */
+	LOAD_DBC("DBC/gtOCTRegenHP.dbc", gtfloatformat, false, dbcHPRegen, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/gtOCTRegenMP.dbc", gtfloatformat, false, dbcManaRegen, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/gtRegenHPPerSpt.dbc", gtfloatformat, false, dbcHPRegenBase, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/gtRegenMPPerSpt.dbc", gtfloatformat, false, dbcManaRegenBase, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/ItemExtendedCost.dbc", itemextendedcostFormat, true, dbcItemExtendedCost, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/ItemSet.dbc", ItemSetFormat, true, dbcItemSet, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/ItemRandomProperties.dbc", randompropsFormat, true, dbcRandomProps, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/ItemRandomSuffix.dbc", itemrandomsuffixformat, true, dbcItemRandomSuffix, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/Lock.dbc", LockFormat, true, dbcLock, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/Map.dbc", mapentryFormat, true, dbcMap, true);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/StableSlotPrices.dbc", bankslotpriceformat, true, dbcStableSlotPrices, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/SkillLine.dbc", skilllineentrYFormat, true, dbcSkillLine, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/SkillLineAbility.dbc", skilllinespellFormat, false, dbcSkillLineSpell, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/Spell.dbc", spellentryFormat, true, dbcSpell, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/SpellCastTimes.dbc", spellcasttimeFormat, true, dbcSpellCastTime, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/SpellDuration.dbc", spelldurationFormat, true, dbcSpellDuration, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/SpellItemEnchantment.dbc", EnchantEntrYFormat, true, dbcEnchant, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/SpellRadius.dbc", spellradiusFormat, true, dbcSpellRadius, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/SpellRange.dbc", spellrangeFormat, true, dbcSpellRange, false);
+	/* Needed for: Spell costs and calculations for dummy scripts or scripted spells for DK's. */
 	LOAD_DBC("DBC/SpellRuneCost.dbc", SpellRuneCostfmt, true, dbcSpellRuneCost, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/SpellShapeshiftForm.dbc", spellshapeshiftformformat, true, dbcSpellShapeshiftForm, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/SummonProperties.dbc", SummonPropertiesfmt, true, dbcSummonProps, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/Talent.dbc", talententryFormat, true, dbcTalent, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/TalentTab.dbc", talenttabentryFormat, true, dbcTalentTab, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/TaxiNodes.dbc", dbctaxinodeFormat, false, dbcTaxiNode, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/TaxiPath.dbc", dbctaxipathFormat, false, dbcTaxiPath, false);
+	/* Needed for: */
 	LOAD_DBC("DBC/TaxiPathNode.dbc", dbctaxipathnodeFormat, false, dbcTaxiPathNode, false);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/Vehicle.dbc", vehicleentryFormat, true, dbcVehicle, true);
+	/* Needed for: */
 	LOAD_DBC("DBC/VehicleSeat.dbc", vehicleseatentryFormat, true, dbcVehicleSeat, true);
-
+	/* Needed for: */
 	LOAD_DBC("DBC/WorldMapOverlay.dbc", WorldMapOverlayfmt, true, dbcWorldMapOverlay, true);
 
 	return true;

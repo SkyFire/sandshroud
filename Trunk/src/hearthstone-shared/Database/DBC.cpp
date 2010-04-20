@@ -45,7 +45,6 @@ void DBC::Load(const char *filename)
 	fread(&rows,4, 1, f);
 	fread(&cols, 4, 1, f);
 	fread(&weird2, 4, 1, f);
-	//int percol = weird2/cols;
 	fread(&dblength, 4, 1, f);
 
 	tbl = new unsigned int[rows * cols];

@@ -27,25 +27,25 @@
 #pragma pack(push,1)
 struct AchievementEntry
 {
-	uint32 ID; // 0
-	uint32 factionFlag; // 1 -1=all, 0=horde, 1=alliance
-	uint32 mapID; // 2 -1=none
-	uint32 Previous_achievement; // 3 Lots of 0's
-	char* name; // 4
-	//uint32 unk1[14]; // 5-19
-	//uint32 name_flags; // 20
-	char* description; // 21
-	//char *descriptionextra[14]; // 22-36
-	//uint32 desc_flags; // 37
-	uint32 categoryId; // 38
-	uint32 points; // 39 reward points
-	//uint32 OrderInCategory; // 40
-	uint32 flags; // 41
-	//uint32 flags; // 42 not flags, some unknown value...
-	//char *unk1[16]; // 43-58
-	//uint32 unk_flags; // 59
-	//uint32 count; // 60
-	//uint32 refAchievement; // 61
+	uint32 ID;						// 0
+	uint32 factionFlag;				// 1 -1=all, 0=horde, 1=alliance
+	uint32 mapID;					// 2 -1=none
+	uint32 Previous_achievement;	// 3 Lots of 0's
+	char* name;						// 4
+//	uint32 unk1[14];				// 5-19
+//	uint32 name_flags;				// 20
+	char* description;				// 21
+//	char *descriptionextra[14];		// 22-36
+//	uint32 desc_flags;				// 37
+	uint32 categoryId;				// 38 Category
+//	uint32 points;					// 39 reward points
+//	uint32 OrderInCategory;			// 40
+	uint32 flags;					// 41
+//	uint32 flags;					// 42 not flags, some unknown value...
+//	char *unk1[16];					// 43-58
+//	uint32 unk_flags;				// 59
+//	uint32 count;					// 60
+//	uint32 refAchievement;			// 61
 
 	uint32 AssociatedCriteria[32]; // Custom stuff
 	uint32 AssociatedCriteriaCount;
@@ -449,73 +449,34 @@ struct AchievementCriteriaEntry
 	//uint32 unk1;										// 30
 };
 
-
-struct AreaTriggerEntry
-{
-	uint32 AreaTriggerID;	// 1
-	uint32 Mapid;			// 2
-	float x;				// 3
-	float y;				// 4
-	float z;				// 5
-	float o;				// 6
-	float edge_x;			// 7
-	float edge_y;			// 8
-	float edge_z;			// 9
-	float edge_o;			// 10
-};
-
 struct BankSlotPrice
 {
 	uint32 Id;
 	uint32 Price;
 };
 
-/*struct CharTitlesEntry
-{
-	uint32 ID;											// 0, title ids
-	//uint32	  unk1;									// 1 flags?
-	char*		 name;									// 2 title name
-	//char*	   name2[15];								// 3-17, unused
-														// 18 string flag, unused
-	//char*	   name2[16];								// 19-34, unused
-														// 35 string flag, unused
-	uint32 bit_index;									// 36 used in PLAYER_CHOSEN_TITLE and 1<<index in PLAYER__FIELD_KNOWN_TITLES
-};*/
-
 struct CurrencyTypesEntry
 {
-	//uint32	ID;									// 0 not used
-	uint32	ItemId;									// 1 used as real index
-	//uint32	Category;							// 2 may be category
-	uint32	BitIndex;								// 3 bit index in PLAYER_FIELD_KNOWN_CURRENCIES (1 << (index-1))
+//	uint32 ID;			// 0 not used
+	uint32 ItemId;		// 1 used as real index
+//	uint32 Category;	// 2 may be category
+	uint32 BitIndex;	// 3 bit index in PLAYER_FIELD_KNOWN_CURRENCIES (1 << (index-1))
 };
 
 
 struct ItemSetEntry
 {
 	uint32 id;						//1
-	char* name;						//2
-	//uint32 unused_shit[15];		//3 - 17
-	uint32 flag;					//18 constant
+//	char* name;						//2
+//	uint32 unused_shit[15];			//3 - 17
+//	uint32 flag;					//18 constant
 	uint32 itemid[10];				//19 - 28
-	//uint32 more_unused_shit[7];	//29 - 35
+//	uint32 more_unused_shit[7];		//29 - 35
 	uint32 SpellID[8];				//36 - 43
 	uint32 itemscount[8];			//44 - 51
 	uint32 RequiredSkillID;			//52
 	uint32 RequiredSkillAmt;		//53
 };
-
-/*struct ItemEntry
-{
-	uint32 ID;						// 0
-	uint32 Class;					// 1
-	uint32 SubClass;				// 2 some items have strange subclasses
-	int32  Unk0;					// 3
-	int32  Material;				// 4
-	uint32 DisplayId;				// 5
-	uint32 InventoryType;			// 6
-	uint32 Sheath;					// 7
-};*/
 
 struct Lock
 {
@@ -531,40 +492,40 @@ struct Lock
 struct emoteentry
 {
 	uint32 Id;
-	//uint32 name;
+//	uint32 name;
 	uint32 textid;
-	uint32 textid2;
+/*	uint32 textid2;
 	uint32 textid3;
 	uint32 textid4;
-	//uint32 unk1;
+	uint32 unk1;
 	uint32 textid5;
-	//uint32 unk2;
+	uint32 unk2;
 	uint32 textid6;
-	//uint32 unk3;
-	//uint32 unk4;
-	//uint32 unk5;
-	//uint32 unk6;
-	//uint32 unk7;
-	//uint32 unk8;
-	//uint32 unk9;
-	//uint32 unk10;
-	//uint32 unk11;
+	uint32 unk3;
+	uint32 unk4;
+	uint32 unk5;
+	uint32 unk6;
+	uint32 unk7;
+	uint32 unk8;
+	uint32 unk9;
+	uint32 unk10;
+	uint32 unk11;*/
 };
 
 struct skilllinespell //SkillLineAbility.dbc
 {
-	uint32 Id;			//1
-	uint32 skilline;	//2
-	uint32 spell;		//3
-	uint32 racemask;									// 4 m_raceMask
-	uint32 classmask;									// 5 m_classMask
-	//uint32 racemaskNot;								// 6 m_excludeRace
-	//uint32 classmaskNot;								// 7 m_excludeClass
-	uint32 req_skill_value;								// 8 m_minSkillLineRank
-	uint32 next;		//9
-	uint32 minrank;		//10
-	uint32 grey;		//11
-	uint32 green;		//12
+	uint32 Id;					//1
+	uint32 skilline;			//2
+	uint32 spell;				//3
+	uint32 racemask;			// 4 m_raceMask
+	uint32 classmask;			// 5 m_classMask
+//	uint32 racemaskNot;			// 6 m_excludeRace
+//	uint32 classmaskNot;		// 7 m_excludeClass
+	uint32 req_skill_value;		// 8 m_minSkillLineRank
+	uint32 next;				//9
+	uint32 minrank;				//10
+	uint32 grey;				//11
+	uint32 green;				//12
 };
 
 struct EnchantEntry
@@ -1202,19 +1163,19 @@ struct CreatureFamilyEntry
 struct MapEntry
 {
 	uint32 id;
-	char* name_internal;
+//	char* name_internal;
 	uint32 map_type;
-	uint32 is_pvp_zone;
-	char* real_name;
-	uint32 linked_zone;		// common zone for instance and continent map
-	char* hordeIntro;		// text for PvP Zones
-	char* allianceIntro;	// text for PvP Zones
+//	uint32 is_pvp_zone;
+//	char* real_name;
+//	uint32 linked_zone;		// common zone for instance and continent map
+//	char* hordeIntro;		// text for PvP Zones
+//	char* allianceIntro;	// text for PvP Zones
 	uint32 multimap_id;		// seems to be 0 for all test maps.
-	int32 parent_map;		// map_id of parent map
-	float start_x;			// enter x coordinate (if exist single entry)
-	float start_y;			// enter y coordinate (if exist single entry)
-	uint32 addon;			// 0-original maps, 1-tbc addon, 2-wotlk addon
-	uint32 maxPlayers;		// max players
+//	int32 parent_map;		// map_id of parent map
+//	float start_x;			// enter x coordinate (if exist single entry)
+//	float start_y;			// enter y coordinate (if exist single entry)
+//	uint32 addon;			// 0-original maps, 1-tbc addon, 2-wotlk addon
+//	uint32 maxPlayers;		// max players
 
 	bool israid() { return map_type == 2; }
 };
@@ -1229,17 +1190,17 @@ struct ItemRandomSuffixEntry
 
 struct BarberShopStyleEntry
 {
-	uint32 id;												// 0
-	uint32 type;											// 1 value 0 -> hair, value 2 -> facialhair
-	char* name;												// 2 string hairstyle name
-	//char*   name[15];										// 3-17 name of hair style
-	//uint32 name_flags;									// 18
-	//uint32 unk_name[16];									// 19-34, all empty
-	//uint32 unk_flags;									// 35
-	//float   unk3;											// 36 values 1 and 0,75
-	uint32 race;											// 37 race
-	uint32 gender;											// 38 0 male, 1 female
-	uint32 hair_id;										// 39 Hair ID
+	uint32 id;					// 0
+	uint32 type;				// 1 value 0 -> hair, value 2 -> facialhair
+	char* name;					// 2 string hairstyle name
+//	char* name[15];				// 3-17 name of hair style
+//	uint32 name_flags;			// 18
+//	uint32 unk_name[16];		// 19-34, all empty
+//	uint32 unk_flags;			// 35
+//	float unk3;					// 36 values 1 and 0,75
+	uint32 race;				// 37 race
+	uint32 gender;				// 38 0 male, 1 female
+	uint32 hair_id;				// 39 Hair ID
 };
 
 struct gtFloat
@@ -1279,88 +1240,88 @@ struct SpellShapeshiftForm
 
 struct VehicleEntry
 {
-	uint32 m_ID; // 0
-	uint32 m_flags; // 1
-	float m_turnSpeed; // 2
-	float m_pitchSpeed; // 3
-	float m_pitchMin; // 4
-	float m_pitchMax; // 5
-	uint32 m_seatID[8]; // 6-13
-	float m_mouseLookOffsetPitch; // 14
-	float m_cameraFadeDistScalarMin; // 15
-	float m_cameraFadeDistScalarMax; // 16
-	float m_cameraPitchOffset; // 17
-	float m_facingLimitRight; // 24
-	float m_facingLimitLeft; // 25
-	float m_msslTrgtTurnLingering; // 26
-	float m_msslTrgtPitchLingering; // 27
-	float m_msslTrgtMouseLingering; // 28
-	float m_msslTrgtEndOpacity; // 29
-	float m_msslTrgtArcSpeed; // 30
-	float m_msslTrgtArcRepeat; // 31
-	float m_msslTrgtArcWidth; // 32
-	float m_msslTrgtImpactRadius[2]; // 33-34
-	char* m_msslTrgtArcTexture; // 35
-	char* m_msslTrgtImpactTexture; // 36
-	char* m_msslTrgtImpactModel[2]; // 37-38
-	float m_cameraYawOffset; // 39
-	uint32 m_uiLocomotionType; // 40
-	float m_msslTrgtImpactTexRadius; // 41
-	uint32 m_uiSeatIndicatorType; // 42
-	//
-	//
-	//
+	uint32 m_ID;								// 0
+//	uint32 m_flags;								// 1
+//	float m_turnSpeed;							// 2
+//	float m_pitchSpeed;							// 3
+//	float m_pitchMin;							// 4
+//	float m_pitchMax;							// 5
+	uint32 m_seatID[8];							// 6-13
+//	float m_mouseLookOffsetPitch;				// 14
+//	float m_cameraFadeDistScalarMin;			// 15
+//	float m_cameraFadeDistScalarMax;			// 16
+//	float m_cameraPitchOffset;					// 17
+//	float m_facingLimitRight;					// 24
+//	float m_facingLimitLeft;					// 25
+//	float m_msslTrgtTurnLingering;				// 26
+//	float m_msslTrgtPitchLingering;				// 27
+//	float m_msslTrgtMouseLingering;				// 28
+//	float m_msslTrgtEndOpacity;					// 29
+//	float m_msslTrgtArcSpeed;					// 30
+//	float m_msslTrgtArcRepeat;					// 31
+//	float m_msslTrgtArcWidth;					// 32
+//	float m_msslTrgtImpactRadius[2];			// 33-34
+//	char* m_msslTrgtArcTexture;					// 35
+//	char* m_msslTrgtImpactTexture;				// 36
+//	char* m_msslTrgtImpactModel[2];				// 37-38
+//	float m_cameraYawOffset;					// 39
+//	uint32 m_uiLocomotionType;					// 40
+//	float m_msslTrgtImpactTexRadius;			// 41
+//	uint32 m_uiSeatIndicatorType;				// 42
+//												// 43
+//												// 44
+//												// 45
 };
  
 struct VehicleSeatEntry
 {
 	uint32 m_ID; // 0
-	uint32 m_flags; // 1
-	int32 m_attachmentID; // 2
-	float m_attachmentOffsetX; // 3
-	float m_attachmentOffsetY; // 4
-	float m_attachmentOffsetZ; // 5
-	float m_enterPreDelay; // 6
-	float m_enterSpeed; // 7
-	float m_enterGravity; // 8
-	float m_enterMinDuration; // 9
-	float m_enterMaxDuration; // 10
-	float m_enterMinArcHeight; // 11
-	float m_enterMaxArcHeight; // 12
-	int32 m_enterAnimStart; // 13
-	int32 m_enterAnimLoop; // 14
-	int32 m_rideAnimStart; // 15
-	int32 m_rideAnimLoop; // 16
-	int32 m_rideUpperAnimStart; // 17
-	int32 m_rideUpperAnimLoop; // 18
-	float m_exitPreDelay; // 19
-	float m_exitSpeed; // 20
-	float m_exitGravity; // 21
-	float m_exitMinDuration; // 22
-	float m_exitMaxDuration; // 23
-	float m_exitMinArcHeight; // 24
-	float m_exitMaxArcHeight; // 25
-	int32 m_exitAnimStart; // 26
-	int32 m_exitAnimLoop; // 27
-	int32 m_exitAnimEnd; // 28
-	float m_passengerYaw; // 29
-	float m_passengerPitch; // 30
-	float m_passengerRoll; // 31
-	int32 m_passengerAttachmentID; // 32
-	int32 m_vehicleEnterAnim; // 33
-	int32 m_vehicleExitAnim; // 34
-	int32 m_vehicleRideAnimLoop; // 35
-	int32 m_vehicleEnterAnimBone; // 36
-	int32 m_vehicleExitAnimBone; // 37
-	int32 m_vehicleRideAnimLoopBone; // 38
-	float m_vehicleEnterAnimDelay; // 39
-	float m_vehicleExitAnimDelay; // 40
-	uint32 m_vehicleAbilityDisplay; // 41
-	uint32 m_enterUISoundID; // 42
-	uint32 m_exitUISoundID; // 43
-	int32 m_uiSkin; // 44
-	uint32 m_flagsB; // 45
-	// 46-57
+	uint32 m_flags;					// 1
+//	int32 m_attachmentID;			// 2
+	float m_attachmentOffsetX;		// 3
+	float m_attachmentOffsetY;		// 4
+	float m_attachmentOffsetZ;		// 5
+//	float m_enterPreDelay;			// 6
+//	float m_enterSpeed;				// 7
+//	float m_enterGravity;			// 8
+//	float m_enterMinDuration;		// 9
+//	float m_enterMaxDuration;		// 10
+//	float m_enterMinArcHeight;		// 11
+//	float m_enterMaxArcHeight;		// 12
+//	int32 m_enterAnimStart;			// 13
+//	int32 m_enterAnimLoop;			// 14
+//	int32 m_rideAnimStart;			// 15
+//	int32 m_rideAnimLoop;			// 16
+//	int32 m_rideUpperAnimStart;		// 17
+//	int32 m_rideUpperAnimLoop;		// 18
+//	float m_exitPreDelay;			// 19
+//	float m_exitSpeed;				// 20
+//	float m_exitGravity;			// 21
+//	float m_exitMinDuration;		// 22
+//	float m_exitMaxDuration;		// 23
+//	float m_exitMinArcHeight;		// 24
+//	float m_exitMaxArcHeight;		// 25
+//	int32 m_exitAnimStart;			// 26
+//	int32 m_exitAnimLoop;			// 27
+//	int32 m_exitAnimEnd;			// 28
+//	float m_passengerYaw;			// 29
+//	float m_passengerPitch;			// 30
+//	float m_passengerRoll;			// 31
+//	int32 m_passengerAttachmentID;	// 32
+//	int32 m_vehicleEnterAnim;		// 33
+//	int32 m_vehicleExitAnim;		// 34
+//	int32 m_vehicleRideAnimLoop;	// 35
+//	int32 m_vehicleEnterAnimBone;	// 36
+//	int32 m_vehicleExitAnimBone;	// 37
+//	int32 m_vehicleRideAnimLoopBone;// 38
+//	float m_vehicleEnterAnimDelay;	// 39
+//	float m_vehicleExitAnimDelay;	// 40
+//	uint32 m_vehicleAbilityDisplay;	// 41
+	uint32 m_enterUISoundID;		// 42
+	uint32 m_exitUISoundID;			// 43
+//	int32 m_uiSkin;					// 44
+//	uint32 m_flagsB;				// 45
+//									// 46-57
 
 	bool IsUsable() const { return (m_flags & 0x2000000 ? true : false); }
 };
@@ -1531,8 +1492,13 @@ public:
 		uint32 c = 0;
 		uint32 val;
 		size_t len = strlen(format);
-		if(len!= cols)
+		if(len != cols)
+		{
 			printf("!!! possible invalid format in file %s (us: %u, them: %u)\n", filename, (uint32)len, cols);
+			printf("!!! Core will pause for 10 seconds\n");
+			Sleep(10000);
+			return;
+		}
 
 		while(*t != 0)
 		{
@@ -1540,7 +1506,9 @@ public:
 			{
 				++t;
 				printf("!!! Read buffer overflow in DBC reading of file %s\n", filename);
-				continue;
+				printf("!!! Core will pause for 10 seconds\n");
+				Sleep(10000);
+				break;
 			}
 
 			fread(&val, 4, 1, f);
@@ -1683,7 +1651,8 @@ public:
 #endif
 };
 
-//extern SERVER_DECL DBCStorage<AreaTriggerEntry> dbcAreaTrigger;
+extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
+extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
 extern SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypesStore;
 extern SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
@@ -1717,7 +1686,6 @@ extern SERVER_DECL DBCStorage<CreatureFamilyEntry> dbcCreatureFamily;
 extern SERVER_DECL DBCStorage<CharClassEntry> dbcCharClass;
 extern SERVER_DECL DBCStorage<CharRaceEntry> dbcCharRace;
 extern SERVER_DECL DBCStorage<MapEntry> dbcMap;
-//extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 extern SERVER_DECL DBCStorage<ItemExtendedCostEntry> dbcItemExtendedCost;
 extern SERVER_DECL DBCStorage<ItemRandomSuffixEntry> dbcItemRandomSuffix;
 extern SERVER_DECL DBCStorage<CombatRatingDBC> dbcCombatRating;
@@ -1736,8 +1704,6 @@ extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegen;
 extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
 extern SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
 extern SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
-extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
-extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 extern SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 extern SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 extern SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;

@@ -4063,13 +4063,15 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			if( Set )
 			{
 				for( uint32 x = 0; x < 8; x++ )
-				if( Set->itemscount == set->itemscount[x] )
 				{
-					this->RemoveAura( set->SpellID[x], GetGUID() );
+					if( Set->itemscount == set->itemscount[x] )
+					{
+						this->RemoveAura( set->SpellID[x], GetGUID() );
+					}
 				}
-	   
+
 				if(!(--Set->itemscount))
-				m_itemsets.erase(i);
+					m_itemsets.erase(i);
 			}
 		}
 	}
