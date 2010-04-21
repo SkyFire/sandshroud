@@ -4901,7 +4901,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			}break;
 
 			//////////////////////////////////////////
-			// DEATH KHINGH								//
+			// DEATH KHINGH							//
 			//////////////////////////////////////////
 
 			// Merciless Combat
@@ -4912,11 +4912,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			}break;
 
 			//////////////////////////////////////////
-			// BOSSES									//
+			// BOSSES								//
 			//////////////////////////////////////////
-	
+
 			// Insert	boss spell fixes here
-		
+
 			// War Stomp
 		case 20549:
 			{
@@ -4924,43 +4924,43 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			}break;
 
 			// Dark	Glare
-		case  26029:
+		case 26029:
 			{
 					sp->cone_width = 15.0f;	// 15	degree cone
 			}break;
-	
+
 			// Commendation	of Kael'thas
-		case  45057:
+		case 45057:
 			{
 					sp->proc_interval	=	30000;
 			}break;
-	
+
 			// Recently	Dropped	Flag
-		case  42792:
+		case 42792:
 			{
 					sp->c_is_flags |=	SPELL_FLAG_IS_FORCEDDEBUFF;
 			}break;
-	
-		case  43958:
+
+		case 43958:
 			{
 					sp->Effect[0]	=	SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
 					sp->DurationIndex	=	6; //	10 minutes.
 					sp->c_is_flags |=	SPELL_FLAG_IS_FORCEDDEBUFF;
-	
+
 					sp->Effect[1]	=	SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[1] = SPELL_AURA_ADD_PCT_MODIFIER;
 					sp->EffectMiscValue[1] = SMT_RESIST_DISPEL;
 					sp->EffectBasePoints[1]	=	90;
 			}break;
-	
+
 			// Recently	Dropped	Flag
 		case 43869:
 			{
 					sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
 					sp->c_is_flags |=	SPELL_FLAG_IS_FORCEDDEBUFF;
 			}break;
-	
+
 		case 48978:
 		case 61216:
 			{
@@ -4968,7 +4968,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
 					sp->EffectMiscValue[1] = 1;
 			}break;
-	
+
 		case 49390:
 		case 61221:
 			{
@@ -4976,7 +4976,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
 					sp->EffectMiscValue[1] = 2;
 			}break;
-	
+
 		case 49391:
 		case 61222:
 			{
@@ -4984,21 +4984,21 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
 					sp->EffectMiscValue[1] = 3;
 			}break;
-	
+
 		case 49392:
 			{
 					sp->Effect[1]	=	SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
 					sp->EffectMiscValue[1] = 4;
 			}break;
-	
+
 		case 49393:
 			{
 					sp->Effect[1]	=	SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
 					sp->EffectMiscValue[1] = 5;
 			}break;
-	
+
 			// Furious Attacks
 		case 46910:
 			{
@@ -5006,20 +5006,20 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procChance = 50;
 					sp->procFlags	|= PROC_ON_MELEE_ATTACK;
 			}break;
-	
+
 		case 46911:
 			{
 					sp->EffectTriggerSpell[0]	=	56112;
 					sp->procChance = 100;
 					sp->procFlags	|= PROC_ON_MELEE_ATTACK;
 			}break;
-	
+
 			// Rogue:	Hunger for Blood!
 		case 51662:
 			{
 					sp->Effect[1]	=	SPELL_EFFECT_DUMMY;
 			}break;
-	
+
 			// Mage: Focus Magic
 		case 54646:
 			{
@@ -5030,7 +5030,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = SPELL_AURA_PROC_TRIGGER_SPELL;
 					sp->EffectTriggerSpell[1] = 54648;
 			}break;
-	
+
 			// Mage: Hot Streak
 		case 44445:
 			{
@@ -5072,22 +5072,20 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 46914:
 		case 46913:
 			{
-					sp->procFlags = PROC_ON_MELEE_ATTACK | PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_CAST_SPELL;
+				sp->procFlags = PROC_ON_MELEE_ATTACK | PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_CAST_SPELL;
 			}break;
-			//Waylay			 
-		case  51692:
-		case  51696:
-			{	 
-					sp->procFlags	=	PROC_ON_CRIT_ATTACK;
+			//Waylay
+		case 51692:
+		case 51696:
+			{
+				sp->procFlags	=	PROC_ON_CRIT_ATTACK;
 			}break;
-
 			// Cold	Blood
-		case  14177:
-			{	 
+		case 14177:
+			{
 					sp->procFlags	=	PROC_ON_CAST_SPELL;
 					sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
 			}break;
-
 			// priest	-	mind flay
 		case 15407:
 		case 17311:
@@ -5110,8 +5108,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->EffectApplyAuraName[0] = SPELL_AURA_PERIODIC_DAMAGE;
 			}break;
-
-	
 			//Warlock	Chaos	bolt
 		case 50796:
 		case 59170:
@@ -5120,18 +5116,16 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->Attributes = ATTRIBUTES_IGNORE_INVULNERABILITY;
 			}break;
-
 			//Force	debuff's	 
 			// Hypothermia
-		case  41425:	 
+		case 41425:	 
 			// Forbearance
-		case  25771:	 
+		case 25771:	 
 			// Weakened	Soul
-		case  6788:
+		case 6788:
 			{
 					sp->c_is_flags = SPELL_FLAG_IS_FORCEDDEBUFF;	 
 			}break;
-
 			// Death Knight	spell	fixes
 			//Blade	Barrier
 		case 49182:
@@ -5143,7 +5137,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
 				sp->procChance = 100;
 			}break;
-
 			// Killing Machine
 		case 51123:
 			{
@@ -5180,7 +5173,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->Effect[1] = SPELL_EFFECT_NULL;	// Incorrect targetting makes it kill everyone around
 			}break;
-
 		case 49143:
 		case 51416:
 		case 51417:
@@ -5197,30 +5189,26 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
 			}break;
-
 		case 1843:	// Disarm
 			{
 				sp->Effect[0] = 0;	// to prevent abuse at Arathi
 			}break;
-	
 			// Bone	Shield
-		case  49222:
+		case 49222:
 			{
 					sp->procFlags	=	PROC_ON_ANY_DAMAGE_VICTIM;
 					sp->proc_interval	=	3000;
 			}break;
 			// Shadow	of Death
-		case  49157:
+		case 49157:
 			{
 					sp->Effect[0]	=	0;	// don't want	DKs	to be	always invincible
 			}break;
-	
 			// Death Grip
 		case  49576:
 			{
 					sp->FacingCasterFlags	=	0;
 			}break;
-	
 			// shadow	of death
 		case 54223:
 			{
@@ -5472,11 +5460,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			//////////////////////////////////////////
 			// ITEMSETS								//
 			//////////////////////////////////////////
+
 		case 70765:
 			{
-				sp->procChance	=	40;
-				sp->procFlags	=	PROC_ON_ANY_HOSTILE_ACTION;
-			}
+				sp->procChance = 40;
+			}break;
 		}
 
 		//////////////////////////////////////////////////////////////////

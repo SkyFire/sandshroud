@@ -690,7 +690,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 {
 	uint32 spellId = m_spellInfo->Id;
-	
+
 	switch( m_spellInfo->NameHash )
 	{
 	case SPELL_HASH_STEADY_SHOT:
@@ -699,16 +699,19 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				if ( unitTarget->IsDazed() )
 					p_caster->Strike( unitTarget, RANGED, NULL, 0, 0, damage, false, false );
 		}break;
+
 	case SPELL_HASH_SLAM:
 		{
 			if(p_caster != NULL && unitTarget != NULL )
 				p_caster->Strike( unitTarget, MELEE, NULL, damage, 0, 0, false, false);
 		}break;
+
 	case SPELL_HASH_SAVAGE_ROAR:
 		{
 			if(p_caster != NULL && unitTarget != NULL )
 				p_caster->Strike( unitTarget, MELEE, m_spellInfo, 0, 0, 0, false, false);
 		}break;
+
 	case SPELL_HASH_PENANCE:
 		{
 			if( p_caster != NULL && unitTarget != NULL )
@@ -759,6 +762,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				}
 			}
 		}break;
+
 	case SPELL_HASH_STARFALL:
 		{
 			if( p_caster != NULL)
@@ -770,6 +774,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				sp->prepare(&targets);
 			}
 		}break;
+
 	case SPELL_HASH_VANISH:
 		{
 			SpellEntry *p;
@@ -792,9 +797,9 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 	switch(spellId)
 	{
-	/*****************************************
-	 *	Class Spells
-	 *****************************************/	
+		/*****************************************
+		*	Class Spells
+		*****************************************/
 	case 49576:
 		{
 			if( p_caster == NULL || unitTarget == NULL )
@@ -806,9 +811,9 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			p_caster->DealDamage(unitTarget,1,0,0,49576);
 		}break;
 
-	/*************************
-	 * WARRIOR SPELLS
-	 *************************/
+		/*************************
+		* WARRIOR SPELLS
+		*************************/
 	case 60970: // Heroic Fury
 		{
 			if( p_caster == NULL)
@@ -817,6 +822,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			if( p_caster->HasSpell( 20252 ) )
 					p_caster->ClearCooldownForSpell( 20252 );
 		}break;
+
 	case 50227: // Sword and Board
 		{
 			if( p_caster == NULL)
@@ -1155,10 +1161,10 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	/*
 		Divine Storm
 	*/
-	
+
 	case 53385:
 		{
-		  if( p_caster != NULL && m_targetList.size())
+			if( p_caster != NULL && m_targetList.size())
 			{
 				uint32 amt = float2int32( 0.25f * m_targetList.size() * CalculateDamage(p_caster, unitTarget, MELEE, m_spellInfo) );
 				uint32 count = 0;
@@ -1194,8 +1200,13 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					tgt.m_unitTarget = p_caster->GetGUID();
 					sp->prepare(&tgt);
 				}
-		  }
-	}break;
+			}
+		}break;
+	case 70769:// Crow: OMG NERFFFFFFF :D
+		{
+			if(p_caster != NULL)
+				p_caster->ClearCooldownForSpell(53385);
+		}
 	/*************************
 	 * PRIEST SPELLS
 	 *************************
@@ -2110,7 +2121,12 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			Spell* spe = CREATESPELL(u_caster,inf,true,NULLAURA);
 			spe->prepare(&tgt);
 		}break;
-	}										 
+	default:
+		{
+			if(sLog.IsOutDevelopement())
+				printf("Dummy spell not handled: %u\n", spellId);
+		}break;
+	}
 }
 
 void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
