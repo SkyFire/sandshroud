@@ -1593,7 +1593,7 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 	// Set the update bit
 	SetUInt32Value(PLAYER_XP, newxp);
 	
-	HandleProc(PROC_ON_GAIN_EXPIERIENCE, TO_PLAYER(this), NULL);
+	HandleProc(PROC_ON_GAIN_EXPIERIENCE, NULL, TO_PLAYER(this), NULL);
 	m_procCounter = 0;
 }
 

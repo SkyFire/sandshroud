@@ -321,7 +321,7 @@ bool Master::Run(int argc, char ** argv)
 #else
 		pid = getpid();
 #endif
-		fprintf( fPid, "%u", (unsigned int)pid );
+		fprintf( fPid, "%u", uint(pid) );
 		fclose( fPid );
 	}
 #ifdef WIN32
@@ -406,7 +406,6 @@ bool Master::Run(int argc, char ** argv)
 	CloseConsoleListener();
 	console->terminate();
 	delete console;
-
 
 	if( lootmgr.is_loading )
 	{

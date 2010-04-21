@@ -300,15 +300,21 @@ enum procFlags
 	PROC_ON_ANY_DAMAGE_VICTIM			= 0x100000,
 	PROC_ON_TRAP_TRIGGER				= 0x200000,	//triggers on trap activation)
 	PROC_ON_AUTO_SHOT_HIT				= 0x400000,
-	PROC_ON_ABSORB						= 0x800000,
-	PROC_ON_FULL_RESIST					= 0x1000000,//added it as custom, maybe already exists in another form ?
-	PROC_ON_DODGE_VICTIM				= 0x2000000,//added it as custom, maybe already exists in another form ?
-	PROC_ON_DIE							= 0x4000000,//added it as custom, maybe already exists in another form ?
-	PROC_REMOVEONUSE					= 0x8000000,//remove prochcharge only when it is used
-	PROC_MISC							= 0x10000000,// depending on destination, flag can be freely used (spell cant visit strike function)
-	PROC_ON_BLOCK_VICTIM				= 0x20000000,//added it as custom, maybe already exists in another form ?
-	PROC_ON_SPELL_CRIT_HIT				= 0x40000000,//added it as custom, maybe already exists in another form ?
-	PROC_TARGET_SELF					= 0x80000000,//our custom flag to decide if proc target is self or victim
+	PROC_ON_ABSORB						= 0x800000
+};
+
+// Crow: Lets create really complicated ones :D
+enum procFlags2
+{
+	PROC_ON_FULL_RESIST					= 0x1,//added it as custom, maybe already exists in another form ?
+	PROC_ON_DODGE_VICTIM				= 0x2,//added it as custom, maybe already exists in another form ?
+	PROC_ON_DIE							= 0x4,//added it as custom, maybe already exists in another form ?
+	PROC_REMOVEONUSE					= 0x8,//remove prochcharge only when it is used
+	PROC_MISC							= 0x10,//Unused.
+	PROC_ON_BLOCK_VICTIM				= 0x20,//added it as custom, maybe already exists in another form ?
+	PROC_ON_SPELL_CRIT_HIT				= 0x40,//added it as custom, maybe already exists in another form ?
+	PROC_TARGET_SELF					= 0x80,//our custom flag to decide if proc target is self or victim
+	PROC_ON_DAMAGE_VICTIM_BELOW_35		= 0x160
 };
 
 enum CastInterruptFlags
@@ -1858,6 +1864,7 @@ public:
 	void SpellEffectDisenchant(uint32 i);
 	void SpellEffectWeapon(uint32 i);
 	void SpellEffectDefense(uint32 i);
+	void SpellEffectLanguage(uint32 i);
 	void SpellEffectDualWield(uint32 i);
 	void SpellEffectSkinPlayerCorpse(uint32 i);
 	void SpellEffectResurrectNew(uint32 i);

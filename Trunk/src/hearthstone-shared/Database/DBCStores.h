@@ -735,51 +735,54 @@ struct SpellEntry
 //	uint32 unk5;						//239
 
 	/// CUSTOM: these fields are used for the modifications made in the world.cpp
-	uint32 DiminishStatus;				//
-	uint32 proc_interval;				//!!! CUSTOM, <Fill description for variable>
+	uint32 proc_interval;				//!!! CUSTOM, Time(In MS) between proc's.
 	float ProcsPerMinute;				//!!! CUSTOM, number of procs per minute
-	uint32 buffIndexType;				//!!! CUSTOM, <Fill description for variable>
+	uint32 buffIndexType;				//!!! CUSTOM, Tells us what type of buff it is, so we can limit the amount of them.
 	uint32 c_is_flags;					//!!! CUSTOM, store spell checks in a static way : isdamageind,ishealing
 	uint32 buffType;					//!!! CUSTOM, these are related to creating a item through a spell
 	uint32 RankNumber;					//!!! CUSTOM, this protects players from having >1 rank of a spell
 	uint32 NameHash;					//!!! CUSTOM, related to custom spells, summon spell quest related spells
 	float base_range_or_radius;			//!!! CUSTOM, needed for aoe spells most of the time
 	float base_range_or_radius_sqr;		//!!! CUSTOM, needed for aoe spells most of the time
-	uint32 talent_tree;					//!!! CUSTOM,
-	bool is_melee_spell;				//!!! CUSTOM,
-	bool is_ranged_spell;				//!!! CUSTOM,
-	bool spell_can_crit;				//!!! CUSTOM,
+	uint32 talent_tree;					//!!! CUSTOM, Used for dumping class spells.
+	bool is_melee_spell;				//!!! CUSTOM, Obvious.
+	bool is_ranged_spell;				//!!! CUSTOM, Obvious.
+	bool spell_can_crit;				//!!! CUSTOM, Obvious.
+	/* Crow:
+	Custom: The amount of threat the spell will generate.
+	This is loaded from a DB table, and if it isn't there, threat is always damage. */
 	uint32 ThreatForSpell;
-
-	// love me or hate me, all "In a cone in front of the caster" spells don't necessarily mean "in front"
-	float cone_width;
-
+	float cone_width; // love me or hate me, all "In a cone in front of the caster" spells don't necessarily mean "in front"
 	//Spell Coefficient
 	uint32 spell_coef_flags;			//!!! CUSTOM, store flags for spell coefficient calculations
 	float Dspell_coef_override;			//!!! CUSTOM, overrides any spell coefficient calculation and use this value in DD&DH
 	float OTspell_coef_override;		//!!! CUSTOM, overrides any spell coefficient calculation and use this value in HOT&DOT
 	float AP_coef_override;				//!!! CUSTOM, Additional coef from ap
 	float RAP_coef_override;			//!!! CUSTOM, Additional coef from RAP
-
-	bool self_cast_only;
-	bool apply_on_shapeshift_change;
-	bool always_apply;
+	bool self_cast_only;				//!!! CUSTOM, Obvious.
+	bool apply_on_shapeshift_change;	//!!! CUSTOM, Obvious.
+	bool always_apply;					//!!! CUSTOM, Obvious.
 	uint32 auraimmune_flag;				//!!! CUSTOM, this var keeps aura effects in binary format.
-
 	bool Unique;						//!!! CUSTOM, Is this a unique effect? ex: Mortal Strike -50% healing.
 
 	uint32 area_aura_update_interval;
 	uint32 skilline;
-	uint32 logsId;	// SpellId used to send log to client for this spell
+	/* Crow:
+	SpellId used to send log to client for this spell
+	This is overwritten sometimes with proc's */
+	uint32 logsId;
 	uint32 AdditionalAura;
 	uint32 forced_creature_target;
 	uint32 AreaAuraTarget;
 
 	//poisons type...
-	uint32 poison_type;
+	uint32 poison_type;					//!!! CUSTOM, Type of poison it is.
 
 	//backattack
-	bool AllowBackAttack;
+	bool AllowBackAttack;				//!!! CUSTOM, Obvious.
+
+	// Crow: The following are customs made by me, mostly duplicate fields for handling more information.
+	uint32 procflags2; // We get two now, hurray. One does not take the place of the other.
 };
 
 struct SpellRuneCostEntry

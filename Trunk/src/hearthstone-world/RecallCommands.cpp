@@ -48,7 +48,9 @@ bool ChatHandler::HandleRecallGoCommand(const char* args, WorldSession *m_sessio
 		{
 			if(m_session->GetPlayer())
 			{
-				if(!m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), locmap))
+				uint8 available = m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), locmap);
+				if((available == NULL) || (!m_session->GetPlayer()->triggerpass_cheat &&
+					(available != AREA_TRIGGER_FAILURE_NO_RAID && available != AREA_TRIGGER_FAILURE_NO_GROUP)))
 					m_session->GetPlayer()->SafeTeleport(locmap, 0, LocationVector(x, y, z));
 				else
 				{

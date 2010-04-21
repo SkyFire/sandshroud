@@ -570,7 +570,7 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 	}
 }
 
-uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, uint32 dmg, uint32 abs, uint32 weapon_damage_type )
+uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* CastingSpell, uint32 dmg, uint32 abs, uint32 weapon_damage_type )
 {
 	uint32 resisted_dmg = 0;
 
@@ -608,9 +608,9 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 		}
 
 		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
-		
+
 		//this requires some specific spell check,not yet implemented
-		if( itr2->procFlags & flag )
+		if( (itr2->procFlags & flag) || (itr2->procflags2 & flag2) ) // Check both.
 		{
 			if(itr2->weapon_damage_type > 0 && itr2->weapon_damage_type < 3 &&
 				(itr2->procFlags & (PROC_ON_MELEE_ATTACK | PROC_ON_CRIT_ATTACK)) &&
@@ -632,8 +632,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 						!(itr2->SpellClassMask[2] & CastingSpell->SpellGroupType[2]))
 						continue;
 				}
-				else
-				if( itr2->procFlags & PROC_ON_CAST_SPECIFIC_SPELL )
+				else if( itr2->procFlags & PROC_ON_CAST_SPECIFIC_SPELL )
 				{
 					//this is wrong, dummy is too common to be based on this, we should use spellgroup or something
 					SpellEntry* sp = dbcSpell.LookupEntry( spellId );
@@ -665,10 +664,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 				Player* plr = TO_PLAYER( this );
 				Item* weapon = NULLITEM;
 				if(plr->GetItemInterface() && weapon_damage_type > 0 && weapon_damage_type < 3)
-				{
-						weapon = plr->GetItemInterface()->
-							GetInventoryItem( EQUIPMENT_SLOT_MAINHAND + weapon_damage_type - 1 );
-				}
+					weapon = plr->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND + weapon_damage_type - 1 );
 				if(weapon && weapon->GetProto())
 				{
 					float speed = float( weapon->GetProto()->Delay );
@@ -708,7 +704,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 			if( spellId && Rand( proc_Chance ) )
 			{
 				SpellCastTargets targets;
-				if( itr2->procFlags & PROC_TARGET_SELF )
+				if( itr2->procflags2 & PROC_TARGET_SELF )
 					targets.m_unitTarget = GetGUID();
 				else if( victim != NULL )
 					targets.m_unitTarget = victim->GetGUID();
@@ -744,7 +740,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 					itr2->LastTrigger = now_in_ms; // consider it triggered
 				}
 				//since we did not allow to remove auras like these with interrupt flag we have to remove them manually.
-				if( itr2->procFlags & PROC_REMOVEONUSE )
+				if( itr2->procflags2 & PROC_REMOVEONUSE )
 				{
 					Aura* aura = NULL;
 					aura = FindActiveAura(origId);
@@ -903,8 +899,8 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 								continue;
 						}break;
 
-                        case 34754: //holy concentration
-                        {
+						case 34754: //holy concentration
+						{
 							if ( CastingSpell == NULL )
 								continue;
 
@@ -1176,7 +1172,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING)
 									|| CastingSpell->School != SCHOOL_FIRE )
 									continue;
-								if( flag & PROC_ON_SPELL_CRIT_HIT )
+								if( flag2 & PROC_ON_SPELL_CRIT_HIT )
 								{
 									itr2->procCharges++;
 									if( itr2->procCharges >= 3 ) //whatch that number cause it depends on original stack count !
@@ -1204,24 +1200,24 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 							}
 							break;
 						//priest - Blessed Recovery
-                        case 27813:
-                        case 27817:
-                        case 27818:
-                            {
-                                if(!IsPlayer() || !dmg)
-                                    continue;
-                                SpellEntry *parentproc= dbcSpell.LookupEntry(origId);
-                                SpellEntry *spellInfo = dbcSpell.LookupEntry(spellId);
+						case 27813:
+						case 27817:
+						case 27818:
+							{
+								if(!IsPlayer() || !dmg)
+									continue;
+								SpellEntry *parentproc= dbcSpell.LookupEntry(origId);
+								SpellEntry *spellInfo = dbcSpell.LookupEntry(spellId);
 								if (!parentproc || !spellInfo)
 									continue;
 								int32 val = parentproc->EffectBasePoints[0] + 1;
-                                Spell* spell(new Spell(TO_UNIT(this), spellInfo ,true, NULLAURA));
-                                spell->forced_basepoints[0] = (val*dmg)/300; //per tick
-                                SpellCastTargets targets;
-                                targets.m_unitTarget = GetGUID();
-                                spell->prepare(&targets);
-                                continue;
-                            }break;
+								Spell* spell(new Spell(TO_UNIT(this), spellInfo ,true, NULLAURA));
+								spell->forced_basepoints[0] = (val*dmg)/300; //per tick
+								SpellCastTargets targets;
+								targets.m_unitTarget = GetGUID();
+								spell->prepare(&targets);
+								continue;
+							}break;
 						//Druid Living Seed
 						case 48504:
 							{
@@ -1869,7 +1865,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 									CastingSpell->NameHash != SPELL_HASH_SCORCH &&
 									CastingSpell->NameHash != SPELL_HASH_LIVING_BOMB &&
 									CastingSpell->NameHash != SPELL_HASH_FROSTFIRE_BOLT )
- 									continue; 
+									continue; 
 
 								m_hotStreakCount++;
 								if (m_hotStreakCount >= 2)
@@ -2327,9 +2323,9 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 		for(iter = m_chargeSpells.begin(); iter != m_chargeSpells.end(); iter++)
 		{
 			aura = *iter;
-			
+
 			if(aura && !aura->m_deleted && aura->procCharges > 0 && aura->m_spellProto &&
-				aura->m_spellProto->procFlags & flag)
+				((aura->m_spellProto->procFlags & flag) && (aura->m_spellProto->procflags2 & flag2)))
 			{
 				//Fixes for spells that dont lose charges when dmg is absorbd
 				if(aura->m_spellProto->procFlags == 680 && dmg==0) continue;
@@ -2429,7 +2425,7 @@ void Unit::HandleProcDmgShield(uint32 flag, Unit* attacker)
 		++i;
 		if(	((*i2).m_flags) & flag )
 		{
-			if( (*i2).m_flags & PROC_MISC )
+			if( (*i2).destination )
 			{
 				uint32 overkill = attacker->computeOverkill((*i2).m_damage);
 				data.Initialize(SMSG_SPELLDAMAGESHIELD);
@@ -2889,7 +2885,9 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 
 	uint32 vstate			 = 1;
 	uint32 aproc			 = 0;
+	uint32 aproc2			 = 0;
 	uint32 vproc			 = 0;
+	uint32 vproc2			 = 0;
 	   
 	float hitmodifier		 = 0;
 	int32 self_skill;
@@ -3235,7 +3233,7 @@ else
 		CALL_SCRIPT_EVENT(TO_UNIT(this), OnDodged)(TO_UNIT(this));
 		targetEvent = 1;
 		vstate = DODGE;
-		vproc |= PROC_ON_DODGE_VICTIM;
+		vproc2 |= PROC_ON_DODGE_VICTIM;
 		pVictim->Emote(EMOTE_ONESHOT_PARRYUNARMED);			// Animation
 		//allmighty warrior overpower
 
@@ -3331,11 +3329,14 @@ else
 	default:
 		hit_status |= HITSTATUS_HITANIMATION;//hit animation on victim
 		if( pVictim->SchoolImmunityList[0] )
-			vstate = IMMUNE;		
+			vstate = IMMUNE;
 		else
 		{
 //--------------------------------state proc initialization---------------------------------
-			vproc |= PROC_ON_ANY_DAMAGE_VICTIM;			
+			vproc |= PROC_ON_ANY_DAMAGE_VICTIM;
+			vproc |= PROC_ON_ANY_DAMAGE_VICTIM;
+			if(pVictim->GetHealthPct() < 35)
+				vproc2 |= PROC_ON_DAMAGE_VICTIM_BELOW_35;
 			if( weapon_damage_type != RANGED )
 			{
 				aproc |= PROC_ON_MELEE_ATTACK;
@@ -3449,8 +3450,7 @@ else
 							CALL_SCRIPT_EVENT(pVictim, OnTargetBlocked)(TO_UNIT(this), blocked_damage);
 							CALL_SCRIPT_EVENT(TO_UNIT(this), OnBlocked)(pVictim, blocked_damage);
 							vstate = BLOCK;
-							vproc |= PROC_ON_BLOCK_VICTIM;
-							
+							vproc2 |= PROC_ON_BLOCK_VICTIM;
 						}
 						if( pVictim->IsPlayer() )//not necessary now but we'll have blocking mobs in future
 						{            
@@ -3614,10 +3614,10 @@ else
     {
 		uint32 resisted_dmg;
 
-		HandleProc(aproc,pVictim, ability,realdamage,abs,weapon_damage_type + 1); //maybe using dmg.resisted_damage is better sometimes but then if using godmode dmg is resisted instead of absorbed....bad
+		HandleProc(aproc, aproc2, pVictim, ability, realdamage, abs, weapon_damage_type + 1); //maybe using dmg.resisted_damage is better sometimes but then if using godmode dmg is resisted instead of absorbed....bad
 		m_procCounter = 0;
 
-		resisted_dmg = pVictim->HandleProc(vproc,TO_UNIT(this), ability,realdamage,abs,weapon_damage_type + 1);
+		resisted_dmg = pVictim->HandleProc(vproc, vproc2, TO_UNIT(this), ability, realdamage, abs, weapon_damage_type + 1);
 		pVictim->m_procCounter = 0;
 
 		if(realdamage > 0)
@@ -4262,7 +4262,7 @@ void Unit::AddAura(Aura* aur)
 	}
 
 	m_chargeSpellsInUse = true;
-	if( aur->procCharges > 0 && !(aur->GetSpellProto()->procFlags & PROC_REMOVEONUSE))
+	if( aur->procCharges > 0 && !(aur->GetSpellProto()->procflags2 & PROC_REMOVEONUSE))
 		m_chargeSpells.push_back(aur);
 	m_chargeSpellsInUse = false;
 
@@ -5289,7 +5289,7 @@ void Unit::RemoveAurasByInterruptFlag(uint32 flag)
 			continue;
 		
 		//some spells do not get removed all the time only at specific intervals
-		if((a->m_spellProto->AuraInterruptFlags & flag) && !(a->m_spellProto->procFlags & PROC_REMOVEONUSE))
+		if((a->m_spellProto->AuraInterruptFlags & flag) && !(a->m_spellProto->procflags2 & PROC_REMOVEONUSE))
 			RemoveAuraBySlot(x);
 	}
 }

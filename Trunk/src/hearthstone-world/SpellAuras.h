@@ -373,12 +373,13 @@ struct ProcTriggerSpellOnSpell
 
 struct DamageProc
 {
-    uint32 m_spellId;
-    uint32 m_damage;
-  //  uint64 m_caster;//log is: some reflects x arcane/nature damage to 'attacker' no matter who casted
-    uint32 m_school;
-    uint32 m_flags;
-    void  *owner;//mark the owner of this proc to know which one to delete
+	uint32 m_spellId;
+	uint32 m_damage;
+//	uint64 m_caster;//log is: some reflects x arcane/nature damage to 'attacker' no matter who casted
+	uint32 m_school;
+	uint32 m_flags;
+	bool destination;
+	void  *owner;//mark the owner of this proc to know which one to delete
 };
 
 struct ProcTriggerSpell
@@ -388,6 +389,7 @@ struct ProcTriggerSpell
 	uint64 caster;
 	uint32 procChance;
 	uint32 procFlags;
+	uint32 procflags2;
 	uint32 procCharges;
 	uint32 LastTrigger;
 	uint32 ProcType; //0=triggerspell/1=triggerclassspell

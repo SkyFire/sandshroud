@@ -1526,13 +1526,13 @@ void Spell::cast(bool check)
 				{
 					if( u_caster != NULL && u_caster->IsInWorld() )
 					{
-							u_caster->HandleProc(PROC_ON_CAST_SPECIFIC_SPELL | PROC_ON_CAST_SPELL, unitTarget, m_spellInfo);
+							u_caster->HandleProc(PROC_ON_CAST_SPECIFIC_SPELL | PROC_ON_CAST_SPELL, NULL, unitTarget, m_spellInfo);
 							u_caster->m_procCounter = 0; //this is required for to be able to count the depth of procs (though i have no idea where/why we use proc on proc)
 					}
 				}
 				if( unitTarget != NULL && unitTarget->IsInWorld() )
 				{
-					unitTarget->HandleProc(PROC_ON_SPELL_LAND_VICTIM, u_caster, m_spellInfo);
+					unitTarget->HandleProc(PROC_ON_SPELL_LAND_VICTIM, NULL, u_caster, m_spellInfo);
 					unitTarget->m_procCounter = 0; //this is required for to be able to count the depth of procs (though i have no idea where/why we use proc on proc)
 				}
 			}
@@ -4719,8 +4719,8 @@ void Spell::Heal(int32 amount)
 				tgt.m_unitTarget = unitTarget->GetGUID();
 				sp->prepare(&tgt);
 			}
-			unitTarget->HandleProc(PROC_ON_SPELL_CRIT_HIT_VICTIM, u_caster, m_spellInfo, amount);
-			u_caster->HandleProc(PROC_ON_SPELL_CRIT_HIT, unitTarget, m_spellInfo, amount);
+			unitTarget->HandleProc(PROC_ON_SPELL_CRIT_HIT_VICTIM, NULL, u_caster, m_spellInfo, amount);
+			u_caster->HandleProc(NULL, PROC_ON_SPELL_CRIT_HIT, unitTarget, m_spellInfo, amount);
 		}
 
 		if( unitTarget != NULL && (m_spellInfo->NameHash == SPELL_HASH_GREATER_HEAL ||

@@ -1910,9 +1910,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			if( spellId )
 				killerspell = dbcSpell.LookupEntry( spellId );
 			else killerspell = NULL;
-			pVictim->HandleProc( PROC_ON_DIE, TO_UNIT(this), killerspell );
+			pVictim->HandleProc( NULL, PROC_ON_DIE, TO_UNIT(this), killerspell );
 			pVictim->m_procCounter = 0;
-			TO_UNIT(this)->HandleProc( PROC_ON_TARGET_DIE, pVictim, killerspell );
+			TO_UNIT(this)->HandleProc( PROC_ON_TARGET_DIE, NULL, pVictim, killerspell );
 			TO_UNIT(this)->m_procCounter = 0;
 		}
 		// check if pets owner is combat participant
@@ -2373,7 +2373,9 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 	uint32 school = spellInfo->School;
 	float res = float(damage);
 	uint32 aproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_SPELL_LAND;
+	uint32 aproc2 = NULL;
 	uint32 vproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_ANY_DAMAGE_VICTIM | PROC_ON_SPELL_HIT_VICTIM;
+	uint32 vproc2 = NULL;
 	bool critical = false;
 	float dmg_reduction_pct;
 
@@ -2498,7 +2500,7 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 				}
 
 				pVictim->Emote( EMOTE_ONESHOT_WOUNDCRITICAL );
-				aproc |= PROC_ON_SPELL_CRIT_HIT;
+				aproc2 |= PROC_ON_SPELL_CRIT_HIT;
 				vproc |= PROC_ON_SPELL_CRIT_HIT_VICTIM;
 			}
 		}
@@ -2525,10 +2527,10 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 		}
 
 		// [Mage] Hot Streak
-		if (!(aproc & PROC_ON_SPELL_CRIT_HIT))
+		if (!(aproc2 & PROC_ON_SPELL_CRIT_HIT))
 			caster->m_hotStreakCount = 0;
 
-		if( aproc & PROC_ON_SPELL_CRIT_HIT && caster->HasDummyAura(SPELL_HASH_ECLIPSE))
+		if( aproc2 & PROC_ON_SPELL_CRIT_HIT && caster->HasDummyAura(SPELL_HASH_ECLIPSE))
 		{
 			if( caster->m_CustomTimers[CUSTOM_TIMER_ECLIPSE] <= getMSTime() )
 			{
@@ -2615,9 +2617,9 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 	
 	if( IsUnit() && allowProc && spellInfo->Id != 25501 )
 	{
-		pVictim->HandleProc( vproc, TO_UNIT(this), spellInfo, float2int32( res ) );
+		pVictim->HandleProc( vproc, vproc2, TO_UNIT(this), spellInfo, float2int32( res ) );
 		pVictim->m_procCounter = 0;
-		TO_UNIT(this)->HandleProc( aproc, pVictim, spellInfo, float2int32( res ) );
+		TO_UNIT(this)->HandleProc( aproc, aproc2, pVictim, spellInfo, float2int32( res ) );
 		TO_UNIT(this)->m_procCounter = 0;
 	}
 	if( IsPlayer() )
@@ -2636,7 +2638,7 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 //==============================Post Damage Processing======================================
 //==========================================================================================
 	if( caster && (int32)dmg.resisted_damage == dmg.full_damage && !abs_dmg )
-		caster->HandleProc(PROC_ON_FULL_RESIST, pVictim, spellInfo);
+		caster->HandleProc(NULL, PROC_ON_FULL_RESIST, pVictim, spellInfo);
 
 	if( school == SHADOW_DAMAGE )
 	{

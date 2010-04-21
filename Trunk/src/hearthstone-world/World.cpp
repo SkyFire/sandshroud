@@ -436,9 +436,6 @@ bool World::SetInitialWorldSettings()
 	new WorldLog;
 	new ChatHandler;
 
-	dw = new DayWatcherThread();
-	ThreadPool.ExecuteTask( dw );
-
 	// grep: this only has to be done once between version updates
 	// to re-fill the table.
 
@@ -544,6 +541,9 @@ bool World::SetInitialWorldSettings()
 	Log.Notice("World", "Starting Auction System...");
 	new AuctionMgr;
 	sAuctionMgr.LoadAuctionHouses();
+
+	dw = new DayWatcherThread();
+	ThreadPool.ExecuteTask( dw );
 
 	m_queueUpdateTimer = mQueueUpdateInterval;
 	if(Config.MainConfig.GetBoolDefault("Startup", "BackgroundLootLoading", true))

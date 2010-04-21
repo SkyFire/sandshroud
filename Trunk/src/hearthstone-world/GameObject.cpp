@@ -187,7 +187,7 @@ void GameObject::Update(uint32 p_time)
 				if(pInfo->Type == 6)
 				{
 					if(m_summoner != NULL)
-						m_summoner->HandleProc(PROC_ON_TRAP_TRIGGER, pUnit, spell);
+						m_summoner->HandleProc(PROC_ON_TRAP_TRIGGER, NULL, pUnit, spell);
 				} 
 
 				if(m_summonedGo)

@@ -207,7 +207,7 @@ void DynamicObject::UpdateTargets()
 				target->AddAura(pAura);
 				if( m_caster->IsPlayer() )
 				{
-					p_caster->HandleProc(PROC_ON_CAST_SPECIFIC_SPELL | PROC_ON_CAST_SPELL,target, m_spellProto);
+					p_caster->HandleProc(PROC_ON_CAST_SPECIFIC_SPELL | PROC_ON_CAST_SPELL, NULL, target, m_spellProto);
 					p_caster->m_procCounter = 0;
 				}
 

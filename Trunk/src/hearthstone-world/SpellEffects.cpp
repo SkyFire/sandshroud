@@ -64,7 +64,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectLearnSpell,					//SPELL_EFFECT_LEARN_SPELL - 36
 	&Spell::SpellEffectSpellDefense,				//SPELL_EFFECT_SPELL_DEFENSE - 37
 	&Spell::SpellEffectDispel,						//SPELL_EFFECT_DISPEL - 38
-	&Spell::SpellEffectNULL,						//SPELL_EFFECT_LANGUAGE - 39
+	&Spell::SpellEffectLanguage,					//SPELL_EFFECT_LANGUAGE - 39
 	&Spell::SpellEffectDualWield,					//SPELL_EFFECT_DUAL_WIELD - 40
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_WILD - 41
 	&Spell::SpellEffectMegaJump,					//SPELL_EFFECT_SUMMON_GUARDIAN - 42
@@ -1065,7 +1065,8 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			ILotP.origId = 34299;
 			ILotP.spellId = 34299;
 			ILotP.procChance = 100;
-			ILotP.procFlags = PROC_ON_CRIT_ATTACK | PROC_TARGET_SELF;
+			ILotP.procFlags = PROC_ON_CRIT_ATTACK;
+			ILotP.procflags2 = PROC_TARGET_SELF;
 			ILotP.deleted = false;
 			ILotP.caster = u_caster->GetGUID();
 			ILotP.LastTrigger = 0;
@@ -4001,7 +4002,7 @@ void Spell::SpellEffectDispel(uint32 i) // Dispel
 			{
 				if(m_spellInfo->DispelType == DISPEL_ALL)
 				{
-					unitTarget->HandleProc( PROC_ON_DISPEL_AURA_VICTIM , u_caster , m_spellInfo, aur->GetSpellId() );
+					unitTarget->HandleProc( PROC_ON_DISPEL_AURA_VICTIM, NULL, u_caster , m_spellInfo, aur->GetSpellId() );
 					data.clear();
 					data << m_caster->GetNewGUID();
 					data << unitTarget->GetNewGUID();
@@ -4018,7 +4019,7 @@ void Spell::SpellEffectDispel(uint32 i) // Dispel
 						 aur->GetSpellProto()->NameHash != SPELL_HASH_DIVINE_SHIELD) ||
 						 m_spellInfo->NameHash == SPELL_HASH_MASS_DISPEL )
 					{
-						unitTarget->HandleProc( PROC_ON_DISPEL_AURA_VICTIM , u_caster, m_spellInfo, aur->GetSpellId() );
+						unitTarget->HandleProc( PROC_ON_DISPEL_AURA_VICTIM, NULL, u_caster, m_spellInfo, aur->GetSpellId() );
 						data.clear();
 						data << m_caster->GetNewGUID();
 						data << unitTarget->GetNewGUID();
@@ -4033,6 +4034,117 @@ void Spell::SpellEffectDispel(uint32 i) // Dispel
 			}
 			else if( !--damage )
 				return;
+		}
+	}
+}
+
+void Spell::SpellEffectLanguage(uint32 i)
+{
+	if(m_caster->GetTypeId() != TYPEID_PLAYER) 
+		return;
+
+	Player* pPlayer = TO_PLAYER( m_caster );
+
+	if(!pPlayer->GetSession()->HasGMPermissions())
+	{
+		if(pPlayer->GetTeam() == ALLIANCE)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_COMMON ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_COMMON, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_COMMON );
+		}
+
+		if(pPlayer->GetTeam() == HORDE)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_ORCISH ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_ORCISH, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_ORCISH );
+		}
+
+		if(pPlayer->getRace() == RACE_DWARF)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_DWARVEN ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_DWARVEN, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_DWARVEN );
+		}
+
+		if(pPlayer->getRace() == RACE_NIGHTELF)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_DARNASSIAN ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_DARNASSIAN, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_DARNASSIAN );
+		}
+
+		if(pPlayer->getRace() == RACE_UNDEAD)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_GUTTERSPEAK ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_GUTTERSPEAK, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_GUTTERSPEAK );
+		}
+
+		if(pPlayer->getRace() == RACE_TAUREN)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_TAURAHE ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_TAURAHE, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_TAURAHE );
+		}
+
+		if(pPlayer->getRace() == RACE_GNOME)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_GNOMISH ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_GNOMISH, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_GNOMISH );
+		}
+
+		if(pPlayer->getRace() == RACE_TROLL)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_TROLL ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_TROLL, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_TROLL );
+		}
+
+		if(pPlayer->getRace() == RACE_BLOODELF)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_THALASSIAN ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_THALASSIAN, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_THALASSIAN );
+		}
+
+		if(pPlayer->getRace() == RACE_DRAENEI)
+		{
+			if( !pPlayer->_HasSkillLine( SKILL_LANG_DRAENEI ) )
+				pPlayer->_AddSkillLine( SKILL_LANG_DRAENEI, 300, 300 );
+		}
+		else
+		{
+			pPlayer->_RemoveSkillLine( SKILL_LANG_DRAENEI );
 		}
 	}
 }
@@ -4797,7 +4909,7 @@ void Spell::SpellEffectTriggerSpell(uint32 i) // Trigger Spell
 	if(spe== NULL )
 		return;
 	Spell* sp = new Spell( m_caster,spe,true,NULLAURA);
-	SpellCastTargets tgt((spe->procFlags & PROC_TARGET_SELF) ? m_caster->GetGUID() :unitTarget->GetGUID());
+	SpellCastTargets tgt((spe->procflags2 & PROC_TARGET_SELF) ? m_caster->GetGUID() : unitTarget->GetGUID());
 	sp->prepare(&tgt);
 }
 

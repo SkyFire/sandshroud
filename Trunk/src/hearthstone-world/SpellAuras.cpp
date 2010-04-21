@@ -962,6 +962,7 @@ void Aura::ApplyModifiers( bool apply )
 
 			pts.procChance = GetSpellProto()->procChance;
 			pts.procFlags = GetSpellProto()->procFlags;
+			pts.procflags2 = GetSpellProto()->procflags2;
 			pts.procCharges = GetSpellProto()->procCharges;
 			pts.LastTrigger = 0;
 			pts.ProcType = 0;
@@ -2006,10 +2007,10 @@ void Aura::EventPeriodicDamage(uint32 amount)
 			aproc |= PROC_ON_SPELL_LAND;
 			vproc |= PROC_ON_SPELL_LAND_VICTIM;
 
-			m_caster->HandleProc(aproc, mtarget, sp, float2int32(res));
+			m_caster->HandleProc(aproc, NULL, mtarget, sp, float2int32(res));
 			m_caster->m_procCounter = 0;
-		
-			mtarget->HandleProc(vproc,m_caster,sp, float2int32(res));
+
+			mtarget->HandleProc(vproc, NULL, m_caster, sp, float2int32(res));
 			mtarget->m_procCounter = 0;
 		}
 
@@ -3319,10 +3320,10 @@ void Aura::EventPeriodicHeal( uint32 amount )
 				(TO_UNIT(*itr))->GetAIInterface()->HealReaction(m_caster, m_target, threat, m_spellProto);
 			}
 		}
-		m_caster->HandleProc(PROC_ON_SPELL_LAND, m_target, m_spellProto, add);
+		m_caster->HandleProc(PROC_ON_SPELL_LAND, NULL, m_target, m_spellProto, add);
 		m_caster->m_procCounter = 0;
 
-		m_target->HandleProc(PROC_ON_SPELL_LAND_VICTIM,m_caster, m_spellProto, add);
+		m_target->HandleProc(PROC_ON_SPELL_LAND_VICTIM, NULL, m_caster, m_spellProto, add);
 		m_target->m_procCounter = 0;
 	}
 }
@@ -3635,7 +3636,8 @@ void Aura::SpellAuraDamageShield(bool apply)
 		ds.m_damage = mod->m_amount;
 		ds.m_spellId = GetSpellProto()->Id;
 		ds.m_school = GetSpellProto()->School;
-		ds.m_flags = PROC_ON_MELEE_ATTACK_VICTIM | PROC_MISC; //maybe later we might want to add other flags too here
+		ds.m_flags = PROC_ON_MELEE_ATTACK_VICTIM; //maybe later we might want to add other flags too here
+		ds.destination = true;
 		ds.owner = (void*)this;
 		m_target->m_damageShields.push_back(ds);
 	}
@@ -5060,6 +5062,7 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 		}
 		pts.procChance = GetSpellProto()->procChance;
 		pts.procFlags = GetSpellProto()->procFlags;
+		pts.procflags2 = GetSpellProto()->procflags2;
 		pts.procCharges = GetSpellProto()->procCharges;
 		if(mod->m_miscValue == EQUIPMENT_SLOT_MAINHAND)
 			pts.weapon_damage_type = 1; // Proc only on main hand attacks
@@ -5095,7 +5098,7 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 		}
 
 		m_target->m_procSpells.push_front(pts);
-		DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u",pts.origId,pts.spellId,pts.procChance,m_spellProto->procFlags & ~PROC_TARGET_SELF,m_spellProto->procCharges,m_spellProto->procFlags & PROC_TARGET_SELF,m_spellProto->proc_interval);
+		DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u",pts.origId,pts.spellId,pts.procChance,m_spellProto->procflags2 & ~PROC_TARGET_SELF,m_spellProto->procCharges,m_spellProto->procFlags & PROC_TARGET_SELF,m_spellProto->proc_interval);
 	}
 	else
 	{
@@ -5346,7 +5349,7 @@ void Aura::EventPeriodicLeech(uint32 amount)
 
 	//deal damage before we add healing bonus to damage
 	m_caster->DealDamage(m_target, Amount, 0, 0, GetSpellProto()->Id, true);
-	m_caster->HandleProc(PROC_ON_SPELL_LAND, m_target, m_spellProto, Amount);
+	m_caster->HandleProc(PROC_ON_SPELL_LAND, NULL, m_target, m_spellProto, Amount);
 
 	if(m_spellProto)
 	{
@@ -7276,7 +7279,7 @@ void Aura::SpellAuraAddTargetTrigger(bool apply)
 			return;
 		}
 		m_target->m_procSpells.push_front(pts);
-		DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u",pts.origId,pts.spellId,pts.procChance,m_spellProto->procFlags & ~PROC_TARGET_SELF,m_spellProto->procCharges,m_spellProto->procFlags & PROC_TARGET_SELF,m_spellProto->proc_interval);
+		DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u",pts.origId,pts.spellId,pts.procChance,m_spellProto->procflags2 & ~PROC_TARGET_SELF,m_spellProto->procCharges,m_spellProto->procFlags & PROC_TARGET_SELF,m_spellProto->proc_interval);
 	}
 	else
 	{
