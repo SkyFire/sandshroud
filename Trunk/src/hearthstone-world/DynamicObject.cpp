@@ -74,11 +74,6 @@ void DynamicObject::Init()
 	Object::Init();
 }
 
-void DynamicObject::Destructor()
-{
-	delete this;
-}
-
 void DynamicObject::Create(Object* caster, Spell* pSpell, float x, float y, float z, uint32 duration, float radius)
 {
 	Object::_Create(caster->GetMapId(),x, y, z, 0);
@@ -261,6 +256,7 @@ void DynamicObject::Remove()
 {
 	if(IsInWorld())
 		RemoveFromWorld(true);
-	Destructor();
+
+	delete this;
 }
 

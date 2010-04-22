@@ -58,7 +58,7 @@ Unit::Unit()
 	m_CurrentVehicle = NULLVEHICLE;
 
 	//transport shit
-	m_transportPosition		= new LocationVector(0,0,0,0);
+	m_transportPosition		= NULL;
 	m_TransporterGUID		= NULL;
 	m_TransporterUnk		= 0.0f;
 	m_lockTransportVariables= false;
@@ -335,11 +335,6 @@ void Unit::Init()
 	Object::Init();
 }
 
-void Unit::Destructor()
-{
-	delete this;
-}
-
 void Unit::SetDiminishTimer(uint32 index)
 {
 	assert(index < DIMINISH_GROUPS);
@@ -610,7 +605,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
 
 		//this requires some specific spell check,not yet implemented
-		if( (itr2->procFlags & flag) || (itr2->procflags2 & flag2) ) // Check both.
+		if( (flag && (itr2->procFlags & flag)) || (flag2 && (itr2->procflags2 & flag2)) ) // Check both.
 		{
 			if(itr2->weapon_damage_type > 0 && itr2->weapon_damage_type < 3 &&
 				(itr2->procFlags & (PROC_ON_MELEE_ATTACK | PROC_ON_CRIT_ATTACK)) &&
@@ -2324,11 +2319,12 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 		{
 			aura = *iter;
 
-			if(aura && !aura->m_deleted && aura->procCharges > 0 && aura->m_spellProto &&
-				((aura->m_spellProto->procFlags & flag) && (aura->m_spellProto->procflags2 & flag2)))
+			if(aura && !aura->m_deleted && aura->procCharges > 0 && aura->m_spellProto && ((aura->m_spellProto->procFlags & flag) && (aura->m_spellProto->procflags2 & flag2)))
 			{
 				//Fixes for spells that dont lose charges when dmg is absorbd
-				if(aura->m_spellProto->procFlags == 680 && dmg==0) continue;
+				if(aura->m_spellProto->procFlags == 680 && dmg==0)
+					continue;
+
 				if(CastingSpell)
 				{
 					SpellEntry * spe = aura->m_spellProto;
@@ -5968,12 +5964,12 @@ void Unit::EnableFlight()
 	}
 	else
 	{
-		WorldPacket * data = new WorldPacket(SMSG_MOVE_SET_CAN_FLY, 13);
-		*data << GetNewGUID();
-		*data << uint32(2);
-		SendMessageToSet(data, false);
+		WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 13);
+		data << GetNewGUID();
+		data << uint32(2);
+		SendMessageToSet(&data, true);
 		TO_PLAYER(this)->z_axisposition = 0.0f;
-		TO_PLAYER(this)->delayedPackets.add( data );
+		TO_PLAYER(this)->delayedPackets.add( &data );
 		TO_PLAYER(this)->m_setflycheat = true;
 	}
 }
@@ -5992,13 +5988,12 @@ void Unit::DisableFlight()
 	}
 	else
 	{
-		WorldPacket * data = NULL;
-		data = new WorldPacket( SMSG_MOVE_UNSET_CAN_FLY, 13 );
-		*data << GetNewGUID();
-		*data << uint32(5);
-		SendMessageToSet(data, false);
+		WorldPacket data( SMSG_MOVE_UNSET_CAN_FLY, 13 );
+		data << GetNewGUID();
+		data << uint32(5);
+		SendMessageToSet(&data, false);
 		TO_PLAYER(this)->z_axisposition = 0.0f;
-		TO_PLAYER(this)->delayedPackets.add( data );
+		TO_PLAYER(this)->delayedPackets.add( &data );
 		TO_PLAYER(this)->m_setflycheat = false;
 	}
 }

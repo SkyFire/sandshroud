@@ -243,8 +243,11 @@ bool ChatHandler::HandleQuestStartCommand(const char * args, WorldSession * m_se
 							Item* item = objmgr.CreateItem( qst->receive_items[i], plr);
 							if(!plr->GetItemInterface()->AddItemToFreeSlot(item))
 							{
-								if(item)
-									item->Destructor();
+								if(item != NULL)
+								{
+									item->DeleteMe();
+									item = NULLITEM;
+								}
 							}
 						}
 					}
@@ -257,8 +260,11 @@ bool ChatHandler::HandleQuestStartCommand(const char * args, WorldSession * m_se
 							item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, qst->srcitemcount ? qst->srcitemcount : 1);
 							if(!plr->GetItemInterface()->AddItemToFreeSlot(item))
 							{
-								if(item)
-									item->Destructor();
+								if(item != NULL)
+								{
+									item->DeleteMe();
+									item = NULLITEM;
+								}
 							}
 						}
 					}

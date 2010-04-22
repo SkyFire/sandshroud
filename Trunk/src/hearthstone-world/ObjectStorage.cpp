@@ -207,7 +207,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 				spe = dbcSpell.LookupEntryForced(spellID);
 				if( spe == NULL )
 				{
-					WorldDatabase.Query("DELETE FROM AI_Agents where entry = '%u' AND spell = '%u'", entry, spellID);
+					WorldDatabase.Execute("DELETE FROM AI_Agents where entry = '%u' AND spell = '%u'", entry, spellID);
 					Log.Warning("AIAgent", "Agent skipped, NPC %u tried to add non-existing Spell %u.", fields[0].GetUInt32(), fields[4].GetUInt32());
 					continue;
 				}

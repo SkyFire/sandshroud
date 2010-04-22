@@ -49,11 +49,6 @@ Vehicle::~Vehicle()
 		RemoveFromWorld(false, true);
 }
 
-void Vehicle::Destructor()
-{
-	delete this;
-}
-
 void Vehicle::Init()
 {
 	Creature::Init();
@@ -340,7 +335,7 @@ void Vehicle::DeleteMe()
 	if(IsInWorld())
 		RemoveFromWorld(false, true);
 
-	Destructor();
+	delete this;
 }
 
 void Vehicle::AddPassenger(Unit* pPassenger)

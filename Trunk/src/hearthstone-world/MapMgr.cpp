@@ -105,13 +105,6 @@ void MapMgr::Init()
 	ScriptInterface = new MapScriptInterface( this );
 }
 
-// call me to break the circular reference, perform cleanup
-void MapMgr::Destructor()
-{
-	delete this;
-}
-
-
 MapMgr::~MapMgr()
 {
 	SetThreadName("thread_proc");//free the name
@@ -157,17 +150,16 @@ MapMgr::~MapMgr()
 		switch(pObject->GetTypeFromGUID())
 		{
 		case HIGHGUID_TYPE_VEHICLE:
-			TO_VEHICLE(pObject)->Destructor();
+			delete TO_VEHICLE(pObject);
 			break;
 		case HIGHGUID_TYPE_UNIT:
-			TO_CREATURE(pObject)->Destructor();
+			delete TO_CREATURE(pObject);
 			break;
-
 		case HIGHGUID_TYPE_GAMEOBJECT:
-			TO_GAMEOBJECT(pObject)->Destructor();
+			delete TO_GAMEOBJECT(pObject);
 			break;
 		default:
-			pObject->Destructor();
+			delete pObject;
 		}
 		pObject = NULLOBJ;
 	}
@@ -183,7 +175,7 @@ MapMgr::~MapMgr()
 		if(pCorpse->IsInWorld())
 			pCorpse->RemoveFromWorld(false);
 
-		pCorpse->Destructor();
+		delete pCorpse;
 		pCorpse = NULLCORPSE;
 	}
 	m_corpses.clear();
@@ -1550,8 +1542,8 @@ bool MapMgr::Do()
 	if(thread_kill_only)
 		return false;
 
-	// delete ourselves
-	Destructor();
+	// Commit suicideeee :3
+	delete this;
 
 	// already deleted, so the threadpool doesn't have to.
 	return false;
@@ -1770,7 +1762,7 @@ void MapMgr::EventCorpseDespawn(uint64 guid)
 		return;
 
 	pCorpse->Despawn();
-	pCorpse->Destructor();
+	delete pCorpse;
 	pCorpse = NULLCORPSE;
 }
 
@@ -1804,7 +1796,7 @@ void MapMgr::TeleportPlayers()
 				ptr->GetSession()->LogoutPlayer(false);
 			else
 			{
-				ptr->Destructor();
+				delete ptr;
 				ptr = NULLPLR;
 				m_PlayerStorage.erase(__player_iterator);
 			}

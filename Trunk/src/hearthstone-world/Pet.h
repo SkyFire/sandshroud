@@ -124,7 +124,6 @@ public:
 	Pet(uint64 guid);
 	~Pet();
 	virtual void Init();
-	virtual void Destructor();
 
 	void LoadFromDB(Player* owner, PlayerPet * pi);
 	void CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_creature, Unit* owner, SpellEntry *created_by_spell, uint32 type, uint32 expiretime);

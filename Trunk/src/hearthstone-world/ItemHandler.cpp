@@ -119,7 +119,9 @@ void WorldSession::HandleSplitOpcode(WorldPacket& recv_data)
 			if(!result)
 			{
 				printf("HandleBuyItemInSlot: Error while adding item to dstslot");
-				i2->Destructor();
+				//i2->DeleteFromDB();
+				i2->DeleteMe();
+				i2 = NULL;
 			}
 		}
 		else
@@ -344,11 +346,13 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 				printf("HandleSwapItem: Error while adding item to dstslot\n");
 				if (!_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
 				{
-					SrcItem->Destructor();
+					SrcItem->DeleteMe();
+					SrcItem = NULL;
 				}
 				if (DstItem && !_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
 				{
-					DstItem->Destructor();
+					DstItem->DeleteMe();
+					DstItem = NULL;
 				}
 				return;
 			}
@@ -362,11 +366,13 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 				printf("HandleSwapItem: Error while adding item to srcslot\n");
 				if (SrcItem && !_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
 				{
-					SrcItem->Destructor();
+					SrcItem->DeleteMe();
+					SrcItem = NULL;
 				}
 				if (!_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
 				{
-					DstItem->Destructor();
+					DstItem->DeleteMe();
+					DstItem = NULL;
 				}
 				return;
 			}
@@ -586,7 +592,8 @@ void WorldSession::HandleDestroyItemOpcode( WorldPacket & recv_data )
 		}
 
 		pItem->DeleteFromDB();
-		pItem->Destructor();
+		pItem->DeleteMe();
+		pItem = NULL;
 	}
 }
 
@@ -661,7 +668,8 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 				if( !_player->GetItemInterface()->SafeAddItem(offhandweapon, result.ContainerSlot, result.Slot) )
 					if( !_player->GetItemInterface()->AddItemToFreeSlot(offhandweapon) )		// shouldn't happen either.
 					{
-						offhandweapon->Destructor();
+						offhandweapon->DeleteMe();
+						offhandweapon = NULL;
 					}
 			}
 		}
@@ -687,7 +695,8 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 				if( !_player->GetItemInterface()->SafeAddItem(mainhandweapon, result.ContainerSlot, result.Slot) )
 					if( !_player->GetItemInterface()->AddItemToFreeSlot(mainhandweapon) )		// shouldn't happen either.
 					{
-						mainhandweapon->Destructor();
+						mainhandweapon->DeleteMe();
+						mainhandweapon = NULL;
 					}
 			}
 		}
@@ -726,14 +735,16 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 			if(!result)
 			{
 				printf("HandleAutoEquip: Error while adding item to SrcSlot");
-				oitem->Destructor();
+				oitem->DeleteMe();
+				oitem = NULL;
 			}
 		}
 		result = _player->GetItemInterface()->SafeAddItem(eitem, INVENTORY_SLOT_NOT_SET, Slot);
 		if(!result)
 		{
 			printf("HandleAutoEquip: Error while adding item to Slot");
-			eitem->Destructor();
+			eitem->DeleteMe();
+			eitem = NULL;
 		}
 		
 	}
@@ -934,7 +945,8 @@ void WorldSession::HandleBuyBackOpcode( WorldPacket & recv_data )
 			if(!result)
 			{
 				printf("HandleBuyBack: Error while adding item to free slot");
-				it->Destructor();
+				it->DeleteMe();
+				it = NULL;
 			}
 		}
 		else
@@ -947,7 +959,8 @@ void WorldSession::HandleBuyBackOpcode( WorldPacket & recv_data )
 
 			// free the pointer
 			it->DestroyForPlayer( _player );
-			it->Delete();
+			it->DeleteMe();
+			it = NULL;
 		}
 
 		data.Initialize( SMSG_BUY_ITEM );
@@ -1241,7 +1254,8 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 //			OUT_DEBUG( "SUPADBG bagslot=%u, slot=%u" , bagslot, slot );
 			if(!_player->GetItemInterface()->SafeAddItem(pItem, bagslot, slot))
 			{
-				pItem->Destructor();
+				pItem->DeleteMe();
+				pItem = NULL;
 				return;
 			}
 		}
@@ -1374,7 +1388,8 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 			result = _player->GetItemInterface()->SafeAddItem(itm, INVENTORY_SLOT_NOT_SET, slotresult.Slot);
 			if(!result)
 			{
-				itm->Destructor();
+				itm->DeleteMe();
+				itm = NULL;
 			}
 			else
 				SendItemPushResult(itm, false, true, false, true, INVENTORY_SLOT_NOT_SET, slotresult.Result, amount*item.amount);
@@ -1385,7 +1400,8 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 			{
 				if( !TO_CONTAINER(bag)->AddItem(slotresult.Slot, itm) )
 				{
-					itm->Destructor();
+					itm->DeleteMe();
+					itm = NULL;
 				}
 				else
 					SendItemPushResult(itm, false, true, false, true, slotresult.ContainerSlot, slotresult.Result, 1);
@@ -1543,7 +1559,8 @@ void WorldSession::HandleAutoStoreBagItemOpcode( WorldPacket & recv_data )
 					if(!result)
 					{
 						printf("HandleAutoStoreBagItem: Error while adding item to newslot");
-						srcitem->Destructor();
+						srcitem->DeleteMe();
+						srcitem = NULL;
 						return;
 					}
 				}
@@ -1582,9 +1599,10 @@ void WorldSession::HandleAutoStoreBagItemOpcode( WorldPacket & recv_data )
 							if(!result)
 							{
 								printf("HandleBuyItemInSlot: Error while adding item to newslot");
-								srcitem->Destructor();
+								srcitem->DeleteMe();
+								srcitem = NULL;
 								return;
-							}		
+							}
 						}
 					}
 				}
@@ -1831,7 +1849,8 @@ void WorldSession::HandleAutoBankItemOpcode(WorldPacket &recvPacket)
 			OUT_DEBUG("[ERROR]AutoBankItem: Error while adding item to bank bag!\n");
             if( !_player->GetItemInterface()->SafeAddItem(eitem, SrcInvSlot, SrcSlot) )
 			{
-				eitem->Destructor();
+				eitem->DeleteMe();
+				eitem = NULL;
 			}
 		}
 	}
@@ -1877,7 +1896,8 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPacket &recvPacket)
 			OUT_DEBUG("[ERROR]AutoStoreBankItem: Error while adding item from one of the bank bags to the player bag!\n");
 			if( !_player->GetItemInterface()->SafeAddItem(eitem, SrcInvSlot, SrcSlot) )
 			{
-				eitem->Destructor();
+				delete eitem;
+				eitem = NULL;
 			}
 		}
 		_player->SaveToDB(false);
@@ -1981,7 +2001,8 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 				continue;
 
 			gp = dbcGemProperty.LookupEntry(it->GetProto()->GemProperties);
-			it->Destructor();
+			it->DeleteMe();
+			it = NULL;
 
 			if(gp == NULL)
 				continue;

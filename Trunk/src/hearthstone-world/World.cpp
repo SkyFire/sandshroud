@@ -161,12 +161,6 @@ World::~World()
 		delete *itr;
 }
 
-void World::Destructor()
-{
-	delete this;
-}
-
-
 WorldSession* World::FindSession(uint32 id)
 {
 	m_sessionlock.AcquireReadLock();
@@ -1205,7 +1199,7 @@ void TaskList::waitForThreadsToExit()
 
 void World::DeleteObject(Object* obj)
 {
-	obj->Destructor();
+	delete obj;
 	obj = NULLOBJ;
 }
 
@@ -1584,7 +1578,7 @@ void World::PollMailboxInsertQueue(DatabaseConnection * con)
 
 			if( pItem != NULL )
 			{
-				pItem->Destructor();
+				pItem->DeleteMe();
 			}
 
 		} while ( result->NextRow() );

@@ -47,7 +47,6 @@ class WeatherInfo : public EventableObject
 public:
 	WeatherInfo();
 	~WeatherInfo();
-	void Destructor();
 
 	void BuildUp();
 	void Update();	

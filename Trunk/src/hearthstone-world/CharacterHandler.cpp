@@ -344,7 +344,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	{
 		// failed.
 		pNewChar->ok_to_remove = true;
-		pNewChar->Destructor();
+		delete pNewChar;
 		pNewChar = NULLPLR;
 		return;
 	}
@@ -362,7 +362,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 
 	pNewChar->SaveToDB(true);
 
-	PlayerInfo *pn=new PlayerInfo;
+	PlayerInfo *pn = new PlayerInfo;
 	memset(pn, 0, sizeof(PlayerInfo));
 	pn->guid = pNewChar->GetLowGUID();
 	pn->name = strdup(pNewChar->GetName());
@@ -380,7 +380,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	objmgr.AddPlayerInfo(pn);
 
 	pNewChar->ok_to_remove = true;
-	pNewChar->Destructor();
+	delete pNewChar;
 	pNewChar = NULLPLR;
 
 	// CHAR_CREATE_SUCCESS
@@ -1348,11 +1348,13 @@ void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 				{
 					if (!_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
 					{
-						SrcItem->Destructor();
+						SrcItem->DeleteMe();
+						SrcItem = NULL
 					}
 					if (DstItem && !_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
 					{
-						DstItem->Destructor();
+						DstItem->DeleteMe();
+						DstItem = NULL
 					}
 					return;
 				}
@@ -1365,11 +1367,13 @@ void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 				{
 					if (SrcItem && !_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
 					{
-						SrcItem->Destructor();
+						SrcItem->DeleteMe();
+						SrcItem = NULL
 					}
 					if (!_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
 					{
-						DstItem->Destructor();
+						DstItem->DeleteMe();
+						DstItem = NULL;
 					}
 					continue;
 				}

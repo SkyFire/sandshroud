@@ -613,11 +613,6 @@ Player::~Player ( )
 
 }
 
-void Player::Destructor()
-{
-	delete this;
-}
-
 HEARTHSTONE_INLINE uint32 GetSpellForLanguage(uint32 SkillID)
 {
 	switch(SkillID)
@@ -946,14 +941,16 @@ void Player::EquipInit(PlayerCreateInfo *EquipInfo)
 				{
 					if( !GetItemInterface()->SafeAddItem(item, INVENTORY_SLOT_NOT_SET, (*is).slot) )
 					{
-						item->Destructor();
+						item->DeleteMe();
+						item = NULLITEM;
 					}
 				}
 				else
 				{
 					if( !GetItemInterface()->AddItemToFreeSlot(item) )
 					{
-						item->Destructor();
+						item->DeleteMe();
+						item = NULLITEM;
 					}
 				}
 			}
@@ -2773,8 +2770,7 @@ void Player::RemovePendingPlayer()
 	}
 
 	ok_to_remove = true;
-	Destructor();
-	//delete this;
+	delete this;
 }
 
 bool Player::LoadFromDB(uint32 guid)
@@ -3184,6 +3180,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		Transporter* t = objmgr.GetTransporter(GUID_LOPART(m_TransporterGUID));
 		m_TransporterGUID = t ? t->GetGUID() : 0;
 	}
+
 	m_transportPosition = new LocationVector(get_next_field.GetFloat(), get_next_field.GetFloat(), get_next_field.GetFloat());
 
 	start = (char*)get_next_field.GetString();//buff;
@@ -3820,7 +3817,8 @@ void Player::RemoveFromWorld()
 		if(m_SummonedObject->GetInstanceID() != GetInstanceID())
 		{
 			sEventMgr.AddEvent(m_SummonedObject, &Object::Delete, EVENT_GAMEOBJECT_EXPIRE, 100, 1,0);
-		}else
+		}
+		else
 		{
 			if(m_SummonedObject->GetTypeId() != TYPEID_PLAYER)
 			{
@@ -3828,7 +3826,7 @@ void Player::RemoveFromWorld()
 				{
 					m_SummonedObject->RemoveFromWorld(true);
 				}
-				m_SummonedObject->Destructor();
+				delete m_SummonedObject;
 			}
 		}
 		m_SummonedObject = NULLOBJ;
@@ -6646,13 +6644,20 @@ void Player::ResetTitansGrip()
 			offhand->SetOwner( NULLPLR );
 			offhand->SaveToDB( INVENTORY_SLOT_NOT_SET, 0, true, NULL );
 			sMailSystem.DeliverMessage(MAILTYPE_NORMAL, GetGUID(), GetGUID(), "Your offhand item", "", 0, 0, offhand->GetUInt32Value(OBJECT_FIELD_GUID), 1, true);
-			offhand->Destructor();
+			offhand->DeleteMe();
+			offhand = NULLITEM;
 		}
-		else if( !GetItemInterface()->SafeAddItem(offhand, result.ContainerSlot, result.Slot) )
-			if( !GetItemInterface()->AddItemToFreeSlot(offhand) )   // shouldn't happen either.
+		else
+		{
+			if( !GetItemInterface()->SafeAddItem(offhand, result.ContainerSlot, result.Slot) )
 			{
-				offhand->Destructor();
+				if( !GetItemInterface()->AddItemToFreeSlot(offhand) )   // shouldn't happen either.
+				{
+					offhand->DeleteMe();
+					offhand = NULLITEM;
+				}
 			}
+		}
 	}
 }
 
@@ -8308,12 +8313,12 @@ void Player::RequestDuel(Player* pTarget)
 	SetUInt64Value(PLAYER_DUEL_ARBITER,pGameObj->GetGUID());
 	pTarget->SetUInt64Value(PLAYER_DUEL_ARBITER,pGameObj->GetGUID());
 
-	pGameObj->PushToWorld(m_mapMgr);
-
 	WorldPacket data(SMSG_DUEL_REQUESTED, 16);
 	data << pGameObj->GetGUID();
 	data << GetGUID();
 	pTarget->GetSession()->SendPacket(&data);
+
+	pGameObj->PushToWorld(m_mapMgr);
 }
 
 void Player::DuelCountdown()
@@ -8446,7 +8451,7 @@ void Player::EndDuel(uint8 WinCondition)
 	if( arbiter != NULL )
 	{
 		arbiter->RemoveFromWorld( true );
-		arbiter->Destructor();
+		delete arbiter;
 		arbiter = NULL;
 	}
 

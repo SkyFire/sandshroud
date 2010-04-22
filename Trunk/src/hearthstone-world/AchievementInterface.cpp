@@ -202,7 +202,8 @@ void AchievementInterface::GiveRewardsForAchievement(AchievementEntry * ae)
 			// Inventory full? Send it by mail.
 			m_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
 			sMailSystem.DeliverMessage(MAILTYPE_NORMAL, m_player->GetGUID(), m_player->GetGUID(), "Achievement Reward", "Here is your reward.", 0, 0, ar->ItemID, 1, true);
-			pItem->Destructor();
+			pItem->DeleteMe();
+			pItem = NULL;
 		}
 	}
 

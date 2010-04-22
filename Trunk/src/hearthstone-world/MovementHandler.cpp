@@ -603,6 +603,8 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 				_player->DelaySpeedHack(5000);
 			}
 			_player->m_TransporterUnk = _player->movement_info.transTime;
+			if( _player->m_transportPosition )
+				delete _player->m_transportPosition;
 			_player->m_transportPosition = new LocationVector( _player->movement_info.transX, _player->movement_info.transY, _player->movement_info.transZ, _player->movement_info.transO);
 		}
 		/*float x = _player->movement_info.x - _player->movement_info.transX;

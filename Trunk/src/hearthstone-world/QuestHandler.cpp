@@ -351,7 +351,8 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 			{
 				if(!_player->GetItemInterface()->AddItemToFreeSlot(item))
 				{
-					item->Destructor();
+					item->DeleteMe();
+					item = NULLITEM;
 				}
 				else
 					SendItemPushResult(item, false, true, false, true, 
@@ -369,7 +370,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 			item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, qst->srcitemcount ? qst->srcitemcount : 1);
 			if(!_player->GetItemInterface()->AddItemToFreeSlot(item))
 			{
-				item->Destructor();
+				item->DeleteMe();
 				item = NULLITEM;
 			}
 		}

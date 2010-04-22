@@ -775,7 +775,6 @@ public:
 	void CombatStatusHandler_UpdateTargets();
 
 	virtual ~Unit ( );
-	virtual void Destructor();
 	virtual void Init();
 
 	friend class AIInterface;

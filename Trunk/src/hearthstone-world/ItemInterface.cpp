@@ -45,7 +45,8 @@ ItemInterface::~ItemInterface()
 	{
 		if( m_pItems[i] != NULL && m_pItems[i]->GetOwner() == m_pOwner )
 		{
-			m_pItems[i]->Destructor();
+			m_pItems[i]->DeleteMe();
+			m_pItems[i] = NULLITEM;
 		}
 	}
 
@@ -151,7 +152,7 @@ Item* ItemInterface::SafeAddItem(uint32 ItemId, int16 ContainerSlot, int16 slot)
 		}
 		else
 		{
-			pItem->Destructor();
+			pItem->DeleteMe();
 			pItem = NULLITEM;
 			return pItem;
 		}
@@ -166,7 +167,7 @@ Item* ItemInterface::SafeAddItem(uint32 ItemId, int16 ContainerSlot, int16 slot)
 		}
 		else
 		{
-			pItem->Destructor();
+			pItem->DeleteMe();
 			pItem = NULLITEM;
 			return pItem;
 		}
@@ -680,7 +681,7 @@ bool ItemInterface::SafeFullRemoveItemFromSlot(int16 ContainerSlot, int16 slot)
 			}
 
 			pItem->DeleteFromDB();
-			pItem->Destructor();
+			pItem->DeleteMe(); // Please note; possible crash here
 			pItem = NULLITEM;
 		}
 	}
@@ -2545,36 +2546,38 @@ void ItemInterface::BuildInventoryChangeError(Item* SrcItem, Item* DstItem, uint
 
 void ItemInterface::EmptyBuyBack()
 {
-	 for (uint32 j = 0;j < 12;j++)
-	 {
-		 if (m_pBuyBack[j] != NULL)
-		 {
+	for (uint32 j = 0;j < 12;++j)
+	{
+		if (m_pBuyBack[j] != NULL)
+		{
 			 m_pBuyBack[j]->DestroyForPlayer(m_pOwner);
 			 m_pBuyBack[j]->DeleteFromDB();
 
-			 if(m_pBuyBack[j]->IsContainer())
-			 {
+			if(m_pBuyBack[j]->IsContainer())
+			{
 				if (TO_CONTAINER(m_pBuyBack[j])->IsInWorld())
 					TO_CONTAINER(m_pBuyBack[j])->RemoveFromWorld();
-				
-				m_pBuyBack[j]->Destructor();
-			 }
-			 else
-			 {
+
+				delete TO_CONTAINER(m_pBuyBack[j]);
+			}
+			else
+			{
 				if (m_pBuyBack[j]->IsInWorld())
 					m_pBuyBack[j]->RemoveFromWorld();
 
-				m_pBuyBack[j]->Destructor();
-			 }
+				delete m_pBuyBack[j];
+			}
 
-			 m_pOwner->SetUInt64Value(PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + (2*j),0);
-			 m_pOwner->SetUInt32Value(PLAYER_FIELD_BUYBACK_PRICE_1 + j,0);
-			 m_pOwner->SetUInt32Value(PLAYER_FIELD_BUYBACK_TIMESTAMP_1 + j,0);
-			 m_pBuyBack[j] = NULLITEM;
-		 }
-		 else
-			 break;
-	 }
+			m_pOwner->SetUInt64Value(PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + (2*j),0);
+			m_pOwner->SetUInt32Value(PLAYER_FIELD_BUYBACK_PRICE_1 + j,0);
+			m_pOwner->SetUInt32Value(PLAYER_FIELD_BUYBACK_TIMESTAMP_1 + j,0);
+			m_pBuyBack[j] = NULLITEM;
+		}
+		else
+		{
+			break;
+		}
+	}
 }
 
 void ItemInterface::AddBuyBackItem(Item* it,uint32 price)
@@ -2583,7 +2586,7 @@ void ItemInterface::AddBuyBackItem(Item* it,uint32 price)
 	if ((m_pBuyBack[11] != NULL) && (m_pOwner->GetUInt64Value(PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + 22) != 0))
 	{
 		if(m_pBuyBack[0] != NULL)
-		{		   
+		{
 			 m_pBuyBack[0]->DestroyForPlayer(m_pOwner);
 			 m_pBuyBack[0]->DeleteFromDB();
 
@@ -2591,15 +2594,17 @@ void ItemInterface::AddBuyBackItem(Item* it,uint32 price)
 			 {
 				if (TO_CONTAINER(m_pBuyBack[0])->IsInWorld())
 					TO_CONTAINER(m_pBuyBack[0])->RemoveFromWorld();
-				
-				m_pBuyBack[0]->Destructor();
+
+				delete TO_CONTAINER(m_pBuyBack[0]);
+				m_pBuyBack[0] = NULL;
 			 }
 			 else
 			 {
 				if (m_pBuyBack[0]->IsInWorld())
 					m_pBuyBack[0]->RemoveFromWorld();
 
-				m_pBuyBack[0]->Destructor();
+				delete m_pBuyBack[0];
+				m_pBuyBack[0] = NULL;
 			 }
 		}
 
@@ -2968,7 +2973,8 @@ void ItemInterface::mLoadItemsFromDatabase(QueryResult * result)
 				    item->m_isDirty = false;
 				else
 				{
-					item->Destructor();
+					item->DeleteMe();
+					item = NULLITEM;
 				}
 			}
 		}
@@ -3387,7 +3393,8 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 		{
 			freeslots = false;
 			chr->GetSession()->SendNotification("No free slots were found in your inventory!");
-			item->Destructor();
+			item->DeleteMe();
+			item = NULLITEM;
 		}
 	}
 	return true;

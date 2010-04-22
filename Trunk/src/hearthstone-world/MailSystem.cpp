@@ -263,7 +263,8 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 			data << pItem->GetUInt32Value( ITEM_FIELD_MAXDURABILITY );
 			data << pItem->GetUInt32Value( ITEM_FIELD_DURABILITY );
 			data << uint32(0);
-			pItem->Destructor();
+			pItem->DeleteMe();
+			pItem = NULLITEM;
 		}
 		data.put< uint8 >( pos, i );
 	}
@@ -633,7 +634,8 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 				sGMLog.writefromsession(this, "sent mail with item entry %u to %s, with gold %u.", pItem->GetEntry(), player->name, msg.money);
 			}
 
-			pItem->Destructor();
+			pItem->DeleteMe();
+			pItem = NULLITEM;
 		}
 	}
 
@@ -752,7 +754,8 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 		data << uint32(MAIL_ERR_BAG_FULL);
 		SendPacket(&data);
 
-		item->Destructor();
+		item->DeleteMe();
+		item = NULLITEM;
 		return;
 	}
 
@@ -765,7 +768,8 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 			// no free slots left!
 			data << uint32(MAIL_ERR_BAG_FULL);
 			SendPacket(&data);
-			item->Destructor();
+			item->DeleteMe();
+			item = NULLITEM;
 			return;
 		}
 	}
@@ -926,7 +930,8 @@ void WorldSession::HandleMailCreateTextItem(WorldPacket & recv_data )
 	}
 	else
 	{
-		pItem->Destructor();
+		pItem->DeleteMe();
+		pItem = NULLITEM;
 	}
 }
 

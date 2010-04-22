@@ -132,7 +132,8 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 		}
 		else
 		{
-			item->Destructor();
+			item->DeleteMe();
+			item = NULLITEM;
 		}
 	}
 	else 
@@ -336,64 +337,64 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 			return;
 
 		pGO->m_loot.looters.erase(_player->GetLowGUID());
-        switch( pGO->GetByte(GAMEOBJECT_BYTES_1, 1) )
-        {
-        case GAMEOBJECT_TYPE_FISHINGNODE:
-            {
-		        if(pGO->IsInWorld())
-			    {
-				    pGO->RemoveFromWorld(true);
-			    }
-			    pGO->Destructor();
+		switch( pGO->GetByte(GAMEOBJECT_BYTES_1, 1) )
+		{
+		case GAMEOBJECT_TYPE_FISHINGNODE:
+			{
+				if(pGO->IsInWorld())
+				{
+					pGO->RemoveFromWorld(true);
+				}
+				delete pGO;
 				pGO = NULLGOB;
-            }break;
-        case GAMEOBJECT_TYPE_CHEST:
-            {
-                pGO->m_loot.looters.erase( _player->GetLowGUID() );
-                //check for locktypes
-                
-                Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
-                if( pLock )
-                {
-                    for( uint32 i=0; i < 5; ++i )
-                    {
-                        if( pLock->locktype[i] )
-                        {
-                            if( pLock->locktype[i] == 2 ) //locktype;
-                            {
-                                //herbalism and mining;
-                                if( pLock->lockmisc[i] == LOCKTYPE_MINING || pLock->lockmisc[i] == LOCKTYPE_HERBALISM )
-                                {
-                                    //we still have loot inside.
-                                    if( pGO->m_loot.HasItems(_player) )
-                                    {
-                                        pGO->SetByte(GAMEOBJECT_BYTES_1, 0, 1 );
+			}break;
+		case GAMEOBJECT_TYPE_CHEST:
+			{
+				pGO->m_loot.looters.erase( _player->GetLowGUID() );
+				//check for locktypes
+				
+				Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
+				if( pLock )
+				{
+					for( uint32 i=0; i < 5; ++i )
+					{
+						if( pLock->locktype[i] )
+						{
+							if( pLock->locktype[i] == 2 ) //locktype;
+							{
+								//herbalism and mining;
+								if( pLock->lockmisc[i] == LOCKTYPE_MINING || pLock->lockmisc[i] == LOCKTYPE_HERBALISM )
+								{
+									//we still have loot inside.
+									if( pGO->m_loot.HasItems(_player) )
+									{
+										pGO->SetByte(GAMEOBJECT_BYTES_1, 0, 1 );
 										// TODO : redo this temporary fix, because for some reason hasloot is true even when we loot everything
 										// my guess is we need to set up some even that rechecks the GO in 10 seconds or something
 										//pGO->Despawn( 600000 + ( RandomUInt( 300000 ) ) );
-                                        return;
-                                    }
-
-                                    if( pGO->CanMine() )
-                                    {
-										pGO->ClearLoot();
-                                        pGO->UseMine();
 										return;
-                                    }
-                                    else
-                                    {
-    									pGO->CalcMineRemaining( true );
+									}
+
+									if( pGO->CanMine() )
+									{
+										pGO->ClearLoot();
+										pGO->UseMine();
+										return;
+									}
+									else
+									{
+										pGO->CalcMineRemaining( true );
 										pGO->Despawn( 600000 + ( RandomUInt( 180000 ) ) );
 										return;
-                                    }
-                                }
-                                else //other type of locks that i dont bother to split atm ;P
-                                {
-                                    if(pGO->m_loot.HasItems(_player))
-                                    {
-                                        pGO->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
-                                        return;
-                                    }
+									}
+								}
+								else //other type of locks that i dont bother to split atm ;P
+								{
+									if(pGO->m_loot.HasItems(_player))
+									{
+										pGO->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
+										return;
+									}
 
 									pGO->CalcMineRemaining(true);
 
@@ -409,32 +410,32 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 										pGO->Despawn(DespawnTime);
 									}
 									return;
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if( pGO->m_loot.HasItems(_player) )
-                    {
-                        pGO->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
-                        return;
-                    }
-                    uint32 DespawnTime = 0;
-			        if(sQuestMgr.GetGameObjectLootQuest(pGO->GetEntry()))
-				        DespawnTime = 120000;	   // 5 min for quest GO,
-			        else
-			        {
-				        DespawnTime = 900000;	   // 15 for else
-			        }
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					if( pGO->m_loot.HasItems(_player) )
+					{
+						pGO->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
+						return;
+					}
+					uint32 DespawnTime = 0;
+					if(sQuestMgr.GetGameObjectLootQuest(pGO->GetEntry()))
+						DespawnTime = 120000;	   // 5 min for quest GO,
+					else
+					{
+						DespawnTime = 900000;	   // 15 for else
+					}
 
 
-			        pGO->Despawn(DespawnTime);
+					pGO->Despawn(DespawnTime);
 
-                }
-            }
-        }
+				}
+			}
+		}
 		return;
 	}
 
@@ -828,7 +829,7 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket &recv_data)
 	}
 
 	// Check we are actually in range of our corpse
-    if ( pCorpse->GetDistance2dSq( _player ) > CORPSE_MINIMUM_RECLAIM_RADIUS_SQ )
+	if ( pCorpse->GetDistance2dSq( _player ) > CORPSE_MINIMUM_RECLAIM_RADIUS_SQ )
   	{
 		WorldPacket data( SMSG_RESURRECT_FAILED, 4 );
 		data << uint32(1);
@@ -836,8 +837,8 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket &recv_data)
 		return;
 	}
 
-    // Check death clock before resurrect they must wait for release to complete
-    if( pCorpse->GetDeathClock() + CORPSE_RECLAIM_TIME > time( NULL ) )
+	// Check death clock before resurrect they must wait for release to complete
+	if( pCorpse->GetDeathClock() + CORPSE_RECLAIM_TIME > time( NULL ) )
 	{
 		WorldPacket data( SMSG_RESURRECT_FAILED, 4 );
 		data << uint32(1);
@@ -1176,8 +1177,8 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 	{
 		case GAMEOBJECT_TYPE_CHAIR:
 		{
-            /// if players are mounted they are not able to sit on a chair
-            if( plyr->IsMounted() )
+			/// if players are mounted they are not able to sit on a chair
+			if( plyr->IsMounted() )
 				plyr->RemoveAura( plyr->m_MountSpellId );
 
 			plyr->SafeTeleport( plyr->GetMapId(), plyr->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
@@ -1725,10 +1726,10 @@ void WorldSession::HandleRandomRollOpcode(WorldPacket &recv_data)
 	data << roll << _player->GetGUID();
 
 	// send to set
-    if(_player->InGroup())
+	if(_player->InGroup())
 		_player->GetGroup()->SendPacketToAll(&data);
 	else
-	    GetPlayer()->SendMessageToSet(&data, true, true);
+		GetPlayer()->SendMessageToSet(&data, true, true);
 }
 
 void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
@@ -1851,7 +1852,8 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 	}
 	else
 	{
-		item->Destructor();
+		item->DeleteMe();
+		item = NULLITEM;
 	}
 
 	pLoot->items.at(slotid).iItemsCount=0;
@@ -1878,15 +1880,15 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 	}
 
 	/*WorldPacket idata(45);
-    if(it->Class == ITEM_CLASS_QUEST)
-    {
-        uint32 pcount = player->GetItemInterface()->GetItemCount(it->ItemId, true);
+	if(it->Class == ITEM_CLASS_QUEST)
+	{
+		uint32 pcount = player->GetItemInterface()->GetItemCount(it->ItemId, true);
 		BuildItemPushResult(&idata, GetPlayer()->GetGUID(), ITEM_PUSH_TYPE_LOOT, amt, itemid, pLoot->items.at(slotid).iRandomProperty ? pLoot->items.at(slotid).iRandomProperty->ID : 0,0xFF,0,0xFFFFFFFF,pcount);
-    }
-    else
-    {
+	}
+	else
+	{
 		BuildItemPushResult(&idata, player->GetGUID(), ITEM_PUSH_TYPE_LOOT, amt, itemid, pLoot->items.at(slotid).iRandomProperty ? pLoot->items.at(slotid).iRandomProperty->ID : 0);
-    }
+	}
 
 	if(_player->InGroup())
 		_player->GetGroup()->SendPacketToAll(&idata);

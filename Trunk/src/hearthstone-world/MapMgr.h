@@ -210,7 +210,6 @@ public:
 	MapMgr(Map *map, uint32 mapid, uint32 instanceid);
 	~MapMgr();
 	void Init();
-	void Destructor();
 
 	void PushObject(Object* obj);
 	void PushStaticObject(Object* obj);

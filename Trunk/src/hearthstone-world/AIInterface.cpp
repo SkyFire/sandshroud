@@ -575,7 +575,8 @@ void AIInterface::Update(uint32 p_time)
 			}
 			else
 			{
-				pSpell->Destructor();
+				delete pSpell;
+				pSpell = NULL;
 			}
 			// these will *almost always* be AoE, so no need to find a target here.
 //			SpellCastTargets targets(m_Unit->GetGUID());
@@ -2304,7 +2305,8 @@ bool AIInterface::showWayPoints(Player* pPlayer, bool Backwards)
 			pPlayer->GetSession()->SendPacket( &data1 );
 
 			//Cleanup
-			pWayPoint->Destructor();
+			delete pWayPoint;
+			pWayPoint = NULL;
 		}
 	}
 	return true;

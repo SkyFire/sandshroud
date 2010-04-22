@@ -136,8 +136,8 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 	{
 		if(sp->CreatureSpawns.size())//got creatures
 		{
-			Vehicle* v;
-			Creature* c;
+			Vehicle* v = NULL;
+			Creature* c = NULL;
 			for(CreatureSpawnList::iterator i = sp->CreatureSpawns.begin(); i != sp->CreatureSpawns.end(); ++i)
 			{
 				if(pInstance)
@@ -152,7 +152,7 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 
 					if((*i)->vehicle != 0)
 					{
-						v=_mapmgr->CreateVehicle((*i)->entry);
+						v = _mapmgr->CreateVehicle((*i)->entry);
 
 						v->SetMapId(_mapmgr->GetMapId());
 						v->SetInstanceID(_mapmgr->GetInstanceID());
@@ -162,7 +162,8 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 						{
 							if(!v->CanAddToWorld())
 							{
-								v->Destructor();
+								delete v;
+								v = NULLVEHICLE;
 								continue;
 							}
 
@@ -170,7 +171,8 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 						}
 						else
 						{
-							v->Destructor();
+							delete v;
+							v = NULLVEHICLE;
 						}
 					}
 					else
@@ -185,7 +187,8 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 						{
 							if(!c->CanAddToWorld())
 							{
-								c->Destructor();
+								delete c;
+								c = NULLCREATURE;
 								continue;
 							}
 
@@ -193,7 +196,8 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 						}
 						else
 						{
-							c->Destructor();
+							delete c;
+							c = NULLCREATURE;
 						}
 					}
 				}
@@ -222,8 +226,8 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 					}
 					else
 					{
-						go->Destructor();
-						go = NULLGOB;
+						delete go;
+						go = NULL;
 					}
 				}
 			}
@@ -349,15 +353,15 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 						if( pObject->IsVehicle())
 						{
 							_mapmgr->_reusable_guids_vehicle.push_back( pObject->GetUIdFromGUID() );
-							TO_VEHICLE(pObject)->m_respawnCell=NULL;
-							TO_VEHICLE(pObject)->Destructor();
+							TO_VEHICLE(pObject)->m_respawnCell = NULL;
+							delete TO_VEHICLE(pObject);
 							_respawnObjects.erase(pObject);
 						}
 						else if( !pObject->IsPet() )
 						{
 							_mapmgr->_reusable_guids_creature.push_back( pObject->GetUIdFromGUID() );
-							TO_CREATURE(pObject)->m_respawnCell=NULL;
-							TO_CREATURE(pObject)->Destructor();
+							TO_CREATURE(pObject)->m_respawnCell = NULL;
+							delete TO_CREATURE(pObject);
 							_respawnObjects.erase(pObject);
 						}
 					}
@@ -370,8 +374,8 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 
 					if(TO_GAMEOBJECT(pObject)->m_spawn->eventid == eventToRemove)
 					{
-						TO_GAMEOBJECT(pObject)->m_respawnCell=NULL;
-						TO_GAMEOBJECT(pObject)->Destructor();
+						TO_GAMEOBJECT(pObject)->m_respawnCell = NULL;
+						delete TO_GAMEOBJECT(pObject);
 						_respawnObjects.erase(pObject);
 					}break;
 				}
@@ -429,7 +433,7 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 			if( pObject->IsInWorld() )
 				pObject->RemoveFromWorld( true );
 
-			pObject->Destructor();
+			delete pObject;
 			pObject = NULLOBJ;
 
 		}

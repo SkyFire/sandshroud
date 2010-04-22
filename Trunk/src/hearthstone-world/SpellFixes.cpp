@@ -5461,9 +5461,14 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			// ITEMSETS								//
 			//////////////////////////////////////////
 
-		case 70765:
+		case 70765: // Divine Storm Cooldown Clear
 			{
-				sp->procChance = 40;
+//#define STORM_NERF
+#ifdef STORM_NERF
+				sp->procChance = 20; // Crow: I got a feeling...
+#else
+				sp->procChance = 40; // Current blizzlike settings.
+#endif
 			}break;
 		}
 

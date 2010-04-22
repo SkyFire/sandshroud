@@ -1774,7 +1774,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 							return;
 
 						Spell* spelld = NULLSPELL;
-						spelld = (new Spell(m_caster, parentsp ,false,NULLAURA));
+						spelld = new Spell(m_caster, parentsp, false, NULLAURA);
 						SpellCastTargets targets(m_target->GetGUID());
 						//this is so not good, maybe parent spell has more then dmg effect and we use it to calc our new dmg :(
 						dmg = 0;
@@ -1783,10 +1783,10 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						  //dmg +=parentsp->EffectBasePoints[i]*m_spellProto->EffectBasePoints[0];
 							dmg +=spelld->CalculateEffect(i,m_target->IsUnit()? TO_UNIT(m_target):NULLUNIT)*parentsp->EffectBasePoints[0]/100;
 						}
-						spelld->Destructor();
+						delete spelld;
 					}
 				}
-			};
+			}
 
 			// Add exceptions here :P
 			switch( m_spellProto->NameHash )
@@ -1829,7 +1829,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 					}
 				}
 			}
-		}
+		};
 		
 		if(dmg <= 0)
 			return; //who would want a neagtive dmg here ?
@@ -2635,7 +2635,7 @@ void Aura::SpellAuraDummy(bool apply)
 				if(farsight)
 				{
 					farsight->RemoveFromWorld(false,true);
-					farsight->Destructor();
+					//delete farsight;
 				}
 		}break;*/
 
@@ -2703,7 +2703,7 @@ void Aura::SpellAuraDummy(bool apply)
 			spell = new Spell(pCaster, m_spellProto, true, NULLAURA);
 			spell->SetUnitTarget( m_target );
 			spell->Heal( mod->m_baseAmount );			
-			spell->Destructor();
+			delete spell;
 			//pCaster->Heal( m_target, m_spellProto->Id, mod->m_amount );
 
 			// 
@@ -6757,12 +6757,12 @@ void Aura::SpellAuraChannelDeathItem(bool apply)
 						Item* item = objmgr.CreateItem(itemid,pCaster);
 						if(!item) return;
 
-
 						item->SetUInt64Value(ITEM_FIELD_CREATOR,pCaster->GetGUID());
 						if(!pCaster->GetItemInterface()->AddItemToFreeSlot(item))
 						{
 							pCaster->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM, INV_ERR_INVENTORY_FULL);
-							item->Destructor();
+							item->DeleteMe();
+							item = NULLITEM;
 							return;
 						}
 						/*WorldPacket data(45);

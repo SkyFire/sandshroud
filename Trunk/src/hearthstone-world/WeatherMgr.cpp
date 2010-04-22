@@ -106,7 +106,8 @@ WeatherMgr::~WeatherMgr()
 {
 	map<uint32, WeatherInfo*>::iterator itr;
 	for( itr = m_zoneWeathers.begin(); itr != m_zoneWeathers.end(); ++itr)
-		itr->second->Destructor();
+		delete itr->second;
+
 	m_zoneWeathers.clear();
 }
 
@@ -173,11 +174,6 @@ WeatherInfo::~WeatherInfo()
 {
 	m_effectValues.clear();
 	sEventMgr.RemoveEvents(this);
-}
-
-void WeatherInfo::Destructor()
-{
-	delete this;
 }
 
 void WeatherInfo::_GenerateWeather()

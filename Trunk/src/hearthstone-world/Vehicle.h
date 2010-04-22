@@ -25,7 +25,6 @@ class SERVER_DECL Vehicle : public Creature
 public:
 	Vehicle(uint64 guid);
 	~Vehicle();
-	virtual void Destructor();
 
 	void Init();
 	void InitSeats(uint32 vehicleEntry, Player* pRider = NULLPLR);

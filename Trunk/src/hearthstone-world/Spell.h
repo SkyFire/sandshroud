@@ -1689,7 +1689,6 @@ public:
 	friend class DummySpellHandler;
 	Spell( Object* Caster, SpellEntry *info, bool triggered, Aura* aur);
 	~Spell();
-	void Destructor();
 
 	// Fills specified targets at the area of effect
 	void FillSpecifiedTargetsInArea(float srcx,float srcy,float srcz,uint32 ind, uint32 specification);
@@ -1833,7 +1832,6 @@ public:
 	void SpellEffectDuel(uint32 i);
 	void SpellEffectStuck(uint32 i);
 	void SpellEffectSummonPlayer(uint32 i);
-	void SpellEffectActivateObject(uint32 i);
 	void SpellEffectWMODamage(uint32 i);
  	void SpellEffectWMORepair(uint32 i);
 	void SummonTotem(uint32 i);

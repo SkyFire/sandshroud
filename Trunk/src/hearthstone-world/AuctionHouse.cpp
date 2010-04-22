@@ -217,7 +217,8 @@ void AuctionHouse::RemoveAuction(Auction * auct)
 	itemLock.ReleaseWriteLock();
 
 	// Destroy the item from memory (it still remains in the db)
-	auct->pItem->Destructor();
+	auct->pItem->DeleteMe();
+	auct->pItem = NULLITEM;
 
 	// Finally destroy the auction instance.
 	auct->DeleteFromDB();

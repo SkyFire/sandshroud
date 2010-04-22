@@ -27,7 +27,6 @@ public:
 	Container(uint32 high, uint32 low);
 	~Container();
 	virtual void Init();
-	virtual void Destructor();
 
 	void Create( uint32 itemid, Player* owner );
 	void LoadFromDB( Field*fields);
@@ -48,7 +47,7 @@ public:
 	void SwapItems(int16 SrcSlot, int16 DstSlot);
 	Item* SafeRemoveAndRetreiveItemFromSlot(int16 slot, bool destroy); //doesnt destroy item from memory
 	bool SafeFullRemoveItemFromSlot(int16 slot); //destroys item fully
-   
+
 	void SaveBagToDB(int16 slot, bool first, QueryBuffer * buf);
 
 protected:

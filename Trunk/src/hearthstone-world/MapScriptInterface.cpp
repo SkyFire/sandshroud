@@ -142,12 +142,13 @@ Creature* MapScriptInterface::SpawnCreature(uint32 Entry, float cX, float cY, fl
 
 void MapScriptInterface::DeleteCreature(Creature* ptr)
 {
-	ptr->Destructor();
+	delete ptr;
+	ptr = NULLCREATURE;
 }
 
 void MapScriptInterface::DeleteGameObject(GameObject* ptr)
 {
-	ptr->Destructor();
+	delete ptr;
 	ptr = NULLGOB;
 }
 

@@ -832,7 +832,6 @@ public:
 
 	Player ( uint32 guid );
 	~Player ( );
-	virtual void Destructor();
 	virtual void Init();
 
 	HEARTHSTONE_INLINE Guild * GetGuild() { return m_playerInfo->guild; }

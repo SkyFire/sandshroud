@@ -114,25 +114,25 @@ void MapCell::RemoveObjects()
 				{
 					_mapmgr->_reusable_guids_vehicle.push_back( pObject->GetUIdFromGUID() );
 					TO_VEHICLE(pObject)->m_respawnCell=NULL;
-					TO_VEHICLE(pObject)->Destructor();
+					delete TO_VEHICLE(pObject);
 					pObject = NULLOBJ;
 				}
 				else if( !pObject->IsPet() )
 				{
 					_mapmgr->_reusable_guids_creature.push_back( pObject->GetUIdFromGUID() );
 					TO_CREATURE(pObject)->m_respawnCell=NULL;
-					TO_CREATURE(pObject)->Destructor();
+					delete TO_CREATURE(pObject);
 					pObject = NULLOBJ;
 				}
 			}break;
 
 		case TYPEID_GAMEOBJECT: {
-			TO_GAMEOBJECT(pObject)->m_respawnCell=NULL;
-			TO_GAMEOBJECT(pObject)->Destructor();
+			TO_GAMEOBJECT(pObject)->m_respawnCell = NULL;
+			delete TO_GAMEOBJECT(pObject);
 			pObject = NULLOBJ;
 			}break;
 		default:
-			pObject->Destructor();
+			delete pObject;
 			pObject = NULLOBJ;
 			break;
 
@@ -170,9 +170,10 @@ void MapCell::RemoveObjects()
 		if( obj->IsInWorld())
 			obj->RemoveFromWorld( true );
 
-		obj->Destructor();
+		delete obj;
 		obj = NULLOBJ;
 	}
+	_objects.clear();
 
 	_playerCount = 0;
 	_loaded = false;
@@ -213,7 +214,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 					{
 						if(!v->CanAddToWorld())
 						{
-							v->Destructor();
+							delete v;
 							v = NULLVEHICLE;
 							continue;
 						}
@@ -222,7 +223,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 					}
 					else
 					{
-						v->Destructor();
+						delete v;
 						v = NULLVEHICLE;
 					}
 				}
@@ -240,7 +241,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 					{
 						if(!c->CanAddToWorld())
 						{
-							c->Destructor();
+							delete c;
 							c = NULLCREATURE;
 							continue;
 						}
@@ -249,7 +250,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 					}
 					else
 					{
-						c->Destructor();
+						delete c;
 						c = NULLCREATURE;
 					}
 				}
@@ -275,7 +276,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 				}
 				else
 				{
-					go->Destructor();
+					delete go;
 					go = NULLOBJ;
 				}
 			}

@@ -136,7 +136,11 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		SystemMessage(m_session, "You should select a creature.");
 		return true;
 	}
-
+	else if(unit->IsPet())
+	{
+		SystemMessage(m_session, "You can't delete playerpets.");
+		return true;
+	}
 	if( unit->m_spawn != NULL && !m_session->CanUseCommand('z') )
 	{
 		SystemMessage(m_session, "You do not have permission to do that. Please contact higher staff for removing of saved spawns.");
@@ -199,12 +203,12 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 			}
 		}
 	}
-	unit->RemoveFromWorld(false,true);
+	unit->RemoveFromWorld(false, true);
 
 	if(unit->IsVehicle())
-		TO_VEHICLE(unit)->Destructor();
+		delete TO_VEHICLE(unit);
 	else
-		unit->Destructor();
+		delete unit;
 
 	m_session->GetPlayer()->SetSelection(NULL);
 	return true;
@@ -475,14 +479,12 @@ bool ChatHandler::HandleCastSpellCommand(const char* args, WorldSession *m_sessi
 		return false;
 	}
 	
-	Spell* sp(new Spell(caster, spellentry, false, NULLAURA));
+	Spell* sp = new Spell(caster, spellentry, false, NULLAURA);
 	if(!sp)
 	{
 		RedSystemMessage(m_session, "Spell failed creation!");
-		sp->Destructor();
 		return false;
 	}
-
 	BlueSystemMessage(m_session, "Casting spell %d on target.", spellid);
 	SpellCastTargets targets;
 	targets.m_unitTarget = target->GetGUID();
@@ -716,8 +718,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 			GObj->m_spawn = NULL;
 		}
 	}
-	GObj->Despawn(0);
-	GObj->Destructor();
+	GObj->Despawn(0); // Deleted through ExpireAndDelete
 	GObj = NULLGOB;
 
 	m_session->GetPlayer()->m_GM_SelectedGO = NULLGOB;

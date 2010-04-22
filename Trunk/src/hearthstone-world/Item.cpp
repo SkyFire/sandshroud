@@ -77,9 +77,13 @@ Item::~Item()
 	m_owner = NULLPLR;
 }
 
-void Item::Destructor()
+void Item::DeleteMe()
 {
-	delete this;
+	if( IsContainer() ) {
+		delete static_cast<Container*>(this);
+	} else {
+		delete this;
+	}
 }
 
 void Item::Create( uint32 itemid, Player* owner )

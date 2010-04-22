@@ -30,7 +30,6 @@ class SERVER_DECL DynamicObject : public Object
 public:
 	DynamicObject( uint32 high, uint32 low );
 	~DynamicObject( );
-	virtual void Destructor();
 	virtual void Init();
 
 	void Create(Object* caster, Spell* pSpell, float x, float y, float z, uint32 duration, float radius);

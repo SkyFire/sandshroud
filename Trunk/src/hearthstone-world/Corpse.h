@@ -54,9 +54,8 @@ public:
 	Corpse( uint32 high, uint32 low );
 	~Corpse();
 	virtual void Init();
-	virtual void Destructor();
 
-   // void Create();
+	// void Create();
 	void Create (Player* owner, uint32 mapid, float x, float y, float z, float ang );
 
 	void SaveToDB();
@@ -64,7 +63,7 @@ public:
 	HEARTHSTONE_INLINE void SetCorpseState(uint32 state) { m_state = state; }
 	HEARTHSTONE_INLINE uint32 GetCorpseState() { return m_state; }
 	void Despawn();
-	
+
 	HEARTHSTONE_INLINE void SetLoadedFromDB(bool value) { _loadedfromdb = value; }
 	HEARTHSTONE_INLINE bool GetLoadedFromDB(void) { return _loadedfromdb; }
 

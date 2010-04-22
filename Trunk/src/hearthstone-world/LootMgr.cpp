@@ -849,11 +849,15 @@ void LootRoll::Finalize()
 		{
 			itemid =iter->item.itemproto->ItemId;
 			Item * Titem = objmgr.CreateItem( itemid, _player);
+			if( Titem == NULLITEM )
+				continue;
 			_player->GetItemInterface()->AddItemToFreeSlot(Titem);
-			Titem->Destructor();
+			Titem->DeleteMe();
+			Titem = NULLITEM;
 		}
-		pItem->Destructor();
-		
+		pItem->DeleteMe();
+		pItem = NULLITEM;
+
 		pLoot->items.at(_slotid).iItemsCount=0;
 	
 		//Send "finish" packet
@@ -914,7 +918,8 @@ void LootRoll::Finalize()
 		}
 		else
 		{
-			item->Destructor();
+			item->DeleteMe();
+			item = NULLITEM;
 		}
 	}
 	else 

@@ -286,11 +286,6 @@ Spell::~Spell()
 	m_reflectedParent = NULLSPELL;
 }
 
-void Spell::Destructor()
-{
-	delete this;
-}
-
 //i might forget conditions here. Feel free to add them
 bool Spell::IsStealthSpell()
 {
@@ -1187,7 +1182,8 @@ void Spell::cancel()
 					if(dynObj)
 					{
 						dynObj->RemoveFromWorld(true);
-						dynObj->Destructor();
+						delete dynObj;
+						dynObj = NULLOBJ;
 					}
 				}
 
@@ -1197,8 +1193,8 @@ void Spell::cancel()
 						p_caster->GetSummonedObject()->RemoveFromWorld(true);
 					// for now..
 					ASSERT(p_caster->GetSummonedObject()->GetTypeId() == TYPEID_GAMEOBJECT);
-					p_caster->GetSummonedObject()->Destructor();
-					p_caster->SetSummonedObject(NULLOBJ);
+					delete TO_GAMEOBJECT(p_caster->GetSummonedObject());
+					p_caster->SetSummonedObject(NULL);
 				}
 				if (m_timer > 0)
 					p_caster->delayAttackTimer(-m_timer);
@@ -1983,7 +1979,7 @@ void Spell::finish()
 		if( m_ForceConsumption || ( cancastresult == SPELL_CANCAST_OK && !GetSpellFailed() ) )
 			RemoveItems();
 	}
-	Destructor();
+	delete this;
 }
 
 void Spell::SendCastResult(uint8 result)
@@ -2430,7 +2426,7 @@ void Spell::SendChannelUpdate(uint32 time)
 			if(dynObj)
 			{
 				dynObj->RemoveFromWorld(true);
-				dynObj->Destructor();
+				delete dynObj;
 				dynObj = NULLGOB;
 			}
 		}
@@ -2440,7 +2436,7 @@ void Spell::SendChannelUpdate(uint32 time)
 			if( dynObj )
 			{
 				dynObj->RemoveFromWorld(true);
-				dynObj->Destructor();
+				delete dynObj;
 				dynObj = NULLGOB;
 				p_caster->SetUInt32Value(PLAYER_FARSIGHT, 0);
 			}
@@ -4493,7 +4489,7 @@ void Spell::CreateItem(uint32 itemId)
 		AddItemResult result = pUnit->GetItemInterface()->SafeAddItem(newItem, slotresult.ContainerSlot, slotresult.Slot);
 		if(!result)
 		{
-			newItem->Destructor();
+			delete newItem;
 			newItem = NULLITEM;
 			return;
 		}

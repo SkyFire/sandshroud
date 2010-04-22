@@ -139,7 +139,6 @@ public:
 	typedef std::map<string, void*> ExtensionSet;
 
 	virtual ~Object ( );
-	virtual void Destructor();
 	virtual void Init();
 
 	virtual void Update ( uint32 time ) { }
@@ -499,7 +498,9 @@ public:
 	{
 		if(IsInWorld())
 			RemoveFromWorld(true);
-		Destructor();
+
+		// this is a suicidal maniac o.o
+		delete this;
 	}
 
 	HEARTHSTONE_INLINE size_t GetInRangeOppFactCount() { return m_oppFactsInRange.size(); }

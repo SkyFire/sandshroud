@@ -511,9 +511,7 @@ void ObjectMgr::LoadPlayerCreateInfo()
 		pPlayerCreateInfo->mindmg = fields[22].GetFloat();
 		pPlayerCreateInfo->maxdmg = fields[23].GetFloat();
 
-		QueryResult *sk_sql = WorldDatabase.Query(
-			"SELECT * FROM playercreateinfo_skills WHERE indexid=%u",pPlayerCreateInfo->index);
-
+		QueryResult *sk_sql = WorldDatabase.Query("SELECT * FROM playercreateinfo_skills WHERE indexid = %u", pPlayerCreateInfo->index);
 		if(sk_sql)
 		{
 			do
@@ -527,8 +525,8 @@ void ObjectMgr::LoadPlayerCreateInfo()
 			} while(sk_sql->NextRow());
 			delete sk_sql;
 		}
-		QueryResult *sp_sql = WorldDatabase.Query("SELECT * FROM playercreateinfo_spells WHERE indexid=%u",pPlayerCreateInfo->index);
 
+		QueryResult *sp_sql = WorldDatabase.Query("SELECT * FROM playercreateinfo_spells WHERE indexid = %u", pPlayerCreateInfo->index);
 		if(sp_sql)
 		{
 			do
@@ -538,9 +536,7 @@ void ObjectMgr::LoadPlayerCreateInfo()
 			delete sp_sql;
 		}
 
-		QueryResult *items_sql = WorldDatabase.Query(
-			"SELECT * FROM playercreateinfo_items WHERE indexid=%u",pPlayerCreateInfo->index);
-
+		QueryResult *items_sql = WorldDatabase.Query("SELECT * FROM playercreateinfo_items WHERE indexid = %u", pPlayerCreateInfo->index);
 		if(items_sql)
 		{
 			do
@@ -555,9 +551,7 @@ void ObjectMgr::LoadPlayerCreateInfo()
 			delete items_sql;
 		}
 
-		QueryResult *bars_sql = WorldDatabase.Query(
-			"SELECT * FROM playercreateinfo_bars WHERE class=%u",pPlayerCreateInfo->class_ );
-
+		QueryResult *bars_sql = WorldDatabase.Query("SELECT * FROM playercreateinfo_bars WHERE class = %u",pPlayerCreateInfo->class_ );
 		if(bars_sql)
 		{
 			do
@@ -575,7 +569,6 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 		mPlayerCreateInfo[pPlayerCreateInfo->index] = pPlayerCreateInfo;
 	} while( result->NextRow() );
-
 	delete result;
 
 	Log.Notice("ObjectMgr", "%u player create infos loaded.", mPlayerCreateInfo.size());
@@ -628,8 +621,8 @@ Corpse* ObjectMgr::LoadCorpse(uint32 guid)
 		pCorpse->LoadValues( fields[7].GetString());
 		if(pCorpse->GetUInt32Value(CORPSE_FIELD_DISPLAY_ID) == 0)
 		{
-			pCorpse->Destructor();
-			pCorpse = NULLCORPSE;
+			delete pCorpse;
+			pCorpse = NULL;
 			continue;
 		}
 
@@ -1224,7 +1217,7 @@ void ObjectMgr::LoadVendors()
 				{
 					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
 					{
-						WorldDatabase.Query("UPDATE vendors set extendedcost = '0' where item = '%u' AND entry = '%u'", itm.itemid, fields[0].GetUInt32());
+						WorldDatabase.Execute("UPDATE vendors set extendedcost = '0' where item = '%u' AND entry = '%u'", itm.itemid, fields[0].GetUInt32());
 					}
 					Log.Warning("ObjectMgr","Item %u at vendor %u has extended cost %u which is invalid. Skipping.", itm.itemid, fields[0].GetUInt32(), ec);
 					continue;
@@ -1271,8 +1264,8 @@ void ObjectMgr::LoadTotemSpells()
 
 		m_totemSpells.insert( TotemSpellMap::value_type( fields[0].GetUInt32(), sp ));
 	} while( result->NextRow() );
-
 	delete result;
+
 	Log.Notice("ObjectMgr", "%u totem spells loaded.", m_totemSpells.size());
 }
 
@@ -1302,7 +1295,7 @@ void ObjectMgr::LoadAIThreatToSpellId()
 		{
 			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
 			{
-				WorldDatabase.Query( "DELETE FROM ai_threattospellid where spell = '%u'", spellid);
+				WorldDatabase.Execute( "DELETE FROM ai_threattospellid where spell = '%u'", spellid);
 			}
 			Log.Warning("AIThreatSpell", "Cannot apply to spell %u; spell is nonexistant.", spellid);
 		}
@@ -1370,7 +1363,7 @@ void ObjectMgr::LoadSpellFixes()
 				}
 				else
 				{
-					WorldDatabase.Query("DELETE FROM SpellFixes where spellid = '%u'", sf_spellId);
+					WorldDatabase.Execute("DELETE FROM SpellFixes where spellid = '%u'", sf_spellId);
 				}
 			}
 		}while(result->NextRow());
@@ -1449,7 +1442,7 @@ void ObjectMgr::LoadCorpses(MapMgr* mgr)
 			pCorpse->LoadValues( fields[8].GetString());
 			if(pCorpse->GetUInt32Value(CORPSE_FIELD_DISPLAY_ID) == 0)
 			{
-				pCorpse->Destructor();
+				delete pCorpse;
 				pCorpse = NULLCORPSE;
 				continue;
 			}
@@ -1470,7 +1463,7 @@ void ObjectMgr::CorpseAddEventDespawn(Corpse* pCorpse)
 {
 	if(!pCorpse->IsInWorld())
 	{
-		pCorpse->Destructor();
+		delete pCorpse;
 		pCorpse = NULLCORPSE;
 	}
 	else
@@ -1484,7 +1477,7 @@ void ObjectMgr::DespawnCorpse(uint64 Guid)
 		return;
 
 	pCorpse->Despawn();
-	pCorpse->Destructor();
+	delete pCorpse;
 	pCorpse = NULLCORPSE;
 }
 
@@ -1499,7 +1492,7 @@ void ObjectMgr::CorpseCollectorUnload()
 		if(c->IsInWorld())
 			c->RemoveFromWorld(false);
 
-		c->Destructor();
+		delete c;
 		c = NULLCORPSE;
 	}
 	m_corpses.clear();
@@ -1646,7 +1639,7 @@ void ObjectMgr::LoadTrainers()
 					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
 					{
 						std::string columnname = (i == 0 ? "can_train_gossip_textid" : "cannot_train_gossip_textid");
-						WorldDatabase.Query("UPDATE trainer_defs SET %s = '0' where entry = '%u'", columnname.c_str(), entry);
+						WorldDatabase.Execute("UPDATE trainer_defs SET %s = '0' where entry = '%u'", columnname.c_str(), entry);
 					}
 					Log.Warning("Trainers", "Trainer %u contains an invalid npc_gossip_id %d.", entry, tmptxtid[i] );
 					tmptxtid[i] = 0;
@@ -1671,6 +1664,7 @@ void ObjectMgr::LoadTrainers()
 			Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Trainers table format is invalid. Please update your database.");
 			if(tr->UIMessage)
 				delete [] tr->UIMessage;
+
 			delete tr;
 			delete result;
 			delete result2;
@@ -1726,9 +1720,9 @@ void ObjectMgr::LoadTrainers()
 					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
 					{
 						if(ts.pCastSpell == NULL)
-							WorldDatabase.Query("DELETE FROM trainer_spells where entry='%u' AND learn_spell='%u'",entry, LearnSpellID);
+							WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u' AND learn_spell='%u'",entry, LearnSpellID);
 						else
-							WorldDatabase.Query("DELETE FROM trainer_spells where entry='%u' AND cast_spell='%u'",entry, CastSpellID);
+							WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u' AND cast_spell='%u'",entry, CastSpellID);
 					}
 					Log.Warning("ObjectMgr", "Trainer %u skipped invalid spell (%u/%u).", entry, CastSpellID, LearnSpellID);
 					continue; //omg a bad spell !
@@ -2067,7 +2061,10 @@ void ObjectMgr::LoadCreatureWaypoints()
 
 	QueryResult *result2 = WorldDatabase.Query("SELECT spawnid,COUNT(waypointid) FROM creature_waypoints GROUP BY spawnid ORDER BY spawnid,waypointid");
 	if(result2 == NULL)
+	{
+		delete result;
 		return;
+	}
 
 	HM_NAMESPACE::hash_map<uint32,WayPointMap*>::const_iterator i;
 	Field * fields;

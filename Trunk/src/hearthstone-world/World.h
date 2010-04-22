@@ -374,7 +374,6 @@ class SERVER_DECL World : public Singleton<World>, public EventableObject
 public:
 	World();
 	~World();
-	void Destructor();
 
 	uint32 GetMaxLevel(Player* plr);
 

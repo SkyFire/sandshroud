@@ -111,9 +111,9 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectDuel,						//SPELL_EFFECT_DUEL - 83
 	&Spell::SpellEffectStuck,						//SPELL_EFFECT_STUCK - 84
 	&Spell::SpellEffectSummonPlayer,				//SPELL_EFFECT_SUMMON_PLAYER - 85
-	&Spell::SpellEffectActivateObject,				//SPELL_EFFECT_ACTIVATE_OBJECT - 86
-	&Spell::SpellEffectWMODamage,					//SPELL_EFFECT_WMO_DAMAGE - 87 
-	&Spell::SpellEffectWMORepair,					//SPELL_EFFECT_WMO_REPAIR - 88 
+	&Spell::SpellEffectWMODamage,					//SPELL_EFFECT_WMO_DAMAGE - 86
+	&Spell::SpellEffectWMORepair,					//SPELL_EFFECT_WMO_REPAIR - 87
+	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT2 - 88
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT3 - 89
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT4 - 90
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_THREAT_ALL - 91 UNUSED
@@ -2227,6 +2227,10 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 		}
 	}
 
+	/* Aura Mastery + Aura Of Concentration = No Interrupting effects */
+	if(m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MOD_SILENCE && unitTarget->HasAura(31821) && unitTarget->HasAura(19746))
+		return;
+
 	if( unitTarget->isDead() && !(m_spellInfo->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD) )
 		return;
 
@@ -2484,9 +2488,9 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 						amplitude = 3;
 
 					//our hapiness is that we did not store the aura mod amount so we have to recalc it
-					Spell* spell(new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA ));				
+					Spell* spell = new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA );
 					uint32 healamount = spell->CalculateEffect( 1, unitTarget );  
-					spell->Destructor();
+					delete spell;
 					spell = NULLSPELL;
 					new_dmg = healamount * 18 / amplitude;
 
@@ -2510,9 +2514,9 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 							amplitude = 3;
 					
 						//our hapiness is that we did not store the aura mod amount so we have to recalc it
-						Spell* spell(new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA ));				
+						Spell* spell = new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA );
 						uint32 healamount = spell->CalculateEffect( 0, unitTarget );  
-						spell->Destructor();
+						delete spell;
 						spell = NULLSPELL;
 						new_dmg = healamount * 12 / amplitude;
 
@@ -4183,13 +4187,12 @@ void Spell::SpellEffectDualWield(uint32 i)
 
 void Spell::SummonGuardian(uint32 i) // Summon Guardian
 {
-	if ( u_caster == NULL )
+	if ( u_caster == NULL || !u_caster->GetMapMgr())
 		return;
 
 	uint32 cr_entry = m_spellInfo->EffectMiscValue[i];
 	uint32 level = u_caster->getLevel();
 
-	//
 	if( i != 0 && m_spellInfo->Effect[i-1] == SPELL_EFFECT_APPLY_AURA && m_spellInfo->EffectApplyAuraName[i-1] == SPELL_AURA_MOUNTED )
 	{
 		CreatureProto * cp = NULL;
@@ -4222,6 +4225,12 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 		// it's health., or a fucked up infernal.
 		if( m_summonProperties->unk2 & 2 || m_summonProperties->Id == 711)
 			damage = 1;
+
+		if(cr_entry == 31216)	// mirror image
+			damage = 3;
+
+		if(cr_entry == 24207)	// army of the dead
+			damage = 6;
 
 		//Spread spawns equally around summoner
 		float angle_for_each_spawn = damage ? - float(M_PI * 2.0f)/damage : - float(M_PI * 2.0f);
@@ -4606,7 +4615,7 @@ void Spell::SpellEffectEnchantItem(uint32 i) // Enchant Item Permanent
 				}
 				else
 				{
-					newItem->Destructor();
+					newItem->DeleteMe();
 					newItem = NULLITEM;
 				}
 				DetermineSkillUp(SKILL_ENCHANTING);
@@ -4633,7 +4642,7 @@ void Spell::SpellEffectEnchantItem(uint32 i) // Enchant Item Permanent
 						newItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, item_count - item_count_filled);
 						if(!p_caster->GetItemInterface()->SafeAddItem(newItem,slotresult.ContainerSlot, slotresult.Slot))
 						{
-							newItem->Destructor();
+							newItem->DeleteMe();
 							newItem = NULLITEM;
 							item_count = item_count_filled;
 						}
@@ -6012,29 +6021,18 @@ void Spell::SpellEffectSummonPlayer(uint32 i)
 		m_caster->GetInstanceID(), m_caster->GetPosition());
 }
 
-void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
+void Spell::SpellEffectWMODamage(uint32 i)
 {
-	/*if( p_caster == NULL)
-		return;
-
-	if( gameObjTarget == NULL)
-		return;
-
-	gameObjTarget->SetUInt32Value(GAMEOBJECT_DYNAMIC, 1);
-
-	sEventMgr.AddEvent(gameObjTarget, &GameObject::Deactivate, EVENT_GAMEOBJECT_DEACTIVATE, GetDuration(), 1);*/
+	printf("WMODamage\n");
+	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
+		gameObjTarget->TakeDamage(uint32(damage));
 }
 
-void Spell::SpellEffectWMODamage(uint32 i) 
-{ 
- 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING) 
-	   gameObjTarget->TakeDamage(uint32(damage)); 
-} 
-void Spell::SpellEffectWMORepair(uint32 i) 
-{ 
- 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING) 
- 	   gameObjTarget->Rebuild(); 
-} 
+void Spell::SpellEffectWMORepair(uint32 i)
+{
+ 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
+ 	   gameObjTarget->Rebuild();
+}
 
 void Spell::SummonTotem(uint32 i) // Summon Totem
 {
@@ -6738,7 +6736,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 			if( GoSummon->IsInWorld() )
 				GoSummon->RemoveFromWorld(true);
 
-			GoSummon->Destructor();
+			delete GoSummon;
 			GoSummon = NULLGOB;
 		}
 	}
@@ -7359,19 +7357,18 @@ void Spell::SpellEffectTranformItem(uint32 i)
 		return;
 	}
 
-	i_caster=NULLITEM;
+	i_caster = NULLITEM;
 
 	Item* it=objmgr.CreateItem(itemid,owner);
 	it->SetDurability(dur);
+
 	//additem
-	
-	   //additem
 	result2 = owner->GetItemInterface()->AddItemToFreeSlot(it);
 	if(!result2) //should never get here
 	{ 
 		owner->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_BAG_FULL);
-		it->Destructor();
-		it = NULLGOB;
+		it->DeleteMe();
+		it = NULLITEM;
 	}
 }
 
@@ -7387,7 +7384,7 @@ void Spell::SpellEffectEnvironmentalDamage(uint32 i)
 	}
 	//this is GO, not unit	
 	m_caster->SpellNonMeleeDamageLog(unitTarget,m_spellInfo->Id,damage, pSpellId==0);
-  
+
 	WorldPacket data(SMSG_ENVIRONMENTALDAMAGELOG, 13);
 	data << unitTarget->GetGUID();
 	data << uint8(DAMAGE_FIRE);
@@ -7763,7 +7760,7 @@ void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item
 			p_caster->GetSession()->SendItemPushResult(newItem,true,false,true,true,slotresult.ContainerSlot,slotresult.Slot,item_count);
 		else
 		{
-			newItem->Destructor();
+			newItem->DeleteMe();
 			newItem = NULLITEM;
 		}
 		
@@ -7792,7 +7789,7 @@ void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item
 				newItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, item_count - item_count_filled);
 				if(!p_caster->GetItemInterface()->SafeAddItem(newItem,slotresult.ContainerSlot, slotresult.Slot))
 				{
-					newItem->Destructor();
+					newItem->DeleteMe();
 					newItem = NULLITEM;
 					item_count = item_count_filled;
 				}

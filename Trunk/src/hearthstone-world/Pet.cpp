@@ -292,11 +292,6 @@ void Pet::Init()
 	Creature::Init();
 }
 
-void Pet::Destructor()
-{
-	delete this;
-}
-
 void Pet::Update(uint32 time)
 {
 	if(m_Owner == NULL)

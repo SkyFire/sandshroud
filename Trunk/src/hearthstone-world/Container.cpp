@@ -51,25 +51,20 @@ Container::~Container( )
 	{
 		if(m_Slot[i] && m_Slot[i]->GetOwner() == m_owner)
 		{
-			m_Slot[i]->Destructor();
+			m_Slot[i]->DeleteMe();
+			m_Slot[i] = NULL;
 		}
 	}
 }
 
-void Container::Destructor()
-{
-	delete this;
-}
 void Container::LoadFromDB( Field*fields )
 {
-
 	uint32 itemid=fields[2].GetUInt32();
 	m_itemProto = ItemPrototypeStorage.LookupEntry( itemid );
 
 	ASSERT(m_itemProto);
 	SetUInt32Value( OBJECT_FIELD_ENTRY, itemid );
 	
-
 	SetUInt32Value( ITEM_FIELD_CREATOR, fields[5].GetUInt32() );
 	SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1);
 	
@@ -78,7 +73,6 @@ void Container::LoadFromDB( Field*fields )
 
 	SetUInt32Value( ITEM_FIELD_MAXDURABILITY, m_itemProto->MaxDurability);
 	SetUInt32Value( ITEM_FIELD_DURABILITY, fields[12].GetUInt32());
-  
 
 	SetUInt32Value( CONTAINER_FIELD_NUM_SLOTS, m_itemProto->ContainerSlots);
 }
@@ -278,7 +272,8 @@ bool Container::SafeFullRemoveItemFromSlot(int16 slot)
 		pItem->RemoveFromWorld();
 	}
 	pItem->DeleteFromDB();
-	pItem->Destructor();
+	pItem->DeleteMe();
+	pItem = NULL;
 
 	return true;
 }

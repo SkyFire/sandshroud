@@ -119,10 +119,10 @@ public:
 	Item();
 	Item( uint32 high, uint32 low );
 	virtual ~Item();
-	virtual void Destructor();
 	virtual void Init();
 
 	void Create( uint32 itemid, Player* owner );
+	void DeleteMe();
 
 	HEARTHSTONE_INLINE ItemPrototype* GetProto() const { return m_itemProto; }
 	HEARTHSTONE_INLINE void SetProto( ItemPrototype* pr ) { m_itemProto = pr; }
