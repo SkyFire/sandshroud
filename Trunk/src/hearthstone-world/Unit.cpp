@@ -58,7 +58,7 @@ Unit::Unit()
 	m_CurrentVehicle = NULLVEHICLE;
 
 	//transport shit
-	m_transportPosition		= NULL;
+	m_transportPosition		= new LocationVector(0,0,0);
 	m_TransporterGUID		= NULL;
 	m_TransporterUnk		= 0.0f;
 	m_lockTransportVariables= false;
@@ -2319,10 +2319,10 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 		{
 			aura = *iter;
 
-			if(aura && !aura->m_deleted && aura->procCharges > 0 && aura->m_spellProto && ((aura->m_spellProto->procFlags & flag) && (aura->m_spellProto->procflags2 & flag2)))
+			if(aura && !aura->m_deleted && aura->procCharges > 0 && aura->m_spellProto && ((aura->m_spellProto->procFlags & flag) || (aura->m_spellProto->procflags2 & flag2)))
 			{
-				//Fixes for spells that dont lose charges when dmg is absorbd
-				if(aura->m_spellProto->procFlags == 680 && dmg==0)
+				//Fixes for spells that dont lose charges when dmg is absorbed
+				if((aura->m_spellProto->procFlags == 680) && dmg == 0)
 					continue;
 
 				if(CastingSpell)
