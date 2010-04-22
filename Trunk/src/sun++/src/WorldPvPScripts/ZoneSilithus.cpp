@@ -140,7 +140,7 @@ void DropFlag(Player * pPlayer, uint32 spellID)
 			GameObject *pGo = pPlayer->GetMapMgr()->GetInterface()->SpawnGameObject(SILITHYST_MOUND, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0, true, 0, 0);
 			if( pGo == NULL )
 			{
-				pGo->Destructor();
+				delete pGo;
 				pGo = NULLGOB;
 			}
 		};

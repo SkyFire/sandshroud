@@ -284,7 +284,7 @@ public:
 				NewItem->SetUInt32Value( ITEM_FIELD_STACK_COUNT, pCount );
 				if ( pPlayer->GetItemInterface()->SafeAddItem( NewItem, Result.ContainerSlot, Result.Slot ) == ADD_ITEM_RESULT_ERROR )
 				{
-					NewItem->Destructor();
+					NewItem->DeleteMe();
 					NewItem = NULLITEM;
 					return false;
 				};

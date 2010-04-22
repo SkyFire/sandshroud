@@ -451,9 +451,9 @@ void MoonInstanceScript::OnGameObjectPushToWorld( GameObject *pGameObject )
 	return NULLGOB;
 };*/
 
-void MoonInstanceScript::SetLockOptions( uint32 pEntryId, GameObject *pGameObject )
+/*void MoonInstanceScript::SetLockOptions( uint32 pEntryId, GameObject *pGameObject )
 {
-};
+};*/
 
 uint32 MoonInstanceScript::GetRespawnTimeForCreature( uint32 pEntryId, Creature *pCreature)
 {
