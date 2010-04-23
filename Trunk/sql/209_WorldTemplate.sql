@@ -1,5 +1,5 @@
 /*
-SQLyog Ultimate v8.4 Beta3
+SQLyog Ultimate - MySQL GUI v8.4 Beta3
 MySQL - 5.0.51a-24+lenny3-log : Database - SADB_world
 *********************************************************************
 */
@@ -81,6 +81,20 @@ CREATE TABLE `auctionhouse` (
   `group` int(32) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Auction House';
+
+/*Table structure for table `clientaddons` */
+
+DROP TABLE IF EXISTS `clientaddons`;
+
+CREATE TABLE `clientaddons` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(50) collate utf8_unicode_ci default NULL,
+  `crc` bigint(20) unsigned default NULL,
+  `banned` int(10) unsigned NOT NULL default '0',
+  `showinlist` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `index` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=153 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Client Addons';
 
 /*Table structure for table `command_overrides` */
 

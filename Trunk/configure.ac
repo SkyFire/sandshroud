@@ -27,6 +27,7 @@ AH_TEMPLATE([USE_EPOLL], Define if you want to use the epoll socket engine modul
 AH_TEMPLATE([USE_KQUEUE], Define if you want to use the kqueue socket engine module.)
 AH_TEMPLATE([USE_KQUEUE_DFLY], Define if you want to use the kqueue socket engine module for DFLY.)
 AH_TEMPLATE([HAVE_DARWIN], Define if you have MacOSX Darwin, to include the correct headers for kevent)
+AH_TEMPLATE([ENABLE_IMPROVED_TICKETSYSTEM], Define if you want to enable the improved ticket system. Warning: Not My_Master compatible!)
 AH_TEMPLATE([ENABLE_CLUSTERING], Define if you want to enable clustering, this is experimental.)
 AH_TEMPLATE([ENABLE_VOICECHAT], Define this if you want to enable voice chat system)
 AH_TEMPLATE([X64], Define this if you are under an X64-based operating system.)
@@ -51,7 +52,7 @@ case "$OSNAME" in
 		FREEBSD=yes
 	;;
 	DragonFly*)
-		dnl DragonFlyBSD OMG, it works? 
+		dnl DragonFlyBSD OMG, it works?
 		AC_MSG_RESULT(DragonFlyBSD Rocks)
 		DRAGONFLY=yes
 	;;
@@ -81,8 +82,8 @@ case "$ARCH" in
 	;;
 	x86_64*)
 		dnl yay 21st century hardware
-                AC_MSG_RESULT(x64 feel teh power)
-                AC_DEFINE(X64)
+			AC_MSG_RESULT(x64 feel teh power)
+			AC_DEFINE(X64)
 		AC_SUBST(ARCH,x64)
 	;;
 	*)
@@ -97,16 +98,16 @@ if test -z "$SVN"; then AC_MSG_ERROR(Subversion not found); fi
 
 # Checks for libraries.
 
-# Reset 
+# Reset
 CFLAGS="$INCLUDES"
 CXXFLAGS="$INCLUDES"
 
 # Check for pthread
 ACX_PTHREAD( [
 	LDFLAGS="$PTHREAD_LIBS $LDFLAGS"
-       	CXXFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-       	CFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
-       	CC="$PTHREAD_CC"
+		CXXFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+		CFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+		CC="$PTHREAD_CC"
 ],AC_MSG_ERROR(pthread not found) )
 
 AC_CHECK_LIB( z, compress, [],[AC_MSG_ERROR([Missing zlib])] )
@@ -124,65 +125,73 @@ else
 	AC_SUBST(LIB_EXPORT)
 fi
 
+AC_ARG_ENABLE(ticketsystem,
+	AC_HELP_STRING([--enable-ticketsystem],enable improved ticket system. warning not my_master compatible),
+	[ if test "x$enable_ticketsystem" = "xyes" ; then
+		AC_DEFINE(ENABLE_IMPROVED_TICKETSYSTEM)
+		fi
+	],
+)
+
 AC_ARG_ENABLE(clustering,
-     AC_HELP_STRING([--enable-clustering],enable clustering. warning this is experimental.),
-     [ if test "x$enable_clustering" = "xyes" ; then
-   	AC_DEFINE(ENABLE_CLUSTERING)
-       fi
-     ],
+	AC_HELP_STRING([--enable-clustering],enable clustering. warning this is experimental.),
+	[ if test "x$enable_clustering" = "xyes" ; then
+		AC_DEFINE(ENABLE_CLUSTERING)
+		fi
+	],
 )
 
 AC_ARG_ENABLE(gcov,
-     AC_HELP_STRING([--enable-gcov],[enable codecovering]),
-     [ if test "x$enable_gcov" = "xyes" ; then
-           CXXFLAGS="$CXXFLAGS -fprofile-arcs -ftest-coverage"
-       fi
-     ],
+	AC_HELP_STRING([--enable-gcov],[enable codecovering]),
+	[ if test "x$enable_gcov" = "xyes" ; then
+		CXXFLAGS="$CXXFLAGS -fprofile-arcs -ftest-coverage"
+		fi
+	],
 )
 
 AC_ARG_ENABLE(debug,
-     AC_HELP_STRING([--enable-debug],[enable debug]),
-     [ if test "x$enable_debug" = "xyes" ; then
-           CFLAGS="$CFLAGS -g -D_DEBUG"
-           CXXFLAGS="$CXXFLAGS -g -D_DEBUG"
-       fi
-     ],
+	AC_HELP_STRING([--enable-debug],[enable debug]),
+	[ if test "x$enable_debug" = "xyes" ; then
+		CFLAGS="$CFLAGS -g -D_DEBUG"
+		CXXFLAGS="$CXXFLAGS -g -D_DEBUG"
+		fi
+	],
 )
 
 AC_ARG_ENABLE(optimize,
-     AC_HELP_STRING([--enable-optimize],[enable code optimization]),
-     [ if test "x$enable_optimize" = "xyes" ; then
-           CFLAGS="$CFLAGS -O2"
-           CXXFLAGS="$CXXFLAGS -O2"
-       fi
-     ],
+	AC_HELP_STRING([--enable-optimize],[enable code optimization]),
+	[ if test "x$enable_optimize" = "xyes" ; then
+		CFLAGS="$CFLAGS -O2"
+		CXXFLAGS="$CXXFLAGS -O2"
+		fi
+	],
 )
 
 AC_ARG_ENABLE(warnings,
-     AC_HELP_STRING([--enable-warnings],[enable Wall compiling]),
-     [ if test "x$enable_warnings" = "xyes" ; then
-           CFLAGS="$CFLAGS -Wall"
-	   CXXFLAGS="$CXXFLAGS -Wall"
-       fi
-     ],
+	AC_HELP_STRING([--enable-warnings],[enable Wall compiling]),
+	[ if test "x$enable_warnings" = "xyes" ; then
+		CFLAGS="$CFLAGS -Wall"
+		CXXFLAGS="$CXXFLAGS -Wall"
+		fi
+	],
 )
 
 AC_ARG_ENABLE(profiling,
-     AC_HELP_STRING([--enable-profiling],[build for profiling using gprof.]),
-     [ if test "x$enable_profiling" = "xyes" ; then
-           CXXFLAGS="$CXXFLAGS -pg" ;
-           #CFLAGS="$CFLAGS -pg" ;
-       fi
-     ],
+	AC_HELP_STRING([--enable-profiling],[build for profiling using gprof.]),
+	[ if test "x$enable_profiling" = "xyes" ; then
+		CXXFLAGS="$CXXFLAGS -pg" ;
+			#CFLAGS="$CFLAGS -pg" ;
+		fi
+	],
 )
 
 AC_ARG_ENABLE(voicechat,
-     AC_HELP_STRING([--enable-voicechat],enable voice chat system),
-     [ if test "x$enable_voicechat" = "xyes" ; then
-   	AC_DEFINE(ENABLE_VOICECHAT)
-	AC_SUBST(ENABLE_VOICECHAT)
-       fi
-     ],
+	AC_HELP_STRING([--enable-voicechat],enable voice chat system),
+	[ if test "x$enable_voicechat" = "xyes" ; then
+		AC_DEFINE(ENABLE_VOICECHAT)
+		AC_SUBST(ENABLE_VOICECHAT)
+		fi
+	],
 )
 
 AC_ARG_ENABLE(mysql,
@@ -227,14 +236,13 @@ if test "x$OSNAME" = "xFreeBSD" ; then
 	AC_CHECK_HEADER(sys/event.h, , AC_MSG_ERROR([Cannot find sys/event.h for socket engine]))
 	AC_DEFINE(USE_KQUEUE)
 	AC_SUBST(NETWORKING, "kqueue (FreeBSD)")
-
 fi
 
 if test "x$OSNAME" = "xDragonFly" ; then
 	AC_MSG_RESULT(kqueue)
 	AC_CHECK_FUNC(kevent, , AC_MSG_ERROR([Cannot find kevent() function for socket engine]))
 	AC_CHECK_HEADER(sys/event.h, , AC_MSG_ERROR([Cannot find sys/event.h for socket engine]))
- 	AC_DEFINE(USE_KQUEUE_DFLY)
+	AC_DEFINE(USE_KQUEUE_DFLY)
 	AC_SUBST(NETWORKING, "kqueue (DragonFly)")
 fi
 
@@ -253,20 +261,18 @@ fi
 MYSQL_FOUND=AX_LIB_MYSQL([5.0])
 if test "$MYSQL_VERSION" = ""; then
 	AC_MSG_ERROR([*** mysql client library not found. Please install it.])
-else 
+else
 	LDFLAGS="$LDFLAGS $MYSQL_LDFLAGS"
 	CFLAGS="$CFLAGS $MYSQL_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $MYSQL_CFLAGS"
 fi
 
-# pcre 
+# pcre
 AX_PATH_LIB_PCRE([
 	LDFLAGS="$LDFLAGS $PCRE_LIBS"
 	CFLAGS="$CFLAGS $PCRE_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $PCRE_CFLAGS"
 ],AC_MSG_ERROR(Couldn't find pcre library. Make sure your pcre path is correct.))
-
-
 
 AC_DEFINE_UNQUOTED([PREFIX], "${prefix}", "Prefix")
 AC_DEFINE_UNQUOTED([SCRIPTDIR], "${scriptdir}", "librarydir")
@@ -275,26 +281,26 @@ AC_DEFINE_UNQUOTED([CONFDIR], "${sysconfdir}", "configdir")
 AC_DEFINE_UNQUOTED([SVN_REVISION_DONE], `sh ./extract_svn_revision.sh`, [SVN revision generated])
 
 AC_CONFIG_FILES([
-   Makefile
-   src/Makefile
-   src/hearthstone-shared/Makefile
-   src/hearthstone-world/Makefile
-   src/hearthstone-logonserver/Makefile
-   src/hearthstone-voicechat/Makefile
-   src/hearthstone-realmserver/Makefile
-   src/sun++/Makefile
-   src/sun++/src/Makefile
-   src/sun++/src/EventScripts/Makefile
-   src/sun++/src/ExtraScripts/Makefile
-   src/sun++/src/GossipScripts/Makefile
-   src/sun++/src/InstanceScripts/Makefile
-   src/sun++/src/LUAScripting/Makefile
-   src/sun++/src/MiscScripts/Makefile
-   src/sun++/src/QuestScripts/Makefile
-   src/sun++/src/ServerStatusPlugin/Makefile
-   src/sun++/src/SpellHandlers/Makefile
-   src/sun++/src/WorldPvPScripts/Makefile
-   ])
+	Makefile
+	src/Makefile
+	src/hearthstone-shared/Makefile
+	src/hearthstone-world/Makefile
+	src/hearthstone-logonserver/Makefile
+	src/hearthstone-voicechat/Makefile
+	src/hearthstone-realmserver/Makefile
+	src/sun++/Makefile
+	src/sun++/src/Makefile
+	src/sun++/src/EventScripts/Makefile
+	src/sun++/src/ExtraScripts/Makefile
+	src/sun++/src/GossipScripts/Makefile
+	src/sun++/src/InstanceScripts/Makefile
+	src/sun++/src/LUAScripting/Makefile
+	src/sun++/src/MiscScripts/Makefile
+	src/sun++/src/QuestScripts/Makefile
+	src/sun++/src/ServerStatusPlugin/Makefile
+	src/sun++/src/SpellHandlers/Makefile
+	src/sun++/src/WorldPvPScripts/Makefile
+	])
 
 AC_OUTPUT
 
@@ -302,45 +308,52 @@ echo
 echo "===================================="
 echo "Hearthstone configure report:"
 echo
-echo " Core:" 
+echo " Core:"
 echo "             os: ${OSNAME}"
 echo "         prefix: ${prefix}"
 echo "   architecture: ${ARCH}"
-echo 
+echo
 echo " Database modules:"
 echo "        mysql: ${MYSQL_VERSION}"
 if test "x$enable_postgres" = "xyes" ; then
-  echo "   postgresql: ${POSTGRESQL_VERSION}"
-fi		
+	echo "   postgresql: ${POSTGRESQL_VERSION}"
+fi
 if test "x$enable_sqlite" = "xyes" ; then
-  echo "       sqlite: ${SQLITE_VERSION}"
+	echo "       sqlite: ${SQLITE_VERSION}"
 fi
 
 echo
-echo " Networking:" 
+echo " Networking:"
 echo "   ${NETWORKING}"
 echo
-echo " Features: " 
+echo " Features: "
 
 echo -n "    voicechat: "
 if test "x$enable_voicechat" = "xyes" ; then
-  echo "enabled"
+	echo "enabled"
 else
-  echo "disabled"
+	echo "disabled"
+fi
+
+echo -n "    improved ticket system: "
+if test "x$enable_ticketsystem" = "xyes" ; then
+	echo "enabled"
+else
+	echo "disabled"
 fi
 
 echo -n "    collision: "
 if test "x$enable_collision" = "xyes" ; then
-  echo "enabled"
+	echo "enabled"
 else
-  echo "disabled"
+	echo "disabled"
 fi
 
-echo -n "   clustering: "
+echo -n "    clustering: "
 if test "x$enable_clustering" = "xyes" ; then
-  echo "enabled"
+	echo "enabled"
 else
-  echo "disabled"
+	echo "disabled"
 fi
 
 echo

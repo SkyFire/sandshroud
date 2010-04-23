@@ -3330,7 +3330,6 @@ else
 		{
 //--------------------------------state proc initialization---------------------------------
 			vproc |= PROC_ON_ANY_DAMAGE_VICTIM;
-			vproc |= PROC_ON_ANY_DAMAGE_VICTIM;
 			if(pVictim->GetHealthPct() < 35)
 				vproc2 |= PROC_ON_DAMAGE_VICTIM_BELOW_35;
 			if( weapon_damage_type != RANGED )
