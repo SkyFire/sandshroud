@@ -82,6 +82,8 @@ Unit::Unit()
 		ModDamageTakenByMechPCT[x]=0;
 	}
 
+	for (uint32 i=0; i<NUM_DISPELS; ++i)
+		DispelResistancesPCT[i] = 0;
 	//SM
 	memset(SM, 0, 2*SPELL_MODIFIERS*sizeof(int32 *));
 
@@ -572,6 +574,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 	++m_procCounter;
 	bool can_delete = !bProcInUse; //if this is a nested proc then we should have this set to TRUE by the father proc
 	bProcInUse = true; //locking the proc list
+	uint32 mstimenow = getMSTime();
 
 	std::list< struct ProcTriggerSpell >::iterator itr,itr2;
 	for( itr = m_procSpells.begin(); itr != m_procSpells.end(); )  // Proc Trigger Spells for Victim
@@ -590,6 +593,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 			continue;
 		}
 
+		if (itr2->LastTrigger + 200 >= mstimenow || (CastingSpell != NULL && (itr2->spellId == CastingSpell->Id || itr2->origId == CastingSpell->Id)))
+			continue;
 		uint32 origId = itr2->origId;
 		if( CastingSpell != NULL )
 		{
@@ -601,8 +606,10 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 				continue;
 			}
 		}
-
+		SpellEntry* sp = dbcSpell.LookupEntry( itr2->spellId );
 		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
+		if (sp == NULL)
+			continue;
 
 		//this requires some specific spell check,not yet implemented
 		if( (flag && (itr2->procFlags & flag)) || (flag2 && (itr2->procflags2 & flag2)) ) // Check both.

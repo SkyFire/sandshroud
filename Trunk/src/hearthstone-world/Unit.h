@@ -1067,6 +1067,7 @@ public:
 	uint32 MechanicsDispels[NUM_MECHANIC];
 	float MechanicsResistancesPCT[NUM_MECHANIC]; 
 	float ModDamageTakenByMechPCT[NUM_MECHANIC];
+	float DispelResistancesPCT[10];
 	//int32 RangedDamageTakenPct; 
 
 	//SM

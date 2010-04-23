@@ -396,6 +396,7 @@ struct ProcTriggerSpell
 	uint32 SpellClassMask[3];
 	uint32 weapon_damage_type; // 0=Any, 1=Main hand, 2=off hand
 	bool deleted;
+	int32 procValue;
 };
 
 typedef set<uint32> AreaAuraList;
@@ -704,9 +705,13 @@ public:
 	void SpellAuraHasteRanged(bool apply);
 	void SpellAuraReflectInfront(bool apply);
 	void SpellAuraModPetTalentPoints(bool apply);
-	
-	void UpdateAuraModDecreaseSpeed();
+	void SpellAuraModAttackPowerByArmor(bool apply);
+	void SpellAuraDispelDebuffResist(bool apply);
+	void SpellAuraIgnoreEnemy(bool apply);
+	//void SpellAuraJumpAndHeal(bool apply);
+	void SpellAuraProcTriggerWithValue(bool apply);
 	void SpellAuraPeriodicTriggerSpellWithValue(bool apply);
+	void UpdateAuraModDecreaseSpeed();
 
 	void SendModifierLog(int32 ** m,int32 v,uint32 *mask,uint8 type,bool pct = false);
 	void SendDummyModifierLog(std::map<SpellEntry*,uint32> * m,SpellEntry * spellInfo,uint32 i,bool apply,bool pct = false);
@@ -726,6 +731,8 @@ public:
 	void EventPeriodicManaPct(float);
 	void EventPeriodicRegenManaStatPct(uint32 perc,uint32 stat);
 	void EventPeriodicSpeedModify(int32 mod);
+	void EventModAttackPowerByArmorUpdate(uint32 i);
+	//void EventJumpAndHeal();
 	void RelocateEvents();
 	int32 event_GetInstanceID();
 

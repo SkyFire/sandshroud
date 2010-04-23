@@ -202,12 +202,8 @@ bool isTargetDummy(uint32 id);
 
 
 typedef std::tr1::unordered_map< Unit*, int32> TargetMap;
-#ifdef TRHAX
-	namespace std
-	{
-		namespace tr1
-		{
-			template <>
+#ifdef WIN32
+template <>
 			class hash < Unit* > : public unary_function< Unit*, size_t>
 			{
 			public:
@@ -216,8 +212,24 @@ typedef std::tr1::unordered_map< Unit*, int32> TargetMap;
 					return (size_t)__x;
 				}
 			};
-		};
-	};
+#else
+#ifdef TRHAX
+	        namespace std
+	        {
+	                namespace tr1
+	                {
+	                        template <>
+	                        class hash < Unit* > : public unary_function< Unit*, size_t>
+	                        {
+	                        public:
+	                                size_t operator()(Unit* __x) const
+	                                {
+	                                        return (size_t)__x;
+	                                }
+	                        };
+	                };
+	        };
+	#endif
 #endif
 
 typedef unordered_set< Unit* > AssistTargetSet;

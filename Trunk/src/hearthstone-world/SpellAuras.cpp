@@ -198,7 +198,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraIncreaseHealingByAttribute,//missing = 175 //used //Apply Aura: Increase Spell Healing by % Spirit //http://www.thottbot.com/?sp=15031
 		&Aura::SpellAuraSpiritOfRedemption,//missing = 176 //used // Apply Aura: Spirit of Redemption
 		&Aura::SpellAuraNULL,//missing = 177 //used //Apply Aura: Area Charm // http://www.thottbot.com/?sp=26740
-		&Aura::SpellAuraNULL,//missing = 178 //Apply Aura: Increase Debuff Resistance 
+		&Aura::SpellAuraDispelDebuffResist,//missing = 178 //Apply Aura: Increase Debuff Resistance 
 		&Aura::SpellAuraIncreaseAttackerSpellCrit,//SPELL_AURA_INCREASE_ATTACKER_SPELL_CRIT//Apply Aura: Increase Attacker Spell Crit % *type* //http://www.thottbot.com/?sp=12579
 		&Aura::SpellAuraNULL,//missing = 180 //used //Apply Aura: Increase Spell Damage *type* //http://www.thottbot.com/?sp=29113
 		&Aura::SpellAuraNULL,//missing = 181
@@ -212,7 +212,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraIncreaseRating,//missing = 189 //Apply Aura: Increases Rating
 		&Aura::SpellAuraIncreaseRepGainPct,//SPELL_AURA_MOD_FACTION_REPUTATION_GAIN //used // Apply Aura: Increases Reputation Gained by % //http://www.thottbot.com/?sp=30754
 		&Aura::SpellAuraUseNormalMovementSpeed,//missing = 191 //used // noname //http://www.thottbot.com/?sp=29894
-		&Aura::SpellAuraNULL,//192 Apply Aura: Melee Slow %
+		&Aura::SpellAuraModAttackSpeed,//192 Apply Aura: Melee Slow %
 		&Aura::SpellAuraIncreaseTimeBetweenAttacksPCT,//193 Apply Aura: Increase Time Between Attacks (Melee, Ranged and Spell) by %
 		&Aura::SpellAuraNULL,//194 //&Aura::SpellAuraIncreaseSpellDamageByInt,//194 Apply Aura: Increase Spell Damage by % of Intellect (All)
 		&Aura::SpellAuraNULL,//195 //&Aura::SpellAuraIncreaseHealingByInt,//195 Apply Aura: Increase Healing by % of Intellect
@@ -241,17 +241,18 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraHasteRanged,//218 // increases time between ranged attacks
 		&Aura::SpellAuraRegenManaStatPCT,//219 Regenerate mana equal to $s1% of your Intellect every 5 sec, even while casting
 		&Aura::SpellAuraSpellHealingStatPCT,//220 Increases your healing spells  by up to $s1% of your Strength
-		&Aura::SpellAuraNULL,//221 Detaunt "Ignores an enemy, forcing the caster to not attack it unless there is no other target nearby. When the effect wears off, the creature will attack the most threatening target."
+		&Aura::SpellAuraIgnoreEnemy,//221 Detaunt "Ignores an enemy, forcing the caster to not attack it unless there is no other target nearby. When the effect wears off, the creature will attack the most threatening target."
 		&Aura::SpellAuraNULL,//222 // not used
 		&Aura::SpellAuraNULL,//223 // used in one spell, cold stare 43593
 		&Aura::SpellAuraNULL,//224 // not used
 		&Aura::SpellAuraNULL,//225 // Prayer of Mending "Places a spell on the target that heals them for $s1 the next time they take damage.  When the heal occurs, Prayer of Mending jumps to a raid member within $a1 yards.  Jumps up to $n times and lasts $d after each jump.  This spell can only be placed on one target at a time."
+		//&Aura::SpellAuraJumpAndHeal,//225 // Prayer of Mending "Places a spell on the target that heals them for $s1 the next time they take damage.  When the heal occurs, Prayer of Mending jumps to a raid member within $a1 yards.  Jumps up to $n times and lasts $d after each jump.  This spell can only be placed on one target at a time."
 		&Aura::SpellAuraDrinkNew,//226 // used in brewfest spells, headless hoerseman
 		&Aura::SpellAuraPeriodicTriggerSpellWithValue,//227 Inflicts [SPELL DAMAGE] damage to enemies in a cone in front of the caster. (based on combat range) http://www.thottbot.com/s40938
 		&Aura::SpellAuraAuraModInvisibilityDetection,//228 Stealth Detection. http://www.thottbot.com/s34709
 		&Aura::SpellAuraReduceAOEDamageTaken,//229 Apply Aura:Reduces the damage your pet takes from area of effect attacks http://www.thottbot.com/s35694
 		&Aura::SpellAuraIncreaseMaxHealth,//230 Increase Max Health (commanding shout);
-        &Aura::SpellAuraNULL,//231 curse a target http://www.thottbot.com/s40303
+        &Aura::SpellAuraProcTriggerWithValue,//231 curse a target http://www.thottbot.com/s40303
         &Aura::SpellAuraReduceEffectDuration,//232 // Movement Slowing Effect Duration // Reduces duration of Magic effects by $s2%.
         &Aura::SpellAuraNULL,//233 // Beer Goggles
         &Aura::SpellAuraReduceEffectDuration,//234 // modifies the duration of all (miscValue mechanic) effects used against you by % http://www.wowhead.com/?spell=16254
@@ -306,6 +307,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraNULL,//283
 		&Aura::SpellAuraNULL,//284
 		&Aura::SpellAuraNULL,//285
+		&Aura::SpellAuraModAttackPowerByArmor,//285
 		&Aura::SpellAuraNULL,//286
 		&Aura::SpellAuraReflectInfront, //287
 		&Aura::SpellAuraNULL,//294 2 spells, possible prevent mana regen
@@ -6603,6 +6605,32 @@ void Aura::SpellAuraModRegen(bool apply)
 	}
 }
 
+void Aura::SpellAuraIgnoreEnemy(bool apply)
+{
+	if (!apply)
+	{
+		//when unapplied, target will switches to highest threat
+		Unit* caster=GetUnitCaster();
+		if (caster == NULL || !caster->isAlive() || !caster->IsCreature() || !caster->IsInWorld())
+			return;
+
+		caster->GetAIInterface()->SetNextTarget(caster->GetAIInterface()->GetMostHated());
+	}
+}
+
+/*void Aura::SpellAuraJumpAndHeal(bool apply)
+{
+	if (apply)
+	{
+		ProcFnc* p = new ProcFnc;
+		p->m_base = new CallbackP0<Aura>(this, &Aura::EventJumpAndHeal);
+		p->m_creator = this;
+		m_target->AddProcFnc(SPELLFNC_PROC_ON_TAKE_DAMAGE, p);
+	}
+	else
+		m_target->DeleteProcFnc(this, SPELLFNC_PROC_ON_TAKE_DAMAGE);
+}
+*/
 void Aura::SpellAuraDrinkNew(bool apply)
 {
 	// what the fuck?
@@ -9088,6 +9116,14 @@ void Aura::SpellAuraSpiritOfRedemption(bool apply)
 	}
 }
 
+void Aura::SpellAuraDispelDebuffResist(bool apply)
+{
+	if (apply)
+		m_target->DispelResistancesPCT[mod->m_miscValue] += mod->m_amount;
+	else
+		m_target->DispelResistancesPCT[mod->m_miscValue] -= mod->m_amount;
+}
+
 void Aura::SpellAuraIncreaseAttackerSpellCrit(bool apply)
 {
 	int32 val = mod->m_amount;
@@ -9473,6 +9509,82 @@ void Aura::SpellAuraModSpellHealingFromAP(bool apply)
 
 }
 
+void Aura::SpellAuraProcTriggerWithValue(bool apply)
+{
+	if(apply)
+	{
+		ProcTriggerSpell pts;
+		pts.procValue = mod->m_amount;
+		pts.origId = GetSpellProto()->Id;
+		pts.caster = m_casterGuid;
+		if(GetSpellProto()->EffectTriggerSpell[mod->i])
+			pts.spellId=GetSpellProto()->EffectTriggerSpell[mod->i];
+		else
+		{
+			sLog.outDebug("Warning,trigger spell is null for spell %u",GetSpellProto()->Id);
+			return;
+		}
+		pts.procChance = GetSpellProto()->procChance;
+		pts.procFlags = GetSpellProto()->procFlags;
+		pts.procCharges = GetSpellProto()->procCharges;
+		pts.LastTrigger = 0;
+		pts.deleted = false;
+
+		if( m_spellProto->NameHash == SPELL_HASH_THE_TWIN_BLADES_OF_AZZINOTH )
+		{
+			/* The Twin Blades of Azzinoth.
+			* According to comments on wowhead, this proc has ~0.75ppm (procs-per-minute). */
+			Item* mh = TO_PLAYER( m_target )->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
+			Item* of = TO_PLAYER( m_target )->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );
+			if( mh != NULL && of != NULL )
+			{
+				float mhs = float( mh->GetProto()->Delay );
+				float ohs = float( of->GetProto()->Delay );
+				pts.procChance = FL2UINT( float( mhs * ohs / ( 800.0f * ( mhs + ohs ) ) ) ); // 0.75 ppm
+			}
+		}
+
+		/* We have a custom formula for seal of command. */
+		else if( m_spellProto->NameHash == SPELL_HASH_SEAL_OF_COMMAND )
+		{
+			// default chance of proc
+			pts.procChance = 25;
+
+			/* The formula for SoC proc rate is: [ 7 / ( 60 / Weapon Speed ) - from wowwiki */
+			if(m_target->IsPlayer())
+			{
+				float weapspeed = 1.0f;
+				Item* itm = TO_PLAYER( m_target )->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+				if( itm != NULL )
+					weapspeed = float( itm->GetProto()->Delay );
+				pts.procChance = FL2UINT( float(7.0f / (600.0f / weapspeed)) );
+				if( pts.procChance >= 50 )
+					pts.procChance = 50;
+			}
+		}
+		/*		pts.ospinfo = m_spellProto;
+		pts.spinfo = sSpellStore.LookupEntry(pts.spellId);
+		if(!pts.spinfo)
+		{
+		sLog.outDebug("Error, could not register procspell %u\n",pts.spellId);
+		return;
+		}*/
+		m_target->m_procSpells.push_front(pts);
+		sLog.outDebug("%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u\n",pts.origId,pts.spellId,pts.procChance,m_spellProto->procFlags,m_spellProto->procCharges,m_spellProto->procFlags,m_spellProto->proc_interval);
+	}
+	else
+	{
+		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+		{
+			if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+			{
+				itr->deleted = true;
+				break; //only 1 instance of a proc spell per caster ?
+			}
+		}
+	}
+}
+
 void Aura::SpellAuraVehiclePassenger(bool apply)
 {
 	if(!apply)
@@ -9753,6 +9865,19 @@ void Aura::SpellAuraHasteRanged(bool apply)
 	}
 }
 
+void Aura::SpellAuraModAttackPowerByArmor( bool apply )
+{
+	if (apply)
+	{
+		mod->realamount = 0;
+		sEventMgr.AddEvent(this, &Aura::EventModAttackPowerByArmorUpdate, mod->i, EVENT_AURA_APPLY, 1000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	}
+	else
+	{
+		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, -m_modList[mod->i].realamount);
+	}
+}
+
 void Aura::SpellAuraReflectInfront(bool apply)
 {
 	if(apply)
@@ -9841,3 +9966,77 @@ void Aura::SpellAuraPeriodicTriggerSpellWithValue(bool apply)
 		}
 	}
 }
+void Aura::EventModAttackPowerByArmorUpdate( uint32 i )
+{
+	//Firstly lets get the value it should be warning 
+	if (m_modList[i].m_amount == 0)
+		return; //should never happen
+	int32 val = m_target->GetUInt32Value(UNIT_FIELD_RESISTANCES) / m_modList[i].m_amount;
+
+	if (val != m_modList[i].realamount)
+	{
+		//remove old one
+		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, -m_modList[i].realamount);
+
+		m_modList[i].realamount = val;
+		//add new one
+		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, m_modList[i].realamount);
+	}
+}
+
+/*void Aura::EventJumpAndHeal()
+{
+	Unit* caster = GetUnitCaster();
+	//first, heal
+	Spell s(caster, m_spellProto, true, NULL);
+	s.SetUnitTarget(m_target);
+	s.Heal(m_spellinfo->forced_basepoints[0]);
+
+	std::vector<Unit* > Targets;
+
+	//find a new target, npcs use friendly, players use group/raid :(
+	if (m_target->IsPlayer())
+	{
+		Player*  Target = TO_PLAYER(m_target);
+		if(!Target)
+			return;
+
+		SubGroup * subgroup = Target->GetGroup() ?
+			Target->GetGroup()->GetSubGroup(Target->GetSubGroup()) : 0;
+
+		if(subgroup)
+		{
+			Target->GetGroup()->Lock();
+			for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); ++itr)
+			{
+				if((*itr)->m_loggedInPlayer == NULL || m_target->CalcDistance((*itr)->m_loggedInPlayer) > GetMaxRange(dbcSpellRange.LookupEntry(m_spellProto->rangeIndex)) || (*itr)->m_loggedInPlayer == m_target)
+					continue;
+				Targets.push_back((*itr)->m_loggedInPlayer);
+			}
+			Target->GetGroup()->Unlock();
+		}
+	}
+	else
+	{
+		for (ObjectSet::iterator itr = m_target->GetInRangeSetBegin(); itr!=m_target->GetInRangeSetEnd(); ++itr)
+			if ((*itr) != m_target && (*itr)->IsUnit() && isFriendly(m_target, *itr) && m_target->CalcDistance(*itr) < GetMaxRange(dbcSpellRange.LookupEntry(m_spellProto->rangeIndex)))
+				Targets.push_back(TO_UNIT(*itr));
+	}
+
+	if (Targets.size() == 0 || m_stackcount == 0)
+		Remove();
+	else
+	{
+		//jump
+		Unit* newtarget = Targets[RandomUInt(Targets.size()-1)];
+
+		//OK, lets do this!
+		Spell* s = objmgr.CreateSpell(m_target, dbcSpell.LookupEntry(_spell->triggered_id), true, NULL);
+		SpellCastTargets t(newtarget);
+		s->forced_modifier = mod;
+		s->forced_applications = m_stackcount;
+		s->prepare(&t);
+		Remove(true);
+	}
+}
+*/

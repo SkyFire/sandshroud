@@ -677,6 +677,8 @@ uint8 Spell::_DidHit(const Unit* target)
 				resistchance = baseresist[2] + (((float)lvldiff-2.0f)*11.0f);
 		}
 	}
+	if (m_spellInfo->DispelType < NUM_DISPELS)
+		resistchance += u_victim->DispelResistancesPCT[m_spellInfo->DispelType];
 	//rating bonus
 	if( p_caster != NULL )
 	{
