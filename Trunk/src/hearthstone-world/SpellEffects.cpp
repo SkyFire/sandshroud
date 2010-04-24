@@ -847,6 +847,38 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			}
 		}break;
 
+	// warrior - slam
+	case 1464:
+	case 8820:
+	case 11604:
+	case 11605:
+	case 25241:
+	case 25242:
+	case 47474:
+	case 47475:
+			{
+			if(p_caster != NULL)
+			{
+			Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+			damage = ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + m_spellInfo->EffectBasePoints[i];
+			}
+		}break;
+
+    //warrior - thunder clap
+	case 6343:
+	case 8198:
+	case 8204:
+	case 8205:
+	case 11580:
+	case 11581:
+	case 25264:
+	case 47501:
+	case 47502:
+ 			{
+ 				if(u_caster)
+				damage = float2int32((m_spellInfo->EffectBasePoints[0]+1)+ u_caster->GetAP() * 0.20f);
+ 			}break;
+
 	case 5308:
 	case 20658:
 	case 20660:
