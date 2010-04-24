@@ -145,6 +145,7 @@ void MapCell::LoadEventIdObjects(CellSpawns * sp, uint8 eventId)
 					if(pInstance->m_killedNpcs.find((*i)->id) != pInstance->m_killedNpcs.end())
 						continue;
 				}
+
 				if((*i)->eventinfo && ((*i)->eventid && (*i)->eventid == eventId))
 				{
 					if(!((*i)->eventinfo->eventchangesflag & EVENTID_FLAG_SPAWN))
@@ -341,13 +342,17 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 
 			if(!pObject)
 				continue;
-			
+
 			switch(pObject->GetTypeId())
 			{
 			case TYPEID_UNIT: 
 				{
+					if(!TO_CREATURE(pObject)->m_spawn)
+						continue;
+
 					if(!(TO_CREATURE(pObject)->m_spawn->eventinfo->eventchangesflag & EVENTID_FLAG_SPAWN))
 						continue;
+
 					if(TO_CREATURE(pObject)->m_spawn->eventid == eventToRemove)
 					{
 						if( pObject->IsVehicle())
@@ -369,6 +374,9 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 
 			case TYPEID_GAMEOBJECT:
 				{
+					if(!TO_GAMEOBJECT(pObject)->m_spawn)
+						continue;
+
 					if(!(TO_GAMEOBJECT(pObject)->m_spawn->eventinfo->eventchangesflag & EVENTID_FLAG_SPAWN))
 						continue;
 
@@ -401,6 +409,9 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 					if( pObject->IsPet() )
 						continue;
 
+					if(!TO_CREATURE(pObject)->m_spawn)
+						continue;
+
 					if(TO_CREATURE(pObject)->m_spawn->eventid != eventToRemove)
 						continue;
 
@@ -409,6 +420,9 @@ void MapCell::RemoveEventIdObjects(uint8 eventToRemove)
 				}break;
 			case TYPEID_GAMEOBJECT:
 				{
+					if(!TO_GAMEOBJECT(pObject)->m_spawn)
+						continue;
+
 					if(TO_GAMEOBJECT(pObject)->m_spawn->eventid != eventToRemove)
 						continue;
 

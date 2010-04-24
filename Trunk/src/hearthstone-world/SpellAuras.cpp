@@ -306,7 +306,6 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraModBaseHealth,//282
 		&Aura::SpellAuraNULL,//283
 		&Aura::SpellAuraNULL,//284
-		&Aura::SpellAuraNULL,//285
 		&Aura::SpellAuraModAttackPowerByArmor,//285
 		&Aura::SpellAuraNULL,//286
 		&Aura::SpellAuraReflectInfront, //287
@@ -780,7 +779,7 @@ void Aura::Remove()
 		SM_PIValue(m_caster->SM[SMT_CHARGES][1],&procCharges, m_spellProto->SpellGroupType);
 	}
 
-	if( procCharges > 0 && !(GetSpellProto()->procFlags & PROC_REMOVEONUSE) )
+	if( procCharges > 0 && !(GetSpellProto()->procflags2 & PROC_REMOVEONUSE) )
 	{
 		if( m_target->m_chargeSpellsInUse )
 		{
@@ -930,11 +929,11 @@ void Aura::ApplyModifiers( bool apply )
 
 		if(mod->m_type<TOTAL_SPELL_AURAS)
 		{
-			DEBUG_LOG( "Aura","Known Aura id %d, value %d", (uint32)mod->m_type, (uint32)mod->m_amount );
+			DEBUG_LOG( "Aura","Known Aura id %d, value %d", uint32(mod->m_type), uint32(mod->m_amount));
 			(*this.*SpellAuraHandler[mod->m_type])(apply);
 		}
 		else
-			DEBUG_LOG( "Aura","Unknown Aura id %d", (uint32)mod->m_type);
+			DEBUG_LOG( "Aura","Unknown Aura id %d in spell %u", uint32(mod->m_type), GetSpellId());
 	}
 	
 	if(GetSpellProto()->procFlags)
@@ -1682,9 +1681,9 @@ void Aura::SpellAuraModBaseResistancePerc(bool apply)
 void Aura::SpellAuraNULL(bool apply)
 {
 	if(sLog.IsOutDevelopement())
-		printf("Unknown Aura id %d\n", (uint32)mod->m_type);
+		printf("Unknown Aura id %d in spell %u\n", uint32(mod->m_type), GetSpellId());
 	else
-		DEBUG_LOG( "Aura","Unknown Aura id %d", (uint32)mod->m_type);
+		DEBUG_LOG( "Aura","Unknown Aura id %d in spell %u", uint32(mod->m_type), GetSpellId());
 }
 
 void Aura::SpellAuraBindSight(bool apply)
@@ -9966,6 +9965,7 @@ void Aura::SpellAuraPeriodicTriggerSpellWithValue(bool apply)
 		}
 	}
 }
+
 void Aura::EventModAttackPowerByArmorUpdate( uint32 i )
 {
 	//Firstly lets get the value it should be warning 

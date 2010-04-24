@@ -306,15 +306,15 @@ enum procFlags
 // Crow: Lets create really complicated ones :D
 enum procFlags2
 {
-	PROC_ON_FULL_RESIST					= 0x1,//added it as custom, maybe already exists in another form ?
-	PROC_ON_DODGE_VICTIM				= 0x2,//added it as custom, maybe already exists in another form ?
-	PROC_ON_DIE							= 0x4,//added it as custom, maybe already exists in another form ?
-	PROC_REMOVEONUSE					= 0x8,//remove prochcharge only when it is used
-	PROC_MISC							= 0x10,//Unused.
-	PROC_ON_BLOCK_VICTIM				= 0x20,//added it as custom, maybe already exists in another form ?
-	PROC_ON_SPELL_CRIT_HIT				= 0x40,//added it as custom, maybe already exists in another form ?
-	PROC_TARGET_SELF					= 0x80,//our custom flag to decide if proc target is self or victim
-	PROC_ON_DAMAGE_VICTIM_BELOW_35		= 0x160
+	PROC_ON_FULL_RESIST					= 0x1, // Custom
+	PROC_ON_DODGE_VICTIM				= 0x2, // Custom
+	PROC_ON_DIE							= 0x4, // Custom
+	PROC_REMOVEONUSE					= 0x8, // remove prochcharge only when it is used
+	PROC_MISC							= 0x10, // Unused.
+	PROC_ON_BLOCK_VICTIM				= 0x20, // Custom
+	PROC_ON_SPELL_CRIT_HIT				= 0x40, // Custom
+	PROC_TARGET_SELF					= 0x80, // Custom
+	PROC_ON_DAMAGE_VICTIM_BELOW_35		= 0x160 // Custom
 };
 
 enum CastInterruptFlags
