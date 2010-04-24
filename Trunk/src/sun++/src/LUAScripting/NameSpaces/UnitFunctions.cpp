@@ -2226,22 +2226,10 @@ namespace luaUnit
 		( (ranged == true) ? lua_pushinteger(L, ptr->GetRAP()) : lua_pushinteger(L,ptr->GetAP()) );
 		return 1;
 	}
-	int GetPlayerRace(lua_State * L, Unit *ptr) {
-		const char * s;
-		switch( ptr->getRace()) {
-			case RACE_HUMAN: s = "Human"; break;
-			case RACE_BLOODELF: s = "BloodElf"; break;
-			case RACE_TROLL: s = "Troll"; break;
-			case RACE_NIGHTELF: s = "NightElf"; break;
-			case RACE_UNDEAD: s = "Undead"; break;
-			case RACE_ORC: s = "Orc"; break;
-			case RACE_DWARF: s = "Dwarf"; break;
-			case RACE_GNOME: s = "Gnome"; break;
-			case RACE_DRAENEI: s = "Draenei"; break;
-			case RACE_TAUREN: s = "Tauren"; break;
-			default: s = "Unknown"; break;
-		}
-		lua_pushstring(L,s);
+	int GetPlayerRace(lua_State * L, Unit *ptr)
+	{
+		CHECK_TYPEID_RET( TYPEID_PLAYER );
+		lua_pushinteger( L, static_cast< Player* >( ptr )->getRace() );
 		return 1;
 	}
 	int GetSummon(lua_State * L, Unit *ptr)
