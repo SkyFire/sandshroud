@@ -2899,6 +2899,12 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 
 	// obtain player create info
 	info = objmgr.GetPlayerCreateInfo(getRace(), getClass());
+	if(info == NULL)
+	{
+		Log.Error("PlayerCreateInfo", "Character creation failed due to non existant or invalid playercreateinfo.\n");
+		RemovePendingPlayer();
+		return;
+	}
 	assert(info);
 
 	// set level
