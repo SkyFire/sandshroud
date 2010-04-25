@@ -74,7 +74,7 @@ void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 		if( ve->m_seatID[i] )
 		{
 			m_vehicleSeats[i] = dbcVehicleSeat.LookupEntry( ve->m_seatID[i] );
-			m_seatSlotMax = i + 1; // i plus 1 so that we can count 0. Plus, no vehicle has 0 seats, so this ensures 1.
+			m_seatSlotMax = i + 1;
 
 			if(m_vehicleSeats[i]->IsUsable())
 			{
@@ -231,7 +231,7 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		if( ve->m_seatID[i] )
 		{
 			m_vehicleSeats[i] = dbcVehicleSeat.LookupEntry( ve->m_seatID[i] );
-			m_seatSlotMax = i + 1; // i plus 1 so that we can count 0. Plus, no vehicle has 0 seats, so this ensures 1.
+			m_seatSlotMax = i + 1;
 
 			if(m_vehicleSeats[i]->IsUsable())
 			{
@@ -253,6 +253,8 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 	if(!acc)
 		return;
 
+	uint8 count;
+
 	WorldPacket data(SMSG_PET_SPELLS, 78); // uint32 = 4; (10 * 6) + 4 + 4 + 2 + 8 = 78
 	data << GetGUID();
 	data << uint16(0);
@@ -265,13 +267,16 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 //		if passive castspell (id)
 //		data << uint16(0) << uint8(0) << uint8(i+8);
 		data << uint16(acc->VehicleSpells[i]) << uint8(0) << uint8(i+8);
+
+		if(acc->VehicleSpells[i])
+			count = i;
 	}
 	for(uint8 i = 6; i < 10; ++i)
 	{
 		data << uint16(0) << uint8(0) << uint8(i+8);
 	}
 
-	data << uint8(0); // spells count
+	data << count; // spells count
 	data << uint8(0); // cooldowns count
 
 	plr->GetSession()->SendPacket(&data);

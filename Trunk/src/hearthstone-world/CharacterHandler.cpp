@@ -1349,12 +1349,12 @@ void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 					if (!_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
 					{
 						SrcItem->DeleteMe();
-						SrcItem = NULL
+						SrcItem = NULL;
 					}
 					if (DstItem && !_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
 					{
 						DstItem->DeleteMe();
-						DstItem = NULL
+						DstItem = NULL;
 					}
 					return;
 				}
@@ -1368,7 +1368,7 @@ void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 					if (SrcItem && !_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
 					{
 						SrcItem->DeleteMe();
-						SrcItem = NULL
+						SrcItem = NULL;
 					}
 					if (!_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
 					{

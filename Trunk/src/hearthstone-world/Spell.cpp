@@ -1061,10 +1061,6 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 
 	m_timer = m_castTime;
 
-	//if( p_caster != NULL )
-	//   m_castTime -= 100;	  // session update time
-
-
 	if( !m_triggeredSpell && p_caster != NULL && p_caster->CooldownCheat )
 		p_caster->ClearCooldownForSpell( m_spellInfo->Id );
 
@@ -1365,7 +1361,7 @@ void Spell::cast(bool check)
 			//******************** SHOOT SPELLS ***********************
 			//* Flags are now 1,4,19,22 (4718610) //0x480012
 
-			if (m_spellInfo->Flags4 & 0x8000 && m_caster->IsPlayer() && m_caster->IsInWorld())
+			if(m_spellInfo->Flags4 & 0x8000 && (p_caster != NULL) && m_caster->IsInWorld())
 			{
 				/// Part of this function contains a hack fix
 				/// hack fix for shoot spells, should be some other resource for it

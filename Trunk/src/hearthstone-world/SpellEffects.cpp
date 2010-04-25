@@ -74,7 +74,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectSpawn,						//SPELL_EFFECT_SPAWN - 46
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_TRADE_SKILL - 47
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_STEALTH - 48
-	&Spell::SpellEffectNULL,						//SPELL_EFFECT_DETECT - 49
+	&Spell::SpellEffectDetect,						//SPELL_EFFECT_DETECT - 49
 	&Spell::SpellEffectSummonObject,				//SPELL_EFFECT_SUMMON_OBJECT - 50
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_FORCE_CRITICAL_HIT - 51 NA
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_GUARANTEE_HIT - 52 NA
@@ -2152,6 +2152,27 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			SpellEntry * inf =dbcSpell.LookupEntry(26635);
 			Spell* spe = CREATESPELL(u_caster,inf,true,NULLAURA);
 			spe->prepare(&tgt);
+		}break;
+
+		/*
+		Crow: Dummy handlers for skills that are always at max.
+		I have no idea what else we would put here o.o */
+	case 33388: // Apprentice Riding.
+	case 33391: // Journeyman Riding.
+	case 34090: // Expert Riding.
+	case 34091: // Artisan Riding.
+		{
+			if(p_caster != NULL)
+			{
+				skilllineentry* skill = dbcSkillLine.LookupEntry(m_spellInfo->EffectMiscValue[1]);
+				if(skill != NULL)
+				{
+					uint32 current = p_caster->_GetSkillLineCurrent(skill->id, false);
+					uint32 maximum = p_caster->_GetSkillLineMax(skill->id);
+					if(current < maximum)
+						p_caster->_AdvanceSkillLine(skill->id, uint32(maximum - current));
+				}
+			}
 		}break;
 	default:
 		{
@@ -4298,7 +4319,7 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 
 	// Check targets
 	if( m_targets.m_unitTarget ) 
-		target = u_caster->GetMapMgr()->GetPlayer((uint32)m_targets.m_unitTarget);
+		target = u_caster->GetMapMgr()->GetPlayer(uint32(m_targets.m_unitTarget));
 	else
 		target = TO_PLAYER( m_caster );
 
@@ -4427,6 +4448,19 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 		target->addSpell( 52738 );// Ivory Ink
 
 	}
+}
+
+void Spell::SpellEffectDetect(uint32 i)
+{
+	if( u_caster == NULL )
+		return;
+	/* Crow:
+	Makes me afraid to see what this us used for.
+	Notes below...
+	*/
+
+	// Crow: We'll just do a visibility update....
+	u_caster->UpdateVisibility();
 }
 
 void Spell::SpellEffectSummonObject(uint32 i)

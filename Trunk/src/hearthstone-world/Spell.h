@@ -1806,6 +1806,7 @@ public:
 	void SpellEffectDispel(uint32 i);
 	void SummonGuardian(uint32 i);
 	void SpellEffectSkillStep(uint32 i);
+	void SpellEffectDetect(uint32 i);
 	void SpellEffectSummonObject(uint32 i);
 	void SpellEffectEnchantItem(uint32 i);
 	void SpellEffectEnchantItemTemporary(uint32 i);

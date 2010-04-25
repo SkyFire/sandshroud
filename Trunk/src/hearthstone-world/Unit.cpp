@@ -7011,7 +7011,7 @@ void Unit::SendPowerUpdate()
 {
 	WorldPacket data(SMSG_POWER_UPDATE, 14);
 	FastGUIDPack(data, GetGUID());
-	data << (uint8)GetPowerType();
+	data << uint8(GetPowerType());
 	data << GetUInt32Value(UNIT_FIELD_POWER1 + GetPowerType());
 	SendMessageToSet(&data, GetTypeId() == TYPEID_PLAYER ? true : false);
 }
