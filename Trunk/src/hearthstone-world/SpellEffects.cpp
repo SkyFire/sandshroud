@@ -6096,8 +6096,9 @@ void Spell::SpellEffectWMODamage(uint32 i)
 
 void Spell::SpellEffectWMORepair(uint32 i)
 {
- 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
- 	   gameObjTarget->Rebuild();
+	printf("WMORepair\n");
+	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
+		gameObjTarget->Rebuild();
 }
 
 void Spell::SummonTotem(uint32 i) // Summon Totem

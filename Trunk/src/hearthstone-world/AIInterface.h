@@ -72,7 +72,7 @@ enum LimitedMovementFlag
 	LIMIT_GROUND	= 0x1,
 	LIMIT_WATER		= 0x2,
 	LIMIT_AIR		= 0x4,
-	LIMIT_ANYWHERE= LIMIT_GROUND | LIMIT_WATER | LIMIT_AIR
+	LIMIT_ANYWHERE	= LIMIT_GROUND | LIMIT_WATER | LIMIT_AIR
 };
 
 /*struct AI_Target
@@ -80,7 +80,6 @@ enum LimitedMovementFlag
 	Unit target;
 	int32 threat;
 };*/
-
 
 enum AI_Agent
 {
