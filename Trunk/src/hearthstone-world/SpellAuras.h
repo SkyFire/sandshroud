@@ -807,6 +807,7 @@ private:
 	}
 	
 	Unit* m_target;
+	Player* p_target;
 	uint64 m_casterGuid;
 
 	uint32 timeleft;

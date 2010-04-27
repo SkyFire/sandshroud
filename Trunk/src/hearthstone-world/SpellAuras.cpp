@@ -637,6 +637,10 @@ Aura::Aura( SpellEntry* proto, int32 duration, Object* caster, Unit* target )
 
 	m_casterGuid = caster->GetGUID();
 	m_target = target;
+	if(target->IsPlayer())
+		p_target = TO_PLAYER(target);
+	else
+		p_target = NULL;
 
 	DurationPctMod(GetMechanic());
 	/*if( caster->GetTypeId() == TYPEID_PLAYER && target->GetTypeId() == TYPEID_PLAYER )
