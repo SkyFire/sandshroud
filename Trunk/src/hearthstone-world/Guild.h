@@ -24,6 +24,7 @@ struct PlayerInfo;
 
 #define MAX_GUILD_RANKS 10
 #define MAX_GUILD_MEMBERS 500
+
 enum PETITION_TURNIN_ERRORS
 {
 	ERR_PETITION_OK,
@@ -39,7 +40,6 @@ enum PETITION_TURNIN_ERRORS
 	//ERR_PETITION_SIGNED_S
 	//ERR_PETITION_SIGNED
 	//ERR_PETITION_OFFERED
-
 };
 
 enum GUILDEMBLEM_ERRORS
@@ -69,51 +69,51 @@ enum MONEY
 
 enum CommandErrors
 {
-	GUILD_U_HAVE_INVITED = 0x00,
-	GUILD_INTERNAL				= 0x01,
-	GUILD_ALREADY_IN_GUILD		= 0x02,
-	ALREADY_IN_GUILD			  = 0x03,
-	INVITED_TO_GUILD			  = 0x04,
-	ALREADY_INVITED_TO_GUILD	  = 0x05,
-	GUILD_NAME_INVALID			= 0x06,
-	GUILD_NAME_EXISTS			 = 0x07,
-	GUILD_LEADER_LEAVE			= 0x08,
-	GUILD_PERMISSIONS			 = 0x08,
-	GUILD_PLAYER_NOT_IN_GUILD	 = 0x09,
-	GUILD_PLAYER_NOT_IN_GUILD_S   = 0x0A,
-	GUILD_PLAYER_NOT_FOUND		= 0x0B,
-	GUILD_NOT_ALLIED			  = 0x0C,
+	GUILD_U_HAVE_INVITED			= 0x00,
+	GUILD_INTERNAL					= 0x01,
+	GUILD_ALREADY_IN_GUILD			= 0x02,
+	ALREADY_IN_GUILD				= 0x03,
+	INVITED_TO_GUILD				= 0x04,
+	ALREADY_INVITED_TO_GUILD		= 0x05,
+	GUILD_NAME_INVALID				= 0x06,
+	GUILD_NAME_EXISTS				= 0x07,
+	GUILD_LEADER_LEAVE				= 0x08,
+	GUILD_PERMISSIONS				= 0x08,
+	GUILD_PLAYER_NOT_IN_GUILD		= 0x09,
+	GUILD_PLAYER_NOT_IN_GUILD_S		= 0x0A,
+	GUILD_PLAYER_NOT_FOUND			= 0x0B,
+	GUILD_NOT_ALLIED				= 0x0C,
 };
 
 //for uint32(0)<<name<<code
 enum GUILD_COMMAND_RESULTS
 {
-	C_R_CREATED							 = 1,
+	C_R_CREATED								= 1,
 	C_R_ALREADY_IN_GUILD					= 2,
-	C_R_TARGET_ALREADY_IN_GUILD			 = 3,
+	C_R_TARGET_ALREADY_IN_GUILD				= 3,
 	C_R_ALREADY_INVITED_TO_GUILD			= 4,
-	C_R_TARGET_ALREADY_INVITED_TO_GUILD	 = 5,
+	C_R_TARGET_ALREADY_INVITED_TO_GUILD		= 5,
 	C_R_GUILDNAME_HAS_INVALID_CHARACTERS	= 6,
-	C_R_GUILD_NAME_EXISTS				   = 7,
+	C_R_GUILD_NAME_EXISTS					= 7,
 	C_R_DONT_HAVE_PERMISSION				= 8,
 	C_R_NOT_IN_GUILD						= 9,
-	C_R_TARGET_IS_NOT_IN_YOUR_GUILD		 = 10,
-	C_R_NAME_NOT_FOUND					  = 11,
-	C_R_CANT_INVITE_PLYRS_FROM_OPP_ALLIANCE = 12,
-	C_R_NAME_RANK_TOO_HIGH				  = 13,
+	C_R_TARGET_IS_NOT_IN_YOUR_GUILD			= 10,
+	C_R_NAME_NOT_FOUND						= 11,
+	C_R_CANT_INVITE_PLYRS_FROM_OPP_ALLIANCE	= 12,
+	C_R_NAME_RANK_TOO_HIGH					= 13,
 	C_R_NAME_RANK_AT_LOWEST_RANK			= 14,
 };
 
 enum typecommand
 {
-	GUILD_CREATE_S	= 0x00,
-	GUILD_INVITE_S	= 0x01,
-	GUILD_QUIT_S	= 0x02,
-	GUILD_PROMOTE_S	= 0x03,
-	GUILD_FOUNDER_S = 0x0C,
-	GUILD_MEMBER_S = 0x0D,
-	GUILD_PUBLIC_NOTE_CHANGED_S = 0x13,
-	GUILD_OFFICER_NOTE_CHANGED_S = 0x14,
+	GUILD_CREATE_S					= 0x00,
+	GUILD_INVITE_S					= 0x01,
+	GUILD_QUIT_S					= 0x02,
+	GUILD_PROMOTE_S					= 0x03,
+	GUILD_FOUNDER_S					= 0x0C,
+	GUILD_MEMBER_S					= 0x0D,
+	GUILD_PUBLIC_NOTE_CHANGED_S		= 0x13,
+	GUILD_OFFICER_NOTE_CHANGED_S	= 0x14,
 
 };
 
@@ -137,16 +137,18 @@ enum GuildRankRights
 	GR_RIGHT_VIEWOFFNOTE		= 0x00004000,
 	GR_RIGHT_EOFFNOTE			= 0x00008000,
 	GR_RIGHT_EGUILDINFO			= 0x00010000,
-	GR_RIGHT_REPAIR_FROM_GUILD  = 0x00020000, 
-	GR_RIGHT_WITHDRAW_REPAIR    = 0x00040000, 
-	GR_RIGHT_WITHDRAW_GOLD      = 0x00080000, 
-	GR_RIGHT_CREATE_GUILD_EVENT = 0x00100000, 
+	GR_RIGHT_REPAIR_FROM_GUILD	= 0x00020000, 
+	GR_RIGHT_WITHDRAW_REPAIR	= 0x00040000, 
+	GR_RIGHT_WITHDRAW_GOLD		= 0x00080000, 
+	GR_RIGHT_CREATE_GUILD_EVENT	= 0x00100000, 
 	GR_RIGHT_ALL				= 0x001FF1FF,
 
 	GR_RIGHT_DEFAULT			= GR_RIGHT_EMPTY | GR_RIGHT_GCHATLISTEN | GR_RIGHT_GCHATSPEAK,
 
 	GR_RIGHT_GUILD_BANK_VIEW_TAB		= 0x01,
 	GR_RIGHT_GUILD_BANK_DEPOSIT_ITEMS	= 0x02,
+	GR_RIGHT_GUILD_BANK_CHANGE_TABTXT	= 0x04,
+	GR_RIGHT_GUILD_BANK_ALL	= GR_RIGHT_GUILD_BANK_VIEW_TAB | GR_RIGHT_GUILD_BANK_DEPOSIT_ITEMS | GR_RIGHT_GUILD_BANK_CHANGE_TABTXT,
 };
 
 
@@ -158,22 +160,23 @@ enum GuildRankRights
 
 enum GuildEvent
 {
-	GUILD_EVENT_PROMOTION		   =0x0,
-	GUILD_EVENT_DEMOTION			=0x1,
-	GUILD_EVENT_MOTD				=0x2,
-	GUILD_EVENT_JOINED			  =0x3,
-	GUILD_EVENT_LEFT				=0x4,
-	GUILD_EVENT_REMOVED			 =0x5,
-	GUILD_EVENT_LEADER_IS		   =0x6,
-	GUILD_EVENT_LEADER_CHANGED	  =0x7,
-	GUILD_EVENT_DISBANDED		   =0x8,
-	GUILD_EVENT_TABARDCHANGE		=0x9,
-	GUILD_EVENT_UNK1				=0xA,
-	GUILD_EVENT_UNK2				=0xB,
-	GUILD_EVENT_HASCOMEONLINE	   =0xC,
-	GUILD_EVENT_HASGONEOFFLINE	  =0xD,
+	GUILD_EVENT_PROMOTION			= 0x0,
+	GUILD_EVENT_DEMOTION			= 0x1,
+	GUILD_EVENT_MOTD				= 0x2,
+	GUILD_EVENT_JOINED				= 0x3,
+	GUILD_EVENT_LEFT				= 0x4,
+	GUILD_EVENT_REMOVED				= 0x5,
+	GUILD_EVENT_LEADER_IS			= 0x6,
+	GUILD_EVENT_LEADER_CHANGED		= 0x7,
+	GUILD_EVENT_DISBANDED			= 0x8,
+	GUILD_EVENT_TABARDCHANGE		= 0x9,
+	GUILD_EVENT_UNK1				= 0xA,
+	GUILD_EVENT_UNK2				= 0xB,
+	GUILD_EVENT_HASCOMEONLINE		= 0xC,
+	GUILD_EVENT_HASGONEOFFLINE		= 0xD,
 	GUILD_EVENT_BANKTABBOUGHT		= 0xF,
 	GUILD_EVENT_SETNEWBALANCE		= 0x11,
+	GUILD_EVENT_TABINFO				= 0x13,
 };
 enum GuildLogEventE
 {
@@ -191,15 +194,16 @@ enum GuildBankLogEvents
 	GUILD_BANK_LOG_EVENT_WITHDRAW_ITEM	= 2,
 	GUILD_BANK_LOG_EVENT_DEPOSIT_MONEY	= 4,
 	GUILD_BANK_LOG_EVENT_WITHDRAW_MONEY	= 5,
+	GUILD_BANK_LOG_EVENT_REPAIR			= 6,
 };
 
-#define ITEM_ENTRY_GUILD_CHARTER 5863
-#define ARENA_TEAM_CHARTER_2v2      23560
-#define ARENA_TEAM_CHARTER_2v2_COST 800000  // 80 G
-#define ARENA_TEAM_CHARTER_3v3      23561
-#define ARENA_TEAM_CHARTER_3v3_COST 1200000 // 120 G
-#define ARENA_TEAM_CHARTER_5v5      23562
-#define ARENA_TEAM_CHARTER_5v5_COST 2000000 // 200 G
+#define ITEM_ENTRY_GUILD_CHARTER		5863
+#define ARENA_TEAM_CHARTER_2v2			23560
+#define ARENA_TEAM_CHARTER_2v2_COST		800000  // 80 G
+#define ARENA_TEAM_CHARTER_3v3			23561
+#define ARENA_TEAM_CHARTER_3v3_COST		1200000 // 120 G
+#define ARENA_TEAM_CHARTER_5v5			23562
+#define ARENA_TEAM_CHARTER_5v5_COST		2000000 // 200 G
 
 #define MAX_GUILD_BANK_SLOTS 98
 #define MAX_GUILD_BANK_TABS 6
@@ -262,11 +266,13 @@ struct SERVER_DECL GuildBankTab
 	uint8 iTabId;
 	char * szTabName;
 	char * szTabIcon;
-	Item* pSlots[MAX_GUILD_BANK_SLOTS];
+	char * szTabInfo;
+	Item * pSlots[MAX_GUILD_BANK_SLOTS];
 	list<GuildBankEvent*> lLog;
 };
 
 class Charter;
+
 
 class SERVER_DECL Guild
 {
@@ -345,6 +351,10 @@ public:
 	 */
 	static void SendGuildCommandResult(WorldSession * pClient, uint32 iCmd, const char * szMsg, uint32 iType);
 
+	/** Sends a turn in petition result to the client.
+	 */
+	static void SendTurnInPetitionResult( WorldSession * pClient, uint32 result );
+
 	/** Logs a guild event and sends it to all online players.
 	 */
 	void LogGuildEvent(uint8 iEvent, uint8 iStringCount, ...);
@@ -397,8 +407,8 @@ public:
 	HEARTHSTONE_INLINE const char * GetGuildName() const { return m_guildName; }
 	HEARTHSTONE_INLINE const uint32 GetGuildLeader() const { return m_guildLeader; }
 	HEARTHSTONE_INLINE const uint32 GetGuildId() const { return m_guildId; }
-	HEARTHSTONE_INLINE const uint32 GetBankTabCount() const { return m_bankTabCount; }
-	HEARTHSTONE_INLINE const uint32 GetBankBalance() const { return m_bankBalance; }
+	HEARTHSTONE_INLINE const uint8  GetBankTabCount() const { return ( uint8) m_bankTabs.size(); }
+	HEARTHSTONE_INLINE const uint64 GetBankBalance() const { return m_bankBalance; }
 	HEARTHSTONE_INLINE const size_t GetNumMembers() const { return m_members.size(); }
 
 	Mutex* getLock() { return &m_lock; }
@@ -438,9 +448,9 @@ public:
 	/** Gets a guild bank tab for editing/viewing
 	 */
 
-	HEARTHSTONE_INLINE GuildBankTab * GetBankTab(uint32 Id)
+	HEARTHSTONE_INLINE GuildBankTab * GetBankTab( uint8 Id )
 	{
-		if(Id >= m_bankTabCount)
+		if( Id >= GetBankTabCount() )
 			return NULL;
 
 		return m_bankTabs[Id];
@@ -496,8 +506,7 @@ protected:
 	uint32 m_backgroundColor;
 	uint32 m_guildLeader;
 	uint32 m_creationTimeStamp;
-	uint32 m_bankTabCount;
-	uint32 m_bankBalance;
+	uint64 m_bankBalance;
 
 	typedef vector<GuildBankTab*> GuildBankTabVector;
 	GuildBankTabVector m_bankTabs;
@@ -539,11 +548,11 @@ protected:
 3->selection is already in guild
 4->you have been already invited to guild
 5->selection is already invited to guild
-6->guildname contains invalid characters pls rename
+6->guildname contains invalid characters please rename
 7->there is an already guild named "name"
-8->you dont have permission to do that
+8->you don't have permission to do that
 9->you are not in guild
-10->selection isnot in your guild
+10->selection is not in your guild
 11->"name" not found
 12->you cannot invite players from opposite alliance
 13->"name"'s rank is too high

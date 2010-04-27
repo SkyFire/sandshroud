@@ -1,5 +1,5 @@
 /*
-SQLyog Ultimate - MySQL GUI v8.4 Beta3
+SQLyog Ultimate v8.4 RC
 MySQL - 5.0.51a-24+lenny3-log : Database - SADB_char
 *********************************************************************
 */
@@ -553,6 +553,7 @@ CREATE TABLE `guild_banktabs` (
   `tabId` int(30) NOT NULL,
   `tabName` varchar(200) collate utf8_unicode_ci NOT NULL,
   `tabIcon` varchar(200) collate utf8_unicode_ci NOT NULL,
+  `tabInfo` varchar(200) collate utf8_unicode_ci NOT NULL,
   PRIMARY KEY  (`guildId`,`tabId`),
   KEY `a` (`guildId`),
   KEY `b` (`tabId`)
@@ -634,22 +635,21 @@ DROP TABLE IF EXISTS `guilds`;
 
 CREATE TABLE `guilds` (
   `guildId` bigint(20) NOT NULL auto_increment,
-  `guildName` varchar(32) NOT NULL default '',
+  `guildName` varchar(32) collate utf8_unicode_ci NOT NULL default '',
   `leaderGuid` bigint(20) NOT NULL default '0',
   `emblemStyle` int(10) NOT NULL default '0',
   `emblemColor` int(10) NOT NULL default '0',
   `borderStyle` int(10) NOT NULL default '0',
   `borderColor` int(10) NOT NULL default '0',
   `backgroundColor` int(10) NOT NULL default '0',
-  `guildInfo` varchar(1024) NOT NULL,
-  `motd` varchar(1024) NOT NULL,
+  `guildInfo` varchar(1024) collate utf8_unicode_ci NOT NULL,
+  `motd` varchar(1024) collate utf8_unicode_ci NOT NULL,
   `createdate` int(30) NOT NULL default '0',
-  `bankTabCount` int(30) NOT NULL default '0',
   `bankBalance` int(30) NOT NULL default '0',
   PRIMARY KEY  (`guildId`),
   UNIQUE KEY `guildName` (`guildName`),
   UNIQUE KEY `leaderGuid` (`leaderGuid`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Table structure for table `instances` */
 
@@ -692,7 +692,7 @@ CREATE TABLE `mailbox` (
   `returned_flag` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`message_id`),
   KEY `b` (`player_guid`)
-) ENGINE=MyISAM AUTO_INCREMENT=67 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 /*Table structure for table `mailbox_insert_queue` */
 

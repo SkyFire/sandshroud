@@ -74,7 +74,7 @@ WorldSession::~WorldSession()
 	while((packet = _recvQueue.Pop()))
 		delete packet;
 
-	for(uint32 x=0;x<8;x++)
+	for(uint32 x= 0;x<8;x++)
 	{
 		if(sAccountData[x].data)
 			delete [] sAccountData[x].data;
@@ -397,7 +397,7 @@ void WorldSession::LogoutPlayer(bool Save)
 		{
 			std::stringstream ss;
 			ss << "UPDATE account_data SET ";
-			for(uint32 ui=0;ui<8;++ui)
+			for(uint32 ui= 0;ui<8; ++ui)
 			{
 				if(sAccountData[ui].bIsDirty)
 				{
@@ -495,7 +495,7 @@ void WorldSession::SetSecurity(std::string securitystring)
 	LoadSecurity(securitystring);
 
 	// update db
-	CharacterDatabase.Execute("UPDATE accounts SET gm=\"%s\" WHERE acct=%u", CharacterDatabase.EscapeString(string(permissions)).c_str(), _accountId);
+	CharacterDatabase.Execute("UPDATE accounts SET gm=\'%s\' WHERE acct=%u", CharacterDatabase.EscapeString(string(permissions)).c_str(), _accountId);
 }
 
 bool WorldSession::CanUseCommand(char cmdstr)
@@ -861,6 +861,8 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[MSG_PETITION_RENAME].handler						= &WorldSession::HandleCharterRename;
 	WorldPacketHandlers[MSG_SAVE_GUILD_EMBLEM].handler						= &WorldSession::HandleSaveGuildEmblem;
 	WorldPacketHandlers[CMSG_GUILD_INFO_TEXT].handler						= &WorldSession::HandleSetGuildInformation;
+	WorldPacketHandlers[MSG_QUERY_GUILD_BANK_TEXT].handler					= &WorldSession::HandleGuildBankQueryText;
+	WorldPacketHandlers[CMSG_SET_GUILD_BANK_TEXT].handler					= &WorldSession::HandleSetGuildBankText;
 	WorldPacketHandlers[MSG_GUILD_EVENT_LOG_QUERY].handler					= &WorldSession::HandleGuildLog;
 	WorldPacketHandlers[CMSG_GUILD_BANKER_ACTIVATE].handler					= &WorldSession::HandleGuildBankOpenVault;
 	WorldPacketHandlers[CMSG_GUILD_BANK_BUY_TAB].handler					= &WorldSession::HandleGuildBankBuyTab;
