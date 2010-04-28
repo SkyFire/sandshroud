@@ -650,7 +650,7 @@ struct ItemPrototype
 	uint32 ItemId;
 	uint32 Class;
 	uint32 SubClass;
-	uint32 unknown_bc;
+	int32 unknown_bc;
 	char * Name1;
 //	char * Name2;
 //	char * Name3;

@@ -592,8 +592,8 @@ void QuestMgr::BuildQuestList(WorldPacket *data, Object* qst_giver, Player* plr,
 				default:
 					*data << status;
 				}
-				*data << (*it)->qst->max_level << uint32(0);
-				*data << uint8(0) << (lq ? lq->Title : (*it)->qst->title);
+				*data << (*it)->qst->max_level << uint32(status == QMGR_QUEST_FINISHED ? 1 : 0);
+				*data << uint8((*it)->qst->is_repeatable ? 1 : 0) << (lq ? lq->Title : (*it)->qst->title);
 			}
 		}
 	}
