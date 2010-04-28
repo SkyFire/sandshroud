@@ -31,7 +31,6 @@ void OutputCrashLogLine(const char* format, ...);
 
 #ifdef WIN32
 
-//#include <Windows.h>
 #include "Common.h"
 #include <DbgHelp.h>
 #include "StackWalker.h"
@@ -57,7 +56,7 @@ int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs);
 void __cdecl PrintSharedPtrInformation(bool m_sharedPtrDestructed, long references);
 
 #define THREAD_TRY_EXECUTION __try 
-#define THREAD_HANDLE_CRASH  __except(HandleCrash(GetExceptionInformation())) {}
+#define THREAD_HANDLE_CRASH  __except( HandleCrash( GetExceptionInformation() ) ) {}
 
 #define THREAD_TRY_EXECUTION2 __try {
 #define THREAD_HANDLE_CRASH2  } __except(HandleCrash(GetExceptionInformation())) {}

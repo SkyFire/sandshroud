@@ -31,9 +31,6 @@
 #include <sched.h>
 #endif
 
-//#include <vld.h>
-//#include <vldapi.h>
-
 // Database impl
 Database * sLogonSQL;
 initialiseSingleton(LogonServer);
@@ -52,10 +49,10 @@ void _OnSignal(int s)
 	{
 #ifndef WIN32
 	case SIGHUP:
-	   {
-		   sLog.outString("Received SIGHUP signal, reloading accounts.");
-		   AccountMgr::getSingleton().ReloadAccounts(true);
-	   }break;
+		{
+			sLog.outString("Received SIGHUP signal, reloading accounts.");
+			AccountMgr::getSingleton().ReloadAccounts(true);
+		}break;
 #endif
 	case SIGINT:
 	case SIGTERM:
@@ -132,7 +129,7 @@ bool startdb()
 	{
 		sLog.outError("sql: Logon database initialization failed. Exiting.");
 		return false;
-	}   
+	}
 
 	return true;
 }
@@ -349,7 +346,7 @@ void LogonServer::Run(int argc, char ** argv)
 	Log.Notice("ThreadMgr", "Starting...");
 
 	ThreadPool.Startup(4);
-   
+
 	if(!startdb())
 		return;
 
@@ -444,7 +441,7 @@ void LogonServer::Run(int argc, char ** argv)
 		{
 			sInfoCore.TimeoutSockets();
 			sSocketGarbageCollector.Update();
-			CheckForDeadSockets();			  // Flood Protection
+			CheckForDeadSockets();				// Flood Protection
 			UNIXTIME = time(NULL);
 			g_localTime = *localtime(&UNIXTIME);
 		}
@@ -463,6 +460,7 @@ void LogonServer::Run(int argc, char ** argv)
 #else
 	signal(SIGHUP, 0);
 #endif
+
 	pfc->kill();
 
 	cl->Close();
@@ -491,6 +489,8 @@ void LogonServer::Run(int argc, char ** argv)
 	delete SocketMgr::getSingletonPtr();
 	delete SocketGarbageCollector::getSingletonPtr();
 	delete pfc;
+	delete cl;
+	delete sl;
 	Log.Notice("LogonServer","Shutdown complete.\n");
 }
 
@@ -515,7 +515,7 @@ void LogonServer::CheckForDeadSockets()
 		++itr;
 
 		diff = t - s->GetLastRecv();
-		if(diff > 240)		   // More than 4mins -> kill the socket.
+		if(diff > 240)			// More than 4mins -> kill the socket.
 		{
 			_authSockets.erase(it2);
 			s->removedFromSet = true;

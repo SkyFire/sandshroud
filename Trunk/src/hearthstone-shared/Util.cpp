@@ -192,11 +192,11 @@ void MakeIntStringNoZero(char * buf, int num)
 string ConvertTimeStampToString(uint32 timestamp)
 {
 	int seconds = (int)timestamp;
-	int mins=0;
-	int hours=0;
-	int days=0;
-	int months=0;
-	int years=0;
+	int mins	= 0;
+	int hours	= 0;
+	int days	= 0;
+	int months	= 0;
+	int years	= 0;
 	if(seconds >= 60)
 	{
 		mins = seconds / 60;

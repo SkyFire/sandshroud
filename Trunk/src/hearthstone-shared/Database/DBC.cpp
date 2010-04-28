@@ -91,9 +91,9 @@ void DBC::CSV(char* filename, bool info)
 	fprintf(out,"DBlength:%u\x0d\x0a",dblength);
 	fprintf(out,"\x0d\x0a");
 
-	for(int i=0; i < rows; i++)
+	for(int i= 0; i < rows; i++)
 	{
-		for(int j=0; j < cols; j++)
+		for(int j= 0; j < cols; j++)
 		{
 			char* str = new char[65535];
 			Lookup(str,i,j);
@@ -123,11 +123,11 @@ void DBC::FormatCSV(const char* filename, bool info)
 	fprintf(out,"\x0d\x0a");
 	
 	printf("Writing file (%s): 0%%",name);
-	int percent=0,npercent;
+	int percent= 0,npercent;
 	int fst;
-	for(int i=0; i < rows; i++)
+	for(int i= 0; i < rows; i++)
 	{
-		for(int j=0; j < cols; j++)
+		for(int j= 0; j < cols; j++)
 		{
 			/*char* str = new char[512];
 			LookupFormat(str,i,j);
@@ -161,9 +161,9 @@ void DBC::GuessFormat()
 	floats = new int[cols]; memset(floats,0x00,sizeof(int)*cols);
 	strings = new int[cols]; memset(strings,0x00,sizeof(int)*cols);
 	printf("Guessing format (%s): 0%%",name);
-	int percent=0,npercent;
-	for(int i=0;i<rows;i++)
-		for(int j=0;j<cols;j++)
+	int percent= 0,npercent;
+	for(int i= 0;i<rows;i++)
+		for(int j= 0;j<cols;j++)
 		{
 			DBCFmat f = GuessFormat(i,j);
 			if(f == F_STRING) strings[j]++;
@@ -177,7 +177,7 @@ void DBC::GuessFormat()
 			}
 		}
 	
-	for(int j=0;j<cols;j++)
+	for(int j= 0;j<cols;j++)
 	{
 		if(strings[j] > ints[j])
 		{
