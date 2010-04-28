@@ -92,50 +92,5 @@ protected:
 	int8 m_seatSlotMax;
 	uint32 m_vehicleEntry;
 };
-class Mount
-{
-public:
-	Mount(Unit * owner, uint32 vehicle_entry, uint32 spellId);
-	~Mount();
-	VehicleSeatEntry* m_vehicleSeats[8];
-	void ClearPassengers();
-	void SendRidePacket(Unit * passenger );
-	void SendHeartbeatPacket(Unit *passenger);
-	HEARTHSTONE_INLINE uint32 Getvehicle_entry() { return m_vehicle_entry; }
 
-	/************************************************************************/
-	/* Passenger Info Functions												*/
-	/************************************************************************/
-
-	Unit * GetOwner() { return m_mountowner; }
-
-	Unit * GetPassenger(uint8 seat)
-	{
-		ASSERT(seat < 4);
-		return m_passengers[seat];
-	}
-
-	int8 GetFreeSeat();
-
-	/************************************************************************/
-	/* Passenger Control Functions                                          */
-	/************************************************************************/
-
-	void AddPassenger(Unit * passenger, int8 seat = -1);
-	void RemovePassenger(Unit * passenger);
-	void RemovePassenger(uint8 seat);
-
-	/************************************************************************/
-	/* Vehicle Mount Packet Functions                                       */
-	/************************************************************************/
-	void ConvertToVehicle(uint32 vehicle_entry);
-
-private:
-	Unit * m_mountowner;							
-	Unit * m_passengers[4];		
-	uint32 m_vehicle_entry;
-	uint8 m_capacity;
-	uint32 m_spellId;
- };
- 
 #endif

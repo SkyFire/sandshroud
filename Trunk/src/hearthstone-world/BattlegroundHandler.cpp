@@ -63,12 +63,17 @@ void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket &recv_data)
 void WorldSession::HandleBattlefieldListOpcode(WorldPacket &recv_data)
 {
 	CHECK_INWORLD_RETURN;
-	uint32 battlegroundtype;
-	uint8 requesttype;
-	recv_data >> battlegroundtype >> requesttype;
-	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundtype, requesttype);
-}
 
+	uint32 battlegroundType;
+	uint8 requestType, unk1; // 0 = ShowBattlefieldList, 1 = RequestBattlegroundInstanceInfo
+
+	recv_data >> battlegroundType >> requestType >> unk1;
+
+	//if( GetPlayer()->HasBGQueueSlotOfType(type) == 4)
+	//	return;
+	
+	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, false);
+}
 
 // Returns -1 if indeterminable.
 int32 GetBattlegroundTypeFromCreature(Creature* pCreature)

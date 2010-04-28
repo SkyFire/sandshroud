@@ -90,7 +90,8 @@ struct Addr
 #define DEF_VALUE_NOT_SET 0xDEADBEEF
 
 #ifdef WIN32
-        static const char* default_config_file = "hearthstone-world.conf";
+        
+		static const char* default_config_file = "hearthstone-world.conf";
         static const char* default_realm_config_file = "hearthstone-realms.conf";
 #else
         static const char* default_config_file = CONFDIR "/hearthstone-world.conf";
@@ -612,7 +613,51 @@ void segfault_handler(int c)
 
 
 void Master::_HookSignals()
-{
+{/*
+	const uint32 fieldSize = 81;
+	const char* prefix = "SPELL_HASH_";
+	uint32 prefixLen = uint32(strlen(prefix));
+	DBCFile dbc;
+
+	if( !dbc.open( "DBC/Spell.dbc" ) )
+	{
+		Log.Error("World", "Cannot find file ./DBC/Spell.dbc" );
+		return;
+	}
+	uint32 cnt = (uint32)dbc.getRecordCount();
+	uint32 namehash = 0;
+	FILE * f = fopen("SpellNameHashes.h", "w");
+	char spaces[fieldSize], namearray[fieldSize];
+	strcpy(namearray, prefix);
+	char* name = &namearray[prefixLen];
+	for(int i=0;i<fieldSize-1;++i)
+		spaces[i] = ' ';
+	spaces[fieldSize-1] = 0;
+	uint32 nameTextLen = 0, nameLen = 0;
+	for(uint32 x=0; x < cnt; x++)
+	{
+		const char* nametext = dbc.getRecord(x).getString(139);
+		nameTextLen = (unsigned int)strlen(nametext);
+		strncpy(name, nametext, fieldSize-prefixLen-2);	// Cut it to fit in field size
+		name[fieldSize-prefixLen-2] = 0; // in case nametext is too long and strncpy didn't copy the null
+		nameLen = (unsigned int)strlen(name);
+		for(uint32 i = 0;i<nameLen;++i)
+		{
+			if(name[i] >= 'a' && name[i] <= 'z')
+				name[i] = toupper(name[i]);
+			else if(!(name[i] >= '0' && name[i] <= '9') &&
+				!(name[i] >= 'A' && name[i] <= 'Z'))
+				name[i] = '_';
+		}
+		namehash = crc32((const unsigned char*)nametext, nameTextLen);
+		int32 numSpaces = fieldSize-prefixLen-nameLen-1;
+		if(numSpaces < 0)
+			fprintf(f, "WTF");
+		spaces[numSpaces] = 0;
+		fprintf(f, "#define %s%s0x%08X\n", namearray, spaces, namehash);
+		spaces[numSpaces] = ' ';
+	}
+	fclose(f);*/
 	signal( SIGINT, _OnSignal );
 	signal( SIGTERM, _OnSignal );
 	signal( SIGABRT, _OnSignal );

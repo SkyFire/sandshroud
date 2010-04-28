@@ -1217,7 +1217,7 @@ enum Opcodes
 	CMSG_QUERY_VEHICLE_STATUS                       = 0x4A4, // not found
 	UMSG_UNKNOWN_1189                               = 0x4A5, // not found, old SMSG_PET_GUIDS
 	SMSG_BATTLEGROUND_INFO_THROTTLED                = 0x4A6, // smsg unk, "You can't do that yet"
-	SMSG_CONVERT_VEHICLE							= 0x4A7, // smsg guid+uint32 (vehicle)
+	SMSG_PLAYER_VEHICLE_DATA                        = 0x4A7, // smsg guid+uint32 (vehicle)
 	CMSG_BOARD_PLAYER_VEHICLE                       = 0x4A8, // cmsg uint64
 	CMSG_EJECT_PASSENGER                            = 0x4A9, // cmsg uint64
 	SMSG_PET_GUIDS                                  = 0x4AA, // shifted+5

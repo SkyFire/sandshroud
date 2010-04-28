@@ -6352,6 +6352,7 @@ void Aura::SpellAuraMounted(bool apply)
 		pPlayer->RemoveAura(id);
 	}
 
+	bool isVehicleSpell = m_spellProto->Effect[1] == SPELL_EFFECT_SUMMON ? true : false;
 	bool warlockpet;
 
 	if(pPlayer->GetSummon() && pPlayer->GetSummon()->IsWarlockPet() == true)
@@ -6359,6 +6360,9 @@ void Aura::SpellAuraMounted(bool apply)
 
 	if(apply)
 	{
+		if( isVehicleSpell ) // get rid of meeeee, I'm a useless placeholder!
+			SetDuration(100);
+
 		pPlayer->m_bgFlagIneligible++;
 		SetPositive();
 
@@ -6381,20 +6385,13 @@ void Aura::SpellAuraMounted(bool apply)
 		m_target->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_MOUNT);
 
 		CreatureInfo* ci = CreatureNameStorage.LookupEntry(mod->m_miscValue);
-		if(ci != NULL && ci->Male_DisplayID != 0)
+		if(!isVehicleSpell && ci != NULL && ci->Male_DisplayID != 0)
 			m_target->SetUInt32Value( UNIT_FIELD_MOUNTDISPLAYID , ci->Male_DisplayID);
 
 		pPlayer->m_MountSpellId = m_spellProto->Id;
 		pPlayer->m_FlyingAura = 0;
 		
-		// Handle player vehicle mounts
-		CreatureProto* cp = CreatureProtoStorage.LookupEntry(mod->m_miscValue);
-		if(cp && cp->vehicle_entry)
-		{
-			Mount * vMount = new Mount(m_target, cp->vehicle_entry, m_spellProto->Id);
-			m_target->SetVehicleMount(vMount, 0);
-			vMount->ConvertToVehicle(cp->vehicle_entry);
-		}
+		//m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI);
 
 		if( pPlayer->GetShapeShift() && 
 				!(pPlayer->GetShapeShift() & FORM_BATTLESTANCE | FORM_DEFENSIVESTANCE | FORM_BERSERKERSTANCE ) && 
@@ -6407,6 +6404,8 @@ void Aura::SpellAuraMounted(bool apply)
 		pPlayer->m_MountSpellId = 0;
 		pPlayer->m_FlyingAura = 0;
 
+		if( !isVehicleSpell )
+			m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
 
 		uint8 petnum = pPlayer->GetUnstabledPetNumber();
 
@@ -6426,13 +6425,7 @@ void Aura::SpellAuraMounted(bool apply)
 			}
 			pPlayer->hasqueuedpet = false;
 		}
-		Mount * vMount = m_target->GetVehicleMount();
-		if(vMount)
-		{
-			vMount->ConvertToVehicle(0);
-			m_target->ResetVehicleMount();
-			delete vMount;
-		}
+		//m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI);
 	}
 }
 
