@@ -730,7 +730,8 @@ protected:
 	void HandleVehicleDismiss(WorldPacket & recv_data);
 	void HandleSpellClick( WorldPacket & recv_data );
 	void HandleRequestSeatChange( WorldPacket & recv_data );
-
+	void ConvertToVehicle( WorldPacket & recv_data );
+    void HandleEnterVehicleOpcode( WorldPacket & recv_data );
 	//MISC
 	void HandleReadyForAccountDataTimes(WorldPacket &recv_data);
 	void HandleWorldStateUITimerUpdate( WorldPacket & recv_data );

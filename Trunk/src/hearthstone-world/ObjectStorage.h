@@ -39,7 +39,6 @@ extern SERVER_DECL SQLStorage<AchievementReward, HashMapStorageContainer<Achieve
 extern SERVER_DECL SQLStorage<RandomItemCreation, HashMapStorageContainer<RandomItemCreation> >		RandomItemCreationStorage;
 extern SERVER_DECL SQLStorage<RandomCardCreation, HashMapStorageContainer<RandomCardCreation> >		RandomCardCreationStorage;
 extern SERVER_DECL SQLStorage<ScrollCreation, HashMapStorageContainer<ScrollCreation> >				ScrollCreationStorage;
-
 void Storage_FillTaskList(TaskList & tl);
 void Storage_Cleanup();
 bool Storage_ReloadTable(const char * TableName);

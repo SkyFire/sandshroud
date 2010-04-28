@@ -824,12 +824,12 @@ typedef std::map<uint32, PlayerCooldown>			PlayerCooldownMap;
 
 class SERVER_DECL Player : public Unit
 {
+	friend class Mount;
 	friend class WorldSession;
 	friend class Pet;
 	friend class SkillIterator;
 
 public:
-
 	Player ( uint32 guid );
 	~Player ( );
 	virtual void Init();

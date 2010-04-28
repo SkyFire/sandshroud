@@ -5627,7 +5627,7 @@ void ApplyNormalFixes()
 		//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
 		namehash = crc32((const unsigned char*)sp->Name, (unsigned int)strlen(sp->Name));
 		sp->NameHash   = namehash; //need these set before we start processing spells
-
+		
 		float radius = 0.0f;
 		if(sp->EffectRadiusIndex[0] != 0)
 			radius=::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[0]));

@@ -768,7 +768,8 @@ protected:
 //  Unit
 //  Base object for Players and Creatures
 //====================================================================
-
+class Vehicle;
+class Mount;
 class SERVER_DECL Unit : public Object
 {
 public:
@@ -794,7 +795,8 @@ public:
 	}
 
 	
-
+	Unit * m_mountowner;
+	Unit * GetOwner() { return m_mountowner; }
 	/// State flags are server-only flags to help me know when to do stuff, like die, or attack
 	HEARTHSTONE_INLINE void addStateFlag(uint32 f) { m_state |= f; };
 	HEARTHSTONE_INLINE bool hasStateFlag(uint32 f) { return (m_state & f ? true : false); }
@@ -1353,6 +1355,29 @@ public:
 	MovementInfo* GetMovementInfo() { return &movement_info; }
 	MovementInfo movement_info;
 
+	/************************************************************************/
+	/* Vehicle Mounts														*/
+	/************************************************************************/
+
+	HEARTHSTONE_INLINE Mount * GetVehicleMount() { return m_vehiclemount; }
+	bool IsVehicleMountOwner();
+
+	HEARTHSTONE_INLINE void SetVehicleMount(Mount * mount, uint8 seatid)
+	{
+		m_vehiclemount = mount;
+		m_vehicleSeat = seatid;
+	}
+
+	HEARTHSTONE_INLINE void ResetVehicleMount()
+	{
+		m_vehiclemount = NULL;
+		m_vehicleSeat = -1;
+	}
+
+private:
+	Vehicle *		m_vehicle;
+	int8			m_vehicleSeat;
+	Mount *			m_vehiclemount;
 protected:
 	/* Preallocated buffers for movement handlers */
 	uint8 movement_packet[90];
