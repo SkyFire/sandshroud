@@ -572,7 +572,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 					msg += "priest";
 					break;
 				case DEATHKNIGHT:
-					msg += "death knigh";
+					msg += "death knight";
 					break;
 				case SHAMAN:
 					msg += "shaman";

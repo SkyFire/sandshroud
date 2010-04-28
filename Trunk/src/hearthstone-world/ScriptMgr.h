@@ -23,6 +23,7 @@
 #define SCRIPT_MODULE void*
 #define ADD_CREATURE_FACTORY_FUNCTION(cl) static CreatureAIScript * Create(Creature* c) { return new cl(c); }
 #define ADD_INSTANCE_FACTORY_FUNCTION( ClassName ) static InstanceScript* Create( MapMgr* pMapMgr ) { return new ClassName( pMapMgr ); };
+#define ADD_GAMEOBJECT_FACTORY_FUNCTION(cl) static GameObjectAIScript * Create(GameObject* go) { return new cl(go); }
 
 class Channel;
 class Guild;
@@ -57,11 +58,11 @@ enum ServerHookEvents
 	SERVER_HOOK_EVENT_ON_AREATRIGGER		= 27,
 	SERVER_HOOK_EVENT_ON_PLAYER_SAVE_TO_DB	= 28,
 	SERVER_HOOK_EVENT_ON_AURA_REMOVE		= 29,
-	SERVER_HOOK_EVENT_ON_DESTROY_BUILDING	= 30, 
-	SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING	= 31, 
-	SERVER_HOOK_EVENT_ON_MOUNT_FLYING		= 32, 
-	SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE	= 33, 
-	SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN		= 34, 
+	SERVER_HOOK_EVENT_ON_DESTROY_BUILDING	= 30,
+	SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING	= 31,
+	SERVER_HOOK_EVENT_ON_MOUNT_FLYING		= 32,
+	SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE	= 33,
+	SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN		= 34,
 
 	NUM_SERVER_HOOKS,
 };
@@ -328,7 +329,7 @@ public:
 	void						RemoveUpdateEvent();
 
 	// Something to return Instance's MapMgr
-	MapMgr*				GetInstance() { return mInstance; };
+	MapMgr*						GetInstance() { return mInstance; };
 
 protected:
 

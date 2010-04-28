@@ -142,7 +142,7 @@ public:
 	// Player and instance - reimplementation for easier calling
 	bool						HasPlayers();
 	size_t						GetPlayerCount();
-	Player *				GetPlayerByGuid( uint32 pGuid );
+	Player *					GetPlayerByGuid( uint32 pGuid );
 	bool						IsCombatInProgress();
 
 	// Timers - reimplementation from MoonScriptCreatureAI
@@ -180,8 +180,8 @@ public:
 	virtual void				OnGameObjectPushToWorld( GameObject *pGameObject );
 
 	// Reimplemented events
-	//virtual GameObject *	GetObjectForOpenLock( Player *pCaster, Spell *pSpell, SpellEntry* pSpellEntry );
-	//virtual void				SetLockOptions( uint32 pEntryId, GameObject *pGameObject );
+	virtual GameObject *		GetObjectForOpenLock( Player *pCaster, Spell *pSpell, SpellEntry* pSpellEntry );
+	virtual void				SetLockOptions( uint32 pEntryId, GameObject *pGameObject );
 	virtual uint32				GetRespawnTimeForCreature( uint32 pEntryId, Creature *pCreature);
 	virtual void				OnLoad();
 	virtual void				UpdateEvent();

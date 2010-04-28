@@ -187,6 +187,9 @@ void MoonScriptCreatureAI::SetDespawnWhenInactive(bool pValue)
 
 void MoonScriptCreatureAI::SetBehavior(BehaviorType pBehavior)
 {
+	if( _unit == NULL || _unit->GetAIInterface() == NULL )
+		return;
+
 	switch( pBehavior )
 	{
 		case Behavior_Default:		_unit->GetAIInterface()->setCurrentAgent(AGENT_NULL); break;

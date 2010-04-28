@@ -10,6 +10,7 @@ lib_LTLIBRARIES = libSunEventScripts.la
 
 libSunEventScripts_la_SOURCES = Setup.cpp \
 ../Common/Base.cpp \
+../Common/Instance_Base.cpp \
 Halloween.cpp \
 WinterVeil.cpp \
 Event_DarkPortal.cpp

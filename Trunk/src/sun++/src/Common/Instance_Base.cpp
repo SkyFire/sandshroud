@@ -446,14 +446,14 @@ void MoonInstanceScript::OnGameObjectPushToWorld( GameObject *pGameObject )
 		pGameObject->SetState( ( *Iter ).second );
 };
 
-/*GameObject *MoonInstanceScript::GetObjectForOpenLock( Player *pCaster, Spell *pSpell, SpellEntry* pSpellEntry )
+GameObject *MoonInstanceScript::GetObjectForOpenLock( Player *pCaster, Spell *pSpell, SpellEntry* pSpellEntry )
 {
 	return NULLGOB;
-};*/
+};
 
-/*void MoonInstanceScript::SetLockOptions( uint32 pEntryId, GameObject *pGameObject )
+void MoonInstanceScript::SetLockOptions( uint32 pEntryId, GameObject *pGameObject )
 {
-};*/
+};
 
 uint32 MoonInstanceScript::GetRespawnTimeForCreature( uint32 pEntryId, Creature *pCreature)
 {

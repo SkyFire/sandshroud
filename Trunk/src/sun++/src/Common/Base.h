@@ -368,7 +368,7 @@ public:
 
 	//Others
 	void					SetTargetToChannel(Unit *pTarget, uint32 pSpellId);
-	Unit *				GetTargetToChannel();
+	Unit *					GetTargetToChannel();
 
 	//Options
 	void					SetAIUpdateFreq(uint32 pUpdateFreq);
@@ -399,12 +399,12 @@ protected:
 	void					CancelAllSpells();
 
 	RangeStatusPair			GetSpellRangeStatusToUnit( Unit *pTarget, SpellDesc* pSpell );
-	Unit *				GetTargetForSpell( SpellDesc* pSpell );
-	Unit *				GetBestPlayerTarget( TargetFilter pFilter = TargetFilter_None, float pMinRange = 0.0f, float pMaxRange = 0.0f );
-	Unit *				GetBestUnitTarget( TargetFilter pFilter = TargetFilter_None, float pMinRange = 0.0f, float pMaxRange = 0.0f );
-	Unit *				ChooseBestTargetInArray( UnitArray& pTargetArray, TargetFilter pFilter );
-	Unit *				GetNearestTargetInArray( UnitArray& pTargetArray );
-	Unit *				GetSecondMostHatedTargetInArray( UnitArray& pTargetArray );
+	Unit *					GetTargetForSpell( SpellDesc* pSpell );
+	Unit *					GetBestPlayerTarget( TargetFilter pFilter = TargetFilter_None, float pMinRange = 0.0f, float pMaxRange = 0.0f );
+	Unit *					GetBestUnitTarget( TargetFilter pFilter = TargetFilter_None, float pMinRange = 0.0f, float pMaxRange = 0.0f );
+	Unit *					ChooseBestTargetInArray( UnitArray& pTargetArray, TargetFilter pFilter );
+	Unit *					GetNearestTargetInArray( UnitArray& pTargetArray );
+	Unit *					GetSecondMostHatedTargetInArray( UnitArray& pTargetArray );
 	bool					IsValidUnitTarget( Object *pObject, TargetFilter pFilter, float pMinRange = 0.0f, float pMaxRange = 0.0f  );
 	void					PushRunToTargetCache( Unit *pTarget, SpellDesc* pSpell, RangeStatusPair pRangeStatus = make_pair( RangeStatus_TooFar, 0.0f ) );
 	void					PopRunToTargetCache();
@@ -415,7 +415,7 @@ protected:
 	SpellDescList			mQueuedSpells;
 	SpellDescList			mScheduledSpells;
 
-	Unit *				mRunToTargetCache;
+	Unit *					mRunToTargetCache;
 	SpellDesc*				mRunToTargetSpellCache;
 
 	EmoteArray				mOnCombatStartEmotes;
