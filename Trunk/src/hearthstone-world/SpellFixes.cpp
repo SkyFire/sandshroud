@@ -2475,6 +2475,15 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procChance = 30;//some say it	is triggered every now and then
 					sp->procFlags	=	PROC_ON_RANGED_ATTACK;
 			}break;
+
+            //deep wounds
+		case  12834:
+		case  12849:
+		case  12867:
+            {
+                    sp->EffectTriggerSpell[0] = 12721;
+                    sp->procFlags = PROC_ON_CRIT_ATTACK | PROC_ON_RANGED_CRIT_ATTACK | PROC_ON_SPELL_CRIT_HIT;
+			}break;
 	
 			//warrior	-	second wind	should trigger on	self
 		case  29841:
@@ -6391,11 +6400,6 @@ void ApplyNormalFixes()
 		}
 
 		//this starts to be an issue for trigger spell id : Deep Wounds
-		else if( strstr( sp->Name, "Deep Wounds") && sp->EffectTriggerSpell[0])
-		{
-			if( strstr(sp->Description, "over $") )
-				sp->EffectTriggerSpell[0] = GetTriggerSpellFromDescription("over $", sp->Description);
-		}
 		else if( strstr( sp->Name, "Holy Shock"))
 		{
 			//check if we can find in the description
@@ -6735,6 +6739,7 @@ void ApplyNormalFixes()
 		//////////////////////////////////////////
 
 		// Insert warrior spell fixes here
+
 		if( sp->NameHash == SPELL_HASH_MORTAL_STRIKE)
 			sp->maxstack = 1; // Healing reduction shouldn't stack
 
