@@ -4284,6 +4284,24 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 
 		if(cr_entry == 24207)	// army of the dead
 			damage = 6;
+		
+		if(cr_entry == 29264)	// Spirit Wolf
+		{
+			CreatureInfo *ci = CreatureNameStorage.LookupEntry(m_spellInfo->EffectMiscValue[i]);
+			Pet *summon = objmgr.CreatePet();
+			summon->CreateAsSummon(cr_entry, ci, NULL, p_caster, m_spellInfo, 4, GetDuration());
+			summon->AddSpell(dbcSpell.LookupEntry(58877), true); // Spirit Hunt
+			summon->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
+			summon->AddSpell(dbcSpell.LookupEntry(58857), true); // Twin Howl
+			summon->AddSpell(dbcSpell.LookupEntry(58861), true); // Spirit Bash
+			Pet *summon2 = objmgr.CreatePet();
+			summon2->CreateAsSummon(cr_entry, ci, NULL, p_caster, m_spellInfo, 4, GetDuration());
+			summon2->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
+			summon2->AddSpell(dbcSpell.LookupEntry(58877), true); // Spirit Hunt
+			summon2->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
+			summon2->AddSpell(dbcSpell.LookupEntry(58857), true); // Twin Howl
+			summon2->AddSpell(dbcSpell.LookupEntry(58861), true); // Spirit Bash
+		};
 
 		//Spread spawns equally around summoner
 		float angle_for_each_spawn = damage ? - float(M_PI * 2.0f)/damage : - float(M_PI * 2.0f);
