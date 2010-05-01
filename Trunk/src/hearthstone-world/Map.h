@@ -69,8 +69,6 @@ typedef struct CreatureSpawn
 	uint32  MountedDisplayID;
 	int32   phase;
 	uint32  vehicle;
-	uint8   eventid;
-	EventIdInfo * eventinfo;
 }CreatureSpawn;
 
 typedef struct GOSpawn
@@ -91,8 +89,6 @@ typedef struct GOSpawn
 	uint32	faction;
 	float   scale;
 	int32   phase;
-	uint8   eventid;
-	EventIdInfo * eventinfo;
 } GOSpawn;
 
 typedef std::vector<CreatureSpawn*> CreatureSpawnList;

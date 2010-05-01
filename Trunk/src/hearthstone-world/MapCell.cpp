@@ -198,61 +198,58 @@ void MapCell::LoadObjects(CellSpawns * sp)
 /*				if((*i)->respawnNpcLink && pInstance->m_killedNpcs.find((*i)->respawnNpcLink) != pInstance->m_killedNpcs.end())
 					continue;*/
 			}
-			if(!(*i)->eventid)
+			if((*i)->vehicle != 0)
 			{
-				if((*i)->vehicle != 0)
-				{
 				v =_mapmgr->CreateVehicle((*i)->entry);
 				if(v == NULLVEHICLE)
 					continue;
 
-					v->SetMapId(_mapmgr->GetMapId());
-					v->SetInstanceID(_mapmgr->GetInstanceID());
-					v->m_loadedFromDB = true;
+				v->SetMapId(_mapmgr->GetMapId());
+				v->SetInstanceID(_mapmgr->GetInstanceID());
+				v->m_loadedFromDB = true;
 
-					if(v->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
-					{
-						if(!v->CanAddToWorld())
-						{
-							delete v;
-							v = NULLVEHICLE;
-							continue;
-						}
-
-						v->PushToWorld(_mapmgr);
-					}
-					else
+				if(v->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
+				{
+					if(!v->CanAddToWorld())
 					{
 						delete v;
 						v = NULLVEHICLE;
+						continue;
 					}
+
+					v->PushToWorld(_mapmgr);
 				}
 				else
 				{
-					c=_mapmgr->CreateCreature((*i)->entry);
-					if(c == NULLCREATURE)
-						continue;
-	
-					c->SetMapId(_mapmgr->GetMapId());
-					c->SetInstanceID(_mapmgr->GetInstanceID());
-					c->m_loadedFromDB = true;
+					delete v;
+					v = NULLVEHICLE;
+				}
+			}
+			else
+			{
+				c=_mapmgr->CreateCreature((*i)->entry);
+				if(c == NULLCREATURE)
+					continue;
 
-					if(c->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
-					{
-						if(!c->CanAddToWorld())
-						{
-							delete c;
-							c = NULLCREATURE;
-							continue;
-						}
+				c->SetMapId(_mapmgr->GetMapId());
+				c->SetInstanceID(_mapmgr->GetInstanceID());
+				c->m_loadedFromDB = true;
 
-						c->PushToWorld(_mapmgr);
-					}
-					else
+				if(c->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
+				{
+					if(!c->CanAddToWorld())
 					{
 						delete c;
 						c = NULLCREATURE;
+						continue;
 					}
+
+					c->PushToWorld(_mapmgr);
+				}
+				else
+				{
+					delete c;
+					c = NULLCREATURE;
 				}
 			}
 		}
@@ -263,22 +260,19 @@ void MapCell::LoadObjects(CellSpawns * sp)
 		GameObject* go;
 		for(GOSpawnList::iterator i=sp->GOSpawns.begin();i!=sp->GOSpawns.end();++i)
 		{
-			if(!(*i)->eventid)
+			go = _mapmgr->CreateGameObject((*i)->entry);
+			if(go == NULL)
+				continue;
+			if(go->Load(*i))
 			{
-				go = _mapmgr->CreateGameObject((*i)->entry);
-				if(go == NULL)
-					continue;
-				if(go->Load(*i))
-				{
-					go->m_loadedFromDB = true;
-					go->PushToWorld(_mapmgr);
-					CALL_GO_SCRIPT_EVENT(go, OnSpawn)();
-				}
-				else
-				{
-					delete go;
-					go = NULLOBJ;
-				}
+				go->m_loadedFromDB = true;
+				go->PushToWorld(_mapmgr);
+				CALL_GO_SCRIPT_EVENT(go, OnSpawn)();
+			}
+			else
+			{
+				delete go;
+				go = NULLOBJ;
 			}
 		}
 	}

@@ -2162,8 +2162,6 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		sp->MountedDisplayID = 0;
 		sp->phase = 1;
 		sp->vehicle = proto->vehicle_entry;
-		sp->eventid = 0;
-		sp->eventinfo = NULL;
 
 		p->Load(sp, (uint32)NULL, NULL);
 	}

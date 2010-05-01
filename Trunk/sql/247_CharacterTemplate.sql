@@ -395,16 +395,6 @@ CREATE TABLE `equipmentsets` (
   UNIQUE KEY `idx_set` (`guid`,`setguid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `events_settings` */
-
-DROP TABLE IF EXISTS `events_settings`;
-
-CREATE TABLE `events_settings` (
-  `eventid` tinyint(2) unsigned NOT NULL,
-  `lastactivated` bigint(20) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`eventid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 /*Table structure for table `gm_surveys` */
 
 DROP TABLE IF EXISTS `gm_surveys`;

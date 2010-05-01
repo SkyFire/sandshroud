@@ -134,7 +134,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 	CreatureSpawnCount = 0;
 	GameObjectSpawnCount = 0;
 	QueryResult* result;
-	QueryResult* result2;
 	set<string>::iterator tableiterator;
 	if(reload)//perform cleanup
 	{
@@ -190,25 +189,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 					cspawn->MountedDisplayID = fields[19].GetUInt32();
 					cspawn->phase = fields[20].GetInt32();
 					cspawn->vehicle = fields[21].GetInt32();
-					cspawn->eventid = fields[22].GetUInt8();
-					if(cspawn->eventid > 0)
-					{
-						result2 = WorldDatabase.Query("SELECT * FROM events_creature WHERE id = '%u' AND eventid = '%u'", cspawn->id, cspawn->eventid);
-						if(result2)
-						{
-							cspawn->eventinfo = new EventIdInfo;
-							Field * fields2 = result2->Fetch();
-							cspawn->eventinfo->eventid = fields2[0].GetUInt8();
-							cspawn->eventinfo->eventchangesflag = fields2[2].GetUInt8();
-							cspawn->eventinfo->eventphase = fields2[3].GetUInt32();
-							cspawn->eventinfo->eventdisplayid = fields2[4].GetUInt32();
-							cspawn->eventinfo->eventitem1 = fields2[5].GetUInt32();
-							cspawn->eventinfo->eventitem2 = fields2[6].GetUInt32();
-							cspawn->eventinfo->eventitem3 = fields2[7].GetUInt32();
-							delete result2;
-						}
-					}
-
 					uint32 cellx = CellHandler<MapMgr>::GetPosX(cspawn->x);
 					uint32 celly = CellHandler<MapMgr>::GetPosY(cspawn->y);
 
@@ -328,21 +308,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 					gspawn->scale = fields[14].GetFloat();
 					gspawn->phase = fields[15].GetInt32();
 					gspawn->MountDisplayID = 0; //gameobjects don't mount
-					gspawn->eventid = fields[16].GetUInt8();
-					if(gspawn->eventid > 0)
-					{
-						result2 = WorldDatabase.Query("SELECT * FROM events_gameobject WHERE id = '%u' AND eventid = '%u'", gspawn->id, gspawn->eventid);
-						if(result2)
-						{
-							gspawn->eventinfo = new EventIdInfo;
-							Field * fields2 = result2->Fetch();
-							gspawn->eventinfo->eventid = fields2[0].GetUInt8();
-							gspawn->eventinfo->eventchangesflag = fields2[2].GetUInt8();
-							gspawn->eventinfo->eventphase = fields2[3].GetUInt32();
-							gspawn->eventinfo->eventdisplayid = fields2[4].GetUInt32();
-							delete result2;
-						}
-					}
 					uint32 cellx = CellHandler<MapMgr>::GetPosX(gspawn->x);
 					uint32 celly = CellHandler<MapMgr>::GetPosY(gspawn->y);
 					if(spawns[cellx] == NULL)

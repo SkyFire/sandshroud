@@ -54,7 +54,6 @@ class SERVER_DECL DayWatcherThread : public Singleton<DayWatcherThread>, public 
 	bool m_busy;
 	bool m_dirty;
 	bool _loaded;
-	bool runEvents;
 	bool _firstrun[2];
 	bool m_heroic_reset;
 
@@ -86,18 +85,6 @@ public:
 	void update_arena();
 	void update_daily();
 	void Reset_Heroic_Instances();
-	//ING Events
-	CreatureEventSpawnMaps m_creatureEventSpawnMaps;
-	GameobjectEventSpawnMaps m_gameobjectEventSpawnMaps;
-	EventsList m_eventIdList;
-
-	void update_event_settings(uint8 eventid, time_t activated);
-	void LoadEventIdSettings();
-	bool CheckHourlyEvent(tm * now_time, uint8 starthour, uint8 endhour);
-	bool has_eventid_timeout_expired(tm * nowtime, int updatetime, uint8 timeoutval);
-	bool has_eventid_expired(int activedays, time_t lastactivated);
-	bool SpawnEventId(uint8 eventId, bool activate = true);
-	uint8 eventToDespawn;
 };
 #define sDayWatcher DayWatcherThread::getSingleton()
 
