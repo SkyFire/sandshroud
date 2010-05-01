@@ -70,16 +70,6 @@ enum MsTimeVariables
 #include <math.h>
 #include <errno.h>
 
-#ifdef WIN32
-#include <unordered_set>
-#include <unordered_map>
-#else
-#include <tr1/unordered_set>
-#include <tr1/unordered_map>
-#endif
-
-using namespace std::tr1;
-
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
 #  define WIN32_LEAN_AND_MEAN
 #  define _WIN32_WINNT 0x0500
@@ -130,6 +120,8 @@ using namespace std::tr1;
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
 #  define PLATFORM PLATFORM_WIN32
+#elif defined( __INTEL_COMPILER )
+#  define PLATFORM PLATFORM_INTEL
 #elif defined( __APPLE_CC__ )
 #  define PLATFORM PLATFORM_APPLE
 #else
@@ -139,9 +131,12 @@ using namespace std::tr1;
 #define COMPILER_MICROSOFT 0
 #define COMPILER_GNU	   1
 #define COMPILER_BORLAND   2
+#define COMPILER_INTEL     3
 
 #ifdef _MSC_VER
 #  define COMPILER COMPILER_MICROSOFT
+#elif defined( __INTEL_COMPILER )
+#  define COMPILER COMPILER_INTEL
 #elif defined( __BORLANDC__ )
 #  define COMPILER COMPILER_BORLAND
 #elif defined( __GNUC__ )
@@ -185,6 +180,14 @@ using namespace std::tr1;
 #else
 #define ARCH "X86"
 #endif
+
+/*#if COMPILER == COMPILER_MICROSOFT
+#  pragma warning( disable : 4267 ) // conversion from 'size_t' to 'int', possible loss of data
+#  pragma warning( disable : 4311 ) // 'type cast': pointer truncation from HMODULE to uint32
+#  pragma warning( disable : 4786 ) // identifier was truncated to '255' characters in the debug information
+#  pragma warning( disable : 4146 )
+#  pragma warning( disable : 4800 )
+#endif*/
 
 #if PLATFORM == PLATFORM_WIN32
 #define STRCASECMP stricmp
@@ -256,34 +259,85 @@ using namespace std::tr1;
 #endif
 #endif
 
-#if COMPILER == COMPILER_GNU && __GNUC__ >= 3
+#if COMPILER == COMPILER_INTEL
+#include <ext/hash_map>
+#elif COMPILER == COMPILER_GNU && __GNUC__ >= 4
+#include <tr1/memory>
+#include <tr1/unordered_map>
+#include <tr1/unordered_set>
+#elif COMPILER == COMPILER_GNU && __GNUC__ >= 3
 #include <ext/hash_map>
 #include <ext/hash_set>
+#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1500 && _HAS_TR1   // VC9.0 SP1 and later
+#include <memory>
+#include <unordered_map>
+#include <unordered_set>
+#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1500 && !_HAS_TR1
+#pragma message ("FATAL ERROR: Please install Service Pack 1 for Visual Studio 2008")
+#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER < 1500
+#include <boost/tr1/memory.hpp>
+#include <boost/tr1/unordered_map.hpp>
+#include <boost/tr1/unordered_set.hpp>
 #else
+#include <memory>
 #include <hash_map>
 #include <hash_set>
 #endif
-
-
 
 #ifdef _STLPORT_VERSION
 #define HM_NAMESPACE std
 using std::hash_map;
 using std::hash_set;
-#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1300
-#define HM_NAMESPACE stdext
-using stdext::hash_map;
-using stdext::hash_set;
+#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1500 && _HAS_TR1
+using namespace std::tr1;
+using std::tr1::shared_ptr;
+#undef HM_NAMESPACE
+#define HM_NAMESPACE tr1
+#define hash_map unordered_map
+#define TRHAX 1
+#elif COMPILER == COMPILER_MICROSOFT && (_MSC_VER < 1500 || !_HAS_TR1)
+using namespace std::tr1;
+using std::tr1::shared_ptr;
+#undef HM_NAMESPACE
+#define HM_NAMESPACE tr1
+#define hash_map unordered_map
 #define ENABLE_SHITTY_STL_HACKS 1
 
 // hacky stuff for vc++
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
-
 #elif COMPILER == COMPILER_INTEL
 #define HM_NAMESPACE std
 using std::hash_map;
 using std::hash_set;
+#elif COMPILER == COMPILER_GNU && __GNUC__ >= 4
+using namespace std::tr1;
+using std::tr1::shared_ptr;
+#undef HM_NAMESPACE
+#define HM_NAMESPACE tr1
+#define shared_ptr std::tr1::shared_ptr
+#define hash_map unordered_map
+#define TRHAX 1
+namespace std
+{
+	namespace tr1
+	{
+		template<> struct hash<const long long unsigned int> : public std::unary_function<const long long unsigned int, std::size_t>
+		{
+			std::size_t operator()(const long long unsigned int val) const
+			{
+				return static_cast<std::size_t>(val);
+			}
+		};
+		template<> struct hash<const unsigned int> : public std::unary_function<const unsigned int, std::size_t>
+		{
+			std::size_t operator()(const unsigned int val) const
+			{
+				return static_cast<std::size_t>(val);
+			}
+		};
+	}
+}
 #elif COMPILER == COMPILER_GNU && __GNUC__ >= 3
 #define HM_NAMESPACE __gnu_cxx
 using __gnu_cxx::hash_map;
@@ -301,12 +355,37 @@ namespace __gnu_cxx
 	};
 
 };
-
 #else
 #define HM_NAMESPACE std
 using std::hash_map;
 #endif
+#if COMPILER == COMPILER_GNU && __GNUC__ >=4 && __GNUC_MINOR__ == 1 && __GNUC_PATCHLEVEL__ == 2
+//GCC I HATE YOU!
+namespace std
+{
+	namespace tr1
+	{
+		template<> struct hash<long long unsigned int> : public std::unary_function<long long unsigned int, std::size_t>
+		{
+			std::size_t operator()(const long long unsigned int val) const
+			{
+				return static_cast<std::size_t>(val);
+			}
+		};
+	}
+}
+#endif
 
+namespace std
+{
+	namespace tr1
+	{
+		template<typename T> struct hash<shared_ptr<T> >
+		{
+			size_t operator()(shared_ptr<T> const &__x) const { return (size_t)__x.get(); }
+		};
+	}
+}
 
 /* Use correct types for x64 platforms, too */
 typedef unsigned int uint;

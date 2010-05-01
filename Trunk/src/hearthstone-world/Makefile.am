@@ -79,7 +79,6 @@ hearthstone_world_SOURCES = \
     GuildHandler.cpp \
     HonorHandler.cpp \
     HonorHandler.h \
-	INGEvents.cpp \
     Item.cpp \
     Item.h \
     ItemHandler.cpp \
@@ -152,7 +151,6 @@ hearthstone_world_SOURCES = \
     SpellEffects.cpp \
     SpellHandler.cpp \
     SpellFixes.cpp \
-    SpellFixes/DruidSpellFixes.cpp \
     Stats.h \
     Stats.cpp \
     StdAfx.cpp \

@@ -118,22 +118,22 @@ public:
 	const uint8 GetNewGuidMask() const { return guidmask; }
 	const bool operator !() const { return (!oldguid); }
 	// WoWGuid == someval bool
-	const bool operator ==(int someval) const { return (oldguid == someval); }
+	const bool operator ==(int someval) const { if(someval < 0) return false; return (oldguid == uint(someval)); }
 	const bool operator ==(uint8 someval) const { return (oldguid == someval); }
 	const bool operator ==(uint32 someval) const { return (oldguid == someval); }
 	const bool operator ==(uint64 someval) const { return (oldguid == someval); }
 	// WoWGuid != someval bool
-	const bool operator !=(int someval) const { return (oldguid != someval); }
+	const bool operator !=(int someval) const { if(someval < 0) return false; return (oldguid != uint(someval)); }
 	const bool operator !=(uint8 someval) const { return (oldguid != someval); }
 	const bool operator !=(uint32 someval) const { return (oldguid != someval); }
 	const bool operator !=(uint64 someval) const { return (oldguid != someval); }
 	// WoWGuid & someval contains
-	const uint64 operator &(int someval) const { return (oldguid & someval); }
+	const uint64 operator &(int someval) const { if(someval < 0) someval = 0; return (oldguid & uint(someval)); }
 	const uint64 operator &(uint8 someval) const { return (oldguid & someval); }
 	const uint64 operator &(uint32 someval) const { return (oldguid & someval); }
 	const uint64 operator &(uint64 someval) const { return (oldguid & someval); }
 	// WoWGuid = someval
-	void operator =(int someval) { if(someval < 0) someval = 0; Clear(); Init(uint64(someval)); }
+	void operator =(int someval) { if(someval < 0) return; Clear(); Init(uint64(someval)); }
 	void operator =(uint8 someval) { Clear(); Init(uint64(someval)); }
 	void operator =(uint32 someval) { Clear(); Init(uint64(someval)); }
 	void operator =(uint64 someval) { Clear(); Init(uint64(someval)); }
