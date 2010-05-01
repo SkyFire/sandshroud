@@ -29,9 +29,6 @@ static const uint32 DKNodesMask[12] = {4294967295,4093640703,830406655,0,3357081
 
 Player::Player( uint32 guid )
 {
-#ifdef SHAREDPTR_DEBUGMODE
-	printf("Player::Player(%u)\n", guid);
-#endif
 	m_runemask = 0x3F;
 	m_bgRatedQueue = false;
 	m_massSummonEnabled = false;
@@ -48,12 +45,9 @@ Player::Player( uint32 guid )
 
 void Player::Init()
 {
-#ifdef SHAREDPTR_DEBUGMODE
-	printf("Player::Init()\n");
-#endif
 	m_mailBox						= new Mailbox( GetUInt32Value(OBJECT_FIELD_GUID) );
-	m_ItemInterface					= new ItemInterface(TO_PLAYER(this));
-	m_achievementInterface			= new AchievementInterface(TO_PLAYER(this));
+	m_ItemInterface					= new ItemInterface(this);
+	m_achievementInterface			= new AchievementInterface(this);
 
 	m_bgSlot						= 0;
 	mAngerManagement				= false;

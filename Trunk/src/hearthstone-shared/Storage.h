@@ -721,7 +721,7 @@ public:
 				Max = result->Fetch()[0].GetUInt32() + 1;
 				if(Max > STORAGE_ARRAY_MAX)
 				{
-					Log.Warning("Storage", "The table, '%s', has been limited to maximum of %u entries. Any entry higher than %u will be discarted.",
+					Log.Error("Storage", "The table, '%s', has been limited to maximum of %u entries. Any entry higher than %u will be discarted.",
 						IndexName, STORAGE_ARRAY_MAX, Max );
 
 					Max = STORAGE_ARRAY_MAX;
@@ -742,7 +742,7 @@ public:
 		{
 			if(result->GetFieldCount() > cols)
 			{
-				Log.Warning("Storage", "Invalid format in %s (%u/%u), loading anyway because we have enough data\n", IndexName, (unsigned int)cols, (unsigned int)result->GetFieldCount());
+				Log.Error("Storage", "Invalid format in %s (%u/%u), loading anyway because we have enough data\n", IndexName, (unsigned int)cols, (unsigned int)result->GetFieldCount());
 			}
 			else
 			{

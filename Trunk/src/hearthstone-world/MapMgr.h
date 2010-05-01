@@ -117,7 +117,7 @@ public:
 /////////////////////////////////////////////
 	uint32 m_VehicleArraySize;
 	uint32 m_VehicleHighGuid;
-	HM_NAMESPACE::unordered_map<const uint32,Vehicle*> m_VehicleStorage;
+	HM_NAMESPACE::hash_map<const uint32,Vehicle*> m_VehicleStorage;
 	Vehicle* CreateVehicle(uint32 entry);
 
 	__inline Vehicle* GetVehicle(const uint32 guid)
@@ -129,7 +129,7 @@ public:
 /////////////////////////////////////////////
 	uint32 m_CreatureArraySize;
 	uint32 m_CreatureHighGuid;
-	HM_NAMESPACE::unordered_map<const uint32,Creature*> m_CreatureStorage;
+	HM_NAMESPACE::hash_map<const uint32,Creature*> m_CreatureStorage;
 	Creature* CreateCreature(uint32 entry);
 
 	__inline Creature* GetCreature(const uint32 guid)

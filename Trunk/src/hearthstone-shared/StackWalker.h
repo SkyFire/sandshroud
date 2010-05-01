@@ -82,9 +82,7 @@ public:
 
   BOOL LoadModules();
 
-  BOOL m_sharedptrlog;
-  BOOL ShowCallstack(BOOL issharedptrlog = FALSE,
-	HANDLE hThread = GetCurrentThread(), 
+  BOOL ShowCallstack(HANDLE hThread = GetCurrentThread(), 
 	const CONTEXT *context = NULL, 
 	PReadProcessMemoryRoutine readMemoryFunction = NULL,
 	LPVOID pUserData = NULL  // optional to identify some data in the 'readMemoryFunction'-callback

@@ -20,8 +20,6 @@
 #ifndef _CALLBACK_H
 #define _CALLBACK_H
 
-#include "Common.h"
-
 class CallbackBase {
 public:
 	virtual void execute() = 0;

@@ -175,8 +175,6 @@ public:
 	{
 		return !(*this == eq);
 	}
-
-
 	float x;
 	float y;
 	float z;

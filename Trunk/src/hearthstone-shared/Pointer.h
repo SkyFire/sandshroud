@@ -1,8 +1,6 @@
 #ifndef _SHARED_PTR_H
 #define _SHARED_PTR_H
 
-//#define LAZY_SHARED_TO_RAW_PTR_METHOD
-
 // Meh
 class CBattleground;
 class CBattlegroundManager;
@@ -33,7 +31,7 @@ class WeatherInfo;
 class World;
 class StrandOfTheAncients;
 
-#define CAST(x,y) static_cast<x*>(y)
+#define CAST(x, y) static_cast<x*>(y)
 
 #define TO_PLAYER(ptr) ((Player*)ptr)
 #define TO_UNIT(ptr) ((Unit*)ptr)
@@ -85,56 +83,5 @@ class StrandOfTheAncients;
 #define NULLROLL 0
 #define NULLMAPMGR 0
 #define NULLSPELL 0
-
-#ifdef LAZY_SHARED_TO_RAW_PTR_METHOD
-
-typedef CBattleground* BattlegroundPointer;
-typedef CBattlegroundManager* BattlegroundMgrPointer;
-typedef AlteracValley* AlteracValleyPointer;
-typedef ArathiBasin* ArathiBasinPointer;
-typedef Arena* ArenaPointer;
-typedef Aura* AuraPointer;
-typedef CBattleground* CBattlegroundPointer;
-typedef CBattlegroundManager* CBattlegroundManagerPointer;
-typedef Container* ContainerPointer;
-typedef Corpse* CorpsePointer;
-typedef Creature* CreaturePointer;
-typedef DynamicObject* DynamicObjectPointer;
-typedef EventableObject* EventableObjectPointer;
-typedef EyeOfTheStorm* EyeOfTheStormPointer;
-typedef GameObject* GameObjectPointer;
-typedef Item* ItemPointer;
-typedef LootRoll* LootRollPointer;
-typedef MapMgr* MapMgrPointer;
-typedef Object* ObjectPointer;
-typedef Pet* PetPointer;
-typedef Player* PlayerPointer;
-typedef QuestMgr* QuestMgrPointer;
-typedef Spell* SpellPointer;
-typedef Transporter* TransporterPointer;
-typedef Unit* UnitPointer;
-typedef Vehicle* VehiclePointer;
-typedef WarsongGulch* WarsongGulchPointer;
-typedef WeatherInfo* WeatherInfoPointer;
-typedef World* WorldPointer;
-typedef StrandOfTheAncients* SotaPointer;
-
-#define object_shared_from_this() TO_OBJECT(this)
-#define obj_shared_from_this() TO_OBJECT(this)
-#define gob_shared_from_this() TO_GAMEOBJECT(this)
-#define unit_shared_from_this() TO_UNIT(this)
-#define plr_shared_from_this() TO_PLAYER(this)
-#define player_shared_from_this() TO_PLAYER(this)
-#define dyn_shared_from_this() TO_DYNAMICOBJECT(this)
-#define item_shared_from_this() TO_ITEM(this)
-#define creature_shared_from_this() TO_CREATURE(this)
-#define pet_shared_from_this() TO_PET(this)
-#define spell_shared_from_this() TO_SPELL(this)
-#define aura_shared_from_this() TO_AURA(this)
-#define lootroll_shared_from_this() TO_LOOTROLL(this)
-#define vehicle_shared_from_this() TO_VEHICLE(this)
-#define shared_from_this() this
-
-#endif
 
 #endif

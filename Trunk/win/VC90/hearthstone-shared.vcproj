@@ -1019,7 +1019,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-shared\SharedPtr.h"
+			RelativePath="..\..\src\hearthstone-shared\Pointer.h"
 			>
 		</File>
 		<File

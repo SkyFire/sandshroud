@@ -206,7 +206,7 @@ public:
 	HEARTHSTONE_INLINE void Gobble() { _threadsEaten=(int32)m_freeThreads.size(); }
 
 	// gets active thread count
-	HEARTHSTONE_INLINE uint32 GetActiveThreadCount() { return (uint32)m_activeThreads.size()+1; }
+	HEARTHSTONE_INLINE uint32 GetActiveThreadCount() { return (uint32)m_activeThreads.size(); }
 
 	// gets free thread count
 	HEARTHSTONE_INLINE uint32 GetFreeThreadCount() { return (uint32)m_freeThreads.size(); }
