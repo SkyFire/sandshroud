@@ -350,7 +350,7 @@ class RunemasterMolgeimAI : public MoonScriptBossAI
 //Stormcaller Brundir
 #define CN_STORMCALLER_BRUNDIR	32857
 #define SCB_CHAIN_LIGHTNING		61879
-#define OVERLOAD				61869
+#define BRUNDIR_OVERLOAD		61869
 #define LIGHTNING_WHIRL			61915
 #define LIGHTNING_TENDRILS		61887
 
@@ -360,7 +360,7 @@ class StormcallerBrundirAI : public MoonScriptBossAI
 		StormcallerBrundirAI(Creature * pCreature) : MoonScriptBossAI(pCreature)
 	{
 		AddSpell(SCB_CHAIN_LIGHTNING, Target_Current, 14, 2, 0);
-		AddSpell(OVERLOAD, Target_Self, 14, 6, 7);
+		AddSpell(BRUNDIR_OVERLOAD, Target_Self, 14, 6, 7);
 
 		//Emotes
 		AddEmote(Event_OnCombatStart, "Nothing short of total decimation will suffice.", Text_Yell, 15657);

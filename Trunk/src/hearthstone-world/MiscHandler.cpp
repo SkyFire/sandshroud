@@ -2316,14 +2316,17 @@ void WorldSession::HandleFarsightOpcode(WorldPacket &recv_data)
 
 void WorldSession::HandleGameobjReportUseOpCode( WorldPacket& recv_data )
 {
+	if(!_player->GetMapMgr()) // Teleporting? :O
+	{ SKIP_READ_PACKET(recv_data); return; }
+
 	uint64 guid;
 	recv_data >> guid;
 	GameObject* gameobj = _player->GetMapMgr()->GetGameObject(uint32(guid));
-	if(gameobj == NULL)
-		return;
-	if(gameobj->CanActivate())
-		sQuestMgr.OnGameObjectActivate(_player, gameobj);
-	return;
+	if(gameobj != NULLGOB)
+	{
+		if(gameobj->CanActivate())
+			sQuestMgr.OnGameObjectActivate(_player, gameobj);
+	}
 }
 
 void WorldSession::HandleTalentWipeConfirmOpcode( WorldPacket& recv_data )
