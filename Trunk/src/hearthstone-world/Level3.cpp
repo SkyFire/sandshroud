@@ -290,7 +290,7 @@ bool ChatHandler::HandleReviveCommand(const char* args, WorldSession *m_session)
 
 	if(SelectedPlayer->m_currentMovement == MOVE_ROOT)
 		SelectedPlayer->SetMovement(MOVE_UNROOT, 1);
-	if(SelectedPlayer->GetUInt32Value(UNIT_FIELD_HEALTH) < 1)
+	if(SelectedPlayer->getDeathState())
 		SelectedPlayer->ResurrectPlayer();
 
 	SelectedPlayer->SetUInt32Value(UNIT_FIELD_HEALTH, SelectedPlayer->GetUInt32Value(UNIT_FIELD_MAXHEALTH) );
