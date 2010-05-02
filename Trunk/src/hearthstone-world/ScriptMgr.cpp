@@ -55,6 +55,7 @@ struct ScriptingEngine
 	void* Handle;
 #endif
 	exp_script_register InitializeCall;
+	exp_script_restart RestartCall;
 	uint32 Type;
 };
 
@@ -295,6 +296,56 @@ char *ext;
 	}
 #endif
 }
+
+void ScriptMgr::ReloadScripts()
+{
+	vector<ScriptingEngine> ScriptEngines;
+ 
+	if(!HookInterface::getSingletonPtr())
+		return;
+	else
+	{
+		LibraryHandleMap::iterator itr = _handles.begin();
+		for(; itr != _handles.end(); itr++)
+		{
+			exp_get_version vcall = (exp_get_version)GetProcAddress(((HMODULE)*itr), "_exp_get_version");
+			exp_script_register rcall = (exp_script_register)GetProcAddress(((HMODULE)*itr), "_exp_script_register");
+			exp_get_script_type scall = (exp_get_script_type)GetProcAddress(((HMODULE)*itr), "_exp_get_script_type");
+			exp_script_restart recall = (exp_script_restart)GetProcAddress(((HMODULE)*itr), "_exp_script_restart");
+			if(vcall == 0 || rcall == 0 || scall == 0 || recall == 0) // hehe not our lua dll
+			{
+				printf("version functions not found!\n");
+			//FreeLibrary(((HMODULE)*itr));
+			}
+			else
+			{
+				uint32 version = vcall();
+				uint32 stype = scall();
+				if(SCRIPTLIB_LOPART(version) == SCRIPTLIB_VERSION_MINOR && SCRIPTLIB_HIPART(version) == SCRIPTLIB_VERSION_MAJOR)
+				{
+					if( stype & SCRIPT_TYPE_SCRIPT_ENGINE ) // We found scripting engines.
+					{
+						ScriptingEngine se;
+						se.Type = stype;
+						se.Handle = ((HMODULE)*itr);
+						se.InitializeCall = rcall;
+						se.RestartCall = recall;
+						ScriptEngines.push_back( se );
+					}
+				}
+			}
+		}
+		for(vector<ScriptingEngine>::iterator itr = ScriptEngines.begin(); itr != ScriptEngines.end(); ++itr)
+		{
+			if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_LUA ) // found our Luaengine
+			{
+				sLog.outString("Restarting Lua Scripts");
+				itr->RestartCall(this);
+			}
+		}
+	}
+}
+
 
 void ScriptMgr::UnloadScripts()
 {

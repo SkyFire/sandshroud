@@ -132,6 +132,7 @@ typedef InstanceScript* ( *exp_create_instance_ai )( MapMgr* pMapMgr );
 typedef bool(*exp_handle_dummy_spell)(uint32 i, Spell* pSpell);
 typedef bool(*exp_handle_dummy_aura)(uint32 i, Aura* pAura, bool apply);
 typedef void(*exp_script_register)(ScriptMgr * mgr);
+typedef void(*exp_script_restart)(ScriptMgr * mgr);
 typedef uint32(*exp_get_script_type)();
 
 typedef uint32(*exp_get_version)();
@@ -157,6 +158,7 @@ public:
 	friend class HookInterface;
 
 	void LoadScripts();
+	void ReloadScripts();
 	void UnloadScripts();
 
 	CreatureAIScript * CreateAIScriptClassForEntry(Creature* pCreature);

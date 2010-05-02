@@ -3377,3 +3377,16 @@ bool ChatHandler::HandleDisableAH(const char *args, WorldSession *m_session)
 	sWorld.AHEnabled = false;
 	return true;
 }
+
+bool ChatHandler::HandleReloadScriptsCommand(const char *args, WorldSession *m_session)
+{
+	sWorld.SendMessageToGMs(m_session, "Reloading LUA scripts.");
+	BlueSystemMessage(m_session, "Reloading LUA scripts.");
+	Log.Notice("ScriptMgr", "Reloading LUA scripts \n");
+	uint32 t = getMSTime();
+	sScriptMgr.ReloadScripts();
+	sWorld.SendMessageToGMs(m_session, "Scripts reload completed in %u ms.", getMSTime() - t);
+	BlueSystemMessage(m_session, "Scripts reload completed in %u ms.", getMSTime() - t);
+	Log.Notice("ScriptMgr", "Completed LUA scripts reload \n");
+	return true;
+}

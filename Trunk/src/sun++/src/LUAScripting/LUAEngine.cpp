@@ -27,7 +27,6 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 extern "C" SCRIPT_DECL void _exp_script_restart(ScriptMgr * mgr)
 {
 	//m_scriptMgr = mgr;
-	printf("_exp_script_restart called. \n");
 	g_luaMgr.Unload();
 }
 

@@ -504,7 +504,7 @@ protected:
 	bool HandleLookupSpellCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupTitleCommand(const char * args, WorldSession * m_session);
 
-	//bool HandleReloadScriptsCommand(const char * args, WorldSession * m_session);
+	bool HandleReloadScriptsCommand(const char * args, WorldSession * m_session);
 	bool HandleNpcPossessCommand(const char * args, WorldSession * m_session);
 	bool HandleNpcUnPossessCommand(const char * args, WorldSession * m_session);
 	bool HandleRehashCommand(const char * args, WorldSession * m_session);
