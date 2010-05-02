@@ -216,6 +216,7 @@ void WorldSession::HandleCorpseQueryOpcode(WorldPacket &recv_data)
 		MapInfo *pPMapinfo = NULL;
 		pPMapinfo = WorldMapInfoStorage.LookupEntry(pCorpse->GetMapId());
 		if(pPMapinfo == NULL)
+			data.Initialize(MSG_CORPSE_QUERY);
 
 		data << uint8(0x01); //show ?
 
