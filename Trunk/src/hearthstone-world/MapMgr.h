@@ -317,8 +317,16 @@ private:
 public:
 	// Distance a Player can "see" other objects and receive updates from them (!! ALREADY dist*dist !!)
 	float m_UpdateDistance;
+	bool collisionloaded; // Crow: Use this later.
 
 private:
+	/* Map Information */
+	bool collision;
+	MapInfo *pMapInfo;
+	uint32 m_instanceID;
+
+	MapScriptInterface * ScriptInterface;
+
 	/* Update System */
 	FastMutex m_updateMutex;		// use a user-mode mutex for extra speed
 	UpdateQueue _updates;
@@ -326,14 +334,6 @@ private:
 
 	/* Sessions */
 	SessionSet MapSessions;
-
-	/* Map Information */
-	MapInfo *pMapInfo;
-	uint32 m_instanceID;
-
-	MapScriptInterface * ScriptInterface;
-
-	bool collision;
 
 public:
 #ifdef WIN32

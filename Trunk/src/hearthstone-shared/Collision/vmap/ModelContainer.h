@@ -33,29 +33,31 @@
 #include "SubModel.h"
 #include "BaseModel.h"
 
+const char VMAP_MAGIC[] = "VMAP_2.0";
+
 namespace VMAP
 {
-    /**
-    The ModelContainer is a balanced BSP-Tree of SubModels.
-    We store a map tile or an instance in one ModelContainer.
-    The ModelContainer manages the memory used for the tree nodes, the SubModels and its triangles in static arrays.
-    The tree nodes are used for the BSP-Tree of SubModels as well as for the BSP-Tree of triangles within one SubModel.
-    The references are done by indexes within these static arrays.
-    Therefore we are able to just load a binary block and do not need to mess around with memory allocation and pointers.
-    */
+	/**
+	The ModelContainer is a balanced BSP-Tree of SubModels.
+	We store a map tile or an instance in one ModelContainer.
+	The ModelContainer manages the memory used for the tree nodes, the SubModels and its triangles in static arrays.
+	The tree nodes are used for the BSP-Tree of SubModels as well as for the BSP-Tree of triangles within one SubModel.
+	The references are done by indexes within these static arrays.
+	Therefore we are able to just load a binary block and do not need to mess around with memory allocation and pointers.
+	*/
 
-    //=====================================================
+	//=====================================================
 
-    class ModelContainer : public BaseModel
-    {
-        private:
-            unsigned int iNSubModel;
-            SubModel *iSubModel;
-            //Vector3 iDirection;
-            AABox iBox;
+	class ModelContainer : public BaseModel
+	{
+		private:
+			unsigned int iNSubModel;
+			SubModel *iSubModel;
+			//Vector3 iDirection;
+			AABox iBox;
 
-        public:
-            ModelContainer() : BaseModel()
+		public:
+			ModelContainer() : BaseModel()
 			{
 				iNSubModel = 0;
 				iSubModel = NULL;
@@ -65,50 +67,50 @@ namespace VMAP
 				iNNodes = 0;
 			}
 
-            // for the mainnode
-            ModelContainer(unsigned int pNTriangles, unsigned int pNNodes, unsigned int pNSubModel);
+			// for the mainnode
+			ModelContainer(unsigned int pNTriangles, unsigned int pNNodes, unsigned int pNSubModel);
 
-            ModelContainer(AABSPTree<SubModel *> *pTree);
+			ModelContainer(AABSPTree<SubModel *> *pTree);
 
-            ~ModelContainer(void);
+			~ModelContainer(void);
 
-            RayIntersectionIterator<TreeNode, SubModel> beginRayIntersection(const Ray& ray, double pMaxTime, bool skipAABoxTests = false) const;
+			RayIntersectionIterator<TreeNode, SubModel> beginRayIntersection(const Ray& ray, double pMaxTime, bool skipAABoxTests = false) const;
 
-            RayIntersectionIterator<TreeNode, SubModel> endRayIntersection() const;
+			RayIntersectionIterator<TreeNode, SubModel> endRayIntersection() const;
 
-            inline const void setSubModel(const SubModel& pSubModel, int pPos) { iSubModel[pPos] = pSubModel; }
+			inline const void setSubModel(const SubModel& pSubModel, int pPos) { iSubModel[pPos] = pSubModel; }
 
-            inline const SubModel& getSubModel(int pPos) const { return iSubModel[pPos]; }
+			inline const SubModel& getSubModel(int pPos) const { return iSubModel[pPos]; }
 
-            inline unsigned int getNSubModel() const { return(iNSubModel); }
+			inline unsigned int getNSubModel() const { return(iNSubModel); }
 
-            RealTime getIntersectionTime(const Ray&, bool pExitAtFirst, float pMaxDist) const;
+			RealTime getIntersectionTime(const Ray&, bool pExitAtFirst, float pMaxDist) const;
 
-            void countSubModelsAndNodesAndTriangles(AABSPTree<SubModel *>::Node& pNode, int& nSubModels, int& nNodes, int& nTriangles);
+			void countSubModelsAndNodesAndTriangles(AABSPTree<SubModel *>::Node& pNode, int& nSubModels, int& nNodes, int& nTriangles);
 
-            void fillContainer(const AABSPTree<SubModel *>::Node& pNode, int &pSubModelPos, int &pTreeNodePos, int &pTrianglePos, Vector3& pLo, Vector3& pHi, Vector3& pFinalLo, Vector3& pFinalHi);
+			void fillContainer(const AABSPTree<SubModel *>::Node& pNode, int &pSubModelPos, int &pTreeNodePos, int &pTrianglePos, Vector3& pLo, Vector3& pHi, Vector3& pFinalLo, Vector3& pFinalHi);
 
-            bool readRawFile(const char *name);
+			bool readRawFile(const char *name);
 
-            inline const AABox& getAABoxBounds() const { return(iBox); }
+			inline const AABox& getAABoxBounds() const { return(iBox); }
 
-            inline void setBounds(const Vector3& lo, const Vector3& hi) { iBox.set(lo,hi); }
+			inline void setBounds(const Vector3& lo, const Vector3& hi) { iBox.set(lo,hi); }
 
-            bool writeFile(const char *filename);
+			bool writeFile(const char *filename);
 
-            bool readFile(const char *filename);
+			bool readFile(const char *filename);
 
-            size_t getMemUsage();
-    };
+			size_t getMemUsage();
+	};
 
-    //=====================================================
+	//=====================================================
 
-    //=====================================================
+	//=====================================================
 
-    size_t hashCode(const ModelContainer& pMc);
-    bool operator==(const ModelContainer& pMc1, const ModelContainer& pMc2);
-    void getBounds(const ModelContainer& pMc, G3D::AABox& pAABox);
-    void getBounds(const ModelContainer* pMc, G3D::AABox& pAABox);
+	size_t hashCode(const ModelContainer& pMc);
+	bool operator==(const ModelContainer& pMc1, const ModelContainer& pMc2);
+	void getBounds(const ModelContainer& pMc, G3D::AABox& pAABox);
+	void getBounds(const ModelContainer* pMc, G3D::AABox& pAABox);
 
 }
 #endif
