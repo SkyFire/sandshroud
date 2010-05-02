@@ -4,6 +4,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "projects\L
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudScripts", "projects\Sandshroud.vcproj", "{9504E4EC-6C33-472E-BABF-F732AB1899DF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomScripts", "projects\CustomScripts.vcproj", "{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -28,6 +30,14 @@ Global
 		{9504E4EC-6C33-472E-BABF-F732AB1899DF}.Release|Win32.Build.0 = Release|Win32
 		{9504E4EC-6C33-472E-BABF-F732AB1899DF}.Release|x64.ActiveCfg = Release|x64
 		{9504E4EC-6C33-472E-BABF-F732AB1899DF}.Release|x64.Build.0 = Release|x64
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Debug|Win32.ActiveCfg = Debug|Win32
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Debug|Win32.Build.0 = Debug|Win32
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Debug|x64.ActiveCfg = Debug|x64
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Debug|x64.Build.0 = Debug|x64
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Release|Win32.ActiveCfg = Release|Win32
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Release|Win32.Build.0 = Release|Win32
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Release|x64.ActiveCfg = Release|x64
+		{72DCAE16-7D13-4D4A-ABB1-E94C4A969BED}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2026,7 +2026,7 @@ int luaUnit_AddItem(lua_State * L, Unit * ptr)
 				plr->GetSession()->SendItemPushResult(add,false,true,false,true,plr->GetItemInterface()->LastSearchItemBagSlot(),plr->GetItemInterface()->LastSearchItemSlot(),count);
 			else
 			{
-				add->Destructor();
+				add->DeleteMe();
 				add = NULLITEM;
 			}
 		}
