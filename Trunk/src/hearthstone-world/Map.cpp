@@ -93,7 +93,7 @@ Map::~Map()
 bool first_table_warning = true;
 bool CheckResultLengthCreatures(QueryResult * res)
 {
-	if( res->GetFieldCount() != 23 )
+	if( res->GetFieldCount() != 22 )
 	{
 		if( first_table_warning )
 		{
@@ -112,7 +112,7 @@ bool CheckResultLengthCreatures(QueryResult * res)
 bool first_table_warningg = true;
 bool CheckResultLengthGameObject(QueryResult * res)
 {
-	if( res->GetFieldCount() != 17 )
+	if( res->GetFieldCount() != 16 )
 	{
 		if( first_table_warningg )
 		{
