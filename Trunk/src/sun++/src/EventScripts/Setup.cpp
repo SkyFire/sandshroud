@@ -31,7 +31,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any 
 {
 	SetupWinterVeil(mgr);
 	SetupHalloween(mgr);
-	SetupEventDarkPortal(mgr);
+	//SetupEventDarkPortal(mgr);
 }
 
 #ifdef WIN32

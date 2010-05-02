@@ -22,6 +22,6 @@
 
 void SetupWinterVeil(ScriptMgr * mgr);
 void SetupHalloween(ScriptMgr * mgr);
-void SetupEventDarkPortal(ScriptMgr * mgr);
+//void SetupEventDarkPortal(ScriptMgr * mgr);
 
 #endif
