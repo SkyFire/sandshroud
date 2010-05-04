@@ -1361,6 +1361,10 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->School = SCHOOL_HOLY; 
 				sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC; 
 			}break;
+		case 57770:
+			{
+				sp->rangeIndex = 1;
+			}
 			//paladin - hammer of the righteous
 		case 53595:
 			{

@@ -154,8 +154,8 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 					data << uint32(1);		// alive
 			}
 
-			data << uint32(fields[19].GetUInt8());		//Added in 3.0.2
-			data << fields[14].GetUInt8();				// Rest State
+			data << uint32(fields[19].GetUInt8());	// Character Customization
+			data << fields[14].GetUInt8();			// Rest State
 
 			if( Class == WARLOCK || Class == HUNTER )
 			{

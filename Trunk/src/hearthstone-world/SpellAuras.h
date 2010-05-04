@@ -536,10 +536,13 @@ public:
 	void SpellAuraProcTriggerSpell(bool apply);
 	void SpellAuraProcTriggerDamage(bool apply);
 	void SpellAuraTrackCreatures(bool apply);
-	void SpellAuraTrackResources(bool apply);	
-	void SpellAuraModParryPerc(bool apply);	
-	void SpellAuraModDodgePerc(bool apply);	
+	void SpellAuraTrackResources(bool apply);
+	void SpellAuraModParrySkill(bool apply);
+	void SpellAuraModParryPerc(bool apply);
+	void SpellAuraModDodgePerc(bool apply);
+	void SpellAuraModDodgeSkill(bool apply);
 	void SpellAuraModBlockPerc(bool apply);
+	void SpellAuraModBlockSkill(bool apply);
 	void SpellAuraModCritPerc(bool apply);
 	void SpellAuraPeriodicLeech(bool apply);
 	void SpellAuraModHitChance(bool apply);
@@ -711,8 +714,9 @@ public:
 	//void SpellAuraJumpAndHeal(bool apply);
 	void SpellAuraProcTriggerWithValue(bool apply);
 	void SpellAuraPeriodicTriggerSpellWithValue(bool apply);
-	void UpdateAuraModDecreaseSpeed();
+	void SpellAuraModCritChanceAll(bool apply);
 
+	void UpdateAuraModDecreaseSpeed();
 	void SendModifierLog(int32 ** m,int32 v,uint32 *mask,uint8 type,bool pct = false);
 	void SendDummyModifierLog(std::map<SpellEntry*,uint32> * m,SpellEntry * spellInfo,uint32 i,bool apply,bool pct = false);
 

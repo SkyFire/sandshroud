@@ -66,11 +66,11 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraProcTriggerDamage,//SPELL_AURA_PROC_TRIGGER_DAMAGE = 43,
 		&Aura::SpellAuraTrackCreatures,//SPELL_AURA_TRACK_CREATURES = 44,
 		&Aura::SpellAuraTrackResources,//SPELL_AURA_TRACK_RESOURCES = 45,
-		&Aura::SpellAuraNULL,//SPELL_AURA_MOD_PARRY_SKILL = 46, obsolete? not used in 1.12.1 spell.dbc
+		&Aura::SpellAuraModParrySkill,//SPELL_AURA_MOD_PARRY_SKILL = 46, obsolete? not used in 1.12.1 spell.dbc
 		&Aura::SpellAuraModParryPerc,//SPELL_AURA_MOD_PARRY_PERCENT = 47,
-		&Aura::SpellAuraNULL,//SPELL_AURA_MOD_DODGE_SKILL = 48, obsolete?
+		&Aura::SpellAuraModDodgeSkill,//SPELL_AURA_MOD_DODGE_SKILL = 48, obsolete?
 		&Aura::SpellAuraModDodgePerc,//SPELL_AURA_MOD_DODGE_PERCENT = 49,
-		&Aura::SpellAuraNULL,//SPELL_AURA_MOD_BLOCK_SKILL = 50, obsolete?,
+		&Aura::SpellAuraModBlockSkill,//SPELL_AURA_MOD_BLOCK_SKILL = 50, obsolete?,
 		&Aura::SpellAuraModBlockPerc,//SPELL_AURA_MOD_BLOCK_PERCENT = 51,
 		&Aura::SpellAuraModCritPerc,//SPELL_AURA_MOD_CRIT_PERCENT = 52,
 		&Aura::SpellAuraPeriodicLeech,//SPELL_AURA_PERIODIC_LEECH = 53,
@@ -267,7 +267,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraNULL,//243
 		&Aura::SpellAuraNULL,//244
 		&Aura::SpellAuraNULL,//245
-		&Aura::SpellAuraNULL,//246
+		&Aura::SpellAuraReduceEffectDuration,//246
 		&Aura::SpellAuraNULL,//247
 		&Aura::SpellAuraNULL,//248
 		&Aura::SpellAuraNULL,//249
@@ -309,6 +309,12 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraModAttackPowerByArmor,//285
 		&Aura::SpellAuraNULL,//286
 		&Aura::SpellAuraReflectInfront, //287
+		&Aura::SpellAuraNULL,//288
+		&Aura::SpellAuraNULL,//289
+		&Aura::SpellAuraModCritChanceAll,//290
+		&Aura::SpellAuraNULL,//291
+		&Aura::SpellAuraNULL,//292
+		&Aura::SpellAuraNULL,//293
 		&Aura::SpellAuraNULL,//294 2 spells, possible prevent mana regen
 		&Aura::SpellAuraNULL,//295
 		&Aura::SpellAuraNULL,//296
@@ -5185,6 +5191,22 @@ void Aura::SpellAuraTrackResources(bool apply)
 	}
 }
 
+void Aura::SpellAuraModParrySkill(bool apply)
+{
+	if (m_target->IsPlayer())
+	{
+		if(apply)
+		{
+			SetPositive();
+			TO_PLAYER( m_target )->_ModifySkillBonus(SKILL_PARRY, mod->m_amount); 
+		}
+		else
+			TO_PLAYER( m_target )->_ModifySkillBonus(SKILL_PARRY, -mod->m_amount); 
+
+		TO_PLAYER( m_target )->UpdateStats();
+	}
+}
+
 void Aura::SpellAuraModParryPerc(bool apply)
 {
 	if (m_target->IsPlayer())
@@ -5207,6 +5229,22 @@ void Aura::SpellAuraModParryPerc(bool apply)
 	}
 }
 
+void Aura::SpellAuraModDodgeSkill(bool apply)
+{
+	if (m_target->IsPlayer())
+	{
+		if(apply)
+		{
+			SetPositive();
+			TO_PLAYER( m_target )->_ModifySkillBonus(SKILL_DODGE, mod->m_amount); 
+		}
+		else
+			TO_PLAYER( m_target )->_ModifySkillBonus(SKILL_DODGE, -mod->m_amount); 
+
+		TO_PLAYER( m_target )->UpdateStats();
+	}
+}
+
 void Aura::SpellAuraModDodgePerc(bool apply)
 {
 	if (m_target->IsPlayer())
@@ -5224,6 +5262,22 @@ void Aura::SpellAuraModDodgePerc(bool apply)
 			amt = -amt;
 		TO_PLAYER( m_target )->SetDodgeFromSpell(TO_PLAYER( m_target )->GetDodgeFromSpell() + amt );
 		TO_PLAYER( m_target )->UpdateChances();
+	}
+}
+
+void Aura::SpellAuraModBlockSkill(bool apply)
+{
+	if (m_target->IsPlayer())
+	{   
+		if(apply)
+		{
+			SetPositive();
+			TO_PLAYER( m_target )->_ModifySkillBonus(SKILL_BLOCK, mod->m_amount); 
+		}
+		else
+			TO_PLAYER( m_target )->_ModifySkillBonus(SKILL_BLOCK, -mod->m_amount); 
+
+		TO_PLAYER( m_target )->UpdateStats();
 	}
 }
 
@@ -9986,6 +10040,33 @@ void Aura::EventModAttackPowerByArmorUpdate( uint32 i )
 		//add new one
 		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, m_modList[i].realamount);
 	}
+}
+
+void Aura::SpellAuraModCritChanceAll(bool apply)
+{
+	if( !m_target || !m_target->IsPlayer() )
+		return;
+
+	Player* plr = TO_PLAYER(m_target);
+
+	if( apply )
+	{
+		WeaponModifier md;
+		md.value = float(mod->m_amount);
+		md.wclass = GetSpellProto()->EquippedItemClass;
+		md.subclass = GetSpellProto()->EquippedItemSubClass;
+		plr->tocritchance.insert( make_pair(GetSpellId(), md) );
+
+		plr->SetSpellCritFromSpell( plr->GetSpellCritFromSpell() + float(mod->m_amount) );
+	}
+	else
+	{
+		plr->tocritchance.erase( GetSpellId() );
+		plr->SetSpellCritFromSpell( plr->GetSpellCritFromSpell() - float(mod->m_amount) );
+	}
+
+	plr->UpdateChances();
+	plr->UpdateChanceFields();
 }
 
 /*void Aura::EventJumpAndHeal()

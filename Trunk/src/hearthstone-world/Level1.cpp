@@ -295,7 +295,7 @@ bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
 		{
 			Player* pPlayer = m_session->GetPlayer();
 			char query[512];
-			snprintf((char*) &query,512, "UPDATE characters SET mapId = %u, positionX = %f, positionY = %f, positionZ = %f, zoneId = %u WHERE guid = %u;",	pPlayer->GetMapId(), pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetZoneId(), pinfo->guid);
+			snprintf((char*) &query,512, "UPDATE characters SET mapId = %u, positionX = %f, positionY = %f, positionZ = %f, zoneId = %u WHERE guid = %u;", pPlayer->GetMapId(), pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetZoneId(), pinfo->guid);
 			CharacterDatabase.Execute(query);
 			char buf[256];
 			snprintf((char*)buf,256,"(Offline) %s has been summoned.", pinfo->name);
@@ -407,7 +407,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 
 	float Speed = (float)atof((char*)args);
 
-	if (Speed > 255 || Speed < 1)
+	if (Speed > 255 || Speed < 0)
 	{
 		RedSystemMessage(m_session, "Incorrect value. Range is 1..255");
 		return true;
@@ -416,19 +416,22 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 	Player* chr = getSelectedChar(m_session);
 	if( chr == NULL )
 		return true;
-	
-	char buf[256];
 
-	// send message to user
-	BlueSystemMessage(m_session, "You set the speed of %s to %2.2f.", chr->GetName(), Speed);
+	if(Speed == 0)
+		Speed = PLAYER_NORMAL_RUN_SPEED + float(chr->m_speedModifier);
 
-	// send message to player
-	snprintf((char*)buf,256, "%s set your speed to %2.2f.", m_session->GetPlayer()->GetName(), Speed);
-	SystemMessage(chr->GetSession(), buf);
+	// send message to user/player
+	if(chr != m_session->GetPlayer())
+	{
+		BlueSystemMessage(m_session, "You set the speed of %s to %2.2f.", chr->GetName(), Speed);
+		SystemMessage(chr->GetSession(), "%s set your speed to %2.2f.", m_session->GetPlayer()->GetName(), Speed);
+	}
+	else
+		BlueSystemMessage(m_session, "Speed set to %2.2f.", Speed);
 
 	chr->SetPlayerSpeed(RUN, Speed);
 	chr->SetPlayerSpeed(SWIM, Speed);
-	chr->SetPlayerSpeed(RUNBACK, Speed);
+	chr->SetPlayerSpeed(RUNBACK, (Speed * 0.5));
 	chr->SetPlayerSpeed(FLY, Speed);
 
 	return true;
@@ -523,59 +526,59 @@ bool ChatHandler::HandleGetSkillLevelCommand(const char *args, WorldSession *m_s
 		return false;
 	}
 
-    char * SkillName = SkillNameManager->SkillNames[skill];
+	char * SkillName = SkillNameManager->SkillNames[skill];
 
-    if (SkillName==0)
-    {
-        BlueSystemMessage(m_session, "Skill: %u does not exists", skill);
-        return false;
-    }
-    
-    if (!plr->_HasSkillLine(skill))
-    {
-        BlueSystemMessage(m_session, "Player does not have %s skill.", SkillName);
-        return false;
-    }
+	if (SkillName==0)
+	{
+		BlueSystemMessage(m_session, "Skill: %u does not exists", skill);
+		return false;
+	}
+	
+	if (!plr->_HasSkillLine(skill))
+	{
+		BlueSystemMessage(m_session, "Player does not have %s skill.", SkillName);
+		return false;
+	}
 
 	uint32 nobonus = plr->_GetSkillLineCurrent(skill,false);
 	uint32 bonus = plr->_GetSkillLineCurrent(skill,true) - nobonus;
-    uint32 max = plr->_GetSkillLineMax(skill);
+	uint32 max = plr->_GetSkillLineMax(skill);
 
-    BlueSystemMessage(m_session, "Player's %s skill has level: %u maxlevel: %u. (+ %u bonus)", SkillName,max,nobonus, bonus);
+	BlueSystemMessage(m_session, "Player's %s skill has level: %u maxlevel: %u. (+ %u bonus)", SkillName,max,nobonus, bonus);
 	return true;
 }
 
 bool ChatHandler::HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session)
 {
-    Player* plr = getSelectedChar(m_session, true);
-    if(!plr) return false;
-    
-    uint32 nobonus = 0;
-    int32  bonus = 0;
-    uint32 max = 0;
+	Player* plr = getSelectedChar(m_session, true);
+	if(!plr) return false;
+	
+	uint32 nobonus = 0;
+	int32  bonus = 0;
+	uint32 max = 0;
 
-    BlueSystemMessage(m_session, "Player: %s has skills", plr->GetName() );
+	BlueSystemMessage(m_session, "Player: %s has skills", plr->GetName() );
 
-    for (uint32 SkillId = 0; SkillId <= SkillNameManager->maxskill; SkillId++)
-    {
-        if (plr->_HasSkillLine(SkillId))
-        {
-            char * SkillName = SkillNameManager->SkillNames[SkillId];
-            if (!SkillName)
-            {
-                RedSystemMessage(m_session, "Invalid skill: %u", SkillId);
-                continue;
-            }
+	for (uint32 SkillId = 0; SkillId <= SkillNameManager->maxskill; SkillId++)
+	{
+		if (plr->_HasSkillLine(SkillId))
+		{
+			char * SkillName = SkillNameManager->SkillNames[SkillId];
+			if (!SkillName)
+			{
+				RedSystemMessage(m_session, "Invalid skill: %u", SkillId);
+				continue;
+			}
 
-            nobonus = plr->_GetSkillLineCurrent(SkillId,false);
-            bonus = plr->_GetSkillLineCurrent(SkillId,true) - nobonus;
-            max = plr->_GetSkillLineMax(SkillId);
+			nobonus = plr->_GetSkillLineCurrent(SkillId,false);
+			bonus = plr->_GetSkillLineCurrent(SkillId,true) - nobonus;
+			max = plr->_GetSkillLineMax(SkillId);
 
-            BlueSystemMessage(m_session, "  %s: Value: %u, MaxValue: %u. (+ %d bonus)", SkillName, nobonus,max, bonus);
-        }
-    }
+			BlueSystemMessage(m_session, "  %s: Value: %u, MaxValue: %u. (+ %d bonus)", SkillName, nobonus,max, bonus);
+		}
+	}
 
-    return true;
+	return true;
 }
 
 
