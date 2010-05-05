@@ -235,7 +235,6 @@ void WorldSession::HandleCorpseQueryOpcode(WorldPacket &recv_data)
 			data << pCorpse->GetPositionZ();
 		}
 		data << pCorpse->GetMapId(); //instance mapid (needs to be same as mapid to be able to recover corpse)
-		data << uint32(0);
 
 		SendPacket(&data);
 	}

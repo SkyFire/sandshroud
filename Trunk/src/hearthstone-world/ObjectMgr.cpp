@@ -1493,7 +1493,6 @@ void ObjectMgr::CorpseCollectorUnload()
 			c->RemoveFromWorld(false);
 
 		delete c;
-		c = NULLCORPSE;
 	}
 	m_corpses.clear();
 	_corpseslock.Release();

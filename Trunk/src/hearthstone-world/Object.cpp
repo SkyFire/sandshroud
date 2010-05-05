@@ -117,6 +117,11 @@ void Object::Init()
 
 }
 
+void Object::Destructor()
+{
+	delete this;
+}
+
 void Object::SetPhase(int32 phase)
 {
 	m_phaseMode = phase;
