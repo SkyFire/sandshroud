@@ -9935,8 +9935,8 @@ void Player::removeSoulStone()
 
 void Player::SoftDisconnect()
 {
-	sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_SOFT_DISCONNECT);
-	GetSession()->LogoutPlayer(true);
+	//basic, but it stops crashes ^^
+	m_session->Disconnect();
 }
 
 void Player::SetNoseLevel()
