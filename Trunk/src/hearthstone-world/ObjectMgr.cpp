@@ -1492,7 +1492,8 @@ void ObjectMgr::CorpseCollectorUnload()
 		if(c->IsInWorld())
 			c->RemoveFromWorld(false);
 
-		delete c;
+		c->Destructor();
+		c = NULLCORPSE;
 	}
 	m_corpses.clear();
 	_corpseslock.Release();
