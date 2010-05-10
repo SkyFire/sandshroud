@@ -1,0 +1,6 @@
+ALTER TABLE `items` DROP COLUMN dmg_min2;
+ALTER TABLE `items` DROP COLUMN dmg_max2;
+ALTER TABLE `items` DROP COLUMN dmg_type2;
+ALTER TABLE `items` DROP COLUMN name2;
+ALTER TABLE `items` DROP COLUMN name3;
+ALTER TABLE `items` DROP COLUMN name4;
