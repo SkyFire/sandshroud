@@ -357,7 +357,12 @@ int main(int argc, char * arg[])
 	//map.dbc
 //	DBCFile* dbc = new DBCFile("DBFilesClient\\Map.dbc"); // Cataclysm, dbc positions changed.
 	DBCFile* dbc = new DBCFile("Map.dbc");
-	dbc->open();
+	if(dbc->open() == false)
+	{
+		printf("Failed to find Map.dbc, did you copy it from the map extractor folder?\n");
+		Sleep(3000); // Wait 3 seconds, so they can see the warning.
+		return 0; // Exit The Program
+	}
 
 	MapCount = dbc->getRecordCount();
 	map_ids = new map_id[MapCount];

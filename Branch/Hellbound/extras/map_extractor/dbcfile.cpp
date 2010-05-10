@@ -1,15 +1,18 @@
 #include "dbcfile.h"
 #include "mpq_libmpq.h"
 
-DBCFile::DBCFile(const std::string &filename):
-	filename(filename),
-	data(0)
+DBCFile::DBCFile(const std::string &filename): filename(filename), data(0)
 {
-	
+
 }
-void DBCFile::open()
+
+bool DBCFile::open()
 {
-	FILE*pf=fopen(filename.c_str(),"rb");
+	FILE*pf;
+	fopen_s(&pf,filename.c_str(),"rb");
+	if(pf == NULL)
+		return false;
+
 	char header[4];
 	unsigned int na,nb,es,ss;
 
@@ -30,6 +33,7 @@ void DBCFile::open()
 	stringTable = data + recordSize*recordCount;
 	fread( data ,recordSize*recordCount+stringSize,1,pf);
 	fclose(pf);
+	return true;
 }
 DBCFile::~DBCFile()
 {

@@ -358,56 +358,50 @@ double GetZ(double x,double z)
 
 	vec v[3];
 	vec p;
-	
-	bool inWMO=false;
-	
-	if(!inWMO)
+
+	//find out quadrant
+	int xc=(int)(x/UNITSIZE);
+	int zc=(int)(z/UNITSIZE);
+	if(xc>127)xc=127;
+	if(zc>127)zc=127;
+
+	double lx=x-xc*UNITSIZE;
+	double lz=z-zc*UNITSIZE;
+	p.x=lx;
+	p.z=lz;
+
+
+	v[0].x=UNITSIZE/2;
+	v[0].y =cell->v8[xc][zc];
+	v[0].z=UNITSIZE/2;
+
+
+	if(lx>lz)
 	{
-		//find out quadrant
-		int xc=(int)(x/UNITSIZE);
-		int zc=(int)(z/UNITSIZE);
-		if(xc>127)xc=127;
-		if(zc>127)zc=127;
-
-		double lx=x-xc*UNITSIZE;
-		double lz=z-zc*UNITSIZE;
-		p.x=lx;
-		p.z=lz;
-	
-
-		v[0].x=UNITSIZE/2;
-		v[0].y =cell->v8[xc][zc];
-		v[0].z=UNITSIZE/2;
-
-	
-		if(lx>lz)
-		{
-				v[1].x=UNITSIZE;
-				v[1].y =cell->v9[xc+1][zc];
-				v[1].z=0;
-		}else
-		{
-				v[1].x=0.0;
-				v[1].y =cell->v9[xc][zc+1];
-				v[1].z=UNITSIZE;
-		}
-
-		if(lz>UNITSIZE-lx)
-		{
-				v[2].x=UNITSIZE;
-				v[2].y =cell->v9[xc+1][zc+1];
-				v[2].z=UNITSIZE;
-
-		}else
-		{
-				v[2].x=0;
-				v[2].y=cell->v9[xc][zc];
-				v[2].z=0;
-		}
-
-		return -solve(v,&p);
+			v[1].x=UNITSIZE;
+			v[1].y =cell->v9[xc+1][zc];
+			v[1].z=0;
+	}else
+	{
+			v[1].x=0.0;
+			v[1].y =cell->v9[xc][zc+1];
+			v[1].z=UNITSIZE;
 	}
-	
+
+	if(lz>UNITSIZE-lx)
+	{
+			v[2].x=UNITSIZE;
+			v[2].y =cell->v9[xc+1][zc+1];
+			v[2].z=UNITSIZE;
+
+	}else
+	{
+			v[2].x=0;
+			v[2].y=cell->v9[xc][zc];
+			v[2].z=0;
+	}
+
+	return -solve(v,&p);	
 }
 
 /*inline

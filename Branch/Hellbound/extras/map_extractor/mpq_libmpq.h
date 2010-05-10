@@ -66,7 +66,7 @@ public:
         char seps[] = "\n";
         char *token;
 
-        token = strtok( buffer, seps );
+        token = strtok_s( buffer, seps, NULL );
         uint32 counter = 0;
         while ((token != NULL) && (counter < size)) {
             //cout << token << endl;
@@ -74,7 +74,7 @@ public:
             string s = token;
             filelist.push_back(s);
             counter += strlen(token) + 2;
-            token = strtok(NULL, seps);
+            token = strtok_s(NULL, seps, NULL);
         }
 
         delete buffer;
