@@ -288,18 +288,9 @@ AC_CONFIG_FILES([
 	src/hearthstone-logonserver/Makefile
 	src/hearthstone-voicechat/Makefile
 	src/hearthstone-realmserver/Makefile
-	src/sun++/Makefile
-	src/sun++/src/Makefile
-	src/sun++/src/EventScripts/Makefile
-	src/sun++/src/ExtraScripts/Makefile
-	src/sun++/src/GossipScripts/Makefile
-	src/sun++/src/InstanceScripts/Makefile
-	src/sun++/src/LUAScripting/Makefile
-	src/sun++/src/MiscScripts/Makefile
-	src/sun++/src/QuestScripts/Makefile
-	src/sun++/src/ServerStatusPlugin/Makefile
-	src/sun++/src/SpellHandlers/Makefile
-	src/sun++/src/WorldPvPScripts/Makefile
+	src/scripts/Makefile
+	src/scripts/src/Makefile
+	src/scripts/src/Lua/Makefile
 	])
 
 AC_OUTPUT
