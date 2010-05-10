@@ -288,9 +288,6 @@ AC_CONFIG_FILES([
 	src/hearthstone-logonserver/Makefile
 	src/hearthstone-voicechat/Makefile
 	src/hearthstone-realmserver/Makefile
-	src/scripts/Makefile
-	src/scripts/src/Makefile
-	src/scripts/src/Lua/Makefile
 	])
 
 AC_OUTPUT
