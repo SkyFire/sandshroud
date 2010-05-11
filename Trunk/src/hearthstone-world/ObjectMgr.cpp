@@ -1491,7 +1491,7 @@ void ObjectMgr::CorpseCollectorUnload()
 		++itr;
 		if(c->IsVehicle())
 		{
-			// FUUUUUUUUUU
+			TO_VEHICLE(c)->SafeDelete();
 		}
 		else
 		{

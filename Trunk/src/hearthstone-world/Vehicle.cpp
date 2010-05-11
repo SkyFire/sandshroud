@@ -29,17 +29,14 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 	m_maxPassengers = 0;
 	m_seatSlotMax = 0;
 	memset( m_vehicleSeats, 0, sizeof(uint32)*8 );
+	memset( m_passengers, 0, sizeof(Player*)*8 );
 	m_isVehicle = true;
 	Initialised = false;
 	m_CreatedFromSpell = false;
 	m_mountSpell = 0;
 
 	for(uint8 i = 0; i < 8; ++i)
-	{
 		seatisusable[i] = false;
-		m_vehicleSeats[i] = NULL;
-		m_passengers[i] = NULLUNIT;
-	}
 }
 
 Vehicle::~Vehicle()
@@ -324,11 +321,14 @@ void Vehicle::SafeDelete()
 {
 	for(int i = 0; i < 8; ++i)
 	{
-		if(!m_passengers[i])
-			continue;
-
-		// Remove any passengers
-		RemovePassenger(m_passengers[i]);
+		if(m_passengers[i] != NULL)
+		{
+			if(m_passengers[i]->IsPlayer())
+				// Remove any passengers
+				RemovePassenger(m_passengers[i]);
+			else
+				delete m_passengers[i];
+		}
 	}
 
 	sEventMgr.RemoveEvents(this);
@@ -455,7 +455,7 @@ uint8 Vehicle::GetPassengerSlot(Unit* pPassenger)
 
 void Vehicle::RemovePassenger(Unit* pPassenger)
 {
-	if(!pPassenger) // We have enough problems that we need to do this :(
+	if(pPassenger == NULL) // We have enough problems that we need to do this :(
 		return;
 
 	Vehicle* pThis = TO_VEHICLE(this);
