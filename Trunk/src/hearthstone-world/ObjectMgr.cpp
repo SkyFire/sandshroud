@@ -1492,7 +1492,8 @@ void ObjectMgr::CorpseCollectorUnload()
 		if(c->IsInWorld())
 			c->RemoveFromWorld(false);
 
-		c->Destructor();
+		RemoveCorpse(c);
+		delete c;
 		c = NULLCORPSE;
 	}
 	m_corpses.clear();
