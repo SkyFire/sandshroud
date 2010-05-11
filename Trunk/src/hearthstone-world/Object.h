@@ -139,7 +139,6 @@ public:
 	typedef std::map<string, void*> ExtensionSet;
 
 	virtual ~Object ( );
-	virtual void Destructor();
 	virtual void Init();
 
 	virtual void Update ( uint32 time ) { }

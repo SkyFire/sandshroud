@@ -48,6 +48,12 @@ void Corpse::Init()
 		objmgr.AddCorpse(TO_CORPSE(this));
 }
 
+void Corpse::Destructor()
+{
+	objmgr.RemoveCorpse(this);
+	delete this;
+}
+
 void Corpse::Create( Player* owner, uint32 mapid, float x, float y, float z, float ang )
 {
 	Object::_Create( mapid, x, y, z, ang);
