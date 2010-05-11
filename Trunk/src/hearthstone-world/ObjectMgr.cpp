@@ -1476,7 +1476,7 @@ void ObjectMgr::DespawnCorpse(uint64 Guid)
 	if(pCorpse == NULL)	// Already Deleted
 		return;
 
-	pCorpse->Despawn();
+	RemoveCorpse(pCorpse);
 	delete pCorpse;
 	pCorpse = NULLCORPSE;
 }

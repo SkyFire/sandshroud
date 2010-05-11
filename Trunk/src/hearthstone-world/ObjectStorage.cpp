@@ -97,75 +97,68 @@ void ObjectMgr::LoadProfessionDiscoveries()
 
 void ObjectMgr::LoadExtraCreatureProtoStuff()
 {
+	CreatureProto * cn;
+	CreatureInfo * ci;
+	StorageContainerIterator<CreatureProto> * cpitr = CreatureProtoStorage.MakeIterator();
+	while(!cpitr->AtEnd())
 	{
-		StorageContainerIterator<CreatureProto> * itr = CreatureProtoStorage.MakeIterator();
-		CreatureProto * cn;
-		while(!itr->AtEnd())
+		cn = cpitr->Get();
+		if(cn->aura_string)
 		{
-			cn = itr->Get();
-			if(itr->Get()->aura_string)
+			string auras = string(cn->aura_string);
+			vector<string> aurs = StrSplit(auras, " ");
+			for(vector<string>::iterator it = aurs.begin(); it != aurs.end(); ++it)
 			{
-				string auras = string(itr->Get()->aura_string);
-				vector<string> aurs = StrSplit(auras, " ");
-				for(vector<string>::iterator it = aurs.begin(); it != aurs.end(); ++it)
-				{
-					uint32 id = atol((*it).c_str());
-					if(id)
-						itr->Get()->start_auras.insert( id );
-				}
+				uint32 id = atol((*it).c_str());
+				if(id)
+					cn->start_auras.insert( id );
 			}
-
-			if(!itr->Get()->MinHealth)
-				itr->Get()->MinHealth = 1;
-			if(!itr->Get()->MaxHealth)
-				itr->Get()->MaxHealth = 1;
-			if (itr->Get()->AttackType > SCHOOL_ARCANE)
-				itr->Get()->AttackType = SCHOOL_NORMAL;
-
-			cn->m_canFlee = cn->m_canRangedAttack = cn->m_canCallForHelp = false;
-			cn->m_fleeHealth = 0.0f;
-			// please.... m_fleeDuration is a uint32...
-			//cn->m_fleeDuration = 0.0f;
-			cn->m_fleeDuration = 0;
-
-			if(!itr->Inc())
-				break;
 		}
 
-		itr->Destruct();
+		if(!cn->MinHealth)
+			cn->MinHealth = 1;
+		if(!cn->MaxHealth)
+			cn->MaxHealth = 1;
+		if (cn->AttackType > SCHOOL_ARCANE)
+			cn->AttackType = SCHOOL_NORMAL;
+
+		cn->m_canFlee = cn->m_canRangedAttack = cn->m_canCallForHelp = false;
+		cn->m_fleeHealth = 0.0f;
+		// please.... m_fleeDuration is a uint32...
+		//cn->m_fleeDuration = 0.0f;
+		cn->m_fleeDuration = 0;
+
+		if(!cpitr->Inc())
+			break;
 	}
+	cpitr->Destruct();
+
+	StorageContainerIterator<CreatureInfo> * ciitr = CreatureNameStorage.MakeIterator();
+	while(!ciitr->AtEnd())
+	{
+		ci = ciitr->Get();
+
+		ci->lowercase_name = string(ci->Name);
+		for(uint32 j = 0; j < ci->lowercase_name.length(); ++j)
+			ci->lowercase_name[j] = tolower(ci->lowercase_name[j]); // Darvaleo 2008/08/15 - Copied lowercase conversion logic from ItemPrototype task
+
+		ci->gossip_script = sScriptMgr.GetDefaultGossipScript();
+
+		if(!ciitr->Inc())
+			break;
+	}
+	ciitr->Destruct();
 
 	{
-		StorageContainerIterator<CreatureInfo> * itr = CreatureNameStorage.MakeIterator();
-		CreatureInfo * ci;
-		while(!itr->AtEnd())
+		StorageContainerIterator<Quest> * qitr = QuestStorage.MakeIterator();
+		while(!qitr->AtEnd())
 		{
-			ci = itr->Get();
+			qitr->Get()->pQuestScript = NULL;
 
-			ci->lowercase_name = string(ci->Name);
-			for(uint32 j = 0; j < ci->lowercase_name.length(); ++j)
-				ci->lowercase_name[j] = tolower(ci->lowercase_name[j]); // Darvaleo 2008/08/15 - Copied lowercase conversion logic from ItemPrototype task
-
-			ci->gossip_script = sScriptMgr.GetDefaultGossipScript();
-
-			if(!itr->Inc())
+			if( !qitr->Inc() )
 				break;
 		}
-		itr->Destruct();
-	}
-
-	{
-		StorageContainerIterator<Quest> * itr = QuestStorage.MakeIterator();
-		Quest * qst;
-		while(!itr->AtEnd())
-		{
-			qst = itr->Get();
-			qst->pQuestScript = NULL;
-
-			if( !itr->Inc() )
-				break;
-		}
-		itr->Destruct();
+		qitr->Destruct();
 	}
 
 	// Load AI Agents
@@ -173,7 +166,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		return;
 
 	QueryResult * result = WorldDatabase.Query( "SELECT Entry,Type+0,Chance,MaxCount,Spell,SpellType+0,TargetType+0,CoolDown,floatMisc1,Misc2 FROM ai_agents" );
-	CreatureProto * cn = NULL;
+	cn = NULL;
 
 	if( result != NULL )
 	{
