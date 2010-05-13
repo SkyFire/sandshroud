@@ -325,12 +325,6 @@ bool ChatHandler::HandleExploreCheatCommand(const char* args, WorldSession *m_se
 
 	for (uint8 i = 0; i < 128; ++i)
 		chr->SetFlag(PLAYER_EXPLORED_ZONES_1+i,0xFFFFFFFF);
-
-	FILE* file = fopen("Dodge_Ratio.txt","w");
-	for(uint32 i = 1; i < 86; ++i)
-		fprintf(file, "Ratio: %ff\n", (dbcMeleeCrit.LookupEntry((i-1)*100*(11-1)) ? dbcMeleeCrit.LookupEntry(100*(11-1)+(i-1))->val : 0.0f));
-	fclose(file);
-
 	return true;
 }
 
