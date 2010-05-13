@@ -301,9 +301,6 @@ bool ChatHandler::HandleReviveCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleExploreCheatCommand(const char* args, WorldSession *m_session)
 {
-	if (!*args)
-		return false;
-
 	int flag = atoi((char*)args);
 
 	Player* chr = getSelectedChar(m_session);
@@ -316,41 +313,23 @@ bool ChatHandler::HandleExploreCheatCommand(const char* args, WorldSession *m_se
 	char buf[256];
 
 	// send message to user
-	if (flag != 0)
-	{
-		snprintf((char*)buf,256,"%s has explored all zones now.", chr->GetName());
-	}
-	else
-	{
-		snprintf((char*)buf,256,"%s has no more explored zones.", chr->GetName());
-	}
+	snprintf((char*)buf,256,"%s has explored all zones now.", chr->GetName());
 	SystemMessage(m_session, buf);
 
-	// send message to player
-	if (flag != 0)
+	if(chr->GetSession() != m_session)
 	{
-		snprintf((char*)buf,256,"%s has explored all zones for you.",
-			m_session->GetPlayer()->GetName());
+		// send message to player
+		snprintf((char*)buf,256,"%s has explored all zones for you.", m_session->GetPlayer()->GetName());
+		SystemMessage(chr->GetSession(),  buf);
 	}
-	else
-	{
-		snprintf((char*)buf,256,"%s has hidden all zones from you.", 
-			m_session->GetPlayer()->GetName());
-	}
-	SystemMessage(m_session,  buf);
-
 
 	for (uint8 i = 0; i < 128; ++i)
-	{
-		if (flag != 0)
-		{
-			chr->SetFlag(PLAYER_EXPLORED_ZONES_1+i,0xFFFFFFFF);
-		}
-		else
-		{
-			chr->SetFlag(PLAYER_EXPLORED_ZONES_1+i,0);
-		}
-	}
+		chr->SetFlag(PLAYER_EXPLORED_ZONES_1+i,0xFFFFFFFF);
+
+	FILE* file = fopen("Dodge_Ratio.txt","w");
+	for(uint32 i = 1; i < 86; ++i)
+		fprintf(file, "Ratio: %ff\n", (dbcMeleeCrit.LookupEntry((i-1)*100*(11-1)) ? dbcMeleeCrit.LookupEntry(100*(11-1)+(i-1))->val : 0.0f));
+	fclose(file);
 
 	return true;
 }
@@ -1912,7 +1891,7 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	static const char* classes[12] =
 	{"None","Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "None", "Druid"};
 	static const char* races[12] =
-	{"None","Human","Orc","Dwarf","Night Elf","Undead","Tauren","Gnome","Troll","None","Blood Elf","Draenei"};
+	{"None","Human","Orc","Dwarf","Night Elf","Undead","Tauren","Gnome","Troll","Goblin","Blood Elf","Draenei"};
 
 	char playedLevel[64];
 	char playedTotal[64];
@@ -1974,7 +1953,7 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	snprintf(playedTotal, 64, "[%d days, %d hours, %d minutes, %d seconds]", days, hours, mins, seconds);
 
 	GreenSystemMessage(m_session, "%s[%u] is a %s %s %s", plr->GetName(), plr->GetLowGUID(),
-		(plr->getGender()?"Female":"Male"), races[plr->getRace()], classes[plr->getClass()]);
+		(plr->getGender()?"Female":"Male"), plr->getRace() < 12 ? races[plr->getRace()] : "Worgen", classes[plr->getClass()]);
 
 	BlueSystemMessage(m_session, "%s has played %s at this level",(plr->getGender()?"She":"He"), playedLevel);
 	BlueSystemMessage(m_session, "and %s overall", playedTotal);

@@ -503,6 +503,9 @@ public:
 
 	uint32 GetOldEmote() { return m_oldEmote; }
 
+	// Movement
+	void SetMovementDefaults(MovementInfo& move);
+
 	// Serialization
 	void SaveToDB();
 	void SaveToFile(std::stringstream & name);

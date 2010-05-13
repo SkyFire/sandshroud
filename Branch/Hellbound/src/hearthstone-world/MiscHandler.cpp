@@ -1541,44 +1541,6 @@ void WorldSession::HandleSetActionBarTogglesOpcode(WorldPacket &recvPacket)
 	GetPlayer()->SetByte(PLAYER_FIELD_BYTES,2, cActionBarId);
 }
 
-// Handlers for acknowledgement opcodes (removes some 'unknown opcode' flood from the logs)
-void WorldSession::HandleAcknowledgementOpcodes( WorldPacket & recv_data )
-{
-	uint64 guid;
-	CHECK_INWORLD_RETURN;
-
-	recv_data >> guid;
-
-	// not us? don't change our stuff.
-	if( guid != _player->GetGUID() )
-		return;
-
-	switch(recv_data.GetOpcode())
-	{
-	case CMSG_MOVE_WATER_WALK_ACK:
-		_player->m_waterwalk = _player->m_setwaterwalk;
-		break;
-
-	case CMSG_MOVE_SET_CAN_FLY_ACK:
-		_player->FlyCheat = _player->m_setflycheat;
-		break;
-
-	case CMSG_FORCE_RUN_SPEED_CHANGE_ACK:
-	case CMSG_FORCE_RUN_BACK_SPEED_CHANGE_ACK:
-	case CMSG_FORCE_SWIM_SPEED_CHANGE_ACK:
-	case CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK:
-	case CMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK:
-	case CMSG_FORCE_FLIGHT_SPEED_CHANGE_ACK:
-	if(_player->m_speedChangeInProgress)
-		{
-			_player->ResetHeartbeatCoords();
-			_player->DelaySpeedHack( 5000 );			// give the client a chance to fall/catch up
-			_player->m_speedChangeInProgress = false;
-		}
-		break;
-	}
-}
-
 void WorldSession::HandleSelfResurrectOpcode(WorldPacket& recv_data)
 {
 	uint32 self_res_spell = _player->GetUInt32Value(PLAYER_SELF_RES_SPELL);

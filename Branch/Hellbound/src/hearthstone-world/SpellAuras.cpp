@@ -5623,6 +5623,12 @@ void Aura::SpellAuraTransform(bool apply)
 						else 
 							m_target->SetUInt32Value(UNIT_FIELD_DISPLAYID, 17828);
 					}break;
+					case RACE_WORGEN:
+						m_target->SetUInt32Value(UNIT_FIELD_DISPLAYID, 29422 + m_target->getGender());
+						break;
+					case RACE_GOBLIN:
+						m_target->SetUInt32Value(UNIT_FIELD_DISPLAYID, 6894 + m_target->getGender());
+						break;
 					default:
 						m_target->SetUInt32Value( UNIT_FIELD_DISPLAYID, m_target->GetUInt32Value( UNIT_FIELD_NATIVEDISPLAYID ) );
 				}

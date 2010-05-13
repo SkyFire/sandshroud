@@ -1538,6 +1538,7 @@ CREATE TABLE `teleport_coords` (
   `position_y` float NOT NULL default '0',
   `position_z` float NOT NULL default '0',
   `orientation` int(10) unsigned NOT NULL default '0',
+  `phase` int(30) NOT NULL default '1',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='World System';
 

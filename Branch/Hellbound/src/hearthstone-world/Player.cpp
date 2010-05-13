@@ -712,6 +712,14 @@ bool Player::Create(WorldPacket& data )
 		return false;
 	}
 
+	// check that the account CAN create TBC characters, if we're making some
+	if((race == RACE_WORGEN || race == RACE_GOBLIN) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03))
+	{
+		//sCheatLog.writefromsession(m_session, "tried to create player with race %u and class %u but no expansion flags", race, class_);
+		m_session->Disconnect();
+		return false;
+	}
+
 	m_mapId = info->mapId;
 	m_zoneId = info->zoneId;
 	m_position.ChangeCoords(info->positionX, info->positionY, info->positionZ);
@@ -1385,17 +1393,6 @@ void Player::_EventExploration()
 	if(at == 0)
 		return;
 
-	/*char areaname[200];
-	if(at)
-	{
-		strcpy(areaname, sAreaStore.LookupString((uint32)at->name));
-	}
-	else
-	{
-		strcpy(areaname, "UNKNOWN");
-	}
-	sChatHandler.BlueSystemMessageToPlr(TO_PLAYER(this),areaname);*/
-
 	uint32 offset = at->explorationFlag / 32;
 	offset += PLAYER_EXPLORED_ZONES_1;
 
@@ -1404,10 +1401,7 @@ void Player::_EventExploration()
 
 	if(AreaId != m_AreaID)
 	{
-		m_AreaID = AreaId;
-		m_areaDBC = dbcArea.LookupEntryForced(m_AreaID);
-		if (m_areaDBC && m_areaDBC->ZoneId != 0)
-			m_areaDBC = dbcArea.LookupEntryForced(m_areaDBC->ZoneId);
+		SetAreaID(AreaId);
 		UpdatePvPArea();
 		if(GetGroup())
 			GetGroup()->UpdateOutOfRangePlayer(TO_PLAYER(this), 128, true, NULL);
@@ -3036,6 +3030,11 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	m_position.z										= get_next_field.GetFloat();
 	m_position.o										= get_next_field.GetFloat();
 
+	movement_info.x = m_position.x;
+	movement_info.y = m_position.y;
+	movement_info.z = m_position.z;
+	movement_info.orientation = m_position.o;
+
 	m_mapId												= get_next_field.GetUInt32();
 	m_zoneId											= get_next_field.GetUInt32();
 
@@ -3175,7 +3174,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	if(m_TransporterGUID)
 	{
 		Transporter* t = objmgr.GetTransporter(GUID_LOPART(m_TransporterGUID));
-		m_TransporterGUID = t ? t->GetGUID() : 0;
+		m_TransporterGUID = t ? t->GetGUID() : NULL;
 	}
 
 	m_transportPosition = new LocationVector(get_next_field.GetFloat(), get_next_field.GetFloat(), get_next_field.GetFloat());
@@ -3348,6 +3347,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	_setFaction();
 	InitGlyphSlots();
 	InitGlyphsForLevel();
+	SetMovementDefaults(movement_info);
 
 	//class fixes
 	switch(getClass())
@@ -5005,7 +5005,7 @@ void Player::SetTutorialInt(uint32 intId, uint32 value)
 
 void Player::UpdateHit(int32 hit)
 {
-   /*std::list<Affect*>::iterator i;
+	/*std::list<Affect*>::iterator i;
 	Affect::ModList::const_iterator j;
 	Affect *aff;
 	uint32 in = hit;
@@ -5033,18 +5033,33 @@ void Player::UpdateChances()
 
 	float tmp = 0;
 	float defence_contribution = 0;
+	float dodge_from_spell = 0;
 
 	// defence contribution estimate
 	defence_contribution = ( float( _GetSkillLineCurrent( SKILL_DEFENSE, true ) ) - ( float( pLevel ) * 5.0f ) ) * 0.04f;
 	defence_contribution += CalcRating( PLAYER_RATING_MODIFIER_DEFENCE ) * 0.04f;
+	if( defence_contribution < 0.0f )
+		defence_contribution = 0.0f;
 
-	// dodge // Use lvl 70 ratio for levels < 75 and 80 ratio for >= 75 for now
-	tmp = baseDodge[pClass] + float( GetUInt32Value( UNIT_FIELD_AGILITY ) / dodgeRatio[(pLevel < 75) ? 69 : 79][pClass] ); 
-	tmp += CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + this->GetDodgeFromSpell();
-	tmp += defence_contribution;
-	if( tmp < 0.0f )tmp = 0.0f;
+	dodge_from_spell = CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + GetDodgeFromSpell();
+	if( dodge_from_spell < 0.0f )
+		dodge_from_spell = 0.0f;
 
-	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( tmp, 95.0f ) );
+	// dodge
+	float class_multiplier = (pClass == WARRIOR ? 1.1f : pClass == HUNTER ? 1.6f : pClass == ROGUE ? 2.0f : pClass == DRUID ? 1.7f : 1.0f);
+	tmp = baseDodge[pClass] + (float( GetUInt32Value( UNIT_FIELD_AGILITY )*(dodgeRatio[pLevel <= 85 ? pLevel : 85/*Custom Level cap dodge fix*/][pClass] *class_multiplier)));
+	tmp += dodge_from_spell + defence_contribution;
+
+//#define MIN_DODGE_5
+#ifdef MIN_DODGE_5
+	if( tmp < 5.0f ) // Crow: Always thought dodge was constantly above 5.
+		tmp = 5.0f;
+#else
+	if( tmp < 0.0f )
+		tmp = 0.0f;
+#endif
+
+	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( tmp, DodgeCap[pClass] ) );
 
 	// block
 	Item* it = this->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );
@@ -5052,7 +5067,8 @@ void Player::UpdateChances()
 	{
 		tmp = 5.0f + CalcRating( PLAYER_RATING_MODIFIER_BLOCK ) + GetBlockFromSpell();
 		tmp += defence_contribution;
-		if( tmp < 0.0f )tmp = 0.0f;
+		if( tmp < 0.0f )
+			tmp = 0.0f;
 	}
 	else
 		tmp = 0.0f;
@@ -5066,7 +5082,8 @@ void Player::UpdateChances()
 		tmp += CalcPercentForRating(PLAYER_RATING_MODIFIER_PARRY, GetUInt32Value(UNIT_FIELD_STAT0) / 4);
 	}
 	tmp += defence_contribution;
-	if( tmp < 0.0f )tmp = 0.0f;
+	if( tmp < 0.0f )
+		tmp = 0.0f;
 
 	SetFloatValue( PLAYER_PARRY_PERCENTAGE, std::max( 0.0f, std::min( tmp, 95.0f ) ) ); //let us not use negative parry. Some spells decrease it
 
@@ -7221,7 +7238,7 @@ void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 	}
 	else
 	{
-		sEventMgr.AddEvent(TO_PLAYER(this), &Player::EventTeleport, (uint32)mapchangeid, mapchangex, mapchangey, mapchangez, orientation, EVENT_PLAYER_TELEPORT, traveltime, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		sEventMgr.AddEvent(TO_PLAYER(this), &Player::EventTeleport, (uint32)mapchangeid, mapchangex, mapchangey, mapchangez, orientation, 0, EVENT_PLAYER_TELEPORT, traveltime, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
 }
 
@@ -8509,9 +8526,13 @@ void Player::StopMirrorTimer(uint32 Type)
 	m_session->OutPacket(SMSG_STOP_MIRROR_TIMER, 4, &Type);
 }
 
-void Player::EventTeleport(uint32 mapid, float x, float y, float z, float o = 0.0f)
+void Player::EventTeleport(uint32 mapid, float x, float y, float z, float o, int32 phase)
 {
 	SafeTeleport(mapid, 0, LocationVector(x, y, z, o));
+	if(phase != 0)
+		SetPhase(phase);
+	else
+		SetPhase(GetPhaseForLocation(mapid, x, y, z));
 }
 
 void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
@@ -8598,29 +8619,10 @@ const double BaseRating []= {
 */
 float Player::CalcPercentForRating( uint32 index, uint32 rating )
 {
-	uint32 relative_index = index - (PLAYER_FIELD_COMBAT_RATING_1);
-	/*if( relative_index <= 10 || ( relative_index >= 14 && relative_index <= 21 ) )
-	{
-		double rating = (double)m_uint32Values[index];
-		int level = getLevel();
-		if( level < 10 )//this is not dirty fix -> it is from wowwiki
-			level = 10;
-		double cost;
-		if( level < 60 )
-			cost = ( double( level ) - 8.0 ) / 52.0;
-		else
-			cost = 82.0 / ( 262.0 - 3.0 *  double( level ) );
-		return float( rating / ( BaseRating[relative_index] * cost ) );
-	}
-	else
-		return 0.0f;*/
-	
+	uint32 relative_index = index - (PLAYER_FIELD_COMBAT_RATING_1);	
 	uint32 level = m_uint32Values[UNIT_FIELD_LEVEL];
 	if( level > 100 )
 		level = 100;
-
-	if(level < 34 && (index == PLAYER_RATING_MODIFIER_BLOCK || index == PLAYER_RATING_MODIFIER_PARRY || index == PLAYER_RATING_MODIFIER_DEFENCE))
-		level = 34;
 
 	CombatRatingDBC * pDBCEntry = dbcCombatRating.LookupEntryForced( relative_index * 100 + level - 1 );
 	if( pDBCEntry == NULL )
@@ -12800,4 +12802,37 @@ bool Player::AllowDisenchantLoot()
 
 	BroadcastMessage(MSG_COLOR_RED"You need at least one enchanter in your group. You will just receive the item.");
 	return false;
+}
+
+void Player::SetMovementDefaults(MovementInfo& move)
+{
+	// Crow:  This is all we really need right now.
+	move.x = GetPositionX();
+	move.y = GetPositionY();
+	move.z = GetPositionZ();
+	move.orientation = GetOrientation();
+
+	if(m_TransporterGUID && m_transportPosition)
+	{
+		move.transGuid = m_transportNewGuid;
+		move.transX = m_transportPosition->x;
+		move.transY = m_transportPosition->y;
+		move.transZ = m_transportPosition->z;
+		move.transO = m_transportPosition->o;
+	}
+}
+
+int32 Player::GetPhaseForLocation(uint32 Mapid, float x, float y, float z)
+{
+	if(GetMapMgr() == NULL)
+		return 1;
+
+	// Our map should have changed already.
+	uint32 areaid = GetMapMgr()->GetAreaID(x, y, z);
+
+	/*
+
+	*/
+	// TODO: We use this because we will need it later.
+	return 1;
 }

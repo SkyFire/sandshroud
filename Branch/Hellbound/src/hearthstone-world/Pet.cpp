@@ -380,15 +380,6 @@ void Pet::SendSpellsToOwner()
 			*data << uint16(itr->first->Id) << uint16(itr->second);
 	}
 	*data << uint8(0);	// count
-	/*
-	for(uint32 i = 0; i < count)
-	{
-		*data << uint32(0);
-		*data << uint16(0);
-		*data << uint32(0);
-		*data << uint32(0);
-	}
-	*/
 
 	m_Owner->delayedPackets.add(data);
 }

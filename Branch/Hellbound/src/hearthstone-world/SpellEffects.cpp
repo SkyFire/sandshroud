@@ -163,7 +163,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectNULL,						// unknown - 135 // no spells
 	&Spell::SpellEffectRestoreHealthPct,			// Restore Health % - 136 // http://www.wowhead.com/?spell=48982
 	&Spell::SpellEffectRestoreManaPct,				// Restore Mana % - 137 // http://www.thottbot.com/s41542
-	&Spell::SpellEffectNULL,						// unknown - 138 // related to superjump or even "*jump" spells http://www.thottbot.com/?e=Unknown%20138
+	&Spell::SpellEffectKnockBack,					// unknown - 138 // related to superjump or even "*jump" spells http://www.thottbot.com/?e=Unknown%20138
 	&Spell::SpellEffectNULL,						// unknown - 139 // no spells
 	&Spell::SpellEffectTeleportUnits,				//SPELL_EFFECT_TELEPORT_UNITS - 140 IronForge teleport / portal only it seems
 	&Spell::SpellEffectNULL,						// unknown - 141 // triggers spell, magic one,  (Mother spell) http://www.thottbot.com/s41065
@@ -637,6 +637,19 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					u_caster->RemoveFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_VICTORIOUS );
 				}
 			}break;
+		}
+	}
+
+	switch(m_spellInfo->Id)
+	{
+	case 69041:
+		{
+			if(p_caster != NULL) // Not finished.
+			{
+				float apbonus = 0.25*float(p_caster->GetAP());
+				float spbonus = 0.429*float(p_caster->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS+SCHOOL_FIRE));
+				dmg += float2int32(float(m_spellInfo->EffectBasePoints[i]) + apbonus + spbonus + (p_caster->getLevel()*2));
+			}
 		}
 	}
 
@@ -1728,7 +1741,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	case 28414:// Call Ashbringer
 		{
 			//http://www.thottbot.com/?i=53974
-			if(p_caster == NULL)
+			if(p_caster == NULL || p_caster->GetSession() == NULL)
 			 	return;
 			
 			uint32 ashcall = RandomUInt(12);
@@ -2170,6 +2183,30 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				}
 			}
 		}break;
+	case 68996:
+		{
+			if(p_caster != NULL)
+			{
+				if(p_caster->getRace() == RACE_WORGEN)
+				{
+					if(p_caster->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_WORGEN_TRANSFORM))
+						p_caster->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_WORGEN_TRANSFORM);
+					else
+						p_caster->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_WORGEN_TRANSFORM);
+//						p_caster->SetFlag(UNIT_FIELD_FLAGS_2, p_caster->GetUInt32Value(UNIT_FIELD_FLAGS_2) | UNIT_FLAG2_WORGEN_TRANSFORM));
+				}
+			}
+			else
+			{
+				if(m_caster->IsCreature())
+				{
+					if(m_caster->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_WORGEN_TRANSFORM))
+						m_caster->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_WORGEN_TRANSFORM);
+					else
+						m_caster->SetFlag(UNIT_FIELD_FLAGS_2, (p_caster->GetUInt32Value(UNIT_FIELD_FLAGS_2) | UNIT_FLAG2_WORGEN_TRANSFORM));
+				}
+			}
+		}break;
 	default:
 		{
 			if(sLog.IsOutDevelopement())
@@ -2245,7 +2282,6 @@ void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
 	}
 
 	/* TODO: Remove Player From bg */
-
 	if(unitTarget->GetTypeId() == TYPEID_PLAYER)
 		HandleTeleport(spellId, unitTarget);
 }
@@ -4282,22 +4318,7 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 			damage = 6;
 		
 		if(cr_entry == 29264)	// Spirit Wolf
-		{
-			CreatureInfo *ci = CreatureNameStorage.LookupEntry(m_spellInfo->EffectMiscValue[i]);
-			Pet *summon = objmgr.CreatePet();
-			summon->CreateAsSummon(cr_entry, ci, NULL, p_caster, m_spellInfo, 4, GetDuration());
-			summon->AddSpell(dbcSpell.LookupEntry(58877), true); // Spirit Hunt
-			summon->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
-			summon->AddSpell(dbcSpell.LookupEntry(58857), true); // Twin Howl
-			summon->AddSpell(dbcSpell.LookupEntry(58861), true); // Spirit Bash
-			Pet *summon2 = objmgr.CreatePet();
-			summon2->CreateAsSummon(cr_entry, ci, NULL, p_caster, m_spellInfo, 4, GetDuration());
-			summon2->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
-			summon2->AddSpell(dbcSpell.LookupEntry(58877), true); // Spirit Hunt
-			summon2->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
-			summon2->AddSpell(dbcSpell.LookupEntry(58857), true); // Twin Howl
-			summon2->AddSpell(dbcSpell.LookupEntry(58861), true); // Spirit Bash
-		};
+			damage = 3;
 
 		//Spread spawns equally around summoner
 		float angle_for_each_spawn = damage ? - float(M_PI * 2.0f)/damage : - float(M_PI * 2.0f);
@@ -4321,6 +4342,7 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 
 			if(u_caster->m_SummonSlots[d]!=NULL)
 				u_caster->m_SummonSlots[d]->SetSummonOwnerSlot(u_caster->GetGUID(),d);
+
 		}
 	}
 }
@@ -6081,12 +6103,14 @@ void Spell::SpellEffectStuck(uint32 i)
 	if( playerTarget == NULL || playerTarget != p_caster)
 		return;
 
+	uint32 mapid = playerTarget->GetBindMapId();
+	float x = playerTarget->GetBindPositionX();
+	float y = playerTarget->GetBindPositionY();
+	float z = playerTarget->GetBindPositionZ();
 	float orientation = 0;
 
-	sEventMgr.AddEvent(playerTarget,&Player::EventTeleport,playerTarget->GetBindMapId(),playerTarget->GetBindPositionX(),playerTarget->GetBindPositionY(),
-		playerTarget->GetBindPositionZ(),orientation,EVENT_PLAYER_TELEPORT,50,1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	/*
-	playerTarget->SafeTeleport(playerTarget->GetBindMapId(), 0, playerTarget->GetBindPositionX(), playerTarget->GetBindPositionY(), playerTarget->GetBindPositionZ(), 3.14f);*/
+	sEventMgr.AddEvent(playerTarget,&Player::EventTeleport,mapid,x,y,z,orientation,0,
+		EVENT_PLAYER_TELEPORT,50,1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 }
 
 void Spell::SpellEffectSummonPlayer(uint32 i)

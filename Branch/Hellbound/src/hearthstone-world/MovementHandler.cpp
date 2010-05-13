@@ -812,9 +812,89 @@ void WorldSession::HandleMoveFallResetOpcode(WorldPacket & recvPacket)
 	_player->z_axisposition = 0.0f;
 }
 
+void WorldSession::HandleMoveHoverWaterFlyAckOpcode( WorldPacket & recv_data )
+{
+	if(!_player)
+		return;
+
+	WoWGuid guid;
+	uint32 unk, unk2;
+	recv_data >> guid, unk;
+	if(guid.GetOldGuid() != _player->GetGUID())
+	{
+		SKIP_READ_PACKET(recv_data);
+		return;
+	}
+
+	_player->movement_info.init(recv_data);
+	recv_data >> unk2;
+
+	switch(recv_data.GetOpcode())
+	{
+	case CMSG_MOVE_WATER_WALK_ACK:
+		_player->m_waterwalk = _player->m_setwaterwalk;
+		break;
+
+	case CMSG_MOVE_SET_CAN_FLY_ACK:
+		_player->FlyCheat = _player->m_setflycheat; // TODO: Send unfly if wrong.
+		break;
+
+	default:
+		break;
+	}
+}
+
+void WorldSession::HandleMoveKnockbackAckOpcode( WorldPacket & recv_data )
+{
+	if(!_player)
+		return;
+
+	WoWGuid guid;
+	uint32 unk2;
+	recv_data >> guid >> unk2;
+	if(guid.GetOldGuid() != _player->GetGUID())
+	{
+		SKIP_READ_PACKET(recv_data);
+		return;
+	}
+
+	_player->movement_info.init(recv_data);
+}
+
+void WorldSession::HandleAcknowledgementOpcodes( WorldPacket & recv_data )
+{
+	recv_data.rpos(recv_data.wpos());
+}
+
+void WorldSession::HandleForceSpeedChangeOpcodes( WorldPacket & recv_data )
+{
+	if(!_player)
+		return;
+
+	WoWGuid guid;
+	uint32 unk;
+	recv_data >> guid >> unk;
+
+	if(guid.GetOldGuid() != _player->GetGUID())
+	{
+		SKIP_READ_PACKET(recv_data);
+		return;
+	}
+
+	_player->movement_info.init(recv_data);
+	SKIP_READ_PACKET(recv_data); // Don't care.
+
+	// TODO: We need more than this I guess...
+	if(_player->m_speedChangeInProgress)
+	{
+		_player->ResetHeartbeatCoords();
+		_player->DelaySpeedHack( 5000 );			// give the client a chance to fall/catch up
+		_player->m_speedChangeInProgress = false;
+	}
+}
+
 void MovementInfo::init(WorldPacket & data)
 {
-	unk13 = 0;
 	data >> flags >> flag16 >> time;
 	data >> x >> y >> z >> orientation;
 
@@ -846,11 +926,11 @@ void MovementInfo::init(WorldPacket & data)
 
 	if (flags & MOVEFLAG_FALLING || flags & MOVEFLAG_REDIRECTED)
 	{
-		data >> jumpspeed >> jump_sinAngle >> jump_cosAngle >> jump_xySpeed;
+		data >> jump_velocity >> jump_sinAngle >> jump_cosAngle >> jump_xySpeed;
 	}
 	if (flags & MOVEFLAG_SPLINE_MOVER)
 	{
-		data >> spline_unk;
+		data >> spline;
 	}
 }
 
@@ -860,26 +940,23 @@ void MovementInfo::write(WorldPacket & data)
 
 	data << x << y << z << orientation;
 
-	if (flags & MOVEFLAG_TAXI)
+	if(flags & MOVEFLAG_TAXI)
 	{
 		data << transGuid << transX << transY << transZ << transO << transTime << transSeat;
 	}
-	if (flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20)
+	if(flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20)
 	{
 		data << pitch;
 	}
 
 	data << FallTime;
 
-	if (flags & MOVEFLAG_FALLING || flags & MOVEFLAG_REDIRECTED)
+	if(flags & MOVEFLAG_FALLING || flags & MOVEFLAG_REDIRECTED)
 	{
-		data << jumpspeed << jump_sinAngle << jump_cosAngle << jump_xySpeed;
+		data << jump_velocity << jump_sinAngle << jump_cosAngle << jump_xySpeed;
 	}
-	if (flags & MOVEFLAG_SPLINE_MOVER)
+	if(flags & MOVEFLAG_SPLINE_MOVER)
 	{
-		data << spline_unk;
+		data << spline;
 	}
-
-	if(unk13)
-		data << unk13;
 }

@@ -36,7 +36,6 @@ Creature::Creature(uint64 guid)
 	SetUInt64Value( OBJECT_FIELD_GUID, guid);
 	m_wowGuid.Init(GetGUID());
 
-
 	m_quests = NULL;
 	proto = NULL;
 	proto_heroic = NULL;
@@ -1117,6 +1116,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	has_waypoint_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_RANDOM_WAYPOINT);
 	m_aiInterface->m_isGuard = isGuard(GetEntry());
 
+	SetMovementDefaults(movement_info);
 	m_aiInterface->getMoveFlags();
 	//CanMove (overrules AI)
 	if(!proto->CanMove)
@@ -1541,3 +1541,7 @@ Unit* Creature::GetSummonOwner()
 	return NULLUNIT;
 }
 
+void Creature::SetMovementDefaults(MovementInfo& move)
+{
+	// TODO
+}

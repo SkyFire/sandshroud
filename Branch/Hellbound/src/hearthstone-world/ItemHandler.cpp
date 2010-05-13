@@ -823,7 +823,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 //	data << itemProto->Damage.Type;
 	data << uint32(0);
 	data << uint32(0);
-	data << uint32(0);
+	data << itemProto->Armor;
 	data << itemProto->Delay;
 	data << itemProto->Range;
 	for(i = 0; i < 5; ++i)

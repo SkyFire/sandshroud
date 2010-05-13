@@ -123,7 +123,9 @@ enum PowerType
 	POWER_TYPE_HAPPINESS= 4, // Not used in creature powertypes.
 	POWER_TYPE_RUNE		= 5,
 	POWER_TYPE_RUNIC	= 6,
-	MAX_POWER_TYPE		= 7
+	POWER_TYPE_S_SHARDS	= 7, // Warlock Soulshards.
+	POWER_TYPE_ECLIPSE	= 8,
+	MAX_POWER_TYPE		= 9
 };
 // Vehicle DBC Power Types
 #define POWER_TYPE_PYRITE 41
@@ -543,7 +545,10 @@ enum UnitFlags2
 	UNIT_FLAG2_UNK1						= 0x00000002, // Hide unit model (show only player equip)
 	UNIT_FLAG2_COMPREHEND_LANG			= 0x00000008,
 	UNIT_FLAG2_FORCE_MOVE				= 0x00000040,
-	UNIT_FLAG2_REGENERATE_POWER			= 0x00000800
+	UNIT_FLAG2_REGENERATE_POWER			= 0x00000800,
+	UNIT_FLAG2_WORGEN_TRANSFORM			= 0x00080000,
+	UNIT_FLAG2_WORGEN_TRANSFORM2		= 0x00100000,
+	UNIT_FLAG2_WORGEN_TRANSFORM3		= 0x00200000
 };
 
 enum UnitDynamicFlags
@@ -665,24 +670,20 @@ typedef std::list<struct ProcTriggerSpellOnSpell> ProcTriggerSpellOnSpellList;
 class MovementInfo
 {
 public:
-	uint64 guid;
-	uint32 time;
-	float pitch;// -1.55=looking down, 0=looking forward, +1.55=looking up
-	float jump_sinAngle;//on slip 8 is zero, on jump some other number
-	float jump_cosAngle, jump_xySpeed;//9,10 changes if you are not on foot
-	float jumpspeed;//something related to collision, CROW: Might be used for other knockback information.
-	uint32 unk11;
-	uint32 spline_unk;
-	uint8 unk13;
-	uint16 flag16;
-
-	float x, y, z, orientation;
 	uint32 flags;
-	uint32 FallTime;
+	uint16 flag16;
+	uint32 time;
+	float x, y, z, orientation;
 	WoWGuid transGuid;
 	float transX, transY, transZ, transO;
 	uint32 transTime;
 	uint8 transSeat;
+	float pitch;// -1.55=looking down, 0=looking forward, +1.55=looking up
+	uint32 FallTime;
+	float jump_sinAngle;//on slip 8 is zero, on jump some other number
+	float jump_cosAngle, jump_xySpeed;//9,10 changes if you are not on foot
+	float jump_velocity;//something related to collision, CROW: Might be used for other knockback information.
+	float spline;
 
 	void init(WorldPacket & data);
 	void write(WorldPacket & data);

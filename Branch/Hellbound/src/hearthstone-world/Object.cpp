@@ -149,7 +149,6 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 {
 	OUT_DEBUG("Building update block for Player");
 	uint16 flags = 0;
-	uint32 flags2 = 0;
 
 	uint8 updatetype = UPDATETYPE_CREATE_OBJECT;
 	if(m_objectTypeId == TYPEID_CORPSE)
@@ -161,14 +160,14 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 	// any other case
 	switch(m_objectTypeId)
 	{
-		// items + containers: 0x8
+		// items + containers: 0x10
 	case TYPEID_ITEM:
 	case TYPEID_CONTAINER:
 		{
 			flags = 0x0010;
 		}break;
 		
-		// player/unit: 0x68 (except self)
+		// player/unit: 0x70 (except self)
 	case TYPEID_UNIT:
 	case TYPEID_PLAYER:
 		{
@@ -182,26 +181,23 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 
 			switch(GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID))
 			{
-				case GAMEOBJECT_TYPE_MO_TRANSPORT:  
-					{
-						if(GetTypeFromGUID() != HIGHGUID_TYPE_TRANSPORTER)
-							return 0;   // bad transporter
-						else
-							flags |= 0x0002;
-					}break;
-
-				case GAMEOBJECT_TYPE_TRANSPORT:
-					{
-						/* deeprun tram, etc */
+			case GAMEOBJECT_TYPE_TRANSPORT:
+			case GAMEOBJECT_TYPE_MO_TRANSPORT:
+				{
+					if(GetTypeFromGUID() != HIGHGUID_TYPE_TRANSPORTER)
+						return 0;	// bad transporter
+					else
 						flags |= 0x0002;
-					}break;
+				}break;
 
-				case GAMEOBJECT_TYPE_DUEL_ARBITER:
-					{
-						// duel flags have to stay as updatetype 3, otherwise
-						// it won't animate
-						updatetype = UPDATETYPE_CREATE_YOURSELF;
-					}break;
+			case GAMEOBJECT_TYPE_DUEL_ARBITER:
+			case GAMEOBJECT_TYPE_FLAGSTAND:
+			case GAMEOBJECT_TYPE_FLAGDROP:
+			case GAMEOBJECT_TYPE_TRAP:
+				{
+					// updatetype as 3. Otherwise it won't animate
+					updatetype = UPDATETYPE_CREATE_YOURSELF;
+				}break;
 			}
 		}break;
 
@@ -230,10 +226,9 @@ uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 	// we shouldn't be here, under any circumstances, unless we have a wowguid..
 	ASSERT(m_wowGuid.GetNewGuidLen());
 	*data << m_wowGuid;
-
 	*data << m_objectTypeId;
 
-	_BuildMovementUpdate(data, flags, flags2, target);
+	_BuildMovementUpdate(data, flags, target);
 
 	// we have dirty data, or are creating for ourself.
 	UpdateMask updateMask;
@@ -351,166 +346,61 @@ void Object::DestroyForPlayer(Player* target) const
 /// TODO: rewrite this stuff, document unknown fields and flags
 uint32 TimeStamp();
 
-void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2, Player* target )
+void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, Player* target )
 {
 	ByteBuffer *splinebuf = (m_objectTypeId == TYPEID_UNIT) ? target->GetAndRemoveSplinePacket(GetGUID()) : 0;
-	uint16 flag16 = 0;	// some other flag
-
-	*data << (uint16)flags;
+	*data << uint16(flags);
 
 	Player* pThis = NULLPLR;
-	MovementInfo* moveinfo;
+	MovementInfo* moveinfo = TO_UNIT(this)->GetMovementInfo();
 	if(m_objectTypeId == TYPEID_PLAYER)
-	{
 		pThis = TO_PLAYER(this);
-		if(pThis->GetSession())
-			moveinfo = pThis->GetMovementInfo();
-		if(target == pThis)
-		{
-			// Updating our last speeds.
-			pThis->UpdateLastSpeeds();
-		}
-	}
+
+	if(IsVehicle())
+		moveinfo->flag16 |= 0x0020;	// Some pitch shit.
 
 	if (flags & 0x20)
 	{
 		if(pThis && pThis->m_TransporterGUID != 0)
-			flags2 |= 0x200;
+			moveinfo->flags |= 0x200;
 		else if(m_objectTypeId==TYPEID_UNIT && TO_CREATURE(this)->m_TransporterGUID != 0 && TO_CREATURE(this)->m_transportPosition != NULL)
-			flags2 |= 0x200;
+			moveinfo->flags |= 0x200;
 		else if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
-			flags2 |= 0x200;
+			moveinfo->flags |= 0x200;
 
 		if(splinebuf)
 		{
-			flags2 |= 0x08000001;	   //1=move forward
+			moveinfo->flags |= 0x08000001;	   //1=move forward
 			if(GetTypeId() == TYPEID_UNIT)
 			{
 				if( TO_UNIT(this)->GetAIInterface()->m_moveRun == false)
-					flags2 |= 0x100;	//100=walk
+					moveinfo->flags |= 0x100;	//100=walk
 			}			
 		}
 
 		if(GetTypeId() == TYPEID_UNIT)
 		{
-			//		 Don't know what this is, but I've only seen it applied to spirit healers.
-			//		 maybe some sort of invisibility flag? :/
-
 			switch(GetEntry())
 			{
 			case 6491:  // Spirit Healer
 			case 13116: // Alliance Spirit Guide
 			case 13117: // Horde Spirit Guide
 				{
-					flags2 |= 0x10000000;
+					moveinfo->flags |= 0x10000000;
 				}break;
 			}
 
 			if( TO_UNIT(this)->GetAIInterface()->IsFlying())
-//				flags2 |= 0x800; //in 2.3 this is some state that i was not able to decode yet
-				flags2 |= 0x400; //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time 
+				moveinfo->flags |= 0x400; //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time 
 			if( TO_CREATURE(this)->proto && TO_CREATURE(this)->proto->extra_a9_flags)
 			{
-				if(!(flags2 & 0x0200))
-					flags2 |= TO_CREATURE(this)->proto->extra_a9_flags;
-			}
-/*			if(GetGUIDHigh() == HIGHGUID_WAYPOINT)
-			{
-				if(GetUInt32Value(UNIT_FIELD_STAT0) == 768)		// flying waypoint
-					flags2 |= 0x800;
-			}*/
-		}
-		*data << uint32(flags2);
-		*data << uint16(flag16);
-		*data << getMSTime(); // this appears to be time in ms but can be any thing
-
-		// this stuff:
-		//   0x01 -> Enable Swimming?
-		//   0x04 -> ??
-		//   0x10 -> disables movement compensation and causes players to jump around all the place
-		//   0x40 -> disables movement compensation and causes players to jump around all the place
-
-		*data << (float)m_position.x;
-		*data << (float)m_position.y;
-		*data << (float)m_position.z;
-		*data << (float)m_position.o;
-
-		if ( flags2 & 0x0200 )	//BYTE1(flags2) & 2
-		{
-			if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
-			{
-				Unit* pUnit = TO_UNIT(this);
-				Vehicle* vehicle = TO_UNIT(this)->m_CurrentVehicle;
-
-				if (pUnit->m_inVehicleSeatId != 0xFF && vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId] != NULL)
-				{
-					*data << pUnit->m_CurrentVehicle->GetNewGUID();
-					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetX;
-					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetY;
-					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetZ;
-					*data << float(0.0f);
-					*data << uint32(0);
-					*data << pUnit->m_inVehicleSeatId;
-				}
-				else
-				{
-					*data << uint8(0);
-					*data << float(0);
-					*data << float(0);
-					*data << float(0);
-					*data << float(0);
-					*data << uint32(0);
-					*data << uint8(0);
-				}
-			}
-			else if(pThis)
-			{
-				WoWGuid wowguid(pThis->m_TransporterGUID);
-				*data << wowguid;
-				*data << pThis->m_transportPosition->x << pThis->m_transportPosition->y << pThis->m_transportPosition->z << pThis->m_transportPosition->o;
-				*data << pThis->m_TransporterUnk << uint8(0);
-			}
-			else if(m_objectTypeId == TYPEID_UNIT && TO_CREATURE(this)->m_transportPosition != NULL)
-			{
-				WoWGuid tguid(TO_CREATURE(this)->m_TransporterGUID);
-				*data << tguid;
-				*data << TO_CREATURE(this)->m_transportPosition->x << TO_CREATURE(this)->m_transportPosition->y <<
-					TO_CREATURE(this)->m_transportPosition->z << TO_CREATURE(this)->m_transportPosition->o;
-				*data << uint32(0);
-				*data << uint8(0);
+				if(!(moveinfo->flags & 0x0200))
+					moveinfo->flags |= TO_CREATURE(this)->proto->extra_a9_flags;
 			}
 		}
 
-		if(flags2 & 0x2200000 || flag16 & 0x20) //flying/swimming, && unk sth to do with vehicles?
-		{
-			if(pThis && moveinfo)
-				*data << moveinfo->pitch;
-			*data << float(0); //pitch
-		}
-
-		if(pThis && moveinfo)
-			*data << moveinfo->FallTime;
-		else
-			*data << uint32(0); //last fall time
-
-		if(flags2 & 0x1000) // BYTE1(flags2) & 0x10
-		{
-			if(pThis && moveinfo)
-			{
-				*data << moveinfo->jumpspeed;
-				*data << moveinfo->jump_sinAngle;
-				*data << moveinfo->jump_cosAngle;
-				*data << moveinfo->jump_xySpeed;
-			}
-			*data << (float)0;
-			*data << (float)1.0; //sinAngle
-			*data << (float)0;	 //cosAngle
-			*data << (float)0;	 //xySpeed
-		}
-		if( flags2 & MOVEFLAG_SPLINE_MOVER )
-		{
-			*data << (float)0; //unknown float
-		}
+		WorldPacket* data2 = ((WorldPacket*)data);
+		TO_UNIT(this)->GetMovementInfo()->write(*data2);
 
 		*data << m_walkSpeed;		// walk speed
 		*data << m_runSpeed;		// run speed
@@ -586,6 +476,103 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			rotation = TO_GAMEOBJECT(this)->m_rotation;
 		*data << uint64(rotation); //blizz 64bit rotation
 	}
+/*
+	Crow: Stuff from before the movement info write.
+	uint32 flags2 = moveinfo->flags;
+	uint16 flag16 = moveinfo->flag16;
+	*data << uint32(flags2);
+	*data << uint16(flag16);
+	*data << getMSTime(); // this appears to be time in ms but can be any thing
+
+	// this stuff:
+	//   0x01 -> Enable Swimming?
+	//   0x04 -> ??
+	//   0x10 -> disables movement compensation and causes players to jump around all the place
+	//   0x40 -> disables movement compensation and causes players to jump around all the place
+
+	*data << (float)m_position.x;
+	*data << (float)m_position.y;
+	*data << (float)m_position.z;
+	*data << (float)m_position.o;
+
+	if ( flags2 & 0x0200 )	//BYTE1(flags2) & 2
+	{
+		if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
+		{
+			Unit* pUnit = TO_UNIT(this);
+			Vehicle* vehicle = TO_UNIT(this)->m_CurrentVehicle;
+
+			if (pUnit->m_inVehicleSeatId != 0xFF && vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId] != NULL)
+			{
+				*data << pUnit->m_CurrentVehicle->GetNewGUID();
+				*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetX;
+				*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetY;
+				*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetZ;
+				*data << float(0.0f);
+				*data << uint32(0);
+				*data << pUnit->m_inVehicleSeatId;
+				*data << uint32(0);
+			}
+			else
+			{
+				*data << uint8(0);
+				*data << float(0);
+				*data << float(0);
+				*data << float(0);
+				*data << float(0);
+				*data << uint32(0);
+				*data << uint8(0);
+				*data << uint32(0);
+			}
+		}
+		else if(pThis)
+		{
+			WoWGuid wowguid(pThis->m_TransporterGUID);
+			*data << wowguid;
+			*data << pThis->m_transportPosition->x << pThis->m_transportPosition->y << pThis->m_transportPosition->z << pThis->m_transportPosition->o;
+			*data << pThis->m_TransporterUnk << uint8(0);
+		}
+		else if(m_objectTypeId == TYPEID_UNIT && TO_CREATURE(this)->m_transportPosition != NULL)
+		{
+			WoWGuid tguid(TO_CREATURE(this)->m_TransporterGUID);
+			*data << tguid;
+			*data << TO_CREATURE(this)->m_transportPosition->x << TO_CREATURE(this)->m_transportPosition->y <<
+				TO_CREATURE(this)->m_transportPosition->z << TO_CREATURE(this)->m_transportPosition->o;
+			*data << uint32(0);
+			*data << uint8(0);
+		}
+	}
+
+	if(flags2 & 0x2200000 || flag16 & 0x20) //flying/swimming, && unk sth to do with vehicles?
+	{
+		if(pThis && moveinfo)
+			*data << moveinfo->pitch;
+		*data << float(0); //pitch
+	}
+
+	if(pThis && moveinfo)
+		*data << moveinfo->FallTime;
+	else
+		*data << uint32(0); //last fall time
+
+	if(flags2 & 0x1000) // BYTE1(flags2) & 0x10
+	{
+		if(pThis && moveinfo)
+		{
+			*data << moveinfo->jump_velocity;
+			*data << moveinfo->jump_sinAngle;
+			*data << moveinfo->jump_cosAngle;
+			*data << moveinfo->jump_xySpeed;
+		}
+		*data << (float)0;
+		*data << (float)1.0; //sinAngle
+		*data << (float)0;	 //cosAngle
+		*data << (float)0;	 //xySpeed
+	}
+	if( flags2 & MOVEFLAG_SPLINE_MOVER )
+	{
+		*data << (float)0; //unknown float
+	}*/
 }
 
 //=======================================================================================
