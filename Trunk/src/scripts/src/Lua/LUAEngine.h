@@ -201,31 +201,20 @@ public:
 
 };
 
-template<typename T> const char * GetTClassName() { return "UNKNOWN"; }
-template<>
-const char * GetTClassName<Item>()
-{
-	return "Item";
-}
-template<>
-const char * GetTClassName<Unit>()
-{
-	return "Unit";
-}
+template<typename T> const char * GetTClassName() { return "UNKNOWN"; };
+template<> const char * GetTClassName<Item>() { return "Item"; };
+template<> const char * GetTClassName<Unit>() {	return "Unit"; };
+template<> const char * GetTClassName<GameObject>() { return "GameObject"; };
 
-template<>
-const char * GetTClassName<GameObject>()
+template <typename T> class Lunar
 {
-	return "GameObject";
-}
-
-template <typename T> class Lunar {
 	typedef struct { T *pT; } userdataType;
 public:
 	typedef int (*mfp)(lua_State *L, T* ptr);
 	typedef struct { const char *name; mfp mfunc; } RegType;
 
-	static void Register(lua_State *L) {
+	static void Register(lua_State *L)
+	{
 		lua_newtable(L);
 		int methods = lua_gettop(L);
 

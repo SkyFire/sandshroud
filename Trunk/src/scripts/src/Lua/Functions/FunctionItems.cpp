@@ -93,7 +93,7 @@ int luaItem_GossipSendPOI(lua_State * L, Item * ptr)
 	int data = luaL_checkint(L, 6);
 	const char * name = luaL_checkstring(L, 7);
 
-	if((x == NULL && y == NULL))
+	if(!x || !y)
 		return 0;
 
 	plr->Gossip_SendPOI(x, y, icon, flags, data, name);
