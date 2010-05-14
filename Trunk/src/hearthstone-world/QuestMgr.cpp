@@ -452,17 +452,8 @@ void QuestMgr::BuildRequestItems(WorldPacket *data, Quest* qst, Object* qst_give
 
 	*data << uint64(qst_giver->GetGUID());
 	*data << uint32(qst->id);
-
-	if(lq)
-	{
-		*data << lq->Title;
-		*data << ((lq->IncompleteText[0]) ? lq->IncompleteText : lq->Details);
-	}
-	else
-	{
-		*data << qst->title;
-		*data << (qst->incompletetext[0] ? qst->incompletetext : qst->details);
-	}
+	*data << (lq ? lq->Title : qst->title);
+	*data << (lq ? ((lq->IncompleteText[0]) ? lq->IncompleteText : lq->Details) : (qst->incompletetext[0] ? qst->incompletetext : qst->details));
 
 	*data << uint32(0);
 	*data << uint32(1);
@@ -470,28 +461,36 @@ void QuestMgr::BuildRequestItems(WorldPacket *data, Quest* qst, Object* qst_give
 
 	*data << qst->quest_flags;
 	*data << qst->suggested_players;
-
 	*data << qst->required_money;		// Required Money
-
-	// item count
-	*data << qst->count_required_item;
+	*data << uint32(6);	// item count
+	uint32 count = 0;
 	
 	// (loop for each item)
 	for(uint32 i = 0; i < 6; ++i)
 	{
 		if(qst->required_item[i])
 		{
-			*data << qst->required_item[i];
-			*data << qst->required_itemcount[i];
+			if(qst->count_required_item == count)
+				continue; // Overflow protector.
+
 			it = ItemPrototypeStorage.LookupEntry(qst->required_item[i]);
-			*data << (it ? it->DisplayInfoID : uint32(0));
+			if(it != NULL)
+			{
+				*data << qst->required_item[i] << (qst->required_itemcount[i] ? qst->required_itemcount[i] : 1) << it->DisplayInfoID;
+			}
+			else
+			{
+				if(sLog.IsOutDevelopement())
+					printf("Incorrect reward %u in quest %u\n", i, qst->id);
+				else
+					OUT_DEBUG("Incorrect reward %u in quest %u", i, qst->id);
+
+				*data << uint32(0) << uint32(0) << uint32(0);
+			}
+			count++;
 		}
 		else
-		{
-			*data << uint32(0);
-			*data << uint32(0);
-			*data << uint32(0);
-		}
+			*data << uint32(0) << uint32(0) << uint32(0);
 	}
 
 	// wtf is this?

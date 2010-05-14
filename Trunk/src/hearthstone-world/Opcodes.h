@@ -1335,6 +1335,7 @@ enum Opcodes
     UMSG_UNKNOWN_1306                               = 0x51A, // not found
     NUM_MSG_TYPES                                   = 0x51B
 };
+
 extern NameTableEntry g_worldOpcodeNames[];
 inline static const char *LookupOpcodeName(uint32 id)
 {

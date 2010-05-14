@@ -5043,31 +5043,33 @@ void Player::UpdateChances()
 
 	float tmp = 0;
 	float defence_contribution = 0;
+	float dodge_from_spell = 0;
 
 	// defence contribution estimate
 	defence_contribution = ( float( _GetSkillLineCurrent( SKILL_DEFENSE, true ) ) - ( float( pLevel ) * 5.0f ) ) * 0.04f;
 	defence_contribution += CalcRating( PLAYER_RATING_MODIFIER_DEFENCE ) * 0.04f;
+	if( defence_contribution < 0.0f )
+		defence_contribution = 0.0f;
 
-	// dodge // Use lvl 70 ratio for levels < 75 and 80 ratio for >= 75 for now
-	tmp = baseDodge[pClass] + float( GetUInt32Value( UNIT_FIELD_AGILITY ) / dodgeRatio[(pLevel < 75) ? 69 : 79][pClass] ); 
-	tmp += CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + this->GetDodgeFromSpell();
-	tmp += defence_contribution;
-	if( tmp < 0.0f )tmp = 0.0f;
+	dodge_from_spell = CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + GetDodgeFromSpell();
+	if( dodge_from_spell < 0.0f )
+		dodge_from_spell = 0.0f;
 
-	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( tmp, 95.0f ) );
+	// dodge
+	float class_multiplier = (pClass == WARRIOR ? 1.1f : pClass == HUNTER ? 1.6f : pClass == ROGUE ? 2.0f : pClass == DRUID ? 1.7f : 1.0f);
+	tmp = baseDodge[pClass] + (float( GetUInt32Value( UNIT_FIELD_AGILITY )*(dodgeRatio[pLevel <= 80 ? pLevel : 80/*Custom Level cap dodge fix*/][pClass] *class_multiplier)));
+	tmp += dodge_from_spell + defence_contribution;
 
-	// block
-	Item* it = this->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );
-	if( it != NULL && it->GetProto()->InventoryType == INVTYPE_SHIELD )
-	{
-		tmp = 5.0f + CalcRating( PLAYER_RATING_MODIFIER_BLOCK ) + GetBlockFromSpell();
-		tmp += defence_contribution;
-		if( tmp < 0.0f )tmp = 0.0f;
-	}
-	else
+//#define MIN_DODGE_5
+#ifdef MIN_DODGE_5
+	if( tmp < 5.0f ) // Crow: Always thought dodge was constantly above 5.
+		tmp = 5.0f;
+#else
+	if( tmp < 0.0f )
 		tmp = 0.0f;
-	
-	SetFloatValue( PLAYER_BLOCK_PERCENTAGE, min( tmp, 95.0f ) );
+#endif
+
+	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( tmp, DodgeCap[pClass] ) );
 
 	//parry
 	tmp = 5.0f + CalcRating( PLAYER_RATING_MODIFIER_PARRY ) + GetParryFromSpell();
