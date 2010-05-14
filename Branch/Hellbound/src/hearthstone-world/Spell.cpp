@@ -1229,13 +1229,6 @@ void Spell::AddStartCooldown()
 
 void Spell::cast(bool check)
 {
-	if(m_spellInfo->Id == 69041)
-	{
-		for(int i = 0; i < 3; i++)
-			printf("sheet. %u\n", m_spellInfo->Effect[i]);
-		printf("sheet. %s\n", m_spellInfo->Description);
-	}
-
 	if( duelSpell && (
 		( p_caster != NULL && p_caster->GetDuelState() != DUEL_STATE_STARTED ) ||
 		( u_caster != NULL && u_caster->IsPet() && TO_PET( u_caster )->GetPetOwner() && TO_PET( u_caster )->GetPetOwner()->GetDuelState() != DUEL_STATE_STARTED ) ) )

@@ -390,6 +390,7 @@ namespace std
 /* Use correct types for x64 platforms, too */
 typedef unsigned int uint;
 typedef unsigned long ulong;
+typedef char const* const* MultiString;
 
 #if COMPILER != COMPILER_GNU
 
