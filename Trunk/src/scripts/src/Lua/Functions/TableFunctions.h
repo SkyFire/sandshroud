@@ -1,12 +1,21 @@
 #ifndef __TABLEFUNCTIONS_H
 #define __TABLEFUNCTIONS_H
 
+#include "../LUAFunctions.h"
+
+template<typename T>
+struct RegType
+{
+	const char * name;
+	int(*mfunc)(lua_State*,T*);
+};
+
 /************************************************************************/
 /* SCRIPT FUNCTION TABLES                                               */
 /************************************************************************/
 RegType<Item> ItemMethods[] = {
-    // Item Gossip functions
-    { "GossipCreateMenu", &luaItem_GossipCreateMenu },
+	// Item Gossip functions
+	{ "GossipCreateMenu", &luaItem_GossipCreateMenu },
 	{ "GossipMenuAddItem", &luaItem_GossipMenuAddItem },
 	{ "GossipSendMenu", &luaItem_GossipSendMenu },
 	{ "GossipComplete", &luaItem_GossipComplete },
@@ -246,5 +255,15 @@ RegType<GameObject> GOMethods[] = {
 	{ "Teleport" , &luaGameObject_Teleport },
 	{ NULL, NULL },
 };
+
+template<typename T> RegType<T>* GetMethodTable() { return NULL; }
+template<>
+RegType<Item>* GetMethodTable<Item>() { return ItemMethods; }
+
+template<>
+RegType<Unit>* GetMethodTable<Unit>() { return UnitMethods; }
+
+template<>
+RegType<GameObject>* GetMethodTable<GameObject>() { return GOMethods; }
 
 #endif // __TABLEFUNCTIONS_H
