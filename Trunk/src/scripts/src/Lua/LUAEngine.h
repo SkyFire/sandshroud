@@ -199,5 +199,30 @@ public:
 
 };
 
+template<typename T> const char * GetTClassName() { return "UNKNOWN"; }
+template<>
+const char * GetTClassName<Item>()
+{
+	return "Item";
+}
+template<>
+const char * GetTClassName<Unit>()
+{
+	return "Unit";
+}
+
+template<>
+const char * GetTClassName<GameObject>()
+{
+	return "GameObject";
+}
+
+template<typename T>
+struct RegType
+{
+	const char * name;
+	int(*mfunc)(lua_State*,T*);
+};
+
 #endif
 

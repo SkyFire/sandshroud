@@ -319,23 +319,6 @@ int luaGameObject_CastSpell(lua_State * L, GameObject * ptr);
 int luaGameObject_FullCastSpell(lua_State * L, GameObject * ptr);
 int luaGameObject_CastSpellOnTarget(lua_State * L, GameObject * ptr);
 int luaGameObject_FullCastSpellOnTarget(lua_State * L, GameObject * ptr);
-//int luaGameObject_EventCastSpell(lua_State * L, GameObject * ptr);
-
-/*
-int luaGameObject_GossipObjectCreateMenu(lua_State * L, GameObject * ptr);
-int luaGameObject_GossipObjectMenuAddItem(lua_State * L, GameObject * ptr);
-int luaGameObject_GossipObjectSendMenu(lua_State * L, GameObject * ptr);
-int luaGameObject_GossipObjectComplete(lua_State * L, GameObject * ptr);
-int luaGameObject_GossipObjectSendPOI(lua_State * L, GameObject * ptr);
-int luaGameObject_ModUInt32Value(lua_State * L, GameObject * ptr);
-int luaGameObject_ModFloatValue(lua_State * L, GameObject * ptr);
-int luaGameObject_GetFloatValue(lua_State * L, GameObject * ptr);
-int luaGameObject_InitPacket(lua_State * L, GameObject * ptr);
-int luaGameObject_AddDataToPacket(lua_State * L, GameObject * ptr);
-int luaGameObject_AddGuidDataToPacket(lua_State * L, GameObject * ptr);
-int luaGameObject_SendData(lua_State * L, GameObject * ptr);
-*/
-
 //////////////////////////////////////////////////
 ////////////////END GAMEOBJECT COMMAND LIST//////////////////
 //////////////////////////////////////////////////
