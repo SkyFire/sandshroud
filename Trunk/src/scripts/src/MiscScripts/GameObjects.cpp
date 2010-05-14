@@ -1222,8 +1222,6 @@ public:
 void SetupGoHandlers(ScriptMgr * mgr)
 {
 	mgr->register_gameobject_script(179879, &OrbOfCommand::Create);
-	mgr->register_gameobject_script(184503, &OrbOfTransLocUC::Create);
-	mgr->register_gameobject_script(184502, &OrbOfTransLocSILVM::Create);
 	mgr->register_gameobject_script(184500, &FalconTowerUpper::Create);
 	mgr->register_gameobject_script(184501, &FalconTowerLower::Create);
 	mgr->register_gameobject_script(182543, &FirewingPointOrb1::Create);
