@@ -291,6 +291,9 @@ AC_CONFIG_FILES([
 	src/sun++/Makefile
 	src/sun++/src/Makefile
 	src/sun++/src/ServerStatusPlugin/Makefile
+	src/scripts/Makefile
+	src/scripts/src/Makefile
+	src/scripts/src/Lua/Makefile
 	])
 
 AC_OUTPUT
