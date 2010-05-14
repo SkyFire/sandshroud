@@ -233,6 +233,8 @@ struct MapInfo
 	float update_distance;
 	uint32 checkpoint_id;
 	bool collision;
+	uint32 phasehorde;
+	uint32 phasealliance;
 
 	bool HasFlag(uint32 flag)
 	{
