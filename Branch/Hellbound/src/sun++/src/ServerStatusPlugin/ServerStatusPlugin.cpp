@@ -306,17 +306,17 @@ void StatDumper::DumpStats()
     fprintf(f, "<serverpage>\n");
     fprintf(f, "  <status>\n");
 
-	uint32 races[RACE_DRAENEI+1];
+	uint32 races[RACE_WORGEN+1];
 	uint32 classes[DRUID+1];
-	memset(&races[0], 0, sizeof(uint32)*(RACE_DRAENEI+1));
+	memset(&races[0], 0, sizeof(uint32)*(RACE_WORGEN+1));
 	memset(&classes[0], 0, sizeof(uint32)*(RACE_DRAENEI+1));
     std::deque<Player*> gms;
     {
         // Dump server information.
 #ifdef WIN32
-		fprintf(f, "    <platform>Sandshroud Hearthstone r%u %s-Win-%s</platform>\n", BUILD_REVISION, CONFIG, ARCH);		
+		fprintf(f, "    <platform>Sandshroud Cataclysm r%u %s-Win-%s</platform>\n", BUILD_REVISION, CONFIG, ARCH);		
 #else
-		fprintf(f, "    <platform>Sandshroud Hearthstone r%u %s-%s </platform>\n", BUILD_REVISION, PLATFORM_TEXT, ARCH);
+		fprintf(f, "    <platform>Sandshroud Cataclysm r%u %s-%s </platform>\n", BUILD_REVISION, PLATFORM_TEXT, ARCH);
 #endif
 		//fprintf(f, "    <buildhost>%s on %s by %s@%s</buildhost>", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
 
@@ -371,7 +371,7 @@ void StatDumper::DumpStats()
     }
 
     fprintf(f, "  </status>\n");
-	static const char * race_names[RACE_DRAENEI+1] = {
+	static const char * race_names[RACE_WORGEN+1] = {
 		NULL,
 		"human",
 		"orc",
@@ -381,9 +381,20 @@ void StatDumper::DumpStats()
 		"tauren",
 		"gnome",
 		"troll",
-		NULL,
+		"goblin",
 		"bloodelf",
 		"draenei",
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		"worgen"
 	};
 
 	static const char * class_names[DRUID+1] = {
@@ -403,7 +414,7 @@ void StatDumper::DumpStats()
 	
 	fprintf(f, "  <statsummary>\n");
 	uint32 i;
-	for(i = 0; i <= RACE_DRAENEI; ++i)
+	for(i = 0; i <= RACE_WORGEN; ++i)
 	{
 		if( race_names[i] != NULL )
 			fprintf(f, "    <%s>%u</%s>\n", race_names[i], races[i], race_names[i]);

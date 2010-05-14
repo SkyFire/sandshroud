@@ -5,7 +5,7 @@
 <xsl:template match="/">
 	<html xmlns="http://www.w3.org/1999/xhtml" >
 	<head>
-		<title>Summit Server Status</title>
+		<title>Hellbound Server Status</title>
 		<meta http-equiv="Pragma" content="no-cache"/>
 		<meta http-equiv="Cache-Control" content="no-cache"/>
 		<style type="text/css" media="screen">@import url(server_stats.css);</style>
@@ -25,7 +25,7 @@
 
 <xsl:template match="status">
 	<table width="100%" border="0" cellspacing="1" cellpadding="3">
-		<tr class="head"><th colspan="4">Summit Server Status</th></tr>
+		<tr class="head"><th colspan="4">Hellbound Server Status</th></tr>
 		<tr>
 			<th>Platform: </th><td><xsl:value-of select="platform"/></td>
 			<th>Uptime: </th><td><xsl:value-of select="uptime"/></td>
@@ -133,6 +133,10 @@
 			<th>Draenei: </th><td><xsl:value-of select="draenei"/></td>
 			<th>Blood Elf: </th><td><xsl:value-of select="bloodelf"/></td>
 		</tr>
+		<tr>
+			<th>Worgen: </th><td><xsl:value-of select="worgen"/></td>
+			<th>Goblin: </th><td><xsl:value-of select="goblin"/></td>
+		</tr>		
 		</table>
 	</td>
 	<td width="20px"></td>
@@ -187,6 +191,10 @@
 <xsl:template match="bloodelf">
 </xsl:template>
 <xsl:template match="draenei">
+</xsl:template>
+<xsl:template match="goblin">
+</xsl:template>
+<xsl:template match="worgen">
 </xsl:template>
 
 <xsl:template match="warrior">
@@ -401,8 +409,10 @@
 					<xsl:when test="race = 6">Tauren</xsl:when>
 					<xsl:when test="race = 7">Gnome</xsl:when>
 					<xsl:when test="race = 8">Troll</xsl:when>
+					<xsl:when test="race = 9">Goblin</xsl:when>
 					<xsl:when test="race = 10">Blood Elf</xsl:when>
 					<xsl:when test="race = 11">Draenei</xsl:when>
+					<xsl:when test="race = 22">Worgen</xsl:when>
 				 </xsl:choose>
 
 			</td>
@@ -469,9 +479,11 @@
                <xsl:when test="race = 6">Tauren</xsl:when>
                <xsl:when test="race = 7">Gnome</xsl:when>
                <xsl:when test="race = 8">Troll</xsl:when>
+	       <xsl:when test="race = 9">Goblin</xsl:when>
                <xsl:when test="race = 10">Blood Elf</xsl:when>
 
                <xsl:when test="race = 11">Draenei</xsl:when>
+	       <xsl:when test="race = 22">Worgen</xsl:when>
                
                </xsl:choose>
          </td>
