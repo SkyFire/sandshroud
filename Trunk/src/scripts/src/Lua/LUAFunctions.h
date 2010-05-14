@@ -1,22 +1,30 @@
 #ifndef __LUAFUNCTIONS_H
 #define __LUAFUNCTIONS_H
 
+// Crow: Some of the following functions are based off of functions created by Hypersniper of LuaHypeArc.
+// Areas where this applies, credit has been given in the form of a name declaration.
 /************************************************************************/
 /* SCRIPT FUNCTIONS DECLARATIONS                                        */
 /************************************************************************/
 //////////////////////////////////////////////////////////////////
-///////////////////UNIT COMMAND LIST//////////////////////////////
+///////////////////ITEM COMMAND LIST//////////////////////////////
 //////////////////////////////////////////////////////////////////
-
-///////////////////
-///Gossip Stuff////
-///////////////////
-//Item Gossip
 int luaItem_GossipCreateMenu(lua_State * L, Item* ptr);
 int luaItem_GossipMenuAddItem(lua_State * L, Item* ptr);
 int luaItem_GossipSendMenu(lua_State * L, Item* ptr);
 int luaItem_GossipComplete(lua_State * L, Item* ptr);
 int luaItem_GossipSendPOI(lua_State * L, Item* ptr);
+int luaItem_PerformWorldDBQuery(lua_State * L, Item* ptr);
+int luaItem_PerformCharDBQuery(lua_State * L, Item* ptr);
+int luaItem_GetOwner(lua_State * L, Item* ptr);
+//////////////////////////////////////////////////////////////////
+/////////////////END ITEM COMMAND LIST////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////
+///////////////////UNIT COMMAND LIST//////////////////////////////
+//////////////////////////////////////////////////////////////////
+
 //Unit Gossip
 int luaUnit_GossipCreateMenu(lua_State * L, Unit * ptr);
 int luaUnit_GossipMenuAddItem(lua_State * L, Unit * ptr);
@@ -32,7 +40,7 @@ int luaGameObject_GossipSendPOI(lua_State * L, GameObject * ptr);
 //GetStuff//
 ////////////
 
-;int luaUnit_GetPlayerRace(lua_State * L, Unit * ptr);
+int luaUnit_GetPlayerRace(lua_State * L, Unit * ptr);
 int luaUnit_GetCurrentSpellId(lua_State * L, Unit * ptr);
 int luaUnit_GetStanding(lua_State * L, Unit * ptr);
 int luaUnit_GetMainTank(lua_State * L, Unit * ptr);
@@ -261,10 +269,7 @@ int luaUnit_SetFacing(lua_State * L, Unit * ptr);
 /////////////////END UNIT COMMAND LIST//////////////////////
 ////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////
-/////////////////////GAMEOBJECT COMMAND LIST///////////////
-///////////////////////////////////////////////////////////
-
+// Crow: These should be Objects not GameObjects...
 //////////////////
 /////GET STUFF////
 //////////////////
@@ -293,13 +298,14 @@ int luaGameObject_GetUInt64Value(lua_State * L, GameObject * ptr);
 int luaGameObject_GetUInt32Value(lua_State * L, GameObject * ptr);
 int luaGameObject_GetFloatValue(lua_State * L, GameObject * ptr);
 int luaGameObject_GetGUID(lua_State * L, GameObject* ptr);
+///////////////////////////////////////////////////////////
+////////////////END GET COMMAND LIST///////////////////////
+///////////////////////////////////////////////////////////
 
-//////////////////
-//////END/////////
-/////////////////
-
-int luaGameObject_Teleport(lua_State * L, GameObject * ptr);
-int luaGameObject_AddItem(lua_State * L, GameObject * ptr);
+///////////////////////////////////////////////////////////
+//////////////GAMEOBJECT COMMAND LIST//////////////////////
+///////////////////////////////////////////////////////////
+int luaGameObject_TeleportPlr(lua_State * L, GameObject * ptr);
 int luaGameObject_Despawn(lua_State * L, GameObject * ptr);
 int luaGameObject_IsInWorld(lua_State * L, GameObject * ptr);
 int luaGameObject_IsInBack(lua_State * L, GameObject * ptr);
@@ -319,9 +325,9 @@ int luaGameObject_CastSpell(lua_State * L, GameObject * ptr);
 int luaGameObject_FullCastSpell(lua_State * L, GameObject * ptr);
 int luaGameObject_CastSpellOnTarget(lua_State * L, GameObject * ptr);
 int luaGameObject_FullCastSpellOnTarget(lua_State * L, GameObject * ptr);
-//////////////////////////////////////////////////
-////////////////END GAMEOBJECT COMMAND LIST//////////////////
-//////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+//////////////END GAMEOBJECT COMMAND LIST//////////////////
+///////////////////////////////////////////////////////////
 
 
 #endif

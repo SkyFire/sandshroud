@@ -91,43 +91,48 @@ int luaGameObject_RemoveFromWorld(lua_State * L, GameObject * ptr)
 		ptr->RemoveFromWorld(true);
 	return 0;
 }
-//int luaGameObject_GetAreaID(lua_State * L, GameObject * ptr)
-//{
-//	float x = (float)luaL_checkint(L, 1);
-//	float y = (float)luaL_checkint(L, 2);
-//	if(ptr)
-//		lua_pushinteger(L,ptr->GetMapMgr()->GetAreaID(x, y));
-//	return 1;
-//}
+
 int luaGameObject_GetName(lua_State * L, GameObject * ptr)
 {
-	if(!ptr||ptr->GetTypeId()!=TYPEID_GAMEOBJECT||!ptr->GetInfo())
-	{
-		lua_pushstring(L,"Unknown");
-		return 1;
-	}
+	if(!ptr || ptr->GetTypeId() != TYPEID_GAMEOBJECT || !ptr->GetInfo())
+		return 0;
 
-	lua_pushstring(L,ptr->GetInfo()->Name);
+	lua_pushstring(L, ptr->GetInfo()->Name);
 	return 1;
 }
-int luaGameObject_Teleport(lua_State * L, GameObject * ptr)
+
+int luaGameObject_TeleportPlr(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
 	Player* target = Lunar<Player>::check(L, 1);
+	if(target == NULL)
+	{
+#ifdef PRINTERRORS
+		printf("Incorrect target in luaGameObject_TeleportPlr, script: %s\n", "GetName"); // TODO
+#endif
+		return 0;
+	}
+
 	int mapId = luaL_checkint(L, 2);
 	double posX = luaL_checknumber(L, 3);
 	double posY = luaL_checknumber(L, 4);
 	double posZ = luaL_checknumber(L, 5);
-	if(!mapId || !posX || !posY || !posZ)
+	double DirO;
+	if(!(DirO = luaL_checknumber(L, 6)))
+		DirO = 0;
+
+	if(!posX || !posY || !posZ)
 		return 0;
-	LocationVector vec((float)posX, (float)posY, (float)posZ);
-	((Player*)target)->SafeTeleport((uint32)mapId, 0, vec);
-	return 0;
+
+
+	target->SafeTeleport(uint32(mapId), 0, float(posX), float(posY), float(posZ), float(DirO));
+
+	return 1;
 }
+
 int luaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
-    if(!ptr) return 0;
     uint32 entryid = luaL_checkint(L,4);
     float x = (float)luaL_checknumber(L,1);
     float y = (float)luaL_checknumber(L,2);
@@ -138,10 +143,10 @@ int luaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
         Lunar<Unit>::push(L,ptr->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(x, y, z, entryid), false);
     return 1;
 }
+
 int luaGameObject_GetGameObjectNearestCoords(lua_State *L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
-    if(!ptr) return 0;
     uint32 entryid = luaL_checkint(L,4);
     float x = (float)luaL_checknumber(L,1);
     float y = (float)luaL_checknumber(L,2);
@@ -151,35 +156,6 @@ int luaGameObject_GetGameObjectNearestCoords(lua_State *L, GameObject * ptr)
     else
         Lunar<GameObject>::push(L,ptr->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(x, y, z, entryid), false);
     return 1;
-}
-int luaGameObject_AddItem(lua_State * L, GameObject * ptr)
-{
-	CHECK_TYPEID(TYPEID_PLAYER);
-	int id = luaL_checkint(L,1);
-	int count = luaL_checkint(L,2);
-
-	Player * plr = (Player*)ptr;
-	ItemPrototype * proto = ItemPrototypeStorage.LookupEntry(id);
-	if(proto==NULL)
-		return 0;
-
-	Item * add = plr->GetItemInterface()->FindItemLessMax(id,count,false);
-	if(add==NULL)
-	{
-		add=objmgr.CreateItem(id,plr);
-		add->SetUInt32Value(ITEM_FIELD_STACK_COUNT,count);
-		if(plr->GetItemInterface()->AddItemToFreeSlot(add))
-			plr->GetSession()->SendItemPushResult(add,false,true,false,true,plr->GetItemInterface()->LastSearchItemBagSlot(),plr->GetItemInterface()->LastSearchItemSlot(),count);
-		else
-			delete add;
-	}
-	else
-	{
-		add->ModSignedInt32Value(ITEM_FIELD_STACK_COUNT,count);
-		plr->GetSession()->SendItemPushResult(add,false,true,false,false,plr->GetItemInterface()->GetBagSlotByGuid(add->GetGUID()),0xFFFFFFFF,count);
-	}
-
-	return 0;
 }
 int luaGameObject_GetClosestPlayer(lua_State * L, GameObject * ptr)
 {

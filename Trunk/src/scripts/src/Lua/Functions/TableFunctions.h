@@ -10,16 +10,20 @@ struct RegType
 	int(*mfunc)(lua_State*,T*);
 };
 
+// Crow: Some of the following functions are based off of functions created by Hypersniper of LuaHypeArc.
+// Areas where this applies, credit has been given in the form of a name declaration.
 /************************************************************************/
 /* SCRIPT FUNCTION TABLES                                               */
 /************************************************************************/
 RegType<Item> ItemMethods[] = {
-	// Item Gossip functions
 	{ "GossipCreateMenu", &luaItem_GossipCreateMenu },
 	{ "GossipMenuAddItem", &luaItem_GossipMenuAddItem },
 	{ "GossipSendMenu", &luaItem_GossipSendMenu },
 	{ "GossipComplete", &luaItem_GossipComplete },
 	{ "GossipSendPOI", &luaItem_GossipSendPOI },
+	{ "PerformWorldDBQuery", &luaItem_PerformWorldDBQuery },
+	{ "PerformCharDBQuery", &luaItem_PerformCharDBQuery },
+	{ "GetOwner", &luaItem_GetOwner },
 	{ NULL, NULL },
 };
 
@@ -171,7 +175,6 @@ RegType<Unit> UnitMethods[] = {
 	{ "HandleEvent", &luaUnit_HandleEvent },
 	{ "HasInRangeObjects", &luaUnit_HasInRangeObjects },
 	{ "IsInWater", &luaUnit_IsInWater },
-	//{ "IsInArc", &luaUnit_IsInArc },
 	{ "GetInRangeObjects", &luaUnit_GetInRangeGameObjects },
 	{ "GetInRangeObjectsCount", &luaUnit_GetInRangeObjectsCount },
 	{ "GetAITargetsCount", &luaUnit_GetAITargetsCount },
@@ -195,7 +198,6 @@ RegType<Unit> UnitMethods[] = {
 	{ "CanCallForHelp", &luaUnit_CanCallForHelp },
 	{ "CallForHelpHp", &luaUnit_CallForHelpHp },
 	{ "SetCreatureNameById", &luaUnit_SetCreatureName },
-	//{ "GetAITargets", &luaUnit_GetAITargets },
 	{ "GetInRangePlayers", &luaUnit_GetInRangePlayers },
 	{ "GetUnitByGUID", &luaUnit_GetUnitByGUID },
 	{ "RemoveFromWorld", &luaUnit_RemoveFromWorld },
@@ -213,7 +215,6 @@ RegType<Unit> UnitMethods[] = {
 	{ "EventCastSpell", &luaUnit_EventCastSpell },
 	{ "IsPlayerMoving", &luaUnit_IsPlayerMoving },
 	{ "IsPlayerAttacking", &luaUnit_IsPlayerAttacking },
-	//{ "IsPlayerAtWar", &luaUnit_IsPlayerAtWar },
 	{ "RemoveThreat", &luaUnit_RemoveThreatByPtr },
 	{ "SetPlayerAtWar", &luaUnit_SetPlayerAtWar },
 	{ "GetFactionStanding", &luaUnit_GetFactionStanding },
@@ -232,27 +233,23 @@ RegType<Unit> UnitMethods[] = {
 	{ "GetPlayerRace", &luaUnit_GetPlayerRace },
 	{ "RemoveAurasByMechanic", &luaUnit_RemoveAurasByMechanic },
 	{ "RemoveAurasType", &luaUnit_RemoveAurasType },
-	//{ "AddAuraVisual", &luaUnit_AddAuraVisual },
 
 	{ NULL, NULL },
 };
 
 
 RegType<GameObject> GOMethods[] = {
+	{ "GossipCreateMenu", &luaGameObject_GossipCreateMenu },
+	{ "GossipSendMenu", &luaGameObject_GossipSendMenu },
+	{ "GossipComplete", &luaGameObject_GossipComplete },
+	{ "GossipSendPOI", &luaGameObject_GossipSendPOI },
 	{ "GetX", &luaGameObject_GetX },
 	{ "GetY", &luaGameObject_GetY },
 	{ "GetZ", &luaGameObject_GetZ },
 	{ "GetO", &luaGameObject_GetO },
 	{ "PlaySoundToSet", &luaGameObject_PlaySoundToSet },
  	{ "GetName", &luaGameObject_GetName },
-    // GameObject gossip functions
-    { "GossipCreateMenu", &luaGameObject_GossipCreateMenu },
-	{ "GossipMenuAddItem", &luaGameObject_GossipMenuAddItem }, 
-	{ "GossipSendMenu", &luaGameObject_GossipSendMenu },
-	{ "GossipComplete", &luaGameObject_GossipComplete },
-	{ "GossipSendPOI", &luaGameObject_GossipSendPOI },
-	{ "GetName", &luaGameObject_GetName },
-	{ "Teleport" , &luaGameObject_Teleport },
+	{ "Teleport" , &luaGameObject_TeleportPlr },
 	{ NULL, NULL },
 };
 
