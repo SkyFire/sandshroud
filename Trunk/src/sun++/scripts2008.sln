@@ -18,6 +18,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunEventScripts", "projects
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WorldPvPScripts", "projects\WorldPvPScripts2008.vcproj", "{FF39B41C-C998-4AAF-9EF0-199402233EE5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "projects\LUA2008.vcproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -92,6 +94,14 @@ Global
 		{FF39B41C-C998-4AAF-9EF0-199402233EE5}.Release|Win32.ActiveCfg = Release|Win32
 		{FF39B41C-C998-4AAF-9EF0-199402233EE5}.Release|Win32.Build.0 = Release|Win32
 		{FF39B41C-C998-4AAF-9EF0-199402233EE5}.Release|x64.ActiveCfg = Release|Win32
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|Win32.Build.0 = Debug|Win32
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|x64.ActiveCfg = Debug|x64
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|x64.Build.0 = Debug|x64
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|Win32.ActiveCfg = Release|Win32
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|Win32.Build.0 = Release|Win32
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|x64.ActiveCfg = Release|x64
+		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
