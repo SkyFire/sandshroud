@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "projects\InstanceScripts2008.vcproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunSpellHandlers", "projects\SpellsHandlers2008.vcproj", "{21CCA237-B55E-4882-B3E3-4A0321315CB3}"
@@ -11,8 +11,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunQuestScripts", "projects\Quest2008.vcproj", "{1A080CA7-D19A-4129-972C-89E816E6DEC0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunMiscScripts", "projects\Misc2008.vcproj", "{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LUAScripting", "projects\LUAScripting2008.vcproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExtraScripts", "projects\ExtraScripts2008.vcproj", "{DF7A3434-324E-418F-8F82-98A2C62366C6}"
 EndProject
@@ -76,14 +74,6 @@ Global
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|Win32.Build.0 = Release|Win32
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|x64.ActiveCfg = Release|x64
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|x64.Build.0 = Release|x64
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|Win32.Build.0 = Debug|Win32
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|x64.ActiveCfg = Debug|x64
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|x64.Build.0 = Debug|x64
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|Win32.ActiveCfg = Release|Win32
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|Win32.Build.0 = Release|Win32
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|x64.ActiveCfg = Release|x64
-		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Release|x64.Build.0 = Release|x64
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Debug|Win32.Build.0 = Debug|Win32
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Debug|x64.ActiveCfg = Debug|Win32
