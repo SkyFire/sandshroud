@@ -1,1 +1,1 @@
-SUBDIRS = Lua
+SUBDIRS = ServerStatusPlugin

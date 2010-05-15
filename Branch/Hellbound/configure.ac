@@ -288,9 +288,9 @@ AC_CONFIG_FILES([
 	src/hearthstone-logonserver/Makefile
 	src/hearthstone-voicechat/Makefile
 	src/hearthstone-realmserver/Makefile
-	src/sun++/Makefile
-	src/sun++/src/Makefile
-	src/sun++/src/ServerStatusPlugin/Makefile
+	src/scripts/Makefile
+	src/scripts/src/Makefile
+	src/scripts/src/ServerStatusPlugin/Makefile
 	])
 
 AC_OUTPUT
