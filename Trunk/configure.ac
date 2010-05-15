@@ -294,7 +294,7 @@ AC_CONFIG_FILES([
 	src/scripts/src/ExtraScripts/Makefile
 	src/scripts/src/GossipScripts/Makefile
 	src/scripts/src/InstanceScripts/Makefile
-	src/scripts/src/LUAScripting/Makefile
+	src/scripts/src/Lua/Makefile
 	src/scripts/src/MiscScripts/Makefile
 	src/scripts/src/QuestScripts/Makefile
 	src/scripts/src/ServerStatusPlugin/Makefile
