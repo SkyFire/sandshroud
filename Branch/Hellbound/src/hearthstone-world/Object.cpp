@@ -1155,12 +1155,10 @@ void Object::ModUnsigned32Value(uint32 index, int32 mod)
 		}
 	}
 
-
-
 	if(m_objectTypeId == TYPEID_PLAYER)
 	{
 		// mana and energy regen
-		if( index == UNIT_FIELD_POWER1 || index == UNIT_FIELD_POWER4 )
+		if( index >= UNIT_FIELD_POWER1 && index <= UNIT_FIELD_POWER9 )
 			TO_PLAYER( this )->SendPowerUpdate();
 
 #ifdef OPTIMIZED_PLAYER_SAVING

@@ -4102,55 +4102,8 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 		}
 		CalcResistance(RESISTANCE_ARMOR);
 	}
-
-	// Resistances
-	//TODO: FIXME: can there be negative resistances from items?
-	if( proto->FireRes )
-	{
-		if( apply )
-			FlatResistanceModifierPos[RESISTANCE_FIRE] += proto->FireRes;
-		else
-			FlatResistanceModifierPos[RESISTANCE_FIRE] -= proto->FireRes;
-		CalcResistance(RESISTANCE_FIRE);
-	}
-
-	if( proto->NatureRes )
-	{
-		if( apply )
-			FlatResistanceModifierPos[RESISTANCE_NATURE] += proto->NatureRes;
-		else
-			FlatResistanceModifierPos[RESISTANCE_NATURE] -= proto->NatureRes;
-		CalcResistance(RESISTANCE_NATURE);
-	}
-
-	if( proto->FrostRes )
-	{
-		if( apply )
-			FlatResistanceModifierPos[RESISTANCE_FROST] += proto->FrostRes;
-		else
-			FlatResistanceModifierPos[RESISTANCE_FROST] -= proto->FrostRes;
-		CalcResistance(RESISTANCE_FROST);	
-	}
-
-	if( proto->ShadowRes )
-	{
-		if( apply )
-			FlatResistanceModifierPos[RESISTANCE_SHADOW] += proto->ShadowRes;
-		else
-			FlatResistanceModifierPos[RESISTANCE_SHADOW] -= proto->ShadowRes;
-		CalcResistance(RESISTANCE_SHADOW);	
-	}
-	 
-	if( proto->ArcaneRes )
-	{
-		if( apply )
-			FlatResistanceModifierPos[RESISTANCE_ARCANE] += proto->ArcaneRes;
-		else
-			FlatResistanceModifierPos[RESISTANCE_ARCANE] -= proto->ArcaneRes;
-		CalcResistance(RESISTANCE_ARCANE);
-	}
 	
-	// Stats
+	// Stats & Resistances
 	for( int i = 0; i < 10; ++i )
 	{
 		int32 val = proto->Stats[i].Value;
@@ -9227,201 +9180,245 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 	// Added some updateXXXX calls so when an item modifies a stat they get updated
 	// also since this is used by auras now it will handle it for those
 	switch (type) 
+	{
+	case POWER:
+		ModUnsigned32Value( UNIT_FIELD_MAXPOWER1, val );
+		m_manafromitems += val;
+		break;
+	case HEALTH:
+		ModUnsigned32Value( UNIT_FIELD_MAXHEALTH, val );
+		m_healthfromitems += val;
+		break;
+	case AGILITY: // modify agility				
+		FlatStatModPos[1] += val;
+		CalcStat( 1 );
+		break;
+	case STRENGTH: //modify strength
+		FlatStatModPos[0] += val;
+		CalcStat( 0 );
+		break;
+	case INTELLECT: //modify intellect 
+		FlatStatModPos[3] += val;
+		CalcStat( 3 );
+		break;
+	 case SPIRIT: //modify spirit
+		FlatStatModPos[4] += val;
+		CalcStat( 4 );
+		break;
+	case STAMINA: //modify stamina
+		FlatStatModPos[2] += val;
+		CalcStat( 2 );
+		break;
+	case WEAPON_SKILL_RATING:
 		{
-		case POWER:
-			ModUnsigned32Value( UNIT_FIELD_MAXPOWER1, val );
-			m_manafromitems += val;
-			break;
-		case HEALTH:
-			ModUnsigned32Value( UNIT_FIELD_MAXHEALTH, val );
-			m_healthfromitems += val;
-			break;
-		case AGILITY: // modify agility				
-			FlatStatModPos[1] += val;
-			CalcStat( 1 );
-			break;
-		case STRENGTH: //modify strength
-			FlatStatModPos[0] += val;
-			CalcStat( 0 );
-			break;
-		case INTELLECT: //modify intellect 
-			FlatStatModPos[3] += val;
-			CalcStat( 3 );
-			break;
-		 case SPIRIT: //modify spirit
-			FlatStatModPos[4] += val;
-			CalcStat( 4 );
-			break;
-		case STAMINA: //modify stamina
-			FlatStatModPos[2] += val;
-			CalcStat( 2 );
-			break;
-		case WEAPON_SKILL_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_SKILL, val ); // ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL, val ); // melee main hand
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL, val ); // melee off hand
-			}break;
-		case DEFENSE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_DEFENCE, val );
-			}break;
-		case DODGE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_DODGE, val );
-			}break;
-		case PARRY_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_PARRY, val );
-			}break;
-		case SHIELD_BLOCK_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_BLOCK, val );
-			}break;
-		case MELEE_HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );
-			}break;
-		case RANGED_HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );
-			}break;
-		case SPELL_HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
-			}break;
-		case MELEE_CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );
-			}break;
-		case RANGED_CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );
-			}break;
-		case SPELL_CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
-			}break;
-		case MELEE_HIT_AVOIDANCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );
-			}break;
-		case RANGED_HIT_AVOIDANCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );
-			}break;
-		case SPELL_HIT_AVOIDANCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );
-			}break;
-		case MELEE_CRITICAL_AVOIDANCE_RATING:
-			{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_SKILL, val ); // ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL, val ); // melee main hand
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL, val ); // melee off hand
+		}break;
+	case DEFENSE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_DEFENCE, val );
+		}break;
+	case DODGE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_DODGE, val );
+		}break;
+	case PARRY_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_PARRY, val );
+		}break;
+	case SHIELD_BLOCK_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_BLOCK, val );
+		}break;
+	case MELEE_HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );
+		}break;
+	case RANGED_HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );
+		}break;
+	case SPELL_HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
+		}break;
+	case MELEE_CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );
+		}break;
+	case RANGED_CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );
+		}break;
+	case SPELL_CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
+		}break;
+	case MELEE_HIT_AVOIDANCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );
+		}break;
+	case RANGED_HIT_AVOIDANCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );
+		}break;
+	case SPELL_HIT_AVOIDANCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );
+		}break;
+	case MELEE_CRITICAL_AVOIDANCE_RATING:
+		{
 
-			}break;
-		case RANGED_CRITICAL_AVOIDANCE_RATING:
-			{
+		}break;
+	case RANGED_CRITICAL_AVOIDANCE_RATING:
+		{
 
-			}break;
-		case SPELL_CRITICAL_AVOIDANCE_RATING:
-			{
+		}break;
+	case SPELL_CRITICAL_AVOIDANCE_RATING:
+		{
 
-			}break;
-		case MELEE_HASTE_RATING:
+		}break;
+	case MELEE_HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
+		}break;
+	case RANGED_HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
+		}break;
+	case SPELL_HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );//spell
+		}break;
+	case HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
+		}break;
+	case CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
+		}break;
+	case HIT_AVOIDANCE_RATING:// this is guessed based on layout of other fields
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );//spell
+		}break;
+	case CRITICAL_AVOIDANCE_RATING:
+		{
+			// todo. what is it?
+		}break;
+	case EXPERTISE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_EXPERTISE, val );
+		}break;
+	case RESILIENCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT_RESILIENCE, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT_RESILIENCE, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE, val );//spell
+		}break;
+	case HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );
+		}break;
+	case ATTACK_POWER:
+		{
+			ModUnsigned32Value( UNIT_FIELD_ATTACK_POWER_MODS, val );
+			ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
+		}break;
+	case RANGED_ATTACK_POWER:
+		{
+			ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
+		}break;
+	case SPELL_HEALING_DONE:
+		{
+			for( uint8 school = 1; school < 7; ++school )
 			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
-			}break;
-		case RANGED_HASTE_RATING:
+				HealDoneMod[school] += val;
+			}
+			ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
+		}break;
+	case SPELL_DAMAGE_DONE:
+		{
+			for( uint8 school = 1; school < 7; ++school )
 			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
-			}break;
-		case SPELL_HASTE_RATING:
+				ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
+			}
+		}break;
+	case MANA_REGENERATION:
+		{
+			m_ModInterrMRegen += val;
+		}break;
+	case ARMOR_PENETRATION_RATING:
+		{
+			ModUnsigned32Value(PLAYER_RATING_MODIFIER_ARMOR_PENETRATION_RATING, val);
+		}break;
+	case SPELL_POWER:
+		{
+			for( uint8 school = 1; school < 7; ++school )
 			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );//spell
-			}break;
-		case HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
-			}break;
-		case CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
-			}break;
-		case HIT_AVOIDANCE_RATING:// this is guessed based on layout of other fields
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );//spell
-			}break;
-		case CRITICAL_AVOIDANCE_RATING:
-			{
-				// todo. what is it?
-			}break;
-		case EXPERTISE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_EXPERTISE, val );
-			}break;
-		case RESILIENCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT_RESILIENCE, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT_RESILIENCE, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE, val );//spell
-			}break;
-		case HASTE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );
-			}break;
-		case ATTACK_POWER:
-			{
-				ModUnsigned32Value( UNIT_FIELD_ATTACK_POWER_MODS, val );
-				ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
-			}break;
-		case RANGED_ATTACK_POWER:
-			{
-				ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
-			}break;
-		case FERAL_ATTACK_POWER:
-			{
-				// todo
-			}break;
-		case SPELL_HEALING_DONE:
-			{
-				for( uint8 school = 1; school < 7; ++school )
-				{
-					HealDoneMod[school] += val;
-				}
-				ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
-			}break;
-		case SPELL_DAMAGE_DONE:
-			{
-				for( uint8 school = 1; school < 7; ++school )
-				{
-					ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
-				}
-			}break;
-		case MANA_REGENERATION:
-			{
-				m_ModInterrMRegen += val;
-			}break;
-		case ARMOR_PENETRATION_RATING:
-			{
-				ModUnsigned32Value(PLAYER_RATING_MODIFIER_ARMOR_PENETRATION_RATING, val);
-			}break;
-		case SPELL_POWER:
-			{
-				for( uint8 school = 1; school < 7; ++school )
-				{
-					ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
-					HealDoneMod[ school ] += val;
-				}
-				ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
-			}break;
-		}
+				ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
+				HealDoneMod[ school ] += val;
+			}
+			ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
+		}break;
+	case BLOCK_VALUE:
+		{
+			ModUnsigned32Value( PLAYER_SHIELD_BLOCK, val );
+		}break;
+	case MASTERY_RATING:
+		{
+			ModUnsigned32Value( PLAYER_MASTERY, val );
+		}break;
+	case EXTRA_ARMOR:
+		{
+			FlatResistanceModifierPos[RESISTANCE_ARMOR] += val;
+			CalcResistance(RESISTANCE_ARMOR);
+		}break;
+	case FIRE_RESISTANCE:
+		{
+			FlatResistanceModifierPos[RESISTANCE_FIRE] += val;
+			CalcResistance(RESISTANCE_FIRE);
+		}break;
+	case FROST_RESISTANCE:
+		{
+			FlatResistanceModifierPos[RESISTANCE_FROST] += val;
+			CalcResistance(RESISTANCE_FROST);
+		}break;
+	case HOLY_RESISTANCE:
+		{
+			FlatResistanceModifierPos[RESISTANCE_HOLY] += val;
+			CalcResistance(RESISTANCE_HOLY);
+		}break;
+	case SHADOW_RESISTANCE:
+		{
+			FlatResistanceModifierPos[RESISTANCE_SHADOW] += val;
+			CalcResistance(RESISTANCE_SHADOW);
+		}break;
+	case NATURE_RESISTANCE:
+		{
+			FlatResistanceModifierPos[RESISTANCE_NATURE] += val;
+			CalcResistance(RESISTANCE_NATURE);
+		}break;
+	case ARCANE_RESISTANCE:
+		{
+			FlatResistanceModifierPos[RESISTANCE_ARCANE] += val;
+			CalcResistance(RESISTANCE_ARCANE);
+		}break;
+	case HEALTH_REGEN:
+	case SPELL_PENETRATION:
+		{
+			// Todo
+		}break;
+	}
 }
 
 bool Player::CanSignCharter(Charter * charter, Player* requester)
