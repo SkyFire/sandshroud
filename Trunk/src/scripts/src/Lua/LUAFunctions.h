@@ -17,6 +17,14 @@ int luaItem_GossipSendPOI(lua_State * L, Item* ptr);
 int luaItem_PerformWorldDBQuery(lua_State * L, Item* ptr);
 int luaItem_PerformCharDBQuery(lua_State * L, Item* ptr);
 int luaItem_GetOwner(lua_State * L, Item* ptr);
+int luaItem_AddEnchantment(lua_State * L, Item* ptr);
+int luaItem_RemoveEnchantment(lua_State * L, Item* ptr);
+int luaItem_GetEntryId(lua_State * L, Item* ptr);
+int luaItem_GetName(lua_State * L, Item* ptr);
+int luaItem_GetSpellId(lua_State * L, Item* ptr);
+int luaItem_GetSpellTrigger(lua_State * L, Item* ptr);
+int luaItem_GetGUID(lua_State * L, Item* ptr);
+int luaItem_AddLoot(lua_State * L, Item* ptr);
 //////////////////////////////////////////////////////////////////
 /////////////////END ITEM COMMAND LIST////////////////////////////
 //////////////////////////////////////////////////////////////////

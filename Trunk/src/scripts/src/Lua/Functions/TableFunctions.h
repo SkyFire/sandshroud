@@ -24,6 +24,14 @@ RegType<Item> ItemMethods[] = {
 	{ "PerformWorldDBQuery", &luaItem_PerformWorldDBQuery },
 	{ "PerformCharDBQuery", &luaItem_PerformCharDBQuery },
 	{ "GetOwner", &luaItem_GetOwner },
+	{ "AddEnchantment", &luaItem_AddEnchantment },
+	{ "RemoveEnchantment", &luaItem_RemoveEnchantment },
+	{ "GetEntryId", &luaItem_GetEntryId },
+	{ "GetName", &luaItem_GetName },
+	{ "GetSpellId", &luaItem_GetSpellId },
+	{ "GetSpellTrigger", &luaItem_GetSpellTrigger },
+	{ "GetGUID", &luaItem_GetGUID },
+	{ "AddLoot", &luaItem_AddLoot},
 	{ NULL, NULL },
 };
 

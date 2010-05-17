@@ -5057,7 +5057,7 @@ void Player::UpdateChances()
 
 	// dodge
 	float class_multiplier = (pClass == WARRIOR ? 1.1f : pClass == HUNTER ? 1.6f : pClass == ROGUE ? 2.0f : pClass == DRUID ? 1.7f : 1.0f);
-	tmp = baseDodge[pClass] + (float( GetUInt32Value( UNIT_FIELD_AGILITY )*(dodgeRatio[pLevel <= 80 ? pLevel : 80/*Custom Level cap dodge fix*/][pClass] *class_multiplier)));
+	tmp = baseDodge[pClass] + (float( GetUInt32Value( UNIT_FIELD_AGILITY )*(dodgeRatio[pLevel][pClass] *class_multiplier)));
 	tmp += dodge_from_spell + defence_contribution;
 
 //#define MIN_DODGE_5

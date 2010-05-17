@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "../LUAEngine.h"
 
-
 /////////////////////////////////////////////////////
 ////////////////ITEM COMMANDS////////////////////////
 /////////////////////////////////////////////////////
@@ -138,5 +137,122 @@ int luaItem_GetOwner(lua_State * L, Item* ptr)
 		Lunar<Unit>::push(L,owner,false);
 	else
 		lua_pushnil(L);
+	return 1;
+}
+
+int luaItem_AddEnchantment(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	int entry = luaL_checkint(L,1);
+	int duration = luaL_checkint(L,2);
+	bool permanent = (duration == 0) ? true : false;
+	bool temp = (luaL_checkint(L, 3) == 1) ? true : false;
+
+	EnchantEntry *eentry = dbcEnchant.LookupEntry( entry );
+	if(eentry == NULL)
+		return 0;
+
+	lua_pushinteger(L, ptr->AddEnchantment(eentry, duration, permanent, true, temp));
+	return 1;
+}
+
+int luaItem_RemoveEnchantment(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	int slot = luaL_checkint(L,1);
+	bool temp = (luaL_checkint(L,2) == 1 ? true : false);
+
+	if (slot == -1)	ptr->RemoveAllEnchantments(temp);
+	else if (slot == -2) ptr->RemoveProfessionEnchant();
+	else if (slot == -3) ptr->RemoveSocketBonusEnchant();
+	else if (slot >= 0) ptr->RemoveEnchantment(slot);
+
+	return 1;
+}
+
+int luaItem_GetEntryId(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	if(!ptr)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetEntry());
+	return 1;
+}
+
+int luaItem_GetName(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	ItemPrototype * proto = NULL;
+	if (!ptr || !(proto = ptr->GetProto()))
+		return 0;
+
+	lua_pushstring(L, proto->Name1);
+	return 1;
+}
+
+int luaItem_GetSpellId(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	ItemPrototype * proto = NULL;
+	uint32 index = luaL_checkint(L, 1);
+	if (!ptr || index < 0 || index > 5 || !(proto = ptr->GetProto()))
+		return 0;
+
+	lua_pushnumber(L, proto->Spells[index].Id);
+	return 1;
+}
+
+int luaItem_GetSpellTrigger(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	ItemPrototype * proto = NULL;
+	uint32 index = luaL_checkint(L, 1);
+	if (!ptr || index < 0 || index > 5 || !(proto = ptr->GetProto()))
+		return 0;
+
+	/*	
+		USE				= 0,
+		ON_EQUIP		= 1,
+		CHANCE_ON_HIT	= 2,
+		SOULSTONE		= 4,
+		LEARNING		= 6,
+	*/
+	lua_pushnumber(L, proto->Spells[index].Trigger);
+	return 1;
+}
+
+int luaItem_AddLoot(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper++
+	uint32 itemid = luaL_checkint(L,1);
+	uint32 mincount = luaL_checkint(L,2);
+	uint32 maxcount = luaL_checkint(L,3);
+	uint32 ffa_loot = luaL_checkint(L,4);
+	bool perm = ((luaL_checkint(L,5) == 1) ? true : false);
+	if(perm)
+	{
+		double chance = luaL_checknumber(L, 6);
+		QueryResult* result = WorldDatabase.Query("SELECT * FROM itemloot WHERE entryid = %u, itemid = %u", ptr->GetEntry(), itemid);
+		if(!result)
+		{
+			WorldDatabase.Execute("REPLACE INTO itemloot VALUES (%u, %u, %f, %u, %u, %u)", ptr->GetEntry(), itemid, float(chance), mincount, maxcount, ffa_loot);
+			lootmgr.AddLoot(ptr->GetLoot(),itemid,mincount,maxcount,ffa_loot);
+		}
+	}
+	else
+		lootmgr.AddLoot(ptr->GetLoot(),itemid,mincount,maxcount,ffa_loot);
+
+
+	return 1;
+}
+
+int luaItem_GetGUID(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	if(!ptr)
+		return 0;
+
+	lua_pushinteger(L,int(ptr->GetGUID()));
 	return 1;
 }
