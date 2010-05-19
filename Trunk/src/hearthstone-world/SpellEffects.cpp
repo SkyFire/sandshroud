@@ -1127,7 +1127,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				return;
 
 			WorldPacket data(SMSG_MOVE_KNOCK_BACK, 39);
-			data << p_caster->GetNewGUID();
+			data << u_caster->GetNewGUID();
 			data << getMSTime();
 			float co = p_caster->GetOrientation() < 3.15f ? 6.3f - ( 3.15f - p_caster->GetOrientation()) : p_caster->GetOrientation() - 3.15f;
 			data << cosf(co) << sinf(co);
@@ -3338,9 +3338,9 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		p_caster->blinked = true;
 
 		WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
-		data << p_caster->GetNewGUID();
+		data << u_caster->GetNewGUID();
 		data << getMSTime();
-		data << cosf(p_caster->GetOrientation()) << sinf(p_caster->GetOrientation());
+		data << cosf(u_caster->GetOrientation()) << sinf(u_caster->GetOrientation());
 		data << radius;
 		data << float(-10.0f);
 		p_caster->GetSession()->SendPacket(&data);

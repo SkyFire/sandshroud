@@ -535,18 +535,22 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					toDamage = _player->m_CurrentVehicle;
 
 				if( _player->m_CurrentVehicle && _player->m_CurrentVehicle->GetControllingUnit() != _player )
-					return; // don't allow any player but the 'driver' to send for fall damage, or we could get duplicate fall dmg
+				{
+					// don't allow any player but the 'driver' to send for fall damage, or we could get duplicate fall dmg
+				}
+				else
+				{
+					uint32 health_loss = float2int32( float( toDamage->GetUInt32Value( UNIT_FIELD_MAXHEALTH ) * ( ( falldistance - 12 ) * 0.017 ) ) );
 
-				uint32 health_loss = float2int32( float( toDamage->GetUInt32Value( UNIT_FIELD_MAXHEALTH ) * ( ( falldistance - 12 ) * 0.017 ) ) );
-													
-				if( health_loss >= toDamage->GetUInt32Value( UNIT_FIELD_HEALTH ) )
-					health_loss = toDamage->GetUInt32Value( UNIT_FIELD_HEALTH );
+					if( health_loss >= toDamage->GetUInt32Value( UNIT_FIELD_HEALTH ) )
+						health_loss = toDamage->GetUInt32Value( UNIT_FIELD_HEALTH );
 
-				if( toDamage == _player )
-					_player->SendEnvironmentalDamageLog( toDamage->GetGUID(), DAMAGE_FALL, health_loss );
-				toDamage->DealDamage( toDamage, health_loss, 0, 0, 0 );
+					if( toDamage == _player )
+						_player->SendEnvironmentalDamageLog( toDamage->GetGUID(), DAMAGE_FALL, health_loss );
+					toDamage->DealDamage( toDamage, health_loss, 0, 0, 0 );
 
-				toDamage->RemoveStealth(); // Fall Damage will cause stealthed units to lose stealth. 
+					toDamage->RemoveStealth(); // Fall Damage will cause stealthed units to lose stealth.
+				}
 			}
 			_player->z_axisposition = 0.0f;
 		}
