@@ -3002,7 +3002,8 @@ uint8 Spell::CanCast(bool tolerate)
 			//you can't mind control someone already mind controlled
 			if (m_spellInfo->NameHash == SPELL_HASH_MIND_CONTROL && target->GetAuraSpellIDWithNameHash(SPELL_HASH_MIND_CONTROL))
 				return SPELL_FAILED_BAD_TARGETS;
-
+			if(target == m_caster && m_spellInfo->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
+            return SPELL_FAILED_BAD_TARGETS;
 			//these spells can be cast only on certain objects. Otherwise cool exploit
 			//Most of this things goes to spell_forced_target table
 			switch (m_spellInfo->Id)
@@ -3104,15 +3105,8 @@ uint8 Spell::CanCast(bool tolerate)
 		//are we in an arena and the spell cooldown is longer then 15mins?
 		if ( p_caster->m_bg && ( p_caster->m_bg->GetType() >= BATTLEGROUND_ARENA_2V2 && p_caster->m_bg->GetType() <= BATTLEGROUND_ARENA_5V5 ) )
 		{
-			if( ( m_spellInfo->RecoveryTime >= 900000 || m_spellInfo->CategoryRecoveryTime >= 900000 ) )
+			if(  m_spellInfo->Flags5 & FLAGS5_NOT_USABLE_IN_ARENA )
 				return SPELL_FAILED_NOT_IN_ARENA;
-
-			// block resurrect spells
-			/*if( m_spellInfo->Effect[0] == SPELL_EFFECT_RESURRECT || m_spellInfo->Effect[1] == SPELL_EFFECT_RESURRECT || m_spellInfo->Effect[2] == SPELL_EFFECT_RESURRECT ||
-				m_spellInfo->Effect[0] == SPELL_EFFECT_RESURRECT_FLAT || m_spellInfo->Effect[1] == SPELL_EFFECT_RESURRECT_FLAT || m_spellInfo->Effect[2] == SPELL_EFFECT_RESURRECT_FLAT )
-			{
-				return SPELL_FAILED_NOT_IN_ARENA;
-			}*/
 
 			if( !p_caster->m_bg->HasStarted() )
 			{

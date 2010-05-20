@@ -246,37 +246,46 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 void Vehicle::SendSpells(uint32 entry, Player* plr)
 {
 	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
-
 	if(!acc)
 		return;
 
 	uint8 count;
+ 
+    WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*10+1+1);
+    data << uint64(GetGUID());
+    data << uint16(0);
+    data << uint32(0);
+    data << uint32(0x00000101);
 
-	WorldPacket data(SMSG_PET_SPELLS, 78); // uint32 = 4; (10 * 6) + 4 + 4 + 2 + 8 = 78
-	data << GetGUID();
-	data << uint16(0);
-	data << uint32(0);
-	data << uint32(0x00000101);
+    for (uint32 i = 0; i < 6; ++i)
+    {
+        uint32 spellId = acc->VehicleSpells[i];
+        if (!spellId)
+            continue;
 
-	// Send the actionbar
-	for(uint8 i = 0; i < 6; ++i)
-	{
-//		if passive castspell (id)
-//		data << uint16(0) << uint8(0) << uint8(i+8);
-		data << uint16(acc->VehicleSpells[i]) << uint8(0) << uint8(i+8);
-
+        SpellEntry const *spellInfo = dbcSpell.LookupEntryForced( spellId );
+        if (!spellInfo)
+            continue;
 		if(acc->VehicleSpells[i])
 			count = i;
-	}
+
+        if (spellInfo->Attributes & ATTRIBUTES_PASSIVE)
+        {
+            CastSpell(GetGUID(), spellId, true);
+            data << uint16(0) << uint8(0) << uint8(i+8);
+        }
+        else
+            data << uint32(MAKE_ACTION_BUTTON(acc->VehicleSpells[i],i+8));
+    }
+
 	for(uint8 i = 6; i < 10; ++i)
 	{
 		data << uint16(0) << uint8(0) << uint8(i+8);
 	}
 
 	data << count; // spells count
-	data << uint8(0); // cooldowns count
-
-	plr->GetSession()->SendPacket(&data);
+    data << uint8(0);
+    plr->GetSession()->SendPacket(&data);
 }
 
 void Vehicle::Despawn(uint32 delay, uint32 respawntime)

@@ -345,8 +345,11 @@ void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
-	if(spellId == 33763 || spellId == 48450 || spellId == 48451) // Prevents Lifebloom exploit
-		return;
+    SpellEntry const *spellInfo = dbcSpell.LookupEntryForced( spellId );
+    if (!spellInfo)
+        return;
+    if (spellInfo->Attributes & ATTRIBUTES_CANT_CANCEL)
+        return;
 	
 	for(uint32 x = 0; x < MAX_AURAS+MAX_POSITIVE_AURAS; ++x)
 	{
@@ -377,90 +380,64 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 {
-	DEBUG_LOG( "WORLD"," got CMSG_PET_CAST_SPELL." );
 	uint64 guid;
 	uint32 spellid;
-	uint8 counter, flags;
-	Unit* caster;
-	SpellCastTargets targets;
-	list<AI_Spell*>::iterator itr;
+	uint8 castnumber, missileflag;
+	recvPacket >> guid >> castnumber >> spellid >> missileflag;
+	Object* caster;
+	if (_player->m_CurrentCharm != NULL)
+		caster = _player->m_CurrentCharm;
+	if (_player->m_Summon != NULL)
+		caster = _player->m_Summon;
+	if (_player->m_CurrentVehicle != NULL)
+		caster = _player->m_CurrentVehicle;
+	if (caster == NULL)
+		return;
 
-	recvPacket >> guid >> counter >> spellid >> flags;
-	SpellEntry *sp = dbcSpell.LookupEntry(spellid);
+	SpellCastTargets targets;
+	targets.read(recvPacket, caster->GetGUID());
+
+	float missilepitch, missilespeed;
+	uint8 missileunkcheck;
+	uint32 unkdoodah, unkdoodah2;
+	float traveltime = 0.0f;
+	if (missileflag & 0x2)
+	{
+		recvPacket >> missilepitch >> missilespeed >> missileunkcheck;
+
+		if (missileunkcheck == 1)
+		{
+			recvPacket >> unkdoodah;
+			recvPacket >> unkdoodah2;
+		}
+
+		//calc
+		float dx = targets.m_destX - targets.m_srcX;
+		float dy = targets.m_destY - targets.m_srcY;
+		if (missilepitch != M_PI / 4 && missilepitch != -M_PI / 4)
+			traveltime = (sqrtf(dx * dx + dy * dy) / (cosf(missilepitch) * missilespeed)) * 1000;
+	}
+
+	SpellEntry * sp = dbcSpell.LookupEntryForced(spellid);
 
 	// Summoned Elemental's Freeze
-	if( spellid == 33395 )
+	if (spellid == 33395)
 	{
-		caster = _player->m_Summon;
-		if( caster && TO_PET(caster)->GetAISpellForSpellId(spellid) == NULL )
+		if (!_player->m_Summon)
 			return;
 	}
-	else
+	else if ((!_player->m_CurrentCharm || guid != _player->m_CurrentCharm->GetGUID()) && _player->m_CurrentVehicle == NULL)
 	{
-		if(_player->m_CurrentVehicle)
-			caster = _player->m_CurrentVehicle;
-		else
-			caster = _player->m_CurrentCharm;
-		if( caster != NULL )
-		{
-			if(caster->IsVehicle() && !caster->IsPlayer())
-			{
-				CreatureProtoVehicle* vehpro = CreatureProtoVehicleStorage.LookupEntry(caster->GetEntry());
-				bool hasspell = false;
-
-				for(int i = 0; i < 6; ++i)
-				{
-					if(vehpro->VehicleSpells[i] = spellid)
-					{
-						hasspell = true;
-						break;
-					}
-				}
-				if(!hasspell)
-				{
-					WorldPacket data(SMSG_PET_CAST_FAILED, 1 + 4 + 1);
-					data << uint8(0);
-					data << uint32(spellid);
-					data << uint8(SPELL_FAILED_NOT_KNOWN);
-					SendPacket(&data); // Send packet to owner
-					return;
-				}
-			}
-			else
-			{
-				for(itr = caster->GetAIInterface()->m_spells.begin(); itr != caster->GetAIInterface()->m_spells.end(); ++itr)
-				{
-					if( (*itr)->spell->Id == spellid )
-						break;
-				}
-
-				if( itr == caster->GetAIInterface()->m_spells.end() )
-					return;
-			}
-		}
-	}
-
-	if( caster == NULL || guid != caster->GetGUID() )
-	{
-		WorldPacket data(SMSG_PET_CAST_FAILED, 1 + 4 + 1);
-		data << uint8(0);
-		data << uint32(spellid);
-		data << uint8(SPELL_FAILED_SPELL_UNAVAILABLE);
-		SendPacket(&data); // Send packet to owner
 		return;
 	}
 
-	if( caster->IsVehicle() && !_player->m_CurrentVehicle)
+	/* ToDo:
+	if (missileflag & 0x2)
 	{
-		WorldPacket data(SMSG_PET_CAST_FAILED, 1 + 4 + 1);
-		data << uint8(0);
-		data << uint32(spellid);
-		data << uint8(SPELL_FAILED_NOT_ON_TRANSPORT);
-		SendPacket(&data); // Send packet to owner
-		return;
-	}
+		pSpell->m_missilePitch = missilepitch;
+		pSpell->m_missileTravelTime = traveltime;
+	}*/
 
-	targets.read(recvPacket, _player->GetGUID());
 
 	Spell* pSpell = new Spell(caster, sp, false, NULLAURA);
 	pSpell->prepare(&targets);

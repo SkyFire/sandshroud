@@ -382,7 +382,7 @@ enum Attributes
 {
 	ATTRIBUTES_NULL								= 0x0,
 	ATTRIBUTES_UNK2								= 0x1,
-	ATTRIBUTES_UNK3								= 0x2,	// related to ranged??
+	ATTRIBUTES_REQ_AMMO							= 0x2,	// requires ammo
 	ATTRIBUTE_ON_NEXT_ATTACK					= 0x4,
 	ATTRIBUTES_UNUSED0							= 0x8,
 	ATTRIBUTES_UNK6								= 0x10,
@@ -400,15 +400,15 @@ enum Attributes
 	ATTRIBUTES_UNK								= 0x10000,
 	ATTRIBUTES_REQ_STEALTH						= 0x20000,
 	ATTRIBUTES_UNK20							= 0x40000,//it's not : must be behind
-	ATTRIBUTES_UNK21							= 0x80000,
+	ATTRIBUTES_LEVEL_DAMAGE_CALCULATION			= 0x80000, //spelldamage depends on caster level
 	ATTRIBUTES_STOP_ATTACK						= 0x100000,//switch off auto attack on use. Maim,Gouge,Disengage,Polymorph etc
 	ATTRIBUTES_CANT_BE_DPB						= 0x200000,//can't be dodged, blocked, parried
 	ATTRIBUTES_UNK24							= 0x400000,	// related to ranged
-	ATTRIBUTES_UNK25							= 0x800000,
+	ATTRIBUTES_CASTABLE_WHILE_DEAD 				= 0x800000,
 	ATTRIBUTES_MOUNT_CASTABLE					= 0x1000000,	//castable on mounts
 	ATTRIBUTES_TRIGGER_COOLDOWN					= 0x2000000,	//also requires atributes ex	= 32 ?
-	ATTRIBUTES_UNK28							= 0x4000000,
-	ATTRIBUTES_UNK29							= 0x8000000,
+	ATTRIBUTES_BREAKABLE_BY_DAMAGE				= 0x4000000,
+	ATTRIBUTES_CANT_CANCEL						= 0x8000000,
 	ATTRIBUTES_REQ_OOC							= 0x10000000,	//	 ATTRIBUTES_REQ_OUT_OF_COMBAT
 	ATTRIBUTES_IGNORE_INVULNERABILITY			= 0x20000000,	//debuffs that can't be removed by any spell and spells that can't be resisted in any case
 	ATTRIBUTES_UNK32							= 0x40000000,	// seems like IS_DIMINISHING but some spells not there (f.e. Gouge)
@@ -417,37 +417,37 @@ enum Attributes
 enum AttributesEx
 {
 	ATTRIBUTESEX_NULL						= 0x0,
-	ATTRIBUTESEX_UNK2						= 0x1,	// pet summonings
+	ATTRIBUTESEX_DISMISS_PET				= 0x1,	// pet summonings
 	ATTRIBUTESEX_DRAIN_WHOLE_MANA			= 0x2,
-	ATTRIBUTESEX_UNK4						= 0x4,
+	ATTRIBUTESEX_CHANNELED_1				= 0x4,
 	ATTRIBUTESEX_AREA_OF_EFFECT				= 0x8,
 	ATTRIBUTESEX_UNK6						= 0x10,	// stealth effects but Rockbiter wtf 0_0
 	ATTRIBUTESEX_NOT_BREAK_STEALTH			= 0x20,
-	ATTRIBUTESEX_UNK8						= 0x40,
-	ATTRIBUTESEX_UNK9						= 0x80,
-	ATTRIBUTESEX_UNK10						= 0x100,
+	ATTRIBUTESEX_CHANNELED_2				= 0x40,
+	ATTRIBUTESEX_NEGATIVE					= 0x80,
+	ATTRIBUTESEX_NOT_IN_COMBAT_TARGET		= 0x100,
 	ATTRIBUTESEX_UNK11						= 0x200,
 	ATTRIBUTESEX_UNK12						= 0x400,
 	ATTRIBUTESEX_UNK13						= 0x800,
 	ATTRIBUTESEX_UNK14						= 0x1000,	// related to pickpocket
 	ATTRIBUTESEX_UNK15						= 0x2000,	// related to remote control
-	ATTRIBUTESEX_UNK16						= 0x4000,
-	ATTRIBUTESEX_UNK17						= 0x8000,	// something like "grant immunity"
-	ATTRIBUTESEX_UNK18						= 0x10000,	// something like "grant immunity" too
+	ATTRIBUTESEX_STACK_FOR_DIFF_CASTERS  	= 0x4000,
+	ATTRIBUTESEX_DISPEL_AURAS_ON_IMMUNITY 	= 0x8000,	// remove auras on immunity
+	ATTRIBUTESEX_UNAFFECTED_SCHOOL_IMMUNE   = 0x10000,	// on immunity
 	ATTRIBUTESEX_REMAIN_OOC					= 0x20000,
 	ATTRIBUTESEX_UNK20						= 0x40000,
-	ATTRIBUTESEX_UNK21						= 0x80000,
-	ATTRIBUTESEX_UNK22						= 0x100000,	// related to "Finishing move" and "Instantly overpowers"
+	ATTRIBUTESEX_CANT_TARGET_SELF			= 0x80000,
+	ATTRIBUTESEX_REQ_COMBO_POINTS1			= 0x100000,	// related to "Finishing move" and "Instantly overpowers"
 	ATTRIBUTESEX_UNK23						= 0x200000,
-	ATTRIBUTESEX_UNK24						= 0x400000,	// only related to "Finishing move"
+	ATTRIBUTESEX_REQ_COMBO_POINTS2			= 0x400000,	// only related to "Finishing move"
 	ATTRIBUTESEX_UNK25						= 0x800000,	// related to spells like "ClearAllBuffs"
 	ATTRIBUTESEX_UNK26						= 0x1000000,	// FISHING SPELLS
 	ATTRIBUTESEX_UNK27						= 0x2000000,	// related to "Detect" spell
 	ATTRIBUTESEX_UNK28						= 0x4000000,
 	ATTRIBUTESEX_UNK29						= 0x8000000,
-	ATTRIBUTESEX_UNK30						= 0x10000000,
+	ATTRIBUTESEX_IGNORE_IMMUNITY			= 0x10000000,
 	ATTRIBUTESEX_UNK31						= 0x20000000,
-	ATTRIBUTESEX_UNK32						= 0x40000000,	// Overpower
+	ATTRIBUTESEX_ENABLE_AT_DODGE			= 0x40000000,	// Overpower
 };
 
 enum Flags3
@@ -482,7 +482,7 @@ enum Flags3
 	FLAGS3_UNK28				= 0x4000000,
 	FLAGS3_UNK29				= 0x8000000,	// fishing spells and enchanting weapons
 	FLAGS3_UNK30				= 0x10000000,	// some secondairy spell triggers, especialy for lightning shield alike spells
-	FLAGS3_UNK31				= 0x20000000,
+	FLAGS3_CANT_CRIT			= 0x20000000,
 	FLAGS3_UNK32				= 0x40000000,
 };
 
@@ -490,6 +490,7 @@ enum Flags4
 {
 	FLAGS4_BG_ONLY						= 0x800,
 	FLAGS4_PLAYER_RANGED_SPELLS			= 0x8000,
+	FLAGS4_DISABLE_PROC					= 0x80000,
 	CAN_PERSIST_AND_CASTED_WHILE_DEAD	= 0x100000,
 	FLAGS4_PLAYER_RANGED_WAND			= 0x400000,
 	FLAGS4_OFFHAND						= 0x1000000,
@@ -498,7 +499,11 @@ enum Flags4
 enum Flags5
 {
 	FLAGS5_PROCCHANCE_COMBOBASED		= 0x2,
-	FLAGS5_ONLY_IN_OUTLANDS				= 0x4000000,
+	FLAGS5_CANT_PROC_FROM_SELFCAST		= 0x8,
+	FLAGS5_NOT_STEALABLE				= 0x40,
+	FLAGS5_NOT_USABLE_IN_ARENA			= 0x10000,
+	FLAGS5_USABLE_IN_ARENA 				= 0x20000,
+	FLAGS5_ONLY_IN_OUTLAND 				= 0x4000000,
 };
 
 enum SpellCastFlags
@@ -1748,7 +1753,8 @@ public:
 	HEARTHSTONE_INLINE uint32 getState() { return m_spellState; }
 	HEARTHSTONE_INLINE void SetUnitTarget(Unit* punit){unitTarget=punit;}
 	HEARTHSTONE_INLINE SpellEntry *GetSpellProto() { return m_spellInfo; }
-
+	/*ToDo: Replace requirescp with this
+	HEARTHSTONE_INLINE bool NeedCP(SpellEntry const* spellInfo){ return (spellInfo->AttributesEx & (ATTRIBUTESEX_REQ_COMBO_POINTS1 | ATTRIBUTESEX_REQ_COMBO_POINTS2)); }*/
 	// Send Packet functions
 	void SendCastResult(uint8 result);
 	void SendSpellStart();
@@ -2001,7 +2007,6 @@ public:
 						if(bonus)
 						{
 							this->Dur+=bonus;
-							m_requiresCP=true;
 						}
 					}
 				}

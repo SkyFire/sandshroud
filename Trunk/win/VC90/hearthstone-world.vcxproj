@@ -319,7 +319,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\VoiceChatClientSocket.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WorkdSocketCluster.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WorkerServerClient.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\INGEvents.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Map.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\MapCell.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\MapMgr.cpp" />
@@ -361,7 +360,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\SpellEffects.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellTarget.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\SpellFixes\DruidSpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AchievementInterface.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AddonMgr.cpp" />
