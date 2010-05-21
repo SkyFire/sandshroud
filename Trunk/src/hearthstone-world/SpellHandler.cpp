@@ -384,6 +384,7 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 	uint32 spellid;
 	uint8 castnumber, missileflag;
 	recvPacket >> guid >> castnumber >> spellid >> missileflag;
+
 	Object* caster;
 	if (_player->m_CurrentCharm != NULL)
 		caster = _player->m_CurrentCharm;
@@ -411,7 +412,6 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 			recvPacket >> unkdoodah2;
 		}
 
-		//calc
 		float dx = targets.m_destX - targets.m_srcX;
 		float dy = targets.m_destY - targets.m_srcY;
 		if (missilepitch != M_PI / 4 && missilepitch != -M_PI / 4)
@@ -431,14 +431,15 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 		return;
 	}
 
-	/* ToDo:
+	Spell* pSpell = new Spell(caster, sp, false, NULLAURA);
+	pSpell->extra_cast_number = castnumber;
+
 	if (missileflag & 0x2)
 	{
 		pSpell->m_missilePitch = missilepitch;
 		pSpell->m_missileTravelTime = traveltime;
-	}*/
+	}
 
 
-	Spell* pSpell = new Spell(caster, sp, false, NULLAURA);
 	pSpell->prepare(&targets);
 }

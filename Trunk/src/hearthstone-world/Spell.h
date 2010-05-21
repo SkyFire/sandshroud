@@ -1664,6 +1664,38 @@ HEARTHSTONE_INLINE bool IsTargetingStealthed(SpellEntry *sp)
 	return false;
 }
 
+struct SpellTargetMod
+{
+	SpellTargetMod(Object* _Target, uint8 _TargetModType) : Target(_Target), TargetModType(_TargetModType)
+	{
+
+	}
+	Object* Target;
+	uint8  TargetModType;
+};
+
+struct SpellTargetEntry
+{
+	SpellTargetEntry()
+	{
+		HasEffect[0] = false;
+		HasEffect[1] = false;
+		HasEffect[2] = false;
+		EffectPoints[0] = 0;
+		EffectPoints[1] = 0;
+		EffectPoints[2] = 0;
+		ProcData = 0;
+		TargetModType = 0;
+		ExtendedTargetModType = 0;
+	}
+	bool HasEffect[3];
+	uint32 EffectPoints[3];
+	uint32 ProcData;
+	uint8 TargetModType;
+	uint8 ExtendedTargetModType; //used for reflected spells
+};
+typedef std::map<uint64, SpellTargetEntry> SpellTargetMap;
+typedef std::vector<SpellTargetMod> SpellSpellTargetMap;
 typedef void(Spell::*pSpellEffect)(uint32 i);
 typedef void(Spell::*pSpellTarget)(uint32 i, uint32 j);
 
@@ -1695,6 +1727,8 @@ public:
 	friend class DummySpellHandler;
 	Spell( Object* Caster, SpellEntry *info, bool triggered, Aura* aur);
 	~Spell();
+	float m_missilePitch;
+	uint32 m_missileTravelTime;
 
 	// Fills specified targets at the area of effect
 	void FillSpecifiedTargetsInArea(float srcx,float srcy,float srcz,uint32 ind, uint32 specification);
@@ -1746,6 +1780,7 @@ public:
 	void AddTime(uint32 type);
 	void AddCooldown();
 	void AddStartCooldown();
+	void HandleDestLocationHit();
 
 
 	bool Reflect(Unit* refunit);
@@ -2161,6 +2196,8 @@ public:
 			(testSpell->SpellGroupType[2] && (spellEffect->EffectSpellClassMask[effectNum][2] & testSpell->SpellGroupType[2])));
 	}
 
+	SpellTargetMap m_spellTargets;
+
 protected:
 
 	/// Spell state's
@@ -2224,6 +2261,8 @@ private:
 	
 	// magnet
 	Unit* m_magnetTarget;
+	std::vector<uint64> m_orderedObjects;
+
 };
 
 void ApplyDiminishingReturnTimer(uint32 * Duration, Unit* Target, SpellEntry * spell);

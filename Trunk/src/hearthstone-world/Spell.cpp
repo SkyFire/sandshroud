@@ -155,6 +155,8 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 	m_caster = Caster;
 	duelSpell = false;
 	m_pushbackCount = 0;
+	m_missilePitch = 0;
+	m_missileTravelTime = 0;
 
 	switch( Caster->GetTypeId() )
 	{
@@ -1432,30 +1434,24 @@ void Spell::cast(bool check)
 				if( u_caster != NULL )
 					u_caster->SetCurrentSpell(this);
 			}
-			else
+			if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 			{
-				// timed?
-				if( m_spellInfo->speed > 0.0f && m_targets.m_unitTarget != 0 )
+				float dist=0.0f;
+
+				if (m_missileTravelTime)
+					sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, m_missileTravelTime, 1, 0);
+				else
 				{
-					Object* pTmpTarget = _LookupObject(m_targets.m_unitTarget);
-					if( pTmpTarget != NULL && pTmpTarget->IsUnit() )
+					if (m_spellInfo->speed <=0)
+						HandleDestLocationHit();
+					else
 					{
-						float tmpDistance = m_caster->CalcDistance(pTmpTarget);
-						float tmpTime = ( tmpDistance * 1000.0f ) / m_spellInfo->speed;
-
-						DEBUG_LOG("Spell projectile","dist: %.5f, time: %u speed: %f", tmpDistance, tmpTime, m_spellInfo->speed);
-
-						if( tmpTime > 100.0f )
-						{
-							m_projectileWait = true;
-							sEventMgr.AddEvent(m_caster, &Object::EventSpellHit, this, EVENT_UNIT_SPELL_HIT,
-								(uint32)float2int32(tmpTime), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_FIRE_ON_DELETE);
-
-							if( u_caster->GetCurrentSpell() == this )
-								u_caster->SetCurrentSpell(NULLSPELL);
-
-							return;
-						}
+						dist = m_caster->CalcDistance(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ);
+						float time = ((dist*1000.0f)/m_spellInfo->speed);
+						if(time <= 100)
+							HandleDestLocationHit();
+						else
+							sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, float2int32(time), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 					}
 				}
 			}
@@ -1727,6 +1723,47 @@ void Spell::cast(bool check)
 		// cancast failed
 		SendCastResult(cancastresult);
 		finish();
+	}
+}
+
+void Spell::HandleDestLocationHit()
+{
+	SpellTargetMap::iterator i;
+	for(uint32 x=0;x<3;x++)
+	{
+
+		FillTargetMap(x);
+		// check if we actualy have a effect
+		if( m_spellInfo->Effect[x])
+		{
+			bool hit = false;
+			if (m_orderedObjects.size()>0)
+			{
+				for (std::vector<uint64>::iterator itr=m_orderedObjects.begin(); itr!=m_orderedObjects.end(); ++itr)
+				{
+					i = m_spellTargets.find(*itr);
+					if (i != m_spellTargets.end() && i->second.HasEffect[x])
+					{
+						HandleEffects(i->first);
+						hit = true;
+					}
+				}
+			}
+
+			if (!hit)
+			{
+				if( m_spellInfo->Effect[x] == SPELL_EFFECT_TELEPORT_UNITS)
+				{
+					HandleEffects(m_caster->GetGUID());
+				}
+				else if( m_spellInfo->Effect[x] == SPELL_EFFECT_SUMMON_WILD)
+				{
+					HandleEffects(m_caster->GetGUID());
+				}
+				else
+					HandleEffects(0); 
+			}
+		}
 	}
 }
 
@@ -2108,6 +2145,8 @@ void Spell::SendSpellStart()
 	// hacky yeaaaa
 	if( m_spellInfo->Id == 8326 ) // death
 		cast_flags = 0x0F;
+	if (m_missileTravelTime)
+		cast_flags = 0x6000E;
 
 	if( i_caster != NULL )
 		data << i_caster->GetNewGUID() << u_caster->GetNewGUID();
@@ -2137,6 +2176,8 @@ void Spell::SendSpellStart()
 		}
 	}
 
+	if (cast_flags & 0x20000)
+		data << m_missilePitch << m_missileTravelTime;
 	if( GetType() == SPELL_DMG_TYPE_RANGED )
 	{
 		ItemPrototype* ip = NULL;
@@ -2231,6 +2272,8 @@ void Spell::SendSpellGo()
 	if( i_caster != NULL )
 		cast_flags |= SPELL_GO_FLAGS_ITEM_CASTER; // 0x100 ITEM CASTER
 
+	if (m_missileTravelTime)
+		cast_flags |= 0x20000;
 	// hacky..
 	if( m_spellInfo->Id == 8326 ) // death
 		cast_flags = SPELL_GO_FLAGS_ITEM_CASTER | 0x0D;
