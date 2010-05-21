@@ -78,19 +78,16 @@ public:
 	bool Initialised;
 	bool m_CreatedFromSpell;
 	uint32 m_mountSpell;
-
-private:
-	void _AddToSlot(Unit* pPassenger, uint8 slot);
-
-protected:
+	Unit* m_passengers[8];
+	uint8 m_passengerCount;
 	uint64 vehicleguid;
 	Unit* m_controllingUnit;
-	Unit* m_passengers[8];
-
-	uint8 m_passengerCount;
 	uint8 m_maxPassengers;
 	int8 m_seatSlotMax;
 	uint32 m_vehicleEntry;
+
+private:
+	void _AddToSlot(Unit* pPassenger, uint8 slot);
 };
 
 #endif

@@ -6107,14 +6107,29 @@ void Spell::SpellEffectSummonPlayer(uint32 i)
 
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	printf("WMODamage\n");
+	Object* obj;
+	Object* controller = NULL;
+	if (!m_caster->IsVehicle())
+		controller = m_caster;
+	else
+	{
+		if (TO_VEHICLE(m_caster)->m_passengerCount > 0 && TO_VEHICLE(m_caster)->m_passengers[0] != NULL)
+			controller = TO_VEHICLE(m_caster)->m_passengers[0];
+		else
+			controller = m_caster;
+	}
 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
-		gameObjTarget->TakeDamage(uint32(damage));
+	{
+			WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
+			data << obj->GetNewGUID() << m_caster->GetNewGUID() << controller->GetNewGUID();
+			data << uint32(damage) << m_spellInfo->Id;
+			obj->SendMessageToSet(&data, true);
+			gameObjTarget->TakeDamage(int32(damage));
+	}
 }
 
 void Spell::SpellEffectWMORepair(uint32 i)
 {
-	printf("WMORepair\n");
 	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
 		gameObjTarget->Rebuild();
 }
