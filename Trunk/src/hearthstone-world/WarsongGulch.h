@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef WARSONG_GULCH_H
+#define WARSONG_GULCH_H
+
 #define BUFF_RESPAWN_TIME 90000
 
 class WarsongGulch : public CBattleground
@@ -67,3 +70,5 @@ public:
 
 	void SetIsWeekend(bool isweekend);
 };
+
+#endif // WARSONG_GULCH_H

@@ -260,7 +260,7 @@ public:
 
 	//Destructable Building
 	uint32 Health;
-	void TakeDamage(uint32 ammount);
+	void TakeDamage(uint32 ammount, Object* mcaster, Object* pcaster, uint32 spellid = 0);
 	void Rebuild();
 
 protected:

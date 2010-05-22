@@ -1664,38 +1664,6 @@ HEARTHSTONE_INLINE bool IsTargetingStealthed(SpellEntry *sp)
 	return false;
 }
 
-struct SpellTargetMod
-{
-	SpellTargetMod(Object* _Target, uint8 _TargetModType) : Target(_Target), TargetModType(_TargetModType)
-	{
-
-	}
-	Object* Target;
-	uint8  TargetModType;
-};
-
-struct SpellTargetEntry
-{
-	SpellTargetEntry()
-	{
-		HasEffect[0] = false;
-		HasEffect[1] = false;
-		HasEffect[2] = false;
-		EffectPoints[0] = 0;
-		EffectPoints[1] = 0;
-		EffectPoints[2] = 0;
-		ProcData = 0;
-		TargetModType = 0;
-		ExtendedTargetModType = 0;
-	}
-	bool HasEffect[3];
-	uint32 EffectPoints[3];
-	uint32 ProcData;
-	uint8 TargetModType;
-	uint8 ExtendedTargetModType; //used for reflected spells
-};
-typedef std::map<uint64, SpellTargetEntry> SpellTargetMap;
-typedef std::vector<SpellTargetMod> SpellSpellTargetMap;
 typedef void(Spell::*pSpellEffect)(uint32 i);
 typedef void(Spell::*pSpellTarget)(uint32 i, uint32 j);
 
@@ -1721,7 +1689,7 @@ enum SpellDidHitResult
 };
 
 // Spell instance
-class SERVER_DECL Spell
+class SERVER_DECL Spell : public EventableObject
 {
 public:
 	friend class DummySpellHandler;
@@ -1780,9 +1748,6 @@ public:
 	void AddTime(uint32 type);
 	void AddCooldown();
 	void AddStartCooldown();
-	void HandleDestLocationHit();
-
-
 	bool Reflect(Unit* refunit);
 
 	HEARTHSTONE_INLINE uint32 getState() { return m_spellState; }
@@ -1875,6 +1840,7 @@ public:
 	void SpellEffectDuel(uint32 i);
 	void SpellEffectStuck(uint32 i);
 	void SpellEffectSummonPlayer(uint32 i);
+	void SpellEffectActivateObject(uint32 i);
 	void SpellEffectWMODamage(uint32 i);
  	void SpellEffectWMORepair(uint32 i);
 	void SummonTotem(uint32 i);
@@ -2195,8 +2161,6 @@ public:
 			(testSpell->SpellGroupType[1] && (spellEffect->EffectSpellClassMask[effectNum][1] & testSpell->SpellGroupType[1])) || 
 			(testSpell->SpellGroupType[2] && (spellEffect->EffectSpellClassMask[effectNum][2] & testSpell->SpellGroupType[2])));
 	}
-
-	SpellTargetMap m_spellTargets;
 
 protected:
 

@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef ALTERAC_VALLEY_H
+#define ALTERAC_VALLEY_H
+
 #include "StdAfx.h"
 
 enum AVControlPoints
@@ -260,3 +263,5 @@ public:
 	AVNode * GetNode(uint32 id) { return m_nodes[id]; }
 	int GetBonusHonor() { return m_bonusHonor; }
 };
+
+#endif // ALTERAC_VALLEY_H

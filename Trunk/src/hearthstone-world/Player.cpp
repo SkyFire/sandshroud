@@ -8136,6 +8136,11 @@ void Player::ForceAreaUpdate()
 		if( m_areaDBC->ZoneId && m_zoneId != m_areaDBC->ZoneId )
 			m_zoneId = m_areaDBC->ZoneId;
 	}
+
+	if(m_AreaID == 4197 && sWorld.wg_enabled)
+	{
+		// Insert into WG.
+	}
 }
 
 void Player::ZoneUpdate(uint32 ZoneId)

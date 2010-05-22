@@ -800,7 +800,7 @@ uint8 GameObject::GetState()
 }
 
 //Destructable Buildings
-void GameObject::TakeDamage(uint32 ammount)
+void GameObject::TakeDamage(uint32 ammount, Object* mcaster, Object* pcaster, uint32 spellid)
 {
 	if(pInfo->Type != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
 		return;
@@ -838,6 +838,11 @@ void GameObject::TakeDamage(uint32 ammount)
 			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
 		}
 	}
+
+	WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
+	data << mcaster->GetNewGUID() << pcaster->GetNewGUID();
+	data << uint32(ammount) << spellid;
+	mcaster->SendMessageToSet(&data, (mcaster->IsPlayer() ? true : false));
 }
 
 void GameObject::Rebuild()

@@ -62,7 +62,6 @@ void DayWatcherThread::update_settings()
 {
 	CharacterDatabase.Execute("REPLACE INTO server_settings VALUES(\"last_arena_update_time\", %u)", last_arena_time);
 	CharacterDatabase.Execute("REPLACE INTO server_settings VALUES(\"last_dailies_reset_time\", %u)", last_daily_reset_time);
-	CharacterDatabase.Execute("REPLACE INTO server_settings VALUES(\"last_eventid_time\", %u)", last_eventid_time);
 }
 
 void DayWatcherThread::load_settings()
@@ -93,22 +92,12 @@ void DayWatcherThread::load_settings()
 		DEBUG_LOG("DayWatcherThread", "Initialized Daily Updates.");
 		last_daily_reset_time = 0;
 	}
-
-	result = CharacterDatabase.Query("SELECT setting_value FROM server_settings WHERE setting_id = \"last_eventid_time\"");
-	if(result)
-	{
-		last_eventid_time = result->Fetch()[0].GetUInt32();
-		delete result;
-	}
-	else
-		last_eventid_time = 0;
 }
 
 void DayWatcherThread::set_tm_pointers()
 {
 	dupe_tm_pointer(localtime(&last_arena_time), &local_last_arena_time);
 	dupe_tm_pointer(localtime(&last_daily_reset_time), &local_last_daily_reset_time);
-	dupe_tm_pointer(localtime(&last_eventid_time), &local_last_eventid_time);
 }
 
 uint32 DayWatcherThread::get_timeout_from_string(const char * string, uint32 def)
@@ -131,24 +120,20 @@ bool DayWatcherThread::has_timeout_expired(tm * now_time, tm * last_time, uint32
 {
 	switch(timeoutval)
 	{
-	case WEEKLY:
-		{
-			if( (now_time->tm_mon != last_time->tm_mon) )
-				return true;
-
-			return ( (now_time->tm_mday / 7) != (last_time->tm_mday / 7) );
-		}
-		
 	case MONTHLY:
 		return (now_time->tm_mon != last_time->tm_mon);
+
+	case WEEKLY:
+		return ( (now_time->tm_mday / 7) != (last_time->tm_mday / 7) || (now_time->tm_mon != last_time->tm_mon) );
+
+	case DAILY:
+		return ((now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mon != last_time->tm_mon));
 
 	case HOURLY:
 		return ((now_time->tm_hour != last_time->tm_hour) || (now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mon != last_time->tm_mon));
 
-	case DAILY:
-		return ((now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mday != last_time->tm_mday));
 	case MINUTELY:
-			return ((now_time->tm_min != last_time->tm_min) || (now_time->tm_hour != last_time->tm_hour) || (now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mon != last_time->tm_mon));
+		return ((now_time->tm_min != last_time->tm_min) || (now_time->tm_hour != last_time->tm_hour) || (now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mon != last_time->tm_mon));
 	}
 	return false;
 }
@@ -167,6 +152,7 @@ bool DayWatcherThread::run()
 	_firstrun[0] = true;
 	_firstrun[1] = true;
 	m_heroic_reset = false;
+	uint32 WGcounter = 0;
 
 #ifdef WIN32
 	m_abortEvent = CreateEvent(NULL, NULL, FALSE, NULL);
@@ -328,13 +314,13 @@ void DayWatcherThread::update_arena()
 			if(orig_arenapoints != arenapoints)
 			{
 				plr = objmgr.GetPlayer(guid);
-				if(plr!=NULL)
+				if(plr != NULL)
 				{
 					plr->m_arenaPoints = arenapoints;
-					
+
 					/* update visible fields (must be done through an event because of no uint lock */
 					sEventMgr.AddEvent(plr, &Player::RecalculateHonor, EVENT_PLAYER_UPDATE, 100, 1, 0);
-	
+
 					/* send a little message :> */
 					sChatHandler.SystemMessage(plr->GetSession(), "Your arena points have been updated! Check your PvP tab!");
 				}

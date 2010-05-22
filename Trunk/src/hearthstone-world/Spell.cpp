@@ -91,11 +91,6 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 			m_srcZ = m_destZ;
 		}
 	}
-
-	/*if( m_targetMask & TARGET_FLAG_STRING )
-	{
-		data >> m_strTarget;
-	}*/
 }
 
 void SpellCastTargets::write( WorldPacket& data )
@@ -116,9 +111,6 @@ void SpellCastTargets::write( WorldPacket& data )
 			{FastGUIDPack( data, m_unitTarget ); data << m_destX << m_destY << m_destZ;}
 		else
 			data << uint8(0) << m_destX << m_destY << m_destZ;
-
-	/*if( m_targetMask & TARGET_FLAG_STRING )
-		data << m_strTarget;*/
 }
 
 void SpellCastTargets::write( StackPacket& data )
@@ -142,9 +134,6 @@ void SpellCastTargets::write( StackPacket& data )
 			data << uint8(0);
 		data << m_destX << m_destY << m_destZ;
 	}
-
-	/*if( m_targetMask & TARGET_FLAG_STRING )
-		data << m_strTarget;*/
 }
 
 Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
@@ -1434,27 +1423,6 @@ void Spell::cast(bool check)
 				if( u_caster != NULL )
 					u_caster->SetCurrentSpell(this);
 			}
-			if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-			{
-				float dist=0.0f;
-
-				if (m_missileTravelTime)
-					sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, m_missileTravelTime, 1, 0);
-				else
-				{
-					if (m_spellInfo->speed <=0)
-						HandleDestLocationHit();
-					else
-					{
-						dist = m_caster->CalcDistance(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ);
-						float time = ((dist*1000.0f)/m_spellInfo->speed);
-						if(time <= 100)
-							HandleDestLocationHit();
-						else
-							sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, float2int32(time), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-					}
-				}
-			}
 		}
 
 		if (p_caster)
@@ -1723,47 +1691,6 @@ void Spell::cast(bool check)
 		// cancast failed
 		SendCastResult(cancastresult);
 		finish();
-	}
-}
-
-void Spell::HandleDestLocationHit()
-{
-	SpellTargetMap::iterator i;
-	for(uint32 x=0;x<3;x++)
-	{
-
-		FillTargetMap(x);
-		// check if we actualy have a effect
-		if( m_spellInfo->Effect[x])
-		{
-			bool hit = false;
-			if (m_orderedObjects.size()>0)
-			{
-				for (std::vector<uint64>::iterator itr=m_orderedObjects.begin(); itr!=m_orderedObjects.end(); ++itr)
-				{
-					i = m_spellTargets.find(*itr);
-					if (i != m_spellTargets.end() && i->second.HasEffect[x])
-					{
-						HandleEffects(i->first);
-						hit = true;
-					}
-				}
-			}
-
-			if (!hit)
-			{
-				if( m_spellInfo->Effect[x] == SPELL_EFFECT_TELEPORT_UNITS)
-				{
-					HandleEffects(m_caster->GetGUID());
-				}
-				else if( m_spellInfo->Effect[x] == SPELL_EFFECT_SUMMON_WILD)
-				{
-					HandleEffects(m_caster->GetGUID());
-				}
-				else
-					HandleEffects(0); 
-			}
-		}
 	}
 }
 

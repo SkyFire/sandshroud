@@ -111,11 +111,11 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectDuel,						//SPELL_EFFECT_DUEL - 83
 	&Spell::SpellEffectStuck,						//SPELL_EFFECT_STUCK - 84
 	&Spell::SpellEffectSummonPlayer,				//SPELL_EFFECT_SUMMON_PLAYER - 85
-	&Spell::SpellEffectWMODamage,					//SPELL_EFFECT_WMO_DAMAGE - 86
-	&Spell::SpellEffectWMORepair,					//SPELL_EFFECT_WMO_REPAIR - 87
-	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT2 - 88
-	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT3 - 89
-	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_TOTEM_SLOT4 - 90
+	&Spell::SpellEffectActivateObject,				//SPELL_EFFECT_ACTIVATE_OBJECT - 86
+	&Spell::SpellEffectWMODamage,					//SPELL_EFFECT_WMO_DAMAGE - 87
+	&Spell::SpellEffectWMORepair,					//SPELL_EFFECT_WMO_REPAIR - 88
+	&Spell::SpellEffectNULL,						//SPELL_EFFECT_WMO_CHANGE - 89
+	&Spell::SpellEffectNULL,						//SPELL_EFFECT_KILL_CREDIT - 90
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_THREAT_ALL - 91 UNUSED
 	&Spell::SpellEffectEnchantHeldItem,				//SPELL_EFFECT_ENCHANT_HELD_ITEM - 92
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_PHANTASM - 93 OLD
@@ -310,12 +310,12 @@ void Spell::SpellEffectInstantKill(uint32 i)
 		}break;
 	case 33974: //Power Burn for each Point consumed mana (Effect1) target get damage(Effect3) no better idea :P
 		{
-			unitTarget->GetPowerType() == POWER_TYPE_RAGE ? m_caster->DealDamage(unitTarget, m_spellInfo->EffectBasePoints[0], 0, spellId, false) : m_caster->DealDamage(unitTarget, m_spellInfo->EffectBasePoints[1], 0, spellId, false);
+			unitTarget->GetPowerType() == POWER_TYPE_RAGE ? m_caster->DealDamage(unitTarget, m_spellInfo->EffectBasePoints[0], 0, 0, spellId) : m_caster->DealDamage(unitTarget, m_spellInfo->EffectBasePoints[1], 0, 0, spellId);
 			return;
 		}break;
 	case 36484: //Mana Burn same like Power Burn
 		{
-			m_caster->DealDamage(unitTarget, m_spellInfo->EffectBasePoints[0], 0, spellId, false);
+			m_caster->DealDamage(unitTarget, m_spellInfo->EffectBasePoints[0], 0, 0, spellId);
 			return;
 		}break;
 	case 37056: //Kill Legion Hold Infernals
@@ -808,7 +808,6 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			// Move Effect
 			unitTarget->CastSpellAoF( p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), dbcSpell.LookupEntryForced(49575), true); 
 			p_caster->CastSpell( unitTarget, 51399, true ); // Taunt Effect
-			p_caster->DealDamage(unitTarget,1,0,0,49576);
 		}break;
 
 		/*************************
@@ -6105,26 +6104,50 @@ void Spell::SpellEffectSummonPlayer(uint32 i)
 		m_caster->GetInstanceID(), m_caster->GetPosition());
 }
 
+void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
+{
+/*	if( p_caster == NULL)
+		return;
+
+	if( gameObjTarget == NULL)
+		return;
+
+	gameObjTarget->SetUInt32Value(GAMEOBJECT_DYNAMIC, 1);
+
+	sEventMgr.AddEvent(gameObjTarget, &GameObject::Deactivate, EVENT_GAMEOBJECT_DEACTIVATE, GetDuration(), 1);*/
+}
+
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	Object* obj;
 	Object* controller = NULL;
-	if (!m_caster->IsVehicle())
-		controller = m_caster;
+
+	if(v_caster)
+		controller = v_caster;
 	else
+		controller = p_caster;
+
+	Unit* unttarget = NULL;
+	GameObject* gobjtarget = NULL;
+
+	if(m_targetList.size() > 1)
 	{
-		if (TO_VEHICLE(m_caster)->m_passengerCount > 0 && TO_VEHICLE(m_caster)->m_passengers[0] != NULL)
-			controller = TO_VEHICLE(m_caster)->m_passengers[0];
-		else
-			controller = m_caster;
-	}
-	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
-	{
-			WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
-			data << obj->GetNewGUID() << m_caster->GetNewGUID() << controller->GetNewGUID();
-			data << uint32(damage) << m_spellInfo->Id;
-			obj->SendMessageToSet(&data, true);
-			gameObjTarget->TakeDamage(int32(damage));
+		for(SpellTargetList::iterator itr = m_targetList.begin(); itr != m_targetList.end(); ++itr)
+		{
+			switch(GET_TYPE_FROM_GUID((*itr).Guid))
+			{
+			case HIGHGUID_TYPE_GAMEOBJECT:
+				{
+					gobjtarget = m_caster->GetMapMgr()->GetGameObject(uint32((*itr).Guid));
+					if(gobjtarget && gobjtarget->GetInfo() && gobjtarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
+						gobjtarget->TakeDamage(uint32(damage), m_caster, controller, m_spellInfo->Id);
+				}break;
+			case HIGHGUID_TYPE_UNIT:
+				{
+					unttarget = m_caster->GetMapMgr()->GetUnit((*itr).Guid);
+					controller->DealDamage(unttarget, damage, 0, 0, m_spellInfo->Id);
+				}break;
+			}
+		}
 	}
 }
 

@@ -23,6 +23,7 @@ initialiseSingleton( World );
 
 DayWatcherThread* dw = NULL;
 CharacterLoaderThread* ctl = NULL;
+WintergraspInternal* wgi = NULL;
 
 float World::m_movementCompressThreshold;
 float World::m_movementCompressThresholdCreatures;
@@ -538,6 +539,12 @@ bool World::SetInitialWorldSettings()
 
 	dw = new DayWatcherThread();
 	ThreadPool.ExecuteTask( dw );
+
+	if(wg_enabled)
+	{
+		wgi = new WintergraspInternal();
+		ThreadPool.ExecuteTask( wgi );
+	}
 
 	m_queueUpdateTimer = mQueueUpdateInterval;
 	if(Config.MainConfig.GetBoolDefault("Startup", "BackgroundLootLoading", true))
@@ -1231,6 +1238,13 @@ void World::Rehash(bool load)
 
 	StartLevel = Config.MainConfig.GetIntDefault("Server", "StartLevel", 1);
 	StartGold = Config.MainConfig.GetIntDefault("Server", "StartGold", 1);
+
+	// Battlegrounds
+	wg_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableWG", false);
+	av_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableAV", true);
+	ab_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableAB", true);
+	wsg_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableWSG", true);
+	eots_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableEOTS", true);
 
 	// load regeneration rates.
 	setRate(RATE_HEALTH,Config.MainConfig.GetFloatDefault("Rates", "Health",1));

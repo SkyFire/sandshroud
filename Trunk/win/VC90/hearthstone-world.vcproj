@@ -1255,6 +1255,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Wintergrasp"
+			>
+			<File
+				RelativePath="..\..\src\hearthstone-world\Wintergrasp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\Wintergrasp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WintergraspInternal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WintergraspInternal.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\src\hearthstone-world\Const.h"
 			>

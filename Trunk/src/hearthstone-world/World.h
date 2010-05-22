@@ -574,10 +574,11 @@ public:
 	bool display_free_items;
 
 	//Enable/Disable specific battlegrounds/arenas
-	bool av_disabled;
-	bool wsg_disabled;
-	bool eots_disabled;
-	bool ab_disabled;
+	bool wg_enabled;
+	bool av_enabled;
+	bool ab_enabled;
+	bool wsg_enabled;
+	bool eots_enabled;
 
 	// Level Caps
 	uint32 LevelCap_Custom_All;

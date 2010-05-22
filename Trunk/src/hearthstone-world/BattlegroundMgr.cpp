@@ -68,11 +68,12 @@ const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
 	NULL,							// 3v3
 	NULL,							// 5v5
 	&EyeOfTheStorm::Create,			// EOTS
-	NULL,							// Unknown
+	NULL,							// Arena
 //	&StrandOfTheAncients::Create,	// SOTA
-	NULL,							// SOTA
-	NULL,							// Unknown
-	NULL,							// Unknown
+	NULL,							// Dalaran Sewer
+	NULL,							// Ring of Valor
+	NULL,							// Non existant.
+	NULL,							// Non existant.
 	NULL,							// Non existant.
 	NULL,							// Non existant.
 	NULL,							// Non existant.
@@ -92,9 +93,8 @@ const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
 	NULL,							// Non existant.
 	NULL,							// Non existant.
 // 	&IsleOfConquest::Create,		// IOC
-	NULL,							// IOC
 	NULL,							// Non existant.
-	NULL,							// Unknown
+	NULL,							// Random
 };
 
 const static uint32 BGMinimumPlayers[BATTLEGROUND_NUM_TYPES] = {

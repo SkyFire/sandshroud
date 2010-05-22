@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef ARATHI_BASIN_H
+#define ARATHI_BASIN_H
+
 #define AB_BUFF_RESPAWN_TIME 90000
 
 enum ABBuffs
@@ -112,3 +115,5 @@ public:
 
 	void SetIsWeekend(bool isweekend);
 };
+
+#endif // ARATHI_BASIN_H
