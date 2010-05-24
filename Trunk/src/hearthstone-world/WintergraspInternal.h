@@ -30,6 +30,8 @@ class SERVER_DECL WintergraspInternal : public Singleton<WintergraspInternal>, p
 private:
 	time_t currenttime;
 	tm local_currenttime;
+	time_t last_countertime;
+	tm local_last_countertime;
 	time_t last_wintergrasp_time;
 	tm local_last_wintergrasp_time;
 
@@ -42,7 +44,7 @@ public:
 	void LoadWintergraspSettings();
 	void UpdateWintergraspSettings();
 	void dupe_tm_pointer(tm * returnvalue, tm * mypointer);
-	bool has_timeout_expired(tm * now_time, tm * last_time, uint32 timeoutval);
+	bool has_timeout_expired(tm * now_time, tm * last_time);
 
 	bool run();
 	bool m_threadRunning;

@@ -34,6 +34,7 @@ WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)
 	m_dirty = false;
 	WGcounter = 0;
 	SetWGTimer((6*60000/*Hour*/)*3);
+	m_wintergrasp = 0;
 }
 
 WintergraspInternal::~WintergraspInternal()
@@ -73,25 +74,14 @@ void WintergraspInternal::dupe_tm_pointer(tm * returnvalue, tm * mypointer)
 	memcpy(mypointer, returnvalue, sizeof(tm));
 }
 
-bool WintergraspInternal::has_timeout_expired(tm * now_time, tm * last_time, uint32 timeoutval)
+bool WintergraspInternal::has_timeout_expired(tm * now_time, tm * last_time)
 {
-	switch(timeoutval)
-	{
-	case MONTHLY:
-		return (now_time->tm_mon != last_time->tm_mon);
+	if(now_time->tm_hour != last_time->tm_hour)
+		return true;
 
-	case WEEKLY:
-		return ( (now_time->tm_mday / 7) != (last_time->tm_mday / 7) || (now_time->tm_mon != last_time->tm_mon) );
+	if(now_time->tm_mday != last_time->tm_mday)
+		return true;
 
-	case DAILY:
-		return ((now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mon != last_time->tm_mon));
-
-	case HOURLY:
-		return ((now_time->tm_hour != last_time->tm_hour) || (now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mon != last_time->tm_mon));
-
-	case MINUTELY:
-		return ((now_time->tm_min != last_time->tm_min) || (now_time->tm_hour != last_time->tm_hour) || (now_time->tm_mday != last_time->tm_mday) || (now_time->tm_mon != last_time->tm_mon));
-	}
 	return false;
 }
 
@@ -102,12 +92,14 @@ bool WintergraspInternal::run()
 	LoadWintergraspSettings();
 	currenttime = UNIXTIME;
 	dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
+	last_countertime = UNIXTIME;
+	dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);
 
 	Log.Notice("WintergraspInternal", "Wintergrasp Handler Initiated.");
 
 	while(m_threadRunning)
 	{
-		if(has_timeout_expired(&local_currenttime, &local_last_wintergrasp_time, HOURLY))
+		if(has_timeout_expired(&local_currenttime, &local_last_countertime))
 		{
 			++WGcounter;
 
@@ -118,13 +110,17 @@ bool WintergraspInternal::run()
 				{
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
 					WG = Wintergrasp::Create(this, &WGMgr);
-
-					last_wintergrasp_time = UNIXTIME;
-					dupe_tm_pointer(localtime(&last_wintergrasp_time), &local_last_wintergrasp_time);
 				}
+				last_wintergrasp_time = UNIXTIME;
+				dupe_tm_pointer(localtime(&last_wintergrasp_time), &local_last_wintergrasp_time);
 				WGcounter = 0; // Reset our timer.
 				m_dirty = true;
 			}
+			else
+				Log.Notice("WintergraspInternal", "Wintergrasp counter at %u/3", WGcounter);
+
+			last_countertime = UNIXTIME;
+			dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);
 		}
 
 		if(m_dirty)
@@ -164,16 +160,22 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 	{
 		if(WG != NULL)
 		{
-			for(WintergraspPlayerSet::iterator itr = WG->WGPlayers.begin(); itr != WG->WGPlayers.end(); ++itr)
-				(*itr)->GetSession()->SendPacket(&data);
+			if(WG->WGPlayers.size())
+			{
+				for(WintergraspPlayerSet::iterator itr = WG->WGPlayers.begin(); itr != WG->WGPlayers.end(); ++itr)
+					(*itr)->GetSession()->SendPacket(&data);
+			}
 		}
 		else
 		{
-			for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); ++itr)
+			if(WGMgr.m_PlayerStorage.size())
 			{
-				plr = itr->second;
-				if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
-					plr->GetSession()->SendPacket(&data);
+				for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); ++itr)
+				{
+					plr = itr->second;
+					if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
+						plr->GetSession()->SendPacket(&data);
+				}
 			}
 		}
 		plr = NULL;
