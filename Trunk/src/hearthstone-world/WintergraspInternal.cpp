@@ -100,6 +100,8 @@ bool WintergraspInternal::run()
 	SetThreadName("WGInternal");
 
 	LoadWintergraspSettings();
+	currenttime = UNIXTIME;
+	dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
 
 	Log.Notice("WintergraspInternal", "Wintergrasp Handler Initiated.");
 
