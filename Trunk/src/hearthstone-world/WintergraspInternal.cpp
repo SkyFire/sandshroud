@@ -176,21 +176,21 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 					if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
 						plr->GetSession()->SendPacket(&data);
 				}
+				plr = NULL;
 			}
 		}
-		plr = NULL;
 	}
 }
 
 void WintergraspInternal::UpdateClockDigit(uint32 timer, uint32 digit, uint32 mod)
 {
-    uint32 value = timer%mod;
-    timer /= mod;
-    if(m_clock[digit] != value)
-    {
-        m_clock[digit] = value;
+	uint32 value = timer%mod;
+	timer /= mod;
+	if(m_clock[digit] != value)
+	{
+		m_clock[digit] = value;
 		SendWSUpdateToAll(ClockWorldState[digit], value);
-    }
+	}
 	WGMgr.GetStateManager().UpdateWorldState(m_clock[digit], value);
 }
 
@@ -218,11 +218,11 @@ void WintergraspInternal::SendWSUpdateToAll(uint32 WorldState, uint32 Value)
 
 void WintergraspInternal::UpdateClock()
 {
-    uint32 timer = m_timer / 1000;
-    UpdateClockDigit(timer, 0, 10);
-    UpdateClockDigit(timer, 1, 6);
-    UpdateClockDigit(timer, 2, 10);
-    UpdateClockDigit(timer, 3, 6);
-    if(!WG_started)
-        UpdateClockDigit(timer, 4, 10);
+	uint32 timer = m_timer / 1000;
+	UpdateClockDigit(timer, 0, 10);
+	UpdateClockDigit(timer, 1, 6);
+	UpdateClockDigit(timer, 2, 10);
+	UpdateClockDigit(timer, 3, 6);
+	if(!WG_started)
+		UpdateClockDigit(timer, 4, 10);
 }
