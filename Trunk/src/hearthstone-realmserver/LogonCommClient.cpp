@@ -302,13 +302,13 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 
 	ByteBuffer uncompressed(40000 * 5 + 8);
 	//uint32 Count = 0;
-	uint32 Remaining = mapping_to_send.size();
+	uint32 Remaining = int32(mapping_to_send.size());
 	itr = mapping_to_send.begin();
 	for(;;)
 	{
-		// Send no more than 40000 characters at once.
 		uncompressed << realm_id;
-		
+
+		// Send no more than 40000 characters at once.
 		if(Remaining > 40000)
 			uncompressed << uint32(40000);
 		else

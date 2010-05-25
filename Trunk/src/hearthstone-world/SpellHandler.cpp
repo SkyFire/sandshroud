@@ -380,29 +380,32 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 {
-	uint64 guid;
-	uint32 spellid;
-	uint8 castnumber, missileflag;
-	recvPacket >> guid >> castnumber >> spellid >> missileflag;
+	if(!_player || !_player->IsInWorld())
+		return;
 
-	Object* caster;
+	Object* caster = NULL;
 	if (_player->m_CurrentCharm != NULL)
 		caster = _player->m_CurrentCharm;
-	if (_player->m_Summon != NULL)
+	else if (_player->m_Summon != NULL)
 		caster = _player->m_Summon;
-	if (_player->m_CurrentVehicle != NULL)
+	else if (_player->m_CurrentVehicle != NULL)
 		caster = _player->m_CurrentVehicle;
+
 	if (caster == NULL)
 		return;
 
-	SpellCastTargets targets;
-	targets.read(recvPacket, caster->GetGUID());
-
+	uint64 guid;
+	uint32 spellid;
+	uint8 castnumber, missileflag;
 	float missilepitch, missilespeed;
 	uint8 missileunkcheck;
 	uint32 unkdoodah, unkdoodah2;
 	float traveltime = 0.0f;
-	if (missileflag & 0x2)
+	recvPacket >> guid >> castnumber >> spellid >> missileflag;
+	SpellCastTargets targets;
+	targets.read(recvPacket, caster->GetGUID());
+
+	if(missileflag & 0x2)
 	{
 		recvPacket >> missilepitch >> missilespeed >> missileunkcheck;
 
@@ -434,12 +437,11 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 	Spell* pSpell = new Spell(caster, sp, false, NULLAURA);
 	pSpell->extra_cast_number = castnumber;
 
-	if (missileflag & 0x2)
+	if(missileflag & 0x2)
 	{
 		pSpell->m_missilePitch = missilepitch;
 		pSpell->m_missileTravelTime = traveltime;
 	}
-
 
 	pSpell->prepare(&targets);
 }
