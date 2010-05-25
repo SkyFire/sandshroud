@@ -31,7 +31,6 @@ static pthread_mutex_t abortmutex;
 WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)))
 {
 	m_threadRunning = true;
-	m_dirty = false;
 	WGcounter = 0;
 	SetWGTimer((6*60000/*Hour*/)*3);
 	m_wintergrasp = 0;
@@ -45,28 +44,6 @@ WintergraspInternal::~WintergraspInternal()
 void WintergraspInternal::terminate()
 {
 	m_threadRunning = false;
-}
-
-void WintergraspInternal::set_tm_pointers()
-{
-	dupe_tm_pointer(localtime(&last_wintergrasp_time), &local_last_wintergrasp_time);
-}
-
-void WintergraspInternal::LoadWintergraspSettings()
-{
-	QueryResult* result = CharacterDatabase.Query("SELECT setting_value FROM server_settings WHERE setting_id = \"last_wintergrasp_time\"");
-	if(result)
-	{
-		last_wintergrasp_time = result->Fetch()[0].GetUInt32();
-		delete result;
-	}
-	else
-		last_wintergrasp_time = 0;
-}
-
-void WintergraspInternal::UpdateWintergraspSettings()
-{
-	CharacterDatabase.Execute("REPLACE INTO server_settings VALUES(\"last_wintergrasp_time\", %u)", last_wintergrasp_time);
 }
 
 void WintergraspInternal::dupe_tm_pointer(tm * returnvalue, tm * mypointer)
@@ -88,8 +65,6 @@ bool WintergraspInternal::has_timeout_expired(tm * now_time, tm * last_time)
 bool WintergraspInternal::run()
 {
 	SetThreadName("WGInternal");
-
-	LoadWintergraspSettings();
 	currenttime = UNIXTIME;
 	dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
 	last_countertime = UNIXTIME;
@@ -111,10 +86,7 @@ bool WintergraspInternal::run()
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
 					WG = Wintergrasp::Create(this, &WGMgr);
 				}
-				last_wintergrasp_time = UNIXTIME;
-				dupe_tm_pointer(localtime(&last_wintergrasp_time), &local_last_wintergrasp_time);
 				WGcounter = 0; // Reset our timer.
-				m_dirty = true;
 			}
 			else
 				Log.Notice("WintergraspInternal", "Wintergrasp counter at %u/3", WGcounter);
@@ -122,9 +94,6 @@ bool WintergraspInternal::run()
 			last_countertime = UNIXTIME;
 			dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);
 		}
-
-		if(m_dirty)
-			UpdateWintergraspSettings();
 	}
 	return false;
 }

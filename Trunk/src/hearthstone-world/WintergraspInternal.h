@@ -32,23 +32,17 @@ private:
 	tm local_currenttime;
 	time_t last_countertime;
 	tm local_last_countertime;
-	time_t last_wintergrasp_time;
-	tm local_last_wintergrasp_time;
 
 public:
 	WintergraspInternal();
 	~WintergraspInternal();
 
 	void terminate();
-	void set_tm_pointers();
-	void LoadWintergraspSettings();
-	void UpdateWintergraspSettings();
 	void dupe_tm_pointer(tm * returnvalue, tm * mypointer);
 	bool has_timeout_expired(tm * now_time, tm * last_time);
 
 	bool run();
 	bool m_threadRunning;
-	bool m_dirty;
 
 // Actual Wintergrasp Internal stuff.
 public:

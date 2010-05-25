@@ -19,11 +19,8 @@
 
 #include "StdAfx.h"
 
+initialiseSingleton( CharacterLoaderThread );
 initialiseSingleton( World );
-
-DayWatcherThread* dw = NULL;
-CharacterLoaderThread* ctl = NULL;
-WintergraspInternal* wgi = NULL;
 
 float World::m_movementCompressThreshold;
 float World::m_movementCompressThresholdCreatures;
@@ -537,14 +534,10 @@ bool World::SetInitialWorldSettings()
 	new AuctionMgr;
 	sAuctionMgr.LoadAuctionHouses();
 
-	dw = new DayWatcherThread();
-	ThreadPool.ExecuteTask( dw );
+	ThreadPool.ExecuteTask(new DayWatcherThread());
 
 	if(wg_enabled)
-	{
-		wgi = new WintergraspInternal();
-		ThreadPool.ExecuteTask( wgi );
-	}
+		ThreadPool.ExecuteTask(new WintergraspInternal());
 
 	m_queueUpdateTimer = mQueueUpdateInterval;
 	if(Config.MainConfig.GetBoolDefault("Startup", "BackgroundLootLoading", true))
@@ -565,13 +558,12 @@ bool World::SetInitialWorldSettings()
 	Channel::LoadConfSettings();
 
 	Log.Notice("World", "Starting BattlegroundManager...");
-	CBattlegroundManager* BattlegroundMgr(new CBattlegroundManager);
-	BattlegroundMgr->Init();
+	new CBattlegroundManager;
+	BattlegroundManager.Init();
 
 	Log.Notice("World", "Starting CharacterLoaderThread...");
-	ctl = new CharacterLoaderThread();
-	ThreadPool.ExecuteTask( ctl );
-	ThreadPool.ExecuteTask( new NewsAnnouncer() );
+	ThreadPool.ExecuteTask(new CharacterLoaderThread());
+	ThreadPool.ExecuteTask(new NewsAnnouncer());
 
 #ifdef ENABLE_COMPRESSED_MOVEMENT
 	Log.Notice("World", "Starting MovementCompressorThread...");
