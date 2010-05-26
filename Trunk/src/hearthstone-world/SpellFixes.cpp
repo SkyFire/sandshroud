@@ -3649,7 +3649,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-					sp->EffectTriggerSpell[0] = 20272;
+					sp->EffectTriggerSpell[0] = 18350;
 					sp->procChance = 20;
 					sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
 			}break;
@@ -3657,7 +3657,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-					sp->EffectTriggerSpell[0] = 20272;
+					sp->EffectTriggerSpell[0] = 18350;
 					sp->procChance = 40;
 					sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
 			}break;
@@ -3665,7 +3665,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-					sp->EffectTriggerSpell[0] = 20272;
+					sp->EffectTriggerSpell[0] = 18350;
 					sp->procChance = 60;
 					sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
 			}break;
@@ -3673,7 +3673,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-					sp->EffectTriggerSpell[0] = 20272;
+					sp->EffectTriggerSpell[0] = 18350;
 					sp->procChance = 80;
 					sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
 			}break;
@@ -3681,7 +3681,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-					sp->EffectTriggerSpell[0] = 20272;
+					sp->EffectTriggerSpell[0] = 18350;
 					sp->procChance = 100;
 					sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
 			}break;

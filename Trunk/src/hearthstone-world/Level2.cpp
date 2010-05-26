@@ -147,8 +147,8 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		return true;
 	}
 
-	if(unit->GetAIInterface())
-		unit->GetAIInterface()->StopMovement(10000);
+//	if(unit->GetAIInterface())
+//		unit->GetAIInterface()->StopMovement(0);
 
 	if(unit->IsVehicle())
 	{

@@ -2309,7 +2309,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 				spell = (new Spell(TO_UNIT( this ), spellInfo ,true, NULLAURA));
 				spell->forced_basepoints[0] = dmg_overwrite;
 				spell->ProcedOnSpell = CastingSpell;
-				spell->pSpellId=origId;
+				spell->pSpellId = origId;
 				spell->prepare(&targets);
 			}//not always we have a spell to cast
 		}

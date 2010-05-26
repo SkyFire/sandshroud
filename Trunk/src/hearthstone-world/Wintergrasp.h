@@ -36,9 +36,10 @@ class Wintergrasp
 public:
 	Wintergrasp(WintergraspInternal* WGI, MapMgr* mgr);
 	~Wintergrasp();
-	virtual void Init();
-
 	static Wintergrasp* Create( WintergraspInternal* i, MapMgr* m) { return new Wintergrasp(i, m); }
+	void Init();
+
+
 	WintergraspPlayerSet WGPlayers;
 	CreatureSwapSet WGCreatures;
 	uint32 GetNumVehicles(uint32 team) { if(team > 1) return 0; return numvehicles[team]; };

@@ -1500,6 +1500,7 @@ public:
 	// Battlegrounds xD
 	CBattleground* m_bg;
 	CBattleground* m_pendingBattleground[3];
+	Wintergrasp* WinterGrasp;
 	uint32 m_bgSlot;
 	bool m_bgRatedQueue;
 	uint32 m_bgEntryPointMap;
@@ -1552,6 +1553,7 @@ public:
 	float SpellHealDoneByAttribute[5][7];
 	uint32 m_modphyscritdmgPCT;
 	uint32 m_RootedCritChanceBonus; // Class Script Override: Shatter
+	uint32 m_Illumination_amount; // Class Script Override: Illumination
 
 	uint32 m_ModInterrMRegenPCT;
 	int32 m_ModInterrMRegen;

@@ -7402,44 +7402,44 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 
 	//misc value is spell to add
 	//spell familyname && grouprelation
-
 	Player* plr = TO_PLAYER(m_caster);
 
 	//Adding bonus to effect
 	switch(mod->m_miscValue)
 	{
-		case 4919:
-		case 4920:	//Molten Fury
-			{
-				if(m_target)
-					TO_PLAYER( m_target )->m_moltenFuryDamageIncreasePct += (apply) ? mod->m_amount : -mod->m_amount;
-			}break;
-			//----Shatter---
-			// Increases crit chance against rooted targets by (Rank * 10)%.
-		case 849:
-		case 910:
-		case 911:
-		case 912:
-		case 913:
-			if (m_target->IsPlayer())
+	case 4919:
+	case 4920:	//Molten Fury
+		{
+			if(m_target != NULL && m_target->IsPlayer())
+				TO_PLAYER( m_target )->m_moltenFuryDamageIncreasePct += (apply) ? mod->m_amount : -mod->m_amount;
+		}break;
+	//----Shatter---
+	// Increases crit chance against rooted targets by (Rank * 10)%.
+	case 849:
+	case 910:
+	case 911:
+	case 912:
+	case 913:
+		{
+			if(m_target != NULL && m_target->IsPlayer())
 			{
 				int32 val = (apply) ? (mod->m_miscValue-908)*10 : -(mod->m_miscValue-908)*10;
 				if (mod->m_miscValue==849)
 					val = (apply) ? 10 : -10;
 				TO_PLAYER( m_target )->m_RootedCritChanceBonus += val;
 			}
-			break;
-// ----?
-		case 3736:
-		case 4415:
-		case 4418:
-		case 4554:
-		case 4555:
-		case 4953:
-		case 5142:
-		case 5147:
-		case 5148:
-			{
+		}break;
+	// ----?
+	case 3736:
+	case 4415:
+	case 4418:
+	case 4554:
+	case 4555:
+	case 4953:
+	case 5142:
+	case 5147:
+	case 5148:
+		{
 			if(apply)
 			{
 				OverrideIdMap::iterator itermap = objmgr.mOverrideIdMap.find(mod->m_miscValue);
@@ -7449,7 +7449,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 				std::list<SpellEntry *>::iterator itrSE = itermap->second->begin();
 
 				SpellOverrideMap::iterator itr = plr->mSpellOverrideMap.find((*itrSE)->Id);
-				
+
 				if(itr != plr->mSpellOverrideMap.end())
 				{
 					ScriptOverrideList::iterator itrSO;
@@ -7464,6 +7464,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 							return;
 						}
 					}
+
 					classScriptOverride *cso = new classScriptOverride;
 					cso->aura = 0;
 					cso->damage = mod->m_amount;
@@ -7480,7 +7481,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 					cso->id = mod->m_miscValue;
 					ScriptOverrideList *lst = new ScriptOverrideList();
 					lst->push_back(cso);
-					
+
 					for(;itrSE != itermap->second->end(); ++itrSE)
 					{
 						plr->mSpellOverrideMap.insert( SpellOverrideMap::value_type( (*itrSE)->Id, lst) );
@@ -7507,33 +7508,32 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 					}
 					// Check if the loop above got to the end, if so it means the item wasn't found
 					// and the itr wasn't incremented so increment it now.
-					if(itrSE == itermap->second->end())      ++itr;
+					if(itrSE == itermap->second->end())
+						++itr;
 				}
 			}
 		}break;
-/*		case 19421: //hunter : Improved Hunter's Mark
-		case 19422:
-		case 19423:
-		case 19424:
-		case 19425:
+	case 4992: // Warlock: Soul Siphon
+	case 4993:
+		{
+			if(m_target != NULL)
 			{
-				//this shoul actually add a new functionality to the spell and not override it. There is a lot to decode and to be done here
-			}break;*/
-		case 4992: // Warlock: Soul Siphon
-		case 4993:
+				m_target->m_soulSiphon.max += (apply ? mod->m_amount : -mod->m_amount);
+			}
+		}break;
+	case 2689: // Illumination
+		{
+			if(m_target != NULL && m_target->IsPlayer())
 			{
-				if(m_target) {
-					if( apply )
-						m_target->m_soulSiphon.max+= mod->m_amount;
-					else
-						m_target->m_soulSiphon.max-= mod->m_amount;
-				}
-			}break;
+				TO_PLAYER(m_target)->m_Illumination_amount += (apply ? mod->m_amount : -mod->m_amount);
+			}
+		}break;
 	default:
 		if(sLog.IsOutDevelopement())
-			printf("Unknown override report to devs: %u\n", mod->m_miscValue);
+			printf("Unknown override %u in spell %u\n", mod->m_miscValue, GetSpellId());
 		else
-			OUT_DEBUG("Unknown override report to devs: %u", mod->m_miscValue);
+			OUT_DEBUG("Unknown override %u in spell %u", mod->m_miscValue, GetSpellId());
+		break;
 	};
 }
 

@@ -377,6 +377,7 @@ void Player::Init()
 	trigger_on_stun_chance = 100;
 	m_modphyscritdmgPCT = 0;
 	m_RootedCritChanceBonus = 0;
+	m_Illumination_amount = 0;
 
 	m_ModInterrMRegenPCT = 0;
 	m_ModInterrMRegen = 0;
@@ -465,6 +466,8 @@ void Player::Init()
 	mSpells.clear();
 	for(uint32 i = 0; i < 21; ++i)
 		m_WeaponSubClassDamagePct[i] = 1.0f;
+
+	WinterGrasp = NULL;
 
 	Unit::Init();
 }
@@ -8137,7 +8140,7 @@ void Player::ForceAreaUpdate()
 			m_zoneId = m_areaDBC->ZoneId;
 	}
 
-	if(m_AreaID == 4197 && sWorld.wg_enabled)
+	if((m_AreaID == WINTERGRASP || (m_areaDBC != NULL && m_areaDBC->ZoneId == WINTERGRASP)) && sWorld.wg_enabled)
 	{
 		// Insert into WG.
 	}

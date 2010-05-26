@@ -4765,17 +4765,18 @@ void Spell::Heal(int32 amount)
 		{
 			if(itr->first != NULL)
 			{
-			Player* HealTarget = itr->first;
-			if(HealTarget->GetGUID() == p_caster->GetGUID())	// don't heal ourself!
-				continue;
+				Player* HealTarget = itr->first;
+				if(HealTarget->GetGUID() == p_caster->GetGUID())	// don't heal ourself!
+					continue;
 
-			if((curHealth + amount) >= maxHealth)
-			{
-				HealTarget->SetUInt32Value(UNIT_FIELD_HEALTH, maxHealth);
-			} 
-			else
-				HealTarget->ModUnsigned32Value(UNIT_FIELD_HEALTH, amount);
-			SendHealSpellOnPlayer( p_caster, HealTarget, amount, critical, overheal, m_spellInfo->logsId ? m_spellInfo->logsId : (pSpellId ? pSpellId : m_spellInfo->Id) );
+				if((curHealth + amount) >= maxHealth)
+				{
+					HealTarget->SetUInt32Value(UNIT_FIELD_HEALTH, maxHealth);
+				} 
+				else
+					HealTarget->ModUnsigned32Value(UNIT_FIELD_HEALTH, amount);
+
+				SendHealSpellOnPlayer( p_caster, HealTarget, amount, critical, overheal, m_spellInfo->logsId ? m_spellInfo->logsId : (pSpellId ? pSpellId : m_spellInfo->Id) );
 			}
 		}
  	}
