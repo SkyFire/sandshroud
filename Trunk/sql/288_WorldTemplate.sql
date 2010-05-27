@@ -747,6 +747,8 @@ CREATE TABLE `items` (
   `stat_value9` int(30) NOT NULL default '0',
   `stat_type10` int(30) NOT NULL default '0',
   `stat_value10` int(30) NOT NULL default '0',
+  `ScalingStatId` int(30) NOT NULL DEFAULT '0',
+  `ScalingStatFlags` int(30) NOT NULL DEFAULT '0',
   `dmg_min1` float NOT NULL default '0',
   `dmg_max1` float NOT NULL default '0',
   `dmg_type1` int(30) NOT NULL default '0',

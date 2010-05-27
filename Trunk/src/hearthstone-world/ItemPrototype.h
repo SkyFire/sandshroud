@@ -676,6 +676,8 @@ struct ItemPrototype
 	uint32 MaxCount;
 	uint32 ContainerSlots;
 	ItemStat Stats[10];
+	uint32 ScalingStatsEntry;
+	uint32 ScalingStatsFlag;
 	ItemDamage Damage[2];
 	uint32 Armor;
 	uint32 HolyRes;
@@ -715,8 +717,9 @@ struct ItemPrototype
 
 	string lowercase_name;	// used in auctions
 	uint32 FoodType;		//pet food type
-	GossipScript * gossip_script;
+	GossipScript* gossip_script;
 	int32 ForcedPetId;
+	uint32 DummySubClass;
 
 	string ConstructItemLink(uint32 random_prop, uint32 random_suffix, uint32 stack);
 	bool ValidateItemLink(const char *szLink);

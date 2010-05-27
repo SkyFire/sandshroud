@@ -4163,35 +4163,106 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			FlatResistanceModifierPos[RESISTANCE_ARCANE] -= proto->ArcaneRes;
 		CalcResistance(RESISTANCE_ARCANE);
 	}
-	
-	// Stats
-	for( int i = 0; i < 10; ++i )
+	/* Heirloom scaling items */
+	if(proto->ScalingStatsEntry != 0)
 	{
-		int32 val = proto->Stats[i].Value;
-		if( val == 0 )
-			continue;
-		ModifyBonuses( proto->Stats[i].Type, apply ? val : -val );
-	}
+		int i = 0;
+		uint32 StatType = 0;
+		uint32 StatMod = 0;
+		int32 StatMultiplier = 0;
+		int32 StatValue = 0;
 
-	// Damage
-	if( proto->Damage[0].Min )
-	{
-		if( proto->InventoryType == INVTYPE_RANGED || proto->InventoryType == INVTYPE_RANGEDRIGHT || proto->InventoryType == INVTYPE_THROWN )	
-		{	
-			BaseRangedDamage[0] += apply ? proto->Damage[0].Min : -proto->Damage[0].Min;
-			BaseRangedDamage[1] += apply ? proto->Damage[0].Max : -proto->Damage[0].Max;
+		ScalingStatDistributionEntry *ssdrow = dbcScalingStatDistribution.LookupEntry( proto->ScalingStatsEntry );
+		ScalingStatValuesEntry *ssvrow = dbcScalingStatValues.LookupEntry(getLevel() < 81 ? getLevel() : 80);
+
+		/* Not going to put a check here since unless you put a random id/flag in the tables these should never return NULL */
+
+		/* Calculating the stats correct for our level and applying them */
+		for(i = 0; ssdrow->StatMod[i] != -1; i++)
+		{
+			StatType = ssdrow->StatMod[i];
+			StatMod  = ssdrow->Modifier[i];
+
+			StatMultiplier = GetscalestatMultiplier(ssvrow, proto->ScalingStatsFlag);
+			StatValue = StatMod*StatMultiplier/10000;
+			ModifyBonuses(StatType, (apply ? StatValue : -StatValue));
+		}
+
+		if((proto->ScalingStatsFlag & 32768) && i < 10)
+		{
+			StatType = ssdrow->StatMod[i];
+			StatMod  = ssdrow->Modifier[i];
+			StatMultiplier = GetscalestatSpellBonus(ssvrow);
+			StatValue = StatMod*StatMultiplier/10000;
+			ModifyBonuses(45, (apply ? StatValue : -StatValue));
+		}
+
+		/* Calculating the Armor correct for our level and applying it */
+		int32 scaledarmorval = GetscalestatArmorMod(ssvrow, proto->ScalingStatsFlag);
+		BaseResistance[0] += (apply ? scaledarmorval : -scaledarmorval);
+		CalcResistance(0);
+
+		/* Calculating the damages correct for our level and applying it */
+		uint32 scaleddps = GetscalestatDPSMod(ssvrow, proto->ScalingStatsFlag);
+		float dpsmod = 1.0;
+
+		if (proto->ScalingStatsFlag & 0x1400)
+			dpsmod = 0.2f;
+		else
+			dpsmod = 0.3f;
+
+		float scaledmindmg = (scaleddps - (scaleddps * dpsmod)) * (proto->Delay/1000);
+		float scaledmaxdmg = (scaleddps * (dpsmod+1.0f)) * (proto->Delay/1000);
+
+		if( proto->InventoryType == INVTYPE_RANGED || proto->InventoryType == INVTYPE_RANGEDRIGHT || proto->InventoryType == INVTYPE_THROWN )
+		{
+			BaseRangedDamage[0] += apply ? scaledmindmg : -scaledmindmg;
+			BaseRangedDamage[1] += apply ? scaledmaxdmg : -scaledmaxdmg;
 		}
 		else
 		{
 			if( slot == EQUIPMENT_SLOT_OFFHAND )
 			{
-				BaseOffhandDamage[0] = apply ? proto->Damage[0].Min : 0;
-				BaseOffhandDamage[1] = apply ? proto->Damage[0].Max : 0;
+				BaseOffhandDamage[0] = apply ? scaledmindmg : 0;
+				BaseOffhandDamage[1] = apply ? scaledmaxdmg : 0;
 			}
 			else
 			{
-				BaseDamage[0] = apply ? proto->Damage[0].Min : 0;
-				BaseDamage[1] = apply ? proto->Damage[0].Max : 0;
+				BaseDamage[0] = apply ? scaledmindmg : 0;
+				BaseDamage[1] = apply ? scaledmaxdmg : 0;
+			}
+		}
+	}
+	else /* Normal items */
+	{	// Stats
+		for( int i = 0; i < 10; ++i )
+		{
+			int32 val = proto->Stats[i].Value;
+			if( val == 0 )
+				continue;
+			ModifyBonuses( proto->Stats[i].Type, apply ? val : -val );
+		}
+
+		// Damage
+		if( proto->Damage[0].Min )
+		{
+			if( proto->InventoryType == INVTYPE_RANGED || proto->InventoryType == INVTYPE_RANGEDRIGHT || proto->InventoryType == INVTYPE_THROWN )	
+			{	
+				BaseRangedDamage[0] += apply ? proto->Damage[0].Min : -proto->Damage[0].Min;
+				BaseRangedDamage[1] += apply ? proto->Damage[0].Max : -proto->Damage[0].Max;
+			}
+			else
+			{
+				if( slot == EQUIPMENT_SLOT_OFFHAND )
+				{
+					BaseOffhandDamage[0] = apply ? proto->Damage[0].Min : 0;
+					BaseOffhandDamage[1] = apply ? proto->Damage[0].Max : 0;
+				}
+				else
+				{
+					BaseDamage[0] = apply ? proto->Damage[0].Min : 0;
+					BaseDamage[1] = apply ? proto->Damage[0].Max : 0;
+				}
 			}
 		}
 	}

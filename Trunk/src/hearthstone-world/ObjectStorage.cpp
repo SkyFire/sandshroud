@@ -39,7 +39,7 @@ const char * gFishingFormat								= "uuu";
 const char * gGameObjectNameFormat						= "uuusuuuuuuuuuuuuuuuuuuuuuuuu";
 const char * gGraveyardFormat							= "uffffuuuux";
 const char * gItemPageFormat							= "usu";
-const char * gItemPrototypeFormat						= "uuuisxxxuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuffuuuuuuuuuufuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuusuuuuuuuuuuuuuuuuuuuuuuuuuuu";
+const char * gItemPrototypeFormat						= "uuuisxxxuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuffuuuuuuuuuufuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuusuuuuuuuuuuuuuuuuuuuuuuuuuuu";
 const char * gNpcTextFormat								= "ufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuu";
 const char * gQuestFormat								= "uuuuuuuuuuuuuuuuuuuussssssssssuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuuuuuuuuuuuuuuuuuuuc";
 const char * gTeleportCoordFormat						= "uxuffff";
@@ -390,9 +390,18 @@ void ObjectMgr::LoadExtraItemStuff()
 		map<uint32,uint32>::iterator iter = foodItems.find(pItemPrototype->ItemId);
 		if(iter != foodItems.end())
 			ft = iter->second;
-		pItemPrototype->FoodType = ft ;
-	
-		pItemPrototype->gossip_script = NULL;
+
+		pItemPrototype->FoodType = ft;
+		if(!pItemPrototype->gossip_script) // rehashing stuff.
+			pItemPrototype->gossip_script = NULL;
+
+		if(pItemPrototype->ScalingStatsEntry > 0 && pItemPrototype->Class == ITEM_CLASS_ARMOR)
+		{
+			uint32 osubclass = pItemPrototype->SubClass;
+			pItemPrototype->DummySubClass = (osubclass > 2 ? (osubclass - 1) : osubclass);
+		}
+		else
+			pItemPrototype->DummySubClass = 0;
 
 		// forced pet entries
 		switch( pItemPrototype->ItemId )

@@ -1191,6 +1191,28 @@ struct ItemRandomSuffixEntry
 	uint32 prefixes[5];
 };
 
+struct ScalingStatDistributionEntry
+{
+	uint32 Id;					// 0
+	int32  StatMod[10];			// 1-10
+	uint32 Modifier[10];		// 11-20
+	uint32 MaxLevel;			// 21
+};
+
+struct ScalingStatValuesEntry
+{
+//	uint32  Id;							// 0
+	uint32 Level;						// 1
+	uint32 ssdMultiplier[4];			// 2-5 Multiplier for ScalingStatDistribution
+	uint32 armorMod[4];					// 6-9 Armor for level
+	uint32 dpsMod[6];					// 10-15 DPS mod for level
+	uint32 spellBonus;					// 16 spell power for level
+	uint32 ssdMultiplier2;				// 17 there's data from 3.1 dbc ssdMultiplier[3]
+	uint32 ssdMultiplier3;				// 18 3.3
+//	uint32 unk2;						// 19 unk, probably also Armor for level (flag 0x80000?)
+	uint32 armorMod2[4];				// 20-23 Low Armor for level
+};
+
 struct BarberShopStyleEntry
 {
 	uint32 id;					// 0
@@ -1355,6 +1377,76 @@ HEARTHSTONE_INLINE float GetMinRange(SpellRange *range)
 HEARTHSTONE_INLINE uint32 GetDuration(SpellDuration *dur)
 {
 	return dur->Duration1;
+}
+
+HEARTHSTONE_INLINE uint32 GetscalestatMultiplier(ScalingStatValuesEntry *ssvrow, uint32 flags)
+{
+	if(flags & 0x4001F)
+	{
+		if(flags & 0x00000001)
+			return ssvrow->ssdMultiplier[0];
+		if(flags & 0x00000002)
+			return ssvrow->ssdMultiplier[1];
+		if(flags & 0x00000004)
+			return ssvrow->ssdMultiplier[2];
+		if(flags & 0x00000008)
+			return ssvrow->ssdMultiplier2;
+		if(flags & 0x00000010)
+			return ssvrow->ssdMultiplier[3];
+		if(flags & 0x00040000)
+			return ssvrow->ssdMultiplier3;
+	}
+	return 0;
+}
+
+HEARTHSTONE_INLINE uint32 GetscalestatArmorMod(ScalingStatValuesEntry *ssvrow, uint32 flags)
+{
+	if(flags & 0x00F001E0)
+	{
+		if(flags & 0x00000020)
+			return ssvrow->armorMod[0];
+		if(flags & 0x00000040)
+			return ssvrow->armorMod[1];
+		if(flags & 0x00000080)
+			return ssvrow->armorMod[2];
+		if(flags & 0x00000100)
+			return ssvrow->armorMod[3];
+
+		if(flags & 0x00100000)
+			return ssvrow->armorMod2[0];
+		if(flags & 0x00200000)
+			return ssvrow->armorMod2[1];
+		if(flags & 0x00400000)
+			return ssvrow->armorMod2[2];
+		if(flags & 0x00800000)
+			return ssvrow->armorMod2[3];
+	}
+	return 0;
+}
+
+HEARTHSTONE_INLINE uint32 GetscalestatDPSMod(ScalingStatValuesEntry *ssvrow, uint32 flags)
+{
+	if(flags & 0x7E00)
+	{
+		if(flags & 0x00000200)
+			return ssvrow->dpsMod[0];
+		if(flags & 0x00000400)
+			return ssvrow->dpsMod[1];
+		if(flags & 0x00000800)
+			return ssvrow->dpsMod[2];
+		if(flags & 0x00001000)
+			return ssvrow->dpsMod[3];
+		if(flags & 0x00002000)
+			return ssvrow->dpsMod[4];
+		if(flags & 0x00004000)	// not used?
+			return ssvrow->dpsMod[5];
+	}
+	return 0;
+}
+
+HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)
+{
+	return ssvrow->spellBonus;
 }
 
 #define SAFE_DBC_CODE_RETURNS			/* undefine this to make out of range/nulls return null. */
@@ -1711,6 +1803,8 @@ extern SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 extern SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 extern SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
 extern SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
+extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
+extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 
 bool LoadDBCs();
 

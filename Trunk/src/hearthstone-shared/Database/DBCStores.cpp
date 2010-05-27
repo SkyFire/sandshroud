@@ -80,6 +80,8 @@ SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
 SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
+SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
+SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 
 const char* SummonPropertiesfmt = "uuuuuu";
 const char* AreaGroupFormat="niiiiiii";
@@ -262,6 +264,21 @@ const char* achievementfmt=
 
 const char* achievementCriteriafmt="niiiiiiiisxxxxxxxxxxxxxxxxiixix";
 
+const char* scalingstatdistributionformat =
+	"u" // ID
+	"iiiiiiiiii" // Stat Mod
+	"uuuuuuuuuu" // Modifier
+	"u"; // Max Level
+
+const char* scalingstatvaluesformat =
+	"x" // Id
+	"u" // Level
+	"uuuu" // ScalingStatD modifier
+	"uuuu" // Armor Mod
+	"uuuuuu" // DPS mod
+	"u" // Spell Power
+	"uux" // Multipliers
+	"uuuu"; // Armor Type[level]
 
 template<class T>
 bool loader_stub(const char * filename, const char * format, bool ind, T& l, bool loadstrs)
@@ -349,6 +366,10 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/Lock.dbc", LockFormat, true, dbcLock, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/Map.dbc", mapentryFormat, true, dbcMap, true);
+	/* Needed for: */
+	LOAD_DBC("DBC/ScalingStatDistribution.dbc", scalingstatdistributionformat, true, dbcScalingStatDistribution, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/ScalingStatValues.dbc", scalingstatvaluesformat, true, dbcScalingStatValues, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/StableSlotPrices.dbc", bankslotpriceformat, true, dbcStableSlotPrices, false);
 	/* Needed for: */

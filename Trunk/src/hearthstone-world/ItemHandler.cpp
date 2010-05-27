@@ -782,7 +782,12 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 
 	data << itemProto->ItemId;
 	data << itemProto->Class;
-	data << itemProto->SubClass;
+
+	if(_player->getLevel() < 40)
+		data << (itemProto->DummySubClass ? itemProto->DummySubClass : itemProto->SubClass);
+	else
+		data << itemProto->SubClass;
+
 	data << itemProto->unknown_bc;
 	data << (li ? li->Name : itemProto->Name1);
 	data << uint8(0) << uint8(0) << uint8(0); // name 2,3,4
@@ -813,8 +818,8 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 		data << itemProto->Stats[i].Type;
 		data << itemProto->Stats[i].Value;
 	}
-	data << uint32(0);								// 3.0.2 related to scaling stats
-	data << uint32(0);								// 3.0.2 related to scaling stats
+	data << uint32(itemProto->ScalingStatsEntry);
+	data << uint32(itemProto->ScalingStatsFlag);
 	for(i = 0; i < 2; ++i)
 	{
 		data << itemProto->Damage[i].Min;

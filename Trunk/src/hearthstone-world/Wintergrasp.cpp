@@ -72,7 +72,7 @@ Wintergrasp::~Wintergrasp()
 
 void Wintergrasp::Init()
 {
+	Internal.StartWintergrasp();
 //	Internal.SendInitWorldStates();
 //	Internal.UpdateClock();
-//	Internal.StartWintergrasp();
 }
