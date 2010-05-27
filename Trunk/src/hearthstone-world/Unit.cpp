@@ -586,26 +586,23 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 		if( itr2->deleted )
 		{
 			if( can_delete )
-			{
 				m_procSpells.erase( itr2 );
-			}
-
 			continue;
 		}
 
 		if (itr2->LastTrigger + 200 >= mstimenow || (CastingSpell != NULL && (itr2->spellId == CastingSpell->Id || itr2->origId == CastingSpell->Id)))
 			continue;
+
 		uint32 origId = itr2->origId;
 		if( CastingSpell != NULL )
 		{
 			//this is to avoid spell proc on spellcast loop. We use dummy that is same for both spells
-			//if( CastingSpell->Id == itr2->spellId )
 			if( CastingSpell->Id == itr2->origId || CastingSpell->Id == itr2->spellId )
-			{
-				//printf("WOULD CRASH HERE ON PROC: CastingId: %u, OrigId: %u, SpellId: %u\n", CastingSpell->Id, itr2->origId, itr2->spellId);
 				continue;
-			}
 		}
+		else
+			continue; // No casting spell proto. Stop here.
+
 		SpellEntry* sp = dbcSpell.LookupEntry( itr2->spellId );
 		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
 		if (sp == NULL)
