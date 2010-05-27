@@ -384,6 +384,7 @@ void Player::Init()
 	m_rap_mod_pct = 0;
 	m_modblockabsorbvalue = 0;
 	m_modblockvaluefromspells = 0;
+	Damageshield_amount = 0.0f;
 	m_summoner = NULLOBJ;
 	m_summonInstanceId = m_summonMapId = 0;
 	m_lastMoveType = 0;
@@ -8554,8 +8555,10 @@ void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
 	CalculateBaseStats();
 
 	// Set health / mana
-	SetUInt32Value(UNIT_FIELD_HEALTH,GetUInt32Value(UNIT_FIELD_MAXHEALTH));
-	SetUInt32Value(UNIT_FIELD_POWER1,GetUInt32Value(UNIT_FIELD_MAXPOWER1));
+	SetUInt32Value(UNIT_FIELD_MAXHEALTH, Info->HP);
+	SetUInt32Value(UNIT_FIELD_HEALTH, Info->HP);
+	SetUInt32Value(UNIT_FIELD_MAXPOWER1, Info->Mana);
+	SetUInt32Value(UNIT_FIELD_POWER1, Info->Mana);
 
 	int32 Talents = Level - PreviousLevel;
 	if(PreviousLevel < 9)
@@ -8565,14 +8568,18 @@ void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
 	else if(Level >= 10)
 		ModUnsigned32Value(PLAYER_CHARACTER_POINTS1, Talents);
 
+	// Set base fields
+	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, Info->BaseHP);
+	SetUInt32Value(UNIT_FIELD_BASE_MANA, Info->BaseMana);
+
 	_UpdateMaxSkillCounts();
 	UpdateStats();
-	//UpdateChances();
 	if (m_playerInfo)
 		m_playerInfo->lastLevel = Level;
 
 	GetAchievementInterface()->HandleAchievementCriteriaLevelUp( getLevel() );
 	InitGlyphsForLevel();
+	smsg_TalentsInfo(false);
 
 	OUT_DEBUG("Player %s set parameters to level %u", GetName(), Level);
 }

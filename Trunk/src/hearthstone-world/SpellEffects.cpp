@@ -426,143 +426,304 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 	}
 	else 
 	{
-		switch(m_spellInfo->NameHash)
+		switch(m_spellInfo->Id)
 		{
+			/************************
+			*		WARRIOR			*
+			************************/
+		case 23881:	// Bloodthirst
+			{	// Half of Attack Power
+				dmg += (u_caster->GetAP() * 0.5);
+			}break;
 
-			case SPELL_HASH_ICE_LANCE: // Ice Lance
-				{
-					if (dmg>300)   //dirty bugfix.
-						dmg = (int32)(damage >> 1);
-				}break;
-			case SPELL_HASH_INCINERATE:	// Incinerate -> Deals x-x extra damage if the target is affected by immolate
-				{
-					if( unitTarget->GetAuraSpellIDWithNameHash( SPELL_HASH_IMMOLATE ) )
-					{
-						// random extra damage
-						uint32 extra_dmg = 111 + (m_spellInfo->RankNumber * 11) + RandomUInt(m_spellInfo->RankNumber * 11);
-						dmg += extra_dmg;
-					}
-				}break;
-			case SPELL_HASH_GOUGE:	// Gouge: turns off your combat
-				{
-					if( p_caster != NULL )
-					{
-						p_caster->EventAttackStop();
-						p_caster->smsg_AttackStop( unitTarget );
-					}break;
-				}break;
-			case SPELL_HASH_BLIND:	// Blind: turns off your attack
-				{
-					if( p_caster != NULL )
-					{
-						p_caster->EventAttackStop();
-						p_caster->smsg_AttackStop( unitTarget );
-					}return;
-				}break;
-			case SPELL_HASH_MAIM:	// Maim: turns off your attack
-				{
-					if( p_caster != NULL )
-					{
-						p_caster->EventAttackStop();
-						p_caster->smsg_AttackStop( unitTarget );
-					}return;
-				}break;
-			case SPELL_HASH_ARCANE_SHOT: //hunter - arcane shot
-				{
-					if(u_caster && u_caster->HasAurasOfNameHashWithCaster(SPELL_HASH_RAPID_KILLING, u_caster))
-						dmg += float2int32(dmg * (m_spellInfo->RankNumber * 0.1f));
-				}break;
-			case SPELL_HASH_AIMED_SHOT: // hunter - aimed shot
-			case SPELL_HASH_AUTO_SHOT: // hunter - auto shot
-				{
-					 if(u_caster && u_caster->HasAurasOfNameHashWithCaster(SPELL_HASH_RAPID_KILLING, u_caster)) //Aimed/Auto shot deals Y% extra damage with rapid killing buff
-						 dmg += float2int32(dmg * (m_spellInfo->RankNumber * 0.1f));
-				}break;	
-			case SPELL_HASH_MOLTEN_ARMOR:		// fire armor, is static damage
-				{
-					static_damage=true;
-				}break;
-			case SPELL_HASH_CONFLAGRATE:
-				{
-					//this is really heavy ;(
-					Aura* pAura;
-					for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
-					{
-						pAura = unitTarget->m_auras[i];
-						if( pAura && ( pAura->m_spellProto->NameHash == SPELL_HASH_IMMOLATE || pAura->m_spellProto->NameHash == SPELL_HASH_SHADOWFLAME ))
-						{
-							if( u_caster->GetDummyAura(SPELL_HASH_FIRE_AND_BRIMSTONE) && pAura->GetTimeLeft() <= 5 )
-								AdditionalCritChance += u_caster->GetDummyAura(SPELL_HASH_FIRE_AND_BRIMSTONE)->RankNumber * 5;
+		case 5308: case 20658: case 20660: case 20661:
+		case 20662: case 25234: case 25236: case 47470:
+		case 47471:// Execute
+			{
+				dmg += u_caster->GetAP() * ((m_spellInfo->EffectBasePoints[0]+1) / 100);
+			}break;
 
-							unitTarget->RemoveAuraBySlot(i);
-							break;
-						}
-					}
-				}break;
-			case SPELL_HASH_SHADOWFLAME:
-				{
-					uint32 spellid = ( m_spellInfo->RankNumber == 1 ) ? 47960 : 61291;
-					SpellEntry* SpellInfo = dbcSpell.LookupEntry( spellid );
-					Spell* sp (new Spell( u_caster, SpellInfo, true, NULLAURA ));
-					SpellCastTargets tgt;
-					tgt.m_unitTarget = unitTarget->GetGUID();
-					sp->prepare( &tgt );				
-				}break;
-			case SPELL_HASH_SHIELD_SLAM:	// Shield Slam - damage is increased by block value
-				{
-					if( p_caster != NULL )
-					{
-						Item* it = TO_ITEM(p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND));
-						if( it && it->GetProto() && it->GetProto()->InventoryType == INVTYPE_SHIELD )
-						{
-							dmg += p_caster->GetUInt32Value(PLAYER_SHIELD_BLOCK);
-						}
-					}
-				}break;
-			case SPELL_HASH_FEROCIOUS_BITE:  //Ferocious Bite dmg correction
-				{
-					if( p_caster )
-					{
-						int32 usedpower = std::max(p_caster->GetUInt32Value(UNIT_FIELD_POWER4), (uint32)30);
-						if( m_spellInfo->RankNumber < 7 )
-							dmg += float2int32( ( p_caster->m_comboPoints * p_caster->GetAP() * 0.07f ) + ( usedpower * m_spellInfo->dmg_multiplier[1] ) );
-						else
-							dmg += float2int32( ( p_caster->m_comboPoints * p_caster->GetAP() * 0.07f ) + ( (usedpower * m_spellInfo->dmg_multiplier[1] + p_caster->GetAP()) / 410.0f ) );
-
-						p_caster->ModUnsigned32Value(UNIT_FIELD_POWER4, -usedpower);
-					}
-				}break;
-			case SPELL_HASH_SHATTER: //Gruul Shatter: Damage based on distance
-				{
-					if( u_caster )
-					{
-						float dist = u_caster->CalcDistance( TO_OBJECT( unitTarget ) );
-						if( dist <= 20.0f && dist >= 0.0f )
-							dmg = float2int32( -450 * dist + damage );
-					}
-				}break;
-			case SPELL_HASH_JUDGEMENT_OF_BLOOD:
-			case SPELL_HASH_JUDGEMENT_OF_VENGEANCE:
-			case SPELL_HASH_JUDGEMENT_OF_RIGHTEOUSNESS:
-				{
-					if( p_caster && p_caster->HasAura(34258) )
-						p_caster->CastSpell(TO_UNIT(p_caster),34260,true);
-				}break;
-		case SPELL_HASH_STEADY_SHOT:
+		case 23922: case 23923: // Shield Slam - damage is increased by block value
+		case 23924: case 23925: case 25258:
+		case 30356: case 47487: case 47488:
 			{
 				if( p_caster != NULL )
 				{
-					//dmg = 0; Yeah! again...(RAP * 0.1 + Base) + unmodified weapon y armor damage WTF 
-					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
-					if( it )
-						dmg += float2int32((it->GetProto()->Damage[0].Min + it->GetProto()->Damage[0].Max) * 0.2f); //+unmodified weapon damage
-
-					ItemPrototype* ip = ItemPrototypeStorage.LookupEntry( p_caster->GetUInt32Value( PLAYER_AMMO_ID ) );
-					if( ip )
-						dmg += float2int32((ip->Damage[0].Min + ip->Damage[0].Max) * 0.2f); //+unmodified ammo damage
+					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND);
+					if( it && it->GetProto() && it->GetProto()->InventoryType == INVTYPE_SHIELD )
+					{
+						dmg += p_caster->GetUInt32Value(PLAYER_SHIELD_BLOCK);
+					}
 				}
 			}break;
-		case SPELL_HASH_EVISCERATE:
+
+		case 34428: // Victory Rush
+			{
+				if(u_caster->HasFlag(UNIT_FIELD_AURASTATE, AURASTATE_FLAG_VICTORIOUS))
+					u_caster->RemoveFlag(UNIT_FIELD_AURASTATE, AURASTATE_FLAG_VICTORIOUS);
+				dmg += (u_caster->GetAP()*(m_spellInfo->EffectBasePoints[i]+1)) / 100;
+			}break;
+
+		case 6572: // Revenge, Deals damage plus AP boost.
+		case 6574: case 7379: case 11600: case 11601:
+		case 25288: case 25269: case 30357: case 57823:
+			{
+				dmg = (u_caster->GetAP() * 0.207);
+			}break;
+
+		case 57755: // Heroic Throw, Deals damage plus AP boost
+			{
+				dmg = (u_caster->GetAP() * 0.5);
+			}break;
+
+		case 64382: // Shattering Throw
+			{
+				dmg = (u_caster->GetAP() * 0.5);
+			}break;
+
+			// Heroic Strike, commented ones don't have bonus.
+		/*case 78: case 284: case 285: case 1608: case 11564:
+		case 11565: case 11566: case 11567: case 25286:*/
+		case 29707: case 30324: case 47449: case 47450:
+			{
+				if(unitTarget->IsDazed())
+				{
+					switch(m_spellInfo->Id)
+					{ // This info isn't in the dbc files.....
+					case 29707:
+						{
+							dmg += 81.9;
+						}break;
+
+					case 30324:
+						{
+							dmg += 110.95;
+						}break;
+
+					case 47449:
+						{
+							dmg += 151.2;
+						}break;
+
+					case 47450:
+						{
+							dmg += 173.25;
+						}break;
+					}
+				}
+			}break;
+
+			// BEHOLD, CLEAVE!!!!!!!!!!!!
+		case 845: case 7369: case 11608: case 11609:
+		case 20569: case 25231: case 47519: case 47520:
+			{
+				if(p_caster != NULL)
+				{
+					Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+					if(p_caster->HasAura(12329))
+						dmg += (((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + m_spellInfo->EffectBasePoints[i]) * 1.4;
+					else if(p_caster->HasAura(12950))
+						dmg += (((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + m_spellInfo->EffectBasePoints[i]) * 1.8;
+					else if(p_caster->HasAura(20496))
+						dmg += (((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + m_spellInfo->EffectBasePoints[i]) * 2.2;
+					else
+						dmg += ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + m_spellInfo->EffectBasePoints[i];
+				}
+			}break;
+
+			// Slam
+		case 1464: case 8820: case 11604: case 11605:
+		case 25241: case 25242: case 47474: case 47475:
+			{
+				if(p_caster != NULL)
+				{
+					Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+					if(itm != NULL)
+						dmg = ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + m_spellInfo->EffectBasePoints[i];
+				}
+			}break;
+
+			// Intercept
+		case 20252:
+			{
+				dmg += u_caster->GetAP() * 0.12;
+			}break;
+
+		case 46968:	// Shockwave
+			{
+				dmg += 0.75 * u_caster->GetAP();
+			}break;
+
+//		case 59653: // Damage Shield
+//			{
+//				if(p_caster != NULL)
+//				{
+//					Item* shield = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND);
+//					if(shield != NULL && shield->GetProto() && shield->GetProto()->InventoryType == INVTYPE_SHIELD)
+//					{
+//						dmg = p_caster->Damageshield_amount;
+//					}
+//					else
+//					{
+//						return; // No Shield = No Damage.
+//					}
+//				}
+//			}break;
+
+			/************************
+			*		PALADIN			*
+			************************/
+		case 31898: // Blood
+		case 31804: // Vengeance
+		case 20187: // Righteousness
+		case 53733: // Corruption
+		case 20425: // Command1
+		case 20467: // Command2
+		case 57774: // Light
+		case 20268: // Wisdom
+		case 53726: // Martyr
+			{
+				if(p_caster != NULL)
+				{
+					if( p_caster->HasAura(34258) )
+						p_caster->CastSpell(TO_UNIT(p_caster), 34260, true);
+					if((p_caster->HasAura(53696) || p_caster->HasAura(53695)))
+						p_caster->CastSpell(TO_UNIT(p_caster), 68055, true);
+					if( p_caster->HasAura(37186) )
+						dmg += 33;
+				}
+			}break;
+
+		case 53600: case 61411: // Shield of Righteousness
+			{
+				if( p_caster != NULL )
+				{
+					Item* it = TO_ITEM(p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND));
+					if( it && it->GetProto() && it->GetProto()->InventoryType == INVTYPE_SHIELD )
+					{
+						dmg += float2int32(1.3f * p_caster->GetUInt32Value(PLAYER_SHIELD_BLOCK));
+					}
+				}
+			}break;
+
+		case 25742: // Seal of Righteousness damage effect
+			{
+				if( p_caster != NULL )
+				{
+					dmg += p_caster->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME)/1000 * ((0.022 * (p_caster->GetAP()) + (0.044 * (p_caster->GetDamageDoneMod(1))))) + m_spellInfo->EffectBasePoints[i];
+				}
+			}break;
+
+		case 9799: case 25988: // Eye for an Eye damage check. Calculates itself, just doesn't limit.
+			{
+				if( p_caster != NULL)
+				{
+					if(dmg > (p_caster->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/2))
+						dmg = (p_caster->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/2);
+				}
+			}break;
+
+			/************************
+			*		HUNTER			*
+			************************/
+		case 3044: // Arcane shot
+		case 14281: case 14282: case 14283: case 14284: case 14285:
+		case 14286: case 14287: case 27019: case 49044: case 49045:
+			{
+				if( p_caster != NULL )
+				{
+					dmg = (p_caster->GetRAP() * 0.15) + m_spellInfo->EffectBasePoints[i];
+
+					if(p_caster->HasAurasOfNameHashWithCaster(SPELL_HASH_RAPID_KILLING, p_caster))
+						dmg += float2int32(dmg * (m_spellInfo->RankNumber * 0.1f));
+				}
+			}break;
+
+		case 19434: // Aimed shot, increase damage with Rapid Killing.
+		case 20900: case 20901: case 20902: case 20903:
+		case 20904: case 27065: case 49049: case 49050:
+			{
+				if( p_caster != NULL )
+				{
+					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
+					dmg = ((it->GetProto()->Damage[0].Min + it->GetProto()->Damage[0].Max) * 0.2f) + m_spellInfo->EffectBasePoints[i];
+
+					if(p_caster->HasAurasOfNameHashWithCaster(SPELL_HASH_RAPID_KILLING, u_caster)) //Aimed/Auto shot deals Y% extra damage with rapid killing buff
+						dmg += float2int32(dmg * (m_spellInfo->RankNumber * 0.1f));
+				}
+			}break;
+
+		case 53209: // Chimera shot
+			{
+				if( p_caster != NULL )
+				{
+					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
+					dmg = ((it->GetProto()->Damage[0].Min + it->GetProto()->Damage[0].Max) * 0.2f) * 1.25;
+
+					if(p_caster->HasAurasOfNameHashWithCaster(SPELL_HASH_RAPID_KILLING, u_caster))
+						dmg += float2int32(dmg * (m_spellInfo->RankNumber * 0.1f));
+				}
+			}break;
+
+		case 56641: // Steady Shot
+		case 34120: case 49051: case 49052:
+			{
+				if( p_caster != NULL )
+				{
+					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
+					ItemPrototype* ip = ItemPrototypeStorage.LookupEntry(p_caster->GetUInt32Value(PLAYER_AMMO_ID));
+					uint32 stundmg;
+					float bowdmg;
+					float ammodmg;
+					// Stun Damage
+					if(unitTarget->IsDazed())
+					{
+						stundmg = p_caster->GetRAP()/10 + m_spellInfo->EffectBasePoints[i] + m_spellInfo->EffectBasePoints[i + 1];
+					}
+					else
+					{
+						stundmg = p_caster->GetRAP()/10 + m_spellInfo->EffectBasePoints[i];
+					}
+					// Bow Damage
+					if(it)
+						bowdmg = (it->GetProto()->Damage[0].Min + it->GetProto()->Damage[0].Max) * 0.2f; //+unmodified weapon damage
+					else
+						bowdmg = 0;
+					// Ammo Damage
+					if(ip)
+						ammodmg = (ip->Damage[0].Min + ip->Damage[0].Max) * 0.2f; //+unmodified ammo damage
+					else
+						ammodmg = 0;
+					// Actual damage :D
+					dmg = float2int32(ammodmg + bowdmg) + stundmg;
+				}
+			}break;
+
+			/************************
+			*		ROGUE			*
+			************************/
+
+		case 1776:	// Gouge: turns off your combat
+			{
+				if( p_caster != NULL )
+				{
+					p_caster->EventAttackStop();
+					p_caster->smsg_AttackStop( unitTarget );
+				}
+			}break;
+
+		case 2094:	// Blind: turns off your attack
+			{
+				if( p_caster != NULL )
+				{
+					p_caster->EventAttackStop();
+					p_caster->smsg_AttackStop( unitTarget );
+				}
+			}break;
+
+		case 2098: // Eviscerate, uses combo points, what a bitch.
+		case 6760: case 6761: case 6762: case 8623: case 8624: case 11299:
+		case 11300: case 31016: case 26865: case 48667: case 48668:
 			{
 				if( p_caster != NULL )
 				{
@@ -580,25 +741,27 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					}
 				}
 			}break;
-		case SPELL_HASH_ENVENOM:
+
+		case 32645: // Envenom
+		case 32684: case 57992: case 57993:
 			{
 				if( p_caster != NULL )
 				{
-					//lets find all deadly poisons...
+					// Lets find all deadly poisons...
 					uint32 dosestoate = 0;
 					uint32 doses = unitTarget->GetPoisonDosesCount( POISON_TYPE_DEADLY );
 					if( doses )
 					{
-						if (doses <= (uint32) ( p_caster->m_comboPoints ) )
+						if (doses <= uint32(p_caster->m_comboPoints))
 							dosestoate = doses;
 						else
 							dosestoate = p_caster->m_comboPoints;
 
-						uint32 bpdamage = m_spellInfo->EffectBasePoints[0] + 1;
+						uint32 bpdamage = m_spellInfo->EffectBasePoints[i] + 1;
 						dmg = ( bpdamage * dosestoate) + float2int32(p_caster->GetAP() * (0.07f * dosestoate));
 						m_requiresCP = true;
 
-						//remove deadly poisons
+						// Remove deadly poisons
 						for(uint32 x = MAX_POSITIVE_AURAS; x < MAX_AURAS; ++x)
 						{
 							if(unitTarget->m_auras[x] && unitTarget->m_auras[x]->m_spellProto->poison_type == POISON_TYPE_DEADLY )
@@ -606,40 +769,222 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 								if (dosestoate >= doses) 
 									unitTarget->m_auras[x]->Remove();
 								else
-									unitTarget->m_auras[x]->ModStackSize((dosestoate) * -1);
+									unitTarget->m_auras[x]->ModStackSize(-int32(dosestoate));
 								break;
 							}
 						}
 					}
-
-					if( p_caster->HasDummyAura(SPELL_HASH_CUT_TO_THE_CHASE) )
-					{
-						Aura* aur = p_caster->FindPositiveAuraByNameHash(SPELL_HASH_SLICE_AND_DICE);
-						if( aur )
-						{
-							aur->SetDuration(21000);
-							aur->SetTimeLeft(21000);
-						}
-					}
 				}
 			}break;
-		case SPELL_HASH_SHIELD_OF_RIGHTEOUSNESS:
+
+			/************************
+			*		PRIEST			*
+			************************/
+
+		case 32379: // Shadow Word Death
+		case 32996: case 48157: case 48158:
 			{
 				if( p_caster != NULL )
 				{
-					Item* it = TO_ITEM(p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND));
-					if( it && it->GetProto() && it->GetProto()->InventoryType == INVTYPE_SHIELD )
+					p_caster->CastSpell(u_caster, 32409, true);
+				}
+			}break;
+
+			/************************
+			*		DEATHKNIGHT		*
+			************************/
+			/************************
+			*		SHAMAN			*
+			************************/
+			/************************
+			*		MAGE			*
+			************************/
+		case 30455: // Ice Lance
+		case 42913: case 42914:
+			{
+				if( unitTarget->HasFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_FROZEN))
+					dmg *= 3;
+			}break;
+
+		case 34913: // Fire Armor no longer has Static Damage
+		case 43043: case 43044:
+			{
+				dmg = m_spellInfo->EffectBasePoints[i] + 1;
+			}break;
+
+			/************************
+			*		WARLOCK			*
+			************************/
+		case 29722:	// Incinerate deals x-x extra damage if the target is affected by immolate
+		case 32231: case 47837: case 47838:
+			{
+				if( unitTarget->GetAuraSpellIDWithNameHash( SPELL_HASH_IMMOLATE ) )
+				{
+					// Random extra damage
+					uint32 extra_dmg = 89 + (m_spellInfo->RankNumber * 11) + RandomUInt(m_spellInfo->RankNumber * 11);
+					dmg += extra_dmg;
+				}
+			}break;
+
+		case 47897: case 61290: // Shadowflame
+			{
+				uint32 spellid = ( m_spellInfo->RankNumber == 1 ) ? 47960 : 61291;
+				SpellEntry* SpellInfo = dbcSpell.LookupEntry( spellid );
+				Spell* sp (new Spell( u_caster, SpellInfo, true, NULLAURA ));
+				SpellCastTargets tgt;
+				tgt.m_unitTarget = unitTarget->GetGUID();
+				sp->prepare( &tgt );
+			}break;
+
+		case 17962:
+			{
+				Aura* pAura;
+				for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+				{
+					pAura = unitTarget->m_auras[i];
+					if( pAura && ( pAura->m_spellProto->NameHash == SPELL_HASH_IMMOLATE || pAura->m_spellProto->NameHash == SPELL_HASH_SHADOWFLAME ))
 					{
-						dmg += float2int32(1.3f * p_caster->GetUInt32Value(PLAYER_SHIELD_BLOCK));
+						if( u_caster->GetDummyAura(SPELL_HASH_FIRE_AND_BRIMSTONE) && pAura->GetTimeLeft() <= 5 )
+							AdditionalCritChance += u_caster->GetDummyAura(SPELL_HASH_FIRE_AND_BRIMSTONE)->RankNumber * 5;
+
+						unitTarget->RemoveAuraBySlot(i);
+						break;
 					}
 				}
 			}break;
-		case SPELL_HASH_VICTORY_RUSH:
+
+			/************************
+			*		DRUID			*
+			************************/
+		case 22570:	case 49802: // Maim: turns off your attack
 			{
-				if( u_caster != NULL )
+				if( p_caster != NULL )
 				{
-					u_caster->RemoveFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_VICTORIOUS );
+					p_caster->EventAttackStop();
+					p_caster->smsg_AttackStop( unitTarget );
+				}return;
+			}break;
+
+		case 22568: case 22827:  //Ferocious Bite dmg correction
+		case 22828: case 22829: case 31018:
+		case 24248: case 48576: case 48577:
+			{
+				if( p_caster != NULL )
+				{
+					int32 usedpower = std::max(p_caster->GetUInt32Value(UNIT_FIELD_POWER4), (uint32)30);
+					dmg += float2int32( ( p_caster->m_comboPoints * p_caster->GetAP() * 0.07f ) + ( (usedpower * m_spellInfo->dmg_multiplier[1] + p_caster->GetAP()) / 410.0f ) );
+					
+					p_caster->ModUnsigned32Value(UNIT_FIELD_POWER4, -usedpower);
 				}
+			}break;
+
+		/* Cat doesn't get affected by AP.
+		case 59881: case 59882: case 59883:
+		case 59884: case 59885: case 59886:*/
+		case 1822: case 1823: case 1824: // Bear Rake
+		case 9904: case 27003: case 48573: case 48574:
+			{
+				if( p_caster != NULL )
+				{
+					dmg += (p_caster->GetAP() * 0.18);
+				}
+			}break;
+
+		case 779: case 780: case 769: case 9754: case 9908: // Bear Swipe
+		case 26997: case 48561: case 48562: // Bear Swipe
+			{
+				if( p_caster != NULL )
+				{
+					dmg = (p_caster->GetAP() * 0.07f);
+				}
+			}break;
+
+		case 62078: // Cat Swipe
+			{
+				if( p_caster != NULL )
+				{
+					// Get weapon damage.
+					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+					float wpdmg;
+					if(it)
+						wpdmg = (it->GetProto()->Damage[0].Min + it->GetProto()->Damage[0].Max) * 0.2f;
+					else
+						wpdmg = (p_caster->GetUInt32Value(UNIT_FIELD_MINDAMAGE) + p_caster->GetUInt32Value(UNIT_FIELD_MAXDAMAGE) * 0.2f);
+
+					// Set damage. "Swipe nearby enemies, inflicting 250% weapon damage." This should work :|
+					dmg = wpdmg * 2.5;
+				}
+			}break;
+
+		case 16857: // Faerie Fire(Feral)
+			{
+				if( p_caster != NULL )
+				{
+					dmg = (p_caster->GetAP() * 0.15) + 1;
+				}
+			}break;
+			/************************
+			*		NON-CLASS		*
+			************************/
+		case 50811: case 61547: case 61546: case 33654: case 50810: case 33671: // Damage based on distance
+			{
+				if( u_caster != NULL)
+				{
+					float dist = u_caster->CalcDistance( TO_OBJECT( unitTarget ) );
+					if( dist <= 20.0f && dist >= 0.0f )
+						dmg = float2int32( -450 * dist + damage );
+				}
+			}break;
+			
+		// Meteor like spells (divided damage to targets)
+		case 24340:	case 26558:	case 28884:		// Meteor
+		case 36837:	case 38903:	case 41276:		// Meteor
+		case 57467:								// Meteor
+		case 66765:	case 66809:	case 67331:		// Meteor Fist
+		case 67333:								// Meteor Fist
+		case 31436:								// Malevolent Cleave
+		case 35181:								// Dive Bomb
+		case 40810:	case 43267:	case 43268:		// Saber Lash
+		case 42384:	case 55319:	case 55324:		// Brutal Swipe
+		case 56586:								// Brutal Swipe
+		case 45150:								// Meteor Slash
+		case 64422:	case 64688:					// Sonic Screech
+			{
+				uint32 count = 0;
+				for(SpellTargetList::iterator itr = m_targetList.begin(); itr != m_targetList.end(); ++itr)
+					if(itr->EffectMask & (1<<i))
+						++count;
+
+				dmg /= count;					// divide to all targets
+			}break;
+			
+			// Cataclysmic Bolt
+		case 38441:
+			{
+				dmg = unitTarget->GetMaxHealth() / 2;
+				break;
+			}
+
+			// Thundercrash
+		case 25599:
+			{
+				dmg = unitTarget->GetHealth() / 2;
+				if(dmg < 200)
+					dmg = 200;
+				break;
+			}
+
+			// Fatal Attraction
+		case 41001:
+			{
+				if(unitTarget->HasAura(43690))// Saber Lash
+					dmg = 0;
+			}break;
+			
+			// Tympanic Tantrum
+		case 62775:
+			{
+				dmg = unitTarget->GetMaxHealth() / 10;
 			}break;
 		}
 	}
@@ -912,12 +1257,24 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 			if( u_caster->HasDummyAura(SPELL_HASH_GLYPH_OF_EXECUTION) )
 				rageUsed += 100; //Your Execute ability deals damage as if you had 10 additional rage.
-			
+
 			value += (int32) (rageUsed * m_spellInfo->dmg_multiplier[0]); 
 			u_caster->SetPower(POWER_TYPE_RAGE, rageLeft);
 			SpellEntry *spellInfo = dbcSpell.LookupEntry(20647);
 			u_caster->Strike(unitTarget,MELEE,spellInfo,0,0,value,false,false);
 		}break;
+
+		// Damage Shield
+	case 58872: // Rank 1
+	case 58874: // Rank 2
+		{
+			if(p_caster != NULL)
+			{
+				float amount = ((p_caster->GetUInt32Value(PLAYER_SHIELD_BLOCK)*m_spellInfo->EffectBasePoints[i]+1)/100);
+				p_caster->Damageshield_amount = amount > 0 ? amount : 0;
+			}
+		}break;
+
 	/*************************
 	 * MAGE SPELLS
 	 *************************
@@ -6016,6 +6373,27 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				nspellid = 54508;
 
 			unitTarget->CastSpell(unitTarget, nspellid, true);
+		}break;
+	case 50842: // Pestilence.
+		{
+			if(p_caster != NULL)
+			{
+				if(p_caster->HasAura(63334)) // Glyph of Disease
+				{
+					uint num = 2;
+					uint32 diseases[2] = { 55078, 55095 };
+					for(uint i = 0; i < num; ++i)
+						if(unitTarget->HasAura(diseases[i]))
+							p_caster->CastSpell(unitTarget, diseases[i], true);
+				}
+			}
+		}break;
+	default:
+		{
+			if(sLog.IsOutDevelopement())
+				printf("Unhandled Scripted Effect In Spell %u\n", spellId);
+			else
+				OUT_DEBUG("Unhandled Scripted Effect In Spell %u", spellId);
 		}break;
 	}
 }

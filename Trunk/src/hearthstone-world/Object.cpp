@@ -120,16 +120,28 @@ void Object::Init()
 void Object::SetPhase(int32 phase)
 {
 	m_phaseMode = phase;
+
+	WorldPacket data(SMSG_SET_PHASE_SHIFT, 9);
+	data << GetNewGUID() << uint8(m_phaseMode);
+	SendMessageToSet(&data, (IsPlayer() ? true : false));
 }
 
 void Object::EnablePhase(int32 phaseMode)
 {
 	m_phaseMode |= phaseMode;
+
+	WorldPacket data(SMSG_SET_PHASE_SHIFT, 9);
+	data << GetNewGUID() << uint8(m_phaseMode);
+	SendMessageToSet(&data, (IsPlayer() ? true : false));
 }
 
 void Object::DisablePhase(int32 phaseMode)
 {
 	m_phaseMode &= ~phaseMode;
+
+	WorldPacket data(SMSG_SET_PHASE_SHIFT, 9);
+	data << GetNewGUID() << uint8(m_phaseMode);
+	SendMessageToSet(&data, (IsPlayer() ? true : false));
 }
 
 void Object::_Create( uint32 mapid, float x, float y, float z, float ang )

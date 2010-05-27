@@ -2995,7 +2995,7 @@ void ItemInterface::mSaveItemsToDatabase(bool first, QueryBuffer * buf)
 		{
 			if( GetInventoryItem( x )->GetProto() != NULL )
 			{
-				if( !( (GetInventoryItem( x )->GetProto()->Flags) & 2 ) ) // skip conjured item on save
+				if( !( (GetInventoryItem( x )->GetProto()->Flags) & ITEM_FLAG_CONJURED ) ) // skip conjured item on save
 				{
 					if( IsBagSlot( x ) && GetInventoryItem( x )->IsContainer() )
 					{

@@ -3565,13 +3565,13 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 58872:
 		case 58874 :
 			{
-					sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
-					sp->procflags2 = PROC_ON_BLOCK_VICTIM;
-					sp->procChance = 100;
-					sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
-					sp->EffectApplyAuraName[1] = SPELL_AURA_PROC_TRIGGER_SPELL;
-					sp->EffectImplicitTargetA[1] = 1;
-					sp->EffectTriggerSpell[1] = 59653;
+				sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
+				sp->procflags2 = PROC_ON_BLOCK_VICTIM;
+				sp->procChance = 100;
+				sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
+				sp->EffectApplyAuraName[2] = SPELL_AURA_PROC_TRIGGER_SPELL;
+				sp->EffectImplicitTargetA[2] = 1;
+				sp->EffectTriggerSpell[2] = 59653;
 			}break;
 
 			// Improved Hamstring

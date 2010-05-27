@@ -123,6 +123,16 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetNULL,						// 98
 	&Spell::SpellTargetNULL,						// 99
 	&Spell::SpellTargetNULL,						// 100
+	&Spell::SpellTargetNULL,						// 101
+	&Spell::SpellTargetNULL,						// 102
+	&Spell::SpellTargetNULL,						// 103
+	&Spell::SpellTargetInFrontOfCaster,				// 104
+	&Spell::SpellTargetNULL,						// 105
+	&Spell::SpellTargetNULL,						// 106
+	&Spell::SpellTargetNULL,						// 107
+	&Spell::SpellTargetNULL,						// 108
+	&Spell::SpellTargetNULL,						// 109
+	&Spell::SpellTargetNULL,						// 110
 	// all 100 > n spelltargettype's are from test spells
 };
 
@@ -234,6 +244,13 @@ void Spell::FillTargetMap(uint32 i)
 	{
 		if(TypeA < TOTAL_SPELL_TARGET)
 			(this->*SpellTargetHandler[TypeA])(i, 0);		//0=A
+		else
+		{
+			if(sLog.IsOutDevelopement())
+				printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", TypeA, GetSpellProto()->Id);
+			else
+				OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", TypeA, GetSpellProto()->Id);
+		}
 
 		return;
 	}
@@ -243,6 +260,13 @@ void Spell::FillTargetMap(uint32 i)
 	{
 		if(TypeB < TOTAL_SPELL_TARGET)
 			(this->*SpellTargetHandler[TypeB])(i, 1);		//1=B
+		else
+		{
+			if(sLog.IsOutDevelopement())
+				printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", TypeB, GetSpellProto()->Id);
+			else
+				OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", TypeB, GetSpellProto()->Id);
+		}
 
 		return;
 	}
@@ -253,12 +277,26 @@ void Spell::FillTargetMap(uint32 i)
 	{
 		(this->*SpellTargetHandler[cur])(i,0);	//0=A
 	}
+	else
+	{
+		if(sLog.IsOutDevelopement())
+			printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", cur, GetSpellProto()->Id);
+		else
+			OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", cur, GetSpellProto()->Id);
+	}
 
 	// j = 1
 	cur = m_spellInfo->EffectImplicitTargetB[i];
 	if (cur < TOTAL_SPELL_TARGET)
 	{
 		(this->*SpellTargetHandler[cur])(i,1);	//1=B
+	}
+	else
+	{
+		if(sLog.IsOutDevelopement())
+			printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", cur, GetSpellProto()->Id);
+		else
+			OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", cur, GetSpellProto()->Id);
 	}
 }
 

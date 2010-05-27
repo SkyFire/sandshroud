@@ -1554,6 +1554,7 @@ public:
 	uint32 m_modphyscritdmgPCT;
 	uint32 m_RootedCritChanceBonus; // Class Script Override: Shatter
 	uint32 m_Illumination_amount; // Class Script Override: Illumination
+	float Damageshield_amount; // Damage Shield
 
 	uint32 m_ModInterrMRegenPCT;
 	int32 m_ModInterrMRegen;
