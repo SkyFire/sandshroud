@@ -5075,6 +5075,18 @@ void Player::UpdateChances()
 
 	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( tmp, DodgeCap[pClass] ) );
 
+	// Block
+	Item* it = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );
+	if( it != NULL && it->GetProto() && it->GetProto()->InventoryType == INVTYPE_SHIELD )
+	{
+		tmp = 5.0f + std::max( 0.0f, CalcRating( PLAYER_RATING_MODIFIER_BLOCK )) + std::max( 0.0f, GetBlockFromSpell());
+		tmp += defence_contribution;
+	}
+	else
+		tmp = 0.0f;
+
+	SetFloatValue( PLAYER_BLOCK_PERCENTAGE, std::max( 5.0f, std::min( tmp, 95.0f ) )  );
+
 	//parry
 	tmp = 5.0f + CalcRating( PLAYER_RATING_MODIFIER_PARRY ) + GetParryFromSpell();
 	if(pClass == DEATHKNIGHT) // DK gets 1/4 of strength as parry rating
@@ -5082,9 +5094,8 @@ void Player::UpdateChances()
 		tmp += CalcPercentForRating(PLAYER_RATING_MODIFIER_PARRY, GetUInt32Value(UNIT_FIELD_STAT0) / 4);
 	}
 	tmp += defence_contribution;
-	if( tmp < 0.0f )tmp = 0.0f;
 
-	SetFloatValue( PLAYER_PARRY_PERCENTAGE, std::max( 0.0f, std::min( tmp, 95.0f ) ) ); //let us not use negative parry. Some spells decrease it
+	SetFloatValue( PLAYER_PARRY_PERCENTAGE, std::max( 5.0f, std::min( tmp, 95.0f ) ) ); //let us not use negative parry. Some spells decrease it
 
 	//critical
 	gtFloat* baseCrit = dbcMeleeCritBase.LookupEntry(pClass-1);
@@ -5398,9 +5409,10 @@ void Player::UpdateStats()
 	if( shield != NULL && shield->GetProto()->InventoryType == INVTYPE_SHIELD )
 	{
 		float block_multiplier = ( 100.0f + float( m_modblockabsorbvalue ) ) / 100.0f;
-		if( block_multiplier < 1.0f )block_multiplier = 1.0f;
+		if( block_multiplier < 1.0f )
+			block_multiplier = 1.0f;
 
-		int32 blockable_damage = float2int32( float( shield->GetProto()->Block ) +( float( m_modblockvaluefromspells + GetUInt32Value( PLAYER_RATING_MODIFIER_BLOCK ) ) * block_multiplier ) + ( ( float( str ) / 2.0f ) ) );
+		int32 blockable_damage = float2int32( float( shield->GetProto()->Block ) +( float( m_modblockvaluefromspells + GetUInt32Value(PLAYER_RATING_MODIFIER_BLOCK))*block_multiplier)+((float(str)/2.0f)));
 		SetUInt32Value( PLAYER_SHIELD_BLOCK, blockable_damage );
 	}
 	else
@@ -8626,21 +8638,6 @@ const double BaseRating []= {
 float Player::CalcPercentForRating( uint32 index, uint32 rating )
 {
 	uint32 relative_index = index - (PLAYER_FIELD_COMBAT_RATING_1);
-	/*if( relative_index <= 10 || ( relative_index >= 14 && relative_index <= 21 ) )
-	{
-		double rating = (double)m_uint32Values[index];
-		int level = getLevel();
-		if( level < 10 )//this is not dirty fix -> it is from wowwiki
-			level = 10;
-		double cost;
-		if( level < 60 )
-			cost = ( double( level ) - 8.0 ) / 52.0;
-		else
-			cost = 82.0 / ( 262.0 - 3.0 *  double( level ) );
-		return float( rating / ( BaseRating[relative_index] * cost ) );
-	}
-	else
-		return 0.0f;*/
 	
 	uint32 level = m_uint32Values[UNIT_FIELD_LEVEL];
 	if( level > 100 )
