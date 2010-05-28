@@ -385,8 +385,10 @@
     <ClCompile Include="..\..\src\hearthstone-world\WorldSocket.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\EventMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\faction.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\icon.ico" />
     <ClCompile Include="..\..\src\hearthstone-world\ObjectMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\ObjectStorage.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\resources.rc" />
     <ClCompile Include="..\..\src\hearthstone-world\Stats.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
