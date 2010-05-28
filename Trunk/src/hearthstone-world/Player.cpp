@@ -4163,46 +4163,32 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			FlatResistanceModifierPos[RESISTANCE_ARCANE] -= proto->ArcaneRes;
 		CalcResistance(RESISTANCE_ARCANE);
 	}
-	/* Heirloom scaling items */
-	if(proto->ScalingStatsEntry != 0)
-	{
-		int i = 0;
-		uint32 StatType = 0;
-		uint32 StatMod = 0;
-		int32 StatMultiplier = 0;
-		int32 StatValue = 0;
 
+	if(proto->ScalingStatsEntry != 0) // This item is an Heirloom, we need to calculate it differently.
+	{
+		// This is Dfighter's code for Heirlooms, modified slightly. Danke Dfighter.
 		ScalingStatDistributionEntry *ssdrow = dbcScalingStatDistribution.LookupEntry( proto->ScalingStatsEntry );
 		ScalingStatValuesEntry *ssvrow = dbcScalingStatValues.LookupEntry(getLevel() < 81 ? getLevel() : 80);
 
-		/* Not going to put a check here since unless you put a random id/flag in the tables these should never return NULL */
-
-		/* Calculating the stats correct for our level and applying them */
+		int i = 0;
+		int32 StatValue;
 		for(i = 0; ssdrow->StatMod[i] != -1; i++)
 		{
-			StatType = ssdrow->StatMod[i];
-			StatMod  = ssdrow->Modifier[i];
-
-			StatMultiplier = GetscalestatMultiplier(ssvrow, proto->ScalingStatsFlag);
-			StatValue = StatMod*StatMultiplier/10000;
+			uint32 StatType = ssdrow->StatMod[i];
+			StatValue = (ssdrow->Modifier[i]*GetscalestatSpellBonus(ssvrow))/10000;
 			ModifyBonuses(StatType, (apply ? StatValue : -StatValue));
 		}
 
 		if((proto->ScalingStatsFlag & 32768) && i < 10)
 		{
-			StatType = ssdrow->StatMod[i];
-			StatMod  = ssdrow->Modifier[i];
-			StatMultiplier = GetscalestatSpellBonus(ssvrow);
-			StatValue = StatMod*StatMultiplier/10000;
-			ModifyBonuses(45, (apply ? StatValue : -StatValue));
+			StatValue = (ssdrow->Modifier[i]*GetscalestatSpellBonus(ssvrow))/10000;
+			ModifyBonuses(SPELL_POWER, (apply ? StatValue : -StatValue));
 		}
 
-		/* Calculating the Armor correct for our level and applying it */
 		int32 scaledarmorval = GetscalestatArmorMod(ssvrow, proto->ScalingStatsFlag);
 		BaseResistance[0] += (apply ? scaledarmorval : -scaledarmorval);
 		CalcResistance(0);
 
-		/* Calculating the damages correct for our level and applying it */
 		uint32 scaleddps = GetscalestatDPSMod(ssvrow, proto->ScalingStatsFlag);
 		float dpsmod = 1.0;
 
@@ -4233,7 +4219,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			}
 		}
 	}
-	else /* Normal items */
+	else // Normal Items.
 	{	// Stats
 		for( int i = 0; i < 10; ++i )
 		{
