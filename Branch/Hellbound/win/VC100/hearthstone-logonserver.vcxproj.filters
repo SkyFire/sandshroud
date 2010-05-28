@@ -61,4 +61,10 @@
     <ClInclude Include="..\..\src\hearthstone-logonserver\LogonStdAfx.h" />
     <ClInclude Include="..\..\src\hearthstone-logonserver\Main.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\hearthstone-shared\Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\hearthstone-shared\resources.rc" />
+  </ItemGroup>
 </Project>

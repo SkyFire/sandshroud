@@ -62,14 +62,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\..\..\bin\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\..\..\bin\Debug_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\hearthstone-world___Win32_Debug\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\..\..\bin\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\..\..\bin\Release_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\hearthstone-world___Win32_Release\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\..\..\bin\Debug_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\..\..\bin\Debug_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\hearthstone-world___x64_Debug\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\bin\Release_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\bin\Release_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\hearthstone-world___x64_Release\</IntDir>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -319,7 +319,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\VoiceChatClientSocket.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WorkdSocketCluster.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WorkerServerClient.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\INGEvents.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Map.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\MapCell.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\MapMgr.cpp" />
@@ -361,7 +360,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\SpellEffects.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellTarget.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\SpellFixes\DruidSpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AchievementInterface.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AddonMgr.cpp" />
@@ -498,6 +496,12 @@
       <Project>{90297c34-f231-4df4-848e-a74bcc0e40ed}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\hearthstone-world\resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\hearthstone-world\Icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

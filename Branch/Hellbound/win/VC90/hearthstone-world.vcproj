@@ -1276,6 +1276,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\hearthstone-world\icon.ico"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\hearthstone-world\MainServerDefines.h"
 			>
 		</File>
@@ -1297,6 +1301,10 @@
 		</File>
 		<File
 			RelativePath="..\..\src\hearthstone-world\ObjectStorage.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-world\resources.rc"
 			>
 		</File>
 		<File

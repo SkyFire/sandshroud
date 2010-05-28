@@ -94,4 +94,10 @@
     <ClInclude Include="..\..\src\hearthstone-realmserver\Master.h" />
     <ClInclude Include="..\..\src\hearthstone-realmserver\RStdAfx.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\hearthstone-shared\Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\hearthstone-shared\resources.rc" />
+  </ItemGroup>
 </Project>

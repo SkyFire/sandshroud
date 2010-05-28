@@ -80,4 +80,10 @@
       <Filter>Opcode/Socket/Packet</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\hearthstone-shared\resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\hearthstone-shared\Icon.ico" />
+  </ItemGroup>
 </Project>

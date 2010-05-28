@@ -539,11 +539,19 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\src\hearthstone-shared\Icon.ico"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\hearthstone-realmserver\Master.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\src\hearthstone-realmserver\Master.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-shared\resources.rc"
 			>
 		</File>
 		<File
