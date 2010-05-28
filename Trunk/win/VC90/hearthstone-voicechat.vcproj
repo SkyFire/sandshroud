@@ -433,6 +433,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\hearthstone-shared\Icon.ico"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\hearthstone-voicechat\launcher.c"
 			>
 		</File>
@@ -442,6 +446,10 @@
 		</File>
 		<File
 			RelativePath="..\..\src\hearthstone-voicechat\mutex.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-shared\resources.rc"
 			>
 		</File>
 	</Files>

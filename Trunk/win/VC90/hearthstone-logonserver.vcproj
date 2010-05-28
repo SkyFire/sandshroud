@@ -478,6 +478,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\src\hearthstone-shared\Icon.ico"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\hearthstone-logonserver\LogonStdAfx.cpp"
 			>
 			<FileConfiguration
@@ -523,6 +527,10 @@
 		</File>
 		<File
 			RelativePath="..\..\src\hearthstone-logonserver\Main.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-shared\resources.rc"
 			>
 		</File>
 	</Files>
