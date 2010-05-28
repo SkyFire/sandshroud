@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{90297C34-F231-4DF4-848E-A74BCC0E40ED}</ProjectGuid>
-    <RootNamespace>shared</RootNamespace>
+    <RootNamespace>hearthstone-shared</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -108,7 +108,7 @@ RevisionExtractor.exe
       <FloatingPointModel>Fast</FloatingPointModel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\shared___Win32_Release/shared.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>.\hearthstone-shared___Win32_Release/shared.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
@@ -122,7 +122,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)Shared.lib</OutputFile>
+      <OutputFile>$(IntDir)hearthstone-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>
@@ -155,7 +155,7 @@ RevisionExtractor.exe
       <FloatingPointModel>Precise</FloatingPointModel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\shared___Win32_Release_x64/shared.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>.\hearthstone-shared___Win32_Release_x64/shared.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
@@ -169,7 +169,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)shared.lib</OutputFile>
+      <OutputFile>$(IntDir)hearthstone-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>
@@ -194,7 +194,7 @@ RevisionExtractor.exe
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\shared___Win32_Debug/shared.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>.\hearthstone-shared___Win32_Debug/shared.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
@@ -208,7 +208,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)shared.lib</OutputFile>
+      <OutputFile>$(IntDir)hearthstone-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>
@@ -236,7 +236,7 @@ RevisionExtractor.exe
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\shared___Win32_Debug_x64/shared.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>.\hearthstone-shared___Win32_Debug_x64/shared.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
@@ -250,7 +250,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)shared.lib</OutputFile>
+      <OutputFile>$(IntDir)hearthstone-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>

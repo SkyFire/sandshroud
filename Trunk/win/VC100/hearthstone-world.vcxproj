@@ -62,14 +62,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\..\..\bin\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\..\..\bin\Debug_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\hearthstone-world___Win32_Debug\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\..\..\bin\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\..\..\bin\Release_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\hearthstone-world___Win32_Release\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\..\..\bin\Debug_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\..\..\bin\Debug_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\hearthstone-world___x64_Debug\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\bin\Release_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\bin\Release_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\hearthstone-world___x64_Release\</IntDir>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -312,6 +312,8 @@
     <ClCompile Include="..\..\src\hearthstone-world\Level3.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\QuestCommands.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\RecallCommands.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\Wintergrasp.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\WintergraspInternal.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WordFilter.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\ClusterInterface.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\LogonCommClient.cpp" />
@@ -385,10 +387,8 @@
     <ClCompile Include="..\..\src\hearthstone-world\WorldSocket.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\EventMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\faction.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\icon.ico" />
     <ClCompile Include="..\..\src\hearthstone-world\ObjectMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\ObjectStorage.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\resources.rc" />
     <ClCompile Include="..\..\src\hearthstone-world\Stats.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -425,6 +425,8 @@
     <ClInclude Include="..\..\src\hearthstone-world\Channel.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ChannelMgr.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Chat.h" />
+    <ClInclude Include="..\..\src\hearthstone-world\Wintergrasp.h" />
+    <ClInclude Include="..\..\src\hearthstone-world\WintergraspInternal.h" />
     <ClInclude Include="..\..\src\hearthstone-world\WordFilter.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ClusterInterface.h" />
     <ClInclude Include="..\..\src\hearthstone-world\LogonCommClient.h" />
@@ -498,6 +500,12 @@
       <Project>{90297c34-f231-4df4-848e-a74bcc0e40ed}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\hearthstone-world\resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\hearthstone-world\Icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
