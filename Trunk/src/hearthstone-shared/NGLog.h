@@ -237,7 +237,7 @@ public:
 	}
 	void Debug(const char * source, const char * format, ...)
 	{
-		if(log_level != 3 || log_level != 6)
+		if(log_level != 3 && log_level != 6)
 			return;
 
 		LOCK_LOG;
