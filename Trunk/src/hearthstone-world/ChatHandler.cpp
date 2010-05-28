@@ -103,7 +103,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	if(msg.find("|c") != string::npos && msg.find("|H") != string::npos && !GetPermissions()) // Allow GM's to Color Speak.
+	if(msg.find("|c") != string::npos && msg.find("|H") != string::npos && !HasGMPermissions()) // Allow GM's to Color Speak.
 		return;
 
 	/* Crow

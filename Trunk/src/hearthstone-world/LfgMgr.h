@@ -19,16 +19,16 @@
 
 enum LFGTypes 
 {
-	LFG_NONE                 = 0,
-	LFG_DUNGEON              = 1,
-	LFG_RAID                 = 2,
-	LFG_QUEST                = 3,
-	LFG_ZONE                 = 4,
-	LFG_HEROIC_DUNGEON       = 5,
-	LFG_ANY_DUNGEON          = 6,
-	LFG_ANY_HEROIC_DUNGEON   = 7,
-	LFG_DAILY_DUNGEON        = 8,
-	LFG_DAILY_HEROIC_DUNGEON = 9
+	LFG_NONE					= 0,
+	LFG_DUNGEON					= 1,
+	LFG_RAID					= 2,
+	LFG_QUEST					= 3,
+	LFG_ZONE					= 4,
+	LFG_HEROIC_DUNGEON			= 5,
+	LFG_RANDOM					= 6,
+	LFG_DAILY_DUNGEON			= 7,
+	LFG_DAILY_HEROIC_DUNGEON	= 8,
+	LFG_MAX_TYPES				= 9
 };
 
 #define MAX_DUNGEONS 288+1 // check max entrys +1 on lfgdungeons.dbc

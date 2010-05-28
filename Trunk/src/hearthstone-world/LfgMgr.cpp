@@ -31,7 +31,13 @@ LfgMgr::LfgMgr()
 		{
 			DBCFile::Record r = f.getRecord(i);
 			uint32 id = r.getUInt(0);
-			uint32 typ = r.getUInt(20);
+			uint32 typ = r.getUInt(26);
+
+			if(typ >= LFG_MAX_TYPES)
+			{
+				printf("!!! WARNING! Incorrect column used for type in LFGDungeons.dbc!\n");
+				break;
+			}
 
 			if(id >= MAX_DUNGEONS)
 				printf("!! warning: LFGDungeons contains an out of range dungeon id %u.\n", id);
