@@ -2966,9 +2966,7 @@ bool Object::PhasedCanInteract(Object* pObj)
 
 	// Hack for Acherus: Horde/Alliance can't see each other!
 	if( pObjI && pObjII && GetMapId() == 609 && pObjI->GetTeam() != pObjII->GetTeam() )
-	{
 		return false;
-	}
 
 	return ret;
 }

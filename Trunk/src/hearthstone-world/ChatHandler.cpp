@@ -103,7 +103,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	if(msg.find("|c") != string::npos && msg.find("|H") == string::npos && !GetPermissions()) // Allow GM's to Color Speak.
+	if(msg.find("|c") != string::npos && msg.find("|H") != string::npos && !GetPermissions()) // Allow GM's to Color Speak.
 		return;
 
 	/* Crow
@@ -280,7 +280,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				SendChatPacket(data, 1, lang, this);
 				for(unordered_set<Player*  >::iterator itr = _player->m_inRangePlayers.begin(); itr != _player->m_inRangePlayers.end(); ++itr)
 				{
-					(*itr)->GetSession()->SendChatPacket(data, 1, lang, this);
+					if(_player->PhasedCanInteract((*itr))) // Matching phases.
+						(*itr)->GetSession()->SendChatPacket(data, 1, lang, this);
 				}
 			}
 			delete data;
@@ -487,7 +488,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			else
 			{
 				GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DND);
-			}		  
+			}
 		} break;
 	default:
 		OUT_DEBUG("CHAT: unknown msg type %u, lang: %u", type, lang);

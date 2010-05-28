@@ -1909,7 +1909,8 @@ void MapMgr::SendChatMessageToCellPlayers(Object* obj, WorldPacket * packet, uin
 					if((*iter)->IsPlayer())
 					{
 						//TO_PLAYER(*iter)->GetSession()->SendPacket(packet);
-						TO_PLAYER(*iter)->GetSession()->SendChatPacket(packet, langpos, lang, originator);
+						if(originator->GetPlayer()->PhasedCanInteract((*iter))) // Matching phases.
+							TO_PLAYER(*iter)->GetSession()->SendChatPacket(packet, langpos, lang, originator);
 					}
 				}
 			}
