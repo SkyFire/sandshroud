@@ -369,4 +369,69 @@ bool HandleOnlinePlayersCommand(BaseConsole * pConsole, int argc, const char * a
 	return true;
 }
 
+bool HandleReloadAllScriptsCommand(BaseConsole * pConsole, int argc, const char * argv[])
+{
+	reloadgossipscripts();
+	sScriptMgr.ReloadScripts();
+	pConsole->Write("DLL Scripts reloaded.\n");
+	return true;
+}
 
+bool HandleUnloadSingleScriptCommand(BaseConsole * pConsole, int argc, const char * argv[])
+{
+	if(argc < 1)
+		return false;
+
+	// TODO
+	const char* pie = argv[1];
+	pConsole->Write("DLL Script %s unloaded.\n", pie);
+	return true;
+}
+
+bool HandleUnloadAllScriptsCommand(BaseConsole * pConsole, int argc, const char * argv[])
+{
+	reloadgossipscripts();
+	sScriptMgr.UnloadScripts();
+	pConsole->Write("DLL Scripts unloaded.\n");
+	return true;
+}
+
+bool HandleLoadNewScriptsCommand(BaseConsole * pConsole, int argc, const char * argv[])
+{
+	uint32 count = 0;
+	// TODO
+	pConsole->Write("%u DLL scripts loaded.\n", count);
+	return true;
+}
+
+bool HandleLoadSingleScriptCommand(BaseConsole * pConsole, int argc, const char * argv[])
+{
+	if(argc < 1)
+		return false;
+
+	// TODO
+	const char* pie = argv[1];
+	pConsole->Write("DLL Script %s loaded.\n", pie);
+	return true;
+}
+
+void reloadgossipscripts()
+{
+	StorageContainerIterator<CreatureInfo> * ciitr = CreatureNameStorage.MakeIterator();
+	while(!ciitr->AtEnd())
+	{
+		ciitr->Get()->gossip_script = sScriptMgr.GetDefaultGossipScript();
+		if(!ciitr->Inc())
+			break;
+	}
+	ciitr->Destruct();
+
+	StorageContainerIterator<ItemPrototype> * itr = ItemPrototypeStorage.MakeIterator();
+	while(!itr->AtEnd())
+	{
+		itr->Get()->gossip_script = NULL;
+		if(!itr->Inc())
+			break;
+	}
+	itr->Destruct();
+}

@@ -304,8 +304,8 @@ void ScriptMgr::UnloadScripts()
 	for(CustomGossipScripts::iterator itr = _customgossipscripts.begin(); itr != _customgossipscripts.end(); ++itr)
 		(*itr)->Destroy();
 	_customgossipscripts.clear();
-	delete this->DefaultGossipScript;
-	this->DefaultGossipScript=NULL;
+	delete DefaultGossipScript;
+	DefaultGossipScript = NULL;
 
 	LibraryHandleMap::iterator itr = _handles.begin();
 	for(; itr != _handles.end(); ++itr)
@@ -317,6 +317,12 @@ void ScriptMgr::UnloadScripts()
 #endif
 	}
 	_handles.clear();
+}
+
+void ScriptMgr::ReloadScripts()
+{
+	UnloadScripts();
+	LoadScripts();
 }
 
 void ScriptMgr::register_creature_script(uint32 entry, exp_create_creature_ai callback)

@@ -362,6 +362,11 @@ void HandleConsoleInput(BaseConsole * pConsole, const char * szInput)
 		{ &HandleWAnnounceCommand, "w", "<wannounce string>", "Shows the message in all client title areas." },
 		{ &HandleWAnnounceCommand, "wannounce", "<wannounce string>", "Shows the message in all client title areas." },
 		{ &HandleWhisperCommand, "whisper","<player> <message>", "Whispers a message to someone from the console." },
+		{ &HandleReloadAllScriptsCommand, "reloadallscripts", "Reloads all scripts. No Arguements required." },
+		{ &HandleUnloadSingleScriptCommand, "unloadscript", "<name> Unloads a single script" },
+		{ &HandleUnloadAllScriptsCommand, "unloadallscripts", "Unloads all scripts" },
+		{ &HandleLoadNewScriptsCommand, "loadnewscripts", "Loads all new scripts" },
+		{ &HandleLoadSingleScriptCommand, "loadscript", "<name> Loads a single script" },
 
 		{ NULL, NULL, NULL, NULL },
 	};

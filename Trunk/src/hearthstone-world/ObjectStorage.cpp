@@ -358,7 +358,6 @@ void ObjectMgr::LoadExtraItemStuff()
 		gtr->Inc();
 	}
 	gtr->Destruct();
-	
 
 	StorageContainerIterator<ItemPrototype> * itr = ItemPrototypeStorage.MakeIterator();
 	ItemPrototype * pItemPrototype;

@@ -158,6 +158,7 @@ public:
 
 	void LoadScripts();
 	void UnloadScripts();
+	void ReloadScripts();
 
 	CreatureAIScript * CreateAIScriptClassForEntry(Creature* pCreature);
 	GameObjectAIScript * CreateAIScriptClassForGameObject(uint32 uEntryId, GameObject* pGameObject);
