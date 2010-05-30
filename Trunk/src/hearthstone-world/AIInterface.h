@@ -30,12 +30,8 @@
 #define TARGET_UPDATE_INTERVAL 600 // ms
 #define oocr 50.0f // out of combat range
 #define PLAYER_SIZE 1.5f
-
-#define ENABLE_CREATURE_DAZE
-#ifdef ENABLE_CREATURE_DAZE
-	#define CREATURE_SPELL_TO_DAZE 1604
-	#define CREATURE_DAZE_TRIGGER_ANGLE M_PI/2 //for the beginners this means 45 degrees 
-#endif
+#define CREATURE_SPELL_TO_DAZE 1604
+#define CREATURE_DAZE_TRIGGER_ANGLE M_PI/2 //for the beginners this means 45 degrees 
 
 class Object;
 class Creature;

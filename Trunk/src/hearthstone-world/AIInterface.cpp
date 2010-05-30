@@ -870,6 +870,40 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 			HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0 );
 	}
 
+	if(m_Unit->GetMapMgr() != NULL && GetNextTarget() != NULL)
+	{
+		if(!m_moveFly)
+		{
+			float target_land_z;
+			if(m_Unit->GetMapMgr()->IsCollisionEnabled())
+			{
+				target_land_z = CollideInterface.GetHeight(m_Unit->GetMapId(), GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY(), GetNextTarget()->GetPositionZ() + 2.0f);
+				if(target_land_z == NO_WMO_HEIGHT)
+					target_land_z = m_Unit->GetMapMgr()->GetLandHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY());
+			}
+			else
+			{
+				target_land_z = m_Unit->GetMapMgr()->GetLandHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY());
+			}
+
+			if(fabs(GetNextTarget()->GetPositionZ() - target_land_z) > _CalcCombatRange(GetNextTarget(), false))
+			{
+				if ( GetNextTarget()->GetTypeId() != TYPEID_PLAYER )
+				{
+					if ( target_land_z > m_Unit->GetMapMgr()->GetWaterHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY()) )
+						HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
+				}
+				else if (TO_PLAYER(GetNextTarget())->GetSession() != NULL)
+				{
+					MovementInfo* mi=TO_PLAYER(GetNextTarget())->GetMovementInfo();
+
+					if ( mi != NULL && !(mi->flags & MOVEFLAG_FALLING) && !(mi->flags & MOVEFLAG_SWIMMING) && !(mi->flags & MOVEFLAG_LEVITATE))
+						HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
+				}
+			}
+		}
+	}
+
 	if( m_nextTarget != NULL && m_nextTarget->isAlive() && m_AIState != STATE_EVADE && !m_Unit->isCasting() )
 	{
 		if( agent == AGENT_NULL || ( m_AIType == AITYPE_PET && !m_nextSpell ) ) // allow pets autocast
@@ -954,14 +988,11 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 						if(infront)
 						{
 							m_Unit->setAttackTimer(0, false);
-#ifdef ENABLE_CREATURE_DAZE
 							//we require to know if strike was succesfull. If there was no dmg then target cannot be dazed by it
 							uint32 health_before_strike=m_nextTarget->GetUInt32Value(UNIT_FIELD_HEALTH);
-#endif
 							if(m_nextTarget != NULL)
 							{
 								m_Unit->Strike( m_nextTarget, MELEE, NULL, 0, 0, 0, false, false, true );
-#ifdef ENABLE_CREATURE_DAZE
 								//now if the target is facing his back to us then we could just cast dazed on him :P
 								//as far as i know dazed is casted by most of the creatures but feel free to remove this code if you think otherwise
 								if(m_nextTarget != NULL && !(m_Unit->m_factionDBC->RepListId == -1 && m_Unit->m_faction->FriendlyMask==0 && m_Unit->m_faction->HostileMask==0) /* neutral creature */
@@ -980,7 +1011,6 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 										sp->prepare(&targets);
 									}
 								}
-#endif
 							}
 						}
 					}	
@@ -1072,7 +1102,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 
 				float distance = m_Unit->CalcDistance(m_nextTarget);
 				bool los = true;
-				if (m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->IsCollisionEnabled())
+				if(m_Unit->GetMapMgr()->IsCollisionEnabled() && m_Unit->GetMapMgr())
 				{
 					los = CollideInterface.CheckLOS( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(),
 						m_nextTarget->GetPositionX(), m_nextTarget->GetPositionY(), m_nextTarget->GetPositionZ() );
@@ -2528,16 +2558,6 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				float x = m_Unit->GetPositionX() + (m_destinationX - m_Unit->GetPositionX()) * q;
 				float y = m_Unit->GetPositionY() + (m_destinationY - m_Unit->GetPositionY()) * q;
 				float z = m_Unit->GetPositionZ() + (m_destinationZ - m_Unit->GetPositionZ()) * q;
-				
-				/*if(m_moveFly != true)
-				{
-					if(m_Unit->GetMapMgr())
-					{
-						float adt_Z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
-						if(fabsf(adt_Z - z) < 1.5)
-							z = adt_Z;
-					}
-				}*/
 
 				m_Unit->SetPosition(x, y, z, m_Unit->GetOrientation());
 				
@@ -3524,7 +3544,7 @@ void AIInterface::Event_Summon_Elemental(uint32 summon_duration, uint32 TotemEnt
 
 void AIInterface::CallGuards()
 {
-	if( m_Unit->isDead() || !m_Unit->isAlive() || m_Unit->GetInRangePlayersCount() == 0 )
+	if( m_Unit->isDead() || !m_Unit->isAlive() || m_Unit->GetInRangePlayersCount() == 0 || m_Unit->GetMapMgr() == NULL )
 		return;
 
 	if(  getMSTime() > m_guardTimer && !IS_INSTANCE(m_Unit->GetMapId()))
@@ -3550,19 +3570,19 @@ void AIInterface::CallGuards()
 
 		float x = m_Unit->GetPositionX() + (float(rand() % 150 + 100) / 1000.0f );
 		float y = m_Unit->GetPositionY() + (float(rand() % 150 + 100) / 1000.0f );
-#ifdef COLLISION
-		float z = CollideInterface.GetHeight(m_Unit->GetMapId(), x, y, m_Unit->GetPositionZ() + 2.0f);
-		if( z == NO_WMO_HEIGHT )
+		float z = 0.0f;
+
+		if(m_Unit->GetMapMgr()->IsCollisionEnabled())
+		{
+			z = CollideInterface.GetHeight(m_Unit->GetMapId(), x, y, m_Unit->GetPositionZ() + 2.0f);
+			if( z == NO_WMO_HEIGHT )
+				z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
+		}
+		else
 			z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
 
 		if( fabs( z - m_Unit->GetPositionZ() ) > 10.0f )
 			z = m_Unit->GetPositionZ();
-#else
-		float z = m_Unit->GetPositionZ();
-		float adt_z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
-		if(fabs(z - adt_z) < 3)
-			z = adt_z;
-#endif
 
 		// "Guards!"
 		m_Unit->SendChatMessage(CHAT_MSG_MONSTER_SAY, team ? LANG_ORCISH : LANG_COMMON, "Guards!");

@@ -222,6 +222,16 @@ int luaItem_GetSpellTrigger(lua_State * L, Item* ptr)
 	return 1;
 }
 
+int luaItem_GetGUID(lua_State * L, Item* ptr)
+{
+	// Crow: HyperSniper
+	if(!ptr)
+		return 0;
+
+	lua_pushinteger(L,int(ptr->GetGUID()));
+	return 1;
+}
+
 int luaItem_AddLoot(lua_State * L, Item* ptr)
 {
 	// Crow: HyperSniper++
@@ -247,12 +257,237 @@ int luaItem_AddLoot(lua_State * L, Item* ptr)
 	return 1;
 }
 
-int luaItem_GetGUID(lua_State * L, Item* ptr)
+int luaItem_SetByteValue(lua_State * L, Item * ptr)
 {
-	// Crow: HyperSniper
 	if(!ptr)
 		return 0;
 
-	lua_pushinteger(L,int(ptr->GetGUID()));
+	uint32 index = luaL_checkint(L,1);
+	uint32 index1 = luaL_checkint(L,2);
+	uint8 value = luaL_checkint(L,3);
+	ptr->SetByte(index,index1,value);
+	return 1;
+}
+
+int luaItem_GetByteValue(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	uint32 index = luaL_checkint(L,1);
+	uint32 index1 = luaL_checkint(L,2);
+	lua_pushinteger(L,ptr->GetByte(index,index1));
+	return 1;
+}
+
+int luaItem_GetItemLevel(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetProto()->ItemLevel);
+	return 1;
+}
+
+int luaItem_GetRequiredLevel(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetProto()->RequiredLevel);
+	return 1;
+}
+
+int luaItem_GetBuyPrice(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetProto()->BuyPrice);
+	return 1;
+}
+
+int luaItem_GetSellPrice(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetProto()->SellPrice);
+	return 1;
+}
+
+int luaItem_RepairItem(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	ptr->SetDurabilityToMax();
+	return 1;
+}
+
+int luaItem_GetMaxDurability(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetDurabilityMax());
+	return 1;
+}
+
+int luaItem_GetDurability(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetDurability());
+	return 1;
+}
+
+int luaItem_HasEnchantment(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	if(ptr->HasEnchantments())
+		lua_pushboolean(L, 1);
+	else
+		lua_pushboolean(L, 0);
+	return 1;
+}
+
+int luaItem_ModifyEnchantmentTime(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	uint32 slot = luaL_checkint(L, 1);
+	uint32 duration = luaL_checkint(L, 2);
+
+	ptr->ModifyEnchantmentTime(slot, duration);
+	return 1;
+}
+
+int luaItem_SetStackCount(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	uint32 count = luaL_checkint(L, 1);
+	if(!count || count > 1000)
+		return 0;
+
+	ptr->SetUInt32Value(ITEM_FIELD_STACK_COUNT, count);
+	return 1;
+}
+
+int luaItem_HasFlag(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	uint32 index = luaL_checkint(L,1);
+	uint32 flag = luaL_checkint(L,2);
+	lua_pushboolean(L, ptr->HasFlag(index,flag) ? 1 : 0);
+	return 1;
+}
+
+int luaItem_IsSoulbound(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	ptr->IsSoulbound() ? lua_pushboolean(L,1) : lua_pushboolean(L,0);
+	return 1;
+}
+
+int luaItem_IsAccountbound(lua_State * L, Item * ptr)
+{
+	if(!ptr || !ptr->GetProto())
+		return 0;
+
+	(ptr->GetProto()->ScalingStatsEntry > 0) ? lua_pushboolean(L,1) : lua_pushboolean(L,0);
+	return 1;
+}
+
+int luaItem_IsContainer(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+		return 0;
+
+	ptr->IsContainer() ? lua_pushboolean(L,1) : lua_pushboolean(L,0);
+	return 1;
+}
+
+int luaItem_GetContainerItemCount(lua_State * L, Item * ptr)
+{
+	if(!ptr || !ptr->IsContainer() || !ptr->GetProto())
+		return 0;
+
+	uint32 itemid = (uint32)luaL_checknumber(L,1);
+	if (!itemid)
+		return 0;
+
+	Container * pCont = TO_CONTAINER(ptr);
+	int16 TotalSlots = pCont->GetProto()->ContainerSlots;
+	if(TotalSlots < 1)
+		return 0;
+
+	int cnt = 0;
+	for (int16 i = 0; i < TotalSlots; i++)
+	{
+		Item *item = pCont->GetItem(i);
+		if (item)
+		{
+			if(item->GetEntry() == itemid && item->wrapped_item_id == 0)
+			{
+				cnt += item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) ? item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) : 1; 
+			}
+		}
+	}
+	lua_pushinteger(L, cnt);
+	return 1;
+}
+
+int luaItem_GetEquippedSlot(lua_State * L, Item * ptr)
+{
+	if(!ptr || !ptr->GetOwner() || !ptr->GetOwner()->GetItemInterface())
+		return 0;
+
+	lua_pushinteger(L, ptr->GetOwner()->GetItemInterface()->GetInventorySlotById(ptr->GetEntry()));
+	return 1;
+}
+
+int luaItem_GetObjectType(lua_State * L, Item * ptr)
+{
+	if(!ptr)
+	{
+		lua_pushnil(L);
+		return 0;
+	}
+
+	lua_pushstring(L, "Item");
+	return 1;
+}
+
+int luaItem_Remove(lua_State * L, Item * ptr)
+{
+	if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_ITEM)
+		return 0;
+
+	ptr->RemoveFromWorld();
+	return 0;
+}
+
+int luaItem_Create(lua_State * L, Item * ptr)
+{
+	uint32 id = (uint32)luaL_checknumber(L,1);
+	uint32 stackcount = (uint32)luaL_checknumber(L,2);
+	Item * pItem = objmgr.CreateItem(id, NULL);
+	if (!pItem)
+		return 0;
+
+	pItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, stackcount);
+	pItem->SaveToDB(0, 0, true, NULL);
+	Lunar<Item>::push(L,pItem);
 	return 1;
 }

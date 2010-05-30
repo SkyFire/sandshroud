@@ -25,6 +25,27 @@ int luaItem_GetSpellId(lua_State * L, Item* ptr);
 int luaItem_GetSpellTrigger(lua_State * L, Item* ptr);
 int luaItem_GetGUID(lua_State * L, Item* ptr);
 int luaItem_AddLoot(lua_State * L, Item* ptr);
+int luaItem_SetByteValue(lua_State * L, Item* ptr);
+int luaItem_GetByteValue(lua_State * L, Item* ptr);
+int luaItem_GetItemLevel(lua_State * L, Item* ptr);
+int luaItem_GetRequiredLevel(lua_State * L, Item* ptr);
+int luaItem_GetBuyPrice(lua_State * L, Item* ptr);
+int luaItem_GetSellPrice(lua_State * L, Item* ptr);
+int luaItem_RepairItem(lua_State * L, Item* ptr);
+int luaItem_GetMaxDurability(lua_State * L, Item* ptr);
+int luaItem_GetDurability(lua_State * L, Item* ptr);
+int luaItem_HasEnchantment(lua_State * L, Item* ptr);
+int luaItem_ModifyEnchantmentTime(lua_State * L, Item* ptr);
+int luaItem_SetStackCount(lua_State * L, Item* ptr);
+int luaItem_HasFlag(lua_State * L, Item* ptr);
+int luaItem_IsSoulbound(lua_State * L, Item* ptr);
+int luaItem_IsAccountbound(lua_State * L, Item* ptr);
+int luaItem_IsContainer(lua_State * L, Item* ptr);
+int luaItem_GetContainerItemCount(lua_State * L, Item* ptr);
+int luaItem_GetEquippedSlot(lua_State * L, Item* ptr);
+int luaItem_GetObjectType(lua_State * L, Item* ptr);
+int luaItem_Remove(lua_State * L, Item* ptr);
+int luaItem_Create(lua_State * L, Item* ptr);
 //////////////////////////////////////////////////////////////////
 /////////////////END ITEM COMMAND LIST////////////////////////////
 //////////////////////////////////////////////////////////////////

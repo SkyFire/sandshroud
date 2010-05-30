@@ -367,12 +367,8 @@ namespace VMAP
 			free();
 
 			result = true;
-			char magic[8];						// Ignore the added magic header
-			fread(magic,1,8,rf);
-			if(strncmp(VMAP_MAGIC,magic,8)) result = false;
 			if(result && fread(ident,8,1,rf) != 1) result = false;
 			if(result && fread(&flags,sizeof(unsigned int),1,rf) != 1) result = false;
-
 			//POS
 			if(result && fread(chunk,4,1,rf) != 1) result = false;
 			if(result && fread(&size,4,1,rf) != 1) result = false;
