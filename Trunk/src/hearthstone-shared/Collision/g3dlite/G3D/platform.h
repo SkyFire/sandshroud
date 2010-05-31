@@ -31,24 +31,24 @@
 #endif
 
 #ifdef _MSC_VER 
-    #define G3D_WIN32
+	#define G3D_WIN32
 #elif __MINGW32__
-    #define G3D_WIN32 
-    #define G3D_MINGW32 
+	#define G3D_WIN32 
+	#define G3D_MINGW32 
 #elif __linux__ 
-    #define G3D_LINUX
+	#define G3D_LINUX
 #elif __OpenBSD__
-    #define G3D_LINUX
+	#define G3D_LINUX
 #elif __FreeBSD__ 
-    #define G3D_LINUX
+	#define G3D_LINUX
 #elif __DragonFly__
-    #define G3D_LINUX
+	#define G3D_LINUX
 #elif __NetBSD__
-    #define G3D_LINUX
+	#define G3D_LINUX
 #elif __APPLE__ 
-    #define G3D_OSX
+	#define G3D_OSX
 #else
-    #error Unknown platform 
+	#error Unknown platform 
 #endif
 
 
@@ -70,9 +70,9 @@
 #endif
 
 #if defined(__GNUC__)
-#    if __STDC_VERSION__ < 199901
-#        define restrict __restrict__
-#    endif
+#	if __STDC_VERSION__ < 199901
+#		define restrict __restrict__
+#	endif
 #endif
 
 
@@ -81,34 +81,34 @@
 
 #ifdef G3D_LINUX
 #   ifndef __GNUC__
-#       error G3D only supports the gcc compiler on Linux.
+#	error G3D only supports the gcc compiler on Linux.
 #   endif
 
 //#   ifndef __i386__
-//#       error G3D only supports x86 machines on Linux.
+//#	error G3D only supports x86 machines on Linux.
 //#   endif
 
 #   define G3D_DEPRECATED __attribute__((__deprecated__))
 
 #   ifndef __cdecl
-#       define __cdecl __attribute__((cdecl))
+#	define __cdecl __attribute__((cdecl))
 #   endif
 
 #   ifndef __stdcall
-#       define __stdcall __attribute__((stdcall))
+#	define __stdcall __attribute__((stdcall))
 #   endif
 
 #   define G3D_CHECK_PRINTF_METHOD_ARGS   __attribute__((__format__(__printf__, 2, 3)))
 #   define G3D_CHECK_VPRINTF_METHOD_ARGS  __attribute__((__format__(__printf__, 2, 0)))
-#   define G3D_CHECK_PRINTF_ARGS          __attribute__((__format__(__printf__, 1, 2)))
-#   define G3D_CHECK_VPRINTF_ARGS         __attribute__((__format__(__printf__, 1, 0)))
+#   define G3D_CHECK_PRINTF_ARGS		__attribute__((__format__(__printf__, 1, 2)))
+#   define G3D_CHECK_VPRINTF_ARGS		__attribute__((__format__(__printf__, 1, 0)))
 #endif
 
 
 #ifdef G3D_OSX
-    #ifndef __GNUC__
-        #error G3D only supports the gcc compiler on OS X.
-    #endif
+	#ifndef __GNUC__
+		#error G3D only supports the gcc compiler on OS X.
+	#endif
 	
 	#if defined(__i386__)
 		#define G3D_OSX_INTEL
@@ -119,19 +119,19 @@
 	#endif
 
 #   ifndef __cdecl
-#       define __cdecl __attribute__((cdecl))
+#	define __cdecl __attribute__((cdecl))
 #   endif
 
 #   ifndef __stdcall
-#       define __stdcall __attribute__((stdcall))
+#	define __stdcall __attribute__((stdcall))
 #   endif
 
 #   define G3D_DEPRECATED __attribute__((__deprecated__))
 
 #   define G3D_CHECK_PRINTF_METHOD_ARGS   __attribute__((__format__(__printf__, 2, 3)))
 #   define G3D_CHECK_VPRINTF_METHOD_ARGS  __attribute__((__format__(__printf__, 2, 0)))
-#   define G3D_CHECK_PRINTF_ARGS          __attribute__((__format__(__printf__, 1, 2)))
-#   define G3D_CHECK_VPRINTF_ARGS         __attribute__((__format__(__printf__, 1, 0)))
+#   define G3D_CHECK_PRINTF_ARGS		__attribute__((__format__(__printf__, 1, 2)))
+#   define G3D_CHECK_VPRINTF_ARGS		__attribute__((__format__(__printf__, 1, 0)))
 #endif
 
 
@@ -141,19 +141,19 @@
 // Microsoft Visual C++ 6.0	_MSC_VER = 1200
 // Microsoft Visual C++ 5.0	_MSC_VER = 1100
 
-    // Old versions of MSVC (6.0 and previous) don't
-    // support C99 for loop scoping rules.  This fixes them.
+	// Old versions of MSVC (6.0 and previous) don't
+	// support C99 for loop scoping rules.  This fixes them.
 #   if (_MSC_VER <= 1200)
-        // This trick will generate a warning; disable the warning
-#       pragma warning (disable : 4127)
-#       define for if (false) {} else for
-#    endif
+		// This trick will generate a warning; disable the warning
+#	pragma warning (disable : 4127)
+#	define for if (false) {} else for
+#	endif
 
 #   if (_MSC_VER <= 1200)
-//      Nothing we can do on VC6 for deprecated functions
-#      define G3D_DEPRECATED
+//	Nothing we can do on VC6 for deprecated functions
+#	define G3D_DEPRECATED
 #   else
-#      define G3D_DEPRECATED __declspec(deprecated)
+#	define G3D_DEPRECATED __declspec(deprecated)
 #   endif
 
 // Prevent Winsock conflicts by hiding the winsock API
@@ -174,7 +174,7 @@
 
 // Mingw32 defines restrict
 #   ifndef G3D_MINGW32
-#          define restrict
+#		define restrict
 #   endif
 
 #   define G3D_CHECK_PRINTF_ARGS 
@@ -182,15 +182,15 @@
 #   define G3D_CHECK_PRINTF_METHOD_ARGS 
 #   define G3D_CHECK_VPRINTF_METHOD_ARGS
 
-    // On MSVC, we need to link against the multithreaded DLL version of
-    // the C++ runtime because that is what SDL and ZLIB are compiled
-    // against.  This is not the default for MSVC, so we set the following
-    // defines to force correct linking.  
-    //
-    // For documentation on compiler options, see:
-    //  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/_core_.2f.md.2c_2f.ml.2c_2f.mt.2c_2f.ld.asp
-    //  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore98/HTML/_core_Compiler_Reference.asp
-    //
+	// On MSVC, we need to link against the multithreaded DLL version of
+	// the C++ runtime because that is what SDL and ZLIB are compiled
+	// against.  This is not the default for MSVC, so we set the following
+	// defines to force correct linking.  
+	//
+	// For documentation on compiler options, see:
+	//  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/_core_.2f.md.2c_2f.ml.2c_2f.mt.2c_2f.ld.asp
+	//  http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore98/HTML/_core_Compiler_Reference.asp
+	//
 
 #ifdef _G3D_INTERNAL_HIDE_WINSOCK_
 #   undef _G3D_INTERNAL_HIDE_WINSOCK_
@@ -200,8 +200,8 @@
 #endif
 
 #   if defined(_MSC_VER) && (_MSC_VER <= 1200)
-        // VC6 std:: has signed/unsigned problems
-#       pragma warning (disable : 4018)
+		// VC6 std:: has signed/unsigned problems
+#	pragma warning (disable : 4018)
 #   endif
 
 /** 

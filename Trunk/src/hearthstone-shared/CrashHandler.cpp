@@ -332,7 +332,7 @@ int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs)
 	{
 		MessageBox(0, "Could not open crash dump file.", "Crash dump error.", MB_OK);
 	}
-	else
+/*	else
 	{
 		MINIDUMP_EXCEPTION_INFORMATION info;
 		info.ClientPointers = FALSE;
@@ -344,7 +344,7 @@ int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs)
 			hDump, MiniDumpWithIndirectlyReferencedMemory, &info, 0, 0);
 
 		CloseHandle(hDump);
-	}
+	}*/
 
 	SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
 	OnCrash(!ON_CRASH_BREAK_DEBUGGER);	  

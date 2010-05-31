@@ -26,10 +26,11 @@
 #include "IVMapManager.h"
 #include "../LocationVector.h"
 
-#include <Collision/g3dlite/G3D/Table.h>
+#include "../g3dlite/G3D/Table.h"
 
 //===========================================================
 
+#define MAX_MAPS 750
 #define DIR_FILENAME_EXTENSION ".vmdir"
 #define MAX_CAN_FALL_DISTANCE 10.0
 #define FILENAMEBUFFER_SIZE 500
@@ -143,6 +144,8 @@ namespace VMAP
 			LocationVector convertPositionToMangosRep(Vector3 & src) const;
 			std::string getDirFileName(unsigned int pMapId) const;
 			std::string getDirFileName(unsigned int pMapId, int x, int y) const;
+			MapTree* getMapTree(int pMapId) { return m_maps[pMapId]; }
+
 		public:
 			VMapManager();
 			~VMapManager(void);
@@ -176,6 +179,8 @@ namespace VMAP
 			// Closest Point
 			virtual bool getObjectHitPos(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float &ry, float& rz, float pModifyDist);
 			virtual bool getObjectHitPos(unsigned int pMapId, LocationVector & v1, LocationVector & v2, LocationVector & vout, float pModifyDist);
+
+			MapTree* m_maps[MAX_MAPS];
 	};
 }
 #endif

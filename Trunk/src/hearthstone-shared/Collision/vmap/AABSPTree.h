@@ -14,18 +14,18 @@ All rights reserved.
 #ifndef G3D_AABSPTREE_H
 #define G3D_AABSPTREE_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/Array.h"
-#include "Collision/g3dlite/G3D/Table.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
-#include "Collision/g3dlite/G3D/AABox.h"
-#include "Collision/g3dlite/G3D/Sphere.h"
-#include "Collision/g3dlite/G3D/Box.h"
-#include "Collision/g3dlite/G3D/Triangle.h"
-#include "Collision/g3dlite/G3D/GCamera.h"
+#include "../g3dlite/G3D/platform.h"
+#include "../g3dlite/G3D/Array.h"
+#include "../g3dlite/G3D/Table.h"
+#include "../g3dlite/G3D/Vector3.h"
+#include "../g3dlite/G3D/AABox.h"
+#include "../g3dlite/G3D/Sphere.h"
+#include "../g3dlite/G3D/Box.h"
+#include "../g3dlite/G3D/Triangle.h"
+#include "../g3dlite/G3D/GCamera.h"
 //#include "Collision/g3dlite/G3D/BinaryInput.h"
 //#include "Collision/g3dlite/G3D/BinaryOutput.h"
-#include "Collision/g3dlite/G3D/CollisionDetection.h"
+#include "../g3dlite/G3D/CollisionDetection.h"
 #include <algorithm>
 
 #include "RayIntersectionIterator.h"

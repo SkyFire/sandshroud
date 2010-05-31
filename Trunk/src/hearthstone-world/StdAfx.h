@@ -35,6 +35,9 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <fstream>
+#include <iosfwd>
+#include <search.h>
 //#include <fstream>
 
 #include "../hearthstone-shared/Common.h"
@@ -52,6 +55,10 @@
 
 #include "../hearthstone-shared/Collision/vmap/IVMapManager.h"
 #include "../hearthstone-shared/Collision/vmap/VMapManager.h"
+#include "../hearthstone-shared/Pathfinding/InputGeom.h"
+#include "../hearthstone-shared/Pathfinding/Recast/Recast.h"
+#include "../hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h"
+#include "../hearthstone-shared/Pathfinding/Detour/DetourNavMeshBuilder.h"
 
 #include <zlib.h>
 

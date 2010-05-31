@@ -24,6 +24,8 @@
 #ifndef __MAPMGR_H
 #define __MAPMGR_H
 
+#include "Pathfinding/Detour/DetourNavMesh.h"
+
 class MapCell;
 class Map;
 class Object;
@@ -268,7 +270,7 @@ public:
 	void EventCorpseDespawn(uint64 guid);
 
 	time_t InactiveMoveTime;
-    uint32 iInstanceMode;
+	uint32 iInstanceMode;
 
 	void UnloadCell(uint32 x,uint32 y);
 	void EventRespawnVehicle(Vehicle* v, MapCell * p);
@@ -277,10 +279,13 @@ public:
 	void SendMessageToCellPlayers(Object* obj, WorldPacket * packet, uint32 cell_radius = 2);
 	void SendChatMessageToCellPlayers(Object* obj, WorldPacket * packet, uint32 cell_radius, uint32 langpos, int32 lang, WorldSession * originator);
 
+	bool LoadNavMesh(uint32 x, uint32 y);
+	LocationVector getNextPositionOnPathToLocation(const float startx, const float starty, const float startz, const float endx, const float endy, const float endz);
+
 	Instance * pInstance;
 	void BeginInstanceExpireCountdown();
 	void HookOnAreaTrigger(Player* plr, uint32 id);
-	
+
 	// better hope to clear any references to us when calling this :P
 	void InstanceShutdown()
 	{
@@ -301,6 +306,7 @@ public:
 	}
 
 protected:
+	dtNavMesh *m_navMesh[64][64];
 
 	//! Collect and send updates to clients
 	void _UpdateObjects();
@@ -317,7 +323,6 @@ private:
 public:
 	// Distance a Player can "see" other objects and receive updates from them (!! ALREADY dist*dist !!)
 	float m_UpdateDistance;
-	bool collisionloaded; // Crow: Use this later.
 
 private:
 	/* Map Information */

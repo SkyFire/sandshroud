@@ -23,9 +23,9 @@
 // load our modified version first !!
 #include "AABSPTree.h"
 
-#include <Collision/g3dlite/G3D/AABox.h>
-#include <Collision/g3dlite/G3D/Vector3.h>
-#include <Collision/g3dlite/G3D/Ray.h>
+#include "../g3dlite/G3D/AABox.h"
+#include "../g3dlite/G3D/Vector3.h"
+#include "../g3dlite/G3D/Ray.h"
 
 #include "ShortBox.h"
 #include "TreeNode.h"

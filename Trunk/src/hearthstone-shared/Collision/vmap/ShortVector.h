@@ -20,7 +20,7 @@
 #ifndef _SHORTVECTOR_H
 #define _SHORTVECTOR_H
 
-#include <Collision/g3dlite/G3D/Vector3.h>
+#include "../g3dlite/G3D/Vector3.h"
 
 using namespace G3D;
 namespace VMAP

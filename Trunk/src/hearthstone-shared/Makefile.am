@@ -117,5 +117,31 @@ libshared_a_SOURCES = \
     Collision/g3dlite/Triangle.cpp \
     Collision/g3dlite/Vector3.cpp \
     Collision/g3dlite/Vector4.cpp \
-    Collision/g3dlite/format.cpp
-    
+    Collision/g3dlite/format.cpp \
+    Pathfinding/ChunkyTriMesh.h \
+    Pathfinding/ChunkyTriMesh.cpp \
+    Pathfinding/InputGeom.h \
+    Pathfinding/InputGeom.cpp \
+    Pathfinding/MeshLoaderObj.h \
+    Pathfinding/MeshLoaderObj.cpp \
+    Pathfinding/Recast/RecastArea.cpp \
+    Pathfinding/Recast/RecastContour.cpp \
+    Pathfinding/Recast/Recast.cpp \
+    Pathfinding/Recast/RecastFilter.cpp \
+    Pathfinding/Recast/Recast.h \
+    Pathfinding/Recast/RecastLog.cpp \
+    Pathfinding/Recast/RecastLog.h \
+    Pathfinding/Recast/RecastMesh.cpp \
+    Pathfinding/Recast/RecastMeshDetail.cpp \
+    Pathfinding/Recast/RecastRasterization.cpp \
+    Pathfinding/Recast/RecastRegion.cpp \
+    Pathfinding/Recast/RecastTimer.cpp \
+    Pathfinding/Recast/RecastTimer.h \
+    Pathfinding/Detour/DetourCommon.cpp \
+    Pathfinding/Detour/DetourCommon.h \
+    Pathfinding/Detour/DetourNavMeshBuilder.cpp \
+    Pathfinding/Detour/DetourNavMeshBuilder.h \
+    Pathfinding/Detour/DetourNavMesh.cpp \
+    Pathfinding/Detour/DetourNavMesh.h \
+    Pathfinding/Detour/DetourNode.cpp \
+    Pathfinding/Detour/DetourNode.h 

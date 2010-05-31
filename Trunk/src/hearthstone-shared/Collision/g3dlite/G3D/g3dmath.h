@@ -16,7 +16,7 @@
 #ifndef G3DMATH_H
 #define G3DMATH_H
 
-#include "Common.h" // for uint32, etc typedefs
+#include "../../../Common.h" // for uint32, etc typedefs
 
 #ifdef _MSC_VER
 // Disable conditional expression is constant, which occurs incorrectly on inlined functions
@@ -26,7 +26,7 @@
 #   pragma warning (disable : 4530)
 #endif
 
-#include "Collision/g3dlite/G3D/platform.h"
+#include "platform.h"
 #include <ctype.h>
 #include <string>
 #include <float.h>
@@ -46,7 +46,7 @@
 
 #include <math.h>
 
-#include "Collision/g3dlite/G3D/debug.h"
+#include "debug.h"
 
 #undef min
 #undef max
@@ -80,12 +80,12 @@ __inline long int lrint (double flt) {
 #ifndef X64
 	int intgr;
 
-    _asm {
-        fld flt
-        fistp intgr
-    };
+	_asm {
+		fld flt
+		fistp intgr
+	};
 
-    return intgr;
+	return intgr;
 
 #else
 
@@ -103,14 +103,14 @@ __inline long int lrint (double flt) {
 
 __inline long int lrintf(float flt) {
 #ifndef X64
-    int intgr;
+	int intgr;
 
 	_asm {
-        fld flt
-        fistp intgr
-    };
+		fld flt
+		fistp intgr
+	};
 
-    return intgr;
+	return intgr;
 #else
 
 	union { int asInt[2]; double asDouble; } n;
@@ -135,63 +135,63 @@ __inline long int lrintf(float flt) {
 const double fuzzyEpsilon = 0.00001;
 
 /** Returns a reference to a static double.
-    This value should not be tested against directly, instead
-    G3D::isNan() and G3D::isFinite() will return reliable results. */
+	This value should not be tested against directly, instead
+	G3D::isNan() and G3D::isFinite() will return reliable results. */
 inline const double& inf() {
 
 // We already have <limits> included but
 // not using it in older gcc for safe compilations
-#if (__GNUC__ == 2)    
-    static const double i = 1.0/sin(0.0);
+#if (__GNUC__ == 2)	
+	static const double i = 1.0/sin(0.0);
 #else
-    // double is a standard type and should have infinity
-    static const double i = std::numeric_limits<double>::infinity();
+	// double is a standard type and should have infinity
+	static const double i = std::numeric_limits<double>::infinity();
 #endif
 	return i;
 }
 
 /** Returns a reference to a static double.
-    This value should not be tested against directly, instead
-    G3D::isNan() and G3D::isFinite() will return reliable results. */
+	This value should not be tested against directly, instead
+	G3D::isNan() and G3D::isFinite() will return reliable results. */
 inline const double& nan() {
 
 // We already have <limits> included but
 // not using it in older gcc for safe compilations
 #if (__GNUC__ == 2)
-    static const double n = 0.0/sin(0.0);
+	static const double n = 0.0/sin(0.0);
 #else
-    // double is a standard type and should have quiet NaN
-    static const double n = std::numeric_limits<double>::quiet_NaN();
+	// double is a standard type and should have quiet NaN
+	static const double n = std::numeric_limits<double>::quiet_NaN();
 #endif
 	return n;
 }
 
 /** Returns a reference to a static double. Use instead of G3D_PI. */
 inline const double& pi() {
-    static const double p = 3.1415926535898;
-    return p;
+	static const double p = 3.1415926535898;
+	return p;
 }
 
 /** Returns a reference to a static double. Use instead of G3D_HALF_PI. */
 inline const double& halfPi() {
-    static const double p = 1.5707963267949;
-    return p;
+	static const double p = 1.5707963267949;
+	return p;
 }
 
 /** Returns a reference to a static double. Use instead of G3D_TWO_PI. */
 inline const double& twoPi() {
-    static const double p = 6.283185;
-    return p;
+	static const double p = 6.283185;
+	return p;
 }
 
 /** @def G3D_PI
-    @deprecated Use G3D::pi() instead. */
-#define G3D_PI      (3.1415926535898)
+	@deprecated Use G3D::pi() instead. */
+#define G3D_PI	(3.1415926535898)
 /** @def G3D_HALF_PI
-    @deprecated Use G3D::halfPi() instead. */
+	@deprecated Use G3D::halfPi() instead. */
 #define G3D_HALF_PI (1.5707963267949)
 /** @def G3D_TWO_PI
-    @deprecated Use G3D::twoPi() instead. */
+	@deprecated Use G3D::twoPi() instead. */
 #define G3D_TWO_PI  (6.283185)
 
 int iAbs(int iValue);
@@ -208,11 +208,11 @@ float clamp(float val, float low, float hi);
  Returns a + (b - a) * f;
  */
 inline double lerp(double a, double b, double f) {
-    return a + (b - a) * f;
+	return a + (b - a) * f;
 }
 
 inline float lerp(float a, float b, float f) {
-    return a + (b - a) * f;
+	return a + (b - a) * f;
 }
 
 /**
@@ -229,24 +229,24 @@ int iSign(int iValue);
 int iSign(double fValue);
 
 inline int iSign(float f) {
-    return iSign((double)f);
+	return iSign((double)f);
 }
 
 
 /** 
-    Fast round to integer using the lrint routine.
-    Typically 6x faster than casting to integer.
+	Fast round to integer using the lrint routine.
+	Typically 6x faster than casting to integer.
  */
 inline int iRound(double fValue) {
-    return lrint(fValue);
+	return lrint(fValue);
 }
 
 /** 
-    Fast round to integer using the lrint routine.
-    Typically 6x faster than casting to integer.
+	Fast round to integer using the lrint routine.
+	Typically 6x faster than casting to integer.
  */
 inline int iRound(float f) {
-    return lrintf(f);
+	return lrintf(f);
 }
 
 /**
@@ -333,12 +333,12 @@ int highestBit(uint32 x);
 bool fuzzyEq(double a, double b);
 
 /** True if a is definitely not equal to b.  
-    Guaranteed false if a == b. 
-    Possibly false when a != b.*/
+	Guaranteed false if a == b. 
+	Possibly false when a != b.*/
 bool fuzzyNe(double a, double b);
 
 /** Is a strictly greater than b? (Guaranteed false if a <= b).
-    (Possibly false if a > b) */
+	(Possibly false if a > b) */
 bool fuzzyGt(double a, double b);
 
 /** Is a near or greater than b? */
@@ -354,7 +354,7 @@ bool fuzzyLe(double a, double b);
  Computes 1 / sqrt(x).
  */
 inline float rsq(float x) {
-    return 1.0f / sqrtf(x);
+	return 1.0f / sqrtf(x);
 }
 
 /**
@@ -363,23 +363,23 @@ inline float rsq(float x) {
  */
 inline float SSErsq(float x) {
 
-    #if defined(SSE) && defined(G3D_WIN32)
+	#if defined(SSE) && defined(G3D_WIN32)
 	#ifdef X64
 		__m128 a, b;
 		a = _mm_set_ps1(x);
 		b = _mm_rsqrt_ss(a);
 		return b.m128_f32[0];
 	#else
-	    __asm {
-           movss xmm0, x
-           rsqrtss xmm0, xmm0
-           movss x, xmm0
-        }
-        return x;
+		__asm {
+		movss xmm0, x
+		rsqrtss xmm0, xmm0
+		movss x, xmm0
+		}
+		return x;
 	#endif
-    #else
-        return 1.0f / sqrt(x);
-    #endif
+	#else
+		return 1.0f / sqrt(x);
+	#endif
 }
 
 /**
@@ -404,28 +404,28 @@ double toDegrees(double rad);
  Returns true if x is not exactly equal to 0.0f.
  */
 inline bool any(float x) {
-    return x != 0;
+	return x != 0;
 }
 
 /**
  Returns true if x is not exactly equal to 0.0f.
  */
 inline bool all(float x) {
-    return x != 0;
+	return x != 0;
 }
 
 /**
  v / v (for DirectX/Cg support)
  */
 inline float normalize(float v) {
-    return v / v;
+	return v / v;
 }
 
 /**
  a * b (for DirectX/Cg support)
  */
 inline float dot(float a, float b) {
-    return a * b;
+	return a * b;
 }
 
 
@@ -433,18 +433,18 @@ inline float dot(float a, float b) {
  a * b (for DirectX/Cg support)
  */
 inline float mul(float a, float b) {
-    return a * b;
+	return a * b;
 }
 
 /**
  2^x
  */
 inline double exp2(double x) {
-    return pow(2.0, x);
+	return pow(2.0, x);
 }
 
 inline double rsqrt(double x) {
-    return 1.0 / sqrt(x);
+	return 1.0 / sqrt(x);
 }
 
 
@@ -452,33 +452,33 @@ inline double rsqrt(double x) {
  sin(x)/x
  */
 inline double sinc(double x) {
-    double r = sin(x) / x;
+	double r = sin(x) / x;
 
-    if (isNaN(r)) {
-        return 1.0;
-    } else {
-        return r;
-    }
+	if (isNaN(r)) {
+		return 1.0;
+	} else {
+		return r;
+	}
 }
 
 /**
  Computes a floating point modulo; the result is t wrapped to the range [lo, hi).
  */
 inline double wrap(double t, double lo, double hi) {
-    if ((t >= lo) && (t < hi)) {
-        return t;
-    }
+	if ((t >= lo) && (t < hi)) {
+		return t;
+	}
 
-    debugAssert(hi > lo);
+	debugAssert(hi > lo);
 
-    double interval = hi - lo;
+	double interval = hi - lo;
 
-    return t - interval * iFloor((t - lo) / interval);
+	return t - interval * iFloor((t - lo) / interval);
 
 }
 
 inline double wrap(double t, double hi) {
-    return wrap(t, 0, hi);
+	return wrap(t, 0, hi);
 }
 
 
@@ -488,7 +488,7 @@ inline double wrap(double t, double hi) {
 #   pragma warning (pop)
 #endif
 
-#include "Collision/g3dlite/G3D/g3dmath.inl"
+#include "g3dmath.inl"
 
 #endif
 

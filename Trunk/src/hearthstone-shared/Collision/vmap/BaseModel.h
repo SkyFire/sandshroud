@@ -20,8 +20,8 @@
 #ifndef _BASEMODEL_H_
 #define _BASEMODEL_H_
 
-#include <Collision/g3dlite/G3D/AABox.h>
-#include <Collision/g3dlite/G3D/Vector3.h>
+#include "../g3dlite/G3D/AABox.h"
+#include "../g3dlite/G3D/Vector3.h"
 
 #include "ShortVector.h"
 #include "ShortBox.h"
