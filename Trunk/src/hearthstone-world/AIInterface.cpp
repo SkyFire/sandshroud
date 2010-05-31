@@ -886,7 +886,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				target_land_z = m_Unit->GetMapMgr()->GetLandHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY());
 			}
 
-			if(fabs(GetNextTarget()->GetPositionZ() - target_land_z) > _CalcCombatRange(GetNextTarget(), false))
+			if((fabs(GetNextTarget()->GetPositionZ() - target_land_z) > _CalcCombatRange(GetNextTarget(), false)) && fabs(GetNextTarget()->GetPositionZ() - target_land_z) < 100.0f)
 			{
 				if ( GetNextTarget()->GetTypeId() != TYPEID_PLAYER )
 				{
@@ -895,11 +895,16 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				}
 				else if (TO_PLAYER(GetNextTarget())->GetSession() != NULL)
 				{
-					MovementInfo* mi=TO_PLAYER(GetNextTarget())->GetMovementInfo();
+					MovementInfo* mi = TO_PLAYER(GetNextTarget())->GetMovementInfo();
 
-					if ( mi != NULL && !(mi->flags & MOVEFLAG_FALLING) && !(mi->flags & MOVEFLAG_SWIMMING) && !(mi->flags & MOVEFLAG_LEVITATE))
-						HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
+					if ( mi != NULL && !(mi->flags & MOVEFLAG_REDIRECTED) && !(mi->flags & MOVEFLAG_FALLING) && !(mi->flags & MOVEFLAG_SWIMMING) && !(mi->flags & MOVEFLAG_LEVITATE))
+						if(TO_PLAYER(GetNextTarget())->m_FlyingAura || TO_PLAYER(GetNextTarget())->m_setflycheat)
+							HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
 				}
+			}
+			else if(fabs(GetNextTarget()->GetPositionZ() - target_land_z) > 100.0f) // Cliff or Netherstorm breaks.
+			{
+				HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
 			}
 		}
 	}
@@ -1968,11 +1973,6 @@ uint32 AIInterface::getMoveFlags()
 	{
 		m_runSpeed = m_Unit->m_runSpeed*0.001f;
 	}
-//	else
-//	{
-//		m_runSpeed = m_Unit->m_walkSpeed*0.001f;
-//		MoveFlags = 0x100;
-//	}
 	m_walkSpeed = m_Unit->m_walkSpeed*0.001f;//move distance per ms time 
 	return MoveFlags;
 }
@@ -2024,7 +2024,6 @@ void AIInterface::UpdateMove()
 		else
 		{
 			// Calculate the angle to our next position
-
 			float dx = (float)m_destinationX - m_Unit->GetPositionX();
 			float dy = (float)m_destinationY - m_Unit->GetPositionY();
 			if(dy != 0.0f)
@@ -2032,64 +2031,6 @@ void AIInterface::UpdateMove()
 				angle = atan2(dy, dx);
 				m_Unit->SetOrientation(angle);
 			}
-/*	Not to be used before we have some proper maps extracted with acurate water/landheights
-	Need some more work too I guess, lowzy water/landheigts mess it up for now.
-			// Check water/air levels when we have restricted movement.
-			if(creature->proto->CanMove != LIMIT_ANYWHERE )
-			{
-				// Use combat reach as lookahead distance
-				float c_reach_X = m_Unit->GetPositionX() + ( sin(angle) * c_reach ) ;
-				float c_reach_Y = m_Unit->GetPositionY() + ( sin(angle) * c_reach ) ;
-
-				// get the landheigt at look ahead distance
-				float lh = m_Unit->GetMapMgr()->GetLandHeight(c_reach_X, c_reach_Y);
-
-				// Only check flying when creature can't fly 
-				if( !creature->canFly() )
-				{
-					if( m_destinationZ > lh + 5.0f )
-					{
-						//Destination is not on ground anymore
-						HandleEvent(EVENT_LEAVECOMBAT, m_Unit, 0); //follow
-						DEBUG_LOG("MOVEMENT","Can't fly, leaving combat");
-						return;
-					}
-				}
-				else
-				{
-					//EnableFlight
-					if( m_destinationZ > lh + 5.0f )
-					{
-						m_moveFly = true;
-						m_Unit->EnableFlight();
-					}
-					else
-					{
-						m_moveFly = false;
-						m_Unit->DisableFlight();
-					}
-				}
-				// Only check swimming when creature can't swim
-				if( !creature->canSwim() )
-				{
-					// get the waterlevel at look ahead distance
-					float wl = m_Unit->GetMapMgr()->GetWaterHeight(c_reach_X, c_reach_Y);
-					if(	lh < wl - (0.75f * c_reach)) //75% is nose deep?
-					{
-						if(m_moveFly)
-						{
-							m_destinationZ = wl + 2.5f;
-							DEBUG_LOG("MOVEMENT","flying 2.5f above water");
-						}
-						else
-						{
-							DEBUG_LOG("MOVEMENT","Can't swim, leaving combat");
-							HandleEvent(EVENT_LEAVECOMBAT, m_Unit, 0); //follow
-							return;
-						}
-					}
-				}
-			}*/
 		}
 	}
 	SendMoveToPacket(m_destinationX, m_destinationY, m_destinationZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());

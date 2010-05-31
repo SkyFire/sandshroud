@@ -5973,7 +5973,6 @@ void Unit::EnableFlight()
 		data << uint32(2);
 		SendMessageToSet(&data, true);
 		TO_PLAYER(this)->z_axisposition = 0.0f;
-		TO_PLAYER(this)->delayedPackets.add( &data );
 		TO_PLAYER(this)->m_setflycheat = true;
 	}
 }
@@ -5995,9 +5994,8 @@ void Unit::DisableFlight()
 		WorldPacket data( SMSG_MOVE_UNSET_CAN_FLY, 13 );
 		data << GetNewGUID();
 		data << uint32(5);
-		SendMessageToSet(&data, false);
+		SendMessageToSet(&data, true);
 		TO_PLAYER(this)->z_axisposition = 0.0f;
-		TO_PLAYER(this)->delayedPackets.add( &data );
 		TO_PLAYER(this)->m_setflycheat = false;
 	}
 }

@@ -1049,7 +1049,7 @@ bool ChatHandler::HandleShowCheatsCommand(const char* args, WorldSession* m_sess
 
 bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 {
-	WorldPacket fly(835, 13);
+	WorldPacket fly(SMSG_MOVE_SET_CAN_FLY, 13);
 	
 	Player* chr = getSelectedChar(m_session);
 	
@@ -1066,7 +1066,7 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 
 bool ChatHandler::HandleLandCommand(const char* args, WorldSession* m_session)
 {
-	WorldPacket fly(836, 13);
+	WorldPacket fly(SMSG_MOVE_UNSET_CAN_FLY, 13);
 	
 	Player* chr = getSelectedChar(m_session);
 	

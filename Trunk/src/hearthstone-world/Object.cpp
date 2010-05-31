@@ -274,7 +274,7 @@ WorldPacket *Object::BuildFieldUpdatePacket( uint32 index,uint32 value)
 	*packet << (uint8)mBlocks;
 
 	for(uint32 dword_n=mBlocks-1;dword_n;dword_n--)
-	*packet <<(uint32)0;
+		*packet <<(uint32)0;
 
 	*packet <<(((uint32)(1))<<(index%32));
 	*packet << value;

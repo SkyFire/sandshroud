@@ -8005,6 +8005,12 @@ void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompre
 	while(delayedPackets.size())
 	{
 		pck = delayedPackets.next();
+		if(pck->GetOpcode() > NUM_MSG_TYPES || pck->size() > WORLDSOCKET_SENDBUF_SIZE)
+		{	// FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+			if(delayedPackets.size() == pck->size())
+				delayedPackets.empty();
+			continue;
+		}
 		//printf("Delayed packet opcode %u sent.\n", pck->GetOpcode());
 		m_session->SendPacket(pck);
 		delete pck;
@@ -8015,7 +8021,7 @@ void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompre
 	{
 		SetPlayerSpeed(RUN, m_runSpeed);
 		SetPlayerSpeed(FLY, m_flySpeed);
-		resend_speed=false;
+		resend_speed = false;
 	}
 }
 
