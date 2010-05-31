@@ -1,7 +1,9 @@
 Crow:
-Its a basic map extractor, except it extracts 1 map at a time.
-Needed in directory:
-Maps
-Vmaps
+Its a basic map extractor.
 
-Please note this doesn't completely work yet, and you have to compile shared of either debug or release of 32 bit first.
+Needed in directory:
+Grid Maps(Run adgrid.exe inside your wow directory)
+Vmaps
+A mmaps folder.
+
+Please note that it works, but only with the above things. It takes a long time to make mmaps.

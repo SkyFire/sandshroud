@@ -225,15 +225,10 @@ namespace VMAP
   ModelContainerView::generateMoveMapForTile (int pMapId, int x, int y)
   {
 	  bool result = iVMapManager.loadMap(gVMapDataDir.c_str(), pMapId, x, y) ? true : false;
-	  if(result)
-	  {
-		  //VMap loaded. Add data from vmap to global Triangle-Array
+	  if(result) //VMap loaded. Add data from vmap to global Triangle-Array
 		  parseVMap(pMapId, x, y);
-	  }
-	  else
-	  {
+	  else // No Vmap, return false.
 		  return false;
-	  }
 
 	  printf("Generating Map for Grid [%i][%i]\n", x,y);
         // Add data from Height-Map to global Triangle-Array
@@ -249,12 +244,11 @@ namespace VMAP
         AABox checkBox = AABox(low,high);
         AABox check;
         Triangle t;
-        //each triangle has mangos format.
-        for (int i = 0; i < globalTriangleArray.size(); i++)
+        for(int i = 0; i < globalTriangleArray.size(); i++)
 		{
             t = globalTriangleArray[i];
             t.getBounds(check);
-            if (checkBox.contains(check))
+            if(checkBox.contains(check))
 			{
                 // Write it down in detour format.
                 iGlobArray.append(t.vertex(0).y,t.vertex(0).z,t.vertex(0).x);
@@ -658,61 +652,71 @@ namespace VMAP
       //TODO: Fix this in general.
       //Here we need to load the GridMap from .map file. then generate vertex map from heigh points.
       GridMap mapArray[64][64]; //TODO: make smaller array and recalculate matching gridmap.
-      for (int x1 = x-1; x1 <= x+1; ++x1)
-        for (int y1 = y-1; y1 <= y+1; ++y1) {
-            mapArray[x1][y1] = GridMap();
-            char tmp[12];
-            sprintf(tmp, "%03u%02u%02u.map",pMapId,x1,y1);
-            std::string gmap =  gMapDataDir + "/" + tmp;
-            if (mapArray[x1][y1].loadData(gmap.c_str()))
-                printf("Loaded %s\n", gmap.c_str());
-        }
-    float x_min,y_min,x_max, y_max;
-    x_max = (32-x)*SIZE_OF_GRIDS + 50;
-    y_max = (32-y)*SIZE_OF_GRIDS + 50;
-    x_min = (32-x)*SIZE_OF_GRIDS - 533 - 50;
-    y_min = (32-y)*SIZE_OF_GRIDS - 533 - 50;
-    for (float x = x_min; x < x_max-2;x += 2)
-        for (float y = y_min; y < y_max-2;y += 2) {
-            int gx,gy;
-            // Here we need to add vertexes. so 3 Vector3 for each triangle.
-            // FIXME: This is overly efficient since we visit each vector3 multipletimes during loop.
-            gx = (int)(32 - x / SIZE_OF_GRIDS);
-            gy = (int)(32 - y / SIZE_OF_GRIDS);
-            float heightxy = mapArray[gx][gy].getHeight(x,y);
-            gx = (int)(32 - (x+2) / SIZE_OF_GRIDS);
-            float heightx1y = mapArray[gx][gy].getHeight(x+2,y);
-            gx = (int)(32 - x / SIZE_OF_GRIDS);
-            gy = (int)(32 - (y+2) / SIZE_OF_GRIDS);
-            float heightxy1 = mapArray[gx][gy].getHeight(x,y+2);
-            gx = (int)(32 - (x+2) / SIZE_OF_GRIDS);
-            float heightx1y1 = mapArray[gx][gy].getHeight(x+2,y+2);
-            Vector3 vector1(x,y,heightxy);
-            Vector3 vector2(x+2,y,heightx1y);
-            Vector3 vector3(x,y+2,heightxy1);
-            Vector3 vector4(x+2,y+2,heightx1y1);
-            /*
-             * vector1 ------ vector2
-             *   |     \     /    |
-             *   |      \   /     |
-             *   |       \ /      |
-             *   |        X       |
-             *   |       / \      |
-             *   |      /   \     |
-             *   |     /     \    |
-             * vector3 -------- vector4
-             */
+	  for (int x1 = x-1; x1 <= x+1; ++x1)
+	  {
+		  for (int y1 = y-1; y1 <= y+1; ++y1)
+		  {
+			  mapArray[x1][y1] = GridMap();
+			  char tmp[12];
+			  sprintf(tmp, "%03u%02u%02u.map",pMapId,x1,y1);
+			  std::string gmap =  gMapDataDir + "/" + tmp;
+			  if (mapArray[x1][y1].loadData(gmap.c_str()))
+				  printf("Loaded %s\n", gmap.c_str());
+			  else
+				  printf("Failed to load %s\n", gmap.c_str());
+		  }
+	  }
 
-            Triangle t1 = Triangle(vector1,vector4,vector3);
-            Triangle t2 = Triangle(vector1,vector2,vector4);
-            // Check if the center of this Triangle is deep under water. (here: 1 meter)
-            Vector3 center = t1.center();
-            if (mapArray[(int)(32 - center.x / SIZE_OF_GRIDS)][(int)(32 - center.y / SIZE_OF_GRIDS)].getLiquidLevel(center.x,center.y) < center.z - 1.f)
-                globalTriangleArray.append(t1);
-            center = t2.center();
-            if (mapArray[(int)(32 - center.x / SIZE_OF_GRIDS)][(int)(32 - center.y / SIZE_OF_GRIDS)].getLiquidLevel(center.x,center.y) < center.z - 1.f)
-                globalTriangleArray.append(t2);
-        }
+	  float x_min,y_min,x_max, y_max;
+	  x_max = (32-x)*SIZE_OF_GRIDS + 50;
+	  y_max = (32-y)*SIZE_OF_GRIDS + 50;
+	  x_min = (32-x)*SIZE_OF_GRIDS - 533 - 50;
+	  y_min = (32-y)*SIZE_OF_GRIDS - 533 - 50;
+	  for (float x = x_min; x < x_max-2;x += 2)
+	  {
+		  for (float y = y_min; y < y_max-2;y += 2)
+		  {
+			  int gx,gy;
+			  // Here we need to add vertexes. so 3 Vector3 for each triangle.
+			  // FIXME: This is overly efficient since we visit each vector3 multipletimes during loop.
+			  gx = (int)(32 - x / SIZE_OF_GRIDS);
+			  gy = (int)(32 - y / SIZE_OF_GRIDS);
+			  float heightxy = mapArray[gx][gy].getHeight(x,y);
+			  gx = (int)(32 - (x+2) / SIZE_OF_GRIDS);
+			  float heightx1y = mapArray[gx][gy].getHeight(x+2,y);
+			  gx = (int)(32 - x / SIZE_OF_GRIDS);
+			  gy = (int)(32 - (y+2) / SIZE_OF_GRIDS);
+			  float heightxy1 = mapArray[gx][gy].getHeight(x,y+2);
+			  gx = (int)(32 - (x+2) / SIZE_OF_GRIDS);
+			  float heightx1y1 = mapArray[gx][gy].getHeight(x+2,y+2);
+
+			  Vector3 vector1(x,y,heightxy);
+			  Vector3 vector2(x+2,y,heightx1y);
+			  Vector3 vector3(x,y+2,heightxy1);
+			  Vector3 vector4(x+2,y+2,heightx1y1);
+			  /*
+			   * vector1 ------ vector2
+			   *   |     \     /    |
+			   *   |      \   /     |
+			   *   |       \ /      |
+			   *   |        X       |
+			   *   |       / \      |
+			   *   |      /   \     |
+			   *   |     /     \    |
+			   * vector3 -------- vector4
+			   */
+
+			  Triangle t1 = Triangle(vector1,vector4,vector3);
+			  Triangle t2 = Triangle(vector1,vector2,vector4);
+			  // Check if the center of this Triangle is deep under water. (here: 1 meter)
+			  Vector3 center = t1.center();
+			  if (mapArray[(int)(32 - center.x / SIZE_OF_GRIDS)][(int)(32 - center.y / SIZE_OF_GRIDS)].getLiquidLevel(center.x,center.y) < center.z - 1.f)
+				  globalTriangleArray.append(t1);
+			  center = t2.center();
+			  if (mapArray[(int)(32 - center.x / SIZE_OF_GRIDS)][(int)(32 - center.y / SIZE_OF_GRIDS)].getLiquidLevel(center.x,center.y) < center.z - 1.f)
+				  globalTriangleArray.append(t2);
+		  }
+	  }
   }
 
   void
