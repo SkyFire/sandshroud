@@ -1,0 +1,1 @@
+ALTER TABLE `worldmap_info`  ADD COLUMN `pathfinding` INT(10) NOT NULL DEFAULT '0' AFTER `collision`;

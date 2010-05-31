@@ -257,6 +257,9 @@ public:
 	HEARTHSTONE_INLINE void SetCollision(bool enable) { collision = enable; }
 	HEARTHSTONE_INLINE bool IsCollisionEnabled() { return collision; }
 
+	HEARTHSTONE_INLINE void SetPathfinding(bool enable) { pathfinding = enable; }
+	HEARTHSTONE_INLINE bool IsPathfindingEnabled() { return (collision ? pathfinding : false); }
+
 	HEARTHSTONE_INLINE MapScriptInterface * GetInterface() { return ScriptInterface; }
 	virtual int32 event_GetInstanceID() { return m_instanceID; }
 
@@ -327,6 +330,7 @@ public:
 private:
 	/* Map Information */
 	bool collision;
+	bool pathfinding;
 	MapInfo *pMapInfo;
 	uint32 m_instanceID;
 

@@ -221,8 +221,7 @@ namespace VMAP
    * Tries to load vmap and tilemap for a gridtile and creates a navmesh for it.
    *
    */
-  bool
-  ModelContainerView::generateMoveMapForTile (int pMapId, int x, int y)
+  bool ModelContainerView::generateMoveMapForTile (int pMapId, int x, int y)
   {
 	  bool result = iVMapManager.loadMap(gVMapDataDir.c_str(), pMapId, x, y) ? true : false;
 	  if(result) //VMap loaded. Add data from vmap to global Triangle-Array
@@ -231,348 +230,348 @@ namespace VMAP
 		  return false;
 
 	  printf("Generating Map for Grid [%i][%i]\n", x,y);
-        // Add data from Height-Map to global Triangle-Array
-        generateHeightMap(pMapId,x,y);
-        // We will now add all triangles inside the given zone to the vectormap.
-        // We could also do additional checks here.
-        double x_max = (32-x)*SIZE_OF_GRIDS + 50;
-        double y_max = (32-y)*SIZE_OF_GRIDS + 50;
-        double x_min = x_max - SIZE_OF_GRIDS - 100;
-        double y_min = y_max - SIZE_OF_GRIDS - 100;
-        Vector3 low = Vector3(x_min,y_min,-inf());
-        Vector3 high = Vector3(x_max,y_max,inf());
-        AABox checkBox = AABox(low,high);
-        AABox check;
-        Triangle t;
-        for(int i = 0; i < globalTriangleArray.size(); i++)
-		{
-            t = globalTriangleArray[i];
-            t.getBounds(check);
-            if(checkBox.contains(check))
-			{
-                // Write it down in detour format.
-                iGlobArray.append(t.vertex(0).y,t.vertex(0).z,t.vertex(0).x);
-                iGlobArray.append(t.vertex(1).y,t.vertex(1).z,t.vertex(1).x);
-                iGlobArray.append(t.vertex(2).y,t.vertex(2).z,t.vertex(2).x);
-            }
-        }
-		bool size = true;
-        if (iGlobArray.size() == 0)
-		{
-            printf("No models found on m_map[%u][%u][%u]\n", pMapId, x, y);
-            return true;
-        }
+	  // Add data from Height-Map to global Triangle-Array
+	  generateHeightMap(pMapId,x,y);
+	  // We will now add all triangles inside the given zone to the vectormap.
+	  // We could also do additional checks here.
+	  double x_max = (32-x)*SIZE_OF_GRIDS + 50;
+	  double y_max = (32-y)*SIZE_OF_GRIDS + 50;
+	  double x_min = x_max - SIZE_OF_GRIDS - 100;
+	  double y_min = y_max - SIZE_OF_GRIDS - 100;
+	  Vector3 low = Vector3(x_min,y_min,-inf());
+	  Vector3 high = Vector3(x_max,y_max,inf());
+	  AABox checkBox = AABox(low,high);
+	  AABox check;
+	  Triangle t;
+	  for(int i = 0; i < globalTriangleArray.size(); i++)
+	  {
+		  t = globalTriangleArray[i];
+		  t.getBounds(check);
+		  if(checkBox.contains(check))
+		  {
+			  // Write it down in detour format.
+			  iGlobArray.append(t.vertex(0).y,t.vertex(0).z,t.vertex(0).x);
+			  iGlobArray.append(t.vertex(1).y,t.vertex(1).z,t.vertex(1).x);
+			  iGlobArray.append(t.vertex(2).y,t.vertex(2).z,t.vertex(2).x);
+		  }
+	  }
+	  if (iGlobArray.size() == 0)
+	  {
+		  printf("No models found on m_map[%u][%u][%u]\n", pMapId, x, y);
+		  return true;
+	  }
 
-        if(gMakeObjFile)
-            debugGenerateObjFile(); // create obj file for Recast Demo viewer
+	  if(gMakeObjFile)
+		  debugGenerateObjFile(); // create obj file for Recast Demo viewer
 
-        //return true;
-        float bmin[3], bmax[3];
-        /*
-         * The format looks like this
-         * Verticle = float[3]
-         * Triangle = Verticle[3]
-         * So there are
-         * array.size() floats
-         * that means there are
-         * nverts = array.size()/3 Verticles
-         * that means there are
-         * ntris = nverts/3
-         */
-         //array/3 verticles
-        const int nverts = iGlobArray.size()/3; // because 1 vert is 3 float.
-        // -> vert = float[3]
-        const float* verts = iGlobArray.getCArray();
-        rcCalcBounds(verts,nverts,bmin,bmax);
-        // nverts/3 triangles
-        // -> Triangle = vert[3] = float[9]
-        int* tris = new int[nverts];// because 1 triangle is 3 verts
-        for (int i = 0; i< nverts; i++)
-            tris[i] = i;
-        /* tris[i] = 1,2,3;4,5,6;7,8,9;
-         *
-         */
-        const int ntris = (nverts/3);
-	rcConfig m_cfg;
-	//
-	// Step 1. Initialize build config.
-	//
+	  float bmin[3], bmax[3];
+	  /*
+	   * The format looks like this
+	   * Verticle = float[3]
+	   * Triangle = Verticle[3]
+	   * So there are
+	   * array.size() floats
+	   * that means there are
+	   * nverts = array.size()/3 Verticles
+	   * that means there are
+	   * ntris = nverts/3
+	   */
+	  //array/3 verticles
+	  const int nverts = iGlobArray.size()/3; // because 1 vert is 3 float.
+	  // -> vert = float[3]
+	  const float* verts = iGlobArray.getCArray();
+	  rcCalcBounds(verts,nverts,bmin,bmax);
+	  // nverts/3 triangles
+	  // -> Triangle = vert[3] = float[9]
+	  int* tris = new int[nverts];// because 1 triangle is 3 verts
+	  for (int i = 0; i < nverts; ++i)
+	  {
+		  /* tris[i] = 1,2,3;4,5,6;7,8,9;
+		  *
+		  */
+		  tris[i] = i;
+	  }
+	  const int ntris = (nverts/3);
+	  rcConfig m_cfg;
+	  //
+	  // Step 1. Initialize build config.
+	  //
 
-	// Init build configuration from GUI
-	memset(&m_cfg, 0, sizeof(m_cfg));
-        // Change config settings here!
-	m_cfg.cs = 0.3f;
-	m_cfg.ch = 0.2f;
-	m_cfg.walkableSlopeAngle = 50.0f;
-	m_cfg.walkableHeight = 10;
-	m_cfg.walkableClimb = 4;
-	m_cfg.walkableRadius = 2;
-	m_cfg.maxEdgeLen = (int)(12 / 0.3f);
-	m_cfg.maxSimplificationError = 1.3f;
-	m_cfg.minRegionSize = (int)rcSqr(50);
-	m_cfg.mergeRegionSize = (int)rcSqr(20);
-	m_cfg.maxVertsPerPoly = (int)6;
-	m_cfg.detailSampleDist = 1.8f;
-	m_cfg.detailSampleMaxError = 0.2f * 1;
-        bool m_keepInterResults = false;
-        printf("CellSize        : %.2f\n",m_cfg.cs);
-        printf("CellHeight      : %.2f\n",m_cfg.ch);
-        printf("WalkableSlope   : %.2f\n",m_cfg.walkableSlopeAngle);
-        printf("WalkableHeight  : %i\n",m_cfg.walkableHeight);
-        printf("walkableClimb   : %i\n",m_cfg.walkableClimb);
-        printf("walkableRadius  : %i\n",m_cfg.walkableRadius);
-        printf("maxEdgeLen      : %i\n",m_cfg.maxEdgeLen);
-        printf("maxSimplific.Er.: %.2f\n",m_cfg.maxSimplificationError);
-        printf("minRegionSize   : %i\n",m_cfg.minRegionSize);
-        printf("mergedRegSize   : %i\n",m_cfg.mergeRegionSize);
-        printf("maxVertsPerPoly : %i\n",m_cfg.maxVertsPerPoly);
-        printf("detailSampledist: %.2f\n",m_cfg.detailSampleDist);
-        printf("det.Samp.max.err: %.2f\n",m_cfg.detailSampleMaxError);
-	// Set the area where the navigation will be build.
-	// Here the bounds of the input mesh are used, but the
-	// area could be specified by an user defined box, etc.
-	vcopy(m_cfg.bmin, bmin);
-	vcopy(m_cfg.bmax, bmax);
-	rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
+	  // Init build configuration from GUI
+	  memset(&m_cfg, 0, sizeof(m_cfg));
+	  // Change config settings here!
+	  m_cfg.cs = 0.3f;
+	  m_cfg.ch = 0.2f;
+	  m_cfg.walkableSlopeAngle = 50.0f;
+	  m_cfg.walkableHeight = 10;
+	  m_cfg.walkableClimb = 4;
+	  m_cfg.walkableRadius = 2;
+	  m_cfg.maxEdgeLen = (int)(12 / 0.3f);
+	  m_cfg.maxSimplificationError = 1.3f;
+	  m_cfg.minRegionSize = (int)rcSqr(50);
+	  m_cfg.mergeRegionSize = (int)rcSqr(20);
+	  m_cfg.maxVertsPerPoly = (int)6;
+	  m_cfg.detailSampleDist = 1.8f;
+	  m_cfg.detailSampleMaxError = 0.2f * 1;
+	  bool m_keepInterResults = false;
+	  printf("CellSize        : %.2f\n",m_cfg.cs);
+	  printf("CellHeight      : %.2f\n",m_cfg.ch);
+	  printf("WalkableSlope   : %.2f\n",m_cfg.walkableSlopeAngle);
+	  printf("WalkableHeight  : %i\n",m_cfg.walkableHeight);
+	  printf("walkableClimb   : %i\n",m_cfg.walkableClimb);
+	  printf("walkableRadius  : %i\n",m_cfg.walkableRadius);
+	  printf("maxEdgeLen      : %i\n",m_cfg.maxEdgeLen);
+	  printf("maxSimplific.Er.: %.2f\n",m_cfg.maxSimplificationError);
+	  printf("minRegionSize   : %i\n",m_cfg.minRegionSize);
+	  printf("mergedRegSize   : %i\n",m_cfg.mergeRegionSize);
+	  printf("maxVertsPerPoly : %i\n",m_cfg.maxVertsPerPoly);
+	  printf("detailSampledist: %.2f\n",m_cfg.detailSampleDist);
+	  printf("det.Samp.max.err: %.2f\n",m_cfg.detailSampleMaxError);
+	  // Set the area where the navigation will be build.
+	  // Here the bounds of the input mesh are used, but the
+	  // area could be specified by an user defined box, etc.
+	  vcopy(m_cfg.bmin, bmin);
+	  vcopy(m_cfg.bmax, bmax);
+	  rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
 
-	//
-	// Step 2. Rasterize input polygon soup.
-	//
+	  //
+	  // Step 2. Rasterize input polygon soup.
+	  //
 
-	// Allocate voxel heighfield where we rasterize our input data to.
-	rcHeightfield* m_solid = new rcHeightfield;
-	if (!m_solid)
-	{
-		printf("buildNavigation: Out of memory 'solid'.\n");
-		return false;
-	}
-	if (!rcCreateHeightfield(*m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch))
-	{
-		printf("buildNavigation: Could not create solid heightfield.\n");
-		return false;
-	}
+	  // Allocate voxel heighfield where we rasterize our input data to.
+	  rcHeightfield* m_solid = new rcHeightfield;
+	  if (!m_solid)
+	  {
+		  printf("buildNavigation: Out of memory 'solid'.\n");
+		  return false;
+	  }
+	  if (!rcCreateHeightfield(*m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch))
+	  {
+		  printf("buildNavigation: Could not create solid heightfield.\n");
+		  return false;
+	  }
 
-	// Allocate array that can hold triangle flags.
-	// If you have multiple meshes you need to process, allocate
-	// and array which can hold the max number of triangles you need to process.
-	unsigned char* m_triflags = new unsigned char[ntris];
-	if (!m_triflags)
-	{
-		printf("buildNavigation: Out of memory 'triangleFlags' (%d).\n", ntris);
-		return false;
-	}
+	  // Allocate array that can hold triangle flags.
+	  // If you have multiple meshes you need to process, allocate
+	  // and array which can hold the max number of triangles you need to process.
+	  unsigned char* m_triflags = new unsigned char[ntris];
+	  if (!m_triflags)
+	  {
+		  printf("buildNavigation: Out of memory 'triangleFlags' (%d).\n", ntris);
+		  return false;
+	  }
 
-	// Find triangles which are walkable based on their slope and rasterize them.
-	// If your input data is multiple meshes, you can transform them here, calculate
-	// the flags for each of the meshes and rasterize them.
-	memset(m_triflags, 0, ntris*sizeof(unsigned char));
-	rcMarkWalkableTriangles(m_cfg.walkableSlopeAngle, verts, nverts, tris, ntris, m_triflags);
-	rcRasterizeTriangles(verts, nverts, tris, m_triflags, ntris, *m_solid, m_cfg.walkableClimb);
+	  // Find triangles which are walkable based on their slope and rasterize them.
+	  // If your input data is multiple meshes, you can transform them here, calculate
+	  // the flags for each of the meshes and rasterize them.
+	  memset(m_triflags, 0, ntris*sizeof(unsigned char));
+	  rcMarkWalkableTriangles(m_cfg.walkableSlopeAngle, verts, nverts, tris, ntris, m_triflags);
+	  rcRasterizeTriangles(verts, nverts, tris, m_triflags, ntris, *m_solid, m_cfg.walkableClimb);
 
-    // should delete [] verts?  - probably not, this is just pointer to data in a G3D Array
-    // should delete [] tris?
+	  // should delete [] verts?  - probably not, this is just pointer to data in a G3D Array
+	  // should delete [] tris?
 
-	if (!m_keepInterResults)
-	{
-		delete [] m_triflags;
-		m_triflags = 0;
-	}
+	  if (!m_keepInterResults)
+	  {
+		  delete [] m_triflags;
+		  m_triflags = 0;
+	  }
 
-	//
-	// Step 3. Filter walkables surfaces.
-	//
+	  //
+	  // Step 3. Filter walkables surfaces.
+	  //
 
-	// Once all geoemtry is rasterized, we do initial pass of filtering to
-	// remove unwanted overhangs caused by the conservative rasterization
-	// as well as filter spans where the character cannot possibly stand.
-	rcFilterLowHangingWalkableObstacles(m_cfg.walkableClimb, *m_solid);
-	rcFilterLedgeSpans(m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
-	rcFilterWalkableLowHeightSpans(m_cfg.walkableHeight, *m_solid);
+	  // Once all geoemtry is rasterized, we do initial pass of filtering to
+	  // remove unwanted overhangs caused by the conservative rasterization
+	  // as well as filter spans where the character cannot possibly stand.
+	  rcFilterLowHangingWalkableObstacles(m_cfg.walkableClimb, *m_solid);
+	  rcFilterLedgeSpans(m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
+	  rcFilterWalkableLowHeightSpans(m_cfg.walkableHeight, *m_solid);
 
+	  //
+	  // Step 4. Partition walkable surface to simple regions.
+	  //
 
-	//
-	// Step 4. Partition walkable surface to simple regions.
-	//
+	  // Compact the heightfield so that it is faster to handle from now on.
+	  // This will result more cache coherent data as well as the neighbours
+	  // between walkable cells will be calculated.
+	  rcCompactHeightfield* m_chf = new rcCompactHeightfield;
+	  if (!m_chf)
+	  {
+		  printf("buildNavigation: Out of memory 'chf'.\n");
+		  return false;
+	  }
 
-	// Compact the heightfield so that it is faster to handle from now on.
-	// This will result more cache coherent data as well as the neighbours
-	// between walkable cells will be calculated.
-	rcCompactHeightfield* m_chf = new rcCompactHeightfield;
-	if (!m_chf)
-	{
-		printf("buildNavigation: Out of memory 'chf'.\n");
-		return false;
-	}
-	if (!rcBuildCompactHeightfield(m_cfg.walkableHeight, m_cfg.walkableClimb, RC_WALKABLE, *m_solid, *m_chf))
-	{
-		printf( "buildNavigation: Could not build compact data.\n");
-		return false;
-	}
+	  if (!rcBuildCompactHeightfield(m_cfg.walkableHeight, m_cfg.walkableClimb, RC_WALKABLE, *m_solid, *m_chf))
+	  {
+		  printf( "buildNavigation: Could not build compact data.\n");
+		  return false;
+	  }
 
-	if (!m_keepInterResults)
-	{
-		delete m_solid;
-		m_solid = 0;
-	}
+	  if (!m_keepInterResults)
+	  {
+		  delete m_solid;
+		  m_solid = 0;
+	  }
 
-	// Erode the walkable area by agent radius.
-	if (!rcErodeArea(RC_WALKABLE_AREA, m_cfg.walkableRadius, *m_chf))
-	{
-		printf("buildNavigation: Could not erode.\n");
-		return false;
-	}
+	  // Erode the walkable area by agent radius.
+	  if (!rcErodeArea(RC_WALKABLE_AREA, m_cfg.walkableRadius, *m_chf))
+	  {
+		  printf("buildNavigation: Could not erode.\n");
+		  return false;
+	  }
 
-	// (Optional) Mark areas.
-	//const ConvexVolume* vols = m_geom->getConvexVolumes();
-	//for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
-	//	rcMarkConvexPolyArea(vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
+	  // (Optional) Mark areas.
+	  //const ConvexVolume* vols = m_geom->getConvexVolumes();
+	  //for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
+	  //	rcMarkConvexPolyArea(vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
 
-	// Prepare for region partitioning, by calculating distance field along the walkable surface.
-	if (!rcBuildDistanceField(*m_chf))
-	{
-		printf("buildNavigation: Could not build distance field.\n");
-		return false;
-	}
+	  // Prepare for region partitioning, by calculating distance field along the walkable surface.
+	  if (!rcBuildDistanceField(*m_chf))
+	  {
+		  printf("buildNavigation: Could not build distance field.\n");
+		  return false;
+	  }
 
-	// Partition the walkable surface into simple regions without holes.
-	if (!rcBuildRegions(*m_chf, m_cfg.borderSize, m_cfg.minRegionSize, m_cfg.mergeRegionSize))
-	{
-		printf("buildNavigation: Could not build regions.\n");
-	}
+	  // Partition the walkable surface into simple regions without holes.
+	  if (!rcBuildRegions(*m_chf, m_cfg.borderSize, m_cfg.minRegionSize, m_cfg.mergeRegionSize))
+	  {   // This is slow.
+		  printf("buildNavigation: Could not build regions.\n");
+	  }
 
-	//
-	// Step 5. Trace and simplify region contours.
-	//
+	  //
+	  // Step 5. Trace and simplify region contours.
+	  //
 
-	// Create contours.
-	rcContourSet* m_cset = new rcContourSet;
-	if (!m_cset)
-	{
-		printf("buildNavigation: Out of memory 'cset'.\n");
-		return false;
-	}
-	if (!rcBuildContours(*m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
-	{
-		printf("buildNavigation: Could not create contours.\n");
-		return false;
-	}
+	  // Create contours.
+	  rcContourSet* m_cset = new rcContourSet;
+	  if (!m_cset)
+	  {
+		  printf("buildNavigation: Out of memory 'cset'.\n");
+		  return false;
+	  }
+	  if (!rcBuildContours(*m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
+	  {
+		  printf("buildNavigation: Could not create contours.\n");
+		  return false;
+	  }
 
-	//
-	// Step 6. Build polygons mesh from contours.
-	//
+	  //
+	  // Step 6. Build polygons mesh from contours.
+	  //
 
-	// Build polygon navmesh from the contours.
-	rcPolyMesh* m_pmesh = new rcPolyMesh;
-	if (!m_pmesh)
-	{
-		printf("buildNavigation: Out of memory 'pmesh'.\n");
-		return false;
-	}
-	if (!rcBuildPolyMesh(*m_cset, m_cfg.maxVertsPerPoly, *m_pmesh))
-	{
-		printf( "buildNavigation: Could not triangulate contours.\n");
-		return false;
-	}
+	  // Build polygon navmesh from the contours.
+	  rcPolyMesh* m_pmesh = new rcPolyMesh;
+	  if (!m_pmesh)
+	  {
+		  printf("buildNavigation: Out of memory 'pmesh'.\n");
+		  return false;
+	  }
+	  if (!rcBuildPolyMesh(*m_cset, m_cfg.maxVertsPerPoly, *m_pmesh))
+	  {
+		  printf( "buildNavigation: Could not triangulate contours.\n");
+		  return false;
+	  }
 
-	//
-	// Step 7. Create detail mesh which allows to access approximate height on each polygon.
-	//
+	  //
+	  // Step 7. Create detail mesh which allows to access approximate height on each polygon.
+	  //
 
-	rcPolyMeshDetail* m_dmesh = new rcPolyMeshDetail;
-	if (!m_dmesh)
-	{
-		printf("buildNavigation: Out of memory 'pmdtl'.\n");
-		return false;
-	}
+	  rcPolyMeshDetail* m_dmesh = new rcPolyMeshDetail;
+	  if (!m_dmesh)
+	  {
+		  printf("buildNavigation: Out of memory 'pmdtl'.\n");
+		  return false;
+	  }
 
-	if (!rcBuildPolyMeshDetail(*m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh))
-	{
-		printf("buildNavigation: Could not build detail mesh.\n");
-	}
+	  if (!rcBuildPolyMeshDetail(*m_pmesh, *m_chf, m_cfg.detailSampleDist, m_cfg.detailSampleMaxError, *m_dmesh))
+	  {
+		  printf("buildNavigation: Could not build detail mesh.\n");
+	  }
 
-	if (!m_keepInterResults)
-	{
-		delete m_chf;
-		m_chf = 0;
-		delete m_cset;
-		m_cset = 0;
-	}
+	  if (!m_keepInterResults)
+	  {
+		  delete m_chf;
+		  m_chf = 0;
+		  delete m_cset;
+		  m_cset = 0;
+	  }
 
-	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
-	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
+	  // At this point the navigation mesh data is ready, you can access it from m_pmesh.
+	  // See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 
-	//
-	// (Optional) Step 8. Create Detour data from Recast poly mesh.
-	//
+	  //
+	  // (Optional) Step 8. Create Detour data from Recast poly mesh.
+	  //
 
-	// The GUI may allow more max points per polygon than Detour can handle.
-	// Only build the detour navmesh if we do not exceed the limit.
-	if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
-	{
-		unsigned char* navData = 0;
-		int navDataSize = 0;
-                // Update poly flags from areas.
-		for (int i = 0; i < m_pmesh->npolys; ++i)
-		{
-                    // for now all generated navmesh is walkable by everyone.
-                    // else there will be no pathfinding at all!
-                    m_pmesh->flags[i] = RC_WALKABLE_AREA;
-		}
+	  // The GUI may allow more max points per polygon than Detour can handle.
+	  // Only build the detour navmesh if we do not exceed the limit.
+	  if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
+	  {
+		  unsigned char* navData = 0;
+		  int navDataSize = 0;
+		  // Update poly flags from areas.
+		  for (int i = 0; i < m_pmesh->npolys; ++i)
+		  {
+			  // for now all generated navmesh is walkable by everyone.
+			  // else there will be no pathfinding at all!
+			  m_pmesh->flags[i] = RC_WALKABLE_AREA;
+		  }
 
-		dtNavMeshCreateParams params;
-		memset(&params, 0, sizeof(params));
-		params.verts = m_pmesh->verts;
-		params.vertCount = m_pmesh->nverts;
-		params.polys = m_pmesh->polys;
-		params.polyAreas = m_pmesh->areas;
-		params.polyFlags = m_pmesh->flags;
-		params.polyCount = m_pmesh->npolys;
-		params.nvp = m_pmesh->nvp;
-		params.detailMeshes = m_dmesh->meshes;
-		params.detailVerts = m_dmesh->verts;
-		params.detailVertsCount = m_dmesh->nverts;
-		params.detailTris = m_dmesh->tris;
-		params.detailTriCount = m_dmesh->ntris;
-		params.offMeshConVerts = 0;
-		params.offMeshConRad = 0;
-		params.offMeshConDir = 0;
-		params.offMeshConAreas = 0;
-		params.offMeshConFlags = 0;
-		params.offMeshConCount = 0;
-		params.walkableHeight = 2.0f;
-		params.walkableRadius = 0.6f;
-		params.walkableClimb = 0.9f;
-		vcopy(params.bmin, m_pmesh->bmin);
-		vcopy(params.bmax, m_pmesh->bmax);
-		params.cs = m_cfg.cs;
-		params.ch = m_cfg.ch;
-		printf("vertcount       : %05u\n",params.vertCount);
-                printf("polycount       : %05u\n",params.polyCount);
-                printf("detailVertsCount: %05u\n",params.detailVertsCount);
-                printf("detailTriCount  : %05u\n",params.detailTriCount);
-                printf("walkableClimb   : %.2f\n",params.walkableClimb);
-                printf("walkableRadius  : %.2f\n",params.walkableRadius);
-                printf("walkableHeight  : %.2f\n",params.walkableHeight);
-		if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
-		{
-			printf("Could not build Detour navmesh.\n");
-			return false;
-		}
-                // navData now contains the MoveMap
-                printf("Generated Navigation Mesh! Size: %i bytes/ %i kB / %i MB\n",navDataSize,navDataSize/1024,navDataSize/(1024*1024));
-                char tmp[14];
-                sprintf(tmp, "%03u%02u%02u.mmap",iMap,ix,iy);
-                std::string savefilepath = gMMapDataDir + "/" + tmp;
-                ofstream inf( savefilepath.c_str(),ofstream::binary );
-                if( inf )
-                {
-                        inf.write( (char*)( &navData[0] ), navDataSize ) ;
-                }
-                printf("MoveMap saved under %s\n", savefilepath.c_str());
-                delete [] navData;
-        }
-       // debugLoadNavMesh();
-        return (result);
+		  dtNavMeshCreateParams params;
+		  memset(&params, 0, sizeof(params));
+		  params.verts = m_pmesh->verts;
+		  params.vertCount = m_pmesh->nverts;
+		  params.polys = m_pmesh->polys;
+		  params.polyAreas = m_pmesh->areas;
+		  params.polyFlags = m_pmesh->flags;
+		  params.polyCount = m_pmesh->npolys;
+		  params.nvp = m_pmesh->nvp;
+		  params.detailMeshes = m_dmesh->meshes;
+		  params.detailVerts = m_dmesh->verts;
+		  params.detailVertsCount = m_dmesh->nverts;
+		  params.detailTris = m_dmesh->tris;
+		  params.detailTriCount = m_dmesh->ntris;
+		  params.offMeshConVerts = 0;
+		  params.offMeshConRad = 0;
+		  params.offMeshConDir = 0;
+		  params.offMeshConAreas = 0;
+		  params.offMeshConFlags = 0;
+		  params.offMeshConCount = 0;
+		  params.walkableHeight = 2.0f;
+		  params.walkableRadius = 0.6f;
+		  params.walkableClimb = 0.9f;
+		  vcopy(params.bmin, m_pmesh->bmin);
+		  vcopy(params.bmax, m_pmesh->bmax);
+		  params.cs = m_cfg.cs;
+		  params.ch = m_cfg.ch;
+		  printf("vertcount       : %05u\n",params.vertCount);
+		  printf("polycount       : %05u\n",params.polyCount);
+		  printf("detailVertsCount: %05u\n",params.detailVertsCount);
+		  printf("detailTriCount  : %05u\n",params.detailTriCount);
+		  printf("walkableClimb   : %.2f\n",params.walkableClimb);
+		  printf("walkableRadius  : %.2f\n",params.walkableRadius);
+		  printf("walkableHeight  : %.2f\n",params.walkableHeight);
+		  if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+		  {
+			  printf("Could not build Detour navmesh.\n");
+			  return false;
+		  }
+
+		  // navData now contains the MoveMap
+		  printf("Generated Navigation Mesh! Size: %i bytes/ %i kB / %i MB\n",navDataSize,navDataSize/1024,navDataSize/(1024*1024));
+		  char tmp[14];
+		  sprintf(tmp, "%03u%02u%02u.mmap",iMap,ix,iy);
+		  std::string savefilepath = gMMapDataDir + "/" + tmp;
+		  ofstream inf( savefilepath.c_str(),ofstream::binary );
+		  if( inf )
+		  {
+			  inf.write( (char*)( &navData[0] ), navDataSize );
+		  }
+		  printf("MoveMap saved under %s\n", savefilepath.c_str());
+		  delete [] navData;
+	  }
+	  return (result);
   }
 
   void ModelContainerView::debugLoadNavMesh()

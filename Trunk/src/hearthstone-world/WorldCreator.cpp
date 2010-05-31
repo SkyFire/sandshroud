@@ -534,14 +534,20 @@ MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 				if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapid, x, y))
 				{
 					collisionloaded = true;
-					if(sWorld.UseMmaps)
+					if(ret->IsPathfindingEnabled())
 						if(ret->LoadNavMesh(x, y))
 							mmapsloaded = true;
 				}
 			}
 		}
 		Log.Notice("CollisionMgr", "Map %03u Collision loaded %s!", mapid, (collisionloaded == true ? "Successfully" : "Unsuccessfully"));
-		Log.Notice("NavmeshMgr", "Map %03u Navmesh loaded %s!", mapid, (mmapsloaded == true ? "Successfully" : "Unsuccessfully"));
+		if(collisionloaded != true)
+			ret->SetCollision(false);
+
+		if(ret->IsPathfindingEnabled())
+			Log.Notice("NavmeshMgr", "Map %03u Navmesh loaded %s!", mapid, (mmapsloaded == true ? "Successfully" : "Unsuccessfully"));
+		if(mmapsloaded == false)
+			ret->SetPathfinding(false);
 	}
 	return ret;
 }

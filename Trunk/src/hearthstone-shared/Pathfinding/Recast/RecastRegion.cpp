@@ -1145,8 +1145,7 @@ bool rcBuildRegionsMonotone(rcCompactHeightfield& chf,
 	return true;
 }
 
-bool rcBuildRegions(rcCompactHeightfield& chf,
-					int borderSize, int minRegionSize, int mergeRegionSize)
+bool rcBuildRegions(rcCompactHeightfield& chf, int borderSize, int minRegionSize, int mergeRegionSize)
 {
 	rcTimeVal startTime = rcGetPerformanceTimer();
 	
@@ -1171,7 +1170,7 @@ bool rcBuildRegions(rcCompactHeightfield& chf,
 			rcGetLog()->log(RC_LOG_ERROR, "rcBuildRegions: Out of memory 'tmp' (%d).", chf.spanCount*4);
 		return false;
 	}
-	
+
 	rcTimeVal regStartTime = rcGetPerformanceTimer();
 	
 	rcIntArray stack(1024);
@@ -1181,10 +1180,10 @@ bool rcBuildRegions(rcCompactHeightfield& chf,
 	unsigned short* srcDist = tmp+chf.spanCount;
 	unsigned short* dstReg = tmp+chf.spanCount*2;
 	unsigned short* dstDist = tmp+chf.spanCount*3;
-	
+
 	memset(srcReg, 0, sizeof(unsigned short)*chf.spanCount);
 	memset(srcDist, 0, sizeof(unsigned short)*chf.spanCount);
-	
+
 	unsigned short regionId = 1;
 	unsigned short level = (chf.maxDistance+1) & ~1;
 
@@ -1202,24 +1201,24 @@ bool rcBuildRegions(rcCompactHeightfield& chf,
 
 	rcTimeVal expTime = 0;
 	rcTimeVal floodTime = 0;
-	
+	rcTimeVal expStartTime = 0;
+	rcTimeVal floodStartTime = 0;
+
 	while (level > 0)
 	{
 		level = level >= 2 ? level-2 : 0;
-		
-		rcTimeVal expStartTime = rcGetPerformanceTimer();
-		
+		expStartTime = rcGetPerformanceTimer();
+
 		// Expand current regions until no empty connected cells found.
 		if (expandRegions(expandIters, level, chf, srcReg, srcDist, dstReg, dstDist, stack) != srcReg)
 		{
 			rcSwap(srcReg, dstReg);
 			rcSwap(srcDist, dstDist);
 		}
-		
+
 		expTime += rcGetPerformanceTimer() - expStartTime;
-		
-		rcTimeVal floodStartTime = rcGetPerformanceTimer();
-		
+		floodStartTime = rcGetPerformanceTimer();
+
 		// Mark new regions with IDs.
 		for (int y = 0; y < h; ++y)
 		{
@@ -1230,17 +1229,16 @@ bool rcBuildRegions(rcCompactHeightfield& chf,
 				{
 					if (chf.dist[i] < level || srcReg[i] != 0 || chf.areas[i] == RC_NULL_AREA)
 						continue;
-					
+
 					if (floodRegion(x, y, i, level, regionId, chf, srcReg, srcDist, stack))
 						regionId++;
 				}
 			}
 		}
-		
+
 		floodTime += rcGetPerformanceTimer() - floodStartTime;
-		
 	}
-	
+
 	// Expand current regions until no empty connected cells found.
 	if (expandRegions(expandIters*8, 0, chf, srcReg, srcDist, dstReg, dstDist, stack) != srcReg)
 	{
@@ -1263,16 +1261,7 @@ bool rcBuildRegions(rcCompactHeightfield& chf,
 	memcpy(chf.regs, srcReg, sizeof(unsigned short)*chf.spanCount);
 	
 	rcTimeVal endTime = rcGetPerformanceTimer();
-	
-/*	if (rcGetLog())
-	{
-		rcGetLog()->log(RC_LOG_PROGRESS, "Build regions: %.3f ms", rcGetDeltaTimeUsec(startTime, endTime)/1000.0f);
-		rcGetLog()->log(RC_LOG_PROGRESS, " - reg: %.3f ms", rcGetDeltaTimeUsec(regStartTime, regEndTime)/1000.0f);
-		rcGetLog()->log(RC_LOG_PROGRESS, " - exp: %.3f ms", rcGetDeltaTimeUsec(0, expTime)/1000.0f);
-		rcGetLog()->log(RC_LOG_PROGRESS, " - flood: %.3f ms", rcGetDeltaTimeUsec(0, floodTime)/1000.0f);
-		rcGetLog()->log(RC_LOG_PROGRESS, " - filter: %.3f ms", rcGetDeltaTimeUsec(filterStartTime, filterEndTime)/1000.0f);
-	}
-*/
+
 	if (rcGetBuildTimes())
 	{
 		rcGetBuildTimes()->buildRegions += rcGetDeltaTimeUsec(startTime, endTime);
@@ -1281,7 +1270,7 @@ bool rcBuildRegions(rcCompactHeightfield& chf,
 		rcGetBuildTimes()->buildRegionsFlood += rcGetDeltaTimeUsec(0, floodTime);
 		rcGetBuildTimes()->buildRegionsFilter += rcGetDeltaTimeUsec(filterStartTime, filterEndTime);
 	}
-		
+
 	return true;
 }
 
