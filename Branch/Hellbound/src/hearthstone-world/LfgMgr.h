@@ -28,7 +28,8 @@ enum LFGTypes
 	LFG_ANY_DUNGEON          = 6,
 	LFG_ANY_HEROIC_DUNGEON   = 7,
 	LFG_DAILY_DUNGEON        = 8,
-	LFG_DAILY_HEROIC_DUNGEON = 9
+	LFG_DAILY_HEROIC_DUNGEON = 9,
+	LFG_MAX_TYPES			 = 10
 };
 
 #define MAX_DUNGEONS 305+1 // check max entrys +1 on lfgdungeons.dbc

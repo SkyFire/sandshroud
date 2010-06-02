@@ -414,7 +414,7 @@ void QuestLogEntry::UpdatePlayerFields()
 
 	m_plr->SetUInt32Value(PLAYER_QUEST_LOG_1_1 + m_slot*5 + 1, 0);
 	m_plr->SetUInt64Value(PLAYER_QUEST_LOG_1_1 + m_slot*5 + 2, field1);
-	m_plr->SetUInt32Value(PLAYER_QUEST_LOG_1_1 + m_slot*5 + 3, ( m_time_left ? static_cast<uint32>(time(NULL) + (m_time_left/1000)) : 0 ));
+	m_plr->SetUInt32Value(PLAYER_QUEST_LOG_1_1 + m_slot*5 + 4, ( m_time_left ? uint32(time(NULL) + (m_time_left/1000)) : 0 ));
 
 	// Timed quest handler.
 	if(m_time_left && !sEventMgr.HasEvent( m_plr,EVENT_TIMED_QUEST_EXPIRE ))

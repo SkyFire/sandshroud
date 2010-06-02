@@ -23,7 +23,7 @@ initialiseSingleton( ChannelMgr );
 
 void WorldSession::HandleChannelJoin(WorldPacket& recvPacket)
 {
-/*	CHECK_PACKET_SIZE(recvPacket, 1);
+	CHECK_PACKET_SIZE(recvPacket, 1);
 	string channelname,pass;
 	uint32 dbc_id = 0;
 	uint16 crap;		// crap = some sort of channel type?
@@ -49,13 +49,13 @@ void WorldSession::HandleChannelJoin(WorldPacket& recvPacket)
 
 	if( sWorld.GmClientChannel.size() && !stricmp(sWorld.GmClientChannel.c_str(), channelname.c_str()) && !GetPermissionCount())
 		return;
-	
+
 	chn = channelmgr.GetCreateChannel(channelname.c_str(), _player, dbc_id);
 	if(chn == NULL)
 		return;
 
 	chn->AttemptJoin(_player, pass.c_str());
-	DEBUG_LOG("ChannelJoin", "%s", channelname.c_str());*/
+	DEBUG_LOG("ChannelJoin", "%s", channelname.c_str());
 }
 
 void WorldSession::HandleChannelLeave(WorldPacket& recvPacket)

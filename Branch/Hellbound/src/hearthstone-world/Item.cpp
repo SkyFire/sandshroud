@@ -50,6 +50,7 @@ Item::Item( uint32 high, uint32 low )
 	random_prop = 0;
 	random_suffix = 0;
 	wrapped_item_id = 0;
+	itemtextid = 0;
 }
 
 void Item::Init()
@@ -161,7 +162,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	else if( random_suffix )
 		SetRandomSuffix( random_suffix );
 
-	SetUInt32Value( ITEM_FIELD_ITEM_TEXT_ID, fields[11].GetUInt32() );
+	SetItemTextId(fields[11].GetUInt32());
 
 	SetUInt32Value( ITEM_FIELD_MAXDURABILITY, m_itemProto->MaxDurability );
 	SetUInt32Value( ITEM_FIELD_DURABILITY, fields[12].GetUInt32() );
@@ -312,7 +313,7 @@ void Item::SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffe
 	ss << GetChargesLeft() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_FLAGS) << ",";
 	ss << random_prop << ", " << random_suffix << ", ";
-	ss << GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID) << ",";
+	ss << GetItemTextId() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_DURABILITY) << ",";
 	ss << static_cast<int>(containerslot) << ",";
 	ss << static_cast<int>(slot) << ",'";
