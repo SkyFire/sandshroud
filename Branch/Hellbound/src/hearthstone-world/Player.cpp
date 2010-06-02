@@ -5685,7 +5685,7 @@ void Player::AddInRangeObject(Object* pObj)
 		
 		if (GetSession() != NULL)
 		{
-			WorldPacket data(SMSG_AURA_UPDATE_ALL, 28 * MAX_AURAS);
+			WorldPacket data(SMSG_AURA_UPDATE_ALL, 29 * MAX_AURAS);
 			data << pUnit->GetNewGUID();
 			for (uint32 i=0; i<MAX_AURAS; ++i)
 			{
@@ -5699,7 +5699,8 @@ void Player::AddInRangeObject(Object* pObj)
 						flags |= AFLAG_POSITIVE;
 					else
 						flags |= AFLAG_NEGATIVE;
-					data << flags;
+					data << uint8(flags);
+					data << uint8(0);
 					data << uint8(aur->procCharges > aur->stackSize ? aur->procCharges : aur->stackSize);
 					if(!(aur->GetAuraFlags() & AFLAG_NOT_GUID))
 					{
@@ -7413,7 +7414,7 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 
 		//send new world
 		data.Initialize(SMSG_NEW_WORLD);
-		data << (uint32)mapid << v << v.o;
+		data << mapid << v.x << v.y << v.z << v.o;
 		GetSession()->SendPacket( &data );
 		SetMapId(mapid);
 		SetPlayerStatus(TRANSFER_PENDING);
@@ -8713,7 +8714,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
 	}
 
 	//no flying outside new continents
-	if((GetShapeShift() == FORM_FLIGHT || GetShapeShift() == FORM_SWIFT) && MapID != 530 && MapID != 571 )
+	if((GetShapeShift() == FORM_FLIGHT || GetShapeShift() == FORM_SWIFT) && MapID != 0 && MapID != 1 && MapID != 530 && MapID != 571)
 		RemoveShapeShiftSpell(m_ShapeShifted);
 
 	// make sure player does not drown when teleporting from under water

@@ -1543,5 +1543,17 @@ Unit* Creature::GetSummonOwner()
 
 void Creature::SetMovementDefaults(MovementInfo& move)
 {
-	// TODO
+	move.x = GetPositionX();
+	move.y = GetPositionY();
+	move.z = GetPositionZ();
+	move.orientation = GetOrientation();
+
+	if(m_TransporterGUID && m_transportPosition)
+	{
+		move.transGuid = m_transportNewGuid;
+		move.transX = m_transportPosition->x;
+		move.transY = m_transportPosition->y;
+		move.transZ = m_transportPosition->z;
+		move.transO = m_transportPosition->o;
+	}
 }

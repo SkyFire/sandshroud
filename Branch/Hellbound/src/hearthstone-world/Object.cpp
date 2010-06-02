@@ -702,14 +702,14 @@ WorldPacket * Object::BuildTeleportAckMsg(const LocationVector & v)
 		TO_PLAYER(this)->SetPlayerStatus( TRANSFER_PENDING );
 
 	WorldPacket * data = new WorldPacket(MSG_MOVE_TELEPORT_ACK, 80);
-	*data << GetNewGUID();
-
-	//First 4 bytes = no idea what it is
+	*data << GetNewGUID(); //First 4 bytes = no idea what it is
 	*data << uint32(2); // flags
-	*data << getMSTime(); // mysterious value #1
+	if(IsUnit())
+		*data << uint32(TO_UNIT(this)->GetMovementInfo()->flags);
+	else
+		*data << uint32(0);
 	*data << uint16(0);
-
-	*data << float(0);
+	*data << getMSTime(); // mysterious value #1
 	*data << v;
 	*data << v.o;
 	*data << uint16(2);

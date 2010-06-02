@@ -3350,3 +3350,10 @@ bool ChatHandler::HandleDisableAH(const char *args, WorldSession *m_session)
 	sWorld.AHEnabled = false;
 	return true;
 }
+
+bool ChatHandler::HandleRelocate(const char *args, WorldSession *m_session)
+{
+	Player* p = m_session->GetPlayer();
+	p->SafeTeleport(p->GetMapId(), p->GetInstanceID(), p->GetPosition());
+	return true;
+}

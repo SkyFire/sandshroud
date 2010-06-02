@@ -1486,15 +1486,16 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 {
 	if( queueSlot > 2 ) return;
 	//Log.Notice("BattlegroundManager", "Sending updated Battleground queues for %u.", queueSlot);
-	WorldPacket data(SMSG_BATTLEFIELD_STATUS, 32);
+	WorldPacket data(SMSG_BATTLEFIELD_STATUS, 31);
 	if( plr->m_bg && plr->m_bgSlot == queueSlot)
 	{
 		// Perform a manual update: this BG
-		data << uint16(0); // 3.3
 		data << uint32(queueSlot);
 		data << uint8(0) << uint8(2);
 		data << plr->m_bg->GetType();
 		data << uint16(0x1F90);
+		data << uint8(0);		// 3.3.0
+		data << uint8(0);		// 3.3.0
 		data << plr->m_bg->GetMapMgr()->GetInstanceID();
 		data << uint8(plr->m_bg->IsArena() ? 1 : 0);
 		data << uint32(3);
@@ -1537,9 +1538,10 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 		data << uint8(0xA);
 		data << uint32(6);
 		data << uint16(0x1F90);
+		data << uint8(0);		// 3.3.0
+		data << uint8(0);		// 3.3.0
 		data << uint32(11);
 		data << uint8(plr->m_bgRatedQueue ? 1 : 0); // Rated?
-		data << uint16(1); // 3.3
 	}
 	else
 	{
@@ -1547,9 +1549,10 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 		data << uint8(0) << uint8(2);
 		data << Type;
 		data << uint16(0x1F90);
+		data << uint8(0);		// 3.3.0
+		data << uint8(0);		// 3.3.0
 		data << plr->m_bgQueueInstanceId[queueSlot];
 		data << uint8(0);
-		data << uint16(0); // 3.3
 	}
 	
 	// Im in a BG
@@ -1562,8 +1565,8 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 	// We're clear to join!
 	if( plr->m_pendingBattleground[queueSlot] )
 	{
-		data << uint32(2);
 		data << plr->m_pendingBattleground[queueSlot]->GetMapMgr()->GetMapId();
+		data << uint32(0);
 		data << uint32(0); // Time
 		plr->GetSession()->SendPacket(&data);
 		return;

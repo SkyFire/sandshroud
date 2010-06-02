@@ -620,6 +620,7 @@ void CommandTableStorage::Init()
 
 		{ "enableauctionhouse",	'z', &ChatHandler::HandleEnableAH,		"Enables Auctionhouse",		NULL, 0, 0, 0},
 		{ "disableauctionhouse",'z', &ChatHandler::HandleDisableAH,		"Disables Auctionhouse",	NULL, 0, 0, 0},
+		{ "relocate",'0', &ChatHandler::HandleRelocate,		"Relocates player",	NULL, 0, 0, 0},
 		{ NULL,		  0, NULL,										 "",							   NULL, 0, 0  }
 	};
 	dupe_command_table(commandTable, _commandTable);

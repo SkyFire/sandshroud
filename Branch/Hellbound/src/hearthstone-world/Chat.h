@@ -568,6 +568,7 @@ protected:
 
 	bool HandleEnableAH(const char *args, WorldSession *m_session);
 	bool HandleDisableAH(const char *args, WorldSession *m_session);
+	bool HandleRelocate(const char *args, WorldSession *m_session);
 };
 
 

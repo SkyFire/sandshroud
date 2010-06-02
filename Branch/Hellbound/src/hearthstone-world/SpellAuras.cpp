@@ -1064,7 +1064,7 @@ void Aura::BuildAuraUpdate()
 	if( m_target == NULL || !spellid)
 		return;
 
-    WorldPacket data(SMSG_AURA_UPDATE, 50);
+    WorldPacket data(SMSG_AURA_UPDATE, 51);
     FastGUIDPack(data, m_target->GetGUID());
 	
     data << uint8(m_auraSlot);
@@ -1086,9 +1086,9 @@ void Aura::BuildAuraUpdate()
 	else if( !IsPositive() && !(flags & AFLAG_NEGATIVE))
 		flags |= AFLAG_NEGATIVE;
 
-    data << flags;
-	
-	data << (uint8) stack;
+    data << uint8(flags);
+	data << uint8(0);
+	data << uint8(stack);
 
     if(!(flags & AFLAG_NOT_GUID))
     {

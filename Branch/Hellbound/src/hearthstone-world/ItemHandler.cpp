@@ -818,13 +818,10 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 			data << uint32(0);
 		}
 	}
-//	data << uint32(itemProto->Damage.Min);
-//	data << uint32(itemProto->Damage.Max);
-//	data << itemProto->Damage.Type;
 	data << uint32(0);
 	data << uint32(0);
-	data << itemProto->Armor;
 	data << itemProto->Delay;
+	data << itemProto->AmmoType;
 	data << itemProto->Range;
 	for(i = 0; i < 5; ++i)
 	{
@@ -867,26 +864,6 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << uint32(0);								// ItemLimitCategory
 	data << uint32(0);								// HolidayId.
 	data << float(0);
-	/* Crow: Holiday Id. Been thinking about the use for this. Maybe used with currency items,
-	if the item is from the holiday, then it would look in the DBC for a event, and remove it if
-	its not within that events time? Also removes it from the currency list.
-	data << uint32(2);
-	for(i = 0; i < 2; ++i)
-	{
-		data << itemProto->Damage[i].Min;
-		data << itemProto->Damage[i].Max;
-		data << itemProto->Damage[i].Type;
-	}
-	// 7 resistances
-	data << itemProto->Armor;
-	data << itemProto->HolyRes;
-	data << itemProto->FireRes;
-	data << itemProto->NatureRes;
-	data << itemProto->FrostRes;
-	data << itemProto->ShadowRes;
-	data << itemProto->ArcaneRes;
-	*/
-
 	SendPacket( &data );
 }
 
