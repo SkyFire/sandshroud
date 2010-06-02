@@ -3315,7 +3315,7 @@ uint8 Spell::CanCast(bool tolerate)
 				{
 					//Mounts have changed, they should be added to known spells
 					if(i_caster->GetProto()->Class != ITEM_CLASS_MISCELLANEOUS && i_caster->GetProto()->SubClass != ITEM_SUBCLASS_MISCELLANEOUS_MOUNT )
-						return SPELL_FAILED_NO_CHARGES_REMAIN;
+						return SPELL_FAILED_ITEM_GONE;
 					else
 					{
 						Unit* target = (m_caster->IsInWorld()) ? m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget) : NULLUNIT;
@@ -3323,7 +3323,7 @@ uint8 Spell::CanCast(bool tolerate)
 						{
 							//Allow spell to be casted if player didn't have this mount yet in pet tab (iow has the spell).
 							if(i_caster->GetProto()->Spells[1].Id && TO_PLAYER(target)->HasSpell(i_caster->GetProto()->Spells[1].Id))
-								return SPELL_FAILED_NO_CHARGES_REMAIN;
+								return SPELL_FAILED_ITEM_GONE;
 						}
 					}
 

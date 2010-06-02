@@ -1671,8 +1671,7 @@ void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 		m_talentSpecsCount = 2; // Hack fix
 
 	*data << uint32(GetUInt32Value(PLAYER_CHARACTER_POINTS1)); // Unspent talents
-	// TODO: probably shouldn't send both specs if target is not self
-	*data << uint8(m_talentSpecsCount);
+	*data << uint8(m_talentSpecsCount); // TODO: probably shouldn't send both specs if target is not self
 	*data << uint8(m_talentActiveSpec);
 	for(uint8 s = 0; s < m_talentSpecsCount; ++s)
 	{
