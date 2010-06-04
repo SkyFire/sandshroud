@@ -591,45 +591,49 @@ public:
 		Field * f = fields;
 		for(; *p != 0; ++p, ++f)
 		{
-            switch(*p)
+			switch(*p)
 			{
 			case 'b':	// Boolean
-				*(bool*)&structpointer[offset] = f->GetBool();
-				offset += sizeof(bool);
-				break;
+				{
+					*(bool*)&structpointer[offset] = f->GetBool();
+					offset += sizeof(bool);
+				}break;
 
 			case 'c':	// Char
-				*(uint8*)&structpointer[offset] = f->GetUInt8();
-				offset += sizeof(uint8);
-				break;
+				{
+					*(uint8*)&structpointer[offset] = f->GetUInt8();
+					offset += sizeof(uint8);
+				}break;
 
 			case 'h':	// Short
-				*(uint16*)&structpointer[offset] = f->GetUInt16();
-				offset += sizeof(uint16);
-				break;
+				{
+					*(uint16*)&structpointer[offset] = f->GetUInt16();
+					offset += sizeof(uint16);
+				}break;
 
 			case 'u':	// Unsigned integer
-				*(uint32*)&structpointer[offset] = f->GetUInt32();
-				offset += sizeof(uint32);
-				break;
+				{
+					*(uint32*)&structpointer[offset] = f->GetUInt32();
+					offset += sizeof(uint32);
+				}break;
 
 			case 'i':	// Signed integer
-				*(int32*)&structpointer[offset] = f->GetInt32();
-				offset += sizeof(int32);
-				break;
+				{
+					*(int32*)&structpointer[offset] = f->GetInt32();
+					offset += sizeof(int32);
+				}break;
 
 			case 'f':	// Float
-				*(float*)&structpointer[offset] = f->GetFloat();
-				offset += sizeof(float);
-				break;
+				{
+					*(float*)&structpointer[offset] = f->GetFloat();
+					offset += sizeof(float);
+				}break;
 
 			case 's':	// Null-terminated string
-				if( reload )
-					free( *(char**)&structpointer[offset] );
-
-				*(char**)&structpointer[offset] = strdup(f->GetString());
-				offset += sizeof(char*);
-				break;
+				{
+					*(char**)&structpointer[offset] = strdup(f->GetString());
+					offset += sizeof(char*);
+				}break;
 
 			case 'x':	// Skip
 				break;
