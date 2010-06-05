@@ -2076,6 +2076,11 @@ bool ChatHandler::HandleIPUnBanCommand(const char * args, WorldSession * m_sessi
 
 bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_session)
 {
+	if(m_session == NULL || m_session->GetPlayer() == NULL)
+		return true;
+
+	Player* plr = m_session->GetPlayer();
+
 	uint32 entry, save;
 	if( sscanf(args, "%u %u", &entry, &save) != 2 )
 	{
@@ -2093,7 +2098,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
 	CreatureInfo * info = CreatureNameStorage.LookupEntry(entry);
-	if(proto == 0 || info == 0 || (objmgr.SQLCheckExists("creature_names", "entry", entry) == NULL)
+	if(proto == NULL || info == NULL || (objmgr.SQLCheckExists("creature_names", "entry", entry) == NULL)
 		|| (objmgr.SQLCheckExists("creature_proto", "entry", entry) == NULL))
 	{
 		RedSystemMessage(m_session, "Invalid entry id(%u).", entry);
@@ -2115,7 +2120,8 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		}
 		else
 		{
-			BlueSystemMessage(m_session, "Incorrect transportguid %u. Spawn has been denied.", GUID_LOPART(pl->m_TransporterGUID));
+			BlueSystemMessage(m_session, "Incorrect transportguid %u. Spawn has been denied and transport guid has been reset.", pl->m_TransporterGUID);
+			pl->m_TransporterGUID = uint64(NULL);
 			return true;
 		}
 	}
@@ -2139,30 +2145,42 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	if( save )
 	{
 		sp = new CreatureSpawn;
-		//sp->displayid = info->DisplayID;
 		info->GenerateModelId(&sp->displayid);
 		sp->entry = entry;
 		sp->form = 0;
 		sp->id = objmgr.GenerateCreatureSpawnID();
 		sp->movetype = 0;
-		sp->x = m_session->GetPlayer()->GetPositionX();
-		sp->y = m_session->GetPlayer()->GetPositionY();
-		sp->z = m_session->GetPlayer()->GetPositionZ();
-		sp->o = m_session->GetPlayer()->GetOrientation();
-		sp->emote_state =0;
-		sp->flags = 0;
+		sp->x = plr->GetPositionX();
+		sp->y = plr->GetPositionY();
+		sp->z = plr->GetPositionZ();
+		sp->o = plr->GetOrientation();
 		sp->factionid = proto->Faction;
-		sp->bytes=0;
-		sp->bytes1=0;
-		sp->bytes2=0;
-		//sp->respawnNpcLink = 0;
-		sp->stand_state = 0;
-		sp->channel_spell=sp->channel_target_creature=sp->channel_target_go=0;
-		sp->MountedDisplayID = 0;
+		sp->bytes = 0;
+		sp->bytes1 = 0;
+		sp->bytes2 = 0;
+		sp->channel_spell = sp->channel_target_creature = sp->channel_target_go = 0;
 		sp->phase = 1;
 		sp->vehicle = proto->vehicle_entry;
 
-		p->Load(sp, (uint32)NULL, NULL);
+		CreatureInfoExtra* extrainfo = CreatureInfoExtraStorage.LookupEntry(entry);
+		if(extrainfo != NULL)
+		{
+			sp->emote_state = extrainfo->default_emote_state;
+			sp->flags = extrainfo->default_flags;
+			sp->stand_state = extrainfo->default_stand_state;
+			sp->MountedDisplayID = extrainfo->default_MountedDisplayID;
+		}
+		else
+		{
+			sp->emote_state = 0;
+			sp->flags = 0;
+			sp->stand_state = 0;
+			sp->MountedDisplayID = 0;
+		}
+
+		MapEntry* mapinfo = dbcMap.LookupEntry(m_session->GetPlayer()->GetMapId());
+		bool raid = mapinfo->israid();
+		p->Load(sp, (plr->IsInInstance() ? (raid ? plr->iInstanceType : plr->iRaidType) : MODE_5PLAYER_NORMAL), NULL);
 	}
 	else
 	{

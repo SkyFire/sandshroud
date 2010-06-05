@@ -35,6 +35,7 @@ const char * gCreatureNameFormat						= "usssuuuuuuuuuuuffcc";
 const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuibuufffuuiuc";
 const char * gCreatureProtoHeroicFormat					= "uuuuuffcuuuuuuuusu";
 const char * gCreatureVehicleProto						= "ubuuuuuuuuuuuuuuu";
+const char * gCreatureInfoExtra							= "uuuhu";
 const char * gFishingFormat								= "uuu";
 const char * gGameObjectNameFormat						= "uuusuuuuuuuuuuuuuuuuuuuuuuuu";
 const char * gGraveyardFormat							= "uffffuuuux";
@@ -57,6 +58,7 @@ SERVER_DECL SQLStorage<CreatureInfo, HashMapStorageContainer<CreatureInfo> >				
 SERVER_DECL SQLStorage<CreatureProto, HashMapStorageContainer<CreatureProto> >					CreatureProtoStorage;
 SERVER_DECL SQLStorage<CreatureProtoHeroic, HashMapStorageContainer<CreatureProtoHeroic> >		CreatureProtoHeroicStorage;
 SERVER_DECL SQLStorage<CreatureProtoVehicle, HashMapStorageContainer<CreatureProtoVehicle> >	CreatureProtoVehicleStorage;
+SERVER_DECL SQLStorage<CreatureInfoExtra, HashMapStorageContainer<CreatureInfoExtra> >			CreatureInfoExtraStorage;
 SERVER_DECL SQLStorage<FishingZoneEntry, HashMapStorageContainer<FishingZoneEntry> >			FishingZoneStorage;
 SERVER_DECL SQLStorage<GameObjectInfo, HashMapStorageContainer<GameObjectInfo> >				GameObjectNameStorage;
 SERVER_DECL SQLStorage<GraveyardTeleport, HashMapStorageContainer<GraveyardTeleport> >			GraveyardStorage;
@@ -543,6 +545,7 @@ void Storage_FillTaskList(TaskList & tl)
 	make_task(CreatureProtoStorage, CreatureProto, HashMapStorageContainer, "creature_proto", gCreatureProtoFormat);
 	make_task(CreatureProtoHeroicStorage, CreatureProtoHeroic, HashMapStorageContainer, "creature_proto_heroic", gCreatureProtoHeroicFormat);
 	make_task(CreatureProtoVehicleStorage, CreatureProtoVehicle, HashMapStorageContainer, "creature_proto_vehicle", gCreatureVehicleProto);
+	make_task(CreatureInfoExtraStorage, CreatureInfoExtra, HashMapStorageContainer, "creature_info", gCreatureInfoExtra);
 	make_task(AreaTriggerStorage, AreaTrigger, HashMapStorageContainer, "areatriggers", gAreaTriggerFormat);
 	make_task(ItemPageStorage, ItemPage, HashMapStorageContainer, "itempages", gItemPageFormat);
 	make_task(QuestStorage, Quest, HashMapStorageContainer, "quests", gQuestFormat);
@@ -587,6 +590,7 @@ void Storage_Cleanup()
 	GameObjectNameStorage.Cleanup();
 	CreatureProtoStorage.Cleanup();
 	CreatureProtoVehicleStorage.Cleanup();
+	CreatureInfoExtraStorage.Cleanup();
 	{
 		StorageContainerIterator<AreaTrigger> * itr = AreaTriggerStorage.MakeIterator();
 		AreaTrigger * a;
@@ -687,7 +691,7 @@ void Storage_Cleanup()
 	TeleportCoordStorage.Cleanup();
 	FishingZoneStorage.Cleanup();
 	NpcTextStorage.Cleanup();
-		{
+	{
 		StorageContainerIterator<MapInfo> * itr = WorldMapInfoStorage.MakeIterator();
 		MapInfo * m;
 		while(!itr->AtEnd())

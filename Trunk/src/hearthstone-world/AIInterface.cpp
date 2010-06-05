@@ -2412,12 +2412,6 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 		{
 			if(m_timeMoved == m_timeToMove) //reached destination
 			{
-/*				if(m_fastMove)
-				{
-					m_Unit->UpdateSpeed();
-					m_fastMove = false;
-				}*/
-
 				if(m_moveType == MOVEMENTTYPE_WANTEDWP)//We reached wanted wp stop now
 					m_moveType = MOVEMENTTYPE_DONTMOVEWP;
 

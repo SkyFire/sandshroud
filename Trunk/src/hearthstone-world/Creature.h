@@ -67,6 +67,7 @@ struct CreatureInfo
 
 	std::string lowercase_name;
 	GossipScript * gossip_script;
+
 	uint32 GenerateModelId(uint32 * dest)
 	{
 		uint32 models[] = { Male_DisplayID, Male_DisplayID2, Female_DisplayID, Female_DisplayID2 };
@@ -83,25 +84,25 @@ struct CreatureInfo
 		if( Male_DisplayID )
 		{
 			modelchoices[max] = Male_DisplayID;
-			max++;
+			++max;
 		}
 
 		if( Male_DisplayID2 )
 		{
 			modelchoices[max] = Male_DisplayID2;
-			max++;
+			++max;
 		}
 
 		if( Female_DisplayID )
 		{
 			modelchoices[max] = Female_DisplayID;
-			max++;
+			++max;
 		}
 
 		if( Female_DisplayID2 )
 		{
 			modelchoices[max] = Female_DisplayID2;
-			max++;
+			++max;
 		}
 
 		uint32 r = RandomUInt(max ? max - 1 : 0);
@@ -194,6 +195,15 @@ struct CreatureProtoVehicle
 	uint32 healthunitfromitemlev;
 	uint32 VehicleSpells[6]; // Vehicle spells.
 	uint32 accessoryentry[8]; // Accessories.
+};
+
+struct CreatureInfoExtra
+{
+	uint32 entry;
+	uint32 default_emote_state;
+	uint32 default_flags;
+	uint16 default_stand_state;
+	uint32 default_MountedDisplayID;
 };
 
 #pragma pack(pop)
