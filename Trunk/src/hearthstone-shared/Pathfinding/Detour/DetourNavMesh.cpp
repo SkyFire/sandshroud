@@ -720,8 +720,10 @@ bool dtNavMesh::removeTileAt(int x, int y, unsigned char** data, int* dataSize)
 
 dtPolyRef dtNavMesh::getTileId(const dtMeshTile* tile) const
 {
-	if (!tile) return 0;
-	const unsigned int it = tile - m_tiles;
+	if (!tile)
+		return 0;
+
+	const uint it = uint(tile - m_tiles);
 	return encodePolyId(tile->salt, it, 0);
 }
 
@@ -730,10 +732,17 @@ bool dtNavMesh::closestPointOnPoly(dtPolyRef ref, const float* pos, float* close
 {
 	unsigned int salt, it, ip;
 	decodePolyId(ref, salt, it, ip);
-	if (it >= (unsigned int)m_maxTiles) return false;
-	if (m_tiles[it].salt != salt || m_tiles[it].header == 0) return false;
+
+	if(it >= (unsigned int)m_maxTiles)
+		return false;
+
+	if(m_tiles[it].salt != salt || m_tiles[it].header == 0)
+		return false;
+
 	const dtMeshHeader* header = m_tiles[it].header;
-	if (ip >= (unsigned int)header->polyCount) return false;
+
+	if(ip >= uint(header->polyCount))
+		return false;
 	
 	return closestPointOnPolyInTile(&m_tiles[it], ip, pos, closest);
 }
@@ -771,13 +780,19 @@ bool dtNavMesh::closestPointOnPolyInTile(const dtMeshTile* tile, unsigned int ip
 
 bool dtNavMesh::closestPointOnPolyBoundary(dtPolyRef ref, const float* pos, float* closest) const
 {
-	unsigned int salt, it, ip;
+	uint salt, it, ip;
 	decodePolyId(ref, salt, it, ip);
-	if (it >= (unsigned int)m_maxTiles) return false;
-	if (m_tiles[it].salt != salt || m_tiles[it].header == 0) return false;
+	if (it >= (unsigned int)m_maxTiles)
+		return false;
+
+	if (m_tiles[it].salt != salt || m_tiles[it].header == 0)
+		return false;
+
 	const dtMeshTile* tile = &m_tiles[it];
 	
-	if (ip >= (unsigned int)tile->header->polyCount) return false;
+	if (ip >= (unsigned int)tile->header->polyCount)
+		return false;
+
 	const dtPoly* poly = &tile->polys[ip];
 
 	// Collect vertices.
@@ -821,14 +836,20 @@ bool dtNavMesh::closestPointOnPolyBoundary(dtPolyRef ref, const float* pos, floa
 // Returns start and end location of an off-mesh link polygon.
 bool dtNavMesh::getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef, float* startPos, float* endPos) const
 {
-	unsigned int salt, it, ip;
+	uint salt, it, ip;
 
 	// Get current polygon
 	decodePolyId(polyRef, salt, it, ip);
-	if (it >= (unsigned int)m_maxTiles) return false;
-	if (m_tiles[it].salt != salt || m_tiles[it].header == 0) return false;
+	if (it >= (unsigned int)m_maxTiles)
+		return false;
+
+	if (m_tiles[it].salt != salt || m_tiles[it].header == 0)
+		return false;
+
 	const dtMeshTile* tile = &m_tiles[it];
-	if (ip >= (unsigned int)tile->header->polyCount) return false;
+	if (ip >= (unsigned int)tile->header->polyCount)
+		return false;
+
 	const dtPoly* poly = &tile->polys[ip];
 
 	// Make sure that the current poly is indeed off-mesh link.

@@ -524,7 +524,8 @@ MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 	if(ret->IsCollisionEnabled())
 	{
 		Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
-		Log.Notice("NavmeshMgr", "Map %03u has Navmesh enabled.", mapid);
+		if(ret->IsPathfindingEnabled())
+			Log.Notice("NavmeshMgr", "Map %03u has Navmesh enabled.", mapid);
 		bool mmapsloaded = false;
 		bool collisionloaded = false;
 		for(uint32 x = 0; x < TilesCount; ++x)

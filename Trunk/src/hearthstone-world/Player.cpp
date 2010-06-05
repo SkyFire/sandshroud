@@ -1687,9 +1687,30 @@ void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 	// TODO: probably shouldn't send both specs if target is not self
 	*data << uint8(m_talentSpecsCount);
 	*data << uint8(m_talentActiveSpec);
-	for(uint8 s = 0; s < m_talentSpecsCount; ++s)
+	if(self)
 	{
-		PlayerSpec spec = m_specs[s];
+		for(uint8 s = 0; s < m_talentSpecsCount; ++s)
+		{
+			PlayerSpec spec = m_specs[s];
+			// Send Talents
+			*data << uint8(spec.talents.size());
+			std::map<uint32, uint8>::iterator itr;
+			for(itr = spec.talents.begin(); itr != spec.talents.end(); ++itr)
+			{
+				*data << uint32(itr->first);	// TalentId
+				*data << uint8(itr->second);	// TalentRank
+			}
+			// Send Glyph info
+			*data << uint8(GLYPHS_COUNT);
+			for(uint8 i = 0; i < GLYPHS_COUNT; ++i)
+			{
+				*data << uint16(spec.glyphs[i]);
+			}
+		}
+	}
+	else
+	{
+		PlayerSpec spec = m_specs[m_talentActiveSpec];
 		// Send Talents
 		*data << uint8(spec.talents.size());
 		std::map<uint32, uint8>::iterator itr;
@@ -1698,19 +1719,7 @@ void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 			*data << uint32(itr->first);	// TalentId
 			*data << uint8(itr->second);	// TalentRank
 		}
-		if(self)
-		{
-			// Send Glyph info
-			*data << uint8(GLYPHS_COUNT);
-			for(uint8 i = 0; i < GLYPHS_COUNT; ++i)
-			{
-				*data << uint16(spec.glyphs[i]);
-			}
-		}
-		else
-		{
-			*data << uint8(0);	// glyphs not sent when inspecting another player
-		}
+		*data << uint8(0);	// glyphs not sent when inspecting another player
 	}
 }
 
@@ -8218,7 +8227,16 @@ void Player::ForceAreaUpdate()
 
 	if((m_AreaID == WINTERGRASP || (m_areaDBC != NULL && m_areaDBC->ZoneId == WINTERGRASP)) && sWorld.wg_enabled)
 	{
-		// Insert into WG.
+		WinterGrasp = sWintergraspI.GetWintergrasp();
+		if(WinterGrasp != NULL)
+			WinterGrasp->OnAddPlayer(this);
+		else // Send clock for till battle.
+			sWintergraspI.SendInitWorldStates(this);
+	}
+	else // There is more todo.
+	{
+		if(WinterGrasp != NULL)
+			WinterGrasp->OnRemovePlayer(this);
 	}
 }
 

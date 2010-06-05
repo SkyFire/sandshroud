@@ -38,10 +38,11 @@ public:
 	~Wintergrasp();
 	static Wintergrasp* Create( WintergraspInternal* i, MapMgr* m) { return new Wintergrasp(i, m); }
 	void Init();
-
+	void OnAddPlayer(Player* plr);
+	void OnRemovePlayer(Player* plr);
 
 	WintergraspPlayerSet WGPlayers;
-	CreatureSwapSet WGCreatures;
+	CreatureSwapSet WGCreatures[2];
 	uint32 GetNumVehicles(uint32 team) { if(team > 1) return 0; return numvehicles[team]; };
 	uint32 GetNumWorkshops(uint32 team) { if(team > 1) return 0; return numworkshop[team]; };
 

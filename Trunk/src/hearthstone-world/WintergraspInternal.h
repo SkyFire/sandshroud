@@ -50,6 +50,7 @@ public:
 	void UpdateClock();
 	void UpdateClockDigit(uint32 timer, uint32 digit, uint32 mod);
 	void SendWSUpdateToAll(uint32 WorldState, uint32 Value);
+	Wintergrasp* GetWintergrasp() { return WG; }
 
 	int m_wintergrasp;
 private:
@@ -59,15 +60,15 @@ private:
 	uint32 WGcounter;
 	int winnerteam; // 0 alliance 1 horde 2 = ??
 
-	uint32 defendingteam;
+	int defendingteam;
 	uint32 m_timer;
 	uint32 m_clock[5];
 
 	bool WG_started;
 public:
 	void SetWGTimer(uint32 time) { m_timer = time; };
-	void StartWintergrasp() { WG_started = true; };
-	void EndWintergrasp() { WG_started = false; WG = NULL; };
+	void StartWintergrasp() { WG_started = true; m_wintergrasp = 1; };
+	void EndWintergrasp() { WG_started = false; WG = NULL; m_wintergrasp = 0; };
 };
 
 #define sWintergraspI WintergraspInternal::getSingleton()
