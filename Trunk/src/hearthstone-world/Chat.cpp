@@ -62,6 +62,8 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _questCommandTable;
 	else if(!stricmp(name, "lookup"))
 		return _lookupCommandTable;
+	else if(!stricmp(name, "wintergrasp"))
+		return _wintergraspCommandTable;
 	return 0;
 }
 
@@ -498,6 +500,14 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(questCommandTable, _questCommandTable);
 
+	static ChatCommand wintergraspCommandTable[] =
+	{
+		{ "start", 'z', &ChatHandler::HandleForceStartWintergrasp, "Force starts wintergrasp.", NULL, 0, 0, 0},
+		{ "end", 'z', &ChatHandler::HandleForceEndWintergrasp, "Ends current wintergrasp.", NULL, 0, 0, 0},
+		{ NULL, 0, NULL, "", NULL, 0, 0, 0},
+	};
+	dupe_command_table(wintergraspCommandTable, _wintergraspCommandTable);
+
 	static ChatCommand commandTable[] = {
 		//{ "renameguild", 'a', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.", NULL, 0, 0, 0 },
 		{ "masssummon", 'z', &ChatHandler::HandleMassSummonCommand, ".masssummon - Summons all players.", NULL, 0, 0, 0},
@@ -563,6 +573,7 @@ void CommandTableStorage::Init()
 		{ "guild",		'm', NULL,									 "",				 GuildCommandTable, 0, 0, 0},
 		{ "title",		'm', NULL,									 "",				 TitleCommandTable, 0, 0, 0},
 		{ "lookup",     '0', NULL,                                   "",				 lookupCommandTable, 0, 0, 0},
+		{ "wintergrasp", '0', NULL,                                   "",				 wintergraspCommandTable, 0, 0, 0},
 		{ "getpos"	  ,  'd', &ChatHandler::HandleGetPosCommand,		"",							   NULL, 0, 0, 0},
 		{ "clearcooldowns", 'm', &ChatHandler::HandleClearCooldownsCommand, "Clears all cooldowns for your class.", NULL, 0, 0, 0 },
 		{ "removeauras",   'm', &ChatHandler::HandleRemoveAurasCommand,   "Removes all auras from target",  NULL, 0, 0, 0},

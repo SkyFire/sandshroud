@@ -66,7 +66,6 @@ Wintergrasp::~Wintergrasp()
 	Internal.m_wintergrasp = 2; // We are ending Wintergrasp.
 	// Handle deletion and removal.
 	Internal.EndWintergrasp();
-	delete this; // Kill ourself.
 }
 
 void Wintergrasp::Init()
@@ -76,9 +75,17 @@ void Wintergrasp::Init()
 	Internal.UpdateClock();
 }
 
+void Wintergrasp::End()
+{
+	// TODO
+}
+
 void Wintergrasp::OnAddPlayer(Player* plr)
 {
 	printf("Pie flavor'd bastard!\n");
+	++playercount[2];
+	++playercount[plr->GetTeam()];
+	WGPlayers.insert(plr);
 	Internal.SendInitWorldStates(plr);
 }
 

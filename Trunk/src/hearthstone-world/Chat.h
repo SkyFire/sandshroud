@@ -168,6 +168,7 @@ class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 	ChatCommand * _commandTable;
 	ChatCommand * _GuildCommandTable;
 	ChatCommand * _TitleCommandTable;
+	ChatCommand * _wintergraspCommandTable;
 
 	ChatCommand * GetSubCommandTable(const char * name);
 public:
@@ -568,6 +569,8 @@ protected:
 
 	bool HandleEnableAH(const char *args, WorldSession *m_session);
 	bool HandleDisableAH(const char *args, WorldSession *m_session);
+	bool HandleForceStartWintergrasp(const char *args, WorldSession *m_session);
+	bool HandleForceEndWintergrasp(const char *args, WorldSession *m_session);
 };
 
 

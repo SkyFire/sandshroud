@@ -43,6 +43,7 @@ public:
 
 	bool run();
 	bool m_threadRunning;
+	bool forcestart_WG;
 
 // Actual Wintergrasp Internal stuff.
 public:
@@ -67,8 +68,18 @@ private:
 	bool WG_started;
 public:
 	void SetWGTimer(uint32 time) { m_timer = time; };
-	void StartWintergrasp() { WG_started = true; m_wintergrasp = 1; };
-	void EndWintergrasp() { WG_started = false; WG = NULL; m_wintergrasp = 0; };
+	void StartWintergrasp()
+	{
+		WG_started = true;
+		m_wintergrasp = 1;
+	};
+
+	void EndWintergrasp()
+	{
+		WG_started = false;
+		WG = NULL;
+		m_wintergrasp = 0;
+	};
 };
 
 #define sWintergraspI WintergraspInternal::getSingleton()

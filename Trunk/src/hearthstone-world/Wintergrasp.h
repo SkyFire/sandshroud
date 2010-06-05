@@ -26,7 +26,14 @@
 #define A_MAXVEH_WORLDSTATE 3681
 #define H_NUMVEH_WORLDSTATE 3490
 #define H_MAXVEH_WORLDSTATE 3491
+#define HORDE_CONTROLLED 3802
+#define ALLIANCE_CONTROLLED 3803
 const uint32 ClockWorldState[5] = { 3785, 3784, 3782, 3976, 3975};
+
+#define WGSPELL_ESSENCE_OF_WINTERGRASP 57940
+#define WGSPELL_TENACITY 59911
+
+#define DEFENDERS_PORTAL 190763 // 2d: The portal thing which you select to teleport inside if a defender
 
 typedef std::set<Creature*> CreatureSwapSet;
 typedef std::set<Player*> WintergraspPlayerSet;
@@ -38,6 +45,7 @@ public:
 	~Wintergrasp();
 	static Wintergrasp* Create( WintergraspInternal* i, MapMgr* m) { return new Wintergrasp(i, m); }
 	void Init();
+	void End();
 	void OnAddPlayer(Player* plr);
 	void OnRemovePlayer(Player* plr);
 

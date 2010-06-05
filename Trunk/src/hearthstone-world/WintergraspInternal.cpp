@@ -38,6 +38,7 @@ WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)
 	WG_started = false;
 	defendingteam = 2;
 	winnerteam = 2;
+	forcestart_WG = false;
 }
 
 WintergraspInternal::~WintergraspInternal()
@@ -79,19 +80,21 @@ bool WintergraspInternal::run()
 
 	while(m_threadRunning)
 	{
-		if(has_timeout_expired(&local_currenttime, &local_last_countertime))
+		if(has_timeout_expired(&local_currenttime, &local_last_countertime) || forcestart_WG == true)
 		{
 			++WGcounter;
 
-			if(WGcounter >= 3/*3 hours*/) // TODO: sWorld.WintergraspHourInterval
+			if(WGcounter >= 3/*3 hours*/ || forcestart_WG == true) // TODO: sWorld.WintergraspHourInterval
 			{
 				Log.Notice("WintergraspInternal", "Wintergrasp function called.");
 				if(m_wintergrasp == 0)
 				{
+					StartWintergrasp();
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
 					WG = Wintergrasp::Create(this, &WGMgr);
 				}
 				WGcounter = 0; // Reset our timer.
+				forcestart_WG = false;
 			}
 			else
 				Log.Notice("WintergraspInternal", "Wintergrasp counter at %u/3", WGcounter);
