@@ -436,7 +436,7 @@ bool ScriptMgr::CallScriptedDummyAura(uint32 uSpellId, uint32 i, Aura* pAura, bo
 
 bool ScriptMgr::CallScriptedItem(Item* pItem, Player* pPlayer)
 {
-	if(pItem->GetProto()->gossip_script)
+	if(pItem->GetProto() && pItem->GetProto()->gossip_script != NULL)
 	{
 		pItem->GetProto()->gossip_script->GossipHello(pItem,pPlayer,true);
 		return true;

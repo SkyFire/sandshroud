@@ -54,11 +54,11 @@ public:
 	Wintergrasp* GetWintergrasp() { return WG; }
 
 	int m_wintergrasp;
+	uint64 WGCounter;
 private:
 	Wintergrasp* WG;
 
 	MapMgr WGMgr;
-	uint32 WGcounter;
 	int winnerteam; // 0 alliance 1 horde 2 = ??
 
 	int defendingteam;

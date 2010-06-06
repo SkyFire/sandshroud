@@ -54,6 +54,9 @@ public:
 	uint32 GetNumVehicles(uint32 team) { if(team > 1) return 0; return numvehicles[team]; };
 	uint32 GetNumWorkshops(uint32 team) { if(team > 1) return 0; return numworkshop[team]; };
 
+
+	HEARTHSTONE_INLINE uint64 GetID() { return WGID; };
+
 private:
 	WintergraspInternal Internal;
 
@@ -67,6 +70,9 @@ private:
 
 	// Workshops
 	uint32 numworkshop[2];
+
+	// Same as BattleGround id
+	uint64 WGID;
 };
 
 #endif // WINTERGRASP_H

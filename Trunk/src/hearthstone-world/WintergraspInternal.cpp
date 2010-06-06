@@ -31,7 +31,6 @@ static pthread_mutex_t abortmutex;
 WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)))
 {
 	m_threadRunning = true;
-	WGcounter = 0;
 	SetWGTimer((6*60000/*Hour*/)*3);
 	m_wintergrasp = 0;
 	WG = NULL;
@@ -39,6 +38,7 @@ WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)
 	defendingteam = 2;
 	winnerteam = 2;
 	forcestart_WG = false;
+	WGCounter = 0;
 }
 
 WintergraspInternal::~WintergraspInternal()
@@ -75,6 +75,7 @@ bool WintergraspInternal::run()
 	last_countertime = UNIXTIME;
 	dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);
 	m_timer = 180000; // 3 hours. TODO: sWorld.WintergraspHourInterval*60*1000
+	uint32 counter = 0;
 
 	Log.Notice("WintergraspInternal", "Wintergrasp Handler Initiated.");
 
@@ -82,22 +83,23 @@ bool WintergraspInternal::run()
 	{
 		if(has_timeout_expired(&local_currenttime, &local_last_countertime) || forcestart_WG == true)
 		{
-			++WGcounter;
+			++counter;
 
-			if(WGcounter >= 3/*3 hours*/ || forcestart_WG == true) // TODO: sWorld.WintergraspHourInterval
+			if(counter >= 3/*3 hours*/ || forcestart_WG == true) // TODO: sWorld.WintergraspHourInterval
 			{
 				Log.Notice("WintergraspInternal", "Wintergrasp function called.");
 				if(m_wintergrasp == 0)
 				{
 					StartWintergrasp();
+					++WGCounter;
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
 					WG = Wintergrasp::Create(this, &WGMgr);
 				}
-				WGcounter = 0; // Reset our timer.
+				counter = 0; // Reset our timer.
 				forcestart_WG = false;
 			}
 			else
-				Log.Notice("WintergraspInternal", "Wintergrasp counter at %u/3", WGcounter);
+				Log.Notice("WintergraspInternal", "Wintergrasp counter at %u/3", counter);
 
 			last_countertime = UNIXTIME;
 			dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);

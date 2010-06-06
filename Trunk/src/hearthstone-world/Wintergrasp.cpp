@@ -41,8 +41,8 @@ Wintergrasp::Wintergrasp(WintergraspInternal* WGI, MapMgr* mgr) : Internal(*WGI)
 	for(int i = 0; i < 3; ++i)
 		playercount[i] = 0;
 
-	memset(&WGPlayers, 0, sizeof(Player*)*40); // Is it 80 or 40? I can't remember...
 	Player* plr = NULL;
+	WGID = Internal.WGCounter;
 
 	for(PlayerStorageMap::iterator itr =  mgr->m_PlayerStorage.begin(); itr != mgr->m_PlayerStorage.end(); ++itr)
 	{
@@ -86,10 +86,15 @@ void Wintergrasp::OnAddPlayer(Player* plr)
 	++playercount[2];
 	++playercount[plr->GetTeam()];
 	WGPlayers.insert(plr);
+	plr->WinterGrasp = this;
 	Internal.SendInitWorldStates(plr);
 }
 
 void Wintergrasp::OnRemovePlayer(Player* plr)
 {
-	printf("Pie flavor'd bastard!\n");
+	printf("Pie flavor'd bastard left!\n");
+	--playercount[2];
+	--playercount[plr->GetTeam()];
+	WGPlayers.erase(plr);
+	plr->WinterGrasp = NULL;
 }

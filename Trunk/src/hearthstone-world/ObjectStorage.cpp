@@ -393,8 +393,7 @@ void ObjectMgr::LoadExtraItemStuff()
 			ft = iter->second;
 
 		pItemPrototype->FoodType = ft;
-		if(!pItemPrototype->gossip_script) // rehashing stuff.
-			pItemPrototype->gossip_script = NULL;
+		pItemPrototype->gossip_script = NULL;
 
 		if(pItemPrototype->ScalingStatsEntry > 0 && pItemPrototype->Class == ITEM_CLASS_ARMOR)
 		{

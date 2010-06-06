@@ -469,7 +469,6 @@ void Player::Init()
 		m_WeaponSubClassDamagePct[i] = 1.0f;
 
 	WinterGrasp = NULL;
-
 	Unit::Init();
 }
 
@@ -477,7 +476,6 @@ void Player::OnLogin()
 {
 
 }
-
 
 Player::~Player ( )
 {
@@ -8227,11 +8225,14 @@ void Player::ForceAreaUpdate()
 
 	if((m_AreaID == WINTERGRASP || (m_areaDBC != NULL && m_areaDBC->ZoneId == WINTERGRASP)) && sWorld.wg_enabled)
 	{
-		WinterGrasp = sWintergraspI.GetWintergrasp();
-		if(WinterGrasp != NULL)
-			WinterGrasp->OnAddPlayer(this);
-		else // Send clock for till battle.
-			sWintergraspI.SendInitWorldStates(this);
+		if(WinterGrasp == NULL)
+		{
+			WinterGrasp = sWintergraspI.GetWintergrasp();
+			if(WinterGrasp != NULL)
+				WinterGrasp->OnAddPlayer(this);
+			else // Send clock for till battle.
+				sWintergraspI.SendInitWorldStates(this);
+		}
 	}
 	else // There is more todo.
 	{
