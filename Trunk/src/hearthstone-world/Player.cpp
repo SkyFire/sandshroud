@@ -8209,6 +8209,8 @@ void Player::ForceAreaUpdate()
 	if(m_position.x > _maxX || m_position.x < _minX || m_position.y > _maxY || m_position.y < _minY || !IsInWorld())
 		return;
 
+	uint32 oldareaid = m_AreaID;
+
 	m_areaDBC = NULL;
 	m_AreaID = m_mapMgr->GetAreaID(m_position.x, m_position.y, m_position.z);
 	if( m_AreaID == 0xffff )
@@ -8223,7 +8225,10 @@ void Player::ForceAreaUpdate()
 			m_zoneId = m_areaDBC->ZoneId;
 	}
 
-	if((m_AreaID == WINTERGRASP || (m_areaDBC != NULL && m_areaDBC->ZoneId == WINTERGRASP)) && sWorld.wg_enabled)
+	if(!sWorld.wg_enabled)
+		return;
+
+	if(m_AreaID == WINTERGRASP || (m_areaDBC != NULL && m_areaDBC->ZoneId == WINTERGRASP))
 	{
 		if(WinterGrasp == NULL)
 		{
@@ -8238,6 +8243,14 @@ void Player::ForceAreaUpdate()
 	{
 		if(WinterGrasp != NULL)
 			WinterGrasp->OnRemovePlayer(this);
+
+		AreaTable *oldarea = dbcArea.LookupEntryForced(oldareaid);
+		if(oldareaid == WINTERGRASP || (oldarea && oldarea->ZoneId == WINTERGRASP))
+		{
+			WorldPacket data(SMSG_INIT_WORLD_STATES, 10); // Clear our Wintergrasp states.
+			data << uint32(571) << uint16(WINTERGRASP) << uint16(WINTERGRASP) << uint16(0);
+			GetSession()->SendPacket(&data);
+		}
 	}
 }
 
