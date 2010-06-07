@@ -273,6 +273,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\IsleOfConquest.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Main.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Master.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\CConsole.cpp" />
@@ -398,6 +399,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\hearthstone-world\IsleOfConquest.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Master.h" />
     <ClInclude Include="..\..\src\hearthstone-world\BaseConsole.h" />
     <ClInclude Include="..\..\src\hearthstone-world\CConsole.h" />
