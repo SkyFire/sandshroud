@@ -479,22 +479,6 @@
 			Name="Battlegrounds"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-world\AlteracValley.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\AlteracValley.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\ArathiBasin.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\ArathiBasin.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\hearthstone-world\Arenas.cpp"
 				>
 			</File>
@@ -526,30 +510,66 @@
 				RelativePath="..\..\src\hearthstone-world\BattlegroundMgr.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\EyeOfTheStorm.cpp"
+			<Filter
+				Name="1"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\EyeOfTheStorm.h"
+				<File
+					RelativePath="..\..\src\hearthstone-world\AlteracValley.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\AlteracValley.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\ArathiBasin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\ArathiBasin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WarsongGulch.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WarsongGulch.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="2"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\StrandOfTheAncients.cpp"
+				<File
+					RelativePath="..\..\src\hearthstone-world\EyeOfTheStorm.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\EyeOfTheStorm.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="3"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\StrandOfTheAncients.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WarsongGulch.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WarsongGulch.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\IsleOfConquest.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\IsleOfConquest.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\StrandOfTheAncients.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\StrandOfTheAncients.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Objects"

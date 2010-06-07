@@ -173,6 +173,7 @@
 #include "AchievementInterface.h"
 #include "ChainAggroEntity.h"
 #include "StrandOfTheAncients.h"
+#include "IsleOfConquest.h"
 
 #ifdef CLUSTERING
 	#include "WorkerServerClient.h"

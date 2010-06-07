@@ -5786,7 +5786,7 @@ void Player::AddInRangeObject(Object* pObj)
 			m_CurrentTaxiPath->SendMoveForTime( TO_PLAYER(this), TO_PLAYER( pObj ), m_taxi_ride_time - ntime);*/
 	}
 
-	if( pObj->IsCreature() && pObj->m_faction->FactionFlags & 0x1000 )
+	if( pObj->IsCreature() && pObj->m_faction && pObj->m_faction->FactionFlags & 0x1000 )
 		m_hasInRangeGuards++;
 
 	Unit::AddInRangeObject(pObj);
@@ -5842,7 +5842,7 @@ void Player::AddInRangeObject(Object* pObj)
 
 void Player::OnRemoveInRangeObject(Object* pObj)
 {
-	if( pObj->IsCreature() && pObj->m_faction->FactionFlags & 0x1000 )
+	if( pObj->IsCreature() && pObj->m_faction && pObj->m_faction->FactionFlags & 0x1000 )
 		m_hasInRangeGuards--;
 
 	//if (/*!CanSee(pObj) && */IsVisible(pObj))
@@ -8234,7 +8234,7 @@ void Player::ForceAreaUpdate()
 				sWintergraspI.SendInitWorldStates(this);
 		}
 	}
-	else // There is more todo.
+	else
 	{
 		if(WinterGrasp != NULL)
 			WinterGrasp->OnRemovePlayer(this);

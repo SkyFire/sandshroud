@@ -69,7 +69,7 @@ const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
 	NULL,							// 5v5
 	&EyeOfTheStorm::Create,			// EOTS
 	NULL,							// Arena
-//	&StrandOfTheAncients::Create,	// SOTA
+	&StrandOfTheAncients::Create,	// SOTA
 	NULL,							// Dalaran Sewer
 	NULL,							// Ring of Valor
 	NULL,							// Non existant.
@@ -90,9 +90,7 @@ const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
 	NULL,							// Non existant.
 	NULL,							// Non existant.
 	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-// 	&IsleOfConquest::Create,		// IOC
+ 	&IsleOfConquest::Create,		// IOC
 	NULL,							// Non existant.
 	NULL,							// Random
 };
@@ -361,7 +359,6 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 	}
 	else
 		Log.Success("BattlegroundManager", "Player %u is now in battleground queue for instance %u", m_session->GetPlayer()->GetLowGUID(), instance );
-
 
 	/* send the battleground status packet */
 	uint32 queueSlot = plr->GetBGQueueSlot();

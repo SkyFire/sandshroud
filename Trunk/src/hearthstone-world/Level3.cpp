@@ -36,7 +36,7 @@ bool ChatHandler::HandleWorldPortCommand(const char* args, WorldSession *m_sessi
 		return false;
 
 	LocationVector vec(x, y, z);
-	if(!m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), mapid))
+	if(m_session->GetPlayer()->GetMapId() == mapid || !m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), mapid))
 		m_session->GetPlayer()->SafeTeleport(mapid, 0, vec);
 	else
 	{

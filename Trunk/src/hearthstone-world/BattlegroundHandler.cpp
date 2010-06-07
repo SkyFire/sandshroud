@@ -69,9 +69,6 @@ void WorldSession::HandleBattlefieldListOpcode(WorldPacket &recv_data)
 
 	recv_data >> battlegroundType >> requestType >> unk1;
 
-	//if( GetPlayer()->HasBGQueueSlotOfType(type) == 4)
-	//	return;
-	
 	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, false);
 }
 
