@@ -25,7 +25,6 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 	m_passengerCount = 0;
 	m_maxPassengers = 0;
 	m_seatSlotMax = 0;
-	memset( m_passengers, 0, sizeof(Player*)*8 );
 	m_isVehicle = true;
 	Initialised = false;
 	m_CreatedFromSpell = false;
@@ -35,6 +34,7 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 	{
 		m_vehicleSeats[i] = NULL;
 		seatisusable[i] = false;
+		m_passengers[i] = NULL;
 	}
 }
 
@@ -123,22 +123,39 @@ void Vehicle::InstallAccessories()
 			RemovePassenger(m_passengers[i]);
 
 		// Create the Unit!
-		Creature* pass = GetMapMgr()->CreateCreature(acc->accessoryentry[i]);
-		if(pass != NULL)
+		if(proto->vehicle_entry > 0) // Vehicle
 		{
-			pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
-				GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
-				GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
-
-			pass->PushToWorld(GetMapMgr());
-			if(pass->IsVehicle())
+			Vehicle* pass = GetMapMgr()->CreateVehicle(acc->accessoryentry[i]);
+			if(pass != NULL)
 			{
-				TO_VEHICLE(pass)->InitSeats(pass->GetEntry());
-				if(pass->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK))
-					RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK); // Accessory
-			}
+				pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+					GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
+					GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
 
-			AddPassenger(pass, i, true);
+				pass->Init();
+				pass->m_TransporterGUID = GetGUID();
+				pass->PushToWorld(GetMapMgr());
+				pass->InitSeats(proto->vehicle_entry);
+				if(pass->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK))
+					pass->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK); // Accessory
+
+				AddPassenger(pass, i, true);
+			}
+		}
+		else
+		{
+			Creature* pass = GetMapMgr()->CreateCreature(acc->accessoryentry[i]);
+			if(pass != NULL)
+			{
+				pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+					GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
+					GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
+
+				pass->Init();
+				pass->m_TransporterGUID = GetGUID();
+				pass->PushToWorld(GetMapMgr());
+				AddPassenger(pass, i, true);
+			}
 		}
 	}
 }
@@ -510,7 +527,7 @@ uint8 Vehicle::GetPassengerSlot(Unit* pPassenger)
 			break;
 		}
 	}
-	return 0xFF;
+	return 0;
 }
 
 void Vehicle::RemovePassenger(Unit* pPassenger)
@@ -635,14 +652,14 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	bool haspassengers = false;
 	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
-		if(m_passengers[i] != NULL)
+		if(m_passengers[i] != NULL && m_passengers[i]->IsPlayer())
 		{
 			haspassengers = true;
 			break;
 		}
 	}
 
-	if(!haspassengers)
+	if(!haspassengers && (m_CurrentVehicle != NULL)) // Passenger and accessory checks.
 	{
 		if( m_spawn )
 			GetAIInterface()->MoveTo(m_spawn->x, m_spawn->y, m_spawn->z, m_spawn->o);
@@ -683,15 +700,23 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		return;
 	}
 
-	m_passengers[ slot ] = pPassenger;
-	pPassenger->m_inVehicleSeatId = slot;
-	pPassenger->m_TransporterGUID = GetGUID();
+	m_passengers[slot] = pPassenger;
+
 	LocationVector v;
-	v.x = m_vehicleSeats[slot]->m_attachmentOffsetX; /* pPassenger->m_TransporterX =*/
+	v.x = m_vehicleSeats[slot]->m_attachmentOffsetX; /* pPassenger->m_TransporterX = */
 	v.y = m_vehicleSeats[slot]->m_attachmentOffsetY; /* pPassenger->m_TransporterY = */
 	v.z = m_vehicleSeats[slot]->m_attachmentOffsetZ; /* pPassenger->m_TransporterZ = */
 	v.o = 0; /* pPassenger->m_TransporterO = */
 	//pPassenger->m_transportPosition =& v; // This is handled elsewhere, do not initialize here.
+	pPassenger->movement_info.flags |= MOVEFLAG_TAXI;
+	pPassenger->movement_info.transX = v.x;
+	pPassenger->movement_info.transY = v.y;
+	pPassenger->movement_info.transZ = v.z;
+	pPassenger->movement_info.transO = GetOrientation();
+	pPassenger->movement_info.transSeat = slot;
+	pPassenger->movement_info.transGuid = WoWGuid(GetGUID());
+	pPassenger->m_inVehicleSeatId = slot;
+	pPassenger->m_TransporterGUID = GetGUID();
 
 	if( m_mountSpell )
 		pPassenger->CastSpell( pPassenger, m_mountSpell, true );
@@ -707,7 +732,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		//Dismount
 		if(pPlayer->m_MountSpellId)
 			pPlayer->RemoveAura(pPlayer->m_MountSpellId);
-	
+
 		//Remove morph spells
 		if(pPlayer->GetUInt32Value(UNIT_FIELD_DISPLAYID) != pPlayer->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID))
 		{
@@ -809,23 +834,8 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
 		pPassenger->SetPosition(GetPositionX()+v.x, GetPositionY()+v.y, GetPositionZ()+v.z, GetOrientation());
 
-		WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
-		data << pPassenger->GetNewGUID();						// Passengerguid
-		data << GetNewGUID();									// Transporterguid (vehicleguid)
-		data << uint8(slot);									// Vehicle Seat ID
-		data << uint8(0);										// Unknown
-		data << GetPositionX() - pPassenger->GetPositionX();	// OffsetTransporterX
-		data << GetPositionY() - pPassenger->GetPositionY();	// OffsetTransporterY
-		data << GetPositionZ() - pPassenger->GetPositionZ();	// OffsetTransporterZ
-		data << getMSTime();									// Timestamp
-		data << uint8(0x04);									// Flags
-		data << float(0);										// Orientation Offset
-		data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
-		data << uint32(0);										// MoveTime
-		data << uint32(1);										// Points
-		data << v.x;											// GetTransOffsetX();
-		data << v.y;											// GetTransOffsetY();
-		data << v.z;											// GetTransOffsetZ();
+		WorldPacket data(MSG_MOVE_HEARTBEAT, 32);
+		BuildHeartBeatMsg(&data);
 		SendMessageToSet(&data, false);
 	}
 
@@ -1022,9 +1032,46 @@ is a vehicle, we will enter the passenger.*/
 void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 {
 	WoWGuid Vehicleguid;
-	uint8 RequestedSeat;
+	int8 RequestedSeat;
+	Vehicle* cv = _player->m_CurrentVehicle;
 
-	if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_SWITCH_SEAT)
+	if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_PREV_SEAT)
+	{
+		int8 seat = _player->GetSeatID();
+		int8 newseat = seat;
+		while(seat == _player->GetSeatID())
+		{
+			if(newseat < 1)
+				break;
+
+			--newseat;
+
+			if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
+				break;
+		}
+		if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
+			cv->ChangeSeats(_player, newseat);
+		return;
+	}
+	else if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_NEXT_SEAT)
+	{
+		int8 seat = _player->GetSeatID();
+		int8 newseat = seat;
+		while(seat == _player->GetSeatID())
+		{
+			if(newseat > 7)
+				break;
+
+			++newseat;
+
+			if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
+				break;
+		}
+		if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
+			cv->ChangeSeats(_player, newseat);
+		return;
+	}
+	else if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_SWITCH_SEAT)
 	{
 		recv_data >> Vehicleguid;
 		recv_data >> RequestedSeat;
@@ -1039,35 +1086,29 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	uint64 guid = Vehicleguid.GetOldGuid();
 	Vehicle* vehicle = GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
 
-	if(vehicle = GetPlayer()->m_CurrentVehicle)
+	if(cv->GetPassengerSlot(vehicle))
 	{
-		if(RequestedSeat == GetPlayer()->GetSeatID())
-		{
-			OUT_DEBUG("Return, Matching Seats. Requsted: %u, current: %u", RequestedSeat, GetPlayer()->GetSeatID());
-			return;
-		}
+		cv->RemovePassenger(_player);
+		vehicle->AddPassenger(_player);
+		return;
 	}
 
-	Unit* existpassenger = vehicle->GetPassenger(RequestedSeat);
-	if(existpassenger && (existpassenger != GetPlayer()))
-	{
-		if(existpassenger->IsVehicle())
-		{
-			Vehicle* vehpassenger = TO_VEHICLE(existpassenger);
-			if(vehpassenger->IsFull())
-				return;
-			else
-				vehpassenger->AddPassenger(GetPlayer());
-		}
-		else
-			return;
-	}
-
-	vehicle->ChangeSeats(GetPlayer(), RequestedSeat);
+	cv->ChangeSeats(_player, RequestedSeat);
 }
 
 void Vehicle::ChangeSeats(Unit* unit, uint8 seatid)
-{	// MORE TODO
+{
+	if(seatid == unit->GetSeatID())
+	{
+		OUT_DEBUG("Return, Matching Seats. Requsted: %u, current: %u", seatid, unit->GetSeatID());
+		return;
+	}
+
+	if(unit->m_CurrentVehicle != NULL)
+	{
+		unit->m_CurrentVehicle->RemovePassenger(unit);
+	}
+
 	unit->m_TransporterGUID = GetGUID();
 	AddPassenger(unit, seatid);
 }

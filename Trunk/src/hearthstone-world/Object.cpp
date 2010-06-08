@@ -360,32 +360,32 @@ uint32 TimeStamp();
 
 void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2, Player* target )
 {
-	ByteBuffer *splinebuf = (m_objectTypeId == TYPEID_UNIT) ? target->GetAndRemoveSplinePacket(GetGUID()) : 0;
 	uint16 flag16 = 0;	// some other flag
-
+	ByteBuffer *splinebuf = (m_objectTypeId == TYPEID_UNIT) ? target->GetAndRemoveSplinePacket(GetGUID()) : 0;
 	*data << (uint16)flags;
 
-	Player* pThis = NULLPLR;
-	MovementInfo* moveinfo;
+	Unit* uThis = NULL;
+	Player* pThis = NULL;
+	MovementInfo* moveinfo = NULL; // We are basically writting movement info, if exists.
+
 	if(m_objectTypeId == TYPEID_PLAYER)
 	{
 		pThis = TO_PLAYER(this);
-		if(pThis->GetSession())
-			moveinfo = pThis->GetMovementInfo();
+		uThis = TO_UNIT(this);
 		if(target == pThis)
-		{
-			// Updating our last speeds.
-			pThis->UpdateLastSpeeds();
-		}
+			pThis->UpdateLastSpeeds(); // Updating our last speeds.
+
+		moveinfo = pThis->GetMovementInfo();
+	}
+	else if(m_objectTypeId == TYPEID_UNIT)
+	{
+		uThis = TO_UNIT(this);
+		moveinfo = uThis->GetMovementInfo();
 	}
 
-	if (flags & 0x20)
+	if(flags & 0x20)
 	{
-		if(pThis && pThis->m_TransporterGUID != 0)
-			flags2 |= 0x200;
-		else if(m_objectTypeId==TYPEID_UNIT && TO_CREATURE(this)->m_TransporterGUID != 0 && TO_CREATURE(this)->m_transportPosition != NULL)
-			flags2 |= 0x200;
-		else if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
+		if(uThis && (uThis->m_TransporterGUID != uint64(NULL) || uThis->m_CurrentVehicle != NULL))
 			flags2 |= 0x200;
 
 		if(splinebuf)
@@ -414,37 +414,29 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			}
 
 			if( TO_UNIT(this)->GetAIInterface()->IsFlying())
-//				flags2 |= 0x800; //in 2.3 this is some state that i was not able to decode yet
 				flags2 |= 0x400; //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time 
 			if( TO_CREATURE(this)->proto && TO_CREATURE(this)->proto->extra_a9_flags)
 			{
 				if(!(flags2 & 0x0200))
 					flags2 |= TO_CREATURE(this)->proto->extra_a9_flags;
 			}
-/*			if(GetGUIDHigh() == HIGHGUID_WAYPOINT)
-			{
-				if(GetUInt32Value(UNIT_FIELD_STAT0) == 768)		// flying waypoint
-					flags2 |= 0x800;
-			}*/
 		}
 		*data << uint32(flags2);
 		*data << uint16(flag16);
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
-
-		// this stuff:
-		//   0x01 -> Enable Swimming?
-		//   0x04 -> ??
-		//   0x10 -> disables movement compensation and causes players to jump around all the place
-		//   0x40 -> disables movement compensation and causes players to jump around all the place
-
 		*data << (float)m_position.x;
 		*data << (float)m_position.y;
 		*data << (float)m_position.z;
 		*data << (float)m_position.o;
 
-		if ( flags2 & 0x0200 )	//BYTE1(flags2) & 2
+		if ( flags2 & MOVEFLAG_TAXI )	//BYTE1(flags2) & 2
 		{
-			if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
+			if(moveinfo != NULL)
+			{
+				*data << moveinfo->transGuid << moveinfo->transX << moveinfo->transY
+					<< moveinfo->transZ << moveinfo->transO << moveinfo->transTime << moveinfo->transSeat;
+			}
+			else if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
 			{
 				Unit* pUnit = TO_UNIT(this);
 				Vehicle* vehicle = TO_UNIT(this)->m_CurrentVehicle;
@@ -455,7 +447,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetX;
 					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetY;
 					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetZ;
-					*data << float(0.0f);
+					*data << vehicle->GetOrientation();
 					*data << uint32(0);
 					*data << pUnit->m_inVehicleSeatId;
 				}
@@ -470,53 +462,52 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 					*data << uint8(0);
 				}
 			}
-			else if(pThis)
+			else if(uThis)
 			{
-				WoWGuid wowguid(pThis->m_TransporterGUID);
+				WoWGuid wowguid(uThis->m_TransporterGUID);
 				*data << wowguid;
-				*data << pThis->m_transportPosition->x << pThis->m_transportPosition->y << pThis->m_transportPosition->z << pThis->m_transportPosition->o;
-				*data << pThis->m_TransporterUnk << uint8(0);
-			}
-			else if(m_objectTypeId == TYPEID_UNIT && TO_CREATURE(this)->m_transportPosition != NULL)
-			{
-				WoWGuid tguid(TO_CREATURE(this)->m_TransporterGUID);
-				*data << tguid;
-				*data << TO_CREATURE(this)->m_transportPosition->x << TO_CREATURE(this)->m_transportPosition->y <<
-					TO_CREATURE(this)->m_transportPosition->z << TO_CREATURE(this)->m_transportPosition->o;
-				*data << uint32(0);
-				*data << uint8(0);
+				*data << uThis->m_transportPosition->x << uThis->m_transportPosition->y << uThis->m_transportPosition->z << uThis->m_transportPosition->o;
+				*data << uint32(uThis->m_TransporterUnk) << uint8(0);
 			}
 		}
 
-		if(flags2 & 0x2200000 || flag16 & 0x20) //flying/swimming, && unk sth to do with vehicles?
+		if(flags2 & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20) //flying/swimming, && unk sth to do with vehicles?
 		{
-			if(pThis && moveinfo)
+			if(moveinfo != NULL)
 				*data << moveinfo->pitch;
-			*data << float(0); //pitch
+			else
+				*data << float(0); //pitch
 		}
 
-		if(pThis && moveinfo)
+		if(moveinfo != NULL)
 			*data << moveinfo->FallTime;
 		else
 			*data << uint32(0); //last fall time
 
-		if(flags2 & 0x1000) // BYTE1(flags2) & 0x10
+		if(flags2 & MOVEFLAG_REDIRECTED || flags2 & MOVEFLAG_FALLING) // BYTE1(flags2) & 0x10
 		{
-			if(pThis && moveinfo)
+			if(moveinfo != NULL)
 			{
-				*data << moveinfo->jumpspeed;
+				*data << moveinfo->jump_velocity;
 				*data << moveinfo->jump_sinAngle;
 				*data << moveinfo->jump_cosAngle;
 				*data << moveinfo->jump_xySpeed;
 			}
-			*data << (float)0;
-			*data << (float)1.0; //sinAngle
-			*data << (float)0;	 //cosAngle
-			*data << (float)0;	 //xySpeed
+			else
+			{
+				*data << (float)0;
+				*data << (float)1.0; //sinAngle
+				*data << (float)0;	 //cosAngle
+				*data << (float)0;	 //xySpeed
+			}
 		}
+
 		if( flags2 & MOVEFLAG_SPLINE_MOVER )
 		{
-			*data << (float)0; //unknown float
+			if(moveinfo != NULL)
+				*data << moveinfo->pitch;
+			else
+				*data << float(0); //last fall time
 		}
 
 		*data << m_walkSpeed;		// walk speed

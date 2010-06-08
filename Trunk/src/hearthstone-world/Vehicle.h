@@ -63,7 +63,7 @@ public:
 		if(seat >= 8)
 			return NULL;
 
-		return m_passengers[seat] ? m_passengers[seat] : NULL;
+		return m_passengers[seat];
 	}
 
 	uint8 GetPassengerSlot(Unit* pPassenger);

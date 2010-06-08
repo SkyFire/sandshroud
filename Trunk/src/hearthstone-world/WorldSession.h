@@ -398,9 +398,12 @@ protected:
 	void HandleMovementOpcodes( WorldPacket& recvPacket );
 	void HandleMoveFallResetOpcode( WorldPacket & recvPacket);
 	void HandleMoveTimeSkippedOpcode( WorldPacket & recv_data );
-	void HandleMoveNotActiveMoverOpcode( WorldPacket & recv_data );
 	void HandleSetActiveMoverOpcode( WorldPacket & recv_data );
 	void HandleMoveTeleportAckOpcode( WorldPacket & recv_data );
+	void HandleMoveKnockbackAckOpcode( WorldPacket & recv_data );
+	void HandleMoveHoverWaterFlyAckOpcode( WorldPacket & recv_data );
+	void HandleAcknowledgementOpcodes( WorldPacket & recv_data );
+	void HandleForceSpeedChangeOpcodes( WorldPacket & recv_data );
 
 	/// Opcodes implemented in GroupHandler.cpp:
 	void HandleGroupInviteOpcode(WorldPacket& recvPacket);
@@ -425,18 +428,8 @@ protected:
 	void HandleGroupPromote(WorldPacket& recv_data);
 
 	// LFG opcodes
-	void HandleEnableAutoJoin(WorldPacket& recvPacket);
-	void HandleDisableAutoJoin(WorldPacket& recvPacket);
-	void HandleEnableAutoAddMembers(WorldPacket& recvPacket);
-	void HandleDisableAutoAddMembers(WorldPacket& recvPacket);
-	void HandleSetLookingForGroupComment(WorldPacket& recvPacket);
-	void HandleMsgLookingForGroup(WorldPacket& recvPacket);
-	void HandleSetLookingForGroup(WorldPacket& recvPacket);
-	void HandleSetLookingForMore(WorldPacket& recvPacket);
-	void HandleSetLookingForNone(WorldPacket& recvPacket);
-	void HandleLfgClear(WorldPacket & recvPacket);
-	void HandleLfgInviteAccept(WorldPacket & recvPacket);
-	void HandleLfgInviteDeny(WorldPacket & recvPacket);
+	void HandleLFDPlrLockOpcode(WorldPacket& recvPacket);
+	void HandleLFDPartyLockOpcode(WorldPacket& recvPacket);
 
 	/// Taxi opcodes (TaxiHandler.cpp)
 	void HandleTaxiNodeStatusQueryOpcode(WorldPacket& recvPacket);
@@ -666,15 +659,12 @@ protected:
 	void HandleTutorialClear( WorldPacket & recv_data );
 	void HandleTutorialReset( WorldPacket & recv_data );
 
-	//Acknowledgements
-	void HandleAcknowledgementOpcodes( WorldPacket & recv_data );
+	// Other
 	void HandleMountSpecialAnimOpcode(WorldPacket& recv_data);	
-
 	void HandleSelfResurrectOpcode(WorldPacket& recv_data);
 	void HandleUnlearnSkillOpcode(WorldPacket &recv_data);
 	void HandleRandomRollOpcode(WorldPacket &recv_data);
 	void HandleOpenItemOpcode(WorldPacket &recv_data);
-	
 	void HandleToggleHelmOpcode(WorldPacket &recv_data);
 	void HandleToggleCloakOpcode(WorldPacket &recv_data);
 	void HandleSetVisibleRankOpcode(WorldPacket& recv_data);

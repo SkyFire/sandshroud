@@ -591,27 +591,27 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[MSG_MOVE_FALL_LAND].handler							= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[MSG_MOVE_STOP].handler								= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[CMSG_MOVE_SET_FLY].handler							= &WorldSession::HandleMovementOpcodes;
-	WorldPacketHandlers[CMSG_MOVE_TIME_SKIPPED].handler						= &WorldSession::HandleMoveTimeSkippedOpcode;
-	WorldPacketHandlers[CMSG_MOVE_NOT_ACTIVE_MOVER].handler					= &WorldSession::HandleMoveNotActiveMoverOpcode;
-	WorldPacketHandlers[CMSG_SET_ACTIVE_MOVER].handler						= &WorldSession::HandleSetActiveMoverOpcode;
+	WorldPacketHandlers[CMSG_MOVE_NOT_ACTIVE_MOVER].handler					= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[CMSG_MOVE_CHNG_TRANSPORT].handler					= &WorldSession::HandleMovementOpcodes;
+	WorldPacketHandlers[CMSG_MOVE_TIME_SKIPPED].handler						= &WorldSession::HandleMoveTimeSkippedOpcode;
+	WorldPacketHandlers[CMSG_SET_ACTIVE_MOVER].handler						= &WorldSession::HandleSetActiveMoverOpcode;
 
 	// ACK
 	WorldPacketHandlers[MSG_MOVE_TELEPORT_ACK].handler						= &WorldSession::HandleMoveTeleportAckOpcode;
-	WorldPacketHandlers[CMSG_FORCE_WALK_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_MOVE_FEATHER_FALL_ACK].handler					= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_MOVE_WATER_WALK_ACK].handler					= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK].handler		= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_FORCE_TURN_RATE_CHANGE_ACK].handler			= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_FORCE_RUN_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_FORCE_RUN_BACK_SPEED_CHANGE_ACK].handler		= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_FORCE_SWIM_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_FORCE_FLIGHT_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleAcknowledgementOpcodes;
+	WorldPacketHandlers[CMSG_MOVE_HOVER_ACK].handler						= &WorldSession::HandleMoveHoverWaterFlyAckOpcode;
+	WorldPacketHandlers[CMSG_MOVE_WATER_WALK_ACK].handler					= &WorldSession::HandleMoveHoverWaterFlyAckOpcode;
+	WorldPacketHandlers[CMSG_MOVE_SET_CAN_FLY_ACK].handler					= &WorldSession::HandleMoveHoverWaterFlyAckOpcode;
+	WorldPacketHandlers[CMSG_MOVE_KNOCK_BACK_ACK].handler					= &WorldSession::HandleMoveKnockbackAckOpcode;
+	WorldPacketHandlers[CMSG_FORCE_WALK_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleForceSpeedChangeOpcodes;
+	WorldPacketHandlers[CMSG_FORCE_SWIM_BACK_SPEED_CHANGE_ACK].handler		= &WorldSession::HandleForceSpeedChangeOpcodes;
+	WorldPacketHandlers[CMSG_FORCE_TURN_RATE_CHANGE_ACK].handler			= &WorldSession::HandleForceSpeedChangeOpcodes;
+	WorldPacketHandlers[CMSG_FORCE_RUN_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleForceSpeedChangeOpcodes;
+	WorldPacketHandlers[CMSG_FORCE_RUN_BACK_SPEED_CHANGE_ACK].handler		= &WorldSession::HandleForceSpeedChangeOpcodes;
+	WorldPacketHandlers[CMSG_FORCE_SWIM_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleForceSpeedChangeOpcodes;
+	WorldPacketHandlers[CMSG_FORCE_FLIGHT_SPEED_CHANGE_ACK].handler			= &WorldSession::HandleForceSpeedChangeOpcodes;
 	WorldPacketHandlers[CMSG_FORCE_MOVE_ROOT_ACK].handler					= &WorldSession::HandleAcknowledgementOpcodes;
 	WorldPacketHandlers[CMSG_FORCE_MOVE_UNROOT_ACK].handler					= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_MOVE_KNOCK_BACK_ACK].handler					= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_MOVE_HOVER_ACK].handler						= &WorldSession::HandleAcknowledgementOpcodes;
-	WorldPacketHandlers[CMSG_MOVE_SET_CAN_FLY_ACK].handler					= &WorldSession::HandleAcknowledgementOpcodes;
+	WorldPacketHandlers[CMSG_MOVE_FEATHER_FALL_ACK].handler					= &WorldSession::HandleAcknowledgementOpcodes;
 
 	// Action Buttons
 	WorldPacketHandlers[CMSG_SET_ACTION_BUTTON].handler						 = &WorldSession::HandleSetActionButtonOpcode;
@@ -709,16 +709,9 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_REQUEST_PARTY_MEMBER_STATS].handler			= &WorldSession::HandlePartyMemberStatsOpcode;
 	WorldPacketHandlers[MSG_PARTY_ASSIGNMENT].handler						= &WorldSession::HandleGroupPromote;
 
-/*	// Grouping Search System
-	WorldPacketHandlers[CMSG_SET_LFG_COMMENT].handler						= &WorldSession::HandleSetLookingForGroupComment;
-	WorldPacketHandlers[MSG_LOOKING_FOR_GROUP].handler						= &WorldSession::HandleMsgLookingForGroup;
-	WorldPacketHandlers[CMSG_SET_LOOKING_FOR_GROUP].handler					= &WorldSession::HandleSetLookingForGroup;
-	WorldPacketHandlers[CMSG_SET_LOOKING_FOR_MORE].handler					= &WorldSession::HandleSetLookingForMore;
-	WorldPacketHandlers[CMSG_LFG_SET_AUTOJOIN].handler						= &WorldSession::HandleEnableAutoJoin;
-	WorldPacketHandlers[CMSG_LFG_CLEAR_AUTOJOIN].handler					= &WorldSession::HandleDisableAutoJoin;
-	WorldPacketHandlers[CMSG_LFM_SET_AUTOFILL].handler						= &WorldSession::HandleEnableAutoAddMembers;
-	WorldPacketHandlers[CMSG_LFM_CLEAR_AUTOFILL].handler					= &WorldSession::HandleDisableAutoAddMembers;
-	WorldPacketHandlers[CMSG_CLEAR_LOOKING_FOR_GROUP].handler				= &WorldSession::HandleLfgClear;*/
+	// Grouping Search System
+	WorldPacketHandlers[CMSG_LFD_PLAYER_LOCK_INFO_REQUEST].handler			= &WorldSession::HandleLFDPlrLockOpcode;
+	WorldPacketHandlers[CMSG_LFD_PARTY_LOCK_INFO_REQUEST].handler			= &WorldSession::HandleLFDPartyLockOpcode;
 
 	// Taxi / NPC Interaction
 	WorldPacketHandlers[CMSG_ENABLETAXI].handler							= &WorldSession::HandleTaxiQueryAvaibleNodesOpcode;
@@ -988,6 +981,8 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_SPELLCLICK].handler							= &WorldSession::HandleSpellClick;
 	WorldPacketHandlers[CMSG_DISMISS_CONTROLLED_VEHICLE].handler			= &WorldSession::HandleVehicleDismiss;
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_EXIT].handler					= &WorldSession::HandleVehicleDismiss;
+	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_PREV_SEAT].handler				= &WorldSession::HandleRequestSeatChange;
+	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_NEXT_SEAT].handler				= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_SWITCH_SEAT].handler			= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE].handler	= &WorldSession::HandleRequestSeatChange;
 

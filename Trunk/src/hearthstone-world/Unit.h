@@ -665,24 +665,20 @@ typedef std::list<struct ProcTriggerSpellOnSpell> ProcTriggerSpellOnSpellList;
 class MovementInfo
 {
 public:
-	uint64 guid;
-	uint32 time;
-	float pitch;// -1.55=looking down, 0=looking forward, +1.55=looking up
-	float jump_sinAngle;//on slip 8 is zero, on jump some other number
-	float jump_cosAngle, jump_xySpeed;//9,10 changes if you are not on foot
-	float jumpspeed;//something related to collision, CROW: Might be used for other knockback information.
-	uint32 unk11;
-	uint32 spline_unk;
-	uint8 unk13;
-	uint16 flag16;
-
-	float x, y, z, orientation;
 	uint32 flags;
-	uint32 FallTime;
+	uint16 flag16;
+	uint32 time;
+	float x, y, z, orientation;
 	WoWGuid transGuid;
 	float transX, transY, transZ, transO;
 	uint32 transTime;
 	uint8 transSeat;
+	float pitch;// -1.55=looking down, 0=looking forward, +1.55=looking up
+	uint32 FallTime;
+	float jump_sinAngle;//on slip 8 is zero, on jump some other number
+	float jump_cosAngle, jump_xySpeed;//9,10 changes if you are not on foot
+	float jump_velocity;//something related to collision, CROW: Might be used for other knockback information.
+	float spline;
 
 	void init(WorldPacket & data);
 	void write(WorldPacket & data);
