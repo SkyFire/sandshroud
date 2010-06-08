@@ -27,7 +27,7 @@ class AIInterface;
 #define MAX_PASSIVE_AURAS 192   // grep: i mananged to break this.. :p seems we need more
 
 bool SERVER_DECL Rand(float);
-#define MAKE_ACTION_BUTTON(A,T) (uint32(A) | (uint32(T) << 24))
+#define MAKE_ACTION_BUTTON(A,T) uint32(uint32(A) | (uint32(T) << 24))
 #define UF_TARGET_DIED  1
 #define UF_ATTACKING	2 // this unit is attacking it's selection
 #define SPELL_GROUPS	96

@@ -2137,9 +2137,6 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		return true;
 	}
 
-	if(spVehicle)
-		TO_VEHICLE(p)->InitSeats( proto->vehicle_entry );
-
 	CreatureSpawn * sp = NULL;
 	ASSERT(p);
 	if( save )
@@ -2188,7 +2185,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	}
 	
 	p->PushToWorld(m_session->GetPlayer()->GetMapMgr());
-	
+
 	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u", info->Name, 
 		entry, m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ(), m_session->GetPlayer()->GetMapId());
 

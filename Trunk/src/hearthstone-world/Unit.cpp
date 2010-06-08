@@ -7228,6 +7228,7 @@ void Unit::OnPositionChange()
 		m_CurrentVehicle->MoveVehicle(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
 	}
 }
+
 void Unit::Dismount()
 {			
 	if(IsPlayer())

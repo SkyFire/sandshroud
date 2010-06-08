@@ -4659,7 +4659,6 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 		veh->Load( cp, u_caster->GetPositionX(), u_caster->GetPositionY(), u_caster->GetPositionZ(), u_caster->GetOrientation());
 		veh->SetInstanceID( u_caster->GetInstanceID() );
 		veh->PushToWorld( u_caster->GetMapMgr() ); // we can do this safely since we're in the mapmgr's context
-		veh->InitSeats( cp->vehicle_entry, p_caster );
 	}
 	else
 	{
