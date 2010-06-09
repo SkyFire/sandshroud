@@ -5667,7 +5667,8 @@ void ApplyNormalFixes()
 	SpellEntry *sp;
 
 	Log.Notice("World", "Processing %u spells...", dbcSpell.GetNumRows());
-	uint32 cnt = (uint32)dbcSpell.GetNumRows();
+	uint32 cnt = uint32(dbcSpell.GetMaxRow());
+	Log.Notice("World", "Highest spell found %u...", cnt);
 	uint32 effect;
 
 	map<uint32, uint32> talentSpells;
@@ -5685,7 +5686,7 @@ void ApplyNormalFixes()
 	DumpSpellsSQL();
 #endif
 
-	for(uint32 x=0; x < cnt; x++)
+	for(uint32 x = 0; x < cnt; x++)
 	{
 		sp = dbcSpell.LookupRow(x);
 

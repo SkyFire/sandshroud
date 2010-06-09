@@ -428,13 +428,6 @@ bool World::SetInitialWorldSettings()
 	new WorldLog;
 	new ChatHandler;
 
-	// grep: this only has to be done once between version updates
-	// to re-fill the table.
-
-	/*sLog.outString("Filling spell replacements table...");
-	FillSpellReplacementsTable();
-	sLog.outString("");*/
-
 	// Fill the task list with jobs to do.
 	TaskList tl;
 	Storage_FillTaskList(tl);

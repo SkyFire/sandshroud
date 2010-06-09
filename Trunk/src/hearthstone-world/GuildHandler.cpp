@@ -1340,12 +1340,12 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 	}
 	else
 	{
-		uint8 source_bagslot;
-		uint8 source_slot;
+		int8 source_bagslot;
+		int8 source_slot;
 		uint8 dest_bank;
 		uint8 dest_bankslot;
-		uint32 withdraw_stack= 0;
-		uint32 deposit_stack= 0;
+		uint8 withdraw_stack= 0;
+		uint8 deposit_stack= 0;
 		uint8 tochar;
 		GuildBankTab * pTab;
 		Item* pSourceItem;
@@ -1358,16 +1358,13 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 		recv_data >> itementry;
 		recv_data >> autostore;
 		if( autostore )
-		{
 			recv_data >> withdraw_stack;
+
+		recv_data >> source_bagslot;
+		recv_data >> source_slot;
+
+		if(!(source_bagslot == 1 && source_slot== 0))
 			recv_data >> tochar >> deposit_stack;
-		}
-		else
-		{
-			recv_data >> source_bagslot;
-			recv_data >> source_slot;
-			recv_data >> tochar >> deposit_stack;
-		}
 
 		/* sanity checks to avoid overflows */
 		if(dest_bank >= MAX_GUILD_BANK_TABS)
@@ -1711,12 +1708,17 @@ void Guild::SendGuildBank(WorldSession * pClient, GuildBankTab * pTab, int8 upda
 
 			// stack
 			data << uint32(pTab->pSlots[j]->GetUInt32Value(ITEM_FIELD_STACK_COUNT));
-			data << uint32(0);			// unknown value
-			data << uint8(0);			// unknown 2.4.2
-
-			data << uint32(0);		// enchant count
-			//		slot
-			//		id
+			data << uint32(0);							// unknown value
+			data << uint8(0);							// unknown 2.4.2
+			EnchantmentInstance * ei = pTab->pSlots[j]->GetEnchantment(0);
+			if(ei != NULL)
+			{
+				data << uint8(1);						// number of enchants
+				data << uint8(0);						// enchantment slot
+				data << uint32(ei->Enchantment->Id);	// enchantment id
+			}
+			else
+				data << uint8(0);						// no enchantment
 		}
 	}
 

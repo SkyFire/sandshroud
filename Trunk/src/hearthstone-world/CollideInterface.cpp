@@ -30,7 +30,7 @@ struct CollisionMap
 };
 
 SERVER_DECL CCollideInterface CollideInterface;
-VMAP::IVMapManager * CollisionMgr;
+VMAP::IVMapManager* CollisionMgr;
 CollisionMap *m_mapLocks[MAX_MAP];
 Mutex m_mapCreateLock;
 

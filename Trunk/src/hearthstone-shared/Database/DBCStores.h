@@ -1644,6 +1644,11 @@ public:
 		return m_numrows;
 	}
 
+	HEARTHSTONE_INLINE uint32 GetMaxRow()
+	{
+		return m_max;
+	}
+
 	T * LookupEntryForced(uint32 i)
 	{
 #if 0
