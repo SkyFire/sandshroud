@@ -1881,10 +1881,9 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		}
 	case EQUIPMENT_SLOT_OFFHAND:
 		{
-			if( m_pOwner->titanGrip && (
-				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_SWORD ||
-				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
-				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_MACE|| 
+			if( m_pOwner->titanGrip && ( type == INVTYPE_2HWEAPON ||
+				type == INVTYPE_WEAPON ||
+				type == INVTYPE_WEAPONOFFHAND ||
 				type == INVTYPE_SHIELD) )
 				return 0;	// Titan's Grip
 			
@@ -2991,7 +2990,7 @@ void ItemInterface::mSaveItemsToDatabase(bool first, QueryBuffer * buf)
 {
 	uint32 x;
 
-	for( x = EQUIPMENT_SLOT_START; x < CURRENCYTOKEN_SLOT_END; ++x )
+	for( x = EQUIPMENT_SLOT_START; x < MAX_INVENTORY_SLOT; ++x )
 	{
 		if( GetInventoryItem( x ) != NULL )
 		{

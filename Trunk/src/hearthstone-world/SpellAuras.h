@@ -463,13 +463,16 @@ public:
 	bool m_dispelled;
 	uint32 m_resistPctChance;
 		
-	HEARTHSTONE_INLINE uint32 GetTimeLeft()//in sec
+	HEARTHSTONE_INLINE int32 GetTimeLeft()//in sec
 	{
-		if(m_duration==-1)return (uint32)-1;
-		int32 n=int32((UNIXTIME-time_t(timeleft))*1000);
-		if(n>=m_duration) return 0;
-		else 
-		return (m_duration-n);
+		if(m_duration == -1)
+			return -1;
+
+		int32 n = int32((UNIXTIME-time_t(timeleft))*1000);
+		if(n >= m_duration)
+			return 0;
+		else
+			return (m_duration-n);
 	}
 
 	HEARTHSTONE_INLINE uint32 GetMSExpiryTime()

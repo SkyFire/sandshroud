@@ -814,13 +814,13 @@ void WorldSession::FullLogin(Player* plr)
 
 	for(uint32 z = 0; z < NUM_ARENA_TEAM_TYPES; ++z)
 	{
-		if(_player->m_playerInfo->arenaTeam[z] != NULL)
+		if(plr->m_playerInfo->arenaTeam[z] != NULL)
 		{
-			_player->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (z*6), _player->m_playerInfo->arenaTeam[z]->m_id);
-			if(_player->m_playerInfo->arenaTeam[z]->m_leader == _player->GetLowGUID())
-				_player->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (z*6) + 1, 0);
+			plr->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (z*6), plr->m_playerInfo->arenaTeam[z]->m_id);
+			if(plr->m_playerInfo->arenaTeam[z]->m_leader == plr->GetLowGUID())
+				plr->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (z*6) + 1, 0);
 			else
-				_player->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (z*6) + 1, 1);
+				plr->SetUInt32Value(PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (z*6) + 1, 1);
 		}
 	}
 
@@ -859,8 +859,6 @@ void WorldSession::FullLogin(Player* plr)
 		}
 		SendPacket(&data);
 	}
-
-	_player->ResetTitansGrip();
 
 	// Set TIME OF LOGIN
 	CharacterDatabase.Execute ("UPDATE characters SET online = 1 WHERE guid = %u" , plr->GetLowGUID());
@@ -943,25 +941,25 @@ void WorldSession::FullLogin(Player* plr)
 
 	// Send online status to people having this char in friendlist (excluding GM's)
 	if(!HasGMPermissions())
-		_player->Social_TellFriendsOnline();
+		plr->Social_TellFriendsOnline();
 
 	// send friend list (for ignores)
-	_player->Social_SendFriendList(7);
+	plr->Social_SendFriendList(7);
 
 	// Send revision
-	_player->BroadcastMessage("Server: %sSandshroud Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH);
+	plr->BroadcastMessage("Server: %sSandshroud Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH);
 
-	_player->BroadcastMessage("%sPlease report all bugs to %shttp://mantis.sandshroud.org", MSG_COLOR_WHITE, MSG_COLOR_RED);
+	plr->BroadcastMessage("%sPlease report all bugs to %shttp://mantis.sandshroud.org", MSG_COLOR_WHITE, MSG_COLOR_RED);
 	if(sWorld.SendStatsOnJoin)
 	{
-		_player->BroadcastMessage("Online Players: %s%u |rPeak: %s%u|r Accepted Connections: %s%u",
+		plr->BroadcastMessage("Online Players: %s%u |rPeak: %s%u|r Accepted Connections: %s%u",
 			MSG_COLOR_WHITE, sWorld.GetSessionCount(), MSG_COLOR_WHITE, sWorld.PeakSessionCount, MSG_COLOR_WHITE, sWorld.mAcceptedConnections);
-		_player->BroadcastMessage("Server Uptime: |r%s", sWorld.GetUptimeString().c_str());
+		plr->BroadcastMessage("Server Uptime: |r%s", sWorld.GetUptimeString().c_str());
 	}
 
 	// send to gms
 	if(HasGMPermissions())
-		sWorld.SendMessageToGMs(this, "%s %s (%s) is now online.", CanUseCommand('z') ? "Admin" : "GameMaster", _player->GetName(), GetAccountNameS(), GetPermissions());
+		sWorld.SendMessageToGMs(this, "%s %s (%s) is now online.", CanUseCommand('z') ? "Admin" : "GameMaster", plr->GetName(), GetAccountNameS(), GetPermissions());
 
 	//Set current RestState
 	if( plr->m_isResting) 		// We are in a resting zone, turn on Zzz
@@ -978,29 +976,36 @@ void WorldSession::FullLogin(Player* plr)
 			plr->AddCalculatedRestXP(timediff);
 	}
 
-	sHookInterface.OnEnterWorld2(_player);
+	sHookInterface.OnEnterWorld2(plr);
 
 	if(info->m_Group)
 		info->m_Group->Update();
 
-	if((_player->getLevel() >= 10) && !HasGMPermissions())
+	if((plr->getLevel() >= 10) && !HasGMPermissions())
 	{
 		// Retroactive: Level achievement
-		_player->GetAchievementInterface()->HandleAchievementCriteriaLevelUp( _player->getLevel() );
+		plr->GetAchievementInterface()->HandleAchievementCriteriaLevelUp( plr->getLevel() );
 
 		// Send achievement data!
-		if( _player->GetAchievementInterface()->HasAchievements() )
+		if( plr->GetAchievementInterface()->HasAchievements() )
 		{
-			WorldPacket * data = _player->GetAchievementInterface()->BuildAchievementData();
-			_player->CopyAndSendDelayedPacket(data);
+			WorldPacket * data = plr->GetAchievementInterface()->BuildAchievementData();
+			plr->CopyAndSendDelayedPacket(data);
 			delete data;
 		}
 	}
 
-	if(enter_world && !_player->GetMapMgr())
+	if(enter_world && !plr->GetMapMgr())
 		plr->AddToWorld(true);
 
-	objmgr.AddPlayer(_player);
+	// Doesn't create an aura, and don't have a way to check talents yet.
+	QueryResult* titansgrip = CharacterDatabase.Query("SELECT * FROM playertalents WHERE spec = \"%u\" AND tid = \"1867\" AND guid = \"%u;\"", plr->m_talentActiveSpec, plr->GetGUID());
+	if(titansgrip == NULL)
+		plr->ResetTitansGrip();
+	else
+		delete titansgrip;
+
+	objmgr.AddPlayer(plr);
 }
 
 bool ChatHandler::HandleRenameCommand(const char * args, WorldSession * m_session)

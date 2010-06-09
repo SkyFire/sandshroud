@@ -79,11 +79,10 @@ Item::~Item()
 
 void Item::DeleteMe()
 {
-	if( IsContainer() ) {
-		delete static_cast<Container*>(this);
-	} else {
+	if( IsContainer() )
+		delete TO_CONTAINER(this);
+	else
 		delete this;
-	}
 }
 
 void Item::Create( uint32 itemid, Player* owner )
@@ -302,7 +301,7 @@ void Item::SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffe
 	ss << "REPLACE INTO playeritems VALUES(";
 
 	ss << m_uint32Values[ITEM_FIELD_OWNER] << ",";
-    ss << m_uint32Values[OBJECT_FIELD_GUID] << ",";
+	ss << m_uint32Values[OBJECT_FIELD_GUID] << ",";
 	ss << m_uint32Values[OBJECT_FIELD_ENTRY] << ",";
 	ss << wrapped_item_id << ",";
 	ss << m_uint32Values[ITEM_FIELD_GIFTCREATOR] << ",";
@@ -330,16 +329,7 @@ void Item::SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffe
 			int32 remaining_duration = itr->second.Duration - elapsed_duration;
 			if( remaining_duration < 0 )
 				remaining_duration = 0;
-		
-			/*
-			if( !itr->second.RemoveAtLogout && (remaining_duration > 5 && itr->second.Slot != 2) || itr->second.Slot == 2)  // no point saving stuff with < 5 seconds... unless is perm enchant
-			{
-				ss << itr->second.Enchantment->Id << ",";
-				ss << remaining_duration << ",";
-				ss << itr->second.Slot << ";";
-			}
-			*/
-		  
+
 			if( itr->second.Enchantment && ( remaining_duration && remaining_duration > 5 ) || ( itr->second.Duration == 0 ) )
 			{
 				ss << itr->second.Enchantment->Id << ",";

@@ -6727,13 +6727,13 @@ void Player::ResetTitansGrip()
 
 	Item* mainhand = GetItemInterface()->GetInventoryItem(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_MAINHAND);
 	Item* offhand = GetItemInterface()->GetInventoryItem(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_OFFHAND);
-	if(offhand && (offhand->GetProto()->InventoryType == INVTYPE_2HWEAPON ||
-		mainhand && mainhand->GetProto()->InventoryType == INVTYPE_2HWEAPON))
+	if(offhand && (offhand->GetProto()->InventoryType == INVTYPE_2HWEAPON || mainhand && mainhand->GetProto()->InventoryType == INVTYPE_2HWEAPON))
 	{
 		// we need to de-equip this
 		offhand = GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_OFFHAND, false);
 		if( offhand == NULL )
 			return; 	// should never happen
+
 		SlotResult result = GetItemInterface()->FindFreeInventorySlot(offhand->GetProto());
 		if( !result.Result )
 		{
@@ -6814,7 +6814,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 	std::map<uint32, uint8> *talents;
 	std::map<uint32, uint8>::iterator itr;
 
-	if(!init)	// unapply old spec
+	if(init == false)	// unapply old spec
 	{
 		talents = &m_specs[m_talentActiveSpec].talents;
 		if(talents->size())
@@ -9219,7 +9219,7 @@ void Player::CompleteLoading()
 			++i;
 
 			// this stuff REALLY needs to be fixed - Burlex
-			SpellEntry * sp = dbcSpell.LookupEntry((*i2).id);
+			SpellEntry* sp = dbcSpell.LookupEntry((*i2).id);
 
 			//do not load auras that only exist while pet exist. We should recast these when pet is created anyway
 			if ( sp->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET )
@@ -9564,9 +9564,7 @@ bool Player::CanSignCharter(Charter * charter, Player* requester)
 
 void Player::SaveAuras(stringstream &ss)
 {
-   
 	// Add player auras
-//	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
 	for(uint32 x=0;x<MAX_AURAS;x++)
 	{
 		if(m_auras[x] != NULL)
@@ -9629,26 +9627,21 @@ void Player::SaveAuras(stringstream &ss)
 
 			//disabled proc spells until proper loading is fixed. Some spells tend to block or not remove when restored
 			if(aur->GetSpellProto()->procFlags)
-			{
-//				OUT_DEBUG("skipping aura %d because has flags %d",aur->GetSpellId(),aur->GetSpellProto()->procFlags);
 				skip = true;
-			}
+
 			//disabled proc spells until proper loading is fixed. We cannot recover the charges that were used up. Will implement later
 			if(aur->GetSpellProto()->procCharges)
-			{
-//				OUT_DEBUG("skipping aura %d because has proccharges %d",aur->GetSpellId(),aur->GetSpellProto()->procCharges);
 				skip = true;
-			}
+
 			//we are going to cast passive spells anyway on login so no need to save auras for them
 			if(aur->IsPassive())
 				skip = true;
-			//shapeshift
-//			if(m_ShapeShifted==aur->m_spellProto->Id)
-//				skip=true;
 
-			if(skip)continue;
-			uint32 d=aur->GetTimeLeft();
-			if(d>3000)
+			if(skip)
+				continue;
+
+			int32 d = aur->GetTimeLeft();
+			if(d > 3000 || d == -1)
 				ss  << aur->GetSpellId() << "," << d << ",";
 		}
 	}

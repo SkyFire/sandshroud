@@ -437,7 +437,7 @@ struct DamageSplit
 struct LoginAura
 {
     uint32 id;
-    uint32 dur;
+    int32 dur;
 };
 
 static const uint32 TalentTreesPerClass[DRUID+1][3] =  {

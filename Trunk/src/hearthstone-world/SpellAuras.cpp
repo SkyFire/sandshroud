@@ -2973,7 +2973,7 @@ void Aura::SpellAuraDummy(bool apply)
 			m_target->RemoveDummyAura( m_spellProto->NameHash );
 	}
 
-	if ( TamingSpellid && ! GetTimeLeft() )
+	if ( TamingSpellid && !GetTimeLeft() )
 	{
 		// Creates a 15 minute pet, if player has the quest that goes with the spell and if target corresponds to quest
 		if( m_caster == NULL || !m_caster->IsPlayer() )
