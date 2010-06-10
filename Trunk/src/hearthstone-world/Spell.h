@@ -1415,6 +1415,8 @@ public:
 	uint64 m_itemTarget;
 	float m_srcX, m_srcY, m_srcZ;
 	float m_destX, m_destY, m_destZ;
+	uint8 missileflags, missileunkcheck;
+	float missilespeed, missilepitch, traveltime;
 	//std::string m_strTarget;
 
 };
@@ -1749,6 +1751,7 @@ public:
 	void AddTime(uint32 type);
 	void AddCooldown();
 	void AddStartCooldown();
+	void HandleDestLocationHit();
 	bool Reflect(Unit* refunit);
 
 	HEARTHSTONE_INLINE uint32 getState() { return m_spellState; }
@@ -1937,6 +1940,7 @@ public:
 	void SpellTargetSameGroupSameClass(uint32 i, uint32 j);
 	void SpellTargetPositionOfTarget(uint32 i, uint32 j);
 	void SpellTargetAreaOfEffect87(uint32 i, uint32 j);
+	void SpellTargetProjectile(uint32 i, uint32 j);
 	void SpellTargetAllTargetsInArea(uint32 i, uint32 j);
 	void SpellTargetVehicle(uint32 i, uint32 j);
 

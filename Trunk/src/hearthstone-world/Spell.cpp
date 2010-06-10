@@ -34,9 +34,11 @@ enum SpellTargetSpecification
 
 void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 {
-	uint8 missileflags;
 	m_unitTarget = m_itemTarget = 0;
 	m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = 0;
+	missileflags = missileunkcheck = 0;
+	missilespeed = missilepitch = 0;
+	traveltime = 0.0f;
 	//m_strTarget = "";
 
 	data >> missileflags >> m_targetMask;
@@ -63,7 +65,7 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 	{
 		uint32 unk2;
 		uint8 unk;
-		data >> unk; data >> unk; data >> unk; 
+		data >> unk >> unk >> unk; 
 		data >> unk2;
 		data >> guid;
 		m_itemTarget = guid.GetOldGuid();
@@ -91,6 +93,24 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 			m_srcY = m_destY;
 			m_srcZ = m_destZ;
 		}
+	}
+
+	if(missileflags & 0x2)
+	{
+		data >> missilepitch >> missilespeed >> missileunkcheck;
+
+		if(missileunkcheck == 1)
+		{
+			uint32 unkdoodah, unkdoodah2;
+			data >> unkdoodah;
+			data >> unkdoodah2;
+		}
+
+		printf("pieflavor %f %f %f %f\n", m_destX, m_srcX, m_destY, m_srcY);
+		float dx = m_destX - m_srcX;
+		float dy = m_destY - m_srcY;
+		if((missilepitch != (M_PI / 4)) && (missilepitch != -M_PI / 4))
+			traveltime = (sqrtf(dx * dx + dy * dy) / (cosf(missilepitch) * missilespeed)) * 1000;
 	}
 }
 
@@ -994,6 +1014,8 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		GenerateTargets( targets );
 	}
 
+	m_missileTravelTime = (uint32)m_targets.traveltime;
+	m_missilePitch = (uint32)m_targets.missilepitch;
 	m_targets = *targets;
 
 	if( !m_triggeredSpell && p_caster != NULL && p_caster->CastTimeCheat )
@@ -1424,6 +1446,27 @@ void Spell::cast(bool check)
 				if( u_caster != NULL )
 					u_caster->SetCurrentSpell(this);
 			}
+			if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+			{
+				float dist = 0.0f;
+
+				if(m_missileTravelTime)
+					sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, m_missileTravelTime, 1, 0);
+				else
+				{
+					if(m_spellInfo->speed <= 0)
+						HandleDestLocationHit();
+					else
+					{
+						dist = m_caster->CalcDistance(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ);
+						float time = ((dist*1000.0f)/m_spellInfo->speed);
+						if(time <= 100)
+							HandleDestLocationHit();
+						else
+							sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, float2int32(time), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+					}
+				}
+			}
 		}
 
 		if (p_caster)
@@ -1692,6 +1735,48 @@ void Spell::cast(bool check)
 		// cancast failed
 		SendCastResult(cancastresult);
 		finish();
+	}
+}
+
+void Spell::HandleDestLocationHit()
+{
+	SpellTargetList::iterator i;
+	for(uint32 x = 0; x < 3; ++x)
+	{
+		FillTargetMap(x);
+		// check if we actualy have a effect
+		if(m_spellInfo->Effect[x])
+		{
+			bool hit = false;
+			if (m_orderedObjects.size()>0)
+			{
+				for(std::vector<uint64>::iterator itr = m_orderedObjects.begin(); itr != m_orderedObjects.end(); ++itr)
+				{
+					for(SpellTargetList::iterator itr2 = m_targetList.begin(); itr2 != m_targetList.end(); ++itr2)
+					{
+						if((*itr2).Guid == *itr && ((*itr2).EffectMask & (1 << x)))
+						{
+							HandleEffects(x);
+							hit = true;
+						}
+					}
+				}
+			}
+
+			if (!hit)
+			{
+				if( m_spellInfo->Effect[x] == SPELL_EFFECT_TELEPORT_UNITS)
+				{
+					HandleEffects(m_caster->GetGUID());
+				}
+				else if( m_spellInfo->Effect[x] == SPELL_EFFECT_SUMMON_WILD)
+				{
+					HandleEffects(m_caster->GetGUID());
+				}
+				else
+					HandleEffects(0); 
+			}
+		}
 	}
 }
 
@@ -2974,7 +3059,7 @@ uint8 Spell::CanCast(bool tolerate)
 			if (m_spellInfo->NameHash == SPELL_HASH_MIND_CONTROL && target->GetAuraSpellIDWithNameHash(SPELL_HASH_MIND_CONTROL))
 				return SPELL_FAILED_BAD_TARGETS;
 			if(target == m_caster && m_spellInfo->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
-            return SPELL_FAILED_BAD_TARGETS;
+				return SPELL_FAILED_BAD_TARGETS;
 			//these spells can be cast only on certain objects. Otherwise cool exploit
 			//Most of this things goes to spell_forced_target table
 			switch (m_spellInfo->Id)

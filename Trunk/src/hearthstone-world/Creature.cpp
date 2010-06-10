@@ -240,6 +240,7 @@ void Creature::OnRespawn( MapMgr* m)
 		TO_VEHICLE(this)->setDeathState(ALIVE);
 	else
 		setDeathState(ALIVE);
+
 	GetAIInterface()->StopMovement(0); // after respawn monster can move
 	m_PickPocketed = false;
 	PushToWorld(m);

@@ -111,7 +111,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetNULL,						// 86
 	&Spell::SpellTargetAreaOfEffect87,				// 87
 	&Spell::SpellTargetNULL,						// 88
-	&Spell::SpellTargetNULL,						// 89 Fill Targets Trajectory // Crow: Maybe... Later.
+	&Spell::SpellTargetProjectile,					// 89 Fill Targets Trajectory
 	&Spell::SpellTargetNULL,						// 90
 	&Spell::SpellTargetNULL,						// 91
 	&Spell::SpellTargetNULL,						// 92
@@ -1061,6 +1061,15 @@ uint64 Spell::FindLowestHealthRaidMember(Player* Target, uint32 dist)
 	return lowestHealthTarget;
 }
 
+/// Spell Target Handling for type 76 All targets in area
+void Spell::SpellTargetAllTargetsInArea(uint32 i, uint32 j)
+{
+	if( !m_caster || !m_caster->IsInWorld() )
+		return;
+
+	FillAllTargetsInArea(i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, GetRadius(i));
+}
+
 /// Spell Target Handling for type 87
 void Spell::SpellTargetAreaOfEffect87(uint32 i, uint32 j)
 {
@@ -1070,13 +1079,14 @@ void Spell::SpellTargetAreaOfEffect87(uint32 i, uint32 j)
 	_AddTargetForced(m_caster->GetGUID(), i);
 }
 
-/// Spell Target Handling for type 76 All targets in area
-void Spell::SpellTargetAllTargetsInArea(uint32 i, uint32 j)
+/// Spell Target Handling for type 89
+void Spell::SpellTargetProjectile(uint32 i, uint32 j)
 {
 	if( !m_caster || !m_caster->IsInWorld() )
 		return;
 
-	FillAllTargetsInArea(i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, GetRadius(i));
+	//TODO
+//	FillAllTargetsInArea(i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, GetRadius(i));
 }
 
 /// Spell Target Handling for type 94: Target: Vehicle

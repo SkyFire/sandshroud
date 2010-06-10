@@ -188,13 +188,19 @@ struct CreatureProtoHeroic
 	unordered_set<uint32> start_auras;
 };
 
+struct AccessoryInfo
+{
+	uint32 accessoryentry;
+//	bool unselectableaccessory;
+};
+
 struct CreatureProtoVehicle
 {
 	uint32 vehicle_creature_entry; // Entry.
 	bool healthfromdriver; // Effects only driver.
 	uint32 healthunitfromitemlev;
 	uint32 VehicleSpells[6]; // Vehicle spells.
-	uint32 accessoryentry[8]; // Accessories.
+	AccessoryInfo accessories[8]; // Accessories.
 };
 
 struct CreatureInfoExtra

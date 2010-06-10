@@ -1008,9 +1008,9 @@ void Object::PushToWorld(MapMgr* mgr)
 	// correct incorrect instance id's
 	mSemaphoreTeleport = false;
 	m_inQueue = false;
-   
+
 	event_Relocate();
-	
+
 	// call virtual function to handle stuff.. :P
 	OnPushToWorld();
 }

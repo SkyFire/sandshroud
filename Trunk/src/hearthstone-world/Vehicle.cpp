@@ -99,7 +99,8 @@ void Vehicle::InstallAccessories()
 
 	for(int i = 0; i < 8; ++i)
 	{
-		if(!acc->accessoryentry[i])
+		AccessoryInfo accessories = acc->accessories[i];
+		if(!accessories.accessoryentry)
 			continue;
 
 		if(m_vehicleSeats[i] == NULL)
@@ -109,12 +110,12 @@ void Vehicle::InstallAccessories()
 		}
 
 		// Load the Proto
-		CreatureProto* proto = CreatureProtoStorage.LookupEntry(acc->accessoryentry[i]);
-		CreatureInfo* info = CreatureNameStorage.LookupEntry(acc->accessoryentry[i]);
+		CreatureProto* proto = CreatureProtoStorage.LookupEntry(accessories.accessoryentry);
+		CreatureInfo* info = CreatureNameStorage.LookupEntry(accessories.accessoryentry);
 
 		if(!proto || !info)
 		{
-			sLog.outError("Vehicle", "No proto/info for vehicle accessory %u in vehicle %u", acc->accessoryentry[i], GetEntry());
+			sLog.outError("No proto/info for vehicle accessory %u in vehicle %u", accessories.accessoryentry, GetEntry());
 			continue;
 		}
 
@@ -125,7 +126,7 @@ void Vehicle::InstallAccessories()
 		// Create the Unit!
 		if(proto->vehicle_entry > 0) // Vehicle
 		{
-			Vehicle* pass = GetMapMgr()->CreateVehicle(acc->accessoryentry[i]);
+			Vehicle* pass = GetMapMgr()->CreateVehicle(accessories.accessoryentry);
 			if(pass != NULL)
 			{
 				pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
@@ -144,7 +145,7 @@ void Vehicle::InstallAccessories()
 		}
 		else
 		{
-			Creature* pass = GetMapMgr()->CreateCreature(acc->accessoryentry[i]);
+			Creature* pass = GetMapMgr()->CreateCreature(accessories.accessoryentry);
 			if(pass != NULL)
 			{
 				pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
@@ -261,6 +262,7 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	return Creature::Load(spawn, mode, info);
 }
+
 void Vehicle::OnPushToWorld()
 {
 	CreatureProto* proto = CreatureProtoStorage.LookupEntry(GetEntry());
@@ -838,9 +840,18 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	else
 	{
 		pPassenger->m_CurrentVehicle = TO_VEHICLE(this);
-		pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
-		pPassenger->SetPosition(GetPositionX()+v.x, GetPositionY()+v.y, GetPositionZ()+v.z, GetOrientation());
 
+/*		CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+		if(vehicleproto != NULL)
+			if(vehicleproto->accessories[slot].accessoryentry == pPassenger->GetEntry())
+				if(vehicleproto->accessories[slot].unselectableaccessory == true)
+					pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
+			else
+				pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
+		else
+			pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));*/
+
+		pPassenger->SetPosition(GetPositionX()+v.x, GetPositionY()+v.y, GetPositionZ()+v.z, GetOrientation());
 		WorldPacket data(MSG_MOVE_HEARTBEAT, 32);
 		BuildHeartBeatMsg(&data);
 		SendMessageToSet(&data, false);

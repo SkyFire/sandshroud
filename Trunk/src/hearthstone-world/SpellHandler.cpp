@@ -397,32 +397,11 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 	uint64 guid;
 	uint32 spellid;
 	uint8 castnumber;
-//	float missilepitch, missilespeed;
-//	uint8 missileunkcheck;
-//	uint32 unkdoodah, unkdoodah2;
-//	float traveltime = 0.0f;
 	recvPacket >> guid >> castnumber >> spellid;
+
+	SpellEntry* sp = dbcSpell.LookupEntryForced(spellid);
 	SpellCastTargets targets;
 	targets.read(recvPacket, caster->GetGUID());
-
-	// Crow: Implementing this correctly into target reading.
-/*	if(missileflag & 0x2)
-	{
-		recvPacket >> missilepitch >> missilespeed >> missileunkcheck;
-
-		if (missileunkcheck == 1)
-		{
-			recvPacket >> unkdoodah;
-			recvPacket >> unkdoodah2;
-		}
-
-		float dx = targets.m_destX - targets.m_srcX;
-		float dy = targets.m_destY - targets.m_srcY;
-		if (missilepitch != M_PI / 4 && missilepitch != -M_PI / 4)
-			traveltime = (sqrtf(dx * dx + dy * dy) / (cosf(missilepitch) * missilespeed)) * 1000;
-	}*/
-
-	SpellEntry * sp = dbcSpell.LookupEntryForced(spellid);
 
 	// Summoned Elemental's Freeze
 	if (spellid == 33395)
@@ -437,12 +416,5 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 
 	Spell* pSpell = new Spell(caster, sp, false, NULLAURA);
 	pSpell->extra_cast_number = castnumber;
-
-/*	if(missileflag & 0x2)
-	{
-		pSpell->m_missilePitch = missilepitch;
-		pSpell->m_missileTravelTime = traveltime;
-	}*/
-
 	pSpell->prepare(&targets);
 }
