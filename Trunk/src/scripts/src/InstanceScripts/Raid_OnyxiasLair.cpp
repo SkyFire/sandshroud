@@ -231,7 +231,7 @@ class GuardAI : public MoonScriptCreatureAI
     {	
 		AddSpell(GUARD_BLAST_NOVA, Target_Current, 15, 0, 10, 0.0f, 15.0f);
 		AddSpell(GUARD_CLEAVE, Target_Current, 15, 0, 10);
-		AddSpell(GUARD_IGNITE_WEAPON, Target_ClosestPlayer, 15, 0, 10, 0.0f, 5.0f); //make it: if guard gets disarmed then do not to cast this shit.
+		AddSpell(GUARD_IGNITE_WEAPON, Target_Self, 15, 0, 10, 0.0f, 5.0f); //make it: if guard gets disarmed then do not to cast this shit.
 	}
 };
 
