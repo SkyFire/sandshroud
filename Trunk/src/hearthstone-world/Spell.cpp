@@ -34,11 +34,12 @@ enum SpellTargetSpecification
 
 void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 {
+	uint8 missileflags;
 	m_unitTarget = m_itemTarget = 0;
 	m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = 0;
 	//m_strTarget = "";
 
-	data >> m_targetMask;
+	data >> missileflags >> m_targetMask;
 	WoWGuid guid;
 
 	if( m_targetMask == TARGET_FLAG_SELF  || m_targetMask & TARGET_FLAG_GLYPH )

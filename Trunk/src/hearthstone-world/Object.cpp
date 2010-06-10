@@ -1292,7 +1292,7 @@ void Object::SetFlag( const uint32 index, uint32 newFlag )
 	ASSERT( index < m_valuesCount );
 
 	//no change -> no update
-	if((m_uint32Values[ index ] & newFlag)==newFlag)
+	if((m_uint32Values[ index ] & newFlag) == newFlag)
 		return;
 
 	m_uint32Values[ index ] |= newFlag;

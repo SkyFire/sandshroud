@@ -651,6 +651,12 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	}
 
 	m_passengers[slot] = NULL;
+	pPassenger->m_TransporterGUID = NULL; // We need to null this out
+
+
+	if(pPassenger->IsPlayer())
+		--m_passengerCount;
+
 	//note: this is not blizz like we should despawn
 	//and respawn at spawn point.
 	//Well actually this is how blizz wanted it
@@ -672,12 +678,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		else //we're a temp spawn
 			SafeDelete();
 	}
-
-	// We need to null this out, its changed automatically.
-	pPassenger->m_TransporterGUID = NULL;
-
-	if(pPassenger->IsPlayer())
-		--m_passengerCount;
 
 	if(!IsFull())
 		SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
