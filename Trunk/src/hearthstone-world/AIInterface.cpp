@@ -234,19 +234,13 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 				CALL_SCRIPT_EVENT(m_Unit, OnCombatStart)(pUnit);
 
 				if( m_ChainAgroSet )
-				{
 					m_ChainAgroSet->EventEnterCombat( pUnit );
-				}
 
 				//Mark raid as combat in progress if it concerns a boss 
 				if(pUnit->GetMapMgr() && pUnit->GetMapMgr()->GetMapInfo() && pUnit->GetMapMgr()->GetMapInfo()->type == INSTANCE_RAID)
-				{
 					if(m_Unit->GetTypeId() == TYPEID_UNIT && m_Unit->m_loadedFromDB )
-					{
 						if(cr->GetCreatureInfo() && cr->GetCreatureInfo()->Rank == ELITE_WORLDBOSS)
 							 pUnit->GetMapMgr()->AddCombatInProgress(m_Unit->GetGUID());
-					}
-				}
 			}break;
 		case EVENT_LEAVECOMBAT:
 			{
@@ -1279,9 +1273,16 @@ void AIInterface::AttackReaction(Unit* pUnit, uint32 damage_dealt, uint32 spellI
 		return;
 	}
 
-	if( m_Unit == pUnit )
+	if( m_Unit == pUnit || m_Unit->IsVehicle() )
 	{
 		return;
+	}
+
+	if(pUnit->IsVehicle())
+	{
+		uint32 count = TO_VEHICLE(pUnit)->GetPassengerCount();
+		if(!count) // No players.
+			return;
 	}
 
 	if( m_AIState == STATE_IDLE || m_AIState == STATE_FOLLOWING )
