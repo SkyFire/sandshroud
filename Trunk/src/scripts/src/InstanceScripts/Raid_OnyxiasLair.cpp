@@ -76,6 +76,8 @@ static Coords coord[] =
     { -4.868f, -217.171f, -86.710f, 3.141590f, Flag_Fly }
 };
 
+void SpellFunc_Deep_Breath(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType);
+
 class OnyxiaAI : public MoonScriptBossAI
 {
 	MOONSCRIPT_FACTORY_FUNCTION(OnyxiaAI, MoonScriptBossAI);
@@ -103,7 +105,8 @@ class OnyxiaAI : public MoonScriptBossAI
 		}
 		AddEmote(Event_OnTargetDied, "Learn your place mortal!", Text_Yell, 0);
 		AddPhaseSpell(1,AddSpell(ONY_CLEAVE, Target_Current, 15, 0, 10, 0.0f, 15.0f));
-		AddPhaseSpell(2,AddSpell(ONY_BREATH, Target_RandomPlayerNotCurrent, 15, 8, 10));
+		deepbreath = AddSpell(ONY_BREATH, Target_RandomPlayerNotCurrent, 0, 0, 0);
+		AddPhaseSpell(2, AddSpellFunc(&SpellFunc_Deep_Breath, Target_RandomPlayerNotCurrent, 15, 8, 30));
 		AddPhaseSpell(3,AddSpell(ONY_CLEAVE, Target_Current, 15, 0, 10, 0.0f, 15.0f));
 		bellowingroar = AddPhaseSpell(3,AddSpell(ONY_BELLOWING_ROAR, Target_Current, 15, 0, 10));
 		for (int i = 0 ; i < 6 ; i++) AddWaypoint(CreateWaypoint( i, (RandomUInt(20)+40)*1000, coord[i].mAddition, coord[i]));
@@ -199,11 +202,24 @@ class OnyxiaAI : public MoonScriptBossAI
 		ParentClass::OnDied(pKiller);
 	}
 
-protected:
 	MoonScriptCreatureAI *whelp, *guard;
 	int32 mWhelpTimer, mGuardTimer;
-	SpellDesc *bellowingroar;
+	SpellDesc *bellowingroar, *deepbreath;
 };
+
+void SpellFunc_Deep_Breath(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType)
+{
+	OnyxiaAI *pOnyxiaAI = (pCreatureAI != NULL) ? (OnyxiaAI*)pCreatureAI : NULL;
+	if (pOnyxiaAI != NULL)
+	{
+		for (unordered_set<Player *>::iterator itr = pOnyxiaAI->GetUnit()->GetInRangePlayerSetBegin(); itr != pOnyxiaAI->GetUnit()->GetInRangePlayerSetEnd(); ++itr) 
+		{
+			Player *pPlayer = TO_PLAYER(*itr);
+			pPlayer->GetSession()->SystemMessage("Lady Onyxia takes in a deep breath...");
+		}
+		pOnyxiaAI->CastSpell(pOnyxiaAI->deepbreath);
+	}
+}
 
 #define GUARD_BLAST_NOVA 68958
 #define GUARD_CLEAVE 15284
