@@ -35,7 +35,7 @@ TargetType::~TargetType()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Class SpellDesc
-SpellDesc::SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId)
+SpellDesc::SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId, EmoteType pEmoteType)
 {
 	mInfo = pInfo;
 	mSpellFunc = pFnc;
@@ -49,7 +49,7 @@ SpellDesc::SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, 
 	mEnabled = true;
 	mPredefinedTarget = NULLUNIT;
 	mLastCastTime = 0;
-	AddEmote(pText, pTextType, pSoundId);
+	AddEmote(pText, pTextType, pSoundId, pEmoteType);
 }
 
 SpellDesc::~SpellDesc()
@@ -57,12 +57,12 @@ SpellDesc::~SpellDesc()
 	DeleteArray(mEmotes);
 }
 
-EmoteDesc* SpellDesc::AddEmote(const char* pText, TextType pType, uint32 pSoundId)
+EmoteDesc* SpellDesc::AddEmote(const char* pText, TextType pType, uint32 pSoundId, EmoteType pEmoteType)
 {
 	EmoteDesc* NewEmote = NULL;
 	if( pText || pSoundId )
 	{
-		NewEmote = new EmoteDesc(pText, pType, pSoundId);
+		NewEmote = new EmoteDesc(pText, pType, pSoundId, pEmoteType);
 		mEmotes.push_back(NewEmote);
 	}
 	return NewEmote;
@@ -472,7 +472,7 @@ void MoonScriptCreatureAI::Despawn( uint32 pDelay, uint32 pRespawnTime )
 	_unit->Despawn( pDelay, pRespawnTime );
 };
 
-SpellDesc* MoonScriptCreatureAI::AddSpell(uint32 pSpellId, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId)
+SpellDesc* MoonScriptCreatureAI::AddSpell(uint32 pSpellId, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId, EmoteType pEmoteType)
 {
 	//Cannot add twice same spell id	- M4ksiu: Disabled, until I rewrite SetPhase(...) function to not disable same spells that are in different phases
 	//SpellDesc* NewSpell = FindSpellById(pSpellId);
@@ -496,17 +496,17 @@ SpellDesc* MoonScriptCreatureAI::AddSpell(uint32 pSpellId, TargetType pTargetTyp
 #endif
 
 	//Create new spell
-	NewSpell = new SpellDesc(Info, NULL, pTargetType, pChance, CastTime, Cooldown, MinRange, MaxRange, pStrictRange, pText, pTextType, pSoundId);
+	NewSpell = new SpellDesc(Info, NULL, pTargetType, pChance, CastTime, Cooldown, MinRange, MaxRange, pStrictRange, pText, pTextType, pSoundId, pEmoteType);
 	mSpells.push_back(NewSpell);
 	return NewSpell;
 }
 
-SpellDesc* MoonScriptCreatureAI::AddSpellFunc(SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId)
+SpellDesc* MoonScriptCreatureAI::AddSpellFunc(SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId, EmoteType pEmoteType)
 {
 	if( !pFnc ) return NULL;
 
 	//Create new spell
-	SpellDesc* NewSpell = new SpellDesc(NULL, pFnc, pTargetType, pChance, pCastTime, pCooldown, pMinRange, pMaxRange, pStrictRange, pText, pTextType, pSoundId);
+	SpellDesc* NewSpell = new SpellDesc(NULL, pFnc, pTargetType, pChance, pCastTime, pCooldown, pMinRange, pMaxRange, pStrictRange, pText, pTextType, pSoundId, pEmoteType);
 	mSpells.push_back(NewSpell);
 	return NewSpell;
 }
@@ -587,12 +587,12 @@ void MoonScriptCreatureAI::CancelAllCooldowns()
 	}
 }
 
-EmoteDesc* MoonScriptCreatureAI::AddEmote(EventType pEventType, const char* pText, TextType pType, uint32 pSoundId)
+EmoteDesc* MoonScriptCreatureAI::AddEmote(EventType pEventType, const char* pText, TextType pType, uint32 pSoundId, EmoteType pEmoteType)
 {
 	EmoteDesc* NewEmote = NULL;
 	if( pText || pSoundId )
 	{
-		NewEmote = new EmoteDesc(pText, pType, pSoundId);
+		NewEmote = new EmoteDesc(pText, pType, pSoundId, pEmoteType);
 		switch( pEventType )
 		{
 			case Event_OnCombatStart:	mOnCombatStartEmotes.push_back(NewEmote); break;
@@ -634,7 +634,7 @@ void MoonScriptCreatureAI::Emote(EmoteDesc* pEmote)
 	if( pEmote ) Emote(pEmote->mText.c_str(), pEmote->mType, pEmote->mSoundId);
 }
 
-void MoonScriptCreatureAI::Emote(const char* pText, TextType pType, uint32 pSoundId)
+void MoonScriptCreatureAI::Emote(const char* pText, TextType pType, uint32 pSoundId, EmoteType pEmoteType)
 {
 	if( pText && strlen(pText) > 0 )
 	{
@@ -647,6 +647,7 @@ void MoonScriptCreatureAI::Emote(const char* pText, TextType pType, uint32 pSoun
 		}
 	}
 	if( pSoundId > 0 ) _unit->PlaySoundToSet(pSoundId);
+	if( pEmoteType ) _unit->Emote(pEmoteType);
 }
 
 uint32 MoonScriptCreatureAI::AddTimer(int32 pDurationMillisec)

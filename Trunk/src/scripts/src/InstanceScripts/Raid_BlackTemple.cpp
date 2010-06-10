@@ -2902,8 +2902,7 @@ class ReliquaryOfSoulsAI : public MoonScriptCreatureAI
 						Creature *pEoS = TO_CREATURE(mEoS->GetUnit());
 						if ( pEoS->GetHealthPct()<=1 && pEoS->CalcDistance(_unit)<=3 )
 						{
-							_unit->Emote(EMOTE_STATE_STAND);
-							mEoS->Emote("Now what do I do?!", Text_Yell, 11414);
+							mEoS->Emote("Now what do I do?!", Text_Yell, 11414, EMOTE_STATE_STAND);
 							pEoS->Emote(EMOTE_ONESHOT_SUBMERGE);
 							pEoS->Despawn(100,0);
 							Phase = 2;
@@ -2929,8 +2928,7 @@ class ReliquaryOfSoulsAI : public MoonScriptCreatureAI
 						Creature *pEoD = TO_CREATURE(mEoD->GetUnit());
 						if ( pEoD->GetHealthPct()<=1 && pEoD->CalcDistance(_unit)<=3 )
 						{							
-							_unit->Emote(EMOTE_STATE_STAND);
-							mEoD->Emote("I'll be waiting.", Text_Yell, 11413);
+							mEoD->Emote("I'll be waiting.", Text_Yell, 11413, EMOTE_STATE_STAND);
 							pEoD->Emote(EMOTE_ONESHOT_SUBMERGE);
 							pEoD->Despawn(100,0);
 							Phase = 5;
@@ -5723,8 +5721,7 @@ class AkamaAI : public MoonScriptBossAI
 			_unit->SetFacing(6.248631f);
 			break;
 		case 2:
-			Emote("The door is all that stands between us and the Betrayer. Stand aside, friends.", Text_Say, 0);
-			_unit->Emote(EMOTE_ONESHOT_TALK);
+			Emote("The door is all that stands between us and the Betrayer. Stand aside, friends.", Text_Say, 0, EMOTE_ONESHOT_TALK);
 			break;
 		case 3:
 			if (pDoorTrigger != NULL)
@@ -5737,8 +5734,7 @@ class AkamaAI : public MoonScriptBossAI
 			SetTargetToChannel(NULLUNIT, 0);
 			break;
 		case 5:
-			Emote("I cannot do this alone...", Text_Say, 0);
-			_unit->Emote(EMOTE_ONESHOT_NO);
+			Emote("I cannot do this alone...", Text_Say, 0, EMOTE_ONESHOT_NO);
 			break;
 		case 6:		// summoning two spirits to help Akama with breaking doors
 			mUdaloAI = SpawnCreature(23410, 751.884705f, 311.270050f, 312.121185f, 0.047113f);
@@ -5784,8 +5780,7 @@ class AkamaAI : public MoonScriptBossAI
 			mOlumAI->SetTargetToChannel(NULLUNIT, 0);
 			break;
 		case 13:
-			Emote("I thank you for your aid, my brothers. Our people will be redeemed!", Text_Say, 0);
-			_unit->Emote(EMOTE_ONESHOT_SALUTE);
+			Emote("I thank you for your aid, my brothers. Our people will be redeemed!", Text_Say, 0, EMOTE_ONESHOT_SALUTE);
 			break;
 		case 14:
 			mUdaloAI->GetUnit()->Emote(EMOTE_ONESHOT_SALUTE);
@@ -5856,8 +5851,7 @@ class AkamaAI : public MoonScriptBossAI
 			mIllidanAI->GetUnit()->Emote(EMOTE_ONESHOT_QUESTION);
 			break;
 		case 6:
-			Emote("We've come to end your reign, Illidan. My people and all of Outland shall be free!", Text_Yell, 11389);
-			_unit->Emote(EMOTE_ONESHOT_POINT);
+			Emote("We've come to end your reign, Illidan. My people and all of Outland shall be free!", Text_Yell, 11389, EMOTE_ONESHOT_POINT);
 		    break;
 		case 7:
 			_unit->Emote(EMOTE_ONESHOT_TALK);
@@ -5866,24 +5860,20 @@ class AkamaAI : public MoonScriptBossAI
 			_unit->Emote(EMOTE_ONESHOT_SALUTE);
 			break;
 		case 9:
-			mIllidanAI->Emote("Boldly said. But I remain unconvinced.", Text_Yell, 11464);
-			mIllidanAI->GetUnit()->Emote(EMOTE_ONESHOT_QUESTION);
+			mIllidanAI->Emote("Boldly said. But I remain unconvinced.", Text_Yell, 11464, EMOTE_ONESHOT_QUESTION);
 			break;
 		case 10:
 			mIllidanAI->GetUnit()->Emote(EMOTE_ONESHOT_QUESTION);
 			break;
 		case 11:
-			Emote("The time has come! The moment is at hand!", Text_Yell, 11380);
-			_unit->Emote(EMOTE_ONESHOT_SHOUT);
+			Emote("The time has come! The moment is at hand!", Text_Yell, 11380, EMOTE_ONESHOT_SHOUT);
 			break;
 		case 12:
 			SetWieldWeapon(true);
 			_unit->Emote(EMOTE_ONESHOT_ROAR);
 			break;
 		case 13:
-			mIllidanAI->Emote("You are not prepared!", Text_Yell, 11466);
-			mIllidanAI->GetUnit()->Emote(EMOTE_ONESHOT_CUSTOMSPELL05);
-
+			mIllidanAI->Emote("You are not prepared!", Text_Yell, 11466, EMOTE_ONESHOT_CUSTOMSPELL05);
 			_unit->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_READY1H);
 			break;
 		case 14:
@@ -6410,9 +6400,7 @@ class MaievAI : public MoonScriptBossAI
 			switch (mScenePart)
 			{
 			case 1:
-				Emote("Ah, it is finished. You are beaten.", Text_Yell, 11496);
-
-				mIllidanAI->GetUnit()->Emote(EMOTE_ONESHOT_CUSTOMSPELL06);
+				Emote("Ah, it is finished. You are beaten.", Text_Yell, 11496, EMOTE_ONESHOT_CUSTOMSPELL06);
 				if (mIllidanAI->GetUnit()->GetCurrentSpell() != NULL)
 					mIllidanAI->GetUnit()->GetCurrentSpell()->cancel();
 				break;
@@ -7374,8 +7362,7 @@ class IllidanStormrageAI : public MoonScriptBossAI
 			_unit->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_READY1H);
 			}break;
 		case 10:
-			pMaievAI->Emote("Ah, my long hunt is finally over. Today, Justice will be done!", Text_Yell, 11492);
-			pMaievAI->GetUnit()->Emote(EMOTE_ONESHOT_EXCLAMATION);
+			pMaievAI->Emote("Ah, my long hunt is finally over. Today, Justice will be done!", Text_Yell, 11492, EMOTE_ONESHOT_EXCLAMATION);
 			pMaievAI->SetDisplayWeapon(false, false);
 			break;
 		case 11:

@@ -80,16 +80,18 @@ enum MoveFlag
 
 struct EmoteDesc
 {
-	EmoteDesc(const char* pText, TextType pType, uint32 pSoundId)
+	EmoteDesc(const char* pText, TextType pType, uint32 pSoundId, EmoteType pEmoteType)
 	{
 		mText = ( pText && strlen(pText) > 0 ) ? pText : "";
 		mType = pType;
 		mSoundId = pSoundId;
+		mEmoteType = pEmoteType;
 	}
 
 	std::string	mText;
 	TextType	mType;
 	uint32		mSoundId;
+	EmoteType   mEmoteType;
 };
 
 struct Coords
@@ -230,10 +232,10 @@ public:
 class SpellDesc
 {
 public:
-	SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId);
+	SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId, EmoteType pEmoteType);
 	virtual ~SpellDesc();
 
-	EmoteDesc*	AddEmote(const char* pText, TextType pType=Text_Yell, uint32 pSoundId=0);
+	EmoteDesc*	AddEmote(const char* pText, TextType pType=Text_Yell, uint32 pSoundId=0, EmoteType pEmoteType = EMOTE_ONESHOT_NONE);
 	void		TriggerCooldown(uint32 pCurrentTime=0);
 
 	SpellEntry*	mInfo;				//Spell Entry information (generally you either want a SpellEntry OR a SpellFunc, not both)
@@ -325,8 +327,8 @@ public:
 	void					Despawn(uint32 pDelay=0, uint32 pRespawnTime=0);
 
 	//Spells
-	SpellDesc*				AddSpell(uint32 pSpellId, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0);
-	SpellDesc*				AddSpellFunc(SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0);
+	SpellDesc*				AddSpell(uint32 pSpellId, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0, EmoteType pEmoteType = EMOTE_ONESHOT_NONE);
+	SpellDesc*				AddSpellFunc(SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0, EmoteType pEmoteType = EMOTE_ONESHOT_NONE);
 	void					CastSpell(SpellDesc* pSpell);
 	void					CastSpellNowNoScheduling(SpellDesc* pSpell);
 	SpellDesc*				FindSpellById(uint32 pSpellId);
@@ -340,11 +342,11 @@ public:
 	void					CancelAllCooldowns();
 
 	//Emotes
-	EmoteDesc*				AddEmote(EventType pEventType, const char* pText, TextType pType, uint32 pSoundId=0);
+	EmoteDesc*				AddEmote(EventType pEventType, const char* pText, TextType pType, uint32 pSoundId=0, EmoteType pEmoteType = EMOTE_ONESHOT_NONE);
 	void					RemoveEmote(EventType pEventType, EmoteDesc* pEmote);
 	void					RemoveAllEmotes(EventType pEventType);
 	void					Emote(EmoteDesc* pEmote);
-	void					Emote(const char* pText, TextType pType=Text_Yell, uint32 pSoundId=0);
+	void					Emote(const char* pText, TextType pType=Text_Yell, uint32 pSoundId=0, EmoteType pEmoteType = EMOTE_ONESHOT_NONE);
 
 	//Timers
 	uint32					AddTimer(int32 pDurationMillisec);
