@@ -2,7 +2,7 @@
  * Sun++ Scripts for Aspire MMORPG Server
  * Copyright (C) 2005-2007 Ascent Team <http://www.ascentemu.com/>
  * Copyright (C) 2007-2008 Moon++ Team <http://www.moonplusplus.info/>
- * Copyright (C) 2008-2009 Sun++ Team <http://www.sunscripting.com/>
+ * Copyright (C) 2008-2010 Sun++ Team <http://www.sunscripting.com/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,530 +20,223 @@
 
 #include "StdAfx.h"
 #include "Setup.h"
+#include "../Common/Base.h"
 
-/************************************************************************/
-/* Raid_OnyxiasLair.cpp Script by DK			                        */
-/************************************************************************/
-
-/* 
-This script covers Onyxia's mind
+/*
+Author: SlavaOrlov
+http://www.sandshroud.com
 */
 
-//Creature Name
-#define CN_ONYXIA 10184
 
-#define WALK 0
-#define RUN 256
-#define FLY 768
-//0 = walk, 256 = run, 768 = fly 
+/*
+TODO:
+- Найти ID голоса Анны, при разговорах.
+- Проработать пути следования
+- Закончить гвардов
 
-//Phase 1,3 Spells
-#define FLAME_BREATH 18435 //Corrected http://www.wowhead.com/?spell=18435
-#define KNOCK_AWAY 19633 //Reduce thread script effect main target
-#define WING_BUFFET 18500 // self
-#define CLEAVE 19983//15579,16044,19642,29832 //target Corrected 
-#define TAIL_SWEEP 15847
+*/
 
-//Phase 2 Spells
-#define SCRIPTABLE_FIREBALL 18392 //Corrected http://www.wowhead.com/?spell=18392
-//Script it
-#define ENTANGLING_FLAMES 20019
-//Onyxia's Breath (Deep Breath)
-#define DEEP_BREATH 17086
+//SlavaOrlov: this is my fuckin 5th rewrite of this fuckin script. tired.
 
-//Phase 3 Spells
-#define AOE_FEAR 18431//With Activate Object
+//Phase 1 and 3
+#define ONY_FLAME_BREATH 18435
+#define ONY_FLAME_BREATH25 68970 //25man
+#define ONY_WING_BUFFET 18500
+#define ONY_WING_BUFFET25 69293 //25man
+#define ONY_TAIL_SWEEP 68867
+#define ONY_TAIL_SWEEP25 69286 //25man
+#define ONY_ERUPTION 17731
+#define ONY_ERUPTION25 69294 //25man
+#define ONY_CLEAVE 68868
+#define ONY_BELLOWING_ROAR 18431
 
-struct Coords
-{
-    float x;
-    float y;
-    float z;
-    float o;
-};
+//Phase 2
+#define ONY_FIREBALL 18392
+#define ONY_FIREBALL25 68926 //25man
+#define ONY_BREATH 17086
 
-static Coords coords[] =
-{
-    { 0, 0, 0, 0 },
-    { -75.945f, -219.245f, -83.375f, 0.004947f },
-    { -72.945f, -219.245f, -80.779f, 0.004947f },
-    { 42.621f, -217.195f, -66.056f, 3.014011f },
-    { 12.270f, -254.694f, -67.997f, 2.395585f },
-    { -79.020f, -252.374f, -68.965f, 0.885179f },
-    { -80.257f, -174.240f, -69.293f, 5.695741f },
-    { 27.875f, -178.547f, -66.041f, 3.908957f },
-    { -4.868f, -217.171f, -86.710f, 3.141590f }
-};
+//My Love :3
+#define ONY_BOSS 10184
+//Summons
+#define ONY_WHELP 11262
+#define ONY_GUARD 36561
+
 
 static Coords whelpCoords[] =
 {
-    { -30.812f, -166.395f, -89.000f, 5.160f },
-    { -30.233f, -264.158f, -89.896f, 1.129f },
-    { -35.813f, -169.427f, -90.000f, 5.384f },
-    { -36.104f, -260.961f, -90.600f, 1.111f },
-    { -34.643f, -164.080f, -90.000f, 5.364f },
-    { -35.377f, -267.320f, -91.000f, 1.111f }
+    { -30.812f, -166.395f, -89.000f, 5.160f, Flag_Run },
+    { -30.233f, -264.158f, -89.896f, 1.129f, Flag_Run },
+    { -35.813f, -169.427f, -90.000f, 5.384f, Flag_Run },
+    { -36.104f, -260.961f, -90.600f, 1.111f, Flag_Run },
+    { -34.643f, -164.080f, -90.000f, 5.364f, Flag_Run },
+    { -35.377f, -267.320f, -91.000f, 1.111f, Flag_Run }
 };
 
-class OnyxiaAI : public CreatureAIScript
+static Coords coord[] =
 {
-public:
-    ADD_CREATURE_FACTORY_FUNCTION(OnyxiaAI);
-    OnyxiaAI(Creature *pCreature) : CreatureAIScript(pCreature)
-    {
-        m_phase = 1;
-        m_entry = pCreature->GetEntry();
-        m_useSpell = true;
-        m_eFlamesCooldown = 1;
-        m_whelpCooldown = 7;
-        m_aoeFearCooldown = 30;
-        m_fCastCount = 5;
-        _unit->GetAIInterface()->setMoveType(4);
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(1, 2000, RUN));
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(2, 0, FLY));
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(3, 0, FLY));
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(4, 0, FLY));
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(5, 0, FLY));
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(6, 0, FLY));
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(7, 0, FLY));
-        _unit->GetAIInterface()->addWayPoint(CreateWaypoint(8, 0, FLY));
+    { -75.945f, -219.245f, -83.375f, 0.004947f, Flag_Fly },
+    { -72.945f, -219.245f, -80.779f, 0.004947f, Flag_Fly },
+    { 42.621f, -217.195f, -66.056f, 3.014011f, Flag_Fly },
+    { 12.270f, -254.694f, -67.997f, 2.395585f, Flag_Fly },
+    { -79.020f, -252.374f, -68.965f, 0.885179f, Flag_Fly },
+    { -80.257f, -174.240f, -69.293f, 5.695741f, Flag_Fly },
+    { 27.875f, -178.547f, -66.041f, 3.908957f, Flag_Fly },
+    { -4.868f, -217.171f, -86.710f, 3.141590f, Flag_Fly }
+};
 
-        infoFear = dbcSpell.LookupEntry(AOE_FEAR);
-        infoCleave = dbcSpell.LookupEntry(CLEAVE);
-        infoFBreath = dbcSpell.LookupEntry(FLAME_BREATH);
-        infoKAway = dbcSpell.LookupEntry(KNOCK_AWAY);
-        infoSFireball = dbcSpell.LookupEntry(SCRIPTABLE_FIREBALL);
-        infoWBuffet = dbcSpell.LookupEntry(WING_BUFFET);
-        infoDeepBreath = dbcSpell.LookupEntry(DEEP_BREATH);
+class OnyxiaAI : public MoonScriptBossAI
+{
+	MOONSCRIPT_FACTORY_FUNCTION(OnyxiaAI, MoonScriptBossAI);
+	OnyxiaAI(Creature *pCreature) : MoonScriptBossAI(pCreature)
+    {		
+		GetUnit()->SetStandState(STANDSTATE_SLEEP);
+		//FUCKIN AWESOME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if(GetUnit()->GetMapMgr()->GetPlayerCount() > 10 ){
+			AddPhaseSpell(1,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 10, 0.0f, 45.0f));
+			AddPhaseSpell(1,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 10, 0.0f, 20.0f));
+			AddPhaseSpell(1,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
+			
+			AddPhaseSpell(2,AddSpell(ONY_FIREBALL25, Target_RandomPlayerNotCurrent, 15, 3, 10));
 
-        if(!infoFear || !infoCleave || !infoFBreath
-            || !infoKAway || !infoSFireball || !infoWBuffet || !infoDeepBreath)
-            m_useSpell = false;
+			AddPhaseSpell(3,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 10, 0.0f, 45.0f));
+			AddPhaseSpell(3,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 10, 0.0f, 20.0f));
+			AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
+						
+			GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,22312000);
+		}else{
+			AddPhaseSpell(1,AddSpell(ONY_FLAME_BREATH, Target_Current, 15, 2, 10, 0.0f, 45.0f));
+			AddPhaseSpell(1,AddSpell(ONY_WING_BUFFET, Target_Current, 15, 0, 10, 0.0f, 20.0f));
+			AddPhaseSpell(1,AddSpell(ONY_TAIL_SWEEP, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
 
-        _unit->GetAIInterface()->setOutOfCombatRange(200000);
+			AddPhaseSpell(2,AddSpell(ONY_FIREBALL, Target_RandomPlayerNotCurrent, 15, 3, 10));
 
-        m_fBreath = false;
-        m_kAway = false;
-        m_wBuffet = false;
-        m_Cleave = false;
+			AddPhaseSpell(3,AddSpell(ONY_FLAME_BREATH, Target_Current, 15, 2, 10, 0.0f, 45.0f));
+			AddPhaseSpell(3,AddSpell(ONY_WING_BUFFET, Target_Current, 15, 0, 10, 0.0f, 20.0f));
+			AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
+			
+			GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,4800000);
+		}
+		AddPhaseSpell(1,AddSpell(ONY_CLEAVE, Target_Current, 15, 0, 10, 0.0f, 15.0f));
+		
+		AddPhaseSpell(2,AddSpell(ONY_BREATH, Target_RandomPlayerNotCurrent, 15, 8, 10));
+
+		AddPhaseSpell(3,AddSpell(ONY_CLEAVE, Target_Current, 15, 0, 10, 0.0f, 15.0f));
+		
+		//she casts it when phase 3 starts.
+		bellowingroar = AddPhaseSpell(3,AddSpell(ONY_BELLOWING_ROAR, Target_Current, 15, 0, 10));
+
+		//waypoints - like it.
+		for (int i = 0 ; i < 6 ; i++) AddWaypoint(CreateWaypoint( i, (RandomUInt(20)+40)*1000, coord[i].mAddition, coord[i]));
+
     }
     
-    void OnCombatStart(Unit *mTarget)
-    {
-        m_phase = 1;
-        m_eFlamesCooldown = 1;
-        m_whelpCooldown = 7;
-        _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_DONTMOVEWP);
-        _unit->SetStandState(0);
-        _unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "How fortuitous, usually I must leave my lair to feed!");
-        if(m_useSpell)
-            RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-
-        m_fBreath = false;
-        m_kAway = false;
-        m_wBuffet = false;
-        m_Cleave = false;
+    void OnCombatStart(Unit *mTarget){
+		SetPhase(1);
+		StopWaypointMovement();
+		mWhelpTimer = AddTimer(90000);
+		mGuardTimer = AddTimer(30000);
+		Emote("How fortuitous, usually I must leave my lair to feed!");
+		GetUnit()->SetStandState(0);
+		ParentClass::OnCombatStart(mTarget);
     }
 
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setMoveType(0);
-        _unit->GetAIInterface()->setWaypointToMove(0);
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        _unit->GetAIInterface()->SetAllowedToEnterCombat(true);
-        _unit->GetAIInterface()->m_moveFly = false;
-        _unit->GetAIInterface()->m_canMove = true;
-        _unit->SetStandState(STANDSTATE_SLEEP);
-        /*if(_unit->m_pacified > 0)
-            _unit->m_pacified--;*/
-        if(m_useSpell)
-            RemoveAIUpdateEvent();
+    void AIUpdate(){
+		switch(GetPhase()){
+		case 1:
+			{
+				if( GetHealthPercent() <= 65 ){
+					SetAllowMelee(false);
+					SetFlyMode(true);
+					SetWaypointToMove(0);
+					SetPhase(2);
+				}
+			}break;
+		case 2:
+			{
+				if( GetHealthPercent() <= 40 ){
+					SetAllowMelee(true);
+					SetFlyMode(false);
+					SetPhase(3);
+					StopWaypointMovement();
+					CastSpell(bellowingroar);
+				}
+				if(IsTimerFinished(mWhelpTimer)) whelps(40);
+//				if(IsTimerFinished(mGuardTimer)) guards();
+			}break;
+		case 3:
+			{
+				if(IsTimerFinished(mWhelpTimer)) whelps( RandomUInt(20)/2+4 ); //because i love it.
+			}break;
+		}
+		ParentClass::AIUpdate();
     }
 
-    void OnDied(Unit *mKiller)
-    {
-        if(m_useSpell)
-            RemoveAIUpdateEvent();
-
-        m_phase = 1;
-        m_eFlamesCooldown = 1;
-        m_whelpCooldown = 7;
-        
-        /*Add Loot?
-        mKiller->
-        */
-    }
-
-    void OnReachWP(uint32 iWaypointId, bool bForwards)
-    {
-        switch(iWaypointId)
+	void whelps(uint32 count){
+		for(int i = 0; i < count; i++)
         {
-        case 1:
-            {
-                _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);
-                _unit->GetAIInterface()->setWaypointToMove(2);
-                Fly();
-            }break;
-        case 2:
-            {
-                _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);
-                _unit->GetAIInterface()->setWaypointToMove(3);
-            }break;
-        case 3:
-            {
-                _unit->GetAIInterface()->m_canMove = false;
-                _unit->GetAIInterface()->SetAllowedToEnterCombat(true);
-                _unit->GetAIInterface()->setCurrentAgent(AGENT_SPELL);
-                //_unit->m_pacified--;
-                _unit->GetAIInterface()->SetAIState(STATE_SCRIPTIDLE);
-                _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_DONTMOVEWP);
-                _unit->GetAIInterface()->setWaypointToMove(0);
-                WorldPacket data(SMSG_MOVE_SET_HOVER, 13);
-                data << _unit->GetNewGUID();
-                data << uint32(0);
-                _unit->SendMessageToSet(&data, false);
-                m_currentWP = 3;
-            }break;
-        case 8:
-            {
-                _unit->GetAIInterface()->SetAllowedToEnterCombat(true);
-                _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-                _unit->GetAIInterface()->SetAIState(STATE_SCRIPTIDLE);
-                _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_DONTMOVEWP);
-                _unit->GetAIInterface()->setWaypointToMove(0);
-                /*_unit->m_pacified--;
-                if(_unit->m_pacified > 0)
-                    _unit->m_pacified--;*/
-                WorldPacket data(SMSG_MOVE_UNSET_HOVER, 13);
-                data << _unit->GetNewGUID();
-                data << uint32(0);
-                _unit->SendMessageToSet(&data, false);
-                Land();
-            }break;
-        default:
-            {
-                _unit->GetAIInterface()->m_canMove = false;
-                _unit->GetAIInterface()->SetAllowedToEnterCombat(true);
-                _unit->GetAIInterface()->SetAIState(STATE_SCRIPTIDLE);
-                _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_DONTMOVEWP);
-                _unit->GetAIInterface()->setWaypointToMove(0);
-                WorldPacket data(SMSG_MOVE_SET_HOVER, 13);
-                data << _unit->GetNewGUID();
-                data << uint32(0);
-                _unit->SendMessageToSet(&data, false);
-                //_unit->m_pacified--;
-            }break;
-        };
-    }
-
-    void AIUpdate()
-    {
-        switch(m_phase)
-        {
-        case 1:
-            {
-                PhaseOne();
-            }break;
-        case 2:
-            {
-                PhaseTwo();
-            }break;
-        case 3:
-            {
-                PhaseThree();
-            }break;
-        default:
-            {
-                m_phase = 1;
-            };
-        };
-    }
-
-    void PhaseOne()
-    {
-        if(_unit->GetHealthPct() <= 65)
-        {
-            m_phase = 2;
-            _unit->SetFloatValue(UNIT_MOD_CAST_SPEED, 0.01f);
-            if(_unit->GetCurrentSpell() != NULL)
-                _unit->GetCurrentSpell()->cancel();
-
-            _unit->GetAIInterface()->SetAllowedToEnterCombat(false);
-            //_unit->m_pacified++;            
-            _unit->GetAIInterface()->StopMovement(0);
-            _unit->GetAIInterface()->SetAIState(STATE_SCRIPTMOVE);
-            _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);
-            _unit->GetAIInterface()->setWaypointToMove(1);
-            
-            return;
+			uint32 rnd = RandomUInt(5)+1;
+			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd].mX, whelpCoords[rnd].mY, whelpCoords[rnd].mZ, whelpCoords[rnd].mO);
+			if(whelp)
+				//whelp->MoveTo(14.161f, -177.874f, -85.649f, 0.23f);
+				whelp->MoveTo(14.161f, -177.874f, -85.649f);
+			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd-1].mX, whelpCoords[rnd-1].mY, whelpCoords[rnd-1].mZ, whelpCoords[rnd-1].mO);
+			if(whelp)
+            	//whelp->MoveTo(27.133f, -232.030f, -84.188f, 0.44f);
+				whelp->MoveTo(27.133f, -232.030f, -84.188f);
         }
-        uint32 val = RandomUInt(1000);
-        SpellCast(val);
+		ResetTimer(mWhelpTimer, 90000);
+	}
+
+/*
+	void guards(){ 
+		//Поставить координаты входа в пещеру.
+		for(int i=0; i<2; i++){
+			guard = SpawnCreature(ONY_GUARD, x, y, z, o);
+			if(guard) guard->MoveTo(14.161f, -177.874f, -85.649f); //, 0.23f
+		}
+		ResetTimer(mWhelpTimer, 90000);
+	}
+*/
+
+	void OnCombatStop(Unit *mTarget){
+		RemoveTimer(mWhelpTimer);
+		RemoveTimer(mGuardTimer);
+		GetUnit()->SetStandState(STANDSTATE_SLEEP);
+		SetPhase(1);
+		ParentClass::OnCombatStop(mTarget);
     }
 
-    void PhaseTwo()
-    {
-        if(_unit->GetHealthPct() <= 40)
-        {
-            m_phase = 3;
-            _unit->SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
-            if(_unit->GetCurrentSpell() != NULL)
-                _unit->GetCurrentSpell()->cancel();
-            _unit->GetAIInterface()->m_canMove = true;
-            _unit->GetAIInterface()->SetAllowedToEnterCombat(false);
-            //_unit->m_pacified++;
-            _unit->GetAIInterface()->StopMovement(0);
-            _unit->GetAIInterface()->SetAIState(STATE_SCRIPTMOVE);
-            _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);
-            _unit->GetAIInterface()->setWaypointToMove(8);
-
-            return;
-        }
-        if(_unit->GetAIInterface()->getMoveType() == MOVEMENTTYPE_WANTEDWP)
-            return;
-        m_eFlamesCooldown--;
-        if(!m_eFlamesCooldown && _unit->GetAIInterface()->GetNextTarget())//_unit->getAttackTarget())
-        {
-            _unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infoSFireball, false);//(_unit->getAttackTarget(),
-            m_eFlamesCooldown = 4;
-            m_fCastCount--;
-        }
-        if(!m_fCastCount)
-        {
-            uint32 val = RandomUInt(1250);
-            if(val < 250)//Move left
-            {
-                m_currentWP++;
-                if(m_currentWP >= 8)
-                    m_currentWP = 3;
-
-                _unit->GetAIInterface()->m_canMove = true;
-                _unit->GetAIInterface()->SetAllowedToEnterCombat(false);
-                //_unit->m_pacified++;
-                _unit->GetAIInterface()->SetAIState(STATE_SCRIPTMOVE);
-                _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);
-                _unit->GetAIInterface()->setWaypointToMove(m_currentWP);
-                m_fCastCount = 5;
-            }
-            else if(val > 1000)//Move right
-            {
-                m_currentWP--;
-                if(m_currentWP < 3)
-                    m_currentWP = 7;
-
-                _unit->GetAIInterface()->m_canMove = true;
-                _unit->GetAIInterface()->SetAllowedToEnterCombat(false);
-                //_unit->m_pacified++;
-                _unit->GetAIInterface()->SetAIState(STATE_SCRIPTMOVE);
-                _unit->GetAIInterface()->setMoveType(MOVEMENTTYPE_WANTEDWP);                
-                _unit->GetAIInterface()->setWaypointToMove(m_currentWP);
-                m_fCastCount = 5;
-            }
-            else if(val < 350)
-            {
-                //Deep breath
-                _unit->CastSpell(_unit, infoDeepBreath, false);
-                m_fCastCount = 5;
-            }
-            else
-                m_fCastCount = 5;
-        }
-        m_whelpCooldown--;
-        if(!m_whelpCooldown)
-        {
-            Creature *cre = NULLCREATURE;
-            for(int i = 0; i < 6; i++)
-            {
-                cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(11262, 
-                    whelpCoords[i].x, whelpCoords[i].y,
-                    whelpCoords[i].z, whelpCoords[i].o,
-                    true, false, 0, 0);
-                if(cre)
-                {
-                    cre->GetAIInterface()->MoveTo(14.161f, -177.874f, -85.649f);
-                    cre->GetAIInterface()->setOutOfCombatRange(100000);
-                }
-                cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(11262, 
-                    whelpCoords[5-i].x, whelpCoords[5-i].y,
-                    whelpCoords[5-i].z, whelpCoords[5-i].o,
-                    true, false, 0, 0);
-                if(cre)
-                {
-                    cre->GetAIInterface()->MoveTo(27.133f, -232.030f, -84.188f);
-                    cre->GetAIInterface()->setOutOfCombatRange(100000);
-                }
-            }
-            m_whelpCooldown = 30;
-        }
-    }
-
-    void PhaseThree()
-    {
-        if(!m_aoeFearCooldown)
-        {
-            _unit->CastSpell(_unit, infoFear, false);//(_unit->getAttackTarget(),
-            m_aoeFearCooldown = 30;
-            return;
-        }
-        uint32 val = RandomUInt(1000);
-        SpellCast(val);
-        m_whelpCooldown--;
-        m_aoeFearCooldown--;
-        if(!m_whelpCooldown)
-        {
-            Creature *cre = NULLCREATURE;
-            for(int i = 0; i < 6; i++)
-            {
-                cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(11262, 
-                    whelpCoords[i].x, whelpCoords[i].y,
-                    whelpCoords[i].z, whelpCoords[i].o,
-                    true, false, 0, 0);
-                if(cre)
-                {
-                    cre->GetAIInterface()->MoveTo(14.161f, -177.874f, -85.649f);
-                    cre->GetAIInterface()->setOutOfCombatRange(100000);
-                }
-                cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(11262, 
-                    whelpCoords[5-i].x, whelpCoords[5-i].y,
-                    whelpCoords[5-i].z, whelpCoords[5-i].o,
-                    true, false, 0, 0);
-                if(cre)
-                {
-                    cre->GetAIInterface()->MoveTo(27.133f, -232.030f, -84.188f);
-                    cre->GetAIInterface()->setOutOfCombatRange(100000);
-                }
-            }
-            m_whelpCooldown = 300;
-        }
-    }
-
-    inline WayPoint* CreateWaypoint(int id, uint32 waittime, uint32 flags)
-    {
-        //WayPoint* wp = new WayPoint;
-        //WayPoint * wp = _unit->GetMapMgr()->GetInterface()->CreateWaypoint();
-        //WayPoint * wp = sStructFactory.CreateWaypoint();
-        WayPoint * wp = _unit->CreateWaypointStruct();
-        wp->id = id;
-        wp->x = coords[id].x;
-        wp->y = coords[id].y;
-        wp->z = coords[id].z;
-        wp->o = coords[id].o;
-        wp->waittime = waittime;
-        wp->flags = flags;
-        wp->forwardemoteoneshot = 0;
-        wp->forwardemoteid = 0;
-        wp->backwardemoteoneshot = 0;
-        wp->backwardemoteid = 0;
-        wp->forwardskinid = 0;
-        wp->backwardskinid = 0;
-        return wp;
-    }
-
-    void Fly()
-    {
-        _unit->Emote(EMOTE_ONESHOT_LIFTOFF);
-        //Do we need hover really? Check it :D
-        /*WorldPacket data(SMSG_MOVE_SET_HOVER, 13);
-        data << _unit->GetNewGUID();
-        data << uint32(0);
-        _unit->SendMessageToSet(&data, false);*/
-        _unit->GetAIInterface()->m_moveFly = true;
-    }
-
-    void Land()
-    {
-        _unit->Emote(EMOTE_ONESHOT_LAND);
-        //Do we need hover really? Check it :D
-        /*WorldPacket data(SMSG_MOVE_UNSET_HOVER, 13);
-        data << _unit->GetNewGUID();
-        data << uint32(0);
-        _unit->SendMessageToSet(&data, false);*/
-        _unit->GetAIInterface()->m_moveFly = false;
-    }
-
-    void SpellCast(uint32 val)
-    {
-        if(_unit->GetCurrentSpell() == NULL && _unit->GetAIInterface()->GetNextTarget())//_unit->getAttackTarget())
-        {
-            if(m_fBreath)
-            {
-                _unit->CastSpell(_unit, infoFBreath, false);
-                m_fBreath = false;
-                return;
-            }
-            else if(m_kAway)
-            {
-                _unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infoKAway, false);
-                m_kAway = false;
-                return;
-            }
-            else if(m_wBuffet)
-            {
-                _unit->CastSpell(_unit, infoWBuffet, false);
-                m_wBuffet = false;
-                return;
-            }
-            else if(m_Cleave)
-            {
-                _unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infoCleave, false);
-                m_Cleave = false;
-                return;
-            }
-
-            if(val >= 100 && val <= 225)
-            {
-                _unit->setAttackTimer(6000, false);//6000
-                m_fBreath = true;
-                //_unit->CastSpell(_unit, infoFBreath, false);
-            }
-            else if(val > 225 && val <= 300)
-            {
-                _unit->setAttackTimer(4000, false);//2000
-                m_kAway = true;
-                //_unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infoKAway, false);
-            }
-            else if(val > 300 && val <= 375)
-            {
-                _unit->setAttackTimer(4000, false);//3000
-                m_wBuffet = true;
-                //_unit->CastSpell(_unit, infoWBuffet, false);
-            }
-            else if(val > 375 && val < 450)
-            {
-                _unit->setAttackTimer(4000, false);//2000
-                m_Cleave = true;
-               // _unit->CastSpell(_unit->GetAIInterface()->GetNextTarget(), infoCleave, false);
-            }
-        }
-    }
-
-	void Destroy()
-	{
-		delete this;
-	};
-
-    inline bool HasEntry() { return (m_entry != 0) ? true : false; }
+	void OnDied(Unit *pKiller){
+		RemoveTimer(mWhelpTimer);
+		RemoveTimer(mGuardTimer);
+		SetPhase(1);
+		ParentClass::OnDied(pKiller);
+	}
 
 protected:
+	MoonScriptCreatureAI *whelp, *guard;
+	int32 mWhelpTimer, mGuardTimer;
+	SpellDesc *bellowingroar;
+};
 
-    bool m_fBreath;
-    bool m_kAway;
-    bool m_wBuffet;
-    bool m_Cleave;
-    uint32 m_entry;
-    uint32 m_phase;
-    bool m_useSpell;
-    uint32 m_eFlamesCooldown;
-    uint32 m_whelpCooldown;
-    uint32 m_aoeFearCooldown;
-    uint32 m_fCastCount;
-    uint32 m_currentWP;
-    SpellEntry *infoFear, *infoWBuffet, *infoCleave, *infoFBreath, *infoKAway, *infoSFireball, *infoDeepBreath;
+//Guard AI. Fuckin guard ai.
+#define GUARD_BLAST_NOVA 68958 //only guard is using this shit.
+#define GUARD_CLEAVE 15284
+#define GUARD_IGNITE_WEAPON 68960
+
+class GuardAI : public MoonScriptCreatureAI
+{
+	MOONSCRIPT_FACTORY_FUNCTION(GuardAI, MoonScriptBossAI);
+	GuardAI(Creature *pCreature) : MoonScriptCreatureAI(pCreature)
+    {	
+		AddSpell(GUARD_BLAST_NOVA, Target_Current, 15, 0, 10, 0.0f, 15.0f);
+		AddSpell(GUARD_CLEAVE, Target_Current, 15, 0, 10);
+		AddSpell(GUARD_IGNITE_WEAPON, Target_ClosestPlayer, 15, 0, 10, 0.0f, 5.0f); //make it: if guard gets disarmed then do not to cast this shit.
+	}
 };
 
 void SetupOnyxiasLair(ScriptMgr * mgr)
 {
-    // Onyxia
-    mgr->register_creature_script(CN_ONYXIA, &OnyxiaAI::Create);
+    mgr->register_creature_script(ONY_BOSS, &OnyxiaAI::Create);
+	mgr->register_creature_script(ONY_GUARD, &GuardAI::Create);
 }

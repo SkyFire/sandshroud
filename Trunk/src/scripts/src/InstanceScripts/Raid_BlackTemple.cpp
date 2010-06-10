@@ -43,7 +43,7 @@ public:
 		// Way to select bosses
 		BuildEncounterMap();
 
-		if(!mEncounters.size())
+		if( mEncounters.size() == 0 )
 			return;
 
 		for ( EncounterMap::iterator Iter = mEncounters.begin(); Iter != mEncounters.end(); ++Iter )
