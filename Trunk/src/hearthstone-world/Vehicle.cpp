@@ -275,7 +275,13 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 {
 	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 	if(!acc)
+	{
+		WorldPacket data(SMSG_PET_SPELLS, 12);
+		data << uint64(0);
+		data << uint32(0);
+		plr->GetSession()->SendPacket(&data);
 		return;
+	}
 
 	uint8 count = 0;
 
@@ -659,10 +665,10 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		}
 	}
 
-	if(!haspassengers && (m_CurrentVehicle != NULL)) // Passenger and accessory checks.
+	if(!haspassengers && !m_CurrentVehicle) // Passenger and accessory checks.
 	{
 		if( m_spawn )
-			GetAIInterface()->MoveTo(m_spawn->x, m_spawn->y, m_spawn->z, m_spawn->o);
+			GetAIInterface()->MoveTo(m_spawn->x, m_spawn->y, m_spawn->z);
 		else //we're a temp spawn
 			SafeDelete();
 	}
@@ -781,10 +787,10 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << v.z;											// GetTransOffsetZ();
 		SendMessageToSet(&data, true);
 
-		DisableAI();
-
 		if(slot == 0)
 		{
+			if(!m_CurrentVehicle)
+				GetAIInterface()->StopMovement(0);
 			SetControllingUnit(pPlayer);
 			m_redirectSpellPackets = pPlayer;
 
@@ -798,7 +804,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 
 			pPlayer->m_CurrentCharm = TO_UNIT(this);
 			pPlayer->SetUInt64Value(UNIT_FIELD_CHARM, GetGUID());
-			SetCharmTempVal(GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+			SetCharmTempVal(pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
 			SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
 			SetUInt64Value(UNIT_FIELD_CHARMEDBY, pPlayer->GetGUID());
 			SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE);
@@ -821,6 +827,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			SendSpells(GetEntry(), pPlayer);
 		}
 
+		DisableAI();
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
 		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
 		data << pPlayer->GetPosition();
@@ -1086,7 +1093,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	uint64 guid = Vehicleguid.GetOldGuid();
 	Vehicle* vehicle = GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
 
-	if(cv->GetPassengerSlot(vehicle))
+	if(cv->GetPassengerSlot(vehicle) || cv->m_CurrentVehicle == vehicle)
 	{
 		cv->RemovePassenger(_player);
 		vehicle->AddPassenger(_player);

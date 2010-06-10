@@ -284,7 +284,7 @@ bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
 			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
 		}
-		TO_CREATURE(obj)->GetAIInterface()->MoveTo(x,y,z,0);
+		TO_CREATURE(obj)->GetAIInterface()->MoveTo(x,y,z);
 	}
 	else
 	{

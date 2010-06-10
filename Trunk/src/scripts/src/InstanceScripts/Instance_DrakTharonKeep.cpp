@@ -138,7 +138,7 @@ public:
 						c->PushToWorld(_unit->GetMapMgr());
 						//path finding would be usefull :)
 						//c->GetAIInterface()->m_moveRun = true;
-						c->GetAIInterface()->MoveTo(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), _unit->GetOrientation());
+						c->GetAIInterface()->MoveTo(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ());
 					}
 				}
 			}
@@ -456,7 +456,7 @@ public:
 					if( p_target )
 					{
 						c->GetAIInterface()->m_moveRun = true;
-						c->GetAIInterface()->MoveTo(p_target->GetPositionX(), p_target->GetPositionY(), p_target->GetPositionZ(), p_target->GetOrientation());
+						c->GetAIInterface()->MoveTo(p_target->GetPositionX(), p_target->GetPositionY(), p_target->GetPositionZ());
 					}
 				}
 			}
@@ -487,7 +487,7 @@ public:
 						if( p_target )
 						{
 							c->GetAIInterface()->m_moveRun = true;
-							c->GetAIInterface()->MoveTo(p_target->GetPositionX(), p_target->GetPositionY(), p_target->GetPositionZ(), p_target->GetOrientation());
+							c->GetAIInterface()->MoveTo(p_target->GetPositionX(), p_target->GetPositionY(), p_target->GetPositionZ());
 						}
 					}
 				}

@@ -508,7 +508,7 @@ bool Echeyakee(uint32 i, Spell *pSpell)
     if (Echeyakee==NULL)
     {
     Creature *EcheyakeeSpawn = sEAS.SpawnCreature( pPlayer, 3475, 459.78, -3034.95, 91.68, 3.87,120000 );
-    EcheyakeeSpawn->GetAIInterface()->MoveTo(pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation());
+    EcheyakeeSpawn->GetAIInterface()->MoveTo(pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ());
     }
     return true;
 };

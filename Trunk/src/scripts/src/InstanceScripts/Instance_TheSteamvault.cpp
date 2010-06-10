@@ -2466,10 +2466,10 @@ static Coords Distiller[]=
 static Coords DistillerMoveTo[]=
 {
 	{  },
-	{ -108.092949f, -491.747803f, 8.198845f,  0.621336f },
-	{  -81.165871f, -492.459869f, 8.255936f,  6.531955f },
-	{  -79.170982f, -518.544800f, 8.241381f, -2.281880f },
-	{ -112.033188f, -517.945190f, 8.205022f, -0.949258f }
+	{ -108.092949f, -491.747803f, 8.198845f},
+	{  -81.165871f, -492.459869f, 8.255936f},
+	{  -79.170982f, -518.544800f, 8.241381f},
+	{ -112.033188f, -517.945190f, 8.205022f}
 };
 
 // Naga DistillerAI
@@ -2694,7 +2694,7 @@ public:
 
 					_unit->GetAIInterface()->StopMovement(0);
 					_unit->GetAIInterface()->SetAIState(STATE_SCRIPTMOVE);
-					_unit->GetAIInterface()->MoveTo(DistillerMoveTo[DistillerNumber].x, DistillerMoveTo[DistillerNumber].y, DistillerMoveTo[DistillerNumber].z, DistillerMoveTo[DistillerNumber].o);
+					_unit->GetAIInterface()->MoveTo(DistillerMoveTo[DistillerNumber].x, DistillerMoveTo[DistillerNumber].y, DistillerMoveTo[DistillerNumber].z);
 
 					if (_unit->GetDistance2dSq(pDistiller) <= 100.0f)
 					{

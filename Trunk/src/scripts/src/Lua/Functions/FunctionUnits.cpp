@@ -159,12 +159,11 @@ int luaUnit_MoveTo(lua_State * L, Unit * ptr)
 	double x = luaL_checknumber(L, 1);
 	double y = luaL_checknumber(L, 2);
 	double z = luaL_checknumber(L, 3);
-	double o = luaL_checknumber(L, 4);
 
 	if(x == 0 || y == 0 || z == 0)
 		return 0;
 
-	ptr->GetAIInterface()->MoveTo( (float)x, (float)y, (float)z, (float)o );
+	ptr->GetAIInterface()->MoveTo( (float)x, (float)y, (float)z);
 	return 0;
 }
 
@@ -1312,9 +1311,8 @@ int luaUnit_ReturnToSpawnPoint(lua_State * L, Unit * ptr)
 	float x = ptr->GetSpawnX();
 	float y = ptr->GetSpawnY();
 	float z = ptr->GetSpawnZ();
-	float o = ptr->GetSpawnO();
 	if(ptr)
-		ptr->GetAIInterface()->MoveTo(x, y, z, o);
+		ptr->GetAIInterface()->MoveTo(x, y, z);
 	return 0;
 }
 int luaUnit_GetGUID(lua_State * L, Unit * ptr)

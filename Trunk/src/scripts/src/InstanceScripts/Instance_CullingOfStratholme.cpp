@@ -1232,13 +1232,13 @@ public:
 				Creature *citizen = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords( _unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), 28167);
 				if( citizen )
 				{
-					_unit->GetAIInterface()->MoveTo( citizen->GetPositionX(),citizen->GetPositionY(),citizen->GetPositionZ(),citizen->GetOrientation());
+					_unit->GetAIInterface()->MoveTo( citizen->GetPositionX(),citizen->GetPositionY(),citizen->GetPositionZ());
 					_unit->DealDamage( citizen, citizen->GetHealth(), 0,0,0);
 				}
 				citizen = _unit->GetMapMgr()->GetInterface()->GetCreatureNearestCoords( _unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), 28169);
 				if( citizen )
 				{
-					_unit->GetAIInterface()->MoveTo( citizen->GetPositionX(),citizen->GetPositionY(),citizen->GetPositionZ(),citizen->GetOrientation());
+					_unit->GetAIInterface()->MoveTo( citizen->GetPositionX(),citizen->GetPositionY(),citizen->GetPositionZ());
 					_unit->DealDamage( citizen, citizen->GetHealth(), 0,0,0);
 				}
 				sEventMgr.AddEvent(TO_UNIT(_unit), &Unit::SendChatMessage, (uint8)CHAT_MSG_MONSTER_SAY, (uint32)LANG_UNIVERSAL, 

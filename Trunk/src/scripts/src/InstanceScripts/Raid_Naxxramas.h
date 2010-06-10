@@ -2984,7 +2984,7 @@ struct Spawns
 struct Spawns PhaseTwoWP[]=
 {
 	{  },
-	{ 3520.820068f, -5233.799805f, 137.626007f, 4.553010f }
+	{ 3520.820068f, -5233.799805f, 137.626007f }
 };
 
 struct Spawns IceBlocks[]=	// Those are not blizzlike pos, because those blocks are spawned randomly
@@ -3049,7 +3049,7 @@ public:
 
     FrostBreathTriggerAI(Creature *pCreature) : CreatureAIScript(pCreature)
     {
-		_unit->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z + 10.5f, PhaseTwoWP[1].o);
+		_unit->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z + 10.5f);
 		_unit->SetUInt64Value(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 		_unit->GetAIInterface()->m_moveFly = true;
 		_unit->m_noRespawn = true;
@@ -3079,9 +3079,9 @@ public:
 
 		AICounter--;
 		if (AICounter == 6)
-			_unit->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z + AICounter * 1.5f, PhaseTwoWP[1].o);
+			_unit->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z + AICounter * 1.5f);
 		else
-			_unit->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z, PhaseTwoWP[1].o);
+			_unit->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z);
 	}
 	
 protected:
@@ -3532,7 +3532,7 @@ public:
 				FlyingFrostBreath =_unit->GetMapMgr()->GetInterface()->SpawnCreature(CN_FROST_BREATH_TRIGGER, PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z + 18.0f, _unit->GetOrientation(), true, false, 0, 0);
 				if (FlyingFrostBreath != NULL)
 				{
-					FlyingFrostBreath->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z, PhaseTwoWP[1].o);
+					FlyingFrostBreath->GetAIInterface()->MoveTo(PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z);
 				}
 
 				_unit->GetMapMgr()->GetInterface()->SpawnCreature(CN_FROST_BREATH_TRIGGER2, PhaseTwoWP[1].x, PhaseTwoWP[1].y, PhaseTwoWP[1].z, _unit->GetOrientation(), true, false, 0, 0);
@@ -4578,7 +4578,7 @@ public:
 		}
 		if (_unit->GetPositionX() == LastPosX && _unit->GetPositionY() == LastPosY && _unit->GetPositionZ() == LastPosZ)
 		{
-			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 		}
 		if (OnStart == false)
 		{
@@ -4599,7 +4599,7 @@ public:
 					newposx = 3715.845703f + xchange;
 					newposy = -5106.928223f + ychange;
 
-					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 				}
 			}
 
@@ -4701,7 +4701,7 @@ public:
 		}
 		if (_unit->GetPositionX() == LastPosX && _unit->GetPositionY() == LastPosY && _unit->GetPositionZ() == LastPosZ)
 		{
-			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 		}
 		if (OnStart == false)
 		{
@@ -4722,7 +4722,7 @@ public:
 					newposx = 3715.845703f + xchange;
 					newposy = -5106.928223f + ychange;
 
-					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 				}
 			}
 
@@ -4863,7 +4863,7 @@ public:
 		}
 		if (_unit->GetPositionX() == LastPosX && _unit->GetPositionY() == LastPosY && _unit->GetPositionZ() == LastPosZ)
 		{
-			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 		}
 		if (OnStart == false)
 		{
@@ -4884,7 +4884,7 @@ public:
 					newposx = 3715.845703f + xchange;
 					newposy = -5106.928223f + ychange;
 
-					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 				}
 			}
 
@@ -5015,7 +5015,7 @@ public:
 		}
 		if (_unit->GetPositionX() == LastPosX && _unit->GetPositionY() == LastPosY && _unit->GetPositionZ() == LastPosZ)
 		{
-			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+			_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 		}
 		if (OnStart == false)
 		{
@@ -5036,7 +5036,7 @@ public:
 					newposx = 3715.845703f + xchange;
 					newposy = -5106.928223f + ychange;
 
-					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f, _unit->GetOrientation());
+					_unit->GetAIInterface()->MoveTo(newposx, newposy, 141.290451f);
 				}
 			}
 

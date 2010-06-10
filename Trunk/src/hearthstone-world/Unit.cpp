@@ -5036,24 +5036,24 @@ void Unit::MoveToWaypoint(uint32 wp_id)
 		ai->m_currentWaypoint = wp_id;
 		if(wp->flags!=0)
 			ai->m_moveRun = true;
-		ai->MoveTo(wp->x, wp->y, wp->z, 0);
+		ai->MoveTo(wp->x, wp->y, wp->z);
 	}
 }
 
 int32 Unit::GetDamageDoneMod(uint32 school)
 {
 	if( IsPlayer() )
-	   return (int32)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school ) - (int32)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + school );
+		return (int32)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school ) - (int32)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + school );
 	else
-	   return TO_CREATURE(this)->ModDamageDone[school];
+		return TO_CREATURE(this)->ModDamageDone[school];
 }
 	
 float Unit::GetDamageDonePctMod(uint32 school)
 {
-   if(IsPlayer())
-	   return m_floatValues[PLAYER_FIELD_MOD_DAMAGE_DONE_PCT+school];
+	if(IsPlayer())
+		return m_floatValues[PLAYER_FIELD_MOD_DAMAGE_DONE_PCT+school];
 	else
-	   return TO_CREATURE(this)->ModDamageDonePct[school];
+		return TO_CREATURE(this)->ModDamageDonePct[school];
 }
 
 void Unit::CalcDamage()
@@ -5062,14 +5062,14 @@ void Unit::CalcDamage()
 		TO_PLAYER(this)->CalcDamage();
 	else
 	{
-	float r;
-	float delta;
-	float mult;
-	
-	float ap_bonus = float(GetAP())/14000.0f;
+		float r;
+		float delta;
+		float mult;
+
+		float ap_bonus = float(GetAP())/14000.0f;
 
 		float bonus = ap_bonus*GetUInt32Value(UNIT_FIELD_BASEATTACKTIME);
-	
+
 		delta = float(TO_CREATURE(this)->ModDamageDone[0]);
 		mult = float(TO_CREATURE(this)->ModDamageDonePct[0]);
 		r = BaseDamage[0]*mult+delta+bonus;
@@ -5077,11 +5077,10 @@ void Unit::CalcDamage()
 		SetFloatValue(UNIT_FIELD_MINDAMAGE,r > 0 ? ( IsPet() ? r * 0.9f : r ) : 0 );
 		r = BaseDamage[1]*mult+delta+bonus;
 		SetFloatValue(UNIT_FIELD_MAXDAMAGE, r > 0 ? ( IsPet() ? r * 1.1f : r ) : 0 );
-	
-	//	SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,BaseRangedDamage[0]*mult+delta);
-	//	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,BaseRangedDamage[1]*mult+delta);
-  
-	}	
+
+//		SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,BaseRangedDamage[0]*mult+delta);
+//		SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,BaseRangedDamage[1]*mult+delta);
+	}
 }
 
 //returns absorbed dmg

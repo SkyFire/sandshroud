@@ -1224,7 +1224,7 @@ public:
 					x = _unit->GetPositionX() + xchange;
 					y = _unit->GetPositionY() + ychange;
 
-					_unit->GetAIInterface()->MoveTo(x, y, _unit->GetPositionZ(), _unit->GetOrientation());
+					_unit->GetAIInterface()->MoveTo(x, y, _unit->GetPositionZ());
 				}
 			}
 

@@ -67,7 +67,9 @@ public:
 				if( !plr || !plr->GetMapMgr() || !plr->GetMapMgr()->GetInterface() )
 					return;
 				Creature *firstenemy = sEAS.SpawnCreature(plr, 1511, -13770.5, -6.79, 42.8, 5.7 , 0);
-				firstenemy->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15, 4.07);
+				firstenemy->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15);
+				float angle = 4.07f;
+				firstenemy->SetOrientation(angle);
 				firstenemy->Despawn(10*60*1000, 0);
 			}break;
 		}
@@ -93,7 +95,9 @@ public:
 			if(mPlayer == NULL || mPlayer->GetMapMgr() == NULL || mPlayer->GetMapMgr()->GetInterface() == NULL)
 				return;
 			Creature * beka1 = sEAS.SpawnCreature(mPlayer, 1516, -13770.5, -6.79, 42.8, 5.7 , 0);
-			beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15, 4.07);
+			beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15);
+			float angle = 4.07f;
+			beka1->SetOrientation(angle);
 			beka1->Despawn(10*60*1000, 0);
 		}
 		else
@@ -104,7 +108,9 @@ public:
 				if(mPlayer == NULL || mPlayer->GetMapMgr() == NULL || mPlayer->GetMapMgr()->GetInterface() == NULL)
 					return;
 				Creature * beka1 = sEAS.SpawnCreature(mPlayer, 1516, -13770.5, -6.79, 42.8, 5.7 , 0);
-				beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15, 4.07);
+				beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15);
+				float angle = 4.07f;
+				beka1->SetOrientation(angle);
 				beka1->Despawn(10*60*1000, 0);
 			}
 		}
@@ -125,7 +131,9 @@ public:
 			if(mPlayer == NULL || mPlayer->GetMapMgr() == NULL || mPlayer->GetMapMgr()->GetInterface() == NULL)
 				return;
 			Creature *beka1 = sEAS.SpawnCreature(mPlayer, 1514, -13770.5, -6.79, 42.8, 5.7, 0);
-			beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15, 4.07);
+			beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15);
+			float angle = 4.07f;
+			beka1->SetOrientation(angle);
 			beka1->Despawn(10*60*1000, 0);
 		}
 		else
@@ -136,7 +144,9 @@ public:
 				if(mPlayer == NULL || mPlayer->GetMapMgr() == NULL || mPlayer->GetMapMgr()->GetInterface() == NULL)
 					return;
 				Creature *beka1 = sEAS.SpawnCreature(mPlayer, 1514, -13770.5, -6.79, 42.8, 5.7, 0);
-				beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15, 4.07);
+				beka1->GetAIInterface()->MoveTo(-13727.8, -26.2, 46.15);
+				float angle = 4.07f;
+				beka1->SetOrientation(angle);
 				beka1->Despawn(10*60*1000, 0);
 			}
 		}
@@ -315,7 +325,9 @@ class FacingNegolash : public QuestScript
 		}	
      	
 		Creature *Negolash = sEAS.SpawnCreature(pPlayer, 1494, -14657.400391, 155.115997, 4.081050, 0.353429);
-		Negolash->GetAIInterface()->MoveTo(-14647.526367, 143.710052, 1.164550, 1.909);
+		Negolash->GetAIInterface()->MoveTo(-14647.526367, 143.710052, 1.164550);
+		float angle = 1.909f;
+		Negolash->SetOrientation(angle);
 	}
 };
 

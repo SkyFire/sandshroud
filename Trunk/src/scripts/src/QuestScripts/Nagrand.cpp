@@ -98,7 +98,7 @@ public:
 
 				pMogor->SetUInt64Value(UNIT_FIELD_FLAGS, 0);
 				pMogor->GetAIInterface()->SetAllowedToEnterCombat(true);
-				pMogor->GetAIInterface()->MoveTo(-704.669f, 7871.08f, 45.0387f, 1.59531f);
+				pMogor->GetAIInterface()->MoveTo(-704.669f, 7871.08f, 45.0387f);
 				pMogor->SetFacing(1.908516);
 				pMogor->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, 14);
 			}

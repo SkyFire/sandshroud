@@ -326,10 +326,10 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 					if(m_Unit->isAlive())
 					{
 						if(m_returnX != 0.0f && m_returnY != 0.0f && m_returnZ != 0.0f)
-							MoveTo(m_returnX,m_returnY,m_returnZ,m_Unit->GetOrientation());
+							MoveTo(m_returnX,m_returnY,m_returnZ);
 						else
 						{
-							MoveTo(m_Unit->GetSpawnX(),m_Unit->GetSpawnY(),m_Unit->GetSpawnZ(),m_Unit->GetSpawnO());
+							MoveTo(m_Unit->GetSpawnX(),m_Unit->GetSpawnY(),m_Unit->GetSpawnZ());
 							m_returnX=m_Unit->GetSpawnX();
 							m_returnY=m_Unit->GetSpawnY();
 							m_returnZ=m_Unit->GetSpawnZ();
@@ -665,7 +665,7 @@ void AIInterface::Update(uint32 p_time)
 					m_returnZ = m_Unit->GetSpawnZ();
 				}
 
-				MoveTo(m_returnX, m_returnY, m_returnZ, m_Unit->GetSpawnO());
+				MoveTo(m_returnX, m_returnY, m_returnZ);
 			}
 		}
 	}
@@ -1918,6 +1918,12 @@ void AIInterface::StopMovement(uint32 time)
 	m_moveTimer = time; //set pause after stopping
 	m_creatureState = STOPPED;
 
+	if(m_destinationY && m_destinationX)
+	{
+		float orient = atan2(m_destinationY - m_Unit->GetPositionY(), m_destinationX - m_Unit->GetPositionX());
+		m_Unit->SetOrientation(orient);
+	}
+
 	m_destinationX = m_destinationY = m_destinationZ = 0;
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 	m_timeMoved = 0;
@@ -1926,7 +1932,7 @@ void AIInterface::StopMovement(uint32 time)
 	SendMoveToPacket(m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), m_Unit->GetOrientation(), 0, getMoveFlags());
 }
 
-void AIInterface::MoveTo(float x, float y, float z, float o)
+void AIInterface::MoveTo(float x, float y, float z)
 {
 	m_sourceX = m_Unit->GetPositionX();
 	m_sourceY = m_Unit->GetPositionY();
@@ -1982,12 +1988,10 @@ void AIInterface::UpdateMove()
 	//this should NEVER be called directly !!!!!!
 	//use MoveTo()
 	float distance = m_Unit->CalcDistance(m_nextPosX,m_nextPosY,m_nextPosZ);
-	
 
 	m_destinationX = m_nextPosX;
 	m_destinationY = m_nextPosY;
 	m_destinationZ = m_nextPosZ;
-	
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 
 	uint32 moveTime = 0;
@@ -2646,7 +2650,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 						}
 						m_moveFly = (wp->flags == 768) ? 1 : 0;
 						m_moveRun = (wp->flags == 256) ? 1 : 0;
-						MoveTo(wp->x, wp->y, wp->z, 0);
+						MoveTo(wp->x, wp->y, wp->z);
 					}
 				}
 			}
@@ -2706,7 +2710,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				}
 				else
 				{
-					MoveTo(Fx, Fy, Fz, Fo);
+					MoveTo(Fx, Fy, Fz);
 					m_FearTimer = m_totalMoveTime + getMSTime() + 400;
 				}
 			}
@@ -2717,7 +2721,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 					m_FearTimer=getMSTime()+100;
 				else
 				{
-					MoveTo(Fx, Fy, Fz, Fo);
+					MoveTo(Fx, Fy, Fz);
 					m_FearTimer = m_totalMoveTime + getMSTime() + 200;
 				}
 			}
@@ -2763,7 +2767,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			else
 			{
 				m_Unit->SetOrientation(wanderO);
-				MoveTo(Fx, Fy, Fz, wanderO);
+				MoveTo(Fx, Fy, Fz);
 				m_WanderTimer = getMSTime() + m_totalMoveTime + 300; // time till next move (+ pause)
 			}
 		}
@@ -2785,7 +2789,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			}
 
 			m_Unit->SetOrientation(wanderO);
-			MoveTo(Fx, Fy, Fz, wanderO);
+			MoveTo(Fx, Fy, Fz);
 			m_WanderTimer = getMSTime() + m_totalMoveTime + 300; // time till next move (+ pause)
 		}
 	}
@@ -2838,7 +2842,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 
 						MoveTo(delta_x+(d*(cosf(m_fallowAngle+UnitToFollow->GetOrientation()))),
 							delta_y+(d*(sinf(m_fallowAngle+UnitToFollow->GetOrientation()))),
-							UnitToFollow->GetPositionZ(),UnitToFollow->GetOrientation());				
+							UnitToFollow->GetPositionZ());				
 					}
 					else
 					{

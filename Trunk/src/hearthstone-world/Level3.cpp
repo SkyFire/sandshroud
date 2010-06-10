@@ -1703,13 +1703,12 @@ bool ChatHandler::HandleNpcReturnCommand(const char* args, WorldSession* m_sessi
 	float x = creature->m_spawn->x;
 	float y = creature->m_spawn->y;
 	float z = creature->m_spawn->z;
-	float o = creature->m_spawn->o;
 
 	// restart movement
 	creature->GetAIInterface()->SetAIState(STATE_IDLE);
 	creature->GetAIInterface()->WipeHateList();
 	creature->GetAIInterface()->WipeTargetList();
-	creature->GetAIInterface()->MoveTo(x, y, z, o);
+	creature->GetAIInterface()->MoveTo(x, y, z);
 
 	return true;
 }
@@ -2720,8 +2719,7 @@ bool ChatHandler::HandleNpcUnPossessCommand(const char * args, WorldSession * m_
 				float x = creature->m_spawn->x;
 				float y = creature->m_spawn->y;
 				float z = creature->m_spawn->z;
-				float o = creature->m_spawn->o;
-				creature->GetAIInterface()->MoveTo(x, y, z, o);
+				creature->GetAIInterface()->MoveTo(x, y, z);
 			}
 	}
 	GreenSystemMessage(m_session, "Removed any possessed targets.");

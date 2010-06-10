@@ -373,7 +373,7 @@ bool Carcass(uint32 i, Spell *pSpell) // Becoming a Shadoweave Tailor
 	{
 		NetherDrake->CastSpell(NetherDrake, dbcSpell.LookupEntry( 38502 ), true);
 		NetherDrake->GetAIInterface()->m_moveFly = true;
-		NetherDrake->GetAIInterface()->MoveTo(pPlayer->GetPositionX(), pPlayer->GetPositionY()+2, pPlayer->GetPositionZ(), 0);
+		NetherDrake->GetAIInterface()->MoveTo(pPlayer->GetPositionX(), pPlayer->GetPositionY()+2, pPlayer->GetPositionZ());
 		pQuest->SetMobCount( 0, pQuest->GetMobCount( 0 )+1);
 		pQuest->SendUpdateAddKill( 0 );
 		pQuest->UpdatePlayerFields();
@@ -399,7 +399,7 @@ bool EatenRecently(uint32 i, Aura *pAura, bool apply)
 	{
 		NetherDrake->GetAIInterface()->SetAllowedToEnterCombat(true);
 		NetherDrake->GetAIInterface()->m_moveFly = true;
-		NetherDrake->GetAIInterface()->MoveTo(NetherDrake->GetSpawnX(), NetherDrake->GetSpawnY(), NetherDrake->GetSpawnZ(), NetherDrake->GetSpawnO());
+		NetherDrake->GetAIInterface()->MoveTo(NetherDrake->GetSpawnX(), NetherDrake->GetSpawnY(), NetherDrake->GetSpawnZ());
 	}
 	return true;
 }

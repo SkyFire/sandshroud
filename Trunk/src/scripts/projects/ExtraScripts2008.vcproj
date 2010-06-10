@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hearthstone-world.lib"
+				AdditionalDependencies="..\..\..\bin\release\hearthstone-world.lib"
 				OutputFile="../../../bin/release/script_bin/ExtraScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hearthstone-world.lib"
+				AdditionalDependencies="..\..\..\bin\release_x64\hearthstone-world.lib"
 				OutputFile="../../../bin/release_x64/script_bin/ExtraScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release_x64"

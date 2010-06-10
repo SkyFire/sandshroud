@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hearthstone-world.lib"
+				AdditionalDependencies="../../../bin/debug/hearthstone-world.lib"
 				OutputFile="../../../bin/debug/script_bin/WorldPvPScripts.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin\debug"
@@ -154,7 +154,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hearthstone-world.lib"
+				AdditionalDependencies="../../../bin/release/hearthstone-world.lib"
 				OutputFile="../../../bin/release/script_bin/WorldPvPScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release"
@@ -240,7 +240,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hearthstone-world.lib"
+				AdditionalDependencies="../../../bin/debug_x64/hearthstone-world.lib"
 				OutputFile="../../../bin/debug_x64/script_bin/WorldPvPScripts.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\bin\debug_x64"
@@ -319,7 +319,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hearthstone-world.lib"
+				AdditionalDependencies="../../../bin/release_x64/hearthstone-world.lib"
 				OutputFile="../../../bin/release_x64/script_bin/WorldPvPScripts.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\bin\release_x64"

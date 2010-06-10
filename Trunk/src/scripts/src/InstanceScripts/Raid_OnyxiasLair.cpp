@@ -361,7 +361,7 @@ public:
                     true, false, 0, 0);
                 if(cre)
                 {
-                    cre->GetAIInterface()->MoveTo(14.161f, -177.874f, -85.649f, 0.23f);
+                    cre->GetAIInterface()->MoveTo(14.161f, -177.874f, -85.649f);
                     cre->GetAIInterface()->setOutOfCombatRange(100000);
                 }
                 cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(11262, 
@@ -370,7 +370,7 @@ public:
                     true, false, 0, 0);
                 if(cre)
                 {
-                    cre->GetAIInterface()->MoveTo(27.133f, -232.030f, -84.188f, 0.44f);
+                    cre->GetAIInterface()->MoveTo(27.133f, -232.030f, -84.188f);
                     cre->GetAIInterface()->setOutOfCombatRange(100000);
                 }
             }
@@ -401,7 +401,7 @@ public:
                     true, false, 0, 0);
                 if(cre)
                 {
-                    cre->GetAIInterface()->MoveTo(14.161f, -177.874f, -85.649f, 0.23f);
+                    cre->GetAIInterface()->MoveTo(14.161f, -177.874f, -85.649f);
                     cre->GetAIInterface()->setOutOfCombatRange(100000);
                 }
                 cre = _unit->GetMapMgr()->GetInterface()->SpawnCreature(11262, 
@@ -410,7 +410,7 @@ public:
                     true, false, 0, 0);
                 if(cre)
                 {
-                    cre->GetAIInterface()->MoveTo(27.133f, -232.030f, -84.188f, 0.44f);
+                    cre->GetAIInterface()->MoveTo(27.133f, -232.030f, -84.188f);
                     cre->GetAIInterface()->setOutOfCombatRange(100000);
                 }
             }

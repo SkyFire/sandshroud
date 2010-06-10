@@ -298,7 +298,7 @@ public:
 	// Movement
 	void SendMoveToPacket(float toX, float toY, float toZ, float toO, uint32 time, uint32 MoveFlags);
 	//void SendMoveToSplinesPacket(std::list<Waypoint> wp, bool run);
-	void MoveTo(float x, float y, float z, float o);
+	void MoveTo(float x, float y, float z);
 	uint32 getMoveFlags();
 	void UpdateMove();
 	void SendCurrentMove(Player* plyr/*uint64 guid*/);

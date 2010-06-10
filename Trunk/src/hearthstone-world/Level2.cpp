@@ -1179,7 +1179,7 @@ bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session
 	Creature* crt = getSelectedCreature(m_session, true);
 	if(!crt) return true;
 
-	crt->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetOrientation());
+	crt->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 	return true;
 }
 

@@ -79,13 +79,13 @@ static Coord TSUNAMI_SPAWN[] =
 static Coord TSUNAMI_MOVE[] =
 {
 	// Left  if right 
-	{ 3211.564697f, 505.982727f, 59.556610f, 3.148659f },
-	{ 3214.280029f, 531.491089f, 59.168331f, 3.156505f },
-	{ 3211.609131f, 560.359375f, 59.420803f, 3.105450f },
+	{ 3211.564697f, 505.982727f, 59.556610f },
+	{ 3214.280029f, 531.491089f, 59.168331f },
+	{ 3211.609131f, 560.359375f, 59.420803f },
 	// Right 1 if left 1
-	{ 3283.215820f, 511.234100f, 59.288776f, 3.148659f },
-	{ 3286.661133f, 533.317261f, 59.366989f, 3.156505f },
-	{ 3283.311035f, 556.839611f, 59.397129f, 3.105450f }
+	{ 3283.215820f, 511.234100f, 59.288776f },
+	{ 3286.661133f, 533.317261f, 59.366989f },
+	{ 3283.311035f, 556.839611f, 59.397129f }
 };
 
 static Coord LAVA_SPAWNS[]	=
@@ -189,13 +189,13 @@ class SartharionAI : public MoonScriptBossAI
 					Tsunami = this->GetUnit()->GetMapMgr()->GetInterface()->SpawnCreature(CN_FLAME_TSUNAMI, TSUNAMI_SPAWN[i].positionX, TSUNAMI_SPAWN[i].positionY, TSUNAMI_SPAWN[i].positionZ, TSUNAMI_SPAWN[i].positionO, true, true, NULL, NULL);  
 					
 					if( Tsunami != NULL )
-						Tsunami->GetAIInterface()->MoveTo( TSUNAMI_MOVE[i].positionX, TSUNAMI_MOVE[i].positionY, TSUNAMI_MOVE[i].positionZ, TSUNAMI_MOVE[i].positionO );
+						Tsunami->GetAIInterface()->MoveTo( TSUNAMI_MOVE[i].positionX, TSUNAMI_MOVE[i].positionY, TSUNAMI_MOVE[i].positionZ );
 					break;
 				case 1:
 					Tsunami = this->GetUnit()->GetMapMgr()->GetInterface()->SpawnCreature(CN_FLAME_TSUNAMI, TSUNAMI_SPAWN[i + 3].positionX, TSUNAMI_SPAWN[i + 3].positionY, TSUNAMI_SPAWN[i + 3].positionZ, TSUNAMI_SPAWN[i + 3].positionO, true, true, NULL, NULL);  
 					
 					if( Tsunami != NULL )
-						Tsunami->GetAIInterface()->MoveTo( TSUNAMI_MOVE[i + 3].positionX, TSUNAMI_MOVE[i + 3].positionY, TSUNAMI_MOVE[i + 3].positionZ, TSUNAMI_MOVE[i + 3].positionO );
+						Tsunami->GetAIInterface()->MoveTo( TSUNAMI_MOVE[i + 3].positionX, TSUNAMI_MOVE[i + 3].positionY, TSUNAMI_MOVE[i + 3].positionZ );
 				};
 			};
 
@@ -260,7 +260,7 @@ class SartharionAI : public MoonScriptBossAI
 		if(Tenebron != NULL && Tenebron->isAlive())
 		{
 			Emote( "Tenebron! The eggs are yours to protect as well!", Text_Yell, 14106);
-			Tenebron->GetAIInterface()->MoveTo( 3254.606689f, 531.867859f, 66.898163f, 4.215994f);
+			Tenebron->GetAIInterface()->MoveTo( 3254.606689f, 531.867859f, 66.898163f);
 			Tenebron->CastSpell( Tenebron, 61248, true);
 		};
 		b_tenebron = false;
@@ -271,7 +271,7 @@ class SartharionAI : public MoonScriptBossAI
 		if(Shadron != NULL && Shadron->isAlive())
 		{
 			Emote( "Vesperon! The clutch is in danger! Assist me!", Text_Yell, 14104);
-			Shadron->GetAIInterface()->MoveTo( 3254.606689f, 531.867859f, 66.898163f, 4.215994f);
+			Shadron->GetAIInterface()->MoveTo( 3254.606689f, 531.867859f, 66.898163f);
 			Shadron->CastSpell( Shadron, 58105, true);
 		};
 		b_shadron = false;
@@ -282,7 +282,7 @@ class SartharionAI : public MoonScriptBossAI
 		if(Vesperon != NULL && Vesperon->isAlive())
 		{
 			Emote( "Shadron! Come to me, all is at risk!", Text_Yell, 14105);
-			Vesperon->GetAIInterface()->MoveTo( 3254.606689f, 531.867859f, 66.898163f, 4.215994f);
+			Vesperon->GetAIInterface()->MoveTo( 3254.606689f, 531.867859f, 66.898163f);
 			Vesperon->CastSpell(Vesperon, 61251, true);
 		};
 		b_vesperon = false;

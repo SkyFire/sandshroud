@@ -315,7 +315,7 @@ public:
 	{
 		if( (int)( last_creation_hp - GOLEM_CREATION_HP ) >= _unit->GetHealthPct() )
 		{
-			_unit->GetAIInterface()->MoveTo(1325.313f, -92.931f, 56.717f, 2.274f);
+			_unit->GetAIInterface()->MoveTo(1325.313f, -92.931f, 56.717f);
 			_unit->CastSpell( _unit, 52238, true );
 			last_creation_hp = _unit->GetHealthPct();
 			switch(rand()%2)
@@ -723,7 +723,7 @@ public:
 						Player *p_target = GetRandomPlayerTarget();
 						if( p_target )
 						{
-							Spark->GetAIInterface()->MoveTo(p_target->GetPositionX(),p_target->GetPositionY(), p_target->GetPositionZ(), p_target->GetOrientation());
+							Spark->GetAIInterface()->MoveTo(p_target->GetPositionX(),p_target->GetPositionY(), p_target->GetPositionZ());
 						}
 					}
 				}			
@@ -799,7 +799,7 @@ public:
 					if( Spark )
 					{
 						Spark->RemoveAllAuras();
-						Spark->GetAIInterface()->MoveTo(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), _unit->GetOrientation());
+						Spark->GetAIInterface()->MoveTo(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ());
 						Spark->Root();
 						Spark->GetAIInterface()->disable_combat = true;
 					}

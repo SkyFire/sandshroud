@@ -228,7 +228,7 @@ public:
 		if(creat == NULL)
 			return;
 
-		creat->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetOrientation());
+		creat->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 	}
 
 	void CreateCustomWaypointMap(Creature *creat)
