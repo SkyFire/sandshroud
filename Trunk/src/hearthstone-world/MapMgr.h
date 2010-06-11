@@ -24,8 +24,6 @@
 #ifndef __MAPMGR_H
 #define __MAPMGR_H
 
-#include "Pathfinding/Detour/DetourNavMesh.h"
-
 class MapCell;
 class Map;
 class Object;
@@ -257,9 +255,6 @@ public:
 	HEARTHSTONE_INLINE void SetCollision(bool enable) { collision = enable; }
 	HEARTHSTONE_INLINE bool IsCollisionEnabled() { return collision; }
 
-	HEARTHSTONE_INLINE void SetPathfinding(bool enable) { pathfinding = enable; }
-	HEARTHSTONE_INLINE bool IsPathfindingEnabled() { return pathfinding; }
-
 	HEARTHSTONE_INLINE MapScriptInterface * GetInterface() { return ScriptInterface; }
 	virtual int32 event_GetInstanceID() { return m_instanceID; }
 
@@ -281,9 +276,6 @@ public:
 	void EventRespawnGameObject(GameObject* o, MapCell * c);
 	void SendMessageToCellPlayers(Object* obj, WorldPacket * packet, uint32 cell_radius = 2);
 	void SendChatMessageToCellPlayers(Object* obj, WorldPacket * packet, uint32 cell_radius, uint32 langpos, int32 lang, WorldSession * originator);
-
-	bool LoadNavMesh(uint32 x, uint32 y);
-	LocationVector getNextPositionOnPathToLocation(const float startx, const float starty, const float startz, const float endx, const float endy, const float endz);
 
 	Instance * pInstance;
 	void BeginInstanceExpireCountdown();
@@ -309,8 +301,6 @@ public:
 	}
 
 protected:
-	dtNavMesh *m_navMesh[64][64];
-
 	//! Collect and send updates to clients
 	void _UpdateObjects();
 
@@ -330,7 +320,6 @@ public:
 private:
 	/* Map Information */
 	bool collision;
-	bool pathfinding;
 	MapInfo *pMapInfo;
 	uint32 m_instanceID;
 

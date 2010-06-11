@@ -1708,10 +1708,9 @@ CREATE TABLE `worldmap_info` (
   `heroic_keyid_2` int(30) NOT NULL default '0',
   `viewingDistance` float NOT NULL default '80',
   `required_checkpoint` int(30) NOT NULL default '0',
-  `collision` int(10) unsigned NOT NULL default '0',
-  `pathfinding` int(10) unsigned NOT NULL default '0',
   `hordephase` int(30) NOT NULL default '0',
   `alliancephase` int(30) NOT NULL default '0',
+  `collision` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='World System';
 

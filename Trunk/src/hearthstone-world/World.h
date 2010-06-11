@@ -232,10 +232,9 @@ struct MapInfo
 	uint32 heroic_key[2];
 	float update_distance;
 	uint32 checkpoint_id;
-	bool collision;
-	bool pathfinding;
 	uint32 phasehorde;
 	uint32 phasealliance;
+	bool collision;
 
 	bool HasFlag(uint32 flag)
 	{
@@ -520,8 +519,6 @@ public:
 
 	string MapPath;
 	string vMapPath;
-	string MMapPath;
-	bool UseMmaps;
 	bool UnloadMapFiles;
 	bool BreathingEnabled;
 	bool SpeedhackProtection;

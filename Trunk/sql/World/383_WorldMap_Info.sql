@@ -1,0 +1,1 @@
+ALTER TABLE `worldmap_info` DROP COLUMN `collision`, DROP COLUMN `pathfinding`, ADD COLUMN `collision` INT(10) NOT NULL DEFAULT '0';
