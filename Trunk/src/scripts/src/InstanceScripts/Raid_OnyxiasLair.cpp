@@ -86,8 +86,8 @@ class OnyxiaAI : public MoonScriptBossAI
     {		
 		GetUnit()->SetStandState(STANDSTATE_SLEEP);
 		switch( GetUnit()->GetMapMgr()->iInstanceMode ){
-		case 1:
-		case 3:
+		case MODE_25PLAYER_NORMAL:
+		case MODE_25PLAYER_HEROIC:
 			{
 				AddPhaseSpell(1,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 10, 0.0f, 45.0f));
 				AddPhaseSpell(1,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 10, 0.0f, 20.0f));
@@ -98,8 +98,8 @@ class OnyxiaAI : public MoonScriptBossAI
 				AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
 				GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,22312000);
 			}break;
-		case 0:
-		case 2:
+		case MODE_10PLAYER_NORMAL:
+		case MODE_10PLAYER_HEROIC:
 			{
 			AddPhaseSpell(1,AddSpell(ONY_FLAME_BREATH, Target_Current, 15, 2, 10, 0.0f, 45.0f));
 			AddPhaseSpell(1,AddSpell(ONY_WING_BUFFET, Target_Current, 15, 0, 10, 0.0f, 20.0f));
@@ -212,7 +212,6 @@ class OnyxiaAI : public MoonScriptBossAI
 	
 	MoonScriptCreatureAI *whelp, *guard;
 	int32 mWhelpTimer, mGuardTimer;
-	uint8 mMode;
 	SpellDesc *bellowingroar, *deepbreath;
 };
 
