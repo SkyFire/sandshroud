@@ -510,10 +510,12 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 				{
 					MapMgr* GMap = m_Unit->GetMapMgr();
 					if(GMap != NULL)
-					if( GMap && GMap->pInstance && GMap->GetMapInfo()->type != INSTANCE_PVP )
 					{
-						GMap->pInstance->m_killedNpcs.insert( cr->GetSQL_id() );
-						GMap->pInstance->SaveToDB();
+						if( GMap && GMap->pInstance && GMap->GetMapInfo()->type != INSTANCE_PVP )
+						{
+							GMap->pInstance->m_killedNpcs.insert( cr->GetSQL_id() );
+							GMap->pInstance->SaveToDB();
+						}
 					}
 				}
 			}
@@ -866,9 +868,9 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 
 	if(m_Unit->GetMapMgr() != NULL && GetNextTarget() != NULL)
 	{
-		if(!m_moveFly)
+		if(!m_moveFly && !IS_INSTANCE(m_Unit->GetMapId()))
 		{
-			float target_land_z;
+			float target_land_z = 0.0f;
 			if(m_Unit->GetMapMgr()->IsCollisionEnabled())
 			{
 				target_land_z = CollideInterface.GetHeight(m_Unit->GetMapId(), GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY(), GetNextTarget()->GetPositionZ() + 2.0f);
@@ -880,25 +882,28 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				target_land_z = m_Unit->GetMapMgr()->GetLandHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY());
 			}
 
-			if((fabs(GetNextTarget()->GetPositionZ() - target_land_z) > _CalcCombatRange(GetNextTarget(), false)) && fabs(GetNextTarget()->GetPositionZ() - target_land_z) < 100.0f)
+			if(target_land_z)
 			{
-				if ( GetNextTarget()->GetTypeId() != TYPEID_PLAYER )
+				if((fabs(GetNextTarget()->GetPositionZ() - target_land_z) > _CalcCombatRange(GetNextTarget(), false)) && fabs(GetNextTarget()->GetPositionZ() - target_land_z) < 100.0f)
 				{
-					if ( target_land_z > m_Unit->GetMapMgr()->GetWaterHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY()) )
-						HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
-				}
-				else if (TO_PLAYER(GetNextTarget())->GetSession() != NULL)
-				{
-					MovementInfo* mi = TO_PLAYER(GetNextTarget())->GetMovementInfo();
-
-					if ( mi != NULL && !(mi->flags & MOVEFLAG_REDIRECTED) && !(mi->flags & MOVEFLAG_FALLING) && !(mi->flags & MOVEFLAG_SWIMMING) && !(mi->flags & MOVEFLAG_LEVITATE))
-						if(TO_PLAYER(GetNextTarget())->m_FlyingAura || TO_PLAYER(GetNextTarget())->m_setflycheat)
+					if ( GetNextTarget()->GetTypeId() != TYPEID_PLAYER )
+					{
+						if ( target_land_z > m_Unit->GetMapMgr()->GetWaterHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY()) )
 							HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
+					}
+					else if (TO_PLAYER(GetNextTarget())->GetSession() != NULL)
+					{
+						MovementInfo* mi = TO_PLAYER(GetNextTarget())->GetMovementInfo();
+
+						if ( mi != NULL && !(mi->flags & MOVEFLAG_REDIRECTED) && !(mi->flags & MOVEFLAG_FALLING) && !(mi->flags & MOVEFLAG_SWIMMING) && !(mi->flags & MOVEFLAG_LEVITATE))
+							if(TO_PLAYER(GetNextTarget())->m_FlyingAura || TO_PLAYER(GetNextTarget())->m_setflycheat)
+								HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
+					}
 				}
-			}
-			else if(fabs(GetNextTarget()->GetPositionZ() - target_land_z) > 100.0f) // Cliff or Netherstorm breaks.
-			{
-				HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
+				else if(fabs(GetNextTarget()->GetPositionZ() - target_land_z) > 100.0f) // Cliff or Netherstorm breaks.
+				{
+					HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0);
+				}
 			}
 		}
 	}
