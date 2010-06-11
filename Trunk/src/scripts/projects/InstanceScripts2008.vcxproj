@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -251,6 +251,7 @@
     <ClCompile Include="..\src\InstanceScripts\Raid_BlackwingLair.cpp" />
     <ClCompile Include="..\src\InstanceScripts\Raid_CoT_BattleOfMountHyjal.cpp" />
     <ClCompile Include="..\src\InstanceScripts\Raid_GruulsLair.cpp" />
+    <ClInclude Include="..\src\InstanceScripts\Raid_IcecrownCitadel.cpp" />
     <ClCompile Include="..\src\InstanceScripts\Raid_Karazhan.cpp" />
     <ClCompile Include="..\src\InstanceScripts\Raid_Magtheridons_Lair.cpp" />
     <ClCompile Include="..\src\InstanceScripts\Raid_MoltenCore.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="..\src\Common\Base.h" />
     <ClInclude Include="..\src\InstanceScripts\Setup.h" />
     <ClInclude Include="..\src\Common\Instance_Base.h" />
+    <ClInclude Include="..\src\InstanceScripts\Raid_IcecrownCitadel.h" />
     <ClInclude Include="..\src\InstanceScripts\Raid_Ulduar.h" />
     <ClInclude Include="..\src\InstanceScripts\Raid_Naxxramas.h" />
   </ItemGroup>
