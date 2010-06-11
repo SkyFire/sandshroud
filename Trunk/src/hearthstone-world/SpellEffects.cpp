@@ -6531,36 +6531,8 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	Object* controller = NULL;
-
-	if(v_caster)
-		controller = v_caster;
-	else
-		controller = p_caster;
-
-	Unit* unttarget = NULL;
-	GameObject* gobjtarget = NULL;
-
-	if(m_targetList.size() > 1)
-	{
-		for(SpellTargetList::iterator itr = m_targetList.begin(); itr != m_targetList.end(); ++itr)
-		{
-			switch(GET_TYPE_FROM_GUID((*itr).Guid))
-			{
-			case HIGHGUID_TYPE_GAMEOBJECT:
-				{
-					gobjtarget = m_caster->GetMapMgr()->GetGameObject(uint32((*itr).Guid));
-					if(gobjtarget && gobjtarget->GetInfo() && gobjtarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
-						gobjtarget->TakeDamage(uint32(damage), m_caster, controller, m_spellInfo->Id);
-				}break;
-			case HIGHGUID_TYPE_UNIT:
-				{
-					unttarget = m_caster->GetMapMgr()->GetUnit((*itr).Guid);
-					controller->DealDamage(unttarget, damage, 0, 0, m_spellInfo->Id);
-				}break;
-			}
-		}
-	}
+	if(gameObjTarget && gameObjTarget->GetInfo() && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
+		gameObjTarget->TakeDamage(uint32(damage), m_caster, p_caster, m_spellInfo->Id);
 }
 
 void Spell::SpellEffectWMORepair(uint32 i)
