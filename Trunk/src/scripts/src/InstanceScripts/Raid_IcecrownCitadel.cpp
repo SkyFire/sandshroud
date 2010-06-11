@@ -1,6 +1,6 @@
 /*
  * Sun++ Scripts for Aspire MMORPG Server
- * Copyright (C) 2010-2011 Sandshroud Team <http://www.sandshroud.com/>
+ * Copyright (C) 2010-2011 Sandshroud Team <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,5 +74,9 @@ void ICCTeleporter::GossipSelectOption(Object * pObject, Player * Plr, uint32 Id
 void SetupICC(ScriptMgr* mgr)
 {
 	GossipScript * ICCTele = (GossipScript*) new ICCTeleporter();
-	//mgr->register_go_gossip_script( , ICCTele);
+	mgr->register_go_gossip_script( 202242, ICCTele);
+	mgr->register_go_gossip_script( 202243, ICCTele);
+	mgr->register_go_gossip_script( 202244, ICCTele);
+	mgr->register_go_gossip_script( 202245, ICCTele);
+	mgr->register_go_gossip_script( 202246, ICCTele);
 }
