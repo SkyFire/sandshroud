@@ -117,6 +117,8 @@ public:
 	MoonInstanceScript( MapMgr *pMapMgr );
 	virtual ~MoonInstanceScript();
 
+	EncounterState			GetEncounterState( uint32 pEntry );
+
 	// Creature
 	Creature *				GetCreatureBySqlId( uint32 pSqlId );
 	Creature *				GetCreatureByGuid( uint32 pGuid );

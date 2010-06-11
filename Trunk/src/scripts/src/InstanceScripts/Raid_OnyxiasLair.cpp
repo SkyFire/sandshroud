@@ -33,6 +33,7 @@ TODO:
 - Найти ID голоса Анны, при разговорах.
 - Проработать пути следования
 - Закончить гвардов
+- Исправить дыхание
 
 */
 
@@ -84,16 +85,22 @@ class OnyxiaAI : public MoonScriptBossAI
 	OnyxiaAI(Creature *pCreature) : MoonScriptBossAI(pCreature)
     {		
 		GetUnit()->SetStandState(STANDSTATE_SLEEP);
-		if(GetUnit()->GetMapMgr()->GetPlayerCount() > 10 ){
-			AddPhaseSpell(1,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 10, 0.0f, 45.0f));
-			AddPhaseSpell(1,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 10, 0.0f, 20.0f));
-			AddPhaseSpell(1,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
-			AddPhaseSpell(2,AddSpell(ONY_FIREBALL25, Target_RandomPlayerNotCurrent, 15, 3, 10));
-			AddPhaseSpell(3,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 10, 0.0f, 45.0f));
-			AddPhaseSpell(3,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 10, 0.0f, 20.0f));
-			AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
-			GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,22312000);
-		}else{
+		switch( GetUnit()->GetMapMgr()->iInstanceMode ){
+		case 1:
+		case 3:
+			{
+				AddPhaseSpell(1,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 10, 0.0f, 45.0f));
+				AddPhaseSpell(1,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 10, 0.0f, 20.0f));
+				AddPhaseSpell(1,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
+				AddPhaseSpell(2,AddSpell(ONY_FIREBALL25, Target_RandomPlayerNotCurrent, 15, 3, 10));
+				AddPhaseSpell(3,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 10, 0.0f, 45.0f));
+				AddPhaseSpell(3,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 10, 0.0f, 20.0f));
+				AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
+				GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,22312000);
+			}break;
+		case 0:
+		case 2:
+			{
 			AddPhaseSpell(1,AddSpell(ONY_FLAME_BREATH, Target_Current, 15, 2, 10, 0.0f, 45.0f));
 			AddPhaseSpell(1,AddSpell(ONY_WING_BUFFET, Target_Current, 15, 0, 10, 0.0f, 20.0f));
 			AddPhaseSpell(1,AddSpell(ONY_TAIL_SWEEP, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
@@ -102,6 +109,7 @@ class OnyxiaAI : public MoonScriptBossAI
 			AddPhaseSpell(3,AddSpell(ONY_WING_BUFFET, Target_Current, 15, 0, 10, 0.0f, 20.0f));
 			AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP, Target_Destination, 15, 0, 10, 0.0f, 30.0f));
 			GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,4800000);
+			}break;
 		}
 		AddEmote(Event_OnTargetDied, "Learn your place mortal!", Text_Yell, 0);
 		AddPhaseSpell(1,AddSpell(ONY_CLEAVE, Target_Current, 15, 0, 10, 0.0f, 15.0f));
@@ -201,9 +209,10 @@ class OnyxiaAI : public MoonScriptBossAI
 		SetPhase(1);
 		ParentClass::OnDied(pKiller);
 	}
-
+	
 	MoonScriptCreatureAI *whelp, *guard;
 	int32 mWhelpTimer, mGuardTimer;
+	uint8 mMode;
 	SpellDesc *bellowingroar, *deepbreath;
 };
 

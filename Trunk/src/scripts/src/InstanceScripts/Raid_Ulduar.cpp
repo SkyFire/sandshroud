@@ -19,6 +19,105 @@
 #include "StdAfx.h"
 #include "Raid_Ulduar.h"
 #include "../Common/Base.h"
+#include "../Common/Instance_Base.h"
+
+#define MAP_ULDUAR 603
+#define NPC_LEVIATHAN 33113
+#define NPC_XT002 33293
+#define NPC_KOLOGARN 32930
+#define NPC_AURIAYA 33515
+
+class UlduarScript : public MoonInstanceScript
+{
+public:
+	MOONSCRIPT_INSTANCE_FACTORY_FUNCTION( UlduarScript, MoonInstanceScript );
+	UlduarScript( MapMgr *pMapMgr ) : MoonInstanceScript( pMapMgr )
+	{
+		// Way to select bosses
+		BuildEncounterMap();
+
+		if( mEncounters.size() == 0 )
+			return;
+
+	};
+
+	void OnCreatureDeath( Creature *pVictim, Unit *pKiller )
+	{
+		if ( pVictim == NULLCREATURE || pVictim->GetCreatureInfo() == NULL || pVictim->GetCreatureInfo()->Rank != ELITE_WORLDBOSS )
+			return;
+
+		EncounterMap::iterator Iter = mEncounters.find( pVictim->GetEntry() );
+		if ( Iter == mEncounters.end() )
+			return;
+
+		( *Iter ).second.mState = State_Finished;
+
+	};
+	
+	void Destroy()
+	{
+		delete this;
+	};
+
+};
+
+// Ulduar Teleporter
+void UlduarTeleporter::GossipHello(Object * pObject, Player * Plr, bool AutoSend)
+{
+	GossipMenu *Menu;
+    objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 0, Plr);
+	UlduarScript* pCheck = (UlduarScript*)(Plr->GetMapMgr()->GetScript());
+	Menu->AddItem(0, "Teleport to the Expedition Base Camp.", 0);
+    Menu->AddItem(0, "Teleport to the Formation Grounds.", 1);
+    if (pCheck->GetEncounterState(NPC_LEVIATHAN) == State_Finished)
+    {
+        Menu->AddItem(0, "Teleport to the Colossal Forge.", 2);
+        if (pCheck->GetEncounterState(NPC_XT002) == State_Finished)
+        {
+            Menu->AddItem(0, "Teleport to the Scrapyard", 3);
+            Menu->AddItem(0, "Teleport to the Antechamber of Ulduar", 4);
+            if (pCheck->GetEncounterState(NPC_KOLOGARN) == State_Finished)
+            {
+                Menu->AddItem(0, "Teleport to the Shattered Walkway", 5);
+                if (pCheck->GetEncounterState(NPC_AURIAYA) == State_Finished)
+                    Menu->AddItem(0, "Teleport to the Conservatory of Life", 6);
+            }
+        }
+    }
+
+    if(AutoSend)
+		Menu->SendTo(Plr);
+};
+
+void UlduarTeleporter::GossipSelectOption(Object * pObject, Player * Plr, uint32 Id, uint32 IntId, const char *Code)
+{
+	switch(IntId)
+	{
+	case 0:
+		Plr->SafeTeleport(603, Plr->GetInstanceID(), -735.864075f, -93.616364f, 429.841797f, 0.079723f);
+		break;
+	case 1:
+		Plr->SafeTeleport(603, Plr->GetInstanceID(), 130.710297f, -35.272095f, 409.804901f, 6.276515f);
+		break;
+	case 2:
+		Plr->SafeTeleport(603, Plr->GetInstanceID(), 539.894897f, -11.009894f, 409.804749f, 0.021830f);
+		break;
+    case 3:
+        Plr->SafeTeleport(603, Plr->GetInstanceID(), 926.292f, -11.4635f, 418.595f, 0);
+        break;
+    case 4:
+        Plr->SafeTeleport(603, Plr->GetInstanceID(), 1498.09f, -24.246f, 420.967f, 0);
+        break;
+    case 5:
+        Plr->SafeTeleport(603, Plr->GetInstanceID(), 1859.45f, -24.1f, 448.9f, 0);
+        break;
+    case 6:
+        Plr->SafeTeleport(603, Plr->GetInstanceID(), 2086.27f, -24.3134f, 421.239f, 0);
+        break;
+    }
+};
+
+
 
 ////////////////////////
 //Partial Boss Scripts//
@@ -1155,38 +1254,9 @@ class XE321BoomBotAI : public MoonScriptCreatureAI
 	SpellDesc* __mExplode;
 };
 
-// Ulduar Teleporter
-void UlduarTeleporter::GossipHello(Object * pObject, Player * Plr, bool AutoSend)
-{
-	GossipMenu *Menu;
-    objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 0, Plr);
-
-    Menu->AddItem(0, "Teleport to the Expedition Base Camp.", 0);
-    Menu->AddItem(0, "Teleport to the Formation Grounds.", 1);
-    Menu->AddItem(0, "Teleport to the Colossal Forge.", 2);
-
-    if(AutoSend)
-		Menu->SendTo(Plr);
-};
-
-void UlduarTeleporter::GossipSelectOption(Object * pObject, Player * Plr, uint32 Id, uint32 IntId, const char *Code)
-{
-	switch(IntId)
-	{
-	case 0:
-		Plr->SafeTeleport(603, Plr->GetInstanceID(), -735.864075f, -93.616364f, 429.841797f, 0.079723f);
-		break;
-	case 1:
-		Plr->SafeTeleport(603, Plr->GetInstanceID(), 130.710297f, -35.272095f, 409.804901f, 6.276515f);
-		break;
-	case 2:
-		Plr->SafeTeleport(603, Plr->GetInstanceID(), 539.894897f, -11.009894f, 409.804749f, 0.021830f);
-		break;
-	};
-};
-
 void SetupUlduar(ScriptMgr* mgr)
 {
+	mgr->register_instance_script( MAP_ULDUAR, &UlduarScript::Create );
 	GossipScript * UlduarTele = (GossipScript*) new UlduarTeleporter();
 	mgr->register_go_gossip_script(194569, UlduarTele);
 	

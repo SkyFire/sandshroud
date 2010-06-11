@@ -603,6 +603,19 @@ void MoonInstanceScript::BuildEncounterMapWithIds( IdVector pIds )
 	};
 };
 
+EncounterState MoonInstanceScript::GetEncounterState( uint32 pEntry )
+{
+	if ( pEntry )
+	{
+		EncounterMap::iterator EncounterIter;
+		EncounterIter = mEncounters.find( pEntry );
+		if ( EncounterIter == mEncounters.end() )
+			return State_NotStarted;
+		return EncounterIter->second.mState;
+	}
+	return State_NotStarted;		
+}
+
 IdVector MoonInstanceScript::BuildIdVector( uint32 pCount, ... )
 {
 	IdVector NewVector;
