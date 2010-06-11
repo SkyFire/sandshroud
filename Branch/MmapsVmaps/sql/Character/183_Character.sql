@@ -1,0 +1,1 @@
+ALTER TABLE `characters` ADD `available_pvp_titles3` bigint(30) NOT NULL DEFAULT '0' after `available_pvp_titles2`;

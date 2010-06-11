@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Scripts\Dark Portal">
+      <UniqueIdentifier>{7a15b3aa-3b44-498f-89df-1859cd1ec29d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main Ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Main Ressources\Base Class">
+      <UniqueIdentifier>{40ecc06b-5b09-4f78-98b4-24a902c2fa6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main Ressources\Setup">
+      <UniqueIdentifier>{9fd2932d-4fcd-404a-82bf-a53d74a38381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main Ressources\Instance Base Class">
+      <UniqueIdentifier>{18aafd01-b26f-40a0-9d17-79f740bb559b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\EventScripts\Halloween.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EventScripts\WinterVeil.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EventScripts\Event_DarkPortal.cpp">
+      <Filter>Scripts\Dark Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Common\Base.cpp">
+      <Filter>Main Ressources\Base Class</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EventScripts\Setup.cpp">
+      <Filter>Main Ressources\Setup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Common\Instance_Base.cpp">
+      <Filter>Main Ressources\Instance Base Class</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\EventScripts\Event_DarkPortal.h">
+      <Filter>Scripts\Dark Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Common\Base.h">
+      <Filter>Main Ressources\Base Class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EventScripts\Setup.h">
+      <Filter>Main Ressources\Setup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Common\Instance_Base.h">
+      <Filter>Main Ressources\Instance Base Class</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
