@@ -431,8 +431,11 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice("Server", "Shutting down random generator.");
 	CleanupRandomNumberGenerators();
 
-	Log.Notice( "WintergraspInternal", "Exiting..." );
-	sWintergraspI.terminate();
+	if(sWorld.wg_enabled)
+	{
+		Log.Notice( "WintergraspInternal", "Exiting..." );
+		sWintergraspI.terminate();
+	}
 
 	Log.Notice( "DayWatcherThread", "Exiting..." );
 	sDayWatcher.terminate();

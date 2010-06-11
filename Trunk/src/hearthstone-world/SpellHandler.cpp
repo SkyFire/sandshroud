@@ -22,26 +22,24 @@
 void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 {
 	CHECK_INWORLD_RETURN;
-	
-	Player* p_User = GetPlayer();
-	DEBUG_LOG("WORLD","Received use Item packet, data length = %i",recvPacket.size());
+
 	//can't use items while dead.
 	if(_player->getDeathState()==CORPSE)
 		return;
-	int8 tmp1,slot;
-	uint8 unk; // 3.0.2 added unk
-	uint64 item_guid;
-	uint8 cn;
-	uint32 spellId, dummyid = 0;
-	uint32 glyphIndex;
 
-	recvPacket >> tmp1 >> slot >> cn >> dummyid >> item_guid >> glyphIndex >> unk;
+	uint64 item_guid;
+	uint32 spellId, glyphIndex;
+	int8 tmp1,slot, cn;
+
+	recvPacket >> tmp1 >> slot >> cn >> spellId >> item_guid >> glyphIndex;
 	Item* tmpItem = NULLITEM;
-	tmpItem = p_User->GetItemInterface()->GetInventoryItem(tmp1,slot);
+	tmpItem = _player->GetItemInterface()->GetInventoryItem(tmp1,slot);
+
 	if (!tmpItem)
-		tmpItem = p_User->GetItemInterface()->GetInventoryItem(slot);
+		tmpItem = _player->GetItemInterface()->GetInventoryItem(slot);
 	if (!tmpItem)
 		return;
+
 	ItemPrototype *itemProto = tmpItem->GetProto();
 	if(!itemProto)
 		return;
@@ -69,19 +67,19 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 	
 	SpellCastTargets targets(recvPacket, _player->GetGUID());
 	uint32 x;
+	bool matching = false;
 	for(x = 0; x < 5; x++)
 	{
 		if(itemProto->Spells[x].Trigger == USE)
-		{
-			if(itemProto->Spells[x].Id)
+			if(itemProto->Spells[x].Id == spellId)
 			{
-				spellId = itemProto->Spells[x].Id;
+				matching = true;
 				break;
 			}
-		}
 	}
-	if(!spellId)
+	if(!matching)
 		return;
+
 	// check for spell id
 	SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellId );
 
@@ -93,14 +91,14 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
 	if (spellInfo->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP)
 	{
-		if (p_User->CombatStatus.IsInCombat() || p_User->IsMounted())
+		if (_player->CombatStatus.IsInCombat() || _player->IsMounted())
 		{
 			_player->GetItemInterface()->BuildInventoryChangeError(tmpItem,NULLITEM,INV_ERR_CANT_DO_IN_COMBAT);
 			return;
 		}
 	
-		if(p_User->GetStandState()!=STANDSTATE_SIT)
-			p_User->SetStandState(STANDSTATE_SIT);
+		if(_player->GetStandState()!=STANDSTATE_SIT)
+			_player->SetStandState(STANDSTATE_SIT);
 	}
 
 	if(itemProto->RequiredLevel)
