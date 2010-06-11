@@ -118,6 +118,7 @@ public:
 	virtual ~MoonInstanceScript();
 
 	EncounterState			GetEncounterState( uint32 pEntry );
+	uint32					GetInstanceMode();
 
 	// Creature
 	Creature *				GetCreatureBySqlId( uint32 pSqlId );
