@@ -282,7 +282,7 @@ Player *MoonInstanceScript::GetPlayerByGuid( uint32 pGuid )
 
 uint32 MoonInstanceScript::GetInstanceMode()
 {
-	return mInstance->GetScript()->GetInstance()->iInstanceMode
+	return mInstance->iInstanceMode;
 };
 
 bool MoonInstanceScript::IsCombatInProgress()
