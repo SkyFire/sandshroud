@@ -73,7 +73,7 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 
 	if( m_targetMask & TARGET_FLAG_SOURCE_LOCATION )
 	{
-		data >> m_srcX >> m_srcY >> m_srcZ;
+		data >> guid >> m_srcX >> m_srcY >> m_srcZ;
 
 		if( !( m_targetMask & TARGET_FLAG_DEST_LOCATION ) )
 		{
@@ -106,7 +106,6 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 			data >> unkdoodah2;
 		}
 
-		printf("pieflavor %f %f %f %f\n", m_destX, m_srcX, m_destY, m_srcY);
 		float dx = m_destX - m_srcX;
 		float dy = m_destY - m_srcY;
 		if((missilepitch != (M_PI / 4)) && (missilepitch != -M_PI / 4))
@@ -395,18 +394,20 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	//uint8 did_hit_result;
 	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
 	{
-		if( !( (*itr)->IsUnit() ) || ! TO_UNIT(*itr)->isAlive() || ( (*itr)->GetTypeId()==TYPEID_UNIT && TO_CREATURE(*itr)->IsTotem() ) || !(*itr)->PhasedCanInteract(m_caster))
+		if( !( (*itr)->IsUnit() ) || TO_UNIT(*itr)->m_CurrentVehicle == m_caster || ! TO_UNIT(*itr)->isAlive() || ( (*itr)->GetTypeId()==TYPEID_UNIT && TO_CREATURE(*itr)->IsTotem() ) || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
 
 		if( m_spellInfo->TargetCreatureType )
 		{
-			if( (*itr)->GetTypeId()!= TYPEID_UNIT )
+			if( (*itr)->GetTypeId() != TYPEID_UNIT )
 				continue;
+
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
 			if( !inf || !( 1 << (inf->Type-1) & m_spellInfo->TargetCreatureType ) )
 				continue;
 		}
-		if( IsInrange( srcx, srcy, srcz, (*itr), r ) )
+
+		if( IsInrange( srcx, srcy, srcz, (*itr), r ))
 		{
 			if( u_caster != NULL )
 			{
@@ -425,12 +426,12 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				}
 				else
 					_AddTargetForced((*itr)->GetGUID(), i);
-			}			
+			}
 			if( m_spellInfo->MaxTargets )
 				if( m_hitTargetCount >= m_spellInfo->MaxTargets )
 					return;
 		}
-	}	
+	}
 }
 
 // We fill all the targets in the area, including the stealth ed one's

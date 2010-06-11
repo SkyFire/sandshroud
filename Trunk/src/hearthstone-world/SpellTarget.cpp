@@ -1085,8 +1085,7 @@ void Spell::SpellTargetProjectile(uint32 i, uint32 j)
 	if( !m_caster || !m_caster->IsInWorld() )
 		return;
 
-	//TODO
-//	FillAllTargetsInArea(i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, GetRadius(i));
+	FillAllTargetsInArea(i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, GetRadius(i));
 }
 
 /// Spell Target Handling for type 94: Target: Vehicle

@@ -129,6 +129,9 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	//Get players (or owners of pets/totems)
 	Player* player_objA = GetPlayerFromObject(objA);
 	Player* player_objB = GetPlayerFromObject(objB);
+	if(!player_objA && objA->IsVehicle())
+		player_objA = TO_VEHICLE(objA)->m_redirectSpellPackets;
+
 	if( player_objA && player_objB )
 	{
 		//Handle duels
@@ -208,6 +211,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		{
 			if(objA->m_faction->EnemyFactions[i] == objB->m_faction->Faction)
 				hostile = true;
+
 			if(objA->m_faction->FriendlyFactions[i] == objB->m_faction->Faction)
 				hostile = false;
 		}
