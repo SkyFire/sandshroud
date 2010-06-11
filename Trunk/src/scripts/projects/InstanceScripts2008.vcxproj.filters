@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Main Resources">
@@ -170,6 +170,9 @@
     <ClCompile Include="..\src\InstanceScripts\Raid_GruulsLair.cpp">
       <Filter>Scripts\Raids</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\InstanceScripts\Raid_IcecrownCitadel.cpp">
+      <Filter>Scripts\Raids\ICC</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\InstanceScripts\Raid_Karazhan.cpp">
       <Filter>Scripts\Raids</Filter>
     </ClCompile>
@@ -222,6 +225,9 @@
     </ClInclude>
     <ClInclude Include="..\src\Common\Instance_Base.h">
       <Filter>Main Resources\Instance Base Class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\InstanceScripts\Raid_IcecrownCitadel.h">
+      <Filter>Scripts\Raids\ICC</Filter>
     </ClInclude>
     <ClInclude Include="..\src\InstanceScripts\Raid_Ulduar.h">
       <Filter>Scripts\Raids\Ulduar</Filter>
