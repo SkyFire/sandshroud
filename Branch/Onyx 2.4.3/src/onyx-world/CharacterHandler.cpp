@@ -861,20 +861,12 @@ void WorldSession::FullLogin(Player * plr)
 	// Send MOTD
 	_player->BroadcastMessage(sWorld.GetMotd());
 
-	// Send revision (if enabled)
-#ifdef WIN32
-	_player->BroadcastMessage("Server: %sonyx r%u-TRUNK/%s-Win-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);
-	//_player->BroadcastMessage("Built at %s on %s by %s@%s", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
-#else
-	_player->BroadcastMessage("Server: %sonyx r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
-	//_player->BroadcastMessage("Built at %s on %s by %s@%s", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
-#endif
+	// Send revision
+	_player->BroadcastMessage("Server: %sSandshroud r%u 2.4.3-BRANCH/%s-Win-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);
 
 	if(sWorld.SendStatsOnJoin)
-	{
 		_player->BroadcastMessage("Online Players: %s%u |rPeak: %s%u|r Accepted Connections: %s%u",
-			MSG_COLOR_WHITE, sWorld.GetSessionCount(), MSG_COLOR_WHITE, sWorld.PeakSessionCount, MSG_COLOR_WHITE, sWorld.mAcceptedConnections);
-	}
+		MSG_COLOR_WHITE, sWorld.GetSessionCount(), MSG_COLOR_WHITE, sWorld.PeakSessionCount, MSG_COLOR_WHITE, sWorld.mAcceptedConnections);
 
 	// send to gms
 	if( HasGMPermissions() )
