@@ -621,7 +621,7 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	int8 Slot = _player->GetItemInterface()->GetItemSlotByType(eitem->GetProto()->InventoryType);
+	int8 Slot = _player->GetItemInterface()->GetItemSlotByType(eitem->GetProto());
 	if(Slot == ITEM_NO_SLOT_AVAILABLE)
 	{
 		_player->GetItemInterface()->BuildInventoryChangeError(eitem,NULLITEM,INV_ERR_ITEM_CANT_BE_EQUIPPED);

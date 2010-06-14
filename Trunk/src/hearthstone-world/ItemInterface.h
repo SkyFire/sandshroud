@@ -117,7 +117,7 @@ public:
 	int16 CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemPrototype* item, bool ignore_combat = false, bool skip_2h_check = false);
 	int8 CanReceiveItem(ItemPrototype * item, uint32 amount, ItemExtendedCostEntry *ec);
 	int8 CanAffordItem(ItemPrototype * item,uint32 amount, Creature* pVendor, ItemExtendedCostEntry *ec);
-	int8 GetItemSlotByType(uint32 type);
+	int8 GetItemSlotByType(ItemPrototype* proto);
 	Item* GetItemByGUID(uint64 itemGuid);
 
 

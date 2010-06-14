@@ -1881,7 +1881,8 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		}
 	case EQUIPMENT_SLOT_OFFHAND:
 		{
-			if( m_pOwner->titanGrip && ( type == INVTYPE_2HWEAPON ||
+			if( m_pOwner->titanGrip && ((type == INVTYPE_2HWEAPON && (proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
+				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_MACE || proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_SWORD)) ||
 				type == INVTYPE_WEAPON ||
 				type == INVTYPE_WEAPONOFFHAND ||
 				type == INVTYPE_SHIELD) )
@@ -2298,56 +2299,34 @@ int8 ItemInterface::CanAffordItem(ItemPrototype * item,uint32 amount, Creature* 
 //-------------------------------------------------------------------//
 //Description: Gets the Item slot by item type
 //-------------------------------------------------------------------//
-int8 ItemInterface::GetItemSlotByType(uint32 type)
+int8 ItemInterface::GetItemSlotByType(ItemPrototype* proto)
 {
-	switch(type)
+	switch(proto->InventoryType)
 	{
 	case INVTYPE_NON_EQUIP:
 		return ITEM_NO_SLOT_AVAILABLE; 
 	case INVTYPE_HEAD:
-		{
 			return EQUIPMENT_SLOT_HEAD;
-		}
 	case INVTYPE_NECK:
-		{
 			return EQUIPMENT_SLOT_NECK;
-		}
 	case INVTYPE_SHOULDERS:
-		{
 			return EQUIPMENT_SLOT_SHOULDERS;
-		}
 	case INVTYPE_BODY:
-		{
 			return EQUIPMENT_SLOT_BODY;
-		}
 	case INVTYPE_CHEST:
-		{
 			return EQUIPMENT_SLOT_CHEST;
-		}
 	case INVTYPE_ROBE: // ???
-		{
 			return EQUIPMENT_SLOT_CHEST;
-		}
 	case INVTYPE_WAIST:
-		{
 			return EQUIPMENT_SLOT_WAIST;
-		}
 	case INVTYPE_LEGS:
-		{
 			return EQUIPMENT_SLOT_LEGS;
-		}
 	case INVTYPE_FEET:
-		{
 			return EQUIPMENT_SLOT_FEET;
-		}
 	case INVTYPE_WRISTS:
-		{
 			return EQUIPMENT_SLOT_WRISTS;
-		}
 	case INVTYPE_HANDS:
-		{
 			return EQUIPMENT_SLOT_HANDS;
-		}
 	case INVTYPE_FINGER:
 		{
 			if (!GetInventoryItem(EQUIPMENT_SLOT_FINGER1))
@@ -2367,9 +2346,7 @@ int8 ItemInterface::GetItemSlotByType(uint32 type)
 				return EQUIPMENT_SLOT_TRINKET1; //auto equips always on trinket 1
 		}
 	case INVTYPE_CLOAK:
-		{
 			return EQUIPMENT_SLOT_BACK;
-		}
 	case INVTYPE_WEAPON:
 		{
 			if (!GetInventoryItem(EQUIPMENT_SLOT_MAINHAND) )
@@ -2380,42 +2357,31 @@ int8 ItemInterface::GetItemSlotByType(uint32 type)
 				return EQUIPMENT_SLOT_MAINHAND;
 		}
 	case INVTYPE_SHIELD:
-		{
 			return EQUIPMENT_SLOT_OFFHAND;
-		}
 	case INVTYPE_RANGED:
-		{
 			return EQUIPMENT_SLOT_RANGED;
-		}
 	case INVTYPE_2HWEAPON:
 		{
 			if (!GetInventoryItem(EQUIPMENT_SLOT_MAINHAND) || !m_pOwner->titanGrip)
 				return EQUIPMENT_SLOT_MAINHAND;
-			else if(!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND))
+			else if(!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND) && (proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
+				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_MACE || proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_SWORD))
 				return EQUIPMENT_SLOT_OFFHAND;
 			else
 				return EQUIPMENT_SLOT_MAINHAND;
 		}
 	case INVTYPE_TABARD:
-		{
 			return EQUIPMENT_SLOT_TABARD;
-		}
 	case INVTYPE_WEAPONMAINHAND:
-		{
 			return EQUIPMENT_SLOT_MAINHAND;
-		}
 	case INVTYPE_WEAPONOFFHAND:
-		{
 			return EQUIPMENT_SLOT_OFFHAND;
-		}
 	case INVTYPE_HOLDABLE:
-		{
 			return EQUIPMENT_SLOT_OFFHAND;
-		}
 	case INVTYPE_THROWN:
-		return EQUIPMENT_SLOT_RANGED; // ?
+		return EQUIPMENT_SLOT_RANGED;
 	case INVTYPE_RANGEDRIGHT:
-		return EQUIPMENT_SLOT_RANGED; // ?
+		return EQUIPMENT_SLOT_RANGED;
 	case INVTYPE_RELIC:
 		return EQUIPMENT_SLOT_RANGED;
 	case INVTYPE_BAG:
