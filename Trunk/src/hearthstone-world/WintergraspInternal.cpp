@@ -108,7 +108,7 @@ bool WintergraspInternal::run()
 		if(!m_abortEvent)
 			break;
 
-		WaitForSingleObject(m_abortEvent, 900000); // 15 minute delay.
+		WaitForSingleObject(m_abortEvent, 30000); // 30 second delay.
 	}
 	return false;
 }
