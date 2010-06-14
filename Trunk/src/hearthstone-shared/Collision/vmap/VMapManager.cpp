@@ -563,7 +563,7 @@ namespace VMAP
 	{
 		bool result = true;
 		float maxDist = abs((pos2 - pos1).magnitude());
-															// direction with length of 1
+		// direction with length of 1
 		Ray ray = Ray::fromOriginAndDirection(pos1, (pos2 - pos1)/maxDist);
 		if(getIntersectionTime(ray, maxDist, true) < inf())
 		{

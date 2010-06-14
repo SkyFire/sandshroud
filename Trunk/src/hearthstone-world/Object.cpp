@@ -358,7 +358,7 @@ void Object::DestroyForPlayer(Player* target) const
 /// TODO: rewrite this stuff, document unknown fields and flags
 uint32 TimeStamp();
 
-void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2, Player* target )
+void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 moveflags, Player* target )
 {
 	uint16 flag16 = 0;	// some other flag
 	ByteBuffer *splinebuf = (m_objectTypeId == TYPEID_UNIT) ? target->GetAndRemoveSplinePacket(GetGUID()) : 0;
@@ -386,15 +386,15 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 	if(flags & 0x20)
 	{
 		if(uThis && (uThis->m_TransporterGUID != uint64(NULL) || uThis->m_CurrentVehicle != NULL))
-			flags2 |= 0x200;
+			moveflags |= MOVEFLAG_TAXI;
 
 		if(splinebuf)
 		{
-			flags2 |= 0x08000001;	   //1=move forward
+			moveflags |= (MOVEFLAG_IMMOBILIZED | MOVEFLAG_MOVE_FORWARD);
 			if(GetTypeId() == TYPEID_UNIT)
 			{
 				if( TO_UNIT(this)->GetAIInterface()->m_moveRun == false)
-					flags2 |= 0x100;	//100=walk
+					moveflags |= MOVEFLAG_WALK;
 			}			
 		}
 
@@ -409,19 +409,20 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			case 13116: // Alliance Spirit Guide
 			case 13117: // Horde Spirit Guide
 				{
-					flags2 |= 0x10000000;
+					moveflags |= MOVEFLAG_WATER_WALK;
 				}break;
 			}
 
 			if( TO_UNIT(this)->GetAIInterface()->IsFlying())
-				flags2 |= 0x400; //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time 
+				moveflags |= (MOVEFLAG_NO_COLLISION | MOVEFLAG_FLYING); //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time
 			if( TO_CREATURE(this)->proto && TO_CREATURE(this)->proto->extra_a9_flags)
 			{
-				if(!(flags2 & 0x0200))
-					flags2 |= TO_CREATURE(this)->proto->extra_a9_flags;
+				if(!(moveflags & MOVEFLAG_TAXI))
+					moveflags |= TO_CREATURE(this)->proto->extra_a9_flags;
 			}
 		}
-		*data << uint32(flags2);
+
+		*data << uint32(moveflags);
 		*data << uint16(flag16);
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
 		*data << (float)m_position.x;
@@ -429,7 +430,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 		*data << (float)m_position.z;
 		*data << (float)m_position.o;
 
-		if ( flags2 & MOVEFLAG_TAXI )	//BYTE1(flags2) & 2
+		if ( moveflags & MOVEFLAG_TAXI )	//BYTE1(flags2) & 2
 		{
 			if(moveinfo != NULL)
 			{
@@ -462,7 +463,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 					*data << uint8(0);
 				}
 			}
-			else if(uThis)
+			else if(uThis && uThis->m_transportPosition != NULL)
 			{
 				WoWGuid wowguid(uThis->m_TransporterGUID);
 				*data << wowguid;
@@ -471,7 +472,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			}
 		}
 
-		if(flags2 & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20) //flying/swimming, && unk sth to do with vehicles?
+		if(moveflags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20) // Pitch
 		{
 			if(moveinfo != NULL)
 				*data << moveinfo->pitch;
@@ -484,7 +485,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 		else
 			*data << uint32(0); //last fall time
 
-		if(flags2 & MOVEFLAG_REDIRECTED || flags2 & MOVEFLAG_FALLING) // BYTE1(flags2) & 0x10
+		if(moveflags & MOVEFLAG_REDIRECTED || moveflags & MOVEFLAG_FALLING) // BYTE1(flags2) & 0x10
 		{
 			if(moveinfo != NULL)
 			{
@@ -502,7 +503,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 flags2
 			}
 		}
 
-		if( flags2 & MOVEFLAG_SPLINE_MOVER )
+		if( moveflags & MOVEFLAG_SPLINE_MOVER )
 		{
 			if(moveinfo != NULL)
 				*data << moveinfo->pitch;

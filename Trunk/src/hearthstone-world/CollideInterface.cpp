@@ -62,7 +62,8 @@ void CCollideInterface::ActivateMap(uint32 mapId)
 
 void CCollideInterface::DeactivateMap(uint32 mapId)
 {
-	if( !CollisionMgr ) return;
+	if( !CollisionMgr )
+		return;
 	m_mapCreateLock.Acquire();
 	ASSERT(m_mapLocks[mapId] != NULL);
 	--m_mapLocks[mapId]->m_loadCount;

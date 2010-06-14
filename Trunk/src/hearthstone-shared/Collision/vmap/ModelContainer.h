@@ -33,8 +33,6 @@
 #include "SubModel.h"
 #include "BaseModel.h"
 
-const char VMAP_MAGIC[] = "VMAP_2.0";
-
 namespace VMAP
 {
 	/**

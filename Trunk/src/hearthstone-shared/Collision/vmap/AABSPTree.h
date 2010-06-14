@@ -36,33 +36,37 @@ extern FILE *g_df;
 #endif
 #endif
 
-
-inline void getBounds(const G3D::Vector3& v, G3D::AABox& out) {
+inline void getBounds(const G3D::Vector3& v, G3D::AABox& out)
+{
 	out = G3D::AABox(v);
 }
 
 
-inline void getBounds(const G3D::AABox& a, G3D::AABox& out) {
+inline void getBounds(const G3D::AABox& a, G3D::AABox& out)
+{
 	out = a;
 }
 
 
-inline void getBounds(const G3D::Sphere& s, G3D::AABox& out) {
+inline void getBounds(const G3D::Sphere& s, G3D::AABox& out)
+{
 	s.getBounds(out);
 }
 
 
-inline void getBounds(const G3D::Box& b, G3D::AABox& out) {
+inline void getBounds(const G3D::Box& b, G3D::AABox& out)
+{
 	b.getBounds(out);
 }
 
 
-inline void getBounds(const G3D::Triangle& t, G3D::AABox& out) {
+inline void getBounds(const G3D::Triangle& t, G3D::AABox& out)
+{
 	t.getBounds(out);
 }
 
-namespace G3D {
-
+namespace G3D
+{
 	/**
 	A set that supports spatial queries using an axis-aligned
 	BSP tree for speed.
@@ -95,7 +99,6 @@ namespace G3D {
 	you can use the AABSPTree::update method as a shortcut to
 	insert/remove an object in one step after it has moved.
 
-
 	Note: Do not mutate any value once it has been inserted into AABSPTree. Values
 	are copied interally. All AABSPTree iterators convert to pointers to constant
 	values to reinforce this.
@@ -112,11 +115,15 @@ namespace G3D {
 	that are always zero along one or more dimensions.
 
 	*/
-	template<class T> class AABSPTree {
+
+	template<class T>
+	class AABSPTree
+	{
 	private:
 	public:
 		/** Wrapper for a value that includes a cache of its bounds. */
-		class Handle {
+		class Handle
+		{
 		public:
 			T value;
 
@@ -131,7 +138,8 @@ namespace G3D {
 
 			Handle() {}
 
-			inline Handle(const T& v) : value(v) {
+			inline Handle(const T& v) : value(v)
+			{
 				getBounds(v, bounds);
 				bounds = bounds.intersect(AABox::maxFinite());
 				center = bounds.center();
@@ -139,315 +147,321 @@ namespace G3D {
 		};
 
 		/** Returns the bounds of the sub array. Used by makeNode. */
-		static AABox computeBounds(
-			const Array<Handle>&  point, 
-			int beginIndex,
-			int endIndex) {
+		static AABox computeBounds(const Array<Handle>&  point,	int beginIndex,	int endIndex)
+		{
+			Vector3 lo = Vector3::inf();
+			Vector3 hi = -lo;
 
-				Vector3 lo = Vector3::inf();
-				Vector3 hi = -lo;
-
-				for (int p = beginIndex; p <= endIndex; ++p) {
-					lo = lo.min(point[p].bounds.low());
-					hi = hi.max(point[p].bounds.high());
-				}
-
-				return AABox(lo, hi);
+			for (int p = beginIndex; p <= endIndex; ++p)
+			{
+				lo = lo.min(point[p].bounds.low());
+				hi = hi.max(point[p].bounds.high());
 			}
+			return AABox(lo, hi);
+		}
 
+		/**
+		A sort predicate that returns true if the midpoint of the
+		first argument is less than the midpoint of the second
+		along the specified axis.
 
-			/**
-			A sort predicate that returns true if the midpoint of the
-			first argument is less than the midpoint of the second
-			along the specified axis.
+		Used by makeNode.
+		*/
+		class CenterLT
+		{
+		public:
+			Vector3::Axis sortAxis;
+			CenterLT(Vector3::Axis a) : sortAxis(a) {}
 
-			Used by makeNode.
-			*/
-			class CenterLT {
-			public:
-				Vector3::Axis sortAxis;
+			inline bool operator()(const Handle& a, const Handle& b) const
+			{
+				return a.center[sortAxis] < b.center[sortAxis];
+			}
+		};
 
-				CenterLT(Vector3::Axis a) : sortAxis(a) {}
+		/**
+		A sort predicate based on a box's location on the specified axis. Each
+		box is given a value -1, 0, or 1 based on whether it is strictly less
+		than, overlapping, or strictly greater than the value on the specified
+		axis. This predicate compares the values for two boxes. The result is
+		that the array is separated into three contiguous (though possibly empty)
+		groups: less than, overlapping, or greater than.
+		*/
+		class PivotLT
+		{
+		public:
+			Vector3::Axis sortAxis;
+			float sortLocation;
 
-				inline bool operator()(const Handle& a, const Handle& b) const {
-					return a.center[sortAxis] < b.center[sortAxis];
-				}
-			};
+			PivotLT(Vector3::Axis a, float l) : sortAxis(a), sortLocation(l) {}
 
-
-			/**
-			A sort predicate based on a box's location on the specified axis. Each
-			box is given a value -1, 0, or 1 based on whether it is strictly less
-			than, overlapping, or strictly greater than the value on the specified
-			axis. This predicate compares the values for two boxes. The result is
-			that the array is separated into three contiguous (though possibly empty)
-			groups: less than, overlapping, or greater than.
-			*/
-			class PivotLT {
-			public:
-				Vector3::Axis sortAxis;
-				float sortLocation;
-
-				PivotLT(Vector3::Axis a, float l) : sortAxis(a), sortLocation(l) {}
-
-				inline int location(const AABox& box) const {
-					if(box.low()[sortAxis] < sortLocation) {
-						if(box.high()[sortAxis] < sortLocation) {
-							return -1;
-						} else {
-							return 0;
-						}
-					} else if(box.low()[sortAxis] > sortLocation) {
-						return 1;
+			inline int location(const AABox& box) const
+			{
+				if(box.low()[sortAxis] < sortLocation)
+				{
+					if(box.high()[sortAxis] < sortLocation)
+					{
+						return -1;
 					} else {
 						return 0;
 					}
 				}
-
-				inline bool operator()(const Handle&a, const Handle& b) const {
-					const AABox& A = a.bounds;
-					const AABox& B = b.bounds;
-
-					return location(A) < location(B);
+				else if(box.low()[sortAxis] > sortLocation)
+				{
+					return 1;
+				} else {
+					return 0;
 				}
-			};
+			}
 
-			class Node {
-			public:
+			inline bool operator()(const Handle&a, const Handle& b) const
+			{
+				const AABox& A = a.bounds;
+				const AABox& B = b.bounds;
 
-				/** Spatial bounds on all values at this node and its children, based purely on
-				the parent's splitting planes.  May be infinite */
-				AABox splitBounds;
+				return location(A) < location(B);
+			}
+		};
 
-				Vector3::Axis splitAxis;
+		class Node
+		{
+		public:
 
-				/** Location along the specified axis */
-				float splitLocation;
+			/** Spatial bounds on all values at this node and its children, based purely on
+			the parent's splitting planes.  May be infinite */
+			AABox splitBounds;
 
-				/** child[0] contains all values strictly 
-				smaller than splitLocation along splitAxis.
+			Vector3::Axis splitAxis;
 
-				child[1] contains all values strictly
-				larger.
+			/** Location along the specified axis */
+			float splitLocation;
 
-				Both may be NULL if there are not enough
-				values to bother recursing.
-				*/
-				Node* child[2];
+			/** child[0] contains all values strictly
+			smaller than splitLocation along splitAxis.
 
-				/** Array of values at this node (i.e. values
-				straddling the split plane + all values if
-				this is a leaf node). */
-				Array<Handle> valueArray;
+			child[1] contains all values strictly
+			larger.
 
-				/** Creates node with NULL children */
-				Node() {
-					splitAxis = Vector3::X_AXIS;
-					splitLocation = 0;
-					splitBounds   = AABox(-Vector3::inf(), Vector3::inf());
-					for (int i = 0; i < 2; ++i) {
-						child[i] = NULL;
-					}
+			Both may be NULL if there are not enough
+			values to bother recursing.
+			*/
+			Node* child[2];
+
+			/** Array of values at this node (i.e. values
+			straddling the split plane + all values if
+			this is a leaf node). */
+			Array<Handle> valueArray;
+
+			/** Creates node with NULL children */
+			Node()
+			{
+				splitAxis = Vector3::X_AXIS;
+				splitLocation = 0;
+				splitBounds   = AABox(-Vector3::inf(), Vector3::inf());
+				for (int i = 0; i < 2; ++i)
+				{
+					child[i] = NULL;
 				}
+			}
 
-				/**
-				Doesn't clone children.
-				*/
-				Node(const Node& other) : valueArray(other.valueArray) {
-					splitAxis = other.splitAxis;
-					splitLocation = other.splitLocation;
-					splitBounds = other.splitBounds;
-					for (int i = 0; i < 2; ++i) {
-						child[i] = NULL;
-					}
+			/**
+			Doesn't clone children.
+			*/
+			Node(const Node& other) : valueArray(other.valueArray) {
+				splitAxis = other.splitAxis;
+				splitLocation = other.splitLocation;
+				splitBounds = other.splitBounds;
+				for (int i = 0; i < 2; ++i) {
+					child[i] = NULL;
 				}
+			}
 
-				/** Copies the specified subarray of pt into point, NULLs the children.
-				Assumes a second pass will set splitBounds. */
-				Node(const Array<Handle>& pt, int beginIndex, int endIndex) {
-					splitAxis = Vector3::X_AXIS;
-					splitLocation = 0;
-					for (int i = 0; i < 2; ++i) {
-						child[i] = NULL;
-					}
-
-					int n = endIndex - beginIndex + 1;
-
-					valueArray.resize(n);
-					for (int i = n - 1; i >= 0; --i) {
-						valueArray[i] = pt[i + beginIndex];
-					}
-				}
-
-
-				/** Deletes the children (but not the values) */
-				~Node() {
-					for (int i = 0; i < 2; ++i) {
-						delete child[i];
-					}
+			/** Copies the specified subarray of pt into point, NULLs the children.
+			Assumes a second pass will set splitBounds. */
+			Node(const Array<Handle>& pt, int beginIndex, int endIndex) {
+				splitAxis = Vector3::X_AXIS;
+				splitLocation = 0;
+				for (int i = 0; i < 2; ++i) {
+					child[i] = NULL;
 				}
 
+				int n = endIndex - beginIndex + 1;
 
-				/** Returns true if this node is a leaf (no children) */
-				inline bool isLeaf() const {
-					return (child[0] == NULL) && (child[1] == NULL);
+				valueArray.resize(n);
+				for (int i = n - 1; i >= 0; --i) {
+					valueArray[i] = pt[i + beginIndex];
 				}
+			}
 
 
-				/**
-				Recursively appends all handles and children's handles
-				to the array.
-				*/
-				void getHandles(Array<Handle>& handleArray) const {
-					handleArray.append(valueArray);
-					for (int i = 0; i < 2; ++i) {
-						if (child[i] != NULL) {
-							child[i]->getHandles(handleArray);
-						}
-					}
+			/** Deletes the children (but not the values) */
+			~Node() {
+				for (int i = 0; i < 2; ++i) {
+					delete child[i];
 				}
+			}
 
 
-				void verifyNode(const Vector3& lo, const Vector3& hi) {
-					//		debugPrintf("Verifying: split %d @ %f [%f, %f, %f], [%f, %f, %f]\n",
-					//				splitAxis, splitLocation, lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+			/** Returns true if this node is a leaf (no children) */
+			inline bool isLeaf() const {
+				return (child[0] == NULL) && (child[1] == NULL);
+			}
 
-					debugAssert(lo == splitBounds.low());
-					debugAssert(hi == splitBounds.high());
 
-					for (int i = 0; i < valueArray.length(); ++i) {
-						const AABox& b = valueArray[i].bounds;
-
-						for(int axis = 0; axis < 3; ++axis) {
-							debugAssert(b.low()[axis] <= b.high()[axis]);
-							debugAssert(b.low()[axis] >= lo[axis]);
-							debugAssert(b.high()[axis] <= hi[axis]);
-						}
-					}
-
-					if (child[0] || child[1]) {
-						debugAssert(lo[splitAxis] < splitLocation);
-						debugAssert(hi[splitAxis] > splitLocation);
-					}
-
-					Vector3 newLo = lo;
-					newLo[splitAxis] = splitLocation;
-					Vector3 newHi = hi;
-					newHi[splitAxis] = splitLocation;
-
-					if (child[0] != NULL) {
-						child[0]->verifyNode(lo, newHi);
-					}
-
-					if (child[1] != NULL) {
-						child[1]->verifyNode(newLo, hi);
+			/**
+			Recursively appends all handles and children's handles
+			to the array.
+			*/
+			void getHandles(Array<Handle>& handleArray) const {
+				handleArray.append(valueArray);
+				for (int i = 0; i < 2; ++i) {
+					if (child[i] != NULL) {
+						child[i]->getHandles(handleArray);
 					}
 				}
+			}
+
+
+			void verifyNode(const Vector3& lo, const Vector3& hi) {
+				//		debugPrintf("Verifying: split %d @ %f [%f, %f, %f], [%f, %f, %f]\n",
+				//				splitAxis, splitLocation, lo.x, lo.y, lo.z, hi.x, hi.y, hi.z);
+
+				debugAssert(lo == splitBounds.low());
+				debugAssert(hi == splitBounds.high());
+
+				for (int i = 0; i < valueArray.length(); ++i) {
+					const AABox& b = valueArray[i].bounds;
+
+					for(int axis = 0; axis < 3; ++axis) {
+						debugAssert(b.low()[axis] <= b.high()[axis]);
+						debugAssert(b.low()[axis] >= lo[axis]);
+						debugAssert(b.high()[axis] <= hi[axis]);
+					}
+				}
+
+				if (child[0] || child[1]) {
+					debugAssert(lo[splitAxis] < splitLocation);
+					debugAssert(hi[splitAxis] > splitLocation);
+				}
+
+				Vector3 newLo = lo;
+				newLo[splitAxis] = splitLocation;
+				Vector3 newHi = hi;
+				newHi[splitAxis] = splitLocation;
+
+				if (child[0] != NULL) {
+					child[0]->verifyNode(lo, newHi);
+				}
+
+				if (child[1] != NULL) {
+					child[1]->verifyNode(newLo, hi);
+				}
+			}
 
 #if 0
-				/**
-				Stores the locations of the splitting planes (the structure but not the content)
-				so that the tree can be quickly rebuilt from a previous configuration without 
-				calling balance.
-				*/
-				static void serializeStructure(const Node* n, BinaryOutput& bo) {
-					if (n == NULL) {
-						bo.writeUInt8(0);
-					} else {
-						bo.writeUInt8(1);
-						n->splitBounds.serialize(bo);
-						serialize(n->splitAxis, bo);
-						bo.writeFloat32(n->splitLocation);
-						for (int c = 0; c < 2; ++c) {
-							serializeStructure(n->child[c], bo);
-						}
+			/**
+			Stores the locations of the splitting planes (the structure but not the content)
+			so that the tree can be quickly rebuilt from a previous configuration without 
+			calling balance.
+			*/
+			static void serializeStructure(const Node* n, BinaryOutput& bo) {
+				if (n == NULL) {
+					bo.writeUInt8(0);
+				} else {
+					bo.writeUInt8(1);
+					n->splitBounds.serialize(bo);
+					serialize(n->splitAxis, bo);
+					bo.writeFloat32(n->splitLocation);
+					for (int c = 0; c < 2; ++c) {
+						serializeStructure(n->child[c], bo);
 					}
 				}
+			}
 
-				/** Clears the member table */
-				static Node* deserializeStructure(BinaryInput& bi) {
-					if (bi.readUInt8() == 0) {
-						return NULL;
-					} else {
-						Node* n = new Node();
-						n->splitBounds.deserialize(bi);
-						deserialize(n->splitAxis, bi);
-						n->splitLocation = bi.readFloat32();
-						for (int c = 0; c < 2; ++c) {
-							n->child[c] = deserializeStructure(bi);
-						}
+			/** Clears the member table */
+			static Node* deserializeStructure(BinaryInput& bi) {
+				if (bi.readUInt8() == 0) {
+					return NULL;
+				} else {
+					Node* n = new Node();
+					n->splitBounds.deserialize(bi);
+					deserialize(n->splitAxis, bi);
+					n->splitLocation = bi.readFloat32();
+					for (int c = 0; c < 2; ++c) {
+						n->child[c] = deserializeStructure(bi);
 					}
 				}
+			}
 #endif
 
-				/** Returns the deepest node that completely contains bounds. */
-				Node* findDeepestContainingNode(const AABox& bounds) {
+			/** Returns the deepest node that completely contains bounds. */
+			Node* findDeepestContainingNode(const AABox& bounds) {
 
-					// See which side of the splitting plane the bounds are on
-					if (bounds.high()[splitAxis] < splitLocation) {
-						// Bounds are on the low side.  Recurse into the child
-						// if it exists.
-						if (child[0] != NULL) {
-							return child[0]->findDeepestContainingNode(bounds);
-						}
-					} else if (bounds.low()[splitAxis] > splitLocation) {
-						// Bounds are on the high side, recurse into the child
-						// if it exists.
-						if (child[1] != NULL) {
-							return child[1]->findDeepestContainingNode(bounds);
-						}
+				// See which side of the splitting plane the bounds are on
+				if (bounds.high()[splitAxis] < splitLocation) {
+					// Bounds are on the low side.  Recurse into the child
+					// if it exists.
+					if (child[0] != NULL) {
+						return child[0]->findDeepestContainingNode(bounds);
 					}
-
-					// There was no containing child, so this node is the
-					// deepest containing node.
-					return this;
+				} else if (bounds.low()[splitAxis] > splitLocation) {
+					// Bounds are on the high side, recurse into the child
+					// if it exists.
+					if (child[1] != NULL) {
+						return child[1]->findDeepestContainingNode(bounds);
+					}
 				}
 
+				// There was no containing child, so this node is the
+				// deepest containing node.
+				return this;
+			}
 
-				/** Appends all members that intersect the box. 
-				If useSphere is true, members that pass the box test
-				face a second test against the sphere. */
-				void getIntersectingMembers(
-					const AABox&		box, 
-					const Sphere&		sphere,
-					Array<T>&			members,
-					bool				useSphere) const {
 
-						// Test all values at this node
-						for (int v = 0; v < valueArray.size(); ++v) {
-							const AABox& bounds = valueArray[v].bounds;
-							if (bounds.intersects(box) &&
-								(! useSphere || bounds.intersects(sphere))) {
-									members.append(valueArray[v].value);
-								}
-						}
+			/** Appends all members that intersect the box. 
+			If useSphere is true, members that pass the box test
+			face a second test against the sphere. */
+			void getIntersectingMembers(
+				const AABox&		box, 
+				const Sphere&		sphere,
+				Array<T>&			members,
+				bool				useSphere) const {
 
-						// If the left child overlaps the box, recurse into it
-						if ((child[0] != NULL) && (box.low()[splitAxis] < splitLocation)) {
-							child[0]->getIntersectingMembers(box, sphere, members, useSphere);
-						}
-
-						// If the right child overlaps the box, recurse into it
-						if ((child[1] != NULL) && (box.high()[splitAxis] > splitLocation)) {
-							child[1]->getIntersectingMembers(box, sphere, members, useSphere);
-						}
-					}
-
-					/**
-					Recurse through the tree, assigning splitBounds fields.
-					*/
-					void assignSplitBounds(const AABox& myBounds) {
-						splitBounds = myBounds;
-
-						AABox childBounds[2];
-						myBounds.split(splitAxis, splitLocation, childBounds[0], childBounds[1]);
-
-						for (int c = 0; c < 2; ++c) {
-							if (child[c]) {
-								child[c]->assignSplitBounds(childBounds[c]);
+					// Test all values at this node
+					for (int v = 0; v < valueArray.size(); ++v) {
+						const AABox& bounds = valueArray[v].bounds;
+						if (bounds.intersects(box) &&
+							(! useSphere || bounds.intersects(sphere))) {
+								members.append(valueArray[v].value);
 							}
+					}
+
+					// If the left child overlaps the box, recurse into it
+					if ((child[0] != NULL) && (box.low()[splitAxis] < splitLocation)) {
+						child[0]->getIntersectingMembers(box, sphere, members, useSphere);
+					}
+
+					// If the right child overlaps the box, recurse into it
+					if ((child[1] != NULL) && (box.high()[splitAxis] > splitLocation)) {
+						child[1]->getIntersectingMembers(box, sphere, members, useSphere);
+					}
+				}
+
+				/**
+				Recurse through the tree, assigning splitBounds fields.
+				*/
+				void assignSplitBounds(const AABox& myBounds) {
+					splitBounds = myBounds;
+
+					AABox childBounds[2];
+					myBounds.split(splitAxis, splitLocation, childBounds[0], childBounds[1]);
+
+					for (int c = 0; c < 2; ++c) {
+						if (child[c]) {
+							child[c]->assignSplitBounds(childBounds[c]);
 						}
 					}
+				}
 			};
 
 

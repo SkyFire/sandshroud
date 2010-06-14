@@ -31,7 +31,7 @@ static pthread_mutex_t abortmutex;
 WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)))
 {
 	m_threadRunning = true;
-	SetWGTimer((6*60000/*Hour*/)*3);
+	m_timer = 0;
 	m_wintergrasp = 0;
 	WG = NULL;
 	WG_started = false;
@@ -104,7 +104,11 @@ bool WintergraspInternal::run()
 			last_countertime = UNIXTIME;
 			dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);
 		}
-//		UpdateClock();
+
+		if(!m_abortEvent)
+			break;
+
+		WaitForSingleObject(m_abortEvent, 900000); // 15 minute delay.
 	}
 	return false;
 }

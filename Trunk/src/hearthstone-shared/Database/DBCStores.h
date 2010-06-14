@@ -823,29 +823,12 @@ struct TalentEntry
 struct TalentTabEntry
 {
 	uint32	TalentTabID;	// 1
-	//char*	Name;
-	//unit32 unk3
-	//unit32 unk4
-	//unit32 unk5
-	//unit32 unk6
-	//unit32 unk7
-	//unit32 unk8
-	//unit32 unk9
-	//unit32 unk10
-	//unit32 unk11
-	//unit32 unk12
-	//unit32 unk13
-	//unit32 unk14
-	//unit32 unk15
-	//unit32 unk16
-	//unit32 unk17
-	//unit32 unk18
-	//unit32 unk19
-	//unit32 unk20
-	uint32 ClassMask;		// 20
-	uint32 PetTalentMask;	// 21
-	uint32 TabPage;			// 22
-	//char* InternalName;	// 23
+//	char*	Name[16];
+//	char*   unk;
+	uint32  ClassMask;		// 20
+	uint32  PetTalentMask;	// 21
+	uint32  TabPage;		// 22
+//	char* InternalName;		// 23
 };
 
 struct Trainerspell
@@ -862,15 +845,15 @@ struct SpellCastTime
 {
 	uint32 ID;
 	uint32 CastTime;
-	//uint32 unk1;
-	//uint32 unk2;
+//	uint32 unk1;
+//	uint32 unk2;
 };
 
 struct SpellRadius
 {
 	uint32 ID;
 	float Radius;
-	//float unk1;
+//	float unk;
 	float Radius2;
 };
 
@@ -897,25 +880,9 @@ struct RandomProps
 	uint32 ID;
 	char *rpname;
 	uint32 spells[3];
-	//uint32 unk1;
-	//uint32 unk2;
-	//uint32 name2;
-	//uint32 RankAlt1;
-	//uint32 RankAlt2;
-	//uint32 RankAlt3;
-	//uint32 RankAlt4;
-	//uint32 RankAlt5;
-	//uint32 RankAlt6;
-	//uint32 RankAlt7;
-	//uint32 RankAlt8;
-	//uint32 RankAlt9;
-	//uint32 RankAlt10;
-	//uint32 RankAlt11;
-	//uint32 RankAlt12;
-	//uint32 RankAlt13;
-	//uint32 RankAlt14;
-	//uint32 RankAlt15;
-	//uint32 RankFlags;
+//	uint32 unk[2];
+//	uint32 name[16];
+//	uint32 RankFlags;
 
 };
 
@@ -934,40 +901,17 @@ struct AreaGroup
 struct AreaTable
 {
 	uint32 AreaId;
-	uint32 mapId;
+//	uint32 mapId;
 	uint32 ZoneId;
 	uint32 explorationFlag;
 	uint32 AreaFlags;
-	//uint32 unk2;
-	//uint32 unk3;
-	//uint32 unk4;
-	uint32 EXP;//not XP
-	//uint32 unk5;
+//	uint32 unk[5];
 	uint32 level;
 	char* name;
-	//uint32 nameAlt1;
-	//uint32 nameAlt2;
-	//uint32 nameAlt3;
-	//uint32 nameAlt4;
-	//uint32 nameAlt5;
-	//uint32 nameAlt6;
-	//uint32 nameAlt7;
-	//uint32 nameAlt8;
-	//uint32 nameAlt9;
-	//uint32 nameAlt10;
-	//uint32 nameAlt11;
-	//uint32 nameAlt12;
-	//uint32 nameAlt13;
-	//uint32 nameAlt14;
-	//uint32 nameAlt15;
-	//uint32 nameFlags;
+//	uint32 nameAlt[15];
+//	uint32 nameFlags;
 	uint32 category;
-	//uint32 unk7;
-	//uint32 unk8;
-	//uint32 unk9;
-	//uint32 unk10;
-	//uint32 unk11;
-	//uint32 unk12;
+//	uint32 unk2[7];
 };
 
 struct FactionTemplateDBC
@@ -989,23 +933,8 @@ struct AuctionHouseDBC
 	uint32 unk;
 	uint32 fee;
 	uint32 tax;
-	//char* name;
-	//char* nameAlt1;
-	//char* nameAlt2;
-	//char* nameAlt3;
-	//char* nameAlt4;
-	//char* nameAlt5;
-	//char* nameAlt6;
-	//char* nameAlt7;
-	//char* nameAlt8;
-	//char* nameAlt9;
-	//char* nameAlt10;
-	//char* nameAlt11;
-	//char* nameAlt12;
-	//char* nameAlt13;
-	//char* nameAlt14;
-	//char* nameAlt15;
-	//char* nameFlags;
+//	char* name[16];
+//	char* nameFlags;
 };
 
 struct FactionDBC
@@ -1013,14 +942,14 @@ struct FactionDBC
 	uint32 ID;
 	int32 RepListId;
 	uint32 baseRepMask[4];
-	//uint32 unk1[4];
+//	uint32 unk1[4];
 	int32 baseRepValue[4];
-	//uint32 unk2[4];
+//	uint32 unk2[4];
 	uint32 parentFaction;
 	char* Name;
-	//uint32 shit[16];
-	//uint32 Description;
-	//uint32 shit2[16];
+//	uint32 shit[16];
+//	uint32 Description;
+//	uint32 shit2[16];
 };
 
 struct DBCTaxiNode
@@ -1030,23 +959,8 @@ struct DBCTaxiNode
 	float x;
 	float y;
 	float z;
-	//uint32 name;
-	//uint32 namealt1;
-	//uint32 namealt2;
-	//uint32 namealt3;
-	//uint32 namealt4;
-	//uint32 namealt5;
-	//uint32 namealt6;
-	//uint32 namealt7;
-	//uint32 namealt8;
-	//uint32 namealt9;
-	//uint32 namealt10;
-	//uint32 namealt11;
-	//uint32 namealt12;
-	//uint32 namealt13;
-	//uint32 namealt14;
-	//uint32 namealt15;
-	//uint32 nameflags;
+//	uint32 name[15];
+//	uint32 nameflags;
 	uint32 horde_mount;
 	uint32 alliance_mount;
 };
@@ -1068,10 +982,9 @@ struct DBCTaxiPathNode
 	float x;
 	float y;
 	float z;
-	uint32 unk1;
+	uint32 flag;
 	uint32 waittime;
-	//uint32 unk2;
-	//uint32 unk3;
+//	uint32 unk[2];
 };
 
 struct CreatureSpellDataEntry
@@ -1094,34 +1007,20 @@ struct CharRaceEntry
 struct CharClassEntry
 {
 	uint32 class_id;
-	//uint32 unk1;
+//	uint32 unk1;
 	uint32 power_type;
-	//uint32 unk2;
+//	uint32 unk2;
 	char* name;
-	//uint32 namealt1;
-	//uint32 namealt2;
-	//uint32 namealt3;
-	//uint32 namealt4;
-	//uint32 namealt5;
-	//uint32 namealt6;
-	//uint32 namealt7;
-	//uint32 namealt8;
-	//uint32 namealt9;
-	//uint32 namealt10;
-	//uint32 namealt11;
-	//uint32 namealt12;
-	//uint32 namealt13;
-	//uint32 namealt14;
-	//uint32 namealt15;
-	//uint32 nameflags;
-	//char* string1[16];									// 22-37 unused
-															// 38 string flag, unused
-	//char* string2[16];									// 39-54 unused
-															// 55 string flag, unused
-															// 56, unused
+//	uint32 namealt[15];
+//	uint32 nameflags;
+//	char* string1[16];									// 22-37
+//	char* stringflag;									// 38
+//	char* string2[16];									// 39-54
+//	char* string2flag;									// 55
+//	uin32 unused;										// 56
 	uint32 spellfamily;									// 57
-															// 58, unused
-	uint32 CinematicSequence;								// 59 id from CinematicSequences.dbc
+//	uin32 unused2;										// 58
+	uint32 CinematicSequence;							// 59 id from CinematicSequences.dbc
 };
 
 struct CreatureDisplayInfo
