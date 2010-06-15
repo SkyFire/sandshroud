@@ -192,6 +192,7 @@
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -519,6 +520,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\InstanceScripts\Instance_TheOldKingdom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\src\InstanceScripts\Instance_TheShatteredHalls.cpp"
 					>
 				</File>
@@ -584,10 +589,6 @@
 				</File>
 				<File
 					RelativePath="..\src\InstanceScripts\Raid_MoltenCore.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_OnyxiasLair.cpp"
 					>
 				</File>
 				<File
@@ -675,6 +676,18 @@
 					</File>
 					<File
 						RelativePath="..\src\InstanceScripts\Raid_IcecrownCitadel.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="OnyxiasLair"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\Raid_OnyxiasLair.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\src\InstanceScripts\Raid_OnyxiasLair.h"
 						>
 					</File>
 				</Filter>
