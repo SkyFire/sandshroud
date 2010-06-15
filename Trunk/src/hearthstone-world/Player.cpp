@@ -881,7 +881,7 @@ bool Player::Create(WorldPacket& data )
 	_InitialReputation();
 
 	// Add actionbars
-	for(std::list<CreateInfo_ActionBarStruct>::iterator itr = info->actionbars.begin();itr!=info->actionbars.end();++itr)
+	for(std::list<CreateInfo_ActionBarStruct>::iterator itr = info->actionbars.begin();itr!=info->actionbars.end();itr++)
 	{
 		setAction(itr->button, itr->action, itr->type, itr->misc);
 	}
@@ -1624,8 +1624,7 @@ void Player::smsg_InitialSpells()
 	itemCount = 0;
 	for( itr = m_cooldownMap[COOLDOWN_TYPE_SPELL].begin(); itr != m_cooldownMap[COOLDOWN_TYPE_SPELL].end(); )
 	{
-		itr2 = itr;
-		++itr;
+		itr2 = itr++;
 
 		// don't keep around expired cooldowns
 		if( itr2->second.ExpireTime < mstime || (itr2->second.ExpireTime - mstime) < 10000 )
@@ -1647,8 +1646,7 @@ void Player::smsg_InitialSpells()
 
 	for( itr = m_cooldownMap[COOLDOWN_TYPE_CATEGORY].begin(); itr != m_cooldownMap[COOLDOWN_TYPE_CATEGORY].end(); )
 	{
-		itr2 = itr;
-		++itr;
+		itr2 = itr++;
 
 		// don't keep around expired cooldowns
 		if( itr2->second.ExpireTime < mstime || (itr2->second.ExpireTime - mstime) < 10000 )
@@ -6553,8 +6551,7 @@ void Player::RemoveQuestsFromLine(int skill_line)
 	set<uint32>::iterator itr, itr2;
 	for (itr = m_finishedQuests.begin(); itr != m_finishedQuests.end();)
 	{
-		itr2 = itr;
-		++itr;
+		itr2 = itr++;
 		Quest * qst = QuestStorage.LookupEntry((*itr2));
 		if (qst && qst->required_tradeskill == skill_line)
 			m_finishedQuests.erase(itr2);
@@ -7724,9 +7721,7 @@ void Player::ClearCooldownForSpell(uint32 spell_id)
 	{
 		for( itr = m_cooldownMap[i].begin(); itr != m_cooldownMap[i].end(); )
 		{
-			itr2 = itr;
-			++itr;
-
+			itr2 = itr++;
 			if( ( i == COOLDOWN_TYPE_CATEGORY && itr2->first == spe->Category ) ||
 				( i == COOLDOWN_TYPE_SPELL && itr2->first == spe->Id ) )
 			{
@@ -8137,8 +8132,7 @@ void Player::ClearSplinePackets()
 	SplineMap::iterator it2;
 	for(SplineMap::iterator itr = _splineMap.begin(); itr != _splineMap.end();)
 	{
-		it2 = itr;
-		++itr;
+		it2 = itr++;
 		delete it2->second;
 		_splineMap.erase(it2);
 	}
@@ -8324,8 +8318,7 @@ void Player::ZoneUpdate(uint32 ZoneId)
 		for( ; itr != m_channels.end(); )
 		{
 			cid = *itr;
-			itr2 = itr;
-			++itr;
+			itr2 = itr++;
 
 			p = channelmgr.GetChannel(cid);
 			if( p == NULL )
@@ -10331,8 +10324,7 @@ void Player::_UpdateSkillFields()
 	{
 		if(!itr->first)
 		{
-			SkillMap::iterator it2 = itr;
-			++itr;
+			SkillMap::iterator it2 = itr++;
 
 			m_skills.erase(it2);
 			continue;
@@ -10598,8 +10590,7 @@ void Player::_RemoveLanguages()
 	{
 		if(itr->second.Skill->type == SKILL_TYPE_LANGUAGE)
 		{
-			it2 = itr;
-			++itr;
+			it2 = itr++;
 
 			m_skills.erase(it2);
 		}
@@ -11546,8 +11537,7 @@ void Player::_SavePlayerCooldowns(QueryBuffer * buf)
 		itr = m_cooldownMap[i].begin( );
 		for( ; itr != m_cooldownMap[i].end( ); )
 		{
-			itr2 = itr;
-			++itr;
+			itr2 = itr++;
 
 			// expired ones - no point saving, nor keeping them around, wipe em
 			if( mstime >= itr2->second.ExpireTime )

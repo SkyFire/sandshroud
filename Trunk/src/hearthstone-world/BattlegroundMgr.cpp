@@ -1364,8 +1364,7 @@ void CBattlegroundManager::DeleteBattleground(CBattleground* bg)
 	list<uint32>::iterator it2;
 	for(; itr != m_queuedPlayers[i][j].end();)
 	{
-		it2 = itr;
-		++itr;
+		it2 = itr++;
 		plr = objmgr.GetPlayer(*it2);
 		if(!plr)
 		{

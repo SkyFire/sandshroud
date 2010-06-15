@@ -1300,7 +1300,7 @@ void MapMgr::ChangeFarsightLocation(Player* plr, Unit* farsight, bool apply)
 	{
 		// We're clearing.
 		for(ObjectSet::iterator itr = plr->m_visibleFarsightObjects.begin(); itr != plr->m_visibleFarsightObjects.end();
-			++itr)
+			itr++)
 		{
 			// Send destroy
 			plr->PushOutOfRange((*itr)->GetNewGUID());
@@ -1354,7 +1354,7 @@ void MapMgr::ChangeFarsightLocation(Player* plr, float X, float Y, bool apply)
 	{
 		// We're clearing.
 		for(ObjectSet::iterator itr = plr->m_visibleFarsightObjects.begin(); itr != plr->m_visibleFarsightObjects.end();
-			++itr)
+			itr++)
 		{
 			// Send destroy
 			plr->PushOutOfRange((*itr)->GetNewGUID());
@@ -1722,8 +1722,7 @@ void MapMgr::_PerformObjectDuties()
 		for(; itr != MapSessions.end();)
 		{
 			MapSession = (*itr);
-			it2 = itr;
-			++itr;
+			it2 = itr++;
 
 			//we have teleported to another map, remove us here.
 			if(MapSession->GetInstance() != m_instanceID)

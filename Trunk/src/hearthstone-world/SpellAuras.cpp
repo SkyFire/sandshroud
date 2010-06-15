@@ -987,7 +987,7 @@ void Aura::ApplyModifiers( bool apply )
 		}
 		else
 		{
-			for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();++itr)
+			for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
 			{
 				if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
 				{
@@ -1158,9 +1158,7 @@ void Aura::EventUpdateCreatureAA(float r)
 
 	for(itr = targets.begin(); itr != targets.end(); )
 	{
-		it2 = itr;
-		++itr;
-
+		it2 = itr++;
 		if((*it2) == GET_LOWGUID_PART(m_casterGuid))
 			continue;
 
@@ -1565,9 +1563,7 @@ void Aura::EventUpdatePlayerAA(float r)
 
 	for(itr = targets.begin(); itr != targets.end(); )
 	{
-		it2 = itr;
-		++itr;
-
+		it2 = itr++;
 		// Check if the target is 'valid'.
 		Unit* unt = NULLUNIT;
 		if(m_target->IsInWorld())
@@ -3493,7 +3489,7 @@ void Aura::SpellAuraModStun(bool apply)
 		}
 
 		//targetdummies stay rooted
-		if( m_target->IsCreature() && TO_CREATURE(m_target)->GetProto() && isTargetDummy(TO_CREATURE(m_target)->GetProto()->Id))
+		if( m_target->IsCreature() && isTargetDummy(m_target->GetEntry()))
 		{
 			m_target->m_rooted = 1;
 			m_target->m_stunned = 1;
@@ -5113,7 +5109,7 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 	}
 	else
 	{
-		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();++itr)
+		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
 		{
 			if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
 			{
@@ -6029,9 +6025,7 @@ void Aura::SpellAuraFeignDeath(bool apply)
 			//now get rid of mobs agro. pTarget->CombatStatus.AttackersForgetHate() - this works only for already attacking mobs
 		    for(itr = pTarget->GetInRangeSetBegin(); itr != pTarget->GetInRangeSetEnd();)
 			{
-				itr2 = itr;
-				++itr;
-
+				itr2 = itr++;
 				pObject = (*itr2);
 
 				if(pObject->IsUnit() && (TO_UNIT(pObject))->isAlive())
@@ -7368,7 +7362,7 @@ void Aura::SpellAuraAddTargetTrigger(bool apply)
 	}
 	else
 	{
-		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();++itr)
+		for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
 		{
 			if(itr->parentId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
 			{
@@ -7499,9 +7493,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 					{
 						if(itr->first == (*itrSE)->Id)
 						{
-							itr2 = itr;
-							++itr;
-
+							itr2 = itr++;
 							plr->mSpellOverrideMap.erase(itr2);
 							break;
 						}

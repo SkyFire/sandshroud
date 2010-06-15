@@ -810,7 +810,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 								//try to get most hated creature
 								TargetMap *m_aiTargets = u_caster->GetAIInterface()->GetAITargets();
 								TargetMap::iterator itr;
-								for(itr = m_aiTargets->begin(); itr != m_aiTargets->end();++itr)
+								for(itr = m_aiTargets->begin(); itr != m_aiTargets->end();itr++)
 								{
 									if( /*m_caster->GetMapMgr()->GetUnit(itr->first->GetGUID()) &&*/ itr->first->GetMapMgr() == m_caster->GetMapMgr() && 
 										itr->first->isAlive() &&

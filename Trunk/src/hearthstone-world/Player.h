@@ -1251,7 +1251,7 @@ public:
 	{
 		if(m_Pets.size() == 0) return 0;
 		std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin();
-		for(;itr != m_Pets.end();++itr)
+		for(;itr != m_Pets.end();itr++)
 			if(itr->second->stablestate == STABLE_STATE_ACTIVE)
 				return itr->first;
 		return NULL;

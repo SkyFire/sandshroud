@@ -1485,7 +1485,7 @@ AI_Spell * Pet::HandleAutoCastEvent()
 		uint32 j = 0;
 		list<AI_Spell*>::iterator itr = m_autoCastSpells[AUTOCAST_EVENT_ATTACK].begin();
 
-		for(; itr != m_autoCastSpells[AUTOCAST_EVENT_ATTACK].end(), j < c; ++j, ++itr);
+		for(; itr != m_autoCastSpells[AUTOCAST_EVENT_ATTACK].end(), j < c; j++, itr++);
 		if(itr == m_autoCastSpells[AUTOCAST_EVENT_ATTACK].end())
 		{
 			AI_Spell * tsp = *m_autoCastSpells[AUTOCAST_EVENT_ATTACK].begin();
@@ -1548,7 +1548,7 @@ void Pet::HandleAutoCastEvent(uint32 Type)
 				uint32 j = 0;
 				itr = m_autoCastSpells[AUTOCAST_EVENT_ATTACK].begin();
 
-				for(; itr != m_autoCastSpells[AUTOCAST_EVENT_ATTACK].end(), j < c; ++j, ++itr);
+				for(; itr != m_autoCastSpells[AUTOCAST_EVENT_ATTACK].end(), j < c; j++, itr++);
 				if(itr == m_autoCastSpells[AUTOCAST_EVENT_ATTACK].end())
 				{
 					m_aiInterface->SetNextSpell(*m_autoCastSpells[AUTOCAST_EVENT_ATTACK].begin());
@@ -1576,8 +1576,7 @@ void Pet::HandleAutoCastEvent(uint32 Type)
 
 	for(  itr = m_autoCastSpells[Type].begin(); itr != m_autoCastSpells[Type].end(); )
 	{
-		it2 = itr;
-		++itr;
+		it2 = itr++;
 		sp = *it2;
 
 		if( sp->spelltargetType == TTYPE_OWNER )

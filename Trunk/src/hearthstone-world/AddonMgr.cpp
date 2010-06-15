@@ -251,7 +251,7 @@ void AddonMgr::LoadFromDB()
 void AddonMgr::SaveToDB()
 {
 	DEBUG_LOG("AddonMgr","Saving any new addons discovered in this session to database.");
-	for(std::map<std::string, AddonEntry*>::iterator itr = KnownAddons.begin();itr!=KnownAddons.end();++itr)
+	for(std::map<std::string, AddonEntry*>::iterator itr = KnownAddons.begin();itr!=KnownAddons.end();itr++)
 	{
 		if(itr->second->isNew)
 		{

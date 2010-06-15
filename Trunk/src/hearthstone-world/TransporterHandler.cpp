@@ -354,9 +354,7 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 
 		for(; itr != mPassengers.end();)
 		{
-			it2 = itr;
-			++itr;
-
+			it2 = itr++;
 			Player* plr = objmgr.GetPlayer(it2->first);
 			if(!plr)
 			{

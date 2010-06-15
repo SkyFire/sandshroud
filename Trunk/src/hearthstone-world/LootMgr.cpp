@@ -321,7 +321,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 	StoreLootList *list = NULL;
 	uint32 itemid;
 
-	//for(itr=loot_db.begin();itr!=loot_db.end();++itr)
+	//for(itr=loot_db.begin();itr!=loot_db.end();itr++)
 	for( itr = db_cache.begin(); itr != db_cache.end(); itr++)
 	{
 		entry_id = (*itr).first;
@@ -333,7 +333,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 			list->items = new StoreLootItem[list->count];
 		
 			uint32 ind = 0;
-			//for(std::vector<loot_tb>::iterator itr2=itr->second.begin();itr2!=itr->second.end();++itr2)
+			//for(std::vector<loot_tb>::iterator itr2=itr->second.begin();itr2!=itr->second.end();itr2++)
 			for(vector< tempy >::iterator itr2 = (*itr).second.begin(); itr2 != (*itr).second.end(); itr2++)
 			{
 				//Omit items that are not in db to prevent future bugs

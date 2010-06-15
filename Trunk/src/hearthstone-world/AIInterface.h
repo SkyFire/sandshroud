@@ -515,6 +515,7 @@ public:
 	bool skip_reset_hp;
 
 	void WipeCurrentTarget();
+	void CheckHeight();
 	bool CheckCurrentTarget();
 	bool TargetUpdateCheck(Unit* ptr);
 };

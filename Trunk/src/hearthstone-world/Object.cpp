@@ -414,7 +414,22 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 			}
 
 			if( TO_UNIT(this)->GetAIInterface()->IsFlying())
-				moveflags |= (MOVEFLAG_NO_COLLISION | MOVEFLAG_FLYING); //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time
+			{
+				uint32 flyflags = 0;
+				switch(GetEntry())
+				{ //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time
+				case 22441: // Crow: Teribus the Cursed also doesn't attack unless he's on the ground.
+//				case : // Dragons in BRD
+					flyflags |= (MOVEFLAG_NO_COLLISION | MOVEFLAG_FLYING | MOVEFLAG_LEVITATE);
+					break;
+				default:
+					flyflags |= (MOVEFLAG_FLYING | MOVEFLAG_LEVITATE);
+					break;
+				}
+
+				moveflags |= flyflags;
+			}
+
 			if( TO_CREATURE(this)->proto && TO_CREATURE(this)->proto->extra_a9_flags)
 			{
 				if(!(moveflags & MOVEFLAG_TAXI))
@@ -1753,8 +1768,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			TO_CREATURE(pVictim)->Tag(plr);
 
 		// Pepsi1x1: is this correct this
-		if( pVictim != 
-			TO_UNIT(this) )
+		if( pVictim != TO_UNIT(this) && isTargetDummy(TO_UNIT(this)->GetEntry()))
 		{
 			// Set our attack target to the victim.
 			TO_UNIT(this)->CombatStatus.OnDamageDealt( pVictim, damage );
@@ -1832,15 +1846,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	{
 		if((health <= damage) && TO_PLAYER(this)->DuelingWith != NULL)
 		{
-			//Player in Duel and Player Victim has lost
-			uint32 NewHP = pVictim->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/100;
-
-			if(NewHP < 5) 
-				NewHP = 5;
-
-			//Set there health to 1% or 5 if 1% is lower then 5
-			pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, NewHP);
-			//End Duel
+			// End Duel
 			TO_PLAYER(this)->EndDuel(DUEL_WINNER_KNOCKOUT);
 			TO_PLAYER(this)->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
 			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel();
@@ -1848,7 +1854,15 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			// surrender emote
 			pVictim->Emote(EMOTE_ONESHOT_BEG);			// Animation
 
-			return;		  
+			// Player in Duel and Player Victim has lost
+			uint32 NewHP = pVictim->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/100;
+
+			if(NewHP < 5) 
+				NewHP = 5;
+
+			//Set there health to 1% or 5 if 1% is lower then 5
+			pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, NewHP);
+			return;
 		}
 	}
 
@@ -1861,7 +1875,8 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			{
 				//Player in Duel and Player Victim has lost
 				uint32 NewHP = pVictim->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/100;
-				if(NewHP < 5) NewHP = 5;
+				if(NewHP < 5)
+					NewHP = 5;
 				
 				//Set there health to 1% or 5 if 1% is lower then 5
 				pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, NewHP);
@@ -1869,6 +1884,16 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				petOwner->EndDuel(DUEL_WINNER_KNOCKOUT);
 				return;
 			}
+		}
+	}
+
+	if(pVictim->IsPlayer()) // Someone else kills them.
+	{
+		if((health <= damage) && TO_PLAYER(pVictim)->DuelingWith != NULL)
+		{
+			TO_PLAYER(pVictim)->DuelingWith->EndDuel(DUEL_WINNER_KNOCKOUT);
+			TO_PLAYER(pVictim)->DuelingWith->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
+//			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel(); Disable because someone cheated!
 		}
 	}
 	/*------------------------------------ DUEL HANDLERS END--------------------------*/

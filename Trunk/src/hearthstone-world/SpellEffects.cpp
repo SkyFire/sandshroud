@@ -1522,8 +1522,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			int targets_got=0;
 			for(unordered_set<Object* >::iterator itr = unitTarget->GetInRangeSetBegin(), i2; itr != unitTarget->GetInRangeSetEnd(); )
 			{
-				i2 = itr;
-				++itr;
+				i2 = itr++;
 				// don't add objects that are not units and that are dead
 				if((*i2)->GetTypeId()!= TYPEID_UNIT || !TO_UNIT(*i2)->isAlive())
 					continue;
@@ -6407,8 +6406,7 @@ void Spell::SpellEffectSanctuary(uint32 i) // Stop all attacks made to you
 
 	for( itr = unitTarget->GetInRangeOppFactsSetBegin(); itr != unitTarget->GetInRangeOppFactsSetEnd(); )
 	{
-		it2 = itr;
-		++itr;
+		it2 = itr++;
 		pUnit = TO_UNIT(*it2);
 		if( pUnit->GetTypeId() == TYPEID_UNIT )
 			pUnit->GetAIInterface()->RemoveThreatByPtr( unitTarget );

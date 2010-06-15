@@ -308,7 +308,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 		else
 			uncompressed << Remaining;
 
-		for(uint32 i = 0; i < 40000; i++, ++itr)
+		for(uint32 i = 0; i < 40000; i++, itr++)
 		{
             uncompressed << uint32(itr->first) << uint8(itr->second);
 			if(!--Remaining)

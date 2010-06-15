@@ -657,7 +657,7 @@ void World::SendMessageToGMs(WorldSession *self, const char * text, ...)
 	WorldPacket *data = sChatHandler.FillSystemMessageData(buf);
 	gmList_lock.AcquireReadLock();	
 	SessionSet::iterator itr;
-	for (itr = gmList.begin(); itr != gmList.end();++itr)
+	for (itr = gmList.begin(); itr != gmList.end();itr++)
 	{
 		gm_session = (*itr);
 		if(gm_session->GetPlayer() != NULL && gm_session != self)  // dont send to self!)
@@ -827,8 +827,7 @@ void World::UpdateSessions(uint32 diff)
 	for(itr = GlobalSessions.begin(); itr != GlobalSessions.end();)
 	{
 		GlobalSession = (*itr);
-		it2 = itr;
-		++itr;
+		it2 = itr++;
 		//We have been moved to mapmgr, remove us here.
 		if( GlobalSession->GetInstance() != 0 )
 		{
@@ -2494,9 +2493,7 @@ void NewsAnnouncer::_ReloadMessages()
 
 	for(itr = m_announcements.begin(); itr != m_announcements.end();)
 	{
-		itr2 = itr;
-		++itr;
-
+		itr2 = itr++;
 		if( db_msgs.find(itr2->second.m_id) == db_msgs.end() )
 		{
 			// message no longer exists

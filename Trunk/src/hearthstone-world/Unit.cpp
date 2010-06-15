@@ -296,7 +296,7 @@ Unit::~Unit()
 	tmpAura.clear();
 	m_DummyAuras.clear();
 
-	for(std::list<ExtraStrike*>::iterator itr = m_extraStrikeTargets.begin();itr != m_extraStrikeTargets.end();++itr)
+	for(std::list<ExtraStrike*>::iterator itr = m_extraStrikeTargets.begin();itr != m_extraStrikeTargets.end();itr++)
 		delete (*itr);
 	m_extraStrikeTargets.clear();
 

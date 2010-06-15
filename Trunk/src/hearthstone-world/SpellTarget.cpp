@@ -538,8 +538,7 @@ void Spell::SpellTargetInFrontOfCaster(uint32 i, uint32 j)
 	{
 		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd();)
 		{
-			itr2 = itr;
-			++itr;
+			itr2 = itr++;
 			if(!((*itr2)->IsUnit()) || !TO_UNIT(*itr2)->isAlive())
 				continue;
 			//is Creature in range
@@ -557,8 +556,7 @@ void Spell::SpellTargetInFrontOfCaster(uint32 i, uint32 j)
 	{
 		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd();)
 		{
-			itr2 = itr;
-			++itr;
+			itr2 = itr++;
 			if(!((*itr2)->IsUnit()) || !TO_UNIT(*itr2)->isAlive())
 				continue;
 			//is Creature in range

@@ -89,9 +89,7 @@ void EventableObject::event_RemoveByPointer(TimedEvent * ev)
 	{
 		do 
 		{
-			it2 = itr;
-			++itr;
-
+			it2 = itr++;
 			if(it2->second == ev)
 			{
 				if( it2->second->eventFlag & EVENT_FLAG_FIRE_ON_DELETE && !it2->second->deleted )
@@ -147,9 +145,7 @@ void EventableObject::event_RemoveEvents(uint32 EventType)
 		{
 			do 
 			{
-				it2 = itr;
-				++itr;
-
+				it2 = itr++;
 				if( it2->second->eventFlag & EVENT_FLAG_FIRE_ON_DELETE && !it2->second->deleted )
 				{
 					it2->second->deleted = true;
@@ -371,9 +367,7 @@ void EventableObjectHolder::Update(uint32 time_difference)
 	itr	= m_events.begin();
 	while(itr != m_events.end())
 	{
-		it2 = itr;
-		++itr;
-
+		it2 = itr++;
 		if((*it2)->instanceId != mInstanceId || (*it2)->deleted || 
 			( mInstanceId == WORLD_INSTANCE && (*it2)->eventFlag & EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT))
 		{
@@ -504,8 +498,7 @@ void EventableObjectHolder::AddObject(EventableObject* obj)
 			// ignore deleted events (shouldn't be any in here, actually)
 			if(itr->second->deleted)
 			{
-				/*it2 = itr;
-				++itr;
+				/*it2 = itr++;
 				itr->second->DecRef();
 				obj->m_events.erase(it2);*/
 				continue;

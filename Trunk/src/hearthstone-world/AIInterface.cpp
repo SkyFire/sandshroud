@@ -179,13 +179,17 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt, Unit* owner)
 
 void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 {
-	if( m_Unit == NULL ) return;
+	if( m_Unit == NULL )
+		return;
 
 	Creature* cr = NULLCREATURE;
 	if( m_Unit->GetTypeId() == TYPEID_UNIT )
 	{
 		cr = TO_CREATURE( m_Unit );
 		if(cr == NULL)
+			return;
+
+		if(isTargetDummy(cr->GetEntry()) && event != EVENT_LEAVECOMBAT)
 			return;
 	}
 
@@ -774,7 +778,7 @@ void AIInterface::_UpdateTargets()
 		/*deque< Unit > tokill;
 
 		//modified for vs2005 compatibility
-		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();++itr)
+		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();itr++)
 		{
 			if(!itr->first->isAlive() || m_Unit->GetDistanceSq(itr->first) >= 6400.0f)
 			{
@@ -787,8 +791,7 @@ void AIInterface::_UpdateTargets()
 
 		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();)
 		{
-			it2 = itr;
-			++itr;
+			it2 = itr++;
 
 			if( it2->first->event_GetCurrentInstanceId() != m_Unit->event_GetCurrentInstanceId() || !m_Unit->PhasedCanInteract(it2->first) ||
 				!it2->first->isAlive() || m_Unit->GetDistanceSq(it2->first) >= 6400.0f )
@@ -1435,10 +1438,9 @@ Unit* AIInterface::FindTarget()
 
 	for( itr = m_Unit->GetInRangeOppFactsSetBegin(); itr != m_Unit->GetInRangeOppFactsSetEnd(); )
 	{
-		it2 = itr;
-		++itr;
-
+		it2 = itr++;
 		pObj = (*it2);
+
 		if( pObj->GetTypeId() == TYPEID_PLAYER )
 		{
 			if(TO_PLAYER( pObj )->GetTaxiState() )	  // skip players on taxi
@@ -1962,7 +1964,7 @@ bool AIInterface::IsFlying()
 {
 	if(m_moveFly)
 		return true;
-	
+
 	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
 		return TO_PLAYER( m_Unit )->FlyCheat;
 
@@ -2207,8 +2209,7 @@ void AIInterface::deleteWayPoint(uint32 wpid)
 	WayPointMap::iterator itr,it2;
 	for(itr = m_waypoints->begin(); itr != m_waypoints->end();)
 	{
-		it2 = itr;
-		++itr;
+		it2 = itr++;
 		if((*it2) == NULL || (*it2)->id == wpid)
 		{
 			delete (*it2);
@@ -2858,6 +2859,9 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			}
 		}
 	}
+
+	// This is fly checks, mostly because of object updates.
+	CheckHeight();
 }
 
 uint8 AIInterface::CastSpell(Unit* caster, SpellEntry *spellInfo, SpellCastTargets targets)
@@ -3621,6 +3625,7 @@ bool isGuard(uint32 id)
 	}
 	return false;
 }
+
 bool isTargetDummy(uint32 id)
 {
 	switch(id)
@@ -3666,7 +3671,13 @@ bool isTargetDummy(uint32 id)
 				return true;
 			}break;
 		default:
-			return false;
+			{
+				CreatureInfo* info = CreatureNameStorage.LookupEntry(id);
+				if(info != NULL)
+					if(FindXinYString(string("training dummy"), info->lowercase_name))
+						return true;
+				return false;
+			}
 	}
 }
 void AIInterface::WipeCurrentTarget()
@@ -3684,3 +3695,24 @@ void AIInterface::WipeCurrentTarget()
 		UnitToFollow_backup = NULLUNIT;
 }
 
+void AIInterface::CheckHeight()
+{
+	if(m_Unit->GetMapMgr())
+	{
+		uint32 m = m_Unit->GetMapId();
+		float x = m_Unit->GetPositionX();
+		float y = m_Unit->GetPositionY();
+		float z = m_Unit->GetPositionZ();
+		float landheight_z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
+		if(m_Unit->GetMapMgr()->IsCollisionEnabled() && CollideInterface.GetHeight(m, x, y, z + 2.0f) != NO_WMO_HEIGHT)
+			landheight_z = CollideInterface.GetHeight(m, x, y, z + 2.0f);
+
+		if(landheight_z)
+		{
+			if(landheight_z < (z-3.0f))
+				m_moveFly = true;
+			else
+				m_moveFly = false;
+		}
+	}
+}

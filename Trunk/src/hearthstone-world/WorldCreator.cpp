@@ -521,20 +521,7 @@ MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 	// assign pointer
 	m_singleMaps[mapid] = ret;
 
-	if(ret->IsCollisionEnabled())
-	{
-		Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
-		bool collisionloaded = false;
-		for(uint32 x = 0; x < TilesCount; ++x)
-		{
-			for(uint32 y = 0; y < TilesCount; ++y)
-				if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapid, x, y))
-					collisionloaded = true;
-		}
-		Log.Notice("CollisionMgr", "Map %03u Collision loaded %s!", mapid, (collisionloaded == true ? "Successfully" : "Unsuccessfully"));
-		if(collisionloaded != true)
-			ret->SetCollision(false);
-	}
+	Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
 	return ret;
 }
 

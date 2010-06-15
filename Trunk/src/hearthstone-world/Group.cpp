@@ -455,8 +455,7 @@ void SubGroup::Disband()
 		}
 
 		m_Parent->m_MemberCount--;
-		it2 = itr;
-		++itr;
+		it2 = itr++;
 
 		m_GroupMembers.erase(it2);
 	}
@@ -890,13 +889,13 @@ void Group::SaveToDB()
 		uint32 j = 0;
 		if (m_SubGroups[i])
 		{
-			for(GroupMembersSet::iterator itr = m_SubGroups[i]->GetGroupMembersBegin(); j<5 && itr != m_SubGroups[i]->GetGroupMembersEnd(); ++j, ++itr)
+			for(GroupMembersSet::iterator itr = m_SubGroups[i]->GetGroupMembersBegin(); j<5 && itr != m_SubGroups[i]->GetGroupMembersEnd(); j++, itr++)
 			{
 				ss << (*itr)->guid << ",";
 			}
 		}
 
-		for(; j < 5; ++j)
+		for(; j < 5; j++)
 			ss << "0,";
 	}
 

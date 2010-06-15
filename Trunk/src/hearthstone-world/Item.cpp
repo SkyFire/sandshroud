@@ -827,8 +827,7 @@ void Item::ApplyEnchantmentBonuses()
 	EnchantmentMap::iterator itr, itr2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end();  )
 	{
-		itr2 = itr;
-		++itr;
+		itr2 = itr++;
 		ApplyEnchantmentBonus( itr2->first, APPLY );
 	}
 }
@@ -838,8 +837,7 @@ void Item::RemoveEnchantmentBonuses()
 	EnchantmentMap::iterator itr, itr2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end(); )
 	{
-		itr2 = itr;
-		++itr;
+		itr2 = itr++;
 		ApplyEnchantmentBonus( itr2->first, REMOVE );
 	}
 }
@@ -946,9 +944,7 @@ void Item::RemoveAllEnchantments( bool OnlyTemporary )
 	EnchantmentMap::iterator itr, it2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end(); )
 	{
-		it2 = itr;
-		++itr;
-
+		it2 = itr++;
 		if( OnlyTemporary && it2->second.Duration == 0 ) 
 			continue;
 			
@@ -961,9 +957,7 @@ void Item::RemoveRelatedEnchants( EnchantEntry* newEnchant )
 	EnchantmentMap::iterator itr,itr2;
 	for( itr = Enchantments.begin(); itr != Enchantments.end(); )
 	{
-		itr2 = itr;
-		++itr;
-		
+		itr2 = itr++;		
 		if( itr2->second.Enchantment->Id == newEnchant->Id || ( itr2->second.Enchantment->EnchantGroups > 1 && newEnchant->EnchantGroups > 1 ) )
 		{ 
 			RemoveEnchantment( itr2->first );

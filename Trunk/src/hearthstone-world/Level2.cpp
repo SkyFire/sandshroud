@@ -191,8 +191,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 				CreatureSpawnList::iterator itr, itr2;
 				for(itr = c->CreatureSpawns.begin(); itr != c->CreatureSpawns.end();)
 				{
-					itr2 = itr;
-					++itr;
+					itr2 = itr++;
 					if((*itr2) == unit->m_spawn)
 					{
 						c->CreatureSpawns.erase(itr2);
@@ -626,7 +625,7 @@ bool ChatHandler::HandleGOSelect(const char *args, WorldSession *m_session)
 			if(m_session->GetPlayer()->m_GM_SelectedGO == NULL)
 				bUseNext = true;
 
-			for(;;++Itr)
+			for(;;Itr++)
 			{
 				if(Itr == Itr2 && GObj == NULL && bUseNext)
 					Itr = m_session->GetPlayer()->GetInRangeSetBegin();
@@ -706,8 +705,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 			GOSpawnList::iterator itr,itr2;
 			for(itr = c->GOSpawns.begin(); itr != c->GOSpawns.end();)
 			{
-				itr2 = itr;
-				++itr;
+				itr2 = itr++;
 				if((*itr2) == GObj->m_spawn)
 				{
 					c->GOSpawns.erase(itr2);
