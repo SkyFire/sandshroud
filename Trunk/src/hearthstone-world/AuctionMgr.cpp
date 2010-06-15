@@ -76,7 +76,7 @@ void AuctionMgr::Update()
 		return;
 		
 	vector<AuctionHouse*>::iterator itr = auctionHouses.begin();
-	for(; itr != auctionHouses.end(); ++itr)
+	for(; itr != auctionHouses.end(); itr++)
 	{
 		(*itr)->UpdateDeletionQueue();
 

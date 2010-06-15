@@ -428,7 +428,7 @@ public:
 	{
 		holderLock.Acquire();
 		HolderMap::iterator itr = mHolders.begin();
-		for(; itr != mHolders.end(); ++itr)
+		for(; itr != mHolders.end(); itr++)
 		{
 			if(itr->second == holder)
 			{

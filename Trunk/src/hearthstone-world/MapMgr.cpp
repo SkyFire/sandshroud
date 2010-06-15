@@ -121,7 +121,7 @@ MapMgr::~MapMgr()
 	// Remove objects
 	if(_cells)
 	{
-		for (uint32 i = 0; i < _sizeX; ++i)
+		for (uint32 i = 0; i < _sizeX; i++)
 		{
 			if(_cells[i] != 0)
 			{
@@ -138,7 +138,7 @@ MapMgr::~MapMgr()
 	}
 
 	Object* pObject;
-	for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
+	for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); itr++)
 	{
 		pObject = *itr;
 		if(!pObject)
@@ -166,7 +166,7 @@ MapMgr::~MapMgr()
 	_mapWideStaticObjects.clear();
 
 	Corpse* pCorpse;
-	for(unordered_set<Corpse* >::iterator itr = m_corpses.begin(); itr != m_corpses.end(); ++itr)
+	for(unordered_set<Corpse* >::iterator itr = m_corpses.begin(); itr != m_corpses.end(); itr++)
 	{
 		pCorpse = *itr;
 		if(!pCorpse)
@@ -399,7 +399,7 @@ void MapMgr::PushObject(Object* obj)
 		/* Add the map wide objects */
 		if(_mapWideStaticObjects.size())
 		{
-			for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
+			for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); itr++)
 			{
 				count = (*itr)->BuildCreateUpdateBlockForPlayer(&m_createBuffer, plObj);
 				plObj->PushCreationData(&m_createBuffer, count);
@@ -555,7 +555,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 	
 	// Remove object from all objects 'seeing' him
 	for (Object::InRangeSet::iterator iter = obj->GetInRangeSetBegin();
-		iter != obj->GetInRangeSetEnd(); ++iter)
+		iter != obj->GetInRangeSetEnd(); iter++)
 	{
 		if( (*iter) )
 		{
@@ -584,7 +584,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 		m_PlayerStorage.erase( TO_PLAYER( obj )->GetLowGUID() );
 
 		// Remove the session from our set if it is a player.
-		for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
+		for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); itr++)
 		{
 			plObj->PushOutOfRange((*itr)->GetNewGUID());
 		}
@@ -1330,7 +1330,7 @@ void MapMgr::ChangeFarsightLocation(Player* plr, Unit* farsight, bool apply)
 				{
 					iter = cell->Begin();
 					iend = cell->End();
-					for(; iter != iend; ++iter)
+					for(; iter != iend; iter++)
 					{
 						obj = (*iter);
 						if(!plr->IsVisible(obj) && plr->CanSee(obj) && farsight->GetDistance2dSq(obj) <= m_UpdateDistance)
@@ -1383,7 +1383,7 @@ void MapMgr::ChangeFarsightLocation(Player* plr, float X, float Y, bool apply)
 				{
 					iter = cell->Begin();
 					iend = cell->End();
-					for(; iter != iend; ++iter)
+					for(; iter != iend; iter++)
 					{
 						obj = (*iter);
 						if(!plr->IsVisible(obj) && plr->CanSee(obj) && obj->GetDistance2dSq(X, Y) <= m_UpdateDistance)
@@ -1423,7 +1423,7 @@ bool MapMgr::Do()
 	LoadInstanceScript();
 
 	/* create static objects */
-	for(GOSpawnList::iterator itr = _map->staticSpawns.GOSpawns.begin(); itr != _map->staticSpawns.GOSpawns.end(); ++itr)
+	for(GOSpawnList::iterator itr = _map->staticSpawns.GOSpawns.begin(); itr != _map->staticSpawns.GOSpawns.end(); itr++)
 	{
 		GameObject* obj = CreateGameObject((*itr)->entry);
 		if(obj == NULL)
@@ -1432,7 +1432,7 @@ bool MapMgr::Do()
 		_mapWideStaticObjects.insert(obj);
 	}
 
-	for(CreatureSpawnList::iterator itr = _map->staticSpawns.CreatureSpawns.begin(); itr != _map->staticSpawns.CreatureSpawns.end(); ++itr)
+	for(CreatureSpawnList::iterator itr = _map->staticSpawns.CreatureSpawns.begin(); itr != _map->staticSpawns.CreatureSpawns.end(); itr++)
 	{
 		Creature* obj = NULLCREATURE;
 		obj = CreateCreature((*itr)->entry);
@@ -1444,7 +1444,7 @@ bool MapMgr::Do()
 	}
 
 	/* add static objects */
-	for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
+	for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); itr++)
 		PushStaticObject(*itr);
 
 	/* load corpses */
@@ -1871,7 +1871,7 @@ void MapMgr::SendMessageToCellPlayers(Object* obj, WorldPacket * packet, uint32 
 			{
 				iter = cell->Begin();
 				iend = cell->End();
-				for(; iter != iend; ++iter)
+				for(; iter != iend; iter++)
 				{
 					if((*iter)->IsPlayer())
 					{
@@ -1904,7 +1904,7 @@ void MapMgr::SendChatMessageToCellPlayers(Object* obj, WorldPacket * packet, uin
 			{
 				iter = cell->Begin();
 				iend = cell->End();
-				for(; iter != iend; ++iter)
+				for(; iter != iend; iter++)
 				{
 					if((*iter)->IsPlayer())
 					{

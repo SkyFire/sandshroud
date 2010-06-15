@@ -52,11 +52,11 @@ template <class T>  // works for anything that has the field 'chance' and is sto
 const T& RandomChoice( const T* variant, int count )
 {
 	float totalChance = 0;
-	for( int i = 0; i < count; ++i)
+	for( int i = 0; i < count; i++)
 		totalChance += variant[i].chance;
 
 	float val = RandomFloat(totalChance);
-	for( int i = 0; i < count; ++i)
+	for( int i = 0; i < count; i++)
 	{
 		val -= variant[i].chance;
 		if (val <= 0) return variant[i];
@@ -75,12 +75,12 @@ T* RandomChoiceVector( vector<pair<T*, float> > & variant )
 	if(variant.size() == 0)
 		return NULL;
 
-	for(itr = variant.begin(); itr != variant.end(); ++itr)
+	for(itr = variant.begin(); itr != variant.end(); itr++)
 		totalChance += itr->second;
 
 	val = RandomFloat(totalChance);
 	
-	for(itr = variant.begin(); itr != variant.end(); ++itr)
+	for(itr = variant.begin(); itr != variant.end(); itr++)
 	{
 		val -= itr->second;
 		if (val <= 0) return itr->first;
@@ -220,31 +220,31 @@ void LootMgr::LoadLootProp()
 LootMgr::~LootMgr()
 {
 	Log.Notice("LootMgr","Deleting Loot Tables...");
-	for(LootStore::iterator iter=CreatureLoot.begin(); iter != CreatureLoot.end(); ++iter)
+	for(LootStore::iterator iter=CreatureLoot.begin(); iter != CreatureLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=FishingLoot.begin(); iter != FishingLoot.end(); ++iter)
+	for(LootStore::iterator iter=FishingLoot.begin(); iter != FishingLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=GatheringLoot.begin(); iter != GatheringLoot.end(); ++iter)
+	for(LootStore::iterator iter=GatheringLoot.begin(); iter != GatheringLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=GOLoot.begin(); iter != GOLoot.end(); ++iter)
+	for(LootStore::iterator iter=GOLoot.begin(); iter != GOLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=ItemLoot.begin(); iter != ItemLoot.end(); ++iter)
+	for(LootStore::iterator iter=ItemLoot.begin(); iter != ItemLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=ProspectingLoot.begin(); iter != ProspectingLoot.end(); ++iter)
+	for(LootStore::iterator iter=ProspectingLoot.begin(); iter != ProspectingLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=DisenchantingLoot.begin(); iter != DisenchantingLoot.end(); ++iter)
+	for(LootStore::iterator iter=DisenchantingLoot.begin(); iter != DisenchantingLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=PickpocketingLoot.begin(); iter != PickpocketingLoot.end(); ++iter)
+	for(LootStore::iterator iter=PickpocketingLoot.begin(); iter != PickpocketingLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=MillingLoot.begin(); iter != MillingLoot.end(); ++iter)
+	for(LootStore::iterator iter=MillingLoot.begin(); iter != MillingLoot.end(); iter++)
 		delete [] iter->second.items;
 }
 
@@ -290,7 +290,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 			|| szTableName == CREATURE_LOOT_GATHERING) // We have multiple difficulties.
 		{
 			t.itemid = fields[1].GetUInt32();
-			for(int i = 0; i < 4; ++i)
+			for(int i = 0; i < 4; i++)
 				t.chance[i] = fields[2+i].GetFloat();
 			t.mincount = fields[5].GetUInt32();
 			t.maxcount = fields[6].GetUInt32();
@@ -300,7 +300,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 		{
 			t.itemid = fields[1].GetUInt32();
 			t.chance[0] = fields[2].GetFloat();
-			for(int i = 1; i < 4; ++i) // Other difficulties.
+			for(int i = 1; i < 4; i++) // Other difficulties.
 				t.chance[i] = 0.0f;
 			t.mincount = fields[3].GetUInt32();
 			t.maxcount = fields[4].GetUInt32();
@@ -322,7 +322,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 	uint32 itemid;
 
 	//for(itr=loot_db.begin();itr!=loot_db.end();++itr)
-	for( itr = db_cache.begin(); itr != db_cache.end(); ++itr)
+	for( itr = db_cache.begin(); itr != db_cache.end(); itr++)
 	{
 		entry_id = (*itr).first;
 		if(LootTable->end() == LootTable->find(entry_id))
@@ -334,7 +334,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 		
 			uint32 ind = 0;
 			//for(std::vector<loot_tb>::iterator itr2=itr->second.begin();itr2!=itr->second.end();++itr2)
-			for(vector< tempy >::iterator itr2 = (*itr).second.begin(); itr2 != (*itr).second.end(); ++itr2)
+			for(vector< tempy >::iterator itr2 = (*itr).second.begin(); itr2 != (*itr).second.end(); itr2++)
 			{
 				//Omit items that are not in db to prevent future bugs
 				//uint32 itemid=(*itr2).itemid;
@@ -354,7 +354,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 					list->items[ind].item.itemproto=proto;
 					list->items[ind].item.displayid=proto->DisplayInfoID;
 					//list->items[ind].chance=(*itr2).chance;
-					for(int i = 0; i < 4; ++i)
+					for(int i = 0; i < 4; i++)
 						list->items[ind].chance[i] = itr2->chance[i];
 					list->items[ind].mincount = itr2->mincount;
 					list->items[ind].maxcount = itr2->maxcount;
@@ -422,7 +422,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 				else
 					count = RandomUInt(list->items[x].maxcount - list->items[x].mincount) + list->items[x].mincount;
 
-				for( i = 0; i < loot->items.size(); ++i )
+				for( i = 0; i < loot->items.size(); i++ )
 				{
 					//itemid rand match a already placed item, if item is stackable and unique(stack), increment it, otherwise skips
 					if((loot->items[i].item.itemproto == list->items[x].item.itemproto) && itemproto->MaxCount && ((loot->items[i].iItemsCount + count) < itemproto->MaxCount))
@@ -478,7 +478,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 			item_to_remove = loot->items.begin();
 			item_quality = 0;
 			quest_item = false;
-			for( itr = loot->items.begin(); itr != loot->items.end(); ++itr )
+			for( itr = loot->items.begin(); itr != loot->items.end(); itr++ )
 			{
 				item_quality = (*itr).item.itemproto->Quality;
 				quest_item = (*itr).item.itemproto->Class == ITEM_CLASS_QUEST;
@@ -641,7 +641,7 @@ void LootMgr::AddLoot(Loot* loot, uint32 itemid, uint32 mincount, uint32 maxcoun
 		else
 			count = RandomUInt(maxcount - mincount) + mincount;
 
-		for( i = 0; i < loot->items.size(); ++i )
+		for( i = 0; i < loot->items.size(); i++ )
 		{
 			//itemid rand match a already placed item, if item is stackable and unique(stack), increment it, otherwise skips
 			if((loot->items[i].item.itemproto == itemproto) && itemproto->MaxCount && ((loot->items[i].iItemsCount + count <= itemproto->MaxCount)))
@@ -732,7 +732,7 @@ void LootRoll::Finalize()
 
 	WorldPacket data(34);
 
-	for(std::map<uint32, uint32>::iterator itr = m_NeedRolls.begin(); itr != m_NeedRolls.end(); ++itr)
+	for(std::map<uint32, uint32>::iterator itr = m_NeedRolls.begin(); itr != m_NeedRolls.end(); itr++)
 	{
 		if(itr->second > highest)
 		{
@@ -744,7 +744,7 @@ void LootRoll::Finalize()
 
 	if(!highest)
 	{
-		for(std::map<uint32, uint32>::iterator itr = m_GreedRolls.begin(); itr != m_GreedRolls.end(); ++itr)
+		for(std::map<uint32, uint32>::iterator itr = m_GreedRolls.begin(); itr != m_GreedRolls.end(); itr++)
 		{
 			if(itr->second > highest)
 			{
@@ -754,7 +754,7 @@ void LootRoll::Finalize()
 			}
 		}
 		
-		for(std::map<uint32, uint32>::iterator itr = m_DisenchantRolls.begin(); itr != m_DisenchantRolls.end(); ++itr)
+		for(std::map<uint32, uint32>::iterator itr = m_DisenchantRolls.begin(); itr != m_DisenchantRolls.end(); itr++)
 		{
 			if(itr->second > highest)
 			{
@@ -864,7 +864,7 @@ void LootRoll::Finalize()
 		data.Initialize(SMSG_LOOT_REMOVED);
 		data << uint8(_slotid);
 		Player* plr;
-		for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); ++itr)
+		for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); itr++)
 		{
 			if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
 				plr->GetSession()->SendPacket(&data);
@@ -935,7 +935,7 @@ void LootRoll::Finalize()
 	data.Initialize(SMSG_LOOT_REMOVED);
 	data << uint8(_slotid);
 	Player* plr;
-	for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); ++itr)
+	for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); itr++)
 	{
 		if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
 			plr->GetSession()->SendPacket(&data);
@@ -1057,7 +1057,7 @@ bool Loot::HasLoot(Player* Looter)
 bool Loot::HasItems(Player* Looter)
 {
 	// check items
-	for(vector<__LootItem>::iterator itr = items.begin(); itr != items.end(); ++itr)
+	for(vector<__LootItem>::iterator itr = items.begin(); itr != items.end(); itr++)
 	{
 		if( itr->iItemsCount > 0 )
 		{

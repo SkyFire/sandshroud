@@ -126,7 +126,7 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 	data << uint32(3801) << uint32(WG_started ? 0 : 1);
 	data << uint32(3710) << uint32(WG_started ? 1 : 0);
 
-	for (uint32 i = 0; i < 5; ++i)
+	for (uint32 i = 0; i < 5; i++)
 		data << ClockWorldState[i] << m_clock[i];
 
 	if(WG_started && WG != NULL)
@@ -145,7 +145,7 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 		{
 			if(WG->WGPlayers.size())
 			{
-				for(WintergraspPlayerSet::iterator itr = WG->WGPlayers.begin(); itr != WG->WGPlayers.end(); ++itr)
+				for(WintergraspPlayerSet::iterator itr = WG->WGPlayers.begin(); itr != WG->WGPlayers.end(); itr++)
 				{
 					WorldPacket* data2 = &data;
 					(*itr)->GetSession()->SendPacket(data2);
@@ -156,7 +156,7 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 		{
 			if(WGMgr.m_PlayerStorage.size())
 			{
-				for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); ++itr)
+				for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); itr++)
 				{
 					plr = itr->second;
 					if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
@@ -191,12 +191,12 @@ void WintergraspInternal::SendWSUpdateToAll(uint32 WorldState, uint32 Value)
 	data << Value;
 	if(WG != NULL)
 	{
-		for(WintergraspPlayerSet::iterator itr = WG->WGPlayers.begin(); itr != WG->WGPlayers.end(); ++itr)
+		for(WintergraspPlayerSet::iterator itr = WG->WGPlayers.begin(); itr != WG->WGPlayers.end(); itr++)
 			(*itr)->GetSession()->SendPacket(&data);
 	}
 	else
 	{
-		for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); ++itr)
+		for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); itr++)
 		{
 			plr = itr->second;
 			if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))

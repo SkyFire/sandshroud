@@ -30,7 +30,7 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 	m_CreatedFromSpell = false;
 	m_mountSpell = 0;
 
-	for(uint8 i = 0; i < 8; ++i)
+	for(uint8 i = 0; i < 8; i++)
 	{
 		m_vehicleSeats[i] = NULL;
 		seatisusable[i] = false;
@@ -65,7 +65,7 @@ void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 		return;
 	}
 
-	for( uint32 i = 0; i < 8; ++i )
+	for( uint32 i = 0; i < 8; i++ )
 	{
 		if( ve->m_seatID[i] )
 		{
@@ -97,7 +97,7 @@ void Vehicle::InstallAccessories()
 		return;
 	}
 
-	for(int i = 0; i < 8; ++i)
+	for(int i = 0; i < 8; i++)
 	{
 		AccessoryInfo accessories = acc->accessories[i];
 		if(!accessories.accessoryentry)
@@ -192,7 +192,7 @@ void Vehicle::Load(CreatureProto * proto_, float x, float y, float z, float o /*
 		return;
 	}
 
-	for( uint32 i = 0; i < 8; ++i )
+	for( uint32 i = 0; i < 8; i++ )
 	{
 		if( ve->m_seatID[i] )
 		{
@@ -243,7 +243,7 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		return false;
 	}
 
-	for( uint32 i = 0; i < 8; ++i )
+	for( uint32 i = 0; i < 8; i++ )
 	{
 		if( ve->m_seatID[i] )
 		{
@@ -293,7 +293,7 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 	data << uint32(0);
 	data << uint32(0x00000101);
 
-	for (uint32 i = 0; i < 6; ++i)
+	for (uint32 i = 0; i < 6; i++)
 	{
 		uint32 spellId = acc->VehicleSpells[i];
 		if (!spellId)
@@ -339,7 +339,7 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 		}
 	}
 
-	for(uint8 i = 6; i < 10; ++i)
+	for(uint8 i = 6; i < 10; i++)
 	{
 		data << uint16(0) << uint8(0) << uint8(i+8);
 	}
@@ -362,7 +362,7 @@ void Vehicle::Despawn(uint32 delay, uint32 respawntime)
 
 	if(respawntime)
 	{
-		for(int i = 0; i < 8; ++i)
+		for(int i = 0; i < 8; i++)
 		{
 			if(m_passengers[i] != NULL)
 			{
@@ -401,7 +401,7 @@ void Vehicle::Update(uint32 time)
 
 void Vehicle::SafeDelete()
 {
-	for(int i = 0; i < 8; ++i)
+	for(int i = 0; i < 8; i++)
 	{
 		if(m_passengers[i] != NULL)
 		{
@@ -440,7 +440,7 @@ void Vehicle::AddPassenger(Unit* pPassenger)
 		pPassenger->m_CurrentVehicle->RemovePassenger(pPassenger);
 
 	// Find an available seat
-	for(uint8 i = 0; i < m_seatSlotMax; ++i)
+	for(uint8 i = 0; i < m_seatSlotMax; i++)
 	{
 		if(pPassenger->IsPlayer())
 		{
@@ -503,7 +503,7 @@ void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat, bool force /*=
 	}
 	else
 	{ // Find us a slot!
-		for(uint8 i = 0; i < m_seatSlotMax; ++i)
+		for(uint8 i = 0; i < m_seatSlotMax; i++)
 		{
 			if(pPassenger->IsPlayer())
 			{
@@ -527,7 +527,7 @@ void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat, bool force /*=
 
 uint8 Vehicle::GetPassengerSlot(Unit* pPassenger)
 {
-	for(uint8 i = 0; i < m_seatSlotMax; ++i)
+	for(uint8 i = 0; i < m_seatSlotMax; i++)
 	{
 		if( m_passengers[i] == pPassenger ) // Found a slot
 		{
@@ -664,7 +664,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	//Well actually this is how blizz wanted it
 	//but they couldnt get it to work xD
 	bool haspassengers = false;
-	for(uint8 i = 0; i < m_seatSlotMax; ++i)
+	for(uint8 i = 0; i < m_seatSlotMax; i++)
 	{
 		if(m_passengers[i] != NULL && m_passengers[i]->IsPlayer())
 		{
@@ -687,7 +687,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 
 bool Vehicle::HasPassenger(Unit* pPassenger)
 {
-	for(uint8 i = 0; i < m_seatSlotMax; ++i)
+	for(uint8 i = 0; i < m_seatSlotMax; i++)
 	{
 		if( m_passengers[i] == pPassenger )
 			return true;
@@ -868,7 +868,7 @@ of its passengers*/
 void Vehicle::MoveVehicle(float x, float y, float z, float o) //thanks andy
 {
 	SetPosition(x, y, z, o, false);
-	for(uint8 i = 0; i < m_seatSlotMax; ++i)
+	for(uint8 i = 0; i < m_seatSlotMax; i++)
 	{
 		if(m_passengers[i] != NULL)
 		{
@@ -881,7 +881,7 @@ void Vehicle::setDeathState(DeathState s)
 {
 	Creature::setDeathState(s);
 
-	for (uint8 i = 0; i < m_seatSlotMax; ++i)
+	for (uint8 i = 0; i < m_seatSlotMax; i++)
 	{
 		if(m_passengers[i] != NULL)
 		{

@@ -33,7 +33,7 @@ public:
 	~AuctionMgr()
 	{
 		vector<AuctionHouse*>::iterator itr = auctionHouses.begin();
-		for(; itr != auctionHouses.end(); ++itr)
+		for(; itr != auctionHouses.end(); itr++)
 			delete (*itr);
 	}
 

@@ -27,7 +27,7 @@ Arena::Arena( MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t, uint32 players_pe
 {
 	int i;
 
-	for (i=0; i<2; ++i) {
+	for (i=0; i<2; i++) {
 		m_players[i].clear();
 		m_pendPlayers[i].clear();
 	}
@@ -76,7 +76,7 @@ Arena::~Arena()
 {
 	int i;
 
-	for(i = 0; i < 2; ++i)
+	for(i = 0; i < 2; i++)
 	{
 		// buffs may not be spawned, so delete them if they're not
 		if(m_buffs[i] && m_buffs[i]->IsInWorld()==false)
@@ -357,7 +357,7 @@ void Arena::OnCreate()
 	}
 
 	/* push gates into world */
-	for(set< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); ++itr)
+	for(set< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); itr++)
 		(*itr)->PushToWorld(m_mapMgr);
 
 	
@@ -378,15 +378,15 @@ void Arena::OnCreate()
 void Arena::OnStart()
 {
 	/* remove arena readyness buff */
-	for(uint32 i = 0; i < 2; ++i) {
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr) {
+	for(uint32 i = 0; i < 2; i++) {
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++) {
 			Player* plr = *itr;
 			plr->RemoveAura(ARENA_PREPARATION);
 		}
 	}
 
 	/* open gates */
-	for(set< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); ++itr)
+	for(set< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); itr++)
 	{
 		(*itr)->SetUInt32Value(GAMEOBJECT_FLAGS, 64);
 		(*itr)->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
@@ -461,7 +461,7 @@ void Arena::Finish()
 	/* update arena team stats */
 	if(rated_match && teams[0] && teams[1])
 	{
-		for (uint32 i = 0; i < 2; ++i) {
+		for (uint32 i = 0; i < 2; i++) {
 			uint32 j = i ? 0 : 1; // opposing side
 			bool outcome = (i != m_losingteam);
 			if (outcome) {
@@ -473,7 +473,7 @@ void Arena::Finish()
 			teams[i]->m_stat_rating += m_deltaRating[i];
 			if ((int32)teams[i]->m_stat_rating < 0) teams[i]->m_stat_rating = 0;
 
-			for(set<uint32>::iterator itr = m_players2[i].begin(); itr != m_players2[i].end(); ++itr)
+			for(set<uint32>::iterator itr = m_players2[i].begin(); itr != m_players2[i].end(); itr++)
 			{
 				PlayerInfo * info = objmgr.GetPlayerInfo(*itr);
 				if (info)
@@ -513,11 +513,11 @@ void Arena::Finish()
 	sEventMgr.AddEvent(TO_CBATTLEGROUND(this), &CBattleground::Close, EVENT_BATTLEGROUND_CLOSE, 120000, 1,0);
 	SendChatMessage( CHAT_MSG_BG_SYSTEM_NEUTRAL, 0, "|cffffff00This arena will close in 2 minutes.");
 
-	for(int i = 0; i < 2; ++i)
+	for(int i = 0; i < 2; i++)
 	{
 		bool victorious = (i != m_losingteam);
 		set<Player*  >::iterator itr = m_players[i].begin();
-		for(; itr != m_players[i].end(); ++itr)
+		for(; itr != m_players[i].end(); itr++)
 		{
 			Player* plr = (Player* )(*itr);
 			plr->Root();

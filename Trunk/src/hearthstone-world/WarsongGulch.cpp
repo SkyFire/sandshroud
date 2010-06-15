@@ -29,7 +29,7 @@ WarsongGulch::WarsongGulch(MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) : CB
 {
 	int i;
 
-	for (i=0; i<2; ++i) {
+	for (i=0; i<2; i++) {
 		m_players[i].clear();
 		m_pendPlayers[i].clear();
 	}
@@ -55,7 +55,7 @@ void WarsongGulch::Init()
 	uint32 i;
 
 	/* create the buffs */
-	for(i = 0; i < 6; ++i)
+	for(i = 0; i < 6; i++)
 		SpawnBuff(i);
 
 	/* take note: these are swapped around for performance bonus */
@@ -80,7 +80,7 @@ void WarsongGulch::Init()
 	if(m_dropFlags[0] == NULL || !m_dropFlags[0]->CreateFromProto(179786, 489, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f))
 		Log.Warning("WarsongGulch", "Could not create dropped flag 0");
 
-	for(i = 0; i < 2; ++i)
+	for(i = 0; i < 2; i++)
 	{
 		m_dropFlags[i]->SetUInt32Value(GAMEOBJECT_DYNAMIC, 1);
 		m_dropFlags[i]->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.5f);
@@ -91,7 +91,7 @@ void WarsongGulch::Init()
 WarsongGulch::~WarsongGulch()
 {
 	// gates are always spawned, so mapmgr will clean them up
-	for(uint32 i = 0; i < 6; ++i)
+	for(uint32 i = 0; i < 6; i++)
 	{
 		// buffs may not be spawned, so delete them if they're not
 		if(m_buffs[i] && !m_buffs[i]->IsInWorld())
@@ -101,7 +101,7 @@ WarsongGulch::~WarsongGulch()
 		}
 	}
 
-	for (uint8 i = 0; i < 2; ++i)
+	for (uint8 i = 0; i < 2; i++)
 	{
 		m_players[i].clear();
 		m_pendPlayers[i].clear();
@@ -184,7 +184,7 @@ void WarsongGulch::HookOnAreaTrigger(Player* plr, uint32 id)
 			m_homeFlags[plr->GetTeam()]->PushToWorld(m_mapMgr);
 
 		/* give each player on that team a bonus according to flagHonorTable */
-		for(set< Player* >::iterator itr = m_players[plr->GetTeam()].begin(); itr != m_players[plr->GetTeam()].end(); ++itr)
+		for(set< Player* >::iterator itr = m_players[plr->GetTeam()].begin(); itr != m_players[plr->GetTeam()].end(); itr++)
 		{
 			(*itr)->m_bgScore.BonusHonor += m_FlagCaptureHonor;
 			HonorHandler::AddHonorPointsToPlayer((*itr), m_FlagCaptureHonor);
@@ -206,9 +206,9 @@ void WarsongGulch::HookOnAreaTrigger(Player* plr, uint32 id)
 			/* add the marks of honor to all players */
 			SpellEntry * winner_spell = dbcSpell.LookupEntry(24951);
 			SpellEntry * loser_spell = dbcSpell.LookupEntry(24950);
-			for(uint32 i = 0; i < 2; ++i)
+			for(uint32 i = 0; i < 2; i++)
 			{
-				for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+				for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 				{
 					(*itr)->Root();
 
@@ -507,7 +507,7 @@ void WarsongGulch::SpawnBuff(uint32 x)
 void WarsongGulch::OnCreate()
 {
 	/* add the buffs to the world */
-	for(int i = 0; i < 6; ++i)
+	for(int i = 0; i < 6; i++)
 	{
 		if(!m_buffs[i]->IsInWorld())
 			m_buffs[i]->PushToWorld(m_mapMgr);
@@ -566,14 +566,14 @@ void WarsongGulch::OnCreate()
 
 void WarsongGulch::OnStart()
 {
-	for(uint32 i = 0; i < 2; ++i) {
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr) {
+	for(uint32 i = 0; i < 2; i++) {
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++) {
 			(*itr)->RemoveAura(BG_PREPARATION);
 		}
 	}
 
 	/* open the gates */
-	for(list<GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); ++itr)
+	for(list<GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); itr++)
 	{
 		(*itr)->SetUInt32Value(GAMEOBJECT_FLAGS, 64);
 		(*itr)->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
@@ -581,7 +581,7 @@ void WarsongGulch::OnStart()
 	}
 
 	/* add the flags to the world */
-	for(int i = 0; i < 2; ++i)
+	for(int i = 0; i < 2; i++)
 	{
 		if( !m_homeFlags[i]->IsInWorld() )
 			m_homeFlags[i]->PushToWorld(m_mapMgr);

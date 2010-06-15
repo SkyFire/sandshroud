@@ -52,7 +52,7 @@ void ChainAggroEntity::RemoveAggroEntity(Creature* pCreature)
 void ChainAggroEntity::Delete()
 {
 	set<Creature*>::iterator itr = m_agroEntitySet.begin();
-	for(; itr != m_agroEntitySet.end(); ++itr)
+	for(; itr != m_agroEntitySet.end(); itr++)
 	{
 		(*itr)->GetAIInterface()->m_ChainAgroSet = NULL;
 	}
@@ -62,7 +62,7 @@ void ChainAggroEntity::Delete()
 void ChainAggroEntity::EventEnterCombat(Unit* pTarget)
 {
 	set<Creature*>::iterator itr = m_agroEntitySet.begin();
-	for(; itr != m_agroEntitySet.end(); ++itr)
+	for(; itr != m_agroEntitySet.end(); itr++)
 	{
 		if( (*itr)->isDead() )
 			continue;

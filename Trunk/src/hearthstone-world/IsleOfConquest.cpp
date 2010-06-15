@@ -191,7 +191,7 @@ float CalcDistance(float x1, float y1, float z1, float x2, float y2, float z2)
 	
 IsleOfConquest::IsleOfConquest(MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) : CBattleground(mgr,id,lgroup,t)
 {
-	for(uint32 i = 0; i < IOC_NUM_CONTROL_POINTS; ++i)
+	for(uint32 i = 0; i < IOC_NUM_CONTROL_POINTS; i++)
 	{
 		m_ioccontrolPointAuras[i] = NULL;
 		m_ioccontrolPoints[i] = NULL;
@@ -202,7 +202,7 @@ IsleOfConquest::IsleOfConquest(MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) 
 		m_flagIsVirgin[i] = true;
 	}
 
-	for(uint32 i = 0; i < 2; ++i)
+	for(uint32 i = 0; i < 2; i++)
 	{
 		m_capturedBases[i] = 0;
 	}
@@ -220,7 +220,7 @@ IsleOfConquest::IsleOfConquest(MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) 
 
 IsleOfConquest::~IsleOfConquest()
 {
-	for(uint32 i = 0; i < IOC_NUM_CONTROL_POINTS; ++i)
+	for(uint32 i = 0; i < IOC_NUM_CONTROL_POINTS; i++)
 	{
 		if(m_ioccontrolPoints[i] != NULL)
 		{
@@ -512,7 +512,7 @@ void IsleOfConquest::AssaultControlPoint(Player* pPlayer, uint32 Id)
 			map<Creature*,set<uint32> >::iterator itr = m_resurrectMap.find(m_spiritGuides[Id]);
 			if( itr != m_resurrectMap.end() )
 			{
-				for( set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); ++it2 )
+				for( set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); it2++ )
 				{
 					Player* r_plr = m_mapMgr->GetPlayer( *it2 );
 					if( r_plr != NULL && r_plr->isDead() )
@@ -749,7 +749,7 @@ void IsleOfConquest::OnCreate()
 	}
 
 	// Flagpole
-	for(uint32 i = 0; i < IOC_NUM_CONTROL_POINTS; ++i)
+	for(uint32 i = 0; i < IOC_NUM_CONTROL_POINTS; i++)
 	{
 		m_flagpole[i] = SpawnGameObject(IOC_FLAGPOLE, ControlPointCoordinates[i][0], ControlPointCoordinates[i][1], ControlPointCoordinates[i][2], ControlPointCoordinates[i][3], 0, 35, 1.0f);
 		m_flagpole[i]->PushToWorld(m_mapMgr);
@@ -817,8 +817,8 @@ LocationVector IsleOfConquest::GetStartingCoords(uint32 Team)
 
 void IsleOfConquest::OnStart()
 {
-	for(uint32 i = 0; i < 2; ++i) {
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr) {
+	for(uint32 i = 0; i < 2; i++) {
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++) {
 			(*itr)->RemoveAura(BG_PREPARATION);
 		}
 	}
@@ -906,9 +906,9 @@ void IsleOfConquest::Finish(uint32 losingTeam)
 	/* add the marks of honor to all players */
 	SpellEntry * winner_spell = dbcSpell.LookupEntry(24955);
 	SpellEntry * loser_spell = dbcSpell.LookupEntry(24954);
-	for(uint32 i = 0; i < 2; ++i)
+	for(uint32 i = 0; i < 2; i++)
 	{
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 		{
 			(*itr)->Root();
 

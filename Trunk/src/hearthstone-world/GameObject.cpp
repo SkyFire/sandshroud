@@ -80,7 +80,7 @@ GameObject::~GameObject()
 		m_respawnCell->_respawnObjects.erase( TO_OBJECT(this) );
 
 	if (m_summonedGo && m_summoner)
-		for(int i = 0; i < 4; ++i)
+		for(int i = 0; i < 4; i++)
 			if (m_summoner->m_ObjectSlots[i] == GetUIdFromGUID())
 				m_summoner->m_ObjectSlots[i] = 0;
 
@@ -155,7 +155,7 @@ void GameObject::Update(uint32 p_time)
 		Object::InRangeSet::iterator itr,it2;
 		Unit* pUnit;
 		float dist;
-		for( it2 = GetInRangeSetBegin(); it2 != GetInRangeSetEnd(); ++it2)
+		for( it2 = GetInRangeSetBegin(); it2 != GetInRangeSetEnd(); it2++)
 		{
 			itr = it2;
 			dist = GetDistanceSq((*itr));
@@ -348,7 +348,7 @@ void GameObject::InitAI()
 			Lock *pLock = dbcLock.LookupEntry(GetInfo()->SpellFocus);
 			if(pLock)
 			{
-				for(uint32 i=0; i < 5; ++i)
+				for(uint32 i=0; i < 5; i++)
 				{
 					if(pLock->locktype[i])
 					{
@@ -561,7 +561,7 @@ void GameObject::AddQuest(QuestRelation *Q)
 void GameObject::DeleteQuest(QuestRelation *Q)
 {
 	list<QuestRelation *>::iterator it;
-	for( it = m_quests->begin(); it != m_quests->end(); ++it )
+	for( it = m_quests->begin(); it != m_quests->end(); it++ )
 	{
 		if( ( (*it)->type == Q->type ) && ( (*it)->qst == Q->qst ) )
 		{
@@ -575,7 +575,7 @@ void GameObject::DeleteQuest(QuestRelation *Q)
 Quest* GameObject::FindQuest(uint32 quest_id, uint8 quest_relation)
 {   
 	list< QuestRelation* >::iterator it;
-	for( it = m_quests->begin(); it != m_quests->end(); ++it )
+	for( it = m_quests->begin(); it != m_quests->end(); it++ )
 	{
 		QuestRelation* ptr = (*it);
 		if( ( ptr->qst->id == quest_id ) && ( ptr->type & quest_relation ) )
@@ -590,7 +590,7 @@ uint16 GameObject::GetQuestRelation(uint32 quest_id)
 {
 	uint16 quest_relation = 0;
 	list< QuestRelation* >::iterator it;
-	for( it = m_quests->begin(); it != m_quests->end(); ++it )
+	for( it = m_quests->begin(); it != m_quests->end(); it++ )
 	{
 		if( (*it) != NULL && (*it)->qst->id == quest_id )
 		{
@@ -723,7 +723,7 @@ void GameObject::OnRemoveInRangeObject(Object* pObj)
 	Object::OnRemoveInRangeObject(pObj);
 	if(m_summonedGo && m_summoner == pObj)
 	{
-		for(int i = 0; i < 4; ++i)
+		for(int i = 0; i < 4; i++)
 			if (m_summoner->m_ObjectSlots[i] == GetUIdFromGUID())
 				m_summoner->m_ObjectSlots[i] = 0;
 

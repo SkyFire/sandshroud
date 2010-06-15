@@ -64,7 +64,7 @@ void MapCell::SetActivity(bool state)
 	if(!_active && state)
 	{
 		// Move all objects to active set.
-		for(ObjectSet::iterator itr = _objects.begin(); itr != _objects.end(); ++itr)
+		for(ObjectSet::iterator itr = _objects.begin(); itr != _objects.end(); itr++)
 		{
 			if(!(*itr)->Active && (*itr)->CanActivate())
 				(*itr)->Activate(_mapmgr);
@@ -78,7 +78,7 @@ void MapCell::SetActivity(bool state)
 	} else if(_active && !state)
 	{
 		// Move all objects from active set.
-		for(ObjectSet::iterator itr = _objects.begin(); itr != _objects.end(); ++itr)
+		for(ObjectSet::iterator itr = _objects.begin(); itr != _objects.end(); itr++)
 		{
 			if((*itr)->Active)
 				(*itr)->Deactivate(_mapmgr);
@@ -101,7 +101,7 @@ void MapCell::RemoveObjects()
 
 	/* delete objects in pending respawn state */
 	Object* pObject;
-	for(itr = _respawnObjects.begin(); itr != _respawnObjects.end(); ++itr)
+	for(itr = _respawnObjects.begin(); itr != _respawnObjects.end(); itr++)
 	{
 		pObject = *itr;
 		if(!pObject)

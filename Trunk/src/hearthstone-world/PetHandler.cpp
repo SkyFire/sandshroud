@@ -341,7 +341,7 @@ void WorldSession::HandleStabledPetList(WorldPacket & recv_data)
 	data << uint8(_player->m_StableSlotCount);
 	uint8 i=0;
 	bool HasActive = false;
-	for(std::map<uint32, PlayerPet*>::iterator itr = _player->m_Pets.begin(); itr != _player->m_Pets.end(); ++itr)
+	for(std::map<uint32, PlayerPet*>::iterator itr = _player->m_Pets.begin(); itr != _player->m_Pets.end(); itr++)
 	{
 		data << uint32(itr->first); // pet no
 		data << uint32(itr->second->entry); // entryid

@@ -839,7 +839,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		case 17962:
 			{
 				Aura* pAura;
-				for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+				for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 				{
 					pAura = unitTarget->m_auras[i];
 					if( pAura && ( pAura->m_spellProto->NameHash == SPELL_HASH_IMMOLATE || pAura->m_spellProto->NameHash == SPELL_HASH_SHADOWFLAME ))
@@ -951,7 +951,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		case 64422:	case 64688:					// Sonic Screech
 			{
 				uint32 count = 0;
-				for(SpellTargetList::iterator itr = m_targetList.begin(); itr != m_targetList.end(); ++itr)
+				for(SpellTargetList::iterator itr = m_targetList.begin(); itr != m_targetList.end(); itr++)
 					if(itr->EffectMask & (1<<i))
 						++count;
 
@@ -1184,7 +1184,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				47488,  /* Shield Slam - Rank 8 */
 			};
 
-			for(i = 0; i < 8; ++i)
+			for(i = 0; i < 8; i++)
 			{
 				if( p_caster->HasSpell( ClearSpellId[i] ) )
 					p_caster->ClearCooldownForSpell( ClearSpellId[i] );
@@ -1381,7 +1381,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				36554  /* Shadowstep	   */
 			};
 
-			for(i = 0; i < 10; ++i)
+			for(i = 0; i < 10; i++)
 			{
 				if( p_caster->HasSpell( ClearSpellId[i] ) )
 					p_caster->ClearCooldownForSpell( ClearSpellId[i] );
@@ -1402,7 +1402,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				return;
 
 			Aura* pAura = NULL;
-			for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+			for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 			{
 				pAura = unitTarget->m_auras[i];
 				if( pAura != NULL && !pAura->IsPassive() && !pAura->IsPositive() && !(pAura->GetSpellProto()->Attributes & ATTRIBUTES_IGNORE_INVULNERABILITY) &&
@@ -1563,7 +1563,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					for(uint32 x = 0; x < p_caster->GetGroup()->GetSubGroupCount(); ++x)
 					{
 						if( count == 3 ) break;
-						for(GroupMembersSet::iterator itr = p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); ++itr)
+						for(GroupMembersSet::iterator itr = p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 						{
 						if( (*itr) && (*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetPowerType() == POWER_TYPE_MANA && count != 3)
 							{
@@ -1677,7 +1677,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					for(uint32 sgid = 0; sgid < grp->GetSubGroupCount(); ++sgid)
 					{
 						sg = p_caster->GetGroup()->GetSubGroup(sgid);
-						for(GroupMembersSet::iterator itr = sg->GetGroupMembersBegin(); itr != sg->GetGroupMembersEnd(); ++itr)
+						for(GroupMembersSet::iterator itr = sg->GetGroupMembersBegin(); itr != sg->GetGroupMembersEnd(); itr++)
 						{
 							if( (*itr)->m_loggedInPlayer != NULL && (*itr)->m_loggedInPlayer->GetInstanceID() == p_caster->GetInstanceID() &&
 								(*itr)->m_loggedInPlayer != p_caster && (*itr)->m_loggedInPlayer->GetDistance2dSq(p_caster) <= 400.0f )
@@ -1858,7 +1858,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			if(p_caster == NULL)
 				return;
 
-			for(Object::InRangeSet::iterator i = p_caster->GetInRangeSetBegin(); i != p_caster->GetInRangeSetEnd(); ++i)
+			for(Object::InRangeSet::iterator i = p_caster->GetInRangeSetBegin(); i != p_caster->GetInRangeSetEnd(); i++)
 			{
 				if((*i)->GetTypeId() == TYPEID_UNIT)
 				{
@@ -2988,7 +2988,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 
 				bool bonus = false;
 				Aura* pAura = NULL;
-				for(uint32 i = 0; i < MAX_POSITIVE_AURAS; ++i)
+				for(uint32 i = 0; i < MAX_POSITIVE_AURAS; i++)
 				{
 					pAura = unitTarget->m_auras[i];
 					if( pAura != NULL && pAura->GetCaster() == m_caster )
@@ -3189,7 +3189,7 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 		// Profession Discoveries
 		uint32 discovered_recipe = 0;
 		std::set<ProfessionDiscovery*>::iterator itr = objmgr.ProfessionDiscoveryTable.begin();
-		for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); ++itr )
+		for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); itr++ )
 		{
 			ProfessionDiscovery * pf = ( *itr );
 			if ( pf != NULL && m_spellInfo->Id == pf->SpellId && p_caster->_GetSkillLineCurrent( skill->skilline ) >= pf->SkillValue && !p_caster->HasSpell( pf->SpellToDiscover ) && Rand( pf->Chance ) )
@@ -3660,7 +3660,7 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		return;
 
 	// just in case
-	for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+	for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 	{
 		if( p_caster->m_auras[i] != NULL )
 		{
@@ -3863,7 +3863,7 @@ void Spell::SpellEffectTriggerMissile(uint32 i) // Trigger Missile
 
 	float spellRadius = GetRadius(i);
 
-	/*for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	/*for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		if(!((*itr)->IsUnit()) || !(TO_UNIT(*itr))->isAlive())
 			continue;
@@ -4292,7 +4292,7 @@ void Spell::SpellEffectLearnSpell(uint32 i) // Learn Spell
 			return;
 
 		uint32 spellid = 0;
-		for(int i = 0; i < 5; ++i)
+		for(int i = 0; i < 5; i++)
 		{
 			if( i_caster->GetProto()->Spells[i].Trigger == LEARNING && i_caster->GetProto()->Spells[i].Id != 0 )
 			{
@@ -4983,7 +4983,7 @@ void Spell::SpellEffectSummonObject(uint32 i)
 			{
 				p_caster->GetGroup()->Lock();
 				for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
-					itr != pGroup->GetGroupMembersEnd(); ++itr)
+					itr != pGroup->GetGroupMembersEnd(); itr++)
 				{
 					if((*itr)->m_loggedInPlayer && m_caster != (*itr)->m_loggedInPlayer)
 						(*itr)->m_loggedInPlayer->GetSession()->SendPacket(pkt);
@@ -5188,7 +5188,7 @@ void Spell::SpellEffectAddPrismaticSocket(uint32 i)
 		return;
 
 	bool add_socket = false;
-	for(uint8 i = 0; i < 3; ++i)
+	for(uint8 i = 0; i < 3; i++)
 	{
 		if(pEnchant->type[i] == 8)
 		{
@@ -5665,7 +5665,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 			if( unitTarget != NULL && p_caster != NULL )
 			{
 				Aura* pAura = NULL;
-				for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+				for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 				{
 					pAura = unitTarget->m_auras[i];
 					if( pAura != NULL && pAura->GetUnitCaster() == p_caster )
@@ -5685,11 +5685,11 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				return;
 			//ugly thingo
 			Aura* pAura = NULL;
-			for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+			for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 			{
 				pAura = p_caster->m_auras[i];
 				if( pAura != NULL )
-					for( int i=0 ; i<3 ; ++i )
+					for( int i=0 ; i<3 ; i++ )
 						if( pAura->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || pAura->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
 						{
 							p_caster->RemoveAuraBySlot(i);
@@ -5710,7 +5710,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 			SpellEntry* sting_proto = NULL;
 			Aura* pAura = NULL;
 			uint32 actdur = 0;
-			for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+			for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 			{
 				pAura = Gettarget->m_auras[i];
 				if( pAura != NULL )
@@ -6058,7 +6058,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 							if( TargetCount == 10 )
 								break;
 
-							for(GroupMembersSet::iterator itr = p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); ++itr)
+							for(GroupMembersSet::iterator itr = p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 							{
 								if((*itr)->m_loggedInPlayer && TargetCount <= 10)
 								{
@@ -6381,7 +6381,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				{
 					uint num = 2;
 					uint32 diseases[2] = { 55078, 55095 };
-					for(uint i = 0; i < num; ++i)
+					for(uint i = 0; i < num; i++)
 						if(unitTarget->HasAura(diseases[i]))
 							p_caster->CastSpell(unitTarget, diseases[i], true);
 				}
@@ -8201,7 +8201,7 @@ void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item
 	// Profession Discoveries used in Northrend Alchemy and Inscription Research plus Minor research
 	uint32 discovered_recipe = 0;
 	std::set<ProfessionDiscovery*>::iterator itr = objmgr.ProfessionDiscoveryTable.begin();
-	for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); ++itr )
+	for ( ; itr != objmgr.ProfessionDiscoveryTable.end(); itr++ )
 	{
 		ProfessionDiscovery * pf = NULL;
 		pf = ( *itr );

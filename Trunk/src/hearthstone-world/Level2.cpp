@@ -99,7 +99,7 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
 		return true;
 	}
 
-	for (uint32 i = 0; i < strlen(args); ++i) {
+	for (uint32 i = 0; i < strlen(args); i++) {
 		if(!isalpha(args[i]) && args[i]!=' ') {
 			SystemMessage(m_session, "Error, name can only contain chars A-Z and a-z.");
 			return true;
@@ -153,7 +153,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	if(unit->IsVehicle())
 	{
 		Vehicle* veh = TO_VEHICLE(unit);
-		for(int i = 0; i < 8; ++i)
+		for(int i = 0; i < 8; i++)
 		{
 			if(!veh->GetPassenger(i))
 				continue;
@@ -369,7 +369,7 @@ bool ChatHandler::HandleSaveAllCommand(const char *args, WorldSession *m_session
 	uint32 stime = now();
 	uint32 count = 0;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 	{
 		if(itr->second->GetSession())
 		{
@@ -654,7 +654,7 @@ bool ChatHandler::HandleGOSelect(const char *args, WorldSession *m_session)
 	}
 	if(!GObj)
 	{
-		for( ; Itr != Itr2; ++Itr )
+		for( ; Itr != Itr2; Itr++ )
 		{
 			if( (*Itr)->GetTypeId() == TYPEID_GAMEOBJECT )
 			{
@@ -1225,7 +1225,7 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 	std::stringstream sstext;
 	if(tmpItem)
 	{
-		for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); ++itr)
+		for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
 		{
 		std::stringstream ss;
 		ss << "INSERT INTO vendors (entry,item,amount,max_amount,inctime) VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << (*itr)->ItemId << "', '" << amount << "', 0, 0 )" << '\0';

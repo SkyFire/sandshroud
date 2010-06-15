@@ -209,7 +209,7 @@ void WorldSession::HandleGMTicketSurveySubmitOpcode( WorldPacket & recv_data )
 	ss << "INSERT INTO gm_surveys (playerguid, question1, answer1, question2, answer2, question3, answer3, question4, answer4, question5, answer5, question6, answer6, question7, answer7, comment, timestamp) VALUES (";
 	ss << GetPlayer()->GetLowGUID() << ", ";
 
-	for( int i = 0; i < 10; ++i)
+	for( int i = 0; i < 10; i++)
 	{
 		uint32 questionID;
 		recv_data >> questionID;

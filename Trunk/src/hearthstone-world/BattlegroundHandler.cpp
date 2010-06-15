@@ -36,7 +36,7 @@ void WorldSession::HandleBattlefieldPortOpcode(WorldPacket &recv_data)
 	}
 	else
 	{
-		for(uint32 i = 0; i < 3; ++i)
+		for(uint32 i = 0; i < 3; i++)
 		{
 			if( GetPlayer()->m_pendingBattleground[i] && 
 				(GetPlayer()->m_pendingBattleground[i]->GetType() == bgtype || bgtype == BATTLEGROUND_ARENA_5V5))
@@ -354,7 +354,7 @@ void WorldSession::HandleInspectArenaStatsOpcode( WorldPacket & recv_data )
 	ArenaTeam *team;
 	uint32 i;
 
-	for( i = 0; i < 3; ++i )
+	for( i = 0; i < 3; i++ )
 	{
 		team = player->m_playerInfo->arenaTeam[i];
 		if( team != NULL )

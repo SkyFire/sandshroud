@@ -412,7 +412,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 		float range=GetMaxRange(dbcSpellRange.LookupEntry(m_spellInfo->rangeIndex));//this is probably wrong
 		range*=range;
 		unordered_set<Object* >::iterator itr;
-		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 		{
 			if((*itr)->GetGUID()==m_targets.m_unitTarget)
 				continue;
@@ -487,7 +487,7 @@ void Spell::SpellTargetAllPartyMembersRangeNR(uint32 i, uint32 j)
 	if( subgroup != NULL )
 	{				
 		p->GetGroup()->Lock();
-		for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); ++itr)
+		for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); itr++)
 		{
 			if(!(*itr)->m_loggedInPlayer || m_caster == (*itr)->m_loggedInPlayer) 
 				continue;
@@ -665,7 +665,7 @@ void Spell::SpellTargetScriptedEffects(uint32 i, uint32 j)
 			{
 				if( TargetCount == 5 )
 					break;
-				for(GroupMembersSet::iterator itr = p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); ++itr)
+				for(GroupMembersSet::iterator itr = p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 				{
 					if((*itr)->m_loggedInPlayer && TargetCount != 5)
 					{
@@ -722,7 +722,7 @@ void Spell::SpellTargetNearbyPartyMembers(uint32 i, uint32 j)
 				{
 					p->GetGroup()->Lock();
 					for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
-						itr != pGroup->GetGroupMembersEnd(); ++itr)
+						itr != pGroup->GetGroupMembersEnd(); itr++)
 					{
 						if(!(*itr)->m_loggedInPlayer || p == (*itr)->m_loggedInPlayer) 
 							continue;
@@ -774,7 +774,7 @@ void Spell::SpellTargetPartyMember(uint32 i, uint32 j)
 	if(subgroup)
 	{
 		Target->GetGroup()->Lock();
-		for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); ++itr)
+		for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); itr++)
 		{
 			if((*itr)->m_loggedInPlayer)
 				_AddTargetForced( (*itr)->m_loggedInPlayer->GetGUID(), i );
@@ -876,7 +876,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 		{
 			p_caster->GetGroup()->Lock();
 			for(itr = pGroup->GetGroupMembersBegin();
-				itr != pGroup->GetGroupMembersEnd(); ++itr)
+				itr != pGroup->GetGroupMembersEnd(); itr++)
 			{
 				if(!(*itr)->m_loggedInPlayer || (*itr)->m_loggedInPlayer==u_caster || (*itr)->m_loggedInPlayer->GetUInt32Value(UNIT_FIELD_HEALTH) == (*itr)->m_loggedInPlayer->GetUInt32Value(UNIT_FIELD_MAXHEALTH))
 					continue;
@@ -896,7 +896,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 	else
 	{
 		unordered_set<Object* >::iterator itr;
-		for( itr = firstTarget->GetInRangeSetBegin(); itr != firstTarget->GetInRangeSetEnd(); ++itr )
+		for( itr = firstTarget->GetInRangeSetBegin(); itr != firstTarget->GetInRangeSetEnd(); itr++ )
 		{
 			if( !(*itr)->IsUnit() || !TO_UNIT(*itr)->isAlive())
 				continue;
@@ -953,7 +953,7 @@ void Spell::SpellTargetInFrontOfCaster2(uint32 i, uint32 j)
 {
 	unordered_set<Object* >::iterator itr;
 
-	for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		if(!((*itr)->IsUnit()) || !TO_UNIT(*itr)->isAlive())
 			continue;
@@ -1016,7 +1016,7 @@ void Spell::SpellTargetSameGroupSameClass(uint32 i, uint32 j)
 
 		for( uint32 x = 0; x < Target->GetGroup()->GetSubGroupCount(); ++x )
 		{
-			for(GroupMembersSet::iterator itr = Target->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != Target->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); ++itr)
+			for(GroupMembersSet::iterator itr = Target->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != Target->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 			{
 				if(!(*itr)->m_loggedInPlayer || Target->getClass() != (*itr)->m_loggedInPlayer->getClass()) 
 					continue;
@@ -1043,7 +1043,7 @@ uint64 Spell::FindLowestHealthRaidMember(Player* Target, uint32 dist)
 	{
 		group->Lock();
 		for(uint32 j = 0; j < group->GetSubGroupCount(); ++j) {
-			for(GroupMembersSet::iterator itr = group->GetSubGroup(j)->GetGroupMembersBegin(); itr != group->GetSubGroup(j)->GetGroupMembersEnd(); ++itr)
+			for(GroupMembersSet::iterator itr = group->GetSubGroup(j)->GetGroupMembersBegin(); itr != group->GetSubGroup(j)->GetGroupMembersEnd(); itr++)
 			{
 				if((*itr)->m_loggedInPlayer && Target->GetDistance2dSq((*itr)->m_loggedInPlayer) <= dist)
 				{

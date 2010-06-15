@@ -34,7 +34,7 @@ AddonMgr::AddonMgr()
 AddonMgr::~AddonMgr()
 {
 	std::map<std::string, AddonEntry*>::iterator itr;
-	for(itr = KnownAddons.begin(); itr!=KnownAddons.end(); ++itr) 
+	for(itr = KnownAddons.begin(); itr!=KnownAddons.end(); itr++) 
 	{
 		delete itr->second;
 	}
@@ -157,7 +157,7 @@ void AddonMgr::SendAddonInfoPacket(WorldPacket *source, uint32 pos, WorldSession
 	}
 
 	std::string name;
-	for (uint32 i = 0; i < addons; ++i)
+	for (uint32 i = 0; i < addons; i++)
 	{
 		unpacked >> name;
 		unpacked >> Enable;

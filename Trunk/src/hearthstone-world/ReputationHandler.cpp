@@ -116,7 +116,7 @@ void Player::smsg_InitialFactions()
 	WorldPacket data(SMSG_INITIALIZE_FACTIONS, 764);
 	data << uint32(128);
 	FactionReputation * rep;
-	for(uint32 i = 0; i < 128; ++i)
+	for(uint32 i = 0; i < 128; i++)
 	{
 		rep = reputationByListId[i];
 		if(rep)
@@ -144,7 +144,7 @@ void Player::_InitialReputation()
 	int32 BaseRep = 0;
 	uint32 j;
 	uint32 RaceMask = getRaceMask();
-	for(uint32 i = 0; i < dbcFaction.GetNumRows(); ++i)
+	for(uint32 i = 0; i < dbcFaction.GetNumRows(); i++)
 	{
 		f = dbcFaction.LookupRow(i);
 		if(f == 0) continue;
@@ -425,7 +425,7 @@ void Player::UpdateInrangeSetsBasedOnReputation()
 	Unit* pUnit;
 	bool rep_value;
 	bool enemy_current;
-	for( itr = m_objectsInRange.begin(); itr != m_objectsInRange.end(); ++itr )
+	for( itr = m_objectsInRange.begin(); itr != m_objectsInRange.end(); itr++ )
 	{
 		if( (*itr)->GetTypeId() != TYPEID_UNIT )
 			continue;
@@ -456,9 +456,9 @@ void Player::Reputation_OnKilledUnit(Unit* pUnit, bool InnerLoop)
 		/* loop the rep for group members */
 		m_Group->getLock().Acquire();
 		GroupMembersSet::iterator it;
-		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); ++i)
+		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); i++)
 		{
-			for(it = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); it != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); ++it)
+			for(it = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); it != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); it++)
 			{
 				if((*it)->m_loggedInPlayer && (*it)->m_loggedInPlayer->isInRange(TO_PLAYER(this),100.0f))
 					(*it)->m_loggedInPlayer->Reputation_OnKilledUnit(pUnit, true);
@@ -473,7 +473,7 @@ void Player::Reputation_OnKilledUnit(Unit* pUnit, bool InnerLoop)
 	if(modifier != 0)
 	{
 		// Apply this data.
-		for(vector<ReputationMod>::iterator itr = modifier->mods.begin(); itr != modifier->mods.end(); ++itr)
+		for(vector<ReputationMod>::iterator itr = modifier->mods.begin(); itr != modifier->mods.end(); itr++)
 		{
 			if(!(*itr).faction[team])
 				continue;

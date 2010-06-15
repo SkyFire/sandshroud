@@ -667,7 +667,7 @@ void Object::_BuildValuesUpdate(ByteBuffer * data, UpdateMask *updateMask, Playe
 	*data << (uint8)bc;
 	data->append( updateMask->GetMask(), bc*4 );
 	  
-	for( uint32 index = 0; index < values_count; ++index )
+	for( uint32 index = 0; index < values_count; index++ )
 	{
 		if( updateMask->GetBit( index ) )
 		{
@@ -805,7 +805,7 @@ void Object::OutPacketToSet(uint16 Opcode, uint16 Len, const void * Data, bool s
 	unordered_set<Player*  >::iterator itr = m_inRangePlayers.begin();
 	unordered_set<Player*  >::iterator it_end = m_inRangePlayers.end();
 	int gm = ( m_objectTypeId == TYPEID_PLAYER ? TO_PLAYER(this)->m_isGmInvisible : 0 );
-	for(; itr != it_end; ++itr)
+	for(; itr != it_end; itr++)
 	{
 		if((*itr))
 		{
@@ -841,7 +841,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf,bool myteam_only)
 		uint32 myteam=TO_PLAYER(this)->GetTeam();
 		if(gminvis && data->GetOpcode()!=SMSG_MESSAGECHAT)
 		{
-			for(; itr != it_end; ++itr)
+			for(; itr != it_end; itr++)
 			{
 				ASSERT((*itr)->GetSession());
 				if((*itr)->GetSession()->GetPermissionCount() > 0 && (*itr)->GetTeam()==myteam && PhasedCanInteract(*itr))
@@ -850,7 +850,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf,bool myteam_only)
 		}
 		else
 		{
-			for(; itr != it_end; ++itr)
+			for(; itr != it_end; itr++)
 			{
 				ASSERT((*itr)->GetSession());
 				if((*itr)->GetTeam()==myteam && PhasedCanInteract(*itr))
@@ -862,7 +862,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf,bool myteam_only)
 	{
 		if(gminvis && data->GetOpcode()!=SMSG_MESSAGECHAT)
 		{
-			for(; itr != it_end; ++itr)
+			for(; itr != it_end; itr++)
 			{
 				ASSERT((*itr)->GetSession());
 				if((*itr)->GetSession()->GetPermissionCount() > 0 && PhasedCanInteract(*itr))
@@ -871,7 +871,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf,bool myteam_only)
 		}
 		else
 		{
-			for(; itr != it_end; ++itr)
+			for(; itr != it_end; itr++)
 			{
 				ASSERT((*itr)->GetSession());
 				if( PhasedCanInteract(*itr) )
@@ -919,7 +919,7 @@ void Object::_SetCreateBits(UpdateMask *updateMask, Player* target) const
 		if(GetUInt32Value(index) != 0)
 			updateMask->SetBit(index);
 	}*/
-	for(uint32 i = 0; i < m_valuesCount; ++i)
+	for(uint32 i = 0; i < m_valuesCount; i++)
 		if(m_uint32Values[i] != 0)
 			updateMask->SetBit(i);
 }
@@ -1315,7 +1315,7 @@ void Object::SetFlag( const uint32 index, uint32 newFlag )
 		Unit* u = TO_UNIT(this);
 		if( newFlag == AURASTATE_FLAG_STUNNED && u->IsPlayer() && u->HasDummyAura(SPELL_HASH_PRIMAL_TENACITY) && TO_PLAYER(u)->GetShapeShift() == FORM_CAT )
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; ++i)
+			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && u->m_auras[i]->GetSpellProto()->NameHash == SPELL_HASH_PRIMAL_TENACITY )
 				{
@@ -1337,7 +1337,7 @@ void Object::SetFlag( const uint32 index, uint32 newFlag )
 		}
 		else
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; ++i)
+			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && !u->m_auras[i]->m_applied) // try to apply
 					u->m_auras[i]->ApplyModifiers(true);
@@ -1377,7 +1377,7 @@ void Object::RemoveFlag( const uint32 index, uint32 oldFlag )
 		Unit* u = TO_UNIT(this);
 		if( oldFlag == AURASTATE_FLAG_STUNNED && u->IsPlayer() && u->HasDummyAura(SPELL_HASH_PRIMAL_TENACITY) && TO_PLAYER(u)->GetShapeShift() == FORM_CAT )
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; ++i)
+			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && u->m_auras[i]->GetSpellProto()->NameHash == SPELL_HASH_PRIMAL_TENACITY )
 				{
@@ -1399,7 +1399,7 @@ void Object::RemoveFlag( const uint32 index, uint32 oldFlag )
 		}
 		else
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; ++i)
+			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && !u->m_auras[i]->m_applied) // try to apply
 					u->m_auras[i]->ApplyModifiers(true);
@@ -1635,7 +1635,7 @@ void Object::_setFaction()
 void Object::UpdateOppFactionSet()
 {
 	m_oppFactsInRange.clear();
-	for(Object::InRangeSet::iterator i = GetInRangeSetBegin(); i != GetInRangeSetEnd(); ++i)
+	for(Object::InRangeSet::iterator i = GetInRangeSetBegin(); i != GetInRangeSetEnd(); i++)
 	{
 		if (((*i)->GetTypeId() == TYPEID_UNIT) || ((*i)->GetTypeId() == TYPEID_PLAYER) || ((*i)->GetTypeId() == TYPEID_GAMEOBJECT))
 		{
@@ -2011,7 +2011,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			if(pVictim->GetCurrentSpell())
 			{
 				Spell* spl = pVictim->GetCurrentSpell();
-				for(int i = 0; i < 3; ++i)
+				for(int i = 0; i < 3; i++)
 				{
 					if(spl->m_spellInfo->Effect[i] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
 					{

@@ -121,7 +121,7 @@ void VoiceChatHandler::OnRead(WorldPacket* pck)
 			*pck >> error;
 
 			DEBUG_LOG("VoiceChatHandler", "Request ID %u, error %u", request_id, (int)error);
-			for(vector<VoiceChatChannelRequest>::iterator itr = m_requests.begin(); itr != m_requests.end(); ++itr)
+			for(vector<VoiceChatChannelRequest>::iterator itr = m_requests.begin(); itr != m_requests.end(); itr++)
 			{
 				if(itr->id == request_id)
 				{
@@ -184,7 +184,7 @@ void VoiceChatHandler::SocketDisconnected()
 	sWorld.SendWorldText("Channel/Party voice services are now offline.");
 
 	// notify channels
-	for(HM_NAMESPACE::hash_map<uint32, VoiceChannel*>::iterator itr = m_voiceChannels.begin(); itr != m_voiceChannels.end(); ++itr)
+	for(HM_NAMESPACE::hash_map<uint32, VoiceChannel*>::iterator itr = m_voiceChannels.begin(); itr != m_voiceChannels.end(); itr++)
 	{
 		if( itr->second->type == 3 )		// party
 			((Group*)itr->second->miscPointer)->VoiceSessionDropped();

@@ -243,11 +243,11 @@ void DayWatcherThread::update_arena()
 			arenapoints = f[1].GetUInt32();
 			orig_arenapoints = arenapoints;
 
-			for(uint32 i = 0; i < 3; ++i)
+			for(uint32 i = 0; i < 3; i++)
 				arenapointsPerTeam[i] = 0;
 
 			/* are we in any arena teams? */
-			for(uint32 i = 0; i < 3; ++i)			// 3 arena team types
+			for(uint32 i = 0; i < 3; i++)			// 3 arena team types
 			{
 				team = inf->arenaTeam[i];
 				if(team)

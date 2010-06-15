@@ -171,7 +171,7 @@ void DynamicObject::UpdateTargets()
 		float radius = m_floatValues[DYNAMICOBJECT_RADIUS]*m_floatValues[DYNAMICOBJECT_RADIUS];
 
 		Object::InRangeSet::iterator itr,itr2;
-		for( itr = GetInRangeSetBegin(); itr != GetInRangeSetEnd(); ++itr)
+		for( itr = GetInRangeSetBegin(); itr != GetInRangeSetEnd(); itr++)
 		{
 			itr2 = itr;
 
@@ -191,7 +191,7 @@ void DynamicObject::UpdateTargets()
 			{
 				Aura* pAura(new Aura(m_spellProto, m_aliveDuration, m_caster, target));
 
-				for(uint32 i = 0; i < 3; ++i)
+				for(uint32 i = 0; i < 3; i++)
 				{
 					if(m_spellProto->Effect[i] == 27)
 					{

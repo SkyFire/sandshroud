@@ -129,7 +129,7 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 						{
 							string temp_msg[2];
 							string tmp_msg;
-							for(uint32 i = 0; i < 2; ++i) 
+							for(uint32 i = 0; i < 2; i++) 
 							{
 								if (pMi->heroic_key[i] && _player->GetItemInterface()->GetItemCount(pMi->heroic_key[i], false)==0)
 								{

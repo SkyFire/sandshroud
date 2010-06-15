@@ -223,7 +223,7 @@ void ClusterInterface::HandlePackedPlayerInfo(WorldPacket & pck)
 	// todo: uncompress
 	uint32 count;
 	pck >> count;
-	for(uint32 i = 0; i < count; ++i)
+	for(uint32 i = 0; i < count; i++)
 	{
 		pi = new RPlayerInfo;
 		pi->Unpack(pck);

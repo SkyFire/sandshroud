@@ -99,7 +99,7 @@ bool ConsoleThread::run()
 #endif
 
 		len = strlen(cmd);
-		for( i = 0; i < len; ++i )
+		for( i = 0; i < len; i++ )
 		{
 			if(cmd[i] == '\n' || cmd[i] == '\r')
 				cmd[i] = '\0';

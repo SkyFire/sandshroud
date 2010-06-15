@@ -124,7 +124,7 @@ Creature::~Creature()
 
 	if(m_custom_waypoint_map != 0)
 	{
-		for(WayPointMap::iterator itr = m_custom_waypoint_map->begin(); itr != m_custom_waypoint_map->end(); ++itr)
+		for(WayPointMap::iterator itr = m_custom_waypoint_map->begin(); itr != m_custom_waypoint_map->end(); itr++)
 			delete (*itr);
 		delete m_custom_waypoint_map;
 	}
@@ -401,7 +401,7 @@ void Creature::AddQuest(QuestRelation *Q)
 void Creature::DeleteQuest(QuestRelation *Q)
 {
 	list<QuestRelation *>::iterator it;
-	for ( it = m_quests->begin(); it != m_quests->end(); ++it )
+	for ( it = m_quests->begin(); it != m_quests->end(); it++ )
 	{
 		if (((*it)->type == Q->type) && ((*it)->qst == Q->qst ))
 		{
@@ -415,7 +415,7 @@ void Creature::DeleteQuest(QuestRelation *Q)
 Quest* Creature::FindQuest(uint32 quest_id, uint8 quest_relation)
 {   
 	list<QuestRelation *>::iterator it;
-	for (it = m_quests->begin(); it != m_quests->end(); ++it)
+	for (it = m_quests->begin(); it != m_quests->end(); it++)
 	{
 		QuestRelation *ptr = (*it);
 
@@ -432,7 +432,7 @@ uint16 Creature::GetQuestRelation(uint32 quest_id)
 	uint16 quest_relation = 0;
 	list<QuestRelation *>::iterator it;
 
-	for (it = m_quests->begin(); it != m_quests->end(); ++it)
+	for (it = m_quests->begin(); it != m_quests->end(); it++)
 	{
 		if ((*it)->qst->id == quest_id)
 		{
@@ -745,7 +745,7 @@ void Creature::AddVendorItem(uint32 itemid, uint32 amount)
 }
 void Creature::ModAvItemAmount(uint32 itemid, uint32 value)
 {
-	for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); ++itr)
+	for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
 	{
 		if(itr->itemid == itemid)
 		{
@@ -768,7 +768,7 @@ void Creature::ModAvItemAmount(uint32 itemid, uint32 value)
 }
 void Creature::UpdateItemAmount(uint32 itemid)
 {
-	for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); ++itr)
+	for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
 	{
 		if(itr->itemid == itemid)
 		{
@@ -882,7 +882,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 			mindmg = proto_heroic->Mindmg;
 			maxdmg = proto_heroic->Maxdmg;
 			level =  proto_heroic->Minlevel + (RandomUInt(proto_heroic->Maxlevel - proto_heroic->Minlevel));
-			for(uint32 i = 0; i < 7; ++i)
+			for(uint32 i = 0; i < 7; i++)
 				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, proto_heroic->Resistances[i]);
 		}
 		else
@@ -894,7 +894,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 			level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
 			if(proto->Power)
 				power = proto->Power * 1.2;
-			for(uint32 i = 0; i < 7; ++i)
+			for(uint32 i = 0; i < 7; i++)
 				SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
 		}
 	}
@@ -906,7 +906,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		mindmg = proto->MinDamage;
 		maxdmg = proto->MaxDamage;
 		level = proto->MinLevel + (RandomUInt(proto->MaxLevel - proto->MinLevel));
-		for(uint32 i = 0; i < 7; ++i)
+		for(uint32 i = 0; i < 7; i++)
 			SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
 	}
 
@@ -1018,7 +1018,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 ////////////AI
 	
 	// kek
-	for(list<AI_Spell*>::iterator itr = proto->spells.begin(); itr != proto->spells.end(); ++itr)
+	for(list<AI_Spell*>::iterator itr = proto->spells.begin(); itr != proto->spells.end(); itr++)
 	{
 		m_aiInterface->addSpellToList(*itr);
 	}
@@ -1173,7 +1173,7 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
 
 	SetUInt32Value(UNIT_FIELD_LEVEL, proto->MinLevel + (RandomUInt(proto->MaxLevel - proto->MinLevel)));
 
-	for(uint32 i = 0; i < 7; ++i)
+	for(uint32 i = 0; i < 7; i++)
 		SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
 
 	SetUInt32Value(UNIT_FIELD_BASEATTACKTIME,proto->AttackTime);
@@ -1245,7 +1245,7 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
 	////////////AI
 
 	// kek
-	for(list<AI_Spell*>::iterator itr = proto->spells.begin(); itr != proto->spells.end(); ++itr)
+	for(list<AI_Spell*>::iterator itr = proto->spells.begin(); itr != proto->spells.end(); itr++)
 	{
 		m_aiInterface->addSpellToList(*itr);
 	}
@@ -1360,7 +1360,7 @@ void Creature::OnPushToWorld()
 	{
 		set<uint32>::iterator itr = proto->start_auras.begin();
 		SpellEntry * sp = NULL;
-		for(; itr != proto->start_auras.end(); ++itr)
+		for(; itr != proto->start_auras.end(); itr++)
 		{
 			sp = dbcSpell.LookupEntry((*itr));
 			if(sp != NULL)
@@ -1401,7 +1401,7 @@ void Creature::OnPushToWorld()
 	m_aiInterface->m_is_in_instance = (m_mapMgr->GetMapInfo()->type!=INSTANCE_NULL) ? true : false;
 	if (HasItems())
 	{
-		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); ++itr)
+		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
 		{
 				if (itr->max_amount == 0)
 					itr->available_amount=0;
@@ -1459,7 +1459,7 @@ void Creature::DestroyCustomWaypointMap()
 {
 	if(m_custom_waypoint_map)
 	{
-		for(WayPointMap::iterator itr = m_custom_waypoint_map->begin(); itr != m_custom_waypoint_map->end(); ++itr)
+		for(WayPointMap::iterator itr = m_custom_waypoint_map->begin(); itr != m_custom_waypoint_map->end(); itr++)
 		{
 			delete (*itr);
 		}
@@ -1487,7 +1487,7 @@ void Creature::SetGuardWaypoints()
 	if(!GetCreatureInfo()) return;
 
 	GetAIInterface()->setMoveType(1);
-	for(int i = 1; i <= 4; ++i)
+	for(int i = 1; i <= 4; i++)
 	{
 		float ang = rand()/100.0f;
 		float ran = (rand()%(100))/10.0f;

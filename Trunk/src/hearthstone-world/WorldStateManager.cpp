@@ -123,7 +123,7 @@ void WorldStateManager::SendWorldStates(Player* pPlayer)
 	data << (uint16)0;
 
 	// add states to packet
-	for(itr = m_states.begin(); itr != m_states.end(); ++itr)
+	for(itr = m_states.begin(); itr != m_states.end(); itr++)
 	{
 		if( itr->second.FactionMask != FACTION_MASK_ALL && itr->second.FactionMask != (int32)pPlayer->GetTeam() )
 			continue;
@@ -233,11 +233,11 @@ void WorldStateTemplateManager::ApplyMapTemplate(MapMgr* pmgr)
 {
 	WorldStateTemplateList::iterator itr = m_templatesForMaps[pmgr->GetMapId()].begin();
 	WorldStateTemplateList::iterator itrend = m_templatesForMaps[pmgr->GetMapId()].end();
-	for(; itr != itrend; ++itr)
+	for(; itr != itrend; itr++)
 		pmgr->GetStateManager().CreateWorldState(itr->uField, itr->uValue, itr->iFactionMask, itr->iZoneMask);
 
 	itr = m_general.begin();
 	itrend = m_general.end();
-	for(; itr != itrend; ++itr)
+	for(; itr != itrend; itr++)
 		pmgr->GetStateManager().CreateWorldState(itr->uField, itr->uValue, itr->iFactionMask, itr->iZoneMask);
 }

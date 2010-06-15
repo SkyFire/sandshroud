@@ -388,7 +388,7 @@ public:
 	/*HEARTHSTONE_INLINE void ResetProcCounts()
 	{
 		AI_Spell*sp;
-		for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
+		for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
 				{
 					sp = *itr;
 					sp->procCount =sp->procCountDB;

@@ -268,7 +268,7 @@ void DumpTalentSpells()
 		return;
 	}
 
-	for(uint32 i = 0 ;i < dbcTalent.GetNumRows(); ++i)
+	for(uint32 i = 0 ;i < dbcTalent.GetNumRows(); i++)
 	{
 		TalentEntry *talent = dbcTalent.LookupRow(i);
 		if(!talent)
@@ -306,7 +306,7 @@ uint32 fill( uint32* arr, ... ){
 	va_list vl;
 	uint32 i;
 	va_start( vl, arr );
-	for( i = 0; i < 100; ++i ){
+	for( i = 0; i < 100; i++ ){
 		arr[i] = va_arg( vl, uint32 );
 		if(arr[i] == 0)
 			break;
@@ -5674,7 +5674,7 @@ void ApplyNormalFixes()
 	map<uint32, uint32> talentSpells;
 	map<uint32,uint32>::iterator talentSpellIterator;
 	unsigned int i,j;
-	for(i = 0; i < dbcTalent.GetNumRows(); ++i)
+	for(i = 0; i < dbcTalent.GetNumRows(); i++)
 	{
 		TalentEntry * tal = dbcTalent.LookupRow(i);
 		for(j = 0; j < 5; ++j)
@@ -5735,7 +5735,7 @@ void ApplyNormalFixes()
 		SCHOOL_ARCANE = 64
 		*/
 
-		for (i=0; i<8; ++i)
+		for (i=0; i<8; i++)
 		{
 			if (sp->School & (1<<i))
 			{
@@ -6123,7 +6123,7 @@ void ApplyNormalFixes()
 					char desc[4096];
 					strcpy(desc,sp->Description);
 					uint32 len = (uint32)strlen(desc);
-					for(i = 0; i < len; ++i)
+					for(i = 0; i < len; i++)
 						desc[i] = tolower(desc[i]);
 					//dirty code for procs, if any1 got any better idea-> u are welcome
 					//139944 --- some magic number, it will trigger on all hits etc
@@ -6629,7 +6629,7 @@ void ApplyNormalFixes()
 		bool spcheck = false;
 		SpellEntry *spz;
 
-		for( uint8 i = 0 ; i < 3 ; ++i )
+		for( uint8 i = 0 ; i < 3 ; i++ )
 		{
 			if (sp->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_DAMAGE ||
 				sp->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_HEAL ||
@@ -6641,7 +6641,7 @@ void ApplyNormalFixes()
 		}
 
 		//Flag for DD or DH
-		for( uint8 i = 0 ; i < 3 ; ++i )
+		for( uint8 i = 0 ; i < 3 ; i++ )
 		{
 			if ( sp->EffectApplyAuraName[i] == SPELL_AURA_PERIODIC_TRIGGER_SPELL && sp->EffectTriggerSpell[i] )
 			{
@@ -6662,7 +6662,7 @@ void ApplyNormalFixes()
 			}
 		}
 
-		for(uint8 i = 0 ; i < 3; ++i)
+		for(uint8 i = 0 ; i < 3; i++)
 		{
 			switch (sp->EffectImplicitTargetA[i])
 			{
@@ -6688,7 +6688,7 @@ void ApplyNormalFixes()
 			}	
 		}
 
-		for(uint8 i = 0 ; i < 3 ; ++i)
+		for(uint8 i = 0 ; i < 3 ; i++)
 		{
 			switch (sp->EffectImplicitTargetB[i])
 			{
@@ -6756,7 +6756,7 @@ void ApplyNormalFixes()
 			sp->spell_coef_flags = SPELL_FLAG_IS_DD_OR_DH_SPELL;
 
 		//Additional Effect (not healing or damaging)
-		for( uint8 i = 0 ; i < 3 ; ++i )
+		for( uint8 i = 0 ; i < 3 ; i++ )
 		{
 			if(sp->Effect[i] == 0)
 				continue;
@@ -7193,7 +7193,7 @@ void ApplyNormalFixes()
 		sp = dbcSpell.LookupRow(x);
 		ApplySingleSpellFixes(sp);
 	}
-	for(list<SpellEntry*>::iterator itr = sWorld.dummyspells.begin(); itr != sWorld.dummyspells.end(); ++itr)
+	for(list<SpellEntry*>::iterator itr = sWorld.dummyspells.begin(); itr != sWorld.dummyspells.end(); itr++)
 		ApplySingleSpellFixes(*itr);
 
 

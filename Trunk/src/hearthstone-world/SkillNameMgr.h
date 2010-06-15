@@ -45,7 +45,7 @@ public:
 		SkillNames = new char * [maxskill+1]; //(+1, arrays count from 0.. not 1.)
 		memset(SkillNames,0,(maxskill+1) * sizeof(char *));
 
-		for(uint32 i = 0; i < SkillDBC.getRecordCount(); ++i)
+		for(uint32 i = 0; i < SkillDBC.getRecordCount(); i++)
 		{
 			unsigned int SkillID = SkillDBC.getRecord(i).getUInt(0);
 			const char *SkillName = SkillDBC.getRecord(i).getString(3);

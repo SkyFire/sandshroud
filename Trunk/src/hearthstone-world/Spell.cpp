@@ -331,7 +331,7 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 	//InStealth()
 	float r = range * range;
 	//uint8 did_hit_result;
-	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		// don't add objects that are not units and that are dead
 		if( !( (*itr)->IsUnit() ) || ! TO_UNIT( *itr )->isAlive())
@@ -392,7 +392,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range*range;
 	//uint8 did_hit_result;
-	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		if( !( (*itr)->IsUnit() ) || TO_UNIT(*itr)->m_CurrentVehicle == m_caster || ! TO_UNIT(*itr)->isAlive() || ( (*itr)->GetTypeId()==TYPEID_UNIT && TO_CREATURE(*itr)->IsTotem() ) || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
@@ -440,7 +440,7 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range * range;
 	//uint8 did_hit_result;
-	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		if( !((*itr)->IsUnit()) || !TO_UNIT(*itr)->isAlive() || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
@@ -496,7 +496,7 @@ uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
 		}
 	}
 	float srcx = m_caster->GetPositionX(), srcy = m_caster->GetPositionY(), srcz = m_caster->GetPositionZ();
-	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		if( !( (*itr)->IsUnit() ) || !TO_UNIT(*itr)->isAlive() || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
@@ -545,7 +545,7 @@ uint64 Spell::GetSinglePossibleFriend(uint32 i,float prange)
 		}
 	}
 	float srcx=m_caster->GetPositionX(),srcy=m_caster->GetPositionY(),srcz=m_caster->GetPositionZ();
-	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr )
+	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		if( !( (*itr)->IsUnit() ) || !TO_UNIT(*itr)->isAlive() )
 			continue;
@@ -865,7 +865,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 						if(subgroup)
 						{
 							p->GetGroup()->Lock();
-							for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); ++itr)
+							for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); itr++)
 							{
 								if(!(*itr)->m_loggedInPlayer || m_caster == (*itr)->m_loggedInPlayer) 
 									continue;
@@ -944,7 +944,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 							{
 								p_caster->GetGroup()->Lock();
 								for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
-									itr != pGroup->GetGroupMembersEnd(); ++itr)
+									itr != pGroup->GetGroupMembersEnd(); itr++)
 								{
 									if(!(*itr)->m_loggedInPlayer || p == (*itr)->m_loggedInPlayer) 
 										continue;
@@ -1488,7 +1488,7 @@ void Spell::cast(bool check)
 		bool effects_done[3];
 		effects_done[0]=effects_done[1]=effects_done[2] = false;
 
-		for(; itr != m_targetList.end(); ++itr)
+		for(; itr != m_targetList.end(); itr++)
 		{
 			if( itr->HitResult != SPELL_DID_HIT_SUCCESS )
 				continue;
@@ -1572,7 +1572,7 @@ void Spell::cast(bool check)
 		   m_spellInfo->EffectApplyAuraName[2] != 0)
 		{
 			itr = m_targetList.begin();
-			for(; itr != m_targetList.end(); ++itr)
+			for(; itr != m_targetList.end(); itr++)
 			{
 				if( itr->HitResult != SPELL_DID_HIT_SUCCESS )
 					continue;
@@ -1620,7 +1620,7 @@ void Spell::cast(bool check)
 				if( u_caster && u_caster->HasDummyAura(SPELL_HASH_GLYPH_OF_ICY_VEINS) )
 				{
 					Aura* pAura = NULL;
-					for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+					for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 					{
 						pAura = u_caster->m_auras[i];
 						if( pAura != NULL && !pAura->IsPositive() )
@@ -1648,7 +1648,7 @@ void Spell::cast(bool check)
 						if( u_target )
 						{
 							Aura* pAura;
-							for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+							for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 							{
 								pAura = u_target->m_auras[i];
 								if( pAura != NULL )
@@ -1751,9 +1751,9 @@ void Spell::HandleDestLocationHit()
 			bool hit = false;
 			if (m_orderedObjects.size()>0)
 			{
-				for(std::vector<uint64>::iterator itr = m_orderedObjects.begin(); itr != m_orderedObjects.end(); ++itr)
+				for(std::vector<uint64>::iterator itr = m_orderedObjects.begin(); itr != m_orderedObjects.end(); itr++)
 				{
-					for(SpellTargetList::iterator itr2 = m_targetList.begin(); itr2 != m_targetList.end(); ++itr2)
+					for(SpellTargetList::iterator itr2 = m_targetList.begin(); itr2 != m_targetList.end(); itr2++)
 					{
 						if((*itr2).Guid == *itr && ((*itr2).EffectMask & (1 << x)))
 						{
@@ -2069,7 +2069,7 @@ void Spell::SendCastResult(uint8 result)
 			uint16 area_id = plr->GetMapMgr()->GetAreaID( plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 			AreaGroup *GroupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
 
-			for( uint8 i = 0; i < 7; ++i )
+			for( uint8 i = 0; i < 7; i++ )
 				if( GroupEntry->AreaId[i] != 0 && GroupEntry->AreaId[i] != area_id )
 				{
 					Extra = GroupEntry->AreaId[i];
@@ -2182,7 +2182,7 @@ void Spell::SendSpellStart()
 		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
 		data << p_caster->m_runemask << theoretical;
 
-		for (uint8 i=0; i<6; ++i)
+		for (uint8 i=0; i<6; i++)
 		{
 			if ((1 << i) & p_caster->m_runemask)
 				if (!((1 << i) & theoretical))
@@ -2344,7 +2344,7 @@ void Spell::SendSpellGo()
 	if( m_hitTargetCount > 0 )
 	{
 		counter = 0;
-		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; ++itr )
+		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; itr++ )
 		{
 			if( itr->HitResult == SPELL_DID_HIT_SUCCESS )
 			{
@@ -2358,7 +2358,7 @@ void Spell::SendSpellGo()
 	if( m_missTargetCount > 0 )
 	{
 		counter = 0;
-		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; ++itr )
+		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; itr++ )
 		{
 			if( itr->HitResult != SPELL_DID_HIT_SUCCESS )
 			{
@@ -2398,7 +2398,7 @@ void Spell::writeSpellGoTargets( WorldPacket * data )
 	if( m_hitTargetCount > 0 )
 	{
 		counter = 0;
-		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; ++itr )
+		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; itr++ )
 		{
 			if( itr->HitResult == SPELL_DID_HIT_SUCCESS )
 			{
@@ -2412,7 +2412,7 @@ void Spell::writeSpellGoTargets( WorldPacket * data )
 	if( m_missTargetCount > 0 )
 	{
 		counter = 0;
-		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; ++itr )
+		for( itr = m_targetList.begin(); itr != m_targetList.end() && counter < 100; itr++ )
 		{
 			if( itr->HitResult != SPELL_DID_HIT_SUCCESS )
 			{
@@ -3226,7 +3226,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 		if(p_caster->GetDuelState() == DUEL_STATE_REQUESTED)
 		{
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				if( m_spellInfo->Effect[i] && m_spellInfo->Effect[i] != SPELL_EFFECT_APPLY_AURA && m_spellInfo->Effect[i] != SPELL_EFFECT_APPLY_PET_AURA
 					&& m_spellInfo->Effect[i] != SPELL_EFFECT_APPLY_AREA_AURA)
@@ -3337,7 +3337,7 @@ uint8 Spell::CanCast(bool tolerate)
 		}
 
 
-		for(uint8 i = 0; i < 3; ++i)
+		for(uint8 i = 0; i < 3; i++)
 		{
 			if( m_spellInfo->Effect[i] == SPELL_EFFECT_OPEN_LOCK && m_spellInfo->EffectMiscValue[i] == LOCKTYPE_SLOW_OPEN )
 			{
@@ -3455,7 +3455,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( ( m_spellInfo->NameHash == SPELL_HASH_CANNIBALIZE || m_spellInfo->Id == 46584 ))
 		{
 			bool check = false;
-			for(Object::InRangeSet::iterator i = p_caster->GetInRangeSetBegin(); i != p_caster->GetInRangeSetEnd(); ++i)
+			for(Object::InRangeSet::iterator i = p_caster->GetInRangeSetBegin(); i != p_caster->GetInRangeSetEnd(); i++)
 			{
 				if(p_caster->GetDistance2dSq((*i)) <= 25)
 					if((*i)->GetTypeId() == TYPEID_UNIT || (*i)->GetTypeId() == TYPEID_PLAYER )
@@ -3485,7 +3485,7 @@ uint8 Spell::CanCast(bool tolerate)
 			float focusRange;
 			bool found = false;
 
-			for( unordered_set<Object*>::iterator itr = p_caster->GetInRangeSetBegin(); itr != p_caster->GetInRangeSetEnd(); ++itr )
+			for( unordered_set<Object*>::iterator itr = p_caster->GetInRangeSetBegin(); itr != p_caster->GetInRangeSetEnd(); itr++ )
 			{
 				if((*itr)->GetTypeId() != TYPEID_GAMEOBJECT)
 					continue;
@@ -3530,7 +3530,7 @@ uint8 Spell::CanCast(bool tolerate)
 			AreaGroup const* groupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
 			if( groupEntry )
 			{
-				for ( uint8 i=0; i<7; ++i )
+				for ( uint8 i=0; i<7; i++ )
 				{
 					if( groupEntry->AreaId[i] == zone_id || groupEntry->AreaId[i] == area_id )
 					{
@@ -4111,7 +4111,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 		if(target != NULL) /* -Supalosa- Shouldn't this be handled on Spell Apply? */
 		{
-			for( int i = 0; i < 3; ++i ) // if is going to cast a spell that breaks stun remove stun auras, looks a bit hacky but is the best way i can find
+			for( int i = 0; i < 3; i++ ) // if is going to cast a spell that breaks stun remove stun auras, looks a bit hacky but is the best way i can find
 			{
 				if( m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MECHANIC_IMMUNITY )
 				{
@@ -4418,7 +4418,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 		if(itr != p_caster->mSpellOverrideMap.end())
 		{
 			ScriptOverrideList::iterator itrSO;
-			for(itrSO = itr->second->begin(); itrSO != itr->second->end(); ++itrSO)
+			for(itrSO = itr->second->begin(); itrSO != itr->second->end(); itrSO++)
 			{
 				//DK:FIXME->yeni bir map olu�tur
 				// Capt: WHAT THE FUCK DOES THIS MEAN....
@@ -4681,7 +4681,7 @@ void Spell::Heal(int32 amount)
 				uint32 GHL = float2int32(amount * 0.1f);
 				uint32 targetcnt = 0;
 				unordered_set<Object* >::iterator itr;
-				for( itr = unitTarget->GetInRangeSetBegin(); itr != unitTarget->GetInRangeSetEnd(); ++itr )
+				for( itr = unitTarget->GetInRangeSetBegin(); itr != unitTarget->GetInRangeSetEnd(); itr++ )
 				{
 					if( !(*itr)->IsUnit() || !TO_UNIT(*itr)->isAlive() || isAttackable(u_caster, (*itr), true) )
 						continue;
@@ -4848,7 +4848,7 @@ void Spell::Heal(int32 amount)
  	//Beacon of Light
 	if(p_caster && p_caster->GetGroup() && p_caster->GetGroup()->m_BeaconOfLightTargets.empty() == false )
  	{
-		for(std::map<Player*, uint32>::iterator itr = p_caster->GetGroup()->m_BeaconOfLightTargets.begin(); itr != p_caster->GetGroup()->m_BeaconOfLightTargets.end(); ++itr)
+		for(std::map<Player*, uint32>::iterator itr = p_caster->GetGroup()->m_BeaconOfLightTargets.begin(); itr != p_caster->GetGroup()->m_BeaconOfLightTargets.end(); itr++)
 		{
 			if(itr->first != NULL)
 			{
@@ -4884,7 +4884,7 @@ void Spell::Heal(int32 amount)
 		{
 			target_threat.reserve(u_caster->GetInRangeCount()); // this helps speed
 
-			for(unordered_set<Object* >::iterator itr = u_caster->GetInRangeSetBegin(); itr != u_caster->GetInRangeSetEnd(); ++itr)
+			for(unordered_set<Object* >::iterator itr = u_caster->GetInRangeSetBegin(); itr != u_caster->GetInRangeSetEnd(); itr++)
 			{
 				if((*itr)->GetTypeId() != TYPEID_UNIT)
 					continue;
@@ -4905,7 +4905,7 @@ void Spell::Heal(int32 amount)
 			*/
 			uint32 threat = base_threat / (count * 2);
 				
-			for(std::vector<Unit* >::iterator itr = target_threat.begin(); itr != target_threat.end(); ++itr)
+			for(std::vector<Unit* >::iterator itr = target_threat.begin(); itr != target_threat.end(); itr++)
 			{
 				// for now we'll just use heal amount as threat.. we'll prolly need a formula though
 				TO_UNIT(*itr)->GetAIInterface()->HealReaction( u_caster, unitTarget, threat, m_spellInfo );
@@ -4966,7 +4966,7 @@ bool Spell::Reflect(Unit* refunit)
 		return false;
 
 	// if the spell to reflect is a reflect spell, do nothing.
-	for(int i=0; i<3; ++i)
+	for(int i=0; i<3; i++)
 	{
 		if( m_spellInfo->Effect[i] == 6 && (m_spellInfo->EffectApplyAuraName[i] == 74 || m_spellInfo->EffectApplyAuraName[i] == 28))
 			return false;
@@ -5264,7 +5264,7 @@ void Spell::_AddTarget(const Unit* target, const uint32 effectid)
 	SpellTarget tgt;
 
 	// look for the target in the list already
-	for( itr = m_targetList.begin(); itr != m_targetList.end(); ++itr )
+	for( itr = m_targetList.begin(); itr != m_targetList.end(); itr++ )
 	{
 		if( itr->Guid == target->GetGUID() )
 		{
@@ -5297,7 +5297,7 @@ void Spell::_AddTargetForced(const uint64& guid, const uint32 effectid)
 	SpellTarget tgt;
 
 	// look for the target in the list already
-	for( itr = m_targetList.begin(); itr != m_targetList.end(); ++itr )
+	for( itr = m_targetList.begin(); itr != m_targetList.end(); itr++ )
 	{
 		if( itr->Guid == guid )
 		{

@@ -354,7 +354,7 @@ void WorldSession::HandleGuildRank(WorldPacket & recv_data)
 
 	recv_data >> pRank->iGoldLimitPerDay;
 
-	for(i = 0; i < MAX_GUILD_BANK_TABS; ++i)
+	for(i = 0; i < MAX_GUILD_BANK_TABS; i++)
 	{
 		recv_data >> pRank->iTabPermissions[i].iFlags;
 		recv_data >> pRank->iTabPermissions[i].iStacksPerDay;
@@ -853,7 +853,7 @@ void WorldSession::HandleCharterSign( WorldPacket & recv_data )
 		return;
 	}
 
-	for(uint32 i = 0; i < 9; ++i)
+	for(uint32 i = 0; i < 9; i++)
 	{
 		if(c->Signatures[i] == _player->GetGUID())
 		{
@@ -976,7 +976,7 @@ void WorldSession::HandleCharterTurnInCharter(WorldPacket & recv_data)
 
 
 		/* Add the members */
-		for(i = 0; i < pCharter->SignatureCount; ++i)
+		for(i = 0; i < pCharter->SignatureCount; i++)
 		{
 			PlayerInfo * info = objmgr.GetPlayerInfo(pCharter->Signatures[i]);
 			if(info)
@@ -1382,7 +1382,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 		/* check if we are auto assigning */
 		if(dest_bankslot == 0xff)
 		{
-			for(i = 0; i < MAX_GUILD_BANK_SLOTS; ++i)
+			for(i = 0; i < MAX_GUILD_BANK_SLOTS; i++)
 			{
 				if(pTab->pSlots[i] == NULL)
 				{
@@ -1634,7 +1634,7 @@ void Guild::SendGuildBankInfo(WorldSession * pClient)
 	data << uint8(1);
 	data << GetBankTabCount();
 
-	for(uint8 i = 0; i < GetBankTabCount(); ++i)
+	for(uint8 i = 0; i < GetBankTabCount(); i++)
 	{
 		GuildBankTab * pTab = GetBankTab(i);
 		if(pTab== NULL || !pMember->pRank->CanPerformBankCommand(GR_RIGHT_GUILD_BANK_VIEW_TAB, i))
@@ -1762,7 +1762,7 @@ void WorldSession::HandleGuildGetFullPermissions(WorldPacket & recv_data)
 	data << pRank->iGoldLimitPerDay;
 	data << _player->GetGuild()->GetBankTabCount();
 
-	for( uint8 i = 0; i < MAX_GUILD_BANK_TABS; ++i)
+	for( uint8 i = 0; i < MAX_GUILD_BANK_TABS; i++)
 	{
 		data << pRank->iTabPermissions[i].iFlags;
 		data << pRank->iTabPermissions[i].iStacksPerDay;

@@ -153,7 +153,7 @@ EyeOfTheStorm::EyeOfTheStorm( MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) :
 {
 	uint32 i;
 
-	for(i = 0; i < EOTS_TOWER_COUNT; ++i)
+	for(i = 0; i < EOTS_TOWER_COUNT; i++)
 	{
 		m_EOTSbuffs[i] = NULLGOB;
 		m_CPStatus[i] = 50;
@@ -183,7 +183,7 @@ void EyeOfTheStorm::Init()
 
 EyeOfTheStorm::~EyeOfTheStorm()
 {
-	for(uint32 i = 0; i < EOTS_TOWER_COUNT; ++i)
+	for(uint32 i = 0; i < EOTS_TOWER_COUNT; i++)
 	{
 		if(m_EOTSbuffs[i] != NULL)
 		{
@@ -204,7 +204,7 @@ void EyeOfTheStorm::RepopPlayersOfTeam(int32 team, Creature* sh)
 	map<Creature*,set<uint32> >::iterator itr = m_resurrectMap.find(sh);
 	if( itr != m_resurrectMap.end() )
 	{
-		for( set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); ++it2 )
+		for( set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); it2++ )
 		{
 			Player* r_plr = m_mapMgr->GetPlayer( *it2 );
 			if( r_plr != NULL && (team < 0 || (int32)r_plr->GetTeam() == team) && r_plr->isDead() )
@@ -226,7 +226,7 @@ bool EyeOfTheStorm::HookHandleRepop(Player* plr)
 
 	dest.ChangeCoords( EOTSStartLocations[t][0], EOTSStartLocations[t][1], EOTSStartLocations[t][2], 0 );
 
-	for(i = 0; i < EOTS_TOWER_COUNT; ++i)
+	for(i = 0; i < EOTS_TOWER_COUNT; i++)
 	{
 		if( m_CPBanner[i] && m_CPBanner[i]->GetEntry() == EOTS_BANNER_ALLIANCE && t == 0 ||
 			  m_CPBanner[i]->GetEntry() == EOTS_BANNER_HORDE && t == 1 ||
@@ -322,7 +322,7 @@ void EyeOfTheStorm::HookOnAreaTrigger(Player* plr, uint32 id)
 	if( m_CPStatus[tid] > 50 && team == 1 )
 		return;
 
-	for(i = 0; i < EOTS_TOWER_COUNT; ++i)
+	for(i = 0; i < EOTS_TOWER_COUNT; i++)
 	{
 		if(m_CPStatus[i] < 50 && team == 1)
 			towers++;
@@ -560,7 +560,7 @@ void EyeOfTheStorm::OnCreate()
 	sm.CreateWorldState(WORLDSTATE_EOTS_FLAG_NEUTRAL_DISPLAY, 1);
 
 	/* create gameobjects */
-	for(i = 0; i < EOTS_TOWER_COUNT; ++i)
+	for(i = 0; i < EOTS_TOWER_COUNT; i++)
 	{
 		m_CPStatusGO[i] = m_mapMgr->CreateGameObject(EOTSTowerIds[i]);
 		if(m_CPStatusGO[i] == NULL || !m_CPStatusGO[i]->CreateFromProto( EOTSTowerIds[i], m_mapMgr->GetMapId(), EOTSCPLocations[i][0], EOTSCPLocations[i][1], EOTSCPLocations[i][2], 0.0f, 0.0f, 0.0f, 0.0f, 0.0f))
@@ -603,7 +603,7 @@ void EyeOfTheStorm::OnCreate()
 	}
 
 	/* BUBBLES! */
-	for( i = 0; i < 2; ++i )
+	for( i = 0; i < 2; i++ )
 	{
 		m_bubbles[i] = m_mapMgr->CreateGameObject((uint32)EOTSBubbleLocations[i][0]);
 		if( m_bubbles[i] == NULL || !m_bubbles[i]->CreateFromProto( (uint32)EOTSBubbleLocations[i][0], m_mapMgr->GetMapId(), EOTSBubbleLocations[i][1], EOTSBubbleLocations[i][2], EOTSBubbleLocations[i][3], EOTSBubbleLocations[i][4], 0.0f, 0.0f, 0.0f, 0.0f ) )
@@ -690,13 +690,13 @@ void EyeOfTheStorm::UpdateCPs()
 	Player* plr;
 	uint32 i;
 
-	for(i = 0; i < EOTS_TOWER_COUNT; ++i)
+	for(i = 0; i < EOTS_TOWER_COUNT; i++)
 	{
 		itr = m_CPStatusGO[i]->GetInRangePlayerSetBegin();
 		itrend = m_CPStatusGO[i]->GetInRangePlayerSetEnd();
 		plrcounts[0] = plrcounts[1] = 0;
 
-		for(; itr != itrend; ++itr)
+		for(; itr != itrend; itr++)
 		{ 
 			if( !(*itr)->IsPvPFlagged() || (*itr)->InStealth() || (*itr)->m_invisible || (*itr)->SchoolImmunityList[0] || (*itr)->m_bgFlagIneligible )
 				is_valid = false;
@@ -913,7 +913,7 @@ void EyeOfTheStorm::GeneratePoints()
 	*/
 	uint32 pointspertick[5] = { 0, 1, 2, 5, 10 };
 
-	for(i = 0; i < EOTS_TOWER_COUNT; ++i)
+	for(i = 0; i < EOTS_TOWER_COUNT; i++)
 	{
 		if(m_CPStatus[i] > 50)
 			towers[0]++;
@@ -921,7 +921,7 @@ void EyeOfTheStorm::GeneratePoints()
 			towers[1]++;
 	}
 
-	for( i = 0; i < 2; ++i )
+	for( i = 0; i < 2; i++ )
 	{
 		if( towers[i] == 0 )
 		{
@@ -947,7 +947,7 @@ bool EyeOfTheStorm::GivePoints(uint32 team, uint32 points)
 	{
 		m_resourceRewards[team] += m_resToGainBH;
 
-		for(set<Player*  >::iterator itx = m_players[team].begin(); itx != m_players[team].end(); ++itx)
+		for(set<Player*  >::iterator itx = m_players[team].begin(); itx != m_players[team].end(); itx++)
 		{
 			Player* plr = (*itx);
 			if(!plr) continue;
@@ -972,9 +972,9 @@ bool EyeOfTheStorm::GivePoints(uint32 team, uint32 points)
 		/* add the marks of honor to all players */
 		m_mainLock.Acquire();
 
-		for(uint32 i = 0; i < 2; ++i)
+		for(uint32 i = 0; i < 2; i++)
 		{
-			for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+			for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 			{
 				(*itr)->Root();
 
@@ -1100,9 +1100,9 @@ LocationVector EyeOfTheStorm::GetStartingCoords(uint32 Team)
 
 void EyeOfTheStorm::OnStart()
 {
-	for(uint32 i = 0; i < 2; ++i)
+	for(uint32 i = 0; i < 2; i++)
 	{
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 		{
 			(*itr)->RemoveAura(BG_PREPARATION);
 		}
@@ -1119,7 +1119,7 @@ void EyeOfTheStorm::OnStart()
 	AddSpiritGuide(SpawnSpiritGuide( EOTSStartLocations[1][0], EOTSStartLocations[1][1], EOTSStartLocations[1][2], 0, 1 ));
 
 	/* remove the bubbles */
-	for( i = 0; i < 2; ++i )
+	for( i = 0; i < 2; i++ )
 	{
 		m_bubbles[i]->RemoveFromWorld(false);
 		delete m_bubbles[i];

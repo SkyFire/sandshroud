@@ -22,6 +22,10 @@
 void WorldSession::HandleRepopRequestOpcode( WorldPacket & recv_data )
 {
 	DEBUG_LOG( "WORLD"," Recvd CMSG_REPOP_REQUEST Message" );
+	uint8 popcheck;
+	recv_data >> popcheck;
+	// Todo: Death checks and whatnot.
+
 	if(_player->m_CurrentTransporter)
 		_player->m_CurrentTransporter->RemovePlayer(_player);
 
@@ -155,7 +159,7 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 		data.SetOpcode(SMSG_LOOT_REMOVED);
 		data << lootSlot;
 		Player* plr;
-		for(LooterSet::iterator itr = pLootObj->m_loot.looters.begin(); itr != pLootObj->m_loot.looters.end(); ++itr)
+		for(LooterSet::iterator itr = pLootObj->m_loot.looters.begin(); itr != pLootObj->m_loot.looters.end(); itr++)
 		{
 			plr = _player->GetMapMgr()->GetPlayer((*itr));
 			if( plr != NULL )
@@ -174,7 +178,7 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 	/* any left yet? (for fishing bobbers) */
 	if(pGO && pGO->GetEntry() ==GO_FISHING_BOBBER)
 	{
-		for(vector<__LootItem>::iterator itr = pLootObj->m_loot.items.begin(); itr != pLootObj->m_loot.items.end(); ++itr)
+		for(vector<__LootItem>::iterator itr = pLootObj->m_loot.items.begin(); itr != pLootObj->m_loot.items.end(); itr++)
 		{
 			if( itr->iItemsCount > 0 )
 				return;
@@ -205,7 +209,7 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 		return;
 
 	uint32 money = pLootObj->m_loot.gold;
-	for(LooterSet::iterator itr = pLootObj->m_loot.looters.begin(); itr != pLootObj->m_loot.looters.end(); ++itr)
+	for(LooterSet::iterator itr = pLootObj->m_loot.looters.begin(); itr != pLootObj->m_loot.looters.end(); itr++)
 	{
 		if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
 			plr->GetSession()->OutPacket(SMSG_LOOT_CLEAR_MONEY);
@@ -231,10 +235,10 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 		GroupMembersSet::iterator itr;
 		SubGroup * sgrp;
 		party->getLock().Acquire();
-		for(uint32 i = 0; i < party->GetSubGroupCount(); ++i)
+		for(uint32 i = 0; i < party->GetSubGroupCount(); i++)
 		{
 			sgrp = party->GetSubGroup(i);
-			for(itr = sgrp->GetGroupMembersBegin(); itr != sgrp->GetGroupMembersEnd(); ++itr)
+			for(itr = sgrp->GetGroupMembersBegin(); itr != sgrp->GetGroupMembersEnd(); itr++)
 			{
 				if((*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetZoneId() == _player->GetZoneId() && _player->GetInstanceID() == (*itr)->m_loggedInPlayer->GetInstanceID())
 					targets.push_back((*itr)->m_loggedInPlayer);
@@ -251,7 +255,7 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 		StackPacket pkt(SMSG_LOOT_MONEY_NOTIFY, databuf, 50);
 		pkt << share;
 
-		for(vector<Player*>::iterator itr = targets.begin(); itr != targets.end(); ++itr)
+		for(vector<Player*>::iterator itr = targets.begin(); itr != targets.end(); itr++)
 		{
 			if(((*itr)->GetUInt32Value(PLAYER_FIELD_COINAGE) + share) >= PLAYER_MAX_GOLD)
 				continue;
@@ -290,10 +294,10 @@ void WorldSession::HandleLootOpcode( WorldPacket & recv_data )
 				SubGroup *s;
 				GroupMembersSet::iterator itr;
 				party->Lock();
-				for(uint32 i = 0; i < party->GetSubGroupCount(); ++i)
+				for(uint32 i = 0; i < party->GetSubGroupCount(); i++)
 				{
 					s = party->GetSubGroup(i);
-					for(itr = s->GetGroupMembersBegin(); itr != s->GetGroupMembersEnd(); ++itr)
+					for(itr = s->GetGroupMembersBegin(); itr != s->GetGroupMembersEnd(); itr++)
 					{
 						if((*itr)->m_loggedInPlayer && _player->GetZoneId() == (*itr)->m_loggedInPlayer->GetZoneId())
 						{
@@ -356,7 +360,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 				Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
 				if( pLock )
 				{
-					for( uint32 i=0; i < 5; ++i )
+					for( uint32 i=0; i < 5; i++ )
 					{
 						if( pLock->locktype[i] )
 						{
@@ -507,7 +511,7 @@ void WorldSession::HandleWhoOpcode( WorldPacket & recv_data )
 	{
 		zones = new uint32[zone_count];
 	
-		for(i = 0; i < zone_count; ++i)
+		for(i = 0; i < zone_count; i++)
 			recv_data >> zones[i];
 	}
 	else
@@ -520,7 +524,7 @@ void WorldSession::HandleWhoOpcode( WorldPacket & recv_data )
 	{
 		names = new string[name_count];
 
-		for(i = 0; i < name_count; ++i)
+		for(i = 0; i < name_count; i++)
 			recv_data >> names[i];
 	}
 	else
@@ -595,7 +599,7 @@ void WorldSession::HandleWhoOpcode( WorldPacket & recv_data )
 		{
 			// people that fail the zone check don't get added
 			add = false;
-			for(i = 0; i < zone_count; ++i)
+			for(i = 0; i < zone_count; i++)
 			{
 				if(zones[i] == plr->GetZoneId())
 				{
@@ -617,7 +621,7 @@ void WorldSession::HandleWhoOpcode( WorldPacket & recv_data )
 		{
 			// people that fail name check don't get added
 			add = false;
-			for(i = 0; i < name_count; ++i)
+			for(i = 0; i < name_count; i++)
 			{
 				if(!strnicmp(names[i].c_str(), plr->GetName(), names[i].length()))
 				{
@@ -1497,13 +1501,13 @@ void WorldSession::HandleTutorialFlag( WorldPacket & recv_data )
 
 void WorldSession::HandleTutorialClear( WorldPacket & recv_data )
 {
-	for ( uint32 iI = 0; iI < 8; ++iI)
+	for ( uint32 iI = 0; iI < 8; iI++)
 		GetPlayer()->SetTutorialInt( iI, 0xFFFFFFFF );
 }
 
 void WorldSession::HandleTutorialReset( WorldPacket & recv_data )
 {
-	for ( uint32 iI = 0; iI < 8; ++iI)
+	for ( uint32 iI = 0; iI < 8; iI++)
 		GetPlayer()->SetTutorialInt( iI, 0x00000000 );
 }
 
@@ -1772,7 +1776,7 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		data.SetOpcode(SMSG_LOOT_REMOVED);
 		data << slotid;
 		Player* plr;
-		for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); ++itr)
+		for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); itr++)
 		{
 			if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
 				plr->GetSession()->SendPacket(&data);
@@ -1961,7 +1965,7 @@ void WorldSession::HandleResetInstanceOpcode(WorldPacket& recv_data)
 void EncodeHex(const char* source, char* dest, uint32 size)
 {
 	char temp[5];
-	for(uint32 i = 0; i < size; ++i)
+	for(uint32 i = 0; i < size; i++)
 	{
 		snprintf(temp, 5, "%02X", source[i]);
 		strcat(dest, temp);
@@ -1972,7 +1976,7 @@ void DecodeHex(const char* source, char* dest, uint32 size)
 {
 	char temp;
 	char* acc = const_cast<char*>(source);
-	for(uint32 i = 0; i < size; ++i)
+	for(uint32 i = 0; i < size; i++)
 	{
 		sscanf("%02X", &temp);
 		acc = ((char*)&source[2]);
@@ -2030,9 +2034,9 @@ void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket& recv_data)
 
 		m_Group->SetDifficulty(data);
 		m_Group->Lock();
-		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); ++i)
+		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); i++)
 		{
-			for(GroupMembersSet::iterator itr = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); itr != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
+			for(GroupMembersSet::iterator itr = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); itr != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 			{
 				if((*itr)->m_loggedInPlayer)
 				{
@@ -2070,9 +2074,9 @@ void WorldSession::HandleRaidDifficultyOpcode(WorldPacket& recv_data)
 
 		m_Group->SetRaidDifficulty(data);
 		m_Group->Lock();
-		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); ++i)
+		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); i++)
 		{
-			for(GroupMembersSet::iterator itr = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); itr != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
+			for(GroupMembersSet::iterator itr = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); itr != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 			{
 				if((*itr)->m_loggedInPlayer)
 				{
@@ -2197,7 +2201,7 @@ void WorldSession::HandleReadyForAccountDataTimes(WorldPacket &recv_data)
 	// account data == UI config
 	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
 	data << uint32(UNIXTIME) << uint8(1) << uint32(0x15);
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 8; i++)
 	{
 		if(0x15 & (1 << i))
 		{

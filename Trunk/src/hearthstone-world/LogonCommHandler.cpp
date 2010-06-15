@@ -39,10 +39,10 @@ LogonCommHandler::LogonCommHandler()
 
 LogonCommHandler::~LogonCommHandler()
 {
-	for(set<LogonServer*>::iterator i = servers.begin(); i != servers.end(); ++i)
+	for(set<LogonServer*>::iterator i = servers.begin(); i != servers.end(); i++)
 		delete (*i);
 
-	for(set<Realm*>::iterator i = realms.begin(); i != realms.end(); ++i)
+	for(set<Realm*>::iterator i = realms.begin(); i != realms.end(); i++)
 		delete (*i);
 }
 
@@ -56,7 +56,7 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 {
 	set<Realm*>::iterator itr = realms.begin();
 	WorldPacket data(RCMSG_REGISTER_REALM, 100);
-	for(; itr != realms.end(); ++itr)
+	for(; itr != realms.end(); itr++)
 	{
 		data.clear();
 
@@ -145,7 +145,7 @@ void LogonCommHandler::Startup()
 void LogonCommHandler::ConnectAll()
 {
 	Log.Notice("LogonCommClient", "Attempting to connect to logon server...");
-	for(set<LogonServer*>::iterator itr = servers.begin(); itr != servers.end(); ++itr)
+	for(set<LogonServer*>::iterator itr = servers.begin(); itr != servers.end(); itr++)
 		Connect(*itr);
 }
 
@@ -252,7 +252,7 @@ void LogonCommHandler::Connect(LogonServer * server)
 void LogonCommHandler::AdditionAck(uint32 ID, uint32 ServID)
 {
 	map<LogonServer*, LogonCommClientSocket*>::iterator itr = logons.begin();
-	for(; itr != logons.end(); ++itr)
+	for(; itr != logons.end(); itr++)
 	{
 		if(itr->first->ID == ID)
 		{
@@ -270,7 +270,7 @@ void LogonCommHandler::UpdateSockets()
 	map<LogonServer*, LogonCommClientSocket*>::iterator itr = logons.begin();
 	LogonCommClientSocket * cs = NULL;
 	uint32 t = (uint32)UNIXTIME;
-	for(; itr != logons.end(); ++itr)
+	for(; itr != logons.end(); itr++)
 	{
 		cs = itr->second;
 		if(cs != NULL)
@@ -316,7 +316,7 @@ void LogonCommHandler::ConnectionDropped(uint32 ID)
 		return;
 	mapLock.Acquire();
 	map<LogonServer*, LogonCommClientSocket*>::iterator itr = logons.begin();
-	for(; itr != logons.end(); ++itr)
+	for(; itr != logons.end(); itr++)
 	{
 		if(itr->first->ID == ID && itr->second != 0)
 		{
@@ -356,7 +356,7 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 	data << request_id;
 
 	// strip the shitty hash from it
-	for(; acct[i] != '#' && acct[i] != '\0'; ++i )
+	for(; acct[i] != '#' && acct[i] != '\0'; i++ )
 		data.append( &acct[i], 1 );
 
 	data.append( "\0", 1 );
@@ -397,7 +397,7 @@ void LogonCommHandler::LoadRealmConfiguration()
 	}
 	else
 	{
-		for(uint32 i = 1; i < realmcount+1; ++i)
+		for(uint32 i = 1; i < realmcount+1; i++)
 		{
 			Realm * realm = NULL;
 			realm = new Realm;

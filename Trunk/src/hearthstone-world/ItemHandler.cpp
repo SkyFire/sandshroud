@@ -774,7 +774,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 
 	LocalizedItem* li = (language>0) ? sLocalizationMgr.GetLocalizedItem(itemid, language) : NULL;
 
-	for(int i = 0; i < 10; ++i)
+	for(int i = 0; i < 10; i++)
 	{
 		if(itemProto->Stats[i].Type)
 			statcount = i + 1; // Crow Classic.
@@ -813,14 +813,14 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->MaxCount;
 	data << itemProto->ContainerSlots;
 	data << uint32(statcount);
-	for(i = 0; i < statcount; ++i)
+	for(i = 0; i < statcount; i++)
 	{
 		data << itemProto->Stats[i].Type;
 		data << itemProto->Stats[i].Value;
 	}
 	data << uint32(itemProto->ScalingStatsEntry);
 	data << uint32(itemProto->ScalingStatsFlag);
-	for(i = 0; i < 2; ++i)
+	for(i = 0; i < 2; i++)
 	{
 		data << itemProto->Damage[i].Min;
 		data << itemProto->Damage[i].Max;
@@ -838,7 +838,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->Delay;
 	data << itemProto->AmmoType;
 	data << itemProto->Range;
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 	{
 		data << itemProto->Spells[i].Id;
 		data << itemProto->Spells[i].Trigger;
@@ -866,7 +866,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->BagFamily;
 	data << itemProto->TotemCategory;
 	// 3 sockets
-	for(i = 0; i < 3; ++i)
+	for(i = 0; i < 3; i++)
 	{
 		data << itemProto->Sockets[i].SocketColor;
 		data << itemProto->Sockets[i].Unk;
@@ -1476,7 +1476,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 	ItemPrototype * curItem;
 	uint32 counter = 0;
 
-	for(std::vector<CreatureItem>::iterator itr = unit->GetSellItemBegin(); itr != unit->GetSellItemEnd(); ++itr)
+	for(std::vector<CreatureItem>::iterator itr = unit->GetSellItemBegin(); itr != unit->GetSellItemEnd(); itr++)
 	{
 		if(itr->itemid && (itr->max_amount == 0 || (itr->max_amount>0 && itr->available_amount >0)))
 		{
@@ -1725,7 +1725,7 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 
 	if( !itemguid ) 
 	{
-		for( i = 0; i < MAX_INVENTORY_SLOT; ++i )
+		for( i = 0; i < MAX_INVENTORY_SLOT; i++ )
 		{
 			pItem = _player->GetItemInterface()->GetInventoryItem( i );
 			if( pItem != NULL )
@@ -1946,7 +1946,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 	bool sockenchbelt = (TargetItem->HasEnchantment(3729) && TargetItem->GetProto()->InventoryType == 6);
 
 	bool ColorMatch[3];
-	for(uint32 i = 0; i < 3; ++i)
+	for(uint32 i = 0; i < 3; i++)
 	{
 		recvPacket >> gemguid[i];
 
@@ -2031,7 +2031,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 
 	bool truecolormatch = false;
 
-	for(uint32 i = 0; i < 3; ++i)
+	for(uint32 i = 0; i < 3; i++)
 	{
 		if(TargetItem->GetProto()->Sockets[i].SocketColor)
 		{

@@ -37,7 +37,7 @@ void WorldSession::HandleChannelJoin(WorldPacket& recvPacket)
 	if(!stricmp(channelname.c_str(), "LookingForGroup") && !sWorld.m_lfgForNonLfg)
 	{
 		// make sure we have lfg dungeons
-		for(i = 0; i < 3; ++i)
+		for(i = 0; i < 3; i++)
 		{
 			if(_player->LfgDungeonId[i] != 0)
 				break;

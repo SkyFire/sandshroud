@@ -36,7 +36,7 @@ WordFilter::~WordFilter()
 	if(!m_filters)
 		return;
 
-	for(i = 0; i < m_filterCount; ++i)
+	for(i = 0; i < m_filterCount; i++)
 	{
 		p = m_filters[i];
 		if(p==NULL)
@@ -154,7 +154,7 @@ void WordFilter::Load(const char * szTableName)
 
 	m_filters = new WordFilterMatch*[lItems.size()];
 	i = 0;
-	for(itr = lItems.begin(); itr != lItems.end(); ++itr)
+	for(itr = lItems.begin(); itr != lItems.end(); itr++)
 		m_filters[i++] = (*itr);
 
 	m_filterCount = i;
@@ -172,7 +172,7 @@ bool WordFilter::Parse(string& sMessage, bool bAllowReplace /* = true */)
 	size_t iLen = sMessage.length();
 	//char 
 
-	for(i = 0; i < m_filterCount; ++i)
+	for(i = 0; i < m_filterCount; i++)
 	{
 		pFilter = m_filters[i];
 		if((n = pcre_exec((const pcre*)pFilter->pCompiledExpression,

@@ -110,7 +110,7 @@ public:
 
 	HEARTHSTONE_INLINE int32 QuestHasMob(Quest* qst, uint32 mob)
 	{
-		for(uint32 i = 0; i < 4; ++i)
+		for(uint32 i = 0; i < 4; i++)
 			if(qst->required_mob[i] == mob)
 				return qst->required_mobcount[i];
 		return -1;
@@ -118,7 +118,7 @@ public:
 
 	HEARTHSTONE_INLINE int32 GetOffsetForMob(Quest *qst, uint32 mob)
 	{
-		for(uint32 i = 0; i < 4; ++i)
+		for(uint32 i = 0; i < 4; i++)
 			if(qst->required_mob[i] == mob)
 				return i;
 
@@ -127,7 +127,7 @@ public:
 
 	HEARTHSTONE_INLINE int32 GetOffsetForItem(Quest *qst, uint32 itm)
 	{
-		for(uint32 i = 0; i < 6; ++i)
+		for(uint32 i = 0; i < 6; i++)
 			if(qst->required_item[i] == itm)
 				return i;
 

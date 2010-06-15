@@ -997,7 +997,7 @@ bool ChatHandler::HandleSendpacket(const char * args, WorldSession * m_session)
 	char * xstring = new char [arg_len];
 	memcpy(xstring, args,arg_len);
 
-	for (uint32 i = 0; i < arg_len; ++i)
+	for (uint32 i = 0; i < arg_len; i++)
 	{
 		if (xstring[i] == ' ')
 		{

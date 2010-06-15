@@ -577,9 +577,9 @@ void StrandOfTheAncients::EndGame()
 	// Honor is added?
 	SpellEntry * winner_spell = dbcSpell.LookupEntry(61160);
 	SpellEntry * loser_spell = dbcSpell.LookupEntry(61159);
-	for(uint32 i = 0; i < 2; ++i)
+	for(uint32 i = 0; i < 2; i++)
 	{
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 		{
 			(*itr)->Root();
 

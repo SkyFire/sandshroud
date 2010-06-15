@@ -81,7 +81,7 @@ ArenaTeam::ArenaTeam(Field * f)
 	sscanf(f[z++].GetString(), "%u %u %u %u", &m_stat_gamesplayedweek, &m_stat_gameswonweek, &m_stat_gamesplayedseason, &m_stat_gameswonseason);
 
 	m_stat_ranking = f[z++].GetUInt32();
-	for(i = 0; i < m_slots; ++i)
+	for(i = 0; i < m_slots; i++)
 	{
 		data = f[z++].GetString();
 		ret = sscanf(data, "%u %u %u %u %u %u", &guid, &m_members[i].Played_ThisWeek, &m_members[i].Won_ThisWeek,
@@ -109,7 +109,7 @@ ArenaTeam::ArenaTeam(Field * f)
 void ArenaTeam::SendPacket(WorldPacket * data)
 {
 	PlayerInfo * info;
-	for(uint32 i = 0; i < m_memberCount; ++i)
+	for(uint32 i = 0; i < m_memberCount; i++)
 	{
 		info = m_members[i].Info;
 		if(info && info->m_loggedInPlayer)
@@ -129,13 +129,13 @@ void ArenaTeam::Destroy()
 	SendPacket(data);
 	delete data;
 
-	for(i=0; i < m_memberCount; ++i)
+	for(i=0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info)
 			tokill.push_back(m_members[i].Info);
 	}
 
-	for(vector<PlayerInfo*>::iterator itr = tokill.begin(); itr != tokill.end(); ++itr)
+	for(vector<PlayerInfo*>::iterator itr = tokill.begin(); itr != tokill.end(); itr++)
 	{
 		RemoveMember(*itr);
 	}
@@ -170,7 +170,7 @@ bool ArenaTeam::AddMember(PlayerInfo * info)
 
 bool ArenaTeam::RemoveMember(PlayerInfo * info)
 {
-	for(uint32 i = 0; i < m_memberCount; ++i)
+	for(uint32 i = 0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info == info)
 		{
@@ -226,7 +226,7 @@ void ArenaTeam::Roster(WorldPacket & data)
 	data << m_memberCount;
 	data << GetPlayersPerTeam();
 
-	for(uint32 i = 0; i < m_memberCount; ++i)
+	for(uint32 i = 0; i < m_memberCount; i++)
 	{
 		PlayerInfo* info = m_members[i].Info;
 		// TODO : burlex figure out why this became null
@@ -267,7 +267,7 @@ void ArenaTeam::SaveToDB()
 		<< m_stat_gamesplayedseason << " " << m_stat_gameswonseason << "',"
 		<< m_stat_ranking;
     
-	for(i = 0; i < m_memberCount; ++i)
+	for(i = 0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info)
 		{
@@ -281,7 +281,7 @@ void ArenaTeam::SaveToDB()
 		}
 	}
 
-	for(; i < 10; ++i)
+	for(; i < 10; i++)
 	{
 		ss << ",'0 0 0 0 0 0'";
 	}
@@ -292,7 +292,7 @@ void ArenaTeam::SaveToDB()
 
 bool ArenaTeam::HasMember(uint32 guid)
 {
-	for(uint32 i = 0; i < m_memberCount; ++i)
+	for(uint32 i = 0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info && m_members[i].Info->guid == guid)
 			return true;
@@ -312,7 +312,7 @@ void ArenaTeam::SetLeader(PlayerInfo * info)
 	delete data;
 
 	/* set the fields */
-	for(uint32 i = 0; i < m_memberCount; ++i)
+	for(uint32 i = 0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info == info)		/* new leader */
 		{
@@ -331,7 +331,7 @@ void ArenaTeam::SetLeader(PlayerInfo * info)
 
 ArenaTeamMember * ArenaTeam::GetMember(PlayerInfo * info)
 {
-	for(uint32 i = 0; i < m_memberCount; ++i)
+	for(uint32 i = 0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info == info)
 			return &m_members[i];
@@ -344,7 +344,7 @@ ArenaTeamMember* ArenaTeam::GetMemberByGuid(uint32 guid)
 	if(!m_memberCount) // If we don't have members, whats the point?
 		return NULL;
 
-	for(uint32 i = 0; i < m_memberCount; ++i)
+	for(uint32 i = 0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info && m_members[i].Info->guid == guid)
 			return &m_members[i];

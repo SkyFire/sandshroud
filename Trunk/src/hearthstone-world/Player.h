@@ -729,7 +729,7 @@ struct EquipmentSet
 {
 	EquipmentSet() : Guid(0), state(EQUIPMENT_SET_NEW)
 	{
-		for(uint8 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+		for(uint8 i = 0; i < EQUIPMENT_SLOT_END; i++)
 			Items[i] = 0;
 	}
 
@@ -966,7 +966,7 @@ public:
 	/************************************************************************/
 	bool HasQuests() 
 	{
-		for(int i = 0; i < 25; ++i)
+		for(int i = 0; i < 25; i++)
 		{
 			if(m_questlog[i] != 0)
 				return true;
@@ -1211,7 +1211,7 @@ public:
 	void ResetTradeVariables()
 	{
 		mTradeGold = 0;
-		for(uint8 i = 0; i < 7; ++i)
+		for(uint8 i = 0; i < 7; i++)
 			mTradeItems[i] = NULLITEM;
 
 		mTradeStatus = 0;

@@ -155,7 +155,7 @@ World::~World()
 	delete eventholder;
 
 	Storage_Cleanup();
-	for(list<SpellEntry*>::iterator itr = dummyspells.begin(); itr != dummyspells.end(); ++itr)
+	for(list<SpellEntry*>::iterator itr = dummyspells.begin(); itr != dummyspells.end(); itr++)
 		delete *itr;
 }
 
@@ -396,7 +396,7 @@ bool World::SetInitialWorldSettings()
 	}
 
 	uint32 flag_, area_, zone_;
-	for(uint32 i = 0; i < area.getRecordCount(); ++i)
+	for(uint32 i = 0; i < area.getRecordCount(); i++)
 	{
 		area_ = area.getRecord(i).getUInt(0);
 		flag_ = area.getRecord(i).getUInt(3);
@@ -572,7 +572,7 @@ bool World::SetInitialWorldSettings()
 
 	TalentEntry const* talent_info = NULL;
 	TalentTabEntry const* tab_info = NULL;
-	for( uint32 i = 0; i < dbcTalent.GetNumRows(); ++i )
+	for( uint32 i = 0; i < dbcTalent.GetNumRows(); i++ )
 	{
 		talent_info = dbcTalent.LookupRow( i );
 		if(!talent_info)
@@ -597,7 +597,7 @@ bool World::SetInitialWorldSettings()
 		InspectTalentTabSize[talent_info->TalentTree] += talent_max_rank;
 	}
 
-	for( uint32 i = 0; i < dbcTalentTab.GetNumRows(); ++i )
+	for( uint32 i = 0; i < dbcTalentTab.GetNumRows(); i++ )
 	{
 		tab_info = dbcTalentTab.LookupRow(i);
 		if( tab_info == NULL )
@@ -613,7 +613,7 @@ bool World::SetInitialWorldSettings()
 
 		InspectTalentTabPages[talent_class + 1][tab_info->TabPage] = tab_info->TalentTabID;
 
-		for( std::map< uint32, uint32 >::iterator itr = InspectTalentTabBit.begin(); itr != InspectTalentTabBit.end(); ++itr )
+		for( std::map< uint32, uint32 >::iterator itr = InspectTalentTabBit.begin(); itr != InspectTalentTabBit.end(); itr++ )
 		{
 			uint32 talent_id = itr->first & 0xFFFF;
 			talent_info = dbcTalent.LookupEntry( talent_id );
@@ -672,7 +672,7 @@ void World::SendGlobalMessage(WorldPacket *packet, WorldSession *self)
 	m_sessionlock.AcquireReadLock();
 
 	SessionMap::iterator itr;
-	for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
 	{
 		if (itr->second->GetPlayer() &&
 			itr->second->GetPlayer()->IsInWorld()
@@ -689,7 +689,7 @@ void World::SendFactionMessage(WorldPacket *packet, uint8 teamId)
 	m_sessionlock.AcquireReadLock();
 	SessionMap::iterator itr;
 	Player* plr;
-	for(itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
 	{
 		plr = itr->second->GetPlayer();
 		if(!plr || !plr->IsInWorld())
@@ -706,7 +706,7 @@ void World::SendZoneMessage(WorldPacket *packet, uint32 zoneid, WorldSession *se
 	m_sessionlock.AcquireReadLock();
 
 	SessionMap::iterator itr;
-	for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
 	{
 		if (itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld() && itr->second != self)  // dont send to self!
 		{
@@ -723,7 +723,7 @@ void World::SendInstanceMessage(WorldPacket *packet, uint32 instanceid, WorldSes
 	m_sessionlock.AcquireReadLock();
 
 	SessionMap::iterator itr;
-	for (itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
 	{
 		if (itr->second->GetPlayer() &&
 			itr->second->GetPlayer()->IsInWorld()
@@ -784,7 +784,7 @@ void World::SendAdministratorMessage(WorldPacket *packet)
 {
 	m_sessionlock.AcquireReadLock();
 	SessionMap::iterator itr;
-	for(itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
 	{
 		if (itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld())
 		{
@@ -799,7 +799,7 @@ void World::SendGamemasterMessage(WorldPacket *packet)
 {
 	m_sessionlock.AcquireReadLock();
 	SessionMap::iterator itr;
-	for(itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
 	{
 		if (itr->second->GetPlayer() &&	itr->second->GetPlayer()->IsInWorld())
 		{
@@ -896,7 +896,7 @@ void World::RemoveQueuedSocket(WorldSocket* Socket)
 
 	// Find socket in list
 	QueueSet::iterator iter = mQueuedSessions.begin();
-	for(; iter != mQueuedSessions.end(); ++iter)
+	for(; iter != mQueuedSessions.end(); iter++)
 	{
 		if((*iter) == Socket)
 		{
@@ -921,7 +921,7 @@ uint32 World::GetQueuePos(WorldSocket* Socket)
 	// Find socket in list
 	QueueSet::iterator iter = mQueuedSessions.begin();
 	uint32 QueuePos = 1;
-	for(; iter != mQueuedSessions.end(); ++iter, ++QueuePos)
+	for(; iter != mQueuedSessions.end(); iter++, ++QueuePos)
 	{
 		if((*iter) == Socket)
 		{
@@ -1002,7 +1002,7 @@ void World::SaveAllPlayers()
 		// Servers started and obviously runing. lets save all players.
 	uint32 mt;
 	objmgr._playerslock.AcquireReadLock();   
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 		{
 			if(itr->second->GetSession())
 			{
@@ -1022,7 +1022,7 @@ WorldSession* World::FindSessionByName(const char * Name)//case insensetive
 
 	// loop sessions, see if we can find him
 	SessionMap::iterator itr = m_sessions.begin();
-	for(; itr != m_sessions.end(); ++itr)
+	for(; itr != m_sessions.end(); itr++)
 	{
 		if(!stricmp(itr->second->GetAccountName().c_str(),Name))
 		{
@@ -1041,7 +1041,7 @@ void World::GetStats(uint32 * GMCount, float * AverageLatency)
 	int avg = 0;
 	PlayerStorageMap::const_iterator itr;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 	{
 		if(itr->second->GetSession())
 		{
@@ -1069,7 +1069,7 @@ Task * TaskList::GetTask()
 	queueLock.Acquire();
 
 	Task* t = 0;
-	for(set<Task*>::iterator itr = tasks.begin(); itr != tasks.end(); ++itr)
+	for(set<Task*>::iterator itr = tasks.begin(); itr != tasks.end(); itr++)
 	{
 		if(!(*itr)->in_progress)
 		{
@@ -1130,7 +1130,7 @@ void TaskList::wait()
 	{
 		queueLock.Acquire();
 		has_tasks = false;
-		for(set<Task*>::iterator itr = tasks.begin(); itr != tasks.end(); ++itr)
+		for(set<Task*>::iterator itr = tasks.begin(); itr != tasks.end(); itr++)
 		{
 			if(!(*itr)->completed)
 			{
@@ -1433,7 +1433,7 @@ void World::LoadNameGenData()
 		return;
 	}
 
-	for(uint32 i = 0; i < dbc.getRecordCount(); ++i)
+	for(uint32 i = 0; i < dbc.getRecordCount(); i++)
 	{
 		NameGenData d;
 		if(dbc.getRecord(i).getString(1)==NULL)
@@ -2366,7 +2366,7 @@ void World::BackupDB()
 
 	sLog.outString("Backing up character db into %s", path);
 
-	for (i=0; tables[i] != NULL; ++i)
+	for (i=0; tables[i] != NULL; i++)
 	{
 		snprintf(cmd, 1024, "mkdir -p %s", path);
 		system(cmd);
@@ -2397,7 +2397,7 @@ bool NewsAnnouncer::run()
 	while(m_threadRunning)
 	{
 		// loop through messages
-		for( itr = m_announcements.begin(); itr != m_announcements.end(); ++itr )
+		for( itr = m_announcements.begin(); itr != m_announcements.end(); itr++ )
 		{
 			// it can be send time pl0x?
 			if( ((uint32)UNIXTIME - itr->second.m_lastTime) >= itr->second.m_timePeriod )

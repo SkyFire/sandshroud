@@ -1247,7 +1247,7 @@ HEARTHSTONE_INLINE bool IsDamagingSpell(SpellEntry *sp)
 	if( sp->NameHash == SPELL_HASH_MUTILATE )
 		return true;
 
-	for (uint32 i = 0; i < 3; ++i)
+	for (uint32 i = 0; i < 3; i++)
 	{
 		switch (sp->Effect[i])
 		{
@@ -1283,7 +1283,7 @@ HEARTHSTONE_INLINE bool IsDamagingSpell(SpellEntry *sp)
 
 HEARTHSTONE_INLINE bool IsHealingSpell(SpellEntry *sp)
 {
-	for(uint32 i = 0; i < 3; ++i)
+	for(uint32 i = 0; i < 3; i++)
 	{
 		switch( sp->Effect[i] )
 		{

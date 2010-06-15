@@ -79,7 +79,7 @@ void WorldSession::HandleLearnPreviewTalents( WorldPacket & recv_data )
 	uint32 count = 0;
 	uint32 talent_id, requested_rank;
 	recv_data >> count;
-	for(uint32 i = 0; i < count && recv_data.rpos() < recv_data.size(); ++i)
+	for(uint32 i = 0; i < count && recv_data.rpos() < recv_data.size(); i++)
 	{
 		recv_data >> talent_id >> requested_rank;
 		_player->LearnTalent(talent_id, requested_rank);

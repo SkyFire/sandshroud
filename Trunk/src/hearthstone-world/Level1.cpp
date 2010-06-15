@@ -383,7 +383,7 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_sessi
 	}
 	SystemMessage(m_session, buf);
 
-	for (uint8 i=0; i<12; ++i)
+	for (uint8 i=0; i<12; i++)
 	{
 		if (flag != 0)
 		{

@@ -118,7 +118,7 @@ bool SubGroup::AddPlayer(PlayerInfo * info)
 
 bool SubGroup::HasMember(uint32 guid)
 {
-	for( GroupMembersSet::iterator itr = m_GroupMembers.begin(); itr != m_GroupMembers.end(); ++itr )
+	for( GroupMembersSet::iterator itr = m_GroupMembers.begin(); itr != m_GroupMembers.end(); itr++ )
 		if( (*itr) != NULL )
 			if( (*itr)->guid == guid )
 				return true;
@@ -128,7 +128,7 @@ bool SubGroup::HasMember(uint32 guid)
 
 SubGroup * Group::FindFreeSubGroup()
 {
-	for(uint32 i = 0; i < m_SubGroupCount; ++i)
+	for(uint32 i = 0; i < m_SubGroupCount; i++)
 		if(!m_SubGroups[i]->IsFull())
 			return m_SubGroups[i];
 
@@ -230,7 +230,7 @@ void Group::Update()
 
 	if( m_groupFlags & GROUP_FLAG_REMOVE_OFFLINE_PLAYERS )
 	{
-		for( i = 0; i < m_SubGroupCount; ++i )
+		for( i = 0; i < m_SubGroupCount; i++ )
 		{
 			sg1 = m_SubGroups[i];
 
@@ -272,13 +272,13 @@ void Group::Update()
 			m_Looter = pNewLeader->m_playerInfo;
 	}
 
-	for( i = 0; i < m_SubGroupCount; ++i )
+	for( i = 0; i < m_SubGroupCount; i++ )
 	{
 		sg1 = m_SubGroups[i];
 
 		if( sg1 != NULL)
 		{
-			for( itr1 = sg1->GetGroupMembersBegin(); itr1 != sg1->GetGroupMembersEnd(); ++itr1 )
+			for( itr1 = sg1->GetGroupMembersBegin(); itr1 != sg1->GetGroupMembersEnd(); itr1++ )
 			{
 				// should never happen but just in case
 				if( (*itr1) == NULL )
@@ -327,7 +327,7 @@ void Group::Update()
 
 					if( sg2 != NULL)
 					{
-						for( itr2 = sg2->GetGroupMembersBegin(); itr2 != sg2->GetGroupMembersEnd(); ++itr2 )
+						for( itr2 = sg2->GetGroupMembersBegin(); itr2 != sg2->GetGroupMembersEnd(); itr2++ )
 						{
 							if( (*itr1) == (*itr2) )
 								continue;
@@ -410,7 +410,7 @@ void Group::Disband()
 	}
 
 	uint32 i = 0;
-	for(i = 0; i < m_SubGroupCount; ++i)
+	for(i = 0; i < m_SubGroupCount; i++)
 	{
 		SubGroup *sg = m_SubGroups[i];
 		sg->Disband();
@@ -470,11 +470,11 @@ Player* Group::FindFirstPlayer()
 	GroupMembersSet::iterator itr;
 	m_groupLock.Acquire();
 
-	for( uint32 i = 0; i < m_SubGroupCount; ++i )
+	for( uint32 i = 0; i < m_SubGroupCount; i++ )
 	{
 		if( m_SubGroups[i] != NULL )
 		{
-			for( itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr )
+			for( itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++ )
 			{
 				if( (*itr) != NULL )
 				{
@@ -513,7 +513,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 
 	if(sg == NULL || sg->m_GroupMembers.find(info) == sg->m_GroupMembers.end())
 	{
-		for(uint32 i = 0; i < m_SubGroupCount; ++i)
+		for(uint32 i = 0; i < m_SubGroupCount; i++)
 		{
 			if(m_SubGroups[i] != NULL)
 			{
@@ -614,7 +614,7 @@ void Group::ExpandToRaid()
 	m_groupLock.Acquire();
 	m_SubGroupCount = 8;
 
-	for(; i < m_SubGroupCount; ++i)
+	for(; i < m_SubGroupCount; i++)
 		m_SubGroups[i] = new SubGroup(this, i);
 
 	m_GroupType = GROUP_TYPE_RAID;
@@ -638,9 +638,9 @@ void Group::SendPacketToAllButOne(WorldPacket *packet, Player* pSkipTarget)
 	GroupMembersSet::iterator itr;
 	uint32 i = 0;
 	m_groupLock.Acquire();
-	for(; i < m_SubGroupCount; ++i)
+	for(; i < m_SubGroupCount; i++)
 	{
-		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr)
+		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++)
 		{
 			if((*itr)->m_loggedInPlayer != NULL && (*itr)->m_loggedInPlayer != pSkipTarget)
 				(*itr)->m_loggedInPlayer->GetSession()->SendPacket(packet);
@@ -655,9 +655,9 @@ void Group::SendPacketToAllButOne(StackPacket *packet, Player* pSkipTarget)
 	GroupMembersSet::iterator itr;
 	uint32 i = 0;
 	m_groupLock.Acquire();
-	for(; i < m_SubGroupCount; ++i)
+	for(; i < m_SubGroupCount; i++)
 	{
-		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr)
+		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++)
 		{
 			if((*itr)->m_loggedInPlayer != NULL && (*itr)->m_loggedInPlayer != pSkipTarget)
 				(*itr)->m_loggedInPlayer->GetSession()->SendPacket(packet);
@@ -672,9 +672,9 @@ void Group::OutPacketToAllButOne(uint16 op, uint16 len, const void* data, Player
 	GroupMembersSet::iterator itr;
 	uint32 i = 0;
 	m_groupLock.Acquire();
-	for(; i < m_SubGroupCount; ++i)
+	for(; i < m_SubGroupCount; i++)
 	{
-		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr)
+		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++)
 		{
 			if((*itr)->m_loggedInPlayer != NULL && (*itr)->m_loggedInPlayer != pSkipTarget)
 				(*itr)->m_loggedInPlayer->GetSession()->OutPacket( op, len, data );
@@ -692,7 +692,7 @@ bool Group::HasMember(Player* pPlayer)
 	GroupMembersSet::iterator itr;
 	m_groupLock.Acquire();
 
-	for( uint32 i = 0; i < m_SubGroupCount; ++i )
+	for( uint32 i = 0; i < m_SubGroupCount; i++ )
 	{
 		if( m_SubGroups[i] != NULL )
 		{
@@ -715,7 +715,7 @@ bool Group::HasMember(PlayerInfo * info)
 
 	m_groupLock.Acquire();
 
-	for(; i < m_SubGroupCount; ++i)
+	for(; i < m_SubGroupCount; i++)
 	{
 		if(m_SubGroups[i]->m_GroupMembers.find(info) != m_SubGroups[i]->m_GroupMembers.end())
 		{
@@ -748,7 +748,7 @@ void Group::MovePlayer(PlayerInfo *info, uint8 subgroup)
 	//first subgroup don't exists or player is not a member of it, search other subgroups
 	if(sg == NULL || sg->m_GroupMembers.find(info) == sg->m_GroupMembers.end())
 	{
-		for(uint32 i = 0; i < m_SubGroupCount; ++i)
+		for(uint32 i = 0; i < m_SubGroupCount; i++)
 		{
 			if(m_SubGroups[i] != NULL)
 			{
@@ -829,11 +829,11 @@ void Group::LoadFromDB(Field *fields)
 	LOAD_ASSISTANT(9, m_mainAssist);
 
 	// create groups
-	for(int i = 1; i < m_SubGroupCount; ++i)
+	for(int i = 1; i < m_SubGroupCount; i++)
 		m_SubGroups[i] = new SubGroup(this, i);
 
 	// assign players into groups
-	for(int i = 0; i < m_SubGroupCount; ++i)
+	for(int i = 0; i < m_SubGroupCount; i++)
 	{
 		for(int j = 0; j < 5; ++j)
 		{
@@ -885,7 +885,7 @@ void Group::SaveToDB()
 	else
 		ss << "0,";
 
-	for(uint32 i = 0; i < m_SubGroupCount; ++i)
+	for(uint32 i = 0; i < m_SubGroupCount; i++)
 	{
 		uint32 j = 0;
 		if (m_SubGroups[i])
@@ -900,7 +900,7 @@ void Group::SaveToDB()
 			ss << "0,";
 	}
 
-	for(uint32 i = 0; i < fillers; ++i)
+	for(uint32 i = 0; i < fillers; i++)
 		ss << "0,0,0,0,0,";
 
 	ss << (uint32)UNIXTIME << ")";
@@ -977,7 +977,7 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 		Player* plr;
 		float dist = pPlayer->GetMapMgr()->m_UpdateDistance;
 		m_groupLock.Acquire();
-		for(uint32 i = 0; i < m_SubGroupCount; ++i)
+		for(uint32 i = 0; i < m_SubGroupCount; i++)
 		{
 			if(m_SubGroups[i]==NULL)
 				continue;
@@ -1016,12 +1016,12 @@ void Group::UpdateAllOutOfRangePlayersFor(Player* pPlayer)
 	Player* plr;
 
 	m_groupLock.Acquire();
-	for(uint32 i = 0; i < m_SubGroupCount; ++i)
+	for(uint32 i = 0; i < m_SubGroupCount; i++)
 	{
 		if(m_SubGroups[i]==NULL)
 			continue;
 
-		for(GroupMembersSet::iterator itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr)
+		for(GroupMembersSet::iterator itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++)
 		{
 			plr = (*itr)->m_loggedInPlayer;
 			if(!plr || plr == pPlayer) continue;
@@ -1159,7 +1159,7 @@ bool Group::HasDisenchanters()
 	{
 		if( m_SubGroups[i] != NULL )
 		{
-			for( itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); ++itr )
+			for( itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++ )
 			{
 				if( (*itr) != NULL )
 				{
@@ -1203,7 +1203,7 @@ void Group::VoiceChannelCreated(uint16 id)
 	{
 		// so we just got a channel. we better activate the slots that are in use so people can talk
 		uint32 i;
-		for( i = 0; i <= 40; ++i )
+		for( i = 0; i <= 40; i++ )
 		{
 			if( m_voiceMembersList[i] != NULL )
 				sVoiceChatHandler.ActivateChannelSlot(id, (uint8)i );
@@ -1220,7 +1220,7 @@ void Group::AddVoiceMember(PlayerInfo * pPlayer)
 	uint32 i;
 
 	// find him an id
-	for( i = 1; i <= 40; ++i )
+	for( i = 1; i <= 40; i++ )
 	{
 		if( m_voiceMembersList[i] == NULL )
 			break;
@@ -1240,7 +1240,7 @@ void Group::AddVoiceMember(PlayerInfo * pPlayer)
 	if( !m_voiceChannelRequested )
 	{
 		/*uint32 count = 0;
-		for( i = 0; i < 41; ++i )
+		for( i = 0; i < 41; i++ )
 		{
 			if( m_voiceMembersList[i] != NULL )
 			{
@@ -1332,7 +1332,7 @@ void Group::SendVoiceUpdate()
 	data << uint8( m_voiceMemberCount );
 	pos = data.wpos();
 
-	for( i = 0; i <= 40; ++i )
+	for( i = 0; i <= 40; i++ )
 	{
 		if( m_voiceMembersList[i] == NULL )
 			continue;
@@ -1397,7 +1397,7 @@ void Group::VoiceSessionDropped()
 {
 	DEBUG_LOG("Group", "Voice session dropped");
 	m_groupLock.Acquire();
-	for(uint32 i = 0; i < 41; ++i)
+	for(uint32 i = 0; i < 41; i++)
 	{
 		if( m_voiceMembersList[i] != NULL )
 		{
@@ -1425,13 +1425,13 @@ void Group::VoiceSessionReconnected()
 	SubGroup *sg2 = NULL;
 	m_groupLock.Acquire();
 
-	for( i = 0; i < m_SubGroupCount; ++i )
+	for( i = 0; i < m_SubGroupCount; i++ )
 	{
 		sg1 = m_SubGroups[i];
 
 		if( sg1 != NULL)
 		{
-			for( itr1 = sg1->GetGroupMembersBegin(); itr1 != sg1->GetGroupMembersEnd(); ++itr1 )
+			for( itr1 = sg1->GetGroupMembersBegin(); itr1 != sg1->GetGroupMembersEnd(); itr1++ )
 			{
 				// should never happen but just in case
 				if( (*itr1) == NULL )

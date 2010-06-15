@@ -41,7 +41,7 @@ Guild::Guild()
 
 Guild::~Guild()
 {
-	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		if(itr->second->szOfficerNote)
 			free((void*)itr->second->szOfficerNote);
@@ -50,7 +50,7 @@ Guild::~Guild()
 		delete itr->second;
 	}
 	m_members.clear();
-	for(uint8 i = 0; i < MAX_GUILD_RANKS; ++i)
+	for(uint8 i = 0; i < MAX_GUILD_RANKS; i++)
 	{
 		if(m_ranks[i] != NULL)
 		{
@@ -60,23 +60,23 @@ Guild::~Guild()
 		}
 	}
 
-	for(GuildLogList::iterator itr = m_log.begin(); itr != m_log.end(); ++itr)
+	for(GuildLogList::iterator itr = m_log.begin(); itr != m_log.end(); itr++)
 	{
 		delete (*itr);
 	}
 
 	m_log.clear();
 
-	for( GuildBankTabVector::iterator itr = m_bankTabs.begin(); itr != m_bankTabs.end(); ++itr )
+	for( GuildBankTabVector::iterator itr = m_bankTabs.begin(); itr != m_bankTabs.end(); itr++ )
 	{
-		for( uint32 i = 0; i < MAX_GUILD_BANK_SLOTS; ++i )
+		for( uint32 i = 0; i < MAX_GUILD_BANK_SLOTS; i++ )
 			if( (*itr)->pSlots[i] != NULL )
 			{
 				(*itr)->pSlots[i]->DeleteMe();
 				(*itr)->pSlots[i] = NULL;
 			}
 
-		for( list<GuildBankEvent*>::iterator it2 = (*itr)->lLog.begin(); it2 != (*itr)->lLog.end(); ++it2 )
+		for( list<GuildBankEvent*>::iterator it2 = (*itr)->lLog.begin(); it2 != (*itr)->lLog.end(); it2++ )
 			delete (*it2);
 		(*itr)->lLog.clear();
 
@@ -88,7 +88,7 @@ Guild::~Guild()
 	}
 	m_bankTabs.clear();
 
-	for(list<GuildBankEvent*>::iterator it2 = m_moneyLog.begin(); it2 != m_moneyLog.end(); ++it2)
+	for(list<GuildBankEvent*>::iterator it2 = m_moneyLog.begin(); it2 != m_moneyLog.end(); it2++)
 		delete (*it2);
 
 	m_moneyLog.clear();
@@ -121,7 +121,7 @@ GuildRank * Guild::FindLowestRank()
 
 GuildRank * Guild::FindHighestRank()
 {
-	for(uint32 i = 1; i < MAX_GUILD_RANKS; ++i)
+	for(uint32 i = 1; i < MAX_GUILD_RANKS; i++)
 	{
 		if(m_ranks[i] != NULL)
 			return m_ranks[i];
@@ -156,7 +156,7 @@ void Guild::LogGuildEvent(uint8 iEvent, uint8 iStringCount, ...)
 	data << iEvent;
 	data << iStringCount;
 
-	for(i = 0; i < iStringCount; ++i)
+	for(i = 0; i < iStringCount; i++)
 	{
 		strs[i] = va_arg(ap, char*);
 		data << strs[i];
@@ -183,10 +183,10 @@ void Guild::AddGuildLogEntry(uint8 iEvent, uint8 iParamCount, ...)
 	ev->iEvent = iEvent;
 	ev->iTimeStamp = (uint32)UNIXTIME;
 
-	for(i = 0; i < iParamCount; ++i)
+	for(i = 0; i < iParamCount; i++)
 		ev->iEventData[i] = va_arg(ap, uint32);
 
-	for(; i < 3; ++i)
+	for(; i < 3; i++)
 		ev->iEventData[i] = 0;
 
 	CharacterDatabase.Execute("INSERT INTO guild_logs VALUES(%u, %u, %u, %u, %u, %u, %u)",
@@ -209,7 +209,7 @@ void Guild::AddGuildLogEntry(uint8 iEvent, uint8 iParamCount, ...)
 void Guild::SendPacket(WorldPacket * data)
 {
 	m_lock.Acquire();
-	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		if(itr->first->m_loggedInPlayer != NULL && itr->first->m_loggedInPlayer->GetSession())
 			itr->first->m_loggedInPlayer->GetSession()->SendPacket(data);
@@ -222,7 +222,7 @@ GuildRank * Guild::CreateGuildRank(const char * szRankName, uint32 iPermissions,
 	// find a free id
 	uint32 i, j;
 	m_lock.Acquire();
-	for(i = 0; i < MAX_GUILD_RANKS; ++i)
+	for(i = 0; i < MAX_GUILD_RANKS; i++)
 	{
 		if(m_ranks[i] == NULL)
 		{
@@ -293,7 +293,7 @@ void Guild::CreateFromCharter(Charter * pCharter, WorldSession * pTurnIn)
 	AddGuildMember(pTurnIn->GetPlayer()->m_playerInfo, NULL, leaderRank->iId);
 
 	// add all the other people
-	for(i = 0; i < pCharter->SignatureCount; ++i)
+	for(i = 0; i < pCharter->SignatureCount; i++)
 	{
 		PlayerInfo * pi = objmgr.GetPlayerInfo(pCharter->Signatures[i]);
 		if(pi)
@@ -617,7 +617,7 @@ bool Guild::LoadFromDB(Field * f)
 			pTab->szTabIcon = (strlen(result->Fetch()[3].GetString()) > 0) ? strdup(result->Fetch()[3].GetString()) : NULL;
 			pTab->szTabInfo = (strlen(result->Fetch()[4].GetString()) > 0) ? strdup(result->Fetch()[4].GetString()) : NULL;
 
-			for(uint32 i = 0; i < MAX_GUILD_BANK_SLOTS; ++i)
+			for(uint32 i = 0; i < MAX_GUILD_BANK_SLOTS; i++)
 				pTab->pSlots[i] = NULLITEM;
 
 			if(res2)
@@ -965,7 +965,7 @@ void Guild::RemoveGuildRank(WorldSession * pClient)
 
 	// check for players that need to be promoted
 	GuildMemberMap::iterator itr = m_members.begin();
-	for(; itr != m_members.end(); ++itr)
+	for(; itr != m_members.end(); itr++)
 	{
 		if(itr->second->pRank == pLowestRank)
 		{
@@ -984,7 +984,7 @@ void Guild::RemoveGuildRank(WorldSession * pClient)
 void Guild::Disband()
 {
 	m_lock.Acquire();
-	for( GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr )
+	for( GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++ )
 	{
 		itr->first->guild= NULL;
 		itr->first->guildRank= NULL;
@@ -1077,7 +1077,7 @@ void Guild::GuildChat(const char * szMessage, WorldSession * pClient, int32 iTyp
 		pClient->GetPlayer()->GetGUID(), pClient->GetPlayer()->bGMTagOn ? 4 : 0);
 
 	m_lock.Acquire();
-	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		if(itr->second->pRank->CanPerformCommand(GR_RIGHT_GCHATLISTEN) && itr->first->m_loggedInPlayer)
 			itr->first->m_loggedInPlayer->GetSession()->SendPacket(data);
@@ -1102,7 +1102,7 @@ void Guild::OfficerChat(const char * szMessage, WorldSession * pClient, int32 iT
 		pClient->GetPlayer()->GetGUID(), pClient->GetPlayer()->bGMTagOn ? 4 : 0);
 
 	m_lock.Acquire();
-	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		if(itr->second->pRank->CanPerformCommand(GR_RIGHT_OFFCHATLISTEN) && itr->first->m_loggedInPlayer)
 			itr->first->m_loggedInPlayer->GetSession()->SendPacket(data);
@@ -1120,7 +1120,7 @@ void Guild::SendGuildLog(WorldSession * pClient)
 
 	data << uint8(m_log.size() >= 25 ? 25 : m_log.size());
 	m_lock.Acquire();
-	for(itr = m_log.begin(); itr != m_log.end(); ++itr) {
+	for(itr = m_log.begin(); itr != m_log.end(); itr++) {
 		data << uint8((*itr)->iEvent);
 		switch((*itr)->iEvent)
 		{
@@ -1190,7 +1190,7 @@ void Guild::SendGuildRoster(WorldSession * pClient)
 	pos = (uint32)data.wpos();
 	data << uint32(MAX_GUILD_RANKS);
 
-	for(i = 0; i < MAX_GUILD_RANKS; ++i)
+	for(i = 0; i < MAX_GUILD_RANKS; i++)
 	{
 		r = m_ranks[i];
 		if(r != NULL)
@@ -1210,7 +1210,7 @@ void Guild::SendGuildRoster(WorldSession * pClient)
 
 	*(uint32*)&data.contents()[pos] = c;
 
-	for(itr = m_members.begin(); itr != m_members.end(); ++itr)
+	for(itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		pPlayer = itr->second->pPlayer->m_loggedInPlayer;
 
@@ -1252,7 +1252,7 @@ void Guild::SendGuildQuery(WorldSession * pClient)
 	data << m_guildName;
 
 	m_lock.Acquire();
-	for(i = 0; i < MAX_GUILD_RANKS; ++i)
+	for(i = 0; i < MAX_GUILD_RANKS; i++)
 	{
 		r = m_ranks[i];
 		if(r != NULL)
@@ -1273,7 +1273,7 @@ void Guild::SendGuildQuery(WorldSession * pClient)
 	}
 	else
 	{
-		for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+		for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 		{
 			if(itr->first->m_loggedInPlayer)
 				itr->first->m_loggedInPlayer->GetSession()->SendPacket(&data);
@@ -1317,7 +1317,7 @@ void Guild::BuyBankTab(WorldSession * pClient)
 
 	GuildBankTab * pTab = new GuildBankTab;
 	pTab->iTabId = GetBankTabCount();
-	for(uint32 i = 0; i < MAX_GUILD_BANK_SLOTS; ++i)
+	for(uint32 i = 0; i < MAX_GUILD_BANK_SLOTS; i++)
 		pTab->pSlots[i] = NULLITEM;
 
 	pTab->szTabName = NULL;
@@ -1493,7 +1493,7 @@ void Guild::SendGuildBankLog(WorldSession * pClient, uint8 iSlot)
 		data << uint8(0x06);
 		data << uint8((m_moneyLog.size() < 25) ? m_moneyLog.size() : 25);
 		list<GuildBankEvent*>::iterator itr = m_moneyLog.begin();
-		for(; itr != m_moneyLog.end(); ++itr)
+		for(; itr != m_moneyLog.end(); itr++)
 		{
 			data << (*itr)->iAction;
 			data << (*itr)->uPlayer;
@@ -1529,7 +1529,7 @@ void Guild::SendGuildBankLog(WorldSession * pClient, uint8 iSlot)
 		data << uint8((pTab->lLog.size() < 25) ? pTab->lLog.size() : 25);
 
 		list<GuildBankEvent*>::iterator itr = pTab->lLog.begin();
-		for(; itr != pTab->lLog.end(); ++itr)
+		for(; itr != pTab->lLog.end(); itr++)
 		{
 			data << (*itr)->iAction;
 			data << (*itr)->uPlayer;
@@ -1643,7 +1643,7 @@ void Guild::ChangeGuildName(char* name)
 {
 	m_guildName = name;
 	
-	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		Player* plr = itr->first->m_loggedInPlayer;
 		if(plr != NULL)
@@ -1655,7 +1655,7 @@ void Guild::ListGuildMembers(WorldSession* session)
 {
 	session->GetPlayer()->BroadcastMessage("Following Members are in the guild %s",m_guildName);
 	
-	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); ++itr)
+	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		if(itr->first != NULL)
 			session->GetPlayer()->BroadcastMessage("%s",itr->first->name);

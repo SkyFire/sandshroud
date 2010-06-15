@@ -140,7 +140,7 @@ void ScriptMgr::LoadScripts()
 		FindClose(find_handle);
 		Log.Notice("ScriptMgr","Loaded %u external libraries.", count);
 		Log.Notice("ScriptMgr","Loading optional scripting engines...");
-		for(vector<ScriptingEngine>::iterator itr = ScriptEngines.begin(); itr != ScriptEngines.end(); ++itr)
+		for(vector<ScriptingEngine>::iterator itr = ScriptEngines.begin(); itr != ScriptEngines.end(); itr++)
 		{
 			if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_LUA )
 			{
@@ -256,7 +256,7 @@ char *ext;
 		sLog.outString("");
 
 		sLog.outString("Loading optional scripting engines...");
-		for(vector<ScriptingEngine>::iterator itr = ScriptEngines.begin(); itr != ScriptEngines.end(); ++itr)
+		for(vector<ScriptingEngine>::iterator itr = ScriptEngines.begin(); itr != ScriptEngines.end(); itr++)
 		{
 			if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_LUA )
 			{
@@ -301,14 +301,14 @@ void ScriptMgr::UnloadScripts()
 	if(HookInterface::getSingletonPtr())
 		delete HookInterface::getSingletonPtr();
 
-	for(CustomGossipScripts::iterator itr = _customgossipscripts.begin(); itr != _customgossipscripts.end(); ++itr)
+	for(CustomGossipScripts::iterator itr = _customgossipscripts.begin(); itr != _customgossipscripts.end(); itr++)
 		(*itr)->Destroy();
 	_customgossipscripts.clear();
 	delete DefaultGossipScript;
 	DefaultGossipScript = NULL;
 
 	LibraryHandleMap::iterator itr = _handles.begin();
-	for(; itr != _handles.end(); ++itr)
+	for(; itr != _handles.end(); itr++)
 	{
 #ifdef WIN32
 		FreeLibrary(((HMODULE)*itr));
@@ -330,7 +330,7 @@ void ScriptMgr::register_creature_script(uint32 entry, exp_create_creature_ai ca
 	CreatureProto* cn = CreatureProtoStorage.LookupEntry(entry);
 	if( cn && !cn->spells.empty() )
 	{
-		for(list<AI_Spell*>::iterator it = cn->spells.begin(); it != cn->spells.end(); ++it)
+		for(list<AI_Spell*>::iterator it = cn->spells.begin(); it != cn->spells.end(); it++)
 				delete (*it);
 		cn->spells.clear();
 	}
@@ -807,7 +807,7 @@ void ScriptMgr::register_hook(ServerHookEvents event, void * function_pointer)
 #define OUTER_LOOP_BEGIN(type, fptr_type) if(!sScriptMgr._hooks[type].size()) { \
 	return; } \
 	fptr_type call; \
-	for(ServerHookList::iterator itr = sScriptMgr._hooks[type].begin(); itr != sScriptMgr._hooks[type].end(); ++itr) { \
+	for(ServerHookList::iterator itr = sScriptMgr._hooks[type].begin(); itr != sScriptMgr._hooks[type].end(); itr++) { \
 	call = ((fptr_type)*itr);
 
 #define OUTER_LOOP_END }
@@ -816,7 +816,7 @@ void ScriptMgr::register_hook(ServerHookEvents event, void * function_pointer)
 	return true; } \
 	fptr_type call; \
 	bool ret_val = true; \
-	for(ServerHookList::iterator itr = sScriptMgr._hooks[type].begin(); itr != sScriptMgr._hooks[type].end(); ++itr) { \
+	for(ServerHookList::iterator itr = sScriptMgr._hooks[type].begin(); itr != sScriptMgr._hooks[type].end(); itr++) { \
 		call = ((fptr_type)*itr);
 
 #define OUTER_LOOP_END_COND } return ret_val;

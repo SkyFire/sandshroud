@@ -34,7 +34,7 @@ AchievementInterface::~AchievementInterface()
 	if( m_achivementDataMap.size() > 0 )
 	{
 		std::map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
-		for(; itr != m_achivementDataMap.end(); ++itr)
+		for(; itr != m_achivementDataMap.end(); itr++)
 			delete itr->second;
 	}
 
@@ -76,7 +76,7 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 			m_completedRealmFirstAchievements.insert( ae->ID );
 
 		vector<string> Delim = StrSplit( criteriaprogress, "," );
-		for( uint32 i = 0; !completed && i < ae->AssociatedCriteriaCount; ++i)
+		for( uint32 i = 0; !completed && i < ae->AssociatedCriteriaCount; i++)
 		{
 			if( i >= Delim.size() )
 				continue;
@@ -109,7 +109,7 @@ void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 	}
 
 	map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
-	for(; itr != m_achivementDataMap.end(); ++itr)
+	for(; itr != m_achivementDataMap.end(); itr++)
 	{
 		AchievementData* ad = itr->second;
 		if( !ad->m_isDirty )
@@ -120,7 +120,7 @@ void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 		ss << m_player->GetLowGUID() << ",";
 		ss << ad->id << ",";
 		ss << "'";
-		for(uint32 i = 0; i < ad->num_criterias; ++i)
+		for(uint32 i = 0; i < ad->num_criterias; i++)
 		{
 			ss << ad->counter[i] << ",";
 		}
@@ -146,7 +146,7 @@ WorldPacket* AchievementInterface::BuildAchievementData(bool forInspect)
 		*data << m_player->GetNewGUID();
 
 	std::map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
-	for(; itr != m_achivementDataMap.end(); ++itr)
+	for(; itr != m_achivementDataMap.end(); itr++)
 	{
 		if( itr->second->completed )
 		{
@@ -157,7 +157,7 @@ WorldPacket* AchievementInterface::BuildAchievementData(bool forInspect)
 
 	*data << int32(-1);
 	itr = m_achivementDataMap.begin(); // Re-loop, luls
-	for(; itr != m_achivementDataMap.end(); ++itr)
+	for(; itr != m_achivementDataMap.end(); itr++)
 	{
 		if( !itr->second->completed )
 		{
@@ -165,7 +165,7 @@ WorldPacket* AchievementInterface::BuildAchievementData(bool forInspect)
 			if(ae == NULL)
 				continue;
 			// Loop over the associated criteria
-			for(uint32 i = 0; i < ae->AssociatedCriteriaCount; ++i)
+			for(uint32 i = 0; i < ae->AssociatedCriteriaCount; i++)
 			{
 				*data << uint32( ae->AssociatedCriteria[i] );
 				uint32 counterVar = itr->second->counter[i];
@@ -322,14 +322,14 @@ bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 	many we need and how many we have, but that seems to be a small amount of achievements,
 	maybe just do those by hand.
 	*/
-	for(uint32 i = 0; i < ad->num_criterias; ++i)
+	for(uint32 i = 0; i < ad->num_criterias; i++)
 	{
 		if(ad->counter[i] == 0)
 			return false;
 	}
 
 	bool failedOne = false;
-	for(uint32 i = 0; i < ad->num_criterias; ++i)
+	for(uint32 i = 0; i < ad->num_criterias; i++)
 	{
 		bool thisFail = false;
 		AchievementCriteriaEntry * ace = dbcAchievementCriteria.LookupEntry(ach->AssociatedCriteria[i]);
@@ -451,7 +451,7 @@ void AchievementInterface::HandleAchievementCriteriaConditionDeath()
 		return;
 
 	map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
-	for(; itr != m_achivementDataMap.end(); ++itr)
+	for(; itr != m_achivementDataMap.end(); itr++)
 	{
 		AchievementData * ad = itr->second;
 		if(ad->completed)
@@ -459,7 +459,7 @@ void AchievementInterface::HandleAchievementCriteriaConditionDeath()
 		AchievementEntry * ae = dbcAchievement.LookupEntry( ad->id );
 		if(ae == NULL)
 			continue;
-		for(uint32 i = 0; i < ad->num_criterias; ++i)
+		for(uint32 i = 0; i < ad->num_criterias; i++)
 		{
 			uint32 CriteriaID = ae->AssociatedCriteria[i];
 			AchievementCriteriaEntry * ace = dbcAchievementCriteria.LookupEntry( CriteriaID );
@@ -502,7 +502,7 @@ void AchievementInterface::HandleAchievementCriteriaKillCreature(uint32 killedMo
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -549,7 +549,7 @@ void AchievementInterface::HandleAchievementCriteriaWinBattleground(uint32 bgMap
 			continue;
 		ad->completionTimeLast = time;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -568,7 +568,7 @@ void AchievementInterface::HandleAchievementCriteriaWinBattleground(uint32 bgMap
 					{
 						bool failure = false;
 						// We must control all Alliance nodes and Horde nodes (towers only)
-						for(uint32 i = 0; i < AV_NUM_CONTROL_POINTS; ++i)
+						for(uint32 i = 0; i < AV_NUM_CONTROL_POINTS; i++)
 						{
 							if( pAV->GetNode(i)->IsGraveyard() )
 								continue;
@@ -581,7 +581,7 @@ void AchievementInterface::HandleAchievementCriteriaWinBattleground(uint32 bgMap
 					{
 						bool failure = false;
 						// We must control all Alliance nodes and Horde nodes (towers only)
-						for(uint32 i = 0; i < AV_NUM_CONTROL_POINTS; ++i)
+						for(uint32 i = 0; i < AV_NUM_CONTROL_POINTS; i++)
 						{
 							if( pAV->GetNode(i)->IsGraveyard() )
 								continue;
@@ -629,7 +629,7 @@ void AchievementInterface::HandleAchievementCriteriaRequiresAchievement(uint32 a
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -671,7 +671,7 @@ void AchievementInterface::HandleAchievementCriteriaLevelUp(uint32 level)
 			static const char* raceNames[] = { "", "Human", "Orc", "Dwarf", "Night Elf", "Forsaken", "Tauren", "Gnome", "Troll", "", "Blood Elf", "Draenei" };
 			uint32 ReqClass = 0;
 			uint32 ReqRace = 0;
-			for(uint32 i = 0; i < 12; ++i)
+			for(uint32 i = 0; i < 12; i++)
 			{
 				if(strlen(classNames[i]) > 0 && string(pAchievementEntry->name).find(classNames[i]) != string::npos )
 				{
@@ -680,7 +680,7 @@ void AchievementInterface::HandleAchievementCriteriaLevelUp(uint32 level)
 					break;
 				}
 			}
-			for(uint32 i = 0; i < 12; ++i)
+			for(uint32 i = 0; i < 12; i++)
 			{
 				if(strlen(raceNames[i]) > 0 && string(pAchievementEntry->name).find(raceNames[i]) != string::npos )
 				{
@@ -704,7 +704,7 @@ void AchievementInterface::HandleAchievementCriteriaLevelUp(uint32 level)
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -750,7 +750,7 @@ void AchievementInterface::HandleAchievementCriteriaOwnItem(uint32 itemId, uint3
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -798,7 +798,7 @@ void AchievementInterface::HandleAchievementCriteriaLootItem(uint32 itemId, uint
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -841,7 +841,7 @@ void AchievementInterface::HandleAchievementCriteriaQuestCount(uint32 questCount
 			continue;
 
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -887,7 +887,7 @@ void AchievementInterface::HandleAchievementCriteriaHonorableKillClass(uint32 cl
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -933,7 +933,7 @@ void AchievementInterface::HandleAchievementCriteriaHonorableKillRace(uint32 rac
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -974,7 +974,7 @@ void AchievementInterface::HandleAchievementCriteriaTalentResetCostTotal(uint32 
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1015,7 +1015,7 @@ void AchievementInterface::HandleAchievementCriteriaTalentResetCount()
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1057,7 +1057,7 @@ void AchievementInterface::HandleAchievementCriteriaBuyBankSlot(bool retroactive
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1106,7 +1106,7 @@ void AchievementInterface::HandleAchievementCriteriaFlightPathsTaken()
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1166,7 +1166,7 @@ void AchievementInterface::HandleAchievementCriteriaExploreArea(uint32 areaId, u
 			continue;
 
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1211,7 +1211,7 @@ void AchievementInterface::HandleAchievementCriteriaHonorableKill()
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1297,7 +1297,7 @@ void AchievementInterface::HandleAchievementCriteriaDoEmote(uint32 emoteId, Unit
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1344,7 +1344,7 @@ void AchievementInterface::HandleAchievementCriteriaCompleteQuestsInZone(uint32 
 			continue;
 
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1391,7 +1391,7 @@ void AchievementInterface::HandleAchievementCriteriaReachSkillLevel(uint32 skill
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1434,7 +1434,7 @@ void AchievementInterface::HandleAchievementCriteriaWinDuel()
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1476,7 +1476,7 @@ void AchievementInterface::HandleAchievementCriteriaLoseDuel()
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1521,7 +1521,7 @@ void AchievementInterface::HandleAchievementCriteriaKilledByCreature(uint32 kill
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1562,7 +1562,7 @@ void AchievementInterface::HandleAchievementCriteriaKilledByPlayer()
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1603,7 +1603,7 @@ void AchievementInterface::HandleAchievementCriteriaDeath()
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )
@@ -1650,7 +1650,7 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 		if(!HandleBeforeChecks(ad))
 			continue;
 		// Figure out our associative ID.
-		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; ++i)
+		for(uint32 i = 0; i < pAchievementEntry->AssociatedCriteriaCount; i++)
 		{
 			compareCriteria = dbcAchievementCriteria.LookupEntry( pAchievementEntry->AssociatedCriteria[i] );			
 			if( compareCriteria == ace )

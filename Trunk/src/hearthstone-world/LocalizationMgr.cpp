@@ -40,9 +40,9 @@ void LocalizationMgr::Shutdown()
 	Log.Notice("LocalizationMgr", "Beginning pointer cleanup...");
 	uint32 t = getMSTime();
 
-    for(i = 0; i < maxid; ++i)
+    for(i = 0; i < maxid; i++)
 	{
-		for(HM_NAMESPACE::hash_map<uint32, LocalizedQuest>::iterator itr = m_Quests[i].begin(); itr != m_Quests[i].end(); ++itr)
+		for(HM_NAMESPACE::hash_map<uint32, LocalizedQuest>::iterator itr = m_Quests[i].begin(); itr != m_Quests[i].end(); itr++)
 		{
 			SAFE_FREE_PTR(itr->second.Title);
 			SAFE_FREE_PTR(itr->second.Details);
@@ -56,13 +56,13 @@ void LocalizationMgr::Shutdown()
 			SAFE_FREE_PTR(itr->second.ObjectiveText[3]);
 		}
 
-		for(HM_NAMESPACE::hash_map<uint32, LocalizedItem>::iterator itr = m_Items[i].begin(); itr != m_Items[i].end(); ++itr)
+		for(HM_NAMESPACE::hash_map<uint32, LocalizedItem>::iterator itr = m_Items[i].begin(); itr != m_Items[i].end(); itr++)
 		{
 			SAFE_FREE_PTR(itr->second.Name);
 			SAFE_FREE_PTR(itr->second.Description);
 		}
 
-		for(HM_NAMESPACE::hash_map<uint32, LocalizedNpcText>::iterator itr = m_NpcTexts[i].begin(); itr != m_NpcTexts[i].end(); ++itr)
+		for(HM_NAMESPACE::hash_map<uint32, LocalizedNpcText>::iterator itr = m_NpcTexts[i].begin(); itr != m_NpcTexts[i].end(); itr++)
 		{
 			for(j = 0; j < 8; ++j)
 			{
@@ -71,18 +71,18 @@ void LocalizationMgr::Shutdown()
 			}
 		}
 
-		for(HM_NAMESPACE::hash_map<uint32, LocalizedCreatureName>::iterator itr = m_CreatureNames[i].begin(); itr != m_CreatureNames[i].end(); ++itr)
+		for(HM_NAMESPACE::hash_map<uint32, LocalizedCreatureName>::iterator itr = m_CreatureNames[i].begin(); itr != m_CreatureNames[i].end(); itr++)
 		{
 			SAFE_FREE_PTR(itr->second.Name);
 			SAFE_FREE_PTR(itr->second.SubName);
 		}
 
-		for(HM_NAMESPACE::hash_map<uint32, LocalizedGameObjectName>::iterator itr = m_GameObjectNames[i].begin(); itr != m_GameObjectNames[i].end(); ++itr)
+		for(HM_NAMESPACE::hash_map<uint32, LocalizedGameObjectName>::iterator itr = m_GameObjectNames[i].begin(); itr != m_GameObjectNames[i].end(); itr++)
 		{
 			SAFE_FREE_PTR(itr->second.Name);
 		}
 
-		for(HM_NAMESPACE::hash_map<uint32, LocalizedItemPage>::iterator itr = m_ItemPages[i].begin(); itr != m_ItemPages[i].end(); ++itr)
+		for(HM_NAMESPACE::hash_map<uint32, LocalizedItemPage>::iterator itr = m_ItemPages[i].begin(); itr != m_ItemPages[i].end(); itr++)
 		{
 			SAFE_FREE_PTR(itr->second.Text);
 		}
@@ -102,7 +102,7 @@ void LocalizationMgr::Shutdown()
 
 void LocalizationMgr::Lower(string& conv)
 {
-	for(size_t i = 0; i < conv.length(); ++i)
+	for(size_t i = 0; i < conv.length(); i++)
 		conv[i] = tolower(conv[i]);
 }
 
@@ -129,7 +129,7 @@ uint32 LocalizationMgr::GetLanguageId(uint32 full)
 	if(m_disabled)
 		return 0;
 
-	for(vector<pair<uint32,uint32> >::iterator itr = m_languages.begin(); itr != m_languages.end(); ++itr)
+	for(vector<pair<uint32,uint32> >::iterator itr = m_languages.begin(); itr != m_languages.end(); itr++)
 		if(itr->first == full)
 			return itr->second;
 
@@ -379,7 +379,7 @@ void LocalizationMgr::Reload(bool first)
 					continue;		// no loading enus stuff.. lawl
 
 				counter = 2;
-				for(uint32 i = 0; i < 8; ++i)
+				for(uint32 i = 0; i < 8; i++)
 				{
 					nt.Texts[i][0] = strdup(f[counter++].GetString());
 					nt.Texts[i][1] = strdup(f[counter++].GetString());
@@ -423,7 +423,7 @@ void LocalizationMgr::Reload(bool first)
 	/************************************************************************/
 	/* Apply all the language bindings.                                     */
 	/************************************************************************/
-	for(map<string,string>::iterator itr = bound_languages.begin(); itr != bound_languages.end(); ++itr)
+	for(map<string,string>::iterator itr = bound_languages.begin(); itr != bound_languages.end(); itr++)
 	{
 		uint32 source_language_id = GetLanguageId(itr->second);
 		uint32 dest_language_id = GetLanguageId(itr->first);

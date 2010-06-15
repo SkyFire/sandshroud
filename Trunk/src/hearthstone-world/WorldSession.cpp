@@ -455,7 +455,7 @@ void WorldSession::LoadSecurity(std::string securitystring)
 {
 	std::list<char> tmp;
 	bool hasa = false;
-	for(uint32 i = 0; i < securitystring.length(); ++i)
+	for(uint32 i = 0; i < securitystring.length(); i++)
 	{
 		char c = securitystring.at(i);
 		c = tolower(c);
@@ -480,7 +480,7 @@ void WorldSession::LoadSecurity(std::string securitystring)
 	memset(permissions, 0, tmp.size()+1);
 	permissioncount = (uint32)tmp.size();
 	int k = 0;
-	for(std::list<char>::iterator itr = tmp.begin(); itr != tmp.end(); ++itr)
+	for(std::list<char>::iterator itr = tmp.begin(); itr != tmp.end(); itr++)
 		permissions[k++] = (*itr);
 	
 	if(permissions[tmp.size()] != 0)
@@ -507,7 +507,7 @@ bool WorldSession::CanUseCommand(char cmdstr)
 	if(permissions[0] == 'a' && cmdstr != 'z')   // all
 		return true;
 
-	for(int i = 0; i < permissioncount; ++i)
+	for(int i = 0; i < permissioncount; i++)
 		if(permissions[i] == cmdstr)
 			return true;
 
@@ -529,7 +529,7 @@ void WorldSession::SendNotification(const char *message, ...)
 void WorldSession::InitPacketHandlerTable()
 {
 	// Nullify Everything, default to STATUS_LOGGEDIN
-	for(uint32 i = 0; i < NUM_MSG_TYPES; ++i)
+	for(uint32 i = 0; i < NUM_MSG_TYPES; i++)
 	{
 		WorldPacketHandlers[i].status = STATUS_LOGGEDIN;
 		WorldPacketHandlers[i].handler = NULL;

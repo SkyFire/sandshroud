@@ -693,7 +693,7 @@ public:
 		static const char * allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		if(m_limitedNames)
 		{
-			for(i = 0; i < nlen; ++i)
+			for(i = 0; i < nlen; i++)
 			{
 				p = allowedCharacters;
 				for(; *p != 0; ++p)
@@ -709,7 +709,7 @@ cont:
 		}
 		else
 		{
-			for(i = 0; i < nlen; ++i)
+			for(i = 0; i < nlen; i++)
 			{
 				p = bannedCharacters;
 				while(*p != 0 && name[i] != *p && name[i] != 0)

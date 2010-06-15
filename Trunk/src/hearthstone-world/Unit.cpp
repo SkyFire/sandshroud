@@ -82,7 +82,7 @@ Unit::Unit()
 		ModDamageTakenByMechPCT[x]=0;
 	}
 
-	for (uint32 i=0; i<NUM_DISPELS; ++i)
+	for (uint32 i=0; i<NUM_DISPELS; i++)
 		DispelResistancesPCT[i] = 0;
 	//SM
 	memset(SM, 0, 2*SPELL_MODIFIERS*sizeof(int32 *));
@@ -124,7 +124,7 @@ Unit::Unit()
 	m_invisible = false;
 	m_invisFlag = INVIS_FLAG_NORMAL;
 
-	for(int i = 0; i < INVIS_FLAG_TOTAL; ++i)
+	for(int i = 0; i < INVIS_FLAG_TOTAL; i++)
 		m_invisDetect[i] = 0;
 
 	m_stealthLevel = 0;
@@ -172,7 +172,7 @@ Unit::Unit()
 	RangedDamageTaken = 0;
 	AOEDmgMod = 1.0f;
 
-	for(int i = 0; i < 5; ++i)
+	for(int i = 0; i < 5; i++)
 	{
 		m_detectRangeGUID[i] = 0;
 		m_detectRangeMOD[i] = 0;
@@ -180,7 +180,7 @@ Unit::Unit()
 
 	m_threatModifyer = 0;
 	m_generatedThreatModifyer = 0;
-	for(uint32 i = 0; i < MAX_AURAS+MAX_PASSIVE_AURAS; ++i)
+	for(uint32 i = 0; i < MAX_AURAS+MAX_PASSIVE_AURAS; i++)
 		m_auras[i] = NULLAURA;
 	
 	
@@ -271,7 +271,7 @@ Unit::~Unit()
 
 	m_redirectSpellPackets = NULLPLR;
 
-	/*for(int i = 0; i < 4; ++i)
+	/*for(int i = 0; i < 4; i++)
 	if(m_ObjectSlots[i])
 	delete m_ObjectSlots[i];*/
 
@@ -285,7 +285,7 @@ Unit::~Unit()
 	}
 
 	// clear tmpAura pointers
-	for(map<uint32, Aura* >::iterator itr = tmpAura.begin(); itr != tmpAura.end(); ++itr)
+	for(map<uint32, Aura* >::iterator itr = tmpAura.begin(); itr != tmpAura.end(); itr++)
 	{
 		if( itr->second )
 		{
@@ -301,7 +301,7 @@ Unit::~Unit()
 	m_extraStrikeTargets.clear();
 
 	HM_NAMESPACE::hash_map<uint32, onAuraRemove*>::iterator itr;
-	for ( itr = m_onAuraRemoveSpells.begin() ; itr != m_onAuraRemoveSpells.end() ; ++itr)
+	for ( itr = m_onAuraRemoveSpells.begin() ; itr != m_onAuraRemoveSpells.end() ; itr++)
 	{
 		delete itr->second;
 	}
@@ -315,7 +315,7 @@ Unit::~Unit()
 
 	m_damageShields.clear();
 
-	for (std::list<ReflectSpellSchool*>::iterator itr=m_reflectSpellSchool.begin(); itr!=m_reflectSpellSchool.end(); ++itr)
+	for (std::list<ReflectSpellSchool*>::iterator itr=m_reflectSpellSchool.begin(); itr!=m_reflectSpellSchool.end(); itr++)
 		delete (*itr);
 	m_reflectSpellSchool.clear();
 
@@ -485,9 +485,9 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 		xp /= pGroup->MemberCount();
 
 		GroupMembersSet::iterator itr;
-		for(uint32 i = 0; i < pGroup->GetSubGroupCount(); ++i)
+		for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++)
 		{
-			for(itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
+			for(itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 			{
 				if((*itr)->getLevel() < sWorld.LevelCap)
 					(*itr)->GiveXP(xp, pVictim->GetGUID(), true);
@@ -499,8 +499,8 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 	//we only take into count players that are near us, on same map
 	GroupMembersSet::iterator itr;
 	pGroup->Lock();
-	for(uint32 i = 0; i < pGroup->GetSubGroupCount(); ++i) {
-		for(itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
+	for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++) {
+		for(itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 		{
 			pGroupGuy = (*itr)->m_loggedInPlayer;
 			if( pGroupGuy && 
@@ -1998,7 +1998,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								stats[1] = GetUInt32Value(UNIT_FIELD_AGILITY);
 								stats[2] = GetUInt32Value(UNIT_FIELD_INTELLECT);
 								stats[3] = GetUInt32Value(UNIT_FIELD_SPIRIT);
-								for(uint32 i=0; i<4; ++i)
+								for(uint32 i=0; i<4; i++)
 								{
 									if(stats[i] > stats[maxstat])
 										maxstat = i;
@@ -2236,7 +2236,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 											if( TargetCount == 10 )
 												break;
 
-											for(GroupMembersSet::iterator itr = caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); ++itr)
+											for(GroupMembersSet::iterator itr = caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 											{
 												if((*itr)->m_loggedInPlayer && TargetCount <= 10)
 												{
@@ -3657,7 +3657,7 @@ else
 
 			// Loop on hit spells, and strike with those.
 			for( map< SpellEntry*, pair< uint32, uint32 > >::iterator itr = TO_PLAYER(this)->m_onStrikeSpells.begin();
-				itr != TO_PLAYER(this)->m_onStrikeSpells.end(); ++itr )
+				itr != TO_PLAYER(this)->m_onStrikeSpells.end(); itr++ )
 			{
 				if( itr->second.first )
 				{
@@ -3902,7 +3902,7 @@ else
 
 			if (ex->deleted) continue;
 
-			for(unordered_set<Object* >::iterator itr = m_objectsInRange.begin(); itr != m_objectsInRange.end(); ++itr)
+			for(unordered_set<Object* >::iterator itr = m_objectsInRange.begin(); itr != m_objectsInRange.end(); itr++)
 			{
 				if (!(*itr) || (*itr) == pVictim || !(*itr)->IsUnit())
 					continue;
@@ -5223,7 +5223,7 @@ uint32 Unit::AbsorbDamage( Object* Attacker, uint32 School, uint32* dmg, SpellEn
 bool Unit::setDetectRangeMod(uint64 guid, int32 amount)
 {
 	int next_free_slot = -1;
-	for(int i = 0; i < 5; ++i)
+	for(int i = 0; i < 5; i++)
 	{
 		if(m_detectRangeGUID[i] == 0 && next_free_slot == -1)
 		{
@@ -5246,7 +5246,7 @@ bool Unit::setDetectRangeMod(uint64 guid, int32 amount)
 
 void Unit::unsetDetectRangeMod(uint64 guid)
 {
-	for(int i = 0; i < 5; ++i)
+	for(int i = 0; i < 5; i++)
 	{
 		if(m_detectRangeGUID[i] == guid)
 		{
@@ -5258,7 +5258,7 @@ void Unit::unsetDetectRangeMod(uint64 guid)
 
 int32 Unit::getDetectRangeMod(uint64 guid)
 {
-	for(int i = 0; i < 5; ++i)
+	for(int i = 0; i < 5; i++)
 	{
 		if(m_detectRangeGUID[i] == guid)
 		{
@@ -5691,7 +5691,7 @@ void Unit::RemoveFromWorld(bool free_guid)
 			si = m_auras[x]->GetSpellProto();
 			if( si != NULL)
 			{
-				for(uint8 i = 0 ; i < 3; ++i)
+				for(uint8 i = 0 ; i < 3; i++)
 				{
 					if(si->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA || si->Effect[i] == SPELL_EFFECT_APPLY_AURA_128)
 					{
@@ -6086,7 +6086,7 @@ void Unit::UpdateVisibility()
 	}
 	else			// For units we can save a lot of work
 	{
-		for(unordered_set<Player*  >::iterator it2 = GetInRangePlayerSetBegin(); it2 != GetInRangePlayerSetEnd(); ++it2)
+		for(unordered_set<Player*  >::iterator it2 = GetInRangePlayerSetBegin(); it2 != GetInRangePlayerSetEnd(); it2++)
 		{
 			can_see = (*it2)->CanSee(TO_OBJECT(this));
 			is_visible = (*it2)->GetVisibility(TO_OBJECT(this), &itr);
@@ -6193,7 +6193,7 @@ bool Unit::GetSpeedDecrease()
 	m_speedModifier -= m_slowdown;
 	m_slowdown = 0;
 	map< uint32, int32 >::iterator itr = speedReductionMap.begin();
-	for(; itr != speedReductionMap.end(); ++itr)
+	for(; itr != speedReductionMap.end(); itr++)
 		m_slowdown = (int32)min( m_slowdown, itr->second );
 
 	if(m_slowdown<-100)
@@ -6370,7 +6370,7 @@ void CombatStatusHandler::ClearMyHealers()
 	// this is where we check all our healers
 	HealedSet::iterator i;
 	Player* pt;
-	for(i = m_healers.begin(); i != m_healers.end(); ++i)
+	for(i = m_healers.begin(); i != m_healers.end(); i++)
 	{
 		pt = m_Unit->GetMapMgr()->GetPlayer(*i);
 		if(pt != NULL)
@@ -6445,7 +6445,7 @@ bool CombatStatusHandler::IsAttacking(Unit* pTarget)
 		return false;
 
 	// check the target for any of our DoT's.
-	for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+	for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 	{
 		if(pTarget->m_auras[i] != NULL)
 		{
@@ -6577,7 +6577,7 @@ Unit* CombatStatusHandler::GetKiller()
 	map<uint64,uint32>::iterator itr = DamageMap.begin();
 	uint64 killer_guid = 0;
 	uint32 mDamage = 0;
-	for(; itr != DamageMap.end(); ++itr)
+	for(; itr != DamageMap.end(); itr++)
 	{
 		if(itr->second > mDamage)
 		{
@@ -6597,7 +6597,7 @@ void CombatStatusHandler::ClearAttackers()
 	// this is a FORCED function, only use when the reference will be destroyed.
 	AttackTMap::iterator itr = m_attackTargets.begin();
 	Unit* pt;
-	for(; itr != m_attackTargets.end(); ++itr)
+	for(; itr != m_attackTargets.end(); itr++)
 	{
 		pt = m_Unit->GetMapMgr()->GetUnit(itr->first);
 		if(pt)
@@ -6608,7 +6608,7 @@ void CombatStatusHandler::ClearAttackers()
 	}
 
 	AttackerMap::iterator it2;
-	for(it2 = m_attackers.begin(); it2 != m_attackers.end(); ++it2)
+	for(it2 = m_attackers.begin(); it2 != m_attackers.end(); it2++)
 	{
 		pt = m_Unit->GetMapMgr()->GetUnit(*it2);
 		if(pt)
@@ -6627,7 +6627,7 @@ void CombatStatusHandler::ClearHealers()
 {
 	HealedSet::iterator itr = m_healed.begin();
 	Player* pt;
-	for(; itr != m_healed.end(); ++itr)
+	for(; itr != m_healed.end(); itr++)
 	{
 		pt = m_Unit->GetMapMgr()->GetPlayer(*itr);
 		if(pt)
@@ -6637,7 +6637,7 @@ void CombatStatusHandler::ClearHealers()
 		}
 	}
 
-	for(itr = m_healers.begin(); itr != m_healers.end(); ++itr)
+	for(itr = m_healers.begin(); itr != m_healers.end(); itr++)
 	{
 		pt = m_Unit->GetMapMgr()->GetPlayer(*itr);
 		if(pt)
@@ -6778,7 +6778,7 @@ bool Unit::RemoveAllAurasByMechanic( uint32 MechanicType , uint32 MaxDispel = -1
 					}
 					else if( MechanicType == MECHANIC_ENSNARED ) // if got immunity for slow, remove some that are not in the mechanics
 					{
-						for( int i=0 ; i<3 ; ++i )
+						for( int i=0 ; i<3 ; i++ )
 						{
 							// SNARE + ROOT
 							if( m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
@@ -6829,13 +6829,13 @@ bool Unit::HasAurasOfNameHashWithCaster(uint32 namehash, Unit* caster)
 
 	if(caster!=NULL) 
 	{ 
-		for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i) 
+		for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++) 
 			if( m_auras[i] != NULL&& m_auras[i]->GetSpellProto()->NameHash == namehash && m_auras[i]->GetCasterGUID() == caster->GetGUID() ) 
 				return true; 
 	} 
 	else 
 	{ 
-		for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i) 
+		for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++) 
 			if( m_auras[i] != NULL&& m_auras[i]->GetSpellProto()->NameHash == namehash ) 
 				return true; 
 	} 
@@ -6848,7 +6848,7 @@ void Creature::UpdateLootAnimation(Player* Looter)
 	if( m_loot.HasLoot(Looter) )
 	{
 		// update players with lootable flags
-		for(unordered_set<Player*  >::iterator itr = m_inRangePlayers.begin(); itr != m_inRangePlayers.end(); ++itr)
+		for(unordered_set<Player*  >::iterator itr = m_inRangePlayers.begin(); itr != m_inRangePlayers.end(); itr++)
 		{
 			Player* plr = *itr;
 			if( ( plr->GetLowGUID() == m_taggingPlayer ) ||
@@ -6864,7 +6864,7 @@ void Creature::UpdateLootAnimation(Player* Looter)
 	else
 	{
 		// we are still alive, probably updating tapped state
-		for(unordered_set<Player*  >::iterator itr = m_inRangePlayers.begin(); itr != m_inRangePlayers.end(); ++itr)
+		for(unordered_set<Player*  >::iterator itr = m_inRangePlayers.begin(); itr != m_inRangePlayers.end(); itr++)
 		{
 			if( !m_taggingPlayer )
 			{
@@ -6902,7 +6902,7 @@ void Creature::ClearTag()
 void Object::ClearLoot()
 {
 	// better cancel any rolls just in case.
-	for(vector<__LootItem>::iterator itr = m_loot.items.begin(); itr != m_loot.items.end(); ++itr)
+	for(vector<__LootItem>::iterator itr = m_loot.items.begin(); itr != m_loot.items.end(); itr++)
 	{
 		if( itr->roll != NULL )
 		{

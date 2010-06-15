@@ -79,7 +79,7 @@ bool Transporter::GenerateWaypoints()
 
 	vector<keyFrame> keyFrames;
 	int mapChange = 0;
-	for (int i = 1; i < (int)path.Size() - 1; ++i)
+	for (int i = 1; i < (int)path.Size() - 1; i++)
 	{
 		if (mapChange == 0)
 		{
@@ -110,7 +110,7 @@ bool Transporter::GenerateWaypoints()
 	}
 
 	// find the rest of the distances between key points
-	for (size_t i = 1; i < keyFrames.size(); ++i)
+	for (size_t i = 1; i < keyFrames.size(); i++)
 	{
 		if ((keyFrames[i-1].actionflag == 1) || (keyFrames[i].mapid != keyFrames[i-1].mapid))
 		{
@@ -132,7 +132,7 @@ bool Transporter::GenerateWaypoints()
 	}
 
 	float tmpDist = 0;
-	for (int i = 0; i < (int)keyFrames.size(); ++i)
+	for (int i = 0; i < (int)keyFrames.size(); i++)
 	{
 		if( lastStop < 0 || firstStop < 0 ) // IT NEVER STOPS :O
 			continue;
@@ -155,7 +155,7 @@ bool Transporter::GenerateWaypoints()
 			tmpDist = 0;
 	}
 
-	for (size_t i = 0; i < keyFrames.size(); ++i)
+	for (size_t i = 0; i < keyFrames.size(); i++)
 	{
 		if (keyFrames[i].distSinceStop < (30 * 30 * 0.5))
 			keyFrames[i].tFrom = sqrt(2 * keyFrames[i].distSinceStop);
@@ -171,7 +171,7 @@ bool Transporter::GenerateWaypoints()
 		keyFrames[i].tTo *= 1000;
 	}
 
-	//	for (int i = 0; i < keyFrames.size(); ++i) {
+	//	for (int i = 0; i < keyFrames.size(); i++) {
 	//		sLog.outString("%f, %f, %f, %f, %f, %f, %f", keyFrames[i].x, keyFrames[i].y, keyFrames[i].distUntilStop, keyFrames[i].distSinceStop, keyFrames[i].distFromPrev, keyFrames[i].tFrom, keyFrames[i].tTo);
 	//	}
 
@@ -188,7 +188,7 @@ bool Transporter::GenerateWaypoints()
 	t += keyFrames[0].delay * 1000;
 
 	int cM = keyFrames[0].mapid;
-	for (size_t i = 0; i < keyFrames.size() - 1; ++i)	   //
+	for (size_t i = 0; i < keyFrames.size() - 1; i++)	   //
 	{
 		float d = 0;
 		float tFrom = keyFrames[i].tFrom;
@@ -422,7 +422,7 @@ Transporter::Transporter(uint64 guid) : GameObject(guid)
 Transporter::~Transporter()
 {
 	sEventMgr.RemoveEvents(this);
-	for(TransportNPCMap::iterator itr = m_npcs.begin(); itr != m_npcs.end(); ++itr)
+	for(TransportNPCMap::iterator itr = m_npcs.begin(); itr != m_npcs.end(); itr++)
 	{
 		if(itr->second->GetTypeId()==TYPEID_UNIT)
 		{
@@ -527,7 +527,7 @@ uint32 Transporter::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* ta
 	uint32 cnt = Object::BuildCreateUpdateBlockForPlayer(data, target);
 
 	// add all the npcs to the packet
-	for(TransportNPCMap::iterator itr = m_npcs.begin(); itr != m_npcs.end(); ++itr)
+	for(TransportNPCMap::iterator itr = m_npcs.begin(); itr != m_npcs.end(); itr++)
 	{
 		LocationVector v_offset = GetPosition();
 		v_offset.x = v_offset.x + TO_CREATURE(itr->second)->m_transportPosition->x;

@@ -80,9 +80,9 @@ Map::~Map()
 		}
 	}
 
-	for(CreatureSpawnList::iterator i = staticSpawns.CreatureSpawns.begin(); i != staticSpawns.CreatureSpawns.end(); ++i)
+	for(CreatureSpawnList::iterator i = staticSpawns.CreatureSpawns.begin(); i != staticSpawns.CreatureSpawns.end(); i++)
 		delete *i;
-	for(GOSpawnList::iterator i = staticSpawns.GOSpawns.begin(); i != staticSpawns.GOSpawns.end(); ++i)
+	for(GOSpawnList::iterator i = staticSpawns.GOSpawns.begin(); i != staticSpawns.GOSpawns.end(); i++)
 		delete *i;
 
 	// collision
@@ -144,9 +144,9 @@ void Map::LoadSpawns(bool reload /* = false */)
 				if(spawns[x][y])
 				{	
 					CellSpawns * sp = spawns[x][y];
-					for(CreatureSpawnList::iterator i = sp->CreatureSpawns.begin(); i != sp->CreatureSpawns.end(); ++i)
+					for(CreatureSpawnList::iterator i = sp->CreatureSpawns.begin(); i != sp->CreatureSpawns.end(); i++)
 						delete (*i);
-					for(GOSpawnList::iterator it = sp->GOSpawns.begin(); it != sp->GOSpawns.end(); ++it)
+					for(GOSpawnList::iterator it = sp->GOSpawns.begin(); it != sp->GOSpawns.end(); it++)
 						delete (*it);
 
 					delete sp;

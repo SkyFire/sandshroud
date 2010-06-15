@@ -165,7 +165,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 #include "ClassSpells.h"
 
 		uint32 c = plr->getClass();
-		for( uint32 i = 0; spellarray[c][i] != 0; ++i )
+		for( uint32 i = 0; spellarray[c][i] != 0; i++ )
 		{
 			plr->addSpell(spellarray[c][i]);
 		}
@@ -230,25 +230,25 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 		switch(c)
 		{
 		case PALADIN:
-			for( uint32 i = 0; paladinspellarray[r][i] != 0; ++i )
+			for( uint32 i = 0; paladinspellarray[r][i] != 0; i++ )
 			{
 				plr->addSpell( paladinspellarray[r][i] );
 			}
 			break;
 		case PRIEST:
-			for( uint32 i = 0; priestspellarray[r][i] != 0; ++i )
+			for( uint32 i = 0; priestspellarray[r][i] != 0; i++ )
 			{
 				plr->addSpell( priestspellarray[r][i] );
 			}
 			break;
 		case MAGE:
-			for( uint32 i = 0; magespellarray[r][i] != 0; ++i )
+			for( uint32 i = 0; magespellarray[r][i] != 0; i++ )
 			{
 				plr->addSpell( magespellarray[r][i] );
 			}
 			break;
 		case SHAMAN:
-			for( uint32 i = 0; shamanspellarray[r][i] != 0; ++i )
+			for( uint32 i = 0; shamanspellarray[r][i] != 0; i++ )
 			{
 				plr->addSpell( shamanspellarray[r][i] );
 			}
@@ -340,7 +340,7 @@ bool ChatHandler::HandleExploreCheatCommand(const char* args, WorldSession *m_se
 	SystemMessage(m_session,  buf);
 
 
-	for (uint8 i = 0; i < 128; ++i)
+	for (uint8 i = 0; i < 128; i++)
 	{
 		if (flag != 0)
 		{
@@ -822,7 +822,7 @@ bool ChatHandler::HandleRemoveAurasCommand(const char *args, WorldSession *m_ses
 	if(!plr) return false;
 
 	BlueSystemMessage(m_session, "Removing all auras...");
-	for(uint32 i = 0; i < MAX_AURAS; ++i)
+	for(uint32 i = 0; i < MAX_AURAS; i++)
 	{
 		if(plr->m_auras[i] != NULL) 
 			plr->RemoveAuraBySlot(i);
@@ -924,7 +924,7 @@ bool ChatHandler::HandleAddItemSetCommand(const char* args, WorldSession* m_sess
 	BlueSystemMessage(m_session, "Searching item set %u...", setid);
 	uint32 start = getMSTime();
 	sGMLog.writefromsession(m_session, "used add item set command, set %u, target %s", setid, chr->GetName());
-	for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); ++itr)
+	for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
 	{
 		Item* itm = objmgr.CreateItem((*itr)->ItemId, m_session->GetPlayer());
 		if(!itm) continue;
@@ -1622,7 +1622,7 @@ bool ChatHandler::HandleMassSummonCommand(const char* args, WorldSession* m_sess
 	Player* summoner = m_session->GetPlayer();
 	Player* plr;
 	uint32 c=0;
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 	{
 		plr = itr->second;
 		if(plr->GetSession() && plr->IsInWorld())
@@ -1657,7 +1657,7 @@ bool ChatHandler::HandleCastAllCommand(const char* args, WorldSession* m_session
 	}
 
 	// this makes sure no moron casts a learn spell on everybody and wrecks the server
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 3; i++)
 	{
 		if (info->Effect[i] == 36) //SPELL_EFFECT_LEARN_SPELL - 36
 		{
@@ -1671,7 +1671,7 @@ bool ChatHandler::HandleCastAllCommand(const char* args, WorldSession* m_session
 
 	PlayerStorageMap::const_iterator itr;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 	{
 		plr = itr->second;
 		if(plr->GetSession() && plr->IsInWorld())
@@ -2497,7 +2497,7 @@ bool ChatHandler::HandleLookupSpellCommand(const char * args, WorldSession * m_s
 	uint32 count = 0;
 	string recout;
 	char itoabuf[12];
-	for (uint32 index = 0; index < dbcSpell.GetNumRows(); ++index)
+	for (uint32 index = 0; index < dbcSpell.GetNumRows(); index++)
 	{
 		SpellEntry* spell = dbcSpell.LookupRow(index);
 		string y = string(spell->Name);
@@ -2599,7 +2599,7 @@ bool ChatHandler::HandleLookupTitleCommand(const char *args, WorldSession *m_ses
 		return true;
 	}
 	GreenSystemMessage(m_session, "Initializing title finder.");
-	for(uint16 i = 1; i < TITLE_END; ++i)
+	for(uint16 i = 1; i < TITLE_END; i++)
 	{
 		std::string lowercase_name = HEARTHSTONE_TOLOWER_RETURN(TitleNames[i]);
 		if(FindXinYString(x, lowercase_name))
@@ -2759,7 +2759,7 @@ bool ChatHandler::HandleAIAgentDebugBegin(const char * args, WorldSession * m_se
 	} while(result->NextRow());
 	delete result;
 
-	for(list<SpellEntry*>::iterator itr = aiagent_spells.begin(); itr != aiagent_spells.end(); ++itr)
+	for(list<SpellEntry*>::iterator itr = aiagent_spells.begin(); itr != aiagent_spells.end(); itr++)
 	{
 		result = WorldDatabase.Query("SELECT * FROM ai_agents WHERE spell = %u", (*itr)->Id);
 		ASSERT(result);
@@ -2819,7 +2819,7 @@ bool ChatHandler::HandleAIAgentDebugContinue(const char * args, WorldSession * m
 
 	Player* pPlayer = m_session->GetPlayer();
 
-	for(uint32 i = 0; i < count; ++i)
+	for(uint32 i = 0; i < count; i++)
 	{
 		if(!aiagent_spells.size())
 			break;
@@ -2853,7 +2853,7 @@ bool ChatHandler::HandleAIAgentDebugSkip(const char * args, WorldSession * m_ses
 	if(!count)
 		return false;
 
-	for(uint32 i = 0; i < count; ++i)
+	for(uint32 i = 0; i < count; i++)
 	{
 		if(!aiagent_spells.size())
 			break;
@@ -2992,7 +2992,7 @@ bool ChatHandler::HandleDispelAllCommand(const char * args, WorldSession * m_ses
 
 	PlayerStorageMap::const_iterator itr;
 	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); ++itr)
+	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 	{
 		plr = itr->second;
 		if(plr->GetSession() && plr->IsInWorld())
@@ -3204,7 +3204,7 @@ bool ChatHandler::HandleClearBonesCommand(const char *args, WorldSession *m_sess
 	Object::InRangeSet::iterator itr;
 	Object* obj;
 
-	for( itr = p->GetInRangeSetBegin(); itr != p->GetInRangeSetEnd(); ++itr)
+	for( itr = p->GetInRangeSetBegin(); itr != p->GetInRangeSetEnd(); itr++)
 	{
 		obj = *itr;
 		if(!obj)
@@ -3226,7 +3226,7 @@ bool ChatHandler::HandleClearCorpsesCommand(const char *args, WorldSession *m_se
 	Object::InRangeSet::iterator itr;
 	Object* obj;
 
-	for( itr = p->GetInRangeSetBegin(); itr != p->GetInRangeSetEnd(); ++itr)
+	for( itr = p->GetInRangeSetBegin(); itr != p->GetInRangeSetEnd(); itr++)
 	{
 		obj = *itr;
 		if(!obj)
@@ -3255,7 +3255,7 @@ bool ChatHandler::HandleMultiMuteCommand(const char *args, WorldSession *m_sessi
 	uint32 i;
 	char msg[200];
 
-	for(i = 2; i < real_args.size(); ++i)
+	for(i = 2; i < real_args.size(); i++)
 	{
 		Player* pPlayer = objmgr.GetPlayer(real_args[i].c_str(), false);
 		if( pPlayer == NULL )
@@ -3285,7 +3285,7 @@ bool ChatHandler::HandleMultiKickCommand(const char *args, WorldSession *m_sessi
 	uint32 i;
 	char msg[200];
 
-	for(i = 1; i < real_args.size(); ++i)
+	for(i = 1; i < real_args.size(); i++)
 	{
 		Player* pPlayer = objmgr.GetPlayer(real_args[i].c_str(), false);
 		if( pPlayer == NULL )
@@ -3317,7 +3317,7 @@ bool ChatHandler::HandleMultiBanCommand(const char *args, WorldSession *m_sessio
 	uint32 i;
 	char msg[200];
 
-	for(i = 2; i < real_args.size(); ++i)
+	for(i = 2; i < real_args.size(); i++)
 	{
 		Player* pPlayer = objmgr.GetPlayer(real_args[i].c_str(), false);
 		if( pPlayer == NULL )
@@ -3353,7 +3353,7 @@ bool ChatHandler::HandleMultiAccountBanCommand(const char *args, WorldSession *m
 	uint32 i;
 	char msg[200];
 
-	for(i = 2; i < real_args.size(); ++i)
+	for(i = 2; i < real_args.size(); i++)
 	{
 		Player* pPlayer = objmgr.GetPlayer(real_args[i].c_str(), false);
 		if( pPlayer == NULL )

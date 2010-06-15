@@ -1167,7 +1167,7 @@ void AVNode::Spawn()
 
 
 	// update field states :O
-	for(uint32 i = 0; i < AV_NUM_SPAWN_TYPES; ++i)
+	for(uint32 i = 0; i < AV_NUM_SPAWN_TYPES; i++)
 	{
 		if( m_template->m_worldStateFields[i] )
 			m_bg->GetMapMgr()->GetStateManager().UpdateWorldState( m_template->m_worldStateFields[i], 0 );
@@ -1180,7 +1180,7 @@ void AVNode::Spawn()
 	if( m_state == AV_NODE_STATE_ALLIANCE_CONTROLLED || m_state == AV_NODE_STATE_HORDE_CONTROLLED )
 	{
 		OUT_DEBUG("AVNode::Spawn(%s) : despawning guards", m_template->m_name);
-		for(vector<Creature*>::iterator itr = m_guards.begin(); itr != m_guards.end(); ++itr)
+		for(vector<Creature*>::iterator itr = m_guards.begin(); itr != m_guards.end(); itr++)
 			(*itr)->Despawn(0, 0);
 		
 		m_guards.clear();
@@ -1190,7 +1190,7 @@ void AVNode::Spawn()
 		if( t > 0 && m_template->m_guardId[t] != 0 )
 		{
 			OUT_DEBUG("AVNode::Spawn(%s) : spawning %u guards of %u", m_template->m_name, m_template->m_guardCount, m_template->m_guardId[t]);
-			for(uint32 i = 0; i < m_template->m_guardCount; ++i)
+			for(uint32 i = 0; i < m_template->m_guardCount; i++)
 			{
 				float x = RandomUInt(10) * cos(RandomFloat(6.28f)) + m_template->m_flagLocation.x;
 				float y = RandomUInt(10) * cos(RandomFloat(6.28f)) + m_template->m_flagLocation.y;
@@ -1223,7 +1223,7 @@ void AVNode::Spawn()
 			map<Creature*, set<uint32> >::iterator itr = m_bg->m_resurrectMap.find(m_spiritGuide);
 			if( itr != m_bg->m_resurrectMap.end() )
 			{
-				for(set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); ++it2)
+				for(set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); it2++)
 				{
 					// repop him at a new GY
 					Player* plr_tmp = m_bg->GetMapMgr()->GetPlayer(*it2);
@@ -1502,7 +1502,7 @@ void AlteracValley::OnCreate()
 	gate->PushToWorld(m_mapMgr);
 	m_gates.push_back(gate);
 
-	for(uint32 i = 0; i < AV_NUM_CONTROL_POINTS; ++i)
+	for(uint32 i = 0; i < AV_NUM_CONTROL_POINTS; i++)
 	{
 		for(uint32 j = 0; j < AV_NODE_STATE_COUNT; ++j)
 		{
@@ -1529,14 +1529,14 @@ void AlteracValley::OnCreate()
 
 void AlteracValley::OnStart()
 {
-	for(uint32 i = 0; i < 2; ++i) {
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr) {
+	for(uint32 i = 0; i < 2; i++) {
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++) {
 			(*itr)->RemoveAura(BG_PREPARATION);
 		}
 	}
 
 	// open gates
-	for(list< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); ++itr)
+	for(list< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); itr++)
 	{
 		(*itr)->SetUInt32Value(GAMEOBJECT_FLAGS, 64);
 		(*itr)->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
@@ -1668,9 +1668,9 @@ void AlteracValley::Finish(uint32 losingTeam)
 	/* add the marks of honor to all players */
 	SpellEntry * winner_spell = dbcSpell.LookupEntry(24955);
 	SpellEntry * loser_spell = dbcSpell.LookupEntry(24954);
-	for(uint32 i = 0; i < 2; ++i)
+	for(uint32 i = 0; i < 2; i++)
 	{
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 		{
 			(*itr)->Root();
 
@@ -1785,7 +1785,7 @@ void AlteracValley::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 
 void AlteracValley::EventUpdateResources()
 {
-/*	for(uint32 i = 0; i < 2; ++i)
+/*	for(uint32 i = 0; i < 2; i++)
 	{
 		AddReinforcements( i, m_mineControl[i] );
 	}

@@ -220,7 +220,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 		if(!ssf) return;
 
 		bool ok = false;
-		for(uint8 i = 0; i < 7; ++i)
+		for(uint8 i = 0; i < 7; i++)
 			if( ssf->spells[i] == spellId)
 				ok = true;
 

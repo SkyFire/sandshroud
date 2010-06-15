@@ -267,7 +267,7 @@ Pet::~Pet()
 {
 	mSpells.clear();
 
-	for(std::map<uint32, AI_Spell*>::iterator itr = m_AISpellStore.begin(); itr != m_AISpellStore.end(); ++itr)
+	for(std::map<uint32, AI_Spell*>::iterator itr = m_AISpellStore.begin(); itr != m_AISpellStore.end(); itr++)
 		delete itr->second;
 	m_AISpellStore.clear();
 
@@ -358,7 +358,7 @@ void Pet::SendSpellsToOwner()
 	*data << uint16(0x0000);//unk3
 
 	// Send the actionbar
-	for(uint32 i = 0; i < 10; ++i)
+	for(uint32 i = 0; i < 10; i++)
 	{
 		if(ActionBar[i] & 0x4000000)		// Command
 			*data << uint32(ActionBar[i]);
@@ -376,7 +376,7 @@ void Pet::SendSpellsToOwner()
 	{
 		// Send the rest of the spells.
 		*data << uint8(mSpells.size());
-		for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); ++itr)
+		for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); itr++)
 			*data << uint16(itr->first->Id) << uint16(itr->second);
 	}
 	*data << uint8(0);	// count
@@ -406,7 +406,7 @@ void Pet::SendNullSpellsToOwner()
 
 void Pet::InitializeSpells()
 {
-	for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); ++itr)
+	for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); itr++)
 	{
 		SpellEntry *info = itr->first;
 		if(!info)
@@ -552,11 +552,11 @@ void Pet::LoadFromDB(Player* owner, PlayerPet * playerPetInfo)
 		SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, GetNextLevelXP(m_Owner->getLevel()));
 	}
 
-	for(uint8 i = 0; i < 10; ++i)
+	for(uint8 i = 0; i < 10; i++)
 	{
 		ActionBar[i] = m_PlayerPetInfo->actionbarspell[i];
 	}
-	for(uint8 i = 0; i < 10; ++i)
+	for(uint8 i = 0; i < 10; i++)
 	{
 		if(!(ActionBar[i] & 0x4000000) && m_PlayerPetInfo->actionbarspell[i])
 		{
@@ -704,7 +704,7 @@ void Pet::UpdatePetInfo(bool bSetToOffline)
 	pi->happinessupdate = m_HappinessTimer;
 
 	// save action bar
-	for(uint32 i = 0; i < 10; ++i)
+	for(uint32 i = 0; i < 10; i++)
 	{
 		if(ActionBar[i] & 0x4000000) //command
 		{
@@ -900,7 +900,7 @@ void Pet::SetDefaultSpells()
 		if(it1 != m_Owner->SummonSpells.end())
 		{
 			it2 = it1->second.begin();
-			for(; it2 != it1->second.end(); ++it2)
+			for(; it2 != it1->second.end(); it2++)
 			{
 				AddSpell(dbcSpell.LookupEntry(*it2), false, false);
 			}
@@ -914,7 +914,7 @@ void Pet::SetDefaultSpells()
 		{
 			CreatureSpellDataEntry * SpellData = dbcCreatureSpellData.LookupEntry(Line);
 			if(SpellData)
-				for(uint32 i = 0; i < 3; ++i)
+				for(uint32 i = 0; i < 3; i++)
 					if(SpellData->Spells[i] != 0)
 						AddSpell(dbcSpell.LookupEntry(SpellData->Spells[i]), false, false); //add spell to pet
 		}
@@ -938,7 +938,7 @@ void Pet::AddSpell(SpellEntry * sp, bool learning, bool sendspells)
 	{
 	   // Active spell add to the actionbar.
 		bool has=false;
-		for(int i = 0; i < 10; ++i)
+		for(int i = 0; i < 10; i++)
 		{
 			if(ActionBar[i] == sp->Id)
 			{
@@ -949,7 +949,7 @@ void Pet::AddSpell(SpellEntry * sp, bool learning, bool sendspells)
 
 		if(!has)
 		{
-			for(int i = 0; i < 10; ++i)
+			for(int i = 0; i < 10; i++)
 			{
 				if(ActionBar[i] == 0)
 				{
@@ -962,12 +962,12 @@ void Pet::AddSpell(SpellEntry * sp, bool learning, bool sendspells)
 		bool done=false;
 		if(learning)
 		{
-			for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); ++itr)
+			for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); itr++)
 			{
 				if(sp->NameHash == itr->first->NameHash)
 				{
 					// replace the spell in the action bar
-					for(int i = 0; i < 10; ++i)
+					for(int i = 0; i < 10; i++)
 					{
 						if(ActionBar[i] == itr->first->Id)
 						{
@@ -1062,7 +1062,7 @@ void Pet::SetDefaultActionbar()
 	{
 		PetSpellMap::iterator itr = mSpells.begin();
 		uint32 pos = 0;
-		for(; itr != mSpells.end() && pos < 4; ++itr, ++pos)
+		for(; itr != mSpells.end() && pos < 4; itr++, ++pos)
 			ActionBar[3+pos] = itr->first->Id;
 	}
 
@@ -1117,7 +1117,7 @@ void Pet::RemoveSpell(SpellEntry * sp)
 	map<uint32, AI_Spell*>::iterator itr = m_AISpellStore.find(sp->Id);
 	if(itr != m_AISpellStore.end())
 	{
-		for(list<AI_Spell*>::iterator it = m_aiInterface->m_spells.begin(); it != m_aiInterface->m_spells.end(); ++it)
+		for(list<AI_Spell*>::iterator it = m_aiInterface->m_spells.begin(); it != m_aiInterface->m_spells.end(); it++)
 		{
 			if((*it) == itr->second)
 			{
@@ -1126,7 +1126,7 @@ void Pet::RemoveSpell(SpellEntry * sp)
 				if((*it)->autocast_type > 0)
 				{
 					for(list<AI_Spell*>::iterator i3 = m_autoCastSpells[(*it)->autocast_type].begin();
-						i3 != m_autoCastSpells[(*it)->autocast_type].end(); ++i3)
+						i3 != m_autoCastSpells[(*it)->autocast_type].end(); i3++)
 					{
 						if( (*i3) == itr->second )
 						{
@@ -1147,7 +1147,7 @@ void Pet::RemoveSpell(SpellEntry * sp)
 	}
 	else
 	{
-		for(list<AI_Spell*>::iterator it = m_aiInterface->m_spells.begin(); it != m_aiInterface->m_spells.end(); ++it)
+		for(list<AI_Spell*>::iterator it = m_aiInterface->m_spells.begin(); it != m_aiInterface->m_spells.end(); it++)
 		{
 			if((*it)->spell == sp)
 			{
@@ -1466,7 +1466,7 @@ uint32 Pet::GetHighestRankSpell(uint32 spellId)
 	if(sp && mSpells.size() > 0)
 	{
 		PetSpellMap::iterator itr = mSpells.begin();
-		for(; itr != mSpells.end(); ++itr)
+		for(; itr != mSpells.end(); itr++)
 			if(sp->NameHash == itr->first->NameHash)
 				if((!tmp || tmp->RankNumber < itr->first->RankNumber))
 					 tmp = itr->first;
@@ -1597,7 +1597,7 @@ void Pet::SetAutoCast(AI_Spell*sp, bool on)
 		if(!on)
 		{
 			for(list<AI_Spell*>::iterator itr = m_autoCastSpells[sp->autocast_type].begin();
-				itr != m_autoCastSpells[sp->autocast_type].end(); ++itr)
+				itr != m_autoCastSpells[sp->autocast_type].end(); itr++)
 			{
 				if( (*itr) == sp )
 				{
@@ -1609,7 +1609,7 @@ void Pet::SetAutoCast(AI_Spell*sp, bool on)
 		else
 		{
 			for(list<AI_Spell*>::iterator itr = m_autoCastSpells[sp->autocast_type].begin();
-				itr != m_autoCastSpells[sp->autocast_type].end(); ++itr)
+				itr != m_autoCastSpells[sp->autocast_type].end(); itr++)
 			{
 				if((*itr) == sp)
 					return;
@@ -1663,7 +1663,7 @@ bool Pet::ResetTalents(bool costs)
 	{
 		PetTalentMap::iterator itr = m_talents.begin();
 
-		for ( ; itr != m_talents.end(); ++itr)
+		for ( ; itr != m_talents.end(); itr++)
 		{
 			// find our talent
 			TalentEntry *talentEntry = dbcTalent.LookupEntry( itr->first );
@@ -1753,7 +1753,7 @@ void Pet::InitializeTalents()
 	uint32 talentid = 0;
 	uint32 rank = 0;
 	uint32 spellId = 0;
-	for(PetTalentMap::iterator itr = m_talents.begin(); itr != m_talents.end(); ++itr)
+	for(PetTalentMap::iterator itr = m_talents.begin(); itr != m_talents.end(); itr++)
 	{
 		talentid = itr->first;
 		rank = itr->second;

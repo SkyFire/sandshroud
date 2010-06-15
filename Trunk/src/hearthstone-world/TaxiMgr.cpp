@@ -322,7 +322,7 @@ void TaxiMgr::_LoadTaxiNodes()
 {
 	uint32 i;
 
-	for(i = 0; i < dbcTaxiNode.GetNumRows(); ++i)
+	for(i = 0; i < dbcTaxiNode.GetNumRows(); i++)
 	{
 		DBCTaxiNode *node = dbcTaxiNode.LookupRow(i);
 		if (node)
@@ -347,7 +347,7 @@ void TaxiMgr::_LoadTaxiPaths()
 {
 	uint32 i, j;
 
-	for(i = 0; i < dbcTaxiPath.GetNumRows(); ++i)
+	for(i = 0; i < dbcTaxiPath.GetNumRows(); i++)
 	{
 		DBCTaxiPath *path = dbcTaxiPath.LookupRow(i);
 
@@ -400,7 +400,7 @@ TaxiPath* TaxiMgr::GetTaxiPath(uint32 from, uint32 to)
 {
 	HM_NAMESPACE::hash_map<uint32, TaxiPath*>::iterator itr;
 
-	for (itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); ++itr)
+	for (itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); itr++)
 		if ((itr->second->to == to) && (itr->second->from == from))
 			return itr->second;
 
@@ -427,7 +427,7 @@ uint32 TaxiMgr::GetNearestTaxiNode( float x, float y, float z, uint32 mapid )
 
 	HM_NAMESPACE::hash_map<uint32, TaxiNode*>::iterator itr;
 
-	for (itr = m_taxiNodes.begin(); itr != m_taxiNodes.end(); ++itr)
+	for (itr = m_taxiNodes.begin(); itr != m_taxiNodes.end(); itr++)
 	{
 		if (itr->second->mapid == mapid)
 		{
@@ -451,7 +451,7 @@ bool TaxiMgr::GetGlobalTaxiNodeMask( uint32 curloc, uint32 *Mask )
 	HM_NAMESPACE::hash_map<uint32, TaxiPath*>::iterator itr;
 	uint8 field;
 
-	for (itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); ++itr)
+	for (itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); itr++)
 	{
 		field = (uint8)((itr->second->to - 1) / 32);
 		if(field >= 12)

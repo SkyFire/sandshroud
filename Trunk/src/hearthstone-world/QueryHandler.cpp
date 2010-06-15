@@ -83,7 +83,7 @@ void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 		data << "WayPoint";
 		data << uint8(0) << uint8(0) << uint8(0);
 		data << "Level is WayPoint ID";
-		for(uint32 i = 0; i < 8; ++i)
+		for(uint32 i = 0; i < 8; i++)
 			data << uint32(0);
 		data << uint8(0);
 		SendPacket( &data );
@@ -118,7 +118,7 @@ void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 	data << ci->unkfloat1;
 	data << ci->unkfloat2;
 	data << ci->Leader;
-	for(uint32 i = 0; i < 6; ++i)
+	for(uint32 i = 0; i < 6; i++)
 		data << uint32(0);	//QuestItems
 	data << uint32(0);	// CreatureMovementInfo.dbc
 	SendPacket( &data );
@@ -189,7 +189,7 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 	data << goinfo->Unknown13;
 	data << goinfo->Unknown14;
 	data << float(1);
-	for(uint32 i = 0; i < 6; ++i)
+	for(uint32 i = 0; i < 6; i++)
 		data << uint32(0);			// itemId[6], quest drop
 
 	SendPacket( &data );
@@ -323,7 +323,7 @@ void WorldSession::HandleInrangeQuestgiverQuery(WorldPacket & recv_data)
 	//    64 guid
 	//    8 status
 
-	for( itr = _player->m_objectsInRange.begin(); itr != _player->m_objectsInRange.end(); ++itr )
+	for( itr = _player->m_objectsInRange.begin(); itr != _player->m_objectsInRange.end(); itr++ )
 	{
 		pCreature = TO_CREATURE(*itr);
 		if( pCreature->GetTypeId() != TYPEID_UNIT )

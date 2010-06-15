@@ -342,7 +342,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 	qle->UpdatePlayerFields();
 
 	// If the quest should give any items on begin, give them the items.
-	for(uint32 i = 0; i < 4; ++i)
+	for(uint32 i = 0; i < 4; i++)
 	{
 		if(qst->receive_items[i])
 		{
@@ -426,7 +426,7 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 	qEntry->Finish();
 
 	// Remove all items given by the questgiver at the beginning
-	for(uint32 i = 0; i < 4; ++i)
+	for(uint32 i = 0; i < 4; i++)
 	{
 		if(qPtr->receive_items[i])
 			_player->GetItemInterface()->RemoveItemAmt( qPtr->receive_items[i], 1 );
@@ -776,7 +776,7 @@ void WorldSession::HandlePushQuestToPartyOpcode(WorldPacket &recv_data)
 			{
 				_player->GetGroup()->Lock();
 				GroupMembersSet::iterator itr;
-				for(itr = sgr->GetGroupMembersBegin(); itr != sgr->GetGroupMembersEnd(); ++itr)
+				for(itr = sgr->GetGroupMembersBegin(); itr != sgr->GetGroupMembersEnd(); itr++)
 				{
 					Player* pPlayer = (*itr)->m_loggedInPlayer;
 					if(pPlayer && pPlayer->GetGUID() !=  pguid)

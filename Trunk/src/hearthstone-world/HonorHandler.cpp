@@ -112,7 +112,7 @@ void HonorHandler::OnPlayerKilledUnit( Player* pPlayer, Unit* pVictim )
 			pPlayer->m_bg->Lock();
 			set<Player*  > * s = &pPlayer->m_bg->m_players[t];
 
-			for(set<Player*  >::iterator itr = s->begin(); itr != s->end(); ++itr)
+			for(set<Player*  >::iterator itr = s->begin(); itr != s->end(); itr++)
 			{
 				if((*itr) == pPlayer || (*itr)->isInRange(pPlayer,40.0f))
 					toadd.push_back(*itr);
@@ -258,7 +258,7 @@ bool ChatHandler::HandleAddKillCommand(const char* args, WorldSession* m_session
 	BlueSystemMessage(m_session, "Adding %u kills to player %s.", KillAmount, plr->GetName());
 	GreenSystemMessage(plr->GetSession(), "You have had %u honor kills added to your character.", KillAmount);
 
-	for(uint32 i = 0; i < KillAmount; ++i)
+	for(uint32 i = 0; i < KillAmount; i++)
 		HonorHandler::OnPlayerKilledUnit(plr, NULLPLR);
 
 	return true;

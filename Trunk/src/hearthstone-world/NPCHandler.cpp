@@ -143,7 +143,7 @@ void WorldSession::SendTrainerList(Creature* pCreature)
 	data << pTrainer->TrainerType;
 
 	data << uint32(0);
-	for(vector<TrainerSpell>::iterator itr = pTrainer->Spells.begin(); itr != pTrainer->Spells.end(); ++itr)
+	for(vector<TrainerSpell>::iterator itr = pTrainer->Spells.begin(); itr != pTrainer->Spells.end(); itr++)
 	{
 		pSpell = &(*itr);
 		Status = TrainerGetSpellStatus(pSpell);
@@ -187,7 +187,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 	if(pTrainer == 0 || !CanTrainAt(_player, pTrainer)) return;
 
 	TrainerSpell* pSpell=NULL;
-	for(vector<TrainerSpell>::iterator itr = pTrainer->Spells.begin(); itr != pTrainer->Spells.end(); ++itr)
+	for(vector<TrainerSpell>::iterator itr = pTrainer->Spells.begin(); itr != pTrainer->Spells.end(); itr++)
 	{
 		if( ( itr->pCastRealSpell && itr->pCastRealSpell->Id == TeachingSpellID ) ||
 			( itr->pLearnSpell && itr->pLearnSpell->Id == TeachingSpellID ) )
@@ -224,7 +224,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 		_player->addSpell( pSpell->pLearnSpell->Id );
 
 		uint32 i;
-		for( i = 0; i < 3; ++i)
+		for( i = 0; i < 3; i++)
 		{
 			if(pSpell->pLearnSpell->Effect[i] == SPELL_EFFECT_PROFICIENCY || pSpell->pLearnSpell->Effect[i] == SPELL_EFFECT_LEARN_SPELL ||
 				pSpell->pLearnSpell->Effect[i] == SPELL_EFFECT_WEAPON)
@@ -234,7 +234,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 			}
 		}
 
-		for( i = 0; i < 3; ++i)
+		for( i = 0; i < 3; i++)
 		{
 			if( pSpell->pLearnSpell->Effect[i] == SPELL_EFFECT_SKILL )
 			{
@@ -438,7 +438,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 		uint32 count = 0;//sQuestMgr.ActiveQuestsCount(TalkingWith, GetPlayer());
 		size_t pos = data.wpos();
 		data << uint32(count);
-		for (it = TalkingWith->QuestsBegin(); it != TalkingWith->QuestsEnd(); ++it)
+		for (it = TalkingWith->QuestsBegin(); it != TalkingWith->QuestsEnd(); it++)
 		{
 			uint32 status = sQuestMgr.CalcQuestStatus(TalkingWith, GetPlayer(), *it);
 			if (status >= QMGR_QUEST_CHAT)

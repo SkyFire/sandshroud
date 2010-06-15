@@ -66,27 +66,27 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 	*data << uint32(0);								// unk
 
 	// (loop 4 times)
-	for(uint32 i = 0; i < 4; ++i)
+	for(uint32 i = 0; i < 4; i++)
 	{
 		*data << qst->reward_item[i];				// Forced Reward Item [i]
 		*data << qst->reward_itemcount[i];			// Forced Reward Item Count [i]
 	}
 
 	// (loop 6 times)
-	for(uint32 i = 0; i < 6; ++i)
+	for(uint32 i = 0; i < 6; i++)
 	{
 		*data << qst->reward_choiceitem[i];			// Choice Reward Item [i]
 		*data << qst->reward_choiceitemcount[i];	// Choice Reward Item Count [i]
 	}
 
 	// 3.3 Faction Reward Stuff.
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << uint32(qst->reward_repfaction[i]);
 
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << int32(qst->reward_repvalue[i]);
 
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << int32(qst->reward_replimit);
 	//end
 
@@ -103,14 +103,14 @@ WorldPacket* WorldSession::BuildQuestQueryResponse(Quest *qst)
 	*data << uint8(0); // Displayed after finishing quest.
 
 	// (loop 4 times)
-	for(uint32 i = 0; i < 4; ++i)
+	for(uint32 i = 0; i < 4; i++)
 	{
 		*data << qst->required_mob[i];				// Kill mob entry ID [i]
 		*data << uint64(qst->required_mobcount[i]);	// Kill mob count [i]
 		*data << uint32(0);							// 3.0.2
 	}
 
-	for(uint32 i = 0; i < 6; ++i)
+	for(uint32 i = 0; i < 6; i++)
 	{
 		*data << qst->required_item[i];				// Collect item [i]
 		*data << qst->required_itemcount[i];		// Collect item count [i]
@@ -226,10 +226,10 @@ void QuestLogEntry::SaveToDB(QueryBuffer * buf)
 	std::stringstream ss;
 	ss << "REPLACE INTO questlog VALUES(";
 	ss << m_plr->GetLowGUID() << "," << m_quest->id << "," << m_slot << "," << m_time_left;
-	for(int i = 0; i < 4; ++i)
+	for(int i = 0; i < 4; i++)
 		ss << "," << m_explored_areas[i];
 	
-	for(int i = 0; i < 4; ++i)
+	for(int i = 0; i < 4; i++)
 		ss << "," << m_mobcount[i];
 
 	ss << "," << m_player_slain;
@@ -249,14 +249,14 @@ bool QuestLogEntry::LoadFromDB(Field *fields)
 	ASSERT(m_plr && m_quest);
 	m_time_left = fields[f].GetUInt32();
 	f++;
-	for(int i = 0; i < 4; ++i)
+	for(int i = 0; i < 4; i++)
 	{
 		m_explored_areas[i] = fields[f].GetUInt32();
 		f++;
 		CALL_QUESTSCRIPT_EVENT(this, OnExploreArea)(m_explored_areas[i], m_plr, this);
 	}
 
-	for(int i = 0; i < 4; ++i)
+	for(int i = 0; i < 4; i++)
 	{
 		m_mobcount[i] = fields[f].GetUInt32();
 		f++;
@@ -273,7 +273,7 @@ bool QuestLogEntry::LoadFromDB(Field *fields)
 bool QuestLogEntry::CanBeFinished()
 {
 	uint32 i;
-	for(i = 0; i < 4; ++i)
+	for(i = 0; i < 4; i++)
 	{
 		if(m_quest->required_mob[i])
 		{
@@ -284,7 +284,7 @@ bool QuestLogEntry::CanBeFinished()
 		}
 	}
 
-	for(i = 0; i < 6; ++i)
+	for(i = 0; i < 6; i++)
 	{
 		if(m_quest->required_item[i])
 		{
@@ -296,7 +296,7 @@ bool QuestLogEntry::CanBeFinished()
 	}
 
 	//Check for Gold & AreaTrigger Requirement s
-	for(i = 0; i < 4; ++i)
+	for(i = 0; i < 4; i++)
 	{
 		if(m_quest->required_money && (m_plr->GetUInt32Value(PLAYER_FIELD_COINAGE) < m_quest->required_money)) 
 			return false;
@@ -383,7 +383,7 @@ void QuestLogEntry::UpdatePlayerFields()
 	if(m_quest->count_requiredtriggers)
 	{
 		uint32 count = 0;
-		for(i = 0; i < 4; ++i)
+		for(i = 0; i < 4; i++)
 		{
 			if(m_quest->required_triggers[i])
 			{
@@ -405,7 +405,7 @@ void QuestLogEntry::UpdatePlayerFields()
 	{
 		// optimized this - burlex
 		uint8 * p = (uint8*)&field1;
-		for(int i = 0; i < 4; ++i)
+		for(int i = 0; i < 4; i++)
 		{
 			if( m_quest->required_mob[i] && m_mobcount[i] > 0 )
 				p[2*i] |= (uint8)m_mobcount[i];

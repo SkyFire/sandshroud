@@ -28,7 +28,7 @@ bool QuestMgr::isRepeatableQuestFinished(Player* plr, Quest *qst)
 {
 	uint32 i;
 
-	for(i = 0; i < 6; ++i)
+	for(i = 0; i < 6; i++)
 	{
 		if(qst->required_item[i])
 		{
@@ -100,7 +100,7 @@ uint32 QuestMgr::PlayerMeetsReqs(Player* plr, Quest* qst, bool skiplevelcheck)
 	//Do we just need to complete one, or all quest requisitions?
 	if( !qst->required_quest_and_or )
 	{
-		for(uint32 i = 0; i < qst->count_requiredquests; ++i)
+		for(uint32 i = 0; i < qst->count_requiredquests; i++)
 		{
 			if (qst->required_quests[i] > 0 && !( plr->HasFinishedQuest(qst->required_quests[i]) || plr->HasFinishedDailyQuest(qst->required_quests[i])))
 				return QMGR_QUEST_NOT_AVAILABLE;
@@ -109,7 +109,7 @@ uint32 QuestMgr::PlayerMeetsReqs(Player* plr, Quest* qst, bool skiplevelcheck)
 	else
 	{
 		bool check_req=false;
-		for(uint32 i = 0; i < qst->count_requiredquests; ++i)
+		for(uint32 i = 0; i < qst->count_requiredquests; i++)
 		{
 			if(plr->HasFinishedQuest(qst->required_quests[i]) || plr->HasFinishedDailyQuest(qst->required_quests[i]))
 				check_req=true;
@@ -216,7 +216,7 @@ uint8 QuestMgr::CalcStatus(Object* quest_giver, Player* plr)
 			status = tmp_status;
 	}
 
-	for(itr = q_begin; itr != q_end; ++itr)
+	for(itr = q_begin; itr != q_end; itr++)
 	{
 		uint32 tmp_status = CalcQuestStatus(quest_giver, plr, *itr);	// save a call
 		if (tmp_status > status)
@@ -262,7 +262,7 @@ uint32 QuestMgr::ActiveQuestsCount(Object* quest_giver, Player* plr)
 		return 0;
 	}
 
-	for(itr = q_begin; itr != q_end; ++itr)
+	for(itr = q_begin; itr != q_end; itr++)
 	{
 		if (CalcQuestStatus(quest_giver, plr, *itr) >= QMGR_QUEST_CHAT)
 		{
@@ -309,7 +309,7 @@ void QuestMgr::BuildOfferReward(WorldPacket *data, Quest* qst, Object* qst_giver
 	*data << qst->count_reward_choiceitem;
 	if (qst->count_reward_choiceitem)
 	{
-		for(i = 0; i < 6; ++i)
+		for(i = 0; i < 6; i++)
 		{
 			if(qst->reward_choiceitem[i])
 			{
@@ -324,7 +324,7 @@ void QuestMgr::BuildOfferReward(WorldPacket *data, Quest* qst, Object* qst_giver
 	*data << qst->count_reward_item;
 	if(qst->count_reward_item)
 	{
-		for(i = 0; i < 4; ++i)
+		for(i = 0; i < 4; i++)
 		{
 			if(qst->reward_item[i])
 			{
@@ -349,13 +349,13 @@ void QuestMgr::BuildOfferReward(WorldPacket *data, Quest* qst, Object* qst_giver
 	*data << uint32(0); // Maybe show reward rep.
 
 	// 3.3 Faction Reward Stuff.
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << uint32(qst->reward_repfaction[i]);
 
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << int32(qst->reward_repvalue[i]);
 
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << int32(qst->reward_replimit);
 	//end
 }
@@ -382,7 +382,7 @@ void QuestMgr::BuildQuestDetails(WorldPacket *data, Quest* qst, Object* qst_give
 
 	ItemPrototype *ip;
 	uint32 i;
-	for(i = 0; i < 6; ++i)
+	for(i = 0; i < 6; i++)
 	{
 		ip = ItemPrototypeStorage.LookupEntry(qst->reward_choiceitem[i]);
 		if(!qst->reward_choiceitem[i])
@@ -398,7 +398,7 @@ void QuestMgr::BuildQuestDetails(WorldPacket *data, Quest* qst, Object* qst_give
 
 	*data << qst->count_reward_item;
 
-	for(i = 0; i < 4; ++i)
+	for(i = 0; i < 4; i++)
 	{
 		ip = ItemPrototypeStorage.LookupEntry(qst->reward_item[i]);
 		if(!qst->reward_item[i]) continue;
@@ -423,13 +423,13 @@ void QuestMgr::BuildQuestDetails(WorldPacket *data, Quest* qst, Object* qst_give
 	*data << uint32(0);							// new 3.3.0
 
 	// 3.3 Faction Reward Stuff.
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << uint32(qst->reward_repfaction[i]);
 
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << int32(qst->reward_repvalue[i]);
 
-	for(i = 0; i < 5; ++i)
+	for(i = 0; i < 5; i++)
 		*data << int32(qst->reward_replimit);
 	//end
 
@@ -466,7 +466,7 @@ void QuestMgr::BuildRequestItems(WorldPacket *data, Quest* qst, Object* qst_give
 	uint32 count = 0;
 	
 	// (loop for each item)
-	for(uint32 i = 0; i < 6; ++i)
+	for(uint32 i = 0; i < 6; i++)
 	{
 		if(qst->required_item[i])
 		{
@@ -566,7 +566,7 @@ void QuestMgr::BuildQuestList(WorldPacket *data, Object* qst_giver, Player* plr,
 	
 	*data << uint8(sQuestMgr.ActiveQuestsCount(qst_giver, plr));
 
-	for (it = st; it != ed; ++it)
+	for (it = st; it != ed; it++)
 	{
 		status = sQuestMgr.CalcQuestStatus(qst_giver, plr, *it);
 		if (status >= QMGR_QUEST_CHAT)
@@ -634,7 +634,7 @@ bool QuestMgr::OnGameObjectActivate(Player* plr, GameObject* go)
 	QuestLogEntry *qle;
 	uint32 entry = go->GetEntry();
 
-	for(i = 0; i < 25; ++i)
+	for(i = 0; i < 25; i++)
 	{
 		qle = plr->GetQuestLogInSlot( i );
 		if( qle != NULL )
@@ -684,7 +684,7 @@ void QuestMgr::_OnPlayerKill(Player* plr, uint32 creature_entry)
 
 	if (plr->HasQuestMob(creature_entry))
 	{
-		for(i = 0; i < 25; ++i)
+		for(i = 0; i < 25; i++)
 		{
 			qle = plr->GetQuestLogInSlot( i );
 			if( qle != NULL )
@@ -736,7 +736,7 @@ void QuestMgr::_OnPlayerKill(Player* plr, uint32 creature_entry)
 					gplr = (*gitr)->m_loggedInPlayer;
 					if(gplr && gplr != plr && plr->isInRange(gplr,300) && gplr->HasQuestMob(creature_entry)) // dont double kills also dont give kills to party members at another side of the world
 					{
-						for( i = 0; i < 25; ++i )
+						for( i = 0; i < 25; i++ )
 						{
 							qle = gplr->GetQuestLogInSlot(i);
 							if( qle != NULL )
@@ -786,7 +786,7 @@ void QuestMgr::OnPlayerSlain(Player* plr, Player* victim)
 
 	QuestLogEntry *qle;
 	uint32 i;
-	for(i = 0; i < 25; ++i)
+	for(i = 0; i < 25; i++)
 	{
 		if((qle = plr->GetQuestLogInSlot(i)) && qle->m_quest->required_kill_player)
 		{
@@ -813,7 +813,7 @@ void QuestMgr::OnPlayerSlain(Player* plr, Player* victim)
 					gplr = (*gitr)->m_loggedInPlayer;
 					if(gplr && gplr != plr && plr->isInRange(gplr,300)) // dont double kills also dont give kills to party members at another side of the world
 					{
-						for( i = 0; i < 25; ++i )
+						for( i = 0; i < 25; i++ )
 						{
 							qle = gplr->GetQuestLogInSlot(i);
 							if( qle != NULL )
@@ -849,7 +849,7 @@ void QuestMgr::OnPlayerCast(Player* plr, uint32 spellid, uint64& victimguid)
 	uint32 i, j;
 	uint32 entry = victim->GetEntry();
 	QuestLogEntry *qle;
-	for(i = 0; i < 25; ++i)
+	for(i = 0; i < 25; i++)
 	{
 		if((qle = plr->GetQuestLogInSlot(i)))
 		{
@@ -885,7 +885,7 @@ void QuestMgr::OnPlayerItemPickup(Player* plr, Item* item)
 	uint32 pcount;
 	uint32 entry = item->GetEntry();
 	QuestLogEntry *qle;
-	for( i = 0; i < 25; ++i )
+	for( i = 0; i < 25; i++ )
 	{
 		if( ( qle = plr->GetQuestLogInSlot( i ) ) )
 		{
@@ -921,7 +921,7 @@ void QuestMgr::OnPlayerExploreArea(Player* plr, uint32 AreaID)
 {
 	uint32 i, j;
 	QuestLogEntry *qle;
-	for( i = 0; i < 25; ++i )
+	for( i = 0; i < 25; i++ )
 	{
 		if((qle = plr->GetQuestLogInSlot(i)))
 		{
@@ -1066,7 +1066,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		GiveQuestRewardReputation(plr, qst, qst_giver);
 		GiveQuestTitleReward(plr, qst);
 		// Static Item reward
-		for(uint32 i = 0; i < 4; ++i)
+		for(uint32 i = 0; i < 4; i++)
 		{
 			if(qst->reward_item[i])
 			{
@@ -1176,7 +1176,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		GiveQuestRewardReputation(plr, qst, qst_giver);
 		GiveQuestTitleReward(plr, qst);
 		// Static Item reward
-		for(uint32 i = 0; i < 4; ++i)
+		for(uint32 i = 0; i < 4; i++)
 		{
 			if(qst->reward_item[i])
 			{
@@ -1380,7 +1380,7 @@ void QuestMgr::AddItemQuestAssociation( uint32 itemId, Quest *qst, uint8 item_co
 	
 	// look through this item's QuestAssociationList for a matching quest entry
 	list<QuestAssociation *>::iterator it;
-	for (it = tempList->begin(); it != tempList->end(); ++it)
+	for (it = tempList->begin(); it != tempList->end(); it++)
 	{
 		if ((*it)->qst == qst)
 		{
@@ -1426,7 +1426,7 @@ template <class T> void QuestMgr::_AddQuest(uint32 entryid, Quest *qst, uint8 ty
 	}
 
 	list<QuestRelation *>::iterator it;
-	for (it = nlist->begin(); it != nlist->end(); ++it)
+	for (it = nlist->begin(); it != nlist->end(); it++)
 	{
 		if ((*it)->qst == qst)
 		{
@@ -1608,7 +1608,7 @@ void QuestMgr::SetGameObjectLootQuest(uint32 GO_Entry, uint32 Item_Entry)
 	while(!itr->AtEnd())
 	{
 		Quest *qst = itr->Get();
-		for(i = 0; i < 4; ++i)
+		for(i = 0; i < 4; i++)
 		{
 			if(qst->required_item[i] == Item_Entry)
 			{
@@ -1678,7 +1678,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 			return false;
 		}
 		
-		for(itr = q_begin; itr != q_end; ++itr) 
+		for(itr = q_begin; itr != q_end; itr++) 
 			if (sQuestMgr.CalcQuestStatus(qst_giver, plr, *itr) >= QMGR_QUEST_CHAT)
 				break;
 
@@ -1728,13 +1728,13 @@ QuestMgr::~QuestMgr()
 	std::list<uint32>::iterator itr6;
 
 	// clear relations
-	for(itr2 = m_obj_quests.begin(); itr2 != m_obj_quests.end(); ++itr2)
+	for(itr2 = m_obj_quests.begin(); itr2 != m_obj_quests.end(); itr2++)
 	{
 		if(!itr2->second)
 			continue;
 
 		itr3 = itr2->second->begin();
-		for(; itr3 != itr2->second->end(); ++itr3)
+		for(; itr3 != itr2->second->end(); itr3++)
 		{
 			delete (*itr3);
 		}
@@ -1743,13 +1743,13 @@ QuestMgr::~QuestMgr()
 	}
 	m_obj_quests.clear(); 
 
-	for(itr2 = m_npc_quests.begin(); itr2 != m_npc_quests.end(); ++itr2)
+	for(itr2 = m_npc_quests.begin(); itr2 != m_npc_quests.end(); itr2++)
 	{
 		if(!itr2->second)
 			continue;
 
 		itr3 = itr2->second->begin();
-		for(; itr3 != itr2->second->end(); ++itr3)
+		for(; itr3 != itr2->second->end(); itr3++)
 		{
 			delete (*itr3);
 		}
@@ -1758,13 +1758,13 @@ QuestMgr::~QuestMgr()
 	}
 	m_npc_quests.clear();
 
-	for(itr2 = m_itm_quests.begin(); itr2 != m_itm_quests.end(); ++itr2)
+	for(itr2 = m_itm_quests.begin(); itr2 != m_itm_quests.end(); itr2++)
 	{
 		if(!itr2->second)
 			continue;
 
 		itr3 = itr2->second->begin();
-		for(; itr3 != itr2->second->end(); ++itr3)
+		for(; itr3 != itr2->second->end(); itr3++)
 		{
 			delete (*itr3);
 		}
@@ -1773,13 +1773,13 @@ QuestMgr::~QuestMgr()
 	}
 	m_itm_quests.clear(); 
 
-	for(itr4 = m_quest_associations.begin(); itr4 != m_quest_associations.end(); ++itr4)
+	for(itr4 = m_quest_associations.begin(); itr4 != m_quest_associations.end(); itr4++)
 	{
 		if(!itr4->second)
 			continue;
 
 		itr5 = itr4->second->begin();
-		for(; itr5 != itr4->second->end(); ++itr5)
+		for(; itr5 != itr4->second->end(); itr5++)
 		{
 			delete (*itr5);
 		}
@@ -1788,7 +1788,7 @@ QuestMgr::~QuestMgr()
 	}
 	m_quest_associations.clear();
 
-	for(itr6 = m_extraqueststuff_list.begin(); itr6 != m_extraqueststuff_list.end(); ++itr6)
+	for(itr6 = m_extraqueststuff_list.begin(); itr6 != m_extraqueststuff_list.end(); itr6++)
 	{
 		GameObjectInfo *inf = GameObjectNameStorage.LookupEntry(*itr6);
 		if( inf == NULL )
@@ -1805,7 +1805,7 @@ bool QuestMgr::CanStoreReward(Player* plyr, Quest *qst, uint32 reward_slot)
 	uint32 slotsrequired = 0;
 	available_slots = plyr->GetItemInterface()->CalculateFreeSlots(NULL);
 	// Static Item reward
-	for(uint32 i = 0; i < 4; ++i)
+	for(uint32 i = 0; i < 4; i++)
 	{
 		if(qst->reward_item[i])
 		{
@@ -1875,7 +1875,7 @@ void QuestMgr::LoadExtraQuestStuff()
 		if(qst->is_repeatable != 0 && (qst->quest_flags & 4096))
 			qst->is_repeatable = REPEATABLE_DAILY;
 
-		for(int i = 0 ; i < 4; ++i)
+		for(int i = 0 ; i < 4; i++)
 		{
 			if(qst->required_mob[i])
 			{
@@ -1946,11 +1946,11 @@ void QuestMgr::LoadExtraQuestStuff()
 				qst->count_requiredquests++;
 		}
 
-		for(int i = 0; i < 6; ++i)
+		for(int i = 0; i < 6; i++)
 			if(qst->reward_choiceitem[i])
 				qst->count_reward_choiceitem++;
 
-		for(int i = 0; i < 5; ++i)
+		for(int i = 0; i < 5; i++)
 		{
 			if(qst->reward_repfaction[i])
 				qst->count_reward_facts++;
@@ -1962,7 +1962,7 @@ void QuestMgr::LoadExtraQuestStuff()
 
 	it->Destruct();
 
-	for(map<uint32, set<uint32> >::iterator itr = tmp_map.begin(); itr != tmp_map.end(); ++itr)
+	for(map<uint32, set<uint32> >::iterator itr = tmp_map.begin(); itr != tmp_map.end(); itr++)
 	{
 		GameObjectInfo *inf = GameObjectNameStorage.LookupEntry(itr->first);
 		if( inf == NULL )

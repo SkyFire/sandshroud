@@ -43,7 +43,7 @@ public:
 	float GetTotalLength(void)
 	{
 		float len = 0, xd, yd, zd;
-		for(unsigned int idx=1; idx < i_nodes.size(); ++idx)
+		for(unsigned int idx=1; idx < i_nodes.size(); idx++)
 		{
 			xd = i_nodes[ idx ].x - i_nodes[ idx-1 ].x;
 			yd = i_nodes[ idx ].y - i_nodes[ idx-1 ].y;

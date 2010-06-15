@@ -1027,7 +1027,7 @@ void Aura::AddAuraVisual()
 
 	if (IsPositive())
 	{
-		for (i = 0; i < MAX_POSITIVE_AURAS; ++i)
+		for (i = 0; i < MAX_POSITIVE_AURAS; i++)
 		{
 			//if (m_target->GetUInt32Value((uint16)(UNIT_FIELD_AURA + i)) == 0)
 			if(m_target->m_auras[i] == NULL)
@@ -1039,7 +1039,7 @@ void Aura::AddAuraVisual()
 	}
 	else
 	{
-		for (i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+		for (i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 		{
 			//if (m_target->GetUInt32Value((uint16)(UNIT_FIELD_AURA + i)) == 0)
 			if(m_target->m_auras[i] == NULL )
@@ -1141,7 +1141,7 @@ void Aura::EventUpdateCreatureAA(float r)
 			Aura* aura = NULLAURA;
 			aura = new Aura(m_spellProto, -1, m_caster, m_caster);
 			aura->m_areaAura = true;
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				if( m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA )
 					aura->AddMod(m_spellProto->EffectApplyAuraName[i], m_spellProto->EffectBasePoints[i],
@@ -1177,7 +1177,7 @@ void Aura::EventUpdateCreatureAA(float r)
 	if( areatargets & AA_TARGET_ALLFRIENDLY )
 	{
 		Object::InRangeSet::iterator it3 = m_caster->GetInRangeSetBegin();
-		for(; it3 != m_caster->GetInRangeSetEnd(); ++it3)
+		for(; it3 != m_caster->GetInRangeSetEnd(); it3++)
 		{
 			if( !(*it3) )
 				continue;
@@ -1194,7 +1194,7 @@ void Aura::EventUpdateCreatureAA(float r)
 				continue;
 
 			Aura* aura = NULLAURA;
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				if(m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA)
 				{
@@ -1217,7 +1217,7 @@ void Aura::EventUpdateCreatureAA(float r)
 	else
 	{
 		Object::InRangeSet::iterator itrr = m_caster->GetInRangeOppFactsSetBegin();
-		for(; itrr != m_caster->GetInRangeOppFactsSetEnd(); ++itrr)
+		for(; itrr != m_caster->GetInRangeOppFactsSetEnd(); itrr++)
 		{
 			if( !(*itrr) )
 				continue;
@@ -1234,7 +1234,7 @@ void Aura::EventUpdateCreatureAA(float r)
 				continue;
 
 			Aura* aura = NULLAURA;
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				if(m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA)
 				{
@@ -1266,7 +1266,7 @@ void Aura::EventRelocateRandomTarget()
 	set<Unit* > enemies;
 
 	unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin();
-	for(; itr != m_caster->GetInRangeSetEnd(); ++itr)
+	for(; itr != m_caster->GetInRangeSetEnd(); itr++)
 	{
 		if( !(*itr)->IsUnit() )
 			continue;
@@ -1377,7 +1377,7 @@ void Aura::EventUpdatePlayerAA(float r)
 		if(!plr->HasActiveAura(m_spellProto->Id))
 		{
 			Aura* aura = NULLAURA;
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				/* is this an area aura modifier? */
 				if(m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA)
@@ -1408,7 +1408,7 @@ void Aura::EventUpdatePlayerAA(float r)
 
 			for(uint32 x = 0; x < plr->GetGroup()->GetSubGroupCount(); ++x )
 			{
-				for(GroupMembersSet::iterator itr = plr->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != plr->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); ++itr)
+				for(GroupMembersSet::iterator itr = plr->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != plr->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 				{
 					if((*itr) && (*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer != plr && (*itr)->m_loggedInPlayer->GetDistanceSq(m_caster) <= r)
 					{
@@ -1418,7 +1418,7 @@ void Aura::EventUpdatePlayerAA(float r)
 						{
 							Aura* aura = NULLAURA;
 							//aura->AddMod(mod->m_type, mod->m_amount, mod->m_miscValue, mod->i);
-							for(i = 0; i < 3; ++i)
+							for(i = 0; i < 3; i++)
 							{
 								/* is this an area aura modifier? */
 								if(m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA)
@@ -1450,7 +1450,7 @@ void Aura::EventUpdatePlayerAA(float r)
 	{
 		Unit* target;
 		Object::InRangeSet::iterator itr = m_caster->GetInRangeSetBegin();
-		for(; itr != m_caster->GetInRangeSetEnd(); ++itr)
+		for(; itr != m_caster->GetInRangeSetEnd(); itr++)
 		{
 			if( !(*itr) )
 				continue;
@@ -1467,7 +1467,7 @@ void Aura::EventUpdatePlayerAA(float r)
 				continue;
 
 			Aura* aura = NULLAURA;
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				if(m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA)
 				{
@@ -1492,7 +1492,7 @@ void Aura::EventUpdatePlayerAA(float r)
 	{
 		Unit* target;
 		Object::InRangeSet::iterator itr = m_caster->GetInRangeOppFactsSetBegin();
-		for(; itr != m_caster->GetInRangeOppFactsSetEnd(); ++itr)
+		for(; itr != m_caster->GetInRangeOppFactsSetEnd(); itr++)
 		{
 			if( !(*itr) )
 				continue;
@@ -1509,7 +1509,7 @@ void Aura::EventUpdatePlayerAA(float r)
 				continue;
 
 			Aura* aura = NULLAURA;
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				if(m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA)
 				{
@@ -1537,7 +1537,7 @@ void Aura::EventUpdatePlayerAA(float r)
 		if( pPet && plr->GetDistanceSq(pPet) <= r && !pPet->HasActiveAura(m_spellProto->Id) )
 		{
 			Aura* aura = NULLAURA;
-			for(i = 0; i < 3; ++i)
+			for(i = 0; i < 3; i++)
 			{
 				if(m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA)
 				{
@@ -1613,7 +1613,7 @@ void Aura::EventUpdatePlayerAA(float r)
 void Aura::RemoveAA()
 {
 	AreaAuraList::iterator itr;
-	for(itr = targets.begin(); itr != targets.end(); ++itr)
+	for(itr = targets.begin(); itr != targets.end(); itr++)
 	{
 		// Check if the target is 'valid'; must be on same mapmgr
 		Player* iplr = NULL;
@@ -3123,7 +3123,7 @@ void Aura::SpellAuraModCharm(bool apply)
 			data << uint32(PET_SPELL_ATTACK);
 			data << uint32(PET_SPELL_FOLLOW);
 			data << uint32(PET_SPELL_STAY);
-			for(int i = 0; i < 4; ++i)
+			for(int i = 0; i < 4; i++)
 				data << uint32(0);
 			data << uint32(PET_SPELL_AGRESSIVE);
 			data << uint32(PET_SPELL_DEFENSIVE);
@@ -3304,7 +3304,7 @@ void Aura::EventPeriodicHeal( uint32 amount )
 		{
 			target_threat.reserve(m_caster->GetInRangeCount()); // this helps speed
 
-			for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr)
+			for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++)
 			{
 				if((*itr)->GetTypeId() != TYPEID_UNIT)
 					continue;
@@ -3325,7 +3325,7 @@ void Aura::EventPeriodicHeal( uint32 amount )
 			*/
 			uint32 threat = base_threat / (count * 2);
 
-			for(std::vector<Unit* >::iterator itr = target_threat.begin(); itr != target_threat.end(); ++itr)
+			for(std::vector<Unit* >::iterator itr = target_threat.begin(); itr != target_threat.end(); itr++)
 			{
 				// for now we'll just use heal amount as threat.. we'll prolly need a formula though
 				(TO_UNIT(*itr))->GetAIInterface()->HealReaction(m_caster, m_target, threat, m_spellProto);
@@ -4891,7 +4891,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 					}
 					else // if got immunity for slow, remove some that are not in the mechanics
 					{
-						for( int i = 0; i < 3; ++i )
+						for( int i = 0; i < 3; i++ )
 						{
 							if( m_target->m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || m_target->m_auras[x]->GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
 							{
@@ -4974,7 +4974,7 @@ void Aura::SpellAuraModSchoolImmunity(bool apply)
 			return;
 
 		Aura* pAura = NULL;
-		for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+		for(uint32 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 		{
 			pAura = m_target->m_auras[i];
 			if( pAura != NULL && pAura != this && !pAura->IsPassive() && !pAura->IsPositive() && !(pAura->GetSpellProto()->Attributes & ATTRIBUTES_IGNORE_INVULNERABILITY) )
@@ -5010,7 +5010,7 @@ void Aura::SpellAuraModSchoolImmunity(bool apply)
 		else
 			SetPositive();
 
-		for(uint32 i = 0; i < 7; ++i)
+		for(uint32 i = 0; i < 7; i++)
 		{
 			if(mod->m_miscValue & (1<<i))
 			{
@@ -5021,7 +5021,7 @@ void Aura::SpellAuraModSchoolImmunity(bool apply)
 	}
 	else
 	{
-		for(int i = 0; i < 7; ++i)
+		for(int i = 0; i < 7; i++)
 		{
 			if(mod->m_miscValue & (1<<i) &&
 				m_target->SchoolImmunityList[i] > 0)
@@ -5688,7 +5688,7 @@ void Aura::SpellAuraTransform(bool apply)
 				{
 					if( m_caster->HasDummyAura(SPELL_HASH_GLYPH_OF_POLYMORPH) )
 					{
-						for(uint8 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; ++i)
+						for(uint8 i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 						{ 
 							if(m_target->m_auras[i] != NULL)
 							{
@@ -6165,7 +6165,7 @@ void Aura::SpellAuraSchoolAbsorb(bool apply)
 		{
 			if (mod->m_miscValue & (((uint32)1)<<x) )
 			{
-				for(SchoolAbsorb::iterator i = m_target->Absorbs[x].begin(); i != m_target->Absorbs[x].end(); ++i)
+				for(SchoolAbsorb::iterator i = m_target->Absorbs[x].begin(); i != m_target->Absorbs[x].end(); i++)
 				{
 					if((*i)->spellid == GetSpellId() && (*i)->caster==m_casterGuid )
 					{
@@ -7453,7 +7453,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 				if(itr != plr->mSpellOverrideMap.end())
 				{
 					ScriptOverrideList::iterator itrSO;
-					for(itrSO = itr->second->begin(); itrSO != itr->second->end(); ++itrSO)
+					for(itrSO = itr->second->begin(); itrSO != itr->second->end(); itrSO++)
 					{
 						if((*itrSO)->id == (uint32)mod->m_miscValue)
 						{
@@ -7482,7 +7482,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 					ScriptOverrideList *lst = new ScriptOverrideList();
 					lst->push_back(cso);
 
-					for(;itrSE != itermap->second->end(); ++itrSE)
+					for(;itrSE != itermap->second->end(); itrSE++)
 					{
 						plr->mSpellOverrideMap.insert( SpellOverrideMap::value_type( (*itrSE)->Id, lst) );
 					}
@@ -7495,7 +7495,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 				while(itr != plr->mSpellOverrideMap.end())
 				{
 					std::list<SpellEntry *>::iterator itrSE = itermap->second->begin();
-					for(;itrSE != itermap->second->end(); ++itrSE)
+					for(;itrSE != itermap->second->end(); itrSE++)
 					{
 						if(itr->first == (*itrSE)->Id)
 						{
@@ -7922,7 +7922,7 @@ void Aura::SpellAuraForceReaction( bool apply )
 
 	WorldPacket data( SMSG_SET_FORCED_REACTIONS, ( 8 * p_target->m_forcedReactions.size() ) + 4 );
 	data << uint32(p_target->m_forcedReactions.size());
-	for( itr = p_target->m_forcedReactions.begin(); itr != p_target->m_forcedReactions.end(); ++itr )
+	for( itr = p_target->m_forcedReactions.begin(); itr != p_target->m_forcedReactions.end(); itr++ )
 	{
 		data << itr->first;
 		data << itr->second;
@@ -8092,7 +8092,7 @@ void Aura::SpellAuraModStealthLevel(bool apply)
 		{
 			// check for stealh spells
 			uint32 stealth_id = 1784;
-			for(SpellSet::iterator itr = TO_PLAYER(m_target)->mSpells.begin(); itr != TO_PLAYER(m_target)->mSpells.end(); ++itr)
+			for(SpellSet::iterator itr = TO_PLAYER(m_target)->mSpells.begin(); itr != TO_PLAYER(m_target)->mSpells.end(); itr++)
 			{
 				if((*itr) == 1787 || (*itr) == 1786 || (*itr) == 1785 || (*itr) == 1784)
 				{
@@ -8384,7 +8384,7 @@ void Aura::SpellAuraIncreaseSpellDamageByAttribute(bool apply)
 		val = -mod->realamount;
 
 	uint32 stat = 3;
-	for(uint32 i=0; i < 3; ++i)
+	for(uint32 i=0; i < 3; i++)
 	{ //bit hacky but it will work with all currently available spells
 		if (m_spellProto->EffectApplyAuraName[i] == SPELL_AURA_INCREASE_SPELL_HEALING_PCT)
 		{
@@ -9713,7 +9713,7 @@ uint32 Aura::GetMaxProcCharges(Unit* caster)
 
 void Aura::UpdateModAmounts()
 {
-	for(uint32 i=0; i<m_modcount; ++i)
+	for(uint32 i=0; i<m_modcount; i++)
 	{
 		Unit * m_caster = GetUnitCaster();
 		if( m_modList[i].m_baseAmount == 0 && m_caster != NULL && m_target != NULL )
@@ -10092,7 +10092,7 @@ void Aura::SpellAuraModCritChanceAll(bool apply)
 		if(subgroup)
 		{
 			Target->GetGroup()->Lock();
-			for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); ++itr)
+			for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); itr++)
 			{
 				if((*itr)->m_loggedInPlayer == NULL || m_target->CalcDistance((*itr)->m_loggedInPlayer) > GetMaxRange(dbcSpellRange.LookupEntry(m_spellProto->rangeIndex)) || (*itr)->m_loggedInPlayer == m_target)
 					continue;
@@ -10103,7 +10103,7 @@ void Aura::SpellAuraModCritChanceAll(bool apply)
 	}
 	else
 	{
-		for (ObjectSet::iterator itr = m_target->GetInRangeSetBegin(); itr!=m_target->GetInRangeSetEnd(); ++itr)
+		for (ObjectSet::iterator itr = m_target->GetInRangeSetBegin(); itr!=m_target->GetInRangeSetEnd(); itr++)
 			if ((*itr) != m_target && (*itr)->IsUnit() && isFriendly(m_target, *itr) && m_target->CalcDistance(*itr) < GetMaxRange(dbcSpellRange.LookupEntry(m_spellProto->rangeIndex)))
 				Targets.push_back(TO_UNIT(*itr));
 	}

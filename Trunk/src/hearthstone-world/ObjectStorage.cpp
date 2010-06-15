@@ -109,7 +109,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		{
 			string auras = string(cn->aura_string);
 			vector<string> aurs = StrSplit(auras, " ");
-			for(vector<string>::iterator it = aurs.begin(); it != aurs.end(); ++it)
+			for(vector<string>::iterator it = aurs.begin(); it != aurs.end(); it++)
 			{
 				uint32 id = atol((*it).c_str());
 				if(id)
@@ -575,7 +575,7 @@ void Storage_Cleanup()
 				p->aura_string = NULL;
 			}
 
-			for(list<AI_Spell*>::iterator it = p->spells.begin(); it != p->spells.end(); ++it)
+			for(list<AI_Spell*>::iterator it = p->spells.begin(); it != p->spells.end(); it++)
 				delete (*it);
 			p->spells.clear();
 			p->start_auras.clear();
@@ -798,7 +798,7 @@ bool Storage_ReloadTable(const char * TableName)
 	
 	uint32 len = (uint32)strlen(TableName);
 	uint32 len2;
-	for(vector<pair<string,string> >::iterator itr = additionalTables.begin(); itr != additionalTables.end(); ++itr)
+	for(vector<pair<string,string> >::iterator itr = additionalTables.begin(); itr != additionalTables.end(); itr++)
 	{
 		len2=(uint32)itr->second.length();
 		if(!strnicmp(TableName, itr->second.c_str(), min(len,len2)))
@@ -820,7 +820,7 @@ void Storage_LoadAdditionalTables()
 	if(strs.empty())
 		return;
 
-	for(vector<string>::iterator itr = strs.begin(); itr != strs.end(); ++itr)
+	for(vector<string>::iterator itr = strs.begin(); itr != strs.end(); itr++)
 	{
 		char s1[200];
 		char s2[200];

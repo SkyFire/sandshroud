@@ -278,7 +278,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 				data = sChatHandler.FillMessageData( CHAT_MSG_SAY, lang, msg.c_str(), _player->GetGUID(), _player->bGMTagOn ? 4 : 0 );
 				SendChatPacket(data, 1, lang, this);
-				for(unordered_set<Player*  >::iterator itr = _player->m_inRangePlayers.begin(); itr != _player->m_inRangePlayers.end(); ++itr)
+				for(unordered_set<Player*  >::iterator itr = _player->m_inRangePlayers.begin(); itr != _player->m_inRangePlayers.end(); itr++)
 				{
 					if(_player->PhasedCanInteract((*itr))) // Matching phases.
 						(*itr)->GetSession()->SendChatPacket(data, 1, lang, this);
@@ -312,7 +312,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				if(sgr)
 				{
 					_player->GetGroup()->Lock();
-					for(GroupMembersSet::iterator itr = sgr->GetGroupMembersBegin(); itr != sgr->GetGroupMembersEnd(); ++itr)
+					for(GroupMembersSet::iterator itr = sgr->GetGroupMembersBegin(); itr != sgr->GetGroupMembersEnd(); itr++)
 					{
 						if((*itr)->m_loggedInPlayer)
 							(*itr)->m_loggedInPlayer->GetSession()->SendChatPacket(data, 1, lang, this);
@@ -323,11 +323,11 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			else
 			{
 				SubGroup * sgr;
-				for(uint32 i = 0; i < _player->GetGroup()->GetSubGroupCount(); ++i)
+				for(uint32 i = 0; i < _player->GetGroup()->GetSubGroupCount(); i++)
 				{
 					sgr = _player->GetGroup()->GetSubGroup(i);
 					_player->GetGroup()->Lock();
-					for(GroupMembersSet::iterator itr = sgr->GetGroupMembersBegin(); itr != sgr->GetGroupMembersEnd(); ++itr)
+					for(GroupMembersSet::iterator itr = sgr->GetGroupMembersBegin(); itr != sgr->GetGroupMembersEnd(); itr++)
 					{
 						if((*itr)->m_loggedInPlayer)
 							(*itr)->m_loggedInPlayer->GetSession()->SendChatPacket(data, 1, lang, this);

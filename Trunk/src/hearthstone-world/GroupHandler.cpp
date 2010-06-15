@@ -353,7 +353,7 @@ void WorldSession::HandleSetPlayerIconOpcode(WorldPacket& recv_data)
 		// client request
 		WorldPacket data(MSG_RAID_TARGET_UPDATE, 73);
 		data << uint8(1);
-		for(uint8 i = 0; i < 8; ++i)
+		for(uint8 i = 0; i < 8; i++)
 			data << i << pGroup->m_targetIcons[i];
 
 		SendPacket(&data);
@@ -365,7 +365,7 @@ void WorldSession::HandleSetPlayerIconOpcode(WorldPacket& recv_data)
 			icon = 7;	// whoops, buffer overflow :p
 
 		// Null last icon
-		for(uint8 i = 0; i < 8; ++i)
+		for(uint8 i = 0; i < 8; i++)
 		{
 			if( pGroup->m_targetIcons[i] == guid )
 			{

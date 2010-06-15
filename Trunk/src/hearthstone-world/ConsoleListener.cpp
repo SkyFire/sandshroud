@@ -399,7 +399,7 @@ void HandleConsoleInput(BaseConsole * pConsole, const char * szInput)
 		pConsole->Write("=========================================================================================================\r\n");
 		pConsole->Write("| %15s | %30s | %50s |\r\n", "Name", "Arguments", "Description");
 		pConsole->Write("=========================================================================================================\r\n");		
-		for(i = 0; Commands[i].Name != NULL; ++i)
+		for(i = 0; Commands[i].Name != NULL; i++)
 		{
 			pConsole->Write("| %15s | %30s | %50s |\r\n", Commands[i].Name, Commands[i].ArgumentFormat, Commands[i].Description);
 		}
@@ -409,7 +409,7 @@ void HandleConsoleInput(BaseConsole * pConsole, const char * szInput)
 	}
 	else
 	{
-		for(i = 0; Commands[i].Name != NULL; ++i)
+		for(i = 0; Commands[i].Name != NULL; i++)
 		{
 			if( !stricmp( Commands[i].Name, tokens[0] ) )
 			{

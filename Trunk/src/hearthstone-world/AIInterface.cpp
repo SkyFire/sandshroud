@@ -138,7 +138,7 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt)
 
 AIInterface::~AIInterface()
 {
-	for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
+	for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
 		if(*itr)
 			delete (*itr);
 
@@ -745,7 +745,7 @@ void AIInterface::_UpdateTargets()
 	/*	deque< Unit > tokill;
 
 		//modified for vs2005 compatibility
-		for(i = m_assistTargets.begin(); i != m_assistTargets.end(); ++i)
+		for(i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
 		{
 			if(m_Unit->GetDistanceSq((*i)) > 2500.0f|| !(*i)->isAlive() || !(*i)->CombatStatus.IsInCombat())
 			{
@@ -753,7 +753,7 @@ void AIInterface::_UpdateTargets()
 			}
 		}
 
-		for(deque< Unit >::iterator i2 = tokill.begin(); i2 != tokill.end(); ++i2)
+		for(deque< Unit >::iterator i2 = tokill.begin(); i2 != tokill.end(); i2++)
 			m_assistTargets.erase(*i2);*/
 
 		for(i = m_assistTargets.begin(); i != m_assistTargets.end();)
@@ -781,7 +781,7 @@ void AIInterface::_UpdateTargets()
 				tokill.push_back(itr->first);
 			}
 		}
-		for(deque< Unit >::iterator itr = tokill.begin(); itr != tokill.end(); ++itr)
+		for(deque< Unit >::iterator itr = tokill.begin(); itr != tokill.end(); itr++)
 			m_aiTargets.erase((*itr));
 		tokill.clear();*/
 
@@ -1324,7 +1324,7 @@ bool AIInterface::HealReaction(Unit* caster, Unit* victim, uint32 amount, SpellE
 	if(m_aiTargets.find(victim) != m_aiTargets.end())
 		victimInList = 1;
 
-	/*for(i = m_aiTargets.begin(); i != m_aiTargets.end(); ++i)
+	/*for(i = m_aiTargets.begin(); i != m_aiTargets.end(); i++)
 	{
 		if(casterInList && victimInList)
 		{ // no need to check the rest, just break that
@@ -1571,7 +1571,7 @@ Unit* AIInterface::FindTargetForSpell(AI_Spell *sp)
 				m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 				return m_Unit;
 			}
-			for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); ++i)
+			for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
 			{
 				if(!(*i)->isAlive())
 				{
@@ -1613,7 +1613,7 @@ Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 			m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 			return m_Unit;
 		}
-		for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); ++i)
+		for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
 		{
 			if(!(*i)->isAlive())
 				continue;
@@ -1645,7 +1645,7 @@ bool AIInterface::FindFriends(float dist)
 	unordered_set<Object* >::iterator itr;
 	Unit* pUnit;
 
-	for( itr = m_Unit->GetInRangeSetBegin(); itr != m_Unit->GetInRangeSetEnd(); ++itr )
+	for(itr = m_Unit->GetInRangeSetBegin(); itr != m_Unit->GetInRangeSetEnd(); itr++)
 	{
 		if((*itr) == NULL || !(*itr)->IsInWorld() || (*itr)->GetTypeId() != TYPEID_UNIT)
 			continue;
@@ -1681,7 +1681,7 @@ bool AIInterface::FindFriends(float dist)
 				result = true;
 				m_assistTargets.insert(pUnit);
 					
-				for(it = m_aiTargets.begin(); it != m_aiTargets.end(); ++it)
+				for(it = m_aiTargets.begin(); it != m_aiTargets.end(); it++)
 				{
 					TO_UNIT( *itr )->GetAIInterface()->AttackReaction( it->first, 1, 0 );
 				}
@@ -1909,7 +1909,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
 		TO_PLAYER(m_Unit)->GetSession()->SendPacket(&data);
 
-	for(unordered_set<Player*  >::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); ++itr)
+	for(unordered_set<Player*  >::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); itr++)
 	{
 		if( (*itr)->GetPositionNC().Distance2DSq( m_Unit->GetPosition() ) >= World::m_movementCompressThresholdCreatures )
 			(*itr)->AppendMovementData( SMSG_MONSTER_MOVE, uint32(data.GetSize()), (const uint8*)data.GetBufferPointer() );
@@ -2086,7 +2086,7 @@ void AIInterface::SendCurrentMove(Player* plyr/*uint64 guid*/)
 
 	*splineBuf << uint32(numpoints); //Spline Count	// lets try this
 
-	for(uint8 i = 0 ; i < numpoints; ++i)
+	for(uint8 i = 0 ; i < numpoints; i++)
 	{
 		*splineBuf << m_sourceX + (pointDiffX * i);
 		*splineBuf << m_sourceY + (pointDiffY * i);
@@ -2218,7 +2218,7 @@ void AIInterface::deleteWayPoint(uint32 wpid)
 	}
 
 	m_waypoints->clear();
-	for(WayPointMap::iterator itr = new_waypoints.begin(); itr != new_waypoints.end(); ++itr)
+	for(WayPointMap::iterator itr = new_waypoints.begin(); itr != new_waypoints.end(); itr++)
 	{
 		(*itr)->id = newpid++;
 		m_waypoints->push_back(*itr);
@@ -2240,7 +2240,7 @@ bool AIInterface::showWayPoints(Player* pPlayer, bool Backwards)
 	m_WayPointsShowing = true;
 
 	WayPoint* wp = NULL;
-	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); ++itr)
+	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); itr++)
 	{
 		if( (*itr) != NULL )
 		{
@@ -2307,7 +2307,7 @@ bool AIInterface::hideWayPoints(Player* pPlayer)
 	// slightly better way to do this
 	uint64 guid;
 
-	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); ++itr)
+	for (itr = m_waypoints->begin(); itr != m_waypoints->end(); itr++)
 	{
 		if( (*itr) != NULL )
 		{
@@ -2371,7 +2371,7 @@ void AIInterface::deleteWaypoints()
 	if(!m_waypoints)
 		return;
 
-	for(WayPointMap::iterator itr = m_waypoints->begin(); itr != m_waypoints->end(); ++itr)
+	for(WayPointMap::iterator itr = m_waypoints->begin(); itr != m_waypoints->end(); itr++)
 	{
 		if((*itr) != NULL)
 			delete (*itr);
@@ -2956,7 +2956,7 @@ AI_Spell *AIInterface::getSpell()
 		else
 		{
 			//start searching the list for a suitable spell. 
-			for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
+			for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
 			{
 				sp = (*itr);
 
@@ -3261,13 +3261,13 @@ void AIInterface::addAssistTargets(Unit* Friend)
 
 void AIInterface::WipeHateList()
 {
-	for(TargetMap::iterator itr = m_aiTargets.begin(); itr != m_aiTargets.end(); ++itr)
+	for(TargetMap::iterator itr = m_aiTargets.begin(); itr != m_aiTargets.end(); itr++)
 		itr->second = 0;
 	m_currentHighestThreat = 0;
 }
 void AIInterface::ClearHateList() //without leaving combat
 {
-	for(TargetMap::iterator itr = m_aiTargets.begin(); itr != m_aiTargets.end(); ++itr)
+	for(TargetMap::iterator itr = m_aiTargets.begin(); itr != m_aiTargets.end(); itr++)
 		itr->second = 1;
 	m_currentHighestThreat = 1;
 }
@@ -3448,7 +3448,7 @@ void AIInterface::WipeReferences()
 
 void AIInterface::ResetProcCounts()
 {
-	for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); ++itr)
+	for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
 		if((*itr)->procCount)
 			(*itr)->procCounter=0;
 }

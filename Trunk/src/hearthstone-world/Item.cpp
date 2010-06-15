@@ -62,7 +62,7 @@ Item::~Item()
 	sEventMgr.RemoveEvents( this );
 
 	EnchantmentMap::iterator itr;
-	for( itr = Enchantments.begin(); itr != Enchantments.end(); ++itr )
+	for( itr = Enchantments.begin(); itr != Enchantments.end(); itr++ )
 	{
 		if( itr->second.Enchantment->type == 0 && itr->second.Slot == 0 && itr->second.ApplyTime == 0 && itr->second.Duration == 0 )
 		{
@@ -101,7 +101,7 @@ void Item::Create( uint32 itemid, Player* owner )
 
 	ASSERT( m_itemProto );
 	
-	for(uint8 i = 0; i < 5; ++i)
+	for(uint8 i = 0; i < 5; i++)
 		SetUInt32Value( ITEM_FIELD_SPELL_CHARGES+i, m_itemProto->Spells[i].Charges );
 
 	SetUInt32Value( ITEM_FIELD_MAXDURABILITY, m_itemProto->MaxDurability );
@@ -175,7 +175,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	uint32 time_left;
 	uint32 enchslot;
 
-	for( vector<string>::iterator itr = enchants.begin(); itr != enchants.end(); ++itr )
+	for( vector<string>::iterator itr = enchants.begin(); itr != enchants.end(); itr++ )
 	{
 		if( sscanf( (*itr).c_str(), "%u,%u,%u", (unsigned int*)&enchant_id, (unsigned int*)&time_left, (unsigned int*)&enchslot) == 3 )
 		{
@@ -320,7 +320,7 @@ void Item::SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffe
 	if( Enchantments.size() > 0 )
 	{
 		EnchantmentMap::iterator itr = Enchantments.begin();
-		for(; itr != Enchantments.end(); ++itr)
+		for(; itr != Enchantments.end(); itr++)
 		{
 			if( itr->second.RemoveAtLogout )
 				continue;
@@ -358,7 +358,7 @@ void Item::DeleteFromDB()
 	if( m_itemProto->ContainerSlots>0 && GetTypeId() == TYPEID_CONTAINER )
 	{
 		/* deleting a Container* */
-		for( uint32 i = 0; i < m_itemProto->ContainerSlots; ++i )
+		for( uint32 i = 0; i < m_itemProto->ContainerSlots; i++ )
 		{
 			if( CAST(Container,this)->GetItem( i ) != NULL )
 			{
@@ -974,7 +974,7 @@ void Item::RemoveRelatedEnchants( EnchantEntry* newEnchant )
 void Item::RemoveProfessionEnchant()
 {
 	EnchantmentMap::iterator itr;
-	for( itr = Enchantments.begin(); itr != Enchantments.end(); ++itr )
+	for( itr = Enchantments.begin(); itr != Enchantments.end(); itr++ )
 	{
 		if( itr->second.Duration != 0 )// not perm
 			continue;
@@ -991,7 +991,7 @@ void Item::RemoveSocketBonusEnchant()
 {
 	EnchantmentMap::iterator itr;
 	
-	for( itr = Enchantments.begin(); itr != Enchantments.end(); ++itr )
+	for( itr = Enchantments.begin(); itr != Enchantments.end(); itr++ )
 	{
 		if( itr->second.Enchantment->Id == GetProto()->SocketBonus )
 		{
@@ -1111,7 +1111,7 @@ bool ItemPrototype::ValidateItemLink(const char *szLink)
 
 bool ItemPrototype::ValidateItemSpell(uint32 SpellId)
 {
-	for(uint8 i = 0; i < 5; ++i)
+	for(uint8 i = 0; i < 5; i++)
 		if(Spells[i].Id == SpellId)
 			return true;
 	return false;

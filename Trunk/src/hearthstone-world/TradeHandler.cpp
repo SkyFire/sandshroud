@@ -234,7 +234,7 @@ void WorldSession::HandleSetTradeItem(WorldPacket & recv_data)
 		}
 	}
 
-	for(uint32 i = 0; i < 7; ++i)
+	for(uint32 i = 0; i < 7; i++)
 	{
 		// duping little shits
 		if(_player->mTradeItems[i] == pItem || pTarget->mTradeItems[i] == pItem)
@@ -308,7 +308,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 		Item* pItem;
 
 		// Count items on both sides, check if bags are empty.
-		for(uint32 Index = 0; Index < 6; ++Index)
+		for(uint32 Index = 0; Index < 6; Index++)
 		{
 			if(_player->mTradeItems[Index] != NULL)
 			{
@@ -349,7 +349,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 			uint64 Guid;
 			
 			//Swapp 6 itemslots (7th will not trade)
-			for(uint32 Index = 0; Index < 6; ++Index)
+			for(uint32 Index = 0; Index < 6; Index++)
 			{
 				Guid = _player->mTradeItems[Index] ? _player->mTradeItems[Index]->GetGUID() : 0;
 				if(Guid != 0)

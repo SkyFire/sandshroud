@@ -38,13 +38,13 @@ const uint32 CreatureEntryPair[][2] =
 
 Wintergrasp::Wintergrasp(WintergraspInternal* WGI, MapMgr* mgr) : Internal(*WGI)
 {
-	for(int i = 0; i < 3; ++i)
+	for(int i = 0; i < 3; i++)
 		playercount[i] = 0;
 
 	Player* plr = NULL;
 	WGID = Internal.WGCounter;
 
-	for(PlayerStorageMap::iterator itr =  mgr->m_PlayerStorage.begin(); itr != mgr->m_PlayerStorage.end(); ++itr)
+	for(PlayerStorageMap::iterator itr =  mgr->m_PlayerStorage.begin(); itr != mgr->m_PlayerStorage.end(); itr++)
 	{
 		plr = itr->second;
 		if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))

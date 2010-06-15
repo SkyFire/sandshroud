@@ -122,7 +122,7 @@ void Player::Init()
 	Lfgcomment = "";
 	m_flyHackChances = 5;
 
-	for(int i=0; i < 3; ++i)
+	for(int i=0; i < 3; i++)
 	{
 		LfgType[i] = 0;
 		LfgDungeonId[i] = 0;
@@ -194,7 +194,7 @@ void Player::Init()
 	m_bgEntryPointY		 = 0;
 	m_bgEntryPointZ		 = 0;
 	m_bgEntryPointO		 = 0;
-	for(uint32 i = 0; i < 3; ++i)
+	for(uint32 i = 0; i < 3; i++)
 	{
 		m_bgQueueType[i] = 0;
 		m_bgQueueInstanceId[i] = 0;
@@ -298,7 +298,7 @@ void Player::Init()
 	mOutOfRangeIdCount	  = 0;
 
 	bProcessPending		 = false;
-	for(int i = 0; i < 25; ++i)
+	for(int i = 0; i < 25; i++)
 		m_questlog[i] = NULL;
 
 	CurrentGossipMenu		= NULL;
@@ -363,7 +363,7 @@ void Player::Init()
 		m_skipCastCheck[x] = 0;
 		m_castFilter[x] = 0;
 	}
-	for(int i = 0; i < 6; ++i)
+	for(int i = 0; i < 6; i++)
 	{
 		m_runes[i] = baseRunes[i];
 	}
@@ -465,7 +465,7 @@ void Player::Init()
 	m_channels.clear();
 	m_visibleObjects.clear();
 	mSpells.clear();
-	for(uint32 i = 0; i < 21; ++i)
+	for(uint32 i = 0; i < 21; i++)
 		m_WeaponSubClassDamagePct[i] = 1.0f;
 
 	WinterGrasp = NULL;
@@ -542,7 +542,7 @@ Player::~Player ( )
 	// delete m_talenttree
 
 	CleanupChannels();
-	for(int i = 0; i < 25; ++i)
+	for(int i = 0; i < 25; i++)
 	{
 		if(m_questlog[i] != NULL)
 		{
@@ -551,7 +551,7 @@ Player::~Player ( )
 		}
 	}
 
-	for(SplineMap::iterator itr = _splineMap.begin(); itr != _splineMap.end(); ++itr)
+	for(SplineMap::iterator itr = _splineMap.begin(); itr != _splineMap.end(); itr++)
 		delete itr->second;
 	_splineMap.clear();
 
@@ -569,7 +569,7 @@ Player::~Player ( )
 
 	if(m_reputation.size())
 	{
-		for(ReputationMap::iterator itr = m_reputation.begin(); itr != m_reputation.end(); ++itr)
+		for(ReputationMap::iterator itr = m_reputation.begin(); itr != m_reputation.end(); itr++)
 			delete itr->second;
 	}
 	m_objectTypeId = TYPEID_UNUSED;
@@ -605,7 +605,7 @@ Player::~Player ( )
 	loginauras.clear();
 	OnMeleeAuras.clear();
 
-	for(std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin(); itr != m_Pets.end(); ++itr)
+	for(std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin(); itr != m_Pets.end(); itr++)
 		delete itr->second;
 	m_Pets.clear();
 
@@ -1693,14 +1693,14 @@ void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 			// Send Talents
 			*data << uint8(spec.talents.size());
 			std::map<uint32, uint8>::iterator itr;
-			for(itr = spec.talents.begin(); itr != spec.talents.end(); ++itr)
+			for(itr = spec.talents.begin(); itr != spec.talents.end(); itr++)
 			{
 				*data << uint32(itr->first);	// TalentId
 				*data << uint8(itr->second);	// TalentRank
 			}
 			// Send Glyph info
 			*data << uint8(GLYPHS_COUNT);
-			for(uint8 i = 0; i < GLYPHS_COUNT; ++i)
+			for(uint8 i = 0; i < GLYPHS_COUNT; i++)
 			{
 				*data << uint16(spec.glyphs[i]);
 			}
@@ -1712,7 +1712,7 @@ void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 		// Send Talents
 		*data << uint8(spec.talents.size());
 		std::map<uint32, uint8>::iterator itr;
-		for(itr = spec.talents.begin(); itr != spec.talents.end(); ++itr)
+		for(itr = spec.talents.begin(); itr != spec.talents.end(); itr++)
 		{
 			*data << uint32(itr->first);	// TalentId
 			*data << uint8(itr->second);	// TalentRank
@@ -1731,7 +1731,7 @@ void Player::BuildPetTalentsInfo(WorldPacket *data)
 	*data << uint32(pPet->GetUnspentPetTalentPoints());
 	*data << uint8(pPet->m_talents.size());
 
-	for(PetTalentMap::iterator itr = pPet->m_talents.begin(); itr != pPet->m_talents.end(); ++itr)
+	for(PetTalentMap::iterator itr = pPet->m_talents.begin(); itr != pPet->m_talents.end(); itr++)
 	{
 		*data << uint32(itr->first);
 		*data << uint8(itr->second);
@@ -1780,7 +1780,7 @@ void Player::_SavePet(QueryBuffer * buf)
 			else
 				buf->AddQuery("DELETE FROM playerpetspells WHERE petnumber=%u AND ownerguid=%u", pn, GetLowGUID());
 
-			for(; itr != m_Summon->mSpells.end(); ++itr)
+			for(; itr != m_Summon->mSpells.end(); itr++)
 			{
 				if(buf == NULL)
 					CharacterDatabase.Execute("INSERT INTO playerpetspells VALUES(%u, %u, %u, %u)", GetLowGUID(), pn, itr->first->Id, itr->second);
@@ -1794,7 +1794,7 @@ void Player::_SavePet(QueryBuffer * buf)
 				buf->AddQuery("DELETE FROM playerpettalents WHERE petnumber=%u AND ownerguid=%u", pn, GetLowGUID());
 
 			PetTalentMap::iterator itr2 = m_Summon->m_talents.begin();
-			for(; itr2 != m_Summon->m_talents.end(); ++itr2)
+			for(; itr2 != m_Summon->m_talents.end(); itr2++)
 			{
 				if(buf == NULL)
 					CharacterDatabase.Execute("INSERT INTO playerpettalents VALUES(%u, %u, %u, %u)", GetLowGUID(), pn, itr2->first, itr2->second);
@@ -1806,7 +1806,7 @@ void Player::_SavePet(QueryBuffer * buf)
 
 	std::stringstream ss;
 
-	for(std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin(); itr != m_Pets.end(); ++itr)
+	for(std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin(); itr != m_Pets.end(); itr++)
 	{
 		ss.rdbuf()->str("");
 		ss << "REPLACE INTO playerpets VALUES('"
@@ -1832,11 +1832,11 @@ void Player::_SavePet(QueryBuffer * buf)
 		// save action bar
 		ss << GetLowGUID() << "','"
 		<< itr->second->number << "','";
-		for(uint8 i = 0; i < 10; ++i)
+		for(uint8 i = 0; i < 10; i++)
 		{
 			ss << itr->second->actionbarspell[i] << "','";
 		}
-		for(uint8 i = 0; i < 9; ++i)
+		for(uint8 i = 0; i < 9; i++)
 		{
 			ss << itr->second->actionbarspellstate[i] << "','";
 		}
@@ -1859,10 +1859,10 @@ void Player::_SavePetSpells(QueryBuffer * buf)
 
 	// Save summon spells
 	map<uint32, set<uint32> >::iterator itr = SummonSpells.begin();
-	for(; itr != SummonSpells.end(); ++itr)
+	for(; itr != SummonSpells.end(); itr++)
 	{
 		set<uint32>::iterator it = itr->second.begin();
-		for(; it != itr->second.end(); ++it)
+		for(; it != itr->second.end(); it++)
 		{
 			if(buf == NULL)
 				CharacterDatabase.Execute("INSERT INTO playersummonspells VALUES(%u, %u, %u)", GetLowGUID(), itr->first, (*it));
@@ -1970,11 +1970,11 @@ void Player::_LoadPetActionBar(QueryResult * result)
 		if(!pet)
 			continue;
 
-		for(uint8 i = 0; i < 10; ++i)
+		for(uint8 i = 0; i < 10; i++)
 		{
 			pet->actionbarspell[i] = fields[2+i].GetUInt32();
 		}
-		for(uint8 i = 0; i < 10; ++i)
+		for(uint8 i = 0; i < 10; i++)
 		{
 			pet->actionbarspellstate[i] = fields[12+i].GetUInt32();
 		}
@@ -2184,7 +2184,7 @@ void Player::InitVisibleUpdateBits()
 	for(uint16 i = PLAYER_QUEST_LOG_1_1; i < PLAYER_QUEST_LOG_25_2; i += 4)
 		Player::m_visibleUpdateMask.SetBit(i);
 
-	for(uint16 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+	for(uint16 i = 0; i < EQUIPMENT_SLOT_END; i++)
 	{
 		uint32 offset = i * PLAYER_VISIBLE_ITEM_LENGTH;
 
@@ -2251,7 +2251,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	// dump exploration data
 	<< "'";
 
-	for(uint32 i = 0; i < 128; ++i)
+	for(uint32 i = 0; i < 128; i++)
 		ss << m_uint32Values[PLAYER_EXPLORED_ZONES_1 + i] << ",";
 
 	ss << "','0', "; //skip saving oldstyle skills, just fill with 0
@@ -2315,7 +2315,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 
 	ss << m_zoneId << ", '";
 
-	for(uint8 i = 0; i < 12; ++i )
+	for(uint8 i = 0; i < 12; i++ )
 		ss << m_taximask[i] << " ";
 	ss << "', "
 	
@@ -2396,14 +2396,14 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	ss << "','";
 	// Dump reputation data
 	ReputationMap::iterator iter = m_reputation.begin();
-	for(; iter != m_reputation.end(); ++iter)
+	for(; iter != m_reputation.end(); iter++)
 	{
 		ss << int32(iter->first) << "," << int32(iter->second->flag) << "," << int32(iter->second->baseStanding) << "," << int32(iter->second->standing) << ",";
 	}
 	ss << "','";
 
 	// Add player action bars
-	for(uint32 i = 0; i < PLAYER_ACTION_BUTTON_COUNT; ++i)
+	for(uint32 i = 0; i < PLAYER_ACTION_BUTTON_COUNT; i++)
 	{
 		ss << uint32(mActions[i].Action) << ","
 			<< uint32(mActions[i].Type) << ","
@@ -2515,7 +2515,7 @@ void Player::_SaveSkillsToDB(QueryBuffer * buf)
 	std::stringstream ss;
 	ss << "INSERT INTO playerskills (Player_Guid, skill_id, type, currentlvl, maxlvl ) VALUES ";
 	uint32 iI = uint32(m_skills.size())-1;
-	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end() ; ++itr)
+	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end() ; itr++)
 	{
 		if(itr->first)
 		{
@@ -2541,7 +2541,7 @@ void Player::_LoadGlyphs(QueryResult * result)
 	// init with 0s just in case
 	for(uint8 s = 0; s < MAX_SPEC_COUNT; s++)
 	{
-		for(uint32 i=0; i < GLYPHS_COUNT; ++i)
+		for(uint32 i=0; i < GLYPHS_COUNT; i++)
 		{
 			m_specs[s].glyphs[i] = 0;
 		}
@@ -2559,7 +2559,7 @@ void Player::_LoadGlyphs(QueryResult * result)
 					spec, fields[0].GetUInt32());
 				continue;
 			}
-			for(uint32 i=0; i < GLYPHS_COUNT; ++i)
+			for(uint32 i=0; i < GLYPHS_COUNT; i++)
 			{
 				m_specs[spec].glyphs[i] = fields[2 + i].GetUInt16();
 			}
@@ -2572,7 +2572,7 @@ void Player::_SaveGlyphsToDB(QueryBuffer * buf)
 	bool empty = true;
 	for(uint8 s = 0; s < m_talentSpecsCount; s++)
 	{
-		for(uint32 i=0; i < GLYPHS_COUNT; ++i)
+		for(uint32 i=0; i < GLYPHS_COUNT; i++)
 		{
 			if(m_specs[s].glyphs[i] != 0)
 			{
@@ -2590,7 +2590,7 @@ void Player::_SaveGlyphsToDB(QueryBuffer * buf)
 		ss << "REPLACE INTO playerglyphs (guid, spec, glyph1, glyph2, glyph3, glyph4, glyph5, glyph6) VALUES "
 			<< "(" << GetLowGUID() << ","
 			<< uint32(s) << ",";
-		for(uint32 i = 0; i < GLYPHS_COUNT; ++i)
+		for(uint32 i = 0; i < GLYPHS_COUNT; i++)
 		{
 			ss << uint32(m_specs[s].glyphs[i]);
 			if(i != GLYPHS_COUNT - 1)
@@ -2688,7 +2688,7 @@ void Player::_SaveTalentsToDB(QueryBuffer * buf)
 			break;
 		std::map<uint32, uint8> *talents = &m_specs[s].talents;
 		std::map<uint32, uint8>::iterator itr;
-		for(itr = talents->begin(); itr != talents->end(); ++itr)
+		for(itr = talents->begin(); itr != talents->end(); itr++)
 		{
 			std::stringstream ss;
 			ss << "INSERT INTO playertalents (guid, spec, tid, rank) VALUES "
@@ -2706,7 +2706,7 @@ void Player::_SaveTalentsToDB(QueryBuffer * buf)
 
 void Player::_SaveQuestLogEntry(QueryBuffer * buf)
 {
-	for(std::set<uint32>::iterator itr = m_removequests.begin(); itr != m_removequests.end(); ++itr)
+	for(std::set<uint32>::iterator itr = m_removequests.begin(); itr != m_removequests.end(); itr++)
 	{
 		if(buf == NULL)
 			CharacterDatabase.Execute("DELETE FROM questlog WHERE player_guid=%u AND quest_id=%u", GetLowGUID(), (*itr));
@@ -2716,7 +2716,7 @@ void Player::_SaveQuestLogEntry(QueryBuffer * buf)
 
 	m_removequests.clear();
 
-	for(int i = 0; i < 25; ++i)
+	for(int i = 0; i < 25; i++)
 	{
 		if(m_questlog[i] != NULL)
 			m_questlog[i]->SaveToDB(buf);
@@ -3061,7 +3061,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	m_zoneId											= get_next_field.GetUInt32();
 
 	// Calculate the base stats now they're all loaded
-	for(uint32 i = 0; i < 5; ++i)
+	for(uint32 i = 0; i < 5; i++)
 		CalcStat(i);
 
 	for(uint32 x = PLAYER_FIELD_MOD_DAMAGE_DONE_PCT; x < PLAYER_FIELD_MOD_HEALING_DONE_POS; ++x)
@@ -3507,7 +3507,7 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 	uint32 baseindex;
 
 	// clear all fields
-	for(int i = 0; i < 25; ++i)
+	for(int i = 0; i < 25; i++)
 	{
 		baseindex = PLAYER_QUEST_LOG_1_1 + (i * 5);
 		SetUInt32Value(baseindex + 0, 0);
@@ -3551,7 +3551,7 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 
 QuestLogEntry* Player::GetQuestLogForEntry(uint32 quest)
 {
-	for(int i = 0; i < 25; ++i)
+	for(int i = 0; i < 25; i++)
 	{
 		if(m_questlog[i] == ((QuestLogEntry*)0x00000001))
 			m_questlog[i] = NULL;
@@ -4049,7 +4049,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			ASSERT( set );
 			ItemSet* Set = NULL;
 			std::list<ItemSet>::iterator i;
-			for( i = m_itemsets.begin(); i != m_itemsets.end(); ++i )
+			for( i = m_itemsets.begin(); i != m_itemsets.end(); i++ )
 			{
 				if( i->setid == setid )
 				{
@@ -4228,7 +4228,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 	}
 	else // Normal Items.
 	{	// Stats
-		for( int i = 0; i < 10; ++i )
+		for( int i = 0; i < 10; i++ )
 		{
 			int32 val = proto->Stats[i].Value;
 			if( val == 0 )
@@ -4330,7 +4330,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 				// so it just set last one to deleted looks like unintended behaviour
 				// because you can just use end()-1 to remove last so i put the if
 				// into the for
-				for( i = m_procSpells.begin(); i != m_procSpells.end(); ++i )
+				for( i = m_procSpells.begin(); i != m_procSpells.end(); i++ )
 				{
 					if( (*i).spellId == item->GetProto()->Spells[k].Id && !(*i).deleted )
 					{
@@ -4670,7 +4670,7 @@ void Player::KillPlayer()
 
 Corpse* Player::CreateCorpse()
 {
-	Corpse* pCorpse;
+	Corpse* pCorpse = NULL;
 	uint32 _uf, _pb, _pb2, _cfb1, _cfb2;
 
 	objmgr.DelinkPlayerCorpses(TO_PLAYER(this));
@@ -4703,7 +4703,7 @@ Corpse* Player::CreateCorpse()
 	uint16 iIventoryType = 0;
 	uint32 _cfi = 0;
 	Item* pItem;
-	for (int8 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+	for (int8 i = 0; i < EQUIPMENT_SLOT_END; i++)
 	{
 		if(( pItem = GetItemInterface()->GetInventoryItem(i)))
 		{
@@ -4722,7 +4722,7 @@ Corpse* Player::CreateCorpse()
 		pCorpse->SetUInt32Value(CORPSE_FIELD_FLAGS, 5);
 		pCorpse->SetUInt64Value(CORPSE_FIELD_OWNER, 0); // remove corpse owner association
 		//remove item association
-		for (int i = 0; i < EQUIPMENT_SLOT_END; ++i)
+		for (int i = 0; i < EQUIPMENT_SLOT_END; i++)
 		{
 			if(pCorpse->GetUInt32Value(CORPSE_FIELD_ITEM + i))
 				pCorpse->SetUInt32Value(CORPSE_FIELD_ITEM + i, 0);
@@ -4789,7 +4789,7 @@ void Player::DeathDurabilityLoss(double percent)
 	int32 pNewDurability;
 	Item* pItem;
 
-	for (int8 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+	for (int8 i = 0; i < EQUIPMENT_SLOT_END; i++)
 	{
 		if((pItem = GetItemInterface()->GetInventoryItem(i)))
 		{
@@ -4919,7 +4919,7 @@ bool Player::IsGroupMember(Player* plyr)
 
 int32 Player::GetOpenQuestSlot()
 {
-	for (uint32 i = 0; i < 25; ++i)
+	for (uint32 i = 0; i < 25; i++)
 		if (m_questlog[i] == NULL)
 			return i;
 
@@ -4951,7 +4951,7 @@ void Player::AddToFinishedDailyQuests(uint32 quest_id)
 void Player::ResetDailyQuests()
 {
 	m_finishedDailyQuests.clear();
-	for(uint32 i = 0; i < 25; ++i)
+	for(uint32 i = 0; i < 25; i++)
 		SetUInt32Value(PLAYER_FIELD_DAILY_QUESTS_1 + i, 0);
 }
 
@@ -5023,7 +5023,7 @@ void Player::_LoadTutorials(QueryResult * result)
 	if(result)
 	{
 		 Field *fields = result->Fetch();
-		 for (int iI=0; iI<8; ++iI) 
+		 for (int iI=0; iI<8; iI++) 
 			 m_Tutorials[iI] = fields[iI + 1].GetUInt32();
 	}
 	tutorialsDirty = false;
@@ -5087,7 +5087,7 @@ void Player::UpdateHit(int32 hit)
 	Affect::ModList::const_iterator j;
 	Affect *aff;
 	uint32 in = hit;
-	for (i = GetAffectBegin(); i != GetAffectEnd(); ++i)
+	for (i = GetAffectBegin(); i != GetAffectEnd(); i++)
 	{
 		aff = *i;
 		for (j = aff->GetModList().begin();j != aff->GetModList().end(); j++)
@@ -5178,7 +5178,7 @@ void Player::UpdateChances()
 
 	//-1 = any weapon
 
-	for(; itr != tocritchance.end(); ++itr )
+	for(; itr != tocritchance.end(); itr++ )
 	{
 		if( itr->second.wclass == ( uint32 )-1 || ( tItemMelee != NULL && ( 1 << tItemMelee->GetProto()->SubClass & itr->second.subclass ) ) )
 		{
@@ -5208,7 +5208,7 @@ void Player::UpdateChances()
 void Player::UpdateChanceFields()
 {
 	// Update spell crit values in fields
-	for(uint32 i = 0; i < 7; ++i)
+	for(uint32 i = 0; i < 7; i++)
 	{
 		SetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1 + i, SpellCritChanceSchool[i]+spellcritperc);
 	}
@@ -5809,7 +5809,7 @@ void Player::AddInRangeObject(Object* pObj)
 		{
 			WorldPacket data(SMSG_AURA_UPDATE_ALL, 28 * MAX_AURAS);
 			data << pUnit->GetNewGUID();
-			for (uint32 i=0; i<MAX_AURAS; ++i)
+			for (uint32 i=0; i<MAX_AURAS; i++)
 			{
 				aur = pUnit->m_auras[i];
 				if (aur != NULL)
@@ -5942,7 +5942,7 @@ void Player::LoadTaxiMask(const char* data)
 	vector<string>::iterator iter;
 
 	for (iter = tokens.begin(), index = 0;
-		(index < 12) && (iter != tokens.end()); ++iter, ++index)
+		(index < 12) && (iter != tokens.end()); iter++, ++index)
 	{
 		m_taximask[index] = atol((*iter).c_str());
 	}
@@ -5951,7 +5951,7 @@ void Player::LoadTaxiMask(const char* data)
 bool Player::HasQuestForItem(uint32 itemid)
 {
 	Quest *qst;
-	for( uint32 i = 0; i < 25; ++i )
+	for( uint32 i = 0; i < 25; i++ )
 	{
 		if( m_questlog[i] != NULL )
 		{
@@ -5962,7 +5962,7 @@ bool Player::HasQuestForItem(uint32 itemid)
 			if( tempList != NULL )
 			{
 				QuestAssociationList::iterator it;
-				for (it = tempList->begin(); it != tempList->end(); ++it)
+				for (it = tempList->begin(); it != tempList->end(); it++)
 					if ( ((*it)->qst == qst) && (GetItemInterface()->GetItemCount( itemid ) < (*it)->item_count) )
 						return true;
 			}
@@ -6079,7 +6079,7 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 			if(pQuest)
 			{
 				//check if its a questline.
-				for(uint32 i = 0; i < pQuest->count_requiredquests; ++i)
+				for(uint32 i = 0; i < pQuest->count_requiredquests; i++)
 				{
 					if(pQuest->required_quests[i])
 					{
@@ -6192,9 +6192,9 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 				if(pGroup)
 				{
 					pGroup->Lock();
-					for(uint32 i = 0; i < pGroup->GetSubGroupCount(); ++i)
+					for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++)
 					{
-						for(GroupMembersSet::iterator itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
+						for(GroupMembersSet::iterator itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 						{
 							if((*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetItemInterface()->CanReceiveItem(itemProto, iter->iItemsCount, NULL) == 0)
 							{
@@ -6532,7 +6532,7 @@ void Player::EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_sl
 }
 void Player::RemoveQuestsFromLine(int skill_line)
 {
-	for (int i = 0; i < 25; ++i)
+	for (int i = 0; i < 25; i++)
 	{
 		if (m_questlog[i])
 		{
@@ -6587,7 +6587,7 @@ void Player::SendInitialLogonPackets()
 
 	//Tutorial Flags
 	data.Initialize( SMSG_TUTORIAL_FLAGS );
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 8; i++)
 		data << uint32( m_Tutorials[i] );
 	GetSession()->SendPacket(&data);
 
@@ -6675,7 +6675,7 @@ void Player::Reset_Spells()
 	std::list<uint32> spelllist;
 	bool profession = false;
 	
-	for(SpellSet::iterator itr = mSpells.begin(); itr!=mSpells.end(); ++itr)
+	for(SpellSet::iterator itr = mSpells.begin(); itr!=mSpells.end(); itr++)
 	{
 		SpellEntry *sp = dbcSpell.LookupEntry((*itr));
 		for( uint32 lp = 0; lp < 3; lp++ )
@@ -6690,7 +6690,7 @@ void Player::Reset_Spells()
 		profession = false;
 	}
 
-	for(std::list<uint32>::iterator itr = spelllist.begin(); itr!=spelllist.end(); ++itr)
+	for(std::list<uint32>::iterator itr = spelllist.begin(); itr!=spelllist.end(); itr++)
 	{
 		removeSpell((*itr), false, false, 0);
 	}
@@ -6704,7 +6704,7 @@ void Player::Reset_Spells()
 	}
 
 	profession = false;
-	for(std::set<uint32>::iterator itr = mDeletedSpells.begin(); itr != mDeletedSpells.end(); ++itr)
+	for(std::set<uint32>::iterator itr = mDeletedSpells.begin(); itr != mDeletedSpells.end(); itr++)
 	{
 		SpellEntry *sp = dbcSpell.LookupEntry((*itr));
 		for( uint32 lp = 0; lp < 3; lp++ )
@@ -6763,7 +6763,7 @@ void Player::Reset_Talents()
 {
 	std::map<uint32, uint8> *talents = &m_specs[m_talentActiveSpec].talents;
 	std::map<uint32, uint8>::iterator itr;
-	for(itr = talents->begin(); itr != talents->end(); ++itr)
+	for(itr = talents->begin(); itr != talents->end(); itr++)
 	{
 		TalentEntry *te = dbcTalent.LookupEntryForced(itr->first);
 		if(!te)
@@ -6819,7 +6819,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 		talents = &m_specs[m_talentActiveSpec].talents;
 		if(talents->size())
 		{
-			for(itr = talents->begin(); itr != talents->end(); ++itr)
+			for(itr = talents->begin(); itr != talents->end(); itr++)
 			{
 				TalentEntry * talentInfo = dbcTalent.LookupEntryForced(itr->first);
 				if(!talentInfo || itr->second > 4)
@@ -6852,7 +6852,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 	uint32 spentPoints = 0;
 	if(talents->size())
 	{
-		for(itr = talents->begin(); itr != talents->end(); ++itr)
+		for(itr = talents->begin(); itr != talents->end(); itr++)
 		{
 			TalentEntry * talentInfo = dbcTalent.LookupEntryForced(itr->first);
 			if(!talentInfo || itr->second > 4)
@@ -6872,7 +6872,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 	SetUInt32Value(PLAYER_CHARACTER_POINTS1, newTalentPoints);
 
 	// Apply glyphs
-	for(uint32 i = 0; i < GLYPHS_COUNT; ++i)
+	for(uint32 i = 0; i < GLYPHS_COUNT; i++)
 	{
 		UnapplyGlyph(i);
 		SetGlyph(i, m_specs[m_talentActiveSpec].glyphs[i]);
@@ -6983,7 +6983,7 @@ void Player::LearnTalent(uint32 talent_id, uint32 requested_rank)
 	uint32 tTree = talentInfo->TalentTree;
 	uint32 cl = getClass();
 
-	for(i = 0; i < 3; ++i)
+	for(i = 0; i < 3; i++)
 		if(tTree == TalentTreesPerClass[cl][i])
 			break;
 
@@ -6998,7 +6998,7 @@ void Player::LearnTalent(uint32 talent_id, uint32 requested_rank)
 	uint32 spentPoints = 0;
 	if (talentInfo->Row > 0)
 	{
-		for(itr = talents->begin(); itr != talents->end(); ++itr)
+		for(itr = talents->begin(); itr != talents->end(); itr++)
 		{
 			TalentEntry *tmpTalent = dbcTalent.LookupEntryForced(itr->first);
 			if (tmpTalent->TalentTree == tTree)
@@ -7107,7 +7107,7 @@ void Player::CalcResistance(uint32 type)
 
 void Player::UpdateNearbyGameObjects()
 {
-	for (Object::InRangeSet::iterator itr = GetInRangeSetBegin(); itr != GetInRangeSetEnd(); ++itr)
+	for (Object::InRangeSet::iterator itr = GetInRangeSetBegin(); itr != GetInRangeSetEnd(); itr++)
 	{
 		if((*itr)->GetTypeId() == TYPEID_GAMEOBJECT)
 		{
@@ -7215,7 +7215,7 @@ void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 		lastx = pn->x;
 		lasty = pn->y;
 		lastz = pn->z;
-		for(uint32 i = 1; i <= start_node; ++i)
+		for(uint32 i = 1; i <= start_node; i++)
 		{
 			pn = path->GetPathNode(i);
 			if(!pn)
@@ -7236,7 +7236,7 @@ void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 	if(m_taxiPaths.size())
 		endn-= 2;
 
-	for(uint32 i = start_node; i < endn; ++i)
+	for(uint32 i = start_node; i < endn; i++)
 	{
 		TaxiPathNode *pn = path->GetPathNode(i);
 		if(!pn)
@@ -7295,7 +7295,7 @@ void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 //	uint32 timer = 0, nodecount = 0;
 //	TaxiPathNode *lastnode = NULL;
 
-	for(uint32 i = start_node; i < endn; ++i)
+	for(uint32 i = start_node; i < endn; i++)
 	{
 		TaxiPathNode *pn = path->GetPathNode(i);
 		if(!pn)
@@ -7347,7 +7347,7 @@ void Player::JumpToEndTaxiNode(TaxiPath * path)
 void Player::RemoveSpellsFromLine(uint32 skill_line)
 {
 	uint32 cnt = dbcSkillLineSpell.GetNumRows();
-	for(uint32 i=0; i < cnt; ++i)
+	for(uint32 i=0; i < cnt; i++)
 	{
 		skilllinespell* sp = dbcSkillLineSpell.LookupRow(i);
 		if(sp)
@@ -7490,7 +7490,7 @@ void Player::RegenerateEnergy()
 uint32 Player::GeneratePetNumber()
 {
 	uint32 val = m_PetNumberMax + 1;
-	for (uint32 i = 1; i < m_PetNumberMax; ++i)
+	for (uint32 i = 1; i < m_PetNumberMax; i++)
 		if(m_Pets.find(i) == m_Pets.end())
 			return i;					   // found a free one
 
@@ -7580,7 +7580,7 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 void Player::AddItemsToWorld()
 {
 	Item* pItem;
-	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; ++i)
+	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		pItem = GetItemInterface()->GetInventoryItem(i);
 		if( pItem != NULL )
@@ -7620,7 +7620,7 @@ void Player::AddItemsToWorld()
 void Player::RemoveItemsFromWorld()
 {
 	Item* pItem;
-	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; ++i)
+	for(uint32 i = 0; i < CURRENCYTOKEN_SLOT_END; i++)
 	{
 		pItem = m_ItemInterface->GetInventoryItem((int8)i);
 		if(pItem)
@@ -7720,7 +7720,7 @@ void Player::ClearCooldownForSpell(uint32 spell_id)
 	SpellEntry * spe = dbcSpell.LookupEntry(spell_id);
 	if(!spe) return;
 
-	for(i = 0; i < NUM_COOLDOWN_TYPES; ++i)
+	for(i = 0; i < NUM_COOLDOWN_TYPES; i++)
 	{
 		for( itr = m_cooldownMap[i].begin(); itr != m_cooldownMap[i].end(); )
 		{
@@ -7741,7 +7741,7 @@ void Player::ClearCooldownsOnLine(uint32 skill_line, uint32 called_from)
 	// found an easier way.. loop spells, check skill line
 	SpellSet::const_iterator itr = mSpells.begin();
 	skilllinespell *sk;
-	for(; itr != mSpells.end(); ++itr)
+	for(; itr != mSpells.end(); itr++)
 	{
 		if((*itr) == called_from)	   // skip calling spell.. otherwise spammies! :D
 			continue;
@@ -8378,7 +8378,7 @@ void Player::SendTradeUpdate()
 	data << mTradeGold << uint32(0);
 
 	// Items
-	for( uint32 Index = 0; Index < 7; ++Index )
+	for( uint32 Index = 0; Index < 7; Index++ )
 	{
 		data << uint8(Index);
 		Item* pItem = mTradeItems[Index];
@@ -8653,7 +8653,7 @@ void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
 	SetUInt32Value(PLAYER_NEXT_LEVEL_XP, Info->XPToNextLevel);
 
 	// Set stats
-	for(uint32 i = 0; i < 5; ++i)
+	for(uint32 i = 0; i < 5; i++)
 	{
 		BaseStats[i] = Info->Stat[i];
 		CalcStat(i);
@@ -9190,7 +9190,7 @@ void Player::CompleteLoading()
 	targets.m_unitTarget = GetGUID();
 	targets.m_targetMask = TARGET_FLAG_UNIT;
 
-	for (itr = mSpells.begin(); itr != mSpells.end(); ++itr)
+	for (itr = mSpells.begin(); itr != mSpells.end(); itr++)
 	{
 		info = dbcSpell.LookupEntry(*itr);
 
@@ -9571,7 +9571,7 @@ void Player::SaveAuras(stringstream &ss)
 		{
 			Aura* aur=m_auras[x];
 			bool skip = false;
-			for(uint32 i = 0; i < 3; ++i)
+			for(uint32 i = 0; i < 3; i++)
 			{
 				if(aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA ||
 					aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AURA_128 || 
@@ -9701,7 +9701,7 @@ void Player::SetShapeShift(uint8 ss)
 	Spell* spe = NULLSPELL;
 	SpellCastTargets t(GetGUID());
 
-	for( itr = mSpells.begin(); itr != mSpells.end(); ++itr )
+	for( itr = mSpells.begin(); itr != mSpells.end(); itr++ )
 	{
 		sp = dbcSpell.LookupEntry( *itr );
 		if( sp->apply_on_shapeshift_change || sp->Attributes & 64 )		// passive/talent
@@ -10138,7 +10138,7 @@ void Player::Possess(Unit* pTarget)
 	pTarget->UpdateOppFactionSet();
 
 	list<uint32> avail_spells;
-	for(list<AI_Spell*>::iterator itr = pTarget->GetAIInterface()->m_spells.begin(); itr != pTarget->GetAIInterface()->m_spells.end(); ++itr)
+	for(list<AI_Spell*>::iterator itr = pTarget->GetAIInterface()->m_spells.begin(); itr != pTarget->GetAIInterface()->m_spells.end(); itr++)
 	{
 		if((*itr)->agent == AGENT_SPELL)
 			avail_spells.push_back((*itr)->spell->Id);
@@ -10159,7 +10159,7 @@ void Player::Possess(Unit* pTarget)
 	data << uint32(PET_SPELL_ATTACK);
 
 	// Send the actionbar
-	for(uint32 i = 1; i < 10; ++i)
+	for(uint32 i = 1; i < 10; i++)
 	{
 		if(itr != avail_spells.end())
 		{
@@ -10172,7 +10172,7 @@ void Player::Possess(Unit* pTarget)
 
 	// Send the rest of the spells.
 	data << uint8(avail_spells.size());
-	for(itr = avail_spells.begin(); itr != avail_spells.end(); ++itr)
+	for(itr = avail_spells.begin(); itr != avail_spells.end(); itr++)
 		data << uint16(*itr) << uint16(DEFAULT_SPELL_STATE);
 
 	data << uint8(0);
@@ -10508,7 +10508,7 @@ void Player::_UpdateMaxSkillCounts()
 {
 	bool dirty = false;
 	uint32 new_max;
-	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); ++itr)
+	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
 	{
 
 		if( itr->second.Skill->id == SKILL_LOCKPICKING )
@@ -10569,7 +10569,7 @@ void Player::_ModifySkillBonus(uint32 SkillLine, int32 Delta)
 void Player::_ModifySkillBonusByType(uint32 SkillType, int32 Delta)
 {
 	bool dirty = false;
-	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); ++itr)
+	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
 	{
 		if(itr->second.Skill->type == SkillType)
 		{
@@ -10631,7 +10631,7 @@ void Player::_AddLanguages(bool All)
 
 	if(All)
 	{
-		for(uint32 i = 0; skills[i] != 0; ++i)
+		for(uint32 i = 0; skills[i] != 0; i++)
 		{
 			if(!skills[i])
 				break;
@@ -10645,7 +10645,7 @@ void Player::_AddLanguages(bool All)
 	}
 	else
 	{
-		for(list<CreateInfo_SkillStruct>::iterator itr = info->skills.begin(); itr != info->skills.end(); ++itr)
+		for(list<CreateInfo_SkillStruct>::iterator itr = info->skills.begin(); itr != info->skills.end(); itr++)
 		{
 			en = dbcSkillLine.LookupEntry(itr->skillid);
 			if(en->type == SKILL_TYPE_LANGUAGE)
@@ -10680,7 +10680,7 @@ void Player::_RemoveAllSkills()
 void Player::_AdvanceAllSkills(uint32 count, bool skipprof /* = false */, uint32 max /* = 0 */)
 {
 	bool dirty=false;
-	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); ++itr)
+	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
 	{
 		if(itr->second.CurrentValue != itr->second.MaximumValue)
 		{
@@ -10829,7 +10829,7 @@ void Player::save_ExploreData()
 {
 	char buffer[2048] = {0};
 	int p = 0;
-	for(uint32 i = 0; i < 64; ++i)
+	for(uint32 i = 0; i < 64; i++)
 	{
 		p += sprintf(&buffer[p], "%u,", m_uint32Values[PLAYER_EXPLORED_ZONES_1 + i]);
 	}
@@ -10849,7 +10849,7 @@ void Player::save_Skills()
 	char buffer[6000] = {0};
 	int p = 0;
 
-	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); ++itr)
+	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
 	{
 		if(itr->first && itr->second.Skill->type != SKILL_TYPE_LANGUAGE)
 			p += sprintf(&buffer[p], "%u;%u;%u;", itr->first, itr->second.CurrentValue, itr->second.MaximumValue);
@@ -10865,7 +10865,7 @@ void Player::save_Reputation()
 	int p = 0;
 
 	ReputationMap::iterator iter = m_reputation.begin();
-	for(; iter != m_reputation.end(); ++iter)
+	for(; iter != m_reputation.end(); iter++)
 	{
 		p += sprintf(&buffer[p], "%d,%d,%d,%d,",
 			iter->first, iter->second->flag, iter->second->baseStanding, iter->second->standing);
@@ -10880,7 +10880,7 @@ void Player::save_Actions()
 	char buffer[2048] = {0};
 	int p = 0;
 
-	for(uint32 i = 0; i < 120; ++i)
+	for(uint32 i = 0; i < 120; i++)
 	{
 		p += sprintf(&buffer[p], "%u,%u,%u,", mActions[i].Action, mActions[i].Misc, mActions[i].Type);
 	}
@@ -10905,7 +10905,7 @@ void Player::save_Taxi()
 {
 	char buffer[1024] = {0};
 	int p = 0;
-	for(uint32 i = 0; i < 12; ++i)
+	for(uint32 i = 0; i < 12; i++)
 		p += sprintf(&buffer[p], "%u ", m_taximask[i]);
 
 	if(m_onTaxi) {
@@ -10931,12 +10931,12 @@ void Player::save_Spells()
 	uint32 p= 0,q= 0;
 
 	SpellSet::iterator itr = mSpells.begin();
-	for(; itr != mSpells.end(); ++itr)
+	for(; itr != mSpells.end(); itr++)
 	{
 		p += sprintf(&buffer[p], "%u,", *itr);
 	}
 
-	for(itr = mDeletedSpells.begin(); itr != mDeletedSpells.end(); ++itr)
+	for(itr = mDeletedSpells.begin(); itr != mDeletedSpells.end(); itr++)
 	{
 		q += sprintf(&buffer2[q], "%u,", *itr);
 	}
@@ -10999,7 +10999,7 @@ void Player::save_Auras()
 		{
 			Aura* aur=m_auras[x];
 			bool skip = false;
-			for(uint32 i = 0; i < 3; ++i)
+			for(uint32 i = 0; i < 3; i++)
 			{
 				if(aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA ||
 					aur->m_spellProto->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT)
@@ -11129,7 +11129,7 @@ void Player::PartLFGChannel()
 	if( pChannel == NULL )
 		return;
 
-	/*for(list<Channel*>::iterator itr = m_channels.begin(); itr != m_channels.end(); ++itr)
+	/*for(list<Channel*>::iterator itr = m_channels.begin(); itr != m_channels.end(); itr++)
 	{
 		if( (*itr) == pChannel )
 		{
@@ -11210,7 +11210,7 @@ bool CMovementCompressorThread::run()
 	while(running)
 	{
 		m_listLock.Acquire();
-		for(itr = m_players.begin(); itr != m_players.end(); ++itr)
+		for(itr = m_players.begin(); itr != m_players.end(); itr++)
 		{
 			(*itr)->EventDumpCompressedMovement();
 		}
@@ -11541,7 +11541,7 @@ void Player::_SavePlayerCooldowns(QueryBuffer * buf)
 	else
 		CharacterDatabase.Execute("DELETE FROM playercooldowns WHERE player_guid = %u", m_uint32Values[OBJECT_FIELD_GUID] );		// 0 is guid always
 
-	for( i = 0; i < NUM_COOLDOWN_TYPES; ++i )
+	for( i = 0; i < NUM_COOLDOWN_TYPES; i++ )
 	{
 		itr = m_cooldownMap[i].begin( );
 		for( ; itr != m_cooldownMap[i].end( ); )
@@ -11997,7 +11997,7 @@ void Player::Social_TellFriendsOnline()
 	data << GetAreaID() << getLevel() << uint32(getClass());
 
 	m_socialLock.Acquire();
-	for( itr = m_hasFriendList.begin(); itr != m_hasFriendList.end(); ++itr )
+	for( itr = m_hasFriendList.begin(); itr != m_hasFriendList.end(); itr++ )
 	{
 		pl = objmgr.GetPlayer(*itr);
 		if( pl != NULL )
@@ -12017,7 +12017,7 @@ void Player::Social_TellFriendsOffline()
 	data << uint8( FRIEND_OFFLINE ) << GetGUID() << uint8( 0 );
 
 	m_socialLock.Acquire();
-	for( itr = m_hasFriendList.begin(); itr != m_hasFriendList.end(); ++itr )
+	for( itr = m_hasFriendList.begin(); itr != m_hasFriendList.end(); itr++ )
 	{
 		pl = objmgr.GetPlayer(*itr);
 		if( pl != NULL )
@@ -12037,7 +12037,7 @@ void Player::Social_SendFriendList(uint32 flag)
 
 	data << flag;
 	data << uint32( m_friends.size() + m_ignores.size() );
-	for( itr = m_friends.begin(); itr != m_friends.end(); ++itr )
+	for( itr = m_friends.begin(); itr != m_friends.end(); itr++ )
 	{
 		// guid
 		data << uint64( itr->first );
@@ -12067,7 +12067,7 @@ void Player::Social_SendFriendList(uint32 flag)
 			data << uint8( 0 );
 	}
 
-	for( itr2 = m_ignores.begin(); itr2 != m_ignores.end(); ++itr2 )
+	for( itr2 = m_ignores.begin(); itr2 != m_ignores.end(); itr2++ )
 	{
 		// guid
 		data << uint64( (*itr2) );
@@ -12103,7 +12103,7 @@ void Player::VampiricSpell(uint32 dmg, Unit* pTarget, SpellEntry *spellinfo)
 			// loop party
 			if( pSubGroup != NULL )
 			{
-				for( itr = pSubGroup->GetGroupMembersBegin(); itr != pSubGroup->GetGroupMembersEnd(); ++itr )
+				for( itr = pSubGroup->GetGroupMembersBegin(); itr != pSubGroup->GetGroupMembersEnd(); itr++ )
 				{
 					if( (*itr)->m_loggedInPlayer != NULL && (*itr) != m_playerInfo )
 						Heal( (*itr)->m_loggedInPlayer, 15286, bonus / 5 );
@@ -12123,7 +12123,7 @@ void Player::VampiricSpell(uint32 dmg, Unit* pTarget, SpellEntry *spellinfo)
 				if( TargetCount == 10 )
 					break;
 
-				for(GroupMembersSet::iterator itr = GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); ++itr)
+				for(GroupMembersSet::iterator itr = GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 				{
 					if((*itr)->m_loggedInPlayer && TargetCount <= 10)
 					{
@@ -12226,7 +12226,7 @@ void Player::UpdateTalentInspectBuffer()
 	uint32 rank_offset;
 	uint32 i;
 
-	for( i = 0; i < 3; ++i )
+	for( i = 0; i < 3; i++ )
 	{
 		talent_tab_id = sWorld.InspectTalentTabPages[getClass()][i];
 
@@ -12311,7 +12311,7 @@ uint32 Player::GetMaxPersonalRating()
 
 	ASSERT(m_playerInfo != NULL);
 
-	for (i=0; i<NUM_ARENA_TEAM_TYPES; ++i)
+	for (i=0; i<NUM_ARENA_TEAM_TYPES; i++)
 	{
 		if(m_playerInfo->arenaTeam[i] != NULL)
 		{
@@ -12411,7 +12411,7 @@ bool Player::HasBattlegroundQueueSlot()
 
 uint32 Player::GetBGQueueSlot()
 {
-	for(uint32 i = 0; i < 3; ++i)
+	for(uint32 i = 0; i < 3; i++)
 	{
 		if( !m_bgIsQueued[i] )
 			return i;
@@ -12422,7 +12422,7 @@ uint32 Player::GetBGQueueSlot()
 
 uint32 Player::GetBGQueueSlotByBGType(uint32 type)
 {
-	for(uint32 i = 0; i < 3; ++i)
+	for(uint32 i = 0; i < 3; i++)
 	{
 		if( m_bgQueueType[i] == type)
 			return i;
@@ -12432,7 +12432,7 @@ uint32 Player::GetBGQueueSlotByBGType(uint32 type)
 
 uint32 Player::HasBGQueueSlotOfType(uint32 type)
 {
-	for(uint32 i = 0; i < 3; ++i)
+	for(uint32 i = 0; i < 3; i++)
 	{
 		if( m_bgIsQueued[i] &&
 			m_bgQueueType[i] == type)
@@ -12445,7 +12445,7 @@ uint32 Player::HasBGQueueSlotOfType(uint32 type)
 void Player::RetroactiveCompleteQuests()
 {
 	set<uint32>::iterator itr = m_finishedQuests.begin();
-	for(; itr != m_finishedQuests.end(); ++itr)
+	for(; itr != m_finishedQuests.end(); itr++)
 	{
 		Quest * pQuest = QuestStorage.LookupEntry( *itr );
 		if(!pQuest) continue;
@@ -12475,7 +12475,7 @@ void Player::InitGlyphsForLevel()
 
 void Player::InitGlyphSlots()
 {
-	for(uint32 i = 0; i < 6; ++i)
+	for(uint32 i = 0; i < 6; i++)
 		SetUInt32Value(PLAYER_FIELD_GLYPH_SLOTS_1 + i, 21 + i);
 }
 
@@ -12541,7 +12541,7 @@ void Player::ConvertRune(uint8 index, uint8 value)
 bool Player::CanUseRunes(uint8 blood, uint8 frost, uint8 unholy)
 {
 	uint8 death = 0;
-	for(uint8 i = 0; i < 6; ++i)
+	for(uint8 i = 0; i < 6; i++)
 	{
 		if( m_runes[ i ] == RUNE_TYPE_BLOOD && blood )
 			blood--;
@@ -12573,7 +12573,7 @@ void Player::ScheduleRuneRefresh(uint8 index, bool forceDeathRune)
 void Player::UseRunes(uint8 blood, uint8 frost, uint8 unholy, SpellEntry* pSpell)
 {
 	uint8 death = 0;
-	for(uint8 i = 0; i < 6; ++i)
+	for(uint8 i = 0; i < 6; i++)
 	{
 		if( m_runes[ i ] == RUNE_TYPE_BLOOD && blood )
 		{
@@ -12616,7 +12616,7 @@ void Player::UseRunes(uint8 blood, uint8 frost, uint8 unholy, SpellEntry* pSpell
 	if( res == 0 )
 		return;
 
-	for(uint8 i = 0; i < 6; ++i)
+	for(uint8 i = 0; i < 6; i++)
 	{
 		if( m_runes[ i ] == RUNE_TYPE_DEATH && res )
 		{
@@ -12632,7 +12632,7 @@ uint8 Player::TheoreticalUseRunes(uint8 blood, uint8 frost, uint8 unholy)
 {
 	uint8 runemask = m_runemask;
 	uint8 death = 0;
-	for(uint8 i = 0; i < 6; ++i)
+	for(uint8 i = 0; i < 6; i++)
 	{
 		if( m_runes[ i ] == RUNE_TYPE_BLOOD && blood )
 		{
@@ -12659,7 +12659,7 @@ uint8 Player::TheoreticalUseRunes(uint8 blood, uint8 frost, uint8 unholy)
 	if( res == 0 )
 		return runemask;
 
-	for(uint8 i = 0; i < 6; ++i)
+	for(uint8 i = 0; i < 6; i++)
 	{
 		if( m_runes[ i ] == RUNE_TYPE_DEATH && res )
 		{
@@ -12723,7 +12723,7 @@ void Player::SetTaximaskNode(uint32 nodeidx, bool Unset)
 
 uint16 Player::FindQuestSlot( uint32 questid )
 {
-	for ( uint16 i = 0; i < 25; ++i )
+	for ( uint16 i = 0; i < 25; i++ )
 		if( (GetUInt32Value(PLAYER_QUEST_LOG_1_1 + i * 5)) == questid )
 			return i;
 
@@ -12758,7 +12758,7 @@ uint32 Player::GetTotalItemLevel()
 
 	uint32 playertotalitemlevel = 0;
 
-	for(int8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
+	for(int8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
 	{
 		uint32 previoustil = playertotalitemlevel;
 		Item* item = Ii->GetInventoryItem(i);
@@ -12788,7 +12788,7 @@ void Player::_LoadEquipmentSets(QueryResult *result)
 		eqSet.IconName	= fields[3].GetString();
 		eqSet.state		= EQUIPMENT_SET_UNCHANGED;
 
-		for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+		for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
 			eqSet.Items[i].Init(fields[4+i].GetUInt64());
 
 		m_EquipmentSets[count] = eqSet;
@@ -12808,7 +12808,7 @@ void Player::SendEquipmentSets()
 	data << uint32(count);
 	if(m_EquipmentSets.size()) // Why go through the trouble if we have nothing.
 	{
-		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 		{
 			if(itr->second.state == EQUIPMENT_SET_DELETED)
 				continue;
@@ -12817,7 +12817,7 @@ void Player::SendEquipmentSets()
 			data << count;
 			data << itr->second.Name;
 			data << itr->second.IconName;
-			for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+			for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
 				data << itr->second.Items[i];
 
 			++count;
@@ -12833,7 +12833,7 @@ void Player::SetEquipmentSet(uint32 index, EquipmentSet eqset)
 	{
 		bool found = false;
 
-		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 		{
 			if((itr->second.Guid == eqset.Guid) && (itr->first == index))
 			{
@@ -12871,7 +12871,7 @@ void Player::SetEquipmentSet(uint32 index, EquipmentSet eqset)
 
 void Player::DeleteEquipmentSet(uint64 setGuid)
 {
-	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 	{
 		if(itr->second.Guid == setGuid)
 		{
@@ -12886,7 +12886,7 @@ void Player::DeleteEquipmentSet(uint64 setGuid)
 
 void Player::_SaveEquipmentSets()
 {
-	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); ++itr)
+	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 	{
 		EquipmentSet& eqset = itr->second;
 		switch(eqset.state)

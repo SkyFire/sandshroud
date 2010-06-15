@@ -376,14 +376,14 @@ void ArathiBasin::OnCreate()
 
 void ArathiBasin::OnStart()
 {
-	for(uint32 i = 0; i < 2; ++i) {
-		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr) {
+	for(uint32 i = 0; i < 2; i++) {
+		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++) {
 			(*itr)->RemoveAura(BG_PREPARATION);
 		}
 	}
 
 	// open gates
-	for(list< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); ++itr)
+	for(list< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); itr++)
 	{
 		(*itr)->SetUInt32Value(GAMEOBJECT_FLAGS, 64);
 		(*itr)->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
@@ -399,7 +399,7 @@ ArathiBasin::ArathiBasin( MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) : CBa
 {
 	uint32 i;
 
-	for (i=0; i<2; ++i) {
+	for (i=0; i<2; i++) {
 		m_players[i].clear();
 		m_pendPlayers[i].clear();
 	}
@@ -412,7 +412,7 @@ ArathiBasin::ArathiBasin( MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) : CBa
 	m_bonusHonor = HonorHandler::CalculateHonorPointsFormula(lgroup*10,lgroup*10);
 	m_resToGainBH = 330;
 
-	for(i = 0; i < AB_NUM_CONTROL_POINTS; ++i)
+	for(i = 0; i < AB_NUM_CONTROL_POINTS; i++)
 	{
 		m_buffs[i] = NULLGOB;
 		m_controlPointAuras[i] = NULLGOB;
@@ -424,7 +424,7 @@ ArathiBasin::ArathiBasin( MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) : CBa
 		m_flagIsVirgin[i] = true;
 	}
 
-	for(i = 0; i < 2; ++i)
+	for(i = 0; i < 2; i++)
 	{
 		m_resources[i] = 0;
 		m_capturedBases[i] = 0;
@@ -441,7 +441,7 @@ void ArathiBasin::Init()
 ArathiBasin::~ArathiBasin()
 {
 	// gates are always spawned, so mapmgr will clean them up
-	for(uint32 i = 0; i < AB_NUM_CONTROL_POINTS; ++i)
+	for(uint32 i = 0; i < AB_NUM_CONTROL_POINTS; i++)
 	{
 		// buffs may not be spawned, so delete them if they're not
 		if(m_buffs[i] != NULL)
@@ -503,7 +503,7 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 	if((current_resources - m_lastHonorGainResources[Team]) >= m_resToGainBH)
 	{
 		m_lastHonorGainResources[Team] += m_resToGainBH;
-		for(set< Player* >::iterator itr = m_players[Team].begin(); itr != m_players[Team].end(); ++itr)
+		for(set< Player* >::iterator itr = m_players[Team].begin(); itr != m_players[Team].end(); itr++)
 		{
 			(*itr)->m_bgScore.BonusHonor += m_bonusHonor;
 			HonorHandler::AddHonorPointsToPlayer((*itr), m_bonusHonor);
@@ -535,9 +535,9 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 		/* add the marks of honor to all players */
 		SpellEntry * winner_spell = dbcSpell.LookupEntry(24953);
 		SpellEntry * loser_spell = dbcSpell.LookupEntry(24952);
-		for(uint32 i = 0; i < 2; ++i)
+		for(uint32 i = 0; i < 2; i++)
 		{
-			for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); ++itr)
+			for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 			{
 				(*itr)->Root();
 
@@ -692,7 +692,7 @@ bool ArathiBasin::HookHandleRepop(Player* plr)
 	float current_distance = 999999.0f;
 	float dist;
 
-	for(uint32 i = 0; i < AB_NUM_CONTROL_POINTS; ++i)
+	for(uint32 i = 0; i < AB_NUM_CONTROL_POINTS; i++)
 	{
 		if(m_basesOwnedBy[i] == (int32)plr->m_bgTeam)
 		{
@@ -807,7 +807,7 @@ void ArathiBasin::AssaultControlPoint(Player* pPlayer, uint32 Id)
 			map<Creature*,set<uint32> >::iterator itr = m_resurrectMap.find(m_spiritGuides[Id]);
 			if( itr != m_resurrectMap.end() )
 			{
-				for( set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); ++it2 )
+				for( set<uint32>::iterator it2 = itr->second.begin(); it2 != itr->second.end(); it2++ )
 				{
 					Player* r_plr = m_mapMgr->GetPlayer( *it2 );
 					if( r_plr != NULL && r_plr->isDead() )

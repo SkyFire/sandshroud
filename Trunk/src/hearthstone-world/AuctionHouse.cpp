@@ -49,7 +49,7 @@ AuctionHouse::AuctionHouse(uint32 ID)
 
 AuctionHouse::~AuctionHouse()
 {
-	for(HM_NAMESPACE::hash_map<uint32, Auction*>::iterator itr = auctions.begin(); itr != auctions.end(); ++itr)
+	for(HM_NAMESPACE::hash_map<uint32, Auction*>::iterator itr = auctions.begin(); itr != auctions.end(); itr++)
 	{
 		itr->second->pItem->Delete();
 		delete itr->second;
@@ -74,7 +74,7 @@ void AuctionHouse::UpdateDeletionQueue()
 	Auction * auct;
 
 	list<Auction*>::iterator it = removalList.begin();
-	for(; it != removalList.end(); ++it)
+	for(; it != removalList.end(); it++)
 	{
 		auct = *it;
 		assert(auct->Deleted);
@@ -245,7 +245,7 @@ void Auction::AddToPacket(WorldPacket & data)
 	data << Id;
 	data << pItem->GetEntry();
 
-	for (uint32 i = 0; i < 6; ++i)
+	for (uint32 i = 0; i < 6; i++)
 	{
 		data << pItem->GetUInt32Value(ITEM_FIELD_ENCHANTMENT_1_1 + (3 * i));   // Enchantment ID
 		data << uint32(pItem->GetEnchantmentApplytime(i));						 // Unknown / maybe ApplyTime
@@ -298,7 +298,7 @@ void AuctionHouse::SendBidListPacket(Player* plr, WorldPacket * packet)
 	Auction * auct;
 	auctionLock.AcquireReadLock();
 	HM_NAMESPACE::hash_map<uint32, Auction*>::iterator itr = auctions.begin();
-	for(; itr != auctions.end(); ++itr)
+	for(; itr != auctions.end(); itr++)
 	{
 		auct = itr->second;
 		if(auct->HighestBidder == plr->GetGUID())
@@ -321,7 +321,7 @@ void AuctionHouse::UpdateItemOwnerships(uint32 oldGuid, uint32 newGuid)
 	Auction * auct;
 	auctionLock.AcquireWriteLock();
 	HM_NAMESPACE::hash_map<uint32, Auction*>::iterator itr = auctions.begin();
-	for(; itr != auctions.end(); ++itr)
+	for(; itr != auctions.end(); itr++)
 	{
 		auct = itr->second;
 		if(auct->Owner == oldGuid)
@@ -349,7 +349,7 @@ void AuctionHouse::SendOwnerListPacket(Player* plr, WorldPacket * packet)
 	Auction * auct;
 	auctionLock.AcquireReadLock();
 	HM_NAMESPACE::hash_map<uint32, Auction*>::iterator itr = auctions.begin();
-	for(; itr != auctions.end(); ++itr)
+	for(; itr != auctions.end(); itr++)
 	{
 		auct = itr->second;
 		if(auct->Owner == plr->GetGUID())
@@ -604,7 +604,7 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 	auctionLock.AcquireReadLock();
 	HM_NAMESPACE::hash_map<uint32, Auction*>::iterator itr = auctions.begin();
 	ItemPrototype * proto;
-	for(; itr != auctions.end(); ++itr)
+	for(; itr != auctions.end(); itr++)
 	{
 		if(itr->second->Deleted) continue;
 		proto = itr->second->pItem->GetProto();

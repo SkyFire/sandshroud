@@ -218,7 +218,7 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 				delete res;
 			}
 
-			for( i = 0; i < EQUIPMENT_SLOT_END; ++i )
+			for( i = 0; i < EQUIPMENT_SLOT_END; i++ )
 				data << items[i].displayid << items[i].invtype << uint32(items[i].enchantment);
 
 			for(uint8 c = 0; c < 4; ++c)
@@ -262,7 +262,7 @@ void WorldSession::LoadAccountDataProc(QueryResult * result)
 		return;
 	}
 
-	for(uint32 i = 0; i < 7; ++i)
+	for(uint32 i = 0; i < 7; i++)
 	{
 		data = result->Fetch()[1+i].GetString();
 		len = data ? strlen(data) : 0;
@@ -525,7 +525,7 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 		string name = result->Fetch()[0].GetString();
 		delete result;
 
-		for(int i = 0; i < NUM_CHARTER_TYPES; ++i)
+		for(int i = 0; i < NUM_CHARTER_TYPES; i++)
 		{
 			if( inf->charterId[i] != 0 )
 			{
@@ -537,7 +537,7 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 			}
 		}
 
-		for(int i = 0; i < NUM_ARENA_TEAM_TYPES; ++i)
+		for(int i = 0; i < NUM_ARENA_TEAM_TYPES; i++)
 		{
 			if( inf->arenaTeam[i] != NULL )
 			{
@@ -832,7 +832,7 @@ void WorldSession::FullLogin(Player* plr)
 		WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
 		MD5Hash md5hash;
 		data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
-		for (int i = 0; i < 8; ++i)
+		for (int i = 0; i < 8; i++)
 		{
 			AccountDataEntry* acct_data = GetAccountData(i);
 			if(0xEA & (1 << i))
@@ -848,7 +848,7 @@ void WorldSession::FullLogin(Player* plr)
 		WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
 		MD5Hash md5hash;
 		data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
-		for (int i = 0; i < 8; ++i)
+		for (int i = 0; i < 8; i++)
 		{
 			AccountDataEntry* acct_data = GetAccountData(i);
 			if(0xEA & (1 << i))
@@ -1231,7 +1231,7 @@ void WorldSession::HandleEquipmentSetSave(WorldPacket &recv_data)
 	eqSet.IconName	= iconName;
 	eqSet.state		= EQUIPMENT_SET_NEW;
 
-	for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+	for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
 	{
 		WoWGuid itemGuid;
 		recv_data >> itemGuid;
@@ -1273,7 +1273,7 @@ void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 {
 	sLog.outDebug("CMSG_EQUIPMENT_SET_USE");
 	bool failed = false;
-	for(uint32 i = 0; i < EQUIPMENT_SLOT_END; ++i)
+	for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
 	{
 		WoWGuid itemGuid;
 		int8 SrcInvSlot;

@@ -367,7 +367,7 @@ public:
 	int32 GetSlotByItemId(uint32 itemid)
 	{
 		uint32 slot = 0;
-		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); ++itr)
+		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
 		{
 			if(itr->itemid == itemid)
 				return slot;
@@ -379,7 +379,7 @@ public:
 
 	uint32 GetItemAmountByItemId(uint32 itemid)
 	{
-		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); ++itr)
+		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
 		{
 			if(itr->itemid == itemid)
 				return ((itr->amount < 1) ? 1 : itr->amount);
@@ -394,7 +394,7 @@ public:
 
 	void GetSellItemByItemId(uint32 itemid, CreatureItem &ci)
 	{
-		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); ++itr)
+		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
 		{
 			if(itr->itemid == itemid)
 			{
@@ -414,7 +414,7 @@ public:
 	HEARTHSTONE_INLINE size_t GetSellItemCount() { return m_SellItems->size(); }
 	void RemoveVendorItem(uint32 itemid)
 	{
-		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); ++itr)
+		for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
 		{
 			if(itr->itemid == itemid)
 			{
@@ -432,7 +432,7 @@ public:
 	bool HasQuest(uint32 id, uint32 type)
 	{
 		if(!m_quests) return false;
-		for(std::list<QuestRelation*>::iterator itr = m_quests->begin(); itr != m_quests->end(); ++itr)
+		for(std::list<QuestRelation*>::iterator itr = m_quests->begin(); itr != m_quests->end(); itr++)
 		{
 			if((*itr)->qst->id == id && (*itr)->type & type)
 				return true;
