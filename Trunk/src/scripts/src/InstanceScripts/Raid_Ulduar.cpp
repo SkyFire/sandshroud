@@ -18,8 +18,7 @@
 
 #include "StdAfx.h"
 #include "Raid_Ulduar.h"
-#include "../Common/Base.h"
-#include "../Common/Instance_Base.h"
+
 
 #define MAP_ULDUAR 603
 #define NPC_LEVIATHAN 33113
@@ -66,7 +65,7 @@ void UlduarTeleporter::GossipHello(Object * pObject, Player * Plr, bool AutoSend
 {
 	GossipMenu *Menu;
     objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 0, Plr);
-	UlduarScript* pCheck = (UlduarScript*)(Plr->GetMapMgr()->GetScript());
+	UlduarScript* pCheck = (UlduarScript*)Plr->GetMapMgr()->GetScript();
 	Menu->AddItem(0, "Teleport to the Expedition Base Camp.", 0);
     Menu->AddItem(0, "Teleport to the Formation Grounds.", 1);
     if (pCheck->GetEncounterState(NPC_LEVIATHAN) == State_Finished)
