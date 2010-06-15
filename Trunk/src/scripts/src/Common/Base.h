@@ -21,6 +21,7 @@
 #define _INSTANCE_SCRIPTS_BASE_H_
 
 #include "StdAfx.h"
+#include "../Common/Instance_Base.h"
 
 #include <string>
 #include <vector>
@@ -263,6 +264,13 @@ public:
 	MoonScriptCreatureAI(Creature *pCreature);
 	virtual ~MoonScriptCreatureAI();
 
+	/* Gonna make a small documentation for scripts. 
+	Currently i'm choosing where to do it. 
+	First idea was to make a wiki for it, but it would be so slow to make it works.
+	Second idea was to post an articles with docu on sandshroud forums. But I NEED MOAR FORMAT TOOLZ! :D
+	Third idea is to put here comments, because while you 'brows' functions to use, you can read a small comments on what that function is doing.
+	So, dunno what to do. Summarize all 'yes' and 'no' i'm beggin before wiki and maybe will do it some time later. */
+
 	//Movement
 	bool					GetCanMove();
 	void					SetCanMove(bool pCanMove);
@@ -295,6 +303,7 @@ public:
 	void					AggroRandomUnit(int pInitialThreat=1);
 	void					AggroNearestPlayer(int pInitialThreat=1);
 	void					AggroRandomPlayer(int pInitialThreat=1);
+	void					AttackPlayer(Unit *pPlayer);
 
 	//Status
 	void					ClearHateList();
@@ -316,6 +325,7 @@ public:
 
 	//Instances
 	bool					IsHeroic();
+	uint32					GetInstanceMode();
 	
 	Player *			GetNearestPlayer();
 	GameObject *		GetNearestGameObject(uint32 pGameObjectId=0);
@@ -326,9 +336,10 @@ public:
 	Unit *				ForceCreatureFind( uint32 pCreatureId, float pX, float pY, float pZ );
 	void					Despawn(uint32 pDelay=0, uint32 pRespawnTime=0);
 
-	//Spells
+
 	SpellDesc*				AddSpell(uint32 pSpellId, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0, EmoteType pEmoteType = EMOTE_ONESHOT_NONE);
 	SpellDesc*				AddSpellFunc(SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange=0, float pMaxRange=0, bool pStrictRange=false, const char* pText=NULL, TextType pTextType=Text_Yell, uint32 pSoundId=0, EmoteType pEmoteType = EMOTE_ONESHOT_NONE);
+
 	void					CastSpell(SpellDesc* pSpell);
 	void					CastSpellNowNoScheduling(SpellDesc* pSpell);
 	SpellDesc*				FindSpellById(uint32 pSpellId);

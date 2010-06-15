@@ -296,6 +296,12 @@ void MoonScriptCreatureAI::AggroRandomPlayer(int pInitialThreat)
 	}
 }
 
+void MoonScriptCreatureAI::AttackPlayer(Unit *pPlayer)
+{
+	if (pPlayer != NULLUNIT)
+		_unit->GetAIInterface()->SetNextTarget(pPlayer);
+}
+
 void MoonScriptCreatureAI::ClearHateList()
 {
 	_unit->GetAIInterface()->ClearHateList();	//without leaving combat
@@ -387,6 +393,11 @@ bool MoonScriptCreatureAI::IsHeroic() // Crow: Add correct Raid checks.
 		return false;
 
 	return true;
+};
+
+uint32 MoonScriptCreatureAI::GetInstanceMode()
+{
+	return _unit->GetMapMgr()->iInstanceMode;
 };
 
 Player *MoonScriptCreatureAI::GetNearestPlayer()
