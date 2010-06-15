@@ -126,7 +126,8 @@ void Vehicle::InstallAccessories()
 		// Create the Unit!
 		if(proto->vehicle_entry > 0) // Vehicle
 		{
-			Vehicle* pass = GetMapMgr()->CreateVehicle(accessories.accessoryentry);
+			MapMgr* map = sInstanceMgr.GetMapMgr(GetMapId());
+			Vehicle* pass = map->CreateVehicle(accessories.accessoryentry);
 			if(pass != NULL)
 			{
 				pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
@@ -135,7 +136,6 @@ void Vehicle::InstallAccessories()
 
 				pass->Init();
 				pass->m_TransporterGUID = GetGUID();
-				pass->PushToWorld(GetMapMgr());
 				pass->InitSeats(proto->vehicle_entry);
 				if(pass->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK))
 					pass->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK); // Accessory
@@ -154,7 +154,6 @@ void Vehicle::InstallAccessories()
 
 				pass->Init();
 				pass->m_TransporterGUID = GetGUID();
-				pass->PushToWorld(GetMapMgr());
 				AddPassenger(pass, i, true);
 			}
 		}
@@ -210,6 +209,7 @@ void Vehicle::Load(CreatureProto * proto_, float x, float y, float z, float o /*
 	Initialised = true;
 
 	Creature::Load(proto_, x, y, z, o);
+	InstallAccessories();
 }
 
 bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
@@ -260,17 +260,21 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	Initialised = true;
 
-	return Creature::Load(spawn, mode, info);
+	if(Creature::Load(spawn, mode, info))
+	{
+		InstallAccessories();
+		return true;
+	}
+
+	return false;
 }
 
 void Vehicle::OnPushToWorld()
 {
-	CreatureProto* proto = CreatureProtoStorage.LookupEntry(GetEntry());
-	if(proto != NULL)
-	{
-		InitSeats(proto->vehicle_entry);
-		InstallAccessories();
-	}
+	for(int i = 0; i < 8; i++)
+		if(m_passengers[i] != NULL)
+			if(!m_passengers[i]->IsInWorld())
+				m_passengers[i]->PushToWorld(GetMapMgr());
 }
 
 void Vehicle::SendSpells(uint32 entry, Player* plr)

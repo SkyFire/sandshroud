@@ -1434,13 +1434,26 @@ bool MapMgr::Do()
 
 	for(CreatureSpawnList::iterator itr = _map->staticSpawns.CreatureSpawns.begin(); itr != _map->staticSpawns.CreatureSpawns.end(); itr++)
 	{
-		Creature* obj = NULLCREATURE;
-		obj = CreateCreature((*itr)->entry);
-		if(obj == NULLCREATURE)
-			continue;
+		if((*itr)->vehicle)
+		{
+			Vehicle* obj = NULLVEHICLE;
+			obj = CreateVehicle((*itr)->entry);
+			if(obj == NULLVEHICLE)
+				continue;
 
-		obj->Load(*itr, iInstanceMode, pMapInfo);
-		_mapWideStaticObjects.insert(obj);
+			obj->Load(*itr, iInstanceMode, pMapInfo);
+			_mapWideStaticObjects.insert(obj);
+		}
+		else
+		{
+			Creature* obj = NULLCREATURE;
+			obj = CreateCreature((*itr)->entry);
+			if(obj == NULLCREATURE)
+				continue;
+
+			obj->Load(*itr, iInstanceMode, pMapInfo);
+			_mapWideStaticObjects.insert(obj);
+		}
 	}
 
 	/* add static objects */

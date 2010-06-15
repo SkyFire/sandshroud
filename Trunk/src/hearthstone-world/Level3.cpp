@@ -2176,13 +2176,19 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 		MapEntry* mapinfo = dbcMap.LookupEntry(m_session->GetPlayer()->GetMapId());
 		bool raid = mapinfo->israid();
-		p->Load(sp, (plr->IsInInstance() ? (raid ? plr->iInstanceType : plr->iRaidType) : MODE_5PLAYER_NORMAL), NULL);
+		if(spVehicle)
+			TO_VEHICLE(p)->Load(sp, (plr->IsInInstance() ? (raid ? plr->iInstanceType : plr->iRaidType) : MODE_5PLAYER_NORMAL), NULL);
+		else
+			p->Load(sp, (plr->IsInInstance() ? (raid ? plr->iInstanceType : plr->iRaidType) : MODE_5PLAYER_NORMAL), NULL);
 	}
 	else
 	{
-		p->Load(proto, m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ(), 0.0f);
+		if(spVehicle)
+			TO_VEHICLE(p)->Load(proto, m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ(), 0.0f);
+		else
+			p->Load(proto, m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ(), 0.0f);
 	}
-	
+
 	p->PushToWorld(m_session->GetPlayer()->GetMapMgr());
 
 	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u", info->Name, 
