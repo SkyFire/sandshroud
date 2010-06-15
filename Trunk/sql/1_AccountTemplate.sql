@@ -7,6 +7,7 @@ Date: 03/02/2009 01:24:51
 -- ----------------------------
 -- Table structure for accounts
 -- ----------------------------
+DROP TABLE IF EXISTS `accounts`;
 CREATE TABLE `accounts`(
   `acct` int(5) NOT NULL AUTO_INCREMENT ,
   `login` varchar(32) NOT NULL DEFAULT '' ,
@@ -27,6 +28,7 @@ CREATE TABLE `accounts`(
 -- ----------------------------
 -- Table structure for ipbans
 -- ----------------------------
+DROP TABLE IF EXISTS `ipbans`;
 CREATE TABLE `ipbans`(
   `ip` varchar(128) NOT NULL ,
   `time` int(30) NOT NULL DEFAULT 0 ,
