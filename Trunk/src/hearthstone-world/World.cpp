@@ -529,8 +529,11 @@ bool World::SetInitialWorldSettings()
 
 	ThreadPool.ExecuteTask(new DayWatcherThread());
 
-	if(wg_enabled)
+	if(wg_enabled && sInstanceMgr.GetMapMgr(571))
+	{
+		sMaster.wintergrasp = true;
 		ThreadPool.ExecuteTask(new WintergraspInternal());
+	}
 
 	m_queueUpdateTimer = mQueueUpdateInterval;
 	if(Config.MainConfig.GetBoolDefault("Startup", "BackgroundLootLoading", true))

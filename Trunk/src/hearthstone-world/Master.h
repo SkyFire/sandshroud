@@ -63,6 +63,7 @@ public:
 	bool Run(int argc, char ** argv);
 
 	static volatile bool m_stopEvent;
+	bool wintergrasp;
 
 private:
 	bool _StartDB();
