@@ -243,7 +243,10 @@ public:
 		if(pCreature!=NULLCREATURE)
 		{
 			if(pCreature->GetEntry() == ONY_BOSS)
+			{
 				mOnyxiaDots = AddTimer(300000);
+				pOnyxia=pCreature;
+			}
 			if(pCreature->GetEntry() == ONY_WHELP)
 				mWhelpCount++;
 		}
