@@ -18,69 +18,112 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../Common/Base.h"
+#include "../Common/Instance_Base.h"
+
 #include <string>
 #ifndef INSTANCE_SCRIPTS_SETUP_H
 #define INSTANCE_SCRIPTS_SETUP_H
 
-//Instances
-void SetupArcatraz(ScriptMgr * mgr);
-void SetupAuchenaiCrypts(ScriptMgr * mgr);
-void SetupAzjolNerub(ScriptMgr * mgr) ;
-void SetupTheBlackMorass(ScriptMgr * mgr);
-void SetupBlackrockSpire(ScriptMgr *mgr);
+#define SKIP_ALLOCATOR_SHARING
+
+//By this you can put off scripts.
+#define Classic
+#define BurningCrusade
+#define LichKing
+
+
+#ifdef Classic
+void SetupBlackfathomDeeps(ScriptMgr * mgr);
 void SetupBlackrockDepths(ScriptMgr * mgr);
-void SetupBloodFurnace(ScriptMgr * mgr);
-void SetupBotanica(ScriptMgr * mgr);
-void SetupCullingOfStratholme(ScriptMgr * mgr);
-void SetupDrakTharonKeep(ScriptMgr* pScriptMgr);
-void SetupDeadmines(ScriptMgr * mgr);
+void SetupBlackrockSpire(ScriptMgr * mgr);
 void SetupDireMaul(ScriptMgr * mgr);
-void SetupHellfireRamparts(ScriptMgr * mgr);
-void SetupHallsOfStone(ScriptMgr * mgr);
-void SetupHallsofLightning(ScriptMgr * mgr);
-void SetupManaTombs(ScriptMgr * mgr);
+//void SetupGnomeregan(ScriptMgr * mgr);
 void SetupMaraudon(ScriptMgr * mgr);
-void SetupNexus(ScriptMgr * mgr);
-void SetupOldHillsbradFoothills(ScriptMgr * mgr);
 void SetupRagefireChasm(ScriptMgr * mgr);
 void SetupRazorfenDowns(ScriptMgr * mgr);
+//void SetupRazorfenKraul(ScriptMgr * mgr);
 void SetupScarletMonastery(ScriptMgr * mgr);
 void SetupScholomance(ScriptMgr * mgr);
-void SetupSethekkHalls(ScriptMgr * mgr);
 void SetupShadowfangKeep(ScriptMgr * mgr);
-void SetupShadowLabyrinth(ScriptMgr * mgr);
-void SetupTheMechanar(ScriptMgr * mgr);
-void SetupTheShatteredHalls(ScriptMgr * mgr);
-void SetupTheSlavePens(ScriptMgr * mgr);
-void SetupTheSteamvault(ScriptMgr * mgr);
-void SetupTheUnderbog(ScriptMgr * mgr);
-void SetupUldaman(ScriptMgr * mgr);
-void SetupUtgardeKeep(ScriptMgr * mgr);
+//void SetupStratholme(ScriptMgr * mgr);
+//void SetupSunkenTemple(ScriptMgr * mgr);
+void SetupDeadmines(ScriptMgr * mgr);
 void SetupTheStockade(ScriptMgr * mgr);
+void SetupUldaman(ScriptMgr * mgr);
 void SetupWailingCaverns(ScriptMgr * mgr);
-void SetupMagistersTerrace(ScriptMgr * mgr);
-//Raids
-void SetupBlackTemple(ScriptMgr * mgr);
-void SetupBlackwingLair(ScriptMgr * mgr);
-void SetupBattleOfMountHyjal(ScriptMgr * mgr);
-void SetupGruulsLair(ScriptMgr * mgr);
-void SetupICC(ScriptMgr* mgr);
-void SetupKarazhan(ScriptMgr * mgr);
-void SetupMoltenCore(ScriptMgr * mgr);
-void SetupNaxxramas(ScriptMgr * mgr);
-void SetupOnyxiasLair(ScriptMgr * mgr);
-void SetupTheEye(ScriptMgr * mgr);
-void SetupTheObsidianSanctum(ScriptMgr * mgr);
-void SetupUlduar(ScriptMgr* mgr);
 void SetupZulFarrak(ScriptMgr * mgr);
+void SetupBlackwingLair(ScriptMgr * mgr);
+void SetupMoltenCore(ScriptMgr * mgr);
+//void SetupRuinsOfAhnQiraj(ScriptMgr * mgr);
+//void SetupTempleOfAhnQiraj(ScriptMgr * mgr);
 void SetupZulGurub(ScriptMgr * mgr);
-void SetupSerpentshrineCavern(ScriptMgr * mgr);
-void SetupMagtheridonsLair(ScriptMgr * mgr);
-void SetupSunwellPlateau(ScriptMgr* pScriptMgr);
+#endif
+
+
+#ifdef BurningCrusade
+void SetupAuchenaiCrypts(ScriptMgr * mgr);				//Auchindoun
+void SetupManaTombs(ScriptMgr * mgr);					//Auchindoun
+void SetupShadowLabyrinth(ScriptMgr * mgr);				//Auchindoun
+void SetupSethekkHalls(ScriptMgr * mgr);				//Auchindoun
+void SetupBlackTemple(ScriptMgr * mgr);					//Black Temple
+void SetupHyjalSummit(ScriptMgr * mgr);					//Caverns of Time
+void SetupTheBlackMorass(ScriptMgr * mgr);				//Caverns of Time
+void SetupOldHillsbradFoothills(ScriptMgr * mgr);		//Caverns of Time
+void SetupSerpentshrineCavern(ScriptMgr * mgr);			//Coilfang Reservoir
+void SetupTheUnderbog(ScriptMgr * mgr);					//Coilfang Reservoir
+void SetupTheSteamvault(ScriptMgr * mgr);				//Coilfang Reservoir
+void SetupTheSlavePens(ScriptMgr * mgr);				//Coilfang Reservoir
+void SetupGruulsLair(ScriptMgr * mgr);					//Gruul's Lair
+void SetupHellfireRamparts(ScriptMgr * mgr);			//Hellfire Citadel
+void SetupMagtheridonsLair(ScriptMgr * mgr);			//Hellfire Citadel
+void SetupTheShatteredHalls(ScriptMgr * mgr);			//Hellfire Citadel
+void SetupTheBloodFurnace(ScriptMgr * mgr);				//Hellfire Citadel
+void SetupKarazhan(ScriptMgr * mgr);					//Karazhan
+void SetupMagistersTerrace(ScriptMgr * mgr);			//Magisters' Terrace
+void SetupSunwellPlateau(ScriptMgr * mgr);		//Sunwell Plateau
+void SetupTheMechanar(ScriptMgr * mgr);					//Tempest Keep
+void SetupArcatraz(ScriptMgr * mgr);					//Tempest Keep
+void SetupBotanica(ScriptMgr * mgr);					//Tempest Keep
+void SetupTheEye(ScriptMgr * mgr);						//Tempest Keep
+void SetupZulAman(ScriptMgr * mgr);						//Zul'Aman
+#endif
+
+
+#ifdef LichKing
+//void SetupTheOldKingdom(ScriptMgr * mgr);				//Azjol-Nerub
+void SetupAzjolNerub(ScriptMgr * mgr);					//Azjol-Nerub
+//void SetupTrialOfTheCrusader(ScriptMgr * mgr);		//Crusaders' Coliseum
+//void SetupTrialOfTheChampion(ScriptMgr * mgr);		//Crusaders' Coliseum
+void SetupDrakTharonKeep(ScriptMgr* mgr);		//Drak'TharonKeep
+//void SetupGundrak(ScriptMgr * mgr);					//Gundrak
+//void SetupHallsOfReflection(ScriptMgr * mgr);			//Icecrown Citadel
+//void SetupIcecrownCitadel(ScriptMgr * mgr);			//Icecrown Citadel
+//void SetupTheForgeOfSouls(ScriptMgr * mgr);			//Icecrown Citadel
+//void SetupPitOfSaron(ScriptMgr * mgr);				//Icecrown Citadel
+void SetupICC(ScriptMgr * mgr);                         //Icecrown Citadel
+void SetupNaxxramas(ScriptMgr * mgr);					//Naxxramas
+void SetupOnyxiasLair(ScriptMgr * mgr);					//Onyxias Lair
+void SetupCullingOfStratholme(ScriptMgr * mgr);			//The Culling of Stratholme
+//void SetupTheEyeOfEternity(ScriptMgr * mgr);			//The Nexus
+//void SetupTheOculus(ScriptMgr * mgr);					//The Nexus
+void SetupNexus(ScriptMgr * mgr);						//The Nexus
+//void SetupTheVioletHold(ScriptMgr * mgr);				//The Violet Hold
+void SetupHallsOfStone(ScriptMgr * mgr);				//Ulduar
+void SetupHallsofLightning(ScriptMgr * mgr);			//Ulduar
+void SetupUlduar(ScriptMgr * mgr);						//Ulduar
+//void SetupUtgardePinnacle(ScriptMgr * mgr);			//Utgarde Pinnacle
+void SetupUtgardeKeep(ScriptMgr * mgr);					//Utgarde Keep
+//void SetupTheRubySanctum(ScriptMgr * mgr);			//Wyrmrest Template
+//void SetupTheObsidianSanctum(ScriptMgr * mgr);		//Wyrmrest Template
+#endif
+
+
 void SetupWorldBosses(ScriptMgr * mgr);
-void SetupZulAman(ScriptMgr * mgr);
-//other
 //void SetupGenericAI(ScriptMgr * mgr);
+
+
+/* All this shit that remains under this comment - will be removed soon. */
 
 struct ScriptSpell
 {
@@ -100,7 +143,7 @@ enum SPELL_TARGETS
 	SPELL_TARGET_RANDOM_PLAYER,
 	SPELL_TARGET_SUMMONER,
 	SPELL_TARGET_RANDOM_PLAYER_POSITION,
-	SPELL_TARGET_GENERATE, // this will send null as target
+	SPELL_TARGET_GENERATE,
 	SPELL_TARGET_LOWEST_THREAT,
 	SPELL_TARGET_CUSTOM,
 };
@@ -130,11 +173,9 @@ enum
 	TARGET_ATTACKING,
 	TARGET_DESTINATION,
 	TARGET_SOURCE,
-	TARGET_RANDOM_FRIEND,	// doesn't work yet
+	TARGET_RANDOM_FRIEND,
 	TARGET_RANDOM_SINGLE,
 	TARGET_RANDOM_DESTINATION,
-
-	//.....add
 };
 
 #endif

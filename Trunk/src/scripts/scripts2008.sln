@@ -2,8 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "projects\InstanceScripts2008.vcproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunSpellHandlers", "projects\SpellsHandlers2008.vcproj", "{21CCA237-B55E-4882-B3E3-4A0321315CB3}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunGossipScripts", "projects\GossipScripts2008.vcproj", "{9F200BBC-57C3-4F0C-8BB5-F9053E4BB4B3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerStatusPlugin", "projects\ServerStatusPlugin2008.vcproj", "{FF551ECC-D127-4997-8C5B-85D2CE3E7A53}"
@@ -36,14 +34,6 @@ Global
 		{EE39B48B-C598-4AAF-9EF0-199402933EE5}.Release|Win32.Build.0 = Release|Win32
 		{EE39B48B-C598-4AAF-9EF0-199402933EE5}.Release|x64.ActiveCfg = Release|x64
 		{EE39B48B-C598-4AAF-9EF0-199402933EE5}.Release|x64.Build.0 = Release|x64
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Debug|Win32.Build.0 = Debug|Win32
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Debug|x64.ActiveCfg = Debug|x64
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Debug|x64.Build.0 = Debug|x64
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Release|Win32.ActiveCfg = Release|Win32
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Release|Win32.Build.0 = Release|Win32
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Release|x64.ActiveCfg = Release|x64
-		{21CCA237-B55E-4882-B3E3-4A0321315CB3}.Release|x64.Build.0 = Release|x64
 		{9F200BBC-57C3-4F0C-8BB5-F9053E4BB4B3}.Debug|Win32.ActiveCfg = Debug|Win32
 		{9F200BBC-57C3-4F0C-8BB5-F9053E4BB4B3}.Debug|Win32.Build.0 = Debug|Win32
 		{9F200BBC-57C3-4F0C-8BB5-F9053E4BB4B3}.Debug|x64.ActiveCfg = Debug|x64
@@ -79,7 +69,6 @@ Global
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Debug|Win32.Build.0 = Debug|Win32
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Debug|x64.ActiveCfg = Debug|x64
-		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Release|x64.ActiveCfg = Release|x64
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Release|Win32.ActiveCfg = Release|Win32
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Release|Win32.Build.0 = Release|Win32
 		{DF7A3434-324E-418F-8F82-98A2C62366C6}.Release|x64.ActiveCfg = Release|x64

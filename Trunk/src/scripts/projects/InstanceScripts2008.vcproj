@@ -188,7 +188,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\..\bin\release\script_bin"
-			IntermediateDirectory="2003_int_release_Suninstancescripts"
+			IntermediateDirectory="2008_int_release_Suninstancescripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -212,10 +212,19 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
+				Optimization="2"
+				InlineFunctionExpansion="0"
+				EnableIntrinsicFunctions="false"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="false"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
-				RuntimeLibrary="0"
+				StringPooling="false"
+				MinimalRebuild="false"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
+				PrecompiledHeaderFile="$(IntDir)\SIS.pch"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -240,6 +249,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/SunInstanceScripts.lib"
@@ -397,299 +407,609 @@
 		</Filter>
 		<Filter
 			Name="Scripts"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<Filter
-				Name="Instances"
+			<File
+				RelativePath="..\src\InstanceScripts\WorldBosses\Raid_WorldBosses.cpp"
 				>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_Arcatraz.cpp"
+			</File>
+			<Filter
+				Name="Classic"
+				>
+				<Filter
+					Name="Raids"
 					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_AuchenaiCrypts.cpp"
+					<Filter
+						Name="Blackwing Lair"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\BlackwingLair\Raid_BlackwingLair.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Molten Core"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\MoltenCore\Raid_MoltenCore.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Ruins of Ahn&apos;Qiraj"
+						>
+					</Filter>
+					<Filter
+						Name="Zul&apos;Gurub"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\ZulGurub\Raid_ZulGurub.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Temple of Ahn&apos;Qiraj"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Instances"
 					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_AzjolNerub.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_BlackfathomDeeps.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_BlackMorass.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_BlackrockDepths.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_BlackrockSpire.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_BloodFurnace.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_Botanica.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_CullingOfStratholme.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_Deadmines.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_DireMaul.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_DrakTharonKeep.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_HallsOfLightning.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_HallsOfStone.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_HellfireRamparts.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_MagistersTerrace.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_ManaTombs.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_Mauradon.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_Nexus.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_OldHillsbradFoothills.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_RagefireChasm.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_RazorfenDowns.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_ScarletMonastery.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_Scholomance.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_SethekkHalls.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_ShadowfangKeep.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_ShadowLabyrinth.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_TheMechanar.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_TheOldKingdom.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_TheShatteredHalls.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_TheSlavePens.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_TheSteamvault.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_TheStockade.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_TheUnderbog.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_Uldaman.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_UtgardeKeep.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_WailingCaverns.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Instance_ZulFarrak.cpp"
-					>
-				</File>
+					<Filter
+						Name="Blackfathom Deeps"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\BlackfathomDeeps\Instance_BlackfathomDeeps.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Maraudon"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Mauradon\Instance_Mauradon.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Blackrock Depths"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\BlackrockDepths\Instance_BlackrockDepths.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Blackrock Spire"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\BlackrockSpire\Instance_BlackrockSpire.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Dire Maul"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\DireMaul\Instance_DireMaul.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Gnomeregan"
+						>
+					</Filter>
+					<Filter
+						Name="Zul&apos;Farrak"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\ZulFarrak\Instance_ZulFarrak.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Ragefire Chasm"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\RagefireChasm\Instance_RagefireChasm.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Wailing Caverns"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\WailingCaverns\Instance_WailingCaverns.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Uldaman"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Uldaman\Instance_Uldaman.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Stockade"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheStockade\Instance_TheStockade.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Deadmines"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Deadmine\Instance_Deadmines.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Sunken Temple"
+						>
+					</Filter>
+					<Filter
+						Name="Stratholme"
+						>
+					</Filter>
+					<Filter
+						Name="Shadowfang Keep"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\ShadowfangKeep\Instance_ShadowfangKeep.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Scholomance"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Scholomance\Instance_Scholomance.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Scarlet Monastery"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\ScarletMonastery\Instance_ScarletMonastery.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Razorfen Kraul"
+						>
+					</Filter>
+					<Filter
+						Name="Razorfen Downs"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\RazorfenDowns\Instance_RazorfenDowns.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="Raids"
+				Name="The Burning Crusade"
 				>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_BlackTemple.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_BlackwingLair.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_CoT_BattleOfMountHyjal.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_GruulsLair.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_Karazhan.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_Magtheridons_Lair.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_MoltenCore.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_SerpentshrineCavern.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_TheEye.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_TheObsidianSanctum.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_WorldBosses.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_ZulAman.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\src\InstanceScripts\Raid_ZulGurub.cpp"
-					>
-				</File>
 				<Filter
-					Name="Ulduar"
+					Name="Auchindoun"
+					>
+					<Filter
+						Name="SethekkHalls"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\SethekkHalls\Instance_SethekkHalls.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="AuchenaiCrypts"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\AuchenaiCrypts\Instance_AuchenaiCrypts.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="ManaTombs"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\ManaTombs\Instance_ManaTombs.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="ShadowLabyrinth"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\ShadowLabyrinth\Instance_ShadowLabyrinth.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Zul&apos;Aman"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\Raid_Ulduar.cpp"
+						RelativePath="..\src\InstanceScripts\ZulAman\Raid_ZulAman.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Black Temple"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\BlackTemple\Raid_BlackTemple.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\src\InstanceScripts\Raid_Ulduar.h"
+						RelativePath="..\src\InstanceScripts\BlackTemple\ShadeOfAkama.cpp"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="Caverns of Time"
+					>
+					<Filter
+						Name="Old Hillsbrad Foothills"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\OldHillsbradFoothills\Instance_OldHillsbradFoothills.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Black Morass"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\BlackMorass\Instance_BlackMorass.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Hyjal Summit"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\HyjalSummit\Raid_HyjalSummit.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Coilfang Reservoir"
+					>
+					<Filter
+						Name="The Slave Pens"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheSlavePens\Instance_TheSlavePens.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Steamvault"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheSteamvault\Instance_TheSteamvault.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Underbog"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheUnderbog\Instance_TheUnderbog.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Serpentshrine Cavern"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\SerpentshrineCavern\Raid_SerpentshrineCavern.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Gruul&apos;s Lair"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\GruulsLair\Raid_GruulsLair.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Hellfire Citadel"
+					>
+					<Filter
+						Name="Hellfire Ramparts"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\HellfireRamparts\Instance_HellfireRamparts.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Blood Furnace"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\BloodFurnace\Instance_BloodFurnace.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Shattered Halls"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheShatteredHalls\Instance_TheShatteredHalls.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Magtheridon&apos;s Lair"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\MagtheridonsLair\Raid_MagtheridonsLair.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Karazhan"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\Karazhan\Raid_Karazhan.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Magisters&apos; Terrace"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\MagistersTerrace\Instance_MagistersTerrace.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Sunwell Plateau"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\SunwellPlateau\Raid_SunwellPlateau.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\src\InstanceScripts\SunwellPlateau\SUNWELL_KALECGOS.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Tempest Keep"
+					>
+					<Filter
+						Name="The Arcatraz"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Arcatraz\Instance_Arcatraz.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Eye"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheEye\Raid_TheEye.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Botanica"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Botanica\Instance_Botanica.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Mechanar"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheMechanar\Instance_TheMechanar.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="The Lich King"
+				>
+				<Filter
+					Name="Azjol-Nerub"
+					>
+					<Filter
+						Name="Ahn&apos;kahet: The Old Kingdom"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\TheOldKingdom\Instance_TheOldKingdom.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Azjol-Nerub"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Azjol-Nerub\Instance_AzjolNerub.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="The Nexus"
+					>
+					<Filter
+						Name="The Nexus"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Nexus\Instance_Nexus.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="The Oculus"
+						>
+					</Filter>
+					<Filter
+						Name="The Eye of Eternity"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Crusaders&apos; Coliseum"
+					>
+					<Filter
+						Name="Trial of the Champion"
+						>
+					</Filter>
+					<Filter
+						Name="Trial of the Crusader"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Icecrown Citadel"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\IcecrownCitadel\ICC_tele.cpp"
+						>
+					</File>
+					<Filter
+						Name="Halls of Reflection"
+						>
+					</Filter>
+					<Filter
+						Name="Pit of Saron"
+						>
+					</Filter>
+					<Filter
+						Name="The Forge of Souls"
+						>
+					</Filter>
+					<Filter
+						Name="Icecrown Citadel"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Drak&apos;Tharon Keep"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\DrakTharonKeep\Instance_DrakTharonKeep.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Gundrak"
+					>
 				</Filter>
 				<Filter
 					Name="Naxxramas"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\Raid_Naxxramas.cpp"
+						RelativePath="..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\src\InstanceScripts\Raid_Naxxramas.h"
+						RelativePath="..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.h"
 						>
 					</File>
 				</Filter>
 				<Filter
-					Name="SUNWELLPLAT"
+					Name="Wyrmrest Temple"
+					>
+					<Filter
+						Name="The Obsidian Sanctum"
+						>
+					</Filter>
+					<Filter
+						Name="The Ruby Sanctum"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Onyxia&apos;s Lair"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\SUNWELL_PLAT\Raid_SunwellPlateau.cpp"
+						RelativePath="..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\src\InstanceScripts\SUNWELL_PLAT\SUNWELL_KALECGOS.cpp"
+						RelativePath="..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.h"
 						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="true"
+					</File>
+				</Filter>
+				<Filter
+					Name="The Culling of Stratholme"
+					>
+					<File
+						RelativePath="..\src\InstanceScripts\CullingOfStratholme\Instance_CullingOfStratholme.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Utgarde Keep"
+					>
+					<Filter
+						Name="Utgarde Keep"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\UtgardeKeep\Instance_UtgardeKeep.cpp"
 							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="true"
+						</File>
+					</Filter>
+					<Filter
+						Name="Utgarde Pinnacle"
+						>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="Ulduar"
+					>
+					<Filter
+						Name="Halls of Lightning"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\HallsOfLightning\Instance_HallsOfLightning.cpp"
 							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
+						</File>
+					</Filter>
+					<Filter
+						Name="Halls of Stone"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\HallsOfStone\Instance_HallsOfStone.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="Ulduar"
+						>
+						<File
+							RelativePath="..\src\InstanceScripts\Ulduar\Raid_Ulduar.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\src\InstanceScripts\Ulduar\Raid_Ulduar.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
-					Name="ICC"
+					Name="The Violet Hold"
 					>
-					<File
-						RelativePath="..\src\InstanceScripts\Raid_IcecrownCitadel.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\src\InstanceScripts\Raid_IcecrownCitadel.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="OnyxiasLair"
-					>
-					<File
-						RelativePath="..\src\InstanceScripts\Raid_OnyxiasLair.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\src\InstanceScripts\Raid_OnyxiasLair.h"
-						>
-					</File>
 				</Filter>
 			</Filter>
 		</Filter>

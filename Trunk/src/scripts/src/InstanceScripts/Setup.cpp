@@ -20,7 +20,6 @@
 
 #include "StdAfx.h"
 #include "Setup.h"
-#define SKIP_ALLOCATOR_SHARING 1
 #include <ScriptSetup.h>
 
 extern "C" SCRIPT_DECL uint32 _exp_get_script_type()
@@ -30,64 +29,90 @@ extern "C" SCRIPT_DECL uint32 _exp_get_script_type()
 
 extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any script to disable it
 {
-	//Instances
-	SetupArcatraz(mgr);
-	SetupAuchenaiCrypts(mgr);
-	SetupAzjolNerub(mgr);
-	SetupTheBlackMorass(mgr);
+	#ifdef Classic
+	SetupBlackfathomDeeps(mgr);
 	SetupBlackrockDepths(mgr);
 	SetupBlackrockSpire(mgr);
-	SetupBloodFurnace(mgr);
-	SetupBotanica(mgr);
-	SetupCullingOfStratholme(mgr);
-	SetupDrakTharonKeep(mgr);
-	SetupDeadmines(mgr);
 	SetupDireMaul(mgr);
-	SetupHellfireRamparts(mgr);
-	SetupHallsOfStone(mgr);
-	SetupHallsofLightning(mgr);
-	SetupManaTombs(mgr);
+	//SetupGnomeregan(mgr);
 	SetupMaraudon(mgr);
-	SetupNexus(mgr);
-	SetupOldHillsbradFoothills(mgr);
 	SetupRagefireChasm(mgr);
 	SetupRazorfenDowns(mgr);
+	//SetupRazorfenKraul(mgr);
 	SetupScarletMonastery(mgr);
 	SetupScholomance(mgr);
-	SetupSethekkHalls(mgr);
 	SetupShadowfangKeep(mgr);
-	SetupShadowLabyrinth(mgr);
-	SetupTheMechanar(mgr);
-	SetupTheShatteredHalls(mgr);
-	SetupTheSlavePens(mgr);
-	SetupTheSteamvault(mgr);
-	SetupTheUnderbog(mgr);
-	SetupUldaman(mgr);
-	SetupUtgardeKeep(mgr);
+	//SetupStratholme(mgr);
+	//SetupSunkenTemple(mgr);
+	SetupDeadmines(mgr);
 	SetupTheStockade(mgr);
+	SetupUldaman(mgr);
 	SetupWailingCaverns(mgr);
-	SetupMagistersTerrace(mgr);
-	//Raids
-	SetupBlackTemple(mgr);
+	SetupZulFarrak(mgr);
 	SetupBlackwingLair(mgr);
-	SetupBattleOfMountHyjal(mgr);
-	SetupGruulsLair(mgr);
-	SetupICC(mgr);
-	SetupKarazhan(mgr);
 	SetupMoltenCore(mgr);
+	//SetupRuinsOfAhnQiraj(mgr);
+	//SetupTempleOfAhnQiraj(mgr);
+	SetupZulGurub(mgr);
+	#endif
+
+	#ifdef BurningCrusade
+	SetupAuchenaiCrypts(mgr);
+	SetupManaTombs(mgr);
+	SetupShadowLabyrinth(mgr);
+	SetupSethekkHalls(mgr);	
+	SetupBlackTemple(mgr);	
+	SetupHyjalSummit(mgr);	
+	SetupTheBlackMorass(mgr);
+	SetupOldHillsbradFoothills(mgr);
+	SetupSerpentshrineCavern(mgr);
+	SetupTheUnderbog(mgr);
+	SetupTheSteamvault(mgr);
+	SetupTheSlavePens(mgr);
+	SetupGruulsLair(mgr);
+	SetupHellfireRamparts(mgr);
+	SetupMagtheridonsLair(mgr);
+	SetupTheShatteredHalls(mgr);
+	SetupTheBloodFurnace(mgr);
+	SetupKarazhan(mgr);
+	SetupMagistersTerrace(mgr);
+	SetupSunwellPlateau(mgr);
+	SetupTheMechanar(mgr);
+	SetupArcatraz(mgr);
+	SetupBotanica(mgr);
+	SetupTheEye(mgr);
+	SetupZulAman(mgr);
+	#endif
+
+	#ifdef LichKing
+	//SetupTheOldKingdom(mgr);
+	SetupAzjolNerub(mgr);
+	//SetupTrialOfTheCrusader(mgr);
+	//SetupTrialOfTheChampion(mgr);
+	SetupDrakTharonKeep(mgr);
+	//SetupGundrak(mgr);
+	//SetupHallsOfReflection(mgr);
+	//SetupIcecrownCitadel(mgr);
+	//SetupTheForgeOfSouls(mgr);
+	//SetupPitOfSaron(mgr);
+    SetupICC(mgr);
 	SetupNaxxramas(mgr);
 	SetupOnyxiasLair(mgr);
-	SetupTheEye(mgr);
-	SetupTheObsidianSanctum(mgr);
+	SetupCullingOfStratholme(mgr);
+	//SetupTheEyeOfEternity(mgr);
+	//SetupTheOculus(mgr);
+	SetupNexus(mgr);
+	//SetupTheVioletHold(mgr);
+	SetupHallsOfStone(mgr);
+	SetupHallsofLightning(mgr);
 	SetupUlduar(mgr);
-	SetupZulFarrak(mgr);
-	SetupZulGurub(mgr);
-	SetupSerpentshrineCavern(mgr);
-	SetupMagtheridonsLair(mgr);
-	SetupSunwellPlateau(mgr);
-	SetupWorldBosses(mgr); 
-	SetupZulAman(mgr);
-	//Other
+	//SetupUtgardePinnacle(mgr);
+	SetupUtgardeKeep(mgr);
+	//SetupTheRubySanctum(mgr);
+	//SetupTheObsidianSanctum(mgr);
+	#endif
+
+	SetupWorldBosses(mgr);
 	//SetupGenericAI(mgr);
 }
 
