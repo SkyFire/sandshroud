@@ -191,7 +191,8 @@ struct CreatureProtoHeroic
 struct AccessoryInfo
 {
 	uint32 accessoryentry;
-//	bool unselectableaccessory;
+	bool ejectfromvehicleondeath;
+	bool unselectableaccessory;
 };
 
 struct CreatureProtoVehicle

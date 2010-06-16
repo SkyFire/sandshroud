@@ -845,7 +845,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	{
 		pPassenger->m_CurrentVehicle = TO_VEHICLE(this);
 
-/*		CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+		CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 		if(vehicleproto != NULL)
 			if(vehicleproto->accessories[slot].accessoryentry == pPassenger->GetEntry())
 				if(vehicleproto->accessories[slot].unselectableaccessory == true)
@@ -853,7 +853,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			else
 				pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
 		else
-			pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));*/
+			pPassenger->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
 
 		pPassenger->SetPosition(GetPositionX()+v.x, GetPositionY()+v.y, GetPositionZ()+v.z, GetOrientation());
 		WorldPacket data(MSG_MOVE_HEARTBEAT, 32);
@@ -884,12 +884,13 @@ void Vehicle::MoveVehicle(float x, float y, float z, float o) //thanks andy
 void Vehicle::setDeathState(DeathState s)
 {
 	Creature::setDeathState(s);
+	CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 
 	for (uint8 i = 0; i < m_seatSlotMax; i++)
 	{
 		if(m_passengers[i] != NULL)
 		{
-			if(m_passengers[i]->IsPlayer())
+			if(m_passengers[i]->IsPlayer() || (vehicleproto && vehicleproto->accessories[i].ejectfromvehicleondeath))
 				RemovePassenger(m_passengers[i]);
 			else
 				m_passengers[i]->setDeathState(s);
