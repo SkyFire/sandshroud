@@ -142,11 +142,10 @@ bool ChatHandler::HandleGPSCommand(const char* args, WorldSession *m_session)
 	AreaTable * at = dbcArea.LookupEntry(obj->GetMapMgr()->GetAreaID(obj->GetPositionX(), obj->GetPositionY(),obj->GetPositionZ()));
 
 	char buf[512];
-	snprintf((char*)buf, 512, "|cff00ff00Current Position: |cffffffffMap: |cff00ff00%u |cffffffffInst: |cff00ff00%u |cffffffff Area: |cff00ff00%u |cffffffffZone: |cff00ff00%u |cffffffffX: |cff00ff00%f |cffffffffY: |cff00ff00%f |cffffffffZ: |cff00ff00%f |cffffffffOrientation: |cff00ff00%f|r",
-		obj->GetMapId(),obj->GetInstanceID(), at ? at->AreaId : 0, at ? at->ZoneId : 0, obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation()); 	
+	snprintf((char*)buf, 512, "|cff00ff00Current Position: |cffffffffMap: |cff00ff00%u |cffffffffInst: |cff00ff00%u |cffffffffPhase: |cff00ff00%u |cffffffff Area: |cff00ff00%u |cffffffffZone: |cff00ff00%u |cffffffffX: |cff00ff00%f |cffffffffY: |cff00ff00%f |cffffffffZ: |cff00ff00%f |cffffffffOrientation: |cff00ff00%f|r",
+		obj->GetMapId(),obj->GetInstanceID(), obj->GetPhase(), at ? at->AreaId : 0, at ? at->ZoneId : 0, obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation()); 	
 
 	SystemMessage(m_session, buf);
-
 	return true;
 }
 

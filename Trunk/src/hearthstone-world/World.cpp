@@ -1220,6 +1220,7 @@ void World::Rehash(bool load)
 	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Terrain", "UnloadMapFiles", true);
 	BreathingEnabled = Config.MainConfig.GetBoolDefault("Server", "EnableBreathing", true);
 	SendStatsOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendStatsOnJoin", true);
+	SendMovieOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendMovieOnJoin", true);
 	compression_threshold = Config.MainConfig.GetIntDefault("Server", "CompressionThreshold", 1000);
 	display_free_items = Config.MainConfig.GetBoolDefault("Server", "DisplayFreeItems", false);
 

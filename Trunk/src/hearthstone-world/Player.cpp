@@ -3765,7 +3765,9 @@ void Player::OnPushToWorld()
 		MapInfo* info = GetMapMgr()->GetMapInfo();
 		if(info != NULL && (info->phasehorde != 0 || info->phasealliance != 0))
 		{
-			if(GetTeam())
+			if(GetSession()->HasGMPermissions())
+				SetPhase(info->phasehorde | info->phasealliance);
+			else if(GetTeam())
 				SetPhase(info->phasehorde);
 			else
 				SetPhase(info->phasealliance);
@@ -9278,7 +9280,9 @@ void Player::OnWorldPortAck()
 
 		if(pPMapinfo->phasehorde != 0 || pPMapinfo->phasealliance !=0)
 		{
-			if(GetTeam())
+			if(GetSession()->HasGMPermissions())
+				SetPhase(info->phasehorde | info->phasealliance);
+			else if(GetTeam())
 				SetPhase(pPMapinfo->phasehorde);
 			else
 				SetPhase(pPMapinfo->phasealliance);
