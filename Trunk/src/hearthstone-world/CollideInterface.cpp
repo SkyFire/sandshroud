@@ -84,10 +84,10 @@ void CCollideInterface::ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
 	// acquire write lock
 	m_mapLocks[mapId]->m_lock.AcquireWriteLock();
 	if( m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY] == 0 )
-		if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapId, tileX, tileY))
-			OUT_DEBUG("Loading VMap [%u/%u] successful", tileX, tileY);
+		if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapId, tileY, tileX))
+			OUT_DEBUG("Loading VMap [%u/%u] successful", tileY, tileX);
 		else
-			OUT_DEBUG("Loading VMap [%u/%u] unsuccessful", tileX, tileY);
+			OUT_DEBUG("Loading VMap [%u/%u] unsuccessful", tileY, tileX);
 
 	// increment count
 	m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY]++;
