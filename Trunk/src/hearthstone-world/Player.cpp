@@ -3760,6 +3760,17 @@ void Player::OnPushToWorld()
 
 	SendPowerUpdate();
 
+	if(m_mapMgr != NULL)
+	{
+		MapInfo* info = GetMapMgr()->GetMapInfo();
+		if(info != NULL && (info->phasehorde != 0 || info->phasealliance != 0))
+		{
+			if(GetTeam())
+				SetPhase(info->phasehorde);
+			else
+				SetPhase(info->phasealliance);
+		}
+	}
 }
 
 void Player::ResetHeartbeatCoords()
