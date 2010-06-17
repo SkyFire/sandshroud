@@ -822,8 +822,8 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket &recv_data)
 
 	if( pCorpse == NULL )
 	{
-		QueryResult* result = CharacterDatabase.Query("SELECT * FROM corpses WHERE guid = %u, mapId = %u, instanceId = %u;",
-			_player->GetGUID(), _player->GetMapId(), _player->GetInstanceID());
+		QueryResult* result = CharacterDatabase.Query("SELECT * FROM corpses WHERE guid = %u AND mapId = %u",
+			guid, _player->GetMapId());
 		if(result == NULL)
 			return;
 		delete result;

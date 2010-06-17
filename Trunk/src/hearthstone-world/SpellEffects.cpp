@@ -1596,35 +1596,35 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 		}break;
 	case 18350: // Massive Dummy spell behind Illumination.
 		{
-			if(p_caster != NULL)
-			{
-				SpellEntry* sp = dbcSpell.LookupEntry(ProcedOnSpell->Id);
-				if(sp != NULL)
-				{
-					uint32 cost = 0;
-					if(sp->ManaCostPercentage)
-					{
-						uint32 maxmana = p_caster->GetUInt32Value(UNIT_FIELD_MAXPOWER1);
-						cost = maxmana*(float(sp->ManaCostPercentage)/100);
-					}
-					else if(sp->manaCostPerlevel)
-					{
-						cost = sp->manaCostPerlevel*p_caster->getLevel();
-					}
-					else if(sp->manaCost)
-					{
-						cost = sp->manaCost;
-					}
+			if(p_caster == NULL || ProcedOnSpell == NULL) // Someone is force casting it.
+				return;
 
-					if(cost > 0)
-					{
-						uint32 amount = ((cost*p_caster->m_Illumination_amount)/100);
-						SpellEntry* newspell = dbcSpell.LookupEntry(20272);
-						Spell* nsp = new Spell(p_caster, newspell, true, NULLAURA);
-						SpellCastTargets tgts(p_caster->GetGUID());
-						nsp->forced_basepoints[0] = amount;
-						nsp->prepare(&tgts);
-					}
+			SpellEntry* sp = dbcSpell.LookupEntry(ProcedOnSpell->Id);
+			if(sp != NULL)
+			{
+				uint32 cost = 0;
+				if(sp->ManaCostPercentage)
+				{
+					uint32 maxmana = p_caster->GetUInt32Value(UNIT_FIELD_MAXPOWER1);
+					cost = maxmana*(float(sp->ManaCostPercentage)/100);
+				}
+				else if(sp->manaCostPerlevel)
+				{
+					cost = sp->manaCostPerlevel*p_caster->getLevel();
+				}
+				else if(sp->manaCost)
+				{
+					cost = sp->manaCost;
+				}
+
+				if(cost > 0)
+				{
+					uint32 amount = ((cost*p_caster->m_Illumination_amount)/100);
+					SpellEntry* newspell = dbcSpell.LookupEntry(20272);
+					Spell* nsp = new Spell(p_caster, newspell, true, NULLAURA);
+					SpellCastTargets tgts(p_caster->GetGUID());
+					nsp->forced_basepoints[0] = amount;
+					nsp->prepare(&tgts);
 				}
 			}
 		}break;
