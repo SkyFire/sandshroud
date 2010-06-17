@@ -9281,7 +9281,7 @@ void Player::OnWorldPortAck()
 		if(pPMapinfo->phasehorde != 0 || pPMapinfo->phasealliance !=0)
 		{
 			if(GetSession()->HasGMPermissions())
-				SetPhase(info->phasehorde | info->phasealliance);
+				SetPhase(pPMapinfo->phasehorde | pPMapinfo->phasealliance);
 			else if(GetTeam())
 				SetPhase(pPMapinfo->phasehorde);
 			else
