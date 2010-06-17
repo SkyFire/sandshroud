@@ -40,6 +40,8 @@ Corpse::Corpse(uint32 high, uint32 low)
 
 Corpse::~Corpse()
 {
+	if(objmgr.GetCorpse(GetLowGUID()))
+		objmgr.RemoveCorpse(this);
 }
 
 void Corpse::Init()
@@ -101,9 +103,7 @@ void CorpseData::DeleteFromDB()
 void Corpse::Despawn()
 {
 	if(IsInWorld())
-	{
 		RemoveFromWorld(false);
-	}
 }
 
 void Corpse::SpawnBones()

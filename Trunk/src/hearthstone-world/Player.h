@@ -1333,6 +1333,8 @@ public:
 	void ResurrectPlayer(Player* pResurrector = NULLPLR);
 	void BuildPlayerRepop();
 	Corpse* RepopRequestedPlayer();
+	void DecReclaimCount() { if(ReclaimCount > 0) --ReclaimCount; };
+	uint32 ReclaimCount;
 
 	// silly event handler
 	void EventRepopRequestedPlayer() { RepopRequestedPlayer(); }

@@ -189,11 +189,12 @@ void Player::Init()
 	m_AllowAreaTriggerPort  = true;
 
 	// Battleground
-	m_bgEntryPointMap	   = 0;
+	m_bgEntryPointMap	 = 0;
 	m_bgEntryPointX		 = 0;	
 	m_bgEntryPointY		 = 0;
 	m_bgEntryPointZ		 = 0;
 	m_bgEntryPointO		 = 0;
+	ReclaimCount		 = 0;
 	for(uint32 i = 0; i < 3; i++)
 	{
 		m_bgQueueType[i] = 0;
@@ -4572,7 +4573,7 @@ Corpse* Player::RepopRequestedPlayer()
 
 		/* Corpse reclaim delay */
 		WorldPacket data2( SMSG_CORPSE_RECLAIM_DELAY, 4 );
-		data2 << (uint32)( CORPSE_RECLAIM_TIME_MS );
+		data2 << uint32((ReclaimCount*15) * 1000);
 		GetSession()->SendPacket( &data2 );
 	}
 
@@ -4612,16 +4613,19 @@ void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 
 	SpawnCorpseBones();
 
-	if(getRace()==RACE_NIGHTELF)
-	{
+	if(getRace() == RACE_NIGHTELF)
 		RemoveAura(20584);
-	}else
+	else
 		RemoveAura(8326);
 
 	RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEATH_WORLD_ENABLE);
 	setDeathState(ALIVE);
 	UpdateVisibility();
 	SetMovement(MOVE_LAND_WALK, 1);
+	if(ReclaimCount < 8) // 2 minute limit.
+		ReclaimCount++;
+	// Crow: Guessed intervals.
+	// TODO: sEventMgr.AddEvent(this, &Player::DecReclaimCount, EVENT_DEC_CORPSE_RECLAIM_COUNT, (ReclaimCount*15)*1000, ReclaimCount, 0);
 
 	if(IsInWorld() && pResurrector != NULL && pResurrector->IsInWorld())
 	{

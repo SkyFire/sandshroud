@@ -1766,16 +1766,7 @@ void MapMgr::_PerformObjectDuties()
 
 void MapMgr::EventCorpseDespawn(uint64 guid)
 {
-	Corpse* pCorpse = objmgr.GetCorpse((uint32)guid);
-	if(pCorpse == NULL)	// Already Deleted
-		return;
-
-	if(pCorpse->GetMapMgr() != this)
-		return;
-
-	pCorpse->Despawn();
-	delete pCorpse;
-	pCorpse = NULLCORPSE;
+	objmgr.DespawnCorpse(guid);
 }
 
 void MapMgr::TeleportPlayers()

@@ -496,8 +496,9 @@ public:
 	void CorpseAddEventDespawn(Corpse* pCorpse);
 	void DelinkPlayerCorpses(Player* pOwner);
 	Corpse* CreateCorpse();
-	void AddCorpse(Corpse* );
-	void RemoveCorpse(Corpse* );
+	void AddCorpse(Corpse* p);
+	void RemoveCorpse(Corpse* p);
+	void RemoveCorpse(uint32 corpseguid);
 	Corpse* GetCorpse(uint32 corpseguid);
 
 	uint32 GetGossipTextForNpc(uint32 ID);

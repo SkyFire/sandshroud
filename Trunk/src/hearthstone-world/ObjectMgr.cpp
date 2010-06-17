@@ -621,6 +621,7 @@ Corpse* ObjectMgr::LoadCorpse(uint32 guid)
 		pCorpse->LoadValues( fields[7].GetString());
 		if(pCorpse->GetUInt32Value(CORPSE_FIELD_DISPLAY_ID) == 0)
 		{
+			RemoveCorpse(pCorpse);
 			delete pCorpse;
 			pCorpse = NULL;
 			continue;
@@ -812,17 +813,17 @@ void ObjectMgr::SetHighestGuids()
 	}
 	else { m_equipmentSetGuid = 0; } // Reset our count.
 
-	Log.Notice("ObjectMgr", "HighGuid(CORPSE) = %u", m_hiCorpseGuid);
-	Log.Notice("ObjectMgr", "HighGuid(PLAYER) = %u", m_hiPlayerGuid);
-	Log.Notice("ObjectMgr", "HighGuid(GAMEOBJ) = %u", m_hiGameObjectSpawnId);
-	Log.Notice("ObjectMgr", "HighGuid(UNIT) = %u", m_hiCreatureSpawnId);
-	Log.Notice("ObjectMgr", "HighGuid(ITEM) = %u", m_hiItemGuid);
-	Log.Notice("ObjectMgr", "HighGuid(CONTAINER) = %u", m_hiContainerGuid);
-	Log.Notice("ObjectMgr", "HighGuid(GROUP) = %u", m_hiGroupId);
-	Log.Notice("ObjectMgr", "HighGuid(CHARTER) = %u", m_hiCharterId);
-	Log.Notice("ObjectMgr", "HighGuid(GUILD) = %u", m_hiGuildId);
-	Log.Notice("ObjectMgr", "HighGuid(TICKET) = %u", m_ticketid - 1);
-	Log.Notice("ObjectMgr", "HighGuid(EQSETS) = %u", m_equipmentSetGuid);
+	Log.Notice("ObjectMgr", "HighGuid(CORPSE) = %i", m_hiCorpseGuid);
+	Log.Notice("ObjectMgr", "HighGuid(PLAYER) = %i", m_hiPlayerGuid);
+	Log.Notice("ObjectMgr", "HighGuid(GAMEOBJ) = %i", m_hiGameObjectSpawnId);
+	Log.Notice("ObjectMgr", "HighGuid(UNIT) = %i", m_hiCreatureSpawnId);
+	Log.Notice("ObjectMgr", "HighGuid(ITEM) = %i", m_hiItemGuid);
+	Log.Notice("ObjectMgr", "HighGuid(CONTAINER) = %i", m_hiContainerGuid);
+	Log.Notice("ObjectMgr", "HighGuid(GROUP) = %i", m_hiGroupId);
+	Log.Notice("ObjectMgr", "HighGuid(CHARTER) = %i", m_hiCharterId);
+	Log.Notice("ObjectMgr", "HighGuid(GUILD) = %i", m_hiGuildId);
+	Log.Notice("ObjectMgr", "HighGuid(TICKET) = %i", m_ticketid - 1);
+	Log.Notice("ObjectMgr", "HighGuid(EQSETS) = %i", m_equipmentSetGuid);
 }
 
 void ObjectMgr::ListGuidAmounts()
@@ -1446,6 +1447,7 @@ void ObjectMgr::LoadCorpses(MapMgr* mgr)
 			pCorpse->LoadValues( fields[8].GetString());
 			if(pCorpse->GetUInt32Value(CORPSE_FIELD_DISPLAY_ID) == 0)
 			{
+				RemoveCorpse(pCorpse);
 				delete pCorpse;
 				pCorpse = NULLCORPSE;
 				continue;
@@ -1467,6 +1469,7 @@ void ObjectMgr::CorpseAddEventDespawn(Corpse* pCorpse)
 {
 	if(!pCorpse->IsInWorld())
 	{
+		RemoveCorpse(pCorpse);
 		delete pCorpse;
 		pCorpse = NULLCORPSE;
 	}
@@ -1478,27 +1481,35 @@ void ObjectMgr::DespawnCorpse(uint64 Guid)
 {
 	Corpse * pCorpse = objmgr.GetCorpse((uint32)Guid);
 	if(pCorpse == NULL)	// Already Deleted
+	{
+		RemoveCorpse((uint32)Guid); // Just to make sure.
 		return;
+	}
 
+	pCorpse->Despawn();
 	RemoveCorpse(pCorpse);
-	delete pCorpse;
-	pCorpse = NULLCORPSE;
 }
 
 void ObjectMgr::CorpseCollectorUnload()
 {
 	CorpseMap::const_iterator itr;
 	_corpseslock.Acquire();
-	for (itr = m_corpses.begin(); itr != m_corpses.end();)
+	if(m_corpses.size())
 	{
-		Corpse* c = itr->second;
-		++itr;
-		if(c->IsInWorld())
-			c->RemoveFromWorld(false);
-		delete c;
-		c = NULLCORPSE;
+		for (itr = m_corpses.begin(); itr != m_corpses.end();)
+		{
+			Corpse* c = itr->second;
+			++itr;
+			if(c != NULLCORPSE)
+			{
+				if(c->IsInWorld())
+					c->RemoveFromWorld(false);
+				delete c;
+				c = NULLCORPSE;
+			}
+		}
+		m_corpses.clear();
 	}
-	m_corpses.clear();
 	_corpseslock.Release();
 }
 
@@ -2215,7 +2226,6 @@ void ObjectMgr::RemovePlayer(Player* p)
 	_playerslock.AcquireWriteLock();
 	_players.erase(p->GetLowGUID());
 	_playerslock.ReleaseWriteLock();
-
 }
 
 Corpse* ObjectMgr::CreateCorpse()
@@ -2240,6 +2250,13 @@ void ObjectMgr::RemoveCorpse(Corpse* p)
 {
 	_corpseslock.Acquire();
 	m_corpses.erase(p->GetLowGUID());
+	_corpseslock.Release();
+}
+
+void ObjectMgr::RemoveCorpse(uint32 corpseguid)
+{
+	_corpseslock.Acquire();
+	m_corpses.erase(corpseguid);
 	_corpseslock.Release();
 }
 
