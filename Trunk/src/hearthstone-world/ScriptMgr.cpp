@@ -744,14 +744,15 @@ void GossipScript::GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, u
 		{
 			GossipMenu *Menu;
 			objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), 14391, Plr);
-			// Crow: The following is wrong :| Someone find the correct box text.
 			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Purchase a Dual Talent Specialization.", 17, false, sWorld.dualTalentTrainCost, "Are you sure you would like to purchase your second talent specialization?" );
 			Menu->SendTo(Plr);
 		}break;
 	case 17:
 		{
-			Plr->Gossip_Complete();
-			Plr->SendDualTalentConfirm();
+			GossipMenu *Menu;
+			objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), 14393, Plr);
+			Menu->SendTo(Plr);
+			Plr->CastSpell(Plr, 63624, true);
 		}break;
 	case 18: // Enable and disable XP.
 		{

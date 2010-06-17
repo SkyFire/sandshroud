@@ -1393,7 +1393,6 @@ public:
 	uint32 CalcTalentResetCost(uint32 resetnum);
 	void SendTalentResetConfirm();
 	void SendPetUntrainConfirm();
-	void SendDualTalentConfirm();
 	void SendXPToggleConfirm();
 	uint32 GetTalentResetTimes() { return m_talentresettimes; }
 	HEARTHSTONE_INLINE void SetTalentResetTimes(uint32 value) { m_talentresettimes = value; }

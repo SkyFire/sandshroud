@@ -6220,19 +6220,6 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_LOOTING);
 }
 
-void Player::SendDualTalentConfirm()
-{
-	// Cast the learning spell
-	CastSpell(this, 63624, true);
-
-	// Crow: Find the right text dammit!
-	sChatHandler.SystemMessage(GetSession(), "You now have Dual Talent specialization");
-	/*WorldPacket data();
-	data << GetGUID();
-	data << sWorld.dualTalentTrainCost;
-	GetSession()->SendPacket( &data );*/
-}
-
 void Player::SendXPToggleConfirm()
 {
 //	sChatHandler.SystemMessageToPlr(this, "XP %s.", m_XPoff ? "Disabled" : "Enabled");
