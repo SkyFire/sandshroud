@@ -3763,7 +3763,7 @@ void Player::OnPushToWorld()
 	if(m_mapMgr != NULL)
 	{
 		MapInfo* info = GetMapMgr()->GetMapInfo();
-		if(info != NULL && (info->phasehorde != 0 || info->phasealliance != 0))
+		if(info != NULL && (info->phasehorde != 0 && info->phasealliance != 0 ))
 		{
 			if(GetSession()->HasGMPermissions())
 				SetPhase(info->phasehorde | info->phasealliance);
@@ -3772,6 +3772,8 @@ void Player::OnPushToWorld()
 			else
 				SetPhase(info->phasealliance);
 		}
+		if(info != NULL && (info->phasehorde == 0 && info->phasealliance == 0 ))
+			SetPhase(1);
 	}
 }
 
@@ -9278,7 +9280,7 @@ void Player::OnWorldPortAck()
 		if(isDead() && pPMapinfo->type != INSTANCE_NULL && pPMapinfo->type != INSTANCE_PVP)
 			ResurrectPlayer();
 
-		if(pPMapinfo->phasehorde != 0 || pPMapinfo->phasealliance !=0)
+		if(pPMapinfo->phasehorde != 0 && pPMapinfo->phasealliance !=0)
 		{
 			if(GetSession()->HasGMPermissions())
 				SetPhase(pPMapinfo->phasehorde | pPMapinfo->phasealliance);
@@ -9287,6 +9289,8 @@ void Player::OnWorldPortAck()
 			else
 				SetPhase(pPMapinfo->phasealliance);
 		}
+		if(info != NULL && (pPMapinfo->phasehorde == 0 && pPMapinfo->phasealliance == 0 ))
+			SetPhase(1);
 		if(pPMapinfo->HasFlag(WMI_INSTANCE_WELCOME) && GetMapMgr())
 		{
 			std::string welcome_msg;
