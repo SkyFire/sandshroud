@@ -69,6 +69,24 @@ zstore * cz;
 mcell * mcell_cache[64][64];
 zstore * cell_cache[64][64];
 
+typedef struct
+{
+    uint32 ofsInformation;
+    uint32 layerCount;
+    uint32 ofsData;
+}MH2Oheader;
+
+typedef struct
+{
+    uint16 type;
+    uint16 flags;
+    float levels[2];
+    char x, y, w, h;
+    uint32 offsData2a;
+    uint32 offsData2b;
+}MH2Oinformation;
+
+
 void reset()
 {
     for(uint32 i = 0; i < 64; ++i)
@@ -119,6 +137,9 @@ bool LoadADT(char* filename)
 
 	size_t mcnk_offsets[256], mcnk_sizes[256];
 
+	MH2Oheader mh2oheader[256]; memset(&mh2oheader,0,sizeof(MH2Oheader)*256);
+	uint32 mh2o_base=0;
+
 	wmo_count=0;
 	bool found=false;
 	//uint32 fs=mf.getSize ()-3;
@@ -130,7 +151,7 @@ bool LoadADT(char* filename)
 		mf.read(&size, 4);
 
 		size_t nextpos = mf.getPos () + size;
-		if(fourcc==0x4d43494e)
+		if(fourcc==0x4d43494e) //MCIN
 		{
 		//	printf("Found chunks info\n");
 			// mapchunk offsets/sizes
@@ -143,7 +164,17 @@ bool LoadADT(char* filename)
 		//break;
 		}
 		else 
-			if(fourcc==0x4d4f4446)
+		if(fourcc==0x4d48324f) //MH2O
+		{
+			mh2o_base=mf.getPos();
+			for (int i=0; i<256; i++)
+			{
+				mf.read(&mh2oheader[i],sizeof(MH2Oheader));
+			}
+		//break;
+		}
+		else 
+			if(fourcc==0x4d4f4446) //MODF
 			{
 			
 			/*	if(size)
@@ -193,6 +224,11 @@ bool LoadADT(char* filename)
 
 				mf.seek((int)mcnk_offsets[j*16+i]);
 				LoadMapChunk (mf,&(mcells->ch [i][j]));
+
+				if (mh2oheader[j*16+i].layerCount>0) {
+					mf.seek((int)mh2oheader[j*16+i].ofsInformation+mh2o_base);
+					LoadH2OChunk(mf,&(mcells->ch [i][j]),mh2o_base);
+				}
 
 			}
 
@@ -280,7 +316,7 @@ void LoadMapChunk(MPQFile & mf, chunk*_chunk)
 	//	if(size!=580)
 	//	printf("\n sz=%d",size);
 		size_t nextpos = mf.getPos()  + size;
-		if(fourcc==0x4d435654)
+		if(fourcc==0x4d435654) //MCVT
 		 {
 			for (int j=0; j<17; j++)
 			for (int i=0; i<((j%2)?8:9); i++) 
@@ -296,15 +332,61 @@ void LoadMapChunk(MPQFile & mf, chunk*_chunk)
 				//	if(z<zmin)zmin=z;
 				}
 		}
-		else if(fourcc==0x4d434e52)
-		{
+		 else
+			if(fourcc==0x4d434e52) //MCNR
+			{
 			nextpos = mf.getPos() + 0x1C0; // size fix
-		}
-		else if(fourcc=0xefb88b70) // map 631 fix
-		{
-			nextpos = mf.getPos() + 0x1199;
-		}
-		else if(fourcc==0x4d434c51)
+
+			}
+            if(fourcc=0xefb88b70)
+            {
+             nextpos = mf.getPos() + 0x1199;
+            }
+
+		else
+			/*if(fourcc==0x4d434c51) //MCLQ
+			{
+				// liquid / water level
+			//	bool haswater;
+				char fcc1[5];
+				mf.read(fcc1,4);
+				flipcc(fcc1);
+				fcc1[4]=0;
+
+				if (!strcmp(fcc1,"MCSE"))
+                {
+                    for(int i=0;i<9;i++)
+                        for(int j=0;j<9;j++)
+                            _chunk->waterlevel[i][j]=-999999; // no liquid/water
+                }
+                else
+				{
+                    float maxheight;
+                    mf.read(&maxheight, 4);
+					
+                    for(int j=0;j<9;j++)
+                        for(int i=0;i<9;i++)
+                        {
+                            mf.read(&h, 4);
+                            mf.read(&h, 4);
+                            if(h > maxheight)
+                                _chunk->waterlevel[i][j]=-999999;
+                            else
+                                _chunk->waterlevel[i][j]=h;
+                        }
+
+                    if(chunkflags & 4 || chunkflags & 8)
+						_chunk->flag |=1;
+					if(chunkflags & 16)
+						_chunk->flag |=2;
+
+
+
+				}
+				
+
+			break;*/
+            if(fourcc==0x4d434c51) //MCLQ
             {
                 // liquid / water level
                 //	bool haswater;
@@ -313,24 +395,56 @@ void LoadMapChunk(MPQFile & mf, chunk*_chunk)
                 flipcc(fcc1);
                 fcc1[4]=0;
                 if (strcmp(fcc1,"MCSE"))
+
+                    //	if(size)
+
+
+
+
+
                 {
                     //chunkflag
-                   mf.seekRelative(-4);
+
+
+                    mf.seekRelative(-4);
                     mf.read(&_chunk->waterlevel,4);
+
+
+
+
+
+
+
+
+
+                    /*if(chunkflags & 4 || chunkflags & 8)
+                        _chunk->flag |=1;
+                    if(chunkflags & 16)
+                        _chunk->flag |=2;*/
                     if(!_chunk->flag)
                         _chunk->flag = chunkflags;
                     else
                         printf("%02X", _chunk->flag);
-                }break;
-			}else if (fourcc==0x4d434c59)
+
+
+
+                }
+
+
+                break;
+			}else if (fourcc==0x4d434c59) //MCLY
 			{
 			// texture info
 			nTextures = (int)size;
-			}else if (fourcc==0x4d43414c)
+			}else if (fourcc==0x4d43414c) //MCAL
 			{
+			
 			if (nTextures<=0) 
 			continue;
 			}
+		
+
+
 		mf.seek(nextpos);
 	}
 	
@@ -338,6 +452,30 @@ void LoadMapChunk(MPQFile & mf, chunk*_chunk)
 	printf("");
 }
 
+
+inline
+void LoadH2OChunk(MPQFile & mf, chunk*_chunk, uint32 base)
+{
+	MH2Oinformation mh2oinfo; memset(&mh2oinfo,0,sizeof(MH2Oinformation));
+	mf.read(&mh2oinfo,sizeof(MH2Oinformation));
+//	if (mh2oinfo.w>0 && mh2oinfo.h>0) { //Cell has some water...
+		//If the type flag does not contain the water bit, and the cell has lake(0) or ocean(2) water, then set it, as this was the old flag for fishable water for the MCLQ structure - compatibility above all.
+		if ( (_chunk->flag&1)==0 && (mh2oinfo.type==0 || mh2oinfo.type==2) ) _chunk->flag|=1;
+		if ( (_chunk->flag&1)==0 && mh2oinfo.type==5 && (mh2oinfo.flags==0 || mh2oinfo.flags==2)) _chunk->flag|=1;
+		//The two liquid levels are sometimes NOT equal; if they define the highest and lowest levels, then choose the lowest one for fishing; but for now this will be sufficient.
+		if ( mh2oinfo.flags & 2 ) _chunk->waterlevel=mh2oinfo.levels[0];
+		else if (mh2oinfo.offsData2b) {
+			mf.seek((int)mh2oinfo.offsData2b+base);
+			float level;
+			mf.read(&level, 4);
+			_chunk->waterlevel=level;
+		} else _chunk->waterlevel=mh2oinfo.levels[0]; //Better than nothing.
+//	} else { //No water here - this should be impossible, as in this case this part wouldn't even exist and layerCount would be zero, but it's better to be prepared for everything.
+//		_chunk->waterlevel=-999999;
+//	}
+
+	return;
+}
 
 
 double solve (vec *v,vec *p)
@@ -360,9 +498,9 @@ double GetZ(double x,double z)
 	vec v[3];
 	vec p;
 	
-	bool inWMO=false;
+	//bool inWMO=false;
 	
-	if(!inWMO)
+	//if(!inWMO)
 	{
 		//find out quadrant
 		int xc=(int)(x/UNITSIZE);
@@ -502,7 +640,7 @@ bool ConvertADT(uint32 x, uint32 y, FILE * out_file, char* name)
             uint32 ly=yc%(16/CellsPerTile);
             out.AreaID[lx][ly] = mcells->ch[yc][xc].area_id;
             out.LiquidType[lx][ly] = mcells->ch[yc][xc].flag;
-            out.LiquidLevel[ly][ly] = mcells->ch[yc][xc].waterlevel;
+            out.LiquidLevel[lx][ly] = mcells->ch[yc][xc].waterlevel;
         }
     }
 
