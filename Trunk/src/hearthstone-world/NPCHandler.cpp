@@ -542,16 +542,9 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 		GossipMenuItem item = _player->CurrentGossipMenu->GetItem(option);
 		IntId = item.IntId;
 		Coded = item.Coded;
-		if(item.BoxMoney)
-		{
-			if(_player->GetUInt32Value(PLAYER_FIELD_COINAGE) < item.BoxMoney)
-			{
-				sChatHandler.SystemMessage(this, "You must have at least %u copper to use this function.", item.BoxMoney);
-				return;
-			}
-			else
-				_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32(item.BoxMoney)));
-		}
+		uint32 money = item.BoxMoney;
+		if(money && (_player->GetUInt32Value(PLAYER_FIELD_COINAGE) >= money)) // Client side checks and whatnot.
+			_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32(money)));
 	}
 
 	if(Coded)

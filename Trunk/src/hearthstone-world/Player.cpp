@@ -6224,6 +6224,9 @@ void Player::SendDualTalentConfirm()
 {
 	// Cast the learning spell
 	CastSpell(this, 63624, true);
+
+	// Crow: Find the right text dammit!
+	sChatHandler.SystemMessage(GetSession(), "You now have Dual Talent specialization");
 	/*WorldPacket data();
 	data << GetGUID();
 	data << sWorld.dualTalentTrainCost;
