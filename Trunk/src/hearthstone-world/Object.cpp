@@ -1768,33 +1768,37 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			TO_CREATURE(pVictim)->Tag(plr);
 
 		// Pepsi1x1: is this correct this
-		if( pVictim != TO_UNIT(this) && isTargetDummy(TO_UNIT(this)->GetEntry()))
+		if( pVictim != TO_UNIT(this))
 		{
-			// Set our attack target to the victim.
-			TO_UNIT(this)->CombatStatus.OnDamageDealt( pVictim, damage );
+			if(pVictim->IsCreature())
+			{
+				 if(!isTargetDummy(pVictim->GetEntry()))
+					 TO_UNIT(this)->CombatStatus.OnDamageDealt( pVictim, damage );
+			}
+			else // Set our attack target to the victim.
+				TO_UNIT(this)->CombatStatus.OnDamageDealt( pVictim, damage );
 		}
 	}
 
-        ///Rage
-        float val;
+	///Rage
+	float val;
 
-		if( pVictim->GetPowerType() == POWER_TYPE_RAGE 
-			&& pVictim != TO_UNIT(this)
-			&& pVictim->IsPlayer())
-		{
-			float level = (float)pVictim->getLevel();
-			float c = 0.0091107836f * level * level + 3.225598133f * level + 4.2652911f;
-			uint32 rage = pVictim->GetUInt32Value( UNIT_FIELD_POWER2 );
-			val = 2.5f * damage / c;
-			rage += float2int32(val) * 10;
-			if( rage > pVictim->GetUInt32Value(UNIT_FIELD_MAXPOWER2) )
-				rage = pVictim->GetUInt32Value(UNIT_FIELD_MAXPOWER2);
-			
-			pVictim->SetUInt32Value(UNIT_FIELD_POWER2, rage);
-			pVictim->SendPowerUpdate();
-		}
+	if( pVictim->GetPowerType() == POWER_TYPE_RAGE 
+		&& pVictim != TO_UNIT(this)
+		&& pVictim->IsPlayer())
+	{
+		float level = (float)pVictim->getLevel();
+		float c = 0.0091107836f * level * level + 3.225598133f * level + 4.2652911f;
+		uint32 rage = pVictim->GetUInt32Value( UNIT_FIELD_POWER2 );
+		val = 2.5f * damage / c;
+		rage += float2int32(val) * 10;
+		if( rage > pVictim->GetUInt32Value(UNIT_FIELD_MAXPOWER2) )
+			rage = pVictim->GetUInt32Value(UNIT_FIELD_MAXPOWER2);
 
-	
+		pVictim->SetUInt32Value(UNIT_FIELD_POWER2, rage);
+		pVictim->SendPowerUpdate();
+	}
+
 	//* BATTLEGROUND DAMAGE COUNTER *//
 	if( pVictim != TO_UNIT(this) )
 	{
@@ -1815,7 +1819,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			plr->m_bg->UpdatePvPData();
 		}
 	}
-   
+
 	uint32 health = pVictim->GetUInt32Value(UNIT_FIELD_HEALTH );
 
 	if(health <= damage && pVictim->IsPlayer() && pVictim->getClass() == ROGUE && pVictim->m_CustomTimers[CUSTOM_TIMER_CHEATDEATH] <= getMSTime() )
