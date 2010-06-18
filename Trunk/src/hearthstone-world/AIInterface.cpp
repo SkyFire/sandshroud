@@ -1889,6 +1889,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	}
 
 	data << MoveFlags;
+	data << time;
 	if(MoveFlags & 0x200000)
 	{
 		data << uint8(0);
@@ -1896,11 +1897,10 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	}
 	if(MoveFlags & 0x800)
 	{
-		data << float(0);
+		data << float(float(time)/1000);
 		data << uint32(0);
 	}
 
-	data << time;
 	data << uint32(1);	  // 1 waypoint
 	data << toX << toY << toZ;
 

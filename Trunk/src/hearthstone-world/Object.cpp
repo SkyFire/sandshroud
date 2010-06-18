@@ -1887,7 +1887,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				uint32 NewHP = pVictim->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/100;
 				if(NewHP < 5)
 					NewHP = 5;
-				
+
 				//Set there health to 1% or 5 if 1% is lower then 5
 				pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, NewHP);
 				//End Duel

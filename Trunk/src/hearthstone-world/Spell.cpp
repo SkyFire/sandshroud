@@ -4475,37 +4475,78 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 
 	Player* pTarget = TO_PLAYER( Target );
 
-	float x,y,z,o;
 	uint32 mapid;
-	
-	// predefined behavior, return home
-	if (m_spellInfo->Id == 8690 || m_spellInfo->Id == 556 || m_spellInfo->Id == 39937)// 8690 - Hearthstone ; 556 - Astral Recall ; 39937 - Ruby Slippers
+	float x,y,z,o;
+
+	TeleportCoords* TC = TeleportCoordStorage.LookupEntry(id);
+	if(TC == NULL)
 	{
-		x = pTarget->GetBindPositionX();
-		y = pTarget->GetBindPositionY();
-		z = pTarget->GetBindPositionZ();
-		o = pTarget->GetOrientation();
-		mapid = pTarget->GetBindMapId();
-	}
-	else // normal behavior
-	{
-		TeleportCoords* TC = TeleportCoordStorage.LookupEntry(id);
-		if(!TC)
+		switch(id)
+		{
+	/*	case :
+			{
+				mapid = ;
+				x = f;
+				y = f;
+				z = f;
+				o = 0.0f;
+			}break;*/
+		case 556: // Hearthstone effects.
+		case 8690:
+		case 39937:
+			{
+				mapid = pTarget->GetBindMapId();
+				x = pTarget->GetBindPositionX();
+				y = pTarget->GetBindPositionY();
+				z = pTarget->GetBindPositionZ();
+				o = pTarget->GetOrientation();
+			}break;
+		case 59901: // Portal Effect: Caverns Of Time
+			{
+				mapid = 1;
+				x = -8164.8f;
+				y = -4768.5f;
+				z = 34.3f;
+				o = 0.0f;
+			}break;
+		case 61419: // Portal Effect: The purple parlor
+			{
+				mapid = 571;
+				x = 5848.48f;
+				y = 853.706f;
+				z = 843.182f;
+				o = 0.0f;
+			}break;
+		case 61420: // Portal Effect: Violet Citadel
+			{
+				mapid = 571;
+				x = 5819.26f;
+				y = 829.774f;
+				z = 680.22f;
+				o = 0.0f;
+			}break;
+		default:
+			if(sLog.IsOutDevelopement())
+				printf("Unknown teleport spell: %u\n", id);
+			else
+				OUT_DEBUG("Unknown teleport spell: %u", id);
 			return;
-		 
-		x=TC->x;
-		y=TC->y;
-		z=TC->z;
-		o=TC->o;
-		mapid=TC->mapId;
+		}
+	}
+	else
+	{
+		mapid = TC->mapId;
+		x = TC->x;
+		y = TC->y;
+		z = TC->z;
+		o = TC->o;
 	}
 
 	pTarget->EventAttackStop();
-	pTarget->SetSelection(0);
-	  
+	pTarget->SetSelection(NULL);
+
 	// We use a teleport event on this one. Reason being because of UpdateCellActivity,
-	// the game object set of the updater thread WILL Get messed up if we teleport from a gameobject
-	// caster.
+	// the game object set of the updater thread WILL Get messed up if we teleport from a gameobject caster.
 	if(!sEventMgr.HasEvent(pTarget, EVENT_PLAYER_TELEPORT))
 		sEventMgr.AddEvent(pTarget, &Player::EventTeleport, mapid, x, y, z, o, EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 }
