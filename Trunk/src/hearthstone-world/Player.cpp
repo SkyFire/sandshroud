@@ -5375,24 +5375,8 @@ void Player::UpdateStats()
 	case WARRIOR:
 	case DEATHKNIGHT:
 		{
-			{
-				//(Strength x 2) + (Character Level x 3) - 20
-				AP = (str *2) + (lev *3) - 20;
-				uint32 divi = 0;
-				uint32 sprank = 0;
-				if	 ( HasSpell(49393) ) { sprank = 5; divi = 180;} // Death Knight: Bladed Armor
-				else if( HasSpell(49392) ) { sprank = 4; divi = 180;} // Increases your attack power by <spellrank> for every 180 armor value you have.
-				else if( HasSpell(49391) ) { sprank = 3; divi = 180;}
-				else if( HasSpell(49390) ) { sprank = 2; divi = 180;}
-				else if( HasSpell(48978) ) { sprank = 1; divi = 180;}
-				else if( HasSpell(61222) ) { sprank = 3; divi = 108;} // Warrior: Armored to the Teeth
-				else if( HasSpell(61221) ) { sprank = 2; divi = 108;} //Increases your attack power by <spellrank> for every 108 armor value you have.
-				else if( HasSpell(61216) ) { sprank = 1; divi = 108;}
-				if(divi && sprank )
-					AP += sprank * (GetUInt32Value(UNIT_FIELD_RESISTANCES)/divi);
-			}
-			//Character Level + Agility - 10
-			RAP = lev + agi - 10;
+			AP = (str *2) + (lev *3) - 20; //(Strength x 2) + (Character Level x 3) - 20
+			RAP = lev + agi - 10; //Character Level + Agility - 10
 		}break;
 
 	default: //mage,priest,warlock

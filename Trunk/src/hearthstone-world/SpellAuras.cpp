@@ -9916,15 +9916,23 @@ void Aura::SpellAuraHasteRanged(bool apply)
 
 void Aura::SpellAuraModAttackPowerByArmor( bool apply )
 {
-	if (apply)
+	if(!m_target)
+		return;
+
+	if( apply )
 	{
-		mod->realamount = 0;
-		sEventMgr.AddEvent(this, &Aura::EventModAttackPowerByArmorUpdate, mod->i, EVENT_AURA_APPLY, 1000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		if( mod->m_amount > 0 )
+			SetPositive();
+		else
+			SetNegative();
+
+		mod->fixed_amount[mod->i] = m_target->GetUInt32Value( UNIT_FIELD_RESISTANCES ) / mod->m_amount;
+		m_target->ModUnsigned32Value( UNIT_FIELD_ATTACK_POWER_MODS, mod->fixed_amount[mod->i] );
 	}
 	else
-	{
-		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, -m_modList[mod->i].realamount);
-	}
+		m_target->ModUnsigned32Value( UNIT_FIELD_ATTACK_POWER_MODS, -mod->fixed_amount[mod->i] );
+
+	m_target->CalcDamage();
 }
 
 void Aura::SpellAuraReflectInfront(bool apply)
