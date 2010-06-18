@@ -1764,7 +1764,8 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	/*************************
 	 * DEATH KNIGHT SPELLS
 	 *************************/
-	case 52375:
+	case 52375: // Old Death Coil
+	case 47541: // New Death Coil
 	case 49892:
 	case 49893:
 	case 49894:
@@ -1780,7 +1781,10 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			{
 				CreatureInfo * ci = TO_CREATURE(unitTarget)->GetCreatureInfo();
 				if(ci && ci->Type == UNDEAD)
+				{
 					u_caster->Heal(unitTarget, spellId, float2int32(damage * 1.5f));
+					u_caster->Energize(u_caster, 47541, 20, POWER_TYPE_RUNIC);
+				}
 			}
 			else if(unitTarget->IsPlayer())
 			{	// TODO: Check if player is considered undead (Lichborne)
