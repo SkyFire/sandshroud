@@ -1846,9 +1846,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	}
 
 	/*------------------------------------ DUEL HANDLERS --------------------------*/
-	if((pVictim->IsPlayer()) && (IsPlayer()) && TO_PLAYER(pVictim)->DuelingWith == TO_PLAYER(this) ) //Both Players
+	if((pVictim->IsPlayer()) && (IsPlayer()) && TO_PLAYER(this)->DuelingWith != NULL) //Both Players
 	{
-		if((health <= damage) && TO_PLAYER(this)->DuelingWith != NULL)
+		if((health <= damage) && TO_PLAYER(pVictim)->DuelingWith == TO_PLAYER(this) )
 		{
 			// End Duel
 			TO_PLAYER(this)->EndDuel(DUEL_WINNER_KNOCKOUT);
@@ -1867,6 +1867,12 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			//Set there health to 1% or 5 if 1% is lower then 5
 			pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, NewHP);
 			return;
+		}
+		else if(pVictim->IsPlayer() && (health <= damage) && TO_PLAYER(pVictim)->DuelingWith != NULL && TO_PLAYER(pVictim)->DuelingWith != TO_PLAYER(this))
+		{
+			TO_PLAYER(pVictim)->DuelingWith->EndDuel(DUEL_WINNER_KNOCKOUT);
+			TO_PLAYER(pVictim)->DuelingWith->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
+//			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel(); Disable because someone cheated!
 		}
 	}
 
@@ -1891,15 +1897,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		}
 	}
 
-	if(pVictim->IsPlayer()) // Someone else kills them.
-	{
-		if((health <= damage) && TO_PLAYER(pVictim)->DuelingWith != NULL)
-		{
-			TO_PLAYER(pVictim)->DuelingWith->EndDuel(DUEL_WINNER_KNOCKOUT);
-			TO_PLAYER(pVictim)->DuelingWith->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
-//			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel(); Disable because someone cheated!
-		}
-	}
 	/*------------------------------------ DUEL HANDLERS END--------------------------*/
 
 	bool isCritter = false;
