@@ -1792,6 +1792,28 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			}
 		}break;
 
+	case 45463: // Death Strike
+	case 49923:
+	case 49924:
+	case 49998:
+	case 49999:
+		{
+			if(u_caster != NULL && unitTarget != NULL)
+			{
+				uint32 diseasecount = 0;
+				uint32 diseases[2] = { 55078, 55095 };
+				for(int8 i = 0; i < 2; i++)
+					if(unitTarget->HasAura(diseases[i]))
+						diseasecount++;
+
+				if(diseasecount)
+				{
+					uint32 healamount = (u_caster->GetMaxHealth()/20)*diseasecount;
+					u_caster->Heal(u_caster, spellId, healamount);
+				}
+			}
+		}break;
+
 	/*************************
 		Non-Class spells
 		- Done
