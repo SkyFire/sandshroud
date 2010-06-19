@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\bin\debug\script_bin"
+			OutputDirectory="..\..\..\..\bin\debug\script_bin"
 			IntermediateDirectory="2003_int_debug_Sunquestscripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -66,12 +66,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\..\bin\Debug\hearthstone-world.lib"
-				OutputFile="../../../bin/debug/script_bin/SunQuestScripts.dll"
+				AdditionalDependencies="..\..\..\..\bin\Debug\hearthstone-world.lib"
+				OutputFile="../../../../bin/debug/script_bin/SunQuestScripts.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\bin\release"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug/script_bin/SunQuestScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/debug/script_bin/SunQuestScripts.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -102,7 +102,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="..\..\..\bin\debug_x64\script_bin"
+			OutputDirectory="..\..\..\..\bin\debug_x64\script_bin"
 			IntermediateDirectory="2008_int_debug_Sunquestscripts_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -128,7 +128,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -150,11 +150,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/debug_x64/script_bin/SunQuestScripts.dll"
+				OutputFile="../../../../bin/debug_x64/script_bin/SunQuestScripts.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\bin\debug_x64"
+				AdditionalLibraryDirectories="..\..\..\..\bin\debug_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug_x64/script_bin/SunQuestScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/debug_x64/script_bin/SunQuestScripts.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -185,7 +185,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\bin\release\script_bin"
+			OutputDirectory="..\..\..\..\bin\release\script_bin"
 			IntermediateDirectory="2003_int_release_Sunquestscripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -209,7 +209,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -229,11 +229,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release/script_bin/SunQuestScripts.dll"
+				OutputFile="../../../../bin/release/script_bin/SunQuestScripts.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\bin\release"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release/script_bin/SunQuestScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/release/script_bin/SunQuestScripts.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -266,7 +266,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="..\..\..\bin\release_x64\script_bin"
+			OutputDirectory="..\..\..\..\bin\release_x64\script_bin"
 			IntermediateDirectory="2008_int_release_Sunquestscripts_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -291,7 +291,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -311,11 +311,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release_x64/script_bin/SunQuestScripts.dll"
+				OutputFile="../../../../bin/release_x64/script_bin/SunQuestScripts.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\bin\release_x64"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release_x64/script_bin/SunQuestScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/release_x64/script_bin/SunQuestScripts.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -356,22 +356,22 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\src\QuestScripts\Setup.cpp"
+				RelativePath="..\..\src\QuestScripts\Setup.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\QuestScripts\Setup.h"
+				RelativePath="..\..\src\QuestScripts\Setup.h"
 				>
 			</File>
 			<Filter
 				Name="Base Class"
 				>
 				<File
-					RelativePath="..\src\Common\Base.cpp"
+					RelativePath="..\..\src\Common\Base.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\Common\Base.h"
+					RelativePath="..\..\src\Common\Base.h"
 					>
 				</File>
 			</Filter>
@@ -382,38 +382,38 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\src\QuestScripts\QuestGossip.cpp"
+				RelativePath="..\..\src\QuestScripts\QuestGossip.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\QuestScripts\QuestHooks.cpp"
+				RelativePath="..\..\src\QuestScripts\QuestHooks.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\QuestScripts\Unsorted.cpp"
+				RelativePath="..\..\src\QuestScripts\Unsorted.cpp"
 				>
 			</File>
 			<Filter
 				Name="Class"
 				>
 				<File
-					RelativePath="..\src\QuestScripts\DeathKnight.cpp"
+					RelativePath="..\..\src\QuestScripts\DeathKnight.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Druid.cpp"
+					RelativePath="..\..\src\QuestScripts\Druid.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Mage.cpp"
+					RelativePath="..\..\src\QuestScripts\Mage.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Paladin.cpp"
+					RelativePath="..\..\src\QuestScripts\Paladin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Warrior.cpp"
+					RelativePath="..\..\src\QuestScripts\Warrior.cpp"
 					>
 				</File>
 			</Filter>
@@ -421,7 +421,7 @@
 				Name="Profession"
 				>
 				<File
-					RelativePath="..\src\QuestScripts\FirstAid.cpp"
+					RelativePath="..\..\src\QuestScripts\FirstAid.cpp"
 					>
 				</File>
 			</Filter>
@@ -429,163 +429,163 @@
 				Name="Zone"
 				>
 				<File
-					RelativePath="..\src\QuestScripts\ArathiHighlands.cpp"
+					RelativePath="..\..\src\QuestScripts\ArathiHighlands.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Azshara.cpp"
+					RelativePath="..\..\src\QuestScripts\Azshara.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Azuremyst_Isle.cpp"
+					RelativePath="..\..\src\QuestScripts\Azuremyst_Isle.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\BladeEdge_Mountains.cpp"
+					RelativePath="..\..\src\QuestScripts\BladeEdge_Mountains.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\BlastedLands.cpp"
+					RelativePath="..\..\src\QuestScripts\BlastedLands.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\BloodmystIsle.cpp"
+					RelativePath="..\..\src\QuestScripts\BloodmystIsle.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Darkshore.cpp"
+					RelativePath="..\..\src\QuestScripts\Darkshore.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Desolace.cpp"
+					RelativePath="..\..\src\QuestScripts\Desolace.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Dragonblight.cpp"
+					RelativePath="..\..\src\QuestScripts\Dragonblight.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Duskwood.cpp"
+					RelativePath="..\..\src\QuestScripts\Duskwood.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Dustwallow_Marsh.cpp"
+					RelativePath="..\..\src\QuestScripts\Dustwallow_Marsh.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Eastern_Plaguelands.cpp"
+					RelativePath="..\..\src\QuestScripts\Eastern_Plaguelands.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\EversongWoods.cpp"
+					RelativePath="..\..\src\QuestScripts\EversongWoods.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Ghostlands.cpp"
+					RelativePath="..\..\src\QuestScripts\Ghostlands.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Hellfire_Peninsula.cpp"
+					RelativePath="..\..\src\QuestScripts\Hellfire_Peninsula.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\HillsbradFoothills.cpp"
+					RelativePath="..\..\src\QuestScripts\HillsbradFoothills.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Howling_Fjord.cpp"
+					RelativePath="..\..\src\QuestScripts\Howling_Fjord.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Isle_of_QuelDanas.cpp"
+					RelativePath="..\..\src\QuestScripts\Isle_of_QuelDanas.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\LochModan.cpp"
+					RelativePath="..\..\src\QuestScripts\LochModan.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Mulgore.cpp"
+					RelativePath="..\..\src\QuestScripts\Mulgore.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Nagrand.cpp"
+					RelativePath="..\..\src\QuestScripts\Nagrand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Netherstorm.cpp"
+					RelativePath="..\..\src\QuestScripts\Netherstorm.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Old_Hillsbrad.cpp"
+					RelativePath="..\..\src\QuestScripts\Old_Hillsbrad.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\RedridgeMountains.cpp"
+					RelativePath="..\..\src\QuestScripts\RedridgeMountains.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\ShadowMoon.cpp"
+					RelativePath="..\..\src\QuestScripts\ShadowMoon.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\SilvermoonCity.cpp"
+					RelativePath="..\..\src\QuestScripts\SilvermoonCity.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Silverpine_Forest.cpp"
+					RelativePath="..\..\src\QuestScripts\Silverpine_Forest.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Stormwind.cpp"
+					RelativePath="..\..\src\QuestScripts\Stormwind.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\StranglethornVale.cpp"
+					RelativePath="..\..\src\QuestScripts\StranglethornVale.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Tanaris.cpp"
+					RelativePath="..\..\src\QuestScripts\Tanaris.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Teldrassil.cpp"
+					RelativePath="..\..\src\QuestScripts\Teldrassil.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Terrokar_Forest.cpp"
+					RelativePath="..\..\src\QuestScripts\Terrokar_Forest.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\The_Barrens.cpp"
+					RelativePath="..\..\src\QuestScripts\The_Barrens.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\ThousandNeedles.cpp"
+					RelativePath="..\..\src\QuestScripts\ThousandNeedles.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\TirisfalGlades.cpp"
+					RelativePath="..\..\src\QuestScripts\TirisfalGlades.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Undercity.cpp"
+					RelativePath="..\..\src\QuestScripts\Undercity.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\UnGoro.cpp"
+					RelativePath="..\..\src\QuestScripts\UnGoro.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Westfall.cpp"
+					RelativePath="..\..\src\QuestScripts\Westfall.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\Zangarmarsh.cpp"
+					RelativePath="..\..\src\QuestScripts\Zangarmarsh.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\QuestScripts\SholazarBasin.cpp"
+					RelativePath="..\..\src\QuestScripts\SholazarBasin.cpp"
 					>
 				</File>
 			</Filter>

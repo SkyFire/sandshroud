@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\bin\debug\script_bin"
+			OutputDirectory="..\..\..\..\bin\debug\script_bin"
 			IntermediateDirectory="2003_int_debug_Suninstancescripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -46,7 +46,7 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -67,12 +67,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\..\..\bin\Debug\hearthstone-world.lib"
-				OutputFile="../../../bin/debug/script_bin/SunInstanceScripts.dll"
+				AdditionalDependencies="..\..\..\..\bin\Debug\hearthstone-world.lib"
+				OutputFile="../../../../bin/debug/script_bin/SunInstanceScripts.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\bin\release"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug/script_bin/SunInstanceScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/debug/script_bin/SunInstanceScripts.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -103,7 +103,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="..\..\..\bin\debug_x64\script_bin"
+			OutputDirectory="..\..\..\..\bin\debug_x64\script_bin"
 			IntermediateDirectory="2008_int_debug_Suninstancescripts_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -130,7 +130,7 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -152,11 +152,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/debug_x64/script_bin/SunInstanceScripts.dll"
+				OutputFile="../../../../bin/debug_x64/script_bin/SunInstanceScripts.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\bin\debug_x64"
+				AdditionalLibraryDirectories="..\..\..\..\bin\debug_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug_x64/script_bin/SunInstanceScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/debug_x64/script_bin/SunInstanceScripts.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -187,7 +187,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\bin\release\script_bin"
+			OutputDirectory="..\..\..\..\bin\release\script_bin"
 			IntermediateDirectory="2008_int_release_Suninstancescripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -218,7 +218,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="false"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				StringPooling="false"
 				MinimalRebuild="false"
@@ -241,11 +241,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release/script_bin/SunInstanceScripts.dll"
+				OutputFile="../../../../bin/release/script_bin/SunInstanceScripts.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\bin\release"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release/script_bin/SunInstanceScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/release/script_bin/SunInstanceScripts.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -279,7 +279,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="..\..\..\bin\release_x64\script_bin"
+			OutputDirectory="..\..\..\..\bin\release_x64\script_bin"
 			IntermediateDirectory="2008_int_release_Suninstancescripts_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -304,7 +304,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -324,11 +324,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release_x64/script_bin/SunInstanceScripts.dll"
+				OutputFile="../../../../bin/release_x64/script_bin/SunInstanceScripts.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\bin\release_x64"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release_x64/script_bin/SunInstanceScripts.pdb"
+				ProgramDatabaseFile="../../../../bin/release_x64/script_bin/SunInstanceScripts.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -372,11 +372,11 @@
 				Name="Base Class"
 				>
 				<File
-					RelativePath="..\src\Common\Base.cpp"
+					RelativePath="..\..\src\Common\Base.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\Common\Base.h"
+					RelativePath="..\..\src\Common\Base.h"
 					>
 				</File>
 			</Filter>
@@ -384,11 +384,11 @@
 				Name="Setup"
 				>
 				<File
-					RelativePath="..\src\InstanceScripts\Setup.cpp"
+					RelativePath="..\..\src\InstanceScripts\Setup.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\InstanceScripts\Setup.h"
+					RelativePath="..\..\src\InstanceScripts\Setup.h"
 					>
 				</File>
 			</Filter>
@@ -396,11 +396,11 @@
 				Name="Instance Base Class"
 				>
 				<File
-					RelativePath="..\src\Common\Instance_Base.cpp"
+					RelativePath="..\..\src\Common\Instance_Base.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\src\Common\Instance_Base.h"
+					RelativePath="..\..\src\Common\Instance_Base.h"
 					>
 				</File>
 			</Filter>
@@ -409,7 +409,7 @@
 			Name="Scripts"
 			>
 			<File
-				RelativePath="..\src\InstanceScripts\WorldBosses\Raid_WorldBosses.cpp"
+				RelativePath="..\..\src\InstanceScripts\WorldBosses\Raid_WorldBosses.cpp"
 				>
 			</File>
 			<Filter
@@ -422,7 +422,7 @@
 						Name="Blackwing Lair"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\BlackwingLair\Raid_BlackwingLair.cpp"
+							RelativePath="..\..\src\InstanceScripts\BlackwingLair\Raid_BlackwingLair.cpp"
 							>
 						</File>
 					</Filter>
@@ -430,7 +430,7 @@
 						Name="Molten Core"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\MoltenCore\Raid_MoltenCore.cpp"
+							RelativePath="..\..\src\InstanceScripts\MoltenCore\Raid_MoltenCore.cpp"
 							>
 						</File>
 					</Filter>
@@ -442,7 +442,7 @@
 						Name="Zul&apos;Gurub"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\ZulGurub\Raid_ZulGurub.cpp"
+							RelativePath="..\..\src\InstanceScripts\ZulGurub\Raid_ZulGurub.cpp"
 							>
 						</File>
 					</Filter>
@@ -458,7 +458,7 @@
 						Name="Blackfathom Deeps"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\BlackfathomDeeps\Instance_BlackfathomDeeps.cpp"
+							RelativePath="..\..\src\InstanceScripts\BlackfathomDeeps\Instance_BlackfathomDeeps.cpp"
 							>
 						</File>
 					</Filter>
@@ -466,7 +466,7 @@
 						Name="Maraudon"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Mauradon\Instance_Mauradon.cpp"
+							RelativePath="..\..\src\InstanceScripts\Mauradon\Instance_Mauradon.cpp"
 							>
 						</File>
 					</Filter>
@@ -474,7 +474,7 @@
 						Name="Blackrock Depths"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\BlackrockDepths\Instance_BlackrockDepths.cpp"
+							RelativePath="..\..\src\InstanceScripts\BlackrockDepths\Instance_BlackrockDepths.cpp"
 							>
 						</File>
 					</Filter>
@@ -482,7 +482,7 @@
 						Name="Blackrock Spire"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\BlackrockSpire\Instance_BlackrockSpire.cpp"
+							RelativePath="..\..\src\InstanceScripts\BlackrockSpire\Instance_BlackrockSpire.cpp"
 							>
 						</File>
 					</Filter>
@@ -490,7 +490,7 @@
 						Name="Dire Maul"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\DireMaul\Instance_DireMaul.cpp"
+							RelativePath="..\..\src\InstanceScripts\DireMaul\Instance_DireMaul.cpp"
 							>
 						</File>
 					</Filter>
@@ -502,7 +502,7 @@
 						Name="Zul&apos;Farrak"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\ZulFarrak\Instance_ZulFarrak.cpp"
+							RelativePath="..\..\src\InstanceScripts\ZulFarrak\Instance_ZulFarrak.cpp"
 							>
 						</File>
 					</Filter>
@@ -510,7 +510,7 @@
 						Name="Ragefire Chasm"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\RagefireChasm\Instance_RagefireChasm.cpp"
+							RelativePath="..\..\src\InstanceScripts\RagefireChasm\Instance_RagefireChasm.cpp"
 							>
 						</File>
 					</Filter>
@@ -518,7 +518,7 @@
 						Name="Wailing Caverns"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\WailingCaverns\Instance_WailingCaverns.cpp"
+							RelativePath="..\..\src\InstanceScripts\WailingCaverns\Instance_WailingCaverns.cpp"
 							>
 						</File>
 					</Filter>
@@ -526,7 +526,7 @@
 						Name="Uldaman"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Uldaman\Instance_Uldaman.cpp"
+							RelativePath="..\..\src\InstanceScripts\Uldaman\Instance_Uldaman.cpp"
 							>
 						</File>
 					</Filter>
@@ -534,7 +534,7 @@
 						Name="The Stockade"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheStockade\Instance_TheStockade.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheStockade\Instance_TheStockade.cpp"
 							>
 						</File>
 					</Filter>
@@ -542,7 +542,7 @@
 						Name="The Deadmines"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Deadmine\Instance_Deadmines.cpp"
+							RelativePath="..\..\src\InstanceScripts\Deadmine\Instance_Deadmines.cpp"
 							>
 						</File>
 					</Filter>
@@ -558,7 +558,7 @@
 						Name="Shadowfang Keep"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\ShadowfangKeep\Instance_ShadowfangKeep.cpp"
+							RelativePath="..\..\src\InstanceScripts\ShadowfangKeep\Instance_ShadowfangKeep.cpp"
 							>
 						</File>
 					</Filter>
@@ -566,7 +566,7 @@
 						Name="Scholomance"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Scholomance\Instance_Scholomance.cpp"
+							RelativePath="..\..\src\InstanceScripts\Scholomance\Instance_Scholomance.cpp"
 							>
 						</File>
 					</Filter>
@@ -574,7 +574,7 @@
 						Name="Scarlet Monastery"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\ScarletMonastery\Instance_ScarletMonastery.cpp"
+							RelativePath="..\..\src\InstanceScripts\ScarletMonastery\Instance_ScarletMonastery.cpp"
 							>
 						</File>
 					</Filter>
@@ -586,7 +586,7 @@
 						Name="Razorfen Downs"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\RazorfenDowns\Instance_RazorfenDowns.cpp"
+							RelativePath="..\..\src\InstanceScripts\RazorfenDowns\Instance_RazorfenDowns.cpp"
 							>
 						</File>
 					</Filter>
@@ -602,7 +602,7 @@
 						Name="SethekkHalls"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\SethekkHalls\Instance_SethekkHalls.cpp"
+							RelativePath="..\..\src\InstanceScripts\SethekkHalls\Instance_SethekkHalls.cpp"
 							>
 						</File>
 					</Filter>
@@ -610,7 +610,7 @@
 						Name="AuchenaiCrypts"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\AuchenaiCrypts\Instance_AuchenaiCrypts.cpp"
+							RelativePath="..\..\src\InstanceScripts\AuchenaiCrypts\Instance_AuchenaiCrypts.cpp"
 							>
 						</File>
 					</Filter>
@@ -618,7 +618,7 @@
 						Name="ManaTombs"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\ManaTombs\Instance_ManaTombs.cpp"
+							RelativePath="..\..\src\InstanceScripts\ManaTombs\Instance_ManaTombs.cpp"
 							>
 						</File>
 					</Filter>
@@ -626,7 +626,7 @@
 						Name="ShadowLabyrinth"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\ShadowLabyrinth\Instance_ShadowLabyrinth.cpp"
+							RelativePath="..\..\src\InstanceScripts\ShadowLabyrinth\Instance_ShadowLabyrinth.cpp"
 							>
 						</File>
 					</Filter>
@@ -635,7 +635,7 @@
 					Name="Zul&apos;Aman"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\ZulAman\Raid_ZulAman.cpp"
+						RelativePath="..\..\src\InstanceScripts\ZulAman\Raid_ZulAman.cpp"
 						>
 					</File>
 				</Filter>
@@ -643,11 +643,11 @@
 					Name="Black Temple"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\BlackTemple\Raid_BlackTemple.cpp"
+						RelativePath="..\..\src\InstanceScripts\BlackTemple\Raid_BlackTemple.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\src\InstanceScripts\BlackTemple\ShadeOfAkama.cpp"
+						RelativePath="..\..\src\InstanceScripts\BlackTemple\ShadeOfAkama.cpp"
 						>
 					</File>
 				</Filter>
@@ -658,7 +658,7 @@
 						Name="Old Hillsbrad Foothills"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\OldHillsbradFoothills\Instance_OldHillsbradFoothills.cpp"
+							RelativePath="..\..\src\InstanceScripts\OldHillsbradFoothills\Instance_OldHillsbradFoothills.cpp"
 							>
 						</File>
 					</Filter>
@@ -666,7 +666,7 @@
 						Name="The Black Morass"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\BlackMorass\Instance_BlackMorass.cpp"
+							RelativePath="..\..\src\InstanceScripts\BlackMorass\Instance_BlackMorass.cpp"
 							>
 						</File>
 					</Filter>
@@ -674,7 +674,7 @@
 						Name="Hyjal Summit"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\HyjalSummit\Raid_HyjalSummit.cpp"
+							RelativePath="..\..\src\InstanceScripts\HyjalSummit\Raid_HyjalSummit.cpp"
 							>
 						</File>
 					</Filter>
@@ -686,7 +686,7 @@
 						Name="The Slave Pens"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheSlavePens\Instance_TheSlavePens.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheSlavePens\Instance_TheSlavePens.cpp"
 							>
 						</File>
 					</Filter>
@@ -694,7 +694,7 @@
 						Name="The Steamvault"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheSteamvault\Instance_TheSteamvault.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheSteamvault\Instance_TheSteamvault.cpp"
 							>
 						</File>
 					</Filter>
@@ -702,7 +702,7 @@
 						Name="The Underbog"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheUnderbog\Instance_TheUnderbog.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheUnderbog\Instance_TheUnderbog.cpp"
 							>
 						</File>
 					</Filter>
@@ -710,7 +710,7 @@
 						Name="Serpentshrine Cavern"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\SerpentshrineCavern\Raid_SerpentshrineCavern.cpp"
+							RelativePath="..\..\src\InstanceScripts\SerpentshrineCavern\Raid_SerpentshrineCavern.cpp"
 							>
 						</File>
 					</Filter>
@@ -719,7 +719,7 @@
 					Name="Gruul&apos;s Lair"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\GruulsLair\Raid_GruulsLair.cpp"
+						RelativePath="..\..\src\InstanceScripts\GruulsLair\Raid_GruulsLair.cpp"
 						>
 					</File>
 				</Filter>
@@ -730,7 +730,7 @@
 						Name="Hellfire Ramparts"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\HellfireRamparts\Instance_HellfireRamparts.cpp"
+							RelativePath="..\..\src\InstanceScripts\HellfireRamparts\Instance_HellfireRamparts.cpp"
 							>
 						</File>
 					</Filter>
@@ -738,7 +738,7 @@
 						Name="The Blood Furnace"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\BloodFurnace\Instance_BloodFurnace.cpp"
+							RelativePath="..\..\src\InstanceScripts\BloodFurnace\Instance_BloodFurnace.cpp"
 							>
 						</File>
 					</Filter>
@@ -746,7 +746,7 @@
 						Name="The Shattered Halls"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheShatteredHalls\Instance_TheShatteredHalls.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheShatteredHalls\Instance_TheShatteredHalls.cpp"
 							>
 						</File>
 					</Filter>
@@ -754,7 +754,7 @@
 						Name="Magtheridon&apos;s Lair"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\MagtheridonsLair\Raid_MagtheridonsLair.cpp"
+							RelativePath="..\..\src\InstanceScripts\MagtheridonsLair\Raid_MagtheridonsLair.cpp"
 							>
 						</File>
 					</Filter>
@@ -763,7 +763,7 @@
 					Name="Karazhan"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\Karazhan\Raid_Karazhan.cpp"
+						RelativePath="..\..\src\InstanceScripts\Karazhan\Raid_Karazhan.cpp"
 						>
 					</File>
 				</Filter>
@@ -771,7 +771,7 @@
 					Name="Magisters&apos; Terrace"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\MagistersTerrace\Instance_MagistersTerrace.cpp"
+						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Instance_MagistersTerrace.cpp"
 						>
 					</File>
 				</Filter>
@@ -779,11 +779,11 @@
 					Name="Sunwell Plateau"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\SunwellPlateau\Raid_SunwellPlateau.cpp"
+						RelativePath="..\..\src\InstanceScripts\SunwellPlateau\Raid_SunwellPlateau.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\src\InstanceScripts\SunwellPlateau\SUNWELL_KALECGOS.cpp"
+						RelativePath="..\..\src\InstanceScripts\SunwellPlateau\SUNWELL_KALECGOS.cpp"
 						>
 					</File>
 				</Filter>
@@ -794,7 +794,7 @@
 						Name="The Arcatraz"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Arcatraz\Instance_Arcatraz.cpp"
+							RelativePath="..\..\src\InstanceScripts\Arcatraz\Instance_Arcatraz.cpp"
 							>
 						</File>
 					</Filter>
@@ -802,7 +802,7 @@
 						Name="The Eye"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheEye\Raid_TheEye.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheEye\Raid_TheEye.cpp"
 							>
 						</File>
 					</Filter>
@@ -810,7 +810,7 @@
 						Name="The Botanica"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Botanica\Instance_Botanica.cpp"
+							RelativePath="..\..\src\InstanceScripts\Botanica\Instance_Botanica.cpp"
 							>
 						</File>
 					</Filter>
@@ -818,7 +818,7 @@
 						Name="The Mechanar"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheMechanar\Instance_TheMechanar.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheMechanar\Instance_TheMechanar.cpp"
 							>
 						</File>
 					</Filter>
@@ -834,7 +834,7 @@
 						Name="Ahn&apos;kahet: The Old Kingdom"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\TheOldKingdom\Instance_TheOldKingdom.cpp"
+							RelativePath="..\..\src\InstanceScripts\TheOldKingdom\Instance_TheOldKingdom.cpp"
 							>
 						</File>
 					</Filter>
@@ -842,7 +842,7 @@
 						Name="Azjol-Nerub"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Azjol-Nerub\Instance_AzjolNerub.cpp"
+							RelativePath="..\..\src\InstanceScripts\Azjol-Nerub\Instance_AzjolNerub.cpp"
 							>
 						</File>
 					</Filter>
@@ -854,7 +854,7 @@
 						Name="The Nexus"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Nexus\Instance_Nexus.cpp"
+							RelativePath="..\..\src\InstanceScripts\Nexus\Instance_Nexus.cpp"
 							>
 						</File>
 					</Filter>
@@ -883,7 +883,7 @@
 					Name="Icecrown Citadel"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\IcecrownCitadel\ICC_tele.cpp"
+						RelativePath="..\..\src\InstanceScripts\IcecrownCitadel\ICC_tele.cpp"
 						>
 					</File>
 					<Filter
@@ -907,7 +907,7 @@
 					Name="Drak&apos;Tharon Keep"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\DrakTharonKeep\Instance_DrakTharonKeep.cpp"
+						RelativePath="..\..\src\InstanceScripts\DrakTharonKeep\Instance_DrakTharonKeep.cpp"
 						>
 					</File>
 				</Filter>
@@ -919,11 +919,11 @@
 					Name="Naxxramas"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.cpp"
+						RelativePath="..\..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.h"
+						RelativePath="..\..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.h"
 						>
 					</File>
 				</Filter>
@@ -943,11 +943,11 @@
 					Name="Onyxia&apos;s Lair"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.cpp"
+						RelativePath="..\..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.h"
+						RelativePath="..\..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.h"
 						>
 					</File>
 				</Filter>
@@ -955,7 +955,7 @@
 					Name="The Culling of Stratholme"
 					>
 					<File
-						RelativePath="..\src\InstanceScripts\CullingOfStratholme\Instance_CullingOfStratholme.cpp"
+						RelativePath="..\..\src\InstanceScripts\CullingOfStratholme\Instance_CullingOfStratholme.cpp"
 						>
 					</File>
 				</Filter>
@@ -966,7 +966,7 @@
 						Name="Utgarde Keep"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\UtgardeKeep\Instance_UtgardeKeep.cpp"
+							RelativePath="..\..\src\InstanceScripts\UtgardeKeep\Instance_UtgardeKeep.cpp"
 							>
 						</File>
 					</Filter>
@@ -982,7 +982,7 @@
 						Name="Halls of Lightning"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\HallsOfLightning\Instance_HallsOfLightning.cpp"
+							RelativePath="..\..\src\InstanceScripts\HallsOfLightning\Instance_HallsOfLightning.cpp"
 							>
 						</File>
 					</Filter>
@@ -990,7 +990,7 @@
 						Name="Halls of Stone"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\HallsOfStone\Instance_HallsOfStone.cpp"
+							RelativePath="..\..\src\InstanceScripts\HallsOfStone\Instance_HallsOfStone.cpp"
 							>
 						</File>
 					</Filter>
@@ -998,11 +998,11 @@
 						Name="Ulduar"
 						>
 						<File
-							RelativePath="..\src\InstanceScripts\Ulduar\Raid_Ulduar.cpp"
+							RelativePath="..\..\src\InstanceScripts\Ulduar\Raid_Ulduar.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\src\InstanceScripts\Ulduar\Raid_Ulduar.h"
+							RelativePath="..\..\src\InstanceScripts\Ulduar\Raid_Ulduar.h"
 							>
 						</File>
 					</Filter>

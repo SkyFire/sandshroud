@@ -21,7 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\bin\debug\script_bin"
+			OutputDirectory="..\..\..\..\bin\debug\script_bin"
 			IntermediateDirectory="2008_int_debug_SandshroudLUA"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -68,11 +68,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/debug/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../../bin/debug/script_bin/SandshroudLUA.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\bin\debug"
+				AdditionalLibraryDirectories="..\..\..\..\bin\debug"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../../bin/debug/script_bin/SandshroudLUA.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -103,7 +103,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="..\..\..\bin\debug_x64\script_bin"
+			OutputDirectory="..\..\..\..\bin\debug_x64\script_bin"
 			IntermediateDirectory="2008_int_debug_SandshroudLUA_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -129,7 +129,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -151,11 +151,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/debug_x64/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../../bin/debug_x64/script_bin/SandshroudLUA.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\bin\debug_x64"
+				AdditionalLibraryDirectories="..\..\..\..\bin\debug_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/debug_x64/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../../bin/debug_x64/script_bin/SandshroudLUA.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -186,7 +186,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\bin\release\script_bin"
+			OutputDirectory="..\..\..\..\bin\release\script_bin"
 			IntermediateDirectory="2008_int_release_SandshroudLUA"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -209,7 +209,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -229,11 +229,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../../bin/release/script_bin/SandshroudLUA.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\bin\release"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../../bin/release/script_bin/SandshroudLUA.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -266,7 +266,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="..\..\..\bin\release_x64\script_bin"
+			OutputDirectory="..\..\..\..\bin\release_x64\script_bin"
 			IntermediateDirectory="2008_int_release_SandshroudLUA_x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -290,7 +290,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\hearthstone-shared;..\..\hearthstone-world;..\..\..\dep\include;..\..\..\dep\src"
+				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -310,11 +310,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="hearthstone-world.lib"
-				OutputFile="../../../bin/release_x64/script_bin/SandshroudLUA.dll"
+				OutputFile="../../../../bin/release_x64/script_bin/SandshroudLUA.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\bin\release_x64"
+				AdditionalLibraryDirectories="..\..\..\..\bin\release_x64"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="../../../bin/release_x64/script_bin/SandshroudLUA.pdb"
+				ProgramDatabaseFile="../../../../bin/release_x64/script_bin/SandshroudLUA.pdb"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -353,232 +353,232 @@
 			Name="Lua"
 			>
 			<File
-				RelativePath="..\src\Lua\lua\lapi.c"
+				RelativePath="..\..\src\Lua\lua\lapi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lapi.h"
+				RelativePath="..\..\src\Lua\lua\lapi.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lauxlib.c"
+				RelativePath="..\..\src\Lua\lua\lauxlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lauxlib.h"
+				RelativePath="..\..\src\Lua\lua\lauxlib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lbaselib.c"
+				RelativePath="..\..\src\Lua\lua\lbaselib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lcode.c"
+				RelativePath="..\..\src\Lua\lua\lcode.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lcode.h"
+				RelativePath="..\..\src\Lua\lua\lcode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ldblib.c"
+				RelativePath="..\..\src\Lua\lua\ldblib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ldebug.c"
+				RelativePath="..\..\src\Lua\lua\ldebug.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ldebug.h"
+				RelativePath="..\..\src\Lua\lua\ldebug.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ldo.c"
+				RelativePath="..\..\src\Lua\lua\ldo.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ldo.h"
+				RelativePath="..\..\src\Lua\lua\ldo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ldump.c"
+				RelativePath="..\..\src\Lua\lua\ldump.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lfunc.c"
+				RelativePath="..\..\src\Lua\lua\lfunc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lfunc.h"
+				RelativePath="..\..\src\Lua\lua\lfunc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lgc.c"
+				RelativePath="..\..\src\Lua\lua\lgc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lgc.h"
+				RelativePath="..\..\src\Lua\lua\lgc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\linit.c"
+				RelativePath="..\..\src\Lua\lua\linit.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\liolib.c"
+				RelativePath="..\..\src\Lua\lua\liolib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\llex.c"
+				RelativePath="..\..\src\Lua\lua\llex.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\llex.h"
+				RelativePath="..\..\src\Lua\lua\llex.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\llimits.h"
+				RelativePath="..\..\src\Lua\lua\llimits.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lmathlib.c"
+				RelativePath="..\..\src\Lua\lua\lmathlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lmem.c"
+				RelativePath="..\..\src\Lua\lua\lmem.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lmem.h"
+				RelativePath="..\..\src\Lua\lua\lmem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\loadlib.c"
+				RelativePath="..\..\src\Lua\lua\loadlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lobject.c"
+				RelativePath="..\..\src\Lua\lua\lobject.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lobject.h"
+				RelativePath="..\..\src\Lua\lua\lobject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lopcodes.c"
+				RelativePath="..\..\src\Lua\lua\lopcodes.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lopcodes.h"
+				RelativePath="..\..\src\Lua\lua\lopcodes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\loslib.c"
+				RelativePath="..\..\src\Lua\lua\loslib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lparser.c"
+				RelativePath="..\..\src\Lua\lua\lparser.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lparser.h"
+				RelativePath="..\..\src\Lua\lua\lparser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lstate.c"
+				RelativePath="..\..\src\Lua\lua\lstate.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lstate.h"
+				RelativePath="..\..\src\Lua\lua\lstate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lstring.c"
+				RelativePath="..\..\src\Lua\lua\lstring.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lstring.h"
+				RelativePath="..\..\src\Lua\lua\lstring.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lstrlib.c"
+				RelativePath="..\..\src\Lua\lua\lstrlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ltable.c"
+				RelativePath="..\..\src\Lua\lua\ltable.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ltable.h"
+				RelativePath="..\..\src\Lua\lua\ltable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ltablib.c"
+				RelativePath="..\..\src\Lua\lua\ltablib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ltm.c"
+				RelativePath="..\..\src\Lua\lua\ltm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\ltm.h"
+				RelativePath="..\..\src\Lua\lua\ltm.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lua.h"
+				RelativePath="..\..\src\Lua\lua\lua.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\luaconf.h"
+				RelativePath="..\..\src\Lua\lua\luaconf.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lualib.h"
+				RelativePath="..\..\src\Lua\lua\lualib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lundump.c"
+				RelativePath="..\..\src\Lua\lua\lundump.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lundump.h"
+				RelativePath="..\..\src\Lua\lua\lundump.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lvm.c"
+				RelativePath="..\..\src\Lua\lua\lvm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lvm.h"
+				RelativePath="..\..\src\Lua\lua\lvm.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lzio.c"
+				RelativePath="..\..\src\Lua\lua\lzio.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\lzio.h"
+				RelativePath="..\..\src\Lua\lua\lzio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\Lua\lua\print.c"
+				RelativePath="..\..\src\Lua\lua\print.c"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\src\Lua\LUAEngine.cpp"
+			RelativePath="..\..\src\Lua\LUAEngine.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\src\Lua\LUAEngine.h"
+			RelativePath="..\..\src\Lua\LUAEngine.h"
 			>
 		</File>
 		<File
-			RelativePath="..\src\Lua\LUAFunctions.h"
+			RelativePath="..\..\src\Lua\LUAFunctions.h"
 			>
 		</File>
 		<File
-			RelativePath="..\src\Lua\Functions\TableFunctions.h"
+			RelativePath="..\..\src\Lua\Functions\TableFunctions.h"
 			>
 		</File>
 	</Files>
