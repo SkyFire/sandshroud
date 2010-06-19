@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="SunOtherScripts"
 	ProjectGUID="{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
 	RootNamespace="SunOtherScripts"
@@ -364,30 +364,6 @@
 				RelativePath="..\..\src\MiscScripts\Setup.h"
 				>
 			</File>
-			<Filter
-				Name="Base"
-				>
-				<File
-					RelativePath="..\..\src\Common\Base.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Common\Base.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Common\EasyFunctions.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Common\Instance_Base.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Common\Instance_Base.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Scripts"
@@ -395,30 +371,30 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\OtherScripts\NeutralGuards.cpp"
+				RelativePath="..\..\src\ExtraScripts\NeutralGuards.cpp"
 				>
 			</File>
 			<Filter
 				Name="Misc"
 				>
 				<File
-					RelativePath="..\..\src\OtherScripts\Miscellaneous\Creatures.cpp"
+					RelativePath="..\..\src\MiscScripts\Creatures.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\Miscellaneous\DarkmoonFaireObjects.cpp"
+					RelativePath="..\..\src\MiscScripts\DarkmoonFaireObjects.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\Miscellaneous\GameObjects.cpp"
+					RelativePath="..\..\src\MiscScripts\GameObjects.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\Miscellaneous\QuelDanasPortal.cpp"
+					RelativePath="..\..\src\MiscScripts\QuelDanasPortal.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\Miscellaneous\RandomScripts.cpp"
+					RelativePath="..\..\src\MiscScripts\RandomScripts.cpp"
 					>
 				</File>
 			</Filter>
@@ -426,22 +402,22 @@
 				Name="Events"
 				>
 				<File
-					RelativePath="..\..\src\OtherScripts\EventScripts\Halloween.cpp"
+					RelativePath="..\..\src\EventScripts\Halloween.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\EventScripts\WinterVeil.cpp"
+					RelativePath="..\..\src\EventScripts\WinterVeil.cpp"
 					>
 				</File>
 				<Filter
 					Name="Dark Portal"
 					>
 					<File
-						RelativePath="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.cpp"
+						RelativePath="..\..\src\EventScripts\Event_DarkPortal.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.h"
+						RelativePath="..\..\src\EventScripts\Event_DarkPortal.h"
 						>
 					</File>
 				</Filter>
@@ -450,19 +426,19 @@
 				Name="WorldPvP"
 				>
 				<File
-					RelativePath="..\..\src\OtherScripts\WorldPvP\ZoneHellfirePeninsula.cpp"
+					RelativePath="..\..\src\WorldPvPScripts\ZoneHellfirePeninsula.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\WorldPvP\ZoneSilithus.cpp"
+					RelativePath="..\..\src\WorldPvPScripts\ZoneSilithus.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\WorldPvP\ZoneTerokkarForest.cpp"
+					RelativePath="..\..\src\WorldPvPScripts\ZoneTerokkarForest.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\WorldPvP\ZoneZangarmarsh.cpp"
+					RelativePath="..\..\src\WorldPvPScripts\ZoneZangarmarsh.cpp"
 					>
 				</File>
 			</Filter>
@@ -470,63 +446,63 @@
 				Name="Gossip"
 				>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Battlemaster.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Battlemaster.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_BoreanTundra.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_BoreanTundra.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Dalaran.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Dalaran.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_DarkmoonFaire.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_DarkmoonFaire.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Guard.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Guard.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Innkeepers.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Innkeepers.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Moonglade.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Moonglade.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Mulgore.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Mulgore.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Shattrath.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Shattrath.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Stormwind.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Stormwind.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Tanaris.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Tanaris.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Teldrassil.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Teldrassil.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Theramore.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Theramore.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_Trainer.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_Trainer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\OtherScripts\GossipScripts\Gossip_WyrmrestTemple.cpp"
+					RelativePath="..\..\src\GossipScripts\Gossip_WyrmrestTemple.cpp"
 					>
 				</File>
 			</Filter>
