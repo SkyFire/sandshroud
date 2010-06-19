@@ -29,5 +29,24 @@ void SetupDarkmoonFaireObjects(ScriptMgr * mgr);
 void SetupWinterVeil(ScriptMgr * mgr);
 void SetupHalloween(ScriptMgr * mgr);
 //void SetupEventDarkPortal(ScriptMgr * mgr);
+void SetupPvPTerokkarForest(ScriptMgr *mgr);
+void SetupPvPHellfirePeninsula(ScriptMgr *mgr);
+void SetupPvPSilithus(ScriptMgr *mgr);
+void SetupPvPZangarmarsh(ScriptMgr *mgr);
+void SetupInnkeepers(ScriptMgr * mgr);
+void SetupGuardGossip(ScriptMgr * mgr);
+void SetupTrainerScript(ScriptMgr * mgr);
+void SetupMulgoreGossip(ScriptMgr * mgr);
+void SetupShattrathGossip(ScriptMgr * mgr);
+void SetupTanarisGossip(ScriptMgr * mgr);
+void SetupMoongladeGossip(ScriptMgr * mgr);
+void SetupStormwindGossip(ScriptMgr * mgr);
+void SetupTheramoreGossip(ScriptMgr * mgr);
+void SetupDarkmoonFaireGossip(ScriptMgr * mgr);
+void SetupDarkmoonFaireBarker(ScriptMgr * mgr);
+void SetupTeldrassilGossip(ScriptMgr * mgr);
+void SetupBoreanTundraGossip(ScriptMgr * mgr);
+void SetupWyrmrestTempleGossip(ScriptMgr * mgr);
+void SetupDalaranGossip(ScriptMgr * mgr);
 
 #endif

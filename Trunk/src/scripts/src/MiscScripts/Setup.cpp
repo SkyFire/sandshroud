@@ -38,6 +38,25 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any 
 	SetupWinterVeil(mgr);
 	SetupHalloween(mgr);
 	//SetupEventDarkPortal(mgr);
+	SetupPvPTerokkarForest(mgr);
+	SetupPvPHellfirePeninsula(mgr);
+	SetupPvPSilithus(mgr);
+	SetupPvPZangarmarsh(mgr);
+	SetupInnkeepers(mgr);
+	SetupGuardGossip(mgr);
+	SetupTrainerScript(mgr);
+	SetupMulgoreGossip(mgr);
+	SetupShattrathGossip(mgr);
+	SetupTanarisGossip(mgr);
+	SetupMoongladeGossip(mgr);
+	SetupStormwindGossip(mgr);
+	SetupTheramoreGossip(mgr);
+	SetupTeldrassilGossip(mgr);
+	SetupDarkmoonFaireGossip(mgr);
+	SetupDarkmoonFaireBarker(mgr);
+	SetupBoreanTundraGossip(mgr);
+	SetupWyrmrestTempleGossip(mgr);
+	SetupDalaranGossip(mgr);
 }
 
 #ifdef WIN32
