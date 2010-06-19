@@ -357,11 +357,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\MiscScripts\Setup.cpp"
+				RelativePath="..\..\src\OtherScripts\Setup.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\MiscScripts\Setup.h"
+				RelativePath="..\..\src\OtherScripts\Setup.h"
 				>
 			</File>
 			<Filter
