@@ -22,6 +22,8 @@
 #include "StdAfx.h"
 #include "Raid_OnyxiasLair.h"
 
+//#define A_ENABLE
+
 /*
 Author: SlavaOrlov
 http://www.sandshroud.org
@@ -279,6 +281,7 @@ public:
 
 	void HandleLairAchievements(uint32 pEntry)
 	{ 
+#ifdef A_ENABLE
 		if(pOnyxia == NULL || pOnyxia->GetMapMgr() == NULL)
 			return;
 		Player *Jerk = NULLPLR;
@@ -288,6 +291,7 @@ public:
 			if(Jerk)
 				Jerk->GetAchievementInterface()->HandleAchievementCreature(pEntry);
 		}
+#endif
 	};
 
 	void Destroy()
