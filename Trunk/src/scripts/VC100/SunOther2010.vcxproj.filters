@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main Resources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Main Resources\Base">
+      <UniqueIdentifier>{d0479678-061f-421c-8519-6e663f62a02a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Scripts\Misc">
+      <UniqueIdentifier>{549a4669-5167-4d66-98f3-b4a2d5e880dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Events">
+      <UniqueIdentifier>{7323f818-00b8-4f0c-a3ec-832e82bd22c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Events\Dark Portal">
+      <UniqueIdentifier>{b04ec629-09ed-4832-a023-25bfc1bb7ace}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\WorldPvP">
+      <UniqueIdentifier>{0305b994-e606-4ddd-bef0-eb6962bd2200}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Gossip">
+      <UniqueIdentifier>{3267651d-f442-44d3-ae2b-adadecbfbc0e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\MiscScripts\Setup.cpp">
+      <Filter>Main Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Common\Base.cpp">
+      <Filter>Main Resources\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Common\Instance_Base.cpp">
+      <Filter>Main Resources\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\NeutralGuards.cpp">
+      <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\Creatures.cpp">
+      <Filter>Scripts\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\DarkmoonFaireObjects.cpp">
+      <Filter>Scripts\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\GameObjects.cpp">
+      <Filter>Scripts\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\QuelDanasPortal.cpp">
+      <Filter>Scripts\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\RandomScripts.cpp">
+      <Filter>Scripts\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\EventScripts\Halloween.cpp">
+      <Filter>Scripts\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\EventScripts\WinterVeil.cpp">
+      <Filter>Scripts\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.cpp">
+      <Filter>Scripts\Events\Dark Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneHellfirePeninsula.cpp">
+      <Filter>Scripts\WorldPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneSilithus.cpp">
+      <Filter>Scripts\WorldPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneTerokkarForest.cpp">
+      <Filter>Scripts\WorldPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneZangarmarsh.cpp">
+      <Filter>Scripts\WorldPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Battlemaster.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_BoreanTundra.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Dalaran.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_DarkmoonFaire.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Guard.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Innkeepers.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Moonglade.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Mulgore.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Shattrath.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Stormwind.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Tanaris.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Teldrassil.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Theramore.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Trainer.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_WyrmrestTemple.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\MiscScripts\Setup.h">
+      <Filter>Main Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Common\Base.h">
+      <Filter>Main Resources\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Common\EasyFunctions.h">
+      <Filter>Main Resources\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Common\Instance_Base.h">
+      <Filter>Main Resources\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.h">
+      <Filter>Scripts\Events\Dark Portal</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
