@@ -742,14 +742,14 @@ void World::SendInstanceMessage(WorldPacket *packet, uint32 instanceid, WorldSes
 
 void World::SendWorldText(const char* text, WorldSession *self)
 {
-    uint32 textLen = (uint32)strlen((char*)text) + 1;
+	uint32 textLen = (uint32)strlen((char*)text) + 1;
 
-    WorldPacket data(textLen + 40);
+	WorldPacket data(textLen + 40);
 
 	data.Initialize(SMSG_MESSAGECHAT);
 	data << uint8(CHAT_MSG_SYSTEM);
 	data << uint32(LANG_UNIVERSAL);
-	
+
 	data << (uint64)0; // Who cares about guid when there's no nickname displayed heh ?
 	data << (uint32)0;
 	data << (uint64)0;
@@ -759,8 +759,6 @@ void World::SendWorldText(const char* text, WorldSession *self)
 	data << uint8(0);
 
 	SendGlobalMessage(&data, self);
-
-	sLog.outString("> %s", text);
 }
 
 void World::SendGMWorldText(const char* text, bool admin)
