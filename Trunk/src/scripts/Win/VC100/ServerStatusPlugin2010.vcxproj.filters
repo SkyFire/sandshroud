@@ -7,12 +7,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\ServerStatusPlugin\PerfCounters.h">
+    <ClInclude Include="..\..\src\ServerStatusPlugin\PerfCounters.h">
       <Filter>Main Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ServerStatusPlugin\ServerStatusPlugin.cpp">
+    <ClCompile Include="..\..\src\ServerStatusPlugin\ServerStatusPlugin.cpp">
       <Filter>Main Resources</Filter>
     </ClCompile>
   </ItemGroup>
