@@ -1318,6 +1318,34 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			unitTarget->m_reflectSpellSchool.push_back(rss);
 		}break;
 
+	case 11958:		// Cold Snap
+		{
+			if(p_caster != NULL) // Clears our cooldowns on frost spells.
+			{
+				for(uint8 index = COOLDOWN_TYPE_SPELL; index < NUM_COOLDOWN_TYPES; index++)
+				{
+					PlayerCooldownMap cm = TO_PLAYER(m_caster)->GetCooldownMap(index);
+					for(PlayerCooldownMap::const_iterator itr = cm.begin(); itr != cm.end(); itr++)
+					{
+						uint32 spellid = itr->second.SpellId;
+						SpellEntry *spellInfo = dbcSpell.LookupEntry(spellid);
+						if(spellInfo)
+						{
+							uint32 cooldown = spellInfo->RecoveryTime ? spellInfo->RecoveryTime : spellInfo->CategoryRecoveryTime;
+							if(spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && (spellInfo->School == SCHOOL_FROST)
+								&& spellInfo->Id != 11958 && cooldown > 0)
+							{
+								TO_PLAYER(m_caster)->ClearCooldownForSpell(spellid);
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				// Todo: For our AI, we should clear cooldowns on frost AI spells.
+			}
+		}break;
 
 	/*************************
 	 * ROGUE SPELLS

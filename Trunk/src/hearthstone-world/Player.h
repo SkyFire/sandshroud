@@ -1644,6 +1644,7 @@ public:
 	void ClearCooldownsOnLine(uint32 skill_line, uint32 called_from);
 	void ResetAllCooldowns();
 	void ClearCooldownForSpell(uint32 spell_id);
+	PlayerCooldownMap GetCooldownMap(uint8 index = COOLDOWN_TYPE_SPELL) { return m_cooldownMap[index]; };
 
 	bool bProcessPending;
 	Mutex _bufferS;
