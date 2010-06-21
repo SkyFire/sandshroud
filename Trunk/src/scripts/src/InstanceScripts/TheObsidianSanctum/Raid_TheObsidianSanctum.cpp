@@ -20,8 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "Setup.h"
-#include "../Common/Base.h" 
+#include "../Setup.h"
 
 enum ENCOUNTER_CREATURES
 {

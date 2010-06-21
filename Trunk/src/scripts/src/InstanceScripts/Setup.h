@@ -115,8 +115,8 @@ void SetupHallsofLightning(ScriptMgr * mgr);			//Ulduar
 void SetupUlduar(ScriptMgr * mgr);						//Ulduar
 //void SetupUtgardePinnacle(ScriptMgr * mgr);			//Utgarde Pinnacle
 void SetupUtgardeKeep(ScriptMgr * mgr);					//Utgarde Keep
-//void SetupTheRubySanctum(ScriptMgr * mgr);			//Wyrmrest Template
-//void SetupTheObsidianSanctum(ScriptMgr * mgr);		//Wyrmrest Template
+void SetupTheRubySanctum(ScriptMgr * mgr);			//Wyrmrest Template
+void SetupTheObsidianSanctum(ScriptMgr * mgr);		//Wyrmrest Template
 #endif
 
 

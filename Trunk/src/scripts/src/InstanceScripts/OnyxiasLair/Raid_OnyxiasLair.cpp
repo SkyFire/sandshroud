@@ -81,8 +81,6 @@ class OnyxiaAI : public MoonScriptBossAI
     
     void OnCombatStart(Unit *mTarget)
 	{
-		range = GetUnit()->GetAIInterface()->getOutOfCombatRange();
-		GetUnit()->GetAIInterface()->setOutOfCombatRange(200000);
 		GetUnit()->SetStandState(STANDSTATE_STAND);
 		Emote("How fortuitous, usually I must leave my lair to feed!");
 		ParentClass::OnCombatStart(mTarget);
@@ -90,7 +88,6 @@ class OnyxiaAI : public MoonScriptBossAI
 
 	void OnCombatStop(Unit *mTarget)
 	{
-		GetUnit()->GetAIInterface()->setOutOfCombatRange(range);
 		GetUnit()->SetStandState(STANDSTATE_SLEEP);
 		SetMoveType(Move_DontMoveWP);
 		SetFlyMode(false);
@@ -129,7 +126,7 @@ class OnyxiaAI : public MoonScriptBossAI
 						CastSpell(bellowingroar);
 					}
 					if(IsTimerFinished(mWhelpTimer)) whelps(40);
-					if(IsTimerFinished(mGuardTimer)) guards((GetInstanceMode()==MODE_25PLAYER_NORMAL) ? 2 : 1);
+					if(IsTimerFinished(mGuardTimer)) guards(2);
 				}break;
 			case 3: break; //whelps doesn't spawn at phase 3. Maybe will add something later.
 		}
@@ -141,28 +138,23 @@ class OnyxiaAI : public MoonScriptBossAI
 		for(int i = 0; i < count; i++)
         {
 			uint32 rnd = RandomUInt(5)+1;
-			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd].mX, whelpCoords[rnd].mY, whelpCoords[rnd].mZ, whelpCoords[rnd].mO);
-			if(whelp)
-				whelp->AttackPlayer(GetUnit()->GetAIInterface()->GetNextTarget());
-			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd-1].mX, whelpCoords[rnd-1].mY, whelpCoords[rnd-1].mZ, whelpCoords[rnd-1].mO);
-			if(whelp)
-				whelp->AttackPlayer(GetUnit()->GetAIInterface()->GetNextTarget());
+			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd].mX, whelpCoords[rnd].mY, whelpCoords[rnd].mZ, whelpCoords[rnd].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
+			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd-1].mX, whelpCoords[rnd-1].mY, whelpCoords[rnd-1].mZ, whelpCoords[rnd-1].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
         }
 		ResetTimer(mWhelpTimer, 90000);
 	}
 
-	void guards(int32 count) //only one guard spawns in 10 player mode.
-	{ 
+	void guards() //only one guard spawns in 10 player mode.
+	{
+        uint32 count = 0;
+        if(IsHeroic()) count = 2;
+        else count = 1;
 		for(int i=0; i<count; i++)
-		{
-			guard = SpawnCreature(ONY_GUARD, -124.648956f, -214.545670f, -71.680466f, 0.0f);
-			if(guard) 
-				guard->AttackPlayer(GetUnit()->GetAIInterface()->GetNextTarget());
-		}
+			SpawnCreature(ONY_GUARD, -124.648956f, -214.545670f, -71.680466f, 0.0f, false, GetUnit()->GetAIInterface()->GetNextTarget());
 		ResetTimer(mGuardTimer, 90000);
 	}
+
 	bool mDidHit;
-	MoonScriptCreatureAI *whelp, *guard;
 	int32 mWhelpTimer, mGuardTimer;
 	uint32 range;
 	SpellDesc *bellowingroar, *deepbreath;
@@ -173,14 +165,16 @@ void SpellFunc_Deep_Breath(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, 
 	OnyxiaAI *pOnyxia = (pCreatureAI != NULL) ? (OnyxiaAI*)(pCreatureAI) : NULL;
 	if(pOnyxia != NULL)
 	{
-		Spell *dbspell = new Spell(TO_OBJECT(pOnyxia), dbcSpell.LookupEntry(ONY_BREATH), false, NULLAURA);
-		dbspell->SetUnitTarget(pTarget);
-		for (unordered_set<Player *>::iterator itr = pOnyxia->GetUnit()->GetInRangePlayerSetBegin(); itr != pOnyxia->GetUnit()->GetInRangePlayerSetEnd(); ++itr) 
+		//Spell *dbspell = new Spell(TO_OBJECT(pOnyxia), dbcSpell.LookupEntry(ONY_BREATH), false, NULLAURA);
+		//dbspell->SetUnitTarget(pTarget);
+		for (PlayerStorageMap::iterator itr = pOnyxia->GetMapMgr()->m_PlayerStorage.begin(); itr != pOnyxia->GetMapMgr()->m_PlayerStorage.end(); ++itr) 
 		{
-			Player *pPlayer = TO_PLAYER(*itr);
-			pPlayer->GetSession()->SystemMessage("Lady Onyxia takes in a deep breath...");
+            Player *pPlayer = itr->second;
+            if(pPlayer != NULL)
+			    pPlayer->GetSession()->SystemMessage("Lady Onyxia takes in a deep breath...");
 		}
-		pOnyxia->GetUnit()->CastSpell(dbspell);
+        pOnyxia->CastSpell(pOnyxia->deepbreath);
+		//pOnyxia->GetUnit()->CastSpell(dbspell);
 		//if(dbspell->_DidHit(dbspell->GetUnitTarget())) //need to somehow return hit state
 			//pOnyxia->mDidHit = true;
 	}
@@ -188,17 +182,9 @@ void SpellFunc_Deep_Breath(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, 
 void SpellFunc_Eruption(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType)
 {
 	if(pCreatureAI != NULL)
-	{
 		for(unordered_set<Object* >::iterator itr = pCreatureAI->GetUnit()->GetInRangeSetBegin(); itr != pCreatureAI->GetUnit()->GetInRangeSetEnd(); ++itr)
-		{
 			if((*itr)->GetEntry() == GO_LAVA)
-			{
-				(*itr)->Activate(pCreatureAI->GetUnit()->GetMapMgr());
 				(*itr)->CastSpell(pTarget->GetGUID(), (pCreatureAI->GetInstanceMode() == MODE_10PLAYER_NORMAL) ? ONY_ERUPTION : ONY_ERUPTION25, false);
-				(*itr)->Deactivate(pCreatureAI->GetUnit()->GetMapMgr());
-			}				
-		}
-	}
 }
 
 void SpellFunc_Ignite_Weapon(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType);

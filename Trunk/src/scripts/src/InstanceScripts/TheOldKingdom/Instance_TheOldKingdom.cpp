@@ -19,53 +19,73 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "Instance_TheOldKingdom.h"
 
-
-
-#ifdef OldKingdom
-enum bosses
+NadoxAI::NadoxAI( Creature *pCreature ) : MoonScriptCreatureAI( pCreature )
 {
-	NPC_NADOX					= 29309,
-	NPC_TALDARAM				= 29308,
-	NPC_SHADOWSEEKER			= 29310,
-	NPC_VOLAZI					= 29311,
-	NPC_AMANITAR				= 30258
+	if(IsHeroic())
+		AddSpell(H_SPELL_BROOD_PLAGUE, Target_Current, 15, 0, 30, 0.0f, 5.0f);
+	else
+		AddSpell(SPELL_BROOD_PLAGUE, Target_Current, 15, 0, 60, 0.0f, 5.0f);
+    pBerserk = AddSpell(SPELL_BERSERK, Target_Self, 0, 0, 60);
+    pGuardA = AddSpell(SPELL_GUARDIAN_AURA, Target_Self, 0, 0, 0);
+    mLoc.ChangeCoords(GetUnit()->GetPositionX(),GetUnit()->GetPositionY(),GetUnit()->GetPositionZ(),GetUnit()->GetOrientation());
+    AddEmote(Event_OnCombatStart, "The secrets of the deep shall remain hidden.", Text_Yell);
+    AddEmote(Event_OnTargetDied, "Sleep now, in the cold dark.", Text_Yell);
+    AddEmote(Event_OnTargetDied, "For the Lich King!", Text_Yell);
+    AddEmote(Event_OnTargetDied, "Perhaps we will be allies soon.", Text_Yell);
+    AddEmote(Event_OnDied, "Master, is my service complete?", Text_Yell);
 };
 
-enum spell
-{	//Nadox spells.
-	SPELL_BROOD_PLAGUE			= 56130,
-	SPELL_BERSER				= 26662,
-	SPELL_GUARDIAN_AURA			= 56153,
-	H_SPELL_BROOD_PLAGUE		= 59467,
-	H_SPELL_BROOD_RAGE			= 59465
-
-};
-
-class NadoxAI : public MoonScriptCreatureAI
+void NadoxAI::OnCombatStart(Unit *pTarget)
 {
-public:
-	MOONSCRIPT_FACTORY_FUNCTION( NadoxAI, MoonScriptCreatureAI );
-	NadoxAI( Creature *pCreature ) : MoonScriptCreatureAI( pCreature )
-	{
-		if(IsHeroic()){
-			AddSpell(H_SPELL_BROOD_PLAGUE, Target_Current, 15, 0, 30, 0.0f, 5.0f);
-			pBloodRage = AddSpell(H_SPELL_BROOD_RAGE, Target_Current, 0, 0, 90, 0.0f, 40.0f);
-		}
-		else
-			AddSpell(SPELL_BROOD_PLAGUE, Target_Current, 15, 0, 60, 0.0f, 5.0f);
-			
-	};
-
-	void AIUpdate()
-	{
-		
-		ParentClass::AIUpdate();
-	}
-private:
-	SpellDesc *pBloodRage;
+    mSwarmerTimer = AddTimer(RandomUInt(15)*1000);
+    ParentClass::OnCombatStart(pTarget);
 };
 
-#endif
+void NadoxAI::AIUpdate()
+{   
+    if (IsTimerFinished(mSwarmerTimer))
+    {
+        ResetTimer(mSwarmerTimer, RandomUInt(15)*1000);
+        uint32 m_swarm = RandomUInt(5)+1;
+        for (uint32 i=0; i < m_swarm; ++i)
+        {
+            mSwarm = SpawnCreature(NPC_SWARMER, 682.851f, -905.214f, 25.614f, 0.0f, true, GetUnit()->GetAIInterface()->GetSecondHated());
+            if (IsHeroic()) Swarmers.push_back(TO_UNIT(mSwarm));
+        }
+    }
+    if (GetUnit()->CalcDistance(mLoc) >= 100.0f)
+        CastSpell(pBerserk);
+    if (IsHeroic())
+    {
+        switch(RandomUInt(2))
+        {
+            case 0:
+                Emote("The young must not grow hungry..."); break;
+            case 1:
+                Emote("Shhhad ak kereeesshh chak-k-k!"); break;
+        }
+        for (UnitArray::iterator swarm = Swarmers.begin(); swarm != Swarmers.end(); ++swarm)
+            if ((*swarm)!=NULLUNIT && (*swarm)->isAlive())
+                GetUnit()->CastSpell((*swarm), SPELL_BROOD_RAGE, false);
+        Swarmers.clear();
+    }
+    if (GetHealthPercent() == 50)
+    {
+        mGuard = SpawnCreature(NPC_GUARDIAN, true, GetUnit()->GetAIInterface()->GetSecondHated());
+        mGuard->CastSpell(pGuardA);
+    }
+	ParentClass::AIUpdate();
+};
+
+
+TaldaramAI::TaldaramAI( Creature *pCreature ) : MoonSciptBossAI(pCreature)
+{
+    AddSpell(SPELL_BLOODTHIRST, Target_Current, 15, 0, 20);
+    pVanish = AddSpell(SPELL_VANISH, Target_Self, 0, 0, 0);
+    pEmbrace = (IsHeroic()) ? AddSpell(H_SPELL_EMBRACE, Target_Current, 0, 0, 0) : AddSpell(SPELL_EMBRACE, Target_Current, 0, 0, 0);
+
+};
+
+

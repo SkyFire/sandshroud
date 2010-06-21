@@ -837,6 +837,10 @@
 							RelativePath="..\..\src\InstanceScripts\TheOldKingdom\Instance_TheOldKingdom.cpp"
 							>
 						</File>
+						<File
+							RelativePath="..\..\src\InstanceScripts\TheOldKingdom\Instance_TheOldKingdom.h"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="Azjol-Nerub"
@@ -933,10 +937,22 @@
 					<Filter
 						Name="The Obsidian Sanctum"
 						>
+						<File
+							RelativePath="..\..\src\InstanceScripts\TheObsidianSanctum\Raid_TheObsidianSanctum.cpp"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="The Ruby Sanctum"
 						>
+						<File
+							RelativePath="..\..\src\InstanceScripts\TheRubySanctum\Raid_TheRubySanctum.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\InstanceScripts\TheRubySanctum\Raid_TheRubySanctum.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 				<Filter

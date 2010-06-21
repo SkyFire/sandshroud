@@ -418,12 +418,12 @@ MoonScriptCreatureAI* MoonScriptCreatureAI::GetNearestCreature(uint32 pCreatureI
 	return ( NearestCreature ) ? static_cast<MoonScriptCreatureAI*>(NearestCreature->GetScript()) : NULL;
 }
 
-MoonScriptCreatureAI* MoonScriptCreatureAI::SpawnCreature(uint32 pCreatureId, bool pForceSameFaction)
+MoonScriptCreatureAI* MoonScriptCreatureAI::SpawnCreature(uint32 pCreatureId, bool pForceSameFaction, Unit *pTarget)
 {
-	return SpawnCreature(pCreatureId, _unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), _unit->GetOrientation(), pForceSameFaction);
+	return SpawnCreature(pCreatureId, _unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), _unit->GetOrientation(), pForceSameFaction, pTarget);
 }
 
-MoonScriptCreatureAI* MoonScriptCreatureAI::SpawnCreature(uint32 pCreatureId, float pX, float pY, float pZ, float pO, bool pForceSameFaction)
+MoonScriptCreatureAI* MoonScriptCreatureAI::SpawnCreature(uint32 pCreatureId, float pX, float pY, float pZ, float pO, bool pForceSameFaction, Unit *pTarget)
 {
 	Creature *NewCreature = _unit->GetMapMgr()->GetInterface()->SpawnCreature(pCreatureId, pX, pY, pZ, pO, true, false, 0, 0);
 	MoonScriptCreatureAI* CreatureScriptAI = ( NewCreature ) ? static_cast<MoonScriptCreatureAI*>(NewCreature->GetScript()) : NULL;
@@ -432,6 +432,8 @@ MoonScriptCreatureAI* MoonScriptCreatureAI::SpawnCreature(uint32 pCreatureId, fl
 		uint32 FactionTemplate = _unit->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
 		NewCreature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, FactionTemplate);
 	}
+    if (pTarget!=NULLUNIT)
+        CreatureScriptAI->AttackPlayer(pTarget);
 	return CreatureScriptAI;
 }
 
