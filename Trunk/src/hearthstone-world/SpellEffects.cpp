@@ -554,21 +554,20 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				dmg += 0.75 * u_caster->GetAP();
 			}break;
 
-//		case 59653: // Damage Shield
-//			{
-//				if(p_caster != NULL)
-//				{
-//					Item* shield = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND);
-//					if(shield != NULL && shield->GetProto() && shield->GetProto()->InventoryType == INVTYPE_SHIELD)
-//					{
-//						dmg = p_caster->Damageshield_amount;
-//					}
-//					else
-//					{
-//						return; // No Shield = No Damage.
-//					}
-//				}
-//			}break;
+		case 59653: // Damage Shield
+			{
+				if(p_caster != NULL)
+				{
+					Item* shield = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND);
+					if(shield != NULL && shield->GetProto() && shield->GetProto()->InventoryType == INVTYPE_SHIELD)
+						if(p_caster->Damageshield_amount)
+							dmg = p_caster->Damageshield_amount;
+						else
+							return; // No damage shield amount is impossible.
+					else
+						return; // No Shield = No Damage.
+				}
+			}break;
 
 			/************************
 			*		PALADIN			*
