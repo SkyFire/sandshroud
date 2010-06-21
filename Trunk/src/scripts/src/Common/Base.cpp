@@ -391,8 +391,15 @@ bool MoonScriptCreatureAI::IsHeroic() // Crow: Add correct Raid checks.
 {
 	if ( _unit->GetMapMgr() == NULLMAPMGR )
 		return false;
-	if ( _unit->GetMapMgr()->iInstanceMode != MODE_5PLAYER_HEROIC )
-		return false;
+	switch(_unit->GetMapMgr()->iInstanceMode)
+    {
+        case MODE_5PLAYER_HEROIC:
+        case MODE_10PLAYER_HEROIC:
+        case MODE_25PLAYER_HEROIC:
+		    return true;
+        default:
+            return false;
+    }
 
 	return true;
 };
@@ -1473,28 +1480,4 @@ void MoonScriptBossAI::AIUpdate()
 		RemoveTimer(mEnrageTimer);
 	}
 	MoonScriptCreatureAI::AIUpdate();
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Premade Spell Functions
-#define SPELLFUNC_VANISH 24699
-
-void SpellFunc_ClearHateList(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType)
-{
-	pCreatureAI->ClearHateList();
-}
-
-void SpellFunc_Disappear(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType)
-{
-	pCreatureAI->ClearHateList();
-	pCreatureAI->SetCanMove(false);
-	pCreatureAI->SetCanEnterCombat(false);
-	pCreatureAI->ApplyAura(SPELLFUNC_VANISH);
-}
-
-void SpellFunc_Reappear(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType)
-{
-	pCreatureAI->SetCanMove(true);
-	pCreatureAI->SetCanEnterCombat(true);
-	pCreatureAI->RemoveAura(SPELLFUNC_VANISH);
 }

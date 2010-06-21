@@ -1724,6 +1724,7 @@ public:
 #define SOLARIAN_PSYCHIC_SCREAM					34322	//Fears up to 5 targets in melee range.
 #define SOLARIUMPRIEST_GREATER_HEAL				38580	//Heals 23125 to 26875 any friendly target
 #define SOLARIUMPRIEST_HOLY_SMITE				31740	//Deals 553 to 747 holy damage
+#define SPELLFUNC_VANISH 24699
 
 bool Dummy_Solarian_WrathOfTheAstromancer(uint32 pEffectIndex, Spell *pSpell);
 void SpellFunc_Solarian_Disappear(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType);
@@ -1835,7 +1836,10 @@ void SpellFunc_Solarian_Disappear(SpellDesc* pThis, MoonScriptCreatureAI* pCreat
 	HighAstromancerSolarianAI* Solarian = ( pCreatureAI ) ? (HighAstromancerSolarianAI*)pCreatureAI : NULL;
 	if( Solarian )
 	{
-		SpellFunc_Disappear(pThis, pCreatureAI, pTarget, pType);
+		pCreatureAI->ClearHateList();
+	    pCreatureAI->SetCanMove(false);
+	    pCreatureAI->SetCanEnterCombat(false);
+	    pCreatureAI->ApplyAura(SPELLFUNC_VANISH);
 
 		//Spawn spot lights, and despawn them after 26sec X(400,460) Y(-340,-400)
 		Solarian->mSpawnPositions[0][0] = 400 + RandomFloat(60); Solarian->mSpawnPositions[0][1] = -400 + RandomFloat(60);
@@ -1857,7 +1861,9 @@ void SpellFunc_Solarian_Reappear(SpellDesc* pThis, MoonScriptCreatureAI* pCreatu
 		Solarian->SpawnCreature(CN_SOLARIUMPRIEST, Solarian->mSpawnPositions[1][0], Solarian->mSpawnPositions[1][1], 17);
 		//Solarian->MoveTo(Solarian->mSpawnPositions[2][0], Solarian->mSpawnPositions[2][1], 17);	//Doesn't work quite right yet
 
-		SpellFunc_Reappear(pThis, pCreatureAI, pTarget, pType);
+		pCreatureAI->SetCanMove(true);
+	    pCreatureAI->SetCanEnterCombat(true);
+	    pCreatureAI->RemoveAura(SPELLFUNC_VANISH);
 	}
 }
 

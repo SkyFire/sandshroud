@@ -411,7 +411,7 @@ class FirelordAI : public MoonScriptCreatureAI
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Lava Annihilator AI Script
 #define CN_LAVAANNIHILATOR 11665
-
+void SpellFunc_ClearHateList(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType);
 class LavaAnnihilatorAI : public MoonScriptCreatureAI
 {
     MOONSCRIPT_FACTORY_FUNCTION(LavaAnnihilatorAI, MoonScriptCreatureAI);
@@ -421,6 +421,10 @@ class LavaAnnihilatorAI : public MoonScriptCreatureAI
     }
 };
 
+void SpellFunc_ClearHateList(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType)
+{
+	pCreatureAI->ClearHateList();
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Ancient Core Hound AI Script
 #define CN_ANCIENTCOREHOUND					11673
