@@ -9314,9 +9314,6 @@ void Player::OnWorldPortAck()
 				case MODE_5PLAYER_HEROIC:
 					welcome_msg += " (5 Player Heroic)";
 					break;
-				case MODE_5PLAYER_EPIC:
-					welcome_msg += " (5 Player Epic)";
-					break;
 				default:
 					break;
 				}
