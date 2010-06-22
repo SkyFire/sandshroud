@@ -316,6 +316,7 @@ public:
 	bool					IsAlive();
 	void					SetScale(float pScale);
 	float					GetScale();
+    void                    SetBaseHealth(uint32 mHealth);
 	void					SetDisplayId(uint32 pDisplayId);
 	void					SetWieldWeapon(bool pValue);
 	void					SetDisplayWeapon(bool pMainHand, bool pOffHand);

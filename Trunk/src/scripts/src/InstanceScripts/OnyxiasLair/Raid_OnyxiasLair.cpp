@@ -38,6 +38,7 @@ void SpellFunc_Deep_Breath(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, 
 void SpellFunc_Eruption(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType);
 class OnyxiaAI : public MoonScriptBossAI
 {
+public:
 	MOONSCRIPT_FACTORY_FUNCTION(OnyxiaAI, MoonScriptBossAI);
 	OnyxiaAI(Creature *pCreature) : MoonScriptBossAI(pCreature)
     {		
@@ -51,7 +52,7 @@ class OnyxiaAI : public MoonScriptBossAI
 				AddPhaseSpell(3,AddSpell(ONY_FLAME_BREATH25, Target_Current, 15, 2, 20, 0.0f, 45.0f));
 				AddPhaseSpell(3,AddSpell(ONY_WING_BUFFET25, Target_Current, 15, 0, 20, 0.0f, 20.0f));
 				AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP25, Target_Destination, 15, 0, 20, 0.0f, 30.0f));
-				GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,22312000);
+				SetBaseHealth(22312000);
 			}break;
 		case MODE_10PLAYER_NORMAL:
 			{
@@ -62,7 +63,7 @@ class OnyxiaAI : public MoonScriptBossAI
 				AddPhaseSpell(3,AddSpell(ONY_FLAME_BREATH, Target_Current, 15, 2, 20, 0.0f, 45.0f));
 				AddPhaseSpell(3,AddSpell(ONY_WING_BUFFET, Target_Current, 15, 0, 20, 0.0f, 20.0f));
 				AddPhaseSpell(3,AddSpell(ONY_TAIL_SWEEP, Target_Destination, 15, 0, 20, 0.0f, 30.0f));
-				GetUnit()->SetUInt32Value(UNIT_FIELD_MAXHEALTH,4800000);
+				SetBaseHealth(4800000);
 			}break;
 		}
 		AddEmote(Event_OnTargetDied, "Learn your place, mortal!", Text_Yell, 0);
@@ -125,7 +126,7 @@ class OnyxiaAI : public MoonScriptBossAI
 						StopWaypointMovement();
 						CastSpell(bellowingroar);
 					}
-					if(IsTimerFinished(mWhelpTimer)) whelps(40);
+					if(IsTimerFinished(mWhelpTimer)) whelps();
 					if(IsTimerFinished(mGuardTimer)) guards();
 				}break;
 			case 3: break; //whelps doesn't spawn at phase 3. Maybe will add something later.
@@ -133,9 +134,10 @@ class OnyxiaAI : public MoonScriptBossAI
 		ParentClass::AIUpdate();
     }
 
-	void whelps(int32 count)
+	void whelps()
 	{
-		for(int i = 0; i < count; i++)
+        uint count = 40;
+		for(uint i = 0; i < count; i++)
         {
 			uint32 rnd = RandomUInt(5)+1;
 			SpawnCreature(ONY_WHELP, whelpCoords[rnd].mX, whelpCoords[rnd].mY, whelpCoords[rnd].mZ, whelpCoords[rnd].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
@@ -153,10 +155,13 @@ class OnyxiaAI : public MoonScriptBossAI
 		ResetTimer(mGuardTimer, 90000);
 	}
 
-	bool mDidHit;
+	
+protected:
 	int32 mWhelpTimer, mGuardTimer;
-	uint32 range;
-	SpellDesc *bellowingroar, *deepbreath;
+    SpellDesc *bellowingroar;
+public:
+    bool mDidHit;
+	SpellDesc *deepbreath;
 };
 
 void SpellFunc_Deep_Breath(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType)
