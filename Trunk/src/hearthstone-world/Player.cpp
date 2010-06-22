@@ -5817,12 +5817,13 @@ void Player::AddInRangeObject(Object* pObj)
 				{
 					data << uint8( aur->m_auraSlot );
 					data << uint32( aur->GetSpellId() );
-					uint16 flags = aur->GetAuraFlags();
+					uint8 flags = aur->GetAuraFlags();
 					if( aur->IsPositive() )
 						flags |= AFLAG_POSITIVE;
 					else
 						flags |= AFLAG_NEGATIVE;
 					data << flags;
+					data << uint8(aur->GetAuraLevel());
 					data << uint8(aur->procCharges > aur->stackSize ? aur->procCharges : aur->stackSize);
 					if(!(aur->GetAuraFlags() & AFLAG_NOT_GUID))
 					{

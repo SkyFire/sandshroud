@@ -870,9 +870,9 @@ struct SpellRange
 struct SpellDuration
 {
 	uint32 ID;
-	uint32 Duration1;
-	uint32 Duration2;
-	uint32 Duration3;
+	int32 Duration1;
+	int32 Duration2;
+	int32 Duration3;
 };
 
 struct RandomProps

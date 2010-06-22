@@ -871,7 +871,12 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 
 	if(m_Unit->GetMapMgr() != NULL && GetNextTarget() != NULL)
 	{
-		if(!m_moveFly && !IS_INSTANCE(m_Unit->GetMapId()))
+		bool fly = true;
+		if(m_Unit->IsCreature())
+			if(!(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
+				fly = false;
+				
+		if(fly && !IS_INSTANCE(m_Unit->GetMapId()))
 		{
 			float target_land_z = 0.0f;
 			if(m_Unit->GetMapMgr()->IsCollisionEnabled())
@@ -1890,18 +1895,18 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 
 	data << MoveFlags;
 	data << time;
-	if(MoveFlags & 0x200000)
-	{
-		data << uint8(0);
-		data << uint32(0);
-	}
-	if(MoveFlags & 0x800)
+	if(MoveFlags & MOVEFLAG_FLYING)
 	{
 		data << float(float(time)/1000);
 		data << uint32(0);
 	}
+	else if(MoveFlags & MOVEFLAG_SWIMMING)
+	{
+		data << uint8(0);
+		data << uint32(0);
+	}
 
-	data << uint32(1);	  // 1 waypoint
+	data << uint32(1);	// 1 waypoint
 	data << toX << toY << toZ;
 
 #ifndef ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES
@@ -2655,7 +2660,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 								GetUnit()->SetUInt32Value(UNIT_FIELD_DISPLAYID, wp->backwardskinid);
 							}
 						}
-						m_moveFly = (wp->flags == 768) ? 1 : 0;
+						m_moveFly = (wp->flags == 768) ? true : false;
 						m_moveRun = (wp->flags == 256) ? 1 : 0;
 						MoveTo(wp->x, wp->y, wp->z);
 					}
@@ -3699,6 +3704,15 @@ void AIInterface::CheckHeight()
 {
 	if(m_Unit->GetMapMgr())
 	{
+		if(m_Unit->IsCreature())
+		{
+			if(!(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
+			{
+				m_moveFly = false;
+				return;
+			}
+		}
+
 		uint32 m = m_Unit->GetMapId();
 		float x = m_Unit->GetPositionX();
 		float y = m_Unit->GetPositionY();

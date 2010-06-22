@@ -1976,13 +1976,15 @@ public:
 
 	uint32 GetDuration()
 	{
-		if(bDurSet)return Dur;
-		bDurSet=true;
+		if(bDurSet)
+			return Dur;
+
+		bDurSet = true;
 		int32 c_dur = 0;
 
 		if(m_spellInfo->DurationIndex)
 		{
-			SpellDuration *sd=dbcSpellDuration.LookupEntry(m_spellInfo->DurationIndex);
+			SpellDuration *sd = dbcSpellDuration.LookupEntry(m_spellInfo->DurationIndex);
 			if(sd)
 			{
 				//check for negative and 0 durations.

@@ -418,7 +418,7 @@ public:
     HEARTHSTONE_INLINE bool IsPassive(){ if(!m_spellProto) return false; return (m_spellProto->Attributes & ATTRIBUTES_PASSIVE && !m_areaAura);}
 
     HEARTHSTONE_INLINE int32 GetDuration() const { return m_duration; }
-    void SetDuration(int32 duration) { m_duration = duration; }
+	void SetDuration(int32 duration) { m_duration = duration; SetTimeLeft(duration); }
 	void SetTimeLeft(int32 time);
 
 	HEARTHSTONE_INLINE uint32 GetModCount() const { return m_modcount; }
