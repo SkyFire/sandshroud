@@ -408,10 +408,11 @@ enum Attributes
 	ATTRIBUTES_MOUNT_CASTABLE					= 0x1000000,	//castable on mounts
 	ATTRIBUTES_TRIGGER_COOLDOWN					= 0x2000000,	//also requires atributes ex	= 32 ?
 	ATTRIBUTES_BREAKABLE_BY_DAMAGE				= 0x4000000,
-	ATTRIBUTES_CANT_CANCEL						= 0x8000000,
+	ATTRIBUTES_CANCAST_WHILE_SITTING			= 0x8000000,
 	ATTRIBUTES_REQ_OOC							= 0x10000000,	//	 ATTRIBUTES_REQ_OUT_OF_COMBAT
 	ATTRIBUTES_IGNORE_INVULNERABILITY			= 0x20000000,	//debuffs that can't be removed by any spell and spells that can't be resisted in any case
 	ATTRIBUTES_UNK32							= 0x40000000,	// seems like IS_DIMINISHING but some spells not there (f.e. Gouge)
+	ATTRIBUTES_CANT_CANCEL						= 0x80000000,
 };
 
 enum AttributesEx
