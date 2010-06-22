@@ -4589,7 +4589,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 			modelId  = 864;
 			freeMovements=true;
 			spellId = 5420;//3122;
-			spellId2 = 34123;
 		} break;
 
 	case FORM_TRAVEL:
@@ -4863,7 +4862,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		SpellCastTargets tgt;
 		tgt.m_unitTarget = m_target->GetGUID();
 		sp->prepare( &tgt );
-		
+
 		if( spellId2 != 0 )
 		{
 			spellInfo = dbcSpell.LookupEntry(spellId2);
