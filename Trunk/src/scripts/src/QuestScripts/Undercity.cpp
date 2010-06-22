@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "Setup.h"
-#include "../Common/EasyFunctions.h"
+#include "ScriptStdAfx.h"
+
+
 
 class Quest_JourneytoUndercity : public QuestScript // never extend std::tr1::enable_shared_from_this. EVER. :)
 { 

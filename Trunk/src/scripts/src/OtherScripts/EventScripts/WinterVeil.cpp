@@ -25,9 +25,8 @@ Author: Angelis
 Team  : Sun++
 */
 
-#include "StdAfx.h"
-#include "../Setup.h"
-#include "../../Common/EasyFunctions.h"
+#include "ScriptStdAfx.h"
+
 
 class PX238WinterWondervolt : public GameObjectAIScript
 {

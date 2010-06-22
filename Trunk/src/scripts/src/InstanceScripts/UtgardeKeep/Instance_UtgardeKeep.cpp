@@ -25,7 +25,7 @@
 	Fix despawn(i think all bosses)
 	Add sound ID's
 */
-#include "StdAfx.h"
+#include "ScriptStdAfx.h"
 
 
 

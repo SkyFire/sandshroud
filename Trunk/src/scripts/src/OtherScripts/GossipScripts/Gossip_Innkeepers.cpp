@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 // Event of Hallowen control
 //#define EVENT_HALLOWEEN		// Decomment this for enable the event on Innkeepers

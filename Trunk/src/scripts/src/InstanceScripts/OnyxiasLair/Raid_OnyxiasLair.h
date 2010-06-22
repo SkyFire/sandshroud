@@ -19,9 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-
-
 #define MAP_LAIR 249
 
 enum LairGO

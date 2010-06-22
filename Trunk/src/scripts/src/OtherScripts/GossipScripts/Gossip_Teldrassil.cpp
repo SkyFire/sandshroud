@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 // Erelas Ambersky
 #define GOSSIP_ERELAS_AMBERSKY    "Tell me more about these hippogryphs."

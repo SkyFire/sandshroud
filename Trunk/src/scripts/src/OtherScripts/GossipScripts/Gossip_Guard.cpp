@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 #ifdef WIN32
 #pragma warning(disable:4305)		// warning C4305: 'argument' : truncation from 'double' to 'float'

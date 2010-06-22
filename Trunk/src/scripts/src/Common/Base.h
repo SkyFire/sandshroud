@@ -22,8 +22,6 @@
 #ifndef _INSTANCE_SCRIPTS_BASE_H_
 #define _INSTANCE_SCRIPTS_BASE_H_
 
-#include "../InstanceScripts/garbage.h"
-
 #define INVALIDATE_TIMER			-1
 #define DEFAULT_UPDATE_FREQUENCY	1000	//milliseconds
 #define DEFAULT_DESPAWN_TIMER		2000	//milliseconds

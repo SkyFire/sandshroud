@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
+#include "ScriptStdAfx.h"
 #include "Raid_TheRubySanctum.h"
 
 void SpellFunc_Enervating_Brand(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, Unit *pTarget, TargetType pType);

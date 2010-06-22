@@ -19,11 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
-#include "../../Common/Base.h"
-#include "../../Common/Instance_Base.h"
-
 /************************************************************************/
 /* Event_DarkPortal.cpp Script											*/
 /************************************************************************/

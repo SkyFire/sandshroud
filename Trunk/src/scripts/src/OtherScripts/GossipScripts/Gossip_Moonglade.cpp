@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 // Trenton Lighthammer
 #define GOSSIP_SILVA_FILNAVETH    "I'd like to fly to Rut'theran Village."

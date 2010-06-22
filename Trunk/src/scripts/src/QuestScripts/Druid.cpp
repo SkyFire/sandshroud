@@ -22,9 +22,9 @@
 /**********************
 Edits by : FenixGman
 **********************/
-#include "StdAfx.h"
-#include "Setup.h"
-#include "../Common/EasyFunctions.h"
+#include "ScriptStdAfx.h"
+
+
 
 bool CenarionMoondust(uint32 i, Spell *pSpell) // Body And Heart (Alliance)
 {

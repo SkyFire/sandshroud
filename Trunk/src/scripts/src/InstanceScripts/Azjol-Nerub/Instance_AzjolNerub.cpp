@@ -25,7 +25,7 @@
 	Add's AI and trash
 	*/
 
-#include "StdAfx.h"
+#include "ScriptStdAfx.h"
 
 
 

@@ -25,8 +25,6 @@
 // Uncomment if you want debug texts
 // #define ENABLE_DEBUG_TEXT
 
-#include "StdAfx.h"
-
 #pragma warning(disable:4305) // warning C4305: 'argument' : truncation from 'double' to 'float'
 #pragma warning(disable:4267) // warning C4267: '=' : conversion from 'size_t' to 'uint32', possible loss of data
 

@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 // Skorn Whitecloud
 #define GOSSIP_SKORN_WHITECLOUD    "Tell me a story, Skorn."

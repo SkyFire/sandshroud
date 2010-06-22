@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
+#include "ScriptStdAfx.h"
 #include "Instance_TheOldKingdom.h"
 
 NadoxAI::NadoxAI( Creature *pCreature ) : MoonScriptCreatureAI( pCreature )

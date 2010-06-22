@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "Setup.h"
-#include "../Common/EasyFunctions.h"
+#include "ScriptStdAfx.h"
+
+
 
 
 
@@ -150,24 +150,24 @@ bool OrbOfMurlocControl(uint32 i, Spell *pSpell)
 
 #define GO_FIRE 183816
 
-struct Coords
+struct Coord
 {
 	float x;
 	float y;
 	float z;
 	float o;
 };
-static Coords BloodoathFire[] =
+static Coord BloodoathFire[] =
 {
 	{13329.4f, -6994.70f, 14.5219f, 1.38938f},
  	{13315.4f, -6990.72f, 14.7647f, 1.25979f}
 };
-static Coords SinlorenFire[] =
+static Coord SinlorenFire[] =
 {
 	{13214.3f, -7059.19f, 17.5717f, 1.58573f},
 	{13204.2f, -7059.38f, 17.5717f, 1.57787f}
 };
-static Coords DawnchaserFire[] =
+static Coord DawnchaserFire[] =
 {
 	{13284.1f, -7152.65f, 15.9774f, 1.44828f},
 	{13273.0f, -7151.21f, 15.9774f, 1.39723f}

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
+#include "ScriptStdAfx.h"
 
 
 #define MEATHOOK_ENTRY 26529

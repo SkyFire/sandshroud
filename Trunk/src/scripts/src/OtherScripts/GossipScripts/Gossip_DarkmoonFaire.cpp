@@ -27,8 +27,8 @@ Team: Sun++ (www.sunplusplus.info)
 ===============================
 */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 // Setup Carnies
 #define BARK_SETUP_CARNIES_1    "Faire's a coming!"

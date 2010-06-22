@@ -225,6 +225,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="ScriptStdAfx.h"
 				PrecompiledHeaderFile="$(IntDir)\$(TargetName).pch"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
@@ -375,7 +376,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\InstanceScripts\StdAfx.cpp"
+				RelativePath="..\..\src\InstanceScripts\ScriptStdAfx.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -385,6 +386,10 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\InstanceScripts\ScriptStdAfx.h"
+				>
 			</File>
 			<Filter
 				Name="Base Class"

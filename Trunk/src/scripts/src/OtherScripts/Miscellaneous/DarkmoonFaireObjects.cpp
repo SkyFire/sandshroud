@@ -27,8 +27,8 @@ Team: Sun++
 ===============================
 */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 // Blastenheimer 5000 Ultra Cannon
 class Blastenheimer5000 : public GameObjectAIScript

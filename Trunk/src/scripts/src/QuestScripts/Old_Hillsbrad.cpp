@@ -19,22 +19,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "Setup.h"
-#include "../Common/EasyFunctions.h"
+#include "ScriptStdAfx.h"
+
+
 
 uint32 numBarrel = 0;
 
 #define GO_FIRE 183816
 
-struct Coords
+struct Coord
 {
 	float x;
 	float y;
 	float z;
 	float o;
 };
-static Coords Fires[] =
+static Coord Fires[] =
 {
 	{2160.68f, 235.382f, 53.8946f, 3.5555f},
 	{2162.26f, 237.439f, 56.7303f, 5.97846f},

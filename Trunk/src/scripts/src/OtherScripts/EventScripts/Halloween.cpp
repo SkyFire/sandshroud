@@ -25,10 +25,8 @@ Author: Angelis
 Team  : Sun++
 */
 
-#include "StdAfx.h"
-#include "../Setup.h"
-#include "../../Common/EasyFunctions.h"
-#include "../../Common/Base.h"
+#include "ScriptStdAfx.h"
+
 
 //Black Cat
 class BlackCat : public MoonScriptCreatureAI

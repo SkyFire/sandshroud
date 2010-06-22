@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "../Setup.h"
+#include "ScriptStdAfx.h"
+
 
 // Cassa Crimsonwing
 #define GOSSIP_CASSA_CRIMSONWING    "Lady Jaina told me to speak to yo about using a gryphon to survey Alcaz Island."

@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
-#include "Setup.h"
-#include "../Common/EasyFunctions.h"
+#include "ScriptStdAfx.h"
+
+
 
 #define SendQuickMenu(textid) objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), textid, plr); \
 	Menu->SendTo(plr);
@@ -268,14 +268,14 @@ public:
 #define GO_BREAD 2562
 
 
-struct Coords
+struct Coord
 {
 	float x;
 	float y;
 	float z;
 	float o;
 };
-static Coords MeatSpawnPoints[] =
+static Coord MeatSpawnPoints[] =
 {
 	{-14655.1f, 148.229f, 3.01744f, 3.45635f},
  	{-14655.6f, 146.111f, 2.29463f, 1.43766f},
@@ -287,7 +287,7 @@ static Coords MeatSpawnPoints[] =
 	{-14652.2f, 146.926f, 3.63756f, 6.06693f},
 	{-14653.0f, 145.274f, 2.76439f, 6.06279f}
 };
-static Coords BottleSpawnPoints[] =
+static Coord BottleSpawnPoints[] =
 {
 	{-14653.5f, 145.711f, 2.01005f, 1.14750f},
 	{-14656.7f, 147.404f, 3.05695f, 1.44181f},
@@ -295,7 +295,7 @@ static Coords BottleSpawnPoints[] =
 	{-14657.5f, 147.567f, 2.83560f, 2.14234f},
 	{-14655.9f, 148.848f, 3.93732f, 2.79728f}
 };
-static Coords BreadSpawnPoints[] =
+static Coord BreadSpawnPoints[] =
 {
 	{-14654.6f, 146.299f, 2.04134f, 5.47387f},
 	{-14656.5f, 148.372f, 3.50805f, 5.76817f},
