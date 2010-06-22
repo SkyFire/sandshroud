@@ -343,16 +343,10 @@ void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
-	SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellId );
-	if (!spellInfo)
-		return;
-
-//	if (spellInfo->Attributes & ATTRIBUTES_CANT_CANCEL)
-//		return;
-
 	for(uint32 x = 0; x < MAX_AURAS+MAX_POSITIVE_AURAS; ++x)
 	{
-		if(_player->m_auras[x] && _player->m_auras[x]->GetSpellId() == spellId && _player->m_auras[x]->IsPositive())
+		SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellId );
+		if(_player->m_auras[x] && _player->m_auras[x]->GetSpellId() == spellId && _player->m_auras[x]->IsPositive() && !(spellInfo->Attributes & static_cast<uint32>(ATTRIBUTES_CANT_CANCEL))
 			_player->RemoveAuraBySlot(x);
 	}
 	DEBUG_LOG("Aura","Removing aura %u",spellId);
