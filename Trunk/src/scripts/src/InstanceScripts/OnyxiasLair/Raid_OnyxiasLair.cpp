@@ -126,7 +126,7 @@ class OnyxiaAI : public MoonScriptBossAI
 						CastSpell(bellowingroar);
 					}
 					if(IsTimerFinished(mWhelpTimer)) whelps(40);
-					if(IsTimerFinished(mGuardTimer)) guards(2);
+					if(IsTimerFinished(mGuardTimer)) guards();
 				}break;
 			case 3: break; //whelps doesn't spawn at phase 3. Maybe will add something later.
 		}
@@ -138,18 +138,17 @@ class OnyxiaAI : public MoonScriptBossAI
 		for(int i = 0; i < count; i++)
         {
 			uint32 rnd = RandomUInt(5)+1;
-			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd].mX, whelpCoords[rnd].mY, whelpCoords[rnd].mZ, whelpCoords[rnd].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
-			whelp = SpawnCreature(ONY_WHELP, whelpCoords[rnd-1].mX, whelpCoords[rnd-1].mY, whelpCoords[rnd-1].mZ, whelpCoords[rnd-1].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
+			SpawnCreature(ONY_WHELP, whelpCoords[rnd].mX, whelpCoords[rnd].mY, whelpCoords[rnd].mZ, whelpCoords[rnd].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
+			SpawnCreature(ONY_WHELP, whelpCoords[rnd-1].mX, whelpCoords[rnd-1].mY, whelpCoords[rnd-1].mZ, whelpCoords[rnd-1].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
         }
 		ResetTimer(mWhelpTimer, 90000);
 	}
 
 	void guards() //only one guard spawns in 10 player mode.
 	{
-        uint32 count = 0;
+        uint count = 1;
         if(IsHeroic()) count = 2;
-        else count = 1;
-		for(int i=0; i<count; i++)
+        for(uint i=0; i<count; i++)
 			SpawnCreature(ONY_GUARD, -124.648956f, -214.545670f, -71.680466f, 0.0f, false, GetUnit()->GetAIInterface()->GetNextTarget());
 		ResetTimer(mGuardTimer, 90000);
 	}
@@ -167,7 +166,7 @@ void SpellFunc_Deep_Breath(SpellDesc* pThis, MoonScriptCreatureAI* pCreatureAI, 
 	{
 		//Spell *dbspell = new Spell(TO_OBJECT(pOnyxia), dbcSpell.LookupEntry(ONY_BREATH), false, NULLAURA);
 		//dbspell->SetUnitTarget(pTarget);
-		for (PlayerStorageMap::iterator itr = pOnyxia->GetMapMgr()->m_PlayerStorage.begin(); itr != pOnyxia->GetMapMgr()->m_PlayerStorage.end(); ++itr) 
+		for (PlayerStorageMap::iterator itr = pOnyxia->GetUnit()->GetMapMgr()->m_PlayerStorage.begin(); itr != pOnyxia->GetUnit()->GetMapMgr()->m_PlayerStorage.end(); ++itr) 
 		{
             Player *pPlayer = itr->second;
             if(pPlayer != NULL)

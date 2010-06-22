@@ -72,17 +72,17 @@ enum eSphere
     GO_SPHERE1                                    = 193093,
     GO_SPHERE2                                    = 193094
 };
-
-class TaldaramAI : public MoonScriptCreatureAI
+/*
+class TaldaramAI : public MoonScriptBossAI
 {
 public:
-	MOONSCRIPT_FACTORY_FUNCTION( TaldaramAI, MoonScriptCreatureAI );
+	MOONSCRIPT_FACTORY_FUNCTION( TaldaramAI, MoonScriptBossAI );
 	TaldaramAI( Creature *pCreature );
 
 private:
-    SpellDesc *pVanish;
+    SpellDesc *pVanish, pEmbrace;
 
-};
+};*/
 
 void SetupTheOldKingdom(ScriptMgr * mgr)
 {

@@ -79,13 +79,16 @@ void NadoxAI::AIUpdate()
 	ParentClass::AIUpdate();
 };
 
-
-TaldaramAI::TaldaramAI( Creature *pCreature ) : MoonSciptBossAI(pCreature)
+/*
+TaldaramAI::TaldaramAI( Creature *pCreature ) : MoonScriptBossAI(pCreature)
 {
     AddSpell(SPELL_BLOODTHIRST, Target_Current, 15, 0, 20);
     pVanish = AddSpell(SPELL_VANISH, Target_Self, 0, 0, 0);
-    pEmbrace = (IsHeroic()) ? AddSpell(H_SPELL_EMBRACE, Target_Current, 0, 0, 0) : AddSpell(SPELL_EMBRACE, Target_Current, 0, 0, 0);
+    if (IsHeroic())
+        pEmbrace = AddSpell(SPELL_EMBRACE, Target_Current, 0, 0, 0);
+    else 
+        pEmbrace = AddSpell(H_SPELL_EMBRACE, Target_Current, 0, 0, 0);
 
 };
-
+*/
 
