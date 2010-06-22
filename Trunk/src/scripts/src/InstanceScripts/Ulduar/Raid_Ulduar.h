@@ -20,7 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "../Setup.h"
+
 
 // Ulduar Teleporter
 class SCRIPT_DECL UlduarTeleporter : public GossipScript

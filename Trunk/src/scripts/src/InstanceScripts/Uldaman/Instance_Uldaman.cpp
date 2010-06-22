@@ -20,7 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "../Setup.h"
+
 
 /************************************************************************/
 /* Instance_Uldaman.cpp Script											*/

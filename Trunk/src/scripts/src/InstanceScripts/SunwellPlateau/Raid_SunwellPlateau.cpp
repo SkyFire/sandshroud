@@ -20,8 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "../../InstanceScripts/Setup.h"
-#include "../../Common/Base.h"
+
 #include "SUNWELL_KALECGOS.cpp"
 
 /*

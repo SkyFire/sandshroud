@@ -20,7 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "../Setup.h"
+
 
 
 class SCRIPT_DECL ICCTeleporter : public GossipScript

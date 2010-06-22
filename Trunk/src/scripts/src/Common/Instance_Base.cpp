@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Instance_Base.h"
+#include "StdAfx.h"
 
 MoonInstanceScript::MoonInstanceScript( MapMgr *pMapMgr ) : InstanceScript( pMapMgr )
 {

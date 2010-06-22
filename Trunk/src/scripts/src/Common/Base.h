@@ -18,16 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#pragma once
 #ifndef _INSTANCE_SCRIPTS_BASE_H_
 #define _INSTANCE_SCRIPTS_BASE_H_
 
-#include "StdAfx.h"
-#include "Instance_Base.h"
-
-#include <string>
-#include <vector>
-#include <map>
+#include "../InstanceScripts/garbage.h"
 
 #define INVALIDATE_TIMER			-1
 #define DEFAULT_UPDATE_FREQUENCY	1000	//milliseconds

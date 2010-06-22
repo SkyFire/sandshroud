@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../Setup.h"
+#include "StdAfx.h"
 
 
 #define MAP_LAIR 249

@@ -18,15 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef _INSTANCE_SCRIPT_BASE_H_
-#define _INSTANCE_SCRIPT_BASE_H_
-
-#include "StdAfx.h"
-
-#include <string>
-#include <vector>
-#include <map>
+#pragma once
+#ifndef _INSTANCE_SCRIPT_IBASE_H_
+#define _INSTANCE_SCRIPT_IBASE_H_
 
 #define INVALIDATE_TIMER			-1
 #define DEFAULT_UPDATE_FREQUENCY	1000	//milliseconds
@@ -40,7 +34,7 @@ enum EncounterState
 {
 	State_NotStarted			= 0,
 	State_InProgress			= 1,
-	State_Finished				= 2,
+	State_Finished				= 2
 };
 
 enum InstanceType
@@ -55,7 +49,7 @@ enum InstanceType
 enum InstanceMode
 {
 	Mode_Normal					= MODE_5PLAYER_NORMAL,
-	Mode_Heroic					= MODE_5PLAYER_HEROIC,
+	Mode_Heroic					= MODE_5PLAYER_HEROIC
 };
 
 enum DataType

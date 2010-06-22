@@ -20,7 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "../Setup.h"
+
 
 /************************************************************************/
 /* Raid_CoT_BattleForMountHyjal.cpp Script								*/

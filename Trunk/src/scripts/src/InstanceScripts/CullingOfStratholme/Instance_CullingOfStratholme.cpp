@@ -20,7 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "../Setup.h"
+
 
 #define MEATHOOK_ENTRY 26529
 class MEATHOOK_AI : public CreatureAIScript

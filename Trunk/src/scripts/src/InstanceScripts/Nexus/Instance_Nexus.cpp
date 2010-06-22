@@ -20,7 +20,7 @@
  */
 
 #include "StdAfx.h"
-#include "../Setup.h"
+
 
 #define ANOMALUS_CS		188527
 #define TELESTRA_CS		188526

@@ -20,7 +20,6 @@
  */
 
 #include "StdAfx.h"
-#include "../Setup.h"
 
 enum eKingdomNPC
 {
