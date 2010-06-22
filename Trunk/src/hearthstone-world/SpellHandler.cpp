@@ -343,10 +343,13 @@ void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
+	SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellId );
+	if(spellInfo == NULL)
+		return;
+
 	for(uint32 x = 0; x < MAX_AURAS+MAX_POSITIVE_AURAS; ++x)
 	{
-		SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellId );
-		if(_player->m_auras[x] && _player->m_auras[x]->GetSpellId() == spellId && _player->m_auras[x]->IsPositive() && !(spellInfo->Attributes & static_cast<uint32>(ATTRIBUTES_CANT_CANCEL)))
+		if(_player->m_auras[x] && _player->m_auras[x]->GetSpellId() == spellId && _player->m_auras[x]->IsPositive())
 			_player->RemoveAuraBySlot(x);
 	}
 	DEBUG_LOG("Aura","Removing aura %u",spellId);
@@ -357,18 +360,22 @@ void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
-	Player* plyr = GetPlayer();
-	if(!plyr)
-		return;
-	if(plyr->m_currentSpell)
-	{		
-		plyr->m_currentSpell->cancel();
+	if(_player)
+	{
+		if(_player->m_currentSpell)
+		{
+			if(_player->m_currentSpell->GetSpellProto()->Id != spellId)
+				DEBUG_LOG("Spell","Player cancelled spell that was not being channeled: %u", spellId);
+
+			_player->m_currentSpell->cancel();
+		}
 	}
 }
 
 void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& recv_data)
 {
-	_player->m_onAutoShot = false;
+	if(_player)
+		_player->m_onAutoShot = false;
 }
 
 void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
