@@ -1974,7 +1974,7 @@ public:
 	bool IsSeal();
 	bool static IsBinary(SpellEntry * sp);
 
-	uint32 GetDuration()
+	int32 GetDuration()
 	{
 		if(bDurSet)
 			return Dur;
@@ -1989,49 +1989,50 @@ public:
 			{
 				//check for negative and 0 durations.
 				//duration affected by level
-				if((int32)sd->Duration1 < 0 && sd->Duration2 && u_caster)
+				if(sd->Duration1 < 0 && sd->Duration2 && u_caster)
 				{
-					this->Dur = uint32(((int32)sd->Duration1 + (sd->Duration2 * u_caster->getLevel())));
-					if((int32)this->Dur > 0 && sd->Duration3 > 0 && (int32)this->Dur > (int32)sd->Duration3)
+					Dur = uint32((sd->Duration1 + (sd->Duration2 * u_caster->getLevel())));
+					if(Dur > 0 && sd->Duration3 > 0 && Dur > sd->Duration3)
 					{
-						this->Dur = sd->Duration3;
+						Dur = sd->Duration3;
 					}
 
-					if((int32)this->Dur < 0)
-						this->Dur = 0;
-					c_dur = this->Dur;
+					if(Dur < 0)
+						Dur = 0;
+					c_dur = Dur;
 				}
 				if(sd->Duration1 >= 0 && !c_dur)
 				{
-					this->Dur = sd->Duration1;
+					Dur = sd->Duration1;
 				}
 				//combo point lolerCopter? ;P
 				if(p_caster)
 				{
-					uint32 cp=p_caster->m_comboPoints;
+					uint32 cp = p_caster->m_comboPoints;
 					if(cp)
 					{
-						uint32 bonus=(cp*(sd->Duration3-sd->Duration1))/5;
+						uint32 bonus = (cp*(sd->Duration3-sd->Duration1))/5;
 						if(bonus)
 						{
-							this->Dur+=bonus;
+							Dur += bonus;
 						}
 					}
 				}
 
 				if(m_spellInfo->SpellGroupType && u_caster)
 				{
-					SM_FIValue(u_caster->SM[SMT_DURATION][0],(int32*)&this->Dur,m_spellInfo->SpellGroupType);
-					SM_PIValue(u_caster->SM[SMT_DURATION][1],(int32*)&this->Dur,m_spellInfo->SpellGroupType);
+					SM_FIValue(u_caster->SM[SMT_DURATION][0], (int32*)&Dur, m_spellInfo->SpellGroupType);
+					SM_PIValue(u_caster->SM[SMT_DURATION][1], (int32*)&Dur, m_spellInfo->SpellGroupType);
 				}
+
 				// Limit duration in PvP but not applying diminishing returns
-				if(unitTarget != NULL && unitTarget->IsPlayer() && this->Dur > 10000)
+				if(unitTarget != NULL && unitTarget->IsPlayer() && Dur > 10000)
 				{
 					switch(m_spellInfo->NameHash)
 					{
 					case SPELL_HASH_CURSE_OF_TONGUES:
 					case SPELL_HASH_BANISH:
-						this->Dur = 10000;
+						Dur = 10000;
 					}
 				}
 				if( unitTarget != NULL && p_caster && unitTarget == p_caster )
@@ -2052,15 +2053,15 @@ public:
 			}
 			else
 			{
-				this->Dur = (uint32)-1;
+				Dur = -1;
 			}
 		}
 		else
 		{
-			 this->Dur = (uint32)-1;
+			Dur = -1;
 		}
 
-		return this->Dur;
+		return Dur;
 	}
 
 	HEARTHSTONE_INLINE float GetRadius(uint32 i)
@@ -2189,7 +2190,7 @@ protected:
 	uint32			add_damage;
 
 	uint8			cancastresult;
-	uint32			Dur;
+	int32			Dur;
 	bool			bDurSet;
 	float			Rad[3];
 	bool			bRadSet[3];
@@ -2236,7 +2237,7 @@ private:
 
 };
 
-void ApplyDiminishingReturnTimer(uint32 * Duration, Unit* Target, SpellEntry * spell);
+void ApplyDiminishingReturnTimer(int32 * Duration, Unit* Target, SpellEntry * spell);
 void UnapplyDiminishingReturnTimer(Unit* Target, SpellEntry * spell);
 uint32 GetDiminishingGroup(uint32 NameHash);
 

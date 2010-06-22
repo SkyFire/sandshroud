@@ -1885,7 +1885,11 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if(!sd)
 									continue;
 
-								Aura* aura(new Aura(spe, std::min(GetDuration(sd), (uint32)10000), victim, TO_UNIT(this)));
+								int32 dur = GetDuration(sd);
+								if(dur > 10000)
+									dur = 10000;
+
+								Aura* aura(new Aura(spe, dur, victim, TO_UNIT(this)));
 								aura->AddMod(SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN, -30, 127, 0);
 								AddAura(aura);
 								continue;

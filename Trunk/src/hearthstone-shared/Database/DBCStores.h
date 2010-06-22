@@ -1273,7 +1273,7 @@ HEARTHSTONE_INLINE float GetMinRange(SpellRange *range)
 {
 	return range->minRange;
 }
-HEARTHSTONE_INLINE uint32 GetDuration(SpellDuration *dur)
+HEARTHSTONE_INLINE int32 GetDuration(SpellDuration *dur)
 {
 	return dur->Duration1;
 }

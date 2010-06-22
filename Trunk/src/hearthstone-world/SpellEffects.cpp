@@ -1343,6 +1343,45 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			}
 		}break;
 
+	case 31687: // Summon Water Elemental.
+		{
+			if(p_caster)
+			{
+				uint32 entry = 510;
+				CreatureInfo * ci = CreatureNameStorage.LookupEntry(entry);
+				CreatureProto * cp = CreatureProtoStorage.LookupEntry(entry);
+				if( ci && cp )
+				{
+					bool infinite = p_caster->HasAura(70937);
+					Pet* summon = objmgr.CreatePet();
+					summon->SetInstanceID(m_caster->GetInstanceID());
+					summon->CreateAsSummon(entry, ci, NULLCREATURE, p_caster, m_spellInfo, 1, infinite ? 0 : 45000);
+					summon->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
+
+					// Stats
+					summon->SetUInt32Value(UNIT_FIELD_MAXHEALTH, summon->GetMaxHealth() + uint32((float)p_caster->GetStamina()*0.3)*10);
+					summon->SetUInt32Value(UNIT_FIELD_MAXPOWER1, summon->GetMaxMana() + uint32((float)p_caster->GetIntellect()*0.3)*15);
+					summon->SetUInt32Value(UNIT_FIELD_HEALTH, summon->GetMaxHealth());
+					summon->SetUInt32Value(UNIT_FIELD_POWER1, summon->GetMaxMana());
+					summon->SetUInt32Value(UNIT_FIELD_RESISTANCES, summon->GetUInt32Value(UNIT_FIELD_RESISTANCES) + uint32(float(p_caster->GetUInt32Value(UNIT_FIELD_RESISTANCES))*0.35));
+					// TODO: 1/3 of spell power?
+
+					summon->AddSpell(dbcSpell.LookupEntry(31707), true, infinite ? true : false);
+					if(!infinite)
+						summon->AddSpell(dbcSpell.LookupEntry(33395), true, true);
+
+					summon->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+					summon->_setFaction();
+					if(p_caster->IsPvPFlagged())
+						summon->SetPvPFlag();
+
+					// Crow: ERR I have no clue.
+					summon->SetSummonOwnerSlot(p_caster->GetGUID(), 0);
+					p_caster->m_SummonSlots[0] = summon;
+				}
+			}
+		}break;
+
 	/*************************
 	 * ROGUE SPELLS
 	 *************************
@@ -2745,7 +2784,7 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 	//if we do not make a check to see if the aura owner is the same as the caster then we will stack the 2 auras and they will not be visible client sided
 	if(itr==unitTarget->tmpAura.end())
 	{
-		uint32 Duration = GetDuration();
+		int32 Duration = GetDuration();
 		
 		// Handle diminishing returns, if it should be resisted, it'll make duration 0 here.
 		if(!(m_spellInfo->Attributes & ATTRIBUTES_PASSIVE)) // Passive
@@ -3416,7 +3455,7 @@ void Spell::SpellEffectPersistentAA(uint32 i) // Persistent Area Aura
 		return;
 
 	//create only 1 dyn object
-	uint32 dur = GetDuration();
+	int32 dur = GetDuration();
 	float r = GetRadius(i);
 
 	//Note: this code seems to be useless
@@ -3580,95 +3619,72 @@ void Spell::SummonCreature(uint32 i) // Summon
 	if( !ci || !cp )
 		return;
 
-	if(m_spellInfo->EffectMiscValue[i] == 510)	// Water Elemental
+	float x, y, z;
+	if( m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && m_targets.m_destX && m_targets.m_destY && m_targets.m_destZ )
 	{
-		Pet* summon = NULLCREATURE;
-		summon = objmgr.CreatePet();
-		summon->SetInstanceID(m_caster->GetInstanceID());
-		summon->CreateAsSummon(m_spellInfo->EffectMiscValue[i], ci, NULLCREATURE, p_caster, m_spellInfo, 1, 45000);
-		summon->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
-		summon->AddSpell(dbcSpell.LookupEntry(31707), true, false); //dont need to send the spell packet yet
-		summon->AddSpell(dbcSpell.LookupEntry(33395), true, true); //now we can send it
-		summon->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-		summon->_setFaction();
-		if(p_caster->IsPvPFlagged())
-			summon->SetPvPFlag();
-		if( m_summonProperties->slot < 7 )
-		{
-			//record our owner guid and slotid
-			summon->SetSummonOwnerSlot(p_caster->GetGUID(),m_summonProperties->slot);
-			p_caster->m_SummonSlots[ m_summonProperties->slot ] = summon;
-		}
+		x = m_targets.m_destX;
+		y = m_targets.m_destY;
+		z = m_targets.m_destZ;
 	}
 	else
 	{
-		float x, y, z;
-		if( m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && m_targets.m_destX && m_targets.m_destY && m_targets.m_destZ )
+		x = u_caster->GetPositionX();
+		y = u_caster->GetPositionY();
+		z = u_caster->GetPositionZ();
+	}
+	uint32 health = 0;
+	uint32 count = m_spellInfo->EffectBasePoints[i] + 1;
+	if( m_summonProperties->unk2 & 2 ) // one, please.
+	{
+		count = 1;
+		health = m_spellInfo->EffectBasePoints[i] + 1;
+	}
+
+	for (uint32 j=0; j<count; j++)
+	{
+		float m_fallowAngle=-((float(M_PI)/2)*j);
+		x += (GetRadius(i)*(cosf(m_fallowAngle+u_caster->GetOrientation())));
+		y += (GetRadius(i)*(sinf(m_fallowAngle+u_caster->GetOrientation())));
+
+		Creature* pCreature = NULLCREATURE;
+		pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
+		if(pCreature == NULLCREATURE)
+			continue;
+		pCreature->Load(cp, x, y, z, p_caster->GetOrientation());
+		if(health)
 		{
-			x = m_targets.m_destX;
-			y = m_targets.m_destY;
-			z = m_targets.m_destZ;
+			pCreature->SetUInt32Value(UNIT_FIELD_MAXHEALTH, health);
+			pCreature->SetUInt32Value(UNIT_FIELD_HEALTH, health);
 		}
-		else
+		pCreature->_setFaction();
+		pCreature->GetAIInterface()->Init(pCreature,AITYPE_PET,MOVEMENTTYPE_NONE,u_caster);
+		pCreature->GetAIInterface()->SetUnitToFollow(u_caster);
+		pCreature->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
+		pCreature->GetAIInterface()->SetFollowDistance(3.0f);
+		pCreature->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
+		pCreature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+		pCreature->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, p_caster->GetGUID());
+		pCreature->_setFaction();
+		p_caster->SetUInt64Value(UNIT_FIELD_SUMMON, pCreature->GetGUID());
+
+		if( m_summonProperties->slot < 7 )
 		{
-			x = u_caster->GetPositionX();
-			y = u_caster->GetPositionY();
-			z = u_caster->GetPositionZ();
+			//record our owner guid and slotid
+			pCreature->SetSummonOwnerSlot(p_caster->GetGUID(),m_summonProperties->slot);
+			p_caster->m_SummonSlots[ m_summonProperties->slot ] = pCreature;
 		}
-		uint32 health = 0;
-		uint32 count = m_spellInfo->EffectBasePoints[i] + 1;
-		if( m_summonProperties->unk2 & 2 ) // one, please.
+
+		if ( m_spellInfo->EffectMiscValue[i] == 19668 ) //shadowfiend
 		{
-			count = 1;
-			health = m_spellInfo->EffectBasePoints[i] + 1;
-		}
+			float parent_bonus = (float)(p_caster->GetDamageDoneMod(SCHOOL_SHADOW)*0.065f);
+			pCreature->SetFloatValue(UNIT_FIELD_MINDAMAGE, pCreature->GetFloatValue(UNIT_FIELD_MINDAMAGE) + parent_bonus);
+			pCreature->SetFloatValue(UNIT_FIELD_MAXDAMAGE, pCreature->GetFloatValue(UNIT_FIELD_MAXDAMAGE) + parent_bonus);
+			pCreature->BaseDamage[0] += parent_bonus;
+			pCreature->BaseDamage[1] += parent_bonus;
+		}		
 
-		for (uint32 j=0; j<count; j++)
-		{
-			float m_fallowAngle=-((float(M_PI)/2)*j);
-			x += (GetRadius(i)*(cosf(m_fallowAngle+u_caster->GetOrientation())));
-			y += (GetRadius(i)*(sinf(m_fallowAngle+u_caster->GetOrientation())));
-
-			Creature* pCreature = NULLCREATURE;
-			pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
-			if(pCreature == NULLCREATURE)
-				continue;
-			pCreature->Load(cp, x, y, z, p_caster->GetOrientation());
-			if(health)
-			{
-				pCreature->SetUInt32Value(UNIT_FIELD_MAXHEALTH, health);
-				pCreature->SetUInt32Value(UNIT_FIELD_HEALTH, health);
-			}
-			pCreature->_setFaction();
-			pCreature->GetAIInterface()->Init(pCreature,AITYPE_PET,MOVEMENTTYPE_NONE,u_caster);
-			pCreature->GetAIInterface()->SetUnitToFollow(u_caster);
-			pCreature->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
-			pCreature->GetAIInterface()->SetFollowDistance(3.0f);
-			pCreature->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
-			pCreature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-			pCreature->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, p_caster->GetGUID());
-			pCreature->_setFaction();
-			p_caster->SetUInt64Value(UNIT_FIELD_SUMMON, pCreature->GetGUID());
-
-			if( m_summonProperties->slot < 7 )
-			{
-				//record our owner guid and slotid
-				pCreature->SetSummonOwnerSlot(p_caster->GetGUID(),m_summonProperties->slot);
-				p_caster->m_SummonSlots[ m_summonProperties->slot ] = pCreature;
-			}
-
-			if ( m_spellInfo->EffectMiscValue[i] == 19668 ) //shadowfiend
-			{
-				float parent_bonus = (float)(p_caster->GetDamageDoneMod(SCHOOL_SHADOW)*0.065f);
-				pCreature->SetFloatValue(UNIT_FIELD_MINDAMAGE, pCreature->GetFloatValue(UNIT_FIELD_MINDAMAGE) + parent_bonus);
-				pCreature->SetFloatValue(UNIT_FIELD_MAXDAMAGE, pCreature->GetFloatValue(UNIT_FIELD_MAXDAMAGE) + parent_bonus);
-				pCreature->BaseDamage[0] += parent_bonus;
-				pCreature->BaseDamage[1] += parent_bonus;
-			}		
-
-			pCreature->PushToWorld(p_caster->GetMapMgr());
-			sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE, GetDuration(), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-		}
+		pCreature->PushToWorld(p_caster->GetMapMgr());
+		sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE, GetDuration(), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
 }
 
@@ -4752,7 +4768,7 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 				continue;
 
 			float m_fallowAngle = angle_for_each_spawn * d;
-			uint32 duration = GetDuration();
+			int32 duration = GetDuration();
 			duration = duration <= 3600000 ? duration : 3600000; //limit to 1hr max.
 			if ( g_caster ) 
 			{
@@ -5531,7 +5547,7 @@ void Spell::SpellEffectDistract(uint32 i) // Distract
 	if(m_targets.m_destX != 0.0f || m_targets.m_destY != 0.0f || m_targets.m_destZ != 0.0f)
 	{
 //		unitTarget->GetAIInterface()->MoveTo(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, 0);
-		uint32 Stare_duration=GetDuration();
+		int32 Stare_duration=GetDuration();
 		if(Stare_duration>30*60*1000)
 			Stare_duration=10000;//if we try to stare for more then a half an hour then better not stare at all :P (bug)
 		float newo=unitTarget->calcRadAngle(unitTarget->GetPositionX(),unitTarget->GetPositionY(),m_targets.m_destX,m_targets.m_destY);

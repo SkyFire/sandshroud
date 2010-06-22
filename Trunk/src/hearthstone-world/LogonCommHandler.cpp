@@ -194,16 +194,14 @@ void LogonCommHandler::Connect(LogonServer * server)
 			Log.Notice("LogonCommClient", "Authentication timed out.");
 			conn->_id = 0;
 			conn->Disconnect();
-			logons[server]=NULL;
+			logons[server] = NULL;
 			return;
 		}
 
 		Sleep(50);
 	}
 
-	if(conn->authenticated == 1)
-		Log.Notice("LogonCommClient","Authentication succeeded.");
-	else
+	if(conn->authenticated != 1)
 	{
 		Log.Notice("LogonCommClient","Authentication failed.");
 		conn->_id = 0;
@@ -211,6 +209,8 @@ void LogonCommHandler::Connect(LogonServer * server)
 		logons[server] = NULL;
 		return;
 	}
+	else
+		Log.Notice("LogonCommClient","Authentication succeeded.");
 
 	// Send the initial ping
 	conn->SendPing();

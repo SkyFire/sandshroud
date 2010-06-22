@@ -626,6 +626,8 @@ public:
 	// Health
 	HEARTHSTONE_INLINE uint32 GetHealth() { return m_uint32Values[UNIT_FIELD_HEALTH]; }
 	HEARTHSTONE_INLINE uint32 GetMaxHealth() { return m_uint32Values[UNIT_FIELD_MAXHEALTH]; }
+	HEARTHSTONE_INLINE uint32 GetMana() { return m_uint32Values[UNIT_FIELD_POWER1]; }
+	HEARTHSTONE_INLINE uint32 GetMaxMana() { return m_uint32Values[UNIT_FIELD_MAXPOWER1]; }
 
 	bool IsInLineOfSight(Object* pObj);
 	int32 GetSpellBaseCost(SpellEntry *sp);

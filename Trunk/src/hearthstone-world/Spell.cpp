@@ -1398,7 +1398,7 @@ void Spell::cast(bool check)
 				and interrupts your regeneration for the full 10 seconds.
 				*/
 
-				uint32 channelDuration = GetDuration();
+				int32 channelDuration = GetDuration();
 				m_spellState = SPELL_STATE_CASTING;
 				SendChannelStart(channelDuration);
 				if( p_caster != NULL )
@@ -5076,7 +5076,7 @@ bool Spell::Reflect(Unit* refunit)
 	return true;
 }
 
-void ApplyDiminishingReturnTimer(uint32 * Duration, Unit* Target, SpellEntry * spell)
+void ApplyDiminishingReturnTimer(int32 * Duration, Unit* Target, SpellEntry * spell)
 {
 	uint32 status = GetDiminishingGroup(spell->NameHash);
 	uint32 Grp = status & 0xFFFF;   // other bytes are if apply to pvp
