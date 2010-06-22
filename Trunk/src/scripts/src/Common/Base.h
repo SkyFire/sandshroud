@@ -344,6 +344,7 @@ public:
 
 	void					CastSpell(SpellDesc* pSpell);
 	void					CastSpellNowNoScheduling(SpellDesc* pSpell);
+    void                    CastSpellInRange(SpellDesc *pSpell);
 	SpellDesc*				FindSpellById(uint32 pSpellId);
 	SpellDesc*				FindSpellByFunc(SpellFunc pFnc);
 	bool					IsCasting();

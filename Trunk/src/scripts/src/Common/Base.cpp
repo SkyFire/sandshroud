@@ -1134,6 +1134,14 @@ void MoonScriptCreatureAI::CastSpellOnTarget( Unit *pTarget, TargetType pType, S
 	};
 };
 
+void MoonScriptCreatureAI::CastSpellInRange(SpellDesc *pSpell)
+{
+    if (pSpell != NULL)
+        for (unordered_set< Player* >::iterator plr = _unit->GetInRangePlayerSetBegin(); plr!=_unit->GetInRangePlayerSetEnd(); itr++)
+            if((*plr)!=NULL && (*plr)->isAlive() && (*plr)->IsPlayer() && _unit->CalcDistance((TO_OBJECT(*plr))) < 100)
+                _unit->CastSpell((*plr)->GetGUID(), pSpell->mInfo, false);
+}
+
 int32 MoonScriptCreatureAI::CalcSpellAttackTime(SpellDesc* pSpell)
 {
 #ifdef USE_DBC_SPELL_INFO
