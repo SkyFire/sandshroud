@@ -43,12 +43,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm250"
+				AdditionalOptions="/Zm180"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				StringPooling="true"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
@@ -129,12 +129,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm250"
+				AdditionalOptions="/Zm180"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				StringPooling="true"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
@@ -219,7 +219,7 @@
 				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				StringPooling="true"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -302,11 +302,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm250"
+				AdditionalOptions="/Zm180"
 				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				StringPooling="true"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
