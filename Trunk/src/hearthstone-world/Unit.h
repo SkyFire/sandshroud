@@ -925,7 +925,7 @@ public:
 	//! Remove all auras
 	void RemoveAllAuras();
 	bool RemoveAllAuras(uint32 spellId,uint64 guid = 0); //remove stacked auras but only if they come from the same caster. Shaman purge If GUID = 0 then removes all auras with this spellid
-    void RemoveAllAurasOfType(uint32 auratype);//ex:to remove morph spells
+	void RemoveAllAurasOfType(uint32 auratype);//ex:to remove morph spells
 	bool RemoveAllAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllPosAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllNegAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
@@ -938,8 +938,8 @@ public:
 	Aura* FindActiveAura(uint32 spellId, uint64 guid = 0);
 	Aura* FindAura(uint32 spellId, uint64 guid = 0);
 	Aura* FindActiveAuraWithNameHash(uint32 namehash, uint64 guid = 0);
-	bool SetAuraDuration(uint32 spellId,Unit* caster,uint32 duration);
-	bool SetAuraDuration(uint32 spellId,uint32 duration);
+	bool SetAuraDuration(uint32 spellId,Unit* caster,int32 duration);
+	bool SetAuraDuration(uint32 spellId,int32 duration);
 	void EventDeathAuraRemoval();
 
 	void CastSpell(Spell* pSpell);

@@ -71,6 +71,9 @@ struct IOCSpawnLocation { float x; float y; float z; float o; };
 struct IOCGameObject { uint32 id[IOC_NODE_STATE_COUNT]; float x; float y; float z; float o; float rot1; float rot2; };
 struct IOCNodeTemplate
 {
+//	IOCNodeTemplate() { };
+//	~IOCNodeTemplate() { };
+
 	const char *m_name;										// Stormpike Aid Station
 	const bool m_isGraveyard;								// Is this a graveyard?
 	const bool m_capturable;								// Is this capturable?

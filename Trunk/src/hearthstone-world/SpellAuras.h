@@ -475,10 +475,11 @@ public:
 			return (m_duration-n);
 	}
 
-	HEARTHSTONE_INLINE uint32 GetMSExpiryTime()
+	HEARTHSTONE_INLINE int32 GetMSExpiryTime()
 	{ 		
 		if (GetDuration() == -1)
 			return -1;
+
 		int32 n = getMSTime() - timeleft;
 
 		if (n > GetDuration())

@@ -9629,7 +9629,7 @@ void Player::SaveAuras(stringstream &ss)
 				continue;
 
 			int32 d = aur->GetTimeLeft();
-			if(d > 3000 || d == -1)
+			if(d > 3000 || d < 0)
 				ss  << aur->GetSpellId() << "," << d << ",";
 		}
 	}

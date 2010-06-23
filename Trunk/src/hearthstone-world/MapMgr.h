@@ -188,10 +188,7 @@ public:
 		_combatProgress.erase(guid);
 	}
 	HEARTHSTONE_INLINE bool IsCombatInProgress()
-	{ 
-		//temporary disabled until AI updates list correctly.
-		return false;
-
+	{
 		//if all players are out, list should be empty.
 		if(!HasPlayers())
 			_combatProgress.clear();
