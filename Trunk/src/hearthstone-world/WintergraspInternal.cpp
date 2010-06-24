@@ -105,7 +105,7 @@ bool WintergraspInternal::run()
 			dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);
 		}
 
-		if(!m_abortEvent)
+		if(!m_threadRunning)
 			break;
 
 		WaitForSingleObject(m_abortEvent, 30000); // 30 second delay.

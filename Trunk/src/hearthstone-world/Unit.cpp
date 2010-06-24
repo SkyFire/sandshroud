@@ -4131,7 +4131,7 @@ void Unit::AddAura(Aura* aur)
 									break;
 								}
 							}
-						}					   
+						}
 					}
 					else if( curAura->GetSpellId() == aur->GetSpellId() )
 					{
@@ -4140,6 +4140,7 @@ void Unit::AddAura(Aura* aur)
 
 						// target already has this aura. Update duration, time left, procCharges
 						curAura->SetDuration(aur->GetDuration());
+						curAura->SetTimeLeft(aur->GetDuration());
 						curAura->procCharges = curAura->GetMaxProcCharges(pCaster);
 						curAura->UpdateModifiers();
 						curAura->ModStackSize(1);	// increment stack size
@@ -4513,6 +4514,7 @@ bool Unit::SetAuraDuration(uint32 spellId,Unit* caster,int32 duration)
 		return false;
 
 	aur->SetDuration(duration);
+	aur->SetTimeLeft(duration);
 	return true;
 }
 
@@ -4524,6 +4526,7 @@ bool Unit::SetAuraDuration(uint32 spellId, int32 duration)
 		return false;
 
 	aur->SetDuration(duration);
+	aur->SetTimeLeft(duration);
 	return true;
 }
 

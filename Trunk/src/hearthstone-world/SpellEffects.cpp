@@ -735,7 +735,10 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					{
 						Aura* aur = p_caster->FindPositiveAuraByNameHash(SPELL_HASH_SLICE_AND_DICE);
 						if( aur )
+						{
 							aur->SetDuration(21000);
+							aur->SetTimeLeft(21000); 
+						}
 					}
 				}
 			}break;
@@ -5739,7 +5742,10 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 					if( pAura != NULL && pAura->GetUnitCaster() == p_caster )
 					{
 						if( pAura->GetSpellProto()->NameHash == SPELL_HASH_CORRUPTION )
+						{
 							pAura->SetDuration(pAura->GetDuration());
+							pAura->SetTimeLeft(pAura->GetDuration());
+						}
 					}
 				}
 			}
@@ -5853,8 +5859,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 			Aura* aur = NULL;
 			Gettarget->FindNegativeAuraByNameHash(SPELL_HASH_SHADOW_WORD__PAIN);
 			if( aur != NULL) // Crow: Hmmm....
-				aur->SetDuration(aur->GetDuration());
-
+				aur->SetTimeLeft(aur->GetDuration());
 		}break;
 	case 47951:
 		{

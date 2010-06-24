@@ -9551,7 +9551,7 @@ bool Player::CanSignCharter(Charter * charter, Player* requester)
 void Player::SaveAuras(stringstream &ss)
 {
 	// Add player auras
-	for(uint32 x=0;x<MAX_AURAS;x++)
+	for(uint32 x = 0; x < MAX_AURAS; x++)
 	{
 		if(m_auras[x] != NULL)
 		{
@@ -9589,21 +9589,27 @@ void Player::SaveAuras(stringstream &ss)
 			case 48421:				// Master Shapeshifter Spell Damage (buff)
 			case 48422:				// Master Shapeshifter Healing (buff)
 				continue;
-				break;
+				break; // Do we need this? :O
 			}
 
+			bool stop = false;
 			for(uint32 i = 0; i < 3; i++)
 			{
-				// Todo: Add caster checks for apply area aura.
-				if((aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA) ||
-					aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AURA_128 || 
-					aur->m_spellProto->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT)
+				if(!stop)
 				{
-					continue;
+					// Todo: Add caster checks for apply area aura.
+					if((aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA) ||
+						aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AURA_128 || 
+						aur->m_spellProto->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT)
+					{
+						stop = true;
+					}
 				}
 			}
+			if(stop)
+				continue;
 
-			//we are going to cast passive spells anyway on login so no need to save auras for them
+			// We are going to cast passive spells anyway on login so no need to save auras for them
 			if( aur->IsPassive() || aur->m_spellProto->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET || aur->m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP )
 				continue; // To prevent food/drink bug
 
