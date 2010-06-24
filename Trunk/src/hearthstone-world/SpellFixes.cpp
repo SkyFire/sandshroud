@@ -3836,6 +3836,15 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->AllowBackAttack = true;
 			}break;
 
+			// Seal of Righteousness
+			case 21084:
+				{
+					sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
+					sp->EffectTriggerSpell[0]	=	25742;
+					sp->procFlags	=	PROC_ON_MELEE_ATTACK;
+					sp->procChance = 1000;
+				}break;
+
 			//////////////////////////////////////////
 			// HUNTER									//
 			//////////////////////////////////////////

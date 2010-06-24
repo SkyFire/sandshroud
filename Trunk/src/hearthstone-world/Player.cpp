@@ -5834,8 +5834,8 @@ void Player::AddInRangeObject(Object* pObj)
 
 					if( aur->GetAuraFlags() & AFLAG_HAS_DURATION )
 					{
-						data << aur->GetDuration();
-						data << aur->GetTimeLeft();
+						data << (uint32)aur->GetDuration();
+						data << (uint32)aur->GetTimeLeft();
 					}
 				}
 			}

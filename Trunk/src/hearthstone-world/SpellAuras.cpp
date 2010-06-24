@@ -1096,8 +1096,8 @@ void Aura::BuildAuraUpdate()
 
 	if( flags & AFLAG_HAS_DURATION )
 	{
-		data << GetDuration();
-		data << GetTimeLeft();
+		data << (uint32)GetDuration();
+		data << (uint32)GetTimeLeft();
 	}
 
 	m_target->SendMessageToSet(&data, true);
@@ -6006,16 +6006,15 @@ void Aura::SpellAuraFeignDeath(bool apply)
 			
 			data.SetOpcode( SMSG_START_MIRROR_TIMER );
 			data << uint32( 2 );		// type
-			data << int32( GetDuration() );
-			data << int32( GetDuration() );
+			data << uint32( GetDuration() );
+			data << uint32( GetDuration() );
 			data << uint32( 0xFFFFFFFF );
 			data << uint8( 0 );
 			data << uint32( m_spellProto->Id );		// ???
 			pTarget->GetSession()->SendPacket( &data );
 
-			data.Initialize(0x03BE);
+			data.Initialize(SMSG_CLEAR_TARGET);
 			data << pTarget->GetGUID();
-//			pTarget->setDeathState(DEAD);
 			unordered_set< Object* >::iterator itr,itr2;
 			Object* pObject = NULLOBJ;
 
@@ -6029,15 +6028,14 @@ void Aura::SpellAuraFeignDeath(bool apply)
 				{
 					if(pObject->GetTypeId()==TYPEID_UNIT)
 						(TO_UNIT( pObject ))->GetAIInterface()->RemoveThreatByPtr(pTarget);
+
 					//if this is player and targeting us then we interrupt cast
 					if( ( pObject )->IsPlayer() )
-					{
-						//if player has selection on us
-						if( TO_PLAYER( pObject )->GetSelection()==pTarget->GetGUID())							
+					{	//if player has selection on us
+						if( TO_PLAYER( pObject )->GetSelection() == pTarget->GetGUID())							
 						{
-							//it seems that all these do not work in 2.3
-							//TO_PLAYER( (*itr) )->SetSelection(0);//loose selection
-							//TO_PLAYER( (*itr) )->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+							TO_PLAYER( (*itr) )->SetSelection(0); //lose selection
+							TO_PLAYER( (*itr) )->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 						}
 						if( TO_PLAYER( pObject )->isCasting() && TO_PLAYER( pObject )->GetCurrentSpell()->GetSpellProto() != m_spellProto )
 							TO_PLAYER( pObject )->CancelSpell( NULLSPELL ); //cancel current casting spell
@@ -9386,7 +9384,7 @@ void Aura::SetTimeLeft(int32 time)
 	sEventMgr.ModifyAuraEventTimeLeft(m_target, time, GetSpellId());
 	if( !IsPassive() )
 	{
-		timeleft = ( uint32 )UNIXTIME;
+		timeleft = (uint32)UNIXTIME;
 		BuildAuraUpdate();
 	}
 }

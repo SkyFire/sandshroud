@@ -610,6 +610,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				if( p_caster != NULL )
 				{
 					dmg += p_caster->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME)/1000 * ((0.022 * (p_caster->GetAP()) + (0.044 * (p_caster->GetDamageDoneMod(1))))) + m_spellInfo->EffectBasePoints[i];
+					if(p_caster->HasAura(56414))
+						dmg += uint32((float)dmg*0.1f);
 				}
 			}break;
 
