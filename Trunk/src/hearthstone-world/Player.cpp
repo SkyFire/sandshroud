@@ -5818,17 +5818,19 @@ void Player::AddInRangeObject(Object* pObj)
 					data << uint8( aur->m_auraSlot );
 					data << uint32( aur->GetSpellId() );
 					uint8 flags = aur->GetAuraFlags();
-					if( aur->IsPositive() )
+					if( aur->IsPositive() && !(flags & AFLAG_POSITIVE))
 						flags |= AFLAG_POSITIVE;
-					else
+					else if( !aur->IsPositive() && !(flags & AFLAG_NEGATIVE))
 						flags |= AFLAG_NEGATIVE;
-					data << flags;
+
+					data << uint8(flags);
 					data << uint8(aur->GetAuraLevel());
 					data << uint8(aur->procCharges > aur->stackSize ? aur->procCharges : aur->stackSize);
 					if(!(aur->GetAuraFlags() & AFLAG_NOT_GUID))
-					{
-						FastGUIDPack(data, aur->GetCasterGUID());
-					}
+						if(aur->GetCasterGUID())
+							FastGUIDPack(data, aur->GetCasterGUID());
+						else
+							uint8(0);
 
 					if( aur->GetAuraFlags() & AFLAG_HAS_DURATION )
 					{

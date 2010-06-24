@@ -4011,10 +4011,10 @@ void Unit::AddAura(Aura* aur)
 		pCaster = this;
 	else if( GetMapMgr() && aur->GetCasterGUID())
 		pCaster = GetMapMgr()->GetUnit( aur->GetCasterGUID());
-		
+
 	if(pCaster == NULL)
 		return;
-  
+
 	if( !aur->IsPassive() )
 	{
 		uint32 maxStack = aur->GetSpellProto()->maxstack;
@@ -4167,10 +4167,13 @@ void Unit::AddAura(Aura* aur)
 	
 	aur->m_auraSlot=255;
 	
-	Unit* target = NULL;
-	target = aur->GetUnitTarget();
+	Unit* target = aur->GetUnitTarget();
+	if(target == NULL)
+		return; // Should never happen.
 
-	aur->SetAuraFlags(AFLAG_VISIBLE | AFLAG_EFF_INDEX_1 | AFLAG_EFF_INDEX_2 | AFLAG_NOT_GUID | (aur->GetDuration() ? AFLAG_HAS_DURATION : AFLAG_NONE) | (aur->IsPositive() ? AFLAG_CANCELLABLE : AFLAG_NONE));
+	aur->SetAuraFlags(AFLAG_VISIBLE | AFLAG_EFF_INDEX_1 | AFLAG_EFF_INDEX_2 | AFLAG_NOT_GUID | (aur->GetDuration() ? AFLAG_HAS_DURATION : AFLAG_NONE)
+		| (aur->IsPositive() ? ((aur->GetSpellProto()->Attributes & ATTRIBUTES_CANT_CANCEL) ? AFLAG_NONE : AFLAG_CANCELLABLE) : AFLAG_NONE));
+
 	aur->SetAuraLevel(aur->GetUnitCaster()!=NULL ? aur->GetUnitCaster()->getLevel() : MAXIMUM_ATTAINABLE_LEVEL);	
 
 	if(!aur->IsPassive())

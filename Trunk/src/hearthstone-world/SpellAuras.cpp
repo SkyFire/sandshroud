@@ -1085,9 +1085,9 @@ void Aura::BuildAuraUpdate()
 	else if( !IsPositive() && !(flags & AFLAG_NEGATIVE))
 		flags |= AFLAG_NEGATIVE;
 
-	data << flags;
-	data << uint8(GetAuraLevel() ? GetAuraLevel() : (m_target ? m_target->getLevel() : 0));
-	data << (uint8) stack;
+	data << uint8(flags);
+	data << uint8(GetAuraLevel());
+	data << uint8(stack);
 
 	if(!(flags & AFLAG_NOT_GUID))
 	{

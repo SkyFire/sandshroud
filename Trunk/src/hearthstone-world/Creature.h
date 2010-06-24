@@ -60,8 +60,8 @@ struct CreatureInfo
 	uint32 Female_DisplayID;
 	uint32 Male_DisplayID2;
 	uint32 Female_DisplayID2;
-	float unkfloat1;
-	float unkfloat2;
+	float unkfloat1; // Something to do with elites.
+	float unkfloat2; // Something to do with unkfloat1.
 	uint8  Civilian;
 	uint8  Leader;
 
