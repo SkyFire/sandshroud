@@ -1767,7 +1767,7 @@ public:
 	void SendLogExecute(uint32 damage, uint64 & targetGuid);
 	void SendInterrupted(uint8 result);
 	void SendChannelUpdate(uint32 time);
-	void SendChannelStart(uint32 duration);
+	void SendChannelStart(int32 duration);
 	void SendResurrectRequest(Player* target);
 	static void SendHealSpellOnPlayer(Object* caster, Object* target, uint32 dmg, bool critical, uint32 overheal, uint32 spellid);
 	static void SendHealManaSpellOnPlayer(Object* caster, Object* target, uint32 dmg, uint32 powertype, uint32 spellid);
@@ -1990,7 +1990,7 @@ public:
 			{
 				//check for negative and 0 durations.
 				//duration affected by level
-				if(sd->Duration1 < 0 && sd->Duration2 && u_caster)
+				if(sd->Duration1 < 1 && sd->Duration2 > 0 && u_caster)
 				{
 					Dur = uint32((sd->Duration1 + (sd->Duration2 * u_caster->getLevel())));
 					if(Dur > 0 && sd->Duration3 > 0 && Dur > sd->Duration3)

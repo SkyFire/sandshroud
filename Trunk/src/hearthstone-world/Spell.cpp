@@ -2512,7 +2512,7 @@ void Spell::SendChannelUpdate(uint32 time)
 	m_caster->SendMessageToSet(&data, (m_caster->IsPlayer() ? true : false));
 }
 
-void Spell::SendChannelStart(uint32 duration)
+void Spell::SendChannelStart(int32 duration)
 {
 	if (m_caster->GetTypeId() != TYPEID_GAMEOBJECT)
 	{
