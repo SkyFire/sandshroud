@@ -418,7 +418,13 @@ public:
     HEARTHSTONE_INLINE bool IsPassive(){ if(!m_spellProto) return false; return (m_spellProto->Attributes & ATTRIBUTES_PASSIVE && !m_areaAura);}
 
     HEARTHSTONE_INLINE int32 GetDuration() const { return m_duration; }
-	void SetDuration(int32 duration) { m_duration = duration; SetTimeLeft(duration); }
+	void SetDuration(int32 duration)
+	{
+		m_duration = duration;
+		if(duration > 0)
+			SetTimeLeft(duration);
+	}
+
 	void SetTimeLeft(int32 time);
 
 	HEARTHSTONE_INLINE uint32 GetModCount() const { return m_modcount; }
@@ -462,10 +468,10 @@ public:
 	void AttemptDispel(Unit* pCaster, bool canResist = true);
 	bool m_dispelled;
 	uint32 m_resistPctChance;
-		
+
 	HEARTHSTONE_INLINE int32 GetTimeLeft()//in sec
 	{
-		if(m_duration == -1)
+		if(m_duration < 0)
 			return -1;
 
 		int32 n = int32((UNIXTIME-time_t(timeleft))*1000);

@@ -4172,9 +4172,8 @@ void Unit::AddAura(Aura* aur)
 		return; // Should never happen.
 
 	aur->SetAuraFlags(AFLAG_VISIBLE | AFLAG_EFF_INDEX_1 | AFLAG_EFF_INDEX_2 | AFLAG_NOT_GUID | (aur->GetDuration() ? AFLAG_HAS_DURATION : AFLAG_NONE)
-		| (aur->IsPositive() ? ((aur->GetSpellProto()->Attributes & ATTRIBUTES_CANT_CANCEL) ? AFLAG_NONE : AFLAG_CANCELLABLE) : AFLAG_NONE));
-
-	aur->SetAuraLevel(aur->GetUnitCaster()!=NULL ? aur->GetUnitCaster()->getLevel() : MAXIMUM_ATTAINABLE_LEVEL);	
+		| (aur->IsPositive() ? (AFLAG_POSITIVE | ((aur->GetSpellProto()->Attributes & ATTRIBUTES_CANT_CANCEL) ? AFLAG_NONE : AFLAG_CANCELLABLE)) : (AFLAG_NEGATIVE | AFLAG_NONE)));
+	aur->SetAuraLevel(aur->GetUnitCaster()!=NULL ? aur->GetUnitCaster()->getLevel() : MAXIMUM_ATTAINABLE_LEVEL);
 
 	if(!aur->IsPassive())
 	{	

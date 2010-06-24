@@ -5815,27 +5815,23 @@ void Player::AddInRangeObject(Object* pObj)
 				aur = pUnit->m_auras[i];
 				if (aur != NULL)
 				{
-					data << uint8( aur->m_auraSlot );
-					data << uint32( aur->GetSpellId() );
 					uint8 flags = aur->GetAuraFlags();
-					if( aur->IsPositive() && !(flags & AFLAG_POSITIVE))
-						flags |= AFLAG_POSITIVE;
-					else if( !aur->IsPositive() && !(flags & AFLAG_NEGATIVE))
-						flags |= AFLAG_NEGATIVE;
 
-					data << uint8(flags);
-					data << uint8(aur->GetAuraLevel());
-					data << uint8(aur->procCharges > aur->stackSize ? aur->procCharges : aur->stackSize);
-					if(!(aur->GetAuraFlags() & AFLAG_NOT_GUID))
+					data << uint8(aur->m_auraSlot);
+					data << uint32(aur->GetSpellId());
+					data << uint16(flags);
+					data << uint8(aur->procCharges ? (aur->procCharges*aur->stackSize) : aur->stackSize);
+
+					if(!(flags & AFLAG_NOT_GUID))
 						if(aur->GetCasterGUID())
 							FastGUIDPack(data, aur->GetCasterGUID());
 						else
 							uint8(0);
 
-					if( aur->GetAuraFlags() & AFLAG_HAS_DURATION )
+					if(flags & AFLAG_HAS_DURATION)
 					{
-						data << (uint32)aur->GetDuration();
-						data << (uint32)aur->GetTimeLeft();
+						data << aur->GetDuration();
+						data << aur->GetTimeLeft();
 					}
 				}
 			}
@@ -9559,24 +9555,7 @@ void Player::SaveAuras(stringstream &ss)
 	{
 		if(m_auras[x] != NULL)
 		{
-			Aura* aur=m_auras[x];
-			bool skip = false;
-			for(uint32 i = 0; i < 3; i++)
-			{
-				if(aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA ||
-					aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AURA_128 || 
-					aur->m_spellProto->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT)
-				{
-					skip = true;
-					break;
-				}
-			}
-
-			if( aur->pSpellId )
-				skip = true; //these auras were gained due to some proc. We do not save these eighter to avoid exploits of not removing them
-
-			if ( aur->m_spellProto->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET )
-				skip = true;
+			Aura* aur = m_auras[x];
 
 			// skipped spells due to bugs
 			switch(aur->m_spellProto->Id)
@@ -9609,30 +9588,26 @@ void Player::SaveAuras(stringstream &ss)
 			case 48420:				// Master Shapeshifter Critical Strike (buff)
 			case 48421:				// Master Shapeshifter Spell Damage (buff)
 			case 48422:				// Master Shapeshifter Healing (buff)
-				skip = true;
+				continue;
 				break;
 			}
-			if( aur->m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP) // To prevent food/drink bug
-				skip = true;
 
-			//disabled proc spells until proper loading is fixed. Some spells tend to block or not remove when restored
-			if(aur->GetSpellProto()->procFlags)
-				skip = true;
-
-			//disabled proc spells until proper loading is fixed. We cannot recover the charges that were used up. Will implement later
-			if(aur->GetSpellProto()->procCharges)
-				skip = true;
+			for(uint32 i = 0; i < 3; i++)
+			{
+				// Todo: Add caster checks for apply area aura.
+				if((aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA) ||
+					aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AURA_128 || 
+					aur->m_spellProto->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT)
+				{
+					continue;
+				}
+			}
 
 			//we are going to cast passive spells anyway on login so no need to save auras for them
-			if(aur->IsPassive())
-				skip = true;
+			if( aur->IsPassive() || aur->m_spellProto->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET || aur->m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP )
+				continue; // To prevent food/drink bug
 
-			if(skip)
-				continue;
-
-			int32 d = aur->GetTimeLeft();
-			if(d > 3000 || d < 0)
-				ss  << aur->GetSpellId() << "," << d << ",";
+			ss << aur->GetSpellId() << "," << aur->GetTimeLeft() << ",";
 		}
 	}
 }

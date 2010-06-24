@@ -3528,7 +3528,7 @@ void Spell::SpellEffectPersistentAA(uint32 i) // Persistent Area Aura
 	default:
 		return;
 	}
-	
+
 	if(u_caster != NULL)
 	{
 		if(m_spellInfo->ChannelInterruptFlags > 0)
@@ -4318,8 +4318,8 @@ void Spell::SpellEffectApplyAA(uint32 i) // Apply Area Aura
 		return;
 
 	Aura* pAura;
-	std::map<uint32,Aura* >::iterator itr=unitTarget->tmpAura.find(m_spellInfo->Id);
-	if(itr==unitTarget->tmpAura.end())
+	std::map<uint32,Aura* >::iterator itr = unitTarget->tmpAura.find(m_spellInfo->Id);
+	if(itr == unitTarget->tmpAura.end())
 	{
 		pAura = (new Aura(m_spellInfo,GetDuration(),m_caster,unitTarget));
 		
@@ -4337,9 +4337,10 @@ void Spell::SpellEffectApplyAA(uint32 i) // Apply Area Aura
 			sEventMgr.AddEvent(pAura, &Aura::EventUpdateCreatureAA, r, EVENT_AREAAURA_UPDATE, m_spellInfo->area_aura_update_interval, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);	
 			pAura->m_creatureAA = true;
 		}
-	}else 
+	}
+	else 
 	{
-		pAura=itr->second;	
+		pAura = itr->second;	
 	}
  
 	pAura->AddMod(m_spellInfo->EffectApplyAuraName[i],damage,m_spellInfo->EffectMiscValue[i],i);
