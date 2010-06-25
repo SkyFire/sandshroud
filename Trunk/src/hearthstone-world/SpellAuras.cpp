@@ -2052,7 +2052,6 @@ void Aura::SpellAuraDummy(bool apply)
 
 	switch(GetSpellId())
 	{
-			
 		case 53563:
 		{
 			if( apply )
@@ -2863,7 +2862,7 @@ void Aura::SpellAuraDummy(bool apply)
 				Player* plr = TO_PLAYER(GetCaster());
 				if(apply)
 				{
-					SetDuration(60000); // Set duration for stack bug reasons.
+					SetTimeLeft(60000); // Set time left for stack bug reasons.
 					if(stackSize >= 1 && stackSize <= 5)
 					{
 						plr->RemoveAura(72523);
@@ -2896,6 +2895,9 @@ void Aura::SpellAuraDummy(bool apply)
 
 	default:
 		{
+			if(sLog.IsOutDevelopement())
+				printf("Dummy aura not handled: %u\n", GetSpellId());
+
 			dummy_aura = true;
 		}break;
 	}
@@ -4882,14 +4884,14 @@ void Aura::SpellAuraModShapeshift(bool apply)
 							}
 						}
 					}
-			   }
+				}
 			}
 		}
 
 		//execute after we changed shape
 		TO_PLAYER( m_target )->EventTalentHeartOfWildChange( true );
 	}
-	else 
+	else
 	{
 		//execute before changing shape back
 		TO_PLAYER( m_target )->EventTalentHeartOfWildChange( false );
@@ -4902,12 +4904,13 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				m_target->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
 				TO_PLAYER(m_target)->m_canCastSpellsWhileDead = false;
 			}
-		}		
-		
+		}
+
 		TO_PLAYER( m_target )->m_ShapeShifted = 0;
+		TO_PLAYER( m_target )->SetShapeShift(0);
 
-		TO_PLAYER( m_target )->SetShapeShift( 0 );
-
+		if(m_target->HasAura(52610))
+			m_target->RemoveAura(52610);
 	}
 	TO_PLAYER( m_target )->UpdateStats();
 	TO_PLAYER( m_target )->CalcResistance(RESISTANCE_ARMOR);

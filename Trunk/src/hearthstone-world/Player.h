@@ -1832,7 +1832,16 @@ public:
 		UpdateComboPoints();
 	}
 
-	HEARTHSTONE_INLINE void NullComboPoints() { if(!m_retainComboPoints) { m_comboTarget = 0; m_comboPoints = 0; m_spellcomboPoints=0; } UpdateComboPoints(); }
+	HEARTHSTONE_INLINE void NullComboPoints()
+	{
+		if(!m_retainComboPoints)
+		{
+			m_comboTarget = m_comboPoints = m_spellcomboPoints = 0;
+		}
+		UpdateComboPoints();
+		sEventMgr.RemoveEvents( this, EVENT_COMBO_POINT_CLEAR_FOR_TARGET );
+	}
+
 	uint32 m_speedChangeCounter;
 
 	// HACKKKKK

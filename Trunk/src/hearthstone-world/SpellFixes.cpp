@@ -2499,7 +2499,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->Attributes |=	ATTRIBUTES_MOUNT_CASTABLE;
 				}break;
 
-	
 			// druid - Naturalist
 		case  17069:
 		case  17070:
@@ -2510,7 +2509,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_DAMAGE_PERCENT_DONE;
 					sp->EffectMiscValue[1] = 1;	
 			}break;
-	
+
 			// Druid: Omen of Clarity
 		case  16864:
 			{
@@ -2518,11 +2517,12 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procChance = 6;
 					sp->proc_interval = 10000;
 			}break;
-		case 52610:
+
+		case 52610: // Savage Roar
 			{
 					sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_ATTACK_POWER_PCT;
 			}break;
-	
+
 			//Serpent-Coil Braid
 		case 37447:
 		case 61062://Heroes' Frostfire Garb AND Valorous Frostfire Garb
@@ -2543,15 +2543,13 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procFlags = PROC_ON_MELEE_ATTACK | PROC_ON_RANGED_ATTACK;
 			}break;
 
-
-	
 			//Paladin	-	Improved Lay on	Hands
 		case  20234:
 		case  20235:
 			{
 					sp->procFlags	=	PROC_ON_CAST_SPELL;
 			}break;
-	
+
 			// Sudden	Death
 		case 29724:
 		case 29725:
@@ -2559,7 +2557,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->procFlags	=	PROC_ON_MELEE_ATTACK;
 			}break;
-	
+
 			// Taste for Blood
 		case 56638:
 		case 56637:
@@ -2569,7 +2567,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->EffectSpellClassMask[0][0]	= 0x0;
 				sp->EffectSpellClassMask[1][0]	= 0x0;
 			}break;
-			
+
 			// Flametongue weapon
 		case 58792:
 			{

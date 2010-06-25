@@ -1535,6 +1535,14 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			ILotP.weapon_damage_type = 0;
 			u_caster->m_procSpells.push_back(ILotP);
 		}break;
+
+	case 52610: // Savage Roar
+		{
+			if(p_caster != NULL)
+			{	// We add an event so we can have the duration from combo points.
+				sEventMgr.AddEvent(p_caster, &Player::NullComboPoints, EVENT_COMBO_POINT_CLEAR_FOR_TARGET, 20, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			}
+		}break;
 	/*************************
 	 * HUNTER SPELLS
 	 *************************
@@ -7707,7 +7715,6 @@ void Spell::SpellEffectDummyMelee( uint32 i ) // Normalized Weapon damage +
 	if( m_spellInfo->NameHash == SPELL_HASH_OVERPOWER && p_caster != NULL ) //warrior : overpower - let us clear the event and the combopoint count
 	{
 		p_caster->NullComboPoints(); //some say that we should only remove 1 point per dodge. Due to cooldown you can't cast it twice anyway..
-		sEventMgr.RemoveEvents( p_caster, EVENT_COMBO_POINT_CLEAR_FOR_TARGET );
 	}
 	else if( m_spellInfo->NameHash == SPELL_HASH_DEVASTATE)
 	{
