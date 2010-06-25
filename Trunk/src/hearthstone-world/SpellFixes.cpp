@@ -385,212 +385,126 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	{
 		switch(sp->Id)
 		{
-			// Spell 1455 Proc Chance (Life Tap Rank 2:
-		case  1455:
+		case 1455: // Spell 1455 Proc Chance (Life Tap Rank 2:
+		case 1456: // Spell 1456 Proc Chance (Life Tap Rank 3:
+		case 8182: // Spell 8182 Proc Chance (Frost Resistance Rank 1:
+		case 8185: // Spell 8185 Proc Chance (Fire Resistance Rank 1:
+		case 10476: // Spell 10476 Proc Chance (Frost Resistance Rank 2:
+		case 10477: // Spell 10477 Proc Chance (Frost Resistance Rank 3:
+		case 10534: // Spell 10534 Proc Chance (Fire Resistance Rank 2:
+		case 10535: // Spell 10535 Proc Chance (Fire Resistance Rank 3:
+		case 11687: // Spell 11687 Proc Chance (Life Tap Rank 4:
+		case 11688: // Spell 11688 Proc Chance (Life Tap Rank 5:
+		case 11689: // Spell 11689 Proc Chance (Life Tap Rank 6:
+		case 12292: // Spell 12292 Proc Chance (Death Wish :
+		case 18803: // Spell 18803 Proc Chance (Focus :
 			sp->procChance = 100;
 			break;
 
-			// Spell 1456 Proc Chance (Life Tap Rank 3:
-		case  1456:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 3391 Proc Chance (Thrash :
-		case  3391:
+		case 3391: // Spell 3391 Proc Chance (Thrash :
+		case 15494: // Spell 15494 Proc Chance (Fury of Forgewright :
+		case 15601: // Spell 15601 Proc Chance (Hand of Justice :
+		case 15642: // Spell 15642 Proc Chance (Ironfoe :
+		case 16843: // Spell 16843 Proc Chance (Crimson Fury :
+		case 18797: // Spell 18797 Proc Chance (Flurry Axe :
+		case 19105: // Spell 19105 Proc Chance (MHTest01 Effect :
+		case 19109: // Spell 19109 Proc Chance (MHTest02 Effect :
+		case 27035: // Spell 27035 Proc Chance (Sword Specialization (OLD: :
+		case 21919: // Spell 21919 Proc Chance (Thrash :
 			sp->procChance = 10;
 			break;
 
-			// Spell 8182 Proc Chance (Frost Resistance Rank 1:
-		case  8182:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 8185 Proc Chance (Fire Resistance Rank 1:
-		case  8185:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 10476 Proc Chance (Frost Resistance Rank 2:
-		case  10476:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 10477 Proc Chance (Frost Resistance Rank 3:
-		case  10477:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 10534 Proc Chance (Fire Resistance Rank 2:
-		case  10534:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 10535 Proc Chance (Fire Resistance Rank 3:
-		case  10535:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 11687 Proc Chance (Life Tap Rank 4:
-		case  11687:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 11688 Proc Chance (Life Tap Rank 5:
-		case  11688:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 11689 Proc Chance (Life Tap Rank 6:
-		case  11689:
-			sp->procChance = 100;
-			break;
-	
 			// Spell 12284 Proc Chance (Mace Specialization Rank 1:
 		case  12284:
 			sp->procChance = 1;
 			break;
-	
-			// Spell 12292 Proc Chance (Death Wish :
-		case  12292:
-			sp->procChance = 100;
-			break;
-	
+
 			// Spell 12322 Proc Chance (Unbridled Wrath Rank 1:
 		case  12322:
 			sp->procChance = 8;
 			break;
-	
+
 			// Spell 12701 Proc Chance (Mace Specialization Rank 2:
 		case  12701:
 			sp->procChance = 2;
 			break;
-	
+
 			// Spell 12702 Proc Chance (Mace Specialization Rank 3:
 		case  12702:
 			sp->procChance = 3;
 			break;
-	
+
 			// Spell 12703 Proc Chance (Mace Specialization Rank 4:
 		case  12703:
 			sp->procChance = 4;
 			break;
-	
+
 			// Spell 12704 Proc Chance (Mace Specialization Rank 5:
 		case  12704:
 			sp->procChance = 6;
 			break;
-	
+
 			// Spell 12999 Proc Chance (Unbridled Wrath Rank 2:
 		case  12999:
 			sp->procChance = 16;
 			break;
-	
+
 			// Spell 13000 Proc Chance (Unbridled Wrath Rank 3:
 		case  13000:
 			sp->procChance = 24;
 			break;
-	
+
 			// Spell 13001 Proc Chance (Unbridled Wrath Rank 4:
 		case  13001:
 			sp->procChance = 32;
 			break;
-	
+
 			// Spell 13002 Proc Chance (Unbridled Wrath Rank 5:
 		case  13002:
 			sp->procChance = 40;
 			break;
-	
+
 			// Spell 14076 Proc Chance (Dirty Tricks Rank 1:
 		case  14076:
 			sp->procChance = 30;
 			break;
-	
+
 			// Spell 14094 Proc Chance (Dirty Tricks Rank 2:
 		case  14094:
 			sp->procChance = 60;
 			break;
-	
-			// Spell 15494 Proc Chance (Fury of Forgewright :
-		case  15494:
-			sp->procChance = 10;
-			break;
-	
+
 			// Spell 15600 Proc Chance (Hand of Justice :
 		case  15600:
 			sp->procChance = 2;
 			break;
-	
-			// Spell 15601 Proc Chance (Hand of Justice :
-		case  15601:
-			sp->procChance = 10;
-			break;
-	
-			// Spell 15642 Proc Chance (Ironfoe :
-		case  15642:
-			sp->procChance = 10;
-			break;
-			
-			// Spell 16843 Proc Chance (Crimson Fury :
-		case  16843:
-			sp->procChance = 10;
-			break;
-	
-			// Spell 18797 Proc Chance (Flurry Axe :
-		case  18797:
-			sp->procChance = 10;
-			break;
-	
-			// Spell 18803 Proc Chance (Focus :
-		case  18803:
-			sp->procChance = 100;
-			break;
-	
-			// Spell 19105 Proc Chance (MHTest01 Effect :
-		case  19105:
-			sp->procChance = 10;
-			break;
-	
-			// Spell 19109 Proc Chance (MHTest02 Effect :
-		case  19109:
-			sp->procChance = 10;
-			break;
-	
+
 			// Improved Wing Clip
 		case  19228:
 			{
 			sp->procChance = 7;
 			sp->procFlags = PROC_ON_CAST_SPECIFIC_SPELL;
 			}break;
-	
+
 			// Improved Wing Clip
 		case  19232:
 			{
 			sp->procChance = 14;
 			sp->procFlags = PROC_ON_CAST_SPECIFIC_SPELL;
 			}break;
-	
+
 			// Improved Wing Clip 
 		case  19233:
 			{
 			sp->procChance = 20;
 			sp->procFlags = PROC_ON_CAST_SPECIFIC_SPELL;
 			}break;
-	
-			// Spell 21919 Proc Chance (Thrash :
-		case  21919:
-			sp->procChance = 10;
-			break;
-	
+
 			// Spell 23158 Proc Chance (Concussive Shot Cooldown Reduction :
 		case  23158:
 			sp->procChance = 4;
 			break;
-			
-			// Spell 27035 Proc Chance (Sword Specialization (OLD: :
-		case  27035:
-			sp->procChance = 10;
-			break;
-	
+
 			// Spell 27521 Proc Chance (Mana Restore :
 		case  27521:
 			sp->procChance = 2;
@@ -706,7 +620,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
 			}break;
-		
+
 			// Astral	Shift
 		case  52179:
 			{
@@ -714,14 +628,14 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN;
 				sp->EffectMiscValue[0] = 127;
 			}break;
-		
+
 			// Shamanistic Rage
 		case 30823:
 			{
 				sp->procFlags = PROC_ON_MELEE_ATTACK;
 				sp->procflags2 = PROC_TARGET_SELF;
 			}break;
-		
+
 		case 51479:
 		case 51478:
 		case 51474: // Astral Shift
@@ -733,7 +647,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->EffectTriggerSpell[0] = 52179;
 				sp->Effect[1] = 0;
 			}break;
-		
+
 		case 51975:
 			{
 					// shaman	-	Poison Cleansing Totem
@@ -744,7 +658,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectImplicitTargetA[0] = EFF_TARGET_ALL_PARTY_IN_AREA;
 				}
 			}break;
-		
+
 		case 52025:
 			{
 					// shaman	-	Disease	Cleansing	Totem
@@ -755,7 +669,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectImplicitTargetA[0] = EFF_TARGET_ALL_PARTY_IN_AREA;
 				}
 			}break;
-		
+
 			// Fire	Nova Totem visual	fix
 		case 8349:
 		case 8502:
@@ -770,7 +684,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->Effect[1]	=	SPELL_EFFECT_TRIGGER_SPELL;
 				sp->EffectTriggerSpell[1]	=	19823;
 			}break;
-		
+
 			// Flurry
 		case 12319:
 		case 12971:
@@ -785,7 +699,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->procFlags	=	PROC_ON_CRIT_ATTACK;
 			}break;
-		
+
 			// Flurry	proc
 		case 12966:
 		case 12967:
@@ -831,7 +745,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->EffectImplicitTargetA[1] = EFF_TARGET_SELF;
 			}break;
-		
+
 			// Totem of	Third	Wind
 		case 46098:
 		case 34138:
@@ -841,14 +755,14 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
 				sp->EffectSpellClassMask[0][0] = 0x00000080;	// Lesser	Healing	Wave
 			}break;
-		
+
 			// Totem of	the	Elemental	Plane
 		case  60770:
 			{
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
 				sp->EffectSpellClassMask[0][0] = 0x00000001;	// Lightning Bolt
 			}break;
-		
+
 			// Fathom-Brooch of	the	Tidewalker
 		case  37247:	
 			{
@@ -864,7 +778,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
 				sp->procflags2 = PROC_TARGET_SELF;
 			}break;
-		
+
 		case  34936:
 			{
 				sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_CAST_SPELL;
@@ -916,13 +830,13 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->Effect[1]	=	SPELL_EFFECT_TRIGGER_SPELL;
 				sp->EffectTriggerSpell[1]	=	48076;
 			}break;
-		
+
 			// Moroes' garrote targets a single	enemy	instead	of us
 		case 37066:
 			{
 				sp->EffectImplicitTargetA[0] = EFF_TARGET_SINGLE_ENEMY;
 			}break;
-		
+
 			// Penance
 		case 47540:
 		case 53005:
@@ -969,7 +883,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procflags2	=	PROC_TARGET_SELF;
 			}break;
 
-	
 			//paladin	-	Judgement	of Wisdom
 		case  20186:
 			{
@@ -981,7 +894,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->EffectApplyAuraName[1] = 0;
 			}break;
 
-	
 			//paladin	-	Judgement	of Light
 		case  20185:
 			{
@@ -1161,7 +1073,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->Effect[2] = SPELL_EFFECT_APPLY_AREA_AURA;*/
 			}break;
 
-	
 			//Shaman - Eye of	the	Storm
 		case  29062:
 		case  29064:
@@ -1169,7 +1080,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->procFlags	=	PROC_ON_CRIT_HIT_VICTIM;
 			}break;
-	
+
 			//shaman - Elemental Devastation
 		case  29179:
 		case  29180:
@@ -1195,7 +1106,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->AttributesEx |= ATTRIBUTESEX_NOT_BREAK_STEALTH;
 			}break;
-	
+
 			//rogue	-	Find Weakness.
 		case  31233:
 		case  31239:
@@ -1221,6 +1132,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->EffectMiscValue[0] = SMT_MISC_EFFECT;
 			}break;
+
 			//rogue	-	Mace Specialization.
 		case  13709:
 		case  13800:
@@ -1229,7 +1141,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case  13803:	
 			{
 					sp->procFlags	=	PROC_ON_MELEE_ATTACK;
-	
 			}break;
 
 			//rogue	- Shadowstep
@@ -1239,7 +1150,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procFlags	=	0;
 					sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
 			}break;
-	
+
 		case 44373:
 			{
 					sp->procFlags	=	0;
@@ -1256,12 +1167,12 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procFlags = PROC_ON_CAST_SPELL;	
 					sp->procflags2 = PROC_TARGET_SELF;					
 			}break;
-	
+
 			//priest	-	Holy Concentration
 		case 34753:
 		case 34859:
 		case 34860:
-			 {
+			{
 					sp->procflags2	=	PROC_ON_SPELL_CRIT_HIT;
 			}break;
 		case 34754://Make it similar to Mage Clearcasting
@@ -1319,7 +1230,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 27839:
 			{
 					sp->EffectApplyAuraName[0] = SPELL_AURA_ADD_PCT_MODIFIER;
-
 			}break;
 			//Paladin: Seal	of Wisdom
 		case  20166:
@@ -1388,7 +1298,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				{
 					sp->EffectMiscValue[0] = 2998;
 				}break;
-	
+
 			//muhaha,	rewriting	Retaliation	spell	as old one :D
 		case  20230:
 				{
@@ -1397,46 +1307,44 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectTriggerSpell[0]	=	22858; //evil	,	but	this is	good for us	:D
 					sp->procFlags	=	PROC_ON_MELEE_ATTACK_VICTIM; //add procflag	here since this	was	not	processed	with the others	!
 				}break;
-	
-	
+
 			//"bloodthirst"	new	version	is ok	but	old	version	is wrong from	now	on :(
 		case  23881:
 				{
 					sp->Effect[1]	=	64;	//cast on	us,	it is	good
 					sp->EffectTriggerSpell[1]	=	23885; //evil	,	but	this is	good for us	:D
 				}break;
-	
+
 		case  23892:
 			{
 					sp->Effect[1]	=	64;
 					sp->EffectTriggerSpell[1]	=	23886; //evil	,	but	this is	good for us	:D
 				}break;
-	
+
 		case  23893:
 			{
 					sp->Effect[1]	=	64;	//
 					sp->EffectTriggerSpell[1]	=	23887; //evil	,	but	this is	good for us	:D
 				}break;
-	
+
 		case  23894:
 			{
 					sp->Effect[1]	=	64;	//
 					sp->EffectTriggerSpell[1]	=	23888; //evil	,	but	this is	good for us	:D
 				}break;
-	
+
 		case  25251:
 			{
 					sp->Effect[1]	=	64;	//aura
 					sp->EffectTriggerSpell[1]	=	25252; //evil	,	but	this is	good for us	:D
 				}break;
-	
+
 		case  30335:
 			{
 					sp->Effect[1]	=	64;	//aura
 					sp->EffectTriggerSpell[1]	=	30339; //evil	,	but	this is	good for us	:D
 				}break;
-	
-	
+
 			// Hunter	-	Master Tactician
 		case  34506:
 		case  34507:
@@ -1447,7 +1355,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procFlags	=	PROC_ON_RANGED_ATTACK;
 					sp->procflags2	=	PROC_TARGET_SELF;
 				}break;
-	
+
 			// Hunter	-	T.N.T
 		case 56333:
 		case 56336:
@@ -1466,14 +1374,14 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->Effect[0]	=	SPELL_EFFECT_TRIGGER_SPELL;
 					sp->EffectTriggerSpell[0]	=	19579;
 				}break;
-	
+
 		case  20895:
 			{
 					sp->c_is_flags |=	SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER | SPELL_FLAG_IS_EXPIREING_WITH_PET;
 					sp->Effect[0]	=	SPELL_EFFECT_TRIGGER_SPELL;
 					sp->EffectTriggerSpell[0]	=	24529;
 				}break;
-	
+
 		case  19579:
 		case  24529:
 			{
@@ -1485,7 +1393,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectAmplitude[1] = sp->EffectAmplitude[0];
 					sp->EffectDieSides[1]	=	sp->EffectDieSides[0];
 				}break;		
-	
+
 			// Hunter	-	Animal Handler
 		case  34453:
 		case  34454:
@@ -1494,8 +1402,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_HIT_CHANCE;
 					sp->EffectImplicitTargetA[1] = EFF_TARGET_PET;
 				}break;
-	
-	
+
 			// Hunter	-	Catlike	Reflexes
 		case  34462:
 		case  34464:
@@ -1505,8 +1412,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = sp->EffectApplyAuraName[0];
 					sp->EffectImplicitTargetA[1] = EFF_TARGET_PET;
 				}break;
-	
-	
+
 			// Hunter	-	Serpent's	Swiftness
 		case  34466:
 		case  34467:
@@ -1518,7 +1424,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_HASTE;
 					sp->EffectImplicitTargetA[1] = EFF_TARGET_PET;
 			}break;
-	
+
 			// Hunter	-	Ferocious	Inspiration
 		case  34455:
 		case  34459:
@@ -1531,7 +1437,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procflags2	=	PROC_ON_SPELL_CRIT_HIT | PROC_TARGET_SELF;
 					sp->Effect[1]	=	0; //remove	this
 			}break;
-	
+
 			// Hunter	-	Focused	Fire
 		case  35029:
 			{
@@ -1550,7 +1456,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 					sp->c_is_flags |=	SPELL_FLAG_IS_EXPIREING_WITH_PET;
 			}break;
-	
+
 			// Hunter	-	Thick	Hide
 		case  19609:
 		case  19610:
@@ -1560,7 +1466,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectBasePoints[0]	*= 10; //just	give it	a	little juice :P
 					sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
 			}break;
-	
+
 			// Hunter	-	Ferocity
 		case  19612:
 		case  19599:
@@ -1572,7 +1478,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_CRIT_PERCENT;
 					sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
 			}break;
-	
+
 			// Hunter	-	Bestial	Swiftness
 		case  19596:
 			{
@@ -1580,7 +1486,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_INCREASE_SPEED;	
 					sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
 			}break;
-	
+
 			// Hunter	-	Endurance	Training
 		case  19583:
 		case  19584:
@@ -1602,7 +1508,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
 					sp->EffectTriggerSpell[0] = 34720;
 			}break;
-	
+
 			// Hunter	-	Expose Weakness
 		case  34500:
 		case  34502:
@@ -1617,8 +1523,8 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 53217:
 			{
 					sp->procFlags = PROC_ON_RANGED_ATTACK;
-
 			}break;
+
 			//Hunter - Frenzy
 		case  19621:
 		case  19622:
@@ -1633,7 +1539,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procFlags	=	PROC_ON_CRIT_ATTACK;
 					sp->c_is_flags	=	SPELL_FLAG_IS_EXPIREING_WITH_PET | SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_ON_PET;
 			}break;
-				
+
 		case 56641:
 		case 34120:
 		case 49051:
@@ -1654,21 +1560,20 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 19618:
 		case 19619:
 		case 19620:
-
 			{
 					sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_PERCENT_DONE;
 					sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
 					sp->EffectMiscValue[0] = 1;	//tweekign melee dmg
 					sp->c_is_flags |=	SPELL_FLAG_IS_EXPIREING_WITH_PET | SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_ON_PET;
 			}break;
-	
+
 			//Hunter : Pathfinding
 		case  19559:
 		case 19560:
 			{
 					sp->EffectMiscValue[0] = SMT_MISC_EFFECT;
 			}break;
-	
+
 			//Hunter : Rapid Killing - might need	to add honor trigger too here. I'm guessing	you	receive	Xp too so	i'm	avoiding double	proc
 		case  34948:
 		case 34949:
@@ -1676,7 +1581,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->procFlags	=	PROC_ON_GAIN_EXPIERIENCE;
 					sp->procflags2	=	PROC_TARGET_SELF;
 			}break;
-	
+
 			// Winter's	chill
 		case 12579:
 			{
@@ -5699,6 +5604,9 @@ void ApplyNormalFixes()
 	{
 		sp = dbcSpell.LookupRow(x);
 
+		if(sp == NULL)
+			continue;
+
 		uint32 result = 0;
 
 		uint32 type = 0;
@@ -5715,7 +5623,7 @@ void ApplyNormalFixes()
 		// hash the name
 		//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
 		namehash = crc32((const unsigned char*)sp->Name, (unsigned int)strlen(sp->Name));
-		sp->NameHash   = namehash; //need these set before we start processing spells
+		sp->NameHash = namehash; //need these set before we start processing spells
 
 		float radius = 0.0f;
 		if(sp->EffectRadiusIndex[0] != 0)
@@ -5733,39 +5641,14 @@ void ApplyNormalFixes()
 		sp->cone_width = 0.0f;
 		sp->area_aura_update_interval = 2000;
 
-		// NEW SCHOOLS AS OF 2.4.0:
-		/* (bitwise)
-		SCHOOL_NORMAL = 1,
-		SCHOOL_HOLY   = 2,
-		SCHOOL_FIRE   = 4,
-		SCHOOL_NATURE = 8,
-		SCHOOL_FROST  = 16,
-		SCHOOL_SHADOW = 32,
-		SCHOOL_ARCANE = 64
-		*/
-
-		for (i=0; i<8; i++)
+		for(i = 0; i < 8; i++)
 		{
-			if (sp->School & (1<<i))
+			if(sp->School & (1<<i))
 			{
 				sp->School = i;
 				break;
 			}
 		}
-
-		/*
-		AURASTATE_FLAG_DODGE_BLOCK			= 1,		//1
-		AURASTATE_FLAG_HEALTH20			 = 2,		//2
-		AURASTATE_FLAG_BERSERK			  = 4,		//3
-		AURASTATE_FLAG_JUDGEMENT			= 16,	   //5
-		AURASTATE_FLAG_PARRY				= 64,	   //7
-		AURASTATE_FLAG_LASTKILLWITHHONOR	= 512,	  //10
-		AURASTATE_FLAG_CRITICAL			 = 1024,	 //11
-		AURASTATE_FLAG_HEALTH35			 = 4096,	 //13
-		AURASTATE_FLAG_IMMOLATE			 = 8192,	 //14
-		AURASTATE_FLAG_REJUVENATE		   = 16384,	//15 //where do i use this ?
-		AURASTATE_FLAG_POISON			   = 32768,	//16
-		*/
 
 		// apply on shapeshift change
 		if( sp->NameHash == SPELL_HASH_TRACK_HUMANOIDS )
@@ -5826,9 +5709,6 @@ void ApplyNormalFixes()
 			}
 		}
 
-		/*if(sp->self_cast_only && !(sp->Attributes&64))
-			printf("SPELL SELF CAST ONLY: %s %u\n", sp->Name, sp->Id);*/
-
 		if(!strcmp(sp->Name, "Hearthstone") || !strcmp(sp->Name, "Stuck") || !strcmp(sp->Name, "Astral Recall"))
 			sp->self_cast_only = true;
 
@@ -5857,20 +5737,10 @@ void ApplyNormalFixes()
 			sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
 
 		//Rogue: Posion time fix for 2.3
-		if( strstr( sp->Name, "Crippling Poison") && sp->Effect[0] == 54 ) //I, II
-			sp->EffectBasePoints[0] = 3599;
-		if( strstr( sp->Name, "Mind-numbing Poison") && sp->Effect[0] == 54 ) //I,II,III
-			sp->EffectBasePoints[0] = 3599;
-		if( strstr( sp->Name, "Instant Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V,VI,VII	
-			sp->EffectBasePoints[0] = 3599;
-		if( strstr( sp->Name, "Deadly Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V,VI,VII
-			sp->EffectBasePoints[0] = 3599;
-		if( strstr( sp->Name, "Wound Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V
-			sp->EffectBasePoints[0] = 3599;
-		if( strstr( sp->Name, "Anesthetic Poison") && sp->Effect[0] == 54 ) //I
-			sp->EffectBasePoints[0] = 3599;
-
-		if( strstr( sp->Name, "Sharpen Blade") && sp->Effect[0] == 54 ) //All BS stones
+		if(strstr( sp->Name, "Mind-numbing Poison") || (strstr( sp->Name, "Wound Poison") || strstr( sp->Name, "Crippling Poison")
+			|| strstr( sp->Name, "Instant Poison") || strstr( sp->Name, "Deadly Poison") || strstr( sp->Name, "Anesthetic Poison")
+			|| strstr( sp->Name, "Sharpen Blade"))
+			&& sp->Effect[0] == 54 )
 			sp->EffectBasePoints[0] = 3599;
 
 		//these mostly do not mix so we can use else
@@ -6058,7 +5928,8 @@ void ApplyNormalFixes()
 		uint32 z;
 		if(!(sp->AuraInterruptFlags & AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN))
 		{
-			for(z = 0; z < 3; ++z) {
+			for(z = 0; z < 3; ++z)
+			{
 				if(sp->EffectApplyAuraName[z] == SPELL_AURA_MOD_FEAR ||
 					sp->EffectApplyAuraName[z] == SPELL_AURA_MOD_ROOT)
 				{
@@ -7057,18 +6928,13 @@ void ApplyNormalFixes()
 			sp->EffectSpellClassMask[1][0] = 0;
 			sp->EffectSpellClassMask[1][1] = 0;
 		}
-	}
 
-	//Fully loaded coefficients, we must share channeled coefficient to its triggered spells
-	for(uint32 x=0; x < cnt; x++)
-	{
-		sp = dbcSpell.LookupRow(x);
+		// Apply spell fixes.
 		ApplySingleSpellFixes(sp);
 	}
+
 	for(list<SpellEntry*>::iterator itr = sWorld.dummyspells.begin(); itr != sWorld.dummyspells.end(); itr++)
 		ApplySingleSpellFixes(*itr);
-
-
 
 	/////////////////////////////////////////////////////////////////
 	//FORCER CREATURE SPELL TARGETING
@@ -7137,3 +7003,30 @@ void ApplyNormalFixes()
 	exit(0);
 #endif
 }
+
+// Kroze: Some commented stuff.
+
+// NEW SCHOOLS AS OF 2.4.0:
+/* (bitwise)
+SCHOOL_NORMAL = 1,
+SCHOOL_HOLY   = 2,
+SCHOOL_FIRE   = 4,
+SCHOOL_NATURE = 8,
+SCHOOL_FROST  = 16,
+SCHOOL_SHADOW = 32,
+SCHOOL_ARCANE = 64
+
+//where do i use this ?
+
+AURASTATE_FLAG_DODGE_BLOCK			= 1,		//1
+AURASTATE_FLAG_HEALTH20				= 2,		//2
+AURASTATE_FLAG_BERSERK				= 4,		//3
+AURASTATE_FLAG_JUDGEMENT			= 16,		//5
+AURASTATE_FLAG_PARRY				= 64,		//7
+AURASTATE_FLAG_LASTKILLWITHHONOR	= 512,		//10
+AURASTATE_FLAG_CRITICAL				= 1024,		//11
+AURASTATE_FLAG_HEALTH35				= 4096,		//13
+AURASTATE_FLAG_IMMOLATE				= 8192,		//14
+AURASTATE_FLAG_REJUVENATE			= 16384,	//15
+AURASTATE_FLAG_POISON				= 32768,	//16
+*/
