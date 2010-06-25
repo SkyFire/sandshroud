@@ -69,10 +69,10 @@ public:
 		AddEmote(Event_OnTargetDied, "Learn your place, mortal!", Text_Yell, 0);
 		AddPhaseSpell(1,AddSpell(ONY_CLEAVE, Target_Current, 15, 0, 20, 0.0f, 15.0f));
 		deepbreath = AddSpell(ONY_BREATH, Target_RandomPlayerNotCurrent, 0, 0, 0);
-		AddPhaseSpell(2, AddSpellFunc(&SpellFunc_Deep_Breath, Target_RandomPlayerNotCurrent, 15, 8, 30));
+		AddPhaseSpell(2, AddSpellFunc(&SpellFunc_Deep_Breath, Target_RandomPlayer, 15, 8, 30));
 		AddPhaseSpell(3,AddSpell(ONY_CLEAVE, Target_Current, 15, 0, 20, 0.0f, 15.0f));
 		bellowingroar = AddPhaseSpell(3,AddSpell(ONY_BELLOWING_ROAR, Target_Current, 15, 0, 10));
-		AddPhaseSpell(3,AddSpellFunc(&SpellFunc_Eruption, Target_RandomPlayerNotCurrent, 15, 0, 40));
+		AddPhaseSpell(3,AddSpellFunc(&SpellFunc_Eruption, Target_RandomPlayer, 15, 0, 40));
 		GetUnit()->SetStandState(STANDSTATE_SLEEP);
 		SetFlyMode(false);
 		SetMoveType(Move_DontMoveWP);
@@ -129,15 +129,14 @@ public:
 					if(IsTimerFinished(mWhelpTimer)) whelps();
 					if(IsTimerFinished(mGuardTimer)) guards();
 				}break;
-			case 3: break; //whelps doesn't spawn at phase 3. Maybe will add something later.
+			case 3: break; 
 		}
 		ParentClass::AIUpdate();
     }
 
 	void whelps()
 	{
-        uint count = 40;
-		for(uint i = 0; i < count; i++)
+		for(uint i = 0; i < 40; i++)
         {
 			uint32 rnd = RandomUInt(5)+1;
 			SpawnCreature(ONY_WHELP, whelpCoords[rnd].mX, whelpCoords[rnd].mY, whelpCoords[rnd].mZ, whelpCoords[rnd].mO, false, GetUnit()->GetAIInterface()->GetNextTarget());
@@ -148,9 +147,9 @@ public:
 
 	void guards() //only one guard spawns in 10 player mode.
 	{
-        uint count = 1;
-        if(IsHeroic()) count = 2;
-        for(uint i=0; i<count; i++)
+        uint8 count = 1;
+        if(GetInstanceMode() == MODE_25PLAYER_NORMAL) count = 2;
+        for(uint8 i=0; i<count; i++)
 			SpawnCreature(ONY_GUARD, -124.648956f, -214.545670f, -71.680466f, 0.0f, false, GetUnit()->GetAIInterface()->GetNextTarget());
 		ResetTimer(mGuardTimer, 90000);
 	}

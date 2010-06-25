@@ -198,7 +198,7 @@
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -223,7 +223,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB"
 				StringPooling="true"
@@ -960,6 +960,18 @@
 					<Filter
 						Name="The Eye of Eternity"
 						>
+						<File
+							RelativePath="..\..\src\InstanceScripts\TheEyeofEternity\Raid_Malygos.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\InstanceScripts\TheEyeofEternity\Raid_TheEyeofEternity.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\InstanceScripts\TheEyeofEternity\Raid_TheEyeofEternity.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 				<Filter

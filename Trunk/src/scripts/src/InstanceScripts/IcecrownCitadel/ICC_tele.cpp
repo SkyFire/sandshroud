@@ -92,8 +92,16 @@ public:
 void SetupICC(ScriptMgr * mgr)
 {
 	GossipScript * ICCTele = (GossipScript*) new ICCTeleporter();
-	mgr->register_go_gossip_script( 202242, ICCTele);
-	mgr->register_go_gossip_script( 202243, ICCTele);
+    mgr->register_go_gossip_script( 201907, ICCTele);
+    mgr->register_go_gossip_script( 201908, ICCTele);
+    mgr->register_go_gossip_script( 201909, ICCTele);
+    mgr->register_go_gossip_script( 201917, ICCTele);
+    mgr->register_go_gossip_script( 201918, ICCTele);
+    mgr->register_go_gossip_script( 201923, ICCTele);
+    mgr->register_go_gossip_script( 202223, ICCTele);
+    mgr->register_go_gossip_script( 202235, ICCTele);
+    mgr->register_go_gossip_script( 202242, ICCTele);
+    mgr->register_go_gossip_script( 202243, ICCTele);
 	mgr->register_go_gossip_script( 202244, ICCTele);
 	mgr->register_go_gossip_script( 202245, ICCTele);
 	mgr->register_go_gossip_script( 202246, ICCTele);
