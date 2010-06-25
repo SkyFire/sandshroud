@@ -999,8 +999,8 @@ struct CreatureSpellDataEntry
 struct CharRaceEntry
 {
 	uint32 race_id;
-	uint32 team_id;
 	uint32 cinematic_id;
+	uint32 team_id;
 	char* name1;
 };
 

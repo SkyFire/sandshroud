@@ -812,6 +812,7 @@ struct PlayerCooldown
 //  TODO:  Attach characters to user accounts
 //====================================================================
 typedef std::set<uint32>	                        SpellSet;
+typedef std::list<uint32>	                        SpellList;
 typedef std::list<classScriptOverride*>             ScriptOverrideList;
 typedef std::set<uint32>                            SaveSet;
 typedef std::map<uint64, ByteBuffer*>               SplineMap;
@@ -1019,7 +1020,7 @@ public:
 	void EventPortToGM(uint32 guid);
 	HEARTHSTONE_INLINE uint32 GetTeam() { return m_team; }
 	HEARTHSTONE_INLINE void SetTeam(uint32 t) { m_team = t; m_bgTeam=t; }
-	HEARTHSTONE_INLINE void ResetTeam() { m_team = myRace->team_id==7 ? 0 : 1; m_bgTeam=m_team; }
+	HEARTHSTONE_INLINE void ResetTeam() { m_team = myRace->team_id; m_bgTeam=m_team; }
 
 	HEARTHSTONE_INLINE bool IsInFeralForm()
 	{
@@ -1335,6 +1336,7 @@ public:
 	Corpse* RepopRequestedPlayer();
 	void DecReclaimCount() { if(ReclaimCount > 0) --ReclaimCount; };
 	uint32 ReclaimCount;
+	bool Wispform;
 
 	// silly event handler
 	void EventRepopRequestedPlayer() { RepopRequestedPlayer(); }
@@ -1420,6 +1422,7 @@ public:
 	}
 
 	void SetShapeShift(uint8 ss);
+	uint32 GetSpellForShapeshiftForm(uint8 ss);
 
 	//Showing Units WayPoints
 	AIInterface* waypointunit;
@@ -1439,6 +1442,7 @@ public:
 	bool m_noFallDamage;
 	float z_axisposition;
 	int32 m_safeFall;
+	bool safefall;
 	// Gossip
 	GossipMenu* CurrentGossipMenu;
 	void CleanupGossipMenu();

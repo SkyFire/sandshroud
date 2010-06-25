@@ -1960,6 +1960,7 @@ void AIInterface::MoveTo(float x, float y, float z)
 	m_nextPosX = x;
 	m_nextPosY = y;
 	m_nextPosZ = z;
+	CheckHeight();
 
 	if(m_creatureState != MOVING)
 		UpdateMove();
@@ -3700,6 +3701,7 @@ void AIInterface::WipeCurrentTarget()
 		UnitToFollow_backup = NULLUNIT;
 }
 
+// Crow: THIS FUNCTION IS HEAVILY DEPENDENT ON THE CREATURE PROTO COLUMN!
 void AIInterface::CheckHeight()
 {
 	if(m_Unit->GetMapMgr())
@@ -3717,8 +3719,15 @@ void AIInterface::CheckHeight()
 		float x = m_Unit->GetPositionX();
 		float y = m_Unit->GetPositionY();
 		float z = m_Unit->GetPositionZ();
+		if(m_nextPosX && m_nextPosY)
+		{
+			x = m_nextPosX;
+			y = m_nextPosY;
+			z = (z > m_nextPosZ ? z : m_nextPosZ); // Crow: Call it hacky, but it works.
+		}
+
 		float landheight_z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
-		if(m_Unit->GetMapMgr()->IsCollisionEnabled() && CollideInterface.GetHeight(m, x, y, z + 2.0f) != NO_WMO_HEIGHT)
+		if(m_Unit->GetMapMgr()->IsCollisionEnabled() && CollideInterface.GetHeight(m, x, y, z + 2.0f) != NO_WMO_HEIGHT /*&& CollideInterface.IsOutdoor(m, x, y, z)*/)
 			landheight_z = CollideInterface.GetHeight(m, x, y, z + 2.0f);
 
 		if(landheight_z)
@@ -3728,5 +3737,6 @@ void AIInterface::CheckHeight()
 			else
 				m_moveFly = false;
 		}
+		m_Unit->UpdateVisibility();
 	}
 }

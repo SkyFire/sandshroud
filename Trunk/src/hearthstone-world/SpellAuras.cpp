@@ -8110,7 +8110,7 @@ void Aura::SpellAuraSafeFall(bool apply)
 	if( apply )
 	{
 		SetPositive();
-		data.SetOpcode( SMSG_MOVE_FEATHER_FALL );
+		data.SetOpcode(SMSG_MOVE_FEATHER_FALL);
 		TO_PLAYER(m_target )->m_safeFall += mod->m_amount;
 	}
 	else 
@@ -8459,7 +8459,7 @@ void Aura::SpellAuraAddFlatModifier(bool apply)
 		return;
 	}
 	//printf("!!! the AffectedGroups %u ,the smt type %u,\n",AffectedGroups,mod->m_miscValue);
-	
+
 	int32 modifier = mod->m_miscValue;
 
 	if(modifier < 0 || modifier >= SPELL_MODIFIERS)

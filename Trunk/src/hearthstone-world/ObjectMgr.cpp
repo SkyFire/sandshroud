@@ -409,11 +409,8 @@ void ObjectMgr::LoadPlayersInfo()
 #ifdef VOICE_CHAT
 			pn->groupVoiceId = -1;
 #endif
-
-			if(pn->race==RACE_HUMAN||pn->race==RACE_DWARF||pn->race==RACE_GNOME||pn->race==RACE_NIGHTELF||pn->race==RACE_DRAENEI)
-				pn->team = 0;
-			else
-				pn->team = 1;
+			CharRaceEntry * race = dbcCharRace.LookupEntryForced(pn->race);
+			pn->team = race->team_id;
 
 			if( GetPlayerInfoByName(pn->name) != NULL )
 			{

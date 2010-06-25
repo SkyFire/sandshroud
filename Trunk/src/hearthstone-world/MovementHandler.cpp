@@ -520,10 +520,10 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			if(_player->movement_info.z > _player->z_axisposition)
 				falldistance = 0;
 
-			/*if player is a rogue or druid(in cat form), then apply -17 modifier to fall distance.
-			these checks need improving, low level rogue/druid should not receive this benefit*/
+			/*if player is a rogue or druid(in cat form), then apply -17 modifier to fall distance.*/
 			if( ( _player->getClass() == ROGUE ) || ( _player->GetShapeShift() == FORM_CAT ) )
-				falldistance -=17;
+				if(_player->safefall)
+					falldistance -= _player->m_safeFall;
 
 			//checks that player has fallen more than 12 units, otherwise no damage will be dealt
 			//falltime check is also needed here, otherwise sudden changes in Z axis position, such as using !recall, may result in death

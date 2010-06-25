@@ -427,6 +427,7 @@ void Player::Init()
 
 	m_heartbeatDisable = 0;
 	m_safeFall = 0;
+	safefall = false;
 	m_noFallDamage = false;
 	z_axisposition = 0.0f;
 	m_KickDelay = 0;
@@ -465,6 +466,7 @@ void Player::Init()
 	m_itemsets.clear();
 	m_channels.clear();
 	m_visibleObjects.clear();
+	mDeletedSpells.clear();
 	mSpells.clear();
 	for(uint32 i = 0; i < 21; i++)
 		m_WeaponSubClassDamagePct[i] = 1.0f;
@@ -613,7 +615,7 @@ Player::~Player ( )
 	m_itemsets.clear();
 	m_channels.clear();
 	mSpells.clear();
-
+	mDeletedSpells.clear();
 }
 
 HEARTHSTONE_INLINE uint32 GetSpellForLanguage(uint32 SkillID)
@@ -740,12 +742,8 @@ bool Player::Create(WorldPacket& data )
 		return false;
 	}
 
-	if(myRace->team_id == 7)
-		m_team = 0;
-	else
-		m_team = 1;
-
-	uint8 powertype = static_cast<uint8>(myClass->power_type);
+	m_team = myRace->team_id;
+	uint8 powertype = uint8(myClass->power_type);
 
 	// Automatically add the race's taxi hub to the character's taximask at creation time ( 1 << (taxi_node_id-1) )
 	memset(m_taximask,0,sizeof(m_taximask));
@@ -2892,14 +2890,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		return;
 	}
 
-	if(myRace->team_id == 7)
-	{
-		m_bgTeam = m_team = 0;
-	}
-	else
-	{
-		m_bgTeam = m_team = 1;
-	}
+	m_bgTeam = m_team = myRace->team_id;
 
 	SetNoseLevel();
 
@@ -3209,8 +3200,9 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		*end=0;
 		SpellEntry * spProto = NULL;
 		spProto = dbcSpell.LookupEntryForced(atol(start));
-		if(spProto)
-			mDeletedSpells.insert(spProto->Id);
+		if(spProto != NULL) // Keep deleted spells in the singles.
+			if(mDeletedSpells.find(spProto->Id) == mDeletedSpells.end())
+				mDeletedSpells.insert(spProto->Id);
 		start = end +1;
 	}
 
@@ -4498,23 +4490,12 @@ void Player::BuildPlayerRepop()
 
 	//8326 --for all races but ne, 20584--ne
 	SpellCastTargets tgt;
-	tgt.m_unitTarget=this->GetGUID();
+	tgt.m_unitTarget = GetGUID();
 
-	if(getRace()==RACE_NIGHTELF)
-	{
-		SpellEntry *inf = dbcSpell.LookupEntry(20584);
-		Spell* sp = NULLSPELL;
-		sp = (new Spell(TO_PLAYER(this),inf,true,NULLAURA));
-		sp->prepare(&tgt);
-	}
-	else
-	{
-
-		SpellEntry *inf=dbcSpell.LookupEntry(8326);
-		Spell* sp = NULLSPELL;
-		sp = (new Spell(TO_PLAYER(this),inf,true,NULLAURA));
-		sp->prepare(&tgt);
-	}
+	SpellEntry *inf = dbcSpell.LookupEntry(Wispform ? 20584 : 8326);
+	Spell* sp = NULLSPELL;
+	sp = (new Spell(TO_PLAYER(this),inf,true,NULLAURA));
+	sp->prepare(&tgt);
 
 	StopMirrorTimer(0);
 	StopMirrorTimer(1);
@@ -4612,11 +4593,7 @@ void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 	m_resurrectHealth = m_resurrectMana = 0;
 
 	SpawnCorpseBones();
-
-	if(getRace() == RACE_NIGHTELF)
-		RemoveAura(20584);
-	else
-		RemoveAura(8326);
+	RemoveAura(Wispform ? 20584 : 8326);
 
 	RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEATH_WORLD_ENABLE);
 	setDeathState(ALIVE);
@@ -5607,6 +5584,10 @@ bool Player::CanSee(Object* obj) // * Invisibility & Stealth Detection - Partha 
 		{
 			Player* pObj = TO_PLAYER(obj);
 
+			if(myCorpse && myCorpse->GetDistanceSq(obj) > CORPSE_VIEW_DISTANCE)
+				if(pObj->IsPlayer() && pObj->getDeathState() == CORPSE)
+					return !pObj->m_isGmInvisible; // we can see all players within range of our corpse except invisible GMs
+
 			if(myCorpse && myCorpse->GetDistanceSq(obj) <= CORPSE_VIEW_DISTANCE)
 				return !pObj->m_isGmInvisible; // we can see all players within range of our corpse except invisible GMs
 
@@ -6486,7 +6467,8 @@ bool Player::removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpel
 	}
 
 	if(MoveToDeleted)
-		mDeletedSpells.insert(SpellID);
+		if(mDeletedSpells.find(SpellID) == mDeletedSpells.end())
+			mDeletedSpells.insert(SpellID);
 
 	if(!IsInWorld())
 		return true;
@@ -6658,13 +6640,16 @@ void Player::SendInitialLogonPackets()
 
 void Player::Reset_Spells()
 {
+	Mutex lock;
+	lock.Acquire();
+
 	PlayerCreateInfo *info = objmgr.GetPlayerCreateInfo(getRace(), getClass());
 	ASSERT(info);
-
-	std::list<uint32> spelllist;
+	SpellSet spelllist;
+	SpellSet::iterator itr;
 	bool profession = false;
 	
-	for(SpellSet::iterator itr = mSpells.begin(); itr!=mSpells.end(); itr++)
+	for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
 	{
 		SpellEntry *sp = dbcSpell.LookupEntry((*itr));
 		for( uint32 lp = 0; lp < 3; lp++ )
@@ -6674,39 +6659,25 @@ void Player::Reset_Spells()
 		}
 
 		if( !profession )
-			spelllist.push_back((*itr));
+			spelllist.insert((*itr));
 			
 		profession = false;
 	}
 
-	for(std::list<uint32>::iterator itr = spelllist.begin(); itr!=spelllist.end(); itr++)
+	for(itr = spelllist.begin(); itr != spelllist.end(); itr++)
 	{
 		removeSpell((*itr), false, false, 0);
 	}
 
-	for(std::set<uint32>::iterator sp = info->spell_list.begin();sp!=info->spell_list.end();sp++)
+	for(itr = info->spell_list.begin(); itr != info->spell_list.end(); itr++)
 	{
-		if(*sp)
-		{
-			addSpell(*sp);
-		}
+		if(*itr)
+			addSpell(*itr);
 	}
 
-	profession = false;
-	for(std::set<uint32>::iterator itr = mDeletedSpells.begin(); itr != mDeletedSpells.end(); itr++)
-	{
-		SpellEntry *sp = dbcSpell.LookupEntry((*itr));
-		for( uint32 lp = 0; lp < 3; lp++ )
-		{
-			if( sp->Effect[lp] == SPELL_EFFECT_SKILL )
-				profession = true;
-		}
-
-		if( !profession )
-			mDeletedSpells.erase((*itr));
-		
-		profession = false;
-	}
+	// Crow: Even though this is the easy way out, why are we even removing deleted spells?
+	// mdeletedspells clearing crap.
+	lock.Release();
 }
 
 void Player::ResetTitansGrip()
@@ -8002,7 +7973,7 @@ void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompre
 		if(pck->GetOpcode() > NUM_MSG_TYPES || pck->size() > WORLDSOCKET_SENDBUF_SIZE)
 		{	// FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
 			if(delayedPackets.size() == pck->size())
-				delayedPackets.empty();
+				delayedPackets.clear();
 			continue;
 		}
 		//printf("Delayed packet opcode %u sent.\n", pck->GetOpcode());
@@ -12891,4 +12862,39 @@ bool Player::AllowDisenchantLoot()
 
 	BroadcastMessage(MSG_COLOR_RED"You need at least one enchanter in your group. You will just receive the item.");
 	return false;
+}
+
+uint32 Player::GetSpellForShapeshiftForm(uint8 ss)
+{
+	if(ss < 0)
+		return 0;
+
+	switch(ss)
+	{
+	case FORM_CAT:
+		return 768;
+		break;
+
+	case FORM_TRAVEL:
+		return 783;
+		break;
+
+	case FORM_BEAR:
+		return 5487;
+		break;
+
+	case FORM_DIREBEAR:
+		return 9634;
+		break;
+
+	case FORM_MOONKIN:
+		return 24858;
+		break;
+
+	case FORM_TREE:
+		return 33891;
+		break;
+	}
+
+	return 0;
 }

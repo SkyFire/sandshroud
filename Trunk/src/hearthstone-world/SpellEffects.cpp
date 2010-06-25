@@ -2657,6 +2657,21 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				}
 			}
 		}break;
+
+	case 20585:
+		{	// Stinking elves, make it available to all if they have the aura.
+			if(p_caster != NULL)
+				p_caster->Wispform = true;
+		}break;
+
+		// Safe fall checks?
+	case 1860:
+	case 20719:
+		{
+			if(p_caster != NULL)
+				p_caster->safefall = true;
+		}break;
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())
