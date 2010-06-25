@@ -6675,8 +6675,8 @@ void Player::Reset_Spells()
 			addSpell(*itr);
 	}
 
-	// Crow: Even though this is the easy way out, why are we even removing deleted spells?
-	// mdeletedspells clearing crap.
+	// Crow: TODO: Create function for some proffession shit no one knows about but me and probably the original creaters of Ascent, yea the professions thing, such a pain in the balls.
+	mDeletedSpells.clear();
 	lock.Release();
 }
 
@@ -12864,9 +12864,10 @@ bool Player::AllowDisenchantLoot()
 	return false;
 }
 
-uint32 Player::GetSpellForShapeshiftForm(uint8 ss)
+// Crow: Spellcheck explanation: Some spells have the required part, but they don't really need it.
+uint32 Player::GetSpellForShapeshiftForm(uint8 ss, bool spellchecks)
 {
-	if(ss < 0)
+	if(ss < 1)
 		return 0;
 
 	switch(ss)
@@ -12876,7 +12877,8 @@ uint32 Player::GetSpellForShapeshiftForm(uint8 ss)
 		break;
 
 	case FORM_TRAVEL:
-		return 783;
+		if(!spellchecks)
+			return 783;
 		break;
 
 	case FORM_BEAR:
@@ -12884,15 +12886,23 @@ uint32 Player::GetSpellForShapeshiftForm(uint8 ss)
 		break;
 
 	case FORM_DIREBEAR:
-		return 9634;
+		if(!spellchecks)
+			return 9634;
 		break;
 
 	case FORM_MOONKIN:
-		return 24858;
+		if(!spellchecks)
+			return 24858;
 		break;
 
 	case FORM_TREE:
-		return 33891;
+		if(!spellchecks)
+			return 33891;
+		break;
+
+	case FORM_GHOSTWOLF:
+		if(!spellchecks)
+			return 0;
 		break;
 	}
 

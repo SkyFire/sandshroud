@@ -1422,7 +1422,7 @@ public:
 	}
 
 	void SetShapeShift(uint8 ss);
-	uint32 GetSpellForShapeshiftForm(uint8 ss);
+	uint32 GetSpellForShapeshiftForm(uint8 ss, bool spellchecks = false);
 
 	//Showing Units WayPoints
 	AIInterface* waypointunit;

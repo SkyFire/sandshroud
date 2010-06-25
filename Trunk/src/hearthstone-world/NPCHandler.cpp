@@ -111,7 +111,8 @@ void WorldSession::HandleTrainerListOpcode( WorldPacket & recv_data )
 	uint64 guid;
 	recv_data >> guid;
 	Creature* train = GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	if(!train) return;
+	if(train == NULL)
+		return;
 
 	_player->Reputation_OnTalk(train->m_factionDBC);
 	SendTrainerList(train);
@@ -120,8 +121,7 @@ void WorldSession::HandleTrainerListOpcode( WorldPacket & recv_data )
 void WorldSession::SendTrainerList(Creature* pCreature)
 {
 	Trainer * pTrainer = pCreature->GetTrainer();
-	//if(pTrainer == 0 || !CanTrainAt(_player, pTrainer)) return;
-	if(pTrainer==0)
+	if(pTrainer == 0)
 		return;
 
 	if(!CanTrainAt(_player,pTrainer))
@@ -181,12 +181,14 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 
 	recvPacket >> Guid >> TeachingSpellID;
 	Creature* pCreature = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(Guid));
-	if(pCreature == 0) return;
+	if(pCreature == NULL)
+		return;
 
 	Trainer *pTrainer = pCreature->GetTrainer();
-	if(pTrainer == 0 || !CanTrainAt(_player, pTrainer)) return;
+	if(pTrainer == NULL || !CanTrainAt(_player, pTrainer))
+		return;
 
-	TrainerSpell* pSpell=NULL;
+	TrainerSpell* pSpell = NULL;
 	for(vector<TrainerSpell>::iterator itr = pTrainer->Spells.begin(); itr != pTrainer->Spells.end(); itr++)
 	{
 		if( ( itr->pCastRealSpell && itr->pCastRealSpell->Id == TeachingSpellID ) ||
@@ -195,11 +197,12 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 			pSpell = &(*itr);
 		}
 	}
-	
+
 	if(pSpell == NULL)
 		return;
 
-	if(TrainerGetSpellStatus(pSpell) > 0) return;
+	if(TrainerGetSpellStatus(pSpell) > 0)
+		return;
 	
 	_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32)pSpell->Cost);
 
@@ -218,7 +221,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 
 		pck.guid = _player->GetGUID();
 		pck.visualid = 0x16a;
-		_player->OutPacketToSet( 0x1F7, sizeof(packetSMSG_PLAY_SPELL_VISUAL), &pck, true );
+		_player->OutPacketToSet( SMSG_PLAY_SPELL_IMPACT, sizeof(packetSMSG_PLAY_SPELL_VISUAL), &pck, true );
 
 		// add the spell
 		_player->addSpell( pSpell->pLearnSpell->Id );
@@ -240,8 +243,8 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 			{
 				uint32 skill = pSpell->pLearnSpell->EffectMiscValue[i];
 				uint32 val = (pSpell->pLearnSpell->EffectBasePoints[i]+1) * 75;
-				if( val > 350 )
-					val = 350;
+				if( val > MAXIMUM_ATTAINABLE_LEVEL*5 )
+					val = MAXIMUM_ATTAINABLE_LEVEL*5;
 
 				if( _player->_GetSkillLineMax(skill) >= val )
 					return;
@@ -271,7 +274,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 	}
 }
 
-uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell*  pSpell)
+uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 {
 	if(!pSpell->pCastSpell && !pSpell->pLearnSpell)
 		return TRAINER_STATUS_NOT_LEARNABLE;
@@ -285,13 +288,21 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell*  pSpell)
 	if(pSpell->DeleteSpell && _player->HasDeletedSpell(pSpell->DeleteSpell))
 		return TRAINER_STATUS_ALREADY_HAVE;
 
-	if(	(pSpell->RequiredLevel && _player->getLevel()<pSpell->RequiredLevel)
+	uint8 ssform = (pSpell->pLearnSpell ? pSpell->pLearnSpell->RequiredShapeShift : 0);
+	uint32 ssspell = 0;
+	if(ssform != FORM_MOONKIN) // We don't accept checks for this.
+		ssspell = _player->GetSpellForShapeshiftForm(ssform, true);
+
+	if(	(pSpell->RequiredLevel && _player->getLevel() < pSpell->RequiredLevel)
 		|| (pSpell->RequiredSpell && !_player->HasSpell(pSpell->RequiredSpell))
 		|| (pSpell->Cost && _player->GetUInt32Value(PLAYER_FIELD_COINAGE) < pSpell->Cost)
 		|| (pSpell->RequiredSkillLine && _player->_GetSkillLineCurrent(pSpell->RequiredSkillLine,true) < pSpell->RequiredSkillLineValue)
-		|| (pSpell->IsProfession && pSpell->RequiredSkillLine==0 && _player->GetUInt32Value(PLAYER_CHARACTER_POINTS2) == 0)//check level 1 professions if we can learn a new proffesion
-		)
+		|| (pSpell->IsProfession && pSpell->RequiredSkillLine == 0 && _player->GetUInt32Value(PLAYER_CHARACTER_POINTS2) == 0)//check level 1 professions if we can learn a new proffesion
+		|| (ssspell && !_player->HasSpell(ssspell)))
+	{
 		return TRAINER_STATUS_NOT_LEARNABLE;
+	}
+
 	return TRAINER_STATUS_LEARNABLE;
 }
 

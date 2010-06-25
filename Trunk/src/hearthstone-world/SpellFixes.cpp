@@ -6100,34 +6100,33 @@ void ApplyNormalFixes()
 		}
 
 		// set extra properties
-		sp->buffType   = type;
+		sp->buffType = type;
 
 		uint32 pr = sp->procFlags;
 		uint32 pr2 = sp->procflags2;
 		for(uint32 y=0;y < 3; y++)
 		{
-			// get the effect number from the spell
+			// Get the effect number from the spell
 			effect = sp->Effect[y];
 
 			if(effect==SPELL_EFFECT_APPLY_AURA)
 			{
 				uint32 aura = sp->EffectApplyAuraName[y];
 				if( aura == SPELL_AURA_PROC_TRIGGER_SPELL ||
-					aura == SPELL_AURA_PROC_TRIGGER_DAMAGE
-					)//search for spellid in description
-				{
-					const char *p=sp->Description;
-					while((p=strstr(p,"$")))
+					aura == SPELL_AURA_PROC_TRIGGER_DAMAGE )
+				{	// Search for spellid in description
+					const char *p = sp->Description;
+					while((p = strstr(p,"$")))
 					{
 						p++;
 						//got $  -> check if spell
-						if(*p>='0' && *p <='9')
+						if(*p >= '0' && *p <= '9')
 						{//woot this is spell id
 						
-							result=atoi(p);
+							result = atoi(p);
 						}					
 					}
-					pr=0;
+					pr = 0;
 
 					char desc[4096];
 					strcpy(desc,sp->Description);
@@ -6137,18 +6136,33 @@ void ApplyNormalFixes()
 					//dirty code for procs, if any1 got any better idea-> u are welcome
 					//139944 --- some magic number, it will trigger on all hits etc
 						//for seems to be smth like custom check
-					if( strstr( desc,"your ranged criticals"))
+
+					if(strstr( desc,"your ranged criticals"))
 						pr|=PROC_ON_RANGED_CRIT_ATTACK;
-					if( strstr( desc,"chance on hit"))
+
+					if(strstr( desc,"chance on hit") || strstr( desc,"your auto attacks") || strstr( desc,"character strikes an enemy")
+						|| strstr( desc,"when it hits") || strstr( desc,"when successfully hit") || strstr( desc,"an enemy on hit")
+						|| strstr( desc,"when the caster is using melee attacks") || strstr( desc,"successful melee attack")
+						|| strstr( desc,"chance per hit") || strstr( desc,"you deal melee damage") || strstr( desc,"your melee attacks")
+						|| strstr( desc,"chance per attack") || strstr( desc,"damage with your Sword") || strstr( desc,"on a successful hit")
+						|| strstr( desc,"takes damage") || strstr( desc,"when damaging an enemy in melee") || strstr( desc,"on a hit")
+						|| strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
+						|| strstr( desc,"damaging melee attacks") || strstr( desc,"attackers when hit") || strstr( desc,"on a melee swing")
+						|| strstr( desc,"on melee or ranged attack") || strstr( desc,"Chance on melee") ||  strstr( desc, "melee attacks has")
+						|| strstr( desc, "giving each melee attack a chance") || strstr( desc, "a chance to deal additional")
+						|| strstr( desc, "chance to get an extra attack") || strstr( desc,"giving each melee attack")
+						|| strstr( desc,"each strike has") || strstr( desc,"chance on hit") || strstr( desc, "with a melee weapon")
+						|| strstr( desc,"damage to melee attackers") || strstr( desc,"into flame, causing an additional")
+						)
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"takes damage"))
-						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"attackers when hit"))
+
+					if(strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
+						|| strstr( desc,"on melee or ranged attack"))
+						pr|=PROC_ON_RANGED_ATTACK;
+
+					if(strstr( desc,"attackers when hit") || strstr( desc,"strike you with a melee attack"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"character strikes an enemy"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"strike you with a melee attack"))
-						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
+
 					if( strstr( desc,"target casts a spell"))
 						pr|=PROC_ON_CAST_SPELL;
 					if( strstr( desc,"your harmful spells land"))
@@ -6163,34 +6177,14 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
 					if( strstr( desc,"the next melee attack against the caster"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"when successfully hit"))
-						pr|=PROC_ON_MELEE_ATTACK ;
-					if( strstr( desc,"an enemy on hit"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"when it hits"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"when successfully hit"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"on a successful hit"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"damage to attacker on hit"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"on a hit"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"strikes you with a melee attack"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
 					if( strstr( desc,"when caster takes damage"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"when the caster is using melee attacks"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"when struck in combat") || strstr(desc,"When struck in combat"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"successful melee attack"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"chance per attack"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"chance per hit"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"that strikes a party member"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
 					if( strstr( desc,"when hit by a melee attack"))
@@ -6201,13 +6195,6 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_CRIT_ATTACK;
 					if( strstr( desc,"whenever you deal ranged damage"))
 						pr|=PROC_ON_RANGED_ATTACK;
-//					if( strstr( desc,"whenever you deal melee damage"))
-					if( strstr( desc,"you deal melee damage"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"your melee attacks"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"damage with your Sword"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"when struck in melee combat"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
 					if( strstr( desc,"any successful spell cast against the priest"))
@@ -6216,33 +6203,18 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
 					if( strstr( desc,"striking melee or ranged attackers"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM|PROC_ON_RANGED_ATTACK_VICTIM;
-					if( strstr( desc,"when damaging an enemy in melee"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"victim of a critical strike"))
 						pr|=PROC_ON_CRIT_HIT_VICTIM;
-					if( strstr( desc,"on successful melee or ranged attack"))
-						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
 					if( strstr( desc,"enemy that strikes you in melee"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
 					if( strstr( desc,"after getting a critical strike"))
 						pr|=PROC_ON_CRIT_ATTACK;
 					if( strstr( desc,"whenever damage is dealt to you"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"when ranged or melee damage is dealt"))
-						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-					if( strstr( desc,"damaging melee attacks"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"on melee or ranged attack"))
-						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-					if( strstr( desc,"on a melee swing"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"Chance on melee"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"spell criticals against you"))
 						pr|=PROC_ON_SPELL_CRIT_HIT_VICTIM;
 					if( strstr( desc,"after being struck by a melee or ranged critical hit"))
 						pr|=PROC_ON_CRIT_HIT_VICTIM;
-//					if( strstr( desc,"on a critical hit"))
 					if( strstr( desc,"critical hit"))
 						pr|=PROC_ON_CRIT_ATTACK;
 					if( strstr( desc,"strikes the caster"))
@@ -6252,17 +6224,9 @@ void ApplyNormalFixes()
 					if( strstr( desc,"after dealing a critical strike"))
 						pr|=PROC_ON_CRIT_ATTACK;
 					if( strstr( desc,"each melee or ranged damage hit against the priest"))
-						pr|=PROC_ON_MELEE_ATTACK_VICTIM|PROC_ON_RANGED_ATTACK_VICTIM;				
-					if( strstr( desc, "a chance to deal additional"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc, "chance to get an extra attack"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc, "melee attacks has"))
-						pr|=PROC_ON_MELEE_ATTACK;
+						pr|=PROC_ON_MELEE_ATTACK_VICTIM|PROC_ON_RANGED_ATTACK_VICTIM;
 					if( strstr( desc, "any damage spell hits a target"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc, "giving each melee attack a chance"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc, "damage when hit"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM; //myabe melee damage ?
 					if( strstr( desc, "gives your"))
@@ -6275,8 +6239,6 @@ void ApplyNormalFixes()
 							pr|=PROC_ON_CAST_SPELL;
 						else if( strstr( desc,"finishing moves"))
 							pr|=PROC_ON_CAST_SPELL;
-//						else if( strstr( desc,"shadow bolt, shadowburn, soul fire, incinerate, searing pain and conflagrate"))
-//							pr|=PROC_ON_CAST_SPELL|PROC_TARGET_SELF;
 						//we should find that specific spell (or group) on what we will trigger
 						else pr|=PROC_ON_CAST_SPECIFIC_SPELL;
 					}
@@ -6316,10 +6278,6 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_CAST_SPELL;
 					if( strstr( desc,"after being hit with a shadow or fire spell"))
 						pr|=PROC_ON_SPELL_LAND_VICTIM;
-					if( strstr( desc,"giving each melee attack"))
-						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"each strike has"))
-						pr|=PROC_ON_MELEE_ATTACK;		
 					if( strstr( desc,"your Fire damage spell hits"))
 						pr|=PROC_ON_CAST_SPELL;		//this happens only on hit ;)
 					if( strstr( desc,"corruption, curse of agony, siphon life and seed of corruption spells also cause"))
@@ -6352,27 +6310,16 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_CAST_SPELL;
 					if( strstr( desc,"your melee and ranged attacks"))
 						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-//					if( strstr( desc,"chill effect to your Blizzard"))
-//						pr|=PROC_ON_CAST_SPELL;
-					//////////////////////////////////////////////////
-					//proc dmg flags
-					//////////////////////////////////////////////////
 					if( strstr( desc,"each attack blocked"))
 						pr2|=PROC_ON_BLOCK_VICTIM;
-					if( strstr( desc,"into flame, causing an additional"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"victim of a critical melee strike"))
 						pr|=PROC_ON_CRIT_HIT_VICTIM;
-					if( strstr( desc,"damage to melee attackers"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"target blocks a melee attack"))
 						pr2|=PROC_ON_BLOCK_VICTIM;
 					if( strstr( desc,"ranged and melee attacks to deal"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM | PROC_ON_RANGED_ATTACK_VICTIM;
 					if( strstr( desc,"damage on hit"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"chance on hit"))
-						pr|=PROC_ON_MELEE_ATTACK;
 					if( strstr( desc,"after being hit by any damaging attack"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
 					if( strstr( desc,"striking melee or ranged attackers"))
@@ -6395,27 +6342,7 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_AUTO_SHOT_HIT;
 					if( strstr( desc,"after getting a critical effect from your"))
 						pr2|=PROC_ON_SPELL_CRIT_HIT;
-					if( strstr( desc, "with a melee weapon"))
-						pr|=PROC_ON_MELEE_ATTACK;
-//					if( strstr( desc,"Your critical strikes from Fire damage"))
-//						pr|=PROC_ON_SPELL_CRIT_HIT;
 				}//end "if procspellaura"
-				//dirty fix to remove auras that should expire on event and they are not
-//				else if(sp->procCharges>0)
-//				{
-					//there are at least 185 spells that should loose charge uppon some event.Be prepared to add more here !
-					// ! watch it cause this might conflict with our custom modified spells like : lighning shield !
-
-					//spells like : Presence of Mind,Nature's Swiftness, Inner Focus,Amplify Curse,Coup de Grace
-					//SELECT * FROM dbc_spell where proc_charges!=0 and (effect_aura_1=108 or effect_aura_2=108 and effect_aura_3=108) and description!=""
-//					if(aura == SPELL_AURA_ADD_PCT_MODIFIER)
-//						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_CAST_SPELL;
-					//most of them probably already have these flags...not sure if we should add to all of them without checking
-/*					if( strstr( desc, "melee"))
-						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_START_ATTACK;
-					if( strstr( desc, "ranged"))
-						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_START_ATTACK;*/
-//				}
 
 				// Aura 109 fix
 				if(sp->EffectApplyAuraName[y] == SPELL_AURA_ADD_TARGET_TRIGGER)
