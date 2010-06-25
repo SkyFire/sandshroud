@@ -5491,8 +5491,12 @@ void Spell::SpellEffectTriggerSpell(uint32 i) // Trigger Spell
 
 	SpellEntry *spe = NULL;
 	spe = dbcSpell.LookupEntryForced(m_spellInfo->EffectTriggerSpell[i]);
-	if(spe== NULL )
+	if(spe == NULL )
 		return;
+
+	if(GetSpellProto() == spe) // Infinite loop fix.
+		return;
+
 	Spell* sp = new Spell( m_caster,spe,true,NULLAURA);
 	SpellCastTargets tgt((spe->procflags2 & PROC_TARGET_SELF) ? m_caster->GetGUID() : unitTarget->GetGUID());
 	sp->prepare(&tgt);
@@ -8093,6 +8097,9 @@ void Spell::SpellEffectForceCast( uint32 i )
 	if( TriggeredSpell == NULL )
 		return;
 
+	if(GetSpellProto() == TriggeredSpell) // Infinite loop fix.
+		return;
+
 	unitTarget->CastSpell( unitTarget, TriggeredSpell, true );
 }
 
@@ -8103,6 +8110,9 @@ void Spell::SpellEffectTriggerSpellWithValue(uint32 i)
 
 	SpellEntry* TriggeredSpell = dbcSpell.LookupEntryForced(m_spellInfo->EffectTriggerSpell[i]);
 	if( TriggeredSpell == NULL )
+		return;
+
+	if(GetSpellProto() == TriggeredSpell) // Infinite loop fix.
 		return;
 
 	Spell* sp= CREATESPELL(m_caster,dbcSpell.LookupEntry(TriggeredSpell->Id),true,NULLAURA);
