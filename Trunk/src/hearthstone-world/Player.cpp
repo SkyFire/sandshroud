@@ -9597,8 +9597,7 @@ void Player::SaveAuras(stringstream &ss)
 			{
 				if(!stop)
 				{
-					// Todo: Add caster checks for apply area aura.
-					if((aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA) ||
+					if((aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA && aur->GetCasterGUID() != GetGUID()) ||
 						aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AURA_128 || 
 						aur->m_spellProto->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT)
 					{
