@@ -258,7 +258,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
+				LinkTimeCodeGeneration="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/SunInstanceScripts.lib"
@@ -961,15 +961,7 @@
 						Name="The Eye of Eternity"
 						>
 						<File
-							RelativePath="..\..\src\InstanceScripts\TheEyeofEternity\Raid_Malygos.cpp"
-							>
-						</File>
-						<File
 							RelativePath="..\..\src\InstanceScripts\TheEyeofEternity\Raid_TheEyeofEternity.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\src\InstanceScripts\TheEyeofEternity\Raid_TheEyeofEternity.h"
 							>
 						</File>
 					</Filter>
