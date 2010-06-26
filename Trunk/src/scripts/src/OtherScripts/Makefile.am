@@ -6,11 +6,36 @@ INCLUDES += -I$(srcdir)/../../../hearthstone-shared/g3dlite -I$(srcdir)/../../..
 
 AM_CXXFLAGS = -DSCRIPTLIB
 
-lib_LTLIBRARIES = libSunMiscScripts.la
+lib_LTLIBRARIES = libOtherScripts.la
 
-libSunMiscScripts_la_SOURCES = Creatures.cpp \
-GameObjects.cpp \
-RandomScripts.cpp \
-QuelDanasPortal.cpp \
-DarkmoonFaireObjects.cpp \
+libSunMiscScripts_la_SOURCES = Miscellaneous/Creatures.cpp \
+Miscellaneous/GameObjects.cpp \
+Miscellaneous/RandomScripts.cpp \
+Miscellaneous/QuelDanasPortal.cpp \
+Miscellaneous/DarkmoonFaireObjects.cpp \
+EventScripts/Event_DarkPortal.cpp \
+EventScripts/Event_DarkPortal.h \
+EventScripts/Halloween.cpp \
+EventScripts/WinterVeil.cpp \
+GossipScripts/Gossip_Battlemaster.cpp \
+GossipScripts/Gossip_BoreanTundra.cpp \
+GossipScripts/Gossip_Dalaran.cpp \
+GossipScripts/Gossip_DarkmoonFaire.cpp \
+GossipScripts/Gossip_Guard.cpp \
+GossipScripts/Gossip_Innkeepers.cpp \
+GossipScripts/Gossip_Moonglade.cpp \
+GossipScripts/Gossip_Mulgore.cpp \
+GossipScripts/Gossip_Shattrath.cpp \
+GossipScripts/Gossip_Stormwind.cpp \
+GossipScripts/Gossip_Tanaris.cpp \
+GossipScripts/Gossip_Teldrassil.cpp \
+GossipScripts/Gossip_Theramore.cpp \
+GossipScripts/Gossip_Trainer.cpp \
+GossipScripts/Gossip_WyrmrestTemple.cpp \
+WorldPvP/ZoneHellfirePeninsula.cpp \
+WorldPvP/ZoneSilithus.cpp \
+WorldPvP/ZoneTerokkarForest.cpp \
+WorldPvP/ZoneZangarmarsh.cpp \
+NeutralGuards.cpp
+ScriptStdAfx.cpp
 Setup.cpp

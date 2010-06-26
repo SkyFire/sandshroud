@@ -20,3 +20,15 @@
  */
 
 #include "ScriptStdAfx.h"
+
+#include "StdAfx.h"
+
+class EyePlatform : GameObjectAIScript
+{
+public:
+	EyePlatform(GameObject *pGameObject) : GameObjectAIScript(pGameObject){}
+    void OnActivate(Player *pPlayer)
+	{
+        _gameobject->SetState(1);
+    }
+}

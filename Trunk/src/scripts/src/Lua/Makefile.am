@@ -59,6 +59,10 @@ lua/lvm.h \
 lua/lzio.c \
 lua/lzio.h \
 lua/print.c \
+Functions/FunctionGameObjects.cpp \
+Functions/FunctionItems.cpp \
+Functions/FunctionUnits.cpp \
+Functions/TableFunctions.h \
 LUAEngine.cpp \
 LUAEngine.h \
 LUAFunctions.h

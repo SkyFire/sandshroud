@@ -1,2 +1,2 @@
-SUBDIRS = GossipScripts InstanceScripts MiscScripts QuestScripts \
-SpellHandlers ServerStatusPlugin LUAScripting ExtraScripts EventScripts WorldPvPScripts
+﻿SUBDIRS = CustomScripts InstanceScripts QuestScripts \
+OtherScripts ServerStatusPlugin Lua

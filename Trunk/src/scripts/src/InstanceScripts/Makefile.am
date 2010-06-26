@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)/src/hearthstone-logonserver \
+﻿INCLUDES = -I$(top_srcdir)/src/hearthstone-logonserver \
    -I$(top_srcdir)/src/hearthstone-realmserver -I$(top_srcdir)/src/hearthstone-shared -I$(top_srcdir)/src/hearthstone-voicechat \
    -I$(top_srcdir)/src/hearthstone-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
@@ -9,60 +9,61 @@ AM_CXXFLAGS = -DSCRIPTLIB
 
 lib_LTLIBRARIES = libSunInstanceScripts.la
 
-libSunInstanceScripts_la_SOURCES = Instance_Arcatraz.cpp \
-Instance_AuchenaiCrypts.cpp \
-Instance_AzjolNerub.cpp \
-Instance_BlackMorass.cpp \
-Instance_BlackrockDepths.cpp \
-Instance_BlackrockSpire.cpp \
-Instance_BloodFurnace.cpp \
-Instance_Botanica.cpp \
-Instance_CullingOfStratholme.cpp \
-Instance_Deadmines.cpp \
-Instance_DireMaul.cpp \
-Instance_DrakTharonKeep.cpp \
-Instance_HallsOfLightning.cpp \
-Instance_HellfireRamparts.cpp \
-Instance_MagistersTerrace.cpp \
-Instance_ManaTombs.cpp \
-Instance_Mauradon.cpp \
-Instance_Nexus.cpp \
-Instance_OldHillsbradFoothills.cpp \
-Instance_HallsOfStone.cpp \
-Instance_RagefireChasm.cpp \
-Instance_RazorfenDowns.cpp \
-Instance_ScarletMonastery.cpp \
-Instance_Scholomance.cpp \
-Instance_SethekkHalls.cpp \
-Instance_ShadowLabyrinth.cpp \
-Instance_ShadowfangKeep.cpp \
-Instance_TheMechanar.cpp \
-Instance_TheShatteredHalls.cpp \
-Instance_TheSlavePens.cpp \
-Instance_TheSteamvault.cpp \
-Instance_TheUnderbog.cpp \
-Instance_Uldaman.cpp \
-Instance_UtgardeKeep.cpp \
-Instance_WailingCaverns.cpp \
-Instance_TheStockade.cpp \
-Instance_ZulFarrak.cpp \
-Raid_BlackTemple.cpp \
-Raid_BlackwingLair.cpp \
-Raid_CoT_BattleOfMountHyjal.cpp \
-Raid_GruulsLair.cpp \
-Raid_Karazhan.cpp \
-Raid_MoltenCore.cpp \
-Raid_Naxxramas.cpp \
-Raid_OnyxiasLair.cpp \
-Raid_SerpentshrineCavern.cpp \
-Raid_TheEye.cpp \
-Raid_TheObsidianSanctum.cpp \
-Raid_Ulduar.cpp \
-Raid_ZulGurub.cpp \
-Raid_Magtheridons_Lair.cpp \
-./SUNWELL_PLAT/Raid_SunwellPlateau.cpp \
-Raid_WorldBosses.cpp \
-Raid_ZulAman.cpp \
+libSunInstanceScripts_la_SOURCES = Arcatraz/Instance_Arcatraz.cpp \
+AuchenaiCrypt/Instance_AuchenaiCrypts.cpp \
+AzjolNerub/Instance_AzjolNerub.cpp \
+BlackMorass/Instance_BlackMorass.cpp \
+BlackrockDepths/Instance_BlackrockDepths.cpp \
+BlackrockSpire/Instance_BlackrockSpire.cpp \
+BloodFurnace/Instance_BloodFurnace.cpp \
+Botanica/Instance_Botanica.cpp \
+CullingOfStratholme/Instance_CullingOfStratholme.cpp \
+Deadmine/Instance_Deadmines.cpp \
+DireMaul/Instance_DireMaul.cpp \
+DrakTharonKeep/Instance_DrakTharonKeep.cpp \
+HallsOfLightnin/Instance_HallsOfLightning.cpp \
+HellfireRamparts/Instance_HellfireRamparts.cpp \
+MagistersTerrace/Instance_MagistersTerrace.cpp \
+ManaTombs/Instance_ManaTombs.cpp \
+Mauradon/Instance_Mauradon.cpp \
+Nexus/Instance_Nexus.cpp \
+OldHillsbradFoothills/Instance_OldHillsbradFoothills.cpp \
+HallsOfStone/Instance_HallsOfStone.cpp \
+RagefireChasm/Instance_RagefireChasm.cpp \
+RazorfenDowns/Instance_RazorfenDowns.cpp \
+ScarletMonastery/Instance_ScarletMonastery.cpp \
+Scholomance/Instance_Scholomance.cpp \
+SethekkHalls/Instance_SethekkHalls.cpp \
+ShadowLabyrinth/Instance_ShadowLabyrinth.cpp \
+ShadowfangKeep/Instance_ShadowfangKeep.cpp \
+TheMechanar/Instance_TheMechanar.cpp \
+TheShatteredHalls/Instance_TheShatteredHalls.cpp \
+TheSlavePens/Instance_TheSlavePens.cpp \
+TheSteamvault/Instance_TheSteamvault.cpp \
+TheUnderbog/Instance_TheUnderbog.cpp \
+Uldaman/Instance_Uldaman.cpp \
+UtgardeKee/Instance_UtgardeKeep.cpp \
+WailingCaverns/Instance_WailingCaverns.cpp \
+TheStockade/Instance_TheStockade.cpp \
+ZulFarrak/Instance_ZulFarrak.cpp \
+BlackTemple/Raid_BlackTemple.cpp \
+BlackwingLair/Raid_BlackwingLair.cpp \
+HyjalSummit/Raid_HyjalSummit.cpp \
+GruulsLair/Raid_GruulsLair.cpp \
+Karazhan/Raid_Karazhan.cpp \
+MoltenCore/Raid_MoltenCore.cpp \
+Naxxramas/Raid_Naxxramas.cpp \
+OnyxiasLair/Raid_OnyxiasLair.cpp \
+SerpentshrineCavern/Raid_SerpentshrineCavern.cpp \
+TheEye/Raid_TheEye.cpp \
+TheObsidianSanctum/Raid_TheObsidianSanctum.cpp \
+Ulduar/Raid_Ulduar.cpp \
+ZulGurub/Raid_ZulGurub.cpp \
+MagtheridonsLair/Raid_MagtheridonsLair.cpp \
+SunwellPlateau/Raid_SunwellPlateau.cpp \
+WorldBosses/Raid_WorldBosses.cpp \
+ZulAman/Raid_ZulAman.cpp \
+ScriptStdAfx.h \
 ../Common/Instance_Base.cpp \
 ../Common/Base.cpp \
 Setup.cpp
