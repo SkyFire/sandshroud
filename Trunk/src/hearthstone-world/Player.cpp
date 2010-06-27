@@ -1500,8 +1500,8 @@ void Player::EventDeath()
 	if (m_onTaxi)
 		sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_TAXI_DISMOUNT);
 
-	if(!IS_INSTANCE(GetMapId()) && !sEventMgr.HasEvent(TO_PLAYER(this),EVENT_PLAYER_FORECED_RESURECT)) //Should never be true 
-		sEventMgr.AddEvent(TO_PLAYER(this),&Player::EventRepopRequestedPlayer,EVENT_PLAYER_FORECED_RESURECT,PLAYER_FORCED_RESURECT_INTERVAL,1,0); //in case he forgets to release spirit (afk or something)
+	if(!IS_INSTANCE(GetMapId()) && !sEventMgr.HasEvent(TO_PLAYER(this),EVENT_PLAYER_FORCED_RESURECT)) //Should never be true 
+		sEventMgr.AddEvent(TO_PLAYER(this),&Player::EventRepopRequestedPlayer,EVENT_PLAYER_FORCED_RESURECT,PLAYER_FORCED_RESURECT_INTERVAL,1,0); //in case he forgets to release spirit (afk or something)
 
 	//remove any summoned totems/summons/go's created by this player
 	SummonExpireAll(false);
@@ -4525,7 +4525,7 @@ Corpse* Player::RepopRequestedPlayer()
 		return NULLCORPSE;
 	}
 
-	sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_FORECED_RESURECT ); //in case somebody resurrected us before this event happened
+	sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_FORCED_RESURECT ); //in case somebody resurrected us before this event happened
 
 	// Set death state to corpse, that way players will lose visibility
 	setDeathState( CORPSE );
@@ -4583,7 +4583,7 @@ Corpse* Player::RepopRequestedPlayer()
 
 void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 {
-	sEventMgr.RemoveEvents(TO_PLAYER(this),EVENT_PLAYER_FORECED_RESURECT); //in case somebody resurected us before this event happened
+	sEventMgr.RemoveEvents(TO_PLAYER(this),EVENT_PLAYER_FORCED_RESURECT); //in case somebody resurected us before this event happened
 	if( m_resurrectHealth )
 		SetUInt32Value(UNIT_FIELD_HEALTH, (uint32)min( m_resurrectHealth, m_uint32Values[UNIT_FIELD_MAXHEALTH] ) );
 	if( m_resurrectMana )
@@ -4601,7 +4601,7 @@ void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 	if(ReclaimCount < 8) // 2 minute limit.
 		ReclaimCount++;
 	// Crow: Guessed intervals.
-	// TODO: sEventMgr.AddEvent(this, &Player::DecReclaimCount, EVENT_DEC_CORPSE_RECLAIM_COUNT, (ReclaimCount*15)*1000, ReclaimCount, 0);
+	// TODO: sEventMgr.AddEvent(this, &Player::DecReclaimCount, EVENT_DEC_CORPSE_RECLAIM_COUNT, 60000, 1, 0);
 
 	if(IsInWorld() && pResurrector != NULL && pResurrector->IsInWorld())
 	{

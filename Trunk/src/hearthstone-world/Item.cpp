@@ -645,7 +645,6 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 					if( Apply && Entry->spell[c] != 0 )
 					{
 						// Create a proc trigger spell
-
 						ProcTriggerSpell TS;
 						TS.caster = m_owner->GetGUID();
 						TS.origId = 0;
