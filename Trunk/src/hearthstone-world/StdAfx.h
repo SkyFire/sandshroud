@@ -39,11 +39,11 @@
 #include <iosfwd>
 #include <search.h>
 #include <fcntl.h>
+#include <signal.h>
 //#include <fstream>
 
 #include "../hearthstone-shared/Common.h"
-#include "MainServerDefines.h"
-
+#include "../hearthstone-shared/svn_revision.h"
 #include "../hearthstone-shared/MersenneTwister.h"
 #include "../hearthstone-shared/WorldPacket.h"
 #include "../hearthstone-shared/Log.h"
@@ -59,6 +59,8 @@
 #include "../hearthstone-shared/Collision/vmap/VMapManager.h"
 
 #include <zlib.h>
+#include <RC4Engine.h>
+#include "MainServerDefines.h"
 
 #include "../hearthstone-shared/Database/DatabaseEnv.h"
 #include "../hearthstone-shared/Database/DBCStores.h"
@@ -81,6 +83,7 @@
 #include "../hearthstone-shared/CallBack.h"
 #include "../hearthstone-shared/Storage.h"
 
+#include "../hearthstone-logonserver/LogonOpcodes.h"
 #include "../hearthstone-voicechat/hearthstone_opcodes.h"
 
 #include "Const.h"
@@ -91,7 +94,8 @@
 #include "WorldStates.h"
 
 #ifdef CLUSTERING
-	#include "../hearthstone-realmserver/WorkerOpcodes.h"
+#include "../hearthstone-realmserver/Structures.h"
+#include "../hearthstone-realmserver/WorkerOpcodes.h"
 #endif
 
 #include "Packets.h"
@@ -112,10 +116,13 @@
 #include "EyeOfTheStorm.h"
 #include "Arenas.h"
 #include "CellHandler.h"
+#include "SkillNameMgr.h"
 #include "Chat.h"
 #include "Corpse.h"
 #include "Quest.h"
 #include "QuestMgr.h"
+#include "TerrainMgr.h"
+#include "Map.h"
 #include "Creature.h"
 #include "DynamicObject.h"
 #include "GameObject.h"
@@ -123,15 +130,14 @@
 #include "Guild.h"
 #include "HonorHandler.h"
 #include "ItemPrototype.h"
+#include "Skill.h"
 #include "Item.h"
 #include "Container.h"
 #include "AuctionHouse.h"
 #include "AuctionMgr.h"
 #include "LfgMgr.h"
 #include "MailSystem.h"
-#include "Map.h"
 #include "MapCell.h"
-#include "TerrainMgr.h"
 #include "MiscHandler.h"
 #include "NPCHandler.h"
 #include "Pet.h"
@@ -146,12 +152,11 @@
 #include "Wintergrasp.h"
 #include "Player.h"
 #include "faction.h"
-#include "Skill.h"
-#include "SkillNameMgr.h"
 #include "SpellNameHashes.h"
 #include "SpellFailure.h"
 #include "Spell.h"
 #include "SpellAuras.h"
+#include "ClassSpells.h"
 #include "TaxiMgr.h"
 #include "TransporterHandler.h"
 #include "WarsongGulch.h"
@@ -187,6 +192,33 @@
 #include "Master.h"
 #include "BaseConsole.h"
 #include "CConsole.h"
+#include "ConsoleCommands.h"
 //#define COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS 1
+
+//#include <vld.h>
+#ifndef WIN32
+
+#include <termios.h>
+#include <sys/resource.h>
+#include <sched.h>
+#include <dlfcn.h>
+#include <unistd.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <cstdlib>
+#include <cstring>
+
+#else
+
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+#define DELTA_EPOCH_IN_USEC  11644473600000000ULL
+
+#endif
+
+extern "C" {
+#include <pcre.h>
+};
 
 #endif

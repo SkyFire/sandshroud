@@ -21,14 +21,6 @@
 
 #define BANNER "Hearthstone r%u/%s-%s-%s :: World Server\n"
 
-#ifndef WIN32
-#include <sched.h>
-#endif
-
-#include "svn_revision.h"
-
-#include <signal.h>
-
 createFileSingleton( Master );
 std::string LogFileName;
 bool bLogChat;

@@ -18,8 +18,6 @@
  */
 
 #include "StdAfx.h"
-#include "AuthCodes.h"
-#include "svn_revision.h"
 
 bool ChatHandler::HandleRenameAllCharacter(const char * args, WorldSession * m_session)
 {
@@ -37,7 +35,7 @@ bool ChatHandler::HandleRenameAllCharacter(const char * args, WorldSession * m_s
 			if( !sWorld.VerifyName(pName, szLen) )
 			{
 				printf("renaming character %s, %u\n", pName,uGuid);
-                Player* pPlayer = objmgr.GetPlayer(uGuid);
+				Player* pPlayer = objmgr.GetPlayer(uGuid);
 				if( pPlayer != NULL )
 				{
 					pPlayer->rename_pending = true;

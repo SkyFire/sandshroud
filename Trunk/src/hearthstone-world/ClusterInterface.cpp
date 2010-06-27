@@ -18,7 +18,6 @@
  */
 
 #include "StdAfx.h"
-#include "svn_revision.h"
 
 #ifdef CLUSTERING
 
@@ -61,14 +60,15 @@ void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void *
 	uint32 size2 = 10 + size;
 	uint16 opcode2 = ICMSG_WOW_PACKET;
 
-	if(!_clientSocket) return;			// Shouldn't happen
-	
+	if(!_clientSocket)
+		return;			// Shouldn't happen
+
 	_clientSocket->BurstBegin();
 	_clientSocket->BurstSend((const uint8*)&opcode2, 2);
 	_clientSocket->BurstSend((const uint8*)&size2, 4);
 	_clientSocket->BurstSend((const uint8*)&sessionid, 4);
 	_clientSocket->BurstSend((const uint8*)&opcode, 2);
-    rv=_clientSocket->BurstSend((const uint8*)&size, 4);
+	rv = _clientSocket->BurstSend((const uint8*)&size, 4);
 	if(size&&rv)
 		rv=_clientSocket->BurstSend((const uint8*)data, size);
 
@@ -95,7 +95,7 @@ void ClusterInterface::ConnectToRealmServer()
 	memcpy(key, k.GetDigest(), 20);
 
 	Log.Notice("ClusterInterface", "Connecting to %s port %u", hostname.c_str(), port);
-    WSClient * s = ConnectTCPSocket<WSClient>(hostname.c_str(), port);
+	WSClient * s = ConnectTCPSocket<WSClient>(hostname.c_str(), port);
 	if(!s)
 	{
 		Log.Error("ClusterInterface", "Could not connect to %s:%u", hostname.c_str(), port);

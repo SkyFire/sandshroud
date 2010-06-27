@@ -18,17 +18,7 @@
  */
 
 #include "StdAfx.h"
-#ifndef WIN32
-    #include <dlfcn.h>
-    #include <unistd.h>
-    #include <dirent.h>
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <cstdlib>
-    #include <cstring>
-#endif
 
-#include <svn_revision.h>
 #define SCRIPTLIB_HIPART(x) ((x >> 16))
 #define SCRIPTLIB_LOPART(x) ((x & 0x0000ffff))
 #define SCRIPTLIB_VERSION_MINOR (BUILD_REVISION % 1000)

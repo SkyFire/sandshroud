@@ -20,8 +20,6 @@
 #ifndef WOWSERVER_CHAT_H
 #define WOWSERVER_CHAT_H
 
-#include "SkillNameMgr.h"
-
 class ChatHandler;
 class WorldSession;
 class Player;

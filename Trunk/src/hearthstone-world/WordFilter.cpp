@@ -18,9 +18,6 @@
  */
 
 #include "StdAfx.h"
-extern "C" {
-#include <pcre.h>
-};
 
 #define REPLACE_FILTER 1
 #define SEARCH_FILTER 0

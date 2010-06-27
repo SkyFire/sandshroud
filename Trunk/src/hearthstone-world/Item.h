@@ -20,8 +20,6 @@
 #ifndef WOWSERVER_ITEM_H
 #define WOWSERVER_ITEM_H
 
-#include "Skill.h"
-
 struct EnchantmentInstance
 {
 	EnchantEntry * Enchantment;

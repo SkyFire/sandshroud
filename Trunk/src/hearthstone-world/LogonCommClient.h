@@ -20,9 +20,6 @@
 #ifndef __LOGON_COMM_CLIENT_H
 #define __LOGON_COMM_CLIENT_H
 
-#include "../hearthstone-logonserver/LogonOpcodes.h"
-#include <RC4Engine.h>
-
 class LogonCommClientSocket : public Socket
 {
 	uint32 remaining;

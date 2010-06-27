@@ -18,15 +18,6 @@
  */
 
 #include "StdAfx.h"
-//#include <vld.h>
-
-#ifdef WIN32
-#include "CrashHandler.h"
-#endif
-
-#ifndef WIN32
-#include <sys/resource.h>
-#endif
 
 uint8 loglevel = DEFAULT_LOG_LEVEL;
 

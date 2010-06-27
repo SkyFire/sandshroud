@@ -23,10 +23,6 @@
 
 #ifdef WIN32
 
-#include <mmsystem.h>
-#pragma comment(lib, "winmm.lib")
-#define DELTA_EPOCH_IN_USEC  11644473600000000ULL
-
 uint32 TimeStamp()
 {
 	//return timeGetTime();

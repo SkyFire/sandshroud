@@ -27,7 +27,6 @@ class GossipScript;
 #define MAX_CREATURE_LOOT 8
 #define MAX_PET_SPELL 4
 #define VENDOR_ITEMS_UPDATE_TIME 3600000
-#include "Map.h"
 
 struct CreatureItem
 {

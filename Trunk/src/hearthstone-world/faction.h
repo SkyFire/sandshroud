@@ -20,7 +20,6 @@
 #ifndef __FACTION_H
 #define __FACTION_H
 
-#include "Unit.h"
 #define NUM_SANCTUARIES 2
 static const uint32 SANCTUARY_ZONES[NUM_SANCTUARIES] = { 3703, 4395 }; //Shatrath city, Dalaran
 

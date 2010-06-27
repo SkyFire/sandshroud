@@ -29,8 +29,6 @@ class TemplateMgr;
 struct MapInfo;
 class TerrainMgr;
 
-#include "TerrainMgr.h"
-
 struct Formation;
 
 typedef struct EventIdInfo

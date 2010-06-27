@@ -18,7 +18,6 @@
  */
 
 #include "StdAfx.h"
-#include "EventableObject.h"
 
 EventableObject::~EventableObject()
 {

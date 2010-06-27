@@ -20,8 +20,6 @@
 #ifndef __CConsole_H
 #define __CConsole_H
 
-#include "Common.h"
-
 class ConsoleThread : public ThreadContext
 {
 protected:

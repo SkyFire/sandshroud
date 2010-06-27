@@ -18,10 +18,7 @@
  */
 
 #include "StdAfx.h"
-#include "Item.h"
-#include "Container.h"
-#include "ItemPrototype.h"
-#include "Player.h"
+
 //
 //-------------------------------------------------------------------//
 ItemInterface::ItemInterface( Player* pPlayer )

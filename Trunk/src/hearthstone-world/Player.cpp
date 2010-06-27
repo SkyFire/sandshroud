@@ -18,7 +18,6 @@
  */
 
 #include "StdAfx.h"
-#include "AuthCodes.h"
 
 UpdateMask Player::m_visibleUpdateMask;
 

@@ -22,8 +22,6 @@
 /////////////////////////////////////////////////
 
 #include "StdAfx.h"
-#include "ObjectMgr.h"
-#include "Master.h"
 
 bool ChatHandler::HandleWorldPortCommand(const char* args, WorldSession *m_session)
 {
@@ -162,7 +160,6 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 	if( stricmp( args, "all" ) == 0 )
 	{
 		sGMLog.writefromsession(m_session, "taught %s all spells.", plr->GetName());
-#include "ClassSpells.h"
 
 		uint32 c = plr->getClass();
 		for( uint32 i = 0; spellarray[c][i] != 0; i++ )

@@ -20,12 +20,6 @@
 #ifndef _MASTER_H
 #define _MASTER_H
 
-#include "Common.h"
-//#include "Singleton.h"
-#include "Config/ConfigEnv.h"
-#include "Database/DatabaseEnv.h"
-#include "MainServerDefines.h"
-
 #ifndef _VERSION
 # define _VERSION "3.2.x.x"
 #endif

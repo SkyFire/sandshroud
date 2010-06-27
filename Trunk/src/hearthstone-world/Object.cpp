@@ -18,7 +18,6 @@
  */
 
 #include "StdAfx.h"
-#include "Unit.h"
 using namespace std;
 
 //#define DEG2RAD (M_PI/180.0)

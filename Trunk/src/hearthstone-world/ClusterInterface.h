@@ -22,7 +22,6 @@
 #define _CLUSTERINTERFACE_H
 
 #define MAX_SESSIONS 3000
-#include "../hearthstone-realmserver/Structures.h"
 
 class ClusterInterface;
 typedef void(ClusterInterface::*ClusterInterfaceHandler)(WorldPacket&);
