@@ -1842,6 +1842,29 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 							}
 						}
 					}
+				}break;
+			case SPELL_HASH_RAKE:
+				{	// Additional [90 + AP * 0.18] damage over 9 sec.  Awards 1 combo point.
+					dmg += + int32(float(m_caster->GetAP())*0.18f);
+				}break;
+			case SPELL_HASH_RUPTURE:
+				{
+					/*
+					1 point : [(145 + 0.015 * AP) * 4] damage over secs
+					2 points: [(163 + 0.024 * AP) * 5] damage over secs
+					3 points: [(181 + 0.03 * AP) * 6] damage over secs
+					4 points: [(199 + 0.03428571 * AP) * 7] damage over secs
+					5 points: [(217 + 0.0375 * AP) * 8] damage over secs
+					*/
+					// Crow: This is all guestimated, but will work, just idk how to get the 0.3
+					if( m_caster->IsPlayer() )
+					{
+						uint32 ap = m_caster->GetAP();
+						uint8 cp = TO_PLAYER(m_caster)->m_comboPoints;
+						uint32 base = dmg+(cp* (m_spellProto->RankNumber*2));
+						float modif = (float(cp)*0.015f)/2;
+						dmg = (base + uint32(modif*float(ap)))*(3+cp);
+					}
 				}
 			}
 		};

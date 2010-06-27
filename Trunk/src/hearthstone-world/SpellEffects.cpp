@@ -879,15 +879,12 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				}
 			}break;
 
-		/* Cat doesn't get affected by AP.
-		case 59881: case 59882: case 59883:
-		case 59884: case 59885: case 59886:*/
 		case 1822: case 1823: case 1824: // Bear Rake
 		case 9904: case 27003: case 48573: case 48574:
 			{
 				if( p_caster != NULL )
 				{
-					dmg += (p_caster->GetAP() * 0.18);
+					dmg += uint32(float(p_caster->GetAP())/100);
 				}
 			}break;
 
@@ -5435,6 +5432,39 @@ void Spell::SpellEffectWeapondamage( uint32 i ) // Weapon damage +
 	{
 		add_damage += damage;
 		return;
+	}
+
+	switch(m_spellInfo->Id)
+	{
+	case 60103: // Lava Lash
+		{
+			if(p_caster != NULL)
+			{
+				Item* offhandweapon = NULL;
+				ItemInterface * ii = p_caster->GetItemInterface();
+				if(ii && (offhandweapon = ii->GetInventoryItem(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_OFFHAND)))
+				{
+					bool hasenchantment = false;
+					uint32 flame[10] = {3, 4, 5, 523, 1665, 1666, 2634, 3779, 3780, 3781};
+					for(uint8 i = 0; i < 10; i++)
+					{
+						if(offhandweapon->HasEnchantment(flame[i]))
+						{
+							hasenchantment = true;
+							break;
+						}
+					}
+
+					if(hasenchantment)
+					{
+						uint32 bonus = 125;
+						if(u_caster && u_caster->HasAura(55444)) // Glyph of Lava Lash
+							bonus += 10;
+						damage = uint32(float(damage * bonus) / 100);
+					}
+				}
+			}
+		}
 	}
 
 	uint32 _type;
