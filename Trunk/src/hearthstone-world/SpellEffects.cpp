@@ -3144,6 +3144,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 					}
 				}
 			}break;
+		case 379: // Earth Shield
 		case 54172: // Divine strom heal
 		case 54968: // Glyph of Holy Light
 			{

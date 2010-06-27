@@ -546,41 +546,10 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_UNUSED2;
 			}break;
 
-			//shaman - Frozen Power
-		case 63374:
-		case 63373:
-			{
-				sp->procFlags = PROC_ON_CAST_SPELL;
-				sp->EffectSpellClassMask[1][0] = 0x80000000;	// frost shock
-				sp->EffectSpellClassMask[1][1] = 0;
-				sp->EffectApplyAuraName[1] = SPELL_AURA_PROC_TRIGGER_SPELL;
-				sp->EffectTriggerSpell[1] = 63685;
-			}break;
-
-			//shaman - Ancestral Awakening
-		case 51556:
-		case 51557:
-		case 51558:
-			{
-				sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-				sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
-				sp->EffectTriggerSpell[0] = 52752;
-			}break;
 		case 52752:
 			{
 				sp->spell_can_crit = false;
 				sp->logsId = sp->Id;
-			}break;
-		case 974:
-		case 32593:
-		case 32594:
-		case 49283:
-		case 49284: //Earth Shield
-			{
-				sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-				sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-				sp->procflags2 = PROC_REMOVEONUSE;
-				sp->EffectTriggerSpell[0] = sp->Id;
 			}break;
 
 			// shaman	-	Maelstrom	Weapon

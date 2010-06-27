@@ -308,7 +308,7 @@ enum procFlags2
 	PROC_ON_FULL_RESIST					= 0x1, // Custom
 	PROC_ON_DODGE_VICTIM				= 0x2, // Custom
 	PROC_ON_DIE							= 0x4, // Custom
-	PROC_REMOVEONUSE					= 0x8, // remove prochcharge only when it is used
+	PROC_REMOVEONUSE					= 0x8, // remove proccharge only when it is used
 	PROC_MISC							= 0x10, // Unused.
 	PROC_ON_BLOCK_VICTIM				= 0x20, // Custom
 	PROC_ON_SPELL_CRIT_HIT				= 0x40, // Custom

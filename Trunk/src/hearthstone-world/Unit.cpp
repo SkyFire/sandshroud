@@ -1239,13 +1239,14 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								Unit* caster = NULLUNIT;
 								if(GET_TYPE_FROM_GUID(itr2->caster) == HIGHGUID_TYPE_PLAYER && IsInWorld())
 								{
-									caster = GetMapMgr()->GetPlayer( GUID_LOPART(itr2->caster) );
+									caster = objmgr.GetPlayer(GUID_LOPART(itr2->caster));
 								}
 								if(!caster)
 									caster = TO_UNIT(this);
+
 								targets.m_unitTarget = GetGUID();
-								Spell* spell(new Spell(TO_UNIT(this), spellInfo ,true, NULLAURA));
-								spell->forced_basepoints[0] = ospinfo->EffectBasePoints[0] + 1;
+								Spell* spell(new Spell(TO_UNIT(this), spellInfo, true, NULLAURA));
+								spell->forced_basepoints[0] = itr2->procValue;
 								spell->ProcedOnSpell = CastingSpell;
 								spell->pSpellId=origId;
 								spell->prepare(&targets);
@@ -2302,6 +2303,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 					if( NewSpellID )
 						spellId = NewSpellID;
 				}
+				if(!dmg_overwrite)
+					dmg_overwrite = itr2->procValue;
 
 				SpellEntry *spellInfo = dbcSpell.LookupEntry( spellId );
 				if( victim == TO_UNIT( this ) && spellInfo->c_is_flags & SPELL_FLAG_CANNOT_PROC_ON_SELF )

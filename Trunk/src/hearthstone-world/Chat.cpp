@@ -218,7 +218,7 @@ void CommandTableStorage::Init()
 		{ "nativedisplayid", 'm', NULL, "Native Display ID", NULL, UNIT_FIELD_NATIVEDISPLAYID, 0,			  1 },
 		{ "displayid" , 'm', NULL,	"Display ID",		  NULL, UNIT_FIELD_DISPLAYID,	   0,			  1 },
 		{ "flags" ,	 'm', NULL,	"Unit Flags",		  NULL, UNIT_FIELD_FLAGS,		   0,			  1 },
-		{ "faction",	'm', NULL,	"Faction Template",	NULL, UNIT_FIELD_FACTIONTEMPLATE, 0,			  1 },
+		{ "faction",	'm', &ChatHandler::HandleModifyFactionCommand,	"Faction Template",	NULL, 0, 0, 1 },
 		{ "dynamicflags",'m',NULL,	"Dynamic Flags",	   NULL, UNIT_DYNAMIC_FLAGS,		 0,			  1 },
 		{ "talentpoints",'m', &ChatHandler::HandleModifyTPsCommand, "Talent points", NULL, 0, 0, 0 },
 		{ "happiness",	'm', NULL,	"Happiness",			 NULL, UNIT_FIELD_POWER5,	UNIT_FIELD_MAXPOWER5, 1 },
@@ -898,7 +898,7 @@ Creature* ChatHandler::getSelectedCreature(WorldSession *m_session, bool showerr
 		creature = m_session->GetPlayer()->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
 	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_VEHICLE)
 		creature = m_session->GetPlayer()->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );
-	
+
 	if(creature != NULL)
 		return creature;
 	else
@@ -1245,5 +1245,37 @@ bool ChatHandler::HandleDebugRetroactiveQuestAchievements(const char *args, Worl
 
 	pTarget->RetroactiveCompleteQuests();
 	m_session->GetPlayer()->BroadcastMessage("Done.");
+	return true;
+}
+
+bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_session)
+{
+	Player* player = m_session->GetPlayer();
+	if(player == NULL)
+		return true;
+
+	Unit* unit = NULL;
+	uint64 guid = player->GetSelection();
+	if(guid == player->GetGUID())
+		unit = player;
+	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PET)
+		unit = player->GetMapMgr()->GetPet( GET_LOWGUID_PART(guid) );
+	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_UNIT)
+		unit = player->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
+	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_VEHICLE)
+		unit = player->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );
+	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
+		unit = objmgr.GetPlayer(GET_LOWGUID_PART(guid));
+
+	if(unit == NULL)
+		unit = player;
+
+	uint32 faction = atol(args);
+	if(!faction && unit->IsCreature())
+		faction = TO_CREATURE(unit)->GetProto()->Faction;
+
+	unit->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
+	unit->m_faction = dbcFactionTemplate.LookupEntry(faction);
+	unit->m_factionDBC = dbcFaction.LookupEntry(faction);
 	return true;
 }

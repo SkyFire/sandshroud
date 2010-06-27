@@ -2868,13 +2868,13 @@ void Aura::SpellAuraDummy(bool apply)
 			{
 				if(apply)
 				{
-					CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71903, 71905, 20, PROC_ON_MELEE_ATTACK | PROC_ON_PHYSICAL_ATTACK | PROC_ON_CRIT_ATTACK, PROC_TARGET_SELF);
+					CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), GetSpellId(), 71905, mod->m_amount, PROC_ON_MELEE_ATTACK | PROC_ON_PHYSICAL_ATTACK | PROC_ON_CRIT_ATTACK, PROC_TARGET_SELF);
 				}
 				else
 				{
 					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
 					{
-						if(itr->origId == 71903 && itr->caster == m_casterGuid && !itr->deleted)
+						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
 						{
 							itr->deleted = true;
 							break;
@@ -2932,6 +2932,79 @@ void Aura::SpellAuraDummy(bool apply)
 	case 52610: // Savage Roar
 		{
 			SpellAuraModPAttackPower(apply);
+		}break;
+
+	case 63374: // Frozen Power
+	case 63373:
+		{
+			if(m_caster != NULL)
+			{
+				if(apply)
+				{
+					CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), GetSpellId(), 63685, mod->m_amount, PROC_ON_CAST_SPELL, 0, 0, 0, 0x80000000);
+				}
+				else
+				{
+					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+					{
+						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+						{
+							itr->deleted = true;
+							break;
+						}
+					}
+				}
+			}
+		}break;
+
+	case 51556: // Ancestral Awakening
+	case 51557:
+	case 51558:
+		{
+			if(m_caster != NULL)
+			{
+				if(apply)
+				{
+					CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), GetSpellId(), 52752, mod->m_amount, PROC_ON_SPELL_CRIT_HIT, 0);
+				}
+				else
+				{
+					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+					{
+						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+						{
+							itr->deleted = true;
+							break;
+						}
+					}
+				}
+			}
+		}break;
+
+	case 974: //Earth Shield
+	case 32593:
+	case 32594:
+	case 49283:
+	case 49284:
+		{
+			if(m_caster != NULL)
+			{
+				if(apply)
+				{
+					CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), GetSpellId(), GetSpellId(), 100, PROC_ON_ANY_DAMAGE_VICTIM, PROC_REMOVEONUSE, 0, 0, 0, 0, 0, mod->m_amount);
+				}
+				else
+				{
+					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+					{
+						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+						{
+							itr->deleted = true;
+							break;
+						}
+					}
+				}
+			}
 		}break;
 
 	default:
@@ -5127,7 +5200,6 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 		}
 
 		CreateProcTriggerSpell(m_target, m_casterGuid, m_spellProto->Id, spellid, procchance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges, wdType, m_spellProto->EffectSpellClassMask[mod->i][0], m_spellProto->EffectSpellClassMask[mod->i][1], m_spellProto->EffectSpellClassMask[mod->i][2]);
-		DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u", m_spellProto->Id, spellid, procchance, m_spellProto->procFlags, m_spellProto->procCharges, m_spellProto->procFlags, m_spellProto->proc_interval);
 	}
 	else
 	{
@@ -9621,7 +9693,6 @@ void Aura::SpellAuraProcTriggerWithValue(bool apply)
 		}
 
 		CreateProcTriggerSpell(m_target, m_casterGuid, m_spellProto->Id, spellid, procchance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges, 0, 0, 0, 0, mod->m_amount );
-		sLog.outDebug("%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u\n", m_spellProto->Id, spellid, procchance, m_spellProto->procFlags, m_spellProto->procCharges, m_spellProto->procFlags, m_spellProto->proc_interval);
 	}
 	else
 	{
@@ -10097,6 +10168,8 @@ uint32 SCM2, uint32 SCM3, int32 procValue)
 	Pts.deleted = false;
 	Pts.procValue = procValue;
 	target->m_procSpells.push_back(Pts);
+
+	DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %s interval %u", Pts.origId, spellid, procChance, procFlags, procCharges, ((procFlags2 & PROC_TARGET_SELF) ? "true" : "false"), m_spellProto->proc_interval);
 }
 
 /*void Aura::EventJumpAndHeal()
