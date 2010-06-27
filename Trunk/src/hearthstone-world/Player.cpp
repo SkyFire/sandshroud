@@ -6735,13 +6735,13 @@ void Player::Reset_Talents()
 	// The dual wield skill for shamans can only be added by talents.
 	// so when reset, the dual wield skill should be removed too.
 	// (see also void Spell::SpellEffectDualWield)
-	if( getClass()==SHAMAN && _HasSkillLine( SKILL_DUAL_WIELD ) )
+	if( getClass() == SHAMAN && _HasSkillLine( SKILL_DUAL_WIELD ) )
 		_RemoveSkillLine( SKILL_DUAL_WIELD );
 
 	SetUInt32Value(PLAYER_CHARACTER_POINTS1, GetMaxTalentPoints()); 
 
 	if( getClass() == WARRIOR )
-	{	
+	{
 		titanGrip = false;
 		ResetTitansGrip();
 	}
@@ -6806,7 +6806,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 			}
 		}
 	}
-	
+
 	// apply new spec
 	talents = &m_specs[spec].talents;
 	uint32 spentPoints = 0;
@@ -6822,6 +6822,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 		}
 	}
 	m_talentActiveSpec = spec;
+
 	// update available Talent Points
 	uint32 maxTalentPoints = GetMaxTalentPoints();
 	uint32 newTalentPoints;

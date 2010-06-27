@@ -440,14 +440,12 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 		*data << uint32(moveflags);
 		*data << uint16(flag16);
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
-		*data << (float)m_position.x;
-		*data << (float)m_position.y;
-		*data << (float)m_position.z;
-		*data << (float)m_position.o;
+		*data << m_position;
+		*data << (m_position.o);
 
 		if ( moveflags & MOVEFLAG_TAXI )	//BYTE1(flags2) & 2
 		{
-			if(moveinfo != NULL)
+			if(moveinfo != NULL && moveinfo->transGuid.GetOldGuid())
 			{
 				*data << moveinfo->transGuid << moveinfo->transX << moveinfo->transY
 					<< moveinfo->transZ << moveinfo->transO << moveinfo->transTime << moveinfo->transSeat;
@@ -502,7 +500,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 
 		if(moveflags & MOVEFLAG_REDIRECTED || moveflags & MOVEFLAG_FALLING) // BYTE1(flags2) & 0x10
 		{
-			if(moveinfo != NULL)
+			if(moveinfo != NULL && (moveinfo->jump_sinAngle || moveinfo->jump_velocity)) // Only thing we really need to check.
 			{
 				*data << moveinfo->jump_velocity;
 				*data << moveinfo->jump_sinAngle;
@@ -511,10 +509,10 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 			}
 			else
 			{
-				*data << (float)0;
-				*data << (float)1.0; //sinAngle
-				*data << (float)0;	 //cosAngle
-				*data << (float)0;	 //xySpeed
+				*data << (float)1.0;	//velocity
+				*data << (float)1.0;	//sinAngle
+				*data << (float)0;		//cosAngle
+				*data << (float)0;		//xySpeed
 			}
 		}
 

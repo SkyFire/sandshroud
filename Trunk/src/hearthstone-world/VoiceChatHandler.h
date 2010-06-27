@@ -22,9 +22,6 @@
 
 #ifdef VOICE_CHAT
 
-#include "../hearthstone-voicechat/hearthstone_opcodes.h"
-#include "VoiceChatClientSocket.h"
-
 class VoiceChatClientSocket;
 struct VoiceChatChannelRequest
 {

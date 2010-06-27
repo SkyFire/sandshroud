@@ -665,6 +665,15 @@ typedef std::list<struct ProcTriggerSpellOnSpell> ProcTriggerSpellOnSpellList;
 class MovementInfo
 {
 public:
+	MovementInfo()
+	{
+		flags = flag16 = time = x = y = z = orientation = transX = transY = transZ = transO = 0;
+		transTime = transSeat = pitch = FallTime = 0;
+		jump_sinAngle = jump_cosAngle = jump_xySpeed = jump_velocity = spline = 0;
+		transGuid = WoWGuid(uint64(NULL));
+	};
+	~MovementInfo() { };
+
 	uint32 flags;
 	uint16 flag16;
 	uint32 time;
@@ -725,7 +734,7 @@ public:
 	HEARTHSTONE_INLINE bool IsInCombat() { return m_lastStatus; }		// checks if we are in combat or not.
 
 	void OnRemoveFromWorld();											// called when we are removed from world, kills all references to us.
-	
+
 	HEARTHSTONE_INLINE void Vanished()
 	{
 		ClearAttackers();
@@ -1346,7 +1355,7 @@ public:
 	bool m_lockTransportVariables;
 
 	// Movement Info.
-	MovementInfo* GetMovementInfo() { return &movement_info; }
+	MovementInfo* GetMovementInfo() { return new MovementInfo(movement_info); }
 	MovementInfo movement_info;
 
 protected:

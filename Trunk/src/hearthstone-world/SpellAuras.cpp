@@ -2844,13 +2844,36 @@ void Aura::SpellAuraDummy(bool apply)
 		}break;
 	case 71903: // Shadowmourne Weapon Effect
 		{
-			if(GetCaster()->IsPlayer())
+			if(m_caster != NULL)
 			{
-				if(!apply)
+				if(apply)
 				{
-					TO_PLAYER(GetCaster())->RemoveAura(71905);
-					TO_PLAYER(GetCaster())->RemoveAura(72521);
-					TO_PLAYER(GetCaster())->RemoveAura(72523);
+					ProcTriggerSpell ILotP;
+					ILotP.origId = 71903;
+					ILotP.spellId = 71905;
+					ILotP.procChance = 20;
+					ILotP.procFlags = PROC_ON_MELEE_ATTACK | PROC_ON_PHYSICAL_ATTACK | PROC_ON_CRIT_ATTACK;
+					ILotP.procflags2 = PROC_TARGET_SELF;
+					ILotP.deleted = false;
+					ILotP.caster = m_caster->GetGUID();
+					ILotP.LastTrigger = 0;
+					ILotP.weapon_damage_type = 0;
+					m_caster->m_procSpells.push_back(ILotP);
+				}
+				else
+				{
+					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+					{
+						if(itr->origId == 71903 && itr->caster == m_casterGuid && !itr->deleted)
+						{
+							itr->deleted = true;
+							break;
+						}
+					}
+
+					m_caster->RemoveAura(71905);
+					m_caster->RemoveAura(72521);
+					m_caster->RemoveAura(72523);
 				}
 			}
 		}break;
@@ -2862,18 +2885,18 @@ void Aura::SpellAuraDummy(bool apply)
 				Player* plr = TO_PLAYER(GetCaster());
 				if(apply)
 				{
-					SetTimeLeft(60000); // Set time left for stack bug reasons.
-					if(stackSize >= 1 && stackSize <= 5)
+					SetDuration(60000); // Set time left for stack bug reasons.
+					if(stackSize == 1)
 					{
 						plr->RemoveAura(72523);
 						if(!plr->HasAura(72521))
 							plr->CastSpell(plr, 72521, false);
 					}
-					if(stackSize >= 6 && stackSize <= 9)
+					if(stackSize == 6)
 					{
 						plr->RemoveAura(72521);
 						if(!plr->HasAura(72523))
-							plr->CastSpell(plr, 72523, false);						
+							plr->CastSpell(plr, 72523, false);
 					}
 					if(stackSize >= 10)
 					{
@@ -2887,10 +2910,18 @@ void Aura::SpellAuraDummy(bool apply)
 				}
 				else
 				{
-					plr->RemoveAura(72521);
-					plr->RemoveAura(72523);
+					if(!plr->HasAura(71905)) // Stacksize is non existant on unapply.
+					{
+						plr->RemoveAura(72521);
+						plr->RemoveAura(72523);
+					}
 				}
 			}
+		}break;
+
+	case 52610: // Savage Roar
+		{
+			SpellAuraModPAttackPower(apply);
 		}break;
 
 	default:

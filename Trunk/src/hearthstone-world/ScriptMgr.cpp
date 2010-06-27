@@ -614,7 +614,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 	if(flags & UNIT_NPC_FLAG_BANKER)
 		Menu->AddItem(GOSSIP_ICON_GOSSIP_COIN, "I would like to check my deposit box.", 6);
 
-	if(flags & UNIT_NPC_FLAG_SPIRITHEALER)
+	if(flags & UNIT_NPC_FLAG_SPIRITHEALER || (pCreature->GetEntry() == 6491 || pCreature->GetEntry() == 32537))
 		Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Bring me back to life.", 7);
 
 	if(flags & UNIT_NPC_FLAG_ARENACHARTER)

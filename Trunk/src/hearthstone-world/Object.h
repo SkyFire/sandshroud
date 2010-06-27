@@ -20,8 +20,6 @@
 #ifndef _OBJECT_H
 #define _OBJECT_H
 
-#include "LootMgr.h"
-
 class Unit;
 class Spell;
 class Aura;

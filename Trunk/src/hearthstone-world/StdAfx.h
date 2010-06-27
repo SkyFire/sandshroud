@@ -28,7 +28,7 @@
 #undef max
 #endif
 
-#define _GAME
+#define _GAME // You just lost the game
 
 #include <list>
 #include <vector>
@@ -38,10 +38,12 @@
 #include <fstream>
 #include <iosfwd>
 #include <search.h>
+#include <fcntl.h>
 //#include <fstream>
 
 #include "../hearthstone-shared/Common.h"
-#include "../hearthstone-shared/Pointer.h"
+#include "MainServerDefines.h"
+
 #include "../hearthstone-shared/MersenneTwister.h"
 #include "../hearthstone-shared/WorldPacket.h"
 #include "../hearthstone-shared/Log.h"
@@ -64,6 +66,7 @@
 
 #include <Network/Network.h>
 
+#include "../hearthstone-shared/AuthCodes.h"
 #include "../hearthstone-shared/Auth/MD5.h"
 #include "../hearthstone-shared/Auth/BigNumber.h"
 #include "../hearthstone-shared/Auth/Sha1.h"
@@ -75,6 +78,10 @@
 #include "../hearthstone-shared/Threading/Condition.h"
 #include "../hearthstone-shared/hearthstone_getopt.h"
 #include "../hearthstone-shared/BufferPool.h"
+#include "../hearthstone-shared/CallBack.h"
+#include "../hearthstone-shared/Storage.h"
+
+#include "../hearthstone-voicechat/hearthstone_opcodes.h"
 
 #include "Const.h"
 #include "NameTables.h"
@@ -89,12 +96,11 @@
 
 #include "Packets.h"
 
-#include "../hearthstone-shared/CallBack.h"
 #include "WordFilter.h"
 #include "EventMgr.h"
 #include "EventableObject.h"
-#include "Object.h"
 #include "LootMgr.h"
+#include "Object.h"
 #include "Unit.h"
 
 #include "AddonMgr.h"
@@ -143,6 +149,7 @@
 #include "Skill.h"
 #include "SkillNameMgr.h"
 #include "SpellNameHashes.h"
+#include "SpellFailure.h"
 #include "Spell.h"
 #include "SpellAuras.h"
 #include "TaxiMgr.h"
@@ -159,10 +166,9 @@
 #include "ArenaTeam.h"
 #include "LogonCommClient.h"
 #include "LogonCommHandler.h"
-#include "MainServerDefines.h"
 #include "WorldRunnable.h"
-#include "../hearthstone-shared/Storage.h"
 #include "ObjectStorage.h"
+#include "VoiceChatClientSocket.h"
 #include "VoiceChatHandler.h"
 #include "LocalizationMgr.h"
 #include "Vehicle.h"

@@ -5091,30 +5091,30 @@ void ApplyDiminishingReturnTimer(int32 * Duration, Unit* Target, SpellEntry * sp
 	assert(Grp < DIMINISH_GROUPS);
 
 	// TODO: check for spells that should do this
-	float Dur = float(*Duration);
+	float Qduration = float(*Duration);
 
 	switch(Target->m_diminishCount[Grp])
 	{
 	case 0: // Full effect
-		if (Target->IsPlayer() && Dur > 10000)
+		if (Target->IsPlayer() && Qduration > 10000)
 		{
-			Dur = 10000;
+			Qduration = 10000;
 		}
 		break;
 		
 	case 1: // Reduced by 50%
-		Dur *= 0.5f;
-		if (Target->IsPlayer() && Dur > 5000)
+		Qduration *= 0.5f;
+		if (Target->IsPlayer() && Qduration > 5000)
 		{
-			Dur = 5000;
+			Qduration = 5000;
 		}
 		break;
 
 	case 2: // Reduced by 75%
-		Dur *= 0.25f;
-		if (Target->IsPlayer() && Dur > 2500)
+		Qduration *= 0.25f;
+		if (Target->IsPlayer() && Qduration > 2500)
 		{
-			Dur = 2500;
+			Qduration = 2500;
 		}
 		break;
 
@@ -5126,7 +5126,7 @@ void ApplyDiminishingReturnTimer(int32 * Duration, Unit* Target, SpellEntry * sp
 	}
 
 	// Convert back
-	*Duration = FL2UINT(Dur);
+	*Duration = FL2UINT(Qduration);
 
 	// Reset the diminishing return counter, and add to the aura count (we don't decrease the timer till we
 	// have no auras of this type left.

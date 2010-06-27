@@ -2518,11 +2518,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->proc_interval = 10000;
 			}break;
 
-		case 52610: // Savage Roar
-			{
-					sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_ATTACK_POWER_PCT;
-			}break;
-
 			//Serpent-Coil Braid
 		case 37447:
 		case 61062://Heroes' Frostfire Garb AND Valorous Frostfire Garb
@@ -5324,17 +5319,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 30302:
 			{
 				sp->procFlags = PROC_ON_SPELL_HIT_VICTIM;
-			}break;
-
-		case 71903: // Shadowmourne
-			{
-				sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
-				sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
-				sp->procFlags = PROC_ON_MELEE_ATTACK | PROC_ON_PHYSICAL_ATTACK | PROC_ON_CRIT_ATTACK;
-				sp->procChance = 20;
-				sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
-				sp->EffectApplyAuraName[1] = SPELL_AURA_PROC_TRIGGER_SPELL;
-				sp->EffectTriggerSpell[1] = 71905;
 			}break;
 
 		case 71905:

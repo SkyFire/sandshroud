@@ -20,7 +20,6 @@
 #ifndef __SPELL_H
 #define __SPELL_H
 
-#include "SpellFailure.h"
 #include "StdAfx.h"
 
 class WorldSession;
@@ -1982,84 +1981,77 @@ public:
 
 		bDurSet = true;
 		int32 c_dur = 0;
+		Dur = -1;
+		SpellDuration *sd = NULL;
 
-		if(m_spellInfo->DurationIndex)
+		if(m_spellInfo->DurationIndex && (sd = dbcSpellDuration.LookupEntry(m_spellInfo->DurationIndex)))
 		{
-			SpellDuration *sd = dbcSpellDuration.LookupEntry(m_spellInfo->DurationIndex);
-			if(sd)
+			Dur = sd->Duration1;
+			//check for negative and 0 durations.
+			//duration affected by level
+			if(sd->Duration1 < 1 && sd->Duration2 > 0 && u_caster)
 			{
-				//check for negative and 0 durations.
-				//duration affected by level
-				if(sd->Duration1 < 1 && sd->Duration2 > 0 && u_caster)
+				Dur = uint32((sd->Duration1 + (sd->Duration2 * u_caster->getLevel())));
+				if(Dur > 0 && sd->Duration3 > 0 && Dur > sd->Duration3)
 				{
-					Dur = uint32((sd->Duration1 + (sd->Duration2 * u_caster->getLevel())));
-					if(Dur > 0 && sd->Duration3 > 0 && Dur > sd->Duration3)
-					{
-						Dur = sd->Duration3;
-					}
-
-					if(Dur < 0)
-						Dur = 0;
-					c_dur = Dur;
-				}
-				if(sd->Duration1 >= 0 && !c_dur)
-				{
-					Dur = sd->Duration1;
-				}
-				//combo point lolerCopter? ;P
-				if(p_caster)
-				{
-					uint32 cp = p_caster->m_comboPoints;
-					if(cp)
-					{
-						uint32 bonus = (cp*(sd->Duration3-sd->Duration1))/5;
-						if(bonus)
-						{
-							Dur += bonus;
-						}
-					}
+					Dur = sd->Duration3;
 				}
 
-				if(m_spellInfo->SpellGroupType && u_caster)
-				{
-					SM_FIValue(u_caster->SM[SMT_DURATION][0], (int32*)&Dur, m_spellInfo->SpellGroupType);
-					SM_PIValue(u_caster->SM[SMT_DURATION][1], (int32*)&Dur, m_spellInfo->SpellGroupType);
-				}
+				if(Dur < 0)
+					Dur = 0;
+				c_dur = Dur;
+			}
 
-				// Limit duration in PvP but not applying diminishing returns
-				if(unitTarget != NULL && unitTarget->IsPlayer() && Dur > 10000)
+			if(sd->Duration1 && !c_dur)
+			{
+				Dur = sd->Duration1;
+			}
+
+			//combo point lolerCopter? ;P
+			if(p_caster && sd->Duration3)
+			{
+				uint32 cp = p_caster->m_comboPoints;
+				if(cp)
 				{
-					switch(m_spellInfo->NameHash)
+					uint32 bonus = (cp*(sd->Duration3-sd->Duration1))/5;
+					if(bonus)
 					{
-					case SPELL_HASH_CURSE_OF_TONGUES:
-					case SPELL_HASH_BANISH:
-						Dur = 10000;
-					}
-				}
-				if( unitTarget != NULL && p_caster && unitTarget == p_caster )
-				{
-					if( m_spellInfo->NameHash == SPELL_HASH_THORNS )
-					{
-						if( p_caster->HasDummyAura( SPELL_HASH_GLYPH_OF_THORNS ) )
-						{
-							Dur += (p_caster->GetDummyAura( SPELL_HASH_GLYPH_OF_THORNS )->EffectBasePoints[0]+1) * MSTIME_MINUTE;
-						}
-					}
-					else if( m_spellInfo->NameHash == SPELL_HASH_BLESSING_OF_MIGHT )
-					{
-						if( p_caster->HasDummyAura(SPELL_HASH_GLYPH_OF_BLESSING_OF_MIGHT) )
-							Dur += 20 * MSTIME_MINUTE;
+						Dur += bonus;
 					}
 				}
 			}
-			else
+
+			if(m_spellInfo->SpellGroupType && u_caster)
 			{
-				Dur = -1;
+				SM_FIValue(u_caster->SM[SMT_DURATION][0], (int32*)&Dur, m_spellInfo->SpellGroupType);
+				SM_PIValue(u_caster->SM[SMT_DURATION][1], (int32*)&Dur, m_spellInfo->SpellGroupType);
 			}
-		}
-		else
-		{
-			Dur = -1;
+
+			// Limit duration in PvP but not applying diminishing returns
+			if(unitTarget != NULL && unitTarget->IsPlayer() && Dur > 10000)
+			{
+				switch(m_spellInfo->NameHash)
+				{
+				case SPELL_HASH_CURSE_OF_TONGUES:
+				case SPELL_HASH_BANISH:
+					Dur = 10000;
+				}
+			}
+			if( unitTarget != NULL && p_caster && unitTarget == p_caster )
+			{
+				if( m_spellInfo->NameHash == SPELL_HASH_THORNS )
+				{
+					if( p_caster->HasDummyAura( SPELL_HASH_GLYPH_OF_THORNS ) )
+					{
+						Dur += (p_caster->GetDummyAura( SPELL_HASH_GLYPH_OF_THORNS )->EffectBasePoints[0]+1) * MSTIME_MINUTE;
+					}
+				}
+				else if( m_spellInfo->NameHash == SPELL_HASH_BLESSING_OF_MIGHT )
+				{
+					if( p_caster->HasDummyAura(SPELL_HASH_GLYPH_OF_BLESSING_OF_MIGHT) )
+						Dur += 20 * MSTIME_MINUTE;
+				}
+			}
 		}
 
 		return Dur;

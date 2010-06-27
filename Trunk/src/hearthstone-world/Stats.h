@@ -20,10 +20,6 @@
 #ifndef __STATS_H
 #define __STATS_H
 
-#include "Unit.h"
-#include "UpdateMask.h"
-#include "ItemInterface.h"
-
 enum Stats
 {
 	STAT_STRENGTH,

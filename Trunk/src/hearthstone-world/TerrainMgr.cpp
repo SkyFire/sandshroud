@@ -18,8 +18,6 @@
  */
 
 #include "StdAfx.h"
-#include <fcntl.h>
-#include "TerrainMgr.h"
 
 TerrainMgr::TerrainMgr(string MapPath, uint32 MapId, bool Instanced) : mapPath(MapPath), mapId(MapId), Instance(Instanced)
 {
