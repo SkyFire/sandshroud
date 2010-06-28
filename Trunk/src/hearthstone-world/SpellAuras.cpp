@@ -1752,7 +1752,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 {
 	if(apply)
 	{
-		int32 dmg	= mod->m_amount;
+		int32 dmg = mod->m_amount;
 		Unit * m_caster = GetUnitCaster();
 		if( m_caster != NULL )
 		{
@@ -1845,7 +1845,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 				}break;
 			case SPELL_HASH_RAKE:
 				{	// Additional [90 + AP * 0.18] damage over 9 sec.  Awards 1 combo point.
-					dmg += + int32(float(m_caster->GetAP())*0.18f);
+					dmg += int32(float(m_caster->GetAP())*0.18f)/3;
 				}break;
 			case SPELL_HASH_RUPTURE:
 				{
@@ -1859,11 +1859,17 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 					// Crow: This is all guestimated, but will work, just idk how to get the 0.3
 					if( m_caster->IsPlayer() )
 					{
+						uint8 timer[6] = { 0, 8, 10, 12, 14, 16 }; // Probably some other way to do this...
+						uint8 bonus = 0;
+//						Crow: Does it just make it longer, or does it also increase damage??!?
+//						if(m_caster->HasAura(56801))
+//							bonus = 4; // Timer increase.
+
 						uint32 ap = m_caster->GetAP();
 						uint8 cp = TO_PLAYER(m_caster)->m_comboPoints;
 						uint32 base = dmg+(cp* (m_spellProto->RankNumber*2));
 						float modif = (float(cp)*0.015f)/2;
-						dmg = (base + uint32(modif*float(ap)))*(3+cp);
+						dmg = int32((base + uint32(modif*float(ap)))*(3+cp)/(float(timer[cp])/3));
 					}
 				}
 			}

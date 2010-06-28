@@ -6315,20 +6315,13 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 		fail = SPELL_FAILED_OUT_OF_RANGE;
 	}
 
-	if( spellid == SPELL_RANGED_THROW )
+	if( spellid == SPELL_RANGED_THROW || spellid == SPELL_RANGED_WAND)
 	{
 		if( itm != NULL ) // no need for this
 			if( itm->GetProto() )
 				if( GetItemInterface()->GetItemCount( itm->GetProto()->ItemId ) == 0 )
 					fail = SPELL_FAILED_NO_AMMO;
-	} 
-/*  else
-	{
-		if(GetUInt32Value(PLAYER_AMMO_ID))//for wand
-			if(this->GetItemInterface()->GetItemCount(GetUInt32Value(PLAYER_AMMO_ID)) == 0)
-				fail = SPELL_FAILED_NO_AMMO;
 	}
-*/
 
 	if (GetMapMgr() && GetMapMgr()->IsCollisionEnabled())
 	{
@@ -6372,22 +6365,18 @@ void Player::EventRepeatSpell()
 	{
 		m_AutoShotAttackTimer = 0; //avoid flooding client with error messages
 		m_onAutoShot = false;
-		//OUT_DEBUG( "Can't cast Autoshot: Target changed! (Timer: %u)" , m_AutoShotAttackTimer );
 		return;
 	}
 
 	m_AutoShotDuration = m_uint32Values[UNIT_FIELD_RANGEDATTACKTIME];
 
-	if( m_isMoving )
+	if( m_isMoving && m_AutoShotSpell->Id != 5019) // Wands can shoot while running.
 	{
-		//OUT_DEBUG( "HUNTER AUTOSHOT 2) %i, %i", m_AutoShotAttackTimer, m_AutoShotDuration );
-		//m_AutoShotAttackTimer = m_AutoShotDuration;//avoid flooding client with error messages
-		//OUT_DEBUG( "Can't cast Autoshot: You're moving! (Timer: %u)" , m_AutoShotAttackTimer );
 		m_AutoShotAttackTimer = 400; // shoot when we can
 		return;
 	}
 
-	int32 f = this->CanShootRangedWeapon( m_AutoShotSpell->Id, target, true );
+	int32 f = CanShootRangedWeapon( m_AutoShotSpell->Id, target, true );
 
 	if( f != 0 )
 	{

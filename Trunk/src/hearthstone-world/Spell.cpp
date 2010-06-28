@@ -3890,7 +3890,7 @@ uint8 Spell::CanCast(bool tolerate)
 				{
 					if(!p_caster->isInFront(target))
 						return SPELL_FAILED_UNIT_NOT_INFRONT;
-					if(m_spellInfo->Flags3 & FLAGS3_REQ_BEHIND_TARGET &&
+					if((m_spellInfo->Flags3 & FLAGS3_REQ_BEHIND_TARGET) && (m_spellInfo->Id != SPELL_RANGED_THROW) &&
 						target->isInFront(p_caster))
 						return SPELL_FAILED_NOT_BEHIND;
 				}
