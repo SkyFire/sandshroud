@@ -22,7 +22,7 @@
 #include "ScriptStdAfx.h"
 #include "Setup.h"
 #define SKIP_ALLOCATOR_SHARING 1
-#include "../../../hearthstone-world/ScriptSetup.h"
+#include <ScriptSetup.h>
 
 extern "C" SCRIPT_DECL uint32 _exp_get_script_type()
 {
