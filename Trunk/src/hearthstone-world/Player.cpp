@@ -6370,7 +6370,7 @@ void Player::EventRepeatSpell()
 
 	m_AutoShotDuration = m_uint32Values[UNIT_FIELD_RANGEDATTACKTIME];
 
-	if( m_isMoving && m_AutoShotSpell->Id != 5019) // Wands can shoot while running.
+	if( m_isMoving )
 	{
 		m_AutoShotAttackTimer = 400; // shoot when we can
 		return;
