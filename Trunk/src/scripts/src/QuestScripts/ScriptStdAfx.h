@@ -19,7 +19,7 @@
 
 #ifndef _TEST_THAT_SHIT_
 #define _TEST_THAT_SHIT_
-#include "StdAfx.h"
+#include "../../../hearthstone-world/StdAfx.h"
 #include "../Common/Base.h"
 #include "../Common/Instance_Base.h"
 #include "../Common/EasyFunctions.h"

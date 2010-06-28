@@ -20,9 +20,9 @@
 #ifndef __SPELLSTORE_H
 #define __SPELLSTORE_H
 
-#include "Common.h"
+#include "../Common.h"
 #include "DataStore.h"
-#include "Timer.h"
+#include "../Timer.h"
 
 #pragma pack(push,1)
 struct AchievementEntry

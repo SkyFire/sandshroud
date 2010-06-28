@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
+#include "../../../hearthstone-world/StdAfx.h"
 #include "../../../hearthstone-shared/svn_revision.h"
 
 #define SKIP_ALLOCATOR_SHARING 1
-#include <ScriptSetup.h>
+#include "../../../hearthstone-world/ScriptSetup.h"
 
 extern "C" SCRIPT_DECL uint32 _exp_get_script_type()
 {

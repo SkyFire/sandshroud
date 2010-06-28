@@ -390,7 +390,7 @@ class AnubRekhanAI : public MoonScriptBossAI
 
 	set< CorpseScarabAI* >	mScarabs;
 	set< CryptGuardAI* >	mCryptGuards;
-	set< uint32 >			mUsedCorpseGuids;
+	set< uint64 >			mUsedCorpseGuids;
 	SpellDesc*				mLocustSwarm;
 	int32					mLocustSwarmTimer;
 	int32					mCryptSpawnTimer;

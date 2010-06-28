@@ -978,7 +978,7 @@ void SpellFunc_AnubRekhanCorpseScarabsPlayer( SpellDesc* pThis, MoonScriptCreatu
 				continue;
 
 			PlayerPtr = *Iter;
-			set< uint32 >::iterator PlayerIter = AnubRekhan->mUsedCorpseGuids.find( PlayerPtr->GetGUID() );
+			set< uint64 >::iterator PlayerIter = AnubRekhan->mUsedCorpseGuids.find( PlayerPtr->GetGUID() );
 			if ( PlayerIter != AnubRekhan->mUsedCorpseGuids.end() )
 			{
 				if ( PlayerPtr->isAlive() )

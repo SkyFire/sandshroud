@@ -6,23 +6,26 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Main Resources\Base Class">
-      <UniqueIdentifier>{947d04df-9c99-442b-a3b1-a0b1760edf02}</UniqueIdentifier>
+      <UniqueIdentifier>{1d055a6b-2acf-4cb2-b3ad-88bc4f83ad3f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Scripts\Class">
-      <UniqueIdentifier>{5576e92e-7367-4f9d-8c89-1ec09284608a}</UniqueIdentifier>
+      <UniqueIdentifier>{1cdb53af-7eb2-4a92-9f73-9e61cbe498ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Profession">
-      <UniqueIdentifier>{82d20f14-bd9f-431a-a0e5-d39500cc616a}</UniqueIdentifier>
+      <UniqueIdentifier>{f8d17edf-f974-4a39-90f4-341bb2977913}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Zone">
-      <UniqueIdentifier>{e8c5a42a-3eb0-4c95-9de6-021c769b3391}</UniqueIdentifier>
+      <UniqueIdentifier>{0e569605-89d4-4fcb-b988-863d86d0d28d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\QuestScripts\ScriptStdAfx.cpp">
+      <Filter>Main Resources</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\QuestScripts\Setup.cpp">
       <Filter>Main Resources</Filter>
     </ClCompile>
@@ -131,6 +134,9 @@
     <ClCompile Include="..\..\src\QuestScripts\ShadowMoon.cpp">
       <Filter>Scripts\Zone</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\QuestScripts\SholazarBasin.cpp">
+      <Filter>Scripts\Zone</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\QuestScripts\SilvermoonCity.cpp">
       <Filter>Scripts\Zone</Filter>
     </ClCompile>
@@ -173,11 +179,11 @@
     <ClCompile Include="..\..\src\QuestScripts\Zangarmarsh.cpp">
       <Filter>Scripts\Zone</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\QuestScripts\SholazarBasin.cpp">
-      <Filter>Scripts\Zone</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\QuestScripts\ScriptStdAfx.h">
+      <Filter>Main Resources</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\QuestScripts\Setup.h">
       <Filter>Main Resources</Filter>
     </ClInclude>

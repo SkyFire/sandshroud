@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>SunOtherScripts</ProjectName>
-    <ProjectGuid>{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}</ProjectGuid>
-    <RootNamespace>SunOtherScripts</RootNamespace>
+    <ProjectName>SandshroudLua</ProjectName>
+    <ProjectGuid>{AEFCEECF-6839-4F1B-9317-70BF3EE09247}</ProjectGuid>
+    <RootNamespace>LUA2008</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -64,47 +64,43 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\bin\debug\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2003_int_debug_SunOtherScripts\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2008_int_debug_SandshroudLUA\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\bin\debug_x64\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2008_int_debug_SunOtherScripts_x64\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2008_int_debug_SandshroudLUA_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\bin\release\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2003_int_release_SunOtherScripts\</IntDir>
-    <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PreBuildEventUseInBuild>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2008_int_release_SandshroudLUA\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\bin\release_x64\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2008_int_release_SunOtherScripts_x64\</IntDir>
-    <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreBuildEventUseInBuild>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2008_int_release_SandshroudLUA_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalOptions>/Zm180 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>ScriptStdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\..\..\bin\Debug\hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/debug/script_bin/SunOtherScripts.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>../../../../bin/debug/script_bin/SandshroudLUA.dll</OutputFile>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/debug/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/debug/script_bin/SandshroudLUA.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SandshroudLUA.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -113,61 +109,55 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/Zm180 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
+      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>ScriptStdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/debug_x64/script_bin/SunOtherScripts.dll</OutputFile>
+      <OutputFile>../../../../bin/debug_x64/script_bin/SandshroudLUA.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\debug_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/debug_x64/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/debug_x64/script_bin/SandshroudLUA.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SandshroudLUA.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalOptions>/Zm180 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>ScriptStdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/release/script_bin/SunOtherScripts.dll</OutputFile>
+      <OutputFile>../../../../bin/release/script_bin/SandshroudLUA.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/release/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/release/script_bin/SandshroudLUA.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SandshroudLUA.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -176,80 +166,90 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/Zm180 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\..\..\hearthstone-shared;..\..\..\hearthstone-world;..\..\..\..\dep\include;..\..\..\..\dep\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>ScriptStdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/release_x64/script_bin/SunOtherScripts.dll</OutputFile>
+      <OutputFile>../../../../bin/release_x64/script_bin/SandshroudLUA.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\release_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/release_x64/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/release_x64/script_bin/SandshroudLUA.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SandshroudLUA.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\OtherScripts\ScriptStdAfx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\Setup.cpp" />
-    <ClCompile Include="..\..\src\Common\Base.cpp" />
-    <ClCompile Include="..\..\src\Common\Instance_Base.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\NeutralGuards.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\Creatures.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\DarkmoonFaireObjects.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\GameObjects.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\QuelDanasPortal.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\RandomScripts.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\EventScripts\Halloween.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\EventScripts\WinterVeil.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneHellfirePeninsula.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneSilithus.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneTerokkarForest.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneZangarmarsh.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Battlemaster.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_BoreanTundra.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Dalaran.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_DarkmoonFaire.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Guard.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Innkeepers.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Moonglade.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Mulgore.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Shattrath.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Stormwind.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Tanaris.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Teldrassil.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Theramore.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Trainer.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_WyrmrestTemple.cpp" />
+    <ClCompile Include="..\..\src\Lua\lua\lapi.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lauxlib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lbaselib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lcode.c" />
+    <ClCompile Include="..\..\src\Lua\lua\ldblib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\ldebug.c" />
+    <ClCompile Include="..\..\src\Lua\lua\ldo.c" />
+    <ClCompile Include="..\..\src\Lua\lua\ldump.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lfunc.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lgc.c" />
+    <ClCompile Include="..\..\src\Lua\lua\linit.c" />
+    <ClCompile Include="..\..\src\Lua\lua\liolib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\llex.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lmathlib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lmem.c" />
+    <ClCompile Include="..\..\src\Lua\lua\loadlib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lobject.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lopcodes.c" />
+    <ClCompile Include="..\..\src\Lua\lua\loslib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lparser.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lstate.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lstring.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lstrlib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\ltable.c" />
+    <ClCompile Include="..\..\src\Lua\lua\ltablib.c" />
+    <ClCompile Include="..\..\src\Lua\lua\ltm.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lundump.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lvm.c" />
+    <ClCompile Include="..\..\src\Lua\lua\lzio.c" />
+    <ClCompile Include="..\..\src\Lua\lua\print.c" />
+    <ClCompile Include="..\..\src\Lua\LUAEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\OtherScripts\ScriptStdAfx.h" />
-    <ClInclude Include="..\..\src\OtherScripts\Setup.h" />
-    <ClInclude Include="..\..\src\Common\Base.h" />
-    <ClInclude Include="..\..\src\Common\EasyFunctions.h" />
-    <ClInclude Include="..\..\src\Common\Instance_Base.h" />
-    <ClInclude Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lapi.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lauxlib.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lcode.h" />
+    <ClInclude Include="..\..\src\Lua\lua\ldebug.h" />
+    <ClInclude Include="..\..\src\Lua\lua\ldo.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lfunc.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lgc.h" />
+    <ClInclude Include="..\..\src\Lua\lua\llex.h" />
+    <ClInclude Include="..\..\src\Lua\lua\llimits.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lmem.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lobject.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lopcodes.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lparser.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lstate.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lstring.h" />
+    <ClInclude Include="..\..\src\Lua\lua\ltable.h" />
+    <ClInclude Include="..\..\src\Lua\lua\ltm.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lua.h" />
+    <ClInclude Include="..\..\src\Lua\lua\luaconf.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lualib.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lundump.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lvm.h" />
+    <ClInclude Include="..\..\src\Lua\lua\lzio.h" />
+    <ClInclude Include="..\..\src\Lua\LUAEngine.h" />
+    <ClInclude Include="..\..\src\Lua\LUAFunctions.h" />
+    <ClInclude Include="..\..\src\Lua\Functions\TableFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

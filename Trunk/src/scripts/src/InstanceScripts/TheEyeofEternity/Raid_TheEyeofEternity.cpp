@@ -21,7 +21,38 @@
 
 #include "ScriptStdAfx.h"
 
-#include "StdAfx.h"
+class MalygosAI : MoonScriptBossAI
+{
+public:
+	MOONSCRIPT_FACTORY_FUNCTION(MalygosAI, MoonScriptBossAI);
+	MalygosAI(Creature *pCreature) : MoonScriptBossAI(pCreature)
+    {
+        		
+    };
+    
+    void OnCombatStart(Unit *mTarget)
+    {
+        ParentClass::OnCombatStart(mTarget);
+    };
+
+    void AIUpdate()
+    {
+		ParentClass::AIUpdate();
+    };
+
+	void OnDied(Unit *pKiller)
+	{
+		ParentClass::OnDied(pKiller);
+	};
+
+	void Destroy()
+    {
+		delete this;
+    };
+
+private:
+    
+};
 
 class EyePlatform : GameObjectAIScript
 {
@@ -29,6 +60,8 @@ public:
 	EyePlatform(GameObject *pGameObject) : GameObjectAIScript(pGameObject){}
     void OnActivate(Player *pPlayer)
 	{
-        _gameobject->SetState(1);
+        _gameobject->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
     }
-}
+
+    static GameObjectAIScript *Create(GameObject *pGameObject) { return new EyePlatform(pGameObject); }
+};

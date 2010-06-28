@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Main Resources">
@@ -6,35 +6,318 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Main Resources\Base Class">
-      <UniqueIdentifier>{9d1a0590-56ed-4661-914a-e02b7a01332f}</UniqueIdentifier>
+      <UniqueIdentifier>{605d28ae-8c63-4a60-a96a-81680550e439}</UniqueIdentifier>
     </Filter>
     <Filter Include="Main Resources\Setup">
-      <UniqueIdentifier>{18f86f5c-e078-4869-83f4-30f74f93e978}</UniqueIdentifier>
+      <UniqueIdentifier>{07dfe0b7-3ae4-41fa-8bc5-f9a123adbfac}</UniqueIdentifier>
     </Filter>
     <Filter Include="Main Resources\Instance Base Class">
-      <UniqueIdentifier>{b982a467-112f-4c06-99e1-46f2f7a34545}</UniqueIdentifier>
+      <UniqueIdentifier>{d6929bc2-2354-4453-b6ab-fb2a7bc79c1f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{f4c31ed8-4364-47c5-97c3-a7b0d6e586fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts\Instances">
-      <UniqueIdentifier>{dd49d454-5d3a-4588-8923-b0fae90d2e83}</UniqueIdentifier>
+    <Filter Include="Scripts\Classic">
+      <UniqueIdentifier>{33dd9475-be8e-4529-a1d9-1884a61b11b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts\Raids">
-      <UniqueIdentifier>{bf90c0e5-34d5-4456-92e9-c370c37ab1c4}</UniqueIdentifier>
+    <Filter Include="Scripts\Classic\Raids">
+      <UniqueIdentifier>{bb5e642b-994c-4f9e-9ed2-0ed29fdf2def}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts\Raids\Ulduar">
-      <UniqueIdentifier>{46d204b5-dfaa-40d5-885c-a0aa87879531}</UniqueIdentifier>
+    <Filter Include="Scripts\Classic\Raids\Blackwing Lair">
+      <UniqueIdentifier>{b855e59b-6fb7-48ac-b4ac-dd35be884670}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts\Raids\Naxxramas">
-      <UniqueIdentifier>{94dc48f8-232b-477e-93be-78a517a50fad}</UniqueIdentifier>
+    <Filter Include="Scripts\Classic\Raids\Molten Core">
+      <UniqueIdentifier>{4f8dce82-99dd-41d6-8c8b-b8fd5f23ff8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripts\Raids\SUNWELLPLAT">
-      <UniqueIdentifier>{8276def1-6bd7-42aa-be32-ede8e1cf34ce}</UniqueIdentifier>
+    <Filter Include="Scripts\Classic\Raids\Ruins of Ahn%27Qiraj">
+      <UniqueIdentifier>{230ee640-fd77-4198-bc0d-2cfee705a824}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Raids\Zul%27Gurub">
+      <UniqueIdentifier>{7c39ae33-9f8e-427b-967a-d85cf3339cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Raids\Temple of Ahn%27Qiraj">
+      <UniqueIdentifier>{e0ea5dd4-8bab-4d40-8ae4-289c08d6b1be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances">
+      <UniqueIdentifier>{1a858d60-0241-4ba2-a549-6570caad00ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Blackfathom Deeps">
+      <UniqueIdentifier>{54a71a49-a45e-48d5-a194-3f7c0db1033d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Maraudon">
+      <UniqueIdentifier>{43e35359-f32a-4732-9ae8-c0e21766f8e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Blackrock Depths">
+      <UniqueIdentifier>{5eabca6a-15c0-4a0e-bfbc-ec6fde2e9f98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Blackrock Spire">
+      <UniqueIdentifier>{b352fbc1-ec9f-44be-8f4c-74187806ad4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Dire Maul">
+      <UniqueIdentifier>{b3a1d4e4-c69d-4119-858e-4908290fdb55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Gnomeregan">
+      <UniqueIdentifier>{169fddc4-3e83-4cb4-b7d2-1fcbcf6aadd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Zul%27Farrak">
+      <UniqueIdentifier>{97f26751-292c-4e90-8418-4a9babde890b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Ragefire Chasm">
+      <UniqueIdentifier>{4b4d850d-afaf-4763-b417-cc3dabdc82a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Wailing Caverns">
+      <UniqueIdentifier>{33a0ad63-b01c-46a6-be99-5ea2c1d34344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Uldaman">
+      <UniqueIdentifier>{c5fc0b9a-bc72-4a22-a175-603c37879784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\The Stockade">
+      <UniqueIdentifier>{3eabe068-458d-4f0a-b607-386c9e394b10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\The Deadmines">
+      <UniqueIdentifier>{68d2dda5-cf4b-4f84-965d-3783e9fba243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Sunken Temple">
+      <UniqueIdentifier>{67f24c5b-971f-44d6-948f-e97791dea66e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Stratholme">
+      <UniqueIdentifier>{191131c8-e892-4079-a6f7-8023f8037baf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Shadowfang Keep">
+      <UniqueIdentifier>{88e045f8-3951-4781-bcb9-d5f5860e34d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Scholomance">
+      <UniqueIdentifier>{77768430-415d-48bc-9568-136de24ce9a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Scarlet Monastery">
+      <UniqueIdentifier>{c823fde0-119b-4776-ab5c-04877fe9a697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Razorfen Kraul">
+      <UniqueIdentifier>{6e7e7789-e957-4c45-938e-be253b717dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Classic\Instances\Razorfen Downs">
+      <UniqueIdentifier>{5824febb-2121-4161-82ea-cdfaab93ad46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade">
+      <UniqueIdentifier>{f25aeca6-3a5b-42f2-8c46-dfbb94133736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Auchindoun">
+      <UniqueIdentifier>{1a01411e-5a76-4dcc-8ad6-7b44d2520329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Auchindoun\SethekkHalls">
+      <UniqueIdentifier>{544c6098-66f7-4786-b565-4be52122208a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Auchindoun\AuchenaiCrypts">
+      <UniqueIdentifier>{73879b0b-5375-4227-bdc3-2b54784d9ec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Auchindoun\ManaTombs">
+      <UniqueIdentifier>{66fac0db-cae0-4068-a149-d1923888928d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Auchindoun\ShadowLabyrinth">
+      <UniqueIdentifier>{65d04c04-e904-449a-9a7e-baee3a6d0c41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Zul%27Aman">
+      <UniqueIdentifier>{429465c7-68f4-4782-8bbe-e0055d8933ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Black Temple">
+      <UniqueIdentifier>{d77f2196-f44d-4468-a141-08827ad65bec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Caverns of Time">
+      <UniqueIdentifier>{e41a8536-7f76-4a5d-967a-730bd9b826cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Caverns of Time\Old Hillsbrad Foothills">
+      <UniqueIdentifier>{89f659aa-d3e3-4e76-a9d2-1ba56c701b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Caverns of Time\The Black Morass">
+      <UniqueIdentifier>{a7422027-704b-4b9c-8015-43bcd4625db4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Caverns of Time\Hyjal Summit">
+      <UniqueIdentifier>{5b0fd5ad-a5af-4992-abb4-f5023d2db6e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir">
+      <UniqueIdentifier>{8e0f72c9-f343-4840-8a30-c8d10340410e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\The Slave Pens">
+      <UniqueIdentifier>{279d5dd1-065d-41bb-ba62-044790147a47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\The Steamvault">
+      <UniqueIdentifier>{8b73679b-c011-4a39-bc00-85f88bf40690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\The Underbog">
+      <UniqueIdentifier>{fe8fb65e-4f73-4f79-8ea1-d86bf4c30a30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\Serpentshrine Cavern">
+      <UniqueIdentifier>{d33003bc-d348-4595-a606-7c9c0753ae86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Gruul%27s Lair">
+      <UniqueIdentifier>{f01f120c-a725-436a-b098-5dd10dbd7a3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel">
+      <UniqueIdentifier>{e18a0111-1287-4577-84fc-e0a26e6fa887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\Hellfire Ramparts">
+      <UniqueIdentifier>{eb2a19f4-0109-4541-b124-226b5c63b09b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\The Blood Furnace">
+      <UniqueIdentifier>{f0472411-c751-4b05-91f2-a967f2a96f2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\The Shattered Halls">
+      <UniqueIdentifier>{3dd702d8-d2d5-444d-a00e-64fa64d7bee3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\Magtheridon%27s Lair">
+      <UniqueIdentifier>{d0c7103b-dd09-4397-8899-e60607da3e48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Karazhan">
+      <UniqueIdentifier>{2d975000-8c8c-4176-9c6c-58e5e93f7caf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Magisters%27 Terrace">
+      <UniqueIdentifier>{5110823d-c2af-4a5a-912c-413815fce2be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Sunwell Plateau">
+      <UniqueIdentifier>{e5d5c5b0-7fb1-4371-acc3-6e5a38f7e574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Tempest Keep">
+      <UniqueIdentifier>{65fff81c-6dc7-4e2d-89c3-7b3892de19c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Arcatraz">
+      <UniqueIdentifier>{b1f8ddd5-eab0-4cbf-87b7-68621dc5058e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Eye">
+      <UniqueIdentifier>{f54d70a9-daff-49a7-ba05-d4378e4e94dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Botanica">
+      <UniqueIdentifier>{729edcb6-b737-49ea-9015-312d15a86464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Mechanar">
+      <UniqueIdentifier>{29b9043b-db23-4834-b9bf-206bd90213d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King">
+      <UniqueIdentifier>{b5984a4f-6ffc-4adc-949c-2ae5a4b3b6ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Azjol-Nerub">
+      <UniqueIdentifier>{08b77f54-5456-4082-befa-f1048339acb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Azjol-Nerub\Ahn%27kahet: The Old Kingdom">
+      <UniqueIdentifier>{211e3863-fe7f-43fd-a28e-d68cb15d2b96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Azjol-Nerub\Azjol-Nerub">
+      <UniqueIdentifier>{d80ea395-5e83-4d16-a2e9-fcfeb160e41c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\The Nexus">
+      <UniqueIdentifier>{4ee2829e-642c-46be-a728-a0d2b14b00d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\The Nexus\The Nexus">
+      <UniqueIdentifier>{e1c9e220-20dc-4dbc-b2e7-4c2970a54b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\The Nexus\The Oculus">
+      <UniqueIdentifier>{584b7049-4551-4a36-a05e-c92063ef4613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\The Nexus\The Eye of Eternity">
+      <UniqueIdentifier>{2fe094a8-4334-4e9d-9b9c-d579b5291031}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Crusaders%27 Coliseum">
+      <UniqueIdentifier>{876a5b6b-a491-4de0-9d31-8b855091bb47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Crusaders%27 Coliseum\Trial of the Champion">
+      <UniqueIdentifier>{78951829-6a9a-47e1-8cb3-97a8fbb653a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Crusaders%27 Coliseum\Trial of the Crusader">
+      <UniqueIdentifier>{7a00623a-1639-40c9-96bb-cf3f8d5c0e65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Icecrown Citadel">
+      <UniqueIdentifier>{a9142bc7-e66b-46e4-a00d-5a7e3ec6e420}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Icecrown Citadel\Halls of Reflection">
+      <UniqueIdentifier>{75a7e9c6-704d-4375-9cc8-a3adce3d2171}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Icecrown Citadel\Pit of Saron">
+      <UniqueIdentifier>{34ac8617-6ac3-4c53-83e7-207529621d02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Icecrown Citadel\The Forge of Souls">
+      <UniqueIdentifier>{cfc2ce7b-b1f4-4b93-8dd9-5e82432687b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Icecrown Citadel\Icecrown Citadel">
+      <UniqueIdentifier>{0df9972c-5966-4383-91e6-756226f55fab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Drak%27Tharon Keep">
+      <UniqueIdentifier>{f3c234dc-6c18-4711-af81-dc18fbeed912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Gundrak">
+      <UniqueIdentifier>{50f90d3b-f146-482b-b439-c309b2132e0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Naxxramas">
+      <UniqueIdentifier>{0a753202-14bc-4d8e-9a9d-99db393f3883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Wyrmrest Temple">
+      <UniqueIdentifier>{58c87c2a-c521-4642-91a6-15cac2f72e08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Wyrmrest Temple\The Obsidian Sanctum">
+      <UniqueIdentifier>{56798bf7-6ab9-43d2-bb60-2154546c511c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Wyrmrest Temple\The Ruby Sanctum">
+      <UniqueIdentifier>{eb2f648a-3b07-45b9-a4e7-752d334cb9a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Onyxia%27s Lair">
+      <UniqueIdentifier>{ccf45a4f-1371-4182-a5be-be83432d8f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\The Culling of Stratholme">
+      <UniqueIdentifier>{e9821a65-8b8a-4b3c-95f8-32f489ceab06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Utgarde Keep">
+      <UniqueIdentifier>{b06e85ed-0938-4473-a513-c2b5418956a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Utgarde Keep\Utgarde Keep">
+      <UniqueIdentifier>{79da3f5b-7b39-44fc-97f7-0579eda453ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Utgarde Keep\Utgarde Pinnacle">
+      <UniqueIdentifier>{cdd52ce4-c8bb-47f6-ab25-24f0fc935faf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Ulduar">
+      <UniqueIdentifier>{c88bbbe6-89a9-4c01-86cb-01927249d568}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Ulduar\Halls of Lightning">
+      <UniqueIdentifier>{a5111d0c-071b-41ce-a1a2-3c74cec3c367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Ulduar\Halls of Stone">
+      <UniqueIdentifier>{e23f335d-29da-455e-a92c-771d04a22d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\Ulduar\Ulduar">
+      <UniqueIdentifier>{9f497733-7b83-46ad-a2af-df3d5416d1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\The Lich King\The Violet Hold">
+      <UniqueIdentifier>{bb767b24-7650-4f27-9088-6ae26d7351e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\InstanceScripts\garbage.h">
+      <Filter>Main Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\ScriptStdAfx.h">
+      <Filter>Main Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\Setup.h">
+      <Filter>Main Resources\Setup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\TheOldKingdom\Instance_TheOldKingdom.h">
+      <Filter>Scripts\The Lich King\Azjol-Nerub\Ahn%27kahet: The Old Kingdom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.h">
+      <Filter>Scripts\The Lich King\Naxxramas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\TheRubySanctum\Raid_TheRubySanctum.h">
+      <Filter>Scripts\The Lich King\Wyrmrest Temple\The Ruby Sanctum</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.h">
+      <Filter>Scripts\The Lich King\Onyxia%27s Lair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\Ulduar\Raid_Ulduar.h">
+      <Filter>Scripts\The Lich King\Ulduar\Ulduar</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\InstanceScripts\ScriptStdAfx.cpp">
+      <Filter>Main Resources</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Common\Base.cpp">
       <Filter>Main Resources\Base Class</Filter>
     </ClCompile>
@@ -44,196 +327,193 @@
     <ClCompile Include="..\..\src\Common\Instance_Base.cpp">
       <Filter>Main Resources\Instance Base Class</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_Arcatraz.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\WorldBosses\Raid_WorldBosses.cpp">
+      <Filter>Scripts</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_AuchenaiCrypts.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BlackwingLair\Raid_BlackwingLair.cpp">
+      <Filter>Scripts\Classic\Raids\Blackwing Lair</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_AzjolNerub.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\MoltenCore\Raid_MoltenCore.cpp">
+      <Filter>Scripts\Classic\Raids\Molten Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_BlackfathomDeeps.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\ZulGurub\Raid_ZulGurub.cpp">
+      <Filter>Scripts\Classic\Raids\Zul%27Gurub</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_BlackMorass.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BlackfathomDeeps\Instance_BlackfathomDeeps.cpp">
+      <Filter>Scripts\Classic\Instances\Blackfathom Deeps</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_BlackrockDepths.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Mauradon\Instance_Mauradon.cpp">
+      <Filter>Scripts\Classic\Instances\Maraudon</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_BlackrockSpire.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BlackrockDepths\Instance_BlackrockDepths.cpp">
+      <Filter>Scripts\Classic\Instances\Blackrock Depths</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_BloodFurnace.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BlackrockSpire\Instance_BlackrockSpire.cpp">
+      <Filter>Scripts\Classic\Instances\Blackrock Spire</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_Botanica.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\DireMaul\Instance_DireMaul.cpp">
+      <Filter>Scripts\Classic\Instances\Dire Maul</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_CullingOfStratholme.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\ZulFarrak\Instance_ZulFarrak.cpp">
+      <Filter>Scripts\Classic\Instances\Zul%27Farrak</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_Deadmines.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\RagefireChasm\Instance_RagefireChasm.cpp">
+      <Filter>Scripts\Classic\Instances\Ragefire Chasm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_DireMaul.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\WailingCaverns\Instance_WailingCaverns.cpp">
+      <Filter>Scripts\Classic\Instances\Wailing Caverns</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_DrakTharonKeep.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Uldaman\Instance_Uldaman.cpp">
+      <Filter>Scripts\Classic\Instances\Uldaman</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_HallsOfLightning.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheStockade\Instance_TheStockade.cpp">
+      <Filter>Scripts\Classic\Instances\The Stockade</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_HallsOfStone.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Deadmine\Instance_Deadmines.cpp">
+      <Filter>Scripts\Classic\Instances\The Deadmines</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_HellfireRamparts.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\ShadowfangKeep\Instance_ShadowfangKeep.cpp">
+      <Filter>Scripts\Classic\Instances\Shadowfang Keep</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_MagistersTerrace.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Scholomance\Instance_Scholomance.cpp">
+      <Filter>Scripts\Classic\Instances\Scholomance</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_ManaTombs.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\ScarletMonastery\Instance_ScarletMonastery.cpp">
+      <Filter>Scripts\Classic\Instances\Scarlet Monastery</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_Mauradon.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\RazorfenDowns\Instance_RazorfenDowns.cpp">
+      <Filter>Scripts\Classic\Instances\Razorfen Downs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_Nexus.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\SethekkHalls\Instance_SethekkHalls.cpp">
+      <Filter>Scripts\The Burning Crusade\Auchindoun\SethekkHalls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_OldHillsbradFoothills.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\AuchenaiCrypts\Instance_AuchenaiCrypts.cpp">
+      <Filter>Scripts\The Burning Crusade\Auchindoun\AuchenaiCrypts</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_RagefireChasm.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\ManaTombs\Instance_ManaTombs.cpp">
+      <Filter>Scripts\The Burning Crusade\Auchindoun\ManaTombs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_RazorfenDowns.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\ShadowLabyrinth\Instance_ShadowLabyrinth.cpp">
+      <Filter>Scripts\The Burning Crusade\Auchindoun\ShadowLabyrinth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_ScarletMonastery.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\ZulAman\Raid_ZulAman.cpp">
+      <Filter>Scripts\The Burning Crusade\Zul%27Aman</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_Scholomance.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BlackTemple\Raid_BlackTemple.cpp">
+      <Filter>Scripts\The Burning Crusade\Black Temple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_SethekkHalls.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BlackTemple\ShadeOfAkama.cpp">
+      <Filter>Scripts\The Burning Crusade\Black Temple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_ShadowfangKeep.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\OldHillsbradFoothills\Instance_OldHillsbradFoothills.cpp">
+      <Filter>Scripts\The Burning Crusade\Caverns of Time\Old Hillsbrad Foothills</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_ShadowLabyrinth.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BlackMorass\Instance_BlackMorass.cpp">
+      <Filter>Scripts\The Burning Crusade\Caverns of Time\The Black Morass</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_TheMechanar.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\HyjalSummit\Raid_HyjalSummit.cpp">
+      <Filter>Scripts\The Burning Crusade\Caverns of Time\Hyjal Summit</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_TheShatteredHalls.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheSlavePens\Instance_TheSlavePens.cpp">
+      <Filter>Scripts\The Burning Crusade\Coilfang Reservoir\The Slave Pens</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_TheSlavePens.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheSteamvault\Instance_TheSteamvault.cpp">
+      <Filter>Scripts\The Burning Crusade\Coilfang Reservoir\The Steamvault</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_TheSteamvault.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheUnderbog\Instance_TheUnderbog.cpp">
+      <Filter>Scripts\The Burning Crusade\Coilfang Reservoir\The Underbog</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_TheStockade.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\SerpentshrineCavern\Raid_SerpentshrineCavern.cpp">
+      <Filter>Scripts\The Burning Crusade\Coilfang Reservoir\Serpentshrine Cavern</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_TheUnderbog.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\GruulsLair\Raid_GruulsLair.cpp">
+      <Filter>Scripts\The Burning Crusade\Gruul%27s Lair</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_Uldaman.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\HellfireRamparts\Instance_HellfireRamparts.cpp">
+      <Filter>Scripts\The Burning Crusade\Hellfire Citadel\Hellfire Ramparts</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_UtgardeKeep.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\BloodFurnace\Instance_BloodFurnace.cpp">
+      <Filter>Scripts\The Burning Crusade\Hellfire Citadel\The Blood Furnace</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_WailingCaverns.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheShatteredHalls\Instance_TheShatteredHalls.cpp">
+      <Filter>Scripts\The Burning Crusade\Hellfire Citadel\The Shattered Halls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Instance_ZulFarrak.cpp">
-      <Filter>Scripts\Instances</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\MagtheridonsLair\Raid_MagtheridonsLair.cpp">
+      <Filter>Scripts\The Burning Crusade\Hellfire Citadel\Magtheridon%27s Lair</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_BlackTemple.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Karazhan\Raid_Karazhan.cpp">
+      <Filter>Scripts\The Burning Crusade\Karazhan</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_BlackwingLair.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Instance_MagistersTerrace.cpp">
+      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_CoT_BattleOfMountHyjal.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\SunwellPlateau\Raid_SunwellPlateau.cpp">
+      <Filter>Scripts\The Burning Crusade\Sunwell Plateau</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_GruulsLair.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Arcatraz\Instance_Arcatraz.cpp">
+      <Filter>Scripts\The Burning Crusade\Tempest Keep\The Arcatraz</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_IcecrownCitadel.cpp">
-      <Filter>Scripts\Raids\ICC</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheEye\Raid_TheEye.cpp">
+      <Filter>Scripts\The Burning Crusade\Tempest Keep\The Eye</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_Karazhan.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Botanica\Instance_Botanica.cpp">
+      <Filter>Scripts\The Burning Crusade\Tempest Keep\The Botanica</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_Magtheridons_Lair.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheMechanar\Instance_TheMechanar.cpp">
+      <Filter>Scripts\The Burning Crusade\Tempest Keep\The Mechanar</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_MoltenCore.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheOldKingdom\Instance_TheOldKingdom.cpp">
+      <Filter>Scripts\The Lich King\Azjol-Nerub\Ahn%27kahet: The Old Kingdom</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_OnyxiasLair.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Azjol-Nerub\Instance_AzjolNerub.cpp">
+      <Filter>Scripts\The Lich King\Azjol-Nerub\Azjol-Nerub</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_SerpentshrineCavern.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Nexus\Instance_Nexus.cpp">
+      <Filter>Scripts\The Lich King\The Nexus\The Nexus</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_TheEye.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheEyeofEternity\Raid_TheEyeofEternity.cpp">
+      <Filter>Scripts\The Lich King\The Nexus\The Eye of Eternity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_TheObsidianSanctum.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\IcecrownCitadel\ICC_tele.cpp">
+      <Filter>Scripts\The Lich King\Icecrown Citadel</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_WorldBosses.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\DrakTharonKeep\Instance_DrakTharonKeep.cpp">
+      <Filter>Scripts\The Lich King\Drak%27Tharon Keep</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_ZulAman.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\Naxxramas\Raid_Naxxramas.cpp">
+      <Filter>Scripts\The Lich King\Naxxramas</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_ZulGurub.cpp">
-      <Filter>Scripts\Raids</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheObsidianSanctum\Raid_TheObsidianSanctum.cpp">
+      <Filter>Scripts\The Lich King\Wyrmrest Temple\The Obsidian Sanctum</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_Ulduar.cpp">
-      <Filter>Scripts\Raids\Ulduar</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\TheRubySanctum\Raid_TheRubySanctum.cpp">
+      <Filter>Scripts\The Lich King\Wyrmrest Temple\The Ruby Sanctum</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\Raid_Naxxramas.cpp">
-      <Filter>Scripts\Raids\Naxxramas</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\OnyxiasLair\Raid_OnyxiasLair.cpp">
+      <Filter>Scripts\The Lich King\Onyxia%27s Lair</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\SUNWELL_PLAT\Raid_SunwellPlateau.cpp">
-      <Filter>Scripts\Raids\SUNWELLPLAT</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\CullingOfStratholme\Instance_CullingOfStratholme.cpp">
+      <Filter>Scripts\The Lich King\The Culling of Stratholme</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\SUNWELL_PLAT\SUNWELL_KALECGOS.cpp">
-      <Filter>Scripts\Raids\SUNWELLPLAT</Filter>
+    <ClCompile Include="..\..\src\InstanceScripts\UtgardeKeep\Instance_UtgardeKeep.cpp">
+      <Filter>Scripts\The Lich King\Utgarde Keep\Utgarde Keep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\HallsOfLightning\Instance_HallsOfLightning.cpp">
+      <Filter>Scripts\The Lich King\Ulduar\Halls of Lightning</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\HallsOfStone\Instance_HallsOfStone.cpp">
+      <Filter>Scripts\The Lich King\Ulduar\Halls of Stone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\Ulduar\Raid_Ulduar.cpp">
+      <Filter>Scripts\The Lich King\Ulduar\Ulduar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\Common\Base.h">
+    <CustomBuildStep Include="..\..\src\Common\Base.h">
       <Filter>Main Resources\Base Class</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\InstanceScripts\Setup.h">
-      <Filter>Main Resources\Setup</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Common\Instance_Base.h">
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\src\Common\Instance_Base.h">
       <Filter>Main Resources\Instance Base Class</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\InstanceScripts\Raid_IcecrownCitadel.h">
-      <Filter>Scripts\Raids\ICC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\InstanceScripts\Raid_Ulduar.h">
-      <Filter>Scripts\Raids\Ulduar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\InstanceScripts\Raid_Naxxramas.h">
-      <Filter>Scripts\Raids\Naxxramas</Filter>
-    </ClInclude>
+    </CustomBuildStep>
   </ItemGroup>
 </Project>

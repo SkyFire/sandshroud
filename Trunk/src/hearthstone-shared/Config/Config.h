@@ -19,7 +19,7 @@
 
 #if !defined (CONFIG_H)
 #define CONFIG_H
-#include "Common.h"
+#include "../Common.h"
 
 using namespace std;
 struct SERVER_DECL ConfigSetting

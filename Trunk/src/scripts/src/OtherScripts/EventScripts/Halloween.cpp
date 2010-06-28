@@ -113,7 +113,7 @@ class HeadlessHorsemanFireAI : public MoonScriptCreatureAI
  * http://www.wowhead.com/?spell=42118 
  * I guess this is the target of the water spells
  * Need to check all visual auras for these http://www.wowhead.com/?search=horseman#uncategorized-spells
- */
+ *//*
 class ShadeOfTheHorsemanAI : public MoonScriptCreatureAI
 {
     MOONSCRIPT_FACTORY_FUNCTION(ShadeOfTheHorsemanAI, MoonScriptCreatureAI);
@@ -136,7 +136,7 @@ class ShadeOfTheHorsemanAI : public MoonScriptCreatureAI
 						WayPoints = WaypointGoldshire;
 					}break;
 		}
-
+		
 		for (int i = 1 ; i <= WPCount ; ++i)
 		{
 			AddWaypoint(CreateWaypoint( i, 0, WayPoints[i].mAddition, WayPoints[i]));
@@ -188,7 +188,7 @@ class ShadeOfTheHorsemanAI : public MoonScriptCreatureAI
 	Coords		*WayPoints;
 	SpellDesc*	mSummon;
 };
-
+*/
 // Headless Horseman - Wisp Invis
 #define CN_HEADLESS_HORSEMAN_WISP_INVIS				24034//						42394
 
@@ -267,7 +267,7 @@ void SetupHalloween(ScriptMgr *mgr)
 	mgr->register_creature_script(CN_HEADLESS_HORSEMAN, &HeadlessHorsemanAI::Create);
 	mgr->register_creature_script(CN_HEADLESS_HORSEMAN_WISP_INVIS, &HeadlessHorsemanWispInvisAI::Create);
 	mgr->register_creature_script(CN_HEADLESS_HORSEMAN_FIRE, &HeadlessHorsemanFireAI::Create);
-	mgr->register_creature_script(CN_SHADE_OF_THE_HORSEMAN, &ShadeOfTheHorsemanAI::Create);
+	//mgr->register_creature_script(CN_SHADE_OF_THE_HORSEMAN, &ShadeOfTheHorsemanAI::Create);
 
 	mgr->register_gameobject_script(186234, &WaterBarrel::Create);
 }

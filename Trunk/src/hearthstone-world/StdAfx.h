@@ -59,14 +59,14 @@
 #include "../hearthstone-shared/Collision/vmap/VMapManager.h"
 
 #include <zlib.h>
-#include <RC4Engine.h>
+#include "../hearthstone-shared/RC4Engine.h"
 #include "MainServerDefines.h"
 
 #include "../hearthstone-shared/Database/DatabaseEnv.h"
 #include "../hearthstone-shared/Database/DBCStores.h"
 #include "../hearthstone-shared/Database/dbcfile.h"
 
-#include <Network/Network.h>
+#include "../hearthstone-shared/Network/Network.h"
 
 #include "../hearthstone-shared/AuthCodes.h"
 #include "../hearthstone-shared/Auth/MD5.h"
