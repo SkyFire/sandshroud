@@ -33,7 +33,6 @@ const char * gAchievementRewardFormat					= "uuuu";
 const char * gAreaTriggerFormat							= "ucuusffffuu";
 const char * gCreatureNameFormat						= "usssuuuuuuuuuuuffcc";
 const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuibuufffuuiuc";
-const char * gCreatureProtoHeroicFormat					= "uuuuuffcuuuuuuuusu";
 const char * gCreatureVehicleProto						= "ubuuuuuuuubbubbubbubbubbubbubbubb";
 const char * gCreatureInfoExtra							= "uuuhu";
 const char * gFishingFormat								= "uuu";
@@ -56,7 +55,6 @@ SERVER_DECL SQLStorage<AchievementReward, HashMapStorageContainer<AchievementRew
 SERVER_DECL SQLStorage<AreaTrigger, HashMapStorageContainer<AreaTrigger> >						AreaTriggerStorage;
 SERVER_DECL SQLStorage<CreatureInfo, HashMapStorageContainer<CreatureInfo> >					CreatureNameStorage;
 SERVER_DECL SQLStorage<CreatureProto, HashMapStorageContainer<CreatureProto> >					CreatureProtoStorage;
-SERVER_DECL SQLStorage<CreatureProtoHeroic, HashMapStorageContainer<CreatureProtoHeroic> >		CreatureProtoHeroicStorage;
 SERVER_DECL SQLStorage<CreatureProtoVehicle, HashMapStorageContainer<CreatureProtoVehicle> >	CreatureProtoVehicleStorage;
 SERVER_DECL SQLStorage<CreatureInfoExtra, HashMapStorageContainer<CreatureInfoExtra> >			CreatureInfoExtraStorage;
 SERVER_DECL SQLStorage<FishingZoneEntry, HashMapStorageContainer<FishingZoneEntry> >			FishingZoneStorage;
@@ -101,10 +99,24 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 {
 	CreatureProto * cn;
 	CreatureInfo * ci;
+	uint32 entry;
+	CreatureProtoMode ecpm; // Used later.
+	ecpm.loaded = false;
+
+	bool loadmodes = false; // Crow: LOAD MOADS
+	QueryResult * modechecks = WorldDatabase.Query( "SELECT * FROM creature_proto_mode");
+	if(modechecks)
+	{
+		loadmodes = true;
+		delete modechecks;
+	}
+
 	StorageContainerIterator<CreatureProto> * cpitr = CreatureProtoStorage.MakeIterator();
 	while(!cpitr->AtEnd())
 	{
 		cn = cpitr->Get();
+		entry = cn->Id;
+
 		if(cn->aura_string)
 		{
 			string auras = string(cn->aura_string);
@@ -130,6 +142,64 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		//cn->m_fleeDuration = 0.0f;
 		cn->m_fleeDuration = 0;
 
+		for(uint8 i = 0; i < 3; i++) // So we can check for real later.
+			cn->ModeProto[i] = ecpm;
+
+		if(loadmodes)
+		{
+			// Load our mode proto.
+			QueryResult * moderesult = WorldDatabase.Query( "SELECT * FROM creature_proto_mode WHERE entry = %u", entry);
+			if(moderesult)
+			{
+				uint8 mode = 0;
+				uint8 realmode = 0;
+				do
+				{
+					uint32 fieldcount = 1;
+					Field *fields = moderesult->Fetch();
+					mode = fields[fieldcount++].GetUInt8();
+					if(mode > 3 || mode < 1)
+					{
+						Log.Warning("ObjectStorage","Incorrect instance mode %u for creature %u, instance mode 3 max.", mode, entry);
+
+						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+							WorldDatabase.Execute("DELETE FROM creature_proto_mode WHERE entry = %u AND mode = %u;", entry, mode);
+
+						continue;
+					}
+					realmode = mode-1;
+					CreatureProtoMode cpm;
+					cpm.loaded = true;
+					cpm.entry = entry;
+					cpm.Minlevel = fields[fieldcount++].GetUInt32();
+					cpm.Maxlevel = fields[fieldcount++].GetUInt32();
+					cpm.Minhealth = fields[fieldcount++].GetUInt32();
+					cpm.Maxhealth = fields[fieldcount++].GetUInt32();
+					cpm.Mindmg = fields[fieldcount++].GetFloat();
+					cpm.Maxdmg = fields[fieldcount++].GetFloat();
+					cpm.Power = fields[fieldcount++].GetUInt32();
+					for(uint8 i = 0; i < 7; i++)
+						cpm.Resistances[i] = fields[fieldcount++].GetUInt32();
+
+					string auras = fields[fieldcount++].GetString();
+					if(auras.size())
+						cpm.aura_string = (char*)auras.c_str();
+					else
+						cpm.aura_string = "";
+
+					cpm.auraimmune_flag = fields[fieldcount++].GetUInt32();
+
+					// Begin cleanup changes.
+
+					// End of changes.
+					cn->ModeProto[realmode] = cpm;
+
+				}while( moderesult->NextRow() );
+				delete moderesult;
+			}
+		}
+
+		entry = 0;
 		if(!cpitr->Inc())
 			break;
 	}
@@ -151,17 +221,15 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	}
 	ciitr->Destruct();
 
+	StorageContainerIterator<Quest> * qitr = QuestStorage.MakeIterator();
+	while(!qitr->AtEnd())
 	{
-		StorageContainerIterator<Quest> * qitr = QuestStorage.MakeIterator();
-		while(!qitr->AtEnd())
-		{
-			qitr->Get()->pQuestScript = NULL;
+		qitr->Get()->pQuestScript = NULL;
 
-			if( !qitr->Inc() )
-				break;
-		}
-		qitr->Destruct();
+		if( !qitr->Inc() )
+			break;
 	}
+	qitr->Destruct();
 
 	// Load AI Agents
 	if(!Config.MainConfig.GetBoolDefault("Server", "LoadAIAgents", true))
@@ -174,7 +242,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	{
 		AI_Spell *sp = NULL;
 		SpellEntry * spe = NULL;
-		uint32 entry = 0;
+		entry = 0;
 		uint32 spellID = 0;
 		uint16 agent = 0;
 		uint32 counter = 0;
@@ -542,7 +610,6 @@ void Storage_FillTaskList(TaskList & tl)
 	make_task(CreatureNameStorage, CreatureInfo, HashMapStorageContainer, "creature_names", gCreatureNameFormat);
 	make_task(GameObjectNameStorage, GameObjectInfo, HashMapStorageContainer, "gameobject_names", gGameObjectNameFormat);
 	make_task(CreatureProtoStorage, CreatureProto, HashMapStorageContainer, "creature_proto", gCreatureProtoFormat);
-	make_task(CreatureProtoHeroicStorage, CreatureProtoHeroic, HashMapStorageContainer, "creature_proto_heroic", gCreatureProtoHeroicFormat);
 	make_task(CreatureProtoVehicleStorage, CreatureProtoVehicle, HashMapStorageContainer, "creature_proto_vehicle", gCreatureVehicleProto);
 	make_task(CreatureInfoExtraStorage, CreatureInfoExtra, HashMapStorageContainer, "creature_info", gCreatureInfoExtra);
 	make_task(AreaTriggerStorage, AreaTrigger, HashMapStorageContainer, "areatriggers", gAreaTriggerFormat);

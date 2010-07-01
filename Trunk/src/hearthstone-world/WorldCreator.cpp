@@ -80,34 +80,34 @@ void InstanceMgr::Load(TaskList * l)
 	StorageContainerIterator<MapInfo> * itr = WorldMapInfoStorage.MakeIterator();
 	while(!itr->AtEnd())
 	{
-		if( itr->Get()->mapid >= NUM_MAPS )
+		MapInfo* mapinfo = itr->Get();
+		if( mapinfo->mapid >= NUM_MAPS )
 		{
-			Log.Warning("InstanceMgr", "One or more of your worldmap_info rows specifies an invalid map: %u", itr->Get()->mapid );
+			Log.Warning("InstanceMgr", "One or more of your worldmap_info rows specifies an invalid map: %u", mapinfo->mapid );
 			itr->Inc();
 			continue;
 		}
 
 #ifdef EXCLUDE_TEST_MAPS
-		MapEntry *me = dbcMap.LookupEntry(itr->Get()->mapid);
+		MapEntry *me = dbcMap.LookupEntry(mapinfo->mapid);
 		if (me != NULL && !me->multimap_id)
 		{
-			Log.Notice("InstanceMgr", "Skipped test map: %u (hearthstoneConfig.h)", itr->Get()->mapid );
+			Log.Notice("InstanceMgr", "Skipped test map: %u (hearthstoneConfig.h)", mapinfo->mapid );
 			itr->Inc();
 			continue;
 		}
 #endif
-		if(m_maps[itr->Get()->mapid] == NULL)
+
+		if(m_maps[mapinfo->mapid] == NULL)
 		{
-			l->AddTask(new Task(new CallbackP1<InstanceMgr,uint32>(this, &InstanceMgr::_CreateMap, itr->Get()->mapid)));
+			l->AddTask(new Task(new CallbackP1<InstanceMgr,uint32>(this, &InstanceMgr::_CreateMap, mapinfo->mapid)));
 		}
 
-		if( itr->Get()->flags != 1 && itr->Get()->cooldown == 0 )
+		if( mapinfo->flags != 1 && mapinfo->cooldown == 0 )
 		{
 			Log.Warning("InstanceMgr", "Your worldmap_info has no cooldown for map %u.", itr->Get()->mapid);
 			itr->Get()->cooldown = TIME_MINUTE * 30;
 		}
-		//_CreateMap(itr->Get()->mapid);
-
 		itr->Inc();
 	}
 	itr->Destruct();
@@ -360,28 +360,29 @@ uint32 InstanceMgr::PreTeleport(uint32 mapid, Player* plr, uint32 instanceid)
 	}
 
 	// if we're here, it means we need to create a new instance.
+	bool raid = map->israid();
 	in = new Instance;
 	in->m_creation = UNIXTIME;
-	in->m_expiration = (inf->type == INSTANCE_NONRAID) ? 0 : UNIXTIME + inf->cooldown;		// expire time 0 is 10 minutes after last player leaves
+	in->m_expiration = (raid ? UNIXTIME + inf->cooldown : 0);		// expire time 0 is 10 minutes after last player leaves
 	in->m_creatorGuid = plr->GetLowGUID();
-	in->m_creatorGroup = pGroup ? pGroup->GetID() : 0;
-	in->m_difficulty = map->israid() ? plr->iRaidType : plr->iInstanceType;
+	in->m_creatorGroup = (pGroup ? pGroup->GetID() : 0);
+	in->m_difficulty = (raid ? plr->iRaidType : plr->iInstanceType);
 	in->m_instanceId = GenerateInstanceID();
 	in->m_mapId = mapid;
 	in->m_mapMgr = NULLMAPMGR;		// always start off without a map manager, it is created in _CreateInstance(in)
 
 	//crash fix; GM's without group will start up raid instances as if they where nonraids
 	//this to avoid exipring check, this is mainly for developers purpose; GM's should NOT invite any players here!
-	if( plr->triggerpass_cheat && !plr->GetGroup() && inf->type == INSTANCE_RAID)
+	if( plr->triggerpass_cheat && !plr->GetGroup() && raid)
 	{
 		const char * message = "Started this instance for development purposes only, do not invite players!!";
-		sEventMgr.AddEvent( plr, &Player::_Warn, message, EVENT_UNIT_SENDMESSAGE, 10000, 1, 0);
+		sEventMgr.AddEvent( plr, &Player::_Warn, message, EVENT_UNIT_SENDMESSAGE, 5000, 1, 0);
 	}
 
 	in->m_mapInfo = inf;
 	in->m_isBattleground = false;
 	plr->SetInstanceID(in->m_instanceId);
-	DEBUG_LOG("InstanceMgr", "Prepared new %s %u for player %u and group %u on map %u with difficulty %u. (%u)", map->israid() ? "Raid" : "Instance" ,in->m_instanceId, in->m_creatorGuid, in->m_creatorGroup, in->m_mapId, in->m_difficulty, in->m_instanceId);
+	DEBUG_LOG("InstanceMgr", "Prepared new %s %u for player %u and group %u on map %u with difficulty %u. (%u)", raid ? "Raid" : "Instance" ,in->m_instanceId, in->m_creatorGuid, in->m_creatorGroup, in->m_mapId, in->m_difficulty, in->m_instanceId);
 
 	// apply it in the instance map
 	instancemap->insert( InstanceMap::value_type( in->m_instanceId, in ) );

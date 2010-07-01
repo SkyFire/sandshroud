@@ -6225,13 +6225,14 @@ void Player::EventAllowTiggerPort(bool enable)
 uint32 Player::CalcTalentResetCost(uint32 resetnum)
 {
 
-	if(resetnum ==0 )
+	if(resetnum == 0 )
 		return  10000;
 	else
 	{
-		if(resetnum>10)
-		return  500000;
-		else return resetnum*50000;
+		if(resetnum > 10)
+			return  500000;
+		else
+			return resetnum*50000;
 	}
 }
 
@@ -6248,6 +6249,7 @@ void Player::SendPetUntrainConfirm()
 	Pet* pPet = GetSummon();
 	if( pPet == NULL )
 		return;
+
 	WorldPacket data( SMSG_PET_UNLEARN_CONFIRM, 12 );
 	data << pPet->GetGUID();
 	data << pPet->GetUntrainCost();

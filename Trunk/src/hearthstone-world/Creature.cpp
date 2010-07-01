@@ -39,7 +39,6 @@ Creature::Creature(uint64 guid)
 
 	m_quests = NULL;
 	proto = NULL;
-	proto_heroic = NULL;
 	creature_info=NULL;
 
 
@@ -848,7 +847,6 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	creature_info = CreatureNameStorage.LookupEntry(spawn->entry);
 	if(!creature_info)
 		return false;
-	proto_heroic = NULL;
 	uint32 health = 0;
 	uint8 powertype = 0;
 	uint32 power = 0;
@@ -869,39 +867,46 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	//Set fields
 	SetUInt32Value(OBJECT_FIELD_ENTRY,proto->Id);
-	
+	powertype = proto->Powertype;
+
 	// Heroic stats
 	if(mode)
 	{
-		proto_heroic = CreatureProtoHeroicStorage.LookupEntry(spawn->entry);
-		if(proto_heroic != NULL)
+		uint8 loadmode = mode-1;
+		if(mode < 4 && proto->ModeProto[loadmode].loaded)
 		{
-			health = proto_heroic->Minhealth + RandomUInt(proto_heroic->Maxhealth - proto_heroic->Minhealth);
-			powertype = proto_heroic->Powertype;
-			power = proto_heroic->Power;
-			mindmg = proto_heroic->Mindmg;
-			maxdmg = proto_heroic->Maxdmg;
-			level =  proto_heroic->Minlevel + (RandomUInt(proto_heroic->Maxlevel - proto_heroic->Minlevel));
+			CreatureProtoMode proto_mode = proto->ModeProto[loadmode];
+			health = proto_mode.Minhealth + RandomUInt(proto_mode.Maxhealth - proto_mode.Minhealth);
+			power = proto_mode.Power;
+			mindmg = proto_mode.Mindmg;
+			maxdmg = proto_mode.Maxdmg;
+			level =  proto_mode.Minlevel + (RandomUInt(proto_mode.Maxlevel - proto_mode.Minlevel));
 			for(uint32 i = 0; i < 7; i++)
-				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, proto_heroic->Resistances[i]);
+				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, proto_mode.Resistances[i]);
 		}
 		else
 		{
-			health = long2int32(double(proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth)) * 1.5);
-			powertype = POWER_TYPE_MANA;
-			mindmg = proto->MinDamage * 1.2f;
-			maxdmg = proto->MaxDamage * 1.2f;
-			level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
-			if(proto->Power)
-				power = proto->Power * 1.2;
 			for(uint32 i = 0; i < 7; i++)
 				SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
+
+			switch(mode) // TODO: find calculations
+			{
+			case 1: // 5 man heroic or 25 man.
+			case 2: // 10 man heroic
+			case 3: // 25 man heroic
+				health = long2int32(double(proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth)) * 1.5);
+				mindmg = proto->MinDamage * 1.2f;
+				maxdmg = proto->MaxDamage * 1.2f;
+				level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
+				if(proto->Power)
+					power = proto->Power * 1.2;
+				break;
+			}
 		}
 	}
 	else
 	{
 		health = proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth);
-		powertype = proto->Powertype;
 		power = proto->Power;
 		mindmg = proto->MinDamage;
 		maxdmg = proto->MaxDamage;

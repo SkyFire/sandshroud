@@ -114,6 +114,26 @@ struct CreatureInfo
 	}
 };
 
+struct CreatureProtoMode
+{
+	bool loaded;
+
+	uint32 entry;
+//	uint8 difficulty; // Woot, not needed inside core.
+	uint32 Minlevel;
+	uint32 Maxlevel;
+	uint32 Minhealth;
+	uint32 Maxhealth;
+	float Mindmg;
+	float Maxdmg;
+	uint32 Power;
+	uint32 Resistances[7];
+	char * aura_string;
+	uint32 auraimmune_flag;
+
+	unordered_set<uint32> start_auras;
+};
+
 struct CreatureProto
 {
 	uint32 Id;
@@ -167,24 +187,7 @@ struct CreatureProto
 
 	set<uint32> start_auras;
 	list<AI_Spell*> spells;
-};
-
-struct CreatureProtoHeroic
-{
-	uint32 entry;
-	uint32 Minlevel;
-	uint32 Maxlevel;
-	uint32 Minhealth;
-	uint32 Maxhealth;
-	float Mindmg;
-	float Maxdmg;
-	uint8 Powertype;
-	uint32 Power;
-	uint32 Resistances[7];
-	char * aura_string;
-	uint32 auraimmune_flag;
-
-	unordered_set<uint32> start_auras;
+	CreatureProtoMode ModeProto[3]; // 3 more proto's, for other difficulties.
 };
 
 struct AccessoryInfo
@@ -594,9 +597,7 @@ public:
 	uint32 original_emotestate;
 	uint32 original_MountedDisplayID;
 	CreatureProto * proto;
-	CreatureProtoHeroic * proto_heroic;
 	HEARTHSTONE_INLINE CreatureProto *GetProto() { return proto; }
-	HEARTHSTONE_INLINE CreatureProtoHeroic * GetProtoHeroic() { return proto_heroic; }
 	CreatureSpawn * m_spawn;
 	EventIdInfo * m_event;
 	void OnPushToWorld();

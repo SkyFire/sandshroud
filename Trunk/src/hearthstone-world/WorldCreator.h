@@ -264,14 +264,14 @@ public:
 private:
 	void _LoadInstances();
 	void _CreateMap(uint32 mapid);
-	MapMgr* _CreateInstance(Instance * in);
+	MapMgr* _CreateInstance(Instance* in);
 	MapMgr* _CreateInstance(uint32 mapid, uint32 instanceid);		// only used on main maps!
-	bool _DeleteInstance(Instance * in, bool ForcePlayersOut);
+	bool _DeleteInstance(Instance* in, bool ForcePlayersOut);
 
 	uint32 m_InstanceHigh;
 
 	Mutex m_mapLock;
-	Map * m_maps[NUM_MAPS];
+	Map* m_maps[NUM_MAPS];
 	InstanceMap* m_instances[NUM_MAPS];
 	MapMgr* m_singleMaps[NUM_MAPS];
 };

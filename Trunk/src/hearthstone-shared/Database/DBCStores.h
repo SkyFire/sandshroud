@@ -1067,17 +1067,20 @@ struct MapEntry
 	uint32 id;
 //	char* name_internal;
 	uint32 map_type;
-//	uint32 is_pvp_zone;
-//	char* real_name;
+//	uint32 flags;
+//	char* real_name[16];
 //	uint32 linked_zone;		// common zone for instance and continent map
-//	char* hordeIntro;		// text for PvP Zones
-//	char* allianceIntro;	// text for PvP Zones
+//	char* hordeIntro[16];		// text for PvP Zones
+//	char* allianceIntro[16];	// text for PvP Zones
 	uint32 multimap_id;		// seems to be 0 for all test maps.
+//	uint32 unk;				// 1/1.25
 //	int32 parent_map;		// map_id of parent map
 //	float start_x;			// enter x coordinate (if exist single entry)
 //	float start_y;			// enter y coordinate (if exist single entry)
+//	uint32 unk;				// -1
 //	uint32 addon;			// 0-original maps, 1-tbc addon, 2-wotlk addon
-//	uint32 maxPlayers;		// max players
+//	uint32 unk;				// 68400 for AQ(20) and ZG else 0
+	uint32 maxPlayers;		// max players
 
 	bool israid() { return map_type == 2; }
 };

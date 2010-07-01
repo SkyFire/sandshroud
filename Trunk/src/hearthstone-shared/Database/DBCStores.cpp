@@ -233,7 +233,7 @@ const char* mapentryFormat =
 	"x"					// 62 unk
 	"x"					// 63 addon
 	"x"					// 64 normalReqText
-	"x";				// 65 Max players
+	"u";				// 65 Max players
 
 const char* itemrandomsuffixformat = "usxxxxxxxxxxxxxxxxxuuuuuuuuuu";
 const char* chatchannelformat = "uuxsxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
