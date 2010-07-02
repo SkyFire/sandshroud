@@ -2773,10 +2773,17 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 				heroic = true;
 
 			uint8 heroicmode = c->GetMapMgr()->iInstanceMode-1;
-			if(heroic && c->proto->ModeProto[heroicmode].loaded)
+			CreatureProtoMode* mode = NULL;
+			HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = c->proto->ModeProto.begin();
+			for(; itr != c->proto->ModeProto.end(); ++itr)
 			{
-				if(c->proto->ModeProto[heroicmode].auraimmune_flag && 
-					(c->proto->ModeProto[heroicmode].auraimmune_flag & m_spellInfo->auraimmune_flag))
+				if(itr->second->difficulty == heroicmode)
+					mode = itr->second;
+			}
+
+			if(heroic && mode != NULL)
+			{
+				if(mode->auraimmune_flag && (mode->auraimmune_flag & m_spellInfo->auraimmune_flag))
 					return;
 			}
 			else

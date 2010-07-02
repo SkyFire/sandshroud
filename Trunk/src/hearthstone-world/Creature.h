@@ -116,10 +116,8 @@ struct CreatureInfo
 
 struct CreatureProtoMode
 {
-	bool loaded;
-
-	uint32 entry;
-//	uint8 difficulty; // Woot, not needed inside core.
+//	uint32 entry; // Woot, not needed inside core.
+	uint8 difficulty;
 	uint32 Minlevel;
 	uint32 Maxlevel;
 	uint32 Minhealth;
@@ -130,8 +128,6 @@ struct CreatureProtoMode
 	uint32 Resistances[7];
 	char * aura_string;
 	uint32 auraimmune_flag;
-
-	unordered_set<uint32> start_auras;
 };
 
 struct CreatureProto
@@ -187,7 +183,7 @@ struct CreatureProto
 
 	set<uint32> start_auras;
 	list<AI_Spell*> spells;
-	CreatureProtoMode ModeProto[3]; // 3 more proto's, for other difficulties.
+	HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*> ModeProto;
 };
 
 struct AccessoryInfo

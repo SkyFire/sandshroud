@@ -100,8 +100,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	CreatureProto * cn;
 	CreatureInfo * ci;
 	uint32 entry;
-	CreatureProtoMode ecpm; // Used later.
-	ecpm.loaded = false;
+	uint32 count = 0;
 
 	bool loadmodes = false; // Crow: LOAD MOADS
 	QueryResult * modechecks = WorldDatabase.Query( "SELECT * FROM creature_proto_mode");
@@ -142,9 +141,6 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		//cn->m_fleeDuration = 0.0f;
 		cn->m_fleeDuration = 0;
 
-		for(uint8 i = 0; i < 3; i++) // So we can check for real later.
-			cn->ModeProto[i] = ecpm;
-
 		if(loadmodes)
 		{
 			// Load our mode proto.
@@ -168,31 +164,31 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 						continue;
 					}
 					realmode = mode-1;
-					CreatureProtoMode cpm;
-					cpm.loaded = true;
-					cpm.entry = entry;
-					cpm.Minlevel = fields[fieldcount++].GetUInt32();
-					cpm.Maxlevel = fields[fieldcount++].GetUInt32();
-					cpm.Minhealth = fields[fieldcount++].GetUInt32();
-					cpm.Maxhealth = fields[fieldcount++].GetUInt32();
-					cpm.Mindmg = fields[fieldcount++].GetFloat();
-					cpm.Maxdmg = fields[fieldcount++].GetFloat();
-					cpm.Power = fields[fieldcount++].GetUInt32();
+					CreatureProtoMode* cpm = new CreatureProtoMode();
+					cpm->difficulty = realmode;
+					cpm->Minlevel = fields[fieldcount++].GetUInt32();
+					cpm->Maxlevel = fields[fieldcount++].GetUInt32();
+					cpm->Minhealth = fields[fieldcount++].GetUInt32();
+					cpm->Maxhealth = fields[fieldcount++].GetUInt32();
+					cpm->Mindmg = fields[fieldcount++].GetFloat();
+					cpm->Maxdmg = fields[fieldcount++].GetFloat();
+					cpm->Power = fields[fieldcount++].GetUInt32();
 					for(uint8 i = 0; i < 7; i++)
-						cpm.Resistances[i] = fields[fieldcount++].GetUInt32();
+						cpm->Resistances[i] = fields[fieldcount++].GetUInt32();
 
 					string auras = fields[fieldcount++].GetString();
 					if(auras.size())
-						cpm.aura_string = (char*)auras.c_str();
+						cpm->aura_string = (char*)auras.c_str();
 					else
-						cpm.aura_string = "";
+						cpm->aura_string = "";
 
-					cpm.auraimmune_flag = fields[fieldcount++].GetUInt32();
+					cpm->auraimmune_flag = fields[fieldcount++].GetUInt32();
 
 					// Begin cleanup changes.
 
 					// End of changes.
-					cn->ModeProto[realmode] = cpm;
+					cn->ModeProto.insert(make_pair( realmode, cpm ));
+					count++;
 
 				}while( moderesult->NextRow() );
 				delete moderesult;
@@ -204,6 +200,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 			break;
 	}
 	cpitr->Destruct();
+	Log.Notice("ObjectStorage","%u entries loaded from table creature_proto_mode", count); // Real professional looking.
 
 	StorageContainerIterator<CreatureInfo> * ciitr = CreatureNameStorage.MakeIterator();
 	while(!ciitr->AtEnd())

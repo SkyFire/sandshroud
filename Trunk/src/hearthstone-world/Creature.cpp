@@ -873,16 +873,23 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	if(mode)
 	{
 		uint8 loadmode = mode-1;
-		if(mode < 4 && proto->ModeProto[loadmode].loaded)
+		CreatureProtoMode* crmode = NULL;
+		HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = proto->ModeProto.begin();
+		for(; itr != proto->ModeProto.end(); ++itr)
 		{
-			CreatureProtoMode proto_mode = proto->ModeProto[loadmode];
-			health = proto_mode.Minhealth + RandomUInt(proto_mode.Maxhealth - proto_mode.Minhealth);
-			power = proto_mode.Power;
-			mindmg = proto_mode.Mindmg;
-			maxdmg = proto_mode.Maxdmg;
-			level =  proto_mode.Minlevel + (RandomUInt(proto_mode.Maxlevel - proto_mode.Minlevel));
+			if(itr->second->difficulty == loadmode)
+				crmode = itr->second;
+		}
+
+		if(mode < 4 && crmode != NULL)
+		{
+			health = crmode->Minhealth + RandomUInt(crmode->Maxhealth - crmode->Minhealth);
+			power = crmode->Power;
+			mindmg = crmode->Mindmg;
+			maxdmg = crmode->Maxdmg;
+			level =  crmode->Minlevel + (RandomUInt(crmode->Maxlevel - crmode->Minlevel));
 			for(uint32 i = 0; i < 7; i++)
-				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, proto_mode.Resistances[i]);
+				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, crmode->Resistances[i]);
 		}
 		else
 		{
