@@ -1687,15 +1687,14 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 
 void AchievementInterface::HandleAchievementByEntry(uint32 achievementId)
 {
-	AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
+	AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(achievementId);
 	if(pAchievementEntry == NULL)
 		return;
-	AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+	AchievementData * ad = GetAchievementDataByAchievementID(achievementId);
 	if(ad->completed)
 		return;
 	if(!HandleBeforeChecks(ad))
 		return;
 	if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
-	}
 }
