@@ -487,11 +487,31 @@ void AchievementInterface::HandleAchievementCriteriaKillCreature(uint32 killedMo
 	{
 		AchievementCriteriaEntry * ace = (*citr);
 		uint32 AchievementID = ace->referredAchievement;
+		//for Achievement Engine in scripts. TEMPONARY!
+		//::START OF BULLSHIT::
+		bool KillMePlease = false;
+		switch(AchievementID)
+		{
+		case 4404:
+		case 4407:
+		case 4396:
+		case 4397: 
+		case 4402: 
+		case 4405: 
+		case 4403: 
+		case 4406:
+			KillMePlease = true; break;
+		default: break;
+		}
+		if(KillMePlease)
+			continue;
+		//::END OF BULLSHIT::
 		uint32 ReqKill = ace->kill_creature.creatureID;
 		uint32 ReqCount = ace->kill_creature.creatureCount;
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
 		if(pAchievementEntry == NULL)
 			continue;
+		
 		// Wrong monster, continue on, kids.
 		if( ReqKill != killedMonster )
 			continue;
@@ -1661,6 +1681,21 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 		}
 
 		if( CanCompleteAchievement(ad) )
+			EventAchievementEarned(ad);
+	}
+}
+
+void AchievementInterface::HandleAchievementByEntry(uint32 achievementId)
+{
+	AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
+	if(pAchievementEntry == NULL)
+		return;
+	AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+	if(ad->completed)
+		return;
+	if(!HandleBeforeChecks(ad))
+		return;
+	if( CanCompleteAchievement(ad) )
 			EventAchievementEarned(ad);
 	}
 }

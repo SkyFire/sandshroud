@@ -244,6 +244,7 @@ public:
 	void HandleAchievementCriteriaKilledByPlayer();
 	void HandleAchievementCriteriaDeath();
 	void HandleAchievementCriteriaDeathAtMap(uint32 mapId);
+	void HandleAchievementByEntry(uint32 entryId); //bullshit, take care to leave it. Smells like a pie.
 
 	//-----------------------------------------------------------------
 };
