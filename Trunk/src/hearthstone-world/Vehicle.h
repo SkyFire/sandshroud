@@ -36,8 +36,7 @@ public:
 	void DeleteMe();
 	void SafeDelete();
 	void MoveVehicle(float x, float y, float z, float o);
-	void AddPassenger(Unit* pPassenger);
-	void AddPassenger(Unit* pPassenger, uint8 requestedseat, bool force = false);
+	void AddPassenger(Unit* pPassenger, uint8 requestedseat = 0, bool force = false);
 	void RemovePassenger(Unit* pPassenger);
 	bool HasPassenger(Unit* pPassenger);
 	void SendSpells(uint32 entry, Player* plr);

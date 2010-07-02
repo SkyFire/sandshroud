@@ -424,56 +424,19 @@ void Vehicle::DeleteMe()
 	delete this;
 }
 
-void Vehicle::AddPassenger(Unit* pPassenger)
+void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat /*= 0*/, bool force /*= false*/)
 {
+
 	if(!m_maxPassengers || !m_seatSlotMax) //how is this happening?
 	{
-		sLog.outColor(TRED, "Vehicle was not correctly initialised, retrying");
-		sLog.outColor(TNORMAL, "\n");
-		InitSeats(m_vehicleEntry);
-	}
-
-	OUT_DEBUG("AddPassenger1: Max Vehicle Slot: %u, Max Passengers: %u", m_seatSlotMax, m_maxPassengers);
-
-	if(pPassenger->m_CurrentVehicle)
-		pPassenger->m_CurrentVehicle->RemovePassenger(pPassenger);
-
-	// Find an available seat
-	for(uint8 i = 0; i < m_seatSlotMax; i++)
-	{
-		if(pPassenger->IsPlayer())
-		{
-			if(!m_passengers[i] && m_vehicleSeats[i] && (seatisusable[i] == true)) // Found a slot
-			{
-				_AddToSlot(pPassenger, i );
-				break;
-			}
-		}
-		else
-		{
-			if(!m_passengers[i] && m_vehicleSeats[i])
-			{
-				_AddToSlot(pPassenger, i );
-				break;
-			}
-		}
-	}
-}
-
-void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat, bool force /*= false*/)
-{
-	// Look at how fancy we are, we get to request a slot for ourselves!
-	if(!m_maxPassengers || !m_seatSlotMax) //how is this happening?
-	{
-		sLog.outColor(TRED, "Vehicle was not correctly initialised, retrying");
-		sLog.outColor(TNORMAL, "\n");
+		sLog.outColor(TRED, "Vehicle was not correctly initialised, retrying|r\n");
 		InitSeats(m_vehicleEntry);
 	}
 
 	if(pPassenger->m_CurrentVehicle)
 		pPassenger->m_CurrentVehicle->RemovePassenger(pPassenger);
 
-	OUT_DEBUG("AddPassenger2: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
+	OUT_DEBUG("AddPassenger: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
 
 	if(requestedseat > 0)
 	{
