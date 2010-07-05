@@ -296,11 +296,11 @@ AchievementData* AchievementInterface::CreateAchievementDataEntryForAchievement(
 
 bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 {
-	// don't allow GMs to complete achievements
-	if( m_player->GetSession()->HasGMPermissions() )
+	if(!m_player) // o.O bastard.
 		return false;
 
-	if(!m_player) // o.O bastard.
+	// don't allow GMs to complete achievements
+	if( m_player->GetSession()->HasGMPermissions() )
 		return false;
 
 	if( ad->completed )
@@ -388,7 +388,19 @@ bool AchievementInterface::HandleBeforeChecks(AchievementData * ad)
 		return false;
 	if(m_player->GetSession()->HasGMPermissions())
 		return false;
+	if(IsHardCoded(ad->id))
+		return false;
 	return true;
+}
+
+bool AchievementInterface::IsHardCoded(uint32 id)
+{
+	switch(id)
+	{
+	case 0: // Weeeeeeeeee
+		return false;
+	}
+	return false;
 }
 
 bool AchievementInterface::HasAchievement(uint32 ID)
@@ -1685,7 +1697,10 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 	}
 }
 
-void AchievementInterface::HandleAchievementByEntry(uint32 achievementId)
+/*	Crow: Force earning achievements for scripts and possibly commands.
+	For this to work, removed before checks and cancomplete's
+	I have kept GM checks though, bastards o.o */
+void AchievementInterface::ForceEarnedAchievement(uint32 achievementId)
 {
 	AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(achievementId);
 	if(pAchievementEntry == NULL)
@@ -1693,8 +1708,8 @@ void AchievementInterface::HandleAchievementByEntry(uint32 achievementId)
 	AchievementData * ad = GetAchievementDataByAchievementID(achievementId);
 	if(ad->completed)
 		return;
-	if(!HandleBeforeChecks(ad))
+	if(m_player->GetSession()->HasGMPermissions())
 		return;
-	if( CanCompleteAchievement(ad) )
-			EventAchievementEarned(ad);
+
+	EventAchievementEarned(ad);
 }

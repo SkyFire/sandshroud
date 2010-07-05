@@ -195,6 +195,7 @@ private:
 	void SendCriteriaUpdate(AchievementData * ad, uint32 idx);
 	bool CanCompleteAchievement(AchievementData * ad);
 	bool HandleBeforeChecks(AchievementData * ad);
+	bool IsHardCoded(uint32 id);
 	AchievementData* CreateAchievementDataEntryForAchievement(AchievementEntry * ae);
 
 	// Gets AchievementData struct. If there is none, one will be created.
@@ -214,6 +215,7 @@ public:
 
 	bool HasAchievement(uint32 ID);
 	bool HasAchievements() { return m_achivementDataMap.size() > 0; }
+	void ForceEarnedAchievement(uint32 achievementId);
 
 	//----------------------------------------------------------------
 	void HandleAchievementCriteriaConditionDeath();
@@ -244,7 +246,6 @@ public:
 	void HandleAchievementCriteriaKilledByPlayer();
 	void HandleAchievementCriteriaDeath();
 	void HandleAchievementCriteriaDeathAtMap(uint32 mapId);
-	void HandleAchievementByEntry(uint32 entryId); //bullshit, take care to leave it. Smells like a pie.
 
 	//-----------------------------------------------------------------
 };
