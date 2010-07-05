@@ -674,6 +674,12 @@ public:
 	};
 	~MovementInfo() { };
 
+	void init(WorldPacket & data);
+	void write(WorldPacket & data);
+	void SetPosition(float nx, float ny, float nz, float o = 0.0f) { x = nx; y = ny; z = nz; orientation = o; };
+	void SetPosition(LocationVector loc) { x = loc.x; y = loc.y; z = loc.z; orientation = loc.o; };
+	LocationVector* GetPosition() { return (new LocationVector(x, y, z, orientation)); };
+
 	uint32 flags;
 	uint16 flag16;
 	uint32 time;
@@ -688,9 +694,6 @@ public:
 	float jump_cosAngle, jump_xySpeed;//9,10 changes if you are not on foot
 	float jump_velocity;//something related to collision, CROW: Might be used for other knockback information.
 	float spline;
-
-	void init(WorldPacket & data);
-	void write(WorldPacket & data);
 };
 
 /************************************************************************/

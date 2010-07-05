@@ -365,7 +365,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 
 	Unit* uThis = NULL;
 	Player* pThis = NULL;
-	MovementInfo* moveinfo = NULL; // We are basically writting movement info, if exists.
+	MovementInfo* moveinfo = NULL; // We are basically writing movement info, if exists.
 
 	if(m_objectTypeId == TYPEID_PLAYER)
 	{
@@ -435,6 +435,13 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 					moveflags |= TO_CREATURE(this)->proto->extra_a9_flags;
 			}
 		}
+
+//		Crow: We can't use this yet, we need some more stuff.
+//		if(moveinfo != NULL && moveinfo->GetPosition())
+//		{
+//			WorldPacket* wpdata = ((WorldPacket*)data);
+//			moveinfo->write(*wpdata);
+//		}
 
 		*data << uint32(moveflags);
 		*data << uint16(flag16);
@@ -749,6 +756,8 @@ bool Object::SetPosition(const LocationVector & v, bool allowPorting /* = false 
 		updateMap = true;
 
 	m_position = const_cast<LocationVector&>(v);
+	if(IsUnit())
+		TO_UNIT(this)->movement_info.SetPosition(const_cast<LocationVector&>(v));
 
 	if (!allowPorting && v.z < -500)
 	{
@@ -776,6 +785,8 @@ bool Object::SetPosition( float newX, float newY, float newZ, float newOrientati
 		updateMap = true;
 
 	m_position.ChangeCoords(newX, newY, newZ, newOrientation);
+	if(IsUnit())
+		TO_UNIT(this)->movement_info.SetPosition(newX, newY, newZ, newOrientation);
 
 	if (!allowPorting && newZ < -500)
 	{

@@ -197,7 +197,7 @@ void Creature::OnRemoveCorpse()
 			setDeathState(DEAD);
 
 
-		m_position = m_spawnLocation;
+		SetPosition(m_spawnLocation, true);
 	}
 	else
 	{
@@ -881,7 +881,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 				crmode = itr->second;
 		}
 
-		if(mode < 4 && crmode != NULL)
+		if(crmode != NULL)
 		{
 			health = crmode->Minhealth + RandomUInt(crmode->Maxhealth - crmode->Minhealth);
 			power = crmode->Power;
@@ -896,18 +896,33 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 			for(uint32 i = 0; i < 7; i++)
 				SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
 
+			float calcu = ((mode*2)/10);
+
 			switch(mode) // TODO: find calculations
 			{
 			case 1: // 5 man heroic or 25 man.
-			case 2: // 10 man heroic
-			case 3: // 25 man heroic
-				health = long2int32(double(proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth)) * 1.5);
-				mindmg = proto->MinDamage * 1.2f;
-				maxdmg = proto->MaxDamage * 1.2f;
-				level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
-				if(proto->Power)
-					power = proto->Power * 1.2;
-				break;
+				{
+					health = long2int32(double(proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth)) * 1.5);
+					mindmg = proto->MinDamage * 1.2f;
+					maxdmg = proto->MaxDamage * 1.2f;
+					level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
+					if(proto->Power)
+						power = proto->Power * 1.2;
+				}break;
+
+			default: // 10H or 25H
+				{
+					uint64 newhealth = long2int32(double(proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth)) * (1.5f + calcu));
+					if(newhealth > 4294967295) // This is the maximum uint32, its pretty much only for LK, and maybe some later cata content.
+						newhealth = 4294967295;
+
+					health = (uint32)newhealth;
+					mindmg = proto->MinDamage * (1.2f+calcu);
+					maxdmg = proto->MaxDamage * (1.2f+calcu);
+					level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
+					if(proto->Power)
+						power = proto->Power * (1.1f+calcu);
+				}break;
 			}
 		}
 	}
@@ -948,36 +963,29 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	SetUInt32Value(UNIT_NPC_EMOTESTATE, original_emotestate);
 	SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID,original_MountedDisplayID);
-
 	SetUInt32Value(UNIT_FIELD_LEVEL, level);
-
-
 	SetUInt32Value(UNIT_FIELD_BASEATTACKTIME,proto->AttackTime);
 	SetFloatValue(UNIT_FIELD_MINDAMAGE, mindmg);
 	SetFloatValue(UNIT_FIELD_MAXDAMAGE, maxdmg);
-
 	SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME,proto->RangedAttackTime);
 	SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,proto->RangedMinDamage);
 	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,proto->RangedMaxDamage);
-
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, proto->Item1);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, proto->Item2);
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_2, proto->Item3);
-
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, spawn->factionid);
 	SetUInt32Value(UNIT_FIELD_FLAGS, spawn->flags);
 	SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, proto->BoundingRadius);
 	SetFloatValue(UNIT_FIELD_COMBATREACH, proto->CombatReach);
 
 	// set position
-	m_position.ChangeCoords( spawn->x, spawn->y, spawn->z, spawn->o );
+	SetPosition( spawn->x, spawn->y, spawn->z, spawn->o, true);
 	m_spawnLocation.ChangeCoords(spawn->x, spawn->y, spawn->z, spawn->o);
 	m_aiInterface->setMoveType(spawn->movetype);	
 	m_aiInterface->m_waypoints = objmgr.GetWayPointMap(spawn->id);
 
-
 	//use proto faction if spawn faction is unspecified
-	m_faction = dbcFactionTemplate.LookupEntry(spawn->factionid?spawn->factionid:proto->Faction);
+	m_faction = dbcFactionTemplate.LookupEntry(spawn->factionid ? spawn->factionid : proto->Faction);
 
 	if(m_faction)
 	{
@@ -1204,9 +1212,9 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
 	SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, proto->BoundingRadius);
 	SetFloatValue(UNIT_FIELD_COMBATREACH, proto->CombatReach);
 	original_emotestate = 0;
-	// set position
 
-	m_position.ChangeCoords( x, y, z, o );
+	// set position
+	SetPosition( x, y, z, o, true);
 	m_spawnLocation.ChangeCoords(x, y, z, o);
 	m_faction = dbcFactionTemplate.LookupEntry(proto->Faction);
 
@@ -1452,7 +1460,7 @@ void Creature::Despawn(uint32 delay, uint32 respawntime)
 		sEventMgr.RemoveEvents(this);
 		sEventMgr.AddEvent(m_mapMgr, &MapMgr::EventRespawnCreature, TO_CREATURE(this), pCell, EVENT_CREATURE_RESPAWN, respawntime, 1, 0);
 		Unit::RemoveFromWorld(false);
-		m_position = m_spawnLocation;
+		SetPosition( m_spawnLocation, true);
 		m_respawnCell=pCell;
 	}
 	else

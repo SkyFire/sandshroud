@@ -22,7 +22,7 @@
 Vehicle::Vehicle(uint64 guid) : Creature(guid)
 {
 	m_vehicleEntry = 0;
-	m_passengerCount = 0;
+	m_ppassengerCount = 0;
 	m_maxPassengers = 0;
 	m_seatSlotMax = 0;
 	m_isVehicle = true;
@@ -40,7 +40,7 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 
 Vehicle::~Vehicle()
 {	
-	m_passengerCount = 0;
+	m_ppassengerCount = 0;
 	if( IsInWorld() )
 		RemoveFromWorld(false, true);
 }
@@ -508,7 +508,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	uint8 slot = pPassenger->m_inVehicleSeatId;
 
 	pPassenger->m_CurrentVehicle = NULL;
-	pPassenger->m_inVehicleSeatId = 0xFF;
+	pPassenger->m_inVehicleSeatId = 0;
 
 	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
 	if( pPassenger->IsPlayer() )
@@ -519,7 +519,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 
 	WorldPacket data(SMSG_MONSTER_MOVE, 85);
 	data << pPassenger->GetNewGUID();			// PlayerGUID
-	data << uint8(0);							// Unk - blizz uses 0x40
+	data << uint8(0x40);						// Unk - blizz uses 0x40
 	data << pPassenger->GetPosition();			// Player Position xyz
 	data << getMSTime();						// Timestamp
 	data << uint8(0x4);							// Flags
@@ -554,6 +554,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		plr->SetPlayerStatus(TRANSFER_PENDING);
 		plr->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
 		plr->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+
 		data.Initialize(MSG_MOVE_TELEPORT_ACK);
 		data << plr->GetNewGUID();
 		data << plr->m_teleportAckCounter;
@@ -619,7 +620,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 
 
 	if(pPassenger->IsPlayer())
-		--m_passengerCount;
+		--m_ppassengerCount;
 
 	//note: this is not blizz like we should despawn
 	//and respawn at spawn point.
@@ -797,7 +798,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << pPlayer->GetPosition();
 		pPlayer->GetSession()->SendPacket(&data);
 		pPlayer->SetPlayerStatus(NONE);
-		++m_passengerCount;
+		++m_ppassengerCount;
 	}
 	else
 	{

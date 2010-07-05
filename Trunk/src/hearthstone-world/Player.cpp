@@ -718,7 +718,7 @@ bool Player::Create(WorldPacket& data )
 
 	m_mapId = info->mapId;
 	m_zoneId = info->zoneId;
-	m_position.ChangeCoords(info->positionX, info->positionY, info->positionZ);
+	SetPosition( info->positionX, info->positionY, info->positionZ, true);
 	m_bind_pos_x = info->positionX;
 	m_bind_pos_y = info->positionY;
 	m_bind_pos_z = info->positionZ;
@@ -3041,11 +3041,11 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetUInt32Value( PLAYER_FLAGS, get_next_field.GetUInt32() );
 	SetUInt32Value( PLAYER_FIELD_BYTES, get_next_field.GetUInt32() );
 
+	// Set our position
 	m_position.x										= get_next_field.GetFloat();
 	m_position.y										= get_next_field.GetFloat();
 	m_position.z										= get_next_field.GetFloat();
 	m_position.o										= get_next_field.GetFloat();
-
 	m_mapId												= get_next_field.GetUInt32();
 	m_zoneId											= get_next_field.GetUInt32();
 

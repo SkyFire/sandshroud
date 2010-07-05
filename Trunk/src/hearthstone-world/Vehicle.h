@@ -48,7 +48,7 @@ public:
 	// Accessors
 	//---------------------------------------
 	uint32 GetMaxPassengerCount() { return m_maxPassengers; }
-	uint32 GetPassengerCount() { return m_passengerCount; }
+	uint32 GetPassengerCount() { return m_ppassengerCount; }
 
 	uint32 GetVehicleEntry() { return m_vehicleEntry; }
 	void SetVehicleEntry(uint32 entry) { m_vehicleEntry = entry; }
@@ -71,7 +71,7 @@ public:
 	// End accessors
 	//---------------------------------------
 
-	bool IsFull() { return m_passengerCount >= m_maxPassengers; }
+	bool IsFull() { return m_ppassengerCount >= m_maxPassengers; }
 
 	VehicleSeatEntry* m_vehicleSeats[8];
 	bool seatisusable[8];
@@ -87,7 +87,7 @@ protected:
 	Unit* m_controllingUnit;
 	Unit* m_passengers[8];
 
-	uint8 m_passengerCount;
+	uint8 m_ppassengerCount;
 	uint8 m_maxPassengers;
 	int8 m_seatSlotMax;
 	uint32 m_vehicleEntry;
