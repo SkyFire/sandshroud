@@ -479,27 +479,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->procChance = 2;
 			break;
 
-			// Improved Wing Clip
-		case  19228:
-			{
-			sp->procChance = 7;
-			sp->procFlags = PROC_ON_CAST_SPECIFIC_SPELL;
-			}break;
-
-			// Improved Wing Clip
-		case  19232:
-			{
-			sp->procChance = 14;
-			sp->procFlags = PROC_ON_CAST_SPECIFIC_SPELL;
-			}break;
-
-			// Improved Wing Clip 
-		case  19233:
-			{
-			sp->procChance = 20;
-			sp->procFlags = PROC_ON_CAST_SPECIFIC_SPELL;
-			}break;
-
 			// Spell 23158 Proc Chance (Concussive Shot Cooldown Reduction :
 		case  23158:
 			sp->procChance = 4;
@@ -509,12 +488,12 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case  27521:
 			sp->procChance = 2;
 			break;
-	
+
 			// Spell 27867 Proc Chance (Freeze :
 		case  27867:
 			sp->procChance = 2;
 			break;
-		
+
 			// Elemental Focus
 		case  16164:
 			{
@@ -525,7 +504,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
 				sp->procCharges++; //	first	charge gets	lost when	it gets	procced
 			}break;
-		
+
 			//shaman - Stormstrike
 		case  17364:
 			{
@@ -538,7 +517,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			{
 				sp->procFlags = PROC_ON_CAST_SPELL;
 			}break;
-		
+
 			//shaman - Hex
 		case  51514:
 			{
@@ -684,6 +663,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procFlags	=	PROC_ON_MELEE_ATTACK;
 				sp->procCharges++; //	first	charge gets	lost when	it gets	procced
 			}break;
+
 			//Minor Glyph Research + Northrend Inscription Research
 		case 61177:
 		case 61288:
@@ -694,6 +674,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->EffectImplicitTargetA[1]	=	0;
 				sp->EffectDieSides[1]	=	0;
 			}break;
+
 			// Shaman	Totem	items	fixes
 			// Totem of	Survival,	Totem	of the Tundra
 		case 46097:
@@ -738,6 +719,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procFlags	=	PROC_ON_CAST_SPELL;
 				sp->proc_interval	=	45000;
 			}break;
+
 			//Warlock: Backlash
 		case  34935:
 		case  34938:
@@ -843,7 +825,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procflags2	=	PROC_TARGET_SELF;
 			}break;
 
-	
 			//paladin	-	Reckoning	Effect = proc	on proc
 		case  20178:
 			{
@@ -891,8 +872,8 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 					sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
 					sp->EffectTriggerSpell[0]	=	25997;
 			}break;
-					
-			//paladin	-	Blessed	Life
+
+			//paladin Blessed Life
 		case  31828:
 		case  31829:
 		case  31830:
@@ -1203,7 +1184,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			//Paladin: Seal	of Wisdom
 		case  20166:
 			{
-					sp->procChance = 25;
+					sp->procChance = 47;
 					sp->procFlags = PROC_ON_MELEE_ATTACK;
 					sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
 					sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
@@ -2637,10 +2618,8 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case  16972:
 		case  16974:
 		case  16975:
-			{
-					//fix	for	Predatory	Strikes
-				uint32 mm	=	(1<<(FORM_BEAR-1))|(1<<(FORM_DIREBEAR-1))|(1<<(FORM_MOONKIN-1))|(1<<(FORM_CAT-1));
-				sp->RequiredShapeShift = mm;
+			{	//fix	for	Predatory	Strikes
+				sp->RequiredShapeShift = (1<<(FORM_BEAR-1))|(1<<(FORM_DIREBEAR-1))|(1<<(FORM_CAT-1));
 			}break;
 	
 		case  20134:
@@ -3694,7 +3673,8 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		case 53600:
 		case 61411:
 			{
-				sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MELEE;
+				sp->School = SCHOOL_HOLY;
+				sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
 			}break;
 
 			// Divine Storm
