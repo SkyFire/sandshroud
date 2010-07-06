@@ -22,6 +22,8 @@
 #ifndef __LUAENGINE_H
 #define __LUAENGINE_H
 
+#include "StdAfx.h"
+
 //#define PRINTERRORS
 
 extern "C" {		// we're C++, and LUA is C, so the compiler needs to know to use C function names.
@@ -32,9 +34,8 @@ extern "C" {		// we're C++, and LUA is C, so the compiler needs to know to use C
 
 class LuaEngine;
 class LuaEngineMgr;
-
-extern LuaEngineMgr g_luaMgr;
 extern LuaEngine * g_engine;
+extern LuaEngineMgr g_luaMgr;
 
 GossipMenu* Menu;
 
@@ -421,6 +422,36 @@ private:
 #define CHECK_TYPEID(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { return 0; }
 #define CHECK_TYPEID_RET(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushboolean(L,0); return 0; }
 #define CHECK_TYPEID_RET_INT(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushinteger(L,0); return 0; }
+
+// LuaHypArc commands
+#define TEST_UNIT() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_UNIT) { return 0; }
+#define TEST_UNIT_RET() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_UNIT) { lua_pushboolean(L,0); return 1; }
+#define TEST_PLAYER() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_PLAYER) { return 0; }
+#define TEST_PLAYER_RET() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_PLAYER) { lua_pushboolean(L,0); return 1; }
+#define TEST_UNITPLAYER() if(ptr == NULL || !ptr->IsInWorld() || ( ptr->GetTypeId() != TYPEID_PLAYER && ptr->GetTypeId() != TYPEID_UNIT)) { return 0; }
+#define TEST_UNITPLAYER_RET() if(ptr == NULL || !ptr->IsInWorld() || ( ptr->GetTypeId() != TYPEID_PLAYER && ptr->GetTypeId() != TYPEID_UNIT)) { lua_pushboolean(L,0); return 1; }
+#define TEST_GO() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_GAMEOBJECT) { return 0; }
+#define TEST_GO_RET() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_GAMEOBJECT) { lua_pushboolean(L,0); return 1; }
+
+#define RET_NIL( ){ lua_pushnil(L); return 1; }
+#define RET_BOOL(exp) { (exp) ? lua_pushboolean(L,1) : lua_pushboolean(L,0); return 1; }
+#define RET_STRING(str) { lua_pushstring(L,(str)); return 1; }
+#define RET_NUMBER(number) { lua_pushnumber(L,(number)); return 1; }
+#define RET_INT(integer) { lua_pushinteger(L,(integer)); return 1; }
+
+#define CHECK_ITEM(L,narg) Lunar<Item>::check(L,narg)
+#define CHECK_UNIT(L,narg) Lunar<Unit>::check(L,narg)
+#define CHECK_PLAYER(L,narg) Lunar<Player>::check(L,narg)
+#define CHECK_GO(L,narg) Lunar<GameObject>::check(L,narg)
+
+#define CHECK_FLOAT(L,narg) (lua_isnoneornil(L,(narg)) ) ? 0.00f : (float)luaL_checknumber(L,(narg)); 
+#define CHECK_ULONG(L,narg) (uint32)luaL_checknumber((L),(narg))
+#define CHECK_USHORT(L, narg) (uint16)luaL_checkinteger((L),(narg))
+#define CHECK_BOOL(L,narg) (lua_toboolean((L),(narg)) > 0) ? true : false
+
+#define PUSH_UNIT(L, unit) Lunar<Unit>::push(L,TO_UNIT(unit))
+#define PUSH_GO(L, go) Lunar<GameObject>::push(L,TO_GAMEOBJECT(go))
+#define PUSH_ITEM(L,item) Lunar<Item>::push(L,TO_ITEM(item))
 
 #include "Functions/TableFunctions.h"
 

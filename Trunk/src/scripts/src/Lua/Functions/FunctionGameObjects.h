@@ -19,7 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
+#ifndef GAMEOBJECT_FUNCTIONS_H
+#define GAMEOBJECT_FUNCTIONS_H
+
 #include "../LUAEngine.h"
 
 ////////////////////////////////////
@@ -577,3 +579,5 @@ int luaGameObject_GetGUID(lua_State * L, GameObject* ptr)
 	lua_pushinteger(L,ptr->GetGUID());
 	return 1;
 }
+
+#endif // GAMEOBJECT_FUNCTIONS_H

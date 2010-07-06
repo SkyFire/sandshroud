@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
 #include "LUAEngine.h"
 #include <ScriptSetup.h>
 
@@ -893,8 +892,3 @@ void LuaEngine::Restart()
 	LoadScripts();
 	m_Lock.Release();
 }
-
-// Crow: We could do compile with, but...
-#include "Functions/FunctionItems.cpp"
-#include "Functions/FunctionUnits.cpp"
-#include "Functions/FunctionGameObjects.cpp"

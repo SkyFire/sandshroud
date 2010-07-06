@@ -574,10 +574,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\Lua\LUAFunctions.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\Lua\Functions\TableFunctions.h"
 			>
 		</File>

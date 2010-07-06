@@ -19,7 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "StdAfx.h"
+#ifndef ITEM_FUNCTIONS_H
+#define ITEM_FUNCTIONS_H
+
 #include "../LUAEngine.h"
 
 /////////////////////////////////////////////////////
@@ -512,3 +514,5 @@ int luaItem_Create(lua_State * L, Item * ptr)
 	Lunar<Item>::push(L,pItem);
 	return 1;
 }
+
+#endif // ITEM_FUNCTIONS_H
