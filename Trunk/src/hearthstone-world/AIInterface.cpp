@@ -1655,7 +1655,12 @@ Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 			{
 				sp->spelltargetType = TTYPE_SINGLETARGET;
 				if(!sp->procCount) // Limit our heals so we don't cast every time someone goes below 50.
-					sp->procCount = 3;
+				{
+					if(sp->spell->RankNumber)
+						sp->procCount = 40/sp->spell->RankNumber;
+					else
+						sp->procCount = 10;
+				}
 
 				m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, (*i)->GetGUID());
 				return (*i); // heal Assist Target which has low HP
@@ -3021,6 +3026,37 @@ AI_Spell *AIInterface::getSpell()
 				//checks by spell type
 				switch (sp->spellType)
 				{
+				case STYPE_ROOT:
+					{
+// #define AI_ROOT_OVERRIDING
+#ifdef AI_ROOT_OVERRIDING
+						if(sp->spell->c_is_flags & SPELL_FLAG_CASTED_ON_ENEMIES)
+						{
+							if(sp->spelltargetType == TTYPE_CASTER || sp->spelltargetType == TTYPE_OWNER)
+							{
+								sp->spelltargetType = TTYPE_SINGLETARGET;
+								WorldDatabase.Execute("UPDATE ai_agents SET spelltargettype = \"RANDOMTARGET\" WHERE spell = %u;", sp->spell->Id);
+								continue;
+							}
+						}
+						else if(sp->spell->c_is_flags & SPELL_FLAG_IS_HEALING || sp->spell->c_is_flags & SPELL_FLAG_IS_HEALING_SPELL)
+						{
+							sp->spellType = STYPE_HEAL;
+							WorldDatabase.Execute("UPDATE ai_agents SET spelltype = \"HEAL\" WHERE spell = %u;", sp->spell->Id);
+							continue;
+						}
+						else if(sp->spell->c_is_flags & SPELL_FLAG_IS_DAMAGING)
+						{
+							if(sp->spell->base_range_or_radius)
+								sp->spellType = STYPE_AOEDAMAGE;
+							else
+								sp->spellType = STYPE_DAMAGE;
+
+							WorldDatabase.Execute("UPDATE ai_agents SET spelltype = \"%s\" WHERE spell = %u;", (sp->spellType == STYPE_AOEDAMAGE ? "AOEDAMAGE" : "DAMAGE"), sp->spell->Id);
+							continue;
+						}
+#endif // AI_ROOT_OVERRIDING
+					}break;
 				case STYPE_DEBUFF:
 					{
 						if (!m_nextTarget || m_nextTarget->HasActiveAura(sp->spell->Id))
