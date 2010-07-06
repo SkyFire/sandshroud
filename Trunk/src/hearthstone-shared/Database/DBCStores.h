@@ -1351,6 +1351,7 @@ HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)
 	return ssvrow->spellBonus;
 }
 
+// Crow: Thinking of doing this...
 #define SAFE_DBC_CODE_RETURNS			/* undefine this to make out of range/nulls return null. */
 
 template<class T>
@@ -1366,7 +1367,22 @@ class SERVER_DECL DBCStorage
 	char * m_stringData;
 
 public:
-	
+
+	class iterator
+	{
+	private:
+		T* p;
+	public:
+		iterator(T* ip = 0) : p(ip) { };
+		iterator& operator++() { ++p; return *this; };
+		bool operator != (const iterator &i) { return (p != i.p); };
+		bool operator == (const iterator &i) { return (p == i.p); };
+		T* operator*() { return p; };
+	};
+
+	iterator begin() { return iterator(&m_heapBlock[0]); }
+	iterator end() { return iterator(&m_heapBlock[m_numrows]); }
+
 	DBCStorage()
 	{
 		m_heapBlock = NULL;

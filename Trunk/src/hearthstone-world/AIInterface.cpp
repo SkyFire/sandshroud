@@ -1603,6 +1603,7 @@ Unit* AIInterface::FindTargetForSpell(AI_Spell *sp)
 
 	return GetMostHated();
 }
+
 Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 {
 	TargetMap::iterator itr, itr2;
@@ -1613,13 +1614,26 @@ Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 
 		uint32 cur = m_Unit->GetUInt32Value(UNIT_FIELD_HEALTH) + 1;
 		uint32 max = m_Unit->GetUInt32Value(UNIT_FIELD_MAXHEALTH) + 1;
-		float healthPercent = float(cur) / float(max);
-		if(healthPercent <= sp->floatMisc1 && !m_Unit->HasActiveAura(sp->spell->Id,m_Unit->GetGUID())) // Heal ourselves cause we got too low HP
+		float healthPercent = float(cur/max);
+		if(sp->floatMisc1)
+		{	// Heal ourselves cause we got too low HP
+			if(healthPercent <= sp->floatMisc1 && !m_Unit->HasActiveAura(sp->spell->Id, m_Unit->GetGUID()))
+			{
+				sp->spelltargetType = TTYPE_CASTER;
+				m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+				return m_Unit;
+			}
+		} // If we don't have a preset, then we can just use half health.
+		else if(healthPercent <= 50 && !m_Unit->HasActiveAura(sp->spell->Id, m_Unit->GetGUID()))
 		{
 			sp->spelltargetType = TTYPE_CASTER;
+			if(!sp->procCount) // Limit our self heals so we don't cast every time we go below 50.
+				sp->procCount = 3;
+
 			m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 			return m_Unit;
 		}
+
 		for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
 		{
 			if(!(*i)->isAlive())
@@ -1628,9 +1642,21 @@ Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 			cur = (*i)->GetUInt32Value(UNIT_FIELD_HEALTH);
 			max = (*i)->GetUInt32Value(UNIT_FIELD_MAXHEALTH);
 			healthPercent = max ? float(cur/max) : 0;
-			if(healthPercent <= sp->floatMisc1 && !(*i)->HasActiveAura(sp->spell->Id,m_Unit->GetGUID()))
+			if(sp->floatMisc1)
+			{
+				if(healthPercent <= sp->floatMisc1 && !(*i)->HasActiveAura(sp->spell->Id,m_Unit->GetGUID()))
+				{
+					sp->spelltargetType = TTYPE_SINGLETARGET;
+					m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, (*i)->GetGUID());
+					return (*i); // heal Assist Target which has low HP
+				}
+			} // If we don't have a preset, then we can just use half health.
+			else if(healthPercent <= 50 && !(*i)->HasActiveAura(sp->spell->Id,m_Unit->GetGUID()))
 			{
 				sp->spelltargetType = TTYPE_SINGLETARGET;
+				if(!sp->procCount) // Limit our heals so we don't cast every time someone goes below 50.
+					sp->procCount = 3;
+
 				m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, (*i)->GetGUID());
 				return (*i); // heal Assist Target which has low HP
 			}
@@ -1639,7 +1665,6 @@ Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 
 	return NULLUNIT;
 }
-
 
 bool AIInterface::FindFriends(float dist)
 {
@@ -3010,7 +3035,7 @@ AI_Spell *AIInterface::getSpell()
 					{
 						if (!FindHealTargetForSpell(sp))
 							continue;
-					}
+					}break;
 				case STYPE_INTERRUPT:
 					{
 						if (!m_nextTarget || !m_nextTarget->isCasting())

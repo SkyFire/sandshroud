@@ -165,9 +165,6 @@ enum AiEvents
 	EVENT_UNITRESPAWN,
 };
 
-struct SpellEntry;
-//enum MOD_TYPES;
-
 struct AI_Spell
 {
 	~AI_Spell() { autocast_type=(uint32)-1; }
@@ -194,38 +191,42 @@ struct AI_Spell
 bool isGuard(uint32 id);
 uint32 getGuardId(uint32 id);
 bool isTargetDummy(uint32 id);
-
-
 typedef std::tr1::unordered_map< Unit*, int32> TargetMap;
+
 #ifdef WIN32
+
 template <>
-			class hash < Unit* > : public unary_function< Unit*, size_t>
-			{
-			public:
-				size_t operator()(Unit* __x) const
-				{
-					return (size_t)__x;
-				}
-			};
+class hash < Unit* > : public unary_function< Unit*, size_t>
+{
+public:
+	size_t operator()(Unit* __x) const
+	{
+		return (size_t)__x;
+	}
+};
+
 #else
+
 #ifdef TRHAX
-	        namespace std
-	        {
-	                namespace tr1
-	                {
-	                        template <>
-	                        class hash < Unit* > : public unary_function< Unit*, size_t>
-	                        {
-	                        public:
-	                                size_t operator()(Unit* __x) const
-	                                {
-	                                        return (size_t)__x;
-	                                }
-	                        };
-	                };
-	        };
-	#endif
-#endif
+namespace std
+{
+	namespace tr1
+	{
+		template <>
+		class hash < Unit* > : public unary_function< Unit*, size_t>
+		{
+		public:
+			size_t operator()(Unit* __x) const
+			{
+				return (size_t)__x;
+			}
+		};
+	};
+};
+
+#endif // TRHAX
+
+#endif // WIN32
 
 typedef unordered_set< Unit* > AssistTargetSet;
 typedef std::map<uint32, AI_Spell*> SpellMap;
@@ -234,7 +235,6 @@ class ChainAggroEntity;
 class SERVER_DECL AIInterface
 {
 public:
-
 	AIInterface();
 	~AIInterface();
 
@@ -373,7 +373,7 @@ public:
 	HEARTHSTONE_INLINE void SetNextSpell(AI_Spell*sp) { m_nextSpell = sp; }
 	HEARTHSTONE_INLINE Unit* GetNextTarget() { return m_nextTarget; }
 	HEARTHSTONE_INLINE void SetNextTarget (Unit* nextTarget) 
-	{ 
+	{
 		m_nextTarget = nextTarget; 
 		if(nextTarget)
 		{
@@ -403,7 +403,7 @@ public:
 	void WipeReferences();
 	WayPointMap *m_waypoints;
 	HEARTHSTONE_INLINE void SetPetOwner(Unit* owner) { m_PetOwner = owner; }
- 
+
 	list<AI_Spell*> m_spells;
 
 	bool disable_combat;

@@ -11345,8 +11345,6 @@ void Player::Cooldown_AddStart(SpellEntry * pSpell)
 
 	if( pSpell->StartRecoveryCategory && pSpell->StartRecoveryCategory != 133 )		// if we have a different cool category to the actual spell category - only used by few spells
 		_Cooldown_Add( COOLDOWN_TYPE_CATEGORY, pSpell->StartRecoveryCategory, mstime + atime, pSpell->Id, 0 );
-	/*else if( pSpell->Category )				// cooldowns are grouped
-		_Cooldown_Add( COOLDOWN_TYPE_CATEGORY, pSpell->Category, mstime + pSpell->StartRecoveryTime, pSpell->Id, 0 );*/
 	else									// no category, so it's a gcd
 	{
 		//OUT_DEBUG("Global cooldown adding: %u ms", atime );

@@ -5440,12 +5440,12 @@ bool Unit::HasActiveAura(uint32 spellid)
 	return false;
 }
 
-bool Unit::HasActiveAura(uint32 spellid,uint64 guid)
+bool Unit::HasActiveAura(uint32 spellid, uint64 guid)
 {
-	for(uint32 x=0;x<MAX_AURAS;x++)
-	if(m_auras[x] != NULL && m_auras[x]->GetSpellId() == spellid && (!guid || m_auras[x]->GetCasterGUID() == guid))
+	for(uint32 x = 0; x < MAX_AURAS; x++)
 	{
-		return true;
+		if(m_auras[x] != NULL && m_auras[x]->GetSpellId() == spellid && (!guid || m_auras[x]->GetCasterGUID() == guid))
+			return true;
 	}
 
 	return false;
