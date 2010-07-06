@@ -397,8 +397,15 @@ bool AchievementInterface::IsHardCoded(uint32 id)
 {
 	switch(id)
 	{
-	case 0: // Weeeeeeeeee
-		return false;
+		case 4404:
+		case 4407:
+		case 4396:
+		case 4397:
+		case 4402:
+		case 4405:
+		case 4403:
+		case 4406:
+			return true;
 	}
 	return false;
 }
@@ -499,25 +506,6 @@ void AchievementInterface::HandleAchievementCriteriaKillCreature(uint32 killedMo
 	{
 		AchievementCriteriaEntry * ace = (*citr);
 		uint32 AchievementID = ace->referredAchievement;
-		//for Achievement Engine in scripts. TEMPONARY!
-		//::START OF BULLSHIT::
-		bool KillMePlease = false;
-		switch(AchievementID)
-		{
-		case 4404:
-		case 4407:
-		case 4396:
-		case 4397: 
-		case 4402: 
-		case 4405: 
-		case 4403: 
-		case 4406:
-			KillMePlease = true; break;
-		default: break;
-		}
-		if(KillMePlease)
-			continue;
-		//::END OF BULLSHIT::
 		uint32 ReqKill = ace->kill_creature.creatureID;
 		uint32 ReqCount = ace->kill_creature.creatureCount;
 		AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(AchievementID);
