@@ -235,19 +235,22 @@ private:
 	/**
 	Frees the heap structures for the nodes.
 	*/
-	void freeMemory() {
-		for (size_t b = 0; b < numBuckets; b++) {
-		Node* node = bucket[b];
-		while (node != NULL) {
+	void freeMemory()
+	{
+		for(size_t b = 0; b < numBuckets; b++)
+		{
+			Node* node = bucket[b];
+			while (node != NULL)
+			{
 				Node* next = node->next;
 				delete node;
 				node = next;
-		}
+			}
 		}
 		System::alignedFree(bucket);
-		bucket	= NULL;
+		bucket = NULL;
 		numBuckets = 0;
-		_size	= 0;
+		_size = 0;
 	}
 
 public:
