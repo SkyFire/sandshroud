@@ -397,17 +397,18 @@ bool AchievementInterface::IsHardCoded(uint32 id)
 {
 	switch(id)
 	{
-		case 4404:
-		case 4407:
-		case 4396:
-		case 4397:
-		case 4402:
-		case 4405:
-		case 4403:
-		case 4406:
-			return true;
-	}
-	return false;
+	//Crow: These shouldn't to be disabled.
+//	case 4396: // Onyxia's Lair (10 player)
+//	case 4397: // Onyxia's Lair (25 player)
+
+	case 4402: // More Dots! (10 player)
+	case 4403: // Many Whelps! Handle It! (10 player)
+	case 4404: // She Deep Breaths More (10 player)
+	case 4405: // More Dots! (25 player)
+	case 4406: // Many Whelps! Handle It! (25 player)
+	case 4407: // She Deep Breaths More (25 player)
+		return true;
+	}return false;
 }
 
 bool AchievementInterface::HasAchievement(uint32 ID)
