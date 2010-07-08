@@ -101,7 +101,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_POSSESSED - 73
 	&Spell::SpellEffectUseGlyph,					//SPELL_EFFECT_USE_GLYPH - 74
 	&Spell::SpellEffectHealMechanical,				//SPELL_EFFECT_HEAL_MECHANICAL - 75
-	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_OBJECT_WILD - 76
+	&Spell::SpellEffectSummonObject,				//SPELL_EFFECT_SUMMON_OBJECT_WILD - 76
 	&Spell::SpellEffectScriptEffect,				//SPELL_EFFECT_SCRIPT_EFFECT - 77
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_ATTACK - 78
 	&Spell::SpellEffectSanctuary,					//SPELL_EFFECT_SANCTUARY - 79
@@ -2675,6 +2675,33 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 		{
 			if(p_caster != NULL)
 				p_caster->safefall = true;
+		}break;
+
+	case 22904: // Onyxia Sword crap for Quel'Serrar
+		{
+			unordered_set< Object* >::iterator itr,itr2;
+			for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd();)
+			{
+				itr2 = itr++;
+				Object* obj = (*itr2);
+				if(obj->IsGameObject() && obj->GetEntry() == 179561)
+				{
+					GameObject* gobj = TO_GAMEOBJECT(obj);
+					if(m_caster->isInFront(gobj))
+					{
+						MapMgr* mgr = gobj->GetMapMgr();
+						GameObject* newobj = NULL;
+						newobj = mgr->CreateGameObject(179562);
+						if(newobj == NULL || !newobj->CreateFromProto(179562, mgr->GetMapId(), gobj->GetPositionX(), gobj->GetPositionY(),
+							gobj->GetPositionZ(), gobj->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f))
+							return;
+
+						newobj->SetInstanceID(mgr->GetInstanceID());
+						newobj->PushToWorld(mgr);
+						gobj->Despawn(0);
+					}
+				}
+			}
 		}break;
 
 	default:
