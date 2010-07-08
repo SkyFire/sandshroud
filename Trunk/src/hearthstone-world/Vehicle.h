@@ -30,7 +30,7 @@ public:
 	void InitSeats(uint32 vehicleEntry, Player* pRider = NULLPLR);
 	virtual void Update(uint32 time);
 	bool Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info);
-	void Load(CreatureProto * proto_, float x, float y, float z, float o = 0.0f);
+	void Load(CreatureProto * proto_, uint32 mode, float x, float y, float z, float o = 0.0f);
 	void OnPushToWorld();
 	void Despawn(uint32 delay, uint32 respawntime);
 	void DeleteMe();

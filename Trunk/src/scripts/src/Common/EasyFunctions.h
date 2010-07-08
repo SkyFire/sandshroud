@@ -136,7 +136,7 @@ public:
 
 		Creature *pCreature = pThis->GetMapMgr()->CreateCreature(entry);
 		pCreature->m_spawn = 0;
-		pCreature->Load(p, posX, posY, posZ);
+		pCreature->Load(p, (pThis->IsInInstance() ? pThis->GetMapMgr()->iInstanceMode : MODE_5PLAYER_NORMAL), posX, posY, posZ);
 		pCreature->SetMapId(pThis->GetMapId());
 		pCreature->SetOrientation(posO);
 		pCreature->Despawn(duration, 0);
@@ -169,7 +169,7 @@ public:
 
 		Creature *pCreature = pThis->GetMapMgr()->CreateCreature(entry);
 		pCreature->m_spawn = 0;
-		pCreature->Load(p, posX, posY, posZ);
+		pCreature->Load(p, (pThis->IsInInstance() ? pThis->GetMapMgr()->iInstanceMode : MODE_5PLAYER_NORMAL), posX, posY, posZ);
 		pCreature->SetMapId(pThis->GetMapId());
 		pCreature->SetOrientation(posO);
 		pCreature->GetAIInterface()->disable_combat = dis_comb;

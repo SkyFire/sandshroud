@@ -133,7 +133,8 @@ void Vehicle::InstallAccessories()
 			Vehicle* pass = map->CreateVehicle(accessories.accessoryentry);
 			if(pass != NULL)
 			{
-				pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+				pass->Load(proto, (IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL),
+					GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
 					GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
 					GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
 
@@ -152,7 +153,8 @@ void Vehicle::InstallAccessories()
 			Creature* pass = map->CreateCreature(accessories.accessoryentry);
 			if(pass != NULL)
 			{
-				pass->Load(proto, GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+				pass->Load(proto, (IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL),
+					GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
 					GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
 					GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
 
@@ -165,7 +167,7 @@ void Vehicle::InstallAccessories()
 	}
 }
 
-void Vehicle::Load(CreatureProto * proto_, float x, float y, float z, float o /* = 0.0f */)
+void Vehicle::Load(CreatureProto * proto_, uint32 mode, float x, float y, float z, float o /* = 0.0f */)
 {
 	proto = proto_;
 	if(!proto)

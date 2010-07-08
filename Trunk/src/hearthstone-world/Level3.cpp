@@ -2072,10 +2072,9 @@ bool ChatHandler::HandleIPUnBanCommand(const char * args, WorldSession * m_sessi
 
 bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_session)
 {
-	if(m_session == NULL || m_session->GetPlayer() == NULL)
-		return true;
-
 	Player* plr = m_session->GetPlayer();
+	if(m_session == NULL || plr == NULL)
+		return true;
 
 	uint32 entry, save;
 	if( sscanf(args, "%u %u", &entry, &save) != 2 )
@@ -2104,20 +2103,19 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	//Are we on a transporter?
 	if(m_session->GetPlayer()->m_TransporterGUID != 0)
 	{
-		Player* pl = m_session->GetPlayer();
-		Transporter* t = objmgr.GetTransporter(GUID_LOPART(pl->m_TransporterGUID));
+		Transporter* t = objmgr.GetTransporter(GUID_LOPART(plr->m_TransporterGUID));
 		if(t)
 		{
-			WorldDatabase.Execute("INSERT INTO transport_creatures VALUES(%u, %u, '%f', '%f', '%f', '%f')", GUID_LOPART(pl->m_TransporterGUID), entry, pl->m_transportPosition->x, pl->m_transportPosition->y, pl->m_transportPosition->z, pl->GetOrientation());
-			t->AddNPC(entry, pl->m_transportPosition->x, pl->m_transportPosition->y, pl->m_transportPosition->z, pl->GetOrientation());
-			BlueSystemMessage(m_session, "Spawned crew-member %u on transport %u. You might need to relog.", entry, GUID_LOPART(pl->m_TransporterGUID));
-			sGMLog.writefromsession(m_session, "spawned crew-member %u on transport %u.", entry, GUID_LOPART(pl->m_TransporterGUID));
+			WorldDatabase.Execute("INSERT INTO transport_creatures VALUES(%u, %u, '%f', '%f', '%f', '%f')", GUID_LOPART(plr->m_TransporterGUID), entry, plr->m_transportPosition->x, plr->m_transportPosition->y, plr->m_transportPosition->z, plr->GetOrientation());
+			t->AddNPC(entry, plr->m_transportPosition->x, plr->m_transportPosition->y, plr->m_transportPosition->z, plr->GetOrientation());
+			BlueSystemMessage(m_session, "Spawned crew-member %u on transport %u. You might need to relog.", entry, GUID_LOPART(plr->m_TransporterGUID));
+			sGMLog.writefromsession(m_session, "spawned crew-member %u on transport %u.", entry, GUID_LOPART(plr->m_TransporterGUID));
 			return true;
 		}
 		else
 		{
-			BlueSystemMessage(m_session, "Incorrect transportguid %u. Spawn has been denied and transport guid has been reset.", pl->m_TransporterGUID);
-			pl->m_TransporterGUID = uint64(NULL);
+			BlueSystemMessage(m_session, "Incorrect transportguid %u. Spawn has been denied and transport guid has been reset.", plr->m_TransporterGUID);
+			plr->m_TransporterGUID = uint64(NULL);
 			return true;
 		}
 	}
@@ -2126,13 +2124,15 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	bool spVehicle = proto->vehicle_entry > 0 ? true : false;
 
 	Creature* p = NULLCREATURE;
-	p = spVehicle ? TO_CREATURE(m_session->GetPlayer()->GetMapMgr()->CreateVehicle(entry)) : m_session->GetPlayer()->GetMapMgr()->CreateCreature(entry);
+	p = spVehicle ? TO_CREATURE(plr->GetMapMgr()->CreateVehicle(entry)) : plr->GetMapMgr()->CreateCreature(entry);
 	if(p == NULLCREATURE)
 	{
 		RedSystemMessage(m_session, "Could not create spawn.");
 		return true;
 	}
 
+	MapEntry* mapinfo = dbcMap.LookupEntry(plr->GetMapId());
+	uint32 mode = (plr->IsInInstance() ? (mapinfo->israid() ? plr->iRaidType : plr->iInstanceType) : MODE_5PLAYER_NORMAL);
 	CreatureSpawn * sp = NULL;
 	ASSERT(p);
 	if( save )
@@ -2171,41 +2171,42 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 			sp->MountedDisplayID = 0;
 		}
 
-		MapEntry* mapinfo = dbcMap.LookupEntry(m_session->GetPlayer()->GetMapId());
-		bool raid = mapinfo->israid();
 		if(spVehicle)
-			TO_VEHICLE(p)->Load(sp, (plr->IsInInstance() ? (raid ? plr->iInstanceType : plr->iRaidType) : MODE_5PLAYER_NORMAL), NULL);
+			TO_VEHICLE(p)->Load(sp, mode, NULL);
 		else
-			p->Load(sp, (plr->IsInInstance() ? (raid ? plr->iInstanceType : plr->iRaidType) : MODE_5PLAYER_NORMAL), NULL);
+			p->Load(sp, mode, NULL);
 	}
 	else
 	{
 		if(spVehicle)
-			TO_VEHICLE(p)->Load(proto, m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ(), 0.0f);
+		{
+			TO_VEHICLE(p)->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f);
+		}
 		else
-			p->Load(proto, m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ(), 0.0f);
+		{
+			p->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f);
+		}
 	}
 
-	p->PushToWorld(m_session->GetPlayer()->GetMapMgr());
+	p->SetPhase(plr->GetPhase());
+	p->PushToWorld(plr->GetMapMgr());
 
-	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u", info->Name, 
-		entry, m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ(), m_session->GetPlayer()->GetMapId());
+	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u in phase %u", info->Name, 
+		entry, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetMapId(), plr->GetPhase());
 
 	// Save it to the database.
 	if( save )
 	{
-		uint32 x = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
-		uint32 y = m_session->GetPlayer()->GetMapMgr()->GetPosY(m_session->GetPlayer()->GetPositionY());
+		uint32 x = plr->GetMapMgr()->GetPosX(plr->GetPositionX());
+		uint32 y = plr->GetMapMgr()->GetPosY(plr->GetPositionY());
 
 		// Add spawn to map
-		m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(
-			x,
-			y)->CreatureSpawns.push_back(sp);
-
+		plr->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(x, y)->CreatureSpawns.push_back(sp);
 		p->SaveToDB();
 	}
 
-	sGMLog.writefromsession(m_session, "spawned a %s at %u %f %f %f", info->Name, m_session->GetPlayer()->GetMapId(),m_session->GetPlayer()->GetPositionX(), m_session->GetPlayer()->GetPositionY(), m_session->GetPlayer()->GetPositionZ() );
+	sGMLog.writefromsession(m_session, "spawned a %s at %u %f %f %f",
+		info->Name, plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ() );
 
 	return true;
 }

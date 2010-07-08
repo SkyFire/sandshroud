@@ -3619,7 +3619,7 @@ void AIInterface::CallGuards()
 			if(guard == NULL)
 				continue;
 
-			guard->Load(cp, x, y, z);
+			guard->Load(cp, (m_Unit->IsInInstance() ? m_Unit->GetMapMgr()->iInstanceMode : MODE_5PLAYER_NORMAL), x, y, z);
 			guard->SetInstanceID(m_Unit->GetInstanceID());
 			guard->SetZoneId(m_Unit->GetZoneId());
 			guard->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP); /* shitty DBs */

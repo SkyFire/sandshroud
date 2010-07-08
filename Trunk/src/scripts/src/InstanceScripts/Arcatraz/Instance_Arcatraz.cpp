@@ -3134,7 +3134,7 @@ public:
 		float vzY = RandomUInt(5) * cos(RandomFloat(6.28f))+RTarget->GetPositionY();
 		float vzZ = RTarget->GetPositionZ();
 		Creature *VoidZone = _unit->GetMapMgr()->CreateCreature(cp->Id);
-		VoidZone->Load(cp, vzX, vzY, vzZ);
+		VoidZone->Load(cp, (_unit->IsInInstance() ? _unit->GetMapMgr()->iInstanceMode : MODE_5PLAYER_NORMAL), vzX, vzY, vzZ);
 		VoidZone->SetInstanceID(_unit->GetInstanceID());
 		VoidZone->SetZoneId(_unit->GetZoneId());
 		VoidZone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_2);

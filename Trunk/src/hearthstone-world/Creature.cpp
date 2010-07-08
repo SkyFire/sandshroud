@@ -848,7 +848,6 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	if(!creature_info)
 		return false;
 	uint32 health = 0;
-	uint8 powertype = 0;
 	uint32 power = 0;
 	float mindmg = 0.0f;
 	float maxdmg = 0.0f;
@@ -867,7 +866,6 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	//Set fields
 	SetUInt32Value(OBJECT_FIELD_ENTRY,proto->Id);
-	powertype = proto->Powertype;
 
 	// Heroic stats
 	if(mode)
@@ -878,7 +876,10 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		for(; itr != proto->ModeProto.end(); ++itr)
 		{
 			if(itr->second->difficulty == loadmode)
+			{
 				crmode = itr->second;
+				break; // We have what we came for... XD
+			}
 		}
 
 		if(crmode != NULL)
@@ -1088,7 +1089,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		m_useAI = false;
 	}
 
-	switch(powertype)
+	switch(proto->Powertype)
 	{
 	case POWER_TYPE_MANA:
 		{
@@ -1129,7 +1130,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		}break;
 	default:
 		{
-			sLog.outError("Creature %u has an incorrect powertype.", this->GetEntry());	
+			sLog.outError("Creature %u has an incorrect powertype.", GetEntry());	
 		}break;
 	}
 
@@ -1161,7 +1162,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 }
 
 
-void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
+void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float z, float o)
 {
 	proto = proto_;
 
@@ -1175,7 +1176,82 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
 	//Set fields
 	SetUInt32Value(OBJECT_FIELD_ENTRY,proto->Id);
 
-	uint32 health = proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth);
+	uint32 health = 0;
+	uint32 power = 0;
+	float mindmg = 0.0f;
+	float maxdmg = 0.0f;
+	uint32 level = 0;
+
+	// Heroic stats
+	if(mode)
+	{
+		uint8 loadmode = mode-1;
+		CreatureProtoMode* crmode = NULL;
+		HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = proto->ModeProto.begin();
+		for(; itr != proto->ModeProto.end(); ++itr)
+		{
+			if(itr->second->difficulty == loadmode)
+			{
+				crmode = itr->second;
+				break; // We have what we came for... XD
+			}
+		}
+
+		if(crmode != NULL)
+		{
+			health = crmode->Minhealth + RandomUInt(crmode->Maxhealth - crmode->Minhealth);
+			power = crmode->Power;
+			mindmg = crmode->Mindmg;
+			maxdmg = crmode->Maxdmg;
+			level =  crmode->Minlevel + (RandomUInt(crmode->Maxlevel - crmode->Minlevel));
+			for(uint32 i = 0; i < 7; i++)
+				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, crmode->Resistances[i]);
+		}
+		else
+		{
+			for(uint32 i = 0; i < 7; i++)
+				SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
+
+			float calcu = ((mode*2)/10);
+
+			switch(mode) // TODO: find calculations
+			{
+			case 1: // 5 man heroic or 25 man.
+				{
+					health = long2int32(double(proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth)) * 1.5);
+					mindmg = proto->MinDamage * 1.2f;
+					maxdmg = proto->MaxDamage * 1.2f;
+					level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
+					if(proto->Power)
+						power = proto->Power * 1.2;
+				}break;
+
+			default: // 10H or 25H
+				{
+					uint64 newhealth = long2int32(double(proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth)) * (1.5f + calcu));
+					if(newhealth > 4294967295) // This is the maximum uint32, its pretty much only for LK, and maybe some later cata content.
+						newhealth = 4294967295;
+
+					health = (uint32)newhealth;
+					mindmg = proto->MinDamage * (1.2f+calcu);
+					maxdmg = proto->MaxDamage * (1.2f+calcu);
+					level = proto->MinLevel + RandomUInt(proto->MaxLevel - proto->MinLevel) + RandomUInt(10);
+					if(proto->Power)
+						power = proto->Power * (1.1f+calcu);
+				}break;
+			}
+		}
+	}
+	else
+	{
+		health = proto->MinHealth + RandomUInt(proto->MaxHealth - proto->MinHealth);
+		power = proto->Power;
+		mindmg = proto->MinDamage;
+		maxdmg = proto->MaxDamage;
+		level = proto->MinLevel + (RandomUInt(proto->MaxLevel - proto->MinLevel));
+		for(uint32 i = 0; i < 7; i++)
+			SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
+	}
 
 	SetUInt32Value(UNIT_FIELD_HEALTH, health);
 	SetUInt32Value(UNIT_FIELD_MAXHEALTH, health);
@@ -1191,14 +1267,14 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
 	SetUInt32Value(UNIT_FIELD_DISPLAYID,model);
 	SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID,model);
 
-	SetUInt32Value(UNIT_FIELD_LEVEL, proto->MinLevel + (RandomUInt(proto->MaxLevel - proto->MinLevel)));
+	SetUInt32Value(UNIT_FIELD_LEVEL, level);
 
 	for(uint32 i = 0; i < 7; i++)
 		SetUInt32Value(UNIT_FIELD_RESISTANCES+i,proto->Resistances[i]);
 
 	SetUInt32Value(UNIT_FIELD_BASEATTACKTIME,proto->AttackTime);
-	SetFloatValue(UNIT_FIELD_MINDAMAGE, proto->MinDamage);
-	SetFloatValue(UNIT_FIELD_MAXDAMAGE, proto->MaxDamage);
+	SetFloatValue(UNIT_FIELD_MINDAMAGE, mindmg);
+	SetFloatValue(UNIT_FIELD_MAXDAMAGE, maxdmg);
 
 	SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME,proto->RangedAttackTime);
 	SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,proto->RangedMinDamage);
@@ -1311,39 +1387,39 @@ void Creature::Load(CreatureProto * proto_, float x, float y, float z, float o)
 	case POWER_TYPE_MANA:
 		{
 			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_MANA);
-			SetUInt32Value(UNIT_FIELD_POWER1, proto->Power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER1, proto->Power);
-			SetUInt32Value(UNIT_FIELD_BASE_MANA, proto->Power);
+			SetUInt32Value(UNIT_FIELD_POWER1, power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER1, power);
+			SetUInt32Value(UNIT_FIELD_BASE_MANA, power);
 		}break;
 	case POWER_TYPE_RAGE:
 		{
 			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RAGE);
-			SetUInt32Value(UNIT_FIELD_POWER2, proto->Power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER2, proto->Power * 10);
+			SetUInt32Value(UNIT_FIELD_POWER2, power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER2, power * 10);
 		}break;
 	case POWER_TYPE_FOCUS:
 		{
 			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_FOCUS);
-			SetUInt32Value(UNIT_FIELD_POWER3, proto->Power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER3, proto->Power);
+			SetUInt32Value(UNIT_FIELD_POWER3, power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER3, power);
 		}break;
 	case POWER_TYPE_ENERGY:
 		{
 			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
-			SetUInt32Value(UNIT_FIELD_POWER4, proto->Power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER4, proto->Power);
+			SetUInt32Value(UNIT_FIELD_POWER4, power);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER4, power);
 		}break;
 	case POWER_TYPE_RUNE:
 		{
 			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNE);
-			SetUInt32Value(UNIT_FIELD_POWER6, proto->Power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER6, proto->Power * 10);
+			SetUInt32Value(UNIT_FIELD_POWER6, power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER6, power * 10);
 		}break;
 	case POWER_TYPE_RUNIC:
 		{
 			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNIC);
-			SetUInt32Value(UNIT_FIELD_POWER7, proto->Power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER7, proto->Power);
+			SetUInt32Value(UNIT_FIELD_POWER7, power * 10);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER7, power * 10);
 		}break;
 	default:
 		{
