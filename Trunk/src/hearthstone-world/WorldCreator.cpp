@@ -522,7 +522,9 @@ MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 	// assign pointer
 	m_singleMaps[mapid] = ret;
 
-	Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
+	if(ret->IsCollisionEnabled())
+		Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
+
 	return ret;
 }
 

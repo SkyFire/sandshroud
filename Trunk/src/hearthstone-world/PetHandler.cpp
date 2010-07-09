@@ -563,7 +563,8 @@ void WorldSession::HandlePetLearnTalent( WorldPacket & recvPacket )
 	if (itr != pPet->m_talents.end())
 	{
 		// Remove the lower rank spell from our pet
-		pPet->RemoveSpell( talentEntry->RankID[ rank - 1 ] );
+		if(rank)
+			pPet->RemoveSpell( talentEntry->RankID[ rank - 1 ] );
 		// Replace the rank in our map with the new one, we'll add the spell later
 		itr->second = rank;
 	}
