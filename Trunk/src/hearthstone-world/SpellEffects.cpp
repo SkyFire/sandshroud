@@ -1634,18 +1634,20 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					p_caster->GetGroup()->Lock();
 					for(uint32 x = 0; x < p_caster->GetGroup()->GetSubGroupCount(); ++x)
 					{
-						if( count == 3 ) break;
+						if( count == 3 )
+							break;
+
 						for(GroupMembersSet::iterator itr = p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != p_caster->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 						{
-						if( (*itr) && (*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetPowerType() == POWER_TYPE_MANA && count != 3)
+							if( (*itr) && (*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetPowerType() == POWER_TYPE_MANA && count != 3)
 							{
-							SpellEntry *spellInfo = dbcSpell.LookupEntry( 54172 );
-							Spell* sp(new Spell( p_caster, spellInfo, true, NULLAURA ));
-							sp->forced_basepoints[0] = amt;
-							SpellCastTargets tgt;
-							tgt.m_unitTarget = (*itr)->m_loggedInPlayer->GetGUID();
-							sp->prepare(&tgt);
-							count++;
+								SpellEntry *spellInfo = dbcSpell.LookupEntry( 54172 );
+								Spell* sp(new Spell( p_caster, spellInfo, true, NULLAURA ));
+								sp->forced_basepoints[0] = amt;
+								SpellCastTargets tgt;
+								tgt.m_unitTarget = (*itr)->m_loggedInPlayer->GetGUID();
+								sp->prepare(&tgt);
+								count++;
 							}
 						}
 					}
@@ -6696,14 +6698,18 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	if(gameObjTarget && gameObjTarget->GetInfo() && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
-		gameObjTarget->TakeDamage(uint32(damage), m_caster, p_caster, m_spellInfo->Id);
+	if(gameObjTarget == NULL)
+		return;
+
+	gameObjTarget->TakeDamage(uint32(damage), m_caster, p_caster, m_spellInfo->Id);
 }
 
 void Spell::SpellEffectWMORepair(uint32 i)
 {
-	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
-		gameObjTarget->Rebuild();
+	if(gameObjTarget == NULL)
+		return;
+
+	gameObjTarget->Rebuild();
 }
 
 void Spell::SummonTotem(uint32 i) // Summon Totem

@@ -133,7 +133,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetNULL,						// 108
 	&Spell::SpellTargetNULL,						// 109
 	&Spell::SpellTargetNULL,						// 110
-	// all 100 > n spelltargettype's are from test spells
+	// all 110 > n spelltargettype's are from test spells
 };
 
 /* LEFTOVER RESEARCH, this contains note's comments from Captnoord

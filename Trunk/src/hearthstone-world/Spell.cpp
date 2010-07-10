@@ -434,33 +434,42 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	}
 }
 
-// We fill all the targets in the area, including the stealth ed one's
+// We fill all the targets in the area, including the stealthed one's
 void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz, float range )
 {
-	//TargetsList *tmpMap=&m_targetUnits[i];
-	float r = range * range;
-	//uint8 did_hit_result;
+	float r = range*range;
+
 	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
-		if( !((*itr)->IsUnit()) || !TO_UNIT(*itr)->isAlive() || !(*itr)->PhasedCanInteract(m_caster))
+		if((*itr)->IsUnit())
+			if( TO_UNIT(*itr)->m_CurrentVehicle == m_caster || (!(TO_UNIT(*itr)->isAlive())) || ( (*itr)->IsCreature() && TO_CREATURE(*itr)->IsTotem() ))
+				continue;
+
+		if((*itr)->PhasedCanInteract(m_caster) == false)
 			continue;
 
 		if( m_spellInfo->TargetCreatureType )
 		{
-			if((*itr)->GetTypeId()!= TYPEID_UNIT)
+			if( (*itr)->IsCreature() == false )
 				continue;
+
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-			if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
+			if( !inf || !( 1 << (inf->Type-1) & m_spellInfo->TargetCreatureType ) )
 				continue;
 		}
 
-		if( IsInrange( srcx, srcy, srcz, (*itr), r ) )
+		if( IsInrange( srcx, srcy, srcz, (*itr), r ))
 		{
 			if( u_caster != NULL )
 			{
-				if( isFriendly( u_caster, TO_UNIT(*itr) ) )
+				if( isAttackable( u_caster, (*itr), !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
 				{
-					_AddTarget((TO_UNIT(*itr)), i);
+					if((*itr)->IsUnit())
+						_AddTarget((TO_UNIT(*itr)), i);
+					else
+					{
+						_AddTargetForced((*itr)->GetGUID(), i);
+					}
 				}
 			}
 			else //cast from GO
@@ -468,17 +477,17 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 				if( g_caster != NULL && g_caster->GetUInt32Value( OBJECT_FIELD_CREATED_BY ) && g_caster->m_summoner != NULL )
 				{
 					//trap, check not to attack owner and friendly
-					if( isFriendly( g_caster->m_summoner, TO_UNIT(*itr) ) )
-						_AddTargetForced((*itr)->GetGUID(), i);
+					if( isAttackable( g_caster->m_summoner, TO_UNIT(*itr), !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
+						_AddTarget((TO_UNIT(*itr)), i);
 				}
 				else
 					_AddTargetForced((*itr)->GetGUID(), i);
-			}			
+			}
 			if( m_spellInfo->MaxTargets )
 				if( m_hitTargetCount >= m_spellInfo->MaxTargets )
 					return;
 		}
-	}	
+	}
 }
 
 uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
@@ -1549,16 +1558,16 @@ void Spell::cast(bool check)
 				switch (m_spellInfo->Effect[x])
 				{
 					// Target ourself for these effects
-					case SPELL_EFFECT_TRIGGER_SPELL:
-					case SPELL_EFFECT_MEGA_JUMP:
-					case SPELL_EFFECT_SUMMON:
+				case SPELL_EFFECT_TRIGGER_SPELL:
+				case SPELL_EFFECT_MEGA_JUMP:
+				case SPELL_EFFECT_SUMMON:
 					{
 						_SetTargets(m_caster->GetGUID());
 						HandleEffects(x);
 					}break;
 
 					// No Target required for these effects
-					case SPELL_EFFECT_PERSISTENT_AREA_AURA:
+				case SPELL_EFFECT_PERSISTENT_AREA_AURA:
 					{
 						HandleEffects(x);
 					}break;
@@ -1754,7 +1763,7 @@ void Spell::HandleDestLocationHit()
 				{
 					for(SpellTargetList::iterator itr2 = m_targetList.begin(); itr2 != m_targetList.end(); itr2++)
 					{
-						if((*itr2).Guid == *itr && ((*itr2).EffectMask & (1 << x)))
+						if((*itr2).Guid == *itr && ((*itr2).EffectMask & (1 << x)) && (m_caster && ((*itr2).Guid != m_caster->GetGUID())))
 						{
 							HandleEffects(x);
 							hit = true;
@@ -1763,18 +1772,12 @@ void Spell::HandleDestLocationHit()
 				}
 			}
 
-			if (!hit)
+			if(!hit)
 			{
 				if( m_spellInfo->Effect[x] == SPELL_EFFECT_TELEPORT_UNITS)
 				{
 					HandleEffects(m_caster->GetGUID());
 				}
-				else if( m_spellInfo->Effect[x] == SPELL_EFFECT_SUMMON_WILD)
-				{
-					HandleEffects(m_caster->GetGUID());
-				}
-				else
-					HandleEffects(0); 
 			}
 		}
 	}
@@ -2849,9 +2852,7 @@ void Spell::HandleEffects(uint32 i)
 	}
 
 	damage = CalculateEffect(i, unitTarget);
-	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", m_spellInfo->Effect[i], damage); 
-//	if(p_caster)
-//		printf( "Handling Effect id = %u, damage = %d in spell %u\n", m_spellInfo->Effect[i], damage, GetSpellProto()->Id); 
+	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", m_spellInfo->Effect[i], damage);
 
 	if( m_spellInfo->Effect[i] < TOTAL_SPELL_EFFECTS)
 		(*this.*SpellEffectsHandler[m_spellInfo->Effect[i]])(i);

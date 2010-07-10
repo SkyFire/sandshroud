@@ -52,6 +52,7 @@ void Vehicle::Init()
 
 void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 {
+	DisableAI();
 	m_maxPassengers = 0;
 	m_seatSlotMax = 0;
 	SetVehicleEntry(vehicleEntry);
@@ -609,11 +610,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		/* update target faction set */
 		_setFaction();
 		UpdateOppFactionSet();
-
-		//GetAIInterface()->SetAIState(STATE_IDLE);
-		GetAIInterface()->WipeHateList();
-		GetAIInterface()->WipeTargetList();
-		EnableAI();
 		//Despawn(0,1000);
 	}
 
@@ -640,9 +636,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 
 	if(!haspassengers && !m_CurrentVehicle) // Passenger and accessory checks.
 	{
-		if( m_spawn )
-			GetAIInterface()->MoveTo(m_spawn->x, m_spawn->y, m_spawn->z);
-		else //we're a temp spawn
+		if( m_spawn == NULL )
 			SafeDelete();
 	}
 
@@ -756,8 +750,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 
 		if(slot == 0)
 		{
-			if(!m_CurrentVehicle)
-				GetAIInterface()->StopMovement(0);
 			SetControllingUnit(pPlayer);
 			m_redirectSpellPackets = pPlayer;
 
@@ -794,7 +786,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			SendSpells(GetEntry(), pPlayer);
 		}
 
-		DisableAI();
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
 		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
 		data << pPlayer->GetPosition();
