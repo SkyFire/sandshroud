@@ -94,26 +94,30 @@ LootMgr::LootMgr()
 	is_loading = false;
 }
 
+/*	Guidlines for loading loot:
+	Crow: Heavier loot should be loaded first.
+	If it has more than 3k, do a delayed load.
+*/
 void LootMgr::LoadLoot()
 {
 	//THIS MUST BE CALLED AFTER LOADING OF ITEMS
 	is_loading = true;
 	LoadLootProp();
 	DEBUG_LOG("LootMgr","Loading loot...");
-	LoadLootTables(DISENCHANTING_LOOT, &DisenchantingLoot);
 	LoadLootTables(FISHING_LOOT,&FishingLoot);
 	LoadLootTables(ITEM_LOOT, &ItemLoot);
 	LoadLootTables(MILLING_LOOT, &MillingLoot);
-	LoadLootTables(OBJECT_LOOT,&GOLoot);
 	LoadLootTables(PROSPECTING_LOOT, &ProspectingLoot);
-	LoadLootTables(PICKPOCKETING_LOOT, &PickpocketingLoot);
 	is_loading = false;
 }
 
 void LootMgr::LoadDelayedLoot()
 {
 	is_loading = true;
+	LoadLootTables(DISENCHANTING_LOOT, &DisenchantingLoot);
+	LoadLootTables(OBJECT_LOOT,&GOLoot);
 	LoadLootTables(CREATURE_LOOT,&CreatureLoot);
+	LoadLootTables(PICKPOCKETING_LOOT, &PickpocketingLoot);
 	LoadLootTables(CREATURE_LOOT_GATHERING,&GatheringLoot);
 	is_loading = false;
 }
