@@ -492,7 +492,7 @@ void SpawnObjects(MapMgr *pmgr)
 		pGo2->PushToWorld(pmgr);
 
 		pGo->GetScript()->OnSpawn();
-		printf("Spawned gameobject entry %u for world pvp on hellfire.\n", p->entry);
+		Log.Notice("HellfireScripts", "Spawned gameobject entry %u for world pvp.", p->entry);
 	}
 }
 

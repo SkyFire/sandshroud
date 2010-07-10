@@ -107,7 +107,11 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	if(modechecks)
 	{
 		loadmodes = true;
-		delete modechecks;
+		if(modechecks->GetFieldCount() != 18)
+		{
+			Log.Error("ObjectStorage", "Incorrect field count(%u/18) for table creature_proto_mode, mode loading is disabled.", modechecks->GetFieldCount());
+			loadmodes = false;
+		}delete modechecks;
 	}
 
 	StorageContainerIterator<CreatureProto> * cpitr = CreatureProtoStorage.MakeIterator();
@@ -137,8 +141,6 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 
 		cn->m_canFlee = cn->m_canRangedAttack = cn->m_canCallForHelp = false;
 		cn->m_fleeHealth = 0.0f;
-		// please.... m_fleeDuration is a uint32...
-		//cn->m_fleeDuration = 0.0f;
 		cn->m_fleeDuration = 0;
 
 		if(loadmodes)
@@ -175,18 +177,23 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					cpm->Power = fields[fieldcount++].GetUInt32();
 					for(uint8 i = 0; i < 7; i++)
 						cpm->Resistances[i] = fields[fieldcount++].GetUInt32();
-
-					string auras = fields[fieldcount++].GetString();
-					if(auras.size())
-						cpm->aura_string = (char*)auras.c_str();
-					else
-						cpm->aura_string = "";
-
+					cpm->aura_string = (char*)fields[fieldcount++].GetString();
 					cpm->auraimmune_flag = fields[fieldcount++].GetUInt32();
 
 					// Begin cleanup changes.
+					// Level cleanup.
+					if(cpm->Maxlevel < cpm->Minlevel)
+						cpm->Maxlevel = cpm->Minlevel;
 
-					// End of changes.
+					// Health cleanup.
+					if(cpm->Maxhealth < cpm->Minhealth)
+						cpm->Maxhealth = cpm->Minhealth;
+
+					// Damage cleanup.
+					if(cpm->Maxdmg < cpm->Mindmg)
+						cpm->Maxdmg = cpm->Mindmg;
+
+					// End of cleanup changes.
 					cn->ModeProto.insert(make_pair( realmode, cpm ));
 					count++;
 
@@ -891,7 +898,8 @@ void Storage_LoadAdditionalTables()
 		if(sscanf((*itr).c_str(), "%s %s", s1, s2) != 2)
 			continue;
 
-		if(LoadAdditionalTable(s2, s1)) {
+		if(LoadAdditionalTable(s2, s1))
+		{
 			pair<string,string> tmppair;
 			tmppair.first = string(s1);
 			tmppair.second = string(s2);
@@ -899,6 +907,3 @@ void Storage_LoadAdditionalTables()
 		}
 	}
 }
-
-
-

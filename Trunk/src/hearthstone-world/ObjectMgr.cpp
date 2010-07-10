@@ -1255,14 +1255,16 @@ void ObjectMgr::LoadTotemSpells()
 
 	//TotemSpells *ts = NULL;
 	SpellEntry * sp;
-	uint32 spellid;
 
 	do
 	{
 		Field *fields = result->Fetch();
-		spellid = fields[1].GetUInt32();
-		sp = dbcSpell.LookupEntry(spellid);
-		if(!spellid || !sp) continue;
+		if(!(fields[1].GetUInt32()))
+			continue;
+
+		sp = dbcSpell.LookupEntry(fields[1].GetUInt32());
+		if(!sp)
+			continue;
 
 		m_totemSpells.insert( TotemSpellMap::value_type( fields[0].GetUInt32(), sp ));
 	} while( result->NextRow() );
@@ -1749,6 +1751,7 @@ void ObjectMgr::LoadTrainers()
 				ts.IsProfession = (fields2[9].GetUInt32() != 0) ? true : false;
 				tr->Spells.push_back(ts);
 			}while(result2->NextRow());
+			delete result2;
 
 			tr->SpellCount = (uint32)tr->Spells.size();
 
@@ -1766,7 +1769,6 @@ void ObjectMgr::LoadTrainers()
 
 	} while(result->NextRow());
 	delete result;
-	delete result2;
 	Log.Notice("ObjectMgr", "%u trainers loaded.", mTrainers.size());
 }
 
