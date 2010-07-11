@@ -3036,6 +3036,145 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
+	case 71519: // Deathbringer's Will Normal.
+		{
+			if(m_caster != NULL && m_caster->IsPlayer())
+			{
+				if(apply)
+				{
+					/* Crow: The only info I got.
+					Warrior - +600 Strength, +600 Haste, or +600 Crit Rating
+					Paladin - +600 Strength, +600 Haste, or +600 Crit Rating
+					Hunter - +600 Agility, +600 Crit Rating, or +1200 Attack Power
+					Rogue - +600 Agility, +600 Haste, or +1200 Attack Power
+					Death Knight - +600 Strength, +600 Haste, or +600 Crit Rating
+					Shaman - +600 Agility, +1200 Attack Power, or +600 Haste
+					Druid - +600 Agility, +600 Haste, or +600 Strength
+					*/
+
+					float pc = 18.0f;
+					uint32 count = 1;
+					switch(m_caster->getClass())
+					{
+					case WARRIOR:
+						{
+							count = 3;
+							// Strength
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71484, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Crit
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71491, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case PALADIN:
+						{
+							count = 3;
+							// Strength
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71484, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Crit
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71491, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case ROGUE:
+						{
+							count = 3;
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Agil
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71485, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// AP
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71486, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case HUNTER:
+						{
+							count = 3;
+							// Crit
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71491, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Agil
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71485, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// AP
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71486, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case PRIEST:
+						{
+							count = 2;
+							// Crit
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71491, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case DEATHKNIGHT:
+						{
+							count = 3;
+							// Strength
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71484, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Crit
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71491, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case SHAMAN:
+						{
+							count = 3;
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Agil
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71485, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// AP
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71486, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case MAGE:
+						{
+							count = 2;
+							// Crit
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71491, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case WARLOCK:
+						{
+							count = 2;
+							// Crit
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71491, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+
+					case DRUID:
+						{
+							count = 3;
+							// Strength
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71484, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Haste
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71492, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+							// Agil
+							CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), 71519, 71485, pc/count, PROC_ON_ANY_HOSTILE_ACTION, PROC_TARGET_SELF);
+						}break;
+					}
+				}
+				else
+				{
+					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+					{
+						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+						{
+							itr->deleted = true;
+//							break; // Delete them all.
+						}
+					}
+				}
+			}
+		}break;
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())
@@ -3044,6 +3183,7 @@ void Aura::SpellAuraDummy(bool apply)
 			dummy_aura = true;
 		}break;
 	}
+
 	//we still should handle this
 	if( m_target && dummy_aura )
 	{

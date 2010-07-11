@@ -2275,6 +2275,27 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							{
 								dmg_overwrite = (spe->EffectBasePoints[0] + 1) * GetUInt32Value(UNIT_FIELD_BASE_MANA) / 100;
 							}break;
+
+						case 71484:
+						case 71485:
+						case 71486:
+						case 71487:
+						case 71491:
+						case 71492:
+							{
+								bool hasaura = false;
+								uint32 auras[6] = { 71484, 71485, 71486, 71487, 71491, 71492 };
+								for(int i = 0; i < 6; i++)
+								{
+									if(HasAura(auras[i]))
+									{
+										hasaura = true;
+										break;
+									}
+								}
+								if(hasaura)
+									continue;
+							}break;
 					}
 				}
 				if(spellId==17364 || spellId==32175 || spellId==32176) // Stormstrike fix
