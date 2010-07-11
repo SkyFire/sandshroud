@@ -5679,7 +5679,6 @@ void Unit::OnPushToWorld()
 
 void Unit::RemoveFromWorld(bool free_guid)
 {
-
 	SummonExpireAll(false);
 
 	if( m_CurrentVehicle )

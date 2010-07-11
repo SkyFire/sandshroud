@@ -1537,7 +1537,7 @@ void Creature::Despawn(uint32 delay, uint32 respawntime)
 		sEventMgr.AddEvent(m_mapMgr, &MapMgr::EventRespawnCreature, TO_CREATURE(this), pCell, EVENT_CREATURE_RESPAWN, respawntime, 1, 0);
 		Unit::RemoveFromWorld(false);
 		SetPosition( m_spawnLocation, true);
-		m_respawnCell=pCell;
+		m_respawnCell = pCell;
 	}
 	else
 	{

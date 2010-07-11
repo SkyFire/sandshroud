@@ -5350,8 +5350,8 @@ void Spell::SpellEffectAddPrismaticSocket(uint32 i)
 void Spell::SpellEffectTameCreature(uint32 i)
 {
 	Creature* tame = NULL;
-	tame = ((unitTarget->GetTypeId() == TYPEID_UNIT) ? TO_CREATURE(unitTarget) : NULLCREATURE);
-	if(tame== NULL )
+	tame = (unitTarget->IsCreature() ? TO_CREATURE(unitTarget) : NULLCREATURE);
+	if(tame== NULL)
 		return;
 
 	uint8 result = SPELL_CANCAST_OK;
@@ -5380,15 +5380,18 @@ void Spell::SpellEffectTameCreature(uint32 i)
 		SendCastResult(result);
 		return;
 	}
+
 	// Remove target
 	tame->GetAIInterface()->HandleEvent(EVENT_LEAVECOMBAT, p_caster, 0);
-	Pet* pPet = objmgr.CreatePet();
-	pPet->SetInstanceID(p_caster->GetInstanceID());
-	pPet->CreateAsSummon(tame->GetEntry(), tame->GetCreatureInfo(), tame, p_caster, NULL, 2, 0);
 
-	//tame->SafeDelete();
-	//delete tame;
-	tame->Despawn(0,tame->proto? tame->proto->RespawnTime:0);
+	Pet* pPet = objmgr.CreatePet();
+	pPet->Init();
+	pPet->SetInstanceID(p_caster->GetInstanceID());
+	pPet->SetPosition(p_caster->GetPosition(), true);
+	pPet->CreateAsSummon(tame->GetEntry(), tame->GetCreatureInfo(), tame, p_caster, NULL, 2, 0);
+	pPet->AddToWorld();
+
+	tame->Despawn(0, tame->GetRespawnTime());
 }
 
 void Spell::SpellEffectSummonPet(uint32 i) //summon - pet
