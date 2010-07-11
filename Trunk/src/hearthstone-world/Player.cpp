@@ -10619,14 +10619,12 @@ void Player::_AdvanceAllSkills(uint32 count, bool skipprof /* = false */, uint32
 
 			if(max != 0)
 			{
-				if(itr->second.MaximumValue > max)
-					continue;
-
 				if(max > itr->second.MaximumValue)
 					max = itr->second.MaximumValue;
 
 				if((itr->second.CurrentValue + count) >= max)
 					itr->second.CurrentValue = max;
+
 				dirty = true;
 				continue;
 			}

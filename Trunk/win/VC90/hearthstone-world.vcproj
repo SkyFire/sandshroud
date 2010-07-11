@@ -1320,10 +1320,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-world\MainServerDefines.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\hearthstone-world\MiscHandler.h"
 			>
 		</File>

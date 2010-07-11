@@ -59,13 +59,12 @@
 #include "../hearthstone-shared/Collision/vmap/VMapManager.h"
 
 #include <zlib.h>
-#include "../hearthstone-shared/RC4Engine.h"
-#include "MainServerDefines.h"
+#include "Const.h"
 
+#include "../hearthstone-shared/RC4Engine.h"
 #include "../hearthstone-shared/Database/DatabaseEnv.h"
 #include "../hearthstone-shared/Database/DBCStores.h"
 #include "../hearthstone-shared/Database/dbcfile.h"
-
 #include "../hearthstone-shared/Network/Network.h"
 
 #include "../hearthstone-shared/AuthCodes.h"
@@ -82,11 +81,9 @@
 #include "../hearthstone-shared/BufferPool.h"
 #include "../hearthstone-shared/CallBack.h"
 #include "../hearthstone-shared/Storage.h"
-
 #include "../hearthstone-logonserver/LogonOpcodes.h"
 #include "../hearthstone-voicechat/hearthstone_opcodes.h"
 
-#include "Const.h"
 #include "NameTables.h"
 #include "UpdateFields.h"
 #include "UpdateMask.h"
