@@ -488,7 +488,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\Const.h" />
     <ClInclude Include="..\..\src\hearthstone-world\EventMgr.h" />
     <ClInclude Include="..\..\src\hearthstone-world\faction.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\MainServerDefines.h" />
     <ClInclude Include="..\..\src\hearthstone-world\MiscHandler.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ObjectMgr.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ObjectStorage.h" />
