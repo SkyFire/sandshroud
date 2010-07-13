@@ -3175,6 +3175,61 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
+	case 31801: // Seal of Vengeance
+	case 53736: // Seal of Corruption
+	case 21084: // Seal of Righteousness
+	case 53720: // Seal of the Martyr
+	case 31892: // Seal of Blood
+	case 20375: // Seal of Command
+		{
+			if(m_caster != NULL && m_caster->IsPlayer())
+			{
+				Player* plr = TO_PLAYER(m_caster);
+				if(apply)
+				{
+					uint32 spellid = 0;
+					uint32 procchance = 100;
+					switch(GetSpellId())
+					{
+					case 31801:
+						spellid = 31803;
+						break;
+					case 53736:
+						spellid = 53742;
+						break;
+					case 21084:
+						spellid = 25742;
+						break;
+					case 53720:
+						procchance = 40;
+						spellid = 53718;
+						break;
+					case 31892:
+						procchance = 40;
+						spellid = 20424;
+						break;
+					}
+
+					if(mod->i == 0 && spellid)
+						CreateProcTriggerSpell(plr, plr->GetGUID(), GetSpellId(), spellid, procchance, (PROC_ON_MELEE_ATTACK | PROC_ON_PHYSICAL_ATTACK), NULL);
+					else
+						plr->JudgementSpell = mod->m_amount;
+				}
+				else
+				{
+					plr->JudgementSpell = 0;
+					for(std::list<struct ProcTriggerSpell>::iterator itr = plr->m_procSpells.begin();itr != plr->m_procSpells.end();itr++)
+					{
+						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+						{
+							itr->deleted = true;
+							break;
+						}
+					}
+				}
+			}
+		}break;
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())
@@ -10337,6 +10392,10 @@ uint32 SCM2, uint32 SCM3, int32 procValue)
 	Pts.deleted = false;
 	Pts.procValue = procValue;
 	target->m_procSpells.push_back(Pts);
+
+	SpellEntry* sp = dbcSpell.LookupEntry(spellid);
+	if(sp->procFlags != procFlags) // Different proc flags?
+		sp->procFlags = procFlags; // Set our flags.
 
 	DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %s interval %u", Pts.origId, spellid, procChance, procFlags, procCharges, ((procFlags2 & PROC_TARGET_SELF) ? "true" : "false"), m_spellProto->proc_interval);
 }

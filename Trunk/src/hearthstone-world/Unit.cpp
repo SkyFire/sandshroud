@@ -571,7 +571,6 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* CastingSpell, uint32 dmg, uint32 abs, uint32 weapon_damage_type )
 {
 	uint32 resisted_dmg = 0;
-
 	++m_procCounter;
 	bool can_delete = !bProcInUse; //if this is a nested proc then we should have this set to TRUE by the father proc
 	bProcInUse = true; //locking the proc list
@@ -591,7 +590,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 			continue;
 		}
 
-		if (itr2->LastTrigger + 200 >= mstimenow || (CastingSpell != NULL && (itr2->spellId == CastingSpell->Id || itr2->origId == CastingSpell->Id)))
+		if (itr2->LastTrigger + 200 >= mstimenow || (CastingSpell != NULL && itr2->spellId == CastingSpell->Id))
 			continue;
 
 		uint32 origId = itr2->origId;
@@ -601,8 +600,6 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 			if( CastingSpell->Id == itr2->origId || CastingSpell->Id == itr2->spellId )
 				continue;
 		}
-		else
-			continue; // No casting spell proto. Stop here.
 
 		SpellEntry* sp = dbcSpell.LookupEntry( itr2->spellId );
 		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
@@ -3365,6 +3362,7 @@ else
 			vproc |= PROC_ON_ANY_DAMAGE_VICTIM;
 			if(pVictim->GetHealthPct() < 35)
 				vproc2 |= PROC_ON_DAMAGE_VICTIM_BELOW_35;
+
 			if( weapon_damage_type != RANGED )
 			{
 				aproc |= PROC_ON_MELEE_ATTACK;
@@ -4649,16 +4647,16 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	Unit* caster = TO_UNIT(this);
 	uint32 school = spellInfo->School;
 	float summaryPCTmod = 0.0f;
-	
+
 	if( caster->IsPet() )
 		caster = TO_UNIT(TO_PET(caster)->GetPetOwner());
 	else if( caster->IsCreature() && TO_CREATURE(caster)->IsTotem() )
 		caster = TO_CREATURE(caster)->GetSummonOwner();
 	else if( caster->GetTypeId() == TYPEID_GAMEOBJECT && caster->GetMapMgr() && caster->GetUInt64Value(OBJECT_FIELD_CREATED_BY) )
 		caster = TO_UNIT(caster->GetMapMgr()->GetUnit(caster->GetUInt64Value(OBJECT_FIELD_CREATED_BY)));
-	
+
 	if( caster == NULL || pVictim == NULL)
-		return 0;
+		return bonus_damage;
 
 	//---------------------------------------------------------
 	// attribute

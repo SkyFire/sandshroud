@@ -1965,6 +1965,7 @@ public:
 	//Current value of Feral Attack Power from items
 	int32 m_feralAP;
 	bool	hasqueuedpet;
+	uint32 JudgementSpell;
 
 protected:
 	uint32 m_timeLogoff;
@@ -1979,9 +1980,9 @@ protected:
 
 	/* Update system components */
 	ByteBuffer bUpdateBuffer;
-    ByteBuffer bCreationBuffer;
+	ByteBuffer bCreationBuffer;
 	uint32 mUpdateCount;
-    uint32 mCreationCount;
+	uint32 mCreationCount;
 	uint32 mOutOfRangeIdCount;
 	ByteBuffer mOutOfRangeIds;
 	SplineMap _splineMap;

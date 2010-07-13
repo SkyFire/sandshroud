@@ -228,12 +228,15 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 			return true;
 		}
 
-		char messagetext[500];
-		string itemlink = it->ConstructItemLink(randomprop, it->RandomSuffixId, count);
-		snprintf(messagetext, 500, "Adding item %d %s to %s's inventory.",(unsigned int)it->ItemId,itemlink.c_str(), chr->GetName());
-		SystemMessage(m_session, messagetext);
-		snprintf(messagetext, 500, "%s added item %d %s to your inventory.", m_session->GetPlayer()->GetName(), (unsigned int)itemid, itemlink.c_str());
-		SystemMessageToPlr(chr,  messagetext);
+		if(chr->GetSession() != m_session) // Since we get that You Recieved Item bullcrap, we don't need this.
+		{
+			char messagetext[500];
+			string itemlink = it->ConstructItemLink(randomprop, it->RandomSuffixId, count);
+			snprintf(messagetext, 500, "Adding item %d %s to %s's inventory.",(unsigned int)it->ItemId,itemlink.c_str(), chr->GetName());
+			SystemMessage(m_session, messagetext);
+			snprintf(messagetext, 500, "%s added item %d %s to your inventory.", m_session->GetPlayer()->GetName(), (unsigned int)itemid, itemlink.c_str());
+			SystemMessageToPlr(chr,  messagetext);
+		}
 		return true;
 	}
 	else

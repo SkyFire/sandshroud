@@ -344,6 +344,7 @@ void ApplyNormalFixes()
 		sp->RAP_coef_override = 0;
 		sp->auraimmune_flag = 0;
 		sp->AllowBackAttack = false;
+		sp->procflags2 = 0;
 
 		talentSpellIterator = talentSpells.find(sp->Id);
 		if(talentSpellIterator == talentSpells.end())
@@ -4568,27 +4569,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectTriggerSpell[0] = 58597;
 			sp->proc_interval = 6000;
 		}break;
-	case 31801: // Seal of Vengeance
-		{
-			sp->Effect[0] = SPELL_EFFECT_TRIGGER_SPELL;
-			sp->EffectTriggerSpell[0] = 31803;
-			sp->procFlags = PROC_ON_MELEE_ATTACK;
-			sp->procChance = 100;
-			sp->Effect[1] = 0;
-			sp->EffectApplyAuraName[1] = 0;
-			sp->EffectBasePoints[1] = 0;
-		}break;
-
-	case 53736:	// Seal of Corruption
-		{
-			sp->Effect[0] = SPELL_EFFECT_TRIGGER_SPELL;
-			sp->EffectTriggerSpell[0] = 53742;
-			sp->procFlags = PROC_ON_MELEE_ATTACK;
-			sp->procChance = 100;
-			sp->Effect[1] = 0;
-			sp->EffectApplyAuraName[1] = 0;
-			sp->EffectBasePoints[1] = 0;
-		}break;	
 
 		// SoC/SoV Dot's
 	case 31803:
@@ -4630,17 +4610,8 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->AllowBackAttack = true;
 		}break;
 
-		// Seal of Righteousness
-		case 21084:
-			{
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-			sp->EffectTriggerSpell[0]	=	25742;
-			sp->procFlags	=	PROC_ON_MELEE_ATTACK;
-			sp->procChance = 1000;
-			}break;
-
 		//////////////////////////////////////////
-		// HUNTER									//
+		// HUNTER								//
 		//////////////////////////////////////////
 
 		//Hunter - Go for the Throat
@@ -6447,10 +6418,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case SPELL_HASH_JUDGEMENT_OF_JUSTICE:
 	case SPELL_HASH_HEART_OF_THE_CRUSADER:
 		sp->maxstack = 1;
-		break;
-
-	case SPELL_HASH_SEAL_OF_RIGHTEOUSNESS: // Seal of Righteousness - cannot crit
-		sp->spell_can_crit = false;
 		break;
 
 	case SPELL_HASH_SEAL_OF_LIGHT:

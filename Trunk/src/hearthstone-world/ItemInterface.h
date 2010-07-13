@@ -165,7 +165,7 @@ public:
 		return true;
 	}
 
-    bool AddItemById(uint32 itemid, uint32 count, int32 randomprop, bool created);
+    bool AddItemById(uint32 itemid, uint32 count, int32 randomprop, bool created, Player* creator = NULL);
 
 	HEARTHSTONE_INLINE bool VerifyBagSlotsWithBank(int16 ContainerSlot, int16 Slot)
 	{

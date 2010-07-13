@@ -32,7 +32,7 @@ extern "C" SCRIPT_DECL uint32 _exp_get_script_type()
 extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any script to disable it
 {
 	/* Quick example, Review header file for more details.
-    SetupGenericCreatureScripts(mgr);*/
+	SetupGenericCreatureScripts(mgr);*/
 
 }
 
@@ -40,7 +40,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any 
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved )
 {
-    return TRUE;
+	return TRUE;
 }
 
 #endif

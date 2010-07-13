@@ -156,6 +156,8 @@ class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 	ChatCommand * _GameObjectCommandTable;
 	ChatCommand * _BattlegroundCommandTable;
 	ChatCommand * _NPCCommandTable;
+	ChatCommand * _gamemasterCommandTable;
+	ChatCommand * _administratorCommandTable;
 	ChatCommand * _accountCommandTable;
 	ChatCommand * _CheatCommandTable;
 	ChatCommand * _honorCommandTable;
@@ -537,7 +539,6 @@ protected:
 	bool HandleNpcSelectCommand(const char * args, WorldSession * m_session);
 	bool HandleWaypointAddFlyCommand(const char * args, WorldSession * m_session);
 	bool HandleWhisperBlockCommand(const char * args, WorldSession * m_session);
-	bool HandleDispelAllCommand(const char * args, WorldSession * m_session);
 	bool HandleShowItems(const char * args, WorldSession * m_session);
 	bool HandleCollisionTestIndoor(const char * args, WorldSession * m_session);
 	bool HandleCollisionTestLOS(const char * args, WorldSession * m_session);

@@ -850,11 +850,9 @@ bool ChatHandler::HandleParalyzeCommand(const char* args, WorldSession *m_sessio
 
 	BlueSystemMessage(m_session, "Rooting target.");
 	BlueSystemMessageToPlr( TO_PLAYER( plr ), "You have been rooted by %s.", m_session->GetPlayer()->GetName() );
-	WorldPacket data;
-	data.Initialize(SMSG_FORCE_MOVE_ROOT);
+	WorldPacket data(SMSG_FORCE_MOVE_ROOT, 12);
 	data << plr->GetNewGUID();
 	data << uint32(1);
-
 	plr->SendMessageToSet(&data, true);
 	return true;
 }
@@ -1532,11 +1530,19 @@ bool ChatHandler::HandleShutdownCommand(const char* args, WorldSession* m_sessio
 
 bool ChatHandler::HandleAllowWhispersCommand(const char* args, WorldSession* m_session)
 {
-	if(args == 0 || strlen(args) < 2) return false;
+	if(args == 0 || strlen(args) < 2)
+		return false;
+
 	Player* plr = objmgr.GetPlayer(args, false);
 	if(!plr)
 	{
 		RedSystemMessage(m_session, "Player not found.");
+		return true;
+	}
+
+	if(m_session->GetPlayer() == plr) // Ourselves.
+	{
+		RedSystemMessage(m_session, "Whispering yourself is always allowed.");
 		return true;
 	}
 
@@ -1547,7 +1553,9 @@ bool ChatHandler::HandleAllowWhispersCommand(const char* args, WorldSession* m_s
 
 bool ChatHandler::HandleBlockWhispersCommand(const char* args, WorldSession* m_session)
 {
-	if(args == 0 || strlen(args) < 2) return false;
+	if(args == 0 || strlen(args) < 2)
+		return false;
+
 	Player* plr = objmgr.GetPlayer(args, false);
 	if(!plr)
 	{
@@ -1573,10 +1581,10 @@ bool ChatHandler::HandleAdvanceAllSkillsCommand(const char* args, WorldSession* 
 	if(!plr)
 		return true;
 
-
 	plr->_AdvanceAllSkills(amt);
 	GreenSystemMessageToPlr(plr, "Advanced all your skill lines by %u points.", amt);
-	sGMLog.writefromsession(m_session, "advanced all skills by %u on %s", amt, plr->GetName());
+	if(plr->GetSession() != m_session)
+		sGMLog.writefromsession(m_session, "advanced all skills by %u on %s", amt, plr->GetName());
 	return true;
 }
 
@@ -2984,40 +2992,6 @@ bool ChatHandler::HandleWhisperBlockCommand(const char * args, WorldSession * m_
 	return true;
 }
 
-bool ChatHandler::HandleDispelAllCommand(const char * args, WorldSession * m_session)
-{
-	uint32 pos=0;
-	if(*args)
-		pos=atoi(args);
-
-	Player* plr;
-
-	sGMLog.writefromsession(m_session, "used dispelall command, pos %u", pos);
-
-	PlayerStorageMap::const_iterator itr;
-	objmgr._playerslock.AcquireReadLock();
-	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
-	{
-		plr = itr->second;
-		if(plr->GetSession() && plr->IsInWorld())
-		{
-			if(plr->GetMapMgr() != m_session->GetPlayer()->GetMapMgr())
-			{
-				sEventMgr.AddEvent( TO_UNIT( plr ), &Unit::DispelAll, pos ? true : false, EVENT_PLAYER_CHECKFORCHEATS, 100, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
-			}
-			else
-			{
-				plr->DispelAll(pos?true:false);
-			}
-		}
-	}
-	sGMLog.writefromsession(m_session, "used mass dispel");
-	objmgr._playerslock.ReleaseReadLock();
-
-	BlueSystemMessage(m_session, "Dispel action done.");
-	return true;
-}
-
 bool ChatHandler::HandleShowItems(const char * args, WorldSession * m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
@@ -3118,7 +3092,10 @@ bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_s
 	}
 	else
 	{
-		SystemMessage(m_session, "Hearthstone was not compiled with collision support.");
+		SystemMessage(m_session, "This map does not have Collision enabled on it, using mapmgr height instead.");
+		float z = plr->GetMapMgr()->GetLandHeight(plr->GetPositionX(), plr->GetPositionY());
+
+		SystemMessage(m_session, "Results were: %f", z);
 		return true;
 	}
 }

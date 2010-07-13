@@ -371,6 +371,7 @@ void Player::Init()
 	m_maxTalentPoints = 0;
 	m_talentActiveSpec = 0;
 	m_talentSpecsCount = 1;
+	JudgementSpell = 0;
 
 	ok_to_remove = false;
 	trigger_on_stun = 0;

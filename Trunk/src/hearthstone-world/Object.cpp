@@ -2406,9 +2406,9 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 //========================================================================================== 
 	uint32 school = spellInfo->School;
 	float res = float(damage);
-	uint32 aproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_SPELL_LAND;
+	uint32 aproc = PROC_ON_ANY_HOSTILE_ACTION;
 	uint32 aproc2 = NULL;
-	uint32 vproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_ANY_DAMAGE_VICTIM | PROC_ON_SPELL_HIT_VICTIM;
+	uint32 vproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_ANY_DAMAGE_VICTIM;
 	uint32 vproc2 = NULL;
 	bool critical = false;
 	float dmg_reduction_pct;
@@ -2418,6 +2418,28 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 	Unit* caster = NULLUNIT;
 	if( IsUnit() )
 		caster = TO_UNIT(this);
+
+	//A school damage is not necessarily magic
+	switch( spellInfo->Spell_Dmg_Type )
+	{
+	case SPELL_DMG_TYPE_RANGED:
+		{
+			aproc |= PROC_ON_RANGED_ATTACK;
+			vproc |= PROC_ON_RANGED_ATTACK_VICTIM;
+		}break;
+
+	case SPELL_DMG_TYPE_MELEE:
+		{
+			aproc |= PROC_ON_MELEE_ATTACK;
+			vproc |= PROC_ON_MELEE_ATTACK_VICTIM;
+		}break;
+
+	case SPELL_DMG_TYPE_MAGIC:
+		{
+			aproc |= PROC_ON_SPELL_LAND;
+			vproc |= PROC_ON_SPELL_HIT_VICTIM;
+		}break;
+	}
 
 //==========================================================================================
 //==============================+Spell Damage Bonus Calculations============================

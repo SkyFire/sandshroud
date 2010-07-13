@@ -3290,7 +3290,7 @@ void ItemInterface::CheckAreaItems()
 /////////////////////////////////////////////////////////////////////////////
 // Crow: Adds an item by id, allowing for count, random prop, and if created, will send item push created, else, recieved.
 // This was supposed to be given to Arc :|
-bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, bool created )
+bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, bool created, Player* creator /* = NULL*/ )
 {
 	if( count < 1 )
 		count = 1;
@@ -3331,7 +3331,7 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 			return false;
 
 		if( it->Bonding == ITEM_BIND_ON_PICKUP )
-				item->SoulBind();
+			item->SoulBind();
 		
 		if( randomprop != 0 )
 		{
@@ -3359,6 +3359,8 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 			chr->GetSession()->SendNotification("No free slots were found in your inventory!");
 			item->DeleteMe();
 			item = NULLITEM;
+			if(creator != NULL && creator != chr) // If someone else is creating the item, its mainly for GM command though.
+				creator->GetSession()->SendNotification("No free slots were found in target's inventory!");
 		}
 	}
 	return true;

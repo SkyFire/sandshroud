@@ -44,6 +44,10 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _BattlegroundCommandTable;
 	else if(!stricmp(name, "npc"))
 		return _NPCCommandTable;
+	else if(!stricmp(name, "gm"))
+		return _gamemasterCommandTable;
+	else if(!stricmp(name, "admin"))
+		return _administratorCommandTable;
 	else if(!stricmp(name, "cheat"))
 		return _CheatCommandTable;
 	else if(!stricmp(name, "account"))
@@ -181,6 +185,8 @@ void CommandTableStorage::Dealloc()
 	free( _GameObjectCommandTable );
 	free( _BattlegroundCommandTable );
 	free( _NPCCommandTable );
+	free( _gamemasterCommandTable );
+	free( _administratorCommandTable );
 	free( _CheatCommandTable );
 	free( _accountCommandTable );
 	free( _petCommandTable );
@@ -401,6 +407,35 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(NPCCommandTable, _NPCCommandTable);
 
+	static ChatCommand GMCommandTable[] =
+	{
+		{ "list",		'1', &ChatHandler::HandleGMListCommand,		"Shows active GM's",			NULL, 0, 0, 0},
+		{ "off",		't', &ChatHandler::HandleGMOffCommand,		"Sets GM tag off",				NULL, 0, 0, 0},
+		{ "on",			't', &ChatHandler::HandleGMOnCommand,		"Sets GM tag on",				NULL, 0, 0, 0},
+		{ "announce",	'u', &ChatHandler::HandleGMAnnounceCommand,	"Announce to GM's and Admin's",	NULL, 0, 0, 0},
+		{ "allowwhispers", 'c', &ChatHandler::HandleAllowWhispersCommand, "Allows whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
+		{ "blockwhispers", 'c', &ChatHandler::HandleBlockWhispersCommand, "Blocks whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
+		{ "ticket",		'c', NULL,									"",								GMTicketCommandTable, 0, 0, 0},
+		{ NULL, 0, NULL, "", NULL, 0, 0 }
+	};
+	dupe_command_table(GMCommandTable, _gamemasterCommandTable);
+
+	static ChatCommand AdminCommandTable[] =
+	{
+		{ "announce", 'z', &ChatHandler::HandleAdminAnnounceCommand,  "Command to Announce to Admin's", NULL, 0, 0, 0},
+		{ "castall", 'z', &ChatHandler::HandleCastAllCommand, "Makes all players online cast spell <x>.", NULL, 0, 0, 0},
+		{ "playall", 'z', &ChatHandler::HandleGlobalPlaySoundCommand, "Plays a sound to the entire server.", NULL, 0, 0, 0 },
+		{ "saveall",	 'z', &ChatHandler::HandleSaveAllCommand,	   "Save's all playing characters",  NULL, 0, 0, 0},
+		{ "rehash", 'z', &ChatHandler::HandleRehashCommand, "Reloads config file.", NULL, 0, 0, 0 },
+		{ "enableauctionhouse",	'z', &ChatHandler::HandleEnableAH,		"Enables Auctionhouse",		NULL, 0, 0, 0},
+		{ "disableauctionhouse",'z', &ChatHandler::HandleDisableAH,		"Disables Auctionhouse",	NULL, 0, 0, 0},
+		{ "masssummon", 'z', &ChatHandler::HandleMassSummonCommand, "Summons all players.", NULL, 0, 0, 0},
+		{ "restart", 'z', &ChatHandler::HandleShutdownCommand, "Initiates server restart in <x> seconds.", NULL, 0, 0, 0 },
+		{ "shutdown", 'z', &ChatHandler::HandleShutdownCommand, "Initiates server shutdown in <x> seconds.", NULL, 0, 0, 0 },
+		{ NULL, 0, NULL, "", NULL, 0, 0 }
+	};
+	dupe_command_table(AdminCommandTable, _administratorCommandTable);
+
 	static ChatCommand CheatCommandTable[] =
 	{
 		{ "status",	 'm', &ChatHandler::HandleShowCheatsCommand, "Shows active cheats.",			 NULL, 0, 0, 0 },
@@ -510,13 +545,10 @@ void CommandTableStorage::Init()
 
 	static ChatCommand commandTable[] = {
 		//{ "renameguild", 'a', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.", NULL, 0, 0, 0 },
-		{ "masssummon", 'z', &ChatHandler::HandleMassSummonCommand, ".masssummon - Summons all players.", NULL, 0, 0, 0},
 		{ "commands",	'0', &ChatHandler::HandleCommandsCommand,		"Shows Commands",				 NULL, 0, 0, 0},
 		{ "help",		'0', &ChatHandler::HandleHelpCommand,			"Shows help for command",		 NULL, 0, 0, 0},
 		{ "announce",	'u', &ChatHandler::HandleAnnounceCommand,	  "Sends Msg To All",			   NULL, 0, 0, 0},
 		{ "wannounce",   'u', &ChatHandler::HandleWAnnounceCommand,	 "Sends Widescreen Msg To All",	NULL, 0, 0, 0},
-		{ "gmannounce", 'u', &ChatHandler::HandleGMAnnounceCommand,  "Announce to GM's and Admin's",	   NULL, 0, 0, 0},
-		{ "adminannounce", 'z', &ChatHandler::HandleAdminAnnounceCommand,  "Command to Announce to Admin's", NULL, 0, 0, 0},
 		{ "appear",	  'v', &ChatHandler::HandleAppearCommand,		"Teleports to x's position.",	 NULL, 0, 0, 0},
 		{ "summon",	  'v', &ChatHandler::HandleSummonCommand,		"Summons x to your position",	 NULL, 0, 0, 0},
 		{ "banchar",	 'b', &ChatHandler::HandleBanCharacterCommand,  "Bans character x with or without reason",			  NULL, 0, 0, 0},
@@ -530,14 +562,10 @@ void CommandTableStorage::Init()
 		{ "mount",	   'm', &ChatHandler::HandleMountCommand,		 "Mounts into modelid x.",		 NULL, 0, 0, 0},
 		{ "dismount",     'm', &ChatHandler::HandleDismountCommand,   "Dismounts.",                  NULL, 0, 0, 0},
 		{ "fulldismount",   'm', &ChatHandler::HandleFullDismountCommand,   "Force a player to full dismount (taxi)",  NULL, 0, 0, 0},
-		{ "gmlist",		  '0', &ChatHandler::HandleGMListCommand,		"Shows active GM's",			  NULL, 0, 0, 0},
-		{ "gmoff",	   't', &ChatHandler::HandleGMOffCommand,		 "Sets GM tag off",				NULL, 0, 0, 0},
-		{ "gmon",		't', &ChatHandler::HandleGMOnCommand,		  "Sets GM tag on",				 NULL, 0, 0, 0},
 		{ "gps",		 '0', &ChatHandler::HandleGPSCommand,		   "Shows Position",				 NULL, 0, 0, 0},
 		{ "info",		'0', &ChatHandler::HandleInfoCommand,		  "Server info",					NULL, 0, 0, 0},
 		{ "worldport",   'v', &ChatHandler::HandleWorldPortCommand,	 "",							   NULL, 0, 0, 0},
 		{ "save",		's', &ChatHandler::HandleSaveCommand,		  "Save's your character",		  NULL, 0, 0, 0},
-		{ "saveall",	 'z', &ChatHandler::HandleSaveAllCommand,	   "Save's all playing characters",  NULL, 0, 0, 0},
 		{ "start",	   'm', &ChatHandler::HandleStartCommand,		 "Teleport's you to a starting location",							   NULL, 0, 0, 0},
 		{ "additem",	 'm', &ChatHandler::HandleAddInvItemCommand,	"",							   NULL, 0, 0, 0},
 		{ "removeitem",  'm', &ChatHandler::HandleRemoveItemCommand,	"Removes item %u count %u.", NULL, 0, 0, 0 },
@@ -560,10 +588,11 @@ void CommandTableStorage::Init()
 		{ "modify",		'm', NULL,									 "",				 modifyCommandTable, 0, 0, 0},
 		{ "waypoint",	  'w', NULL,									 "",			   waypointCommandTable, 0, 0, 0},
 		{ "debug",		 'd', NULL,									 "",				  debugCommandTable, 0, 0, 0},
-		{ "gmTicket",	  'c', NULL,									 "",			   GMTicketCommandTable, 0, 0, 0},
 		{ "gobject",	   'o', NULL,									 "",			 GameObjectCommandTable, 0, 0, 0},
 		{ "battleground",  'e', NULL,									 "",		   BattlegroundCommandTable, 0, 0, 0},
 		{ "npc"		 ,  'n', NULL,									 "",					NPCCommandTable, 0, 0, 0},
+		{ "gm"		 ,  'n', NULL,									 "",					GMCommandTable, 0, 0, 0},
+		{ "admin"	 ,  'z', NULL,									 "",					AdminCommandTable, 0, 0, 0},
 		{ "cheat"	   ,  'm', NULL,									 "",				  CheatCommandTable, 0, 0, 0},
 		{ "account"	   ,  'a', NULL,									 "",				  accountCommandTable, 0, 0, 0},
 		{ "honor"	   ,  'm', NULL,									 "",				  honorCommandTable, 0, 0, 0},
@@ -584,15 +613,9 @@ void CommandTableStorage::Init()
 		{ "gotrig",		'v', &ChatHandler::HandleTriggerCommand,	   "Warps to areatrigger <id>",	  NULL, 0, 0, 0 },
 		{ "exitinstance",  'm', &ChatHandler::HandleExitInstanceCommand,  "Exits current instance, return to entry point.", NULL, 0, 0, 0 },
 		{ "reloadtable",	  'm', &ChatHandler::HandleDBReloadCommand,	  "Reloads some of the database tables", NULL, 0, 0, 0 },
-		{ "shutdown", 'z', &ChatHandler::HandleShutdownCommand, "Initiates server shutdown in <x> seconds.", NULL, 0, 0, 0 },
-		{ "restart", 'z', &ChatHandler::HandleShutdownCommand, "Initiates server restart in <x> seconds.", NULL, 0, 0, 0 },
-		{ "allowwhispers", 'c', &ChatHandler::HandleAllowWhispersCommand, "Allows whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
-		{ "blockwhispers", 'c', &ChatHandler::HandleBlockWhispersCommand, "Blocks whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "advanceallskills", 'm', &ChatHandler::HandleAdvanceAllSkillsCommand, "Advances all skills <x> points.", NULL, 0, 0, 0 },
 		{ "killbyplayer", 'f', &ChatHandler::HandleKillByPlayerCommand, "Disconnects the player with name <s>.", NULL, 0, 0, 0 },
 		{ "killbyaccount", 'f', &ChatHandler::HandleKillBySessionCommand, "Disconnects the session with account name <s>.", NULL, 0, 0, 0 },
-		{ "castall", 'z', &ChatHandler::HandleCastAllCommand, "Makes all players online cast spell <x>.", NULL, 0, 0, 0},
-		{ "dispelall", 'z', &ChatHandler::HandleDispelAllCommand, "Dispels all negative (or positive w/ 1) auras on all players.",NULL,0,0,0},
 		{ "castspell",   'd', &ChatHandler::HandleCastSpellCommand,	 ".castspell <spellid> - Casts spell on target.",  NULL, 0, 0, 0 },
 		{ "modperiod" , 'm', &ChatHandler::HandleModPeriodCommand, "Changes period of current transporter.", NULL, 0, 0, 0 },
 		{ "npcfollow", 'm', &ChatHandler::HandleNpcFollowCommand, "Sets npc to follow you", NULL, 0, 0, 0 },
@@ -600,7 +623,6 @@ void CommandTableStorage::Init()
 		{ "formationlink1", 'm', &ChatHandler::HandleFormationLink1Command, "Sets formation master.", NULL, 0, 0, 0 },
 		{ "formationlink2", 'm', &ChatHandler::HandleFormationLink2Command, "Sets formation slave with distance and angle", NULL, 0, 0, 0 },
 		{ "formationclear", 'm', &ChatHandler::HandleFormationClearCommand, "Removes formation from creature", NULL, 0, 0, 0 },
-		{ "playall", 'z', &ChatHandler::HandleGlobalPlaySoundCommand, "Plays a sound to the entire server.", NULL, 0, 0, 0 },
 		{ "addipban", 'm', &ChatHandler::HandleIPBanCommand, "Adds an address to the IP ban table: <address>/<mask> <duration>\n Mask represents a subnet mask, use /32 to ban a single ip.\nDuration should be a number followed by a character representing the calendar subdivision to use (h>hours, d>days, w>weeks, m>months, y>years, default minutes).", NULL, 0, 0, 0 },
 		{ "delipban", 'm', &ChatHandler::HandleIPUnBanCommand, "Deletes an address from the IP ban table: <address>", NULL, 0, 0, 0},
 		{ "renamechar", 'm', &ChatHandler::HandleRenameCommand, "Renames character x to y.", NULL, 0, 0, 0 },
@@ -608,8 +630,6 @@ void CommandTableStorage::Init()
 		{ "recustomizechar", 'm', &ChatHandler::HandleRecustomizeCharCommand, "Flags character x for character recustomization", NULL, 0, 0, 0 },
 		{ "getstanding", 'm', &ChatHandler::HandleGetStandingCommand, "Gets standing of faction %u.", NULL, 0, 0, 0 },
 		{ "setstanding", 'm', &ChatHandler::HandleSetStandingCommand, "Sets stanging of faction %u.", NULL, 0, 0, 0 },
-		//{ "reloadscripts", 'w', &ChatHandler::HandleReloadScriptsCommand, "Reloads GM Scripts", NULL, 0, 0, 0 },
-		{ "rehash", 'z', &ChatHandler::HandleRehashCommand, "Reloads config file.", NULL, 0, 0, 0 },
 		{ "createarenateam", 'g', &ChatHandler::HandleCreateArenaTeamCommands, "Creates arena team", NULL, 0, 0, 0 },
 		{ "whisperblock", 'g', &ChatHandler::HandleWhisperBlockCommand, "Blocks like .gmon except without the <GM> tag", NULL, 0, 0, 0 },
 		{ "logcomment" , '1' , &ChatHandler::HandleGmLogCommentCommand, "Adds a comment to the GM log for the admins to read." , NULL , 0 , 0 , 0 },
@@ -628,9 +648,6 @@ void CommandTableStorage::Init()
 		{ "multiban", 'b', &ChatHandler::HandleMultiBanCommand, "bans multiple , .multimute <reason> <player1> <player2> ...", NULL, 0, 0, 0 },
 		{ "multiaccountban", 'b', &ChatHandler::HandleMultiAccountBanCommand, "account bans multiple , .multimute <reason> <player1> <player2> ...", NULL, 0, 0, 0 },
 		{ "multikick", 'b', &ChatHandler::HandleMultiKickCommand, "kicks multiple , .multimute <reason> <player1> <player2> ...", NULL, 0, 0, 0 },
-
-		{ "enableauctionhouse",	'z', &ChatHandler::HandleEnableAH,		"Enables Auctionhouse",		NULL, 0, 0, 0},
-		{ "disableauctionhouse",'z', &ChatHandler::HandleDisableAH,		"Disables Auctionhouse",	NULL, 0, 0, 0},
 		{ NULL,		  0, NULL,										 "",							   NULL, 0, 0  }
 	};
 	dupe_command_table(commandTable, _commandTable);

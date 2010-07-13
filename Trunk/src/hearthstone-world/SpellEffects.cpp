@@ -586,10 +586,20 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				{
 					if( p_caster->HasAura(34258) )
 						p_caster->CastSpell(TO_UNIT(p_caster), 34260, true);
+
 					if((p_caster->HasAura(53696) || p_caster->HasAura(53695)))
 						p_caster->CastSpell(TO_UNIT(p_caster), 68055, true);
+
 					if( p_caster->HasAura(37186) )
 						dmg += 33;
+
+					// Damage Calculations:
+					switch(m_spellInfo->Id)
+					{
+					case 20187: // Righteousness
+						dmg += (0.32 * p_caster->GetSpellBonusDamage(unitTarget, m_spellInfo, (0.2 * p_caster->GetAP()), false, false));
+						break;
+					}
 				}
 			}break;
 
@@ -2949,10 +2959,10 @@ void Spell::SpellEffectPowerDrain(uint32 i)  // Power Drain
 	uint32 powerField = UNIT_FIELD_POWER1+m_spellInfo->EffectMiscValue[i];
 	uint32 curPower = unitTarget->GetUInt32Value(powerField);
 	uint32 amt = u_caster->GetSpellBonusDamage(unitTarget, m_spellInfo, damage, false, false);
-	
+
 	if( GetPlayerTarget() )
 		amt *= float2int32( 1 - ( ( TO_PLAYER(GetPlayerTarget())->CalcRating( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE ) * 2 ) / 100.0f ) );
-	
+
 	if(amt > curPower)
 		amt = curPower;
 
@@ -3379,7 +3389,7 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 		return;
 	}
 
-	if(!p_caster->GetItemInterface()->AddItemById(m_spellInfo->EffectItemType[i], (item_count > 1 ? item_count : 1 ), m_itemProto->RandomPropId ? m_itemProto->RandomPropId : 0, true))
+	if(!p_caster->GetItemInterface()->AddItemById(m_spellInfo->EffectItemType[i], (item_count > 1 ? item_count : 1 ), m_itemProto->RandomPropId ? m_itemProto->RandomPropId : 0, true, p_caster))
 		return;
 
 	if(skill)
@@ -6166,17 +6176,9 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				spellid = 20184;
 			else
 				spellid = 20186;
-			
+
 			switch(p_caster->Seal)
 			{
-			case 21084: //righteousness
-				{
-					p_caster->CastSpell(unitTarget, 20187, true);
-				}break;
-			case 20375: //command
-				{
-					p_caster->CastSpell(unitTarget, 20467, true);
-				}break;	
 			case 20164: //justice
 				{
 					p_caster->CastSpell(unitTarget, 53733, true); // bleh corruption spell
@@ -6189,18 +6191,10 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				{
 					p_caster->CastSpell(unitTarget, 53733, true);
 				}break;
-			case 31892: //blood		
+			default:
 				{
-					p_caster->CastSpell(unitTarget, 31898, true);
-				}break;
-			case 53720: //martyr
-				{
-					p_caster->CastSpell(unitTarget, 53726, true);
-				}break;
-			case 53736: //corruption
-			case 31801: //vengeance
-				{
-					p_caster->CastSpell(unitTarget, 31804, true);
+					if(p_caster->JudgementSpell)
+						p_caster->CastSpell(unitTarget, p_caster->JudgementSpell, true);
 				}break;
 			}
 
