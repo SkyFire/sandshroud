@@ -468,6 +468,7 @@ void Player::Init()
 	m_visibleObjects.clear();
 	mDeletedSpells.clear();
 	mSpells.clear();
+
 	for(uint32 i = 0; i < 21; i++)
 		m_WeaponSubClassDamagePct[i] = 1.0f;
 
@@ -7486,7 +7487,7 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 
 		//did we get a new instanceid?
 		if(instance_id)
-			m_instanceId=instance_id;
+			m_instanceId = instance_id;
 
 		//remove us from this map
 		if(IsInWorld())
@@ -7521,6 +7522,8 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 	m_sentTeleportPosition = v;
 	SetPosition(v);
 	ResetHeartbeatCoords();
+	if(GetItemInterface())
+		GetItemInterface()->CheckAreaItems();
 
 	z_axisposition = 0.0f;
 }

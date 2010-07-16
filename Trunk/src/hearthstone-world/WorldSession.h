@@ -290,8 +290,6 @@ public:
 	void SendSellItem(uint64 vendorguid, uint64 itemid, uint8 error);
 	void SendNotification(const char *message, ...);
 
-    void SendRefundInfo( uint64 GUID );
-
 	HEARTHSTONE_INLINE void SetInstance(uint32 Instance) { instanceId = Instance; }
 	HEARTHSTONE_INLINE uint32 GetLatency() { return _latency; }
 	HEARTHSTONE_INLINE string GetAccountName() { return _accountName; }

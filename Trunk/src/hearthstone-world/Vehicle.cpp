@@ -936,7 +936,7 @@ void WorldSession::HandleVehicleDismiss(WorldPacket & recv_data)
 	if(GetPlayer() == NULL || !GetPlayer()->m_CurrentVehicle)
 		return;
 
-	if(recv_data.rpos() != recv_data.wpos())
+	if((recv_data.rpos() != recv_data.wpos()) && (/*So we don't get disconnected due to size checks.*/recv_data.size() <= 90))
 		HandleMovementOpcodes(recv_data);
 
 	GetPlayer()->m_CurrentVehicle->RemovePassenger(GetPlayer());

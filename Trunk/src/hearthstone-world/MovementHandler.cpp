@@ -326,17 +326,18 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 	// spell cancel on movement, for now only fishing is added
 	Object* t_go = _player->m_SummonedObject;
-	uint32 mstime = mTimeStamp();
 	if (t_go)
 	{
 		if (t_go->GetEntry() == GO_FISHING_BOBBER)
 			TO_GAMEOBJECT(t_go)->EndFishing(GetPlayer(),true);
 	}
 
+	uint32 mstime = mTimeStamp();
+
 	/************************************************************************/
-	/* Make sure the packet is the correct size range.                      */
+	/* Make sure the packet is the correct size range. 77 is real number    */
 	/************************************************************************/
-	if(recv_data.size() > 80) { Disconnect(); return; }
+	if(recv_data.size() > 90) { Disconnect(); return; }
 
 	/************************************************************************/
 	/* Read Movement Data Packet                                            */

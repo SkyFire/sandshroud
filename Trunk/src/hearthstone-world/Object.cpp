@@ -41,6 +41,7 @@ Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 
 	m_uint32Values = 0;
 	m_objectUpdated = false;
+	m_isVehicle = false;
 
 	m_valuesCount = 0;
 

@@ -138,17 +138,7 @@ public:
 	void RemoveBuyBackItem(uint32 index);
 	void EmptyBuyBack();
 	bool IsEquipped(uint32 itemid);
-
 	void CheckAreaItems();
-
-
-/////////////////////////////////////////////// Refundable item stuff ////////////////////////////////////
-    void AddRefundable( uint64 GUID,  uint32 extendedcost );
-    void AddRefundable( uint64 GUID,  uint32 extendedcost, time_t buytime );
-    void AddRefundable( Item* item, uint32 extendedcost, time_t buytime );
-    void RemoveRefundable( uint64 GUID );
-    std::pair< time_t, uint32 > LookupRefundable( uint64 GUID );
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public:
 	HEARTHSTONE_INLINE bool VerifyBagSlots(int16 ContainerSlot, int16 Slot)
@@ -165,7 +155,7 @@ public:
 		return true;
 	}
 
-    bool AddItemById(uint32 itemid, uint32 count, int32 randomprop, bool created, Player* creator = NULL);
+	bool AddItemById(uint32 itemid, uint32 count, int32 randomprop, bool created, Player* creator = NULL);
 
 	HEARTHSTONE_INLINE bool VerifyBagSlotsWithBank(int16 ContainerSlot, int16 Slot)
 	{

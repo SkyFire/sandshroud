@@ -1003,6 +1003,8 @@ void WorldSession::FullLogin(Player* plr)
 	else
 		delete titansgrip;
 
+	if(plr->GetItemInterface())
+		plr->GetItemInterface()->CheckAreaItems();
 	objmgr.AddPlayer(plr);
 }
 
