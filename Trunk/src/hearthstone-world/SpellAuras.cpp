@@ -3856,18 +3856,6 @@ void Aura::SpellAuraModStun(bool apply)
 void Aura::SpellAuraModDamageDone(bool apply)
 {
 	int32 val = 0;
-
-	if( m_spellProto->NameHash == SPELL_HASH_DIVINE_SPIRIT ||
-		m_spellProto->NameHash == SPELL_HASH_PRAYER_OF_SPIRIT )
-	{
-		Unit * m_caster = GetUnitCaster();
-		if( m_caster != NULL && m_caster->HasDummyAura(SPELL_HASH_IMPROVED_DIVINE_SPIRIT) )
-		{
-			val += m_spellProto->EffectBasePoints[0] / m_caster->GetDummyAura(SPELL_HASH_IMPROVED_DIVINE_SPIRIT)->RankNumber == 1 ? 2 : 1;
-			if( !apply ) val = -val;
-		}
-	}
-
 	if( m_target->IsPlayer() )
 	{
 		uint32 index;
@@ -8810,18 +8798,6 @@ void Aura::SpellAuraAddFlatModifier(bool apply)
 void Aura::SpellAuraModHealingDone(bool apply)
 {
 	int32 val = 0;
-
-	if( m_spellProto->NameHash == SPELL_HASH_DIVINE_SPIRIT ||
-		m_spellProto->NameHash == SPELL_HASH_PRAYER_OF_SPIRIT )
-	{
-		Unit * m_caster = GetUnitCaster();
-		if( m_caster != NULL && m_caster->HasDummyAura(SPELL_HASH_IMPROVED_DIVINE_SPIRIT) )
-		{
-			val += m_spellProto->EffectBasePoints[0] / m_caster->GetDummyAura(SPELL_HASH_IMPROVED_DIVINE_SPIRIT)->RankNumber == 1 ? 2 : 1;
-			if( !apply ) val = -val;
-		}
-	}
-
 	if(apply)
 	{
 		val += mod->m_amount;

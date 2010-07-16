@@ -6882,11 +6882,6 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 
 		if( TotemSpell->NameHash == SPELL_HASH_TOTEM_OF_WRATH )
 			pTotem->CastSpell(pTotem, dbcSpell.LookupEntry(30708), true);
-		else if( TotemSpell->NameHash == SPELL_HASH_FIRE_NOVA_TOTEM )
-		{
-			if( p_caster->HasDummyAura(SPELL_HASH_IMPROVED_FIRE_NOVA_TOTEM) && Rand(p_caster->GetDummyAura(SPELL_HASH_IMPROVED_FIRE_NOVA_TOTEM)->RankNumber * 50) )
-				sEventMgr.AddEvent( TO_UNIT(pTotem), &Unit::EventCastSpell, TO_UNIT(pTotem), dbcSpell.LookupEntry(51880), EVENT_AURA_PERIODIC_TRIGGERSPELL, 4000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
-		}	
 	}
 	else
 	{
