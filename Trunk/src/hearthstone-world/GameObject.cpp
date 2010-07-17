@@ -802,17 +802,21 @@ uint8 GameObject::GetState()
 //Destructable Buildings
 void GameObject::TakeDamage(uint32 amount, Object* mcaster, Object* pcaster, uint32 spellid)
 {
+	printf("Gameobject Target Found\n");
 	if(pInfo->Type != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
+		return;
+
+	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED)) // Already destroyed
 		return;
 
 	if(Health > amount)
 		Health -= amount;
-	else if(Health < amount)
+	else
 		Health = 0;
 
 	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && !HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED))
 	{
-		if(Health <= 0)
+		if(Health == 0)
 		{
 			RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
 			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED);
@@ -838,6 +842,11 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Object* pcaster, uin
 
 	WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
 	data << mcaster->GetNewGUID() << pcaster->GetNewGUID();
+	if(pcaster->IsPlayer() && TO_PLAYER(pcaster)->m_CurrentVehicle)
+		data << TO_PLAYER(pcaster)->m_CurrentVehicle->GetNewGUID();
+	else
+		data << uint8(0);
+
 	data << uint32(amount) << spellid;
 	mcaster->SendMessageToSet(&data, (mcaster->IsPlayer() ? true : false));
 }

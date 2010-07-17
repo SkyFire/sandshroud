@@ -80,30 +80,30 @@ class StrandOfTheAncients;
 #define TO_LOOTROLL(ptr) ((LootRoll*)ptr)
 #define TO_VEHICLE(ptr) ((Vehicle*)ptr)
 #define TO_WEATHER(ptr) ((WeatherInfo*)ptr)
-#define NULLPTR 0
-#define NULLGOB 0
-#define NULLPLR 0
-#define NULLOBJ 0
-#define NULLUNIT 0
-#define NULLPET 0
-#define NULLITEM 0
-#define NULLDYN 0
-#define NULLCREATURE 0
-#define NULLVEHICLE 0
-#define NULLCORPSE 0
-#define NULLTRANSPORT 0
-#define NULLEVENTABLEOBJECT 0
-#define NULLCONTAINER 0
-#define NULLMAPMGR 0
-#define NULLBGMGR 0
-#define NULLBATTLEGROUND 0
-#define NULLWEATHER 0
-#define NULLWORLD 0
-#define NULLINSTANCEMGR 0
-#define NULLAURA 0
-#define NULLROLL 0
-#define NULLMAPMGR 0
-#define NULLSPELL 0
+
+#define NULLPTR NULL
+#define NULLGOB NULL
+#define NULLPLR NULL
+#define NULLOBJ NULL
+#define NULLUNIT NULL
+#define NULLPET NULL
+#define NULLITEM NULL
+#define NULLDYN NULL
+#define NULLCREATURE NULL
+#define NULLVEHICLE NULL
+#define NULLCORPSE NULL
+#define NULLTRANSPORT NULL
+#define NULLEVENTABLEOBJECT NULL
+#define NULLCONTAINER NULL
+#define NULLBATTLEGROUND NULL
+#define NULLWEATHER NULL
+#define NULLAURA NULL
+#define NULLSPELL NULL
+#define NULLROLL NULL
+#define NULLBGMGR NULL
+#define NULLWORLD NULL
+#define NULLMAPMGR NULL
+#define NULLINSTANCEMGR NULL
 
 SERVER_DECL extern Database* Database_Character;
 SERVER_DECL extern Database* Database_World;

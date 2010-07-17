@@ -264,7 +264,7 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 	m_ForceConsumption = false;
 	pSpellId = 0;
 	m_cancelled = false;
-	ProcedOnSpell = 0;
+	ProcedOnSpell = NULL;
 	forced_basepoints[0] = forced_basepoints[1] = forced_basepoints[2] = 0;
 	extra_cast_number = 0;
 	m_glyphIndex = 0;
@@ -333,15 +333,16 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 	//uint8 did_hit_result;
 	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
-		// don't add objects that are not units and that are dead
-		if( !( (*itr)->IsUnit() ) || ! TO_UNIT( *itr )->isAlive())
+		// don't add objects that are units and dead
+		if( (*itr)->IsUnit() && (!(TO_UNIT( *itr )->isAlive())))
 			continue;
-		
+
 		//TO_UNIT(*itr)->InStealth()
 		if( m_spellInfo->TargetCreatureType)
 		{
-			if((*itr)->GetTypeId()!= TYPEID_UNIT)
+			if((*itr)->GetTypeId() != TYPEID_UNIT)
 				continue;
+
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
 			if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
 				continue;
@@ -349,21 +350,39 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 
 		if(IsInrange(srcx,srcy,srcz,(*itr),r))
 		{
-			if( u_caster != NULL )
+			if( v_caster != NULL ) // Vehicles can destroy gameobjects
 			{
-				if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+				if( (*itr)->IsUnit() )
 				{
-					_AddTarget((TO_UNIT(*itr)), i);
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					{
+						_AddTarget((TO_UNIT(*itr)), i);
+					}
 				}
-
+				else if((*itr)->IsGameObject())
+				{
+					_AddTargetForced((*itr)->GetGUID(), i);
+				}
+			}
+			else if( u_caster != NULL )
+			{
+				if( (*itr)->IsUnit() )
+				{
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					{
+						_AddTarget((TO_UNIT(*itr)), i);
+					}
+				}
 			}
 			else //cast from GO
 			{
 				if(g_caster && g_caster->GetUInt32Value(OBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
 				{
-					//trap, check not to attack owner and friendly
-					if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
-						_AddTarget((TO_UNIT(*itr)), i);
+					if((*itr)->IsUnit())
+					{	//trap, check not to attack owner and friendly
+						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+							_AddTarget((TO_UNIT(*itr)), i);
+					}
 				}
 				else
 					_AddTargetForced((*itr)->GetGUID(), i);
@@ -1491,10 +1510,10 @@ void Spell::cast(bool check)
 		}
 
 		// if the spell is not reflected
-		SpellTargetList::iterator itr = m_targetList.begin();
 		uint32 x;
 		bool effects_done[3];
-		effects_done[0]=effects_done[1]=effects_done[2] = false;
+		SpellTargetList::iterator itr = m_targetList.begin();
+		effects_done[0] = effects_done[1] = effects_done[2] = false;
 
 		for(; itr != m_targetList.end(); itr++)
 		{
@@ -1507,25 +1526,19 @@ void Spell::cast(bool check)
 			// call effect handlers
 			for( x = 0; x < 3; ++x )
 			{
-				switch (m_spellInfo->Effect[x])
+				//Don't handle effect now
+				if(m_spellInfo->Effect[x] == SPELL_EFFECT_SUMMON)
 				{
-					//Don't handle effect now
-					case SPELL_EFFECT_SUMMON:
-					{
-						effects_done[x] = false;
-						continue;
-					}break;
-
-					default:
-					{
-						if(itr->EffectMask & (1 << x))
-						{
-							HandleEffects(x);
-							effects_done[x] = true;
-						}
-					}break;
+					effects_done[x] = false;
+					continue;
+				}
+				else if(itr->EffectMask & (1 << x))
+				{
+					HandleEffects(x);
+					effects_done[x] = true;
 				}
 			}
+
 			// handle the rest of shit
 			if( unitTarget != NULL )
 			{
@@ -2811,31 +2824,32 @@ void Spell::_SetTargets(const uint64& guid)
 		else
 		{
 			unitTarget = NULLUNIT;
+			MapMgr* mgr = m_caster->GetMapMgr();
 			switch(GET_TYPE_FROM_GUID(guid))
 			{
 			case HIGHGUID_TYPE_VEHICLE:
-				unitTarget = m_caster->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
+				unitTarget = mgr->GetVehicle(GET_LOWGUID_PART(guid));
 				break;
 			case HIGHGUID_TYPE_UNIT:
-				unitTarget = m_caster->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
+				unitTarget = mgr->GetCreature(GET_LOWGUID_PART(guid));
 				break;
 			case HIGHGUID_TYPE_PET:
-				unitTarget = m_caster->GetMapMgr()->GetPet(GET_LOWGUID_PART(guid));
+				unitTarget = mgr->GetPet(GET_LOWGUID_PART(guid));
 				break;
 			case HIGHGUID_TYPE_PLAYER:
 				{
-					unitTarget =  m_caster->GetMapMgr()->GetPlayer((uint32)guid);
+					unitTarget = mgr->GetPlayer((uint32)guid);
 					playerTarget = TO_PLAYER(unitTarget);
 				}break;
-			case HIGHGUID_TYPE_ITEM:
-				if( p_caster != NULL )
-					itemTarget = p_caster->GetItemInterface()->GetItemByGUID(guid);
-				break;
 			case HIGHGUID_TYPE_GAMEOBJECT:
-				gameObjTarget = m_caster->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
+				gameObjTarget = mgr->GetGameObject(GET_LOWGUID_PART(guid));
 				break;
 			case HIGHGUID_TYPE_CORPSE:
 				corpseTarget = objmgr.GetCorpse((uint32)guid);
+				break;
+			case HIGHGUID_TYPE_ITEM:
+				if( p_caster != NULL )
+					itemTarget = p_caster->GetItemInterface()->GetItemByGUID(guid);
 				break;
 			}
 		}
@@ -5251,7 +5265,6 @@ void Spell::_AddTarget(const Unit* target, const uint32 effectid)
 void Spell::_AddTargetForced(const uint64& guid, const uint32 effectid)
 {
 	SpellTargetList::iterator itr;
-	SpellTarget tgt;
 
 	// look for the target in the list already
 	for( itr = m_targetList.begin(); itr != m_targetList.end(); itr++ )
@@ -5265,6 +5278,7 @@ void Spell::_AddTargetForced(const uint64& guid, const uint32 effectid)
 	}
 
 	// setup struct
+	SpellTarget tgt;
 	tgt.Guid = guid;
 	tgt.EffectMask = (1 << effectid);
 	tgt.HitResult = SPELL_DID_HIT_SUCCESS;

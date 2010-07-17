@@ -406,7 +406,6 @@ bool Master::Run(int argc, char ** argv)
 			Sleep( 100 );
 	}
 
-
 	Log.Notice( "CharacterLoaderThread", "Exiting..." );
 	sCLT.Terminate();
 
@@ -442,12 +441,13 @@ bool Master::Run(int argc, char ** argv)
 #endif
 	sSocketMgr.CloseAll();
 
-	Log.Notice("AddonMgr", "~AddonMgr()");
 	sAddonMgr.SaveToDB();
+	Log.Notice("AddonMgr", "~AddonMgr()");
 	delete AddonMgr::getSingletonPtr();
 
 	Log.Notice("AuctionMgr", "~AuctionMgr()");
 	delete AuctionMgr::getSingletonPtr();
+
 	Log.Notice("LootMgr", "~LootMgr()");
 	delete LootMgr::getSingletonPtr();
 
@@ -460,13 +460,13 @@ bool Master::Run(int argc, char ** argv)
 	delete ls;
 #endif
 
-	sLog.outString( "" );
-
+	Log.Notice("LogonComm", "~LogonCommHandler()");
 	delete LogonCommHandler::getSingletonPtr();
 
 	Log.Notice( "World", "~World()" );
 	delete World::getSingletonPtr();
 
+	Log.Notice( "ScriptMgr", "~ScriptMgr()" );
 	sScriptMgr.UnloadScripts();
 	delete ScriptMgr::getSingletonPtr();
 

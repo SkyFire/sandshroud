@@ -28,11 +28,9 @@ SERVER_DECL InstanceMgr sInstanceMgr;
 
 InstanceMgr::InstanceMgr()
 {
-	memset(m_maps, 0, sizeof(Map*)* NUM_MAPS);
-	memset(m_instances, 0, sizeof(InstanceMap*) * NUM_MAPS);
-
-	for(uint32 i = 0; i < NUM_MAPS; i++)
-		m_singleMaps[i] = NULLMAPMGR;
+	memset(m_maps, NULL, sizeof(Map*)* NUM_MAPS);
+	memset(m_instances, NULLINSTANCEMGR, sizeof(InstanceMap*) * NUM_MAPS);
+	memset(m_singleMaps, NULLMAPMGR, sizeof(MapMgr*) * NUM_MAPS);
 }
 
 void InstanceMgr::Load(TaskList * l)

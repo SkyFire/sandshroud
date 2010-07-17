@@ -3362,6 +3362,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->procFlags	=	PROC_ON_MELEE_ATTACK;
 			sp->procflags2	=	PROC_TARGET_SELF;
 			sp->EffectTriggerSpell[0]	=	sp->EffectTriggerSpell[1];
+//			sp->Unique = true; // Crow: It should be, but what if we have 2 warriors?
 		}break;
 
 		// warrior - overpower 
@@ -4530,13 +4531,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectImplicitTargetA[1] = 1;
 			sp->EffectBasePoints[1] = 15;
 		}break;
-	
-		// Righteous Vengeance (3.1 reduced to 3 ranks only just need remove 2 last cases)
+
+		// Righteous Vengeance
 	case 53380:
 	case 53381:
 	case 53382:
-	case 53383:
-	case 53384:
 		{
 			sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
 			sp->EffectTriggerSpell[0] = 61840;
@@ -4553,6 +4552,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectTriggerSpell[1]	=	54203;
 			sp->procflags2	=	PROC_ON_SPELL_CRIT_HIT;
 		}break;
+
 	case 54203:
 		{
 			sp->logsId = sp->Id;

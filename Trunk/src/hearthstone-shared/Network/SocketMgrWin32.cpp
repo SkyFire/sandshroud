@@ -135,7 +135,7 @@ void SocketMgr::ShutdownThreads()
 	GetSystemInfo(&si);
 
 	uint8 threadcnt = uint8(si.dwNumberOfProcessors*2);
-	for(int i = 0; i < threadcnt; ++i)
+	for(int i = 0; i < threadcnt; i++)
 	{
 		OverlappedStruct * ov = NULL;
 		ov = new OverlappedStruct(SOCKET_IO_THREAD_SHUTDOWN);

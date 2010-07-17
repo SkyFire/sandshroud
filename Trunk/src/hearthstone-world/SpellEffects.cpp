@@ -178,18 +178,18 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectNULL,						// unknown - 150 unused
 	&Spell::SpellEffectTriggerSpell,				// 151 SPELL_EFFECT_TRIGGER_SPELL_2
 	&Spell::SpellEffectNULL,						// unknown - 152
-	&Spell::SpellEffectNULL,						// unknown - 153 // SPELL_EFFECT_CREATE_PET  misc value is creature entry
-	&Spell::SpellEffectNULL,						//154 unused
+	&Spell::SpellEffectCreatePet,					// 153 SPELL_EFFECT_CREATE_PET
+	&Spell::SpellEffectNULL,						// 154 unused
 	&Spell::SpellEffectTitanGrip,					// Titan's Grip - 155
-	&Spell::SpellEffectAddPrismaticSocket,			//156 Add Socket
-	&Spell::SpellEffectCreateRandomItem,			//157 create/learn random item/spell for profession
-	&Spell::SpellEffectMilling,						//158 milling
-	&Spell::SpellEffectNULL,						//159 allow rename pet once again
-	&Spell::SpellEffectNULL,						//160
-	&Spell::SpellEffectSetTalentSpecsCount,			//161 Sets number of talent specs available to the player
-	&Spell::SpellEffectActivateTalentSpec,			//162 Activates one of talent specs
-	&Spell::SpellEffectNULL,						//163
-	&Spell::SpellEffectNULL,						//164
+	&Spell::SpellEffectAddPrismaticSocket,			// 156 Add Socket
+	&Spell::SpellEffectCreateRandomItem,			// 157 create/learn random item/spell for profession
+	&Spell::SpellEffectMilling,						// 158 milling
+	&Spell::SpellEffectNULL,						// 159 allow rename pet once again
+	&Spell::SpellEffectNULL,						// 160
+	&Spell::SpellEffectSetTalentSpecsCount,			// 161 Sets number of talent specs available to the player
+	&Spell::SpellEffectActivateTalentSpec,			// 162 Activates one of talent specs
+	&Spell::SpellEffectNULL,						// 163
+	&Spell::SpellEffectNULL,						// 164
 };
 
 void Spell::SpellEffectNULL(uint32 i)
@@ -597,7 +597,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					switch(m_spellInfo->Id)
 					{
 					case 20187: // Righteousness
-						dmg += (0.32 * p_caster->GetSpellBonusDamage(unitTarget, m_spellInfo, (0.2 * p_caster->GetAP()), false, false));
+						dmg += 1+((0.2 * p_caster->GetAP())+(0.32 * p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					}
 				}
@@ -958,12 +958,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		case 45150:								// Meteor Slash
 		case 64422:	case 64688:					// Sonic Screech
 			{
-				uint32 count = 0;
-				for(SpellTargetList::iterator itr = m_targetList.begin(); itr != m_targetList.end(); itr++)
-					if(itr->EffectMask & (1<<i))
-						++count;
-
-				dmg /= count;					// divide to all targets
+				dmg /= m_hitTargetCount;					// divide to all targets
 			}break;
 			
 			// Cataclysmic Bolt
@@ -5399,9 +5394,7 @@ void Spell::SpellEffectTameCreature(uint32 i)
 	pPet->SetInstanceID(p_caster->GetInstanceID());
 	pPet->SetPosition(p_caster->GetPosition(), true);
 	pPet->CreateAsSummon(tame->GetEntry(), tame->GetCreatureInfo(), tame, p_caster, NULL, 2, 0);
-	pPet->AddToWorld();
-
-	tame->Despawn(0, tame->GetRespawnTime());
+	tame->Despawn(1, tame->GetRespawnTime());
 }
 
 void Spell::SpellEffectSummonPet(uint32 i) //summon - pet
@@ -8260,10 +8253,39 @@ void Spell::SpellEffectMilling(uint32 i)
 	}
 }
 
+// Spells: 46716-46730
+void Spell::SpellEffectCreatePet(uint32 i)
+{
+	if( !playerTarget )
+		return;
+
+	if( playerTarget->getClass() != HUNTER )
+		return;
+
+	if( playerTarget->GetSummon() )
+		playerTarget->GetSummon()->Remove( true, true, true );
+
+	CreatureInfo *ci = CreatureNameStorage.LookupEntry( GetSpellProto()->EffectMiscValue[i] );
+	if( ci != NULL )
+	{
+		Pet *pPet = objmgr.CreatePet();
+		if(pPet != NULL)
+		{
+			pPet->CreateAsSummon( GetSpellProto()->EffectMiscValue[i], ci, NULL, playerTarget, GetSpellProto(), 2, 0 );
+			if(!pPet->IsInWorld())
+			{
+				delete pPet;
+				pPet = NULL;
+			}
+		}
+	}
+}
+
 void Spell::SpellEffectTitanGrip(uint32 i)
 {
 	if (playerTarget == NULL)
 		return;
+
 	playerTarget->titanGrip = true;
 }
 
