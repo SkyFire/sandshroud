@@ -1618,6 +1618,11 @@ void ObjectMgr::LoadTrainers()
 		if(!trainer_info)
 		{
 			Log.Warning("Trainers", "NPC id for Trainer %u does not exist, skipping.", entry);
+			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+			{
+				WorldDatabase.Execute("DELETE FROM trainer_defs where entry='%u'",entry);
+				WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u'",entry);
+			}
 			continue;
 		}
 
@@ -2099,6 +2104,9 @@ void ObjectMgr::LoadCreatureWaypoints()
 		if(!wpid)
 		{
 			Log.Warning("Waypoints","Waypoint can't be 0, counting starts at 1 (spawn %u)", spawnid);
+			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid = '%u';", spawnid);
+
 			skipid = spawnid;
 			continue;
 		}
@@ -2138,6 +2146,9 @@ void ObjectMgr::LoadCreatureWaypoints()
 			if(wp->id > 1)
 			{
 				Log.Warning("Waypoints","Waypoint id's can't start above 1 (spawn %u)", spawnid);
+				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+					WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid = '%u';", spawnid);
+
 				if(spawnid)
 					skipid = spawnid;
 				delete wp;
@@ -2156,6 +2167,9 @@ void ObjectMgr::LoadCreatureWaypoints()
 			if(i->second->size() < wp->id)
 			{
 				Log.Warning("Waypoints","Waypoint id's are not continuous, skipping spawn (spawn %u)", spawnid);
+				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+					WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid = '%u';", spawnid);
+
 				delete i->second;
 				m_waypoints.erase(spawnid);
 				skipid = spawnid;

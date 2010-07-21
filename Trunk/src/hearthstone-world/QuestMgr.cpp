@@ -1996,13 +1996,21 @@ void QuestMgr::LoadExtraQuestStuff()
 
 			qst = QuestStorage.LookupEntry(quest);
 			if(!qst)
-				Log.Warning("QuestMgr","Tried to add starter to npc %d for non-existant quest %d.", creature, quest);
-			else 
+			{
+				Log.Warning("QuestMgr","Tried to add starter to npc %u for non-existant quest %u.", creature, quest);
+				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				{
+					WorldDatabase.Execute("DELETE FROM creature_quest_starter where quest = '%u'", quest);
+				}
+				total--;
+			}
+			else
 				_AddQuest<Creature>(creature, qst, 1);  // 1 = starter
+
 		} while(pResult->NextRow());
 		delete pResult;
-		Log.Notice("QuestMgr","Marked %u creatures as quest starter", total);
 	}
+	Log.Notice("QuestMgr","Marked %u creatures as quest starter", total);
 
 	pResult = WorldDatabase.Query("SELECT * FROM creature_quest_finisher");
 	pos = total = 0;
@@ -2017,13 +2025,21 @@ void QuestMgr::LoadExtraQuestStuff()
 
 			qst = QuestStorage.LookupEntry(quest);
 			if(!qst)
+			{
 				Log.Warning("QuestMgr","Tried to add finisher to npc %d for non-existant quest %d.", creature, quest);
-			else 
-				_AddQuest<Creature>(creature, qst, 2);  // 1 = starter
+				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				{
+					WorldDatabase.Execute("DELETE FROM creature_quest_finisher where quest = '%u'", quest);
+				}
+				total--;
+			}
+			else
+				_AddQuest<Creature>(creature, qst, 2);  // 2 = starter
+
 		} while(pResult->NextRow());
 		delete pResult;
-		Log.Notice("QuestMgr","Marked %u creatures as quest finisher", total);
 	}
+	Log.Notice("QuestMgr","Marked %u creatures as quest finisher", total);
 
 	pResult = WorldDatabase.Query("SELECT * FROM gameobject_quest_starter");
 	pos = total = 0;
@@ -2038,9 +2054,17 @@ void QuestMgr::LoadExtraQuestStuff()
 
 			qst = QuestStorage.LookupEntry(quest);
 			if(!qst)
-				Log.Warning("QuestMgr","Tried to add starter to go %d for non-existant quest %d.\n", creature, quest);
+			{
+				Log.Warning("QuestMgr","Tried to add starter to go %d for non-existant quest %d.", creature, quest);
+				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				{
+					WorldDatabase.Execute("DELETE FROM gameobject_quest_starter where quest = '%u'", quest);
+				}
+				total--;
+			}
 			else
 				_AddQuest<GameObject>(creature, qst, 1);  // 1 = starter
+
 		} while(pResult->NextRow());
 		delete pResult;
 		Log.Notice("QuestMgr","Marked %u gameobjects as quest starter", total);
@@ -2059,9 +2083,17 @@ void QuestMgr::LoadExtraQuestStuff()
 
 			qst = QuestStorage.LookupEntry(quest);
 			if(!qst)
+			{
 				Log.Warning("QuestMgr","Tried to add finisher to go %d for non-existant quest %d.\n", creature, quest);
-			else 
+				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				{
+					WorldDatabase.Execute("DELETE FROM gameobject_quest_finisher where quest = '%u'", quest);
+				}
+				total--;
+			}
+			else
 				_AddQuest<GameObject>(creature, qst, 2);  // 2 = finish
+
 		} while(pResult->NextRow());
 		delete pResult;
 		Log.Notice("QuestMgr","Marked %u gameobjects as quest finisher", total);
@@ -2084,9 +2116,17 @@ void QuestMgr::LoadExtraQuestStuff()
 
 			qst = QuestStorage.LookupEntry(quest);
 			if(!qst)
-				Log.Warning("QuestMgr","Tried to add association to item %d for non-existant quest %d.\n", item, quest);
-			else 
+			{
+				Log.Warning("QuestMgr","Tried to add association to item %d for non-existant quest %d.", item, quest);
+				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				{
+					WorldDatabase.Execute("DELETE FROM item_quest_association where quest = '%u'", quest);
+				}
+				total--;
+			}
+			else
 				AddItemQuestAssociation( item, qst, item_count );
+
 		} while( pResult->NextRow() );
 		delete pResult;
 		Log.Notice("QuestMgr","Loaded %u item-quest associations", total);
@@ -2100,25 +2140,29 @@ bool QuestMgr::SkippedKills( uint32 QuestID )
 {
 	switch(QuestID)
 	{
-		case 6061:
-		case 6062:
-		case 6063:
-		case 6064:
-		case 6082:
-		case 6083:
-		case 6084:
-		case 6085:
-		case 6087:
-		case 6088:
-		case 6101:
-		case 6102:
-		case 9484:
-		case 9485:
-		case 9486:
-		case 9591:
-		case 9592:
-		case 9593:
-			return true;
+	case 6061:
+	case 6062:
+	case 6063:
+	case 6064:
+	case 6082:
+	case 6083:
+	case 6084:
+	case 6085:
+	case 6087:
+	case 6088:
+	case 6101:
+	case 6102:
+	case 9484:
+	case 9485:
+	case 9486:
+	case 9591:
+	case 9592:
+	case 9593:
+		return true;
+		break;
+
+	default:
+		return false;
+		break;
 	}
-	return false;
 }

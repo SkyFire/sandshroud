@@ -265,6 +265,24 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 		Log.Error("LootMgr", "Loading loot from table %s failed.", szTableName);
 		return;
 	}
+
+	bool multidifficulty = false;
+	if(szTableName == CREATURE_LOOT || szTableName == OBJECT_LOOT
+		|| szTableName == CREATURE_LOOT_GATHERING) // We have multiple difficulties.
+	{
+		multidifficulty = true;
+		if(result->GetFieldCount() != 9)
+		{
+			Log.Error("LootMgr", "Incorrect structure in table %s, loot loading has been cancled to prevent a crash.", szTableName);
+			return;
+		}
+	}
+	else if(result->GetFieldCount() != 6)
+	{
+		Log.Error("LootMgr", "Incorrect structure in table %s, loot loading has been cancled to prevent a crash.", szTableName);
+		return;
+	}
+
 	uint32 entry_id = 0;
 	uint32 last_entry = 0;
 
@@ -279,7 +297,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 		entry_id = fields[0].GetUInt32();
 		if(entry_id < last_entry)
 		{
-			Log.Error("LootMgr", "WARNING: Out of order loot table being loaded.\n");
+			Log.Error("LootMgr", "WARNING: Out of order loot table being loaded.");
 			delete result;
 			return;
 		}
@@ -290,8 +308,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 			ttab.clear();
 		}
 
-		if(szTableName == CREATURE_LOOT || szTableName == OBJECT_LOOT
-			|| szTableName == CREATURE_LOOT_GATHERING) // We have multiple difficulties.
+		if(multidifficulty) // We have multiple difficulties.
 		{
 			t.itemid = fields[1].GetUInt32();
 			for(int i = 0; i < 4; i++)
@@ -304,11 +321,11 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 		{
 			t.itemid = fields[1].GetUInt32();
 			t.chance[0] = fields[2].GetFloat();
-			for(int i = 1; i < 4; i++) // Other difficulties.
-				t.chance[i] = 0.0f;
 			t.mincount = fields[3].GetUInt32();
 			t.maxcount = fields[4].GetUInt32();
 			t.ffa_loot = fields[5].GetUInt32();
+			for(int i = 1; i < 4; i++) // Other difficulties.
+				t.chance[i] = 0.0f;
 		}
 
 		ttab.push_back( t );
@@ -335,7 +352,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 			//list.count = itr->second.size();			
 			list->count = (uint32)(*itr).second.size();
 			list->items = new StoreLootItem[list->count];
-		
+
 			uint32 ind = 0;
 			//for(std::vector<loot_tb>::iterator itr2=itr->second.begin();itr2!=itr->second.end();itr2++)
 			for(vector< tempy >::iterator itr2 = (*itr).second.begin(); itr2 != (*itr).second.end(); itr2++)
@@ -382,7 +399,6 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 	}
 
 	Log.Notice("LootMgr","%d loot templates loaded from %s", db_cache.size(), szTableName);
-//	loot_db.clear();
 	delete result;
 }
 
