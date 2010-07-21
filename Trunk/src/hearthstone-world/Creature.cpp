@@ -305,20 +305,25 @@ void Creature::GenerateLoot()
 		m_loot.gold = int32(float(m_loot.gold) * sWorld.getRate(RATE_MONEY));
 }
 
-void Creature::SaveToDB()
+void Creature::SaveToDB(bool saveposition /*= false*/)
 {
 	if(!spawnid)
 		spawnid = objmgr.GenerateCreatureSpawnID();
-	 
+
+	float savex = (!saveposition && (m_spawn != NULL)) ? m_spawn->x : m_position.x;
+	float savey = (!saveposition && (m_spawn != NULL)) ? m_spawn->y : m_position.y;
+	float savez = (!saveposition && (m_spawn != NULL)) ? m_spawn->z : m_position.z;
+	float saveo = (!saveposition && (m_spawn != NULL)) ? m_spawn->o : m_position.o;
+
 	std::stringstream ss;
 	ss << "REPLACE INTO creature_spawns VALUES("
 		<< spawnid << ","
 		<< GetEntry() << ","
 		<< GetMapId() << ","
-		<< m_position.x << ","
-		<< m_position.y << ","
-		<< m_position.z << ","
-		<< m_position.o << ","
+		<< savex << ","
+		<< savey << ","
+		<< savez << ","
+		<< saveo << ","
 		<< m_aiInterface->getMoveType() << ","
 		<< 0 << "," //Uses random display from proto. Setting a displayid manualy will override proto lookup
 		<< m_uint32Values[UNIT_FIELD_FACTIONTEMPLATE] << ","
@@ -334,8 +339,14 @@ void Creature::SaveToDB()
 	else
 		ss << "0,0,0,";
 
-	ss << uint32(GetStandState()) << "," << ( m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID ) << "," << m_phaseMode << ",";
-	ss << (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ")";
+	ss << uint32(GetStandState()) << ","
+		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
+		<< m_phaseMode << ","
+		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ")";
+
 	WorldDatabase.Execute(ss.str().c_str());
 }
 
@@ -971,9 +982,11 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME,proto->RangedAttackTime);
 	SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,proto->RangedMinDamage);
 	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,proto->RangedMaxDamage);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, proto->Item1);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, proto->Item2);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_2, proto->Item3);
+
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, spawn->ItemSlot1);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, spawn->ItemSlot2);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_2, spawn->ItemSlot3);
+
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, spawn->factionid);
 	SetUInt32Value(UNIT_FIELD_FLAGS, spawn->flags);
 	SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, proto->BoundingRadius);

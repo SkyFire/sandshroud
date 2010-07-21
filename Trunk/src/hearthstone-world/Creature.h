@@ -107,7 +107,7 @@ struct CreatureInfo
 		uint32 r = RandomUInt(max ? max - 1 : 0);
 		*dest = modelchoices[r];
 
-		if( *dest == Male_DisplayID  || *dest == Male_DisplayID2 )
+		if( *dest == Male_DisplayID || *dest == Male_DisplayID2 )
 			return 0;
 
 		return 1;
@@ -519,7 +519,7 @@ public:
 	uint32 GetOldEmote() { return m_oldEmote; }
 
 	// Serialization
-	void SaveToDB();
+	void SaveToDB(bool saveposition = false);
 	void SaveToFile(std::stringstream & name);
 	//bool LoadFromDB(uint32 guid);
 	//bool LoadFromDB(CreatureTemplate *t);

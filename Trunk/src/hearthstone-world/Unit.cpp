@@ -5702,7 +5702,11 @@ void Unit::RemoveFromWorld(bool free_guid)
 
 	if( m_CurrentVehicle )
 	{
-		m_CurrentVehicle->RemovePassenger( TO_UNIT(this) );
+		if(IsPlayer())
+			m_CurrentVehicle->RemovePassenger(this);
+		else
+			m_CurrentVehicle->DeletePassengerData(this);
+
 		m_CurrentVehicle = NULLVEHICLE;
 	}
 
@@ -7221,9 +7225,9 @@ void Unit::SetPowerType(uint8 type)
 }
 
 //	custom functions for scripting
-void Unit::SetWeaponDisplayId(uint8 slot, uint32 displayId)
+void Unit::SetWeaponDisplayId(uint8 slot, uint32 ItemId)
 {
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+slot, displayId);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+slot, ItemId);
 }
 
 bool Unit::IsFFAPvPFlagged()
@@ -7289,4 +7293,15 @@ void Unit::RemoveBeacons()
 	//reset this fucker
 	BeaconCaster = NULLUNIT;
 	BeaconTarget = NULLUNIT;
+}
+
+void Unit::SetFaction(uint32 faction)
+{
+	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
+	m_faction = dbcFactionTemplate.LookupEntry(faction);
+	m_factionDBC = dbcFaction.LookupEntry(faction);
+
+	if(IsCreature() && TO_CREATURE(this)->m_spawn)
+		TO_CREATURE(this)->SaveToDB();
+//		WorldDatabase.Execute("UPDATE creature_spawns SET faction = %u WHERE id = %u;", faction, TO_CREATURE(this)->m_spawn->id);
 }

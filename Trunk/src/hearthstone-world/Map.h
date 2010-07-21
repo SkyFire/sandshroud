@@ -65,6 +65,9 @@ typedef struct CreatureSpawn
 	uint32  channel_target_creature;
 	uint16  stand_state;
 	uint32  MountedDisplayID;
+	uint32  ItemSlot1;
+	uint32  ItemSlot2;
+	uint32  ItemSlot3;
 	int32   phase;
 	uint32  vehicle;
 }CreatureSpawn;
@@ -83,7 +86,6 @@ typedef struct GOSpawn
 	float	facing;
 	uint32	flags;
 	uint32	state;
-	uint32  MountDisplayID;
 	uint32	faction;
 	float   scale;
 	int32   phase;

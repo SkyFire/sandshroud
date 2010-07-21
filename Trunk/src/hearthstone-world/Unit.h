@@ -1115,6 +1115,7 @@ public:
 	void SendChatMessageToPlayer(uint8 type, uint32 lang, const char *msg, Player* plr);
 	void SendChatMessageAlternateEntry(uint32 entry, uint8 type, uint32 lang, const char * msg);
 	void RegisterPeriodicChatMessage(uint32 delay, uint32 msgid, std::string message, bool sendnotify);
+	void SetFaction(uint32 faction);
 
 	HEARTHSTONE_INLINE int32 GetHealthPct() { return (int32)(GetUInt32Value(UNIT_FIELD_HEALTH) * 100 / std::max(1, (int32)GetUInt32Value(UNIT_FIELD_MAXHEALTH))); }
     HEARTHSTONE_INLINE void SetHealthPct(uint32 val) { if (val>0) SetUInt32Value(UNIT_FIELD_HEALTH,float2int32(val*0.01f*GetUInt32Value(UNIT_FIELD_MAXHEALTH))); }
@@ -1348,7 +1349,7 @@ public:
 	void OnPositionChange();
 	void Dismount();
 	//	custom functions for scripting
-	void SetWeaponDisplayId(uint8 slot, uint32 displayId);
+	void SetWeaponDisplayId(uint8 slot, uint32 ItemId);
 
 	//Transporters
 	WoWGuid m_transportNewGuid;

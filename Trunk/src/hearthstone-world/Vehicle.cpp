@@ -644,6 +644,13 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
 }
 
+void Vehicle::DeletePassengerData(Unit* pPassenger)
+{
+	uint8 slot = pPassenger->m_inVehicleSeatId;
+	pPassenger->m_inVehicleSeatId = 0;
+	m_passengers[slot] = NULL;
+}
+
 bool Vehicle::HasPassenger(Unit* pPassenger)
 {
 	for(uint8 i = 0; i < m_seatSlotMax; i++)

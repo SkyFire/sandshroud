@@ -192,7 +192,7 @@ bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession *
 {
 	char location[255];
 	char player[255];
-	if(sscanf(args, "%s %s", player, location) != 2)
+	if(sscanf(args, "%s %s", player, location) < 2)
 		return false;
 
 	Player* plr = objmgr.GetPlayer(player, false);

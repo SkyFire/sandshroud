@@ -93,7 +93,7 @@ Map::~Map()
 bool first_table_warning = true;
 bool CheckResultLengthCreatures(QueryResult * res)
 {
-	if( res->GetFieldCount() != 22 )
+	if( res->GetFieldCount() != 25 )
 	{
 		if( first_table_warning )
 		{
@@ -158,7 +158,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 
 	for(tableiterator = ExtraMapCreatureTables.begin(); tableiterator != ExtraMapCreatureTables.end(); ++tableiterator)
 	{
-		result = WorldDatabase.Query("SELECT * FROM %s WHERE Map = %u",(*tableiterator).c_str(),this->_mapId);
+		result = WorldDatabase.Query("SELECT * FROM %s WHERE Map = %u", (*tableiterator).c_str(), _mapId);
 		if(result)
 		{
 			if(CheckResultLengthCreatures( result) )
@@ -187,8 +187,11 @@ void Map::LoadSpawns(bool reload /* = false */)
 					cspawn->channel_target_creature = fields[17].GetUInt32();
 					cspawn->stand_state = fields[18].GetUInt16();
 					cspawn->MountedDisplayID = fields[19].GetUInt32();
-					cspawn->phase = fields[20].GetInt32();
-					cspawn->vehicle = fields[21].GetInt32();
+					cspawn->ItemSlot1 = fields[20].GetUInt32();
+					cspawn->ItemSlot2 = fields[21].GetUInt32();
+					cspawn->ItemSlot3 = fields[22].GetUInt32();
+					cspawn->phase = fields[23].GetInt32();
+					cspawn->vehicle = fields[24].GetInt32();
 					uint32 cellx = CellHandler<MapMgr>::GetPosX(cspawn->x);
 					uint32 celly = CellHandler<MapMgr>::GetPosY(cspawn->y);
 
@@ -205,6 +208,52 @@ void Map::LoadSpawns(bool reload /* = false */)
 
 					++CreatureSpawnCount;
 
+				}while(result->NextRow());
+			}
+
+			delete result;
+		}
+	}
+
+	for(tableiterator = ExtraMapGameObjectTables.begin(); tableiterator != ExtraMapGameObjectTables.end(); ++tableiterator)
+	{
+		result = WorldDatabase.Query("SELECT * FROM %s WHERE map = %u", (*tableiterator).c_str(), this->_mapId);
+		if(result)
+		{
+			if( CheckResultLengthGameObject(result) )
+			{
+				do
+				{
+					Field * fields = result->Fetch();
+					GOSpawn * gspawn = new GOSpawn;
+					gspawn->entry = fields[1].GetUInt32();
+					gspawn->id = fields[0].GetUInt32();
+					gspawn->x = fields[3].GetFloat();
+					gspawn->y = fields[4].GetFloat();
+					gspawn->z = fields[5].GetFloat();
+					gspawn->facing = fields[6].GetFloat();
+					gspawn->orientation1 = fields[7].GetFloat();
+					gspawn->orientation2 = fields[8].GetFloat();
+					gspawn->orientation3 = fields[9].GetFloat();
+					gspawn->orientation4 = fields[10].GetFloat();
+					gspawn->state = fields[11].GetUInt32();
+					gspawn->flags = fields[12].GetUInt32();
+					gspawn->faction = fields[13].GetUInt32();
+					gspawn->scale = fields[14].GetFloat();
+					gspawn->phase = fields[15].GetInt32();
+					uint32 cellx = CellHandler<MapMgr>::GetPosX(gspawn->x);
+					uint32 celly = CellHandler<MapMgr>::GetPosY(gspawn->y);
+					if(spawns[cellx] == NULL)
+					{
+						spawns[cellx] = new CellSpawns*[_sizeY];
+						memset(spawns[cellx], 0, sizeof(CellSpawns*)*_sizeY);
+					}
+
+					if(!spawns[cellx][celly])
+						spawns[cellx][celly] = new CellSpawns;
+
+					spawns[cellx][celly]->GOSpawns.push_back(gspawn);
+					++GameObjectSpawnCount;
 				}while(result->NextRow());
 			}
 
@@ -241,7 +290,11 @@ void Map::LoadSpawns(bool reload /* = false */)
 				cspawn->channel_target_creature = fields[17].GetUInt32();
 				cspawn->stand_state = fields[18].GetUInt16();
 				cspawn->MountedDisplayID = fields[19].GetUInt32();
-				cspawn->phase = fields[20].GetInt32();
+				cspawn->ItemSlot1 = fields[20].GetUInt32();
+				cspawn->ItemSlot2 = fields[21].GetUInt32();
+				cspawn->ItemSlot3 = fields[22].GetUInt32();
+				cspawn->phase = fields[23].GetInt32();
+				cspawn->vehicle = fields[24].GetInt32();
 				staticSpawns.CreatureSpawns.push_back(cspawn);
 				++CreatureSpawnCount;
 			}while(result->NextRow());
@@ -272,7 +325,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 				gspawn->flags = fields[12].GetUInt32();
 				gspawn->faction = fields[13].GetUInt32();
 				gspawn->scale = fields[14].GetFloat();
-				gspawn->MountDisplayID = 0; //gameobjects don't mount
+				gspawn->phase = fields[15].GetInt32();
 				staticSpawns.GOSpawns.push_back(gspawn);
 				++GameObjectSpawnCount;
 			}while(result->NextRow());
@@ -281,52 +334,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 		delete result;
 	}
 
-	for(tableiterator = ExtraMapGameObjectTables.begin(); tableiterator != ExtraMapGameObjectTables.end(); ++tableiterator)
-	{
-		result = WorldDatabase.Query("SELECT * FROM %s WHERE map = %u", (*tableiterator).c_str(), this->_mapId);
-		if(result)
-		{
-			if( CheckResultLengthGameObject(result) )
-			{
-				do
-				{
-					Field * fields = result->Fetch();
-					GOSpawn * gspawn = new GOSpawn;
-					gspawn->entry = fields[1].GetUInt32();
-					gspawn->id = fields[0].GetUInt32();
-					gspawn->x = fields[3].GetFloat();
-					gspawn->y = fields[4].GetFloat();
-					gspawn->z = fields[5].GetFloat();
-					gspawn->facing = fields[6].GetFloat();
-					gspawn->orientation1 = fields[7].GetFloat();
-					gspawn->orientation2 = fields[8].GetFloat();
-					gspawn->orientation3 = fields[9].GetFloat();
-					gspawn->orientation4 = fields[10].GetFloat();
-					gspawn->state = fields[11].GetUInt32();
-					gspawn->flags = fields[12].GetUInt32();
-					gspawn->faction = fields[13].GetUInt32();
-					gspawn->scale = fields[14].GetFloat();
-					gspawn->phase = fields[15].GetInt32();
-					gspawn->MountDisplayID = 0; //gameobjects don't mount
-					uint32 cellx = CellHandler<MapMgr>::GetPosX(gspawn->x);
-					uint32 celly = CellHandler<MapMgr>::GetPosY(gspawn->y);
-					if(spawns[cellx] == NULL)
-					{
-						spawns[cellx] = new CellSpawns*[_sizeY];
-						memset(spawns[cellx], 0, sizeof(CellSpawns*)*_sizeY);
-					}
-
-					if(!spawns[cellx][celly])
-						spawns[cellx][celly] = new CellSpawns;
-
-					spawns[cellx][celly]->GOSpawns.push_back(gspawn);
-					++GameObjectSpawnCount;
-				}while(result->NextRow());
-			}
-
-			delete result;
-		}
-	}
 	Log.Notice("Map", "%u creatures / %u gameobjects on map %u cached.", CreatureSpawnCount, GameObjectSpawnCount, _mapId);
 }
 

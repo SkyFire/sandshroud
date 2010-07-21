@@ -508,6 +508,33 @@ bool ChatHandler::HandleMonsterCastCommand(const char * args, WorldSession * m_s
 	return true;
 }
 
+bool ChatHandler::HandleNPCEquipCommand(const char * args, WorldSession * m_session)
+{
+	Creature* crt = getSelectedCreature(m_session, false);
+	if(crt == NULL)
+	{
+		RedSystemMessage(m_session, "Please select a creature before using this command.");
+		return true;
+	}
+
+	if(strlen(args) < 1)
+		return false;
+
+	uint32 slot = 0, itemid = 0;
+	if(sscanf(args, "%u %u", &slot, &itemid) < 1)
+		return false;
+
+	if(slot > 2)
+		return false;
+
+	crt->SetWeaponDisplayId(slot, itemid);
+	if(crt->m_spawn)
+		crt->SaveToDB();
+
+	BlueSystemMessage(m_session, "Equipped item %u in creature's %s", itemid, ((slot == 0) ? "Main hand" : (slot == 1) ? "Off hand" : "Ranged slot"));
+	return true;
+}
+
 bool ChatHandler::HandleCastSpellNECommand(const char* args, WorldSession *m_session)
 {
 	Unit* caster = m_session->GetPlayer();

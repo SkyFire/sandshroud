@@ -403,6 +403,7 @@ void CommandTableStorage::Init()
 		{ "unpossess", 'n', &ChatHandler::HandleNpcUnPossessCommand, ".npc unpossess - Unposses any currently possessed npc.", NULL, 0, 0, 0 },
 		{ "select", 'n', &ChatHandler::HandleNpcSelectCommand, ".npc select - selects npc closest", NULL, 0, 0, 0 },
 		{ "cast", 'd', &ChatHandler::HandleMonsterCastCommand, ".npc cast <spellId> - Makes selected mob cast the specified spell on you.", NULL, 0, 0, 0 },
+		{ "equip",	'a', &ChatHandler::HandleNPCEquipCommand,    "Use: .npc equip <slot> <itemid> - use .npc equip <slot> 0 to remove the item",                                                                        NULL, 0, 0, 0 },
 		{ NULL,		  2, NULL,						   "",										   NULL, 0, 0  }
 	};
 	dupe_command_table(NPCCommandTable, _NPCCommandTable);
@@ -1291,8 +1292,8 @@ bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_s
 	if(!faction && unit->IsCreature())
 		faction = TO_CREATURE(unit)->GetProto()->Faction;
 
-	unit->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
-	unit->m_faction = dbcFactionTemplate.LookupEntry(faction);
-	unit->m_factionDBC = dbcFaction.LookupEntry(faction);
+	BlueSystemMessage(m_session, "Set target's faction to %u", faction);
+
+	unit->SetFaction(faction);
 	return true;
 }

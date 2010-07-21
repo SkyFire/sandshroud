@@ -1714,7 +1714,6 @@ bool ChatHandler::HandleNpcReturnCommand(const char* args, WorldSession* m_sessi
 	creature->GetAIInterface()->WipeHateList();
 	creature->GetAIInterface()->WipeTargetList();
 	creature->GetAIInterface()->MoveTo(x, y, z);
-
 	return true;
 }
 
@@ -2162,6 +2161,9 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		sp->channel_spell = sp->channel_target_creature = sp->channel_target_go = 0;
 		sp->phase = 1;
 		sp->vehicle = proto->vehicle_entry;
+		sp->ItemSlot1 = proto->Item1;
+		sp->ItemSlot2 = proto->Item2;
+		sp->ItemSlot3 = proto->Item3;
 
 		CreatureInfoExtra* extrainfo = CreatureInfoExtraStorage.LookupEntry(entry);
 		if(extrainfo != NULL)
@@ -2210,7 +2212,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 		// Add spawn to map
 		plr->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(x, y)->CreatureSpawns.push_back(sp);
-		p->SaveToDB();
+		p->SaveToDB(true);
 	}
 
 	sGMLog.writefromsession(m_session, "spawned a %s at %u %f %f %f",

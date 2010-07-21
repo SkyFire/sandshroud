@@ -38,6 +38,7 @@ public:
 	void MoveVehicle(float x, float y, float z, float o);
 	void AddPassenger(Unit* pPassenger, uint8 requestedseat = 0, bool force = false);
 	void RemovePassenger(Unit* pPassenger);
+	void DeletePassengerData(Unit* pPassenger);
 	bool HasPassenger(Unit* pPassenger);
 	void SendSpells(uint32 entry, Player* plr);
 	void setDeathState(DeathState s);
