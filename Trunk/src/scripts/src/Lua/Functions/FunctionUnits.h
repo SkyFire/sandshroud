@@ -29,11 +29,15 @@
 ////////////////////////////////////////////////////
 int luaUnit_GossipCreateMenu(lua_State * L, Unit * ptr)
 {
+	TEST_UNIT();
+
 	int text_id = luaL_checkint(L, 1);
 	Unit* target = Lunar<Unit>::check(L, 2);
-	int autosend = luaL_checkint(L, 3);
+	if(target == NULL)
+		return 0;
 
-	Player* plr = (Player*)target;
+	int autosend = luaL_checkint(L, 3);
+	Player* plr = TO_PLAYER(target);
 
 	objmgr.CreateGossipMenuForPlayer(&Menu, ptr->GetGUID(), text_id, plr);
 	if(autosend)
@@ -43,6 +47,12 @@ int luaUnit_GossipCreateMenu(lua_State * L, Unit * ptr)
 
 int luaUnit_GossipMenuAddItem(lua_State * L, Unit * ptr)
 {
+	if(Menu == NULL)
+	{
+		printf("Menu used while uninitialized!!!");
+		return 0;
+	}
+
 	int icon = luaL_checkint(L, 1);
 	const char * menu_text = luaL_checkstring(L, 2);
 	int IntId = luaL_checkint(L, 3);
@@ -53,8 +63,17 @@ int luaUnit_GossipMenuAddItem(lua_State * L, Unit * ptr)
 
 int luaUnit_GossipSendMenu(lua_State * L, Unit * ptr)
 {
+	if(Menu == NULL)
+	{
+		printf("Menu used while uninitialized!!!");
+		return 0;
+	}
+
 	Unit* target = Lunar<Unit>::check(L, 1);
-    Player* plr = (Player*)target;
+	if(target == NULL)
+		return 0;
+
+	Player * plr = TO_PLAYER(target);
 	Menu->SendTo(plr);
 	return 1;
 }
@@ -63,7 +82,7 @@ int luaUnit_GossipSendPOI(lua_State * L, Unit * ptr)
 {
 	CHECK_TYPEID(TYPEID_PLAYER);
 	Unit* target = Lunar<Unit>::check(L, 1);
-	Player * plr = (Player*)target;
+	Player * plr = TO_PLAYER(target);
 	float x = (float)luaL_checknumber(L, 2);
 	float y = (float)luaL_checknumber(L, 3);
 	int icon = luaL_checkint(L, 4);

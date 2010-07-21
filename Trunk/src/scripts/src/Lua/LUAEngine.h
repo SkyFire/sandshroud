@@ -423,13 +423,20 @@ private:
 #define CHECK_TYPEID_RET(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushboolean(L,0); return 0; }
 #define CHECK_TYPEID_RET_INT(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushinteger(L,0); return 0; }
 
-// LuaHypArc commands
+// LuaHypArc commands(With additions)
+
+#define TEST_ITEM() if(ptr == NULL || !ptr->IsInWorld() || (ptr->GetProto() == NULL) || (ptr->GetTypeId() != TYPEID_ITEM && ptr->GetTypeId() != TYPEID_CONTAINER)) { return 0; }
+#define TEST_ITEM_RET() if(ptr == NULL || !ptr->IsInWorld() || (ptr->GetProto() == NULL) || (ptr->GetTypeId() != TYPEID_ITEM && ptr->GetTypeId() != TYPEID_CONTAINER)) { lua_pushboolean(L,0); return 1; }
+
 #define TEST_UNIT() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_UNIT) { return 0; }
 #define TEST_UNIT_RET() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_UNIT) { lua_pushboolean(L,0); return 1; }
+
 #define TEST_PLAYER() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_PLAYER) { return 0; }
 #define TEST_PLAYER_RET() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_PLAYER) { lua_pushboolean(L,0); return 1; }
+
 #define TEST_UNITPLAYER() if(ptr == NULL || !ptr->IsInWorld() || ( ptr->GetTypeId() != TYPEID_PLAYER && ptr->GetTypeId() != TYPEID_UNIT)) { return 0; }
 #define TEST_UNITPLAYER_RET() if(ptr == NULL || !ptr->IsInWorld() || ( ptr->GetTypeId() != TYPEID_PLAYER && ptr->GetTypeId() != TYPEID_UNIT)) { lua_pushboolean(L,0); return 1; }
+
 #define TEST_GO() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_GAMEOBJECT) { return 0; }
 #define TEST_GO_RET() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_GAMEOBJECT) { lua_pushboolean(L,0); return 1; }
 
