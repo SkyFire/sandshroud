@@ -7275,7 +7275,7 @@ void Spell::SpellEffectDisenchant(uint32 i)
 
 	if( !it->m_looted )
 	{
-		lootmgr.FillDisenchantingLoot(&it->m_loot, it->GetEntry());
+		lootmgr.FillItemLoot(&it->m_loot, it->GetEntry());
 
 		if( it->m_loot.items.size() > 0 )
 		{
@@ -7936,7 +7936,7 @@ void Spell::SpellEffectProspecting(uint32 i)
 	if(p_caster->GetItemInterface()->RemoveItemAmt(entry, 5))
 	{
 		p_caster->SetLootGUID(p_caster->GetGUID());
-		lootmgr.FillProspectingLoot(&p_caster->m_loot, entry);
+		lootmgr.FillItemLoot(&p_caster->m_loot, entry);
 		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
 	}
 	else // this should never happen either
@@ -8243,7 +8243,7 @@ void Spell::SpellEffectMilling(uint32 i)
 	if(p_caster->GetItemInterface()->RemoveItemAmt(entry, 5))
 	{
 		p_caster->SetLootGUID(p_caster->GetGUID());
-		lootmgr.FillMillingLoot(&p_caster->m_loot, entry);
+		lootmgr.FillItemLoot(&p_caster->m_loot, entry);
 		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
 	}
 	else

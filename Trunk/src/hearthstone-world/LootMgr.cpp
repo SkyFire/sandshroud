@@ -105,16 +105,13 @@ void LootMgr::LoadLoot()
 	LoadLootProp();
 	DEBUG_LOG("LootMgr","Loading loot...");
 	LoadLootTables(FISHING_LOOT,&FishingLoot);
-	LoadLootTables(ITEM_LOOT, &ItemLoot);
-	LoadLootTables(MILLING_LOOT, &MillingLoot);
-	LoadLootTables(PROSPECTING_LOOT, &ProspectingLoot);
 	is_loading = false;
 }
 
 void LootMgr::LoadDelayedLoot()
 {
 	is_loading = true;
-	LoadLootTables(DISENCHANTING_LOOT, &DisenchantingLoot);
+	LoadLootTables(ITEM_LOOT, &ItemLoot);
 	LoadLootTables(OBJECT_LOOT,&GOLoot);
 	LoadLootTables(CREATURE_LOOT,&CreatureLoot);
 	LoadLootTables(PICKPOCKETING_LOOT, &PickpocketingLoot);
@@ -239,16 +236,7 @@ LootMgr::~LootMgr()
 	for(LootStore::iterator iter=ItemLoot.begin(); iter != ItemLoot.end(); iter++)
 		delete [] iter->second.items;
 
-	for(LootStore::iterator iter=ProspectingLoot.begin(); iter != ProspectingLoot.end(); iter++)
-		delete [] iter->second.items;
-
-	for(LootStore::iterator iter=DisenchantingLoot.begin(); iter != DisenchantingLoot.end(); iter++)
-		delete [] iter->second.items;
-
 	for(LootStore::iterator iter=PickpocketingLoot.begin(); iter != PickpocketingLoot.end(); iter++)
-		delete [] iter->second.items;
-
-	for(LootStore::iterator iter=MillingLoot.begin(); iter != MillingLoot.end(); iter++)
 		delete [] iter->second.items;
 }
 
@@ -571,40 +559,16 @@ void LootMgr::FillPickpocketingLoot(Loot * loot,uint32 loot_id)
 		PushLoot(&tab->second, loot, 0, false);
 }
 
-void LootMgr::FillDisenchantingLoot(Loot *loot, uint32 loot_id)
+void LootMgr::FillItemLoot(Loot *loot, uint32 loot_id)
 {
 	loot->items.clear();
 	loot->gold = 0;
 
-	LootStore::iterator tab = DisenchantingLoot.find(loot_id);
-	if( DisenchantingLoot.end() == tab)
-		return;
-	else 
-		PushLoot(&tab->second,loot,0, true);
-}
-
-void LootMgr::FillProspectingLoot(Loot *loot, uint32 loot_id)
-{
-	loot->items.clear();
-	loot->gold = 0;
-
-	LootStore::iterator tab = ProspectingLoot.find(loot_id);
-	if( ProspectingLoot.end() == tab)
+	LootStore::iterator tab = ItemLoot.find(loot_id);
+	if( ItemLoot.end()==tab)
 		return;
 	else
-		PushLoot(&tab->second, loot, 0, false);
-}
-
-void LootMgr::FillMillingLoot(Loot *loot, uint32 loot_id)
-{
-	loot->items.clear();
-	loot->gold = 0;
-
-	LootStore::iterator tab = MillingLoot.find(loot_id);
-	if( MillingLoot.end() == tab)
-		return;
-	else
-		PushLoot(&tab->second, loot, 0, false);
+		PushLoot(&tab->second, loot, false, false);
 }
 
 bool LootMgr::CanGODrop(uint32 LootId,uint32 itemid)
@@ -862,7 +826,7 @@ void LootRoll::Finalize()
 	{
 		//generate Disenchantingloot
 		Item * pItem = objmgr.CreateItem( itemid, _player);
-		lootmgr.FillDisenchantingLoot(&pItem->m_loot, pItem->GetEntry());
+		lootmgr.FillItemLoot(&pItem->m_loot, pItem->GetEntry());
 		
 		//add loot
 		for(std::vector<__LootItem>::iterator iter=pItem->m_loot.items.begin();iter != pItem->m_loot.items.end();iter++)
@@ -1022,18 +986,6 @@ void LootRoll::PlayerRolled(Player* player, uint8 choice)
 	}
 
 	mLootLock.Release();
-}
-
-void LootMgr::FillItemLoot(Loot *loot, uint32 loot_id)
-{
-	loot->items.clear();
-	loot->gold = 0;
-
-	LootStore::iterator tab = ItemLoot.find(loot_id);
-	if( ItemLoot.end()==tab)
-		return;
-	else
-		PushLoot(&tab->second, loot, false, false);
 }
 
 int32 LootRoll::event_GetInstanceID()

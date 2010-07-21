@@ -23,12 +23,9 @@
 #define OBJECT_LOOT "objectloot"
 #define CREATURE_LOOT "creatureloot"
 #define CREATURE_LOOT_GATHERING "creatureloot_gathering"
-#define DISENCHANTING_LOOT "disenchantingloot"
 #define FISHING_LOOT "fishingloot"
 #define ITEM_LOOT "itemloot"
-#define PROSPECTING_LOOT "prospectingloot"
 #define PICKPOCKETING_LOOT "pickpocketingloot"
-#define MILLING_LOOT "millingloot"
 
 struct ItemPrototype;
 class MapMgr;
@@ -153,9 +150,6 @@ public:
 	void FillFishingLoot(Loot * loot,uint32 loot_id);
 	void FillGatheringLoot(Loot * loot,uint32 loot_id);
 	void FillPickpocketingLoot(Loot *loot, uint32 loot_id);
-	void FillDisenchantingLoot(Loot *loot, uint32 loot_id);
-	void FillProspectingLoot(Loot *loot, uint32 loot_id);
-	void FillMillingLoot(Loot *loot, uint32 loot_id);
 
 	bool CanGODrop(uint32 LootId,uint32 itemid);
 	bool IsPickpocketable(uint32 creatureId);
@@ -171,10 +165,7 @@ public:
 	LootStore	GatheringLoot;
 	LootStore	GOLoot;
 	LootStore	ItemLoot;
-	LootStore	ProspectingLoot;
-	LootStore	DisenchantingLoot;
 	LootStore	PickpocketingLoot;
-	LootStore	MillingLoot;
 	std::map<uint32, std::set<uint32> > quest_loot_go;
 
 	RandomProps * GetRandomProperties(ItemPrototype * proto);
