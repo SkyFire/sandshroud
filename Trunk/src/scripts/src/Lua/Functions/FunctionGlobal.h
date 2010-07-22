@@ -75,27 +75,24 @@ namespace luaGlobalFunctions
 				sp->emote_state = 0;
 				sp->flags = 0;
 				sp->factionid = faction;
-				sp->bytes0 = sp->setbyte(0,2,gender);
+				sp->bytes = 0;
 				sp->bytes1 = 0;
 				sp->bytes2 = 0;
-				//sp->respawnNpcLink = 0;
 				sp->stand_state = 0;
 				sp->channel_target_creature = sp->channel_target_go = sp->channel_spell = 0;
 				sp->MountedDisplayID = 0;
-				sp->Item1SlotDisplay = equip1;
-				sp->Item2SlotDisplay = equip2;
-				sp->Item3SlotDisplay = equip3;
-				sp->CanFly = 0;
+				sp->ItemSlot1 = equip1;
+				sp->ItemSlot2 = equip2;
+				sp->ItemSlot3 = equip3;
 				sp->phase = 1;
+				sp->vehicle = 0;
+
 				Creature * pCreature = mapMgr->CreateCreature(entry);
 				pCreature->Load(sp, (uint32)NULL, NULL);
 				pCreature->m_loadedFromDB = true;
 				pCreature->SetFaction(faction);
 				pCreature->SetInstanceID(instanceid);
 				pCreature->SetMapId(map);
-				pCreature->SetEquippedItem(MELEE,equip1);
-				pCreature->SetEquippedItem(OFFHAND,equip2);
-				pCreature->SetEquippedItem(RANGED,equip3);
 				pCreature->m_noRespawn = true;
 				pCreature->PushToWorld(mapMgr);
 				if (duration>0) 

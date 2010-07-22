@@ -20,7 +20,7 @@
 #ifndef LUA_AURA_H
 #define LUA_AURA_H
 
-int luaAuraGetObjectType(lua_State * L, Aura * aura)
+int luaAura_GetObjectType(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_NIL();
@@ -29,7 +29,7 @@ int luaAuraGetObjectType(lua_State * L, Aura * aura)
 	return 1;
 }
 
-int luaAuraGetSpellId(lua_State * L, Aura * aura)
+int luaAura_GetSpellId(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_NIL();
@@ -38,7 +38,7 @@ int luaAuraGetSpellId(lua_State * L, Aura * aura)
 	return 1;
 }
 
-int luaAuraGetCaster(lua_State * L, Aura * aura)
+int luaAura_GetCaster(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_NIL();
@@ -66,7 +66,7 @@ int luaAuraGetCaster(lua_State * L, Aura * aura)
 	RET_NIL();
 }
 
-int luaAuraGetTarget(lua_State * L, Aura * aura)
+int luaAura_GetTarget(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_NIL();
@@ -75,7 +75,7 @@ int luaAuraGetTarget(lua_State * L, Aura * aura)
 	return 1;
 }
 
-int luaAuraGetDuration(lua_State * L, Aura * aura)
+int luaAura_GetDuration(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_NIL();
@@ -83,7 +83,7 @@ int luaAuraGetDuration(lua_State * L, Aura * aura)
 	RET_NUMBER(aura->GetDuration()); //in milliseconds
 }
 
-int luaAuraSetDuration(lua_State * L, Aura * aura)
+int luaAura_SetDuration(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		return 0;
@@ -94,7 +94,7 @@ int luaAuraSetDuration(lua_State * L, Aura * aura)
 	return 1;
 }
 
-int luaAuraGetTimeLeft(lua_State * L, Aura * aura)
+int luaAura_GetTimeLeft(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_NIL();
@@ -102,7 +102,7 @@ int luaAuraGetTimeLeft(lua_State * L, Aura * aura)
 	RET_NUMBER(aura->GetTimeLeft()); //in milliseconds
 }
 
-int luaAuraSetNegative(lua_State * L, Aura * aura)
+int luaAura_SetNegative(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_BOOL(false);
@@ -112,7 +112,7 @@ int luaAuraSetNegative(lua_State * L, Aura * aura)
 	RET_BOOL(true);
 }
 
-int luaAuraSetPositive(lua_State * L, Aura * aura)
+int luaAura_SetPositive(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		RET_BOOL(false);
@@ -122,7 +122,7 @@ int luaAuraSetPositive(lua_State * L, Aura * aura)
 	RET_BOOL(true);
 }
 
-int luaAuraRemove(lua_State * L, Aura * aura)
+int luaAura_Remove(lua_State * L, Aura * aura)
 {
 	if(aura == NULL)
 		return 0;
@@ -131,7 +131,7 @@ int luaAuraRemove(lua_State * L, Aura * aura)
 	return 1;
 }
 
-int luaAuraSetVar(lua_State * L, Aura * aura)
+int luaAura_SetVar(lua_State * L, Aura * aura)
 {
 	const char* var = luaL_checkstring(L,1);
 	int subindex = 0;
@@ -139,14 +139,17 @@ int luaAuraSetVar(lua_State * L, Aura * aura)
 	{
 		subindex = luaL_optint(L,2,0);
 	}
+
 	if (!aura || !var || subindex < 0) 
 	{ 
 		lua_pushboolean(L, 0); 
-		return 1; 
+		return 0; 
 	}
+
 	int valindex = 2;
-	if (subindex)
+	if(subindex)
 		valindex++;
+
 	SpellEntry * proto = aura->m_spellProto;
 	LuaSpellEntry l = GetLuaSpellEntryByName(var);
 	if (!l.name)
@@ -173,7 +176,7 @@ int luaAuraSetVar(lua_State * L, Aura * aura)
 	return 1;
 }
 
-int luaAuraGetVar(lua_State * L, Aura * aura)
+int luaAura_GetVar(lua_State * L, Aura * aura)
 {
 	const char* var = luaL_checkstring(L,1);
 	int subindex = luaL_optint(L,2,0);
@@ -204,13 +207,13 @@ int luaAuraGetVar(lua_State * L, Aura * aura)
 	return 1;
 }
 
-int luaAuraGetAuraSlot(lua_State * L, Aura * aura)
+int luaAura_GetAuraSlot(lua_State * L, Aura * aura)
 {
 	if (!aura) RET_NIL();
 	RET_INT(aura->GetAuraSlot());
 }
 
-int luaAuraSetAuraSlot(lua_State * L, Aura * aura)
+int luaAura_SetAuraSlot(lua_State * L, Aura * aura)
 {
 	if (!aura) return 0;
 	uint16 slot = CHECK_USHORT(L,1);

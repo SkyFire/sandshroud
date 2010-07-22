@@ -24,13 +24,13 @@
 
 // Crow: Some of the following functions are based off of functions created by Hypersniper of LuaHypeArc.
 // Areas where this applies, credit has been given in the form of a name declaration.
-#include "FunctionAura.h"
 #include "FunctionGameObjects.h"
-#include "FunctionGlobal.h"
+//#include "FunctionGlobal.h"
 #include "FunctionItems.h"
-#include "FunctionPacket.h"
-#include "FunctionSpell.h"
-#include "FunctionTaxi.h"
+//#include "FunctionPacket.h"
+//#include "FunctionSpell.h"
+//#include "FunctionAura.h"
+//#include "FunctionTaxi.h"
 #include "FunctionUnits.h"
 
 template<typename T>
