@@ -1351,7 +1351,6 @@ HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)
 	return ssvrow->spellBonus;
 }
 
-// Crow: Thinking of doing this...
 #define SAFE_DBC_CODE_RETURNS			/* undefine this to make out of range/nulls return null. */
 
 template<class T>
@@ -1651,19 +1650,19 @@ public:
 		}
 		else
 		{
-			if(i >= m_numrows)
+			if(i >= m_numrows || &m_heapBlock[i] == NULL)
 				return NULL;
 			else
-				return m_heapBlock[i];
+				return &m_heapBlock[i];
 		}
 	}
 
 	T * LookupRow(uint32 i)
 	{
-		if(i >= m_numrows)
+		if(i >= m_numrows || &m_heapBlock[i] == NULL)
 			return NULL;
 		else
-			return m_heapBlock[i];
+			return &m_heapBlock[i];
 	}
 
 #endif

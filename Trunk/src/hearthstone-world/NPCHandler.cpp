@@ -290,13 +290,37 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 
 	uint8 ssform = (pSpell->pLearnSpell ? pSpell->pLearnSpell->RequiredShapeShift : 0);
 	uint32 ssspell = 0;
-	if(ssform != FORM_MOONKIN) // We don't accept checks for this.
+	if(ssform && ssform != FORM_MOONKIN) // We don't accept checks for this.
 		ssspell = _player->GetSpellForShapeshiftForm(ssform, true);
+
+	// Skill Checks
+	bool hasskill = true;
+	if(pSpell->RequiredSkillLine)
+	{
+		skilllineentry* sle = dbcSkillLine.LookupEntry(pSpell->RequiredSkillLine);
+		if(sle != NULL) // It is a skill.
+		{
+			if(_player->_GetSkillLineCurrent(pSpell->RequiredSkillLine,true) < pSpell->RequiredSkillLineValue)
+				hasskill = false;
+		}
+		else
+		{
+			SpellEntry* sp = dbcSpell.LookupEntry(pSpell->RequiredSkillLine);
+			if(sp != NULL) // We accidentally put a spell here... -_-
+			{
+				skilllinespell* sls = dbcSkillLineSpell.LookupEntry(sp->Id);
+				if(sls) // We purposely put a spell here, but we're still wrong... -_-
+				{
+					if(_player->_GetSkillLineCurrent(sls->skilline, true) < pSpell->RequiredSkillLineValue)
+						hasskill = false;
+				}
+			}
+		}
+	}
 
 	if(	(pSpell->RequiredLevel && _player->getLevel() < pSpell->RequiredLevel)
 		|| (pSpell->RequiredSpell && !_player->HasSpell(pSpell->RequiredSpell))
-		|| (pSpell->Cost && _player->GetUInt32Value(PLAYER_FIELD_COINAGE) < pSpell->Cost)
-		|| (pSpell->RequiredSkillLine && _player->_GetSkillLineCurrent(pSpell->RequiredSkillLine,true) < pSpell->RequiredSkillLineValue)
+		|| (pSpell->Cost && _player->GetUInt32Value(PLAYER_FIELD_COINAGE) < pSpell->Cost) || (!hasskill)
 		|| (pSpell->IsProfession && pSpell->RequiredSkillLine == 0 && _player->GetUInt32Value(PLAYER_CHARACTER_POINTS2) == 0)//check level 1 professions if we can learn a new proffesion
 		|| (ssspell && !_player->HasSpell(ssspell)))
 	{

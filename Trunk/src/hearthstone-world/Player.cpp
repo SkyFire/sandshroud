@@ -12895,7 +12895,10 @@ uint32 Player::GetSpellForShapeshiftForm(uint8 ss, bool spellchecks)
 		if(!spellchecks)
 			return 0;
 		break;
-	}
 
+	default:
+		return 0;
+		break;
+	}
 	return 0;
 }

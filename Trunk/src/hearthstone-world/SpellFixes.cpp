@@ -210,9 +210,9 @@ void ApplyNormalFixes()
 	//Updating spell.dbc
 	SpellEntry *sp;
 
-	Log.Notice("World", "Processing %u spells...", dbcSpell.GetNumRows());
-	uint32 cnt = uint32(dbcSpell.GetMaxRow());
-	Log.Notice("World", "Highest spell found %u...", cnt);
+	uint32 cnt = uint32(dbcSpell.GetNumRows());
+	Log.Notice("World", "Processing %u spells...", cnt);
+	Log.Notice("World", "Highest spell found %u...", dbcSpell.GetMaxRow());
 	uint32 effect;
 	set<uint32> DummySpells;
 	map<uint32, uint32> talentSpells;
@@ -1101,7 +1101,7 @@ void ApplyNormalFixes()
 				if( spz &&
 					spz->Effect[i] == SPELL_EFFECT_SCHOOL_DAMAGE ||
 					spz->Effect[i] == SPELL_EFFECT_HEAL
-					) 
+					)
 					spcheck = true;
 			}
 			if (sp->Effect[i] == SPELL_EFFECT_SCHOOL_DAMAGE ||

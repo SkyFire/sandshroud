@@ -1250,25 +1250,23 @@ void ObjectMgr::LoadTotemSpells()
 	std::stringstream query;
 	QueryResult *result = WorldDatabase.Query( "SELECT * FROM totemspells" );
 
-	if(result == NULL)
-		return;
-
-	//TotemSpells *ts = NULL;
-	SpellEntry * sp;
-
-	do
+	if(result != NULL)
 	{
-		Field *fields = result->Fetch();
-		if(!(fields[1].GetUInt32()))
-			continue;
+		SpellEntry * sp;
+		do
+		{
+			Field *fields = result->Fetch();
+			if(!(fields[1].GetUInt32()))
+				continue;
 
-		sp = dbcSpell.LookupEntry(fields[1].GetUInt32());
-		if(!sp)
-			continue;
+			sp = dbcSpell.LookupEntry(fields[1].GetUInt32());
+			if(!sp)
+				continue;
 
-		m_totemSpells.insert( TotemSpellMap::value_type( fields[0].GetUInt32(), sp ));
-	} while( result->NextRow() );
-	delete result;
+			m_totemSpells.insert( TotemSpellMap::value_type( fields[0].GetUInt32(), sp ));
+		} while( result->NextRow() );
+		delete result;
+	}
 
 	Log.Notice("ObjectMgr", "%u totem spells loaded.", m_totemSpells.size());
 }
@@ -2019,46 +2017,45 @@ uint32 ObjectMgr::GetPetSpellCooldown(uint32 SpellId)
 
 void ObjectMgr::LoadSpellOverride()
 {
-//	int i = 0;
-	std::stringstream query;
 	QueryResult *result = WorldDatabase.Query( "SELECT DISTINCT overrideId FROM spelloverride" );
 
-	if(result == NULL)
-		return;
-
-//	int num = 0;
-//	uint32 total =(uint32) result->GetRowCount();
-	SpellEntry * sp;
-	uint32 spellid;
-
-	do
+	if(result != NULL)
 	{
-		Field *fields = result->Fetch();
-		query.rdbuf()->str("");
-		query << "SELECT spellId FROM spelloverride WHERE overrideId = ";
-		query << fields[0].GetUInt32();
-		QueryResult *resultIn = WorldDatabase.Query(query.str().c_str());
-		std::list<SpellEntry*>* list = new std::list<SpellEntry*>;
-		if(resultIn)
-		{
-			do
-			{
-				Field *fieldsIn = resultIn->Fetch();
-				spellid = fieldsIn[0].GetUInt32();
-				sp = dbcSpell.LookupEntry(spellid);
-				if(!spellid || !sp)
-					continue;
-				list->push_back(sp);
-			}while(resultIn->NextRow());
-		}
-		delete resultIn;
-		if(list->size() == 0)
-			delete list;
-		else
-			mOverrideIdMap.insert( OverrideIdMap::value_type( fields[0].GetUInt32(), list ));
-	} while( result->NextRow() );
+		SpellEntry * sp;
+		uint32 spellid;
+		std::list<SpellEntry*>* list;
+		QueryResult *resultIn;
 
-	delete result;
+		do
+		{
+			Field *fields = result->Fetch();
+			resultIn = WorldDatabase.Query("SELECT spellId FROM spelloverride WHERE overrideId = %u", fields[0].GetUInt32());
+			list = new std::list<SpellEntry*>;
+			if(resultIn)
+			{
+				do
+				{
+					Field *fieldsIn = resultIn->Fetch();
+					spellid = fieldsIn[0].GetUInt32();
+					sp = dbcSpell.LookupEntry(spellid);
+					if(!spellid || !sp)
+						continue;
+
+					list->push_back(sp);
+
+				}while(resultIn->NextRow());
+				delete resultIn;
+			}
+
+			if(list->size() == 0)
+				delete list;
+			else
+				mOverrideIdMap.insert( OverrideIdMap::value_type( fields[0].GetUInt32(), list ));
+
+		} while( result->NextRow() );
+		delete result;
+	}
+
 	Log.Notice("ObjectMgr", "%u spell overrides loaded.", mOverrideIdMap.size());
 }
 
@@ -2104,12 +2101,10 @@ void ObjectMgr::LoadCreatureWaypoints()
 		if(!wpid)
 		{
 			Log.Warning("Waypoints","Waypoint can't be 0, counting starts at 1 (spawn %u)", spawnid);
-			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
-				WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid = '%u';", spawnid);
-
 			skipid = spawnid;
 			continue;
 		}
+
 		wp = new WayPoint;
 		if(spawnid != lastspawnid)
 		{
@@ -2146,8 +2141,6 @@ void ObjectMgr::LoadCreatureWaypoints()
 			if(wp->id > 1)
 			{
 				Log.Warning("Waypoints","Waypoint id's can't start above 1 (spawn %u)", spawnid);
-				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
-					WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid = '%u';", spawnid);
 
 				if(spawnid)
 					skipid = spawnid;
@@ -2167,9 +2160,6 @@ void ObjectMgr::LoadCreatureWaypoints()
 			if(i->second->size() < wp->id)
 			{
 				Log.Warning("Waypoints","Waypoint id's are not continuous, skipping spawn (spawn %u)", spawnid);
-				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
-					WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid = '%u';", spawnid);
-
 				delete i->second;
 				m_waypoints.erase(spawnid);
 				skipid = spawnid;
