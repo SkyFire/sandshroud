@@ -75,10 +75,12 @@ enum CHANNEL_NOTIFY_FLAGS
 
 class Channel
 {
+private:
 	Mutex m_lock;
 	typedef map<Player* , uint32> MemberMap;
 	MemberMap m_members;
 	set<uint32> m_bannedMembers;
+
 public:
 	friend class ChannelIterator;
 	static void LoadConfSettings();

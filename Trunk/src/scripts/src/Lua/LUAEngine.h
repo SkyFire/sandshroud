@@ -207,6 +207,9 @@ template<typename T> const char * GetTClassName() { return "UNKNOWN"; };
 template<> const char * GetTClassName<Item>() { return "Item"; };
 template<> const char * GetTClassName<Unit>() {	return "Unit"; };
 template<> const char * GetTClassName<GameObject>() { return "GameObject"; };
+template<> const char * GetTClassName<Aura>() { return "Aura"; };
+//template<> const char * GetTClassName<GameObject>() { return "GameObject"; };
+//template<> const char * GetTClassName<GameObject>() { return "GameObject"; };
 
 template <typename T> class Lunar
 {

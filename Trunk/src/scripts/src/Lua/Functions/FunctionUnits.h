@@ -2591,7 +2591,7 @@ int luaUnit_RemoveAurasType(lua_State * L, Unit * ptr)
 	return 1;
 }
 
-/*int luaUnit_AddAura(lua_State * L, Unit * ptr)
+int luaUnit_AddAura(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER()
 	uint32 spellid = luaL_checkint(L,1);
@@ -2904,7 +2904,7 @@ int luaUnit_LifeTimeKills(lua_State * L, Unit * ptr)
 	if (check && strncmp(check, "add", 4)==0 && kills > 0) 
 	{ 
 		plr->SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, killscheck+kills);
-		plr->SaveToDB(false); 
+		plr->SaveToDB(false);
 		return 1; 
 	}
 	else if (check && strncmp(check, "del", 4)==0 && killscheck >= kills) 
@@ -3074,7 +3074,8 @@ int luaUnit_RemoveNegativeAuras(lua_State * L, Unit * ptr)
 	if (!ptr)
 		return 0;
 
-	ptr->RemoveNegativeAuras();
+// TODO
+//	ptr->();
 	return 1;
 }
 
@@ -3082,7 +3083,7 @@ int luaUnit_GossipMiscAction(lua_State * L, Unit * ptr)
 {
 	Player* plr = TO_PLAYER(ptr);
 	Creature * crc = TO_CREATURE(CHECK_UNIT(L, 2));
-	uint32 miscint luaUnit_= (uint32)luaL_checkint(L, 3);
+	uint32 miscint = (uint32)luaL_checkint(L, 3);
 	int actionid = luaL_checkint(L, 1);
 	if ( !plr || (!crc && actionid < 9) )
 		return 0;
@@ -3164,7 +3165,7 @@ int luaUnit_SendBattlegroundWindow(lua_State * L, Unit * ptr)
 int luaUnit_SendLootWindow(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
-	uint64 guid = CHECK_GUID(L,1);
+	uint64 guid = luaL_checkint(L,1);
 	uint8 loot_type = (uint8)luaL_checkint(L,2);
 	uint8 loot_type2 = 1;
 	Player * plr = TO_PLAYER(ptr);
@@ -3176,19 +3177,19 @@ int luaUnit_SendLootWindow(lua_State * L, Unit * ptr)
 		CreatureProto * proto = TO_CREATURE(pUnit)->GetProto();
 		switch (loot_type) 
 		{
-			default:
-				lootmgr.FillCreatureLoot(&pUnit->loot, pUnit->GetEntry(), pUnit->GetMapMgr() ? ( pUnit->GetMapMgr()->iInstanceMode ? true : false ) : false);
-				pUnit->loot.gold = proto ? proto->money : 0;
-				loot_type2 = 1;
-				break;
-			case 2:
-				lootmgr.FillSkinningLoot(&pUnit->loot, pUnit->GetEntry());
-				loot_type2 = 2;
-				break;
-			case 3:
-				lootmgr.FillPickpocketingLoot(&pUnit->loot, pUnit->GetEntry());
-				loot_type2 = 2;
-				break;
+		case 2:
+			lootmgr.FillGatheringLoot(&pUnit->m_loot, pUnit->GetEntry());
+			loot_type2 = 2;
+			break;
+		case 3:
+			lootmgr.FillPickpocketingLoot(&pUnit->m_loot, pUnit->GetEntry());
+			loot_type2 = 2;
+			break;
+		default:
+			lootmgr.FillCreatureLoot(&pUnit->m_loot, pUnit->GetEntry(), pUnit->GetMapMgr() ? ( pUnit->GetMapMgr()->iInstanceMode ? true : false ) : false);
+			pUnit->m_loot.gold = proto ? proto->money : 0;
+			loot_type2 = 1;
+			break;
 		}
 	}
 	else if (guidtype == HIGHGUID_TYPE_GAMEOBJECT)
@@ -3196,14 +3197,14 @@ int luaUnit_SendLootWindow(lua_State * L, Unit * ptr)
 		GameObject* pGO = plr->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
 		switch (loot_type) 
 		{
-			default:
-				lootmgr.FillGOLoot(&pGO->loot, pGO->GetEntry(), pGO->GetMapMgr() ? ( pGO->GetMapMgr()->iInstanceMode ? true : false ) : false);
-				loot_type2 = 1;
-				break;
-			case 5:
-				lootmgr.FillSkinningLoot(&pGO->loot, pGO->GetEntry());
-				loot_type2 = 2;
-				break;
+		case 5:
+			lootmgr.FillGatheringLoot(&pGO->m_loot, pGO->GetEntry());
+			loot_type2 = 2;
+			break;
+		default:
+			lootmgr.FillGOLoot(&pGO->m_loot, pGO->GetEntry(), pGO->GetMapMgr() ? ( pGO->GetMapMgr()->iInstanceMode ? true : false ) : false);
+			loot_type2 = 1;
+			break;
 		}
 	}
 	else if(guidtype == HIGHGUID_TYPE_ITEM)
@@ -3211,12 +3212,12 @@ int luaUnit_SendLootWindow(lua_State * L, Unit * ptr)
 		Item *pItem = plr->GetItemInterface()->GetItemByGUID(guid);
 		switch (loot_type) 
 		{
-			case 6:
-				lootmgr.FillItemLoot(pItem->loot,pItem->GetEntry());
-				loot_type2 = 1;
-				break;
-			default:
-				break;
+		case 6:
+			lootmgr.FillItemLoot(&pItem->m_loot,pItem->GetEntry());
+			loot_type2 = 1;
+			break;
+		default:
+			break;
 		}
 	}
 	plr->SendLoot(guid,2, plr->GetMapId());
@@ -3230,7 +3231,7 @@ int luaUnit_AddLoot(lua_State * L, Unit * ptr)
 	uint32 mincount = luaL_checkint(L,2);
 	uint32 maxcount = luaL_checkint(L,3);
 	uint32 ffa_loot = luaL_checkint(L,4);
-	lootmgr.AddLoot(&ptr->loot,itemid,mincount,maxcount,ffa_loot);
+	lootmgr.AddLoot(&ptr->m_loot,itemid,mincount,maxcount,ffa_loot);
 	return 1;
 }
 
@@ -3241,9 +3242,9 @@ int luaUnit_VendorAddItem(lua_State * L, Unit * ptr)
 	uint32 itemid = (uint32)luaL_checknumber(L, 1);
 	uint32 amount = (uint32)luaL_checknumber(L, 2);
 	uint32 costid = (uint32)luaL_checknumber(L, 3);
-	ItemExtendedCostEntry * ec = (costid > 0) ? dbcItemExtendedCost.LookupEntryForced(costid) : NULL;
 	if (itemid && amount)
-		ctr->AddVendorItem(itemid, amount, ec);
+		ctr->AddVendorItem(itemid, amount, costid);
+
 	return 1;
 }
 
@@ -3285,9 +3286,9 @@ int luaUnit_EquipWeapons(lua_State * L, Unit * ptr)
 	uint32 equip1 = luaL_checkint(L, 1);
 	uint32 equip2 = luaL_checkint(L, 2);
 	uint32 equip3 = luaL_checkint(L, 3);
-	ptr->SetEquippedItem(MELEE,equip1);
-	ptr->SetEquippedItem(OFFHAND,equip2);
-	ptr->SetEquippedItem(RANGED,equip3);
+	ptr->SetWeaponDisplayId(MELEE,equip1);
+	ptr->SetWeaponDisplayId(OFFHAND,equip2);
+	ptr->SetWeaponDisplayId(RANGED,equip3);
 	return 1;
 }
 
@@ -3333,11 +3334,12 @@ int luaUnit_GetTeam(lua_State * L, Unit * ptr) //returns 0 for alliance, 1 for h
 
 int luaUnit_StartTaxi(lua_State * L, Unit * ptr)
 {
-	TEST_PLAYER()
+	//TODO
+/*	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
 	TaxiPath * tp = CHECK_TAXIPATH(L, 1);
 	uint32 mount_id = luaL_checkint(L, 2);
-	plr->TaxiStart(tp, mount_id, 0);
+	plr->TaxiStart(tp, mount_id, 0);*/
 	return 1;
 }
 
@@ -3350,8 +3352,9 @@ int luaUnit_IsOnTaxi(lua_State * L, Unit * ptr)
 
 int luaUnit_GetTaxi(lua_State * L, Unit * ptr)
 {
-	TEST_PLAYER()
-	PUSH_TAXIPATH(L, TO_PLAYER(ptr)->GetTaxiPath());
+	//TODO
+//	TEST_PLAYER()
+//	PUSH_TAXIPATH(L, TO_PLAYER(ptr)->GetTaxiPath());
 	return 1;
 }
 
@@ -3425,16 +3428,16 @@ int luaUnit_ChannelSpell(lua_State * L, Unit * ptr)
 	if (Csp && target != NULL) 
 	{
 		ptr->CastSpell(target,dbcSpell.LookupEntry(Csp),false);
-		ptr->SetChannelSpellTargetGUID( target->GetGUID());
-		ptr->SetChannelSpellId(Csp);
+		ptr->SetUInt64Value( UNIT_FIELD_CHANNEL_OBJECT, target->GetGUID() );
+		ptr->SetUInt32Value(UNIT_CHANNEL_SPELL, Csp);
 	}
 	return 1;
 }
 
 int luaUnit_StopChannel(lua_State * L, Unit * ptr)
 {
-	ptr->SetChannelSpellTargetGUID( 0);
-	ptr->SetChannelSpellId(0);
+	ptr->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
+	ptr->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
 	return 1;
 }
 
@@ -3465,7 +3468,7 @@ int luaUnit_GetCoinage(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
-	lua_pushinteger(L, plr->GetGold());
+	lua_pushinteger(L, plr->GetUInt32Value(PLAYER_FIELD_COINAGE));
 	return 1;
 }
 
@@ -3489,7 +3492,7 @@ int luaUnit_IsMounted(lua_State * L, Unit * ptr)
 			lua_pushboolean(L,0);
 	}
 	else
-		lua_pushboolean(L, (ptr->GetMount() > 0) ? 1 : 0);
+		lua_pushboolean(L, (ptr->GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID) > 0) ? 1 : 0);
 	return 1;
 }
 
@@ -3502,49 +3505,18 @@ int luaUnit_SpawnVehicle(lua_State * L, Unit * ptr)
 	float o = CHECK_FLOAT(L,5);
 	uint32 faction = (uint32)luaL_checknumber(L,6);
 	uint32 duration = (uint32)luaL_checknumber(L,7);
-	uint32 phase = luaL_optint(L, 8, ptr->m_phase);
+	uint32 phase = luaL_optint(L, 8, ptr->GetPhase());
+	uint32 mode = ptr->GetMapMgr()->iInstanceMode;
 
 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
 	CreatureInfo * info = CreatureNameStorage.LookupEntry(entry);
-	if(proto != NULL && info != NULL) {
-		CreatureSpawn * sp = new CreatureSpawn;
-		sp->entry = entry;
-		uint32 DisplayID = 0;
-		uint8 gender = info->GenerateModelId(&DisplayID);
-		sp->displayid = DisplayID;
-		sp->form = 0;
-		sp->id = 0;
-		sp->movetype = 0;
-		sp->x = x;
-		sp->y = y;
-		sp->z = z;
-		sp->o = o;
-		sp->emote_state = 0;
-		sp->flags = 0;
-		sp->factionid = faction;
-		sp->bytes0 = 0;
-		sp->bytes1 = 0;
-		sp->bytes2 = 0;
-		//sp->respawnNpcLink = 0;
-		sp->stand_state = 0;
-		sp->channel_target_creature = sp->channel_target_go = sp->channel_spell = 0;
-		sp->MountedDisplayID = 0;
-		sp->CanFly = 0;
-		sp->phase = phase;
-
-		Creature * p = ptr->GetMapMgr()->CreateCreature(entry,true);
+	if(proto != NULL && info != NULL && proto->vehicle_entry > 0) // Only allow the creation of vehicles that are vehicles.
+	{
+		Vehicle * p = ptr->GetMapMgr()->CreateVehicle(entry);
 		ASSERT(p);
-		p->Load(sp, (uint32)NULL, NULL);
-		p->setGender(gender);
-		p->spawnid = 0;
-		p->m_spawn = 0;
-		delete sp;
+		p->Load(proto, mode, x, y, z, o);
+		p->SetPhase(phase);
 		p->PushToWorld(ptr->GetMapMgr());
-		p->SetFaction(faction);
-		p->SetInstanceID(ptr->GetInstanceID());
-		p->SetMapId(ptr->GetMapId());
-		if(duration)
-			p->Despawn(duration,0);
 		PUSH_UNIT(L,p);
 	}
 	else
@@ -3557,6 +3529,9 @@ int luaUnit_SetVehicle(lua_State * L, Unit * ptr)
 	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
 	Unit * unitVehicle = CHECK_UNIT(L,1);
+	if(!unitVehicle->IsVehicle())
+		return 0;
+
 	int8 seat = luaL_checkint(L,2); //make it -1 for auto-choose.
 	Vehicle * vehicle = ((Vehicle*)unitVehicle);
 	if (vehicle && seat >= -1)
@@ -3568,7 +3543,7 @@ int luaUnit_GetVehicle(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
-	Vehicle * ride = plr->GetVehicle();
+	Vehicle * ride = plr->m_CurrentVehicle;
 	if(ride != NULL)
 		PUSH_UNIT(L,ride); 
 	else
@@ -3580,7 +3555,7 @@ int luaUnit_RemoveFromVehicle(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
-	Vehicle * veh = plr->GetVehicle();
+	Vehicle * veh = plr->m_CurrentVehicle;
 	if(veh != NULL)
 		veh->RemovePassenger(plr);
 	return 1;
@@ -3590,8 +3565,8 @@ int luaUnit_GetVehicleSeat(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
-	if(plr->GetVehicle() != NULL)
-		lua_pushinteger(L,plr->GetVehicleSeat());
+	if(plr->m_CurrentVehicle != NULL)
+		lua_pushinteger(L,plr->m_inVehicleSeatId);
 	else
 		lua_pushnil(L);
 	return 1;
@@ -3600,7 +3575,7 @@ int luaUnit_GetVehicleSeat(lua_State * L, Unit * ptr)
 int luaUnit_IsVehicle(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT()
-	lua_pushboolean(L, ( TO_CREATURE(ptr)->IsVehicle() ) ? 1 : 0);
+	lua_pushboolean(L, ( ptr->IsVehicle() ) ? 1 : 0);
 	return 1;
 }
 
@@ -3633,7 +3608,7 @@ int luaUnit_IsGroupedWith(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Player * target = CHECK_PLAYER(L,1);
-	if(ptr->GetGroup()->HasMember(target))
+	if(TO_PLAYER(ptr)->GetGroup()->HasMember(target))
 		lua_pushboolean(L, 1);
 	else
 		lua_pushboolean(L, 0);
@@ -3733,12 +3708,13 @@ int luaUnit_SetGender(lua_State * L, Unit * ptr)
 //next 5 credits: alvanaar
 int luaUnit_SendPacketToGuild(lua_State * L, Unit * ptr)
 {
-	TEST_PLAYER()
+	// TODO
+/*	TEST_PLAYER()
 	WorldPacket * data = CHECK_PACKET(L,1);
 	Player* plr = TO_PLAYER(ptr);
 	Guild* guild = plr->GetGuild();
 	if (data != NULL && guild != NULL)
-		guild->SendPacket(data);
+		guild->SendPacket(data);*/
 	return 1;
 }
 
@@ -3793,7 +3769,7 @@ int luaUnit_SendGuildInvite(lua_State * L, Unit * ptr)
 	Player * sender = TO_PLAYER(ptr);
 	Player * plyr = CHECK_PLAYER(L,1);
 	std::string inviteeName = plyr->GetName();
-	Guild *pGuild = sender->getPlayerInfo()->guild;
+	Guild *pGuild = sender->GetGuild();
 	if(!plyr)
 	{
 		Guild::SendGuildCommandResult(sender->GetSession(), GUILD_INVITE_S,inviteeName.c_str(),GUILD_PLAYER_NOT_FOUND);
@@ -3810,11 +3786,8 @@ int luaUnit_SendGuildInvite(lua_State * L, Unit * ptr)
 	{
 		Guild::SendGuildCommandResult(sender->GetSession(), GUILD_INVITE_S,plyr->GetName(),ALREADY_INVITED_TO_GUILD);
 	}
-	else if(plyr->GetTeam()!=sender->GetTeam() && sender->GetSession()->GetPermissionCount() == 0 && !sWorld.interfaction_guild)
+	else
 	{
-		Guild::SendGuildCommandResult(sender->GetSession(), GUILD_INVITE_S,"",GUILD_NOT_ALLIED);
-	}
-	else {
 		Guild::SendGuildCommandResult(sender->GetSession(), GUILD_INVITE_S,inviteeName.c_str(),GUILD_U_HAVE_INVITED);
 		WorldPacket data(SMSG_GUILD_INVITE, 100);
 		data << sender->GetName();
@@ -3831,7 +3804,7 @@ int luaUnit_DemoteGuildMember(lua_State * L, Unit * ptr)
 	Player * plr = TO_PLAYER(ptr);
 	Player * target = CHECK_PLAYER(L,1);
 	if (target)
-		plr->GetGuild()->DemoteGuildMember(target->getPlayerInfo(), plr->GetSession());
+		plr->GetGuild()->DemoteGuildMember(target->m_playerInfo, plr->GetSession());
 	return 1;
 }
 
@@ -3841,7 +3814,7 @@ int luaUnit_PromoteGuildMember(lua_State * L, Unit * ptr)
 	Player * plr = TO_PLAYER(ptr);
 	Player * target = CHECK_PLAYER(L,1);
 	if (target)
-		plr->GetGuild()->PromoteGuildMember(target->getPlayerInfo(), plr->GetSession());
+		plr->GetGuild()->PromoteGuildMember(target->m_playerInfo, plr->GetSession());
 	return 1;
 }
 
@@ -3883,7 +3856,7 @@ int luaUnit_AddGuildMember(lua_State * L, Unit * ptr)
 	Player * target = CHECK_PLAYER(L,1);
 	int32 rank = luaL_optinteger(L, 2, -1);
 	if (target)
-		plr->GetGuild()->AddGuildMember(target->getPlayerInfo(), plr->GetSession(), rank);
+		plr->GetGuild()->AddGuildMember(target->m_playerInfo, plr->GetSession(), rank);
 	return 1;
 }
 
@@ -3893,7 +3866,7 @@ int luaUnit_RemoveGuildMember(lua_State * L, Unit * ptr)
 	Player * plr = TO_PLAYER(ptr);
 	Player * target = CHECK_PLAYER(L,1);
 	if (target)
-		plr->GetGuild()->RemoveGuildMember(target->getPlayerInfo(), plr->GetSession());
+		plr->GetGuild()->RemoveGuildMember(target->m_playerInfo, plr->GetSession());
 	return 1;
 }
 
@@ -3904,7 +3877,7 @@ int luaUnit_SetPublicNote(lua_State * L, Unit * ptr)
 	Player * target = CHECK_PLAYER(L,1);
 	const char * note = luaL_checkstring(L,2);
 	if (target && note)
-		plr->GetGuild()->SetPublicNote(target->getPlayerInfo(), note, plr->GetSession());
+		plr->GetGuild()->SetPublicNote(target->m_playerInfo, note, plr->GetSession());
 	return 1;
 }
 
@@ -3915,7 +3888,7 @@ int luaUnit_SetOfficerNote(lua_State * L, Unit * ptr)
 	Player * target = CHECK_PLAYER(L,1);
 	const char * note = luaL_checkstring(L,2);
 	if (target && note)
-		plr->GetGuild()->SetOfficerNote(target->getPlayerInfo(), note, plr->GetSession());
+		plr->GetGuild()->SetOfficerNote(target->m_playerInfo, note, plr->GetSession());
 	return 1;
 }
 
@@ -3934,7 +3907,7 @@ int luaUnit_ChangeGuildMaster(lua_State * L, Unit * ptr)
 	Player * plr = TO_PLAYER(ptr);
 	Player * target = CHECK_PLAYER(L,1);
 	if (target)
-		plr->GetGuild()->ChangeGuildMaster(target->getPlayerInfo(), plr->GetSession());
+		plr->GetGuild()->ChangeGuildMaster(target->m_playerInfo, plr->GetSession());
 	return 1;
 }
 
@@ -4044,7 +4017,7 @@ int luaUnit_IsFriendly(lua_State * L, Unit * ptr)
 		lua_pushboolean(L,0);
 	return 1;
 }
-
+/*
 int luaUnit_IsInChannel(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
@@ -4053,7 +4026,7 @@ int luaUnit_IsInChannel(lua_State * L, Unit * ptr)
 		return 0;
 
 	Channel* pChannel = channelmgr.GetChannel(channel_name, ((Player*)ptr));
-	if(pChannel->HasMember((Player*)ptr)) // Channels: "General", "Trade", "LocalDefense", "GuildRecruitment", "LookingForGroup", (or any custom channel)
+	if(pChannel->HasMember(((Player*)ptr))) // Channels: "General", "Trade", "LocalDefense", "GuildRecruitment", "LookingForGroup", (or any custom channel)
 		lua_pushboolean(L, 1);
 	else
 		lua_pushboolean(L, 0);
@@ -4131,7 +4104,7 @@ int luaUnit_KickFromChannel(lua_State * L, Unit * ptr)
 		return 0;
 	pChannel->Kick(plr, plr, false);
 	return 1;
-}
+
 
 int luaUnit_BanFromChannel(lua_State * L, Unit * ptr)
 {
@@ -4153,7 +4126,7 @@ int luaUnit_UnbanFromChannel(lua_State * L, Unit * ptr)
 	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
 	if(!plr || !pChannel)
 		return 0;
-	pChannel->Unban(plr, plr->getPlayerInfo());
+	pChannel->Unban(plr, plr->m_playerInfo);
 	return 1;
 }
 
@@ -4165,13 +4138,13 @@ int luaUnit_GetChannelMemberCount(lua_State * L, Unit * ptr)
 		return 0;
 	lua_pushnumber(L, channelmgr.GetChannel(channel_name, ((Player*)ptr))->GetNumMembers());
 	return 1;
-}
+}*/
 
 int luaUnit_GetPlayerMovementVector(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
-	MovementInfo * movement_info = plr->GetSession()->GetMovementInfo();
+	MovementInfo * movement_info = plr->GetMovementInfo();
 	if(movement_info != NULL) 
 	{
 		lua_newtable(L);
@@ -4196,7 +4169,7 @@ int luaUnit_GetPlayerMovementVector(lua_State * L, Unit * ptr)
 int luaUnit_GetPlayerMovementFlags(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
-	MovementInfo * move_info = TO_PLAYER(ptr)->GetSession()->GetMovementInfo();
+	MovementInfo * move_info = TO_PLAYER(ptr)->GetMovementInfo();
 	if (move_info != NULL)
 		lua_pushnumber(L, move_info->flags);
 	else
@@ -4208,7 +4181,7 @@ int luaUnit_Repop(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Player * plr = TO_PLAYER(ptr);
-	if (plr->IsDead())
+	if (plr->isDead())
 		plr->RepopRequestedPlayer();
 	return 1;
 }
@@ -4221,19 +4194,19 @@ int luaUnit_SetMovementFlags(lua_State * L, Unit * ptr)
 	{
 		ptr->GetAIInterface()->m_moveFly = true;
 		ptr->GetAIInterface()->m_moveRun = false;
-		ptr->GetAIInterface()->m_moveSprint luaUnit_= false;
+		ptr->GetAIInterface()->m_moveSprint = false;
 	}
 	else if (movetype == 1)
 	{
 		ptr->GetAIInterface()->m_moveFly = false;
 		ptr->GetAIInterface()->m_moveRun = true;
-		ptr->GetAIInterface()->m_moveSprint luaUnit_= false;
+		ptr->GetAIInterface()->m_moveSprint = false;
 	}
 	else
 	{
 		ptr->GetAIInterface()->m_moveFly = false;
 		ptr->GetAIInterface()->m_moveRun = false;
-		ptr->GetAIInterface()->m_moveSprint luaUnit_= false;
+		ptr->GetAIInterface()->m_moveSprint = false;
 	}
 	return 1;
 }
@@ -4256,10 +4229,11 @@ int luaUnit_ResetTalents(lua_State * L, Unit * ptr)
 
 int luaUnit_SetTalentPoints(lua_State * L, Unit * ptr)
 {
-	TEST_PLAYER()
+	// TODO
+/*	TEST_PLAYER()
 	uint32 spec = luaL_checkint(L,1); //0 or 1
 	uint32 points = luaL_checkint(L,2);
-	TO_PLAYER(ptr)->m_specs[spec].m_customTalentPointOverride = points;
+	TO_PLAYER(ptr)->m_specs[spec].m_customTalentPointOverride = points;*/
 	return 1;
 }
 
@@ -4306,7 +4280,7 @@ int luaUnit_GetGuildMembers(lua_State * L, Unit * ptr)
 	if(pGuild != NULL)
 	{
 		map<PlayerInfo*, GuildMember*>::iterator itr;
-		pGuild->getLock().Acquire();
+		pGuild->getLock()->Acquire();
 		for(itr = pGuild->GetGuildMembersBegin(); itr != pGuild->GetGuildMembersEnd(); ++itr)
 		{
 			count++;
@@ -4318,7 +4292,7 @@ int luaUnit_GetGuildMembers(lua_State * L, Unit * ptr)
 			lua_pushstring(L, (*itr).first->name);
 			lua_rawset(L, -3);
 		}
-		pGuild->getLock().Release();
+		pGuild->getLock()->Release();
 	}
 	else
 		lua_pushnil(L);
@@ -4356,12 +4330,9 @@ int luaUnit_ResetPetTalents(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER()
 	Pet * pet = TO_PLAYER(ptr)->GetSummon();
-	if (pet != NULL) 
-	{
-		pet->WipeTalents();
-		pet->SetTPs(pet->GetTPsForLevel(pet->getLevel()));
-		pet->SendTalentsToOwner();
-	}
+	if (pet != NULL)
+		pet->ResetTalents(false);
+
 	return 1;
 }
 
@@ -4385,9 +4356,9 @@ int luaUnit_GetAuraObject(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER_RET();
 	uint32 slot = CHECK_ULONG(L,1);
-	if (slot > MAX_TOTAL_AURAS_START && slot < MAX_TOTAL_AURAS_END)
+	if (slot > 0 && slot < MAX_AURAS+MAX_PASSIVE_AURAS)
 	{
-		PUSH_AURA(L, ptr->m_auras[slot]);
+		Lunar<Aura>::push(L, ptr->m_auras[slot]);
 		return 1;
 	}
 	RET_NIL()
@@ -4396,7 +4367,7 @@ int luaUnit_GetAuraObject(lua_State * L, Unit * ptr)
 int luaUnit_IsRooted(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER_RET();
-	if(ptr->isRooted() )
+	if(ptr->m_rooted)
 		RET_BOOL(true)
 	RET_BOOL(false)
 }
@@ -4405,7 +4376,7 @@ int luaUnit_HasAuraWithMechanic(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER_RET();
 	uint32 mechanic = CHECK_ULONG(L,1);
-	if(mechanic && ptr->HasAuraWithMechanics(mechanic) )
+	if(mechanic && ptr->HasAuraWithMechanic(mechanic) )
 		RET_BOOL(true)
 	RET_BOOL(false)
 }
@@ -4413,7 +4384,7 @@ int luaUnit_HasAuraWithMechanic(lua_State * L, Unit * ptr)
 int luaUnit_HasNegativeAura(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER_RET();
-	for (uint32 x = MAX_NEGATIVE_VISUAL_AURAS_START; x < MAX_NEGATIVE_VISUAL_AURAS_END; ++x)
+	for (uint32 x = MAX_POSITIVE_AURAS; x < MAX_AURAS; ++x)
 	{
 		if (ptr->m_auras[x] && ptr->m_auras[x]->m_spellProto)
 			RET_BOOL(true)
@@ -4424,7 +4395,7 @@ int luaUnit_HasNegativeAura(lua_State * L, Unit * ptr)
 int luaUnit_HasPositiveAura(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER()
-	for (uint32 x = MAX_POSITIVE_VISUAL_AURAS_START; x < MAX_POSITIVE_VISUAL_AURAS_END; ++x)
+	for (uint32 x = 0; x < MAX_POSITIVE_AURAS; ++x)
 	{
 		if (ptr->m_auras[x] && ptr->m_auras[x]->m_spellProto)
 			RET_BOOL(true)
@@ -4599,7 +4570,7 @@ int luaUnit_GetSpawnLocation(lua_State * L, Unit * ptr)
 int luaUnit_GetObject(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
-	uint64 guid = CHECK_GUID(L,1);
+	uint64 guid = luaL_checkint(L,1);
 	Object * obj = ptr->GetMapMgr()->_GetObject(guid);
 	if(obj != NULL && obj->IsUnit() )
 		PUSH_UNIT(L, obj);
@@ -4615,18 +4586,14 @@ int luaUnit_GetSecondHated(lua_State * L, Unit * ptr)
 	PUSH_UNIT(L,ptr->GetAIInterface()->GetSecondHated());
 	return 1;
 }
-int luaUnit_SaveToInstance(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER();
-	Instance * dungeon = sInstanceMgr.GetInstanceByIds(ptr->GetMapId(),ptr->GetInstanceID());
-	dungeon->SaveToDB();
-	sInstanceMgr.BuildRaidSavedInstancesForPlayer(TO_PLAYER(ptr));
-	return 1;
-}
+
 int luaUnit_UseAI(lua_State * L, Unit * ptr)
 {
 	bool check = CHECK_BOOL(L,1);
-	ptr->setAItoUse(check);
+	if(check)
+		ptr->EnableAI();
+	else
+		ptr->DisableAI();
 	return 1;
 }
 int luaUnit_FlagFFA(lua_State * L, Unit * ptr)
@@ -4679,13 +4646,13 @@ int luaUnit_IsInRaid(lua_State * L, Unit * ptr)
 }
 int luaUnit_IsHostile(lua_State*  L, Unit * ptr)
 {
-	Object * B = CHECK_OBJECT(L,1);
+	Object * B = Lunar<Object>::check(L,1);
 	lua_pushboolean(L, isHostile(ptr,B));
 	return 1;
 }
 int luaUnit_IsAttackable(lua_State*  L, Unit * ptr)
 {
-	Object * B = CHECK_OBJECT(L,1);
+	Object * B = Lunar<Object>::check(L,1);
 	lua_pushboolean(L, isAttackable(ptr,B));
 	return 1;
 }
@@ -4716,14 +4683,21 @@ int luaUnit_GetAuraStackCount(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER_RET();
 	uint32 id = CHECK_ULONG(L,1);
-	RET_NUMBER(ptr->GetAuraStackCount(id));
+	Aura* aur = ptr->FindAura(id);
+	if(aur)
+		RET_NUMBER(aur->stackSize);
+
+	lua_pushnumber(L,(0));
+	return 1;
 }
 
 int luaUnit_AddAuraObject(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER();
-	Aura * aura = CHECK_AURA(L,1);
-	if (!aura) return 0;
+	Aura * aura = Lunar<Aura>::check(L,1);
+	if(aura == NULL)
+		return 0;
+
 	ptr->AddAura(aura);
 	return 1;
 }
@@ -4732,8 +4706,8 @@ int luaUnit_GetAuraObjectById(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER();
 	uint32 id = CHECK_ULONG(L,1);
-	PUSH_AURA(L, ptr->FindAura(id));
+	Lunar<Aura>::push(L, ptr->FindAura(id));
 	return 1;
-}*/
+}
 
 #endif // UNIT_FUNCTIONS_H

@@ -247,7 +247,7 @@ namespace luPacket
 	}
 	int WriteGUID(lua_State * L, WorldPacket * packet)
 	{
-		uint64 guid = CHECK_GUID(L,1);
+		uint64 guid = luaL_checkint(L,1);
 		(*packet) << guid;
 		return 0;
 	}

@@ -251,6 +251,7 @@ public:
 
 	void SetSlot(int32 i);
 	void Finish();
+	uint32 GetSlot() { return m_slot; };
 
 	void SendQuestComplete();
 	void SendUpdateAddKill(uint32 i);
