@@ -74,16 +74,17 @@ void VoiceChatClientSocket::SendPacket(WorldPacket* data)
 		return;
 	}
 	uint16 opcode = data->GetOpcode();
-	uint32 sz = data->size();
+	uint32 sz = uint32(data->size());
 	bool rv;
 
 	BurstBegin();
 	rv = BurstSend((const uint8*)&opcode, 2);
-	if(rv) BurstSend((const uint8*)&sz, 2);
+	if(rv)
+		BurstSend((const uint8*)&sz, 2);
 
 	if( sz > 0 && rv )
 	{
-		rv = BurstSend((const uint8*)data->contents(), data->size());
+		rv = BurstSend((const uint8*)data->contents(), uint32(data->size()));
 	}
 
 	OUT_DEBUG("sent packet of %u bytes with op %u, buffer len is now %u\n", data->size(), data->GetOpcode(), writeBuffer.GetSize());

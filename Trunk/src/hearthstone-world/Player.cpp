@@ -473,6 +473,7 @@ void Player::Init()
 		m_WeaponSubClassDamagePct[i] = 1.0f;
 
 	WinterGrasp = NULL;
+	watchedchannel = NULL;
 	Unit::Init();
 }
 

@@ -54,6 +54,7 @@
 #include "../hearthstone-shared/crc32.h"
 #include "../hearthstone-shared/LocationVector.h"
 #include "../hearthstone-shared/hashmap.h"
+#include "../hearthstone-shared/hearthstoneConfig.h"
 
 #include "../hearthstone-shared/Collision/vmap/IVMapManager.h"
 #include "../hearthstone-shared/Collision/vmap/VMapManager.h"

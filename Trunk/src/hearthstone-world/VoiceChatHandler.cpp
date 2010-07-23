@@ -23,7 +23,7 @@
 
 void WorldSession::HandleEnableMicrophoneOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: Received CMSG_VOICE_SESSION_ENABLE");
+	OUT_DEBUG("WORLD: Received CMSG_VOICE_SESSION_ENABLE with VOICE CHAT");
 	uint8 voice, mic;
 	recv_data >> voice >> mic;
 
@@ -35,13 +35,13 @@ void WorldSession::HandleEnableMicrophoneOpcode(WorldPacket & recv_data)
 
 void WorldSession::HandleChannelVoiceOnOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: Received CMSG_CHANNEL_VOICE_ON");
+	OUT_DEBUG("WORLD: Received CMSG_CHANNEL_VOICE_ON with VOICE CHAT");
 	recv_data.hexlike();
 }
 
 void WorldSession::HandleVoiceChatQueryOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: Received CMSG_SET_ACTIVE_VOICE_CHANNEL");
+	OUT_DEBUG("WORLD: Received CMSG_SET_ACTIVE_VOICE_CHANNEL with VOICE CHAT");
 
 	if(!sVoiceChatHandler.CanUseVoiceChat())
 		return;
@@ -63,12 +63,14 @@ void WorldSession::HandleVoiceChatQueryOpcode(WorldPacket & recv_data)
 			return;
 
 		chn->JoinVoiceChannel(_player);
+		chn->List(_player);
+		_player->watchedchannel = chn;
 	}
 }
 
 void WorldSession::HandleChannelWatchOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: Received CMSG_SET_CHANNEL_WATCH");
+	OUT_DEBUG("WORLD: Received CMSG_SET_CHANNEL_WATCH with VOICE CHAT");
 
 	string name;
 	recv_data >> name;
@@ -112,7 +114,7 @@ void VoiceChatHandler::OnRead(WorldPacket* pck)
 	{
 	case VOICECHAT_SMSG_PONG:
 		{
-			OUT_DEBUG("!! VOICECHAT PONGZ!\n");
+			OUT_DEBUG("!! VOICECHAT PONGZ!");
 			m_client->last_pong = UNIXTIME;
 		}break;
 	case VOICECHAT_SMSG_CHANNEL_CREATED:

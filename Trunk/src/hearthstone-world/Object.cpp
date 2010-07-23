@@ -154,7 +154,7 @@ void Object::_Create( uint32 mapid, float x, float y, float z, float ang )
 
 uint32 Object::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target)
 {
-	OUT_DEBUG("Building update block for Player");
+//	OUT_DEBUG("Building update block for Player"); // Too heavy for the core.
 	uint16 flags = 0;
 	uint32 flags2 = 0;
 

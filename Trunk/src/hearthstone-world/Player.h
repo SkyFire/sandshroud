@@ -1813,7 +1813,8 @@ public:
 	// spell to (delay, last time)
 	
 	FactionReputation * reputationByListId[128];
-	
+	Channel* watchedchannel;
+
 	uint64 m_comboTarget;
 	int8 m_comboPoints;
 	bool m_retainComboPoints;
@@ -1822,7 +1823,7 @@ public:
 
 	HEARTHSTONE_INLINE void AddComboPoints(uint64 target, uint8 count)
 	{
-        if(m_comboTarget == target)
+		if(m_comboTarget == target)
 			m_comboPoints += count;
 		else
 		{
