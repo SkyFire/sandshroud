@@ -161,7 +161,7 @@ void Channel::Part(Player* plr, bool silent)
 		m_lock.Release();
 		return;
 	}
-    
+
 	flags = itr->second;
 	m_members.erase(itr);
 

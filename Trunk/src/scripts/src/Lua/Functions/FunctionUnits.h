@@ -22,8 +22,6 @@
 #ifndef UNIT_FUNCTIONS_H
 #define UNIT_FUNCTIONS_H
 
-#include "../LUAEngine.h"
-
 ////////////////////////////////////////////////////
 //////////////UNIT GOSSIP///////////////////////////
 ////////////////////////////////////////////////////
@@ -4017,128 +4015,6 @@ int luaUnit_IsFriendly(lua_State * L, Unit * ptr)
 		lua_pushboolean(L,0);
 	return 1;
 }
-/*
-int luaUnit_IsInChannel(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	if(!ptr || !channel_name)
-		return 0;
-
-	Channel* pChannel = channelmgr.GetChannel(channel_name, ((Player*)ptr));
-	if(pChannel->HasMember(((Player*)ptr))) // Channels: "General", "Trade", "LocalDefense", "GuildRecruitment", "LookingForGroup", (or any custom channel)
-		lua_pushboolean(L, 1);
-	else
-		lua_pushboolean(L, 0);
-	return 1;
-}
-
-int luaUnit_JoinChannel(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	Channel* pChannel = channelmgr.GetChannel(channel_name, ((Player*)ptr));
-	const char* pw = luaL_optstring(L, 2, pChannel->m_password.c_str());
-
-	if(!ptr || !channel_name || pChannel->HasMember(((Player*)ptr)) || !pChannel)
-		return 0;
-	else
-		pChannel->AttemptJoin(((Player*)ptr), pw);
-	return 1;
-}
-
-int luaUnit_LeaveChannel(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	Channel* pChannel = channelmgr.GetChannel(channel_name, ((Player*)ptr));
-	if(!ptr || !channel_name || !pChannel || !pChannel->HasMember(((Player*)ptr)))
-		return 0;
-	else
-		pChannel->Part(((Player*)ptr), true);
-	return 1;
-}
-
-int luaUnit_SetChannelName(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* current_name = luaL_checkstring(L, 1);
-	const char* new_name = luaL_checkstring(L, 2);
-	Channel* pChannel = channelmgr.GetChannel(current_name, ((Player*)ptr));
-	if(!current_name || !new_name || !ptr || !pChannel || pChannel->m_name == new_name)
-		return 0;
-	pChannel->m_name = new_name;
-	return 1;
-}
-
-int luaUnit_SetChannelPassword(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	const char* pass = luaL_checkstring(L, 2);
-	Channel* pChannel = channelmgr.GetChannel(channel_name, ((Player*)ptr));
-	if(!pass || !ptr || pChannel->m_password == pass)
-		return 0;
-	pChannel->Password(((Player*)ptr), pass);
-	return 1;
-}
-
-int luaUnit_GetChannelPassword(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	Channel* pChannel = channelmgr.GetChannel(channel_name, ((Player*)ptr));
-	if(!ptr)
-		return 0;
-	lua_pushstring(L, pChannel->m_password.c_str());
-	return 1;
-}
-
-int luaUnit_KickFromChannel(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	Player* plr = ((Player*)ptr);
-	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
-	if(!plr || !pChannel)
-		return 0;
-	pChannel->Kick(plr, plr, false);
-	return 1;
-
-
-int luaUnit_BanFromChannel(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	Player* plr = ((Player*)ptr);
-	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
-	if(!plr|| !pChannel)
-		return 0;
-	pChannel->Kick(plr, plr, true);
-	return 1;
-}
-
-int luaUnit_UnbanFromChannel(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	Player* plr = ((Player*)ptr);
-	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
-	if(!plr || !pChannel)
-		return 0;
-	pChannel->Unban(plr, plr->m_playerInfo);
-	return 1;
-}
-
-int luaUnit_GetChannelMemberCount(lua_State * L, Unit * ptr)
-{
-	TEST_PLAYER()
-	const char* channel_name = luaL_checkstring(L, 1);
-	if(!ptr || !channel_name)
-		return 0;
-	lua_pushnumber(L, channelmgr.GetChannel(channel_name, ((Player*)ptr))->GetNumMembers());
-	return 1;
-}*/
 
 int luaUnit_GetPlayerMovementVector(lua_State * L, Unit * ptr)
 {
@@ -4707,6 +4583,182 @@ int luaUnit_GetAuraObjectById(lua_State * L, Unit * ptr)
 	TEST_UNITPLAYER();
 	uint32 id = CHECK_ULONG(L,1);
 	Lunar<Aura>::push(L, ptr->FindAura(id));
+	return 1;
+}
+
+int luaUnit_GetNativeFaction(lua_State * L, Unit * ptr)
+{
+	TEST_UNITPLAYER_RET()
+	int32 faction = 35;
+	if (ptr->IsPlayer())
+	{
+		Player* plr = TO_PLAYER(ptr);
+		PlayerCreateInfo * pci = objmgr.GetPlayerCreateInfo(plr->getRace(), plr->getClass());
+		if( pci )
+			faction = pci->factiontemplate;
+	}
+	else
+	{
+		if (TO_CREATURE(ptr)->GetProto())
+			faction = TO_CREATURE(ptr)->GetProto()->Faction;
+		else
+			faction = ptr->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE);
+	}
+	RET_INT(faction)
+}
+
+int luaUnit_RemoveFlag(lua_State * L, Unit * ptr)
+{
+	if(ptr != NULL)
+	{
+		int field = luaL_checkint(L,1);
+		int value = luaL_checkint(L,2);
+		ptr->RemoveFlag(field,value);
+	}
+
+	return 0;
+}
+
+int luaUnit_SetMount(lua_State * L, Unit * ptr)
+{
+	if (!ptr) return 0;
+	uint32 DsplId = CHECK_ULONG(L, 1);
+	ptr->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, DsplId);
+	return 0;
+}
+
+int luaUnit_StartQuest(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER_RET()
+	int quest_id = luaL_checkint(L,1);
+	Player *plr = TO_PLAYER(ptr);
+
+	Quest * qst = QuestStorage.LookupEntry(quest_id);
+	if (qst)
+	{
+		if (plr->HasFinishedQuest(quest_id)) {
+			lua_pushnumber(L, 0);
+			return 1;
+		}
+		else
+		{
+			QuestLogEntry * IsPlrOnQuest = plr->GetQuestLogForEntry(quest_id);
+			if (IsPlrOnQuest) 
+			{
+				lua_pushnumber(L, 1);
+				return 1;
+			}
+			else
+			{
+				int32 open_slot = plr->GetOpenQuestSlot();
+
+				if (open_slot == -1)
+				{
+					sQuestMgr.SendQuestLogFull(plr);
+					lua_pushnumber(L, 2);
+					return 1;
+				}
+				else
+				{
+					QuestLogEntry *qle = new QuestLogEntry();
+					qle->Init(qst, plr, (uint32)open_slot);
+					qle->UpdatePlayerFields();
+		
+					// If the quest should give any items on begin, give them the items.
+					for(uint32 i = 0; i < 4; ++i)
+					{
+						if(qst->receive_items[i])
+						{
+							Item *item = objmgr.CreateItem( qst->receive_items[i], plr);
+							if(item==NULL)
+								return false;
+
+							if(!plr->GetItemInterface()->AddItemToFreeSlot(item))
+								item->DeleteMe();
+						}
+					}
+
+					if(qst->srcitem && qst->srcitem != qst->receive_items[0])
+					{
+						Item * item = objmgr.CreateItem( qst->srcitem, plr);
+						if(item)
+						{
+							item->SetUInt32Value( ITEM_FIELD_STACK_COUNT, (qst->srcitemcount ? qst->srcitemcount : 1));
+							if(!plr->GetItemInterface()->AddItemToFreeSlot(item))
+								item->DeleteMe();
+						}
+					}
+
+					sHookInterface.OnQuestAccept( plr, qst, NULL );
+					lua_pushnumber(L, 3);
+					return 1;
+				}
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+	
+	lua_pushnumber(L, 999);
+	return 1;
+} //StartQuest
+
+int luaUnit_FinishQuest(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER_RET()
+	int quest_id = luaL_checkint(L,1);
+	Player *plr = TO_PLAYER(ptr);
+	Quest * qst = QuestStorage.LookupEntry(quest_id);
+	if (qst)
+	{
+		if (plr->HasFinishedQuest(quest_id)) 
+		{
+			lua_pushnumber(L, 0);
+			return 1;
+		}
+		else
+		{
+			QuestLogEntry * IsPlrOnQuest = plr->GetQuestLogForEntry(quest_id);
+			if (IsPlrOnQuest)
+			{	
+				sQuestMgr.GenerateQuestXP(plr, qst);
+				sQuestMgr.BuildQuestComplete(plr, qst);
+
+				IsPlrOnQuest->Finish();
+				plr->AddToFinishedQuests(quest_id);
+				lua_pushnumber(L, 1);
+				return 1;
+			}
+			else
+			{
+				lua_pushnumber(L, 2);
+				return 1;
+			}		
+		}
+	}
+	else
+		return 0;
+}
+
+int luaUnit_GetDisplay(lua_State * L, Unit * ptr)
+{
+	if( ptr == NULL )
+		lua_pushinteger( L, 0 );
+	else
+		lua_pushinteger( L, ptr->GetUInt32Value(UNIT_FIELD_DISPLAYID) );
+
+	return 1;
+}
+
+int luaUnit_GetNativeDisplay(lua_State * L, Unit * ptr)
+{
+	if( ptr == NULL )
+		lua_pushinteger( L, 0 );
+	else
+		lua_pushinteger( L, ptr->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID) );
+
 	return 1;
 }
 

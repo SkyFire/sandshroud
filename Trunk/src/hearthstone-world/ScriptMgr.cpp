@@ -931,9 +931,23 @@ bool HookInterface::OnChat(Player* pPlayer, uint32 Type, uint32 Lang, string Mes
 	OUTER_LOOP_END_COND
 }
 
-void HookInterface::OnEnterWorld2(Player* pPlayer)
+void HookInterface::OnLoot(Player * pPlayer, Object * pTarget, uint32 money, uint32 itemId)
 {
-	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_ENTER_WORLD_2, tOnEnterWorld)
+	ServerHookList hookList = sScriptMgr._hooks[SERVER_HOOK_EVENT_ON_LOOT];
+	for(ServerHookList::iterator itr = hookList.begin(); itr != hookList.end(); ++itr)
+		((tOnLoot)*itr)(pPlayer, pTarget, money, itemId);
+}
+
+void HookInterface::OnObjectLoot(Player * pPlayer, Object * pTarget, uint32 money, uint32 itemId)
+{
+	ServerHookList hookList = sScriptMgr._hooks[SERVER_HOOK_EVENT_ON_OBJECTLOOT];
+	for(ServerHookList::iterator itr = hookList.begin(); itr != hookList.end(); ++itr)
+		((tOnObjectLoot)*itr)(pPlayer, pTarget, money, itemId);
+}
+
+void HookInterface::OnFullLogin(Player* pPlayer)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_FULL_LOGIN, tOnFullLogin)
 		(call)(pPlayer);
 	OUTER_LOOP_END
 }

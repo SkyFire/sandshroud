@@ -28,6 +28,7 @@
 class Channel;
 class Guild;
 struct Quest;
+
 enum ServerHookEvents
 {
 	SERVER_HOOK_EVENT_ON_NEW_CHARACTER		= 1,
@@ -46,23 +47,30 @@ enum ServerHookEvents
 	SERVER_HOOK_EVENT_ON_QUEST_ACCEPT		= 14,
 	SERVER_HOOK_EVENT_ON_ZONE				= 15,
 	SERVER_HOOK_EVENT_ON_CHAT				= 16,
-	SERVER_HOOK_EVENT_ON_GUILD_CREATE		= 17,
-	SERVER_HOOK_EVENT_ON_ENTER_WORLD_2		= 18,
-	SERVER_HOOK_EVENT_ON_CHARACTER_CREATE	= 19,
-	SERVER_HOOK_EVENT_ON_QUEST_CANCELLED	= 20,
-	SERVER_HOOK_EVENT_ON_QUEST_FINISHED		= 21,
-	SERVER_HOOK_EVENT_ON_HONORABLE_KILL		= 22,
-	SERVER_HOOK_EVENT_ON_ARENA_FINISH		= 23,
-	SERVER_HOOK_EVENT_ON_CONTINENT_CREATE	= 25,
-	SERVER_HOOK_EVENT_ON_POST_SPELL_CAST	= 26,
-	SERVER_HOOK_EVENT_ON_AREATRIGGER		= 27,
-	SERVER_HOOK_EVENT_ON_PLAYER_SAVE_TO_DB	= 28,
-	SERVER_HOOK_EVENT_ON_AURA_REMOVE		= 29,
-	SERVER_HOOK_EVENT_ON_DESTROY_BUILDING	= 30,
-	SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING	= 31,
-	SERVER_HOOK_EVENT_ON_MOUNT_FLYING		= 32,
-	SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE	= 33,
-	SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN		= 34,
+	SERVER_HOOK_EVENT_ON_LOOT				= 17,
+	SERVER_HOOK_EVENT_ON_GUILD_CREATE		= 18,
+	SERVER_HOOK_EVENT_ON_FULL_LOGIN			= 19,
+	SERVER_HOOK_EVENT_ON_CHARACTER_CREATE	= 20,
+	SERVER_HOOK_EVENT_ON_QUEST_CANCELLED	= 21,
+	SERVER_HOOK_EVENT_ON_QUEST_FINISHED		= 22,
+	SERVER_HOOK_EVENT_ON_HONORABLE_KILL		= 23,
+	SERVER_HOOK_EVENT_ON_ARENA_FINISH		= 24,
+	SERVER_HOOK_EVENT_ON_OBJECTLOOT			= 25,
+	SERVER_HOOK_EVENT_ON_AREATRIGGER		= 26,
+	SERVER_HOOK_EVENT_ON_POST_LEVELUP		= 27,
+	SERVER_HOOK_EVENT_ON_PRE_DIE			= 28,
+	SERVER_HOOK_EVENT_ON_ADVANCE_SKILLLINE	= 29,
+	SERVER_HOOK_EVENT_ON_DUEL_FINISHED		= 30,
+	SERVER_HOOK_EVENT_ON_UPDATE				= 31,
+	SERVER_HOOK_EVENT_ON_CONTINENT_CREATE	= 32,
+	SERVER_HOOK_EVENT_ON_POST_SPELL_CAST	= 33,
+	SERVER_HOOK_EVENT_ON_PLAYER_SAVE_TO_DB	= 34,
+	SERVER_HOOK_EVENT_ON_AURA_REMOVE		= 35,
+	SERVER_HOOK_EVENT_ON_DESTROY_BUILDING	= 36,
+	SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING	= 37,
+	SERVER_HOOK_EVENT_ON_MOUNT_FLYING		= 38,
+	SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE	= 39,
+	SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN		= 40,
 
 	NUM_SERVER_HOOKS,
 };
@@ -83,6 +91,7 @@ typedef void(*tOnKillPlayer)(Player* pPlayer, Player* pVictim);
 typedef void(*tOCharacterCreate)(Player* pPlayer);
 typedef void(*tOnFirstEnterWorld)(Player* pPlayer);
 typedef void(*tOnEnterWorld)(Player* pPlayer);
+typedef void(*tOnFullLogin)(Player* pPlayer);
 typedef void(*tOnGuildCreate)(Player* pLeader, Guild * pGuild);
 typedef void(*tOnGuildJoin)(Player* pPlayer, Guild * pGuild);
 typedef void(*tOnDeath)(Player* pPlayer);
@@ -96,14 +105,21 @@ typedef void(*tOnLogout)(Player* pPlayer);
 typedef void(*tOnQuestAccept)(Player* pPlayer, Quest * pQuest, Object* pObject);
 typedef void(*tOnZone)(Player* pPlayer, uint32 Zone, uint32 OldZone);
 typedef bool(*tOnChat)(Player* pPlayer, uint32 Type, uint32 Lang, string Message, string Misc);
+typedef void(*tOnLoot)(Player * pPlayer, Object* pTarget, uint32 Money, uint32 ItemId);
 typedef bool(*ItemScript)(Item* pItem, Player* pPlayer);
 typedef void(*tOnQuestCancel)(Player* pPlayer, Quest * pQuest);
 typedef void(*tOnQuestFinished)(Player* pPlayer, Quest * pQuest, Object* pObject);
 typedef void(*tOnHonorableKill)(Player* pPlayer, Player* pKilled);
 typedef void(*tOnArenaFinish)(Player* pPlayer, uint32 type, ArenaTeam * pTeam, bool victory, bool rated);
+typedef void(*tOnObjectLoot)(Player * pPlayer, Object * pTarget, uint32 Money, uint32 ItemId);
+typedef void(*tOnAreaTrigger)(Player * pPlayer, uint32 areaTrigger);
+typedef void(*tOnPostLevelUp)(Player * pPlayer);
+typedef bool(*tOnPreUnitDie)(Unit *killer, Unit *target);
+typedef void(*tOnAdvanceSkillLine)(Player * pPlayer, uint32 SkillLine, uint32 Current);
+typedef void(*tOnDuelFinished)(Player * Winner, Player * Looser);
+typedef void(*tOnUpdate)(Player * plr);
 typedef void(*tOnContinentCreate)(MapMgr* mgr);
 typedef void(*tOnPostSpellCast)(Player* pPlayer, SpellEntry * pSpell, Unit* pTarget);
-typedef void(*tOnAreaTrigger)(Player* plr, uint32 areatrigger);
 typedef void(*tOnPlayerSaveToDB)(Player* pPlayer, QueryBuffer* buf);
 typedef void(*tOnAuraRemove)(Player* pPlayer, uint32 spellID);
 
@@ -222,6 +238,7 @@ public:
 	virtual void OnCallForHelp() {}
 	virtual void OnLoad() {}
 	virtual void OnReachWP(uint32 iWaypointId, bool bForwards) {}
+	virtual void OnLootTaken(Player* pPlayer, ItemPrototype *pItemPrototype) {}
 	virtual void AIUpdate() {}
 	virtual void OnEmote(Player* pPlayer, EmoteType Emote) {}
 	virtual void StringFunctionCall(const char * pFunc) {}
@@ -246,6 +263,7 @@ public:
 	virtual void OnCreate() {}
 	virtual void OnSpawn() {}
 	virtual void OnDespawn() {}
+	virtual void OnLootTaken(Player * pLooter, ItemPrototype *pItemInfo) {}
 	virtual void OnActivate(Player* pPlayer) {}
 	virtual void AIUpdate() {}
 	virtual void Destroy() { delete this; }
@@ -358,15 +376,22 @@ public:
 	void OnQuestAccept(Player* pPlayer, Quest * pQuest, Object* pObject);
 	void OnZone(Player* pPlayer, uint32 Zone, uint32 OldZone);
 	bool OnChat(Player* pPlayer, uint32 Type, uint32 Lang, string Message, string Misc);
-	void OnEnterWorld2(Player* pPlayer);
+	void OnLoot(Player * pPlayer, Object* pTarget, uint32 Money, uint32 ItemId);
+	void OnFullLogin(Player* pPlayer);
 	void OnCharacterCreate(Player* pPlayer);
 	void OnQuestCancelled(Player* pPlayer, Quest * pQuest);
 	void OnQuestFinished(Player* pPlayer, Quest * pQuest, Object* pObject);
 	void OnHonorableKill(Player* pPlayer, Player* pKilled);
 	void OnArenaFinish(Player* pPlayer, uint32 type, ArenaTeam* pTeam, bool victory, bool rated);
+	void OnObjectLoot(Player * pPlayer, Object * pTarget, uint32 Money, uint32 ItemId);
+	void OnAreaTrigger(Player * pPlayer, uint32 areaTrigger);
+	void OnPostLevelUp(Player * pPlayer);
+	bool OnPreUnitDie(Unit *Killer, Unit *Victim);
+	void OnAdvanceSkillLine(Player * pPlayer, uint32 SkillLine, uint32 Current);
+	void OnDuelFinished(Player * Winner, Player * Looser);
+	void OnUpdate(Player *plr);
 	void OnContinentCreate(MapMgr* pMgr);
 	void OnPostSpellCast(Player* pPlayer, SpellEntry * pSpell, Unit* pTarget);
-	void OnAreaTrigger(Player* plr, uint32 areatrigger);
 	void OnPlayerSaveToDB(Player* pPlayer, QueryBuffer* buf);
 	void OnAuraRemove(Player* pPlayer, uint32 spellID);
 

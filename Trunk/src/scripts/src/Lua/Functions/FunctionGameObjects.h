@@ -22,8 +22,6 @@
 #ifndef GAMEOBJECT_FUNCTIONS_H
 #define GAMEOBJECT_FUNCTIONS_H
 
-#include "../LUAEngine.h"
-
 ////////////////////////////////////
 ////////////GAMEOBJECT GOSSIP///////
 /////////////////////////////////////

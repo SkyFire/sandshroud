@@ -22,6 +22,7 @@
 #ifndef __TABLEFUNCTIONS_H
 #define __TABLEFUNCTIONS_H
 
+#include "../LUAEngine.h"
 // Crow: Some of the following functions are based off of functions created by Hypersniper of LuaHypeArc.
 // Areas where this applies, credit has been given in the form of a name declaration.
 #include "FunctionGameObjects.h"
@@ -302,7 +303,7 @@ RegType<Unit> UnitMethods[] = {
 	{ "SetStealthLevel", &luaUnit_SetStealth },
 	{ "GetStealthLevel", &luaUnit_GetStealthLevel },
 	{ "IsStealthed", &luaUnit_IsStealthed },
-//	{ "RemoveFlag", &luaUnit_RemoveFlag },
+	{ "RemoveFlag", &luaUnit_RemoveFlag },
 	{ "RegisterAIUpdateEvent", &luaUnit_RegisterAIUpdateEvent },
 	{ "ModifyAIUpdateEvent", &luaUnit_ModifyAIUpdateEvent },
 	{ "RemoveAIUpdateEvent", &luaUnit_RemoveAIUpdateEvent },
@@ -314,9 +315,9 @@ RegType<Unit> UnitMethods[] = {
 	{ "Attack", &luaUnit_Attack },
 	{ "GetTarget", &luaUnit_GetTarget },
 	{ "GetSelection", &luaUnit_GetSelection },
-//	{ "SetMount", &luaUnit_SetMount },
-//	{ "StartQuest", &luaUnit_StartQuest },
-//	{ "FinishQuest", &luaUnit_FinishQuest },
+	{ "SetMount", &luaUnit_SetMount },
+	{ "StartQuest", &luaUnit_StartQuest },
+	{ "FinishQuest", &luaUnit_FinishQuest },
 	{ "RepairAllPlayerItems", &luaUnit_RepairAllPlayerItems },
 	{ "SetKnownTitle", &luaUnit_SetKnownTitle },
 	{ "LifeTimeKills", &luaUnit_LifeTimeKills },
@@ -347,8 +348,8 @@ RegType<Unit> UnitMethods[] = {
 	{ "EnableFlight", &luaUnit_EnableFlight },
 	{ "GetCoinage", &luaUnit_GetCoinage },
 	{ "FlagPvP", &luaUnit_FlagPvP },
-//    { "GetDisplay", &luaUnit_GetDisplay },
-//    { "GetNativeDisplay", &luaUnit_GetNativeDisplay },
+	{ "GetDisplay", &luaUnit_GetDisplay },
+	{ "GetNativeDisplay", &luaUnit_GetNativeDisplay },
 	{ "IsMounted", &luaUnit_IsMounted },
 //	{ "GetGameTime", &luaUnit_GetGameTime },
 //	{ "PlaySoundToPlayer", &luaUnit_PlaySoundToPlayer },
@@ -453,16 +454,6 @@ RegType<Unit> UnitMethods[] = {
 //	{ "GetInRangeEnemies", &luaUnit_GetInRangeEnemies },
 	{ "IsFriendly", &luaUnit_IsFriendly },
 	{ "MovePlayerTo", &luaUnit_MovePlayerTo },
-//	{ "IsInChannel", &luaUnit_IsInChannel },
-//	{ "JoinChannel", &luaUnit_JoinChannel },
-//	{ "LeaveChannel", &luaUnit_LeaveChannel },
-//	{ "SetChannelName", &luaUnit_SetChannelName },
-//	{ "SetChannelPassword", &luaUnit_SetChannelPassword },
-//	{ "GetChannelPassword", &luaUnit_GetChannelPassword },
-//	{ "KickFromChannel", &luaUnit_KickFromChannel },
-//	{ "BanFromChannel", &luaUnit_BanFromChannel },
-//	{ "UnbanFromChannel", &luaUnit_UnbanFromChannel },
-//	{ "GetChannelMemberCount", &luaUnit_GetChannelMemberCount },
 	{ "GetPlayerMovementVector", &luaUnit_GetPlayerMovementVector},
 	{ "UnsetKnownTitle", &luaUnit_UnsetKnownTitle},
 //	{ "IsInPhase", &luaUnit_IsInPhase},
@@ -523,7 +514,6 @@ RegType<Unit> UnitMethods[] = {
 	{ "GetPlayerMovementFlags", &luaUnit_GetPlayerMovementFlags},
 	{ "GetObject", &luaUnit_GetObject },
 	{ "GetSecondHated", &luaUnit_GetSecondHated },
-//	{ "SaveToInstance", &luaUnit_SaveToInstance },
 	{ "UseAI", &luaUnit_UseAI },
 	{ "FlagFFA", &luaUnit_FlagFFA },
 	{ "TeleportCreature", &luaUnit_TeleportCreature },
@@ -540,7 +530,7 @@ RegType<Unit> UnitMethods[] = {
 	{ "GetAuraStackCount", &luaUnit_GetAuraStackCount },
 	{ "AddAuraObject", &luaUnit_AddAuraObject },
 	{ "GetAuraObjectById", &luaUnit_GetAuraObjectById },
-//	{ "GetNativeFaction", &luaUnit_GetNativeFaction },
+	{ "GetNativeFaction", &luaUnit_GetNativeFaction },
 
 	{ NULL, NULL },
 };

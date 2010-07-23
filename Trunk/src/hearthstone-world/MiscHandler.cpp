@@ -103,8 +103,16 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 		return;
 	}
 
+	if(pGO)
+	{
+		CALL_GO_SCRIPT_EVENT(pGO, OnLootTaken)(_player, it);
+	}
+	else if(pLootObj->IsCreature())
+		CALL_SCRIPT_EVENT(pLootObj, OnLootTaken)(_player, it);
+
+	sHookInterface.OnLoot(_player, pLootObj, 0, itemid);
+
 	add = GetPlayer()->GetItemInterface()->FindItemLessMax(itemid, amt, false);
-	
 	if (!add)
 	{
 		slotresult = GetPlayer()->GetItemInterface()->FindFreeInventorySlot(it);
@@ -1735,10 +1743,9 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		return;
 	}
 
-	/*if(pCreature)
-		CALL_SCRIPT_EVENT(pCreature, OnLootTaken)(player, it);*/
-	
-	
+	if(pCreature)
+		CALL_SCRIPT_EVENT(pCreature, OnLootTaken)(player, it);
+
 	slotresult = player->GetItemInterface()->FindFreeInventorySlot(it);
 	if(!slotresult.Result)
 	{

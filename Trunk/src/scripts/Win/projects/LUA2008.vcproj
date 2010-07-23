@@ -565,6 +565,46 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Functions"
+			>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionAura.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionGameObjects.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionGlobal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionItems.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionPacket.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionSpell.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionTaxi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\FunctionUnits.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Lua\Functions\LuaSqlApi.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\src\Lua\LUAEngine.cpp"
 			>
