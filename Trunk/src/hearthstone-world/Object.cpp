@@ -2872,6 +2872,16 @@ void Object::SetZoneId(uint32 newZone)
 		TO_PLAYER(this)->GetGroup()->HandlePartialChange( PARTY_UPDATE_FLAG_ZONEID, TO_PLAYER(this) );
 }
 
+void Object::PlaySoundToPlayer( Player* plr, uint32 sound_entry )
+{
+	if(plr == NULL || plr->GetSession() == NULL)
+		return;
+
+	WorldPacket data(SMSG_PLAY_SOUND, 4);
+	data << sound_entry;
+	plr->GetSession()->SendPacket( &data );
+}
+
 void Object::PlaySoundToSet(uint32 sound_entry)
 {
 	WorldPacket data(SMSG_PLAY_SOUND, 4);

@@ -399,8 +399,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				return;
 
 			float WMIN = 1.0f;
-			float WMAX = 1.0f;
-			float MWS = 1.0f;
+			float WMAX = 2.0f;
+			float MWS = 2.0f;
 			Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
 			if( it && it->GetProto() )
 			{

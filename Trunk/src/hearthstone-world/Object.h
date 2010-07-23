@@ -502,6 +502,7 @@ public:
 	}
 
 	HEARTHSTONE_INLINE size_t GetInRangeOppFactCount() { return m_oppFactsInRange.size(); }
+	void PlaySoundToPlayer( Player* plr, uint32 sound_entry );
 	void PlaySoundToSet(uint32 sound_entry);
 	void EventSpellHit(Spell* pSpell);
 
