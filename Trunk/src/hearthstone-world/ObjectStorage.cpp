@@ -267,6 +267,9 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					if(  cn == NULL )
 					{
 						Log.Warning("AIAgent", "Agent skipped, NPC %u does not exist.", fields[0].GetUInt32());
+
+						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+							WorldDatabase.Execute("DELETE FROM AI_Agents where entry = '%u'", entry);
 						continue;
 					}
 
