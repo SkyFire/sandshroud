@@ -1871,6 +1871,7 @@ bool ChatHandler::HandleResetSkillsCommand(const char* args, WorldSession * m_se
 		if(se->type != SKILL_TYPE_LANGUAGE && ss->skillid && ss->currentval && ss->maxval)
 			plr->_AddSkillLine(ss->skillid, ss->currentval, ss->maxval);
 	}
+
 	//Chances depend on stats must be in this order!
 	plr->UpdateStats();
 	plr->UpdateChances();

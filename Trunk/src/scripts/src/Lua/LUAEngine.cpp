@@ -535,6 +535,12 @@ public:
 			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_REACH_WP], CREATURE_EVENT_ON_REACH_WP, NULL, iWaypointId );
 	}
 
+	void OnLootTaken()
+	{
+		if( m_binding->Functions[CREATURE_EVENT_ON_LOOT_TAKEN] != NULL )
+			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_LOOT_TAKEN], CREATURE_EVENT_ON_LOOT_TAKEN, NULL, 0 );
+	}
+
 	void AIUpdate()
 	{
 		if( m_binding->Functions[CREATURE_EVENT_AI_TICK] != NULL )

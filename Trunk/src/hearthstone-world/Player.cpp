@@ -2436,13 +2436,13 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	ss << m_killsToday << ", " << m_killsYesterday << ", " << m_killsLifetime << ", ";
 	ss << m_honorToday << ", " << m_honorYesterday << ", ";
 	ss << m_honorPoints << ", ";
-   	ss << iInstanceType << ", ";
+	ss << iInstanceType << ", ";
 	ss << iRaidType << ", ";
 
 	ss << uint32(m_talentActiveSpec) << ", ";
 	ss << uint32(m_talentSpecsCount) << ", ";
 
-	ss << "0)";	// force_reset_talents
+	ss << "0, 0)";	// Reset for talents and position
 
 	if(bNewCharacter)
 		CharacterDatabase.WaitExecuteNA(ss.str().c_str());
@@ -2616,6 +2616,10 @@ void Player::_LoadSpells(QueryResult * result)
 			if(spProto)
 				mSpells.insert(spProto->Id);
 		} while(result->NextRow());
+	}
+	else // Player without spells, create defaults.
+	{
+		Reset_Spells();
 	}
 }
 
@@ -2818,7 +2822,7 @@ bool Player::LoadFromDB(uint32 guid)
 	//Spells
 	q->AddQuery("SELECT spellid FROM playerspells WHERE guid = %u", guid);
 
-	//Spells
+	//Equipmentsets
 	q->AddQuery("SELECT * FROM equipmentsets WHERE guid = %u", guid);
 
 	// queue it!
@@ -2957,71 +2961,100 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		// old format
 		Counter = 0;
 		start = (char*)get_next_field.GetString();//buff old system;
-		const ItemProf * prof;
-		if(!strchr(start, ' ') && !strchr(start,';'))
+
+		if(start != "0")
 		{
-			// no skills - reset to defaults 
-			for(std::list<CreateInfo_SkillStruct>::iterator ss = info->skills.begin(); ss!=info->skills.end(); ss++)
+			const ItemProf * prof;
+			if(!strchr(start, ' ') && !strchr(start,';'))
 			{
-				if(ss->skillid && ss->currentval && ss->maxval && !::GetSpellForLanguage(ss->skillid))
-					_AddSkillLine(ss->skillid, ss->currentval, ss->maxval);
+				// no skills - reset to defaults 
+				for(std::list<CreateInfo_SkillStruct>::iterator ss = info->skills.begin(); ss!=info->skills.end(); ss++)
+				{
+					if(ss->skillid && ss->currentval && ss->maxval && !::GetSpellForLanguage(ss->skillid))
+						_AddSkillLine(ss->skillid, ss->currentval, ss->maxval);
+				}
+			}
+			else
+			{
+				char * f = strdup(start);
+				start = f;
+
+				uint32 v1,v2,v3;
+				PlayerSkill sk;
+				for(;;)
+				{
+					end = strchr(start, ';');
+					if(!end)
+						break;
+
+					*end = 0;
+					v1 = atol(start);
+					start = end + 1;
+
+					end = strchr(start, ';');
+					if(!end)
+						break;
+
+					*end = 0;
+					v2 = atol(start);
+					start = end + 1;
+
+					end = strchr(start, ';');
+					if(!end)
+						break;
+
+					v3 = atol(start);
+					start = end + 1;
+
+					/* add the skill */
+					if(v1)
+					{
+						sk.Reset(v1);
+						sk.CurrentValue = v2;
+						sk.MaximumValue = v3;
+						if (v1 == SKILL_RIDING)
+							sk.CurrentValue = sk.MaximumValue;
+						m_skills.insert(make_pair(v1, sk));
+		
+						prof = GetProficiencyBySkill(v1);
+						if(prof)
+						{
+							if(prof->itemclass==4)
+								armor_proficiency|=prof->subclass;
+							else
+								weapon_proficiency|=prof->subclass;
+						}
+					}
+				}
+				free(f);
+				_UpdateMaxSkillCounts();
+				DEBUG_LOG("Player","loaded old style skills for player %s", m_name.c_str());
 			}
 		}
 		else
-		{
-			char * f = strdup(start);
-			start = f;
+		{	// Reset player's skills.
+			_RemoveAllSkills();
 
-			uint32 v1,v2,v3;
-			PlayerSkill sk;
-			for(;;)
+			// Load skills from create info.
+			PlayerCreateInfo * info = objmgr.GetPlayerCreateInfo(getRace(), getClass());
+			if(info)
 			{
-				end = strchr(start, ';');
-				if(!end)
-					break;
-
-				*end = 0;
-				v1 = atol(start);
-				start = end + 1;
-
-				end = strchr(start, ';');
-				if(!end)
-					break;
-
-				*end = 0;
-				v2 = atol(start);
-				start = end + 1;
-
-				end = strchr(start, ';');
-				if(!end)
-					break;
-
-				v3 = atol(start);
-				start = end + 1;
-
-				/* add the skill */
-				if(v1)
+				skilllineentry* se = NULL;
+				for(std::list<CreateInfo_SkillStruct>::iterator ss = info->skills.begin(); ss!=info->skills.end(); ss++)
 				{
-					sk.Reset(v1);
-					sk.CurrentValue = v2;
-					sk.MaximumValue = v3;
-					if (v1 == SKILL_RIDING)
-						sk.CurrentValue = sk.MaximumValue;
-					m_skills.insert(make_pair(v1, sk));
-	
-					prof = GetProficiencyBySkill(v1);
-					if(prof)
-					{
-						if(prof->itemclass==4)
-							armor_proficiency|=prof->subclass;
-						else
-							weapon_proficiency|=prof->subclass;
-					}
+					se = dbcSkillLine.LookupEntry(ss->skillid);
+					if(se != NULL && se->type != SKILL_TYPE_LANGUAGE && ss->skillid && ss->currentval && ss->maxval)
+						_AddSkillLine(ss->skillid, ss->currentval, ss->maxval);
+
+					se = NULL;
 				}
 			}
-			free(f);
+
+			//Chances depend on stats must be in this order!
+			UpdateStats();
+			UpdateChances();
 			_UpdateMaxSkillCounts();
-			DEBUG_LOG("Player","loaded old style skills for player %s", m_name.c_str());
+			_AddLanguages(false);
 		}
 	}
 
@@ -3406,6 +3439,12 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	if( needTalentReset )
 	{
 		Reset_Talents();
+	}
+
+	bool NeedsPositionReset = get_next_field.GetBool();
+	if( NeedsPositionReset )
+	{
+		EjectFromInstance();
 	}
 
 #undef get_next_field

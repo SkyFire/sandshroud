@@ -308,7 +308,7 @@ void Item::SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffe
 	ss << m_uint32Values[ITEM_FIELD_CREATOR] << ",";
 
 	ss << GetUInt32Value(ITEM_FIELD_STACK_COUNT) << ",";
-	ss << GetChargesLeft() << ",";
+	ss << (int32)GetChargesLeft() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_FLAGS) << ",";
 	ss << random_prop << ", " << random_suffix << ", ";
 	ss << GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID) << ",";
