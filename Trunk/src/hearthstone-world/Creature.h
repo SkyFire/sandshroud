@@ -453,11 +453,11 @@ public:
 	int32 FlatResistanceMod[7];
 	int32 BaseResistanceModPct[7];
 	int32 ResistanceModPct[7];
-	
+
 	int32 FlatStatMod[5];
 	int32 StatModPct[5];
 	int32 TotalStatModPct[5];
-	
+
 	int32 ModDamageDone[7];
 	float ModDamageDonePct[7];
 	void CalcResistance(uint32 type);

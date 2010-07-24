@@ -3230,6 +3230,62 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
+	case 20911: // Blessing of Sanctuary
+	case 25899: // Greater Blessing of Sanctuary
+		{
+			SpellAuraModDamageTaken(apply);
+			if(apply)
+			{
+				// Trigger spells
+				uint32 spellid = 57319;
+				if(m_target->getClass() == WARRIOR)
+					spellid = 57320;
+				else if(m_target->getClass() == DEATHKNIGHT)
+					spellid = 57321;
+				else if(m_target->getClass() == DRUID)
+					if(m_target->IsPlayer())
+						if(TO_PLAYER(m_caster)->GetShapeShift() == FORM_BEAR)
+							spellid = 57320;
+
+				// Crow: Since we absorb at parry or block or dodge, we just use absorb and melee victim.
+				// Cannot guarentee it will have the desired effect though...
+				CreateProcTriggerSpell(m_target, m_target->GetGUID(), GetSpellId(), spellid, 100, PROC_ON_ABSORB|PROC_ON_MELEE_ATTACK_VICTIM, PROC_TARGET_SELF);
+			}
+			else
+			{
+				// Proc shit
+				for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+				{
+					if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+					{
+						itr->deleted = true;
+						break;
+					}
+				}
+
+			}
+
+			// Stat changes
+			if(m_target->IsPlayer())
+			{
+				Player* plr = TO_PLAYER(m_target);
+				plr->TotalStatModPctPos[0] += (apply ? 10 : -10);
+				plr->TotalStatModPctPos[2] += (apply ? 10 : -10);
+				plr->CalcStat(0);
+				plr->CalcStat(2);
+				plr->UpdateStats();
+				plr->UpdateChances();
+			}
+			else
+			{
+				Creature* ctr = TO_CREATURE(m_target);
+				ctr->TotalStatModPct[0] += (apply ? 10 : -10);
+				ctr->TotalStatModPct[2] += (apply ? 10 : -10);
+				ctr->CalcStat(0);
+				ctr->CalcStat(2);
+			}
+		}break;
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())

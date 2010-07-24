@@ -4416,20 +4416,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
 		}break;
 
-		// blessing of sanctuary / greater blessing of sanctuary
-	case 20911:
-	case 25899:
-		{
-			sp->procflags2 = PROC_ON_DODGE_VICTIM | PROC_ON_BLOCK_VICTIM;
-			sp->procChance = 100;
-			sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
-			sp->EffectApplyAuraName[1] = SPELL_AURA_PROC_TRIGGER_SPELL;
-			sp->EffectTriggerSpell[1] = 57319;
-			sp->EffectImplicitTargetA[1] = 6;
-			sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
-			sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
-		}break;
-
 		// Seal	of Command - Holy	damage,	but	melee	mechanics	(crit	damage,	chance,	etc)
 	case 20424:
 		{
