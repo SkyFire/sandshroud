@@ -512,35 +512,34 @@ void WarsongGulch::OnCreate()
 		if(!m_buffs[i]->IsInWorld())
 			m_buffs[i]->PushToWorld(m_mapMgr);
 	}
-
 	// Alliance Gates
-	GameObject* gate = SpawnGameObject(179921, 1471.56f, 1458.78f, 362.633f, 0, 33, 114, 3.11541f);
-	gate->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
+	GameObject *gate = SpawnGameObject(179921, 1471.56f, 1458.78f, 362.633f, 3.11541f, 33, 114, 2.33271f);
+	gate->SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 	gate->PushToWorld(m_mapMgr);
 	m_gates.push_back(gate);
 
-	gate = SpawnGameObject(179920, 1468.5f, 1494.36f, 351.862f, 0, 33, 114, 3.11541f);
-	gate->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
+	gate = SpawnGameObject(179920, 1468.5f, 1494.36f, 351.862f, 3.11541f, 33, 114, 3.12f);
+	gate->SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 	gate->PushToWorld(m_mapMgr);
 	m_gates.push_back(gate);
 
-	gate = SpawnGameObject(179919, 1492.48f, 1457.91f, 342.969f, 0, 33, 114, 3.11541f);
-	gate->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
+	gate = SpawnGameObject(179919, 1492.48f, 1457.91f, 342.969f, 3.11541f, 33, 114, 2.68149f);
+	gate->SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 	gate->PushToWorld(m_mapMgr);
 	m_gates.push_back(gate);
 
-	gate = SpawnGameObject(179918, 1503.33f, 1493.47f, 352.189f, 0, 33, 114, 3.11541f);
-	gate->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
+	gate = SpawnGameObject(179918, 1503.33f, 1493.47f, 352.189f, 3.11541f, 33, 114, 2.26f);
+	gate->SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 	gate->PushToWorld(m_mapMgr);
 	m_gates.push_back(gate);
 
 	// Horde Gates
-	gate = SpawnGameObject(179916, 949.1663208f, 1423.7717285f, 345.6241455f, 5.56f, 32, 114, 0.900901f);
+	gate = SpawnGameObject(179916, 949.166f, 1423.77f, 345.624f, -0.575681f, 32, 114, 0.900901f);
 	gate->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 	gate->PushToWorld(m_mapMgr);
 	m_gates.push_back(gate);
 
-	gate = SpawnGameObject(179917, 953.0507202f, 1459.8424072f, 340.6525573f, 4.02f, 32, 114, 0.854700f);   
+	gate = SpawnGameObject(179917, 953.051f, 1459.84f, 340.653f, -1.99662f, 32, 114, 0.854701f);
 	gate->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 	gate->PushToWorld(m_mapMgr);
 	m_gates.push_back(gate);
