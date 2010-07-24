@@ -259,7 +259,12 @@ void WarsongGulch::DropFlag(Player* plr)
 
 	plr->CastSpell(plr, BG_RECENTLY_DROPPED_FLAG, true);
 
-	sEventMgr.AddEvent( TO_WARSONGGULCH(this), &WarsongGulch::ReturnFlag, plr->GetTeam(), EVENT_BATTLEGROUND_WSG_AUTO_RETURN_FLAG + plr->GetTeam(), 5000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
+	// I need confirmation on additional time when in bases.
+//	if(plr->GetAreaID() == (3321-plr->GetTeam())) // Opposite bases
+//		sEventMgr.AddEvent( TO_WARSONGGULCH(this), &WarsongGulch::ReturnFlag, plr->GetTeam(), EVENT_BATTLEGROUND_WSG_AUTO_RETURN_FLAG + plr->GetTeam(), 25000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
+//	else
+//		sEventMgr.AddEvent( TO_WARSONGGULCH(this), &WarsongGulch::ReturnFlag, plr->GetTeam(), EVENT_BATTLEGROUND_WSG_AUTO_RETURN_FLAG + plr->GetTeam(), 10000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
+	sEventMgr.AddEvent( TO_WARSONGGULCH(this), &WarsongGulch::ReturnFlag, plr->GetTeam(), EVENT_BATTLEGROUND_WSG_AUTO_RETURN_FLAG + plr->GetTeam(), 10000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
 
 	if( plr->GetTeam() == 1 )
 		SendChatMessage( CHAT_MSG_BG_SYSTEM_ALLIANCE, plr->GetGUID(), "The Alliance flag was dropped by %s!", plr->GetName() );
@@ -564,8 +569,10 @@ void WarsongGulch::OnCreate()
 	sm.CreateWorldState(WORLDSTATE_WSG_HORDE_SCORE, 0);
 
 	/* spawn spirit guides */
-	AddSpiritGuide(SpawnSpiritGuide(1423.218872f, 1554.663574f, 342.833801f, 3.124139f, 0));
-	AddSpiritGuide(SpawnSpiritGuide(1032.644775f, 1388.316040f, 340.559937f, 0.043200f, 1));
+	// Alliance Spirit Guide (13116)
+	AddSpiritGuide(SpawnSpiritGuide(1415.33f, 1554.79f, 343.156f, 3.14159f, 0));
+	// Horde Spirit Guide (13117)
+	AddSpiritGuide(SpawnSpiritGuide(1029.14f, 1387.49f, 340.836f, 3.14159f, 1));
 }
 
 void WarsongGulch::OnStart()
