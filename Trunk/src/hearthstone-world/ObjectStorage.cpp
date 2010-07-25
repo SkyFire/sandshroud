@@ -165,9 +165,8 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 
 						continue;
 					}
-					realmode = mode-1;
 					CreatureProtoMode* cpm = new CreatureProtoMode();
-					cpm->difficulty = realmode;
+					cpm->difficulty = mode;
 					cpm->Minlevel = fields[fieldcount++].GetUInt32();
 					cpm->Maxlevel = fields[fieldcount++].GetUInt32();
 					cpm->Minhealth = fields[fieldcount++].GetUInt32();
@@ -269,14 +268,14 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 						Log.Warning("AIAgent", "Agent skipped, NPC %u does not exist.", fields[0].GetUInt32());
 
 						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
-							WorldDatabase.Execute("DELETE FROM AI_Agents where entry = '%u'", entry);
+							WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u'", entry);
 						continue;
 					}
 
 					spe = dbcSpell.LookupEntryForced(spellID);
 					if( spe == NULL )
 					{
-						WorldDatabase.Execute("DELETE FROM AI_Agents where entry = '%u' AND spell = '%u'", entry, spellID);
+						WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u' AND spell = '%u'", entry, spellID);
 						Log.Warning("AIAgent", "Agent skipped, NPC %u tried to add non-existing Spell %u.", fields[0].GetUInt32(), fields[4].GetUInt32());
 						continue;
 					}

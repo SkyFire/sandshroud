@@ -2806,13 +2806,16 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 			if(c->GetMapMgr()->iInstanceMode)
 				heroic = true;
 
-			uint8 heroicmode = c->GetMapMgr()->iInstanceMode-1;
+			uint8 imode = c->GetMapMgr()->iInstanceMode;
 			CreatureProtoMode* mode = NULL;
-			HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = c->proto->ModeProto.begin();
-			for(; itr != c->proto->ModeProto.end(); ++itr)
+			if(heroic)
 			{
-				if(itr->second->difficulty == heroicmode)
-					mode = itr->second;
+				HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = c->proto->ModeProto.begin();
+				for(; itr != c->proto->ModeProto.end(); ++itr)
+				{
+					if(itr->second->difficulty == imode)
+						mode = itr->second;
+				}
 			}
 
 			if(heroic && mode != NULL)

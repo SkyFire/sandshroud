@@ -885,12 +885,11 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	// Heroic stats
 	if(mode)
 	{
-		uint8 loadmode = mode-1;
 		CreatureProtoMode* crmode = NULL;
 		HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = proto->ModeProto.begin();
 		for(; itr != proto->ModeProto.end(); ++itr)
 		{
-			if(itr->second->difficulty == loadmode)
+			if(itr->second->difficulty == mode)
 			{
 				crmode = itr->second;
 				break; // We have what we came for... XD
@@ -1202,12 +1201,11 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	// Heroic stats
 	if(mode)
 	{
-		uint8 loadmode = mode-1;
 		CreatureProtoMode* crmode = NULL;
 		HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = proto->ModeProto.begin();
 		for(; itr != proto->ModeProto.end(); ++itr)
 		{
-			if(itr->second->difficulty == loadmode)
+			if(itr->second->difficulty == mode)
 			{
 				crmode = itr->second;
 				break; // We have what we came for... XD
