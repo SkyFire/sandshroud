@@ -6,286 +6,286 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Main Resources\Base Class">
-      <UniqueIdentifier>{605d28ae-8c63-4a60-a96a-81680550e439}</UniqueIdentifier>
+      <UniqueIdentifier>{89e48781-c223-4665-8d8d-fe7ac64ec670}</UniqueIdentifier>
     </Filter>
     <Filter Include="Main Resources\Setup">
-      <UniqueIdentifier>{07dfe0b7-3ae4-41fa-8bc5-f9a123adbfac}</UniqueIdentifier>
+      <UniqueIdentifier>{adb0a664-cf65-479d-ad95-fe05aad2433a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Main Resources\Instance Base Class">
-      <UniqueIdentifier>{d6929bc2-2354-4453-b6ab-fb2a7bc79c1f}</UniqueIdentifier>
+      <UniqueIdentifier>{fb7727ef-1ff0-4276-a79a-f2a4e87fe95d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts">
-      <UniqueIdentifier>{f4c31ed8-4364-47c5-97c3-a7b0d6e586fb}</UniqueIdentifier>
+      <UniqueIdentifier>{276a4497-e9da-4ed8-8070-56a597ad3c3e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic">
-      <UniqueIdentifier>{33dd9475-be8e-4529-a1d9-1884a61b11b3}</UniqueIdentifier>
+      <UniqueIdentifier>{ba466af9-6d53-4aa0-a657-520cdf1d0c48}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Raids">
-      <UniqueIdentifier>{bb5e642b-994c-4f9e-9ed2-0ed29fdf2def}</UniqueIdentifier>
+      <UniqueIdentifier>{947fb7a1-4e7d-4a76-a15c-d7e602ba78f8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Raids\Blackwing Lair">
-      <UniqueIdentifier>{b855e59b-6fb7-48ac-b4ac-dd35be884670}</UniqueIdentifier>
+      <UniqueIdentifier>{a47d5620-f0a5-4d80-9c82-216ea3444cb7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Raids\Molten Core">
-      <UniqueIdentifier>{4f8dce82-99dd-41d6-8c8b-b8fd5f23ff8e}</UniqueIdentifier>
+      <UniqueIdentifier>{ec814a45-f1e3-42c7-b277-0e9bfedc5277}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Raids\Ruins of Ahn%27Qiraj">
-      <UniqueIdentifier>{230ee640-fd77-4198-bc0d-2cfee705a824}</UniqueIdentifier>
+      <UniqueIdentifier>{407b4b5f-f22f-4421-ae1a-b79ed0504d72}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Raids\Zul%27Gurub">
-      <UniqueIdentifier>{7c39ae33-9f8e-427b-967a-d85cf3339cd8}</UniqueIdentifier>
+      <UniqueIdentifier>{65901a9b-a4c1-448d-b5c8-0414e2c09d4d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Raids\Temple of Ahn%27Qiraj">
-      <UniqueIdentifier>{e0ea5dd4-8bab-4d40-8ae4-289c08d6b1be}</UniqueIdentifier>
+      <UniqueIdentifier>{9b7a0695-3f89-412a-a6ec-a04f948ecd2d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances">
-      <UniqueIdentifier>{1a858d60-0241-4ba2-a549-6570caad00ad}</UniqueIdentifier>
+      <UniqueIdentifier>{cada95b9-6dbc-439f-b1c9-034a4bbb78ec}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Blackfathom Deeps">
-      <UniqueIdentifier>{54a71a49-a45e-48d5-a194-3f7c0db1033d}</UniqueIdentifier>
+      <UniqueIdentifier>{8550d32d-d1fb-48ec-a5b9-7f76250dac3b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Maraudon">
-      <UniqueIdentifier>{43e35359-f32a-4732-9ae8-c0e21766f8e0}</UniqueIdentifier>
+      <UniqueIdentifier>{b2ce14f2-cb93-4758-bfc6-9c9e97b2de8e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Blackrock Depths">
-      <UniqueIdentifier>{5eabca6a-15c0-4a0e-bfbc-ec6fde2e9f98}</UniqueIdentifier>
+      <UniqueIdentifier>{8cab9b8c-b3b4-454f-80a4-22185d7e210c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Blackrock Spire">
-      <UniqueIdentifier>{b352fbc1-ec9f-44be-8f4c-74187806ad4b}</UniqueIdentifier>
+      <UniqueIdentifier>{8e5e69eb-57a0-49ab-b74c-80cae1653fac}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Dire Maul">
-      <UniqueIdentifier>{b3a1d4e4-c69d-4119-858e-4908290fdb55}</UniqueIdentifier>
+      <UniqueIdentifier>{bef13920-4f26-4a74-a077-a28d35d15c1a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Gnomeregan">
-      <UniqueIdentifier>{169fddc4-3e83-4cb4-b7d2-1fcbcf6aadd4}</UniqueIdentifier>
+      <UniqueIdentifier>{cb02e1de-ea27-4e2d-af29-051066f4a07a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Zul%27Farrak">
-      <UniqueIdentifier>{97f26751-292c-4e90-8418-4a9babde890b}</UniqueIdentifier>
+      <UniqueIdentifier>{e9e94228-8568-4125-aa2c-e7974c99bc49}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Ragefire Chasm">
-      <UniqueIdentifier>{4b4d850d-afaf-4763-b417-cc3dabdc82a0}</UniqueIdentifier>
+      <UniqueIdentifier>{102b9706-6e98-447e-ad0e-cebf04128736}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Wailing Caverns">
-      <UniqueIdentifier>{33a0ad63-b01c-46a6-be99-5ea2c1d34344}</UniqueIdentifier>
+      <UniqueIdentifier>{c2074295-691f-46b9-b1e6-c2fb674d650a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Uldaman">
-      <UniqueIdentifier>{c5fc0b9a-bc72-4a22-a175-603c37879784}</UniqueIdentifier>
+      <UniqueIdentifier>{cc910f07-7137-4d5f-8ddd-dd95aefd4411}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\The Stockade">
-      <UniqueIdentifier>{3eabe068-458d-4f0a-b607-386c9e394b10}</UniqueIdentifier>
+      <UniqueIdentifier>{078bb11a-231d-4955-80be-58a330a5d7a4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\The Deadmines">
-      <UniqueIdentifier>{68d2dda5-cf4b-4f84-965d-3783e9fba243}</UniqueIdentifier>
+      <UniqueIdentifier>{4171f4f5-3f48-4da5-9612-7befb8444b03}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Sunken Temple">
-      <UniqueIdentifier>{67f24c5b-971f-44d6-948f-e97791dea66e}</UniqueIdentifier>
+      <UniqueIdentifier>{ee7a2be0-cae9-48ea-b44e-60d7554e0a71}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Stratholme">
-      <UniqueIdentifier>{191131c8-e892-4079-a6f7-8023f8037baf}</UniqueIdentifier>
+      <UniqueIdentifier>{43ba95cd-12e3-4aeb-a565-3089c94de0f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Shadowfang Keep">
-      <UniqueIdentifier>{88e045f8-3951-4781-bcb9-d5f5860e34d3}</UniqueIdentifier>
+      <UniqueIdentifier>{96789706-dd9f-4a43-941d-a62146556cff}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Scholomance">
-      <UniqueIdentifier>{77768430-415d-48bc-9568-136de24ce9a5}</UniqueIdentifier>
+      <UniqueIdentifier>{e3f41cbf-0e66-4f1f-892d-c3c59347d436}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Scarlet Monastery">
-      <UniqueIdentifier>{c823fde0-119b-4776-ab5c-04877fe9a697}</UniqueIdentifier>
+      <UniqueIdentifier>{8c45d84c-8b76-4213-ad4f-98a0e48dd9d9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Razorfen Kraul">
-      <UniqueIdentifier>{6e7e7789-e957-4c45-938e-be253b717dc1}</UniqueIdentifier>
+      <UniqueIdentifier>{b3608849-55f2-42f0-a2e9-5e59ed990a27}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Classic\Instances\Razorfen Downs">
-      <UniqueIdentifier>{5824febb-2121-4161-82ea-cdfaab93ad46}</UniqueIdentifier>
+      <UniqueIdentifier>{f50e241b-cae4-4706-b657-55de6ad2f002}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade">
-      <UniqueIdentifier>{f25aeca6-3a5b-42f2-8c46-dfbb94133736}</UniqueIdentifier>
+      <UniqueIdentifier>{3682dbef-6680-4238-9d44-02fa5234a217}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Auchindoun">
-      <UniqueIdentifier>{1a01411e-5a76-4dcc-8ad6-7b44d2520329}</UniqueIdentifier>
+      <UniqueIdentifier>{ec0790b8-bd7f-4f21-98e3-9a93bd7845a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Auchindoun\SethekkHalls">
-      <UniqueIdentifier>{544c6098-66f7-4786-b565-4be52122208a}</UniqueIdentifier>
+      <UniqueIdentifier>{7b8e996e-b414-4f21-a68f-61664fd1766e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Auchindoun\AuchenaiCrypts">
-      <UniqueIdentifier>{73879b0b-5375-4227-bdc3-2b54784d9ec6}</UniqueIdentifier>
+      <UniqueIdentifier>{bbbfcde6-6e1a-452e-ab12-f86c9cb20d76}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Auchindoun\ManaTombs">
-      <UniqueIdentifier>{66fac0db-cae0-4068-a149-d1923888928d}</UniqueIdentifier>
+      <UniqueIdentifier>{36b8fb39-8e1f-427a-955d-a4dad4151430}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Auchindoun\ShadowLabyrinth">
-      <UniqueIdentifier>{65d04c04-e904-449a-9a7e-baee3a6d0c41}</UniqueIdentifier>
+      <UniqueIdentifier>{3cd0a652-228d-41d4-9350-5373f2722eaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Zul%27Aman">
-      <UniqueIdentifier>{429465c7-68f4-4782-8bbe-e0055d8933ed}</UniqueIdentifier>
+      <UniqueIdentifier>{7273d3c8-4672-4ef9-8cc8-260d54ac7259}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Black Temple">
-      <UniqueIdentifier>{d77f2196-f44d-4468-a141-08827ad65bec}</UniqueIdentifier>
+      <UniqueIdentifier>{2cee5af8-77bd-4f99-8dce-e784d4f5ffa1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Caverns of Time">
-      <UniqueIdentifier>{e41a8536-7f76-4a5d-967a-730bd9b826cc}</UniqueIdentifier>
+      <UniqueIdentifier>{7ffa34b7-135c-4069-a90d-a2c903922c9f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Caverns of Time\Old Hillsbrad Foothills">
-      <UniqueIdentifier>{89f659aa-d3e3-4e76-a9d2-1ba56c701b43}</UniqueIdentifier>
+      <UniqueIdentifier>{52057448-f2ce-4c91-b0b8-51565cc0d358}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Caverns of Time\The Black Morass">
-      <UniqueIdentifier>{a7422027-704b-4b9c-8015-43bcd4625db4}</UniqueIdentifier>
+      <UniqueIdentifier>{c499a628-5d6b-4800-aceb-cfb8ae9dd03d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Caverns of Time\Hyjal Summit">
-      <UniqueIdentifier>{5b0fd5ad-a5af-4992-abb4-f5023d2db6e7}</UniqueIdentifier>
+      <UniqueIdentifier>{abd1c988-cb9d-4d37-95d3-7a3ac69d156f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir">
-      <UniqueIdentifier>{8e0f72c9-f343-4840-8a30-c8d10340410e}</UniqueIdentifier>
+      <UniqueIdentifier>{9ad52a85-e9df-42fd-aa10-5e5f699a1ea8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\The Slave Pens">
-      <UniqueIdentifier>{279d5dd1-065d-41bb-ba62-044790147a47}</UniqueIdentifier>
+      <UniqueIdentifier>{287d028d-3e01-47d9-8073-c64ab25275d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\The Steamvault">
-      <UniqueIdentifier>{8b73679b-c011-4a39-bc00-85f88bf40690}</UniqueIdentifier>
+      <UniqueIdentifier>{3c0376f9-5eed-461b-a018-e5ed9ef4a98c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\The Underbog">
-      <UniqueIdentifier>{fe8fb65e-4f73-4f79-8ea1-d86bf4c30a30}</UniqueIdentifier>
+      <UniqueIdentifier>{f98deea1-ed2c-45c5-b9f7-4c72139b1af9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Coilfang Reservoir\Serpentshrine Cavern">
-      <UniqueIdentifier>{d33003bc-d348-4595-a606-7c9c0753ae86}</UniqueIdentifier>
+      <UniqueIdentifier>{438acc49-9732-4c39-b2c2-310f49e8dbf2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Gruul%27s Lair">
-      <UniqueIdentifier>{f01f120c-a725-436a-b098-5dd10dbd7a3e}</UniqueIdentifier>
+      <UniqueIdentifier>{3f9c27f7-2a13-41e2-bf6f-71400f942c6b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel">
-      <UniqueIdentifier>{e18a0111-1287-4577-84fc-e0a26e6fa887}</UniqueIdentifier>
+      <UniqueIdentifier>{8ac99837-6dbd-40a1-81d1-e203fcf533cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\Hellfire Ramparts">
-      <UniqueIdentifier>{eb2a19f4-0109-4541-b124-226b5c63b09b}</UniqueIdentifier>
+      <UniqueIdentifier>{04e0d584-f3e2-4981-885d-2ec563a97862}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\The Blood Furnace">
-      <UniqueIdentifier>{f0472411-c751-4b05-91f2-a967f2a96f2f}</UniqueIdentifier>
+      <UniqueIdentifier>{c945ab0a-733b-411e-be06-935c49f12660}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\The Shattered Halls">
-      <UniqueIdentifier>{3dd702d8-d2d5-444d-a00e-64fa64d7bee3}</UniqueIdentifier>
+      <UniqueIdentifier>{feb81ab3-aebb-4530-babf-897653649f2f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Hellfire Citadel\Magtheridon%27s Lair">
-      <UniqueIdentifier>{d0c7103b-dd09-4397-8899-e60607da3e48}</UniqueIdentifier>
+      <UniqueIdentifier>{7fe6979b-5c0f-4635-aaaf-94d8b506aa51}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Karazhan">
-      <UniqueIdentifier>{2d975000-8c8c-4176-9c6c-58e5e93f7caf}</UniqueIdentifier>
+      <UniqueIdentifier>{2d5766a0-63e0-415c-8e6a-c207b28c290e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Magisters%27 Terrace">
-      <UniqueIdentifier>{5110823d-c2af-4a5a-912c-413815fce2be}</UniqueIdentifier>
+      <UniqueIdentifier>{c5f4a2d8-a27b-4fa1-a4f4-d67031d000fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Sunwell Plateau">
-      <UniqueIdentifier>{e5d5c5b0-7fb1-4371-acc3-6e5a38f7e574}</UniqueIdentifier>
+      <UniqueIdentifier>{c8e85f6f-d82c-4b3f-a301-8ad2b6539a4f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Tempest Keep">
-      <UniqueIdentifier>{65fff81c-6dc7-4e2d-89c3-7b3892de19c7}</UniqueIdentifier>
+      <UniqueIdentifier>{f8b0921c-71a8-4edf-91a6-012433e0657c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Arcatraz">
-      <UniqueIdentifier>{b1f8ddd5-eab0-4cbf-87b7-68621dc5058e}</UniqueIdentifier>
+      <UniqueIdentifier>{15b92f8c-326d-4f9a-9bbc-c2f90010d2e2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Eye">
-      <UniqueIdentifier>{f54d70a9-daff-49a7-ba05-d4378e4e94dc}</UniqueIdentifier>
+      <UniqueIdentifier>{aac17188-ff6d-42bd-a209-ad67c4b5b841}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Botanica">
-      <UniqueIdentifier>{729edcb6-b737-49ea-9015-312d15a86464}</UniqueIdentifier>
+      <UniqueIdentifier>{364a6dbc-8623-4592-b3e1-866a722c8f71}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Burning Crusade\Tempest Keep\The Mechanar">
-      <UniqueIdentifier>{29b9043b-db23-4834-b9bf-206bd90213d1}</UniqueIdentifier>
+      <UniqueIdentifier>{5045964a-68b1-44b8-a237-d29e036d20b5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King">
-      <UniqueIdentifier>{b5984a4f-6ffc-4adc-949c-2ae5a4b3b6ce}</UniqueIdentifier>
+      <UniqueIdentifier>{8edad1fe-9373-4e05-9c48-25bee6691992}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Azjol-Nerub">
-      <UniqueIdentifier>{08b77f54-5456-4082-befa-f1048339acb2}</UniqueIdentifier>
+      <UniqueIdentifier>{c2fc5154-fc90-4d86-ba29-36c77ff0e247}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Azjol-Nerub\Ahn%27kahet: The Old Kingdom">
-      <UniqueIdentifier>{211e3863-fe7f-43fd-a28e-d68cb15d2b96}</UniqueIdentifier>
+      <UniqueIdentifier>{01a4c964-e56c-4b46-8a4d-6bfd09627d8b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Azjol-Nerub\Azjol-Nerub">
-      <UniqueIdentifier>{d80ea395-5e83-4d16-a2e9-fcfeb160e41c}</UniqueIdentifier>
+      <UniqueIdentifier>{09ff72f8-ebe5-4ac0-bedd-b4c181d15aa2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\The Nexus">
-      <UniqueIdentifier>{4ee2829e-642c-46be-a728-a0d2b14b00d5}</UniqueIdentifier>
+      <UniqueIdentifier>{02c021ab-a6f6-4525-b1d5-c76e8dfbbdae}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\The Nexus\The Nexus">
-      <UniqueIdentifier>{e1c9e220-20dc-4dbc-b2e7-4c2970a54b19}</UniqueIdentifier>
+      <UniqueIdentifier>{4ad42e18-dc2a-4acf-9ac6-f5a2a5a4f13a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\The Nexus\The Oculus">
-      <UniqueIdentifier>{584b7049-4551-4a36-a05e-c92063ef4613}</UniqueIdentifier>
+      <UniqueIdentifier>{7902880f-77d9-4e4d-ba2c-2bf1aad5ffcc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\The Nexus\The Eye of Eternity">
-      <UniqueIdentifier>{2fe094a8-4334-4e9d-9b9c-d579b5291031}</UniqueIdentifier>
+      <UniqueIdentifier>{53f6e0a0-7d30-4d6c-8c6b-0cdcf8618af0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Crusaders%27 Coliseum">
-      <UniqueIdentifier>{876a5b6b-a491-4de0-9d31-8b855091bb47}</UniqueIdentifier>
+      <UniqueIdentifier>{6207832f-e275-43f5-add4-8c5836a5da5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Crusaders%27 Coliseum\Trial of the Champion">
-      <UniqueIdentifier>{78951829-6a9a-47e1-8cb3-97a8fbb653a2}</UniqueIdentifier>
+      <UniqueIdentifier>{c58303c1-f3a6-4916-840b-488efb6c8912}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Crusaders%27 Coliseum\Trial of the Crusader">
-      <UniqueIdentifier>{7a00623a-1639-40c9-96bb-cf3f8d5c0e65}</UniqueIdentifier>
+      <UniqueIdentifier>{c82d1660-4b3b-4297-a2e2-a894070d2264}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Icecrown Citadel">
-      <UniqueIdentifier>{a9142bc7-e66b-46e4-a00d-5a7e3ec6e420}</UniqueIdentifier>
+      <UniqueIdentifier>{32b87da4-c42a-466c-ae47-9c9dd5b498ff}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Icecrown Citadel\Halls of Reflection">
-      <UniqueIdentifier>{75a7e9c6-704d-4375-9cc8-a3adce3d2171}</UniqueIdentifier>
+      <UniqueIdentifier>{0d2fb387-1bed-4f40-800a-2c2257102c1f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Icecrown Citadel\Pit of Saron">
-      <UniqueIdentifier>{34ac8617-6ac3-4c53-83e7-207529621d02}</UniqueIdentifier>
+      <UniqueIdentifier>{acdd5f30-5dea-4bde-a005-fbdc2f6d266d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Icecrown Citadel\The Forge of Souls">
-      <UniqueIdentifier>{cfc2ce7b-b1f4-4b93-8dd9-5e82432687b3}</UniqueIdentifier>
+      <UniqueIdentifier>{26c8b8ee-501e-4776-bf73-672e1eb4466c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Icecrown Citadel\Icecrown Citadel">
-      <UniqueIdentifier>{0df9972c-5966-4383-91e6-756226f55fab}</UniqueIdentifier>
+      <UniqueIdentifier>{e28bd808-c626-4f51-9c2a-cf84564ec31a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Drak%27Tharon Keep">
-      <UniqueIdentifier>{f3c234dc-6c18-4711-af81-dc18fbeed912}</UniqueIdentifier>
+      <UniqueIdentifier>{f81c89d1-1531-4a8c-a881-c60832f4f85f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Gundrak">
-      <UniqueIdentifier>{50f90d3b-f146-482b-b439-c309b2132e0f}</UniqueIdentifier>
+      <UniqueIdentifier>{03b95ac2-1561-4050-8512-889fd4bf250d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Naxxramas">
-      <UniqueIdentifier>{0a753202-14bc-4d8e-9a9d-99db393f3883}</UniqueIdentifier>
+      <UniqueIdentifier>{4fea6849-deb7-4662-8044-6c9c27947fa7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Wyrmrest Temple">
-      <UniqueIdentifier>{58c87c2a-c521-4642-91a6-15cac2f72e08}</UniqueIdentifier>
+      <UniqueIdentifier>{d029ab1e-4a04-4c49-89fe-3dc906217165}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Wyrmrest Temple\The Obsidian Sanctum">
-      <UniqueIdentifier>{56798bf7-6ab9-43d2-bb60-2154546c511c}</UniqueIdentifier>
+      <UniqueIdentifier>{0dd7122a-4e29-44a3-98f9-2baadae32697}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Wyrmrest Temple\The Ruby Sanctum">
-      <UniqueIdentifier>{eb2f648a-3b07-45b9-a4e7-752d334cb9a9}</UniqueIdentifier>
+      <UniqueIdentifier>{f9bc2edc-d649-4d8a-87bb-51140fad5972}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Onyxia%27s Lair">
-      <UniqueIdentifier>{ccf45a4f-1371-4182-a5be-be83432d8f9b}</UniqueIdentifier>
+      <UniqueIdentifier>{179f9d6e-e726-49d2-bdde-3266dd080027}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\The Culling of Stratholme">
-      <UniqueIdentifier>{e9821a65-8b8a-4b3c-95f8-32f489ceab06}</UniqueIdentifier>
+      <UniqueIdentifier>{386cf178-a1a7-48ad-a08c-58f0d406ad89}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Utgarde Keep">
-      <UniqueIdentifier>{b06e85ed-0938-4473-a513-c2b5418956a4}</UniqueIdentifier>
+      <UniqueIdentifier>{8beb819d-e913-48dc-8bb0-55621d35f8da}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Utgarde Keep\Utgarde Keep">
-      <UniqueIdentifier>{79da3f5b-7b39-44fc-97f7-0579eda453ad}</UniqueIdentifier>
+      <UniqueIdentifier>{abb6a27d-62dd-483f-906a-5c7c23206389}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Utgarde Keep\Utgarde Pinnacle">
-      <UniqueIdentifier>{cdd52ce4-c8bb-47f6-ab25-24f0fc935faf}</UniqueIdentifier>
+      <UniqueIdentifier>{c94419c2-a237-4d32-b4be-0549f541238c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Ulduar">
-      <UniqueIdentifier>{c88bbbe6-89a9-4c01-86cb-01927249d568}</UniqueIdentifier>
+      <UniqueIdentifier>{b027d166-f569-4f34-a2b0-69c41a67a797}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Ulduar\Halls of Lightning">
-      <UniqueIdentifier>{a5111d0c-071b-41ce-a1a2-3c74cec3c367}</UniqueIdentifier>
+      <UniqueIdentifier>{23f1d03d-0757-43ef-9fd8-5177d39d930e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Ulduar\Halls of Stone">
-      <UniqueIdentifier>{e23f335d-29da-455e-a92c-771d04a22d42}</UniqueIdentifier>
+      <UniqueIdentifier>{fd3e6aa2-43d6-4974-bff5-010a9be1995d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\Ulduar\Ulduar">
-      <UniqueIdentifier>{9f497733-7b83-46ad-a2af-df3d5416d1af}</UniqueIdentifier>
+      <UniqueIdentifier>{705431c1-dc76-4927-b586-b7f03d979a8a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\The Lich King\The Violet Hold">
-      <UniqueIdentifier>{bb767b24-7650-4f27-9088-6ae26d7351e9}</UniqueIdentifier>
+      <UniqueIdentifier>{394dc059-5902-4170-a815-43f105dbc722}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

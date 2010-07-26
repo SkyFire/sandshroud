@@ -6,20 +6,20 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Main Resources\Base Class">
-      <UniqueIdentifier>{1d055a6b-2acf-4cb2-b3ad-88bc4f83ad3f}</UniqueIdentifier>
+      <UniqueIdentifier>{efb4efed-7578-4a1a-88c8-6639304ee5e9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Scripts\Class">
-      <UniqueIdentifier>{1cdb53af-7eb2-4a92-9f73-9e61cbe498ab}</UniqueIdentifier>
+      <UniqueIdentifier>{03498f2c-459a-4a77-b84b-f25bf4372fc6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Profession">
-      <UniqueIdentifier>{f8d17edf-f974-4a39-90f4-341bb2977913}</UniqueIdentifier>
+      <UniqueIdentifier>{b19287b4-4cb0-422c-b858-69db2ddae683}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Zone">
-      <UniqueIdentifier>{0e569605-89d4-4fcb-b988-863d86d0d28d}</UniqueIdentifier>
+      <UniqueIdentifier>{64f2ff23-6169-4630-8a25-055389263560}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

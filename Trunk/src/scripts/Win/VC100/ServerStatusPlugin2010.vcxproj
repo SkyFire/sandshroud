@@ -62,16 +62,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\bin\debug\script_bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\bin\debug_100\script_bin\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2010_int_debug_statusplugin\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\bin\release\script_bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\bin\release_100\script_bin\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2010_int_release_statusplugin\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\bin\debug_x64\script_bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\bin\debug_100_x64\script_bin\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2010_int_debug_statusplugin_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\bin\release_x64\script_bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\bin\release_100_x64\script_bin\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2010_int_release_statusplugin_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
@@ -92,10 +92,10 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>..\..\..\..\bin\Debug\hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/debug/script_bin/ServerStatusPlugin.dll</OutputFile>
+      <OutputFile>../../../../bin/debug_100/script_bin/ServerStatusPlugin.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/debug/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/debug_100/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -116,10 +116,10 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/release/script_bin/ServerStatusPlugin.dll</OutputFile>
+      <OutputFile>../../../../bin/release_100/script_bin/ServerStatusPlugin.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/release/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/release_100/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -150,10 +150,10 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/debug_x64/script_bin/ServerStatusPlugin.dll</OutputFile>
+      <OutputFile>../../../../bin/debug_100_x64/script_bin/ServerStatusPlugin.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\debug_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/debug_x64/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/debug_100_x64/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -177,10 +177,10 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/release_x64/script_bin/ServerStatusPlugin.dll</OutputFile>
+      <OutputFile>../../../../bin/release_100_x64/script_bin/ServerStatusPlugin.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\release_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/release_x64/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/release_100_x64/script_bin/ServerStatusPlugin.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

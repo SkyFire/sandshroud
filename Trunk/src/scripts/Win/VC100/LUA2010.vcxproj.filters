@@ -2,7 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Lua">
-      <UniqueIdentifier>{fe5fd758-d8a5-4b4b-b5c8-3ba718f62848}</UniqueIdentifier>
+      <UniqueIdentifier>{c3beb227-8efe-47aa-8ca5-d0c3d2e989a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Functions">
+      <UniqueIdentifier>{9e3632ef-d052-482f-bafe-6685b9b4ef51}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -168,8 +171,34 @@
     <ClInclude Include="..\..\src\Lua\lua\lzio.h">
       <Filter>Lua</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionAura.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionGameObjects.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionGlobal.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionItems.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionPacket.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionSpell.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionTaxi.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\FunctionUnits.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Lua\Functions\LuaSqlApi.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Lua\LUAEngine.h" />
-    <ClInclude Include="..\..\src\Lua\LUAFunctions.h" />
     <ClInclude Include="..\..\src\Lua\Functions\TableFunctions.h" />
   </ItemGroup>
 </Project>

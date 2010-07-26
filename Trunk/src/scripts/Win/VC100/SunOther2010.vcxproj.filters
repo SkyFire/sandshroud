@@ -6,26 +6,26 @@
       <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Main Resources\Base">
-      <UniqueIdentifier>{d71890d1-e65e-407a-88f2-ce5007289321}</UniqueIdentifier>
+      <UniqueIdentifier>{d2a3cbae-5e66-4454-8ffe-ba1877b85288}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Scripts\Misc">
-      <UniqueIdentifier>{2dab3964-a0c6-4b65-a3b9-d2869013babc}</UniqueIdentifier>
+      <UniqueIdentifier>{383b1302-dc5d-4af2-acbf-b2020a9949b4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Events">
-      <UniqueIdentifier>{47c4f641-51c2-4453-900d-d0e46019e0c3}</UniqueIdentifier>
+      <UniqueIdentifier>{7598b78e-70a7-4642-9bdc-328430e2cb1c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Events\Dark Portal">
-      <UniqueIdentifier>{34396011-2bfb-4d57-848d-1c59747c9726}</UniqueIdentifier>
+      <UniqueIdentifier>{f96b0c29-1d86-4de9-a341-14124354ddf7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\WorldPvP">
-      <UniqueIdentifier>{b9e23410-8eff-4aa4-a2c5-5ad8229c41b3}</UniqueIdentifier>
+      <UniqueIdentifier>{5e8c150f-44cd-4d22-a7d9-f02fd7dad3cd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scripts\Gossip">
-      <UniqueIdentifier>{ec7f668d-ed71-47e2-8e9a-095da723a630}</UniqueIdentifier>
+      <UniqueIdentifier>{f58f9e09-3111-4835-ac71-5de021b46a25}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
