@@ -3994,33 +3994,12 @@ void Unit::smsg_AttackStart(Unit* pVictim)
 {
 	if(GetTypeId() != TYPEID_PLAYER) 
 		return;
-
-	Player* pThis = TO_PLAYER(this);
-
-	// Prevent user from ignoring attack speed and stopping and start combat really really fast
-	/*if(!isAttackReady())
-		setAttackTimer(uint32(0));
-	else if(!canReachWithAttack(pVictim))
-	{
-		setAttackTimer(uint32(500));
-		//pGetSession()->OutPacket(SMSG_ATTACKSWING_NOTINRANGE);
-	}
-	else if(!isInFront(pVictim))
-	{
-		setAttackTimer(uint32(500));
-		//pGetSession()->OutPacket(SMSG_ATTACKSWING_NOTINRANGE);
-	}*/
-
 	// Send out ATTACKSTART
 	WorldPacket data(SMSG_ATTACKSTART, 16);
 	data << GetGUID();
 	data << pVictim->GetGUID();
 	SendMessageToSet(&data, true);
 	DEBUG_LOG( "WORLD"," Sent SMSG_ATTACKSTART" );
-
-	// FLAGS changed so other players see attack animation
-	//	addUnitFlag(UNIT_FLAG_COMBAT);
-	//	setUpdateMaskBit(UNIT_FIELD_FLAGS );
 }
 
 void Unit::AddAura(Aura* aur)
@@ -4617,7 +4596,6 @@ void Unit::_UpdateSpells( uint32 time )
 	if(m_currentSpell != NULL)
 	{
 		m_spellsbusy=true;
-		Spell* blah = m_currentSpell;
 		m_currentSpell->update(time);
 		m_spellsbusy=false;
 	}

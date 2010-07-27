@@ -2022,27 +2022,26 @@ void CBattlegroundManager::HandleArenaJoin(WorldSession * m_session, uint32 Batt
 			ArenaTeam * pTargetTeam = NULL;
 			uint32 teamType = 0;
 			/* make sure all players are 70 */
-			uint32 maxplayers;
+			uint32 maxplayers = 0;
 			switch(BattlegroundType)
 			{
-				teamType = ARENA_TEAM_TYPE_2V2;
-				break;
+				case BATTLEGROUND_ARENA_3V3:
+					maxplayers=3;
+					teamType = ARENA_TEAM_TYPE_3V3;
+					break;
 
-			case BATTLEGROUND_ARENA_3V3:
-				maxplayers=3;
-				teamType = ARENA_TEAM_TYPE_3V3;
-				break;
+				case BATTLEGROUND_ARENA_5V5:
+					maxplayers=5;
+					teamType = ARENA_TEAM_TYPE_5V5;
+					break;
 
-			case BATTLEGROUND_ARENA_5V5:
-				maxplayers=5;
-				teamType = ARENA_TEAM_TYPE_5V5;
-				break;
-
-			case BATTLEGROUND_ARENA_2V2:
-			default:
-				maxplayers=2;
-				teamType = ARENA_TEAM_TYPE_2V2;
-				break;
+				case BATTLEGROUND_ARENA_2V2:
+					teamType = ARENA_TEAM_TYPE_2V2;
+					break;
+				default:
+					maxplayers=2;
+					teamType = ARENA_TEAM_TYPE_2V2;
+					break;
 			}
 
 			pTargetTeam = plr->m_playerInfo->arenaTeam[teamType];

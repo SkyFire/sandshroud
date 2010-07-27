@@ -2026,8 +2026,6 @@ void Spell::finish()
 	otherwise it's instant spell and we delete it right after completion
 	*/
 
-	Spell* spl = this; // feeefeee! <3
-
 	if( u_caster != NULL )
 	{
 		if( u_caster->GetCurrentSpell() == this )
@@ -4633,7 +4631,7 @@ void Spell::Heal(int32 amount)
 	//Make it critical
 	bool critical = false;
 	float critchance = 0; 
-	int32 bonus = 0;
+	//int32 bonus = 0;
 	if( u_caster != NULL )
 	{		
 		// All calculations are done in getspellbonusdamage
@@ -4931,7 +4929,7 @@ bool Spell::Reflect(Unit* refunit)
 {
 	uint32 refspellid = 0;
 	bool canreflect = false;
-	bool remove = false;
+//	bool remove = false;
 
 	if( m_reflectedParent != NULL || m_caster == refunit )
 		return false;

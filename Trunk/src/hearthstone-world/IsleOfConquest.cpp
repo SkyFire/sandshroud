@@ -249,7 +249,6 @@ void IsleOfConquest::Init()
 
 bool IsleOfConquest::HookHandleRepop(Player* plr)
 {
-	float dist = 999999.0f;
 	LocationVector dest_pos;
 	if( plr->GetTeam() == 1 )
 		dest_pos.ChangeCoords(NoBaseGYLocations[1][0], NoBaseGYLocations[1][1], NoBaseGYLocations[1][2], NoBaseGYLocations[1][3]);
@@ -538,7 +537,6 @@ void IsleOfConquest::AssaultControlPoint(Player* pPlayer, uint32 Id)
 	}
 
 	// Contested Flag, not ours, and is not virgin
-	uint32 otherTeam = Team ? 0 : 1;
 	if( !isVirgin && m_basesLastOwnedBy[Id] == Team && m_basesOwnedBy[Id] == -1 )
 	{
 		m_mapMgr->GetStateManager().UpdateWorldState(AssaultFields[Id][Team ? 0 : 1], 0);
@@ -851,8 +849,6 @@ void IsleOfConquest::HookOnUnitKill(Player* plr, Unit* pVictim)
 {
 	if(pVictim->IsPlayer())
 		return;
-
-	WorldStateManager &sm = m_mapMgr->GetStateManager();
 
 	if(pVictim->GetEntry() == 34924)	// High Commander Halford Wyrmbane 
 	{

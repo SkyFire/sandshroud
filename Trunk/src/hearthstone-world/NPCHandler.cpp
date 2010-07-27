@@ -530,7 +530,6 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 	uint32 unk24;
 	uint64 guid;
 	bool Coded = false;
-	uint32 BoxMoney = 0;
 	std::string BoxMessage;
 
 	recv_data >> guid >> unk24 >> option;

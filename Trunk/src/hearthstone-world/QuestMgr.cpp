@@ -1994,7 +1994,7 @@ void QuestMgr::LoadExtraQuestStuff()
 
 	QueryResult * pResult = WorldDatabase.Query("SELECT * FROM creature_quest_starter");
 	uint32 pos = 0;
-	uint32 total;
+	uint32 total = 0;
 	if(pResult)
 	{
 		total = pResult->GetRowCount();

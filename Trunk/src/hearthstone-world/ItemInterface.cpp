@@ -169,7 +169,6 @@ Item* ItemInterface::SafeAddItem(uint32 ItemId, int16 ContainerSlot, int16 slot)
 			return pItem;
 		}
 	}
-	return NULLITEM;
 }
 
 //-------------------------------------------------------------------//

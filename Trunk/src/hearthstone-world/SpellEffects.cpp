@@ -3887,7 +3887,7 @@ void Spell::SpellEffectEnergize(uint32 i) // Energize
 	if( unitTarget == NULL || !unitTarget->isAlive())
 		return;
 
-	uint32 modEnergy;
+	uint32 modEnergy = 0;
 	switch( m_spellInfo->Id )
 	{
 	case 58883: //Rapid Recuperation
@@ -3952,8 +3952,7 @@ void Spell::SpellEffectEnergize(uint32 i) // Energize
 		}break;
 
 	}
-	u_caster->Energize(unitTarget, m_spellInfo->logsId ? m_spellInfo->logsId : (pSpellId ? pSpellId : m_spellInfo->Id), 
-		modEnergy, m_spellInfo->EffectMiscValue[i]);
+	u_caster->Energize(unitTarget, m_spellInfo->logsId ? m_spellInfo->logsId : (pSpellId ? pSpellId : m_spellInfo->Id), modEnergy, m_spellInfo->EffectMiscValue[i]);
 }
 
 void Spell::SpellEffectWeaponDmgPerc(uint32 i) // Weapon Percent damage
@@ -4000,35 +3999,14 @@ void Spell::SpellEffectTriggerMissile(uint32 i) // Trigger Missile
 	if(spInfo == NULL )
 		return;
 
-	float spellRadius = GetRadius(i);
-
-	/*for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
-	{
-		if(!((*itr)->IsUnit()) || !(TO_UNIT(*itr))->isAlive())
-			continue;
-		Unit t=TO_UNIT(*itr);
-	
-		float r;
-		float d=m_targets.m_destX-t->GetPositionX();
-		r=d*d;
-		d=m_targets.m_destY-t->GetPositionY();
-		r+=d*d;
-		d=m_targets.m_destZ-t->GetPositionZ();
-		r+=d*d;
-		if(sqrt(r)> spellRadius)
-			continue;
-		
-		if(!isAttackable(m_caster, TO_UNIT(*itr)))//Fixme only enemy targets?
-			continue;*/
-
-		// Just send this spell where he wants :S
-		Spell* sp=CREATESPELL(m_caster, spInfo, true, NULLAURA);
-		SpellCastTargets tgt;
-		tgt.m_destX = m_targets.m_destX;
-		tgt.m_destY = m_targets.m_destY;
-		tgt.m_destZ = m_targets.m_destZ;
-		tgt.m_unitTarget = m_caster->GetGUID();
-		sp->prepare(&tgt);
+	// Just send this spell where he wants :S
+	Spell* sp=CREATESPELL(m_caster, spInfo, true, NULLAURA);
+	SpellCastTargets tgt;
+	tgt.m_destX = m_targets.m_destX;
+	tgt.m_destY = m_targets.m_destY;
+	tgt.m_destZ = m_targets.m_destZ;
+	tgt.m_unitTarget = m_caster->GetGUID();
+	sp->prepare(&tgt);
 }
 
 void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
@@ -6121,7 +6099,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 	case 19943:
 	case 27137:
 		{
-			uint32 NewSpell;
+			uint32 NewSpell = 0;
 			switch(m_spellInfo->Id)
 			{
 				// hehe xD
@@ -6144,7 +6122,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				case 27135: NewSpell = 35222; break;
 				case 27136: NewSpell = 35223; break;
 			}
-			if( u_caster && NewSpell)
+			if(u_caster && NewSpell)
 			{
 				Spell* sp = new Spell(u_caster,dbcSpell.LookupEntry(NewSpell),true,NULLAURA);
 				if(sp == NULL)

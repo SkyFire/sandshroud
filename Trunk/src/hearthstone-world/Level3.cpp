@@ -2673,7 +2673,7 @@ bool ChatHandler::HandleGORotate(const char * args, WorldSession * m_session)
 	go->RemoveFromWorld(true);
 	go->SetNewGuid(m_session->GetPlayer()->GetMapMgr()->GenerateGameobjectGuid());
 	go->PushToWorld(m_session->GetPlayer()->GetMapMgr());
-	uint32 ak = 51;
+	//uint32 ak = 51;
 	//go->SetUInt32Value(GAMEOBJECT_ARTKIT, ak);
 	return true;
 }

@@ -2983,7 +2983,6 @@ AI_Spell *AIInterface::getSpell()
 	// look at our spells
 	AI_Spell *  sp = NULL;
 	AI_Spell *  def_spell = NULL;
-	uint32 cool_time = 0;
 	uint32 nowtime = getMSTime();
 
 	if( nowtime > next_spell_time )

@@ -119,7 +119,7 @@ uint32 GetSpellClass(SpellEntry *sp)
 			return DEATHKNIGHT;
 	}
 
-	return -1;
+	return 0;
 }
 
 // fills array 'arr' with integers in arguments and returns its new size. Last argument must be 0!

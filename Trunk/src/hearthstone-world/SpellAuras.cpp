@@ -981,7 +981,6 @@ void Aura::ApplyModifiers( bool apply )
 			if(m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PROC_TRIGGER_SPELL||GetSpellId()==974||GetSpellId()==32593||GetSpellId()==32594)
 				return;//already have proc for this aura
 
-		Unit * m_caster = GetUnitCaster();
 		if(apply)
 		{
 			uint32 id = 0;
@@ -996,8 +995,7 @@ void Aura::ApplyModifiers( bool apply )
 			if(id == 0)
 				return;
 
-			CreateProcTriggerSpell(m_target, m_casterGuid, GetSpellId(), id, m_spellProto->procChance,
-				m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges);
+			CreateProcTriggerSpell(m_target, m_casterGuid, GetSpellId(), id, m_spellProto->procChance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges);
 		}
 		else
 		{
@@ -1860,7 +1858,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 					if( m_caster->IsPlayer() )
 					{
 						uint8 timer[6] = { 0, 8, 10, 12, 14, 16 }; // Probably some other way to do this...
-						uint8 bonus = 0;
+//						uint8 bonus = 0;
 //						Crow: Does it just make it longer, or does it also increase damage??!?
 //						if(m_caster->HasAura(56801))
 //							bonus = 4; // Timer increase.
@@ -2039,7 +2037,6 @@ void Aura::EventPeriodicDamage(uint32 amount)
 	// grep: this is hack.. some auras seem to delete this shit.
 	SpellEntry * sp = m_spellProto;
 	Unit* mtarget = m_target;
-	uint64 cguid = m_casterGuid;
 	if( mtarget != NULL )
 	{
 		Unit * m_caster = NULL;
@@ -6761,7 +6758,7 @@ void Aura::SpellAuraMounted(bool apply)
 	}
 
 	bool isVehicleSpell = m_spellProto->Effect[1] == SPELL_EFFECT_SUMMON ? true : false;
-	bool warlockpet;
+	bool warlockpet = false;
 
 	if(pPlayer->GetSummon() && pPlayer->GetSummon()->IsWarlockPet() == true)
 		warlockpet = true;
@@ -8557,7 +8554,6 @@ void Aura::EventPeriodicBurn(uint32 amount, uint32 misc)
 		uint32 field = UNIT_FIELD_POWER1 + misc;
 	
 		uint32 Amount = (uint32)min( amount, m_target->GetUInt32Value( field ) );
-		uint32 newHealth = m_target->GetUInt32Value(field) - Amount ;
 				
 		SendPeriodicAuraLog(m_target, m_target, m_spellProto, Amount, 0, 0, FLAG_PERIODIC_DAMAGE);
 		m_target->DealDamage(m_target, Amount, 0, 0, m_spellProto->Id);

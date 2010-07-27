@@ -369,12 +369,12 @@ void Player::SetAtWar(uint32 Faction, bool Set)
 		return;
 
 	FactionReputation * rep = reputationByListId[Faction];
-	if(!rep) return;
+	if(!rep) 
+		return;
 	
 	if(GetReputationRankFromStanding(rep->standing) <= STANDING_HOSTILE && !Set) // At this point we have to be at war.
 		return;
 
-	FactionDBC * f = dbcFaction.LookupEntry(Faction);
 	if(rep->flag & 0x4)
 		return;
 

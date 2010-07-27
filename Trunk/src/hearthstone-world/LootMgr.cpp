@@ -395,7 +395,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 	uint32 i;
 	uint32 count;
 	float nrand = 0;
-	float ncount;
+	float ncount = 0;
 	assert(difficulty < 4);
 
 	if (disenchant)

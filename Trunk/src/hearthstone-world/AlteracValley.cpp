@@ -1627,8 +1627,6 @@ void AlteracValley::HookOnUnitKill(Player* plr, Unit* pVictim)
 	if(pVictim->IsPlayer())
 		return;
 
-	WorldStateManager &sm = m_mapMgr->GetStateManager();
-
 	if(pVictim->GetEntry() == AV_NPC_GENERAL_VANNDAR_STORMPIKE) 
 	{
 		Herald("The Stormpike General is dead!");

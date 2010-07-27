@@ -2629,7 +2629,6 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 		dmg.resisted_damage = dmg.full_damage;
 
 	//------------------------------resistance reducing-----------------------------------------	
-	float res_before_resist = res;
 	if(res > 0 && IsUnit())
 	{
 		TO_UNIT(this)->CalculateResistanceReduction(pVictim,&dmg,spellInfo,0.0f);

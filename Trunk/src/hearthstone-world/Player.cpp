@@ -6639,10 +6639,10 @@ void Player::SendInitialLogonPackets()
 	time_t t;
 	struct tm *tm;
 
-	uint32 DayOfTheWeek;		//	(0b111 = (any) day, 0 = Monday ect)
-	uint32 DayOfTheMonth;		//	Day - 1 (0 is actual 1) its now the 20e here.
-	uint32 CurrentMonth;		//	Month - 1 (0 is actual 1) same as above.
-	uint32 CurrentYear;			//	2000 + this number results in a correct value for this crap.
+	uint32 DayOfTheWeek = 0;		//	(0b111 = (any) day, 0 = Monday ect)
+	uint32 DayOfTheMonth = 0;		//	Day - 1 (0 is actual 1) its now the 20e here.
+	uint32 CurrentMonth = 0;		//	Month - 1 (0 is actual 1) same as above.
+	uint32 CurrentYear = 0;			//	2000 + this number results in a correct value for this crap.
 
 	t = UNIXTIME;
 	tm = localtime(&t);
@@ -7157,7 +7157,9 @@ void Player::EventTaxiInterpolate()
 {
 	if(!m_CurrentTaxiPath || m_mapMgr==NULL) return;
 
-	float x,y,z;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
 	uint32 ntime = getMSTime();
 
 	if (ntime > m_taxi_ride_time)
@@ -7174,9 +7176,9 @@ void Player::EventTaxiInterpolate()
 void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 {
 	int32 mapchangeid = -1;
-	float mapchangex;
-	float mapchangey;
-	float mapchangez;
+	float mapchangex = 0.0f;
+	float mapchangey = 0.0f;
+	float mapchangez = 0.0f;
 	float orientation = 0;
 	uint32 cn = m_taxiMapChangeNode;
 
@@ -9171,11 +9173,11 @@ void Player::ResetPvPTimer()
 
 void Player::CalculateBaseStats()
 {
-	if(!lvlinfo) return;
+	if(!lvlinfo) 
+		return;
 
 	memcpy(BaseStats, lvlinfo->Stat, sizeof(uint32) * 5);
 
-	LevelInfo * levelone = objmgr.GetLevelInfo(this->getRace(), this->getClass(),1);
 	SetUInt32Value(UNIT_FIELD_MAXHEALTH, lvlinfo->HP);
 	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, lvlinfo->BaseHP);
 	SetUInt32Value(PLAYER_NEXT_LEVEL_XP, lvlinfo->XPToNextLevel);
@@ -10496,7 +10498,6 @@ void Player::_RemoveSkillLine(uint32 SkillLine)
 
 void Player::_UpdateMaxSkillCounts()
 {
-	bool dirty = false;
 	uint32 new_max;
 	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
 	{
@@ -12489,7 +12490,6 @@ uint8 Player::SetGlyph(uint32 slot, uint32 glyphId)
 	if(!glyph)
 		return SPELL_FAILED_INVALID_GLYPH;
 
-	uint32 type = glyph->Type;
 	for(uint32 x = 0; x < GLYPHS_COUNT; ++x)
 	{
 		if(m_specs[m_talentActiveSpec].glyphs[x] == glyphId && slot != x)

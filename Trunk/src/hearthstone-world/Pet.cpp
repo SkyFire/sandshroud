@@ -1630,7 +1630,6 @@ bool Pet::ResetTalents(bool costs)
 	if (!m_Owner || !m_Owner->IsPlayer())
 		return false;
 
-	uint32 level = getLevel();
 	uint32 talentPointsForLevel = GetPetTalentPointsAtLevel();
 
 	if (GetSpentPetTalentPoints() == 0)
@@ -1707,7 +1706,6 @@ void Pet::InitTalentsForLevel(bool creating)
 	if(!m_Owner)
 		return;
 
-	uint32 level = getLevel();
 	uint8 talentPointsForLevel = GetPetTalentPointsAtLevel();
 
 	if(creating)
