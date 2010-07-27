@@ -3530,6 +3530,21 @@ bool Player::HasSpell(uint32 spell)
 	return mSpells.find(spell) != mSpells.end();
 }
 
+uint32 Player::FindSpellWithNamehash(uint32 namehash)
+{
+	SpellSet::iterator itr = mSpells.begin();
+	if(itr != mSpells.end())
+	{
+		for(itr; itr != mSpells.end(); itr++)
+		{
+			SpellEntry* sp = dbcSpell.LookupEntry(*itr);
+			if(sp && sp->NameHash == namehash)
+				return (*itr);
+		}
+	}
+	return 0;
+}
+
 void Player::_LoadQuestLogEntry(QueryResult * result)
 {
 	QuestLogEntry *entry;

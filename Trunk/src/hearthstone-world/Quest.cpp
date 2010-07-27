@@ -169,8 +169,8 @@ void QuestLogEntry::Init(Quest* quest, Player* plr, uint32 slot)
 		if (quest->required_spell[i]!=0)
 		{
 			iscastquest=true;
-			if (!plr->HasQuestSpell(quest->required_spell[i]))
-				plr->quest_spells.insert(quest->required_spell[i]);
+			if (!plr->HasQuestSpell(GetRequiredSpell(i)))
+				plr->quest_spells.insert(GetRequiredSpell(i));
 		}
 		else if (quest->required_mob[i]!=0)
 		{
@@ -435,3 +435,19 @@ void QuestLogEntry::SendUpdateAddKill(uint32 i)
 	sQuestMgr.SendQuestUpdateAddKill(m_plr, m_quest->id, m_quest->required_mob[i], m_mobcount[i], m_quest->required_mobcount[i], 0);
 }
 
+uint32 QuestLogEntry::GetRequiredSpell(uint32 i)
+{
+	if(!m_plr->HasSpell(m_quest->required_spell[i]))
+	{
+		SpellEntry* reqspell = dbcSpell.LookupEntry(m_quest->required_spell[i]);
+		 // Spell has a power type, so we check if player has spells with the same namehash, and replace it with that.
+		if(reqspell && (reqspell->powerType != m_plr->GetPowerType()))
+		{
+			uint32 newspell = m_plr->FindSpellWithNamehash(reqspell->NameHash);
+			if(newspell != 0)
+				return newspell;
+		}
+	}
+
+	return m_quest->required_spell[i];
+}

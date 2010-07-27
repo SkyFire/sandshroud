@@ -843,7 +843,7 @@ void QuestMgr::OnPlayerCast(Player* plr, uint32 spellid, uint64& victimguid)
 		return;
 
 	Unit* victim = plr->GetMapMgr() ? plr->GetMapMgr()->GetUnit(victimguid) : NULLUNIT;
-	if(victim==NULL)
+	if(victim == NULL)
 		return;
 
 	uint32 i, j;
@@ -859,14 +859,24 @@ void QuestMgr::OnPlayerCast(Player* plr, uint32 spellid, uint64& victimguid)
 
 			for(j = 0; j < 4; ++j)
 			{
-				if(qle->GetQuest()->required_mob[j] == entry &&
-					qle->GetQuest()->required_spell[j] == spellid &&
-					qle->m_mobcount[j] < qle->GetQuest()->required_mobcount[j] &&
-					!qle->IsUnitAffected(victim))
+				if(qle->GetQuest()->required_mob[j])
 				{
-					// add another kill.(auto-dirtys it)
-					qle->AddAffectedUnit(victim);
-					qle->SetMobCount(j, qle->m_mobcount[j] + 1);
+					if(qle->GetQuest()->required_mob[j] == entry &&
+						qle->GetRequiredSpell(j) == spellid &&
+						qle->m_mobcount[j] < qle->GetQuest()->required_mobcount[j] &&
+						!qle->IsUnitAffected(victim))
+					{
+						// add another kill.(auto-dirtys it)
+						qle->AddAffectedUnit(victim);
+						qle->SetMobCount(j, qle->m_mobcount[j] + 1);
+						qle->SendUpdateAddKill(j);
+						qle->UpdatePlayerFields();
+						qle->SaveToDB(NULL);
+						break;
+					}
+				}
+				else if( qle->GetRequiredSpell(j) == spellid )// Some quests don't require a target.
+				{
 					qle->SendUpdateAddKill(j);
 					qle->UpdatePlayerFields();
 					qle->SaveToDB(NULL);
@@ -1006,8 +1016,8 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 	{
 		if (qst->required_spell[x]!=0)
 		{
-			if (plr->HasQuestSpell(qst->required_spell[x]))
-				plr->RemoveQuestSpell(qst->required_spell[x]);
+			if (plr->HasQuestSpell(qle->GetRequiredSpell(x)))
+				plr->RemoveQuestSpell(qle->GetRequiredSpell(x));
 		}
 		else if (qst->required_mob[x]!=0)
 		{
@@ -1028,8 +1038,8 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		else 
 		{
 			//Remove aquired spells
-			if( qst->required_spell[x] && plr->HasQuestSpell(qst->required_spell[x]) )
-				plr->RemoveQuestSpell(qst->required_spell[x]);
+			if( qst->required_spell[x] && plr->HasQuestSpell(qle->GetRequiredSpell(x)) )
+				plr->RemoveQuestSpell(qle->GetRequiredSpell(x));
 
 			//Remove Killed npc's
 			if( qst->required_mob[x] && plr->HasQuestMob(qst->required_mob[x]) )

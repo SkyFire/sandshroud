@@ -1207,6 +1207,7 @@ void World::Rehash(bool load)
 	if(!MailSystem::getSingletonPtr())
 		new MailSystem;
 
+	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "File", -1),Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
 	vMapPath = Config.MainConfig.GetStringDefault("Terrain", "vMapPath", "vmaps");

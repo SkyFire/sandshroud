@@ -259,6 +259,7 @@ public:
 	HEARTHSTONE_INLINE uint32 GetMobCount(uint32 i) { return m_mobcount[i]; }
 	HEARTHSTONE_INLINE uint32 GetExploredAreas(uint32 i) { return m_explored_areas[i]; }
 	HEARTHSTONE_INLINE uint32 GetTimeLeft() { return m_time_left; }
+	HEARTHSTONE_INLINE uint32 GetRequiredSpell(uint32 i);
 
 	HEARTHSTONE_INLINE uint32 GetBaseField(uint32 slot)
 	{
