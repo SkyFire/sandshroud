@@ -159,7 +159,7 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 				for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); itr++)
 				{
 					plr = itr->second;
-					if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
+					if((plr->GetPlayerAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
 					{
 						WorldPacket* data2 = &data;
 						plr->GetSession()->SendPacket(data2);
@@ -199,7 +199,7 @@ void WintergraspInternal::SendWSUpdateToAll(uint32 WorldState, uint32 Value)
 		for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); itr++)
 		{
 			plr = itr->second;
-			if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
+			if((plr->GetPlayerAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
 				plr->GetSession()->SendPacket(&data);
 		}
 	}

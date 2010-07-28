@@ -273,6 +273,7 @@ struct SERVER_DECL GuildBankTab
 
 class Charter;
 
+typedef map<PlayerInfo*, GuildMember*> GuildMemberMap;
 
 class SERVER_DECL Guild
 {
@@ -412,8 +413,8 @@ public:
 	HEARTHSTONE_INLINE const size_t GetNumMembers() const { return m_members.size(); }
 
 	Mutex* getLock() { return &m_lock; }
-	map<PlayerInfo*, GuildMember*>::iterator GetGuildMembersBegin() { return m_members.begin(); }
-	map<PlayerInfo*, GuildMember*>::iterator GetGuildMembersEnd() { return m_members.end(); }
+	GuildMemberMap::iterator GetGuildMembersBegin() { return m_members.begin(); }
+	GuildMemberMap::iterator GetGuildMembersEnd() { return m_members.end(); }
 	
 	/** Creates a guild rank with the specified permissions.
 	 */
@@ -517,7 +518,6 @@ protected:
 	
 	/** Guild Member Map.
 	 */
-	typedef map<PlayerInfo*, GuildMember*> GuildMemberMap;
 	GuildMemberMap m_members;
 
 	/** Guild Rank Information.

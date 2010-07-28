@@ -47,7 +47,7 @@ Wintergrasp::Wintergrasp(WintergraspInternal* WGI, MapMgr* mgr) : Internal(*WGI)
 	for(PlayerStorageMap::iterator itr =  mgr->m_PlayerStorage.begin(); itr != mgr->m_PlayerStorage.end(); itr++)
 	{
 		plr = itr->second;
-		if((plr->GetAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
+		if((plr->GetPlayerAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
 		{
 			WGPlayers.insert(plr);
 			plr->WinterGrasp = this;

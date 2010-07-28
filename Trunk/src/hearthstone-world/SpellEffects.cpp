@@ -5026,7 +5026,7 @@ void Spell::SpellEffectSummonObject(uint32 i)
 		posy = py + r * si;
 		   
 		// Todo / Fix me: This should be loaded / cached
-		uint32 zone = p_caster->GetAreaID();
+		uint32 zone = p_caster->GetPlayerAreaID();
 		if( zone == 0 ) // If the player's area ID is 0, use the zone ID instead
 			zone = p_caster->GetZoneId();
 

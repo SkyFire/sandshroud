@@ -141,7 +141,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		//These area's are sanctuaries
 		for(uint32 i = 0; i < NUM_SANCTUARIES ; i++)
 		{
-			if( player_objA->GetAreaID() == SANCTUARY_ZONES[i] || player_objB->GetAreaID() == SANCTUARY_ZONES[i])
+			if( player_objA->GetPlayerAreaID() == SANCTUARY_ZONES[i] || player_objB->GetPlayerAreaID() == SANCTUARY_ZONES[i])
 				return false;
 		}
 
@@ -155,8 +155,8 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		// We know they aren't dueling
 		AreaTable *atA = NULL;
 		AreaTable *atB = NULL;
-		atA = dbcArea.LookupEntry( player_objA->GetAreaID() );
-		atB = dbcArea.LookupEntry( player_objB->GetAreaID() );
+		atA = dbcArea.LookupEntry( player_objA->GetPlayerAreaID() );
+		atB = dbcArea.LookupEntry( player_objB->GetPlayerAreaID() );
 		if ( atA && atB && (atA->AreaFlags & AREA_SANCTUARY || atB->AreaFlags & AREA_SANCTUARY) )
 			return false;
 

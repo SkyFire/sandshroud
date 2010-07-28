@@ -117,7 +117,7 @@ void WorldStateManager::SendWorldStates(Player* pPlayer)
 	//data << m_property1;
 	//data << m_property2;
 	data << pPlayer->GetZoneId();
-	data << pPlayer->GetAreaID();
+	data << pPlayer->GetPlayerAreaID();
 
 	// set this to zero, since the count can be variable
 	data << (uint16)0;

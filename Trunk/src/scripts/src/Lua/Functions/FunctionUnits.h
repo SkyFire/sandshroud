@@ -4161,7 +4161,7 @@ int luaUnit_GetGuildMembers(lua_State * L, Unit * ptr)
 		{
 			count++;
 			lua_pushinteger(L, count);
-			//Paroxysm : Why do we push player names are opposed to objects?
+			//Paroxysm : Why do we push player names as opposed to objects?
 			//hyper: because guild members might not be logged in
 			//ret = (*itr).first->m_loggedInPlayer;
 			//PUSH_UNIT(L, ((Unit*)ret), false);
@@ -4199,7 +4199,7 @@ int luaUnit_HasAchievement(lua_State * L, Unit * ptr)
 int luaUnit_GetAreaId(lua_State * L, Unit * ptr)
 {
 	TEST_UNITPLAYER_RET();
-	RET_NUMBER(ptr->GetMapMgr()->GetAreaID(ptr->GetPositionX(), ptr->GetPositionY() ) );
+	RET_NUMBER(ptr->GetAreaID(ptr->GetPositionX(), ptr->GetPositionY(), ptr->GetPositionZ() ) );
 }
 
 int luaUnit_ResetPetTalents(lua_State * L, Unit * ptr)

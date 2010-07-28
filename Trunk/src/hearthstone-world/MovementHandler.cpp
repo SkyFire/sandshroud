@@ -146,7 +146,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 	// Very dirty way of fixing swim bug in serpent lake :(
 	// The waterlevel at the entrance is NOT the same as where you surface again.
 	// This keeps players in breathing mode until they drown.
-	if( _player->GetAreaID() == 3653 )
+	if( _player->GetPlayerAreaID() == 3653 )
 	{
 		float pposx = _player->GetPositionX();
 		float pposy = _player->GetPositionY();

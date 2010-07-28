@@ -2079,7 +2079,7 @@ void Spell::SendCastResult(uint8 result)
 	case SPELL_FAILED_REQUIRES_AREA:
 		if( m_spellInfo->AreaGroupId > 0 )
 		{
-			uint16 area_id = plr->GetMapMgr()->GetAreaID( plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
+			uint16 area_id = plr->GetAreaID( plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 			AreaGroup *GroupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
 
 			for( uint8 i = 0; i < 7; i++ )
@@ -3090,7 +3090,7 @@ uint8 Spell::CanCast(bool tolerate)
 	{
 		if( m_spellInfo->Id == 51721 )
 		{
-			if( !(p_caster->GetAreaID() == 4281) )
+			if( !(p_caster->GetPlayerAreaID() == 4281) )
 				return SPELL_FAILED_NOT_HERE;
 		}
 		// flying auras
@@ -3256,7 +3256,7 @@ uint8 Spell::CanCast(bool tolerate)
 		// check for duel areas
 		if( m_spellInfo->Id == 7266 )
 		{
-			AreaTable* at = dbcArea.LookupEntry( p_caster->GetAreaID() );
+			AreaTable* at = dbcArea.LookupEntry( p_caster->GetPlayerAreaID() );
 			if(at->AreaFlags & AREA_CITY_AREA)
 				return SPELL_FAILED_NO_DUELING;
 
@@ -3536,7 +3536,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( m_spellInfo->AreaGroupId > 0)
 		{
 			bool found = false;
-			uint16 area_id = p_caster->GetMapMgr()->GetAreaID( p_caster->GetPositionX(),p_caster->GetPositionY() ,p_caster->GetPositionZ());
+			uint16 area_id = p_caster->GetAreaID( p_caster->GetPositionX(),p_caster->GetPositionY() ,p_caster->GetPositionZ());
 			uint32 zone_id = p_caster->GetZoneId();
 
 			AreaGroup const* groupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
@@ -3821,8 +3821,8 @@ uint8 Spell::CanCast(bool tolerate)
 					// allow attacks in duels
 					if( p_caster->DuelingWith != target && !isFriendly( p_caster, target ) )
 					{
-						AreaTable* atCaster = dbcArea.LookupEntry( p_caster->GetAreaID() );
-						AreaTable* atTarget = dbcArea.LookupEntry( TO_PLAYER( target )->GetAreaID() );
+						AreaTable* atCaster = dbcArea.LookupEntry( p_caster->GetPlayerAreaID() );
+						AreaTable* atTarget = dbcArea.LookupEntry( TO_PLAYER( target )->GetPlayerAreaID() );
 						if( atCaster->AreaFlags & 0x800 || atTarget->AreaFlags & 0x800 )
 							return SPELL_FAILED_NOT_HERE;
 					}

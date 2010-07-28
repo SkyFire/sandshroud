@@ -241,6 +241,9 @@ public:
 	HEARTHSTONE_INLINE const uint32 GetMapId( ) const { return m_mapId; }
 	HEARTHSTONE_INLINE const uint32& GetZoneId( ) const { return m_zoneId; }
 
+	// Area id
+	HEARTHSTONE_INLINE uint32 GetAreaID(float x, float y, float z = 0.0f);
+
 	//! Get uint32 property
 	HEARTHSTONE_INLINE const uint32& GetUInt32Value( uint32 index ) const { return m_uint32Values[ index ]; }
 

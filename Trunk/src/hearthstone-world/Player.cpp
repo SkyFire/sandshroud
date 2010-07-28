@@ -1383,7 +1383,7 @@ void Player::_EventExploration()
 	if(GetMapMgr()->GetCellByCoords(GetPositionX(),GetPositionY()) == NULL)
 		return;
 
-	uint16 AreaId = GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY(), GetPositionZ());
+	uint16 AreaId = GetAreaID(GetPositionX(), GetPositionY(), GetPositionZ());
 
 	if(!AreaId || AreaId == 0xFFFF)
 		return;
@@ -8221,7 +8221,7 @@ void Player::ForceAreaUpdate()
 	uint32 oldareaid = m_AreaID;
 
 	m_areaDBC = NULL;
-	m_AreaID = m_mapMgr->GetAreaID(m_position.x, m_position.y, m_position.z);
+	m_AreaID = GetAreaID(m_position.x, m_position.y, m_position.z);
 	if( m_AreaID == 0xffff )
 		m_AreaID = 0;
 	else
@@ -8287,7 +8287,7 @@ void Player::ZoneUpdate(uint32 ZoneId)
 	sHookInterface.OnZone(TO_PLAYER(this), ZoneId, oldzone);
 	CALL_INSTANCE_SCRIPT_EVENT( m_mapMgr, OnZoneChange )( TO_PLAYER(this), ZoneId, oldzone );
 
-	AreaTable *at = dbcArea.LookupEntry(GetAreaID());
+	AreaTable *at = dbcArea.LookupEntry(GetPlayerAreaID());
 	if(at && ( at->category == AREAC_SANCTUARY || at->AreaFlags & AREA_SANCTUARY ) )
 	{
 		Unit* pUnit = (GetSelection() == 0) ? NULLUNIT : (m_mapMgr ? m_mapMgr->GetUnit(GetSelection()) : NULLUNIT);
@@ -11979,7 +11979,7 @@ void Player::Social_TellFriendsOnline()
 	set<uint32>::iterator itr;
 	Player* pl;
 	data << uint8( FRIEND_ONLINE ) << GetGUID() << uint8( 1 );
-	data << GetAreaID() << getLevel() << uint32(getClass());
+	data << GetPlayerAreaID() << getLevel() << uint32(getClass());
 
 	m_socialLock.Acquire();
 	for( itr = m_hasFriendList.begin(); itr != m_hasFriendList.end(); itr++ )

@@ -463,7 +463,7 @@ void GameObject::UseFishingNode(Player* player)
 
 	FishingZoneEntry *entry = NULL;
 
-	uint32 zone = player->GetAreaID();
+	uint32 zone = player->GetPlayerAreaID();
 	if(zone != 0)
 	{
 		entry = FishingZoneStorage.LookupEntry( zone );

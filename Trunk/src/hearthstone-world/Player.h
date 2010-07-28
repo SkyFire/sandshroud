@@ -840,8 +840,8 @@ public:
 	virtual void Init();
 
 	HEARTHSTONE_INLINE Guild * GetGuild() { return m_playerInfo->guild; }
-	HEARTHSTONE_INLINE GuildMember * GetGuildMember() { return m_playerInfo->guildMember; }
-	HEARTHSTONE_INLINE GuildRank * GetGuildRankS() { return m_playerInfo->guildRank; }
+	HEARTHSTONE_INLINE GuildMember* GetGuildMember() { return m_playerInfo->guildMember; }
+	HEARTHSTONE_INLINE GuildRank* GetGuildRankS() { return m_playerInfo->guildRank; }
 
 	void EventGroupFullUpdate();
 	void GroupUninvite(Player* player, PlayerInfo *info);
@@ -1190,6 +1190,10 @@ public:
 	uint32						GetGuildInvitersGuid() { return m_invitersGuid; }
 	void						SetGuildInvitersGuid( uint32 guid ) { m_invitersGuid = guid; }
 	void						UnSetGuildInvitersGuid() { m_invitersGuid = 0; }
+
+	// You better have guild checks before this or its gonna crash.
+	map<PlayerInfo*, GuildMember*>::iterator GetGuildMembersBegin() { return m_playerInfo->guild->GetGuildMembersBegin(); }
+	map<PlayerInfo*, GuildMember*>::iterator GetGuildMembersEnd() { return m_playerInfo->guild->GetGuildMembersEnd(); }
 
 	/************************************************************************/
 	/* Duel																	*/
@@ -1687,7 +1691,7 @@ public:
 	bool PowerCheat;
 	bool FlyCheat;
 	void ZoneUpdate(uint32 ZoneId);
-	HEARTHSTONE_INLINE uint32 GetAreaID() { return m_AreaID; }
+	HEARTHSTONE_INLINE uint32 GetPlayerAreaID() { return m_AreaID; }
 	void SetAreaID(uint32 area) { m_AreaID = area; m_areaDBC = dbcArea.LookupEntryForced(m_AreaID); }
 	HEARTHSTONE_INLINE AreaTable *GetAreaDBC() { return m_areaDBC; }
 

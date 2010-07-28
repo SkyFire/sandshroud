@@ -20,8 +20,8 @@
 #ifndef __FACTION_H
 #define __FACTION_H
 
-#define NUM_SANCTUARIES 2
-static const uint32 SANCTUARY_ZONES[NUM_SANCTUARIES] = { 3703, 4395 }; //Shatrath city, Dalaran
+#define NUM_SANCTUARIES 3
+static const uint32 SANCTUARY_ZONES[NUM_SANCTUARIES] = { 3703, 4395,  }; //Shatrath city, Dalaran
 
 SERVER_DECL bool isHostile(Object* objA, Object* objB); // B is hostile for A?
 SERVER_DECL bool isAttackable(Object* objA, Object* objB, bool CheckStealth = true); // A can attack B?

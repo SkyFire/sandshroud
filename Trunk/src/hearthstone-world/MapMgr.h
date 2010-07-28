@@ -224,7 +224,7 @@ public:
 	HEARTHSTONE_INLINE float  GetWaterHeight(float x, float y) { return GetBaseMap()->GetWaterHeight(x, y); }
 	HEARTHSTONE_INLINE uint8  GetWaterType(float x, float y) { return GetBaseMap()->GetWaterType(x, y); }
 	HEARTHSTONE_INLINE uint8  GetWalkableState(float x, float y) { return GetBaseMap()->GetWalkableState(x, y); }
-	HEARTHSTONE_INLINE uint16 GetAreaID(float x, float y, float z = 0)
+	HEARTHSTONE_INLINE uint16 GetAreaID(float x, float y, float z = 0.0f)
 	{
 		uint16 aid = GetBaseMap()->GetAreaID(x, y);
 		if(GetMapId() == 571)
