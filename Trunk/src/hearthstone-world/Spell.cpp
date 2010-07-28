@@ -411,44 +411,67 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range*range;
 	//uint8 did_hit_result;
-	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
-		if( !( (*itr)->IsUnit() ) || TO_UNIT(*itr)->m_CurrentVehicle == m_caster || ! TO_UNIT(*itr)->isAlive() || ( (*itr)->GetTypeId()==TYPEID_UNIT && TO_CREATURE(*itr)->IsTotem() ) || !(*itr)->PhasedCanInteract(m_caster))
+		// don't add objects that are units and dead
+		if( (*itr)->IsUnit() && (!(TO_UNIT( *itr )->isAlive())))
 			continue;
 
-		if( m_spellInfo->TargetCreatureType )
+		//TO_UNIT(*itr)->InStealth()
+		if( m_spellInfo->TargetCreatureType)
 		{
-			if( (*itr)->GetTypeId() != TYPEID_UNIT )
+			if((*itr)->GetTypeId() != TYPEID_UNIT)
 				continue;
 
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-			if( !inf || !( 1 << (inf->Type-1) & m_spellInfo->TargetCreatureType ) )
+			if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
 				continue;
 		}
 
-		if( IsInrange( srcx, srcy, srcz, (*itr), r ))
+		if(IsInrange(srcx,srcy,srcz,(*itr),r))
 		{
-			if( u_caster != NULL )
+			if( v_caster != NULL ) // Vehicles can destroy gameobjects
 			{
-				if( isAttackable( u_caster, TO_UNIT(*itr), !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
+				if( (*itr)->IsUnit() )
 				{
-					_AddTarget((TO_UNIT(*itr)), i);
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					{
+						_AddTarget((TO_UNIT(*itr)), i);
+					}
+				}
+				else if((*itr)->IsGameObject())
+				{
+					_AddTargetForced((*itr)->GetGUID(), i);
+				}
+			}
+			else if( u_caster != NULL )
+			{
+				if( (*itr)->IsUnit() )
+				{
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					{
+						_AddTarget((TO_UNIT(*itr)), i);
+					}
 				}
 			}
 			else //cast from GO
 			{
-				if( g_caster != NULL && g_caster->GetUInt32Value( OBJECT_FIELD_CREATED_BY ) && g_caster->m_summoner != NULL )
+				if(g_caster && g_caster->GetUInt32Value(OBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
 				{
-					//trap, check not to attack owner and friendly
-					if( isAttackable( g_caster->m_summoner, TO_UNIT(*itr), !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
-						_AddTarget((TO_UNIT(*itr)), i);
+					if((*itr)->IsUnit())
+					{	//trap, check not to attack owner and friendly
+						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+							_AddTarget((TO_UNIT(*itr)), i);
+					}
 				}
 				else
 					_AddTargetForced((*itr)->GetGUID(), i);
 			}
-			if( m_spellInfo->MaxTargets )
+			if( m_spellInfo->MaxTargets)
+			{
 				if( m_hitTargetCount >= m_spellInfo->MaxTargets )
 					return;
+			}
 		}
 	}
 }
