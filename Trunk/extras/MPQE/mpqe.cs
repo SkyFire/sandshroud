@@ -86,7 +86,6 @@ namespace MPQE {
 							Console.WriteLine("Fatal: Unknown option {0}", args[i]);
 							mpqe.helper();
 							return;
-							break;
 					};
 				} else {
 					if (mpqe.option_baseMPQ == null)
