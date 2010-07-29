@@ -11,10 +11,10 @@ ALTER TABLE `ai_agents` CHANGE COLUMN `targettype_overwrite` `targettype` INT(11
 ALTER TABLE `ai_agents` CHANGE COLUMN `cooldown_overwrite` `cooldown` INT(11) NOT NULL DEFAULT '-1' AFTER `targettype`;
 ALTER TABLE `ai_agents` DROP COLUMN `instance_mode`, DROP COLUMN `event`;
 
-ALTER TABLE ai_agents CHANGE type type varchar(255) NOT NULL DEFAULT 'ROOT';
-ALTER TABLE ai_agents CHANGE spelltype spelltype varchar(255) NOT NULL DEFAULT 'ROOT';
-ALTER TABLE ai_agents CHANGE targettype targettype varchar(255) NOT NULL DEFAULT 'ROOT';
-ALTER TABLE auctionhouse CHANGE ahgroup group int(32) NOT NULL DEFAULT '0';
+ALTER TABLE `ai_agents` CHANGE COLUMN `type` `type` varchar(255) NOT NULL DEFAULT 'ROOT';
+ALTER TABLE `ai_agents` CHANGE COLUMN `spelltype` `spelltype` varchar(255) NOT NULL DEFAULT 'ROOT';
+ALTER TABLE `ai_agents` CHANGE COLUMN `targettype` `targettype` varchar(255) NOT NULL DEFAULT 'ROOT';
+ALTER TABLE `auctionhouse` CHANGE COLUMN `ahgroup` `group` int(32) NOT NULL DEFAULT '0';
 
 UPDATE ai_agents SET type = 'SPELL' WHERE type = 0;
 UPDATE ai_agents SET type = 'MELEE' WHERE type = 1;
