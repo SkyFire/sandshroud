@@ -56,6 +56,7 @@ Unit::Unit()
 	m_teleportAckCounter = 0;
 	m_inVehicleSeatId = 0xFF;
 	m_CurrentVehicle = NULLVEHICLE;
+	ExitingVehicle = false;
 
 	//transport shit
 	m_transportPosition		= new LocationVector(0,0,0);

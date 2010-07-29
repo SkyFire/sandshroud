@@ -106,7 +106,7 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 	recv_data >> flags >> time;
 	if(guid == _player->GetGUID())
 	{
-		if(sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->GetPlayerStatus() != TRANSFER_PENDING)
+		if(!_player->ExitingVehicle && sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->GetPlayerStatus() != TRANSFER_PENDING)
 		{
 			/* we're obviously cheating */
 			sCheatLog.writefromsession(this, "Used teleport hack, disconnecting.");
@@ -502,6 +502,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		{
 			if (m_isFalling)
 				Disconnect();
+
 			m_isFalling = true;
 		}
 

@@ -997,7 +997,7 @@ void WorldSession::FullLogin(Player* plr)
 		plr->AddToWorld(true);
 
 	// Doesn't create an aura, and don't have a way to check talents yet.
-	QueryResult* titansgrip = CharacterDatabase.Query("SELECT * FROM playertalents WHERE spec = \"%u\" AND tid = \"1867\" AND guid = \"%u;\"", plr->m_talentActiveSpec, plr->GetGUID());
+	QueryResult* titansgrip = CharacterDatabase.Query("SELECT * FROM playertalents WHERE spec = '%u' AND tid = '1867' AND guid = '%u';", plr->m_talentActiveSpec, plr->GetGUID());
 	if(titansgrip == NULL)
 		plr->ResetTitansGrip();
 	else

@@ -554,7 +554,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		}
 		RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_PLAYER_CONTROLLED_CREATURE | UNIT_FLAG_PLAYER_CONTROLLED));
 
-		plr->SetPlayerStatus(TRANSFER_PENDING);
+		plr->SetPlayerStatus(TRANSFER_PENDING); // We get an ack later, if we don't set this now, we get disconnected.
 		plr->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
 		plr->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
 
@@ -597,7 +597,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 				SetUInt32Value(UNIT_FIELD_MAXHEALTH, GetProto()->MaxHealth);
 			}
 		}
-		plr->SetPlayerStatus(NONE);
 	}
 		
 	if(slot == 0)
@@ -670,7 +669,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 
 	if(pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_isGmInvisible)
 	{
-		sChatHandler.GreenSystemMessage(TO_PLAYER(pPassenger)->GetSession(), "Please turn of invis before entering vehicle.");
+		sChatHandler.GreenSystemMessage(TO_PLAYER(pPassenger)->GetSession(), "Please turn off invis before entering vehicle.");
 		return;
 	}
 
@@ -940,13 +939,16 @@ leave a vehicle, it removes us server side from our current
 vehicle*/
 void WorldSession::HandleVehicleDismiss(WorldPacket & recv_data)
 {
-	if(GetPlayer() == NULL || !GetPlayer()->m_CurrentVehicle)
+	Player* plr = GetPlayer();
+	if(plr == NULL || !plr->m_CurrentVehicle)
 		return;
 
+	plr->ExitingVehicle = true;
 	if((recv_data.rpos() != recv_data.wpos()) && (/*So we don't get disconnected due to size checks.*/recv_data.size() <= 90))
 		HandleMovementOpcodes(recv_data);
 
-	GetPlayer()->m_CurrentVehicle->RemovePassenger(GetPlayer());
+	plr->m_CurrentVehicle->RemovePassenger(GetPlayer());
+	plr->ExitingVehicle = false;
 }
 
 /* This function handles the packet from the client which is

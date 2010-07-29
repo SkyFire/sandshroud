@@ -1127,6 +1127,7 @@ public:
 	//Vehicle
 	uint8 m_inVehicleSeatId;
 	Vehicle* m_CurrentVehicle;
+	bool ExitingVehicle;
 	HEARTHSTONE_INLINE int8 GetSeatID() { return m_inVehicleSeatId; }
 
 	//Pet
