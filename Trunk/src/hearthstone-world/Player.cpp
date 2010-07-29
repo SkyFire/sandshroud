@@ -10261,8 +10261,10 @@ void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)
 	if (!CheckedSkill) //skill doesn't exist, exit here
 		return;
 
+	uint32 customlvlcapskcap = 50+(sWorld.LevelCap_Custom_All*5);
+
 	// force to be within limits
-	Max_sk = Max_sk > 450 ? 450 : Max_sk;
+	Max_sk = Max_sk > customlvlcapskcap ? customlvlcapskcap : Max_sk;
 	Curr_sk = Curr_sk > Max_sk ? Max_sk : Curr_sk < 1 ? 1 : Curr_sk ;
 
 	ItemProf * prof;
@@ -10534,8 +10536,10 @@ void Player::_UpdateMaxSkillCounts()
 			}
 		}
 
+		uint32 customlvlcapskcap = 50+(sWorld.LevelCap_Custom_All*5);
+
 		//Update new max, forced to be within limits
-		itr->second.MaximumValue = new_max > 450 ? 450 : new_max < 1 ? 1 : new_max;
+		itr->second.MaximumValue = new_max > customlvlcapskcap ? customlvlcapskcap : new_max < 1 ? 1 : new_max;
 
 		//Check if current is below nem max, if so, set new current to new max
 		itr->second.CurrentValue = itr->second.CurrentValue > new_max ? new_max : itr->second.CurrentValue;

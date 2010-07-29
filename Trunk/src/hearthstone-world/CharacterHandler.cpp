@@ -772,8 +772,8 @@ void WorldSession::FullLogin(Player* plr)
 	plr->UpdateAttackSpeed();
 
 	// Anti max level hack.
-	if(plr->getLevel() > 80)
-		plr->SetUInt32Value(UNIT_FIELD_LEVEL, 80);
+	if(plr->getLevel() > sWorld.LevelCap_Custom_All)
+		plr->SetUInt32Value(UNIT_FIELD_LEVEL, sWorld.LevelCap_Custom_All);
 
 	// Enable certain GM abilities on login.
 	if(HasGMPermissions())
