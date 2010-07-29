@@ -1406,6 +1406,7 @@ public:
 	uint32 GetTalentResetTimes() { return m_talentresettimes; }
 	HEARTHSTONE_INLINE void SetTalentResetTimes(uint32 value) { m_talentresettimes = value; }
 	void SetPlayerStatus(uint8 pStatus) { m_status = pStatus; }
+	void CheckPlayerStatus(uint8 pStatus) { if(m_status == pStatus) m_status = NONE; }
 	HEARTHSTONE_INLINE uint8 GetPlayerStatus() { return m_status; }
 	const float& GetBindPositionX( ) const { return m_bind_pos_x; }
 	const float& GetBindPositionY( ) const { return m_bind_pos_y; }

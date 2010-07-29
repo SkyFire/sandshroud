@@ -555,6 +555,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_PLAYER_CONTROLLED_CREATURE | UNIT_FLAG_PLAYER_CONTROLLED));
 
 		plr->SetPlayerStatus(TRANSFER_PENDING); // We get an ack later, if we don't set this now, we get disconnected.
+		sEventMgr.AddEvent(plr, &Player::CheckPlayerStatus, (uint8)TRANSFER_PENDING, EVENT_PLAYER_CHECK_STATUS_Transfer, 5000, 0, 0);
 		plr->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
 		plr->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
 
@@ -733,6 +734,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		//pPlayer->GetSession()->SendPacket(&data3);
 
 		pPlayer->SetPlayerStatus(TRANSFER_PENDING);
+		sEventMgr.AddEvent(pPlayer, &Player::CheckPlayerStatus, (uint8)TRANSFER_PENDING, EVENT_PLAYER_CHECK_STATUS_Transfer, 5000, 0, 0);
 		pPlayer->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
 
 		WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
@@ -796,7 +798,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
 		data << pPlayer->GetPosition();
 		pPlayer->GetSession()->SendPacket(&data);
-		pPlayer->SetPlayerStatus(NONE);
 		++m_ppassengerCount;
 	}
 	else
@@ -1018,6 +1019,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	WoWGuid Vehicleguid;
 	int8 RequestedSeat;
 	Vehicle* cv = _player->m_CurrentVehicle;
+	_player->ChangingSeats = true;
 
 	if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_PREV_SEAT)
 	{
@@ -1035,6 +1037,8 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 		}
 		if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
 			cv->ChangeSeats(_player, newseat);
+
+		_player->ChangingSeats = false;
 		return;
 	}
 	else if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_NEXT_SEAT)
@@ -1053,6 +1057,8 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 		}
 		if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
 			cv->ChangeSeats(_player, newseat);
+
+		_player->ChangingSeats = false;
 		return;
 	}
 	else if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_SWITCH_SEAT)
@@ -1074,10 +1080,12 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	{
 		cv->RemovePassenger(_player);
 		vehicle->AddPassenger(_player);
+		_player->ChangingSeats = false;
 		return;
 	}
 
 	cv->ChangeSeats(_player, RequestedSeat);
+	_player->ChangingSeats = false;
 }
 
 void Vehicle::ChangeSeats(Unit* unit, uint8 seatid)

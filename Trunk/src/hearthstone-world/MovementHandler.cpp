@@ -64,13 +64,15 @@ HEARTHSTONE_INLINE uint32 mTimeStamp()
 
 void WorldSession::HandleMoveWorldportAckOpcode( WorldPacket & recv_data )
 {
+	DEBUG_LOG( "WORLD"," got MSG_MOVE_WORLDPORT_ACK." );
+
 	GetPlayer()->SetPlayerStatus(NONE);
+	sEventMgr.RemoveEvents(GetPlayer(), EVENT_PLAYER_CHECK_STATUS_Transfer);
 	if(_player->IsInWorld())
 	{
 		// get outta here
 		return;
 	}
-	DEBUG_LOG( "WORLD"," got MSG_MOVE_WORLDPORT_ACK." );
 	
 	if(_player->m_CurrentTransporter && _player->GetMapId() != _player->m_CurrentTransporter->GetMapId())
 	{
@@ -106,7 +108,7 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 	recv_data >> flags >> time;
 	if(guid == _player->GetGUID())
 	{
-		if(!_player->ExitingVehicle && sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->GetPlayerStatus() != TRANSFER_PENDING)
+		if(!_player->m_CurrentVehicle && sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->GetPlayerStatus() != TRANSFER_PENDING)
 		{
 			/* we're obviously cheating */
 			sCheatLog.writefromsession(this, "Used teleport hack, disconnecting.");
@@ -124,6 +126,7 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 
 		DEBUG_LOG( "WORLD"," got MSG_MOVE_TELEPORT_ACK." );
 		GetPlayer()->SetPlayerStatus(NONE);
+		sEventMgr.RemoveEvents(GetPlayer(), EVENT_PLAYER_CHECK_STATUS_Transfer);
 		GetPlayer()->SetMovement(MOVE_UNROOT,5);
 		_player->ResetHeartbeatCoords();
 
@@ -337,7 +340,11 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/************************************************************************/
 	/* Make sure the packet is the correct size range. 77 is real number    */
 	/************************************************************************/
-	if(recv_data.size() > 90) { Disconnect(); return; }
+	if(recv_data.size() > 90)
+	{
+		Disconnect();
+		return;
+	}
 
 	/************************************************************************/
 	/* Read Movement Data Packet                                            */
