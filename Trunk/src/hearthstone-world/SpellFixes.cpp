@@ -1269,10 +1269,14 @@ void ApplyNormalFixes()
 		ApplySingleSpellFixes(sp);
 	}
 
+	Log.Notice("World", "Processing %u dummy spells...", DummySpells.size());
 	set<uint32>::iterator itr = DummySpells.begin();
-	for(; itr != DummySpells.end(); itr++)
-	{	// Crow: Create the dummy spell, and apply fixs :D
-		ApplySingleSpellFixes(CreateDummySpell(*itr));
+	if(itr != DummySpells.end())
+	{
+		for(; itr != DummySpells.end(); itr++)
+		{	// Crow: Create the dummy spell, and apply fixs :D
+			ApplySingleSpellFixes(CreateDummySpell(*itr));
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////
@@ -1281,12 +1285,13 @@ void ApplyNormalFixes()
 	QueryResult * resultfcst = WorldDatabase.Query("SELECT * FROM spell_forced_targets");
 	if( resultfcst != NULL )
 	{
+		Log.Notice("World", "Forcing targets for %u spells...", resultfcst->GetRowCount());
 		do
 		{
 			Field * f = resultfcst->Fetch();
 			sp = dbcSpell.LookupEntryForced( f[0].GetUInt32() );
 			if( sp )
-			sp->forced_creature_target = f[1].GetUInt32();
+				sp->forced_creature_target = f[1].GetUInt32();
 
 		}while( resultfcst->NextRow() );
 		delete resultfcst;
@@ -1296,6 +1301,7 @@ void ApplyNormalFixes()
 	QueryResult * resultx = WorldDatabase.Query("SELECT * FROM spell_coef_override");
 	if( resultx != NULL )
 	{
+		Log.Notice("World", "Loading %u spell coefficient overrides...", resultx->GetRowCount());
 		uint32 spellid;
 		do
 		{
@@ -1304,10 +1310,10 @@ void ApplyNormalFixes()
 			SpellEntry * sp = dbcSpell.LookupEntryForced( spellid );
 			if( sp != NULL )
 			{
-			sp->Dspell_coef_override = fields[1].GetFloat();
-			sp->OTspell_coef_override = fields[2].GetFloat();
-			sp->AP_coef_override = fields[3].GetFloat();
-			sp->RAP_coef_override = fields[4].GetFloat();
+				sp->Dspell_coef_override = fields[1].GetFloat();
+				sp->OTspell_coef_override = fields[2].GetFloat();
+				sp->AP_coef_override = fields[3].GetFloat();
+				sp->RAP_coef_override = fields[4].GetFloat();
 			}
 			else
 			{

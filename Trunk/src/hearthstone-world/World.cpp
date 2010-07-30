@@ -449,7 +449,6 @@ bool World::SetInitialWorldSettings()
 	tl.wait();
 
 	ApplyNormalFixes();
-
 	MAKE_TASK(ObjectMgr, LoadAchievements);
 	MAKE_TASK(ObjectMgr, LoadCreatureWaypoints);
 	MAKE_TASK(ObjectMgr, LoadTrainers);
