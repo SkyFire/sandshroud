@@ -3364,3 +3364,93 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 	}
 	return true;
 }
+
+void ItemInterface::SwapItems(uint16 SrcInvSlot, uint16 DstInvSlot, uint16 SrcSlot, uint16 DstSlot)
+{
+	if(SrcInvSlot == DstInvSlot)
+	{
+		if( SrcInvSlot == INVENTORY_SLOT_NOT_SET ) //in backpack
+			SwapItemSlots( SrcSlot, DstSlot );
+		else//in bag
+			TO_CONTAINER( GetInventoryItem( SrcInvSlot ) )->SwapItems( SrcSlot, DstSlot );
+	}
+	else
+	{
+		Item* SrcItem = GetInventoryItem(SrcInvSlot, SrcSlot);
+		Item* DstItem = GetInventoryItem(DstInvSlot, DstSlot);
+
+		//Check for stacking
+		if(DstItem && SrcItem->GetEntry()==DstItem->GetEntry() && SrcItem->GetProto()->MaxCount>1 && SrcItem->wrapped_item_id == 0 && DstItem->wrapped_item_id == 0)
+		{
+			uint32 total=SrcItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT)+DstItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
+			if(total <= DstItem->GetProto()->MaxCount)
+			{
+				DstItem->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT,SrcItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT));
+				DstItem->m_isDirty = true;
+				bool result = SafeFullRemoveItemFromSlot(SrcInvSlot, SrcSlot);
+				if(!result)
+					BuildInventoryChangeError(SrcItem, DstItem, INV_ERR_ITEM_CANT_STACK);
+
+				return;
+			}
+			else
+			{
+				if(DstItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) == DstItem->GetProto()->MaxCount)
+				{
+
+				}
+				else
+				{
+					int32 delta=DstItem->GetProto()->MaxCount-DstItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
+					DstItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT,DstItem->GetProto()->MaxCount);
+					SrcItem->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT,-delta);
+					SrcItem->m_isDirty = true;
+					DstItem->m_isDirty = true;
+					return;
+				}
+			}
+		}
+	   
+		if(SrcItem)
+			SrcItem = SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot,SrcSlot, false);
+
+		if(DstItem)
+			DstItem = SafeRemoveAndRetreiveItemFromSlot(DstInvSlot,DstSlot, false);
+
+		if(SrcItem)
+		{
+			AddItemResult result = SafeAddItem(SrcItem,DstInvSlot,DstSlot);
+			if(!result)
+			{
+				if (!SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
+				{
+					SrcItem->DeleteMe();
+					SrcItem = NULL;
+				}
+				if (DstItem && !SafeAddItem(DstItem, DstInvSlot, DstSlot))
+				{
+					DstItem->DeleteMe();
+					DstItem = NULL;
+				}
+			}
+		}
+
+		if(DstItem)
+		{
+			AddItemResult result = SafeAddItem(DstItem,SrcInvSlot,SrcSlot);
+			if(!result)
+			{
+				if (SrcItem && !SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
+				{
+					SrcItem->DeleteMe();
+					SrcItem = NULL;
+				}
+				if (!SafeAddItem(DstItem, DstInvSlot, DstSlot))
+				{
+					DstItem->DeleteMe();
+					DstItem = NULL;
+				}
+			}
+		}
+	}
+}
