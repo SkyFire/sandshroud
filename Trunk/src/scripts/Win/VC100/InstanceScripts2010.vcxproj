@@ -94,9 +94,9 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\..\..\bin\Debug\hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\bin\debug_100\hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/debug_100/script_bin/SunInstanceScripts.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\debug_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/debug_100/script_bin/SunInstanceScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -130,7 +130,7 @@
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/debug_100_x64/script_bin/SunInstanceScripts.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\debug_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\debug_100_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/debug_100_x64/script_bin/SunInstanceScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -166,7 +166,7 @@
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/release_100/script_bin/SunInstanceScripts.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\release_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/release_100/script_bin/SunInstanceScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -201,7 +201,7 @@
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/release_100_x64/script_bin/SunInstanceScripts.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\release_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\release_100_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/release_100_x64/script_bin/SunInstanceScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
