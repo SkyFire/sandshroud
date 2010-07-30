@@ -246,6 +246,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 			SpellEntry * spe = NULL;
 			entry = 0;
 			uint32 spellID = 0;
+			int8 difficulty = 0;
 			uint16 agent = 0;
 			uint32 counter = 0;
 			{
@@ -255,15 +256,17 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					spe = NULL;
 					entry = 0;
 					spellID = 0;
+					difficulty = 0;
 					agent = 0;
 					Field *fields = result->Fetch();
 					entry = fields[0].GetUInt32();
-					agent = fields[1].GetUInt16();
-					spellID = fields[4].GetUInt32();
-					int32 tcd = fields[7].GetInt32();
+					difficulty = fields[1].GetInt8();
+					agent = fields[2].GetUInt16();
+					spellID = fields[5].GetUInt32();
+					int32 tcd = fields[8].GetInt32();
 
 					cn = CreatureProtoStorage.LookupEntry(entry);
-					if(  cn == NULL )
+					if( cn == NULL )
 					{
 						Log.Warning("AIAgent", "Agent skipped, NPC %u does not exist.", fields[0].GetUInt32());
 
@@ -277,6 +280,15 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					{
 						WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u' AND spell = '%u'", entry, spellID);
 						Log.Warning("AIAgent", "Agent skipped, NPC %u tried to add non-existing Spell %u.", fields[0].GetUInt32(), fields[4].GetUInt32());
+						continue;
+					}
+
+					if(difficulty > 3 || difficulty < -1)
+					{
+						Log.Warning("AIAgent", "Agent skipped, wrong difficulty type in npc %u", fields[0].GetUInt32());
+
+						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+							WorldDatabase.Execute("UPDATE ai_agents SET `difficulty` = '-1' where entry = '%u' AND difficulty = '%i'", entry, difficulty);
 						continue;
 					}
 
@@ -398,7 +410,13 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					}
 					//Valid; add to list
 					if(sp != NULL)
-						cn->spells.push_back(sp);
+					{
+						if(difficulty == -1) // -1 means difficulty doesn't matter.
+							for(uint8 i = 0; i < 4; i++)
+								cn->spells[i].push_back(sp);
+						else
+							cn->spells[difficulty].push_back(sp);
+					}
 					sp = NULL;
 				}while( result->NextRow() );
 			}
@@ -648,9 +666,14 @@ void Storage_Cleanup()
 				p->aura_string = NULL;
 			}
 
-			for(list<AI_Spell*>::iterator it = p->spells.begin(); it != p->spells.end(); it++)
-				delete (*it);
-			p->spells.clear();
+			for(uint8 i = 0; i < 4; i++)
+			{
+				for(list<AI_Spell*>::iterator it = p->spells[i].begin(); it != p->spells[i].end(); it++)
+					delete (*it);
+
+				p->spells[i].clear();
+			}
+
 			p->start_auras.clear();
 			if(!itr->Inc())
 				break;

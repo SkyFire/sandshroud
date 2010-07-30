@@ -318,11 +318,17 @@ void ScriptMgr::ReloadScripts()
 void ScriptMgr::register_creature_script(uint32 entry, exp_create_creature_ai callback)
 {
 	CreatureProto* cn = CreatureProtoStorage.LookupEntry(entry);
-	if( cn && !cn->spells.empty() )
+	if( cn )
 	{
-		for(list<AI_Spell*>::iterator it = cn->spells.begin(); it != cn->spells.end(); it++)
-				delete (*it);
-		cn->spells.clear();
+		for(uint8 i = 0; i < 4; i++)
+		{
+			if( !cn->spells[i].empty() )
+			{
+				for(list<AI_Spell*>::iterator it = cn->spells[i].begin(); it != cn->spells[i].end(); it++)
+						delete (*it);
+				cn->spells[i].clear();
+			}
+		}
 	}
 	_creatures.insert( CreatureCreateMap::value_type( entry, callback ) );
 }

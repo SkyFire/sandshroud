@@ -1053,12 +1053,13 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);   // better set this one
 
 ////////////AI
-	
+
 	// kek
-	for(list<AI_Spell*>::iterator itr = proto->spells.begin(); itr != proto->spells.end(); itr++)
+	for(list<AI_Spell*>::iterator itr = proto->spells[mode].begin(); itr != proto->spells[mode].end(); itr++)
 	{
 		m_aiInterface->addSpellToList(*itr);
 	}
+
 	m_aiInterface->m_canRangedAttack = proto->m_canRangedAttack;
 	m_aiInterface->m_RangedAttackSpell = proto->m_RangedAttackSpell;
 	m_aiInterface->m_SpellSoundid = proto->m_SpellSoundid;
@@ -1095,8 +1096,8 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	// HACK! set call for help on civ health @ 100%
 	if(creature_info->Civilian >= 1)
 		m_aiInterface->m_CallForHelpHealth = 100;
- 
- //HACK!
+
+	//HACK!
 	if(m_uint32Values[UNIT_FIELD_DISPLAYID] == 17743 ||
 		m_uint32Values[UNIT_FIELD_DISPLAYID] == 20242 ||
 		m_uint32Values[UNIT_FIELD_DISPLAYID] == 15435 ||
@@ -1356,10 +1357,11 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	////////////AI
 
 	// kek
-	for(list<AI_Spell*>::iterator itr = proto->spells.begin(); itr != proto->spells.end(); itr++)
+	for(list<AI_Spell*>::iterator itr = proto->spells[mode].begin(); itr != proto->spells[mode].end(); itr++)
 	{
 		m_aiInterface->addSpellToList(*itr);
 	}
+
 	m_aiInterface->m_canRangedAttack = proto->m_canRangedAttack;
 	m_aiInterface->m_RangedAttackSpell = proto->m_RangedAttackSpell;
 	m_aiInterface->m_SpellSoundid = proto->m_SpellSoundid;

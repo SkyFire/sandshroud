@@ -182,7 +182,7 @@ struct CreatureProto
 	float m_callForHelpHealth;
 
 	set<uint32> start_auras;
-	list<AI_Spell*> spells;
+	list<AI_Spell*> spells[4];
 	HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*> ModeProto;
 };
 
