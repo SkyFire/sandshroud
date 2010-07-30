@@ -717,8 +717,9 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 		RedSystemMessage(m_session, "No selected GameObject...");
 		return true;
 	}
-	
-	if(GObj->m_spawn != 0 && GObj->m_spawn->entry == GObj->GetEntry())
+
+	bool foundonmap = false;
+	if(GObj->m_spawn && GObj->m_spawn->entry == GObj->GetEntry())
 	{
 		uint32 cellx=float2int32(((_maxX-GObj->m_spawn->x)/_cellSize));
 		uint32 celly=float2int32(((_maxY-GObj->m_spawn->y)/_cellSize));
@@ -735,16 +736,21 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 				itr2 = itr++;
 				if((*itr2) == GObj->m_spawn)
 				{
+					foundonmap = true;
 					c->GOSpawns.erase(itr2);
 					break;
 				}
 			}
+		}
+		if(foundonmap)
+		{
 			delete GObj->m_spawn;
 			GObj->m_spawn = NULL;
 		}
 	}
 	GObj->Despawn(0); // Deleted through ExpireAndDelete
 	GObj = NULLGOB;
+	BlueSystemMessage(m_session, "Deleted selected object %s", foundonmap ? "and erased it from spawn map." : "but was unable to erase it from spawn map.");
 
 	m_session->GetPlayer()->m_GM_SelectedGO = NULLGOB;
 	return true;

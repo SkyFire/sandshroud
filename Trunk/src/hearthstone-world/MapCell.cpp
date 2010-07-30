@@ -109,7 +109,8 @@ void MapCell::RemoveObjects()
 		
 		switch(pObject->GetTypeId())
 		{
-		case TYPEID_UNIT: {
+		case TYPEID_UNIT:
+			{
 				if( pObject->IsVehicle() )
 				{
 					_mapmgr->_reusable_guids_vehicle.push_back( pObject->GetUIdFromGUID() );
@@ -126,10 +127,11 @@ void MapCell::RemoveObjects()
 				}
 			}break;
 
-		case TYPEID_GAMEOBJECT: {
-			TO_GAMEOBJECT(pObject)->m_respawnCell = NULL;
-			delete TO_GAMEOBJECT(pObject);
-			pObject = NULLOBJ;
+		case TYPEID_GAMEOBJECT:
+			{
+				TO_GAMEOBJECT(pObject)->m_respawnCell = NULL;
+				delete TO_GAMEOBJECT(pObject);
+				pObject = NULLOBJ;
 			}break;
 		default:
 			delete pObject;

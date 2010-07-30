@@ -232,7 +232,7 @@ void GameObject::Despawn(uint32 time)
 	}
 	else
 	{
-		Object::RemoveFromWorld(false);
+		Object::RemoveFromWorld(true);
 		ExpireAndDelete();
 	}
 }
@@ -682,6 +682,7 @@ void GameObject::_Expire()
 {
 	if(IsInWorld())
 		RemoveFromWorld(true);
+
 	delete this;
 }
 
