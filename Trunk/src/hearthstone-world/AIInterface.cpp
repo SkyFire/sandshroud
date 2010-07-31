@@ -19,7 +19,6 @@
 
 #include "StdAfx.h"
 
-
 AIInterface::AIInterface()
 {
 	m_ChainAgroSet = NULL;
@@ -31,6 +30,8 @@ AIInterface::AIInterface()
 	FollowDistance = 0.0f;
 	m_fallowAngle = float(M_PI/2);
 	m_timeToMove = 0;
+	jumptolocation = false;
+	forcedjumpspeed = 0.0f;
 	m_timeMoved = 0;
 	m_moveTimer = 0;
 	m_WayPointsShowing = false;
@@ -1904,36 +1905,22 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 {
 	//this should NEVER be called directly !!!!!!
 	//use MoveTo()
-	//WorldPacket data(SMSG_MONSTER_MOVE, 60);
+	bool orientation = (toO != 0.0f);
+
 	uint8 buffer[100];
 	StackPacket data(SMSG_MONSTER_MOVE, buffer, 100);
 	data << m_Unit->GetNewGUID();
 	data << uint8(0);
 	data << m_Unit->GetPositionX() << m_Unit->GetPositionY() << m_Unit->GetPositionZ();
 	data << getMSTime();
-	
-	// Check if we have an orientation
-	if(toO != 0.0f)
-	{
-		data << uint8(4);
-		data << toO;
-	}
-	else
-	{
-		data << uint8(0);
-	}
-
+	data << uint8(orientation ? 4 : 0);
+	if(orientation)
+		data << float( toO );
 	data << MoveFlags;
 	data << time;
-	if(MoveFlags & MOVEFLAG_FLYING)
+	if(MoveFlags & MONSTER_MOVE_FLAG_JUMP)
 	{
-		data << float(float(time)/1000);
-		data << uint32(0);
-	}
-	else if(MoveFlags & MOVEFLAG_SWIMMING)
-	{
-		data << uint8(0);
-		data << uint32(0);
+		data << float(m_Unit->m_flySpeed) << uint32(0);
 	}
 
 	data << uint32(1);	// 1 waypoint
@@ -1941,12 +1928,12 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 
 #ifndef ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES
 	bool self = m_Unit->GetTypeId() == TYPEID_PLAYER;
-	m_Unit->SendMessageToSet( &data, self );
+	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
 #else
 	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
 		TO_PLAYER(m_Unit)->GetSession()->SendPacket(&data);
 
-	for(unordered_set<Player*  >::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); itr++)
+	for(unordered_set<Player*>::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); itr++)
 	{
 		if( (*itr)->GetPositionNC().Distance2DSq( m_Unit->GetPosition() ) >= World::m_movementCompressThresholdCreatures )
 			(*itr)->AppendMovementData( SMSG_MONSTER_MOVE, uint32(data.GetSize()), (const uint8*)data.GetBufferPointer() );
@@ -2009,8 +1996,14 @@ bool AIInterface::IsFlying()
 
 uint32 AIInterface::getMoveFlags()
 {
-	uint32 MoveFlags = MONSTER_MOVE_FLAG_RUN;
-	if(m_moveFly == true) //Fly
+	CheckHeight();
+	uint32 MoveFlags = MONSTER_MOVE_FLAG_WALK;
+	if(jumptolocation == true)
+	{
+		m_flySpeed = m_Unit->m_flySpeed*0.001f;
+		MoveFlags = MONSTER_MOVE_FLAG_JUMP;
+	}
+	else if(m_moveFly == true) //Fly
 	{
 		m_flySpeed = m_Unit->m_flySpeed*0.001f;
 		MoveFlags = MONSTER_MOVE_FLAG_FLY;
@@ -2039,7 +2032,9 @@ void AIInterface::UpdateMove()
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 
 	uint32 moveTime = 0;
-	if(m_moveFly)
+	if(jumptolocation)
+		moveTime = (uint32)(distance/m_flySpeed);
+	else if(m_moveFly)
 		moveTime = (uint32)(distance/m_flySpeed);
 	else if(m_moveRun)
 		moveTime = (uint32)(distance/m_runSpeed);
@@ -2083,6 +2078,7 @@ void AIInterface::UpdateMove()
 	}
 	SendMoveToPacket(m_destinationX, m_destinationY, m_destinationZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
 
+	jumptolocation = false;
 	m_timeToMove = moveTime;
 	m_timeMoved = 0;
 	if(m_moveTimer == 0)
@@ -3618,7 +3614,7 @@ void AIInterface::CallGuards()
 			if(guard == NULL)
 				continue;
 
-			guard->Load(cp, (m_Unit->IsInInstance() ? m_Unit->GetMapMgr()->iInstanceMode : MODE_5PLAYER_NORMAL), x, y, z);
+			guard->Load(cp, m_Unit->GetMapMgr()->iInstanceMode, x, y, z);
 			guard->SetInstanceID(m_Unit->GetInstanceID());
 			guard->SetZoneId(m_Unit->GetZoneId());
 			guard->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP); /* shitty DBs */

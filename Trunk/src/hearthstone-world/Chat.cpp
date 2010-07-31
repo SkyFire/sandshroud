@@ -395,6 +395,7 @@ void CommandTableStorage::Init()
 		{ "say",		 'n', &ChatHandler::HandleMonsterSayCommand,	".npc say <text> - Makes selected mob say text <text>.", NULL, 0, 0, 0 },
 		{ "yell",		'n', &ChatHandler::HandleMonsterYellCommand,   ".npc yell <Text> - Makes selected mob yell text <text>.", NULL, 0, 0, 0},
 		{ "come",		'n', &ChatHandler::HandleNpcComeCommand,	   ".npc come - Makes npc move to your position", NULL, 0, 0, 0 },
+		{ "jumpto",		'n', &ChatHandler::HandleNpcJumpCommand,	   ".npc come - Makes npc move to your position", NULL, 0, 0, 0 },
 		{ "return",	  'n', &ChatHandler::HandleNpcReturnCommand,	 ".npc return - Returns ncp to spawnpoint.", NULL, 0, 0, 0 },
 		{ "respawn", 'n', &ChatHandler::HandleCreatureRespawnCommand,".respawn - Respawns a dead npc from its corpse.", NULL, 0, 0, 0 },
 		{ "spawn", 'n', &ChatHandler::HandleCreatureSpawnCommand, ".npc spawn <id> <save> - Spawns npc of entry <id>", NULL, 0, 0, 0 },

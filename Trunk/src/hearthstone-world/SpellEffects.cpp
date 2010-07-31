@@ -1148,7 +1148,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 		/*****************************************
 		*	Class Spells
 		*****************************************/
-	case 49576:
+	case 49576: // Death Grip
 		{
 			if( p_caster == NULL || unitTarget == NULL )
 				return;
@@ -7054,8 +7054,8 @@ void Spell::SpellEffectCharge(uint32 i)
 	z = unitTarget->GetPositionZ();
 
 	uint32 time = uint32( (m_caster->CalcDistance(unitTarget) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
-	
-	p_caster->GetAIInterface()->SendMoveToPacket(x, y, z, alpha, time, MONSTER_MOVE_FLAG_RUN);
+
+	p_caster->GetAIInterface()->SendMoveToPacket(x, y, z, alpha, time, MONSTER_MOVE_FLAG_WALK);
 
 	if(unitTarget->GetTypeId() == TYPEID_UNIT)
 		unitTarget->GetAIInterface()->StopMovement(2000);
@@ -7150,7 +7150,7 @@ void Spell::SpellEffectPlayerPull( uint32 i )
 	data << getMSTime();
 	data << uint8( 4 );
 	data << pullO;
-	data << uint32( MONSTER_MOVE_FLAG_RUN );
+	data << uint32( MONSTER_MOVE_FLAG_WALK );
 	data << time;
 	data << uint32( 1 );
 	data << pullX << pullY << pullZ;
@@ -8188,7 +8188,7 @@ void Spell::SpellEffectMegaJump(uint32 i)
 		Unit* u = u_caster->GetMapMgr()->GetUnit( m_targets.m_unitTarget );
 		if( u == NULL )
 			return; // or we'll TP to some far off land :P
-		
+
 		m_targets.m_destX = u->GetPositionX();
 		m_targets.m_destY = u->GetPositionY();
 		m_targets.m_destZ = u->GetPositionZ();
@@ -8196,7 +8196,7 @@ void Spell::SpellEffectMegaJump(uint32 i)
 	float o = u_caster->calcRadAngle( m_targets.m_destX, m_targets.m_destY, u_caster->GetPositionX(), u_caster->GetPositionY() );
 
 	// Time formula is derived from andy's logs, 271ms to move ~14.5 units
-	float distance = u_caster->GetDistanceSq( m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ );
+	float distance = u_caster->GetDistanceSq( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ );
 	uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
 	u_caster->GetAIInterface()->SendMoveToPacket( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, moveTime, u_caster->GetAIInterface()->getMoveFlags() );
 

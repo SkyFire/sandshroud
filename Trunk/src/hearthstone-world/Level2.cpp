@@ -1214,6 +1214,19 @@ bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session
 	return true;
 }
 
+bool ChatHandler::HandleNpcJumpCommand(const char* args, WorldSession* m_session)
+{
+	// moves npc to players location
+	Player* plr = m_session->GetPlayer();
+	Creature* crt = getSelectedCreature(m_session, true);
+	if(!crt)
+		return false;
+
+	crt->GetAIInterface()->jumptolocation = true;
+	crt->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
+	return true;
+}
+
 bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session)
 {
 	char* pitem = strtok((char*)args, " ");

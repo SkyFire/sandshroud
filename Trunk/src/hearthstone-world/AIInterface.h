@@ -138,10 +138,12 @@ enum MovementState
 
 enum MonsterMoveFlags	// for AIInterface::SendMoveToPacket
 {
-	MONSTER_MOVE_FLAG_WALK		= 0x0,
-	MONSTER_MOVE_FLAG_RUN		= 0x1000,
+	MONSTER_MOVE_FLAG_STAND		= 0x0,
 	MONSTER_MOVE_FLAG_TELEPORT	= 0x100,
-	MONSTER_MOVE_FLAG_FLY		= 0x3000,
+	MONSTER_MOVE_FLAG_JUMP		= 0x800,
+	MONSTER_MOVE_FLAG_WALK		= 0x1000,
+	MONSTER_MOVE_FLAG_FLY		= 0x2000,
+	MONSTER_MOVE_FLAG_FLY2		= 0x3000,
 };
 
 enum CreatureState
@@ -320,6 +322,8 @@ public:
 	HEARTHSTONE_INLINE void setCanMove(bool canmove) { m_canMove = canmove; }
 	void setWaypointToMove(uint32 id) { m_currentWaypoint = id; }
 	bool IsFlying();
+	bool jumptolocation;
+	float forcedjumpspeed;
 
 	// Calculation
 	float _CalcAggroRange(Unit* target);

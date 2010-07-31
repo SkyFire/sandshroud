@@ -6242,7 +6242,7 @@ void Unit::SetFacing(float newo)
 	data << uint32(0);				// time
 	data << m_position;				// position
 	SendMessageToSet(&data, true);*/
-	m_aiInterface->SendMoveToPacket(m_position.x,m_position.y,m_position.z,m_position.o,1,MONSTER_MOVE_FLAG_RUN);
+	m_aiInterface->SendMoveToPacket(m_position.x,m_position.y,m_position.z,m_position.o,1,MONSTER_MOVE_FLAG_WALK);
 }
 
 //guardians are temporary spawn that will inherit master faction and will folow them. Apart from that they have their own mind
