@@ -501,7 +501,7 @@ void Transporter::AddNPC(uint32 Entry, float offsetX, float offsetY, float offse
 
 	Creature* pCreature(new Creature((uint64)HIGHGUID_TYPE_TRANSPORTER<<32 | guid));
 	pCreature->Init();
-	pCreature->Load(proto, offsetX, offsetY, offsetZ, offsetO);
+	pCreature->Load(proto, GetMapMgr()->iInstanceMode, offsetX, offsetY, offsetZ, offsetO);
 	pCreature->m_TransporterUnk = UNIXTIME;
 	pCreature->m_transportPosition = new LocationVector(offsetX, offsetY, offsetZ, offsetO);
 	pCreature->m_TransporterGUID = GetGUID();

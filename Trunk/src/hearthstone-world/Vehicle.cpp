@@ -154,7 +154,7 @@ void Vehicle::InstallAccessories()
 			Creature* pass = map->CreateCreature(accessories.accessoryentry);
 			if(pass != NULL)
 			{
-				pass->Load(proto, (IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL),
+				pass->Load(proto, map->iInstanceMode,
 					GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
 					GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
 					GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
@@ -216,7 +216,7 @@ void Vehicle::Load(CreatureProto * proto_, uint32 mode, float x, float y, float 
 
 	Initialised = true;
 
-	Creature::Load(proto_, x, y, z, o);
+	Creature::Load(proto_, mode, x, y, z, o);
 }
 
 bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)

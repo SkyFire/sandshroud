@@ -644,7 +644,7 @@ Unit* GameObject::CreateTemporaryGuardian(uint32 guardian_entry,uint32 duration,
 		return NULLUNIT;
 
 	p->SetInstanceID(GetMapMgr()->GetInstanceID());
-	p->Load(proto, x, y, v.z, angle);
+	p->Load(proto, GetMapMgr()->iInstanceMode, x, y, v.z, angle);
 
 	if(lvl != 0)
 	{

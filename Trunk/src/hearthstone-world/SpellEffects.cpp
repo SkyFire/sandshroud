@@ -3724,7 +3724,7 @@ void Spell::SummonCreature(uint32 i) // Summon
 		pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
 		if(pCreature == NULLCREATURE)
 			continue;
-		pCreature->Load(cp, x, y, z, p_caster->GetOrientation());
+		pCreature->Load(cp, p_caster->GetMapMgr()->iInstanceMode, x, y, z, p_caster->GetOrientation());
 		if(health)
 		{
 			pCreature->SetUInt32Value(UNIT_FIELD_MAXHEALTH, health);
@@ -7184,7 +7184,7 @@ void Spell::SummonNonCombatPet(uint32 i)
 		return;
 
 	pCreature->SetInstanceID(u_caster->GetMapMgr()->GetInstanceID());
-	pCreature->Load(cp, m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation());
+	pCreature->Load(cp, m_caster->GetMapMgr()->iInstanceMode, m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation());
 	pCreature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, 35);
 	pCreature->_setFaction();
 	pCreature->SetUInt32Value(UNIT_FIELD_LEVEL, 1);

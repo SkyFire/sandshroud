@@ -2140,8 +2140,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		return true;
 	}
 
-	MapEntry* mapinfo = dbcMap.LookupEntry(plr->GetMapId());
-	uint32 mode = (plr->IsInInstance() ? (mapinfo->israid() ? plr->iRaidType : plr->iInstanceType) : MODE_5PLAYER_NORMAL);
+	uint32 mode = plr->GetMapMgr()->iInstanceMode;
 	CreatureSpawn * sp = NULL;
 	ASSERT(p);
 	if( save )

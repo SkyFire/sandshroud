@@ -1416,7 +1416,7 @@ Creature* CBattleground::SpawnCreature(uint32 entry,float x, float y, float z, f
 		c = m_mapMgr->CreateCreature(entry);
 		if (c != NULLCREATURE)
 		{
-			c->Load(cp,x, y, z, o);
+			c->Load(cp, m_mapMgr->iInstanceMode, x, y, z, o);
 			c->PushToWorld(m_mapMgr);
 		}
 	}

@@ -165,7 +165,7 @@ StrandOfTheAncients::StrandOfTheAncients(MapMgr* mgr, uint32 id, uint32 lgroup, 
 			m_cannons[x] = m_mapMgr->CreateCreature(27894);
 			if(m_cannons[x] != NULL)
 			{
-				m_cannons[x]->Load(prto, m_cannonsLocations[x][0], m_cannonsLocations[x][1], m_cannonsLocations[x][2], m_cannonsLocations[x][3]);
+				m_cannons[x]->Load(prto, m_mapMgr->iInstanceMode, m_cannonsLocations[x][0], m_cannonsLocations[x][1], m_cannonsLocations[x][2], m_cannonsLocations[x][3]);
 				m_cannons[x]->PushToWorld(m_mapMgr);
 
 				//Change Cannon Factions
@@ -332,7 +332,7 @@ void StrandOfTheAncients::Respawn()
 			m_cannons[x] = m_mapMgr->CreateCreature(27894);
 			if(m_cannons[x] != NULL)
 			{
-				m_cannons[x]->Load(prto, m_cannonsLocations[x][0], m_cannonsLocations[x][1], m_cannonsLocations[x][2], m_cannonsLocations[x][3]);
+				m_cannons[x]->Load(prto, m_mapMgr->iInstanceMode, m_cannonsLocations[x][0], m_cannonsLocations[x][1], m_cannonsLocations[x][2], m_cannonsLocations[x][3]);
 				m_cannons[x]->PushToWorld(m_mapMgr);
 
 				//Change Cannon Factions

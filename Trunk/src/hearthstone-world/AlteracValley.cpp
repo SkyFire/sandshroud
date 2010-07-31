@@ -929,7 +929,7 @@ AVNode::AVNode( AlteracValley* parent, AVNodeTemplate *tmpl, uint32 nodeid) : m_
 			sp = m_bg->GetMapMgr()->CreateCreature(ci->Id);
 			if(sp != NULLCREATURE)
 			{
-				sp->Load(cp, spi->x, spi->y, spi->z, spi->o);
+				sp->Load(cp, MODE_5PLAYER_NORMAL, spi->x, spi->y, spi->z, spi->o);
 				sp->PushToWorld(m_bg->GetMapMgr());
 			}
 			++spi;
