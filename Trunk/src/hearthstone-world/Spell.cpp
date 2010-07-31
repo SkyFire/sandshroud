@@ -3820,7 +3820,7 @@ uint8 Spell::CanCast(bool tolerate)
 				if( m_spellInfo->Id == SPELL_RANGED_THROW)
 				{
 					Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
-					if(!itm || itm->GetDurability() == 0)
+					if(!itm || ((itm->GetDurability() == 0) && GetDurabilityMax()))
 						return SPELL_FAILED_NO_AMMO;
 				}
 

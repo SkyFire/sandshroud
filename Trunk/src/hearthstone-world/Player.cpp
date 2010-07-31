@@ -6326,8 +6326,6 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 	if( spellinfo == NULL )
 		return -1;
 
-	//sLog.outString( "Canshootwithrangedweapon!?!? spell: [%u] %s" , spellinfo->Id , spellinfo->Name );
-
 	// Check ammo
 	Item* itm = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_RANGED );
 	if( itm == NULL )
@@ -6377,9 +6375,8 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 	if( spellid == SPELL_RANGED_THROW || spellid == SPELL_RANGED_WAND)
 	{
 		if( itm != NULL ) // no need for this
-			if( itm->GetProto() )
-				if( GetItemInterface()->GetItemCount( itm->GetProto()->ItemId ) == 0 )
-					fail = SPELL_FAILED_NO_AMMO;
+			if( GetItemInterface()->GetItemCount( itm->GetEntry() ) == 0 )
+				fail = SPELL_FAILED_NO_AMMO;
 	}
 
 	if (GetMapMgr() && GetMapMgr()->IsCollisionEnabled())
