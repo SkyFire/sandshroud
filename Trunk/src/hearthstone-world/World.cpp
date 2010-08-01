@@ -74,7 +74,7 @@ World::World()
 uint32 World::GetMaxLevel(Player* plr)
 {
 	uint32 level = 60; // Classic World of Warcraft
-	if(LevelCap_Custom_All != 0)
+	if(LevelCap_Custom_All != 80)
 		return LevelCap_Custom_All;
 	if( plr->GetSession()->HasFlag(WMI_INSTANCE_XPACK_01) )
 		level = 70;
@@ -1400,7 +1400,7 @@ void World::Rehash(bool load)
 
 
 	// LevelCaps
-	LevelCap_Custom_All = Config.MainConfig.GetIntDefault("Server", "LevelCap_Custom_All", 0);
+	LevelCap_Custom_All = Config.MainConfig.GetIntDefault("Server", "LevelCap_Custom_All", 80);
 
 	// Dual Talent Specialization costs
 	dualTalentTrainCost = Config.MainConfig.GetIntDefault("Server", "DualTalentPrice", 1000);

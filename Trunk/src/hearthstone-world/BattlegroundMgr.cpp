@@ -2036,6 +2036,7 @@ void CBattlegroundManager::HandleArenaJoin(WorldSession * m_session, uint32 Batt
 					break;
 
 				case BATTLEGROUND_ARENA_2V2:
+					maxplayers=2;
 					teamType = ARENA_TEAM_TYPE_2V2;
 					break;
 				default:
