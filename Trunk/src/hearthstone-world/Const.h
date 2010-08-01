@@ -80,6 +80,7 @@ class StrandOfTheAncients;
 #define TO_LOOTROLL(ptr) ((LootRoll*)ptr)
 #define TO_VEHICLE(ptr) ((Vehicle*)ptr)
 #define TO_WEATHER(ptr) ((WeatherInfo*)ptr)
+#define TO_TAXI(ptr) ((TaxiPath*)ptr)
 
 #define NULLPTR NULL
 #define NULLGOB NULL

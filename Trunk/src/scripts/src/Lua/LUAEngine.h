@@ -488,6 +488,7 @@ private:
 #define PUSH_UNIT(L, unit) Lunar<Unit>::push(L,TO_UNIT(unit))
 #define PUSH_GO(L, go) Lunar<GameObject>::push(L,TO_GAMEOBJECT(go))
 #define PUSH_ITEM(L,item) Lunar<Item>::push(L,TO_ITEM(item))
+#define PUSH_TAXIPATH(L, tp) Lunar<TaxiPath>::push(L,TO_TAXI(tp))
 
 #include "Functions/TableFunctions.h"
 

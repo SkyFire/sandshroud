@@ -20,9 +20,7 @@
 #ifndef GLOBALFUNCTIONS_H
 #define GLOBALFUNCTIONS_H
 
-#include "StdAfx.h"
-#include "LUAEngine.h"
-#include "svn_revision.h"
+#include "../LUAEngine.h"
 
 #define ENGINE_NAME "LuaHypArc" //You should check in your scripts that GetLuaEngine() == "LuaHypArc"
 #ifdef LUA_SVN_REVISION_H
@@ -101,7 +99,7 @@ namespace luaGlobalFunctions
 					pCreature->SaveToDB();
 				PUSH_UNIT(L,pCreature);
 			} 
-			else if (spawntype == 2) //GO
+			/*else if (spawntype == 2) //GO
 			{ 
 				GameObjectInfo *n = GameObjectNameStorage.LookupEntry(entry);
 				if (n == NULL)
@@ -142,7 +140,7 @@ namespace luaGlobalFunctions
 				if (save)
 					go->SaveToDB();
 				PUSH_GO(L,go);
-			}
+			}*/
 			else
 				lua_pushnil(L);
 		}
@@ -192,7 +190,7 @@ namespace luaGlobalFunctions
 		return 0;
 	}
 	
-	static int WorldDBQuery(lua_State * L)
+	/*static int WorldDBQuery(lua_State * L)
 	{
 		const char * qStr = luaL_checkstring(L,1);
 		uint32 fID = luaL_optint(L,2,0); //column
@@ -234,7 +232,7 @@ namespace luaGlobalFunctions
 		QueryResult * result = CharacterDatabase.Query(qStr);
 		PUSH_SQLRESULT(L,result);
 		return 1;
-	}
+	}*/
 	
 	static int SendWorldMessage(lua_State * L)
 	{
@@ -277,10 +275,6 @@ namespace luaGlobalFunctions
 				AreaTriggerStorage.Reload();
 			else if (!stricmp(TableName, "itempages"))			// Item Pages
 				ItemPageStorage.Reload();
-			else if (!stricmp(TableName, "worldstring_tables"))			// wst
-				WorldStringTableStorage.Reload();
-			else if (!stricmp(TableName, "worldbroadcast"))			// wb
-				WorldBroadCastStorage.Reload();
 			else if (!stricmp(TableName, "quests"))				// Quests
 				QuestStorage.Reload();
 			else if (!stricmp(TableName, "npc_text"))			// NPC Text Storage
@@ -295,8 +289,6 @@ namespace luaGlobalFunctions
 				WorldMapInfoStorage.Reload();
 			else if (!stricmp(TableName, "zoneguards"))
 				ZoneGuardStorage.Reload();
-			else if (!stricmp(TableName, "unit_display_sizes"))
-				UnitModelSizeStorage.Reload();
 			else if (!stricmp(TableName, "command_overrides"))	// Command Overrides
 			{
 				CommandTableStorage::getSingleton().Dealloc();
@@ -358,11 +350,11 @@ namespace luaGlobalFunctions
 		return 0;
 	}
 
-	static int GetburningemuRevision(lua_State * L)
+	/*static int GetburningemuRevision(lua_State * L)
 	{
 		lua_pushnumber(L,BUILD_REVISION);
 		return 1;
-	}
+	}*/
 
 	/*static int GetInstanceIdsByMap(lua_State * L)
 	{
@@ -442,7 +434,7 @@ namespace luaGlobalFunctions
 		return 1;
 	}
 
-	static int SendMail(lua_State * L)
+	/*static int SendMail(lua_State * L)
 	{
 		uint32 type = luaL_checkint(L,1);
 		uint64 sender_guid = CHECK_GUID(L,2);
@@ -455,7 +447,7 @@ namespace luaGlobalFunctions
 		uint32 stationery = luaL_checkint(L,9);
 		sMailSystem.SendAutomatedMessage(type, sender_guid, recipient_guid, subject, body, money, cod, item_guid, stationery);
 		return 0;
-	}
+	}*/
 
 	static int GetTaxiPath(lua_State * L)
 	{
@@ -468,7 +460,7 @@ namespace luaGlobalFunctions
 		return 1;
 	}
 
-	static int SetDBCSpellVar(lua_State * L)
+	/*static int SetDBCSpellVar(lua_State * L)
 	{
 		uint32 entry = luaL_checkinteger(L,1);
 		const char* var = luaL_checkstring(L,2);
@@ -541,7 +533,7 @@ namespace luaGlobalFunctions
 			break;
 		}
 		return 1;
-	}
+	}*/
 
 	int bit_and(lua_State *L)
 	{
@@ -602,7 +594,7 @@ namespace luaGlobalFunctions
 		uint8 count = luaL_checkinteger(L,2) & 0x7F;
 		RET_NUMBER(left >> count)
 	}
-	int RemoveTimedEvents(lua_State * L)
+	/*int RemoveTimedEvents(lua_State * L)
 	{
 		sLuaEventMgr.RemoveEvents();
 		return 0;
@@ -695,7 +687,7 @@ namespace luaGlobalFunctions
 			return 0;
 		pChannel->SendToAll(pack);
 		return 1;
-	}
+	}*/
 }
 void RegisterGlobalFunctions(lua_State *L)
 {
@@ -705,23 +697,23 @@ void RegisterGlobalFunctions(lua_State *L)
 	lua_register(L,"GetLuaEngine",&luaGlobalFunctions::GetLUAEngine);
 	lua_register(L,"GetLuaEngineVersion",&luaGlobalFunctions::GetLuaEngineVersion);
 	lua_register(L,"GetGameTime",&luaGlobalFunctions::GetGameTime);
-	lua_register(L,"WorldDBQuery",&luaGlobalFunctions::WorldDBQuery);
-	lua_register(L,"CharDBQuery",&luaGlobalFunctions::CharDBQuery);
-	lua_register(L,"WorldDBQueryTable",&luaGlobalFunctions::WorldDBQueryTable);
-	lua_register(L,"CharDBQueryTable",&luaGlobalFunctions::CharDBQueryTable);
+	//lua_register(L,"WorldDBQuery",&luaGlobalFunctions::WorldDBQuery);
+	//lua_register(L,"CharDBQuery",&luaGlobalFunctions::CharDBQuery);
+	//lua_register(L,"WorldDBQueryTable",&luaGlobalFunctions::WorldDBQueryTable);
+	//lua_register(L,"CharDBQueryTable",&luaGlobalFunctions::CharDBQueryTable);
 	lua_register(L,"SendWorldMessage",&luaGlobalFunctions::SendWorldMessage);
 	lua_register(L,"ReloadTable",&luaGlobalFunctions::ReloadTable);
 	lua_register(L,"ReloadLuaEngine",&luaGlobalFunctions::ReloadLuaEngine);
 	lua_register(L,"Rehash",&luaGlobalFunctions::Rehash);
 	lua_register(L,"logcol",&luaGlobalFunctions::logcol);
 	lua_register(L,"GetPlayersInWorld",&luaGlobalFunctions::GetPlayersInWorld);
-	lua_register(L,"GetburningemuRevision",&luaGlobalFunctions::GetburningemuRevision);
+	//lua_register(L,"GetburningemuRevision",&luaGlobalFunctions::GetburningemuRevision);
 	lua_register(L,"GetPlayersInMap",&luaGlobalFunctions::GetPlayersInMap);
 	lua_register(L,"GetPlayersInZone",&luaGlobalFunctions::GetPlayersInZone);
-	lua_register(L,"SendMail",&luaGlobalFunctions::SendMail);
+	//lua_register(L,"SendMail",&luaGlobalFunctions::SendMail);
 	lua_register(L, "GetTaxiPath", &luaGlobalFunctions::GetTaxiPath);
-	lua_register(L, "SetDBCSpellVar", &luaGlobalFunctions::SetDBCSpellVar);
-	lua_register(L, "GetDBCSpellVar", &luaGlobalFunctions::GetDBCSpellVar);
+	//lua_register(L, "SetDBCSpellVar", &luaGlobalFunctions::SetDBCSpellVar);
+	//lua_register(L, "GetDBCSpellVar", &luaGlobalFunctions::GetDBCSpellVar);
 	//Lua's bit instructions
 	lua_register(L, "bit_and", &luaGlobalFunctions::bit_and);
 	lua_register(L, "bit_or", &luaGlobalFunctions::bit_or);
@@ -730,7 +722,7 @@ void RegisterGlobalFunctions(lua_State *L)
 	lua_register(L, "bit_shiftleft", &luaGlobalFunctions::bit_shiftleft);
 	lua_register(L, "bit_shiftright", &luaGlobalFunctions::bit_shiftright);
 
-	lua_register(L, "RemoveTimedEventsInTable", &luaGlobalFunctions::RemoveTimedEventsInTable);
+	/*lua_register(L, "RemoveTimedEventsInTable", &luaGlobalFunctions::RemoveTimedEventsInTable);
 	lua_register(L, "RemoveTimedEventsWithName", &luaGlobalFunctions::RemoveTimedEventsWithName);
 	lua_register(L, "RemoveTimedEvent", &luaGlobalFunctions::RemoveTimedEvent);
 	lua_register(L, "HasTimedEvents", &luaGlobalFunctions::HasTimedEvents);
@@ -742,6 +734,6 @@ void RegisterGlobalFunctions(lua_State *L)
 	lua_register(L, "SendPacketToWorld", &luaGlobalFunctions::SendPacketToWorld);
 	lua_register(L, "SendPacketToInstance", &luaGlobalFunctions::SendPacketToInstance);
 	lua_register(L, "SendPacketToZone", &luaGlobalFunctions::SendPacketToZone);
-	lua_register(L, "SendPacketToChannel", &luaGlobalFunctions::SendPacketToChannel);
+	lua_register(L, "SendPacketToChannel", &luaGlobalFunctions::SendPacketToChannel);*/
 }
 #endif

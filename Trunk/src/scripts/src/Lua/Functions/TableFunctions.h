@@ -26,12 +26,12 @@
 // Crow: Some of the following functions are based off of functions created by Hypersniper of LuaHypeArc.
 // Areas where this applies, credit has been given in the form of a name declaration.
 #include "FunctionGameObjects.h"
-//#include "FunctionGlobal.h"
+#include "FunctionGlobal.h"
 #include "FunctionItems.h"
 //#include "FunctionPacket.h"
 //#include "FunctionSpell.h"
 //#include "FunctionAura.h"
-//#include "FunctionTaxi.h"
+#include "FunctionTaxi.h"
 #include "FunctionUnits.h"
 
 template<typename T>
@@ -551,12 +551,20 @@ RegType<GameObject> GOMethods[] = {
 	{ NULL, NULL },
 };
 
+RegType<TaxiPath> LuaTaxiMethods[] = {
+	{ "CreateTaxi", &LuaTaxi::CreateTaxi },
+	{ "GetNodeCount", &LuaTaxi::GetNodeCount },
+	{ "AddPathNode", &LuaTaxi::AddPathNode },
+	{ "GetId", &LuaTaxi::GetId },
+	{ "GetObjectType", &LuaTaxi::GetObjectType},
+	{NULL, NULL},
+};
 template<typename T> RegType<T>* GetMethodTable() { return NULL; }
 template<> RegType<Item>* GetMethodTable<Item>() { return ItemMethods; }
 template<> RegType<Unit>* GetMethodTable<Unit>() { return UnitMethods; }
 template<> RegType<GameObject>* GetMethodTable<GameObject>() { return GOMethods; }
-/*template<> RegType<WorldPacket>* GetMethodTable<WorldPacket>() { return LuaPacketMethods; }
 template<> RegType<TaxiPath>* GetMethodTable<TaxiPath>() { return LuaTaxiMethods; }
+/*template<> RegType<WorldPacket>* GetMethodTable<WorldPacket>() { return LuaPacketMethods; }
 template<> RegType<Spell>* GetMethodTable<Spell>() { return SpellMethods; }
 template<> RegType<QueryResult>* GetMethodTable<QueryResult>() { return QResultMethods; }
 template<> RegType<Field> * GetMethodTable<Field>() { return SQLFieldMethods; }
