@@ -86,8 +86,6 @@ Group::Group(bool Assign)
 	m_voiceMemberCount = 0;
 	memset(m_voiceMembersList, 0, sizeof(Player* )*41);
 #endif
-	m_prayerOfMendingCount = 0;
-	m_prayerOfMendingTarget = 0;
 }
 
 Group::~Group()

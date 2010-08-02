@@ -260,11 +260,6 @@ protected:
 	uint8 m_difficulty;
 	uint8 m_raiddifficulty;
 	uint8 m_groupFlags;
-
-	// Evil prayer of mending stuff
-public:
-	uint8 m_prayerOfMendingCount;
-	uint32 m_prayerOfMendingTarget;
 };
 
 #endif  // _GROUP_H_

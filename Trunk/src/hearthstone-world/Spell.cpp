@@ -3129,18 +3129,6 @@ uint8 Spell::CanCast(bool tolerate)
 			}
 		}
 
-		if( m_spellInfo->Id == 33076 )			// Prayer of mending
-		{
-			if( p_caster->GetGroup() != NULL && p_caster->GetGroup()->m_prayerOfMendingCount )
-			{
-				Player* tmp_plr_pom = p_caster->IsInWorld() ? p_caster->GetMapMgr()->GetPlayer(p_caster->GetGroup()->m_prayerOfMendingTarget) : NULLPLR;
-				if( tmp_plr_pom != NULL )		// remove from current target.
-					tmp_plr_pom->RemoveAura(41635);
-
-				p_caster->GetGroup()->m_prayerOfMendingTarget = 0;
-				p_caster->GetGroup()->m_prayerOfMendingCount = 0;
-			}
-		}
 		if( m_spellInfo->Id == 53822 && p_caster->getClass()!=DEATHKNIGHT)			// DeathGate
 			return SPELL_FAILED_SPELL_UNAVAILABLE;
 

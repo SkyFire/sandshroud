@@ -715,7 +715,7 @@ public:
 	void SpellAuraModAttackPowerByArmor(bool apply);
 	void SpellAuraDispelDebuffResist(bool apply);
 	void SpellAuraIgnoreEnemy(bool apply);
-	//void SpellAuraJumpAndHeal(bool apply);
+	void SpellAuraHealAndJump(bool apply);
 	void SpellAuraProcTriggerWithValue(bool apply);
 	void SpellAuraPeriodicTriggerSpellWithValue(bool apply);
 	void SpellAuraModCritChanceAll(bool apply);
@@ -830,6 +830,8 @@ private:
 	Modifier m_modList[3];
 
 	uint32 m_dynamicValue;
+	Player *Heal_and_Hump_newtargy;
+	uint32 Heal_and_Hump_Charges;
 
 protected:
 	uint32 m_casterfaction;

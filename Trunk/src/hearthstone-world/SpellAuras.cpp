@@ -245,7 +245,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraNULL,                                           //222 // not used
 		&Aura::SpellAuraNULL,                                           //223 // used in one spell, cold stare 43593
 		&Aura::SpellAuraNULL,                                           //224 // not used
-		&Aura::SpellAuraNULL,                                           //225 // Prayer of Mending "Places a spell on the target that heals them for $s1 the next time they take damage.  When the heal occurs, Prayer of Mending jumps to a raid member within $a1 yards.  Jumps up to $n times and lasts $d after each jump.  This spell can only be placed on one target at a time."
+		&Aura::SpellAuraHealAndJump,                                    //225 // Prayer of Mending "Places a spell on the target that heals them for $s1 the next time they take damage.  When the heal occurs, Prayer of Mending jumps to a raid member within $a1 yards.  Jumps up to $n times and lasts $d after each jump.  This spell can only be placed on one target at a time."
 		&Aura::SpellAuraDrinkNew,                                       //226 // used in brewfest spells, headless hoerseman
 		&Aura::SpellAuraPeriodicTriggerSpellWithValue,                  //227 Inflicts [SPELL DAMAGE] damage to enemies in a cone in front of the caster. (based on combat range) http://www.thottbot.com/s40938
 		&Aura::SpellAuraAuraModInvisibilityDetection,                   //228 Stealth Detection. http://www.thottbot.com/s34709
@@ -259,7 +259,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraVehiclePassenger,                               //236
 		&Aura::SpellAuraModSpellDamageFromAP,                           //237 Mod Spell Damage from Attack Power
 		&Aura::SpellAuraModSpellHealingFromAP,                          //238 Mod Healing from Attack Power
-		&Aura::SpellAuraNULL,                                           //239
+		&Aura::SpellAuraModScale,                                       //239
 		&Aura::SpellAuraExpertise,                                      //240 Expertise
 		&Aura::SpellAuraNULL,                                           //241
 		&Aura::SpellAuraNULL,                                           //242
@@ -692,6 +692,8 @@ Aura::Aura( SpellEntry* proto, int32 duration, Object* caster, Unit* target )
 	}*/
 
 	//SetCasterFaction(caster->_getFaction());
+	Heal_and_Hump_newtargy = 0;
+	Heal_and_Hump_Charges = 0;
 
 	//m_auraSlot = 0;
 	m_modcount = 0;
@@ -7026,19 +7028,6 @@ void Aura::SpellAuraIgnoreEnemy(bool apply)
 	}
 }
 
-/*void Aura::SpellAuraJumpAndHeal(bool apply)
-{
-	if (apply)
-	{
-		ProcFnc* p = new ProcFnc;
-		p->m_base = new CallbackP0<Aura>(this, &Aura::EventJumpAndHeal);
-		p->m_creator = this;
-		m_target->AddProcFnc(SPELLFNC_PROC_ON_TAKE_DAMAGE, p);
-	}
-	else
-		m_target->DeleteProcFnc(this, SPELLFNC_PROC_ON_TAKE_DAMAGE);
-}
-*/
 void Aura::SpellAuraDrinkNew(bool apply)
 {
 	// what the fuck?
@@ -10428,59 +10417,79 @@ uint32 SCM2, uint32 SCM3, int32 procValue)
 	DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %s interval %u", Pts.origId, spellid, procChance, procFlags, procCharges, ((procFlags2 & PROC_TARGET_SELF) ? "true" : "false"), m_spellProto->proc_interval);
 }
 
-/*void Aura::EventJumpAndHeal()
+void Aura::SpellAuraHealAndJump(bool apply)
 {
-	Unit* caster = GetUnitCaster();
-	//first, heal
-	Spell s(caster, m_spellProto, true, NULL);
-	s.SetUnitTarget(m_target);
-	s.Heal(m_spellinfo->forced_basepoints[0]);
-
-	std::vector<Unit* > Targets;
-
-	//find a new target, npcs use friendly, players use group/raid :(
-	if (m_target->IsPlayer())
+	if( !m_target || !m_target->IsPlayer() || GetSpellProto()->NameHash != SPELL_HASH_PRAYER_OF_MENDING )
+		return;
+	Player *caster = TO_PLAYER( m_target );
+	if( apply )
 	{
-		Player*  Target = TO_PLAYER(m_target);
-		if(!Target)
-			return;
-
-		SubGroup * subgroup = Target->GetGroup() ?
-			Target->GetGroup()->GetSubGroup(Target->GetSubGroup()) : 0;
-
-		if(subgroup)
+		Player *First_loser, *First_thingy;
+		First_loser = First_thingy = NULL;
+		bool passed_prev_targy = false;
+		Heal_and_Hump_Charges = stackSize;
+		GroupMembersSet::iterator itr;
+		SubGroup * pGroup = caster->GetGroup() ? caster->GetGroup()->GetSubGroup(caster->GetSubGroup()) : 0;
+		if( pGroup )
 		{
-			Target->GetGroup()->Lock();
-			for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); itr++)
+			float range = 20.0f;
+			range *= range;
+			caster->GetGroup()->Lock();
+			for( itr = pGroup->GetGroupMembersBegin(); itr != pGroup->GetGroupMembersEnd(); ++itr )
 			{
-				if((*itr)->m_loggedInPlayer == NULL || m_target->CalcDistance((*itr)->m_loggedInPlayer) > GetMaxRange(dbcSpellRange.LookupEntry(m_spellProto->rangeIndex)) || (*itr)->m_loggedInPlayer == m_target)
+				if( !(*itr)->m_loggedInPlayer || !(*itr)->m_loggedInPlayer->isAlive() )
 					continue;
-				Targets.push_back((*itr)->m_loggedInPlayer);
+				if( (*itr)->m_loggedInPlayer == caster )
+				{
+					passed_prev_targy = true;
+					continue;
+				}
+				if( IsInrange( caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ(), (*itr)->m_loggedInPlayer, range) )
+				{
+					if( !First_thingy )
+						First_thingy = (*itr)->m_loggedInPlayer;
+					if( First_thingy && (*itr)->m_loggedInPlayer->GetUInt32Value( UNIT_FIELD_HEALTH ) == (*itr)->m_loggedInPlayer->GetUInt32Value( UNIT_FIELD_MAXHEALTH ) )
+						continue;
+					if( !First_loser )
+						First_loser = (*itr)->m_loggedInPlayer;
+
+					if( passed_prev_targy )
+					{
+						Heal_and_Hump_newtargy = (*itr)->m_loggedInPlayer;
+						break;
+					}
+				}
 			}
-			Target->GetGroup()->Unlock();
+			caster->GetGroup()->Unlock();
+		}
+
+		if( First_loser && !Heal_and_Hump_newtargy )
+			Heal_and_Hump_newtargy = First_loser;
+		if( !Heal_and_Hump_newtargy )
+			Heal_and_Hump_newtargy = First_thingy;
+	}
+	else
+	{
+		// Heal
+		SpellEntry *se = dbcSpell.LookupEntry( 33110 );
+		if( !se )
+			return;
+		Spell *sp = new Spell( caster, se, true, NULL );
+		if( !sp )
+			return;
+		sp->forced_basepoints[0] = mod->m_amount;
+		SpellCastTargets targets( caster->GetGUID() );
+		sp->prepare( &targets );
+		if( Heal_and_Hump_newtargy && Heal_and_Hump_Charges > 1)
+		{
+			Spell *spell = new Spell( caster, GetSpellProto(), true, NULL );
+			if( !spell )
+				return;
+			spell->m_spellInfo->procCharges = (Heal_and_Hump_Charges - 1);
+			SpellCastTargets targets(Heal_and_Hump_newtargy->GetGUID());
+			spell->prepare(&targets);
+			Heal_and_Hump_newtargy = NULL;
+			Heal_and_Hump_Charges = 0;
 		}
 	}
-	else
-	{
-		for (ObjectSet::iterator itr = m_target->GetInRangeSetBegin(); itr!=m_target->GetInRangeSetEnd(); itr++)
-			if ((*itr) != m_target && (*itr)->IsUnit() && isFriendly(m_target, *itr) && m_target->CalcDistance(*itr) < GetMaxRange(dbcSpellRange.LookupEntry(m_spellProto->rangeIndex)))
-				Targets.push_back(TO_UNIT(*itr));
-	}
-
-	if (Targets.size() == 0 || m_stackcount == 0)
-		Remove();
-	else
-	{
-		//jump
-		Unit* newtarget = Targets[RandomUInt(Targets.size()-1)];
-
-		//OK, lets do this!
-		Spell* s = objmgr.CreateSpell(m_target, dbcSpell.LookupEntry(_spell->triggered_id), true, NULL);
-		SpellCastTargets t(newtarget);
-		s->forced_modifier = mod;
-		s->forced_applications = m_stackcount;
-		s->prepare(&t);
-		Remove(true);
-	}
 }
-*/
