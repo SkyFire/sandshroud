@@ -269,7 +269,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraReduceEffectDuration,                           //246
 		&Aura::SpellAuraNULL,                                           //247
 		&Aura::SpellAuraNULL,                                           //248
-		&Aura::SpellAuraNULL,                                           //249
+		&Aura::SpellAuraConvertRune,                                    //249
 		&Aura::SpellAuraModIncreaseHealth,                              //250 Add Health http://www.wowhead.com/?spell=44055
 		&Aura::SpellAuraNULL,                                           //251
 		&Aura::SpellAuraNULL,                                           //252
@@ -10492,4 +10492,28 @@ void Aura::SpellAuraHealAndJump(bool apply)
 			Heal_and_Hump_Charges = 0;
 		}
 	}
+}
+void Aura::SpellAuraConvertRune(bool apply)
+{
+    if( !m_target || !m_target->IsPlayer() )
+        return;
+
+    Player *plr = TO_PLAYER(m_target);
+
+    if( plr->getClass() != DEATHKNIGHT )
+        return;
+
+    for(uint32 i = 0; i < 6; ++i)
+    {
+        if( apply )
+ 			plr->ConvertRune((uint8)i,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
+        else
+        {
+            if(plr->m_runes[i] == GetSpellProto()->EffectMiscValueB[mod->i])
+            {
+                plr->ConvertRune((uint8)i, plr->GetRune(i));
+                break;
+            }
+        }
+    }
 }

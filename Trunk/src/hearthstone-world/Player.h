@@ -1978,7 +1978,7 @@ public:
 protected:
 	uint32 m_timeLogoff;
 	LocationVector m_summonPos;
-	uint32 m_summonInstanceId;
+	int32 m_summonInstanceId;
 	uint32 m_summonMapId;
 	Object* m_summoner;
 
@@ -2257,6 +2257,10 @@ public:
 	// Runes
 	uint8 m_runes[6];
 	uint8 m_runemask;
+	uint8 GetRune(uint32 index)
+	{
+		return m_runes[index];
+	}
 
 	void ConvertRune(uint8 index, uint8 value);
 	void ScheduleRuneRefresh(uint8 index, bool forceDeathRune = false);

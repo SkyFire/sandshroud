@@ -719,6 +719,7 @@ public:
 	void SpellAuraProcTriggerWithValue(bool apply);
 	void SpellAuraPeriodicTriggerSpellWithValue(bool apply);
 	void SpellAuraModCritChanceAll(bool apply);
+	void SpellAuraConvertRune(bool apply);
 
 	void CreateProcTriggerSpell(Unit* target, uint64 m_caster, uint32 origid, uint32 spellid, uint32 procChance, uint32 procFlags,
 		uint32 procFlags2, uint32 procCharges = 0, uint32 wdtype = 0, uint32 SCM1 = 0, uint32 SCM2 = 0, uint32 SCM3 = 0, int32 procValue = 0);
