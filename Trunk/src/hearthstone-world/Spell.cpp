@@ -1595,7 +1595,6 @@ void Spell::cast(bool check)
 				{
 					// Target ourself for these effects
 				case SPELL_EFFECT_TRIGGER_SPELL:
-				case SPELL_EFFECT_MEGA_JUMP:
 				case SPELL_EFFECT_SUMMON:
 					{
 						_SetTargets(m_caster->GetGUID());

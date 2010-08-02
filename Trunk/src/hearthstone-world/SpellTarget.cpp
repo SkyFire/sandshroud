@@ -318,8 +318,7 @@ void Spell::SpellTargetDefault(uint32 i, uint32 j)
 		else if(m_targets.m_itemTarget)
 			_AddTargetForced(m_targets.m_itemTarget, i);
 		else if( m_spellInfo->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT || 
-				 m_spellInfo->Effect[i] == SPELL_EFFECT_SUMMON_DEMON ||
-				 m_spellInfo->Effect[i] == SPELL_EFFECT_SUMMON_WILD )
+				 m_spellInfo->Effect[i] == SPELL_EFFECT_SUMMON_DEMON )
 			_AddTargetForced(m_caster->GetGUID(), i);
 	}
 }
