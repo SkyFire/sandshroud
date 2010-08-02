@@ -1401,6 +1401,8 @@ void World::Rehash(bool load)
 
 	// LevelCaps
 	LevelCap_Custom_All = Config.MainConfig.GetIntDefault("Server", "LevelCap_Custom_All", 80);
+	if(LevelCap_Custom_All < 1)
+		LevelCap_Custom_All = 80;
 
 	// Dual Talent Specialization costs
 	dualTalentTrainCost = Config.MainConfig.GetIntDefault("Server", "DualTalentPrice", 1000);
