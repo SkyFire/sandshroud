@@ -66,8 +66,8 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectDispel,						//SPELL_EFFECT_DISPEL - 38
 	&Spell::SpellEffectLanguage,					//SPELL_EFFECT_LANGUAGE - 39
 	&Spell::SpellEffectDualWield,					//SPELL_EFFECT_DUAL_WIELD - 40
-	&Spell::SpellEffectNULL,						//SPELL_EFFECT_SUMMON_WILD - 41
-	&Spell::SpellEffectMegaJump,					//SPELL_EFFECT_SUMMON_GUARDIAN - 42
+	&Spell::SpellEffectJump,						//SPELL_EFFECT_JUMP_TO_TARGET  - 41
+	&Spell::SpellEffectJump,						//SPELL_EFFECT_JUMP_TO_DESTIONATION - 42
 	&Spell::SpellEffectNULL,						//SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER - 43
 	&Spell::SpellEffectSkillStep,					//SPELL_EFFECT_SKILL_STEP - 44
 	&Spell::SpellEffectAddHonor,					//SPELL_ADD_HONOR - 45
@@ -8174,7 +8174,7 @@ void Spell::SpellEffectTriggerSpellWithValue(uint32 i)
 	sp->prepare(&tgt);
 }
 
-void Spell::SpellEffectMegaJump(uint32 i)
+void Spell::SpellEffectJump(uint32 i)
 {
 	if( u_caster == NULL)
 		return;
@@ -8183,24 +8183,38 @@ void Spell::SpellEffectMegaJump(uint32 i)
 		if(isTargetDummy(u_caster->GetEntry()))
 			return;
 
-	if( m_targets.m_destX == 0.0f && m_targets.m_destY == 0.0f && m_targets.m_destZ == 0.0f && m_targets.m_unitTarget )
+	if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 	{
-		Unit* u = u_caster->GetMapMgr()->GetUnit( m_targets.m_unitTarget );
-		if( u == NULL )
-			return; // or we'll TP to some far off land :P
-
-		m_targets.m_destX = u->GetPositionX();
-		m_targets.m_destY = u->GetPositionY();
-		m_targets.m_destZ = u->GetPositionZ();
+		if(m_targets.m_destX == 0 || m_targets.m_destY == 0 || m_targets.m_destZ == 0)
+			return; //Hueston we haz a problem.
+		WorldPacket data(SMSG_MONSTER_MOVE, 500);
+		data << u_caster->GetNewGUID();
+		data << uint8(0);
+		data << u_caster->GetPositionX() << u_caster->GetPositionY() << u_caster->GetPositionZ();
+		data << getMSTime();
+		data << uint8(0);
+		data << uint32(MONSTER_MOVE_FLAG_JUMP);
+		data << uint32((m_spellInfo->EffectMiscValue[i])/10);
+		data << float(10.0f);
+		data << uint32(0);
+		data << uint32(1);
+		data << m_targets.m_destX << m_targets.m_destY << m_targets.m_destZ;
+		u_caster->SendMessageToSet(&data, true);
+		float newo = u_caster->calcRadAngle(u_caster->GetPositionX(),u_caster->GetPositionY(), m_targets.m_destX, m_targets.m_destY);
+		u_caster->SetPosition(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, newo);
+		u_caster->GetAIInterface()->StopMovement(1000);
 	}
-	float o = u_caster->calcRadAngle( m_targets.m_destX, m_targets.m_destY, u_caster->GetPositionX(), u_caster->GetPositionY() );
-
-	// Time formula is derived from andy's logs, 271ms to move ~14.5 units
-	float distance = u_caster->GetDistanceSq( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ );
-	uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-	u_caster->GetAIInterface()->SendMoveToPacket( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, moveTime, u_caster->GetAIInterface()->getMoveFlags() );
-
-	u_caster->SetPosition( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, false );
+	else
+	{
+		if( unitTarget == NULL )
+			return; //Hueston we haz a problem.
+		float o = u_caster->calcRadAngle(  u_caster->GetPositionX(), u_caster->GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY() );
+		// Time formula is derived from andy's logs, 271ms to move ~14.5 units
+		float distance = u_caster->GetDistanceSq( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o),unitTarget->GetPositionZ() );
+		uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
+		u_caster->GetAIInterface()->SendMoveToPacket( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o), unitTarget->GetPositionZ(), 0.0f, moveTime, u_caster->GetAIInterface()->getMoveFlags() );
+		u_caster->SetPosition( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o), unitTarget->GetPositionZ(), 0.0f, false );
+	}
 	if( p_caster != NULL)
 	{
 		p_caster->ResetHeartbeatCoords();

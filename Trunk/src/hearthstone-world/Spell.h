@@ -664,8 +664,8 @@ enum SpellEffects
 	SPELL_EFFECT_DISPEL,					//	38
 	SPELL_EFFECT_LANGUAGE,					//	39
 	SPELL_EFFECT_DUAL_WIELD,				//	40
-	SPELL_EFFECT_SUMMON_WILD,				//	41
-	SPELL_EFFECT_MEGA_JUMP,					//	42
+	SPELL_EFFECT_JUMP_TO_TARGET,			//	41
+	SPELL_EFFECT_JUMP_TO_DESTIONATION,		//	42
 	SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER,//	43
 	SPELL_EFFECT_SKILL_STEP,				//	44
 	SPELL_EFFECT_UNDEFINED_45,				//	45
@@ -1672,7 +1672,7 @@ public:
 	void SpellEffectSpawn(uint32 i);
 	void SpellEffectApplyAura128(uint32 i);
 	void SpellEffectTriggerSpellWithValue(uint32 i);
-	void SpellEffectMegaJump(uint32 i);
+	void SpellEffectJump(uint32 i);
 	void SpellEffectMilling(uint32 i);
 	void SpellEffectAddPrismaticSocket(uint32 i);
 	void SpellEffectCreatePet(uint32 i);
