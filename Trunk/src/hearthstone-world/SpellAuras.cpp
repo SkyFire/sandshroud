@@ -5422,9 +5422,10 @@ void Aura::SpellAuraModDispelImmunity(bool apply)
 void Aura::SpellAuraProcTriggerSpell(bool apply)
 {
 	if(apply)
-	{		uint32 spellid = 0;
+	{
+		uint32 spellid = 0;
 		spellid = m_spellProto->EffectTriggerSpell[mod->i];
-		if(spellid = 0)
+		if(spellid == 0)
 			return;
 
 		uint32 procchance = m_spellProto->procChance;
@@ -9897,7 +9898,7 @@ void Aura::SpellAuraProcTriggerWithValue(bool apply)
 	{
 		uint32 spellid = 0;
 		spellid = m_spellProto->EffectTriggerSpell[mod->i];
-		if(spellid = 0)
+		if(spellid == 0)
 			return;
 
 		uint32 procchance = m_spellProto->procChance;

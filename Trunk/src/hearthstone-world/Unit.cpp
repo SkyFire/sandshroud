@@ -3638,7 +3638,7 @@ else
 	//vstate=1-wound,2-dodge,3-parry,4-interrupt,5-block,6-evade,7-immune,8-deflect	
 	// the above code was remade it for reasons : damage shield needs moslty same flags as handleproc + dual wield should proc too ?
 	if( !disable_proc )
-    {
+	{
 		uint32 resisted_dmg;
 
 		HandleProc(aproc, aproc2, pVictim, ability, realdamage, abs, weapon_damage_type + 1); //maybe using dmg.resisted_damage is better sometimes but then if using godmode dmg is resisted instead of absorbed....bad
