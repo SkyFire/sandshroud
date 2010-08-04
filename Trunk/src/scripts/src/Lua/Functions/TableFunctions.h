@@ -46,7 +46,8 @@ struct RegType
 /************************************************************************/
 /* SCRIPT FUNCTION TABLES                                               */
 /************************************************************************/
-RegType<Item> ItemMethods[] = {
+RegType<Item> ItemMethods[] = 
+{
 	{ "GossipCreateMenu", &luaItem_GossipCreateMenu },
 	{ "GossipMenuAddItem", &luaItem_GossipMenuAddItem },
 	{ "GossipSendMenu", &luaItem_GossipSendMenu },
@@ -87,7 +88,8 @@ RegType<Item> ItemMethods[] = {
 	{ NULL, NULL },
 };
 
-RegType<Unit> UnitMethods[] = {
+RegType<Unit> UnitMethods[] = 
+{
 	{ "GossipCreateMenu", &luaUnit_GossipCreateMenu },
 	{ "GossipMenuAddItem", &luaUnit_GossipMenuAddItem },
 	{ "GossipSendMenu", &luaUnit_GossipSendMenu },
@@ -351,23 +353,23 @@ RegType<Unit> UnitMethods[] = {
 	{ "GetDisplay", &luaUnit_GetDisplay },
 	{ "GetNativeDisplay", &luaUnit_GetNativeDisplay },
 	{ "IsMounted", &luaUnit_IsMounted },
-//	{ "GetGameTime", &luaUnit_GetGameTime },
-//	{ "PlaySoundToPlayer", &luaUnit_PlaySoundToPlayer },
-//	{ "GetDuelState", &luaUnit_GetDuelState }, 
-//	{ "SetPosition", &luaUnit_SetPosition},
+	{ "GetGameTime", &luaUnit_GetGameTime },
+	{ "PlaySoundToPlayer", &luaUnit_PlaySoundToPlayer },
+	{ "GetDuelState", &luaUnit_GetDuelState }, 
+	{ "SetPosition", &luaUnit_SetPosition},
 	{ "CastSpellOnTarget", &luaUnit_CastSpellOnTarget},
-//	{ "GetLandHeight", &luaUnit_GetLandHeight},
-//	{ "QuestAddStarter", &luaUnit_QuestAddStarter},
-//	{ "QuestAddFinisher", &luaUnit_QuestAddFinisher},
-//	{ "SetPlayerSpeed", &luaUnit_SetPlayerSpeed},
-//	{ "GiveHonor", &luaUnit_GiveHonor},
-//	{ "SetBindPoint", &luaUnit_SetBindPoint},
-//	{ "SoftDisconnect", &luaUnit_SoftDisconnect},
-//	{ "SetZoneWeather", &luaUnit_SetZoneWeather},
-//	{ "SetPlayerWeather", &luaUnit_SetPlayerWeather},
-//	{ "SendPacketToPlayer", &luaUnit_SendPacketToPlayer},
-//	{ "PlayerSendChatMessage", &luaUnit_PlayerSendChatMessage},
-//	{ "GetDistanceYards", &luaUnit_GetDistanceYards},
+	{ "GetLandHeight", &luaUnit_GetLandHeight},
+	{ "QuestAddStarter", &luaUnit_QuestAddStarter},
+	{ "QuestAddFinisher", &luaUnit_QuestAddFinisher},
+	{ "SetPlayerSpeed", &luaUnit_SetPlayerSpeed},
+	{ "GiveHonor", &luaUnit_GiveHonor},
+	{ "SetBindPoint", &luaUnit_SetBindPoint},
+	{ "SoftDisconnect", &luaUnit_SoftDisconnect},
+	{ "SetZoneWeather", &luaUnit_SetZoneWeather},
+	{ "SetPlayerWeather", &luaUnit_SetPlayerWeather},
+	{ "SendPacketToPlayer", &luaUnit_SendPacketToPlayer},
+	{ "PlayerSendChatMessage", &luaUnit_PlayerSendChatMessage},
+	{ "GetDistanceYards", &luaUnit_GetDistanceYards},
 	{ "VendorAddItem", &luaUnit_VendorAddItem},
 	{ "VendorRemoveItem", &luaUnit_VendorRemoveItem},
 	{ "VendorRemoveAllItems", &luaUnit_VendorRemoveAllItems},
@@ -378,15 +380,14 @@ RegType<Unit> UnitMethods[] = {
 	{ "SendBankWindow", &luaUnit_SendBankWindow},
 	{ "SendAuctionWindow", &luaUnit_SendAuctionWindow},
 	{ "SendBattlegroundWindow", &luaUnit_SendBattlegroundWindow},
-//	{ "GetInventoryItem", &luaUnit_GetInventoryItem},
-//	{ "GetInventoryItemById", &luaUnit_GetInventoryItemById},
+	{ "GetInventoryItem", &luaUnit_GetInventoryItem},
+	{ "GetInventoryItemById", &luaUnit_GetInventoryItemById},
 //	{ "PhaseSet", &luaUnit_PhaseSet},
 //	{ "PhaseAdd", &luaUnit_PhaseAdd},
 //	{ "PhaseDelete", &luaUnit_PhaseDelete},
 //	{ "GetPhase", &luaUnit_GetPhase},
-//	{ "AggroWithInRangeFriends", &luaUnit_AggroWithInRangeFriends},
-//	{ "GetPrimaryCombatTarget", &luaUnit_GetPrimaryCombatTarget},
-//	{ "MoveRandomArea", &luaUnit_MoveRandomArea},
+	{ "AggroWithInRangeFriends", &luaUnit_AggroWithInRangeFriends},
+	{ "MoveRandomArea", &luaUnit_MoveRandomArea},
 	{ "SendLootWindow", &luaUnit_SendLootWindow},
 	{ "AddLoot", &luaUnit_AddLoot},
 //	{ "SetPacified", &luaUnit_SetPacified},
@@ -399,16 +400,16 @@ RegType<Unit> UnitMethods[] = {
 	{ "GetPassengerCount", &luaUnit_GetPassengerCount},
 	{ "MoveVehicle", &luaUnit_MoveVehicle},
 	{ "SetPlayerLock", &luaUnit_SetPlayerLock},
-//	{ "GetGroupPlayers", &luaUnit_GetGroupPlayers},
+	{ "GetGroupPlayers", &luaUnit_GetGroupPlayers},
 	{ "IsGm", &luaUnit_IsGm},
-//	{ "GetDungeonDifficulty", &luaUnit_GetDungeonDifficulty},
-//	{ "GetGroupLeader", &luaUnit_GetGroupLeader},
-//	{ "SetGroupLeader", &luaUnit_SetGroupLeader},
-//	{ "AddGroupMember", &luaUnit_AddGroupMember},
-//	{ "SetDungeonDifficulty", &luaUnit_SetDungeonDifficulty},
-//	{ "ExpandToRaid", &luaUnit_ExpandToRaid},
-//	{ "SendPacketToGroup", &luaUnit_SendPacketToGroup},
-//	{ "IsGroupFull", &luaUnit_IsGroupFull},
+	{ "GetDungeonDifficulty", &luaUnit_GetDungeonDifficulty},
+	{ "GetGroupLeader", &luaUnit_GetGroupLeader},
+	{ "SetGroupLeader", &luaUnit_SetGroupLeader},
+	{ "AddGroupMember", &luaUnit_AddGroupMember},
+	{ "SetDungeonDifficulty", &luaUnit_SetDungeonDifficulty},
+	{ "ExpandToRaid", &luaUnit_ExpandToRaid},
+	{ "SendPacketToGroup", &luaUnit_SendPacketToGroup},
+	{ "IsGroupFull", &luaUnit_IsGroupFull},
 	{ "IsGroupedWith", &luaUnit_IsGroupedWith},
 	{ "GetTotalHonor", &luaUnit_GetTotalHonor},
 	{ "GetHonorToday", &luaUnit_GetHonorToday},
@@ -440,7 +441,7 @@ RegType<Unit> UnitMethods[] = {
 	{ "SendGuildLog", &luaUnit_SendGuildLog },
 	{ "GuildBankDepositMoney", &luaUnit_GuildBankDepositMoney },
 	{ "GuildBankWithdrawMoney", &luaUnit_GuildBankWithdrawMoney },
-//	{ "GetInstanceOwner", &luaUnit_GetInstanceOwner },
+	{ "GetInstanceOwner", &luaUnit_GetInstanceOwner },
 	{ "GetGmRank", &luaUnit_GetGmRank },
 	{ "SetByteValue", &luaUnit_SetByteValue },
 	{ "GetByteValue", &luaUnit_GetByteValue },
@@ -449,15 +450,15 @@ RegType<Unit> UnitMethods[] = {
 	{ "IsFFAFlagged", &luaUnit_IsFFAPvPFlagged },
 	{ "GetGuildLeader", &luaUnit_GetGuildLeader },
 	{ "GetGuildMemberCount", &luaUnit_GetGuildMemberCount },
-//	{ "CanAttack", &luaUnit_CanAttack },
-//	{ "GetInRangeUnits", &luaUnit_GetInRangeUnits },
-//	{ "GetInRangeEnemies", &luaUnit_GetInRangeEnemies },
+	{ "CanAttack", &luaUnit_CanAttack },
+	{ "GetInRangeUnits", &luaUnit_GetInRangeUnits },
+	{ "GetInRangeEnemies", &luaUnit_GetInRangeEnemies },
 	{ "IsFriendly", &luaUnit_IsFriendly },
 	{ "MovePlayerTo", &luaUnit_MovePlayerTo },
 	{ "GetPlayerMovementVector", &luaUnit_GetPlayerMovementVector},
 	{ "UnsetKnownTitle", &luaUnit_UnsetKnownTitle},
 //	{ "IsInPhase", &luaUnit_IsInPhase},
-//	{ "HasFlag", &luaUnit_HasFlag },
+	{ "HasFlag", &luaUnit_HasFlag },
 	{ "Repop", &luaUnit_Repop },
 	{ "SetMovementFlags", &luaUnit_SetMovementFlags },
 	{ "GetSpawnId", &luaUnit_GetSpawnId },
@@ -471,7 +472,7 @@ RegType<Unit> UnitMethods[] = {
 	{ "RemoveAchievement", &luaUnit_RemoveAchievement },
 	{ "HasAchievement", &luaUnit_HasAchievement },
 	{ "RemoveArenaPoints", &luaUnit_RemoveArenaPoints},
-//	{ "TakeHonor", &luaUnit_TakeHonor},
+	{ "TakeHonor", &luaUnit_TakeHonor},
 //	{ "SetPhase", &luaUnit_PhaseSet},
 //	{ "DeletePhase", &luaUnit_PhaseDelete},
 //	{ "AddToPhase", &luaUnit_PhaseAdd},
@@ -489,16 +490,14 @@ RegType<Unit> UnitMethods[] = {
 	{ "IsOnTaxi", &luaUnit_IsOnTaxi },
 	{ "GetTaxi", &luaUnit_GetTaxi },
 	{ "GetObjectType", &luaUnit_GetObjectType },
-//	{ "CreateCustomWaypoint", &luaUnit_CreateCustomWaypoint },
-//	{ "DeleteWaypoints", &luaUnit_DeleteAllWaypoints },
 	{ "GiveXp", &luaUnit_GiveXp },
-//	{ "GetPower", &luaUnit_GetPower },
-//	{ "GetPowerPct", &luaUnit_GetPowerPct },
-//	{ "GetMaxPower", &luaUnit_GetMaxPower },
-//	{ "SetPower", &luaUnit_SetPower },
-//	{ "SetPowerPct", &luaUnit_SetPowerPct },
-//	{ "SetMaxPower", &luaUnit_SetMaxPower },
-//	{ "LearnSpells", &luaUnit_LearnSpells },
+	{ "GetPower", &luaUnit_GetPower },
+	{ "GetPowerPct", &luaUnit_GetPowerPct },
+	{ "GetMaxPower", &luaUnit_GetMaxPower },
+	{ "SetPower", &luaUnit_SetPower },
+	{ "SetPowerPct", &luaUnit_SetPowerPct },
+	{ "SetMaxPower", &luaUnit_SetMaxPower },
+	{ "LearnSpells", &luaUnit_LearnSpells },
 	{ "GetCurrentWaypoint", &luaUnit_GetCurrentWaypoint },
 	{ "GetSelectedGO", &luaUnit_GetSelectedGO },
 	{ "FullCastSpell", &luaUnit_FullCastSpell },
@@ -531,12 +530,12 @@ RegType<Unit> UnitMethods[] = {
 	{ "AddAuraObject", &luaUnit_AddAuraObject },
 	{ "GetAuraObjectById", &luaUnit_GetAuraObjectById },
 	{ "GetNativeFaction", &luaUnit_GetNativeFaction },
-
 	{ NULL, NULL },
 };
 
 
-RegType<GameObject> GOMethods[] = {
+RegType<GameObject> GOMethods[] = 
+{
 	{ "GossipCreateMenu", &luaGameObject_GossipCreateMenu },
 	{ "GossipSendMenu", &luaGameObject_GossipSendMenu },
 	{ "GossipComplete", &luaGameObject_GossipComplete },
@@ -551,7 +550,8 @@ RegType<GameObject> GOMethods[] = {
 	{ NULL, NULL },
 };
 
-RegType<TaxiPath> LuaTaxiMethods[] = {
+RegType<TaxiPath> LuaTaxiMethods[] = 
+{
 	{ "CreateTaxi", &LuaTaxi::CreateTaxi },
 	{ "GetNodeCount", &LuaTaxi::GetNodeCount },
 	{ "AddPathNode", &LuaTaxi::AddPathNode },
@@ -559,6 +559,7 @@ RegType<TaxiPath> LuaTaxiMethods[] = {
 	{ "GetObjectType", &LuaTaxi::GetObjectType},
 	{NULL, NULL},
 };
+
 template<typename T> RegType<T>* GetMethodTable() { return NULL; }
 template<> RegType<Item>* GetMethodTable<Item>() { return ItemMethods; }
 template<> RegType<Unit>* GetMethodTable<Unit>() { return UnitMethods; }

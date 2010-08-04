@@ -1852,43 +1852,7 @@ int luaUnit_SendChatMessageToPlayer(lua_State * L, Unit * ptr)
 	ptr->SendChatMessageToPlayer(type,lang,msg,plr);
 	return 1;
 }
-int luaUnit_SetPowerType(lua_State * L, Unit * ptr)
-{
-	const char * message = luaL_checklstring(L,1,NULL);
-	if(!ptr||!message)
-		return 0;
-	if( message == "health")
-		ptr->SetPowerType(POWER_TYPE_HEALTH);
-	else if( message == "mana")
-		ptr->SetPowerType(POWER_TYPE_MANA);
-	else if(message == "rage")
-		ptr->SetPowerType(POWER_TYPE_RAGE);
-	else if(message == "focus")
-		ptr->SetPowerType(POWER_TYPE_FOCUS);
-	else if (message == "energy")
-		ptr->SetPowerType(POWER_TYPE_ENERGY);
-	return 1;
-}
-int luaUnit_GetPowerType(lua_State * L, Unit * ptr)
-{
-	if(ptr)
-	{
-		switch(ptr->GetPowerType())
-		{
-		case POWER_TYPE_HEALTH:
-			lua_pushstring(L,"Health");
-		case POWER_TYPE_MANA:
-			lua_pushstring(L, "Mana");
-		case POWER_TYPE_RAGE:
-			lua_pushstring(L, "Rage");
-		case POWER_TYPE_FOCUS:
-			lua_pushstring(L, "Focus");
-		case POWER_TYPE_ENERGY:
-			lua_pushstring(L, "Energy");
-		}
-	}
-	return 1;
-}
+
 int luaUnit_Strike(lua_State * L, Unit * ptr)
 {
 	CHECK_TYPEID_RET(TYPEID_UNIT);
@@ -4760,6 +4724,815 @@ int luaUnit_GetNativeDisplay(lua_State * L, Unit * ptr)
 		lua_pushinteger( L, ptr->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID) );
 
 	return 1;
+}
+
+static int luaUnit_GetGameTime(lua_State * L, Unit * ptr)
+{
+	lua_pushnumber(L, ((uint32)sWorld.GetGameTime())); //in seconds.
+	return 1;
+}
+
+int luaUnit_PlaySoundToPlayer(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+	int soundid = luaL_checkint(L,1);
+	Player* plr = TO_PLAYER(ptr);
+	WorldPacket data;
+    data.Initialize(SMSG_PLAY_OBJECT_SOUND);
+	data << uint32(soundid) << plr->GetGUID();
+	plr->GetSession()->SendPacket(&data);
+	return 0;
+}
+
+int luaUnit_GetDuelState(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player* plr = TO_PLAYER(ptr);
+	lua_pushnumber(L,plr->GetDuelState());
+	return 1;
+}
+
+int luaUnit_SetPosition(lua_State * L, Unit * ptr)
+{
+	float x = CHECK_FLOAT(L,1);
+	float y = CHECK_FLOAT(L,2);
+	float z = CHECK_FLOAT(L,3);
+	float o = CHECK_FLOAT(L,4);
+	ptr->SetFacing(o);
+	ptr->SetOrientation(o);
+	WorldPacket data(SMSG_MONSTER_MOVE, 50);
+	data << ptr->GetNewGUID();
+	data << uint8(0);
+	data << ptr->GetPositionX();
+	data << ptr->GetPositionY();
+	data << ptr->GetPositionZ();
+	data << getMSTime();
+	data << uint8(0x00);
+	data << uint32(256);
+	data << uint32(1);
+	data << uint32(1);
+	data << x << y << z;
+
+	ptr->SendMessageToSet(&data, true);
+	ptr->SetPosition(x,y,z,o,true);
+	return 0;
+}
+
+int luaUnit_GetLandHeight(lua_State * L, Unit * ptr)
+{
+	/*float x = CHECK_FLOAT(L,1);
+	float y = CHECK_FLOAT(L,2);
+	if (!ptr || !x || !y) 
+		return 0;
+	Land height seems to return a linking error.
+	float lH = ptr->GetMapMgr()->GetLandHeight(x,y);
+	lua_pushnumber(L, lH);*/
+	return 1;
+}
+
+int luaUnit_QuestAddStarter(lua_State * L, Unit * ptr)
+{
+	TEST_UNIT()
+	Creature * unit = TO_CREATURE(ptr);
+	uint32 quest_id = (uint32)luaL_checknumber(L, 1);
+	if (!unit->HasFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_QUESTGIVER))
+		unit->SetUInt32Value(UNIT_NPC_FLAGS, unit->GetUInt32Value(UNIT_NPC_FLAGS)+UNIT_NPC_FLAG_QUESTGIVER);
+	if(!quest_id)
+		return 0;
+	Quest * qst = QuestStorage.LookupEntry(quest_id);
+	if (!qst)
+		return 0;
+
+	uint32 quest_giver = unit->GetEntry();
+		
+	char my_query1 [200];
+	sprintf(my_query1,"SELECT id FROM creature_quest_starter WHERE id = %d AND quest = %d", quest_giver, quest_id);
+	QueryResult *selectResult1 = WorldDatabase.Query(my_query1);
+	if (selectResult1)
+		delete selectResult1; //already has quest
+	else
+	{
+		char my_insert1 [200];
+		sprintf(my_insert1, "INSERT INTO creature_quest_starter (id, quest) VALUES (%d,%d)", quest_giver, quest_id);
+		WorldDatabase.Execute(my_insert1);
+	}
+	sQuestMgr.LoadExtraQuestStuff();
+	QuestRelation *qstrel = new QuestRelation;
+	qstrel->qst = qst;
+	qstrel->type = QUESTGIVER_QUEST_START;
+	uint8 qstrelid;
+	if ( unit->HasQuests() )
+	{
+		qstrelid = (uint8)unit->GetQuestRelation(quest_id);
+		unit->DeleteQuest(qstrel);
+	}
+	unit->_LoadQuests();
+	return 0;
+}
+
+int luaUnit_QuestAddFinisher(lua_State * L, Unit * ptr)
+{
+	TEST_UNIT()
+	Creature * unit = TO_CREATURE(ptr);
+	uint32 quest_id = CHECK_ULONG(L, 1);
+	if (!unit->HasFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_QUESTGIVER))
+		unit->SetUInt32Value(UNIT_NPC_FLAGS, unit->GetUInt32Value(UNIT_NPC_FLAGS)+UNIT_NPC_FLAG_QUESTGIVER);
+	if(!quest_id)
+		return 0;
+	Quest * qst = QuestStorage.LookupEntry(quest_id);
+	if (!qst)
+		return 0;
+	uint32 quest_giver = unit->GetEntry();
+	
+	char my_query1 [200];
+	sprintf(my_query1,"SELECT id FROM creature_quest_finisher WHERE id = %d AND quest = %d", quest_giver, quest_id);
+	QueryResult *selectResult1 = WorldDatabase.Query(my_query1);
+	if (selectResult1)
+	{
+		delete selectResult1; //already has quest
+	}
+	else
+	{
+		char my_insert1 [200];
+		sprintf(my_insert1, "INSERT INTO creature_quest_finisher (id, quest) VALUES (%d,%d)", quest_giver, quest_id);
+		WorldDatabase.Execute(my_insert1);
+	}
+	sQuestMgr.LoadExtraQuestStuff();
+	QuestRelation *qstrel = new QuestRelation;
+	qstrel->qst = qst;
+	qstrel->type = QUESTGIVER_QUEST_END;
+	uint8 qstrelid;
+	if ( unit->HasQuests() )
+	{
+		qstrelid = (uint8)unit->GetQuestRelation(quest_id);
+		unit->DeleteQuest(qstrel);
+	}
+	unit->_LoadQuests();
+	return 0;
+}
+
+int luaUnit_SetPlayerSpeed(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	float Speed = CHECK_FLOAT(L,1);
+	if (Speed<1 || Speed>255)
+		return 0;
+	plr->SetPlayerSpeed(RUN, Speed);
+	plr->SetPlayerSpeed(SWIM, Speed);
+	plr->SetPlayerSpeed(RUNBACK, Speed / 2);
+	plr->SetPlayerSpeed(FLY, Speed * 2);
+	return 0;
+}
+
+int luaUnit_GiveHonor(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	uint32 honor = CHECK_ULONG(L,1);
+	plr->m_honorToday += honor;
+	plr->m_honorPoints += honor;
+	plr->RecalculateHonor();
+	return 0;
+}
+
+int luaUnit_SetBindPoint(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	float x = CHECK_FLOAT(L, 1);
+	float y = CHECK_FLOAT(L, 2);
+	float z = CHECK_FLOAT(L, 3);
+	uint32 map = CHECK_ULONG(L, 4);
+	uint32 zone = CHECK_ULONG(L, 5);
+	if (!x || !y || !z || !zone)
+		return 0;
+	plr->SetBindPoint(x, y, z, map, zone);
+	return 0;
+}
+
+int luaUnit_SoftDisconnect(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	TO_PLAYER(ptr)->SoftDisconnect();
+	return 0;
+}
+
+int luaUnit_GetInventoryItem(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	int8 containerslot = luaL_checkint(L, 1);
+	int16 slot = luaL_checkint(L, 2);
+	Player * plr = TO_PLAYER(ptr);
+	PUSH_ITEM(L, plr->GetItemInterface()->GetInventoryItem(containerslot, slot));
+	return 1;
+}
+
+int luaUnit_GetInventoryItemById(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	uint32 entry = CHECK_ULONG(L, 1);
+	Player * plr = TO_PLAYER(ptr);
+	int16 slot = plr->GetItemInterface()->GetInventorySlotById(entry);
+	if (slot == -1) //check bags
+	{
+		for (uint8 contslot = INVENTORY_SLOT_BAG_START; contslot != INVENTORY_SLOT_BAG_END; contslot++)
+		{
+			Container * bag = static_cast<Container*>(plr->GetItemInterface()->GetInventoryItem(contslot));
+			for (uint8 bslot = 0; bslot != bag->GetSlotCount(); bslot++)
+			{
+				if (bag->GetItem(bslot) && bag->GetItem(bslot)->GetEntry() == entry)
+				{
+					PUSH_ITEM(L, bag->GetItem(bslot));
+					return 1;
+				}
+			}
+		}
+	}
+	PUSH_ITEM(L, plr->GetItemInterface()->GetInventoryItem(slot));
+	return 1;
+}
+
+int luaUnit_SetZoneWeather(lua_State * L, Unit * ptr)
+{
+	/*
+	WEATHER_TYPE_NORMAL            = 0, // NORMAL (SUNNY)
+	WEATHER_TYPE_FOG               = 1, // FOG
+	WEATHER_TYPE_RAIN              = 2, // RAIN
+	WEATHER_TYPE_HEAVY_RAIN        = 4, // HEAVY_RAIN
+	WEATHER_TYPE_SNOW              = 8, // SNOW
+	WEATHER_TYPE_SANDSTORM         = 16 // SANDSTORM
+	*/
+	uint32 zone_id = CHECK_ULONG(L, 1);
+	uint32 type = CHECK_ULONG(L, 2);
+	float Density = CHECK_FLOAT(L, 3); //min: 0.30 max: 2.00
+	if (Density<0.30f || Density>2.0f || !zone_id || !type)
+		return 0;
+	uint32 sound;
+	if(Density<=0.30f)
+		sound = 0;
+	switch(type)
+	{
+		case 2:                                             //rain
+		case 4:                                             
+			if(Density  <0.40f)
+				 sound = 8533;
+			else if(Density  <0.70f)
+				sound = 8534;
+			else
+				sound = 8535;
+			break;
+		case 8:                                             //snow
+			if(Density  <0.40f)
+				sound = 8536;
+			else if(Density  <0.70f)
+				sound = 8537;
+			else
+				sound = 8538;
+			break;
+		case 16:                                             //storm
+			if(Density  <0.40f)
+				sound = 8556;
+			else if(Density  <0.70f)
+				sound = 8557;
+			else
+				sound = 8558;
+			break;
+		default:											//no sound
+			sound = 0;
+			break;
+	}
+	WorldPacket data(SMSG_WEATHER, 9);
+	data.Initialize(SMSG_WEATHER);
+	if(type == 0 ) // set all parameter to 0 for sunny.
+		data << uint32(0) << float(0) << uint32(0) << uint8(0);		
+	else if (type == 1) // No sound/density for fog
+		data << type << float(0) << uint32(0) << uint8(0);		
+	else
+		data << type << Density << sound << uint8(0) ;
+	sWorld.SendZoneMessage(&data, zone_id, 0);
+	return 0;
+}
+
+int luaUnit_SetPlayerWeather(lua_State * L, Unit * ptr)
+{
+	/*
+	WEATHER_TYPE_NORMAL            = 0, // NORMAL (SUNNY)
+	WEATHER_TYPE_FOG               = 1, // FOG
+	WEATHER_TYPE_RAIN              = 2, // RAIN
+	WEATHER_TYPE_HEAVY_RAIN        = 4, // HEAVY_RAIN
+	WEATHER_TYPE_SNOW              = 8, // SNOW
+	WEATHER_TYPE_SANDSTORM         = 16 // SANDSTORM
+	*/
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	uint32 type = CHECK_ULONG(L, 1);
+	float Density = CHECK_FLOAT(L, 2); //min: 0.30 max: 2.00
+	if (Density<0.30f || Density>2.0f || !type)
+		return 0;
+	uint32 sound;
+	if(Density<=0.30f)
+		sound = 0;
+	switch(type)
+	{
+		case 2:                                             //rain
+		case 4:                                             
+			if(Density  <0.40f)
+				 sound = 8533;
+			else if(Density  <0.70f)
+				sound = 8534;
+			else
+				sound = 8535;
+			break;
+		case 8:                                             //snow
+			if(Density  <0.40f)
+				sound = 8536;
+			else if(Density  <0.70f)
+				sound = 8537;
+			else
+				sound = 8538;
+			break;
+		case 16:                                             //storm
+			if(Density  <0.40f)
+				sound = 8556;
+			else if(Density  <0.70f)
+				sound = 8557;
+			else
+				sound = 8558;
+			break;
+		default:											//no sound
+			sound = 0;
+			break;
+	}
+	WorldPacket data(SMSG_WEATHER, 9);
+	data.Initialize(SMSG_WEATHER);
+	if(type == 0 ) // set all parameter to 0 for sunny.
+		data << uint32(0) << float(0) << uint32(0) << uint8(0);		
+	else if (type == 1) // No sound/density for fog
+		data << type << float(0) << uint32(0) << uint8(0);		
+	else
+		data << type << Density << sound << uint8(0) ;
+	plr->GetSession()->SendPacket(&data);
+	return 0;
+}
+
+int luaUnit_SendPacketToPlayer(lua_State * L, Unit * ptr)
+{
+	WorldPacket * data = CHECK_PACKET(L,1);
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	if (data)
+		plr->GetSession()->SendPacket(data);
+	return 0;
+}
+
+int luaUnit_PlayerSendChatMessage(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	uint32 type = CHECK_ULONG(L,1);
+	uint32 lang = CHECK_ULONG(L,2);
+	const char * msg = luaL_checklstring(L, 3, NULL);
+	Player * plr = TO_PLAYER(ptr);
+	if(msg == NULL || !plr)
+		return 0;
+	WorldPacket *data = sChatHandler.FillMessageData( type, lang, msg, plr->GetGUID(), 0 );
+	plr->GetSession()->SendChatPacket(data, 1, lang, plr->GetSession());
+	for(unordered_set<Player * >::iterator itr = plr->GetInRangePlayerSetBegin(); itr != plr->GetInRangePlayerSetEnd(); ++itr)
+	{
+		(static_cast< Player* >(*itr))->GetSession()->SendChatPacket(data, 1, lang, plr->GetSession());
+	}
+	return 0;
+}
+
+int luaUnit_AggroWithInRangeFriends(lua_State * L, Unit * ptr)
+{
+	/*TEST_UNIT()
+	// If Pointer isn't in combat skip everything
+	if (!ptr->CombatStatus.IsInCombat())
+	  return 0;
+	Unit * pTarget = ptr->GetAIInterface()->GetNextTarget();
+	if (!pTarget)
+	  return 0;
+	Unit * pUnit = NULL;
+	for(set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); ++itr)
+	{
+		Object * obj = TO_OBJECT(*itr);
+		// No Object, Object Isn't a Unit, Unit is Dead
+		if (!obj || !obj->IsUnit() || TO_UNIT(obj)->isDead())
+		   continue;
+		 if (!isFriendly(obj, ptr))
+		   continue;
+		if (ptr->GetDistance2dSq(obj) > 10*10) // 10yrd range?
+		   continue;
+		 pUnit = TO_UNIT(obj);
+		if (!pUnit) // Should never happen!
+		   continue;
+		pUnit->GetAIInterface()->SetNextTarget(pTarget);
+		pUnit->GetAIInterface()->AttackReaction(pTarget, 1, 0);
+	}*/
+	return 0;
+}
+
+int luaUnit_GetDistanceYards(lua_State * L, Unit * ptr)
+{
+	Object * target = CHECK_OBJECT(L, 1);
+	if(!ptr || !target)
+		return 0;
+	LocationVector vec = ptr->GetPosition();
+	lua_pushnumber(L,(float)vec.Distance(target->GetPosition()));
+	return 1;
+}
+
+int luaUnit_MoveRandomArea(lua_State * L, Unit * ptr)
+{
+	TEST_UNIT()
+	float x1 = CHECK_FLOAT(L, 1);
+	float y1 = CHECK_FLOAT(L, 2);
+	float z1 = CHECK_FLOAT(L, 3);
+	float x2 = CHECK_FLOAT(L, 4);
+	float y2 = CHECK_FLOAT(L, 5);
+	float z2 = CHECK_FLOAT(L, 6);
+	ptr->GetAIInterface()->MoveTo( x1+(RandomFloat(x2-x1)), y1+(RandomFloat(y2-y1)), z1+(RandomFloat(z2-z1)));
+	return 0;
+}
+
+int luaUnit_SendPacketToGroup(lua_State * L, Unit * ptr)
+{
+	WorldPacket * data = CHECK_PACKET(L,1);
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	if (!data) return 0;
+	plr->GetGroup()->SendPacketToAll(data);
+	return 0;
+}
+
+int luaUnit_GetGroupPlayers(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * _player = TO_PLAYER(ptr);
+	Group* party = _player->GetGroup();
+	uint32 count = 0;
+	lua_newtable(L);
+	if (party)
+	{
+		GroupMembersSet::iterator itr;
+		SubGroup * sgrp;
+		party->getLock().Acquire();
+		for(uint32 i = 0; i < party->GetSubGroupCount(); i++)
+		{
+			sgrp = party->GetSubGroup(i);
+			for(itr = sgrp->GetGroupMembersBegin(); itr != sgrp->GetGroupMembersEnd(); ++itr)
+			{
+				if((*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetZoneId() == _player->GetZoneId() && _player->GetInstanceID() == (*itr)->m_loggedInPlayer->GetInstanceID())
+				{
+					count++,
+					lua_pushinteger(L,count);
+					PUSH_UNIT(L,(*itr)->m_loggedInPlayer);
+					lua_rawset(L,-3);
+				}
+			}
+		}
+		party->getLock().Release();		
+	}
+	return 1;
+}
+
+int luaUnit_GetDungeonDifficulty(lua_State * L, Unit * ptr)
+{	/*
+	MODE_NORMAL_10MEN	=	0,
+	MODE_NORMAL_25MEN	=	1,
+	MODE_HEROIC_10MEN	=	2,
+	MODE_HEROIC_25MEN	=	3
+	*/
+	if (ptr->GetTypeId() == TYPEID_PLAYER)
+	{
+		Player * plr = TO_PLAYER(ptr);
+		if (plr->GetGroup())
+		{
+			if (plr->GetGroup()->GetGroupType() == GROUP_TYPE_PARTY)
+				lua_pushnumber(L,plr->GetGroup()->GetDifficulty());
+			else
+				lua_pushnumber(L,plr->GetGroup()->GetRaidDifficulty());
+		}
+		else
+		{
+			if (!plr->IsInInstance())
+				return 0;
+			Instance * pInstance = sInstanceMgr.GetInstanceByIds(plr->GetMapId(), plr->GetInstanceID());
+			lua_pushinteger(L,pInstance->m_difficulty);
+		}
+		return 1;
+	}
+	else
+	{
+		if (!ptr->IsInInstance())
+		{	
+			lua_pushboolean(L,0);
+			return 1;
+		}
+		Instance * pInstance = sInstanceMgr.GetInstanceByIds(ptr->GetMapId(), ptr->GetInstanceID());
+		lua_pushinteger(L,pInstance->m_difficulty);
+	}
+	return 1;
+}
+
+int luaUnit_GetInstanceOwner(lua_State * L, Unit * ptr)
+{
+	if (!ptr) return 0;
+	if (!ptr->IsInInstance())
+		lua_pushnil(L);
+	else 
+	{
+		Instance * pInstance = sInstanceMgr.GetInstanceByIds(ptr->GetMapId(), ptr->GetInstanceID());
+		if (pInstance->m_creatorGuid != 0) // creator guid is 0 if its owned by a group.
+		{
+			Player * owner = pInstance->m_mapMgr->GetPlayer(pInstance->m_creatorGuid);
+			PUSH_UNIT(L,owner);
+		}
+		else
+		{
+			uint32 gId = pInstance->m_creatorGroup;
+			PUSH_UNIT(L,objmgr.GetGroupById(gId)->GetLeader()->m_loggedInPlayer);
+		}
+	}
+	return 1;
+}
+
+int luaUnit_IsGroupFull(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	lua_pushboolean(L,plr->GetGroup()->IsFull() ? 1 : 0);
+	return 1;
+}
+
+int luaUnit_GetGroupLeader(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	PUSH_UNIT(L,plr->GetGroup()->GetLeader()->m_loggedInPlayer);
+	return 1;
+}
+
+int luaUnit_SetGroupLeader(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * _plr = CHECK_PLAYER(L,1);
+	bool silent = CHECK_BOOL(L,2);
+	Player * plr = TO_PLAYER(ptr);
+	plr->GetGroup()->SetLeader(_plr, silent);
+	return 0;
+}
+
+int luaUnit_AddGroupMember(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	Player * _plr = CHECK_PLAYER(L,1);
+	int32 subgroup = luaL_optint(L,2,-1);
+	plr->GetGroup()->AddMember(_plr->getPlayerInfo(),subgroup);
+	return 0;
+}
+
+int luaUnit_SetDungeonDifficulty(lua_State * L, Unit * ptr)
+{   /*
+	MODE_NORMAL_10MEN	=	0,
+	MODE_NORMAL_25MEN	=	1,
+	MODE_HEROIC_10MEN	=	2,
+	MODE_HEROIC_25MEN	=	3
+	*/
+	uint32 difficulty = CHECK_ULONG(L,1);
+	if (!ptr) return 0;
+	if (ptr->IsInInstance()) 
+	{
+		if (ptr->IsPlayer())
+		{
+			Player * plr = TO_PLAYER(ptr);
+			if (plr->GetGroup())(difficulty > 1 ? plr->GetGroup()->m_difficulty : plr->GetGroup()->m_raiddifficulty) = difficulty;
+			else
+			{
+				Instance * pInstance = sInstanceMgr.GetInstanceByIds(plr->GetMapId(), plr->GetInstanceID());
+				pInstance->m_difficulty = difficulty;
+			}
+		}
+		else
+		{
+			Instance * pInstance = sInstanceMgr.GetInstanceByIds(ptr->GetMapId(), ptr->GetInstanceID());
+			pInstance->m_difficulty = difficulty;
+		}
+	}
+	return 0;
+}
+
+int luaUnit_ExpandToRaid(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	plr->GetGroup()->ExpandToRaid();
+	return 0;
+}
+
+int luaUnit_CanAttack(lua_State * L, Unit * ptr)
+{
+	TEST_UNITPLAYER_RET();
+	Unit * target = CHECK_UNIT(L,1);
+	if (!target) return 0;
+	if (isAttackable(ptr, target))
+		lua_pushboolean(L, 1);
+	else
+		lua_pushboolean(L, 0);
+	return 1;
+}
+
+int luaUnit_GetInRangeEnemies(lua_State * L, Unit * ptr)
+{
+	/*uint32 count = 0;
+	lua_newtable(L);
+	for( set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); itr++)
+	{
+		if( (*itr) ->IsUnit() && !isFriendly(ptr, (*itr)) )
+		{
+			count++,
+			lua_pushinteger(L,count);
+			PUSH_UNIT(L,*itr);
+			lua_rawset(L,-3);
+		}
+	}*/
+	return 1;
+}
+
+int luaUnit_GetInRangeUnits(lua_State * L, Unit * ptr)
+{
+/*	uint32 count = 0;
+	lua_newtable(L);
+	for( set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); itr++)
+	{
+		if( (*itr) ->IsUnit() )
+		{
+			count++,
+			lua_pushinteger(L,count);
+			PUSH_UNIT(L,*itr);
+			lua_rawset(L,-3);
+		}
+	}*/
+	return 1;
+}
+
+int luaUnit_HasFlag(lua_State * L, Unit * ptr)
+{
+	TEST_UNITPLAYER_RET();
+	uint32 index = CHECK_ULONG(L,1);
+	uint32 flag = CHECK_ULONG(L,2);
+	lua_pushboolean(L, ptr->HasFlag(index,flag) ? 1 : 0);
+	return 1;
+}
+
+int luaUnit_TakeHonor(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER()
+	Player * plr = TO_PLAYER(ptr);
+	uint32 honor = CHECK_ULONG(L,1);
+	if (plr->m_honorToday-honor < 0 || plr->m_honorPoints-honor < 0)
+		return 0;
+	plr->m_honorToday -= honor;
+	plr->m_honorPoints -= honor;
+	plr->RecalculateHonor();
+	return 0;
+}
+
+int luaUnit_GetPower(lua_State * L, Unit * ptr)
+{
+	if (!ptr)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	int powertype = luaL_optint(L, 1, -1);
+	if (powertype == -1)
+		powertype = ptr->GetPowerType();
+	lua_pushnumber(L, ptr->GetPower(powertype));
+	return 1;
+}
+
+int luaUnit_GetMaxPower(lua_State * L, Unit * ptr)
+{
+	if (!ptr)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	int powertype = luaL_optint(L, 1, -1);
+	if (powertype == -1)
+		powertype = ptr->GetPowerType();
+	lua_pushnumber(L, ptr->GetMaxPower(powertype));
+	return 1;
+}
+
+int luaUnit_SetPowerType(lua_State * L, Unit * ptr)
+{/* POWER_TYPE_MANA         = 0,
+	POWER_TYPE_RAGE         = 1,
+	POWER_TYPE_FOCUS        = 2,
+	POWER_TYPE_ENERGY       = 3,
+	POWER_TYPE_HAPPINESS    = 4,
+	POWER_TYPE_RUNES        = 5,
+	POWER_TYPE_RUNIC_POWER  = 6 */
+	int type = luaL_checkint(L, 1);
+	if(!ptr || type < 0)
+		return 0;
+	ptr->SetPowerType(type);
+	return 0;
+}
+
+int luaUnit_SetMaxPower(lua_State * L, Unit * ptr)
+{
+	int amount = luaL_checkint(L,1);
+	int powertype = luaL_optint(L, 2, -1);
+	if (!ptr || amount < 0) return 0;
+	if (powertype == -1)
+		powertype = ptr->GetPowerType();
+	ptr->SetMaxPower(powertype, amount);
+	return 0;
+}
+
+int luaUnit_SetPower(lua_State * L, Unit * ptr)
+{
+	int amount = luaL_checkint(L,1);
+	int powertype = luaL_optint(L, 2, -1);
+	if (!ptr || amount < 0) return 0;
+	if (powertype == -1)
+		powertype = ptr->GetPowerType();
+	ptr->SetPower(powertype, amount);
+	return 0;
+}
+
+int luaUnit_SetPowerPct(lua_State * L, Unit * ptr)
+{
+	int amount = luaL_checkint(L,1);
+	int powertype = luaL_optint(L, 2, -1);
+	if (!ptr || amount < 0) return 0;
+	if (powertype == -1)
+		powertype = ptr->GetPowerType();
+	ptr->SetPower( powertype, (int)(amount/100) * (ptr->GetMaxPower(powertype)) );
+	return 0;
+}
+
+int luaUnit_GetPowerType(lua_State * L, Unit * ptr)
+{
+	if (!ptr) return 0;
+	lua_pushinteger(L, ptr->GetPowerType());
+	return 1;
+}
+
+int luaUnit_GetPowerPct(lua_State * L, Unit * ptr)
+{
+	if (!ptr)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	int powertype = luaL_optint(L, 1, -1);
+	if (powertype == -1)
+		powertype = ptr->GetPowerType();
+	lua_pushnumber(L, (int)(ptr->GetPower(powertype) * 100.0f / ptr->GetMaxPower(powertype)));
+	return 1;
+}
+
+int luaUnit_LearnSpells(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER_RET()
+	if(!strcmp("table",luaL_typename(L,1)) )
+	{
+		int table = lua_gettop(L);
+		lua_pushnil(L);
+		while(lua_next(L,table) != 0)
+		{
+			if(lua_isnumber(L,-1) )
+				TO_PLAYER(ptr)->addSpell(CHECK_ULONG(L,-1));
+			lua_pop(L,1);
+		}
+		lua_pushboolean(L,1);
+		lua_replace(L,table);
+		lua_settop(L,table);
+	}
+	else
+	{
+		lua_settop(L,0);
+		lua_pushboolean(L,0);
+	}
+	return 1;
+}
+
+int luaUnit_SetPacified(lua_State * L, Unit * ptr)
+{
+	bool pacified = CHECK_BOOL(L, 1);
+	if (!ptr)
+		return 0;
+	ptr->m_pacified = pacified ? 1 : 0;
+	if (pacified)
+		ptr->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED | UNIT_FLAG_SILENCED);
+	else
+		ptr->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED | UNIT_FLAG_SILENCED);
+	return 0;
 }
 
 #endif // UNIT_FUNCTIONS_H

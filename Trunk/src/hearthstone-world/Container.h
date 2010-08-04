@@ -49,6 +49,7 @@ public:
 	bool SafeFullRemoveItemFromSlot(int16 slot); //destroys item fully
 
 	void SaveBagToDB(int16 slot, bool first, QueryBuffer * buf);
+	uint32 GetSlotCount() {return GetUInt32Value(CONTAINER_FIELD_NUM_SLOTS);}
 
 protected:
 	Item* m_Slot[72];

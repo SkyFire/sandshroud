@@ -1359,6 +1359,8 @@ public:
 	LocationVector* m_transportPosition;
 	float m_TransporterUnk;
 	bool m_lockTransportVariables;
+    uint32 GetMaxPower( uint32 index ){ return GetUInt32Value( UNIT_FIELD_MAXPOWER1 + index ); }
+    void SetMaxPower( uint32 index, uint32 value ){SetUInt32Value(UNIT_FIELD_MAXPOWER1+index,value );}
 
 	// Movement Info.
 	MovementInfo* GetMovementInfo() { return new MovementInfo(movement_info); }

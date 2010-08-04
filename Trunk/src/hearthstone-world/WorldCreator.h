@@ -260,6 +260,27 @@ public:
 	//Find saved instance for player at given mapid
 	Instance* GetSavedInstance(uint32 map_id, uint32 guid, uint32 difficulty);
 	InstanceMap * GetInstancesForMap(uint32 map_id) {return m_instances[map_id];}
+	Instance* GetInstanceByIds(uint32 mapid, uint32 instanceId)
+	{
+		if(mapid > NUM_MAPS)
+			return NULL;
+		if(mapid == NUM_MAPS)
+		{
+			Instance *in;
+			for(uint32 i=0; i<NUM_MAPS; ++i)
+			{
+				in = GetInstanceByIds(i, instanceId);
+				if(in != NULL)
+					return in;
+			}
+			return NULL;
+		}
+		InstanceMap *map = m_instances[mapid];
+		if(map == NULL)
+			return NULL;
+		InstanceMap::iterator instance = map->find(instanceId);
+		return instance == map->end() ? NULL : instance->second;
+	}
 
 private:
 	void _LoadInstances();

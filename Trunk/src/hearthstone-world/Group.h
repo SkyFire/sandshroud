@@ -238,6 +238,8 @@ public:
 	HEARTHSTONE_INLINE int8 GetRaidDifficulty() { return m_raiddifficulty; }
 	HEARTHSTONE_INLINE void SetDifficulty(uint8 diff) { m_difficulty = diff; }
 	HEARTHSTONE_INLINE void SetRaidDifficulty(uint8 diff) { m_raiddifficulty = diff; }
+	uint8 m_difficulty;
+	uint8 m_raiddifficulty;
 
 protected:
 	PlayerInfo * m_Leader;
@@ -257,8 +259,6 @@ protected:
 	Mutex m_groupLock;
 	bool m_dirty;
 	bool m_updateblock;
-	uint8 m_difficulty;
-	uint8 m_raiddifficulty;
 	uint8 m_groupFlags;
 };
 

@@ -401,9 +401,9 @@ public:
 
 	HEARTHSTONE_INLINE size_t GetInRangeCount() { return m_objectsInRange.size(); }
 	HEARTHSTONE_INLINE size_t GetInRangePlayersCount() { return m_inRangePlayers.size();}
-	HEARTHSTONE_INLINE InRangeSet::iterator GetInRangeSetBegin() { return m_objectsInRange.begin(); }
-	HEARTHSTONE_INLINE InRangeSet::iterator GetInRangeSetEnd() { return m_objectsInRange.end(); }
-	HEARTHSTONE_INLINE InRangeSet::iterator FindInRangeSet(Object* obj) { return m_objectsInRange.find(obj); }
+	InRangeSet::iterator GetInRangeSetBegin() { return m_objectsInRange.begin(); }
+	InRangeSet::iterator GetInRangeSetEnd() { return m_objectsInRange.end(); }
+	InRangeSet::iterator FindInRangeSet(Object * obj) { return m_objectsInRange.find(obj); }
 
 	void RemoveInRangeObject(InRangeSet::iterator itr)
 	{ 
