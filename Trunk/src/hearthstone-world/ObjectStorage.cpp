@@ -238,7 +238,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	// Load AI Agents
 	if(Config.MainConfig.GetBoolDefault("Server", "LoadAIAgents", true))
 	{
-		QueryResult* result = WorldDatabase.Query( "SELECT * FROM ai_agents" );
+		QueryResult* result = WorldDatabase.Query( "SELECT Entry,difficulty,Type+0,Chance,MaxCount,Spell,SpellType+0,TargetType+0,CoolDown,floatMisc1,Misc2 FROM ai_agents" );
 
 		if( result != NULL )
 		{
