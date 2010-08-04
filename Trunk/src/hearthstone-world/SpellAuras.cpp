@@ -2923,7 +2923,6 @@ void Aura::SpellAuraDummy(bool apply)
 				Player* plr = TO_PLAYER(GetCaster());
 				if(apply)
 				{
-					SetDuration(60000); // Set time left for stack bug reasons.
 					if(stackSize == 1)
 					{
 						plr->RemoveAura(72523);
@@ -2943,7 +2942,8 @@ void Aura::SpellAuraDummy(bool apply)
 						plr->CastSpell(plr, 73422, false);
 						plr->RemoveAura(72521);
 						plr->RemoveAura(72523);
-						plr->RemoveAura(71905);
+						// Remove the aura after we are done with it.
+						sEventMgr.AddEvent(this, &Aura::Remove, EVENT_AURA_REMOVE, 50, 0, 0);
 					}
 				}
 				else
