@@ -238,7 +238,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	// Load AI Agents
 	if(Config.MainConfig.GetBoolDefault("Server", "LoadAIAgents", true))
 	{
-		QueryResult* result = WorldDatabase.Query( "SELECT Entry,Type+0,Chance,MaxCount,Spell,SpellType+0,TargetType+0,CoolDown,floatMisc1,Misc2 FROM ai_agents" );
+		QueryResult* result = WorldDatabase.Query( "SELECT * FROM ai_agents" );
 
 		if( result != NULL )
 		{
@@ -279,32 +279,32 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					if( spe == NULL )
 					{
 						WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u' AND spell = '%u'", entry, spellID);
-						Log.Warning("AIAgent", "Agent skipped, NPC %u tried to add non-existing Spell %u.", fields[0].GetUInt32(), fields[4].GetUInt32());
+						Log.Warning("AIAgent", "Agent skipped, NPC %u tried to add non-existing Spell %u.", entry, spellID);
 						continue;
 					}
 
 					if(difficulty > 3 || difficulty < -1)
 					{
-						Log.Warning("AIAgent", "Agent skipped, wrong difficulty type in npc %u", fields[0].GetUInt32());
+						Log.Warning("AIAgent", "Agent skipped, wrong difficulty type %i in npc %u", difficulty, entry);
 
 						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
 							WorldDatabase.Execute("UPDATE ai_agents SET `difficulty` = '-1' where entry = '%u' AND difficulty = '%i'", entry, difficulty);
-						continue;
+						difficulty = -1;
 					}
 
 					sp = new AI_Spell;
 					sp->entryId = entry;
 					sp->agent = agent;
-					sp->procChance = fields[2].GetUInt32();
-					sp->procCount = fields[3].GetUInt32();
+					sp->procChance = fields[3].GetFloat();
+					sp->procCount = fields[4].GetUInt32();
 					sp->spell = spe;
-					sp->spellType = fields[5].GetUInt8();
-					sp->spelltargetType = fields[6].GetUInt8();
+					sp->spellType = fields[6].GetUInt8();
+					sp->spelltargetType = fields[7].GetUInt8();
 					if( spe->c_is_flags & SPELL_FLAG_CASTED_ON_FRIENDS && !(sp->spelltargetType == TTYPE_OWNER))//just to make sure ;)
 						sp->spelltargetType = TTYPE_CASTER;
 					sp->cooldown = (tcd <0 ? 0 : tcd);
-					sp->floatMisc1 = fields[8].GetFloat();
-					sp->Misc2 = fields[9].GetUInt32();
+					sp->floatMisc1 = fields[9].GetFloat();
+					sp->Misc2 = fields[10].GetUInt32();
 					sp->autocast_type=(uint32)-1;
 					sp->custom_pointer=false;
 					sp->procCounter=0;

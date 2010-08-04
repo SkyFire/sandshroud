@@ -604,7 +604,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 
 		SpellEntry* sp = dbcSpell.LookupEntry( itr2->spellId );
 		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
-		if (sp == NULL)
+		if(sp == NULL)
 			continue;
 
 		//this requires some specific spell check,not yet implemented

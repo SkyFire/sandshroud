@@ -973,7 +973,7 @@ void InstanceMgr::BuildSavedInstancesForPlayer(Player* plr)
 					in = itr->second;
 					++itr;
 
-					if( in->m_mapInfo->type == INSTANCE_NONRAID && PlayerOwnsInstance(in, plr))
+					if( in->m_mapInfo->type == INSTANCE_NONRAID && (PlayerOwnsInstance(in, plr) >= OWNER_CHECK_OK) )
 					{
 						m_mapLock.Release();
 
@@ -1023,6 +1023,7 @@ void InstanceMgr::BuildSavedRaidInstancesForPlayer(Player* plr)
 					data << uint32(in->m_expiration - UNIXTIME);
 				else
 					data << uint32(0);
+
 				++counter;
 			}
 		}
