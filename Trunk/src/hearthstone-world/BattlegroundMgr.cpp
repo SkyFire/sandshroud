@@ -992,7 +992,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 		return;
 
 	data->Initialize(MSG_PVP_LOG_DATA);
-	data->reserve(10*(m_players[0].size()+m_players[1].size())+50);
+	data->reserve(1+1+4+40*(m_players[0].size()+m_players[1].size()));
 
 	BGScore * bs;
 	*data << uint8(IsArena());
@@ -1031,6 +1031,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 
 		*data << uint64(0);
 	}
+
 	*data << uint8(m_ended);
 	if(m_ended)
 	{
@@ -1049,11 +1050,14 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 	{
 		for(set<Player*>::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 		{
-			if( (*itr)->m_isGmInvisible ) continue;
-			*data << (*itr)->GetGUID();
-			bs = &(*itr)->m_bgScore;
-			*data << bs->KillingBlows;
+			// Crow: TODO: Show invisible GMs who are PvPing.
+			if( (*itr)->m_isGmInvisible )
+				continue;
 
+			bs = &(*itr)->m_bgScore;
+
+			*data << (*itr)->GetGUID();
+			*data << bs->KillingBlows;
 			if(IsArena())
 				*data << uint8((*itr)->m_bgTeam);
 			else
@@ -1062,6 +1066,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 				*data << bs->Deaths;
 				*data << bs->BonusHonor;
 			}
+
 			*data << bs->DamageDone;
 			*data << bs->HealingDone;
 
@@ -1480,32 +1485,36 @@ void CBattleground::PlaySoundToTeam(uint32 Team, uint32 Sound)
 
 void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queueSlot)
 {
-	if( queueSlot > 2 ) return;
-	//Log.Notice("BattlegroundManager", "Sending updated Battleground queues for %u.", queueSlot);
-	WorldPacket data(SMSG_BATTLEFIELD_STATUS, 32);
+	if( queueSlot > 2 )
+		return;
+
+	WorldPacket data(SMSG_BATTLEFIELD_STATUS, 40);
+	data << uint32(queueSlot);
 	if( plr->m_bg && plr->m_bgSlot == queueSlot)
 	{
 		// Perform a manual update: this BG
-		data << uint16(0); // 3.3
-		data << uint32(queueSlot);
 		data << uint8(0) << uint8(2);
 		data << plr->m_bg->GetType();
 		data << uint16(0x1F90);
+		data << uint8(0);
+		data << uint8(0);
 		data << plr->m_bg->GetMapMgr()->GetInstanceID();
 		data << uint8(plr->m_bg->IsArena() ? 1 : 0);
 		data << uint32(3);
 		data << plr->m_bg->GetMapMgr()->GetMapId();
+		data << uint64(0);
 		data << uint32(0);
 		data << uint32(60);
 		data << uint8(1); // Normal BG queue, 0 = arena?
 		plr->GetSession()->SendPacket(&data);
 		return;
 	}
+
 	// We're no longer queued!
 	if( !plr->m_bgIsQueued[queueSlot] && !plr->m_pendingBattleground[queueSlot])
 	{
 		//Log.Notice("BattlegroundManager", "No queue slot active for %u.", queueSlot);
-		data << uint32(queueSlot) << uint64(0);
+		data << uint64(0);
 		plr->GetSession()->SendPacket(&data);
 		return;
 	}
@@ -1533,19 +1542,20 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 		data << uint8(0xA);
 		data << uint32(6);
 		data << uint16(0x1F90);
+		data << uint8(0);
+		data << uint8(0);
 		data << uint32(11);
 		data << uint8(plr->m_bgRatedQueue ? 1 : 0); // Rated?
-		data << uint16(1); // 3.3
 	}
 	else
 	{
-		data << uint32(queueSlot);
 		data << uint8(0) << uint8(2);
 		data << Type;
 		data << uint16(0x1F90);
+		data << uint8(0);
+		data << uint8(0);
 		data << plr->m_bgQueueInstanceId[queueSlot];
 		data << uint8(0);
-		data << uint16(0); // 3.3
 	}
 	
 	// Im in a BG
@@ -1560,13 +1570,13 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 	{
 		data << uint32(2);
 		data << plr->m_pendingBattleground[queueSlot]->GetMapMgr()->GetMapId();
+		data << uint64(0);
 		data << uint32(0); // Time
 		plr->GetSession()->SendPacket(&data);
 		return;
 	}
 
-	data << uint32(1);
-	// And we're waiting...
+	data << uint32(1); // And we're waiting...
 	data << uint32(GetAverageQueueTime(Type)*1000);		// average time in msec
 	data << uint32(0);
 	plr->GetSession()->SendPacket(&data);
