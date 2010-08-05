@@ -3796,3 +3796,13 @@ void AIInterface::CheckHeight()
 		m_Unit->UpdateVisibility();
 	}
 }
+
+uint32 AIInterface::GetMovementTime(float distance)
+{
+	if (m_moveFly)
+		return m_flySpeed? float2int32(distance/m_flySpeed):0xFFFFFFFF;
+	else if (m_moveRun)
+		return m_runSpeed? float2int32(distance/m_runSpeed):0xFFFFFFFF;
+	else
+		return m_walkSpeed? float2int32(distance/m_walkSpeed):0xFFFFFFFF;
+}

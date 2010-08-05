@@ -1684,6 +1684,10 @@ public:
 	void SpellEffectForceCast(uint32 i);
 	void SpellEffectSetTalentSpecsCount(uint32 i);
 	void SpellEffectActivateTalentSpec(uint32 i);
+	void SpellEffectDisengage(uint32 i);
+	void SpellEffectClearFinishedQuest(uint32 i);
+	void SpellEffectApplyDemonAura(uint32 i);
+	void SpellEffectRemoveAura(uint32 i);
 
 	// Spell Targets Handlers
 	void SpellTargetNULL(uint32 i, uint32 j);

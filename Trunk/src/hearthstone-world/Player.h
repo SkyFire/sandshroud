@@ -2292,6 +2292,7 @@ public:
 	HEARTHSTONE_INLINE const uint8 *GetTalentInspectBuffer() { return m_talentInspectBuffer; }
 	void UpdateTalentInspectBuffer();
 	static void InitializeTalentInspectSupport();
+	void knockback( float Orientation, int32 basepoint, uint32 miscvalue, bool disengage = false );
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);

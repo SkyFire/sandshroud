@@ -522,5 +522,6 @@ public:
 	void CheckHeight();
 	bool CheckCurrentTarget();
 	bool TargetUpdateCheck(Unit* ptr);
+	uint32 GetMovementTime(float distance);
 };
 #endif

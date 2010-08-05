@@ -12958,3 +12958,43 @@ uint32 Player::GetSpellForShapeshiftForm(uint8 ss, bool spellchecks)
 	}
 	return 0;
 }
+
+void Player::knockback( float Orientation, int32 basepoint, uint32 miscvalue, bool disengage )
+{
+	float dx, dy;
+	float value1 = float( basepoint );
+	float value2 = float( miscvalue );
+	float proportion;
+	float multiplier;
+
+	if( disengage )
+		multiplier = -1.0f;
+	else
+		multiplier = 1.0f;
+
+	if( value2 != 0 )
+		proportion = value1 / value2;
+	else
+		proportion = 0;
+
+	if(proportion)
+	{
+		value1 = value1 / (10 * proportion);
+		value2 = value2 / 10 * proportion;
+	}
+	else
+	{
+		value2 = value1 / 10;
+		value1 = 0.1f;
+	}
+	dx = sinf( Orientation );
+	dy = cosf( Orientation );
+	WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
+	data << GetNewGUID();
+	data << uint32( getMSTime() );
+	data << float( multiplier * dy );
+	data << float( multiplier * dx );
+	data << float( value1 );
+	data << float( -value2 );	
+	GetSession()->SendPacket( &data );	
+}

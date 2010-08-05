@@ -159,17 +159,17 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectNULL,						// unknown - 131 // test spell
 	&Spell::SpellEffectNULL,						// unknown - 132 // no spells
 	&Spell::SpellEffectNULL,						// SPELL_EFFECT_FORGET_SPECIALIZATION - 133 // http://www.thottbot.com/s36441 // I think this is a gm/npc spell
-	&Spell::SpellEffectKillCredit,				  // SPELL_EFFECT_KILL_CREDIT - 134  misc value is creature entry
+	&Spell::SpellEffectKillCredit,					// SPELL_EFFECT_KILL_CREDIT - 134  misc value is creature entry
 	&Spell::SpellEffectNULL,						// unknown - 135 // no spells
 	&Spell::SpellEffectRestoreHealthPct,			// Restore Health % - 136 // http://www.wowhead.com/?spell=48982
 	&Spell::SpellEffectRestoreManaPct,				// Restore Mana % - 137 // http://www.thottbot.com/s41542
-	&Spell::SpellEffectNULL,						// unknown - 138 // related to superjump or even "*jump" spells http://www.thottbot.com/?e=Unknown%20138
-	&Spell::SpellEffectNULL,						// unknown - 139 // no spells
+	&Spell::SpellEffectDisengage,					// unknown - 138 // related to superjump or even "*jump" spells http://www.thottbot.com/?e=Unknown%20138
+	&Spell::SpellEffectClearFinishedQuest,			// unknown - 139 // no spells
 	&Spell::SpellEffectTeleportUnits,				//SPELL_EFFECT_TELEPORT_UNITS - 140 IronForge teleport / portal only it seems
 	&Spell::SpellEffectNULL,						// unknown - 141 // triggers spell, magic one,  (Mother spell) http://www.thottbot.com/s41065
 	&Spell::SpellEffectTriggerSpellWithValue,		// unknown - 142 // triggers some kind of "Put spell on target" thing... (dono for sure) http://www.thottbot.com/s40872 and http://www.thottbot.com/s33076
-	&Spell::SpellEffectNULL,						// Apply area aura- 143 // Master -> deamon effecting spell, http://www.thottbot.com/s25228 and http://www.thottbot.com/s35696
-	&Spell::SpellEffectNULL,						// unknown - 144 Spectral Blast
+	&Spell::SpellEffectApplyDemonAura,				// 143  http://www.thottbot.com/s25228 and http://www.thottbot.com/s35696
+	&Spell::SpellEffectKnockBack,					// unknown - 144 Spectral Blast
 	&Spell::SpellEffectNULL,						// unknown - 145 Black Hole Effect
 	&Spell::SpellEffectNULL,						// unknown - 146  unused
 	&Spell::SpellEffectNULL,						// unknown - 147 // Torch Tossing Training Failure
@@ -189,7 +189,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectSetTalentSpecsCount,			// 161 Sets number of talent specs available to the player
 	&Spell::SpellEffectActivateTalentSpec,			// 162 Activates one of talent specs
 	&Spell::SpellEffectNULL,						// 163
-	&Spell::SpellEffectNULL,						// 164
+	&Spell::SpellEffectRemoveAura,					// 164
 };
 
 void Spell::SpellEffectNULL(uint32 i)
@@ -7117,39 +7117,54 @@ void Spell::SummonNonCombatPet(uint32 i)
 
 void Spell::SpellEffectKnockBack(uint32 i)
 {
-	if( unitTarget == NULL ||  playerTarget == NULL || m_caster == NULL )
+	if(unitTarget == NULL || !unitTarget->isAlive())
 		return;
-
-	float dx, dy;
-	float value1 = float(m_spellInfo->EffectBasePoints[i]+1);
-	float value2 = float(m_spellInfo->EffectMiscValue[i]);
-	float proportion;
-	value2 ? proportion = value1/value2 : proportion = 0;
-
-	if(proportion)
-	{
-		value1 = value1 / (10 * proportion);
-		value2 = value2 / 10 * proportion;
-	}
+	if(unitTarget->IsPlayer())
+		playerTarget->knockback( m_caster->GetOrientation(), m_spellInfo->EffectBasePoints[ i ] + 1, m_spellInfo->EffectMiscValue[ i ] );
 	else
 	{
-		value2 = value1 / 10;
-		value1 = 0.1f;
-	}
-
-	dx = sinf(m_caster->GetOrientation());
-	dy = cosf(m_caster->GetOrientation());
-
-	WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
-	data << unitTarget->GetNewGUID();
-	data << getMSTime();
-	data << dy << dx;
-	data << value1;
-	data << -value2;
-	if (playerTarget!=NULL)
-	{
-		playerTarget->GetSession()->SendPacket(&data);
-		playerTarget->DelaySpeedHack( 5000 );
+		float dx, dy;
+		float value1 = float(m_spellInfo->EffectBasePoints[i]+1);
+		float value2 = float(m_spellInfo->EffectMiscValue[i]);
+		float proportion;
+		value2 ? proportion = value1/value2 : proportion = 0;
+		if(proportion)
+		{
+			value1 = value1 / (10 * proportion);
+			value2 = value2 / 10 * proportion;
+		}
+		else
+		{
+			value2 = value1 / 10;
+			value1 = 0.1f;
+		}
+		float angle = m_caster->calcAngle(m_caster->GetPositionX(), m_caster->GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY()) * float(M_PI) / 180.0f;
+		dx = cosf(angle);
+		dy = sinf(angle);
+		float x = unitTarget->GetPositionX() + (value1 * dx);
+		float y = unitTarget->GetPositionY() + (value1 * dy);
+		float z = unitTarget->GetPositionZ();
+		float dist = unitTarget->CalcDistance(x, y, z);
+		uint32 movetime = unitTarget->GetAIInterface()->GetMovementTime(dist);
+		unitTarget->SetPosition(x, y, z, 0);
+		WorldPacket data(SMSG_MONSTER_MOVE, 50);
+		data << unitTarget->GetNewGUID();
+		data << uint8(0);
+		data << unitTarget->GetPositionX();
+		data << unitTarget->GetPositionY();
+		data << unitTarget->GetPositionZ();
+		data << getMSTime();
+		data << uint8(0);
+		data << uint32(MONSTER_MOVE_FLAG_JUMP); //move flags
+		data << movetime;
+		data << value2; 
+		data << uint32(0); 
+		data << uint32(1);
+		data << x << y << z;
+		unitTarget->SendMessageToSet(&data, true);
+		unitTarget->GetAIInterface()->StopMovement(movetime);
+		if (unitTarget->GetCurrentSpell() != NULL)
+			unitTarget->GetCurrentSpell()->cancel();
 	}
 }
 
@@ -8460,4 +8475,47 @@ void Spell::SpellEffectActivateTalentSpec(uint32 i)
 		p_caster->SetPower(POWER_TYPE_RUNE, 0);
 		break;
 	}
+}
+
+void Spell::SpellEffectDisengage(uint32 i)
+{
+	if( playerTarget == NULL || !playerTarget->isAlive() || m_caster == NULL )
+		return;
+	
+	playerTarget->knockback( m_caster->GetOrientation(), GetSpellProto()->EffectBasePoints[ i ] + 1, GetSpellProto()->EffectMiscValue[ i ], true );
+}
+
+void Spell::SpellEffectClearFinishedQuest(uint32 i)
+{
+	if (playerTarget == NULL)
+		return;
+
+	playerTarget->m_finishedQuests.erase(GetSpellProto()->EffectMiscValue[i]);
+}
+
+void Spell::SpellEffectApplyDemonAura( uint32 i )
+{
+	if (u_caster == NULL || !u_caster->IsPet() || TO_PET(u_caster)->GetPetOwner() == NULL)
+		return;
+	Aura* pAura = NULL;
+
+	pAura = new Aura(m_spellInfo, GetDuration(), u_caster, u_caster);
+	Aura* otheraura = new Aura(m_spellInfo, GetDuration(), u_caster, TO_PET(u_caster)->GetPetOwner());
+	pAura->targets.insert(TO_PET(u_caster)->GetPetOwner()->GetGUID());
+	for (uint32 j=0; j<3; ++j)
+	{
+		pAura->AddMod(m_spellInfo->EffectApplyAuraName[j], j == i? damage : CalculateEffect(j, unitTarget), m_spellInfo->EffectMiscValue[j], j);
+		otheraura->AddMod(m_spellInfo->EffectApplyAuraName[j], j == i? damage : CalculateEffect(j, unitTarget), m_spellInfo->EffectMiscValue[j], j);
+	}
+
+	u_caster->AddAura(pAura);
+	TO_PET(u_caster)->GetPetOwner()->AddAura(otheraura);
+}
+
+void Spell::SpellEffectRemoveAura(uint32 i)
+{
+    if (!unitTarget)
+        return;
+
+	unitTarget->RemoveAura(m_spellInfo->EffectTriggerSpell[i], unitTarget->GetGUID());
 }
