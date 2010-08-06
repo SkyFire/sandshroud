@@ -4352,6 +4352,19 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 			// the effect of the talent is to add 1 combo point but when triggering spell finishes it will clear the extra combo point
 			p_caster->m_spellcomboPoints = 0;	
 		}
+		if( GetSpellProto()->Id == 49020 )
+		{
+			if( u_caster != NULL )
+			{
+				uint32 diseasecount = 0;
+				uint32 diseases[2] = { 55078, 55095 };
+				for(int8 i = 0; i < 2; i++)
+					if(unitTarget->HasAura(diseases[i]))
+						diseasecount++;
+				if(diseasecount)
+					value += value*(0.125f*diseasecount);
+			}
+		}
 		SpellOverrideMap::iterator itr = p_caster->mSpellOverrideMap.find(m_spellInfo->Id);
 		if(itr != p_caster->mSpellOverrideMap.end())
 		{

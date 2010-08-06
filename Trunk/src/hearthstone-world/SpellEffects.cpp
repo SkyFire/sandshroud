@@ -1148,16 +1148,6 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 		/*****************************************
 		*	Class Spells
 		*****************************************/
-	case 49576: // Death Grip
-		{
-			if( p_caster == NULL || unitTarget == NULL )
-				return;
-
-			// Move Effect
-			unitTarget->CastSpellAoF( p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), dbcSpell.LookupEntryForced(49575), true); 
-			p_caster->CastSpell( unitTarget, 51399, true ); // Taunt Effect
-		}break;
-
 		/*************************
 		* WARRIOR SPELLS
 		*************************/
@@ -1807,6 +1797,36 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			}
 		}break;
 
+	case 49020:
+		{
+			if(u_caster != NULL && unitTarget != NULL)
+			{
+				uint32 diseasecount = 0;
+				uint32 diseases[2] = { 55078, 55095 };
+				for(int8 i = 0; i < 2; i++)
+					if(unitTarget->HasAura(diseases[i]))
+						diseasecount++;
+				if(diseasecount)
+					unitTarget->RemoveAura(diseases[i]);
+			}
+		
+		}break;
+
+	case 49576: // Death Grip
+		{
+			if( p_caster == NULL || unitTarget == NULL )
+				return;
+
+			// Move Effect
+			unitTarget->CastSpellAoF( p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), dbcSpell.LookupEntryForced(49575), true); 
+			p_caster->CastSpell( unitTarget, 51399, true ); // Taunt Effect
+		}break;
+
+	case 49203: //Hungering Cold 
+		{
+                unitTarget->CastSpell(u_caster, 51209, true);
+                return;
+		}break;
 	/*************************
 		Non-Class spells
 		- Done
