@@ -2450,8 +2450,10 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		buf->AddQueryStr(ss.str());
 
 	//Save Other related player stuff
-
 	sHookInterface.OnPlayerSaveToDB(TO_PLAYER(this), buf);
+
+	// Player Info Position stuff
+	_updatePlayerInfo();
 
 	// Skills
 	_SaveSkillsToDB(buf);
@@ -2500,6 +2502,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	if(buf)
 		CharacterDatabase.AddQueryBuffer(buf);
 }
+
 void Player::_SaveSkillsToDB(QueryBuffer * buf)
 {
 	// if we have nothing to save why save?
@@ -5066,6 +5069,16 @@ void Player::_LoadSkills(QueryResult * result)
 	_UpdateMaxSkillCounts();
 }
 
+void Player::_updatePlayerInfo()
+{
+	PlayerInfo* pInfo = getPlayerInfo();
+	pInfo->curInstanceID = m_instanceId;
+	pInfo->lastmapid = GetMapId();
+	pInfo->lastpositionx = m_position.x;
+	pInfo->lastpositiony = m_position.y;
+	pInfo->lastpositionz = m_position.z;
+	pInfo = NULL;
+}
 
 //From Mangos Project
 void Player::_LoadTutorials(QueryResult * result)

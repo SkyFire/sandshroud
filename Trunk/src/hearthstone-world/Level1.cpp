@@ -313,23 +313,18 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 		return false;
 
 	Player* chr = objmgr.GetPlayer( args, false );
-	if ( chr && chr->IsInWorld() )
+	if(chr && chr->IsInWorld())
 	{
-		char buf[256];
-		if( chr->IsBeingTeleported() ) {
-			snprintf((char*)buf,256, "%s is already being teleported.", chr->GetName());
-			SystemMessage( m_session, buf );
+		if(chr->IsBeingTeleported())
+		{
+			SystemMessage(m_session, "%s is already being teleported.", chr->GetName());
 			return true;
 		}
-		snprintf((char*)buf,256, "Appearing at %s's location.", chr->GetName());  // -- europa
-		SystemMessage( m_session, buf );
+
+		SystemMessage(m_session, "Appearing at %s's location.", chr->GetName());
 
 		if(!m_session->GetPlayer()->m_isGmInvisible)
-		{
-			char buf0[256];
-			snprintf((char*)buf0,256, "%s is appearing to your location.", m_session->GetPlayer()->GetName());
-			SystemMessageToPlr(chr, buf0);
-		}
+			SystemMessageToPlr(chr, "%s is appearing to your location.", m_session->GetPlayer()->GetName());
 
 		//If the GM is on the same map as the player, use the normal safeteleport method
 		if ( m_session->GetPlayer()->GetMapId() == chr->GetMapId() && m_session->GetPlayer()->GetInstanceID() == chr->GetInstanceID() )
@@ -340,9 +335,25 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 	}
 	else
 	{
-		char buf[256];
-		snprintf((char*)buf,256, "Player (%s) does not exist or is not logged in.", args);
-		SystemMessage(m_session, buf);
+		std::stringstream ss;
+		PlayerInfo* PI = objmgr.GetPlayerInfoByName(args);
+		if(PI)
+		{
+			if(!chr) // Send message telling
+				ss << "Player " << args << " is not logged in.";
+			else
+				ss << "Player " << args << " is not available.";
+
+			if(PI->lastpositionx != 0.0f && PI->lastpositiony != 0.0f)
+			{
+				m_session->GetPlayer()->SafeTeleport(PI->lastmapid, PI->curInstanceID, PI->lastpositionx, PI->lastpositiony, PI->lastpositionz+1.0f, 0.0f);
+				ss << "\nTeleporting to last known location of player " << args;
+			}
+		}
+		else
+			ss << "Player " << args << " does not exist.";
+
+		SystemMessage(m_session, ss.str().c_str());
 	}
 
 	return true;

@@ -576,7 +576,12 @@ struct PlayerInfo
 	uint32 gender;
 	uint32 cl;
 	uint32 team;
-	
+	uint32 curInstanceID;
+	uint32 lastmapid;
+	uint32 lastpositionx;
+	uint32 lastpositiony;
+	uint32 lastpositionz;
+
 	time_t lastOnline;
 	uint32 lastZone;
 	uint32 lastLevel;
@@ -593,6 +598,7 @@ struct PlayerInfo
 	ArenaTeam * arenaTeam[NUM_ARENA_TEAM_TYPES];
 	uint32 charterId[NUM_CHARTER_TYPES];
 };
+
 struct PlayerPet
 {
 	string name;
@@ -1995,6 +2001,8 @@ protected:
 	ByteBuffer mOutOfRangeIds;
 	SplineMap _splineMap;
 	/* End update system */
+
+	void _updatePlayerInfo();
 
 	void _LoadTutorials(QueryResult * result);
 	void _SaveTutorials(QueryBuffer * buf);

@@ -19,7 +19,6 @@
 
 #include "StdAfx.h"
 
-
 initialiseSingleton(CBattlegroundManager);
 typedef CBattleground*(*CreateBattlegroundFunc)( MapMgr* mgr,uint32 iid,uint32 group, uint32 type);
 
@@ -573,16 +572,17 @@ void CBattlegroundManager::EventQueueUpdate(bool forceStart)
 			for(it3 = m_queuedPlayers[i][j].begin(); it3 != m_queuedPlayers[i][j].end();)
 			{
 				it4 = it3++;
-                plr = objmgr.GetPlayer(*it4);
-				
+				plr = objmgr.GetPlayer(*it4);
+
 				if(!plr || GetLevelGrouping(plr->getLevel()) != j)
 				{
-                    m_queuedPlayers[i][j].erase(it4);
+					m_queuedPlayers[i][j].erase(it4);
 					continue;
 				}
 
 				uint32 queueSlot = plr->GetBGQueueSlotByBGType(i);
-				if(queueSlot >= 3) continue;
+				if(queueSlot >= 3)
+					continue;
 
 				if( !plr->m_bgIsQueued[queueSlot] )
 				{
@@ -1243,7 +1243,6 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 		/* This is where we actually teleport the player to the battleground. */	
 		plr->SafeTeleport(m_mapMgr,GetStartingCoords(plr->m_bgTeam));
 	}
-
 
 	m_mainLock.Release();
 }
