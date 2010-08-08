@@ -52,6 +52,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunOtherScripts", "..\src\s
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GM_Engine", "..\src\scripts\Win\projects\GMEngine.vcproj", "{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -138,6 +143,12 @@ Global
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|Win32.Build.0 = Release|Win32
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|x64.ActiveCfg = Release|x64
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|x64.Build.0 = Release|x64
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Debug|Win32.Build.0 = Debug|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Debug|x64.ActiveCfg = Debug|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Release|Win32.ActiveCfg = Release|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Release|Win32.Build.0 = Release|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

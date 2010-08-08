@@ -146,6 +146,19 @@ void ScriptMgr::LoadScripts()
 					FreeLibrary( itr->Handle );
 				}
 			}
+			else if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_GM )
+			{
+				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "GM", false) )
+				{
+					Log.Notice("ScriptMgr","Initializing GameMonkey script engine...");
+					itr->InitializeCall(this);
+					_handles.push_back( (SCRIPT_MODULE)itr->Handle );
+				}
+				else
+				{
+					FreeLibrary( (*itr).Handle );
+				}
+			}
 			else if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_AS )
 			{
 				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "AS", false) )
