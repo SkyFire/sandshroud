@@ -951,7 +951,7 @@ bool gmCodeGenPrivate::GenExprOpUnary(const gmCodeTreeNode * a_node, gmByteCodeG
     case CTNOT_UNARY_COMPLEMENT : return a_byteCode->Emit(BC_BIT_INV);
     default :
     {
-      if(m_log) m_log->LogEntry("error (%d) unkown operator", a_node->m_lineNumber);
+      if(m_log) m_log->LogEntry("error (%d) unknown operator", a_node->m_lineNumber);
     }
   }
   return false;
@@ -987,7 +987,7 @@ bool gmCodeGenPrivate::GenExprOpAr(const gmCodeTreeNode * a_node, gmByteCodeGen 
     case CTNOT_MINUS : return a_byteCode->Emit(BC_OP_SUB);
     default :
     {
-      if(m_log) m_log->LogEntry("error (%d) unkown arithmatic operator", a_node->m_lineNumber);
+      if(m_log) m_log->LogEntry("error (%d) unknown arithmatic operator", a_node->m_lineNumber);
     }
   }
   return false;
@@ -1008,7 +1008,7 @@ bool gmCodeGenPrivate::GenExprOpShift(const gmCodeTreeNode * a_node, gmByteCodeG
     case CTNOT_SHIFT_RIGHT : return a_byteCode->Emit(BC_BIT_SHR);
     default :
     {
-      if(m_log) m_log->LogEntry("error (%d) unkown shift operator", a_node->m_lineNumber);
+      if(m_log) m_log->LogEntry("error (%d) unknown shift operator", a_node->m_lineNumber);
     }
   }
   return false;
@@ -1033,7 +1033,7 @@ bool gmCodeGenPrivate::GenExprOpComparison(const gmCodeTreeNode * a_node, gmByte
     case CTNOT_NEQ : return a_byteCode->Emit(BC_OP_NEQ);
     default :
     {
-      if(m_log) m_log->LogEntry("error (%d) unkown comparison operator", a_node->m_lineNumber);
+      if(m_log) m_log->LogEntry("error (%d) unknown comparison operator", a_node->m_lineNumber);
     }
   }
   return false;
@@ -1055,7 +1055,7 @@ bool gmCodeGenPrivate::GenExprOpBitwise(const gmCodeTreeNode * a_node, gmByteCod
     case CTNOT_BIT_OR  : return a_byteCode->Emit(BC_BIT_OR);
     default :
     {
-      if(m_log) m_log->LogEntry("error (%d) unkown bitwise operator", a_node->m_lineNumber);
+      if(m_log) m_log->LogEntry("error (%d) unknown bitwise operator", a_node->m_lineNumber);
     }
   }
   return false;
@@ -1240,7 +1240,7 @@ bool gmCodeGenPrivate::GenExprConstant(const gmCodeTreeNode * a_node, gmByteCode
     }
     default:
     {
-      if(m_log) m_log->LogEntry("unkown constant type");
+      if(m_log) m_log->LogEntry("unknown constant type");
       return false;
     }
   }

@@ -103,7 +103,7 @@ void GMEngine::Reload()
 		m_machine->AddCPPOwnedGMObject(m_userObjects[i]);
 	}
 
-	sLog.outString("Compiling GameMonkey Scripts...");
+	Log.Notice("GMEngine", "Compiling GameMonkey Scripts...");
 
 #ifdef WIN32
 	/* compile the scripts */
@@ -141,7 +141,7 @@ void GMEngine::Reload()
 	free(list);
 #endif
 
-	printf("\nScripts compiled.\n\n");
+	Log.Notice("GMEngine", "Scripts compiled.");
 }
 
 void GMEngine::ExecuteScriptFile(const char *filename)
@@ -166,15 +166,17 @@ void GMEngine::ExecuteScriptFile(const char *filename)
 	m_variables[0].SetUser(m_userObjects[0]);
 
 	int threadid;
-	printf("  %s: ", strstr(filename, "/")+1);
+	printf("%s:\n	{\n", strstr(filename, "/")+1);
 	int no_errors = m_machine->ExecuteString(data, &threadid, true, filename, &m_variables[0]);
-	bool first=true;
+	bool first = true;
 	if(no_errors || m_machine->GetLog().GetEntry(first))
 	{
-		printf("Errors occured while compiling %s.\n", filename);
+		Log.Error("GMEngine", "Errors occured while compiling %s.", filename);
 		DumpErrors();
 	}
-	else printf("%u errors.\n", no_errors);
+	else
+		Log.Notice("GMEngine", "%u errors.", no_errors);
+	printf("	}\n");
 
 	delete [] data;
 }
@@ -186,7 +188,7 @@ void GMEngine::DumpErrors()
 	first = false;
 	while(message)
 	{
-		printf("GM_Debug:  %s", message);
+		printf("GM_Debug: %s", message);
 		message = m_machine->GetLog().GetEntry(first);
 	}
 	m_machine->GetLog().Reset();  //if not reset, will repeat last error over and over again

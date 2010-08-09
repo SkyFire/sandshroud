@@ -5072,23 +5072,26 @@ void Player::_LoadSkills(QueryResult * result)
 void Player::_updatePlayerInfo(bool newchar)
 {
 	PlayerInfo* pInfo = getPlayerInfo();
-	if(newchar || !m_position)
+	if(pInfo != NULL)
 	{
-		pInfo->curInstanceID = 0;
-		pInfo->lastmapid = 0;
-		pInfo->lastpositionx = 0;
-		pInfo->lastpositiony = 0;
-		pInfo->lastpositionz = 0;
+		if(newchar)
+		{
+			pInfo->curInstanceID = 0;
+			pInfo->lastmapid = 0;
+			pInfo->lastpositionx = 0;
+			pInfo->lastpositiony = 0;
+			pInfo->lastpositionz = 0;
+		}
+		else
+		{
+			pInfo->curInstanceID = m_instanceId;
+			pInfo->lastmapid = GetMapId();
+			pInfo->lastpositionx = m_position.x;
+			pInfo->lastpositiony = m_position.y;
+			pInfo->lastpositionz = m_position.z;
+		}
+		pInfo = NULL;
 	}
-	else
-	{
-		pInfo->curInstanceID = m_instanceId;
-		pInfo->lastmapid = GetMapId();
-		pInfo->lastpositionx = m_position.x;
-		pInfo->lastpositiony = m_position.y;
-		pInfo->lastpositionz = m_position.z;
-	}
-	pInfo = NULL;
 }
 
 //From Mangos Project
