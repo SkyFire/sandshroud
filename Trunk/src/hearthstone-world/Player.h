@@ -2002,7 +2002,7 @@ protected:
 	SplineMap _splineMap;
 	/* End update system */
 
-	void _updatePlayerInfo();
+	void _updatePlayerInfo(bool newchar);
 
 	void _LoadTutorials(QueryResult * result);
 	void _SaveTutorials(QueryBuffer * buf);

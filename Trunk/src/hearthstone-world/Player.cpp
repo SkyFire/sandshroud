@@ -2453,7 +2453,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	sHookInterface.OnPlayerSaveToDB(TO_PLAYER(this), buf);
 
 	// Player Info Position stuff
-	_updatePlayerInfo();
+	_updatePlayerInfo(bNewCharacter);
 
 	// Skills
 	_SaveSkillsToDB(buf);
@@ -5069,14 +5069,25 @@ void Player::_LoadSkills(QueryResult * result)
 	_UpdateMaxSkillCounts();
 }
 
-void Player::_updatePlayerInfo()
+void Player::_updatePlayerInfo(bool newchar)
 {
 	PlayerInfo* pInfo = getPlayerInfo();
-	pInfo->curInstanceID = m_instanceId;
-	pInfo->lastmapid = GetMapId();
-	pInfo->lastpositionx = m_position.x;
-	pInfo->lastpositiony = m_position.y;
-	pInfo->lastpositionz = m_position.z;
+	if(newchar || !m_position)
+	{
+		pInfo->curInstanceID = 0;
+		pInfo->lastmapid = 0;
+		pInfo->lastpositionx = 0;
+		pInfo->lastpositiony = 0;
+		pInfo->lastpositionz = 0;
+	}
+	else
+	{
+		pInfo->curInstanceID = m_instanceId;
+		pInfo->lastmapid = GetMapId();
+		pInfo->lastpositionx = m_position.x;
+		pInfo->lastpositiony = m_position.y;
+		pInfo->lastpositionz = m_position.z;
+	}
 	pInfo = NULL;
 }
 
