@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 
 #ifndef AUTHSOCKET_H
 #define AUTHSOCKET_H
@@ -65,6 +67,7 @@ public:
 	HEARTHSTONE_INLINE time_t GetLastRecv() { return last_recv; }
 	bool removedFromSet;
 	HEARTHSTONE_INLINE uint32 GetAccountID() { return m_account ? m_account->AccountId : 0; }
+	HEARTHSTONE_INLINE string GetAccountName() { return AccountName; }
 
 protected:
 

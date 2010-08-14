@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,16 +23,17 @@
 
 enum _errors
 {
-	CE_SUCCESS = 0x00,
-	CE_IPBAN=0x01,									  //2bd -- unable to connect (some internal problem)
-	CE_ACCOUNT_CLOSED=0x03,							 // "This account has been closed and is no longer in service -- Please check the registered email address of this account for further information.";
-	CE_NO_ACCOUNT=0x04,								 //(5)The information you have entered is not valid.  Please check the spelling of the account name and password.  If you need help in retrieving a lost or stolen password and account
-	CE_ACCOUNT_IN_USE=0x06,							 //This account is already logged in.  Please check the spelling and try again.
-	CE_PREORDER_TIME_LIMIT=0x07,
-	CE_SERVER_FULL=0x08,								//Could not log in at this time.  Please try again later.
-	CE_WRONG_BUILD_NUMBER=0x09,						 //Unable to validate game version.  This may be caused by file corruption or the interference of another program.
-	CE_UPDATE_CLIENT=0x0a,
-	CE_ACCOUNT_FREEZED=0x0c
+	CE_SUCCESS				= 0x00,
+	CE_IPBAN				= 0x01, // Unable to connect
+	CE_ACCOUNT_CLOSED		= 0x03,	// "This account has been closed and is no longer in service -- Please check the registered email address of this account for further information.";
+	CE_NO_ACCOUNT			= 0x04,	// The information you have entered is not valid. Please check the spelling of the account name and password. If you need help in retrieving a lost or stolen password, see <site> for more information
+	CE_ACCOUNT_IN_USE		= 0x06,	// This account is already logged in.  Please check the spelling and try again.
+	CE_PREORDER_TIME_LIMIT	= 0x07,
+	CE_SERVER_FULL			= 0x08,	// Could not log in to <game> at this time. Please try again later.
+	CE_WRONG_BUILD_NUMBER	= 0x09, // Unable to validate game version. This may be caused by file corruption or interference of another program. Please visit <site> for more information and possible solutions to this issue.
+	CE_UPDATE_CLIENT		= 0x0a, // Downloading
+	CE_ACCOUNT_FREEZED		= 0x0c, // This <game> account has been temporarily suspended. Please go to <site>/banned.html for further information
+	CE_ACCOUNT_PARENTAL		= 0x0f, // Access to this account has been blocked by parental controls. Your settings may be changed in your account preferences at <site>
 };
 
 AuthSocket::AuthSocket(SOCKET fd) : Socket(fd, 32768, 4096)
@@ -172,12 +174,10 @@ void AuthSocket::HandleChallenge()
 	}
 
 	// Look up the account information
-	Log.Notice("AuthChallenge","Account Name: \"%s\"", AccountName.c_str());
-
 	m_account = AccountMgr::getSingleton().GetAccount(AccountName);
 	if(m_account == 0)
 	{
-		DEBUG_LOG("AuthChallenge","Invalid account.");
+		DEBUG_LOG("AuthChallenge","Account Name: \"%s\" - Account state: INVALID", AccountName.c_str());
 
 		// Non-existant account
 		SendChallengeError(CE_NO_ACCOUNT);
@@ -189,17 +189,17 @@ void AuthSocket::HandleChallenge()
 	if(m_account->Banned == 1)
 	{
 		SendChallengeError(CE_ACCOUNT_CLOSED);
-		Log.Notice("AuthChallenge","Account closed state = %u", m_account->Banned);
+		Log.Notice("AuthChallenge","Account Name: \"%s\" - Account state: CLOSED", AccountName.c_str());
 		return;
 	}
 	else if(m_account->Banned > 0)
 	{
 		SendChallengeError(CE_ACCOUNT_FREEZED);
-		Log.Notice("AuthChallenge","Account frozen state = %u", m_account->Banned);
+		Log.Notice("AuthChallenge","Account Name: \"%s\" - Account state: FROZEN (%u)", AccountName.c_str(), m_account->Banned);
 		return;
 	}
 	else
-		Log.Notice("AuthChallenge","Account OK, banned state = %u", m_account->Banned);
+		Log.Notice("AuthChallenge","Account Name: \"%s\" - Account state: OK", AccountName.c_str());
 
 	// update cached locale
 	if(!m_account->forcedLocale)
@@ -486,7 +486,7 @@ void AuthSocket::OnRead()
 	last_recv = UNIXTIME;
 	if(Command < MAX_AUTH_CMD && Handlers[Command] != NULL)
 		(this->*Handlers[Command])();
-	else if(Command != 19)
+	else
 		Log.Notice("AuthSocket", "Unknown cmd %u", Command);
 }
 
@@ -678,9 +678,9 @@ void AuthSocket::HandleTransferResume()
 
 	GetReadBuffer().Remove(1);
 	uint64 size;
-	GetReadBuffer().Read(&size, sizeof(size));
-//	if(size >= m_patch->FileSize)
-//		return;
+	GetReadBuffer().Read(&size, 8);
+	if(size>=m_patch->FileSize)
+		return;
 
 	PatchMgr::getSingleton().BeginPatchJob(m_patch,this,(uint32)size);
 }

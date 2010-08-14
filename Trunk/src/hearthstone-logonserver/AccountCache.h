@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -231,6 +232,7 @@ public:
 	Realm*		  AddRealm(uint32 realm_id, Realm * rlm);
 	Realm*        GetRealm(uint32 realm_id);
 	int32		  GetRealmIdByName(string Name);
+	map<uint32, Realm*> GetRealmMap() { return m_realms; }
 	void		  RemoveRealm(uint32 realm_id);
 	void		  UpdateRealmStatus(uint32 realm_id, uint8 Color);
 	void		  SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss);

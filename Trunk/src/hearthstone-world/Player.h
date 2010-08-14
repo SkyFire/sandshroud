@@ -578,9 +578,10 @@ struct PlayerInfo
 	uint32 team;
 	uint32 curInstanceID;
 	uint32 lastmapid;
-	uint32 lastpositionx;
-	uint32 lastpositiony;
-	uint32 lastpositionz;
+	float lastpositionx;
+	float lastpositiony;
+	float lastpositionz;
+	float lastorientation;
 
 	time_t lastOnline;
 	uint32 lastZone;
@@ -2001,8 +2002,6 @@ protected:
 	ByteBuffer mOutOfRangeIds;
 	SplineMap _splineMap;
 	/* End update system */
-
-	void _updatePlayerInfo(bool newchar);
 
 	void _LoadTutorials(QueryResult * result);
 	void _SaveTutorials(QueryBuffer * buf);

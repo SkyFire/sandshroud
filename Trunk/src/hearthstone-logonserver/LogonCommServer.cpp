@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -140,7 +141,7 @@ void LogonCommServerSocket::HandlePacket(WorldPacket & recvData)
 		&LogonCommServerSocket::HandlePing,					// RCMSG_PING
 		NULL,												// RSMSG_PONG
 		NULL,/*Deprecated*/									// RCMSG_SQL_EXECUTE
-		NULL,/*Deprecated*/									// RCMSG_RELOAD_ACCOUNTS
+		&LogonCommServerSocket::HandleReloadAccounts,		// RCMSG_RELOAD_ACCOUNTS
 		&LogonCommServerSocket::HandleAuthChallenge,		// RCMSG_AUTH_CHALLENGE
 		NULL,												// RSMSG_AUTH_RESPONSE
 		NULL,												// RSMSG_REQUEST_ACCOUNT_CHARACTER_MAPPING
@@ -295,8 +296,24 @@ void LogonCommServerSocket::HandleSQLExecute(WorldPacket & recvData)
 
 void LogonCommServerSocket::HandleReloadAccounts(WorldPacket & recvData)
 {
-	printf("!! WORLD SERVER IS REQUESTING US TO RELOAD ACCOUNTS. THIS IS DEPRECATED AND IS BEING IGNORED. THE SERVER WAS: %s, PLEASE UPDATE IT.\n", GetRemoteIP().c_str());
-	//sAccountMgr.ReloadAccounts(true);
+	if( !IsServerAllowedMod( GetRemoteAddress().s_addr ) )
+	{
+		Log.Notice("WORLD", "We received a reload request from %s, but access was denied.", GetRemoteIP().c_str());
+		return;
+	}
+
+	uint32 num1;
+	recvData >> num1; //uint8(42);
+
+	if(	num1 == 3 )
+	{
+		Log.Notice("WORLD", "World Server at %s is forcing us to reload accounts.", GetRemoteIP().c_str());
+		sAccountMgr.ReloadAccounts(false);
+	}
+	else
+	{
+		Log.Notice("WORLD", "We received a reload request from %s, but bad packet received.", GetRemoteIP().c_str());
+	}
 }
 
 void LogonCommServerSocket::HandleAuthChallenge(WorldPacket & recvData)

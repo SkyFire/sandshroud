@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 
-#define BANNER "Hearthstone r%u/%s-%s-%s :: World Server\n"
+#define BANNER "Sandshroud Hearthstone r%u/%s-%s-%s :: World Server\n"
 
 createFileSingleton( Master );
 std::string LogFileName;
@@ -81,12 +81,11 @@ struct Addr
 #define DEF_VALUE_NOT_SET 0xDEADBEEF
 
 #ifdef WIN32
-        
-		static const char* default_config_file = "hearthstone-world.conf";
-        static const char* default_realm_config_file = "hearthstone-realms.conf";
+static const char* default_config_file = "hearthstone-world.conf";
+static const char* default_realm_config_file = "hearthstone-realms.conf";
 #else
-        static const char* default_config_file = CONFDIR "/hearthstone-world.conf";
-        static const char* default_realm_config_file = CONFDIR "/hearthstone-realms.conf";
+static const char* default_config_file = CONFDIR "/hearthstone-world.conf";
+static const char* default_realm_config_file = CONFDIR "/hearthstone-realms.conf";
 #endif
 
 bool bServerShutdown = false;

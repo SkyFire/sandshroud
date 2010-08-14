@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -116,6 +117,7 @@ void LogonConsole::ProcessCmd(char *cmd)
 		{"?", &LogonConsole::TranslateHelp}, {"help", &LogonConsole::TranslateHelp},
 		{ "reload", &LogonConsole::ReloadAccts},
 		{ "rehash", &LogonConsole::TranslateRehash},
+		{ "list",  &LogonConsole::ListRealms},
 		{"shutdown", &LogonConsole::TranslateQuit}, {"quit", &LogonConsole::TranslateQuit}, {"exit", &LogonConsole::TranslateQuit}, 
 	};
 
@@ -138,6 +140,32 @@ void LogonConsole::ReloadAccts(char *str)
 {
 	AccountMgr::getSingleton().ReloadAccounts(false);
 	IPBanner::getSingleton().Reload();
+}
+
+void LogonConsole::ListRealms(char *str)
+{
+	Realm* rlm = NULL;
+	sLog.outString("Console:------Listing Realms--------");
+	sInfoCore.getRealmLock().Acquire();
+	map<uint32, Realm*> realms = sInfoCore.GetRealmMap();
+	map<uint32, Realm*>::iterator itr = realms.begin();
+	for(; itr != realms.end(); ++itr)
+	{
+		uint32 id = itr->first;
+		rlm = itr->second;
+		if( rlm == NULL )
+			continue;
+
+		sLog.outString("   Realm ID:   %u", id);
+		sLog.outString("   Name:       %s", rlm->Name.c_str());
+		sLog.outString("   Address:    %s", rlm->Address.c_str());
+		sLog.outString("   Icon:       %u", rlm->Icon);
+		sLog.outString("   Colour:     %u", rlm->Colour);
+		sLog.outString("   Population: %f", rlm->Population);
+		sLog.outString("   TimeZone:   %u", rlm->WorldRegion);
+		sLog.outString("------------------------------------");
+	}
+	sInfoCore.getRealmLock().Release();
 }
 
 // quit | exit
@@ -169,6 +197,7 @@ void LogonConsole::ProcessHelp(char *command)
 		sLog.outString("   help, ?: print this text");
 		sLog.outString("   reload, reloads accounts");
 		sLog.outString("   rehash, rehashes config file");
+		sLog.outString("   list, lists all cached realm information");
 		sLog.outString("   quit, shutdown, exit: close program");
 	}
 }

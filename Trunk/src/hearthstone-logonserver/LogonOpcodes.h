@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -61,8 +62,12 @@ enum RealmListOpcodes
 	RSMSG_SERVER_PING							= 18,
 	RCMSG_SERVER_PONG							= 19,
 
+	// Realm population
+	RSMSG_REALM_POP_REQ							= 20,
+	RCMSG_REALM_POP_RES							= 21,
+
 	// count
-	RMSG_COUNT									= 20,
+	RMSG_COUNT									= 22,
 };
 
 #endif

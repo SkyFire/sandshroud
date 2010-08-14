@@ -386,7 +386,7 @@ skilllinespell* ObjectMgr::GetSpellSkill(uint32 id)
 void ObjectMgr::LoadPlayersInfo()
 {
 	PlayerInfo * pn;
-	QueryResult *result = CharacterDatabase.Query("SELECT guid,name,race,class,level,gender,zoneId,timestamp,acct,instance_id,mapId,positionX,positionY,positionZ FROM characters");
+	QueryResult *result = CharacterDatabase.Query("SELECT guid,name,race,class,level,gender,zoneId,timestamp,acct,instance_id,mapId,positionX,positionY,positionZ,orientation FROM characters");
 	uint32 period, c;
 	if(result)
 	{
@@ -409,9 +409,10 @@ void ObjectMgr::LoadPlayersInfo()
 			pn->acct = fields[8].GetUInt32();
 			pn->curInstanceID = fields[9].GetUInt32();
 			pn->lastmapid = fields[10].GetUInt32();
-			pn->lastpositionx = fields[11].GetUInt32();
-			pn->lastpositiony = fields[12].GetUInt32();
-			pn->lastpositionz = fields[13].GetUInt32();
+			pn->lastpositionx = fields[11].GetFloat();
+			pn->lastpositiony = fields[12].GetFloat();
+			pn->lastpositionz = fields[13].GetFloat();
+			pn->lastorientation = fields[14].GetFloat();
 #ifdef VOICE_CHAT
 			pn->groupVoiceId = -1;
 #endif

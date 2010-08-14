@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -55,6 +56,7 @@ protected:					// Protected methods:
 
 	void ReloadAccts(char *str);
 	void TranslateRehash(char* str);
+	void ListRealms(char *str);
 };
 
 #define sLogonConsole LogonConsole::getSingleton()

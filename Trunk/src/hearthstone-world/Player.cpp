@@ -2293,35 +2293,58 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< player_flags << ","
 	<< m_uint32Values[PLAYER_FIELD_BYTES] << ",";
 
+	float posx = 0.0f;
+	float posy = 0.0f;
+	float posz = 0.0f;
+	float orientation = 0.0f;
+	uint32 map = m_mapId;
+	uint32 instanceid = m_instanceId;
 	if( in_arena )
 	{
 		// if its an arena, save the entry coords instead
-		ss << m_bgEntryPointX << ", ";
-		ss << m_bgEntryPointY << ", ";
-		ss << m_bgEntryPointZ << ", ";
-		ss << m_bgEntryPointO << ", ";
-		ss << m_bgEntryPointMap << ", ";
+		posx = m_bgEntryPointX;
+		posy = m_bgEntryPointY;
+		posz = m_bgEntryPointZ;
+		orientation = m_bgEntryPointO;
+
+		map = m_bgEntryPointMap;
+		instanceid = m_bgEntryPointInstance;
 	}
 	else
 	{
 		// save the normal position
-		ss << m_position.x << ", "
-			<< m_position.y << ", "
-			<< m_position.z << ", "
-			<< m_position.o << ", "
-			<< m_mapId << ", ";
+		posx = m_position.x;
+		posy = m_position.y;
+		posz = m_position.z;
+		orientation = m_position.o;
 	}
+
+	if(m_playerInfo)
+	{
+		m_playerInfo->curInstanceID = m_instanceId;
+		m_playerInfo->lastmapid = map;
+		m_playerInfo->lastpositionx = posx;
+		m_playerInfo->lastpositiony = posy;
+		m_playerInfo->lastpositionz = posz;
+		m_playerInfo->lastorientation = orientation;
+	}
+
+	ss << posx << ", "
+		<< posy << ", "
+		<< posz << ", "
+		<< orientation << ", "
+		<< map << ", ";
 
 	ss << m_zoneId << ", '";
 
 	for(uint8 i = 0; i < 12; i++ )
 		ss << m_taximask[i] << " ";
 	ss << "', "
-	
+
 	<< m_banned << ", '"
 	<< CharacterDatabase.EscapeString(m_banreason) << "', "
 	<< (uint32)UNIXTIME << ",";
-	
+
 	//online state
 	if(GetSession()->_loggingOut || bNewCharacter)
 	{
@@ -2355,16 +2378,8 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< (uint32)m_StableSlotCount << ",";
 
 	// instances
-	if( in_arena )
-	{
-		ss << m_bgEntryPointInstance << ", ";
-	}
-	else
-	{
-		ss << m_instanceId		   << ", ";
-	}
-
-	ss << m_bgEntryPointMap	  << ", "
+	ss << instanceid		<< ", "
+	<< m_bgEntryPointMap	<< ", "
 	<< m_bgEntryPointX		<< ", "
 	<< m_bgEntryPointY		<< ", "
 	<< m_bgEntryPointZ		<< ", "
@@ -2451,9 +2466,6 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 
 	//Save Other related player stuff
 	sHookInterface.OnPlayerSaveToDB(TO_PLAYER(this), buf);
-
-	// Player Info Position stuff
-	_updatePlayerInfo(bNewCharacter);
 
 	// Skills
 	_SaveSkillsToDB(buf);
@@ -5067,31 +5079,6 @@ void Player::_LoadSkills(QueryResult * result)
 	//Update , GM's can still learn more
 	SetUInt32Value( PLAYER_CHARACTER_POINTS2, ( GetSession()->HasGMPermissions()? 2 : proff_counter ) );
 	_UpdateMaxSkillCounts();
-}
-
-void Player::_updatePlayerInfo(bool newchar)
-{
-	PlayerInfo* pInfo = getPlayerInfo();
-	if(pInfo != NULL)
-	{
-		if(newchar)
-		{
-			pInfo->curInstanceID = 0;
-			pInfo->lastmapid = 0;
-			pInfo->lastpositionx = 0;
-			pInfo->lastpositiony = 0;
-			pInfo->lastpositionz = 0;
-		}
-		else
-		{
-			pInfo->curInstanceID = m_instanceId;
-			pInfo->lastmapid = GetMapId();
-			pInfo->lastpositionx = m_position.x;
-			pInfo->lastpositiony = m_position.y;
-			pInfo->lastpositionz = m_position.z;
-		}
-		pInfo = NULL;
-	}
 }
 
 //From Mangos Project

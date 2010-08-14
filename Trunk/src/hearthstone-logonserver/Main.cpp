@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -375,8 +376,8 @@ void LogonServer::Run(int argc, char ** argv)
 	uint32 sport = Config.MainConfig.GetIntDefault("Listen", "ServerPort", 8093);
 	string host = Config.MainConfig.GetStringDefault("Listen", "Host", "0.0.0.0");
 	string shost = Config.MainConfig.GetStringDefault("Listen", "ISHost", host.c_str());
-	min_build = Config.MainConfig.GetIntDefault("Client", "MinBuild", 11159);
-	max_build = Config.MainConfig.GetIntDefault("Client", "MaxBuild", 11159);
+	min_build = Config.MainConfig.GetIntDefault("Client", "MinBuild", 12340);
+	max_build = Config.MainConfig.GetIntDefault("Client", "MaxBuild", 12340);
 	string logon_pass = Config.MainConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3b4d");
 	Sha1Hash hash;
 	hash.UpdateData(logon_pass);
@@ -460,7 +461,6 @@ void LogonServer::Run(int argc, char ** argv)
 #else
 	signal(SIGHUP, 0);
 #endif
-
 	pfc->kill();
 
 	cl->Close();

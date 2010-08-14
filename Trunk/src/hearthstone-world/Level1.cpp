@@ -346,7 +346,7 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 
 			if(PI->lastpositionx != 0.0f && PI->lastpositiony != 0.0f)
 			{
-				m_session->GetPlayer()->SafeTeleport(PI->lastmapid, PI->curInstanceID, PI->lastpositionx, PI->lastpositiony, PI->lastpositionz+1.0f, 0.0f);
+				m_session->GetPlayer()->SafeTeleport(PI->lastmapid, PI->curInstanceID, PI->lastpositionx, PI->lastpositiony, PI->lastpositionz+1.0f, PI->lastorientation);
 				ss << "\nTeleporting to last known location of player " << args;
 			}
 		}

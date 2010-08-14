@@ -1,5 +1,6 @@
 /*
  * Sandshroud Hearthstone
+ * FeatherMoonEmu by Crow@Sandshroud
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,6 +19,9 @@
  */
 
 #include "LogonStdAfx.h"
+
+#define SELECTIVE_REALM_LIST
+
 initialiseSingleton(AccountMgr);
 initialiseSingleton(IPBanner);
 initialiseSingleton(InformationCore);
@@ -467,6 +471,12 @@ void InformationCore::UpdateRealmStatus(uint32 realm_id, uint8 Color)
 
 void InformationCore::SendRealms(AuthSocket * Socket)
 {
+#ifdef SELECTIVE_REALM_LIST
+	Account * acct = sAccountMgr.GetAccount(Socket->GetAccountName());
+
+	bool isGM = ( acct ? (acct->GMFlags != NULL) : false );
+#endif
+
 	realmLock.Acquire();
 
 	// packet header
@@ -477,13 +487,22 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	// dunno what this is..
 	data << uint32(0);
 
-	data << uint16(m_realms.size());
-	
+	size_t count_pos = data.wpos();
+	uint16 count = uint16(m_realms.size());
+	data << uint16(count);
+
 	// loop realms :/
 	map<uint32, Realm*>::iterator itr = m_realms.begin();
 	HM_NAMESPACE::hash_map<uint32, uint8>::iterator it;
 	for(; itr != m_realms.end(); ++itr)
 	{
+#ifdef SELECTIVE_REALM_LIST
+		if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
+		{
+			count -= 1;
+			continue;
+		}
+#endif
 		data << itr->second->Icon;
 		data << uint8(0);		// delete when using data << itr->second->Lock;
 		data << itr->second->Colour;		
@@ -500,6 +519,8 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		data << uint8(6);    //Realm ID
 	}
 	realmLock.Release();
+
+	data.put<uint16>(count_pos, count);
 
 	data << uint8(0x17);
 	data << uint8(0);

@@ -489,7 +489,7 @@ bool World::SetInitialWorldSettings()
 
 	Log.Success("World", "Database loaded in %ums.", getMSTime() - start_time);
 
-	if(sWorld.Collision)
+	if(Collision)
 		CollideInterface.Init();
 	sScriptMgr.LoadScripts();
 
