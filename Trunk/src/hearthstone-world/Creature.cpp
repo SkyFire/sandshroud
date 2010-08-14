@@ -103,7 +103,7 @@ Creature::Creature(uint64 guid)
 	m_lootMethod = -1;
 	m_noDeleteAfterDespawn = false;
 
-	spawnid=0;
+	spawnid = 0;
 }
 
 void Creature::Init()

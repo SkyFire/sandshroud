@@ -114,6 +114,25 @@ struct CreatureInfo
 	}
 };
 
+struct TeleportInfo
+{
+//	uint32 entry;
+	uint8 intid;
+	uint8 iconid;
+	bool teleport;
+	string textinfo;
+	uint32 teleportmapid;
+	float teleportx;
+	float teleporty;
+	float teleportz;
+	float teleporto;
+	uint32 castspellid;
+	uint32 removetargetaura;
+	bool sndchtmessage;
+	uint8 messagetype;
+	string Message;
+};
+
 struct CreatureProtoMode
 {
 //	uint32 entry; // Woot, not needed inside core.
@@ -184,6 +203,7 @@ struct CreatureProto
 	set<uint32> start_auras;
 	list<AI_Spell*> spells[4];
 	HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*> ModeProto;
+	std::set<TeleportInfo*> TeleportInfoList;
 };
 
 struct AccessoryInfo
@@ -218,8 +238,7 @@ struct Formation{
 	float ang;
 	float dist;
 };
- 
-   
+
 enum UNIT_TYPE
 {
 	NOUNITTYPE		= 0,
@@ -618,6 +637,8 @@ public:
 	bool m_corpseEvent;
 	MapCell * m_respawnCell;
 	bool m_noRespawn;
+	HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*> ModeProto;
+
 protected:
 	CreatureAIScript *_myScriptClass;
 	bool m_limbostate;

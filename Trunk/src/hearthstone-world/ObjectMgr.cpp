@@ -1529,6 +1529,7 @@ void GossipMenu::AddItem(uint8 Icon, const char* Text, int32 Id, bool Coded, uin
 		GossipItem.IntId = Id;
 	else
 		GossipItem.IntId = GossipItem.Id;
+
 	GossipItem.Icon = Icon;
 	GossipItem.Coded = Coded;
 	GossipItem.BoxMoney = BoxMoney;
