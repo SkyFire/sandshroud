@@ -637,7 +637,6 @@ public:
 	bool m_corpseEvent;
 	MapCell * m_respawnCell;
 	bool m_noRespawn;
-	HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*> ModeProto;
 
 protected:
 	CreatureAIScript *_myScriptClass;
@@ -656,7 +655,7 @@ protected:
 
 	/// Quest data
 	std::list<QuestRelation *>* m_quests;
-   
+
 	/// Pet
 	uint32 m_enslaveCount;
 	uint32 m_enslaveSpell;
