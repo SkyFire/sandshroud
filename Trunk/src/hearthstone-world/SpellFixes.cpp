@@ -1378,7 +1378,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 
 		// Spell 12322 Proc Chance (Unbridled Wrath Rank 1:
 	case 12322:
-			sp->procChance = 8;
+			sp->ProcsPerMinute = 3;
 		break;
 
 		// Spell 12701 Proc Chance (Mace Specialization Rank 2:
@@ -1403,22 +1403,22 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 
 		// Spell 12999 Proc Chance (Unbridled Wrath Rank 2:
 	case 12999:
-			sp->procChance = 16;
+			sp->ProcsPerMinute = 6;
 		break;
 
 		// Spell 13000 Proc Chance (Unbridled Wrath Rank 3:
 	case 13000:
-			sp->procChance = 24;
+			sp->ProcsPerMinute = 9;
 		break;
 
 		// Spell 13001 Proc Chance (Unbridled Wrath Rank 4:
 	case 13001:
-			sp->procChance = 32;
+			sp->ProcsPerMinute = 12;
 		break;
 
 		// Spell 13002 Proc Chance (Unbridled Wrath Rank 5:
 	case 13002:
-			sp->procChance = 40;
+			sp->ProcsPerMinute = 15;
 		break;
 
 		// Spell 14076 Proc Chance (Dirty Tricks Rank 1:
@@ -1450,6 +1450,19 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 27867:
 			sp->procChance = 2;
 		break;
+
+		//Martyrdom
+	case 14531:
+	case 14774:
+		{
+			sp->procFlags = PROC_ON_CRIT_HIT_VICTIM | PROC_ON_RANGED_CRIT_ATTACK_VICTIM;
+		}break;
+
+		// Impact proc
+	case 64343:
+		{
+			sp->AuraInterruptFlags	|= AURA_INTERRUPT_ON_CAST_SPELL;
+		}break;
 
 		// Elemental Focus
 	case 16164:
@@ -3292,8 +3305,9 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 12849:
 	case 12867:
 		{
-			sp->EffectTriggerSpell[0] = 12721;
-			sp->procFlags = PROC_ON_CRIT_ATTACK | PROC_ON_RANGED_CRIT_ATTACK | PROC_ON_SPELL_CRIT_HIT;
+			sp->EffectTriggerSpell[0] = 12868;
+			sp->procFlags = PROC_ON_CRIT_ATTACK | PROC_ON_RANGED_CRIT_ATTACK;
+			sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
 		}break;
 
 		//warrior	-	second wind	should trigger on	self
@@ -4533,6 +4547,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectTriggerSpell[0] = 61840;
 			sp->procFlags = PROC_ON_CRIT_ATTACK;
 			sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
+			sp->EffectSpellClassMask[0][0] = 0xE14BFF42;
 		}break;
 
 		// Sheat of Light (Hot Effect)
@@ -5917,11 +5932,15 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->Effect[0]	=	SPELL_EFFECT_DUMMY;
 		}break;
 		// Bloodsurge
-	case 46915:
-	case 46914:
 	case 46913:
+	case 46914:
+	case 46915:
 		{
 			sp->procFlags = PROC_ON_MELEE_ATTACK | PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_CAST_SPELL;
+		}break;
+	case 46916:
+		{
+			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
 		}break;
 		//Waylay
 	case 51692:

@@ -5308,6 +5308,7 @@ void Spell::SpellEffectTameCreature(uint32 i)
 	pPet->SetInstanceID(p_caster->GetInstanceID());
 	pPet->SetPosition(p_caster->GetPosition(), true);
 	pPet->CreateAsSummon(tame->GetEntry(), tame->GetCreatureInfo(), tame, p_caster, NULL, 2, 0);
+
 	tame->Despawn(1, tame->GetRespawnTime());
 }
 

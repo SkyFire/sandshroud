@@ -3285,6 +3285,14 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
+	case 45524: // Chains of Ice
+		{
+			Spell* spell = (new Spell(m_caster, dbcSpell.LookupEntry(55095), true, NULLAURA));
+			SpellCastTargets targets;
+			targets.m_unitTarget = m_target->GetGUID();
+			spell->prepare(&targets);
+		}break;
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())
@@ -9606,7 +9614,8 @@ void Aura::SpellAuraModBlockValue(bool apply)
 void Aura::SpellAuraSkipCanCastCheck(bool apply)
 {
 	Unit * m_caster = GetUnitCaster();
-	if (m_caster ==NULL || !m_target->IsPlayer()) return;
+	if (m_caster == NULL || !m_target->IsPlayer())
+		return;
 
 	// Generic
 	if(apply)

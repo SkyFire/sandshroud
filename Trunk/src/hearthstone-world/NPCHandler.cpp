@@ -653,43 +653,35 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 	LocalizedNpcText * lnc = (language>0) ? sLocalizationMgr.GetLocalizedNpcText(textID,language) : NULL;
 
 	data << textID;
-	
+
+	uint32 e = 0;
 	if(pGossip)
 	{
-		for(uint32 i=0;i<8;++i)
+		for(uint32 i = 0; i < 8; i++)
 		{
-			data << pGossip->Texts[i].Prob;		// prob
-			if(lnc)
-			{
-				data << lnc->Texts[i][0];
-				data << lnc->Texts[i][1];
-			}
-			else
-			{
-				data << pGossip->Texts[i].Text[0];
-				data << pGossip->Texts[i].Text[1];
-			}
-
+			data << pGossip->Texts[i].Prob;	// Prob
+			data << (lnc ? lnc->Texts[i][0] : pGossip->Texts[i].Text[0]);
+			data << (lnc ? lnc->Texts[i][1] : pGossip->Texts[i].Text[1]);
 			data << pGossip->Texts[i].Lang;
-			for(uint32 e=0;e<6;e++)
+			for(e = 0; e < 6; e++)
 				data << uint32(pGossip->Texts[i].Emote[e]);
 		}
 	} 
 	else 
 	{
-		data << float(1.0f);		// prob
-		data << "Hello, $N. What can I do for you?";
-		data << "Hello, $N. What can I do for you?";
-		data << uint32(0);	// lang
-		for(uint32 e=0;e<6;e++)		// emotes
+		data << float(1.0f);	// Prob
+		data << "Hello, $N. What can I do for you?"; // Team
+		data << "Hello, $N. What can I do for you?"; // Team
+		data << uint32(0);		// Lang: Universal
+		for(e = 0; e < 6; e++)	// Emotes
 			data << uint32(0x00);
 
-		for(int i=0;i<7;++i)
+		for(int i = 0; i < 7; i++)
 		{
 			data << float(0.0f);
 			data << uint8(0x00) << uint8(0x00);
 			data << uint32(0x00);	// lang
-			for(uint32 e=0;e<6;e++) // emotes
+			for(e = 0; e < 6; e++)	// emotes
 				data << uint32(0x00);
 		}
 	}
