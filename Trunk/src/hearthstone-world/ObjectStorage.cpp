@@ -214,7 +214,6 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					}
 
 					CreatureProtoMode* cpm = new CreatureProtoMode();
-					cpm->difficulty = mode;
 					cpm->Minlevel = fields[fieldcount++].GetUInt32();
 					cpm->Maxlevel = fields[fieldcount++].GetUInt32();
 					cpm->Minhealth = fields[fieldcount++].GetUInt32();
@@ -241,7 +240,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 						cpm->Maxdmg = cpm->Mindmg;
 
 					// End of cleanup changes.
-					cn->ModeProto.insert(make_pair( mode, cpm ));
+					cn->ModeProto[mode] = cpm;
 					modecount++;
 
 				}while( moderesult->NextRow() );

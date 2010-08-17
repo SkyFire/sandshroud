@@ -248,6 +248,7 @@ public:
 
 	HEARTHSTONE_INLINE uint32 GetInstanceID() { return m_instanceID; }
 	HEARTHSTONE_INLINE MapInfo *GetMapInfo() { return pMapInfo; }
+	HEARTHSTONE_INLINE MapEntry *GetdbcMap() { return pdbcMap; }
 
 	HEARTHSTONE_INLINE void SetCollision(bool enable) { collision = enable; }
 	HEARTHSTONE_INLINE bool IsCollisionEnabled() { return collision; }
@@ -318,6 +319,7 @@ private:
 	/* Map Information */
 	bool collision;
 	MapInfo *pMapInfo;
+	MapEntry* pdbcMap;
 	uint32 m_instanceID;
 
 	MapScriptInterface * ScriptInterface;

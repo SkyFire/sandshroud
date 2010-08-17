@@ -126,6 +126,7 @@ public:
 	time_t m_creation;
 	time_t m_expiration;
 	MapInfo * m_mapInfo;
+	MapEntry * m_dbcMap;
 	bool m_isBattleground;
 
 	void LoadFromDB(Field * fields);
@@ -173,7 +174,7 @@ public:
 		}
 
 		// Valid map?
-		if( !pInstance->m_mapInfo || !dbcMap.LookupEntry(pInstance->m_mapId)) // ITS A TARP!
+		if( !pInstance->m_mapInfo || !pInstance->m_dbcMap) // ITS A TARP!
 			return OWNER_CHECK_NOT_EXIST;
 
 		// Triggercheat in use?
@@ -181,7 +182,7 @@ public:
 			return OWNER_CHECK_TRIGGERPASS;
 
 		// Matching the requested mode?
-		if( pInstance->m_difficulty != (dbcMap.LookupEntry(pInstance->m_mapId)->israid() ? pPlayer->iRaidType : pPlayer->iInstanceType) )
+		if( pInstance->m_difficulty != (pInstance->m_dbcMap->israid() ? pPlayer->iRaidType : pPlayer->iInstanceType) )
 			return OWNER_CHECK_DIFFICULT;
 
 		//Reached player limit?
@@ -193,7 +194,7 @@ public:
 			return OWNER_CHECK_MIN_LEVEL;
 
 		//Need to be in group?
-		if(!pPlayer->GetGroup() && pInstance->m_mapInfo->type == INSTANCE_RAID )
+		if(!pPlayer->GetGroup() && pInstance->m_dbcMap->israid() )
 			return OWNER_CHECK_NO_GROUP;
 
 		// Are we on the saved list?

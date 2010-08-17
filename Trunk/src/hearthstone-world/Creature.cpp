@@ -179,7 +179,7 @@ void Creature::OnRemoveCorpse()
 
 		DEBUG_LOG("Creature","OnRemoveCorpse Removing corpse of "I64FMT"...", GetGUID());
 
-		if((GetMapMgr()->GetMapInfo() && GetMapMgr()->GetMapInfo()->type == INSTANCE_RAID && proto && proto->boss) || m_noRespawn)
+		if((GetMapMgr()->GetMapInfo() && GetMapMgr()->GetdbcMap()->israid() && proto && proto->boss) || m_noRespawn)
 		{
 			RemoveFromWorld(false, true);
 		}
@@ -885,17 +885,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	// Heroic stats
 	if(mode)
 	{
-		CreatureProtoMode* crmode = NULL;
-		HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = proto->ModeProto.begin();
-		for(; itr != proto->ModeProto.end(); ++itr)
-		{
-			if(itr->second->difficulty == mode)
-			{
-				crmode = itr->second;
-				break; // We have what we came for... XD
-			}
-		}
-
+		CreatureProtoMode* crmode = proto->ModeProto[mode];
 		if(crmode != NULL)
 		{
 			health = crmode->Minhealth + RandomUInt(crmode->Maxhealth - crmode->Minhealth);
@@ -1202,17 +1192,7 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	// Heroic stats
 	if(mode)
 	{
-		CreatureProtoMode* crmode = NULL;
-		HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = proto->ModeProto.begin();
-		for(; itr != proto->ModeProto.end(); ++itr)
-		{
-			if(itr->second->difficulty == mode)
-			{
-				crmode = itr->second;
-				break; // We have what we came for... XD
-			}
-		}
-
+		CreatureProtoMode* crmode = proto->ModeProto[mode];
 		if(crmode != NULL)
 		{
 			health = crmode->Minhealth + RandomUInt(crmode->Maxhealth - crmode->Minhealth);

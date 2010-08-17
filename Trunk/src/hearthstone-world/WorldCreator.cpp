@@ -196,9 +196,8 @@ uint32 InstanceMgr::PreTeleport(uint32 mapid, Player* plr, uint32 instanceid)
 	if( !plr->triggerpass_cheat )
 	{
 		// players without groups cannot enter raid instances (no soloing them:P)
-		if( pGroup == NULL && (inf->type == INSTANCE_RAID || inf->type == INSTANCE_MULTIMODE))
+		if( pGroup == NULL && (map->israid() || inf->type == INSTANCE_MULTIMODE))
 			return INSTANCE_ABORT_NOT_IN_RAID_GROUP;
-
 
 		//and has the required level
 		if( plr->getLevel() < 80)
@@ -378,6 +377,7 @@ uint32 InstanceMgr::PreTeleport(uint32 mapid, Player* plr, uint32 instanceid)
 	}
 
 	in->m_mapInfo = inf;
+	in->m_dbcMap = map;
 	in->m_isBattleground = false;
 	plr->SetInstanceID(in->m_instanceId);
 	DEBUG_LOG("InstanceMgr", "Prepared new %s %u for player %u and group %u on map %u with difficulty %u. (%u)", raid ? "Raid" : "Instance" ,in->m_instanceId, in->m_creatorGuid, in->m_creatorGroup, in->m_mapId, in->m_difficulty, in->m_instanceId);
@@ -533,7 +533,7 @@ MapMgr* InstanceMgr::_CreateInstance(Instance * in)
 	if(!dbcMap.LookupEntry(in->m_mapId)) // SHOULD NEVER HAPPEN!
 		return NULL;
 
-	Log.Notice("InstanceMgr", "Creating %s %u (%s)", dbcMap.LookupEntry(in->m_mapId)->israid() ? "Raid" : "Instance", in->m_instanceId, m_maps[in->m_mapId]->GetName());
+	Log.Notice("InstanceMgr", "Creating %s %u (%s) with difficulty %u", dbcMap.LookupEntry(in->m_mapId)->israid() ? "Raid" : "Instance", in->m_instanceId, m_maps[in->m_mapId]->GetName(), in->m_difficulty);
 
 	// we don't have to check for world map info here, since the instance wouldn't have been saved if it didn't have any.
 	in->m_mapMgr = (new MapMgr(m_maps[in->m_mapId], in->m_mapId, in->m_instanceId));
@@ -717,6 +717,7 @@ void InstanceMgr::_LoadInstances()
 
 			in = new Instance();
 			in->m_mapInfo = inf;
+			in->m_dbcMap = dbcMap.LookupEntry(in->m_mapId);
 			in->LoadFromDB(result->Fetch());
 
 			if(m_instances[in->m_mapId] == NULL)
@@ -857,7 +858,7 @@ void InstanceMgr::ResetHeroicInstances()
 				in = itr->second;
 				++itr;
 
-				if(in->m_mapInfo->type != INSTANCE_RAID)
+				if(!in->m_dbcMap->israid())
 				{
 					// use a "soft" delete here.
 					if(in->m_difficulty == MODE_5PLAYER_HEROIC)
@@ -943,7 +944,7 @@ void InstanceMgr::CheckForExpiredInstances()
 				++itr;
 
 				// use a "soft" delete here.
-				if(in->m_mapInfo->type != INSTANCE_NONRAID && HasInstanceExpired(in))
+				if(!in->m_dbcMap->israid() && HasInstanceExpired(in))
 					_DeleteInstance(in, false);
 			}
 
@@ -973,7 +974,7 @@ void InstanceMgr::BuildSavedInstancesForPlayer(Player* plr)
 					in = itr->second;
 					++itr;
 
-					if( in->m_mapInfo->type == INSTANCE_NONRAID && (PlayerOwnsInstance(in, plr) >= OWNER_CHECK_OK) )
+					if( !in->m_dbcMap->israid() && (PlayerOwnsInstance(in, plr) >= OWNER_CHECK_OK) )
 					{
 						m_mapLock.Release();
 
@@ -1161,7 +1162,8 @@ MapMgr* InstanceMgr::CreateBattlegroundInstance(uint32 mapid)
 	pInstance->m_instanceId = ret->GetInstanceID();
 	pInstance->m_isBattleground = true;
 	pInstance->m_mapId = mapid;
-	pInstance->m_mapInfo = WorldMapInfoStorage.LookupEntry( mapid );
+	pInstance->m_dbcMap = dbcMap.LookupEntry(mapid);
+	pInstance->m_mapInfo = WorldMapInfoStorage.LookupEntry(mapid);
 	pInstance->m_mapMgr = ret;
 	m_mapLock.Acquire();
 	if( m_instances[mapid] == NULL )

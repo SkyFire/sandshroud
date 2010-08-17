@@ -34,6 +34,7 @@ MapMgr::MapMgr(Map *map, uint32 mapId, uint32 instanceid) : CellHandler<MapCell>
 {
 	m_instanceID = instanceid;
 	pMapInfo = WorldMapInfoStorage.LookupEntry(mapId);
+	pdbcMap = dbcMap.LookupEntry(mapId);
 	m_UpdateDistance = pMapInfo->update_distance * pMapInfo->update_distance;
 	iInstanceMode = 0;
 
@@ -192,6 +193,7 @@ MapMgr::~MapMgr()
 	_processQueue.clear();
 	MapSessions.clear();
 	pMapInfo = NULL;
+	pdbcMap = NULL;
 
 	activeGameObjects.clear();
 	activeCreatures.clear();

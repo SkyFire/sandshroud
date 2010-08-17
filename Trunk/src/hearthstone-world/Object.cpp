@@ -972,8 +972,8 @@ void Object::AddToWorld()
 				return;
 		}
 		// players who's group disbanded cannot remain in a raid instances alone(no soloing them:P)
-		if( !p->triggerpass_cheat && p->GetGroup()== NULL && (mapMgr->GetMapInfo()->type == INSTANCE_RAID || mapMgr->GetMapInfo()->type == INSTANCE_MULTIMODE))
-			return ;
+		if( !p->triggerpass_cheat && p->GetGroup()== NULL && (mapMgr->GetdbcMap()->israid() || mapMgr->GetMapInfo()->type == INSTANCE_MULTIMODE))
+			return;
 	}
 
 	m_mapMgr = mapMgr;

@@ -2735,23 +2735,12 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 		Creature* c = TO_CREATURE( unitTarget );
 		if(c != NULL && c->GetMapMgr() && c->proto != NULL)
 		{
-			bool heroic = false;
-			if(c->GetMapMgr()->iInstanceMode)
-				heroic = true;
-
 			uint8 imode = c->GetMapMgr()->iInstanceMode;
 			CreatureProtoMode* mode = NULL;
-			if(heroic)
-			{
-				HM_NAMESPACE::hash_map<uint8, CreatureProtoMode*>::iterator itr = c->proto->ModeProto.begin();
-				for(; itr != c->proto->ModeProto.end(); ++itr)
-				{
-					if(itr->second->difficulty == imode)
-						mode = itr->second;
-				}
-			}
+			if(imode)
+				c->proto->ModeProto[imode];
 
-			if(heroic && mode != NULL)
+			if(mode != NULL)
 			{
 				if(mode->auraimmune_flag && (mode->auraimmune_flag & m_spellInfo->auraimmune_flag))
 					return;

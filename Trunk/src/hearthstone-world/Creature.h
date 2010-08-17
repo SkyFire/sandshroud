@@ -136,7 +136,6 @@ struct TeleportInfo
 struct CreatureProtoMode
 {
 //	uint32 entry; // Woot, not needed inside core.
-	uint8 difficulty;
 	uint32 Minlevel;
 	uint32 Maxlevel;
 	uint32 Minhealth;
