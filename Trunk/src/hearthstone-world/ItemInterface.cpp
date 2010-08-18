@@ -2690,11 +2690,7 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 		}
 		else
 		{
-			if( DstItem->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) == DstItem->GetProto()->MaxCount )
-			{
-
-			}
-			else
+			if(!(DstItem->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) == DstItem->GetProto()->MaxCount))
 			{
 				int32 delta=DstItem->GetProto()->MaxCount-DstItem->GetUInt32Value( ITEM_FIELD_STACK_COUNT );
 				DstItem->SetUInt32Value( ITEM_FIELD_STACK_COUNT, DstItem->GetProto()->MaxCount );

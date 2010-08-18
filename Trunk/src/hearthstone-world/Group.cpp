@@ -41,6 +41,7 @@ enum PartyUpdateFlags
 	GROUP_UPDATE_FLAG_PET_POWER					= 65535,	// 0x00010000  uint16
 	GROUP_UPDATE_FLAG_PET_MAXPOWER				= 131070,	// 0x00020000  uint16
 	GROUP_UPDATE_FLAG_PET_AURAS					= 262144,	// 0x00040000  uint64, uint16 for each uint64
+	GROUP_UPDATE_FLAG_VEHICLE_ENTRY				= 524288,	// 0x00080000  uint32
 };
 
 enum PartyUpdateFlagGroups
@@ -952,9 +953,9 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 	if(Flags & GROUP_UPDATE_FLAG_LEVEL)
 		*data << uint16(pPlayer->getLevel());
 
-	if(Flags & GROUP_UPDATE_FLAG_ZONEID) {
+	if(Flags & GROUP_UPDATE_FLAG_ZONEID)
 		*data << uint16(pPlayer->GetPlayerAreaID());
-    }
+    
 
 	if(Flags & GROUP_UPDATE_FLAG_POSITION)
 	{
@@ -967,6 +968,78 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 		*data << uint64(0xFF00000000000000ULL);
 		*data << uint8(0);
 		*data << uint64(0xFF00000000000000ULL);
+	}
+
+	if (Flags & GROUP_UPDATE_FLAG_PET_GUID)
+	{
+		if (pPlayer->GetSummon() != NULL)
+			*data << pPlayer->GetSummon()->GetGUID();
+		else
+			*data << uint64(0);
+	}
+
+	if (Flags & GROUP_UPDATE_FLAG_PET_NAME)
+	{
+		if (pPlayer->GetSummon() != NULL)
+			*data << pPlayer->GetSummon()->GetName();
+		else
+			*data << uint8(0);
+	}
+
+	if (Flags & GROUP_UPDATE_FLAG_PET_DISPLAYID)
+	{
+		if (pPlayer->GetSummon() != NULL)
+			*data << uint16(pPlayer->GetSummon()->GetUInt32Value(UNIT_FIELD_DISPLAYID));
+		else
+			*data << uint16(0);
+	}
+
+	if (Flags & GROUP_UPDATE_FLAG_PET_HEALTH)
+	{
+		if (pPlayer->GetSummon() != NULL)
+			*data << pPlayer->GetSummon()->GetUInt32Value(UNIT_FIELD_HEALTH);
+		else
+			*data << uint32(0);
+	}
+	
+	if (Flags & GROUP_UPDATE_FLAG_PET_MAXHEALTH)
+	{
+		if (pPlayer->GetSummon() != NULL)
+			*data << pPlayer->GetSummon()->GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+		else
+			*data << uint32(0);
+	}
+
+	if (Flags & GROUP_UPDATE_FLAG_PET_POWER_TYPE)
+	{
+		if (pPlayer->GetSummon() != NULL)
+			*data << uint8(pPlayer->GetSummon()->GetPowerType());
+		else
+			*data << uint8(0);
+	}
+
+	if (Flags & GROUP_UPDATE_FLAG_PET_POWER)
+	{
+		if (pPlayer->GetSummon() != NULL && pPlayer->GetSummon()->GetPowerType() < 7)
+			*data << uint16(pPlayer->GetSummon()->GetUInt32Value(UNIT_FIELD_POWER1 + pPlayer->GetSummon()->GetPowerType()));
+		else
+			*data << uint16(0);
+	}
+	
+	if (Flags & GROUP_UPDATE_FLAG_PET_MAXPOWER)
+	{
+		if (pPlayer->GetSummon() != NULL && pPlayer->GetSummon()->GetPowerType() < 7)
+			*data << uint16(pPlayer->GetSummon()->GetUInt32Value(UNIT_FIELD_MAXPOWER1 + pPlayer->GetSummon()->GetPowerType()));
+		else
+			*data << uint16(0);
+	}
+
+	if (Flags & GROUP_UPDATE_FLAG_VEHICLE_ENTRY)
+	{
+		if (pPlayer->m_CurrentVehicle != NULL)
+			*data << pPlayer->m_CurrentVehicle->GetVehicleEntry();
+		else
+			*data << uint32(0);
 	}
 
 	if(Distribute&&pPlayer->IsInWorld())
