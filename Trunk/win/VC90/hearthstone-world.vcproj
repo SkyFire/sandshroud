@@ -1038,14 +1038,6 @@
 				RelativePath="..\..\src\hearthstone-world\VoiceChatHandler.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorldSession.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorldSession.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Spell"
@@ -1284,6 +1276,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-world\Opcodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WorldSession.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WorldSession.h"
 				>
 			</File>
 			<File
