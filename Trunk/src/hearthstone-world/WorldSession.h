@@ -727,6 +727,23 @@ protected:
 	void HandleEquipmentSetDelete(WorldPacket &recv_data);
 	void HandleEquipmentSetUse(WorldPacket &recv_data);
 
+	//Calendar
+	void HandleCalendarGetCalendar( WorldPacket & recv_data );
+	void HandleCalendarGetEvent( WorldPacket & recv_data );
+	void HandleCalendarGuildFilter( WorldPacket & recv_data );
+	void HandleCalendarArenaTeam( WorldPacket & recv_data );
+	void HandleCalendarAddEvent( WorldPacket & recv_data );
+	void HandleCalendarUpdateEvent( WorldPacket & recv_data );
+	void HandleCalendarRemoveEvent( WorldPacket & recv_data );
+	void HandleCalendarCopyEvent( WorldPacket & recv_data );
+	void HandleCalendarEventInvite( WorldPacket & recv_data );
+	void HandleCalendarEventRsvp( WorldPacket & recv_data );
+	void HandleCalendarEventRemoveInvite( WorldPacket & recv_data );
+	void HandleCalendarEventStatus( WorldPacket & recv_data );
+	void HandleCalendarEventModeratorStatus( WorldPacket & recv_data );
+	void HandleCalendarComplain( WorldPacket & recv_data );
+	void HandleCalendarGetNumPending( WorldPacket & recv_data );
+
 	/// Empty packets
 	void EmptyPacket(WorldPacket &recv_data);
 

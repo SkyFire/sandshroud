@@ -5255,6 +5255,22 @@ void Spell::SpellEffectAddPrismaticSocket(uint32 i)
 	itemTarget->AddEnchantment(pEnchant, 0, true, true, false, 6); // 6 is profession slot.
 }
 
+bool isExotic(uint32 family)
+{
+	switch(family)
+	{
+	case FAMILY_WORM:
+	case FAMILY_RHINO:
+	case FAMILY_CHIMAERA:
+	case FAMILY_SILITHID:
+	case FAMILY_DEVILSAUR:
+	case FAMILY_CORE_HOUND:
+	case FAMILY_SPIRIT_BEAST:
+		return true;
+	}
+	return false;
+}
+
 void Spell::SpellEffectTameCreature(uint32 i)
 {
 	Creature* tame = NULL;
@@ -5262,6 +5278,7 @@ void Spell::SpellEffectTameCreature(uint32 i)
 	if(tame== NULL)
 		return;
 
+	CreatureFamilyEntry *cf = dbcCreatureFamily.LookupEntry(tame->GetCreatureInfo()->Family);
 	uint8 result = SPELL_CANCAST_OK;
 
 	if(!tame || !p_caster || !p_caster->isAlive() || !tame->isAlive() || p_caster->getClass() != HUNTER )
@@ -5274,15 +5291,13 @@ void Spell::SpellEffectTameCreature(uint32 i)
 		result = SPELL_FAILED_HIGHLEVEL;
 	else if(p_caster->GeneratePetNumber() == 0)
 		result = SPELL_FAILED_BAD_TARGETS;
-	else if(!tame->GetCreatureInfo()->Family)
+	else if(!cf || cf && !cf->tameable)
+		result = SPELL_FAILED_BAD_TARGETS;
+	else if(isExotic(cf->ID) && !p_caster->m_BeastMaster)
 		result = SPELL_FAILED_BAD_TARGETS;
 	else if(p_caster->GetSummon() || p_caster->GetUnstabledPetNumber())
 		result = SPELL_FAILED_ALREADY_HAVE_SUMMON;
-	{
-		CreatureFamilyEntry *cf = dbcCreatureFamily.LookupEntry(tame->GetCreatureInfo()->Family);
-		if(cf && !cf->tameable)
-				result = SPELL_FAILED_BAD_TARGETS;
-	}
+
 	if(result != SPELL_CANCAST_OK)
 	{
 		SendCastResult(result);
@@ -5298,7 +5313,8 @@ void Spell::SpellEffectTameCreature(uint32 i)
 	pPet->SetPosition(p_caster->GetPosition(), true);
 	pPet->CreateAsSummon(tame->GetEntry(), tame->GetCreatureInfo(), tame, p_caster, NULL, 2, 0);
 
-	tame->Despawn(1, tame->GetRespawnTime());
+	// Add removal event.
+	sEventMgr.AddEvent(tame, &Creature::Despawn, uint32(1), tame->GetRespawnTime(), EVENT_CORPSE_DESPAWN, 5, 0, 0);
 }
 
 void Spell::SpellEffectSummonPet(uint32 i) //summon - pet

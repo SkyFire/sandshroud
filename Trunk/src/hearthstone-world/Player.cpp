@@ -451,6 +451,7 @@ void Player::Init()
 	m_bgFlagIneligible = 0;
 	m_moltenFuryDamageIncreasePct = 0;
 	m_insigniaTaken = false;
+	m_BeastMaster = false;
 	mSpellsUniqueTargets.clear();
 
 	m_wratings.clear();

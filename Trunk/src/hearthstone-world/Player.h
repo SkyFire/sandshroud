@@ -1468,6 +1468,8 @@ public:
 	uint32 m_UnderwaterState;
 	uint32 m_SwimmingTime;
 	uint32 m_BreathDamageTimer;
+	bool m_BeastMaster;
+
 	// Visible objects
 	bool CanSee(Object* obj);
 	HEARTHSTONE_INLINE bool IsVisible(Object* pObj) { return !(m_visibleObjects.find(pObj) == m_visibleObjects.end()); }

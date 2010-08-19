@@ -619,8 +619,7 @@ void Pet::InitializeMe(bool first)
 	else
 	{
 		// Pull from database... :/
-		QueryResult * query = CharacterDatabase.Query("SELECT * FROM playerpetspells WHERE ownerguid=%u AND petnumber=%u",
-			m_Owner->GetLowGUID(), m_PetNumber);
+		QueryResult * query = CharacterDatabase.Query("SELECT * FROM playerpetspells WHERE ownerguid=%u AND petnumber=%u", m_Owner->GetLowGUID(), m_PetNumber);
 		if(query)
 		{
 			do 
@@ -637,8 +636,7 @@ void Pet::InitializeMe(bool first)
 
 		// Pull from database... :/
 		uint8 spentPoints = 0;
-		QueryResult * query2 = CharacterDatabase.Query("SELECT * FROM playerpettalents WHERE ownerguid=%u AND petnumber=%u",
-			m_Owner->GetLowGUID(), m_PetNumber);
+		QueryResult * query2 = CharacterDatabase.Query("SELECT * FROM playerpettalents WHERE ownerguid=%u AND petnumber=%u",m_Owner->GetLowGUID(), m_PetNumber);
 		if(query2)
 		{
 			do 
@@ -1635,6 +1633,7 @@ bool Pet::ResetTalents(bool costs)
 	if (GetSpentPetTalentPoints() == 0)
 	{
 		SetUnspentPetTalentPoints(talentPointsForLevel);
+
 		m_Owner->smsg_TalentsInfo(true);
 		return false;
 	}
@@ -1689,7 +1688,6 @@ bool Pet::ResetTalents(bool costs)
 		}
 		m_talents.clear();
 	}
-
 
 	SetUnspentPetTalentPoints(talentPointsForLevel);
 	m_Owner->smsg_TalentsInfo(true);

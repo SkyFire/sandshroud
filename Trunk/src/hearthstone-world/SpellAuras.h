@@ -706,6 +706,7 @@ public:
 	void SpellAuraCastFilter(bool apply);
 	void SpellAuraModBaseHealth(bool apply);
 	void SpellAuraModDamageTakenByMechPCT(bool apply);
+	void SpellAuraAllowTamePetType(bool apply);
 	void SpellAuraAddCreatureImmunity(bool apply);
 	void SpellAuraRedirectThreat(bool apply);
 	void SpellAuraReduceAOEDamageTaken(bool apply);

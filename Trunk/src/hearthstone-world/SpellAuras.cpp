@@ -166,7 +166,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS]={
 		&Aura::SpellAuraModResistanceExclusive,                         //SPELL_AURA_MOD_RESISTANCE_EXCLUSIVE = 143,
 		&Aura::SpellAuraSafeFall,                                       //SPELL_AURA_SAFE_FALL = 144,
 		&Aura::SpellAuraModPetTalentPoints,                             //SPELL_AURA_MOD_PET_TALENT_POINTS = 145,
-		&Aura::SpellAuraNULL,                                           //SPELL_AURA_PERSUADED = 146,//obsolete
+		&Aura::SpellAuraAllowTamePetType,								//SPELL_AURA_ALLOW_TAME_PET_TYPE = 146,
 		&Aura::SpellAuraAddCreatureImmunity,                            //SPELL_AURA_ADD_CREATURE_IMMUNITY = 147,//http://wow.allakhazam.com/db/spell.html?wspell=36798
 		&Aura::SpellAuraRetainComboPoints,                              //SPELL_AURA_RETAIN_COMBO_POINTS = 148,
 		&Aura::SpellAuraResistPushback,                                 //SPELL_AURA_RESIST_PUSHBACK = 149,//	Resist Pushback //Simply resist spell casting delay
@@ -10106,6 +10106,14 @@ void Aura::SpellAuraModDamageTakenByMechPCT(bool apply)
 
 	float val = apply ? mod->m_amount / 100.0f : -(mod->m_amount / 100.0f);
 	m_target->ModDamageTakenByMechPCT[mod->m_miscValue] += val;
+}
+
+void Aura::SpellAuraAllowTamePetType(bool apply)
+{
+	if(m_target->IsPlayer())
+	{
+		TO_PLAYER(m_target)->m_BeastMaster = apply;
+	}
 }
 
 void Aura::SpellAuraAddCreatureImmunity(bool apply)

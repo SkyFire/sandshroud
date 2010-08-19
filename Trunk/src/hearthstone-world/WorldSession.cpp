@@ -977,6 +977,23 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_QUERY_INSPECT_ACHIEVEMENTS].handler			= &WorldSession::HandleAchievementInspect;
 	WorldPacketHandlers[CMSG_FAR_SIGHT].handler								= &WorldSession::HandleFarsightOpcode;
 
+	// Calendar
+	WorldPacketHandlers[CMSG_CALENDAR_GET_CALENDAR].handler					= &WorldSession::HandleCalendarGetCalendar;
+	WorldPacketHandlers[CMSG_CALENDAR_GET_EVENT].handler					= &WorldSession::HandleCalendarGetEvent;
+	WorldPacketHandlers[CMSG_CALENDAR_GUILD_FILTER].handler					= &WorldSession::HandleCalendarGuildFilter;
+	WorldPacketHandlers[CMSG_CALENDAR_ARENA_TEAM].handler					= &WorldSession::HandleCalendarArenaTeam;
+	WorldPacketHandlers[CMSG_CALENDAR_ADD_EVENT].handler					= &WorldSession::HandleCalendarAddEvent;
+	WorldPacketHandlers[CMSG_CALENDAR_UPDATE_EVENT].handler					= &WorldSession::HandleCalendarUpdateEvent;
+	WorldPacketHandlers[CMSG_CALENDAR_REMOVE_EVENT].handler					= &WorldSession::HandleCalendarRemoveEvent;
+	WorldPacketHandlers[CMSG_CALENDAR_COPY_EVENT].handler					= &WorldSession::HandleCalendarCopyEvent;
+	WorldPacketHandlers[CMSG_CALENDAR_EVENT_INVITE].handler					= &WorldSession::HandleCalendarEventInvite;
+	WorldPacketHandlers[CMSG_CALENDAR_EVENT_RSVP].handler					= &WorldSession::HandleCalendarEventRsvp;
+	WorldPacketHandlers[CMSG_CALENDAR_EVENT_REMOVE_INVITE].handler			= &WorldSession::HandleCalendarEventRemoveInvite;
+	WorldPacketHandlers[CMSG_CALENDAR_EVENT_STATUS].handler					= &WorldSession::HandleCalendarEventStatus;
+	WorldPacketHandlers[CMSG_CALENDAR_EVENT_MODERATOR_STATUS].handler		= &WorldSession::HandleCalendarEventModeratorStatus;
+	WorldPacketHandlers[CMSG_CALENDAR_COMPLAIN].handler						= &WorldSession::HandleCalendarComplain;
+	WorldPacketHandlers[CMSG_CALENDAR_GET_NUM_PENDING].handler				= &WorldSession::HandleCalendarGetNumPending;
+
 	// Vehicles
 	WorldPacketHandlers[CMSG_SPELLCLICK].handler							= &WorldSession::HandleSpellClick;
 	WorldPacketHandlers[CMSG_DISMISS_CONTROLLED_VEHICLE].handler			= &WorldSession::HandleVehicleDismiss;
