@@ -1562,14 +1562,12 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 	recv_data >> guid;
 
 	Player* player = _player->GetMapMgr()->GetPlayer( (uint32)guid );
-
 	if( player == NULL )
 		return;
 
 	WorldPacket data(SMSG_INSPECT_TALENT, 1000);
 	data << player->GetNewGUID();
 	player->BuildPlayerTalentsInfo(&data, false);
-	SendPacket( &data );
 
 	// build items inspect part. could be sent separately as SMSG_INSPECT
 	uint32 slotUsedMask = 0;
@@ -1582,10 +1580,13 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 		if( item )
 		{
 			slotUsedMask |= 1 << slot;
+
 			data << uint32(item->GetEntry());
+
 			size_t maskPosEnch = data.wpos();
 			enchantmentMask = 0;
-			data << uint16(enchantmentMask); // will be replaced later
+			data << uint16(enchantmentMask);
+
 			for(uint32 ench = 0; ench < 12; ench++)
 			{
 				uint16 enchId = (uint16) item->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 + ench * 3);
@@ -1596,8 +1597,9 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 				}
 			}
 			*(uint16*)&data.contents()[maskPosEnch] = enchantmentMask;
+
 			data << uint16(0);	// unk
-			FastGUIDPack(data, item->GetUInt32Value(ITEM_FIELD_CREATOR));
+			data << WoWGuid(item->GetUInt64Value(ITEM_FIELD_CREATOR));
 			data << uint32(0);	// unk
 		}
 	}

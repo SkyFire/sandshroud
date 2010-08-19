@@ -6876,6 +6876,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 			TalentEntry * talentInfo = dbcTalent.LookupEntryForced(itr->first);
 			if(!talentInfo || itr->second > 4)
 				continue;
+
 			ApplyTalent(talentInfo->RankID[itr->second]);
 			spentPoints += itr->second + 1;
 		}
