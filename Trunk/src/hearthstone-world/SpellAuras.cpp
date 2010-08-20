@@ -10412,7 +10412,7 @@ uint32 SCM2, uint32 SCM3, int32 procValue)
 
 	ProcTriggerSpell Pts;
 	memset(&Pts, 0, sizeof(ProcTriggerSpell));
-	Pts.origId = origid ? origid : spellid;
+	Pts.origId = origid;
 	Pts.spellId = spellid;
 	Pts.caster = m_caster;
 	Pts.procFlags = procFlags;
@@ -10428,11 +10428,6 @@ uint32 SCM2, uint32 SCM3, int32 procValue)
 	Pts.deleted = false;
 	Pts.procValue = procValue;
 	target->m_procSpells.push_back(Pts);
-
-	SpellEntry* sp = dbcSpell.LookupEntry(spellid);
-	if(sp->procFlags != procFlags) // Different proc flags?
-		sp->procFlags = procFlags; // Set our flags.
-
 	DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %s interval %u", Pts.origId, spellid, procChance, procFlags, procCharges, ((procFlags2 & PROC_TARGET_SELF) ? "true" : "false"), m_spellProto->proc_interval);
 }
 
