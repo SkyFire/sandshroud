@@ -6842,6 +6842,7 @@ void Aura::SpellAuraMounted(bool apply)
 			pPlayer->hasqueuedpet = false;
 		}
 		//m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI);
+		pPlayer->RemoveAurasByInterruptFlag( AURA_INTERRUPT_ON_DISMOUNT );
 	}
 }
 

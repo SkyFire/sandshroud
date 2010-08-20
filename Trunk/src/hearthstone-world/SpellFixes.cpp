@@ -324,7 +324,6 @@ void ApplyNormalFixes()
 				if(itr == sWorld.TeachingSpellMap.end())
 					sWorld.TeachingSpellMap.insert(make_pair(sp->EffectTriggerSpell[b],sp->Id));
 			}
-
 			if( sp->Attributes & ATTRIBUTES_ONLY_OUTDOORS && sp->EffectApplyAuraName[b] == SPELL_AURA_MOUNTED )
 			{
 				sp->Attributes &= ~ATTRIBUTES_ONLY_OUTDOORS;
@@ -642,7 +641,7 @@ void ApplyNormalFixes()
 				if(sp->EffectApplyAuraName[z] == SPELL_AURA_MOD_FEAR ||
 					sp->EffectApplyAuraName[z] == SPELL_AURA_MOD_ROOT)
 				{
-					sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_UNUSED2;
+					sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
 					break;
 				}
 			}
@@ -1492,7 +1491,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 51514:
 		{
 				// Damage	caused may interrupt the effect.
-			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_UNUSED2;
+			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
 		}break;
 
 	case 52752:
@@ -1704,7 +1703,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_CAST_SPELL;
 		}break;
-				
+
 			//Priest - Holy	Nova
 	case 15237:
 		{
@@ -3635,7 +3634,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 
 	case 5106:
 		{
-			sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_UNUSED2;
+			sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
 		}break;
 
 	/**********************************************************
@@ -5442,7 +5441,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 22570:
 	case 49802:	// Maim
 		{
-			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_UNUSED2;
+			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
 			sp->Attributes |=	ATTRIBUTES_STOP_ATTACK;
 		}break;
 
@@ -6622,7 +6621,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 
 			//Hex hax
 			if( sp->NameHash == SPELL_HASH_HEX )
-				sp->AuraInterruptFlags = AURA_INTERRUPT_ON_UNUSED2;
+				sp->AuraInterruptFlags = AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
 
 			// Glyph of hex
 			if( sp->Id == 63291 )

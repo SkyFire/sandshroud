@@ -1215,6 +1215,9 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 	if(!plr->IsPvPFlagged())
 		plr->SetPvPFlag();
 
+	// Remove auras that disappear on PvP Enter.
+	plr->RemoveAurasByInterruptFlag( AURA_INTERRUPT_ON_PVP_ENTER );
+
 	/* Reset the score */
 	memset(&plr->m_bgScore, 0, sizeof(BGScore));
 

@@ -195,17 +195,8 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 
 		// player is above water level
 		if( pSession->m_bIsWLevelSet )
-		{
 			if( ( movement_info.z + _player->m_noseLevel ) > pSession->m_wLevel )
-			{
-				// remove druid aquatic form on land
-				if( _player->getClass() == DRUID )
-					_player->RemoveAura( 1066 );
-
-				// unset swim session water level
-				pSession->m_bIsWLevelSet = false;
-			}
-		}
+				pSession->m_bIsWLevelSet = false; // unset swim session water level
 
 		return;
 	}
@@ -637,7 +628,14 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/************************************************************************/
 	/* Remove Spells                                                        */
 	/************************************************************************/
-	_player->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_MOVEMENT);
+	uint32 flags = AURA_INTERRUPT_ON_MOVEMENT;
+	if( !( _player->movement_info.flags & MOVEFLAG_SWIMMING || _player->movement_info.flags & MOVEFLAG_FALLING ) && !m_bIsWLevelSet )
+		flags |= AURA_INTERRUPT_ON_LEAVE_WATER;
+	if( _player->movement_info.flags & MOVEFLAG_SWIMMING )
+		flags |= AURA_INTERRUPT_ON_ENTER_WATER;
+	if( _player->movement_info.flags & ( MOVEFLAG_TURN_LEFT | MOVEFLAG_TURN_RIGHT ) )
+		flags |= AURA_INTERRUPT_ON_TURNING;
+	_player->RemoveAurasByInterruptFlag( flags );
 
 	/************************************************************************/
 	/* Update our position in the server.                                   */
