@@ -742,6 +742,45 @@ void ObjectMgr::SaveGMTicket(GM_Ticket* ticket, QueryBuffer * buf)
 		buf->AddQueryStr(ss.str());
 }
 
+void ObjectMgr::LoadQuestPOI()
+{
+	uint32 count = 0;
+	QueryResult *result = WorldDatabase.Query("SELECT questId, id, objIndex, mapid, WorldMapAreaId, FloorId, unk3, unk4 FROM quest_poi order by questId");
+	if(!result)
+		return;
+
+    if(result)
+    {
+		Field *fields = result->Fetch();
+		uint32 questId            = fields[0].GetUInt32();
+		uint32 id                 = fields[1].GetUInt32();
+		int32 objIndex            = fields[2].GetInt32();
+		uint32 mapId              = fields[3].GetUInt32();
+		uint32 WorldMapAreaId     = fields[4].GetUInt32();
+		uint32 FloorId            = fields[5].GetUInt32();
+		uint32 unk3               = fields[6].GetUInt32();
+		uint32 unk4               = fields[7].GetUInt32();
+		QuestPOI POI(id, objIndex, mapId, WorldMapAreaId, FloorId, unk3, unk4);
+		QueryResult *points = WorldDatabase.Query("SELECT x, y FROM quest_poi_points WHERE questId='%u' AND id='%i'", questId, id);
+		if (points)
+		{
+			do
+			{
+				Field *pointFields = points->Fetch();
+				int32 x = pointFields[0].GetInt32();
+				int32 y = pointFields[1].GetInt32();
+				QuestPOIPoint point(x, y);
+				POI.points.push_back(point);
+			}while (points->NextRow());
+        }
+
+		mQuestPOIMap[questId].push_back(POI);
+		++count;
+	} while (result->NextRow());
+
+	Log.Notice("ObjectMgr", "%u quest POI definitions.", count);
+}
+
 void ObjectMgr::SetHighestGuids()
 {
 	QueryResult *result;

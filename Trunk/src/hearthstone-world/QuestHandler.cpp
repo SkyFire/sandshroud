@@ -23,7 +23,7 @@ initialiseSingleton( QuestMgr );
 void WorldSession::HandleQuestgiverStatusQueryOpcode( WorldPacket & recv_data )
 {
 	DEBUG_LOG( "WORLD"," Received CMSG_QUESTGIVER_STATUS_QUERY." );
-	if(!_player) return;
+
 	CHECK_INWORLD_RETURN;
 
 	uint64 guid;
@@ -76,7 +76,6 @@ void WorldSession::HandleQuestgiverStatusQueryOpcode( WorldPacket & recv_data )
 void WorldSession::HandleQuestgiverHelloOpcode( WorldPacket & recv_data )
 {
 	DEBUG_LOG( "WORLD"," Received CMSG_QUESTGIVER_HELLO." );
-	if(!_player) return;
 	CHECK_INWORLD_RETURN;
 
 	uint64 guid;
@@ -106,7 +105,6 @@ void WorldSession::HandleQuestgiverHelloOpcode( WorldPacket & recv_data )
 void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 {
 	DEBUG_LOG( "WORLD"," Received CMSG_QUESTGIVER_QUERY_QUEST." );
-	if(!_player) return;
 	CHECK_INWORLD_RETURN;
 
 	WorldPacket data;
@@ -208,7 +206,6 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 {
 	DEBUG_LOG( "WORLD"," Received CMSG_QUESTGIVER_ACCEPT_QUEST" );
-	if(!_player) return;
 	CHECK_INWORLD_RETURN;
 
 	//WorldPacket data;
@@ -452,7 +449,6 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 
 void WorldSession::HandleQuestQueryOpcode( WorldPacket & recv_data )
 {
-	if(!_player) return;
 	CHECK_INWORLD_RETURN;
 	DEBUG_LOG( "WORLD"," Received CMSG_QUEST_QUERY" );
 
@@ -477,7 +473,6 @@ void WorldSession::HandleQuestQueryOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleQuestgiverRequestRewardOpcode( WorldPacket & recv_data )
 {
-	if(!_player) return;
 	CHECK_INWORLD_RETURN;
 	DEBUG_LOG( "WORLD"," Received CMSG_QUESTGIVER_REQUESTREWARD_QUEST." );
 
@@ -563,7 +558,6 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode( WorldPacket & recv_data 
 
 void WorldSession::HandleQuestgiverCompleteQuestOpcode( WorldPacket & recvPacket )
 {
-    if(!_player) return;
 	CHECK_INWORLD_RETURN;
 	DEBUG_LOG( "WORLD"," Received CMSG_QUESTGIVER_COMPLETE_QUEST." );
 
@@ -756,7 +750,6 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 
 void WorldSession::HandlePushQuestToPartyOpcode(WorldPacket &recv_data)
 {
-    if(!_player) return;
 	CHECK_INWORLD_RETURN;
 	uint32 questid, status;
 	recv_data >> questid;
@@ -852,7 +845,6 @@ void WorldSession::HandlePushQuestToPartyOpcode(WorldPacket &recv_data)
 
 void WorldSession::HandleQuestPushResult(WorldPacket& recvPacket)
 {
-	if(!_player) return;
 	CHECK_INWORLD_RETURN;
 	uint64 guid;
 	uint8 msg;
@@ -873,4 +865,72 @@ void WorldSession::HandleQuestPushResult(WorldPacket& recvPacket)
 			GetPlayer()->SetQuestSharer(0);
 		}
 	}
+}
+
+void WorldSession::HandleQuestPOI(WorldPacket& recvPacket)
+{
+	CHECK_INWORLD_RETURN;
+	uint32 count;
+	recvPacket >> count;
+	
+	if (count >= 25)
+		return;
+	
+	DEBUG_LOG( "WORLD"," Received MSG_QUEST_PUSH_RESULT " );
+
+	WorldPacket data(SMSG_QUEST_POI_QUERY_RESPONSE, 4+(4+4)*count);
+	data << uint32(count);
+
+	for (int i = 0; i < count; ++i)
+	{
+		uint32 questId;
+		recvPacket >> questId;
+
+		bool questOk = false;
+
+		uint16 questSlot = _player->FindQuestSlot(questId);
+
+		if (questSlot != 25)
+			questOk =_player->GetQuestSlotQuestId(questSlot) == questId;
+
+		if (questOk)
+		{
+			QuestPOIVector const *POI = objmgr.GetQuestPOIVector(questId);
+
+			if (POI)
+			{
+				data << uint32(questId);
+				data << uint32(POI->size());
+
+				for (QuestPOIVector::const_iterator itr = POI->begin(); itr != POI->end(); ++itr)
+				{
+					data << uint32(itr->Id);
+					data << int32(itr->ObjectiveIndex);
+					data << uint32(itr->MapId);
+					data << uint32(itr->AreaId);
+					data << uint32(itr->Unk2);
+					data << uint32(itr->Unk3);
+					data << uint32(itr->Unk4);
+					data << uint32(itr->points.size());
+
+					for (std::vector<QuestPOIPoint>::const_iterator itr2 = itr->points.begin(); itr2 != itr->points.end(); ++itr2)
+					{
+						data << int32(itr2->x);
+						data << int32(itr2->y);
+					}
+				}
+			}
+			else
+			{
+				data << uint32(questId);
+				data << uint32(0);
+			}
+		}
+		else
+		{
+			data << uint32(questId);
+			data << uint32(0);
+		}
+	}
+	SendPacket(&data);
 }

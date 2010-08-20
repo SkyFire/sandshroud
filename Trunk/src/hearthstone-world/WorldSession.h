@@ -524,6 +524,7 @@ protected:
 	void HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket);
 	void HandlePushQuestToPartyOpcode(WorldPacket &recvPacket);
 	void HandleQuestPushResult(WorldPacket &recvPacket);
+	void HandleQuestPOI(WorldPacket &recvPacket);
 
 
 	/// Chat opcodes (Chat.cpp)

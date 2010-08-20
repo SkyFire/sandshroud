@@ -472,6 +472,7 @@ bool World::SetInitialWorldSettings()
 	MAKE_TASK(QuestMgr,  LoadExtraQuestStuff);
 	MAKE_TASK(ObjectMgr, LoadArenaTeams);
 	MAKE_TASK(ObjectMgr, LoadProfessionDiscoveries);
+	MAKE_TASK(ObjectMgr, LoadQuestPOI);
 
 #undef MAKE_TASK
 

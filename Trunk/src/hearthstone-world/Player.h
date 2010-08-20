@@ -1011,6 +1011,7 @@ public:
 	void				RemoveQuestsFromLine(int skill_line);
 	void				ResetDailyQuests();
 	uint16				FindQuestSlot(uint32 questid);
+	uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * 5 + (uint32)NULL); }
 
 	//Quest related variables
 	QuestLogEntry*		m_questlog[25];

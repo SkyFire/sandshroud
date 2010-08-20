@@ -802,6 +802,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_RESURRECT_RESPONSE].handler					= &WorldSession::HandleResurrectResponseOpcode;
 	WorldPacketHandlers[CMSG_PUSHQUESTTOPARTY].handler						= &WorldSession::HandlePushQuestToPartyOpcode;
 	WorldPacketHandlers[MSG_QUEST_PUSH_RESULT].handler						= &WorldSession::HandleQuestPushResult;
+	WorldPacketHandlers[CMSG_QUEST_POI_QUERY].handler						= &WorldSession::HandleQuestPOI;
 
 	// Auction System
 	WorldPacketHandlers[CMSG_AUCTION_LIST_ITEMS].handler					= &WorldSession::HandleAuctionListItems;
@@ -894,7 +895,6 @@ void WorldSession::InitPacketHandlerTable()
 	// Battlegrounds
 	WorldPacketHandlers[CMSG_BATTLEFIELD_PORT].handler						= &WorldSession::HandleBattlefieldPortOpcode;
 	WorldPacketHandlers[CMSG_BATTLEFIELD_STATUS].handler					= &WorldSession::HandleBattlefieldStatusOpcode;
-//	WorldPacketHandlers[CMSG_BATTLEFIELD_LIST].handler						= &WorldSession::HandleBattlefieldListOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_HELLO].handler					= &WorldSession::HandleBattleMasterHelloOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_JOIN_ARENA].handler				= &WorldSession::HandleArenaJoinOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_JOIN].handler						= &WorldSession::HandleBattleMasterJoinOpcode;
