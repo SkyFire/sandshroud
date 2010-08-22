@@ -1451,15 +1451,33 @@ void Creature::OnPushToWorld()
 {
 	if(proto)
 	{
-		set<uint32>::iterator itr = proto->start_auras.begin();
-		SpellEntry * sp = NULL;
-		for(; itr != proto->start_auras.end(); itr++)
+		uint8 mode = GetMapMgr()->iInstanceMode;
+		if(mode && (proto->ModeProto.find(mode) != proto->ModeProto.end()))
 		{
-			sp = dbcSpell.LookupEntry((*itr));
-			if(sp != NULL)
+			set<uint32>::iterator itr = proto->ModeProto[mode]->start_auras.begin();
+			SpellEntry * sp = NULL;
+			for(; itr != proto->ModeProto[mode]->start_auras.end(); itr++)
 			{
-				Unit* target = TO_UNIT(this);
-				sEventMgr.AddEvent(target, &Unit::EventCastSpell, target, sp, EVENT_AURA_APPLY, 250, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT); 
+				sp = dbcSpell.LookupEntry((*itr));
+				if(sp != NULL)
+				{
+					Unit* target = TO_UNIT(this);
+					sEventMgr.AddEvent(target, &Unit::EventCastSpell, target, sp, EVENT_AURA_APPLY, 250, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT); 
+				}
+			}
+		}
+		else
+		{
+			set<uint32>::iterator itr = proto->start_auras.begin();
+			SpellEntry * sp = NULL;
+			for(; itr != proto->start_auras.end(); itr++)
+			{
+				sp = dbcSpell.LookupEntry((*itr));
+				if(sp != NULL)
+				{
+					Unit* target = TO_UNIT(this);
+					sEventMgr.AddEvent(target, &Unit::EventCastSpell, target, sp, EVENT_AURA_APPLY, 250, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT); 
+				}
 			}
 		}
 	}

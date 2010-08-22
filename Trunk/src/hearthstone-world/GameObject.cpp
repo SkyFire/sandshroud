@@ -842,7 +842,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Object* pcaster, uin
 	}
 
 	WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
-	data << mcaster->GetNewGUID() << pcaster->GetNewGUID();
+	data << GetNewGUID() << mcaster->GetNewGUID() << pcaster->GetNewGUID();
 	if(pcaster->IsPlayer() && TO_PLAYER(pcaster)->m_CurrentVehicle)
 		data << TO_PLAYER(pcaster)->m_CurrentVehicle->GetNewGUID();
 	else

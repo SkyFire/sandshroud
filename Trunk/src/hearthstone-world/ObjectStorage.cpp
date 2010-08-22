@@ -162,12 +162,13 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 			QueryResult* teleresult = WorldDatabase.Query( "SELECT * FROM creature_teleport_info WHERE entry = %u", entry);
 			if(teleresult)
 			{
+				TeleportInfo* teleinfo = NULL;
 				do
 				{
 					Field *fields = teleresult->Fetch();
 					uint32 fieldcount = 1;
 
-					TeleportInfo* teleinfo = new TeleportInfo;
+					teleinfo = new TeleportInfo;
 					teleinfo->intid = fields[fieldcount++].GetUInt8();
 					teleinfo->iconid = fields[fieldcount++].GetUInt8();
 					teleinfo->teleport = fields[fieldcount++].GetBool();
@@ -184,6 +185,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					teleinfo->Message = fields[fieldcount++].GetString();
 
 					cn->TeleportInfoList.insert(teleinfo);
+					teleinfo = NULL;
 					teleportcount++;
 
 				}while( teleresult->NextRow() );
@@ -197,12 +199,12 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 			QueryResult * moderesult = WorldDatabase.Query( "SELECT * FROM creature_proto_mode WHERE entry = %u", entry);
 			if(moderesult)
 			{
-				uint8 mode = 0;
+				CreatureProtoMode* cpm = NULL;
 				do
 				{
 					uint32 fieldcount = 1;
 					Field *fields = moderesult->Fetch();
-					mode = fields[fieldcount++].GetUInt8();
+					uint8 mode = fields[fieldcount++].GetUInt8();
 					if(mode > 3 || mode < 1)
 					{
 						Log.Warning("ObjectStorage","Incorrect instance mode %u for creature %u, instance mode 3 max.", mode, entry);
@@ -213,7 +215,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 						continue;
 					}
 
-					CreatureProtoMode* cpm = new CreatureProtoMode();
+					cpm = new CreatureProtoMode();
 					cpm->Minlevel = fields[fieldcount++].GetUInt32();
 					cpm->Maxlevel = fields[fieldcount++].GetUInt32();
 					cpm->Minhealth = fields[fieldcount++].GetUInt32();
@@ -223,7 +225,20 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					cpm->Power = fields[fieldcount++].GetUInt32();
 					for(uint8 i = 0; i < 7; i++)
 						cpm->Resistances[i] = fields[fieldcount++].GetUInt32();
-					cpm->aura_string = (char*)fields[fieldcount++].GetString();
+
+					char* aura_string = (char*)fields[fieldcount++].GetString();
+					if(aura_string)
+					{
+						string auras = string(aura_string);
+						vector<string> aurs = StrSplit(auras, " ");
+						for(vector<string>::iterator it = aurs.begin(); it != aurs.end(); it++)
+						{
+							uint32 id = atol((*it).c_str());
+							if(id)
+								cpm->start_auras.insert( id );
+						}
+					}
+
 					cpm->auraimmune_flag = fields[fieldcount++].GetUInt32();
 
 					// Begin cleanup changes.
@@ -703,157 +718,155 @@ void Storage_FillTaskList(TaskList & tl)
 
 void Storage_Cleanup()
 {
+	StorageContainerIterator<CreatureProto> * cpitr = CreatureProtoStorage.MakeIterator();
+	CreatureProto * p;
+	while(!cpitr->AtEnd())
 	{
-		StorageContainerIterator<CreatureProto> * itr = CreatureProtoStorage.MakeIterator();
-		CreatureProto * p;
-		while(!itr->AtEnd())
+		p = cpitr->Get();
+
+		if (p->aura_string)
 		{
-			p = itr->Get();
-
-			if (p->aura_string)
-			{
-				free(p->aura_string);
-				p->aura_string = NULL;
-			}
-
-			for(uint8 i = 0; i < 4; i++)
-			{
-				for(list<AI_Spell*>::iterator it = p->spells[i].begin(); it != p->spells[i].end(); it++)
-					delete (*it);
-
-				p->spells[i].clear();
-			}
-
-			p->start_auras.clear();
-			if(!itr->Inc())
-				break;
+			free(p->aura_string);
+			p->aura_string = NULL;
 		}
-		itr->Destruct();
+
+		for(uint8 i = 0; i < 4; i++)
+		{
+			for(list<AI_Spell*>::iterator it = p->spells[i].begin(); it != p->spells[i].end(); it++)
+				delete (*it);
+
+			p->spells[i].clear();
+		}
+
+		p->start_auras.clear();
+		p->ModeProto.clear();
+
+		if(!cpitr->Inc())
+			break;
 	}
+	cpitr->Destruct();
+
 	ItemPrototypeStorage.Cleanup();
 	CreatureNameStorage.Cleanup();
 	GameObjectNameStorage.Cleanup();
 	CreatureProtoStorage.Cleanup();
 	CreatureProtoVehicleStorage.Cleanup();
 	CreatureInfoExtraStorage.Cleanup();
+
+	StorageContainerIterator<AreaTrigger> * ATitr = AreaTriggerStorage.MakeIterator();
+	AreaTrigger * a;
+	while(!ATitr->AtEnd())
 	{
-		StorageContainerIterator<AreaTrigger> * itr = AreaTriggerStorage.MakeIterator();
-		AreaTrigger * a;
-		while(!itr->AtEnd())
+		a = ATitr->Get();
+
+		if (a->Name)
 		{
-			a = itr->Get();
-
-			if (a->Name)
-			{
-				free(a->Name);
-				a->Name = NULL;
-			}
-
-			if(!itr->Inc())
-				break;
+			free(a->Name);
+			a->Name = NULL;
 		}
-		itr->Destruct();
+
+		if(!ATitr->Inc())
+			break;
 	}
+	ATitr->Destruct();
+
 	AreaTriggerStorage.Cleanup();
+
+	StorageContainerIterator<ItemPage> * IPitr = ItemPageStorage.MakeIterator();
+	ItemPage * i;
+	while(!IPitr->AtEnd())
 	{
-		StorageContainerIterator<ItemPage> * itr = ItemPageStorage.MakeIterator();
-		ItemPage * i;
-		while(!itr->AtEnd())
+		i = IPitr->Get();
+
+		if (i->text)
 		{
-			i = itr->Get();
-
-			if (i->text)
-			{
-				free(i->text);
-				i->text = NULL;
-			}
-
-			if(!itr->Inc())
-				break;
+			free(i->text);
+			i->text = NULL;
 		}
-		itr->Destruct();
+
+		if(!IPitr->Inc())
+			break;
 	}
+	IPitr->Destruct();
+
 	ItemPageStorage.Cleanup();
 	RandomItemCreationStorage.Cleanup();
 	RandomCardCreationStorage.Cleanup();
 	ScrollCreationStorage.Cleanup();
 
+	StorageContainerIterator<Quest> * Qitr = QuestStorage.MakeIterator();
+	Quest * q;
+	while(!Qitr->AtEnd())
 	{
-		StorageContainerIterator<Quest> * itr = QuestStorage.MakeIterator();
-		Quest * q;
-		while(!itr->AtEnd())
+		q = Qitr->Get();
+
+		if (q->title)
 		{
-			q = itr->Get();
-
-			if (q->title)
-			{
-				free(q->title);
-				q->title = NULL;
-			}
-			if (q->details)
-			{
-				free(q->details);
-				q->details = NULL;
-			}
-			if (q->objectives)
-			{
-				free(q->objectives);
-				q->objectives = NULL;
-			}
-			if (q->completiontext)
-			{
-				free(q->completiontext);
-				q->completiontext = NULL;
-			}
-			if (q->incompletetext)
-			{
-				free(q->incompletetext);
-				q->incompletetext = NULL;
-			}
-			if (q->endtext)
-			{
-				free(q->endtext);
-				q->endtext = NULL;
-			}
-			for(uint8 x = 0; x < 4; x++)
-			{
-				if (q->objectivetexts[x])
-				{
-					free(q->objectivetexts[x]);
-					q->objectivetexts[x] = NULL;
-				}
-			}
-
-			if(!itr->Inc())
-				break;
+			free(q->title);
+			q->title = NULL;
 		}
-		itr->Destruct();
-	}
+		if (q->details)
+		{
+			free(q->details);
+			q->details = NULL;
+		}
+		if (q->objectives)
+		{
+			free(q->objectives);
+			q->objectives = NULL;
+		}
+		if (q->completiontext)
+		{
+			free(q->completiontext);
+			q->completiontext = NULL;
+		}
+		if (q->incompletetext)
+		{
+			free(q->incompletetext);
+			q->incompletetext = NULL;
+		}
+		if (q->endtext)
+		{
+			free(q->endtext);
+			q->endtext = NULL;
+		}
+		for(uint8 x = 0; x < 4; x++)
+		{
+			if (q->objectivetexts[x])
+			{
+				free(q->objectivetexts[x]);
+				q->objectivetexts[x] = NULL;
+			}
+		}
 
+		if(!Qitr->Inc())
+			break;
+	}
+	Qitr->Destruct();
 
 	QuestStorage.Cleanup();
 	GraveyardStorage.Cleanup();
 	TeleportCoordStorage.Cleanup();
 	FishingZoneStorage.Cleanup();
 	NpcTextStorage.Cleanup();
+
+	StorageContainerIterator<MapInfo> * MIitr = WorldMapInfoStorage.MakeIterator();
+	MapInfo * m;
+	while(!MIitr->AtEnd())
 	{
-		StorageContainerIterator<MapInfo> * itr = WorldMapInfoStorage.MakeIterator();
-		MapInfo * m;
-		while(!itr->AtEnd())
+		m = MIitr->Get();
+
+		if (m->name)
 		{
-			m = itr->Get();
-
-			if (m->name)
-			{
-				free(m->name);
-				m->name = NULL;
-			}
-
-			if(!itr->Inc())
-				break;
+			free(m->name);
+			m->name = NULL;
 		}
-		itr->Destruct();
+
+		if(!MIitr->Inc())
+			break;
 	}
+	MIitr->Destruct();
+
 	WorldMapInfoStorage.Cleanup();
 	ZoneGuardStorage.Cleanup();
 }

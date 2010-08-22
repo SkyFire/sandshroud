@@ -61,17 +61,19 @@ enum ServerHookEvents
 	SERVER_HOOK_EVENT_ON_PRE_DIE			= 28,
 	SERVER_HOOK_EVENT_ON_ADVANCE_SKILLLINE	= 29,
 	SERVER_HOOK_EVENT_ON_DUEL_FINISHED		= 30,
-	SERVER_HOOK_EVENT_ON_UPDATE				= 31,
-	SERVER_HOOK_EVENT_ON_CONTINENT_CREATE	= 32,
-	SERVER_HOOK_EVENT_ON_POST_SPELL_CAST	= 33,
-	SERVER_HOOK_EVENT_ON_PLAYER_SAVE_TO_DB	= 34,
-	SERVER_HOOK_EVENT_ON_AURA_REMOVE		= 35,
-	SERVER_HOOK_EVENT_ON_DESTROY_BUILDING	= 36,
-	SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING	= 37,
-	SERVER_HOOK_EVENT_ON_MOUNT_FLYING		= 38,
-	SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE	= 39,
-	SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN		= 40,
+	SERVER_HOOK_EVENT_ON_AURA_REMOVE		= 31,
+	SERVER_HOOK_EVENT_ON_RESURRECT			= 32,
+	SERVER_HOOK_EVENT_ON_UPDATE				= 33,
+	SERVER_HOOK_EVENT_ON_CONTINENT_CREATE	= 34,
+	SERVER_HOOK_EVENT_ON_POST_SPELL_CAST	= 35,
+	SERVER_HOOK_EVENT_ON_PLAYER_SAVE_TO_DB	= 36,
 
+	// Destructable Buildings
+	SERVER_HOOK_EVENT_ON_DESTROY_BUILDING	= 37,
+	SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING	= 38,
+	SERVER_HOOK_EVENT_ON_MOUNT_FLYING		= 39,
+	SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE	= 40,
+	SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN		= 41,
 	NUM_SERVER_HOOKS,
 };
 
@@ -119,11 +121,12 @@ typedef void(*tOnPostLevelUp)(Player * pPlayer);
 typedef bool(*tOnPreUnitDie)(Unit *killer, Unit *target);
 typedef void(*tOnAdvanceSkillLine)(Player * pPlayer, uint32 SkillLine, uint32 Current);
 typedef void(*tOnDuelFinished)(Player * Winner, Player * Looser);
+typedef void(*tOnAuraRemove)(Player* pPlayer, uint32 spellID);
+typedef bool(*tOnResurrect)(Player * pPlayer);
 typedef void(*tOnUpdate)(Player * plr);
 typedef void(*tOnContinentCreate)(MapMgr* mgr);
 typedef void(*tOnPostSpellCast)(Player* pPlayer, SpellEntry * pSpell, Unit* pTarget);
 typedef void(*tOnPlayerSaveToDB)(Player* pPlayer, QueryBuffer* buf);
-typedef void(*tOnAuraRemove)(Player* pPlayer, uint32 spellID);
 
 //Destructable building
 typedef void(*tOnDestroyBuilding)(GameObject* go); 
@@ -132,16 +135,12 @@ typedef bool(*tOnMountFlying) (Player* plr);
 typedef bool(*tOnPreAuraRemove)(Player* plr,uint32 spellID); 
 typedef void(*tOnSlowLockOpen)(GameObject* go,Player* plr); 
 
-class Spell;
-class Aura;
-class Creature;
 class CreatureAIScript;
 class GossipScript;
 class GameObjectAIScript;
 class InstanceScript;
 class ScriptMgr;
 struct ItemPrototype;
-class QuestLogEntry;
 
 /* Factory Imports (from script lib) */
 typedef CreatureAIScript*(*exp_create_creature_ai)(Creature* pCreature);
@@ -151,7 +150,6 @@ typedef bool(*exp_handle_dummy_spell)(uint32 i, Spell* pSpell);
 typedef bool(*exp_handle_dummy_aura)(uint32 i, Aura* pAura, bool apply);
 typedef void(*exp_script_register)(ScriptMgr * mgr);
 typedef uint32(*exp_get_script_type)();
-
 typedef uint32(*exp_get_version)();
 
 /* Hashmap typedefs */
@@ -396,8 +394,9 @@ public:
 	void OnPostSpellCast(Player* pPlayer, SpellEntry * pSpell, Unit* pTarget);
 	void OnPlayerSaveToDB(Player* pPlayer, QueryBuffer* buf);
 	void OnAuraRemove(Player* pPlayer, uint32 spellID);
+	bool OnResurrect(Player * pPlayer);
 
-//Destructable buildings
+	//Destructable buildings
 	void OnDestroyBuilding(GameObject* go);
 	void OnDamageBuilding(GameObject* go);
 	bool OnMountFlying(Player* plr);

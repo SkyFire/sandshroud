@@ -144,8 +144,10 @@ struct CreatureProtoMode
 	float Maxdmg;
 	uint32 Power;
 	uint32 Resistances[7];
-	char * aura_string;
+//	char * aura_string; // We just convert directly.
 	uint32 auraimmune_flag;
+
+	set<uint32> start_auras;
 };
 
 struct CreatureProto

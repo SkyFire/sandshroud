@@ -906,119 +906,119 @@ bool HookInterface::OnNewCharacter(uint32 Race, uint32 Class, WorldSession * Ses
 {
 	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_NEW_CHARACTER, tOnNewCharacter)
 		ret_val = (call)(Race, Class, Session, Name);
-	OUTER_LOOP_END_COND
+	OUTER_LOOP_END_COND;
 }
 
 void HookInterface::OnKillPlayer(Player* pPlayer, Player* pVictim)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_KILL_PLAYER, tOnKillPlayer)
 		(call)(pPlayer, pVictim);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnFirstEnterWorld(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_FIRST_ENTER_WORLD, tOnFirstEnterWorld)
 		(call)(pPlayer);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnCharacterCreate(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_CHARACTER_CREATE, tOCharacterCreate)
 		(call)(pPlayer);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnEnterWorld(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_ENTER_WORLD, tOnEnterWorld)
 		(call)(pPlayer);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnGuildCreate(Player* pLeader, Guild * pGuild)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_GUILD_CREATE, tOnGuildCreate)
 		(call)(pLeader, pGuild);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnGuildJoin(Player* pPlayer, Guild * pGuild)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_GUILD_JOIN, tOnGuildJoin)
 		(call)(pPlayer, pGuild);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnDeath(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_DEATH, tOnDeath)
 		(call)(pPlayer);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 bool HookInterface::OnRepop(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_REPOP, tOnRepop)
 		ret_val = (call)(pPlayer);
-	OUTER_LOOP_END_COND
+	OUTER_LOOP_END_COND;
 }
 
 void HookInterface::OnEmote(Player* pPlayer, uint32 Emote, Unit* pUnit)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_EMOTE, tOnEmote)
 		(call)(pPlayer, Emote, pUnit);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnEnterCombat(Player* pPlayer, Unit* pTarget)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_ENTER_COMBAT, tOnEnterCombat)
 		(call)(pPlayer, pTarget);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 bool HookInterface::OnCastSpell(Player* pPlayer, SpellEntry* pSpell)
 {
 	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_CAST_SPELL, tOnCastSpell)
 		ret_val = (call)(pPlayer, pSpell);
-	OUTER_LOOP_END_COND
+	OUTER_LOOP_END_COND;
 }
 
 bool HookInterface::OnLogoutRequest(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_LOGOUT_REQUEST, tOnLogoutRequest)
 		ret_val = (call)(pPlayer);
-	OUTER_LOOP_END_COND
+	OUTER_LOOP_END_COND;
 }
 
 void HookInterface::OnLogout(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_LOGOUT, tOnLogout)
 		(call)(pPlayer);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnQuestAccept(Player* pPlayer, Quest * pQuest, Object* pObject)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_QUEST_ACCEPT, tOnQuestAccept)
 		(call)(pPlayer, pQuest, pObject);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnZone(Player* pPlayer, uint32 Zone, uint32 OldZone)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_ZONE, tOnZone)
 		(call)(pPlayer, Zone, OldZone);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 bool HookInterface::OnChat(Player* pPlayer, uint32 Type, uint32 Lang, string Message, string Misc)
 {
 	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_CHAT, tOnChat)
 		ret_val = (call)(pPlayer, Type, Lang, Message, Misc);
-	OUTER_LOOP_END_COND
+	OUTER_LOOP_END_COND;
 }
 
 void HookInterface::OnLoot(Player * pPlayer, Object * pTarget, uint32 money, uint32 itemId)
@@ -1039,103 +1039,124 @@ void HookInterface::OnFullLogin(Player* pPlayer)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_FULL_LOGIN, tOnFullLogin)
 		(call)(pPlayer);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnQuestCancelled(Player* pPlayer, Quest * pQuest)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_QUEST_CANCELLED, tOnQuestCancel)
 		(call)(pPlayer, pQuest);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnQuestFinished(Player* pPlayer, Quest * pQuest, Object* pObject)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_QUEST_FINISHED, tOnQuestFinished)
 		(call)(pPlayer, pQuest, pObject);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnHonorableKill(Player* pPlayer, Player* pKilled)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_HONORABLE_KILL, tOnHonorableKill)
 		(call)(pPlayer, pKilled);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnArenaFinish(Player* pPlayer, uint32 type, ArenaTeam* pTeam, bool victory, bool rated)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_ARENA_FINISH, tOnArenaFinish)
 		(call)(pPlayer, type, pTeam, victory, rated);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
+}
+
+void HookInterface::OnDuelFinished(Player * Winner, Player * Looser)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_DUEL_FINISHED, tOnDuelFinished)
+		(call)(Winner, Looser);
+	OUTER_LOOP_END;
+}
+
+void HookInterface::OnUpdate(Player* pPlayer)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_UPDATE, tOnUpdate)
+		(call)(pPlayer);
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnContinentCreate(MapMgr* pMgr)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_CONTINENT_CREATE, tOnContinentCreate)
 		(call)(pMgr);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnPostSpellCast(Player* pPlayer, SpellEntry * pSpell, Unit* pTarget)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_POST_SPELL_CAST, tOnPostSpellCast)
 		(call)(pPlayer, pSpell, pTarget);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnAreaTrigger(Player* plr, uint32 areatrigger)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_AREATRIGGER, tOnAreaTrigger)
 		(call)(plr, areatrigger);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnPlayerSaveToDB(Player* pPlayer, QueryBuffer* buf)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_PLAYER_SAVE_TO_DB, tOnPlayerSaveToDB)
 		(call)(pPlayer, buf);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnAuraRemove(Player* pPlayer, uint32 spellID)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_AURA_REMOVE, tOnAuraRemove)
 		(call)(pPlayer, spellID);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
+}
+
+bool HookInterface::OnResurrect(Player * pPlayer)
+{
+	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_RESURRECT,tOnResurrect)
+		ret_val = (call)(pPlayer);
+	OUTER_LOOP_END_COND;
 }
 
 void HookInterface::OnDestroyBuilding(GameObject* go)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_DESTROY_BUILDING,tOnDestroyBuilding)
 		(call)(go);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnDamageBuilding(GameObject* go)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_DAMAGE_BUILDING,tOnDamageBuilding)
 		(call)(go);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }
 
 bool HookInterface::OnMountFlying(Player* plr)
 {
-	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_MOUNT_FLYING,tOnMountFlying)
+	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_MOUNT_FLYING, tOnMountFlying)
 		ret_val = (call)(plr);
-	OUTER_LOOP_END_COND
+	OUTER_LOOP_END_COND;
 }
 
 bool HookInterface::OnPreAuraRemove(Player* plr,uint32 spellID)
 {
 	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_PRE_AURA_REMOVE,tOnPreAuraRemove)
 		ret_val = (call)(plr,spellID);
-	OUTER_LOOP_END_COND
+	OUTER_LOOP_END_COND;
 }
 
 void HookInterface::OnSlowLockOpen(GameObject* go,Player* plr)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_SLOW_LOCK_OPEN,tOnSlowLockOpen)
 		(call)(go,plr);
-	OUTER_LOOP_END
+	OUTER_LOOP_END;
 }

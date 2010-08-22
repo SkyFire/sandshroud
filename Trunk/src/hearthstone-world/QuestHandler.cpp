@@ -872,10 +872,10 @@ void WorldSession::HandleQuestPOI(WorldPacket& recvPacket)
 	CHECK_INWORLD_RETURN;
 	uint32 count;
 	recvPacket >> count;
-	
+
 	if (count >= 25)
 		return;
-	
+
 	DEBUG_LOG( "WORLD"," Received MSG_QUEST_PUSH_RESULT " );
 
 	WorldPacket data(SMSG_QUEST_POI_QUERY_RESPONSE, 4+(4+4)*count);

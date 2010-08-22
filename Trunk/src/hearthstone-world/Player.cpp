@@ -969,6 +969,7 @@ void Player::Update( uint32 p_time )
 
 	Unit::Update( p_time );
 	uint32 mstime = getMSTime();
+	sHookInterface.OnUpdate(this);
 
 	if(m_attacking)
 	{
@@ -4656,6 +4657,9 @@ Corpse* Player::RepopRequestedPlayer()
 
 void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 {
+	if (!sHookInterface.OnResurrect(this))
+		return;
+
 	sEventMgr.RemoveEvents(TO_PLAYER(this),EVENT_PLAYER_FORCED_RESURECT); //in case somebody resurected us before this event happened
 	if( m_resurrectHealth )
 		SetUInt32Value(UNIT_FIELD_HEALTH, (uint32)min( m_resurrectHealth, m_uint32Values[UNIT_FIELD_MAXHEALTH] ) );
@@ -8606,6 +8610,12 @@ void Player::EndDuel(uint8 WinCondition)
 	data.Initialize( SMSG_DUEL_COMPLETE );
 	data << uint8( 1 );
 	SendMessageToSet( &data, true );
+
+	// Handle OnDuelFinished hook
+	if ( WinCondition != 0 )
+		sHookInterface.OnDuelFinished( DuelingWith, this );
+	else
+		sHookInterface.OnDuelFinished( this, DuelingWith );
 
 	//Clear Duel Related Stuff
 

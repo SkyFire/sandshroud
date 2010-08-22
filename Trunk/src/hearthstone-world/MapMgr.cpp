@@ -103,7 +103,8 @@ void MapMgr::Init()
 {
 	m_stateManager = new WorldStateManager(this);
 	// Create script interface
-	ScriptInterface = new MapScriptInterface( this );
+	ScriptInterface = new MapScriptInterface(this);
+	sHookInterface.OnContinentCreate(this);
 }
 
 MapMgr::~MapMgr()
