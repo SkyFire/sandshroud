@@ -1023,16 +1023,16 @@ bool HookInterface::OnChat(Player* pPlayer, uint32 Type, uint32 Lang, string Mes
 
 void HookInterface::OnLoot(Player * pPlayer, Object * pTarget, uint32 money, uint32 itemId)
 {
-	ServerHookList hookList = sScriptMgr._hooks[SERVER_HOOK_EVENT_ON_LOOT];
-	for(ServerHookList::iterator itr = hookList.begin(); itr != hookList.end(); ++itr)
-		((tOnLoot)*itr)(pPlayer, pTarget, money, itemId);
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_LOOT, tOnLoot)
+		(call)(pPlayer, pTarget, money, itemId);
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnObjectLoot(Player * pPlayer, Object * pTarget, uint32 money, uint32 itemId)
 {
-	ServerHookList hookList = sScriptMgr._hooks[SERVER_HOOK_EVENT_ON_OBJECTLOOT];
-	for(ServerHookList::iterator itr = hookList.begin(); itr != hookList.end(); ++itr)
-		((tOnObjectLoot)*itr)(pPlayer, pTarget, money, itemId);
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_OBJECTLOOT, tOnObjectLoot)
+		(call)(pPlayer, pTarget, money, itemId);
+	OUTER_LOOP_END;
 }
 
 void HookInterface::OnFullLogin(Player* pPlayer)
@@ -1067,6 +1067,27 @@ void HookInterface::OnArenaFinish(Player* pPlayer, uint32 type, ArenaTeam* pTeam
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_ARENA_FINISH, tOnArenaFinish)
 		(call)(pPlayer, type, pTeam, victory, rated);
+	OUTER_LOOP_END;
+}
+
+void HookInterface::OnPostLevelUp(Player * pPlayer)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_POST_LEVELUP, tOnPostLevelUp)
+		(call)(pPlayer);
+	OUTER_LOOP_END;
+}
+
+bool HookInterface::OnPreUnitDie(Unit *Killer, Unit *Victim)
+{
+	OUTER_LOOP_BEGIN_COND(SERVER_HOOK_EVENT_ON_PRE_DIE,tOnPreUnitDie)
+		ret_val = (call)(Killer, Victim);
+	OUTER_LOOP_END_COND;
+}
+
+void HookInterface::OnAdvanceSkillLine(Player * pPlayer, uint32 SkillLine, uint32 Current)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_ADVANCE_SKILLLINE, tOnAdvanceSkillLine)
+		(call)(pPlayer, SkillLine, Current);
 	OUTER_LOOP_END;
 }
 

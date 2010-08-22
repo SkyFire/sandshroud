@@ -1929,6 +1929,12 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	/* -------------------------- HIT THAT CAUSES VICTIM TO DIE ---------------------------*/
 	if ((isCritter || health <= damage) )
 	{
+		if( IsUnit() )
+		{
+			if( !sHookInterface.OnPreUnitDie( TO_UNIT(this), pVictim) )
+				return;
+		}
+
 		if( pVictim->HasDummyAura(SPELL_HASH_GUARDIAN_SPIRIT) )
 		{
 			pVictim->CastSpell(pVictim, dbcSpell.LookupEntry(48153), true);

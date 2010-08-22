@@ -1590,6 +1590,9 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 		GetAchievementInterface()->HandleAchievementCriteriaLevelUp( getLevel() );
 		SetUInt32Value(UNIT_FIELD_HEALTH,GetUInt32Value(UNIT_FIELD_MAXHEALTH));
 		SetUInt32Value(UNIT_FIELD_POWER1,GetUInt32Value(UNIT_FIELD_MAXPOWER1));
+
+		// ScriptMgr hook for OnPostLevelUp
+		sHookInterface.OnPostLevelUp(this);
 	}
 
 	// Set the update bit
@@ -10486,11 +10489,14 @@ void Player::_AdvanceSkillLine(uint32 SkillLine, uint32 Count /* = 1 */)
 		/* Add it */
 		_AddSkillLine(SkillLine, Count, getLevel() * 5);
 		_UpdateMaxSkillCounts();
+		sHookInterface.OnAdvanceSkillLine(this, SkillLine, Count);
 	}
 	else
-	{	
+	{
 		uint32 curr_sk = itr->second.CurrentValue;
 		itr->second.CurrentValue = min(curr_sk + Count,itr->second.MaximumValue);
+		sHookInterface.OnAdvanceSkillLine(this, SkillLine, curr_sk);
+
 		if (itr->second.CurrentValue != curr_sk)
 			_UpdateSkillFields();
 	}
@@ -10712,6 +10718,8 @@ void Player::_AdvanceAllSkills(uint32 count, bool skipprof /* = false */, uint32
 				if((itr->second.CurrentValue + count) >= max)
 					itr->second.CurrentValue = max;
 
+				sHookInterface.OnAdvanceSkillLine(this, itr->second.Skill->id, itr->second.CurrentValue);
+
 				dirty = true;
 				continue;
 			}
@@ -10719,6 +10727,7 @@ void Player::_AdvanceAllSkills(uint32 count, bool skipprof /* = false */, uint32
 			itr->second.CurrentValue += count;
 			if(itr->second.CurrentValue >= itr->second.MaximumValue)
 				itr->second.CurrentValue = itr->second.MaximumValue;
+
 			dirty = true;
 		}
 	}
