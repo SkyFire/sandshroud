@@ -1604,6 +1604,14 @@ public:
 #endif
 	}
 
+	T * CreateCopy(T * obj)
+	{
+		T * oCopy = (T*)malloc(sizeof(T));
+		ASSERT(oCopy);
+		memcpy(oCopy,obj,sizeof(T));
+		return oCopy;
+	}
+
 	void SetRow(uint32 i, T * t)
 	{
 		if(i < m_max && m_entries)

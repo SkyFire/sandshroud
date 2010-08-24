@@ -38,13 +38,19 @@ LuaSpellEntry luaSpellVars[] = {
 	{"MechanicsType", 0, offsetof(SpellEntry, MechanicsType)},
 	{"Attributes", 0, offsetof(SpellEntry, Attributes)},
 	{"AttributesEx", 0, offsetof(SpellEntry, AttributesEx)},
-	{"AttributesExB", 0, offsetof(SpellEntry, AttributesExB)},
-	{"AttributesExC", 0, offsetof(SpellEntry, AttributesExC)},
-	{"AttributesExD", 0, offsetof(SpellEntry, AttributesExD)},
-	{"AttributesExE", 0, offsetof(SpellEntry, AttributesExE)},
-	{"AttributesExF", 0, offsetof(SpellEntry, AttributesExF)},
+	{"Flags3", 0, offsetof(SpellEntry, Flags3)},
+	{"Flags4", 0, offsetof(SpellEntry, Flags4)},
+	{"Flags5", 0, offsetof(SpellEntry, Flags5)},
+	{"Flags6", 0, offsetof(SpellEntry, Flags6)},
+	{"Flags7", 0, offsetof(SpellEntry, Flags7)},
+	{"AttributesExB", 0, offsetof(SpellEntry, Flags3)},
+	{"AttributesExC", 0, offsetof(SpellEntry, Flags4)},
+	{"AttributesExD", 0, offsetof(SpellEntry, Flags5)},
+	{"AttributesExE", 0, offsetof(SpellEntry, Flags6)},
+	{"AttributesExF", 0, offsetof(SpellEntry, Flags7)},
 	{"RequiredShapeShift", 0, offsetof(SpellEntry, RequiredShapeShift)},
-	{"ShapeshiftExclude", 0, offsetof(SpellEntry, ShapeshiftExclude)},
+	{"NotAllowedShapeShift", 0, offsetof(SpellEntry, NotAllowedShapeShift)},
+	{"ShapeshiftExclude", 0, offsetof(SpellEntry, NotAllowedShapeShift)},
 	{"Targets", 0, offsetof(SpellEntry, Targets)},
 	{"TargetCreatureType", 0, offsetof(SpellEntry, TargetCreatureType)},
 	{"RequiresSpellFocus", 0, offsetof(SpellEntry, RequiresSpellFocus)},
@@ -55,8 +61,10 @@ LuaSpellEntry luaSpellVars[] = {
 	{"TargetAuraStateNot", 0, offsetof(SpellEntry, TargetAuraStateNot)},
 	{"casterAuraSpell", 0, offsetof(SpellEntry, casterAuraSpell)},
 	{"targetAuraSpell", 0, offsetof(SpellEntry, targetAuraSpell)},
-	{"casterAuraSpellNot", 0, offsetof(SpellEntry, casterAuraSpellNot)},
-	{"targetAuraSpellNot", 0, offsetof(SpellEntry, targetAuraSpellNot)},
+	{"casterAuraSpellNot", 0, offsetof(SpellEntry, excludeCasterAuraSpell)},
+	{"excludeCasterAuraSpell", 0, offsetof(SpellEntry, excludeCasterAuraSpell)},
+	{"targetAuraSpellNot", 0, offsetof(SpellEntry, excludeTargetAuraSpell)},
+	{"excludeTargetAuraSpell", 0, offsetof(SpellEntry, excludeTargetAuraSpell)},
 	{"CastingTimeIndex", 0, offsetof(SpellEntry, CastingTimeIndex)},
 	{"RecoveryTime", 0, offsetof(SpellEntry, RecoveryTime)},
 	{"CategoryRecoveryTime", 0, offsetof(SpellEntry, CategoryRecoveryTime)},
@@ -87,8 +95,6 @@ LuaSpellEntry luaSpellVars[] = {
 	{"RequiredItemFlags", 0, offsetof(SpellEntry, RequiredItemFlags)},
 	{"Effect", 0, offsetof(SpellEntry, Effect[0])},
 	{"EffectDieSides", 0, offsetof(SpellEntry, EffectDieSides[0])},
-	//{"EffectBaseDice", 0, offsetof(SpellEntry, EffectBaseDice[0])},
-	//{"EffectDicePerLevel", 3, offsetof(SpellEntry, EffectDicePerLevel[0])},
 	{"EffectRealPointsPerLevel", 3, offsetof(SpellEntry, EffectRealPointsPerLevel[0])},
 	{"EffectBasePoints", 0, offsetof(SpellEntry, EffectBasePoints[0])},
 	{"EffectMechanic", 0, offsetof(SpellEntry, EffectMechanic[0])},
@@ -105,9 +111,11 @@ LuaSpellEntry luaSpellVars[] = {
 	{"EffectTriggerSpell", 0, offsetof(SpellEntry, EffectTriggerSpell[0])},
 	{"EffectPointsPerComboPoint", 3, offsetof(SpellEntry, EffectPointsPerComboPoint[0])},
 	{"EffectSpellClassMask", 0, offsetof(SpellEntry, EffectSpellClassMask[0][0])},
-	{"SpellVisual", 0, offsetof(SpellEntry, SpellVisual)},
-	{"field114", 0, offsetof(SpellEntry, field114)},
-	{"spellIconID", 0, offsetof(SpellEntry, spellIconID)},
+	{"SpellVisual", 0, offsetof(SpellEntry, SpellVisual[0])},
+	{"SpellVisual1", 0, offsetof(SpellEntry, SpellVisual[0])},
+	{"SpellVisual2", 0, offsetof(SpellEntry, SpellVisual[1])},
+	{"field114", 0, offsetof(SpellEntry, SpellVisual[1])},
+	{"spellIconID", 0, offsetof(SpellEntry, SpellIconID)},
 	{"activeIconID", 0, offsetof(SpellEntry, activeIconID)},
 	{"spellPriority", 0, offsetof(SpellEntry, spellPriority)},
 	{"Name", 1, offsetof(SpellEntry, Name)},
@@ -129,39 +137,27 @@ LuaSpellEntry luaSpellVars[] = {
 	{"MinReputation", 0, offsetof(SpellEntry, MinReputation)},
 	{"RequiredAuraVision", 0, offsetof(SpellEntry, RequiredAuraVision)},
 	{"TotemCategory", 0, offsetof(SpellEntry, TotemCategory[0])},
-	{"RequiresAreaId", 0, offsetof(SpellEntry, RequiresAreaId)},
+	{"RequiresAreaId", 0, offsetof(SpellEntry, AreaGroupId)},
 	{"School", 0, offsetof(SpellEntry, School)},
-	{"RuneCostID", 0, offsetof(SpellEntry, RuneCostID)},
-	{"DiminishStatus", 0, offsetof(SpellEntry, DiminishStatus)},
+	{"RuneCostID", 0, offsetof(SpellEntry, runeCostID)},
 	{"proc_interval", 0, offsetof(SpellEntry, proc_interval)},
-	{"BGR_one_buff_from_caster_on_1target", 0, offsetof(SpellEntry, BGR_one_buff_from_caster_on_1target)},
-	{"BGR_one_buff_on_target", 0, offsetof(SpellEntry, BGR_one_buff_on_target)},
-	{"BGR_one_buff_from_caster_on_self", 0, offsetof(SpellEntry, BGR_one_buff_from_caster_on_self)},
 	{"c_is_flags", 0, offsetof(SpellEntry, c_is_flags)},
 	{"RankNumber", 0, offsetof(SpellEntry, RankNumber)},
 	{"NameHash", 0, offsetof(SpellEntry, NameHash)},
 	{"talent_tree", 0, offsetof(SpellEntry, talent_tree)},
-	{"in_front_status", 0, offsetof(SpellEntry, in_front_status)},
-	{"EffectSpellGroupRelation_high", 0, offsetof(SpellEntry, EffectSpellGroupRelation_high[0])},
+	{"in_front_status", 0, offsetof(SpellEntry, AllowBackAttack)},
+	{"AllowBackAttack", 0, offsetof(SpellEntry, AllowBackAttack)},
 	{"ThreatForSpell", 0, offsetof(SpellEntry, ThreatForSpell)},
-	{"ThreatForSpellCoef", 3, offsetof(SpellEntry, ThreatForSpellCoef)},
-	{"ProcOnNameHash", 0, offsetof(SpellEntry, ProcOnNameHash[0])},
 	{"spell_coef_flags", 0, offsetof(SpellEntry, spell_coef_flags)},
 	{"base_range_or_radius_sqr", 3, offsetof(SpellEntry, base_range_or_radius_sqr)},
 	{"cone_width", 3, offsetof(SpellEntry, cone_width)},
-	{"casttime_coef", 3, offsetof(SpellEntry, casttime_coef)},
-	{"fixed_dddhcoef", 3, offsetof(SpellEntry, fixed_dddhcoef)},
-	{"fixed_hotdotcoef", 3, offsetof(SpellEntry, fixed_hotdotcoef)},
 	{"Dspell_coef_override", 3, offsetof(SpellEntry, Dspell_coef_override)},
 	{"OTspell_coef_override", 3, offsetof(SpellEntry, OTspell_coef_override)},
-	{"ai_target_type", 0, offsetof(SpellEntry, ai_target_type)},
 	{"self_cast_only", 2, offsetof(SpellEntry, self_cast_only)},
 	{"apply_on_shapeshift_change", 2, offsetof(SpellEntry, apply_on_shapeshift_change)},
 	{"always_apply", 2, offsetof(SpellEntry, always_apply)},
 	{"is_melee_spell", 2, offsetof(SpellEntry, is_melee_spell)},
 	{"is_ranged_spell", 2, offsetof(SpellEntry, is_ranged_spell)},
-	{"noproc", 2, offsetof(SpellEntry, noproc)},
-	{"SchoolMask", 0, offsetof(SpellEntry, SchoolMask)},
 	{NULL, NULL, NULL},
 };
 
@@ -177,308 +173,306 @@ LuaSpellEntry GetLuaSpellEntryByName(const char* name)
 	return luaSpellVars[lElem];
 }
 
-namespace LuaSpell
+int LuaSpell_GetCaster(lua_State * L, Spell * sp)
 {
-	int GetCaster(lua_State * L, Spell * sp)
+	if (!sp) return 0;
+	if (sp->u_caster) //unit caster
 	{
-		if (!sp) return 0;
-		if (sp->u_caster) //unit caster
-		{
-			PUSH_UNIT(L, sp->u_caster);
-			return 1;
-		}
-		else if (sp->g_caster) //gameobject
-		{
-			PUSH_GO(L, sp->g_caster);
-			return 1;
-		}
-		else if (sp->i_caster) //item
-		{
-			PUSH_ITEM(L, sp->i_caster);
-			return 1;
-		}
-		else
-		{
-			lua_pushnil(L);
-			return 1;
-		}
-	}
-
-	int GetEntry(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		lua_pushinteger(L, sp->GetProto()->Id);
+		Lunar<Unit>::push(L, sp->u_caster);
 		return 1;
 	}
-
-	int IsDuelSpell(lua_State * L, Spell * sp)
+	else if (sp->g_caster) //gameobject
 	{
-		if (!sp) return 0;
-		lua_pushboolean(L, sp->duelSpell ? 1 : 0);
+		Lunar<GameObject>::push(L, sp->g_caster);
 		return 1;
 	}
-
-	int GetSpellType(lua_State * L, Spell * sp)
+	else if (sp->i_caster) //item
 	{
-		if (!sp) return 0;
-		lua_pushinteger(L, sp->GetType());
+		Lunar<Item>::push(L, sp->i_caster);
 		return 1;
 	}
-
-	int GetSpellState(lua_State * L, Spell * sp)
+	else
 	{
-		/*
-		SPELL_STATE_NULL      = 0,
-		SPELL_STATE_PREPARING = 1,
-		SPELL_STATE_CASTING   = 2,
-		SPELL_STATE_FINISHED  = 3,
-		SPELL_STATE_IDLE      = 4
-		*/
-		if (!sp) return 0;
-		lua_pushinteger(L, sp->getState());
-		return 1;
-	}
-
-	int Cancel(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		sp->cancel();
-		return 0;
-	}
-
-	int Cast(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		bool check = CHECK_BOOL(L, 1);
-		sp->cast(check);
-		return 0;
-	}
-
-	int CanCast(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		lua_pushinteger(L, sp->CanCast(false));
-		return 1;
-	}
-
-	int Finish(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		sp->finish();
-		return 0;
-	}
-
-	int GetTarget(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		if (sp->GetUnitTarget())
-		{
-			PUSH_UNIT(L, sp->GetUnitTarget());
-			return 1;
-		}
-		else if (sp->GetItemTarget())
-		{
-			PUSH_ITEM(L,sp->GetItemTarget());
-			return 1;
-		}
-		else if (sp->GetGameObjectTarget())
-		{
-			PUSH_GO(L, sp->GetGameObjectTarget());
-			return 1;
-		}
-		else
-		{
-			lua_pushnil(L);
-			return 1;
-		}
-	}
-
-	int IsStealthSpell(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		lua_pushboolean(L, sp->IsStealthSpell() ? 1 : 0);
-		return 1;
-	}
-
-	int IsInvisibilitySpell(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		lua_pushboolean(L, sp->IsInvisibilitySpell() ? 1 : 0);
-		return 1;
-	}
-
-	int GetPossibleEnemy(lua_State * L, Spell * sp)
-	{
-		float range = (float)luaL_optnumber(L, 1, 0.0f);
-		if (!sp || range < 0) return 0;
-		PUSH_GUID(L, sp->GetSinglePossibleEnemy(0, range));
-		return 1;
-	}
-
-	int GetPossibleFriend(lua_State * L, Spell * sp)
-	{
-		float range = (float)luaL_optnumber(L, 1, 0.0f);
-		if (!sp || range < 0) return 0;
-		PUSH_GUID(L, sp->GetSinglePossibleFriend(0, range));
-		return 1;
-	}
-
-	int HasPower(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		lua_pushboolean(L, sp->HasPower() ? 1 : 0);
-		return 1;
-	}
-
-	int IsAspect(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		lua_pushboolean(L, sp->IsAspect() ? 1 : 0);
-		return 1;
-	}
-
-	int IsSeal(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		lua_pushboolean(L, sp->IsSeal() ? 1 : 0);
-		return 1;
-	}
-
-	int GetObjectType(lua_State * L, Spell * sp)
-	{
-		if (!sp) 
-		{ 
-			lua_pushnil(L); 
-			return 1; 
-		}
-		lua_pushstring(L, "Spell");
-		return 1;
-	}
-
-	int SetVar(lua_State * L, Spell * sp)
-	{
-		const char* var = luaL_checkstring(L,1);
-		int subindex = 0;
-		if (lua_gettop(L) == 3)
-		{
-			subindex = luaL_optint(L,2,0);
-		}
-		if (!sp || !var || subindex < 0) 
-		{ 
-			lua_pushboolean(L, 0); 
-			return 1; 
-		}
-		int valindex = 2;
-		if (subindex)
-			valindex++;
-		sp->InitProtoOverride();
-		SpellEntry * proto = sp->GetProto();
-		LuaSpellEntry l = GetLuaSpellEntryByName(var);
-		if (!l.name)
-			RET_BOOL(false);
-		switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
-		{
-		case 0:
-			GET_SPELLVAR_INT(proto,l.offset,subindex) = luaL_checkinteger(L, valindex);
-			lua_pushboolean(L, 1);
-			break;
-		case 1:
-			strcpy(GET_SPELLVAR_CHAR(proto,l.offset,subindex), luaL_checkstring(L, valindex));
-			lua_pushboolean(L, 1);
-			break;
-		case 2:
-			GET_SPELLVAR_BOOL(proto,l.offset,subindex) = CHECK_BOOL(L, valindex);
-			lua_pushboolean(L, 1);
-			break;
-		case 3:
-			GET_SPELLVAR_FLOAT(proto,l.offset,subindex) = (float)luaL_checknumber(L, valindex);
-			lua_pushboolean(L, 1);
-			break;
-		}
-		return 1;
-	}
-
-	int GetVar(lua_State * L, Spell * sp)
-	{
-		const char* var = luaL_checkstring(L,1);
-		int subindex = luaL_optint(L,2,0);
-		if (!sp || !var || subindex < 0) 
-		{ 
-			lua_pushnil(L);
-			return 1; 
-		}
-		SpellEntry * proto = sp->GetProto();
-		LuaSpellEntry l = GetLuaSpellEntryByName(var);
-		if (!l.name)
-			RET_NIL();
-		switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
-		{
-		case 0:
-			lua_pushinteger(L, GET_SPELLVAR_INT(proto,l.offset,subindex));
-			break;
-		case 1:
-			lua_pushstring(L, GET_SPELLVAR_CHAR(proto,l.offset,subindex));
-			break;
-		case 2:
-			lua_pushboolean(L, (GET_SPELLVAR_BOOL(proto,l.offset,subindex)) ? 1 : 0);
-			break;
-		case 3:
-			lua_pushnumber(L, GET_SPELLVAR_FLOAT(proto,l.offset,subindex));
-			break;
-		}
-		return 1;
-	}
-
-	int ResetVar(lua_State * L, Spell * sp)
-	{
-		const char* var = luaL_checkstring(L,1);
-		int subindex = luaL_optint(L,2,0);
-		if (!sp || !var || subindex < 0) 
-		{ 
-			lua_pushboolean(L, 0);
-			return 1; 
-		}
-		LuaSpellEntry l = GetLuaSpellEntryByName(var);
-		if (!l.name)
-			RET_BOOL(false);
-		switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
-		{
-		case 0:
-			GET_SPELLVAR_INT(sp->GetProto(),l.offset,subindex) = GET_SPELLVAR_INT(sp->m_spellInfo,l.offset,subindex);
-			lua_pushboolean(L, 1);
-			break;
-		case 1:
-			GET_SPELLVAR_CHAR(sp->GetProto(),l.offset,subindex) = GET_SPELLVAR_CHAR(sp->m_spellInfo,l.offset,subindex);
-			lua_pushboolean(L, 1);
-			break;
-		case 2:
-			GET_SPELLVAR_BOOL(sp->GetProto(),l.offset,subindex) = GET_SPELLVAR_BOOL(sp->m_spellInfo,l.offset,subindex);
-			lua_pushboolean(L, 1);
-			break;
-		case 3:
-			GET_SPELLVAR_FLOAT(sp->GetProto(),l.offset,subindex) = GET_SPELLVAR_FLOAT(sp->m_spellInfo,l.offset,subindex);
-			lua_pushboolean(L, 1);
-			break;
-		}
-		return 1;
-	}
-
-	int ResetAllVars(lua_State * L, Spell * sp)
-	{
-		if (!sp) return 0;
-		sp->m_spellInfo_override = NULL;
-		return 0;
-	}
-
-	int GetCastedItemId(lua_State * L, Spell * sp)
-	{
-		if (!sp) 
-		{
-			lua_pushnil(L);
-			return 1;
-		}
-		lua_pushnumber(L, sp->castedItemId);
+		lua_pushnil(L);
 		return 1;
 	}
 }
+
+int LuaSpell_GetEntry(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushinteger(L, sp->GetSpellProto()->Id);
+	return 1;
+}
+
+int LuaSpell_IsDuelSpell(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushboolean(L, sp->duelSpell ? 1 : 0);
+	return 1;
+}
+
+int LuaSpell_GetSpellType(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushinteger(L, sp->GetType());
+	return 1;
+}
+
+int LuaSpell_GetSpellState(lua_State * L, Spell * sp)
+{
+	/*
+	SPELL_STATE_NULL      = 0,
+	SPELL_STATE_PREPARING = 1,
+	SPELL_STATE_CASTING   = 2,
+	SPELL_STATE_FINISHED  = 3,
+	SPELL_STATE_IDLE      = 4
+	*/
+	if (!sp) return 0;
+	lua_pushinteger(L, sp->getState());
+	return 1;
+}
+
+int LuaSpell_Cancel(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	sp->cancel();
+	return 0;
+}
+
+int LuaSpell_Cast(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	bool check = CHECK_BOOL(L, 1);
+	sp->cast(check);
+	return 0;
+}
+
+int LuaSpell_CanCast(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushinteger(L, sp->CanCast(false));
+	return 1;
+}
+
+int LuaSpell_Finish(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	sp->finish();
+	return 0;
+}
+
+int LuaSpell_GetTarget(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	if (sp->GetUnitTarget())
+	{
+		Lunar<Unit>::push(L, sp->GetUnitTarget());
+		return 1;
+	}
+	else if (sp->GetItemTarget())
+	{
+		Lunar<Item>::push(L,sp->GetItemTarget());
+		return 1;
+	}
+	else if (sp->GetGameObjectTarget())
+	{
+		Lunar<GameObject>::push(L, sp->GetGameObjectTarget());
+		return 1;
+	}
+	else
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+}
+
+int LuaSpell_IsStealthSpell(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushboolean(L, sp->IsStealthSpell() ? 1 : 0);
+	return 1;
+}
+
+int LuaSpell_IsInvisibilitySpell(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushboolean(L, sp->IsInvisibilitySpell() ? 1 : 0);
+	return 1;
+}
+
+int LuaSpell_GetPossibleEnemy(lua_State * L, Spell * sp)
+{
+	float range = (float)luaL_optnumber(L, 1, 0.0f);
+	if (!sp || range < 0) return 0;
+	GuidMgr::push(L, sp->GetSinglePossibleEnemy(0, range));
+	return 1;
+}
+
+int LuaSpell_GetPossibleFriend(lua_State * L, Spell * sp)
+{
+	float range = (float)luaL_optnumber(L, 1, 0.0f);
+	if (!sp || range < 0) return 0;
+	GuidMgr::push(L, sp->GetSinglePossibleFriend(0, range));
+	return 1;
+}
+
+int LuaSpell_HasPower(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushboolean(L, sp->HasPower() ? 1 : 0);
+	return 1;
+}
+
+int LuaSpell_IsAspect(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushboolean(L, sp->IsAspect() ? 1 : 0);
+	return 1;
+}
+
+int LuaSpell_IsSeal(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	lua_pushboolean(L, sp->IsSeal() ? 1 : 0);
+	return 1;
+}
+
+int LuaSpell_GetObjectType(lua_State * L, Spell * sp)
+{
+	if (!sp) 
+	{ 
+		lua_pushnil(L); 
+		return 1; 
+	}
+	lua_pushstring(L, "Spell");
+	return 1;
+}
+
+int LuaSpell_SetVar(lua_State * L, Spell * sp)
+{
+	const char* var = luaL_checkstring(L,1);
+	int subindex = 0;
+	if (lua_gettop(L) == 3)
+	{
+		subindex = luaL_optint(L,2,0);
+	}
+	if (!sp || !var || subindex < 0) 
+	{ 
+		lua_pushboolean(L, 0); 
+		return 1; 
+	}
+	int valindex = 2;
+	if (subindex)
+		valindex++;
+	sp->InitProtoOverride();
+	SpellEntry * proto = sp->GetSpellProto();
+	LuaSpellEntry l = GetLuaSpellEntryByName(var);
+	if (!l.name)
+		RET_BOOL(false);
+	switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
+	{
+	case 0:
+		GET_SPELLVAR_INT(proto,l.offset,subindex) = luaL_checkinteger(L, valindex);
+		lua_pushboolean(L, 1);
+		break;
+	case 1:
+		strcpy(GET_SPELLVAR_CHAR(proto,l.offset,subindex), luaL_checkstring(L, valindex));
+		lua_pushboolean(L, 1);
+		break;
+	case 2:
+		GET_SPELLVAR_BOOL(proto,l.offset,subindex) = CHECK_BOOL(L, valindex);
+		lua_pushboolean(L, 1);
+		break;
+	case 3:
+		GET_SPELLVAR_FLOAT(proto,l.offset,subindex) = (float)luaL_checknumber(L, valindex);
+		lua_pushboolean(L, 1);
+		break;
+	}
+	return 1;
+}
+
+int LuaSpell_GetVar(lua_State * L, Spell * sp)
+{
+	const char* var = luaL_checkstring(L,1);
+	int subindex = luaL_optint(L,2,0);
+	if (!sp || !var || subindex < 0) 
+	{ 
+		lua_pushnil(L);
+		return 1; 
+	}
+	SpellEntry * proto = sp->GetSpellProto();
+	LuaSpellEntry l = GetLuaSpellEntryByName(var);
+	if (!l.name)
+		RET_NIL();
+	switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
+	{
+	case 0:
+		lua_pushinteger(L, GET_SPELLVAR_INT(proto,l.offset,subindex));
+		break;
+	case 1:
+		lua_pushstring(L, GET_SPELLVAR_CHAR(proto,l.offset,subindex));
+		break;
+	case 2:
+		lua_pushboolean(L, (GET_SPELLVAR_BOOL(proto,l.offset,subindex)) ? 1 : 0);
+		break;
+	case 3:
+		lua_pushnumber(L, GET_SPELLVAR_FLOAT(proto,l.offset,subindex));
+		break;
+	}
+	return 1;
+}
+
+int LuaSpell_ResetVar(lua_State * L, Spell * sp)
+{
+	const char* var = luaL_checkstring(L,1);
+	int subindex = luaL_optint(L,2,0);
+	if (!sp || !var || subindex < 0) 
+	{ 
+		lua_pushboolean(L, 0);
+		return 1; 
+	}
+	LuaSpellEntry l = GetLuaSpellEntryByName(var);
+	if (!l.name)
+		RET_BOOL(false);
+	switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
+	{
+	case 0:
+		GET_SPELLVAR_INT(sp->GetSpellProto(),l.offset,subindex) = GET_SPELLVAR_INT(sp->m_spellInfo,l.offset,subindex);
+		lua_pushboolean(L, 1);
+		break;
+	case 1:
+		GET_SPELLVAR_CHAR(sp->GetSpellProto(),l.offset,subindex) = GET_SPELLVAR_CHAR(sp->m_spellInfo,l.offset,subindex);
+		lua_pushboolean(L, 1);
+		break;
+	case 2:
+		GET_SPELLVAR_BOOL(sp->GetSpellProto(),l.offset,subindex) = GET_SPELLVAR_BOOL(sp->m_spellInfo,l.offset,subindex);
+		lua_pushboolean(L, 1);
+		break;
+	case 3:
+		GET_SPELLVAR_FLOAT(sp->GetSpellProto(),l.offset,subindex) = GET_SPELLVAR_FLOAT(sp->m_spellInfo,l.offset,subindex);
+		lua_pushboolean(L, 1);
+		break;
+	}
+	return 1;
+}
+
+int LuaSpell_ResetAllVars(lua_State * L, Spell * sp)
+{
+	if (!sp) return 0;
+	sp->m_spellInfo_override = NULL;
+	return 0;
+}
+
+int LuaSpell_GetCastedItemId(lua_State * L, Spell * sp)
+{
+	if (!sp) 
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	lua_pushnumber(L, sp->castedItemId);
+	return 1;
+}
+
 #endif

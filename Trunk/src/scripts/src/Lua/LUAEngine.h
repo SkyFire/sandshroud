@@ -490,14 +490,9 @@ private:
 #define CHECK_USHORT(L, narg) (uint16)luaL_checkinteger((L),(narg))
 #define CHECK_BOOL(L,narg) (lua_toboolean((L),(narg)) > 0) ? true : false
 
-#define PUSH_UNIT(L, unit) Lunar<Unit>::push(L,TO_UNIT(unit))
-#define PUSH_GO(L, go) Lunar<GameObject>::push(L,TO_GAMEOBJECT(go))
-#define PUSH_ITEM(L,item) Lunar<Item>::push(L,TO_ITEM(item))
-#define PUSH_TAXIPATH(L, tp) Lunar<TaxiPath>::push(L,TO_TAXI(tp))
-
-class GUID_MGR
+class GuidMgr
 {
-	static const char * GetName() { return "WoWGUID"; }
+	static const char * GetName() { return "GuidMgr"; }
 public:
 
 	static void Register(lua_State * L)
@@ -570,12 +565,12 @@ public:
 	}
 
 private:
-	GUID_MGR() {}
+	GuidMgr() {}
 
 	//This method prints formats the GUID in hexform and pushes to the stack.
 	static int _tostring(lua_State * L) 
 	{
-		uint64 GUID = GUID_MGR::check(L,1);
+		uint64 GUID = GuidMgr::check(L,1);
 		if(GUID == 0)
 			lua_pushnil(L);
 		else {

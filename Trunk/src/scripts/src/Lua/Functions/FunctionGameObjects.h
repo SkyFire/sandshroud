@@ -25,7 +25,7 @@
 ////////////////////////////////////
 ////////////GAMEOBJECT GOSSIP///////
 /////////////////////////////////////
-int luaGameObject_GossipCreateMenu(lua_State * L, GameObject * ptr)
+int LuaGameObject_GossipCreateMenu(lua_State * L, GameObject * ptr)
 {
 	int text_id = luaL_checkint(L, 1);
 	Unit* target = Lunar<Unit>::check(L, 2);
@@ -37,7 +37,7 @@ int luaGameObject_GossipCreateMenu(lua_State * L, GameObject * ptr)
 		Menu->SendTo(plr);
 	return 1;
 }
-int luaGameObject_GossipMenuAddItem(lua_State * L, GameObject * ptr)
+int LuaGameObject_GossipMenuAddItem(lua_State * L, GameObject * ptr)
 {
 	int icon = luaL_checkint(L, 1);
 	const char * menu_text = luaL_checkstring(L, 2);
@@ -46,21 +46,21 @@ int luaGameObject_GossipMenuAddItem(lua_State * L, GameObject * ptr)
 	Menu->AddItem(icon, menu_text, IntId);
 	return 1;
 }
-int luaGameObject_GossipSendMenu(lua_State * L, GameObject * ptr)
+int LuaGameObject_GossipSendMenu(lua_State * L, GameObject * ptr)
 {
 	Unit* target = Lunar<Unit>::check(L, 1);
 	Player * plr = (Player*)target;
 	Menu->SendTo(plr);
 	return 1;
 }
-int luaGameObject_GossipComplete(lua_State * L, GameObject * ptr)
+int LuaGameObject_GossipComplete(lua_State * L, GameObject * ptr)
 {
 	Unit* target = Lunar<Unit>::check(L, 1);
 	Player * plr = (Player*)target;
 	plr->Gossip_Complete();
 	return 1;
 }
-int luaGameObject_GossipSendPOI(lua_State * L, GameObject * ptr)
+int LuaGameObject_GossipSendPOI(lua_State * L, GameObject * ptr)
 {
 	Unit* target = Lunar<Unit>::check(L, 1);
 	Player * plr = (Player*)target;
@@ -86,7 +86,7 @@ int luaGameObject_GossipSendPOI(lua_State * L, GameObject * ptr)
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
-/*int luaGameObject_EventCastSpell(lua_State * L, GameObject * ptr)
+/*int LuaGameObject_EventCastSpell(lua_State * L, GameObject * ptr)
 {
 	uint32 guid = luaL_checkint(L,1);
 	uint32 sp = luaL_checkint(L,2);
@@ -98,7 +98,7 @@ int luaGameObject_GossipSendPOI(lua_State * L, GameObject * ptr)
 	}
 	return 0;
 }*/
-int luaGameObject_GetMapId(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetMapId(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 	{
@@ -106,14 +106,14 @@ int luaGameObject_GetMapId(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_RemoveFromWorld(lua_State * L, GameObject * ptr)
+int LuaGameObject_RemoveFromWorld(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		ptr->RemoveFromWorld(true);
 	return 0;
 }
 
-int luaGameObject_GetName(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetName(lua_State * L, GameObject * ptr)
 {
 	if(!ptr || ptr->GetTypeId() != TYPEID_GAMEOBJECT || !ptr->GetInfo())
 		return 0;
@@ -122,14 +122,14 @@ int luaGameObject_GetName(lua_State * L, GameObject * ptr)
 	return 1;
 }
 
-int luaGameObject_TeleportPlr(lua_State * L, GameObject * ptr)
+int LuaGameObject_TeleportPlr(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
 	Player* target = Lunar<Player>::check(L, 1);
 	if(target == NULL)
 	{
 #ifdef PRINTERRORS
-		printf("Incorrect target in luaGameObject_TeleportPlr, script: %s\n", "GetName"); // TODO
+		printf("Incorrect target in LuaGameObject_TeleportPlr, script: %s\n", "GetName"); // TODO
 #endif
 		return 0;
 	}
@@ -151,7 +151,7 @@ int luaGameObject_TeleportPlr(lua_State * L, GameObject * ptr)
 	return 1;
 }
 
-int luaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
     uint32 entryid = luaL_checkint(L,4);
@@ -165,7 +165,7 @@ int luaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
     return 1;
 }
 
-int luaGameObject_GetGameObjectNearestCoords(lua_State *L, GameObject * ptr)
+int LuaGameObject_GetGameObjectNearestCoords(lua_State *L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
     uint32 entryid = luaL_checkint(L,4);
@@ -178,7 +178,7 @@ int luaGameObject_GetGameObjectNearestCoords(lua_State *L, GameObject * ptr)
         Lunar<GameObject>::push(L,ptr->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(x, y, z, entryid), false);
     return 1;
 }
-int luaGameObject_GetClosestPlayer(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetClosestPlayer(lua_State * L, GameObject * ptr)
 {
 	if(!ptr)
 		return 0;
@@ -203,7 +203,7 @@ int luaGameObject_GetClosestPlayer(lua_State * L, GameObject * ptr)
 
 	return 1;
 }
-int luaGameObject_GetDistance(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetDistance(lua_State * L, GameObject * ptr)
 {
 	if(!ptr)
 		return 0;
@@ -211,7 +211,7 @@ int luaGameObject_GetDistance(lua_State * L, GameObject * ptr)
 	lua_pushnumber(L,ptr->GetDistance2dSq(target));
 	return 1;
 }
-int luaGameObject_IsInWorld(lua_State * L, GameObject * ptr)
+int LuaGameObject_IsInWorld(lua_State * L, GameObject * ptr)
 {
 	if (ptr)
 		if(ptr->IsInWorld())
@@ -220,21 +220,21 @@ int luaGameObject_IsInWorld(lua_State * L, GameObject * ptr)
 			lua_pushboolean(L, 0);
 	return 1;
 }
-int luaGameObject_GetZoneId(lua_State *L, GameObject * ptr)
+int LuaGameObject_GetZoneId(lua_State *L, GameObject * ptr)
 {
 	if(!ptr)
 		return 0;
 	lua_pushinteger(L,(ptr->GetZoneId()));
 	return 1;
 }
-int luaGameObject_PlaySoundToSet(lua_State * L, GameObject * ptr)
+int LuaGameObject_PlaySoundToSet(lua_State * L, GameObject * ptr)
 {
 	if(!ptr) return 0;
 	int soundid = luaL_checkint(L,1);
 	ptr->PlaySoundToSet(soundid);
 	return 0;
 }
-int luaGameObject_SpawnCreature(lua_State * L, GameObject * ptr)
+int LuaGameObject_SpawnCreature(lua_State * L, GameObject * ptr)
 {
 	if(ptr == NULL) return 0;
 	uint32 entry_id = luaL_checkint(L, 1);
@@ -273,14 +273,14 @@ int luaGameObject_SpawnCreature(lua_State * L, GameObject * ptr)
 	Lunar<Unit>::push(L,pCreature);
 	return 0;
 }
-int luaGameObject_GetItemCount(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetItemCount(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID_RET_INT(TYPEID_PLAYER);
 	int itemid = luaL_checkint(L,1);
 	lua_pushinteger(L, ((Player*)ptr)->GetItemInterface()->GetItemCount(itemid,false));
 	return 1;
 }
-int luaGameObject_SpawnGameObject(lua_State * L, GameObject * ptr)
+int LuaGameObject_SpawnGameObject(lua_State * L, GameObject * ptr)
 {
 	if(ptr == NULL) return 0;
 	uint32 entry_id = luaL_checkint(L, 1);
@@ -311,75 +311,75 @@ int luaGameObject_SpawnGameObject(lua_State * L, GameObject * ptr)
 	Lunar<GameObject>::push(L,pC);
 	return 0;
 }
-int luaGameObject_CalcDistance(lua_State * L, GameObject * ptr)
+int LuaGameObject_CalcDistance(lua_State * L, GameObject * ptr)
 {
 	Object * ob = Lunar<Object>::check(L,1);
 	if(ob)
 		lua_pushnumber(L,ptr->CalcDistance(ob));
 	return 1;
 }
-int luaGameObject_GetSpawnX(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetSpawnX(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetSpawnX());
 	return 1;
 }
-int luaGameObject_GetSpawnY(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetSpawnY(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetSpawnY());
 	return 1;
 }
-int luaGameObject_GetSpawnZ(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetSpawnZ(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetSpawnZ());
 	return 1;
 }
-int luaGameObject_GetSpawnO(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetSpawnO(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetSpawnO());
 	return 1;
 }
-int luaGameObject_GetX(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetX(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetPositionX());
 	return 0;
 }
-int luaGameObject_GetY(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetY(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetPositionY());
 	return 0;
 }
-int luaGameObject_GetZ(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetZ(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetPositionZ());
 	return 0;
 }
-int luaGameObject_GetO(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetO(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetOrientation());
 	return 0;
 }
 
-int luaGameObject_GetInRangePlayersCount(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetInRangePlayersCount(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetInRangePlayersCount());
 	return 1;
 }
-int luaGameObject_GetEntry(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetEntry(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
 		lua_pushnumber(L,ptr->GetEntry());
 	return 1;
 }
-int luaGameObject_SetOrientation(lua_State * L, GameObject * ptr)
+int LuaGameObject_SetOrientation(lua_State * L, GameObject * ptr)
 {
 	float newo = (float)luaL_checkint(L, 1);
 	if(!newo|!ptr)
@@ -387,7 +387,7 @@ int luaGameObject_SetOrientation(lua_State * L, GameObject * ptr)
 	ptr->SetOrientation(newo);
 	return 0;
 }
-int luaGameObject_CalcRadAngle(lua_State * L, GameObject * ptr)
+int LuaGameObject_CalcRadAngle(lua_State * L, GameObject * ptr)
 {
 	float x = (float)luaL_checkint(L,1 );
 	float y = (float)luaL_checkint(L, 2);
@@ -398,7 +398,7 @@ int luaGameObject_CalcRadAngle(lua_State * L, GameObject * ptr)
 	lua_pushnumber(L,ptr->calcRadAngle(x,y,x2,y2));
 	return 0;
 }
-int luaGameObject_GetInstanceID(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetInstanceID(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_UNIT);
 	if(ptr->GetMapMgr()->GetMapInfo()->type == INSTANCE_NULL)
@@ -407,7 +407,7 @@ int luaGameObject_GetInstanceID(lua_State * L, GameObject * ptr)
 	lua_pushinteger(L,ptr->GetInstanceID());
 	return 1;
 }
-int luaGameObject_GetInRangePlayers(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetInRangePlayers(lua_State * L, GameObject * ptr)
 {
 	uint32 count = 0;
 	lua_newtable(L);
@@ -424,7 +424,7 @@ int luaGameObject_GetInRangePlayers(lua_State * L, GameObject * ptr)
 	return 1;
 }
 
-int luaGameObject_GetInRangeGameObjects(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetInRangeGameObjects(lua_State * L, GameObject * ptr)
 {
 	uint32 count = 0;
 	lua_newtable(L);
@@ -440,7 +440,7 @@ int luaGameObject_GetInRangeGameObjects(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_IsInFront(lua_State * L, GameObject * ptr)
+int LuaGameObject_IsInFront(lua_State * L, GameObject * ptr)
 {
 	Unit * target = Lunar<Unit>::check(L, 1);
 	if(ptr && target)
@@ -450,7 +450,7 @@ int luaGameObject_IsInFront(lua_State * L, GameObject * ptr)
 			lua_pushboolean(L, 0);
 	return 1;
 }
-int luaGameObject_IsInBack(lua_State * L, GameObject * ptr)
+int LuaGameObject_IsInBack(lua_State * L, GameObject * ptr)
 {
 	Unit * target = Lunar<Unit>::check(L, 1);
 	if(ptr && target)
@@ -460,14 +460,14 @@ int luaGameObject_IsInBack(lua_State * L, GameObject * ptr)
 			lua_pushboolean(L, 0);
 	return 1;
 }
-int luaGameObject_GetUInt32Value(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetUInt32Value(lua_State * L, GameObject * ptr)
 {
 	int field = luaL_checkint(L,1);
 	if (ptr)
 		lua_pushinteger(L,ptr->GetUInt32Value(field));
 	return 1;
 }
-int luaGameObject_GetUInt64Value(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetUInt64Value(lua_State * L, GameObject * ptr)
 {
 	int field = luaL_checkint(L,1);
 	if (ptr && field)
@@ -476,7 +476,7 @@ int luaGameObject_GetUInt64Value(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_SetUInt32Value(lua_State * L, GameObject * ptr)
+int LuaGameObject_SetUInt32Value(lua_State * L, GameObject * ptr)
 {
 	int field = luaL_checkint(L,1);
 	int value = luaL_checkint(L,2);
@@ -486,7 +486,7 @@ int luaGameObject_SetUInt32Value(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_SetUInt64Value(lua_State * L, GameObject * ptr)
+int LuaGameObject_SetUInt64Value(lua_State * L, GameObject * ptr)
 {
 	int field = luaL_checkint(L,1);
 	int value = luaL_checkint(L,2);
@@ -496,7 +496,7 @@ int luaGameObject_SetUInt64Value(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_SetFloatValue(lua_State * L, GameObject * ptr)
+int LuaGameObject_SetFloatValue(lua_State * L, GameObject * ptr)
 {
 	int field = luaL_checkint(L,1);
 	float value = (float)luaL_checkint(L,2);
@@ -506,7 +506,7 @@ int luaGameObject_SetFloatValue(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_GetFloatValue(lua_State * L, GameObject * ptr)
+int LuaGameObject_GetFloatValue(lua_State * L, GameObject * ptr)
 {
 	int field = luaL_checkint(L,1);
 	if( ptr && field)
@@ -515,7 +515,7 @@ int luaGameObject_GetFloatValue(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_ModUInt32Value(lua_State * L, GameObject * ptr)
+int LuaGameObject_ModUInt32Value(lua_State * L, GameObject * ptr)
 {
 	int field = luaL_checkint(L,1);
 	int value = luaL_checkint(L,2);
@@ -525,7 +525,7 @@ int luaGameObject_ModUInt32Value(lua_State * L, GameObject * ptr)
 	}
 	return 1;
 }
-int luaGameObject_CastSpell(lua_State * L, GameObject * ptr)
+int LuaGameObject_CastSpell(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
 	uint32 sp = luaL_checkint(L,1);
@@ -536,7 +536,7 @@ int luaGameObject_CastSpell(lua_State * L, GameObject * ptr)
 	spp->prepare(&tar);
 	return 0;
 }
-int luaGameObject_FullCastSpell(lua_State * L, GameObject * ptr)
+int LuaGameObject_FullCastSpell(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
 	uint32 sp = luaL_checkint(L,1);
@@ -547,7 +547,7 @@ int luaGameObject_FullCastSpell(lua_State * L, GameObject * ptr)
 	nspell->prepare(&tar);
 	return 0;
 }
-int luaGameObject_CastSpellOnTarget(lua_State * L, GameObject * ptr)
+int LuaGameObject_CastSpellOnTarget(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
 	uint32 sp = luaL_checkint(L,1);
@@ -559,7 +559,7 @@ int luaGameObject_CastSpellOnTarget(lua_State * L, GameObject * ptr)
 	nspell->prepare(&tar);
 	return 0;
 }
-int luaGameObject_FullCastSpellOnTarget(lua_State * L, GameObject * ptr)
+int LuaGameObject_FullCastSpellOnTarget(lua_State * L, GameObject * ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
 	uint32 sp = luaL_checkint(L,1);
@@ -570,7 +570,7 @@ int luaGameObject_FullCastSpellOnTarget(lua_State * L, GameObject * ptr)
 	nspell->prepare(&tar);
 	return 0;
 }
-int luaGameObject_GetGUID(lua_State * L, GameObject* ptr)
+int LuaGameObject_GetGUID(lua_State * L, GameObject* ptr)
 {
 	CHECK_TYPEID(TYPEID_GAMEOBJECT);
 

@@ -90,8 +90,8 @@ int luaGlobalFunctions_PerformIngameSpawn(lua_State * L)
 				pCreature->Despawn(duration,0);
 			if (save)
 				pCreature->SaveToDB();
-			PUSH_UNIT(L,pCreature);
-		} 
+			Lunar<Unit>::push(L,TO_UNIT(pCreature));
+		}
 		/*else if (spawntype == 2) //GO
 		{ 
 			GameObjectInfo *n = GameObjectNameStorage.LookupEntry(entry);
@@ -156,7 +156,7 @@ int luaGlobalFunctions_GetPlayer(lua_State * L)
 	{
 		if (plr->IsInWorld()) 
 		{
-			PUSH_UNIT(L, plr);
+			Lunar<Unit>::push(L, TO_UNIT(plr));
 			return 1;
 		}
 	}
@@ -330,7 +330,7 @@ int luaGlobalFunctions_GetPlayersInWorld(lua_State * L)
 		count++,
 		ret = (*itr).second;
 		lua_pushinteger(L,count);
-		PUSH_UNIT(L,((Unit*)ret));
+		Lunar<Unit>::push(L,((Unit*)ret));
 		lua_rawset(L,-3);
 	}
 	objmgr._playerslock.ReleaseReadLock();	
@@ -400,7 +400,7 @@ int luaGlobalFunctions_GetPlayersInMap(lua_State * L)
 		count++,
 		ret = (*itr).second;
 		lua_pushinteger(L,count);
-		PUSH_UNIT(L,((Unit*)ret));
+		Lunar<Unit>::push(L,((Unit*)ret));
 		lua_rawset(L,-3);
 	}
 	return 1;
@@ -421,7 +421,7 @@ int luaGlobalFunctions_GetPlayersInZone(lua_State * L)
 			count++,
 			ret = (*itr).second;
 			lua_pushinteger(L,count);
-			PUSH_UNIT(L,((Unit*)ret));
+			Lunar<Unit>::push(L,((Unit*)ret));
 			lua_rawset(L,-3);
 		}
 	}
@@ -432,13 +432,13 @@ int luaGlobalFunctions_GetPlayersInZone(lua_State * L)
 /*int luaGlobalFunctions_SendMail(lua_State * L)
 {
 	uint32 type = luaL_checkint(L,1);
-	uint64 sender_guid = GUID_MGR::check(L,2);
-	uint64 recipient_guid = GUID_MGR::check(L,3);
+	uint64 sender_guid = GuidMgr::check(L,2);
+	uint64 recipient_guid = GuidMgr::check(L,3);
 	string subject = luaL_checkstring(L,4);
 	string body = luaL_checkstring(L,5);
 	uint32 money = luaL_checkint(L,6);
 	uint32 cod = luaL_checkint(L,7);
-	uint64 item_guid = GUID_MGR::check(L,8);
+	uint64 item_guid = GuidMgr::check(L,8);
 	uint32 stationery = luaL_checkint(L,9);
 	sMailSystem.DeliverMessage(type, sender_guid, recipient_guid, subject, body, money, cod, item_guid, stationery, false);
 	return 1;
@@ -449,7 +449,7 @@ int luaGlobalFunctions_GetTaxiPath(lua_State * L)
 	uint32 path = luaL_checkint(L, 1);
 	TaxiPath * tp = sTaxiMgr.GetTaxiPath(path);
 	if (tp != NULL)
-		PUSH_TAXIPATH(L, tp);
+		Lunar<TaxiPath>::push(L, tp);
 	else
 		lua_pushnil(L);
 	return 1;

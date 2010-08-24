@@ -374,7 +374,7 @@ void LuaEngine::RegisterCoreFunctions()
 	Lunar<Field>::Register(L);
 	Lunar<QueryResult>::Register(L);
 
-	GUID_MGR::Register(L);
+	GuidMgr::Register(L);
 }
 
 static int RegisterUnitEvent(lua_State * L)
