@@ -455,34 +455,6 @@ void MailSystem::UpdateMessages()
 	delete result;
 }
 
-//delete
-void MailSystem::SendAutomatedMessage(uint32 type, uint64 sender, uint64 receiver, string subject, string body,
-									  uint32 money, uint32 cod, uint64 item_guid, uint32 stationary)
-{
-	// This is for sending automated messages, for example from an auction house.
-	MailMessage msg;
-	msg.message_type = type;
-	msg.sender_guid = sender;
-	msg.player_guid = receiver;
-	msg.subject = subject;
-	msg.body = body;
-	msg.money = money;
-	msg.cod = cod;
-	if( GUID_LOPART(item_guid) != 0 )
-		msg.items.push_back( GUID_LOPART(item_guid) );
-
-	msg.stationary = stationary;
-	msg.delivery_time = (uint32)UNIXTIME;
-	msg.expire_time = 0;
-	msg.read_flag = false;
-	msg.copy_made = false;
-	msg.deleted_flag = false;
-
-	// Send the message.
-	DeliverMessage(&msg);
-}
-//delete
-
 void WorldSession::HandleSendMail(WorldPacket & recv_data )
 {
 	MailMessage msg;
@@ -798,6 +770,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 		sMailSystem.DeliverMessage(MAILTYPE_NORMAL, message->player_guid, message->sender_guid, subject, "", message->cod, 0, 0, 1, true);
 
 		message->cod = 0;
+		CharacterDatabase.Execute("UPDATE mailbox SET cod = 0 WHERE message_id = %u", message->message_id);
 	}
 
 	// re-save (update the items field)

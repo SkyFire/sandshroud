@@ -144,8 +144,7 @@ public:
 	void DeliverMessage(uint32 type, uint64 sender, uint64 receiver, string subject, string body,
 						uint32 money, uint32 cod, uint64 item_guid, uint32 stationary, bool returned);
 	void ReturnToSender(MailMessage* message);
-	void SendAutomatedMessage(uint32 type, uint64 sender, uint64 receiver, string subject, string body, uint32 money,
-							uint32 cod, uint64 item_guid, uint32 stationary);
+
 	HEARTHSTONE_INLINE bool MailOption(uint32 flag)
 	{
 		return (config_flags & flag) ? true : false;

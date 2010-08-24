@@ -560,15 +560,63 @@ RegType<TaxiPath> LuaTaxiMethods[] =
 	{NULL, NULL},
 };
 
+void RegisterGlobalFunctions(lua_State *L)
+{
+	lua_register(L,"PerformIngameSpawn",&luaGlobalFunctions_PerformIngameSpawn);
+	lua_register(L,"GetPlayer",&luaGlobalFunctions_GetPlayer);
+	lua_register(L,"GetLUAEngine",&luaGlobalFunctions_GetLUAEngine);
+	lua_register(L,"GetLuaEngine",&luaGlobalFunctions_GetLUAEngine);
+	lua_register(L,"GetLuaEngineVersion",&luaGlobalFunctions_GetLuaEngineVersion);
+	lua_register(L,"GetGameTime",&luaGlobalFunctions_GetGameTime);
+	//lua_register(L,"WorldDBQuery",&luaGlobalFunctions_WorldDBQuery);
+	//lua_register(L,"CharDBQuery",&luaGlobalFunctions_CharDBQuery);
+	//lua_register(L,"WorldDBQueryTable",&luaGlobalFunctions_WorldDBQueryTable);
+	//lua_register(L,"CharDBQueryTable",&luaGlobalFunctions_CharDBQueryTable);
+	lua_register(L,"SendWorldMessage",&luaGlobalFunctions_SendWorldMessage);
+	lua_register(L,"ReloadTable",&luaGlobalFunctions_ReloadTable);
+	lua_register(L,"ReloadLuaEngine",&luaGlobalFunctions_ReloadLuaEngine);
+	lua_register(L,"Rehash",&luaGlobalFunctions_Rehash);
+	lua_register(L,"logcol",&luaGlobalFunctions_logcol);
+	lua_register(L,"GetPlayersInWorld",&luaGlobalFunctions_GetPlayersInWorld);
+	//lua_register(L,"GetburningemuRevision",&luaGlobalFunctions_GetburningemuRevision);
+	lua_register(L,"GetPlayersInMap",&luaGlobalFunctions_GetPlayersInMap);
+	lua_register(L,"GetPlayersInZone",&luaGlobalFunctions_GetPlayersInZone);
+//	lua_register(L,"SendMail",&luaGlobalFunctions_SendMail);
+	lua_register(L, "GetTaxiPath", &luaGlobalFunctions_GetTaxiPath);
+	//lua_register(L, "SetDBCSpellVar", &luaGlobalFunctions_SetDBCSpellVar);
+	//lua_register(L, "GetDBCSpellVar", &luaGlobalFunctions_GetDBCSpellVar);
+	//Lua's bit instructions
+	lua_register(L, "bit_and", &luaGlobalFunctions_bit_and);
+	lua_register(L, "bit_or", &luaGlobalFunctions_bit_or);
+	lua_register(L, "bit_xor", &luaGlobalFunctions_bit_xor);
+	lua_register(L, "bit_not", &luaGlobalFunctions_bit_not);
+	lua_register(L, "bit_shiftleft", &luaGlobalFunctions_bit_shiftleft);
+	lua_register(L, "bit_shiftright", &luaGlobalFunctions_bit_shiftright);
+
+	/*lua_register(L, "RemoveTimedEventsInTable", &luaGlobalFunctions_RemoveTimedEventsInTable);
+	lua_register(L, "RemoveTimedEventsWithName", &luaGlobalFunctions_RemoveTimedEventsWithName);
+	lua_register(L, "RemoveTimedEvent", &luaGlobalFunctions_RemoveTimedEvent);
+	lua_register(L, "HasTimedEvents", &luaGlobalFunctions_HasTimedEvents);
+	lua_register(L, "HasTimedEventInTable", &luaGlobalFunctions_HasTimedEventInTable);
+	lua_register(L, "HasTimedEventWithName", &luaGlobalFunctions_HasTimedEventWithName);
+	lua_register(L, "HasTimedEvent", &luaGlobalFunctions_HasTimedEvent);
+	lua_register(L,"GetPlatform",&luaGlobalFunctions_GetPlatform);
+	lua_register(L, "NumberToGUID", &luaGlobalFunctions_NumberToGUID);
+	lua_register(L, "SendPacketToWorld", &luaGlobalFunctions_SendPacketToWorld);
+	lua_register(L, "SendPacketToInstance", &luaGlobalFunctions_SendPacketToInstance);
+	lua_register(L, "SendPacketToZone", &luaGlobalFunctions_SendPacketToZone);
+	lua_register(L, "SendPacketToChannel", &luaGlobalFunctions_SendPacketToChannel);*/
+}
+
 template<typename T> RegType<T>* GetMethodTable() { return NULL; }
 template<> RegType<Item>* GetMethodTable<Item>() { return ItemMethods; }
 template<> RegType<Unit>* GetMethodTable<Unit>() { return UnitMethods; }
 template<> RegType<GameObject>* GetMethodTable<GameObject>() { return GOMethods; }
 template<> RegType<TaxiPath>* GetMethodTable<TaxiPath>() { return LuaTaxiMethods; }
-/*template<> RegType<WorldPacket>* GetMethodTable<WorldPacket>() { return LuaPacketMethods; }
-template<> RegType<Spell>* GetMethodTable<Spell>() { return SpellMethods; }
-template<> RegType<QueryResult>* GetMethodTable<QueryResult>() { return QResultMethods; }
-template<> RegType<Field> * GetMethodTable<Field>() { return SQLFieldMethods; }
-template<> RegType<Aura> * GetMethodTable<Aura>() { return AuraMethods; }*/
+//template<> RegType<WorldPacket>* GetMethodTable<WorldPacket>() { return LuaPacketMethods; }
+//template<> RegType<Spell>* GetMethodTable<Spell>() { return SpellMethods; }
+//template<> RegType<QueryResult>* GetMethodTable<QueryResult>() { return QResultMethods; }
+//template<> RegType<Field> * GetMethodTable<Field>() { return SQLFieldMethods; }
+//template<> RegType<Aura> * GetMethodTable<Aura>() { return AuraMethods; }
 
 #endif // __TABLEFUNCTIONS_H

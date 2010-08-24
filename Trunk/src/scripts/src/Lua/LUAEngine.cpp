@@ -20,6 +20,7 @@
  */
 
 #include "LUAEngine.h"
+#include "Functions/TableFunctions.h"
 #include <ScriptSetup.h>
 
 #if PLATFORM != PLATFORM_WIN32
@@ -176,22 +177,18 @@ void LuaEngine::OnGossipEvent(Object* pObject, const char * FunctionName, uint32
 		return;
 	}
 
-    if(pObject->GetTypeId() == TYPEID_UNIT)
-        Lunar<Unit>::push(L, TO_UNIT(pObject));
+	if(pObject->IsUnit())
+		Lunar<Unit>::push(L, TO_UNIT(pObject));
+	else if(pObject->IsItem())
+		Lunar<Item>::push(L, TO_ITEM(pObject));
+	else if(pObject->IsGameObject())
+		Lunar<GameObject>::push(L, TO_GAMEOBJECT(pObject));
 
-    else if(pObject->GetTypeId() == TYPEID_ITEM)
-        Lunar<Item>::push(L, TO_ITEM(pObject));
-
-    else if(pObject->GetTypeId() == TYPEID_GAMEOBJECT)
-        Lunar<GameObject>::push(L, TO_GAMEOBJECT(pObject));
-
-    lua_pushinteger(L, EventType);
+	lua_pushinteger(L, EventType);
 	Lunar<Unit>::push(L, mPlayer);
-
-    lua_pushinteger(L, Id);
-    lua_pushinteger(L, IntId);
-
-    lua_pushstring(L, Code);
+	lua_pushinteger(L, Id);
+	lua_pushinteger(L, IntId);
+	lua_pushstring(L, Code);
 
 	int r = lua_pcall(L, 6, LUA_MULTRET, 0);
 	if(r)
@@ -320,31 +317,64 @@ static int RegisterUnitGossipEvent(lua_State * L);
 static int RegisterItemGossipEvent(lua_State * L);
 static int RegisterGOGossipEvent(lua_State * L);
 
+// Hyp Arc
+/*static int RegisterServerHook(lua_State * L);
+static int SuspendLuaThread(lua_State * L);
+static int RegisterTimedEvent(lua_State * L);
+static int RemoveTimedEvents(lua_State * L);
+static int RegisterDummySpell(lua_State * L);
+static int RegisterInstanceEvent(lua_State * L);*/
+void RegisterGlobalFunctions(lua_State*);
+
 void LuaEngine::RegisterCoreFunctions()
 {
 	lua_pushcfunction(L, &RegisterUnitEvent);
 	lua_setglobal(L, "RegisterUnitEvent");
-
 	lua_pushcfunction(L, &RegisterGameObjectEvent);
 	lua_setglobal(L, "RegisterGameObjectEvent");
-
 	lua_pushcfunction(L, &RegisterQuestEvent);
 	lua_setglobal(L, "RegisterQuestEvent");
 
 	// Unit, Item, GO gossip stuff
 	lua_pushcfunction(L, &RegisterUnitGossipEvent);
-	lua_setglobal(L, "RegisterUnitGossipEvent"); 
-	
+	lua_setglobal(L, "RegisterUnitGossipEvent");
 	lua_pushcfunction(L, &RegisterItemGossipEvent);
-	lua_setglobal(L, "RegisterItemGossipEvent"); 
- 
+	lua_setglobal(L, "RegisterItemGossipEvent");
 	lua_pushcfunction(L, &RegisterGOGossipEvent);
 	lua_setglobal(L, "RegisterGOGossipEvent");
 
+	// Hyp Arc
+/*	lua_pushcfunction(L, &RegisterServerHook);
+	lua_setglobal(L, "RegisterServerHook");
+	lua_pushcfunction(L, &SuspendLuaThread);
+	lua_setglobal(L, "SuspendThread");
+	lua_pushcfunction(L, &RegisterTimedEvent);
+	lua_setglobal(L, "RegisterTimedEvent");
+	lua_pushcfunction(L, &RemoveTimedEvents);
+	lua_setglobal(L, "RemoveTimedEvents");
+	lua_pushcfunction(L, &RegisterDummySpell);
+	lua_setglobal(L, "RegisterDummySpell");
+	lua_pushcfunction(L, &RegisterInstanceEvent);
+	lua_setglobal(L, "RegisterInstanceEvent");
+	lua_pushcfunction(L, &CreateLuaEvent);
+	lua_setglobal(L, "CreateLuaEvent");
+	lua_pushcfunction(L, &ModifyLuaEventInterval);
+	lua_setglobal(L, "ModifyLuaEventInterval");
+	lua_pushcfunction(L, &DestroyLuaEvent);
+	lua_setglobal(L, "DestroyLuaEvent");*/
+
+	RegisterGlobalFunctions(L);
 	Lunar<Item>::Register(L);
 	Lunar<Unit>::Register(L);
 	Lunar<GameObject>::Register(L);
-	//Lunar<Quest>::Register(L); quest isn't a class
+	Lunar<Aura>::Register(L);
+	Lunar<WorldPacket>::Register(L);
+	Lunar<TaxiPath>::Register(L);
+	Lunar<Spell>::Register(L);
+	Lunar<Field>::Register(L);
+	Lunar<QueryResult>::Register(L);
+
+	GUID_MGR::Register(L);
 }
 
 static int RegisterUnitEvent(lua_State * L)
@@ -421,9 +451,32 @@ static int RegisterGOGossipEvent(lua_State * L)
 	if(!entry || !ev || !str || !lua_is_starting_up)
 		return 0;
 
-    g_luaMgr.RegisterGOGossipEvent(entry, ev, str);
+	g_luaMgr.RegisterGOGossipEvent(entry, ev, str);
 	return 0;
 }
+
+/*static int RegisterServerHook(lua_State * L)
+{
+	uint16 functionRef = 0;
+	//Maximum passed in arguments, consider rest as garbage
+	lua_settop(L,2);
+	uint32 ev = luaL_checkint(L, 1);
+	const char * typeName = luaL_typename(L,2);
+	if(!ev || typeName == NULL)
+		return 0;
+
+	// For functions directly passed in, skip all that code and register the reference.
+	if(!strcmp(typeName,"function"))
+		functionRef = (uint16)lua_ref(L,true);
+	else if(!strcmp(typeName,"string")) //Old way of passing in functions, obsolete but left in for compatability.
+		functionRef = ExtractfRefFromCString(L,luaL_checkstring(L,2));
+
+	if(functionRef > 0)
+		g_luaMgr.RegisterEvent(REGTYPE_SERVHOOK,0,ev,functionRef);
+
+	lua_pop(L,2);
+	return 1;
+}*/
 
 
 /************************************************************************/
