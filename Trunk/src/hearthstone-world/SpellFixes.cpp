@@ -149,20 +149,23 @@ void GenerateNameHashesFile()
 		Log.Error("World", "Cannot find file ./DBC/Spell.dbc" );
 		return;
 	}
+
 	uint32 cnt = (uint32)dbc.getRecordCount();
 	uint32 namehash = 0;
 	FILE * f = fopen("SpellNameHashes.h", "w");
 	char spaces[fieldSize], namearray[fieldSize];
 	strcpy(namearray, prefix);
 	char* name = &namearray[prefixLen];
-	for(int i=0;i<fieldSize-1;++i)
+	for(int i = 0;i < fieldSize-1; ++i)
 		spaces[i] = ' ';
+
+	std::set<uint32> namehashes;
 
 	spaces[fieldSize-1] = 0;
 	uint32 nameTextLen = 0, nameLen = 0;
-	for(uint32 x=0; x < cnt; x++)
+	for(uint32 x = 0; x < cnt; x++)
 	{
-		const char* nametext = dbc.getRecord(x).getString(139);
+		const char* nametext = dbc.getRecord(x).getString(136);
 		nameTextLen = (unsigned int)strlen(nametext);
 		strncpy(name, nametext, fieldSize-prefixLen-2);	// Cut it to fit in field size
 		name[fieldSize-prefixLen-2] = 0; // in case nametext is too long and strncpy didn't copy the null
@@ -177,6 +180,10 @@ void GenerateNameHashesFile()
 		}
 
 		namehash = crc32((const unsigned char*)nametext, nameTextLen);
+
+		if(namehashes.find(namehash) != namehashes.end())
+			continue; // Skip namehashes we've already done.
+
 		int32 numSpaces = fieldSize-prefixLen-nameLen-1;
 		if(numSpaces < 0)
 			fprintf(f, "WTF");
@@ -184,6 +191,7 @@ void GenerateNameHashesFile()
 		spaces[numSpaces] = 0;
 		fprintf(f, "#define %s%s0x%08X\n", namearray, spaces, namehash);
 		spaces[numSpaces] = ' ';
+		namehashes.insert(namehash);
 	}
 	fclose(f);
 }
@@ -233,6 +241,9 @@ void ApplyNormalFixes()
 
 		if(sp == NULL)
 			continue;
+
+		if(DummySpells.find(sp->Id) != DummySpells.end())
+			continue; // Dummy spells will be handled later.
 
 		uint32 result = 0;
 
@@ -1326,6 +1337,8 @@ void ApplyNormalFixes()
 		}while( resultx->NextRow() );
 		delete resultx;
 	}
+
+//	GenerateNameHashesFile();
 
 	sp = dbcSpell.LookupEntryForced( 26659 );
 	SpellEntry * sp2 = sp;
