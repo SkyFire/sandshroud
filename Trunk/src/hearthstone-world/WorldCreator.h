@@ -81,8 +81,6 @@ enum OWNER_CHECK
 	OWNER_CHECK_OK			= 10,
 	OWNER_CHECK_GROUP_OK	= 11,
 	OWNER_CHECK_SAVED_OK	= 12,
-	OWNER_CHECK_TRIGGERPASS = 13,
-	OWNER_CHECK_GM_INSIDE	= 14,
 };
 
 extern const char * InstanceAbortMessages[];
@@ -101,7 +99,7 @@ class SERVER_DECL FormationMgr : public Singleton < FormationMgr >
 	map<uint32, Formation*> m_formations;
 public:
 	typedef std::map<uint32, Formation*> FormationMap;
-    FormationMgr();
+	FormationMgr();
 	~FormationMgr();
 
 	Formation * GetFormation(uint32 sqlid)
@@ -177,10 +175,6 @@ public:
 		if( !pInstance->m_mapInfo || !pInstance->m_dbcMap) // ITS A TARP!
 			return OWNER_CHECK_NOT_EXIST;
 
-		// Triggercheat in use?
-		if( pPlayer->triggerpass_cheat )
-			return OWNER_CHECK_TRIGGERPASS;
-
 		// Matching the requested mode?
 		if( pInstance->m_difficulty != (pInstance->m_dbcMap->israid() ? pPlayer->iRaidType : pPlayer->iInstanceType) )
 			return OWNER_CHECK_DIFFICULT;
@@ -194,7 +188,7 @@ public:
 			return OWNER_CHECK_MIN_LEVEL;
 
 		//Need to be in group?
-		if(!pPlayer->GetGroup() && pInstance->m_dbcMap->israid() )
+		if(!pPlayer->GetGroup() && pInstance->m_dbcMap->israid() && !pPlayer->triggerpass_cheat)
 			return OWNER_CHECK_NO_GROUP;
 
 		// Are we on the saved list?
@@ -210,8 +204,11 @@ public:
 		if( pInstance->m_mapMgr && pInstance->m_mapMgr->HasPlayers() )
 		{
 			//we have ensured the groupid is valid when it was created.
-			if( pPlayer->GetGroup() && pPlayer->GetGroupID() != pInstance->m_creatorGroup )
-				return OWNER_CHECK_WRONG_GROUP;
+			if( pPlayer->GetGroup() )
+			{
+				if(pPlayer->GetGroupID() != pInstance->m_creatorGroup)
+					return OWNER_CHECK_WRONG_GROUP;
+			}
 		}
 
 		// if we are not the creator, check if we are in same creator group.
@@ -223,7 +220,13 @@ public:
 				 if( pPlayer->GetGroupID() != pInstance->m_creatorGroup)
 					return OWNER_CHECK_WRONG_GROUP;
 			}
+			else // There is no group, so group checks will be wrong, check by guid.
+			{	// Since there is no group, if creator guid is wrong, fuck it.
+				if(pPlayer->GetLowGUID() != pInstance->m_creatorGuid)
+					return OWNER_CHECK_WRONG_GROUP;
+			}
 		}
+
 		//nothing left to check, should be OK then
 		return OWNER_CHECK_OK;
 	}
