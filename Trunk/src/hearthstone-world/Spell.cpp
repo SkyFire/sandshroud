@@ -161,6 +161,7 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 	ASSERT( Caster != NULL && info != NULL );
 
 	m_spellInfo = info;
+	m_spellInfo_override = NULL;
 	m_caster = Caster;
 	duelSpell = false;
 	m_pushbackCount = 0;
