@@ -275,9 +275,7 @@ enum MsTimeVariables
 #elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1500 && !_HAS_TR1
 #pragma message ("FATAL ERROR: Please install Service Pack 1 for Visual Studio 2008")
 #elif COMPILER == COMPILER_MICROSOFT && _MSC_VER < 1500
-#include <boost/tr1/memory.hpp>
-#include <boost/tr1/unordered_map.hpp>
-#include <boost/tr1/unordered_set.hpp>
+#pragma message ("FATAL ERROR: Please install a newer version of visual studio, VS2008 or above.")
 #else
 #include <memory>
 #include <hash_map>
