@@ -30,7 +30,7 @@ struct CollisionMap
 };
 
 SERVER_DECL CCollideInterface CollideInterface;
-VMAP::VMapManager* CollisionMgr;
+VMAP::VMapManager2* CollisionMgr;
 CollisionMap *m_mapLocks[MAX_MAP];
 Mutex m_mapCreateLock;
 
@@ -40,7 +40,7 @@ Mutex m_mapCreateLock;
 void CCollideInterface::Init()
 {
 	Log.Notice("CollideInterface", "Init");
-	CollisionMgr = new VMAP::VMapManager;
+	CollisionMgr = new VMAP::VMapManager2;
 	memset(m_mapLocks, 0, sizeof(CollisionMap*)*MAX_MAP);
 }
 
@@ -84,7 +84,7 @@ void CCollideInterface::ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
 	// acquire write lock
 	m_mapLocks[mapId]->m_lock.AcquireWriteLock();
 	if( m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY] == 0 )
-		if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapId, tileY, tileX))
+		if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapId, tileX, tileY))
 			OUT_DEBUG("Loading VMap [%u/%u] successful", tileY, tileX);
 		else
 			OUT_DEBUG("Loading VMap [%u/%u] unsuccessful", tileY, tileX);
@@ -169,7 +169,7 @@ bool CCollideInterface::IsIndoor(uint32 mapId, float x, float y, float z)
 	m_mapLocks[mapId]->m_lock.AcquireReadLock();
 
 	// get data
-	bool res = CollisionMgr ? CollisionMgr->isInDoors(mapId, x, y, z) : true;
+	bool res = CollisionMgr ? CollisionMgr->isInDoors(mapId, x, y, z) : false;
 
 	// release write lock
 	m_mapLocks[mapId]->m_lock.ReleaseReadLock();
@@ -186,7 +186,7 @@ bool CCollideInterface::IsOutdoor(uint32 mapId, float x, float y, float z)
 	m_mapLocks[mapId]->m_lock.AcquireReadLock();
 
 	// get data
-	bool res = CollisionMgr ? CollisionMgr->isOutDoors(mapId, x, y, z) : true; 
+	bool res = /*CollisionMgr ? CollisionMgr->isOutDoors(mapId, x, y, z) :*/ false; 
 
 	// release write lock
 	m_mapLocks[mapId]->m_lock.ReleaseReadLock();

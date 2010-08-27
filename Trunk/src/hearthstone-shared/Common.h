@@ -388,6 +388,7 @@ namespace std
 /* Use correct types for x64 platforms, too */
 typedef unsigned int uint;
 typedef unsigned long ulong;
+#define UNORDERED_MAP std::tr1::unordered_map
 
 #if COMPILER != COMPILER_GNU
 
@@ -650,5 +651,8 @@ HEARTHSTONE_INLINE std::string HEARTHSTONE_TOLOWER_RETURN(std::string str)
 // returns true if the ip hits the mask, otherwise false
 bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits);
 unsigned int MakeIP(const char * str);
+
+#include "Log.h"
+#include "NGLog.h"
 
 #endif

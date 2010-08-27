@@ -18,17 +18,18 @@
  */
 
 #include "vmap/IVMapManager.h"
-#include "vmap/VMapManager.h"
+#include "vmap/VMapManager2.h"
+#include "g3dlite/g3dmath.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include "LocationVector.h"
 
-VMAP::VMapManager* vmgr;
+VMAP::VMapManager2* vmgr;
 
 void * collision_init()
 {
-	vmgr = new VMAP::VMapManager();
+	vmgr = new VMAP::VMapManager2();
 	return vmgr;
 }
 

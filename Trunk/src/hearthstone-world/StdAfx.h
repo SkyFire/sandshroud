@@ -60,7 +60,7 @@
 #include "../hearthstone-shared/hearthstoneConfig.h"
 
 #include "../hearthstone-shared/Collision/vmap/IVMapManager.h"
-#include "../hearthstone-shared/Collision/vmap/VMapManager.h"
+#include "../hearthstone-shared/Collision/vmap/VMapManager2.h"
 
 #include <zlib.h>
 #include "Const.h"

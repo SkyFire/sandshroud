@@ -23,7 +23,7 @@
 /* imports */
 #define NO_WMO_HEIGHT -100000.0f
 
-extern VMAP::VMapManager* CollisionMgr;
+extern VMAP::VMapManager2* CollisionMgr;
 
 class SERVER_DECL CCollideInterface
 {
