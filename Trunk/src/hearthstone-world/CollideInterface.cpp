@@ -80,14 +80,15 @@ void CCollideInterface::DeactivateMap(uint32 mapId)
 void CCollideInterface::ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
 {
 	ASSERT(m_mapLocks[mapId] != NULL);
-	if( !CollisionMgr ) return;
+	if( !CollisionMgr )
+		return;
 	// acquire write lock
 	m_mapLocks[mapId]->m_lock.AcquireWriteLock();
 	if( m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY] == 0 )
 		if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapId, tileX, tileY))
-			OUT_DEBUG("Loading VMap [%u/%u] successful", tileY, tileX);
+			OUT_DEBUG("Loading VMap [%u/%u] successful", tileX, tileY);
 		else
-			OUT_DEBUG("Loading VMap [%u/%u] unsuccessful", tileY, tileX);
+			OUT_DEBUG("Loading VMap [%u/%u] unsuccessful", tileX, tileY);
 
 	// increment count
 	m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY]++;
@@ -99,12 +100,13 @@ void CCollideInterface::ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
 void CCollideInterface::DeactivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
 {
 	ASSERT(m_mapLocks[mapId] != NULL);
-	if( !CollisionMgr ) return;
+	if( !CollisionMgr )
+		return;
 
 	// get write lock
 	m_mapLocks[mapId]->m_lock.AcquireWriteLock();
 	if( (--m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY]) == 0 )
-		CollisionMgr->unloadMap(mapId, tileY, tileX);
+		CollisionMgr->unloadMap(mapId, tileX, tileY);
 
 	// release write lock
 	m_mapLocks[mapId]->m_lock.ReleaseWriteLock();
@@ -186,7 +188,7 @@ bool CCollideInterface::IsOutdoor(uint32 mapId, float x, float y, float z)
 	m_mapLocks[mapId]->m_lock.AcquireReadLock();
 
 	// get data
-	bool res = /*CollisionMgr ? CollisionMgr->isOutDoors(mapId, x, y, z) :*/ false; 
+	bool res = CollisionMgr ? CollisionMgr->isOutDoors(mapId, x, y, z) : true; 
 
 	// release write lock
 	m_mapLocks[mapId]->m_lock.ReleaseReadLock();

@@ -1275,7 +1275,7 @@ public:
 				System::outOfMemoryCallback()(REALBLOCK_SIZE(bytes), false);
 			}
 #		   ifdef G3D_DEBUG
-			debugPrintf("::malloc(%d) returned NULL\n", (int)REALBLOCK_SIZE(bytes));
+			printf("::malloc(%d) returned NULL\n", (int)REALBLOCK_SIZE(bytes));
 #		   endif
 			debugAssertM(ptr != NULL, 
 						 "::malloc returned NULL. Either the "
