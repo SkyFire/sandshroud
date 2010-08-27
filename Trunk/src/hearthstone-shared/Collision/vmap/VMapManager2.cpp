@@ -145,6 +145,7 @@ namespace VMAP
 			StaticMapTree *newTree = new StaticMapTree(pMapId, basePath);
 			if (!newTree->InitMap(mapFileName, this))
 				return false;
+
 			instanceTree = iInstanceMapTrees.insert(InstanceTreeMap::value_type(pMapId, newTree)).first;
 		}
 		return instanceTree->second->LoadMapTile(tileX, tileY, this);

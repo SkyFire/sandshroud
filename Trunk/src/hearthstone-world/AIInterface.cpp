@@ -2041,7 +2041,9 @@ void AIInterface::UpdateMove()
 		m_nextPosX = PathLocation.x;
 		m_nextPosY = PathLocation.y;
 		m_nextPosZ = PathLocation.z;
-//		m_destinationX = m_destinationY = m_destinationZ = 0; Pathfinding requires we keep our destination.
+
+		if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
+			m_destinationX = m_destinationY = m_destinationZ = 0.0f; // Pathfinding requires we keep our destination.
 
 		float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
 
@@ -2512,6 +2514,17 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 		m_timeMoved = m_timeToMove <= p_time + m_timeMoved ? m_timeToMove : p_time + m_timeMoved;
 	}
 
+	if(sWorld.PathFinding && m_Unit->GetMapMgr()->GetNavmesh(m_Unit))
+	{
+		if(m_destinationX != 0.0f && m_destinationY != 0.0f)
+		{
+			if(m_Unit->GetPositionX() == m_nextPosX && m_Unit->GetPositionY() == m_nextPosY && m_Unit->GetPositionZ() == m_nextPosZ)
+			{
+				MoveTo(m_destinationX, m_destinationY, m_destinationZ);
+			}
+		}
+	}
+
 	if(m_creatureState == MOVING)
 	{
 		if(!m_moveTimer)
@@ -2601,11 +2614,12 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				float z = m_Unit->GetPositionZ() + (m_nextPosZ - m_Unit->GetPositionZ()) * q;
 
 				m_Unit->SetPosition(x, y, z, m_Unit->GetOrientation());
-				
+
 				m_timeToMove -= m_timeMoved;
 				m_timeMoved = 0;
 				m_moveTimer = (UNIT_MOVEMENT_INTERPOLATE_INTERVAL < m_timeToMove) ? UNIT_MOVEMENT_INTERPOLATE_INTERVAL : m_timeToMove;
 			}
+
 			//**** Movement related stuff that should be done after a move update (Keeps Client and Server Synced) ****//
 			//**** Process the Pending Move ****//
 			if(m_destinationX != 0.0f && m_destinationY != 0.0f)
@@ -2645,6 +2659,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				m_fallowAngle = m_formationFollowAngle;
 			}
 		}
+
 		if(UnitToFollow == NULL)
 		{
 			// no formation, use waypoints
