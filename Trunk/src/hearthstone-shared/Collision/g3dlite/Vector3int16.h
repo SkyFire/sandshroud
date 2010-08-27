@@ -39,26 +39,26 @@ private:
 	bool operator>=(const Vector3int16&) const;
 
 public:
-	G3D::int16			  x;
-	G3D::int16			  y;
-	G3D::int16			  z;
+	int16			  x;
+	int16			  y;
+	int16			  z;
 
 	Vector3int16() : x(0), y(0), z(0) {}
-	Vector3int16(G3D::int16 _x, G3D::int16 _y, G3D::int16 _z) : x(_x), y(_y), z(_z) {}
+	Vector3int16(int16 _x, int16 _y, int16 _z) : x(_x), y(_y), z(_z) {}
 	Vector3int16(const class Vector3& v);
 	Vector3int16(class BinaryInput& bi);
 
 	void serialize(class BinaryOutput& bo) const;
 	void deserialize(class BinaryInput& bi);
 
-	inline G3D::int16& operator[] (int i) {
+	inline int16& operator[] (int i) {
 		debugAssert(i <= 2);
-		return ((G3D::int16*)this)[i];
+		return ((int16*)this)[i];
 	}
 
-	inline const G3D::int16& operator[] (int i) const {
+	inline const int16& operator[] (int i) const {
 		debugAssert(i <= 2);
-		return ((G3D::int16*)this)[i];
+		return ((int16*)this)[i];
 	}
 
 	inline Vector3int16 operator+(const Vector3int16& other) const {

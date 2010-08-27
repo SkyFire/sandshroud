@@ -24,8 +24,8 @@ AIInterface::AIInterface()
 	m_ChainAgroSet = NULL;
 	m_waypoints=NULL;
 	m_canMove = true;
-	m_destinationX = m_destinationY = m_destinationZ = 0;
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
+	m_destinationX = m_destinationY = m_destinationZ = 0;
 	UnitToFollow = NULLCREATURE;
 	FollowDistance = 0.0f;
 	m_fallowAngle = float(M_PI/2);
@@ -1814,20 +1814,20 @@ void AIInterface::_CalcDestinationAndMove(Unit* target, float dist)
 			y -= sinf(target->GetOrientation());
 		}
 
-		m_nextPosX = ResX - x;
-		m_nextPosY = ResY - y;
-		m_nextPosZ = ResZ;
+		m_destinationX = ResX - x;
+		m_destinationY = ResY - y;
+		m_destinationZ = ResZ;
 	}
 	else
 	{
 		target = NULLUNIT;
-		m_nextPosX = m_Unit->GetPositionX();
-		m_nextPosY = m_Unit->GetPositionY();
-		m_nextPosZ = m_Unit->GetPositionZ();
+		m_destinationX = m_Unit->GetPositionX();
+		m_destinationY = m_Unit->GetPositionY();
+		m_destinationZ = m_Unit->GetPositionZ();
 	}
 
-	float dx = m_nextPosX - m_Unit->GetPositionX();
-	float dy = m_nextPosY - m_Unit->GetPositionY();
+	float dx = m_destinationX - m_Unit->GetPositionX();
+	float dy = m_destinationY - m_Unit->GetPositionY();
 	if(dy != 0.0f)
 	{
 		float angle = atan2(dx, dy);
@@ -1948,14 +1948,14 @@ void AIInterface::StopMovement(uint32 time)
 	m_moveTimer = time; //set pause after stopping
 	m_creatureState = STOPPED;
 
-	if(m_destinationY && m_destinationX)
+	if(m_nextPosY && m_nextPosX)
 	{
-		float orient = atan2(m_destinationY - m_Unit->GetPositionY(), m_destinationX - m_Unit->GetPositionX());
+		float orient = atan2(m_nextPosY - m_Unit->GetPositionY(), m_nextPosX - m_Unit->GetPositionX());
 		m_Unit->SetOrientation(orient);
 	}
 
-	m_destinationX = m_destinationY = m_destinationZ = 0;
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
+	m_destinationX = m_destinationY = m_destinationZ = 0;
 	m_timeMoved = 0;
 	m_timeToMove = 0;
 
@@ -1974,9 +1974,9 @@ void AIInterface::MoveTo(float x, float y, float z)
 		return;
 	}
 
-	m_nextPosX = x;
-	m_nextPosY = y;
-	m_nextPosZ = z;
+	m_destinationX = x;
+	m_destinationY = y;
+	m_destinationZ = z;
 	CheckHeight();
 
 	if(m_creatureState != MOVING)
@@ -2024,12 +2024,12 @@ void AIInterface::UpdateMove()
 {
 	//this should NEVER be called directly !!!!!!
 	//use MoveTo()
-	float distance = m_Unit->CalcDistance(m_nextPosX,m_nextPosY,m_nextPosZ);
+	float distance = m_Unit->CalcDistance(m_destinationX,m_destinationY,m_destinationZ);
 
-	m_destinationX = m_nextPosX;
-	m_destinationY = m_nextPosY;
-	m_destinationZ = m_nextPosZ;
-	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
+	m_nextPosX = m_destinationX;
+	m_nextPosY = m_destinationY;
+	m_nextPosZ = m_destinationZ;
+	m_destinationX = m_destinationY = m_destinationZ = 0;
 
 	uint32 moveTime = 0;
 	if(jumptolocation)
@@ -2059,7 +2059,7 @@ void AIInterface::UpdateMove()
 
 		// check if we're returning to our respawn location. if so, reset back to default
 		// orientation
-		if(creature->GetSpawnX() == m_destinationX && creature->GetSpawnY() == m_destinationY)
+		if(creature->GetSpawnX() == m_nextPosX && creature->GetSpawnY() == m_nextPosY)
 		{
 			angle = creature->GetSpawnO();
 			creature->SetOrientation(angle);
@@ -2067,8 +2067,8 @@ void AIInterface::UpdateMove()
 		else
 		{
 			// Calculate the angle to our next position
-			float dx = (float)m_destinationX - m_Unit->GetPositionX();
-			float dy = (float)m_destinationY - m_Unit->GetPositionY();
+			float dx = (float)m_nextPosX - m_Unit->GetPositionX();
+			float dy = (float)m_nextPosY - m_Unit->GetPositionY();
 			if(dy != 0.0f)
 			{
 				angle = atan2(dy, dx);
@@ -2076,7 +2076,7 @@ void AIInterface::UpdateMove()
 			}
 		}
 	}
-	SendMoveToPacket(m_destinationX, m_destinationY, m_destinationZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
+	SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
 
 	jumptolocation = false;
 	m_timeToMove = moveTime;
@@ -2089,16 +2089,16 @@ void AIInterface::UpdateMove()
 
 void AIInterface::SendCurrentMove(Player* plyr/*uint64 guid*/)
 {
-	if(m_destinationX == 0.0f && m_destinationY == 0.0f && m_destinationZ == 0.0f) return; //invalid move 
+	if(m_nextPosX == 0.0f && m_nextPosY == 0.0f && m_nextPosZ == 0.0f) return; //invalid move 
 
 	uint32 numpoints = 4;
-	float pointDiffX = m_sourceX - m_destinationX / (float)numpoints;
-	float pointDiffY = m_sourceY - m_destinationY / (float)numpoints;
-	float pointDiffZ = m_sourceZ - m_destinationZ / (float)numpoints;
+	float pointDiffX = m_sourceX - m_nextPosX / (float)numpoints;
+	float pointDiffY = m_sourceY - m_nextPosY / (float)numpoints;
+	float pointDiffZ = m_sourceZ - m_nextPosZ / (float)numpoints;
 
 	if(pointDiffX < 1.0f || pointDiffY < 1.0f)
 	{
-		SendMoveToPacket(m_destinationX, m_destinationY, m_destinationZ, 0.0f, 0, getMoveFlags());
+		SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, 0.0f, 0, getMoveFlags());
 		return;
 	}
 
@@ -2129,12 +2129,12 @@ void AIInterface::SendCurrentMove(Player* plyr/*uint64 guid*/)
 	/*
 	*splineBuf << m_sourceX << m_sourceY << m_sourceZ;
 	*splineBuf << m_Unit->GetPositionX() << m_Unit->GetPositionY() << m_Unit->GetPositionZ();
-	*splineBuf << m_destinationX << m_destinationY << m_destinationZ;
-	*splineBuf << m_destinationX << m_destinationY << m_destinationZ;
+	*splineBuf << m_nextPosX << m_nextPosY << m_nextPosZ;
+	*splineBuf << m_nextPosX << m_nextPosY << m_nextPosZ;
 	*/
 	*splineBuf << uint8(0); // Pguid?
 	
-	*splineBuf << m_destinationX << m_destinationY << m_destinationZ;	// 3 floats after all the spline points
+	*splineBuf << m_nextPosX << m_nextPosY << m_nextPosZ;	// 3 floats after all the spline points
 
 	plyr->AddSplinePacket(m_Unit->GetGUID(), splineBuf);
 
@@ -2143,7 +2143,7 @@ void AIInterface::SendCurrentMove(Player* plyr/*uint64 guid*/)
 	//Player* plyr = World::GetPlayer(guid);
 	//if(!plyr) return;
 
-	/*if(m_destinationX == 0.0f && m_destinationY == 0.0f && m_destinationZ == 0.0f) return; //invalid move 
+	/*if(m_nextPosX == 0.0f && m_nextPosY == 0.0f && m_nextPosZ == 0.0f) return; //invalid move 
 	uint32 moveTime = m_timeToMove-m_timeMoved;
 	//uint32 moveTime = (m_timeToMove-m_timeMoved)+m_moveTimer;
 	WorldPacket data(50);
@@ -2154,12 +2154,12 @@ void AIInterface::SendCurrentMove(Player* plyr/*uint64 guid*/)
 	data << uint8(0);
 	data << getMoveFlags();
 
-	//float distance = m_Unit->CalcDistance(m_destinationX, m_destinationY, m_destinationZ);
+	//float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
 	//uint32 moveTime = (uint32) (distance / m_runSpeed);
 
 	data << moveTime;
 	data << uint32(1); //Number of Waypoints
-	data << m_destinationX << m_destinationY << m_destinationZ;
+	data << m_nextPosX << m_nextPosY << m_nextPosZ;
 	plyr->GetSession()->SendPacket(&data);*/
 
 }
@@ -2521,11 +2521,11 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				m_moveSprint = false;
 
 				if(m_MovementType == MOVEMENTTYPE_DONTMOVEWP)
-					m_Unit->SetPosition(m_destinationX, m_destinationY, m_destinationZ, wayO, true);
+					m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, wayO, true);
 				else
-					m_Unit->SetPosition(m_destinationX, m_destinationY, m_destinationZ, m_Unit->GetOrientation(), true);
+					m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), true);
 
-				m_destinationX = m_destinationY = m_destinationZ = 0;
+				m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 				m_timeMoved = 0;
 				m_timeToMove = 0;
 			}
@@ -2533,9 +2533,9 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			{
 				//Move Server Side Update
 				float q = (float)m_timeMoved / (float)m_timeToMove;
-				float x = m_Unit->GetPositionX() + (m_destinationX - m_Unit->GetPositionX()) * q;
-				float y = m_Unit->GetPositionY() + (m_destinationY - m_Unit->GetPositionY()) * q;
-				float z = m_Unit->GetPositionZ() + (m_destinationZ - m_Unit->GetPositionZ()) * q;
+				float x = m_Unit->GetPositionX() + (m_nextPosX - m_Unit->GetPositionX()) * q;
+				float y = m_Unit->GetPositionY() + (m_nextPosY - m_Unit->GetPositionY()) * q;
+				float z = m_Unit->GetPositionZ() + (m_nextPosZ - m_Unit->GetPositionZ()) * q;
 
 				m_Unit->SetPosition(x, y, z, m_Unit->GetOrientation());
 				
@@ -2545,7 +2545,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			}
 			//**** Movement related stuff that should be done after a move update (Keeps Client and Server Synced) ****//
 			//**** Process the Pending Move ****//
-			if(m_nextPosX != 0.0f && m_nextPosY != 0.0f)
+			if(m_destinationX != 0.0f && m_destinationY != 0.0f)
 			{
 				UpdateMove();
 			}
@@ -3775,11 +3775,11 @@ void AIInterface::CheckHeight()
 		float x = m_Unit->GetPositionX();
 		float y = m_Unit->GetPositionY();
 		float z = m_Unit->GetPositionZ();
-		if(m_nextPosX && m_nextPosY)
+		if(m_destinationX && m_destinationY)
 		{
-			x = m_nextPosX;
-			y = m_nextPosY;
-			z = (z > m_nextPosZ ? z : m_nextPosZ); // Crow: Call it hacky, but it works.
+			x = m_destinationX;
+			y = m_destinationY;
+			z = (z > m_destinationZ ? z : m_destinationZ); // Crow: Call it hacky, but it works.
 		}
 
 		float landheight_z = m_Unit->GetMapMgr()->GetLandHeight(x, y);

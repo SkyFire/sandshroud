@@ -1211,6 +1211,7 @@ void World::Rehash(bool load)
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
 	vMapPath = Config.MainConfig.GetStringDefault("Terrain", "vMapPath", "vmaps");
+	MMapPath = Config.MainConfig.GetStringDefault("Terrain", "MMapPath", "mmaps");
 	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Terrain", "UnloadMapFiles", true);
 	BreathingEnabled = Config.MainConfig.GetBoolDefault("Server", "EnableBreathing", true);
 	SendStatsOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendStatsOnJoin", true);
@@ -1245,7 +1246,7 @@ void World::Rehash(bool load)
 	setRate(RATE_QUESTXP,Config.MainConfig.GetFloatDefault("Rates", "QuestXP", 1));
 	setIntRate(INTRATE_SAVE, Config.MainConfig.GetIntDefault("Rates", "Save", 1));
 	setRate(RATE_MONEY, Config.MainConfig.GetFloatDefault("Rates", "DropMoney", 1.0f));
-    setRate(RATE_QUEST_MONEY, Config.MainConfig.GetFloatDefault("Rates", "QuestMoney", 1.0f));
+	setRate(RATE_QUEST_MONEY, Config.MainConfig.GetFloatDefault("Rates", "QuestMoney", 1.0f));
 	setRate(RATE_QUESTREPUTATION, Config.MainConfig.GetFloatDefault("Rates", "QuestReputation", 1.0f));
 	setRate(RATE_KILLREPUTATION, Config.MainConfig.GetFloatDefault("Rates", "KillReputation", 1.0f));
 	setRate(RATE_HONOR, Config.MainConfig.GetFloatDefault("Rates", "Honor", 1.0f));
@@ -1257,6 +1258,7 @@ void World::Rehash(bool load)
 	setRate(RATE_ARENAPOINTMULTIPLIER3X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier3x", 1.0f));
 	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
 	Collision = Config.MainConfig.GetBoolDefault("Server", "Collision", false);
+	PathFinding = Config.MainConfig.GetBoolDefault("Server", "Pathfinding", false);
 	free_arena_teams = Config.MainConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
 	free_guild_charters = Config.MainConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
 	setRate(RATE_EOTS_CAPTURERATE, Config.MainConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));

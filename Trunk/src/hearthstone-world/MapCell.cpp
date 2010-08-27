@@ -60,7 +60,10 @@ void MapCell::RemoveObject(Object* obj)
 }
 
 void MapCell::SetActivity(bool state)
-{	
+{
+	uint32 x, y;
+	x = _x/8;
+	y = _y/8;
 	if(!_active && state)
 	{
 		// Move all objects to active set.
@@ -74,8 +77,14 @@ void MapCell::SetActivity(bool state)
 			CancelPendingUnload();
 
 		if (_mapmgr->IsCollisionEnabled())
-			CollideInterface.ActivateTile(_mapmgr->GetMapId(), _x/8, _y/8);
-	} else if(_active && !state)
+		{
+			CollideInterface.ActivateTile(_mapmgr->GetMapId(), x, y);
+
+			if(sWorld.PathFinding)
+				_mapmgr->LoadNavMesh(x, y);
+		}
+	}
+	else if(_active && !state)
 	{
 		// Move all objects from active set.
 		for(ObjectSet::iterator itr = _objects.begin(); itr != _objects.end(); itr++)
@@ -88,7 +97,11 @@ void MapCell::SetActivity(bool state)
 			QueueUnloadPending();
 
 		if (_mapmgr->IsCollisionEnabled())
-			CollideInterface.DeactivateTile(_mapmgr->GetMapId(), _x/8, _y/8);
+		{
+			CollideInterface.DeactivateTile(_mapmgr->GetMapId(), x, y);
+			if(sWorld.PathFinding)
+				_mapmgr->UnloadNavMesh(x, y);
+		}
 	}
 
 	_active = state; 

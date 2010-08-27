@@ -71,7 +71,7 @@ uint128::uint128(const uint64& lo) : hi(0), lo(lo) {
 
 uint128& uint128::operator+=(const uint128& x) {
 
-	G3D::uint64 carry;
+	uint64 carry;
 	addAndCarry(lo, x.lo, carry, lo);
 
 	// Adding the carry will change hi. Save the old hi bits in case this == x.
@@ -87,7 +87,7 @@ uint128& uint128::operator*=(const uint128& x) {
 	const uint64 oldLo = lo;
 	const uint64 oldXLo = x.lo;
 
-	G3D::uint64 carry;
+	uint64 carry;
 	multiplyAndCarry(oldLo, oldXLo, carry, lo);
 
 	// Overflow doesn't matter here because the result is going into hi - any overflow will exceed the capacity of a 128-bit number

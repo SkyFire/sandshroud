@@ -33,22 +33,22 @@ private:
 	bool operator>=(const Vector2int16&) const;
 
 public:
-	G3D::int16			  x;
-	G3D::int16			  y;
+	int16			  x;
+	int16			  y;
 
 	Vector2int16() : x(0), y(0) {}
-	Vector2int16(G3D::int16 _x, G3D::int16 _y) : x(_x), y(_y){}
+	Vector2int16(int16 _x, int16 _y) : x(_x), y(_y){}
 	Vector2int16(const class Vector2& v);
 	Vector2int16(class BinaryInput& bi);
 
-	inline G3D::int16& operator[] (int i) {
+	inline int16& operator[] (int i) {
 		debugAssert(((unsigned int)i) <= 1);
-		return ((G3D::int16*)this)[i];
+		return ((int16*)this)[i];
 	}
 
-	inline const G3D::int16& operator[] (int i) const {
+	inline const int16& operator[] (int i) const {
 		debugAssert(((unsigned int)i) <= 1);
-		return ((G3D::int16*)this)[i];
+		return ((int16*)this)[i];
 	}
 
 	inline Vector2int16 operator+(const Vector2int16& other) const {

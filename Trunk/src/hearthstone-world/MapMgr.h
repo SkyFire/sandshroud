@@ -381,6 +381,11 @@ public:
 	void RemovePositiveAuraFromPlayers(int32 iFactionMask, uint32 uAuraId);
 	void CastSpellOnPlayers(int32 iFactionMask, uint32 uSpellId);
 
+	// Navmesh settings
+	dtNavMesh *m_navMesh[64][64];
+	bool LoadNavMesh(uint32 x, uint32 y);
+	void UnloadNavMesh(uint32 x, uint32 y);
+	LocationVector getNextPositionOnPathToLocation(const float startx, const float starty, const float startz, const float endx, const float endy, const float endz);
 
 public:
 

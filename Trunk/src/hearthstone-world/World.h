@@ -519,10 +519,12 @@ public:
 
 	string MapPath;
 	string vMapPath;
+	string MMapPath;
 	bool UnloadMapFiles;
 	bool BreathingEnabled;
 	bool SpeedhackProtection;
 	bool Collision;
+	bool PathFinding;
 	bool AHEnabled;
 	uint32 mInWorldPlayerCount;
 	uint32 mAcceptedConnections;

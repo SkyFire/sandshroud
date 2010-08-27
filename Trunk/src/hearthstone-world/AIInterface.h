@@ -371,7 +371,6 @@ public:
 
 	ChainAggroEntity* m_ChainAgroSet;
 
-	float m_sourceX, m_sourceY, m_sourceZ;
 	uint32 m_totalMoveTime;
 	HEARTHSTONE_INLINE void AddStopTime(uint32 Time) { m_moveTimer += Time; }
 	HEARTHSTONE_INLINE void SetNextSpell(AI_Spell*sp) { m_nextSpell = sp; }
@@ -480,23 +479,12 @@ protected:
 	Unit* soullinkedWith; //This mob can be hitten only by soullinked unit
 	bool isSoulLinked;
 
-
 	// Movement
-	float m_walkSpeed;
-	float m_runSpeed;
-	float m_flySpeed;
-	float m_destinationX;
-	float m_destinationY;
-	float m_destinationZ;
-	
-	float m_nextPosX;
-	float m_nextPosY;
-	float m_nextPosZ;
-
-	//Return position after attacking a mob
-	float m_returnX;
-	float m_returnY;
-	float m_returnZ;
+	float m_walkSpeed, m_runSpeed, m_flySpeed;
+	float m_sourceX, m_sourceY, m_sourceZ;
+	float m_destinationX, m_destinationY, m_destinationZ;
+	float m_nextPosX, m_nextPosY, m_nextPosZ;
+	float m_returnX, m_returnY, m_returnZ; //Return position after attacking a mob
 
 	float m_lastFollowX;
 	float m_lastFollowY;

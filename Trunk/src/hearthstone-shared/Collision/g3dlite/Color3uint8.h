@@ -88,7 +88,7 @@ public:
 	}
 
 	operator uint8* () {
-		return (G3D::uint8*)this;
+		return (uint8*)this;
 	}
 
 	operator const uint8* () const {

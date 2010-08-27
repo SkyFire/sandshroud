@@ -32,38 +32,38 @@ template <> struct HashTrait <int> {
 };
 #endif
 
-template <> struct HashTrait <G3D::int16> {
-	static size_t hashCode(G3D::int16 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <int16> {
+	static size_t hashCode(int16 k) { return static_cast<size_t>(k); }
 };
 
-template <> struct HashTrait <G3D::uint16> {
-	static size_t hashCode(G3D::uint16 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <uint16> {
+	static size_t hashCode(uint16 k) { return static_cast<size_t>(k); }
 };
 
 //template <> struct HashTrait <int> {
 //	static size_t hashCode(int k) { return static_cast<size_t>(k); }
 //};
 
-template <> struct HashTrait <G3D::int32> {
-	static size_t hashCode(G3D::int32 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <int32> {
+	static size_t hashCode(int32 k) { return static_cast<size_t>(k); }
 };
 
-template <> struct HashTrait <G3D::uint32> {
-	static size_t hashCode(G3D::uint32 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <uint32> {
+	static size_t hashCode(uint32 k) { return static_cast<size_t>(k); }
 };
 
 #if 0
 template <> struct HashTrait <long unsigned int> {
-	static size_t hashCode(G3D::uint32 k) { return static_cast<size_t>(k); }
+	static size_t hashCode(uint32 k) { return static_cast<size_t>(k); }
 };
 #endif
 
-template <> struct HashTrait <G3D::int64> {
-	static size_t hashCode(G3D::int64 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <int64> {
+	static size_t hashCode(int64 k) { return static_cast<size_t>(k); }
 };
 
-template <> struct HashTrait <G3D::uint64> {
-	static size_t hashCode(G3D::uint64 k) { return static_cast<size_t>(k); }
+template <> struct HashTrait <uint64> {
+	static size_t hashCode(uint64 k) { return static_cast<size_t>(k); }
 };
 
 template <> struct HashTrait <std::string> {
@@ -84,7 +84,7 @@ template <> struct HashTrait<G3D::uint128> {
 			key >>= 8;
 		}
 	
-		G3D::uint64 foldedHash = hash.hi ^ hash.lo;
+		uint64 foldedHash = hash.hi ^ hash.lo;
 		return static_cast<size_t>((foldedHash >> 32) ^ (foldedHash & 0xFFFFFFFF));
 	}
 };
