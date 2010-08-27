@@ -1974,9 +1974,18 @@ void AIInterface::MoveTo(float x, float y, float z)
 		return;
 	}
 
-	m_destinationX = x;
-	m_destinationY = y;
-	m_destinationZ = z;
+	if(sWorld.PathFinding)
+	{
+		m_destinationX = x;
+		m_destinationY = y;
+		m_destinationZ = z;
+	}
+	else
+	{
+		m_destinationX = x;
+		m_destinationY = y;
+		m_destinationZ = z;
+	}
 	CheckHeight();
 
 	if(m_creatureState != MOVING)
@@ -2024,67 +2033,137 @@ void AIInterface::UpdateMove()
 {
 	//this should NEVER be called directly !!!!!!
 	//use MoveTo()
-	float distance = m_Unit->CalcDistance(m_destinationX,m_destinationY,m_destinationZ);
-
-	m_nextPosX = m_destinationX;
-	m_nextPosY = m_destinationY;
-	m_nextPosZ = m_destinationZ;
-	m_destinationX = m_destinationY = m_destinationZ = 0;
-
-	uint32 moveTime = 0;
-	if(jumptolocation)
-		moveTime = (uint32)(distance/m_flySpeed);
-	else if(m_moveFly)
-		moveTime = (uint32)(distance/m_flySpeed);
-	else if(m_moveRun)
-		moveTime = (uint32)(distance/m_runSpeed);
-	else
-		moveTime = (uint32)(distance/m_walkSpeed);
-
-	m_totalMoveTime = moveTime;
-
-	if(m_Unit->GetTypeId() == TYPEID_UNIT)
+	if(sWorld.PathFinding && m_Unit->GetMapMgr()->GetNavmesh(m_Unit))
 	{
-		Creature* creature = TO_CREATURE(m_Unit);
+		LocationVector PathLocation = m_Unit->GetMapMgr()->getNextPositionOnPathToLocation(
+			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
 
-		float angle = 0.0f;
-		float c_reach =GetUnit()->GetFloatValue(UNIT_FIELD_COMBATREACH);
+		m_nextPosX = PathLocation.x;
+		m_nextPosY = PathLocation.y;
+		m_nextPosZ = PathLocation.z;
+//		m_destinationX = m_destinationY = m_destinationZ = 0; Pathfinding requires we keep our destination.
 
-		//We don't want little movements here and there; 
-		float DISTANCE_TO_SMALL_TO_WALK = c_reach - 1.0f <= 0.0f ? 1.0f : c_reach - 1.0f;
+		float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
 
-		// don't move if we're well within combat range; rooted can't move neither
-		if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
-			return; 
-
-		// check if we're returning to our respawn location. if so, reset back to default
-		// orientation
-		if(creature->GetSpawnX() == m_nextPosX && creature->GetSpawnY() == m_nextPosY)
-		{
-			angle = creature->GetSpawnO();
-			creature->SetOrientation(angle);
-		}
+		uint32 moveTime = 0;
+		if(jumptolocation)
+			moveTime = (uint32)(distance/m_flySpeed);
+		else if(m_moveFly)
+			moveTime = (uint32)(distance/m_flySpeed);
+		else if(m_moveRun)
+			moveTime = (uint32)(distance/m_runSpeed);
 		else
+			moveTime = (uint32)(distance/m_walkSpeed);
+
+		m_totalMoveTime = moveTime;
+
+		if(m_Unit->GetTypeId() == TYPEID_UNIT)
 		{
-			// Calculate the angle to our next position
-			float dx = (float)m_nextPosX - m_Unit->GetPositionX();
-			float dy = (float)m_nextPosY - m_Unit->GetPositionY();
-			if(dy != 0.0f)
+			Creature* creature = TO_CREATURE(m_Unit);
+
+			float angle = 0.0f;
+			float c_reach = GetUnit()->GetFloatValue(UNIT_FIELD_COMBATREACH);
+
+			//We don't want little movements here and there; 
+			float DISTANCE_TO_SMALL_TO_WALK = c_reach - 1.0f <= 0.0f ? 1.0f : c_reach - 1.0f;
+
+			// don't move if we're well within combat range; rooted can't move neither
+			if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
+				return; 
+
+			// check if we're returning to our respawn location. if so, reset back to default
+			// orientation
+			if(creature->GetSpawnX() == m_nextPosX && creature->GetSpawnY() == m_nextPosY)
 			{
-				angle = atan2(dy, dx);
-				m_Unit->SetOrientation(angle);
+				angle = creature->GetSpawnO();
+				creature->SetOrientation(angle);
+			}
+			else
+			{
+				// Calculate the angle to our next position
+				float dx = (float)m_nextPosX - m_Unit->GetPositionX();
+				float dy = (float)m_nextPosY - m_Unit->GetPositionY();
+				if(dy != 0.0f)
+				{
+					angle = atan2(dy, dx);
+					m_Unit->SetOrientation(angle);
+				}
 			}
 		}
+		SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
+
+		jumptolocation = false;
+		m_timeToMove = moveTime;
+		m_timeMoved = 0;
+		if(m_moveTimer == 0)
+			m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
+
+		m_creatureState = MOVING;
 	}
-	SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
+	else
+	{
+		float distance = m_Unit->CalcDistance(m_destinationX,m_destinationY,m_destinationZ);
 
-	jumptolocation = false;
-	m_timeToMove = moveTime;
-	m_timeMoved = 0;
-	if(m_moveTimer == 0)
-		m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
+		m_nextPosX = m_destinationX;
+		m_nextPosY = m_destinationY;
+		m_nextPosZ = m_destinationZ;
+		m_destinationX = m_destinationY = m_destinationZ = 0;
 
-	m_creatureState = MOVING;
+		uint32 moveTime = 0;
+		if(jumptolocation)
+			moveTime = (uint32)(distance/m_flySpeed);
+		else if(m_moveFly)
+			moveTime = (uint32)(distance/m_flySpeed);
+		else if(m_moveRun)
+			moveTime = (uint32)(distance/m_runSpeed);
+		else
+			moveTime = (uint32)(distance/m_walkSpeed);
+
+		m_totalMoveTime = moveTime;
+
+		if(m_Unit->GetTypeId() == TYPEID_UNIT)
+		{
+			Creature* creature = TO_CREATURE(m_Unit);
+
+			float angle = 0.0f;
+			float c_reach =GetUnit()->GetFloatValue(UNIT_FIELD_COMBATREACH);
+
+			//We don't want little movements here and there; 
+			float DISTANCE_TO_SMALL_TO_WALK = c_reach - 1.0f <= 0.0f ? 1.0f : c_reach - 1.0f;
+
+			// don't move if we're well within combat range; rooted can't move neither
+			if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
+				return; 
+
+			// check if we're returning to our respawn location. if so, reset back to default
+			// orientation
+			if(creature->GetSpawnX() == m_nextPosX && creature->GetSpawnY() == m_nextPosY)
+			{
+				angle = creature->GetSpawnO();
+				creature->SetOrientation(angle);
+			}
+			else
+			{
+				// Calculate the angle to our next position
+				float dx = (float)m_nextPosX - m_Unit->GetPositionX();
+				float dy = (float)m_nextPosY - m_Unit->GetPositionY();
+				if(dy != 0.0f)
+				{
+					angle = atan2(dy, dx);
+					m_Unit->SetOrientation(angle);
+				}
+			}
+		}
+		SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
+
+		jumptolocation = false;
+		m_timeToMove = moveTime;
+		m_timeMoved = 0;
+		if(m_moveTimer == 0)
+			m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
+
+		m_creatureState = MOVING;
+	}
 }
 
 void AIInterface::SendCurrentMove(Player* plyr/*uint64 guid*/)

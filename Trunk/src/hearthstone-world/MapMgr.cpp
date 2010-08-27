@@ -2191,6 +2191,11 @@ void MapMgr::CallScriptUpdate()
 	mInstanceScript->UpdateEvent();
 }
 
+dtNavMesh* MapMgr::GetNavmesh(Object* obj)
+{
+	return m_navMesh[(GetPosX(obj->GetPositionX())/8)][(GetPosY(obj->GetPositionY())/8)];
+}
+
 bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
 {
 	if(m_navMesh[x][y])

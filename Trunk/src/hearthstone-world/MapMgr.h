@@ -383,6 +383,7 @@ public:
 
 	// Navmesh settings
 	dtNavMesh *m_navMesh[64][64];
+	dtNavMesh* GetNavmesh(Object* obj);
 	bool LoadNavMesh(uint32 x, uint32 y);
 	void UnloadNavMesh(uint32 x, uint32 y);
 	LocationVector getNextPositionOnPathToLocation(const float startx, const float starty, const float startz, const float endx, const float endy, const float endz);
