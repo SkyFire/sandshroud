@@ -1796,7 +1796,7 @@ void AIInterface::_CalcDestinationAndMove(Unit* target, float dist)
 		StopMovement(0); //Just Stop
 		return;
 	}
-	
+
 	if(target && (target->GetTypeId() == TYPEID_UNIT || target->GetTypeId() == TYPEID_PLAYER))
 	{
 		float ResX = target->GetPositionX();
@@ -1920,7 +1920,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	data << time;
 	if(MoveFlags & MONSTER_MOVE_FLAG_JUMP)
 	{
-		data << float(m_Unit->m_flySpeed) << uint32(0);
+		data << float((toZ - m_Unit->GetPositionZ()) + 4.0f) << uint32(0);
 	}
 
 	data << uint32(1);	// 1 waypoint
@@ -1974,18 +1974,9 @@ void AIInterface::MoveTo(float x, float y, float z)
 		return;
 	}
 
-	if(sWorld.PathFinding)
-	{
-		m_destinationX = x;
-		m_destinationY = y;
-		m_destinationZ = z;
-	}
-	else
-	{
-		m_destinationX = x;
-		m_destinationY = y;
-		m_destinationZ = z;
-	}
+	m_destinationX = x;
+	m_destinationY = y;
+	m_destinationZ = z;
 	CheckHeight();
 
 	if(m_creatureState != MOVING)
@@ -2035,6 +2026,11 @@ void AIInterface::UpdateMove()
 	//use MoveTo()
 	if(sWorld.PathFinding && m_Unit->GetMapMgr()->GetNavmesh(m_Unit))
 	{
+		// Reset our source position
+		m_sourceX = m_Unit->GetPositionX();
+		m_sourceY = m_Unit->GetPositionY();
+		m_sourceZ = m_Unit->GetPositionZ();
+
 		LocationVector PathLocation = m_Unit->GetMapMgr()->getNextPositionOnPathToLocation(
 			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
 
@@ -2043,7 +2039,10 @@ void AIInterface::UpdateMove()
 		m_nextPosZ = PathLocation.z;
 
 		if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
+		{
+			jumptolocation = false;
 			m_destinationX = m_destinationY = m_destinationZ = 0.0f; // Pathfinding requires we keep our destination.
+		}
 
 		float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
 
@@ -2086,7 +2085,6 @@ void AIInterface::UpdateMove()
 		}
 		SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
 
-		jumptolocation = false;
 		m_timeToMove = moveTime;
 		m_timeMoved = 0;
 		if(m_moveTimer == 0)
