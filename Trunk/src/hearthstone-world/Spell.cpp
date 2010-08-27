@@ -4601,21 +4601,19 @@ void Spell::CreateItem(uint32 itemId)
 	}
 }*/
 
-void Spell::SendHealSpellOnPlayer( Object* caster, Object* target, uint32 dmg, bool critical, uint32 overheal, uint32 spellid )
+void Spell::SendHealSpellOnPlayer( Object* caster, Object* target, uint32 dmg, bool critical, uint32 overheal, uint32 spellid)
 {
 	if( caster == NULL || target == NULL || !target->IsPlayer())
 		return;
-
-	uint8 buf[100];
-	StackPacket data(SMSG_SPELLHEALLOG, buf, 100);
-	
-	data << target->GetNewGUID();
-	data << caster->GetNewGUID();
-	data << spellid;
-	data << uint32(dmg);	// amt healed
+	WorldPacket data(SMSG_SPELLHEALLOG, 34);
+	data.append(target->GetNewGUID());
+	data.append(caster->GetNewGUID());
+	data << uint32(spellid);
+	data << uint32(dmg);
 	data << uint32(overheal);
-	data << uint8(critical);	 //this is critical message
-
+	data << uint32(0); //Todo: Calculate healing absorb.
+	data << uint8(critical ? 1 : 0);
+	data << uint8(0);//?????
 	caster->SendMessageToSet(&data, true);
 }
 
@@ -4623,16 +4621,12 @@ void Spell::SendHealManaSpellOnPlayer(Object* caster, Object* target, uint32 dmg
 {
 	if( caster == NULL || target == NULL || !target->IsPlayer())
 		return;
-
-	uint8 buf[100];
-	StackPacket data(SMSG_SPELLENERGIZELOG, buf, 100);
-
-	data << target->GetNewGUID();
-	data << caster->GetNewGUID();
-	data << spellid;
-	data << powertype;
-	data << dmg;
-
+	WorldPacket data(SMSG_SPELLENERGIZELOG, 29);
+	data.append(target->GetNewGUID());
+	data.append(caster->GetNewGUID());
+	data << uint32(spellid);
+	data << uint32(powertype);
+	data << uint32(dmg);
 	caster->SendMessageToSet(&data, true);
 }
 
