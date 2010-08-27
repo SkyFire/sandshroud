@@ -220,7 +220,7 @@ namespace VMAP
 
 	float StaticMapTree::getHeight(const Vector3& pPos, float maxSearchDist) const
 	{
-		float height = G3D::inf();
+		float height = VMAP_INVALID_HEIGHT;
 		Vector3 dir = Vector3(0,0,-1);
 		G3D::Ray ray(pPos, dir);		// direction with length of 1
 		float maxDist = maxSearchDist;
@@ -228,7 +228,7 @@ namespace VMAP
 		{
 			height = pPos.z - maxDist;
 		}
-		return(height);
+		return (height);
 	}
 
 	bool StaticMapTree::isInDoors(Vector3& pos)
