@@ -2045,15 +2045,7 @@ void AIInterface::UpdateMove()
 
 		float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
 
-		uint32 moveTime = 0;
-		if(jumptolocation)
-			moveTime = (uint32)(distance/m_flySpeed);
-		else if(m_moveFly)
-			moveTime = (uint32)(distance/m_flySpeed);
-		else if(m_moveRun)
-			moveTime = (uint32)(distance/m_runSpeed);
-		else
-			moveTime = (uint32)(distance/m_walkSpeed);
+		uint32 moveTime = GetMovementTime(distance);
 
 		m_totalMoveTime = moveTime;
 
@@ -2109,15 +2101,7 @@ void AIInterface::UpdateMove()
 		m_nextPosZ = m_destinationZ;
 		m_destinationX = m_destinationY = m_destinationZ = 0;
 
-		uint32 moveTime = 0;
-		if(jumptolocation)
-			moveTime = (uint32)(distance/m_flySpeed);
-		else if(m_moveFly)
-			moveTime = (uint32)(distance/m_flySpeed);
-		else if(m_moveRun)
-			moveTime = (uint32)(distance/m_runSpeed);
-		else
-			moveTime = (uint32)(distance/m_walkSpeed);
+		uint32 moveTime = GetMovementTime(distance);
 
 		m_totalMoveTime = moveTime;
 
@@ -3882,6 +3866,8 @@ uint32 AIInterface::GetMovementTime(float distance)
 		return m_flySpeed? float2int32(distance/m_flySpeed):0xFFFFFFFF;
 	else if (m_moveRun)
 		return m_runSpeed? float2int32(distance/m_runSpeed):0xFFFFFFFF;
+	else if(jumptolocation)
+		return m_flySpeed? float2int32(distance/m_flySpeed):0xFFFFFFFF;
 	else
 		return m_walkSpeed? float2int32(distance/m_walkSpeed):0xFFFFFFFF;
 }
