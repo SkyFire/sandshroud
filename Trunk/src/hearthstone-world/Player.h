@@ -2306,6 +2306,7 @@ public:
 	void UpdateTalentInspectBuffer();
 	static void InitializeTalentInspectSupport();
 	void knockback( float Orientation, int32 basepoint, uint32 miscvalue, bool disengage = false );
+	uint8 GetChatTag() const;
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);

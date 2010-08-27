@@ -13033,3 +13033,15 @@ void Player::knockback( float Orientation, int32 basepoint, uint32 miscvalue, bo
 	data << float( -value2 );	
 	GetSession()->SendPacket( &data );	
 }
+
+uint8 Player::GetChatTag() const
+{
+	if(bGMTagOn)
+		return 4;
+	else if(HasFlag(PLAYER_FLAGS,PLAYER_FLAG_DND))
+		return 3;
+	else if(HasFlag(PLAYER_FLAGS,PLAYER_FLAG_AFK))
+		return 1;
+	else
+		return 0;
+}
