@@ -881,7 +881,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 		if(fly && !IS_INSTANCE(m_Unit->GetMapId()))
 		{
 			float target_land_z = 0.0f;
-			if(m_Unit->GetMapMgr()->IsCollisionEnabled())
+			if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
 			{
 				target_land_z = CollideInterface.GetHeight(m_Unit->GetMapId(), GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY(), GetNextTarget()->GetPositionZ() + 2.0f);
 				if(target_land_z == NO_WMO_HEIGHT)
@@ -1116,7 +1116,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 
 				float distance = m_Unit->CalcDistance(m_nextTarget);
 				bool los = true;
-				if(m_Unit->GetMapMgr()->IsCollisionEnabled() && m_Unit->GetMapMgr())
+				if(m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
 				{
 					los = CollideInterface.CheckLOS( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(),
 						m_nextTarget->GetPositionX(), m_nextTarget->GetPositionY(), m_nextTarget->GetPositionZ() );
@@ -2033,15 +2033,22 @@ void AIInterface::UpdateMove()
 		m_sourceZ = m_Unit->GetPositionZ();
 
 		usepathing = true;
-		if(m_Unit->GetMapMgr()->IsCollisionEnabled())
-			if(CollideInterface.CheckLOS(m_Unit->GetMapId(), m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ))
+		if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
+			if(CollideInterface.CheckLOS(m_Unit->GetMapId(), m_sourceX, m_sourceY, m_sourceZ+1.0f, m_destinationX, m_destinationY, m_destinationZ+1.0f))
 				usepathing = false; // Don't need it for a straight line with no breaks.
 	}
 
 	if(usepathing)
 	{
+
+//#define TEST_COLLISION_LOS // Use collision to reduce the amount of steps we take.
+#ifdef TEST_COLLISION_LOS
+		LocationVector PathLocation = m_Unit->GetMapMgr()->getBestPositionOnPathToLocation(
+			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
+#else
 		LocationVector PathLocation = m_Unit->GetMapMgr()->getNextPositionOnPathToLocation(
 			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
+#endif
 
 		m_nextPosX = PathLocation.x;
 		m_nextPosY = PathLocation.y;
@@ -2810,7 +2817,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			float wl = m_Unit->GetMapMgr()->GetWaterHeight(Fx, Fy);
 //			uint8 wt = m_Unit->GetMapMgr()->GetWaterType(Fx, Fy);
 
-			if (m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->IsCollisionEnabled())
+			if (m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
 			{
 				if( !CollideInterface.GetFirstPoint( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), 
 					Fx, Fy, m_Unit->GetPositionZ() + 1.5f, Fx, Fy, Fz, -3.5f ) )
@@ -2866,7 +2873,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 		float Fy = m_Unit->GetPositionY() + wanderD * sinf(wanderO);
 		float Fz;
 
-		if (m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->IsCollisionEnabled())
+		if (m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
 		{
 			if( !CollideInterface.GetFirstPoint( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), 
 				Fx, Fy, m_Unit->GetPositionZ() + 1.5f, Fx, Fy, Fz, -3.5f ) )
@@ -3669,7 +3676,7 @@ void AIInterface::CallGuards()
 		float y = m_Unit->GetPositionY() + (float(rand() % 150 + 100) / 1000.0f );
 		float z = 0.0f;
 
-		if(m_Unit->GetMapMgr()->IsCollisionEnabled())
+		if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
 		{
 			z = CollideInterface.GetHeight(m_Unit->GetMapId(), x, y, m_Unit->GetPositionZ() + 2.0f);
 			if( z == NO_WMO_HEIGHT )
@@ -3869,7 +3876,7 @@ void AIInterface::CheckHeight()
 		}
 
 		float landheight_z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
-		if(m_Unit->GetMapMgr()->IsCollisionEnabled() && CollideInterface.GetHeight(m, x, y, z + 2.0f) != NO_WMO_HEIGHT /*&& CollideInterface.IsOutdoor(m, x, y, z)*/)
+		if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit) && CollideInterface.GetHeight(m, x, y, z + 2.0f) != NO_WMO_HEIGHT /*&& CollideInterface.IsOutdoor(m, x, y, z)*/)
 			landheight_z = CollideInterface.GetHeight(m, x, y, z + 2.0f);
 
 		if(landheight_z)

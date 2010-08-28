@@ -2196,6 +2196,11 @@ dtNavMesh* MapMgr::GetNavmesh(Object* obj)
 	return m_navMesh[(GetPosX(obj->GetPositionX())/8)][(GetPosY(obj->GetPositionY())/8)];
 }
 
+dtNavMesh* MapMgr::GetNavmesh(uint32 tileX, uint32 tileY)
+{
+	return m_navMesh[tileX][tileY];
+}
+
 bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
 {
 	if(m_navMesh[x][y])
@@ -2246,7 +2251,67 @@ void MapMgr::UnloadNavMesh(uint32 x, uint32 y)
 	m_navMesh[x][y] = NULL;
 }
 
-LocationVector MapMgr::getNextPositionOnPathToLocation(const float startx, const float starty, const float startz, const float endx, const float endy, const float endz)
+/* Crow: This is a more advanced version of the pathing bool system we have in AI interface.
+Basically, it will try and find the farthest path we can travel to, without hitting a collision path.
+So say we have a tree: (Yes I made a shitty tree)
+
+|||||||||||||||||||||||
+|||||      ||      ||||
+|||||     ||||     ||||
+|||||    ||||||    ||||
+|||||   ||||||||   ||||
+|||||  ||||||||||  ||||
+||||| |||||||||||| ||||
+|||||  A   ||   B  ||||
+|||||   \  ||  /   ||||
+|||||    \ || /    ||||
+|||||     \||/     ||||
+|||||      \/      ||||
+|||||||||||||||||||||||
+
+If we are on one side going to the other, we would walk around it, but the pathfinding system goes around it with about 20 or so poly's.
+Using this system, if we have a clear sight to the next poly, we skip the current step and move to the next, so we have a clearer walk
+from Point A on one side of the tree, to Point B. However, its still very buggy, and we take too many steps, and we sort of circle around
+the tree instead of moving in two straight lines, but thats normal I guess.
+*/
+LocationVector MapMgr::getBestPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz)
+{
+	if(collision)
+	{
+		uint32 tileX = (GetPosX(startx)/8);
+		uint32 tileY = (GetPosY(starty)/8);
+		uint32 endtileX = (GetPosX(endx)/8);
+		uint32 endtileY = (GetPosY(endy)/8);
+		if(CollideInterface.IsActiveTile(_mapId, tileX, tileY) && CollideInterface.IsActiveTile(_mapId, endtileX, endtileY))
+		{
+			bool finding = true;
+			LocationVector sourcepos = LocationVector(startx, starty, startz);
+			LocationVector lastposition = sourcepos;
+			LocationVector nextposition;
+			while(finding)
+			{
+				nextposition = getNextPositionOnPathToLocation(lastposition.x, lastposition.y, lastposition.z, endx, endy, endz);
+				if(lastposition == sourcepos)
+					lastposition = nextposition;
+
+				if(CollideInterface.CheckLOS(_mapId, sourcepos.x, sourcepos.y, sourcepos.z+1.0f, nextposition.x, nextposition.y, nextposition.z+1.0f))
+				{
+					lastposition = nextposition;
+
+					if(lastposition.x == endx && lastposition.y == endy && lastposition.z == endz)
+						finding = false; // We reached our destination, so we should just stop.
+				}
+				else
+					finding = false;
+			}
+			return lastposition;
+		}
+	}
+
+	return getNextPositionOnPathToLocation(startx, starty, startz, endx, endy, endz);
+}
+
+LocationVector MapMgr::getNextPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz)
 {
 	//convert to nav coords.
 	float startPos[3] = { starty, startz, startx };
@@ -2264,7 +2329,7 @@ LocationVector MapMgr::getNextPositionOnPathToLocation(const float startx, const
 	{
 		dtPolyRef mStartRef = myNavMesh->findNearestPoly(startPos,mPolyPickingExtents,mPathFilter,0); // this maybe should be saved on mob for later
 		dtPolyRef mEndRef = myNavMesh->findNearestPoly(endPos,mPolyPickingExtents,mPathFilter,0); // saved on player? probably waste since player moves to much
-		if (mStartRef != 0 && mEndRef != 0)
+		if (mStartRef != NULL && mEndRef != NULL)
 		{
 			dtPolyRef mPathResults[50];
 			int mNumPathResults = myNavMesh->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter ,mPathResults,50);//TODO: CHANGE ME
@@ -2285,4 +2350,17 @@ LocationVector MapMgr::getNextPositionOnPathToLocation(const float startx, const
 		}
 	}
 	return pos;
+}
+
+bool MapMgr::CanUseCollision(Object* obj)
+{
+	if(collision)
+	{
+		uint32 tileX = (GetPosX(obj->GetPositionX())/8);
+		uint32 tileY = (GetPosY(obj->GetPositionY())/8);
+		if(CollideInterface.IsActiveTile(_mapId, tileX, tileY))
+			return true;
+	}
+
+	return false;
 }

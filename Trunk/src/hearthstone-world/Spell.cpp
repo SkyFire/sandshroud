@@ -3165,7 +3165,7 @@ uint8 Spell::CanCast(bool tolerate)
 			}
 		}
 
-		if (p_caster->GetMapMgr() && p_caster->GetMapMgr()->IsCollisionEnabled())
+		if (p_caster->GetMapMgr() && p_caster->GetMapMgr()->CanUseCollision(p_caster))
 		{
 			if (m_spellInfo->MechanicsType == MECHANIC_MOUNTED)
 			{

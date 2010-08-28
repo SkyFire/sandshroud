@@ -2701,7 +2701,7 @@ void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
 		float new_x = pTarget->GetPositionX() - (shadowstep_distance * cosf(ang));
 		float new_y = pTarget->GetPositionY() - (shadowstep_distance * sinf(ang));
 		float new_z = pTarget->GetPositionZ() + 0.1f;
-		if (pTarget->GetMapMgr() && pTarget->GetMapMgr()->IsCollisionEnabled())
+		if (pTarget->GetMapMgr() && pTarget->GetMapMgr()->CanUseCollision(pTarget))
 		{
 			float z2 = CollideInterface.GetHeight(pTarget->GetMapId(), pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
 			if( z2 == NO_WMO_HEIGHT )
@@ -3737,7 +3737,7 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		}
 	}
 
-	if (p_caster->GetMapMgr() && p_caster->GetMapMgr()->IsCollisionEnabled())
+	if (p_caster->GetMapMgr() && p_caster->GetMapMgr()->CanUseCollision(p_caster))
 	{
 		float ori = m_caster->GetOrientation();				
 		float posX = m_caster->GetPositionX()+(radius*(cosf(ori)));

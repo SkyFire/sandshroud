@@ -3004,7 +3004,7 @@ bool Object::HasByteFlag(const uint32 index, const uint32 flag, uint8 checkFlag)
 
 bool Object::IsInLineOfSight(Object* pObj)
 {
-	if (GetMapMgr() && GetMapMgr()->IsCollisionEnabled())
+	if (GetMapMgr() && GetMapMgr()->CanUseCollision(this) && GetMapMgr()->CanUseCollision(pObj))
 		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + 2.0f, pObj->GetPositionX(), pObj->GetPositionY(), pObj->GetPositionZ() + 2.0f) );
 	else
 		return true;

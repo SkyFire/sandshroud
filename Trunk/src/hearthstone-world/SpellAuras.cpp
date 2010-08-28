@@ -1284,7 +1284,7 @@ void Aura::EventRelocateRandomTarget()
 		if( TO_UNIT(*itr)->isDead() || m_caster->GetDistance2dSq( *itr ) > 100 || !TO_PLAYER(m_caster)->CanSee(*itr) )
 			continue;
 
-		if (m_caster->GetMapMgr() && m_caster->GetMapMgr()->IsCollisionEnabled())
+		if (m_caster->GetMapMgr() && m_caster->GetMapMgr()->CanUseCollision(m_caster))
 		{
 			if( !CollideInterface.CheckLOS( m_caster->GetMapId(), m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ() + 2.0f, (*itr)->GetPositionX(), (*itr)->GetPositionY(), (*itr)->GetPositionZ() + 2.0f) )
 				continue;
@@ -1313,7 +1313,7 @@ void Aura::EventRelocateRandomTarget()
 	float new_x = pTarget->GetPositionX() - (killingspree_distance * cosf(ang));
 	float new_y = pTarget->GetPositionY() - (killingspree_distance * sinf(ang));
 	float new_z = pTarget->GetPositionZ() + 0.1f;
-	if (pTarget->GetMapMgr() && pTarget->GetMapMgr()->IsCollisionEnabled())
+	if (pTarget->GetMapMgr() && pTarget->GetMapMgr()->CanUseCollision(pTarget))
 	{
 		float z2 = CollideInterface.GetHeight(pTarget->GetMapId(), pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
 		if( z2 == NO_WMO_HEIGHT )

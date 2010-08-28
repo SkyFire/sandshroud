@@ -1111,7 +1111,7 @@ void Player::Update( uint32 p_time )
 
 	if (GetMapMgr())
 	{
-		if( GetMapMgr()->IsCollisionEnabled() && mstime >= m_mountCheckTimer )
+		if( GetMapMgr()->CanUseCollision(this) && mstime >= m_mountCheckTimer )
 		{
 			if( CollideInterface.IsIndoor( m_mapId, m_position.x, m_position.y, m_position.z ) )
 			{
@@ -1468,7 +1468,7 @@ void Player::_EventExploration()
 	{
 		if(m_isResting)
 		{
-			if (GetMapMgr()->IsCollisionEnabled())
+			if (GetMapMgr()->CanUseCollision(this))
 			{
 				const LocationVector & loc = GetPosition();
 				if(!CollideInterface.IsIndoor(GetMapId(), loc.x, loc.y, loc.z + 2.0f))
@@ -6401,7 +6401,7 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 				fail = SPELL_FAILED_NO_AMMO;
 	}
 
-	if (GetMapMgr() && GetMapMgr()->IsCollisionEnabled())
+	if (GetMapMgr() && GetMapMgr()->CanUseCollision(this))
 	{
 		if( !CollideInterface.CheckLOS(m_mapId, GetPositionX(), GetPositionY(), GetPositionZ(), 
 			target->GetPositionX(), target->GetPositionY(), target->GetPositionZ()) )
@@ -12178,7 +12178,7 @@ void Player::VampiricSpell(uint32 dmg, Unit* pTarget, SpellEntry *spellinfo)
 
 void Player::_FlyhackCheck()
 {
-	if (!GetMapMgr() || !GetMapMgr()->IsCollisionEnabled())
+	if (!GetMapMgr() || !GetMapMgr()->CanUseCollision(this))
 		return;
 
 	if(!IsFlyHackEligible())

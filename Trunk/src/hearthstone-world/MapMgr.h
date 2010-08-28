@@ -252,6 +252,7 @@ public:
 
 	HEARTHSTONE_INLINE void SetCollision(bool enable) { collision = enable; }
 	HEARTHSTONE_INLINE bool IsCollisionEnabled() { return collision; }
+	HEARTHSTONE_INLINE bool CanUseCollision(Object* obj);
 
 	HEARTHSTONE_INLINE MapScriptInterface * GetInterface() { return ScriptInterface; }
 	virtual int32 event_GetInstanceID() { return m_instanceID; }
@@ -384,9 +385,11 @@ public:
 	// Navmesh settings
 	dtNavMesh *m_navMesh[64][64];
 	dtNavMesh* GetNavmesh(Object* obj);
+	dtNavMesh* GetNavmesh(uint32 tileX, uint32 tileY);
 	bool LoadNavMesh(uint32 x, uint32 y);
 	void UnloadNavMesh(uint32 x, uint32 y);
-	LocationVector getNextPositionOnPathToLocation(const float startx, const float starty, const float startz, const float endx, const float endy, const float endz);
+	LocationVector getBestPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz);
+	LocationVector getNextPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz);
 
 public:
 

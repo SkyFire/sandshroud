@@ -112,6 +112,23 @@ void CCollideInterface::DeactivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
 	m_mapLocks[mapId]->m_lock.ReleaseWriteLock();
 }
 
+bool CCollideInterface::IsActiveTile(uint32 mapId, uint32 tileX, uint32 tileY)
+{
+	ASSERT(m_mapLocks[mapId] != NULL);
+	if( !CollisionMgr )
+		return false;
+
+	bool isactive = false;
+
+	// acquire write lock
+	m_mapLocks[mapId]->m_lock.AcquireWriteLock();
+	if(m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY])
+		isactive = true;
+	m_mapLocks[mapId]->m_lock.ReleaseWriteLock(); // release lock
+
+	return isactive;
+}
+
 bool CCollideInterface::CheckLOS(uint32 mapId, float x1, float y1, float z1, float x2, float y2, float z2)
 {
 	ASSERT(m_mapLocks[mapId] != NULL);

@@ -3028,7 +3028,7 @@ bool ChatHandler::HandleCollisionTestIndoor(const char * args, WorldSession * m_
 		return true;
 	}
 
-	if (plr->GetMapMgr()->IsCollisionEnabled())
+	if (plr->GetMapMgr()->CanUseCollision(plr))
 	{
 		const LocationVector & loc = plr->GetPosition();
 		bool res = CollideInterface.IsIndoor(plr->GetMapId(), loc.x, loc.y, loc.z + 2.0f);
@@ -3044,7 +3044,7 @@ bool ChatHandler::HandleCollisionTestIndoor(const char * args, WorldSession * m_
 
 bool ChatHandler::HandleCollisionTestLOS(const char * args, WorldSession * m_session)
 {
-	if (sWorld.Collision)
+	if(sWorld.Collision)
 	{
 		Object* pObj = NULLOBJ;
 		Creature* pCreature = getSelectedCreature(m_session, false);
@@ -3060,19 +3060,27 @@ bool ChatHandler::HandleCollisionTestLOS(const char * args, WorldSession * m_ses
 			return true;
 		}
 
-		const LocationVector & loc2 = pObj->GetPosition();
-		const LocationVector & loc1 = m_session->GetPlayer()->GetPosition();
-		bool res = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z, loc2.x, loc2.y, loc2.z);
-		bool res2 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+2.0f, loc2.x, loc2.y, loc2.z+2.0f);
-		bool res3 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+5.0f, loc2.x, loc2.y, loc2.z+5.0f);
-		SystemMessage(m_session, "Result was: %s %s %s.", res ? "in LOS" : "not in LOS", res2 ? "in LOS" : "not in LOS", res3 ? "in LOS" : "not in LOS");
+		if(pObj->GetMapMgr()->CanUseCollision(pObj))
+		{
+			const LocationVector & loc2 = pObj->GetPosition();
+			const LocationVector & loc1 = m_session->GetPlayer()->GetPosition();
+			bool res = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z, loc2.x, loc2.y, loc2.z);
+			bool res1 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+1.0f, loc2.x, loc2.y, loc2.z+1.0f);
+			bool res2 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+2.0f, loc2.x, loc2.y, loc2.z+2.0f);
+			bool res5 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+5.0f, loc2.x, loc2.y, loc2.z+5.0f);
+			SystemMessage(m_session, "Test 0: Result was: %s.", res ? "in LOS" : "not in LOS");
+			SystemMessage(m_session, "Test 1: Result was: %s.", res1 ? "in LOS" : "not in LOS");
+			SystemMessage(m_session, "Test 2: Result was: %s.", res2 ? "in LOS" : "not in LOS");
+			SystemMessage(m_session, "Test 5: Result was: %s.", res5 ? "in LOS" : "not in LOS");
+			return true;
+		}
+
+		SystemMessage(m_session, "Collision is not available here.");
 		return true;
 	}
-	else
-	{
-		SystemMessage(m_session, "Hearthstone was not compiled with collision support.");
-		return true;
-	}
+
+	SystemMessage(m_session, "Hearthstone was does not have collision enabled.");
+	return true;
 }
 
 bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_session)
@@ -3084,7 +3092,7 @@ bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_s
 		return true;
 	}
 
-	if (plr->GetMapMgr()->IsCollisionEnabled())
+	if (plr->GetMapMgr()->CanUseCollision(plr))
 	{
 		float z = CollideInterface.GetHeight(plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ() + 2.0f);
 		float z2 = CollideInterface.GetHeight(plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ() + 5.0f);
@@ -3095,7 +3103,7 @@ bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_s
 	}
 	else
 	{
-		SystemMessage(m_session, "This map does not have Collision enabled on it, using mapmgr height instead.");
+		SystemMessage(m_session, "Collision is not available here, using mapmgr height instead.");
 		float z = plr->GetMapMgr()->GetLandHeight(plr->GetPositionX(), plr->GetPositionY());
 
 		SystemMessage(m_session, "Results were: %f", z);

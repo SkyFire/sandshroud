@@ -487,11 +487,11 @@ bool World::SetInitialWorldSettings()
 	g_chatFilter = new WordFilter();
 	g_characterNameFilter->Load("wordfilter_character_names");
 	g_chatFilter->Load("wordfilter_chat");
-
 	Log.Success("World", "Database loaded in %ums.", getMSTime() - start_time);
 
 	if(Collision)
 		CollideInterface.Init();
+
 	sScriptMgr.LoadScripts();
 
 	// calling this puts all maps into our task list.

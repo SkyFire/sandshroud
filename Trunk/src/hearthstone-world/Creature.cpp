@@ -1612,7 +1612,7 @@ void Creature::SetGuardWaypoints()
 		wp->waittime = 800;  /* these guards are antsy :P */
 		wp->x = GetSpawnX()+ran*sin(ang);
 		wp->y = GetSpawnY()+ran*cos(ang);
-		if (GetMapMgr() && GetMapMgr()->IsCollisionEnabled())
+		if (GetMapMgr() && GetMapMgr()->CanUseCollision(this))
 		{
 			wp->z = CollideInterface.GetHeight(m_mapId, wp->x, wp->y, m_spawnLocation.z + 2.0f);
 			if( wp->z == NO_WMO_HEIGHT )
