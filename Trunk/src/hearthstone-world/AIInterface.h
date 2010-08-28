@@ -485,6 +485,7 @@ protected:
 	float m_destinationX, m_destinationY, m_destinationZ;
 	float m_nextPosX, m_nextPosY, m_nextPosZ;
 	float m_returnX, m_returnY, m_returnZ; //Return position after attacking a mob
+	bool usepathing;
 
 	float m_lastFollowX;
 	float m_lastFollowY;

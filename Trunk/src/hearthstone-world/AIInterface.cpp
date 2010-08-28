@@ -24,6 +24,7 @@ AIInterface::AIInterface()
 	m_ChainAgroSet = NULL;
 	m_waypoints=NULL;
 	m_canMove = true;
+	usepathing = false;
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 	m_destinationX = m_destinationY = m_destinationZ = 0;
 	UnitToFollow = NULLCREATURE;
@@ -2024,13 +2025,21 @@ void AIInterface::UpdateMove()
 {
 	//this should NEVER be called directly !!!!!!
 	//use MoveTo()
-	if(sWorld.PathFinding && m_Unit->GetMapMgr()->GetNavmesh(m_Unit))
+	if(!usepathing && sWorld.PathFinding && m_Unit->GetMapMgr()->GetNavmesh(m_Unit))
 	{
 		// Reset our source position
 		m_sourceX = m_Unit->GetPositionX();
 		m_sourceY = m_Unit->GetPositionY();
 		m_sourceZ = m_Unit->GetPositionZ();
 
+		usepathing = true;
+		if(m_Unit->GetMapMgr()->IsCollisionEnabled())
+			if(CollideInterface.CheckLOS(m_Unit->GetMapId(), m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ))
+				usepathing = false; // Don't need it for a straight line with no breaks.
+	}
+
+	if(usepathing)
+	{
 		LocationVector PathLocation = m_Unit->GetMapMgr()->getNextPositionOnPathToLocation(
 			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
 
@@ -2041,6 +2050,7 @@ void AIInterface::UpdateMove()
 		if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
 		{
 			jumptolocation = false;
+			usepathing = false;
 			m_destinationX = m_destinationY = m_destinationZ = 0.0f; // Pathfinding requires we keep our destination.
 		}
 
@@ -2094,7 +2104,7 @@ void AIInterface::UpdateMove()
 	}
 	else
 	{
-		float distance = m_Unit->CalcDistance(m_destinationX,m_destinationY,m_destinationZ);
+		float distance = m_Unit->CalcDistance(m_destinationX, m_destinationY, m_destinationZ);
 
 		m_nextPosX = m_destinationX;
 		m_nextPosY = m_destinationY;
@@ -2512,7 +2522,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 		m_timeMoved = m_timeToMove <= p_time + m_timeMoved ? m_timeToMove : p_time + m_timeMoved;
 	}
 
-	if(sWorld.PathFinding && m_Unit->GetMapMgr()->GetNavmesh(m_Unit))
+	if(usepathing)
 	{
 		if(m_destinationX != 0.0f && m_destinationY != 0.0f)
 		{
