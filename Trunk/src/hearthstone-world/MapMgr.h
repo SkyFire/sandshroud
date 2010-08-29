@@ -383,9 +383,10 @@ public:
 	void CastSpellOnPlayers(int32 iFactionMask, uint32 uSpellId);
 
 	// Navmesh settings
+	bool m_navMeshLoaded[64][64];
+	bool IsNavmeshLoaded(uint32 tileX, uint32 tileY);
 	dtNavMesh *m_navMesh[64][64];
 	dtNavMesh* GetNavmesh(Object* obj);
-	dtNavMesh* GetNavmesh(uint32 tileX, uint32 tileY);
 	bool LoadNavMesh(uint32 x, uint32 y);
 	void UnloadNavMesh(uint32 x, uint32 y);
 	LocationVector getBestPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz);

@@ -6403,8 +6403,7 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 
 	if (GetMapMgr() && GetMapMgr()->CanUseCollision(this))
 	{
-		if( !CollideInterface.CheckLOS(m_mapId, GetPositionX(), GetPositionY(), GetPositionZ(), 
-			target->GetPositionX(), target->GetPositionY(), target->GetPositionZ()) )
+		if( !IsInLineOfSight(target) )
 		{
 			fail = SPELL_FAILED_LINE_OF_SIGHT;
 		}

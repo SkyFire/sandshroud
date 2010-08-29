@@ -1118,8 +1118,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				bool los = true;
 				if(m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
 				{
-					los = CollideInterface.CheckLOS( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(),
-						m_nextTarget->GetPositionX(), m_nextTarget->GetPositionY(), m_nextTarget->GetPositionZ() );
+					los = m_Unit->IsInLineOfSight(m_nextTarget);
 				}
 				if(los && ((distance <= (m_nextSpell->maxrange*m_nextSpell->maxrange)  && distance >= (m_nextSpell->minrange*m_nextSpell->minrange)) || m_nextSpell->maxrange == 0)) // Target is in Range -> Attack
 				{

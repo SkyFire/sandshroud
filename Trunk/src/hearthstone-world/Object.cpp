@@ -3004,8 +3004,15 @@ bool Object::HasByteFlag(const uint32 index, const uint32 flag, uint8 checkFlag)
 
 bool Object::IsInLineOfSight(Object* pObj)
 {
+	float Onoselevel = 2.0f;
+	float Tnoselevel = 2.0f;
+	if(IsPlayer())
+		Onoselevel = TO_PLAYER(this)->m_noseLevel;
+	if(pObj->IsPlayer())
+		Tnoselevel = TO_PLAYER(pObj)->m_noseLevel;
+
 	if (GetMapMgr() && GetMapMgr()->CanUseCollision(this) && GetMapMgr()->CanUseCollision(pObj))
-		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + 2.0f, pObj->GetPositionX(), pObj->GetPositionY(), pObj->GetPositionZ() + 2.0f) );
+		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + Onoselevel, pObj->GetPositionX(), pObj->GetPositionY(), pObj->GetPositionZ() + Tnoselevel) );
 	else
 		return true;
 }

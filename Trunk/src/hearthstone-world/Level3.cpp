@@ -3068,10 +3068,12 @@ bool ChatHandler::HandleCollisionTestLOS(const char * args, WorldSession * m_ses
 			bool res1 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+1.0f, loc2.x, loc2.y, loc2.z+1.0f);
 			bool res2 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+2.0f, loc2.x, loc2.y, loc2.z+2.0f);
 			bool res5 = CollideInterface.CheckLOS(pObj->GetMapId(), loc1.x, loc1.y, loc1.z+5.0f, loc2.x, loc2.y, loc2.z+5.0f);
-			SystemMessage(m_session, "Test 0: Result was: %s.", res ? "in LOS" : "not in LOS");
-			SystemMessage(m_session, "Test 1: Result was: %s.", res1 ? "in LOS" : "not in LOS");
-			SystemMessage(m_session, "Test 2: Result was: %s.", res2 ? "in LOS" : "not in LOS");
-			SystemMessage(m_session, "Test 5: Result was: %s.", res5 ? "in LOS" : "not in LOS");
+			bool objectfunction = m_session->GetPlayer()->IsInLineOfSight(pObj);
+			SystemMessage(m_session, "Difference 0: Result was: %s.", res ? "in LOS" : "not in LOS");
+			SystemMessage(m_session, "Difference 1: Result was: %s.", res1 ? "in LOS" : "not in LOS");
+			SystemMessage(m_session, "Difference 2: Result was: %s.", res2 ? "in LOS" : "not in LOS");
+			SystemMessage(m_session, "Difference 5: Result was: %s.", res5 ? "in LOS" : "not in LOS");
+			SystemMessage(m_session, "Object Function: Result was: %s.", objectfunction ? "in LOS" : "not in LOS");
 			return true;
 		}
 

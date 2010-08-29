@@ -100,38 +100,11 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	CreatureProto * cn;
 	CreatureInfo * ci;
 	uint32 entry;
-	uint32 modecount = 0;
-	uint32 teleportcount = 0;
-
-	bool loadteleporters = false; // Crow: LOAD TELEPORTERS!!!!144
-	QueryResult * telechecks = WorldDatabase.Query( "SELECT * FROM creature_teleport_info");
-	if(telechecks)
-	{
-		loadteleporters = true;
-		if(telechecks->GetFieldCount() != 15)
-		{
-			Log.Error("ObjectStorage", "Incorrect field count(%u/15) for table creature_teleport_info, teleport loading is disabled.", telechecks->GetFieldCount());
-			loadteleporters = false;
-		}delete telechecks;
-	}
-
-	bool loadmodes = false; // Crow: LOAD MOADS
-	QueryResult * modechecks = WorldDatabase.Query( "SELECT * FROM creature_proto_mode");
-	if(modechecks)
-	{
-		loadmodes = true;
-		if(modechecks->GetFieldCount() != 18)
-		{
-			Log.Error("ObjectStorage", "Incorrect field count(%u/18) for table creature_proto_mode, mode loading is disabled.", modechecks->GetFieldCount());
-			loadmodes = false;
-		}delete modechecks;
-	}
 
 	StorageContainerIterator<CreatureProto> * cpitr = CreatureProtoStorage.MakeIterator();
 	while(!cpitr->AtEnd())
 	{
 		cn = cpitr->Get();
-		entry = cn->Id;
 
 		if(cn->aura_string)
 		{
@@ -155,123 +128,13 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		cn->m_canFlee = cn->m_canRangedAttack = cn->m_canCallForHelp = false;
 		cn->m_fleeHealth = 0.0f;
 		cn->m_fleeDuration = 0;
+		cn->ModeProto.clear();
+		cn->TeleportInfoList.clear();
 
-		if(loadteleporters)
-		{
-			// Load our custom teleporter crap.
-			QueryResult* teleresult = WorldDatabase.Query( "SELECT * FROM creature_teleport_info WHERE entry = %u", entry);
-			if(teleresult)
-			{
-				TeleportInfo* teleinfo = NULL;
-				do
-				{
-					Field *fields = teleresult->Fetch();
-					uint32 fieldcount = 1;
-
-					teleinfo = new TeleportInfo;
-					teleinfo->intid = fields[fieldcount++].GetUInt8();
-					teleinfo->iconid = fields[fieldcount++].GetUInt8();
-					teleinfo->teleport = fields[fieldcount++].GetBool();
-					teleinfo->textinfo = fields[fieldcount++].GetString();
-					teleinfo->teleportmapid = fields[fieldcount++].GetUInt32();
-					teleinfo->teleportx = fields[fieldcount++].GetFloat();
-					teleinfo->teleporty = fields[fieldcount++].GetFloat();
-					teleinfo->teleportz = fields[fieldcount++].GetFloat();
-					teleinfo->teleporto = fields[fieldcount++].GetFloat();
-					teleinfo->castspellid = fields[fieldcount++].GetUInt32();
-					teleinfo->removetargetaura = fields[fieldcount++].GetUInt32();
-					teleinfo->sndchtmessage = fields[fieldcount++].GetBool();
-					teleinfo->messagetype = fields[fieldcount++].GetUInt8();
-					teleinfo->Message = fields[fieldcount++].GetString();
-
-					cn->TeleportInfoList.insert(teleinfo);
-					teleinfo = NULL;
-					teleportcount++;
-
-				}while( teleresult->NextRow() );
-				delete teleresult;
-			}
-		}
-
-		if(loadmodes)
-		{
-			// Load our mode proto.
-			QueryResult * moderesult = WorldDatabase.Query( "SELECT * FROM creature_proto_mode WHERE entry = %u", entry);
-			if(moderesult)
-			{
-				CreatureProtoMode* cpm = NULL;
-				do
-				{
-					uint32 fieldcount = 1;
-					Field *fields = moderesult->Fetch();
-					uint8 mode = fields[fieldcount++].GetUInt8();
-					if(mode > 3 || mode < 1)
-					{
-						Log.Warning("ObjectStorage","Incorrect instance mode %u for creature %u, instance mode 3 max.", mode, entry);
-
-						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
-							WorldDatabase.Execute("DELETE FROM creature_proto_mode WHERE entry = %u AND mode = %u;", entry, mode);
-
-						continue;
-					}
-
-					cpm = new CreatureProtoMode();
-					cpm->Minlevel = fields[fieldcount++].GetUInt32();
-					cpm->Maxlevel = fields[fieldcount++].GetUInt32();
-					cpm->Minhealth = fields[fieldcount++].GetUInt32();
-					cpm->Maxhealth = fields[fieldcount++].GetUInt32();
-					cpm->Mindmg = fields[fieldcount++].GetFloat();
-					cpm->Maxdmg = fields[fieldcount++].GetFloat();
-					cpm->Power = fields[fieldcount++].GetUInt32();
-					for(uint8 i = 0; i < 7; i++)
-						cpm->Resistances[i] = fields[fieldcount++].GetUInt32();
-
-					char* aura_string = (char*)fields[fieldcount++].GetString();
-					if(aura_string)
-					{
-						string auras = string(aura_string);
-						vector<string> aurs = StrSplit(auras, " ");
-						for(vector<string>::iterator it = aurs.begin(); it != aurs.end(); it++)
-						{
-							uint32 id = atol((*it).c_str());
-							if(id)
-								cpm->start_auras.insert( id );
-						}
-					}
-
-					cpm->auraimmune_flag = fields[fieldcount++].GetUInt32();
-
-					// Begin cleanup changes.
-					// Level cleanup.
-					if(cpm->Maxlevel < cpm->Minlevel)
-						cpm->Maxlevel = cpm->Minlevel;
-
-					// Health cleanup.
-					if(cpm->Maxhealth < cpm->Minhealth)
-						cpm->Maxhealth = cpm->Minhealth;
-
-					// Damage cleanup.
-					if(cpm->Maxdmg < cpm->Mindmg)
-						cpm->Maxdmg = cpm->Mindmg;
-
-					// End of cleanup changes.
-					cn->ModeProto[mode] = cpm;
-					modecount++;
-
-				}while( moderesult->NextRow() );
-				delete moderesult;
-			}
-		}
-
-		entry = 0;
 		if(!cpitr->Inc())
 			break;
 	}
 	cpitr->Destruct();
-
-	// List what we've loaded.
-	Log.Notice("ObjectStorage","%u entries loaded from table creature_teleport_info", teleportcount);
-	Log.Notice("ObjectStorage","%u entries loaded from table creature_proto_mode", modecount);
 
 	StorageContainerIterator<CreatureInfo> * ciitr = CreatureNameStorage.MakeIterator();
 	while(!ciitr->AtEnd())
@@ -493,6 +356,160 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		if(result)
 			delete result;
 	}
+
+	uint32 modecount = 0;
+	uint32 teleportcount = 0;
+	bool loadteleporters = false; // Crow: LOAD TELEPORTERS!!!!144
+	QueryResult * telechecks = WorldDatabase.Query( "SELECT * FROM creature_teleport_info");
+	if(telechecks)
+	{
+		loadteleporters = true;
+		if(telechecks->GetFieldCount() != 15)
+		{
+			Log.Error("ObjectStorage", "Incorrect field count(%u/15) for table creature_teleport_info, teleport loading is disabled.", telechecks->GetFieldCount());
+			loadteleporters = false;
+		}delete telechecks;
+	}
+
+	bool loadmodes = false; // Crow: LOAD MOADS
+	QueryResult * modechecks = WorldDatabase.Query( "SELECT * FROM creature_proto_mode");
+	if(modechecks)
+	{
+		loadmodes = true;
+		if(modechecks->GetFieldCount() != 18)
+		{
+			Log.Error("ObjectStorage", "Incorrect field count(%u/18) for table creature_proto_mode, mode loading is disabled.", modechecks->GetFieldCount());
+			loadmodes = false;
+		}delete modechecks;
+	}
+
+	CreatureProto* proto;
+
+	if(loadteleporters)
+	{
+		// Load our custom teleporter crap.
+		QueryResult* teleresult = WorldDatabase.Query( "SELECT * FROM creature_teleport_info WHERE entry = %u", entry);
+		if(teleresult)
+		{
+			TeleportInfo* teleinfo = NULL;
+			do
+			{
+				Field *fields = teleresult->Fetch();
+				uint32 fieldcount = 0;
+				entry = fields[fieldcount++].GetUInt32();
+				proto = CreatureProtoStorage.LookupEntry(entry);
+				if(proto == NULL)
+				{
+					// Do something?
+					continue;
+				}
+
+				teleinfo = new TeleportInfo;
+				teleinfo->intid = fields[fieldcount++].GetUInt8();
+				teleinfo->iconid = fields[fieldcount++].GetUInt8();
+				teleinfo->teleport = fields[fieldcount++].GetBool();
+				teleinfo->textinfo = fields[fieldcount++].GetString();
+				teleinfo->teleportmapid = fields[fieldcount++].GetUInt32();
+				teleinfo->teleportx = fields[fieldcount++].GetFloat();
+				teleinfo->teleporty = fields[fieldcount++].GetFloat();
+				teleinfo->teleportz = fields[fieldcount++].GetFloat();
+				teleinfo->teleporto = fields[fieldcount++].GetFloat();
+				teleinfo->castspellid = fields[fieldcount++].GetUInt32();
+				teleinfo->removetargetaura = fields[fieldcount++].GetUInt32();
+				teleinfo->sndchtmessage = fields[fieldcount++].GetBool();
+				teleinfo->messagetype = fields[fieldcount++].GetUInt8();
+				teleinfo->Message = fields[fieldcount++].GetString();
+
+				proto->TeleportInfoList.insert(teleinfo);
+				teleinfo = NULL;
+				teleportcount++;
+
+			}while( teleresult->NextRow() );
+			delete teleresult;
+		}
+	}
+
+	if(loadmodes)
+	{
+		// Load our mode proto.
+		QueryResult * moderesult = WorldDatabase.Query( "SELECT * FROM creature_proto_mode");
+		if(moderesult)
+		{
+			CreatureProtoMode* cpm = NULL;
+			do
+			{
+				uint32 fieldcount = 0;
+				Field *fields = moderesult->Fetch();
+				entry = fields[fieldcount++].GetUInt32();
+				proto = CreatureProtoStorage.LookupEntry(entry);
+				if(proto == NULL)
+				{
+					// Do something?
+					continue;
+				}
+
+				uint8 mode = fields[fieldcount++].GetUInt8();
+				if(mode > 3 || mode < 1)
+				{
+					Log.Warning("ObjectStorage","Incorrect instance mode %u for creature %u, instance mode 3 max.", mode, entry);
+
+					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+						WorldDatabase.Execute("DELETE FROM creature_proto_mode WHERE entry = %u AND mode = %u;", entry, mode);
+
+					continue;
+				}
+
+				cpm = new CreatureProtoMode();
+				cpm->Minlevel = fields[fieldcount++].GetUInt32();
+				cpm->Maxlevel = fields[fieldcount++].GetUInt32();
+				cpm->Minhealth = fields[fieldcount++].GetUInt32();
+				cpm->Maxhealth = fields[fieldcount++].GetUInt32();
+				cpm->Mindmg = fields[fieldcount++].GetFloat();
+				cpm->Maxdmg = fields[fieldcount++].GetFloat();
+				cpm->Power = fields[fieldcount++].GetUInt32();
+				for(uint8 i = 0; i < 7; i++)
+					cpm->Resistances[i] = fields[fieldcount++].GetUInt32();
+
+				char* aura_string = (char*)fields[fieldcount++].GetString();
+				if(aura_string)
+				{
+					string auras = string(aura_string);
+					vector<string> aurs = StrSplit(auras, " ");
+					for(vector<string>::iterator it = aurs.begin(); it != aurs.end(); it++)
+					{
+						uint32 id = atol((*it).c_str());
+						if(id)
+							cpm->start_auras.insert( id );
+					}
+				}
+
+				cpm->auraimmune_flag = fields[fieldcount++].GetUInt32();
+
+				// Begin cleanup changes.
+				// Level cleanup.
+				if(cpm->Maxlevel < cpm->Minlevel)
+					cpm->Maxlevel = cpm->Minlevel;
+
+				// Health cleanup.
+				if(cpm->Maxhealth < cpm->Minhealth)
+					cpm->Maxhealth = cpm->Minhealth;
+
+				// Damage cleanup.
+				if(cpm->Maxdmg < cpm->Mindmg)
+					cpm->Maxdmg = cpm->Mindmg;
+
+				// End of cleanup changes.
+				proto->ModeProto[mode] = cpm;
+				modecount++;
+
+			}while( moderesult->NextRow() );
+			delete moderesult;
+		}
+	}
+
+	// List what we've loaded.
+	Log.Notice("ObjectStorage","%u entries loaded from table creature_teleport_info", teleportcount);
+	Log.Notice("ObjectStorage","%u entries loaded from table creature_proto_mode", modecount);
 }
 
 void ObjectMgr::LoadExtraItemStuff()

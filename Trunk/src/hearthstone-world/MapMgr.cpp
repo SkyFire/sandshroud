@@ -2196,9 +2196,9 @@ dtNavMesh* MapMgr::GetNavmesh(Object* obj)
 	return m_navMesh[(GetPosX(obj->GetPositionX())/8)][(GetPosY(obj->GetPositionY())/8)];
 }
 
-dtNavMesh* MapMgr::GetNavmesh(uint32 tileX, uint32 tileY)
+bool MapMgr::IsNavmeshLoaded(uint32 tileX, uint32 tileY)
 {
-	return m_navMesh[tileX][tileY];
+	return m_navMeshLoaded[tileX][tileY];
 }
 
 bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
@@ -2225,20 +2225,24 @@ bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
 		if(m_navMesh == NULL)
 		{
 			delete [] navData;
+			m_navMeshLoaded[x][y] = false;
 			return false;
 		}
 		if(!m_navMesh[x][y]->init(navData, navDataSize, true, 2048))
 		{
 			delete [] navData;
+			m_navMeshLoaded[x][y] = false;
 			return false;
 		}
 	}
 	else
 	{
 		delete[] tmp;
+		m_navMeshLoaded[x][y] = false;
 		return false;
 	}
 	delete[] tmp;
+	m_navMeshLoaded[x][y] = true;
 	return true;
 }
 
@@ -2249,6 +2253,7 @@ void MapMgr::UnloadNavMesh(uint32 x, uint32 y)
 
 	delete m_navMesh[x][y];
 	m_navMesh[x][y] = NULL;
+	m_navMeshLoaded[x][y] = false;
 }
 
 /* Crow: This is a more advanced version of the pathing bool system we have in AI interface.

@@ -1452,7 +1452,7 @@ void Creature::OnPushToWorld()
 	if(proto)
 	{
 		uint8 mode = GetMapMgr()->iInstanceMode;
-		if(mode && (proto->ModeProto.find(mode) != proto->ModeProto.end()))
+		if(mode && (proto->ModeProto[mode] != NULL))
 		{
 			set<uint32>::iterator itr = proto->ModeProto[mode]->start_auras.begin();
 			SpellEntry * sp = NULL;
