@@ -3173,12 +3173,12 @@ uint8 Spell::CanCast(bool tolerate)
 				if ( p_caster->GetMapId() == 531 && ( m_spellInfo->Id == 25953 || m_spellInfo->Id == 26054 || m_spellInfo->Id == 26055 || m_spellInfo->Id == 26056 ) )
 					return SPELL_CANCAST_OK;
 
-				if (CollideInterface.IsIndoor( p_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ))
+				if (!CollideInterface.IsOutdoor( p_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ))
 					return SPELL_FAILED_NO_MOUNTS_ALLOWED;
 			}
 			else if( m_spellInfo->Attributes & ATTRIBUTES_ONLY_OUTDOORS )
 			{
-				if( CollideInterface.IsIndoor( p_caster->GetMapId(),p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ) )
+				if(!CollideInterface.IsOutdoor( p_caster->GetMapId(),p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ) )
 					return SPELL_FAILED_ONLY_OUTDOORS;
 			}
 		}

@@ -2714,12 +2714,10 @@ void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
 		/* Send a movement packet to "charge" at this target. Similar to warrior charge. */
 		p_caster->z_axisposition = 0.0f;
 		p_caster->SafeTeleport(p_caster->GetMapId(), p_caster->GetInstanceID(), LocationVector(new_x, new_y, new_z, pTarget->GetOrientation()));
-		
 		return;
 	}
 
 	/* TODO: Remove Player From bg */
-
 	if(unitTarget->GetTypeId() == TYPEID_PLAYER)
 		HandleTeleport(spellId, unitTarget);
 }
@@ -6966,6 +6964,7 @@ void Spell::SpellEffectCharge(uint32 i)
 {
 	if( unitTarget == NULL || p_caster == NULL || !unitTarget->isAlive())
 		return;
+
 	if (p_caster->IsStunned() || p_caster->m_rooted || p_caster->IsPacified() || p_caster->IsFeared())
 		return;
 
@@ -6998,10 +6997,11 @@ void Spell::SpellEffectCharge(uint32 i)
 
 	if(unitTarget->GetTypeId() == TYPEID_UNIT)
 		unitTarget->GetAIInterface()->StopMovement(2000);
-	
+
 	p_caster->SetPosition(x,y,z,alpha,true);
+
 	p_caster->addStateFlag(UF_ATTACKING);
-	p_caster ->smsg_AttackStart( unitTarget );
+	p_caster->smsg_AttackStart( unitTarget );
 	p_caster->EventAttackStart();
 	p_caster->setAttackTimer(time, false);
 	p_caster->setAttackTimer(time, true);

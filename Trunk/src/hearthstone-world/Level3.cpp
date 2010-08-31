@@ -3042,6 +3042,29 @@ bool ChatHandler::HandleCollisionTestIndoor(const char * args, WorldSession * m_
 	}
 }
 
+bool ChatHandler::HandleCollisionTestOutdoor(const char * args, WorldSession * m_session)
+{
+	Player* plr = m_session->GetPlayer();
+	if(plr == NULL)
+	{
+		SystemMessage(m_session, "Invalid target.");
+		return true;
+	}
+
+	if (plr->GetMapMgr()->CanUseCollision(plr))
+	{
+		const LocationVector & loc = plr->GetPosition();
+		bool res = CollideInterface.IsOutdoor(plr->GetMapId(), loc.x, loc.y, loc.z + 2.0f);
+		SystemMessage(m_session, "Result was: %s.", res ? "outside" : "indoors");
+		return true;
+	}
+	else
+	{
+		SystemMessage(m_session, "Hearthstone was not compiled with collision support.");
+		return true;
+	}
+}
+
 bool ChatHandler::HandleCollisionTestLOS(const char * args, WorldSession * m_session)
 {
 	if(sWorld.Collision)
