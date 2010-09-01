@@ -886,7 +886,7 @@ Player* ChatHandler::getSelectedChar(WorldSession *m_session, bool showerror)
 	Player* chr;
 	
 	guid = m_session->GetPlayer()->GetSelection();
-	
+
 	if (guid == 0)
 	{
 		if(showerror) 
@@ -895,7 +895,7 @@ Player* ChatHandler::getSelectedChar(WorldSession *m_session, bool showerror)
 	}
 	else
 		chr = m_session->GetPlayer()->GetMapMgr()->GetPlayer((uint32)guid);
-	
+
 	if(chr == NULL)
 	{
 		if(showerror) 

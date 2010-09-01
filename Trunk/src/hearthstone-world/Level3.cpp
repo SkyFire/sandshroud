@@ -3022,31 +3022,24 @@ bool ChatHandler::HandleShowItems(const char * args, WorldSession * m_session)
 bool ChatHandler::HandleCollisionTestIndoor(const char * args, WorldSession * m_session)
 {
 	Player* plr = m_session->GetPlayer();
-	if(plr == NULL)
+	if(plr != NULL)
 	{
-		SystemMessage(m_session, "Invalid target.");
-		return true;
-	}
-
-	if(sWorld.Collision)
-	{
-		if (plr->GetMapMgr()->CanUseCollision(plr))
+		if(sWorld.Collision)
 		{
-			const LocationVector & loc = plr->GetPosition();
-			bool res = CollideInterface.IsIndoor(plr->GetMapId(), loc.x, loc.y, loc.z + 2.0f);
-			SystemMessage(m_session, "Result was: %s.", res ? "indoors" : "outside");
-			return true;
+			if (plr->GetMapMgr()->CanUseCollision(plr))
+			{
+				const LocationVector & loc = plr->GetPosition();
+				bool res = CollideInterface.IsIndoor(plr->GetMapId(), loc.x, loc.y, loc.z + 2.0f);
+				SystemMessage(m_session, "Result was: %s.", res ? "indoors" : "outside");
+			}
+			else
+				SystemMessage(m_session, "Collision is not available here.");
 		}
 		else
-		{
-			SystemMessage(m_session, "Collision is not available here.");
-			return true;
-		}
+			SystemMessage(m_session, "Hearthstone was does not have collision enabled.");
 	}
-	else
-	{
-		SystemMessage(m_session, "Hearthstone was does not have collision enabled.");
-	}
+
+	return true;
 }
 
 bool ChatHandler::HandleDebugVmapAreaInfo(const char* args, WorldSession * m_session)
