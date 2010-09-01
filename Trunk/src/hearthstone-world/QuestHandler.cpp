@@ -111,17 +111,14 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 	uint64 guid;
 	uint32 quest_id;
 	uint32 status = 0;
-	uint8 unk;
 
 	recv_data >> guid;
 	recv_data >> quest_id;
-	recv_data >> unk;
 
 	Object* qst_giver = NULLOBJ;
 
 	bool bValid = false;
 	Quest* qst = QuestStorage.LookupEntry(quest_id);
-	
 	if (!qst)
 	{
 		OUT_DEBUG("WORLD: Invalid quest ID.");
@@ -129,7 +126,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 	}
 
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_UNIT)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -140,7 +137,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 		if(bValid)
 			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id), false);
 	} 
-	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
+	else if(guidtype == HIGHGUID_TYPE_GAMEOBJECT)
 	{
 		GameObject* quest_giver = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -689,7 +686,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 		//bValid = quest_giver->isQuestGiver();
 		//if(bValid)
 		bValid = true;
-			qst = QuestStorage.LookupEntry(quest_id);
+		qst = QuestStorage.LookupEntry(quest_id);
 	}
 
 	if (!qst_giver)
@@ -720,12 +717,6 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	// remove icon
-	/*if(qst_giver->GetTypeId() == TYPEID_UNIT)
-	{
-		qst_giver->BuildFieldUpdatePacket(GetPlayer(), UNIT_DYNAMIC_FLAGS, qst_giver->GetUInt32Value(UNIT_DYNAMIC_FLAGS));
-	}*/
-
 	//check for room in inventory for all items
 	if(!sQuestMgr.CanStoreReward(_player,qst,reward_slot))
 	{
@@ -733,7 +724,6 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	
 	sQuestMgr.OnQuestFinished(_player, qst, qst_giver, reward_slot);
 	//if(qst_giver->GetTypeId() == TYPEID_UNIT) qst->LUA_SendEvent(TO_CREATURE( qst_giver ),GetPlayer(),ON_QUEST_COMPLETEQUEST);
 
