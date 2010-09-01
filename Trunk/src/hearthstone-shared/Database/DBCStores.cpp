@@ -79,6 +79,7 @@ SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
 SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
+SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
 SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
 SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
 SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
@@ -200,6 +201,7 @@ const char* spellrangeFormat =
 	"sxxxxxxxxxxxxxxxx";
 
 const char* WorldMapOverlayfmt="uxuxxxxxxxxxxxxxx";
+const char* WMOAreaEntryfmt="niiixxxxxiixxxxxxxxxxxxxxxxx";
 const char* SpellRuneCostfmt="uuuuu";
 const char* spelldurationFormat = "uiii";
 const char* randompropsFormat = "usuuuxxxxxxxxxxxxxxxxxxx";
@@ -410,6 +412,8 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/VehicleSeat.dbc", vehicleseatentryFormat, true, dbcVehicleSeat, true);
 	/* Needed for: */
 	LOAD_DBC("DBC/WorldMapOverlay.dbc", WorldMapOverlayfmt, true, dbcWorldMapOverlay, true);
+	/* Needed for: */
+	LOAD_DBC("DBC/WMOAreaTable.dbc", WMOAreaEntryfmt, true, dbcWMOAreaTable, true);
 
 	return true;
 }

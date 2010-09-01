@@ -180,24 +180,51 @@ float CCollideInterface::GetHeight(uint32 mapId, float x, float y, float z)
 	return res;
 }
 
+/* Crow: Systematic calculations based on Mangos, a big thank you to them! */
 bool CCollideInterface::IsIndoor(uint32 mapId, float x, float y, float z)
 {
 	ASSERT(m_mapLocks[mapId] != NULL);
+	if(!CollisionMgr)
+		return false;
 
-	// get read lock
-	m_mapLocks[mapId]->m_lock.AcquireReadLock();
+	uint32 flags = 0;
+	int32 adtId = 0, rootId = 0, groupid = 0;
+	if(CollisionMgr->getAreaInfo(mapId, x, y, z, flags, adtId, rootId, groupid))
+	{
+		bool indoor = false;
+		WMOAreaTableEntry * WMOEntry = GetWorldMapOverlayEntry(adtId, rootId, groupid);
+		if(WMOEntry != NULL)
+		{
+			AreaTable* ate = dbcArea.LookupEntry(WMOEntry->adtId);
+			if(ate != NULL)
+			{
+				if(ate->AreaFlags & AREA_OUTSIDE)
+					return false;
+				if(ate->AreaFlags & AREA_INSIDE)
+					return true;
+			}
+		}
 
-	// get data
-	bool res = CollisionMgr ? CollisionMgr->isInDoors(mapId, x, y, z) : false;
+		if( flags != 0 )
+			if(flags & VA_FLAG_INDOORS && !(flags & VA_FLAG_IN_CITY) && !(flags & VA_FLAG_OUTSIDE) && !(flags & VA_FLAG_IN_CITY2) && !(flags & VA_FLAG_IN_CITY3))
+				indoor = true;
 
-	// release write lock
-	m_mapLocks[mapId]->m_lock.ReleaseReadLock();
+		if(WMOEntry != NULL)
+		{
+			if(WMOEntry->Flags & 4)
+				return false;
 
-	// return
-	return res;
+			if((WMOEntry->Flags & 2) != 0)
+				indoor = true;
+		}
+
+		return indoor;
+	}
+
+	return false; // If we have no info, then we are outside.
 }
 
-bool CCollideInterface::IsOutdoor(uint32 mapId, float x, float y, float z)
+uint32 CCollideInterface::GetVmapAreaFlags(uint32 mapId, float x, float y, float z)
 {
 	ASSERT(m_mapLocks[mapId] != NULL);
 
@@ -205,13 +232,13 @@ bool CCollideInterface::IsOutdoor(uint32 mapId, float x, float y, float z)
 	m_mapLocks[mapId]->m_lock.AcquireReadLock();
 
 	// get data
-	bool res = CollisionMgr ? CollisionMgr->isOutDoors(mapId, x, y, z) : true; 
+	uint32 flags = CollisionMgr ? CollisionMgr->GetVmapFlags(mapId, x, y, z) : 0; 
 
 	// release write lock
 	m_mapLocks[mapId]->m_lock.ReleaseReadLock();
 
 	// return
-	return res;
+	return flags;
 }
 
 void CCollideInterface::DeInit()

@@ -40,7 +40,7 @@ public:
 	bool CheckLOS(uint32 mapId, float x1, float y1, float z1, float x2, float y2, float z2);
 	bool GetFirstPoint(uint32 mapId, float x1, float y1, float z1, float x2, float y2, float z2, float & outx, float & outy, float & outz, float distmod);
 	bool IsIndoor(uint32 mapId, float x, float y, float z);
-	bool IsOutdoor(uint32 mapId, float x, float y, float z);
+	uint32 GetVmapAreaFlags(uint32 mapId, float x, float y, float z);
 	float GetHeight(uint32 mapId, float x, float y, float z);
 };
 

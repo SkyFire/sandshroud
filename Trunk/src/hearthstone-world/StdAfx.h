@@ -61,6 +61,7 @@
 
 #include "../hearthstone-shared/Collision/vmap/IVMapManager.h"
 #include "../hearthstone-shared/Collision/vmap/VMapManager2.h"
+#include "../hearthstone-shared/Collision/vmap/MapTree.h"
 #include "../hearthstone-shared/Pathfinding/InputGeom.h"
 #include "../hearthstone-shared/Pathfinding/Recast/Recast.h"
 #include "../hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h"

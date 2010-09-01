@@ -22,6 +22,40 @@
 #include "Common.h"
 #include "BIH.h"
 
+/*Flag	Meaning
+0x1		Always set
+0x4		Has vertex colors (MOCV chunk)
+0x8		Outdoor
+0x200	Has lights (MOLR chunk)
+0x800	Has doodads (MODR chunk)
+0x1000	Has water (MLIQ chunk)
+0x2000	Indoor
+0x40000	Show skybox
+**********************
+0x8000 seems to be set in the areas in citys (while it has the indoor flag, its not
+an indoor area*/
+
+enum VMapAreaFlags
+{
+	VA_FLAG_EXISTS		= 0x1,
+	VA_FLAG_UNK			= 0x2,
+	VA_FLAG_VERTEX		= 0x4,
+	VA_FLAG_OUTSIDE		= 0x8,
+	VA_FLAG_UNK1		= 0x10,
+	VA_FLAG_UNK2		= 0x20,
+	VA_FLAG_IN_CITY		= 0x40, // Main Cities
+	VA_FLAG_UNK3		= 0x80,
+	VA_FLAG_IN_CITY2	= 0x100, // Areas inside cities, Cleft of Shadows ect..
+	VA_FLAG_HAS_LIGHTS	= 0x200,
+	VA_FLAG_UNK5		= 0x400,
+	VA_FLAG_HAS_DOODAD	= 0x800,
+	VA_FLAG_HAS_WATER	= 0x1000,
+	VA_FLAG_INDOORS		= 0x2000,
+	VA_FLAG_UNK6		= 0x4000,
+	VA_FLAG_IN_CITY3	= 0x8000, // Other cities, like IF, Darnassus, Silvermoon, Exodar, 
+	VA_FLAG_HAS_SKYBOX	= 0x40000,
+};
+
 namespace VMAP
 {
 	class ModelInstance;
@@ -70,8 +104,7 @@ namespace VMAP
 			bool isInLineOfSight(const G3D::Vector3& pos1, const G3D::Vector3& pos2) const;
 			bool getObjectHitPos(const G3D::Vector3& pos1, const G3D::Vector3& pos2, G3D::Vector3& pResultHitPos, float pModifyDist) const;
 			float getHeight(const G3D::Vector3& pPos, float maxSearchDist) const;
-			bool isInDoors(Vector3& pos);
-			bool isOutDoors(Vector3& pos);
+			uint32 GetVmapFlags(Vector3& pos);
 			bool getAreaInfo(G3D::Vector3 &pos, uint32 &flags, int32 &adtId, int32 &rootId, int32 &groupId) const;
 			bool GetLocationInfo(const Vector3 &pos, LocationInfo &info) const;
 

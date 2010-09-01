@@ -92,8 +92,7 @@ namespace VMAP
 			*/
 			bool getObjectHitPos(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float &ry, float& rz, float pModifyDist);
 			float getHeight(unsigned int pMapId, float x, float y, float z, float maxSearchDist = 10.0f);
-			bool isInDoors(unsigned int mapid, float x, float y, float z);
-			bool isOutDoors(unsigned int mapid, float x, float y, float z);
+			uint32 GetVmapFlags(unsigned int mapid, float x, float y, float z);
 
 			bool processCommand(char *pCommand) { return false; }		// for debug and extensions
 

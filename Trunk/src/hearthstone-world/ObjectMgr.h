@@ -238,17 +238,26 @@ enum MONSTER_SAY_EVENTS
 
 enum AREATABLE_FLAGS
 {
-	AREA_UNK1				= 0x8,
-	AREA_UNK2				= 0x10,
-	AREA_CITY_AREA			= 0x20,
-	AREA_NEUTRAL_AREA		= 0x40,
-	AREA_PVP_ARENA			= 0x80,
-	AREA_CITY				= 0x200,
-	AREA_FLYING_PERMITTED	= 0x400,
-	AREA_SANCTUARY			= 0x800,
-	AREA_ISLAND				= 0x1000,
-	AREA_UNK4				= 0x4000,
-	AREA_PVP_OBJECTIVE_AREA = 0x8000,
+	AREA_SNOW					= 0x00000001, 	// Snow (only Dun Morogh, Naxxramas, Razorfen Downs and Winterspring)
+	AREA_CAPITAL_SUB			= 0x00000008, 	// City and city subsones
+	AREA_CITY_AREA				= 0x00000020, 	// Slave capital city flag?
+	AREA_NEUTRAL_AREA			= 0x00000040, 	// Many zones have this flag
+	AREA_PVP_ARENA				= 0x00000080, 	// Arena, both instanced and world arenas
+	AREA_CAPITAL				= 0x00000100, 	// Main capital city flag
+	AREA_CITY					= 0x00000200, 	// Only for one zone named "City" (where it located?)
+	AREA_FLYING_PERMITTED		= 0x00000400, 	// Expansion zones? (only Eye of the Storm not have this flag, but have 0x00004000 flag)
+	AREA_SANCTUARY				= 0x00000800, 	// Sanctuary area (PvP disabled)
+	AREA_ISLAND					= 0x00001000, 	// Only Netherwing Ledge, Socrethar's Seat, Tempest Keep, The Arcatraz, The Botanica, The Mechanar, Sorrow Wing Point, Dragonspine Ridge, Netherwing Mines, Dragonmaw Base Camp, Dragonmaw Skyway
+	AREA_OUTLAND2				= 0x00004000, 	// Expansion zones? (only Circle of Blood Arena not have this flag, but have 0x00000400 flag)
+	AREA_PVP_OBJECTIVE_AREA		= 0x00008000, 	// Pvp objective area? (Death's Door also has this flag although it's no pvp object area)
+	AREA_ARENA_INSTANCE			= 0x00010000, 	// Used by instanced arenas only
+	AREA_LOWLEVEL				= 0x00100000, 	// Used for some starting areas with area_level <=15
+	AREA_TOWN					= 0x00200000, 	// Small towns with Inn
+	AREA_OUTDOOR_PVP			= 0x01000000, 	// Wintergrasp and it's subzones
+	AREA_INSIDE					= 0x02000000, 	// Used for determinating spell related inside/outside questions in Map::IsOutdoors
+	AREA_OUTSIDE				= 0x04000000, 	// Used for determinating spell related inside/outside questions in Map::IsOutdoors
+	AREA_CAN_HEARTH_AND_RES		= 0x08000000, 	// Wintergrasp and it's subzones
+	AREA_CANNOT_FLY				= 0x20000000	// Not allowed to fly, only used in Dalaran areas (zone 4395)
 };
 
 enum AREATABLE_CATEGORY

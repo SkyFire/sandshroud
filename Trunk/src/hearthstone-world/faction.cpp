@@ -132,12 +132,20 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	if(!player_objA && objA->IsVehicle())
 		player_objA = TO_VEHICLE(objA)->m_redirectSpellPackets;
 
+	if( player_objA && player_objB && player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
+		return true;
+	else
+	{
+		// Do not let units attack each other in sanctuary
+		// We know they aren't dueling
+		AreaTable *atA = dbcArea.LookupEntry(objA->GetAreaID());
+		AreaTable *atB = dbcArea.LookupEntry(objB->GetAreaID());
+		if( atA && atB && (atA->AreaFlags & AREA_SANCTUARY || atB->AreaFlags & AREA_SANCTUARY) )
+			return false;
+	}
+
 	if( player_objA && player_objB )
 	{
-		//Handle duels
-		if( player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
-			return true;
-
 		//These area's are sanctuaries
 		for(uint32 i = 0; i < NUM_SANCTUARIES ; i++)
 		{
@@ -149,15 +157,6 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		// But they can be attacked by another players. -- Dvlpr
 		// WARNING: This presumes, that objA attacks objb!!!
 		if( (objA->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH) || objB->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH)) && !objA->IsPlayer() )
-			return false;
-
-		// do not let people attack each other in sanctuary
-		// We know they aren't dueling
-		AreaTable *atA = NULL;
-		AreaTable *atB = NULL;
-		atA = dbcArea.LookupEntry( player_objA->GetPlayerAreaID() );
-		atB = dbcArea.LookupEntry( player_objB->GetPlayerAreaID() );
-		if ( atA && atB && (atA->AreaFlags & AREA_SANCTUARY || atB->AreaFlags & AREA_SANCTUARY) )
 			return false;
 
 		//Handle BG's

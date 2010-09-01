@@ -204,28 +204,16 @@ namespace VMAP
 		return result;
 	}
 
-	bool VMapManager2::isInDoors(unsigned int mapid, float x, float y, float z)
+	uint32 VMapManager2::GetVmapFlags(unsigned int mapid, float x, float y, float z)
 	{
-		bool result = false;
+		uint32 result;
 		InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapid);
 		if (instanceTree != iInstanceMapTrees.end())
 		{
 			Vector3 position = convertPositionToInternalRep(x,y,z);
-			result = instanceTree->second->isInDoors(position);
+			result = instanceTree->second->GetVmapFlags(position);
 		}
-		return(result);
-	}
-
-	bool VMapManager2::isOutDoors(unsigned int mapid, float x, float y, float z)
-	{
-		bool result = false;
-		InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(mapid);
-		if (instanceTree != iInstanceMapTrees.end())
-		{
-			Vector3 position = convertPositionToInternalRep(x,y,z);
-			result = instanceTree->second->isOutDoors(position);
-		}
-		return(result);
+		return result;
 	}
 
 	//=========================================================

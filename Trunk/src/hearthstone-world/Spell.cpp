@@ -2102,7 +2102,7 @@ void Spell::SendCastResult(uint8 result)
 	case SPELL_FAILED_REQUIRES_AREA:
 		if( m_spellInfo->AreaGroupId > 0 )
 		{
-			uint16 area_id = plr->GetAreaID( plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
+			uint16 area_id = plr->GetAreaID();
 			AreaGroup *GroupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
 
 			for( uint8 i = 0; i < 7; i++ )
@@ -3173,12 +3173,12 @@ uint8 Spell::CanCast(bool tolerate)
 				if ( p_caster->GetMapId() == 531 && ( m_spellInfo->Id == 25953 || m_spellInfo->Id == 26054 || m_spellInfo->Id == 26055 || m_spellInfo->Id == 26056 ) )
 					return SPELL_CANCAST_OK;
 
-				if (!CollideInterface.IsOutdoor( p_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ))
+				if (CollideInterface.IsIndoor( p_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ))
 					return SPELL_FAILED_NO_MOUNTS_ALLOWED;
 			}
 			else if( m_spellInfo->Attributes & ATTRIBUTES_ONLY_OUTDOORS )
 			{
-				if(!CollideInterface.IsOutdoor( p_caster->GetMapId(),p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ) )
+				if(CollideInterface.IsIndoor( p_caster->GetMapId(),p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ) )
 					return SPELL_FAILED_ONLY_OUTDOORS;
 			}
 		}
@@ -3547,7 +3547,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( m_spellInfo->AreaGroupId > 0)
 		{
 			bool found = false;
-			uint16 area_id = p_caster->GetAreaID( p_caster->GetPositionX(),p_caster->GetPositionY() ,p_caster->GetPositionZ());
+			uint16 area_id = p_caster->GetAreaID();
 			uint32 zone_id = p_caster->GetZoneId();
 
 			AreaGroup const* groupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );

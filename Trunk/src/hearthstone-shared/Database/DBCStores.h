@@ -892,6 +892,16 @@ struct WorldMapOverlayEntry
 	uint32 AreaTableID;
 };
 
+struct WMOAreaTableEntry
+{
+	uint32 Id;				// 0 index
+	int32 rootId;			// 1 used in root WMO
+	uint32 adtId;			// 2 used in adt file
+	int32 groupId;			// 3 used in group WMO
+	uint32 Flags;			// 9 used for indoor/outdoor determination
+	uint32 areaId;			// 10 link to AreaTableEntry.ID
+};
+
 struct AreaGroup
 {
 	uint32 AreaGroupId;		// 0
@@ -1346,11 +1356,6 @@ HEARTHSTONE_INLINE uint32 GetscalestatDPSMod(ScalingStatValuesEntry *ssvrow, uin
 	return 0;
 }
 
-HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)
-{
-	return ssvrow->spellBonus;
-}
-
 #define SAFE_DBC_CODE_RETURNS			/* undefine this to make out of range/nulls return null. */
 
 template<class T>
@@ -1732,10 +1737,36 @@ extern SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
 extern SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 extern SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 extern SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
+extern SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
 extern SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
 extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
 extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 
 bool LoadDBCs();
+
+HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)
+{
+	return ssvrow->spellBonus;
+}
+
+HEARTHSTONE_INLINE WMOAreaTableEntry* GetWorldMapOverlayEntry( int32 adtid, int32 rootid, int32 groupid)
+{
+	DBCStorage<WMOAreaTableEntry>::iterator itr;
+	if(dbcWMOAreaTable.begin() != dbcWMOAreaTable.end()) // NO DATERS
+	{
+		WMOAreaTableEntry* WMOentry = NULL;
+		for(itr = dbcWMOAreaTable.begin(); itr != dbcWMOAreaTable.end(); ++itr)
+		{
+			WMOentry = (*itr);
+			if(WMOentry->adtId == adtid && WMOentry->rootId == rootid && WMOentry->groupId == groupid)
+				return WMOentry;
+		}
+	}
+#ifdef SAFE_DBC_CODE_RETURNS
+	return dbcWMOAreaTable.LookupRow(1);
+#else
+	return NULL;
+#endif
+}
 
 #endif

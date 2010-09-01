@@ -1385,24 +1385,13 @@ void Player::_EventExploration()
 	if(GetMapMgr()->GetCellByCoords(GetPositionX(),GetPositionY()) == NULL)
 		return;
 
-	uint16 AreaId = GetAreaID(GetPositionX(), GetPositionY(), GetPositionZ());
+	uint16 AreaId = GetAreaID();
 
 	if(!AreaId || AreaId == 0xFFFF)
 		return;
 	AreaTable * at = dbcArea.LookupEntry(AreaId);
 	if(at == 0)
 		return;
-
-	/*char areaname[200];
-	if(at)
-	{
-		strcpy(areaname, sAreaStore.LookupString((uint32)at->name));
-	}
-	else
-	{
-		strcpy(areaname, "UNKNOWN");
-	}
-	sChatHandler.BlueSystemMessageToPlr(TO_PLAYER(this),areaname);*/
 
 	uint32 offset = at->explorationFlag / 32;
 	offset += PLAYER_EXPLORED_ZONES_1;
@@ -1429,9 +1418,10 @@ void Player::_EventExploration()
 	else if( m_zoneId != at->AreaId )
 		ZoneUpdate(at->AreaId);
 
-	bool rest_on = false;
+	bool rest_on = false; // Crow: Should be put in Update somehow.
+	LocationVector loc = GetPosition();
 	// Check for a restable area
-	if(at->AreaFlags & AREA_CITY_AREA || at->AreaFlags & AREA_CITY)
+	if(at->AreaFlags & AREA_CITY_AREA || at->AreaFlags & AREA_CITY || at->AreaFlags & AREA_CAPITAL_SUB || at->AreaFlags & AREA_CAPITAL)
 	{
 		// check faction
 		if((at->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == ALLIANCE) || (at->category == AREAC_HORDE_TERRITORY && GetTeam() == HORDE) )
@@ -1459,6 +1449,23 @@ void Player::_EventExploration()
 		}
 	}
 
+	if(GetMapMgr()->CanUseCollision(this))
+	{
+		uint32 vmflags = CollideInterface.GetVmapAreaFlags(GetMapId(), loc.x, loc.y, loc.z + 2.0f);
+
+		if(vmflags & VA_FLAG_IN_CITY || vmflags & VA_FLAG_IN_CITY2 || vmflags & VA_FLAG_IN_CITY3)
+		{
+			if((at->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == ALLIANCE) || (at->category == AREAC_HORDE_TERRITORY && GetTeam() == HORDE) )
+			{
+				rest_on = true;
+			}
+			else if(at->category != AREAC_ALLIANCE_TERRITORY && at->category != AREAC_HORDE_TERRITORY)
+			{
+				rest_on = true;
+			}
+		}
+	}
+
 	if (rest_on)
 	{
 		if(!m_isResting)
@@ -1468,9 +1475,8 @@ void Player::_EventExploration()
 	{
 		if(m_isResting)
 		{
-			if (GetMapMgr()->CanUseCollision(this))
+			if(GetMapMgr()->CanUseCollision(this))
 			{
-				const LocationVector & loc = GetPosition();
 				if(!CollideInterface.IsIndoor(GetMapId(), loc.x, loc.y, loc.z + 2.0f))
 					ApplyPlayerRestState(false);
 			}
@@ -1478,7 +1484,6 @@ void Player::_EventExploration()
 				ApplyPlayerRestState(false);
 		}
 	}
-
 
 	if( !(currFields & val) && !GetTaxiState() && !m_TransporterGUID)//Unexplored Area		// bur: we dont want to explore new areas when on taxi
 	{
@@ -8240,7 +8245,7 @@ void Player::ForceAreaUpdate()
 	uint32 oldareaid = m_AreaID;
 
 	m_areaDBC = NULL;
-	m_AreaID = GetAreaID(m_position.x, m_position.y, m_position.z);
+	m_AreaID = GetAreaID();
 	if( m_AreaID == 0xffff )
 		m_AreaID = 0;
 	else

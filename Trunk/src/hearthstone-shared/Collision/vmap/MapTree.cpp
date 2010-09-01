@@ -231,64 +231,13 @@ namespace VMAP
 		return (height);
 	}
 
-	bool StaticMapTree::isInDoors(Vector3& pos)
-	{
-		bool indoors = false;
-		uint32 flags = 0;
-		int32 adtId = 0, rootId = 0, groupid = 0;
-		getAreaInfo(pos, flags, adtId, rootId, groupid);
-		if( flags != 0 )
-		{
-			/* From WoWdev:
-			Flag	Meaning
-			0x1		Always set
-			0x4		Has vertex colors (MOCV chunk)
-			0x8		Outdoor
-			0x200	Has lights (MOLR chunk)
-			0x800	Has doodads (MODR chunk)
-			0x1000	Has water (MLIQ chunk)
-			0x2000	Indoor
-			0x40000	Show skybox
-			**********************
-			0x8000 seems to be set in the areas in citys (while it has the indoor flag, its not
-			an indoor area
-			*/
-			if( flags & 0x2000 && !(flags & 0x8000) && !(flags & 0x8) )
-				indoors = true;
-		}
-		return indoors;
-	}
-
-	bool StaticMapTree::isOutDoors(Vector3& pos)
-	{
-		bool indoors = true;
-		uint32 flags = 0;
-		int32 adtId = 0, rootId = 0, groupid = 0;
-		getAreaInfo(pos, flags, adtId, rootId, groupid);
-
-		if( flags != 0 )
-		{
-			/* From WoWdev:
-			Flag	Meaning
-			0x1		Always set
-			0x4		Has vertex colors (MOCV chunk)
-			0x8		Outdoor
-			0x200	Has lights (MOLR chunk)
-			0x800	Has doodads (MODR chunk)
-			0x1000	Has water (MLIQ chunk)
-			0x2000	Indoor
-			0x40000	Show skybox
-			**********************
-
-			0x8000 seems to be set in the areas in citys (while it has the indoor flag, its not
-			an indoor area
-			*/
-
-			if( !(flags & 0x8) )
-				indoors = false;
-		}
-		return indoors;
-	}
+	uint32 StaticMapTree::GetVmapFlags(Vector3& pos)
+ 	{
+ 		uint32 flags = 0;
+ 		int32 adtId = 0, rootId = 0, groupid = 0;
+ 		getAreaInfo(pos, flags, adtId, rootId, groupid);
+		return flags;
+ 	}
 
 	//=========================================================
 

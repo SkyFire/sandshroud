@@ -2034,7 +2034,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 						teamId = 1;
 					else
 						teamId = 0;
-					uint32 AreaID = pVictim->GetAreaID(pVictim->GetPositionX(), pVictim->GetPositionY(), pVictim->GetPositionZ());
+					uint32 AreaID = pVictim->GetAreaID();
 					if(!AreaID)
 						AreaID = pAttacker->GetZoneId(); // Failsafe for a shitty TerrainMgr
 
@@ -3110,6 +3110,11 @@ void Object::CastSpell( uint64 targetGuid, uint32 SpellID, bool triggered )
 	if(ent == 0) return;
 
 	CastSpell(targetGuid, ent, triggered);
+}
+
+uint32 Object::GetAreaID()
+{
+	return (GetMapMgr() ? GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY(),GetPositionZ()) : 0);
 }
 
 uint32 Object::GetAreaID(float x, float y, float z)
