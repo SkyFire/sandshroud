@@ -1,4 +1,4 @@
-﻿INCLUDES = -I$(top_srcdir)/src/hearthstone-logonserver \
+INCLUDES = -I$(top_srcdir)/src/hearthstone-logonserver \
    -I$(top_srcdir)/src/hearthstone-realmserver -I$(top_srcdir)/src/hearthstone-shared -I$(top_srcdir)/src/hearthstone-voicechat \
    -I$(top_srcdir)/src/hearthstone-world -I$(srcdir) -I$(srcdir)/../../../../dep/include \
    -I$(srcdir)/../../../../dep/src -I$(srcdir)/../../../../src
