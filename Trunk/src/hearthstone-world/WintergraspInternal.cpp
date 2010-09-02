@@ -107,8 +107,11 @@ bool WintergraspInternal::run()
 
 		if(!m_threadRunning)
 			break;
-
+#ifdef WIN32
 		WaitForSingleObject(m_abortEvent, 30000); // 30 second delay.
+#else
+		Sleep( 30000 );
+#endif
 	}
 	return false;
 }

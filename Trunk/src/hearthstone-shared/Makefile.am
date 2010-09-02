@@ -37,7 +37,7 @@ libshared_a_SOURCES = \
     CrashHandler.cpp \
     Auth/BigNumber.cpp \
     Auth/BigNumber.h \
-	Auth/HMAC.cpp \
+    Auth/HMAC.cpp \
     Auth/HMAC.h \
     Auth/MD5.cpp \
     Auth/MD5.h \
@@ -86,23 +86,23 @@ libshared_a_SOURCES = \
     Network/SocketMgrPoll.cpp \
     Network/SocketOpsPoll.cpp \
     Network/SocketPoll.cpp \
-	Collision/vmap/BIH.h \
-	Collision/vmap/BIH.cpp \
-	Collision/vmap/IVMapManager.h \
-	Collision/vmap/MapTree.cpp \
-	Collision/vmap/MapTree.h \
-	Collision/vmap/ModelInstance.cpp \
-	Collision/vmap/ModelInstance.h \
-	Collision/vmap/TileAssembler.cpp \
-	Collision/vmap/TileAssembler.h \
-	Collision/vmap/VMapDefinitions.h \
-	Collision/vmap/VMapFactory.cpp \
-	Collision/vmap/VMapFactory.h \
-	Collision/vmap/VMapManager2.cpp \
-	Collision/vmap/VMapManager2.h \
-	Collision/vmap/VMapTools.h \
-	Collision/vmap/WorldModel.cpp \
-	Collision/vmap/WorldModel.h
+    Collision/vmap/BIH.h \
+    Collision/vmap/BIH.cpp \
+    Collision/vmap/IVMapManager.h \
+    Collision/vmap/MapTree.cpp \
+    Collision/vmap/MapTree.h \
+    Collision/vmap/ModelInstance.cpp \
+    Collision/vmap/ModelInstance.h \
+    Collision/vmap/TileAssembler.cpp \
+    Collision/vmap/TileAssembler.h \
+    Collision/vmap/VMapDefinitions.h \
+    Collision/vmap/VMapFactory.cpp \
+    Collision/vmap/VMapFactory.h \
+    Collision/vmap/VMapManager2.cpp \
+    Collision/vmap/VMapManager2.h \
+    Collision/vmap/VMapTools.h \
+    Collision/vmap/WorldModel.cpp \
+    Collision/vmap/WorldModel.h \
     Collision/g3dlite/AABox.cpp \
     Collision/g3dlite/AABox.h \
     Collision/g3dlite/Any.cpp \
@@ -203,8 +203,8 @@ libshared_a_SOURCES = \
     Collision/g3dlite/Table.h \
     Collision/g3dlite/TextInput.cpp \
     Collision/g3dlite/TextInput.h \
-    Collision/g3dlite/TestOutput.cpp \
-    Collision/g3dlite/TestOutput.h \
+    Collision/g3dlite/TextOutput.cpp \
+    Collision/g3dlite/TextOutput.h \
     Collision/g3dlite/Triangle.cpp \
     Collision/g3dlite/Triangle.h \
     Collision/g3dlite/uint128.cpp \

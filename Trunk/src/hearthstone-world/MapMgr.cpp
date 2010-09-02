@@ -1657,6 +1657,19 @@ Object* MapMgr::_GetObject(const uint64 & guid)
 	}
 }
 
+bool MapMgr::CanUseCollision(Object* obj)
+{
+	if(collision)
+	{
+		uint32 tileX = (GetPosX(obj->GetPositionX())/8);
+		uint32 tileY = (GetPosY(obj->GetPositionY())/8);
+		if(CollideInterface.IsActiveTile(_mapId, tileX, tileY))
+			return true;
+	}
+
+	return false;
+}
+
 void MapMgr::_PerformObjectDuties()
 {
 	++mLoopCounter;
@@ -2355,17 +2368,4 @@ LocationVector MapMgr::getNextPositionOnPathToLocation(float startx, float start
 		}
 	}
 	return pos;
-}
-
-bool MapMgr::CanUseCollision(Object* obj)
-{
-	if(collision)
-	{
-		uint32 tileX = (GetPosX(obj->GetPositionX())/8);
-		uint32 tileY = (GetPosY(obj->GetPositionY())/8);
-		if(CollideInterface.IsActiveTile(_mapId, tileX, tileY))
-			return true;
-	}
-
-	return false;
 }

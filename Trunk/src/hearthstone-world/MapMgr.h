@@ -252,7 +252,7 @@ public:
 
 	HEARTHSTONE_INLINE void SetCollision(bool enable) { collision = enable; }
 	HEARTHSTONE_INLINE bool IsCollisionEnabled() { return collision; }
-	HEARTHSTONE_INLINE bool CanUseCollision(Object* obj);
+	bool CanUseCollision(Object* obj);
 
 	HEARTHSTONE_INLINE MapScriptInterface * GetInterface() { return ScriptInterface; }
 	virtual int32 event_GetInstanceID() { return m_instanceID; }

@@ -36,6 +36,6 @@ WorldPvP/ZoneHellfirePeninsula.cpp \
 WorldPvP/ZoneSilithus.cpp \
 WorldPvP/ZoneTerokkarForest.cpp \
 WorldPvP/ZoneZangarmarsh.cpp \
-NeutralGuards.cpp
-ScriptStdAfx.cpp
+NeutralGuards.cpp \
+ScriptStdAfx.cpp \
 Setup.cpp

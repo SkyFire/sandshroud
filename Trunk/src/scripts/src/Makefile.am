@@ -1,2 +1,1 @@
-﻿SUBDIRS = CustomScripts InstanceScripts QuestScripts \
-OtherScripts ServerStatusPlugin Lua
+﻿SUBDIRS = Common CustomScripts GameMonkey InstanceScripts QuestScripts OtherScripts ServerStatusPlugin Lua
