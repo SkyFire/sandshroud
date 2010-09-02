@@ -2613,6 +2613,7 @@ bool ChatHandler::HandleLookupTitleCommand(const char *args, WorldSession *m_ses
 		RedSystemMessage(m_session, "Your search string must be at least 3 characters long.");
 		return true;
 	}
+
 	GreenSystemMessage(m_session, "Initializing title finder.");
 	for(uint16 i = 1; i < TITLE_END; i++)
 	{

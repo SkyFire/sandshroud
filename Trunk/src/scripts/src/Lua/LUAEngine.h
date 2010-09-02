@@ -42,6 +42,7 @@ class LuaGossip;
 
 extern LuaEngine * g_engine;
 extern LuaEngineMgr g_luaMgr;
+#define LuaEvent g_luaMgr.LuaEventMgr
 
 GossipMenu* Menu;
 
@@ -267,6 +268,10 @@ private:
 	HM_NAMESPACE::hash_map<uint32, LuaGossip*> m_itemgAIScripts;
 	HM_NAMESPACE::hash_map<uint32, LuaGossip*> m_gogAIScripts;
 
+	std::set<int> m_pendingThreads;
+	std::set<int> m_functionRefs;
+	std::map< uint64,std::set<int> > m_objectFunctionRefs;
+
 	UnitBindingMap m_unitBinding;
 	QuestBindingMap m_questBinding;
 	GameObjectBindingMap m_gameobjectBinding;
@@ -279,8 +284,12 @@ public:
 	void Startup();
 	void Unload();
 	lua_State* GLuas() { return m_engine->GetMainLuaState(); }
-
 	void RegisterEvent(uint8, uint32, uint32 , uint16);
+	void ResumeLuaThread(int);
+	void HyperCallFunction(const char *, int);
+	void CallFunctionByReference(int);
+	void DestroyAllLuaEvents();
+
 	LuaUnitBinding * GetUnitBinding(uint32 Id)
 	{
 		UnitBindingMap::iterator itr = m_unitBinding.find(Id);
@@ -318,9 +327,106 @@ public:
 		return (itr == m_go_gossipBinding.end()) ? NULL : &itr->second;
 	}
 
+	HEARTHSTONE_INLINE std::set<int> & getThreadRefs() { return m_pendingThreads; }
+	HEARTHSTONE_INLINE std::set<int> & getFunctionRefs() { return m_functionRefs; }
 	HEARTHSTONE_INLINE hash_map<uint32, LuaGossip*> & getUnitGossipInterfaceMap() { return m_unitgAIScripts; }
 	HEARTHSTONE_INLINE hash_map<uint32, LuaGossip*> & getItemGossipInterfaceMap() { return m_itemgAIScripts; }
 	HEARTHSTONE_INLINE hash_map<uint32, LuaGossip*> & getGameObjectGossipInterfaceMap() { return m_gogAIScripts; }
+	HEARTHSTONE_INLINE std::map< uint64,std::set<int> > & getObjectFunctionRefs() { return m_objectFunctionRefs; }
+	hash_map<int, EventInfoHolder*> m_registeredTimedEvents;
+
+	class luEventMgr : public EventableObject
+	{
+	public:
+		bool HasEvent(int ref)
+		{
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.find(ref);
+			return (itr != g_luaMgr.m_registeredTimedEvents.end());
+		}
+
+		bool HasEventInTable(const char * table)
+		{
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.begin();
+			for (; itr != g_luaMgr.m_registeredTimedEvents.end(); ++itr)
+			{
+				if (strncmp(itr->second->funcName, table, strlen(table)) == 0)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool HasEventWithName(const char * name)
+		{
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.begin();
+			for (; itr != g_luaMgr.m_registeredTimedEvents.end(); ++itr)
+			{
+				if (strcmp(itr->second->funcName, name) == 0)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		void RemoveEventsInTable(const char * table)
+		{
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.begin(), itr2;
+			for (; itr != g_luaMgr.m_registeredTimedEvents.end(); )
+			{
+				itr2 = itr++;
+				if (strncmp(itr2->second->funcName, table, strlen(table)) == 0)
+				{
+					event_RemoveByPointer(itr2->second->te);
+					free((void*)itr2->second->funcName);
+					luaL_unref(g_luaMgr.GLuas(), LUA_REGISTRYINDEX, itr2->first);
+					g_luaMgr.m_registeredTimedEvents.erase(itr2);
+				}
+			}
+		}
+
+		void RemoveEventsByName(const char * name)
+		{
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.begin(), itr2;
+			for (; itr != g_luaMgr.m_registeredTimedEvents.end(); )
+			{
+				itr2 = itr++;
+				if (strcmp(itr2->second->funcName, name) == 0)
+				{
+					event_RemoveByPointer(itr2->second->te);
+					free((void*)itr2->second->funcName);
+					luaL_unref(g_luaMgr.GLuas(), LUA_REGISTRYINDEX, itr2->first);
+					g_luaMgr.m_registeredTimedEvents.erase(itr2);
+				}
+			}
+		}
+
+		void RemoveEventByRef(int ref)
+		{
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.find(ref);
+			if (itr != g_luaMgr.m_registeredTimedEvents.end())
+			{
+				event_RemoveByPointer(itr->second->te);
+				free((void*)itr->second->funcName);
+				luaL_unref(g_luaMgr.GLuas(), LUA_REGISTRYINDEX, itr->first);
+				g_luaMgr.m_registeredTimedEvents.erase(itr);
+			}
+		}
+
+		void RemoveEvents()
+		{
+			event_RemoveEvents(EVENT_LUA_TIMED);
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.begin();
+			for (; itr != g_luaMgr.m_registeredTimedEvents.end(); ++itr)
+			{
+				free((void*)itr->second->funcName);
+				luaL_unref(g_luaMgr.GLuas(), LUA_REGISTRYINDEX, itr->first);
+			}
+			g_luaMgr.m_registeredTimedEvents.clear();
+		}
+
+	} LuaEventMgr;
 };
 
 template<> const char * GetTClassName<Item>() { return "Item"; };
@@ -581,6 +687,7 @@ private:
 #define CHECK_ULONG(L,narg) (uint32)luaL_checknumber((L),(narg))
 #define CHECK_USHORT(L, narg) (uint16)luaL_checkinteger((L),(narg))
 #define CHECK_BOOL(L,narg) (lua_toboolean((L),(narg)) > 0) ? true : false
+#define CREATE_L_PTR lua_State* L = GLuas();
 
 class GuidMgr
 {

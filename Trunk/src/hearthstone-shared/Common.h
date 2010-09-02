@@ -632,7 +632,6 @@ HEARTHSTONE_INLINE void HEARTHSTONE_TOLOWER(std::string& str)
 		str[i] = (char)tolower(str[i]);
 };
 
-
 HEARTHSTONE_INLINE void HEARTHSTONE_TOUPPER(std::string& str)
 {
 	for(size_t i = 0; i < str.length(); ++i)

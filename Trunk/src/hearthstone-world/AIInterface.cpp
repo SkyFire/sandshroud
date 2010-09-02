@@ -3784,56 +3784,57 @@ bool isTargetDummy(uint32 id)
 {
 	switch(id)
 	{
-		case 1921:
-		case 2673:
-		case 2674:
-		case 4952:
-		case 5202:
-		case 5652:
-		case 5723:
-		case 11875:
-		case 12385:
-		case 12426:
-		case 16211:
-		case 16897:
-		case 17059:
-		case 17060:
-		case 17578:
-		case 18215:
-		case 18504:
-		case 19139:
-		case 21157:
-		case 24792:
-		case 25225:
-		case 25297:
-		case 30527:
-		case 31143:
-		case 31144:
-		case 31146:
-		case 32541:
-		case 32542:
-		case 32543:
-		case 32545:
-		case 32546:
-		case 32547:
-		case 32666:
-		case 32667:
-		case 33272:
-		case 33243:
-		case 33229:
-			{
-				return true;
-			}break;
-		default:
-			{
-				CreatureInfo* info = CreatureNameStorage.LookupEntry(id);
-				if(info != NULL)
-					if(FindXinYString(string("training dummy"), info->lowercase_name))
-						return true;
-				return false;
-			}
+	case 1921:
+	case 2673:
+	case 2674:
+	case 4952:
+	case 5202:
+	case 5652:
+	case 5723:
+	case 11875:
+	case 12385:
+	case 12426:
+	case 16211:
+	case 16897:
+	case 17059:
+	case 17060:
+	case 17578:
+	case 18215:
+	case 18504:
+	case 19139:
+	case 21157:
+	case 24792:
+	case 25225:
+	case 25297:
+	case 30527:
+	case 31143:
+	case 31144:
+	case 31146:
+	case 32541:
+	case 32542:
+	case 32543:
+	case 32545:
+	case 32546:
+	case 32547:
+	case 32666:
+	case 32667:
+	case 33272:
+	case 33243:
+	case 33229:
+		{
+			return true;
+		}break;
+	default:
+		{
+			CreatureInfo* info = CreatureNameStorage.LookupEntry(id);
+			if(info != NULL)
+				if(FindXinYString(string("training dummy"), info->lowercase_name))
+					return true;
+			return false;
+		}
 	}
 }
+
 void AIInterface::WipeCurrentTarget()
 {
 	TargetMap::iterator itr = m_aiTargets.find( m_nextTarget );

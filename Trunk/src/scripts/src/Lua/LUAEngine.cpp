@@ -20,7 +20,6 @@
  */
 
 #include "LUAEngine.h"
-#include "Functions/TableFunctions.h"
 #include <ScriptSetup.h>
 
 #if PLATFORM != PLATFORM_WIN32
@@ -310,6 +309,152 @@ void LuaEngine::PushAura(Aura * aura, lua_State * LuaS)
 	END PUSH METHODS
 *******************************************************************************/
 
+// Hyper as in Hyperactive, Jk, its Hypersniper.
+void LuaEngineMgr::HyperCallFunction(const char * FuncName, int ref)
+{
+	CREATE_L_PTR;
+	string sFuncName = string(FuncName);
+	char * copy = strdup(FuncName);
+	char * token = strtok(copy,".:");
+	int top = 1;
+	bool colon = false;
+	//REMEMBER: top is always 1
+	lua_settop(L,0); //stack should be empty
+	if (strpbrk(FuncName,".:") == NULL ) //stack: empty
+		lua_getglobal(L,FuncName);  //stack: function
+	else
+	{
+		lua_getglobal(L, "_G"); //start out with the global table.  //stack: _G
+		while (token != NULL)
+		{
+			lua_getfield(L, -1, token); //get the (hopefully) table/func  //stack: _G, subtable/func/nil
+			if ((int)sFuncName.find(token)-1 > 0) //if it isn't the first token
+			{
+				if (sFuncName.at(sFuncName.find(token)-1) == ':')
+					colon = true;
+			}
+
+			if (lua_isfunction(L,-1) && !lua_iscfunction(L,-1)) //if it's a Lua function //stack: _G/subt, func
+			{
+				if (colon) //stack: subt, func
+				{
+					lua_pushvalue(L, -2); //make the table the first arg //stack: subt, func, subt
+					lua_remove(L,top); //stack: func, subt
+				}
+				else
+					lua_replace(L,top); //stack: func
+				break; //we don't need anything else
+			}
+			else if(lua_istable(L,-1) ) //stack: _G/subt, subtable
+			{
+				token = strtok(NULL,".:"); //stack: _G/subt, subtable
+				lua_replace(L, top); //stack: subtable
+			}
+		}
+	}
+	lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+	lua_State * M = lua_tothread(L, -1); //repeats, args
+	int thread = lua_gettop(L);
+	int repeats = luaL_checkinteger(M, 1); //repeats, args
+	int nargs = lua_gettop(M)-1;
+	if (nargs != 0) //if we HAVE args...
+	{
+		for (int i = 2; i <= nargs+1; i++)
+		{
+			lua_pushvalue(M,i);
+		}
+		lua_xmove(M, L, nargs);
+	}
+
+	if(repeats != 0)
+	{
+		if (--repeats == 0) //free stuff, then
+		{
+			free((void*)FuncName);
+			luaL_unref(L, LUA_REGISTRYINDEX, ref);
+			hash_map<int, EventInfoHolder*>::iterator itr = g_luaMgr.m_registeredTimedEvents.find(ref);
+			g_luaMgr.m_registeredTimedEvents.erase(itr);
+		}
+		else
+		{
+			lua_remove(M, 1); //args
+			lua_pushinteger(M, repeats); //args, repeats
+			lua_insert(M, 1); //repeats, args
+		}
+	}
+	lua_remove(L, thread); //now we can remove the thread object
+	int r = lua_pcall(L, nargs+(colon ? 1 : 0),0,0);
+	if (r)
+		report(L);
+
+	free((void*)copy);
+	lua_settop(L,0);
+}
+
+/*
+	This version only accepts actual Lua functions and no arguments. See LCF_Extra:CreateClosure(...) to pass arguments to this function.
+	*/
+static int CreateLuaEvent(lua_State * L)
+{
+	int delay = luaL_checkinteger(L,2);
+	int repeats = luaL_checkinteger(L,3);
+	if(!strcmp(luaL_typename(L,1),"function") || delay > 0)
+	{
+		lua_settop(L,1);
+		int functionRef = lua_ref(L,true);
+		TimedEvent * ev = TimedEvent::Allocate(World::getSingletonPtr(), new CallbackP1<LuaEngineMgr,int>(&g_luaMgr, &LuaEngineMgr::CallFunctionByReference, functionRef), 0, delay, repeats);
+		ev->eventType  = LUA_EVENTS_END+functionRef; //Create custom reference by adding the ref number to the max lua event type to get a unique reference for every function.
+		sWorld.event_AddEvent(ev);
+		g_luaMgr.getFunctionRefs().insert(functionRef);
+		lua_pushinteger(L,functionRef);
+	}
+	else
+		lua_pushnil(L);
+
+	return 1;
+}
+
+void LuaEngineMgr::CallFunctionByReference(int ref)
+{
+	CREATE_L_PTR;
+	lua_getref(L,ref);
+	if(lua_pcall(L,0,0,0) )
+		report(L);
+}
+
+void LuaEngineMgr::DestroyAllLuaEvents()
+{
+	CREATE_L_PTR;
+	//Clean up for all events.
+	set<int>::iterator itr = m_functionRefs.begin();
+	for(; itr != m_functionRefs.end(); ++itr)
+	{
+		sEventMgr.RemoveEvents(World::getSingletonPtr(),(*itr)+LUA_EVENTS_END);
+		lua_unref(L,(*itr));
+	}
+	m_functionRefs.clear();
+}
+
+static int ModifyLuaEventInterval(lua_State * L)
+{
+	int ref = luaL_checkinteger(L,1);
+	int newinterval = luaL_checkinteger(L,2);
+	ref+= LUA_EVENTS_END;
+	//Easy interval modification.
+	sEventMgr.ModifyEventTime(World::getSingletonPtr(),ref,newinterval);
+	return 1;
+}
+
+static int DestroyLuaEvent(lua_State * L)
+{
+	//Simply remove the reference, CallFunctionByReference will find the reference has been freed and skip any processing.
+	int ref = luaL_checkinteger(L,1);
+	lua_unref(L,ref);
+	g_luaMgr.getFunctionRefs().erase(ref);
+	sEventMgr.RemoveEvents(World::getSingletonPtr(),ref+LUA_EVENTS_END);
+	return 1;
+}
+
 static int ExtractfRefFromCString(lua_State * L,const char * functionName)
 {
 	int functionRef = 0;
@@ -363,12 +508,12 @@ static int RegisterItemGossipEvent(lua_State * L);
 static int RegisterGOGossipEvent(lua_State * L);
 
 // Hyp Arc
-/*static int RegisterServerHook(lua_State * L);
+static int RegisterServerHook(lua_State * L);
 static int SuspendLuaThread(lua_State * L);
 static int RegisterTimedEvent(lua_State * L);
 static int RemoveTimedEvents(lua_State * L);
-static int RegisterDummySpell(lua_State * L);
-static int RegisterInstanceEvent(lua_State * L);*/
+//static int RegisterDummySpell(lua_State * L);
+//static int RegisterInstanceEvent(lua_State * L);
 void RegisterGlobalFunctions(lua_State*);
 
 void LuaEngine::RegisterCoreFunctions()
@@ -389,7 +534,7 @@ void LuaEngine::RegisterCoreFunctions()
 	lua_setglobal(L, "RegisterGOGossipEvent");
 
 	// Hyp Arc
-/*	lua_pushcfunction(L, &RegisterServerHook);
+	lua_pushcfunction(L, &RegisterServerHook);
 	lua_setglobal(L, "RegisterServerHook");
 	lua_pushcfunction(L, &SuspendLuaThread);
 	lua_setglobal(L, "SuspendThread");
@@ -397,16 +542,16 @@ void LuaEngine::RegisterCoreFunctions()
 	lua_setglobal(L, "RegisterTimedEvent");
 	lua_pushcfunction(L, &RemoveTimedEvents);
 	lua_setglobal(L, "RemoveTimedEvents");
-	lua_pushcfunction(L, &RegisterDummySpell);
+/*	lua_pushcfunction(L, &RegisterDummySpell);
 	lua_setglobal(L, "RegisterDummySpell");
 	lua_pushcfunction(L, &RegisterInstanceEvent);
-	lua_setglobal(L, "RegisterInstanceEvent");
+	lua_setglobal(L, "RegisterInstanceEvent");*/
 	lua_pushcfunction(L, &CreateLuaEvent);
 	lua_setglobal(L, "CreateLuaEvent");
 	lua_pushcfunction(L, &ModifyLuaEventInterval);
 	lua_setglobal(L, "ModifyLuaEventInterval");
 	lua_pushcfunction(L, &DestroyLuaEvent);
-	lua_setglobal(L, "DestroyLuaEvent");*/
+	lua_setglobal(L, "DestroyLuaEvent");
 
 	RegisterGlobalFunctions(L);
 	Lunar<Item>::Register(L);
@@ -545,10 +690,72 @@ static int RegisterGOGossipEvent(lua_State * L)
 		g_luaMgr.RegisterEvent(REGTYPE_GO_GOSSIP,entry,ev,functionRef);
 
 	lua_pop(L,3);
-	return 0;
+	return 1;
 }
 
-/*static int RegisterServerHook(lua_State * L)
+static int SuspendLuaThread(lua_State * L)
+{
+	lua_State * thread = (lua_isthread(L,1)) ? lua_tothread(L,1) : NULL;
+	if(thread == NULL)
+		return luaL_error(L,"LuaEngineMgr","SuspendLuaThread expected Lua coroutine, got NULL. \n");
+
+	int waitime = luaL_checkinteger(L,2);
+	if(waitime <= 0)
+		return luaL_error(L,"LuaEngineMgr","SuspendLuaThread expected timer > 0 instead got (%d) \n",waitime);
+
+	lua_pushvalue(L,1);
+	int ref = luaL_ref(L,LUA_REGISTRYINDEX);
+	if(ref == LUA_REFNIL || ref == LUA_NOREF)
+		return luaL_error(L,"Error in SuspendLuaThread! Failed to create a valid reference.");
+
+	TimedEvent * evt = TimedEvent::Allocate(thread,new CallbackP1<LuaEngineMgr,int>(&g_luaMgr,&LuaEngineMgr::ResumeLuaThread,ref),0,waitime,1);
+	sWorld.event_AddEvent(evt);
+	lua_remove(L,1); // remove thread object
+	lua_remove(L,1); // remove timer.
+	//All that remains now are the extra arguments passed to this function.
+	lua_xmove(L,thread,lua_gettop(L));
+	g_luaMgr.getThreadRefs().insert(ref);
+	return lua_yield(thread,lua_gettop(L));
+}
+
+static int RegisterTimedEvent(lua_State * L) //in this case, L == lu
+{
+	const char * funcName = strdup(luaL_checkstring(L,1));
+	int delay = luaL_checkint(L,2);
+	int repeats = luaL_checkint(L,3);
+	if (!delay || repeats < 0 || !funcName)
+	{
+		lua_pushnumber(L, LUA_REFNIL);
+		return 1;
+	}
+
+	lua_remove(L, 1); 
+	lua_remove(L, 1);//repeats, args
+	lua_State * thread = lua_newthread(L); //repeats, args, thread
+	lua_insert(L,1); //thread, repeats, args
+	lua_xmove(L,thread,lua_gettop(L)-1); //thread
+	int ref = luaL_ref(L, LUA_REGISTRYINDEX); //empty
+	if(ref == LUA_REFNIL || ref == LUA_NOREF)
+		return luaL_error(L,"Error in RegisterTimedEvent! Failed to create a valid reference.");
+
+	TimedEvent *te = TimedEvent::Allocate(&g_luaMgr, new CallbackP2<LuaEngineMgr, const char*, int>(&g_luaMgr, &LuaEngineMgr::HyperCallFunction, funcName, ref), EVENT_LUA_TIMED, delay, repeats);
+	EventInfoHolder * ek = new EventInfoHolder;
+	ek->funcName = funcName;
+	ek->te = te;
+	g_luaMgr.m_registeredTimedEvents.insert( make_pair<int, EventInfoHolder*>(ref, ek) );
+	LuaEvent.event_AddEvent(te);
+	lua_settop(L,0);
+	lua_pushnumber(L, ref);
+	return 1;
+}
+
+static int RemoveTimedEvents(lua_State * L) //in this case, L == lu
+{
+	LuaEvent.RemoveEvents();
+	return 1;
+}
+
+static int RegisterServerHook(lua_State * L)
 {
 	uint16 functionRef = 0;
 	//Maximum passed in arguments, consider rest as garbage
@@ -569,8 +776,7 @@ static int RegisterGOGossipEvent(lua_State * L)
 
 	lua_pop(L,2);
 	return 1;
-}*/
-
+}
 
 /************************************************************************/
 /* Manager Stuff														*/
@@ -1441,6 +1647,34 @@ void LuaEngineMgr::RegisterEvent(uint8 regtype, uint32 id, uint32 evt, uint16 fu
 	}
 }
 
+void LuaEngineMgr::ResumeLuaThread(int ref)
+{
+	CREATE_L_PTR;
+
+	lua_State * expectedThread = NULL;
+	lua_rawgeti(L,LUA_REGISTRYINDEX,ref);
+	if(lua_isthread(L,-1) )
+		expectedThread = lua_tothread(L,-1);
+
+	if(expectedThread != NULL) 
+	{
+		//push ourself on the stack
+		lua_pushthread(expectedThread);
+		//move the thread to the main lu state(and pop it off)
+		lua_xmove(expectedThread,L,1);
+		if(lua_rawequal(L,-1,-2) )
+		{
+			lua_pop(L,2);
+			int res = lua_resume(expectedThread,lua_gettop(expectedThread));
+			if(res != LUA_YIELD && res)
+				report(expectedThread);
+		}
+		else
+			lua_pop(L,2);
+		luaL_unref(L,LUA_REGISTRYINDEX,ref);
+	}
+}
+
 /*void LuaEngineMgr::ReloadScripts()
 {
 	m_lock.Acquire();
@@ -1506,3 +1740,5 @@ void LuaEngine::Restart()
 	LoadScripts();
 	m_Lock.Release();
 }
+
+#include "Functions/TableFunctions.h"
