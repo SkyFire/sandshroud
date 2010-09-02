@@ -2876,6 +2876,28 @@ void Object::SetZoneId(uint32 newZone)
 		TO_PLAYER(this)->GetGroup()->HandlePartialChange( PARTY_UPDATE_FLAG_ZONEID, TO_PLAYER(this) );
 }
 
+uint32 Object::GetAreaID()
+{
+	return (GetMapMgr() ? GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY(),GetPositionZ()) : 0);
+}
+
+uint32 Object::GetAreaID(float x, float y, float z, int32 mapid)
+{
+	if(mapid > -1)
+	{
+		if(mapid != m_mapId)
+		{
+			uint32 areaid = 0;
+			MapMgr* mgr = sInstanceMgr.GetMapMgr(mapid);
+			if(mgr != NULL)
+				areaid = mgr->GetAreaID(x, y, z);
+
+			return areaid;
+		}
+	}
+	return (GetMapMgr() ? GetMapMgr()->GetAreaID(x, y, z) : 0);
+}
+
 void Object::PlaySoundToPlayer( Player* plr, uint32 sound_entry )
 {
 	if(plr == NULL || plr->GetSession() == NULL)
@@ -3110,26 +3132,4 @@ void Object::CastSpell( uint64 targetGuid, uint32 SpellID, bool triggered )
 	if(ent == 0) return;
 
 	CastSpell(targetGuid, ent, triggered);
-}
-
-uint32 Object::GetAreaID()
-{
-	return (GetMapMgr() ? GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY(),GetPositionZ()) : 0);
-}
-
-uint32 Object::GetAreaID(float x, float y, float z, int32 mapid)
-{
-	if(mapid > -1)
-	{
-		if(mapid != m_mapId)
-		{
-			uint32 areaid = 0;
-			MapMgr* mgr = sInstanceMgr.GetMapMgr(mapid);
-			if(mgr != NULL)
-				areaid = mgr->GetAreaID(x, y, z);
-
-			return areaid;
-		}
-	}
-	return (GetMapMgr() ? GetMapMgr()->GetAreaID(x, y, z) : 0);
 }
