@@ -471,7 +471,7 @@ RegType<Unit> UnitMethods[] =
 	{ "MovePlayerTo", &LuaUnit_MovePlayerTo },
 	{ "GetPlayerMovementVector", &LuaUnit_GetPlayerMovementVector},
 	{ "UnsetKnownTitle", &LuaUnit_UnsetKnownTitle},
-	{ "IsInPhase", &EmptyLuaFunction /*&LuaUnit_IsInPhase*/},
+	{ "IsInPhase", &LuaUnit_IsInPhase },
 	{ "HasFlag", &LuaUnit_HasFlag },
 	{ "Repop", &LuaUnit_Repop },
 	{ "SetMovementFlags", &LuaUnit_SetMovementFlags },
@@ -691,26 +691,26 @@ template<> RegType<Aura> * GetMethodTable<Aura>() { return AuraMethods; }
 
 void RegisterGlobalFunctions(lua_State *L)
 {
-	lua_register(L,"PerformIngameSpawn", &luaGlobalFunctions_PerformIngameSpawn);
-	lua_register(L,"GetPlayer", &luaGlobalFunctions_GetPlayer);
-	lua_register(L,"GetLUAEngine", &luaGlobalFunctions_GetLUAEngine);
-	lua_register(L,"GetLuaEngine", &luaGlobalFunctions_GetLUAEngine);
-	lua_register(L,"GetLuaEngineVersion", &luaGlobalFunctions_GetLuaEngineVersion);
-	lua_register(L,"GetGameTime", &luaGlobalFunctions_GetGameTime);
-	lua_register(L,"WorldDBQuery", &EmptyGlobalFunction /*&luaGlobalFunctions_WorldDBQuery*/);
-	lua_register(L,"CharDBQuery", &EmptyGlobalFunction /*&luaGlobalFunctions_CharDBQuery*/);
-	lua_register(L,"WorldDBQueryTable", &EmptyGlobalFunction /*&luaGlobalFunctions_WorldDBQueryTable*/);
-	lua_register(L,"CharDBQueryTable", &EmptyGlobalFunction /*&luaGlobalFunctions_CharDBQueryTable*/);
-	lua_register(L,"SendWorldMessage", &luaGlobalFunctions_SendWorldMessage);
-	lua_register(L,"ReloadTable", &luaGlobalFunctions_ReloadTable);
-	lua_register(L,"ReloadLuaEngine", &luaGlobalFunctions_ReloadLuaEngine);
-	lua_register(L,"Rehash", &luaGlobalFunctions_Rehash);
-	lua_register(L,"logcol", &luaGlobalFunctions_logcol);
-	lua_register(L,"GetPlayersInWorld", &luaGlobalFunctions_GetPlayersInWorld);
-	lua_register(L,"GetSandshroudRevision", &EmptyGlobalFunction /*&luaGlobalFunctions_GetSandshroudRevision*/);
-	lua_register(L,"GetPlayersInMap", &luaGlobalFunctions_GetPlayersInMap);
-	lua_register(L,"GetPlayersInZone", &luaGlobalFunctions_GetPlayersInZone);
-	lua_register(L,"SendMail", &EmptyGlobalFunction /*&luaGlobalFunctions_SendMail*/);
+	lua_register(L, "PerformIngameSpawn", &luaGlobalFunctions_PerformIngameSpawn);
+	lua_register(L, "GetPlayer", &luaGlobalFunctions_GetPlayer);
+	lua_register(L, "GetLUAEngine", &luaGlobalFunctions_GetLUAEngine);
+	lua_register(L, "GetLuaEngine", &luaGlobalFunctions_GetLUAEngine);
+	lua_register(L, "GetLuaEngineVersion", &luaGlobalFunctions_GetLuaEngineVersion);
+	lua_register(L, "GetGameTime", &luaGlobalFunctions_GetGameTime);
+	lua_register(L, "WorldDBQuery", &luaGlobalFunctions_WorldDBQuery);
+	lua_register(L, "CharDBQuery", &luaGlobalFunctions_CharDBQuery);
+	lua_register(L, "WorldDBQueryTable", &luaGlobalFunctions_WorldDBQueryTable);
+	lua_register(L, "CharDBQueryTable", &luaGlobalFunctions_CharDBQueryTable);
+	lua_register(L, "SendWorldMessage", &luaGlobalFunctions_SendWorldMessage);
+	lua_register(L, "ReloadTable", &luaGlobalFunctions_ReloadTable);
+	lua_register(L, "ReloadLuaEngine", &luaGlobalFunctions_ReloadLuaEngine);
+	lua_register(L, "Rehash", &luaGlobalFunctions_Rehash);
+	lua_register(L, "logcol", &luaGlobalFunctions_logcol);
+	lua_register(L, "GetPlayersInWorld", &luaGlobalFunctions_GetPlayersInWorld);
+	lua_register(L, "GetSandshroudRevision", &EmptyGlobalFunction /*&luaGlobalFunctions_GetSandshroudRevision*/);
+	lua_register(L, "GetPlayersInMap", &luaGlobalFunctions_GetPlayersInMap);
+	lua_register(L, "GetPlayersInZone", &luaGlobalFunctions_GetPlayersInZone);
+	lua_register(L, "SendMail", &EmptyGlobalFunction /*&luaGlobalFunctions_SendMail*/);
 	lua_register(L, "GetTaxiPath", &luaGlobalFunctions_GetTaxiPath);
 	lua_register(L, "SetDBCSpellVar", &EmptyGlobalFunction /*&luaGlobalFunctions_SetDBCSpellVar*/);
 	lua_register(L, "GetDBCSpellVar", &EmptyGlobalFunction /*&luaGlobalFunctions_GetDBCSpellVar*/);

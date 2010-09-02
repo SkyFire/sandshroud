@@ -373,7 +373,6 @@ void LuaEngine::RegisterCoreFunctions()
 	Lunar<Spell>::Register(L);
 	Lunar<Field>::Register(L);
 	Lunar<QueryResult>::Register(L);
-
 	GuidMgr::Register(L);
 }
 
@@ -387,7 +386,7 @@ static int RegisterUnitEvent(lua_State * L)
 		return 0;
 
 	g_luaMgr.RegisterUnitEvent(entry,ev,str);
-	return 0;
+	return 1;
 }
 
 static int RegisterQuestEvent(lua_State * L)
@@ -422,11 +421,11 @@ static int RegisterUnitGossipEvent(lua_State * L)
 	int entry = luaL_checkint(L, 1);
 	int ev = luaL_checkint(L, 2);
 	const char * str = luaL_checkstring(L, 3);
- 
+
 	if(!entry || !ev || !str || !lua_is_starting_up)
 		return 0;
 
-    g_luaMgr.RegisterUnitGossipEvent(entry, ev, str);
+	g_luaMgr.RegisterUnitGossipEvent(entry, ev, str);
 	return 0;
 }
 
@@ -438,7 +437,7 @@ static int RegisterItemGossipEvent(lua_State * L)
 	if(!entry || !ev || !str || !lua_is_starting_up)
 		return 0;
 
-    g_luaMgr.RegisterItemGossipEvent(entry, ev, str);
+	g_luaMgr.RegisterItemGossipEvent(entry, ev, str);
 	return 0;
 }
 
@@ -782,10 +781,10 @@ void LuaEngineMgr::RegisterUnitEvent(uint32 Id, uint32 Event, const char * Funct
 	}
 	else
 	{
-		if(itr->second.Functions[Event]!=NULL)
+		if(itr->second.Functions[Event] != NULL)
 			free((void*)itr->second.Functions[Event]);
 
-		itr->second.Functions[Event]=strdup(FunctionName);
+		itr->second.Functions[Event] = strdup(FunctionName);
 	}
 }
 

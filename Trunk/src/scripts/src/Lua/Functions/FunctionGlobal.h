@@ -148,6 +148,58 @@ int luaGlobalFunctions_GetGameTime(lua_State * L)
 	return 1;
 }
 
+int luaGlobalFunctions_WorldDBQuery(lua_State * L)
+{
+	const char * qStr = luaL_checkstring(L,1);
+	if (!qStr)
+		return 0;
+
+	uint32 fID = luaL_optint(L,2,0); //column
+	uint32 rID = luaL_optint(L,3,0); //row
+	QueryResult * result = WorldDatabase.Query(qStr);
+	lua_settop(L,0);
+	Lunar<QueryResult>::push(L,result);
+	return 1;
+}
+
+int luaGlobalFunctions_CharDBQuery(lua_State * L)
+{
+	const char * qStr = luaL_checkstring(L,1);
+	if (!qStr)
+		return 0;
+
+	uint32 fID = luaL_optint(L,2,0); //column
+	uint32 rID = luaL_optint(L,3,0); //row
+	QueryResult * result = CharacterDatabase.Query(qStr);
+	lua_settop(L,0);
+	Lunar<QueryResult>::push(L,result);
+	return 1;
+}
+
+int luaGlobalFunctions_WorldDBQueryTable(lua_State * L)
+{
+	const char * qStr = luaL_checkstring(L,1);
+	if(!qStr)
+		return 0;
+
+	lua_newtable(L);
+	QueryResult * result = WorldDatabase.Query(qStr);
+	Lunar<QueryResult>::push(L,result);
+	return 1;
+}
+
+int luaGlobalFunctions_CharDBQueryTable(lua_State * L)
+{
+	const char * qStr = luaL_checkstring(L,1);
+	if(!qStr)
+		return 0;
+
+	lua_newtable(L);
+	QueryResult * result = CharacterDatabase.Query(qStr);
+	Lunar<QueryResult>::push(L,result);
+	return 1;
+}
+
 int luaGlobalFunctions_GetPlayer(lua_State * L)
 {
 	const char * plName = luaL_checkstring(L,1);

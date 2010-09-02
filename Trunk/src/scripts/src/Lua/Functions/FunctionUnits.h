@@ -5061,6 +5061,14 @@ int LuaUnit_GetPhase(lua_State * L, Unit * ptr)
 	return 1;
 }
 
+int LuaUnit_IsInPhase(lua_State * L, Unit * ptr)
+{
+	TEST_UNITPLAYER();
+	uint32 phase = luaL_checkint(L,1);
+	lua_pushboolean(L, ptr->IsInPhase(phase) ? 1 : 0);
+	return 1;
+}
+
 int LuaUnit_SetZoneWeather(lua_State * L, Unit * ptr)
 {
 	/*
