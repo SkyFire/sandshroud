@@ -84,7 +84,7 @@ void LuaEngine::LoadScripts()
 		char * fn = strrchr(fd.cFileName, '\\');
 		if(!fn)
 			fn=fd.cFileName;
-        char * ext = strrchr(fd.cFileName, '.');
+		char * ext = strrchr(fd.cFileName, '.');
 		if(!stricmp(ext, ".lua"))
 			luaFiles.insert(string(fn));
 		else if(!stricmp(ext, ".luc"))
@@ -162,152 +162,197 @@ void LuaEngine::LoadScripts()
 	}
 }
 
-void LuaEngine::OnGossipEvent(Object* pObject, const char * FunctionName, uint32 EventType, Player* mPlayer, uint32 Id, uint32 IntId, const char * Code)
+/*******************************************************************************
+	FUNCTION CALL METHODS
+*******************************************************************************/
+void LuaEngine::BeginCall(uint16 fReference)
 {
-    if(FunctionName==NULL)
-		return;
-
-	m_Lock.Acquire();
-	lua_pushstring(L, FunctionName);
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	if(lua_isnil(L, -1))
-	{
-		printf("Tried to call invalid LUA function '%s' from Sandshroud (Gossip)!\n", FunctionName);
-		m_Lock.Release();
-		return;
-	}
-
-	if(pObject->IsUnit())
-		Lunar<Unit>::push(L, TO_UNIT(pObject));
-	else if(pObject->IsItem())
-		Lunar<Item>::push(L, TO_ITEM(pObject));
-	else if(pObject->IsGameObject())
-		Lunar<GameObject>::push(L, TO_GAMEOBJECT(pObject));
-
-	lua_pushinteger(L, EventType);
-	Lunar<Unit>::push(L, mPlayer);
-	lua_pushinteger(L, Id);
-	lua_pushinteger(L, IntId);
-	lua_pushstring(L, Code);
-
-	int r = lua_pcall(L, 6, LUA_MULTRET, 0);
-	if(r)
-		report(L);
-
-	m_Lock.Release();
+	lua_settop(L,0); //stack should be empty
+	lua_getref(L,fReference);
 }
 
-void LuaEngine::OnUnitEvent(Unit * pUnit, const char * FunctionName, uint32 EventType, Unit * pMiscUnit, uint32 Misc)
+bool LuaEngine::ExecuteCall(uint8 params, uint8 res)
 {
-	if(FunctionName == NULL)
-		return;
-
-	m_Lock.Acquire();
-	lua_pushstring(L, FunctionName);
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	if(lua_isnil(L,-1))
+	bool ret = true;
+	int top = lua_gettop(L);
+	if(strcmp(luaL_typename(L,top-params),"function") )
 	{
-		printf("Tried to call invalid LUA function '%s' from Sandshroud (Unit)!\n", FunctionName);
-		m_Lock.Release();
-		return;
+		ret = false;
+		//Paroxysm : Stack Cleaning here, not sure what causes that crash in luaH_getstr, maybe due to lack of stack space. Anyway, experimental.
+		if(params > 0)
+		{
+			for(int i = top; i >= (top-params); i--)
+			{
+				if(!lua_isnone(L,i) )
+					lua_remove(L,i);
+			}
+		}
 	}
-
-	Lunar<Unit>::push(L, pUnit);
-	lua_pushinteger(L,EventType);
-	if(pMiscUnit!=NULL)
-		Lunar<Unit>::push(L, pMiscUnit);
 	else
-		lua_pushnil(L);
-	lua_pushinteger(L,Misc);
-
-	int r = lua_pcall(L,4,LUA_MULTRET,0);
-	if(r)
-		report(L);
-
-	m_Lock.Release();
+	{
+		if(lua_pcall(L,params,res,0) )
+		{
+			report(L);
+			ret = false;
+		}
+	}
+	return ret;
 }
 
-void LuaEngine::OnQuestEvent(Player * QuestOwner, const char * FunctionName, uint32 QuestID, uint32 EventType, Object * QuestStarter)
+void LuaEngine::EndCall(uint8 res) 
 {
-	if(FunctionName==NULL)
-		return;
-
-	m_Lock.Acquire();
-	lua_pushstring(L, FunctionName);
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	if(lua_isnil(L,-1))
+	for(int i = res; i > 0; i--)
 	{
-		printf("Tried to call invalid LUA function '%s' from Sandshroud (Quest)!\n", FunctionName);
-		m_Lock.Release();
-		return;
+		if(!lua_isnone(L,res))
+			lua_remove(L,res);
 	}
-
-	if (QuestOwner)
-		Lunar<Unit>::push(L, (Unit*)QuestOwner);
-	else
-		lua_pushnil(L);
-
-	lua_pushinteger(L,EventType);
-
-	if(QuestStarter!=NULL && QuestStarter->GetTypeId() == TYPEID_UNIT)
-		Lunar<Unit>::push(L, (Unit*)QuestStarter);
-	else
-		lua_pushnil(L);
-
-	int r = lua_pcall(L,3,LUA_MULTRET,0);
-	if(r)
-		report(L);
-
-	m_Lock.Release();
-	
 }
-void LuaEngine::CallFunction(Unit * pUnit, const char * FuncName)
+/*******************************************************************************
+	END FUNCTION CALL METHODS
+*******************************************************************************/
+
+/******************************************************************************
+	PUSH METHODS
+******************************************************************************/
+
+void LuaEngine::PushUnit(Object * unit, lua_State * LuaS) 
 {
-	m_Lock.Acquire();
-	lua_pushstring(L, FuncName);
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	if(lua_isnil(L,-1))
-	{
-		printf("Tried to call invalid LUA function '%s' from Sandshroud (Unit)!\n", FuncName);
-		m_Lock.Release();
-		return;
-	}
-
-	Lunar<Unit>::push(L, pUnit);
-	int r = lua_pcall(L,1,LUA_MULTRET,0);
-	if(r)
-		report(L);
-
-	m_Lock.Release();
+	Unit * pUnit = NULL;
+	if(unit != NULL && unit->IsUnit() ) 
+		pUnit = TO_UNIT(unit);
+	if(LuaS == NULL)
+		Lunar<Unit>::push(L,pUnit);
+	else
+		Lunar<Unit>::push(LuaS,pUnit);
 }
 
-void LuaEngine::OnGameObjectEvent(GameObject * pGameObject, const char * FunctionName, uint32 EventType, Unit * pMiscUnit)
+void LuaEngine::PushGo(Object *go, lua_State *LuaS)
 {
-	if(FunctionName==NULL)
-		return;
+	GameObject * pGo = NULL;
+	if(go != NULL && go->IsGameObject() )
+		pGo = TO_GAMEOBJECT(go);
 
-	m_Lock.Acquire();
-	lua_pushstring(L, FunctionName);
-	lua_gettable(L, LUA_GLOBALSINDEX);
-	if(lua_isnil(L,-1))
-	{
-		printf("Tried to call invalid LUA function '%s' from Sandshroud! (GO)\n", FunctionName);
-		m_Lock.Release();
-		return;
-	}
-
-	Lunar<GameObject>::push(L, pGameObject);
-	lua_pushinteger(L,EventType);
-	if(!pMiscUnit)
-		lua_pushnil(L);
+	if(LuaS == NULL)
+		Lunar<GameObject>::push(L, pGo);
 	else
-		Lunar<Unit>::push(L, pMiscUnit);
+		Lunar<GameObject>::push(LuaS, pGo);
+}
 
-	int r = lua_pcall(L,3,LUA_MULTRET,0);
-	if(r)
-		report(L);
+void LuaEngine::PushItem(Object * item, lua_State *LuaS)
+{
+	Item * pItem = NULL;
+	if(item != NULL && (item->GetTypeId() == TYPEID_ITEM || item->GetTypeId() == TYPEID_CONTAINER))
+		pItem = TO_ITEM(item);
 
-	m_Lock.Release();
+	if(LuaS == NULL)
+		Lunar<Item>::push(L, pItem);
+	else
+		Lunar<Item>::push(LuaS, pItem);
+}
+
+void LuaEngine::PushGuid(uint64 guid, lua_State * LuaS) 
+{
+	if(LuaS == NULL)
+		GuidMgr::push(L, guid);
+	else
+		GuidMgr::push(LuaS, guid);
+}
+
+void LuaEngine::PushPacket(WorldPacket * pack, lua_State * LuaS) 
+{
+	if(LuaS == NULL)
+		Lunar<WorldPacket>::push(L, pack, true);
+	else
+		Lunar<WorldPacket>::push(LuaS, pack, true);
+}
+
+void LuaEngine::PushTaxiPath(TaxiPath * tp, lua_State * LuaS) 
+{
+	if(LuaS == NULL)
+		Lunar<TaxiPath>::push(L, tp, true);
+	else
+		Lunar<TaxiPath>::push(LuaS, tp, true);
+}
+
+void LuaEngine::PushSpell(Spell * sp, lua_State * LuaS) 
+{
+	if(LuaS == NULL)
+		Lunar<Spell>::push(L, sp);
+	else
+		Lunar<Spell>::push(LuaS, sp);
+}
+
+void LuaEngine::PushSQLField(Field *field, lua_State *LuaS)
+{
+	if(LuaS == NULL)
+		Lunar<Field>::push(L, field);
+	else
+		Lunar<Field>::push(LuaS, field);
+}
+
+void LuaEngine::PushSQLResult(QueryResult * res, lua_State * LuaS)
+{
+	if(LuaS == NULL)
+		Lunar<QueryResult>::push(L, res, true);
+	else
+		Lunar<QueryResult>::push(LuaS, res, true);
+}
+
+void LuaEngine::PushAura(Aura * aura, lua_State * LuaS)
+{
+	if(LuaS == NULL)
+		Lunar<Aura>::push(L, aura);
+	else
+		Lunar<Aura>::push(LuaS, aura);
+}
+
+/*******************************************************************************
+	END PUSH METHODS
+*******************************************************************************/
+
+static int ExtractfRefFromCString(lua_State * L,const char * functionName)
+{
+	int functionRef = 0;
+	int top = lua_gettop(L);
+	if(functionName != NULL)
+	{
+		char * copy = strdup(functionName);
+		char * token = strtok(copy, ".:");
+		if (strpbrk(functionName,".:") == NULL)
+		{
+			lua_getglobal(L,functionName);
+			if (lua_isfunction(L,-1) && !lua_iscfunction(L,-1))
+				functionRef = lua_ref(L,true);
+			else
+				luaL_error(L,"Reference creation failed! (%s) is not a valid Lua function. \n",functionName);
+		}
+		else
+		{
+			lua_getglobal(L,"_G");
+			while (token != NULL)
+			{
+				lua_getfield(L,-1,token);
+				if (lua_isfunction(L,-1) && !lua_iscfunction(L,-1))
+				{
+					functionRef = lua_ref(L,true);
+					break;
+				}
+				else if (lua_istable(L,-1) )
+				{
+					token = strtok(NULL,".:");
+					continue;
+				}
+				else
+				{
+					luaL_error(L,"Reference creation failed! (%s) is not a valid Lua function. \n",functionName);
+					break;
+				}
+			}
+		}
+		free((void*)copy);
+		lua_settop(L,top);
+	}
+	return functionRef;
 }
 
 static int RegisterUnitEvent(lua_State * L);
@@ -378,79 +423,128 @@ void LuaEngine::RegisterCoreFunctions()
 
 static int RegisterUnitEvent(lua_State * L)
 {
+	lua_settop(L,3);
+	uint16 functionRef = 0;
 	int entry = luaL_checkint(L, 1);
 	int ev = luaL_checkint(L, 2);
-	const char * str = luaL_checkstring(L, 3);
-
-	if(!entry || !ev || !str || !lua_is_starting_up)
+	const char * typeName = luaL_typename(L,3);
+	if(!entry || !ev || typeName == NULL )
 		return 0;
 
-	g_luaMgr.RegisterUnitEvent(entry,ev,str);
+	if(!strcmp(typeName,"function"))
+		functionRef = (uint16)lua_ref(L,true);
+	else if(!strcmp(typeName,"string")) //Old way of passing in functions, obsolete but left in for compatability.
+		functionRef = ExtractfRefFromCString(L, luaL_checkstring(L,3));
+	if(functionRef > 0)
+		g_luaMgr.RegisterEvent(REGTYPE_UNIT,entry,ev,functionRef);
+
+	lua_pop(L,3);
 	return 1;
 }
 
 static int RegisterQuestEvent(lua_State * L)
 {
+	lua_settop(L,3);
+	uint16 functionRef = 0;
 	int entry = luaL_checkint(L, 1);
 	int ev = luaL_checkint(L, 2);
-	const char * str = luaL_checkstring(L, 3);
-
-	if(!entry || !ev || !str || !lua_is_starting_up)
+	const char * typeName = luaL_typename(L,3);
+	if(!entry || !ev || typeName == NULL)
 		return 0;
 
-	g_luaMgr.RegisterQuestEvent(entry,ev,str);
-	return 0;
+	if(!strcmp(typeName,"function"))
+		functionRef = (uint16)lua_ref(L,true);
+	else if(!strcmp(typeName,"string")) //Old way of passing in functions, obsolete but left in for compatability.
+		functionRef = ExtractfRefFromCString(L,luaL_checkstring(L,3));
+	if(functionRef > 0)
+		g_luaMgr.RegisterEvent(REGTYPE_QUEST,entry,ev,functionRef);
+
+	lua_pop(L,3);
+	return 1;
 }
 
 static int RegisterGameObjectEvent(lua_State * L)
 {
+	lua_settop(L,3);
+	uint16 functionRef = 0;
 	int entry = luaL_checkint(L, 1);
 	int ev = luaL_checkint(L, 2);
-	const char * str = luaL_checkstring(L, 3);
-
-	if(!entry || !ev || !str || !lua_is_starting_up)
+	const char * typeName = luaL_typename(L,3);
+	if(!entry || !ev || typeName == NULL)
 		return 0;
 
-	g_luaMgr.RegisterGameObjectEvent(entry,ev,str);
-	return 0;
+	if(!strcmp(typeName,"function"))
+		functionRef = (uint16)lua_ref(L,true);
+	else if(!strcmp(typeName,"string")) //Old way of passing in functions, obsolete but left in for compatability.
+		functionRef = ExtractfRefFromCString(L,luaL_checkstring(L,3));
+	if(functionRef > 0)
+		g_luaMgr.RegisterEvent(REGTYPE_GO,entry,ev,functionRef);
+
+	lua_pop(L,3);
+	return 1;
 }
 
 // Gossip stuff
 static int RegisterUnitGossipEvent(lua_State * L)
 {
+	lua_settop(L,3);
+	uint16 functionRef = 0;
 	int entry = luaL_checkint(L, 1);
 	int ev = luaL_checkint(L, 2);
-	const char * str = luaL_checkstring(L, 3);
-
-	if(!entry || !ev || !str || !lua_is_starting_up)
+	const char * typeName = luaL_typename(L,3);
+	if(!entry || !ev || typeName == NULL)
 		return 0;
 
-	g_luaMgr.RegisterUnitGossipEvent(entry, ev, str);
-	return 0;
+	if(!strcmp(typeName,"function"))
+		functionRef = (uint16)lua_ref(L,true);
+	else if(!strcmp(typeName,"string")) //Old way of passing in functions, obsolete but left in for compatability.
+		functionRef = ExtractfRefFromCString(L,luaL_checkstring(L,3));
+	if(functionRef > 0)
+		g_luaMgr.RegisterEvent(REGTYPE_UNIT_GOSSIP,entry,ev,functionRef);
+
+	lua_pop(L,3);
+	return 1;
 }
 
 static int RegisterItemGossipEvent(lua_State * L)
 {
+ 	lua_settop(L,3);
+	uint16 functionRef = 0;
 	int entry = luaL_checkint(L, 1);
 	int ev = luaL_checkint(L, 2);
-	const char * str = luaL_checkstring(L, 3);
-	if(!entry || !ev || !str || !lua_is_starting_up)
+	const char * typeName = luaL_typename(L,3);
+	if(!entry || !ev || typeName == NULL)
 		return 0;
 
-	g_luaMgr.RegisterItemGossipEvent(entry, ev, str);
-	return 0;
+	if(!strcmp(typeName,"function"))
+		functionRef = (uint16)lua_ref(L,true);
+	else if(!strcmp(typeName,"string")) //Old way of passing in functions, obsolete but left in for compatability.
+		functionRef = ExtractfRefFromCString(L,luaL_checkstring(L,3));
+	if(functionRef > 0)
+		g_luaMgr.RegisterEvent(REGTYPE_ITEM_GOSSIP,entry,ev,functionRef);
+
+	lua_pop(L,3);
+	return 1;
 }
 
 static int RegisterGOGossipEvent(lua_State * L)
 {
+	lua_settop(L,3);
+	uint16 functionRef = 0;
 	int entry = luaL_checkint(L, 1);
 	int ev = luaL_checkint(L, 2);
-	const char * str = luaL_checkstring(L, 3);
-
-	if(!entry || !ev || !str || !lua_is_starting_up)
+	const char * typeName = luaL_typename(L,3);
+	if(!entry || !ev || typeName == NULL)
 		return 0;
 
-	g_luaMgr.RegisterGOGossipEvent(entry, ev, str);
+	if(!strcmp(typeName,"function"))
+		functionRef = (uint16)lua_ref(L,true);
+	else if(!strcmp(typeName,"string")) //Old way of passing in functions, obsolete but left in for compatability.
+		functionRef = ExtractfRefFromCString(L,luaL_checkstring(L,3));
+	if(functionRef > 0)
+		g_luaMgr.RegisterEvent(REGTYPE_GO_GOSSIP,entry,ev,functionRef);
+
+	lua_pop(L,3);
 	return 0;
 }
 
@@ -479,70 +573,181 @@ static int RegisterGOGossipEvent(lua_State * L)
 
 
 /************************************************************************/
-/* Manager Stuff                                                        */
+/* Manager Stuff														*/
 /************************************************************************/
 
 class LuaGossip : public GossipScript
 {
 public:
-	LuaGossip() : GossipScript() {}
-	~LuaGossip() {}
 
-	void GossipHello(Object* pObject, Player* Plr, bool AutoSend) // Dont need GossipHello for GO's
+	LuaGossip() : GossipScript(), m_go_gossip_binding(NULL),m_item_gossip_binding(NULL),m_unit_gossip_binding(NULL) {}
+	~LuaGossip()
 	{
-        if(pObject->GetTypeId() == TYPEID_UNIT)
-        {
-            if( m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_TALK] != NULL )
-			    g_engine->OnGossipEvent( pObject, m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_TALK], GOSSIP_EVENT_ON_TALK, Plr, NULL, NULL, NULL );
-        }
-        else if(pObject->GetTypeId() == TYPEID_ITEM)
-        {
-            if( m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_TALK] != NULL )
-			    g_engine->OnGossipEvent( pObject, m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_TALK], GOSSIP_EVENT_ON_TALK, Plr, NULL, NULL, NULL );
-        }
+		typedef HM_NAMESPACE::hash_map<uint32, LuaGossip*> MapType;
+		MapType gMap;
+		if(m_go_gossip_binding != NULL)
+		{
+			gMap = g_luaMgr.getGameObjectGossipInterfaceMap();
+			for(MapType::iterator itr = gMap.begin(); itr != gMap.end(); ++itr)
+			{
+				if(itr->second == this) {
+					gMap.erase(itr);
+					break;
+				}
+			}
+		}
+		else if(m_unit_gossip_binding != NULL)
+		{
+			gMap = g_luaMgr.getUnitGossipInterfaceMap();
+			for(MapType::iterator itr = gMap.begin(); itr != gMap.end(); ++itr)
+			{
+				if(itr->second == this)
+				{
+					gMap.erase(itr);
+					break;
+				}
+			}
+		}
+		else if(m_item_gossip_binding != NULL)
+		{
+			gMap = g_luaMgr.getItemGossipInterfaceMap();
+			for(MapType::iterator itr = gMap.begin(); itr != gMap.end(); ++itr)
+			{
+				if(itr->second == this)
+				{
+					gMap.erase(itr);
+					break;
+				}
+			}
+		}
+	}
+
+	void GossipHello(Object* pObject, Player* Plr, bool AutoSend)
+	{
+		if(pObject->GetTypeId() == TYPEID_UNIT)
+		{
+			if(m_unit_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_TALK]);
+			g_engine->PushUnit(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_TALK);
+			g_engine->PushUnit(Plr);
+			g_engine->PushBool(AutoSend);
+			g_engine->ExecuteCall(4);
+		}
+		else if(pObject->GetTypeId() == TYPEID_ITEM)
+		{
+			if(m_item_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_TALK]);
+			g_engine->PushItem(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_TALK);
+			g_engine->PushUnit(Plr);
+			g_engine->PushBool(AutoSend);
+			g_engine->ExecuteCall(4);
+		}
+		else if(pObject->GetTypeId() == TYPEID_GAMEOBJECT)
+		{
+			if(m_go_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_go_gossip_binding->Functions[GOSSIP_EVENT_ON_TALK]);
+			g_engine->PushGo(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_TALK);
+			g_engine->PushUnit(Plr);
+			g_engine->PushBool(AutoSend);
+			g_engine->ExecuteCall(4);
+		}
 	}
 
 	void GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, uint32 IntId, const char * EnteredCode)
 	{
-        if(pObject->GetTypeId() == TYPEID_UNIT)
-        {
-            if( m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION] != NULL )
-			    g_engine->OnGossipEvent( pObject, m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION], GOSSIP_EVENT_ON_SELECT_OPTION, Plr, Id, IntId, EnteredCode);
-        }
-        else if(pObject->GetTypeId() == TYPEID_ITEM)
-        {
-            if( m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION] != NULL )
-                g_engine->OnGossipEvent( pObject, m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION], GOSSIP_EVENT_ON_SELECT_OPTION, Plr, Id, IntId, EnteredCode);
-        }
-        else if(pObject->GetTypeId() == TYPEID_GAMEOBJECT)
-       {
-            if( m_go_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION] != NULL )
-                g_engine->OnGossipEvent( pObject, m_go_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION], GOSSIP_EVENT_ON_SELECT_OPTION, Plr, Id, IntId, EnteredCode);
-        }
+		if(pObject->GetTypeId() == TYPEID_UNIT)
+		{
+			if(m_unit_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION]);
+			g_engine->PushUnit(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_SELECT_OPTION);
+			g_engine->PushUnit(Plr);
+			g_engine->PushUint(Id);
+			g_engine->PushUint(IntId);
+			g_engine->PushString(EnteredCode);
+			g_engine->ExecuteCall(6);
+		}
+		else if(pObject->GetTypeId() == TYPEID_ITEM)
+		{
+			if(m_item_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION]);
+			g_engine->PushItem(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_SELECT_OPTION);
+			g_engine->PushUnit(Plr);
+			g_engine->PushUint(Id);
+			g_engine->PushUint(IntId);
+			g_engine->PushString(EnteredCode);
+			g_engine->ExecuteCall(6);
+		}
+		else if(pObject->GetTypeId() == TYPEID_GAMEOBJECT)
+		{
+			if(m_go_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_go_gossip_binding->Functions[GOSSIP_EVENT_ON_SELECT_OPTION]);
+			g_engine->PushGo(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_SELECT_OPTION);
+			g_engine->PushUnit(Plr);
+			g_engine->PushUint(Id);
+			g_engine->PushUint(IntId);
+			g_engine->PushString(EnteredCode);
+			g_engine->ExecuteCall(6);
+		}
 	}
 
 	void GossipEnd(Object* pObject, Player* Plr)
 	{
-        if(pObject->GetTypeId() == TYPEID_UNIT)
-        {
-		    if( m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_END] != NULL )
-			    g_engine->OnGossipEvent( pObject, m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_END], GOSSIP_EVENT_ON_END, Plr, NULL, NULL, NULL );
-       }
-        else if(pObject->GetTypeId() == TYPEID_ITEM)
-        {
-            if( m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_END] != NULL )
-			    g_engine->OnGossipEvent( pObject, m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_END], GOSSIP_EVENT_ON_END, Plr, NULL, NULL, NULL );
-        }
-       else if(pObject->GetTypeId() == TYPEID_GAMEOBJECT)
-        {
-            if( m_go_gossip_binding->Functions[GOSSIP_EVENT_ON_END] != NULL )
-			    g_engine->OnGossipEvent( pObject, m_go_gossip_binding->Functions[GOSSIP_EVENT_ON_END], GOSSIP_EVENT_ON_END, Plr, NULL, NULL, NULL );
-       }
+		if(pObject->GetTypeId() == TYPEID_UNIT)
+		{
+			if(m_unit_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_unit_gossip_binding->Functions[GOSSIP_EVENT_ON_END]);
+			g_engine->PushUnit(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_END);
+			g_engine->PushUnit(Plr);
+			g_engine->ExecuteCall(3);
+		}
+		else if(pObject->GetTypeId() == TYPEID_ITEM)
+		{
+			if(m_item_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_item_gossip_binding->Functions[GOSSIP_EVENT_ON_END]);
+			g_engine->PushItem(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_END);
+			g_engine->PushUnit(Plr);
+			g_engine->ExecuteCall(3);
+		}
+		else if(pObject->GetTypeId() == TYPEID_GAMEOBJECT)
+		{
+			if(m_go_gossip_binding == NULL)
+				return;
+
+			g_engine->BeginCall(m_go_gossip_binding->Functions[GOSSIP_EVENT_ON_END]);
+			g_engine->PushGo(pObject);
+			g_engine->PushUint(GOSSIP_EVENT_ON_END);
+			g_engine->PushUnit(Plr);
+			g_engine->ExecuteCall(3);
+		}
 	}
 
 	LuaUnitGossipBinding * m_unit_gossip_binding;
 	LuaItemGossipBinding * m_item_gossip_binding;
-    LuaGOGossipBinding * m_go_gossip_binding;
+	LuaGOGossipBinding * m_go_gossip_binding;
 };
 
 class LuaCreature : public CreatureAIScript
@@ -553,59 +758,260 @@ public:
 
 	void OnCombatStart(Unit* mTarget)
 	{
-		if( m_binding->Functions[CREATURE_EVENT_ON_ENTER_COMBAT] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_ENTER_COMBAT], CREATURE_EVENT_ON_ENTER_COMBAT, mTarget, 0 );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_ENTER_COMBAT]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_ENTER_COMBAT);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(3);
 	}
 
 	void OnCombatStop(Unit* mTarget)
 	{
-		if( m_binding->Functions[CREATURE_EVENT_ON_LEAVE_COMBAT] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_LEAVE_COMBAT], CREATURE_EVENT_ON_LEAVE_COMBAT, mTarget, 0 );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_LEAVE_COMBAT]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_LEAVE_COMBAT);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(3);
 	}
 
 	void OnTargetDied(Unit* mTarget)
 	{
-		if( m_binding->Functions[CREATURE_EVENT_ON_KILLED_TARGET] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_KILLED_TARGET], CREATURE_EVENT_ON_KILLED_TARGET, mTarget, 0 );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_KILLED_TARGET]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_KILLED_TARGET);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(3);
 	}
 
 	void OnDied(Unit *mKiller)
 	{
-		if( m_binding->Functions[CREATURE_EVENT_ON_DIED] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_DIED], CREATURE_EVENT_ON_DIED, mKiller, 0 );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_DIED]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_DIED);
+		g_engine->PushUnit(mKiller);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnTargetParried(Unit* mTarget)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_TARGET_PARRIED]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_TARGET_PARRIED);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnTargetDodged(Unit* mTarget)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_TARGET_DODGED]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_TARGET_DODGED);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnTargetBlocked(Unit* mTarget, int32 iAmount)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_TARGET_BLOCKED]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_TARGET_BLOCKED);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushInt(iAmount);
+		g_engine->ExecuteCall(4);
+	}
+
+	void OnTargetCritHit(Unit* mTarget, int32 fAmount)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_TARGET_CRIT_HIT]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_TARGET_CRIT_HIT);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushInt(fAmount);
+		g_engine->ExecuteCall(4);
+	}
+
+	void OnParried(Unit* mTarget)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_PARRY]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_PARRY);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnDodged(Unit* mTarget)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_DODGED]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_DODGED);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnBlocked(Unit* mTarget, int32 iAmount)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_BLOCKED]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_BLOCKED);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushInt(iAmount);
+		g_engine->ExecuteCall(4);
+	}
+
+	void OnCritHit(Unit* mTarget, int32 fAmount)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_CRIT_HIT]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_CRIT_HIT);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushInt(fAmount);
+		g_engine->ExecuteCall(4);
+	}
+
+	void OnHit(Unit* mTarget, float fAmount)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_HIT]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_HIT);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushFloat(fAmount);
+		g_engine->ExecuteCall(4);
+	}
+
+	void OnAssistTargetDied(Unit* mAssistTarget)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_ASSIST_DIED]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_ASSIST_DIED);
+		g_engine->PushUnit(mAssistTarget);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnFear(Unit* mFeared, uint32 iSpellId)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_FEAR]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_FEAR);
+		g_engine->PushUnit(mFeared);
+		g_engine->PushUint(iSpellId);
+		g_engine->ExecuteCall(4);
+	}
+
+	void OnFlee(Unit* mFlee)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_FLEE]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_FLEE);
+		g_engine->PushUnit(mFlee);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnCallForHelp()
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_CALL_FOR_HELP]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_CALL_FOR_HELP);
+		g_engine->ExecuteCall(2);
 	}
 
 	void OnLoad()
 	{
-		if( m_binding->Functions[CREATURE_EVENT_ON_SPAWN] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_SPAWN], CREATURE_EVENT_ON_SPAWN, NULL, 0 );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_SPAWN]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_SPAWN);
+		g_engine->ExecuteCall(2);
+
+		uint32 iid = _unit->GetInstanceID();
+		if (_unit->GetMapMgr() == NULL || _unit->GetMapMgr()->GetMapInfo()->type == INSTANCE_NULL)
+			iid = 0;
+
+		OnLoadInfo.push_back(_unit->GetMapId());
+		OnLoadInfo.push_back(iid);
+		OnLoadInfo.push_back(GET_LOWGUID_PART(_unit->GetGUID()));
 	}
 
 	void OnReachWP(uint32 iWaypointId, bool bForwards)
 	{
-		if( m_binding->Functions[CREATURE_EVENT_ON_REACH_WP] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_REACH_WP], CREATURE_EVENT_ON_REACH_WP, NULL, iWaypointId );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_REACH_WP]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_REACH_WP);
+		g_engine->PushUint(iWaypointId);
+		g_engine->PushBool(bForwards);
+		g_engine->ExecuteCall(4);
 	}
 
-	void OnLootTaken()
+	void OnLootTaken(Player* pPlayer, ItemPrototype *pItemPrototype)
 	{
-		if( m_binding->Functions[CREATURE_EVENT_ON_LOOT_TAKEN] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_ON_LOOT_TAKEN], CREATURE_EVENT_ON_LOOT_TAKEN, NULL, 0 );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_LOOT_TAKEN]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_LOOT_TAKEN);
+		g_engine->PushUnit(pPlayer);
+		g_engine->PushUint(pItemPrototype->ItemId);
+		g_engine->ExecuteCall(4);
 	}
 
 	void AIUpdate()
 	{
-		if( m_binding->Functions[CREATURE_EVENT_AI_TICK] != NULL )
-			g_engine->OnUnitEvent( _unit, m_binding->Functions[CREATURE_EVENT_AI_TICK], CREATURE_EVENT_AI_TICK, NULL, 0 );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_AIUPDATE]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_AIUPDATE);
+		g_engine->ExecuteCall(2);
 	}
 
-	void StringFunctionCall(const char * pFunction)
+	void OnEmote(Player * pPlayer, EmoteType Emote)
 	{
-		g_engine->CallFunction( _unit, pFunction );
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_EMOTE]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_EMOTE);
+		g_engine->PushUnit(pPlayer);
+		g_engine->PushInt((int32)Emote);
+		g_engine->ExecuteCall(4);
+	}
+
+	void OnDamageTaken(Unit* mAttacker, uint32 fAmount)
+	{
+		g_engine->BeginCall(m_binding->Functions[CREATURE_EVENT_ON_DAMAGE_TAKEN]);
+		g_engine->PushUnit(_unit);
+		g_engine->PushInt(CREATURE_EVENT_ON_DAMAGE_TAKEN);
+		g_engine->PushUnit(mAttacker);
+		g_engine->PushUint(fAmount);
+		g_engine->ExecuteCall(4);
+	}
+
+	void StringFunctionCall(int fRef)
+	{
+		g_engine->BeginCall(fRef);
+		g_engine->PushUnit(_unit);
+		g_engine->ExecuteCall(1);
 	}
 
 	void Destroy()
 	{
+/*		typedef std::multimap<uint32,LuaCreature*> CMAP;
+		CMAP & cMap = g_engine->getLuCreatureMap();
+		CMAP::iterator itr = cMap.find(_unit->GetEntry());
+		CMAP::iterator itend = cMap.upper_bound(_unit->GetEntry());
+		CMAP::iterator it;
+		for(;itr != cMap.end() && itr != itend;)
+		{
+			it = itr++;
+			if(it->second != NULL && it->second == this)
+				cMap.erase(it);
+		}
+
+		//Function Ref clean up
+		std::map< uint64,std::set<int> > & objRefs = g_engine->getObjectFunctionRefs();
+		std::map< uint64,std::set<int> >::iterator itr = objRefs.find(_unit->GetGUID());
+		if(itr != objRefs.end() )
+		{
+			std::set<int> & refs = itr->second;
+			for(std::set<int>::iterator it = refs.begin(); it != refs.end(); ++it)
+			{
+				lua_unref(g_engine->getluState(),(*it));
+				sEventMgr.RemoveEvents(_unit,(*it)+EVENT_LUA_CREATURE_EVENTS);
+			}
+			refs.clear();
+		}*/
 		delete this;
 	}
 
@@ -618,16 +1024,78 @@ public:
 	LuaGameObject(GameObject * go) : GameObjectAIScript(go) {}
 	~LuaGameObject() {}
 
+	void OnCreate()
+	{
+		g_engine->BeginCall(m_binding->Functions[GAMEOBJECT_EVENT_ON_CREATE]);
+		g_engine->PushGo(_gameobject);
+		g_engine->ExecuteCall(1);
+	}
+
 	void OnSpawn()
 	{
-		if( m_binding->Functions[GAMEOBJECT_EVENT_ON_SPAWN] != NULL )
-			g_engine->OnGameObjectEvent( _gameobject, m_binding->Functions[GAMEOBJECT_EVENT_ON_SPAWN], GAMEOBJECT_EVENT_ON_SPAWN, NULL );
+		g_engine->BeginCall(m_binding->Functions[GAMEOBJECT_EVENT_ON_SPAWN]);
+		g_engine->PushGo(_gameobject);
+		g_engine->ExecuteCall(1);
+	}
+
+	void OnDespawn()
+	{
+		g_engine->BeginCall(m_binding->Functions[GAMEOBJECT_EVENT_ON_DESPAWN]);
+		g_engine->PushGo(_gameobject);
+		g_engine->ExecuteCall(1);
+	}
+
+	void OnLootTaken(Player * pLooter, ItemPrototype *pItemInfo)
+	{
+		g_engine->BeginCall(m_binding->Functions[GAMEOBJECT_EVENT_ON_LOOT_TAKEN]);
+		g_engine->PushGo(_gameobject);
+		g_engine->PushUint(GAMEOBJECT_EVENT_ON_LOOT_TAKEN);
+		g_engine->PushUnit(pLooter);
+		g_engine->PushUint(pItemInfo->ItemId);
+		g_engine->ExecuteCall(4);
 	}
 
 	void OnActivate(Player * pPlayer)
 	{
-		if( m_binding->Functions[GAMEOBJECT_EVENT_ON_USE] != NULL )
-			g_engine->OnGameObjectEvent( _gameobject, m_binding->Functions[GAMEOBJECT_EVENT_ON_USE], GAMEOBJECT_EVENT_ON_USE, pPlayer );
+		g_engine->BeginCall(m_binding->Functions[GAMEOBJECT_EVENT_ON_USE]);
+		g_engine->PushGo(_gameobject);
+		g_engine->PushUint(GAMEOBJECT_EVENT_ON_USE);
+		g_engine->PushUnit(pPlayer);
+		g_engine->ExecuteCall(3);
+	}
+
+	void AIUpdate()
+	{
+		g_engine->BeginCall(m_binding->Functions[GAMEOBJECT_EVENT_AIUPDATE]);
+		g_engine->PushGo(_gameobject);
+		g_engine->ExecuteCall(1);
+	}
+
+	void Destroy ()
+	{
+/*		typedef std::multimap<uint32,LuaGameObject*> GMAP;
+		GMAP & gMap = g_engine->getLuGameObjectMap();
+		GMAP::iterator itr = gMap.find(_gameobject->GetEntry());
+		GMAP::iterator itend = gMap.upper_bound(_gameobject->GetEntry());
+		GMAP::iterator it;
+		//uint64 guid = _gameobject->GetGUID(); Unused?
+		for(; itr != itend;)
+		{
+			it = itr++;
+			if(it->second != NULL && it->second == this)
+				gMap.erase(it);
+		}
+
+		std::map< uint64,std::set<int> > & objRefs = g_engine->getObjectFunctionRefs();
+		std::map< uint64,std::set<int> >::iterator itr2 = objRefs.find(_gameobject->GetGUID());
+		if(itr2 != objRefs.end() )
+		{
+			std::set<int> & refs = itr2->second;
+			for(std::set<int>::iterator it = refs.begin(); it != refs.end(); ++it)
+				lua_unref( g_engine->getluState(), (*it) );
+			refs.clear();
+		}*/
+		delete this;
 	}
 
 	LuaGameObjectBinding * m_binding;
@@ -641,14 +1109,62 @@ public:
 
 	void OnQuestStart(Player* mTarget, QuestLogEntry *qLogEntry)
 	{
-		if( m_binding->Functions[QUEST_EVENT_ON_ACCEPT] != NULL )
-			g_engine->OnQuestEvent( mTarget, m_binding->Functions[QUEST_EVENT_ON_ACCEPT], qLogEntry->GetQuest()->id, QUEST_EVENT_ON_ACCEPT, mTarget );
+		g_engine->BeginCall(m_binding->Functions[QUEST_EVENT_ON_ACCEPT]);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushUint(qLogEntry->GetQuest()->id);
+		g_engine->ExecuteCall(2);
 	}
 
 	void OnQuestComplete(Player* mTarget, QuestLogEntry *qLogEntry)
 	{
-		if( m_binding->Functions[QUEST_EVENT_ON_COMPLETE] != NULL )
-			g_engine->OnQuestEvent( mTarget, m_binding->Functions[QUEST_EVENT_ON_COMPLETE], qLogEntry->GetQuest()->id, QUEST_EVENT_ON_COMPLETE, mTarget );
+		g_engine->BeginCall(m_binding->Functions[QUEST_EVENT_ON_COMPLETE]);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushUint(qLogEntry->GetQuest()->id);
+		g_engine->ExecuteCall(2);
+	}
+
+	void OnQuestCancel(Player* mTarget)
+	{
+		g_engine->BeginCall(m_binding->Functions[QUEST_EVENT_ON_CANCEL]);
+		g_engine->PushUnit(mTarget);
+		g_engine->ExecuteCall(1);
+	}
+
+	void OnGameObjectActivate(uint32 entry, Player* mTarget, QuestLogEntry *qLogEntry)
+	{
+		g_engine->BeginCall(m_binding->Functions[QUEST_EVENT_GAMEOBJECT_ACTIVATE]);
+		g_engine->PushUint(entry);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushUint(qLogEntry->GetQuest()->id);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnCreatureKill(uint32 entry, Player* mTarget, QuestLogEntry *qLogEntry)
+	{
+		g_engine->BeginCall(m_binding->Functions[QUEST_EVENT_ON_CREATURE_KILL]);
+		g_engine->PushUint(entry);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushUint(qLogEntry->GetQuest()->id);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnExploreArea(uint32 areaId, Player* mTarget, QuestLogEntry *qLogEntry)
+	{
+		g_engine->BeginCall(m_binding->Functions[QUEST_EVENT_ON_EXPLORE_AREA]);
+		g_engine->PushUint(areaId);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushUint(qLogEntry->GetQuest()->id);
+		g_engine->ExecuteCall(3);
+	}
+
+	void OnPlayerItemPickup(uint32 itemId, uint32 totalCount, Player* mTarget, QuestLogEntry *qLogEntry)
+	{
+		g_engine->BeginCall(m_binding->Functions[QUEST_EVENT_ON_PLAYER_ITEMPICKUP]);
+		g_engine->PushUint(itemId);
+		g_engine->PushUint(totalCount);
+		g_engine->PushUnit(mTarget);
+		g_engine->PushUint(qLogEntry->GetQuest()->id);
+		g_engine->ExecuteCall(4);
 	}
 
 	LuaQuestBinding * m_binding;
@@ -689,7 +1205,7 @@ QuestScript * CreateLuaQuestScript(uint32 id)
 // Gossip stuff
 GossipScript * CreateLuaUnitGossipScript(uint32 id)
 {
-    LuaUnitGossipBinding * pBinding = g_luaMgr.GetLuaUnitGossipBinding( id );
+	LuaUnitGossipBinding * pBinding = g_luaMgr.GetLuaUnitGossipBinding( id );
 	if( pBinding == NULL )
 		return NULL;
  
@@ -700,7 +1216,7 @@ GossipScript * CreateLuaUnitGossipScript(uint32 id)
 
 GossipScript * CreateLuaItemGossipScript(uint32 id)
 {
-    LuaItemGossipBinding * pBinding = g_luaMgr.GetLuaItemGossipBinding( id );
+	LuaItemGossipBinding * pBinding = g_luaMgr.GetLuaItemGossipBinding( id );
 	if( pBinding == NULL )
 		return NULL;
 
@@ -711,12 +1227,12 @@ GossipScript * CreateLuaItemGossipScript(uint32 id)
 
 GossipScript * CreateLuaGOGossipScript(uint32 id)
 {
-    LuaGOGossipBinding * pBinding = g_luaMgr.GetLuaGOGossipBinding( id );
+	LuaGOGossipBinding * pBinding = g_luaMgr.GetLuaGOGossipBinding( id );
 	if( pBinding == NULL )
 		return NULL;
 
 	LuaGossip * pLua = new LuaGossip();
-    pLua->m_go_gossip_binding = pBinding;
+	pLua->m_go_gossip_binding = pBinding;
 	return pLua;
 }
 
@@ -746,142 +1262,182 @@ void LuaEngineMgr::Startup()
 		if( qs != NULL )
 			m_scriptMgr->register_quest_script( itr->first, qs );
 	}
-    // Register Gossip Stuff
-    for(GossipUnitScriptsBindingMap::iterator itr = m_unit_gossipBinding.begin(); itr != m_unit_gossipBinding.end(); ++itr)
+	// Register Gossip Stuff
+	for(GossipUnitScriptsBindingMap::iterator itr = m_unit_gossipBinding.begin(); itr != m_unit_gossipBinding.end(); ++itr)
 	{
 		GossipScript * gs = CreateLuaUnitGossipScript( itr->first );
 	if( gs != NULL )
 			m_scriptMgr->register_gossip_script( itr->first, gs );
-    }
+	}
 
-    for(GossipItemScriptsBindingMap::iterator itr = m_item_gossipBinding.begin(); itr != m_item_gossipBinding.end(); ++itr)
+	for(GossipItemScriptsBindingMap::iterator itr = m_item_gossipBinding.begin(); itr != m_item_gossipBinding.end(); ++itr)
 	{
 		GossipScript * gs = CreateLuaItemGossipScript( itr->first );
 		if( gs != NULL )
 			m_scriptMgr->register_item_gossip_script( itr->first, gs );
-    }
+	}
 
-    for(GossipGOScriptsBindingMap::iterator itr = m_go_gossipBinding.begin(); itr != m_go_gossipBinding.end(); ++itr)
+	for(GossipGOScriptsBindingMap::iterator itr = m_go_gossipBinding.begin(); itr != m_go_gossipBinding.end(); ++itr)
 	{
 		GossipScript * gs = CreateLuaGOGossipScript( itr->first );
 		if( gs != NULL )
 			m_scriptMgr->register_go_gossip_script( itr->first, gs );
-    }
-}
-
-void LuaEngineMgr::RegisterUnitEvent(uint32 Id, uint32 Event, const char * FunctionName)
-{
-	UnitBindingMap::iterator itr = m_unitBinding.find(Id);
-	if(itr == m_unitBinding.end())
-	{
-		LuaUnitBinding ub;
-		memset(&ub,0,sizeof(LuaUnitBinding));
-		ub.Functions[Event] = strdup(FunctionName);
-		m_unitBinding.insert(make_pair(Id,ub));
-	}
-	else
-	{
-		if(itr->second.Functions[Event] != NULL)
-			free((void*)itr->second.Functions[Event]);
-
-		itr->second.Functions[Event] = strdup(FunctionName);
 	}
 }
 
-void LuaEngineMgr::RegisterQuestEvent(uint32 Id, uint32 Event, const char * FunctionName)
+void LuaEngineMgr::RegisterEvent(uint8 regtype, uint32 id, uint32 evt, uint16 functionRef) 
 {
-	QuestBindingMap::iterator itr = m_questBinding.find(Id);
-	if(itr == m_questBinding.end())
+	switch(regtype) 
 	{
-		LuaQuestBinding qb;
-		memset(&qb,0,sizeof(LuaQuestBinding));
-		qb.Functions[Event] = strdup(FunctionName);
-		m_questBinding.insert(make_pair(Id,qb));
-	}
-	else
-	{
-		if(itr->second.Functions[Event]!=NULL)
-			free((void*)itr->second.Functions[Event]);
-
-		itr->second.Functions[Event]=strdup(FunctionName);
-	}
-}
-void LuaEngineMgr::RegisterGameObjectEvent(uint32 Id, uint32 Event, const char * FunctionName)
-{
-	GameObjectBindingMap::iterator itr = m_gameobjectBinding.find(Id);
-	if(itr == m_gameobjectBinding.end())
-	{
-		LuaGameObjectBinding ub;
-		memset(&ub,0,sizeof(LuaGameObjectBinding));
-		ub.Functions[Event] = strdup(FunctionName);
-		m_gameobjectBinding.insert(make_pair(Id,ub));
-	}
-	else
-	{
-		if(itr->second.Functions[Event]!=NULL)
-			free((void*)itr->second.Functions[Event]);
-
-		itr->second.Functions[Event]=strdup(FunctionName);
-	}
-}
-// Gossip Events
-void LuaEngineMgr::RegisterUnitGossipEvent(uint32 Id, uint32 Event, const char * FunctionName)
-{
-    GossipUnitScriptsBindingMap::iterator itr = m_unit_gossipBinding.find(Id);
- 
-    if(itr == m_unit_gossipBinding.end())
-	{
-		LuaUnitGossipBinding gb;
-		memset(&gb, 0, sizeof(LuaUnitGossipBinding));
-		gb.Functions[Event] = strdup(FunctionName);
-		m_unit_gossipBinding.insert(make_pair(Id, gb));
-	}
-	else
-	{
-		if(itr->second.Functions[Event]!=NULL)
-			free((void*)itr->second.Functions[Event]);
-
-		itr->second.Functions[Event]=strdup(FunctionName);
-	}
-}
-
-void LuaEngineMgr::RegisterItemGossipEvent(uint32 Id, uint32 Event, const char * FunctionName)
-{
-    GossipItemScriptsBindingMap::iterator itr = m_item_gossipBinding.find(Id);
-
-    if(itr == m_item_gossipBinding.end())
-	{
-		LuaItemGossipBinding gb;
-		memset(&gb, 0, sizeof(LuaItemGossipBinding));
-		gb.Functions[Event] = strdup(FunctionName);
-		m_item_gossipBinding.insert(make_pair(Id, gb));
-	}
-	else
-	{
-		if(itr->second.Functions[Event]!=NULL)
-			free((void*)itr->second.Functions[Event]);
-
-		itr->second.Functions[Event]=strdup(FunctionName);
-	}
-}
-
-void LuaEngineMgr::RegisterGOGossipEvent(uint32 Id, uint32 Event, const char * FunctionName)
-{
-    GossipGOScriptsBindingMap::iterator itr = m_go_gossipBinding.find(Id);
-
-    if(itr == m_go_gossipBinding.end())
-	{
-		LuaGOGossipBinding gb;
-		memset(&gb, 0, sizeof(LuaGOGossipBinding));
-		gb.Functions[Event] = strdup(FunctionName);
-		m_go_gossipBinding.insert(make_pair(Id, gb));
-	}
-	else
-	{
-		if(itr->second.Functions[Event]!=NULL)
-			free((void*)itr->second.Functions[Event]);
-
-		itr->second.Functions[Event]=strdup(FunctionName);
+		case REGTYPE_UNIT: 
+			{
+				if(id && evt && evt < CREATURE_EVENT_COUNT) {
+					LuaUnitBinding * bind = GetUnitBinding(id);
+					if(bind == NULL)
+					{
+						LuaUnitBinding nbind;
+						memset(&nbind,0,sizeof(LuaUnitBinding));
+						nbind.Functions[evt] = functionRef;
+						m_unitBinding.insert(make_pair(id,nbind));
+					}
+					else
+					{
+						if(bind->Functions[evt] > 0)
+							lua_unref(GLuas(), bind->Functions[evt]);
+						bind->Functions[evt] = functionRef;
+					}
+				}
+			}break;
+		case REGTYPE_GO:
+			{
+				if(id && evt && evt < GAMEOBJECT_EVENT_COUNT)
+				{
+					LuaGameObjectBinding * bind = GetGameObjectBinding(id);
+					if(bind == NULL)
+					{
+						LuaGameObjectBinding nbind;
+						memset(&nbind,0,sizeof(LuaGameObjectBinding));
+						nbind.Functions[evt] = functionRef;
+						m_gameobjectBinding.insert(make_pair(id,nbind));
+					}
+					else
+					{
+						if(bind->Functions[evt] > 0)
+							lua_unref(GLuas(), bind->Functions[evt]);
+						bind->Functions[evt] = functionRef;
+					}
+				}
+			}break;
+		case REGTYPE_QUEST:
+			{
+				if(id && evt && evt < QUEST_EVENT_COUNT)
+				{
+					LuaQuestBinding * bind = GetQuestBinding(id);
+					if(bind == NULL)
+					{
+						LuaQuestBinding nbind;
+						memset(&nbind,0,sizeof(LuaQuestBinding));
+						nbind.Functions[evt] = functionRef;
+						m_questBinding.insert(make_pair(id,nbind));
+					}
+					else
+					{
+						if(bind->Functions[evt] > 0)
+							lua_unref(GLuas(), bind->Functions[evt]);
+						bind->Functions[evt] = functionRef;
+					}
+				}
+			}break;
+		case REGTYPE_SERVHOOK:
+			{
+				if(evt < NUM_SERVER_HOOKS)
+					EventAsToFuncName[evt].push_back(functionRef);
+			}break;
+		case REGTYPE_DUMMYSPELL: 
+			{
+				if (id)
+					m_luaDummySpells.insert( make_pair<uint32,uint16>(id,functionRef) );
+			}break;
+/*		case REGTYPE_INSTANCE: 
+			{
+				if(id && evt && evt < INSTANCE_EVENT_COUNT)
+				{
+					LuaObjectBinding * bind = getInstanceBinding(id);
+					if(bind == NULL)
+					{
+						LuaObjectBinding nbind;
+						memset(&nbind,0,sizeof(LuaObjectBinding));
+						nbind.Functions[evt] = functionRef;
+						m_instanceBinding.insert(make_pair(id,nbind));
+					}
+					else
+					{
+						if(bind->Functions[evt] > 0)
+							lua_unref(GLuas(), bind->Functions[evt]);
+						bind->Functions[evt] = functionRef;
+					}
+				}
+			}break;*/
+		case REGTYPE_UNIT_GOSSIP:
+			{
+				if(id && evt && evt < GOSSIP_EVENT_COUNT)
+				{
+					LuaUnitGossipBinding * bind = GetLuaUnitGossipBinding(id);
+					if(bind == NULL)
+					{
+						LuaUnitGossipBinding nbind;
+						memset(&nbind,0,sizeof(LuaUnitGossipBinding));
+						nbind.Functions[evt] = functionRef;
+						m_unit_gossipBinding.insert(make_pair(id,nbind));
+					}
+					else
+					{
+						if(bind->Functions[evt] > 0)
+							lua_unref(GLuas(), bind->Functions[evt]);
+						bind->Functions[evt] = functionRef;
+					}
+				}
+			}break;
+		case REGTYPE_ITEM_GOSSIP:
+		{
+			if(id && evt && evt < GOSSIP_EVENT_COUNT)
+			{
+				LuaItemGossipBinding * bind = GetLuaItemGossipBinding(id);
+				if(bind == NULL)
+				{
+					LuaItemGossipBinding nbind;
+					memset(&nbind,0,sizeof(LuaItemGossipBinding));
+					nbind.Functions[evt] = functionRef;
+					m_item_gossipBinding.insert(make_pair(id,nbind));
+				}
+				else
+				{
+					if(bind->Functions[evt] > 0)
+						lua_unref(GLuas(), bind->Functions[evt]);
+					bind->Functions[evt] = functionRef;
+				}
+			}
+		}break;
+		case REGTYPE_GO_GOSSIP:
+		{
+			if(id && evt && evt < GOSSIP_EVENT_COUNT)
+			{
+				LuaGOGossipBinding * bind = GetLuaGOGossipBinding(id);
+				if(bind == NULL)
+				{
+					LuaGOGossipBinding nbind;
+					memset(&nbind,0,sizeof(LuaGOGossipBinding));
+					nbind.Functions[evt] = functionRef;
+					m_go_gossipBinding.insert(make_pair(id,nbind));
+				}
+				else
+				{
+					if(bind->Functions[evt] > 0)
+						lua_unref(GLuas(), bind->Functions[evt]);
+					bind->Functions[evt] = functionRef;
+				}
+			}
+		}break;
 	}
 }
 

@@ -34,18 +34,16 @@ extern "C" {		// we're C++, and LUA is C, so the compiler needs to know to use C
 
 class LuaEngine;
 class LuaEngineMgr;
+class LuaCreature;
+class LuaGameObject;
+class LuaQuest;
+//class LuaInstance;
+class LuaGossip;
+
 extern LuaEngine * g_engine;
 extern LuaEngineMgr g_luaMgr;
 
 GossipMenu* Menu;
-
-/** Macros for calling lua-based events
- */
-#define LUA_ON_UNIT_EVENT(unit,eventtype,miscunit,misc) if(unit->GetTypeId()==TYPEID_UNIT && unit->IsInWorld()) { unit->GetMapMgr()->GetScriptEngine()->OnUnitEvent(unit,eventtype,miscunit,misc); }
-#define LUA_ON_QUEST_EVENT(plr,quest,eventtype,miscobject) if(plr->IsPlayer() && plr->IsInWorld() && miscobject->IsInWorld() && !miscobject->IsPlayer()) { plr->GetMapMgr()->GetScriptEngine()->OnQuestEvent(plr,quest,eventtype,miscobject); } 
-#define LUA_ON_GO_EVENT(unit,evtype,miscunit) if(unit->GetTypeId()==TYPEID_GAMEOBJECT && unit->IsInWorld()) { unit->GetMapMgr()->GetScriptEngine()->OnGameObjectEvent(unit,evtype,miscunit); }
-#define LUA_ON_GOSSIP_EVENT(object, evtype, player, id, intid, code) if(object->IsInWorld()) { object->GetMapMgr()->GetScriptEngine()->OnGossipEvent(object, evtype, player, id, intid, code); }
-#define LUA_CALL_FUNC(unit,funcname) if(unit->GetTypeId()==TYPEID_UNIT && unit->IsInWorld()) { unit->GetMapMgr()->GetScriptEngine()->CallFunction(unit,funcname); }
 
 /** Quest Events
  */
@@ -131,6 +129,19 @@ enum RandomFlags
 	RANDOM_NOT_MAINTANK  = 7
 };
 
+//reg type defines
+#define REGTYPE_UNIT (1 << 0)
+#define REGTYPE_GO (1 << 1)
+#define REGTYPE_QUEST (1 << 2)
+#define REGTYPE_SERVHOOK (1 << 3)
+#define REGTYPE_ITEM (1 << 4)
+#define REGTYPE_GOSSIP (1 << 5)
+#define REGTYPE_DUMMYSPELL (1 << 6)
+#define REGTYPE_INSTANCE (1 << 7)
+#define REGTYPE_UNIT_GOSSIP (REGTYPE_UNIT | REGTYPE_GOSSIP)
+#define REGTYPE_GO_GOSSIP (REGTYPE_GO | REGTYPE_GOSSIP)
+#define REGTYPE_ITEM_GOSSIP (REGTYPE_ITEM | REGTYPE_GOSSIP)
+
 enum CustomLuaEvenTypes
 {
 	LUA_EVENT_START = NUM_EVENT_TYPES, // Used as a placeholder
@@ -139,6 +150,49 @@ enum CustomLuaEvenTypes
 	EVENT_LUA_GAMEOBJ_EVENTS,
 	LUA_EVENTS_END
 };
+
+struct EventInfoHolder
+{
+	const char * funcName;
+	TimedEvent * te;
+};
+
+std::vector<uint32> OnLoadInfo;
+
+struct LuaUnitBinding
+{
+	uint16 Functions[CREATURE_EVENT_COUNT];
+};
+
+struct LuaGameObjectBinding
+{
+	uint16 Functions[GAMEOBJECT_EVENT_COUNT];
+};
+
+struct LuaQuestBinding
+{
+	uint16 Functions[QUEST_EVENT_COUNT];
+};
+
+struct LuaUnitGossipBinding
+{
+	uint16 Functions[GOSSIP_EVENT_COUNT];
+};
+
+struct LuaItemGossipBinding
+{
+	uint16 Functions[GOSSIP_EVENT_COUNT];
+};
+
+struct LuaGOGossipBinding
+{
+	uint16 Functions[GOSSIP_EVENT_COUNT];
+};
+
+std::vector<uint16> EventAsToFuncName[NUM_SERVER_HOOKS];
+std::map<uint32, uint16> m_luaDummySpells;
+
+template<typename T> const char * GetTClassName() { return "UNKNOWN"; };
 
 class LuaEngine
 {
@@ -150,25 +204,49 @@ public:
 	LuaEngine();
 	~LuaEngine();
 
+	lua_State* GetMainLuaState() { return L; }
 	void LoadScripts();
 	void Shutdown();
 	void Restart();
 	void RegisterCoreFunctions();
 	HEARTHSTONE_INLINE Mutex& GetLock() { return m_Lock; }
 
-	void OnUnitEvent(Unit * pUnit, const char * FunctionName, uint32 EventType, Unit * pMiscUnit, uint32 Misc);
-	void OnQuestEvent(Player * QuestOwner, const char * FunctionName, uint32 QuestID, uint32 EventType, Object * QuestStarter);
-	void OnGameObjectEvent(GameObject * pGameObject, const char * FunctionName, uint32 EventType, Unit * pMiscUnit);
-	void OnGossipEvent(Object* pObject, const char * FunctionName, uint32 EventType, Player* mPlayer, uint32 Id, uint32 IntId, const char *Code);
-	void CallFunction(Unit * pUnit, const char * FuncName);
-};
+	void BeginCall(uint16);
+	HEARTHSTONE_INLINE bool ExecuteCall(uint8 params = 0,uint8 res = 0);
+	HEARTHSTONE_INLINE void EndCall(uint8 res = 0);
 
-struct LuaUnitBinding { const char * Functions[CREATURE_EVENT_COUNT]; };
-struct LuaQuestBinding { const char * Functions[QUEST_EVENT_COUNT]; };
-struct LuaGameObjectBinding { const char * Functions[GAMEOBJECT_EVENT_COUNT]; };
-struct LuaUnitGossipBinding { const char * Functions[GOSSIP_EVENT_COUNT]; };
-struct LuaItemGossipBinding { const char * Functions[GOSSIP_EVENT_COUNT]; };
-struct LuaGOGossipBinding { const char * Functions[GOSSIP_EVENT_COUNT]; };
+	void PushUnit(Object * unit, lua_State * LuaS = NULL);
+	void PushGo(Object * go, lua_State * LuaS = NULL);
+	void PushItem(Object * item, lua_State * LuaS = NULL);
+	void PushGuid(uint64 guid, lua_State * LuaS = NULL);
+	void PushPacket(WorldPacket * packet, lua_State * LuaS = NULL);
+	void PushTaxiPath(TaxiPath * tp, lua_State * LuaS = NULL);
+	void PushSpell(Spell * sp, lua_State * LuaS = NULL);
+	void PushSQLField(Field * field, lua_State * LuaS = NULL);
+	void PushSQLResult(QueryResult * res, lua_State * LuaS = NULL);
+	void PushAura(Aura * aura, lua_State * LuaS = NULL);
+
+	HEARTHSTONE_INLINE void PushBool(bool bewl)
+	{
+		if(bewl) 
+			lua_pushboolean(L,1);
+		else 
+			lua_pushboolean(L,0);
+	}
+
+	HEARTHSTONE_INLINE void PushNil(lua_State * LuaS = NULL)
+	{
+		if(LuaS == NULL)
+			lua_pushnil(L);
+		else
+			lua_pushnil(LuaS);
+	}
+
+	HEARTHSTONE_INLINE void PushInt(int32 value) { lua_pushinteger(L, value); }
+	HEARTHSTONE_INLINE void PushUint(uint32 value) { lua_pushnumber(L, value); }
+	HEARTHSTONE_INLINE void PushFloat(float value) { lua_pushnumber(L, value); }
+	HEARTHSTONE_INLINE void PushString(const char * str) { lua_pushstring(L, str); }
+};
 
 class LuaEngineMgr
 {
@@ -179,6 +257,15 @@ private:
 	typedef HM_NAMESPACE::hash_map<uint32, LuaUnitGossipBinding> GossipUnitScriptsBindingMap;
 	typedef HM_NAMESPACE::hash_map<uint32, LuaItemGossipBinding> GossipItemScriptsBindingMap;
 	typedef HM_NAMESPACE::hash_map<uint32, LuaGOGossipBinding> GossipGOScriptsBindingMap;
+
+	//maps to creature, & go script interfaces
+	std::multimap<uint32, LuaCreature*> m_cAIScripts;
+	std::multimap<uint32, LuaGameObject*> m_gAIScripts;
+	HM_NAMESPACE::hash_map<uint32, LuaQuest*> m_qAIScripts;
+//	HM_NAMESPACE::hash_map<uint32, LuaInstance*> m_iAIScripts;
+	HM_NAMESPACE::hash_map<uint32, LuaGossip*> m_unitgAIScripts;
+	HM_NAMESPACE::hash_map<uint32, LuaGossip*> m_itemgAIScripts;
+	HM_NAMESPACE::hash_map<uint32, LuaGossip*> m_gogAIScripts;
 
 	UnitBindingMap m_unitBinding;
 	QuestBindingMap m_questBinding;
@@ -191,14 +278,9 @@ public:
 	LuaEngine * m_engine;
 	void Startup();
 	void Unload();
+	lua_State* GLuas() { return m_engine->GetMainLuaState(); }
 
-	void RegisterUnitEvent(uint32 Id, uint32 Event, const char * FunctionName);
-	void RegisterQuestEvent(uint32 Id, uint32 Event, const char * FunctionName);
-	void RegisterGameObjectEvent(uint32 Id, uint32 Event, const char * FunctionName);
-	void RegisterUnitGossipEvent(uint32 Id, uint32 Event, const char * FunctionName);
-    void RegisterItemGossipEvent(uint32 Id, uint32 Event, const char * FunctionName);
-    void RegisterGOGossipEvent(uint32 Id, uint32 Event, const char * FunctionName);
- 
+	void RegisterEvent(uint8, uint32, uint32 , uint16);
 	LuaUnitBinding * GetUnitBinding(uint32 Id)
 	{
 		UnitBindingMap::iterator itr = m_unitBinding.find(Id);
@@ -217,28 +299,30 @@ public:
 		return (itr == m_gameobjectBinding.end()) ? NULL : &itr->second;
 	}
 
-    // Gossip Stuff
-    LuaUnitGossipBinding * GetLuaUnitGossipBinding(uint32 Id)
+	// Gossip Stuff
+	LuaUnitGossipBinding * GetLuaUnitGossipBinding(uint32 Id)
 	{
 		GossipUnitScriptsBindingMap::iterator itr = m_unit_gossipBinding.find(Id);
 		return (itr == m_unit_gossipBinding.end()) ? NULL : &itr->second;
 	}
 
-    LuaItemGossipBinding * GetLuaItemGossipBinding(uint32 Id)
+	LuaItemGossipBinding * GetLuaItemGossipBinding(uint32 Id)
 	{
 		GossipItemScriptsBindingMap::iterator itr = m_item_gossipBinding.find(Id);
 		return (itr == m_item_gossipBinding.end()) ? NULL : &itr->second;
 	}
 
-    LuaGOGossipBinding * GetLuaGOGossipBinding(uint32 Id)
+	LuaGOGossipBinding * GetLuaGOGossipBinding(uint32 Id)
 	{
 		GossipGOScriptsBindingMap::iterator itr = m_go_gossipBinding.find(Id);
 		return (itr == m_go_gossipBinding.end()) ? NULL : &itr->second;
 	}
 
+	HEARTHSTONE_INLINE hash_map<uint32, LuaGossip*> & getUnitGossipInterfaceMap() { return m_unitgAIScripts; }
+	HEARTHSTONE_INLINE hash_map<uint32, LuaGossip*> & getItemGossipInterfaceMap() { return m_itemgAIScripts; }
+	HEARTHSTONE_INLINE hash_map<uint32, LuaGossip*> & getGameObjectGossipInterfaceMap() { return m_gogAIScripts; }
 };
 
-template<typename T> const char * GetTClassName() { return "UNKNOWN"; };
 template<> const char * GetTClassName<Item>() { return "Item"; };
 template<> const char * GetTClassName<Unit>() {	return "Unit"; };
 template<> const char * GetTClassName<GameObject>() { return "GameObject"; };
