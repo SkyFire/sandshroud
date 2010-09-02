@@ -455,6 +455,11 @@ static const uint32 TalentTreesPerClass[DRUID+1][3] =  {
 	{ 283, 281, 282 },	// DRUID
 };
 
+struct AreaPhaseData
+{	// We might need more later.
+	int32 phase;
+};
+
 // Dodge ( class base ) - UNUSED, Warrior, Paladin, Hunter, Rogue,   Priest, Death Knight, Shaman, Mage, Warlock, UNUSED, Druid
 const float baseDodge[12] = { 0.0f, 3.4636f, 3.2685f, -5.45f, -0.5900f, 3.1830f, 3.4636f, 1.6750f, 3.4575f, 2.0350f, 0.0f, 4.951f };
 
@@ -1709,6 +1714,15 @@ public:
 	void SetAreaID(uint32 area) { m_AreaID = area; m_areaDBC = dbcArea.LookupEntryForced(m_AreaID); }
 	HEARTHSTONE_INLINE AreaTable *GetAreaDBC() { return m_areaDBC; }
 
+	// Phase stuff
+	void _LoadAreaPhaseInfo(QueryResult *result);
+	void _SaveAreaPhaseInfo(QueryBuffer* buff);
+	void EnablePhase(int32 phaseMode, bool save = false);
+	void DisablePhase(int32 phaseMode, bool save = false);
+	void SetPhase(int32 phase, bool save = false);
+	int32 GetPhaseForArea(uint32 areaid);
+	map<uint32, AreaPhaseData*> areaphases; // Map<Areaid, AreaPhaseData>
+
 	std::string Lfgcomment;
 	uint16 LfgDungeonId[3];
 	uint8 LfgType[3];
@@ -1736,10 +1750,10 @@ public:
 	bool m_honorless;
 	uint32 m_lastSeenWeather;
 	unordered_set<Object* > m_visibleFarsightObjects;
-	void EventTeleport(uint32 mapid, float x, float y, float z, float o);
-	void EventTeleport(uint32 mapid, float x, float y, float z)
+	void EventTeleport(uint32 mapid, float x, float y, float z, float o, int32 phase = 1);
+	void EventTeleport(uint32 mapid, float x, float y, float z, int32 phase = 1)
 	{
-		EventTeleport(mapid, x, y, z, 0.0f);
+		EventTeleport(mapid, x, y, z, 0.0f, phase);
 	}
 	void ApplyLevelInfo(LevelInfo* Info, uint32 Level);
 	void BroadcastMessage(const char* Format, ...);
@@ -1768,15 +1782,15 @@ public:
 	Unit* linkTarget;
 	bool stack_cheat;
 	bool triggerpass_cheat;
-	bool SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O);
-	bool SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec);
-	void SafeTeleport(MapMgr* mgr, LocationVector vec);
+	bool SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, int32 phase = 1);
+	bool SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1);
+	void SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase = 1);
 	void EjectFromInstance();
 	bool raidgrouponlysent;
 	
-	void EventSafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
+	void EventSafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1)
 	{
-		SafeTeleport(MapID, InstanceID, vec);
+		SafeTeleport(MapID, InstanceID, vec, phase);
 	}
 
 	/*****************
@@ -2291,7 +2305,7 @@ public:
 	void SetEquipmentSet(uint32 index, EquipmentSet eqset);
 	void DeleteEquipmentSet(uint64 setGuid);
 	void _LoadEquipmentSets(QueryResult *result);
-	void _SaveEquipmentSets();
+	void _SaveEquipmentSets(QueryBuffer* buff);
 
 private:
 	// Stuff for "Talent Inspect"

@@ -4428,6 +4428,7 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 	Player* pTarget = TO_PLAYER( Target );
 
 	uint32 mapid;
+	int32 phase = 1;
 	float x,y,z,o;
 
 	TeleportCoords* TC = TeleportCoordStorage.LookupEntry(id);
@@ -4492,6 +4493,7 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 		y = TC->y;
 		z = TC->z;
 		o = TC->o;
+//		phase = TC->p;
 	}
 
 	pTarget->EventAttackStop();
@@ -4500,7 +4502,7 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 	// We use a teleport event on this one. Reason being because of UpdateCellActivity,
 	// the game object set of the updater thread WILL Get messed up if we teleport from a gameobject caster.
 	if(!sEventMgr.HasEvent(pTarget, EVENT_PLAYER_TELEPORT))
-		sEventMgr.AddEvent(pTarget, &Player::EventTeleport, mapid, x, y, z, o, EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		sEventMgr.AddEvent(pTarget, &Player::EventTeleport, mapid, x, y, z, o, phase, EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 }
 
 void Spell::CreateItem(uint32 itemId)

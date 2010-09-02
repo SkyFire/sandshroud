@@ -3117,7 +3117,19 @@ uint32 Object::GetAreaID()
 	return (GetMapMgr() ? GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY(),GetPositionZ()) : 0);
 }
 
-uint32 Object::GetAreaID(float x, float y, float z)
+uint32 Object::GetAreaID(float x, float y, float z, int32 mapid)
 {
-	return (GetMapMgr() ? GetMapMgr()->GetAreaID(x,y,z) : 0);
+	if(mapid > -1)
+	{
+		if(mapid != m_mapId)
+		{
+			uint32 areaid = 0;
+			MapMgr* mgr = sInstanceMgr.GetMapMgr(mapid);
+			if(mgr != NULL)
+				areaid = mgr->GetAreaID(x, y, z);
+
+			return areaid;
+		}
+	}
+	return (GetMapMgr() ? GetMapMgr()->GetAreaID(x, y, z) : 0);
 }

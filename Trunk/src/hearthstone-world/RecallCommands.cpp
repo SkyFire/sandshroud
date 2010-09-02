@@ -218,7 +218,7 @@ bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession *
 				(available != AREA_TRIGGER_FAILURE_NO_RAID && available != AREA_TRIGGER_FAILURE_NO_GROUP)))
 			{
 				if(plr->GetInstanceID() != m_session->GetPlayer()->GetInstanceID())
-					sEventMgr.AddEvent(plr, &Player::EventSafeTeleport, locmap, uint32(0), LocationVector(x, y, z), EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+					sEventMgr.AddEvent(plr, &Player::EventSafeTeleport, locmap, uint32(0), LocationVector(x, y, z), 1, EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 				else
 					plr->SafeTeleport(locmap, 0, LocationVector(x, y, z));
 			}

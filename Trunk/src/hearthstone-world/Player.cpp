@@ -470,6 +470,7 @@ void Player::Init()
 	m_visibleObjects.clear();
 	mDeletedSpells.clear();
 	mSpells.clear();
+	areaphases.clear();
 
 	for(uint32 i = 0; i < 21; i++)
 		m_WeaponSubClassDamagePct[i] = 1.0f;
@@ -1087,10 +1088,10 @@ void Player::Update( uint32 p_time )
 	}
 
 	// Exploration
-	if(mstime >= m_explorationTimer)
+	if(mstime >= m_explorationTimer || (m_AreaID != GetAreaID()))
 	{
 		_EventExploration();
-		m_explorationTimer = mstime + 3000;
+		m_explorationTimer = mstime + 1000;
 	}
 
 	if(m_pvpTimer)
@@ -1402,6 +1403,7 @@ void Player::_EventExploration()
 
 	if(AreaId != m_AreaID)
 	{
+		SetPhase(GetPhaseForArea(AreaId));
 		m_AreaID = AreaId;
 		m_areaDBC = dbcArea.LookupEntryForced(m_AreaID);
 		if (m_areaDBC && m_areaDBC->ZoneId != 0)
@@ -1931,8 +1933,6 @@ void Player::_LoadPet(QueryResult * result)
 	do
 	{
 		Field *fields = result->Fetch();
-		fields = result->Fetch();
-
 		PlayerPet* pet = NULLPET;
 		pet = new PlayerPet;
 		pet->number  = fields[1].GetUInt32();
@@ -2488,7 +2488,10 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	_SaveSpellsToDB(buf);
 
 	// Equipment Sets
-	_SaveEquipmentSets();
+	_SaveEquipmentSets(buf);
+
+	// Area Phase Info
+	_SaveAreaPhaseInfo(buf);
 
 	// Glyphs
 	_SaveGlyphsToDB(buf);
@@ -2850,6 +2853,9 @@ bool Player::LoadFromDB(uint32 guid)
 
 	//Equipmentsets
 	q->AddQuery("SELECT * FROM equipmentsets WHERE guid = %u", guid);
+
+	//Area Phase Info
+	q->AddQuery("SELECT * FROM playerphaseinfo WHERE guid = %u", guid);
 
 	// queue it!
 	m_uint32Values[OBJECT_FIELD_GUID] = guid;
@@ -3480,6 +3486,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	_LoadGlyphs(results[15].result);
 	_LoadSpells(results[16].result);
 	_LoadEquipmentSets(results[17].result);
+	_LoadAreaPhaseInfo(results[18].result);
 	_LoadTutorials(results[1].result);
 	_LoadPlayerCooldowns(results[2].result);
 	_LoadQuestLogEntry(results[3].result);
@@ -3841,14 +3848,16 @@ void Player::OnPushToWorld()
 		if(info != NULL && (info->phasehorde != 0 && info->phasealliance != 0 ))
 		{
 			if(GetSession()->HasGMPermissions())
-				SetPhase(info->phasehorde | info->phasealliance);
+				SetPhase(info->phasehorde | info->phasealliance, false);
 			else if(GetTeam())
-				SetPhase(info->phasehorde);
+				SetPhase(info->phasehorde, false);
 			else
-				SetPhase(info->phasealliance);
+				SetPhase(info->phasealliance, false);
 		}
+
 		if(info != NULL && (info->phasehorde == 0 && info->phasealliance == 0 ))
-			SetPhase(1);
+			if(GetPhase() == 1)
+				SetPhase(GetPhaseForArea(GetAreaID()), false);
 	}
 }
 
@@ -7355,7 +7364,7 @@ void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 	}
 	else
 	{
-		sEventMgr.AddEvent(TO_PLAYER(this), &Player::EventTeleport, (uint32)mapchangeid, mapchangex, mapchangey, mapchangez, orientation, EVENT_PLAYER_TELEPORT, traveltime, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		sEventMgr.AddEvent(TO_PLAYER(this), &Player::EventTeleport, (uint32)mapchangeid, mapchangex, mapchangey, mapchangez, orientation, 1, EVENT_PLAYER_TELEPORT, traveltime, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
 }
 
@@ -8677,9 +8686,9 @@ void Player::StopMirrorTimer(uint32 Type)
 	m_session->OutPacket(SMSG_STOP_MIRROR_TIMER, 4, &Type);
 }
 
-void Player::EventTeleport(uint32 mapid, float x, float y, float z, float o = 0.0f)
+void Player::EventTeleport(uint32 mapid, float x, float y, float z, float o = 0.0f, int32 phase)
 {
-	SafeTeleport(mapid, 0, LocationVector(x, y, z, o));
+	SafeTeleport(mapid, 0, LocationVector(x, y, z, o), phase);
 }
 
 void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
@@ -8787,12 +8796,12 @@ float Player::CalcPercentForRating( uint32 index, uint32 rating )
 		return (rating / pDBCEntry->val);
 }
 
-bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O)
+bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, int32 phase)
 {
 	return SafeTeleport(MapID, InstanceID, LocationVector(X, Y, Z, O));
 }
 
-bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
+bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase)
 {
 	//abort duel if other map or new distance becomes bigger then 1600
 	if(DuelingWith && (MapID != GetMapId() || m_position.Distance2DSq(vec) >= 1600) )		// 40
@@ -8910,7 +8919,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
 			m_session->SendPacket(&msg);
 			return false;
 		}
-		
+
 		// Dismount
 		TO_UNIT(this)->Dismount();
 	}
@@ -8923,13 +8932,18 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec)
 	if (m_UnderwaterState & UNDERWATERSTATE_UNDERWATER)
 		m_UnderwaterState &= ~UNDERWATERSTATE_UNDERWATER;
 
+	int32 phase2 = GetPhaseForArea(GetAreaID(vec.x, vec.y, vec.z, MapID));
+	if(phase2 != 1)
+		phase = phase2;
+	SetPhase(phase, false);
+
 	//all set...relocate
 	_Relocate(MapID, vec, true, force_new_world, InstanceID);
 	return true;
 #endif
 }
 
-void Player::SafeTeleport(MapMgr* mgr, LocationVector vec)
+void Player::SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase)
 {
 	if(IsInWorld())
 		RemoveFromWorld();
@@ -8948,6 +8962,11 @@ void Player::SafeTeleport(MapMgr* mgr, LocationVector vec)
 	m_sentTeleportPosition = vec;
 	SetPosition(vec);
 	ResetHeartbeatCoords();
+
+	int32 phase2 = GetPhaseForArea(GetAreaID());
+	if(phase2 != 1 && phase == 1)
+		phase = phase2;
+	SetPhase(phase, false);
 
 	if(GetShapeShift())
 	{
@@ -9331,7 +9350,9 @@ void Player::OnWorldPortAck()
 				SetPhase(pPMapinfo->phasealliance);
 		}
 		if(info != NULL && (pPMapinfo->phasehorde == 0 && pPMapinfo->phasealliance == 0 ))
-			SetPhase(1);
+			if(GetPhase() == 1)
+				SetPhase(GetPhaseForArea(GetAreaID()), false);
+
 		if(pPMapinfo->HasFlag(WMI_INSTANCE_WELCOME) && GetMapMgr())
 		{
 			std::string welcome_msg;
@@ -9391,201 +9412,201 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 	// Added some updateXXXX calls so when an item modifies a stat they get updated
 	// also since this is used by auras now it will handle it for those
 	switch (type) 
+	{
+	case POWER:
+		ModUnsigned32Value( UNIT_FIELD_MAXPOWER1, val );
+		m_manafromitems += val;
+		break;
+	case HEALTH:
+		ModUnsigned32Value( UNIT_FIELD_MAXHEALTH, val );
+		m_healthfromitems += val;
+		break;
+	case AGILITY: // modify agility				
+		FlatStatModPos[1] += val;
+		CalcStat( 1 );
+		break;
+	case STRENGTH: //modify strength
+		FlatStatModPos[0] += val;
+		CalcStat( 0 );
+		break;
+	case INTELLECT: //modify intellect 
+		FlatStatModPos[3] += val;
+		CalcStat( 3 );
+		break;
+	 case SPIRIT: //modify spirit
+		FlatStatModPos[4] += val;
+		CalcStat( 4 );
+		break;
+	case STAMINA: //modify stamina
+		FlatStatModPos[2] += val;
+		CalcStat( 2 );
+		break;
+	case WEAPON_SKILL_RATING:
 		{
-		case POWER:
-			ModUnsigned32Value( UNIT_FIELD_MAXPOWER1, val );
-			m_manafromitems += val;
-			break;
-		case HEALTH:
-			ModUnsigned32Value( UNIT_FIELD_MAXHEALTH, val );
-			m_healthfromitems += val;
-			break;
-		case AGILITY: // modify agility				
-			FlatStatModPos[1] += val;
-			CalcStat( 1 );
-			break;
-		case STRENGTH: //modify strength
-			FlatStatModPos[0] += val;
-			CalcStat( 0 );
-			break;
-		case INTELLECT: //modify intellect 
-			FlatStatModPos[3] += val;
-			CalcStat( 3 );
-			break;
-		 case SPIRIT: //modify spirit
-			FlatStatModPos[4] += val;
-			CalcStat( 4 );
-			break;
-		case STAMINA: //modify stamina
-			FlatStatModPos[2] += val;
-			CalcStat( 2 );
-			break;
-		case WEAPON_SKILL_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_SKILL, val ); // ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL, val ); // melee main hand
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL, val ); // melee off hand
-			}break;
-		case DEFENSE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_DEFENCE, val );
-			}break;
-		case DODGE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_DODGE, val );
-			}break;
-		case PARRY_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_PARRY, val );
-			}break;
-		case SHIELD_BLOCK_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_BLOCK, val );
-			}break;
-		case MELEE_HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );
-			}break;
-		case RANGED_HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );
-			}break;
-		case SPELL_HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
-			}break;
-		case MELEE_CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );
-			}break;
-		case RANGED_CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );
-			}break;
-		case SPELL_CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
-			}break;
-		case MELEE_HIT_AVOIDANCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );
-			}break;
-		case RANGED_HIT_AVOIDANCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );
-			}break;
-		case SPELL_HIT_AVOIDANCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );
-			}break;
-		case MELEE_CRITICAL_AVOIDANCE_RATING:
-			{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_SKILL, val ); // ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL, val ); // melee main hand
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL, val ); // melee off hand
+		}break;
+	case DEFENSE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_DEFENCE, val );
+		}break;
+	case DODGE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_DODGE, val );
+		}break;
+	case PARRY_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_PARRY, val );
+		}break;
+	case SHIELD_BLOCK_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_BLOCK, val );
+		}break;
+	case MELEE_HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );
+		}break;
+	case RANGED_HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );
+		}break;
+	case SPELL_HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
+		}break;
+	case MELEE_CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );
+		}break;
+	case RANGED_CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );
+		}break;
+	case SPELL_CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
+		}break;
+	case MELEE_HIT_AVOIDANCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );
+		}break;
+	case RANGED_HIT_AVOIDANCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );
+		}break;
+	case SPELL_HIT_AVOIDANCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );
+		}break;
+	case MELEE_CRITICAL_AVOIDANCE_RATING:
+		{
 
-			}break;
-		case RANGED_CRITICAL_AVOIDANCE_RATING:
-			{
+		}break;
+	case RANGED_CRITICAL_AVOIDANCE_RATING:
+		{
 
-			}break;
-		case SPELL_CRITICAL_AVOIDANCE_RATING:
-			{
+		}break;
+	case SPELL_CRITICAL_AVOIDANCE_RATING:
+		{
 
-			}break;
-		case MELEE_HASTE_RATING:
+		}break;
+	case MELEE_HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
+		}break;
+	case RANGED_HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
+		}break;
+	case SPELL_HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );//spell
+		}break;
+	case HIT_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
+		}break;
+	case CRITICAL_STRIKE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
+		}break;
+	case HIT_AVOIDANCE_RATING:// this is guessed based on layout of other fields
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );//spell
+		}break;
+	case CRITICAL_AVOIDANCE_RATING:
+		{
+			// todo. what is it?
+		}break;
+	case EXPERTISE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_EXPERTISE, val );
+		}break;
+	case RESILIENCE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT_RESILIENCE, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT_RESILIENCE, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE, val );//spell
+		}break;
+	case HASTE_RATING:
+		{
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
+			ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );
+		}break;
+	case ATTACK_POWER:
+		{
+			ModUnsigned32Value( UNIT_FIELD_ATTACK_POWER_MODS, val );
+			ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
+		}break;
+	case RANGED_ATTACK_POWER:
+		{
+			ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
+		}break;
+	case FERAL_ATTACK_POWER:
+		{
+			// todo
+		}break;
+	case SPELL_HEALING_DONE:
+		{
+			for( uint8 school = 1; school < 7; ++school )
 			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
-			}break;
-		case RANGED_HASTE_RATING:
+				HealDoneMod[school] += val;
+			}
+			ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
+		}break;
+	case SPELL_DAMAGE_DONE:
+		{
+			for( uint8 school = 1; school < 7; ++school )
 			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
-			}break;
-		case SPELL_HASTE_RATING:
+				ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
+			}
+		}break;
+	case MANA_REGENERATION:
+		{
+			m_ModInterrMRegen += val;
+		}break;
+	case ARMOR_PENETRATION_RATING:
+		{
+			ModUnsigned32Value(PLAYER_RATING_MODIFIER_ARMOR_PENETRATION_RATING, val);
+		}break;
+	case SPELL_POWER:
+		{
+			for( uint8 school = 1; school < 7; ++school )
 			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );//spell
-			}break;
-		case HIT_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT, val );
-			}break;
-		case CRITICAL_STRIKE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT, val );
-			}break;
-		case HIT_AVOIDANCE_RATING:// this is guessed based on layout of other fields
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HIT_AVOIDANCE, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HIT_AVOIDANCE, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HIT_AVOIDANCE, val );//spell
-			}break;
-		case CRITICAL_AVOIDANCE_RATING:
-			{
-				// todo. what is it?
-			}break;
-		case EXPERTISE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_EXPERTISE, val );
-			}break;
-		case RESILIENCE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_CRIT_RESILIENCE, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_CRIT_RESILIENCE, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE, val );//spell
-			}break;
-		case HASTE_RATING:
-			{
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_MELEE_HASTE, val );//melee
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_RANGED_HASTE, val );//ranged
-				ModUnsigned32Value( PLAYER_RATING_MODIFIER_SPELL_HASTE, val );
-			}break;
-		case ATTACK_POWER:
-			{
-				ModUnsigned32Value( UNIT_FIELD_ATTACK_POWER_MODS, val );
-				ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
-			}break;
-		case RANGED_ATTACK_POWER:
-			{
-				ModUnsigned32Value( UNIT_FIELD_RANGED_ATTACK_POWER_MODS, val );
-			}break;
-		case FERAL_ATTACK_POWER:
-			{
-				// todo
-			}break;
-		case SPELL_HEALING_DONE:
-			{
-				for( uint8 school = 1; school < 7; ++school )
-				{
-					HealDoneMod[school] += val;
-				}
-				ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
-			}break;
-		case SPELL_DAMAGE_DONE:
-			{
-				for( uint8 school = 1; school < 7; ++school )
-				{
-					ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
-				}
-			}break;
-		case MANA_REGENERATION:
-			{
-				m_ModInterrMRegen += val;
-			}break;
-		case ARMOR_PENETRATION_RATING:
-			{
-				ModUnsigned32Value(PLAYER_RATING_MODIFIER_ARMOR_PENETRATION_RATING, val);
-			}break;
-		case SPELL_POWER:
-			{
-				for( uint8 school = 1; school < 7; ++school )
-				{
-					ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
-					HealDoneMod[ school ] += val;
-				}
-				ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
-			}break;
-		}
+				ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
+				HealDoneMod[ school ] += val;
+			}
+			ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
+		}break;
+	}
 }
 
 bool Player::CanSignCharter(Charter * charter, Player* requester)
@@ -12909,31 +12930,47 @@ void Player::DeleteEquipmentSet(uint64 setGuid)
 	}
 }
 
-void Player::_SaveEquipmentSets()
+void Player::_SaveEquipmentSets(QueryBuffer* buff)
 {
 	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 	{
 		EquipmentSet& eqset = itr->second;
 		switch(eqset.state)
 		{
-			case EQUIPMENT_SET_UNCHANGED:
-				break; // nothing do
-			case EQUIPMENT_SET_CHANGED: // Todo: Use a text column and store them all in that.
+		case EQUIPMENT_SET_UNCHANGED:
+			break; // nothing do
+		case EQUIPMENT_SET_CHANGED: // Todo: Use a text column and store them all in that.
+			if(buff == NULL)
 				CharacterDatabase.Execute("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
-					eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
-				eqset.state = EQUIPMENT_SET_UNCHANGED;
-				break;
-			case EQUIPMENT_SET_NEW:
+				eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
+			else
+				buff->AddQuery("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
+				eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
+
+			eqset.state = EQUIPMENT_SET_UNCHANGED;
+			break;
+		case EQUIPMENT_SET_NEW:
+			if(buff == NULL)
 				CharacterDatabase.Execute("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
-					GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
-				eqset.state = EQUIPMENT_SET_UNCHANGED;
-				break;
-			case EQUIPMENT_SET_DELETED:
+				GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
+			else
+				buff->AddQuery("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
+				GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
+
+			eqset.state = EQUIPMENT_SET_UNCHANGED;
+			break;
+		case EQUIPMENT_SET_DELETED:
+			if(buff == NULL)
 				CharacterDatabase.Execute("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
-				m_EquipmentSets.erase(itr);
-				break;
+			else
+				buff->AddQuery("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
+
+			m_EquipmentSets.erase(itr);
+			break;
 		}
 	}
 }
@@ -13055,4 +13092,120 @@ void Player::AddArenaPoints( uint32 arenapoints )
 {
 	this->m_arenaPoints += arenapoints;
 	HonorHandler::RecalculateHonorFields(this);
+}
+
+void Player::_LoadAreaPhaseInfo(QueryResult *result)
+{
+	if(result)
+	{
+		AreaPhaseData* APD = NULL;
+		do
+		{
+			Field *fields = result->Fetch();
+			APD = new AreaPhaseData();
+			uint32 areaid = fields[1].GetUInt32();
+			APD->phase = fields[2].GetInt32();
+			areaphases[areaid] = APD;
+		}while(result->NextRow());
+	}
+}
+
+void Player::_SaveAreaPhaseInfo(QueryBuffer* buff)
+{
+	if(areaphases.size())
+	{
+		if(buff == NULL)
+			CharacterDatabase.Execute("DELETE FROM playerphaseinfo WHERE guid = '%u'", GetGUID());
+		else
+			buff->AddQuery("DELETE FROM playerphaseinfo WHERE guid = '%u'", GetGUID());
+
+		map<uint32, AreaPhaseData*>::iterator itr;
+		for(itr = areaphases.begin(); itr != areaphases.end(); itr++)
+		{
+			if(itr->second != NULL)
+				if(buff == NULL)
+					CharacterDatabase.Execute("INSERT INTO playerphaseinfo VALUES('%u', '%u', '%i')", GetGUID(), itr->first, itr->second->phase);
+				else
+					buff->AddQuery("INSERT INTO playerphaseinfo VALUES('%u', '%u', '%i')", GetGUID(), itr->first, itr->second->phase);
+		}
+	}
+}
+
+void Player::SetPhase(int32 phase, bool save)
+{
+	Object::SetPhase(phase);
+
+	if(areaphases[GetAreaID()] != NULL)
+		areaphases[GetAreaID()]->phase = phase;
+	else if(save && phase != 1)
+	{
+		AreaPhaseData* APD = new AreaPhaseData();
+		APD->phase = phase;
+		areaphases[GetAreaID()] = APD;
+	}
+
+	if(phase == 1) // Phase is reset, no point in saving it.
+	{
+		if(areaphases[GetAreaID()])
+		{
+			delete areaphases[GetAreaID()];
+			areaphases.erase(GetAreaID());
+		}
+	}
+}
+
+void Player::EnablePhase(int32 phaseMode, bool save)
+{
+	Object::EnablePhase(phaseMode);
+
+	int32 phase = GetPhase();
+	if(areaphases[GetAreaID()] != NULL)
+		areaphases[GetAreaID()]->phase = phase;
+	else if(save && phase != 1)
+	{
+		AreaPhaseData* APD = new AreaPhaseData();
+		APD->phase = phase;
+		areaphases[GetAreaID()] = APD;
+	}
+
+	if(phase == 1) // Phase is reset, no point in saving it.
+	{
+		if(areaphases[GetAreaID()])
+		{
+			delete areaphases[GetAreaID()];
+			areaphases.erase(GetAreaID());
+		}
+	}
+}
+
+void Player::DisablePhase(int32 phaseMode, bool save)
+{
+	Object::DisablePhase(phaseMode);
+
+	int32 phase = GetPhase();
+	if(areaphases[GetAreaID()] != NULL)
+		areaphases[GetAreaID()]->phase = phase;
+	else if(save && phase != 1)
+	{
+		AreaPhaseData* APD = new AreaPhaseData();
+		APD->phase = GetPhase();
+		areaphases[GetAreaID()] = APD;
+	}
+
+	if(phase == 1) // Phase is reset, no point in saving it.
+	{
+		if(areaphases[GetAreaID()])
+		{
+			delete areaphases[GetAreaID()];
+			areaphases.erase(GetAreaID());
+		}
+	}
+}
+
+int32 Player::GetPhaseForArea(uint32 areaid)
+{
+	if(areaphases[areaid] != NULL)
+		return areaphases[areaid]->phase;
+
+	return 1;
 }

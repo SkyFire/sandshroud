@@ -204,6 +204,7 @@ CREATE TABLE `characters` (
   `active_spec` tinyint(3) unsigned NOT NULL default '0',
   `specs_count` tinyint(3) unsigned NOT NULL default '1',
   `need_talent_reset` int(3) NOT NULL default '0',
+  `need_position_reset` int(3) NOT NULL default '0',
   PRIMARY KEY  (`guid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -863,6 +864,17 @@ CREATE TABLE `playerpettalents` (
   KEY `a` (`ownerguid`),
   KEY `b` (`petnumber`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+/*Table structure for table `playerphaseinfo` */
+
+DROP TABLE IF EXISTS `playerphaseinfo`;
+
+CREATE TABLE `playerphaseinfo` (
+  `guid` int(10) unsigned NOT NULL DEFAULT '0',
+  `areaid` int(10) unsigned NOT NULL DEFAULT '0',
+  `phase` int(11) NOT NULL DEFAULT '1',
+  UNIQUE KEY `Index` (`guid`,`areaid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `playerskills` */
 

@@ -9817,12 +9817,19 @@ void Aura::SpellAuraSetPhase(bool apply)
 		if( m_target->m_phaseAura )
 			m_target->m_phaseAura->Remove();
 
-		m_target->EnablePhase( mod->m_miscValue );
+		if(m_target->IsPlayer())
+			TO_PLAYER(m_target)->EnablePhase( mod->m_miscValue, true );
+		else
+			m_target->EnablePhase( mod->m_miscValue );
 		m_target->m_phaseAura = this;
 	}
 	else
 	{
-		m_target->SetPhase( 1 );
+		if(m_target->IsPlayer())
+			m_target->SetPhase(1);
+		else
+			m_target->SetPhase(1);
+
 		m_target->m_phaseAura = NULLAURA;
 	}
 }

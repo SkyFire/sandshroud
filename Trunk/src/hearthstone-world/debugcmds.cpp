@@ -170,7 +170,11 @@ bool ChatHandler::HandleDebugSetPhase(const char* args, WorldSession *m_session)
 		}
 	}
 
-	int32 phaseId = atoi(args);
+	int32 phaseId = 0;
+	int save = 0;
+	if(sscanf(args, "%u %u", &phaseId, &save) < 1)
+		return false;
+
 	if(phaseId < -1)
 	{
 		m_session->GetPlayer()->BroadcastMessage("You must specify a valid phase id.");
@@ -183,7 +187,10 @@ bool ChatHandler::HandleDebugSetPhase(const char* args, WorldSession *m_session)
 		return true;
 	}
 
-	pUnit->SetPhase( phaseId );
+	if(pUnit->IsPlayer())
+		TO_PLAYER(pUnit)->SetPhase( phaseId, (save ? true : false) );
+	else
+		pUnit->SetPhase( phaseId );
 	m_session->GetPlayer()->BroadcastMessage("Target's phase altered successfully.");
 	return true;
 }
