@@ -377,7 +377,11 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 
 	sQuestMgr.OnQuestAccepted(_player,qst,qst_giver);
 
-	OUT_DEBUG("WORLD: Added new QLE.");
+	if(qst->start_phase!=0)
+	{
+		_player->SetPhase(qst->start_phase);
+		_player->placeholderphase = qst->start_phase;
+	}
 	sHookInterface.OnQuestAccept(_player, qst, qst_giver);
 }
 

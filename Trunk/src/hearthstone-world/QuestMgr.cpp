@@ -33,9 +33,7 @@ bool QuestMgr::isRepeatableQuestFinished(Player* plr, Quest *qst)
 		if(qst->required_item[i])
 		{
 			if(plr->GetItemInterface()->GetItemCount(qst->required_item[i]) < qst->required_itemcount[i])
-			{
 				return false;
-			}
 		}
 	}
 
@@ -50,9 +48,7 @@ uint32 QuestMgr::PlayerMeetsReqs(Player* plr, Quest* qst, bool skiplevelcheck)
 	if (!sQuestMgr.IsQuestRepeatable(qst))
 		status = QMGR_QUEST_AVAILABLE;
 	else
-	{
 		status = QMGR_QUEST_REPEATABLE;
-	}
 
 	if (plr->getLevel() < qst->min_level && !skiplevelcheck)
 		return QMGR_QUEST_AVAILABLELOW_LEVEL;
@@ -80,15 +76,11 @@ uint32 QuestMgr::PlayerMeetsReqs(Player* plr, Quest* qst, bool skiplevelcheck)
 		if(plr->GetStanding(qst->required_rep_faction) < (int32)qst->required_rep_value)
 			return QMGR_QUEST_NOT_AVAILABLE;
 
-	uint32 fact;
 	// Check reputation limit
 	for(uint32 z = 0; z < qst->count_reward_facts; z++)
 	{
-		fact = qst->reward_repfaction[z];
-		if( fact && qst->reward_replimit && plr->GetStanding(fact) >= (int32)qst->reward_replimit )
-		{
+		if( qst->reward_repfaction[z] && qst->reward_replimit && plr->GetStanding(qst->reward_repfaction[z]) >= (int32)qst->reward_replimit )
 			return QMGR_QUEST_NOT_AVAILABLE;
-		}
 	}
 
 	if (plr->HasFinishedQuest(qst->id) && !qst->is_repeatable)
@@ -134,26 +126,18 @@ uint32 QuestMgr::CalcQuestStatus(Object* quest_giver, Player* plr, Quest* qst, u
 	if (!qle)
 	{
 		if (type & QUESTGIVER_QUEST_START)
-		{
 			return PlayerMeetsReqs(plr, qst, skiplevelcheck);
-		}
 	}
 	else
 	{		
 		if (!qle->CanBeFinished())
-		{
 			return QMGR_QUEST_NOT_FINISHED;
-		}
 		else
 		{
 			if (type & QUESTGIVER_QUEST_END) 
-			{
 				return QMGR_QUEST_FINISHED;					
-			}
 			else
-			{
 				return QMGR_QUEST_NOT_AVAILABLE;
-			}
 		}
 	}
 
@@ -193,16 +177,10 @@ uint8 QuestMgr::CalcStatus(Object* quest_giver, Player* plr)
 	}
 	//This will be handled at quest share so nothing important as status
 	else if(quest_giver->GetTypeId() == TYPEID_PLAYER)
-	{
 		status = QMGR_QUEST_AVAILABLE;
-	}
 
 	if(!bValid)
-	{
-		//anoying msg that is not needed since all objects dont exactly have quests 
-		//OUT_DEBUG("QUESTS: Warning, invalid NPC "I64FMT" specified for CalcStatus. TypeId: %d.", quest_giver->GetGUID(), quest_giver->GetTypeId());
 		return status;
-	}
 
 	if(quest_giver->GetTypeId() == TYPEID_ITEM)
 	{
@@ -345,7 +323,7 @@ void QuestMgr::BuildOfferReward(WorldPacket *data, Quest* qst, Object* qst_giver
 	*data << qst->effect_on_player;
 	*data << qst->reward_title;
 	*data << qst->reward_talents;
-	*data << uint32(0); // 3.3 Arena Points.
+	*data << qst->reward_arenapoints;
 	*data << uint32(0); // Maybe show reward rep.
 
 	// 3.3 Faction Reward Stuff.
@@ -419,7 +397,7 @@ void QuestMgr::BuildQuestDetails(WorldPacket *data, Quest* qst, Object* qst_give
 	*data << qst->effect_on_player;				// Cast Spell Id
 	*data << qst->reward_title;					// Reward Title Id
 	*data << qst->reward_talents;				// 3.0.2 - Reward Talents
-	*data << uint32(0);							// new 3.3.0
+	*data << qst->reward_arenapoints;			// Reward Arena Points
 	*data << uint32(0);							// new 3.3.0
 
 	// 3.3 Faction Reward Stuff.
@@ -475,9 +453,7 @@ void QuestMgr::BuildRequestItems(WorldPacket *data, Quest* qst, Object* qst_give
 
 			it = ItemPrototypeStorage.LookupEntry(qst->required_item[i]);
 			if(it != NULL)
-			{
 				*data << qst->required_item[i] << (qst->required_itemcount[i] ? qst->required_itemcount[i] : 1) << it->DisplayInfoID;
-			}
 			else
 			{
 				if(sLog.IsOutDevelopement())
@@ -513,13 +489,13 @@ void QuestMgr::BuildQuestComplete(Player* plr, Quest* qst)
 		plr->GiveXP(xp, 0, false);
 	}
 
-	WorldPacket data(SMSG_QUESTGIVER_QUEST_COMPLETE, 24);
+	WorldPacket data(SMSG_QUESTGIVER_QUEST_COMPLETE, 20);
 	data << uint32(qst->id);
 	data << uint32(xp);
 	data << uint32(GenerateRewardMoney(plr, qst));
 	data << uint32(qst->reward_honor);
 	data << uint32(qst->reward_talents);
-	data << uint32(0);						// 3.3 Arena points
+	data << uint32(qst->reward_arenapoints);
 	plr->GetSession()->SendPacket(&data);
 }
 
@@ -606,9 +582,12 @@ void QuestMgr::BuildQuestUpdateAddItem(WorldPacket* data, uint32 itemid, uint32 
 
 void QuestMgr::SendQuestUpdateAddKill(Player* plr, uint32 questid, uint32 entry, uint32 count, uint32 tcount, uint64 guid)
 {
-	WorldPacket data(32);
-	data.SetOpcode(SMSG_QUESTUPDATE_ADD_KILL);
-	data << questid << entry << count << tcount << guid;
+	WorldPacket data(SMSG_QUESTUPDATE_ADD_KILL,24);
+	data << questid;
+	data << entry;
+	data << count;
+	data << tcount; 
+	data << guid;
 	plr->GetSession()->SendPacket(&data);
 }
 
@@ -1324,6 +1303,13 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		plr->AddToFinishedDailyQuests(qst->id);
 	else if(!IsQuestRepeatable(qst))
 		plr->AddToFinishedQuests(qst->id);
+	if(qst->reward_arenapoints!=0)
+		plr->AddArenaPoints(qst->reward_arenapoints);
+	if(qst->complete_phase!=0)
+	{
+		plr->placeholderphase = qst->complete_phase;
+		plr->SetPhase(qst->complete_phase);
+	}
 
 	//Remove any timed events
 	if (sEventMgr.HasEvent(plr,EVENT_TIMED_QUEST_EXPIRE))

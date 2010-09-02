@@ -447,6 +447,7 @@ void Player::Init()
 	mHypothermia = false;
 	mSated = false;
 	mAvengingWrath = true;
+	placeholderphase = 1;
 	m_flyhackCheckTimer = 0;
 	m_bgFlagIneligible = 0;
 	m_moltenFuryDamageIncreasePct = 0;
@@ -13048,4 +13049,10 @@ uint8 Player::GetChatTag() const
 		return 1;
 	else
 		return 0;
+}
+
+void Player::AddArenaPoints( uint32 arenapoints )
+{
+	this->m_arenaPoints += arenapoints;
+	HonorHandler::RecalculateHonorFields(this);
 }

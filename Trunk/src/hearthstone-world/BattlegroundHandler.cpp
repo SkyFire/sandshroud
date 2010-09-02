@@ -47,6 +47,7 @@ void WorldSession::HandleBattlefieldPortOpcode(WorldPacket &recv_data)
 				}
 
 				GetPlayer()->m_pendingBattleground[i]->PortPlayer(GetPlayer(),false);
+				GetPlayer()->SetPhase(1);
 				return;
 			}
 		}
@@ -165,7 +166,10 @@ void WorldSession::HandleBattleMasterHelloOpcode(WorldPacket &recv_data)
 void WorldSession::HandleLeaveBattlefieldOpcode(WorldPacket &recv_data)
 {
 	if(_player->m_bg && _player->IsInWorld())
+	{
 		_player->m_bg->RemovePlayer(_player, false);
+		_player->SetPhase(_player->placeholderphase);
+	}
 }
 
 void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket &recv_data)

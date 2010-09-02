@@ -2307,7 +2307,8 @@ public:
 	static void InitializeTalentInspectSupport();
 	void knockback( float Orientation, int32 basepoint, uint32 miscvalue, bool disengage = false );
 	uint8 GetChatTag() const;
-
+	void AddArenaPoints( uint32 arenapoints );
+	uint32 placeholderphase;
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);
 };

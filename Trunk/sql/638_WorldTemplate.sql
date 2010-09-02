@@ -1261,6 +1261,9 @@ CREATE TABLE `quests` (
   `ReceiveItemCount3` int(10) unsigned NOT NULL DEFAULT '0',
   `ReceiveItemCount4` int(10) unsigned NOT NULL DEFAULT '0',
   `IsRepeatable` int(11) NOT NULL DEFAULT '0',
+  `reward_arenapoints` int(10) unsigned NOT NULL DEFAULT '0',
+  `start_phase` int(10) unsigned NOT NULL DEFAULT '0',
+  `complete_phase` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`),
   UNIQUE KEY `entry` (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quests System';
