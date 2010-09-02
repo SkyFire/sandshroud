@@ -2324,8 +2324,8 @@ void WorldSession::HandleCalendarAddEvent(WorldPacket &recv_data)
 	SKIP_READ_PACKET(recv_data);	// set to end to avoid warnings spam
 
 	std::string unk1, unk2;
-	recv_data >> (std::string)unk1;
-	recv_data >> (std::string)unk2;
+	recv_data >> unk1;
+	recv_data >> unk2;
 
 	uint8   unk3, unk4;
 	uint32  unk5, unk6, unk7, unk8, unk9, count = 0;

@@ -79,6 +79,8 @@ hearthstone_world_SOURCES = \
     GuildHandler.cpp \
     HonorHandler.cpp \
     HonorHandler.h \
+    IsleOfConquest.cpp \
+    IsleOfConquest.h \
     Item.cpp \
     Item.h \
     ItemHandler.cpp \
@@ -176,6 +178,10 @@ hearthstone_world_SOURCES = \
     WayPoints.cpp \
     WeatherMgr.cpp \
     WeatherMgr.h \
+    Wintergrasp.cpp \
+    Wintergrasp.h \
+    WintergraspInternal.cpp \
+    WintergraspInternal.h \
     World.cpp \
     World.h \
     WorldCreator.cpp \

@@ -749,7 +749,7 @@ void ObjectMgr::LoadQuestPOI()
 {
 	uint32 count = 0;
 	uint32 pointcount = 0;
-	hash_map<uint32, hash_map<uint32, QuestPOIPoint*>> PoiMap;
+	hash_map< uint32, hash_map<uint32, QuestPOIPoint*> > PoiMap;
 	PoiMap.clear();
 	QueryResult *points = WorldDatabase.Query("SELECT * FROM quest_poi_points");
 	if (points)
