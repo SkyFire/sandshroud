@@ -199,7 +199,7 @@ void LuaEngine::OnGossipEvent(Object* pObject, const char * FunctionName, uint32
 
 void LuaEngine::OnUnitEvent(Unit * pUnit, const char * FunctionName, uint32 EventType, Unit * pMiscUnit, uint32 Misc)
 {
-	if(FunctionName==NULL)
+	if(FunctionName == NULL)
 		return;
 
 	m_Lock.Acquire();
@@ -219,7 +219,7 @@ void LuaEngine::OnUnitEvent(Unit * pUnit, const char * FunctionName, uint32 Even
 	else
 		lua_pushnil(L);
 	lua_pushinteger(L,Misc);
-	
+
 	int r = lua_pcall(L,4,LUA_MULTRET,0);
 	if(r)
 		report(L);

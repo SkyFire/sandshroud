@@ -115,8 +115,7 @@ int LuaGameObject_RemoveFromWorld(lua_State * L, GameObject * ptr)
 
 int LuaGameObject_GetName(lua_State * L, GameObject * ptr)
 {
-	if(!ptr || ptr->GetTypeId() != TYPEID_GAMEOBJECT || !ptr->GetInfo())
-		return 0;
+	TEST_GO();
 
 	lua_pushstring(L, ptr->GetInfo()->Name);
 	return 1;
@@ -124,7 +123,7 @@ int LuaGameObject_GetName(lua_State * L, GameObject * ptr)
 
 int LuaGameObject_TeleportPlr(lua_State * L, GameObject * ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
 	Player* target = Lunar<Player>::check(L, 1);
 	if(target == NULL)
 	{
@@ -153,7 +152,7 @@ int LuaGameObject_TeleportPlr(lua_State * L, GameObject * ptr)
 
 int LuaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
     uint32 entryid = luaL_checkint(L,4);
     float x = (float)luaL_checknumber(L,1);
     float y = (float)luaL_checknumber(L,2);
@@ -167,7 +166,7 @@ int LuaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
 
 int LuaGameObject_GetGameObjectNearestCoords(lua_State *L, GameObject * ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
     uint32 entryid = luaL_checkint(L,4);
     float x = (float)luaL_checknumber(L,1);
     float y = (float)luaL_checknumber(L,2);
@@ -273,13 +272,15 @@ int LuaGameObject_SpawnCreature(lua_State * L, GameObject * ptr)
 	Lunar<Unit>::push(L,pCreature);
 	return 0;
 }
+
 int LuaGameObject_GetItemCount(lua_State * L, GameObject * ptr)
 {
-	CHECK_TYPEID_RET_INT(TYPEID_PLAYER);
+	TEST_PLAYER_RET();
 	int itemid = luaL_checkint(L,1);
 	lua_pushinteger(L, ((Player*)ptr)->GetItemInterface()->GetItemCount(itemid,false));
 	return 1;
 }
+
 int LuaGameObject_SpawnGameObject(lua_State * L, GameObject * ptr)
 {
 	if(ptr == NULL) return 0;
@@ -527,7 +528,7 @@ int LuaGameObject_ModUInt32Value(lua_State * L, GameObject * ptr)
 }
 int LuaGameObject_CastSpell(lua_State * L, GameObject * ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
 	uint32 sp = luaL_checkint(L,1);
 	if( !ptr || !sp|| sp == 0) return 0;
 	
@@ -538,7 +539,7 @@ int LuaGameObject_CastSpell(lua_State * L, GameObject * ptr)
 }
 int LuaGameObject_FullCastSpell(lua_State * L, GameObject * ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
 	uint32 sp = luaL_checkint(L,1);
 	if( !ptr || !sp|| sp == 0) return 0;
 	
@@ -549,7 +550,7 @@ int LuaGameObject_FullCastSpell(lua_State * L, GameObject * ptr)
 }
 int LuaGameObject_CastSpellOnTarget(lua_State * L, GameObject * ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
 	uint32 sp = luaL_checkint(L,1);
 	Unit * target = Lunar<Unit>::check(L,2);
 	if( !ptr || !sp || sp == 0) return 0;
@@ -561,7 +562,7 @@ int LuaGameObject_CastSpellOnTarget(lua_State * L, GameObject * ptr)
 }
 int LuaGameObject_FullCastSpellOnTarget(lua_State * L, GameObject * ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
 	uint32 sp = luaL_checkint(L,1);
 	Unit * target = Lunar<Unit>::check(L,2);
 	if( !ptr || !sp || sp == 0) return 0;
@@ -572,7 +573,7 @@ int LuaGameObject_FullCastSpellOnTarget(lua_State * L, GameObject * ptr)
 }
 int LuaGameObject_GetGUID(lua_State * L, GameObject* ptr)
 {
-	CHECK_TYPEID(TYPEID_GAMEOBJECT);
+	TEST_GO();
 
 	lua_pushinteger(L,ptr->GetGUID());
 	return 1;

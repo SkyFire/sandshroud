@@ -119,7 +119,6 @@ enum GameObjectEvents
 	GAMEOBJECT_EVENT_COUNT,
 };
 
-
 enum RandomFlags
 {
 	RANDOM_ANY           = 0,
@@ -131,6 +130,16 @@ enum RandomFlags
 	RANDOM_WITH_ENERGY   = 6,
 	RANDOM_NOT_MAINTANK  = 7
 };
+
+enum CustomLuaEvenTypes
+{
+	LUA_EVENT_START = NUM_EVENT_TYPES, // Used as a placeholder
+	EVENT_LUA_TIMED,
+	EVENT_LUA_CREATURE_EVENTS,
+	EVENT_LUA_GAMEOBJ_EVENTS,
+	LUA_EVENTS_END
+};
+
 class LuaEngine
 {
 private:
@@ -456,7 +465,6 @@ private:
 #define CHECK_TYPEID_RET_INT(expected_type) if(!ptr || !ptr->IsInWorld() || ptr->GetTypeId() != expected_type) { lua_pushinteger(L,0); return 0; }
 
 // LuaHypArc commands(With additions)
-
 #define TEST_ITEM() if(ptr == NULL || !ptr->IsInWorld() || (ptr->GetProto() == NULL) || (ptr->GetTypeId() != TYPEID_ITEM && ptr->GetTypeId() != TYPEID_CONTAINER)) { return 0; }
 #define TEST_ITEM_RET() if(ptr == NULL || !ptr->IsInWorld() || (ptr->GetProto() == NULL) || (ptr->GetTypeId() != TYPEID_ITEM && ptr->GetTypeId() != TYPEID_CONTAINER)) { lua_pushboolean(L,0); return 1; }
 
@@ -469,7 +477,7 @@ private:
 #define TEST_UNITPLAYER() if(ptr == NULL || !ptr->IsInWorld() || ( ptr->GetTypeId() != TYPEID_PLAYER && ptr->GetTypeId() != TYPEID_UNIT)) { return 0; }
 #define TEST_UNITPLAYER_RET() if(ptr == NULL || !ptr->IsInWorld() || ( ptr->GetTypeId() != TYPEID_PLAYER && ptr->GetTypeId() != TYPEID_UNIT)) { lua_pushboolean(L,0); return 1; }
 
-#define TEST_GO() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_GAMEOBJECT) { return 0; }
+#define TEST_GO() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_GAMEOBJECT || !ptr->GetInfo()) { return 0; }
 #define TEST_GO_RET() if(ptr == NULL || !ptr->IsInWorld() || ptr->GetTypeId() != TYPEID_GAMEOBJECT) { lua_pushboolean(L,0); return 1; }
 
 #define RET_NIL( ){ lua_pushnil(L); return 1; }
