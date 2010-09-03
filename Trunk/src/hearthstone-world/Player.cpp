@@ -1863,6 +1863,7 @@ void Player::_SavePet(QueryBuffer * buf)
 
 void Player::_SavePetSpells(QueryBuffer * buf)
 {
+	m_lock.Acquire();
 	// Remove any existing
 	if(buf == NULL)
 		CharacterDatabase.Execute("DELETE FROM playersummonspells WHERE ownerguid=%u", GetLowGUID());
@@ -1882,6 +1883,7 @@ void Player::_SavePetSpells(QueryBuffer * buf)
 				buf->AddQuery("INSERT INTO playersummonspells VALUES(%u, %u, %u)", GetLowGUID(), itr->first, (*it));
 		}
 	}
+	m_lock.Release();
 }
 
 void Player::AddSummonSpell(uint32 Entry, uint32 SpellID)
@@ -2534,6 +2536,7 @@ void Player::_SaveSkillsToDB(QueryBuffer * buf)
 	// if we have nothing to save why save?
 	if (m_skills.size() == 0)
 		return;
+	m_lock.Acquire();
 
 	if(buf == NULL)
 		CharacterDatabase.Execute("DELETE FROM playerskills WHERE Player_Guid = %u", GetLowGUID() );
@@ -2562,6 +2565,8 @@ void Player::_SaveSkillsToDB(QueryBuffer * buf)
 		CharacterDatabase.Execute(ss.str().c_str());
 	else
 		buf->AddQueryStr(ss.str());
+
+	m_lock.Release();
 }
 
 void Player::_LoadGlyphs(QueryResult * result)
@@ -2612,6 +2617,7 @@ void Player::_SaveGlyphsToDB(QueryBuffer * buf)
 	if(empty)
 		return;	// nothing to save
 
+	m_lock.Acquire();
 	for(uint8 s = 0; s < m_talentSpecsCount; s++)
 	{
 		std::stringstream ss;
@@ -2632,6 +2638,7 @@ void Player::_SaveGlyphsToDB(QueryBuffer * buf)
 		else
 			buf->AddQueryStr(ss.str());
 	}
+	m_lock.Release();
 }
 
 void Player::_LoadSpells(QueryResult * result)
@@ -2654,6 +2661,7 @@ void Player::_LoadSpells(QueryResult * result)
 
 void Player::_SaveSpellsToDB(QueryBuffer * buf)
 {
+	m_lock.Acquire();
 	// delete old first
 	if(buf == NULL)
 		CharacterDatabase.Execute("DELETE FROM playerspells WHERE guid = %u", GetLowGUID() );
@@ -2670,16 +2678,19 @@ void Player::_SaveSpellsToDB(QueryBuffer * buf)
 		SpellEntry * sp = dbcSpell.LookupEntry( *spellItr );
 		if( !sp || sp->RequiredShapeShift == FORM_ZOMBIE )
 			continue;
+
 		if(!first)
 			ss << ",";
 		else
 			first = false;
+
 		ss << "("<< GetLowGUID() << "," << uint32(*spellItr) << ")";
 	}
 	if(buf == NULL)
 		CharacterDatabase.Execute(ss.str().c_str());
 	else
 		buf->AddQueryStr(ss.str());
+	m_lock.Release();
 }
 
 void Player::_LoadTalents(QueryResult * result)
@@ -2708,6 +2719,7 @@ void Player::_LoadTalents(QueryResult * result)
 
 void Player::_SaveTalentsToDB(QueryBuffer * buf)
 {
+	m_lock.Acquire();
 	// delete old talents first
 	if(buf == NULL)
 		CharacterDatabase.Execute("DELETE FROM playertalents WHERE guid = %u", GetLowGUID() );
@@ -2734,10 +2746,12 @@ void Player::_SaveTalentsToDB(QueryBuffer * buf)
 				buf->AddQueryStr(ss.str());
 		}
 	}
+	m_lock.Release();
 }
 
 void Player::_SaveQuestLogEntry(QueryBuffer * buf)
 {
+	m_lock.Acquire();
 	for(std::set<uint32>::iterator itr = m_removequests.begin(); itr != m_removequests.end(); itr++)
 	{
 		if(buf == NULL)
@@ -2753,6 +2767,7 @@ void Player::_SaveQuestLogEntry(QueryBuffer * buf)
 		if(m_questlog[i] != NULL)
 			m_questlog[i]->SaveToDB(buf);
 	}
+	m_lock.Release();
 }
 
 bool Player::canCast(SpellEntry *m_spellInfo)
@@ -11577,6 +11592,7 @@ bool Player::Cooldown_CanCast(ItemPrototype * pProto, uint32 x)
 
 void Player::_SavePlayerCooldowns(QueryBuffer * buf)
 {
+	m_lock.Acquire();
 	PlayerCooldownMap::iterator itr;
 	PlayerCooldownMap::iterator itr2;
 	uint32 i;
@@ -11627,6 +11643,7 @@ void Player::_SavePlayerCooldowns(QueryBuffer * buf)
 			}
 		}
 	}
+	m_lock.Release();
 }
 
 void Player::_LoadPlayerCooldowns(QueryResult * result)
@@ -12932,6 +12949,7 @@ void Player::DeleteEquipmentSet(uint64 setGuid)
 
 void Player::_SaveEquipmentSets(QueryBuffer* buff)
 {
+	m_lock.Acquire();
 	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 	{
 		EquipmentSet& eqset = itr->second;
@@ -12973,6 +12991,7 @@ void Player::_SaveEquipmentSets(QueryBuffer* buff)
 			break;
 		}
 	}
+	m_lock.Release();
 }
 
 bool Player::AllowDisenchantLoot()
@@ -13114,6 +13133,7 @@ void Player::_SaveAreaPhaseInfo(QueryBuffer* buff)
 {
 	if(areaphases.size())
 	{
+		m_lock.Acquire();
 		if(buff == NULL)
 			CharacterDatabase.Execute("DELETE FROM playerphaseinfo WHERE guid = '%u'", GetGUID());
 		else
@@ -13128,6 +13148,7 @@ void Player::_SaveAreaPhaseInfo(QueryBuffer* buff)
 				else
 					buff->AddQuery("INSERT INTO playerphaseinfo VALUES('%u', '%u', '%i')", GetGUID(), itr->first, itr->second->phase);
 		}
+		m_lock.Release();
 	}
 }
 

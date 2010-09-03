@@ -65,7 +65,6 @@ void AccountMgr::ReloadAccounts(bool silent)
 			account_list.insert(AccountName);
 
 		} while(result->NextRow());
-
 		delete result;
 	}
 
