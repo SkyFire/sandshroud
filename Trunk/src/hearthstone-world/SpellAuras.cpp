@@ -3293,6 +3293,20 @@ void Aura::SpellAuraDummy(bool apply)
 			spell->prepare(&targets);
 		}break;
 
+	case 51468: // Annihilation
+	case 51472:
+	case 51473:
+		{
+			if(m_caster->IsPlayer())
+			{
+				Player* plr = TO_PLAYER(m_caster);
+				if(apply)
+					plr->AnnihilationProcChance += mod->m_amount;
+				else
+					plr->AnnihilationProcChance -= mod->m_amount;
+			}
+		}break;
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())

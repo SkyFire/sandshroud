@@ -105,7 +105,7 @@
 #endif
 
 #include "Packets.h"
-
+#include "CallScripting.h"
 #include "WordFilter.h"
 #include "EventMgr.h"
 #include "EventableObject.h"

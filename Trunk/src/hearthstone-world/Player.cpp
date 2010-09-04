@@ -344,6 +344,7 @@ void Player::Init()
 	m_XPoff = false;
 	customizable = false;
 	memset(reputationByListId, 0, sizeof(FactionReputation*) * 128);
+	AnnihilationProcChance = 0;
 
 	m_comboTarget = 0;
 	m_comboPoints = 0;
@@ -8336,7 +8337,7 @@ void Player::ZoneUpdate(uint32 ZoneId)
 	sHookInterface.OnZone(TO_PLAYER(this), ZoneId, oldzone);
 	CALL_INSTANCE_SCRIPT_EVENT( m_mapMgr, OnZoneChange )( TO_PLAYER(this), ZoneId, oldzone );
 
-	AreaTable *at = dbcArea.LookupEntry(GetPlayerAreaID());
+	AreaTable *at = dbcArea.LookupEntry(GetAreaID());
 	if(at && ( at->category == AREAC_SANCTUARY || at->AreaFlags & AREA_SANCTUARY ) )
 	{
 		Unit* pUnit = (GetSelection() == 0) ? NULLUNIT : (m_mapMgr ? m_mapMgr->GetUnit(GetSelection()) : NULLUNIT);
@@ -8399,13 +8400,14 @@ void Player::ZoneUpdate(uint32 ZoneId)
 				if( stricmp(strbuf, p->m_name.c_str()) )
 				{
 					// different channel name. :O
-					p->Part(TO_PLAYER(this), true);
+					p->Part(this, true);
 				}
 
-				p = channelmgr.GetCreateChannel(strbuf, TO_PLAYER(this), dbcid);
-				p->AttemptJoin(TO_PLAYER(this), "");
+				p = channelmgr.GetCreateChannel(strbuf, this, dbcid);
+				p->AttemptJoin(this, "");
 			}
 		}
+
 		// flying auras
 		if( m_FlyingAura != 0 && !(at->AreaFlags & AREA_FLYING_PERMITTED) )
 		{

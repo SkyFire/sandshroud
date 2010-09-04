@@ -37,6 +37,7 @@ hearthstone_world_SOURCES = \
     BattlegroundHandler.cpp \
     BattlegroundMgr.cpp \
     BattlegroundMgr.h \
+    CallScripting.h \
     CellHandler.h \
     Channel.cpp \
     Channel.h \

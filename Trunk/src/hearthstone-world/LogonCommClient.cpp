@@ -234,7 +234,7 @@ void LogonCommClientSocket::SendChallenge()
 
 void LogonCommClientSocket::HandleAuthResponse(WorldPacket & recvData)
 {
-	uint8 result = 0;
+	uint32 result = 0;
 	recvData >> result;
 	if(result != 1)
 	{

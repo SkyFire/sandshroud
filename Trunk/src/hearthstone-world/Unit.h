@@ -1419,6 +1419,12 @@ protected:
 	uint32 m_charmtemp;
 
 	std::map<uint32, SpellEntry*> m_DummyAuras;
+
+public: // Virtual Script Callers
+	OnKillUnitScript* CallOnKillUnit;
+	OnDeathScript* CallOnDeath;
+	OnEnterCombatScript* CallOnEnterCombat;
+	OnCastSpellScript* CallOnCastSpell;
 };
 
 #endif

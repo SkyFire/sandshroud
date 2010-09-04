@@ -281,9 +281,19 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleReviveCommand(const char* args, WorldSession *m_session)
 {
-	Player* SelectedPlayer = getSelectedChar(m_session, true);
+	Player* SelectedPlayer = getSelectedChar(m_session, false);
 	if(!SelectedPlayer)
-		return true;
+	{
+		Creature* ctr = getSelectedCreature(m_session, false);
+		if(ctr != NULL)
+		{
+			HandleCreatureRespawnCommand(args, m_session);
+			return true;
+		}
+
+		RedSystemMessage(m_session, "You have no target!");
+		return false;
+	}
 
 	if(SelectedPlayer->m_currentMovement == MOVE_ROOT)
 		SelectedPlayer->SetMovement(MOVE_UNROOT, 1);

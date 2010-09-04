@@ -1232,6 +1232,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\hearthstone-world\CallScripting.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\hearthstone-world\ChainAggroEntity.cpp"
 				>
 			</File>

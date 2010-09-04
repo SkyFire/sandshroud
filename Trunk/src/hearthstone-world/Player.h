@@ -1842,9 +1842,9 @@ public:
 	bool customizable;
 	uint32 iInstanceType;
 	uint32 iRaidType;
+	uint32 AnnihilationProcChance;
 	HEARTHSTONE_INLINE void SetName(string& name) { m_name = name; }
 	// spell to (delay, last time)
-	
 	FactionReputation * reputationByListId[128];
 	Channel* watchedchannel;
 

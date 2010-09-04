@@ -140,8 +140,9 @@ Unit::Unit()
 	m_P_regenTimer = 2000;
 
 	m_emoteState = 0;
-	m_oldEmote = 0;	
-	
+	m_oldEmote = 0;
+	m_charmtemp = 0;
+
 	BaseDamage[0]=0;
 	BaseOffhandDamage[0]=0;
 	BaseRangedDamage[0]=0;
@@ -250,6 +251,11 @@ Unit::Unit()
 	{
 		m_CustomTimers[x] = 0;
 	}
+
+	CallOnKillUnit = NULL;
+	CallOnDeath = NULL;
+	CallOnEnterCombat = NULL;
+	CallOnCastSpell = NULL;
 }
 
 Unit::~Unit()

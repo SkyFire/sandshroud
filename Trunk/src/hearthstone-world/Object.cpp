@@ -1001,6 +1001,34 @@ void Object::AddToWorld(MapMgr* pMapMgr)
 	m_instanceId = pMapMgr->GetInstanceID();
 
 	mSemaphoreTeleport = false;
+
+	if(IsUnit())
+	{
+		Unit* unit = TO_UNIT(this);
+		if(unit->CallOnKillUnit != NULL)
+		{
+			delete unit->CallOnKillUnit;
+			unit->CallOnKillUnit = NULL;
+		}
+
+		if(unit->CallOnDeath != NULL)
+		{
+			delete unit->CallOnDeath;
+			unit->CallOnDeath = NULL;
+		}
+
+		if(unit->CallOnEnterCombat != NULL)
+		{
+			delete unit->CallOnEnterCombat;
+			unit->CallOnEnterCombat = NULL;
+		}
+
+		if(unit->CallOnCastSpell != NULL)
+		{
+			delete unit->CallOnCastSpell;
+			unit->CallOnCastSpell = NULL;
+		}
+	}
 }
 
 //Unlike addtoworld it pushes it directly ignoring add pool
@@ -1038,6 +1066,34 @@ void Object::PushToWorld(MapMgr* mgr)
 
 	// call virtual function to handle stuff.. :P
 	OnPushToWorld();
+
+	if(IsUnit())
+	{
+		Unit* unit = TO_UNIT(this);
+		if(unit->CallOnKillUnit != NULL)
+		{
+			delete unit->CallOnKillUnit;
+			unit->CallOnKillUnit = NULL;
+		}
+
+		if(unit->CallOnDeath != NULL)
+		{
+			delete unit->CallOnDeath;
+			unit->CallOnDeath = NULL;
+		}
+
+		if(unit->CallOnEnterCombat != NULL)
+		{
+			delete unit->CallOnEnterCombat;
+			unit->CallOnEnterCombat = NULL;
+		}
+
+		if(unit->CallOnCastSpell != NULL)
+		{
+			delete unit->CallOnCastSpell;
+			unit->CallOnCastSpell = NULL;
+		}
+	}
 }
 
 void Object::RemoveFromWorld(bool free_guid)
@@ -1763,12 +1819,20 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			TO_PLAYER(this)->CreateResetGuardHostileFlagEvent();
 		}
 
-/*		if(!pVictim->isInCombat() && pVictim->IsPlayer())
+		if(!pVictim->CombatStatus.IsInCombat())
+			if(pVictim->CallOnEnterCombat != NULL)
+				pVictim->CallOnEnterCombat->OnEnterCombat(pVictim, TO_UNIT(this));
+
+		if(!TO_UNIT(this)->CombatStatus.IsInCombat())
+			if(TO_UNIT(this)->CallOnEnterCombat != NULL)
+				TO_UNIT(this)->CallOnEnterCombat->OnEnterCombat(TO_UNIT(this), pVictim);
+
+		if(pVictim->IsPlayer() && !pVictim->CombatStatus.IsInCombat())
 			sHookInterface.OnEnterCombat( TO_PLAYER( pVictim ), TO_UNIT(this) );
 
-		if(IsPlayer() && ! TO_PLAYER(this)->isInCombat())
-			sHookInterface.OnEnterCombat( TO_PLAYER(this), TO_PLAYER(this) );*/
-			
+		if(IsPlayer() && ! TO_PLAYER(this)->CombatStatus.IsInCombat())
+			sHookInterface.OnEnterCombat( TO_PLAYER(this), TO_PLAYER(this) );
+
 		if(IsPet())
 			plr = TO_PET(this)->GetPetOwner();
 		else if(IsPlayer())
@@ -2068,7 +2132,8 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 						dObj = NULL;
 					}
 				}
-				if(spl->m_spellInfo->ChannelInterruptFlags == 48140) spl->cancel();
+				if(spl->m_spellInfo->ChannelInterruptFlags == 48140)
+					spl->cancel();
 			}
 		}
 
@@ -2112,6 +2177,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			TO_UNIT(this)->addStateFlag( UF_TARGET_DIED );
 
 		}
+
 		if( pVictim->IsPlayer() )
 		{
 			if( TO_PLAYER( pVictim)->HasDummyAura(SPELL_HASH_SPIRIT_OF_REDEMPTION) ) //check for spirit of Redemption
@@ -2161,6 +2227,19 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			}
 		}
 		/* -------------------------------- HONOR + BATTLEGROUND CHECKS END------------------------ */
+
+		/* ------------------------------------ CALL SCRIPTING START ------------------------------ */
+		if(IsUnit())
+		{
+			Unit* SUnit = TO_UNIT(this);
+
+			if( SUnit->CallOnKillUnit != NULL )
+				SUnit->CallOnKillUnit->OnKillUnit(SUnit, pVictim);
+
+			if( pVictim->CallOnDeath != NULL )
+				pVictim->CallOnDeath->OnDeath(SUnit);
+		}
+		/* -------------------------------------- CALL SCRIPTING END ------------------------------- */
 
 		uint64 victimGuid = pVictim->GetGUID();
 

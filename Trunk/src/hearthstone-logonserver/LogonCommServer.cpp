@@ -340,7 +340,7 @@ void LogonCommServerSocket::HandleAuthChallenge(WorldPacket & recvData)
 	use_crypto = true;
 
 	/* send the response packet */
-	WorldPacket data(RSMSG_AUTH_RESPONSE, 1);
+	WorldPacket data(RSMSG_AUTH_RESPONSE, 4);
 	data << result;
 	SendPacket(&data);
 

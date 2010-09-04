@@ -1307,6 +1307,10 @@ void Spell::cast(bool check)
 
 	DEBUG_LOG("Spell","Cast %u, Unit: %u", m_spellInfo->Id, m_caster->GetLowGUID());
 
+	if(u_caster != NULL )
+		if(u_caster->CallOnCastSpell != NULL)
+			u_caster->CallOnCastSpell->OnCastSpell(u_caster, m_spellInfo);
+
 	if(check)
 		cancastresult = CanCast(true);
 	else 
@@ -4353,15 +4357,37 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 			// the effect of the talent is to add 1 combo point but when triggering spell finishes it will clear the extra combo point
 			p_caster->m_spellcomboPoints = 0;	
 		}
+
 		if( GetSpellProto()->Id == 49020 )
 		{
 			if( u_caster != NULL )
 			{
+				Player* plr = NULL;
+				if(u_caster->IsPlayer())
+					plr = TO_PLAYER(u_caster);
+
 				uint32 diseasecount = 0;
 				uint32 diseases[2] = { 55078, 55095 };
 				for(int8 i = 0; i < 2; i++)
+				{
 					if(unitTarget->HasAura(diseases[i]))
+					{
 						diseasecount++;
+						if(plr != NULL)
+						{
+							uint32 keepchance = plr->AnnihilationProcChance;
+							if(keepchance > 0)
+							{
+								if(!Rand(keepchance))
+									unitTarget->RemoveAura(diseases[i]);
+							}
+							else
+								unitTarget->RemoveAura(diseases[i]);
+						}
+						else
+							unitTarget->RemoveAura(diseases[i]);
+					}
+				}
 				if(diseasecount)
 					value += value*(0.125f*diseasecount);
 			}

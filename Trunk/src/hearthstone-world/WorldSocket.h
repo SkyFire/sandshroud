@@ -70,14 +70,12 @@ public:
 	bool Authed;
 
 	void UpdateQueuedPackets();
-	
+
 protected:
-	
 	void _HandleAuthSession(WorldPacket* recvPacket);
 	void _HandlePing(WorldPacket* recvPacket);
 
 private:
-
 	uint8 K[40];
 	uint32 mOpcode;
 	uint32 mRemaining;
