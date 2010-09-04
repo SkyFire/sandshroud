@@ -846,13 +846,14 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	WhiteSystemMessage(m_session, "Informations:");
 	GreenSystemMessage(m_session, "Entry: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetEntry());
 	GreenSystemMessage(m_session, "Model: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_DISPLAYID));
-	GreenSystemMessage(m_session, "State: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_STATE));
+	GreenSystemMessage(m_session, "State: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetState());
 	GreenSystemMessage(m_session, "flags: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_FLAGS));
-	GreenSystemMessage(m_session, "dynflags: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_DYN_FLAGS));
+	GreenSystemMessage(m_session, "dynflags: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_DYNAMIC));
 	GreenSystemMessage(m_session, "faction: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_FACTION));
 
 	std::stringstream gottext;
-	switch( GObj->GetUInt32Value(GAMEOBJECT_TYPE_ID) )
+	uint8 type = GObj->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID);
+	switch(type)
 	{
 	case GAMEOBJECT_TYPE_DOOR:		  gottext << "Door";	break;
 	case GAMEOBJECT_TYPE_BUTTON:		gottext << "Button";	break;
@@ -883,7 +884,7 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	case GAMEOBJECT_TYPE_FLAGDROP:	  gottext << "Flag Drop";	break;
 	default:							gottext << "Unknown.";	break;
 	}
-	GreenSystemMessage(m_session, "Type: %s%u|r -- %s", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_TYPE_ID), gottext.str().c_str());
+	GreenSystemMessage(m_session, "Type: %s%u|r -- %s", MSG_COLOR_LIGHTBLUE, type, gottext.str().c_str());
 	GreenSystemMessage(m_session, "Distance: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->CalcDistance((Object*)m_session->GetPlayer()));
 	GreenSystemMessage(m_session, "Size: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->GetFloatValue(OBJECT_FIELD_SCALE_X));
 	if(GObj->GetInfo())

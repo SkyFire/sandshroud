@@ -1007,25 +1007,33 @@ void Object::AddToWorld(MapMgr* pMapMgr)
 		Unit* unit = TO_UNIT(this);
 		if(unit->CallOnKillUnit != NULL)
 		{
-			delete unit->CallOnKillUnit;
+			--unit->CallOnKillUnit->links;
+			if(unit->CallOnKillUnit->links == 0)
+				delete unit->CallOnKillUnit;
 			unit->CallOnKillUnit = NULL;
 		}
 
 		if(unit->CallOnDeath != NULL)
 		{
-			delete unit->CallOnDeath;
+			--unit->CallOnDeath->links;
+			if(unit->CallOnDeath->links == 0)
+				delete unit->CallOnDeath;
 			unit->CallOnDeath = NULL;
 		}
 
 		if(unit->CallOnEnterCombat != NULL)
 		{
-			delete unit->CallOnEnterCombat;
+			--unit->CallOnEnterCombat->links;
+			if(unit->CallOnEnterCombat->links == 0)
+				delete unit->CallOnEnterCombat;
 			unit->CallOnEnterCombat = NULL;
 		}
 
 		if(unit->CallOnCastSpell != NULL)
 		{
-			delete unit->CallOnCastSpell;
+			--unit->CallOnCastSpell->links;
+			if(unit->CallOnCastSpell->links == 0)
+				delete unit->CallOnCastSpell;
 			unit->CallOnCastSpell = NULL;
 		}
 	}

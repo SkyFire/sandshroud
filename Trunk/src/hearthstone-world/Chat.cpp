@@ -987,6 +987,21 @@ void ChatHandler::GreenSystemMessage(WorldSession *m_session, const char *messag
 	delete data;
 }
 
+void ChatHandler::WhiteSystemMessage(WorldSession *m_session, const char *message, ...)
+{
+	if( !message ) return;
+	va_list ap;
+	va_start(ap, message);
+	char msg1[1024];
+	vsnprintf(msg1,1024, message,ap);
+	char msg[1024];
+	snprintf(msg, 1024, "%s%s|r", MSG_COLOR_WHITE, msg1);
+	WorldPacket * data = FillSystemMessageData(msg);
+	if(m_session != NULL) 
+		m_session->SendPacket(data);
+	delete data;
+}
+
 void ChatHandler::BlueSystemMessage(WorldSession *m_session, const char *message, ...)
 {
 	if( !message ) return;

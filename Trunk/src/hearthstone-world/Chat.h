@@ -195,6 +195,7 @@ public:
 	void ColorSystemMessage(WorldSession *m_session, const char *colorcode, const char *message, ...);
 	void RedSystemMessage(WorldSession *m_session, const char *message, ...);
 	void GreenSystemMessage(WorldSession *m_session, const char *message, ...);
+	void WhiteSystemMessage(WorldSession *m_session, const char *message, ...);
 	void BlueSystemMessage(WorldSession *m_session, const char *message, ...);
 	void RedSystemMessageToPlr(Player* plr, const char *message, ...);
 	void GreenSystemMessageToPlr(Player* plr, const char *message, ...);
