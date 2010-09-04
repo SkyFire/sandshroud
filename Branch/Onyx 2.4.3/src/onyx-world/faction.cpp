@@ -198,9 +198,9 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 			return false;
 
 		/// added by Zack : 
-        /// we cannot attack sheathed units. Maybe checked in other places too ?
+		/// we cannot attack sheathed units. Maybe checked in other places too ?
 		/// !! warning, this presumes that objA is attacking ObjB
-        /// Capt: Added the possibility to disregard this (regarding the spell class)
+		/// Capt: Added the possibility to disregard this (regarding the spell class)
 		if(static_cast<Unit *>(objB)->IsStealth() && CheckStealth)
 			return false;
 	}

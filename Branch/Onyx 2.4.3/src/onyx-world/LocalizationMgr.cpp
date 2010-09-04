@@ -41,7 +41,7 @@ void LocalizationMgr::Shutdown()
 	Log.Notice("LocalizationMgr", "Beginning pointer cleanup...");
 	uint32 t = getMSTime();
 
-    for(i = 0; i < maxid; ++i)
+	for(i = 0; i < maxid; ++i)
 	{
 		for(HM_NAMESPACE::hash_map<uint32, LocalizedQuest>::iterator itr = m_Quests[i].begin(); itr != m_Quests[i].end(); ++itr)
 		{
@@ -118,7 +118,7 @@ void GetDistinctLanguages(set<string>& dest, const char * table)
 	{
 		lc = result->Fetch()[0].GetString();
 		sLocalizationMgr.Lower(lc);
-        if(dest.find(lc)==dest.end())
+		if(dest.find(lc)==dest.end())
 			dest.insert(lc);
 
 	} while(result->NextRow());
@@ -153,7 +153,7 @@ void LocalizationMgr::Reload(bool first)
 	GetDistinctLanguages(languages, "itempages_localized");
 
 	/************************************************************************/
-	/* Read Language Bindings From Config                                   */
+	/* Read Language Bindings From Config								   */
 	/************************************************************************/
 	string ls = Config.MainConfig.GetStringDefault("Localization", "LocaleBindings", "");
 	vector<string> tbindings = StrSplit(ls, " ");
@@ -182,7 +182,7 @@ void LocalizationMgr::Reload(bool first)
 	}
 
 	/************************************************************************/
-	/* Generate Language IDs                                                */
+	/* Generate Language IDs												*/
 	/************************************************************************/
 
 	uint32 langid=1;
@@ -219,7 +219,7 @@ void LocalizationMgr::Reload(bool first)
 	m_ItemPages = new HM_NAMESPACE::hash_map<uint32, LocalizedItemPage>[langid];
 
 	/************************************************************************/
-	/* Creature Names                                                       */
+	/* Creature Names													   */
 	/************************************************************************/
 	{
 		LocalizedCreatureName cn;
@@ -250,7 +250,7 @@ void LocalizationMgr::Reload(bool first)
 	}
 
 	/************************************************************************/
-	/* GameObject Names                                                     */
+	/* GameObject Names													 */
 	/************************************************************************/
 	{
 		LocalizedGameObjectName gn;
@@ -280,7 +280,7 @@ void LocalizationMgr::Reload(bool first)
 	}
 
 	/************************************************************************/
-	/* Items                                                                */
+	/* Items																*/
 	/************************************************************************/
 	{
 		LocalizedItem it;
@@ -316,7 +316,7 @@ void LocalizationMgr::Reload(bool first)
 	}
 
 	/************************************************************************/
-	/* Quests                                                               */
+	/* Quests															   */
 	/************************************************************************/
 	{
 		LocalizedQuest q;
@@ -356,7 +356,7 @@ void LocalizationMgr::Reload(bool first)
 	}
 
 	/************************************************************************/
-	/* NPC Texts                                                            */
+	/* NPC Texts															*/
 	/************************************************************************/
 	{
 		LocalizedNpcText nt;
@@ -392,7 +392,7 @@ void LocalizationMgr::Reload(bool first)
 		}
 	}
 	/************************************************************************/
-	/* Item Pages                                                           */
+	/* Item Pages														   */
 	/************************************************************************/
 	{
 		LocalizedItemPage nt;
@@ -422,7 +422,7 @@ void LocalizationMgr::Reload(bool first)
 	}
 
 	/************************************************************************/
-	/* Apply all the language bindings.                                     */
+	/* Apply all the language bindings.									 */
 	/************************************************************************/
 	for(map<string,string>::iterator itr = bound_languages.begin(); itr != bound_languages.end(); ++itr)
 	{

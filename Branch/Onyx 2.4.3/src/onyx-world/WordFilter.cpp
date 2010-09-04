@@ -90,7 +90,7 @@ bool WordFilter::CompileExpression(const char * szExpression, void** pOutput, vo
 		return false;
 	}
 
-    *pOutput = (void*)re;
+	*pOutput = (void*)re;
 	*pExtraOutput = (void*)ee;
 	return true;
 }

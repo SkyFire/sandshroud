@@ -203,7 +203,7 @@ public:
 	void SetDifficulty(uint8 difficulty);
 	
 	/************************************************************************/
-	/* Voicechat                                                            */
+	/* Voicechat															*/
 	/************************************************************************/
 #ifdef VOICE_CHAT
 	void AddVoiceMember(PlayerInfo * pPlayer);

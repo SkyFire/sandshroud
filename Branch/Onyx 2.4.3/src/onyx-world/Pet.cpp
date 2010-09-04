@@ -1413,7 +1413,7 @@ void Pet::ApplyPetLevelAbilities()
 	if(creature_info->Family > 35 || R_pet_mod_sta[creature_info->Family] == 0)
 	{
 		if( myFamily == NULL && myFamily->name != NULL )
-            DEBUG_LOG("PETSTAT: Creature family %u has missing data. Assuming to be 1.", creature_info->Family);
+			DEBUG_LOG("PETSTAT: Creature family %u has missing data. Assuming to be 1.", creature_info->Family);
 		else
 			DEBUG_LOG("PETSTAT: Creature family %u [%s] has missing data. Assuming to be 1.", creature_info->Family, myFamily->name);
 	}
@@ -1590,7 +1590,7 @@ void Pet::AddPetSpellToOwner(uint32 spellId)
 	//find appropriate teaching spell...
 	uint32 TeachingSpellID = 0;
 	TeachingSpellID = sWorld.GetTeachingSpell(spellId);
-    if(TeachingSpellID)
+	if(TeachingSpellID)
 	{
 		if(m_Owner->HasSpell(TeachingSpellID))
 			return;

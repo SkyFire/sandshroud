@@ -319,17 +319,17 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	}
 
 	/************************************************************************/
-	/* Make sure the packet is the correct size range.                      */
+	/* Make sure the packet is the correct size range.					  */
 	/************************************************************************/
 	if(recv_data.size() > 80) { Disconnect(); return; }
 
 	/************************************************************************/
-	/* Read Movement Data Packet                                            */
+	/* Read Movement Data Packet											*/
 	/************************************************************************/
 	movement_info.init(recv_data);
 
 	/************************************************************************/
-	/* Update player movement state                                         */
+	/* Update player movement state										 */
 	/************************************************************************/
 	if( sWorld.antihack_cheatengine && _player->m_lastMovementPacketTimestamp != 0 )
 	{
@@ -360,13 +360,13 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 
 	/************************************************************************/
-	/* Remove Emote State                                                   */
+	/* Remove Emote State												   */
 	/************************************************************************/
 	if(_player->m_uint32Values[UNIT_NPC_EMOTESTATE])
 		_player->SetUInt32Value(UNIT_NPC_EMOTESTATE,0);
 
 	/************************************************************************/
-	/* Make sure the co-ordinates are valid.                                */
+	/* Make sure the co-ordinates are valid.								*/
 	/************************************************************************/
 	if( !((movement_info.y >= _minY) && (movement_info.y <= _maxY)) || !((movement_info.x >= _minX) && (movement_info.x <= _maxX)) )
 	{
@@ -375,7 +375,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	}
 
 	/************************************************************************/
-	/* Dump movement flags - Wheee!                                         */
+	/* Dump movement flags - Wheee!										 */
 	/************************************************************************/
 #if 0
 	printf("=========================================================\n");
@@ -393,7 +393,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 #endif
 
 	/************************************************************************/
-	/* Orientation dumping                                                  */
+	/* Orientation dumping												  */
 	/************************************************************************/
 #if 0
 	printf("Packet: 0x%03X (%s)\n", recv_data.GetOpcode(), LookupName( recv_data.GetOpcode(), g_worldOpcodeNames ) );
@@ -401,12 +401,12 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 #endif
 
 	/************************************************************************/
-	/* Anti-Hack Checks                                                     */
+	/* Anti-Hack Checks													 */
 	/************************************************************************/
 	if( !(HasGMPermissions() && sWorld.no_antihack_on_gm) && !_player->m_uint32Values[UNIT_FIELD_CHARM] && !_player->m_heartbeatDisable)
 	{
 		/************************************************************************/
-		/* Anti-Teleport                                                        */
+		/* Anti-Teleport														*/
 		/************************************************************************/
 		if(sWorld.antihack_teleport && _player->m_position.Distance2DSq(movement_info.x, movement_info.y) > 5625.0f
 			&& _player->m_runSpeed < 50.0f && !_player->m_TransporterGUID)
@@ -418,7 +418,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	}
 
 	/************************************************************************/
-	/* Calculate the timestamp of the packet we have to send out            */
+	/* Calculate the timestamp of the packet we have to send out			*/
 	/************************************************************************/
 	size_t pos = (size_t)m_MoverWoWGuid.GetNewGuidLen() + 1;
 	int32 move_time;
@@ -426,7 +426,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		m_clientTimeDelay = mstime - movement_info.time;
 
 	/************************************************************************/
-	/* Copy into the output buffer.                                         */
+	/* Copy into the output buffer.										 */
 	/************************************************************************/
 	if(_player->m_inRangePlayers.size())
 	{
@@ -435,7 +435,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		movement_packet[pos+5]=0;
 
 		/************************************************************************/
-		/* Distribute to all inrange players.                                   */
+		/* Distribute to all inrange players.								   */
 		/************************************************************************/
 		for(set<Player*>::iterator itr = _player->m_inRangePlayers.begin(); itr != _player->m_inRangePlayers.end(); ++itr)
 		{
@@ -452,7 +452,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	}
 
 	/************************************************************************/
-	/* Falling damage checks                                                */
+	/* Falling damage checks												*/
 	/************************************************************************/
 
 	if( _player->blinked )
@@ -516,7 +516,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	}
 
 	/************************************************************************/
-	/* Transporter Setup                                                    */
+	/* Transporter Setup													*/
 	/************************************************************************/
 	if(!_player->m_lockTransportVariables)
 	{
@@ -568,23 +568,23 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	}
 
 	/************************************************************************/
-	/* Anti-Speed Hack Checks                                               */
+	/* Anti-Speed Hack Checks											   */
 	/************************************************************************/
 
 	
 
 	/************************************************************************/
-	/* Breathing System                                                     */
+	/* Breathing System													 */
 	/************************************************************************/
 	_HandleBreathing(movement_info, _player, this);
 
 	/************************************************************************/
-	/* Remove Spells                                                        */
+	/* Remove Spells														*/
 	/************************************************************************/
 	_player->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_MOVEMENT);
 
 	/************************************************************************/
-	/* Update our position in the server.                                   */
+	/* Update our position in the server.								   */
 	/************************************************************************/
 	if( _player->m_CurrentCharm )
 		_player->m_CurrentCharm->SetPosition(movement_info.x, movement_info.y, movement_info.z, movement_info.orientation);
@@ -695,7 +695,7 @@ void WorldSession::HandleSetActiveMoverOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleMoveSplineCompleteOpcode(WorldPacket &recvPacket)
 {
-
+	SKIP_READ_PACKET(recvPacket);
 }
 
 void WorldSession::HandleMountSpecialAnimOpcode(WorldPacket &recvdata)

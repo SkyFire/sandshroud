@@ -55,7 +55,7 @@ struct ZoneGuardEntry
 
 struct ItemPage
 {
-    uint32 id;
+	uint32 id;
 	char * text;
 	uint32 next_page;
 };
@@ -97,7 +97,7 @@ struct Trainer
 	uint32 SpellCount;
 	vector<TrainerSpell> Spells;
 	char*	UIMessage;
-    uint32 RequiredSkill;
+	uint32 RequiredSkill;
 	uint32 RequiredSkillLine;
 	uint32 RequiredClass;
 	uint32 TrainerType;
@@ -168,23 +168,23 @@ enum AREATABLE_FLAGS
 {
 	AREA_UNK1				= 0x8,
 	AREA_UNK2				= 0x10,
-	AREA_CITY_AREA          = 0x20,
-	AREA_NEUTRAL_AREA       = 0x40,
-	AREA_PVP_ARENA          = 0x80,
-	AREA_CITY               = 0x200,
+	AREA_CITY_AREA		  = 0x20,
+	AREA_NEUTRAL_AREA	   = 0x40,
+	AREA_PVP_ARENA		  = 0x80,
+	AREA_CITY			   = 0x200,
 	AREA_FLYING_PERMITTED	= 0x400,
-	AREA_SANCTUARY          = 0x800,
-	AREA_ISLAND             = 0x1000,
+	AREA_SANCTUARY		  = 0x800,
+	AREA_ISLAND			 = 0x1000,
 	AREA_UNK4				= 0x4000,
 	AREA_PVP_OBJECTIVE_AREA = 0x8000,
 };
 
 enum AREATABLE_CATEGORY
 {
-    AREAC_CONTESTED          = 0,
-    AREAC_ALLIANCE_TERRITORY = 2,
-    AREAC_HORDE_TERRITORY    = 4,
-    AREAC_SANCTUARY          = 6,
+	AREAC_CONTESTED		  = 0,
+	AREAC_ALLIANCE_TERRITORY = 2,
+	AREAC_HORDE_TERRITORY	= 4,
+	AREAC_SANCTUARY		  = 6,
 };
 
 #define MAX_PREDEFINED_NEXTLEVELXP 70
@@ -274,9 +274,9 @@ public:
 	ONYX_INLINE bool IsFull() { return (SignatureCount == Slots); }
 };
 
-typedef std::map<uint32, std::list<SpellEntry*>* >                  OverrideIdMap;
-typedef HM_NAMESPACE::hash_map<uint32, Player*>                     PlayerStorageMap;
-typedef std::list<GM_Ticket*>                                       GmTicketList;
+typedef std::map<uint32, std::list<SpellEntry*>* >				  OverrideIdMap;
+typedef HM_NAMESPACE::hash_map<uint32, Player*>					 PlayerStorageMap;
+typedef std::list<GM_Ticket*>									   GmTicketList;
 
 #ifndef WIN32
 #define onyx_USE_MAP_PLAYER_INDEX
@@ -318,37 +318,37 @@ public:
 	void LoadCreatureWaypoints();
 
 	// other objects
-    
-    // Set typedef's
+	
+	// Set typedef's
 	typedef HM_NAMESPACE::hash_map<uint32, Group*>						GroupMap;
 	
-    // HashMap typedef's
-    typedef HM_NAMESPACE::hash_map<uint64, Item*>                       ItemMap;
-	typedef HM_NAMESPACE::hash_map<uint32, CorpseData*>                 CorpseCollectorMap;
-	typedef HM_NAMESPACE::hash_map<uint32, PlayerInfo*>                 PlayerNameMap;
-	typedef HM_NAMESPACE::hash_map<uint32, PlayerCreateInfo*>           PlayerCreateInfoMap;
-	typedef HM_NAMESPACE::hash_map<uint32, Guild*>                      GuildMap;
-	typedef HM_NAMESPACE::hash_map<uint32, skilllinespell*>             SLMap;
+	// HashMap typedef's
+	typedef HM_NAMESPACE::hash_map<uint64, Item*>					   ItemMap;
+	typedef HM_NAMESPACE::hash_map<uint32, CorpseData*>				 CorpseCollectorMap;
+	typedef HM_NAMESPACE::hash_map<uint32, PlayerInfo*>				 PlayerNameMap;
+	typedef HM_NAMESPACE::hash_map<uint32, PlayerCreateInfo*>		   PlayerCreateInfoMap;
+	typedef HM_NAMESPACE::hash_map<uint32, Guild*>					  GuildMap;
+	typedef HM_NAMESPACE::hash_map<uint32, skilllinespell*>			 SLMap;
 	typedef HM_NAMESPACE::hash_map<uint32, std::vector<CreatureItem>*>  VendorMap;
-    typedef HM_NAMESPACE::hash_map<uint32, Transporter*>                TransportMap;
-	typedef HM_NAMESPACE::hash_map<uint32, Trainer*>                    TrainerMap;
+	typedef HM_NAMESPACE::hash_map<uint32, Transporter*>				TransportMap;
+	typedef HM_NAMESPACE::hash_map<uint32, Trainer*>					TrainerMap;
 	typedef HM_NAMESPACE::hash_map<uint32, std::vector<TrainerSpell*> > TrainerSpellMap;
-    typedef HM_NAMESPACE::hash_map<uint32, ReputationModifier*>         ReputationModMap;
-    typedef HM_NAMESPACE::hash_map<uint32, Corpse*>                     CorpseMap;
-    
-    // Map typedef's
-    typedef std::map<uint32, LevelInfo*>                                LevelMap;
-	typedef std::map<pair<uint32, uint32>, LevelMap* >                  LevelInfoMap;
-    typedef std::map<uint32, std::list<ItemPrototype*>* >               ItemSetContentMap;
-	typedef std::map<uint32, uint32>                                    NpcToGossipTextMap;
-	typedef std::map<uint32, set<SpellEntry*> >                         PetDefaultSpellMap;
-	typedef std::map<uint32, uint32>                                    PetSpellCooldownMap;
-	typedef std::map<uint32, SpellEntry*>                               TotemSpellMap;
+	typedef HM_NAMESPACE::hash_map<uint32, ReputationModifier*>		 ReputationModMap;
+	typedef HM_NAMESPACE::hash_map<uint32, Corpse*>					 CorpseMap;
+	
+	// Map typedef's
+	typedef std::map<uint32, LevelInfo*>								LevelMap;
+	typedef std::map<pair<uint32, uint32>, LevelMap* >				  LevelInfoMap;
+	typedef std::map<uint32, std::list<ItemPrototype*>* >			   ItemSetContentMap;
+	typedef std::map<uint32, uint32>									NpcToGossipTextMap;
+	typedef std::map<uint32, set<SpellEntry*> >						 PetDefaultSpellMap;
+	typedef std::map<uint32, uint32>									PetSpellCooldownMap;
+	typedef std::map<uint32, SpellEntry*>							   TotemSpellMap;
 
-    // object holders
-	GmTicketList        GM_TicketList;
-	TotemSpellMap       m_totemSpells;
-	OverrideIdMap       mOverrideIdMap;
+	// object holders
+	GmTicketList		GM_TicketList;
+	TotemSpellMap	   m_totemSpells;
+	OverrideIdMap	   mOverrideIdMap;
 
 	Player* GetPlayer(const char* name, bool caseSensitive = true);
 	Player* GetPlayer(uint32 guid);
@@ -356,7 +356,7 @@ public:
 	CorpseMap m_corpses;
 	Mutex _corpseslock;
 	Mutex m_corpseguidlock;
-    Mutex _TransportLock;
+	Mutex _TransportLock;
 	uint32 m_hiCorpseGuid;
 	uint32 m_hiGuildId;
 	
@@ -497,7 +497,7 @@ public:
 	
 	void LoadTransporters();
 	void ProcessGameobjectQuests();
-    void AddTransport(Transporter * pTransporter);
+	void AddTransport(Transporter * pTransporter);
    
 	void LoadTrainers();
 	Trainer* GetTrainer(uint32 Entry);
@@ -580,11 +580,11 @@ protected:
 	uint32 m_mailid;
 	// highest GUIDs, used for creating new objects
 	Mutex m_guidGenMutex;
-    union
-    {
-	    uint32 m_hiItemGuid;
-	    uint32 m_hiContainerGuid;
-    };
+	union
+	{
+		uint32 m_hiItemGuid;
+		uint32 m_hiContainerGuid;
+	};
 	uint32 m_hiGroupId;
 	uint32 m_hiCharterId;
 	RWLock m_charterLock;
@@ -633,7 +633,7 @@ protected:
 	//Corpse Collector
 	CorpseCollectorMap mCorpseCollector;
 
-    TransportMap mTransports;
+	TransportMap mTransports;
 
 	ItemSetContentMap mItemSets;
 

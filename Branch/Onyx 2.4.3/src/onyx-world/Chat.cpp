@@ -250,7 +250,7 @@ void CommandTableStorage::Init()
 		{ "aispelltestcontinue", 'd', &ChatHandler::HandleAIAgentDebugContinue, "", NULL, 0, 0, 0 },
 		{ "aispelltestskip", 'd', &ChatHandler::HandleAIAgentDebugSkip, "", NULL, 0, 0, 0 },
 		{ "dumpcoords", 'd', &ChatHandler::HandleDebugDumpCoordsCommmand, "", NULL, 0, 0, 0 },
-        { "sendpacket", 'd', &ChatHandler::HandleSendpacket, "<opcode ID>, <data>", NULL, 0, 0, 0 },
+		{ "sendpacket", 'd', &ChatHandler::HandleSendpacket, "<opcode ID>, <data>", NULL, 0, 0, 0 },
 		{ "sqlquery", 'd', &ChatHandler::HandleSQLQueryCommand, "<sql query>", NULL, 0, 0, 0 },
 		{ "rangecheck", 'd', &ChatHandler::HandleRangeCheckCommand, "Checks the 'yard' range and internal range between the player and the target.", NULL, 0, 0, 0 },
 		{ "setallratings", 'd', &ChatHandler::HandleRatingsCommand, "Sets rating values to incremental numbers based on their index.", NULL, 0, 0, 0 },
@@ -306,11 +306,11 @@ void CommandTableStorage::Init()
 		{ "select",	  'o', &ChatHandler::HandleGOSelect,   "Selects the nearest GameObject to you",	NULL, 0, 0, 0},
 		{ "delete",	  'o', &ChatHandler::HandleGODelete,   "Deletes selected GameObject",			  NULL, 0, 0, 0},
 		{ "spawn",	   'o', &ChatHandler::HandleGOSpawn,	"Spawns a GameObject by ID",				NULL, 0, 0, 0},
-		/*{ "info",		'o', &ChatHandler::HandleGOInfo,	 "Gives you informations about selected GO", NULL, 0, 0, 0},
+		{ "info",		'o', &ChatHandler::HandleGOInfo,	 "Gives you informations about selected GO", NULL, 0, 0, 0},
 		{ "activate",	'o', &ChatHandler::HandleGOActivate, "Activates/Opens the selected GO.",		 NULL, 0, 0, 0},
 		{ "enable",	  'o', &ChatHandler::HandleGOEnable,   "Enables the selected GO for use.",		 NULL, 0, 0, 0},
 		{ "scale",	   'o', &ChatHandler::HandleGOScale,	"Sets scale of selected GO",				NULL, 0, 0, 0},
-		{ "animprogress",'o', &ChatHandler::HandleGOAnimProgress, "Sets anim progress",				   NULL, 0, 0, 0 },
+		/*{ "animprogress",'o', &ChatHandler::HandleGOAnimProgress, "Sets anim progress",				   NULL, 0, 0, 0 },
 		{ "export",	  'o', &ChatHandler::HandleGOExport,   "Exports the current GO selected",		  NULL, 0, 0, 0 },*/
 		{ "move", 'g', &ChatHandler::HandleGOMove, "Moves gameobject to player xyz", NULL, 0, 0, 0 },
 		{ "rotate", 'g', &ChatHandler::HandleGORotate, "Rotates gameobject x degrees", NULL, 0, 0, 0 },
@@ -381,7 +381,7 @@ void CommandTableStorage::Init()
 	{
 		{ "ban",	  'a', &ChatHandler::HandleAccountBannedCommand,   "Ban account. .account ban name timeperiod", NULL, 0, 0, 0 },
 		{ "unban",	  'z', &ChatHandler::HandleAccountUnbanCommand,		"Unbans account x.", NULL, 0, 0, 0 },
-		{ "level",	  'z', &ChatHandler::HandleAccountLevelCommand,    "Sets gm level on account. Pass it username and 0,1,2,3,az, etc.", NULL, 0, 0, 0 },
+		{ "level",	  'z', &ChatHandler::HandleAccountLevelCommand,	"Sets gm level on account. Pass it username and 0,1,2,3,az, etc.", NULL, 0, 0, 0 },
 		{ "mute",	  'a', &ChatHandler::HandleAccountMuteCommand,		"Mutes account for <timeperiod>.", NULL, 0, 0, 0 },
 		{ "unmute",	  'a', &ChatHandler::HandleAccountUnmuteCommand,	"Unmutes account <x>", NULL, 0, 0, 0 },
 
@@ -429,7 +429,7 @@ void CommandTableStorage::Init()
 		{ "delboth",   '2', &ChatHandler::HandleQuestDelBothCommand,	"Delete quest <id> from the targeted NPC as start & finish",	NULL, 0, 0, 0},
 		{ "delfinish", '2', &ChatHandler::HandleQuestDelFinishCommand,	"Delete quest <id> from the targeted NPC as finisher",	NULL, 0, 0, 0},
 		{ "delstart",  '2', &ChatHandler::HandleQuestDelStartCommand,	"Delete quest <id> from the targeted NPC as starter",	NULL, 0, 0, 0},
-		{ "complete",  '2', &ChatHandler::HandleQuestFinishCommand,	    "Complete/Finish quest <id>",							NULL, 0, 0, 0},
+		{ "complete",  '2', &ChatHandler::HandleQuestFinishCommand,		"Complete/Finish quest <id>",							NULL, 0, 0, 0},
 		{ "finisher",  '2', &ChatHandler::HandleQuestFinisherCommand,	"Lookup quest finisher for quest <id>",					NULL, 0, 0, 0},
 		{ "item",	   '2', &ChatHandler::HandleQuestItemCommand,		"Lookup itemid necessary for quest <id>",				NULL, 0, 0, 0},
 		{ "list",	   '2', &ChatHandler::HandleQuestListCommand,		"Lists the quests for the npc <id>",					NULL, 0, 0, 0},
@@ -441,7 +441,7 @@ void CommandTableStorage::Init()
 		{ "status",	   '2', &ChatHandler::HandleQuestStatusCommand,		"Lists the status of quest <id>",						NULL, 0, 0, 0},
 		{ "spawn",	   '2', &ChatHandler::HandleQuestSpawnCommand,		"Port to spawn location for quest <id>",				NULL, 0, 0, 0},
 		{ "start",	   '2', &ChatHandler::HandleQuestStartCommand,		"Starts quest <id>",									NULL, 0, 0, 0},
-		{ NULL,		    0,  NULL,										"",														NULL, 0, 0, 0},
+		{ NULL,			0,  NULL,										"",														NULL, 0, 0, 0},
 	};
 	dupe_command_table(questCommandTable, _questCommandTable);
 
@@ -458,7 +458,7 @@ void CommandTableStorage::Init()
 		{ "unbanchar",   'b', &ChatHandler::HandleUnBanCharacterCommand,"Unbans character x",			 NULL, 0, 0, 0},
 		{ "kick",		'b', &ChatHandler::HandleKickCommand,		  "Kicks player from server",	   NULL, 0, 0, 0},
 		{ "kill",		'r', &ChatHandler::HandleKillCommand,		  ".kill - Kills selected unit.",   NULL, 0, 0, 0},
-		{ "killplr" ,   'r', &ChatHandler::HandleKillByPlrCommand,         ".killplr <name> - Kills specified player" , NULL , 0 , 0 , 0 },
+		{ "killplr" ,   'r', &ChatHandler::HandleKillByPlrCommand,		 ".killplr <name> - Kills specified player" , NULL , 0 , 0 , 0 },
 		{ "revive",	  'r', &ChatHandler::HandleReviveCommand,		"Revives you.",				   NULL, 0, 0, 0},
 		{ "reviveplr",   'r', &ChatHandler::HandleReviveStringcommand,  "Revives player specified.",	  NULL, 0, 0, 0},
 		{ "demorph",	 'm', &ChatHandler::HandleDeMorphCommand,	   "Demorphs from morphed model.",   NULL, 0, 0, 0},
@@ -484,7 +484,7 @@ void CommandTableStorage::Init()
 		{ "learn",	   'm', &ChatHandler::HandleLearnCommand,		 "Learns spell",				   NULL, 0, 0, 0},
 		{ "unlearn",	 'm', &ChatHandler::HandleUnlearnCommand,	   "Unlearns spell",				 NULL, 0, 0, 0},
 		{ "getskilllevel", 'm', &ChatHandler::HandleGetSkillLevelCommand, "Gets the current level of a skill",NULL,0,0,0}, //DGM (maybe add to playerinfo?)
-        { "getskillinfo", 'm', &ChatHandler::HandleGetSkillsInfoCommand, "Gets all the skills from a player",NULL,0,0,0},
+		{ "getskillinfo", 'm', &ChatHandler::HandleGetSkillsInfoCommand, "Gets all the skills from a player",NULL,0,0,0},
 		{ "learnskill",  'm', &ChatHandler::HandleLearnSkillCommand,	".learnskill <skillid> (optional) <value> <maxvalue> - Learns skill id skillid.", NULL, 0, 0, 0},
 		{ "advanceskill",'m', &ChatHandler::HandleModifySkillCommand,   "advanceskill <skillid> <amount, optional, default = 1> - Advances skill line x times..", NULL, 0, 0, 0},
 		{ "removeskill", 'm', &ChatHandler::HandleRemoveSkillCommand,   ".removeskill <skillid> - Removes skill",		 NULL, 0, 0, 0 },
@@ -614,7 +614,7 @@ void ChatHandler::SendMultilineMessage(WorldSession *m_session, const char *str)
 	char * start = (char*)str, *end;
 	for(;;)
 	{
-        end = strchr(start, '\n');
+		end = strchr(start, '\n');
 		if(!end)
 			break;
 
@@ -741,14 +741,14 @@ int ChatHandler::ParseCommands(const char* text, WorldSession *session)
 
 WorldPacket * ChatHandler::FillMessageData( uint32 type, int32 language, const char *message,uint64 guid , uint8 flag) const
 {
-	//Packet    structure
-	//uint8	    type;
+	//Packet	structure
+	//uint8		type;
 	//uint32	language;
 	//uint64	guid;
 	//uint64	guid;
 	//uint32	len_of_text;
-	//char	    text[];		 // not sure ? i think is null terminated .. not null terminated
-	//uint8	    afk_state;
+	//char		text[];		 // not sure ? i think is null terminated .. not null terminated
+	//uint8		afk_state;
 	ASSERT(type != CHAT_MSG_CHANNEL);
 	   //channels are handled in channel handler and so on
 	uint32 messageLength = (uint32)strlen((char*)message) + 1;
@@ -889,6 +889,21 @@ void ChatHandler::GreenSystemMessage(WorldSession *m_session, const char *messag
 	vsnprintf(msg1,1024, message,ap);
 	char msg[1024];
 	snprintf(msg, 1024, "%s%s|r", MSG_COLOR_GREEN, msg1);
+	WorldPacket * data = FillSystemMessageData(msg);
+	if(m_session != NULL) 
+		m_session->SendPacket(data);
+	delete data;
+}
+
+void ChatHandler::WhiteSystemMessage(WorldSession *m_session, const char *message, ...)
+{
+	if( !message ) return;
+	va_list ap;
+	va_start(ap, message);
+	char msg1[1024];
+	vsnprintf(msg1,1024, message,ap);
+	char msg[1024];
+	snprintf(msg, 1024, "%s%s|r", MSG_COLOR_WHITE, msg1);
 	WorldPacket * data = FillSystemMessageData(msg);
 	if(m_session != NULL) 
 		m_session->SendPacket(data);

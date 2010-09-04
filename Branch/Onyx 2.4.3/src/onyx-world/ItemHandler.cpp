@@ -54,7 +54,7 @@ void WorldSession::HandleSplitOpcode(WorldPacket& recv_data)
 	if( (i1 && i1->wrapped_item_id) || (i2 && i2->wrapped_item_id) || ( i1 && i1->GetProto()->MaxCount < 2 ) || ( i2 && i2->GetProto()->MaxCount < 2 ) || count < 1 )
 	{
 		GetPlayer()->GetItemInterface()->BuildInventoryChangeError(i1, i2, INV_ERR_ITEM_CANT_STACK);
-        return;
+		return;
 	}
 
 	if(i2)//smth already in this slot
@@ -487,13 +487,15 @@ void WorldSession::HandleSwapInvItemOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleDestroyItemOpcode( WorldPacket & recv_data )
 {
-	if(!_player->IsInWorld()) return;
+	if(!_player->IsInWorld())
+		return;
+
 	CHECK_PACKET_SIZE(recv_data, 2);
 	//Player *plyr = GetPlayer();
 
 	int8 SrcInvSlot, SrcSlot;
-
 	recv_data >> SrcInvSlot >> SrcSlot;
+	SKIP_READ_PACKET(recv_data);
 
 	DEBUG_LOG( "ITEM: destroy, SrcInv Slot: %i Src slot: %i", SrcInvSlot, SrcSlot );
 	Item *it = _player->GetItemInterface()->GetInventoryItem(SrcInvSlot,SrcSlot);
@@ -1090,7 +1092,7 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 
 	uint32 count_per_stack = ci.amount * amount;
 
-    //if slot is diferent than -1, check for validation, else continue for auto storing.
+	//if slot is diferent than -1, check for validation, else continue for auto storing.
 	if(slot != INVENTORY_SLOT_NOT_SET)
 	{
 		if(!(bagguid>>32))//buy to bakcpack
@@ -1189,7 +1191,7 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 			return;
 		}
 
-        pItem = objmgr.CreateItem(it->ItemId, _player);
+		pItem = objmgr.CreateItem(it->ItemId, _player);
 		if(pItem)
 		{
 			pItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, count_per_stack);
@@ -1281,6 +1283,13 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 		return;
 	}
 
+	if((it->AllowableClass && !(_player->getClassMask() & it->AllowableClass))
+		|| (it->AllowableRace && !(_player->getRaceMask() & it->AllowableRace)))
+	{
+		_player->GetItemInterface()->BuildInventoryChangeError(NULL, NULL, INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM2);
+		return;
+	}
+
 	if( amount > it->MaxCount )
 	{
 		_player->GetItemInterface()->BuildInventoryChangeError(0, 0, INV_ERR_ITEM_CANT_STACK);
@@ -1293,11 +1302,11 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 		return;
 	}
 
-   if((error = _player->GetItemInterface()->CanAffordItem(it, amount, unit, item.extended_cost)))
-   {
-      SendBuyFailed(srcguid, itemid, error);
-      return;
-   }
+	if((error = _player->GetItemInterface()->CanAffordItem(it, amount, unit, item.extended_cost)))
+	{
+		SendBuyFailed(srcguid, itemid, error);
+		return;
+	}
  
 	// Find free slot and break if inv full
 	add = _player->GetItemInterface()->FindItemLessMax(itemid,amount*item.amount, false);
@@ -1414,10 +1423,13 @@ void WorldSession::SendInventoryList(Creature* unit)
 		{
 			if((curItem = ItemPrototypeStorage.LookupEntry(itr->itemid)))
 			{
-				if(curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass))
-					continue;
-				if(curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace))
-					continue;
+				if(itr->ExcludeUnusable)
+				{
+					if(curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass))
+						continue;
+					if(curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace))
+						continue;
+				}
 
 				int32 av_am = (itr->max_amount>0)?itr->available_amount:-1;
 				data << (counter + 1);
@@ -1768,11 +1780,11 @@ void WorldSession::HandleAutoBankItemOpcode(WorldPacket &recvPacket)
 	}
 	else
 	{
-        eitem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot,SrcSlot, false);
+		eitem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot,SrcSlot, false);
 		if(!_player->GetItemInterface()->SafeAddItem(eitem, slotresult.ContainerSlot, slotresult.Slot))
 		{
 			DEBUG_LOG("[ERROR]AutoBankItem: Error while adding item to bank bag!\n");
-            if( !_player->GetItemInterface()->SafeAddItem(eitem, SrcInvSlot, SrcSlot) )
+			if( !_player->GetItemInterface()->SafeAddItem(eitem, SrcInvSlot, SrcSlot) )
 				delete eitem;
 		}
 	}
@@ -1812,11 +1824,11 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPacket &recvPacket)
 	}
 	else
 	{
-        eitem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot, SrcSlot, false);
+		eitem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot, SrcSlot, false);
 		if (!_player->GetItemInterface()->AddItemToFreeSlot(eitem))
 		{
 			DEBUG_LOG("[ERROR]AutoStoreBankItem: Error while adding item from one of the bank bags to the player bag!\n");
-           if( !_player->GetItemInterface()->SafeAddItem(eitem, SrcInvSlot, SrcSlot) )
+		   if( !_player->GetItemInterface()->SafeAddItem(eitem, SrcInvSlot, SrcSlot) )
 			   delete eitem;
 		}
 	}

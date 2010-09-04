@@ -50,12 +50,12 @@ uint32 buffentrys[3] = {180380,180362,180146};
 	};
 
 	static uint32 ControlPointGoIds[AB_NUM_CONTROL_POINTS][AB_NUM_SPAWN_TYPES] = {
-		  // NEUTRAL    ALLIANCE-ATTACK    HORDE-ATTACK    ALLIANCE-CONTROLLED    HORDE_CONTROLLED
-		{ 180087,       180085,            180086,         180076,                180078 },			// STABLE	
-		{ 180089,       180085,            180086,         180076,                180078 },			// FARM
-		{ 180088,       180085,            180086,         180076,                180078 },			// BLACKSMITH
-		{ 180091,       180085,            180086,         180076,                180078 },			// MINE
-		{ 180090,       180085,            180086,         180076,                180078 },			// LUMBERMILL
+		  // NEUTRAL	ALLIANCE-ATTACK	HORDE-ATTACK	ALLIANCE-CONTROLLED	HORDE_CONTROLLED
+		{ 180087,	   180085,			180086,		 180076,				180078 },			// STABLE	
+		{ 180089,	   180085,			180086,		 180076,				180078 },			// FARM
+		{ 180088,	   180085,			180086,		 180076,				180078 },			// BLACKSMITH
+		{ 180091,	   180085,			180086,		 180076,				180078 },			// MINE
+		{ 180090,	   180085,			180086,		 180076,				180078 },			// LUMBERMILL
 	};
 
 	static float ControlPointCoordinates[AB_NUM_CONTROL_POINTS][4] = {

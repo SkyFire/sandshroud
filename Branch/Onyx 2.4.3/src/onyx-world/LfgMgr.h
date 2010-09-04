@@ -69,7 +69,7 @@ public:
 	set<Player*> AcceptedPlayers;
 	Mutex lock;
 	uint32 DungeonId;
-    Group * pGroup;
+	Group * pGroup;
 
 	LfgMatch(uint32 did) : DungeonId(did),pGroup(NULL) { }
 };

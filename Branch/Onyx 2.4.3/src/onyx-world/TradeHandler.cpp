@@ -142,18 +142,18 @@ void WorldSession::HandleCancelTrade(WorldPacket & recv_data)
 	if(_player->mTradeTarget == 0 || _player->mTradeStatus == TRADE_STATUS_COMPLETE)
 		return;
 
-    uint32 TradeStatus = TRADE_STATUS_CANCELLED;
-    OutPacket(SMSG_TRADE_STATUS, 4, &TradeStatus);
+	uint32 TradeStatus = TRADE_STATUS_CANCELLED;
+	OutPacket(SMSG_TRADE_STATUS, 4, &TradeStatus);
 
 	Player * plr = _player->GetTradeTarget();
-    if(plr)
-    {
-        if(plr->m_session && plr->m_session->GetSocket())
+	if(plr)
+	{
+		if(plr->m_session && plr->m_session->GetSocket())
 		plr->m_session->OutPacket(SMSG_TRADE_STATUS, 4, &TradeStatus);
 	
-	    plr->mTradeTarget = 0;
+		plr->mTradeTarget = 0;
 		plr->ResetTradeVariables();
-    }
+	}
 	
 	_player->mTradeTarget = 0;
 	_player->ResetTradeVariables();

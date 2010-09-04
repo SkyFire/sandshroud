@@ -1462,7 +1462,7 @@ Unit* AIInterface::FindTarget()
 
 	#endif		// LOS_ONLY_IN_INSTANCE
 
-            if( CollideInterface.CheckLOS( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), 
+			if( CollideInterface.CheckLOS( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), 
 				pUnit->GetPositionX(), pUnit->GetPositionZ(), pUnit->GetPositionZ() ) )
 			{
 				distance = dist;
@@ -3463,7 +3463,7 @@ void AIInterface::CheckTarget(Unit* target)
 		it2 = target->GetAIInterface()->m_aiTargets.find( m_Unit );
 		if( it2 != target->GetAIInterface()->m_aiTargets.end() )
 			target->GetAIInterface()->m_aiTargets.erase( it2 );
-        
+		
 		if( target->GetAIInterface()->m_nextTarget == m_Unit )
 		{
 			target->GetAIInterface()->m_nextTarget = NULL;

@@ -1157,7 +1157,7 @@ enum FriendsResult {
 */
 /*
 enum NPCFlags {
-//									Decimal                    Hex     Bit  Comments
+//									Decimal					Hex	 Bit  Comments
 	UNIT_NPC_FLAG_NONE				=	0,				 //0x00000000	01
 	UNIT_NPC_FLAG_GOSSIP			=	1,				 //0x00000001	02	Gossip/Talk (CMSG_GOSSIP_HELLO, ?)
 	UNIT_NPC_FLAG_QUESTGIVER		=	2,				 //0x00000002	03	Questgiver

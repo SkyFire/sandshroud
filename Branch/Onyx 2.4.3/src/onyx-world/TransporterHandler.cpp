@@ -126,7 +126,7 @@ bool Transporter::GenerateWaypoints()
 				pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
 		}
 		if (keyFrames[i].actionflag == 2) {
-            if(firstStop<0)
+			if(firstStop<0)
 				firstStop=(int)i;
 
 			lastStop = (int)i;
@@ -417,9 +417,6 @@ Transporter::~Transporter()
 
 void ObjectMgr::LoadTransporters()
 {
-#ifdef CLUSTERING
-	return;
-#endif
 	Log.Notice("ObjectMgr", "Loading Transports...");
 	QueryResult * QR = WorldDatabase.Query("SELECT * FROM transport_data");
 	if(!QR) return;
@@ -438,7 +435,7 @@ void ObjectMgr::LoadTransporters()
 			delete pTransporter;
 		}else
 		{
-            AddTransport(pTransporter);
+			AddTransport(pTransporter);
 
 			QueryResult * result2 = WorldDatabase.Query("SELECT * FROM transport_creatures WHERE transport_entry = %u", entry);
 			if(result2)

@@ -572,7 +572,7 @@ public:
 	bool m_loadedFromDB;
 
 	/************************************************************************/
-	/* ACCESSOR FUNCTIONS                                                   */
+	/* ACCESSOR FUNCTIONS												   */
 	/************************************************************************/
 	// Stats
 	ONYX_INLINE uint32 GetStrength() { return m_uint32Values[UNIT_FIELD_STRENGTH]; }
@@ -586,7 +586,7 @@ public:
 	ONYX_INLINE uint32 GetMaxHealth() { return m_uint32Values[UNIT_FIELD_MAXHEALTH]; }
 
 	/************************************************************************/
-	/* END ACCESSOR FUNCTIONS                                               */
+	/* END ACCESSOR FUNCTIONS											   */
 	/************************************************************************/
 
 public:

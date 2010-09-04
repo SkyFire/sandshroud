@@ -155,7 +155,7 @@ bool MailMessage::AddMessageDataToPacket(WorldPacket& data)
 
 			data << pItem->GetUInt32Value( ITEM_FIELD_RANDOM_PROPERTIES_ID );
 			if( ( (int32)pItem->GetUInt32Value( ITEM_FIELD_RANDOM_PROPERTIES_ID ) ) < 0 )
-                data << pItem->GetItemRandomSuffixFactor();
+				data << pItem->GetItemRandomSuffixFactor();
 			else
 				data << uint32( 0 );
 
@@ -303,7 +303,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 		recv_data >> itemslot;
 		recv_data >> itemguid;
 
-        pItem = _player->GetItemInterface()->GetItemByGUID( itemguid );
+		pItem = _player->GetItemInterface()->GetItemByGUID( itemguid );
 		real_item_slot = _player->GetItemInterface()->GetInventorySlotByGuid( itemguid );
 		if( pItem == NULL || pItem->IsSoulbound() || pItem->HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) || 
 			( pItem->IsContainer() && ((Container*)pItem)->HasItems() ) || real_item_slot >= 0 && real_item_slot < INVENTORY_SLOT_ITEM_START )
@@ -911,7 +911,7 @@ void Mailbox::Load(QueryResult * result)
 				if( itemguid != 0 )
 					msg.items.push_back( itemguid );
 
-                str = p;
+				str = p;
 				p = strchr( str, ',' );
 			}
 		}

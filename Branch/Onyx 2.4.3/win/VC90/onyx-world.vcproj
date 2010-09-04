@@ -600,14 +600,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\onyx-world\ClusterInterface.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\onyx-world\ClusterInterface.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\onyx-world\CollideInterface.cpp"
 			>
 		</File>
@@ -1185,18 +1177,6 @@
 		</File>
 		<File
 			RelativePath="..\..\src\onyx-world\WordFilter.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\onyx-world\WorkdSocketCluster.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\onyx-world\WorkerServerClient.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\onyx-world\WorkerServerClient.h"
 			>
 		</File>
 		<File

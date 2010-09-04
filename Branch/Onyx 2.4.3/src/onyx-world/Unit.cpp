@@ -249,7 +249,7 @@ Unit::~Unit()
 	if(SM_FDOT != 0) delete [] SM_FDOT ;
 	if(SM_PDOT != 0) delete [] SM_PDOT ;
 	if(SM_PEffectBonus != 0) delete [] SM_PEffectBonus ;
-    if(SM_FEffectBonus != 0) delete [] SM_FEffectBonus ;
+	if(SM_FEffectBonus != 0) delete [] SM_FEffectBonus ;
 	if(SM_FDamageBonus != 0) delete [] SM_FDamageBonus ;
 	if(SM_PDamageBonus != 0) delete [] SM_PDamageBonus ;
 	if(SM_PSPELL_VALUE != 0) delete [] SM_PSPELL_VALUE ;
@@ -296,10 +296,10 @@ void Unit::Update( uint32 p_time )
 
 		//-----------------------POWER & HP REGENERATION-----------------
 /* Please dont do temp fixes. Better report to me. Thx. Shady */
-        if( p_time >= m_H_regenTimer )
-		    RegenerateHealth();
-	    else
-		    m_H_regenTimer -= p_time;
+		if( p_time >= m_H_regenTimer )
+			RegenerateHealth();
+		else
+			m_H_regenTimer -= p_time;
 
 		if( p_time >= m_P_regenTimer )
 		{
@@ -747,8 +747,8 @@ void Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, uint
 							if( !this->IsPlayer() || static_cast< Player* >( this )->GetShapeShift() != FORM_CAT )
 								continue;
 						}break;
-                        case 34754: //holy concentration
-                        {
+						case 34754: //holy concentration
+						{
 
 							if( CastingSpell->NameHash != SPELL_HASH_FLASH_HEAL &&
 								CastingSpell->NameHash != SPELL_HASH_BINDING_HEAL &&
@@ -933,28 +933,28 @@ void Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, uint
 									CastingSpell->NameHash != SPELL_HASH_DRAIN_LIFE )//Drain Life								
 									continue;
 							}break;
-/*                        //warlock - Demonic Knowledge
-                        case 39576:
-                            {
-                                if( CastingSpell == NULL )
-                                    continue;
-                                if( CastingSpell->Effect[0] != 56 )
-                                    continue;
-                                Pet* ps = static_cast< Player* >( this )->GetSummon();
-                                if( ps == NULL)
-                                    return;//no pet
-                                int32 val;
-                                SpellEntry *parentproc= dbcSpell.LookupEntry( origId );
-                                val = parentproc->EffectBasePoints[0] + 1;
-                                val = val * (ps->GetUInt32Value( UNIT_FIELD_STAT2 ) + ps->GetUInt32Value( UNIT_FIELD_STAT3 ) );
-                                SpellEntry *spellInfo = dbcSpell.LookupEntry( 39576 );
-                                Spell *spell = new Spell( this, spellInfo ,true, NULL );
-                                spell->forced_basepoints[0] = ( val / 100 );
-                                SpellCastTargets targets;
-                                targets.m_unitTarget = GetGUID();
-                                spell->prepare( &targets );
-                                continue;
-                            }break;*/
+/*						//warlock - Demonic Knowledge
+						case 39576:
+							{
+								if( CastingSpell == NULL )
+									continue;
+								if( CastingSpell->Effect[0] != 56 )
+									continue;
+								Pet* ps = static_cast< Player* >( this )->GetSummon();
+								if( ps == NULL)
+									return;//no pet
+								int32 val;
+								SpellEntry *parentproc= dbcSpell.LookupEntry( origId );
+								val = parentproc->EffectBasePoints[0] + 1;
+								val = val * (ps->GetUInt32Value( UNIT_FIELD_STAT2 ) + ps->GetUInt32Value( UNIT_FIELD_STAT3 ) );
+								SpellEntry *spellInfo = dbcSpell.LookupEntry( 39576 );
+								Spell *spell = new Spell( this, spellInfo ,true, NULL );
+								spell->forced_basepoints[0] = ( val / 100 );
+								SpellCastTargets targets;
+								targets.m_unitTarget = GetGUID();
+								spell->prepare( &targets );
+								continue;
+							}break;*/
 						//mage - Arcane Blast proc
 						case 36032:
 							{
@@ -1116,24 +1116,24 @@ void Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, uint
 							}
 							break;
 						//priest - Blessed Recovery
-                        case 27813:
-                        case 27817:
-                        case 27818:
-                            {
-                                if(!IsPlayer() || !dmg)
-                                    continue;
-                                SpellEntry *parentproc= dbcSpell.LookupEntry(origId);
-                                SpellEntry *spellInfo = dbcSpell.LookupEntry(spellId);
+						case 27813:
+						case 27817:
+						case 27818:
+							{
+								if(!IsPlayer() || !dmg)
+									continue;
+								SpellEntry *parentproc= dbcSpell.LookupEntry(origId);
+								SpellEntry *spellInfo = dbcSpell.LookupEntry(spellId);
 								if (!parentproc || !spellInfo)
 									continue;
 								int32 val = parentproc->EffectBasePoints[0] + 1;
-                                Spell *spell = new Spell(this, spellInfo ,true, NULL);
-                                spell->forced_basepoints[0] = (val*dmg)/300; //per tick
-                                SpellCastTargets targets;
-                                targets.m_unitTarget = GetGUID();
-                                spell->prepare(&targets);
-                                continue;
-                            }break;
+								Spell *spell = new Spell(this, spellInfo ,true, NULL);
+								spell->forced_basepoints[0] = (val*dmg)/300; //per tick
+								SpellCastTargets targets;
+								targets.m_unitTarget = GetGUID();
+								spell->prepare(&targets);
+								continue;
+							}break;
 						//shaman - Healing Way
 						case 29203:
 							{
@@ -1757,7 +1757,7 @@ void Unit::HandleProcDmgShield(uint32 flag, Unit* attacker)
 	WorldPacket data(24);
 	std::list<DamageProc>::iterator i;
 	std::list<DamageProc>::iterator i2;
-	for(i = m_damageShields.begin();i != m_damageShields.end();)     // Deal Damage to Attacker
+	for(i = m_damageShields.begin();i != m_damageShields.end();)	 // Deal Damage to Attacker
 	{
 		i2 = i++; //we should not proc on proc.. not get here again.. not needed.Better safe then sorry.
 		if(	(flag & (*i2).m_flags) )
@@ -1830,7 +1830,7 @@ void Unit::RegenerateHealth()
 
 void Unit::RegeneratePower(bool isinterrupted)
 {
-    // This is only 2000 IF the power is not rage
+	// This is only 2000 IF the power is not rage
 	if (isinterrupted)
 		m_interruptedRegenTime =2000;
 	else
@@ -1965,7 +1965,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 {
 	Item * it = NULL;
 
-	float hitchance          = 0.0f;
+	float hitchance		  = 0.0f;
 	float dodge				 = 0.0f;
 	float parry				 = 0.0f;
 	float block				 = 0.0f;
@@ -1976,7 +1976,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	uint32 SubClassSkill	 = SKILL_UNARMED;
 
 	bool backAttack			 = isInBack( pVictim );
-	uint32 vskill            = 0;
+	uint32 vskill			= 0;
 
 	//==========================================================================================
 	//==============================Victim Skill Base Calculation===============================
@@ -2202,13 +2202,13 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 	
 	Item * it = NULL;
 	
-	float hitchance          = 0.0f;
+	float hitchance		  = 0.0f;
 	float dodge				 = 0.0f;
 	float parry				 = 0.0f;
-	float glanc              = 0.0f;
+	float glanc			  = 0.0f;
 	float block				 = 0.0f;
 	float crit				 = 0.0f;
-	float crush              = 0.0f;
+	float crush			  = 0.0f;
 
 	uint32 targetEvent		 = 0;
 	uint32 hit_status		 = 0;
@@ -2226,7 +2226,7 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 	uint32 SubClassSkill	 = SKILL_UNARMED;
 
 	bool backAttack			 = !pVictim->isInFront( this );
-	uint32 vskill            = 0;
+	uint32 vskill			= 0;
 	bool disable_dR			 = false;
 	
 	if(ability)
@@ -2726,7 +2726,7 @@ else
 							vproc |= PROC_ON_BLOCK_VICTIM;
 						}
 						if( pVictim->IsPlayer() )//not necessary now but we'll have blocking mobs in future
-						{            
+						{			
 							pVictim->SetFlag(UNIT_FIELD_AURASTATE,AURASTATE_FLAG_DODGE_BLOCK);	//SB@L: Enables spells requiring dodge
 							if(!sEventMgr.HasEvent(pVictim,EVENT_DODGE_BLOCK_FLAG_EXPIRE))
 								sEventMgr.AddEvent(pVictim,&Unit::EventAurastateExpire,(uint32)AURASTATE_FLAG_DODGE_BLOCK,EVENT_DODGE_BLOCK_FLAG_EXPIRE,5000,1,0);
@@ -2872,7 +2872,7 @@ else
 	//vstate=1-wound,2-dodge,3-parry,4-interrupt,5-block,6-evade,7-immune,8-deflect	
 	// the above code was remade it for reasons : damage shield needs moslty same flags as handleproc + dual wield should proc too ?
 	if( !disable_proc )
-    {
+	{
 		this->HandleProc(aproc,pVictim, ability,realdamage,abs); //maybe using dmg.resisted_damage is better sometimes but then if using godmode dmg is resisted instead of absorbed....bad
 		m_procCounter = 0;
 
@@ -3294,7 +3294,7 @@ void Unit::AddAura(Aura *aur, Aura *pParentAura)
 	uint8 databuffer[100];
 	StackPacket data(SMSG_SET_EXTRA_AURA_INFO, databuffer, 100);
 
-    if( !aur->IsPassive() )
+	if( !aur->IsPassive() )
 	{
 		//uint32 aurName = aur->GetSpellProto()->Name;
 		//uint32 aurRank = aur->GetSpellProto()->Rank;
@@ -3746,12 +3746,12 @@ void Unit::RemoveNegativeAuras()
 	{
 		if(m_auras[x])
 		{
-            if(m_auras[x]->GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
-                continue;
-            else
-            {
-			    m_auras[x]->Remove();
-            }
+			if(m_auras[x]->GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
+				continue;
+			else
+			{
+				m_auras[x]->Remove();
+			}
 		}
 	}
 }
@@ -3770,15 +3770,15 @@ void Unit::RemoveAllAuras()
 //ex:to remove morph spells
 void Unit::RemoveAllAuraType(uint32 auratype)
 {
-    for(uint32 x = 0;x < MAX_AURAS; ++x)
-    {
+	for(uint32 x = 0;x < MAX_AURAS; ++x)
+	{
 		if(m_auras[x])
 		{
 			SpellEntry *proto=m_auras[x]->GetSpellProto();
 			if(proto->EffectApplyAuraName[0]==auratype || proto->EffectApplyAuraName[1]==auratype || proto->EffectApplyAuraName[2]==auratype)
 				RemoveAura(m_auras[x]->GetSpellId());//remove all morph auras containig to this spell (like wolf motph also gives speed)
 		}
-    }
+	}
 }
 
 bool Unit::SetAurDuration(uint32 spellId,Unit* caster,uint32 duration)
@@ -3952,10 +3952,10 @@ int32 Unit::GetSpellDmgBonus(Unit *pVictim, SpellEntry *spellInfo,int32 base_dmg
 	{
 		downrank1 = 1.0f;
 		if(spellInfo->baseLevel < 20)
-		    downrank1 = 1.0f - (20.0f - float (spellInfo->baseLevel) ) * 0.0375f;
+			downrank1 = 1.0f - (20.0f - float (spellInfo->baseLevel) ) * 0.0375f;
 		downrank2 = ( float(spellInfo->maxLevel + 5.0f) / float(static_cast< Player* >(caster)->getLevel()) );
 		if(downrank2 >= 1 || downrank2 < 0)
-		        downrank2 = 1.0f;
+				downrank2 = 1.0f;
 		dmgdoneaffectperc *= downrank1 * downrank2;
 	}
 //==========================================================================================
@@ -4133,17 +4133,17 @@ void Unit::OnRemoveInRangeObject(Object* pObj)
 			if(m_currentSpell)
 				m_currentSpell->cancel();
 
-        Object::OnRemoveInRangeObject(pObj);
-        if(critterPet == pObj)
+		Object::OnRemoveInRangeObject(pObj);
+		if(critterPet == pObj)
 		{
 			critterPet->SafeDelete();
 			critterPet = 0;
 		}
 	}
-    else
-    {
-        Object::OnRemoveInRangeObject(pObj);
-    }
+	else
+	{
+		Object::OnRemoveInRangeObject(pObj);
+	}
 }
 
 void Unit::ClearInRangeSet()
@@ -4423,17 +4423,17 @@ bool Unit::HasAura(uint32 spellid)
 void Unit::DropAurasOnDeath()
 {
 	for(uint32 x = 0;x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
-    {
-        if(m_auras[x] != NULL && !m_auras[x]->IsPassive())
-        {
-            if(m_auras[x] && m_auras[x]->GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
-                continue;
-            else
-	        {
-		        m_auras[x]->Remove();
-	        }
-        }
-    }
+	{
+		if(m_auras[x] != NULL && !m_auras[x]->IsPassive())
+		{
+			if(m_auras[x] && m_auras[x]->GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
+				continue;
+			else
+			{
+				m_auras[x]->Remove();
+			}
+		}
+	}
 }
 
 void Unit::UpdateSpeed()
@@ -4800,7 +4800,7 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 								continue;
 
 							//this spell gets removed only when casting smite
-						    SpellEntry *spi = dbcSpell.LookupEntry( skip );
+							SpellEntry *spi = dbcSpell.LookupEntry( skip );
 							if( spi && spi->NameHash != SPELL_HASH_SMITE )
 								continue;
 						}break;
@@ -5208,8 +5208,8 @@ void Unit::EventHealthChangeSinceLastUpdate()
 
 int32 Unit::GetAP()
 {
-    int32 baseap = GetUInt32Value(UNIT_FIELD_ATTACK_POWER) + GetUInt32Value(UNIT_FIELD_ATTACK_POWER_MODS);
-    float totalap = float(baseap)*(GetFloatValue(UNIT_FIELD_ATTACK_POWER_MULTIPLIER)+1);
+	int32 baseap = GetUInt32Value(UNIT_FIELD_ATTACK_POWER) + GetUInt32Value(UNIT_FIELD_ATTACK_POWER_MODS);
+	float totalap = float(baseap)*(GetFloatValue(UNIT_FIELD_ATTACK_POWER_MULTIPLIER)+1);
 	if(totalap>=0)
 		return float2int32(totalap);
 	return	0;
@@ -5217,8 +5217,8 @@ int32 Unit::GetAP()
 
 int32 Unit::GetRAP()
 {
-    int32 baseap = GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER) + GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MODS);
-    float totalap = float(baseap)*(GetFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER)+1);
+	int32 baseap = GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER) + GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MODS);
+	float totalap = float(baseap)*(GetFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER)+1);
 	if(totalap>=0)
 		return float2int32(totalap);
 	return	0;
@@ -5305,8 +5305,8 @@ Unit* Unit::create_guardian(uint32 guardian_entry,uint32 duration,float angle, u
 	}
 
 	p->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, GetGUID());
-    p->SetUInt64Value(UNIT_FIELD_CREATEDBY, GetGUID());
-    p->SetZoneId(GetZoneId());
+	p->SetUInt64Value(UNIT_FIELD_CREATEDBY, GetGUID());
+	p->SetZoneId(GetZoneId());
 	p->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE,GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
 	p->_setFaction();
 

@@ -529,59 +529,59 @@ bool ChatHandler::HandleGetSkillLevelCommand(const char *args, WorldSession *m_s
 		return false;
 	}
 
-    char * SkillName = SkillNameManager->SkillNames[skill];
+	char * SkillName = SkillNameManager->SkillNames[skill];
 
-    if (SkillName==0)
-    {
-        BlueSystemMessage(m_session, "Skill: %u does not exists", skill);
-        return false;
-    }
-    
-    if (!plr->_HasSkillLine(skill))
-    {
-        BlueSystemMessage(m_session, "Player does not have %s skill.", SkillName);
-        return false;
-    }
+	if (SkillName==0)
+	{
+		BlueSystemMessage(m_session, "Skill: %u does not exists", skill);
+		return false;
+	}
+	
+	if (!plr->_HasSkillLine(skill))
+	{
+		BlueSystemMessage(m_session, "Player does not have %s skill.", SkillName);
+		return false;
+	}
 
 	uint32 nobonus = plr->_GetSkillLineCurrent(skill,false);
 	uint32 bonus = plr->_GetSkillLineCurrent(skill,true) - nobonus;
-    uint32 max = plr->_GetSkillLineMax(skill);
+	uint32 max = plr->_GetSkillLineMax(skill);
 
-    BlueSystemMessage(m_session, "Player's %s skill has level: %u maxlevel: %u. (+ %u bonus)", SkillName,max,nobonus, bonus);
+	BlueSystemMessage(m_session, "Player's %s skill has level: %u maxlevel: %u. (+ %u bonus)", SkillName,max,nobonus, bonus);
 	return true;
 }
 
 bool ChatHandler::HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session)
 {
-    Player *plr = getSelectedChar(m_session, true);
-    if(!plr) return false;
-    
-    uint32 nobonus = 0;
-    int32  bonus = 0;
-    uint32 max = 0;
+	Player *plr = getSelectedChar(m_session, true);
+	if(!plr) return false;
+	
+	uint32 nobonus = 0;
+	int32  bonus = 0;
+	uint32 max = 0;
 
-    BlueSystemMessage(m_session, "Player: %s has skills", plr->GetName() );
+	BlueSystemMessage(m_session, "Player: %s has skills", plr->GetName() );
 
-    for (uint32 SkillId = 0; SkillId <= SkillNameManager->maxskill; SkillId++)
-    {
-        if (plr->_HasSkillLine(SkillId))
-        {
-            char * SkillName = SkillNameManager->SkillNames[SkillId];
-            if (!SkillName)
-            {
-                RedSystemMessage(m_session, "Invalid skill: %u", SkillId);
-                continue;
-            }
+	for (uint32 SkillId = 0; SkillId <= SkillNameManager->maxskill; SkillId++)
+	{
+		if (plr->_HasSkillLine(SkillId))
+		{
+			char * SkillName = SkillNameManager->SkillNames[SkillId];
+			if (!SkillName)
+			{
+				RedSystemMessage(m_session, "Invalid skill: %u", SkillId);
+				continue;
+			}
 
-            nobonus = plr->_GetSkillLineCurrent(SkillId,false);
-            bonus = plr->_GetSkillLineCurrent(SkillId,true) - nobonus;
-            max = plr->_GetSkillLineMax(SkillId);
+			nobonus = plr->_GetSkillLineCurrent(SkillId,false);
+			bonus = plr->_GetSkillLineCurrent(SkillId,true) - nobonus;
+			max = plr->_GetSkillLineMax(SkillId);
 
-            BlueSystemMessage(m_session, "  %s: Value: %u, MaxValue: %u. (+ %d bonus)", SkillName, nobonus,max, bonus);
-        }
-    }
+			BlueSystemMessage(m_session, "  %s: Value: %u, MaxValue: %u. (+ %d bonus)", SkillName, nobonus,max, bonus);
+		}
+	}
 
-    return true;
+	return true;
 }
 
 

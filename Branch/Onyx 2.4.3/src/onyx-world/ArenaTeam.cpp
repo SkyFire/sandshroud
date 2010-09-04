@@ -256,7 +256,7 @@ void ArenaTeam::SaveToDB()
 		<< m_stat_gamesplayedweek << " " << m_stat_gameswonweek << " "
 		<< m_stat_gamesplayedseason << " " << m_stat_gameswonseason << "',"
 		<< m_stat_ranking;
-    
+	
 	for(i = 0; i < m_memberCount; ++i)
 	{
 		if(m_members[i].Info)
@@ -298,7 +298,7 @@ void ArenaTeam::SetLeader(PlayerInfo * info)
 	snprintf(buffer, 1024,"%s is now the captain of the arena team, '%s'.", info->name, m_name.c_str());
 	data = sChatHandler.FillSystemMessageData(buffer);
 	m_leader=info->guid;
-    SendPacket(data);
+	SendPacket(data);
 	delete data;
 
 	/* set the fields */

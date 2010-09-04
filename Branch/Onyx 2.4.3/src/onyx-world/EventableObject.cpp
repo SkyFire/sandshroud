@@ -372,7 +372,7 @@ void EventableObjectHolder::Update(uint32 time_difference)
 				ev->cb->execute();
 
 			// check if the event is expired now.
-            if(ev->repeats && --ev->repeats == 0)
+			if(ev->repeats && --ev->repeats == 0)
 			{
 				// Event expired :>
 				

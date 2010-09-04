@@ -21,7 +21,7 @@
 LocalConsole g_localConsole;
 
 #ifndef WIN32
-    #include <termios.h>
+	#include <termios.h>
 #endif
 
 void ConsoleThread::terminate()

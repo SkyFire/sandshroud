@@ -66,7 +66,7 @@ const static uint32 weap_skills[21] = {	SKILL_AXES,
 										SKILL_CROSSBOWS,
 										SKILL_WANDS,
 										SKILL_FISHING };
-                                      
+									  
 const static float pricemod[9] = { 1.0f, // HATED
 								   1.0f, // HOSTILE
 								   1.0f, // UNFRIENDLY

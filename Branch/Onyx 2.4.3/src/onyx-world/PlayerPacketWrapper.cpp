@@ -42,57 +42,57 @@ void Player::Gossip_SendPOI(float X, float Y, uint32 Icon, uint32 Flags, uint32 
   
 void Player::SendLevelupInfo(uint32 level, uint32 Hp, uint32 Mana, uint32 Stat0, uint32 Stat1, uint32 Stat2, uint32 Stat3, uint32 Stat4)
 {
-    packet_SMSG_LEVELUP_INFO packet;
-    packet.level = level;
-    packet.Hp = Hp;
-    packet.Mana = Mana;
+	packet_SMSG_LEVELUP_INFO packet;
+	packet.level = level;
+	packet.Hp = Hp;
+	packet.Mana = Mana;
 
-    // grep: these are probably the other powers :)
-    packet.unk0 = 0;
-    packet.unk1 = 0;
-    packet.unk2 = 0;
-    packet.unk3 = 0;
+	// grep: these are probably the other powers :)
+	packet.unk0 = 0;
+	packet.unk1 = 0;
+	packet.unk2 = 0;
+	packet.unk3 = 0;
 
-    // Append stat differences
-    packet.Stat0 = Stat0;
-    packet.Stat1 = Stat1;
-    packet.Stat2 = Stat2;
-    packet.Stat3 = Stat3;
-    packet.Stat4 = Stat4;
-    GetSession()->OutPacket(SMSG_LEVELUP_INFO, sizeof(packet_SMSG_LEVELUP_INFO),(const char*)&packet);
+	// Append stat differences
+	packet.Stat0 = Stat0;
+	packet.Stat1 = Stat1;
+	packet.Stat2 = Stat2;
+	packet.Stat3 = Stat3;
+	packet.Stat4 = Stat4;
+	GetSession()->OutPacket(SMSG_LEVELUP_INFO, sizeof(packet_SMSG_LEVELUP_INFO),(const char*)&packet);
 }
 
 void Player::SendLogXPGain(uint64 guid, uint32 NormalXP, uint32 RestedXP, bool type)
 {
-    if (type == false)
-    {
-        packetSMSG_LOG_XP_GAIN_EXTRA packet;
-        packet.guid     = guid;
-        packet.xp       = NormalXP;
-        packet.type     = (uint8)type;
-        packet.restxp   = RestedXP;
-        packet.unk2     = 1.0f;
-        GetSession()->OutPacket(SMSG_LOG_XPGAIN, sizeof(packetSMSG_LOG_XP_GAIN_EXTRA),(const char*)&packet);
-    }
-    else if (type == true)
-    {
-        packetSMSG_LOG_XP_GAIN packet;
-        packet.guid = 0; // does not need to be set for quest xp
-        packet.xp = NormalXP;
-        packet.type = (uint8)type;
+	if (type == false)
+	{
+		packetSMSG_LOG_XP_GAIN_EXTRA packet;
+		packet.guid	 = guid;
+		packet.xp	   = NormalXP;
+		packet.type	 = (uint8)type;
+		packet.restxp   = RestedXP;
+		packet.unk2	 = 1.0f;
+		GetSession()->OutPacket(SMSG_LOG_XPGAIN, sizeof(packetSMSG_LOG_XP_GAIN_EXTRA),(const char*)&packet);
+	}
+	else if (type == true)
+	{
+		packetSMSG_LOG_XP_GAIN packet;
+		packet.guid = 0; // does not need to be set for quest xp
+		packet.xp = NormalXP;
+		packet.type = (uint8)type;
 		packet.unk = 0;
-        GetSession()->OutPacket(SMSG_LOG_XPGAIN, sizeof(packetSMSG_LOG_XP_GAIN),(const char*)&packet);
-    }
+		GetSession()->OutPacket(SMSG_LOG_XPGAIN, sizeof(packetSMSG_LOG_XP_GAIN),(const char*)&packet);
+	}
 }
 
 // this one needs to be send inrange...
 void Player::SendEnvironmentalDamageLog(const uint64 & guid, uint8 type, uint32 damage)
 {
-    packetSMSG_ENVIRONMENTAL_DAMAGE packet;
-    packet.Guid = guid;
-    packet.Damage = damage;
-    packet.Type = type;
-    GetSession()->OutPacket(SMSG_ENVIRONMENTALDAMAGELOG, sizeof(packetSMSG_ENVIRONMENTAL_DAMAGE),(const char*)&packet);
+	packetSMSG_ENVIRONMENTAL_DAMAGE packet;
+	packet.Guid = guid;
+	packet.Damage = damage;
+	packet.Type = type;
+	GetSession()->OutPacket(SMSG_ENVIRONMENTALDAMAGELOG, sizeof(packetSMSG_ENVIRONMENTAL_DAMAGE),(const char*)&packet);
 }
 
 

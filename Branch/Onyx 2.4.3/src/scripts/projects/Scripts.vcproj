@@ -379,34 +379,94 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<Filter
-				Name="Eastern Kingdoms"
+				Name="Ex. Eastern Kingdoms"
 				>
 				<Filter
 					Name="Instances"
 					>
 				</Filter>
+				<Filter
+					Name="Quests"
+					>
+					<Filter
+						Name="Horde"
+						>
+					</Filter>
+					<Filter
+						Name="Alliance"
+						>
+					</Filter>
+					<Filter
+						Name="Both"
+						>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="Kalimdor"
+				Name="Ex. Kalimdor"
 				>
 				<Filter
 					Name="Instances"
 					>
 				</Filter>
+				<Filter
+					Name="Quests"
+					>
+					<Filter
+						Name="Horde"
+						>
+					</Filter>
+					<Filter
+						Name="Alliance"
+						>
+					</Filter>
+					<Filter
+						Name="Both"
+						>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="Outlands"
+				Name="Ex. Outlands"
 				>
 				<Filter
 					Name="Instances"
 					>
+				</Filter>
+				<Filter
+					Name="Quests"
+					>
+					<Filter
+						Name="Horde"
+						>
+					</Filter>
+					<Filter
+						Name="Alliance"
+						>
+					</Filter>
+					<Filter
+						Name="Both"
+						>
+					</Filter>
+					<Filter
+						Name="Classes"
+						>
+						<Filter
+							Name="Paladin"
+							>
+							<File
+								RelativePath="..\src\Scripts\Scripts\Outland.Quests.Paladin.cpp"
+								>
+							</File>
+						</Filter>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
 				Name="Other"
 				>
 				<File
-					RelativePath="..\src\Scripts\Other\WorldBosses.cpp"
+					RelativePath="..\src\Scripts\Scripts\Other.WorldBosses.cpp"
 					>
 				</File>
 			</Filter>

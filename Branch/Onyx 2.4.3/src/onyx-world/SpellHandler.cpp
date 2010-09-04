@@ -60,8 +60,8 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		if( sQuestMgr.PlayerMeetsReqs(_player, qst, false) != QMGR_QUEST_AVAILABLE || qst->min_level > _player->getLevel() )
 			return;
 
-        WorldPacket data;
-        sQuestMgr.BuildQuestDetails(&data, qst, tmpItem, 0, language);
+		WorldPacket data;
+		sQuestMgr.BuildQuestDetails(&data, qst, tmpItem, 0, language);
 		SendPacket(&data);
 	}
 	
@@ -225,7 +225,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 			{
 			case 2:			 // bows
 			case 3:			 // guns
-            case 18:		 // crossbow
+			case 18:		 // crossbow
 				spellid = SPELL_RANGED_GENERAL;
 				break;
 			case 16:			// thrown
@@ -265,8 +265,8 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 			return;
 		}
 
-        if(_player->m_currentSpell)
-        {
+		if(_player->m_currentSpell)
+		{
 			if( _player->m_currentSpell->getState() == SPELL_STATE_CASTING )
 			{
 				// cancel the existing channel spell, cast this one
@@ -278,7 +278,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 				_player->SendCastResult(spellInfo->Id, SPELL_FAILED_SPELL_IN_PROGRESS, cn, 0);
 				return;
 			}
-        }
+		}
 
 		SpellCastTargets targets(recvPacket,GetPlayer()->GetGUID());
 
@@ -354,7 +354,7 @@ void WorldSession::HandleAddDynamicTargetOpcode(WorldPacket & recvPacket)
 	sp = dbcSpell.LookupEntry(spellid);
 
 	// Summoned Elemental's Freeze
-    if (spellid == 33395)
+	if (spellid == 33395)
 	{
 		caster = _player->m_Summon;
 		if( caster && ((Pet*)caster)->GetAISpellForSpellId(spellid) == NULL )

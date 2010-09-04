@@ -172,7 +172,7 @@ void LfgMgr::UpdateLfgQueue(uint32 LfgDungeonId)
 	m_lock.Acquire();
 	for(itr = m_lookingForGroup[LfgDungeonId].begin(); itr != m_lookingForGroup[LfgDungeonId].end(); ++itr)
 	{
-        plr = *itr;
+		plr = *itr;
 
 		if(plr->m_lfgInviterGuid || plr->m_lfgMatch != NULL)
 			continue;
@@ -289,13 +289,13 @@ void LfgMgr::SendLfgList( Player* plr, uint32 Dungeon )
 		if(pl->GetTeam() != plr->GetTeam() || pl == plr)
 			continue;
 
-        ++count;
+		++count;
 		data << pl->GetNewGUID();
 		data << pl->getLevel();
 		data << pl->GetZoneId();
 		data << uint8(0);		// 1=LFG?
 
-        for(i = 0; i < MAX_LFG_QUEUE_ID; ++i)
+		for(i = 0; i < MAX_LFG_QUEUE_ID; ++i)
 			data << pl->LfgDungeonId[i] << uint8(0) << pl->LfgType[i];
 
 		data << pl->Lfgcomment;
@@ -350,7 +350,7 @@ void LfgMgr::SendLfgList( Player* plr, uint32 Dungeon )
 	data.put(8, count);
 	data.put(12, count);
 
-    plr->GetSession()->SendPacket(&data);
+	plr->GetSession()->SendPacket(&data);
 }
 
 void LfgMgr::SetPlayerInLfmList(Player * pl, uint32 LfgDungeonId)

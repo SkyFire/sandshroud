@@ -51,7 +51,7 @@ public:
 		T * ClosestObject = 0;
 		float ClosestDist = 999999.0f;
 		float CurrentDist = 0;
-        ObjectSet::const_iterator iter = pCell->Begin();
+		ObjectSet::const_iterator iter = pCell->Begin();
 		for(; iter != pCell->End(); ++iter)
 		{
 			CurrentDist = (*iter)->CalcDistance(x, y, (z != 0.0f ? z : (*iter)->GetPositionZ()));

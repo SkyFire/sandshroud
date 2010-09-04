@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 initialiseSingleton(LogonCommHandler);
-#ifndef CLUSTERING
+
 LogonCommHandler::LogonCommHandler()
 {
 	idhigh = 1;
@@ -129,7 +129,7 @@ void LogonCommHandler::Startup()
 			string perm = result->Fetch()[1].GetString();
 
 			onyx_TOUPPER(acct);
-            forced_permissions.insert(make_pair(acct,perm));
+			forced_permissions.insert(make_pair(acct,perm));
 
 		} while (result->NextRow());
 		delete result;
@@ -253,12 +253,12 @@ void LogonCommHandler::UpdateSockets()
 		{
 			if(!pings) continue;
 
-            if(cs->IsDeleted() || !cs->IsConnected())
-            {
-                cs->_id = 0;
-                itr->second = 0;
-                continue;
-            }
+			if(cs->IsDeleted() || !cs->IsConnected())
+			{
+				cs->_id = 0;
+				itr->second = 0;
+				continue;
+			}
 
 			if(cs->last_pong < t && ((t - cs->last_pong) > 60))
 			{
@@ -269,7 +269,7 @@ void LogonCommHandler::UpdateSockets()
 				itr->second = 0;
 				continue;
 			}
-            
+			
 			if( (t - cs->last_ping) > 15 )
 			{
 				// send a ping packet.
@@ -523,5 +523,3 @@ void LogonCommHandler::IPBan_Remove(const char * ip)
 	data << ip;
 	itr->second->SendPacket(&data, false);
 }
-
-#endif

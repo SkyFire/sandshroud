@@ -216,7 +216,7 @@ struct MapInfo
 	char * name;
 	uint32 flags;
 	uint32 cooldown;
-    uint32 lvl_mod_a;
+	uint32 lvl_mod_a;
 	uint32 required_quest;
 	uint32 required_item;
 	uint32 heroic_key_1;
@@ -234,8 +234,8 @@ struct MapInfo
 
 enum REALM_TYPE
 {
-    REALM_PVE = 0,
-    REALM_PVP = 1,
+	REALM_PVE = 0,
+	REALM_PVP = 1,
 };
 struct AreaTable;
 
@@ -513,7 +513,7 @@ public:
 	void	SetKickAFKPlayerTime(uint32 idletimer){m_KickAFKPlayers=idletimer;}
 	uint32	GetKickAFKPlayerTime(){return m_KickAFKPlayers;}
 
-    uint32 GetRealmType() { return realmtype; }
+	uint32 GetRealmType() { return realmtype; }
 
 	uint32 flood_lines;
 	uint32 flood_seconds;
@@ -581,7 +581,7 @@ protected:
 	bool m_gmTicketSystem;
 	std::string m_motd;
    
-    uint32 realmtype;
+	uint32 realmtype;
 
 	time_t m_gameTime;
 	time_t m_lastTick;

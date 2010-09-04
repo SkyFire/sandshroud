@@ -21,17 +21,17 @@
 
 enum SUMMON_TYPE
 {
-    SUMMON_TYPE_POSSESSED = 65,
-    SUMMON_TYPE_GUARDIAN = 61,
-    SUMMON_TYPE_WILD = 64,
-    SUMMON_TYPE_DEMON = 66,
-    SUMMON_TYPE_TOTEM_1 = 63,
-    SUMMON_TYPE_TOTEM_2 = 81,
-    SUMMON_TYPE_TOTEM_3 = 82,
-    SUMMON_TYPE_TOTEM_4 = 83,
-    SUMMON_TYPE_SUMMON = 67,
-    SUMMON_TYPE_CRITTER = 41,
-    SUMMON_TYPE_CREATE_TOTEM = 121,
+	SUMMON_TYPE_POSSESSED = 65,
+	SUMMON_TYPE_GUARDIAN = 61,
+	SUMMON_TYPE_WILD = 64,
+	SUMMON_TYPE_DEMON = 66,
+	SUMMON_TYPE_TOTEM_1 = 63,
+	SUMMON_TYPE_TOTEM_2 = 81,
+	SUMMON_TYPE_TOTEM_3 = 82,
+	SUMMON_TYPE_TOTEM_4 = 83,
+	SUMMON_TYPE_SUMMON = 67,
+	SUMMON_TYPE_CRITTER = 41,
+	SUMMON_TYPE_CREATE_TOTEM = 121,
 };
 
 void CreateDummySpell(uint32 id)
@@ -12663,20 +12663,12 @@ void Apply112SpellFixes()
 
 void ApplyNormalFixes()
 {
-	//Updating spell.dbc--this is slow like hell due to we cant read string fields
-	//dbc method will be changed in future
-	DBCFile dbc;
-
-	if( !dbc.open( "DBC/Spell.dbc" ) )
-	{
-		Log.Error("World", "Cannot find file ./DBC/Spell.dbc" );
-		return;
-	}
-
-	Log.Notice("World", "Processing %u spells...", dbc.getRecordCount());
+	SpellEntry * sp;
+	SpellEntry * spz;
+	uint32 cnt = dbcSpell.GetNumRows();
+	Log.Notice("World", "Processing %u spells...", cnt);
 	Apply112SpellFixes();
 
-	uint32 cnt = (uint32)dbc.getRecordCount();
 	uint32 effect;
 	uint32 All_Seal_Groups_Combined=0;
 	// Relation Groups
@@ -12706,33 +12698,28 @@ void ApplyNormalFixes()
 				talentSpells.insert(make_pair(tal->RankID[j], tal->TalentTree));
 	}
 
-
 	for(uint32 x=0; x < cnt; x++)
 	{
+		sp = dbcSpell.LookupRow(x);
+
+		if(sp == NULL)
+			continue;
+
 		uint32 result = 0;
-		// SpellID
-		uint32 spellid = dbc.getRecord(x).getUInt(0);
-		// Description field
-		char* desc = (char*)dbc.getRecord(x).getString(161); 
-		const char* ranktext = dbc.getRecord(x).getString(144);
-		const char* nametext = dbc.getRecord(x).getString(127);
-
-		uint32 rank = 0;
 		uint32 type = 0;
-		uint32 namehash = 0;
 
-		// get spellentry
-		SpellEntry * sp = dbcSpell.LookupEntry(spellid);		
+		// get spellentry		
 		sp->self_cast_only = false;
 		sp->Unique = false;
 		sp->apply_on_shapeshift_change = false;
 		sp->always_apply = false;
 		sp->procs_per_minute = 0.0f;
+		sp->forced_creature_target = 0;
 
 		// hash the name
-		//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
-        namehash = crc32((const unsigned char*)nametext, (unsigned int)strlen(nametext));
-		sp->NameHash   = namehash; //need these set before we start processing spells
+		// !!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
+		// need these set before we start processing spells
+		sp->NameHash = crc32((const unsigned char*)sp->Name, (unsigned int)strlen(sp->Name));
 
 		float radius = 0.0f;
 		if(sp->EffectRadiusIndex[0] != 0)
@@ -12772,25 +12759,25 @@ void ApplyNormalFixes()
 #undef SET_SCHOOL
 
 		// New 2.4.3 summon types
-        for(uint8 i = 0; i<3; i++)
-        {
-            if(!sp->EffectMiscValueB[i])
-                continue;
+		for(uint8 i = 0; i<3; i++)
+		{
+			if(!sp->EffectMiscValueB[i])
+				continue;
 
-            switch(sp->EffectMiscValueB[i])
-            {
-                case SUMMON_TYPE_POSSESSED: sp->Effect[i] = SPELL_EFFECT_SUMMON_POSSESSED; break;
-                case SUMMON_TYPE_GUARDIAN: sp->Effect[i] = SPELL_EFFECT_SUMMON_GUARDIAN; break;
-                case SUMMON_TYPE_WILD: sp->Effect[i] = SPELL_EFFECT_SUMMON_WILD; break;
-                case SUMMON_TYPE_DEMON: sp->Effect[i] = SPELL_EFFECT_SUMMON_DEMON; break;
-                case SUMMON_TYPE_TOTEM_1: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT1; break;
-                case SUMMON_TYPE_TOTEM_2: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT2; break;
-                case SUMMON_TYPE_TOTEM_4: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT4; break;
-                case SUMMON_TYPE_CRITTER: sp->Effect[i] = SPELL_EFFECT_SUMMON_CRITTER; break;
-                case SUMMON_TYPE_TOTEM_3: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT3; break;
-                case SUMMON_TYPE_CREATE_TOTEM: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM; break;
-            }
-        }
+			switch(sp->EffectMiscValueB[i])
+			{
+				case SUMMON_TYPE_POSSESSED: sp->Effect[i] = SPELL_EFFECT_SUMMON_POSSESSED; break;
+				case SUMMON_TYPE_GUARDIAN: sp->Effect[i] = SPELL_EFFECT_SUMMON_GUARDIAN; break;
+				case SUMMON_TYPE_WILD: sp->Effect[i] = SPELL_EFFECT_SUMMON_WILD; break;
+				case SUMMON_TYPE_DEMON: sp->Effect[i] = SPELL_EFFECT_SUMMON_DEMON; break;
+				case SUMMON_TYPE_TOTEM_1: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT1; break;
+				case SUMMON_TYPE_TOTEM_2: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT2; break;
+				case SUMMON_TYPE_TOTEM_4: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT4; break;
+				case SUMMON_TYPE_CRITTER: sp->Effect[i] = SPELL_EFFECT_SUMMON_CRITTER; break;
+				case SUMMON_TYPE_TOTEM_3: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM_SLOT3; break;
+				case SUMMON_TYPE_CREATE_TOTEM: sp->Effect[i] = SPELL_EFFECT_SUMMON_TOTEM; break;
+			}
+		}
 
 		// correct caster aura state
 		if( sp->CasterAuraState != 0 )
@@ -12997,103 +12984,103 @@ void ApplyNormalFixes()
 			sp->talent_tree = talentSpellIterator->second;
 
 		// parse rank text
-		if( !sscanf( ranktext, "Rank %d", (unsigned int*)&rank) )
-			rank = 0;
+		if( !sscanf( sp->Rank, "Rank %d", (unsigned int*)&sp->RankNumber) )
+			sp->RankNumber = 0;
 
 		//seal of light 
-		if( namehash == SPELL_HASH_SEAL_OF_LIGHT )			
+		if( sp->NameHash == SPELL_HASH_SEAL_OF_LIGHT )			
 			sp->procChance = 45;	/* this will do */
 
 		//seal of command
-		else if( namehash == SPELL_HASH_SEAL_OF_COMMAND )		
+		else if( sp->NameHash == SPELL_HASH_SEAL_OF_COMMAND )		
 			sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
 
 		//judgement of command
-		else if( namehash == SPELL_HASH_JUDGEMENT_OF_COMMAND )		
+		else if( sp->NameHash == SPELL_HASH_JUDGEMENT_OF_COMMAND )		
 			sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
 
-		else if( namehash == SPELL_HASH_ARCANE_SHOT )		
+		else if( sp->NameHash == SPELL_HASH_ARCANE_SHOT )		
 			sp->c_is_flags |= SPELL_FLAG_IS_NOT_USING_DMG_BONUS;
 
-		else if( namehash == SPELL_HASH_SERPENT_STING )		
+		else if( sp->NameHash == SPELL_HASH_SERPENT_STING )		
 			sp->c_is_flags |= SPELL_FLAG_IS_NOT_USING_DMG_BONUS;
 
 		//Rogue: Posion time fix for 2.3
-		if( strstr( nametext, "Crippling Poison") && sp->Effect[0] == 54 ) //I, II
+		if( strstr( sp->Name, "Crippling Poison") && sp->Effect[0] == 54 ) //I, II
 			sp->EffectBasePoints[0] = 3599;
-		if( strstr( nametext, "Mind-numbing Poison") && sp->Effect[0] == 54 ) //I,II,III
+		if( strstr( sp->Name, "Mind-numbing Poison") && sp->Effect[0] == 54 ) //I,II,III
 			sp->EffectBasePoints[0] = 3599;
-		if( strstr( nametext, "Instant Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V,VI,VII    
+		if( strstr( sp->Name, "Instant Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V,VI,VII	
 			sp->EffectBasePoints[0] = 3599;
-		if( strstr( nametext, "Deadly Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V,VI,VII
+		if( strstr( sp->Name, "Deadly Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V,VI,VII
 			sp->EffectBasePoints[0] = 3599;
-		if( strstr( nametext, "Wound Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V
+		if( strstr( sp->Name, "Wound Poison") && sp->Effect[0] == 54 ) //I,II,III,IV,V
 			sp->EffectBasePoints[0] = 3599;
-		if( strstr( nametext, "Anesthetic Poison") && sp->Effect[0] == 54 ) //I
+		if( strstr( sp->Name, "Anesthetic Poison") && sp->Effect[0] == 54 ) //I
 			sp->EffectBasePoints[0] = 3599;
 
-        if( strstr( nametext, "Sharpen Blade") && sp->Effect[0] == 54 ) //All BS stones
-            sp->EffectBasePoints[0] = 3599;
+		if( strstr( sp->Name, "Sharpen Blade") && sp->Effect[0] == 54 ) //All BS stones
+			sp->EffectBasePoints[0] = 3599;
 
 		//these mostly do not mix so we can use else 
-        // look for seal, etc in name
-        if( strstr( nametext, "Seal"))
+		// look for seal, etc in name
+		if( strstr( sp->Name, "Seal"))
 		{
-            type |= SPELL_TYPE_SEAL;
+			type |= SPELL_TYPE_SEAL;
 			All_Seal_Groups_Combined |= sp->SpellGroupType;
 		}
-        else if( strstr( nametext, "Blessing"))
-            type |= SPELL_TYPE_BLESSING;
-        else if( strstr( nametext, "Curse"))
-            type |= SPELL_TYPE_CURSE;
-        else if( strstr( nametext, "Aspect"))
-            type |= SPELL_TYPE_ASPECT;
-        else if( strstr( nametext, "Sting") || strstr( nametext, "sting"))
-            type |= SPELL_TYPE_STING;
-        // don't break armor items!
-        else if(strcmp(nametext, "Armor") && strstr( nametext, "Armor") || strstr( nametext, "Demon Skin"))
-            type |= SPELL_TYPE_ARMOR;
-        else if( strstr( nametext, "Aura"))
-            type |= SPELL_TYPE_AURA;
-		else if( strstr( nametext, "Track")==nametext)
-            type |= SPELL_TYPE_TRACK;
-		else if( namehash == SPELL_HASH_GIFT_OF_THE_WILD || namehash == SPELL_HASH_MARK_OF_THE_WILD )
-            type |= SPELL_TYPE_MARK_GIFT;
-		else if( namehash == SPELL_HASH_IMMOLATION_TRAP || namehash == SPELL_HASH_FREEZING_TRAP || namehash == SPELL_HASH_FROST_TRAP || namehash == SPELL_HASH_EXPLOSIVE_TRAP || namehash == SPELL_HASH_SNAKE_TRAP )
-            type |= SPELL_TYPE_HUNTER_TRAP;
-		else if( namehash == SPELL_HASH_ARCANE_INTELLECT || namehash == SPELL_HASH_ARCANE_BRILLIANCE )
-            type |= SPELL_TYPE_MAGE_INTEL;
-		else if( namehash == SPELL_HASH_AMPLIFY_MAGIC || namehash == SPELL_HASH_DAMPEN_MAGIC )
-            type |= SPELL_TYPE_MAGE_MAGI;
-		else if( namehash == SPELL_HASH_FIRE_WARD || namehash == SPELL_HASH_FROST_WARD )
-            type |= SPELL_TYPE_MAGE_WARDS;
-		else if( namehash == SPELL_HASH_SHADOW_PROTECTION || namehash == SPELL_HASH_PRAYER_OF_SHADOW_PROTECTION )
-            type |= SPELL_TYPE_PRIEST_SH_PPROT;
-		else if( namehash == SPELL_HASH_WATER_SHIELD || namehash == SPELL_HASH_EARTH_SHIELD || namehash == SPELL_HASH_LIGHTNING_SHIELD )
-            type |= SPELL_TYPE_SHIELD;
-		else if( namehash == SPELL_HASH_POWER_WORD__FORTITUDE || namehash == SPELL_HASH_PRAYER_OF_FORTITUDE )
-            type |= SPELL_TYPE_FORTITUDE;
-		else if( namehash == SPELL_HASH_DIVINE_SPIRIT || namehash == SPELL_HASH_PRAYER_OF_SPIRIT )
-            type |= SPELL_TYPE_SPIRIT;
-//		else if( strstr( nametext, "Curse of Weakness") || strstr( nametext, "Curse of Agony") || strstr( nametext, "Curse of Recklessness") || strstr( nametext, "Curse of Tongues") || strstr( nametext, "Curse of the Elements") || strstr( nametext, "Curse of Idiocy") || strstr( nametext, "Curse of Shadow") || strstr( nametext, "Curse of Doom"))
-//		else if(namehash==4129426293 || namehash==885131426 || namehash==626036062 || namehash==3551228837 || namehash==2784647472 || namehash==776142553 || namehash==3407058720 || namehash==202747424)
-//		else if( strstr( nametext, "Curse of "))
-//            type |= SPELL_TYPE_WARLOCK_CURSES;
-		else if( strstr( nametext, "Immolate") || strstr( nametext, "Conflagrate"))
+		else if( strstr( sp->Name, "Blessing"))
+			type |= SPELL_TYPE_BLESSING;
+		else if( strstr( sp->Name, "Curse"))
+			type |= SPELL_TYPE_CURSE;
+		else if( strstr( sp->Name, "Aspect"))
+			type |= SPELL_TYPE_ASPECT;
+		else if( strstr( sp->Name, "Sting") || strstr( sp->Name, "sting"))
+			type |= SPELL_TYPE_STING;
+		// don't break armor items!
+		else if(strcmp(sp->Name, "Armor") && strstr( sp->Name, "Armor") || strstr( sp->Name, "Demon Skin"))
+			type |= SPELL_TYPE_ARMOR;
+		else if( strstr( sp->Name, "Aura"))
+			type |= SPELL_TYPE_AURA;
+		else if( strstr( sp->Name, "Track")==sp->Name)
+			type |= SPELL_TYPE_TRACK;
+		else if( sp->NameHash == SPELL_HASH_GIFT_OF_THE_WILD || sp->NameHash == SPELL_HASH_MARK_OF_THE_WILD )
+			type |= SPELL_TYPE_MARK_GIFT;
+		else if( sp->NameHash == SPELL_HASH_IMMOLATION_TRAP || sp->NameHash == SPELL_HASH_FREEZING_TRAP || sp->NameHash == SPELL_HASH_FROST_TRAP || sp->NameHash == SPELL_HASH_EXPLOSIVE_TRAP || sp->NameHash == SPELL_HASH_SNAKE_TRAP )
+			type |= SPELL_TYPE_HUNTER_TRAP;
+		else if( sp->NameHash == SPELL_HASH_ARCANE_INTELLECT || sp->NameHash == SPELL_HASH_ARCANE_BRILLIANCE )
+			type |= SPELL_TYPE_MAGE_INTEL;
+		else if( sp->NameHash == SPELL_HASH_AMPLIFY_MAGIC || sp->NameHash == SPELL_HASH_DAMPEN_MAGIC )
+			type |= SPELL_TYPE_MAGE_MAGI;
+		else if( sp->NameHash == SPELL_HASH_FIRE_WARD || sp->NameHash == SPELL_HASH_FROST_WARD )
+			type |= SPELL_TYPE_MAGE_WARDS;
+		else if( sp->NameHash == SPELL_HASH_SHADOW_PROTECTION || sp->NameHash == SPELL_HASH_PRAYER_OF_SHADOW_PROTECTION )
+			type |= SPELL_TYPE_PRIEST_SH_PPROT;
+		else if( sp->NameHash == SPELL_HASH_WATER_SHIELD || sp->NameHash == SPELL_HASH_EARTH_SHIELD || sp->NameHash == SPELL_HASH_LIGHTNING_SHIELD )
+			type |= SPELL_TYPE_SHIELD;
+		else if( sp->NameHash == SPELL_HASH_POWER_WORD__FORTITUDE || sp->NameHash == SPELL_HASH_PRAYER_OF_FORTITUDE )
+			type |= SPELL_TYPE_FORTITUDE;
+		else if( sp->NameHash == SPELL_HASH_DIVINE_SPIRIT || sp->NameHash == SPELL_HASH_PRAYER_OF_SPIRIT )
+			type |= SPELL_TYPE_SPIRIT;
+//		else if( strstr( sp->Name, "Curse of Weakness") || strstr( sp->Name, "Curse of Agony") || strstr( sp->Name, "Curse of Recklessness") || strstr( sp->Name, "Curse of Tongues") || strstr( sp->Name, "Curse of the Elements") || strstr( sp->Name, "Curse of Idiocy") || strstr( sp->Name, "Curse of Shadow") || strstr( sp->Name, "Curse of Doom"))
+//		else if(sp->NameHash==4129426293 || sp->NameHash==885131426 || sp->NameHash==626036062 || sp->NameHash==3551228837 || sp->NameHash==2784647472 || sp->NameHash==776142553 || sp->NameHash==3407058720 || sp->NameHash==202747424)
+//		else if( strstr( sp->Name, "Curse of "))
+//			type |= SPELL_TYPE_WARLOCK_CURSES;
+		else if( strstr( sp->Name, "Immolate") || strstr( sp->Name, "Conflagrate"))
 			type |= SPELL_TYPE_WARLOCK_IMMOLATE;
-		else if( strstr( nametext, "Amplify Magic") || strstr( nametext, "Dampen Magic"))
+		else if( strstr( sp->Name, "Amplify Magic") || strstr( sp->Name, "Dampen Magic"))
 			type |= SPELL_TYPE_MAGE_AMPL_DUMP;
-        else if( strstr( desc, "Battle Elixir"))
-            type |= SPELL_TYPE_ELIXIR_BATTLE;
-        else if( strstr( desc, "Guardian Elixir"))
-            type |= SPELL_TYPE_ELIXIR_GUARDIAN;
-        else if( strstr( desc, "Battle and Guardian elixir"))
-            type |= SPELL_TYPE_ELIXIR_FLASK;
-		else if( namehash == SPELL_HASH_HUNTER_S_MARK )		// hunter's mark
+		else if( strstr( sp->Description, "Battle Elixir"))
+			type |= SPELL_TYPE_ELIXIR_BATTLE;
+		else if( strstr( sp->Description, "Guardian Elixir"))
+			type |= SPELL_TYPE_ELIXIR_GUARDIAN;
+		else if( strstr( sp->Description, "Battle and Guardian elixir"))
+			type |= SPELL_TYPE_ELIXIR_FLASK;
+		else if( sp->NameHash == SPELL_HASH_HUNTER_S_MARK )		// hunter's mark
 			type |= SPELL_TYPE_HUNTER_MARK;
-        else if( namehash == SPELL_HASH_COMMANDING_SHOUT || namehash == SPELL_HASH_BATTLE_SHOUT )
-            type |= SPELL_TYPE_WARRIOR_SHOUT;
-		else if( strstr( desc, "Finishing move")==desc)
+		else if( sp->NameHash == SPELL_HASH_COMMANDING_SHOUT || sp->NameHash == SPELL_HASH_BATTLE_SHOUT )
+			type |= SPELL_TYPE_WARRIOR_SHOUT;
+		else if( strstr( sp->Description, "Finishing move")==sp->Description)
 			sp->c_is_flags |= SPELL_FLAG_IS_FINISHING_MOVE;
 		if( IsDamagingSpell( sp ) )
 			sp->c_is_flags |= SPELL_FLAG_IS_DAMAGING;
@@ -13120,15 +13107,15 @@ void ApplyNormalFixes()
 		if(sp->spellLevel==0)
 		{
 			uint32 new_level=0;
-			if( strstr( nametext, "Apprentice "))
+			if( strstr( sp->Name, "Apprentice "))
 				new_level = 1;
-			else if( strstr( nametext, "Journeyman "))
+			else if( strstr( sp->Name, "Journeyman "))
 				new_level = 2;
-			else if( strstr( nametext, "Expert "))
+			else if( strstr( sp->Name, "Expert "))
 				new_level = 3;
-			else if( strstr( nametext, "Artisan "))
+			else if( strstr( sp->Name, "Artisan "))
 				new_level = 4;
-			else if( strstr( nametext, "Master "))
+			else if( strstr( sp->Name, "Master "))
 				new_level = 5;
 			if(new_level!=0)
 			{
@@ -13150,13 +13137,13 @@ void ApplyNormalFixes()
 		}
 
 		/*FILE * f = fopen("C:\\spells.txt", "a");
-		fprintf(f, "case 0x%08X:		// %s\n", namehash, nametext);
+		fprintf(f, "case 0x%08X:		// %s\n", sp->NameHash, sp->Name);
 		fclose(f);*/
 
 		// find diminishing status
-		sp->DiminishStatus = GetDiminishingGroup(namehash);
+		sp->DiminishStatus = GetDiminishingGroup(sp->NameHash);
 		sp->buffIndexType=0;
-		switch(namehash)
+		switch(sp->NameHash)
 		{
 		case SPELL_HASH_HUNTER_S_MARK:		// Hunter's mark
 			sp->buffIndexType = SPELL_TYPE_INDEX_MARK;
@@ -13209,7 +13196,7 @@ void ApplyNormalFixes()
 		}
 
 		// PROCS PERMINUTE
-		switch( namehash )
+		switch( sp->NameHash )
 		{
 		case SPELL_HASH_MAGTHERIDON_MELEE_TRINKET:
 			sp->procs_per_minute = 1.5f;
@@ -13280,20 +13267,19 @@ void ApplyNormalFixes()
 
 		// set extra properties
 		sp->buffType   = type;
-		sp->RankNumber = rank;
 
 		uint32 pr=sp->procFlags;
 		for(uint32 y=0;y < 3; y++)
 		{
 			// get the effect number from the spell
-			effect = dbc.getRecord(x).getUInt(64 + y); // spelleffect[0] = 64 // 2.0.1
+			effect = sp->Effect[0]; // spelleffect[0] = 64 // 2.0.1
 
 			//spell group
 			/*if(effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT1||effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT2||
 				effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT3||effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT4)
 			{
 			
-					const char *p=desc;
+					const char *p=sp->Description;
 					while(p=strstr(p,"$"))
 					{
 						p++;
@@ -13321,50 +13307,50 @@ void ApplyNormalFixes()
 			/*if(effect==SPELL_EFFECT_ENCHANT_ITEM)//add inventory type check
 			{
 				result=0;
-				//136--desc field
+				//136--sp->Description field
 				//dirty code
-				if( strstr( desc,"head"))
+				if( strstr( sp->Description,"head"))
 					result|=(1<<INVTYPE_HEAD);
-				if( strstr( desc,"leg"))
+				if( strstr( sp->Description,"leg"))
 					result|=(1<<INVTYPE_LEGS);
-				if( strstr( desc,"neck"))
+				if( strstr( sp->Description,"neck"))
 					result|=(1<<INVTYPE_NECK);
-				if( strstr( desc,"shoulder"))
+				if( strstr( sp->Description,"shoulder"))
 					result|=(1<<INVTYPE_SHOULDERS);
-				if( strstr( desc,"body"))
+				if( strstr( sp->Description,"body"))
 					result|=(1<<INVTYPE_BODY);
-				if( strstr( desc,"chest"))
+				if( strstr( sp->Description,"chest"))
 					result|=((1<<INVTYPE_CHEST)|(1<<INVTYPE_ROBE));
-				if( strstr( desc,"waist"))
+				if( strstr( sp->Description,"waist"))
 					result|=(1<<INVTYPE_WAIST);
-				if( strstr( desc,"foot")||strstr(desc,"feet")||strstr(desc,"boot"))
+				if( strstr( sp->Description,"foot")||strstr(sp->Description,"feet")||strstr(sp->Description,"boot"))
 					result|=(1<<INVTYPE_FEET);
-				if( strstr( desc,"wrist")||strstr(desc,"bracer"))
+				if( strstr( sp->Description,"wrist")||strstr(sp->Description,"bracer"))
 					result|=(1<<INVTYPE_WRISTS);
-				if( strstr( desc,"hand")||strstr(desc,"glove"))
+				if( strstr( sp->Description,"hand")||strstr(sp->Description,"glove"))
 					result|=(1<<INVTYPE_HANDS);
-				if( strstr( desc,"finger")||strstr(desc,"ring"))
+				if( strstr( sp->Description,"finger")||strstr(sp->Description,"ring"))
 					result|=(1<<INVTYPE_FINGER);
-				if( strstr( desc,"trinket"))
+				if( strstr( sp->Description,"trinket"))
 					result|=(1<<INVTYPE_TRINKET);
-				if( strstr( desc,"shield"))
+				if( strstr( sp->Description,"shield"))
 					result|=(1<<INVTYPE_SHIELD);
-				if( strstr( desc,"cloak"))
+				if( strstr( sp->Description,"cloak"))
 					result|=(1<<INVTYPE_CLOAK);
-				if( strstr( desc,"robe"))
+				if( strstr( sp->Description,"robe"))
 					result|=(1<<INVTYPE_ROBE);
-				//if( strstr( desc,"two")||strstr(desc,"Two"))
+				//if( strstr( sp->Description,"two")||strstr(sp->Description,"Two"))
 				//	result|=(1<<INVTYPE_2HWEAPON);<-handled in subclass
 			}
 			else*/
 			if(effect==SPELL_EFFECT_APPLY_AURA)
 			{
-				uint32 aura = dbc.getRecord(x).getUInt(94+y); // 58+30+3 = 91
+				uint32 aura = sp->EffectApplyAuraName[y]; // 58+30+3 = 91
 				if( aura == SPELL_AURA_PROC_TRIGGER_SPELL ||
 					aura == SPELL_AURA_PROC_TRIGGER_DAMAGE
-					)//search for spellid in description
+					)//search for spellid in sp->Descriptionription
 				{
-					const char *p=desc;
+					const char *p=sp->Description;
 					while((p=strstr(p,"$")))
 					{
 						p++;
@@ -13377,269 +13363,269 @@ void ApplyNormalFixes()
 					}
 					pr=0;
 
-					uint32 len = (uint32)strlen(desc);
+					uint32 len = (uint32)strlen(sp->Description);
 					for(i = 0; i < len; ++i)
-						desc[i] = tolower(desc[i]);
+						sp->Description[i] = tolower(sp->Description[i]);
 					//dirty code for procs, if any1 got any better idea-> u are welcome
 					//139944 --- some magic number, it will trigger on all hits etc
 						//for seems to be smth like custom check
-					if( strstr( desc,"your ranged criticals"))
+					if( strstr( sp->Description,"your ranged criticals"))
 						pr|=PROC_ON_RANGED_CRIT_ATTACK;
-					if( strstr( desc,"chance on hit"))
+					if( strstr( sp->Description,"chance on hit"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"takes damage"))
+					if( strstr( sp->Description,"takes damage"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"attackers when hit"))
+					if( strstr( sp->Description,"attackers when hit"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"character strikes an enemy"))
+					if( strstr( sp->Description,"character strikes an enemy"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"strike you with a melee attack"))
+					if( strstr( sp->Description,"strike you with a melee attack"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"target casts a spell"))
+					if( strstr( sp->Description,"target casts a spell"))
 						pr|=PROC_ON_CAST_SPELL;
-                    if( strstr( desc,"your harmful spells land"))
-                        pr|=PROC_ON_CAST_SPELL;
-                    if( strstr( desc,"on spell critical hit"))
-                        pr|=PROC_ON_SPELL_CRIT_HIT;
-                    if( strstr( desc,"spell critical strikes"))
-                        pr|=PROC_ON_SPELL_CRIT_HIT;
-                    if( strstr( desc,"being able to resurrect"))
-                        pr|=PROC_ON_DIE;
-					if( strstr( desc,"any damage caused"))
+					if( strstr( sp->Description,"your harmful spells land"))
+						pr|=PROC_ON_CAST_SPELL;
+					if( strstr( sp->Description,"on spell critical hit"))
+						pr|=PROC_ON_SPELL_CRIT_HIT;
+					if( strstr( sp->Description,"spell critical strikes"))
+						pr|=PROC_ON_SPELL_CRIT_HIT;
+					if( strstr( sp->Description,"being able to resurrect"))
+						pr|=PROC_ON_DIE;
+					if( strstr( sp->Description,"any damage caused"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"the next melee attack against the caster"))
+					if( strstr( sp->Description,"the next melee attack against the caster"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"when successfully hit"))
+					if( strstr( sp->Description,"when successfully hit"))
 						pr|=PROC_ON_MELEE_ATTACK ;
-					if( strstr( desc,"an enemy on hit"))
+					if( strstr( sp->Description,"an enemy on hit"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"when it hits"))
+					if( strstr( sp->Description,"when it hits"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"when successfully hit"))
+					if( strstr( sp->Description,"when successfully hit"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"on a successful hit"))
+					if( strstr( sp->Description,"on a successful hit"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"damage to attacker on hit"))
+					if( strstr( sp->Description,"damage to attacker on hit"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"on a hit"))
+					if( strstr( sp->Description,"on a hit"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"strikes you with a melee attack"))
+					if( strstr( sp->Description,"strikes you with a melee attack"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"when caster takes damage"))
+					if( strstr( sp->Description,"when caster takes damage"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"when the caster is using melee attacks"))
+					if( strstr( sp->Description,"when the caster is using melee attacks"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"when struck in combat") || strstr(desc,"When struck in combat"))
+					if( strstr( sp->Description,"when struck in combat") || strstr(sp->Description,"When struck in combat"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"successful melee attack"))
+					if( strstr( sp->Description,"successful melee attack"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"chance per attack"))
+					if( strstr( sp->Description,"chance per attack"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"chance per hit"))
+					if( strstr( sp->Description,"chance per hit"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"that strikes a party member"))
+					if( strstr( sp->Description,"that strikes a party member"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"when hit by a melee attack"))
+					if( strstr( sp->Description,"when hit by a melee attack"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"landing a melee critical strike"))
+					if( strstr( sp->Description,"landing a melee critical strike"))
 						pr|=PROC_ON_CRIT_ATTACK;
-					if( strstr( desc,"your critical strikes"))
+					if( strstr( sp->Description,"your critical strikes"))
 						pr|=PROC_ON_CRIT_ATTACK;
-					if( strstr( desc,"whenever you deal ranged damage"))
+					if( strstr( sp->Description,"whenever you deal ranged damage"))
 						pr|=PROC_ON_RANGED_ATTACK;
-//					if( strstr( desc,"whenever you deal melee damage"))
-					if( strstr( desc,"you deal melee damage"))
+//					if( strstr( sp->Description,"whenever you deal melee damage"))
+					if( strstr( sp->Description,"you deal melee damage"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"your melee attacks"))
+					if( strstr( sp->Description,"your melee attacks"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"damage with your Sword"))
+					if( strstr( sp->Description,"damage with your Sword"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"when struck in melee combat"))
+					if( strstr( sp->Description,"when struck in melee combat"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"any successful spell cast against the priest"))
+					if( strstr( sp->Description,"any successful spell cast against the priest"))
 						pr|=PROC_ON_SPELL_HIT_VICTIM;
-					if( strstr( desc,"the next melee attack on the caster"))
+					if( strstr( sp->Description,"the next melee attack on the caster"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"striking melee or ranged attackers"))
+					if( strstr( sp->Description,"striking melee or ranged attackers"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM|PROC_ON_RANGED_ATTACK_VICTIM;
-					if( strstr( desc,"when damaging an enemy in melee"))
+					if( strstr( sp->Description,"when damaging an enemy in melee"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"victim of a critical strike"))
+					if( strstr( sp->Description,"victim of a critical strike"))
 						pr|=PROC_ON_CRIT_HIT_VICTIM;
-					if( strstr( desc,"on successful melee or ranged attack"))
+					if( strstr( sp->Description,"on successful melee or ranged attack"))
 						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-					if( strstr( desc,"enemy that strikes you in melee"))
+					if( strstr( sp->Description,"enemy that strikes you in melee"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"after getting a critical strike"))
+					if( strstr( sp->Description,"after getting a critical strike"))
 						pr|=PROC_ON_CRIT_ATTACK;
-					if( strstr( desc,"whenever damage is dealt to you"))
+					if( strstr( sp->Description,"whenever damage is dealt to you"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"when ranged or melee damage is dealt"))
+					if( strstr( sp->Description,"when ranged or melee damage is dealt"))
 						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-					if( strstr( desc,"damaging melee attacks"))
+					if( strstr( sp->Description,"damaging melee attacks"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"on melee or ranged attack"))
+					if( strstr( sp->Description,"on melee or ranged attack"))
 						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-					if( strstr( desc,"on a melee swing"))
+					if( strstr( sp->Description,"on a melee swing"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"Chance on melee"))
+					if( strstr( sp->Description,"Chance on melee"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"spell criticals against you"))
+					if( strstr( sp->Description,"spell criticals against you"))
 						pr|=PROC_ON_SPELL_CRIT_HIT_VICTIM;
-					if( strstr( desc,"after being struck by a melee or ranged critical hit"))
+					if( strstr( sp->Description,"after being struck by a melee or ranged critical hit"))
 						pr|=PROC_ON_CRIT_HIT_VICTIM;
-//					if( strstr( desc,"on a critical hit"))
-					if( strstr( desc,"critical hit"))
+//					if( strstr( sp->Description,"on a critical hit"))
+					if( strstr( sp->Description,"critical hit"))
 						pr|=PROC_ON_CRIT_ATTACK;
-					if( strstr( desc,"strikes the caster"))
+					if( strstr( sp->Description,"strikes the caster"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"a spell, melee or ranged attack hits the caster"))
+					if( strstr( sp->Description,"a spell, melee or ranged attack hits the caster"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"after dealing a critical strike"))
+					if( strstr( sp->Description,"after dealing a critical strike"))
 						pr|=PROC_ON_CRIT_ATTACK;
-					if( strstr( desc,"each melee or ranged damage hit against the priest"))
+					if( strstr( sp->Description,"each melee or ranged damage hit against the priest"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM|PROC_ON_RANGED_ATTACK_VICTIM;				
-					if( strstr( desc, "a chance to deal additional"))
+					if( strstr( sp->Description, "a chance to deal additional"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc, "chance to get an extra attack"))
+					if( strstr( sp->Description, "chance to get an extra attack"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc, "melee attacks has"))
+					if( strstr( sp->Description, "melee attacks has"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc, "any damage spell hits a target"))
+					if( strstr( sp->Description, "any damage spell hits a target"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc, "giving each melee attack a chance"))
+					if( strstr( sp->Description, "giving each melee attack a chance"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc, "damage when hit"))
+					if( strstr( sp->Description, "damage when hit"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM; //myabe melee damage ?
-					if( strstr( desc, "gives your"))
+					if( strstr( sp->Description, "gives your"))
 					{
-						if( strstr( desc, "melee"))
+						if( strstr( sp->Description, "melee"))
 							pr|=PROC_ON_MELEE_ATTACK;
-						else if( strstr( desc,"sinister strike, backstab, gouge and shiv"))
+						else if( strstr( sp->Description,"sinister strike, backstab, gouge and shiv"))
 							pr|=PROC_ON_CAST_SPELL;
-						else if( strstr( desc,"chance to daze the target"))
+						else if( strstr( sp->Description,"chance to daze the target"))
 							pr|=PROC_ON_CAST_SPELL;
-						else if( strstr( desc,"finishing moves"))
+						else if( strstr( sp->Description,"finishing moves"))
 							pr|=PROC_ON_CAST_SPELL;
-//						else if( strstr( desc,"shadow bolt, shadowburn, soul fire, incinerate, searing pain and conflagrate"))
+//						else if( strstr( sp->Description,"shadow bolt, shadowburn, soul fire, incinerate, searing pain and conflagrate"))
 //							pr|=PROC_ON_CAST_SPELL|PROC_TARGET_SELF;
 						//we should find that specific spell (or group) on what we will trigger
 						else pr|=PROC_ON_CAST_SPECIFIC_SPELL;
 					}
-					if( strstr( desc, "chance to add an additional combo") && strstr(desc, "critical") )
+					if( strstr( sp->Description, "chance to add an additional combo") && strstr(sp->Description, "critical") )
 						pr|=PROC_ON_CRIT_ATTACK;
-					else if( strstr( desc, "chance to add an additional combo"))
+					else if( strstr( sp->Description, "chance to add an additional combo"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc, "victim of a melee or ranged critical strike"))
+					if( strstr( sp->Description, "victim of a melee or ranged critical strike"))
 						pr|=PROC_ON_CRIT_HIT_VICTIM;
-					if( strstr( desc, "getting a critical effect from"))
+					if( strstr( sp->Description, "getting a critical effect from"))
 						pr|=PROC_ON_SPELL_CRIT_HIT_VICTIM;
-					if( strstr( desc, "damaging attack is taken"))
+					if( strstr( sp->Description, "damaging attack is taken"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc, "struck by a Stun or Immobilize"))
+					if( strstr( sp->Description, "struck by a Stun or Immobilize"))
 						pr|=PROC_ON_SPELL_HIT_VICTIM;
-					if( strstr( desc, "melee critical strike"))
+					if( strstr( sp->Description, "melee critical strike"))
 						pr|=PROC_ON_CRIT_ATTACK;
-					if( strstr( nametext, "Bloodthirst"))
+					if( strstr( sp->Name, "Bloodthirst"))
 						pr|=PROC_ON_MELEE_ATTACK | PROC_TARGET_SELF;
-					if( strstr( desc, "experience or honor"))
+					if( strstr( sp->Description, "experience or honor"))
 						pr|=PROC_ON_GAIN_EXPIERIENCE;
-					if( strstr( desc,"your next offensive ability"))
+					if( strstr( sp->Description,"your next offensive ability"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"hit by a melee or ranged attack"))
+					if( strstr( sp->Description,"hit by a melee or ranged attack"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM | PROC_ON_RANGED_ATTACK_VICTIM;
-					if( strstr( desc,"enemy strikes the caster"))
+					if( strstr( sp->Description,"enemy strikes the caster"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"melee and ranged attacks against you"))
+					if( strstr( sp->Description,"melee and ranged attacks against you"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM | PROC_ON_RANGED_ATTACK_VICTIM;
-					if( strstr( desc,"when a block occurs"))
+					if( strstr( sp->Description,"when a block occurs"))
 						pr|=PROC_ON_BLOCK_VICTIM;
-					if( strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability"))
+					if( strstr( sp->Description,"dealing a critical strike from a weapon swing, spell, or ability"))
 						pr|=PROC_ON_CRIT_ATTACK|PROC_ON_SPELL_CRIT_HIT;
-					if( strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability"))
+					if( strstr( sp->Description,"dealing a critical strike from a weapon swing, spell, or ability"))
 						pr|=PROC_ON_CRIT_ATTACK|PROC_ON_SPELL_CRIT_HIT;
-					if( strstr( desc,"shadow bolt critical strikes increase shadow damage"))
+					if( strstr( sp->Description,"shadow bolt critical strikes increase shadow damage"))
 						pr|=PROC_ON_SPELL_CRIT_HIT;
-					if( strstr( desc,"next offensive ability"))
+					if( strstr( sp->Description,"next offensive ability"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"after being hit with a shadow or fire spell"))
+					if( strstr( sp->Description,"after being hit with a shadow or fire spell"))
 						pr|=PROC_ON_SPELL_LAND_VICTIM;
-					if( strstr( desc,"giving each melee attack"))
+					if( strstr( sp->Description,"giving each melee attack"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"each strike has"))
+					if( strstr( sp->Description,"each strike has"))
 						pr|=PROC_ON_MELEE_ATTACK;		
-					if( strstr( desc,"your Fire damage spell hits"))
+					if( strstr( sp->Description,"your Fire damage spell hits"))
 						pr|=PROC_ON_CAST_SPELL;		//this happens only on hit ;)
-					if( strstr( desc,"corruption, curse of agony, siphon life and seed of corruption spells also cause"))
+					if( strstr( sp->Description,"corruption, curse of agony, siphon life and seed of corruption spells also cause"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"pain, mind flay and vampiric touch spells also cause"))
+					if( strstr( sp->Description,"pain, mind flay and vampiric touch spells also cause"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"shadow damage spells have"))
+					if( strstr( sp->Description,"shadow damage spells have"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"on successful spellcast"))
+					if( strstr( sp->Description,"on successful spellcast"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"your spell criticals have"))
+					if( strstr( sp->Description,"your spell criticals have"))
 						pr|=PROC_ON_SPELL_CRIT_HIT | PROC_ON_SPELL_CRIT_HIT_VICTIM;
-					if( strstr( desc,"after dodging their attack"))
+					if( strstr( sp->Description,"after dodging their attack"))
 					{
 						pr|=PROC_ON_DODGE_VICTIM;
-						if( strstr( desc,"add a combo point"))
+						if( strstr( sp->Description,"add a combo point"))
 							pr|=PROC_TARGET_SELF;
 					}
-					if( strstr( desc,"fully resisting"))
+					if( strstr( sp->Description,"fully resisting"))
 						pr|=PROC_ON_RESIST_VICTIM;
-					if( strstr( desc,"Your Shadow Word: Pain, Mind Flay and Vampiric Touch spells also cause the target"))
+					if( strstr( sp->Description,"Your Shadow Word: Pain, Mind Flay and Vampiric Touch spells also cause the target"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"chance on spell hit"))
+					if( strstr( sp->Description,"chance on spell hit"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"your spell casts have"))
+					if( strstr( sp->Description,"your spell casts have"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"chance on spell cast"))
+					if( strstr( sp->Description,"chance on spell cast"))
 						pr|=PROC_ON_CAST_SPELL;
-					if( strstr( desc,"your melee and ranged attacks"))
+					if( strstr( sp->Description,"your melee and ranged attacks"))
 						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-//					if( strstr( desc,"chill effect to your Blizzard"))
+//					if( strstr( sp->Description,"chill effect to your Blizzard"))
 //						pr|=PROC_ON_CAST_SPELL;	
 					//////////////////////////////////////////////////
 					//proc dmg flags
 					//////////////////////////////////////////////////
-					if( strstr( desc,"each attack blocked"))
+					if( strstr( sp->Description,"each attack blocked"))
 						pr|=PROC_ON_BLOCK_VICTIM;
-					if( strstr( desc,"into flame, causing an additional"))
+					if( strstr( sp->Description,"into flame, causing an additional"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"victim of a critical melee strike"))
+					if( strstr( sp->Description,"victim of a critical melee strike"))
 						pr|=PROC_ON_CRIT_HIT_VICTIM;
-					if( strstr( desc,"damage to melee attackers"))
+					if( strstr( sp->Description,"damage to melee attackers"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"target blocks a melee attack"))
+					if( strstr( sp->Description,"target blocks a melee attack"))
 						pr|=PROC_ON_BLOCK_VICTIM;
-					if( strstr( desc,"ranged and melee attacks to deal"))
+					if( strstr( sp->Description,"ranged and melee attacks to deal"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM | PROC_ON_RANGED_ATTACK_VICTIM;
-					if( strstr( desc,"damage on hit"))
+					if( strstr( sp->Description,"damage on hit"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"chance on hit"))
+					if( strstr( sp->Description,"chance on hit"))
 						pr|=PROC_ON_MELEE_ATTACK;
-					if( strstr( desc,"after being hit by any damaging attack"))
+					if( strstr( sp->Description,"after being hit by any damaging attack"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"striking melee or ranged attackers"))
+					if( strstr( sp->Description,"striking melee or ranged attackers"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM | PROC_ON_RANGED_ATTACK_VICTIM;
-					if( strstr( desc,"damage to attackers when hit"))
+					if( strstr( sp->Description,"damage to attackers when hit"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"striking melee attackers"))
+					if( strstr( sp->Description,"striking melee attackers"))
 						pr|=PROC_ON_MELEE_ATTACK_VICTIM;
-					if( strstr( desc,"whenever the caster takes damage"))
+					if( strstr( sp->Description,"whenever the caster takes damage"))
 						pr|=PROC_ON_ANY_DAMAGE_VICTIM;
-					if( strstr( desc,"damage on every attack"))
+					if( strstr( sp->Description,"damage on every attack"))
 						pr|=PROC_ON_MELEE_ATTACK | PROC_ON_RANGED_ATTACK;
-					if( strstr( desc,"chance to reflect Fire spells"))
+					if( strstr( sp->Description,"chance to reflect Fire spells"))
 						pr|=PROC_ON_SPELL_HIT_VICTIM;
-					if( strstr( desc,"hunter takes on the aspects of a hawk"))
+					if( strstr( sp->Description,"hunter takes on the aspects of a hawk"))
 						pr|=PROC_TARGET_SELF | PROC_ON_RANGED_ATTACK;
-					if( strstr( desc,"successful auto shot attacks"))
+					if( strstr( sp->Description,"successful auto shot attacks"))
 						pr|=PROC_ON_AUTO_SHOT_HIT;
-					if( strstr( desc,"after getting a critical effect from your"))
+					if( strstr( sp->Description,"after getting a critical effect from your"))
 						pr=PROC_ON_SPELL_CRIT_HIT;
-//					if( strstr( desc,"Your critical strikes from Fire damage"))
+//					if( strstr( sp->Description,"Your critical strikes from Fire damage"))
 //						pr|=PROC_ON_SPELL_CRIT_HIT;
 				}//end "if procspellaura"
 				//dirty fix to remove auras that should expire on event and they are not
@@ -13649,20 +13635,20 @@ void ApplyNormalFixes()
 					// ! watch it cause this might conflict with our custom modified spells like : lighning shield !
 
 					//spells like : Presence of Mind,Nature's Swiftness, Inner Focus,Amplify Curse,Coup de Grace
-					//SELECT * FROM dbc_spell where proc_charges!=0 and (effect_aura_1=108 or effect_aura_2=108 and effect_aura_3=108) and description!=""
+					//SELECT * FROM dbc_spell where proc_charges!=0 and (effect_aura_1=108 or effect_aura_2=108 and effect_aura_3=108) and sp->Descriptionription!=""
 //					if(aura == SPELL_AURA_ADD_PCT_MODIFIER)
 //						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_CAST_SPELL;
 					//most of them probably already have these flags...not sure if we should add to all of them without checking
-/*					if( strstr( desc, "melee"))
+/*					if( strstr( sp->Description, "melee"))
 						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_START_ATTACK;
-					if( strstr( desc, "ranged"))
+					if( strstr( sp->Description, "ranged"))
 						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_START_ATTACK;*/
 //				}
 			}//end "if aura"
 		}//end "for each effect"
 		sp->procFlags = pr;
 
-		if( strstr( desc, "Must remain seated"))
+		if( strstr( sp->Description, "Must remain seated"))
 		{
 			sp->RecoveryTime = 1000;
 			sp->CategoryRecoveryTime = 1000;
@@ -13673,10 +13659,10 @@ void ApplyNormalFixes()
 		//////////////////////////////////////////////////////////////////////////////////////////////////////
 		//omg lighning shield trigger spell id's are all wrong ?
 		//if you are bored you could make thiese by hand but i guess we might find other spells with this problem..and this way it's safe
-		if( strstr( nametext, "Lightning Shield" ) && sp->EffectTriggerSpell[0] )
+		if( strstr( sp->Name, "Lightning Shield" ) && sp->EffectTriggerSpell[0] )
 		{
 			//check if we can find in the desription
-			char *startofid = strstr(desc, "for $");
+			char *startofid = strstr(sp->Description, "for $");
 			if( startofid )
 			{
 				startofid += strlen("for $");
@@ -13689,10 +13675,10 @@ void ApplyNormalFixes()
 			sp->proc_interval = 3000; //few seconds
 		}
 		//mage ignite talent should proc only on some chances
-		else if( strstr( nametext, "Ignite") && sp->Id>=11119 && sp->Id<=12848 && sp->EffectApplyAuraName[0] == 4 )
+		else if( strstr( sp->Name, "Ignite") && sp->Id>=11119 && sp->Id<=12848 && sp->EffectApplyAuraName[0] == 4 )
 		{
 			//check if we can find in the desription
-			char *startofid=strstr(desc, "an additional ");
+			char *startofid=strstr(sp->Description, "an additional ");
 			if(startofid)
 			{
 				startofid += strlen("an additional ");
@@ -13704,18 +13690,18 @@ void ApplyNormalFixes()
 			sp->procFlags = PROC_ON_SPELL_CRIT_HIT; //add procflag here since this was not processed with the others !
 		}
 		// Winter's Chill handled by frost school
-		else if( strstr( nametext, "Winter's Chill"))
+		else if( strstr( sp->Name, "Winter's Chill"))
 		{
 			sp->School = 4;
 		}
 		// Blackout handled by Shadow school
-		else if( strstr( nametext, "Blackout"))
+		else if( strstr( sp->Name, "Blackout"))
 		{
 			sp->School = 5;
 		}
 #ifndef NEW_PROCFLAGS
 		// Shadow Weaving
-		else if( strstr( nametext, "Shadow Weaving"))
+		else if( strstr( sp->Name, "Shadow Weaving"))
 		{
 			sp->School = 5;
 			sp->EffectApplyAuraName[0] = 42;
@@ -13724,51 +13710,51 @@ void ApplyNormalFixes()
 		}
 #endif
 		//Improved Aspect of the Hawk
-		else if( strstr( nametext, "Improved Aspect of the Hawk"))
+		else if( strstr( sp->Name, "Improved Aspect of the Hawk"))
 			sp->EffectSpellGroupRelation[1] = 0x00100000;
 		//more triggered spell ids are wrong. I think blizz is trying to outsmart us :S
-		else if( strstr( nametext, "Nature's Guardian"))
+		else if( strstr( sp->Name, "Nature's Guardian"))
 		{
 			sp->EffectTriggerSpell[0] = 31616;
 			sp->proc_interval = 5000;
 		}
 		//Chain Heal all ranks %50 heal value (49 + 1)
-		else if( strstr( nametext, "Chain Heal"))
+		else if( strstr( sp->Name, "Chain Heal"))
 		{
 			sp->EffectDieSides[0] = 49;
 		}
 		//this starts to be an issue for trigger spell id : Deep Wounds
-		else if( strstr( nametext, "Deep Wounds") && sp->EffectTriggerSpell[0])
+		else if( strstr( sp->Name, "Deep Wounds") && sp->EffectTriggerSpell[0])
 		{
 			//check if we can find in the desription
-			char *startofid=strstr(desc, "over $");
+			char *startofid=strstr(sp->Description, "over $");
 			if(startofid)
 			{
 				startofid += strlen("over $");
 				sp->EffectTriggerSpell[0] = atoi(startofid);
 			}
 		}
-		else if( strstr( nametext, "Holy Shock"))
+		else if( strstr( sp->Name, "Holy Shock"))
 		{
 			//check if we can find in the desription
-			char *startofid=strstr(desc, "causing $");
+			char *startofid=strstr(sp->Description, "causing $");
 			if(startofid)
 			{
 				startofid += strlen("causing $");
 				sp->EffectTriggerSpell[0] = atoi(startofid);
 			}
 			//check if we can find in the desription
-			startofid=strstr(desc, " or $");
+			startofid=strstr(sp->Description, " or $");
 			if(startofid)
 			{
 				startofid += strlen(" or $");
 				sp->EffectTriggerSpell[1]=atoi(startofid);
 			}
 		}
-		else if( strstr( nametext, "Touch of Weakness"))
+		else if( strstr( sp->Name, "Touch of Weakness"))
 		{
 			//check if we can find in the desription
-			char *startofid=strstr(desc, "cause $");
+			char *startofid=strstr(sp->Description, "cause $");
 			if(startofid)
 			{
 				startofid += strlen("cause $");
@@ -13777,11 +13763,11 @@ void ApplyNormalFixes()
 				sp->procFlags = uint32(PROC_ON_MELEE_ATTACK_VICTIM);
 			}
 		}
-		else if( strstr( nametext, "Firestone Passive"))
+		else if( strstr( sp->Name, "Firestone Passive"))
 		{
 			//Enchants the main hand weapon with fire, granting each attack a chance to deal $17809s1 additional fire damage.
 			//check if we can find in the desription
-			char * startofid=strstr(desc, "to deal $");
+			char * startofid=strstr(sp->Description, "to deal $");
 			if(startofid)
 			{
 				startofid += strlen("to deal $");
@@ -13792,48 +13778,48 @@ void ApplyNormalFixes()
 			}
 		}
 		//some procs trigger at intervals
-		else if( strstr( nametext, "Water Shield"))
+		else if( strstr( sp->Name, "Water Shield"))
 		{
 			sp->proc_interval = 3000; //few seconds
 			sp->procFlags |= PROC_TARGET_SELF;
 		}
-		else if( strstr( nametext, "Earth Shield"))
+		else if( strstr( sp->Name, "Earth Shield"))
 			sp->proc_interval = 3000; //few seconds
-		else if( strstr( nametext, "Shadowguard"))
+		else if( strstr( sp->Name, "Shadowguard"))
 			sp->proc_interval = 3000; //few seconds
-		else if( strstr( nametext, "Poison Shield"))
+		else if( strstr( sp->Name, "Poison Shield"))
 			sp->proc_interval = 3000; //few seconds
-		else if( strstr( nametext, "Infused Mushroom"))
+		else if( strstr( sp->Name, "Infused Mushroom"))
 			sp->proc_interval = 10000; //10 seconds
-		else if( strstr( nametext, "Aviana's Purpose"))
+		else if( strstr( sp->Name, "Aviana's Purpose"))
 			sp->proc_interval = 10000; //10 seconds
-		//don't change to namehash since we are searching only a protion of the name
- 		else if( strstr( nametext, "Crippling Poison"))
+		//don't change to sp->NameHash since we are searching only a protion of the name
+ 		else if( strstr( sp->Name, "Crippling Poison"))
 		{
 			sp->SpellGroupType |= 16384; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
-		else if( strstr( nametext, "Mind-Numbing Poison"))
+		else if( strstr( sp->Name, "Mind-Numbing Poison"))
 		{
 			sp->SpellGroupType |= 32768; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
-		else if( strstr( nametext, "Instant Poison"))
+		else if( strstr( sp->Name, "Instant Poison"))
 		{
 			sp->SpellGroupType |= 8192; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
-		else if( strstr( nametext, "Deadly Poison"))
+		else if( strstr( sp->Name, "Deadly Poison"))
 		{
 			sp->SpellGroupType |= 65536; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
-		else if( strstr( nametext, "Wound Poison"))
+		else if( strstr( sp->Name, "Wound Poison"))
 		{
 			sp->SpellGroupType |= 268435456; //some of them do have the flags but i's hard to write down those some from 130 spells
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
 		}
-		else if( strstr( nametext, "Scorpid Poison") )
+		else if( strstr( sp->Name, "Scorpid Poison") )
 		{
 			// groups?
 			sp->c_is_flags |= SPELL_FLAG_IS_POISON;
@@ -13847,9 +13833,9 @@ void ApplyNormalFixes()
 		if( sp->NameHash == SPELL_HASH_CONE_OF_COLD || sp->NameHash == SPELL_HASH_COLD_SNAP || sp->NameHash == SPELL_HASH_ICE_BARRIER || sp->NameHash == SPELL_HASH_ICE_BLOCK )
 			sp->EffectSpellGroupRelation[0] = 0x00200000;
 
-/*		else if( strstr( nametext, "Anesthetic Poison"))
+/*		else if( strstr( sp->Name, "Anesthetic Poison"))
 			sp->SpellGroupType |= 0; //not yet known ? 
-		else if( strstr( nametext, "Blinding Powder"))
+		else if( strstr( sp->Name, "Blinding Powder"))
 			sp->SpellGroupType |= 0; //not yet known ?
 		else 
 		if( sp->NameHash == SPELL_HASH_ILLUMINATION )
@@ -13860,27 +13846,27 @@ void ApplyNormalFixes()
 			sp->procCharges=-1;*/
 
 		//Set Silencing spells mech.
-		        // Set default mechanics if we don't already have one
-        if( !sp->MechanicsType )
-        {
-            //Set Silencing spells mechanic.
-            if( sp->EffectApplyAuraName[0] == 27 ||
-                sp->EffectApplyAuraName[1] == 27 ||
-                sp->EffectApplyAuraName[2] == 27 )
-                sp->MechanicsType = MECHANIC_SILENCED;
+				// Set default mechanics if we don't already have one
+		if( !sp->MechanicsType )
+		{
+			//Set Silencing spells mechanic.
+			if( sp->EffectApplyAuraName[0] == 27 ||
+				sp->EffectApplyAuraName[1] == 27 ||
+				sp->EffectApplyAuraName[2] == 27 )
+				sp->MechanicsType = MECHANIC_SILENCED;
 
-            //Set Stunning spells mechanic.
-            if( sp->EffectApplyAuraName[0] == 12 ||
-                sp->EffectApplyAuraName[1] == 12 ||
-                sp->EffectApplyAuraName[2] == 12 )
-                sp->MechanicsType = MECHANIC_STUNNED;
+			//Set Stunning spells mechanic.
+			if( sp->EffectApplyAuraName[0] == 12 ||
+				sp->EffectApplyAuraName[1] == 12 ||
+				sp->EffectApplyAuraName[2] == 12 )
+				sp->MechanicsType = MECHANIC_STUNNED;
 
-            //Set Fearing spells mechanic
-            if( sp->EffectApplyAuraName[0] == 7 ||
-                sp->EffectApplyAuraName[1] == 7 ||
-                sp->EffectApplyAuraName[2] == 7 )
-                sp->MechanicsType = MECHANIC_FLEEING;
-        }
+			//Set Fearing spells mechanic
+			if( sp->EffectApplyAuraName[0] == 7 ||
+				sp->EffectApplyAuraName[1] == 7 ||
+				sp->EffectApplyAuraName[2] == 7 )
+				sp->MechanicsType = MECHANIC_FLEEING;
+		}
 
 		// Sap, Gouge, Blehhhh
 		if( sp->NameHash == SPELL_HASH_GOUGE ||
@@ -13922,7 +13908,7 @@ void ApplyNormalFixes()
 			sp->MechanicsType = 25;
 
 		/* hackfix for this - FIX ME LATER - Burlex */
-		if( namehash == SPELL_HASH_SEAL_FATE )
+		if( sp->NameHash == SPELL_HASH_SEAL_FATE )
 			sp->procFlags = 0;
 
 		if(
@@ -13933,28 +13919,11 @@ void ApplyNormalFixes()
 			sp->c_is_flags |= SPELL_FLAG_IS_REQUIRECOOLDOWNUPDATE;
 		}
 
-		if( namehash == SPELL_HASH_SHRED || namehash == SPELL_HASH_BACKSTAB || namehash == SPELL_HASH_AMBUSH )
+		if( sp->NameHash == SPELL_HASH_SHRED || sp->NameHash == SPELL_HASH_BACKSTAB || sp->NameHash == SPELL_HASH_AMBUSH )
 		{
 			// Shred, Backstab, Ambush
 			sp->in_front_status = 2;
 		}
-
-//junk code to get me has :P 
-//if(sp->Id==11267 || sp->Id==11289 || sp->Id==6409)
-//	printf("!!!!!!! name %s , id %u , hash %u \n",nametext,sp->Id, namehash);
-	}
-
-
-	/////////////////////////////////////////////////////////////////
-	//SPELL COEFFICIENT SETTINGS START
-	//////////////////////////////////////////////////////////////////
-
-	for(uint32 x=0; x < cnt; x++)
-	{
-		// SpellID
-		uint32 spellid = dbc.getRecord(x).getUInt(0);
-		// get spellentry
-		SpellEntry * sp = dbcSpell.LookupEntry(spellid);
 
 		//Setting Cast Time Coefficient
 		SpellCastTime *sd = dbcSpellCastTime.LookupEntry(sp->CastingTimeIndex);
@@ -13965,7 +13934,6 @@ void ApplyNormalFixes()
 
 		sp->casttime_coef = castaff / 3500;		 
 
-		SpellEntry * spz;
 		bool spcheck = false;
 
 		//Flag for DoT and HoT
@@ -14158,7 +14126,7 @@ void ApplyNormalFixes()
 			{
 				sp->fixed_dddhcoef *= 0.5f;
 				sp->fixed_hotdotcoef *= 0.5f;
-			}		
+			}
 		}
 
 		///	SPELLS CAN CRIT ///
@@ -14276,37 +14244,6 @@ void ApplyNormalFixes()
 		// Insert druid spell fixes here
 
 
-	}
-
-	//Settings for special cases
-	QueryResult * resultx = WorldDatabase.Query("SELECT * FROM spell_coef_override");
-	if( resultx != NULL )
-	{
-		do 
-		{
-			Field * f;
-			f = resultx->Fetch();
-			SpellEntry * sp = dbcSpell.LookupEntryForced( f[0].GetUInt32() );
-			if( sp != NULL )
-			{
-				sp->Dspell_coef_override = f[2].GetFloat();
-				sp->OTspell_coef_override = f[3].GetFloat();
-			}
-			else
-				Log.Warning("SpellCoefOverride", "Has nonexistant spell %u.", f[0].GetUInt32());
-		} while( resultx->NextRow() );
-		delete resultx;
-	}
-
-	//Fully loaded coefficients, we must share channeled coefficient to its triggered spells
-	for(uint32 x=0; x < cnt; x++)
-	{
-		// SpellID
-		uint32 spellid = dbc.getRecord(x).getUInt(0);
-		// get spellentry
-		SpellEntry * sp = dbcSpell.LookupEntry(spellid);
-		SpellEntry * spz;
-
 		//Case SPELL_AURA_PERIODIC_TRIGGER_SPELL
 		for( uint8 i = 0 ; i < 3 ; i++ )
 		{
@@ -14346,7 +14283,35 @@ void ApplyNormalFixes()
 				}
 			}
 		}
-	}	
+//junk code to get me has :P 
+//if(sp->Id==11267 || sp->Id==11289 || sp->Id==6409)
+//	printf("!!!!!!! name %s , id %u , hash %u \n",sp->Name,sp->Id, sp->NameHash);
+	}
+
+
+	/////////////////////////////////////////////////////////////////
+	//SPELL COEFFICIENT SETTINGS START
+	//////////////////////////////////////////////////////////////////
+
+	//Settings for special cases
+	QueryResult * resultx = WorldDatabase.Query("SELECT * FROM spell_coef_override");
+	if( resultx != NULL )
+	{
+		do 
+		{
+			Field * f;
+			f = resultx->Fetch();
+			SpellEntry * sp = dbcSpell.LookupEntryForced( f[0].GetUInt32() );
+			if( sp != NULL )
+			{
+				sp->Dspell_coef_override = f[2].GetFloat();
+				sp->OTspell_coef_override = f[3].GetFloat();
+			}
+			else
+				Log.Warning("SpellCoefOverride", "Has nonexistant spell %u.", f[0].GetUInt32());
+		} while( resultx->NextRow() );
+		delete resultx;
+	}
 
 	/////////////////////////////////////////////////////////////////
 	//SPELL COEFFICIENT SETTINGS END
@@ -14360,7 +14325,7 @@ void ApplyNormalFixes()
 		triggersp->EffectBasePoints[0] = parentsp->EffectBasePoints[0];
 
 	/// Elemental Focus
-	SpellEntry* sp = dbcSpell.LookupEntryForced( 16164 );
+	sp = dbcSpell.LookupEntryForced( 16164 );
 	if( sp != NULL && sp->Id == 16164 )
 		sp->procFlags = PROC_ON_SPELL_CRIT_HIT;
 
@@ -14417,99 +14382,99 @@ void ApplyNormalFixes()
 	}
 
 	//Warlock: Demonic Knowledge
-    sp = dbcSpell.LookupEntryForced( 35691 );
-    if( sp != NULL )
+	sp = dbcSpell.LookupEntryForced( 35691 );
+	if( sp != NULL )
 	{
-        sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_DONE;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_DONE;
 		sp->EffectImplicitTargetA[0] = EFF_TARGET_SELF;
-        sp->Effect[1] = 6;
-        sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_DAMAGE_DONE;
-        sp->EffectBasePoints[1] = sp->EffectBasePoints[0];
+		sp->Effect[1] = 6;
+		sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_DAMAGE_DONE;
+		sp->EffectBasePoints[1] = sp->EffectBasePoints[0];
 		sp->EffectImplicitTargetA[1]= EFF_TARGET_PET;
-        sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[2] = 35696;
+		sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[2] = 35696;
 		sp->EffectImplicitTargetA[2]=EFF_TARGET_PET;
 		sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER | SPELL_FLAG_IS_EXPIREING_WITH_PET;
-    }
-    sp = dbcSpell.LookupEntryForced( 35692 );
-    if( sp != NULL )
+	}
+	sp = dbcSpell.LookupEntryForced( 35692 );
+	if( sp != NULL )
 	{
-        sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_DONE;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_DONE;
 		sp->EffectImplicitTargetA[0] = EFF_TARGET_SELF;
-        sp->Effect[1] = 6;
-        sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_DAMAGE_DONE;
-        sp->EffectBasePoints[1] = sp->EffectBasePoints[0];
+		sp->Effect[1] = 6;
+		sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_DAMAGE_DONE;
+		sp->EffectBasePoints[1] = sp->EffectBasePoints[0];
 		sp->EffectImplicitTargetA[1] = EFF_TARGET_PET;
-        sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[2] = 35696;
+		sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[2] = 35696;
 		sp->EffectImplicitTargetA[2] = EFF_TARGET_PET;
 		sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER | SPELL_FLAG_IS_EXPIREING_WITH_PET;
-    }
-    sp = dbcSpell.LookupEntryForced( 35693 );
-    if( sp != NULL )
+	}
+	sp = dbcSpell.LookupEntryForced( 35693 );
+	if( sp != NULL )
 	{
-        sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_DONE;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_DONE;
 		sp->EffectImplicitTargetA[0] = EFF_TARGET_SELF;
-        sp->Effect[1] = 6;
-        sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_DAMAGE_DONE;
-        sp->EffectBasePoints[1] = sp->EffectBasePoints[0];
+		sp->Effect[1] = 6;
+		sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_DAMAGE_DONE;
+		sp->EffectBasePoints[1] = sp->EffectBasePoints[0];
 		sp->EffectImplicitTargetA[1] = EFF_TARGET_PET;
-        sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[2] = 35696;
+		sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[2] = 35696;
 		sp->EffectImplicitTargetA[2] = EFF_TARGET_PET;
 		sp->c_is_flags |= SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER | SPELL_FLAG_IS_EXPIREING_WITH_PET;
-    }
-    sp = dbcSpell.LookupEntryForced( 35696 );
-    if( sp != NULL )
+	}
+	sp = dbcSpell.LookupEntryForced( 35696 );
+	if( sp != NULL )
 	{
-        sp->Effect[0] = 6; //making this only for the visible effect
-        sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY; //no effect here
+		sp->Effect[0] = 6; //making this only for the visible effect
+		sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY; //no effect here
 		sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
 	}
 
-    //Priest - Holy Nova
-    sp = dbcSpell.LookupEntryForced( 15237 );
-    if( sp != NULL )
-    {
-        sp->Effect[1] = 64;
-        sp->EffectTriggerSpell[1] = 23455;
-    }
-    sp = dbcSpell.LookupEntryForced( 15430 );
-    if( sp != NULL )
-    {
-        sp->Effect[1] = 64;
-        sp->EffectTriggerSpell[1] = 23458;
-    }
-    sp = dbcSpell.LookupEntryForced( 15431 );
-    if( sp != NULL )
-    {
-        sp->Effect[1] = 64;
-        sp->EffectTriggerSpell[1] = 23459;
-    }
-    sp = dbcSpell.LookupEntryForced( 27799 );
-    if( sp != NULL )
-    {
-        sp->Effect[1] = 64;
-        sp->EffectTriggerSpell[1] = 27803;
-    }
-    sp = dbcSpell.LookupEntryForced( 27800 );
-    if( sp != NULL )
-    {
-        sp->Effect[1] = 64;
-        sp->EffectTriggerSpell[1] = 27804;
-    }
-    sp = dbcSpell.LookupEntryForced( 27801 );
-    if( sp != NULL )
-    {
-        sp->Effect[1] = 64;
-        sp->EffectTriggerSpell[1] = 27805;
-    }
-    sp = dbcSpell.LookupEntryForced( 25331 );
-    if( sp != NULL )
-    {
-        sp->Effect[1] = 64;
-        sp->EffectTriggerSpell[1] = 25329;
-    }
+	//Priest - Holy Nova
+	sp = dbcSpell.LookupEntryForced( 15237 );
+	if( sp != NULL )
+	{
+		sp->Effect[1] = 64;
+		sp->EffectTriggerSpell[1] = 23455;
+	}
+	sp = dbcSpell.LookupEntryForced( 15430 );
+	if( sp != NULL )
+	{
+		sp->Effect[1] = 64;
+		sp->EffectTriggerSpell[1] = 23458;
+	}
+	sp = dbcSpell.LookupEntryForced( 15431 );
+	if( sp != NULL )
+	{
+		sp->Effect[1] = 64;
+		sp->EffectTriggerSpell[1] = 23459;
+	}
+	sp = dbcSpell.LookupEntryForced( 27799 );
+	if( sp != NULL )
+	{
+		sp->Effect[1] = 64;
+		sp->EffectTriggerSpell[1] = 27803;
+	}
+	sp = dbcSpell.LookupEntryForced( 27800 );
+	if( sp != NULL )
+	{
+		sp->Effect[1] = 64;
+		sp->EffectTriggerSpell[1] = 27804;
+	}
+	sp = dbcSpell.LookupEntryForced( 27801 );
+	if( sp != NULL )
+	{
+		sp->Effect[1] = 64;
+		sp->EffectTriggerSpell[1] = 27805;
+	}
+	sp = dbcSpell.LookupEntryForced( 25331 );
+	if( sp != NULL )
+	{
+		sp->Effect[1] = 64;
+		sp->EffectTriggerSpell[1] = 25329;
+	}
 
 	sp = dbcSpell.LookupEntryForced( 30427 );
 	if( sp != NULL )
@@ -14519,10 +14484,10 @@ void ApplyNormalFixes()
 
 	// Moroes' garrote targets a single enemy instead of us
 	sp = dbcSpell.LookupEntryForced( 37066 );
-    if( sp != NULL )
-    {
-        sp->EffectImplicitTargetA[0] = EFF_TARGET_SINGLE_ENEMY;
-    }
+	if( sp != NULL )
+	{
+		sp->EffectImplicitTargetA[0] = EFF_TARGET_SINGLE_ENEMY;
+	}
 
 	//Bloodlust targets sorounding party members instead of us
 	sp = dbcSpell.LookupEntryForced( 2825 );
@@ -14812,7 +14777,7 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_MELEE_ATTACK;
-        sp->EffectTriggerSpell[0] = 31803;
+		sp->EffectTriggerSpell[0] = 31803;
 		sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
 	}
 
@@ -14846,25 +14811,25 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-        sp->EffectTriggerSpell[0] = 20268;
+		sp->EffectTriggerSpell[0] = 20268;
 	}
 	sp = dbcSpell.LookupEntryForced( 20354 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-        sp->EffectTriggerSpell[0] = 20352;
+		sp->EffectTriggerSpell[0] = 20352;
 	}
 	sp = dbcSpell.LookupEntryForced( 20355 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-        sp->EffectTriggerSpell[0] = 20353;
+		sp->EffectTriggerSpell[0] = 20353;
 	}
 	sp = dbcSpell.LookupEntryForced( 27164 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-        sp->EffectTriggerSpell[0] = 27165;
+		sp->EffectTriggerSpell[0] = 27165;
 	}
 	sp = dbcSpell.LookupEntryForced( 20268 );
 	if( sp != NULL )
@@ -14884,31 +14849,31 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
-        sp->EffectTriggerSpell[0] = 20267;
+		sp->EffectTriggerSpell[0] = 20267;
 	}
 	sp = dbcSpell.LookupEntryForced( 20344 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
-        sp->EffectTriggerSpell[0] = 20341;
+		sp->EffectTriggerSpell[0] = 20341;
 	}
 	sp = dbcSpell.LookupEntryForced( 20345 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
-        sp->EffectTriggerSpell[0] = 20342;
+		sp->EffectTriggerSpell[0] = 20342;
 	}
 	sp = dbcSpell.LookupEntryForced( 20346 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
-        sp->EffectTriggerSpell[0] = 20343;
+		sp->EffectTriggerSpell[0] = 20343;
 	}
 	sp = dbcSpell.LookupEntryForced( 27162 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_MELEE_ATTACK_VICTIM;
-        sp->EffectTriggerSpell[0] = 27163;
+		sp->EffectTriggerSpell[0] = 27163;
 	}
 	sp = dbcSpell.LookupEntryForced( 20267 );
 	if( sp != NULL )
@@ -14931,15 +14896,15 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_SPELL_CRIT_HIT_VICTIM;
-        sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[0] = 25997;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[0] = 25997;
 	}
 	sp = dbcSpell.LookupEntryForced( 25988 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_SPELL_CRIT_HIT_VICTIM;
-        sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[0] = 25997;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[0] = 25997;
 	}
 
 	//paladin - sanctified judgement
@@ -14947,22 +14912,22 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_CAST_SPELL;
-        sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[0] = 31930;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[0] = 31930;
 	}
 	sp = dbcSpell.LookupEntryForced( 31877 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_CAST_SPELL;
-        sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[0] = 31930;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[0] = 31930;
 	}
 	sp = dbcSpell.LookupEntryForced( 31878 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_CAST_SPELL;
-        sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[0] = 31930;
+		sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[0] = 31930;
 		//sp->procChance=100;
 	}
 
@@ -14971,19 +14936,19 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-        sp->EffectTriggerSpell[0] = 31828;
+		sp->EffectTriggerSpell[0] = 31828;
 	}
 	sp = dbcSpell.LookupEntryForced( 31829 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-        sp->EffectTriggerSpell[0] = 31828;
+		sp->EffectTriggerSpell[0] = 31828;
 	}
 	sp = dbcSpell.LookupEntryForced( 31830 );
 	if( sp != NULL )
 	{
 		sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-        sp->EffectTriggerSpell[0] = 31828;
+		sp->EffectTriggerSpell[0] = 31828;
 	}
 
 	//paladin - Light's Grace
@@ -15116,7 +15081,7 @@ void ApplyNormalFixes()
 	sp = dbcSpell.LookupEntryForced( 29063 );
 	if( sp != NULL )
 	{
-	//        sp->EffectSpellGroupRelation[0] =  1 | 2 | 64 | 128 | 256;
+	//		sp->EffectSpellGroupRelation[0] =  1 | 2 | 64 | 128 | 256;
 		sp->EffectSpellGroupRelation[0] =  0xFFFFFFFF; // shaman spells. Guess that wraps them all 
 		sp->EffectSpellGroupRelation_high[0] =  0xFFFFFFFF; // shaman spells. Guess that wraps them all 
 	}
@@ -15261,16 +15226,16 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 		sp->procFlags = PROC_ON_SPELL_CRIT_HIT;
 
-    //shaman - Ancestral healing proc spell
-    sp = dbcSpell.LookupEntryForced( 16177 );
-    if( sp != NULL )
-        sp->rangeIndex = 4;
-    sp = dbcSpell.LookupEntryForced( 16236 );
-    if( sp != NULL )
-        sp->rangeIndex = 4;
-    sp = dbcSpell.LookupEntryForced( 16237 );
-    if( sp != NULL )
-        sp->rangeIndex = 4;
+	//shaman - Ancestral healing proc spell
+	sp = dbcSpell.LookupEntryForced( 16177 );
+	if( sp != NULL )
+		sp->rangeIndex = 4;
+	sp = dbcSpell.LookupEntryForced( 16236 );
+	if( sp != NULL )
+		sp->rangeIndex = 4;
+	sp = dbcSpell.LookupEntryForced( 16237 );
+	if( sp != NULL )
+		sp->rangeIndex = 4;
 
 	//shaman ( grouping ) Mental Quickness (missing 18 spells which have no grouping)
 	group_relation_shaman_mental_quickness = 0x00000008 | 0x00000010 | 0x00000200 | 0x00000400 | 0x00080000 | 0x00100000 | 0x00400000 | 0x20000000 | 0x10000000 | 0x80000000;
@@ -15326,7 +15291,7 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 		sp->EffectSpellGroupRelation[0] = group_relation_shaman_lightning;
 
-    //shaman ( grouping ) Shock = Earth + Flame + Frost
+	//shaman ( grouping ) Shock = Earth + Flame + Frost
 	group_relation_shaman_shock = 0x00100000 | 0x10000000 | 0x80000000;
 
 	//shaman - Convection
@@ -15346,22 +15311,22 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 		sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
 
-    //shaman - Concussion
-    sp = dbcSpell.LookupEntryForced( 16035 );
-    if( sp != NULL )
-        sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
-    sp = dbcSpell.LookupEntryForced( 16105 );
-    if( sp != NULL )
-        sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
-    sp = dbcSpell.LookupEntryForced( 16106 );
-    if( sp != NULL )
-        sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
-    sp = dbcSpell.LookupEntryForced( 16107 );
-    if( sp != NULL )
-        sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
-    sp = dbcSpell.LookupEntryForced( 16108 );
-    if( sp != NULL )
-        sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
+	//shaman - Concussion
+	sp = dbcSpell.LookupEntryForced( 16035 );
+	if( sp != NULL )
+		sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
+	sp = dbcSpell.LookupEntryForced( 16105 );
+	if( sp != NULL )
+		sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
+	sp = dbcSpell.LookupEntryForced( 16106 );
+	if( sp != NULL )
+		sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
+	sp = dbcSpell.LookupEntryForced( 16107 );
+	if( sp != NULL )
+		sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
+	sp = dbcSpell.LookupEntryForced( 16108 );
+	if( sp != NULL )
+		sp->EffectSpellGroupRelation[0] = group_relation_shaman_shock | group_relation_shaman_lightning;
 
 	//rogue ( grouping ) Elusiveness = blind + vanish
 	group_relation_rogue_elusiveness = 0x00000800 | 0x01000000;
@@ -15670,22 +15635,22 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 		sp->EffectSpellGroupRelation[0] = 64 | 32;	//Sprint + Evasion
 
-     //priest - Holy Concentration
-     sp = dbcSpell.LookupEntryForced( 34753 );
-     if (sp != NULL)
-          sp->procFlags = PROC_ON_CAST_SPELL;
-     sp = dbcSpell.LookupEntryForced( 34859 );
-     if (sp != NULL)
-	     sp->procFlags = PROC_ON_CAST_SPELL;
-     sp = dbcSpell.LookupEntryForced( 34860 );
-     if (sp != NULL)
-          sp->procFlags = PROC_ON_CAST_SPELL;
-     sp = dbcSpell.LookupEntryForced( 34754 );
-     if (sp != NULL)
-     {
-          //sp->EffectSpellGroupRelation[0] = 2048 | 4096;
-          sp->EffectSpellGroupRelation_high[0] = 4;
-     }
+	 //priest - Holy Concentration
+	 sp = dbcSpell.LookupEntryForced( 34753 );
+	 if (sp != NULL)
+		  sp->procFlags = PROC_ON_CAST_SPELL;
+	 sp = dbcSpell.LookupEntryForced( 34859 );
+	 if (sp != NULL)
+		 sp->procFlags = PROC_ON_CAST_SPELL;
+	 sp = dbcSpell.LookupEntryForced( 34860 );
+	 if (sp != NULL)
+		  sp->procFlags = PROC_ON_CAST_SPELL;
+	 sp = dbcSpell.LookupEntryForced( 34754 );
+	 if (sp != NULL)
+	 {
+		  //sp->EffectSpellGroupRelation[0] = 2048 | 4096;
+		  sp->EffectSpellGroupRelation_high[0] = 4;
+	 }
 
 	//priest - Focused Mind 
 	sp = dbcSpell.LookupEntryForced( 33213 ); 
@@ -17546,21 +17511,21 @@ void ApplyNormalFixes()
 	if( sp != NULL )
 	{
 		sp->EffectSpellGroupRelation[0] = 2097152;
-		sp->EffectBasePoints[0] *= 5; //heh B thinks he is smart by adding this to description ? If it doesn;t work std then it still needs to made by hand
+		sp->EffectBasePoints[0] *= 5; //heh B thinks he is smart by adding this to sp->Descriptionription ? If it doesn;t work std then it still needs to made by hand
 		sp->EffectSpellGroupRelation[1] = 2048;
 	}
 	sp = dbcSpell.LookupEntryForced( 31582 );
 	if( sp != NULL )
 	{
 		sp->EffectSpellGroupRelation[0] = 2097152;
-		sp->EffectBasePoints[0] *= 5; //heh B thinks he is smart by adding this to description ? If it doesn;t work std then it still needs to made by hand
+		sp->EffectBasePoints[0] *= 5; //heh B thinks he is smart by adding this to sp->Descriptionription ? If it doesn;t work std then it still needs to made by hand
 		sp->EffectSpellGroupRelation[1] = 2048;
 	}
 	sp = dbcSpell.LookupEntryForced( 31583 );
 	if( sp != NULL )
 	{
 		sp->EffectSpellGroupRelation[0] = 2097152; //damage
-		sp->EffectBasePoints[0] *= 5; //heh B thinks he is smart by adding this to description ? If it doesn;t work std then it still needs to made by hand
+		sp->EffectBasePoints[0] *= 5; //heh B thinks he is smart by adding this to sp->Descriptionription ? If it doesn;t work std then it still needs to made by hand
 		sp->EffectSpellGroupRelation[1] = 2048; //cost
 	}
 
@@ -17647,7 +17612,7 @@ void ApplyNormalFixes()
 	//Mage - Improved Blizzard
 	sp = dbcSpell.LookupEntryForced( 11185 );
 	if( sp != NULL )
-	{    
+	{	
 		sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
 		sp->EffectTriggerSpell[0] = 12484;
 		sp->procFlags = PROC_ON_CAST_SPELL;
@@ -18952,16 +18917,16 @@ void ApplyNormalFixes()
 	}
 #endif
 
-    //Priest - Inspiration proc spell
-    sp = dbcSpell.LookupEntryForced( 14893 );
-    if( sp != NULL )
-        sp->rangeIndex = 4;
-    sp = dbcSpell.LookupEntryForced( 15357 );
-    if( sp != NULL )
-        sp->rangeIndex = 4;
-    sp = dbcSpell.LookupEntryForced( 15359 );
-    if( sp != NULL )
-        sp->rangeIndex = 4;
+	//Priest - Inspiration proc spell
+	sp = dbcSpell.LookupEntryForced( 14893 );
+	if( sp != NULL )
+		sp->rangeIndex = 4;
+	sp = dbcSpell.LookupEntryForced( 15357 );
+	if( sp != NULL )
+		sp->rangeIndex = 4;
+	sp = dbcSpell.LookupEntryForced( 15359 );
+	if( sp != NULL )
+		sp->rangeIndex = 4;
 
 #ifndef NEW_PROCFLAGS
 	//Relentless Strikes
@@ -19510,18 +19475,18 @@ void ApplyNormalFixes()
 		sp->EffectSpellGroupRelation[0] = 67108864;
 		sp->EffectMiscValue[0] = SMT_SPELL_VALUE;
 	}
-    sp = dbcSpell.LookupEntryForced( 20608 ); //Reincarnation
-    if( sp != NULL )
-    {
-        for(uint32 i=0;i<8;i++)
-        {
-            if(sp->Reagent[i])
-            {
-                sp->Reagent[i] = 0;
-                sp->ReagentCount[i] = 0;
-            }
-        }
-    }
+	sp = dbcSpell.LookupEntryForced( 20608 ); //Reincarnation
+	if( sp != NULL )
+	{
+		for(uint32 i=0;i<8;i++)
+		{
+			if(sp->Reagent[i])
+			{
+				sp->Reagent[i] = 0;
+				sp->ReagentCount[i] = 0;
+			}
+		}
+	}
 
 	// druid - travel form
 	sp = dbcSpell.LookupEntryForced(5419);
@@ -19728,8 +19693,8 @@ void ApplyNormalFixes()
 	sp = dbcSpell.LookupEntryForced( 21992 );
 	if( sp != NULL )
 	{
-        sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
-        sp->EffectTriggerSpell[2] = 27648;
+		sp->Effect[2] = SPELL_EFFECT_TRIGGER_SPELL;
+		sp->EffectTriggerSpell[2] = 27648;
 		sp->EffectImplicitTargetA[2] = EFF_TARGET_SELF;
 	}
 

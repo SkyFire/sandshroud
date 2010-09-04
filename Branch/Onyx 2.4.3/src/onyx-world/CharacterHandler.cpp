@@ -76,7 +76,7 @@ bool ChatHandler::HandleRenameAllCharacter(const char * args, WorldSession * m_s
 			if( !VerifyName(pName, szLen) )
 			{
 				printf("renaming character %s, %u\n", pName,uGuid);
-                Player * pPlayer = objmgr.GetPlayer(uGuid);
+				Player * pPlayer = objmgr.GetPlayer(uGuid);
 				if( pPlayer != NULL )
 				{
 					pPlayer->rename_pending = true;
@@ -700,7 +700,7 @@ void WorldSession::FullLogin(Player * plr)
 	|------------------------------------------------|----------------|
 	|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|
 	|------------------------------------------------|----------------|
-	|02 01							               |..              |
+	|02 01										   |..			  |
 	-------------------------------------------------------------------
 	*/
 
@@ -784,7 +784,7 @@ void WorldSession::FullLogin(Player * plr)
 		"UPDATE characters SET online = 1 WHERE guid = %u" , plr->GetLowGUID());
 
 	bool enter_world = true;
-#ifndef CLUSTERING
+
 	// Find our transporter and add us if we're on one.
 	if(plr->m_TransporterGUID != 0)
 	{
@@ -816,7 +816,6 @@ void WorldSession::FullLogin(Player * plr)
 			pTrans->AddPlayer(plr);
 		}
 	}
-#endif
 
 	Log.Debug("Login", "Player %s logged in.", plr->GetName());
 
@@ -895,12 +894,7 @@ void WorldSession::FullLogin(Player * plr)
 		}
 	}
 
-#ifdef CLUSTERING
-	plr->SetInstanceID(forced_instance_id);
-	plr->SetMapId(forced_map_id);
-#else
 	sHookInterface.OnEnterWorld2(_player);
-#endif
 
 	if(info->m_Group)
 		info->m_Group->Update();

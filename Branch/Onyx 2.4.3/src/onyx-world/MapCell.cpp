@@ -184,7 +184,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 			c->SetInstanceID(_mapmgr->GetInstanceID());
 			c->m_loadedFromDB = true;
 
-            if(c->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
+			if(c->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
 			{
 				if(!c->CanAddToWorld())
 				{

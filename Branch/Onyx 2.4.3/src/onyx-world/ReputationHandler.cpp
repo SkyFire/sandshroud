@@ -19,8 +19,8 @@
 
 #include "StdAfx.h"
 
-#define FACTION_FLAG_HIDDEN 4                
-#define FACTION_FLAG_INVISIBLE_FORCED 8               
+#define FACTION_FLAG_HIDDEN 4				
+#define FACTION_FLAG_INVISIBLE_FORCED 8			   
 #define FACTION_FLAG_PEACE_FORCED 16  
 #define FACTION_FLAG_AT_WAR  2
 #define FACTION_FLAG_VISIBLE 1

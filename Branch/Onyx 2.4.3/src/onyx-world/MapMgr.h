@@ -152,9 +152,9 @@ public:
 //////////////////////////////////////////////////////////
 // Local (mapmgr) storage of players for faster lookup
 ////////////////////////////////
-    
-    // double typedef lolz// a compile breaker..
-	typedef HM_NAMESPACE::hash_map<uint32, Player*>                     PlayerStorageMap;
+	
+	// double typedef lolz// a compile breaker..
+	typedef HM_NAMESPACE::hash_map<uint32, Player*>					 PlayerStorageMap;
 	PlayerStorageMap m_PlayerStorage;
 	__inline Player * GetPlayer(uint32 guid)
 	{
@@ -229,7 +229,7 @@ public:
 	void EventCorpseDespawn(uint64 guid);
 
 	time_t InactiveMoveTime;
-    uint32 iInstanceMode;
+	uint32 iInstanceMode;
 
 	void UnloadCell(uint32 x,uint32 y);
 	void EventRespawnCreature(Creature * c, MapCell * p);

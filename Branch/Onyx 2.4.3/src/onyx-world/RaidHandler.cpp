@@ -71,7 +71,7 @@ void WorldSession::HandleGroupAssistantLeader(WorldPacket & recv_data)
 
 	recv_data >> guid >> on;
 	if(on == 0)
-        _player->GetGroup()->SetAssistantLeader(NULL);
+		_player->GetGroup()->SetAssistantLeader(NULL);
 	else
 	{
 		PlayerInfo * np = objmgr.GetPlayerInfo((uint32)guid);

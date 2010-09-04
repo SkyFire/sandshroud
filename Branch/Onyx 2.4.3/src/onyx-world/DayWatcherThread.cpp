@@ -18,7 +18,7 @@
  */
 
 /* Arena and Honor Point Calculation System
- *    Copyright (c) 2007 Burlex
+ *	Copyright (c) 2007 Burlex
  */
 
 #include "StdAfx.h"
@@ -101,7 +101,7 @@ bool DayWatcherThread::has_timeout_expired(tm * now_time, tm * last_time, uint32
 		{
 			if( (now_time->tm_mon != last_time->tm_mon) )
 				return true;
-            
+			
 			return ( (now_time->tm_mday / 7) != (last_time->tm_mday / 7) );
 		}
 		
@@ -143,7 +143,7 @@ bool DayWatcherThread::run()
 
 		if(has_timeout_expired(&local_currenttime, &local_last_arena_time, arena_period))
 			update_arena();
-        
+		
 		if(m_dirty)
 			update_settings();
 
@@ -222,10 +222,10 @@ void DayWatcherThread::update_arena()
 					else			// "if X > 1500"
 					{
 						// http://eu.wowarmory.com/arena-calculator.xml
-						//              1511.26
+						//			  1511.26
 						//   ---------------------------
-						//                   -0.00412*X
-						//    1+1639.28*2.71828
+						//				   -0.00412*X
+						//	1+1639.28*2.71828
 
 						double power = ((-0.00412) * X);
 						//if(power < 1.0)

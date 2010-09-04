@@ -56,7 +56,7 @@ Group::Group(bool Assign)
 	m_GroupType = GROUP_TYPE_PARTY;	 // Always init as party
 
 	// Create initial subgroup
-    memset(m_SubGroups,0, sizeof(SubGroup*)*8);
+	memset(m_SubGroups,0, sizeof(SubGroup*)*8);
 	m_SubGroups[0] = new SubGroup(this, 0);
 
 	m_Leader = NULL;
@@ -158,7 +158,7 @@ bool Group::AddMember(PlayerInfo * info, int32 subgroupid/* =-1 */)
 		{
 			if(pPlayer)
 				sEventMgr.AddEvent(pPlayer,&Player::EventGroupFullUpdate,EVENT_PLAYER_UPDATE,1500,1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-            
+			
 			m_dirty=true;
 			++m_MemberCount;
 			Update();	// Send group update
@@ -568,7 +568,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 	{
 		newPlayer = FindFirstPlayer();
 		if( newPlayer != NULL )
-            m_Looter = newPlayer->m_playerInfo;
+			m_Looter = newPlayer->m_playerInfo;
 		else
 			m_Looter = NULL;
 	}
@@ -757,7 +757,7 @@ void Group::MovePlayer(PlayerInfo *info, uint8 subgroup)
 	}
 	
 	sg->RemovePlayer(info);
-    
+	
 	// Grab the new group, and insert
 	sg = m_SubGroups[subgroup];
 	if(!sg->AddPlayer(info))
@@ -940,7 +940,7 @@ void Group::UpdateOutOfRangePlayer(Player * pPlayer, uint32 Flags, bool Distribu
 
 	if(Flags & GROUP_UPDATE_FLAG_ZONEID) {
 		*data << uint16(pPlayer->GetAreaID());
-    }
+	}
 
 	if(Flags & GROUP_UPDATE_FLAG_POSITION)
 	{
@@ -1145,7 +1145,7 @@ void Group::SetAssistantLeader(PlayerInfo * pMember)
 
 
 /************************************************************************/
-/* Voicechat                                                            */
+/* Voicechat															*/
 /************************************************************************/
 #ifdef VOICE_CHAT
 

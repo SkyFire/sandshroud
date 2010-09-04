@@ -55,10 +55,8 @@ World::World()
 	gm_skip_attunement = false;
 	show_gm_in_who_list = true;
 	map_unload_time=0;
-#ifndef CLUSTERING
 	SocketSendBufSize = WORLDSOCKET_SENDBUF_SIZE;
 	SocketRecvBufSize = WORLDSOCKET_RECVBUF_SIZE;
-#endif
 	m_levelCap=70;
 	m_genLevelCap=70;
 	m_limitedNames=false;
@@ -520,9 +518,9 @@ bool World::SetInitialWorldSettings()
 	uint32 talent_pos;
 	uint32 talent_class;
 
-    for( uint32 i = 0; i < dbcTalent.GetNumRows(); ++i )
-    {
-        TalentEntry const* talent_info = dbcTalent.LookupRow( i );
+	for( uint32 i = 0; i < dbcTalent.GetNumRows(); ++i )
+	{
+		TalentEntry const* talent_info = dbcTalent.LookupRow( i );
 		if( talent_info == NULL )
 			continue;
 
@@ -530,14 +528,14 @@ bool World::SetInitialWorldSettings()
 		if( tab_info == NULL )
 			continue;
 
-        talent_max_rank = 0;
-        for( uint32 j = 5; j > 0; --j )
-        {
-            if( talent_info->RankID[j - 1] )
-            {
-                talent_max_rank = j;
-                break;
-            }
+		talent_max_rank = 0;
+		for( uint32 j = 5; j > 0; --j )
+		{
+			if( talent_info->RankID[j - 1] )
+			{
+				talent_max_rank = j;
+				break;
+			}
 		}
 
 		InspectTalentTabBit[( talent_info->Row << 24 ) + ( talent_info->Col << 16 ) + talent_info->TalentID] = talent_max_rank;
@@ -551,7 +549,7 @@ bool World::SetInitialWorldSettings()
 			continue;
 
 		talent_pos = 0;
-        
+		
 		for( talent_class = 0; talent_class < 12; ++talent_class )
 		{
 			if( tab_info->ClassMask & ( 1 << talent_class ) )
@@ -686,9 +684,9 @@ void World::SendInstanceMessage(WorldPacket *packet, uint32 instanceid, WorldSes
 
 void World::SendWorldText(const char* text, WorldSession *self)
 {
-    uint32 textLen = (uint32)strlen((char*)text) + 1;
+	uint32 textLen = (uint32)strlen((char*)text) + 1;
 
-    WorldPacket data(textLen + 40);
+	WorldPacket data(textLen + 40);
 
 	data.Initialize(SMSG_MESSAGECHAT);
 	data << uint8(CHAT_MSG_SYSTEM);
@@ -844,7 +842,6 @@ uint32 World::GetQueuePos(WorldSocket* Socket)
 
 void World::UpdateQueuedSessions(uint32 diff)
 {
-#ifndef CLUSTERING
 	if(diff >= m_queueUpdateTimer) 
 	{
 		m_queueUpdateTimer = mQueueUpdateInterval;
@@ -898,7 +895,6 @@ void World::UpdateQueuedSessions(uint32 diff)
 	{
 		m_queueUpdateTimer -= diff;
 	}
-#endif
 }
 
 void World::SaveAllPlayers()
@@ -1181,10 +1177,8 @@ void World::Rehash(bool load)
 	mQueueUpdateInterval = Config.MainConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
 	SetKickAFKPlayerTime(Config.MainConfig.GetIntDefault("Server", "KickAFKPlayers", 0));
 	gm_skip_attunement = Config.MainConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);
-#ifndef CLUSTERING
 	SocketRecvBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "RecvBufSize", WORLDSOCKET_RECVBUF_SIZE);
 	SocketSendBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "SendBufSize", WORLDSOCKET_SENDBUF_SIZE);
-#endif
 
 	bool log_enabled = Config.MainConfig.GetBoolDefault("Log", "Cheaters", false);
 	if(Anticheat_Log->IsOpen())
@@ -1387,7 +1381,7 @@ void World::CleanupCheaters()
 		start = f[5].GetString();
 		should_talents = (level<10 ? 0 : level - 9);
 		used_talents -= 
-        		
+				
 
 		start = (char*)get_next_field.GetString();//buff;
 		while(true) 
@@ -1555,7 +1549,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 	map<uint32, vector<insert_playeritem> > itemMap;
 	map<uint32,vector<insert_playeritem> >::iterator itr;
 	Field * f;
-	insert_playeritem ipi;                          
+	insert_playeritem ipi;						  
 	static const char * characterTableFormat = "uSuuuuuussuuuuuuuuuuuuuuffffuususuufffuuuuusuuuUssuuuuuuffffuuuuufffssssssuuuuuuuu";
 
 	// Lock the table to prevent any more inserts

@@ -324,63 +324,63 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 			return;
 
 		pGO->m_loot.looters.erase(_player->GetLowGUID());
-        switch( pGO->GetUInt32Value( GAMEOBJECT_TYPE_ID ) )
-        {
-        case GAMEOBJECT_TYPE_FISHINGNODE:
-            {
-		        if(pGO->IsInWorld())
-			    {
-				    pGO->RemoveFromWorld(true);
-			    }
-			    delete pGO;
-            }break;
-        case GAMEOBJECT_TYPE_CHEST:
-            {
-                pGO->m_loot.looters.erase( _player->GetLowGUID() );
-                //check for locktypes
-                
-                Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
-                if( pLock )
-                {
-                    for( uint32 i=0; i < 5; i++ )
-                    {
-                        if( pLock->locktype[i] )
-                        {
-                            if( pLock->locktype[i] == 2 ) //locktype;
-                            {
-                                //herbalism and mining;
-                                if( pLock->lockmisc[i] == LOCKTYPE_MINING || pLock->lockmisc[i] == LOCKTYPE_HERBALISM )
-                                {
-                                    //we still have loot inside.
-                                    if( pGO->m_loot.HasLoot() )
-                                    {
-                                        pGO->SetUInt32Value( GAMEOBJECT_STATE, 1 );
+		switch( pGO->GetUInt32Value( GAMEOBJECT_TYPE_ID ) )
+		{
+		case GAMEOBJECT_TYPE_FISHINGNODE:
+			{
+				if(pGO->IsInWorld())
+				{
+					pGO->RemoveFromWorld(true);
+				}
+				delete pGO;
+			}break;
+		case GAMEOBJECT_TYPE_CHEST:
+			{
+				pGO->m_loot.looters.erase( _player->GetLowGUID() );
+				//check for locktypes
+				
+				Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
+				if( pLock )
+				{
+					for( uint32 i=0; i < 5; i++ )
+					{
+						if( pLock->locktype[i] )
+						{
+							if( pLock->locktype[i] == 2 ) //locktype;
+							{
+								//herbalism and mining;
+								if( pLock->lockmisc[i] == LOCKTYPE_MINING || pLock->lockmisc[i] == LOCKTYPE_HERBALISM )
+								{
+									//we still have loot inside.
+									if( pGO->m_loot.HasLoot() )
+									{
+										pGO->SetUInt32Value( GAMEOBJECT_STATE, 1 );
 										// TODO : redo this temporary fix, because for some reason hasloot is true even when we loot everything
 										// my guess is we need to set up some even that rechecks the GO in 10 seconds or something
 										//pGO->Despawn( 600000 + ( RandomUInt( 300000 ) ) );
-                                        return;
-                                    }
-
-                                    if( pGO->CanMine() )
-                                    {
-										pGO->ClearLoot();
-                                        pGO->UseMine();
 										return;
-                                    }
-                                    else
-                                    {
-    									pGO->CalcMineRemaining( true );
+									}
+
+									if( pGO->CanMine() )
+									{
+										pGO->ClearLoot();
+										pGO->UseMine();
+										return;
+									}
+									else
+									{
+										pGO->CalcMineRemaining( true );
 										pGO->Despawn( 600000 + ( RandomUInt( 180000 ) ) );
 										return;
-                                    }
-                                }
-                                else //other type of locks that i dont bother to split atm ;P
-                                {
-                                    if(pGO->m_loot.HasLoot())
-                                    {
-                                        pGO->SetUInt32Value(GAMEOBJECT_STATE, 1);
-                                        return;
-                                    }
+									}
+								}
+								else //other type of locks that i dont bother to split atm ;P
+								{
+									if(pGO->m_loot.HasLoot())
+									{
+										pGO->SetUInt32Value(GAMEOBJECT_STATE, 1);
+										return;
+									}
 
 									pGO->CalcMineRemaining(true);
 
@@ -392,32 +392,32 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 
 									pGO->Despawn(DespawnTime);
 									return;
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if( pGO->m_loot.HasLoot() )
-                    {
-                        pGO->SetUInt32Value(GAMEOBJECT_STATE, 1);
-                        return;
-                    }
-                    uint32 DespawnTime = 0;
-			        if(sQuestMgr.GetGameObjectLootQuest(pGO->GetEntry()))
-				        DespawnTime = 120000;	   // 5 min for quest GO,
-			        else
-			        {
-				        DespawnTime = 900000;	   // 15 for else
-			        }
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					if( pGO->m_loot.HasLoot() )
+					{
+						pGO->SetUInt32Value(GAMEOBJECT_STATE, 1);
+						return;
+					}
+					uint32 DespawnTime = 0;
+					if(sQuestMgr.GetGameObjectLootQuest(pGO->GetEntry()))
+						DespawnTime = 120000;	   // 5 min for quest GO,
+					else
+					{
+						DespawnTime = 900000;	   // 15 for else
+					}
 
 
-			        pGO->Despawn(DespawnTime);
+					pGO->Despawn(DespawnTime);
 
-                }
-            }
-        }
+				}
+			}
+		}
 		return;
 	}
 
@@ -810,7 +810,7 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket &recv_data)
 	}
 
 	// Check we are actually in range of our corpse
-    if ( pCorpse->GetDistance2dSq( _player ) > CORPSE_MINIMUM_RECLAIM_RADIUS_SQ )
+	if ( pCorpse->GetDistance2dSq( _player ) > CORPSE_MINIMUM_RECLAIM_RADIUS_SQ )
   	{
 		WorldPacket data( SMSG_RESURRECT_FAILED, 4 );
 		data << uint32(1);
@@ -818,8 +818,8 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket &recv_data)
 		return;
 	}
 
-    // Check death clock before resurrect they must wait for release to complete
-    if( pCorpse->GetDeathClock() + CORPSE_RECLAIM_TIME > time( NULL ) )
+	// Check death clock before resurrect they must wait for release to complete
+	if( pCorpse->GetDeathClock() + CORPSE_RECLAIM_TIME > time( NULL ) )
 	{
 		WorldPacket data( SMSG_RESURRECT_FAILED, 4 );
 		data << uint32(1);
@@ -1151,8 +1151,8 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 	{
 		case GAMEOBJECT_TYPE_CHAIR:
 		{
-            /// if players are mounted they are not able to sit on a chair
-            if( plyr->IsMounted() )
+			/// if players are mounted they are not able to sit on a chair
+			if( plyr->IsMounted() )
 				plyr->RemoveAura( plyr->m_MountSpellId );
 
 			plyr->SafeTeleport( plyr->GetMapId(), plyr->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
@@ -1338,7 +1338,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 	case GAMEOBJECT_TYPE_MEETINGSTONE:	// Meeting Stone
 		{
 			/* Use selection */
-            Player * pPlayer = objmgr.GetPlayer((uint32)_player->GetSelection());
+			Player * pPlayer = objmgr.GetPlayer((uint32)_player->GetSelection());
 			if(!pPlayer || _player->GetGroup() != pPlayer->GetGroup() || !_player->GetGroup())
 				return;
 
@@ -1431,7 +1431,7 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 	recv_data >> guid;
 
 	Player * player = _player->GetMapMgr()->GetPlayer( (uint32)guid );
-    
+	
 	if( player == NULL )
 		return;
 
@@ -1439,9 +1439,9 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 	StackPacket data( SMSG_INSPECT_TALENT, packetbuf, 200 );
 
 	data << player->GetNewGUID();
-    data << uint32(TALENT_INSPECT_BYTES);
+	data << uint32(TALENT_INSPECT_BYTES);
 	data.Write((uint8*)_player->GetTalentInspectBuffer(), TALENT_INSPECT_BYTES);
-    SendPacket( &data );*/
+	SendPacket( &data );*/
 }
 
 void WorldSession::HandleSetActionBarTogglesOpcode(WorldPacket &recvPacket)
@@ -1525,10 +1525,10 @@ void WorldSession::HandleRandomRollOpcode(WorldPacket &recv_data)
 	data << roll << _player->GetGUID();
 
 	// send to set
-    if(_player->InGroup())
+	if(_player->InGroup())
 		_player->GetGroup()->SendPacketToAll(&data);
 	else
-	    GetPlayer()->SendMessageToSet(&data, true, true);
+		GetPlayer()->SendMessageToSet(&data, true, true);
 }
 
 void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
@@ -1675,16 +1675,16 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		pLoot->items.at(slotid).has_looted.insert(player->GetLowGUID());
 	}*/
 
-/*    WorldPacket idata(45);
-    if(it->Class == ITEM_CLASS_QUEST)
-    {
-        uint32 pcount = player->GetItemInterface()->GetItemCount(it->ItemId, true);
+/*	WorldPacket idata(45);
+	if(it->Class == ITEM_CLASS_QUEST)
+	{
+		uint32 pcount = player->GetItemInterface()->GetItemCount(it->ItemId, true);
 		BuildItemPushResult(&idata, GetPlayer()->GetGUID(), ITEM_PUSH_TYPE_LOOT, amt, itemid, pLoot->items.at(slotid).iRandomProperty ? pLoot->items.at(slotid).iRandomProperty->ID : 0,0xFF,0,0xFFFFFFFF,pcount);
-    }
-    else
-    {
+	}
+	else
+	{
 		BuildItemPushResult(&idata, player->GetGUID(), ITEM_PUSH_TYPE_LOOT, amt, itemid, pLoot->items.at(slotid).iRandomProperty ? pLoot->items.at(slotid).iRandomProperty->ID : 0);
-    }
+	}
 
 	if(_player->InGroup())
 		_player->GetGroup()->SendPacketToAll(&idata);
@@ -1897,39 +1897,39 @@ void WorldSession::HandleToggleHelmOpcode(WorldPacket &recv_data)
 
 void WorldSession::HandleDungeonDifficultyOpcode(WorldPacket& recv_data)
 {
-    uint32 data;
-    recv_data >> data;
+	uint32 data;
+	recv_data >> data;
 
-    if(_player->GetGroup() && _player->IsGroupLeader())
-    {
-        WorldPacket pData;
-        pData.Initialize(MSG_SET_DUNGEON_DIFFICULTY);
-        pData << data;
+	if(_player->GetGroup() && _player->IsGroupLeader())
+	{
+		WorldPacket pData;
+		pData.Initialize(MSG_SET_DUNGEON_DIFFICULTY);
+		pData << data;
 
-        _player->iInstanceType = data;
-        sInstanceMgr.ResetSavedInstances(_player);
+		_player->iInstanceType = data;
+		sInstanceMgr.ResetSavedInstances(_player);
 
-        Group * m_Group = _player->GetGroup();
+		Group * m_Group = _player->GetGroup();
 
-        m_Group->Lock();
+		m_Group->Lock();
 		for(uint32 i = 0; i < m_Group->GetSubGroupCount(); ++i)
 		{
 			for(GroupMembersSet::iterator itr = m_Group->GetSubGroup(i)->GetGroupMembersBegin(); itr != m_Group->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
 			{
 				if((*itr)->m_loggedInPlayer)
 				{
-                    (*itr)->m_loggedInPlayer->iInstanceType = data;
+					(*itr)->m_loggedInPlayer->iInstanceType = data;
 					(*itr)->m_loggedInPlayer->GetSession()->SendPacket(&pData);
 				}
 			}
 		}
 		m_Group->Unlock();
-    }
-    else if(!_player->GetGroup())
-    {
-        _player->iInstanceType = data;
-        sInstanceMgr.ResetSavedInstances(_player);
-    }
+	}
+	else if(!_player->GetGroup())
+	{
+		_player->iInstanceType = data;
+		sInstanceMgr.ResetSavedInstances(_player);
+	}
 
 #ifdef OPTIMIZED_PLAYER_SAVING
 	_player->save_InstanceType();

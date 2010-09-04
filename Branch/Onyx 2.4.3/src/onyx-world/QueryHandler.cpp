@@ -150,7 +150,7 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 		return;
 
 	LocalizedGameObjectName * lgn = (language>0) ? sLocalizationMgr.GetLocalizedGameObjectName(entryID, language) : NULL;
-    
+	
 	data << entryID;
 	data << goinfo->Type;
 	data << goinfo->DisplayID;
@@ -312,8 +312,8 @@ void WorldSession::HandleInrangeQuestgiverQuery(WorldPacket & recv_data)
 
 	// 32 count
 	// <foreach count>
-	//    64 guid
-	//    8 status
+	//	64 guid
+	//	8 status
 
 	for( itr = _player->m_objectsInRange.begin(); itr != _player->m_objectsInRange.end(); ++itr )
 	{

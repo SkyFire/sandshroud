@@ -83,10 +83,8 @@ WorldSession::~WorldSession()
 			delete [] sAccountData[x].data;
 	}
 
-#ifndef CLUSTERING
 	if(_socket)
 		_socket->SetSession(0);
-#endif
 
 	if(m_loggingInPlayer)
 		m_loggingInPlayer->SetSession(NULL);
@@ -98,10 +96,8 @@ int WorldSession::Update(uint32 InstanceID)
 {
 	m_currMsTime = getMSTime();
 
-#ifndef CLUSTERING
 	if(!((++_updatecount) % 2) && _socket)
 		_socket->UpdateQueuedPackets();
-#endif
 
 	WorldPacket *packet;
 	OpcodeHandler * Handler;
@@ -165,7 +161,7 @@ int WorldSession::Update(uint32 InstanceID)
 					(this->*Handler->handler)(*packet);
 
 					if(packet->rpos() < packet->wpos())
-							LogUnprocessedTail(packet);
+						LogUnprocessedTail(packet);
 
 				}
 			}
@@ -509,8 +505,8 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[MSG_MOVE_STOP_ASCEND].handler							= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[MSG_MOVE_START_FORWARD].handler							= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[MSG_MOVE_START_BACKWARD].handler						= &WorldSession::HandleMovementOpcodes;
-    WorldPacketHandlers[MSG_MOVE_SET_FACING].handler							= &WorldSession::HandleMovementOpcodes;
-    WorldPacketHandlers[MSG_MOVE_START_STRAFE_LEFT].handler						= &WorldSession::HandleMovementOpcodes;
+	WorldPacketHandlers[MSG_MOVE_SET_FACING].handler							= &WorldSession::HandleMovementOpcodes;
+	WorldPacketHandlers[MSG_MOVE_START_STRAFE_LEFT].handler						= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[MSG_MOVE_START_STRAFE_RIGHT].handler					= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[MSG_MOVE_STOP_STRAFE].handler							= &WorldSession::HandleMovementOpcodes;
 	WorldPacketHandlers[MSG_MOVE_START_TURN_LEFT].handler						= &WorldSession::HandleMovementOpcodes;
@@ -530,7 +526,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_MOVE_TIME_SKIPPED].handler							= &WorldSession::HandleMoveTimeSkippedOpcode;
 	WorldPacketHandlers[CMSG_MOVE_NOT_ACTIVE_MOVER].handler						= &WorldSession::HandleMoveNotActiveMoverOpcode;
 	WorldPacketHandlers[CMSG_SET_ACTIVE_MOVER].handler							= &WorldSession::HandleSetActiveMoverOpcode;
-    WorldPacketHandlers[CMSG_MOVE_CHNG_TRANSPORT].handler						= &WorldSession::HandleMovementOpcodes;
+	WorldPacketHandlers[CMSG_MOVE_CHNG_TRANSPORT].handler						= &WorldSession::HandleMovementOpcodes;
 	// ACK
 	WorldPacketHandlers[MSG_MOVE_TELEPORT_ACK].handler							= &WorldSession::HandleMoveTeleportAckOpcode;
 	WorldPacketHandlers[CMSG_FORCE_WALK_SPEED_CHANGE_ACK].handler				= &WorldSession::HandleAcknowledgementOpcodes;
@@ -665,7 +661,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_NPC_TEXT_QUERY].handler							= &WorldSession::HandleNpcTextQueryOpcode;
 	WorldPacketHandlers[CMSG_BINDER_ACTIVATE].handler							= &WorldSession::HandleBinderActivateOpcode;
 	WorldPacketHandlers[CMSG_ACTIVATETAXIEXPRESS].handler						= &WorldSession::HandleMultipleActivateTaxiOpcode;
-	
+
 	// Item / Vendors
 	WorldPacketHandlers[CMSG_SWAP_INV_ITEM].handler								= &WorldSession::HandleSwapInvItemOpcode;
 	WorldPacketHandlers[CMSG_SWAP_ITEM].handler									= &WorldSession::HandleSwapItemOpcode;
@@ -869,10 +865,6 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_ARENA_TEAM_DISBAND].handler						= &WorldSession::HandleArenaTeamDisbandOpcode;
 	WorldPacketHandlers[CMSG_ARENA_TEAM_LEADER].handler							= &WorldSession::HandleArenaTeamPromoteOpcode;
 	WorldPacketHandlers[MSG_INSPECT_ARENA_TEAMS].handler						= &WorldSession::HandleInspectArenaStatsOpcode;
-
-#ifdef CLUSTERING
-	WorldPacketHandlers[CMSG_PING].handler										= &WorldSession::HandlePingOpcode;
-#endif
 
 	// cheat/gm commands?
 	WorldPacketHandlers[MSG_MOVE_TELEPORT_CHEAT].handler						= &WorldSession::HandleTeleportCheatOpcode;

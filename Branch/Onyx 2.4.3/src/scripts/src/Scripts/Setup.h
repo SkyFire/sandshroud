@@ -35,6 +35,9 @@ void SetupGenericCreatureScripts(ScriptMgr * mgr);
 Adhere or die.
 */
 
+void SetupWorldBosses(ScriptMgr * mgr);
+void SetupPaladinQuests(ScriptMgr * mgr);
+
 struct SP_AI_Spell{
 	SpellEntry *info;		// spell info
 	char targettype;		// 0-self , 1-attaking target, ....

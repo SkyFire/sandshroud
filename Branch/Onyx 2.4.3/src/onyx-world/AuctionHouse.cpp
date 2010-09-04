@@ -649,12 +649,12 @@ void AuctionHouse::SendAuctionList(Player * plr, WorldPacket * packet)
 				continue;
 		}
 		
-        // Page system.
-        ++counted_items;
-        if(counted_items >= start_index + 50)
-            continue;
-        current_index++;
-        if(start_index && current_index < start_index) continue;
+		// Page system.
+		++counted_items;
+		if(counted_items >= start_index + 50)
+			continue;
+		current_index++;
+		if(start_index && current_index < start_index) continue;
 
 		// all checks passed -> add to packet.
 		itr->second->AddToPacket(data);

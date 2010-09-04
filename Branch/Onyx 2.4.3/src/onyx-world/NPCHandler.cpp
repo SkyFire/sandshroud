@@ -399,15 +399,17 @@ void WorldSession::SendAuctionList(Creature* auctioneer)
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 {
-	if(!_player->IsInWorld()) return;
-	uint64 guid;
-	list<QuestRelation *>::iterator it;
-	std::set<uint32> ql;
+	if(!_player->IsInWorld())
+		return;
 
+	uint64 guid;
 	recv_data >> guid;
 	Creature *qst_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	if(!qst_giver) 
+	if(!qst_giver)
 		return;
+
+	list<QuestRelation *>::iterator it;
+	std::set<uint32> ql;
 
 	//stop when talked to for 3 min
 	if(qst_giver->GetAIInterface())
@@ -435,7 +437,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 			return;
 
 		_player->CurrentGossipMenu->BuildPacket(data);
-		uint32 count=0;//sQuestMgr.ActiveQuestsCount(qst_giver, GetPlayer());
+		uint32 count = 0;//sQuestMgr.ActiveQuestsCount(qst_giver, GetPlayer());
 		size_t pos=data.wpos();
 		data << uint32(count);
 		for (it = qst_giver->QuestsBegin(); it != qst_giver->QuestsEnd(); ++it)
@@ -448,8 +450,6 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 					ql.insert((*it)->qst->id);
 					count++;
 					data << (*it)->qst->id;
-					/*data << status;//sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), *it);
-					data << uint32(0);*/
 					switch(status)
 					{
 					case QMGR_QUEST_NOT_FINISHED:
@@ -667,7 +667,7 @@ void WorldSession::SendInnkeeperBind(Creature* pCreature)
 
 	if(!_player->bHasBindDialogOpen)
 	{
-        OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
+		OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
 
 		data.Initialize(SMSG_BINDER_CONFIRM);
 		data << pCreature->GetGUID() << _player->GetZoneId();
@@ -706,7 +706,7 @@ void WorldSession::SendInnkeeperBind(Creature* pCreature)
 	data << pCreature->GetGUID() << _player->GetBindZoneId();
 	SendPacket(&data);
 
-    OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
+	OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
 
 	data.Initialize( SMSG_SPELL_START );
 	data << pCreature->GetNewGUID();

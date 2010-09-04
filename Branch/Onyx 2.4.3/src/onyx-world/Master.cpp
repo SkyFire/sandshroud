@@ -90,11 +90,11 @@ struct Addr
 #define DEF_VALUE_NOT_SET 0xDEADBEEF
 
 #ifdef WIN32
-        static const char* default_config_file = "onyx-world.conf";
-        static const char* default_realm_config_file = "onyx-realms.conf";
+		static const char* default_config_file = "onyx-world.conf";
+		static const char* default_realm_config_file = "onyx-realms.conf";
 #else
-        static const char* default_config_file = CONFDIR "/onyx-world.conf";
-        static const char* default_realm_config_file = CONFDIR "/onyx-realms.conf";
+		static const char* default_config_file = CONFDIR "/onyx-world.conf";
+		static const char* default_realm_config_file = CONFDIR "/onyx-realms.conf";
 #endif
 
 bool bServerShutdown = false;
@@ -182,7 +182,7 @@ bool Master::Run(int argc, char ** argv)
 
 	printf( "The key combination <Ctrl-C> will safely shut down the server at any time.\n" );
 	Log.Line();
-    
+	
 #ifndef WIN32
 	if(geteuid() == 0 || getegid() == 0)
 		Log.LargeErrorMessage( LARGERRORMESSAGE_WARNING, "You are running onyx as root.", "This is not needed, and may be a possible security risk.", "It is advised to hit CTRL+C now and", "start as a non-privileged user.", NULL);
@@ -317,7 +317,6 @@ bool Master::Run(int argc, char ** argv)
 	uint32 loopcounter = 0;
 	//ThreadPool.Gobble();
 
-#ifndef CLUSTERING
 	/* Connect to realmlist servers / logon servers */
 	new LogonCommHandler();
 	sLogonCommHandler.Startup();
@@ -330,17 +329,12 @@ bool Master::Run(int argc, char ** argv)
 
 	// Create listener
 	ListenSocket<WorldSocket> * ls = new ListenSocket<WorldSocket>(host.c_str(), wsport);
-    bool listnersockcreate = ls->IsOpen();
+	bool listnersockcreate = ls->IsOpen();
 #ifdef WIN32
 	if( listnersockcreate )
 		ThreadPool.ExecuteTask(ls);
 #endif
 	while( !m_stopEvent && listnersockcreate )
-#else
-	new ClusterInterface;
-	sClusterInterface.ConnectToRealmServer();
-	while(!m_stopEvent)
-#endif
 	{
 		start = now();
 		diff = start - last_time;
@@ -359,12 +353,8 @@ bool Master::Run(int argc, char ** argv)
 			g_localTime = *localtime(&curTime);
 		}
 
-#ifndef CLUSTERING
 #ifdef VOICE_CHAT
 		sVoiceChatHandler.Update();
-#endif
-#else
-		sClusterInterface.Update();
 #endif
 		sSocketGarbageCollector.Update();
 
@@ -382,7 +372,7 @@ bool Master::Run(int argc, char ** argv)
 	}
 	_UnhookSignals();
 
-    wr->Terminate();
+	wr->Terminate();
 	ThreadPool.ShowStats();
 	/* Shut down console system */
 	console->terminate();
@@ -409,9 +399,7 @@ bool Master::Run(int argc, char ** argv)
 	dw->terminate();
 	dw = NULL;
 
-#ifndef CLUSTERING
 	ls->Close();
-#endif
 
 	CloseConsoleListener();
 	sWorld.SaveAllPlayers();

@@ -85,22 +85,22 @@ enum ChatMsg
 enum Languages
 {
 	LANG_ADDON									= -1,
-    LANG_UNIVERSAL                              = 0x00,
-    LANG_ORCISH                                 = 0x01,
-    LANG_DARNASSIAN                             = 0x02,
-    LANG_TAURAHE                                = 0x03,
-    LANG_DWARVISH                               = 0x06,
-    LANG_COMMON                                 = 0x07,
-    LANG_DEMONIC                                = 0x08,
-    LANG_TITAN                                  = 0x09,
-    LANG_THELASSIAN                             = 0x0A,
-    LANG_DRACONIC                               = 0x0B,
-    LANG_KALIMAG                                = 0x0C,
-    LANG_GNOMISH                                = 0x0D,
-    LANG_TROLL                                  = 0x0E,
-    LANG_GUTTERSPEAK                            = 0x21,
-    LANG_DRAENEI                                = 0x23,
-    NUM_LANGUAGES                               = 0x24
+	LANG_UNIVERSAL							  = 0x00,
+	LANG_ORCISH								 = 0x01,
+	LANG_DARNASSIAN							 = 0x02,
+	LANG_TAURAHE								= 0x03,
+	LANG_DWARVISH							   = 0x06,
+	LANG_COMMON								 = 0x07,
+	LANG_DEMONIC								= 0x08,
+	LANG_TITAN								  = 0x09,
+	LANG_THELASSIAN							 = 0x0A,
+	LANG_DRACONIC							   = 0x0B,
+	LANG_KALIMAG								= 0x0C,
+	LANG_GNOMISH								= 0x0D,
+	LANG_TROLL								  = 0x0E,
+	LANG_GUTTERSPEAK							= 0x21,
+	LANG_DRAENEI								= 0x23,
+	NUM_LANGUAGES							   = 0x24
 };
 
 /*#define MSG_COLOR_YELLOW	"|r"
@@ -132,7 +132,7 @@ public:
 	char			   CommandGroup;
 	bool (ChatHandler::*Handler)(const char* args, WorldSession *m_session) ;
 	std::string		Help;
-	ChatCommand *    ChildCommands;
+	ChatCommand *	ChildCommands;
 	uint32			 NormalValueField;
 	uint32			 MaxValueField;
 	uint16			 ValueType;	// 0 = nothing, 1 = uint, 2 = float
@@ -181,6 +181,7 @@ public:
 	void ColorSystemMessage(WorldSession *m_session, const char *colorcode, const char *message, ...);
 	void RedSystemMessage(WorldSession *m_session, const char *message, ...);
 	void GreenSystemMessage(WorldSession *m_session, const char *message, ...);
+	void WhiteSystemMessage(WorldSession *m_session, const char *message, ...);
 	void BlueSystemMessage(WorldSession *m_session, const char *message, ...);
 	void RedSystemMessageToPlr(Player* plr, const char *message, ...);
 	void GreenSystemMessageToPlr(Player* plr, const char *message, ...);
@@ -245,7 +246,7 @@ protected:
 	bool HandleThreatListCommand(const char* args, WorldSession *m_session);
 	bool HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_session);
 	bool HandleDebugDumpCoordsCommmand(const char * args, WorldSession * m_session);
-    bool HandleSendpacket(const char * args, WorldSession * m_session);
+	bool HandleSendpacket(const char * args, WorldSession * m_session);
 	bool HandleSQLQueryCommand(const char* args, WorldSession *m_session);
 	bool HandleRangeCheckCommand( const char * args , WorldSession * m_session );
 
@@ -347,10 +348,10 @@ protected:
 	bool HandleNullFollowCommand(const char* args, WorldSession * m_session);
 	bool HandleFormationClearCommand(const char* args, WorldSession * m_session);
 	bool HandleResetSkillsCommand(const char* args, WorldSession * m_session);
-    bool HandleGetSkillLevelCommand(const char* args, WorldSession * m_session);
-    bool HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session);
-    bool HandlePlayerInfo(const char* args, WorldSession * m_session);
-    
+	bool HandleGetSkillLevelCommand(const char* args, WorldSession * m_session);
+	bool HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session);
+	bool HandlePlayerInfo(const char* args, WorldSession * m_session);
+	
 	//Ban
 	bool HandleBanCharacterCommand(const char* args, WorldSession *m_session);
 	bool HandleUnBanCharacterCommand(const char* args, WorldSession *m_session);

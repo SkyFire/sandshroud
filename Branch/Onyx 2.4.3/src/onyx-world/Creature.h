@@ -36,6 +36,7 @@ struct CreatureItem
 	uint32 available_amount;
 	uint32 max_amount;
 	uint32 incrtime;
+	bool ExcludeUnusable;
 	ItemExtendedCostEntry *extended_cost;
 };
 
@@ -69,7 +70,7 @@ struct CreatureInfo
 	uint32 GenerateModelId(uint32 * dest)
 	{
 		/* only M */
-        if(Male_DisplayID == Female_DisplayID)
+		if(Male_DisplayID == Female_DisplayID)
 		{
 			*dest = Male_DisplayID;
 			return 0;
@@ -78,7 +79,7 @@ struct CreatureInfo
 		/* only M */
 		if(Male_DisplayID && !Female_DisplayID)
 		{
-            *dest = Male_DisplayID;
+			*dest = Male_DisplayID;
 			return 0;
 		}
 
@@ -250,7 +251,7 @@ public:
 
 	Creature(uint64 guid);
 	virtual ~Creature();
-    bool Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info);
+	bool Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info);
 	void Load(CreatureProto * proto_, float x, float y, float z, float o);
 
 	void AddToWorld();

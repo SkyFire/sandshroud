@@ -49,7 +49,7 @@ void WorldSession::HandleEnableMicrophoneOpcode(WorldPacket & recv_data)
 		|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|
 		|------------------------------------------------|----------------|
 		|4B C5 00 00 00 00 D1 E1 00 6D 6F 6F 63 6F 77 00 |K........moocow.|
-		|F3 0D 13 01 00 00 00 00                         |........        |
+		|F3 0D 13 01 00 00 00 00						 |........		|
 		-------------------------------------------------------------------
 		uint8 channel_id?
 		uint8 channel_type (00=custom channel, 03=party, 04=raid?)
@@ -103,7 +103,7 @@ void WorldSession::HandleVoiceChatQueryOpcode(WorldPacket & recv_data)
 
 
 /************************************************************************/
-/* Singleton Stuff                                                      */
+/* Singleton Stuff													  */
 /************************************************************************/
 initialiseSingleton(VoiceChatHandler);
 

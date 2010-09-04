@@ -523,11 +523,11 @@ void WorldSession::HandleTextEmoteOpcode( WorldPacket & recv_data )
 		if(pUnit)
 			CALL_SCRIPT_EVENT(pUnit,OnEmote)(_player,(EmoteType)em->textid);
 
-        switch(em->textid)
-        {
-            case EMOTE_STATE_SLEEP:
-            case EMOTE_STATE_SIT:
-            case EMOTE_STATE_KNEEL:
+		switch(em->textid)
+		{
+			case EMOTE_STATE_SLEEP:
+			case EMOTE_STATE_SIT:
+			case EMOTE_STATE_KNEEL:
 			case EMOTE_STATE_DANCE:
 				{
 					_player->SetUInt32Value(UNIT_NPC_EMOTESTATE, em->textid);
@@ -554,8 +554,8 @@ void WorldSession::HandleReportSpamOpcode(WorldPacket & recvPacket)
 {
 	CHECK_PACKET_SIZE(recvPacket, 29);
 
-    // the 0 in the out packet is unknown
-    GetPlayer()->GetSession()->OutPacket(SMSG_COMPLAIN_RESULT, 1, 0 );
+	// the 0 in the out packet is unknown
+	GetPlayer()->GetSession()->OutPacket(SMSG_COMPLAIN_RESULT, 1, 0 );
 
 	/* This whole thing is guess-work */
 	/*uint8 unk1;

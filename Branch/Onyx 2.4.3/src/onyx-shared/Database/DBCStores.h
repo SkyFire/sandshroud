@@ -381,6 +381,7 @@ struct SpellEntry
 
 	bool Unique;											//!!! CUSTOM, Is this a unique effect? ex: Mortal Strike -50% healing.
 
+	uint32 forced_creature_target;
 	uint32 area_aura_update_interval;
 	float procs_per_minute;
 };

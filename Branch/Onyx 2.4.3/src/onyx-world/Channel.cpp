@@ -99,7 +99,7 @@ void Channel::AttemptJoin(Player * plr, const char * password)
 
 	if(!m_password.empty() && strcmp(m_password.c_str(), password) != 0)
 	{
-        data << uint8(CHANNEL_NOTIFY_FLAG_WRONGPASS) << m_name;
+		data << uint8(CHANNEL_NOTIFY_FLAG_WRONGPASS) << m_name;
 		plr->GetSession()->SendPacket(&data);
 		return;
 	}
@@ -156,7 +156,7 @@ void Channel::Part(Player * plr, bool silent)
 		m_lock.Release();
 		return;
 	}
-    
+	
 	flags = itr->second;
 	m_members.erase(itr);
 
@@ -193,11 +193,11 @@ void Channel::Part(Player * plr, bool silent)
 	}
 
 #ifndef WIN32
-    if(m_members.size() == 0 )
-    {
-        m_lock.Release();
+	if(m_members.size() == 0 )
+	{
+		m_lock.Release();
 		channelmgr.RemoveChannel(this);
-    }
+	}
 	else
 		m_lock.Release();
 #else
@@ -432,7 +432,7 @@ void Channel::Kick(Player * plr, Player * die_player, bool ban)
 		return;
 	}
 
-    flags = itr->second;
+	flags = itr->second;
 	data << uint8(CHANNEL_NOTIFY_FLAG_KICKED) << m_name << die_player->GetGUID();
 	SendToAll(&data);
 
@@ -516,7 +516,7 @@ void Channel::Voice(Player * plr, Player * v_player)
 	}
 
 	uint32 oldflags = itr2->second;
-    itr2->second |= CHANNEL_FLAG_VOICED;
+	itr2->second |= CHANNEL_FLAG_VOICED;
 	data << uint8(CHANNEL_NOTIFY_FLAG_MODE_CHG) << m_name << v_player->GetGUID() << uint8(oldflags) << uint8(itr2->second);
 	SendToAll(&data);
 }

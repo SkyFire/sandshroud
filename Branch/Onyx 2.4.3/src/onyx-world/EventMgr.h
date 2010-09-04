@@ -242,7 +242,7 @@ struct SERVER_DECL TimedEvent
 	   to change this, I couldn't find the atomic functions anymore though :*( */
 
 	/*void IncRef() { ++ref; }
-    
+	
 	void DecRef()
 	{
 		--ref;

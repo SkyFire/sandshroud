@@ -284,7 +284,7 @@ void Item::SaveToDB( int8 containerslot, int8 slot, bool firstsave, QueryBuffer*
 	ss << "REPLACE INTO playeritems VALUES(";
 
 	ss << m_uint32Values[ITEM_FIELD_OWNER] << ",";
-    ss << m_uint32Values[OBJECT_FIELD_GUID] << ",";
+	ss << m_uint32Values[OBJECT_FIELD_GUID] << ",";
 	ss << m_uint32Values[OBJECT_FIELD_ENTRY] << ",";
 	ss << wrapped_item_id << ",";
 	ss << m_uint32Values[ITEM_FIELD_GIFTCREATOR] << ",";
@@ -369,7 +369,7 @@ uint32 GetSkillByProto( uint32 Class, uint32 SubClass )
 	{
 		return arm_skills[SubClass];
 	} 
-    else if( Class == 2 )
+	else if( Class == 2 )
 	{
 		if( SubClass < 20 )//no skill for fishing
 		{
@@ -516,9 +516,9 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 			Slot=Slot_;
 		}
 		else
-        {
+		{
 			Slot = FindFreeEnchantSlot(Enchantment);
-        }
+		}
 	}
 	else
 	{
@@ -597,7 +597,7 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 		/* Only apply the enchantment bonus if we're equipped */
 		uint8 slot = m_owner->GetItemInterface()->GetInventorySlotByGuid( GetGUID() );
 		if( slot > EQUIPMENT_SLOT_START && slot < EQUIPMENT_SLOT_END )
-            ApplyEnchantmentBonus( Slot, APPLY );
+			ApplyEnchantmentBonus( Slot, APPLY );
 	}
 
 	GetOwner()->SaveToDB(false);

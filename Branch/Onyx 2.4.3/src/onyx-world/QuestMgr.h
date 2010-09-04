@@ -50,7 +50,7 @@ public:
 	void BuildQuestComplete(Player*, Quest* qst);
 	void BuildQuestList(WorldPacket* data, Object* qst_giver, Player* plr, uint32 language);
 	bool OnActivateQuestGiver(Object *qst_giver, Player *plr);
-    bool isRepeatableQuestFinished(Player *plr, Quest *qst);
+	bool isRepeatableQuestFinished(Player *plr, Quest *qst);
 
 	void SendQuestUpdateAddKill(Player* plr, uint32 questid, uint32 entry, uint32 count, uint32 tcount, uint64 guid);
 	void BuildQuestUpdateAddItem(WorldPacket* data, uint32 itemid, uint32 count);

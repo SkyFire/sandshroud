@@ -354,7 +354,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			}break;
 		case 0xCBC738B8:	// Bloodthirst
 			{
-                dmg = u_caster->GetAP()*(m_spellInfo->EffectBasePoints[0]+1) / 100;
+				dmg = u_caster->GetAP()*(m_spellInfo->EffectBasePoints[0]+1) / 100;
 			}break;
 		case 2189817683UL:	// Shield Slam - damage is increased by block value
 			{
@@ -515,9 +515,9 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			1856,  /* Vanish  - Rank 1 */
 			1857,  /* Vanish  - Rank 2 */
 			26889, /* Vanish  - Rank 3 */
-			14177, /* Cold Blood       */
-			14183, /* Premeditation    */
-			36554  /* Shadowstep       */
+			14177, /* Cold Blood	   */
+			14183, /* Premeditation	*/
+			36554  /* Shadowstep	   */
 			};
 
 			for(i = 0; i < 11; ++i)
@@ -642,7 +642,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				// don't add objects that are not units and that are dead
 				if((*i2)->GetTypeId()!= TYPEID_UNIT || !((Unit*)(*i2))->isAlive())
 					continue;
-		        
+				
 				Creature *cr=((Creature*)(*i2));
 				if(cr->GetAIInterface()->GetNextTarget()==unitTarget)
 					targets[targets_got++]=cr;
@@ -1056,10 +1056,10 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			uint32 spell_id;
 			switch(m_spellInfo->Id)
 			{
-                case 23074: spell_id = 19804; break;
-                case 23075: spell_id = 12749; break;
-                case 23076: spell_id =  4073; break;
-                case 23133: spell_id = 13166; break;
+				case 23074: spell_id = 19804; break;
+				case 23075: spell_id = 12749; break;
+				case 23076: spell_id =  4073; break;
+				case 23133: spell_id = 13166; break;
 				default: 
 					return;
 			}
@@ -1450,7 +1450,26 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			break, a boss mob spawns. Successfully completing this event 
 			turns the arena spectators from red to yellow*/
 		}break;
-	}										 
+	case 31225: // Filled Shimmering Vessel, Redeeming the Dead.
+		{
+			if(p_caster != NULL)
+			{
+				QuestLogEntry* qle = p_caster->GetQuestLogForEntry(9685);
+				if(qle && !qle->CanBeFinished())
+				{
+					qle->SetMobCount(0, 1);
+					qle->SendUpdateAddKill(1);
+					qle->UpdatePlayerFields();
+					qle->SendQuestComplete();
+				}
+			}
+		}break;
+
+	default:
+		{
+			printf("Unscripted Dummy Spell %u\n", m_spellInfo->Id);
+		}break;
+	}
 }
 
 void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
@@ -1986,7 +2005,7 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 					}
 					else
 						p_caster->GetSession()->SendItemPushResult(newItem, true, false, true, true, slotresult.ContainerSlot, slotresult.Slot, item_count-item_count_filled);
-                }
+				}
 			}
 			else
 			{
@@ -2014,7 +2033,7 @@ void Spell::SpellEffectWeapon(uint32 i)
 
 	switch( this->m_spellInfo->Id )
 	{
-	case 201:    // one-handed swords
+	case 201:	// one-handed swords
 		{
 			skill = SKILL_SWORDS;
 		}break;
@@ -2237,35 +2256,35 @@ void Spell::SpellEffectSummon(uint32 i) // Summon
 		summon->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
 		summon->AddSpell(dbcSpell.LookupEntry(31707), true);
 		summon->AddSpell(dbcSpell.LookupEntry(33395), true);
-       summon->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-       summon->_setFaction();
+	   summon->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+	   summon->_setFaction();
 	   p_caster->m_tempSummon = summon;
 	}
 	else
 	{
-	       Creature * pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
-	       pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
-	       pCreature->_setFaction();
-	       pCreature->GetAIInterface()->Init(pCreature,AITYPE_PET,MOVEMENTTYPE_NONE,u_caster);
-	       pCreature->GetAIInterface()->SetUnitToFollow(u_caster);
-	       pCreature->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
-	       pCreature->GetAIInterface()->SetFollowDistance(3.0f);
-	       pCreature->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
-	       pCreature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-	       pCreature->_setFaction();
-	       p_caster->SetUInt64Value(UNIT_FIELD_SUMMON, pCreature->GetGUID());
-	       p_caster->m_tempSummon = pCreature;
-	       pCreature->PushToWorld(p_caster->GetMapMgr());
+		   Creature * pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
+		   pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
+		   pCreature->_setFaction();
+		   pCreature->GetAIInterface()->Init(pCreature,AITYPE_PET,MOVEMENTTYPE_NONE,u_caster);
+		   pCreature->GetAIInterface()->SetUnitToFollow(u_caster);
+		   pCreature->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
+		   pCreature->GetAIInterface()->SetFollowDistance(3.0f);
+		   pCreature->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
+		   pCreature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, p_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+		   pCreature->_setFaction();
+		   p_caster->SetUInt64Value(UNIT_FIELD_SUMMON, pCreature->GetGUID());
+		   p_caster->m_tempSummon = pCreature;
+		   pCreature->PushToWorld(p_caster->GetMapMgr());
 
-	       /*if(p_caster->isInCombat())
-	       {
-		       Unit * target = p_caster->GetMapMgr()->GetUnit(p_caster->getAttackTarget());
-		       if(target)
-			       pCreature->GetAIInterface()->AttackReaction(target, 1, 0);
-	       }*/
-	       
-	       /* not sure on this */
-	       sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE, /*GetDuration()*/45000, 1, 0);
+		   /*if(p_caster->isInCombat())
+		   {
+			   Unit * target = p_caster->GetMapMgr()->GetUnit(p_caster->getAttackTarget());
+			   if(target)
+				   pCreature->GetAIInterface()->AttackReaction(target, 1, 0);
+		   }*/
+		   
+		   /* not sure on this */
+		   sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE, /*GetDuration()*/45000, 1, 0);
 	}
 }
 
@@ -2444,7 +2463,7 @@ void Spell::SpellEffectEnergize(uint32 i) // Energize
 		}
 	}
 	else  
-        modEnergy = damage;
+		modEnergy = damage;
 
 	SendHealManaSpellOnPlayer(u_caster, unitTarget, modEnergy, m_spellInfo->EffectMiscValue[i], pSpellId ? pSpellId : m_spellInfo->Id);
 
@@ -2803,9 +2822,10 @@ void Spell::SpellEffectSendEvent(uint32 i) //Send Event
 	// Item - Cleansing Vial DND
 	case 29297: // Empty the vial near the Bones of Aggonar to cleanse the waters of their demonic taint.
 		{
-			QuestLogEntry *en=p_caster->GetQuestLogForEntry(9427);
+			QuestLogEntry *en = p_caster->GetQuestLogForEntry(9427);
 			if(!en)
 				return;
+
 			en->SendQuestComplete();
 		}break;
 
@@ -3241,7 +3261,7 @@ void Spell::SpellEffectSummonWild(uint32 i)  // Summon Wild
 		Creature * p = u_caster->GetMapMgr()->CreateCreature(cr_entry);
 		//ASSERT(p);
 		p->Load(proto, x, y, z, 0.0f);
-        p->SetZoneId(m_caster->GetZoneId());
+		p->SetZoneId(m_caster->GetZoneId());
 		p->SetZoneId( m_caster->GetZoneId() );
 
 		if ( p->proto && p->proto->Faction == 35 )
@@ -4600,8 +4620,8 @@ void Spell::SpellEffectDuel(uint32 i) // Duel
 
 void Spell::SpellEffectStuck(uint32 i)
 {
-    if(!playerTarget || playerTarget != p_caster)
-        return;
+	if(!playerTarget || playerTarget != p_caster)
+		return;
 
 	sEventMgr.AddEvent(playerTarget,&Player::EventTeleport,playerTarget->GetBindMapId(),playerTarget->GetBindPositionX(),playerTarget->GetBindPositionY(),
 		playerTarget->GetBindPositionZ(),EVENT_PLAYER_TELEPORT,50,1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
@@ -4877,7 +4897,7 @@ void Spell::SpellEffectSelfResurrect(uint32 i)
 			health = uint32(unitTarget->GetUInt32Value(UNIT_FIELD_MAXHEALTH)*damage/100);
 			mana = uint32(unitTarget->GetUInt32Value(UNIT_FIELD_MAXPOWER1)*damage/100);
 		}break;
-        }
+		}
 
 	if(class_==WARRIOR||class_==ROGUE)
 		mana=0;
@@ -4936,8 +4956,8 @@ void Spell::SpellEffectCharge(uint32 i)
 		return;
 	if(!unitTarget->isAlive())
 		return;
-    if (p_caster->IsStunned() || p_caster->m_rooted || p_caster->IsPacified() || p_caster->IsFeared())
-        return;
+	if (p_caster->IsStunned() || p_caster->m_rooted || p_caster->IsPacified() || p_caster->IsFeared())
+		return;
 
 	float x, y, z;
 	float dx,dy;

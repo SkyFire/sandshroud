@@ -102,7 +102,7 @@ void HonorHandler::OnPlayerKilledUnit( Player *pPlayer, Unit* pVictim )
 	if( static_cast< Player* >( pVictim )->m_honorless )
 		return;
 
-    if( pVictim->IsPlayer() )
+	if( pVictim->IsPlayer() )
 	{
 		if( pPlayer->m_bg )
 		{
@@ -164,85 +164,85 @@ void HonorHandler::OnPlayerKilledUnit( Player *pPlayer, Unit* pVictim )
 			pPlayer->m_bg->Unlock();
 		}
 		else if(pPlayer->GetGroup())
-        {
-            Group *pGroup = pPlayer->GetGroup();
-            Player *gPlayer = NULL;
-            int32 GroupPoints;
+		{
+			Group *pGroup = pPlayer->GetGroup();
+			Player *gPlayer = NULL;
+			int32 GroupPoints;
 			pGroup->Lock();
-            GroupPoints = (Points / (pGroup->MemberCount() ? pGroup->MemberCount() : 1));
-            GroupMembersSet::iterator gitr;
+			GroupPoints = (Points / (pGroup->MemberCount() ? pGroup->MemberCount() : 1));
+			GroupMembersSet::iterator gitr;
 			for(uint32 k = 0; k < pGroup->GetSubGroupCount(); k++)
 			{
 				for(gitr = pGroup->GetSubGroup(k)->GetGroupMembersBegin(); gitr != pGroup->GetSubGroup(k)->GetGroupMembersEnd(); ++gitr)
 				{
 					gPlayer = (*gitr)->m_loggedInPlayer;
-                    
-                    if(gPlayer && (gPlayer == pPlayer || gPlayer->isInRange(pPlayer,100.0f))) // visible range
-                    {
-                        gPlayer->m_killsToday++;
-                        gPlayer->m_killsLifetime++;
+					
+					if(gPlayer && (gPlayer == pPlayer || gPlayer->isInRange(pPlayer,100.0f))) // visible range
+					{
+						gPlayer->m_killsToday++;
+						gPlayer->m_killsLifetime++;
 						if(gPlayer->m_bg)
 							gPlayer->m_bg->HookOnHK(gPlayer);
 
 						sHookInterface.OnHonorableKill(gPlayer, ((Player*)pVictim));
-		                AddHonorPointsToPlayer(gPlayer, GroupPoints);
-                        if(pVictim)
-		                {
-			                // Send PVP credit
-			                WorldPacket data(SMSG_PVP_CREDIT, 12);
-			                uint32 pvppoints = GroupPoints * 10;
-			                data << pvppoints << pVictim->GetGUID() << uint32(static_cast< Player* >(pVictim)->GetPVPRank());
-			                gPlayer->GetSession()->SendPacket(&data);
-		                }
+						AddHonorPointsToPlayer(gPlayer, GroupPoints);
+						if(pVictim)
+						{
+							// Send PVP credit
+							WorldPacket data(SMSG_PVP_CREDIT, 12);
+							uint32 pvppoints = GroupPoints * 10;
+							data << pvppoints << pVictim->GetGUID() << uint32(static_cast< Player* >(pVictim)->GetPVPRank());
+							gPlayer->GetSession()->SendPacket(&data);
+						}
 						//patch by emsy
-                        // If we are in Halaa
-                        if(pPlayer->GetZoneId() == 3518)
-                        {
-                            // Add Halaa Battle Token
-                            SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 33004 : 33005);
-                            gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
-                        }
-                        // If we are in Hellfire Peninsula
-                        if(pPlayer->GetZoneId() == 3483)
-                        {
-                            // Add Mark of Thrallmar/Honor Hold
-                            SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 32158 : 32155);
-                            gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
-                        }
-                    }
+						// If we are in Halaa
+						if(pPlayer->GetZoneId() == 3518)
+						{
+							// Add Halaa Battle Token
+							SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 33004 : 33005);
+							gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
+						}
+						// If we are in Hellfire Peninsula
+						if(pPlayer->GetZoneId() == 3483)
+						{
+							// Add Mark of Thrallmar/Honor Hold
+							SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 32158 : 32155);
+							gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
+						}
+					}
 
-                }
-            }
+				}
+			}
 			pGroup->Unlock();
-        
-        }
-        else
-        {
-		    pPlayer->m_killsToday++;
-		    pPlayer->m_killsLifetime++;
-		    AddHonorPointsToPlayer(pPlayer, Points);
-    		
+		
+		}
+		else
+		{
+			pPlayer->m_killsToday++;
+			pPlayer->m_killsLifetime++;
+			AddHonorPointsToPlayer(pPlayer, Points);
+			
 			if(pPlayer->m_bg)
 				pPlayer->m_bg->HookOnHK(pPlayer);
 
 			sHookInterface.OnHonorableKill(pPlayer, ((Player*)pVictim));
-		    if(pVictim)
-		    {
-			    // Send PVP credit
-			    WorldPacket data(SMSG_PVP_CREDIT, 12);
-			    uint32 pvppoints = Points * 10;
-			    data << pvppoints << pVictim->GetGUID() << uint32(static_cast< Player* >(pVictim)->GetPVPRank());
-			    pPlayer->GetSession()->SendPacket(&data);
-		    }
+			if(pVictim)
+			{
+				// Send PVP credit
+				WorldPacket data(SMSG_PVP_CREDIT, 12);
+				uint32 pvppoints = Points * 10;
+				data << pvppoints << pVictim->GetGUID() << uint32(static_cast< Player* >(pVictim)->GetPVPRank());
+				pPlayer->GetSession()->SendPacket(&data);
+			}
 			//patch by emsy
-            // If we are in Halaa
-            if(pPlayer->GetZoneId() == 3518)
-            {
-                // Add Halaa Battle Token
-                SpellEntry * halaa_spell = dbcSpell.LookupEntry(pPlayer->GetTeam()? 33004 : 33005);
-                pPlayer->CastSpell(pPlayer, halaa_spell, true);
-            }
-        }
+			// If we are in Halaa
+			if(pPlayer->GetZoneId() == 3518)
+			{
+				// Add Halaa Battle Token
+				SpellEntry * halaa_spell = dbcSpell.LookupEntry(pPlayer->GetTeam()? 33004 : 33005);
+				pPlayer->CastSpell(pPlayer, halaa_spell, true);
+			}
+		}
 	}
 }
 

@@ -77,7 +77,7 @@ public:
 		authmgrlock.Acquire();
 		n = highrequestid++;
 		authmgrlock.Release();
-        return n;
+		return n;
 	}
 
 	void SetRequest(uint32 id, ConsoleSocket * sock)
@@ -113,7 +113,7 @@ void ConsoleAuthCallback(uint32 request, uint32 result)
 	if(pSocket == NULL || !pSocket->IsConnected())
 		return;
 
-    if(result)
+	if(result)
 		pSocket->AuthCallback(true);
 	else
 		pSocket->AuthCallback(false);
@@ -229,7 +229,7 @@ void ConsoleSocket::OnRead()
 				m_requestNo = ConsoleAuthMgr::getSingleton().GenerateRequestId();
 				ConsoleAuthMgr::getSingleton().SetRequest(m_requestNo, this);
 
-                TestConsoleLogin(m_username, m_password, m_requestNo);
+				TestConsoleLogin(m_username, m_password, m_requestNo);
 				break;
 
 			case STATE_LOGGED:
@@ -239,7 +239,7 @@ void ConsoleSocket::OnRead()
 					break;
 				}
 
-                HandleConsoleInput(m_pConsole, m_pBuffer);
+				HandleConsoleInput(m_pConsole, m_pBuffer);
 				break;
 			}
 		}
@@ -304,7 +304,7 @@ void RemoteConsole::Write(const char * Format, ...)
 	char obuf[65536];
 	va_list ap;
 
-    va_start(ap, Format);
+	va_start(ap, Format);
 	vsnprintf(obuf, 65536, Format, ap);
 	va_end(ap);
 

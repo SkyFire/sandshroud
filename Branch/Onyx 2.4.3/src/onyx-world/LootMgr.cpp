@@ -53,12 +53,12 @@ const T& RandomChoice( const T* variant, int count )
 {
   float totalChance = 0;
   for( int i = 0; i < count; i++)
-    totalChance += variant[i].chance;
+	totalChance += variant[i].chance;
   float val = RandomFloat(totalChance);
   for( int i = 0; i < count; i++)
   {
-    val -= variant[i].chance;
-    if (val <= 0) return variant[i];
+	val -= variant[i].chance;
+	if (val <= 0) return variant[i];
   }
   // should not come here, buf if it does, we should return something reasonable
   return variant[count-1];
@@ -124,7 +124,7 @@ RandomProps * LootMgr::GetRandomProperties(ItemPrototype * proto)
 	if(proto->RandomPropId==0)
 		return NULL;
 
-    itr = _randomprops.find(proto->RandomPropId);
+	itr = _randomprops.find(proto->RandomPropId);
 	if(itr==_randomprops.end())
 		return NULL;
 
@@ -170,7 +170,7 @@ void LootMgr::LoadLootProp()
 				continue;
 			}
 
-            itr = _randomprops.find(id);
+			itr = _randomprops.find(id);
 			if(itr == _randomprops.end())
 			{
 				RandomPropertyVector v;
@@ -476,12 +476,12 @@ void LootMgr::FillGOLoot(Loot * loot,uint32 loot_id, bool heroic)
 
 void LootMgr::FillFishingLoot(Loot * loot,uint32 loot_id)
 {
-    loot->items.clear();
-    loot->gold = 0;
+	loot->items.clear();
+	loot->gold = 0;
 
-    LootStore::iterator tab = FishingLoot.find(loot_id);
-    if( FishingLoot.end() == tab) return;
-    else PushLoot(&tab->second, loot, false);
+	LootStore::iterator tab = FishingLoot.find(loot_id);
+	if( FishingLoot.end() == tab) return;
+	else PushLoot(&tab->second, loot, false);
 }
 
 void LootMgr::FillSkinningLoot(Loot * loot,uint32 loot_id)
@@ -713,7 +713,7 @@ void LootRoll::Finalize()
 		return;
 	}
 
-    pLoot->items.at(_slotid).roll = 0;
+	pLoot->items.at(_slotid).roll = 0;
 	data.Initialize(SMSG_LOOT_ROLL_WON);
 	data << _guid << _slotid << _itemid << _itemunk1 << _itemunk2;
 	data << _player->GetGUID() << uint8(highest) << uint8(hightype);

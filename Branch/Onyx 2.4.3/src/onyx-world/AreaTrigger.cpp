@@ -38,7 +38,7 @@ enum AreaTriggerFailures
 	AREA_TRIGGER_FAILURE_NO_ATTUNE_I	= 6,
 	AREA_TRIGGER_FAILURE_LEVEL			= 7,
 	AREA_TRIGGER_FAILURE_NO_GROUP		= 8,
-	AREA_TRIGGER_FAILURE_NO_KEY         = 9,
+	AREA_TRIGGER_FAILURE_NO_KEY		 = 9,
 	AREA_TRIGGER_FAILURE_LEVEL_HEROIC	= 9,
 	AREA_TRIGGER_FAILURE_NO_CHECK		= 10,
 };
@@ -107,7 +107,7 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 	if( !_player->IsInWorld() )
 		return;
 
-    // Search quest log, find any exploration quests
+	// Search quest log, find any exploration quests
 	sQuestMgr.OnPlayerExploreArea(GetPlayer(),id);
 
 	AreaTrigger* pAreaTrigger = AreaTriggerStorage.LookupEntry( id );
@@ -149,7 +149,7 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 					char msg[200];
 					WorldPacket data(SMSG_AREA_TRIGGER_MESSAGE, 50);
 					data << uint32(0);
-                    
+					
 					switch (reason)
 					{
 					case AREA_TRIGGER_FAILURE_LEVEL:

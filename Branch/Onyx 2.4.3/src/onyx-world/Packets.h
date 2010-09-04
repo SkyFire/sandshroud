@@ -83,18 +83,18 @@ struct packet_SMSG_LEVELUP_INFO
 
 struct packetSMSG_LOG_XP_GAIN_EXTRA
 {
-	uint64	guid;                                    // Player guid
-	uint32	xp;                                      // Normal XP
-	uint8	type;                                    // 0 for xp gained from killing creature's and 1 for xp gained from quests
-	uint32	restxp;                                  // "Rest XP", is equal to XP for no rest xp message
-	float	unk2; //1.0f                             // static data.. Seems to always be 1.0f
+	uint64	guid;									// Player guid
+	uint32	xp;									  // Normal XP
+	uint8	type;									// 0 for xp gained from killing creature's and 1 for xp gained from quests
+	uint32	restxp;								  // "Rest XP", is equal to XP for no rest xp message
+	float	unk2; //1.0f							 // static data.. Seems to always be 1.0f
 };
 
 struct packetSMSG_LOG_XP_GAIN
 {
-	uint64	guid;                                    // Always 0
-	uint32	xp;                                      // Normal XP
-	uint8	type;                                    // Unknown.. seems to always be 0		
+	uint64	guid;									// Always 0
+	uint32	xp;									  // Normal XP
+	uint8	type;									// Unknown.. seems to always be 0		
 	uint8   unk;									 // 2.4.0 unknown
 };
 

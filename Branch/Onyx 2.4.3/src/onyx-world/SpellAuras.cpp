@@ -964,7 +964,7 @@ void Aura::EventUpdatePlayerAA(float r)
 			if(iplr)
 			{
 				// execute in the correct context
-                if(iplr->GetInstanceID() != plr->GetInstanceID())
+				if(iplr->GetInstanceID() != plr->GetInstanceID())
 					sEventMgr.AddEvent(((Unit*)iplr), &Unit::EventRemoveAura, m_spellProto->Id, EVENT_DELETE_TIMER, 10, 1,0);
 				else
 					iplr->RemoveAura(m_spellProto->Id);
@@ -1490,11 +1490,11 @@ void Aura::SpellAuraDummy(bool apply)
 	//warrior - sweeping strikes
 	case 12328:
 		{
-	      if(apply)
+		  if(apply)
 			 m_target->m_extrastriketargets++;
 		}break;
 	//taming rod spells
-	case 19548:	{                 //invoke damage to trigger attack
+	case 19548:	{				 //invoke damage to trigger attack
 		if (apply)
 		{
 			m_target->GetAIInterface()->AttackReaction( GetUnitCaster(), 10, 0);
@@ -1824,14 +1824,14 @@ void Aura::SpellAuraDummy(bool apply)
 	case 20707://Soulstone Resurrecton
 		if(apply)
 		{
-            _ptarget->SetSoulStone(3026);
+			_ptarget->SetSoulStone(3026);
 			_ptarget->SetSoulStoneReceiver((uint32)m_casterGuid);
 		}
 		else if(m_target->isAlive())
-        {
-            _ptarget->SetSoulStone(0);
-            _ptarget->SetSoulStoneReceiver(0);
-        }break;
+		{
+			_ptarget->SetSoulStone(0);
+			_ptarget->SetSoulStoneReceiver(0);
+		}break;
 	case 20762:
 		if(apply)
 		{
@@ -2084,7 +2084,7 @@ void Aura::SpellAuraDummy(bool apply)
 				sEventMgr.AddEvent(this, &Aura::EventPeriodicHeal1, (uint32)mod->m_amount, EVENT_AURA_PERIODIC_HEAL, 2000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 			else
 				sEventMgr.RemoveEvents(this, EVENT_AURA_PERIODIC_HEAL);
-            		
+					
 		}break;
 
 	case 16914:
@@ -2518,22 +2518,22 @@ void Aura::EventPeriodicHeal( uint32 amount )
 	else
 		bonus = 0;
 
-    //Downranking
-    if( c != NULL && c->IsPlayer() )
-    {
+	//Downranking
+	if( c != NULL && c->IsPlayer() )
+	{
 		if( m_spellProto->baseLevel > 0 && m_spellProto->maxLevel > 0 )
 		{
-            float downrank1 = 1.0f;
-            if( m_spellProto->baseLevel < 20 )
-                downrank1 = 1.0f - ( 20.0f - float( m_spellProto->baseLevel ) ) * 0.0375f;
+			float downrank1 = 1.0f;
+			if( m_spellProto->baseLevel < 20 )
+				downrank1 = 1.0f - ( 20.0f - float( m_spellProto->baseLevel ) ) * 0.0375f;
 
-            float downrank2 = ( float(m_spellProto->maxLevel + 5.0f) / float(c->getLevel()) );
-            if( downrank2 >= 1 || downrank2 < 0 )
-                downrank2 = 1.0f;
+			float downrank2 = ( float(m_spellProto->maxLevel + 5.0f) / float(c->getLevel()) );
+			if( downrank2 >= 1 || downrank2 < 0 )
+				downrank2 = 1.0f;
 
-            bonus = float2int32( float( bonus ) * downrank1 * downrank2 );
-        }
-    }
+			bonus = float2int32( float( bonus ) * downrank1 * downrank2 );
+		}
+	}
 
 	int32 add = ( bonus + amount > 0 ) ? bonus + amount : 0;
 	if( c != NULL )
@@ -3236,7 +3236,7 @@ void Aura::SpellAuraPeriodicTriggerSpell(bool apply)
 			sEventMgr.AddEvent(this, &Aura::EventPeriodicTriggerSpell, spe,
 			EVENT_AURA_PERIODIC_TRIGGERSPELL,GetSpellProto()->EffectAmplitude[mod->i], 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
-            periodic_target = m_caster->GetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT);
+			periodic_target = m_caster->GetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT);
 		}
 		else if(m_target)
 		{
@@ -4089,7 +4089,7 @@ void Aura::SpellAuraModEffectImmunity(bool apply)
 	{
 		if( !apply )
 		{
-            Player* plr = static_cast< Player* >( GetUnitCaster() );
+			Player* plr = static_cast< Player* >( GetUnitCaster() );
 			if( plr == NULL || plr->GetTypeId() != TYPEID_PLAYER || plr->m_bg == NULL)
 				return;
 
@@ -4195,7 +4195,7 @@ void Aura::SpellAuraModDispelImmunity(bool apply)
 	{
 		for(uint32 x=0;x<MAX_AURAS;x++)
 		{
-            // HACK FIX FOR: 41425 and 25771
+			// HACK FIX FOR: 41425 and 25771
 			if(m_target->m_auras[x] && m_target->m_auras[x]->GetSpellId() != 41425 && m_target->m_auras[x]->GetSpellId() != 25771)
 				if(m_target->m_auras[x]->GetSpellProto()->DispelType==(uint32)mod->m_miscValue)
 					m_target->m_auras[x]->Remove();
@@ -5001,7 +5001,7 @@ void Aura::SpellAuraFeignDeath(bool apply)
 //			pTarget->setDeathState(DEAD);
 
 			//now get rid of mobs agro. pTarget->CombatStatus.AttackersForgetHate() - this works only for already attacking mobs
-		    for(std::set<Object*>::iterator itr = pTarget->GetInRangeSetBegin(); itr != pTarget->GetInRangeSetEnd(); itr++ )
+			for(std::set<Object*>::iterator itr = pTarget->GetInRangeSetBegin(); itr != pTarget->GetInRangeSetEnd(); itr++ )
 			{
 				if((*itr)->IsUnit() && ((Unit*)(*itr))->isAlive())
 				{
@@ -6449,7 +6449,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 					}
 					// Check if the loop above got to the end, if so it means the item wasn't found
 					// and the itr wasn't incremented so increment it now.
-					if(itrSE == itermap->second->end())      itr++;
+					if(itrSE == itermap->second->end())	  itr++;
 				}
 			}
 		}break;
@@ -6846,7 +6846,7 @@ void Aura::SpellAuraModRangedHaste(bool apply)
 		if( apply )
 		{
 			mod->fixed_float_amount[0] = baseMod * TO_PLAYER(m_target)->m_rangedattackspeedmod;
-		    static_cast< Player* >( m_target )->m_rangedattackspeedmod -= mod->fixed_float_amount[0];
+			static_cast< Player* >( m_target )->m_rangedattackspeedmod -= mod->fixed_float_amount[0];
 		}
 		else
 			static_cast< Player* >( m_target )->m_rangedattackspeedmod += mod->fixed_float_amount[0];
@@ -6989,7 +6989,7 @@ void Aura::SpellAuraModUnderwaterBreathing(bool apply)
 			static_cast< Player* >( m_target )->m_UnderwaterMaxTime *= (1 + mod->m_amount / 100 );
 		else
 			static_cast< Player* >( m_target )->m_UnderwaterMaxTime /= (1 + mod->m_amount / 100 );
-                static_cast< Player* >( m_target )->m_UnderwaterTime *= static_cast< Player* >( m_target )->m_UnderwaterMaxTime / m_UnderwaterMaxTimeSaved;
+				static_cast< Player* >( m_target )->m_UnderwaterTime *= static_cast< Player* >( m_target )->m_UnderwaterMaxTime / m_UnderwaterMaxTimeSaved;
 	}
 }
 
@@ -7164,11 +7164,11 @@ void Aura::SpellAuraModPAttackPower(bool apply)
 
 void Aura::SpellAuraModRangedAttackPowerPct(bool apply)
 {
-    if(m_target->IsPlayer())
+	if(m_target->IsPlayer())
 	{
 		m_target->ModFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER,((apply)?1:-1)*(float)mod->m_amount/100);
-        m_target->CalcDamage();
-    }
+		m_target->CalcDamage();
+	}
 }
 
 void Aura::SpellAuraIncreaseDamageTypePCT(bool apply)

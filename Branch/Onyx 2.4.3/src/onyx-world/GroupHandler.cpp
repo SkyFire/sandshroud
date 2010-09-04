@@ -142,7 +142,7 @@ void WorldSession::HandleGroupAcceptOpcode( WorldPacket & recv_data )
 		if(grp->GetLeader()->m_loggedInPlayer)
 			_player->iInstanceType = grp->GetLeader()->m_loggedInPlayer->iInstanceType;
 
-        _player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &_player->iInstanceType);
+		_player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &_player->iInstanceType);
 		return;
 	}
 	
@@ -150,8 +150,8 @@ void WorldSession::HandleGroupAcceptOpcode( WorldPacket & recv_data )
 	grp = new Group(true);
 	grp->AddMember(player->m_playerInfo);		// add the inviter first, therefore he is the leader
 	grp->AddMember(_player->m_playerInfo);	   // add us.
-    _player->iInstanceType = player->iInstanceType;
-    _player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &player->iInstanceType);
+	_player->iInstanceType = player->iInstanceType;
+	_player->GetSession()->OutPacket(MSG_SET_DUNGEON_DIFFICULTY, 4, &player->iInstanceType);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

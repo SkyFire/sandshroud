@@ -35,9 +35,9 @@ enum INSTANCE_TYPE
 
 enum INSTANCE_MODE
 {
-    MODE_NORMAL = 0,
-    MODE_HEROIC = 1,
-    MODE_EPIC   = 2,
+	MODE_NORMAL = 0,
+	MODE_HEROIC = 1,
+	MODE_EPIC   = 2,
 };
 
 enum INSTANCE_ABORT_ERROR
@@ -70,7 +70,7 @@ class SERVER_DECL FormationMgr : public Singleton < FormationMgr >
 	map<uint32, Formation*> m_formations;
 public:
 	typedef std::map<uint32, Formation*> FormationMap;
-    FormationMgr();
+	FormationMgr();
 	~FormationMgr();
 
 	Formation * GetFormation(uint32 sqlid)
@@ -89,7 +89,7 @@ public:
 	uint32 m_creatorGuid;
 	uint32 m_creatorGroup;
 	uint32 m_difficulty;
-    set<uint32> m_killedNpcs;
+	set<uint32> m_killedNpcs;
 	time_t m_creation;
 	time_t m_expiration;
 	MapInfo * m_mapInfo;
@@ -135,7 +135,7 @@ public:
 
 	// has an instance expired?
 	// can a player join?
-    ONYX_INLINE bool PlayerOwnsInstance(Instance * pInstance, Player * pPlayer)
+	ONYX_INLINE bool PlayerOwnsInstance(Instance * pInstance, Player * pPlayer)
 	{
 		// expired?
 		if( pInstance->m_expiration && (UNIXTIME+20) >= pInstance->m_expiration)

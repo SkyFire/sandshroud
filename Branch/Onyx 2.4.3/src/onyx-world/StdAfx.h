@@ -74,10 +74,6 @@
 #include "Opcodes.h"
 #include "WorldStates.h"
 
-#ifdef CLUSTERING
-	#include "../onyx-realmserver/WorkerOpcodes.h"
-#endif
-
 #include "Packets.h"
 
 #include "../onyx-shared/CallBack.h"
@@ -156,11 +152,6 @@
 #include "DayWatcherThread.h"
 #include "VoiceChatHandler.h"
 #include "LocalizationMgr.h"
-
-#ifdef CLUSTERING
-	#include "WorkerServerClient.h"
-	#include "ClusterInterface.h"
-#endif
 
 #ifdef COLLISION
 #include "CollideInterface.h"

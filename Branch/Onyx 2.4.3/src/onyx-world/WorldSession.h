@@ -40,7 +40,7 @@ struct TrainerSpell;
 enum MovementFlags
 {
 	// Byte 1 (Resets on Movement Key Press)
-    MOVEFLAG_MOVE_STOP                  = 0x00,			//verified
+	MOVEFLAG_MOVE_STOP				  = 0x00,			//verified
 	MOVEFLAG_MOVE_FORWARD				= 0x01,			//verified
 	MOVEFLAG_MOVE_BACKWARD				= 0x02,			//verified
 	MOVEFLAG_STRAFE_LEFT				= 0x04,			//verified
@@ -54,9 +54,9 @@ enum MovementFlags
 	MOVEFLAG_WALK						= 0x100,		//verified
 	MOVEFLAG_TAXI						= 0x200,		
 	MOVEFLAG_NO_COLLISION				= 0x400,
-	MOVEFLAG_FLYING	    				= 0x800,		//verified
+	MOVEFLAG_FLYING						= 0x800,		//verified
 	MOVEFLAG_REDIRECTED					= 0x1000,		//Unconfirmed
-	MOVEFLAG_FALLING					= 0x2000,       //verified
+	MOVEFLAG_FALLING					= 0x2000,	   //verified
 	MOVEFLAG_FALLING_FAR				= 0x4000,		//verified
 	MOVEFLAG_FREE_FALLING				= 0x8000,		//half verified
 
@@ -66,8 +66,8 @@ enum MovementFlags
 	MOVEFLAG_TB_PENDING_FALL			= 0x40000,		// (MOVEFLAG_PENDING_FALL)
 	MOVEFLAG_TB_PENDING_FORWARD			= 0x80000,		// (MOVEFLAG_PENDING_FORWARD)
 	MOVEFLAG_TB_PENDING_BACKWARD		= 0x100000,		// (MOVEFLAG_PENDING_BACKWARD)
-	MOVEFLAG_SWIMMING          		    = 0x200000,		//  verified
-	MOVEFLAG_FLYING_PITCH_UP	        = 0x400000,		// (half confirmed)(MOVEFLAG_PENDING_STR_RGHT)
+	MOVEFLAG_SWIMMING		  			= 0x200000,		//  verified
+	MOVEFLAG_FLYING_PITCH_UP			= 0x400000,		// (half confirmed)(MOVEFLAG_PENDING_STR_RGHT)
 	MOVEFLAG_TB_MOVED					= 0x800000,		// (half confirmed) gets called when landing (MOVEFLAG_MOVED)
 
 	// Byte 4 (Script Based Flags. Never reset, only turned on or off.)
@@ -634,7 +634,7 @@ protected:
 
 	//instances
 	void HandleResetInstanceOpcode(WorldPacket& recv_data);
-    void HandleDungeonDifficultyOpcode(WorldPacket& recv_data);
+	void HandleDungeonDifficultyOpcode(WorldPacket& recv_data);
 
 	uint8 TrainerGetSpellStatus(TrainerSpell* pSpell);
 	void SendMailError(uint32 error);

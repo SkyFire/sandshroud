@@ -499,7 +499,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint8 flags, uint32 flags2,
 			*data << getMSTime();
 		}
 		else
-            *data << getMSTime();
+			*data << getMSTime();
 	}
 }
 
@@ -756,7 +756,7 @@ bool Object::SetPosition( float newX, float newY, float newZ, float newOrientati
 
 		if( m_objectTypeId == TYPEID_PLAYER && static_cast< Player* >( this )->GetGroup() && static_cast< Player* >( this )->m_last_group_position.Distance2DSq(m_position) > 25.0f ) // distance of 5.0
 		{
-            static_cast< Player* >( this )->GetGroup()->HandlePartialChange( PARTY_UPDATE_FLAG_POSITION, static_cast< Player* >( this ) );
+			static_cast< Player* >( this )->GetGroup()->HandlePartialChange( PARTY_UPDATE_FLAG_POSITION, static_cast< Player* >( this ) );
 		}	
 	}
 
@@ -1388,36 +1388,36 @@ bool Object::isInFront(Object* target)
 {
 	// check if we facing something ( is the object within a 180 degree slice of our positive y axis )
 
-    double x = target->GetPositionX() - m_position.x;
-    double y = target->GetPositionY() - m_position.y;
+	double x = target->GetPositionX() - m_position.x;
+	double y = target->GetPositionY() - m_position.y;
 
-    double angle = atan2( y, x );
-    angle = ( angle >= 0.0 ) ? angle : 2.0 * M_PI + angle;
+	double angle = atan2( y, x );
+	angle = ( angle >= 0.0 ) ? angle : 2.0 * M_PI + angle;
 	angle -= m_position.o;
 
-    while( angle > M_PI)
-        angle -= 2.0 * M_PI;
+	while( angle > M_PI)
+		angle -= 2.0 * M_PI;
 
-    while(angle < -M_PI)
-        angle += 2.0 * M_PI;
+	while(angle < -M_PI)
+		angle += 2.0 * M_PI;
 
 	// replace M_PI in the two lines below to reduce or increase angle
 
-    double left = -1.0 * ( M_PI / 2.0 );
-    double right = ( M_PI / 2.0 );
+	double left = -1.0 * ( M_PI / 2.0 );
+	double right = ( M_PI / 2.0 );
 
-    return( ( angle >= left ) && ( angle <= right ) );
+	return( ( angle >= left ) && ( angle <= right ) );
 }
 
 bool Object::isInBack(Object* target)
 {
 	// check if we are behind something ( is the object within a 180 degree slice of our negative y axis )
 
-    double x = m_position.x - target->GetPositionX();
-    double y = m_position.y - target->GetPositionY();
+	double x = m_position.x - target->GetPositionX();
+	double y = m_position.y - target->GetPositionY();
 
-    double angle = atan2( y, x );
-    angle = ( angle >= 0.0 ) ? angle : 2.0 * M_PI + angle;
+	double angle = atan2( y, x );
+	angle = ( angle >= 0.0 ) ? angle : 2.0 * M_PI + angle;
 
 	// if we are a unit and have a UNIT_FIELD_TARGET then we are always facing them
 	if( m_objectTypeId == TYPEID_UNIT && m_uint32Values[UNIT_FIELD_TARGET] != 0 && static_cast< Unit* >( this )->GetAIInterface()->GetNextTarget() )
@@ -1428,18 +1428,18 @@ bool Object::isInBack(Object* target)
 	else
 		angle -= target->GetOrientation();
 
-    while( angle > M_PI)
-        angle -= 2.0 * M_PI;
+	while( angle > M_PI)
+		angle -= 2.0 * M_PI;
 
-    while(angle < -M_PI)
-        angle += 2.0 * M_PI;
+	while(angle < -M_PI)
+		angle += 2.0 * M_PI;
 
 	// replace M_H_PI in the two lines below to reduce or increase angle
 
-    double left = -1.0 * ( M_H_PI / 2.0 );
-    double right = ( M_H_PI / 2.0 );
+	double left = -1.0 * ( M_H_PI / 2.0 );
+	double right = ( M_H_PI / 2.0 );
 
-    return( ( angle <= left ) && ( angle >= right ) );
+	return( ( angle <= left ) && ( angle >= right ) );
 }
 
 bool Object::isInArc(Object* target , float angle) // angle in degrees
@@ -1593,8 +1593,8 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 		}
 	}
 
-        ///Rage
-        float val;
+		///Rage
+		float val;
 
 		if( pVictim->GetPowerType() == POWER_TYPE_RAGE 
 			&& pVictim != this
@@ -1767,8 +1767,8 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 		}
 
 		/* Zone Under Attack */
-        MapInfo * pMapInfo = WorldMapInfoStorage.LookupEntry(GetMapId());
-        if( pMapInfo && pMapInfo->type == INSTANCE_NULL && !pVictim->IsPlayer() && !pVictim->IsPet() && ( IsPlayer() || IsPet() ) )
+		MapInfo * pMapInfo = WorldMapInfoStorage.LookupEntry(GetMapId());
+		if( pMapInfo && pMapInfo->type == INSTANCE_NULL && !pVictim->IsPlayer() && !pVictim->IsPet() && ( IsPlayer() || IsPet() ) )
 		{
 			// Only NPCs that bear the PvP flag can be truly representing their faction.
 			if( ((Creature*)pVictim)->HasFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_PVP ) )
@@ -1780,23 +1780,23 @@ void Object::DealDamage(Unit *pVictim, uint32 damage, uint32 targetEvent, uint32
 					pAttacker = static_cast< Player* >( this );
 
 				if( pAttacker != NULL)
-                {
-				    uint8 teamId = (uint8)pAttacker->GetTeam();
-				    if(teamId == 0) // Swap it.
-					    teamId = 1;
-				    else
-					    teamId = 0;
-				    uint32 AreaID = pVictim->GetMapMgr()->GetAreaID(pVictim->GetPositionX(), pVictim->GetPositionY());
-				    if(!AreaID)
-					    AreaID = pAttacker->GetZoneId(); // Failsafe for a shitty TerrainMgr
+				{
+					uint8 teamId = (uint8)pAttacker->GetTeam();
+					if(teamId == 0) // Swap it.
+						teamId = 1;
+					else
+						teamId = 0;
+					uint32 AreaID = pVictim->GetMapMgr()->GetAreaID(pVictim->GetPositionX(), pVictim->GetPositionY());
+					if(!AreaID)
+						AreaID = pAttacker->GetZoneId(); // Failsafe for a shitty TerrainMgr
 
-				    if(AreaID)
-				    {
-					    WorldPacket data(SMSG_ZONE_UNDER_ATTACK, 4);
-					    data << AreaID;
-					    sWorld.SendFactionMessage(&data, teamId);
-				    }
-                }
+					if(AreaID)
+					{
+						WorldPacket data(SMSG_ZONE_UNDER_ATTACK, 4);
+						data << AreaID;
+						sWorld.SendFactionMessage(&data, teamId);
+					}
+				}
 			}
 		}
 		
@@ -2135,7 +2135,7 @@ void Object::SpellNonMeleeDamageLog(Unit *pVictim, uint32 spellID, uint32 damage
 
 	SpellEntry *spellInfo = dbcSpell.LookupEntry( spellID );
 	if(!spellInfo)
-        return;
+		return;
 
 	if (this->IsPlayer() && !static_cast< Player* >( this )->canCast(spellInfo))
 		return;
@@ -2456,15 +2456,15 @@ void Object::SendSpellNonMeleeDamageLog( Object* Caster, Object* Target, uint32 
 	WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG,40);
 	data << Target->GetNewGUID();
 	data << Caster->GetNewGUID();
-	data << SpellID;                    // SpellID / AbilityID
-	data << Damage;                     // All Damage
-	data << uint8(g_spellSchoolConversionTable[School]);                     // School
-	data << AbsorbedDamage;             // Absorbed Damage
-	data << ResistedDamage;             // Resisted Damage
-	data << uint8(PhysicalDamage);      // Physical Damage (true/false)
-	data << uint8(0);                   // unknown or it binds with Physical Damage
-	data << BlockedDamage;		     // Physical Damage (true/false)
-	data << uint8(CriticalHit ? 7 : 5);                   // unknown const
+	data << SpellID;					// SpellID / AbilityID
+	data << Damage;					 // All Damage
+	data << uint8(g_spellSchoolConversionTable[School]);					 // School
+	data << AbsorbedDamage;			 // Absorbed Damage
+	data << ResistedDamage;			 // Resisted Damage
+	data << uint8(PhysicalDamage);	  // Physical Damage (true/false)
+	data << uint8(0);				   // unknown or it binds with Physical Damage
+	data << BlockedDamage;			 // Physical Damage (true/false)
+	data << uint8(CriticalHit ? 7 : 5);				   // unknown const
 	data << uint32(0);
 
 	Caster->SendMessageToSet( &data, bToset );

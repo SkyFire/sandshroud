@@ -25,7 +25,6 @@
 /* echo send/received packets to console */
 //#define ECHO_PACKET_LOG_TO_CONSOLE 1
 
-#ifndef CLUSTERING
 #pragma pack(push, 1)
 struct ClientPktHeader
 {
@@ -204,7 +203,7 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 	ServerPktHeader Header;
 	Header.cmd = opcode;
 	Header.size = ntohs((uint16)len + 2);
-    _crypt.EncryptFourSend((uint8*)&Header);
+	_crypt.EncryptFourSend((uint8*)&Header);
 
 	// Pass the header to our send buffer
 	rv = BurstSend((const uint8*)&Header, 4);
@@ -259,7 +258,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 	m_fullAccountName = new string( account );
 
 	// Set the authentication packet 
-    pAuthenticationPacket = recvPacket;
+	pAuthenticationPacket = recvPacket;
 }
 
 void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
@@ -311,7 +310,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	delete key;
 
 	//checking if player is already connected
-    //disconnect corrent player and login this one(blizzlike)
+	//disconnect corrent player and login this one(blizzlike)
 
 	if(recvData.rpos() != recvData.wpos())
 		recvData.read((uint8*)lang.data(), 4);
@@ -541,7 +540,7 @@ void WorldSocket::OnRead()
 			readBuffer.Read(&Header, 6);
 
 			// Decrypt the header
-            _crypt.DecryptSixRecv((uint8*)&Header);
+			_crypt.DecryptSixRecv((uint8*)&Header);
 			mRemaining = mSize = ntohs(Header.size) - 4;
 			mOpcode = Header.cmd;
 		}
@@ -593,8 +592,6 @@ void WorldSocket::OnRead()
 		}
 	}
 }
-
-#endif
 
 void WorldLog::LogPacket(uint32 len, uint16 opcode, const uint8* data, uint8 direction)
 {

@@ -767,7 +767,7 @@ bool ChatHandler::HandleResetSpellsCommand(const char* args, WorldSession *m_ses
 
 bool ChatHandler::HandleAccountLevelCommand(const char * args, WorldSession * m_session)
 {
-    if(!*args) return false;
+	if(!*args) return false;
 
 	char account[100];
 	char gmlevel[100];
@@ -797,7 +797,7 @@ bool ChatHandler::HandleAccountUnbanCommand(const char * args, WorldSession * m_
 
 bool ChatHandler::HandleAccountBannedCommand(const char * args, WorldSession * m_session)
 {
-    if(!*args) return false;
+	if(!*args) return false;
 
 	/*char account[100];
 	uint32 banned;

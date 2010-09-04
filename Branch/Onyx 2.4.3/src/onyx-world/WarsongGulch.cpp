@@ -412,7 +412,7 @@ void WarsongGulch::HookOnMount(Player * plr)
 
 bool WarsongGulch::HookHandleRepop(Player * plr)
 {
-    LocationVector dest;
+	LocationVector dest;
 	if(plr->GetTeam())
 		dest.ChangeCoords(1032.644775f, 1388.316040f, 340.559937f, 0.043200f);
 	else
@@ -423,7 +423,7 @@ bool WarsongGulch::HookHandleRepop(Player * plr)
 
 void WarsongGulch::SpawnBuff(uint32 x)
 {
-    switch(x)
+	switch(x)
 	{
 	case 0:
 		m_buffs[x] = SpawnGameObject(179871, 1449.9296875f, 1470.70971679688f, 342.634552001953f, -1.64060950279236f, 0, 114, 1);

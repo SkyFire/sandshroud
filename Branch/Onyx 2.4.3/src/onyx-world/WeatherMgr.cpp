@@ -22,26 +22,26 @@
 /// Weather defines
 enum WeatherTypes
 {
-     WEATHER_TYPE_NORMAL            = 0, // NORMAL
-     WEATHER_TYPE_FOG               = 1, // FOG --> current value irrelant
-     WEATHER_TYPE_RAIN              = 2, // RAIN
-     WEATHER_TYPE_HEAVY_RAIN        = 4, // HEAVY_RAIN
-     WEATHER_TYPE_SNOW              = 8, // SNOW
-     WEATHER_TYPE_SANDSTORM         = 16 // SANDSTORM
+	 WEATHER_TYPE_NORMAL			= 0, // NORMAL
+	 WEATHER_TYPE_FOG			   = 1, // FOG --> current value irrelant
+	 WEATHER_TYPE_RAIN			  = 2, // RAIN
+	 WEATHER_TYPE_HEAVY_RAIN		= 4, // HEAVY_RAIN
+	 WEATHER_TYPE_SNOW			  = 8, // SNOW
+	 WEATHER_TYPE_SANDSTORM		 = 16 // SANDSTORM
 };
 
 enum WeatherSounds
 {
-     WEATHER_NOSOUND                = 0,
-     WEATHER_RAINLIGHT              = 8533,
-     WEATHER_RAINMEDIUM             = 8534,
-     WEATHER_RAINHEAVY              = 8535,
-     WEATHER_SNOWLIGHT              = 8536,
-     WEATHER_SNOWMEDIUM             = 8537,
-     WEATHER_SNOWHEAVY              = 8538,
-     WEATHER_SANDSTORMLIGHT         = 8556,
-     WEATHER_SANDSTORMMEDIUM        = 8557,
-     WEATHER_SANDSTORMHEAVY         = 8558
+	 WEATHER_NOSOUND				= 0,
+	 WEATHER_RAINLIGHT			  = 8533,
+	 WEATHER_RAINMEDIUM			 = 8534,
+	 WEATHER_RAINHEAVY			  = 8535,
+	 WEATHER_SNOWLIGHT			  = 8536,
+	 WEATHER_SNOWMEDIUM			 = 8537,
+	 WEATHER_SNOWHEAVY			  = 8538,
+	 WEATHER_SANDSTORMLIGHT		 = 8556,
+	 WEATHER_SANDSTORMMEDIUM		= 8557,
+	 WEATHER_SANDSTORMHEAVY		 = 8558
 };
 
 initialiseSingleton( WeatherMgr );
@@ -60,42 +60,42 @@ void BuildWeatherPacket(WorldPacket * data, uint32 Effect, float Density )
 
 uint32 GetSound(uint32 Effect, float Density)
 {
-    uint32 sound;
-    if(Density<=0.20f)
+	uint32 sound;
+	if(Density<=0.20f)
 		return WEATHER_NOSOUND;
 
 	switch(Effect)
-    {
-        case 2:                                             //rain
-        case 4:                                             
-            if(Density  <0.40f)
-                 sound = WEATHER_RAINLIGHT;
-            else if(Density  <0.70f)
-                sound = WEATHER_RAINMEDIUM;
-            else
-                sound = WEATHER_RAINHEAVY;
-            break;
-        case 8:                                             //snow
-            if(Density  <0.40f)
-                sound = WEATHER_SNOWLIGHT;
-            else if(Density  <0.70f)
-                sound = WEATHER_SNOWMEDIUM;
-            else
-                sound = WEATHER_SNOWHEAVY;
-            break;
-        case 16:                                             //storm
-            if(Density  <0.40f)
-                sound = WEATHER_SANDSTORMLIGHT;
-            else if(Density  <0.70f)
-                sound = WEATHER_SANDSTORMMEDIUM;
-            else
-                sound = WEATHER_SANDSTORMHEAVY;
-            break;
+	{
+		case 2:											 //rain
+		case 4:											 
+			if(Density  <0.40f)
+				 sound = WEATHER_RAINLIGHT;
+			else if(Density  <0.70f)
+				sound = WEATHER_RAINMEDIUM;
+			else
+				sound = WEATHER_RAINHEAVY;
+			break;
+		case 8:											 //snow
+			if(Density  <0.40f)
+				sound = WEATHER_SNOWLIGHT;
+			else if(Density  <0.70f)
+				sound = WEATHER_SNOWMEDIUM;
+			else
+				sound = WEATHER_SNOWHEAVY;
+			break;
+		case 16:											 //storm
+			if(Density  <0.40f)
+				sound = WEATHER_SANDSTORMLIGHT;
+			else if(Density  <0.70f)
+				sound = WEATHER_SANDSTORMMEDIUM;
+			else
+				sound = WEATHER_SANDSTORMHEAVY;
+			break;
 		default:											//no sound
-            sound = WEATHER_NOSOUND;
-            break;
-    }
-    return sound;
+			sound = WEATHER_NOSOUND;
+			break;
+	}
+	return sound;
 }
 
 WeatherMgr::WeatherMgr()
@@ -210,7 +210,7 @@ void WeatherInfo::_GenerateWeather()
 
 void WeatherInfo::BuildUp()
 {
-    // Increase until 0.5, start random counter when reached   
+	// Increase until 0.5, start random counter when reached   
 	if (m_currentDensity >= 0.50f) 
 	{
 		sEventMgr.RemoveEvents(this, EVENT_WEATHER_UPDATE);
@@ -226,7 +226,7 @@ void WeatherInfo::BuildUp()
 }
 void WeatherInfo::Update()
 {
-    // There will be a 66% the weather density decreases. If Sunny, use as currentDensity as countdown
+	// There will be a 66% the weather density decreases. If Sunny, use as currentDensity as countdown
 	if (m_currentEffect == 0 || RandomUInt(100) < 66) 
 	{
 		m_currentDensity -= WEATHER_DENSITY_UPDATE;

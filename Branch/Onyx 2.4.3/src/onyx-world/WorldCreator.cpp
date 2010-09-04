@@ -254,7 +254,7 @@ uint32 InstanceMgr::PreTeleport(uint32 mapid, Player * plr, uint32 instanceid)
 	
 	// save our new instance to the database.
 	in->SaveToDB();
-    
+	
 	// apply it in the instance map
 	instancemap->insert( InstanceMap::value_type( in->m_instanceId, in ) );
 
@@ -381,7 +381,7 @@ MapMgr * InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 
 	// start its thread
 	ThreadPool.ExecuteTask(ret);
-    
+	
 	// assign pointer
 	m_singleMaps[mapid] = ret;
 	return ret;
@@ -636,7 +636,7 @@ void InstanceMgr::ResetSavedInstances(Player * plr)
 			}
 		}
 	}
-    m_mapLock.Release();	
+	m_mapLock.Release();	
 }
 
 void InstanceMgr::OnGroupDestruction(Group * pGroup)
@@ -699,7 +699,7 @@ bool InstanceMgr::_DeleteInstance(Instance * in, bool ForcePlayersOut)
 		if(itr != instancemap->end())
 			instancemap->erase(itr);
 	}
-    
+	
 	// cleanup corpses, database references
 	in->DeleteFromDB();
 

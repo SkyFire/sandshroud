@@ -87,91 +87,91 @@ enum PlayerStatus
 
 enum RankTitles
 {
-	PVPTITLE_NONE                   = 0x0,
-	PVPTITLE_PRIVATE                = 0x02,
-	PVPTITLE_CORPORAL               = 0x04,
-	PVPTITLE_SERGEANT               = 0x08,
-	PVPTITLE_MASTER_SERGEANT        = 0x10,
-	PVPTITLE_SERGEANT_MAJOR         = 0x20,
-	PVPTITLE_KNIGHT                 = 0x40,
-	PVPTITLE_KNIGHT_LIEUTENANT      = 0x80,
-	PVPTITLE_KNIGHT_CAPTAIN         = 0x100,
-	PVPTITLE_KNIGHT_CHAMPION        = 0x200,
+	PVPTITLE_NONE				   = 0x0,
+	PVPTITLE_PRIVATE				= 0x02,
+	PVPTITLE_CORPORAL			   = 0x04,
+	PVPTITLE_SERGEANT			   = 0x08,
+	PVPTITLE_MASTER_SERGEANT		= 0x10,
+	PVPTITLE_SERGEANT_MAJOR		 = 0x20,
+	PVPTITLE_KNIGHT				 = 0x40,
+	PVPTITLE_KNIGHT_LIEUTENANT	  = 0x80,
+	PVPTITLE_KNIGHT_CAPTAIN		 = 0x100,
+	PVPTITLE_KNIGHT_CHAMPION		= 0x200,
 	PVPTITLE_LIEUTENANT_COMMANDER   = 0x400,
-	PVPTITLE_COMMANDER              = 0x800,
-	PVPTITLE_MARSHAL                = 0x1000,
-	PVPTITLE_FIELD_MARSHAL          = 0x2000,
-	PVPTITLE_GRAND_MARSHAL          = 0x4000,
-	PVPTITLE_SCOUT                  = 0x8000,
-	PVPTITLE_GRUNT                  = 0x10000,
-	PVPTITLE_HSERGEANT              = 0x20000,
-	PVPTITLE_SENIOR_SERGEANT        = 0x40000,
-	PVPTITLE_FIRST_SERGEANT         = 0x80000,
-	PVPTITLE_STONE_GUARD            = 0x100000,
-	PVPTITLE_BLOOD_GUARD            = 0x200000,
-	PVPTITLE_LEGIONNAIRE            = 0x400000,
-	PVPTITLE_CENTURION              = 0x800000,
-	PVPTITLE_CHAMPION               = 0x1000000,
-	PVPTITLE_LIEUTENANT_GENERAL     = 0x2000000,
-	PVPTITLE_GENERAL                = 0x4000000,
-	PVPTITLE_WARLORD                = 0x8000000,
-	PVPTITLE_HIGH_WARLORD           = 0x10000000,
+	PVPTITLE_COMMANDER			  = 0x800,
+	PVPTITLE_MARSHAL				= 0x1000,
+	PVPTITLE_FIELD_MARSHAL		  = 0x2000,
+	PVPTITLE_GRAND_MARSHAL		  = 0x4000,
+	PVPTITLE_SCOUT				  = 0x8000,
+	PVPTITLE_GRUNT				  = 0x10000,
+	PVPTITLE_HSERGEANT			  = 0x20000,
+	PVPTITLE_SENIOR_SERGEANT		= 0x40000,
+	PVPTITLE_FIRST_SERGEANT		 = 0x80000,
+	PVPTITLE_STONE_GUARD			= 0x100000,
+	PVPTITLE_BLOOD_GUARD			= 0x200000,
+	PVPTITLE_LEGIONNAIRE			= 0x400000,
+	PVPTITLE_CENTURION			  = 0x800000,
+	PVPTITLE_CHAMPION			   = 0x1000000,
+	PVPTITLE_LIEUTENANT_GENERAL	 = 0x2000000,
+	PVPTITLE_GENERAL				= 0x4000000,
+	PVPTITLE_WARLORD				= 0x8000000,
+	PVPTITLE_HIGH_WARLORD		   = 0x10000000,
 };
 
 enum PvPAreaStatus
 {
-    AREA_ALLIANCE = 1,
-    AREA_HORDE = 2,
-    AREA_CONTESTED = 3,
-    AREA_PVPARENA = 4,
+	AREA_ALLIANCE = 1,
+	AREA_HORDE = 2,
+	AREA_CONTESTED = 3,
+	AREA_PVPARENA = 4,
 };
 
 enum PlayerMovementType
 {
-    MOVE_ROOT	    = 1,
-    MOVE_UNROOT	    = 2,
-    MOVE_WATER_WALK = 3,
-    MOVE_LAND_WALK  = 4,
+	MOVE_ROOT		= 1,
+	MOVE_UNROOT		= 2,
+	MOVE_WATER_WALK = 3,
+	MOVE_LAND_WALK  = 4,
 };
 
 enum PlayerSpeedType
 {
-    RUN	            = 1,
-    RUNBACK         = 2,
-    SWIM	        = 3,
-    SWIMBACK        = 4,
-    WALK	        = 5,
-    FLY	            = 6,
+	RUN				= 1,
+	RUNBACK		 = 2,
+	SWIM			= 3,
+	SWIMBACK		= 4,
+	WALK			= 5,
+	FLY				= 6,
 };
 
 enum Standing
 {
-    STANDING_HATED,
-    STANDING_HOSTILE,
-    STANDING_UNFRIENDLY,
-    STANDING_NEUTRAL,
-    STANDING_FRIENDLY,
-    STANDING_HONORED,
-    STANDING_REVERED,
-    STANDING_EXALTED
+	STANDING_HATED,
+	STANDING_HOSTILE,
+	STANDING_UNFRIENDLY,
+	STANDING_NEUTRAL,
+	STANDING_FRIENDLY,
+	STANDING_HONORED,
+	STANDING_REVERED,
+	STANDING_EXALTED
 };
 
 enum PlayerFlags
 {
-    PLAYER_FLAG_PARTY_LEADER		= 0x01,
-    PLAYER_FLAG_AFK					= 0x02,
-    PLAYER_FLAG_DND					= 0x04,
-    PLAYER_FLAG_GM					= 0x08,
-    PLAYER_FLAG_DEATH_WORLD_ENABLE  = 0x10,
-    PLAYER_FLAG_RESTING				= 0x20,
-    PLAYER_FLAG_UNKNOWN1            = 0x40,
-    PLAYER_FLAG_FREE_FOR_ALL_PVP	= 0x80,
-    PLAYER_FLAG_UNKNOWN2            = 0x100,
-    PLAYER_FLAG_PVP_TOGGLE			= 0x200,
-    PLAYER_FLAG_NOHELM				= 0x400,
-    PLAYER_FLAG_NOCLOAK				= 0x800,
-    PLAYER_FLAG_NEED_REST_3_HOURS	= 0x1000,
-    PLAYER_FLAG_NEED_REST_5_HOURS	= 0x2000,
+	PLAYER_FLAG_PARTY_LEADER		= 0x01,
+	PLAYER_FLAG_AFK					= 0x02,
+	PLAYER_FLAG_DND					= 0x04,
+	PLAYER_FLAG_GM					= 0x08,
+	PLAYER_FLAG_DEATH_WORLD_ENABLE  = 0x10,
+	PLAYER_FLAG_RESTING				= 0x20,
+	PLAYER_FLAG_UNKNOWN1			= 0x40,
+	PLAYER_FLAG_FREE_FOR_ALL_PVP	= 0x80,
+	PLAYER_FLAG_UNKNOWN2			= 0x100,
+	PLAYER_FLAG_PVP_TOGGLE			= 0x200,
+	PLAYER_FLAG_NOHELM				= 0x400,
+	PLAYER_FLAG_NOCLOAK				= 0x800,
+	PLAYER_FLAG_NEED_REST_3_HOURS	= 0x1000,
+	PLAYER_FLAG_NEED_REST_5_HOURS	= 0x2000,
 };
 
 enum CharterTypes
@@ -200,13 +200,13 @@ enum CooldownTypes
 
 enum LootType
 {
-	LOOT_CORPSE                 = 1,
-	LOOT_SKINNING               = 2,
-	LOOT_FISHING                = 3,
-	LOOT_PICKPOCKETING          = 2,                        // 4 unsupported by client, sending LOOT_SKINNING instead
-	LOOT_DISENCHANTING          = 2,                        // 5 unsupported by client, sending LOOT_SKINNING instead
-	LOOT_PROSPECTING            = 2,                        // 6 unsupported by client, sending LOOT_SKINNING instead
-	LOOT_INSIGNIA               = 2                         // 7 unsupported by client, sending LOOT_SKINNING instead
+	LOOT_CORPSE				 = 1,
+	LOOT_SKINNING			   = 2,
+	LOOT_FISHING				= 3,
+	LOOT_PICKPOCKETING		  = 2,						// 4 unsupported by client, sending LOOT_SKINNING instead
+	LOOT_DISENCHANTING		  = 2,						// 5 unsupported by client, sending LOOT_SKINNING instead
+	LOOT_PROSPECTING			= 2,						// 6 unsupported by client, sending LOOT_SKINNING instead
+	LOOT_INSIGNIA			   = 2						 // 7 unsupported by client, sending LOOT_SKINNING instead
 };
 
 struct spells
@@ -293,8 +293,8 @@ struct DamageSplit
 
 struct LoginAura
 {
-    uint32 id;
-    uint32 dur;
+	uint32 id;
+	uint32 dur;
 };
 
 // Dodge ( class base ) - UNUSED, Warrior, Paladin, Hunter, Rogue, Priest, UNUSED, Shaman, Mage, Warlock, UNUSED, Druid
@@ -376,14 +376,14 @@ const float dodgeRatio[70][12] = {
 };
 
 /*
-Exalted	        1,000	 Access to racial mounts. Capped at 999.7
-Revered	        21,000	 Heroic mode keys for Outland dungeons
-Honored	        12,000	 10% discount from faction vendors
-Friendly	    6,000
-Neutral	        3,000
-Unfriendly	    3,000	 Cannot buy, sell or interact.
-Hostile	        3,000	 You will always be attacked on sight
-Hated	        36,000 
+Exalted			1,000	 Access to racial mounts. Capped at 999.7
+Revered			21,000	 Heroic mode keys for Outland dungeons
+Honored			12,000	 10% discount from faction vendors
+Friendly		6,000
+Neutral			3,000
+Unfriendly		3,000	 Cannot buy, sell or interact.
+Hostile			3,000	 You will always be attacked on sight
+Hated			36,000 
 */
 enum FactionRating
 {
@@ -493,36 +493,36 @@ struct TaxiPathNode;
 
 #define RESTSTATE_RESTED			 1
 #define RESTSTATE_NORMAL			 2
-#define RESTSTATE_TIRED100		     3
+#define RESTSTATE_TIRED100			 3
 #define RESTSTATE_TIRED50			 4
-#define RESTSTATE_EXHAUSTED		     5
+#define RESTSTATE_EXHAUSTED			 5
 #define UNDERWATERSTATE_NONE		 0
 #define UNDERWATERSTATE_SWIMMING	 1
 #define UNDERWATERSTATE_UNDERWATER   2
 #define UNDERWATERSTATE_RECOVERING   4
 #define UNDERWATERSTATE_TAKINGDAMAGE 8
-#define UNDERWATERSTATE_FATIGUE	     16
+#define UNDERWATERSTATE_FATIGUE		 16
 #define UNDERWATERSTATE_LAVA		 32
 #define UNDERWATERSTATE_SLIME		 64
 
 enum TRADE_STATUS
 {
-	TRADE_STATUS_PLAYER_BUSY	    = 0x00,
-	TRADE_STATUS_PROPOSED		    = 0x01,
-	TRADE_STATUS_INITIATED		    = 0x02,
-	TRADE_STATUS_CANCELLED		    = 0x03,
-	TRADE_STATUS_ACCEPTED		    = 0x04,
-	TRADE_STATUS_ALREADY_TRADING    = 0x05,
+	TRADE_STATUS_PLAYER_BUSY		= 0x00,
+	TRADE_STATUS_PROPOSED			= 0x01,
+	TRADE_STATUS_INITIATED			= 0x02,
+	TRADE_STATUS_CANCELLED			= 0x03,
+	TRADE_STATUS_ACCEPTED			= 0x04,
+	TRADE_STATUS_ALREADY_TRADING	= 0x05,
 	TRADE_STATUS_PLAYER_NOT_FOUND   = 0x06,
-	TRADE_STATUS_STATE_CHANGED	    = 0x07,
-	TRADE_STATUS_COMPLETE		    = 0x08,
-	TRADE_STATUS_UNACCEPTED		    = 0x09,
-	TRADE_STATUS_TOO_FAR_AWAY	    = 0x0A,
-	TRADE_STATUS_WRONG_FACTION	    = 0x0B,
-	TRADE_STATUS_FAILED			    = 0x0C,
-	TRADE_STATUS_DEAD			    = 0x0D,
-	TRADE_STATUS_PETITION		    = 0x0E,
-	TRADE_STATUS_PLAYER_IGNORED	    = 0x0F,
+	TRADE_STATUS_STATE_CHANGED		= 0x07,
+	TRADE_STATUS_COMPLETE			= 0x08,
+	TRADE_STATUS_UNACCEPTED			= 0x09,
+	TRADE_STATUS_TOO_FAR_AWAY		= 0x0A,
+	TRADE_STATUS_WRONG_FACTION		= 0x0B,
+	TRADE_STATUS_FAILED				= 0x0C,
+	TRADE_STATUS_DEAD				= 0x0D,
+	TRADE_STATUS_PETITION			= 0x0E,
+	TRADE_STATUS_PLAYER_IGNORED		= 0x0F,
 };
 enum TRADE_DATA
 {
@@ -612,16 +612,16 @@ struct PlayerCooldown
 //
 //  TODO:  Attach characters to user accounts
 //====================================================================
-typedef std::set<uint32>	                        SpellSet;
-typedef std::list<classScriptOverride*>             ScriptOverrideList;
-typedef std::set<uint32>                            SaveSet;
-typedef std::map<uint64, ByteBuffer*>               SplineMap;
-typedef std::map<uint32, ScriptOverrideList* >      SpellOverrideMap;
-typedef std::map<uint32, uint32>                    SpellOverrideExtraAuraMap;
-typedef std::map<uint32, FactionReputation*>        ReputationMap;
-typedef std::map<uint32, uint64>                    SoloSpells;
+typedef std::set<uint32>							SpellSet;
+typedef std::list<classScriptOverride*>			 ScriptOverrideList;
+typedef std::set<uint32>							SaveSet;
+typedef std::map<uint64, ByteBuffer*>			   SplineMap;
+typedef std::map<uint32, ScriptOverrideList* >	  SpellOverrideMap;
+typedef std::map<uint32, uint32>					SpellOverrideExtraAuraMap;
+typedef std::map<uint32, FactionReputation*>		ReputationMap;
+typedef std::map<uint32, uint64>					SoloSpells;
 typedef std::map<SpellEntry*, pair<uint32, uint32> >StrikeSpellMap;
-typedef std::map<uint32, OnHitSpell >               StrikeSpellDmgMap;
+typedef std::map<uint32, OnHitSpell >			   StrikeSpellDmgMap;
 typedef std::map<uint32, PlayerSkill>				SkillMap;
 typedef std::set<Player**>							ReferenceSet;
 typedef std::map<uint32, PlayerCooldown>			PlayerCooldownMap;
@@ -716,7 +716,7 @@ public:
 	
 	void Update( uint32 time );
 	
-    void BuildFlagUpdateForNonGroupSet(uint32 index, uint32 flag);
+	void BuildFlagUpdateForNonGroupSet(uint32 index, uint32 flag);
 	std::string m_afk_reason;
 	void SetAFKReason(std::string reason) { m_afk_reason = reason; };
 	ONYX_INLINE const char* GetName() { return m_name.c_str(); }
@@ -727,40 +727,40 @@ public:
 	void ModifyBonuses(uint32 type,int32 val);
 	std::map<uint32, uint32> m_wratings;
 
-    /************************************************************************/
-    /* Taxi                                                                 */
-    /************************************************************************/
-    ONYX_INLINE TaxiPath*    GetTaxiPath() { return m_CurrentTaxiPath; }
-    ONYX_INLINE bool         GetTaxiState() { return m_onTaxi; }
-    const uint32&       GetTaximask( uint8 index ) const { return m_taximask[index]; }
-    void                LoadTaxiMask(const char* data);
-    void                TaxiStart(TaxiPath* path, uint32 modelid, uint32 start_node);
-    void                JumpToEndTaxiNode(TaxiPath * path);
-    void                EventDismount(uint32 money, float x, float y, float z);
-    void                EventTaxiInterpolate();
+	/************************************************************************/
+	/* Taxi																 */
+	/************************************************************************/
+	ONYX_INLINE TaxiPath*	GetTaxiPath() { return m_CurrentTaxiPath; }
+	ONYX_INLINE bool		 GetTaxiState() { return m_onTaxi; }
+	const uint32&	   GetTaximask( uint8 index ) const { return m_taximask[index]; }
+	void				LoadTaxiMask(const char* data);
+	void				TaxiStart(TaxiPath* path, uint32 modelid, uint32 start_node);
+	void				JumpToEndTaxiNode(TaxiPath * path);
+	void				EventDismount(uint32 money, float x, float y, float z);
+	void				EventTaxiInterpolate();
 
-    ONYX_INLINE void         SetTaxiState    (bool state) { m_onTaxi = state; }
-    ONYX_INLINE void         SetTaximask     (uint8 index, uint32 value ) { m_taximask[index] = value; }
-    ONYX_INLINE void         SetTaxiPath     (TaxiPath *path) { m_CurrentTaxiPath = path; }
-    ONYX_INLINE void         SetTaxiPos()	{m_taxi_pos_x = m_position.x; m_taxi_pos_y = m_position.y; m_taxi_pos_z = m_position.z;}
-    ONYX_INLINE void         UnSetTaxiPos()	{m_taxi_pos_x = 0; m_taxi_pos_y = 0; m_taxi_pos_z = 0; }
+	ONYX_INLINE void		 SetTaxiState	(bool state) { m_onTaxi = state; }
+	ONYX_INLINE void		 SetTaximask	 (uint8 index, uint32 value ) { m_taximask[index] = value; }
+	ONYX_INLINE void		 SetTaxiPath	 (TaxiPath *path) { m_CurrentTaxiPath = path; }
+	ONYX_INLINE void		 SetTaxiPos()	{m_taxi_pos_x = m_position.x; m_taxi_pos_y = m_position.y; m_taxi_pos_z = m_position.z;}
+	ONYX_INLINE void		 UnSetTaxiPos()	{m_taxi_pos_x = 0; m_taxi_pos_y = 0; m_taxi_pos_z = 0; }
  
 	// Taxi related variables
 	vector<TaxiPath*>   m_taxiPaths;
-    TaxiPath*           m_CurrentTaxiPath;
-    uint32              taxi_model_id;
-	uint32              lastNode;
-    uint32              m_taxi_ride_time;
-    uint32              m_taximask[8];
-    float               m_taxi_pos_x;
-    float               m_taxi_pos_y;
-    float               m_taxi_pos_z;
-    bool                m_onTaxi;
+	TaxiPath*		   m_CurrentTaxiPath;
+	uint32			  taxi_model_id;
+	uint32			  lastNode;
+	uint32			  m_taxi_ride_time;
+	uint32			  m_taximask[8];
+	float			   m_taxi_pos_x;
+	float			   m_taxi_pos_y;
+	float			   m_taxi_pos_z;
+	bool				m_onTaxi;
 	uint32				m_taxiMapChangeNode;
 
-    /************************************************************************/
-    /* Quests                                                               */
-    /************************************************************************/
+	/************************************************************************/
+	/* Quests															   */
+	/************************************************************************/
 	bool HasQuests() 
 	{
 		for(int i = 0; i < 25; ++i)
@@ -771,50 +771,50 @@ public:
 		return false;
 	}
 
-	int32                GetOpenQuestSlot();
-	QuestLogEntry*       GetQuestLogForEntry(uint32 quest);
+	int32				GetOpenQuestSlot();
+	QuestLogEntry*	   GetQuestLogForEntry(uint32 quest);
 	ONYX_INLINE QuestLogEntry*GetQuestLogInSlot(uint32 slot)  { return m_questlog[slot]; }
-    ONYX_INLINE uint32        GetQuestSharer()                { return m_questSharer; }
-    
-    ONYX_INLINE void         SetQuestSharer(uint32 guid)     { m_questSharer = guid; }
-    void                SetQuestLogSlot(QuestLogEntry *entry, uint32 slot);
-    
-    ONYX_INLINE void         PushToRemovedQuests(uint32 questid)	{ m_removequests.insert(questid);}
-    void                AddToFinishedQuests(uint32 quest_id);
-    void                EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_slot);
+	ONYX_INLINE uint32		GetQuestSharer()				{ return m_questSharer; }
 	
-	bool                HasFinishedQuest(uint32 quest_id);
-	bool                HasQuestForItem(uint32 itemid);
-    bool                CanFinishQuest(Quest* qst);
-	bool                HasQuestSpell(uint32 spellid);
-	void                RemoveQuestSpell(uint32 spellid);
-	bool                HasQuestMob(uint32 entry);
-	void                RemoveQuestMob(uint32 entry);
+	ONYX_INLINE void		 SetQuestSharer(uint32 guid)	 { m_questSharer = guid; }
+	void				SetQuestLogSlot(QuestLogEntry *entry, uint32 slot);
+	
+	ONYX_INLINE void		 PushToRemovedQuests(uint32 questid)	{ m_removequests.insert(questid);}
+	void				AddToFinishedQuests(uint32 quest_id);
+	void				EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_slot);
+	
+	bool				HasFinishedQuest(uint32 quest_id);
+	bool				HasQuestForItem(uint32 itemid);
+	bool				CanFinishQuest(Quest* qst);
+	bool				HasQuestSpell(uint32 spellid);
+	void				RemoveQuestSpell(uint32 spellid);
+	bool				HasQuestMob(uint32 entry);
+	void				RemoveQuestMob(uint32 entry);
 
-    //Quest related variables
+	//Quest related variables
 	uint32 m_questbarrier1[25];
-    QuestLogEntry*      m_questlog[25];
+	QuestLogEntry*	  m_questlog[25];
 	uint32 m_questbarrier2[25];
-    std::set<uint32>    m_QuestGOInProgress;
-    std::set<uint32>    m_removequests;
-    std::set<uint32>    m_finishedQuests;
-    uint32              m_questSharer;
-    uint32              timed_quest_slot;
-	std::set<uint32>    quest_spells;
-	std::set<uint32>    quest_mobs;
+	std::set<uint32>	m_QuestGOInProgress;
+	std::set<uint32>	m_removequests;
+	std::set<uint32>	m_finishedQuests;
+	uint32			  m_questSharer;
+	uint32			  timed_quest_slot;
+	std::set<uint32>	quest_spells;
+	std::set<uint32>	quest_mobs;
 
-    /************************************************************************/
-    /* Stun Immobilize                                                      */
-    /************************************************************************/
-    void SetTriggerStunOrImmobilize(uint32 newtrigger,uint32 new_chance)
-    {
-        trigger_on_stun = newtrigger;
-        trigger_on_stun_chance = new_chance;
-    }
-    void EventStunOrImmobilize(Unit *proc_target);
+	/************************************************************************/
+	/* Stun Immobilize													  */
+	/************************************************************************/
+	void SetTriggerStunOrImmobilize(uint32 newtrigger,uint32 new_chance)
+	{
+		trigger_on_stun = newtrigger;
+		trigger_on_stun_chance = new_chance;
+	}
+	void EventStunOrImmobilize(Unit *proc_target);
 
-    
-    void EventPortToGM(uint32 guid);
+	
+	void EventPortToGM(uint32 guid);
 	ONYX_INLINE uint32 GetTeam() { return m_team; }
 	ONYX_INLINE void SetTeam(uint32 t) { m_team = t; m_bgTeam=t; }
 	ONYX_INLINE void ResetTeam() { m_team = myRace->team_id==7 ? 0 : 1; m_bgTeam=m_team; }
@@ -831,12 +831,12 @@ public:
 	void CalcDamage();
 	uint32 GetMainMeleeDamage(uint32 AP_owerride); //i need this for windfury
 
-    const uint64& GetSelection( ) const { return m_curSelection; }
+	const uint64& GetSelection( ) const { return m_curSelection; }
 	void SetSelection(const uint64 &guid) { m_curSelection = guid; }
 	
-    /************************************************************************/
-    /* Spells                                                               */
-    /************************************************************************/
+	/************************************************************************/
+	/* Spells															   */
+	/************************************************************************/
 	bool HasSpell(uint32 spell);
 	bool HasDeletedSpell(uint32 spell);
 	void smsg_InitialSpells();
@@ -845,74 +845,74 @@ public:
 	bool removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpell, uint32 SupercededSpellID);
 	bool HasNoFallDamageAura();
 
-    // PLEASE DO NOT INLINE!
-    void AddOnStrikeSpell(SpellEntry* sp, uint32 delay)
-    {
-        m_onStrikeSpells.insert( map< SpellEntry*, pair<uint32, uint32> >::value_type( sp, make_pair( delay, 0 ) ) );
-    }
-    void RemoveOnStrikeSpell(SpellEntry *sp)
-    {
-        m_onStrikeSpells.erase(sp);
-    }
-    void AddOnStrikeSpellDamage(uint32 spellid, uint32 mindmg, uint32 maxdmg)
-    {
-        OnHitSpell sp;
-        sp.spellid = spellid;
-        sp.mindmg = mindmg;
-        sp.maxdmg = maxdmg;
-        m_onStrikeSpellDmg[spellid] = sp;
-    }
-    void RemoveOnStrikeSpellDamage(uint32 spellid)
-    {
-        m_onStrikeSpellDmg.erase(spellid);
-    }
+	// PLEASE DO NOT INLINE!
+	void AddOnStrikeSpell(SpellEntry* sp, uint32 delay)
+	{
+		m_onStrikeSpells.insert( map< SpellEntry*, pair<uint32, uint32> >::value_type( sp, make_pair( delay, 0 ) ) );
+	}
+	void RemoveOnStrikeSpell(SpellEntry *sp)
+	{
+		m_onStrikeSpells.erase(sp);
+	}
+	void AddOnStrikeSpellDamage(uint32 spellid, uint32 mindmg, uint32 maxdmg)
+	{
+		OnHitSpell sp;
+		sp.spellid = spellid;
+		sp.mindmg = mindmg;
+		sp.maxdmg = maxdmg;
+		m_onStrikeSpellDmg[spellid] = sp;
+	}
+	void RemoveOnStrikeSpellDamage(uint32 spellid)
+	{
+		m_onStrikeSpellDmg.erase(spellid);
+	}
 
-    //Spells variables
-    StrikeSpellMap      m_onStrikeSpells;
-    StrikeSpellDmgMap   m_onStrikeSpellDmg;
-    SpellOverrideMap    mSpellOverrideMap;
-    SpellSet            mSpells;
-    SpellSet            mDeletedSpells;
+	//Spells variables
+	StrikeSpellMap	  m_onStrikeSpells;
+	StrikeSpellDmgMap   m_onStrikeSpellDmg;
+	SpellOverrideMap	mSpellOverrideMap;
+	SpellSet			mSpells;
+	SpellSet			mDeletedSpells;
 	SpellSet			mShapeShiftSpells;
 
 	void AddShapeShiftSpell(uint32 id);
 	void RemoveShapeShiftSpell(uint32 id);
 
 
-    /************************************************************************/
-    /* Actionbar                                                            */
-    /************************************************************************/
-	void                setAction(uint8 button, uint16 action, uint8 type, uint8 misc);
-	void                SendInitialActions();
-    bool                m_actionsDirty;
+	/************************************************************************/
+	/* Actionbar															*/
+	/************************************************************************/
+	void				setAction(uint8 button, uint16 action, uint8 type, uint8 misc);
+	void				SendInitialActions();
+	bool				m_actionsDirty;
 	
-    /************************************************************************/
-    /* Reputation                                                           */
-    /************************************************************************/
-	void                ModStanding(uint32 Faction, int32 Value);
-	int32               GetStanding(uint32 Faction);
-	int32               GetBaseStanding(uint32 Faction);
-	void                SetStanding(uint32 Faction, int32 Value);
-	void                SetAtWar(uint32 Faction, bool Set);
-	bool                IsAtWar(uint32 Faction);
-	Standing            GetStandingRank(uint32 Faction);
-	bool                IsHostileBasedOnReputation(FactionDBC * dbc);
-	void                UpdateInrangeSetsBasedOnReputation();
-	void                Reputation_OnKilledUnit(Unit * pUnit, bool InnerLoop);
-	void                Reputation_OnTalk(FactionDBC * dbc);
-	static Standing     GetReputationRankFromStanding(int32 Standing_);
+	/************************************************************************/
+	/* Reputation														   */
+	/************************************************************************/
+	void				ModStanding(uint32 Faction, int32 Value);
+	int32			   GetStanding(uint32 Faction);
+	int32			   GetBaseStanding(uint32 Faction);
+	void				SetStanding(uint32 Faction, int32 Value);
+	void				SetAtWar(uint32 Faction, bool Set);
+	bool				IsAtWar(uint32 Faction);
+	Standing			GetStandingRank(uint32 Faction);
+	bool				IsHostileBasedOnReputation(FactionDBC * dbc);
+	void				UpdateInrangeSetsBasedOnReputation();
+	void				Reputation_OnKilledUnit(Unit * pUnit, bool InnerLoop);
+	void				Reputation_OnTalk(FactionDBC * dbc);
+	static Standing	 GetReputationRankFromStanding(int32 Standing_);
 	
-    /************************************************************************/
-    /* Factions                                                             */
-    /************************************************************************/
+	/************************************************************************/
+	/* Factions															 */
+	/************************************************************************/
 	void smsg_InitialFactions();
 	uint32 GetFactionId();
-    // factions variables
-    int32 pctReputationMod;
+	// factions variables
+	int32 pctReputationMod;
 
-    /************************************************************************/
-    /* PVP                                                                  */
-    /************************************************************************/
+	/************************************************************************/
+	/* PVP																  */
+	/************************************************************************/
 	ONYX_INLINE uint8 GetPVPRank()
 	{
 		return (uint8)((GetUInt32Value(PLAYER_BYTES_3) >> 24) & 0xFF);
@@ -924,13 +924,13 @@ public:
 
 	static const uint32 PvPRanks[];
 
-    /************************************************************************/
-    /* Groups                                                               */
-    /************************************************************************/
-	void                SetInviter(uint32 pInviter) { m_GroupInviter = pInviter; }
-	ONYX_INLINE uint32       GetInviter() { return m_GroupInviter; }
-	ONYX_INLINE bool         InGroup() { return (m_playerInfo->m_Group != NULL && !m_GroupInviter); }
-	bool                IsGroupLeader()
+	/************************************************************************/
+	/* Groups															   */
+	/************************************************************************/
+	void				SetInviter(uint32 pInviter) { m_GroupInviter = pInviter; }
+	ONYX_INLINE uint32	   GetInviter() { return m_GroupInviter; }
+	ONYX_INLINE bool		 InGroup() { return (m_playerInfo->m_Group != NULL && !m_GroupInviter); }
+	bool				IsGroupLeader()
 	{
 		if(m_playerInfo->m_Group != NULL)
 		{
@@ -939,11 +939,11 @@ public:
 		}
 		return false;
 	}
-	ONYX_INLINE int          HasBeenInvited() { return m_GroupInviter != 0; }
-	ONYX_INLINE Group*       GetGroup() { return m_playerInfo ? m_playerInfo->m_Group : NULL; }
+	ONYX_INLINE int		  HasBeenInvited() { return m_GroupInviter != 0; }
+	ONYX_INLINE Group*	   GetGroup() { return m_playerInfo ? m_playerInfo->m_Group : NULL; }
 	ONYX_INLINE int8		   GetSubGroup() { return m_playerInfo->subGroup; }
-    bool                IsGroupMember(Player *plyr);
-	ONYX_INLINE bool         IsBanned()
+	bool				IsGroupMember(Player *plyr);
+	ONYX_INLINE bool		 IsBanned()
 	{
 		if(m_banned)
 		{
@@ -952,43 +952,43 @@ public:
 		}
 		return false;
 	}
-    ONYX_INLINE void         SetBanned() { m_banned = 4;}
-	ONYX_INLINE void         SetBanned(string Reason) { m_banned = 4; m_banreason = Reason;}
-	ONYX_INLINE void         SetBanned(uint32 timestamp, string& Reason) { m_banned = timestamp; m_banreason = Reason; }
-	ONYX_INLINE void         UnSetBanned() { m_banned = 0; }
-	ONYX_INLINE string       GetBanReason() {return m_banreason;}
+	ONYX_INLINE void		 SetBanned() { m_banned = 4;}
+	ONYX_INLINE void		 SetBanned(string Reason) { m_banned = 4; m_banreason = Reason;}
+	ONYX_INLINE void		 SetBanned(uint32 timestamp, string& Reason) { m_banned = timestamp; m_banreason = Reason; }
+	ONYX_INLINE void		 UnSetBanned() { m_banned = 0; }
+	ONYX_INLINE string	   GetBanReason() {return m_banreason;}
 
-    /************************************************************************/
-    /* Guilds                                                               */
-    /************************************************************************/
-	ONYX_INLINE  bool        IsInGuild() {return (m_uint32Values[PLAYER_GUILDID] != 0) ? true : false;}
-	ONYX_INLINE uint32       GetGuildId() { return m_uint32Values[PLAYER_GUILDID]; }
-	void                SetGuildId(uint32 guildId);
-	ONYX_INLINE uint32       GetGuildRank() { return m_uint32Values[PLAYER_GUILDRANK]; }
-	void                SetGuildRank(uint32 guildRank);
-	uint32              GetGuildInvitersGuid() { return m_invitersGuid; }
-	void                SetGuildInvitersGuid( uint32 guid ) { m_invitersGuid = guid; }
-	void                UnSetGuildInvitersGuid() { m_invitersGuid = 0; }
+	/************************************************************************/
+	/* Guilds															   */
+	/************************************************************************/
+	ONYX_INLINE  bool		IsInGuild() {return (m_uint32Values[PLAYER_GUILDID] != 0) ? true : false;}
+	ONYX_INLINE uint32	   GetGuildId() { return m_uint32Values[PLAYER_GUILDID]; }
+	void				SetGuildId(uint32 guildId);
+	ONYX_INLINE uint32	   GetGuildRank() { return m_uint32Values[PLAYER_GUILDRANK]; }
+	void				SetGuildRank(uint32 guildRank);
+	uint32			  GetGuildInvitersGuid() { return m_invitersGuid; }
+	void				SetGuildInvitersGuid( uint32 guid ) { m_invitersGuid = guid; }
+	void				UnSetGuildInvitersGuid() { m_invitersGuid = 0; }
   
-    /************************************************************************/
-    /* Duel                                                                 */
-    /************************************************************************/
-    void                RequestDuel(Player *pTarget);
-	void                DuelBoundaryTest();
-	void                EndDuel(uint8 WinCondition);
-	void                DuelCountdown();
-	void                SetDuelStatus(uint8 status) { m_duelStatus = status; }
-	ONYX_INLINE uint8        GetDuelStatus() { return m_duelStatus; }
-	void                SetDuelState(uint8 state) { m_duelState = state; }
-	ONYX_INLINE uint8        GetDuelState() { return m_duelState; }
-    // duel variables
-    Player*             DuelingWith;
+	/************************************************************************/
+	/* Duel																 */
+	/************************************************************************/
+	void				RequestDuel(Player *pTarget);
+	void				DuelBoundaryTest();
+	void				EndDuel(uint8 WinCondition);
+	void				DuelCountdown();
+	void				SetDuelStatus(uint8 status) { m_duelStatus = status; }
+	ONYX_INLINE uint8		GetDuelStatus() { return m_duelStatus; }
+	void				SetDuelState(uint8 state) { m_duelState = state; }
+	ONYX_INLINE uint8		GetDuelState() { return m_duelState; }
+	// duel variables
+	Player*			 DuelingWith;
 
-    /************************************************************************/
-    /* Trade                                                                */
-    /************************************************************************/
-	void                SendTradeUpdate(void);
-	void         ResetTradeVariables()
+	/************************************************************************/
+	/* Trade																*/
+	/************************************************************************/
+	void				SendTradeUpdate(void);
+	void		 ResetTradeVariables()
 	{
 		mTradeGold = 0;
 		memset(&mTradeItems, 0, sizeof(Item*) * 8);
@@ -997,9 +997,9 @@ public:
 		m_tradeSequence = 2;
 	}
 	
-    /************************************************************************/
-    /* Pets                                                                 */
-    /************************************************************************/
+	/************************************************************************/
+	/* Pets																 */
+	/************************************************************************/
 	ONYX_INLINE void			SetSummon(Pet *pet) { m_Summon = pet; }
 	ONYX_INLINE Pet*			GetSummon(void) { return m_Summon; }
 	uint32						GeneratePetNumber(void);
@@ -1035,28 +1035,28 @@ public:
 	void						EventSummonPet(Pet *new_pet); //if we charmed or simply summoned a pet, this function should get called
 	void						EventDismissPet(); //if pet/charm died or whatever happned we should call this function
 
-    /************************************************************************/
-    /* Item Interface                                                       */
-    /************************************************************************/
+	/************************************************************************/
+	/* Item Interface													   */
+	/************************************************************************/
 	ONYX_INLINE ItemInterface* GetItemInterface() { return m_ItemInterface; } // Player Inventory Item storage
-	ONYX_INLINE void         ApplyItemMods(Item *item, int8 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply,justdrokedown); }
-    // item interface variables
-    ItemInterface *     m_ItemInterface;
+	ONYX_INLINE void		 ApplyItemMods(Item *item, int8 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply,justdrokedown); }
+	// item interface variables
+	ItemInterface *	 m_ItemInterface;
 	
-    /************************************************************************/
-    /* Loot                                                                 */
-    /************************************************************************/
+	/************************************************************************/
+	/* Loot																 */
+	/************************************************************************/
 	ONYX_INLINE const uint64& GetLootGUID() const { return m_lootGuid; }
-	ONYX_INLINE void         SetLootGUID(const uint64 &guid) { m_lootGuid = guid; }
-	void                SendLoot(uint64 guid,uint8 loot_type);
-    // loot variables
-    uint64              m_lootGuid;
-    uint64              m_currentLoot;
-    bool                m_insigniaTaken;
+	ONYX_INLINE void		 SetLootGUID(const uint64 &guid) { m_lootGuid = guid; }
+	void				SendLoot(uint64 guid,uint8 loot_type);
+	// loot variables
+	uint64			  m_lootGuid;
+	uint64			  m_currentLoot;
+	bool				m_insigniaTaken;
 
-    /************************************************************************/
-    /* World Session                                                        */
-    /************************************************************************/
+	/************************************************************************/
+	/* World Session														*/
+	/************************************************************************/
 	ONYX_INLINE WorldSession* GetSession() const { return m_session; }
 	void SetSession(WorldSession *s) { m_session = s; }
 	void SetBindPoint(float x, float y, float z, uint32 m, uint32 v) { m_bind_pos_x = x; m_bind_pos_y = y; m_bind_pos_z = z; m_bind_mapid = m; m_bind_zoneid = v;}
@@ -1080,12 +1080,12 @@ public:
 	
 	std::list<LoginAura> loginauras;
 
-    std::set<uint32> OnMeleeAuras;
+	std::set<uint32> OnMeleeAuras;
 
-    /************************************************************************/
-    /* Player loading and savings                                           */
-    /* Serialize character to db                                            */
-    /************************************************************************/
+	/************************************************************************/
+	/* Player loading and savings										   */
+	/* Serialize character to db											*/
+	/************************************************************************/
 	void SaveToDB(bool bNewCharacter);
 	void SaveAuras(stringstream&);
 	bool LoadFromDB(uint32 guid);
@@ -1094,9 +1094,9 @@ public:
 	void LoadNamesFromDB(uint32 guid);
 	bool m_FirstLogin;
 
-    /************************************************************************/
-    /* Death system                                                         */
-    /************************************************************************/
+	/************************************************************************/
+	/* Death system														 */
+	/************************************************************************/
 	void SpawnCorpseBones();
 	Corpse *CreateCorpse();
 	void KillPlayer();
@@ -1110,9 +1110,9 @@ public:
 	void DeathDurabilityLoss(double percent);
 	void RepopAtGraveyard(float ox, float oy, float oz, uint32 mapid);
 	
-    /************************************************************************/
-    /* Movement system                                                      */
-    /************************************************************************/
+	/************************************************************************/
+	/* Movement system													  */
+	/************************************************************************/
 	void SetMovement(uint8 pType, uint32 flag);
 	void SetPlayerSpeed(uint8 SpeedType, float value);
 	float GetPlayerSpeed(){return m_runSpeed;}
@@ -1121,9 +1121,9 @@ public:
 	//Invisibility stuff
 	bool m_isGmInvisible;
 	
-    /************************************************************************/
-    /* Channel stuff                                                        */
-    /************************************************************************/
+	/************************************************************************/
+	/* Channel stuff														*/
+	/************************************************************************/
 	void JoinedChannel(Channel *c);
 	void LeftChannel(Channel *c);
 	void CleanupChannels();
@@ -1190,7 +1190,7 @@ public:
 
 	uint32 m_furorChance;
 
-    //Showing Units WayPoints
+	//Showing Units WayPoints
 	AIInterface* waypointunit;
 	
 	uint32 m_nextSave;
@@ -1349,14 +1349,14 @@ public:
 	void RegenerateEnergy();
 	void LooseRage(int32 value);
 	
-    uint32 SoulStone;
+	uint32 SoulStone;
 	uint32 SoulStoneReceiver;
 	void removeSoulStone();
 
-    ONYX_INLINE uint32 GetSoulStoneReceiver(){return SoulStoneReceiver;}
-    ONYX_INLINE void SetSoulStoneReceiver(uint32 StoneGUID){SoulStoneReceiver = StoneGUID;}
-    ONYX_INLINE uint32 GetSoulStone(){return SoulStone;}
-    ONYX_INLINE void SetSoulStone(uint32 StoneID){SoulStone = StoneID;}
+	ONYX_INLINE uint32 GetSoulStoneReceiver(){return SoulStoneReceiver;}
+	ONYX_INLINE void SetSoulStoneReceiver(uint32 StoneGUID){SoulStoneReceiver = StoneGUID;}
+	ONYX_INLINE uint32 GetSoulStone(){return SoulStone;}
+	ONYX_INLINE void SetSoulStone(uint32 StoneID){SoulStone = StoneID;}
 
 	bool bReincarnation;
 
@@ -1369,21 +1369,17 @@ public:
 	int32 rageFromDamageDealt;
 	// GameObject commands
 	GameObject *m_GM_SelectedGO;
-	
-#ifndef CLUSTERING
+
 	void _Relocate(uint32 mapid,const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id);
-#else
-	void RelocateCallback(uint32 instance_were_going_to);
-#endif
 	void AddItemsToWorld();
 	void RemoveItemsFromWorld();
 	
 	uint32 m_ShapeShifted;
 	uint32 m_MountSpellId;
-    
+	
 	ONYX_INLINE bool IsMounted() {return (m_MountSpellId!=0 ? true : false); }
 	
-    bool bHasBindDialogOpen;
+	bool bHasBindDialogOpen;
 	bool bGMTagOn;
 	uint32 TrackingSpell;
 	void _EventCharmAttack();
@@ -1407,7 +1403,7 @@ public:
 	Mutex _bufferS;
 	void PushUpdateData(ByteBuffer *data, uint32 updatecount);
 	void PushUpdateData(StackBuffer *data, uint32 updatecount);
-    void PushCreationData(ByteBuffer *data, uint32 updatecount);
+	void PushCreationData(ByteBuffer *data, uint32 updatecount);
 	void PushOutOfRange(const WoWGuid & guid);
 	void ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompressionBuffer);
 	bool __fastcall CompressAndSendUpdateBuffer(uint32 size, const uint8* update_buffer, ByteBuffer *pCompressionBuffer);
@@ -1575,7 +1571,7 @@ public:
 
 	ONYX_INLINE void AddComboPoints(uint64 target, uint8 count)
 	{
-        if(m_comboTarget == target)
+		if(m_comboTarget == target)
 			m_comboPoints += count;
 		else
 		{
@@ -1593,7 +1589,7 @@ public:
 	uint32 m_cheatDeathRank;
 
 	void SendAreaTriggerMessage(const char * message, ...);
-        
+		
 	// Trade Target
 	//Player *getTradeTarget() {return mTradeTarget;};
 
@@ -1604,7 +1600,7 @@ public:
 	}
 
 	Item *getTradeItem(uint32 slot) {return mTradeItems[slot];};
-        
+		
 	// Water level related stuff (they are public because they need to be accessed fast)
 	// Nose level of the character (needed for proper breathing)
 	float m_noseLevel;
@@ -1661,12 +1657,6 @@ public:
 	void save_PVP();
 #endif
 
-#ifdef CLUSTERING
-	void EventRemoveAndDelete();
-	void PackPlayerData(ByteBuffer & data);
-	bool UnpackPlayerData(ByteBuffer & data);
-#endif
-
 	Creature * m_tempSummon;
 	bool m_deathVision;
 	SpellEntry * last_heal_spell;
@@ -1676,18 +1666,18 @@ public:
 	void FullHPMP();
 	uint32 m_arenateaminviteguid;
 
-    /************************************************************************/
-    /* Spell Packet wrapper Please keep this separated                      */
-    /************************************************************************/
-    void SendLevelupInfo(uint32 level, uint32 Hp, uint32 Mana, uint32 Stat0, uint32 Stat1, uint32 Stat2, uint32 Stat3, uint32 Stat4);
-    void SendLogXPGain(uint64 guid, uint32 NormalXP, uint32 RestedXP, bool type);
-    void SendEnvironmentalDamageLog(const uint64 & guid, uint8 type, uint32 damage);
+	/************************************************************************/
+	/* Spell Packet wrapper Please keep this separated					  */
+	/************************************************************************/
+	void SendLevelupInfo(uint32 level, uint32 Hp, uint32 Mana, uint32 Stat0, uint32 Stat1, uint32 Stat2, uint32 Stat3, uint32 Stat4);
+	void SendLogXPGain(uint64 guid, uint32 NormalXP, uint32 RestedXP, bool type);
+	void SendEnvironmentalDamageLog(const uint64 & guid, uint8 type, uint32 damage);
 	void SendWorldStateUpdate(uint32 WorldState, uint32 Value);
 	void SendCastResult(uint32 SpellId, uint8 ErrorMessage, uint8 MultiCast, uint32 Extra);
 	void Gossip_SendPOI(float X, float Y, uint32 Icon, uint32 Flags, uint32 Data, const char* Name);
-    /************************************************************************/
-    /* End of SpellPacket wrapper                                           */
-    /************************************************************************/
+	/************************************************************************/
+	/* End of SpellPacket wrapper										   */
+	/************************************************************************/
 
 	Mailbox m_mailBox;
 	bool m_waterwalk;
@@ -1716,9 +1706,9 @@ protected:
 
 	/* Update system components */
 	ByteBuffer bUpdateBuffer;
-    ByteBuffer bCreationBuffer;
+	ByteBuffer bCreationBuffer;
 	uint32 mUpdateCount;
-    uint32 mCreationCount;
+	uint32 mCreationCount;
 	uint32 mOutOfRangeIdCount;
 	ByteBuffer mOutOfRangeIds;
 	SplineMap _splineMap;
@@ -1750,28 +1740,28 @@ protected:
 	uint32 mTradeTarget;
 	uint32 mTradeStatus;
 
-    /************************************************************************/
-    /* Player Class systems, info and misc things                           */
-    /************************************************************************/
-    PlayerCreateInfo *info;
-	uint32      m_AttackMsgTimer;	// "too far away" and "wrong facing" timer
-	bool        m_attacking;
+	/************************************************************************/
+	/* Player Class systems, info and misc things						   */
+	/************************************************************************/
+	PlayerCreateInfo *info;
+	uint32	  m_AttackMsgTimer;	// "too far away" and "wrong facing" timer
+	bool		m_attacking;
 	std::string m_name;	// max 21 character name
-	uint32      m_Tutorials[8];
+	uint32	  m_Tutorials[8];
 
-    // Character Ban
-	uint32      m_banned;
-	string      m_banreason;
-	uint32      m_AreaID;
+	// Character Ban
+	uint32	  m_banned;
+	string	  m_banreason;
+	uint32	  m_AreaID;
 	AreaTable  *m_areaDBC;
-	Pet*        m_Summon;
-	uint32      m_PetNumberMax;
+	Pet*		m_Summon;
+	uint32	  m_PetNumberMax;
 	std::map<uint32, PlayerPet*> m_Pets;
 	
-    uint32      m_invitersGuid; // It is guild inviters guid ,0 when its not used
-    
+	uint32	  m_invitersGuid; // It is guild inviters guid ,0 when its not used
+	
 
-    // bind
+	// bind
 	float m_bind_pos_x;
 	float m_bind_pos_y;
 	float m_bind_pos_z;
@@ -1828,24 +1818,24 @@ protected:
 	uint32 m_GroupInviter;
 	uint8 m_StableSlotCount;
 
-    // Fishing related
+	// Fishing related
 	Object *m_SummonedObject;
 
-    // other system
-	Corpse *    myCorpse;
+	// other system
+	Corpse *	myCorpse;
 
-	uint32      m_lastHonorResetTime;
-	uint32      _fields[PLAYER_END];
-	uint32	    trigger_on_stun;        //bah, warrior talent but this will not get triggered on triggered spells if used on proc so i'm forced to used a special variable
-	uint32	    trigger_on_stun_chance; //also using this for mage "Frostbite" talent
+	uint32	  m_lastHonorResetTime;
+	uint32	  _fields[PLAYER_END];
+	uint32		trigger_on_stun;		//bah, warrior talent but this will not get triggered on triggered spells if used on proc so i'm forced to used a special variable
+	uint32		trigger_on_stun_chance; //also using this for mage "Frostbite" talent
 	int			hearth_of_wild_pct;		//druid hearth of wild talent used on shapeshifting. We eighter know what is last talent level or memo on learn
 
 	uint32 m_team;
-	float       m_lastRunSpeed;
-	float       m_lastRunBackSpeed;
-	float       m_lastSwimSpeed;
-	float       m_lastBackSwimSpeed;
-	float       m_lastFlySpeed;
+	float	   m_lastRunSpeed;
+	float	   m_lastRunBackSpeed;
+	float	   m_lastSwimSpeed;
+	float	   m_lastBackSwimSpeed;
+	float	   m_lastFlySpeed;
 
 	uint32 m_mountCheckTimer;
 	void RemovePendingPlayer();
@@ -1873,7 +1863,7 @@ public:
 	bool m_changingMaps;
 
 	/************************************************************************/
-	/* SOCIAL                                                               */
+	/* SOCIAL															   */
 	/************************************************************************/
 private:
 	/* we may have multiple threads on this(chat) - burlex */
@@ -1900,7 +1890,7 @@ public:
 	void Social_TellFriendsOffline();
 
 	/************************************************************************/
-	/* end social                                                           */
+	/* end social														   */
 	/************************************************************************/
 
 	PlayerInfo * m_playerInfo;

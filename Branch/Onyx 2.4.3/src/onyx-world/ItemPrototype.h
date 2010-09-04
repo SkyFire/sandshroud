@@ -291,42 +291,42 @@ enum ITEM_BONDING_TYPE
 	ITEM_BIND_ON_PICKUP =   1,
 	ITEM_BIND_ON_EQUIP  =   2,
 	ITEM_BIND_ON_USE	=   3,
-	ITEM_BIND_QUEST	    =   4,
-	ITEM_BIND_QUEST2    =   5,
+	ITEM_BIND_QUEST		=   4,
+	ITEM_BIND_QUEST2	=   5,
 };
 
 enum INVENTORY_TYPES
 {
-	INVTYPE_NON_EQUIP       = 0x0,
-	INVTYPE_HEAD            = 0x1,
-	INVTYPE_NECK            = 0x2,
-	INVTYPE_SHOULDERS       = 0x3,
-	INVTYPE_BODY            = 0x4,
-	INVTYPE_CHEST           = 0x5,
-	INVTYPE_WAIST           = 0x6,
-	INVTYPE_LEGS            = 0x7,
-	INVTYPE_FEET            = 0x8,
-	INVTYPE_WRISTS          = 0x9,
-	INVTYPE_HANDS           = 0xa,
-	INVTYPE_FINGER          = 0xb,
-	INVTYPE_TRINKET         = 0xc,
-	INVTYPE_WEAPON          = 0xd,
-	INVTYPE_SHIELD          = 0xe,
-	INVTYPE_RANGED          = 0xf,
-	INVTYPE_CLOAK           = 0x10,
-	INVTYPE_2HWEAPON        = 0x11,
-	INVTYPE_BAG             = 0x12,
-	INVTYPE_TABARD          = 0x13,
-	INVTYPE_ROBE            = 0x14,
+	INVTYPE_NON_EQUIP	   = 0x0,
+	INVTYPE_HEAD			= 0x1,
+	INVTYPE_NECK			= 0x2,
+	INVTYPE_SHOULDERS	   = 0x3,
+	INVTYPE_BODY			= 0x4,
+	INVTYPE_CHEST		   = 0x5,
+	INVTYPE_WAIST		   = 0x6,
+	INVTYPE_LEGS			= 0x7,
+	INVTYPE_FEET			= 0x8,
+	INVTYPE_WRISTS		  = 0x9,
+	INVTYPE_HANDS		   = 0xa,
+	INVTYPE_FINGER		  = 0xb,
+	INVTYPE_TRINKET		 = 0xc,
+	INVTYPE_WEAPON		  = 0xd,
+	INVTYPE_SHIELD		  = 0xe,
+	INVTYPE_RANGED		  = 0xf,
+	INVTYPE_CLOAK		   = 0x10,
+	INVTYPE_2HWEAPON		= 0x11,
+	INVTYPE_BAG			 = 0x12,
+	INVTYPE_TABARD		  = 0x13,
+	INVTYPE_ROBE			= 0x14,
 	INVTYPE_WEAPONMAINHAND  = 0x15,
 	INVTYPE_WEAPONOFFHAND   = 0x16,
-	INVTYPE_HOLDABLE        = 0x17,
-	INVTYPE_AMMO            = 0x18,
-	INVTYPE_THROWN          = 0x19,
-	INVTYPE_RANGEDRIGHT     = 0x1a,
-	INVTYPE_QUIVER          = 0x1b,
-	INVTYPE_RELIC           = 0x1c,
-	NUM_INVENTORY_TYPES     = 0x1d,
+	INVTYPE_HOLDABLE		= 0x17,
+	INVTYPE_AMMO			= 0x18,
+	INVTYPE_THROWN		  = 0x19,
+	INVTYPE_RANGEDRIGHT	 = 0x1a,
+	INVTYPE_QUIVER		  = 0x1b,
+	INVTYPE_RELIC		   = 0x1c,
+	NUM_INVENTORY_TYPES	 = 0x1d,
 };
 
 enum ITEM_CLASS
@@ -385,7 +385,7 @@ enum Item_Subclass
    // Trade goods
    ITEM_SUBCLASS_PROJECTILE_TRADE_GOODS		= 0,
    ITEM_SUBCLASS_PROJECTILE_PARTS			= 1,
-   ITEM_SUBCLASS_PROJECTILE_EXPLOSIVES      = 2,
+   ITEM_SUBCLASS_PROJECTILE_EXPLOSIVES	  = 2,
    ITEM_SUBCLASS_PROJECTILE_DEVICES			= 3,
    
    // Recipe
@@ -410,57 +410,57 @@ enum Item_Subclass
 
 enum ITEM_QUALITY
 {
-	ITEM_QUALITY_POOR_GREY             = 0,
-	ITEM_QUALITY_NORMAL_WHITE          = 1,
-	ITEM_QUALITY_UNCOMMON_GREEN        = 2,
-	ITEM_QUALITY_RARE_BLUE             = 3,
-	ITEM_QUALITY_EPIC_PURPLE           = 4,
-	ITEM_QUALITY_LEGENDARY_ORANGE      = 5,
+	ITEM_QUALITY_POOR_GREY			 = 0,
+	ITEM_QUALITY_NORMAL_WHITE		  = 1,
+	ITEM_QUALITY_UNCOMMON_GREEN		= 2,
+	ITEM_QUALITY_RARE_BLUE			 = 3,
+	ITEM_QUALITY_EPIC_PURPLE		   = 4,
+	ITEM_QUALITY_LEGENDARY_ORANGE	  = 5,
 	ITEM_QUALITY_ARTIFACT_LIGHT_YELLOW = 6,
 };
 
 enum ITEM_FLAG
 {
-	ITEM_FLAG_SOULBOUND    = 0x1,      // not used in proto
-	ITEM_FLAG_CONJURED     = 0x2,
-	ITEM_FLAG_LOOTABLE     = 0x4,
-	ITEM_FLAG_UNKNOWN_04   = 0x8,      // not used in proto
-	ITEM_FLAG_UNKNOWN_05   = 0x10,     // many equipable items and bags
-	ITEM_FLAG_UNKNOWN_06   = 0x20,     // totems
-	ITEM_FLAG_UNKNOWN_07   = 0x40,     // many consumables
-	ITEM_FLAG_UNKNOWN_08   = 0x80,     // only 1 wand uses this
-	ITEM_FLAG_UNKNOWN_09   = 0x100,    // some wands & relics
-	ITEM_FLAG_WRAP_GIFT    = 0x200,
+	ITEM_FLAG_SOULBOUND	= 0x1,	  // not used in proto
+	ITEM_FLAG_CONJURED	 = 0x2,
+	ITEM_FLAG_LOOTABLE	 = 0x4,
+	ITEM_FLAG_UNKNOWN_04   = 0x8,	  // not used in proto
+	ITEM_FLAG_UNKNOWN_05   = 0x10,	 // many equipable items and bags
+	ITEM_FLAG_UNKNOWN_06   = 0x20,	 // totems
+	ITEM_FLAG_UNKNOWN_07   = 0x40,	 // many consumables
+	ITEM_FLAG_UNKNOWN_08   = 0x80,	 // only 1 wand uses this
+	ITEM_FLAG_UNKNOWN_09   = 0x100,	// some wands & relics
+	ITEM_FLAG_WRAP_GIFT	= 0x200,
 	ITEM_FLAG_CREATE_ITEM  = 0x400,
-	ITEM_FLAG_QUEST        = 0x800,
+	ITEM_FLAG_QUEST		= 0x800,
 	ITEM_FLAG_UNKNOWN_13   = 0x1000,   // not used in proto
-	ITEM_FLAG_SIGNABLE     = 0x2000,
-	ITEM_FLAG_READABLE     = 0x4000,
+	ITEM_FLAG_SIGNABLE	 = 0x2000,
+	ITEM_FLAG_READABLE	 = 0x4000,
 	ITEM_FLAG_UNKNOWN_16   = 0x8000,
-	ITEM_FLAG_EVENT_REQ    = 0x10000,
+	ITEM_FLAG_EVENT_REQ	= 0x10000,
 	ITEM_FLAG_UNKNOWN_18   = 0x20000,
 	ITEM_FLAG_PROSPECTABLE = 0x40000,
 	ITEM_FLAG_UNIQUE_EQUIP = 0x80000,
 	ITEM_FLAG_UNKNOWN_21   = 0x100000, // not used in proto
 	ITEM_FLAG_UNKNOWN_22   = 0x200000, // player created health/mana/poisons
-	ITEM_FLAG_THROWN       = 0x400000,
+	ITEM_FLAG_THROWN	   = 0x400000,
 	ITEM_FLAG_SHAPESHIFT_OK= 0x800000,
 };
 
 enum SPECIAL_ITEM_TYPE
 {
-	ITEM_TYPE_BOWAMMO	    = 1,	// Arrows
-	ITEM_TYPE_GUNAMMO	    = 2,	// Bullets
-	ITEM_TYPE_SOULSHARD     = 3,	// Soul Shards
+	ITEM_TYPE_BOWAMMO		= 1,	// Arrows
+	ITEM_TYPE_GUNAMMO		= 2,	// Bullets
+	ITEM_TYPE_SOULSHARD	 = 3,	// Soul Shards
 	ITEM_TYPE_LEATHERWORK   = 4,	// Leatherworking Supplies
-	ITEM_TYPE_HERBALISM     = 6,	// Herbs
+	ITEM_TYPE_HERBALISM	 = 6,	// Herbs
 	ITEM_TYPE_ENCHANTMENT   = 7,	// Enchanting Supplies
 	ITEM_TYPE_ENGINEERING   = 8,	// Engineering Supplies
-	ITEM_TYPE_KEYRING	    = 9,	// Keys
-	ITEM_TYPE_GEMS   	    = 10,	// Gems
-	ITEM_TYPE_MINING	    = 11,	// Mining Supplies
+	ITEM_TYPE_KEYRING		= 9,	// Keys
+	ITEM_TYPE_GEMS   		= 10,	// Gems
+	ITEM_TYPE_MINING		= 11,	// Mining Supplies
 	ITEM_TYPE_SBEQUIPMENT   = 12,	// Soulbound Equipment
-	ITEM_TYPE_VANITYPETS    = 13	// Vanity Pets
+	ITEM_TYPE_VANITYPETS	= 13	// Vanity Pets
 };
 
 enum SOCKET_GEM_COLOR

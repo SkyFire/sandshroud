@@ -300,7 +300,7 @@ Player::Player( uint32 guid ) : m_mailBox(guid)
 	}
 
 	PctIgnoreRegenModifier  = 0.0f;
-	m_retainedrage          = 0;
+	m_retainedrage		  = 0;
 	DetectedRange		   = 0;
 
 	m_targetIcon			= 0;
@@ -313,8 +313,8 @@ Player::Player( uint32 guid ) : m_mailBox(guid)
 	pctReputationMod		= 0;
 	roll					= 0;
 	mUpdateCount			= 0;
-    mCreationCount          = 0;
-    bCreationBuffer.reserve(40000);
+	mCreationCount		  = 0;
+	bCreationBuffer.reserve(40000);
 	bUpdateBuffer.reserve(30000);//ought to be > than enough ;)
 	mOutOfRangeIds.reserve(1000);
 	mOutOfRangeIdCount	  = 0;
@@ -1181,7 +1181,7 @@ void Player::EventAttackStart()
 {
 	m_attacking = true;
 	if(m_MountSpellId)
-        RemoveAura(m_MountSpellId);
+		RemoveAura(m_MountSpellId);
 }
 
 void Player::EventAttackStop()
@@ -1223,7 +1223,7 @@ void Player::_EventExploration()
 	{
 		strcpy(areaname, "UNKNOWN");
 	}
-    sChatHandler.BlueSystemMessageToPlr(this,areaname);*/
+	sChatHandler.BlueSystemMessageToPlr(this,areaname);*/
 
 	int offset = at->explorationFlag / 32;
 	offset += PLAYER_EXPLORED_ZONES_1;
@@ -1237,7 +1237,7 @@ void Player::_EventExploration()
 		m_areaDBC = dbcArea.LookupEntryForced(m_AreaID);
 		UpdatePvPArea();
 		if(GetGroup())
-            GetGroup()->UpdateOutOfRangePlayer(this, 128, true, NULL);
+			GetGroup()->UpdateOutOfRangePlayer(this, 128, true, NULL);
 	}
 
 	if(at->ZoneId != 0)
@@ -1249,53 +1249,53 @@ void Player::_EventExploration()
 		ZoneUpdate(at->AreaId);
 
 	// Check for a restable area
-    if(at->AreaFlags & AREA_CITY_AREA || at->AreaFlags & AREA_CITY)
+	if(at->AreaFlags & AREA_CITY_AREA || at->AreaFlags & AREA_CITY)
 	{
 		// check faction
 		if((at->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (at->category == AREAC_HORDE_TERRITORY && GetTeam() == 1) )
 		{
 			if(!m_isResting) ApplyPlayerRestState(true);
 		}
-        else if(at->category != AREAC_ALLIANCE_TERRITORY && at->category != AREAC_HORDE_TERRITORY)
+		else if(at->category != AREAC_ALLIANCE_TERRITORY && at->category != AREAC_HORDE_TERRITORY)
 		{
 			if(!m_isResting) ApplyPlayerRestState(true);
 		}
-        else
-        {
-            if(m_isResting) ApplyPlayerRestState(false);
-        }
+		else
+		{
+			if(m_isResting) ApplyPlayerRestState(false);
+		}
 	}
 	else
 	{
-        //second AT check for subzones.
-        if(at->ZoneId)
-        {
-            AreaTable * at2 = dbcArea.LookupEntry(at->ZoneId);
-            if(at2 && at2->AreaFlags & AREA_CITY_AREA || at2 && at2->AreaFlags & AREA_CITY)
-            {
-                if((at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1) )
-		        {
-			        if(!m_isResting) ApplyPlayerRestState(true);
-		        }
-                else if(at2->category != AREAC_ALLIANCE_TERRITORY && at2->category != AREAC_HORDE_TERRITORY)
-		        {
-			        if(!m_isResting) ApplyPlayerRestState(true);
-		        }
-                else
-                {
-                    if(m_isResting) ApplyPlayerRestState(false);
-                }
-            }
+		//second AT check for subzones.
+		if(at->ZoneId)
+		{
+			AreaTable * at2 = dbcArea.LookupEntry(at->ZoneId);
+			if(at2 && at2->AreaFlags & AREA_CITY_AREA || at2 && at2->AreaFlags & AREA_CITY)
+			{
+				if((at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1) )
+				{
+					if(!m_isResting) ApplyPlayerRestState(true);
+				}
+				else if(at2->category != AREAC_ALLIANCE_TERRITORY && at2->category != AREAC_HORDE_TERRITORY)
+				{
+					if(!m_isResting) ApplyPlayerRestState(true);
+				}
+				else
+				{
+					if(m_isResting) ApplyPlayerRestState(false);
+				}
+			}
 			else
 			{
 				if(m_isResting)
 					ApplyPlayerRestState(false);
 			}
-        }
-        else
-        {
-		    if(m_isResting) ApplyPlayerRestState(false);
-        }
+		}
+		else
+		{
+			if(m_isResting) ApplyPlayerRestState(false);
+		}
 	}
 
 	if( !(currFields & val) && !GetTaxiState() && !m_TransporterGUID)//Unexplored Area		// bur: we dont want to explore new areas when on taxi
@@ -1407,15 +1407,15 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 		CalculateBaseStats();
 
 		// Generate Level Info Packet and Send to client
-        SendLevelupInfo(
-            level,
-            lvlinfo->HP - oldlevel->HP,
-            lvlinfo->Mana - oldlevel->Mana,
-            lvlinfo->Stat[0] - oldlevel->Stat[0],
-            lvlinfo->Stat[1] - oldlevel->Stat[1],
-            lvlinfo->Stat[2] - oldlevel->Stat[2],
-            lvlinfo->Stat[3] - oldlevel->Stat[3],
-            lvlinfo->Stat[4] - oldlevel->Stat[4]);
+		SendLevelupInfo(
+			level,
+			lvlinfo->HP - oldlevel->HP,
+			lvlinfo->Mana - oldlevel->Mana,
+			lvlinfo->Stat[0] - oldlevel->Stat[0],
+			lvlinfo->Stat[1] - oldlevel->Stat[1],
+			lvlinfo->Stat[2] - oldlevel->Stat[2],
+			lvlinfo->Stat[3] - oldlevel->Stat[3],
+			lvlinfo->Stat[4] - oldlevel->Stat[4]);
 	
 		_UpdateMaxSkillCounts();
 		UpdateStats();
@@ -2127,7 +2127,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	ss << m_killsToday << ", " << m_killsYesterday << ", " << m_killsLifetime << ", ";
 	ss << m_honorToday << ", " << m_honorYesterday << ", ";
 	ss << m_honorPoints << ", ";
-    ss << iInstanceType << ")";
+	ss << iInstanceType << ")";
 	
 	if(bNewCharacter)
 		CharacterDatabase.WaitExecuteNA(ss.str().c_str());
@@ -2834,7 +2834,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	m_honorPoints = get_next_field.GetUInt32();
 
 	RolloverHonor();
-    iInstanceType = get_next_field.GetUInt32();
+	iInstanceType = get_next_field.GetUInt32();
 
 	HonorHandler::RecalculateHonorFields(this);
 	
@@ -2858,7 +2858,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	case WARLOCK:
 	case HUNTER:
 		_LoadPet(results[5].result);
-        _LoadPetSpells(results[6].result);
+		_LoadPetSpells(results[6].result);
 	break;
 	}
 
@@ -4484,14 +4484,14 @@ void Player::UpdateAttackSpeed()
 			speed = weap->GetProto()->Delay;
 	}
 	SetUInt32Value( UNIT_FIELD_BASEATTACKTIME, 
-				     uint32(( speed * m_meleeattackspeedmod ) * ( ( 100.0f - CalcRating( PLAYER_RATING_MODIFIER_MELEE_HASTE ) ) / 100.0f ) ));
+					 uint32(( speed * m_meleeattackspeedmod ) * ( ( 100.0f - CalcRating( PLAYER_RATING_MODIFIER_MELEE_HASTE ) ) / 100.0f ) ));
 	
 	weap = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );
 	if( weap != NULL && weap->GetProto()->Class == 2 )// 2 is a weapon
 	{
 		speed = weap->GetProto()->Delay;
 		SetUInt32Value( UNIT_FIELD_BASEATTACKTIME_01, 
-					    uint32(( speed * m_meleeattackspeedmod ) * ( ( 100.0f - CalcRating( PLAYER_RATING_MODIFIER_MELEE_HASTE ) ) / 100.0f ) ));
+						uint32(( speed * m_meleeattackspeedmod ) * ( ( 100.0f - CalcRating( PLAYER_RATING_MODIFIER_MELEE_HASTE ) ) / 100.0f ) ));
 	}
 	  
 	weap = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_RANGED );
@@ -5193,47 +5193,47 @@ void Player::SendLoot(uint64 guid,uint8 loot_type)
 		ItemPrototype* itemProto =iter->item.itemproto;
 		if (!itemProto)		   
 			continue;
-        //quest items check. type 4/5
-        //quest items that dont start quests.
-        if((itemProto->Bonding == ITEM_BIND_QUEST) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
-            continue;
-        if((itemProto->Bonding == ITEM_BIND_QUEST2) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
-            continue;
+		//quest items check. type 4/5
+		//quest items that dont start quests.
+		if((itemProto->Bonding == ITEM_BIND_QUEST) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
+			continue;
+		if((itemProto->Bonding == ITEM_BIND_QUEST2) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
+			continue;
 
-        //quest items that start quests need special check to avoid drops all the time.
-        if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
-            continue;
-        if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
-            continue;
+		//quest items that start quests need special check to avoid drops all the time.
+		if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
+			continue;
+		if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
+			continue;
 
-        if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
-            continue;
-        if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
-            continue;
+		if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
+			continue;
+		if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
+			continue;
 
-        //check for starting item quests that need questlines.
-        if((itemProto->QuestId && itemProto->Bonding != ITEM_BIND_QUEST && itemProto->Bonding != ITEM_BIND_QUEST2))
-        {
-            bool HasRequiredQuests = true;
-            Quest * pQuest = QuestStorage.LookupEntry(itemProto->QuestId);
-            if(pQuest)
-            {
-                //check if its a questline.
-                for(uint32 i = 0; i < pQuest->count_requiredquests; i++)
-                {
-                    if(pQuest->required_quests[i])
-                    {
-                        if(!HasFinishedQuest(pQuest->required_quests[i]) || GetQuestLogForEntry(pQuest->required_quests[i]))
-                        {
-                            HasRequiredQuests = false;
-                            break;
-                        }
-                    }
-                }
-                if(!HasRequiredQuests)
-                    continue;
-            }
-        } 
+		//check for starting item quests that need questlines.
+		if((itemProto->QuestId && itemProto->Bonding != ITEM_BIND_QUEST && itemProto->Bonding != ITEM_BIND_QUEST2))
+		{
+			bool HasRequiredQuests = true;
+			Quest * pQuest = QuestStorage.LookupEntry(itemProto->QuestId);
+			if(pQuest)
+			{
+				//check if its a questline.
+				for(uint32 i = 0; i < pQuest->count_requiredquests; i++)
+				{
+					if(pQuest->required_quests[i])
+					{
+						if(!HasFinishedQuest(pQuest->required_quests[i]) || GetQuestLogForEntry(pQuest->required_quests[i]))
+						{
+							HasRequiredQuests = false;
+							break;
+						}
+					}
+				}
+				if(!HasRequiredQuests)
+					continue;
+			}
+		} 
 
 
 		slottype = 0;
@@ -5645,17 +5645,17 @@ void Player::SendInitialLogonPackets()
 	// Initial Packets... they seem to be re-sent on port.
 	m_session->OutPacket(SMSG_SET_REST_START, 4, &m_timeLogoff);
 
-    WorldPacket data(SMSG_BINDPOINTUPDATE, 32);
-    data << m_bind_pos_x;
-    data << m_bind_pos_y;
-    data << m_bind_pos_z;
-    data << m_bind_mapid;
-    data << m_bind_zoneid;
-    GetSession()->SendPacket( &data );
+	WorldPacket data(SMSG_BINDPOINTUPDATE, 32);
+	data << m_bind_pos_x;
+	data << m_bind_pos_y;
+	data << m_bind_pos_z;
+	data << m_bind_mapid;
+	data << m_bind_zoneid;
+	GetSession()->SendPacket( &data );
 
 	//Proficiencies
-    //SendSetProficiency(4,armor_proficiency);
-    //SendSetProficiency(2,weapon_proficiency);
+	//SendSetProficiency(4,armor_proficiency);
+	//SendSetProficiency(2,weapon_proficiency);
 	packetSMSG_SET_PROFICICENCY pr;
 	pr.ItemClass = 4;
 	pr.Profinciency = armor_proficiency;
@@ -5680,54 +5680,54 @@ void Player::SendInitialLogonPackets()
 	smsg_InitialFactions();
 
 
-    /* Some minor documentation about the time field
-    // MOVE THIS DOCUMENATION TO THE WIKI
-    
-    minute's = 0x0000003F                  00000000000000000000000000111111
-    hour's   = 0x000007C0                  00000000000000000000011111000000
-    weekdays = 0x00003800                  00000000000000000011100000000000
-    days     = 0x000FC000                  00000000000011111100000000000000
-    months   = 0x00F00000                  00000000111100000000000000000000
-    years    = 0x1F000000                  00011111000000000000000000000000
-    unk	     = 0xE0000000                  11100000000000000000000000000000
-    */
+	/* Some minor documentation about the time field
+	// MOVE THIS DOCUMENATION TO THE WIKI
+	
+	minute's = 0x0000003F				  00000000000000000000000000111111
+	hour's   = 0x000007C0				  00000000000000000000011111000000
+	weekdays = 0x00003800				  00000000000000000011100000000000
+	days	 = 0x000FC000				  00000000000011111100000000000000
+	months   = 0x00F00000				  00000000111100000000000000000000
+	years	= 0x1F000000				  00011111000000000000000000000000
+	unk		 = 0xE0000000				  11100000000000000000000000000000
+	*/
 
 	data.Initialize(SMSG_LOGIN_SETTIMESPEED);
 	time_t minutes = sWorld.GetGameTime( ) / 60;
 	time_t hours = minutes / 60; minutes %= 60;
-    time_t gameTime = 0;
+	time_t gameTime = 0;
 
-    // TODO: Add stuff to handle these variable's
+	// TODO: Add stuff to handle these variable's
 
 	uint32 DayOfTheWeek = -1;		//	(0b111 = (any) day, 0 = Monday ect)
-    uint32 DayOfTheMonth = 20-1;	//	Day - 1 (0 is actual 1) its now the 20e here. TODO: replace this one with the proper date
-    uint32 CurrentMonth = 9-1;		//	Month - 1 (0 is actual 1) same as above. TODO: replace it with the proper code
-    uint32 CurrentYear = 7;			//	2000 + this number results in a correct value for this crap. TODO: replace this with the propper code
+	uint32 DayOfTheMonth = 20-1;	//	Day - 1 (0 is actual 1) its now the 20e here. TODO: replace this one with the proper date
+	uint32 CurrentMonth = 9-1;		//	Month - 1 (0 is actual 1) same as above. TODO: replace it with the proper code
+	uint32 CurrentYear = 7;			//	2000 + this number results in a correct value for this crap. TODO: replace this with the propper code
 
-   #define MINUTE_BITMASK      0x0000003F
-    #define HOUR_BITMASK        0x000007C0
-    #define WEEKDAY_BITMASK     0x00003800
-    #define DAY_BITMASK         0x000FC000
-    #define MONTH_BITMASK       0x00F00000
-    #define YEAR_BITMASK        0x1F000000
-    #define UNK_BITMASK         0xE0000000
+   #define MINUTE_BITMASK	  0x0000003F
+	#define HOUR_BITMASK		0x000007C0
+	#define WEEKDAY_BITMASK	 0x00003800
+	#define DAY_BITMASK		 0x000FC000
+	#define MONTH_BITMASK	   0x00F00000
+	#define YEAR_BITMASK		0x1F000000
+	#define UNK_BITMASK		 0xE0000000
 
-    #define MINUTE_SHIFTMASK    0
-    #define HOUR_SHIFTMASK      6
-    #define WEEKDAY_SHIFTMASK   11
-    #define DAY_SHIFTMASK       14
-    #define MONTH_SHIFTMASK     20
-    #define YEAR_SHIFTMASK      24
-    #define UNK_SHIFTMASK       29
+	#define MINUTE_SHIFTMASK	0
+	#define HOUR_SHIFTMASK	  6
+	#define WEEKDAY_SHIFTMASK   11
+	#define DAY_SHIFTMASK	   14
+	#define MONTH_SHIFTMASK	 20
+	#define YEAR_SHIFTMASK	  24
+	#define UNK_SHIFTMASK	   29
 
-    gameTime = ((minutes << MINUTE_SHIFTMASK) & MINUTE_BITMASK);
-    gameTime|= ((hours << HOUR_SHIFTMASK) & HOUR_BITMASK);
-    gameTime|= ((DayOfTheWeek << WEEKDAY_SHIFTMASK) & WEEKDAY_BITMASK);
-    gameTime|= ((DayOfTheMonth << DAY_SHIFTMASK) & DAY_BITMASK);
-    gameTime|= ((CurrentMonth << MONTH_SHIFTMASK) & MONTH_BITMASK);
-    gameTime|= ((CurrentYear << YEAR_SHIFTMASK) & YEAR_BITMASK);
+	gameTime = ((minutes << MINUTE_SHIFTMASK) & MINUTE_BITMASK);
+	gameTime|= ((hours << HOUR_SHIFTMASK) & HOUR_BITMASK);
+	gameTime|= ((DayOfTheWeek << WEEKDAY_SHIFTMASK) & WEEKDAY_BITMASK);
+	gameTime|= ((DayOfTheMonth << DAY_SHIFTMASK) & DAY_BITMASK);
+	gameTime|= ((CurrentMonth << MONTH_SHIFTMASK) & MONTH_BITMASK);
+	gameTime|= ((CurrentYear << YEAR_SHIFTMASK) & YEAR_BITMASK);
 
-    data << (uint32)gameTime;
+	data << (uint32)gameTime;
 	data << (float)0.0166666669777748f;  // Normal Game Speed
 	GetSession()->SendPacket( &data );
 
@@ -6202,11 +6202,11 @@ void Player::LooseRage(int32 decayValue)
 	//Rage is lost at a rate of 3 rage every 3 seconds. 
 	//The Anger Management talent changes this to 2 rage every 3 seconds.
 	uint32 cur = GetUInt32Value(UNIT_FIELD_POWER2);
-    uint32 newrage = ((int)cur <= decayValue) ? 0 : cur-decayValue;
-    if (newrage > 1000 )
+	uint32 newrage = ((int)cur <= decayValue) ? 0 : cur-decayValue;
+	if (newrage > 1000 )
 	  newrage = 1000;
 
-    SetUInt32Value(UNIT_FIELD_POWER2,newrage);
+	SetUInt32Value(UNIT_FIELD_POWER2,newrage);
 }
 
 void Player::RegenerateEnergy()
@@ -6241,7 +6241,7 @@ void Player::RemovePlayerPet(uint32 pet_number)
 		EventDismissPet();
 	}
 }
-#ifndef CLUSTERING
+
 void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id)
 {
 	//this func must only be called when switching between maps!
@@ -6299,7 +6299,6 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 
 	z_axisposition = 0.0f;
 }
-#endif
 
 // Player::AddItemsToWorld
 // Adds all items to world, applies any modifiers for them.
@@ -6609,7 +6608,7 @@ void Player::PushOutOfRange(const WoWGuid & guid)
 
 void Player::PushCreationData(ByteBuffer *data, uint32 updatecount)
 {
-    // imagine the bytebuffer getting appended from 2 threads at once! :D
+	// imagine the bytebuffer getting appended from 2 threads at once! :D
 	_bufferS.Acquire();
 
 	// unfortunately there is no guarantee that all data will be compressed at a ratio
@@ -6641,49 +6640,49 @@ void Player::PushCreationData(ByteBuffer *data, uint32 updatecount)
 void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompressionBuffer)
 {
 	_bufferS.Acquire();
-    if(!bUpdateBuffer.size() && !mOutOfRangeIds.size() && !bCreationBuffer.size())
+	if(!bUpdateBuffer.size() && !mOutOfRangeIds.size() && !bCreationBuffer.size())
 	{
 		_bufferS.Release();
 		return;
 	}
 
 	size_t bBuffer_size =  (bCreationBuffer.size() > bUpdateBuffer.size() ? bCreationBuffer.size() : bUpdateBuffer.size()) + 10 + (mOutOfRangeIds.size() * 9);
-    //uint8 * update_buffer = new uint8[bBuffer_size];
+	//uint8 * update_buffer = new uint8[bBuffer_size];
 	pBuildBuffer->resize(bBuffer_size);
 	uint8 * update_buffer = (uint8*)pBuildBuffer->contents();
 	size_t c = 0;
 
-    //build out of range updates if creation updates are queued
-    if(bCreationBuffer.size() || mOutOfRangeIdCount)
-    {
-        *(uint32*)&update_buffer[c] = ((mOutOfRangeIds.size() > 0) ? (mCreationCount + 1) : mCreationCount);	c += 4;
-        update_buffer[c] = 1;																			   ++c;
+	//build out of range updates if creation updates are queued
+	if(bCreationBuffer.size() || mOutOfRangeIdCount)
+	{
+		*(uint32*)&update_buffer[c] = ((mOutOfRangeIds.size() > 0) ? (mCreationCount + 1) : mCreationCount);	c += 4;
+		update_buffer[c] = 1;																			   ++c;
 
-            // append any out of range updates
-	    if(mOutOfRangeIdCount)
-	    {
-		    update_buffer[c]				= UPDATETYPE_OUT_OF_RANGE_OBJECTS;			 ++c;
-            *(uint32*)&update_buffer[c]	 = mOutOfRangeIdCount;						  c += 4;
-		    memcpy(&update_buffer[c], mOutOfRangeIds.contents(), mOutOfRangeIds.size());   c += mOutOfRangeIds.size();
-		    mOutOfRangeIds.clear();
-		    mOutOfRangeIdCount = 0;
-	    }
+			// append any out of range updates
+		if(mOutOfRangeIdCount)
+		{
+			update_buffer[c]				= UPDATETYPE_OUT_OF_RANGE_OBJECTS;			 ++c;
+			*(uint32*)&update_buffer[c]	 = mOutOfRangeIdCount;						  c += 4;
+			memcpy(&update_buffer[c], mOutOfRangeIds.contents(), mOutOfRangeIds.size());   c += mOutOfRangeIds.size();
+			mOutOfRangeIds.clear();
+			mOutOfRangeIdCount = 0;
+		}
 
-        if(bCreationBuffer.size())
+		if(bCreationBuffer.size())
 			memcpy(&update_buffer[c], bCreationBuffer.contents(), bCreationBuffer.size());  c += bCreationBuffer.size();
 
-        // clear our update buffer
-	    bCreationBuffer.clear();
-	    mCreationCount = 0;
+		// clear our update buffer
+		bCreationBuffer.clear();
+		mCreationCount = 0;
 
-        // compress update packet
-	    // while we said 350 before, i'm gonna make it 500 :D
-	    if(c < (size_t)sWorld.compression_threshold || !CompressAndSendUpdateBuffer((uint32)c, update_buffer, pCompressionBuffer))
-	    {
-		    // send uncompressed packet -> because we failed
-		    m_session->OutPacket(SMSG_UPDATE_OBJECT, (uint16)c, update_buffer);
-	    }
-    }
+		// compress update packet
+		// while we said 350 before, i'm gonna make it 500 :D
+		if(c < (size_t)sWorld.compression_threshold || !CompressAndSendUpdateBuffer((uint32)c, update_buffer, pCompressionBuffer))
+		{
+			// send uncompressed packet -> because we failed
+			m_session->OutPacket(SMSG_UPDATE_OBJECT, (uint16)c, update_buffer);
+		}
+	}
 
 	if(bUpdateBuffer.size())
 	{
@@ -7425,57 +7424,6 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, const LocationVector 
 		EndDuel(DUEL_WINNER_RETREAT);
 	}
 
-#ifdef CLUSTERING
-	/* Clustering Version */
-	MapInfo * mi = WorldMapInfoStorage.LookupEntry(MapID);
-
-	// Lookup map info
-	if(mi && mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01))
-	{
-		WorldPacket msg(SMSG_BROADCAST_MSG, 50);
-		msg << uint32(3) << "You must have The Burning Crusade Expansion to access this content." << uint8(0);
-		m_session->SendPacket(&msg);
-		return false;
-	}
-
-	uint32 instance_id;
-	bool map_change = false;
-	if(mi && mi->type == 0)
-	{
-		// single instance map
-		if(MapID != m_mapId)
-		{
-			map_change = true;
-			instance_id = 0;
-		}
-	}
-	else
-	{
-		// instanced map
-		if(InstanceID != GetInstanceID())
-			map_change = true;
-
-		instance_id = InstanceID;
-	}
-
-	if(map_change)
-	{
-		WorldPacket data(SMSG_TRANSFER_PENDING, 4);
-		data << uint32(MapID);
-		GetSession()->SendPacket(&data);
-		sClusterInterface.RequestTransfer(this, MapID, instance_id, vec);
-		return;
-	}
-
-	m_sentTeleportPosition = vec;
-	SetPosition(vec);
-	ResetHeartbeatCoords();
-
-	WorldPacket * data = BuildTeleportAckMsg(vec);
-	m_session->SendPacket(data);
-	delete data;
-#else
-	/* Normal Version */
 	bool instance = false;
 	MapInfo * mi = WorldMapInfoStorage.LookupEntry(MapID);
 
@@ -7511,7 +7459,6 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, const LocationVector 
 
 	_Relocate(MapID, vec, true, instance, InstanceID);
 	return true;
-#endif
 }
 
 void Player::SafeTeleport(MapMgr * mgr, const LocationVector & vec)
@@ -7574,119 +7521,119 @@ void Player::UpdatePvPArea()
 		return;
 
 	// This is where all the magic happens :P
-    if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 1))
+	if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 1))
 	{
 		if(!HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE) && !m_pvpTimer)
 		{
 			// I'm flagged and I just walked into a zone of my type. Start the 5min counter.
 			ResetPvPTimer();
 		}
-        return;
+		return;
 	}
 	else
 	{
-        //Enemy city check
-        if(m_areaDBC->AreaFlags & AREA_CITY_AREA || m_areaDBC->AreaFlags & AREA_CITY)
-        {
-            if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 1) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 0))
-            {
-                if(!IsPvPFlagged()) SetPvPFlag();
-                    StopPvPTimer();
-                return;
-            }
-        }
+		//Enemy city check
+		if(m_areaDBC->AreaFlags & AREA_CITY_AREA || m_areaDBC->AreaFlags & AREA_CITY)
+		{
+			if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 1) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 0))
+			{
+				if(!IsPvPFlagged()) SetPvPFlag();
+					StopPvPTimer();
+				return;
+			}
+		}
 
-        //fix for zone areas.
-        if(m_areaDBC->ZoneId)
-        {
-            AreaTable * at2 = dbcArea.LookupEntry(m_areaDBC->ZoneId);
-            if(at2 && (at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || at2 && (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1))
-            {
-                if(!HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE) && !m_pvpTimer)
-		        {
-			        // I'm flagged and I just walked into a zone of my type. Start the 5min counter.
-			        ResetPvPTimer();
-		        }
-                return;
-            }
-            //enemy territory check
-            if(at2 && at2->AreaFlags & AREA_CITY_AREA || at2 && at2->AreaFlags & AREA_CITY)
-            {
-                if(at2 && (at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 1) || at2 && (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 0))
-                {
-                   if(!IsPvPFlagged()) SetPvPFlag();
-                       StopPvPTimer();
-                   return;
-                }
-            }
-        }
-        
+		//fix for zone areas.
+		if(m_areaDBC->ZoneId)
+		{
+			AreaTable * at2 = dbcArea.LookupEntry(m_areaDBC->ZoneId);
+			if(at2 && (at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || at2 && (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1))
+			{
+				if(!HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE) && !m_pvpTimer)
+				{
+					// I'm flagged and I just walked into a zone of my type. Start the 5min counter.
+					ResetPvPTimer();
+				}
+				return;
+			}
+			//enemy territory check
+			if(at2 && at2->AreaFlags & AREA_CITY_AREA || at2 && at2->AreaFlags & AREA_CITY)
+			{
+				if(at2 && (at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 1) || at2 && (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 0))
+				{
+				   if(!IsPvPFlagged()) SetPvPFlag();
+					   StopPvPTimer();
+				   return;
+				}
+			}
+		}
+		
 		// I just walked into either an enemies town, or a contested zone.
 		// Force flag me if i'm not already.
-        if(m_areaDBC->category == AREAC_SANCTUARY || m_areaDBC->AreaFlags & AREA_SANCTUARY)
-        {
-            if(IsPvPFlagged()) RemovePvPFlag();
+		if(m_areaDBC->category == AREAC_SANCTUARY || m_areaDBC->AreaFlags & AREA_SANCTUARY)
+		{
+			if(IsPvPFlagged()) RemovePvPFlag();
 
 			RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_FREE_FOR_ALL_PVP);
 
-            StopPvPTimer();
-        }
-        else
-        {
-            //contested territory
-            if(sWorld.GetRealmType() == REALM_PVP)
-            {
-                //automaticaly sets pvp flag on contested territorys.
-                if(!IsPvPFlagged()) SetPvPFlag();
-                StopPvPTimer();
-            }
+			StopPvPTimer();
+		}
+		else
+		{
+			//contested territory
+			if(sWorld.GetRealmType() == REALM_PVP)
+			{
+				//automaticaly sets pvp flag on contested territorys.
+				if(!IsPvPFlagged()) SetPvPFlag();
+				StopPvPTimer();
+			}
 
-            if(sWorld.GetRealmType() == REALM_PVE)
-            {
-                if(HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE))
-                {
-                    if(!IsPvPFlagged()) SetPvPFlag();
-                }
-                else if(!HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE) && IsPvPFlagged() && !m_pvpTimer)
-                {
-                    ResetPvPTimer();
-                }
-            }
+			if(sWorld.GetRealmType() == REALM_PVE)
+			{
+				if(HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE))
+				{
+					if(!IsPvPFlagged()) SetPvPFlag();
+				}
+				else if(!HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE) && IsPvPFlagged() && !m_pvpTimer)
+				{
+					ResetPvPTimer();
+				}
+			}
 
-            if(m_areaDBC->AreaFlags & AREA_PVP_ARENA)			/* ffa pvp arenas will come later */
-            {
-                if(!IsPvPFlagged()) SetPvPFlag();
+			if(m_areaDBC->AreaFlags & AREA_PVP_ARENA)			/* ffa pvp arenas will come later */
+			{
+				if(!IsPvPFlagged()) SetPvPFlag();
 
-			    SetFlag(PLAYER_FLAGS, PLAYER_FLAG_FREE_FOR_ALL_PVP);
-            }
-            else
-            {
-			    RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_FREE_FOR_ALL_PVP);
-            }
-        }
+				SetFlag(PLAYER_FLAGS, PLAYER_FLAG_FREE_FOR_ALL_PVP);
+			}
+			else
+			{
+				RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_FREE_FOR_ALL_PVP);
+			}
+		}
 	}
 }
 
 void Player::BuildFlagUpdateForNonGroupSet(uint32 index, uint32 flag)
 {
-    Object *curObj;
-    for (Object::InRangeSet::iterator iter = GetInRangeSetBegin(); iter != GetInRangeSetEnd();)
+	Object *curObj;
+	for (Object::InRangeSet::iterator iter = GetInRangeSetBegin(); iter != GetInRangeSetEnd();)
 	{
 		curObj = *iter;
 		iter++;
-        if(curObj->IsPlayer())
-        {
-            Group* pGroup = static_cast< Player* >( curObj )->GetGroup();
-            if( pGroup != NULL && pGroup == GetGroup())
-            {
+		if(curObj->IsPlayer())
+		{
+			Group* pGroup = static_cast< Player* >( curObj )->GetGroup();
+			if( pGroup != NULL && pGroup == GetGroup())
+			{
 				//TODO: huh? if this is unneeded change the if to the inverse and don't waste jmp space
-            }
-            else
-            {
-                BuildFieldUpdatePacket( static_cast< Player* >( curObj ), index, flag );
-            }
-        }
-    }
+			}
+			else
+			{
+				BuildFieldUpdatePacket( static_cast< Player* >( curObj ), index, flag );
+			}
+		}
+	}
 }
 
 void Player::LoginPvPSetup()
@@ -7694,137 +7641,137 @@ void Player::LoginPvPSetup()
 	// Make sure we know our area ID.
 	_EventExploration();
 
-    if(isAlive())
-        CastSpell(this, PLAYER_HONORLESS_TARGET_SPELL, true);
+	if(isAlive())
+		CastSpell(this, PLAYER_HONORLESS_TARGET_SPELL, true);
 }
 
 void Player::PvPToggle()
 {
-    if(sWorld.GetRealmType() == REALM_PVE)
-    {
-	    if(m_pvpTimer > 0)
-	    {
-		    // Means that we typed /pvp while we were "cooling down". Stop the timer.
-		    StopPvPTimer();
+	if(sWorld.GetRealmType() == REALM_PVE)
+	{
+		if(m_pvpTimer > 0)
+		{
+			// Means that we typed /pvp while we were "cooling down". Stop the timer.
+			StopPvPTimer();
 
-		    SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+			SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
 
-            if(!IsPvPFlagged()) SetPvPFlag();
-	    }
-	    else
-	    {
-		    if(IsPvPFlagged())
-		    {
-                if(m_areaDBC != NULL && ( m_areaDBC->AreaFlags & AREA_CITY_AREA || m_areaDBC->AreaFlags & AREA_CITY) )
-                {
-                    if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 1) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 0))
-                    {
-                    }
-                    else
-                    {
-                        // Start the "cooldown" timer.
-			            ResetPvPTimer();
-                    }
-                }
-                else
-                {
-                    // Start the "cooldown" timer.
-			        ResetPvPTimer();
-                }
-			    RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
-		    }
-		    else
-		    {
-			    // Move into PvP state.
-			    SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+			if(!IsPvPFlagged()) SetPvPFlag();
+		}
+		else
+		{
+			if(IsPvPFlagged())
+			{
+				if(m_areaDBC != NULL && ( m_areaDBC->AreaFlags & AREA_CITY_AREA || m_areaDBC->AreaFlags & AREA_CITY) )
+				{
+					if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 1) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 0))
+					{
+					}
+					else
+					{
+						// Start the "cooldown" timer.
+						ResetPvPTimer();
+					}
+				}
+				else
+				{
+					// Start the "cooldown" timer.
+					ResetPvPTimer();
+				}
+				RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+			}
+			else
+			{
+				// Move into PvP state.
+				SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
 
-			    StopPvPTimer();
-			    SetPvPFlag();
-		    }		
-	    }
-    }
-    else if(sWorld.GetRealmType() == REALM_PVP)
-    {
-	    if(m_areaDBC == NULL)
-            return;
+				StopPvPTimer();
+				SetPvPFlag();
+			}		
+		}
+	}
+	else if(sWorld.GetRealmType() == REALM_PVP)
+	{
+		if(m_areaDBC == NULL)
+			return;
 
-	    // This is where all the magic happens :P
-        if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 1))
-	    {
-            if(m_pvpTimer > 0)
-	        {
-		        // Means that we typed /pvp while we were "cooling down". Stop the timer.
-		        StopPvPTimer();
+		// This is where all the magic happens :P
+		if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 1))
+		{
+			if(m_pvpTimer > 0)
+			{
+				// Means that we typed /pvp while we were "cooling down". Stop the timer.
+				StopPvPTimer();
 
-		        SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+				SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
 
-                if(!IsPvPFlagged()) SetPvPFlag();
-	        }
-	        else
-	        {
-		        if(IsPvPFlagged())
-		        {
-                    // Start the "cooldown" timer.
-			        ResetPvPTimer();
+				if(!IsPvPFlagged()) SetPvPFlag();
+			}
+			else
+			{
+				if(IsPvPFlagged())
+				{
+					// Start the "cooldown" timer.
+					ResetPvPTimer();
 
-			        RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
-		        }
-		        else
-		        {
-			        // Move into PvP state.
-			        SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+					RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+				}
+				else
+				{
+					// Move into PvP state.
+					SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
 
-			        StopPvPTimer();
-			        SetPvPFlag();
-		        }		
-	        }
-        }
-        else
-        {
-            if(m_areaDBC->ZoneId)
-            {
-                AreaTable * at2 = dbcArea.LookupEntry(m_areaDBC->ZoneId);
-                if( at2 != NULL && ((at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1)) )
-                {
-                    if(m_pvpTimer > 0)
-	                {
-		                // Means that we typed /pvp while we were "cooling down". Stop the timer.
-		                StopPvPTimer();
+					StopPvPTimer();
+					SetPvPFlag();
+				}		
+			}
+		}
+		else
+		{
+			if(m_areaDBC->ZoneId)
+			{
+				AreaTable * at2 = dbcArea.LookupEntry(m_areaDBC->ZoneId);
+				if( at2 != NULL && ((at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1)) )
+				{
+					if(m_pvpTimer > 0)
+					{
+						// Means that we typed /pvp while we were "cooling down". Stop the timer.
+						StopPvPTimer();
 
-		                SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+						SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
 
-                        if(!IsPvPFlagged()) SetPvPFlag();
-	                }
-	                else
-	                {
-		                if(IsPvPFlagged())
-		                {
-			                // Start the "cooldown" timer.
-			                ResetPvPTimer();
+						if(!IsPvPFlagged()) SetPvPFlag();
+					}
+					else
+					{
+						if(IsPvPFlagged())
+						{
+							// Start the "cooldown" timer.
+							ResetPvPTimer();
 
-			                RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
-		                }
-		                else
-		                {
-			                // Move into PvP state.
-			                SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+							RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+						}
+						else
+						{
+							// Move into PvP state.
+							SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
 
-			                StopPvPTimer();
-			                SetPvPFlag();
-		                }		
-	                }
-                    return;
-                }
-            }
+							StopPvPTimer();
+							SetPvPFlag();
+						}		
+					}
+					return;
+				}
+			}
 
-            if(!HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE))
-		        SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
-            else
-            {
-			    RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
-            }
-        }
-    }
+			if(!HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE))
+				SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+			else
+			{
+				RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
+			}
+		}
+	}
 }
 
 void Player::ResetPvPTimer()
@@ -7853,7 +7800,7 @@ void Player::CalculateBaseStats()
 
 void Player::CompleteLoading()
 {	
-    // cast passive initial spells	  -- grep note: these shouldnt require plyr to be in world
+	// cast passive initial spells	  -- grep note: these shouldnt require plyr to be in world
 	SpellSet::iterator itr;
 	SpellEntry *info;
 	SpellCastTargets targets;
@@ -7891,7 +7838,7 @@ void Player::CompleteLoading()
    
 	std::list<LoginAura>::iterator i =  loginauras.begin();
 
-    for(;i!=loginauras.end(); i++)
+	for(;i!=loginauras.end(); i++)
 	{
 
 		//check if we already have this aura
@@ -7933,12 +7880,12 @@ void Player::CompleteLoading()
 		
 
 		for(uint32 x =0;x<3;x++)
-        {
-		    if(sp->Effect[x]==SPELL_EFFECT_APPLY_AURA)
-		    {
-			    a->AddMod(sp->EffectApplyAuraName[x],sp->EffectBasePoints[x]+1,sp->EffectMiscValue[x],x);
-		    }
-        }
+		{
+			if(sp->Effect[x]==SPELL_EFFECT_APPLY_AURA)
+			{
+				a->AddMod(sp->EffectApplyAuraName[x],sp->EffectBasePoints[x]+1,sp->EffectMiscValue[x],x);
+			}
+		}
 
 
 		this->AddAura(a, NULL);		//FIXME: must save amt,pos/neg
@@ -8001,7 +7948,7 @@ void Player::OnWorldPortAck()
 			welcome_msg = "Welcome to ";
 			welcome_msg += pMapinfo->name;
 			welcome_msg += ". ";
-            if(pMapinfo->type != INSTANCE_NONRAID && m_mapMgr->pInstance)
+			if(pMapinfo->type != INSTANCE_NONRAID && m_mapMgr->pInstance)
 			{
 				/*welcome_msg += "This instance is scheduled to reset on ";
 				welcome_msg += asctime(localtime(&m_mapMgr->pInstance->m_expiration));*/
@@ -8250,7 +8197,7 @@ void Player::SaveAuras(stringstream &ss)
 				skip = true;
 			}
 			//we are going to cast passive spells anyway on login so no need to save auras for them
-            if(aur->IsPassive())
+			if(aur->IsPassive())
 				skip = true;
 			//shapeshift
 //			if(m_ShapeShifted==aur->m_spellProto->Id)
@@ -8681,9 +8628,9 @@ void Player::removeSoulStone()
 
 void Player::SoftDisconnect()
 {/*
-      sEventMgr.RemoveEvents(this, EVENT_PLAYER_SOFT_DISCONNECT);
+	  sEventMgr.RemoveEvents(this, EVENT_PLAYER_SOFT_DISCONNECT);
 	  WorldSession *session=GetSession();
-      session->LogoutPlayer(true);
+	  session->LogoutPlayer(true);
 	  session->Disconnect();*/
 
 	// NOOB NOOB BIG BIG NOOB NOOB
@@ -8912,13 +8859,6 @@ void Player::RemoveFromBattlegroundQueue()
 	m_pendingBattleground = 0;
 }
 
-#ifdef CLUSTERING
-void Player::EventRemoveAndDelete()
-{
-
-}
-#endif
-
 void Player::_AddSkillLine(uint32 SkillLine, uint32 Current, uint32 Max)
 {
 	ItemProf * prof;
@@ -8955,19 +8895,19 @@ void Player::_AddSkillLine(uint32 SkillLine, uint32 Current, uint32 Max)
 		{
 			packetSMSG_SET_PROFICICENCY pr;
 			pr.ItemClass = prof->itemclass;
-            if(prof->itemclass==4)
-            {
-                armor_proficiency|=prof->subclass;
-                //SendSetProficiency(prof->itemclass,armor_proficiency);
+			if(prof->itemclass==4)
+			{
+				armor_proficiency|=prof->subclass;
+				//SendSetProficiency(prof->itemclass,armor_proficiency);
 				pr.Profinciency = armor_proficiency;
-            }else
-            {
-                weapon_proficiency|=prof->subclass;
-                //SendSetProficiency(prof->itemclass,weapon_proficiency);
+			}else
+			{
+				weapon_proficiency|=prof->subclass;
+				//SendSetProficiency(prof->itemclass,weapon_proficiency);
 				pr.Profinciency = weapon_proficiency;
-            }
+			}
 			m_session->OutPacket( SMSG_SET_PROFICIENCY, sizeof( packetSMSG_SET_PROFICICENCY ), &pr );
-    	}
+		}
 
 		// hackfix for poisons
 		if(SkillLine==SKILL_POISONS && !HasSpell(2842))
@@ -9072,7 +9012,7 @@ void Player::_UpdateMaxSkillCounts()
 			continue;
 		}
 
-        if(itr->second.MaximumValue != new_max)
+		if(itr->second.MaximumValue != new_max)
 		{
 			dirty = true;
 			itr->second.MaximumValue = new_max;
@@ -9161,7 +9101,7 @@ void Player::_AddLanguages(bool All)
 			if(!skills[i])
 				break;
 
-            sk.Reset(skills[i]);
+			sk.Reset(skills[i]);
 			sk.MaximumValue = sk.CurrentValue = 300;
 			m_skills.insert( make_pair(skills[i], sk) );
 			if((spell_id = ::GetSpellForLanguage(skills[i])))
@@ -9242,7 +9182,7 @@ void Player::RemoveSpellTargets(uint32 Type)
 	{
 		Unit * pUnit = m_mapMgr ? m_mapMgr->GetUnit(m_spellIndexTypeTargets[Type]) : NULL;
 		if(pUnit)
-            pUnit->RemoveAurasByBuffIndexType(Type, GetGUID());
+			pUnit->RemoveAurasByBuffIndexType(Type, GetGUID());
 
 		m_spellIndexTypeTargets[Type] = 0;
 	}
@@ -9296,7 +9236,7 @@ void Player::EventTalentHearthOfWildChange(bool apply)
 }
 
 /************************************************************************/
-/* New Save System                                                      */
+/* New Save System													  */
 /************************************************************************/
 #ifdef OPTIMIZED_PLAYER_SAVING
 
@@ -9559,12 +9499,6 @@ void Player::save_Auras()
 }
 
 #endif
-
-#ifdef CLUSTERING
-
-
-#endif
-
 
 void Player::EventGroupFullUpdate()
 {
@@ -10236,7 +10170,7 @@ void Player::DelaySpeedHack(uint32 ms)
 }
 
 /************************************************************************/
-/* SOCIAL                                                               */
+/* SOCIAL															   */
 /************************************************************************/
 
 void Player::Social_AddFriend(const char * name, const char * note)

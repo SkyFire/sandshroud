@@ -531,7 +531,7 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 	uint64 crap;
 	uint32 crap2;
 	string name;
-    uint8 error;
+	uint8 error;
 	uint32 crap3,crap4,crap5,crap6,crap7,crap8,crap9,crap10,crap11,arena_index,crap12;
 	uint16 crap13;
 	uint8 crap14;
@@ -803,25 +803,25 @@ void WorldSession::HandleCharterQuery(WorldPacket & recv_data)
 		data << uint32(c->Slots) << uint32(c->Slots);
 	}
 
-	data << uint32(0);                                      // 4
-    data << uint32(0);                                      // 5
-    data << uint32(0);                                      // 6
-    data << uint32(0);                                      // 7
-    data << uint32(0);                                      // 8
-    data << uint16(0);                                      // 9 2 bytes field
-    
+	data << uint32(0);									  // 4
+	data << uint32(0);									  // 5
+	data << uint32(0);									  // 6
+	data << uint32(0);									  // 7
+	data << uint32(0);									  // 8
+	data << uint16(0);									  // 9 2 bytes field
+	
 	if( c->CharterType == CHARTER_TYPE_GUILD )
 	{
-		data << uint32(1);                                      // 10
+		data << uint32(1);									  // 10
 	}
 	else
 	{
-		data << uint32(70);                                      // 10
+		data << uint32(70);									  // 10
 	}
 
-    data << uint32(0);                                      // 11
-    data << uint32(0);                                      // 13 count of next strings?
-    data << uint32(0);                                      // 14
+	data << uint32(0);									  // 11
+	data << uint32(0);									  // 13 count of next strings?
+	data << uint32(0);									  // 14
 
 	if (c->CharterType == CHARTER_TYPE_GUILD)
 	{
@@ -1001,7 +1001,7 @@ void WorldSession::HandleCharterTurnInCharter(WorldPacket & recv_data)
 		team->m_backgroundColour = background;
 		team->m_leader=_player->GetLowGUID();
 		team->m_stat_rating=1500;
-        
+		
 		objmgr.AddArenaTeam(team);
 		objmgr.UpdateArenaTeamRankings();
 		team->AddMember(_player->m_playerInfo);
@@ -1081,7 +1081,7 @@ void WorldSession::HandleGuildBankBuyTab(WorldPacket & recv_data)
 
 	if(_player->m_playerInfo->guild->GetBankTabCount() < 6)
 	{
-		//                                        tab1, tab2, tab3, tab4, tab5, tab6
+		//										tab1, tab2, tab3, tab4, tab5, tab6
 		const static int32 GuildBankPrices[6] = { 100, 250,  500,  1000, 2500, 5000 };
 		int32 cost = MONEY_ONE_GOLD * GuildBankPrices[_player->m_playerInfo->guild->GetBankTabCount()];
 

@@ -432,22 +432,22 @@ enum StandState
 
 enum UnitSpecialStates
 {
-	UNIT_STATE_NORMAL    = 0x0000,
+	UNIT_STATE_NORMAL	= 0x0000,
 	UNIT_STATE_DISARMED  = 0X0001,
-	UNIT_STATE_CHARM     = 0x0002,
-	UNIT_STATE_FEAR      = 0x0004,
-	UNIT_STATE_ROOT      = 0x0008,
-	UNIT_STATE_SLEEP     = 0x0010,  // never set
-	UNIT_STATE_SNARE     = 0x0020,  // never set
-	UNIT_STATE_STUN      = 0x0040,
+	UNIT_STATE_CHARM	 = 0x0002,
+	UNIT_STATE_FEAR	  = 0x0004,
+	UNIT_STATE_ROOT	  = 0x0008,
+	UNIT_STATE_SLEEP	 = 0x0010,  // never set
+	UNIT_STATE_SNARE	 = 0x0020,  // never set
+	UNIT_STATE_STUN	  = 0x0040,
 	UNIT_STATE_KNOCKOUT  = 0x0080,  // not used
-	UNIT_STATE_BLEED     = 0x0100,  // not used
+	UNIT_STATE_BLEED	 = 0x0100,  // not used
 	UNIT_STATE_POLYMORPH = 0x0200,  // not used
-	UNIT_STATE_BANISH    = 0x0400,  // not used
+	UNIT_STATE_BANISH	= 0x0400,  // not used
 	UNIT_STATE_CONFUSE   = 0x0800,
-	UNIT_STATE_PACIFY    = 0x1000,
+	UNIT_STATE_PACIFY	= 0x1000,
 	UNIT_STATE_SILENCE   = 0x2000,
-	UNIT_STATE_FROZEN    = 0x4000,
+	UNIT_STATE_FROZEN	= 0x4000,
 };
 
 enum UnitFieldBytes1
@@ -461,39 +461,39 @@ enum UnitFieldBytes2
 };
 
 enum UnitFieldFlags // UNIT_FIELD_FLAGS #46 - these are client flags
-{	//                                            Hex    Bit     Decimal  Comments
-	UNIT_FLAG_UNKNOWN_1                  = 0x00000001, // 1            1
-	UNIT_FLAG_NOT_ATTACKABLE_2           = 0x00000002, // 2            2  client won't let you attack them
-	UNIT_FLAG_LOCK_PLAYER                = 0x00000004, // 3            4  ? does nothing to client (probably wrong) - only taxi code checks this
-	UNIT_FLAG_PLAYER_CONTROLLED          = 0x00000008, // 4            8  makes players and NPCs attackable / not attackable
-	UNIT_FLAG_UNKNOWN_5                  = 0x00000010, // 5           16  ? some NPCs have this
-	UNIT_FLAG_UNKNOWN_6                  = 0x00000020, // 6           32
-	UNIT_FLAG_PLUS_MOB                   = 0x00000040, // 7           64  ? some NPCs have this (Rare/Elite/Boss?)
-	UNIT_FLAG_UNKNOWN_8                  = 0x00000080, // 8          128  ? can change attackable status 
-	UNIT_FLAG_NOT_ATTACKABLE_9           = 0x00000100, // 9          256  changes attackable status
-	UNIT_FLAG_UNKNOWN_10                 = 0x00000200, // 10         512  ? some NPCs have this
-	UNIT_FLAG_LOOTING                    = 0x00000400, // 11        1024
-	UNIT_FLAG_SELF_RES                   = 0x00000800, // 12        2048  ? some NPCs have this
-	UNIT_FLAG_PVP                        = 0x00001000, // 13        4096  sets PvP flag
-	UNIT_FLAG_SILENCED                   = 0x00002000, // 14        8192
-	UNIT_FLAG_DEAD                       = 0x00004000, // 15       16384  used for special "dead" NPCs like Withered Corpses
-	UNIT_FLAG_UNKNOWN_16                 = 0x00008000, // 16       32768  ? some NPCs have this
-	UNIT_FLAG_ALIVE                      = 0x00010000, // 17       65536  ?
-	UNIT_FLAG_PACIFIED                   = 0x00020000, // 18      131072
-	UNIT_FLAG_STUNNED                    = 0x00040000, // 19      262144
-	UNIT_FLAG_COMBAT                     = 0x00080000, // 20      524288  sets combat flag
-	UNIT_FLAG_MOUNTED_TAXI               = 0x00100000, // 21     1048576  mounted on a taxi
-	UNIT_FLAG_DISARMED                   = 0x00200000, // 22     2097152
-	UNIT_FLAG_CONFUSED                   = 0x00400000, // 23     4194304
-	UNIT_FLAG_FLEEING                    = 0x00800000, // 24     8388608  fear
-	UNIT_FLAG_PLAYER_CONTROLLED_CREATURE = 0x01000000, // 25    16777216
-	UNIT_FLAG_NOT_SELECTABLE             = 0x02000000, // 26    33554432  cannot select the unit
-	UNIT_FLAG_SKINNABLE                  = 0x04000000, // 27    67108864
-	UNIT_FLAG_UNKNOWN_28                 = 0x08000000, // 28   134217728  ? was MAKE_CHAR_UNTOUCHABLE (probably wrong), nothing ever set it
-	UNIT_FLAG_UNKNOWN_29                 = 0x10000000, // 29   268435456
-	UNIT_FLAG_FEIGN_DEATH                = 0x20000000, // 30   536870912
-	UNIT_FLAG_UNKNOWN_31                 = 0x40000000, // 31  1073741824  ? was WEAPON_OFF and being used for disarm
-	UNIT_FLAG_UNKNOWN_32                 = 0x80000000, // 32  2147483648
+{	//											Hex	Bit	 Decimal  Comments
+	UNIT_FLAG_UNKNOWN_1				  = 0x00000001, // 1			1
+	UNIT_FLAG_NOT_ATTACKABLE_2		   = 0x00000002, // 2			2  client won't let you attack them
+	UNIT_FLAG_LOCK_PLAYER				= 0x00000004, // 3			4  ? does nothing to client (probably wrong) - only taxi code checks this
+	UNIT_FLAG_PLAYER_CONTROLLED		  = 0x00000008, // 4			8  makes players and NPCs attackable / not attackable
+	UNIT_FLAG_UNKNOWN_5				  = 0x00000010, // 5		   16  ? some NPCs have this
+	UNIT_FLAG_UNKNOWN_6				  = 0x00000020, // 6		   32
+	UNIT_FLAG_PLUS_MOB				   = 0x00000040, // 7		   64  ? some NPCs have this (Rare/Elite/Boss?)
+	UNIT_FLAG_UNKNOWN_8				  = 0x00000080, // 8		  128  ? can change attackable status 
+	UNIT_FLAG_NOT_ATTACKABLE_9		   = 0x00000100, // 9		  256  changes attackable status
+	UNIT_FLAG_UNKNOWN_10				 = 0x00000200, // 10		 512  ? some NPCs have this
+	UNIT_FLAG_LOOTING					= 0x00000400, // 11		1024
+	UNIT_FLAG_SELF_RES				   = 0x00000800, // 12		2048  ? some NPCs have this
+	UNIT_FLAG_PVP						= 0x00001000, // 13		4096  sets PvP flag
+	UNIT_FLAG_SILENCED				   = 0x00002000, // 14		8192
+	UNIT_FLAG_DEAD					   = 0x00004000, // 15	   16384  used for special "dead" NPCs like Withered Corpses
+	UNIT_FLAG_UNKNOWN_16				 = 0x00008000, // 16	   32768  ? some NPCs have this
+	UNIT_FLAG_ALIVE					  = 0x00010000, // 17	   65536  ?
+	UNIT_FLAG_PACIFIED				   = 0x00020000, // 18	  131072
+	UNIT_FLAG_STUNNED					= 0x00040000, // 19	  262144
+	UNIT_FLAG_COMBAT					 = 0x00080000, // 20	  524288  sets combat flag
+	UNIT_FLAG_MOUNTED_TAXI			   = 0x00100000, // 21	 1048576  mounted on a taxi
+	UNIT_FLAG_DISARMED				   = 0x00200000, // 22	 2097152
+	UNIT_FLAG_CONFUSED				   = 0x00400000, // 23	 4194304
+	UNIT_FLAG_FLEEING					= 0x00800000, // 24	 8388608  fear
+	UNIT_FLAG_PLAYER_CONTROLLED_CREATURE = 0x01000000, // 25	16777216
+	UNIT_FLAG_NOT_SELECTABLE			 = 0x02000000, // 26	33554432  cannot select the unit
+	UNIT_FLAG_SKINNABLE				  = 0x04000000, // 27	67108864
+	UNIT_FLAG_UNKNOWN_28				 = 0x08000000, // 28   134217728  ? was MAKE_CHAR_UNTOUCHABLE (probably wrong), nothing ever set it
+	UNIT_FLAG_UNKNOWN_29				 = 0x10000000, // 29   268435456
+	UNIT_FLAG_FEIGN_DEATH				= 0x20000000, // 30   536870912
+	UNIT_FLAG_UNKNOWN_31				 = 0x40000000, // 31  1073741824  ? was WEAPON_OFF and being used for disarm
+	UNIT_FLAG_UNKNOWN_32				 = 0x80000000, // 32  2147483648
 };
 
 enum UnitDynamicFlags
@@ -540,15 +540,15 @@ enum HitStatus
 {
 	HITSTATUS_unk			= 0x01,
 	HITSTATUS_HITANIMATION  = 0x02,
-	HITSTATUS_DUALWIELD     = 0x04,
-	HITSTATUS_MISS          = 0x10,
-	HITSTATUS_ABSORBED      = 0x20,
-	HITSTATUS_RESIST        = 0x40,
-	HITSTATUS_CRICTICAL     = 0x80,
-	HITSTATUS_BLOCK         = 0x800,
-	HITSTATUS_GLANCING      = 0x4000,
+	HITSTATUS_DUALWIELD	 = 0x04,
+	HITSTATUS_MISS		  = 0x10,
+	HITSTATUS_ABSORBED	  = 0x20,
+	HITSTATUS_RESIST		= 0x40,
+	HITSTATUS_CRICTICAL	 = 0x80,
+	HITSTATUS_BLOCK		 = 0x800,
+	HITSTATUS_GLANCING	  = 0x4000,
 	HITSTATUS_CRUSHINGBLOW  = 0x8000,
-	HITSTATUS_NOACTION      = 0x10000,
+	HITSTATUS_NOACTION	  = 0x10000,
 	HITSTATUS_SWINGNOHITSOUND = 0x80000 // as in miss?
 };
 
@@ -588,7 +588,7 @@ enum AURA_CHECK_RESULT
 typedef std::list<struct ProcTriggerSpellOnSpell> ProcTriggerSpellOnSpellList;
 
 /************************************************************************/
-/* "In-Combat" Handler                                                  */
+/* "In-Combat" Handler												  */
 /************************************************************************/
 
 class Unit;
@@ -674,7 +674,7 @@ public:
 	virtual void RemoveFromWorld(bool free_guid);
 	virtual void OnPushToWorld();
 
-    void setAttackTimer(int32 time, bool offhand);
+	void setAttackTimer(int32 time, bool offhand);
 	bool isAttackReady(bool offhand);
 
 	ONYX_INLINE void SetDuelWield(bool enabled)
@@ -727,7 +727,7 @@ public:
 
 	bool isCasting();
 	bool IsInInstance();
-    void CalculateResistanceReduction(Unit *pVictim,dealdamage *dmg,SpellEntry* ability) ;
+	void CalculateResistanceReduction(Unit *pVictim,dealdamage *dmg,SpellEntry* ability) ;
 	void RegenerateHealth();
 	void RegeneratePower(bool isinterrupted);
 	ONYX_INLINE void setHRegenTimer(uint32 time) {m_H_regenTimer = time; }
@@ -792,7 +792,7 @@ public:
 	//! Remove all auras
 	void RemoveAllAuras();
 	bool RemoveAllAuras(uint32 spellId,uint64 guid); //remove stacked auras but only if they come from the same caster. Shaman purge If GUID = 0 then removes all auras with this spellid
-    void RemoveAllAuraType(uint32 auratype);//ex:to remove morph spells
+	void RemoveAllAuraType(uint32 auratype);//ex:to remove morph spells
 	bool RemoveAllAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllPosAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllNegAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
@@ -959,7 +959,7 @@ public:
 	void RegisterPeriodicChatMessage(uint32 delay, uint32 msgid, std::string message, bool sendnotify);
 
 	ONYX_INLINE int GetHealthPct() { return (int)((GetUInt32Value(UNIT_FIELD_HEALTH)+1) * 100 / (GetUInt32Value(UNIT_FIELD_MAXHEALTH)+1)); };
-    ONYX_INLINE void SetHealthPct(uint32 val) { if (val>0) SetUInt32Value(UNIT_FIELD_HEALTH,float2int32(val*0.01f*GetUInt32Value(UNIT_FIELD_MAXHEALTH))); };
+	ONYX_INLINE void SetHealthPct(uint32 val) { if (val>0) SetUInt32Value(UNIT_FIELD_HEALTH,float2int32(val*0.01f*GetUInt32Value(UNIT_FIELD_MAXHEALTH))); };
 	ONYX_INLINE int GetManaPct() { return (int)((GetUInt32Value(UNIT_FIELD_POWER1)+1) * 100 / (GetUInt32Value(UNIT_FIELD_MAXPOWER1)+1)); };
 		
 	uint32 GetResistance(uint32 type);	

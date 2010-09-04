@@ -130,7 +130,7 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	m_instanceLock.Acquire();
 	for(map<uint32, CBattleground*>::iterator itr = m_instances[BattlegroundType].begin(); itr != m_instances[BattlegroundType].end(); ++itr)
 	{
-        if( itr->second->GetLevelGroup() == LevelGroup && itr->second->CanPlayerJoin(m_session->GetPlayer()) && !itr->second->HasEnded() )
+		if( itr->second->GetLevelGroup() == LevelGroup && itr->second->CanPlayerJoin(m_session->GetPlayer()) && !itr->second->HasEnded() )
 		{
 			data << itr->first;
 			++Count;
@@ -179,7 +179,7 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 		if( m_session->GetPlayer()->GetGroup() != NULL )
 			RemoveGroupFromQueues( m_session->GetPlayer()->GetGroup() );
 	}
-    
+	
 	/* Queue him! */
 	m_queueLock.Acquire();
 	m_queuedPlayers[bgtype][lgroup].push_back(pguid);
@@ -244,11 +244,11 @@ void CBattlegroundManager::EventQueueUpdate()
 			for(it3 = m_queuedPlayers[i][j].begin(); it3 != m_queuedPlayers[i][j].end();)
 			{
 				it4 = it3++;
-                plr = objmgr.GetPlayer(*it4);
+				plr = objmgr.GetPlayer(*it4);
 				
 				if(!plr || GetLevelGrouping(plr->getLevel()) != j)
 				{
-                    m_queuedPlayers[i][j].erase(it4);
+					m_queuedPlayers[i][j].erase(it4);
 					continue;
 				}
 
@@ -291,7 +291,7 @@ void CBattlegroundManager::EventQueueUpdate()
 
 				if(IS_ARENA(i))
 				{
-                    arena = ((Arena*)iitr->second);
+					arena = ((Arena*)iitr->second);
 					if(arena->Rated())
 						continue;
 
@@ -576,7 +576,7 @@ void CBattlegroundManager::RemovePlayerFromQueues(Player * plr)
 	plr->m_bgTeam=plr->GetTeam();
 	plr->m_pendingBattleground=0;
 	SendBattlefieldStatus(plr,0,0,0,0,0,0);
-    m_queueLock.Release();
+	m_queueLock.Release();
 }
 
 void CBattlegroundManager::RemoveGroupFromQueues(Group * grp)
@@ -966,13 +966,13 @@ CBattleground * CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGr
 		case BATTLEGROUND_ARENA_5V5:
 			players_per_side = 5;
 			break;
-        default:
-            players_per_side = 0;
-            break;
+		default:
+			players_per_side = 0;
+			break;
 		}
 
 		iid = ++m_maxBattlegroundId;
-        bg = new Arena(mgr, iid, LevelGroup, Type, players_per_side);
+		bg = new Arena(mgr, iid, LevelGroup, Type, players_per_side);
 		mgr->m_battleground = bg;
 		Log.Success("BattlegroundManager", "Created arena battleground type %u for level group %u on map %u.", Type, LevelGroup, mapid);
 		sEventMgr.AddEvent(bg, &CBattleground::EventCreate, EVENT_BATTLEGROUND_QUEUE_UPDATE, 1, 1,0);
@@ -1246,7 +1246,7 @@ void CBattleground::RemovePlayer(Player * plr, bool logout)
 }
 
 void CBattleground::SendPVPData(Player * plr)
-{              
+{			  
 	m_mainLock.Acquire();
 	/*if(m_type >= BATTLEGROUND_ARENA_2V2 && m_type <= BATTLEGROUND_ARENA_5V5)
 	{
@@ -1329,7 +1329,7 @@ void CBattleground::Close()
 			++itr;
 			RemovePlayer(plr, false);
 		}
-        
+		
 		for(it2 = m_pendPlayers[i].begin(); it2 != m_pendPlayers[i].end();)
 		{
 			guid = *it2;
@@ -1477,7 +1477,7 @@ void CBattleground::EventResurrectPlayers()
 			plr = m_mapMgr->GetPlayer(*itr);
 			if(plr && plr->isDead())
 			{
-                data.Initialize(SMSG_SPELL_START);
+				data.Initialize(SMSG_SPELL_START);
 				data << plr->GetNewGUID() << plr->GetNewGUID() << uint32(RESURRECT_SPELL) << uint8(0) << uint16(0) << uint32(0) << uint16(2) << plr->GetGUID();
 				plr->SendMessageToSet(&data, true);
 

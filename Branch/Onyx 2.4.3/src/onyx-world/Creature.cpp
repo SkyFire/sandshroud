@@ -91,7 +91,7 @@ Creature::Creature(uint64 guid)
 	m_base_runSpeed = m_runSpeed;
 	m_base_walkSpeed = m_walkSpeed;
 	m_noRespawn=false;
-    m_canRegenerateHP = true;
+	m_canRegenerateHP = true;
 	m_transportGuid = 0;
 	m_transportPosition = NULL;
 	BaseAttackType = SCHOOL_NORMAL;
@@ -675,6 +675,7 @@ void Creature::AddVendorItem(uint32 itemid, uint32 amount)
 	ci.available_amount = 0;
 	ci.max_amount = 0;
 	ci.incrtime = 0;
+	ci.ExcludeUnusable = false;
 	if(!m_SellItems)
 	{
 		m_SellItems = new vector<CreatureItem>;
@@ -697,7 +698,7 @@ void Creature::ModAvItemAmount(uint32 itemid, uint32 value)
 				}
 				else
 					itr->available_amount -= value;
-                
+				
 				if(!event_HasEvent(EVENT_ITEM_UPDATE))
 					sEventMgr.AddEvent(this, &Creature::UpdateItemAmount, itr->itemid, EVENT_ITEM_UPDATE, itr->incrtime, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 			}
@@ -899,7 +900,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID,model);
 	SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID,proto->MountedDisplayID);
 
-    //SetUInt32Value(UNIT_FIELD_LEVEL, (mode ? proto->Level + (info ? info->lvl_mod_a : 0) : proto->Level));
+	//SetUInt32Value(UNIT_FIELD_LEVEL, (mode ? proto->Level + (info ? info->lvl_mod_a : 0) : proto->Level));
 	SetUInt32Value(UNIT_FIELD_LEVEL, proto->MinLevel + (RandomUInt(proto->MaxLevel - proto->MinLevel)));
 	if(mode && info)
 		ModUnsigned32Value(UNIT_FIELD_LEVEL, info->lvl_mod_a);

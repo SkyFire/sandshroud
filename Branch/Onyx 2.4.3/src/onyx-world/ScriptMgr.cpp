@@ -19,13 +19,13 @@
 
 #include "StdAfx.h"
 #ifndef WIN32
-    #include <dlfcn.h>
-    #include <unistd.h>
-    #include <dirent.h>
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <cstdlib>
-    #include <cstring>
+	#include <dlfcn.h>
+	#include <unistd.h>
+	#include <dirent.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <cstdlib>
+	#include <cstring>
 #endif
 
 #include <svn_revision.h>
@@ -197,7 +197,7 @@ char *ext;
 #ifdef HAVE_DARWIN
 			if (ext != NULL && strstr(list[filecount]->d_name, ".0.dylib") == NULL && !strcmp(ext, ".dylib")) {
 #else
-                        if (ext != NULL && !strcmp(ext, ".so")) {
+						if (ext != NULL && !strcmp(ext, ".so")) {
 #endif
 				string full_path = "../lib/" + string(list[filecount]->d_name);
 				SCRIPT_MODULE mod = dlopen(full_path.c_str(), RTLD_NOW);
@@ -515,7 +515,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 			Menu->SetTextID(pTrainer->Can_Train_Gossip_TextId);
 		else
 			Menu->SetTextID(pTrainer->Cannot_Train_GossipTextId);
-        
+		
 		string msg = "I seek ";
 		if(pTrainer->RequiredClass)
 		{
