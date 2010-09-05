@@ -1065,3 +1065,35 @@ bool ChatHandler::HandleSendpacket(const char * args, WorldSession * m_session)
 #endif
 	return true;
 }
+bool ChatHandler::HandleDebugGoDamage(const char* args, WorldSession *m_session)
+{
+	GameObject* GObj = NULLGOB;
+
+	GObj = m_session->GetPlayer()->m_GM_SelectedGO;
+	if( !GObj )
+	{
+		RedSystemMessage(m_session, "No selected GameObject...");
+		return true;
+	}
+	uint32 damage = (float)atof(args);
+	GObj->TakeDamage(uint32(damage),  m_session->GetPlayer(), m_session->GetPlayer(), 5555);
+	BlueSystemMessage(m_session, "Gameobject Has Taken %u", damage);
+	return true;
+}
+
+bool ChatHandler::HandleDebugGoRepair(const char* args, WorldSession *m_session)
+{
+	GameObject* GObj = NULLGOB;
+
+	GObj = m_session->GetPlayer()->m_GM_SelectedGO;
+	if( !GObj )
+	{
+		RedSystemMessage(m_session, "No selected GameObject...");
+		return true;
+	}
+	GObj->Rebuild();
+	
+	BlueSystemMessage(m_session, "Gameobject rebuilt.");
+	return true;
+
+}

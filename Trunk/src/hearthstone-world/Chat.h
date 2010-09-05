@@ -245,6 +245,8 @@ protected:
 
 	// Debug Commands
 	bool HandleDebugSetPhase(const char* args, WorldSession *m_session);
+	bool HandleDebugGoDamage(const char* args, WorldSession *m_session);
+	bool HandleDebugGoRepair(const char* args, WorldSession *m_session);
 	bool HandleDebugInFrontCommand(const char* args, WorldSession *m_session);
 	bool HandleShowReactionCommand(const char* args, WorldSession *m_session);
 	bool HandleAIMoveCommand(const char* args, WorldSession *m_session);

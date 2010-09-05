@@ -355,7 +355,7 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && (*itr)->GetGUID() != v_caster->GetGUID())
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -435,7 +435,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && (*itr)->GetGUID() != v_caster->GetGUID())
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -2831,7 +2831,13 @@ Object* Spell::_LookupObject(const uint64& guid)
 
 void Spell::_SetTargets(const uint64& guid)
 {
-	if(guid == m_caster->GetGUID())
+	if(guid == 0)
+	{
+		unitTarget = 0;
+		gameObjTarget = 0;
+		playerTarget = 0;
+	}
+	else if(guid == m_caster->GetGUID())
 	{
 		unitTarget = u_caster;
 		gameObjTarget = g_caster;

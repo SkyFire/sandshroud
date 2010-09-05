@@ -279,7 +279,7 @@ public:
 
 	void Disconnect()
 	{
-		if(_socket && _socket->IsConnected())
+		if(_socket && _socket->IsConnected() && !_socket->GetSession()->HasGMPermissions())
 			_socket->Disconnect();
 	}
 

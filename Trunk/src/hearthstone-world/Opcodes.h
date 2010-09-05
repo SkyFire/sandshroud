@@ -1317,7 +1317,7 @@ enum Opcodes
     CMSG_UNKNOWN_1288                               = 0x508, // lua: SetAllowLowLevelRaid
     CMSG_UNKNOWN_1289                               = 0x509, // lua: SetAllowLowLevelRaid
     SMSG_UNKNOWN_1290                               = 0x50A, // uint32 SpellEffectCameraShakes.dbc uint32, camera shake?
-    SMSG_UNKNOWN_1291                               = 0x50B, // some item update packet?
+    SMSG_UPDATE_ITEM_ENCHANTMENTS                   = 0x50B, // some item update packet?
     UMSG_UNKNOWN_1292                               = 0x50C, // not found
     SMSG_UNKNOWN_1293                               = 0x50D, //
     CMSG_UNKNOWN_1294                               = 0x50E, // something with networking

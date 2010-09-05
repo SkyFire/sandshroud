@@ -4858,12 +4858,12 @@ int LuaUnit_SetPosition(lua_State * L, Unit * ptr)
 
 int LuaUnit_GetLandHeight(lua_State * L, Unit * ptr)
 {
-	float x = CHECK_FLOAT(L,1);
+	/*float x = CHECK_FLOAT(L,1);
 	float y = CHECK_FLOAT(L,2);
 	if (!ptr || !x || !y) 
 		return 0;
 	float lH = ptr->GetMapMgr()->GetLandHeight(x,y);
-	lua_pushnumber(L, lH);
+	lua_pushnumber(L, lH);*/
 	return 1;
 }
 

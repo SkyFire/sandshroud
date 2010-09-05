@@ -241,6 +241,8 @@ void CommandTableStorage::Init()
 	{
 		{ "retroactivequest", 'd', &ChatHandler::HandleDebugRetroactiveQuestAchievements, "",		NULL, 0, 0, 0},
 		{ "setphase",    'd', &ChatHandler::HandleDebugSetPhase, "",								NULL, 0, 0, 0},
+		{ "damagego",    'd', &ChatHandler::HandleDebugGoDamage, "",								NULL, 0, 0, 0},
+		{ "repairgo",    'd', &ChatHandler::HandleDebugGoRepair, "",								NULL, 0, 0, 0},
 		{ "infront",	 'd', &ChatHandler::HandleDebugInFrontCommand,  "",							   NULL, 0, 0, 0},
 		{ "showreact",   'd', &ChatHandler::HandleShowReactionCommand,  "",							   NULL, 0, 0, 0},
 		{ "aimove",	  'd', &ChatHandler::HandleAIMoveCommand,		"",							   NULL, 0, 0, 0},

@@ -78,25 +78,20 @@ bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_sessi
 
 	sWorld.SendWorldWideScreenText(pAnnounce); // send message
 	sGMLog.writefromsession(m_session, "used wannounce command [%s]", args);
-	//sWorld.SendForcedIRCMessage(pAnnounce);
 	return true;
 }
 
 
 bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 {
-	/*uint32 newbytes = m_session->GetPlayer( )->GetUInt32Value(PLAYER_BYTES_2) | 0x8;
-	m_session->GetPlayer( )->SetUInt32Value( PLAYER_BYTES_2, newbytes);
-
-	GreenSystemMessage(m_session, "GM Flag Set.");*/
 	GreenSystemMessage(m_session, "Setting GM Flag on yourself...");
 	if(m_session->GetPlayer()->bGMTagOn)
-		RedSystemMessage(m_session, "GM Flag is already set on. Use !gmoff to disable it.");
+		RedSystemMessage(m_session, "GM Flag is already set on. Use .gm off to disable it.");
 	else
 	{
 		m_session->GetPlayer()->bGMTagOn = true;
 		m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
-		BlueSystemMessage(m_session, "GM Flag Set. It will appear above your name and in chat messages until you use !gmoff.");
+		BlueSystemMessage(m_session, "GM Flag Set. It will appear above your name and in chat messages until you use .gm off.");
 	}
 
 	return true;
@@ -105,13 +100,9 @@ bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 {
-	//uint32 newbytes = m_session->GetPlayer( )->GetUInt32Value(PLAYER_BYTES_2) & ~(0x8);
-	//m_session->GetPlayer( )->SetUInt32Value( PLAYER_BYTES_2, newbytes);
-
-	//GreenSystemMessage(m_session, "GM Flag Unset.");
 	GreenSystemMessage(m_session, "Unsetting GM Flag on yourself...");
 	if(!m_session->GetPlayer()->bGMTagOn)
-		RedSystemMessage(m_session, "GM Flag not set. Use !gmon to enable it.");
+		RedSystemMessage(m_session, "GM Flag not set. Use .gm on to enable it.");
 	else
 	{
 		m_session->GetPlayer()->bGMTagOn = false;
@@ -176,20 +167,12 @@ bool ChatHandler::HandleKickCommand(const char* args, WorldSession *m_session)
 			RedSystemMessage(m_session, "You cannot kick %s, as they are a higher level gm than you.", chr->GetName());
 			return true;
 		}
-		/*if(m_session->GetSecurity() < chr->GetSession()->GetSecurity())
-		{
-			SystemMessage(m_session, "You cannot kick %s, as he is a higher GM level than you.", chr->GetName());
-			return true;
-		}*/ // we might have to re-work this
 
 		char msg[200];
 		snprintf(msg, 200, "%s%s was kicked by %s (%s)", MSG_COLOR_WHITE, chr->GetName(), m_session->GetPlayer()->GetName(), kickreason.c_str());
 		sWorld.SendWorldText(msg, NULL);
-		//sWorld.SendIRCMessage(msg);
 		SystemMessageToPlr(chr, "You are being kicked from the server by %s. Reason: %s", m_session->GetPlayer()->GetName(), kickreason.c_str());
-
-		chr->Kick(6000);
-		
+		chr->Kick(6000);	
 		return true;
 	} 
 	else 
@@ -425,9 +408,19 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 		return true;
 	}
 
-	Player* chr = getSelectedChar(m_session);
-	if( chr == NULL )
-		return true;
+	Player* chr = getSelectedChar(m_session, false);
+	if(!chr)
+	{
+		Creature* ctr = getSelectedCreature(m_session, false);
+		if(ctr != NULL && ctr->IsVehicle())
+		{
+			TO_VEHICLE(ctr)->SetSpeed(RUN,Speed);
+			return true;
+		}
+		RedSystemMessage(m_session, "You have no target!");
+		return false;
+	}
+
 
 	if(Speed == 0)
 		Speed = PLAYER_NORMAL_RUN_SPEED + float(chr->m_speedModifier);
@@ -645,19 +638,14 @@ bool ChatHandler::HandleGenderChanger(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleModifyGoldCommand(const char* args, WorldSession *m_session)
 {
-//	WorldPacket data;
-
 	if ( *args == 0 )
 		return false;
 
 	Player* chr = getSelectedChar( m_session, true );
-	if( chr == NULL ) return true;
+	if( chr == NULL ) 
+		return true;
 
 	int32 total   = atoi( (char*)args );
-
-	// gold = total / 10000;
-	// silver = (total / 100) % 100;
-	// copper = total % 100;
 	uint32 gold   = (uint32) floor( (float)int32abs( total ) / 10000.0f );
 	uint32 silver = (uint32) floor( ((float)int32abs( total ) / 100.0f) ) % 100;
 	uint32 copper = int32abs2uint32( total ) % 100;
@@ -674,31 +662,19 @@ bool ChatHandler::HandleModifyGoldCommand(const char* args, WorldSession *m_sess
 	}
 	else
 	{
-		if(total >= 0) {
-			BlueSystemMessage( m_session,
-				"Adding %u gold, %u silver, %u copper to %s's backpack...",
-				gold, silver, copper,
-				chr->GetName() );
-
-			GreenSystemMessageToPlr( chr, "%s added %u gold, %u silver, %u copper to your backpack.",
-				m_session->GetPlayer()->GetName(),
-				gold, silver, copper );
+		if(total >= 0) 
+		{
+			BlueSystemMessage( m_session, "Adding %u gold, %u silver, %u copper to %s's backpack...", gold, silver, copper, chr->GetName() );
+			GreenSystemMessageToPlr( chr, "%s added %u gold, %u silver, %u copper to your backpack.", m_session->GetPlayer()->GetName(), gold, silver, copper );
 		}
 		else
 		{
-			BlueSystemMessage( m_session,
-				"Taking %u gold, %u silver, %u copper from %s's backpack...",
-				gold, silver, copper,
-				chr->GetName() );
-
-			GreenSystemMessageToPlr( chr, "%s took %u gold, %u silver, %u copper from your backpack.",
-				m_session->GetPlayer()->GetName(),
-				gold, silver, copper );
+			BlueSystemMessage( m_session, "Taking %u gold, %u silver, %u copper from %s's backpack...", gold, silver, copper, chr->GetName() );
+			GreenSystemMessageToPlr( chr, "%s took %u gold, %u silver, %u copper from your backpack.", m_session->GetPlayer()->GetName(), gold, silver, copper );
 		}
 	}
 
-	chr->SetUInt32Value( PLAYER_FIELD_COINAGE, newgold );
-	
+	chr->SetUInt32Value( PLAYER_FIELD_COINAGE, newgold );	
 	return true;
 }
 
@@ -719,11 +695,8 @@ bool ChatHandler::HandleTriggerCommand(const char* args, WorldSession* m_session
 		return true;
 	}
 
-	m_session->GetPlayer()->SafeTeleport(pTrigger->Mapid, instance_id, LocationVector(pTrigger->x, pTrigger->y,
-			pTrigger->z, pTrigger->o));
-
-	BlueSystemMessage(m_session, "Teleported to trigger %u on [%u][%.2f][%.2f][%.2f]", pTrigger->AreaTriggerID,
-		pTrigger->Mapid, pTrigger->x, pTrigger->y, pTrigger->z);
+	m_session->GetPlayer()->SafeTeleport(pTrigger->Mapid, instance_id, LocationVector(pTrigger->x, pTrigger->y, pTrigger->z, pTrigger->o));
+	BlueSystemMessage(m_session, "Teleported to trigger %u on [%u][%.2f][%.2f][%.2f]", pTrigger->AreaTriggerID, pTrigger->Mapid, pTrigger->x, pTrigger->y, pTrigger->z);
 	return true;
 }
 
@@ -748,9 +721,7 @@ bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_sessio
 		plr->removeSpell(SpellId, false, false, 0);
 	}
 	else
-	{
 		RedSystemMessage(m_session, "That player does not have spell %u learnt.", SpellId);
-	}
 
 	return true;
 }
@@ -771,9 +742,7 @@ bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_se
 		BlueSystemMessage(m_session, "Spawn linking for this NPC has been updated: %u", id);
 	}
 	else
-	{
 		RedSystemMessage(m_session, "Sql entry invalid %u", id);
-	}
 
 	return true;
 }

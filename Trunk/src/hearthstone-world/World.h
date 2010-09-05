@@ -251,6 +251,77 @@ enum REALM_TYPE
 };
 struct AreaTable;
 
+struct insert_playeritem
+{
+	uint32 ownerguid;
+	uint32 entry;
+	uint32 wrapped_item_id;
+	uint32 wrapped_creator;
+	uint32 creator;
+	uint32 count;
+	uint32 charges;
+	uint32 flags;
+	uint32 randomprop;
+	uint32 randomsuffix;
+	uint32 itemtext;
+	uint32 durability;
+	int32 containerslot;
+	int32 slot;
+	string enchantments;
+};
+
+struct insert_playerskill
+{
+	uint32 player_guid;
+	uint32 skill_id;
+	uint32 type;
+	uint32 currentlvl;
+	uint32 maxlvl;
+};
+
+struct insert_playerquest 
+{ 
+	uint32 player_guid; 
+	uint32 quest_id; 
+	uint32 slot; 
+	uint32 time_left; 
+	uint32 explored_area1; 
+	uint32 explored_area2; 
+	uint32 explored_area3; 
+	uint32 explored_area4; 
+	uint32 mob_kill1; 
+	uint32 mob_kill2; 
+	uint32 mob_kill3; 
+	uint32 mob_kill4; 
+	uint32 slain;
+};
+
+struct insert_playerglyph 
+{ 
+	uint32 player_guid; 
+	uint32 spec; 
+	uint32 glyph1; 
+	uint32 glyph2; 
+	uint32 glyph3; 
+	uint32 glyph4; 
+	uint32 glyph5; 
+	uint32 glyph6; 
+};
+
+struct insert_playertalent 
+{ 
+	uint32 player_guid; 
+	uint32 spec; 
+	uint32 tid; 
+	uint32 rank; 
+};
+
+struct insert_playerspell 
+{ 
+	uint32 player_guid; 
+	uint32 spellid; 
+};
+
 class BasicTaskExecutor : public ThreadContext
 {
 	CallbackBase * cb;
@@ -583,6 +654,7 @@ public:
 	bool ab_enabled;
 	bool wsg_enabled;
 	bool eots_enabled;
+	bool log_chats;
 
 	// Level Caps
 	uint32 LevelCap_Custom_All;

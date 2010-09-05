@@ -93,7 +93,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 	else
 		recv_data >> msg;
 
-	if(!sHookInterface.OnChat(_player, type, lang, msg, misc))
+	if(!sHookInterface.OnChat(_player, type, lang, msg, misc) && !(m_muted && m_muted >= (uint32)UNIXTIME))
 		return;
 
 	// Idiots spamming giant pictures through the chat system
@@ -264,8 +264,9 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				data = sChatHandler.FillMessageData( CHAT_MSG_EMOTE, CanUseCommand('c') ? LANG_UNIVERSAL : lang,  msg.c_str(), _player->GetGUID(), _player->GetChatTag());
 
 			GetPlayer()->SendMessageToSet( data, true ,true );
+			if(sWorld.log_chats)
+				sLog.outString("[emote] %s: %s", _player->GetName(), msg.c_str());
 			delete data;
-
 		}break;
 	case CHAT_MSG_SAY:
 		{
@@ -293,6 +294,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 						(*itr)->GetSession()->SendChatPacket(data, 1, lang, this);
 				}
 			}
+			if(sWorld.log_chats && msg.c_str()[0] != '.')
+				sLog.outString("[say] %s: %s", _player->GetName(), msg.c_str());
 			delete data;
 		} break;
 	case CHAT_MSG_PARTY:
@@ -306,17 +309,18 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				break;
 
 			Group *pGroup = _player->GetGroup();
-			if(pGroup == NULL) break;
+			if(pGroup == NULL) 
+				break;
 			
 			if(GetPlayer()->m_modlanguage >=0)
 				data=sChatHandler.FillMessageData( type, GetPlayer()->m_modlanguage,  msg.c_str(), _player->GetGUID(), _player->GetChatTag());
 			else
 				data=sChatHandler.FillMessageData( type, (CanUseCommand('c') && lang != -1) ? LANG_UNIVERSAL : lang, msg.c_str(), _player->GetGUID(), _player->GetChatTag());
+
 			if((type == CHAT_MSG_PARTY || type == CHAT_MSG_PARTY_LEADER) && pGroup->GetGroupType() == GROUP_TYPE_RAID)
 			{
 				// only send to that subgroup
-				SubGroup * sgr = _player->GetGroup() ?
-					_player->GetGroup()->GetSubGroup(_player->GetSubGroup()) : 0;
+				SubGroup * sgr = _player->GetGroup() ? _player->GetGroup()->GetSubGroup(_player->GetSubGroup()) : 0;
 
 				if(sgr)
 				{
@@ -344,6 +348,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 					_player->GetGroup()->Unlock();
 				}
 			}
+			if(sWorld.log_chats && msg.c_str()[0] != '.')
+				sLog.outString("[Party/Raid/Battleground] %s: %s", _player->GetName(), msg.c_str());
 			delete data;
 		} break;
 	case CHAT_MSG_GUILD:
@@ -353,6 +359,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 			if(_player->m_playerInfo->guild != NULL)
 				_player->m_playerInfo->guild->GuildChat(msg.c_str(), this, lang);
+			if(sWorld.log_chats && msg.c_str()[0] != '.')
+				sLog.outString("[guild: %s] %s: %s", _player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_OFFICER:
 		{
@@ -361,6 +369,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 			if(_player->m_playerInfo->guild != NULL)
 				_player->m_playerInfo->guild->OfficerChat(msg.c_str(), this, lang);
+			if(sWorld.log_chats && msg.c_str()[0] != '.')
+				sLog.outString("[Officer Chat Guild: %s] %s: %s" ,_player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_YELL:
 		{
@@ -378,6 +388,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 			_player->GetMapMgr()->SendChatMessageToCellPlayers(_player, data, 2, 1, lang, this);
 			delete data;
+			if(sWorld.log_chats && msg.c_str()[0] != '.')
+				sLog.outString("[Yell] %s: %s", _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_WHISPER:
 		{
@@ -453,7 +465,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				SendPacket(data);
 				delete data;
 			}
-
+			if(sWorld.log_chats)
+				sLog.outString("[whisper] %s to %s: %s", _player->GetName(), player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_CHANNEL:
 		{
@@ -463,6 +476,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			Channel *chn = channelmgr.GetChannel(misc.c_str(),GetPlayer()); 
 			if(chn != NULL)
 				chn->Say(GetPlayer(),msg.c_str(), NULLPLR, false);
+			if(sWorld.log_chats && msg.c_str()[0] != '.')
+				sLog.outString("[%s] %s: %s", misc.c_str(), _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_AFK:
 		{
