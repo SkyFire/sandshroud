@@ -56,18 +56,20 @@ std::string FormatOutputString(const char * Prefix, const char * Description, bo
 
 class SERVER_DECL oLog : public Singleton< oLog > {
 public:
-  void outString( const char * str, ... );
-  void outDebug( const char * str, ... );
-  void outDebugInLine( const char * str, ... );
+	void outString( const char * str, ... );
+	void outError( const char * err, ... );
+	void outDebug( const char * str, ... );
+	void outDebugInLine( const char * str, ... );
+	void outTime( );
 
-  void fLogText(const char *text);
-  void SetLogging(bool enabled);
-  
-  void Init();
-  void outColor(uint32 colorcode, const char * str, ...);
-  
+	void fLogText(const char *text);
+	void SetLogging(bool enabled);
+
+	void Init();
+	void outColor(uint32 colorcode, const char * str, ...);
+
 #ifdef WIN32
-  HANDLE stdout_handle, stderr_handle;
+	HANDLE stdout_handle, stderr_handle;
 #endif
 };
 

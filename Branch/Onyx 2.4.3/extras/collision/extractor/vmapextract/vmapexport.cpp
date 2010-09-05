@@ -288,6 +288,11 @@ void ParsMapFiles()
 void getGamePath()
 {
 #ifdef _WIN32
+    strcat(input_path,"\\Data\\");
+#else
+    strcpy(input_path,"data/");
+#endif
+/*#ifdef _WIN32
     HKEY key;
     DWORD t,s;
     LONG l;
@@ -304,7 +309,7 @@ void getGamePath()
     strcat(input_path,"Data\\");
 #else
     strcpy(input_path,"data/");
-#endif
+#endif*/
 }
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

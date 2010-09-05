@@ -1715,13 +1715,16 @@ void Spell::SendCastResult(uint8 result)
 
 	SetSpellFailed();
 
-	if(!m_caster->IsInWorld()) return;
+	if(!m_caster->IsInWorld())
+		return;
 
 	Player * plr = p_caster;
 
 	if(!plr && u_caster)
 		plr = u_caster->m_redirectSpellPackets;
-	if(!plr) return;
+
+	if(!plr)
+		return;
 
 	// reset cooldowns
 	if( m_spellState == SPELL_STATE_PREPARING )

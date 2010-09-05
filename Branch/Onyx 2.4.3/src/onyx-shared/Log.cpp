@@ -73,6 +73,29 @@ void oLog::outString( const char * str, ... )
 	va_end(ap);
 }
 
+void oLog::outError( const char * err, ... )
+{
+	va_list ap;
+	char buf[32768];
+
+	va_start(ap, err);
+	vsnprintf(buf, 32768, err, ap);
+	va_end(ap);
+
+#ifdef WIN32
+	SetConsoleTextAttribute(stderr_handle, FOREGROUND_RED | FOREGROUND_INTENSITY);
+#else
+	puts(colorstrings[TRED]);
+#endif
+	fprintf(stderr, buf);
+	putc('\n', stderr);
+#ifdef WIN32
+	SetConsoleTextAttribute(stderr_handle, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+#else
+	puts(colorstrings[TNORMAL]);
+#endif
+}
+
 void oLog::outDebug( const char * str, ... )
 {
 	va_list ap;
@@ -97,6 +120,21 @@ void oLog::outDebugInLine(const char * str, ...)
 	va_end(ap);
 
 	printf(buf);
+}
+
+void oLog::outTime()
+{
+#ifndef WIN32
+	char buf[256];
+	time_t t = time(NULL);
+	struct tm *tm = localtime(&t);
+
+	if (tm)
+	{
+		strftime(buf, 256, "[%Y-%m-%d %T] ", tm);
+		fprintf(m_file, buf);
+	}
+#endif
 }
 
 void oLog::Init()

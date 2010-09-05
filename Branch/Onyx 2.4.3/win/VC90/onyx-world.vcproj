@@ -980,6 +980,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\onyx-world\resources.rc"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\onyx-world\ScriptMgr.cpp"
 			>
 		</File>

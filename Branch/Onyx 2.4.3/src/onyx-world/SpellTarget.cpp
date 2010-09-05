@@ -213,6 +213,7 @@ void Spell::FillTargetMap(uint32 i)
 	// if all secondary targets are 0 then use only primary targets
 	if(!TypeB)
 	{
+//		sLog.outString("Target Type for spell %u: %u", m_spellInfo->Id, TypeA);
 		if(TypeA < TOTAL_SPELL_TARGET)
 			(this->*SpellTargetHandler[TypeA])(i, 0);		//0=A
 
@@ -222,6 +223,7 @@ void Spell::FillTargetMap(uint32 i)
 	// if all primary targets are 0 then use only secondary targets
 	if(!TypeA)
 	{
+//		sLog.outString("Target Type for spell %u: %u", m_spellInfo->Id, TypeB);
 		if(TypeB < TOTAL_SPELL_TARGET)
 			(this->*SpellTargetHandler[TypeB])(i, 1);		//1=B
 
@@ -414,10 +416,10 @@ void Spell::SpellTargetAllPartyMembersRangeNR(uint32 i, uint32 j)
 
 	if( p == NULL )
 	{
-		if( static_cast< Creature* >( u_caster)->IsTotem() )
-			p = static_cast< Player* >( static_cast< Creature* >( u_caster )->GetTotemOwner() );
-		else if( u_caster->IsPet() && static_cast< Pet* >( u_caster )->GetPetOwner() ) 
-			p = static_cast< Pet* >( u_caster )->GetPetOwner();
+		if(TO_CREATURE(u_caster)->IsTotem())
+			p = TO_PLAYER(TO_CREATURE(u_caster)->GetTotemOwner());
+		else if(u_caster->IsPet() && TO_PET(u_caster)->GetPetOwner()) 
+			p = TO_PET(u_caster)->GetPetOwner();
 	}
 
 	if( p == NULL )
@@ -921,8 +923,7 @@ void Spell::SpellTargetSameGroupSameClass(uint32 i, uint32 j)
 	if(!Target)
 		return;
 
-	SubGroup * subgroup = Target->GetGroup() ?
-		Target->GetGroup()->GetSubGroup(Target->GetSubGroup()) : 0;
+	SubGroup * subgroup = Target->GetGroup() ? Target->GetGroup()->GetSubGroup(Target->GetSubGroup()) : NULL;
 
 	if(subgroup)
 	{
@@ -936,4 +937,6 @@ void Spell::SpellTargetSameGroupSameClass(uint32 i, uint32 j)
 		}
 		Target->GetGroup()->Unlock();
 	}
+	else
+		_AddTargetForced(Target->GetGUID(), i);
 }
