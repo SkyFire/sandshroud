@@ -239,7 +239,7 @@ void WorldSession::HandleSetTradeItem(WorldPacket & recv_data)
 		// duping little shits
 		if(_player->mTradeItems[i] == pItem || pTarget->mTradeItems[i] == pItem)
 		{
-			sCheatLog.writefromsession(this, "tried to dupe an item through trade");
+			sWorld.LogCheater(this, "tried to dupe an item through trade");
 			Disconnect();
 
 			uint8 TradeStatus = TRADE_STATUS_CANCELLED;
@@ -315,7 +315,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 				pItem = _player->mTradeItems[Index];
 				if( pItem != NULL && pItem->IsContainer() && TO_CONTAINER(pItem)->HasItems())
 				{
-					sCheatLog.writefromsession(this, "%s involved in bag-trick trade with %s", _player->GetName(),pTarget->GetName());
+					sWorld.LogCheater(this, "%s involved in bag-trick trade with %s", _player->GetName(),pTarget->GetName());
 					_player->GetItemInterface()->BuildInventoryChangeError(	pItem, NULLITEM, INV_ERR_CANT_TRADE_EQUIP_BAGS);
 					TradeStatus = TRADE_STATUS_CANCELLED;
 					break;
@@ -328,7 +328,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 				pItem = pTarget->mTradeItems[Index];
 				if( pItem != NULL && pItem->IsContainer() && TO_CONTAINER(pItem)->HasItems() )
 				{
-					sCheatLog.writefromsession(this, "%s involved in bag-trick trade with %s.", pTarget->GetName(),_player->GetName());
+					sWorld.LogCheater(this, "%s involved in bag-trick trade with %s.", pTarget->GetName(),_player->GetName());
 					pTarget->GetItemInterface()->BuildInventoryChangeError(	pItem, NULLITEM, INV_ERR_CANT_TRADE_EQUIP_BAGS);
 					TradeStatus = TRADE_STATUS_CANCELLED;
 					break;
@@ -373,7 +373,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 						}
 
 						if(GetPermissionCount()>0 || pTarget->GetSession()->GetPermissionCount()>0)
-							sGMLog.writefromsession(this, "trade item %s with %s (soulbound = %d)", _player->mTradeItems[Index]->GetProto()->Name1, pTarget->GetName());
+							sWorld.LogGM(this, "trade item %s with %s (soulbound = %d)", _player->mTradeItems[Index]->GetProto()->Name1, pTarget->GetName());
 					}
 				}
 
@@ -400,7 +400,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 						}
 
 						if(GetPermissionCount()>0 || pTarget->GetSession()->GetPermissionCount()>0)
-							sGMLog.writefromsession(this, "trade item %s with %s", pTarget->mTradeItems[Index]->GetProto()->Name1, _player->GetName());
+							sWorld.LogGM(this, "trade item %s with %s", pTarget->mTradeItems[Index]->GetProto()->Name1, _player->GetName());
 					}
 				}
 			}

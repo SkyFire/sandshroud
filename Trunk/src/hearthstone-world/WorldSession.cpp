@@ -1027,31 +1027,6 @@ void WorldSession::LogUnprocessedTail(WorldPacket *packet)
 	packet->print_storage();
 }
 
-void SessionLogWriter::writefromsession(WorldSession* session, const char* format, ...)
-{
-	if(!IsOpen())
-		return;
-
-	va_list ap;
-	va_start(ap, format);
-	char out[32768];
-
-	time_t t = UNIXTIME;
-	tm* aTm = localtime(&t);
-	snprintf(out, 32768, "[%-4d-%02d-%02d %02d:%02d:%02d] ",aTm->tm_year+1900,aTm->tm_mon+1,aTm->tm_mday,aTm->tm_hour,aTm->tm_min,aTm->tm_sec);
-	size_t l = strlen(out);
-
-	snprintf(&out[l], 32768 - l, "Account %u [%s], IP %s, Player %s :: ", (unsigned int)session->GetAccountId(), session->GetAccountName().c_str(),
-		session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP", 
-		session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin");
-
-	l = strlen(out);
-	vsnprintf(&out[l], 32768 - l, format, ap);
-
-	fprintf(m_file, "%s\n", out);
-	fflush(m_file);
-	va_end(ap);
-}
 
 #ifdef CLUSTERING
 void WorldSession::HandlePingOpcode(WorldPacket& recvPacket)

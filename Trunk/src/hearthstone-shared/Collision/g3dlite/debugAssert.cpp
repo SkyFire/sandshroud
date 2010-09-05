@@ -360,28 +360,6 @@ std::string __cdecl debugPrintf(const char* fmt ...) {
 //	return debugPrint(consolePrint(s));
 }
 
-std::string consolePrint(const std::string& s) {
-	FILE* L = sLog.m_file;
-	fprintf(L, "%s", s.c_str());
-
-	if (consolePrintHook()) {
-		consolePrintHook()(s);
-	}
-
-	fflush(L);
-	return s;
-}
-
-
-std::string __cdecl consolePrintf(const char* fmt ...) {
-	va_list argList;
-	va_start(argList, fmt);
-	std::string s = G3D::vformat(fmt, argList);
-	va_end(argList);
-
-	return consolePrint(s);
-}
-
 } // namespace
 
 #ifdef _MSC_VER

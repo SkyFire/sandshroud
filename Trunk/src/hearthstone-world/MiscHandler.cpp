@@ -1122,7 +1122,7 @@ void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)
 
 	if(xproto->Class != ITEM_CLASS_PROJECTILE || GetPlayer()->GetItemInterface()->GetItemCount(ammoId) == 0)
 	{
-		sCheatLog.writefromsession(GetPlayer()->GetSession(), "Definately cheating. tried to add %u as ammo.", ammoId);
+		sWorld.LogCheater(GetPlayer()->GetSession(), "Definately cheating. tried to add %u as ammo.", ammoId);
 		GetPlayer()->GetSession()->Disconnect();
 		return;
 	}

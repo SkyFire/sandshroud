@@ -83,7 +83,7 @@ void oLog::outString( const char * str, ... )
 	va_list ap;
 	char buf[32768];
 
-	if(m_fileLogLevel < 0 && m_screenLogLevel < 0)
+	if(m_screenLogLevel < 0)
 		return;
 
 	va_start(ap, str);
@@ -95,12 +95,6 @@ void oLog::outString( const char * str, ... )
 		printf(buf);
 		putc('\n', stdout);
 	}
-	if(m_fileLogLevel >= 0 && m_file)
-	{
-		outTime();
-		fprintf(m_file, buf);
-		putc('\n', m_file);
-	}
 }
 
 void oLog::outError( const char * err, ... )
@@ -108,7 +102,7 @@ void oLog::outError( const char * err, ... )
 	va_list ap;
 	char buf[32768];
 
-	if(m_fileLogLevel < 1 && m_screenLogLevel < 1)
+	if(m_screenLogLevel < 1)
 		return;
 
 	va_start(ap, err);
@@ -130,12 +124,6 @@ void oLog::outError( const char * err, ... )
 		puts(colorstrings[TNORMAL]);
 #endif
 	}
-	if(m_fileLogLevel >= 1 && m_file)
-	{
-		outTime();
-		fprintf(m_file, buf);
-		putc('\n', m_file);
-	}
 }
 
 void oLog::outDetail( const char * str, ... )
@@ -143,7 +131,7 @@ void oLog::outDetail( const char * str, ... )
 	va_list ap;
 	char buf[32768];
 
-	if(m_fileLogLevel < 2 && m_screenLogLevel < 2)
+	if(m_screenLogLevel < 2)
 		return;
 
 	va_start(ap, str);
@@ -155,12 +143,6 @@ void oLog::outDetail( const char * str, ... )
 		printf(buf);
 		putc('\n', stdout);
 	}
-	if(m_fileLogLevel >= 2 && m_file)
-	{
-		outTime();
-		fprintf(m_file, buf);
-		putc('\n', m_file);
-	}
 }
 
 void oLog::outDebug( const char * str, ... )
@@ -168,7 +150,7 @@ void oLog::outDebug( const char * str, ... )
 	va_list ap;
 	char buf[32768];
 
-	if(m_fileLogLevel < 3 && m_screenLogLevel < 3)
+	if(m_screenLogLevel < 3)
 		return;
 
 	va_start(ap, str);
@@ -179,12 +161,6 @@ void oLog::outDebug( const char * str, ... )
 	{
 		printf(buf);
 		putc('\n', stdout);
-	}
-	if(m_fileLogLevel == 3 && m_file || m_fileLogLevel == 6 && m_file)
-	{
-		outTime();
-		fprintf(m_file, buf);
-		putc('\n', m_file);
 	}
 }
 
@@ -204,30 +180,12 @@ void oLog::outDebugInLine(const char * str, ...)
 	{
 		printf(buf);
 	}
-
-	if(m_fileLogLevel == 5 && m_file || m_fileLogLevel == 6 && m_file)
-	{
-		outTime();
-		fprintf(m_file, buf);
-	}
 }
 
-void oLog::Init(int32 fileLogLevel, int32 screenLogLevel)
+void oLog::Init(int32 screenLogLevel)
 {
 	m_screenLogLevel = screenLogLevel;
 	Log.log_level = screenLogLevel;
-	m_fileLogLevel = fileLogLevel;
-	m_file = NULL;
-
-	if (m_fileLogLevel >= 0)
-	{
-		const char *filename = "file.log";
-		m_file = fopen(filename, "w");
-		if (m_file == NULL)
-		{
-			fprintf(stderr, "%s: Error opening '%s': %s\n", __FUNCTION__, filename, strerror(errno));
-		}
-	}
 
 	// get error handle
 #ifdef WIN32
@@ -235,49 +193,17 @@ void oLog::Init(int32 fileLogLevel, int32 screenLogLevel)
 	stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
 }
+
 void oLog::SetScreenLoggingLevel(int32 level)
 {
 	m_screenLogLevel = level;
 }
 
-void oLog::SetFileLoggingLevel(int32 level)
-{
-	m_fileLogLevel = level;
-}
-void SessionLogWriter::write(const char* format, ...)
-{
-	if(!m_file)
-		return;
-
-	va_list ap;
-	va_start(ap, format);
-	char out[32768];
-
-	time_t t = time(NULL);
-	tm* aTm = localtime(&t);
-	sprintf(out, "[%-4d-%02d-%02d %02d:%02d:%02d] ",aTm->tm_year+1900,aTm->tm_mon+1,aTm->tm_mday,aTm->tm_hour,aTm->tm_min,aTm->tm_sec);
-	size_t l = strlen(out);
-	vsnprintf(&out[l], 32768 - l, format, ap);
-
-	fprintf(m_file, "%s\n", out);
-	va_end(ap);
-}
-
 WorldLog::WorldLog()
 {
-	bEnabled = false;
 	bEnabledXml = false;
 	onlyPlayer = NULL;
-	m_file=NULL;
 	m_xml=NULL;
-
-	if (Config.MainConfig.GetBoolDefault("LogLevel", "World", false))
-	{
-		Log.Notice("WorldLog", "Enabling packetlog output to \"world.log\"");
-		Enable();
-	} else {
-		Disable();
-	}
 
 	if (Config.MainConfig.GetBoolDefault("LogLevel", "WorldXml", false))
 	{
@@ -287,34 +213,6 @@ WorldLog::WorldLog()
 		DisableXml();
 	}
 
-}
-
-void WorldLog::Enable()
-{
-	if(bEnabled)
-		return;
-
-	bEnabled = true;
-	if(m_file != NULL)
-	{
-		Disable();
-		bEnabled=true;
-	}
-	m_file = fopen("world.log", "w");
-}
-
-void WorldLog::Disable()
-{
-	if(!bEnabled)
-		return;
-
-	bEnabled = false;
-	if(!m_file)
-		return;
-
-	fflush(m_file);
-	fclose(m_file);
-	m_file=NULL;
 }
 
 void WorldLog::EnableXml()
@@ -352,12 +250,6 @@ void WorldLog::DisableXml()
 
 WorldLog::~WorldLog()
 {
-	if (m_file)
-	{
-		fclose(m_file);
-		m_file = NULL;
-	}
-
 	if (m_xml)
 	{
 		fprintf(m_xml, "</log>");
@@ -380,34 +272,3 @@ void oLog::outColor(uint32 colorcode, const char * str, ...)
 	fflush(stdout);
 	va_end(ap);
 }
-
-void SessionLogWriter::Open()
-{
-	m_file = fopen(m_filename, "a");
-}
-
-void SessionLogWriter::Close()
-{
-	if(!m_file) return;
-	fflush(m_file);
-	fclose(m_file);
-	m_file=NULL;
-}
-
-SessionLogWriter::SessionLogWriter(const char * filename, bool open)
-{
-	m_filename = strdup(filename);
-	m_file=NULL;
-	if(open)
-		Open();
-}
-
-SessionLogWriter::~SessionLogWriter()
-{
-	if(m_file)
-		Close();
-
-	free(m_filename);
-}
-
-

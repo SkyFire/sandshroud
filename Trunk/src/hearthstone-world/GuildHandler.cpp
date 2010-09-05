@@ -1428,7 +1428,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 
 		if( source_bagslot== 0xff && source_slot < INVENTORY_SLOT_ITEM_START && pDestItem != NULL)
 		{
-			sCheatLog.writefromsession(this,"Tried to equip an item from the guild bank (WPE HACK)");
+			sWorld.LogCheater(this,"Tried to equip an item from the guild bank (WPE HACK)");
 			SystemMessage("You don't have permission to do that.");
 			return;
 		}

@@ -603,7 +603,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 			if( GetPermissionCount() > 0 )
 			{
 				/* log the message */
-				sGMLog.writefromsession(this, "sent mail with item entry %u to %s, with gold %u.", pItem->GetEntry(), player->name, msg.money);
+				sWorld.LogGM(this, "sent mail with item entry %u to %s, with gold %u.", pItem->GetEntry(), player->name, msg.money);
 			}
 
 			pItem->DeleteMe();

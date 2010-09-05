@@ -201,9 +201,6 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 		return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
 	}
 
-	// Packet logger :)
-	sWorldLog.LogPacket((uint32)len, opcode, (const uint8*)data, 1);
-
 	// Encrypt the packet
 	// First, create the header.
 	ServerPktHeader Header;
@@ -266,11 +263,11 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 		return;
 	}
 
-//	if(mClientBuild != sWorld.GetServerRequiredBuild())
-//	{
-//		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x14");
-//		return;
-//	}
+	if(mClientBuild != CL_BUILD_SUPPORT)
+	{
+		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x14");
+		return;
+	}
 
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
@@ -598,8 +595,6 @@ void WorldSocket::OnRead()
 			//Read(mRemaining, (uint8*)Packet->contents());
 			readBuffer.Read((uint8*)Packet->contents(), mRemaining);
 		}
-
-		sWorldLog.LogPacket(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0);
 		mRemaining = mSize = mOpcode = 0;
 
 		// Check for packets that we handle
@@ -625,125 +620,6 @@ void WorldSocket::OnRead()
 }
 
 #endif
-
-void WorldLog::LogPacket(uint32 len, uint16 opcode, const uint8* data, uint8 direction)
-{
-	unsigned int count;
-
-#ifdef ECHO_PACKET_LOG_TO_CONSOLE
-	DEBUG_LOG("WorldLog","[%s]: %s %s (0x%03X) of %u bytes.", direction ? "SERVER" : "CLIENT", direction ? "sent" : "received",
-		LookupOpcodeName(opcode), opcode, len);
-#endif
-
-	if(bEnabled)
-	{
-		mutex.Acquire();
-		unsigned int line = 1;
-		unsigned int countpos = 0;
-		uint16 lenght = len;
-
-		fprintf(m_file, "{%s} Packet: (0x%04X) %s PacketSize = %u\n", (direction ? "SERVER" : "CLIENT"), opcode,
-			LookupOpcodeName(opcode), lenght);
-		fprintf(m_file, "|------------------------------------------------|----------------|\n");
-		fprintf(m_file, "|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|\n");
-		fprintf(m_file, "|------------------------------------------------|----------------|\n");
-
-		if(lenght > 0)
-		{
-			fprintf(m_file, "|");
-			for (count = 0 ; count < lenght ; count++)
-			{
-				if (countpos == 16)
-				{
-					countpos = 0;
-
-					fprintf(m_file, "|");
-
-					for (unsigned int a = count-16; a < count;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(m_file, ".");
-						else
-							fprintf(m_file, "%c",data[a]);
-					}
-
-					fprintf(m_file, "|\n");
-
-					line++;
-					fprintf(m_file, "|");
-				}
-
-				fprintf(m_file, "%02X ",data[count]);
-
-				//FIX TO PARSE PACKETS WITH LENGHT < OR = TO 16 BYTES.
-				if (count+1 == lenght && lenght <= 16)
-				{
-					for (unsigned int b = countpos+1; b < 16;b++)
-						fprintf(m_file, "   ");
-
-					fprintf(m_file, "|");
-
-					for (unsigned int a = 0; a < lenght;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(m_file, ".");
-						else
-							fprintf(m_file, "%c",data[a]);
-					}
-
-					for (unsigned int c = count; c < 15;c++)
-						fprintf(m_file, " ");
-
-					fprintf(m_file, "|\n");
-				}
-
-				//FIX TO PARSE THE LAST LINE OF THE PACKETS WHEN THE LENGHT IS > 16 AND ITS IN THE LAST LINE.
-				if (count+1 == lenght && lenght > 16)
-				{
-					for (unsigned int b = countpos+1; b < 16;b++)
-						fprintf(m_file, "   ");
-
-					fprintf(m_file, "|");
-
-					unsigned short print = 0;
-
-					for (unsigned int a = line * 16 - 16; a < lenght;a++)
-					{
-						if ((data[a] < 32) || (data[a] > 126))
-							fprintf(m_file, ".");
-						else
-							fprintf(m_file, "%c",data[a]);
-
-						print++;
-					}
-
-					for (unsigned int c = print; c < 16;c++)
-						fprintf(m_file, " ");
-
-					fprintf(m_file, "|\n");
-				}
-
-				countpos++;
-			}
-		}
-		fprintf(m_file, "-------------------------------------------------------------------\n\n");
-		fflush(m_file);
-		mutex.Release();
-	}
-
-	if(bEnabledXml)
-	{
-		mutex.Acquire();
-
-		fprintf(m_xml, "<packet direction=\"%s\" opcode=\"%d\">", (direction ? "S2C" : "C2S"), opcode);
-		for (count = 0 ; count < len ; count++)
-			fprintf(m_xml, "%02X",data[count]);
-		fprintf(m_xml, "</packet>\n");
-
-		fflush(m_xml);
-		mutex.Release();
-	}
-}
 
 void FastGUIDPack(ByteBuffer & buf, const uint64 & oldguid)
 {

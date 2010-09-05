@@ -5179,8 +5179,10 @@ void Spell::SpellEffectEnchantItem(uint32 i) // Enchant Item Permanent
 		p_caster->GetItemInterface()->RemoveItemAmt(itemTarget->GetEntry(),1);
 		return;
 	}
-	if(p_caster->GetSession()->GetPermissionCount() > 0)
-		sGMLog.writefromsession(p_caster->GetSession(), "enchanted item for %s", itemTarget->GetOwner()->GetName());
+
+	WorldSession* session = p_caster->GetSession();
+	if(session->GetPermissionCount() > 0)
+		sWorld.LogGM(session, "enchanted item for %s", itemTarget->GetOwner()->GetName());
 
 	//remove other perm enchantment that was enchanted by profession
 	itemTarget->RemoveProfessionEnchant();

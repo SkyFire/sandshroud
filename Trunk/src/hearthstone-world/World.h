@@ -588,6 +588,11 @@ public:
 
 	void SaveAllPlayers();
 
+	bool LogCheaters;
+	bool LogCommands;
+	bool LogPlayers;
+	bool LogChats;
+
 	string MapPath;
 	string vMapPath;
 	string MMapPath;
@@ -654,7 +659,6 @@ public:
 	bool ab_enabled;
 	bool wsg_enabled;
 	bool eots_enabled;
-	bool log_chats;
 
 	// Level Caps
 	uint32 LevelCap_Custom_All;
@@ -676,6 +680,11 @@ public:
 	void LogoutPlayers();
 
 	void BackupDB();
+
+	void LogGM(WorldSession* session, string message, ...);
+	void LogCheater(WorldSession* session, string message, ...);
+	void LogPlayer(WorldSession* session, string message, ...);
+	void LogChat(WorldSession* session, string message, ...);
 
 protected:
 	// update Stuff, FIXME: use diff

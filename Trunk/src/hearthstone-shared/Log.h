@@ -25,6 +25,7 @@
 
 class WorldPacket;
 class WorldSession;
+class Database;
 
 #ifdef WIN32
 
@@ -65,46 +66,20 @@ public:
 	void fLogText(const char *text);
 	void SetLogging(bool enabled);
 
-	void Init(int32 fileLogLevel, int32 screenLogLevel);
-	void SetFileLoggingLevel(int32 level);
+	void Init(int32 screenLogLevel);
 	void SetScreenLoggingLevel(int32 level);
 	void outColor(uint32 colorcode, const char * str, ...);
-	bool IsOutDevelopement() const { return m_screenLogLevel == 4 || (m_fileLogLevel == 4 && m_file) || m_screenLogLevel == 6; }
-	bool IsOutProccess() const { return m_screenLogLevel == 5 || (m_fileLogLevel == 5 && m_file) || m_screenLogLevel == 6; }
+	bool IsOutDevelopement() const { return m_screenLogLevel == 4 || m_screenLogLevel == 6; }
+	bool IsOutProccess() const { return m_screenLogLevel == 5 || m_screenLogLevel == 6; }
 
 #ifdef WIN32
 	HANDLE stdout_handle, stderr_handle;
 #endif
 
-	int32 m_fileLogLevel;
 	int32 m_screenLogLevel;
-
-	FILE *m_file;
 };
-
-class SessionLogWriter
-{
-	FILE * m_file;
-	char * m_filename;
-public:
-	SessionLogWriter(const char * filename, bool open);
-	~SessionLogWriter();
-
-	void write(const char* format, ...);
-	void writefromsession(WorldSession* session, const char* format, ...);
-	HEARTHSTONE_INLINE bool IsOpen() { return (m_file != NULL); }
-	void Open();
-	void Close();
-};
-
-extern SessionLogWriter * Anticheat_Log;
-extern SessionLogWriter * GMCommand_Log;
-extern SessionLogWriter * Player_Log;
 
 #define sLog oLog::getSingleton()
-#define sCheatLog (*Anticheat_Log)
-#define sGMLog (*GMCommand_Log)
-#define sPlrLog (*Player_Log)
 
 class WorldLog : public Singleton<WorldLog>
 {
@@ -112,16 +87,11 @@ public:
 	WorldLog();
 	~WorldLog();
 
-	void LogPacket(uint32 len, uint16 opcode, const uint8* data, uint8 direction);
-	void Enable();
-	void Disable();
 	void EnableXml();
 	void DisableXml();
 private:
-	FILE * m_file;
 	FILE * m_xml;
 	Mutex mutex;
-	bool bEnabled;
 	bool bEnabledXml;
 	char *onlyPlayer;
 };

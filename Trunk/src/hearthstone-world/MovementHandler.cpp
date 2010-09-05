@@ -111,7 +111,7 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 		if(!_player->m_CurrentVehicle && sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->GetPlayerStatus() != TRANSFER_PENDING)
 		{
 			/* we're obviously cheating */
-			sCheatLog.writefromsession(this, "Used teleport hack, disconnecting.");
+			sWorld.LogCheater(this, "Used teleport hack, disconnecting.");
 			Disconnect();
 			return;
 		}
@@ -119,7 +119,7 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 		if(sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->m_position.Distance2DSq(_player->m_sentTeleportPosition) > 625.0f)	/* 25.0f*25.0f */
 		{
 			/* cheating.... :( */
-			sCheatLog.writefromsession(this, "Used teleport hack {2}, disconnecting.");
+			sWorld.LogCheater(this, "Used teleport hack {2}, disconnecting.");
 			Disconnect();
 			return;
 		}
@@ -367,7 +367,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 				_player->BroadcastMessage( MSG_COLOR_WHITE"diff: %d server delta: %u client delta: %u\n", diff, server_delta, client_delta );
 				sEventMgr.AddEvent( _player, &Player::_Disconnect, EVENT_PLAYER_KICK, 10000, 1, 0 );
 				_player->m_cheatEngineChances = 0;
-				sCheatLog.writefromsession(this, "Cheat Engine detected. Diff: %d, Server Delta: %u, Client Delta: %u", diff, server_delta, client_delta );
+				sWorld.LogCheater(this, "Cheat Engine detected. Diff: %d, Server Delta: %u, Client Delta: %u", diff, server_delta, client_delta );
 			}
 			else if (_player->m_cheatEngineChances > 0 )
 				_player->m_cheatEngineChances--;
@@ -430,7 +430,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		if(sWorld.antihack_teleport && _player->m_position.Distance2DSq(_player->movement_info.x, _player->movement_info.y) > 5625.0f
 			&& _player->m_runSpeed < 50.0f && !_player->m_TransporterGUID)
 		{
-			sCheatLog.writefromsession(this, "Used teleport hack {3}, speed was %f", _player->m_runSpeed);
+			sWorld.LogCheater(this, "Used teleport hack {3}, speed was %f", _player->m_runSpeed);
 			Disconnect();
 			return;
 		}
@@ -440,7 +440,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	if (_player->movement_info.flags & MOVEFLAG_WATER_WALK && !GetPlayer()->m_isWaterWalking)
 	{
 		/* Need to check if aura has just been dispelled recently and client didn't have time to update
-		sCheatLog.writefromsession(this, "Used water walk hack");
+		sWorld.LogCheater(this, "Used water walk hack");
 		Disconnect();*/
 	}
 

@@ -21,6 +21,7 @@
 #define __CONST_H__
 
 #define NUM_MAPS 750
+#define CL_BUILD_SUPPORT 12340
 
 class Database;
 class CBattleground;
@@ -54,6 +55,8 @@ class StrandOfTheAncients;
 
 #define WorldDatabase (*Database_World)
 #define CharacterDatabase (*Database_Character)
+#define LogDatabase (*Database_Log)
+
 #define CAST(x, y) static_cast<x*>(y)
 #define TO_PLAYER(ptr) ((Player*)ptr)
 #define TO_UNIT(ptr) ((Unit*)ptr)
@@ -108,5 +111,6 @@ class StrandOfTheAncients;
 
 SERVER_DECL extern Database* Database_Character;
 SERVER_DECL extern Database* Database_World;
+SERVER_DECL extern Database* Database_Log;
 
 #endif

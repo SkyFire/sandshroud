@@ -682,6 +682,7 @@ void World::SendGlobalMessage(WorldPacket *packet, WorldSession *self)
 
 	m_sessionlock.ReleaseReadLock();
 }
+
 void World::SendFactionMessage(WorldPacket *packet, uint8 teamId)
 {
 	m_sessionlock.AcquireReadLock();
@@ -1207,7 +1208,7 @@ void World::Rehash(bool load)
 	if(!MailSystem::getSingletonPtr())
 		new MailSystem;
 
-	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "File", -1),Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
+	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
 	vMapPath = Config.MainConfig.GetStringDefault("Terrain", "vMapPath", "vmaps");
@@ -1278,39 +1279,10 @@ void World::Rehash(bool load)
 	SocketSendBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "SendBufSize", WORLDSOCKET_SENDBUF_SIZE);
 #endif
 
-	bool log_enabled = Config.MainConfig.GetBoolDefault("Log", "Cheaters", false);
-	if(Anticheat_Log->IsOpen())
-	{
-		if(!log_enabled)
-			Anticheat_Log->Close();
-	}
-	else
-		if(log_enabled)
-			Anticheat_Log->Open();
-
-	log_enabled = Config.MainConfig.GetBoolDefault("Log", "GMCommands", false);
-	if(GMCommand_Log->IsOpen())
-	{
-		if(!log_enabled)
-			GMCommand_Log->Close();
-	}
-	else
-		if(log_enabled)
-			GMCommand_Log->Open();
-
-	log_enabled = Config.MainConfig.GetBoolDefault("Log", "Player", false);
-	if(Player_Log->IsOpen())
-	{
-		if(!log_enabled)
-			Player_Log->Close();
-	}
-	else
-	{
-		if(log_enabled)
-			Player_Log->Open();
-	}
-	log_chats = Config.MainConfig.GetBoolDefault("Log", "Chat", false);
-
+	LogCheaters = Config.MainConfig.GetBoolDefault("Log", "Cheaters", false);
+	LogCommands = Config.MainConfig.GetBoolDefault("Log", "GMCommands", false);
+	LogPlayers = Config.MainConfig.GetBoolDefault("Log", "Player", false);
+	LogChats = Config.MainConfig.GetBoolDefault("Log", "Chat", false);
 
 #ifdef WIN32
 	DWORD current_priority_class = GetPriorityClass( GetCurrentProcess() );
@@ -2310,6 +2282,78 @@ void World::BackupDB()
 
 	sLog.outString("Done!");
 #endif
+}
+
+void World::LogGM(WorldSession* session, string message, ...)
+{
+	if(LogCommands)
+	{
+		va_list ap;
+		va_start(ap, message);
+		char msg1[1024];
+		vsnprintf(msg1, 1024, message.c_str(), ap);
+
+		stringstream ss;
+		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
+			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+
+		LogDatabase.Execute("INSERT INTO gmlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+	}
+}
+
+void World::LogCheater(WorldSession* session, string message, ...)
+{
+	if(LogCommands)
+	{
+		va_list ap;
+		va_start(ap, message);
+		char msg1[1024];
+		vsnprintf(msg1, 1024, message.c_str(), ap);
+
+		stringstream ss;
+		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
+			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+
+		LogDatabase.Execute("INSERT INTO cheaterlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+	}
+}
+
+void World::LogPlayer(WorldSession* session, string message, ...)
+{
+	if(LogPlayers)
+	{
+		va_list ap;
+		va_start(ap, message);
+		char msg1[1024];
+		vsnprintf(msg1, 1024, message.c_str(), ap);
+
+		stringstream ss;
+		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
+			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+
+		LogDatabase.Execute("INSERT INTO playerlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+	}
+}
+
+void World::LogChat(WorldSession* session, string message, ...)
+{
+	if(LogChats)
+	{
+		va_list ap;
+		va_start(ap, message);
+		char msg1[1024];
+		vsnprintf(msg1, 1024, message.c_str(), ap);
+
+		stringstream ss;
+		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
+			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+
+		LogDatabase.Execute("INSERT INTO chatlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

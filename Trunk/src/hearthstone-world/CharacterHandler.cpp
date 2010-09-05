@@ -549,7 +549,7 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 		/*if( _socket != NULL )
 			sPlrLog.write("Account: %s | IP: %s >> Deleted player %s", GetAccountName().c_str(), GetSocket()->GetRemoteIP().c_str(), name.c_str());*/
 
-		sPlrLog.writefromsession(this, "deleted character %s (GUID: %u)", name.c_str(), (uint32)guid);
+		sWorld.LogPlayer(this, "deleted character %s (GUID: %u)", name.c_str(), (uint32)guid);
 
 		CharacterDatabase.WaitExecute("DELETE FROM characters WHERE guid = %u", (uint32)guid);
 
@@ -655,7 +655,7 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 	CapitalizeString(name);
 	objmgr.RenamePlayerInfo(pi, pi->name, name.c_str());
 
-	sPlrLog.writefromsession(this, "a rename was pending. renamed character %s (GUID: %u) to %s.", pi->name, pi->guid, name.c_str());
+	sWorld.LogPlayer(this, "a rename was pending. renamed character %s (GUID: %u) to %s.", pi->name, pi->guid, name.c_str());
 
 	// If we're here, the name is okay.
 	CharacterDatabase.Query("UPDATE characters SET name = \'%s\',  forced_rename_pending  = 0 WHERE guid = %u AND acct = %u",name.c_str(), (uint32)guid, _accountId);
@@ -1059,8 +1059,8 @@ bool ChatHandler::HandleRenameCommand(const char * args, WorldSession * m_sessio
 	}
 
 	GreenSystemMessage(m_session, "Changed name of '%s' to '%s'.", name1, name2);
-	sGMLog.writefromsession(m_session, "renamed character %s (GUID: %u) to %s", name1, pi->guid, name2);
-	sPlrLog.writefromsession(m_session, "GM renamed character %s (GUID: %u) to %s", name1, pi->guid, name2);
+	sWorld.LogGM(m_session, "renamed character %s (GUID: %u) to %s", name1, pi->guid, name2);
+	sWorld.LogPlayer(m_session, "GM renamed character %s (GUID: %u) to %s", name1, pi->guid, name2);
 	return true;
 }
 

@@ -31,11 +31,7 @@ volatile bool Master::m_stopEvent = false;
 // Database defines.
 SERVER_DECL Database* Database_Character;
 SERVER_DECL Database* Database_World;
-
-// mainserv defines
-SessionLogWriter* GMCommand_Log;
-SessionLogWriter* Anticheat_Log;
-SessionLogWriter* Player_Log;
+SERVER_DECL Database* Database_Log;
 
 void Master::_OnSignal(int s)
 {
@@ -98,7 +94,6 @@ bool Master::Run(int argc, char ** argv)
 	char * config_file = (char*)default_config_file;
 	char * realm_config_file = (char*)default_realm_config_file;
 
-	int file_log_level = DEF_VALUE_NOT_SET;
 	int screen_log_level = DEF_VALUE_NOT_SET;
 	int do_check_conf = 0;
 	int do_version = 0;
@@ -110,7 +105,6 @@ bool Master::Run(int argc, char ** argv)
 	{
 		{ "checkconf",			hearthstone_no_argument,			&do_check_conf,			1		},
 		{ "screenloglevel",		hearthstone_required_argument,		&screen_log_level,		1		},
-		{ "fileloglevel",		hearthstone_required_argument,		&file_log_level,		-1		},
 		{ "version",			hearthstone_no_argument,			&do_version,			1		},
 		{ "conf",				hearthstone_required_argument,		NULL,					'c'		},
 		{ "realmconf",			hearthstone_required_argument,		NULL,					'r'		},
@@ -135,7 +129,6 @@ bool Master::Run(int argc, char ** argv)
 		case 0:
 			break;
 		default:
-			sLog.m_fileLogLevel = -1;
 			sLog.m_screenLogLevel = 3;
 			printf("Usage: %s [--checkconf] [--conf <filename>] [--realmconf <filename>] [--version]\n", argv[0]);
 			return true;
@@ -144,9 +137,6 @@ bool Master::Run(int argc, char ** argv)
 	/* set new log levels if used as argument*/
 	if( screen_log_level != (int)DEF_VALUE_NOT_SET )
 		sLog.SetScreenLoggingLevel(screen_log_level);
-	
-	if( file_log_level != (int)DEF_VALUE_NOT_SET )
-		sLog.SetFileLoggingLevel(file_log_level);
 
 	// Startup banner
 	UNIXTIME = time(NULL);
@@ -183,9 +173,9 @@ bool Master::Run(int argc, char ** argv)
 
 	//use these log_level until we are fully started up.
 #ifdef _DEBUG
-	sLog.Init(-1, 3);
+	sLog.Init(3);
 #else
-	sLog.Init(-1, 2);
+	sLog.Init(2);
 #endif // _DEBUG
 
 #ifndef WIN32
@@ -237,11 +227,6 @@ bool Master::Run(int argc, char ** argv)
 
 	new EventMgr;
 	new World;
-
-	// open cheat log file
-	Anticheat_Log = new SessionLogWriter(FormatOutputString( "logs", "cheaters", false).c_str(), false );
-	GMCommand_Log = new SessionLogWriter(FormatOutputString( "logs", "gmcommand", false).c_str(), false );
-	Player_Log = new SessionLogWriter(FormatOutputString( "logs", "players", false).c_str(), false );
 
 	/* load the config file */
 	sWorld.Rehash(false);
@@ -300,7 +285,7 @@ bool Master::Run(int argc, char ** argv)
 	Log.Success("Server","Ready for connections. Startup time: %ums\n", LoadingTime );
 
 	//Update sLog to obey config setting
-	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "File", -1),Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
+	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 
 	/* write pid file */
 	FILE * fPid = fopen( "hearthstone-world.pid", "w" );
@@ -489,10 +474,6 @@ bool Master::Run(int argc, char ** argv)
 #endif
 	//delete ScriptSystem;
 
-	delete GMCommand_Log;
-	delete Anticheat_Log;
-	delete Player_Log;
-
 	// remove pid
 	remove( "hearthstone-world.pid" );
 	g_bufferPool.Destroy();
@@ -553,10 +534,31 @@ bool Master::_StartDB()
 	}
 
 	// Initialize it
-	if( !CharacterDatabase.Initialize( hostname.c_str(), (unsigned int)port, username.c_str(),
+	if( !CharacterDatabase.Initialize( hostname.c_str(), (uint)port, username.c_str(),
 		password.c_str(), database.c_str(), Config.MainConfig.GetIntDefault( "CharacterDatabase", "ConnectionCount", 5 ), 16384 ) )
 	{
 		OUT_DEBUG( "sql: Main database initialization failed. Exiting." );
+		return false;
+	}
+
+	result = Config.MainConfig.GetString( "LogDatabase", "Username", &username );
+	Config.MainConfig.GetString( "LogDatabase", "Password", &password );
+	result = !result ? result : Config.MainConfig.GetString( "LogDatabase", "Hostname", &hostname );
+	result = !result ? result : Config.MainConfig.GetString( "LogDatabase", "Name", &database );
+	result = !result ? result : Config.MainConfig.GetInt( "LogDatabase", "Port", &port );
+	Database_Log = Database::Create();
+
+	if(result == false)
+	{
+		OUT_DEBUG( "sql: One or more parameters were missing from Database directive." );
+		return false;
+	}
+
+	// Initialize it
+	if( !(LogDatabase.Initialize( hostname.c_str(), (uint)port, username.c_str(),
+		password.c_str(), database.c_str(), Config.MainConfig.GetIntDefault( "LogDatabase", "ConnectionCount", 5 ), 16384 )) )
+	{
+		OUT_DEBUG( "sql: Log database initialization failed. Exiting." );
 		return false;
 	}
 

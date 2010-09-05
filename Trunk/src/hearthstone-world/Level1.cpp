@@ -34,7 +34,7 @@ bool ChatHandler::HandleAnnounceCommand(const char* args, WorldSession *m_sessio
 	char msg[1024];
 	snprintf(msg, 1024, "[Server Notice]"MSG_COLOR_GREEN" %s: %s", m_session->GetPlayer()->GetName(), args);
 	sWorld.SendWorldText(msg); // send message
-	sGMLog.writefromsession(m_session, "used announce command, [%s]", args);
+	sWorld.LogGM(m_session, "used announce command, [%s]", args);
 	return true;
 }
 
@@ -77,7 +77,7 @@ bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_sessi
 	snprintf((char*)pAnnounce, 1024, "%s%s", input2.c_str(), args);
 
 	sWorld.SendWorldWideScreenText(pAnnounce); // send message
-	sGMLog.writefromsession(m_session, "used wannounce command [%s]", args);
+	sWorld.LogGM(m_session, "used wannounce command [%s]", args);
 	return true;
 }
 
@@ -161,7 +161,7 @@ bool ChatHandler::HandleKickCommand(const char* args, WorldSession *m_session)
 			kickreason = reason;
 
 		BlueSystemMessage(m_session, "Attempting to kick %s from the server for \"%s\".", chr->GetName(), kickreason.c_str());
-		sGMLog.writefromsession(m_session, "Kicked player %s from the server for %s", chr->GetName(), kickreason.c_str());
+		sWorld.LogGM(m_session, "Kicked player %s from the server for %s", chr->GetName(), kickreason.c_str());
 		if(!m_session->CanUseCommand('z') && chr->GetSession()->CanUseCommand('z'))
 		{
 			RedSystemMessage(m_session, "You cannot kick %s, as they are a higher level gm than you.", chr->GetName());
@@ -202,7 +202,7 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 	ItemPrototype* it = ItemPrototypeStorage.LookupEntry(itemid);
 	if(it)
 	{
-		sGMLog.writefromsession(m_session, "used add item command, item id %u [%s] to %s", it->ItemId, it->Name1, chr->GetName());
+		sWorld.LogGM(m_session, "used add item command, item id %u [%s] to %s", it->ItemId, it->Name1, chr->GetName());
 
 		if(!chr->GetItemInterface()->AddItemById(itemid, count, randomprop, false))
 		{
@@ -233,7 +233,7 @@ bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
 	if(!*args)
 		return false;
 
-	sGMLog.writefromsession(m_session, "summoned %s", args);
+	sWorld.LogGM(m_session, "summoned %s", args);
 
 	Player* chr = objmgr.GetPlayer(args, false);
 	if (chr)
@@ -468,7 +468,7 @@ bool ChatHandler::HandleLearnSkillCommand(const char *args, WorldSession *m_sess
 	Player* plr = getSelectedChar(m_session, true);
 	if(!plr) return false;
 	if(plr->GetTypeId() != TYPEID_PLAYER) return false;
-	sGMLog.writefromsession(m_session, "used add skill of %u %u %u on %s", skill, min, max, plr->GetName());
+	sWorld.LogGM(m_session, "used add skill of %u %u %u on %s", skill, min, max, plr->GetName());
 
 	plr->_AddSkillLine(skill, min, max);   
 
@@ -499,7 +499,7 @@ bool ChatHandler::HandleModifySkillCommand(const char *args, WorldSession *m_ses
 	Player* plr = getSelectedChar(m_session, true);
 	if(!plr) plr = m_session->GetPlayer();
 	if(!plr) return false;
-	sGMLog.writefromsession(m_session, "used modify skill of %u %u on %s", skill, cnt,plr->GetName());
+	sWorld.LogGM(m_session, "used modify skill of %u %u on %s", skill, cnt,plr->GetName());
 
 	if(!plr->_HasSkillLine(skill))
 	{
@@ -599,7 +599,7 @@ bool ChatHandler::HandleRemoveSkillCommand(const char *args, WorldSession *m_ses
 
 	Player* plr = getSelectedChar(m_session, true);
 	if(!plr) return true;
-	sGMLog.writefromsession(m_session, "used remove skill of %u on %s", skill, plr->GetName());
+	sWorld.LogGM(m_session, "used remove skill of %u on %s", skill, plr->GetName());
 	plr->_RemoveSkillLine(skill);
 	SystemMessageToPlr(plr, "%s removed skill line %d from you. ", m_session->GetPlayer()->GetName(), skill);
 	return true;
@@ -632,7 +632,7 @@ bool ChatHandler::HandleGenderChanger(const char* args, WorldSession *m_session)
 	target->setGender(gender);
 	SystemMessage(m_session, "Gender changed to %u",gender);
 	GreenSystemMessageToPlr(target, "%s has changed your gender.", m_session->GetPlayer()->GetName());
-	sGMLog.writefromsession( m_session, "used modify gender on %s", target->GetName());
+	sWorld.LogGM( m_session, "used modify gender on %s", target->GetName());
 	return true;
 }
 
@@ -650,7 +650,7 @@ bool ChatHandler::HandleModifyGoldCommand(const char* args, WorldSession *m_sess
 	uint32 silver = (uint32) floor( ((float)int32abs( total ) / 100.0f) ) % 100;
 	uint32 copper = int32abs2uint32( total ) % 100;
 	
-	sGMLog.writefromsession( m_session, "used modify gold on %s, gold: %d", chr->GetName(), total );
+	sWorld.LogGM( m_session, "used modify gold on %s, gold: %d", chr->GetName(), total );
 
 	int32 newgold = chr->GetUInt32Value( PLAYER_FIELD_COINAGE ) + total;
 
@@ -713,7 +713,7 @@ bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_sessio
 		return true;
 	}
 
-	sGMLog.writefromsession(m_session, "removed spell %u from %s", SpellId, plr->GetName());
+	sWorld.LogGM(m_session, "removed spell %u from %s", SpellId, plr->GetName());
 
 	if(plr->HasSpell(SpellId))
 	{

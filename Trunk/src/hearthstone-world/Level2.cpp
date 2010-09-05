@@ -34,7 +34,7 @@ bool ChatHandler::HandleResetReputationCommand(const char *args, WorldSession *m
 	
 	plr->_InitialReputation();
 	SystemMessage(m_session, "Done. Relog for changes to take effect.");
-	sGMLog.writefromsession(m_session, "used reset reputation for %s", plr->GetName());
+	sWorld.LogGM(m_session, "used reset reputation for %s", plr->GetName());
 	return true;
 }
 
@@ -50,7 +50,7 @@ bool ChatHandler::HandleInvincibleCommand(const char *args, WorldSession *m_sess
 		snprintf(msg, 100, "Select a player or yourself first.");
 	}
 	if(chr!=m_session->GetPlayer()&&chr)
-		sGMLog.writefromsession(m_session, "toggled invincibility on %s", chr->GetName());
+		sWorld.LogGM(m_session, "toggled invincibility on %s", chr->GetName());
 	SystemMessage(m_session, msg);
 	return true;
 }
@@ -166,7 +166,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		}
 	}
 
-	sGMLog.writefromsession(m_session, "used npc delete, sqlid %u, creature %s, pos %f %f %f",
+	sWorld.LogGM(m_session, "used npc delete, sqlid %u, creature %s, pos %f %f %f",
 		unit->m_spawn ? unit->m_spawn : 0, unit->GetCreatureInfo() ? unit->GetCreatureInfo()->Name : "wtfbbqhax", unit->GetPositionX(), unit->GetPositionY(),
 		unit->GetPositionZ());
 
@@ -270,7 +270,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 		sstext << "Item '" << item << "' Not Found in Database." << '\0';
 	}
 
-	sGMLog.writefromsession(m_session, "added item %u to vendor %u", item, pCreature->GetEntry());
+	sWorld.LogGM(m_session, "added item %u to vendor %u", item, pCreature->GetEntry());
 	SystemMessage(m_session,  sstext.str().c_str());
 
 	return true;
@@ -381,7 +381,7 @@ bool ChatHandler::HandleSaveAllCommand(const char *args, WorldSession *m_session
 	snprintf(msg, 100, "Saved all %d online players in %d msec.", (int)count, int((uint32)now() - stime));
 	sWorld.SendWorldText(msg);
 	sWorld.SendWorldWideScreenText(msg);
-	sGMLog.writefromsession(m_session, "saved all players");
+	sWorld.LogGM(m_session, "saved all players");
 	//sWorld.SendIRCMessage(msg);
 	return true;
 }
@@ -398,11 +398,11 @@ bool ChatHandler::HandleKillCommand(const char *args, WorldSession *m_session)
 	switch(target->GetTypeId())
 	{
 	case TYPEID_PLAYER:
-		sGMLog.writefromsession(m_session, "used kill command on PLAYER %s", TO_PLAYER( target )->GetName() );
+		sWorld.LogGM(m_session, "used kill command on PLAYER %s", TO_PLAYER( target )->GetName() );
 		break;
 
 	case TYPEID_UNIT:
-		sGMLog.writefromsession(m_session, "used kill command on CREATURE %s", TO_CREATURE( target )->GetCreatureInfo() ? TO_CREATURE( target )->GetCreatureInfo()->Name : "unknown");
+		sWorld.LogGM(m_session, "used kill command on CREATURE %s", TO_CREATURE( target )->GetCreatureInfo() ? TO_CREATURE( target )->GetCreatureInfo()->Name : "unknown");
 		break;
 	}
 	
@@ -453,7 +453,7 @@ bool ChatHandler::HandleKillByPlrCommand( const char *args , WorldSession *m_ses
 		plr->KillPlayer();
 		BlueSystemMessageToPlr(plr, "You were killed by %s with a GM command.", m_session->GetPlayer()->GetName());
 		GreenSystemMessage(m_session, "Killed player %s.", args);
-		sGMLog.writefromsession(m_session, "remote killed "I64FMT" (Name: %s)", plr->GetGUID(), plr->GetNameString() );
+		sWorld.LogGM(m_session, "remote killed "I64FMT" (Name: %s)", plr->GetGUID(), plr->GetNameString() );
 
 	}
 	return true;
@@ -1269,7 +1269,7 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 		sstext << "Item set '" << item << "' Not Found in DBC file." << '\0';
 	}
 
-	sGMLog.writefromsession(m_session, "added item set %u to vendor %u", item, pCreature->GetEntry());
+	sWorld.LogGM(m_session, "added item set %u to vendor %u", item, pCreature->GetEntry());
 	SystemMessage(m_session,  sstext.str().c_str());
 
 	return true;

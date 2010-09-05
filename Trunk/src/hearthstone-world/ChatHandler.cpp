@@ -264,8 +264,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				data = sChatHandler.FillMessageData( CHAT_MSG_EMOTE, CanUseCommand('c') ? LANG_UNIVERSAL : lang,  msg.c_str(), _player->GetGUID(), _player->GetChatTag());
 
 			GetPlayer()->SendMessageToSet( data, true ,true );
-			if(sWorld.log_chats)
-				sLog.outString("[emote] %s: %s", _player->GetName(), msg.c_str());
+			if(sWorld.LogChats)
+				sWorld.LogChat(this, "[emote] %s: %s", _player->GetName(), msg.c_str());
 			delete data;
 		}break;
 	case CHAT_MSG_SAY:
@@ -294,8 +294,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 						(*itr)->GetSession()->SendChatPacket(data, 1, lang, this);
 				}
 			}
-			if(sWorld.log_chats && msg.c_str()[0] != '.')
-				sLog.outString("[say] %s: %s", _player->GetName(), msg.c_str());
+			if(sWorld.LogChats && msg.c_str()[0] != '.')
+				sWorld.LogChat(this, "[say] %s: %s", _player->GetName(), msg.c_str());
 			delete data;
 		} break;
 	case CHAT_MSG_PARTY:
@@ -348,8 +348,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 					_player->GetGroup()->Unlock();
 				}
 			}
-			if(sWorld.log_chats && msg.c_str()[0] != '.')
-				sLog.outString("[Party/Raid/Battleground] %s: %s", _player->GetName(), msg.c_str());
+			if(sWorld.LogChats && msg.c_str()[0] != '.')
+				sWorld.LogChat(this, "[Party/Raid/Battleground] %s: %s", _player->GetName(), msg.c_str());
 			delete data;
 		} break;
 	case CHAT_MSG_GUILD:
@@ -359,8 +359,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 			if(_player->m_playerInfo->guild != NULL)
 				_player->m_playerInfo->guild->GuildChat(msg.c_str(), this, lang);
-			if(sWorld.log_chats && msg.c_str()[0] != '.')
-				sLog.outString("[guild: %s] %s: %s", _player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
+			if(sWorld.LogChats && msg.c_str()[0] != '.')
+				sWorld.LogChat(this, "[guild: %s] %s: %s", _player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_OFFICER:
 		{
@@ -369,8 +369,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 			if(_player->m_playerInfo->guild != NULL)
 				_player->m_playerInfo->guild->OfficerChat(msg.c_str(), this, lang);
-			if(sWorld.log_chats && msg.c_str()[0] != '.')
-				sLog.outString("[Officer Chat Guild: %s] %s: %s" ,_player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
+			if(sWorld.LogChats && msg.c_str()[0] != '.')
+				sWorld.LogChat(this, "[Officer Chat Guild: %s] %s: %s" ,_player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_YELL:
 		{
@@ -388,8 +388,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 			_player->GetMapMgr()->SendChatMessageToCellPlayers(_player, data, 2, 1, lang, this);
 			delete data;
-			if(sWorld.log_chats && msg.c_str()[0] != '.')
-				sLog.outString("[Yell] %s: %s", _player->GetName(), msg.c_str());
+			if(sWorld.LogChats && msg.c_str()[0] != '.')
+				sWorld.LogChat(this, "[Yell] %s: %s", _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_WHISPER:
 		{
@@ -465,8 +465,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				SendPacket(data);
 				delete data;
 			}
-			if(sWorld.log_chats)
-				sLog.outString("[whisper] %s to %s: %s", _player->GetName(), player->GetName(), msg.c_str());
+			if(sWorld.LogChats)
+				sWorld.LogChat(this, "[whisper] %s to %s: %s", _player->GetName(), player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_CHANNEL:
 		{
@@ -476,8 +476,8 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			Channel *chn = channelmgr.GetChannel(misc.c_str(),GetPlayer()); 
 			if(chn != NULL)
 				chn->Say(GetPlayer(),msg.c_str(), NULLPLR, false);
-			if(sWorld.log_chats && msg.c_str()[0] != '.')
-				sLog.outString("[%s] %s: %s", misc.c_str(), _player->GetName(), msg.c_str());
+			if(sWorld.LogChats && msg.c_str()[0] != '.')
+				sWorld.LogChat(this, "[%s] %s: %s", misc.c_str(), _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_AFK:
 		{

@@ -1103,7 +1103,7 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 	Player* plr = getSelectedChar(m_session, false);
 	if(plr!=NULL)
 	{  
-		sGMLog.writefromsession(m_session, "used modify field value: %s, %u on %s", fieldname, av, plr->GetName());
+		sWorld.LogGM(m_session, "used modify field value: %s, %u on %s", fieldname, av, plr->GetName());
 		if(fieldmax)
 		{
 			BlueSystemMessage(m_session, "You set the %s of %s to %d/%d.", fieldname, plr->GetName(), av, mv);
@@ -1131,7 +1131,7 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 		{
 			std::string creaturename = cr->GetCreatureInfo() ? cr->GetCreatureInfo()->Name : "Unknown Being";
 
-			sGMLog.writefromsession(m_session, "used modify field value: [creature]%s, %u on %s", fieldname, av, creaturename.c_str());
+			sWorld.LogGM(m_session, "used modify field value: [creature]%s, %u on %s", fieldname, av, creaturename.c_str());
 
 			switch(field)
 			{
@@ -1214,9 +1214,10 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 	}
 
 	Player* plr = getSelectedChar(m_session, false);
-	if(plr!=NULL)
+	if(plr != NULL)
 	{  
-		sGMLog.writefromsession(m_session, "used modify field value: %s, %f on %s", fieldname, av, plr->GetName());
+		sWorld.LogGM(m_session, "used modify field value: %s, %f on %s", fieldname, av, plr->GetName());
+
 		if(fieldmax)
 		{
 			BlueSystemMessage(m_session, "You set the %s of %s to %.1f/%.1f.", fieldname, plr->GetName(), av, mv);
@@ -1244,7 +1245,7 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 			else
 				BlueSystemMessage(m_session, "Setting %s of %s to %.1f.", fieldname, creaturename.c_str(), av);
 			cr->SetFloatValue(field, av);
-			sGMLog.writefromsession(m_session, "used modify field value: [creature]%s, %f on %s", fieldname, av, creaturename.c_str());
+			sWorld.LogGM(m_session, "used modify field value: [creature]%s, %f on %s", fieldname, av, creaturename.c_str());
 			if(fieldmax) {
 				cr->SetFloatValue(fieldmax, mv);
 			}

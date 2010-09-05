@@ -42,7 +42,6 @@ ConsolePrintHook consolePrintHook();
    @return The string that was printed
  */
 std::string __cdecl consolePrintf(const char* fmt ...) G3D_CHECK_PRINTF_ARGS;
-std::string consolePrint(const std::string&);
 
 /**
    Under visual studio, appears in the VS debug pane.

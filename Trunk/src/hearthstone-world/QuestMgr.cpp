@@ -1039,7 +1039,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 	{
 		if(!TO_CREATURE(qst_giver)->HasQuest(qst->id, 2))
 		{
-			//sCheatLog.writefromsession(plr->GetSession(), "tried to finish quest from invalid npc.");
+			//sWorld.LogCheater(plr->GetSession(), "tried to finish quest from invalid npc.");
 			plr->GetSession()->Disconnect();
 			return;
 		}

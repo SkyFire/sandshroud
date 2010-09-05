@@ -710,7 +710,7 @@ bool Player::Create(WorldPacket& data )
 	if(!info)
 	{
 		// info not found... disconnect
-		//sCheatLog.writefromsession(m_session, "tried to create invalid player with race %u and class %u", race, class_);
+		//sWorld.LogCheater(m_session, "tried to create invalid player with race %u and class %u", race, class_);
 		m_session->Disconnect();
 		return false;
 	}
@@ -718,7 +718,7 @@ bool Player::Create(WorldPacket& data )
 	// check that the account CAN create TBC characters, if we're making some
 	if(race >= RACE_BLOODELF && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01))
 	{
-		//sCheatLog.writefromsession(m_session, "tried to create player with race %u and class %u but no expansion flags", race, class_);
+		//sWorld.LogCheater(m_session, "tried to create player with race %u and class %u but no expansion flags", race, class_);
 		m_session->Disconnect();
 		return false;
 	}
@@ -743,7 +743,7 @@ bool Player::Create(WorldPacket& data )
 	if(!myRace || !myClass)
 	{
 		// information not found
-		sCheatLog.writefromsession(m_session, "tried to create invalid player with race %u and class %u, dbc info not found", race, class_);
+		sWorld.LogCheater(m_session, "tried to create invalid player with race %u and class %u, dbc info not found", race, class_);
 		m_session->Disconnect();
 		return false;
 	}
@@ -2910,7 +2910,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 
 	if(fields[1].GetUInt32() != m_session->GetAccountId())
 	{
-		sCheatLog.writefromsession(m_session, "player tried to load character not belonging to them (guid %u, on account %u)",
+		sWorld.LogCheater(m_session, "player tried to load character not belonging to them (guid %u, on account %u)",
 			fields[0].GetUInt32(), fields[1].GetUInt32());
 		RemovePendingPlayer();
 		return;
@@ -5084,7 +5084,7 @@ void Player::_LoadSkills(QueryResult * result)
 				{
 					proff_counter = 0;
 					
-					sCheatLog.writefromsession(GetSession(),"Bug_Primary_Professions Player %s [%d] \n", GetName(), GetLowGUID());
+					sWorld.LogCheater(GetSession(),"Bug_Primary_Professions Player %s [%d] \n", GetName(), GetLowGUID());
 
 					const char * message = "Your character has more then 2 primary professions.\n You have 5 minutes remaining to unlearn and relog.";
 
@@ -11752,7 +11752,7 @@ void Player::_SpeedhackCheck()
 					BroadcastMessage( "Speedhack detected. Please contact an admin with the below information if you believe this is a false detection." );
 					BroadcastMessage( "You will be disconnected in 10 seconds." );
 					BroadcastMessage( MSG_COLOR_WHITE"speed: %f diff: %i dist: %f move: %u tdiff: %u\n", speed, difference, distance, move_time, time_diff );
-					sCheatLog.writefromsession(GetSession(), "Speed hack detected! Distance: %i, Speed: %f, Move: %u, tdiff: %u", distance, speed, move_time, time_diff);
+					sWorld.LogCheater(GetSession(), "Speed hack detected! Distance: %i, Speed: %f, Move: %u, tdiff: %u", distance, speed, move_time, time_diff);
 					if(m_bg)
 						m_bg->RemovePlayer(TO_PLAYER(this), false);
 
