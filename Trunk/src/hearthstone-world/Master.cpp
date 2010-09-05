@@ -569,6 +569,7 @@ void Master::_StopDB()
 {
 	delete Database_World;
 	delete Database_Character;
+	delete Database_Log;
 }
 
 #ifndef WIN32
