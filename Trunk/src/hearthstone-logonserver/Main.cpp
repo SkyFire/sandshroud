@@ -295,7 +295,6 @@ void LogonServer::Run(int argc, char ** argv)
 		case 0:
 			break;
 		default:
-			sLog.m_fileLogLevel = -1;
 			sLog.m_screenLogLevel = 3;
 			printf("Usage: %s [--checkconf] [--screenloglevel <level>] [--fileloglevel <level>] [--conf <filename>] [--version]\n", argv[0]);
 			return;
@@ -305,11 +304,10 @@ void LogonServer::Run(int argc, char ** argv)
 	// Startup banner
 	if(!do_version && !do_check_conf)
 	{
-		sLog.Init(-1, 3);
+		sLog.Init(3);
 	}
 	else
 	{
-		sLog.m_fileLogLevel = -1;
 		sLog.m_screenLogLevel = 3;
 	}
 	
