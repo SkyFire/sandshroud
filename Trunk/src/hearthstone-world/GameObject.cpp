@@ -368,14 +368,11 @@ void GameObject::InitAI()
 	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
 		{
 			Health = pInfo->SpellFocus + pInfo->sound5;
+			SetByte(GAMEOBJECT_BYTES_1, 3, 255);
 		}break;
 	}
 
 	myScript = sScriptMgr.CreateAIScriptClassForGameObject(GetEntry(), this);
-
-	// hackfix for bad spell in BWL
-	if(!spellid || spellid == 22247)
-		return;
 
 	SpellEntry *sp= dbcSpell.LookupEntry(spellid);
 	if(!sp)
@@ -384,9 +381,7 @@ void GameObject::InitAI()
 		return;
 	}
 	else
-	{
 		spell = sp;
-	}
 	//ok got valid spell that will be casted on target when it comes close enough
 	//get the range for that 
 	
@@ -407,7 +402,6 @@ void GameObject::InitAI()
 
 	range = r*r;//square to make code faster
 	checkrate = 20;//once in 2 seconds
-	
 }
 
 bool GameObject::Load(GOSpawn *spawn)
@@ -418,7 +412,6 @@ bool GameObject::Load(GOSpawn *spawn)
 	m_phaseMode = spawn->phase;
 	m_spawn = spawn;
 	SetUInt32Value(GAMEOBJECT_FLAGS,spawn->flags);
-//	SetUInt32Value(GAMEOBJECT_LEVEL,spawn->level);
 	SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE, spawn->state);
 	if(spawn->faction)
 	{
@@ -803,12 +796,16 @@ uint8 GameObject::GetState()
 //Destructable Buildings
 void GameObject::TakeDamage(uint32 amount, Object* mcaster, Object* pcaster, uint32 spellid)
 {
-	printf("Gameobject Target Found\n");
 	if(pInfo->Type != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
 		return;
 
-	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED)) // Already destroyed
+	printf("Gameobject Target Found\n");
+
+	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED)) // Already destroyed
 		return;
+
+	uint32 IntactHealth = pInfo->SpellFocus;
+	uint32 DamagedHealth = pInfo->sound5;
 
 	if(Health > amount)
 		Health -= amount;
@@ -826,26 +823,24 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Object* pcaster, uin
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
 		}
 	}
-	else if(!HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED))
+	else if(!HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && Health <= DamagedHealth)
 	{
-		if(Health <= pInfo->sound5)
-		{
-			if(Health == 0)
-				Health = 1;
-			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
-			DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-			SetUInt32Value(GAMEOBJECT_DISPLAYID,display->GetDisplayId(1));
-			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
-		}
+		if(Health == 0)
+			Health = 1;
+		SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
+		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
+		SetUInt32Value(GAMEOBJECT_DISPLAYID, display->GetDisplayId(1));
+		sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
 	}
 
 	WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
 	data << GetNewGUID(); 
 	data << mcaster->GetNewGUID();
 	data << pcaster->GetNewGUID();
-	data << uint32(amount) << spellid;
+	data << uint32(amount);
+	data << spellid;
 	mcaster->SendMessageToSet(&data, (mcaster->IsPlayer() ? true : false));
-	SetByte(GAMEOBJECT_BYTES_1, 3, Health);
+	SetByte(GAMEOBJECT_BYTES_1, 3, Health*255/(IntactHealth + DamagedHealth));
 }
 
 void GameObject::Rebuild()
