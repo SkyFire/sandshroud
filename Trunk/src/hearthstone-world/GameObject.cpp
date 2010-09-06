@@ -825,12 +825,20 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Object* pcaster, uin
 	}
 	else if(!HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && Health <= DamagedHealth)
 	{
-		if(Health == 0)
-			Health = 1;
-		SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
-		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-		SetUInt32Value(GAMEOBJECT_DISPLAYID, display->GetDisplayId(1));
-		sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
+		if(Health != 0)
+		{
+			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
+			DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
+			SetUInt32Value(GAMEOBJECT_DISPLAYID, display->GetDisplayId(1));
+			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
+		}
+		else
+		{
+			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED);
+			DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
+			SetUInt32Value(GAMEOBJECT_DISPLAYID,display->GetDisplayId(3));
+			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
+		}
 	}
 
 	WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
