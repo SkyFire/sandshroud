@@ -1305,11 +1305,8 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		plr->AddToFinishedQuests(qst->id);
 	if(qst->reward_arenapoints!=0)
 		plr->AddArenaPoints(qst->reward_arenapoints);
-	if(qst->complete_phase!=0)
-	{
-		plr->placeholderphase = qst->complete_phase;
+	if(qst->complete_phase != 0)
 		plr->SetPhase(qst->complete_phase);
-	}
 
 	//Remove any timed events
 	if (sEventMgr.HasEvent(plr,EVENT_TIMED_QUEST_EXPIRE))

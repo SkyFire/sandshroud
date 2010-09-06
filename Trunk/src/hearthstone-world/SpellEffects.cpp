@@ -3748,8 +3748,8 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		if( fabs( posZ - m_caster->GetPositionZ() ) >= 10.0f )
 			return;*/
 
-		if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), 
-				posX, posY, m_caster->GetPositionZ() + 2.0f, posX, posY, posZ, -1.5f) )
+		if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ()
+			+ p_caster->m_noseLevel, posX, posY, p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, posZ, -1.5f) )
 		{
 			float fz2 = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, posZ);
 			if( fz2 != NO_WMO_HEIGHT )

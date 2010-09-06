@@ -1893,7 +1893,7 @@ public:
 	}
 
 	Item* getTradeItem(uint32 slot) {return mTradeItems[slot];};
-        
+
 	// Water level related stuff (they are public because they need to be accessed fast)
 	// Nose level of the character (needed for proper breathing)
 	float m_noseLevel;
@@ -2322,7 +2322,8 @@ public:
 	void knockback( float Orientation, int32 basepoint, uint32 miscvalue, bool disengage = false );
 	uint8 GetChatTag() const;
 	void AddArenaPoints( uint32 arenapoints );
-	uint32 placeholderphase;
+	uint32 LastPhase;
+
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);
 };

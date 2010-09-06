@@ -168,7 +168,6 @@ void WorldSession::HandleLeaveBattlefieldOpcode(WorldPacket &recv_data)
 	if(_player->m_bg && _player->IsInWorld())
 	{
 		_player->m_bg->RemovePlayer(_player, false);
-		_player->SetPhase(_player->placeholderphase);
 	}
 }
 

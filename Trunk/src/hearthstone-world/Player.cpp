@@ -448,7 +448,6 @@ void Player::Init()
 	mHypothermia = false;
 	mSated = false;
 	mAvengingWrath = true;
-	placeholderphase = 1;
 	m_flyhackCheckTimer = 0;
 	m_bgFlagIneligible = 0;
 	m_moltenFuryDamageIncreasePct = 0;
@@ -478,6 +477,7 @@ void Player::Init()
 
 	WinterGrasp = NULL;
 	watchedchannel = NULL;
+	LastPhase = 1; // TODO: SAVE TO DB!
 	Unit::Init();
 }
 
@@ -13156,6 +13156,8 @@ void Player::_SaveAreaPhaseInfo(QueryBuffer* buff)
 
 void Player::SetPhase(int32 phase, bool save)
 {
+	LastPhase = GetPhase();
+
 	Object::SetPhase(phase);
 
 	if(areaphases[GetAreaID()] != NULL)

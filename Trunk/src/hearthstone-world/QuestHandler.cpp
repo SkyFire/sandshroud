@@ -377,11 +377,9 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 
 	sQuestMgr.OnQuestAccepted(_player,qst,qst_giver);
 
-	if(qst->start_phase!=0)
-	{
-		_player->SetPhase(qst->start_phase);
-		_player->placeholderphase = qst->start_phase;
-	}
+	if(qst->start_phase != 0 )
+		_player->SetPhase(qst->start_phase, true);
+
 	sHookInterface.OnQuestAccept(_player, qst, qst_giver);
 }
 
@@ -439,6 +437,12 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 	{
 		if (sEventMgr.HasEvent(_player,EVENT_TIMED_QUEST_EXPIRE))
 			sEventMgr.RemoveEvents(_player, EVENT_TIMED_QUEST_EXPIRE); 	
+	}
+
+	if(qPtr->start_phase != 0)
+	{
+		if(_player->GetPhase() == qPtr->start_phase)
+			_player->SetPhase(_player->LastPhase, true);
 	}
 
 	_player->UpdateNearbyGameObjects();
