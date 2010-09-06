@@ -220,6 +220,7 @@ struct CreatureProtoVehicle
 	bool healthfromdriver; // Effects only driver.
 	uint32 healthunitfromitemlev;
 	uint32 VehicleSpells[6]; // Vehicle spells.
+	uint32 MovementFlags;
 	AccessoryInfo accessories[8]; // Accessories.
 };
 

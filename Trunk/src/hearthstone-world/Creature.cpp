@@ -1165,6 +1165,8 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	if( spawn->stand_state )
 		SetStandState( (uint8)spawn->stand_state );
 
+
+
 	return true;
 }
 

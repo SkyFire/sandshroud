@@ -264,7 +264,6 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 			}
 		}
 	}
-
 	Initialised = true;
 
 	return Creature::Load(spawn, mode, info);
@@ -792,6 +791,8 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			UpdateOppFactionSet();
 
 			SendSpells(GetEntry(), pPlayer);
+			GetMovementInfo()->flags = vehicleproto->MovementFlags;
+			SetVehiclePower(dbcVehicle.LookupEntry(GetVehicleEntry()));
 		}
 
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
@@ -859,6 +860,26 @@ void Vehicle::setDeathState(DeathState s)
 	if( s == JUST_DIED && m_CreatedFromSpell)
 		SafeDelete();
 }
+
+void Vehicle::SetVehiclePower(VehicleEntry * v)
+{
+	switch (v->m_powerType)
+	{
+		case 61:
+		case 141:
+		case 121:
+		SetPowerType(POWER_TYPE_ENERGY);
+		SetMaxPower(POWER_ENERGY, 100);
+		break;
+		case 41:
+		SetPowerType(POWER_ENERGY);
+		SetMaxPower(POWER_ENERGY, 50);
+		break;
+		default:
+		break;
+	}
+}
+	
 
 /* To change a vehicles speed we must send a Force Speed
 change packet to the client. SpeedType takes values from
@@ -991,9 +1012,7 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 		return;
 	}
 	else
-	{
 		pVehicle = TO_VEHICLE(unit);
-	}
 
 	if(!pVehicle->GetMaxPassengerCount())
 		return;

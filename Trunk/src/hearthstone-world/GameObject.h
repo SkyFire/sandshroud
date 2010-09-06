@@ -272,7 +272,6 @@ protected:
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
 	uint32 mines_remaining; //used for mining to mark times it can be mined
-
 };
 
 #endif

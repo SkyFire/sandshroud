@@ -33,7 +33,7 @@ const char * gAchievementRewardFormat					= "uuuu";
 const char * gAreaTriggerFormat							= "ucuusffffuu";
 const char * gCreatureNameFormat						= "usssuuuuuuuuuuuffcc";
 const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuibuufffuuiuc";
-const char * gCreatureVehicleProto						= "ubuuuuuuuubbubbubbubbubbubbubbubb";
+const char * gCreatureVehicleProto						= "ubuuuuuuuuubbubbubbubbubbubbubbubb";
 const char * gCreatureInfoExtra							= "uuuhu";
 const char * gFishingFormat								= "uuu";
 const char * gGameObjectNameFormat						= "uuusuuuuuuuuuuuuuuuuuuuuuuuu";
@@ -941,6 +941,10 @@ bool Storage_ReloadTable(const char * TableName)
 		ItemPrototypeStorage.Reload();
 	else if(!stricmp(TableName, "creature_proto"))		// Creature Proto
 		CreatureProtoStorage.Reload();
+	else if(!stricmp(TableName, "creature_proto"))		// Creature Proto
+		CreatureProtoStorage.Reload();
+	else if(!stricmp(TableName, "creature_proto_vehicle"))	// Creature Vehicle Proto
+		CreatureProtoVehicleStorage.Reload();
 	else if(!stricmp(TableName, "creature_names"))		// Creature Names
 		CreatureNameStorage.Reload();
 	else if(!stricmp(TableName, "gameobject_names"))	// GO Names

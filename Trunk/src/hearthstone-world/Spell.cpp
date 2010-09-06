@@ -5346,3 +5346,27 @@ void Spell::_AddTargetForced(const uint64& guid, const uint32 effectid)
 	else
 		++m_missTargetCount;
 }
+
+void Spell::DamageGosAround(Unit*Caster,uint32 i, uint32 spell_damage , uint32 spell_id)
+{
+	if(!Caster)
+		return; //Lets put that here just incase something happens mmk?
+
+	float r = GetRadius(i);
+	r *= r;
+	Object* o;
+	Object* vehicle_controller = NULL;
+	if(!Caster->IsVehicle())
+		vehicle_controller = Caster;
+	else
+		vehicle_controller = TO_VEHICLE(Caster)->GetControllingUnit();
+
+	for (Object::InRangeSet::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr)
+	{
+		o = *itr;
+		if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r)
+		{
+			TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,vehicle_controller,spell_id);
+		}
+	}
+}

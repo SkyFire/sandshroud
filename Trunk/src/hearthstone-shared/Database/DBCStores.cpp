@@ -83,6 +83,7 @@ SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
 SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
 SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
 SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
+SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
 
 const char* SummonPropertiesfmt = "uuuuuu";
 const char* AreaGroupFormat="niiiiiii";
@@ -247,7 +248,7 @@ const char* gtfloatformat = "f";
 const char* spellshapeshiftformformat = "uxxxxxxxxxxxxxxxxxxxxxxxxxxxuuuuuuu";
 
 const char* vehicleseatentryFormat = "uuxfffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxuuxxxxxxxxxxxx";
-const char* vehicleentryFormat = "uxxxxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxxxxx";
+const char* vehicleentryFormat = "uxxxxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxuxxx";
 
 const char* achievementfmt=
 	"n" // Index
@@ -281,6 +282,8 @@ const char* scalingstatvaluesformat =
 	"u" // Spell Power
 	"uux" // Multipliers
 	"uuuu"; // Armor Type[level]
+
+const char* DestructibleModelDataFormat = "uxxuxxxuxxxuxxxuxxx";
 
 template<class T>
 bool loader_stub(const char * filename, const char * format, bool ind, T& l, bool loadstrs)
@@ -414,6 +417,8 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/WorldMapOverlay.dbc", WorldMapOverlayfmt, true, dbcWorldMapOverlay, true);
 	/* Needed for: */
 	LOAD_DBC("DBC/WMOAreaTable.dbc", WMOAreaEntryfmt, true, dbcWMOAreaTable, true);
+	/* Needed for: */
+	LOAD_DBC("DBC/DestructibleModelData.dbc", DestructibleModelDataFormat, true, dbcDestructibleModelDataEntry, false);
 
 	return true;
 }

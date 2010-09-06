@@ -1205,6 +1205,7 @@ struct VehicleEntry
 //	uint32 m_uiLocomotionType;					// 40
 //	float m_msslTrgtImpactTexRadius;			// 41
 //	uint32 m_uiSeatIndicatorType;				// 42
+	uint32  m_powerType;
 //												// 43
 //												// 44
 //												// 45
@@ -1261,6 +1262,29 @@ struct VehicleSeatEntry
 //									// 46-57
 
 	bool IsUsable() const { return (m_flags & 0x2000000 ? true : false); }
+};
+
+struct DestructibleModelDataEntry
+{
+	uint32 entry; //Unknown9 from gameobject_names
+	uint32 displayId[4];
+
+	uint32 GetDisplayId(uint8 state)
+	{
+		if(state > 4)
+			return 0;
+
+		if(!displayId[state])
+		{
+			for(int32 i = state-1; i > -1; --i)
+			{
+				if(displayId[i])
+					return displayId[i];
+			}
+		}
+
+		return displayId[state];
+	}
 };
 
 #pragma pack(pop)
@@ -1741,6 +1765,7 @@ extern SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
 extern SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
 extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
 extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
+extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
 
 bool LoadDBCs();
 
