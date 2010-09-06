@@ -40,6 +40,10 @@ class LuaQuest;
 //class LuaInstance;
 class LuaGossip;
 
+#ifdef WIN32
+	HANDLE stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
+
 extern LuaEngine * g_engine;
 extern LuaEngineMgr g_luaMgr;
 #define LuaEvent g_luaMgr.LuaEventMgr
@@ -152,6 +156,11 @@ enum CustomLuaEvenTypes
 	LUA_EVENTS_END
 };
 
+struct LUALoadScripts
+{
+	set<string> luaFiles;
+};
+
 struct EventInfoHolder
 {
 	const char * funcName;
@@ -207,6 +216,7 @@ public:
 
 	lua_State* GetMainLuaState() { return L; }
 	void LoadScripts();
+	void ScriptLoadDir(char* Dirname, LUALoadScripts *pak);
 	void Shutdown();
 	void Restart();
 	void RegisterCoreFunctions();
@@ -741,14 +751,14 @@ public:
 		{
 			luaL_getmetatable(L,GetName());
 			if(lua_isnoneornil(L,-1) )
-				luaL_error(L,"%s metatable not found!. \n",GetName());
+				luaL_error(L,"%s metatable not found!.",GetName());
 			else 
 			{
 				int mt = lua_gettop(L);
 				uint64* guidHold = (uint64*)lua_newuserdata(L,sizeof(uint64));
 				int ud = lua_gettop(L);
 				if(guidHold == NULL)
-					luaL_error(L,"Lua tried to allocate size %d of memory and failed! \n",sizeof(uint64*));
+					luaL_error(L,"Lua tried to allocate size %d of memory and failed!",sizeof(uint64*));
 				else
 				{
 					(*guidHold) = guid;
@@ -786,7 +796,7 @@ private:
 		lua_remove(L,1);
 		lua_remove(L,1);
 		lua_remove(L,1);
-		luaL_error(L,"OPERATION PROHIBITED!\n");
+		luaL_error(L,"OPERATION PROHIBITED!");
 		return 0;
 	}
 };

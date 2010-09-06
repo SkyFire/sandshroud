@@ -63,102 +63,146 @@ LuaEngine::~LuaEngine()
 	lua_close(L);
 }
 
-void LuaEngine::LoadScripts()
+void LuaEngine::ScriptLoadDir(char* Dirname, LUALoadScripts *pak)
 {
-	unordered_set<string> luaFiles;
-	unordered_set<string> luaBytecodeFiles;
-
 #ifdef WIN32
-	WIN32_FIND_DATA fd;
-	HANDLE h;
 
-	h = FindFirstFile("scripts\\*.*", &fd);
-	if(h == INVALID_HANDLE_VALUE)
-		return;
+	HANDLE hFile;
+	WIN32_FIND_DATA FindData;
+	memset(&FindData,0,sizeof(FindData));
 
-	do 
+	char SearchName[MAX_PATH];
+
+	strcpy(SearchName,Dirname);
+	strcat(SearchName,"\\*.*");
+
+	hFile = FindFirstFile(SearchName,&FindData);
+	FindNextFile(hFile, &FindData);
+
+	while( FindNextFile(hFile, &FindData) )
 	{
-		if(fd.dwFileAttributes  & FILE_ATTRIBUTE_DIRECTORY)
-			continue;
-		char * fn = strrchr(fd.cFileName, '\\');
-		if(!fn)
-			fn=fd.cFileName;
-		char * ext = strrchr(fd.cFileName, '.');
-		if(!stricmp(ext, ".lua"))
-			luaFiles.insert(string(fn));
-		else if(!stricmp(ext, ".luc"))
-			luaBytecodeFiles.insert(string(fn));
-	} while(FindNextFile(h, &fd));
-	FindClose(h);
+		if( FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) //Credits for this 'if' go to Cebernic from ArcScripts Team. Thanks, you saved me some work ;-)
+		{
+			strcpy(SearchName,Dirname);
+			strcat(SearchName,"\\");
+			strcat(SearchName,FindData.cFileName);
+			ScriptLoadDir(SearchName, pak);
+		}
+		else
+		{
+			string fname = Dirname;
+			fname += "\\";
+			fname += FindData.cFileName;
+
+			int len = int(strlen(fname.c_str()));
+			int i = 0;
+			char ext[MAX_PATH];
+
+			while(len > 0)
+			{  
+				ext[i++] = fname[--len];
+				if(fname[len] == '.')
+					break;
+			}
+			ext[i++] = '\0';
+			if ( !_stricmp(ext,"aul.") ) pak->luaFiles.insert(fname);
+		}
+	}
+	FindClose(hFile);
+
 #else
+
+	char *pch=strrchr(Dirname,'/');
+	if (strcmp(Dirname, "..")==0 || strcmp(Dirname, ".")==0) return; //Against Endless-Loop
+	if (pch != NULL && (strcmp(pch, "/..")==0 || strcmp(pch, "/.")==0 || strcmp(pch, "/.svn")==0)) return;
 	struct dirent ** list;
-	int filecount = scandir("./scripts", &list, 0, 0);
+	int filecount = scandir(Dirname, &list, 0, 0);
+
 	if(filecount <= 0 || !list)
 		return;
 
+	struct stat attributes;
+	bool err;
+	Log.Success("LuaEngine", "Scanning Directory %s", Dirname);
 	while(filecount--)
 	{
-		char* ext = strrchr(list[filecount]->d_name, '.');
-		if(ext != NULL && !strcmp(ext, ".lua"))
-			{
-				string full_path = string(list[filecount]->d_name);
-				luaFiles.insert(string(full_path.c_str()));
-		}
-		else if(!stricmp(ext, ".luc"))
+		char dottedrelpath[200];
+		sprintf(dottedrelpath, "%s/%s", Dirname, list[filecount]->d_name);
+		err = false;
+		if(stat(dottedrelpath, &attributes) == -1)
 		{
-		string full_path = string(list[filecount]->d_name);
-		luaBytecodeFiles.insert(string(full_path.c_str()));
+			err = true;
+			Log.Error("LuaEngine","Error opening %s: %s\n", dottedrelpath, strerror(errno));
+		}
+
+		if (!err && S_ISDIR(attributes.st_mode))
+		{
+			ScriptLoadDir((char *)dottedrelpath, pak); //Subdirectory
+		}
+		else
+		{
+			char* ext = strrchr(list[filecount]->d_name, '.');
+			if(ext != NULL && !strcmp(ext, ".lua"))
+			{
+				pak->luaFiles.insert(dottedrelpath);
+			}
 		}
 
 		free(list[filecount]);
 	}
 	free(list);
+
 #endif
+}
 
-	// we prefer precompiled code.
-	for(unordered_set<string>::iterator itr = luaBytecodeFiles.begin(); itr != luaBytecodeFiles.end(); ++itr)
-	{
-		unordered_set<string>::iterator it2 = luaFiles.find(*itr);
-		if(it2 == luaFiles.end())
-			luaFiles.erase(it2);
-	}
+void LuaEngine::LoadScripts()
+{
+	LUALoadScripts rtn;
+	Log.Notice("LuaEngine", "Scanning Script-Directories...");
+	ScriptLoadDir((char*)"scripts", &rtn);
 
+	unsigned int cnt_uncomp = 0;
 	luaL_openlibs(L);
 	RegisterCoreFunctions();
-
-	if(lua_is_starting_up)
-		Log.Notice("LuaEngine", "Loading Scripts...");
+	Log.Notice("LuaEngine", "Loading Scripts...");
 
 	char filename[200];
 
-	for(unordered_set<string>::iterator itr = luaFiles.begin(); itr != luaFiles.end(); ++itr)
+	for(set<string>::iterator itr = rtn.luaFiles.begin(); itr != rtn.luaFiles.end(); ++itr)
 	{
-#ifdef WIN32
-			snprintf(filename, 200, "scripts\\%s", itr->c_str());
-#else
-			snprintf(filename, 200, "scripts/%s", itr->c_str());
-#endif
-		if(lua_is_starting_up)
-			Log.Notice("LuaEngine", "%s...", itr->c_str());
-
+		strcpy(filename, itr->c_str());
 		if(luaL_loadfile(L, filename) != 0)
 		{
-			printf("failed. (could not load)\n");
-			const char * msg = lua_tostring(L, -1);
-			if(msg!=NULL&&lua_is_starting_up)
-				printf("\t%s\n",msg);
+#ifdef WIN32
+				SetConsoleTextAttribute(stdout_handle, (WORD)TRED);
+				report(L);
+				SetConsoleTextAttribute(stdout_handle, (WORD)TWHITE);
+#else
+				printf("\033[22;31m");
+				report(L);
+				printf("\033[01;37m");
+#endif
+			continue;
 		}
 		else
 		{
-			if(lua_pcall(L, 0, LUA_MULTRET, 0) != 0)
+			if(lua_pcall(L, 0, 0, 0) != 0)
 			{
-				printf("failed. (could not run)\n");
-				const char * msg = lua_tostring(L, -1);
-				if(msg!=NULL&&lua_is_starting_up)
-					printf("\t%s\n",msg);
+#ifdef WIN32
+				SetConsoleTextAttribute(stdout_handle, (WORD)TRED);
+				report(L);
+				SetConsoleTextAttribute(stdout_handle, (WORD)TWHITE);
+#else
+				printf("\033[22;31m");
+				report(L);
+				printf("\033[01;37m");
+#endif
+				continue;
 			}
 		}
+		cnt_uncomp++;
 	}
+	Log.Notice("LuaEngine","Loaded %u Lua scripts.", cnt_uncomp);
 }
 
 /*******************************************************************************
@@ -469,7 +513,7 @@ static int ExtractfRefFromCString(lua_State * L,const char * functionName)
 			if (lua_isfunction(L,-1) && !lua_iscfunction(L,-1))
 				functionRef = lua_ref(L,true);
 			else
-				luaL_error(L,"Reference creation failed! (%s) is not a valid Lua function. \n",functionName);
+				luaL_error(L,"Reference creation failed! (%s) is not a valid Lua function.",functionName);
 		}
 		else
 		{
@@ -489,7 +533,7 @@ static int ExtractfRefFromCString(lua_State * L,const char * functionName)
 				}
 				else
 				{
-					luaL_error(L,"Reference creation failed! (%s) is not a valid Lua function. \n",functionName);
+					luaL_error(L,"Reference creation failed! (%s) is not a valid Lua function.",functionName);
 					break;
 				}
 			}
@@ -697,11 +741,11 @@ static int SuspendLuaThread(lua_State * L)
 {
 	lua_State * thread = (lua_isthread(L,1)) ? lua_tothread(L,1) : NULL;
 	if(thread == NULL)
-		return luaL_error(L,"LuaEngineMgr","SuspendLuaThread expected Lua coroutine, got NULL. \n");
+		return luaL_error(L,"LuaEngineMgr","SuspendLuaThread expected Lua coroutine, got NULL.");
 
 	int waitime = luaL_checkinteger(L,2);
 	if(waitime <= 0)
-		return luaL_error(L,"LuaEngineMgr","SuspendLuaThread expected timer > 0 instead got (%d) \n",waitime);
+		return luaL_error(L,"LuaEngineMgr","SuspendLuaThread expected timer > 0 instead got (%d)",waitime);
 
 	lua_pushvalue(L,1);
 	int ref = luaL_ref(L,LUA_REGISTRYINDEX);
