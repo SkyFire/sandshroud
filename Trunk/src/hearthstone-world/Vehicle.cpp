@@ -91,13 +91,13 @@ void Vehicle::InstallAccessories()
 {
 	//Disabled.
 	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
-
 	if(acc == NULL)
 	{
 		sLog.outDetail("Vehicle %u has no accessories.", GetEntry());
 		return;
 	}
 
+	GetMovementInfo()->flags = acc->MovementFlags;
 	MapMgr* map = (GetMapMgr() ? GetMapMgr() : sInstanceMgr.GetMapMgr(GetMapId()));
 	if(map == NULL) // Shouldn't ever really happen.
 		return;
@@ -791,7 +791,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			UpdateOppFactionSet();
 
 			SendSpells(GetEntry(), pPlayer);
-			GetMovementInfo()->flags = vehicleproto->MovementFlags;
 			SetVehiclePower(dbcVehicle.LookupEntry(GetVehicleEntry()));
 		}
 

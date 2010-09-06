@@ -1873,7 +1873,7 @@ void WorldSession::HandleLootRollOpcode(WorldPacket& recv_data)
 	if(!li)
 		return;
 
-	li->PlayerRolled(_player, choice);
+	li->PlayerRolled(_player->getPlayerInfo(), choice);
 }
 
 void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)

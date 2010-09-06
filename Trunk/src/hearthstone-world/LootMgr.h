@@ -30,13 +30,15 @@
 struct ItemPrototype;
 class MapMgr;
 class Player;
+struct PlayerInfo;
+
 class LootRoll : public EventableObject
 {
 public:
 	LootRoll();
 	~LootRoll();
 	void Init(uint32 timer, uint32 groupcount, uint64 guid, uint32 slotid, uint32 itemid, uint32 randomsuffixid, uint32 randompropertyid, MapMgr* mgr);
-	void PlayerRolled(Player* player, uint8 choice);
+	void PlayerRolled(PlayerInfo* pInfo, uint8 choice);
 	void Finalize();
 
 	int32 event_GetInstanceID();

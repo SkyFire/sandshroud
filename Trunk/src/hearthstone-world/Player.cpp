@@ -6131,7 +6131,7 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 	uint32 count=0;
 	uint8 slottype = 0;
 
-	for(uint32 x=0;iter!=lootObj->m_loot.items.end();iter++,x++)
+	for(uint32 x = 0; iter != lootObj->m_loot.items.end(); iter++, x++)
 	{ 
 		if (iter->iItemsCount == 0)
 			continue;
@@ -6147,12 +6147,14 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 		//quest items that dont start quests.
 		if((itemProto->Bonding == ITEM_BIND_QUEST) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
 			continue;
+
 		if((itemProto->Bonding == ITEM_BIND_QUEST2) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
 			continue;
 
 		//quest items that start quests need special check to avoid drops all the time.
 		if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
 			continue;
+
 		if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
 			continue;
 
@@ -6221,8 +6223,6 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 		data << uint32(itemProto->ItemId);
 		data << uint32(iter->iItemsCount);//nr of items of this type
 		data << uint32(iter->item.displayid); 
-		//data << uint32(iter->iRandomSuffix ? iter->iRandomSuffix->id : 0);
-		//data << uint32(iter->iRandomProperty ? iter->iRandomProperty->ID : 0);
 		if(iter->iRandomSuffix)
 		{
 			data << Item::GenerateRandomSuffixFactor(itemProto);
@@ -6245,14 +6245,14 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 		{
 			if(iter->roll == NULL && !iter->passed)
 			{
-				int32 ipid = 0;
-				uint32 factor=0;
+				uint32 ipid = 0;
+				uint32 factor = 0;
 				if(iter->iRandomProperty)
-					ipid=iter->iRandomProperty->ID;
+					ipid = iter->iRandomProperty->ID;
 				else if(iter->iRandomSuffix)
 				{
-					ipid = -int32(iter->iRandomSuffix->id);
-					factor=Item::GenerateRandomSuffixFactor(iter->item.itemproto);
+					factor = Item::GenerateRandomSuffixFactor(iter->item.itemproto);
+					ipid = uint32(-int32(iter->iRandomSuffix->id));
 				}
 
 				if(iter->item.itemproto)
@@ -6266,13 +6266,7 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 					data2 << x;
 					data2 << uint32(iter->item.itemproto->ItemId);
 					data2 << uint32(factor);
-					if(iter->iRandomProperty)
-						data2 << uint32(iter->iRandomProperty->ID);
-					else if(iter->iRandomSuffix)
-						data2 << uint32(ipid);
-					else
-						data2 << uint32(0);
-
+					data2 << uint32(ipid);
 					data2 << iter->iItemsCount;
 					data2 << uint32(60000); // countdown
 					data2 << uint8(7);
@@ -6289,10 +6283,12 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 							if((*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetItemInterface()->CanReceiveItem(itemProto, iter->iItemsCount, NULL) == 0)
 							{
 								if( (*itr)->m_loggedInPlayer->m_passOnLoot )
-									iter->roll->PlayerRolled( (*itr)->m_loggedInPlayer, PASS );		// passed
+									iter->roll->PlayerRolled( (*itr), PASS );		// passed
 								else
 									(*itr)->m_loggedInPlayer->GetSession()->SendPacket(&data2);
 							}
+							else
+								iter->roll->PlayerRolled( (*itr), PASS );		// passed
 						}
 					}
 					pGroup->Unlock();

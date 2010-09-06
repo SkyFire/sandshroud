@@ -928,9 +928,9 @@ void LootRoll::Finalize()
 	delete this;
 }
 
-void LootRoll::PlayerRolled(Player* player, uint8 choice)
+void LootRoll::PlayerRolled(PlayerInfo* pInfo, uint8 choice)
 {
-	if(m_NeedRolls.find(player->GetLowGUID()) != m_NeedRolls.end() || m_GreedRolls.find(player->GetLowGUID()) != m_GreedRolls.end() || m_DisenchantRolls.find(player->GetLowGUID()) != m_DisenchantRolls.end())
+	if(m_NeedRolls.find(pInfo->guid) != m_NeedRolls.end() || m_GreedRolls.find(pInfo->guid) != m_GreedRolls.end() || m_DisenchantRolls.find(pInfo->guid) != m_DisenchantRolls.end())
 		return; // dont allow cheaters
 
 	mLootLock.Acquire();
@@ -939,42 +939,40 @@ void LootRoll::PlayerRolled(Player* player, uint8 choice)
 	// create packet
 	WorldPacket data(34);
 	data.SetOpcode(SMSG_LOOT_ROLL);
-	data << _guid << _slotid << player->GetGUID();
+	data << _guid << _slotid << pInfo->guid;
 	data << _itemid << _randomsuffixid << _randompropertyid;
 
 	switch(choice)
  	{
 	case NEED:
 		{
-			m_NeedRolls.insert( std::make_pair(player->GetLowGUID(), roll) );
+			m_NeedRolls.insert( std::make_pair(pInfo->guid, roll) );
 			data << uint8(roll) << uint8(NEED);
-		}
- 
+		}break;
 	case GREED:
 		{
-			m_GreedRolls.insert( std::make_pair(player->GetLowGUID(), roll) );
+			m_GreedRolls.insert( std::make_pair(pInfo->guid, roll) );
 			data << uint8(roll) << uint8(GREED);
-
-		}
+		}break;
 	case DISENCHANT:
-		{ 
-			m_DisenchantRolls.insert( std::make_pair(player->GetLowGUID(), roll) );
+		{
+			m_DisenchantRolls.insert( std::make_pair(pInfo->guid, roll) );
 			data << uint8(roll) << uint8(DISENCHANT);
-		}
+		}break;
 	default: //pass
 		{
-			m_passRolls.insert( player->GetLowGUID() );
+			m_passRolls.insert( pInfo->guid );
 			data << uint8(128) << uint8(128);
-		}
+		}break;
  	}
 
 	data << uint8(0);
 
-	if(player->InGroup())
-		player->GetGroup()->SendPacketToAll(&data);
-	else
-		player->GetSession()->SendPacket(&data);
-	
+	if(pInfo->m_Group)
+		pInfo->m_Group->SendPacketToAll(&data);
+	else if(pInfo->m_loggedInPlayer)
+		pInfo->m_loggedInPlayer->GetSession()->SendPacket(&data);
+
 	// check for early completion
 	if(!--_remaining)
 	{
