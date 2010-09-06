@@ -6610,7 +6610,7 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	DamageGosAround(u_caster,i,damage,GetSpellProto()->Id);
+	DamageGosAround(m_caster,i,damage,GetSpellProto()->Id);
 }
 
 void Spell::SpellEffectWMORepair(uint32 i)

@@ -1992,7 +1992,7 @@ protected:
 	bool			m_cancelled;
 	bool			m_isCasting;
 	bool			m_projectileWait;
-	void DamageGosAround(Unit*Caster,uint32 i, uint32 spell_damage, uint32 spell_id);
+	void DamageGosAround(Object*Caster,uint32 i, uint32 spell_damage, uint32 spell_id);
 private:
 	struct SpellTarget
 	{
