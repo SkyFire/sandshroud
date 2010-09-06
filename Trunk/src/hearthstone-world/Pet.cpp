@@ -376,19 +376,18 @@ void Pet::SendSpellsToOwner()
 	{
 		// Send the rest of the spells.
 		*data << uint8(mSpells.size());
-		for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); itr++)
-			*data << uint16(itr->first->Id) << uint16(itr->second);
+		// I don't know how pet ability spamming is on Sandshroud, wether it's there or not
+		// This did however fix issues with it on my core.
+		for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); ++itr)
+		{
+			*data << uint16(itr->first->Id);
+			*data << uint16(itr->first->Category);
+			*data << uint32(itr->first->RecoveryTime);
+			*data << uint32(itr->first->CategoryRecoveryTime);
+		}
 	}
-	*data << uint8(0);	// count
-	/*
-	for(uint32 i = 0; i < count)
-	{
-		*data << uint32(0);
-		*data << uint16(0);
-		*data << uint32(0);
-		*data << uint32(0);
-	}
-	*/
+	//I don't believe this is needed.
+	//*data << uint8(0);	// count
 
 	m_Owner->delayedPackets.add(data);
 }
