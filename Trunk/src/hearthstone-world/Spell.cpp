@@ -2608,6 +2608,8 @@ bool Spell::HasPower()
 	//Haven't found any items taking power, so guess it's safe to skip them.
 	if(i_caster) 
 		return true; 
+	if(g_caster)
+		return true; //GO's Don't use power.
 
 	int32 powerField;
 	switch(m_spellInfo->powerType)
@@ -2703,8 +2705,10 @@ bool Spell::TakePower()
 	//Haven't found any items taking power, so guess it's safe to skip them.
 	if(i_caster) 
 		return true; 
+	if(g_caster)
+		return true; //GO's Don't use power.
 
-	int32 powerField;
+	int32 powerField = 0;
 	switch(m_spellInfo->powerType)
 	{
 		case POWER_TYPE_HEALTH:	{ powerField = UNIT_FIELD_HEALTH; }break;
@@ -2738,7 +2742,7 @@ bool Spell::TakePower()
 	//FIXME: add handler for UNIT_FIELD_POWER_COST_MODIFIER
 	//UNIT_FIELD_POWER_COST_MULTIPLIER
 
-	int32 cost;
+	int32 cost = 0;
 	int32 currentPower = m_caster->GetUInt32Value(powerField);
 
 	cost = m_caster->GetSpellBaseCost(m_spellInfo);
@@ -2792,12 +2796,11 @@ bool Spell::TakePower()
 	{
 		if(cost <= currentPower) // Unit has enough power (needed for creatures)
 		{
-			if(u_caster)
-				u_caster->SetPower(m_spellInfo->powerType, currentPower - cost);
-			else // Is this needed at all Do GO's use mana? 
-				m_caster->SetUInt32Value(powerField, currentPower - cost);
+			m_caster->SetUInt32Value(powerField, currentPower - cost);
 			return true;
 		}
+		else
+			return false;
 	}
 	return false;
 }

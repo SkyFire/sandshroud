@@ -1201,6 +1201,32 @@ void Object::SetUInt32Value( const uint32 index, const uint32 value )
 			break;
 		}
 #endif
+		switch (index)
+		{
+			case UNIT_FIELD_POWER1:
+			case UNIT_FIELD_POWER2:
+			case UNIT_FIELD_POWER4:
+			case UNIT_FIELD_POWER7:
+				static_cast< Unit* >( this )->SendPowerUpdate();
+				break;
+			default:
+				break;
+		}
+	}
+	else if(m_objectTypeId == TYPEID_UNIT)
+	{
+		switch(index)
+		{
+			case UNIT_FIELD_POWER1:
+			case UNIT_FIELD_POWER2:
+			case UNIT_FIELD_POWER3:
+			case UNIT_FIELD_POWER4:
+			case UNIT_FIELD_POWER7:
+				static_cast< Unit* >( this )->SendPowerUpdate();
+				break;
+			default:
+				break;
+		}
 	}
 }
 
