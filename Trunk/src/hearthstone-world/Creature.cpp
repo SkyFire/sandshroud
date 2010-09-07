@@ -1135,9 +1135,22 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 			SetUInt32Value(UNIT_FIELD_POWER7, power * 10);
 			SetUInt32Value(UNIT_FIELD_MAXPOWER7, power * 10);
 		}break;
+		//Special vehicle power type cases.
+		case 61:
+		case 141:
+		case 121:
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
+			SetUInt32Value(UNIT_FIELD_POWER4, 100);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER4, 100);
+		break;
+		case 41:
+			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
+			SetUInt32Value(UNIT_FIELD_POWER4, 50);
+			SetUInt32Value(UNIT_FIELD_MAXPOWER4, 50);
+		break;
 	default:
 		{
-			sLog.outError("Creature %u has an incorrect powertype.", GetEntry());	
+			sLog.outError("Creature %u has an unhandled powertype.", GetEntry());	
 		}break;
 	}
 

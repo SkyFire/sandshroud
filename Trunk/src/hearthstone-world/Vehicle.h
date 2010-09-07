@@ -44,7 +44,6 @@ public:
 	void setDeathState(DeathState s);
 	void SetSpeed(uint8 SpeedType, float value);
 	void ChangeSeats(Unit* pPassenger, uint8 seatid);
-	void SetVehiclePower(VehicleEntry * v);
 	//---------------------------------------
 	// Accessors
 	//---------------------------------------

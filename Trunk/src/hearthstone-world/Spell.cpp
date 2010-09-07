@@ -288,6 +288,7 @@ Spell::~Spell()
 	i_caster = NULLITEM;
 	p_caster = NULLPLR;
 	m_caster = NULLOBJ;
+	v_caster = NULLVEHICLE;
 	m_triggeredByAura = NULLAURA;
 	unitTarget = NULLUNIT;
 	itemTarget = NULLITEM;
@@ -355,7 +356,7 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && (*itr)->GetGUID() != v_caster->GetGUID())
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -435,7 +436,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && (*itr)->GetGUID() != v_caster->GetGUID())
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -5362,7 +5363,7 @@ void Spell::DamageGosAround(Object*Caster,uint32 i, uint32 spell_damage , uint32
 		vehicle_controller = TO_VEHICLE(Caster)->GetControllingUnit();
 	if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 	{
-		for (Object::InRangeSet::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr)
+		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
 			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r)
@@ -5373,7 +5374,7 @@ void Spell::DamageGosAround(Object*Caster,uint32 i, uint32 spell_damage , uint32
 	}
 	else
 	{
-		for (Object::InRangeSet::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr)
+		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
 			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r)

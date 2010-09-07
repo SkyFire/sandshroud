@@ -791,7 +791,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			UpdateOppFactionSet();
 
 			SendSpells(GetEntry(), pPlayer);
-			SetVehiclePower(dbcVehicle.LookupEntry(GetVehicleEntry()));
 		}
 
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
@@ -858,25 +857,6 @@ void Vehicle::setDeathState(DeathState s)
 
 	if( s == JUST_DIED && m_CreatedFromSpell)
 		SafeDelete();
-}
-
-void Vehicle::SetVehiclePower(VehicleEntry * v)
-{
-	switch (v->m_powerType)
-	{
-		case 61:
-		case 141:
-		case 121:
-		SetPowerType(POWER_TYPE_ENERGY);
-		SetMaxPower(POWER_ENERGY, 100);
-		break;
-		case 41:
-		SetPowerType(POWER_ENERGY);
-		SetMaxPower(POWER_ENERGY, 50);
-		break;
-		default:
-		break;
-	}
 }
 	
 
