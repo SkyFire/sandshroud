@@ -8528,7 +8528,7 @@ void Spell::SpellEffectApplyDemonAura( uint32 i )
 
 	pAura = new Aura(m_spellInfo, GetDuration(), u_caster, u_caster);
 	Aura* otheraura = new Aura(m_spellInfo, GetDuration(), u_caster, TO_PET(u_caster)->GetPetOwner());
-	pAura->targets.insert(TO_PET(u_caster)->GetPetOwner()->GetGUID());
+	pAura->targets.insert(TO_PET(u_caster)->GetPetOwner()->GetUIdFromGUID());
 	for (uint32 j=0; j<3; ++j)
 	{
 		pAura->AddMod(m_spellInfo->EffectApplyAuraName[j], j == i? damage : CalculateEffect(j, unitTarget), m_spellInfo->EffectMiscValue[j], j);
