@@ -1,1 +1,0 @@
-ALTER TABLE `creature_proto` ADD `SpellClickId` int(30) NOT NULL DEFAULT '0' after `vehicle_entry`;
