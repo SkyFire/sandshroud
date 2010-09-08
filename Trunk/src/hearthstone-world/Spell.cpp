@@ -283,6 +283,7 @@ Spell::~Spell()
 	if( u_caster != NULL && u_caster->GetCurrentSpell() == this )
 		u_caster->SetCurrentSpell(NULLSPELL);
 
+	v_caster = NULLVEHICLE;
 	g_caster = NULLGOB;
 	u_caster = NULLUNIT;
 	i_caster = NULLITEM;
@@ -413,6 +414,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range*range;
 	//uint8 did_hit_result;
+
 	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		// don't add objects that are units and dead
@@ -469,6 +471,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				else
 					_AddTargetForced((*itr)->GetGUID(), i);
 			}
+
 			if( m_spellInfo->MaxTargets)
 			{
 				if( m_hitTargetCount >= m_spellInfo->MaxTargets )

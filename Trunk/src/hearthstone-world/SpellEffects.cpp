@@ -4848,7 +4848,6 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 		break;
 	case SKILL_TAILORING:
 		target->addSpell( 2963 );//Bolt of Linen Cloth
-
 		target->addSpell( 2387 );//Linen Cloak
 		target->addSpell( 2393 );//White Linen Shirt
 		target->addSpell( 3915 );//Brown Linen Shirt
@@ -4892,7 +4891,7 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 		target->addSpell( 48114 );// Scroll of Intellect
 		target->addSpell( 45382 );// Scroll of Stamina
 		target->addSpell( 52738 );// Ivory Ink
-
+		break;
 	}
 }
 

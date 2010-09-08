@@ -57,6 +57,7 @@ SERVER_DECL DBCStorage<CreatureFamilyEntry> dbcCreatureFamily;
 SERVER_DECL DBCStorage<CharClassEntry> dbcCharClass;
 SERVER_DECL DBCStorage<CharRaceEntry> dbcCharRace;
 SERVER_DECL DBCStorage<MapEntry> dbcMap;
+SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 SERVER_DECL DBCStorage<ItemExtendedCostEntry> dbcItemExtendedCost;
 SERVER_DECL DBCStorage<ItemRandomSuffixEntry> dbcItemRandomSuffix;
 SERVER_DECL DBCStorage<CombatRatingDBC> dbcCombatRating;
@@ -186,6 +187,7 @@ const char* spellentryFormat =
 	"u" // PowerDisplayId
 	"xxxxx"; // Unk
 
+const char* itemFormat = "uuuiiuuu";
 const char* itemextendedcostFormat = "uuuuuuuuuuuuuuux";
 const char* talententryFormat = "uuuuuuuuuxxxxuxxuxxxuxx";
 const char* talenttabentryFormat = "uxxxxxxxxxxxxxxxxxxxuxux";
@@ -359,6 +361,8 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/gtRegenHPPerSpt.dbc", gtfloatformat, false, dbcHPRegenBase, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/gtRegenMPPerSpt.dbc", gtfloatformat, false, dbcManaRegenBase, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/Item.dbc", itemFormat, true, dbcItem, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/ItemExtendedCost.dbc", itemextendedcostFormat, true, dbcItemExtendedCost, false);
 	/* Needed for: */

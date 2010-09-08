@@ -284,23 +284,20 @@ void WorldSession::HandleItemNameQueryOpcode( WorldPacket & recv_data )
 	recv_data >> itemid;
 	recv_data >> guid;
 
-	reply << itemid;
+	ItemEntry* itemE = dbcItem.LookupEntry(itemid);
+	LocalizedItem* li = (language > 0) ? sLocalizationMgr.GetLocalizedItem(itemid, language) : NULL;
 	ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(itemid);
-	if(!proto)
-		reply << "Unknown Item";
-	else
+
+	reply << itemid;
+	if(proto)
 	{
-		LocalizedItem* li = (language > 0) ? sLocalizationMgr.GetLocalizedItem(itemid, language) : NULL;
-		if(li)
-			reply << li->Name;
-		else
-			reply << proto->Name1;
-	}
-	if(!proto)
-		reply << uint32(0);
-	else
-	{
+		reply << (li ? li->Name : proto->Name1);
 		reply << uint32(proto->InventoryType);
+	}
+	else
+	{
+		reply << (li ? li->Name : "Unknown Item");
+		reply << (itemE ? itemE->InventoryType : uint32(0));
 	}
 
 	SendPacket(&reply);	

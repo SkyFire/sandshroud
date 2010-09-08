@@ -463,6 +463,17 @@ struct CurrencyTypesEntry
 	uint32 BitIndex;	// 3 bit index in PLAYER_FIELD_KNOWN_CURRENCIES (1 << (index-1))
 };
 
+struct ItemEntry
+{
+   uint32 ID;
+   uint32 Class;
+   uint32 SubClass;
+   int32  Unk0; // 3 All -1
+   int32  Material;
+   uint32 DisplayId;
+   uint32 InventoryType;
+   uint32 Sheath;
+};
 
 struct ItemSetEntry
 {
@@ -1710,6 +1721,7 @@ extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
 extern SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypesStore;
 extern SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
+extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 extern SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
 extern SERVER_DECL DBCStorage<Lock> dbcLock;
 extern SERVER_DECL DBCStorage<SpellEntry> dbcSpell;

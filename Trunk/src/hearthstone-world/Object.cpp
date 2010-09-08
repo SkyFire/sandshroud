@@ -76,7 +76,6 @@ Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 	m_loadedFromDB = false;
 	m_loot.gold = 0;
 	m_looted = false;
-	m_isVehicle = false;
 
 	m_objectsInRange.clear();
 	m_inRangePlayers.clear();
