@@ -481,7 +481,7 @@ int luaGlobalFunctions_GetPlayersInZone(lua_State * L)
 	return 1;
 }
 
-/*int luaGlobalFunctions_SendMail(lua_State * L)
+int luaGlobalFunctions_SendMail(lua_State * L)
 {
 	uint32 type = luaL_checkint(L,1);
 	uint64 sender_guid = GuidMgr::check(L,2);
@@ -494,7 +494,7 @@ int luaGlobalFunctions_GetPlayersInZone(lua_State * L)
 	uint32 stationery = luaL_checkint(L,9);
 	sMailSystem.DeliverMessage(type, sender_guid, recipient_guid, subject, body, money, cod, item_guid, stationery, false);
 	return 1;
-}*/
+}
 
 int luaGlobalFunctions_GetTaxiPath(lua_State * L)
 {

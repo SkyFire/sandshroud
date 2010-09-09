@@ -17,9 +17,8 @@
  *
  */
 
-class ChannelMgr :  public Singleton < ChannelMgr >
+class SERVER_DECL ChannelMgr :  public Singleton < ChannelMgr >
 {
- 
 public:
 	ChannelMgr();
 	~ChannelMgr();

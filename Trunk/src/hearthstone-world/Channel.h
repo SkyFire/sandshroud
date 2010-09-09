@@ -73,7 +73,7 @@ enum CHANNEL_NOTIFY_FLAGS
 	CHANNEL_NOTIFY_FLAG_VOICE_OFF	= 0x23,
 };
 
-class Channel
+class SERVER_DECL Channel
 {
 private:
 	Mutex m_lock;
@@ -148,7 +148,7 @@ public:
 #endif
 };
 
-class ChannelIterator
+class SERVER_DECL ChannelIterator
 {
 	Channel::MemberMap::iterator m_itr;
 	Channel::MemberMap::iterator m_endItr;

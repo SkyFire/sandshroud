@@ -4050,12 +4050,159 @@ int LuaUnit_GetGuildMemberCount(lua_State * L, Unit * ptr)
 
 int LuaUnit_IsFriendly(lua_State * L, Unit * ptr)
 {
+	TEST_UNIT_RET();
+
 	Unit * obj = CHECK_UNIT(L,1);
-	if (!obj || !ptr) return 0;
+	if (!obj)
+		return 0;
+
 	if (isFriendly(ptr, obj))
 		lua_pushboolean(L,1);
 	else
 		lua_pushboolean(L,0);
+	return 1;
+}
+
+int LuaUnit_IsInChannel(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER_RET();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	if(!channel_name)
+		return 0;
+
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	if(pChannel->HasMember(plr)) // Channels: "General", "Trade", "LocalDefense", "GuildRecruitment", "LookingForGroup", (or any custom channel)
+		lua_pushboolean(L, 1);
+	else
+		lua_pushboolean(L, 0);
+	return 1;
+}
+
+int LuaUnit_JoinChannel(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	const char* pw = luaL_optstring(L, 2, pChannel->m_password.c_str());
+
+	if(!channel_name || pChannel->HasMember(plr) || !pChannel)
+		return 0;
+	else
+		pChannel->AttemptJoin(plr, pw);
+
+	return 1;
+}
+
+int LuaUnit_LeaveChannel(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	if(!channel_name || !pChannel || !pChannel->HasMember(plr))
+		return 0;
+	else
+		pChannel->Part(plr, true);
+	return 1;
+}
+
+int LuaUnit_SetChannelName(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* current_name = luaL_checkstring(L, 1);
+	const char* new_name = luaL_checkstring(L, 2);
+	Channel* pChannel = channelmgr.GetChannel(current_name, plr);
+	if(!current_name || !new_name || !pChannel || pChannel->m_name == new_name)
+		return 0;
+
+	pChannel->m_name = new_name;
+	return 1;
+}
+
+int LuaUnit_SetChannelPassword(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	const char* pass = luaL_checkstring(L, 2);
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	if(!pass || pChannel->m_password == pass)
+		return 0;
+
+	pChannel->Password(TO_PLAYER(ptr), pass);
+	return 1;
+}
+
+int LuaUnit_GetChannelPassword(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	lua_pushstring(L, pChannel->m_password.c_str());
+	return 1;
+}
+
+int LuaUnit_KickFromChannel(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	if(!pChannel)
+		return 0;
+
+	pChannel->Kick(plr, plr, false);
+	return 1;
+}
+
+int LuaUnit_BanFromChannel(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	if(!pChannel)
+		return 0;
+
+	pChannel->Kick(plr, plr, true);
+	return 1;
+}
+
+int LuaUnit_UnbanFromChannel(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	Channel* pChannel = channelmgr.GetChannel(channel_name, plr);
+	if(!plr || !pChannel)
+		return 0;
+	pChannel->Unban(plr, plr->getPlayerInfo());
+	return 1;
+}
+
+int LuaUnit_GetChannelMemberCount(lua_State * L, Unit * ptr)
+{
+	TEST_PLAYER();
+
+	Player* plr = TO_PLAYER(ptr);
+	const char* channel_name = luaL_checkstring(L, 1);
+	if(!channel_name)
+		return 0;
+
+	lua_pushnumber(L, channelmgr.GetChannel(channel_name, plr)->GetNumMembers());
 	return 1;
 }
 

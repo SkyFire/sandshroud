@@ -81,7 +81,7 @@ bool CThreadPool::ThreadExit(Thread * t)
 	}
 	m_freeThreads.insert(t);
 	
-	//DEBUG_LOG("ThreadPool", "Thread %u entered the free pool.", t->ControlInterface.GetId());
+	DEBUG_LOG("ThreadPool", "Thread %u entered the free pool.", t->ControlInterface.GetId());
 	_mutex.Release();
 	return true;
 }
@@ -104,7 +104,7 @@ void CThreadPool::ExecuteTask(ThreadContext * ExecutionTarget)
 
 		// resume the thread, and it should start working.
 		t->ControlInterface.Resume();
-		//DEBUG_LOG("ThreadPool", "Thread %u left the thread pool.", t->ControlInterface.GetId());
+		DEBUG_LOG("ThreadPool", "Thread %u left the thread pool.", t->ControlInterface.GetId());
 	}
 	else
 	{
@@ -298,7 +298,6 @@ static unsigned long WINAPI thread_proc(void* param)
 Thread * CThreadPool::StartThread(ThreadContext * ExecutionTarget)
 {
 	SetThreadName("Thread Starter");
-
 	Thread * t = new Thread;
 	t->DeleteAfterExit = false;
 	t->ExecutionTarget = ExecutionTarget;

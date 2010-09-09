@@ -469,6 +469,16 @@ RegType<Unit> UnitMethods[] =
 	{ "GetInRangeEnemies", &LuaUnit_GetInRangeEnemies },
 	{ "IsFriendly", &LuaUnit_IsFriendly },
 	{ "MovePlayerTo", &LuaUnit_MovePlayerTo },
+	{ "IsInChannel", &LuaUnit_IsInChannel },
+	{ "JoinChannel", &LuaUnit_JoinChannel },
+	{ "LeaveChannel", &LuaUnit_LeaveChannel },
+	{ "SetChannelName", &LuaUnit_SetChannelName },
+	{ "SetChannelPassword", &LuaUnit_SetChannelPassword },
+	{ "GetChannelPassword", &LuaUnit_GetChannelPassword },
+	{ "KickFromChannel", &LuaUnit_KickFromChannel },
+	{ "BanFromChannel", &LuaUnit_BanFromChannel },
+	{ "UnbanFromChannel", &LuaUnit_UnbanFromChannel },
+	{ "GetChannelMemberCount", &LuaUnit_GetChannelMemberCount },
 	{ "GetPlayerMovementVector", &LuaUnit_GetPlayerMovementVector},
 	{ "UnsetKnownTitle", &LuaUnit_UnsetKnownTitle},
 	{ "IsInPhase", &LuaUnit_IsInPhase },
@@ -710,7 +720,7 @@ void RegisterGlobalFunctions(lua_State *L)
 	lua_register(L, "GetSandshroudRevision", &EmptyGlobalFunction /*&luaGlobalFunctions_GetSandshroudRevision*/);
 	lua_register(L, "GetPlayersInMap", &luaGlobalFunctions_GetPlayersInMap);
 	lua_register(L, "GetPlayersInZone", &luaGlobalFunctions_GetPlayersInZone);
-	lua_register(L, "SendMail", &EmptyGlobalFunction /*&luaGlobalFunctions_SendMail*/);
+	lua_register(L, "SendMail", &luaGlobalFunctions_SendMail);
 	lua_register(L, "GetTaxiPath", &luaGlobalFunctions_GetTaxiPath);
 	lua_register(L, "SetDBCSpellVar", &EmptyGlobalFunction /*&luaGlobalFunctions_SetDBCSpellVar*/);
 	lua_register(L, "GetDBCSpellVar", &EmptyGlobalFunction /*&luaGlobalFunctions_GetDBCSpellVar*/);
