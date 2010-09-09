@@ -214,7 +214,7 @@ void CThreadPool::Shutdown()
 {
 	_mutex.Acquire();
 	size_t tcount = m_activeThreads.size() + m_freeThreads.size();		// exit all
-	DEBUG_LOG("ThreadPool", "Shutting down %u threads.", tcount);
+	OUT_DEBUG("ThreadPool", "Shutting down %u threads.", tcount);
 	KillFreeThreads((uint32)m_freeThreads.size());
 	_threadsToExit += (uint32)m_activeThreads.size();
 
@@ -230,11 +230,14 @@ void CThreadPool::Shutdown()
 		_mutex.Acquire();
 		if(m_activeThreads.size() || m_freeThreads.size())
 		{
-			DEBUG_LOG("ThreadPool", "%u threads remaining...",m_activeThreads.size() + m_freeThreads.size() );
+			OUT_DEBUG("ThreadPool", "%u threads remaining...", m_activeThreads.size() + m_freeThreads.size() );
 			_mutex.Release();
 			Sleep(1000);
 			continue;
 		}
+		m_activeThreads.clear();
+		m_freeThreads.clear();
+		_mutex.Release();
 
 		break;
 	}

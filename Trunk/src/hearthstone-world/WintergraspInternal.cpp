@@ -70,6 +70,7 @@ bool WintergraspInternal::has_timeout_expired(tm * now_time, tm * last_time)
 bool WintergraspInternal::run()
 {
 	SetThreadName("WGInternal");
+
 	currenttime = UNIXTIME;
 	dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
 	last_countertime = UNIXTIME;
@@ -188,14 +189,19 @@ void WintergraspInternal::UpdateClockDigit(uint32 timer, uint32 digit, uint32 mo
 
 void WintergraspInternal::SendWSUpdateToAll(uint32 WorldState, uint32 Value)
 {
-	Player* plr = NULL;
 	WorldPacket data(SMSG_UPDATE_WORLD_STATE, 8);
 	data << WorldState;
 	data << Value;
+	SendPacketToWG(&data);
+}
+
+void WintergraspInternal::SendPacketToWG(WorldPacket* data)
+{
+	Player* plr = NULL;
 	if(WG != NULL)
 	{
 		for(WintergraspPlayerSet::iterator itr = WG->WGPlayers.begin(); itr != WG->WGPlayers.end(); itr++)
-			(*itr)->GetSession()->SendPacket(&data);
+			(*itr)->GetSession()->SendPacket(data);
 	}
 	else
 	{
@@ -203,7 +209,7 @@ void WintergraspInternal::SendWSUpdateToAll(uint32 WorldState, uint32 Value)
 		{
 			plr = itr->second;
 			if((plr->GetPlayerAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
-				plr->GetSession()->SendPacket(&data);
+				plr->GetSession()->SendPacket(data);
 		}
 	}
 }

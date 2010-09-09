@@ -51,6 +51,7 @@ public:
 	void UpdateClock();
 	void UpdateClockDigit(uint32 timer, uint32 digit, uint32 mod);
 	void SendWSUpdateToAll(uint32 WorldState, uint32 Value);
+	void SendPacketToWG(WorldPacket*);
 	Wintergrasp* GetWintergrasp() { return WG; }
 
 	int m_wintergrasp;
