@@ -423,7 +423,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 
 
 	if(Speed == 0)
-		Speed = PLAYER_NORMAL_RUN_SPEED + float(chr->m_speedModifier);
+		Speed = chr->m_base_runSpeed*(1.0f + ((float)chr->m_speedModifier)/100.0f);
 
 	// send message to user/player
 	if(chr != m_session->GetPlayer())
