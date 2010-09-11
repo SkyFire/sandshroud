@@ -1,18 +1,18 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "projects\InstanceScripts2008.vcproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "VC90\InstanceScripts2008.vcproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerStatusPlugin", "projects\ServerStatusPlugin2008.vcproj", "{FF551ECC-D127-4997-8C5B-85D2CE3E7A53}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerStatusPlugin", "VC90\ServerStatusPlugin2008.vcproj", "{FF551ECC-D127-4997-8C5B-85D2CE3E7A53}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunQuestScripts", "projects\Quest2008.vcproj", "{1A080CA7-D19A-4129-972C-89E816E6DEC0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunQuestScripts", "VC90\Quest2008.vcproj", "{1A080CA7-D19A-4129-972C-89E816E6DEC0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunOtherScripts", "projects\SunOther2008.vcproj", "{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunOtherScripts", "VC90\SunOther2008.vcproj", "{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "projects\LUA2008.vcproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "VC90\LUA2008.vcproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomScripts", "projects\CustomScripts.vcproj", "{C57C8C12-E283-4C2E-8A74-1285587F5934}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomScripts", "VC90\CustomScripts.vcproj", "{C57C8C12-E283-4C2E-8A74-1285587F5934}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GM_Engine", "projects\GMEngine.vcproj", "{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GM_Engine", "VC90\GMEngine.vcproj", "{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
