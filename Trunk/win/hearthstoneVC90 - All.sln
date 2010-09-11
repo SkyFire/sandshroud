@@ -22,37 +22,37 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-voicechat", "VC
 		{90297C34-F231-4DF4-848E-A74BCC0E40ED} = {90297C34-F231-4DF4-848E-A74BCC0E40ED}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "..\src\scripts\Win\projects\LUA2008.vcproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "..\src\scripts\Win\VC90\LUA2008.vcproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomScripts", "..\src\scripts\Win\projects\CustomScripts.vcproj", "{C57C8C12-E283-4C2E-8A74-1285587F5934}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomScripts", "..\src\scripts\Win\VC90\CustomScripts.vcproj", "{C57C8C12-E283-4C2E-8A74-1285587F5934}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "..\src\scripts\Win\projects\InstanceScripts2008.vcproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "..\src\scripts\Win\VC90\InstanceScripts2008.vcproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunQuestScripts", "..\src\scripts\Win\projects\Quest2008.vcproj", "{1A080CA7-D19A-4129-972C-89E816E6DEC0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunQuestScripts", "..\src\scripts\Win\VC90\Quest2008.vcproj", "{1A080CA7-D19A-4129-972C-89E816E6DEC0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerStatusPlugin", "..\src\scripts\Win\projects\ServerStatusPlugin2008.vcproj", "{FF551ECC-D127-4997-8C5B-85D2CE3E7A53}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerStatusPlugin", "..\src\scripts\Win\VC90\ServerStatusPlugin2008.vcproj", "{FF551ECC-D127-4997-8C5B-85D2CE3E7A53}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunOtherScripts", "..\src\scripts\Win\projects\SunOther2008.vcproj", "{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunOtherScripts", "..\src\scripts\Win\VC90\SunOther2008.vcproj", "{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GM_Engine", "..\src\scripts\Win\projects\GMEngine.vcproj", "{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GM_Engine", "..\src\scripts\Win\VC90\GMEngine.vcproj", "{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
