@@ -997,8 +997,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		return;
 
 	// Todo: Add a config option, and check for magic buffs like Tenacity.
-	if((p_caster != NULL) && dmg > 25000)
-		dmg = 10000;
+	//if((p_caster != NULL) && dmg > 25000)
+		//dmg = 10000;
 
 	// stealthed stuff
 	if( m_projectileWait && unitTarget->InStealth() )
@@ -3689,25 +3689,6 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 	float radius = GetRadius(i);
 
 	//FIXME: check for obstacles
-	 
-	/*float ori = m_caster->GetOrientation();				
-	float posX = m_caster->GetPositionX()+(radius*(cos(ori)));
-	float posY = m_caster->GetPositionY()+(radius*(sin(ori)));
-	float z= m_caster->GetMapMgr()->GetLandHeight(posX,posY);
-
-	if(fabs(m_caster->GetPositionZ() - z) > 2)
-		z=m_caster->GetPositionZ()+2;
-
-	m_caster->SetPosition(posX,posY,z,ori,true);
-
-	WorldPacket data(MSG_MOVE_HEARTBEAT, 33);
-	data << m_caster->GetNewGUID();
-	data << uint32(0) << uint32(0);
-	data << posX;
-	data << posY;
-	data << z;
-	data << ori;
-	m_caster->SendMessageToSet(&data, true); */
 
 	if(!p_caster)
 		return;
@@ -3741,20 +3722,12 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		float posX = m_caster->GetPositionX()+(radius*(cosf(ori)));
 		float posY = m_caster->GetPositionY()+(radius*(sinf(ori)));
 		float posZ;
-		/*float posZ = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, m_caster->GetPositionZ());
-		if(posZ == NO_WMO_HEIGHT)		// not found height, or on adt
-			posZ = m_caster->GetMapMgr()->GetLandHeight(posX,posY);
 
-		if( fabs( posZ - m_caster->GetPositionZ() ) >= 10.0f )
-			return;*/
-
-		if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ()
-			+ p_caster->m_noseLevel, posX, posY, p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, posZ, -1.5f) )
+		if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, posZ, -1.5f) )
 		{
 			float fz2 = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, posZ);
 			if( fz2 != NO_WMO_HEIGHT )
 				posZ = fz2;
-
 			p_caster->blinked = true;
 			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
@@ -3772,7 +3745,6 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 
 			if( fabs( posZ - m_caster->GetPositionZ() ) >= 10.0f )
 				return;
-
 			p_caster->blinked = true;
 			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
@@ -6609,7 +6581,9 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	DamageGosAround(m_caster,i,damage,GetSpellProto()->Id);
+	if(p_caster == NULL)
+		p_caster = TO_PLAYER(v_caster->GetControllingUnit());
+	DamageGosAround(m_caster,p_caster, i, damage,GetSpellProto()->Id);
 }
 
 void Spell::SpellEffectWMORepair(uint32 i)

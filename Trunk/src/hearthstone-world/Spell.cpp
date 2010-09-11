@@ -254,7 +254,6 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 	
 	m_requiresCP = false;
 	unitTarget = NULLUNIT;
-	//ModeratedTargets.clear();
 	itemTarget = NULLITEM;
 	gameObjTarget = NULLGOB;
 	playerTarget = NULLPLR;
@@ -820,15 +819,18 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 				cur = m_spellInfo->EffectImplicitTargetB[i];		
 			switch(cur)
 			{
-				case EFF_TARGET_NONE:{
+				case EFF_TARGET_NONE:
+					{
 					//this is bad for us :(
 					}break;
-				case EFF_TARGET_SELF:{
+				case EFF_TARGET_SELF:
+					{
 						if(m_caster->IsUnit())
 							store_buff->m_unitTarget = m_caster->GetGUID();
 					}break;		
 					// need more research
-				case 4:{ // dono related to "Wandering Plague", "Spirit Steal", "Contagion of Rot", "Retching Plague" and "Copy of Wandering Plague"
+				case 4:
+					{ // dono related to "Wandering Plague", "Spirit Steal", "Contagion of Rot", "Retching Plague" and "Copy of Wandering Plague"
 					}break;			
 				case EFF_TARGET_PET:
 					{// Target: Pet
@@ -1062,9 +1064,7 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 {
 	uint8 ccr;
 	chaindamage = 0;
-	if( p_caster && m_spellInfo->Id == 51514 || 
-		m_spellInfo->NameHash == SPELL_HASH_ARCANE_SHOT ||
-		m_spellInfo->NameHash == SPELL_HASH_MIND_FLAY )
+	if( p_caster && m_spellInfo->Id == 51514 || m_spellInfo->NameHash == SPELL_HASH_ARCANE_SHOT || m_spellInfo->NameHash == SPELL_HASH_MIND_FLAY )
 	{
 		targets->m_unitTarget = 0;
 		GenerateTargets( targets );
@@ -1084,21 +1084,11 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		{
 			SM_FIValue( u_caster->SM[SMT_CAST_TIME][0], (int32*)&m_castTime, m_spellInfo->SpellGroupType );
 			SM_PIValue( u_caster->SM[SMT_CAST_TIME][1], (int32*)&m_castTime, m_spellInfo->SpellGroupType );
-#ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
-			int spell_flat_modifers=0;
-			int spell_pct_modifers=0;
-			SM_FIValue(u_caster->SM[SMT_CAST_TIME][0],&spell_flat_modifers,m_spellInfo->SpellGroupType);
-			SM_FIValue(u_caster->SM[SMT_CAST_TIME][1],&spell_pct_modifers,m_spellInfo->SpellGroupType);
-			if(spell_flat_modifers!=0 || spell_pct_modifers!=0)
-				printf("!!!!!spell casttime mod flat %d , spell casttime mod pct %d , spell casttime %d, spell group %u\n",spell_flat_modifers,spell_pct_modifers,m_castTime,m_spellInfo->SpellGroupType);
-#endif
 		}
 
 		// handle MOD_CAST_TIME
 		if( u_caster != NULL && m_castTime )
-		{
 			m_castTime = float2int32( m_castTime * u_caster->GetFloatValue( UNIT_MOD_CAST_SPEED ) );
-		}
 	}
 
 	uint8 forced_cancast_failure = 0;
@@ -1107,17 +1097,13 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		if( GetGameObjectTarget() || GetSpellProto()->Id == 21651)
 		{
 			if( u_caster->InStealth() )
-			{
 				u_caster->RemoveAura( u_caster->m_stealth );
-			}
 
 			if( (GetSpellProto()->Effect[0] == SPELL_EFFECT_OPEN_LOCK ||
 				GetSpellProto()->Effect[1] == SPELL_EFFECT_OPEN_LOCK ||
 				GetSpellProto()->Effect[2] == SPELL_EFFECT_OPEN_LOCK) &&
 				p_caster != NULL && p_caster->m_bgFlagIneligible)
-			{
 				forced_cancast_failure = SPELL_FAILED_BAD_TARGETS;
-			}
 		}
 	}
 
@@ -1188,15 +1174,12 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 
 		// start cooldown handler
 		if( p_caster != NULL && !p_caster->CastTimeCheat )
-		{
 			AddStartCooldown();
-		}
 
 		if( i_caster == NULL )
 		{
 			if( p_caster != NULL && m_timer > 0 )
 				p_caster->delayAttackTimer( m_timer + 1000 );
-			//p_caster->setAttackTimer(m_timer + 1000, false);
 		}
 
 		// aura state removal
@@ -1212,7 +1195,6 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		m_castPositionX = m_caster->GetPositionX();
 		m_castPositionY = m_caster->GetPositionY();
 		m_castPositionZ = m_caster->GetPositionZ();
-
 		u_caster->CastSpell( this );
 	}
 	else
@@ -1266,7 +1248,6 @@ void Spell::cancel()
 				}
 				if (m_timer > 0)
 					p_caster->delayAttackTimer(-m_timer);
-//				p_caster->setAttackTimer(1000, false);
 			 }
 		}
 		SendChannelUpdate(0);
@@ -1809,18 +1790,12 @@ void Spell::HandleDestLocationHit()
 					{
 						if((*itr2).Guid == *itr && ((*itr2).EffectMask & (1 << x)) && (m_caster && ((*itr2).Guid != m_caster->GetGUID())))
 						{
+							if((*itr2).Guid == m_caster->GetGUID() || TO_OBJECT((*itr))->GetGUID() == m_caster->GetGUID())
+								continue;
 							HandleEffects(x);
 							hit = true;
 						}
 					}
-				}
-			}
-
-			if(!hit)
-			{
-				if( m_spellInfo->Effect[x] == SPELL_EFFECT_TELEPORT_UNITS)
-				{
-					HandleEffects(m_caster->GetGUID());
 				}
 			}
 		}
@@ -5354,7 +5329,7 @@ void Spell::_AddTargetForced(const uint64& guid, const uint32 effectid)
 		++m_missTargetCount;
 }
 
-void Spell::DamageGosAround(Object*Caster,uint32 i, uint32 spell_damage , uint32 spell_id)
+void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell_damage , uint32 spell_id)
 {
 	if(!Caster)
 		return; //Lets put that here just incase something happens mmk?
@@ -5362,11 +5337,7 @@ void Spell::DamageGosAround(Object*Caster,uint32 i, uint32 spell_damage , uint32
 	float r = GetRadius(i);
 	r *= r;
 	Object* o;
-	Object* vehicle_controller = NULL;
-	if(!Caster->IsVehicle())
-		vehicle_controller = Caster;
-	else
-		vehicle_controller = TO_VEHICLE(Caster)->GetControllingUnit();
+
 	if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 	{
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
@@ -5374,7 +5345,18 @@ void Spell::DamageGosAround(Object*Caster,uint32 i, uint32 spell_damage , uint32
 			o = *itr;
 			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r)
 			{
-				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,vehicle_controller,spell_id);
+				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
+			}
+		}
+	}
+	else if(m_targets.m_targetMask & TARGET_FLAG_SOURCE_LOCATION)
+	{
+		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
+		{
+			o = *itr;
+			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_srcX, m_targets.m_srcY) <= r)
+			{
+				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
 		}
 	}
@@ -5383,9 +5365,9 @@ void Spell::DamageGosAround(Object*Caster,uint32 i, uint32 spell_damage , uint32
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r)
+			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (30*30))
 			{
-				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,vehicle_controller,spell_id);
+				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
 		}
 	}
