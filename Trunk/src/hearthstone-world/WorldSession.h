@@ -280,7 +280,7 @@ public:
 	void Disconnect()
 	{
 		if(_socket && _socket->IsConnected())
-			_socket->Disce1onnect();
+			_socket->Disconnect();
 	}
 
 	int __fastcall Update(uint32 InstanceID);

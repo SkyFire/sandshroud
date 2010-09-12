@@ -12258,7 +12258,7 @@ bool Player::IsFlyHackEligible()
 	if(!sWorld.antihack_cheatengine)
 		return false;
 
-	if(!GetMapMgr() || m_FlyingAura || IsStunned() || IsPacified() || IsFeared() || GetTaxiState() || m_TransporterGUID != 0) // Stunned, rooted, riding a flying machine, whatever
+	if(!GetMapMgr() || _player->FlyCheat || m_FlyingAura || IsStunned() || IsPacified() || IsFeared() || GetTaxiState() || m_TransporterGUID != 0) // Stunned, rooted, riding a flying machine, whatever
 		return false;
 
 	if(GetMapId() == 369)
