@@ -1791,7 +1791,11 @@ int LuaUnit_AddGuidDataToPacket(lua_State * L, Unit * ptr)
 int LuaUnit_ModUInt32Value(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
+
 	int field = luaL_checkint(L, 1);
+	if(field >= PLAYER_END)
+		return 0;
+
 	int value = luaL_checkint(L, 2);
 	ptr->ModSignedInt32Value(field, value);
 	return 1;
@@ -1800,7 +1804,11 @@ int LuaUnit_ModUInt32Value(lua_State * L, Unit * ptr)
 int LuaUnit_ModFloatValue(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
+
 	int field = luaL_checkint(L, 1);
+	if(field >= PLAYER_END)
+		return 0;
+
 	float value = (float)luaL_checknumber(L, 2);
 	ptr->ModFloatValue(field, value);
 	return 1;
@@ -1809,7 +1817,11 @@ int LuaUnit_ModFloatValue(lua_State * L, Unit * ptr)
 int LuaUnit_SetUInt32Value(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
+
 	int field = luaL_checkint(L, 1);
+	if(field >= PLAYER_END)
+		return 0;
+
 	int value = luaL_checkint(L, 2);
 	ptr->SetUInt32Value(field, value);
 	return 1;
@@ -1818,7 +1830,11 @@ int LuaUnit_SetUInt32Value(lua_State * L, Unit * ptr)
 int LuaUnit_SetUInt64Value(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
+
 	int field = luaL_checkint(L, 1);
+	if(field >= PLAYER_END)
+		return 0;
+
 	int value = luaL_checkint(L, 2);
 	ptr->SetUInt64Value(field, value);
 	return 1;
@@ -1827,7 +1843,11 @@ int LuaUnit_SetUInt64Value(lua_State * L, Unit * ptr)
 int LuaUnit_SetFloatValue(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
+
 	int field = luaL_checkint(L, 1);
+	if(field >= PLAYER_END)
+		return 0;
+
 	float value = (float)luaL_checknumber(L, 2);
 	ptr->SetFloatValue(field, value);
 	return 1;
@@ -1836,7 +1856,11 @@ int LuaUnit_SetFloatValue(lua_State * L, Unit * ptr)
 int LuaUnit_GetUInt32Value(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
+
 	int field = luaL_checkint(L, 1);
+	if(field >= PLAYER_END)
+		return 0;
+
 	lua_pushnumber(L, ptr->GetUInt32Value(field));
 	return 1;
 }
@@ -1844,7 +1868,11 @@ int LuaUnit_GetUInt32Value(lua_State * L, Unit * ptr)
 int LuaUnit_GetUInt64Value(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
+
 	int field = luaL_checkint(L, 1);
+	if(field >= PLAYER_END)
+		return 0;
+
 	lua_pushinteger(L, (int)ptr->GetUInt64Value(field));
 	return 1;
 }

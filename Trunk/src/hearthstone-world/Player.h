@@ -1309,12 +1309,6 @@ public:
 	HEARTHSTONE_INLINE WorldSession* GetSession() const { return m_session; }
 	void SetSession(WorldSession *s) { m_session = s; }
 	void SetBindPoint(float x, float y, float z, uint32 m, uint32 v) { m_bind_pos_x = x; m_bind_pos_y = y; m_bind_pos_z = z; m_bind_mapid = m; m_bind_zoneid = v;}
-	void SendDelayedPacket(WorldPacket *data, bool bDeleteOnSend)
-	{
-		if(data == NULL) return;
-		if(GetSession() != NULL) GetSession()->SendPacket(data);
-		if(bDeleteOnSend) delete data;
-	}
 	float offhand_dmg_mod;
 	float GetSpellTimeMod(uint32 id);
 	int GetSpellDamageMod(uint32 id);
@@ -2326,6 +2320,9 @@ public:
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);
+
+public:
+
 };
 
 class SkillIterator

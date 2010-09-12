@@ -2638,7 +2638,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 						newobj->SetInstanceID(mgr->GetInstanceID());
 						newobj->PushToWorld(mgr);
-						gobj->Despawn(0);
+						gobj->Despawn(0, 0);
 					}
 				}
 			}
@@ -4112,7 +4112,7 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 
 	if( gameObjTarget->GetEntry() == 183146)
 	{
-		gameObjTarget->Despawn(1);
+		gameObjTarget->Despawn(0, 1);
 		return;
 	}
 
@@ -4134,7 +4134,7 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 			sEventMgr.AddEvent(gameObjTarget,&GameObject::EventCloseDoor, EVENT_GAMEOBJECT_DOOR_CLOSE,10000,1,0);
 	}
 
-	sEventMgr.AddEvent(gameObjTarget, &GameObject::Despawn, (uint32)1, EVENT_GAMEOBJECT_ITEM_SPAWN, 6*60*1000, 1, 0);
+	sEventMgr.AddEvent(gameObjTarget, &GameObject::Despawn, (uint32)0, (uint32)1, EVENT_GAMEOBJECT_ITEM_SPAWN, 6*60*1000, 1, 0);
 }
 
 void Spell::SpellEffectProficiency(uint32 i)
@@ -4224,14 +4224,14 @@ void Spell::SpellEffectSendEvent(uint32 i) //Send Event
 			if( !ci || !cp )
 				return;
 
-		   Creature* pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
-		   pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
-		   pCreature->_setFaction();
-		   pCreature->GetAIInterface()->Init(pCreature,AITYPE_AGRO,MOVEMENTTYPE_NONE);
-		   pCreature->GetAIInterface()->taunt(p_caster,true);
-		   pCreature->_setFaction();
-		   pCreature->PushToWorld(p_caster->GetMapMgr());
-		   sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE,60000, 1, 0);
+			Creature* pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
+			pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
+			pCreature->_setFaction();
+			pCreature->GetAIInterface()->Init(pCreature,AITYPE_AGRO,MOVEMENTTYPE_NONE);
+			pCreature->GetAIInterface()->taunt(p_caster,true);
+			pCreature->_setFaction();
+			pCreature->PushToWorld(p_caster->GetMapMgr());
+			sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE,60000, 1, 0);
 		}break;
 
 	//Warlock: Summon Felhunter Quest
@@ -4242,14 +4242,14 @@ void Spell::SpellEffectSendEvent(uint32 i) //Send Event
 			if( !ci || !cp )
 				return;
 
-		   Creature* pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
-		   pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
-		   pCreature->_setFaction();
-		   pCreature->GetAIInterface()->Init(pCreature,AITYPE_AGRO,MOVEMENTTYPE_NONE);
-		   pCreature->GetAIInterface()->taunt(p_caster,true);
-		   pCreature->_setFaction();
-		   pCreature->PushToWorld(p_caster->GetMapMgr());
-		   sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE,60000, 1, 0);
+			Creature* pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
+			pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
+			pCreature->_setFaction();
+			pCreature->GetAIInterface()->Init(pCreature,AITYPE_AGRO,MOVEMENTTYPE_NONE);
+			pCreature->GetAIInterface()->taunt(p_caster,true);
+			pCreature->_setFaction();
+			pCreature->PushToWorld(p_caster->GetMapMgr());
+			sEventMgr.AddEvent(pCreature, &Creature::SafeDelete, EVENT_CREATURE_REMOVE_CORPSE,60000, 1, 0);
 		}break;*/
 	}
 }

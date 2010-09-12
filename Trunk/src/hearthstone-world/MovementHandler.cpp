@@ -482,6 +482,66 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	}
 
 	/************************************************************************/
+	/* Hack Detection by Classic, some changes by Crow						*/
+	/************************************************************************/
+	if(!_player->GetSession()->HasGMPermissions() || !sWorld.no_antihack_on_gm)
+	{
+		if(sWorld.antihack_flight)
+		{
+			if(!_player->movement_info.transGuid.GetOldGuid() && recv_data.GetOpcode() != MSG_MOVE_JUMP && !_player->FlyCheat && 
+				!_player->m_FlyingAura && !(_player->movement_info.flags & MOVEFLAG_SWIMMING || _player->movement_info.flags & MOVEFLAG_FALLING)
+				&& _player->movement_info.z > _player->GetPositionZ() && _player->movement_info.x == _player->GetPositionX()
+				&& _player->movement_info.y == _player->GetPositionY() )
+			{
+				WorldPacket data (SMSG_MOVE_UNSET_CAN_FLY, 13);
+				data << _player->GetNewGUID();
+				data << uint32(5);
+				SendPacket(&data);
+
+				_player->m_flyHackChances--;
+				if(!_player->m_flyHackChances)
+				{
+					sWorld.LogCheater(this, "Disconnected for fly cheat.");
+					Disconnect();
+					return;
+				}
+			}
+
+			if((_player->movement_info.flags & MOVEFLAG_AIR_SWIMMING) && !(_player->movement_info.flags & MOVEFLAG_SWIMMING)
+				&& !(_player->m_FlyingAura || _player->FlyCheat))
+			{
+				WorldPacket data (SMSG_MOVE_UNSET_CAN_FLY, 13);
+				data << _player->GetNewGUID();
+				data << uint32(5);
+				SendPacket(&data);
+
+				_player->m_flyHackChances--;
+				if(!_player->m_flyHackChances)
+				{
+					sWorld.LogCheater(this, "Disconnected for fly cheat.");
+					Disconnect();
+					return;
+				}
+			}
+		}
+
+		if( _player->movement_info.z > -0.001 && _player->movement_info.z < 0.001 && !(_player->movement_info.flags & MOVEFLAG_FALLING_FAR)
+			&& (_player->GetPositionZ() > 3.0 || _player->GetPositionZ() < -3.0)/*3 meter tolerance to prevent false triggers*/)
+		{
+			sWorld.LogCheater(this, "Detected using teleport to plane.");
+			Disconnect();
+			return;
+		}
+
+		if( recv_data.GetOpcode() == MSG_MOVE_START_FORWARD && _player->movement_info.flags & MOVEFLAG_TAXI && !_player->GetTaxiState() )
+		{
+			sWorld.LogCheater(this, "Detected taxi-flag/speed hacking (Maelstrom Hack Program).");
+			Disconnect();
+			return;
+		}
+	}
+
+	/************************************************************************/
 	/* Falling damage checks                                                */
 	/************************************************************************/
 

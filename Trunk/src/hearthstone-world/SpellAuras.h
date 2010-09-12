@@ -852,6 +852,9 @@ public:
 	int16 m_interrupted;
 
 	HEARTHSTONE_INLINE bool IsInterrupted() { return ( m_interrupted >= 0 ); }
+
+public:
+
 };
 
 typedef void(Aura::*pSpellAura)(bool apply);

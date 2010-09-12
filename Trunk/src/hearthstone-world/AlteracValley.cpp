@@ -1024,7 +1024,7 @@ void AVNode::Spawn()
 		if( m_flag != NULL )
 		{
 			OUT_DEBUG("AVNode::Spawn(%s) : Despawning main flag", m_template->m_name);
-			m_flag->Despawn(0);
+			m_flag->Despawn(0, 0);
 			m_flag = NULLGOB;
 		}
 	}
@@ -1070,7 +1070,7 @@ void AVNode::Spawn()
 		if( m_aura != NULL )
 		{
 			OUT_DEBUG("AVNode::Spawn(%s) : Despawning secondary flag", m_template->m_name);
-			m_aura->Despawn(0);
+			m_aura->Despawn(0, 0);
 			m_aura = NULLGOB;
 		}
 	}
@@ -1117,7 +1117,7 @@ void AVNode::Spawn()
 		if( m_glow != NULL )
 		{
 			OUT_DEBUG("AVNode::Spawn(%s) : Despawning glow", m_template->m_name);
-			m_glow->Despawn(0);
+			m_glow->Despawn(0, 0);
 			m_glow = NULLGOB;
 		}
 	}

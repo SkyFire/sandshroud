@@ -204,10 +204,18 @@ void GameObject::Spawn( MapMgr* m)
 	CALL_GO_SCRIPT_EVENT(TO_GAMEOBJECT(this), OnSpawn)();
 }
 
-void GameObject::Despawn(uint32 time)
+void GameObject::Despawn( uint32 delay, uint32 respawntime)
 {
+	if(delay)
+	{
+		sEventMgr.AddEvent(this, &GameObject::Despawn, (uint32)0, respawntime, EVENT_GAMEOBJECT_EXPIRE, delay, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		return;
+	}
+
 	if(!IsInWorld())
 		return;
+
+	m_loot.items.clear();
 
 	//This is for go get deleted while looting
 	if( m_spawn != NULL )
@@ -218,14 +226,14 @@ void GameObject::Despawn(uint32 time)
 
 	CALL_GO_SCRIPT_EVENT(TO_GAMEOBJECT(this), OnDespawn)();
 
-	if(time)
+	if(respawntime)
 	{
 		/* Get our originiating mapcell */
 		MapCell * pCell = m_mapCell;
 		ASSERT(pCell);
 		pCell->_respawnObjects.insert( TO_OBJECT(this) );
 		sEventMgr.RemoveEvents(this);
-		sEventMgr.AddEvent(m_mapMgr, &MapMgr::EventRespawnGameObject, TO_GAMEOBJECT(this), pCell, EVENT_GAMEOBJECT_ITEM_SPAWN, time, 1, 0);
+		sEventMgr.AddEvent(m_mapMgr, &MapMgr::EventRespawnGameObject, TO_GAMEOBJECT(this), pCell, EVENT_GAMEOBJECT_ITEM_SPAWN, respawntime, 1, 0);
 		Object::RemoveFromWorld(false);
 		m_respawnCell=pCell;
 	}

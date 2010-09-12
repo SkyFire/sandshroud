@@ -1548,6 +1548,8 @@ void Creature::Despawn(uint32 delay, uint32 respawntime)
 		return;
 	}
 
+	m_loot.items.clear();
+
 	if(!IsInWorld())
 		return;
 

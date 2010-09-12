@@ -156,7 +156,7 @@ public:
 	virtual void Update(uint32 p_time);
 
 	void Spawn( MapMgr* m);
-	void Despawn(uint32 time);
+	void Despawn( uint32 delay, uint32 respawntime);
 
 	//void _EnvironmentalDamageUpdate();
 	void UpdateTrapState();
@@ -265,13 +265,15 @@ public:
 	void Rebuild();
 
 protected:
-
 	bool m_summonedGo;
 	bool m_deleted;
 	GameObjectInfo *pInfo;
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
 	uint32 mines_remaining; //used for mining to mark times it can be mined
+
+public:
+
 };
 
 #endif

@@ -279,8 +279,8 @@ public:
 
 	void Disconnect()
 	{
-		if(_socket && _socket->IsConnected() && !_socket->GetSession()->HasGMPermissions())
-			_socket->Disconnect();
+		if(_socket && _socket->IsConnected())
+			_socket->Disce1onnect();
 	}
 
 	int __fastcall Update(uint32 InstanceID);

@@ -688,7 +688,7 @@ void Arena::HookOnAreaTrigger(Player* plr, uint32 id)
 			plr->CastSpell(plr, m_buffs[buffslot]->GetInfo()->sound3, true);
 
 			/* despawn the gameobject (not delete!) */
-			m_buffs[buffslot]->Despawn(BUFF_RESPAWN_TIME);
+			m_buffs[buffslot]->Despawn(0, BUFF_RESPAWN_TIME);
 		}
 	}
 }

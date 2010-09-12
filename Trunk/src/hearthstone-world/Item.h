@@ -245,13 +245,15 @@ public:
 	uint32 wrapped_item_id;
 
 protected:
-
 	ItemPrototype* m_itemProto;
 	EnchantmentMap Enchantments;
 	uint32 _fields[ITEM_END];//this mem is wasted in case of container... but this will be fixed in future
 	Player* m_owner; // let's not bother the manager with unneeded requests
 	uint32 random_prop;
 	uint32 random_suffix;
+
+public:
+
 };
 
 uint32 GetSkillByProto( uint32, uint32 );

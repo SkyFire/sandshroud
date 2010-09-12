@@ -396,7 +396,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 									else
 									{
 										pGO->CalcMineRemaining( true );
-										pGO->Despawn( 600000 + ( RandomUInt( 180000 ) ) );
+										pGO->Despawn( 0, 600000 + ( RandomUInt( 180000 ) ) );
 										return;
 									}
 								}
@@ -419,7 +419,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 										else
 											DespawnTime = 900000;	   // 15 for else
 
-										pGO->Despawn(DespawnTime);
+										pGO->Despawn(0, DespawnTime);
 									}
 									return;
 								}
@@ -443,7 +443,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 					}
 
 
-					pGO->Despawn(DespawnTime);
+					pGO->Despawn(0, DespawnTime);
 
 				}
 			}

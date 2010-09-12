@@ -676,6 +676,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\hearthstone-world\SpellAuras.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\SpellAuras.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\hearthstone-world\Unit.cpp"
 				>
 			</File>
@@ -1053,14 +1061,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-world\Spell.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\SpellAuras.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\SpellAuras.h"
 				>
 			</File>
 			<File

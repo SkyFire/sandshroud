@@ -12241,7 +12241,8 @@ void Player::_FlyhackCheck()
 	if(diff <= 8.0f) // Relatively small threshold maybe?
 		return;
 
-	if(m_flyHackChances--)
+	m_flyHackChances--;
+	if(!m_flyHackChances)
 		return;
 
 	// Something's afoot!
@@ -12251,23 +12252,25 @@ void Player::_FlyhackCheck()
 
 bool Player::IsFlyHackEligible()
 {
-	if(!sWorld.antihack_cheatengine) return false;
+	if(GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm)
+		return false;
 
-	if(GetSession()->HasGMPermissions())
+	if(!sWorld.antihack_cheatengine)
 		return false;
 
 	if(!GetMapMgr() || m_FlyingAura || IsStunned() || IsPacified() || IsFeared() || GetTaxiState() || m_TransporterGUID != 0) // Stunned, rooted, riding a flying machine, whatever
 		return false;
 
-	if(GetMapId() == 369) return false; // Deeprun Tram
+	if(GetMapId() == 369)
+		return false; // Deeprun Tram
 
 	MovementInfo* moveInfo = GetMovementInfo();
-	if(!moveInfo) return false;
+	if(moveInfo == NULL)
+		return false;
 
 	uint32 moveFlags = moveInfo->flags;
-
-	if(moveFlags & MOVEFLAG_FALLING || moveFlags & MOVEFLAG_FALLING_FAR || moveFlags & MOVEFLAG_FREE_FALLING)
-		return false; // Freeee falling.
+	if(moveFlags & MOVEFLAG_FALLING || moveFlags & MOVEFLAG_FALLING_FAR || moveFlags & MOVEFLAG_FREE_FALLING || moveFlags & MOVEFLAG_REDIRECTED)
+		return false; // Falling or Jumping.
 
 	if(m_UnderwaterState) // We're swimming.
 		return false;

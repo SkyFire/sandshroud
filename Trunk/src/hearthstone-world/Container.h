@@ -54,6 +54,9 @@ public:
 protected:
 	Item* m_Slot[72];
 	uint32 __fields[CONTAINER_END];
+
+public:
+
 };
 
 #endif

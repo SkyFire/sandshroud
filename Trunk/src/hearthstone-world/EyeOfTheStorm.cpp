@@ -293,7 +293,7 @@ void EyeOfTheStorm::HookOnAreaTrigger(Player* plr, uint32 id)
 				SpellCastTargets targets(plr->GetGUID());
 				pSpell->prepare(&targets);
 			}
-			m_EOTSbuffs[x]->Despawn(EOTS_BUFF_RESPAWN_TIME);
+			m_EOTSbuffs[x]->Despawn(0, EOTS_BUFF_RESPAWN_TIME);
 		}
 	}
 

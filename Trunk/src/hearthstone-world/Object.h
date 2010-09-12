@@ -651,6 +651,9 @@ public:
 
 	// empties loot vector
 	void ClearLoot();
+
+public:
+
 };
 
 #endif

@@ -35,10 +35,17 @@ int LuaGameObject_GossipCreateMenu(lua_State * L, GameObject * ptr)
 	objmgr.CreateGossipMenuForPlayer(&Menu, ptr->GetGUID(), text_id, plr);
 	if(autosend)
 		Menu->SendTo(plr);
+
 	return 1;
 }
 int LuaGameObject_GossipMenuAddItem(lua_State * L, GameObject * ptr)
 {
+	if(Menu == NULL)
+	{
+		printf("Menu used while uninitialized!!!");
+		return 0;
+	}
+
 	int icon = luaL_checkint(L, 1);
 	const char * menu_text = luaL_checkstring(L, 2);
 	int IntId = luaL_checkint(L, 3);
@@ -48,6 +55,12 @@ int LuaGameObject_GossipMenuAddItem(lua_State * L, GameObject * ptr)
 }
 int LuaGameObject_GossipSendMenu(lua_State * L, GameObject * ptr)
 {
+	if(Menu == NULL)
+	{
+		printf("Menu used while uninitialized!!!");
+		return 0;
+	}
+
 	Unit* target = Lunar<Unit>::check(L, 1);
 	Player * plr = (Player*)target;
 	Menu->SendTo(plr);
@@ -55,6 +68,12 @@ int LuaGameObject_GossipSendMenu(lua_State * L, GameObject * ptr)
 }
 int LuaGameObject_GossipComplete(lua_State * L, GameObject * ptr)
 {
+	if(Menu == NULL)
+	{
+		printf("Menu used while uninitialized!!!");
+		return 0;
+	}
+
 	Unit* target = Lunar<Unit>::check(L, 1);
 	Player * plr = (Player*)target;
 	plr->Gossip_Complete();
@@ -98,6 +117,108 @@ int LuaGameObject_GossipSendPOI(lua_State * L, GameObject * ptr)
 	}
 	return 0;
 }*/
+
+int LuaGameObject_ModUInt32Value(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	int value = luaL_checkint(L, 2);
+	ptr->ModSignedInt32Value(field, value);
+	return 1;
+}
+
+int LuaGameObject_ModFloatValue(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	float value = (float)luaL_checknumber(L, 2);
+	ptr->ModFloatValue(field, value);
+	return 1;
+}
+
+int LuaGameObject_SetUInt32Value(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	int value = luaL_checkint(L, 2);
+	ptr->SetUInt32Value(field, value);
+	return 1;
+}
+
+int LuaGameObject_SetUInt64Value(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	int value = luaL_checkint(L, 2);
+	ptr->SetUInt64Value(field, value);
+	return 1;
+}
+
+int LuaGameObject_SetFloatValue(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	float value = (float)luaL_checknumber(L, 2);
+	ptr->SetFloatValue(field, value);
+	return 1;
+}
+
+int LuaGameObject_GetUInt32Value(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetUInt32Value(field));
+	return 1;
+}
+
+int LuaGameObject_GetUInt64Value(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	lua_pushinteger(L, (int)ptr->GetUInt64Value(field));
+	return 1;
+}
+
+int LuaGameObject_GetFloatValue(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	int field = luaL_checkint(L, 1);
+	if(field >= GAMEOBJECT_END)
+		return 0;
+
+	lua_pushnumber(L, ptr->GetFloatValue(field));
+	return 1;
+}
+
 int LuaGameObject_GetMapId(lua_State * L, GameObject * ptr)
 {
 	if(ptr)
@@ -162,6 +283,14 @@ int LuaGameObject_GetCreatureNearestCoords(lua_State * L, GameObject * ptr)
     else
         Lunar<Unit>::push(L,ptr->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(x, y, z, entryid), false);
     return 1;
+}
+
+int LuaGameObject_GetAreaId(lua_State * L, GameObject * ptr)
+{
+	TEST_GO_RET();
+
+	lua_pushnumber(L, ptr->GetAreaID());
+	return 1;
 }
 
 int LuaGameObject_GetGameObjectNearestCoords(lua_State *L, GameObject * ptr)
@@ -461,71 +590,6 @@ int LuaGameObject_IsInBack(lua_State * L, GameObject * ptr)
 			lua_pushboolean(L, 0);
 	return 1;
 }
-int LuaGameObject_GetUInt32Value(lua_State * L, GameObject * ptr)
-{
-	int field = luaL_checkint(L,1);
-	if (ptr)
-		lua_pushinteger(L,ptr->GetUInt32Value(field));
-	return 1;
-}
-int LuaGameObject_GetUInt64Value(lua_State * L, GameObject * ptr)
-{
-	int field = luaL_checkint(L,1);
-	if (ptr && field)
-	{
-		lua_pushinteger(L,(int)ptr->GetUInt64Value(field));
-	}
-	return 1;
-}
-int LuaGameObject_SetUInt32Value(lua_State * L, GameObject * ptr)
-{
-	int field = luaL_checkint(L,1);
-	int value = luaL_checkint(L,2);
-	if(ptr && field && value)
-	{
-		ptr->SetUInt32Value(field,value);
-	}
-	return 1;
-}
-int LuaGameObject_SetUInt64Value(lua_State * L, GameObject * ptr)
-{
-	int field = luaL_checkint(L,1);
-	int value = luaL_checkint(L,2);
-	if(ptr && field && value)
-	{
-		ptr->SetUInt64Value(field,value);
-	}
-	return 1;
-}
-int LuaGameObject_SetFloatValue(lua_State * L, GameObject * ptr)
-{
-	int field = luaL_checkint(L,1);
-	float value = (float)luaL_checkint(L,2);
-	if( ptr && value)
-	{
-		ptr->SetFloatValue(field,value);
-	}
-	return 1;
-}
-int LuaGameObject_GetFloatValue(lua_State * L, GameObject * ptr)
-{
-	int field = luaL_checkint(L,1);
-	if( ptr && field)
-	{
-		lua_pushnumber(L,ptr->GetFloatValue(field));
-	}
-	return 1;
-}
-int LuaGameObject_ModUInt32Value(lua_State * L, GameObject * ptr)
-{
-	int field = luaL_checkint(L,1);
-	int value = luaL_checkint(L,2);
-	if( ptr && field && value)
-	{
-		ptr->ModSignedInt32Value(field,value);
-	}
-	return 1;
-}
 int LuaGameObject_CastSpell(lua_State * L, GameObject * ptr)
 {
 	TEST_GO();
@@ -577,6 +641,148 @@ int LuaGameObject_GetGUID(lua_State * L, GameObject* ptr)
 
 	lua_pushinteger(L,ptr->GetGUID());
 	return 1;
+}
+
+int LuaGameObject_RegisterAIUpdate(lua_State *L, GameObject * ptr)
+{
+	TEST_GO();
+
+	uint32 time = CHECK_ULONG(L,1);
+	sEventMgr.AddEvent(ptr,&GameObject::CallScriptUpdate, EVENT_SCRIPT_UPDATE_EVENT, time, 0, 0);
+	return 1;
+}
+
+int LuaGameObject_ModAIUpdate(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	uint32 newtime = CHECK_ULONG(L,1);
+	sEventMgr.ModifyEventTimeAndTimeLeft(ptr, EVENT_SCRIPT_UPDATE_EVENT, newtime);
+	return 1;
+}
+
+int LuaGameObject_RemoveAIUpdate(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	sEventMgr.RemoveEvents(ptr, EVENT_SCRIPT_UPDATE_EVENT);
+	return 1;
+}
+
+int LuaGameObject_IsActive(lua_State * L, GameObject* ptr)
+{
+	TEST_GO_RET();
+	if(ptr->GetByte(GAMEOBJECT_BYTES_1,0))
+		RET_BOOL(true)
+	RET_BOOL(false)
+}
+
+int LuaGameObject_Activate(lua_State * L, GameObject* ptr)
+{
+	TEST_GO_RET();
+
+	if(ptr->GetByte(GAMEOBJECT_BYTES_1, 0) == 1)
+		ptr->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
+	else 
+		ptr->SetByte(GAMEOBJECT_BYTES_1, 0, 1);
+
+	ptr->SetUInt32Value(GAMEOBJECT_FLAGS, (ptr->GetUInt32Value(GAMEOBJECT_FLAGS) & ~1));
+	RET_BOOL(true)
+}
+
+int LuaGameObject_DespawnObject(lua_State * L, GameObject* ptr)
+{
+	TEST_GO();
+
+	int delay = luaL_checkint(L,1);
+	int respawntime = luaL_checkint(L,2);
+	if (!delay) 
+		delay = 1; //Delay 0 might cause bugs
+
+	ptr->Despawn(delay,respawntime);
+	return 1;
+}
+
+int LuaGameObject_GetLandHeight(lua_State * L, GameObject * ptr)
+{
+	TEST_GO();
+
+	float x = CHECK_FLOAT(L,1);
+	float y = CHECK_FLOAT(L,2);
+	if (!x || !y) 
+	{
+		x = ptr->GetPositionX();
+		y = ptr->GetPositionY();
+	}
+
+	float lH = ptr->GetMapMgr()->GetLandHeight(x,y);
+	lua_pushnumber(L, lH);
+	return 1;
+}
+
+int LuaGameObject_SetZoneWeather(lua_State * L, GameObject * ptr)
+{
+	/*
+	WEATHER_TYPE_NORMAL            = 0, // NORMAL (SUNNY)
+	WEATHER_TYPE_FOG               = 1, // FOG
+	WEATHER_TYPE_RAIN              = 2, // RAIN
+	WEATHER_TYPE_HEAVY_RAIN        = 4, // HEAVY_RAIN
+	WEATHER_TYPE_SNOW              = 8, // SNOW
+	WEATHER_TYPE_SANDSTORM         = 16 // SANDSTORM
+	*/
+	uint32 zone_id = CHECK_ULONG(L,1);
+	uint32 type = CHECK_ULONG(L, 2);
+	float Density = CHECK_FLOAT(L, 3); //min: 0.30 max: 2.00
+	if (Density < 0.30f || Density > 2.0f || !zone_id || !type)
+		return 0;
+
+	uint32 sound;
+	if(Density <= 0.30f)
+		sound = 0;
+
+	switch(type)
+	{
+		case 2:                                             //rain
+		case 4:                                             
+			if(Density  <0.40f)
+				 sound = 8533;
+			else if(Density  <0.70f)
+				sound = 8534;
+			else
+				sound = 8535;
+			break;
+		case 8:                                             //snow
+			if(Density  <0.40f)
+				sound = 8536;
+			else if(Density  <0.70f)
+				sound = 8537;
+			else
+				sound = 8538;
+			break;
+		case 16:                                             //storm
+			if(Density  <0.40f)
+				sound = 8556;
+			else if(Density  <0.70f)
+				sound = 8557;
+			else
+				sound = 8558;
+			break;
+		default:											//no sound
+			sound = 0;
+			break;
+	}
+
+	WorldPacket data(SMSG_WEATHER, 9);
+	if(type == 0 ) // set all parameter to 0 for sunny.
+		data << uint32(0) << float(0) << uint32(0) << uint8(0);		
+	else if (type == 1) // No sound/density for fog
+		data << type << float(0) << uint32(0) << uint8(0);		
+	else
+		data << type << Density << sound << uint8(0) ;
+
+	sWorld.SendZoneMessage(&data, zone_id, 0);
+
+	return 0;
 }
 
 #endif // GAMEOBJECT_FUNCTIONS_H
