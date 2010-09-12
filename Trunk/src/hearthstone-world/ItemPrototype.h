@@ -667,7 +667,7 @@ struct ItemPrototype
 	uint32 RequiredLevel;
 	uint32 RequiredSkill;
 	uint32 RequiredSkillRank;
-	uint32 RequiredSkillSubRank;
+	uint32 RequiredSpell;
 	uint32 RequiredPlayerRank1;
 	uint32 RequiredPlayerRank2;
 	uint32 RequiredFaction;

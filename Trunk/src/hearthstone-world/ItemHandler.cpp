@@ -695,7 +695,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->RequiredLevel;
 	data << itemProto->RequiredSkill;
 	data << itemProto->RequiredSkillRank;
-	data << itemProto->RequiredSkillSubRank;
+	data << itemProto->RequiredSpell;
 	data << itemProto->RequiredPlayerRank1;
 	data << itemProto->RequiredPlayerRank2;
 	data << itemProto->RequiredFaction;

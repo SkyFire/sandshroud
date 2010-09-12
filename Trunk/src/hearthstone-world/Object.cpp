@@ -210,10 +210,14 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 			newz = mgr->GetLandHeight(x, y);
 	}
 
+	float offset = 10.0f;
 	if(newz < z) // Make sure we don't have some shit.
 	{
 		if(mgr->CanUseCollision(this))
 		{
+			if(CollideInterface.IsIndoor(GetMapId(), x, y, z))
+				offset = 5.0f;
+
 			float pointx = 0.0f;
 			float pointy = 0.0f;
 			float pointz = 0.0f;
@@ -240,12 +244,12 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 					newz = pointz;
 			}
 
-			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z+10.0f, x, y, newz, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
+			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z+offset, x, y, newz, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
 			{
 				if(pointz+2.0f < newz) // Distance is more than a roof.
 				{
 					float pointz2 = 0.0f;
-					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z+10.0f, x, y, pointz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
+					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z+offset, x, y, pointz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
 					{
 						if(pointz2+2.0f < pointz) // Distance is more than a roof.
 						{
@@ -268,6 +272,9 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 	{
 		if(mgr->CanUseCollision(this))
 		{
+			if(CollideInterface.IsIndoor(GetMapId(), x, y, z))
+				offset = 5.0f; // Use a smaller offset
+
 			float pointx = 0.0f;
 			float pointy = 0.0f;
 			float pointz = 0.0f;
@@ -294,12 +301,12 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 					newz = pointz;
 			}
 
-			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+10.0f, x, y, z, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
+			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+offset, x, y, z, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
 			{
 				if(pointz+2.0f < newz) // Distance is more than a roof.
 				{
 					float pointz2 = 0.0f;
-					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+10.0f, x, y, pointz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
+					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+offset, x, y, pointz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
 					{
 						if(pointz2+2.0f < pointz) // Distance is more than a roof.
 						{

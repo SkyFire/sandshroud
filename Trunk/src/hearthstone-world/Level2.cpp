@@ -31,7 +31,7 @@ bool ChatHandler::HandleResetReputationCommand(const char *args, WorldSession *m
 		SystemMessage(m_session, "Select a player or yourself first.");
 		return true;
 	}
-	
+
 	plr->_InitialReputation();
 	SystemMessage(m_session, "Done. Relog for changes to take effect.");
 	sWorld.LogGM(m_session, "used reset reputation for %s", plr->GetName());
