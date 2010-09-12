@@ -261,9 +261,7 @@ WorldPacket *Object::BuildFieldUpdatePacket( uint32 index,uint32 value)
 {
 	// uint64 guidfields = GetGUID();
 	// uint8 guidmask = 0;
-	WorldPacket * packet=new WorldPacket(1500);
-	packet->SetOpcode( SMSG_UPDATE_OBJECT );
-
+	WorldPacket * packet = new WorldPacket(SMSG_UPDATE_OBJECT, 1500);
 	*packet << (uint32)1;//number of update/create blocks
 
 	*packet << (uint8) UPDATETYPE_VALUES;		// update type == update
@@ -2631,9 +2629,12 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 				if( pVictim->IsPlayer() )
 					CritChance -= TO_PLAYER(pVictim)->CalcRating( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE );
 			}
-			if( CritChance < 0 ) CritChance = 0;
-			if( CritChance > 95 ) CritChance = 95;
+			if( CritChance < 0 )
+				CritChance = 0;
+			if( CritChance > 95 )
+				CritChance = 95;
 			critical = Rand(CritChance);
+
 			//sLog.outString( "SpellNonMeleeDamageLog: Crit Chance %f%%, WasCrit = %s" , CritChance , critical ? "Yes" : "No" );
 			Aura* fs = NULLAURA;
 			fs = spellInfo->NameHash == SPELL_HASH_LAVA_BURST ? pVictim->FindNegativeAuraByNameHash(SPELL_HASH_FLAME_SHOCK): NULL;
@@ -2801,11 +2802,11 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 	}
 
 	if( (dmg.full_damage == 0 && abs_dmg) == 0 )
-    {
-        //Only pushback the victim current spell if it's not fully absorbed
-        if( pVictim->GetCurrentSpell() )
-            pVictim->GetCurrentSpell()->AddTime( school );
-    }
+	{
+		//Only pushback the victim current spell if it's not fully absorbed
+		if( pVictim->GetCurrentSpell() )
+			pVictim->GetCurrentSpell()->AddTime( school );
+	}
 
 //==========================================================================================
 //==============================Post Damage Processing======================================
@@ -2849,13 +2850,13 @@ void Object::SendSpellLog(Object* Caster, Object* Target, uint32 Ability, uint8 
 	if ((!Caster || !Target) && Ability)
 		return;
 
-	WorldPacket data(SMSG_SPELLLOGMISS,28);
-	data << Ability;										// spellid
-	data << Caster->GetGUID();							  // caster / player
-	data << (uint8)1;									   // unknown but I think they are const
-	data << (uint32)1;									  // unknown but I think they are const
-	data << Target->GetGUID();							  // target
-	data << SpellLogType;								   // spelllogtype
+	WorldPacket data(SMSG_SPELLLOGMISS,26);
+	data << uint32(Ability);			// spellid
+	data << Caster->GetGUID();			// caster / player
+	data << uint8(1);					// unknown but I think they are const
+	data << uint32(1);					// unknown but I think they are const
+	data << Target->GetGUID();			// target
+	data << uint8(SpellLogType);		// spelllogtype
 	Caster->SendMessageToSet(&data, true);
 }
 
@@ -2884,8 +2885,8 @@ void Object::SendSpellNonMeleeDamageLog( Object* Caster, Unit* Target, uint32 Sp
 	data << uint8(PhysicalDamage);      // Physical Damage (true/false)
 	data << uint8(0);                   // unknown or it binds with Physical Damage
 	data << BlockedDamage;		     // Physical Damage (true/false)
-	data << uint8(CriticalHit ? 7 : 5);                   // unknown const
-	data << uint32(0);
+	data << uint32(CriticalHit ? 7 : 5);                   // unknown const
+	data << uint8(0);
 
 	Caster->SendMessageToSet( &data, bToset );
 }
@@ -3049,43 +3050,55 @@ void Object::SendAttackerStateUpdate( Unit* Target, dealdamage *dmg, uint32 real
 	}
 
 	uint32 overkill = Target->computeOverkill(realdamage);
+	uint32 schooldam = g_spellSchoolConversionTable[dmg->school_type];
 
-	data << (uint32)hit_status;   
+	data << uint32(hit_status);
 	data << GetNewGUID();
 	data << Target->GetNewGUID();
+	data << uint32(realdamage);					// Realdamage;
+	data << uint32(overkill);					// Overkill
+	data << uint8(1);							// Damage type counter / swing type
+	data << uint32(schooldam);					// Damage school
+	data << float(dmg->full_damage);			// Damage float
+	data << uint32(dmg->full_damage);			// Damage amount
 
-	data << (uint32)realdamage;			// Realdamage;
-	data << (uint32)overkill;			// Overkill
-	data << (uint8)1;					// Damage type counter / swing type
-
-	data << (uint32)g_spellSchoolConversionTable[dmg->school_type];				  // Damage school
-	data << (float)dmg->full_damage;		// Damage float
-	data << (uint32)dmg->full_damage;	// Damage amount
-
-	if(hit_status & HITSTATUS_ABSORBED)
+	if(hit_status & (HITSTATUS_ABSORBED | HITSTATUS_ABSORBED2))
 	{
-		data << (uint32)abs;				// Damage absorbed
+		data << (uint32)abs;					// Damage absorbed
 	}
-	if(hit_status & HITSTATUS_RESIST)
+	if(hit_status & (HITSTATUS_RESIST | HITSTATUS_RESIST2))
 	{
-		data << (uint32)dmg->resisted_damage;	// Damage resisted
+		data << uint32(dmg->resisted_damage);	// Damage resisted
 	}
 
-	data << (uint8)vstate;				// new victim state
+	data << uint8(vstate);						// new victim state
+	data << uint32(0);
+	data << uint32(0);
+
 	if(hit_status & HITSTATUS_BLOCK)
-		data << (uint32)0;				// can be 0,1000 or -1
-	else
-		data << (uint32)0x3e8;			// can be 0,1000 or -1
+		data << uint32(blocked_damage);			// Damage amount blocked
 
 	if (hit_status & 0x00800000)
+		data << uint32(0);						// unknown
+
+	if(hit_status & HITSTATUS_unk)
 	{
-		data << (uint32)0;				// unknown
+		data << uint32(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		for(uint8 i = 0; i < 5; ++i)
+		{
+			data << float(0);
+			data << float(0);
+		}
+		data << uint32(0);
 	}
-	if(hit_status & HITSTATUS_BLOCK)
-	{
-		data << (uint32)blocked_damage;	 // Damage amount blocked
-	}
-	data << (uint32)0;					// Unknown
 
 	SendMessageToSet(&data, IsPlayer());
 }
