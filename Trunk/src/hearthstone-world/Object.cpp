@@ -131,6 +131,19 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		return newz;
 
 	MapMgr* mgr = GetMapMgr();
+	if(IS_INSTANCE(mgr->GetMapId()))
+	{
+		if(mgr->CanUseCollision(this))
+		{
+			float pointx = 0.0f;
+			float pointy = 0.0f;
+			float pointz = 0.0f;
+			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z-100.0f, x, y, z+100.0f, pointx, pointy, pointz, 0.0f))
+				return pointz;
+		}
+		return newz;
+	}
+
 	if(x != 0.0f && y != 0.0f)
 	{
 		if(z != 0.0f)
@@ -146,12 +159,8 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 				ztwo = mgr->GetLandHeight(x, y);
 
 				if(usingcollision)
-				{
 					if(ztwo > newz)
-					{
 						newz = ztwo;
-					}
-				}
 			}
 			else
 				newz = mgr->GetLandHeight(x, y);
@@ -171,12 +180,8 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 				ztwo = mgr->GetLandHeight(x, y);
 
 				if(usingcollision)
-				{
 					if(ztwo > newz)
-					{
 						newz = ztwo;
-					}
-				}
 			}
 			else
 				newz = mgr->GetLandHeight(x, y);
@@ -198,12 +203,8 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 			ztwo = mgr->GetLandHeight(x, y);
 
 			if(usingcollision)
-			{
 				if(ztwo > newz)
-				{
 					newz = ztwo;
-				}
-			}
 		}
 		else
 			newz = mgr->GetLandHeight(x, y);
@@ -227,9 +228,7 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 						{
 							float pointz3 = 0.0f;
 							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz, x, y, pointz2, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
-							{
 								newz = pointz3;
-							}
 						}
 						else
 							newz = pointz2;
@@ -252,9 +251,7 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 						{
 							float pointz3 = 0.0f;
 							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz, x, y, pointz2, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
-							{
 								newz = pointz3;
-							}
 						}
 						else
 							newz = pointz2;
@@ -285,9 +282,7 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 						{
 							float pointz3 = 0.0f;
 							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz2+2.0f, x, y, pointz, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
-							{
 								newz = pointz3;
-							}
 						}
 						else
 							newz = pointz2;
@@ -310,9 +305,7 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 						{
 							float pointz3 = 0.0f;
 							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz, x, y, pointz2, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
-							{
 								newz = pointz3;
-							}
 						}
 						else
 							newz = pointz2;
