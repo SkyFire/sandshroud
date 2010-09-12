@@ -12226,13 +12226,7 @@ void Player::_FlyhackCheck()
 		return;
 
 	// Get the current terrain height at this position
-	float height = CollideInterface.GetHeight(GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + 2.0f);
-	if(height == NO_WMO_HEIGHT)
-	{
-		height = GetMapMgr()->GetLandHeight(GetPositionX(), GetPositionY());
-		if(height == 0.0f) // At this point, we just can't get a valid height.
-			return;
-	}
+	float height = GetCHeightForPosition(true);
 
 	float diff = GetPositionZ() - height;
 	if(diff < 0)
@@ -12258,7 +12252,7 @@ bool Player::IsFlyHackEligible()
 	if(!sWorld.antihack_cheatengine)
 		return false;
 
-	if(!GetMapMgr() || FlyCheat || m_FlyingAura || IsStunned() || IsPacified() || IsFeared() || GetTaxiState() || m_TransporterGUID != 0) // Stunned, rooted, riding a flying machine, whatever
+	if(!GetMapMgr() || FlyCheat || m_FlyingAura || IsStunned() || IsPacified() || IsFeared() || GetTaxiState() || m_TransporterGUID != 0 || GetSession()->m_loggingInPlayer) // Stunned, rooted, riding a flying machine, whatever
 		return false;
 
 	if(GetMapId() == 369)
@@ -12274,6 +12268,9 @@ bool Player::IsFlyHackEligible()
 
 	if(m_UnderwaterState) // We're swimming.
 		return false;
+
+//	if(CollideInterface.IsIndoor(GetMapId(), GetPositionX(), GetPositionY(),  GetPositionZ()))
+//		return false; // Shouldn't do checks indoors, wrong height checks because of stairs
 
 	return true;
 }

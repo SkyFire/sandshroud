@@ -2507,7 +2507,8 @@ bool ChatHandler::HandleLookupObjectCommand(const char * args, WorldSession * m_
 
 bool ChatHandler::HandleLookupSpellCommand(const char * args, WorldSession * m_session)
 {
-	if(!*args) return false;
+	if(!*args)
+		return false;
 
 	string x = string(args);
 	HEARTHSTONE_TOLOWER(x);
@@ -3222,28 +3223,10 @@ bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_s
 {
 	Player* plr = m_session->GetPlayer();
 	if(plr == NULL)
-	{
-		SystemMessage(m_session, "Invalid target.");
 		return true;
-	}
 
-	if (plr->GetMapMgr()->CanUseCollision(plr))
-	{
-		float z = CollideInterface.GetHeight(plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ() + 2.0f);
-		float z2 = CollideInterface.GetHeight(plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ() + 5.0f);
-		float z3 = CollideInterface.GetHeight(plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
-
-		SystemMessage(m_session, "Results were: %f %f %f", z, z2, z3);
-		return true;
-	}
-	else
-	{
-		SystemMessage(m_session, "Collision is not available here, using mapmgr height instead.");
-		float z = plr->GetMapMgr()->GetLandHeight(plr->GetPositionX(), plr->GetPositionY());
-
-		SystemMessage(m_session, "Results were: %f", z);
-		return true;
-	}
+	SystemMessage(m_session, "Results: No Water, Curr pos: %f; Water: %f;", plr->GetCHeightForPosition(), plr->GetCHeightForPosition(true));
+	return true;
 }
 
 bool ChatHandler::HandleFixScaleCommand(const char * args, WorldSession * m_session)

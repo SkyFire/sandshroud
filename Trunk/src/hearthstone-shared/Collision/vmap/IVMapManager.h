@@ -39,7 +39,6 @@ namespace VMAP
 	};
 
 	#define VMAP_INVALID_HEIGHT		-100000.0f			// for check
-	#define VMAP_INVALID_HEIGHT_VALUE -200000.0f			// real assigned value in unknown height case
 
 	//===========================================================
 	class IVMapManager

@@ -4492,12 +4492,24 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 				z = 680.22f;
 				o = 0.0f;
 			}break;
+
 		default:
-			if(sLog.IsOutDevelopement())
-				printf("Unknown teleport spell: %u\n", id);
+			if(m_targets.m_destX && m_targets.m_destY)
+			{
+				mapid = pTarget->GetMapId();
+				x = m_targets.m_destX;
+				y = m_targets.m_destY;
+				z = m_targets.m_destZ;
+				o = pTarget->GetOrientation();
+			}
 			else
-				OUT_DEBUG("Unknown teleport spell: %u", id);
-			return;
+			{
+				if(sLog.IsOutDevelopement())
+					printf("Unknown teleport spell: %u\n", id);
+				else
+					OUT_DEBUG("Unknown teleport spell: %u", id);
+				return;
+			}break;
 		}
 	}
 	else
@@ -4621,15 +4633,15 @@ void Spell::SendHealSpellOnPlayer( Object* caster, Object* target, uint32 dmg, b
 {
 	if( caster == NULL || target == NULL || !target->IsPlayer())
 		return;
-	WorldPacket data(SMSG_SPELLHEALLOG, 34);
-	data.append(target->GetNewGUID());
-	data.append(caster->GetNewGUID());
+
+	WorldPacket data(SMSG_SPELLHEALLOG, 25);
+	data << target->GetNewGUID();
+	data << caster->GetNewGUID();
 	data << uint32(spellid);
 	data << uint32(dmg);
 	data << uint32(overheal);
-	data << uint32(0); //Todo: Calculate healing absorb.
 	data << uint8(critical ? 1 : 0);
-	data << uint8(0);//?????
+	data << uint8(0);
 	caster->SendMessageToSet(&data, true);
 }
 

@@ -933,7 +933,9 @@ Creature* ChatHandler::getSelectedCreature(WorldSession *m_session, bool showerr
 
 void ChatHandler::SystemMessage(WorldSession *m_session, const char* message, ...)
 {
-	if( !message ) return;
+	if( !message )
+		return;
+
 	va_list ap;
 	va_start(ap, message);
 	char msg1[1024];

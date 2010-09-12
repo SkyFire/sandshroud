@@ -140,9 +140,10 @@ public:
 	virtual void Init();
 
 	virtual void Update ( uint32 time ) { }
-  //! True if object exists in world
- 
-	
+	//! True if object exists in world
+
+	float GetCHeightForPosition(bool checkwater = false, float x = 0.0f, float y = 0.0f, float z = 0.0f);
+
 	HEARTHSTONE_INLINE bool IsInWorld() { return m_mapMgr != NULL; }
 	virtual void AddToWorld();
 	virtual void AddToWorld(MapMgr* pMapMgr);

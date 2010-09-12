@@ -1169,15 +1169,10 @@ public:
 		if( !plr )
 			return;
 
-		if( _gameobject->CalcDistance( _gameobject, plr ) <= 1.5f && plr->GetMapId() == 609)
-		{
+		if( _gameobject->CalcDistance( _gameobject, plr ) <= 2.0f && plr->GetMapId() == 609)
 			plr->SafeTeleport( 609, 4298, 2397.57, -5636.03, 377.05, 0.57 );
-		}
-
-		else if( _gameobject->CalcDistance( _gameobject, plr ) <= 1.5f && plr->GetMapId() == 0)
-		{
+		else if( _gameobject->CalcDistance( _gameobject, plr ) <= 2.0f && plr->GetMapId() == 0)
 			plr->SafeTeleport( 0, plr->GetInstanceID(), 2395.233154f, -5637.875488f, 377.086884f, 0.520721f);
-		}
 	}
 };
 

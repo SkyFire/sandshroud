@@ -1312,17 +1312,7 @@ void Aura::EventRelocateRandomTarget()
 	const static float killingspree_distance = 1.6f * GetScale( dbcCreatureDisplayInfo.LookupEntry( pTarget->GetUInt32Value(UNIT_FIELD_DISPLAYID)));
 	float new_x = pTarget->GetPositionX() - (killingspree_distance * cosf(ang));
 	float new_y = pTarget->GetPositionY() - (killingspree_distance * sinf(ang));
-	float new_z = pTarget->GetPositionZ() + 0.1f;
-	if (pTarget->GetMapMgr() && pTarget->GetMapMgr()->CanUseCollision(pTarget))
-	{
-		float z2 = CollideInterface.GetHeight(pTarget->GetMapId(), pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
-		if( z2 == NO_WMO_HEIGHT )
-			z2 = pTarget->GetMapMgr()->GetLandHeight(new_x, new_y);
-
-		if( fabs( new_z - z2 ) < 10.0f )
-				new_z = z2 + 0.2f;
-	}
-
+	float new_z = pTarget->GetCHeightForPosition(true);
 	TO_PLAYER(m_caster)->SafeTeleport( pTarget->GetMapId(), pTarget->GetInstanceID(), new_x, new_y, new_z, pTarget->GetOrientation() );
 	// void Unit::Strike( Unit pVictim, uint32 weapon_damage_type, SpellEntry* ability, int32 add_damage, int32 pct_dmg_mod, uint32 exclusive_damage, bool disable_proc, bool skip_hit_check )
 	TO_PLAYER(m_caster)->Strike( pTarget, MELEE, NULL, 0, 0, 0, false, false, true );

@@ -116,6 +116,226 @@ void Object::Init()
 
 }
 
+/* Crow:
+	This function is a really heavy height check that is used for getting all types of height checks!
+	Since it is in the object class, we can skip any actual variables and instead use our current position.
+	This function gets map height and also checks the position of WMO's so that the height is set to the WMO height
+	based on the Z position that is given. If no Z position is given, but x and y positions are given, we will instead
+	use basic map heights as our Z position. */
+float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
+{
+	bool usingcollision = true;
+	float newz = 0.0f;
+	float ztwo = 0.0f;
+	if(!IsInWorld())
+		return newz;
+
+	MapMgr* mgr = GetMapMgr();
+	if(x != 0.0f && y != 0.0f)
+	{
+		if(z != 0.0f)
+		{
+			if(mgr->CanUseCollision(this))
+			{
+				newz = CollideInterface.GetHeight(GetMapId(), x, y, z);
+				if(newz == NO_WMO_HEIGHT)
+				{
+					usingcollision = false;
+					newz = mgr->GetLandHeight(x, y);
+				}
+				ztwo = mgr->GetLandHeight(x, y);
+
+				if(usingcollision)
+				{
+					if(ztwo > newz)
+					{
+						newz = ztwo;
+					}
+				}
+			}
+			else
+				newz = mgr->GetLandHeight(x, y);
+		}
+		else
+		{
+			z = mgr->GetLandHeight(x, y);
+
+			if(mgr->CanUseCollision(this))
+			{
+				newz = CollideInterface.GetHeight(GetMapId(), x, y, z);
+				if(newz == NO_WMO_HEIGHT)
+				{
+					usingcollision = false;
+					newz = mgr->GetLandHeight(x, y);
+				}
+				ztwo = mgr->GetLandHeight(x, y);
+
+				if(usingcollision)
+				{
+					if(ztwo > newz)
+					{
+						newz = ztwo;
+					}
+				}
+			}
+			else
+				newz = mgr->GetLandHeight(x, y);
+		}
+	}
+	else
+	{
+		x = GetPositionX();
+		y = GetPositionY();
+		z = GetPositionZ();
+		if(mgr->CanUseCollision(this))
+		{
+			newz = CollideInterface.GetHeight(GetMapId(), x, y, z);
+			if(newz == NO_WMO_HEIGHT)
+			{
+				usingcollision = false;
+				newz = mgr->GetLandHeight(x, y);
+			}
+			ztwo = mgr->GetLandHeight(x, y);
+
+			if(usingcollision)
+			{
+				if(ztwo > newz)
+				{
+					newz = ztwo;
+				}
+			}
+		}
+		else
+			newz = mgr->GetLandHeight(x, y);
+	}
+
+	if(newz < z) // Make sure we don't have some shit.
+	{
+		if(mgr->CanUseCollision(this))
+		{
+			float pointx = 0.0f;
+			float pointy = 0.0f;
+			float pointz = 0.0f;
+			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+2.0f, x, y, z, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
+			{
+				if(pointz+2.0f < newz) // Distance is more than a roof.
+				{
+					float pointz2 = 0.0f;
+					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+2.0f, x, y, pointz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
+					{					
+						if(pointz2+2.0f < pointz) // Distance is more than a roof.
+						{
+							float pointz3 = 0.0f;
+							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz, x, y, pointz2, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
+							{
+								newz = pointz3;
+							}
+						}
+						else
+							newz = pointz2;
+					}
+					else
+						newz = pointz;
+				}
+				else
+					newz = pointz;
+			}
+
+			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z+10.0f, x, y, newz, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
+			{
+				if(pointz+2.0f < newz) // Distance is more than a roof.
+				{
+					float pointz2 = 0.0f;
+					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z+10.0f, x, y, pointz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
+					{
+						if(pointz2+2.0f < pointz) // Distance is more than a roof.
+						{
+							float pointz3 = 0.0f;
+							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz, x, y, pointz2, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
+							{
+								newz = pointz3;
+							}
+						}
+						else
+							newz = pointz2;
+					}
+					else
+						newz = pointz;
+				}
+				else
+					newz = pointz;
+			}
+		}
+	}
+	else if(z+2.0f < newz)
+	{
+		if(mgr->CanUseCollision(this))
+		{
+			float pointx = 0.0f;
+			float pointy = 0.0f;
+			float pointz = 0.0f;
+			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z+2.0f, x, y, newz, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
+			{
+				if(pointz+2.0f < newz) // Distance is more than a roof.
+				{
+					float pointz2 = 0.0f;
+					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz+2.0f, x, y, newz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
+					{
+						if(pointz2+2.0f < pointz) // Distance is more than a roof.
+						{
+							float pointz3 = 0.0f;
+							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz2+2.0f, x, y, pointz, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
+							{
+								newz = pointz3;
+							}
+						}
+						else
+							newz = pointz2;
+					}
+					else
+						newz = pointz;
+				}
+				else
+					newz = pointz;
+			}
+
+			if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+10.0f, x, y, z, pointx, pointy, pointz, 0.0f)) // Meaning there is a break inbetween us.
+			{
+				if(pointz+2.0f < newz) // Distance is more than a roof.
+				{
+					float pointz2 = 0.0f;
+					if(CollideInterface.GetFirstPoint(GetMapId(), x, y, newz+10.0f, x, y, pointz, pointx, pointy, pointz2, 0.0f)) // Meaning there is a break inbetween us.
+					{
+						if(pointz2+2.0f < pointz) // Distance is more than a roof.
+						{
+							float pointz3 = 0.0f;
+							if(CollideInterface.GetFirstPoint(GetMapId(), x, y, pointz, x, y, pointz2, pointx, pointy, pointz3, 0.0f)) // Meaning there is a break inbetween us.
+							{
+								newz = pointz3;
+							}
+						}
+						else
+							newz = pointz2;
+					}
+					else
+						newz = pointz;
+				}
+				else
+					newz = pointz;
+			}
+		}
+	}
+
+	if(checkwater == true) // Crow: Pretty sure this is all we need.
+	{
+		float wz = mgr->GetWaterHeight(x, y);
+		if(wz > newz)
+			newz = wz;
+	}
+
+	return newz+0.03321f; // We have a direct offset
+}
+
 void Object::SetPhase(int32 phase)
 {
 	m_phaseMode = phase;

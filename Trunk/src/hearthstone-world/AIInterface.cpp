@@ -880,18 +880,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				
 		if(fly && !IS_INSTANCE(m_Unit->GetMapId()))
 		{
-			float target_land_z = 0.0f;
-			if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
-			{
-				target_land_z = CollideInterface.GetHeight(m_Unit->GetMapId(), GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY(), GetNextTarget()->GetPositionZ() + 2.0f);
-				if(target_land_z == NO_WMO_HEIGHT)
-					target_land_z = m_Unit->GetMapMgr()->GetLandHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY());
-			}
-			else
-			{
-				target_land_z = m_Unit->GetMapMgr()->GetLandHeight(GetNextTarget()->GetPositionX(), GetNextTarget()->GetPositionY());
-			}
-
+			float target_land_z = m_Unit->GetCHeightForPosition();
 			if(target_land_z)
 			{
 				if((fabs(GetNextTarget()->GetPositionZ() - target_land_z) > _CalcCombatRange(GetNextTarget(), false)) && fabs(GetNextTarget()->GetPositionZ() - target_land_z) < 100.0f)
@@ -2812,49 +2801,18 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				Fx = m_Unit->GetPositionX() + (RandomFloat(20.f)+5.0f)*cosf(Fo);
 				Fy = m_Unit->GetPositionY() + (RandomFloat(20.f)+5.0f)*sinf(Fo);
 			}
+
 			// Check if this point is in water.
 			float wl = m_Unit->GetMapMgr()->GetWaterHeight(Fx, Fy);
-//			uint8 wt = m_Unit->GetMapMgr()->GetWaterType(Fx, Fy);
-
-			if (m_Unit->GetMapMgr() && m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
+			Fz = m_Unit->GetCHeightForPosition(false); // We COULD check water height, but nah.
+			if( fabs( m_Unit->GetPositionZ() - Fz ) > 3.5f || ( wl != 0.0f && Fz < wl ) )		// in water
 			{
-				if( !CollideInterface.GetFirstPoint( m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), 
-					Fx, Fy, m_Unit->GetPositionZ() + 1.5f, Fx, Fy, Fz, -3.5f ) )
-				{
-					// clear path?
-					Fz = CollideInterface.GetHeight( m_Unit->GetMapId(), Fx, Fy, m_Unit->GetPositionZ() );
-					if( Fz == NO_WMO_HEIGHT )
-						Fz = m_Unit->GetMapMgr()->GetLandHeight(Fx, Fy);
-				}
-				else
-				{
-					// obstruction in the way.
-					// the distmod will fuck up the Z, so get a new height.
-					float fz2 = CollideInterface.GetHeight(m_Unit->GetMapId(), Fx, Fy, Fz);
-					if( fz2 != NO_WMO_HEIGHT )
-						Fz = fz2;
-				}
-
-				if( fabs( m_Unit->GetPositionZ() - Fz ) > 3.5f || ( wl != 0.0f && Fz < wl ) )		// in water
-				{
-					m_FearTimer=getMSTime() + 500;
-				}
-				else
-				{
-					MoveTo(Fx, Fy, Fz);
-					m_FearTimer = m_totalMoveTime + getMSTime() + 400;
-				}
+				m_FearTimer = getMSTime() + 500;
 			}
 			else
 			{
-				Fz = m_Unit->GetMapMgr()->GetLandHeight(Fx, Fy);
-				if(fabs(m_Unit->GetPositionZ()-Fz) > 4 || (Fz != 0.0f && Fz < (wl-2.0f)))
-					m_FearTimer=getMSTime()+100;
-				else
-				{
-					MoveTo(Fx, Fy, Fz);
-					m_FearTimer = m_totalMoveTime + getMSTime() + 200;
-				}
+				MoveTo(Fx, Fy, Fz);
+				m_FearTimer = m_totalMoveTime + getMSTime() + 400;
 			}
 		}
 	}

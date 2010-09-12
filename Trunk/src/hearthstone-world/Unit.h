@@ -870,7 +870,7 @@ public:
 
 	// Invisibility
 	HEARTHSTONE_INLINE void SetInvisibility(uint32 id) { m_invisibility = id; }
-	HEARTHSTONE_INLINE bool IsInvisible() { return (m_invisible!=0 ? true : false); }
+	HEARTHSTONE_INLINE bool IsInvisible() { return (m_invisible != 0 ? true : false); }
 	uint32 m_invisibility;
 	bool m_invisible;
 	uint8 m_invisFlag;

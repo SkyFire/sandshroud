@@ -53,11 +53,14 @@ void WorldSession::HandleAttackSwingOpcode( WorldPacket & recv_data )
 		return;
 
 	// Faction "Hack" by Deathshit
-	if( !isAttackable( GetPlayer(), pEnemy, false ) && !pEnemy->IsInRangeOppFactSet(_player) && !pEnemy->CombatStatus.DidDamageTo(GetPlayer()->GetGUID()))
+	if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
 	{
-		GetPlayer()->BroadcastMessage("Faction exploit detected. You will be disconnected in 5 seconds.");
-		GetPlayer()->Kick(5000);
-		return;
+		if(sWorld.antihack_cheatengine && !isAttackable( GetPlayer(), pEnemy, false ) && !pEnemy->IsInRangeOppFactSet(_player) && !pEnemy->CombatStatus.DidDamageTo(GetPlayer()->GetGUID()))
+		{
+			GetPlayer()->BroadcastMessage("Faction exploit detected. You will be disconnected in 5 seconds.");
+			GetPlayer()->Kick(5000);
+			return;
+		}
 	}
 
 	GetPlayer()->smsg_AttackStart(pEnemy);

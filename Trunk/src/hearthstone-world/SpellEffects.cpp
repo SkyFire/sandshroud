@@ -1060,6 +1060,64 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				p_caster->Strike( unitTarget, MELEE, m_spellInfo, 0, 0, 0, false, false);
 		}break;
 
+	case SPELL_HASH_HOLY_SHOCK:
+		{
+			if( p_caster != NULL && unitTarget != NULL )
+			{
+				uint32 hostileSpell = 0;
+				uint32 friendlySpell = 0;
+				switch( m_spellInfo->Id )
+				{
+				case 20473: //Rank 1
+					{
+						hostileSpell = 25912;
+						friendlySpell = 25914;
+					}break;
+				case 20929: //Rank 2
+					{
+						hostileSpell = 25911;
+						friendlySpell = 25913;
+					}break;
+				case 20930: //Rank 3
+					{
+						hostileSpell = 25902;
+						friendlySpell = 25903;
+					}break;
+				case 27174: //Rank 4
+					{
+						hostileSpell = 27176;
+						friendlySpell = 27175;
+					}break;
+				case 33072: //Rank 5
+					{
+						hostileSpell = 33073;
+						friendlySpell = 33074;
+					}break;
+				case 48824: //Rank 6
+					{
+						hostileSpell = 48822;
+						friendlySpell = 48820;
+					}break;
+				case 48825: //Rank 7
+					{
+						hostileSpell = 48823;
+						friendlySpell = 48821;
+					}break;
+
+				default:
+					{
+						hostileSpell = 48823;
+						friendlySpell = 48821;
+					}break;
+				}
+
+				if( isAttackable(p_caster, unitTarget) ) // Do holy damage
+					p_caster->CastSpell(unitTarget, hostileSpell, true);
+				else // Heal
+					p_caster->CastSpell(unitTarget, friendlySpell, true);
+			}
+		}break;
+
 	case SPELL_HASH_PENANCE:
 		{
 			if( p_caster != NULL && unitTarget != NULL )
@@ -2700,17 +2758,7 @@ void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
 		const static float shadowstep_distance = 1.6f * GetScale( dbcCreatureDisplayInfo.LookupEntry( unitTarget->GetUInt32Value(UNIT_FIELD_DISPLAYID)));
 		float new_x = pTarget->GetPositionX() - (shadowstep_distance * cosf(ang));
 		float new_y = pTarget->GetPositionY() - (shadowstep_distance * sinf(ang));
-		float new_z = pTarget->GetPositionZ() + 0.1f;
-		if (pTarget->GetMapMgr() && pTarget->GetMapMgr()->CanUseCollision(pTarget))
-		{
-			float z2 = CollideInterface.GetHeight(pTarget->GetMapId(), pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
-			if( z2 == NO_WMO_HEIGHT )
-				z2 = p_caster->GetMapMgr()->GetLandHeight(new_x, new_y);
-
-			if( fabs( new_z - z2 ) < 10.0f )
-				new_z = z2 + 0.2f;
-		}
-		
+		float new_z = pTarget->GetCHeightForPosition(true);
 		/* Send a movement packet to "charge" at this target. Similar to warrior charge. */
 		p_caster->z_axisposition = 0.0f;
 		p_caster->SafeTeleport(p_caster->GetMapId(), p_caster->GetInstanceID(), LocationVector(new_x, new_y, new_z, pTarget->GetOrientation()));
@@ -3723,11 +3771,9 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		float posY = m_caster->GetPositionY()+(radius*(sinf(ori)));
 		float posZ;
 
-		if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, posZ, -1.5f) )
+		if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, p_caster->GetPositionZ(), posX, posY, posZ, -1.5f) )
 		{
-			float fz2 = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, posZ);
-			if( fz2 != NO_WMO_HEIGHT )
-				posZ = fz2;
+			posZ = p_caster->GetCHeightForPosition(true, posX, posY, posZ);
 			p_caster->blinked = true;
 			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
@@ -3739,12 +3785,10 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		else
 		{
 			// either no objects in the way, or no wmo height
-			posZ = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, m_caster->GetPositionZ());
-			if(posZ == NO_WMO_HEIGHT)		// not found height, or on adt
-				posZ = m_caster->GetMapMgr()->GetLandHeight(posX,posY);
-
-			if( fabs( posZ - m_caster->GetPositionZ() ) >= 10.0f )
+			posZ = p_caster->GetCHeightForPosition(true, posX, posY, m_caster->GetPositionZ());
+			if( fabs(posZ - m_caster->GetPositionZ()) >= 10.0f )
 				return;
+
 			p_caster->blinked = true;
 			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
