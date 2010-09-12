@@ -316,7 +316,7 @@ public:
 			{
 				GameObject *Crystal = _unit->GetMapMgr()->GetGameObject( _unit->m_ObjectSlots[i] );
 				if( Crystal && Crystal->IsInWorld() )
-					Crystal->Despawn(0);
+					Crystal->Despawn(0, 0);
 			}
 		}
 		_unit->Root();
@@ -609,7 +609,7 @@ public:
 					GameObject *Crystal = Novos->GetMapMgr()->GetGameObject( Novos->m_ObjectSlots[i] );
 					if( Crystal && Crystal->IsInWorld() )
 					{
-						Crystal->Despawn(0);
+						Crystal->Despawn(0, 0);
 						return;
 					}
 				}

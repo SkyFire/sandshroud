@@ -138,7 +138,7 @@ public:
 			pPlayer->CastSpell(pPlayer, SILITHYST_SPELL, true);
 
 		if( _gameobject )
-			_gameobject->Despawn(0);		
+			_gameobject->Despawn(0, 0);		
 	}
 };
 

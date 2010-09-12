@@ -52,7 +52,7 @@ public:
 #ifdef BLIZZLIKE
 		sEventMgr.AddEvent( School, &GameObject::Despawn, static_cast< uint32 >( 20000 ), EVENT_GAMEOBJECT_ITEM_SPAWN, 1000, 1, 0 );
 #else
-		School->Despawn( 20000 );
+		School->Despawn(0, 20000 );
 #endif
 		pPlayer->CastSpell( pPlayer, dbcSpell.LookupEntry( TO_ITEM( pObject )->GetProto()->Spells[ 0 ].Id ), false );
 		uint32 Chance = RandomUInt( 10 );

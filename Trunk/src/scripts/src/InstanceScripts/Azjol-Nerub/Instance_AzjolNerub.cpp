@@ -79,7 +79,7 @@ class KrikthirAI : public MoonScriptCreatureAI
 	{
 		GameObject *Doors = GetNearestGameObject(192395);
 		if( Doors != NULL )
-			Doors->Despawn(0);
+			Doors->Despawn(0, 0);
 
 		ParentClass::OnDied(pKiller);
 	};

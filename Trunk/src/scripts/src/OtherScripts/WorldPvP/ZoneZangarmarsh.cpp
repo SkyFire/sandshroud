@@ -547,7 +547,7 @@ public:
 		_gameobject->GetMapMgr()->RemovePositiveAuraFromPlayers(oppositeTeam, TWIN_SPIRE_BLESSING);
 
 		if( _gameobject )
-			_gameobject->Despawn(0);
+			_gameobject->Despawn(0, 0);
 
 		ZMSpawnBanners( pPlayer->GetMapMgr(), pTeam ); // spawn faction banner
 	}

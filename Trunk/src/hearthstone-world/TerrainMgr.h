@@ -46,7 +46,7 @@ typedef struct
    wanting to access this information at once.
   */
 
-class TerrainMgr
+class SERVER_DECL TerrainMgr
 {
 public:
 	/* Initializes the terrain interface, allocates all required arrays, and sets 

@@ -135,7 +135,7 @@ bool ToLegionHold(uint32 i, Aura *pAura, bool apply)
 		GameObject *pGameObject = pPlayer->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 184834);
 		if ( pGameObject != NULL )
 		{
-			pGameObject->Despawn(60000);
+			pGameObject->Despawn(0, 60000);
 			pPlayer->UpdateNearbyGameObjects();
 		}
 	}
@@ -361,7 +361,7 @@ bool Carcass(uint32 i, Spell *pSpell) // Becoming a Shadoweave Tailor
 	if ( FlayerCarcass == NULLGOB )
 	{
 		FlayerCarcass = sEAS.SpawnGameobject(pPlayer, 185155, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), 0, 1, 0, 0, 0, 0);
-		FlayerCarcass->Despawn(60000);
+		FlayerCarcass->Despawn(0, 60000);
 	}
 	if ( NetherDrake == NULL )
 		return true;

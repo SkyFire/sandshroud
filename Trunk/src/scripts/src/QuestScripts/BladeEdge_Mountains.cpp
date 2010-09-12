@@ -91,7 +91,7 @@ public:
 			magneto->Despawn(5*60*1000, 0);
 		}
 
-		_gameobject->Despawn(300000);
+		_gameobject->Despawn(0, 300000);
 	}
 };
 
@@ -116,7 +116,7 @@ public:
 			whelp->Despawn(5*60*1000, 0);
 		}
 
-		_gameobject->Despawn(300000);
+		_gameobject->Despawn(0, 300000);
 	}
 };
 		
@@ -375,7 +375,7 @@ public:
          NdGo = GetNearestGameObject(184315);
 		 if( NdGo == NULL )
 			 return;
-		 NdGo->Despawn(0);
+		 NdGo->Despawn(0, 0);
          Ogre->Despawn(60*1000, 3*60*1000);
 		 if( plr == NULL )
 			 return;

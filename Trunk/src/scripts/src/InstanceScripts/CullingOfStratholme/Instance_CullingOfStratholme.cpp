@@ -941,7 +941,7 @@ public:
 		}
 		GameObject *crate = pMapMgr->GetInterface()->GetGameObjectNearestCoords(x, y, z, 190094, 1.0f);
 		if( crate )
-			crate->Despawn(0);
+			crate->Despawn(0, 0);
 		GameObject *go = pMapMgr->CreateGameObject(entry);
 		go->CreateFromProto(entry, pMapMgr->GetMapId(), x, y, z, o, 0.0f, 0.0f, 0.0f, 0.0f);
 		go->SetInstanceID(pMapMgr->GetInstanceID());
@@ -965,7 +965,7 @@ bool ArcaneDisruption(uint32 i, Spell *pSpell)
 		go->CreateFromProto(190095, crate->GetMapMgr()->GetMapId(), crate->GetPositionX(), crate->GetPositionY(), crate->GetPositionZ(), crate->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f);
 		go->SetInstanceID(crate->GetMapMgr()->GetInstanceID());
 		go->PushToWorld(crate->GetMapMgr());
-		crate->Despawn(0);
+		crate->Despawn(0, 0);
 		pQuest->SetMobCount( 0, pQuest->GetMobCount( 0 ) + 1 );
 		pQuest->SendUpdateAddKill( 0 );
 		pQuest->UpdatePlayerFields();

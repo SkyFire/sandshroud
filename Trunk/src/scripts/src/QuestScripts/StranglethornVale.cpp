@@ -202,10 +202,10 @@ public:
 		msg1 += ". Now let us see what tale these heads tell...";
 		Kin_weelay->SendChatMessage(CHAT_MSG_MONSTER_SAY, LANG_UNIVERSAL, msg1.c_str());
 		Kin_weelay->CastSpell(Kin_weelay, dbcSpell.LookupEntry(3644), false);
-		skull1->Despawn(5000);
+		skull1->Despawn(0, 5000);
 		GameObject *skull2 = mTarget->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(SSX, SSY, SSZ, 2551);
 		if(skull2)
-			skull2->Despawn(5000);
+			skull2->Despawn(0, 5000);
 
 		if(Kin_weelay == NULL)
 			return;

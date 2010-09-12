@@ -7808,7 +7808,7 @@ class CageTrapTriggerAI : public MoonScriptCreatureAI
 				GameObject *pGameObject = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), GO_CAGE_TRAP);
 				if (pGameObject != NULL)
 				{
-					pGameObject->Despawn(0);
+					pGameObject->Despawn(0, 0);
 				}
 
 				Despawn(0);
@@ -7862,7 +7862,7 @@ class CageTrapTriggerAI : public MoonScriptCreatureAI
 				GameObject *pGameObject = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), GO_CAGE_TRAP);
 				if (pGameObject != NULL)
 				{
-					pGameObject->Despawn(0);
+					pGameObject->Despawn(0, 0);
 				}
 
 				// Immediatly Illidan, after trap expires, becomes Demon
@@ -7898,7 +7898,7 @@ class CageTrapTriggerAI : public MoonScriptCreatureAI
 			GameObject *pGameObject = _unit->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(_unit->GetPositionX(), _unit->GetPositionY(), _unit->GetPositionZ(), GO_CAGE_TRAP);
 			if (pGameObject != NULL)
 			{
-				pGameObject->Despawn(0);
+				pGameObject->Despawn(0, 0);
 			}
 
 			for (size_t i = 0; i < mTriggerAIList.size(); ++i)

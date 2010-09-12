@@ -1004,7 +1004,7 @@ public:
 		if(!gobj)
 			return;
 
-		gobj->Despawn(6*60*1000);
+		gobj->Despawn(0, 6*60*1000);
 
 		Creature *spike = sEAS.SpawnCreature(pPlayer, 21319, 1315.54, 6688.33, -18, 0.001, 0);
 		spike->Despawn(5*60*1000, 0);
