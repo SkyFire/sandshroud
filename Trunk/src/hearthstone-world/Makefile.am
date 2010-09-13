@@ -56,6 +56,7 @@ hearthstone_world_SOURCES = \
     Corpse.h \
     Creature.cpp \
     Creature.h \
+    DatabaseCommands.cpp \
     debugcmds.cpp \
     DuelHandler.cpp \
     DynamicObject.cpp \
@@ -172,8 +173,8 @@ hearthstone_world_SOURCES = \
     Unit.h \
     UpdateFields.h \
     UpdateMask.h \
-	Vehicle.h \
-	Vehicle.cpp \
+    Vehicle.h \
+    Vehicle.cpp \
     WarsongGulch.cpp \
     WarsongGulch.h \
     WayPoints.cpp \
