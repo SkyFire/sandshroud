@@ -196,20 +196,22 @@ enum ServerShutdownType
 
 enum WorldMapInfoFlag
 {
-	WMI_INSTANCE_ENABLED   = 0x1,
-	WMI_INSTANCE_WELCOME   = 0x2,
-	WMI_INSTANCE_MULTIMODE = 0x4,
-	WMI_INSTANCE_XPACK_01  = 0x8, //The Burning Crusade expansion
-	WMI_INSTANCE_XPACK_02  = 0x10, //Wrath of the Lich King expansion
+	WMI_INSTANCE_ENABLED	= 0x1,
+	WMI_INSTANCE_WELCOME	= 0x2,
+	WMI_INSTANCE_MULTIMODE	= 0x4,
+	WMI_INSTANCE_XPACK_01	= 0x8, //The Burning Crusade expansion
+	WMI_INSTANCE_XPACK_02	= 0x10, //Wrath of the Lich King expansion
+	WMI_INSTANCE_XPACK_03	= 0x20, //Cataclysm expansion
 };
 
 enum AccountFlags
 {
-	ACCOUNT_FLAG_VIP		 = 0x1,
-	ACCOUNT_FLAG_NO_AUTOJOIN = 0x2,
-	//ACCOUNT_FLAG_XTEND_INFO  = 0x4,
-	ACCOUNT_FLAG_XPACK_01	= 0x8,
-	ACCOUNT_FLAG_XPACK_02	= 0x10,
+	ACCOUNT_FLAG_VIP			= 0x1,
+	ACCOUNT_FLAG_NO_AUTOJOIN	= 0x2,
+	//ACCOUNT_FLAG_XTEND_INFO	= 0x4,
+	ACCOUNT_FLAG_XPACK_01		= 0x8,
+	ACCOUNT_FLAG_XPACK_02		= 0x10,
+	ACCOUNT_FLAG_XPACK_03		= 0x20,
 };
 
 #pragma pack(push,1)
@@ -441,7 +443,7 @@ typedef std::list<WorldSocket*> QueueSet;
 typedef set<WorldSession*> SessionSet;
 
 // The maximum level attainable, period, regardless of flags on your account.
-#define MAXIMUM_ATTAINABLE_LEVEL 80
+#define MAXIMUM_ATTAINABLE_LEVEL 100 // Crow: Lets use 100, since its the highest the DBCs will support
 
 class SERVER_DECL World : public Singleton<World>, public EventableObject
 {
@@ -749,15 +751,15 @@ public:
 
 	char * m_banTable;
 
-	static float m_movementCompressThreshold;
-	static float m_movementCompressThresholdCreatures;
-	static uint32 m_movementCompressRate;
-	static uint32 m_movementCompressInterval;
-	static float m_speedHackThreshold;
-	static float m_speedHackLatencyMultiplier;
-	static uint32 m_speedHackResetInterval;
-	static uint32 m_CEThreshold;
-	static float m_wallhackthreshold;
+	float m_movementCompressThreshold;
+	float m_movementCompressThresholdCreatures;
+	uint32 m_movementCompressRate;
+	uint32 m_movementCompressInterval;
+	float m_speedHackThreshold;
+	float m_speedHackLatencyMultiplier;
+	uint32 m_speedHackResetInterval;
+	uint32 m_CEThreshold;
+	float m_wallhackthreshold;
 
 	// shutdown
 	uint32 m_shutdownTime;

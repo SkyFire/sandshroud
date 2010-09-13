@@ -655,14 +655,15 @@ struct ItemPrototype
 //	char * Name2;
 //	char * Name3;
 //	char * Name4;
+
 	uint32 DisplayInfoID;
 	uint32 Quality;
 	uint32 Flags;
 	uint32 BuyPrice;
 	uint32 SellPrice;
 	uint32 InventoryType;
-	uint32 AllowableClass;
-	uint32 AllowableRace;
+	int32 AllowableClass;
+	int32 AllowableRace;
 	uint32 ItemLevel;
 	uint32 RequiredLevel;
 	uint32 RequiredSkill;

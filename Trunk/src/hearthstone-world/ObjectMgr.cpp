@@ -1856,11 +1856,10 @@ void ObjectMgr::GenerateLevelUpInfo()
 			continue;
 
 		// Search for a playercreateinfo.
-		for(uint32 Race = RACE_HUMAN; Race <= RACE_DRAENEI; ++Race )
+		for(uint32 Race = RACE_HUMAN; Race <= RACE_WORGEN; Race++ )
 		{
 			PCI = GetPlayerCreateInfo(Race, Class);
-
-			if(PCI == 0)
+			if(PCI == NULL)
 				continue;   // Class not valid for this race.
 
 			// Generate each level's information
@@ -1881,7 +1880,7 @@ void ObjectMgr::GenerateLevelUpInfo()
 			// Insert into map
 			lMap->insert( LevelMap::value_type( 1, lvl0 ) );
 
-			for(uint32 Level = 2; Level < MaxLevel; ++Level)
+			for(uint32 Level = 2; Level < MaxLevel; Level++)
 			{
 				lvl = new LevelInfo;
 				memset(lvl, 0, sizeof(LevelInfo));

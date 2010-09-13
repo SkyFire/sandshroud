@@ -22,16 +22,6 @@
 initialiseSingleton( CharacterLoaderThread );
 initialiseSingleton( World );
 
-float World::m_movementCompressThreshold;
-float World::m_movementCompressThresholdCreatures;
-uint32 World::m_movementCompressRate;
-uint32 World::m_movementCompressInterval;
-float World::m_speedHackThreshold;
-float World::m_wallhackthreshold;
-float World::m_speedHackLatencyMultiplier;
-uint32 World::m_speedHackResetInterval;
-uint32 World::m_CEThreshold;
-
 World::World()
 {
 	m_playerLimit = 0;
@@ -73,14 +63,16 @@ World::World()
 
 uint32 World::GetMaxLevel(Player* plr)
 {
-	uint32 level = 60; // Classic World of Warcraft
-	if(LevelCap_Custom_All != 80)
+	if(LevelCap_Custom_All && LevelCap_Custom_All != 80)
 		return LevelCap_Custom_All;
+
+	uint32 level = 60; // Classic World of Warcraft
 	if( plr->GetSession()->HasFlag(WMI_INSTANCE_XPACK_01) )
 		level = 70;
-
 	if( plr->GetSession()->HasFlag(WMI_INSTANCE_XPACK_02) )
 		level = 80;
+	if( plr->GetSession()->HasFlag(WMI_INSTANCE_XPACK_03) )
+		level = 85;
 
 	return level;
 }
@@ -1374,7 +1366,6 @@ void World::Rehash(bool load)
 
 	m_deathKnightOnePerAccount = Config.MainConfig.GetBoolDefault("DeathKnight", "OnePerRealm", true);
 	m_deathKnightReqLevel = Config.MainConfig.GetIntDefault("DeathKnight", "RequiredLevel", 55);
-
 
 	// LevelCaps
 	LevelCap_Custom_All = Config.MainConfig.GetIntDefault("Server", "LevelCap_Custom_All", 80);

@@ -282,40 +282,57 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	recv_data >> name >> race >> class_;
 	recv_data.rpos(0);
 
+	WorldPacket data(SMSG_CHAR_CREATE, 1);
 	if(!sWorld.VerifyName(name.c_str(), name.length()))
 	{
-		OutPacket(SMSG_CHAR_CREATE, 1, "\x32");
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
 		return;
 	}
 
 	if(g_characterNameFilter->Parse(name, false))
 	{
-		OutPacket(SMSG_CHAR_CREATE, 1, "\x32");
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
 		return;
 	}
 
 	//reserved for console whisper
 	if(name == "Console" ||  name == "console")
 	{
-		OutPacket(SMSG_CHAR_CREATE, 1, "\x32");
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
 		return;
 	}
 
 	if(objmgr.GetPlayerInfoByName(name.c_str()) != 0)
 	{
-		OutPacket(SMSG_CHAR_CREATE, 1, "\x32");
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
 		return;
 	}
 
 	if(!sHookInterface.OnNewCharacter(race, class_, this, name.c_str()))
 	{
-		OutPacket(SMSG_CHAR_CREATE, 1, "\x32");
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
 		return;
 	}
 
 	if( class_ == DEATHKNIGHT && (!HasFlag(ACCOUNT_FLAG_XPACK_02) || !CanCreateDeathKnight() ) )
 	{
-		OutPacket(SMSG_CHAR_CREATE, 1, "\x3B");
+		if(CanCreateDeathKnight())
+			data << uint8(CHAR_CREATE_EXPANSION);
+		else
+			data << uint8(CHAR_CREATE_LEVEL_REQUIREMENT);
+		SendPacket(&data);
+		return;
+	}
+
+	if( (race == RACE_GOBLIN || race == RACE_WORGEN) && !HasFlag(ACCOUNT_FLAG_XPACK_03) )
+	{
+		data << uint8(CHAR_CREATE_EXPANSION);
+		SendPacket(&data);
 		return;
 	}
 
@@ -325,7 +342,8 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 		if(result->Fetch()[0].GetUInt32() > 0)
 		{
 			// That name is banned!
-			OutPacket(SMSG_CHAR_CREATE, 1, "\x51"); // You cannot use that name
+			data << uint8(CHAR_NAME_PROFANE);
+			SendPacket(&data);
 			delete result;
 			return;
 		}
@@ -382,7 +400,8 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	pNewChar = NULLPLR;
 
 	// CHAR_CREATE_SUCCESS
-	OutPacket(SMSG_CHAR_CREATE, 1, "\x2F");
+	data << uint8(CHAR_CREATE_SUCCESS);
+	SendPacket(&data);
 
 	sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
 	m_lastEnumTime = 0;
@@ -772,7 +791,7 @@ void WorldSession::FullLogin(Player* plr)
 	plr->UpdateAttackSpeed();
 
 	// Anti max level hack.
-	if(plr->getLevel() > sWorld.LevelCap_Custom_All)
+	if(sWorld.LevelCap_Custom_All && (plr->getLevel() > sWorld.LevelCap_Custom_All))
 		plr->SetUInt32Value(UNIT_FIELD_LEVEL, sWorld.LevelCap_Custom_All);
 
 	// Enable certain GM abilities on login.

@@ -295,6 +295,7 @@ bool ChatHandler::HandleReviveCommand(const char* args, WorldSession *m_session)
 		return false;
 	}
 
+	BlueSystemMessage(m_session, "Reviving...");
 	if(SelectedPlayer->m_currentMovement == MOVE_ROOT)
 		SelectedPlayer->SetMovement(MOVE_UNROOT, 1);
 	if(SelectedPlayer->getDeathState())
@@ -1997,12 +1998,15 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 		(plr->getGender()?"She":"He"), sess->GetAccountName().c_str(), sess->GetAccountId(), sess->GetPermissions());
 
 	const char *client;
-	if(sess->HasFlag(ACCOUNT_FLAG_XPACK_02))
+	if(sess->HasFlag(ACCOUNT_FLAG_XPACK_03))
+		client = "Cataclysm";
+	else if(sess->HasFlag(ACCOUNT_FLAG_XPACK_02))
 		client = "Wrath of the Lich King";
 	else if(sess->HasFlag(ACCOUNT_FLAG_XPACK_01))
 		client = "The Burning Crusade";
 	else
 		client = "World of Warcraft";
+
  	BlueSystemMessage(m_session, "%s uses %s (build %u)", (plr->getGender()?"She":"He"),
 		client, sess->GetClientBuild());
 

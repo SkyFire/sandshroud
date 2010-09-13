@@ -120,6 +120,8 @@ void Player::Init()
 
 	Lfgcomment = "";
 	m_flyHackChances = 5;
+	m_isJumping = false;
+	m_jumpHackChances = 3;
 
 	for(int i=0; i < 3; i++)
 	{
@@ -448,7 +450,6 @@ void Player::Init()
 	mHypothermia = false;
 	mSated = false;
 	mAvengingWrath = true;
-	m_flyhackCheckTimer = 0;
 	m_bgFlagIneligible = 0;
 	m_moltenFuryDamageIncreasePct = 0;
 	m_insigniaTaken = false;
@@ -1142,12 +1143,6 @@ void Player::Update( uint32 p_time )
 	{
 		_SpeedhackCheck();
 		m_speedhackCheckTimer = mstime + 1000;
-	}
-
-	if( mstime >= m_flyhackCheckTimer )
-	{
-		_FlyhackCheck();
-		m_flyhackCheckTimer = mstime + 5000;
 	}
 }
 
@@ -5210,7 +5205,7 @@ void Player::UpdateHit(int32 hit)
 void Player::UpdateChances()
 {
 	uint32 pClass = (uint32)getClass();
-	uint32 pLevel = (getLevel() > 100) ? 100 : getLevel();
+	uint32 pLevel = (getLevel() > MAXIMUM_ATTAINABLE_LEVEL) ? MAXIMUM_ATTAINABLE_LEVEL : getLevel();
 
 	float tmp = 0;
 	float defence_contribution = 0;
@@ -5231,22 +5226,19 @@ void Player::UpdateChances()
 	tmp = baseDodge[pClass] + (float( (GetUInt32Value( UNIT_FIELD_AGILITY )*class_multiplier)*(dbcMeleeCrit.LookupEntry((pLevel-1)+(pClass-1)*100)->val*100)));
 	tmp += dodge_from_spell + defence_contribution;
 
-	if( tmp < baseDodge[pClass] )
-		tmp = baseDodge[pClass];
-
-	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( tmp, DodgeCap[pClass] ) );
+	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( max( baseDodge[pClass], tmp), DodgeCap[pClass] ) );
 
 	// Block
 	Item* it = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );
 	if( it != NULL && it->GetProto() && it->GetProto()->InventoryType == INVTYPE_SHIELD )
 	{
-		tmp = 5.0f + std::max( 0.0f, CalcRating( PLAYER_RATING_MODIFIER_BLOCK )) + std::max( 0.0f, GetBlockFromSpell());
+		tmp = 5.0f + max( 0.0f, CalcRating( PLAYER_RATING_MODIFIER_BLOCK )) + max( 0.0f, GetBlockFromSpell());
 		tmp += defence_contribution;
 	}
 	else
 		tmp = 0.0f;
 
-	SetFloatValue( PLAYER_BLOCK_PERCENTAGE, std::max( 5.0f, std::min( tmp, 95.0f ) )  );
+	SetFloatValue( PLAYER_BLOCK_PERCENTAGE, max( 0.0f, min( tmp, 95.0f ) )  );
 
 	//parry
 	tmp = 5.0f + CalcRating( PLAYER_RATING_MODIFIER_PARRY ) + GetParryFromSpell();
@@ -5468,14 +5460,15 @@ void Player::UpdateStats()
 	/* modifiers */
 	RAP += int32(float(float(m_rap_mod_pct) * float(float(m_uint32Values[UNIT_FIELD_STAT3]) / 100.0f)));
 
-	if( RAP < 0 )RAP = 0;
-	if( AP < 0 )AP = 0;
+	if( RAP < 0 )
+		RAP = 0;
+	if( AP < 0 )
+		AP = 0;
 
 	SetUInt32Value( UNIT_FIELD_ATTACK_POWER, AP );
 	SetUInt32Value( UNIT_FIELD_RANGED_ATTACK_POWER, RAP ); 
 
-	LevelInfo* lvlinfo = objmgr.GetLevelInfo( this->getRace(), this->getClass(), lev );
-
+	LevelInfo* lvlinfo = objmgr.GetLevelInfo( getRace(), getClass(), lev );
 	if( lvlinfo != NULL )
 	{
 		stam = lvlinfo->Stat[STAT_STAMINA];
@@ -5483,9 +5476,7 @@ void Player::UpdateStats()
 	}
 
 	int32 hp = GetUInt32Value( UNIT_FIELD_BASE_HEALTH );
-
 	stam += GetUInt32Value( UNIT_FIELD_POSSTAT2 ) - GetUInt32Value( UNIT_FIELD_NEGSTAT2 );
-
 	int32 res = hp + std::max(20, stam) + std::max(0, stam - 20) * 10 + m_healthfromspell + m_healthfromitems;
 
 	if (res < 1)
@@ -8911,7 +8902,8 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 	if( force_new_world )
 	{
 		//Do we need TBC expansion?
-		if(mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
+		if(mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02)
+			&& !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03))
 		{
 			WorldPacket msg(SMSG_MOTD, 50);
 			msg << uint32(3) << "You must have The Burning Crusade Expansion to access this content." << uint8(0);
@@ -8920,10 +8912,19 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 		}
 
 		//Do we need WOTLK expansion?
-		if(mi->flags & WMI_INSTANCE_XPACK_02 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
+		if(mi->flags & WMI_INSTANCE_XPACK_02 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03))
 		{
 			WorldPacket msg(SMSG_MOTD, 50);
 			msg << uint32(3) << "You must have Wrath of the Lich King Expansion to access this content." << uint8(0);
+			m_session->SendPacket(&msg);
+			return false;
+		}
+
+		//Do we need Cataclysm expansion?
+		if(mi->flags & WMI_INSTANCE_XPACK_03 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03))
+		{
+			WorldPacket msg(SMSG_MOTD, 50);
+			msg << uint32(3) << "You must have World of Warcraft: Cataclysm to access this content." << uint8(0);
 			m_session->SendPacket(&msg);
 			return false;
 		}
@@ -11273,7 +11274,7 @@ bool CMovementCompressorThread::run()
 			(*itr)->EventDumpCompressedMovement();
 		}
 		m_listLock.Release();
-		Sleep(World::m_movementCompressInterval);
+		Sleep(sWorld.m_movementCompressInterval);
 	}
 
 	return true;
@@ -11301,7 +11302,7 @@ void Player::EventDumpCompressedMovement()
 	m_movementBufferLock.Acquire();
 	uint32 size = (uint32)m_movementBuffer.size();
 	uint32 destsize = size + size/10 + 16;
-	int rate = World::m_movementCompressRate;
+	int rate = sWorld.m_movementCompressRate;
 	if(size >= 40000 && rate < 6)
 		rate = 6;
 	if(size <= 100)
@@ -11690,16 +11691,20 @@ void Player::_LoadPlayerCooldowns(QueryResult * result)
 
 void Player::_SpeedhackCheck()
 {
-	if( sWorld.antihack_speed && !m_TransporterGUID && !(m_special_state & UNIT_STATE_CONFUSE) && !m_uint32Values[UNIT_FIELD_CHARMEDBY] && !GetTaxiState() && m_isMoving && GetMapMgr())
+	if(sWorld.antihack_speed && (!GetSession()->HasGMPermissions() || sWorld.no_antihack_on_gm))
 	{
-		if( ( sWorld.no_antihack_on_gm && GetSession()->HasGMPermissions() ) )
-			return; // do not check GMs speed been the config tells us not to.
-		if( m_position == m_lastHeartbeatPosition && m_isMoving )
-		{
-			// this means the client is probably lagging. don't update the timestamp, don't do anything until we start to receive
-			// packets again (give the poor laggers a chance to catch up)
+		if(!m_isMoving)
 			return;
-		}
+
+		if(m_TransporterGUID || !IsInWorld())
+			return;
+
+		if((m_special_state & UNIT_STATE_CONFUSE) || m_uint32Values[UNIT_FIELD_CHARMEDBY])
+			return;
+
+		// this means the client is probably lagging. don't update the timestamp, don't do anything until we start to receive
+		if( m_position == m_lastHeartbeatPosition && m_isMoving ) // packets again (give the poor laggers a chance to catch up)
+			return;
 
 		// simplified; just take the fastest speed. less chance of fuckups too
 		float speed = ( m_FlyingAura ) ? m_flySpeed : m_runSpeed;
@@ -11727,15 +11732,15 @@ void Player::_SpeedhackCheck()
 		if( sWorld.antihack_cheatengine && !m_heartbeatDisable && !m_uint32Values[UNIT_FIELD_CHARM] && m_TransporterGUID == 0 && !m_speedChangeInProgress )
 		{
 			// latency compensation a little
-			if( World::m_speedHackLatencyMultiplier > 0.0f )
-				speed += (float(m_session->GetLatency()) / 100.0f) * World::m_speedHackLatencyMultiplier; 
+			if( sWorld.m_speedHackLatencyMultiplier > 0.0f )
+				speed += (float(m_session->GetLatency()) / 100.0f) * sWorld.m_speedHackLatencyMultiplier; 
 
 			float distance = m_position.Distance2D( m_lastHeartbeatPosition );
 			uint32 time_diff = m_lastMoveTime - m_startMoveTime;
 			uint32 move_time = float2int32( ( distance / ( speed * 0.001f ) ) );
 			int32 difference = time_diff - move_time;
 			DEBUG_LOG("Player","SpeedhackCheck: speed=%f diff=%i dist=%f move=%u tdiff=%u", speed, difference, distance, move_time, time_diff );
-			if( difference < World::m_speedHackThreshold )
+			if( difference < sWorld.m_speedHackThreshold )
 			{
 				if( m_speedhackChances == 1 )
 				{
@@ -11747,12 +11752,11 @@ void Player::_SpeedhackCheck()
 					if(m_bg)
 						m_bg->RemovePlayer(TO_PLAYER(this), false);
 
-					//SafeTeleport(GetMapMgr(), m_lastHeartbeatPosition);
 					sEventMgr.AddEvent(TO_PLAYER(this), &Player::_Disconnect, EVENT_PLAYER_KICK, 10000, 1, 0 );
 					m_speedhackChances = 0;
 				}
-				else if (m_cheatEngineChances > 0 )
-					m_cheatEngineChances--;
+				else if (m_speedhackChances > 0 )
+					m_speedhackChances--;
 			}
 		}
 	}
@@ -12210,64 +12214,6 @@ void Player::VampiricSpell(uint32 dmg, Unit* pTarget, SpellEntry *spellinfo)
 			pSpell->prepare(&tgt);
 		}
 	}
-}
-
-void Player::_FlyhackCheck()
-{
-	if (!GetMapMgr() || !GetMapMgr()->CanUseCollision(this))
-		return;
-
-	if(!IsFlyHackEligible())
-		return;
-
-	// Get the current terrain height at this position
-	float height = GetCHeightForPosition(true);
-
-	float diff = GetPositionZ() - height;
-	if(diff < 0)
-		diff = -diff;
-
-	if(diff <= 8.0f) // Relatively small threshold maybe?
-		return;
-
-	m_flyHackChances--;
-	if(!m_flyHackChances)
-		return;
-
-	// Something's afoot!
-	EventTeleport(GetMapId(), GetPositionX(), GetPositionY(), height, 0.0f); // Return us to valid coordinates for the next logon.
-	GetSession()->Disconnect();
-}
-
-bool Player::IsFlyHackEligible()
-{
-	if(GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm)
-		return false;
-
-	if(!sWorld.antihack_cheatengine)
-		return false;
-
-	if(!GetMapMgr() || FlyCheat || m_FlyingAura || IsStunned() || IsPacified() || IsFeared() || GetTaxiState() || m_TransporterGUID != 0 || GetSession()->m_loggingInPlayer) // Stunned, rooted, riding a flying machine, whatever
-		return false;
-
-	if(GetMapId() == 369)
-		return false; // Deeprun Tram
-
-	MovementInfo* moveInfo = GetMovementInfo();
-	if(moveInfo == NULL)
-		return false;
-
-	uint32 moveFlags = moveInfo->flags;
-	if(moveFlags & MOVEFLAG_FALLING || moveFlags & MOVEFLAG_FALLING_FAR || moveFlags & MOVEFLAG_FREE_FALLING || moveFlags & MOVEFLAG_REDIRECTED)
-		return false; // Falling or Jumping.
-
-	if(m_UnderwaterState) // We're swimming.
-		return false;
-
-//	if(CollideInterface.IsIndoor(GetMapId(), GetPositionX(), GetPositionY(),  GetPositionZ()))
-//		return false; // Shouldn't do checks indoors, wrong height checks because of stairs
-
-	return true;
 }
 
 void Player::UpdateTalentInspectBuffer()

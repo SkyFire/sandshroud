@@ -385,12 +385,7 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 
 			// Lucky bitch. Do it like on official.
 			if(plr->isDead())
-			{
-				/*plr->ResurrectPlayer(NULL);
-				plr->SetUInt32Value(UNIT_FIELD_HEALTH, plr->GetUInt32Value(UNIT_FIELD_MAXHEALTH));
-				plr->SetUInt32Value(UNIT_FIELD_POWER1, plr->GetUInt32Value(UNIT_FIELD_MAXPOWER1));*/
 				plr->RemoteRevive();
-			}
 
 			if( plr->m_CurrentVehicle )
 				plr->m_CurrentVehicle->RemovePassenger( plr );

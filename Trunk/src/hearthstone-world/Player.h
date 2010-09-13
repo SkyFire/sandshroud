@@ -82,8 +82,10 @@ enum Races
 	RACE_TAUREN = 6,
 	RACE_GNOME = 7,
 	RACE_TROLL = 8,
+	RACE_GOBLIN	= 9,
 	RACE_BLOODELF = 10,
 	RACE_DRAENEI = 11,
+	RACE_WORGEN	= 22
 };
 
 enum PlayerStatus
@@ -1606,6 +1608,8 @@ public:
 	uint32								m_lastMoveTime;
 	bool 								m_speedChangeInProgress;
 	uint32								m_flyHackChances;
+	bool								m_isJumping;
+	uint32								m_jumpHackChances;
 
 	void AddSplinePacket(uint64 guid, ByteBuffer* packet);
 	ByteBuffer* GetAndRemoveSplinePacket(uint64 guid);
@@ -2085,10 +2089,6 @@ public:
 
 	uint32 m_speedhackCheckTimer;
 	void _SpeedhackCheck();		// save a call to getMSTime() yes i am a stingy bastard
-
-	uint32 m_flyhackCheckTimer;
-	bool IsFlyHackEligible();
-	void _FlyhackCheck();
 
 	bool m_passOnLoot;
 	bool m_changingMaps;

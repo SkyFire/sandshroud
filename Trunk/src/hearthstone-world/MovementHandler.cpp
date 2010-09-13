@@ -355,7 +355,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		int32 client_delta = (int32)_player->movement_info.time - (int32)_player->m_lastMoveTime;
 		int32 diff = client_delta - server_delta;
 		//DEBUG_LOG("WorldSession","HandleMovementOpcodes: server delta=%u, client delta=%u", server_delta, client_delta);
-		int32 threshold = int32( World::m_CEThreshold ) + int32( _player->GetSession()->GetLatency() );
+		int32 threshold = int32( sWorld.m_CEThreshold ) + int32( _player->GetSession()->GetLatency() );
 		if( diff >= threshold )		// replace with threshold var
 		{
 			// client cheating with process speedup
@@ -436,6 +436,26 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		}
 	}
 
+	if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
+	{	// Crow: Base credit for jump hack detection goes to ArcEmu, and whoever coded it.
+		if( recv_data.GetOpcode() == MSG_MOVE_FALL_LAND || _player->movement_info.flags & MOVEFLAG_SWIMMING)
+			_player->m_isJumping = false;
+		else if(recv_data.GetOpcode() == MSG_MOVE_JUMP || _player->movement_info.flags & MOVEFLAG_FALLING)
+		{
+			if(_player->m_isJumping)
+			{
+				_player->m_jumpHackChances--;
+				if(!_player->m_jumpHackChances)
+				{
+					sWorld.LogCheater(this, "Disconnected for jump cheat.");
+					Disconnect();
+					return;
+				}
+			}
+			_player->m_isJumping = true;
+		}
+	}
+
 	//Water walk hack
 	if (_player->movement_info.flags & MOVEFLAG_WATER_WALK && !GetPlayer()->m_isWaterWalking)
 	{
@@ -470,7 +490,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			{
 				*(uint32*)&_player->movement_packet[pos+6] = uint32(move_time + (*itr)->GetSession()->m_moveDelayTime);
 #if defined(ENABLE_COMPRESSED_MOVEMENT) && defined(ENABLE_COMPRESSED_MOVEMENT_FOR_PLAYERS)
-				if( _player->GetPositionNC().Distance2DSq((*itr)->GetPosition()) >= World::m_movementCompressThreshold )
+				if( _player->GetPositionNC().Distance2DSq((*itr)->GetPosition()) >= sWorld.m_movementCompressThreshold )
 					(*itr)->AppendMovementData( recv_data.GetOpcode(), uint16(recv_data.size() + pos), _player->movement_packet );
 				else
 					(*itr)->GetSession()->OutPacket(recv_data.GetOpcode(), uint16(recv_data.size() + pos), _player->movement_packet);
@@ -484,43 +504,45 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/************************************************************************/
 	/* Hack Detection by Classic, some changes by Crow						*/
 	/************************************************************************/
-	if(!_player->GetSession()->HasGMPermissions() || !sWorld.no_antihack_on_gm)
+	if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
 	{
 		if(sWorld.antihack_flight)
 		{
-			if(!_player->movement_info.transGuid.GetOldGuid() && recv_data.GetOpcode() != MSG_MOVE_JUMP && !_player->FlyCheat && 
-				!_player->m_FlyingAura && !(_player->movement_info.flags & MOVEFLAG_SWIMMING || _player->movement_info.flags & MOVEFLAG_FALLING)
-				&& _player->movement_info.z > _player->GetPositionZ() && _player->movement_info.x == _player->GetPositionX()
-				&& _player->movement_info.y == _player->GetPositionY() )
+			if(recv_data.GetOpcode() != MSG_MOVE_JUMP)
 			{
-				WorldPacket data (SMSG_MOVE_UNSET_CAN_FLY, 13);
-				data << _player->GetNewGUID();
-				data << uint32(5);
-				SendPacket(&data);
-
-				_player->m_flyHackChances--;
-				if(!_player->m_flyHackChances)
+				if(!_player->movement_info.transGuid.GetOldGuid() && !_player->FlyCheat && 
+					!_player->m_FlyingAura && !(_player->movement_info.flags & MOVEFLAG_SWIMMING || _player->movement_info.flags & MOVEFLAG_FALLING)
+					&& _player->movement_info.z > _player->GetPositionZ()+3.0f && _player->movement_info.x == _player->GetPositionX()
+					&& _player->movement_info.y == _player->GetPositionY() )
 				{
-					sWorld.LogCheater(this, "Disconnected for fly cheat.");
-					Disconnect();
-					return;
+					WorldPacket data (SMSG_MOVE_UNSET_CAN_FLY, 13);
+					data << _player->GetNewGUID();
+					data << uint32(5);
+					SendPacket(&data);
+
+					_player->m_flyHackChances--;
+					if(!_player->m_flyHackChances)
+					{
+						sWorld.LogCheater(this, "Disconnected for fly cheat.");
+						Disconnect();
+						return;
+					}
 				}
-			}
-
-			if((_player->movement_info.flags & MOVEFLAG_AIR_SWIMMING) && !(_player->movement_info.flags & MOVEFLAG_SWIMMING)
-				&& !(_player->m_FlyingAura || _player->FlyCheat))
-			{
-				WorldPacket data (SMSG_MOVE_UNSET_CAN_FLY, 13);
-				data << _player->GetNewGUID();
-				data << uint32(5);
-				SendPacket(&data);
-
-				_player->m_flyHackChances--;
-				if(!_player->m_flyHackChances)
+				else if((_player->movement_info.flags & MOVEFLAG_AIR_SWIMMING) && !(_player->movement_info.flags & MOVEFLAG_SWIMMING)
+					&& !(_player->m_FlyingAura || _player->FlyCheat))
 				{
-					sWorld.LogCheater(this, "Disconnected for fly cheat.");
-					Disconnect();
-					return;
+					WorldPacket data (SMSG_MOVE_UNSET_CAN_FLY, 13);
+					data << _player->GetNewGUID();
+					data << uint32(5);
+					SendPacket(&data);
+
+					_player->m_flyHackChances--;
+					if(!_player->m_flyHackChances)
+					{
+						sWorld.LogCheater(this, "Disconnected for fly cheat.");
+						Disconnect();
+						return;
+					}
 				}
 			}
 		}

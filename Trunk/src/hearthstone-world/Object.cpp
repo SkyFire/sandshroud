@@ -29,6 +29,10 @@ using namespace std;
 #define M_H_PI		1.57079632679489661923f
 #define M_Q_PI		0.785398163397448309615f
 
+// Basic Height Checks
+#define BASIC_OUTDOOR_WMO_2_DIFF 35.0f // Stuff
+#define BASIC_HOUSE_FLOOR_DIFF 7.2f // Inn and houses
+
 Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 {
 #ifdef SHAREDPTR_DEBUGMODE
@@ -80,7 +84,6 @@ Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 	m_objectsInRange.clear();
 	m_inRangePlayers.clear();
 	m_oppFactsInRange.clear();
-
 }
 
 Object::~Object( )
@@ -333,7 +336,18 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 			newz = wz;
 	}
 
-	return newz+0.03321f; // We have a direct offset
+	return newz+0.00321f; // We have a direct offset
+}
+
+float Object::GetCHeightForPosition2(bool checkwater, float x, float y, float z)
+{
+	bool usingcollision = true;
+	float newz = 0.0f;
+	float ztwo = 0.0f;
+	if(!IsInWorld())
+		return newz;
+
+	return newz+0.00321f; // We have a direct offset
 }
 
 void Object::SetPhase(int32 phase)

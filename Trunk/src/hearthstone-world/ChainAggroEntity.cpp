@@ -61,7 +61,7 @@ void ChainAggroEntity::Delete()
 
 void ChainAggroEntity::EventEnterCombat(Unit* pTarget)
 {
-	if(pTarget->IsInvisible())
+	if(pTarget->IsPlayer() && TO_PLAYER(pTarget)->m_isGmInvisible)
 		return;
 
 	set<Creature*>::iterator itr = m_agroEntitySet.begin();

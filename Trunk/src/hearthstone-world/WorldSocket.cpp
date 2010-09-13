@@ -483,7 +483,11 @@ void WorldSocket::Authenticate()
 	if(!pSession)
 		return;
 
-	if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_02))
+	// Crow: Cata account flags = Wotlk account flags till Cata Release.
+	if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_03))
+		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
+//		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x03");
+	else if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_02))
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
 	else if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_01))
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x01");

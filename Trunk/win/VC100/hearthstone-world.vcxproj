@@ -273,6 +273,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\DatabaseCommands.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\IsleOfConquest.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Main.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Master.cpp" />

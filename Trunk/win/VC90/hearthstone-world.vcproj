@@ -732,6 +732,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\hearthstone-world\DatabaseCommands.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\hearthstone-world\debugcmds.cpp"
 				>
 			</File>

@@ -793,6 +793,7 @@ private:
 	uint32 client_build;
 	uint32 instanceId;
 	uint8 _updatecount;
+
 public:
 	uint8 CheckTeleportPrerequisites(AreaTrigger * pAreaTrigger, WorldSession * pSession, Player* pPlayer, uint32 mapid);
 	static void InitPacketHandlerTable();

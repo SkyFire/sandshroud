@@ -121,7 +121,7 @@ bool ChatHandler::HandleRecallAddCommand(const char* args, WorldSession *m_sessi
 
 bool ChatHandler::HandleRecallDelCommand(const char* args, WorldSession *m_session)
 {
-	   if(!*args)
+	if(!*args)
 		return false;
 
 	QueryResult *result = WorldDatabase.Query( "SELECT id,name FROM recall" );
@@ -190,13 +190,14 @@ bool ChatHandler::HandleRecallListCommand(const char* args, WorldSession *m_sess
 
 bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession * m_session)
 {
-	char location[255];
-	char player[255];
-	if(sscanf(args, "%s %s", player, location) < 2)
+	char player[20];
+	char location[50];
+	if(sscanf(args, "%s %s", &player, &location) != 2)
 		return false;
 
-	Player* plr = objmgr.GetPlayer(player, false);
-	if(!plr) return false;
+	Player* plr = objmgr.GetPlayer((char*)player, false);
+	if(!plr)
+		return false;
 
 	QueryResult *result = WorldDatabase.Query( "SELECT * FROM recall ORDER BY name" );
 	if(!result)
