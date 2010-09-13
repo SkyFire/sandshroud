@@ -5007,16 +5007,14 @@ void Spell::SpellEffectSummonObject(uint32 i)
 		if( go == NULL )
 			return;
 
-		if( m_spellInfo->EffectImplicitTargetA[i] == EFF_TARGET_SIMPLE_AOE )
-		{
-			if( !go->CreateFromProto(entry, mapid, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) )
-				return;
-		}
-		else
-		{
-			if( !go->CreateFromProto(entry, mapid, posx, posy, pz, orient, 0.0f, 0.0f, 0.0f, 0.0f) )
-				return;
-		}
+		if( m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION ) 
+		{ 
+			px = m_targets.m_destX; 
+			py = m_targets.m_destY; 
+			pz = m_targets.m_destZ; 
+		} 
+		if( !go->CreateFromProto(entry, mapid, posx, posy, pz, orient, 0.0f, 0.0f, 0.0f, 0.0f) )
+			return;
 
 		go->SetInstanceID(m_caster->GetInstanceID());
 		go->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);

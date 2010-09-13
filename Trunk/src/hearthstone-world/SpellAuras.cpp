@@ -965,8 +965,7 @@ void Aura::ApplyModifiers( bool apply )
 	for( uint32 x = 0; x < m_modcount; x++ )
 	{
 		mod = &m_modList[x];
-		DEBUG_LOG( "Aura","Applying Aura modifiers target = %u, slot = %u , Spell Aura id = %u (%s), SpellId  = %u, i = %u, apply = %s, duration = %i, damage = %d",
-				m_target->GetLowGUID(), m_auraSlot, mod->m_type, SpellAuraNames[mod->m_type], m_spellProto->Id, mod->i, apply ? "true" : "false", GetDuration(),mod->m_amount);
+		//DEBUG_LOG( "Aura","Applying Aura modifiers target = %u, slot = %u , Spell Aura id = %u (%s), SpellId  = %u, i = %u, apply = %s, duration = %i, damage = %d", m_target->GetLowGUID(), m_auraSlot, mod->m_type, SpellAuraNames[mod->m_type], m_spellProto->Id, mod->i, apply ? "true" : "false", GetDuration(),mod->m_amount);
 
 		if(mod->m_type<TOTAL_SPELL_AURAS)
 		{
