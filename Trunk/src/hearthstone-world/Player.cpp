@@ -5210,7 +5210,7 @@ void Player::UpdateHit(int32 hit)
 void Player::UpdateChances()
 {
 	uint32 pClass = (uint32)getClass();
-	uint32 pLevel = (getLevel() > 80) ? 80 : getLevel();
+	uint32 pLevel = (getLevel() > 100) ? 100 : getLevel();
 
 	float tmp = 0;
 	float defence_contribution = 0;
@@ -5228,17 +5228,11 @@ void Player::UpdateChances()
 
 	// dodge
 	float class_multiplier = (pClass == WARRIOR ? 1.1f : pClass == HUNTER ? 1.6f : pClass == ROGUE ? 2.0f : pClass == DRUID ? 1.7f : 1.0f);
-	tmp = baseDodge[pClass] + (float( GetUInt32Value( UNIT_FIELD_AGILITY )*(dodgeRatio[pLevel][pClass] *class_multiplier)));
+	tmp = baseDodge[pClass] + (float( (GetUInt32Value( UNIT_FIELD_AGILITY )*class_multiplier)*(dbcMeleeCrit.LookupEntry((pLevel-1)+(pClass-1)*100)->val*100)));
 	tmp += dodge_from_spell + defence_contribution;
 
-//#define MIN_DODGE_5
-#ifdef MIN_DODGE_5
-	if( tmp < 5.0f ) // Crow: Always thought dodge was constantly above 5.
-		tmp = 5.0f;
-#else
-	if( tmp < 0.0f )
-		tmp = 0.0f;
-#endif
+	if( tmp < baseDodge[pClass] )
+		tmp = baseDodge[pClass];
 
 	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( tmp, DodgeCap[pClass] ) );
 
@@ -5302,9 +5296,9 @@ void Player::UpdateChances()
 	gtFloat* SpellCritBase  = dbcSpellCritBase.LookupEntry(pClass-1);
 	gtFloat* SpellCritPerInt = dbcSpellCrit.LookupEntry(pLevel - 1 + (pClass-1)*100);
 
-	spellcritperc = 100*(SpellCritBase->val + GetUInt32Value( UNIT_FIELD_STAT3 ) * SpellCritPerInt->val) +
-		this->GetSpellCritFromSpell() +
-		this->CalcRating( PLAYER_RATING_MODIFIER_SPELL_CRIT );
+	spellcritperc = 100*(SpellCritBase->val + (GetUInt32Value( UNIT_FIELD_STAT3 ) * SpellCritPerInt->val)) +
+		GetSpellCritFromSpell() + CalcRating( PLAYER_RATING_MODIFIER_SPELL_CRIT );
+
 	UpdateChanceFields();
 }
 
@@ -5539,7 +5533,8 @@ void Player::UpdateStats()
 		};
 
 		uint32 lvl = getLevel();
-		if(lvl > 80) lvl = 80;
+		if(lvl > 80)
+			lvl = 80;
 
 		float amt = ( 0.001f + sqrt((float)GetUInt32Value( UNIT_FIELD_INTELLECT )) * GetUInt32Value( UNIT_FIELD_SPIRIT ) * BaseRegen[lvl-1] ) * PctPowerRegenModifier[POWER_TYPE_MANA];
 		SetFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER, amt + m_ModInterrMRegen / 5.0f);
@@ -12522,7 +12517,7 @@ void Player::InitGlyphsForLevel()
 	// Enable number of glyphs depending on level
 	uint32 level = getLevel();
 	uint32 glyph_mask = 0; 
-	if(level == 80)
+	if(level > 80)
 		glyph_mask = 6;
 	else if(level >= 70)
 		glyph_mask = 5;
