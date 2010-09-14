@@ -51,6 +51,9 @@ _logoutTime(0), permissions(NULL), permissioncount(0), _loggingOut(false), insta
 	m_repeatEmoteTime = 0;
 	m_repeatEmoteId = 0;
 	m_lastWhoTime = 0;
+	m_isFalling = false;
+	m_isJumping = false;
+	m_jumpHackChances = 5;
 
 	for(uint32 x=0;x<8;x++)
 		sAccountData[x].data=NULL;	

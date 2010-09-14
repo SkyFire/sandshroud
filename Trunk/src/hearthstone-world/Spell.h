@@ -1205,7 +1205,6 @@ public:
 	uint8 missileflags, missileunkcheck;
 	float missilespeed, missilepitch, traveltime;
 	//std::string m_strTarget;
-
 };
 
 enum SpellState
@@ -1493,7 +1492,7 @@ public:
 	// Fills specified targets at the area of effect. We suppose we already inited this spell and know the details
 	void FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz, float range, uint32 specification);
 	// Fills the targets at the area of effect
-	void FillAllTargetsInArea(uint32 i, float srcx,float srcy,float srcz, float range);
+	void FillAllTargetsInArea(uint32 i, float srcx,float srcy,float srcz, float range, bool includegameobjects = false);
 	// Fills the targets at the area of effect. We suppose we already inited this spell and know the details
 	void FillAllTargetsInArea(float srcx,float srcy,float srcz,uint32 ind);
 	// Fills the targets at the area of effect. We suppose we already inited this spell and know the details
@@ -1936,7 +1935,7 @@ public:
 	float m_castPositionX;
 	float m_castPositionY;
 	float m_castPositionZ;
-	
+
 	int32 damageToHit;
 	uint32 castedItemId;
 	uint8 extra_cast_number;
@@ -1993,6 +1992,7 @@ protected:
 	bool			m_isCasting;
 	bool			m_projectileWait;
 	void DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell_damage, uint32 spell_id);
+
 private:
 	struct SpellTarget
 	{

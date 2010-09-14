@@ -871,14 +871,14 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 			HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0 );
 	}
 
-	if(m_Unit->GetMapMgr() != NULL && GetNextTarget() != NULL)
+	if(m_Unit->GetMapMgr() != NULL && GetNextTarget() != NULL && m_Unit->GetMapMgr()->CanUseCollision(m_Unit) && !IS_INSTANCE(m_Unit->GetMapId()))
 	{
 		bool fly = true;
 		if(m_Unit->IsCreature())
 			if(!(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
 				fly = false;
-				
-		if(fly && !IS_INSTANCE(m_Unit->GetMapId()))
+
+		if(!fly)
 		{
 			float target_land_z = m_Unit->GetCHeightForPosition();
 			if(target_land_z)
@@ -924,6 +924,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 					agent = AGENT_MELEE;
 			}
 		}
+
 		//check if we can do range attacks
 		if(agent == AGENT_RANGED || agent == AGENT_MELEE)
 		{
@@ -1109,6 +1110,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				{
 					los = m_Unit->IsInLineOfSight(m_nextTarget);
 				}
+
 				if(los && ((distance <= (m_nextSpell->maxrange*m_nextSpell->maxrange)  && distance >= (m_nextSpell->minrange*m_nextSpell->minrange)) || m_nextSpell->maxrange == 0)) // Target is in Range -> Attack
 				{
 					SpellEntry* spellInfo = m_nextSpell->spell;

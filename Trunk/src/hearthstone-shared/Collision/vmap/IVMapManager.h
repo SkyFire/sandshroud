@@ -39,6 +39,7 @@ namespace VMAP
 	};
 
 	#define VMAP_INVALID_HEIGHT		-100000.0f			// for check
+	#define VMAP_MAX_HEIGHT			 100000.0f			// for other checks
 
 	//===========================================================
 	class IVMapManager

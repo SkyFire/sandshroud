@@ -1617,8 +1617,6 @@ public:
 	uint32								m_lastMoveTime;
 	bool 								m_speedChangeInProgress;
 	uint32								m_flyHackChances;
-	bool								m_isJumping;
-	uint32								m_jumpHackChances;
 
 	void AddSplinePacket(uint64 guid, ByteBuffer* packet);
 	ByteBuffer* GetAndRemoveSplinePacket(uint64 guid);
@@ -1693,6 +1691,7 @@ public:
 	uint32 m_resurrectHealth, m_resurrectMana;
 	uint32 resurrector;
 	LocationVector m_resurrectLoction;
+	uint32 blinktimer;
 	bool blinked;
 	uint16 m_speedhackChances;
 	uint16 m_cheatEngineChances;

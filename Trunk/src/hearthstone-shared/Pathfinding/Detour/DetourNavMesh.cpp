@@ -1528,16 +1528,16 @@ int dtNavMesh::findStraightPath(const float* startPos, const float* endPos,
 			}
 		}
 	}
-	
+
 	// Add end point.
 	vcopy(&straightPath[straightPathSize*3], closestEndPos);
 	if (straightPathFlags)
 		straightPathFlags[straightPathSize] = DT_STRAIGHTPATH_END;
 	if (straightPathRefs)
 		straightPathRefs[straightPathSize] = 0;
-	
+
 	straightPathSize++;
-	
+
 	return straightPathSize;
 }
 

@@ -34,15 +34,13 @@ enum SpellTargetSpecification
 
 void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 {
+	WoWGuid guid;
 	m_unitTarget = m_itemTarget = 0;
-	m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = 0;
+	m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = missilespeed = missilepitch = traveltime = 0.0f;
 	missileflags = missileunkcheck = 0;
-	missilespeed = missilepitch = 0;
-	traveltime = 0.0f;
 	//m_strTarget = "";
 
 	data >> missileflags >> m_targetMask;
-	WoWGuid guid;
 
 	if( m_targetMask == TARGET_FLAG_SELF  || m_targetMask & TARGET_FLAG_GLYPH )
 	{
@@ -408,7 +406,7 @@ void Spell::FillAllTargetsInArea(float srcx,float srcy,float srcz,uint32 ind)
 }
 
 /// We fill all the targets in the area, including the stealth ed one's
-void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, float range)
+void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, float range, bool includegameobjects)
 {
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range*range;
@@ -433,11 +431,11 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 
 		if(IsInrange(srcx,srcy,srcz,(*itr),r))
 		{
-			if( v_caster != NULL ) // Vehicles can destroy gameobjects
+			if( includegameobjects )
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( m_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -1268,13 +1266,13 @@ void Spell::cancel()
 
 void Spell::AddCooldown()
 {
-	if( p_caster != NULL )
+	if( p_caster != NULL && !p_caster->CooldownCheat)
 		p_caster->Cooldown_Add( m_spellInfo, i_caster );
 }
 
 void Spell::AddStartCooldown()
 {
-	if( p_caster != NULL )
+	if( p_caster != NULL && !p_caster->CastTimeCheat)
 		p_caster->Cooldown_AddStart( m_spellInfo );
 }
 
@@ -2038,13 +2036,14 @@ void Spell::finish()
 			u_caster->SetCurrentSpell(NULLSPELL);
 	}
 
-	if( p_caster != NULL && !GetSpellFailed() )
-	{
-		sHookInterface.OnPostSpellCast( p_caster, GetSpellProto(), unitTarget );
-	}
-
 	if( p_caster)
 	{
+		if(!GetSpellFailed())
+			sHookInterface.OnPostSpellCast( p_caster, GetSpellProto(), unitTarget );
+
+		if(p_caster->CooldownCheat && GetSpellProto())
+			p_caster->ClearCooldownForSpell(GetSpellProto()->Id);
+
 		if( m_ForceConsumption || ( cancastresult == SPELL_CANCAST_OK && !GetSpellFailed() ) )
 			RemoveItems();
 	}

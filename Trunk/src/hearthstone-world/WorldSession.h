@@ -771,6 +771,8 @@ private:
 	WorldSocket *_socket;
 
 	bool m_isFalling;
+	bool m_isJumping;
+	uint32 m_jumpHackChances;
 
 	uint32 _accountId;
 	uint32 _accountFlags;

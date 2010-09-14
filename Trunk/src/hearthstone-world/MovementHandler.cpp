@@ -133,8 +133,6 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 		if(GetPlayer()->GetSummon() != NULL)		// move pet too
 			GetPlayer()->GetSummon()->SetPosition((GetPlayer()->GetPositionX() + 2), (GetPlayer()->GetPositionY() + 2), GetPlayer()->GetPositionZ(), float(M_PI));
 
-		m_isFalling = false;
-
 		if(_player->m_sentTeleportPosition.x != 999999.0f)
 		{
 			_player->m_position = _player->m_sentTeleportPosition;
@@ -436,26 +434,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		}
 	}
 
-	if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
-	{	// Crow: Base credit for jump hack detection goes to ArcEmu, and whoever coded it.
-		if( recv_data.GetOpcode() == MSG_MOVE_FALL_LAND || _player->movement_info.flags & MOVEFLAG_SWIMMING)
-			_player->m_isJumping = false;
-		else if(recv_data.GetOpcode() == MSG_MOVE_JUMP || _player->movement_info.flags & MOVEFLAG_FALLING)
-		{
-			if(_player->m_isJumping)
-			{
-				_player->m_jumpHackChances--;
-				if(!_player->m_jumpHackChances)
-				{
-					sWorld.LogCheater(this, "Disconnected for jump cheat.");
-					Disconnect();
-					return;
-				}
-			}
-			_player->m_isJumping = true;
-		}
-	}
-
 	//Water walk hack
 	if (_player->movement_info.flags & MOVEFLAG_WATER_WALK && !GetPlayer()->m_isWaterWalking)
 	{
@@ -504,7 +482,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/************************************************************************/
 	/* Hack Detection by Classic, some changes by Crow						*/
 	/************************************************************************/
-	if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
+	if((!HasGMPermissions() || !sWorld.no_antihack_on_gm) && !_player->m_TransporterGUID)
 	{
 		if(sWorld.antihack_flight)
 		{
@@ -569,21 +547,47 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 	if( _player->blinked )
 	{
-		_player->blinked = false;
-		_player->m_fallDisabledUntil = UNIXTIME + 5;
-		_player->DelaySpeedHack( 5000 );
+		if(_player->blinktimer < getMSTime())
+		{
+			_player->blinked = false;
+			_player->m_fallDisabledUntil = UNIXTIME + 5;
+			_player->DelaySpeedHack( 5000 );
+		}
 	}
 	else
 	{
 		if (_player->movement_info.flags & MOVEFLAG_FALLING)
 			m_isFalling = true;
+		else if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
+		{	// Crow: Base credit for jump hack detection goes to ArcEmu, and whoever coded it.
+			if(recv_data.GetOpcode() == MSG_MOVE_JUMP)
+			{
+				if(m_isJumping)
+				{
+					SystemMessage("Jump cheat detected. If this is wrong, please report it to an administrator.");
+					m_jumpHackChances--;
+					if(!m_jumpHackChances)
+					{
+						sWorld.LogCheater(this, "Disconnected for jump cheat.");
+						Disconnect();
+						return;
+					}
+				}
+				else if (m_isFalling)
+				{
+					SystemMessage("Jump cheat detected. If this is wrong, please report it to an administrator.");
+					m_jumpHackChances--;
+					if(!m_jumpHackChances)
+					{
+						sWorld.LogCheater(this, "Disconnected for jump cheat.");
+						Disconnect();
+						return;
+					}
+				}
 
-		if (recv_data.GetOpcode() == MSG_MOVE_JUMP)
-		{
-			if (m_isFalling)
-				Disconnect();
-
-			m_isFalling = true;
+				m_isFalling = true;
+				m_isJumping = true;
+			}
 		}
 
 		if( recv_data.GetOpcode() == MSG_MOVE_FALL_LAND )
@@ -639,8 +643,9 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		case MSG_MOVE_START_SWIM:
 		case MSG_MOVE_FALL_LAND:
 			m_isFalling = false;
+			m_isJumping = false;
 		}
-		
+
 		if(!m_isFalling)
 			_player->z_axisposition = _player->movement_info.z;
 	}

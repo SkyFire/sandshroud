@@ -3764,7 +3764,7 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		}
 	}
 
-	if (p_caster->GetMapMgr() && p_caster->GetMapMgr()->CanUseCollision(p_caster))
+	if(p_caster->GetMapMgr() && !IS_INSTANCE(p_caster->GetMapId()) && p_caster->GetMapMgr()->CanUseCollision(p_caster))
 	{
 		float ori = m_caster->GetOrientation();				
 		float posX = m_caster->GetPositionX()+(radius*(cosf(ori)));
@@ -3775,6 +3775,7 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		{
 			posZ = p_caster->GetCHeightForPosition(true, posX, posY, posZ);
 			p_caster->blinked = true;
+			p_caster->blinktimer = getMSTime()+5000;
 			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
 			// reset heartbeat for a little while, 5 seconds maybe?
@@ -3790,6 +3791,7 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 				return;
 
 			p_caster->blinked = true;
+			p_caster->blinktimer = getMSTime()+5000;
 			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
 			// reset heartbeat for a little while, 5 seconds maybe?
@@ -6700,7 +6702,6 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	if( slot < 7 )
 		p_caster->m_SummonSlots[slot] = pTotem;
 
-
 	//record our owner guid and slotid
 	pTotem->SetSummonOwnerSlot(u_caster->GetGUID(),int8(slot));
 
@@ -7990,19 +7991,20 @@ void Spell::SpellEffectEnvironmentalDamage(uint32 i)
 	if(playerTarget == NULL)
 		return;
 
-	if(unitTarget->SchoolImmunityList[m_spellInfo->School])
+	if(playerTarget->SchoolImmunityList[m_spellInfo->School])
 	{
 		SendCastResult(SPELL_FAILED_IMMUNE);
 		return;
 	}
+
 	//this is GO, not unit	
-	m_caster->SpellNonMeleeDamageLog(unitTarget,m_spellInfo->Id,damage, pSpellId==0);
+	m_caster->SpellNonMeleeDamageLog(playerTarget,m_spellInfo->Id,damage, pSpellId==0);
 
 	WorldPacket data(SMSG_ENVIRONMENTALDAMAGELOG, 13);
-	data << unitTarget->GetGUID();
+	data << playerTarget->GetGUID();
 	data << uint8(DAMAGE_FIRE);
 	data << uint32(damage);
-	unitTarget->SendMessageToSet( &data, true );
+	playerTarget->SendMessageToSet( &data, true );
 }
 
 void Spell::SpellEffectDismissPet(uint32 i)
@@ -8556,8 +8558,8 @@ void Spell::SpellEffectApplyDemonAura( uint32 i )
 
 void Spell::SpellEffectRemoveAura(uint32 i)
 {
-    if (!unitTarget)
-        return;
+	if (!unitTarget)
+		return;
 
 	unitTarget->RemoveAura(m_spellInfo->EffectTriggerSpell[i], unitTarget->GetGUID());
 }
