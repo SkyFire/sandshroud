@@ -20,7 +20,6 @@
 #include "StdAfx.h"
 
 #define ROUND_LENGTH 600 // This takes seconds.
-#pragma warning(disable:4700) // Uninitialized local variable 'pPlayer' used // Yea, we get it.
 
 const float m_gateSigilsLocations[5][5] = {
 	{192687, 1414.054f, 106.72f, 41.442f, 5.441f},

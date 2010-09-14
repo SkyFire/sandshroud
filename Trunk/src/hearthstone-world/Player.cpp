@@ -300,9 +300,14 @@ void Player::Init()
 	mOutOfRangeIdCount	  = 0;
 
 	bProcessPending		 = false;
+	
+#ifdef CATACLYSM
+	for(int i = 0; i < 50; i++)
+#else
 	for(int i = 0; i < 25; i++)
+#endif
 		m_questlog[i] = NULL;
-
+		
 	CurrentGossipMenu		= NULL;
 
 	ResetHeartbeatCoords();
@@ -552,7 +557,12 @@ Player::~Player ( )
 	// delete m_talenttree
 
 	CleanupChannels();
+	
+#ifdef CATACLYSM
+	for(int i = 0; i < 50; i++)
+#else
 	for(int i = 0; i < 25; i++)
+#endif
 	{
 		if(m_questlog[i] != NULL)
 		{
@@ -2758,7 +2768,11 @@ void Player::_SaveQuestLogEntry(QueryBuffer * buf)
 
 	m_removequests.clear();
 
+#ifdef CATACLYSM
+	for(int i = 0; i < 50; i++)
+#else
 	for(int i = 0; i < 25; i++)
+#endif
 	{
 		if(m_questlog[i] != NULL)
 			m_questlog[i]->SaveToDB(buf);
@@ -3598,7 +3612,11 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 	uint32 baseindex;
 
 	// clear all fields
+#ifdef CATACLYSM
+	for(int i = 0; i < 50; i++)
+#else
 	for(int i = 0; i < 25; i++)
+#endif
 	{
 		baseindex = PLAYER_QUEST_LOG_1_1 + (i * 5);
 		SetUInt32Value(baseindex + 0, 0);
@@ -3627,7 +3645,12 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 			}
 			if(m_questlog[slot] != 0)
 				continue;
+				
+#ifdef CATACLYSM
+			if(slot >= 50)
+#else
 			if(slot >= 25)
+#endif			
 				break;
 
 			entry = NULL;
@@ -3642,7 +3665,11 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 
 QuestLogEntry* Player::GetQuestLogForEntry(uint32 quest)
 {
+#ifdef CATACLYSM
+	for(int i = 0; i < 50; i++)
+#else
 	for(int i = 0; i < 25; i++)
+#endif
 	{
 		if(m_questlog[i] == ((QuestLogEntry*)0x00000001))
 			m_questlog[i] = NULL;
@@ -3666,7 +3693,12 @@ QuestLogEntry* Player::GetQuestLogForEntry(uint32 quest)
 
 void Player::SetQuestLogSlot(QuestLogEntry *entry, uint32 slot)
 {
+#ifdef CATACLYSM
+	ASSERT(slot < 50);
+#else
 	ASSERT(slot < 25);
+#endif
+
 	m_questlog[slot] = entry;
 }
 
@@ -5018,7 +5050,11 @@ bool Player::IsGroupMember(Player* plyr)
 
 int32 Player::GetOpenQuestSlot()
 {
-	for (uint32 i = 0; i < 25; i++)
+#ifdef CATACLYSM
+	for(uint32 i = 0; i < 50; i++)
+#else
+	for(uint32 i = 0; i < 25; i++)
+#endif
 		if (m_questlog[i] == NULL)
 			return i;
 
@@ -5050,7 +5086,12 @@ void Player::AddToFinishedDailyQuests(uint32 quest_id)
 void Player::ResetDailyQuests()
 {
 	m_finishedDailyQuests.clear();
+
+#ifdef CATACLYSM
+	for(uint32 i = 0; i < 50; i++)
+#else
 	for(uint32 i = 0; i < 25; i++)
+#endif	
 		SetUInt32Value(PLAYER_FIELD_DAILY_QUESTS_1 + i, 0);
 }
 
@@ -6027,7 +6068,11 @@ void Player::LoadTaxiMask(const char* data)
 bool Player::HasQuestForItem(uint32 itemid)
 {
 	Quest *qst;
-	for( uint32 i = 0; i < 25; i++ )
+#ifdef CATACLYSM
+	for(uint32 i = 0; i < 50; i++)
+#else
+	for(uint32 i = 0; i < 25; i++)
+#endif	
 	{
 		if( m_questlog[i] != NULL )
 		{
@@ -6582,7 +6627,11 @@ void Player::EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_sl
 }
 void Player::RemoveQuestsFromLine(int skill_line)
 {
-	for (int i = 0; i < 25; i++)
+#ifdef CATACLYSM
+	for(int i = 0; i < 50; i++)
+#else
+	for(int i = 0; i < 25; i++)
+#endif
 	{
 		if (m_questlog[i])
 		{
@@ -12725,11 +12774,19 @@ void Player::SetTaximaskNode(uint32 nodeidx, bool Unset)
 
 uint16 Player::FindQuestSlot( uint32 questid )
 {
-	for ( uint16 i = 0; i < 25; i++ )
+#ifdef CATACLYSM
+	for(uint16 i = 0; i < 50; i++)
+#else
+	for(uint16 i = 0; i < 25; i++)
+#endif	
 		if( (GetUInt32Value(PLAYER_QUEST_LOG_1_1 + i * 5)) == questid )
 			return i;
 
+#ifdef CATACLYSM
 	return 25;
+#else
+	return 50;
+#endif
 }
 
 void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
