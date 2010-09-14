@@ -523,17 +523,27 @@ void StrandOfTheAncients::TimeTick()
 		{
 			Player* pPlayer;
 			PlaySoundToAll( 8212 );
-			pPlayer->CastSpell(pPlayer,52459,true);
-			if(pPlayer->GetTeam() == Attackers)
+			for(uint8 i = 0; i < 2; i++)
 			{
-				pPlayer->SetTeam(1);
-				pPlayer->SafeTeleport(pPlayer->GetMapId(),pPlayer->GetInstanceID(),SOTAStartLocations[0][0],SOTAStartLocations[0][1],SOTAStartLocations[0][2],0.0f);
+				for(set<Player*>::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
+				{
+					if(pPlayer = (*itr))
+					{
+						pPlayer->CastSpell(pPlayer,52459,true);
+						if(pPlayer->GetTeam() == Attackers)
+						{
+							pPlayer->SetTeam(1);
+							pPlayer->SafeTeleport(pPlayer->GetMapId(),pPlayer->GetInstanceID(),SOTAStartLocations[0][0],SOTAStartLocations[0][1],SOTAStartLocations[0][2],0.0f);
+						}
+						else
+						{
+							pPlayer->SetTeam(0);
+							pPlayer->SafeTeleport(pPlayer->GetMapId(),pPlayer->GetInstanceID(),SOTAStartLocations[1][0],SOTAStartLocations[1][1],SOTAStartLocations[1][2],0.0f);
+						}
+					}
+				}
 			}
-			else
-			{
-				pPlayer->SetTeam(0);
-				pPlayer->SafeTeleport(pPlayer->GetMapId(),pPlayer->GetInstanceID(),SOTAStartLocations[1][0],SOTAStartLocations[1][1],SOTAStartLocations[1][2],0.0f);
-			}
+
 			Respawn();
 			OnStart();
 			if(Attackers == HORDE)
