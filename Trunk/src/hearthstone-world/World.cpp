@@ -2281,8 +2281,23 @@ void World::LogGM(WorldSession* session, string message, ...)
 	{
 		va_list ap;
 		va_start(ap, message);
+		char msg0[1024];
 		char msg1[1024];
-		vsnprintf(msg1, 1024, message.c_str(), ap);
+		vsnprintf(msg0, 1024, message.c_str(), ap);
+		va_end(ap);
+		uint32 size = (uint32)strlen(msg0);
+
+		uint32 j = 0;
+		for(uint32 i = 0; i < size; i++)
+		{
+			if(msg0[i] == '"')
+			{
+				msg1[j++] = '\\';
+				msg1[j++] = '"';
+			}
+			else
+				msg1[j++] = msg0[i];
+		}
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
@@ -2299,8 +2314,23 @@ void World::LogCheater(WorldSession* session, string message, ...)
 	{
 		va_list ap;
 		va_start(ap, message);
+		char msg0[1024];
 		char msg1[1024];
-		vsnprintf(msg1, 1024, message.c_str(), ap);
+		vsnprintf(msg0, 1024, message.c_str(), ap);
+		va_end(ap);
+		uint32 size = (uint32)strlen(msg0);
+
+		uint32 j = 0;
+		for(uint32 i = 0; i < size; i++)
+		{
+			if(msg0[i] == '"')
+			{
+				msg1[j++] = '\\';
+				msg1[j++] = '"';
+			}
+			else
+				msg1[j++] = msg0[i];
+		}
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
@@ -2317,8 +2347,23 @@ void World::LogPlayer(WorldSession* session, string message, ...)
 	{
 		va_list ap;
 		va_start(ap, message);
+		char msg0[1024];
 		char msg1[1024];
-		vsnprintf(msg1, 1024, message.c_str(), ap);
+		vsnprintf(msg0, 1024, message.c_str(), ap);
+		va_end(ap);
+		uint32 size = (uint32)strlen(msg0);
+
+		uint32 j = 0;
+		for(uint32 i = 0; i < size; i++)
+		{
+			if(msg0[i] == '"')
+			{
+				msg1[j++] = '\\';
+				msg1[j++] = '"';
+			}
+			else
+				msg1[j++] = msg0[i];
+		}
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
@@ -2335,8 +2380,23 @@ void World::LogChat(WorldSession* session, string message, ...)
 	{
 		va_list ap;
 		va_start(ap, message);
+		char msg0[1024];
 		char msg1[1024];
-		vsnprintf(msg1, 1024, message.c_str(), ap);
+		vsnprintf(msg0, 1024, message.c_str(), ap);
+		va_end(ap);
+		uint32 size = (uint32)strlen(msg0);
+
+		uint32 j = 0;
+		for(uint32 i = 0; i < size; i++)
+		{
+			if(msg0[i] == '"')
+			{
+				msg1[j++] = '\\';
+				msg1[j++] = '"';
+			}
+			else
+				msg1[j++] = msg0[i];
+		}
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
