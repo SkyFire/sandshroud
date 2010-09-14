@@ -967,6 +967,7 @@ void Aura::ApplyModifiers( bool apply )
 		mod = &m_modList[x];
 		//DEBUG_LOG( "Aura","Applying Aura modifiers target = %u, slot = %u , Spell Aura id = %u (%s), SpellId  = %u, i = %u, apply = %s, duration = %i, damage = %d", m_target->GetLowGUID(), m_auraSlot, mod->m_type, SpellAuraNames[mod->m_type], m_spellProto->Id, mod->i, apply ? "true" : "false", GetDuration(),mod->m_amount);
 
+
 		if(mod->m_type<TOTAL_SPELL_AURAS)
 		{
 			DEBUG_LOG( "Aura","Known Aura id %d, value %d", uint32(mod->m_type), uint32(mod->m_amount));
@@ -6835,6 +6836,10 @@ void Aura::SpellAuraMounted(bool apply)
 				vehicle->PushToWorld(map);
 
 				vehicle->AddPassenger(m_target, 0, true); // Always add to first slot
+				WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
+				data << m_target->GetNewGUID();
+				data << cp->vehicle_entry;
+				m_target->SendMessageToSet(&data, true);			
 			}
 		}
 	}
