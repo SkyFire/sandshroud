@@ -300,14 +300,14 @@ void Player::Init()
 	mOutOfRangeIdCount	  = 0;
 
 	bProcessPending		 = false;
-	
+
 #ifdef CATACLYSM
 	for(int i = 0; i < 50; i++)
 #else
 	for(int i = 0; i < 25; i++)
 #endif
 		m_questlog[i] = NULL;
-		
+
 	CurrentGossipMenu		= NULL;
 
 	ResetHeartbeatCoords();
@@ -557,7 +557,7 @@ Player::~Player ( )
 	// delete m_talenttree
 
 	CleanupChannels();
-	
+
 #ifdef CATACLYSM
 	for(int i = 0; i < 50; i++)
 #else
@@ -3645,7 +3645,7 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 			}
 			if(m_questlog[slot] != 0)
 				continue;
-				
+
 #ifdef CATACLYSM
 			if(slot >= 50)
 #else
