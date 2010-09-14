@@ -204,7 +204,7 @@ void Vehicle::Load(CreatureProto * proto_, uint32 mode, float x, float y, float 
 		if( ve->m_seatID[i] )
 		{
 			m_vehicleSeats[i] = dbcVehicleSeat.LookupEntry( ve->m_seatID[i] );
-			m_seatSlotMax = (i = 0 ? i + 1 : i); // i plus 1 so that we can count 0. Plus, no vehicle has 0 seats, so this ensures 1.
+			m_seatSlotMax = i+1;
 
 			if(m_vehicleSeats[i]->IsUsable())
 			{
