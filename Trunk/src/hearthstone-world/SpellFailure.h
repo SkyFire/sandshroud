@@ -207,7 +207,7 @@ enum SpellCastError
 	SPELL_FAILED_PET_CAN_RENAME                                  = 182,
 	SPELL_FAILED_TARGET_CANNOT_BE_RESURRECTED                    = 183,
 	SPELL_FAILED_UNKNOWN                                         = 184,
-	SPELL_CANCAST_OK 											 = 255,
+	SPELL_CANCAST_OK                                             = 255,
 };
 
 #endif
