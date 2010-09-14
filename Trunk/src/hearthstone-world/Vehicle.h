@@ -36,7 +36,7 @@ public:
 	void DeleteMe();
 	void SafeDelete();
 	void MoveVehicle(float x, float y, float z, float o);
-	void AddPassenger(Unit* pPassenger, uint8 requestedseat = 0, bool force = false);
+	void AddPassenger(Unit* pPassenger, int8 requestedseat = -1, bool force = false);
 	void RemovePassenger(Unit* pPassenger);
 	void DeletePassengerData(Unit* pPassenger);
 	bool HasPassenger(Unit* pPassenger);
@@ -54,6 +54,7 @@ public:
 	void SetVehicleEntry(uint32 entry) { m_vehicleEntry = entry; }
 
 	Unit* GetControllingUnit() { return m_passengers[0]; }
+	Player* GetControllingPlayer() { return (m_passengers[0] ? m_passengers[0]->IsPlayer() ? TO_PLAYER(m_passengers[0]) : NULL : NULL); }
 	void SetControllingUnit(Unit* pUnit) { m_controllingUnit = pUnit; }
 
 	int8 GetMaxSeat() { return m_seatSlotMax; }

@@ -426,7 +426,7 @@ void Vehicle::DeleteMe()
 	delete this;
 }
 
-void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat /*= 0*/, bool force /*= false*/)
+void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool force /*= false*/)
 {
 
 	if(!m_maxPassengers || !m_seatSlotMax) //how is this happening?
@@ -440,7 +440,7 @@ void Vehicle::AddPassenger(Unit* pPassenger, uint8 requestedseat /*= 0*/, bool f
 
 	OUT_DEBUG("AddPassenger: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
 
-	if(requestedseat > 0)
+	if(requestedseat > -1)
 	{
 		if(force)
 		{

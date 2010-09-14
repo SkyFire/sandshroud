@@ -6771,8 +6771,12 @@ void Aura::SpellAuraMounted(bool apply)
 		pPlayer->RemoveAura(id);
 	}
 
-	bool isVehicleSpell = m_spellProto->Effect[1] == SPELL_EFFECT_SUMMON ? true : false;
+	bool isVehicleSpell = false;
 	bool warlockpet = false;
+
+	CreatureProto* cp = CreatureProtoStorage.LookupEntry(mod->m_miscValue);
+//	if(cp != NULL && cp->vehicle_entry > 0)
+//		isVehicleSpell = true; // Lack of proto means fuck it!
 
 	if(pPlayer->GetSummon() && pPlayer->GetSummon()->IsWarlockPet() == true)
 		warlockpet = true;
@@ -6816,6 +6820,23 @@ void Aura::SpellAuraMounted(bool apply)
 				!(pPlayer->GetShapeShift() & FORM_BATTLESTANCE | FORM_DEFENSIVESTANCE | FORM_BERSERKERSTANCE ) && 
 				pPlayer->m_ShapeShifted != m_spellProto->Id )
 			m_target->RemoveAura( pPlayer->m_ShapeShifted );
+
+		if(isVehicleSpell)
+		{
+			MapMgr* map = m_target->GetMapMgr();
+			Vehicle* vehicle = map->CreateVehicle(mod->m_miscValue);
+			if(vehicle != NULL)
+			{
+				vehicle->Load(cp, (m_target->IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL),
+					m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ());
+
+				vehicle->Init();
+				vehicle->InitSeats(cp->vehicle_entry);
+				vehicle->PushToWorld(map);
+
+				vehicle->AddPassenger(m_target, 0, true); // Always add to first slot
+			}
+		}
 	}
 	else
 	{
@@ -6825,6 +6846,9 @@ void Aura::SpellAuraMounted(bool apply)
 
 		if( !isVehicleSpell )
 			m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
+		else
+			if(m_target->m_CurrentVehicle)
+				m_target->m_CurrentVehicle->RemovePassenger(m_target);
 
 		uint8 petnum = pPlayer->GetUnstabledPetNumber();
 
