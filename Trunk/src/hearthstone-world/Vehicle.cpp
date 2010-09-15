@@ -105,7 +105,7 @@ void Vehicle::InstallAccessories()
 	for(int i = 0; i < 8; i++)
 	{
 		AccessoryInfo accessories = acc->accessories[i];
-		if(!accessories.accessoryentry)
+		if(!accessories.accessoryentry || (accessories.accessoryentry == GetEntry()))
 			continue;
 
 		if(m_vehicleSeats[i] == NULL)
@@ -132,7 +132,7 @@ void Vehicle::InstallAccessories()
 		if(proto->vehicle_entry > 0) // Vehicle
 		{
 			Vehicle* pass = map->CreateVehicle(accessories.accessoryentry);
-			if(pass != NULL)
+			if(pass != NULL && pass)
 			{
 				pass->Load(proto, (IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL),
 					GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
@@ -513,11 +513,13 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	pPassenger->m_inVehicleSeatId = 0;
 
 	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
-	if( pPassenger->IsPlayer() )
+	if( pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_MountSpellId != m_mountSpell )
 		pPassenger->RemoveAura(TO_PLAYER(pPassenger)->m_MountSpellId);
 
 	if( m_mountSpell )
 		pPassenger->RemoveAura( m_mountSpell );
+	if( m_CastSpellOnMount )
+		pPassenger->RemoveAura( m_CastSpellOnMount );
 
 	WorldPacket data(SMSG_MONSTER_MOVE, 85);
 	data << pPassenger->GetNewGUID();			// PlayerGUID
@@ -691,8 +693,8 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	pPassenger->m_inVehicleSeatId = slot;
 	pPassenger->m_TransporterGUID = GetGUID();
 
-	if( m_mountSpell )
-		pPassenger->CastSpell( pPassenger, m_mountSpell, true );
+	if( m_CastSpellOnMount )
+		pPassenger->CastSpell( pPassenger, m_CastSpellOnMount, true );
 
 	RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SELF_RES);
 
@@ -703,7 +705,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		//pPlayer->Root();
 
 		//Dismount
-		if(pPlayer->m_MountSpellId)
+		if(pPlayer->m_MountSpellId && pPlayer->m_MountSpellId != m_mountSpell)
 			pPlayer->RemoveAura(pPlayer->m_MountSpellId);
 
 		//Remove morph spells

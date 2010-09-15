@@ -4710,6 +4710,7 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 		veh = u_caster->GetMapMgr()->CreateVehicle( cr_entry );
 		if(veh == NULLVEHICLE)
 			return;
+
 		veh->m_CreatedFromSpell = true;
 		veh->m_mountSpell = m_spellInfo->EffectBasePoints[i];
 		veh->Load( cp, u_caster->GetPositionX(), u_caster->GetPositionY(), u_caster->GetPositionZ(), u_caster->GetOrientation());

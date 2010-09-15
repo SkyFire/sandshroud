@@ -79,6 +79,7 @@ public:
 	bool Initialised;
 	bool m_CreatedFromSpell;
 	uint32 m_mountSpell;
+	uint32 m_CastSpellOnMount;
 
 private:
 	void _AddToSlot(Unit* pPassenger, uint8 slot);
