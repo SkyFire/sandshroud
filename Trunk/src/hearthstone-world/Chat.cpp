@@ -731,7 +731,6 @@ void CommandTableStorage::Init()
 		{ "addtrainerspell", 'm', &ChatHandler::HandleAddTrainerSpellCommand, "", NULL, 0, 0, 0 },
 		{ "clearcorpses", 'm', &ChatHandler::HandleClearCorpsesCommand, "", NULL, 0, 0, 0 },
 		{ "clearbones", 'm', &ChatHandler::HandleClearBonesCommand, "", NULL, 0, 0, 0 },
-
 		{ "multimute", 'b', &ChatHandler::HandleMultiMuteCommand, "mutes multiple , .multimute <reason> <player1> <player2> ...", NULL, 0, 0, 0 },
 		{ "multiban", 'b', &ChatHandler::HandleMultiBanCommand, "bans multiple , .multimute <reason> <player1> <player2> ...", NULL, 0, 0, 0 },
 		{ "multiaccountban", 'b', &ChatHandler::HandleMultiAccountBanCommand, "account bans multiple , .multimute <reason> <player1> <player2> ...", NULL, 0, 0, 0 },
@@ -897,7 +896,7 @@ int ChatHandler::ParseCommands(const char* text, WorldSession *session)
 	if(session->GetPermissionCount() == 0 && sWorld.m_reqGmForCommands)
 		return 0;
 
-	if(text[0] != '!' && text[0] != '.') // let's not confuse users
+	if(text[0] != '.') // let's not confuse users
 		return 0;
 
 	/* skip '..' :P that pisses me off */
@@ -1052,7 +1051,7 @@ void ChatHandler::RedSystemMessage(WorldSession *m_session, const char *message,
 	char msg1[1024];
 	vsnprintf(msg1,1024,message,ap);
 	char msg[1024];
-	snprintf(msg, 1024,"%s%s|r", MSG_COLOR_LIGHTRED/*MSG_COLOR_RED*/, msg1);
+	snprintf(msg, 1024,"%s%s|r", MSG_COLOR_LIGHTRED, msg1);
 	WorldPacket * data = FillSystemMessageData(msg);
 	if(m_session != NULL) 
 		m_session->SendPacket(data);
@@ -1167,14 +1166,15 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 	}
 	else
 		mv = 0;
-
+	if(mv <= -1 )
+		mv = 0;
 	//valid UNIT_FIELD?
 	if(field <= OBJECT_END || field > UNIT_END )
 	{  
 		RedSystemMessage(m_session, "Specified field is not valid.");
 		return true;   
 	}
-	if (av <= 0 )
+	if (av <= 0 || av <= -1)
 	{  
 		RedSystemMessage(m_session, "Values are invalid. Value must be > 0.");
 		return true;   
@@ -1200,7 +1200,8 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 			GreenSystemMessageToPlr(plr, "%s set your %s to %d.", m_session->GetPlayer()->GetName(), fieldname, av);
 		}
 
-		if(field == UNIT_FIELD_STAT1) av /= 2;
+		if(field == UNIT_FIELD_STAT1) 
+			av /= 2;
 		if(field == UNIT_FIELD_BASE_HEALTH) 
 			plr->SetUInt32Value(UNIT_FIELD_HEALTH, av);
 
@@ -1283,8 +1284,10 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 	{
 		mv = 0;
 	}
+	if(mv <= -1 )
+		mv = 0;
 
-	if (av <= 0)
+	if (av <= 0 || av <= -1)
 	{  
 		RedSystemMessage(m_session, "Values are invalid. Value must be < max (if max exists), and both must be > 0.");
 		return true;   
