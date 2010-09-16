@@ -1315,7 +1315,7 @@ void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 		uint16 DstSlot = (i);
 		uint16 DstInvSlot = INVENTORY_SLOT_NOT_SET; // Character :D
 
-		int result = ii->SwapItems(SrcInvSlot, DstInvSlot, slot, DstSlot);
+		ii->SwapItems(SrcInvSlot, DstInvSlot, slot, DstSlot);
 	}
 
 	WorldPacket data(SMSG_EQUIPMENT_SET_USE_RESULT, 1);

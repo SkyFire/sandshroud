@@ -3774,50 +3774,55 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + p_caster->m_noseLevel, posX, posY, p_caster->GetPositionZ(), posX, posY, posZ, -1.5f) )
 		{
 			posZ = p_caster->GetCHeightForPosition(true, posX, posY, posZ);
-			p_caster->blinked = true;
-			p_caster->blinktimer = getMSTime()+5000;
-			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
+			float diff = fabs(fabs(posZ) - fabs(m_caster->GetPositionZ()));
+			if( diff <= 10.0f)
+			{
+				p_caster->blinked = true;
+				p_caster->blinktimer = getMSTime()+5000;
+				p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
-			// reset heartbeat for a little while, 5 seconds maybe?
-			p_caster->DelaySpeedHack( 5000 );
-			++p_caster->m_heartbeatDisable;
-			p_caster->z_axisposition = 0.0f;
+				// reset heartbeat for a little while, 5 seconds maybe?
+				p_caster->DelaySpeedHack( 5000 );
+				++p_caster->m_heartbeatDisable;
+				p_caster->z_axisposition = 0.0f;
+			}
 		}
 		else
 		{
 			// either no objects in the way, or no wmo height
-			posZ = p_caster->GetCHeightForPosition(true, posX, posY, m_caster->GetPositionZ());
-			if( fabs(posZ - m_caster->GetPositionZ()) >= 10.0f )
-				return;
+			posZ = p_caster->GetCHeightForPosition(true, posX, posY);
+			float diff = fabs(fabs(posZ) - fabs(m_caster->GetPositionZ()));
+			if( diff <= 10.0f)
+			{
+				p_caster->blinked = true;
+				p_caster->blinktimer = getMSTime()+5000;
+				p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
 
-			p_caster->blinked = true;
-			p_caster->blinktimer = getMSTime()+5000;
-			p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
-
-			// reset heartbeat for a little while, 5 seconds maybe?
-			p_caster->DelaySpeedHack( 5000 );
-			++p_caster->m_heartbeatDisable;
-			p_caster->z_axisposition = 0.0f;
+				// reset heartbeat for a little while, 5 seconds maybe?
+				p_caster->DelaySpeedHack( 5000 );
+				++p_caster->m_heartbeatDisable;
+				p_caster->z_axisposition = 0.0f;
+			}
 		}
-	}
-	else
-	{
-		p_caster->blinked = true;
 
-		WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
-		data << u_caster->GetNewGUID();
-		data << getMSTime();
-		data << cosf(u_caster->GetOrientation()) << sinf(u_caster->GetOrientation());
-		data << radius;
-		data << float(-10.0f);
-		p_caster->GetSession()->SendPacket(&data);
-		//m_caster->SendMessageToSet(&data, true);
-
-		// reset heartbeat for a little while, 2 seconds maybe?
-		p_caster->DelaySpeedHack( 10000 );
-		++p_caster->m_heartbeatDisable;
-		p_caster->z_axisposition = 0.0f;
+		if(p_caster->blinked)
+			return;
 	}
+
+	p_caster->blinked = true;
+
+	WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
+	data << u_caster->GetNewGUID();
+	data << getMSTime();
+	data << cosf(u_caster->GetOrientation()) << sinf(u_caster->GetOrientation());
+	data << radius;
+	data << float(-10.0f);
+	p_caster->GetSession()->SendPacket(&data);
+
+	// reset heartbeat for a little while, 2 seconds maybe?
+	p_caster->DelaySpeedHack( 10000 );
+	++p_caster->m_heartbeatDisable;
+	p_caster->z_axisposition = 0.0f;
 }
 
 void Spell::SpellEffectEnergize(uint32 i) // Energize

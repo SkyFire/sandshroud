@@ -6836,10 +6836,11 @@ void Aura::SpellAuraMounted(bool apply)
 				vehicle->PushToWorld(map);
 
 				vehicle->AddPassenger(m_target, 0, true); // Always add to first slot
+
 				WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
 				data << m_target->GetNewGUID();
 				data << cp->vehicle_entry;
-				m_target->SendMessageToSet(&data, true);			
+				m_target->SendMessageToSet(&data, true);
 			}
 		}
 	}

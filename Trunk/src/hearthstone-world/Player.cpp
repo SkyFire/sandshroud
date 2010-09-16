@@ -12982,6 +12982,9 @@ void Player::DeleteEquipmentSet(uint64 setGuid)
 void Player::_SaveEquipmentSets(QueryBuffer* buff)
 {
 	m_lock.Acquire();
+	if(!m_EquipmentSets.size())
+		return;
+
 	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 	{
 		EquipmentSet& eqset = itr->second;
