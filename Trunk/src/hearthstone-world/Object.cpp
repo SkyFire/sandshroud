@@ -138,40 +138,63 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		y = GetPositionY();
 	}
 
-	float mapheight = mgr->GetLandHeight(x, y);
+	float cmapheight = mgr->GetLandHeight(x, y);
 	if(!mgr->CanUseCollision(this))
-		return mapheight;
+		return cmapheight;
 
 	if(z == 0.0f)
-		z = mapheight;
+		z = cmapheight;
 
 	float phx = 0.0f;
 	float phy = 0.0f;
-	float collidemapheight = 0.0f;
-	float vmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
-	CollideInterface.GetFirstPoint(GetMapId(), x, y, NO_WMO_HEIGHT, x, y, WMO_MAX_HEIGHT, phx, phy, collidemapheight, 0.0f);
+	float ccollidemapheight = 0.0f;
+	float cvmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
+	CollideInterface.GetFirstPoint(GetMapId(), x, y, NO_WMO_HEIGHT, x, y, WMO_MAX_HEIGHT, phx, phy, ccollidemapheight, 0.0f);
 
 	if(IS_INSTANCE(mgr->GetMapId()))
 	{
-		if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z-100.0f, x, y, z+100.0f, phx, phy, collidemapheight, 0.0f))
-			return collidemapheight; // Suprisingly works!
-		else
-			return vmapheight;
+		if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z-100.0f, x, y, z+100.0f, phx, phy, ccollidemapheight, 0.0f))
+			return ccollidemapheight; // Suprisingly works!
+
+		return cvmapheight;
 	}
 
-
 	// Crow: WE SHOULD GET HIGHEST REASONABLE VALUE BASED ON Z AND THE CALCULATIONS BELOW
-
 	// For now return the lowest reasonable one!
-	if(collidemapheight != NO_WMO_HEIGHT)
-		if(collidemapheight < vmapheight && collidemapheight+3.0f > vmapheight || collidemapheight < mapheight && collidemapheight+3.0f > mapheight)
-			return collidemapheight + ((z-1.0f > collidemapheight) ? 1.0f : 0.21563f);
+	if(ccollidemapheight != NO_WMO_HEIGHT)
+	{
+		if(checkwater == true)
+		{
+			float wz = mgr->GetWaterHeight(x, y);
+			if(wz > ccollidemapheight && !(wz > (WMO_MAX_HEIGHT/2)))
+				ccollidemapheight = wz;
+		}
 
-	if(vmapheight != NO_WMO_HEIGHT)
-		if(vmapheight < collidemapheight && vmapheight+3.0f > collidemapheight || vmapheight < mapheight && vmapheight+3.0f > mapheight)
-			return vmapheight + ((z-1.0f > vmapheight) ? 1.0f : 0.21563f);
+		if(ccollidemapheight < cvmapheight && ccollidemapheight+3.0f > cvmapheight || ccollidemapheight < cmapheight && ccollidemapheight+3.0f > cmapheight)
+			return ccollidemapheight + ((z-1.0f > ccollidemapheight) ? 1.0f : 0.21563f);
+	}
 
-	return mapheight + ((z-1.0f > mapheight) ? 1.0f : 0.21563f);
+	if(cvmapheight != NO_WMO_HEIGHT)
+	{
+		if(checkwater == true)
+		{
+			float wz = mgr->GetWaterHeight(x, y);
+			if(wz > cvmapheight && !(wz > (WMO_MAX_HEIGHT/2)))
+				cvmapheight = wz;
+		}
+
+		if(cvmapheight < ccollidemapheight && cvmapheight+3.0f > ccollidemapheight || cvmapheight < cmapheight && cvmapheight+3.0f > cmapheight)
+			return cvmapheight + ((z-1.0f > cvmapheight) ? 1.0f : 0.21563f);
+	}
+
+	if(checkwater == true)
+	{
+		float wz = mgr->GetWaterHeight(x, y);
+		if(wz > cmapheight && !(wz > (WMO_MAX_HEIGHT/2)))
+			cmapheight = wz;
+	}
+
+	return cmapheight + ((z-1.0f > cmapheight) ? 1.0f : 0.21563f);
 
 /*
 	float offset = 10.0f;
