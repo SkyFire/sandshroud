@@ -67,6 +67,7 @@ void oLog::outTime()
 {
 #ifndef WIN32
 	char buf[256];
+	FILE * m_file = fopen ("log","a");    //Assuming this is what you were trying to do??
 	time_t t = time(NULL);
 	struct tm *tm = localtime(&t);
 

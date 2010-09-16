@@ -180,10 +180,6 @@ hearthstone_world_SOURCES = \
     WayPoints.cpp \
     WeatherMgr.cpp \
     WeatherMgr.h \
-    Wintergrasp.cpp \
-    Wintergrasp.h \
-    WintergraspInternal.cpp \
-    WintergraspInternal.h \
     World.cpp \
     World.h \
     WorldCreator.cpp \
@@ -202,6 +198,10 @@ hearthstone_world_SOURCES = \
     Main.cpp \
     Master.cpp \
     Master.h \
+    Wintergrasp.cpp \
+    Wintergrasp.h \
+    WintergraspInternal.cpp \
+    WintergraspInternal.h \
     CConsole.cpp \
     CConsole.h \
     BaseConsole.h \

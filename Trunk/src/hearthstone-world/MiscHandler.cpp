@@ -816,7 +816,7 @@ void WorldSession::HandleBugOpcode( WorldPacket & recv_data )
 	OUT_DEBUG( content.c_str( ) );
 }
 
-void WorldSession::HandleCorpseReclaimOpcode(WorldPacket &recv_data)
+void WorldSession::HandleCorpseReclaimOpcode(WorldPacket& recv_data)
 {
 	if(_player->isAlive())
 		return;
@@ -912,7 +912,7 @@ void WorldSession::HandleResurrectResponseOpcode(WorldPacket & recv_data)
 	
 }
 
-void WorldSession::HandleUpdateAccountData(WorldPacket &recv_data)
+void WorldSession::HandleUpdateAccountData(WorldPacket& recv_data)
 {
 	//OUT_DEBUG("WORLD: Received CMSG_UPDATE_ACCOUNT_DATA");
 	if(!sWorld.m_useAccountData)
@@ -1628,7 +1628,7 @@ void WorldSession::HandleSelfResurrectOpcode(WorldPacket& recv_data)
 	}
 }
 
-void WorldSession::HandleRandomRollOpcode(WorldPacket &recv_data)
+void WorldSession::HandleRandomRollOpcode(WorldPacket& recv_data)
 {
 	uint32 min, max;
 	recv_data >> min >> max;
@@ -1876,7 +1876,7 @@ void WorldSession::HandleLootRollOpcode(WorldPacket& recv_data)
 	li->PlayerRolled(_player->getPlayerInfo(), choice);
 }
 
-void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)
+void WorldSession::HandleOpenItemOpcode(WorldPacket& recv_data)
 {
 	CHECK_INWORLD_RETURN;
 	CHECK_PACKET_SIZE(recv_data, 2);
@@ -1967,7 +1967,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)
 	_player->SendLoot(pItem->GetGUID(), _player->GetMapId(), LOOT_DISENCHANTING);
 }
 
-void WorldSession::HandleCompleteCinematic(WorldPacket &recv_data)
+void WorldSession::HandleCompleteCinematic(WorldPacket& recv_data)
 {
 	// when a Cinematic is started the player is going to sit down, when its finished its standing up.
 	_player->SetStandState(STANDSTATE_STAND);
@@ -2000,7 +2000,7 @@ void DecodeHex(const char* source, char* dest, uint32 size)
 	}
 }
 
-void WorldSession::HandleToggleCloakOpcode(WorldPacket &recv_data)
+void WorldSession::HandleToggleCloakOpcode(WorldPacket& recv_data)
 {
 	CHECK_INWORLD_RETURN;
 	//////////////////////////
@@ -2016,7 +2016,7 @@ void WorldSession::HandleToggleCloakOpcode(WorldPacket &recv_data)
 		_player->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_NOCLOAK);
 }
 
-void WorldSession::HandleToggleHelmOpcode(WorldPacket &recv_data)
+void WorldSession::HandleToggleHelmOpcode(WorldPacket& recv_data)
 {
 	CHECK_INWORLD_RETURN;
 	//////////////////////////
@@ -2210,7 +2210,7 @@ void WorldSession::HandleWorldStateUITimerUpdate(WorldPacket& recv_data)
 	SendPacket(&data);
 }
 
-void WorldSession::HandleReadyForAccountDataTimes(WorldPacket &recv_data)
+void WorldSession::HandleReadyForAccountDataTimes(WorldPacket& recv_data)
 {
 	DEBUG_LOG( "WORLD","Received CMSG_READY_FOR_ACCOUNT_DATA_TIMES" );
 
@@ -2228,7 +2228,7 @@ void WorldSession::HandleReadyForAccountDataTimes(WorldPacket &recv_data)
 
 }
 
-void WorldSession::HandleFarsightOpcode(WorldPacket &recv_data)
+void WorldSession::HandleFarsightOpcode(WorldPacket& recv_data)
 {
 	uint8 type;
 	recv_data >> type;
@@ -2281,7 +2281,7 @@ void WorldSession::HandleTalentWipeConfirmOpcode( WorldPacket& recv_data )
 	return;
 }
 
-void WorldSession::HandleCalendarGetCalendar(WorldPacket &recv_data)
+void WorldSession::HandleCalendarGetCalendar(WorldPacket& recv_data)
 {
 	time_t cur_time = time(NULL);
 
@@ -2304,22 +2304,22 @@ void WorldSession::HandleCalendarGetCalendar(WorldPacket &recv_data)
 	SendPacket(&data);
 }
 
-void WorldSession::HandleCalendarGetEvent(WorldPacket &recv_data)
+void WorldSession::HandleCalendarGetEvent(WorldPacket& recv_data)
 {
 
 }
 
-void WorldSession::HandleCalendarGuildFilter(WorldPacket &recv_data)
+void WorldSession::HandleCalendarGuildFilter(WorldPacket& recv_data)
 {
 
 }
 
-void WorldSession::HandleCalendarArenaTeam(WorldPacket &recv_data)
+void WorldSession::HandleCalendarArenaTeam(WorldPacket& recv_data)
 {
 
 }
 
-void WorldSession::HandleCalendarAddEvent(WorldPacket &recv_data)
+void WorldSession::HandleCalendarAddEvent(WorldPacket& recv_data)
 {
 	SKIP_READ_PACKET(recv_data);	// set to end to avoid warnings spam
 
@@ -2353,7 +2353,7 @@ void WorldSession::HandleCalendarAddEvent(WorldPacket &recv_data)
 	}
 }
 
-void WorldSession::HandleCalendarUpdateEvent(WorldPacket &recv_data)
+void WorldSession::HandleCalendarUpdateEvent(WorldPacket& recv_data)
 {
 	SKIP_READ_PACKET(recv_data);
 
@@ -2370,7 +2370,7 @@ void WorldSession::HandleCalendarUpdateEvent(WorldPacket &recv_data)
 	//recv_data >> uint32
 }
 
-void WorldSession::HandleCalendarRemoveEvent(WorldPacket &recv_data)
+void WorldSession::HandleCalendarRemoveEvent(WorldPacket& recv_data)
 {
 	SKIP_READ_PACKET(recv_data);
 
@@ -2380,7 +2380,7 @@ void WorldSession::HandleCalendarRemoveEvent(WorldPacket &recv_data)
 
 }
 
-void WorldSession::HandleCalendarCopyEvent(WorldPacket &recv_data)
+void WorldSession::HandleCalendarCopyEvent(WorldPacket& recv_data)
 {
 	SKIP_READ_PACKET(recv_data);
 
@@ -2390,7 +2390,7 @@ void WorldSession::HandleCalendarCopyEvent(WorldPacket &recv_data)
 
 }
 
-void WorldSession::HandleCalendarEventInvite(WorldPacket &recv_data)
+void WorldSession::HandleCalendarEventInvite(WorldPacket& recv_data)
 {
 	recv_data.hexlike();
 	SKIP_READ_PACKET(recv_data);
@@ -2403,7 +2403,7 @@ void WorldSession::HandleCalendarEventInvite(WorldPacket &recv_data)
 
 }
 
-void WorldSession::HandleCalendarEventRsvp(WorldPacket &recv_data)
+void WorldSession::HandleCalendarEventRsvp(WorldPacket& recv_data)
 {
 	recv_data.hexlike();
 	SKIP_READ_PACKET(recv_data);
@@ -2414,7 +2414,7 @@ void WorldSession::HandleCalendarEventRsvp(WorldPacket &recv_data)
 
 }
 
-void WorldSession::HandleCalendarEventRemoveInvite(WorldPacket &recv_data)
+void WorldSession::HandleCalendarEventRemoveInvite(WorldPacket& recv_data)
 {
 	recv_data.hexlike();
 	SKIP_READ_PACKET(recv_data);
@@ -2425,19 +2425,7 @@ void WorldSession::HandleCalendarEventRemoveInvite(WorldPacket &recv_data)
 	//recv_data >> uint64
 }
 
-void WorldSession::HandleCalendarEventStatus(WorldPacket &recv_data)
-{
-	recv_data.hexlike();
-	SKIP_READ_PACKET(recv_data);
-
-	//recv_data >> wowguid(guid);
-	//recv_data >> uint64
-	//recv_data >> uint64
-	//recv_data >> uint64
-	//recv_data >> uint32
-}
-
-void WorldSession::HandleCalendarEventModeratorStatus(WorldPacket &recv_data)
+void WorldSession::HandleCalendarEventStatus(WorldPacket& recv_data)
 {
 	recv_data.hexlike();
 	SKIP_READ_PACKET(recv_data);
@@ -2449,7 +2437,19 @@ void WorldSession::HandleCalendarEventModeratorStatus(WorldPacket &recv_data)
 	//recv_data >> uint32
 }
 
-void WorldSession::HandleCalendarComplain(WorldPacket &recv_data)
+void WorldSession::HandleCalendarEventModeratorStatus(WorldPacket& recv_data)
+{
+	recv_data.hexlike();
+	SKIP_READ_PACKET(recv_data);
+
+	//recv_data >> wowguid(guid);
+	//recv_data >> uint64
+	//recv_data >> uint64
+	//recv_data >> uint64
+	//recv_data >> uint32
+}
+
+void WorldSession::HandleCalendarComplain(WorldPacket& recv_data)
 {
 	recv_data.hexlike();
 	SKIP_READ_PACKET(recv_data);
