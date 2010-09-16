@@ -131,7 +131,6 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		return 0.0f;
 
 	MapMgr* mgr = GetMapMgr();
-
 	if(x == 0.0f && y == 0.0f)
 	{
 		x = GetPositionX();

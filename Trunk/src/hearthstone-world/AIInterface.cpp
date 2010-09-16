@@ -346,9 +346,10 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 				if( cr!= NULL && m_Unit->GetMapMgr() )
 					m_Unit->GetMapMgr()->RemoveCombatInProgress(m_Unit->GetGUID());
 			}break;
-// 		case EVENT_DAMAGETAKEN:
+ 		case EVENT_DAMAGETAKEN:
 			{
-				if( pUnit == NULL ) return;
+				if( pUnit == NULL )
+					return;
 
 				if( cr!= NULL && cr->has_combat_text )
 					objmgr.HandleMonsterSayEvent( TO_CREATURE( m_Unit ), MONSTER_SAY_EVENT_ON_DAMAGE_TAKEN );
