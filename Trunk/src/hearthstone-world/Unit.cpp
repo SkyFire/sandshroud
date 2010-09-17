@@ -42,7 +42,7 @@ Unit::Unit()
 	m_meleespell = 0;
 	m_meleespell_cn = 0;
 	m_addDmgOnce = 0;
-	
+
 	m_silenced = 0;
 	disarmed = false;
 	disarmedShield = false;
@@ -752,64 +752,53 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 						case 13001:	{talentlevel = 3;}break;
 						case 13002:	{talentlevel = 4;}break;
 					}
+
 					if(CastingSpell)
 					{
-					switch( spellId )
-					{
+						switch( spellId )
+						{
 						case 32592:
 						case 39897:
-						{
-							if( CastingSpell->NameHash != SPELL_HASH_MASS_DISPEL )
-								continue;
-
-						}break;
-						// Blade Barrier
-						case 51789:
-						{
-							if( !IsPlayer() )
-								continue;
-
-							SpellEntry * sp = dbcSpell.LookupEntryForced( CastingSpell->Id );
-							SpellRuneCostEntry * sr = dbcSpellRuneCost.LookupEntryForced( sp->runeCostID );
-							if( !sr || sr->bloodRuneCost == 0 ) // not costing blood.
-								continue;
-
-							if( TO_PLAYER(this)->m_runes[0] == RUNE_TYPE_BLOOD || TO_PLAYER(this)->m_runes[1] == RUNE_TYPE_BLOOD )
-								continue; // oh snap, still have blood runes, this doesn't count.
-
-						}break;
+							{
+								if( CastingSpell->NameHash != SPELL_HASH_MASS_DISPEL )
+									continue;
+							}break;
 
 						case 14189: //Seal Fate
 						case 16953: //Blood Frenzy
-						{
-							if( !IsPlayer() ||  
-								CastingSpell->Id == 14189 ||
-								CastingSpell->Id == 16953 )
-								continue;
+							{
+								if( !IsPlayer() ||  
+									CastingSpell->Id == 14189 ||
+									CastingSpell->Id == 16953 )
+									continue;
 
-							if( CastingSpell->Effect[0] != 80 &&
-								CastingSpell->Effect[1] != 80 &&
-								CastingSpell->Effect[2] != 80 &&
-								CastingSpell->NameHash != SPELL_HASH_MANGLE__CAT_ )
-								continue;
-						}break;
+								if( CastingSpell->Effect[0] != 80 &&
+									CastingSpell->Effect[1] != 80 &&
+									CastingSpell->Effect[2] != 80 &&
+									CastingSpell->NameHash != SPELL_HASH_MANGLE__CAT_ )
+									continue;
+							}break;
+
 						case 17106: //druid intencity
-						{
-							if( CastingSpell->Id != 5229 )//enrage
-								continue;
-						}break;
-						//Druid Eclipse
+							{
+								if( CastingSpell->Id != 5229 )//enrage
+									continue;
+							}break;
+
+							//Druid Eclipse
 						case 48518:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_WRATH )
 									continue;
 							}break;
+
 						case 48517:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_STARFIRE )
 									continue;
 							}break;
-						// Infected Wounds
+
+							// Infected Wounds
 						case 58179:
 						case 58180:
 						case 58181:
@@ -820,172 +809,48 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_MANGLE__BEAR_ )
 									continue;
 							}break;
-						// Focus Magic
-						case 54648:
-							{
-								Aura* aur = FindAura(54646);
-								if( aur )
-								{
-									Unit* cstr = aur->GetUnitCaster();
-									if( cstr )
-										victim = cstr;
-								}
-							}break;
-						case 31616: // Nature's Guardian
-						{
-							if(GetHealthPct() > 30)
-								continue;
-							//heal value depends on the rank of parent spell
-							//maybe we should use CalculateEffect(uint32 i) to gain SM benefits
-							int32 value = 0;
-							int32 basePoints = ospinfo->EffectBasePoints[0]+1;//+(getLevel()*basePointsPerLevel);
-							int32 randomPoints = ospinfo->EffectDieSides[0];
-							if(randomPoints <= 1)
-								value = basePoints;
-							else
-								value = basePoints + rand() % randomPoints;
-							dmg_overwrite = GetUInt32Value(UNIT_FIELD_MAXHEALTH) * value / 100;
-						}break;
-						case 45058: // Commendation of Kael'thas
-						{
-							if(GetHealthPct() >= 35)
-								continue;
-						}break;
-						case 37309:
-						{
-							if( !IsPlayer() )
-								continue;
-							if( TO_PLAYER(this)->GetShapeShift() != FORM_BEAR ||
-								TO_PLAYER(this)->GetShapeShift() != FORM_DIREBEAR )
-								continue;
-						}break;
-						case 37310:
-						{
-							if( !IsPlayer() || TO_PLAYER(this)->GetShapeShift() != FORM_CAT )
-								continue;
-						}break;
 
 						case 34754: //holy concentration
-						{
-							if( CastingSpell->NameHash != SPELL_HASH_FLASH_HEAL &&
-								CastingSpell->NameHash != SPELL_HASH_BINDING_HEAL &&
-								CastingSpell->NameHash != SPELL_HASH_GREATER_HEAL )
-								continue;
-						}break;
-						case 5530:
-						{
-							//warrior/rogue mace specialization can trigger only when using maces
-							Item* it;
-							if( TO_PLAYER(this)->GetItemInterface() )
 							{
-								it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
-								if( it != NULL && it->GetProto() )
-								{
-									uint32 reqskill = GetSkillByProto( it->GetProto()->Class, it->GetProto()->SubClass );
-									if( reqskill != SKILL_MACES && reqskill != SKILL_2H_MACES )
-										continue;
-								}
-								else
-									continue; //no weapon no joy
-							}
-							else
-								continue; //no weapon no joy
-							//let's recalc chance to cast since we have a full 100 all time on this one
-							//how lame to get talentpointlevel for this spell :(
-							//float chance=it->GetProto()->Delay*100*talentlevel/60000;
-						}break;
-						case 57319:
-						{
-							switch( victim->GetPowerType() )
-							{
-								case POWER_TYPE_RAGE: spellId = 57320; break;
-								case POWER_TYPE_RUNIC: spellId = 57321; break;
-							}
-						}break;
-						case 16459:
-						case 4350:
-						{
-							//sword specialization
-							if( TO_PLAYER(this)->GetItemInterface())
-							{
-								Item* it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
-								if( it != NULL && it->GetProto() )
-								{
-									uint32 reqskill=GetSkillByProto( it->GetProto()->Class, it->GetProto()->SubClass );
-									if( reqskill != SKILL_SWORDS && reqskill != SKILL_2H_SWORDS )
-										continue;
-								}
-								else
-									continue; //no weapon no joy
-							}
-							else
-								continue; //no weapon no joy
-						}break;
-						case 12721:
-						{
-							//deep wound requires a melee weapon
-							Item* it;
-							if( TO_PLAYER(this)->GetItemInterface())
-							{
-								it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
-								if( it != NULL && it->GetProto() )
-								{
-									//class 2 means weapons ;)
-									if( it->GetProto()->Class != ITEM_CLASS_WEAPON )
-										continue;
-								}
-								else continue; //no weapon no joy
-							}
-							else continue; //no weapon no joy
-						}break;
-						//warrior - Blood Frenzy
+								if( CastingSpell->NameHash != SPELL_HASH_FLASH_HEAL &&
+									CastingSpell->NameHash != SPELL_HASH_BINDING_HEAL &&
+									CastingSpell->NameHash != SPELL_HASH_GREATER_HEAL )
+									continue;
+							}break;
+
+							//warrior - Blood Frenzy
 						case 30069:
 						case 30070:
-						{
-								if( CastingSpell->NameHash != SPELL_HASH_REND && 
-									CastingSpell->NameHash != SPELL_HASH_DEEP_WOUNDS )
-									continue;
-						}break;
-						//warrior - Unbridled Wrath
-						case 12964:
-						{
-							//let's recalc chance to cast since we have a full 100 all time on this one
-							Item* it;
-							if( TO_PLAYER(this)->GetItemInterface() )
 							{
-								it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
-								if( !( it != NULL && it->GetProto() ) )
-									continue; //no weapon no joy
-							}
-							else
-								continue; //no weapon no joy
-							//float chance=float(it->GetProto()->Delay)*float(talentlevel)/600.0f;
-							float chance = float( it->GetProto()->Delay ) * float(talentlevel ) / 300.0f; //zack this had a very low proc rate. Kinda liek a waisted talent
-							uint32 myroll = RandomUInt( 100 );
-							if( myroll > chance )
-								continue;
-						}break;
-						// Sword and Board
+									if( CastingSpell->NameHash != SPELL_HASH_REND && 
+										CastingSpell->NameHash != SPELL_HASH_DEEP_WOUNDS )
+										continue;
+							}break;
+
+							// Sword and Board
 						case 50227:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_DEVASTATE &&
 									CastingSpell->NameHash != SPELL_HASH_REVENGE )
 									continue;
 							}break;
-						// Improved Revenge / Glyph of Revenge
+
+							// Improved Revenge / Glyph of Revenge
 						case 12798:
 						case 58363:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_REVENGE )
 									continue;
 							}break;
-						// Mage ignite talent only for fire dmg
+
+							// Mage ignite talent only for fire dmg
 						case 12654:
-						{
-							if( CastingSpell->School != SCHOOL_FIRE )
-								continue;
-						}break;
-						//rogue - blade twisting
+							{
+								if( CastingSpell->School != SCHOOL_FIRE )
+									continue;
+							}break;
+
+							//rogue - blade twisting
 						case 31125:
 							{
 								//only trigger effect for specified spells
@@ -995,7 +860,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_GOUGE ) //gouge
 									continue;
 							}break;
-						//warlock - Improved Shadow Bolt
+
+							//warlock - Improved Shadow Bolt
 						case 17794:
 						case 17798:
 						case 17797:
@@ -1003,10 +869,11 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 						case 17800:
 							{
 								//only trigger effect for specified spells
-								if( CastingSpell->NameHash!=SPELL_HASH_SHADOW_BOLT)//shadow bolt								
+								if( CastingSpell->NameHash!=SPELL_HASH_SHADOW_BOLT)//shadow bolt
 									continue;
 							}break;
-						// warlock - Improved Drain Soul
+
+							// warlock - Improved Drain Soul
 						case 18371:
 							{
 								if( !IsPlayer() )
@@ -1015,9 +882,11 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if(!plr->m_currentSpell || !plr->m_currentSpell->GetSpellProto() || 
 									plr->m_currentSpell->GetSpellProto()->NameHash != SPELL_HASH_DRAIN_SOUL)
 										continue;
+
 								dmg_overwrite = ( ospinfo->EffectBasePoints[2] + 1 ) * GetUInt32Value( UNIT_FIELD_MAXPOWER1 ) / 100;
 							}break;
-						// warlock - Unstable Affliction
+
+							// warlock - Unstable Affliction
 						case 31117:
 							{
 								//null check was made before like 2 times already :P
@@ -1028,7 +897,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									dmg_overwrite += cstr->GetDamageDoneMod(SCHOOL_SHADOW) * 1.8;
 								}
 							}break;
-						//warlock soul link
+
+							//warlock soul link
 						case 25228:
 							{
 								//we need a pet for this, else we do not trigger it at all
@@ -1052,7 +922,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								}
 								continue;
 							}break;
-						//warlock - Nightfall
+
+							//warlock - Nightfall
 						case 17941:
 							{
 								//only trigger effect for specified spells
@@ -1060,6 +931,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_DRAIN_LIFE )//Drain Life								
 									continue;
 							}break;
+
 						case 32386://Shadow Embrace
 						case 32388:
 						case 32389:
@@ -1068,26 +940,31 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_SHADOW_BOLT &&
 									CastingSpell->NameHash != SPELL_HASH_HAUNT )
-									continue; 
+									continue;
 							}break;
-						//warlock - Aftermath
+
+							//warlock - Aftermath
 						case 18118:
 							{
 								//only trigger effect for specified spells
 								skilllinespell* skillability = objmgr.GetSpellSkill(CastingSpell->Id);
 								if( !skillability )
 									continue;
+
 								if( skillability->skilline != SKILL_DESTRUCTION )
 									continue;
 							}break;
-						//warlock - Soul Leech
+
+							//warlock - Soul Leech
 						case 30294:
 							{
 								if( dmg == (uint32) -1 )
 									continue;
+
 								dmg_overwrite = (ospinfo->EffectBasePoints[0]+1) * dmg / 100;
 							}break;
-						//warlock - pyroclasm
+
+							//warlock - pyroclasm
 						case 18093:
 							{
 								//only trigger effect for specified spells
@@ -1096,73 +973,60 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_SOUL_FIRE ) //Soul Fire
 									continue;
 							}break;
-						//mage - Improved Scorch
+
+							//mage - Improved Scorch
 						case 22959:
 							{
 								//only trigger effect for specified spells
 								if( CastingSpell->NameHash != SPELL_HASH_SCORCH ) //Scorch
 									continue;
 							}break;
-						//mage - Combustion
+
+							//mage - Combustion
 						case 28682:
 							{
 								//only trigger effect for specified spells
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING)
 									|| CastingSpell->School != SCHOOL_FIRE )
 									continue;
+
 								if( flag2 & PROC_ON_SPELL_CRIT_HIT )
 								{
 									itr2->procCharges++;
 									if( itr2->procCharges >= 3 ) //whatch that number cause it depends on original stack count !
 									{
 										RemoveAllAuraByNameHash( SPELL_HASH_COMBUSTION );
-									}
-									continue;
+									}continue;
 								}
 							}break;
-						//priest - Shadow Weaving
+
+							//priest - Shadow Weaving
 						case 15258:
 							{
-								if( CastingSpell->School != SCHOOL_SHADOW || !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) ) //we need damaging spells for this, so we suppose all shadow spells casted on target are dmging spells = Wrong
+								//we need damaging spells for this, so we suppose all shadow spells casted on target are dmging spells = Wrong
+								if( CastingSpell->School != SCHOOL_SHADOW || !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 									continue;
 							}break;
-						//priest - Inspiration
+
+							//priest - Inspiration
 						case 15359:
 						case 14893:
 						case 15357:
 							{
 								if(!( CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING ) )
 									continue;
-							}
-							break;
-						//priest - Blessed Recovery
-						case 27813:
-						case 27817:
-						case 27818:
-							{
-								if(!IsPlayer() || !dmg)
-									continue;
-								SpellEntry *parentproc= dbcSpell.LookupEntry(origId);
-								SpellEntry *spellInfo = dbcSpell.LookupEntry(spellId);
-								if (!parentproc || !spellInfo)
-									continue;
-								int32 val = parentproc->EffectBasePoints[0] + 1;
-								Spell* spell(new Spell(TO_UNIT(this), spellInfo ,true, NULLAURA));
-								spell->forced_basepoints[0] = (val*dmg)/300; //per tick
-								SpellCastTargets targets;
-								targets.m_unitTarget = GetGUID();
-								spell->prepare(&targets);
-								continue;
 							}break;
-						//Druid Living Seed
+
+							//Druid Living Seed
 						case 48504:
 							{
 								if ( CastingSpell->NameHash != SPELL_HASH_SWIFTMEND &&
-									 CastingSpell->NameHash != SPELL_HASH_REGROWTH &&
-									 CastingSpell->NameHash != SPELL_HASH_HEALING_TOUCH &&
-									 CastingSpell->NameHash != SPELL_HASH_NOURISH )
+									CastingSpell->NameHash != SPELL_HASH_REGROWTH &&
+									CastingSpell->NameHash != SPELL_HASH_HEALING_TOUCH &&
+									CastingSpell->NameHash != SPELL_HASH_NOURISH )
 									continue;
 							}break;
+
 						case 974:
 						case 32593:
 						case 32594:
@@ -1175,6 +1039,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								{
 									caster = objmgr.GetPlayer(GUID_LOPART(itr2->caster));
 								}
+
 								if(!caster)
 									caster = TO_UNIT(this);
 
@@ -1182,17 +1047,19 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								Spell* spell(new Spell(TO_UNIT(this), spellInfo, true, NULLAURA));
 								spell->forced_basepoints[0] = itr2->procValue;
 								spell->ProcedOnSpell = CastingSpell;
-								spell->pSpellId=origId;
+								spell->pSpellId = origId;
 								spell->prepare(&targets);
 								continue;
 							}break;
-						//shaman - Healing Way
+
+							//shaman - Healing Way
 						case 29203:
 							{
 								//only trigger effect for specified spells
 								if( CastingSpell->NameHash != SPELL_HASH_HEALING_WAVE ) //healing wave
 									continue;
 							}break;
+
 						case 16180:
 						case 16196:
 						case 16198: // Improved Water Shield
@@ -1200,23 +1067,28 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								// Proc for Lesser Healing Wave is 60% of base one
 								if((CastingSpell->NameHash == SPELL_HASH_LESSER_HEALING_WAVE && Rand(40)))
 									continue;
+
 								Aura* shield = FindPositiveAuraByNameHash(SPELL_HASH_WATER_SHIELD);
 								if(!shield)
 									continue;
+
 								spellId = shield->m_spellProto->EffectTriggerSpell[0];
 								shield->ModProcCharges(-1);
 							}break;
+
 						case 51525:
 						case 51526:
 						case 51527:	// Static Shock
 							{
 								Aura* shield = FindPositiveAuraByNameHash(SPELL_HASH_LIGHTNING_SHIELD);
-								if(!shield)
+								if(shield == NULL)
 									continue;
+
 								spellId = shield->m_spellProto->EffectTriggerSpell[0];
 								shield->ModProcCharges(-1);
 							}break;
-						//shaman - Elemental Devastation
+
+							//shaman - Elemental Devastation
 						case 29177:
 						case 29178:
 						case 30165:
@@ -1225,18 +1097,26 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if( !(CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING)) //healing wave
 									continue;
 							}break;
-						//shaman - windfury weapon
+
+							//shaman - windfury weapon
 						case 25504:
 							{
 								if(!IsPlayer() || weapon_damage_type < 1 || weapon_damage_type > 2)
 									continue;
+
 								Item* mh = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND + weapon_damage_type -1);
-								if(!mh) continue;
+								if(mh == NULL)
+									continue;
+
 								uint32 apBonus = 46; // use rank 1 bonus as default
 								EnchantmentInstance * ei = mh->GetEnchantment(1);
-								if(!ei) continue;
+								if(ei == NULL)
+									continue;
+
 								EnchantEntry * e = ei->Enchantment;
-								if(!e) continue;
+								if(e == NULL)
+									continue;
+
 								switch(e->Id)
 								{
 								case 284: apBonus = 119; break;
@@ -1246,17 +1126,20 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								case 3785: apBonus = 835; break;
 								case 3786: apBonus = 1090; break;
 								case 3787: apBonus = 1250; break;
-								}	
+								}
+
 								float mhs = float( mh->GetProto()->Delay );
 								// Calculate extra AP bonus damage
 								uint32 extra_dmg=float2int32(mhs * apBonus / 14000.0f);
 								if(weapon_damage_type == 2)	// offhand gets 50% bonus
 									extra_dmg /= 2;
+
 								Strike( victim, weapon_damage_type-1, spe, extra_dmg, 0, 0, false, false );
 								Strike( victim, weapon_damage_type-1, spe, extra_dmg, 0, 0, false, false );
 								spellId = 33010; // WF animation
 							}break;
-						// Ancestral Fortitude
+
+							// Ancestral Fortitude
 						case 16237:
 						case 16177:
 						case 16236:
@@ -1264,7 +1147,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if(!( CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING ))
 									continue;
 							}break;
-						// Flametongue Weapon
+
+							// Flametongue Weapon
 						case 8026:
 						case 8028:
 						case 8029:
@@ -1278,22 +1162,21 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							{
 								if(!IsPlayer() || weapon_damage_type < 1 || weapon_damage_type > 2)
 									continue;
+
 								spellId = 10444;	// Flametongue Weapon proc
 								Item* mh = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND + weapon_damage_type - 1 );
 
-								if( mh != NULL)
-								{
-									float mhs = float( mh->GetProto()->Delay );
-									dmg_overwrite = FL2UINT( mhs * 0.001f * (spe->EffectBasePoints[0] + 1)/88 );
-								}
-								else
+								if( mh == NULL)
 									continue;
+
+								float mhs = float( mh->GetProto()->Delay );
+								dmg_overwrite = FL2UINT( mhs * 0.001f * (spe->EffectBasePoints[0] + 1)/88 );
 							}break;
 
-						//rogue - Ruthlessness
+							//rogue - Ruthlessness
 						case 14157:
 							{
-								//we need a finishing move for this 
+								//we need a finishing move for this
 								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_FINISHING_MOVE) || victim == TO_UNIT(this))
 									continue;
 
@@ -1303,7 +1186,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									//TO_PLAYER(this)->UpdateComboPoints();
 								}
 							}break;
-						//rogue - Relentless Strikes
+
+							//rogue - Relentless Strikes
 						case 14181:
 							{
 								if(!IsPlayer() || TO_UNIT(this) != victim)	// to prevent it proccing 2 times
@@ -1316,7 +1200,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if(!Rand(procChance))
 									continue;
 							}break;
-						//rogue - Find Weakness
+
+							//rogue - Find Weakness
 						case 31234:
 						case 31235:
 						case 31236:
@@ -1326,7 +1211,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_FINISHING_MOVE))
 									continue;
 							}break;
-						//rogue - Initiative
+
+							//rogue - Initiative
 						case 13977:
 							{
 								//we need a Ambush, Garrote, or Cheap Shot
@@ -1335,26 +1221,30 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_GARROTE )  //Garrote
 									continue;
 							}break;
-						//Priest - blackout
+
+							//Priest - blackout
 						case 15269:
 							{
 								if( CastingSpell->School != SCHOOL_SHADOW || !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 									continue;
 							}break;
-						//warrior - improved berserker rage 
+
+							//warrior - improved berserker rage
 						case 23690:
 						case 23691:
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_BERSERKER_RAGE )
 									continue;
 							}break;
-						//mage - Arcane Concentration 
+
+							//mage - Arcane Concentration
 						case 12536:
 							{
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 									continue;
 							}break;
-						//mage - Improved Blizzard
+
+							//mage - Improved Blizzard
 						case 12484:
 						case 12485:
 						case 12486:
@@ -1362,12 +1252,14 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if( CastingSpell->NameHash != SPELL_HASH_BLIZZARD || victim == TO_UNIT(this) ) //Blizzard
 									continue;
 							}break;
-						//mage - Master of Elements
+
+							//mage - Master of Elements
 						case 29077:
 							{
 								dmg_overwrite = float2int32(GetSpellBaseCost(CastingSpell) * ((ospinfo->EffectBasePoints[0] + 1) / 100));
 							}break;
-						// Burnout
+
+							// Burnout
 						case 44450:
 							{
 								int32 addcost = float2int32(GetSpellBaseCost(CastingSpell) * ((ospinfo->EffectBasePoints[1] + 1) / 100));
@@ -1376,62 +1268,46 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								else
 									ModUnsigned32Value(UNIT_FIELD_POWER1, -addcost);
 							}break;
-						//Hunter - Thrill of the Hunt
+
+							//Hunter - Thrill of the Hunt
 						case 34720:
 							{
 								dmg_overwrite = float2int32(GetSpellBaseCost(CastingSpell) * (40.0f / 100.0f));
 							}break;
-						// Improved Steady Shot
+
+							// Improved Steady Shot
 						case 53220:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_STEADY_SHOT )
-									continue;				
+									continue;
 							}break;
-						//priest - Reflective Shield 
-						case 33619:
-							{
-								//requires Power Word: Shield active
-								int power_word_id = GetAuraSpellIDWithNameHash( SPELL_HASH_POWER_WORD__SHIELD );
-								if( !power_word_id )
-									continue;//this should not ocur unless we made a fuckup somewhere
-								//make a direct strike then exit rest of handler
-								int tdmg = abs * ( ospinfo->EffectBasePoints[0] + 1 ) / 100;
-								//somehow we should make this not caused any threat (tobedone)
-								SpellNonMeleeDamageLog( victim, power_word_id, tdmg, false, true );
-								continue;
-							}break;
-						//rogue - improved sprint
+
+							//rogue - improved sprint
 						case 30918:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_SPRINT || victim != TO_UNIT(this) ) //sprint
 									continue;
 							}break;
-						//rogue - combat potency
-						case 35542:
-						case 35545:
-						case 35546:
-						case 35547:
-						case 35548:
-							{
-								if( !IsPlayer() || !dmg || weapon_damage_type != 2 )
-									continue;
-							}break;
-						//paladin - Improved Lay on Hands
+
+							//paladin - Improved Lay on Hands
 						case 20233:
 						case 20236:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_LAY_ON_HANDS )
 									continue;
 							}break;
-						//paladin - Spiritual Attunement
+
+							//paladin - Spiritual Attunement
 						case 31786:
 							{
 								//trigger only on heal spell cast by NOT us
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING ) || TO_UNIT(this) == victim )
 									continue; 
+
 								dmg_overwrite = (CastingSpell->EffectBasePoints[IsHealingSpell(CastingSpell)-1] + 1) * (ospinfo->EffectBasePoints[0] + 1 ) / 100;
 							}break;
-						//paladin - Eye for an Eye
+
+							//paladin - Eye for an Eye
 						case 25997:
 							{
 								if( victim == TO_UNIT(this) )
@@ -1443,76 +1319,73 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								dmg_overwrite = ( dmg *  (ospinfo->EffectBasePoints[0] + 1 )) / 100 ; //only half dmg
 								int32 half_health = GetUInt32Value(UNIT_FIELD_HEALTH) >> 1;
 								if( dmg_overwrite > half_health )
-									dmg_overwrite = half_health ;
+									dmg_overwrite = half_health;
 							}break;
-						//paladin  - Sacred Cleansing
+
+							//paladin  - Sacred Cleansing
 						case 53659:
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_CLEANSE )
 									continue;
 							}break;
-						//paladin - Infusion of Light
+
+							//paladin - Infusion of Light
 						case 53672:
 						case 54149:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_HOLY_SHOCK )
 									continue;
 							}break;
-						//paladin - art of war
+
+							//paladin - art of war
 						case 53489:
 						case 59578:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_CRUSADER_STRIKE &&
 									CastingSpell->NameHash != SPELL_HASH_DIVINE_STORM &&
 									!(CastingSpell->buffType & SPELL_TYPE_JUDGEMENT) )
-									continue;				
-								}break;
-						// Righteous Vengeance (judgements damage is broken also crusader strike was added in 3.1 need update on 3.1)
+									continue;
+							}break;
+
+							// Righteous Vengeance (judgements damage is broken also crusader strike was added in 3.1 need update on 3.1)
 						case 61840:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_DIVINE_STORM &&
 									CastingSpell->buffType != SPELL_TYPE_JUDGEMENT )
 									continue;
-								dmg_overwrite = ( dmg * (ospinfo->EffectBasePoints[0] + 1 )) / 400 ;
+								dmg_overwrite = ( dmg * (ospinfo->EffectBasePoints[0] + 1 )) / 400;
 							}break;
-						// Paladin - Sheat of Light
+
+							// Paladin - Sheat of Light
 						case 54203:
 							{
 								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING))
-									continue; 
+									continue;
 								dmg_overwrite = dmg * (ospinfo->EffectBasePoints[1] + 1) / 400;
 							}break;
-						case 45057: // Trinket: Evasive Maneuvers
-							{
-								if(GetHealthPct() > 35)
-									continue;
-							}break;
-						//paladin - Blessed Life
-						case 31828:
-							{
-								//we should test is damage is from enviroment or not :S
-								resisted_dmg = dmg/2;
-								continue; //there is no visual for this ?
-							}break;
-						//Energized
+
+							//Energized
 						case 43751:
 							{
 								if(	CastingSpell->NameHash != SPELL_HASH_LIGHTNING_BOLT )
 									continue;
 							}break;
-						//Spell Haste Trinket
+
+							//Spell Haste Trinket
 						case 33370:
 							{
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 									continue;
 							}break;
+
 							// Fathom-Brooch of the Tidewalker proc
 						case 37243:
 							{
 								if( CastingSpell->School != SCHOOL_NATURE )
 									continue;
 							}break;
-						//shaman - Lightning Overload
+
+							//shaman - Lightning Overload
 						case 39805:
 							{
 								//trigger on lightning and chain lightning. Spell should be identical , well maybe next time :P
@@ -1522,51 +1395,59 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									dmg_overwrite = (CastingSpell->EffectBasePoints[0] + 1) / 2; //only half dmg
 									targets.m_unitTarget = victim->GetGUID();
 								}
-								else continue;
-							}break;
-						//item - Band of the Eternal Sage
-						case 35084:
-							{
-								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) ) //requires offensive spell. ! might not cover all spells
+								else
 									continue;
 							}break;
-						//Fingers of Frost
-						case 44544:
-						//Brain Freeze
-						case 57761:
+
+							//item - Band of the Eternal Sage
+						case 35084:
+							{
+								//requires offensive spell. ! might not cover all spells
+								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
+									continue;
+							}break;
+
+						case 44544: //Fingers of Frost
+						case 57761: //Brain Freeze
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_FROSTBOLT &&
 									CastingSpell->NameHash != SPELL_HASH_CONE_OF_COLD &&
 									CastingSpell->NameHash != SPELL_HASH_FROSTFIRE_BOLT )
 									continue;
 							}break;
-						// druid - Celestial Focus
+
+							// druid - Celestial Focus
 						case 16922:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_STARFIRE )
 									continue;
 							}break;
+
 						case 37565: //setbonus
 							{
 								if (CastingSpell->NameHash != SPELL_HASH_FLASH_HEAL)
 									continue;
 							}break;
-						//SETBONUSES
+
+							//SETBONUSES
 						case 37379:
 							{
 								if (CastingSpell->School != SCHOOL_SHADOW || !(CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING))
 									continue;
 							}break;
+
 						case 37378:
 							{
 								if (CastingSpell->School != SCHOOL_FIRE || !(CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING))
 									continue;
 							}break;
+
 						case 39950:
 							{
 								if (!(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING))
 									continue;
 							}break;
+
 						case 37234:
 						case 37214:
 						case 37601:
@@ -1574,53 +1455,60 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if (!(CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING))
 									continue;
 							}break;
+
 						case 37237:
 							{
 								if (CastingSpell->NameHash != SPELL_HASH_LIGHTNING_BOLT)
 									continue;
 							}break;
+
 						case 37193:
 							{
 								if (CastingSpell->NameHash != SPELL_HASH_HOLY_SHIELD)
 									continue;
 							}break;
+
 						case 37196:
 						case 43838:
 							{
-
 								if( CastingSpell->NameHash != SPELL_HASH_JUDGEMENT_OF_JUSTICE &&
 									CastingSpell->NameHash != SPELL_HASH_JUDGEMENT_OF_LIGHT &&
 									CastingSpell->NameHash != SPELL_HASH_JUDGEMENT_OF_WISDOM )
 									continue;
 							}break;
+
 						case 43837:
 							{
-								if( CastingSpell->NameHash != SPELL_HASH_FLASH_OF_LIGHT && 
+								if( CastingSpell->NameHash != SPELL_HASH_FLASH_OF_LIGHT &&
 									CastingSpell->NameHash != SPELL_HASH_HOLY_LIGHT )
 									continue;
 							}break;
+
 						case 37529:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_OVERPOWER )
 									continue;
 							}break;
+
 						case 37517:
 							{
 								if( CastingSpell->Id == 37517 || CastingSpell->NameHash != SPELL_HASH_REVENGE )
 									continue;
 							}break;
-						//SETBONUSES END
-						//Pendulum of Telluric Currents
+
+							//SETBONUSES END
+							//Pendulum of Telluric Currents
 						case 60483:
 							{
 								if(!( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ))
 									continue;
 							}break;
+
 							//http://www.wowhead.com/?item=32493 Ashtongue Talisman of Shadows
 						case 40480:
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_CORRUPTION )
-									continue; 
+									continue;
 							}break;
 
 							//http://www.wowhead.com/?item=32488 Ashtongue Talisman of Insight
@@ -1634,17 +1522,19 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 						case 40487:
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_STEADY_SHOT)
-									continue; 
+									continue;
 							}break;
 
 							//http://www.wowhead.com/?item=32485 Ashtongue Talisman of Valor
 						case 40459:
 							{
-								if((CastingSpell->NameHash != SPELL_HASH_MORTAL_STRIKE || CastingSpell->NameHash != SPELL_HASH_BLOODTHIRST || CastingSpell->NameHash != SPELL_HASH_SHIELD_SLAM))
-									continue; 
+								if((CastingSpell->NameHash != SPELL_HASH_MORTAL_STRIKE
+									|| CastingSpell->NameHash != SPELL_HASH_BLOODTHIRST
+									|| CastingSpell->NameHash != SPELL_HASH_SHIELD_SLAM))
+									continue;
 							}break;
 
-						//item - Band of the Eternal Restorer 
+							//item - Band of the Eternal Restorer
 						case 35087:
 							{
 								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING)) //requires healing spell.
@@ -1654,45 +1544,49 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							//http://www.wowhead.com/?item=32486 Ashtongue Talisman of Equilibrium
 						case 40452: //Mangle has a 40% chance to grant 140 Strength for 8 sec
 							{
-								if(CastingSpell->NameHash != SPELL_HASH_MANGLE__BEAR_ || CastingSpell->NameHash != SPELL_HASH_MANGLE__CAT_)
-									continue; 
+								if(CastingSpell->NameHash != SPELL_HASH_MANGLE__BEAR_
+									|| CastingSpell->NameHash != SPELL_HASH_MANGLE__CAT_)
+									continue;
 							}break;
+
 						case 40445: //Starfire has a 25% chance to grant up to 150 spell damage for 8 sec
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_STARFIRE)
-									continue; 
+									continue;
 							}break;
+
 						case 40446: //Rejuvenation has a 25% chance to grant up to 210 healing for 8 sec
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_REJUVENATION)
-									continue; 
+									continue;
 							}break;
 
 							//http://www.wowhead.com/?item=32490 Ashtongue Talisman of Acumen
 						case 40441: //Each time your Shadow Word: Pain deals damage, it has a 10% chance to grant you 220 spell damage for 10 sec
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_SHADOW_WORD__PAIN)
-									continue; 
+									continue;
 							}break;
 
 							//http://www.wowhead.com/?item=32490 Ashtongue Talisman of Acumen
 						case 40440: //Each time your Renew heals, it has a 10% chance to grant you 220 healing for 5 sec
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_RENEW)
-									continue; 
+									continue;
 							}break;
 
 							//http://www.wowhead.com/?item=32492 Ashtongue Talisman of Lethality
 						case 40461:
 							{
-								//we need a finishing move for this 
-								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_FINISHING_MOVE) || victim== TO_UNIT(this))
+								//we need a finishing move for this
+								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_FINISHING_MOVE) || victim == TO_UNIT(this))
 									continue;
 							}break;
+
 						case 37445: //using a mana gem grants you 225 spell damage for 15 sec
 							{
 								if (CastingSpell->NameHash != SPELL_HASH_REPLENISH_MANA)
-									continue; 
+									continue;
 							}break;
 
 						case 38395:
@@ -1701,6 +1595,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_CORRUPTION)
 									continue;
 							}break;
+
 						case 48108: // [Mage] Hot Streak
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_FIREBALL &&
@@ -1708,7 +1603,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_SCORCH &&
 									CastingSpell->NameHash != SPELL_HASH_LIVING_BOMB &&
 									CastingSpell->NameHash != SPELL_HASH_FROSTFIRE_BOLT )
-									continue; 
+									continue;
 
 								m_hotStreakCount++;
 								if (m_hotStreakCount >= 2)
@@ -1716,11 +1611,12 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								else
 									continue;
 							}break;
+
 						case 52179: // Astral Shift
 							{
-								if( !spe || 
+								if( !spe ||
 									!(Spell::HasMechanic(CastingSpell, MECHANIC_STUNNED) ||
-									Spell::HasMechanic(CastingSpell, MECHANIC_FLEEING) || 
+									Spell::HasMechanic(CastingSpell, MECHANIC_FLEEING) ||
 									Spell::HasMechanic(CastingSpell, MECHANIC_SILENCED)) )
 									continue;
 
@@ -1737,67 +1633,69 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								AddAura(aura);
 								continue;
 							}break;
+
 						case 51693: // Waylay
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_AMBUSH)
 									continue;
 							}break;
+
 						case 60503: // Taste for Blood
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_REND)
 									continue;
 							}break;
+
 						case 46989: //improved blink
 						case 47000:
 							{
 								if (CastingSpell->NameHash != SPELL_HASH_BLINK )
-									continue; 
+									continue;
 							}break;
+
 						case 52752: // Ancestral Awakening
 							{
 								if((CastingSpell->NameHash != SPELL_HASH_HEALING_WAVE &&
 									CastingSpell->NameHash != SPELL_HASH_LESSER_HEALING_WAVE &&
 									CastingSpell->NameHash != SPELL_HASH_RIPTIDE) ||
 									!IsPlayer())
-										continue;
+									continue;
+
 								targets.m_unitTarget = Spell::FindLowestHealthRaidMember(TO_PLAYER(this), 1600); // within 40 yards
 								if(!targets.m_unitTarget)	// shouldn't happen
 									continue;
+
 								dmg_overwrite = dmg * (ospinfo->EffectBasePoints[0] + 1) / 100;
 							}break;
+
 						case 54748: //Burning Determination
 							{
-								if(!(Spell::HasMechanic(CastingSpell, MECHANIC_SILENCED) || 
-										Spell::HasMechanic(CastingSpell, MECHANIC_INTERRUPTED)))
+								if(!(Spell::HasMechanic(CastingSpell, MECHANIC_SILENCED)
+									|| Spell::HasMechanic(CastingSpell, MECHANIC_INTERRUPTED)))
 									continue;
 							}break;
-						case 50475:
-							{
-								//heal him :)
-								if( dmg )
-								{
-									int32 toheal = (int32)(dmg * 0.04);
-									Heal( TO_UNIT(this), 50475, toheal );
-								}
-							}break;
+
 						case 54741: //Firestarter
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_BLAST_WAVE &&
 									CastingSpell->NameHash != SPELL_HASH_DRAGON_S_BREATH )
-									continue; 
+									continue;
 							}break;
+
 						case 12494: //Frostbite
 							{
 								//me thinks its correct
 								if( !( CastingSpell->SpellGroupType[0] & 0x100220 ) || victim == TO_UNIT(this) ) //frost
 									continue;
 							}break;
+
 						case 53390: //Tidal Waves
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_CHAIN_HEAL &&
 									CastingSpell->NameHash != SPELL_HASH_RIPTIDE )
-									continue; 
+									continue;
 							}break;
+
 							//Earthliving
 						case 51945:
 						case 51990:
@@ -1809,6 +1707,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if( !(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING) )
 									continue;
 							}break;
+
 							//Borrowed Time
 						case 59887:
 						case 59888:
@@ -1819,15 +1718,12 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if( CastingSpell->NameHash != SPELL_HASH_POWER_WORD__SHIELD )
 									continue;
 							}break;
-						case 60064: // Sundial of the Exiled
-							{
-								if(!victim || !isAttackable(this, victim, false))	// harmful spells
-									continue;
-							}break;
+
 						case 60229: // Darkmoon Card: Greatness
 							{
 								if(!(CastingSpell->c_is_flags & (SPELL_FLAG_IS_DAMAGING | SPELL_FLAG_IS_HEALING) ))
 									continue;
+
 								// find the maximum stat and proc appropriate spell
 								static const uint32 greatness[4] = {60229, 60233, 60234, 60235};
 								uint32 stats[4], maxstat = 0;
@@ -1842,13 +1738,15 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								}
 								spellId = greatness[maxstat];
 							}break;
+
 						case 49694://Improved Spirit Tap
 						case 59000:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_MIND_BLAST &&
 									CastingSpell->NameHash != SPELL_HASH_SHADOW_WORD__DEATH )
-									continue; 
+									continue;
 							}break;
+
 						case 33196://Misery
 						case 33197:
 						case 33198:
@@ -1856,44 +1754,18 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if( CastingSpell->NameHash != SPELL_HASH_MIND_FLAY &&
 									CastingSpell->NameHash != SPELL_HASH_VAMPIRIC_TOUCH &&
 									CastingSpell->NameHash != SPELL_HASH_SHADOW_WORD__PAIN )
-									continue; 
+									continue;
 							}break;
+
 						case 47383://molten core
-								{
+							{
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 									continue;
 
 								if( CastingSpell->School != SCHOOL_SHADOW )
 									continue;
 							}break;
-						case 59653:
-							{
-								float shdmg = 0.0f;
-								if( HasDummyAura(SPELL_HASH_DAMAGE_SHIELD) )
-									GetDummyAura(SPELL_HASH_DAMAGE_SHIELD)->Id == 58874 ? shdmg = 0.2f : shdmg = 0.1f;
 
-								dmg_overwrite = float2int32(GetUInt32Value(PLAYER_SHIELD_BLOCK) * shdmg);
-							}break;
-						// Aspect of the Viper
-						case 34075:
-							{
-								if( !IsPlayer() )
-									continue;
-
-								Player* caster = TO_PLAYER(this);
-
-								Item* it = caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
-								if( !it )
-									it = caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
-
-								if( it )
-								{
-									float mod = it->GetProto()->Delay / 1000.0f;
-									dmg_overwrite = float2int32( 0.01f * mod * caster->GetUInt32Value(UNIT_FIELD_BASE_MANA) );
-								}
-								else 
-									dmg_overwrite = 1;
-							}break;
 						case 53655://judgements of the pure
 						case 53656:
 						case 53657:
@@ -1901,36 +1773,33 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 						case 54153:
 							{
 								if( CastingSpell->buffIndexType != SPELL_TYPE_INDEX_JUDGEMENT )
-									continue; 
+									continue;
 							}break;
+
 						case 60803://Glyph of Remove Curse
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_REMOVE_CURSE || victim == this )
 									continue;
 							}break;
+
 						case 16246: // Elemental focus
 							{
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 									continue;
+
 								if( CastingSpell->School != SCHOOL_FIRE &&
 									CastingSpell->School != SCHOOL_NATURE &&
 									CastingSpell->School != SCHOOL_FROST )
 									continue;
 							}break;
+
 						case 55021:
 						case 18469:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_COUNTERSPELL || victim == this )
 									continue;
 							}break;
-						case 48391: // Owlkin Frenzy
-							{
-								if( !IsPlayer() )
-									continue;
 
-								if( TO_PLAYER( this )->GetShapeShift() != FORM_MOONKIN )
-									continue;
-							}break;
 						case 60433:
 						case 60432:
 						case 60431: // Earth and Moon
@@ -1939,7 +1808,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_STARFIRE )
 									continue;
 							}break;
-						// Bloodsurge
+
+							// Bloodsurge
 						case 46916:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_HEROIC_STRIKE &&
@@ -1947,36 +1817,43 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									CastingSpell->NameHash != SPELL_HASH_WHIRLWIND )
 									continue;
 							}break;
+
 						case 58362: // Glyph of heroic strike
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_HEROIC_STRIKE )
 									continue;
 							}break;
+
 						case 43738://primal instinct
 							{
-								if( CastingSpell->NameHash != SPELL_HASH_MANGLE__CAT_ && CastingSpell->NameHash != SPELL_HASH_MANGLE__BEAR_ )
+								if( CastingSpell->NameHash != SPELL_HASH_MANGLE__CAT_
+									&& CastingSpell->NameHash != SPELL_HASH_MANGLE__BEAR_ )
 									continue;
 							}break;
+
 						case 44401: // Missile Barrage
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_ARCANE_BLAST &&
 									CastingSpell->NameHash != SPELL_HASH_ARCANE_BARRAGE &&
 									CastingSpell->NameHash != SPELL_HASH_FIREBALL &&
-									CastingSpell->NameHash != SPELL_HASH_FROSTBOLT && 
+									CastingSpell->NameHash != SPELL_HASH_FROSTBOLT &&
 									CastingSpell->NameHash != SPELL_HASH_FROSTFIRE_BOLT )
 									continue;
 							}break;
-						case 16886: 
+
+						case 16886:
 							{
 								if( !(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING) )
 									continue;
 							}break;
+
 						case 47948:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_MIND_FLAY )
 									continue;
 							}break;
-						// Illumination
+
+							// Illumination
 						case 20272:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_HOLY_LIGHT &&
@@ -1986,37 +1863,28 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 
 								dmg_overwrite = float2int32(GetSpellBaseCost(CastingSpell) * 0.3f);
 							}break;
-						//Fiery Payback
-						case 44440:
-						case 44441:
-							{
-								if(GetHealthPct() > 35)
-									continue;
-							}break;
-						// Pallas
-						case 43747:
-						case 34260:
-							{
-								if( !HasDummyAura(SPELL_HASH_SEAL_OF_COMMAND) )
-									continue;
-							}break;
-						// Omen of Clarity
+
+							// Omen of Clarity
 						case 16870:
 							{
-								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING || CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING) )
+								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING
+									|| CastingSpell->c_is_flags & SPELL_FLAG_IS_DAMAGING) )
 									continue;
 							}break;
 
-						// Gag order
+							// Gag order
 						case 18498:
 							{
 								if( CastingSpell->NameHash != SPELL_HASH_SHIELD_BASH && CastingSpell->NameHash != SPELL_HASH_HEROIC_THROW )
 									continue;
 							}break;
-						// Replenishment
+
+							// Replenishment
 						case 57669:
 							{
-								if( CastingSpell->NameHash != SPELL_HASH_EXPLOSIVE_SHOT && CastingSpell->NameHash != SPELL_HASH_ARCANE_SHOT && CastingSpell->NameHash != SPELL_HASH_STEADY_SHOT )
+								if( CastingSpell->NameHash != SPELL_HASH_EXPLOSIVE_SHOT
+									&& CastingSpell->NameHash != SPELL_HASH_ARCANE_SHOT
+									&& CastingSpell->NameHash != SPELL_HASH_STEADY_SHOT )
 									continue;
 
 								if( IsPlayer() )
@@ -2024,7 +1892,6 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									Player* caster = TO_PLAYER( this );
 									if( caster->GetGroup() )
 									{
-										
 										uint32 TargetCount = 0;
 										caster->GetGroup()->Lock();
 										for(uint32 x = 0; x < caster->GetGroup()->GetSubGroupCount(); ++x)
@@ -2056,43 +1923,329 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									}
 								}
 							}break;
-						case 63685:// Frozen Power - Freeze
-							{
-								uint32 minDistance = spe->EffectBasePoints[0] + 1;
-								if(!victim || GetDistanceSq(victim) < minDistance * minDistance)
-									continue;	// victim not far enough
-							}break;
-						case 63375: // Improved Stormstrike
-							{
-								dmg_overwrite = (spe->EffectBasePoints[0] + 1) * GetUInt32Value(UNIT_FIELD_BASE_MANA) / 100;
-							}break;
 
-						case 71484:
-						case 71485:
-						case 71486:
-						case 71487:
-						case 71491:
-						case 71492:
+							// Blade Barrier
+						case 51789:
 							{
-								bool hasaura = false;
-								uint32 auras[6] = { 71484, 71485, 71486, 71487, 71491, 71492 };
-								for(int i = 0; i < 6; i++)
-								{
-									if(HasAura(auras[i]))
-									{
-										hasaura = true;
-										break;
-									}
-								}
-								if(hasaura)
+								if( !IsPlayer() )
 									continue;
+
+								SpellEntry * sp = dbcSpell.LookupEntryForced( CastingSpell->Id );
+								SpellRuneCostEntry * sr = dbcSpellRuneCost.LookupEntryForced( sp->runeCostID );
+								if( !sr || sr->bloodRuneCost == 0 ) // not costing blood.
+									continue;
+
+								if( TO_PLAYER(this)->m_runes[0] == RUNE_TYPE_BLOOD || TO_PLAYER(this)->m_runes[1] == RUNE_TYPE_BLOOD )
+									continue; // oh snap, still have blood runes, this doesn't count.
 							}break;
+						}
+					}
+
+					switch( spellId) // Independent of Casting spell
+					{
+						// Focus Magic
+					case 54648:
+						{
+							Aura* aur = FindAura(54646);
+							if( aur )
+							{
+								Unit* cstr = aur->GetUnitCaster();
+								if( cstr )
+									victim = cstr;
+							}
+						}break;
+
+					case 31616: // Nature's Guardian
+						{
+							if(GetHealthPct() > 30)
+								continue;
+
+							//heal value depends on the rank of parent spell
+							//maybe we should use CalculateEffect(uint32 i) to gain SM benefits
+							int32 value = 0;
+							int32 basePoints = ospinfo->EffectBasePoints[0]+1;//+(getLevel()*basePointsPerLevel);
+							int32 randomPoints = ospinfo->EffectDieSides[0];
+							if(randomPoints <= 1)
+								value = basePoints;
+							else
+								value = basePoints + rand() % randomPoints;
+							dmg_overwrite = GetUInt32Value(UNIT_FIELD_MAXHEALTH) * value / 100;
+						}break;
+
+					case 37309:
+						{
+							if( !IsPlayer() )
+								continue;
+
+							if( TO_PLAYER(this)->GetShapeShift() != FORM_BEAR ||
+								TO_PLAYER(this)->GetShapeShift() != FORM_DIREBEAR )
+								continue;
+						}break;
+
+					case 37310:
+						{
+							if( !IsPlayer() || TO_PLAYER(this)->GetShapeShift() != FORM_CAT )
+								continue;
+						}break;
+
+					case 5530:
+						{
+							//warrior/rogue mace specialization can trigger only when using maces
+							Item* it;
+							if( TO_PLAYER(this)->GetItemInterface() )
+							{
+								it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
+								if( it != NULL && it->GetProto() )
+								{
+									uint32 reqskill = GetSkillByProto( it->GetProto()->Class, it->GetProto()->SubClass );
+									if( reqskill != SKILL_MACES && reqskill != SKILL_2H_MACES )
+										continue;
+								}
+								else
+									continue; //no weapon no joy
+							}
+							else
+								continue; //no weapon no joy
+
+							//let's recalc chance to cast since we have a full 100 all time on this one
+							//how lame to get talentpointlevel for this spell :(
+							//float chance=it->GetProto()->Delay*100*talentlevel/60000;
+						}break;
+
+					case 57319:
+						{
+							switch( victim->GetPowerType() )
+							{
+								case POWER_TYPE_RAGE: spellId = 57320; break;
+								case POWER_TYPE_RUNIC: spellId = 57321; break;
+							}
+						}break;
+
+					case 16459:
+					case 4350:
+						{
+							//sword specialization
+							if( TO_PLAYER(this)->GetItemInterface())
+							{
+								Item* it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
+								if( it != NULL && it->GetProto() )
+								{
+									uint32 reqskill=GetSkillByProto( it->GetProto()->Class, it->GetProto()->SubClass );
+									if( reqskill != SKILL_SWORDS && reqskill != SKILL_2H_SWORDS )
+										continue;
+								}
+								else
+									continue; //no weapon no joy
+							}
+							else
+								continue; //no weapon no joy
+						}break;
+
+					case 12721:
+						{
+							//deep wound requires a melee weapon
+							Item* it;
+							if( TO_PLAYER(this)->GetItemInterface())
+							{
+								it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
+								if( it != NULL && it->GetProto() )
+								{
+									//class 2 means weapons ;)
+									if( it->GetProto()->Class != ITEM_CLASS_WEAPON )
+										continue;
+								}
+								else continue; //no weapon no joy
+							}
+							else continue; //no weapon no joy
+						}break;
+
+						//warrior - Unbridled Wrath
+					case 12964:
+						{
+							//let's recalc chance to cast since we have a full 100 all time on this one
+							Item* it;
+							if( TO_PLAYER(this)->GetItemInterface() )
+							{
+								it = TO_PLAYER(this)->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
+								if( !( it != NULL && it->GetProto() ) )
+									continue; //no weapon no joy
+							}
+							else
+								continue; //no weapon no joy
+
+							//float chance=float(it->GetProto()->Delay)*float(talentlevel)/600.0f;
+							float chance = float( it->GetProto()->Delay ) * float(talentlevel ) / 300.0f; //zack this had a very low proc rate. Kinda liek a waisted talent
+							uint32 myroll = RandomUInt( 100 );
+							if( myroll > chance )
+								continue;
+						}break;
+
+						//priest - Blessed Recovery
+					case 27813:
+					case 27817:
+					case 27818:
+						{
+							if(!IsPlayer() || !dmg)
+								continue;
+							SpellEntry *parentproc= dbcSpell.LookupEntry(origId);
+							SpellEntry *spellInfo = dbcSpell.LookupEntry(spellId);
+							if (!parentproc || !spellInfo)
+								continue;
+
+							int32 val = parentproc->EffectBasePoints[0] + 1;
+							Spell* spell(new Spell(TO_UNIT(this), spellInfo ,true, NULLAURA));
+							spell->forced_basepoints[0] = (val*dmg)/300; //per tick
+							SpellCastTargets targets;
+							targets.m_unitTarget = GetGUID();
+							spell->prepare(&targets);
+							continue;
+						}break;
+
+						//priest - Reflective Shield 
+					case 33619:
+						{
+							//requires Power Word: Shield active
+							int power_word_id = GetAuraSpellIDWithNameHash( SPELL_HASH_POWER_WORD__SHIELD );
+							if( !power_word_id )
+								continue;//this should not ocur unless we made a fuckup somewhere
+
+							//make a direct strike then exit rest of handler
+							int tdmg = abs * ( ospinfo->EffectBasePoints[0] + 1 ) / 100;
+							//somehow we should make this not caused any threat (tobedone)
+							SpellNonMeleeDamageLog( victim, power_word_id, tdmg, false, true );
+							continue;
+						}break;
+
+						//rogue - combat potency
+					case 35542:
+					case 35545:
+					case 35546:
+					case 35547:
+					case 35548:
+						{
+							if( !IsPlayer() || !dmg || weapon_damage_type != 2 )
+								continue;
+						}break;
+
+						//paladin - Blessed Life
+					case 31828:
+						{
+							//we should test is damage is from enviroment or not :S
+							resisted_dmg = dmg/2;
+							continue; //there is no visual for this ?
+						}break;
+
+						// Pallas
+					case 43747:
+					case 34260:
+						{
+							if( !HasDummyAura(SPELL_HASH_SEAL_OF_COMMAND) )
+								continue;
+						}break;
+
+					case 48391: // Owlkin Frenzy
+						{
+							if( !IsPlayer() )
+								continue;
+
+							if( TO_PLAYER( this )->GetShapeShift() != FORM_MOONKIN )
+								continue;
+						}break;
+
+					case 59653:
+						{
+							float shdmg = 0.0f;
+							if( HasDummyAura(SPELL_HASH_DAMAGE_SHIELD) )
+								GetDummyAura(SPELL_HASH_DAMAGE_SHIELD)->Id == 58874 ? shdmg = 0.2f : shdmg = 0.1f;
+
+							dmg_overwrite = float2int32(GetUInt32Value(PLAYER_SHIELD_BLOCK) * shdmg);
+						}break;
+
+						// Aspect of the Viper
+					case 34075:
+						{
+							if( !IsPlayer() )
+								continue;
+
+							Player* caster = TO_PLAYER(this);
+							Item* it = caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
+							if( !it )
+								it = caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+							if( it )
+							{
+								float mod = it->GetProto()->Delay / 1000.0f;
+								dmg_overwrite = float2int32( 0.01f * mod * caster->GetUInt32Value(UNIT_FIELD_BASE_MANA) );
+							}
+							else 
+								dmg_overwrite = 1;
+						}break;
+
+					case 50475:
+						{
+							if( dmg ) // heal him :)
+							{
+								int32 toheal = (int32)(dmg * 0.04);
+								Heal( TO_UNIT(this), 50475, toheal );
+							}
+						}break;
+
+					case 60064: // Sundial of the Exiled
+						{
+							if(!victim || !isAttackable(this, victim, false))	// harmful spells
+								continue;
+						}break;
+
+						// Spells that are takedamage but less than 35.
+					case 45057: // Trinket: Evasive Maneuvers
+					case 45058: // Commendation of Kael'thas
+					case 44440: // Fiery Payback 1
+					case 44441: // Fiery Payback 2
+					case 71634: // Corpse Tongue
+					case 71640: // Corpse Tongue H
+						{
+							if(GetHealthPct() > 35)
+								continue;
+						}break;
+
+					case 63685:// Frozen Power - Freeze
+						{
+							uint32 minDistance = spe->EffectBasePoints[0] + 1;
+							if(!victim || GetDistanceSq(victim) < minDistance * minDistance)
+								continue;	// victim not far enough
+						}break;
+
+					case 63375: // Improved Stormstrike
+						{
+							dmg_overwrite = (spe->EffectBasePoints[0] + 1) * GetUInt32Value(UNIT_FIELD_BASE_MANA) / 100;
+						}break;
+
+					case 71484:
+					case 71485:
+					case 71486:
+					case 71487:
+					case 71491:
+					case 71492:
+						{
+							bool hasaura = false;
+							uint32 auras[6] = { 71484, 71485, 71486, 71487, 71491, 71492 };
+							for(int i = 0; i < 6; i++)
+							{
+								if(HasAura(auras[i]))
+								{
+									hasaura = true;
+									break;
+								}
+							}
+							if(hasaura)
+								continue;
+						}break;
 					}
 				}
-				}
-				if(spellId==17364 || spellId==32175 || spellId==32176) // Stormstrike fix
+
+				if(spellId == 17364 || spellId == 32175 || spellId == 32176) // Stormstrike fix
 					continue;
-				if(spellId==22858 && isInBack(victim)) //retatliation needs target to be not in front. Can be casted by creatures too
+
+				if(spellId == 22858 && isInBack(victim)) //retatliation needs target to be not in front. Can be casted by creatures too
 					continue;
 
 				if( CastingSpell && spellId == 54370 )
@@ -2203,6 +2356,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 				aura->ModProcCharges(-1);
 			}
 		}
+
 		if(can_delete)
 		{
 			for(;!m_chargeSpellRemoveQueue.empty();)
@@ -3155,9 +3309,6 @@ else
 		{
 //--------------------------------state proc initialization---------------------------------
 			vproc |= PROC_ON_ANY_DAMAGE_VICTIM;
-			if(pVictim->GetHealthPct() < 35)
-				vproc2 |= PROC_ON_DAMAGE_VICTIM_BELOW_35;
-
 			if( weapon_damage_type != RANGED )
 			{
 				aproc |= PROC_ON_MELEE_ATTACK;

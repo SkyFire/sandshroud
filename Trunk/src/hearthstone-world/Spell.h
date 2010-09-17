@@ -314,7 +314,6 @@ enum procFlags2
 	PROC_ON_BLOCK_VICTIM				= 0x20, // Custom
 	PROC_ON_SPELL_CRIT_HIT				= 0x40, // Custom
 	PROC_TARGET_SELF					= 0x80, // Custom
-	PROC_ON_DAMAGE_VICTIM_BELOW_35		= 0x160 // Custom
 };
 
 enum CastInterruptFlags

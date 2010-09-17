@@ -6248,8 +6248,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 71640:
 		{
 			sp->procChance	=	100;
-			sp->procFlags	=	PROC_NULL; // Skip.
-			sp->procflags2	=	PROC_ON_DAMAGE_VICTIM_BELOW_35;
+			sp->procFlags	=	PROC_ON_PHYSICAL_ATTACK_VICTIM | PROC_ON_MELEE_ATTACK_VICTIM; // Skip.
 			sp->EffectTriggerSpell[0]	=	(sp->Id == 71640 ? 71639 : 71633);
 			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
 		}break;

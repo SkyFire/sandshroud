@@ -154,8 +154,9 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 	{
 		if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z-100.0f, x, y, z+100.0f, phx, phy, ccollidemapheight, 0.0f))
 			return ccollidemapheight; // Suprisingly works!
-
-		return cvmapheight;
+		if(cvmapheight != NO_WMO_HEIGHT)
+			return cvmapheight;
+		return cmapheight;
 	}
 
 	// Crow: WE SHOULD GET HIGHEST REASONABLE VALUE BASED ON Z AND THE CALCULATIONS BELOW
