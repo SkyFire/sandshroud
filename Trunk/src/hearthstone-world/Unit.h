@@ -706,11 +706,11 @@ class SERVER_DECL CombatStatusHandler
 	typedef set<uint64> AttackerMap;
 	typedef map<uint64, uint32> AttackTMap;
 	typedef set<uint32> HealedSet;		// Must Be Players!
-	AttackerMap m_attackers;
-	HealedSet m_healers;
-	HealedSet m_healed;
 	Unit* m_Unit;
 	bool m_lastStatus;
+	HealedSet m_healed;
+	HealedSet m_healers;
+	AttackerMap m_attackers;
 	AttackTMap m_attackTargets;
 	uint32 condom[16]; // wear protection, damagemap! don't get access violated!
 	map<uint64,uint32> DamageMap;

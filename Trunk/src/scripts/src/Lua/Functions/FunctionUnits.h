@@ -566,6 +566,40 @@ int LuaUnit_CreateCustomWaypointMap(lua_State * L, Unit * ptr)
 	return 1;
 }
 
+int LuaUnit_CreateCustomWaypoint(lua_State * L, Unit * ptr)
+{
+	CHECK_TYPEID(TYPEID_UNIT);
+
+	Creature * crc = TO_CREATURE(ptr);
+	uint32 id = CHECK_ULONG(L,1);
+	float x = CHECK_FLOAT(L,2);
+	float y = CHECK_FLOAT(L,3);
+	float z = CHECK_FLOAT(L,4);
+	float o = CHECK_FLOAT(L,5);
+	uint32 waitime = CHECK_ULONG(L,6);
+	uint32 flags = CHECK_ULONG(L,7);
+	uint32 model = luaL_optint(L,8,0);
+	WayPoint * wp = new WayPoint;
+	wp->id = id;
+	wp->x = x;
+	wp->y = y;
+	wp->z = z;
+	wp->o = o;
+	wp->waittime = waitime;
+	wp->flags = flags;
+	wp->backwardskinid = model;
+	wp->forwardskinid = model;
+	crc->GetAIInterface()->addWayPoint(wp);
+	return 1;
+}
+
+int LuaUnit_DeleteAllWaypoints(lua_State * L, Unit * ptr)
+{
+	CHECK_TYPEID(TYPEID_UNIT);
+	TO_CREATURE(ptr)->GetAIInterface()->deleteWaypoints();
+	return 1;
+}
+
 int LuaUnit_CreateWaypoint(lua_State * L, Unit * ptr)
 {
 	CHECK_TYPEID(TYPEID_UNIT);
@@ -938,11 +972,12 @@ int LuaUnit_GetRandomPlayer(lua_State * L, Unit * ptr)
 
 	return 1;
 }
+
 int LuaUnit_GetRandomFriend(lua_State * L, Unit * ptr)
 {
 	TEST_UNIT();
-	Unit * ret=NULL;
 	Object* obj;
+	Unit* ret = NULL;
 	uint32 count = 0;
 
 	for(unordered_set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); ++itr)
@@ -955,22 +990,63 @@ int LuaUnit_GetRandomFriend(lua_State * L, Unit * ptr)
 	if (count)
 	{
 		uint32 r = RandomUInt(count-1);
-		count=0;
+		count = 0;
 		for(unordered_set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); ++itr)
 		{
 			obj = (*itr);
 			if (!obj->IsUnit() || !isFriendly(obj,ptr))
 				continue;
 
-			if(count==r)
+			if(count == r)
 			{
-				ret=(Unit*)obj;
+				ret = TO_UNIT(obj);
 				break;
 			}
 			++count;
 		}
 	}
-	if(ret==NULL)
+
+	if(ret == NULL)
+		lua_pushnil(L);
+	else
+		Lunar<Unit>::push(L, ret,false);
+	return 1;
+}
+
+int LuaUnit_GetRandomEnemy(lua_State * L, Unit * ptr)
+{
+	TEST_UNIT();
+	Object* obj;
+	Unit* ret = NULL;
+	uint32 count = 0;
+
+	for(unordered_set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); ++itr)
+	{
+		obj = (*itr);
+		if (obj->IsUnit() && !isFriendly(obj,ptr))
+			++count;
+	}
+
+	if (count)
+	{
+		uint32 r = RandomUInt(count-1);
+		count = 0;
+		for(unordered_set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); ++itr)
+		{
+			obj = (*itr);
+			if (!obj->IsUnit() || isFriendly(obj,ptr))
+				continue;
+
+			if(count == r)
+			{
+				ret = TO_UNIT(obj);
+				break;
+			}
+			++count;
+		}
+	}
+
+	if(ret == NULL)
 		lua_pushnil(L);
 	else
 		Lunar<Unit>::push(L, ret,false);
@@ -1712,6 +1788,17 @@ int LuaUnit_GetFloatValue(lua_State * L, Unit * ptr)
 	int field = luaL_checkint(L, 1);
 	if( ptr != NULL ) 
 		lua_pushnumber(L, ptr->GetFloatValue(field));
+	return 1;
+}
+
+int LuaUnit_SendPacket(lua_State * L, Unit * ptr)
+{
+	TEST_UNITPLAYER();
+
+	WorldPacket * data = CHECK_PACKET(L,1);
+	int self = lua_toboolean(L,2);
+	if (data)
+		ptr->SendMessageToSet(data,(self > 0 ) ? true : false);
 	return 1;
 }
 
@@ -2876,7 +2963,8 @@ int LuaUnit_CanUseCommand(lua_State * L, Unit * ptr)
 
 int LuaUnit_GetTarget(lua_State * L, Unit * ptr)
 {
-	Log.Notice("LuaEngine", "GetTarget is outdated. Please use GetPrimaryCombatTarget.");
+//	Crow: Fuck it, use GetTarget, see if I give a fuck.
+//	Log.Notice("LuaEngine", "GetTarget is outdated. Please use GetPrimaryCombatTarget.");
 	TEST_PLAYER();
 	Player * plr = TO_PLAYER(ptr);
 	Unit * target = plr->GetMapMgr()->GetUnit(plr->GetSelection());
@@ -5473,30 +5561,36 @@ int LuaUnit_PlayerSendChatMessage(lua_State * L, Unit * ptr)
 
 int LuaUnit_AggroWithInRangeFriends(lua_State * L, Unit * ptr)
 {
-	/*TEST_UNIT();
+	TEST_UNIT();
 	// If Pointer isn't in combat skip everything
 	if (!ptr->CombatStatus.IsInCombat())
-	  return 0;
+		return 0;
+
 	Unit * pTarget = ptr->GetAIInterface()->GetNextTarget();
-	if (!pTarget)
-	  return 0;
+	if (pTarget == NULL)
+		return 0;
+
 	Unit * pUnit = NULL;
-	for(set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); ++itr)
+	for(unordered_set<Object*>::iterator itr = ptr->GetInRangeSetBegin(); itr != ptr->GetInRangeSetEnd(); ++itr)
 	{
 		Object * obj = TO_OBJECT(*itr);
 		// No Object, Object Isn't a Unit, Unit is Dead
 		if (!obj || !obj->IsUnit() || TO_UNIT(obj)->isDead())
-		   continue;
+			continue;
+
 		 if (!isFriendly(obj, ptr))
-		   continue;
+			continue;
+
 		if (ptr->GetDistance2dSq(obj) > 10*10) // 10yrd range?
-		   continue;
+			continue;
+
 		 pUnit = TO_UNIT(obj);
 		if (!pUnit) // Should never happen!
-		   continue;
+			continue;
+
 		pUnit->GetAIInterface()->SetNextTarget(pTarget);
 		pUnit->GetAIInterface()->AttackReaction(pTarget, 1, 0);
-	}*/
+	}
 	return 1;
 }
 
@@ -5528,7 +5622,9 @@ int LuaUnit_SendPacketToGroup(lua_State * L, Unit * ptr)
 	WorldPacket * data = CHECK_PACKET(L,1);
 	TEST_PLAYER();
 	Player * plr = TO_PLAYER(ptr);
-	if (!data) return 0;
+	if (!data)
+		return 0;
+
 	plr->GetGroup()->SendPacketToAll(data);
 	return 1;
 }
@@ -5559,7 +5655,7 @@ int LuaUnit_GetGroupPlayers(lua_State * L, Unit * ptr)
 				}
 			}
 		}
-		party->getLock().Release();		
+		party->getLock().Release();
 	}
 	return 1;
 }
