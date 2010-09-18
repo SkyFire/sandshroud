@@ -514,44 +514,45 @@ int Unit_RemoveAura(gmThread * a_thread)
 
 int Player_HasQuest(gmThread * a_thread)
 {
-        GM_CHECK_NUM_PARAMS(1);
-        GM_CHECK_INT_PARAM(questid, 0);
-        if(GetThisPointer<Player>(a_thread)->GetTypeId() != TYPEID_PLAYER)
-                return GM_EXCEPTION;
+	GM_CHECK_NUM_PARAMS(1);
+	GM_CHECK_INT_PARAM(questid, 0);
+	if(GetThisPointer<Player>(a_thread)->GetTypeId() != TYPEID_PLAYER)
+		return GM_EXCEPTION;
 
-        Player *p = GetThisPointer<Player>(a_thread);
-        if(p->GetQuestLogForEntry(questid))
-                a_thread->PushInt(1);
-        else
-                a_thread->PushInt(0);
+	Player *p = GetThisPointer<Player>(a_thread);
+	if(p->GetQuestLogForEntry(questid))
+		a_thread->PushInt(1);
+	else
+		a_thread->PushInt(0);
 
-        return GM_OK;
+	return GM_OK;
 }
 
 int Player_HasItem(gmThread * a_thread)
 {
-        GM_CHECK_NUM_PARAMS(1);
-        GM_CHECK_INT_PARAM(itemid, 0);
+	GM_CHECK_NUM_PARAMS(1);
+	GM_CHECK_INT_PARAM(itemid, 0);
 
-        Player * pPlayer = GetThisPointer<Player>(a_thread);
-        if(pPlayer->GetTypeId() != TYPEID_PLAYER)
-                return GM_EXCEPTION;
+	Player * pPlayer = GetThisPointer<Player>(a_thread);
+	if(pPlayer->GetTypeId() != TYPEID_PLAYER)
+		return GM_EXCEPTION;
 
-        if(pPlayer->GetItemInterface()->GetItemCount(itemid, 0))
-                a_thread->PushInt(1);
-        else
-                a_thread->PushInt(0);
+	if(pPlayer->GetItemInterface()->GetItemCount(itemid, 0))
+		a_thread->PushInt(1);
+	else
+		a_thread->PushInt(0);
 
-        return GM_OK;
+	return GM_OK;
 }
 
 int GameObject_Despawn(gmThread * a_thread)
 {
-	GM_CHECK_NUM_PARAMS(1);
+	GM_CHECK_NUM_PARAMS(2);
+	GM_CHECK_INT_PARAM(delay, 0);
 	GM_CHECK_INT_PARAM(timer, 0);
 
 	GameObject * pThis = GetThisPointer<GameObject>(a_thread);
-	pThis->Despawn(timer);
+	pThis->Despawn(delay, timer);
 	return GM_OK;
 }
 
@@ -578,7 +579,7 @@ void GMScriptEvent(void * function, uint32 argc, uint32 * argv, uint32 * argt)
 
 	gmFunctionObject * func = (gmFunctionObject*)function;
 	ASSERT(func->GetType() == GM_FUNCTION);
-	
+
 	/* strange if we had a function without any arguments, that means no 'this' pointer :P *shrugs* */
 	GMSystem->m_userObjectCounter = argc;
 	/*if(argc)
@@ -595,7 +596,7 @@ void GMScriptEvent(void * function, uint32 argc, uint32 * argv, uint32 * argt)
 	}
 	else
 	{
-        /* the rest of the arguments */
+		/* the rest of the arguments */
 		if(argc)
 		{
 			for(uint32 i = 0; i < argc; ++i)
