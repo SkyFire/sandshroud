@@ -9,8 +9,6 @@
 */
 
 #include "UprightFrame.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 
 namespace G3D {
 
@@ -73,58 +71,6 @@ void UprightFrame::unwrapYaw(UprightFrame* a, int N) {
 			// Offset the current from the previous by the difference
 			// between them.
 			cur = prev + diff;
-		}
-	}
-}
-
-
-void UprightFrame::serialize(class BinaryOutput& b) const {
-	translation.serialize(b);
-	b.writeFloat32(pitch);
-	b.writeFloat32(yaw);
-}
-
-
-void UprightFrame::deserialize(class BinaryInput& b) {
-	translation.deserialize(b);
-	pitch = b.readFloat32();
-	yaw = b.readFloat32();
-}
-
-
-void UprightSpline::serialize(class BinaryOutput& b) const {
-	b.writeBool8(cyclic);
-
-	b.writeInt32(control.size());
-	for (int i = 0; i < control.size(); ++i) {
-		control[i].serialize(b);
-	}
-	b.writeInt32(time.size());
-	for (int i = 0; i < time.size(); ++i) {
-		b.writeFloat32(time[i]);
-	}
-}
-
-
-void UprightSpline::deserialize(class BinaryInput& b) {
-	cyclic = b.readBool8();
-
-	control.resize(b.readInt32());
-	for (int i = 0; i < control.size(); ++i) {
-		control[i].deserialize(b);
-	}
-
-	if (b.hasMore()) {
-		time.resize(b.readInt32());
-		for (int i = 0; i < time.size(); ++i) {
-			time[i] = b.readFloat32();
-		}
-		debugAssert(time.size() == control.size());
-	} else {
-		// Import legacy path
-		time.resize(control.size());
-		for (int i = 0; i < time.size(); ++i) {
-			time[i] = i;
 		}
 	}
 }

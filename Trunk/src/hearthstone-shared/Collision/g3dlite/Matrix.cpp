@@ -3,7 +3,6 @@
  @author Morgan McGuire, http://graphics.cs.williams.edu
  */
 #include "Matrix.h"
-#include "TextOutput.h"
 
 static inline G3D::Matrix::T negate(G3D::Matrix::T x) {
 	return -x;
@@ -13,34 +12,6 @@ namespace G3D {
 
 int Matrix::debugNumCopyOps  = 0;
 int Matrix::debugNumAllocOps = 0;
-
-void Matrix::serialize(TextOutput& t) const {
-	t.writeSymbol("%");
-	t.writeNumber(rows());
-	t.writeSymbol("x");
-	t.writeNumber(cols());
-	t.pushIndent();
-	t.writeNewline();
-
-	t.writeSymbol("[");
-	for (int r = 0; r < rows(); ++r) {
-		for (int c = 0; c < cols(); ++c) {
-			t.writeNumber(impl->get(r, c));
-			if (c < cols() - 1) {
-				t.writeSymbol(",");
-			} else {
-				if (r < rows() - 1) {
-					t.writeSymbol(";");
-					t.writeNewline();
-				}
-			}
-		}
-	}
-	t.writeSymbol("]");
-	t.popIndent();
-	t.writeNewline();
-}
-
 
 std::string Matrix::toString(const std::string& name) const {
 	std::string s;

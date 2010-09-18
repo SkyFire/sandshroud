@@ -31,8 +31,6 @@ public:
 		}
 	}
 
-	explicit MD5Hash(class BinaryInput& b);
-
 	uint8& operator[](int i) {
 		return value[i];
 	}

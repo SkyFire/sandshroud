@@ -32,51 +32,6 @@ Box::Box(const AABox& b) {
 	init(b.low(), b.high());
 }
 
-Box::Box(class BinaryInput& b) {
-	deserialize(b);	
-}
-
-
-void Box::serialize(class BinaryOutput& b) const {
-	int i;
-	for (i = 0; i < 8; ++i) {
-		_corner[i].serialize(b);
-	}
-
-	// Other state can be reconstructed
-}
-
-
-void Box::deserialize(class BinaryInput& b) {
-	int i;
-
-	_center = Vector3::zero();
-	for (i = 0; i < 8; ++i) {
-		_corner[i].deserialize(b);
-		_center += _corner[i];
-	}
-
-	_center = _center / 8;
-	
-	// Reconstruct other state from the corners
-	_axis[0] = _corner[5] - _corner[4];
-	_axis[1] = _corner[7] - _corner[4];
-	_axis[2] = _corner[0] - _corner[4];
-
-	for (i = 0; i < 3; ++i) {
-		_extent[i] = _axis[i].magnitude();
-		_axis[i] /= _extent[i];
-	}
-
-	_volume = _extent.x * _extent.y * _extent.z;
-
-	_area = 2 * 
-		(_extent.x * _extent.y +
-		 _extent.y * _extent.z +
-		 _extent.z * _extent.x);
-}
-
-
 Box::Box(
 	const Vector3& min,
 	const Vector3& max) {
@@ -142,7 +97,6 @@ float Box::area() const {
 	return _area;
 }
 
-
 void Box::getLocalFrame(CoordinateFrame& frame) const {
 
 	frame.rotation = Matrix3(
@@ -152,14 +106,6 @@ void Box::getLocalFrame(CoordinateFrame& frame) const {
 
 	frame.translation = _center;
 }
-
-
-CoordinateFrame Box::localFrame() const {
-	CoordinateFrame out;
-	getLocalFrame(out);
-	return out;
-}
-
 
 void Box::getFaceCorners(int f, Vector3& v0, Vector3& v1, Vector3& v2, Vector3& v3) const {
 	switch (f) {

@@ -12,8 +12,6 @@
 #include "Vector3int32.h"
 #include "Vector3int16.h"
 #include "Vector3.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "format.h"
 
 namespace G3D {
@@ -29,25 +27,6 @@ Vector3int32::Vector3int32(const class Vector3int16& v) {
 	x = v.x;
 	y = v.y;
 	z = v.z;
-}
-
-
-Vector3int32::Vector3int32(class BinaryInput& bi) {
-	deserialize(bi);
-}
-
-
-void Vector3int32::serialize(class BinaryOutput& bo) const {
-	bo.writeInt32(x);
-	bo.writeInt32(y);
-	bo.writeInt32(z);
-}
-
-
-void Vector3int32::deserialize(class BinaryInput& bi) {
-	x = bi.readInt32();
-	y = bi.readInt32();
-	z = bi.readInt32();
 }
 
 std::string Vector3int32::toString() const {

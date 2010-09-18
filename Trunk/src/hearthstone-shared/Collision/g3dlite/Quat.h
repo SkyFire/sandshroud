@@ -328,10 +328,6 @@ public:
 	@cite From "Uniform Random Rotations", Ken Shoemake, Graphics Gems III.
    */
 	static Quat unitRandom();
-
-	void deserialize(class BinaryInput& b);
-	void serialize(class BinaryOutput& b) const;
-
 	// 2-char swizzles
 
 	Vector2 xx() const;

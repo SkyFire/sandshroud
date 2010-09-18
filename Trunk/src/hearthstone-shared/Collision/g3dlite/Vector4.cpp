@@ -10,42 +10,12 @@
 #include <stdlib.h>
 #include <limits>
 #include "Vector4.h"
-#include "Color4.h"
 #include "g3dmath.h"
 #include "stringutils.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "Vector4int8.h"
 #include "Matrix4.h"
-#include "Any.h"
 
 namespace G3D {
-
-Vector4::Vector4(const Any& any) {
-	any.verifyName("Vector4");
-	any.verifyType(Any::TABLE, Any::ARRAY);
-	any.verifySize(4);
-
-	if (any.type() == Any::ARRAY) {
-		x = any[0];
-		y = any[1];
-		z = any[2];
-		w = any[3];
-	} else {
-		// Table
-		x = any["x"];
-		y = any["y"];
-		z = any["z"];
-		w = any["w"];
-	}
-}
-
-Vector4::operator Any() const {
-	Any any(Any::ARRAY, "Vector4");
-	any.append(x, y, z, w);
-	return any;
-}
-
 
 Vector4::Vector4(const Vector4int8& v) : x(v.x / 127.0f), y(v.y / 127.0f), z(v.z / 127.0f), w(v.w / 127.0f) {
 }
@@ -77,15 +47,6 @@ size_t Vector4::hashCode() const {
 	return xhash + (yhash * 37) + (zhash * 101) + (whash * 241);
 }
 
-
-Vector4::Vector4(const class Color4& c) {
-	x = c.r;
-	y = c.g;
-	z = c.b;
-	w = c.a;
-}
-
-
 Vector4::Vector4(const Vector2& v1, const Vector2& v2) {
 	x = v1.x;
 	y = v1.y;
@@ -99,26 +60,6 @@ Vector4::Vector4(const Vector2& v1, float fz, float fw) {
 	y = v1.y;
 	z = fz;
 	w = fw;
-}
-
-Vector4::Vector4(BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void Vector4::deserialize(BinaryInput& b) {
-	x = b.readFloat32();
-	y = b.readFloat32();
-	z = b.readFloat32();
-	w = b.readFloat32();
-}
-
-
-void Vector4::serialize(BinaryOutput& b) const {
-	b.writeFloat32(x);
-	b.writeFloat32(y);
-	b.writeFloat32(z);
-	b.writeFloat32(w);
 }
 
 //----------------------------------------------------------------------------

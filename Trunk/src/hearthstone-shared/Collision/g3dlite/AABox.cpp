@@ -12,9 +12,6 @@
 #include "Box.h"
 #include "Plane.h"
 #include "Sphere.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
-
 
 namespace G3D {
 
@@ -42,19 +39,6 @@ const AABox& AABox::zero() {
 	static const AABox b = AABox(Vector3::zero(), Vector3::zero());
 	return b;
 }
-
-
-void AABox::serialize(class BinaryOutput& b) const {
-	b.writeVector3(lo);
-	b.writeVector3(hi);
-}
-
-
-void AABox::deserialize(class BinaryInput& b) {
-	lo = b.readVector3();
-	hi = b.readVector3();
-}
-
 
 void AABox::split(const Vector3::Axis& axis, float location, AABox& low, AABox& high) const {
 	// Low, medium, and high along the chosen axis

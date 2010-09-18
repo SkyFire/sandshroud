@@ -122,24 +122,6 @@ void Ray::set(const Vector3& origin, const Vector3& direction) {
 	}
 }
 
-Ray::Ray(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void Ray::serialize(class BinaryOutput& b) const {
-	m_origin.serialize(b);
-	m_direction.serialize(b);
-}
-
-
-void Ray::deserialize(class BinaryInput& b) {
-	m_origin.deserialize(b);
-	m_direction.deserialize(b);
-	set(m_origin, m_direction);
-}
-
-
 Ray Ray::refract(
 	const Vector3&  newOrigin,
 	const Vector3&  normal,

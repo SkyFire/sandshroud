@@ -66,10 +66,6 @@ public:
 
 	static Plane fromEquation(float a, float b, float c, float d);
 
-	Plane(class BinaryInput& b);
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
-
 	virtual ~Plane() {}
 
 	/**

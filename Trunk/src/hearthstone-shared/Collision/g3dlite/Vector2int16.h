@@ -39,7 +39,6 @@ public:
 	Vector2int16() : x(0), y(0) {}
 	Vector2int16(int16 _x, int16 _y) : x(_x), y(_y){}
 	Vector2int16(const class Vector2& v);
-	Vector2int16(class BinaryInput& bi);
 
 	inline int16& operator[] (int i) {
 		debugAssert(((unsigned int)i) <= 1);
@@ -113,8 +112,6 @@ public:
 		return Vector2int16(iMin(x, v.x), iMin(y, v.y));
 	}
 
-	void serialize(class BinaryOutput& bo) const;
-	void deserialize(class BinaryInput& bi);
 }
 G3D_END_PACKED_CLASS(2)
 

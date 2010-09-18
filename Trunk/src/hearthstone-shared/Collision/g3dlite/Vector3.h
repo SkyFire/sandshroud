@@ -72,31 +72,14 @@ public:
 	/** Initializes to zero */
 	Vector3();
 
-	/** \param any Must either Vector3(#, #, #) or Vector3 {x = #, y = #, z = #}*/
-	Vector3(const Any& any);
-	
-	/** Converts the Vector3 to an Any. */
-	operator Any() const;
-
 	/** Divides by 127 */
 	Vector3(const Vector4int8&);
 	Vector3(const class Vector3int32& v);
-	explicit Vector3(class BinaryInput& b);
 	Vector3(float _x, float _y, float _z);
 	explicit Vector3(const class Vector2& v, float _z);
 	explicit Vector3(float coordinate[3]);
 	explicit Vector3(double coordinate[3]);
 	Vector3(const class Vector3int16& v);
-	explicit Vector3(class TextInput& t);
-	explicit Vector3(const class Color3& c);
-
-	/** Format is three float32's */
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
-
-	/** Format is "(%f, %f, %f)" */
-	void serialize(class TextOutput& t) const;
-	void deserialize(class TextInput& t);
 
 	// access vector V as V[0] = V.x, V[1] = V.y, V[2] = V.z
 	//
@@ -562,11 +545,6 @@ inline G3D::Vector3 operator*(int s, const G3D::Vector3& v) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector3&);
-
-
-void serialize(const Vector3::Axis& a, class BinaryOutput& bo);
-void deserialize(Vector3::Axis& a, class BinaryInput& bo);
-
 
 //----------------------------------------------------------------------------
 inline Vector3::Vector3() : x(0.0f), y(0.0f), z(0.0f) {

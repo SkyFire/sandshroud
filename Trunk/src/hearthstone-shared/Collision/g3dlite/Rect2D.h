@@ -118,13 +118,6 @@ private:
 	}
 
 public:
-
-	/** \param any Must either Rect2D::xywh(#, #, #, #) or Rect2D::xyxy(#, #, #, #)*/
-	Rect2D(const Any& any);
-	
-	/** Converts the Rect2D to an Any. */
-	operator Any() const;
-
 	Rect2D() : min(0, 0), max(0, 0) {}
 
 	/** Creates a rectangle at 0,0 with the given width and height*/

@@ -29,7 +29,6 @@ namespace G3D {
 class Vector2;	
 class Vector3;
 class Vector4;
-class Any;
 
 /**
  Do not subclass-- this implementation makes assumptions about the
@@ -47,28 +46,13 @@ public:
 	float x;
 	float y;
 
-	/** \param any Must either Vector2(#, #) or Vector2 {x = #, y = #}*/
-	Vector2(const Any& any);
-	
-	/** Converts the Vector2 to an Any. */
-	operator Any() const;
-
 	/** Creates the zero vector */
 	Vector2();
-	Vector2(class TextInput& t);
-	Vector2(class BinaryInput& b);
 	Vector2(float x, float y);
 	Vector2(float coordinate[2]);
 	Vector2(double coordinate[2]);
 	Vector2(const Vector2& other);
 	Vector2(const Vector2int16& other); 
-
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
-
-	void serialize(class TextOutput& t) const;
-	void deserialize(class TextInput& t);
-
 	float& operator[](int i);
 	const float& operator[](int i) const;
 

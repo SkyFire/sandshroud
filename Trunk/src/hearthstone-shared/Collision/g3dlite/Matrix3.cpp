@@ -17,39 +17,11 @@
 #include <assert.h>
 #include "Matrix3.h"
 #include "g3dmath.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "Quat.h"
-#include "Any.h"
 
 namespace G3D {
 
 const float Matrix3::EPSILON = 1e-06f;
-
-Matrix3::Matrix3(const Any& any) {
-	any.verifyName("Matrix3");
-	any.verifyType(Any::ARRAY);
-	any.verifySize(9);
-
-	for (int r = 0; r < 3; ++r) {
-		for (int c = 0; c < 3; ++c) {
-			elt[r][c] = any[r * 3 + c];
-		}
-	}
-}
-
-
-Matrix3::operator Any() const {
-	Any any(Any::ARRAY, "Matrix3");
-	any.resize(9);
-	for (int r = 0; r < 3; ++r) {
-		for (int c = 0; c < 3; ++c) {
-			any[r * 3 + c] = elt[r][c];
-		}
-	}
-
-	return any;
-}
 
 const Matrix3& Matrix3::zero() {
 	static Matrix3 m(0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -64,10 +36,6 @@ const Matrix3& Matrix3::identity() {
 
 const float Matrix3::ms_fSvdEpsilon = 1e-04f;
 const int Matrix3::ms_iSvdMaxIterations = 32;
-
-Matrix3::Matrix3(BinaryInput& b) {
-	deserialize(b);
-}
 
 bool Matrix3::fuzzyEq(const Matrix3& b) const {
 	for (int r = 0; r < 3; ++r) {
@@ -166,27 +134,6 @@ void Matrix3::set(
 	elt[2][1] = fEntry21;
 	elt[2][2] = fEntry22;
 }
-
-
-void Matrix3::deserialize(BinaryInput& b) {
-	int r,c;
-	for (c = 0; c < 3; ++c) {
-		for (r = 0; r < 3; ++r) {
-			elt[r][c] = b.readFloat32();
-		}
-	}
-}
-
-
-void Matrix3::serialize(BinaryOutput& b) const {
-	int r,c;
-	for (c = 0; c < 3; ++c) {
-		for (r = 0; r < 3; ++r) {
-			b.writeFloat32(elt[r][c]);
-		}
-	}
-}
-
 
 //----------------------------------------------------------------------------
 Vector3 Matrix3::column (int iCol) const {

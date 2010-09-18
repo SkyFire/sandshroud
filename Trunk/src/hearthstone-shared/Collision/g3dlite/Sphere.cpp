@@ -12,8 +12,6 @@
 #include "platform.h"
 #include "Sphere.h"
 #include "stringutils.h"
-#include "BinaryOutput.h"
-#include "BinaryInput.h"
 #include "AABox.h"
 #include "Plane.h"
 
@@ -21,28 +19,10 @@ namespace G3D {
 
 int32 Sphere::dummy;
 
-Sphere::Sphere(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void Sphere::serialize(class BinaryOutput& b) const {
-	center.serialize(b);
-	b.writeFloat64(radius);
-}
-
-
-void Sphere::deserialize(class BinaryInput& b) {
-	center.deserialize(b);
-	radius = (float)b.readFloat64();
-}
-
-
 std::string Sphere::toString() const {
 	return format("Sphere(<%g, %g, %g>, %g)", 
 				  center.x, center.y, center.z, radius);
 }
-
 
 bool Sphere::contains(const Vector3& point) const {
 	float distance = (center - point).squaredMagnitude();

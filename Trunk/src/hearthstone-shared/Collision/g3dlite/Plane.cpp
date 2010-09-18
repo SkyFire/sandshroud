@@ -9,28 +9,9 @@
 
 #include "platform.h"
 #include "Plane.h"
-#include "BinaryOutput.h"
-#include "BinaryInput.h"
 #include "stringutils.h"
 
 namespace G3D {
-
-Plane::Plane(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void Plane::serialize(class BinaryOutput& b) const {
-	_normal.serialize(b);
-	b.writeFloat64(_distance);
-}
-
-
-void Plane::deserialize(class BinaryInput& b) {
-	_normal.deserialize(b);
-	_distance = (float)b.readFloat64();
-}
-
 
 Plane::Plane(
 	Vector4	  point0,

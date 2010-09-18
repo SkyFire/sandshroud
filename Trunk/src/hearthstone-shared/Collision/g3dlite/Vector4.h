@@ -45,29 +45,17 @@ private:
 	bool operator>=(const Vector4&) const;
 
 public:
-
-	/** \param any Must either Vector4(#, #, #, #) or Vector3 {x = #, y = #, z = #, w =#}*/
-	Vector4(const Any& any);
-	
-	/** Converts the Vector4 to an Any. */
-	operator Any() const;
-
 	// construction
 	Vector4();
 	Vector4(float fX, float fY, float fZ, float fW);
 	Vector4(float afCoordinate[4]);
 	Vector4(const Vector4& rkVector);
-	Vector4(const class Color4& c);
 	Vector4(const Vector3& rkVector, float fW);
 	Vector4(const Vector2& v1, const Vector2& v2);
 	Vector4(const Vector2& v1, float fz, float fw);
 
 	/** Divides by 127 when converting */
 	Vector4(const Vector4int8&);
-
-	Vector4(class BinaryInput& b);
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
 
 	// coordinates
 	float x, y, z, w;

@@ -15,39 +15,12 @@
 #include "platform.h"
 #include <stdlib.h>
 #include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
 #include "g3dmath.h"
 #include "format.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
-#include "TextInput.h"
-#include "TextOutput.h"
-#include "Any.h"
 
 namespace G3D {
-
-
-Vector2::Vector2(const Any& any) {
-	any.verifyName("Vector2");
-	any.verifyType(Any::TABLE, Any::ARRAY);
-	any.verifySize(2);
-
-	if (any.type() == Any::ARRAY) {
-		x = any[0];
-		y = any[1];
-	} else {
-		// Table
-		x = any["x"];
-		y = any["y"];
-	}
-}
-
-
-Vector2::operator Any() const {
-	Any any(Any::ARRAY, "Vector2");
-	any.append(x, y);
-	return any;
-}
-
 
 const Vector2& Vector2::one() { 
 	static const Vector2 v(1, 1); return v; 
@@ -98,41 +71,6 @@ size_t Vector2::hashCode() const {
 	unsigned int yhash = (*(int*)(void*)(&y));
 
 	return xhash + (yhash * 37);
-}
-
-
-Vector2::Vector2(BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void Vector2::deserialize(BinaryInput& b) {
-	x = b.readFloat32();
-	y = b.readFloat32();
-}
-
-
-void Vector2::serialize(BinaryOutput& b) const {
-	b.writeFloat32(x);
-	b.writeFloat32(y);
-}
-
-
-void Vector2::deserialize(TextInput& t) {
-	t.readSymbol("(");
-	x = (float)t.readNumber();
-	t.readSymbol(",");
-	y = (float)t.readNumber();
-	t.readSymbol(")");
-}
-
-
-void Vector2::serialize(TextOutput& t) const {
-   t.writeSymbol("(");
-   t.writeNumber(x);
-   t.writeSymbol(",");
-   t.writeNumber(y);
-   t.writeSymbol(")");
 }
 
 //----------------------------------------------------------------------------

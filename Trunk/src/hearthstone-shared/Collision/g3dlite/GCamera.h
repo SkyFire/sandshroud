@@ -325,11 +325,6 @@ public:
 	void frustum(const Rect2D& viewport, GCamera::Frustum& f) const;
 
 	GCamera::Frustum frustum(const Rect2D& viewport) const;
-	
-	/** Read and Write camera parameters */
-	void serialize(class BinaryOutput& bo) const;
-	void deserialize(class BinaryInput& bi);
-   
 };
 
 } // namespace G3D

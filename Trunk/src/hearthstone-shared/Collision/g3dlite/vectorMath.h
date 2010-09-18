@@ -21,10 +21,6 @@
 #include "Vector4.h"
 #include "Matrix3.h"
 #include "Matrix4.h"
-#include "Color1.h"
-#include "Color3.h"
-#include "Color4.h"
-
 
 namespace G3D {
 
@@ -129,18 +125,6 @@ inline Vector4 lerp(const Vector4& v1, const Vector4& v2, float f) {
 	return v1.lerp(v2, f);
 }
 
-inline Color1 lerp(const Color1& v1, const Color1& v2, float f) {
-	return v1.lerp(v2, f);
-}
-
-inline Color3 lerp(const Color3& v1, const Color3& v2, float f) {
-	return v1.lerp(v2, f);
-}
-
-inline Color4 lerp(const Color4& v1, const Color4& v2, float f) {
-	return v1.lerp(v2, f);
-}
-
 inline Vector3 cross(const Vector3& v1, const Vector3& v2) {
 	return v1.cross(v2);
 }
@@ -165,14 +149,6 @@ inline Vector4 min(const Vector4& v1, const Vector4& v2) {
 	return v1.min(v2);
 }
 
-inline Color3 min(const Color3& v1, const Color3& v2) {
-	return v1.min(v2);
-}
-
-inline Color4 min(const Color4& v1, const Color4& v2) {
-	return v1.min(v2);
-}
-
 inline Vector2 max(const Vector2& v1, const Vector2& v2) {
 	return v1.max(v2);
 }
@@ -182,14 +158,6 @@ inline Vector3 max(const Vector3& v1, const Vector3& v2) {
 }
 
 inline Vector4 max(const Vector4& v1, const Vector4& v2) {
-	return v1.max(v2);
-}
-
-inline Color3 max(const Color3& v1, const Color3& v2) {
-	return v1.max(v2);
-}
-
-inline Color4 max(const Color4& v1, const Color4& v2) {
 	return v1.max(v2);
 }
 
@@ -219,15 +187,6 @@ inline float length(const Vector3& v) {
 
 inline float length(const Vector4& v) {
 	return v.length();
-}
-
-/**
- Computes the log of each component.  Useful for
- inverting the monitor gamma function or simulating
- perceptual response.
- */
-inline Color3 log(const Color3& c) {
-	return Color3(::logf(c.r), ::logf(c.g), ::logf(c.b));
 }
 
 }

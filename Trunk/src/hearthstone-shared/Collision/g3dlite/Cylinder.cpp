@@ -12,8 +12,6 @@
 
 #include "platform.h"
 #include "Cylinder.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "LineSegment.h"
 #include "CoordinateFrame.h"
 #include "Line.h"
@@ -21,31 +19,12 @@
 
 namespace G3D {
 
-Cylinder::Cylinder(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
 Cylinder::Cylinder() {
 }
 
 
 Cylinder::Cylinder(const Vector3& _p1, const Vector3& _p2, float _r) 
 	: p1(_p1), p2(_p2), mRadius(_r) {
-}
-
-
-void Cylinder::serialize(class BinaryOutput& b) const {
-	p1.serialize(b);
-	p2.serialize(b);
-	b.writeFloat64(mRadius);
-}
-
-
-void Cylinder::deserialize(class BinaryInput& b) {
-	p1.deserialize(b);
-	p2.deserialize(b);
-	mRadius = b.readFloat64();
 }
 
 

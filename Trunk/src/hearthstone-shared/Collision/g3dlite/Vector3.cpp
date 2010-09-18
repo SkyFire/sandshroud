@@ -16,44 +16,13 @@
 #include "Vector3.h"
 #include "g3dmath.h"
 #include "stringutils.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
-#include "TextInput.h"
-#include "TextOutput.h"
 #include "Vector3int16.h"
 #include "Matrix3.h"
 #include "Vector2.h"
-#include "Color3.h"
 #include "Vector4int8.h"
 #include "Vector3int32.h"
-#include "Any.h"
  
 namespace G3D {
-
-Vector3::Vector3(const Any& any) {
-	any.verifyName("Vector3");
-	any.verifyType(Any::TABLE, Any::ARRAY);
-	any.verifySize(3);
-
-	if (any.type() == Any::ARRAY) {
-		x = any[0];
-		y = any[1];
-		z = any[2];
-	} else {
-		// Table
-		x = any["x"];
-		y = any["y"];
-		z = any["z"];
-	}
-}
-
-Vector3::operator Any() const {
-	Any any(Any::ARRAY, "Vector3");
-	any.append(x, y, z);
-	return any;
-}
-
-Vector3::Vector3(const class Color3& v) : x(v.r), y(v.g), z(v.b) {}
 
 Vector3::Vector3(const class Vector3int32& v) : x((float)v.x), y((float)v.y), z((float)v.z) {}
 
@@ -122,57 +91,11 @@ double frand() {
 	return rand() / (double) RAND_MAX;
 }
 
-Vector3::Vector3(TextInput& t) {
-	deserialize(t);
-}
-
-Vector3::Vector3(BinaryInput& b) {
-	deserialize(b);
-}
-
-
 Vector3::Vector3(const class Vector3int16& v) {
 	x = v.x;
 	y = v.y;
 	z = v.z;
 }
-
-
-void Vector3::deserialize(BinaryInput& b) {
-	x = b.readFloat32();
-	y = b.readFloat32();
-	z = b.readFloat32();
-}
-
-
-void Vector3::deserialize(TextInput& t) {
-	t.readSymbol("(");
-	x = (float)t.readNumber();
-	t.readSymbol(",");
-	y = (float)t.readNumber();
-	t.readSymbol(",");
-	z = (float)t.readNumber();
-	t.readSymbol(")");
-}
-
-
-void Vector3::serialize(TextOutput& t) const {
-   t.writeSymbol("(");
-   t.writeNumber(x);
-   t.writeSymbol(",");
-   t.writeNumber(y);
-   t.writeSymbol(",");
-   t.writeNumber(z);
-   t.writeSymbol(")");
-}
-
-
-void Vector3::serialize(BinaryOutput& b) const {
-	b.writeFloat32(x);
-	b.writeFloat32(y);
-	b.writeFloat32(z);
-}
-
 
 Vector3 Vector3::random(Random& r) {
 	Vector3 result;
@@ -361,15 +284,6 @@ Matrix3 Vector3::cross() const {
 	return Matrix3( 0, -z,  y,
 					z,  0, -x,
 				   -y,  x,  0);
-}
-
-
-void serialize(const Vector3::Axis& a, class BinaryOutput& bo) {
-	bo.writeUInt8((uint8)a);
-}
-
-void deserialize(Vector3::Axis& a, class BinaryInput& bi) {
-	a = (Vector3::Axis)bi.readUInt8();
 }
 
 //----------------------------------------------------------------------------

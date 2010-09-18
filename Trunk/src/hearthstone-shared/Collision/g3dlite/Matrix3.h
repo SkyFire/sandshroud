@@ -29,8 +29,6 @@ namespace G3D {
 #   pragma warning (disable : 4127)
 #endif
 
-class Any;
-
 /**
   3x3 matrix.  Do not subclass.
  */
@@ -47,15 +45,10 @@ private:
 
 public:
 
-	Matrix3(const Any& any);
-
-	operator Any() const;
-
 	/** Initial values are undefined for performance.  See also 
 		Matrix3::zero(), Matrix3::identity(), Matrix3::fromAxisAngle, etc.*/
 	inline Matrix3() {}
 
-	Matrix3 (class BinaryInput& b);
 	Matrix3 (const float aafEntry[3][3]);
 	Matrix3 (const Matrix3& rkMatrix);
 	Matrix3 (float fEntry00, float fEntry01, float fEntry02,
@@ -68,9 +61,6 @@ public:
 		@cite Graphics Gems II, p. 351--354
  		@cite Implementation from Watt and Watt, pg 362*/
 	Matrix3(const class Quat& q);
-
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
 
 	/** Returns true if column(0).cross(column(1)).dot(column(2)) > 0. */
 	bool isRightHanded() const;

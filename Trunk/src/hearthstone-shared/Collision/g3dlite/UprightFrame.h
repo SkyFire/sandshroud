@@ -56,9 +56,6 @@ public:
 	   without wrapping about zero.  For use with Spline<UprightFrame>
 	 */
 	static void unwrapYaw(UprightFrame* a, int N);
-
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
 };
 
 /** Shortest-path linear velocity spline for camera positions.  Always keeps the camera from rolling.
@@ -70,12 +67,6 @@ protected:
 	virtual void ensureShortestPath(UprightFrame* A, int N) const {
 		UprightFrame::unwrapYaw(A, N);
 	}
-
-public:
-	
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
-
 };
 
 }

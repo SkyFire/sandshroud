@@ -50,11 +50,6 @@ private:
 	bool operator>=(const Matrix4&) const;
 
 public:
-	/** Must be of the form: <code>Matrix4(#, #, # .... #)</code>*/
-	Matrix4(const Any& any);
-
-	operator Any() const;
-
 	Matrix4(
 		float r1c1, float r1c2, float r1c3, float r1c4,
 		float r2c1, float r2c2, float r2c3, float r2c4,
@@ -190,10 +185,6 @@ public:
 	*/
 	Matrix4 adjoint() const;
 	Matrix4 cofactor() const;
-
-	/** Serializes row-major */
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
 
 	std::string toString() const;
 

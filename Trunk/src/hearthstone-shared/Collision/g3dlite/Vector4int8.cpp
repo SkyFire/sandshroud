@@ -16,8 +16,6 @@
 #include "Vector4int8.h"
 #include "Vector3.h"
 #include "Vector4.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include <string>
 
 namespace G3D {
@@ -33,25 +31,6 @@ Vector4int8::Vector4int8(const Vector3& source, int8 w) : w(w) {
 	x = iClamp(iRound(source.x), -128, 127);
 	y = iClamp(iRound(source.y), -128, 127);
 	z = iClamp(iRound(source.z), -128, 127);
-}
-
-Vector4int8::Vector4int8(class BinaryInput& b) {
-	deserialize(b);
-}
-
-void Vector4int8::serialize(class BinaryOutput& b) const {
-	// Intentionally write individual bytes to avoid endian issues
-	b.writeInt8(x);
-	b.writeInt8(y);
-	b.writeInt8(z);
-	b.writeInt8(w);
-}
-
-void Vector4int8::deserialize(class BinaryInput& b) {
-	x = b.readInt8();
-	y = b.readInt8();
-	z = b.readInt8();
-	w = b.readInt8();
 }
 
 } // namespace G3D

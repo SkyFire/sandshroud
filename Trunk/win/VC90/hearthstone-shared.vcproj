@@ -809,43 +809,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Any.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Any.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Array.h"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\AtomicInt32.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\BinaryFormat.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\BinaryFormat.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\BinaryInput.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\BinaryInput.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\BinaryOutput.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\BinaryOutput.h"
 					>
 				</File>
 				<File
@@ -874,54 +842,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\CollisionDetection.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color1.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color1.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color1uint8.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color1uint8.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color3.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color3.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color3uint8.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color3uint8.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color4.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color4.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color4uint8.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Color4uint8.h"
 					>
 				</File>
 				<File
@@ -1014,6 +934,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\g3dmath.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\g3dmath.inl"
 					>
 				</File>
 				<File
@@ -1117,6 +1041,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Quat.inl"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Random.cpp"
 					>
 				</File>
@@ -1193,22 +1121,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\TextInput.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\TextInput.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\TextOutput.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\TextOutput.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Triangle.cpp"
 					>
 				</File>
@@ -1245,6 +1157,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Vector2.inl"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Vector2int16.cpp"
 					>
 				</File>
@@ -1258,6 +1174,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3.inl"
 					>
 				</File>
 				<File
@@ -1282,6 +1202,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Vector4.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Vector4.inl"
 					>
 				</File>
 				<File

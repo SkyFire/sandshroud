@@ -24,55 +24,9 @@
 #include "Capsule.h"
 #include "Cylinder.h"
 #include "UprightFrame.h"
-#include "Any.h"
 #include "stringutils.h"
 
 namespace G3D {
-
-CoordinateFrame::CoordinateFrame(const Any& any) {
-	any.verifyName("CFrame");
-	if (toUpper(any.name()) == "CFRAME") {
-		any.verifyType(Any::TABLE, Any::ARRAY);
-		if (any.type() == Any::TABLE) {
-			rotation	= any["rotation"];
-			translation = any["translation"];
-		} else {
-			any.verifySize(2);
-			rotation	= any[0];
-			translation = any[1];
-		}
-	} else {
-		any.verifyName("CFrame::fromXYZYPRDegrees");
-		any.verifyType(Any::ARRAY);
-		any.verifySize(3, 6);
-
-		int s = any.size();
-
-		*this = fromXYZYPRDegrees(any[0], any[1], any[2], 
-								  (s > 3) ? any[3].number() : 0.0f,
-								  (s > 4) ? any[4].number() : 0.0f,
-								  (s > 5) ? any[5].number() : 0.0f);
-	}
-}
-
-
-CoordinateFrame::operator Any() const {
-	float x, y, z, yaw, pitch, roll;
-	getXYZYPRDegrees(x, y, z, yaw, pitch, roll); 
-	Any a(Any::ARRAY, "CFrame::fromXYZYPRDegrees");
-	a.append(x, y, z, yaw);
-	if ( ! G3D::fuzzyEq(yaw, 0.0f) || ! G3D::fuzzyEq(pitch, 0.0f) || ! G3D::fuzzyEq(roll, 0.0f)) {
-		a.append(yaw);
-		if (! G3D::fuzzyEq(pitch, 0.0f) || ! G3D::fuzzyEq(roll, 0.0f)) {
-			a.append(pitch);
-			if (! G3D::fuzzyEq(roll, 0.0f)) {
-				a.append(roll);
-			}
-		}
-	}
-	return a;
-}
-
 
 CoordinateFrame::CoordinateFrame(const class UprightFrame& f) {
 	*this = f.toCoordinateFrame();
@@ -288,24 +242,6 @@ Box CoordinateFrame::toObjectSpace(const Box &b) const {
 Box CoordinateFrame::toObjectSpace(const AABox& b) const {
 	return toObjectSpace(Box(b));
 }
-
-
-CoordinateFrame::CoordinateFrame(class BinaryInput& b) : rotation(Matrix3::zero()) {
-	deserialize(b);
-}
-
-
-void CoordinateFrame::deserialize(class BinaryInput& b) {
-	rotation.deserialize(b);
-	translation.deserialize(b);
-}
-
-
-void CoordinateFrame::serialize(class BinaryOutput& b) const {
-	rotation.serialize(b);
-	translation.serialize(b);
-}
-
 
 Sphere CoordinateFrame::toWorldSpace(const Sphere &b) const {
 	return Sphere(pointToWorldSpace(b.center), b.radius);

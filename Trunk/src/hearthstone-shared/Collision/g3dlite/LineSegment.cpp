@@ -78,24 +78,6 @@ bool LineSegment::intersectsSolidSphere(const class Sphere& s) const {
 	return distanceSquared(s.center) <= square(s.radius);
 }
 
-
-LineSegment::LineSegment(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void LineSegment::serialize(class BinaryOutput& b) const {
-	_point.serialize(b);
-	direction.serialize(b);
-}
-
-
-void LineSegment::deserialize(class BinaryInput& b) {
-	_point.deserialize(b);
-	direction.deserialize(b);
-}
-
-
 Vector3 LineSegment::randomPoint() const {
 	return _point + uniformRandom(0, 1) * direction;
 }

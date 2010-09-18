@@ -13,54 +13,11 @@
 #include "Matrix3.h"
 #include "Vector4.h"
 #include "Vector3.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "CoordinateFrame.h"
 #include "Rect2D.h"
-#include "Any.h"
 #include "stringutils.h"
 
 namespace G3D {
-
-	
-Matrix4::Matrix4(const Any& any) {
-	any.verifyName("Matrix4");
-	any.verifyType(Any::ARRAY);
-
-	const std::string& name = toLower(any.name());
-	if (name == "matrix4") {
-		any.verifySize(16);
-
-		for (int r = 0; r < 4; ++r) {
-			for (int c = 0; c < 4; ++c) {
-				elt[r][c] = any[r * 4 + c];
-			}
-		}
-	} else if (name == "matrix4::scale") {
-		if (any.size() == 1) {
-			*this = scale(any[0].number());
-		} else if (any.size() == 3) {
-			*this = scale(any[0], any[1], any[2]);
-		} else {
-			any.verify(false, "Matrix4::scale() takes either 1 or 3 arguments");
-		}
-	} else {
-		any.verify(false, "Expected Matrix4 constructor");
-	}
-}
-
-
-Matrix4::operator Any() const {
-	Any any(Any::ARRAY, "Matrix4");
-	any.resize(16);
-	for (int r = 0; r < 4; ++r) {
-		for (int c = 0; c < 4; ++c) {
-			any[r * 4 + c] = elt[r][c];
-		}
-	}
-
-	return any;
-}
 
 const Matrix4& Matrix4::identity() {
 	static Matrix4 m(
@@ -492,23 +449,6 @@ CoordinateFrame Matrix4::approxCoordinateFrame() const {
 	return cframe;
 }
 
-
-void Matrix4::serialize(class BinaryOutput& b) const {
-	for (int r = 0; r < 4; ++r) {
-		for (int c = 0; c < 4; ++c) {
-			b.writeFloat32(elt[r][c]);
-		}
-	}
-}
-
-
-void Matrix4::deserialize(class BinaryInput& b) {
-	for (int r = 0; r < 4; ++r) {
-		for (int c = 0; c < 4; ++c) {
-			elt[r][c] = b.readFloat32();
-		}
-	}
-}
 
 std::string Matrix4::toString() const {
 	return G3D::format("[%g, %g, %g, %g; %g, %g, %g, %g; %g, %g, %g, %g; %g, %g, %g, %g]", 

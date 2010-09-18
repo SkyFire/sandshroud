@@ -36,10 +36,6 @@ public:
 		radius = 0;
 	}
 
-	Sphere(class BinaryInput& b);
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
-
 	Sphere(
 		const Vector3&  center,
 		float		   radius) {

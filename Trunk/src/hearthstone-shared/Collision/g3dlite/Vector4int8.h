@@ -58,10 +58,6 @@ public:
 
 	inline Vector4int8(int8 x, int8 y, int8 z, int8 w) : x(x), y(y), z(z), w(w) {}
 
-	Vector4int8(class BinaryInput& b);
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
-
 	// coordinates
 	int8 x, y, z, w;
 

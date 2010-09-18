@@ -33,12 +33,6 @@ public:
 
 	inline LineSegment() : _point(Vector3::zero()), direction(Vector3::zero()) {}
 
-	LineSegment(class BinaryInput& b);
-
-	void serialize(class BinaryOutput& b) const;
-
-	void deserialize(class BinaryInput& b);
-
 	virtual ~LineSegment() {}
 
 	/**

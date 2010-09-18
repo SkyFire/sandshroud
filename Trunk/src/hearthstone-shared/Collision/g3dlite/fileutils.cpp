@@ -11,8 +11,6 @@
 #include <cstdio>
 #include "platform.h"
 #include "fileutils.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "g3dmath.h"
 #include "stringutils.h"
 #include "Set.h"

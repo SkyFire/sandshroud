@@ -13,8 +13,6 @@
 #include "platform.h"
 #include "Triangle.h"
 #include "Plane.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "debugAssert.h"
 #include "AABox.h"
 #include "Ray.h"
@@ -63,27 +61,6 @@ Triangle::Triangle(const Vector3& v0, const Vector3& v1, const Vector3& v2) {
 	
 Triangle::~Triangle() {
 }
-
-
-Triangle::Triangle(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void Triangle::serialize(class BinaryOutput& b) {
-	_vertex[0].serialize(b);
-	_vertex[1].serialize(b);
-	_vertex[2].serialize(b);
-}
-
-
-void Triangle::deserialize(class BinaryInput& b) {
-	_vertex[0].deserialize(b);
-	_vertex[1].deserialize(b);
-	_vertex[2].deserialize(b);
-	init(_vertex[0], _vertex[1], _vertex[2]);
-}
-
 
 float Triangle::area() const {
 	return _area;

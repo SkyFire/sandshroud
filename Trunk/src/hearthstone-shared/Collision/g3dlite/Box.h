@@ -85,13 +85,7 @@ public:
 		const Vector3&	  max);
 
 	static Box inf();
-
-	Box(class BinaryInput& b);
-
 	Box(const class AABox& b);
-
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
 
 	/**
 	 Returns the object to world transformation for 

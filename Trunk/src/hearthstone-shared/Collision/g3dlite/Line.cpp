@@ -31,29 +31,10 @@ Vector3 Line::intersection(const Plane& plane) const {
 	}
 }
 
-
-Line::Line(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
-void Line::serialize(class BinaryOutput& b) const {
-	_point.serialize(b);
-	_direction.serialize(b);
-}
-
-
-void Line::deserialize(class BinaryInput& b) {
-	_point.deserialize(b);
-	_direction.deserialize(b);
-}
-
-
 Vector3 Line::closestPoint(const Vector3& pt) const {
 	float t = _direction.dot(pt - _point);
 	return _point + _direction * t;
 }
-
 
 Vector3 Line::point() const {
 	return _point;

@@ -71,11 +71,6 @@ public:
 		set(origin, direction);
 	}
 
-	Ray(class BinaryInput& b);
-
-	void serialize(class BinaryOutput& b) const;
-	void deserialize(class BinaryInput& b);
-
 	/**
 	 Creates a Ray from a origin and a (nonzero) unit direction.
 	 */

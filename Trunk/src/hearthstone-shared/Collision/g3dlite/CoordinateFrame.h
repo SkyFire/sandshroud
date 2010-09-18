@@ -64,16 +64,6 @@ public:
 	/** Takes object space points to world space. */
 	Vector3							translation;
 
-	/** \param any Must be in one of the following forms: 
-		- CFrame((matrix3 expr), (vector3 expr))
-		- CFrame::fromXYZYPRDegrees(#, #, #, #, #, #)
-		- CFrame {  rotation = (matrix3 expr), translation = (vector3 expr) }
-		*/
-	CoordinateFrame(const Any& any);
-	
-	/** Converts the CFrame to an Any. */
-	operator Any() const;
-
 	inline bool operator==(const CoordinateFrame& other) const {
 		return (translation == other.translation) && (rotation == other.rotation);
 	}
@@ -115,12 +105,6 @@ public:
 	 equivalent to Euler angles; they are known as Tait-Bryan
 	 rotations and are more convenient for intuitive positioning.*/
 	static CoordinateFrame fromXYZYPRDegrees(float x, float y, float z, float yaw = 0.0f, float pitch = 0.0f, float roll = 0.0f);
-	
-	CoordinateFrame(class BinaryInput& b);
-
-	void deserialize(class BinaryInput& b);
-
-	void serialize(class BinaryOutput& b) const;
 
 	CoordinateFrame(const CoordinateFrame &other) :
 		rotation(other.rotation), translation(other.translation) {}

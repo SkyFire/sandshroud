@@ -11,8 +11,6 @@
  */
 
 #include "Capsule.h"
-#include "BinaryInput.h"
-#include "BinaryOutput.h"
 #include "LineSegment.h"
 #include "Sphere.h"
 #include "CoordinateFrame.h"
@@ -21,31 +19,12 @@
 
 namespace G3D {
 
-Capsule::Capsule(class BinaryInput& b) {
-	deserialize(b);
-}
-
-
 Capsule::Capsule() {
 }
 
 
 Capsule::Capsule(const Vector3& _p1, const Vector3& _p2, float _r) 
 	: p1(_p1), p2(_p2), _radius(_r) {
-}
-
-
-void Capsule::serialize(class BinaryOutput& b) const {
-	p1.serialize(b);
-	p2.serialize(b);
-	b.writeFloat64(_radius);
-}
-
-
-void Capsule::deserialize(class BinaryInput& b) {
-	p1.deserialize(b);
-	p2.deserialize(b);
-	_radius = b.readFloat64();
 }
 
 

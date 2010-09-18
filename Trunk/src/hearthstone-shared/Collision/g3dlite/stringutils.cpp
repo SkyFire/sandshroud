@@ -9,7 +9,6 @@
 
 #include "platform.h"
 #include "stringutils.h"
-#include "BinaryInput.h"
 #include <algorithm>
 
 namespace G3D {

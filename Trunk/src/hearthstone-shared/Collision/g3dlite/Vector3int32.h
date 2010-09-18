@@ -40,10 +40,6 @@ public:
 	Vector3int32(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {}
 	Vector3int32(const class Vector3int16& v);
 	Vector3int32(const class Vector3& v);
-	Vector3int32(class BinaryInput& bi);
-
-	void serialize(class BinaryOutput& bo) const;
-	void deserialize(class BinaryInput& bi);
 
 	inline int32& operator[] (int i) {
 		debugAssert(i <= 2);
