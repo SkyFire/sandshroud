@@ -994,49 +994,44 @@ bool ChatHandler::HandleWPHideCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_session)
 {
-	Creature* cr = 
-		m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
+	Creature* cr = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
 	if(!cr)
 	{
 		SystemMessage(m_session, "You should select a creature.");
 		return true;
 	}
+
 	if( cr->m_spawn == NULL )
 	{
 		SystemMessage(m_session, "You cannot add waypoints to a creature that is not saved.");
 		return true;
 	}
+
 	if(cr->GetAIInterface()->GetWayPointsCount())//ALREADY HAVE WAYPOINTS
 	{	
 		SystemMessage(m_session, "The creature already has waypoints");
 		return false;
 	}
+
 	if(m_session->GetPlayer()->waypointunit != NULL)
 	{
 		SystemMessage(m_session, "You are already showing waypoints, hide them first.");
 		return true;
 	}
+
 	if(!cr->GetSQL_id())
 	{
 		SystemMessage(m_session, "This creature did not get a valid spawn_id.");
 		return true;
 	}
 
-	char* pR = strtok((char*)args, " ");
-	if(!pR)
+	int r;
+	int n;
+	if(sscanf(args, "%u %u", &r, &n) != 2)
 	{
 		SystemMessage(m_session, "Randomly generate wps params: range count");
 		return true;
 	}
-
-	int r = atoi(pR);
-	char *pC=strtok(NULL, " ");
-	if(!pC)
-	{
-		SystemMessage(m_session, "Randomly generate wps params: range count");
-		return true;
-	}
-	int n = atol(pC);
 
 	for(int i=0;i<n;++i)
 	{
@@ -1083,7 +1078,7 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 	}
 	m_session->GetPlayer()->waypointunit = cr->GetAIInterface();
 	cr->GetAIInterface()->showWayPoints(m_session->GetPlayer(),cr->GetAIInterface()->m_WayPointsShowBackwards);
-	
+
 	return true;
 }
 
