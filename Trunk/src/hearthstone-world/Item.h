@@ -147,6 +147,15 @@ public:
 		return HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_QUEST | ITEM_FLAG_SOULBOUND );
 	}
 
+	HEARTHSTONE_INLINE bool IsAccountbound()
+	{
+		if(HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_BINDONACC ))
+			return true;
+		if(GetProto()->ScalingStatsEntry || GetProto()->ScalingStatsFlag)
+			return true;
+		return false;
+	}
+
 	HEARTHSTONE_INLINE uint32 GetChargesLeft()
 	{
 		for( uint32 x = 0; x < 5; x++ )

@@ -143,19 +143,20 @@ bool ChatHandler::HandleGPSCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleKickCommand(const char* args, WorldSession *m_session)
 {
+	char pname[20];
+	if(sscanf(args, "%s", &pname) != 1)
+		return false;
 
-	if(!*args)
-	return false;
-	char *pname = strtok((char*)args, " ");
 	if(!pname)
 	{
 		RedSystemMessage(m_session, "No name specified.");
 		return true;
 	}
-	Player* chr = objmgr.GetPlayer((const char*)pname, false);
+
+	Player* chr = objmgr.GetPlayer((char*)pname, false);
 	if (chr)
 	{
-		char *reason = strtok(NULL, "\n");
+		char* reason = strtok((char*)args, "");
 		std::string kickreason = "No reason";
 		if(reason)
 			kickreason = reason;
@@ -350,8 +351,9 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_sessi
 	int flag = atoi((char*)args);
 
 	Player* chr = getSelectedChar(m_session);
-	if (chr == NULL) return true;
-	
+	if (chr == NULL)
+		return true;
+
 	char buf[256];
 
 	// send message to user
@@ -364,7 +366,7 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_sessi
 		snprintf((char*)buf,256, "%s has no more taxi nodes now.", chr->GetName());
 	}
 	GreenSystemMessage(m_session, buf);
-	
+
 	// send message to player
 	if (flag != 0)
 	{
