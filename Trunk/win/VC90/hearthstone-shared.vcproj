@@ -925,10 +925,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\GMutex.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\HashTrait.h"
 					>
 				</File>

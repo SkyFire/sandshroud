@@ -14,7 +14,6 @@
 
 #include "platform.h"
 #include "g3dmath.h"
-#include "GMutex.h"
 
 namespace G3D {
 
@@ -50,18 +49,11 @@ protected:
 		B = 0x9D2C5680,
 		C = 0xEFC60000};
 
-	/** 
-		Prevents multiple overlapping calls to generate(). 
-	 */
-	Spinlock	 lock;
-
 	/** State vector (these are the next N values that will be returned) */
 	uint32*	  state;
 
 	/** Index into state */
 	int		  index;
-
-	bool		 m_threadsafe;
 
 	/** Generate the next N ints, and store them for readback later.
 		Called from bits() */
@@ -77,7 +69,7 @@ public:
 		will only be used on a single thread.  This eliminates the
 		lock and improves performance on some platforms.
 	 */
-	Random(uint32 seed = 0xF018A4D2, bool threadsafe = true);
+	Random(uint32 seed = 0xF018A4D2);
 
 	virtual ~Random();
 

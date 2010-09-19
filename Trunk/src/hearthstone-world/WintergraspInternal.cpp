@@ -22,9 +22,9 @@
 initialiseSingleton( WintergraspInternal );
 
 #ifdef WIN32
-static HANDLE m_abortEvent = INVALID_HANDLE_VALUE;
+static HANDLE m_abortEventWGI = INVALID_HANDLE_VALUE;
 #else
-static pthread_cond_t abortcond;
+static pthread_cond_t abortcondWGI;
 static pthread_mutex_t abortmutex;
 #endif
 
@@ -49,6 +49,11 @@ WintergraspInternal::~WintergraspInternal()
 void WintergraspInternal::terminate()
 {
 	m_threadRunning = false;
+#ifdef WIN32
+	SetEvent(m_abortEventWGI);
+#else
+	pthread_cond_signal(&abortcondWGI);
+#endif
 }
 
 void WintergraspInternal::dupe_tm_pointer(tm * returnvalue, tm * mypointer)
@@ -109,7 +114,7 @@ bool WintergraspInternal::run()
 		if(!m_threadRunning)
 			break;
 #ifdef WIN32
-		WaitForSingleObject(m_abortEvent, 30000); // 30 second delay.
+		WaitForSingleObject(m_abortEventWGI, 30000); // 30 second delay.
 #else
 		Sleep( 30000 );
 #endif

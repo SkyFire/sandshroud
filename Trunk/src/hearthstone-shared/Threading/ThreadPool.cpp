@@ -80,7 +80,7 @@ bool CThreadPool::ThreadExit(Thread * t)
 		printf("Thread %u duplicated with thread %u\n", (*itr)->ControlInterface.GetId(), t->ControlInterface.GetId());
 	}
 	m_freeThreads.insert(t);
-	
+
 	DEBUG_LOG("ThreadPool", "Thread %u entered the free pool.", t->ControlInterface.GetId());
 	_mutex.Release();
 	return true;
@@ -214,7 +214,7 @@ void CThreadPool::Shutdown()
 {
 	_mutex.Acquire();
 	size_t tcount = m_activeThreads.size() + m_freeThreads.size();		// exit all
-	OUT_DEBUG("ThreadPool", "Shutting down %u threads.", tcount);
+	DEBUG_LOG("ThreadPool", "Shutting down %u threads.", tcount);
 	KillFreeThreads((uint32)m_freeThreads.size());
 	_threadsToExit += (uint32)m_activeThreads.size();
 
@@ -225,16 +225,46 @@ void CThreadPool::Shutdown()
 	}
 	_mutex.Release();
 
+	uint32 listcount = 0;
 	for(;;)
 	{
 		_mutex.Acquire();
-		if(m_activeThreads.size() || m_freeThreads.size())
+		if(listcount > 24)
 		{
-			OUT_DEBUG("ThreadPool", "%u threads remaining...", m_activeThreads.size() + m_freeThreads.size() );
+			listcount = 0;
+			DEBUG_LOG("ThreadPool", "Listing threads" );
+			if(m_activeThreads.size())
+			{
+				for(ThreadSet::iterator itr = m_activeThreads.begin(); itr != m_activeThreads.end(); ++itr)
+				{
+					if(!(*itr)->ExecutionTarget)
+						m_activeThreads.erase(itr);
+					else
+						DEBUG_LOG("ThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
+				}
+			}
+
+			if(m_freeThreads.size())
+			{
+				for(ThreadSet::iterator itr = m_freeThreads.begin(); itr != m_freeThreads.end(); ++itr)
+				{
+					if(!(*itr)->ExecutionTarget)
+						m_activeThreads.erase(itr);
+					else
+						DEBUG_LOG("ThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
+				}
+			}
+			continue;
+		}
+		else if(m_activeThreads.size() || m_freeThreads.size())
+		{
+			DEBUG_LOG("ThreadPool", "%u active threads, %u free threads remaining...", m_activeThreads.size(), m_freeThreads.size() );
 			_mutex.Release();
+			listcount++;
 			Sleep(1000);
 			continue;
 		}
+
 		m_activeThreads.clear();
 		m_freeThreads.clear();
 		_mutex.Release();

@@ -18,12 +18,13 @@ Random& Random::common() {
 	return r;
 }
 
-Random::Random(void* x) : state(NULL), m_threadsafe(false) {
+Random::Random(void* x) : state(NULL)
+{
 	(void)x;
 }
 
-
-Random::Random(uint32 seed, bool threadsafe) : m_threadsafe(threadsafe) {
+Random::Random(uint32 seed)
+{
 	const uint32 X = 1812433253UL;
 
 	state = new uint32[N];
@@ -72,7 +73,6 @@ uint32 Random::bits() {
 	return r;	
 }
 
-
 /** Generate the next N ints, and store them for readback later */
 void Random::generate() {
 	// Lower R bits
@@ -81,16 +81,6 @@ void Random::generate() {
 	// Upper (32 - R) bits
 	static const uint32 UPPER_MASK = 0xFFFFFFFF << R;
 	static const uint32 mag01[2] = {0UL, (uint32)A};
-
-	if (m_threadsafe) {
-		bool contention = ! lock.lock();
-		if (contention)  {
-			// Another thread just generated a set of numbers; no need for
-			// this thread to do it too
-			lock.unlock();
-			return;
-		}
-	}
 
 	// First N - M
 	for (unsigned int i = 0; i < N - M; ++i) {	
@@ -107,13 +97,8 @@ void Random::generate() {
 	uint32 y = (state[N - 1] & UPPER_MASK) | (state[0] & LOWER_MASK);
 	state[N - 1] = state[M - 1] ^ (y >> 1) ^ mag01[y & 1];
 	index = 0;
-
-	if (m_threadsafe) {
-		lock.unlock();
-	}
 }
 
-	
 int Random::integer(int low, int high) {
 	int r = iFloor(low + (high - low + 1) * (double)bits() / 0xFFFFFFFFUL);
 

@@ -1655,14 +1655,14 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 #	   ifdef G3D_DEBUG
 		{
 			// Internal consistency checks
-			ASSERT(b[0] >= 0.0 && b[0] <= 1.0f, "Intersection is outside triangle.");
-			ASSERT(b[1] >= 0.0 && b[1] <= 1.0f, "Intersection is outside triangle.");
-			ASSERT(b[2] >= 0.0 && b[2] <= 1.0f, "Intersection is outside triangle.");
+			ASSERT(b[0] >= 0.0 && b[0] <= 1.0f);
+			ASSERT(b[1] >= 0.0 && b[1] <= 1.0f);
+			ASSERT(b[2] >= 0.0 && b[2] <= 1.0f);
 			Vector3 blend = 
 				b[0] * triangle.vertex(0) + 
 				b[1] * triangle.vertex(1) + 
 				b[2] * triangle.vertex(2);
-			ASSERT(blend.fuzzyEq(outLocation), "Barycentric coords don't match intersection.");
+			ASSERT(blend.fuzzyEq(outLocation));
 			// Call again so that we can debug the problem
 			// isPointInsideTriangle(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2), triangle.normal(), 
 			// outLocation, b, triangle.primaryAxis());
@@ -1707,16 +1707,13 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 		{
 			// Internal consistency checks
 			for (int i = 0; i < 3; ++i) {
-				ASSERT(fuzzyGe(b[i], 0.0f) && fuzzyLe(b[i], 1.0f), "Intersection is outside triangle.");
+				ASSERT(fuzzyGe(b[i], 0.0f) && fuzzyLe(b[i], 1.0f));
 			}
 			Vector3 blend = 
 				b[0] * triangle.vertex(0) + 
 				b[1] * triangle.vertex(1) + 
 				b[2] * triangle.vertex(2);
-			ASSERT(blend.fuzzyEq(outLocation), 
-				format("Barycentric coords don't match intersection. %s != %s", 
-					blend.toString().c_str(), 
-					outLocation.toString().c_str()));	
+			ASSERT(blend.fuzzyEq(outLocation));
 
 			// Call again so that we can debug the problem
 			collisionTimeForMovingPointFixedSphere(point, -velocity, sphere, dummy, dummy);
@@ -1986,10 +1983,10 @@ Vector3 CollisionDetection::closestPointOnTrianglePerimeter(
 	{
 		Vector3 diff = r[edgeIndex] - v[edgeIndex];
 		ASSERT(fuzzyEq(diff.direction().dot(edgeDirection[edgeIndex]), 1.0f) ||
-			diff.fuzzyEq(Vector3::zero()), "Point not on correct triangle edge");
+			diff.fuzzyEq(Vector3::zero()));
 		float frac = diff.dot(edgeDirection[edgeIndex])/edgeLength[edgeIndex];
-		ASSERT(frac >= -0.000001, "Point off low side of edge.");
-		ASSERT(frac <= 1.000001, "Point off high side of edge.");
+		ASSERT(frac >= -0.000001);
+		ASSERT(frac <= 1.000001);
 	}
 #   endif
 

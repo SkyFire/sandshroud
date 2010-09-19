@@ -53,6 +53,8 @@ void SetThreadName(const char* format, ...)
 	info.dwThreadID = GetCurrentThreadId();
 	info.dwFlags = 0;
 	info.szName = thread_name;
+	DEBUG_LOG("ThreadMaker", "Creating thread %u with name %s", info.dwThreadID, info.szName);
+	ThreadPool.SetThreadInfo(info.dwThreadID, info);
 
 	__try
 	{
@@ -77,6 +79,7 @@ time_t convTimePeriod ( uint32 dLength, char dType )
 	time_t rawtime = 0;
 	if (dLength == 0)
 		return rawtime;
+
 	struct tm * ti = localtime( &rawtime );
 	switch(dType)
 	{

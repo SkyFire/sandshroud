@@ -402,6 +402,7 @@ bool Master::Run(int argc, char ** argv)
 	// kill the database thread first so we don't lose any queries/data
 	CharacterDatabase.EndThreads();
 	WorldDatabase.EndThreads();
+	LogDatabase.EndThreads();
 
 	Log.Notice("Server", "Shutting down random generator.");
 	CleanupRandomNumberGenerators();
@@ -593,6 +594,7 @@ void segfault_handler(int c)
 			sLog.outString( "Waiting for all database queries to finish..." );
 			WorldDatabase.EndThreads();
 			CharacterDatabase.EndThreads();
+			LogDatabase.EndThreads();
 			sLog.outString( "All pending database operations cleared.\n" );
 			sWorld.SaveAllPlayers();
 			sLog.outString( "Data saved." );
@@ -704,6 +706,7 @@ void OnCrash( bool Terminate )
 			sLog.outString( "Waiting for all database queries to finish..." );
 			WorldDatabase.EndThreads();
 			CharacterDatabase.EndThreads();
+			LogDatabase.EndThreads();
 			sLog.outString( "All pending database operations cleared.\n" );
 			sWorld.SaveAllPlayers();
 			sLog.outString( "Data saved." );
