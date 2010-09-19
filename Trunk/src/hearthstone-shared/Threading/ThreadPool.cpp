@@ -225,6 +225,7 @@ void CThreadPool::Shutdown()
 	}
 	_mutex.Release();
 
+#ifdef WIN32
 	uint32 listcount = 0;
 	for(;;)
 	{
@@ -254,9 +255,13 @@ void CThreadPool::Shutdown()
 						DEBUG_LOG("ThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
 				}
 			}
-			continue;
 		}
-		else if(m_activeThreads.size() || m_freeThreads.size())
+#else
+	for(;;)
+	{
+		_mutex.Acquire();
+#endif
+		if(m_activeThreads.size() || m_freeThreads.size())
 		{
 			DEBUG_LOG("ThreadPool", "%u active threads, %u free threads remaining...", m_activeThreads.size(), m_freeThreads.size() );
 			_mutex.Release();

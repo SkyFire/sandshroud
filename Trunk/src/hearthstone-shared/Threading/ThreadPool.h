@@ -156,7 +156,9 @@ struct SERVER_DECL Thread
 	ThreadController ControlInterface;
 	Mutex SetupMutex;
 	bool DeleteAfterExit;
+#ifdef WIN32
 	THREADNAME_INFO threadinfo;
+#endif
 };
 
 typedef std::set<Thread*> ThreadSet;
@@ -203,6 +205,7 @@ public:
 	// kills x free threads
 	void KillFreeThreads(uint32 count);
 
+#ifdef WIN32
 	void SetThreadInfo(uint32 threadid, THREADNAME_INFO info)
 	{
 		for(ThreadSet::iterator itr = m_activeThreads.begin(); itr != m_activeThreads.end(); itr++)
@@ -212,6 +215,7 @@ public:
 			if((*itr)->ControlInterface.GetId() == threadid)
 				(*itr)->threadinfo = info;
 	};
+#endif
 
 	// resets the gobble counter
 	HEARTHSTONE_INLINE void Gobble() { _threadsEaten=(int32)m_freeThreads.size(); }

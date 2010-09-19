@@ -105,17 +105,8 @@ libshared_a_SOURCES = \
     Collision/vmap/WorldModel.h \
     Collision/g3dlite/AABox.cpp \
     Collision/g3dlite/AABox.h \
-    Collision/g3dlite/Any.cpp \
-    Collision/g3dlite/Any.h \
     Collision/g3dlite/Array.h \
-    Collision/g3dlite/Box.cpp \
     Collision/g3dlite/AtomicInt32.h \
-    Collision/g3dlite/BinaryFormat.cpp \
-    Collision/g3dlite/BinaryFormat.h \
-    Collision/g3dlite/BinaryInput.cpp \
-    Collision/g3dlite/BinaryInput.h \
-    Collision/g3dlite/BinaryOutput.cpp \
-    Collision/g3dlite/BinaryOutput.h \
     Collision/g3dlite/BoundsTrait.h \
     Collision/g3dlite/Box.cpp \
     Collision/g3dlite/Box.h \
@@ -123,29 +114,12 @@ libshared_a_SOURCES = \
     Collision/g3dlite/Capsule.h \
     Collision/g3dlite/CollisionDetection.cpp \
     Collision/g3dlite/CollisionDetection.h \
-    Collision/g3dlite/Color1.cpp \
-    Collision/g3dlite/Color1.h \
-    Collision/g3dlite/Color1uint8.cpp \
-    Collision/g3dlite/Color1uint8.h \
-    Collision/g3dlite/Color3.cpp \
-    Collision/g3dlite/Color3.h \
-    Collision/g3dlite/Color3uint8.cpp \
-    Collision/g3dlite/Color3uint8.h \
-    Collision/g3dlite/Color4.cpp \
-    Collision/g3dlite/Color4.h \
-    Collision/g3dlite/Color4uint8.cpp \
-    Collision/g3dlite/Color4uint8.h \
     Collision/g3dlite/CoordinateFrame.cpp \
     Collision/g3dlite/CoordinateFrame.h \
     Collision/g3dlite/Crypto.cpp \
     Collision/g3dlite/Crypto.h \
     Collision/g3dlite/Cylinder.cpp \
     Collision/g3dlite/Cylinder.h \
-    Collision/g3dlite/debug.h \
-    Collision/g3dlite/debugAssert.cpp \
-    Collision/g3dlite/debugAssert.h \
-    Collision/g3dlite/debugAssert2.h \
-    Collision/g3dlite/debugPrintf.h \
     Collision/g3dlite/EqualsTrait.h \
     Collision/g3dlite/fileutils.cpp \
     Collision/g3dlite/fileutils.h \
@@ -159,7 +133,6 @@ libshared_a_SOURCES = \
     Collision/g3dlite/g3dmath.cpp \
     Collision/g3dlite/g3dmath.h \
     Collision/g3dlite/GCamera.h \
-    Collision/g3dlite/GMutex.h \
     Collision/g3dlite/HashTrait.h \
     Collision/g3dlite/Line.cpp \
     Collision/g3dlite/Line.h \
@@ -182,11 +155,11 @@ libshared_a_SOURCES = \
     Collision/g3dlite/prompt.cpp \
     Collision/g3dlite/prompt.h \
     Collision/g3dlite/Quat.cpp \
+    Collision/g3dlite/Quat.h \
     Collision/g3dlite/Random.cpp \
     Collision/g3dlite/Random.h \
     Collision/g3dlite/Ray.cpp \
     Collision/g3dlite/Ray.h \
-    Collision/g3dlite/Rect2D.cpp \
     Collision/g3dlite/Rect2D.h \
     Collision/g3dlite/ReferenceCount.cpp \
     Collision/g3dlite/ReferenceCount.h \
@@ -201,10 +174,6 @@ libshared_a_SOURCES = \
     Collision/g3dlite/System.cpp \
     Collision/g3dlite/System.h \
     Collision/g3dlite/Table.h \
-    Collision/g3dlite/TextInput.cpp \
-    Collision/g3dlite/TextInput.h \
-    Collision/g3dlite/TextOutput.cpp \
-    Collision/g3dlite/TextOutput.h \
     Collision/g3dlite/Triangle.cpp \
     Collision/g3dlite/Triangle.h \
     Collision/g3dlite/uint128.cpp \
