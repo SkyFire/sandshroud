@@ -978,7 +978,7 @@ public:
 	/* Spells																*/
 	/************************************************************************/
 	bool HasSpell(uint32 spell);
-	bool HasDeletedSpell(uint32 spell);
+	SpellEntry* GetSpellWithNamehash(uint32 namehash);
 	void smsg_InitialSpells();
 	void smsg_TalentsInfo(bool pet);
 	void BuildPlayerTalentsInfo(WorldPacket *data, bool self);
@@ -1015,7 +1015,6 @@ public:
 	StrikeSpellDmgMap	m_onStrikeSpellDmg;
 	SpellOverrideMap	mSpellOverrideMap;
 	SpellSet			mSpells;
-	SpellSet			mDeletedSpells;
 	SpellSet			mShapeShiftSpells;
 	HM_NAMESPACE::hash_map<uint32, uint64 > mSpellsUniqueTargets;
 
@@ -2090,8 +2089,6 @@ public:
 	Mutex m_movementBufferLock;
 	ByteBuffer m_movementBuffer;
 #endif
-
-	void addDeletedSpell(uint32 id) { mDeletedSpells.insert( id ); }
 
 	map<uint32, uint32> m_forcedReactions;
 

@@ -1654,18 +1654,105 @@ uint32 ObjectMgr::GetGossipTextForNpc(uint32 ID)
 
 void ObjectMgr::LoadTrainers()
 {
-	QueryResult * result = WorldDatabase.Query("SELECT * FROM trainer_defs");
-	QueryResult * result2;
-	Field * fields2;
+	LoadDisabledSpells();
+	QueryResult* result = WorldDatabase.Query("SELECT * FROM trainer_defs");
+	if(result == NULL)
+		return;
+
+	QueryResult* result2 = WorldDatabase.Query("SELECT * FROM trainer_spells");
+	if(result2 == NULL)
+		return;
+
+	Field* fields2;
+	hash_map< uint32, hash_map< uint32, TrainerSpell > > TSMap;
+	hash_map< uint32, uint32 > TSCounterMap;
+	TSMap.clear();
+	TSCounterMap.clear();
+
+	if(result2->GetFieldCount() != 10)
+	{
+		Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Trainers table format is invalid. Please update your database.");
+		delete result;
+		return;
+	}
+
+	uint32 entry = NULL;
+	uint32 CastSpellID = NULL;
+	uint32 LearnSpellID = NULL;
+	do
+	{
+		bool abrt = false;
+		TrainerSpell ts;
+		fields2 = result2->Fetch();
+
+		entry = fields2[0].GetUInt32();
+		CastSpellID = fields2[1].GetUInt32();
+		LearnSpellID = fields2[2].GetUInt32();
+
+		ts.pCastSpell = NULL;
+		ts.pLearnSpell = NULL;
+		ts.pCastRealSpell = NULL;
+
+		if( CastSpellID != 0 )
+		{
+			ts.pCastSpell = dbcSpell.LookupEntryForced( CastSpellID );
+			if( ts.pCastSpell )
+			{
+				for( int k = 0; k < 3; ++k )
+				{
+					if( ts.pCastSpell->Effect[k] == SPELL_EFFECT_LEARN_SPELL )
+					{
+						ts.pCastRealSpell = dbcSpell.LookupEntryForced(ts.pCastSpell->EffectTriggerSpell[k]);
+						if( ts.pCastRealSpell == NULL )
+						{
+							Log.Warning("Trainers", "Trainer %u contains cast spell %u that is non-teaching", entry, CastSpellID);
+							abrt = true;
+						}
+						break;
+					}
+				}
+			}
+
+			if( abrt )
+				continue;
+		}
+
+		if( LearnSpellID != 0 )
+		{
+			ts.pLearnSpell = dbcSpell.LookupEntryForced( LearnSpellID );
+		}
+
+		if( ts.pCastSpell == NULL && ts.pLearnSpell == NULL )
+		{
+			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+			{
+				if(ts.pCastSpell == NULL)
+					WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u' AND learn_spell='%u'",entry, LearnSpellID);
+				else
+					WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u' AND cast_spell='%u'",entry, CastSpellID);
+			}
+			Log.Warning("ObjectMgr", "Trainer %u skipped invalid spell (%u/%u).", entry, CastSpellID, LearnSpellID);
+			continue; //omg a bad spell !
+		}
+
+		if( ts.pCastSpell && !ts.pCastRealSpell )
+			continue;
+
+		ts.Cost = fields2[3].GetUInt32();
+		ts.RequiredSpell = fields2[4].GetUInt32();
+		ts.RequiredSkillLine = fields2[5].GetUInt32();
+		ts.RequiredSkillLineValue = fields2[6].GetUInt32();
+		ts.RequiredLevel = fields2[7].GetUInt32();
+		ts.DeleteSpell = fields2[8].GetUInt32();
+		ts.IsProfession = (fields2[9].GetUInt32() != 0) ? true : false;
+		TSMap[entry][TSCounterMap[entry]++] = ts;
+	}while(result2->NextRow());
+	delete result2;
+
 	Trainer* tr = NULL;
 	GossipText* text;
 	const char* temp;
 	size_t len;
-
-	LoadDisabledSpells();
-
-	if(result == NULL)
-		return;
 
 	do
 	{
@@ -1722,115 +1809,31 @@ void ObjectMgr::LoadTrainers()
 		tr->Can_Train_Gossip_TextId = tmptxtid[0];
 		tr->Cannot_Train_GossipTextId = tmptxtid[1];
 
-		//now load the spells
-		result2 = WorldDatabase.Query("SELECT * FROM trainer_spells where entry = '%u'", entry);
-		if(result2 == NULL)
+		// Start Spell Insertion.
+		if(TSMap[entry].size())
 		{
-			Log.Error("LoadTrainers", "Trainer without spells, entry %u.", entry);
+			tr->SpellCount = (uint32)TSMap[entry].size();
+			hash_map< uint32, TrainerSpell >::iterator itr;
+			for(itr = TSMap[entry].begin(); itr != TSMap[entry].end(); itr++)
+				tr->Spells.push_back(itr->second);
+		}
+		// End Spell Insertion.
+
+		//and now we insert it to our lookup table
+		if(!tr->SpellCount)
+		{
 			if(tr->UIMessage)
 				delete [] tr->UIMessage;
 			delete tr;
 			continue;
 		}
-		if(result2->GetFieldCount() != 10)
-		{
-			Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Trainers table format is invalid. Please update your database.");
-			if(tr->UIMessage)
-				delete [] tr->UIMessage;
 
-			delete tr;
-			delete result;
-			delete result2;
-			return;
-		}
-		else
-		{
-			uint32 CastSpellID = NULL;
-			uint32 LearnSpellID = NULL;
-			do
-			{
-				fields2 = result2->Fetch();
-				TrainerSpell ts;
-				bool abrt = false;
-				CastSpellID = fields2[1].GetUInt32();
-				LearnSpellID = fields2[2].GetUInt32();
-
-				ts.pCastSpell = NULL;
-				ts.pLearnSpell = NULL;
-				ts.pCastRealSpell = NULL;
-
-				if( CastSpellID != 0 )
-				{
-					ts.pCastSpell = dbcSpell.LookupEntryForced( CastSpellID );
-					if( ts.pCastSpell )
-					{
-						for( int k = 0; k < 3; ++k )
-						{
-							if( ts.pCastSpell->Effect[k] == SPELL_EFFECT_LEARN_SPELL )
-							{
-								ts.pCastRealSpell = dbcSpell.LookupEntryForced(ts.pCastSpell->EffectTriggerSpell[k]);
-								if( ts.pCastRealSpell == NULL )
-								{
-									Log.Warning("Trainers", "Trainer %u contains cast spell %u that is non-teaching", entry, CastSpellID);
-									abrt = true;
-								}
-								break;
-							}
-						}
-					}
-
-					if( abrt )
-						continue;
-				}
-
-				if( LearnSpellID != 0 )
-				{
-					ts.pLearnSpell = dbcSpell.LookupEntryForced( LearnSpellID );
-				}
-
-				if( ts.pCastSpell == NULL && ts.pLearnSpell == NULL )
-				{
-					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
-					{
-						if(ts.pCastSpell == NULL)
-							WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u' AND learn_spell='%u'",entry, LearnSpellID);
-						else
-							WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u' AND cast_spell='%u'",entry, CastSpellID);
-					}
-					Log.Warning("ObjectMgr", "Trainer %u skipped invalid spell (%u/%u).", entry, CastSpellID, LearnSpellID);
-					continue; //omg a bad spell !
-				}
-
-				if( ts.pCastSpell && !ts.pCastRealSpell )
-					continue;
-
-				ts.Cost = fields2[3].GetUInt32();
-				ts.RequiredSpell = fields2[4].GetUInt32();
-				ts.RequiredSkillLine = fields2[5].GetUInt32();
-				ts.RequiredSkillLineValue = fields2[6].GetUInt32();
-				ts.RequiredLevel = fields2[7].GetUInt32();
-				ts.DeleteSpell = fields2[8].GetUInt32();
-				ts.IsProfession = (fields2[9].GetUInt32() != 0) ? true : false;
-				tr->Spells.push_back(ts);
-			}while(result2->NextRow());
-			delete result2;
-
-			tr->SpellCount = (uint32)tr->Spells.size();
-
-			//and now we insert it to our lookup table
-			if(!tr->SpellCount)
-			{
-				if(tr->UIMessage)
-					delete [] tr->UIMessage;
-				delete tr;
-				continue;
-			}
-
-			mTrainers.insert( TrainerMap::value_type( entry, tr ) );
-		}
-
+		mTrainers.insert( TrainerMap::value_type( entry, tr ) );
 	} while(result->NextRow());
 	delete result;
+
+	TSMap.clear();
+	TSCounterMap.clear();
 	Log.Notice("ObjectMgr", "%u trainers loaded.", mTrainers.size());
 }
 

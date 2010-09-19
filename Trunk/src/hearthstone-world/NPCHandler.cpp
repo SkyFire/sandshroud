@@ -127,7 +127,7 @@ void WorldSession::SendTrainerList(Creature* pCreature)
 	if(!CanTrainAt(_player,pTrainer))
 	{
 		GossipMenu * pMenu;
-		objmgr.CreateGossipMenuForPlayer(&pMenu,pCreature->GetGUID(),pTrainer->Cannot_Train_GossipTextId,_player);
+		objmgr.CreateGossipMenuForPlayer(&pMenu,pCreature->GetGUID(), pTrainer->Cannot_Train_GossipTextId, _player);
 		pMenu->SendTo(_player);
 		return;
 	}
@@ -279,13 +279,16 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 	if(!pSpell->pCastSpell && !pSpell->pLearnSpell)
 		return TRAINER_STATUS_NOT_LEARNABLE;
 
-	if( pSpell->pCastRealSpell && (_player->HasSpell(pSpell->pCastRealSpell->Id) || _player->HasDeletedSpell(pSpell->pCastRealSpell->Id)) )
+	SpellEntry* namehashSP = NULL;
+	if( pSpell->pCastRealSpell && ( _player->HasSpell(pSpell->pCastRealSpell->Id)
+		|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pCastRealSpell->NameHash))
+		&& (namehashSP->RankNumber ? namehashSP->RankNumber > pSpell->pCastRealSpell->RankNumber : false)) ) )
 		return TRAINER_STATUS_ALREADY_HAVE;
 
-	if( pSpell->pLearnSpell && (_player->HasSpell(pSpell->pLearnSpell->Id) || _player->HasDeletedSpell(pSpell->pLearnSpell->Id)) )
-		return TRAINER_STATUS_ALREADY_HAVE;
-
-	if(pSpell->DeleteSpell && _player->HasDeletedSpell(pSpell->DeleteSpell))
+	namehashSP = NULL;
+	if( pSpell->pLearnSpell && (_player->HasSpell(pSpell->pLearnSpell->Id)
+		|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pLearnSpell->NameHash))
+		&& (namehashSP->RankNumber ? namehashSP->RankNumber > pSpell->pLearnSpell->RankNumber : false)) ) )
 		return TRAINER_STATUS_ALREADY_HAVE;
 
 	uint8 ssform = (pSpell->pLearnSpell ? pSpell->pLearnSpell->RequiredShapeShift : 0);
@@ -324,6 +327,9 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 		|| (pSpell->IsProfession && pSpell->RequiredSkillLine == 0 && _player->GetUInt32Value(PLAYER_CHARACTER_POINTS2) == 0)//check level 1 professions if we can learn a new proffesion
 		|| (ssspell && !_player->HasSpell(ssspell)))
 	{
+		if(pSpell->pLearnSpell && pSpell->pLearnSpell->Id == 1943)
+			printf("Pieflavor NL\n");
+
 		return TRAINER_STATUS_NOT_LEARNABLE;
 	}
 

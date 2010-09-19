@@ -186,7 +186,6 @@ CREATE TABLE `characters` (
   `transporter_xdiff` float NOT NULL default '0',
   `transporter_ydiff` float NOT NULL default '0',
   `transporter_zdiff` float NOT NULL default '0',
-  `deleted_spells` longtext NOT NULL,
   `reputation` longtext NOT NULL,
   `actions` longtext NOT NULL,
   `auras` longtext NOT NULL,

@@ -473,7 +473,6 @@ void Player::Init()
 	m_itemsets.clear();
 	m_channels.clear();
 	m_visibleObjects.clear();
-	mDeletedSpells.clear();
 	mSpells.clear();
 	areaphases.clear();
 
@@ -631,7 +630,6 @@ Player::~Player ( )
 	m_itemsets.clear();
 	m_channels.clear();
 	mSpells.clear();
-	mDeletedSpells.clear();
 }
 
 HEARTHSTONE_INLINE uint32 GetSpellForLanguage(uint32 SkillID)
@@ -2055,11 +2053,6 @@ void Player::addSpell(uint32 spell_id)
 		m_session->SendPacket(&data);
 	}
 
-	// Check if we're a deleted spell
-	iter = mDeletedSpells.find(spell_id);
-	if(iter != mDeletedSpells.end())
-		mDeletedSpells.erase(iter);
-
 	// Check if we're logging in.
 	if(!IsInWorld())
 		return;
@@ -2417,15 +2410,6 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	ss << ",'" << m_transportPosition->x << "','" << m_transportPosition->y << "','" << m_transportPosition->z << "'";
 	ss << ",'";
 
-	// Dump deleted spell data to stringstream
-	SpellSet::iterator spellItr;
-	spellItr = mDeletedSpells.begin();
-	for(; spellItr != mDeletedSpells.end(); ++spellItr)
-	{
-		ss << uint32(*spellItr) << ",";
-	}
-
-	ss << "','";
 	// Dump reputation data
 	ReputationMap::iterator iter = m_reputation.begin();
 	for(; iter != m_reputation.end(); iter++)
@@ -3282,21 +3266,6 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 
 	m_transportPosition = new LocationVector(get_next_field.GetFloat(), get_next_field.GetFloat(), get_next_field.GetFloat());
 
-	start = (char*)get_next_field.GetString();//buff;
-	while(true)
-	{
-		end = strchr(start,',');
-		if(!end)
-			break;
-		*end=0;
-		SpellEntry * spProto = NULL;
-		spProto = dbcSpell.LookupEntryForced(atol(start));
-		if(spProto != NULL) // Keep deleted spells in the singles.
-			if(mDeletedSpells.find(spProto->Id) == mDeletedSpells.end())
-				mDeletedSpells.insert(spProto->Id);
-		start = end +1;
-	}
-
 	// Load Reputatation CSV Data
 	start =(char*) get_next_field.GetString();
 	FactionDBC * factdbc ;
@@ -3585,6 +3554,22 @@ void Player::RolloverHonor()
 bool Player::HasSpell(uint32 spell)
 {
 	return mSpells.find(spell) != mSpells.end();
+}
+
+SpellEntry* Player::GetSpellWithNamehash(uint32 namehash)
+{
+	SpellSet::iterator itr;
+	SpellEntry* sp = NULL;
+	for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
+	{
+		sp = NULL;
+		if(sp = dbcSpell.LookupEntry(*itr))
+		{
+			if(sp->NameHash == namehash)
+				return sp;
+		}
+	}
+	return NULL;
 }
 
 uint32 Player::FindSpellWithNamehash(uint32 namehash)
@@ -6557,22 +6542,6 @@ void Player::removeSpellByHashName(uint32 hash)
 			mSpells.erase(it);
 		}
 	}
-
-	for(iter= mDeletedSpells.begin();iter != mDeletedSpells.end();)
-	{
-		it = iter++;
-		uint32 SpellID = *it;
-		SpellEntry *e = dbcSpell.LookupEntry(SpellID);
-		if(e->NameHash == hash)
-		{
-			if(info->spell_list.find(e->Id) != info->spell_list.end())
-				continue;
-
-			RemoveAura(SpellID,GetGUID());
-			m_session->OutPacket(SMSG_REMOVED_SPELL, 4, &SpellID);
-			mDeletedSpells.erase(it);
-		}
-	}
 }
 
 bool Player::removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpell, uint32 SupercededSpellID)
@@ -6587,10 +6556,6 @@ bool Player::removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpel
 	{
 		return false;
 	}
-
-	if(MoveToDeleted)
-		if(mDeletedSpells.find(SpellID) == mDeletedSpells.end())
-			mDeletedSpells.insert(SpellID);
 
 	if(!IsInWorld())
 		return true;
@@ -6801,8 +6766,6 @@ void Player::Reset_Spells()
 			addSpell(*itr);
 	}
 
-	// Crow: TODO: Create function for some proffession shit no one knows about but me and probably the original creaters of Ascent, yea the professions thing, such a pain in the balls.
-	mDeletedSpells.clear();
 	lock.Release();
 }
 
@@ -7789,11 +7752,6 @@ void Player::_Kick()
 		}
 		sChatHandler.BlueSystemMessageToPlr(TO_PLAYER(this), "You will be removed from the server in %u seconds.", (uint32)(m_KickDelay/1000));
 	}
-}
-
-bool Player::HasDeletedSpell(uint32 spell)
-{
-	return (mDeletedSpells.count(spell) > 0);
 }
 
 void Player::ClearCooldownForSpell(uint32 spell_id)
@@ -11078,11 +11036,6 @@ void Player::save_Spells()
 	for(; itr != mSpells.end(); itr++)
 	{
 		p += sprintf(&buffer[p], "%u,", *itr);
-	}
-
-	for(itr = mDeletedSpells.begin(); itr != mDeletedSpells.end(); itr++)
-	{
-		q += sprintf(&buffer2[q], "%u,", *itr);
 	}
 
 	CharacterDatabase.Execute("UPDATE characters SET spells = '%s', deleted_spells = '%s' WHERE guid = %u",
