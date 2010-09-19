@@ -610,7 +610,7 @@ protected:
 	void HandleGuildBankBuyTab(WorldPacket & recv_data);
 	void HandleGuildBankDepositMoney(WorldPacket & recv_data);
 	void HandleGuildBankWithdrawMoney(WorldPacket & recv_data);
-	void HandleGuildBankDepositItem(WorldPacket & recv_data);
+	void HandleGuildBankSwapItem(WorldPacket & recv_data);
 	void HandleGuildBankWithdrawItem(WorldPacket & recv_data);
 	void HandleGuildBankGetAvailableAmount(WorldPacket & recv_data);
 	void HandleGuildBankModifyTab(WorldPacket & recv_data);

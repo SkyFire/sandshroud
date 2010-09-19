@@ -1186,7 +1186,7 @@ void WorldSession::HandleGuildBankDepositMoney(WorldPacket & recv_data)
 	_player->m_playerInfo->guild->DepositMoney(this, money);
 }
 
-void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
+void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 {
 	uint64 guid;
 	uint8 source_isfrombank;
@@ -1344,8 +1344,8 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 		int8 source_slot;
 		uint8 dest_bank;
 		uint8 dest_bankslot;
-		uint8 withdraw_stack= 0;
-		uint8 deposit_stack= 0;
+		uint8 withdraw_stack = 0;
+		uint8 deposit_stack = 0;
 		uint8 tochar;
 		GuildBankTab * pTab;
 		Item* pSourceItem;
@@ -1391,7 +1391,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 				}
 			}
 
-			if(dest_bankslot== 0xff)
+			if(dest_bankslot == 0xff)
 			{
 				_player->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM, INV_ERR_BAG_FULL);
 				return;
@@ -1426,7 +1426,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 			source_slot = sr.Slot;
 		}
 
-		if( source_bagslot== 0xff && source_slot < INVENTORY_SLOT_ITEM_START && pDestItem != NULL)
+		if( source_bagslot == 0xff && source_slot < INVENTORY_SLOT_ITEM_START && pDestItem != NULL)
 		{
 			sWorld.LogCheater(this,"Tried to equip an item from the guild bank (WPE HACK)");
 			SystemMessage("You don't have permission to do that.");
@@ -1484,7 +1484,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 				pSourceItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, deposit_stack);
 				pSourceItem->SetUInt32Value(ITEM_FIELD_CREATOR, pSourceItem2->GetUInt32Value(ITEM_FIELD_CREATOR));
 				pSourceItem2->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT, -(int32)deposit_stack);
-				pSourceItem2->m_isDirty=true;
+				pSourceItem2->m_isDirty = true;
 			}
 			else
 			{
@@ -1500,7 +1500,7 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 		if(pSourceItem == NULL)
 		{
 			/* splitting */
-			if(pDestItem != NULL && deposit_stack>0 && pDestItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) > deposit_stack)
+			if(pDestItem != NULL && deposit_stack > 0 && pDestItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) > deposit_stack)
 			{
 				pSourceItem2 = pDestItem;
 

@@ -1767,9 +1767,9 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPacket &recvPacket)
 
 	recvPacket >> SrcInvSlot >> SrcSlot;
 
-	OUT_DEBUG("ITEM: AutoStore Bank Item, Inventory slot: %u Source Slot: %u", (uint32)SrcInvSlot, (uint32)SrcSlot);
+	OUT_DEBUG("ITEM: AutoStore Bank Item, Inventory slot: %i Source Slot: %i", SrcInvSlot, SrcSlot);
 
-	Item* eitem=_player->GetItemInterface()->GetInventoryItem(SrcInvSlot,SrcSlot);
+	Item* eitem = _player->GetItemInterface()->GetInventoryItem(SrcInvSlot,SrcSlot);
 
 	if(!eitem) 
 	{
