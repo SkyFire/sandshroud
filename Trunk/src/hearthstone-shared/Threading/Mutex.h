@@ -121,7 +121,7 @@ public:
 				break;
 
 			if(!SwitchToThread())
-				printf("Thread %u entered wait state at(no next thread found), possible lockup! m_recursiveCount = %u \n",thread_id,m_recursiveCount);
+				printf("REPORT TO DEVS: Thread %u entered wait state at(no next thread found), possible lockup! m_recursiveCount = %u \n", thread_id, m_recursiveCount);
 		}
 
 		++m_recursiveCount;

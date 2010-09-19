@@ -12981,49 +12981,57 @@ void Player::DeleteEquipmentSet(uint64 setGuid)
 
 void Player::_SaveEquipmentSets(QueryBuffer* buff)
 {
-	m_lock.Acquire();
 	if(!m_EquipmentSets.size())
 		return;
 
+	m_lock.Acquire();
 	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
 	{
 		EquipmentSet& eqset = itr->second;
 		switch(eqset.state)
 		{
 		case EQUIPMENT_SET_UNCHANGED:
-			break; // nothing do
+			{
+
+			}break; // nothing do
+
 		case EQUIPMENT_SET_CHANGED: // Todo: Use a text column and store them all in that.
-			if(buff == NULL)
-				CharacterDatabase.Execute("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
-				eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
-			else
-				buff->AddQuery("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
-				eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
+			{
+				if(buff == NULL)
+					CharacterDatabase.Execute("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
+					eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
+				else
+					buff->AddQuery("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
+					eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
 
-			eqset.state = EQUIPMENT_SET_UNCHANGED;
-			break;
+				eqset.state = EQUIPMENT_SET_UNCHANGED;
+			}break;
+
 		case EQUIPMENT_SET_NEW:
-			if(buff == NULL)
-				CharacterDatabase.Execute("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
-				GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
-			else
-				buff->AddQuery("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
-				GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-				eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
+			{
+				if(buff == NULL)
+					CharacterDatabase.Execute("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
+					GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
+				else
+					buff->AddQuery("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
+					GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
+					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
 
-			eqset.state = EQUIPMENT_SET_UNCHANGED;
-			break;
+				eqset.state = EQUIPMENT_SET_UNCHANGED;
+			}break;
+
 		case EQUIPMENT_SET_DELETED:
-			if(buff == NULL)
-				CharacterDatabase.Execute("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
-			else
-				buff->AddQuery("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
+			{
+				if(buff == NULL)
+					CharacterDatabase.Execute("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
+				else
+					buff->AddQuery("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
 
-			m_EquipmentSets.erase(itr);
-			break;
+				m_EquipmentSets.erase(itr);
+			}break;
 		}
 	}
 	m_lock.Release();
