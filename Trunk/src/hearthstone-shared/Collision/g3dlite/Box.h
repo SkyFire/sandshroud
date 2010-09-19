@@ -107,7 +107,7 @@ public:
 
 
 	inline Vector3 corner(int i) const {
-		debugAssert(i < 8);
+		ASSERT(i < 8);
 		return _corner[i];
 	}
 
@@ -115,7 +115,7 @@ public:
 	 Unit length.
 	 */
 	inline Vector3 axis(int a) const {
-		debugAssert(a < 3);
+		ASSERT(a < 3);
 		return _axis[a];
 	}
 
@@ -124,7 +124,7 @@ public:
 	 along the box's local axis a.
 	 */
 	inline float extent(int a) const {
-		debugAssert(a < 3);
+		ASSERT(a < 3);
 		return (float)_extent[a];
 	}
 

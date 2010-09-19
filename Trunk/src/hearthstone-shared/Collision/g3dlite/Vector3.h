@@ -388,9 +388,8 @@ public:
 	/** Creates two orthonormal tangent vectors X and Y such that
 		if Z = this, X x Y = Z.*/
 	inline void getTangents(Vector3& X, Vector3& Y) const {
-		debugAssertM(G3D::fuzzyEq(length(), 1.0f), 
-					 "makeAxes requires Z to have unit length");
-		
+		ASSERT(G3D::fuzzyEq(length(), 1.0f));
+
 		// Choose another vector not perpendicular
 		X = (abs(x) < 0.9f) ? Vector3::unitX() : Vector3::unitY();
 		

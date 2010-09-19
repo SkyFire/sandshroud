@@ -53,8 +53,6 @@
 
 #include <math.h>
 
-#include "debug.h"
-
 #undef min
 #undef max
 
@@ -459,7 +457,7 @@ inline float wrap(float t, float lo, float hi) {
 		return t;
 	}
 
-	debugAssert(hi > lo);
+	ASSERT(hi > lo);
 
 	float interval = hi - lo;
 
@@ -472,7 +470,7 @@ inline double wrap(double t, double lo, double hi) {
 		return t;
 	}
 
-	debugAssert(hi > lo);
+	ASSERT(hi > lo);
 
 	double interval = hi - lo;
 
@@ -505,7 +503,7 @@ inline int iCeil (double fValue) {
 //----------------------------------------------------------------------------
 
 inline int iClamp(int val, int low, int hi) {
-	debugAssert(low <= hi);
+	ASSERT(low <= hi);
 	if (val <= low) {
 		return low;
 	} else if (val >= hi) {
@@ -518,7 +516,7 @@ inline int iClamp(int val, int low, int hi) {
 //----------------------------------------------------------------------------
 
 inline int16 iClamp(int16 val, int16 low, int16 hi) {
-	debugAssert(low <= hi);
+	ASSERT(low <= hi);
 	if (val <= low) {
 		return low;
 	} else if (val >= hi) {
@@ -531,7 +529,7 @@ inline int16 iClamp(int16 val, int16 low, int16 hi) {
 //----------------------------------------------------------------------------
 
 inline double clamp(double val, double low, double hi) {
-	debugAssert(low <= hi);
+	ASSERT(low <= hi);
 	if (val <= low) {
 		return low;
 	} else if (val >= hi) {
@@ -542,7 +540,7 @@ inline double clamp(double val, double low, double hi) {
 }
 
 inline float clamp(float val, float low, float hi) {
-	debugAssert(low <= hi);
+	ASSERT(low <= hi);
 	if (val <= low) {
 		return low;
 	} else if (val >= hi) {

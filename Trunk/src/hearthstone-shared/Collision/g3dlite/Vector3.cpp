@@ -131,8 +131,7 @@ Vector3 Vector3::reflectAbout(const Vector3& normal) const {
 
 
 Vector3 Vector3::cosHemiRandom(const Vector3& normal, Random& r) {
-	debugAssertM(G3D::fuzzyEq(normal.length(), 1.0f), 
-				 "cosHemiRandom requires its argument to have unit length");
+	ASSERT(G3D::fuzzyEq(normal.length(), 1.0f));
 
 	float x, y, z;
 	r.cosHemi(x, y, z);
@@ -151,8 +150,7 @@ Vector3 Vector3::cosHemiRandom(const Vector3& normal, Random& r) {
 
 
 Vector3 Vector3::cosPowHemiRandom(const Vector3& normal, const float k, Random& r) {
-	debugAssertM(G3D::fuzzyEq(normal.length(), 1.0f), 
-				 "cosPowHemiRandom requires its argument to have unit length");
+	ASSERT(G3D::fuzzyEq(normal.length(), 1.0f));
 
 	float x, y, z;
 	r.cosPowHemi(k, x, y, z);

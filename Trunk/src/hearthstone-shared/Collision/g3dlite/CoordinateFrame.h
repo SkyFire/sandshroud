@@ -182,7 +182,7 @@ public:
 		p[0] = v[0] - translation[0];
 		p[1] = v[1] - translation[1];
 		p[2] = v[2] - translation[2];
-		debugAssert(G3D::fuzzyEq(rotation.determinant(), 1.0f));
+		ASSERT(G3D::fuzzyEq(rotation.determinant(), 1.0f));
 		return Vector3(
 					   rotation[0][0] * p[0] + rotation[1][0] * p[1] + rotation[2][0] * p[2],
 					   rotation[0][1] * p[0] + rotation[1][1] * p[1] + rotation[2][1] * p[2],

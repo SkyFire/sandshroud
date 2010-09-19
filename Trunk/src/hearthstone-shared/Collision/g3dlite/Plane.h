@@ -15,7 +15,6 @@
 #include "platform.h"
 #include "Vector3.h"
 #include "Vector4.h"
-#include "debugAssert.h"
 
 namespace G3D {
 
@@ -98,7 +97,7 @@ public:
 	 is in the plane.  Only call on finite points.  Faster than halfSpaceContains.
 	 */
 	inline bool halfSpaceContainsFinite(const Vector3& point) const {
-		debugAssert(point.isFinite());
+		ASSERT(point.isFinite());
 		return _normal.dot(point) >= _distance;
 	}
 

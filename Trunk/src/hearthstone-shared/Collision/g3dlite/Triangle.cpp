@@ -13,7 +13,6 @@
 #include "platform.h"
 #include "Triangle.h"
 #include "Plane.h"
-#include "debugAssert.h"
 #include "AABox.h"
 #include "Ray.h"
 

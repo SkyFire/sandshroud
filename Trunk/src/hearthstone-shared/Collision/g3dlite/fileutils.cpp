@@ -70,9 +70,7 @@ std::string resolveFilename(const std::string& filename) {
 					} else {
 						// The drive spec is relative to the
 						// working directory on that drive.
-						debugAssertM(false, "Files of the form d:path are"
-									 " not supported (use a fully qualified"
-									 " name).");
+						ASSERT(false);
 						return filename;
 					}
 				}
@@ -101,17 +99,17 @@ std::string readWholeFile(
 
 	std::string s;
 
-	debugAssert(filename != "");
+	ASSERT(filename != "");
 	if (fileExists(filename, false)) {
 
 		int64 length = fileLength(filename);
 
 		char* buffer = (char*)System::alignedMalloc(length + 1, 16);
-		debugAssert(buffer);
+		ASSERT(buffer);
 		FILE* f = fopen(filename.c_str(), "rb");
-		debugAssert(f);
+		ASSERT(f);
 		int ret = (int)fread(buffer, 1, length, f);
-		debugAssert(ret == length);(void)ret;
+		ASSERT(ret == length);(void)ret;
 		fclose(f);
 
 		buffer[length] = '\0';	
@@ -133,7 +131,7 @@ std::string readWholeFile(
 		s = std::string(buffer);
 		System::alignedFree(buffer);
 	} else {
-		debugAssertM(false, filename + " not found");
+		ASSERT(false);
 	}
 
 	return s;
@@ -157,7 +155,7 @@ void zipRead(const std::string& file,
 			struct zip_file *zf = zip_fopen( z, desiredFile.c_str(), ZIP_FL_NOCASE );
 			{
 				int test = zip_fread( zf, data, length );
-				debugAssertM((size_t)test == length,
+				ASSERT((size_t)test == length,
 							 desiredFile + " was corrupt because it unzipped to the wrong size.");
 				(void)test;
 			}
@@ -189,12 +187,12 @@ int64 fileLength(const std::string& filename) {
 			int64 requiredMem;
 
 						struct zip *z = zip_open( zip.c_str(), ZIP_CHECKCONS, NULL );
-						debugAssertM(z != NULL, zip + ": zip open failed.");
+						ASSERT(z != NULL, zip + ": zip open failed.");
 			{
 								struct zip_stat info;
 								zip_stat_init( &info );	// TODO: Docs unclear if zip_stat_init is required.
 								int success = zip_stat( z, contents.c_str(), ZIP_FL_NOCASE, &info );
-								debugAssertM(success == 0, zip + ": " + contents + ": zip stat failed.");
+								ASSERT(success == 0, zip + ": " + contents + ": zip stat failed.");
 								requiredMem = info.size;
 			}
 						zip_close( z );
@@ -346,7 +344,7 @@ void writeWholeFile(
 
 	FILE* file = fopen(filename.c_str(), "wb");
 
-	debugAssert(file);
+	ASSERT(file);
 
 	fwrite(str.c_str(), str.size(), 1, file);
 
@@ -393,8 +391,8 @@ void createDirectory(
 
 	std::string lead;
 	parseFilename(d, root, path, base, ext);
-	debugAssert(base == "");
-	debugAssert(ext == "");
+	ASSERT(base == "");
+	ASSERT(ext == "");
 
 	// Begin with an extra period so "c:\" becomes "c:\.\" after
 	// appending a path and "c:" becomes "c:.\", not root: "c:\"
@@ -1006,7 +1004,7 @@ static void determineFileOrDirList(
 		if ((path != "") && isZipfile(path)) {
 			// .zip should only work if * is specified as the Base + Ext
 			// Here, we have been asked for the root's contents
-			debugAssertM(filenameBaseExt(filespec) == "*", "Can only call getFiles/getDirs on zipfiles using '*' wildcard");
+			ASSERT(filenameBaseExt(filespec) == "*");
 			getFileOrDirListZip(path, prefix, files, wantFiles, includePath);
 		} else {
 			// It is a normal directory
@@ -1015,7 +1013,7 @@ static void determineFileOrDirList(
 	} else if (zipfileExists(filenamePath(filespec), path, prefix)) {
 		// .zip should only work if * is specified as the Base + Ext
 		// Here, we have been asked for the contents of a folder within the .zip
-		debugAssertM(filenameBaseExt(filespec) == "*", "Can only call getFiles/getDirs on zipfiles using '*' wildcard");
+		ASSERT(filenameBaseExt(filespec) == "*");
 		getFileOrDirListZip(path, prefix, files, wantFiles, includePath);
 	}
 }

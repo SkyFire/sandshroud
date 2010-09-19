@@ -75,12 +75,12 @@ public:
 	// (1) Vector4int8 not having virtual functions
 	// (2) the data packed in a 4*sizeof(int8) memory block
 	inline int8& operator[] (int i) {
-		debugAssert(i >= 0 && i <= 4);
+		ASSERT(i >= 0 && i <= 4);
 		return ((int8*)this)[i];
 	}
 
 	const int8& operator[] (int i) const {
-		debugAssert(i >= 0 && i <= 4);
+		ASSERT(i >= 0 && i <= 4);
 		return ((const int8*)this)[i];
 	}
 

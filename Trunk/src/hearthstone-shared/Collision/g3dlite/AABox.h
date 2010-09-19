@@ -17,7 +17,6 @@
 
 #include "platform.h"
 #include "Vector3.h"
-#include "debug.h"
 #include "Array.h"
 #include "Plane.h"
 
@@ -59,7 +58,7 @@ public:
 	/** Assumes that low is less than or equal to high along each dimension.
 	*/
 	inline void set(const Vector3& low, const Vector3& high) {
-		debugAssert(
+		ASSERT(
 			(low.x <= high.x) &&
 			(low.y <= high.y) &&
 			(low.z <= high.z));
@@ -122,7 +121,7 @@ public:
 	 Distance from corner(0) to the next corner along axis a.
 	 */
 	inline float extent(int a) const {
-		debugAssert(a < 3);
+		ASSERT(a < 3);
 		return hi[a] - lo[a];
 	}
 

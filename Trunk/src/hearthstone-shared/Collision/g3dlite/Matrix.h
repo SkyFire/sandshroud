@@ -134,14 +134,14 @@ public:
 		void setZero();
 
 		inline void set(int r, int c, T v) {
-			debugAssert(r < R);
-			debugAssert(c < C);
+			ASSERT(r < R);
+			ASSERT(c < C);
 			elt[r][c] = v;
 		}
 
 		inline const T& get(int r, int c) const {
-			debugAssert(r < R);
-			debugAssert(c < C);
+			ASSERT(r < R);
+			ASSERT(c < C);
 			return elt[r][c];
 		}
 

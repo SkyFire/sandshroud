@@ -9,7 +9,6 @@
 */
 
 #include "Box.h"
-#include "debug.h"
 #include "Plane.h"
 #include "AABox.h"
 #include "CoordinateFrame.h"
@@ -44,7 +43,7 @@ void Box::init(
 	const Vector3& min,
 	const Vector3& max) {
 
-	debugAssert(
+	ASSERT(
 		(min.x <= max.x) &&
 		(min.y <= max.y) &&
 		(min.z <= max.z));
@@ -70,7 +69,7 @@ void Box::init(
 		_volume = G3D::finf();
 	}
 
-	debugAssert(! isNaN(_extent.x));
+	ASSERT(! isNaN(_extent.x));
 
 	_area = 2 * 
 		(_extent.x * _extent.y +
@@ -134,7 +133,7 @@ void Box::getFaceCorners(int f, Vector3& v0, Vector3& v1, Vector3& v2, Vector3& 
 		break;
 
 	default:
-		debugAssert((f >= 0) && (f < 6));
+		ASSERT((f >= 0) && (f < 6));
 	}
 }
 

@@ -48,12 +48,12 @@ public:
 	Vector3int16(const class Vector3& v);
 
 	inline int16& operator[] (int i) {
-		debugAssert(i <= 2);
+		ASSERT(i <= 2);
 		return ((int16*)this)[i];
 	}
 
 	inline const int16& operator[] (int i) const {
-		debugAssert(i <= 2);
+		ASSERT(i <= 2);
 		return ((int16*)this)[i];
 	}
 

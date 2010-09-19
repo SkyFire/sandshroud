@@ -292,7 +292,7 @@ public:
 
 	/** Returns the corners in the order: (min,min), (max,min), (max,max), (min,max). */
 	Vector2 corner(int i) const {
-		debugAssert(i >= 0 && i < 4);
+		ASSERT(i >= 0 && i < 4);
 		switch (i & 3) {
 		case 0:
 			return Vector2(min.x, min.y);

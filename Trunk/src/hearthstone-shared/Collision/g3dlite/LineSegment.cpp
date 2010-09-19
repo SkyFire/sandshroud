@@ -10,7 +10,6 @@
 #include "platform.h"
 #include "LineSegment.h"
 #include "Sphere.h"
-#include "debug.h"
 
 namespace G3D {
 
@@ -68,7 +67,7 @@ Vector3 LineSegment::point(int i) const {
 		return _point + direction;
 
 	default:
-		debugAssertM(i == 0 || i == 1, "Argument to point must be 0 or 1");
+		ASSERT(i == 0 || i == 1);
 		return _point;
 	}
 }
@@ -95,7 +94,7 @@ LineSegment2D LineSegment2D::fromTwoPoints(const Vector2& p0, const Vector2& p1)
 
 
 Vector2 LineSegment2D::point(int i) const {
-	debugAssert(i == 0 || i == 1);
+	ASSERT(i == 0 || i == 1);
 	if (i == 0) {
 		return m_origin;
 	} else {

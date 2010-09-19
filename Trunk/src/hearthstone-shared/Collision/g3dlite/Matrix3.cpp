@@ -150,7 +150,7 @@ const Vector3& Matrix3::row (int iRow) const {
 
 
 void Matrix3::setColumn(int iCol, const Vector3 &vector) {
-	debugAssert((iCol >= 0) && (iCol < 3));
+	ASSERT((iCol >= 0) && (iCol < 3));
 	elt[0][iCol] = vector.x;
 	elt[1][iCol] = vector.y;
 	elt[2][iCol] = vector.z;
@@ -158,7 +158,7 @@ void Matrix3::setColumn(int iCol, const Vector3 &vector) {
 
 
 void Matrix3::setRow(int iRow, const Vector3 &vector) {
-	debugAssert((iRow >= 0) && (iRow < 3));
+	ASSERT((iRow >= 0) && (iRow < 3));
 	elt[iRow][0] = vector.x;
 	elt[iRow][1] = vector.y;
 	elt[iRow][2] = vector.z;

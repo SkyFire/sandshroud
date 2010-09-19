@@ -14,7 +14,6 @@
 #define G3D_ReferenceCount_h
 
 #include "platform.h"
-#include "debug.h"
 #include "AtomicInt32.h"
 
 namespace G3D {
@@ -186,9 +185,8 @@ private:
 		if (m_pointer != NULL) {
 
 			ReferenceCountedObject* pointer = ((ReferenceCountedObject*)m_pointer);
-			debugAssert(G3D::isValidHeapPointer(m_pointer));
-			debugAssertM(pointer->ReferenceCountedObject_refCount.value() > 0,
-						"Dangling reference detected.");
+			ASSERT(isValidHeapPointer(m_pointer));
+			ASSERT(pointer->ReferenceCountedObject_refCount.value() > 0);
 
 			// Only delete if this instance caused the count to hit
 			// exactly zero.  If there is a race condition, the value
@@ -223,15 +221,14 @@ private:
 			zeroPointer();
 
 			if (x != NULL) {
-				debugAssert(G3D::isValidHeapPointer(x));
+				ASSERT(isValidHeapPointer(x));
 
 				m_pointer = x;
 
 				// Note that the ref count can be zero if this is the
 				// first pointer to it
 				ReferenceCountedObject* pointer = (ReferenceCountedObject*)m_pointer;
-				debugAssertM(pointer->ReferenceCountedObject_refCount.value() >= 0, 
-							 "Negative reference count detected.");
+				ASSERT(pointer->ReferenceCountedObject_refCount.value() >= 0);
 				pointer->ReferenceCountedObject_refCount.increment();
 			}
 		}
@@ -338,12 +335,12 @@ public:
 	}
 	
 	inline T& operator*() const {
-		debugAssertM(m_pointer != NULL, "Dereferenced a NULL ReferenceCountedPointer");
+		ASSERT(m_pointer != NULL);
 		return (*m_pointer);
 	}
 
 	inline T* operator->() const {
-		debugAssertM(m_pointer != NULL, "Dereferenced a NULL ReferenceCountedPointer");
+		ASSERT(m_pointer != NULL);
 		return m_pointer;
 	}
 
@@ -451,15 +448,13 @@ private:
 		// If the following test fails then the object was collected before we
 		// reached it.
 		if (strong.notNull()) {
-			debugAssertM(((ReferenceCountedObject*)pointer)->ReferenceCountedObject_weakPointer != NULL,
-				"Weak pointer exists without a backpointer from the object.");
+			ASSERT(((ReferenceCountedObject*)pointer)->ReferenceCountedObject_weakPointer != NULL);
 			
 			// Remove myself from my target's list of weak pointers
 			_WeakPtrLinkedList** node = &((ReferenceCountedObject*)pointer)->ReferenceCountedObject_weakPointer;
 			while ((*node)->weakPtr != this) {
 				node = &((*node)->next);
-				debugAssertM(*node != NULL, 
-					"Weak pointer exists without a backpointer from the object (2).");
+				ASSERT(*node != NULL);
 			}
 
 			// Node must now point at the node for me.  Remove node and
@@ -557,8 +552,7 @@ protected:
 
 	/** Invoked by the destructor on ReferenceCountedPointer. */
 	void objectCollected() {
-		debugAssertM(pointer != NULL,
-					 "Removed a weak pointer twice.");
+		ASSERT(pointer != NULL);
 		pointer = NULL;
 	}
 

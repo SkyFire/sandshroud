@@ -140,7 +140,7 @@ Matrix4 Matrix4::perspectiveProjection(
 	   d = -(2.0f*farval*nearval) / (farval-nearval);
 	}
 
-	debugAssertM(abs(upDirection) == 1.0f, "upDirection must be -1 or +1");
+	ASSERT(abs(upDirection) == 1.0f);
 	y *= upDirection;
 	b *= upDirection;
 
@@ -161,7 +161,7 @@ void Matrix4::getPerspectiveProjectionParameters(
 	float& farval,
 	float upDirection) const {
 
-	debugAssertM(abs(upDirection) == 1.0f, "upDirection must be -1 or +1");
+	ASSERT(abs(upDirection) == 1.0f);
 
 	float x = elt[0][0];
 	float y = elt[1][1] * upDirection;
@@ -171,16 +171,16 @@ void Matrix4::getPerspectiveProjectionParameters(
 	float d = elt[2][3];
 
 	// Verify that this really is a projection matrix
-	debugAssertM(elt[3][2] == -1, "Not a projection matrix");
-	debugAssertM(elt[0][1] == 0, "Not a projection matrix");
-	debugAssertM(elt[0][3] == 0, "Not a projection matrix");
-	debugAssertM(elt[1][3] == 0, "Not a projection matrix");
-	debugAssertM(elt[3][3] == 0, "Not a projection matrix");
-	debugAssertM(elt[1][0] == 0, "Not a projection matrix");
-	debugAssertM(elt[2][0] == 0, "Not a projection matrix");
-	debugAssertM(elt[2][1] == 0, "Not a projection matrix");
-	debugAssertM(elt[3][0] == 0, "Not a projection matrix");
-	debugAssertM(elt[3][1] == 0, "Not a projection matrix");
+	ASSERT(elt[3][2] == -1);
+	ASSERT(elt[0][1] == 0);
+	ASSERT(elt[0][3] == 0);
+	ASSERT(elt[1][3] == 0);
+	ASSERT(elt[3][3] == 0);
+	ASSERT(elt[1][0] == 0);
+	ASSERT(elt[2][0] == 0);
+	ASSERT(elt[2][1] == 0);
+	ASSERT(elt[3][0] == 0);
+	ASSERT(elt[3][1] == 0);
 
 	if (c == -1) {
 		farval = finf();

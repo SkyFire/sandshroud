@@ -17,7 +17,6 @@
 #include "platform.h"
 #include "Vector3.h"
 #include "Vector4.h"
-#include "debugAssert.h"
 
 #include <cstring>
 
@@ -76,14 +75,14 @@ public:
 	 * member access, allows use of construct mat[r][c]
 	 */
 	inline float* operator[] (int iRow) {
-		debugAssert(iRow >= 0);
-		debugAssert(iRow < 3);
+		ASSERT(iRow >= 0);
+		ASSERT(iRow < 3);
 		return (float*)&elt[iRow][0];
 	}
 
 	inline const float* operator[] (int iRow) const {
-		debugAssert(iRow >= 0);
-		debugAssert(iRow < 3);
+		ASSERT(iRow >= 0);
+		ASSERT(iRow < 3);
 		return (const float*)&elt[iRow][0];
 	}
 

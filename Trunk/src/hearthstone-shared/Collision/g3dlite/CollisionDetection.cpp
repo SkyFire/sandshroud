@@ -12,7 +12,6 @@
 #include "CoordinateFrame.h"
 #include "platform.h"
 #include "CollisionDetection.h"
-#include "debugAssert.h"
 #include "vectorMath.h"
 #include "Capsule.h"
 #include "Plane.h"
@@ -46,8 +45,8 @@ Vector3 CollisionDetection::separatingAxisForSolidBoxSolidBox(
 		const int separatingAxisIndex,
 		const Box & box1,
 		const Box & box2) {
-	debugAssert(separatingAxisIndex >= 0);
-	debugAssert(separatingAxisIndex < 15);
+	ASSERT(separatingAxisIndex >= 0);
+	ASSERT(separatingAxisIndex < 15);
 	Vector3 axis;
 	if (separatingAxisIndex < 3) {
 		axis = box1.axis(separatingAxisIndex);
@@ -173,7 +172,7 @@ float CollisionDetection::projectedDistanceForSolidBoxSolidBox(
 		R = fabs(c[2] * ad[1] - c[5] * ad[0]);
 		break;
 	default:
-		debugAssertM(false, "fell through switch statement");
+		ASSERT(false);
 	}
 
 	return (R - (R0 + R1));
@@ -362,8 +361,8 @@ float CollisionDetection::penetrationDepthForFixedBoxFixedBox(
 	double ad[3];
 	double bd[3];
 
-	debugAssert(lastSeparatingAxis >= -1);
-	debugAssert(lastSeparatingAxis < 15);
+	ASSERT(lastSeparatingAxis >= -1);
+	ASSERT(lastSeparatingAxis < 15);
 
 	fillSolidBoxSolidBoxInfo(box1, box2, a, b, D, c, ca, ad, bd);
 
@@ -624,8 +623,7 @@ float CollisionDetection::penetrationDepthForFixedSphereFixedBox(
 			constant[a]	 = -halfExtent[a];
 			++numNonZero;
 		} else {
-			debugAssertM(false, 
-				"distanceFromLow and distanceFromHigh cannot both be positive");
+			ASSERT(false);
 		}
 	}
 
@@ -755,7 +753,7 @@ ZAXIS:
 		break;
 
 	default:
-		debugAssertM(false, "Fell through switch");
+		ASSERT(false);
 		break;
 	}
 
@@ -894,7 +892,7 @@ bool __fastcall CollisionDetection::rayAABox(
 	Vector3&				location,
 	bool&				   inside) {
 
-	debugAssertM(fabs(ray.direction().squaredLength() - 1.0f) < 0.01f, format("Length = %f", ray.direction().length()));
+	ASSERT(fabs(ray.direction().squaredLength() - 1.0f) < 0.01f);
 	{
 		// Pre-emptive partial bounding sphere test
 		const Vector3 L(boxCenter - ray.origin());
@@ -1657,14 +1655,14 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 #	   ifdef G3D_DEBUG
 		{
 			// Internal consistency checks
-			debugAssertM(b[0] >= 0.0 && b[0] <= 1.0f, "Intersection is outside triangle.");
-			debugAssertM(b[1] >= 0.0 && b[1] <= 1.0f, "Intersection is outside triangle.");
-			debugAssertM(b[2] >= 0.0 && b[2] <= 1.0f, "Intersection is outside triangle.");
+			ASSERT(b[0] >= 0.0 && b[0] <= 1.0f, "Intersection is outside triangle.");
+			ASSERT(b[1] >= 0.0 && b[1] <= 1.0f, "Intersection is outside triangle.");
+			ASSERT(b[2] >= 0.0 && b[2] <= 1.0f, "Intersection is outside triangle.");
 			Vector3 blend = 
 				b[0] * triangle.vertex(0) + 
 				b[1] * triangle.vertex(1) + 
 				b[2] * triangle.vertex(2);
-			debugAssertM(blend.fuzzyEq(outLocation), "Barycentric coords don't match intersection.");
+			ASSERT(blend.fuzzyEq(outLocation), "Barycentric coords don't match intersection.");
 			// Call again so that we can debug the problem
 			// isPointInsideTriangle(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2), triangle.normal(), 
 			// outLocation, b, triangle.primaryAxis());
@@ -1709,13 +1707,13 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 		{
 			// Internal consistency checks
 			for (int i = 0; i < 3; ++i) {
-				debugAssertM(fuzzyGe(b[i], 0.0f) && fuzzyLe(b[i], 1.0f), "Intersection is outside triangle.");
+				ASSERT(fuzzyGe(b[i], 0.0f) && fuzzyLe(b[i], 1.0f), "Intersection is outside triangle.");
 			}
 			Vector3 blend = 
 				b[0] * triangle.vertex(0) + 
 				b[1] * triangle.vertex(1) + 
 				b[2] * triangle.vertex(2);
-			debugAssertM(blend.fuzzyEq(outLocation), 
+			ASSERT(blend.fuzzyEq(outLocation), 
 				format("Barycentric coords don't match intersection. %s != %s", 
 					blend.toString().c_str(), 
 					outLocation.toString().c_str()));	
@@ -1903,8 +1901,8 @@ Vector3 CollisionDetection::closestPointOnLineSegment(
 	const float	edgeLength,
 	const Vector3& point) {
 
-	debugAssert((v1 - v0).direction().fuzzyEq(edgeDirection));
-	debugAssert(fuzzyEq((v1 - v0).magnitude(), edgeLength));
+	ASSERT((v1 - v0).direction().fuzzyEq(edgeDirection));
+	ASSERT(fuzzyEq((v1 - v0).magnitude(), edgeLength));
 
 	// Vector towards the point
 	const Vector3& c = point - v0;
@@ -1987,11 +1985,11 @@ Vector3 CollisionDetection::closestPointOnTrianglePerimeter(
 #   ifdef G3D_DEBUG
 	{
 		Vector3 diff = r[edgeIndex] - v[edgeIndex];
-		debugAssertM(fuzzyEq(diff.direction().dot(edgeDirection[edgeIndex]), 1.0f) ||
+		ASSERT(fuzzyEq(diff.direction().dot(edgeDirection[edgeIndex]), 1.0f) ||
 			diff.fuzzyEq(Vector3::zero()), "Point not on correct triangle edge");
 		float frac = diff.dot(edgeDirection[edgeIndex])/edgeLength[edgeIndex];
-		debugAssertM(frac >= -0.000001, "Point off low side of edge.");
-		debugAssertM(frac <= 1.000001, "Point off high side of edge.");
+		ASSERT(frac >= -0.000001, "Point off low side of edge.");
+		ASSERT(frac <= 1.000001, "Point off high side of edge.");
 	}
 #   endif
 
@@ -2035,7 +2033,7 @@ bool CollisionDetection::isPointInsideTriangle(
 	default:
 		// This case is here to supress a warning on Linux
 		i = j = 0;
-		debugAssertM(false, "Should not get here.");
+		ASSERT(false);
 		break;
 	}
 
@@ -2052,7 +2050,7 @@ bool CollisionDetection::isPointInsideTriangle(
 		return (v0 == point);
 	}
 
-	debugAssert(area != 0);
+	ASSERT(area != 0);
 
 	float invArea = 1.0f / area;
 

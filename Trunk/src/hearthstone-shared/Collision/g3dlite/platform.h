@@ -15,6 +15,18 @@
 #include "Common.h"
 
 /**
+ Useful for debugging purposes.
+ */
+inline bool isValidHeapPointer(const void* x) {
+	#ifdef _MSC_VER
+		return 
+			(x != (void*)0xcccccccc) && (x != (void*)0xdeadbeef) && (x != (void*)0xfeeefeee);
+	#else
+		return x != NULL;
+	#endif
+}
+
+/**
  The version number of G3D in the form: MmmBB ->
  version M.mm [beta BB]
  */

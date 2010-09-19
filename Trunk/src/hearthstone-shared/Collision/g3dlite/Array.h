@@ -15,7 +15,6 @@
 #define G3D_Array_h
 
 #include "platform.h"
-#include "debug.h"
 #include "System.h"
 #include "MemoryManager.h"
 #ifdef G3D_DEBUG
@@ -104,7 +103,7 @@ private:
 	*/
 	void init(int n, const MemoryManager::Ref& m) {
 		m_memoryManager = m;
-		debugAssert(n >= 0);
+		ASSERT(n >= 0);
 		this->num = 0;
 		this->numAllocated = 0;
 		data = NULL;
@@ -151,7 +150,7 @@ private:
 		 // will be constructed in the resize() method.
 
 		 data = (T*)m_memoryManager->alloc(sizeof(T) * numAllocated);
-		 alwaysAssertM(data, "Memory manager returned NULL: out of memory?");
+		 ASSERT(data);
 
 		 // Call the copy constructors
 		 {const int N = G3D::min(oldNum, numAllocated);
@@ -164,8 +163,7 @@ private:
 			 const T* constructed = new (ptr) T(*oldPtr);
 
 			 (void)constructed;
-			 debugAssertM(constructed == ptr, 
-				 "new returned a different address than the one provided by Array.");
+			 ASSERT(constructed == ptr);
 		 }}
 
 		 // Call destructors on the old array (if there is no destructor, this will compile away)
@@ -241,7 +239,7 @@ public:
 	/** Creates a zero length array (no heap allocation occurs until resize). */
 	Array() : num(0) {
 		init(0, MemoryManager::create());
-		debugAssert(num >= 0);
+		ASSERT(num >= 0);
 	}
 	
 
@@ -291,7 +289,7 @@ public:
 	*/
 	Array(const Array& other) : num(0) {
 	   _copy(other);
-	   debugAssert(num >= 0);
+	   ASSERT(num >= 0);
    }
 
    /**
@@ -325,7 +323,7 @@ public:
 
    void clearAndSetMemoryManager(const MemoryManager::Ref& m) {
 	   clear();
-	   debugAssert(data == NULL);
+	   ASSERT(data == NULL);
 	   m_memoryManager = m;
    }
 
@@ -339,11 +337,11 @@ public:
 	Assignment operator.
 	*/
    Array& operator=(const Array& other) {
-	   debugAssert(num >= 0);
+	   ASSERT(num >= 0);
 	   resize(other.num);	   for (int i = 0; i < num; ++i) {
 		   data[i] = other[i];
 	   }
-	   debugAssert(num >= 0);
+	   ASSERT(num >= 0);
 	   return *this;
    }
 
@@ -379,8 +377,8 @@ public:
 	shrinks the array by one.
 	*/
    void fastRemove(int index, bool shrinkIfNecessary = false) {
-	   debugAssert(index >= 0);
-	   debugAssert(index < num);
+	   ASSERT(index >= 0);
+	   ASSERT(index < num);
 	   data[index] = data[num - 1];
 	   resize(size() - 1, shrinkIfNecessary);
    }
@@ -404,7 +402,7 @@ public:
 	  faster but can waste memory. 
 	*/
 	void resize(int n, bool shrinkIfNecessary = true) {
-		debugAssert(n >= 0);
+		ASSERT(n >= 0);
 		if (num == n) {
 			return;
 		}
@@ -434,7 +432,7 @@ public:
 		  if (numAllocated == 0) {
 			  // First allocation; grow to exactly the size requested to avoid wasting space.
 			  numAllocated = n;
-			  debugAssert(oldNum == 0);
+			  ASSERT(oldNum == 0);
 			  realloc(oldNum);
 		  } else {
 		 
@@ -601,7 +599,7 @@ public:
 	as an argument.
 	*/
    void append(const Array<T>& array) {
-	   debugAssert(this != &array);
+	   ASSERT(this != &array);
 	   int oldNum = num;
 	   int arrayLength = array.length();
 
@@ -692,7 +690,7 @@ public:
 	Removes the last element and returns it.  By default, shrinks the underlying array.
 	*/
    inline T pop(bool shrinkUnderlyingArrayIfNecessary = true) {
-	   debugAssert(num > 0);
+	   ASSERT(num > 0);
 	   T temp = data[num - 1];
 	   resize(num - 1, shrinkUnderlyingArrayIfNecessary);
 	   return temp;
@@ -701,7 +699,7 @@ public:
    /** Pops the last element and discards it without returning anything.  Faster than pop.
 	  By default, does not shrink the underlying array.*/
    inline void popDiscard(bool shrinkUnderlyingArrayIfNecessary = false) {
-	   debugAssert(num > 0);
+	   ASSERT(num > 0);
 	   resize(num - 1, shrinkUnderlyingArrayIfNecessary);
    }
 
@@ -723,13 +721,13 @@ public:
 	Performs bounds checks in debug mode
 	*/
    inline T& operator[](int n) {
-		debugAssertM((n >= 0) && (n < num), format("Array index out of bounds. n = %d, size() = %d", n, num));
-		debugAssert(data!=NULL);
+		ASSERT((n >= 0) && (n < num));
+		ASSERT(data!=NULL);
 		return data[n];
    }
 
    inline T& operator[](unsigned int n) {
-		debugAssertM(n < (unsigned int)num, format("Array index out of bounds. n = %d, size() = %d", n, num));
+		ASSERT(n < (unsigned int)num);
 		return data[n];
    }
 
@@ -737,26 +735,26 @@ public:
 	Performs bounds checks in debug mode
 	*/
 	inline const T& operator[](int n) const {
-		debugAssert((n >= 0) && (n < num));
-		debugAssert(data!=NULL);
+		ASSERT((n >= 0) && (n < num));
+		ASSERT(data!=NULL);
 		return data[n];
 	}
 
 	inline const T& operator[](unsigned int n) const {
-		debugAssert((n < (unsigned int)num));
-		debugAssert(data!=NULL);
+		ASSERT((n < (unsigned int)num));
+		ASSERT(data!=NULL);
 		return data[n];
 	}
 
 	inline T& randomElement() {
-		debugAssert(num > 0);
-		debugAssert(data!=NULL);
+		ASSERT(num > 0);
+		ASSERT(data!=NULL);
 		return data[iRandom(0, num - 1)];
 	}
 
 	inline const T& randomElement() const {
-		debugAssert(num > 0);
-		debugAssert(data!=NULL);
+		ASSERT(num > 0);
+		ASSERT(data!=NULL);
 		return data[iRandom(0, num - 1)];
 	}
 
@@ -765,55 +763,55 @@ public:
 	debug mode that there is at least one element.
 	*/
 	inline const T& last() const {
-		debugAssert(num > 0);
-		debugAssert(data!=NULL);
+		ASSERT(num > 0);
+		ASSERT(data!=NULL);
 		return data[num - 1];
 	}
 
 	/** Returns element lastIndex() */
 	inline T& last() {
-		debugAssert(num > 0);
-		debugAssert(data!=NULL);
+		ASSERT(num > 0);
+		ASSERT(data!=NULL);
 		return data[num - 1];
 	}
 
 	/** Returns <i>size() - 1</i> */
 	inline int lastIndex() const {
-		debugAssertM(num > 0, "Array is empty");
+		ASSERT(num > 0);
 		return num - 1;
 	}
 
 	inline int firstIndex() const {
-		debugAssertM(num > 0, "Array is empty");
+		ASSERT(num > 0);
 		return 0;
 	}
 
 	/** Returns element firstIndex(), performing a check in debug mode to ensure that there is at least one */
 	inline T& first() {
-		debugAssertM(num > 0, "Array is empty");
+		ASSERT(num > 0);
 		return data[0];
 	}
 
 	inline const T& first() const {
-		debugAssertM(num > 0, "Array is empty");
+		ASSERT(num > 0);
 		return data[0];
 	}
 
 	/** Returns iFloor(size() / 2), throws an assertion in debug mode if the array is empty */
 	inline int middleIndex() const {
-		debugAssertM(num > 0, "Array is empty");
+		ASSERT(num > 0);
 		return num >> 1;
 	}
 
 	/** Returns element middleIndex() */
 	inline const T& middle() const {
-		debugAssertM(num > 0, "Array is empty");
+		ASSERT(num > 0);
 		return data[num >> 1];   
 	}
 
 	/** Returns element middleIndex() */
 	inline T& middle() {
-		debugAssertM(num > 0, "Array is empty");
+		ASSERT(num > 0);
 		return data[num >> 1];   
 	}
 
@@ -881,8 +879,8 @@ public:
 	 referenced either by index or Iterator.
 	 */
 	void remove(Iterator element, int count = 1) {
-		debugAssert((element >= begin()) && (element < end()));
-		debugAssert((count > 0) && (element + count) <= end());
+		ASSERT((element >= begin()) && (element < end()));
+		ASSERT((count > 0) && (element + count) <= end());
 		Iterator last = end() - count;
 
 		while(element < last) {
@@ -894,8 +892,8 @@ public:
 	}
 
 	void remove(int index, int count = 1) {
-		debugAssert((index >= 0) && (index < num));
-		debugAssert((count > 0) && (index + count <= num));
+		ASSERT((index >= 0) && (index < num));
+		ASSERT((count > 0) && (index + count <= num));
 		
 		remove(begin() + index, count);
 	}
@@ -1038,12 +1036,12 @@ return( lhs < rhs? true : false );
 		const Comparator& comparator) const {
 
 		// Make sure all arrays are independent
-		debugAssert(&ltArray != this);
-		debugAssert(&eqArray != this);
-		debugAssert(&gtArray != this);
-		debugAssert(&ltArray != &eqArray);
-		debugAssert(&ltArray != &gtArray);
-		debugAssert(&eqArray != &gtArray);
+		ASSERT(&ltArray != this);
+		ASSERT(&eqArray != this);
+		ASSERT(&gtArray != this);
+		ASSERT(&ltArray != &eqArray);
+		ASSERT(&ltArray != &gtArray);
+		ASSERT(&eqArray != &gtArray);
 
 		// Clear the arrays
 		ltArray.fastClear();
@@ -1055,7 +1053,7 @@ return( lhs < rhs? true : false );
 
 		for (int i = 0; i < num; ++i) {
 			int c = comparator(partitionElement, data[i]);
-			debugAssertM(c >= -1 && c <= 1, "Comparator returned an illegal value.");
+			ASSERT(c >= -1 && c <= 1);
 
 			// Insert into the correct bucket, 0, 1, or 2
 			bucket[c + 1]->append(data[i]);

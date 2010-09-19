@@ -251,7 +251,7 @@ public:
 	}
 	/** log q = [Av, 0] where q = [sin(A) * v, cos(A)].
 		Only for unit quaternions 
-		debugAssertM(isUnit(), "Log only defined for unit quaternions");
+		ASSERT(isUnit(), "Log only defined for unit quaternions");
 		// Solve for A in q = [sin(A)*v, cos(A)]
 		Vector3 u(x, y, z);
 		double len = u.magnitude();
@@ -269,7 +269,7 @@ public:
 	/** exp q = [sin(A) * v, cos(A)] where q = [Av, 0].
 		Only defined for pure-vector quaternions */
 	inline Quat exp() const {
-		debugAssertM(w == 0, "exp only defined for vector quaternions");
+		ASSERT(w == 0);
 		Vector3 u(x, y, z);
 		float A = u.magnitude();
 		Vector3 v = u / A;
@@ -691,14 +691,14 @@ inline G3D::Quat operator*(float s, const G3D::Quat& q) {
 }
 
 inline float& Quat::operator[] (int i) {
-	debugAssert(i >= 0);
-	debugAssert(i < 4);
+	ASSERT(i >= 0);
+	ASSERT(i < 4);
 	return ((float*)this)[i];
 }
 
 inline const float& Quat::operator[] (int i) const {
-	debugAssert(i >= 0);
-	debugAssert(i < 4);
+	ASSERT(i >= 0);
+	ASSERT(i < 4);
 	return ((float*)this)[i];
 }
 

@@ -20,7 +20,6 @@
 #include "Vector3.h"
 #include "Plane.h"
 #include "BoundsTrait.h"
-#include "debugAssert.h"
 #include <string>
 
 namespace G3D {
@@ -63,7 +62,7 @@ public:
 
 	/** 0, 1, or 2 */
 	inline const Vector3& vertex(int n) const {
-		debugAssert((n >= 0) && (n < 3));
+		ASSERT((n >= 0) && (n < 3));
 		return _vertex[n];
 	}
 

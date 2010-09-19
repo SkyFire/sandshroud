@@ -10,7 +10,6 @@
 
 #include "platform.h"
 #include "AtomicInt32.h"
-#include "debugAssert.h"
 #include <string>
 
 #ifndef G3D_WIN32

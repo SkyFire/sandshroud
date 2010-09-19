@@ -41,12 +41,12 @@ public:
 	Vector2int16(const class Vector2& v);
 
 	inline int16& operator[] (int i) {
-		debugAssert(((unsigned int)i) <= 1);
+		ASSERT(((unsigned int)i) <= 1);
 		return ((int16*)this)[i];
 	}
 
 	inline const int16& operator[] (int i) const {
-		debugAssert(((unsigned int)i) <= 1);
+		ASSERT(((unsigned int)i) <= 1);
 		return ((int16*)this)[i];
 	}
 

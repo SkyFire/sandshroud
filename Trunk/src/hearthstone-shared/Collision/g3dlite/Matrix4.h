@@ -19,7 +19,6 @@
 #endif
 
 #include "platform.h"
-#include "debugAssert.h"
 #include "Matrix3.h"
 #include "Vector3.h"
 
@@ -94,14 +93,14 @@ public:
 	 float updirection = -1.0f) const;
 		
 	inline float* operator[](int r) {
-		debugAssert(r >= 0);
-		debugAssert(r < 4);
+		ASSERT(r >= 0);
+		ASSERT(r < 4);
 		return (float*)&elt[r];
 	}
 
 	inline const float* operator[](int r) const {
-		debugAssert(r >= 0);
-		debugAssert(r < 4);
+		ASSERT(r >= 0);
+		ASSERT(r < 4);
 		return (const float*)&elt[r];
 	} 
 

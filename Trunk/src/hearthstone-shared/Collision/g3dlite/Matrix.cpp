@@ -116,7 +116,7 @@ void Matrix::arrayDivInPlace(const Matrix& _B) {
 #undef INPLACE
 
 Matrix Matrix::fromDiagonal(const Matrix& d) {
-	debugAssert((d.rows() == 1) || (d.cols() == 1));
+	ASSERT((d.rows() == 1) || (d.cols() == 1));
 
 	int n = d.numElements();
 	Matrix D = zero(n, n);
@@ -137,13 +137,11 @@ void Matrix::set(int r, int c, T v) {
 
 
 void Matrix::setRow(int r, const Matrix& vec) {
-	debugAssertM(vec.cols() == cols(),
-		"A row must be set to a vector of the same size.");
-	debugAssertM(vec.rows() == 1,
-		"A row must be set to a row vector.");
+	ASSERT(vec.cols() == cols());
+	ASSERT(vec.rows() == 1);
 
-	debugAssert(r >= 0);
-	debugAssert(r < rows());
+	ASSERT(r >= 0);
+	ASSERT(r < rows());
 
 	if (! impl.isLastReference()) {
 		// Copy the data before mutating; this object is shared
@@ -154,14 +152,12 @@ void Matrix::setRow(int r, const Matrix& vec) {
 
 
 void Matrix::setCol(int c, const Matrix& vec) {
-	debugAssertM(vec.rows() == rows(),
-		"A column must be set to a vector of the same size.");
-	debugAssertM(vec.cols() == 1,
-		"A column must be set to a column vector.");
+	ASSERT(vec.rows() == rows());
+	ASSERT(vec.cols() == 1);
 
-	debugAssert(c >= 0);
+	ASSERT(c >= 0);
 
-	debugAssert(c < cols());
+	ASSERT(c < cols());
 
 	if (! impl.isLastReference()) {
 		// Copy the data before mutating; this object is shared
@@ -177,8 +173,8 @@ Matrix::T Matrix::get(int r, int c) const {
 
 
 Matrix Matrix::row(int r) const {
-	debugAssert(r >= 0);
-	debugAssert(r < rows());
+	ASSERT(r >= 0);
+	ASSERT(r < rows());
 	Matrix out(1, cols());
 	out.impl->setRow(1, impl->elt[r]);
 	return out;
@@ -186,8 +182,8 @@ Matrix Matrix::row(int r) const {
 
 
 Matrix Matrix::col(int c) const {
-	debugAssert(c >= 0);
-	debugAssert(c < cols());
+	ASSERT(c >= 0);
+	ASSERT(c < cols());
 	Matrix out(rows(), 1);
 
 	T* outData = out.impl->data;
@@ -258,7 +254,7 @@ TRAMPOLINE_EXPLICIT_1(arrayCos)
 TRAMPOLINE_EXPLICIT_1(arraySin)
 
 void Matrix::mulRow(int r, const T& v) {
-	debugAssert(r >= 0 && r < rows());
+	ASSERT(r >= 0 && r < rows());
 
 	if (! impl.isLastReference()) {
 		impl = new Impl(*impl);
@@ -279,8 +275,8 @@ void Matrix::transpose(Matrix& out) const {
 
 
 Matrix3 Matrix::toMatrix3() const {
-	debugAssert(impl->R == 3);
-	debugAssert(impl->C == 3);
+	ASSERT(impl->R == 3);
+	ASSERT(impl->C == 3);
 	return Matrix3(
 		impl->get(0,0), impl->get(0,1), impl->get(0,2),
 		impl->get(1,0), impl->get(1,1), impl->get(1,2),
@@ -289,8 +285,8 @@ Matrix3 Matrix::toMatrix3() const {
 
 
 Matrix4 Matrix::toMatrix4() const {
-	debugAssert(impl->R == 4);
-	debugAssert(impl->C == 4);
+	ASSERT(impl->R == 4);
+	ASSERT(impl->C == 4);
 	return Matrix4(
 		impl->get(0,0), impl->get(0,1), impl->get(0,2), impl->get(0,3),
 		impl->get(1,0), impl->get(1,1), impl->get(1,2), impl->get(1,3),
@@ -300,7 +296,7 @@ Matrix4 Matrix::toMatrix4() const {
 
 
 Vector2 Matrix::toVector2() const {
-	debugAssert(impl->R * impl->C == 2);
+	ASSERT(impl->R * impl->C == 2);
 	if (impl->R > impl->C) {
 		return Vector2(impl->get(0,0), impl->get(1,0));
 	} else {
@@ -310,7 +306,7 @@ Vector2 Matrix::toVector2() const {
 
 
 Vector3 Matrix::toVector3() const {
-	debugAssert(impl->R * impl->C == 3);
+	ASSERT(impl->R * impl->C == 3);
 	if (impl->R > impl->C) {
 		return Vector3(impl->get(0,0), impl->get(1,0), impl->get(2, 0));
 	} else {
@@ -320,7 +316,7 @@ Vector3 Matrix::toVector3() const {
 
 
 Vector4 Matrix::toVector4() const {
-	debugAssert(
+	ASSERT(
 		((impl->R == 4) && (impl->C == 1)) || 
 		((impl->R == 1) && (impl->C == 4)));
 	
@@ -333,8 +329,8 @@ Vector4 Matrix::toVector4() const {
 
 
 void Matrix::swapRows(int r0, int r1) {
-	debugAssert(r0 >= 0 && r0 < rows());
-	debugAssert(r1 >= 0 && r1 < rows());
+	ASSERT(r0 >= 0 && r0 < rows());
+	ASSERT(r1 >= 0 && r1 < rows());
 
 	if (r0 == r1) {
 		return;
@@ -349,8 +345,8 @@ void Matrix::swapRows(int r0, int r1) {
 
 
 void Matrix::swapAndNegateCols(int c0, int c1) {
-	debugAssert(c0 >= 0 && c0 < cols());
-	debugAssert(c1 >= 0 && c1 < cols());
+	ASSERT(c0 >= 0 && c0 < cols());
+	ASSERT(c1 >= 0 && c1 < cols());
 
 	if (c0 == c1) {
 		return;
@@ -364,12 +360,12 @@ void Matrix::swapAndNegateCols(int c0, int c1) {
 }
 
 Matrix Matrix::subMatrix(int r1, int r2, int c1, int c2) const {
-	debugAssert(r2>=r1);
-	debugAssert(c2>=c1);
-	debugAssert(c2<cols());
-	debugAssert(r2<rows());
-	debugAssert(r1>=0);
-	debugAssert(c1>=0);
+	ASSERT(r2>=r1);
+	ASSERT(c2>=c1);
+	ASSERT(c2<cols());
+	ASSERT(r2<rows());
+	ASSERT(r1>=0);
+	ASSERT(c1>=0);
 
 	Matrix X(r2 - r1 + 1, c2 - c1 + 1);
 
@@ -394,10 +390,10 @@ bool Matrix::allNonZero() const {
 
 
 void Matrix::svd(Matrix& U, Array<T>& d, Matrix& V, bool sort) const {
-	debugAssert(rows() >= cols());
-	debugAssertM(&U != &V, "Arguments to SVD must be different matrices");
-	debugAssertM(&U != this, "Arguments to SVD must be different matrices");
-	debugAssertM(&V != this, "Arguments to SVD must be different matrices");
+	ASSERT(rows() >= cols());
+	ASSERT(&U != &V);
+	ASSERT(&U != this);
+	ASSERT(&V != this);
 
 	int R = rows();
 	int C = cols();
@@ -415,10 +411,6 @@ void Matrix::svd(Matrix& U, Array<T>& d, Matrix& V, bool sort) const {
 	}
 
 	d.resize(C);
-	const char* ret = svdCore(U.impl->elt, R, C, d.getCArray(), V.impl->elt);
-
-	debugAssertM(ret == NULL, ret);
-	(void)ret;
 
 	if (sort) {
 		// Sort the singular values from greatest to least
@@ -603,13 +595,11 @@ void Matrix::Impl::mulRow(int r, const T& v) {
 void Matrix::Impl::mul(const Impl& B, Impl& out) const {
 	const Impl& A = *this;
 
-	debugAssertM(
-		(this != &out) && (&B != &out),
-		"Output argument to mul cannot be the same as an input argument.");
+	ASSERT((this != &out) && (&B != &out));
 
-	debugAssert(A.C == B.R);
-	debugAssert(A.R == out.R);
-	debugAssert(B.C == out.C);
+	ASSERT(A.C == B.R);
+	ASSERT(A.R == out.R);
+	ASSERT(B.C == out.C);
 
 	for (int r = 0; r < out.R; ++r) {
 		for (int c = 0; c < out.C; ++c) {
@@ -631,10 +621,10 @@ void Matrix::Impl::mul(const Impl& B, Impl& out) const {
 void Matrix::Impl::method(const Impl& B, Impl& out) const {\
 	const Impl& A = *this;\
 							\
-	debugAssert(A.C == B.C);\
-	debugAssert(A.R == B.R);\
-	debugAssert(A.C == out.C);\
-	debugAssert(A.R == out.R);\
+	ASSERT(A.C == B.C);\
+	ASSERT(A.R == B.R);\
+	ASSERT(A.C == out.C);\
+	ASSERT(A.R == out.R);\
 							\
 	for (int i = R * C - 1; i >= 0; --i) {\
 		out.data[i] = A.data[i] OP B.data[i];\
@@ -646,8 +636,8 @@ void Matrix::Impl::method(const Impl& B, Impl& out) const {\
 void Matrix::Impl::method(Impl& out) const {\
 	const Impl& A = *this;\
 							\
-	debugAssert(A.C == out.C);\
-	debugAssert(A.R == out.R);\
+	ASSERT(A.C == out.C);\
+	ASSERT(A.R == out.R);\
 							\
 	for (int i = R * C - 1; i >= 0; --i) {\
 		out.data[i] = f(A.data[i]);\
@@ -659,8 +649,8 @@ void Matrix::Impl::method(Impl& out) const {\
 void Matrix::Impl::method(Matrix::T B, Impl& out) const {\
 	const Impl& A = *this;\
 							\
-	debugAssert(A.C == out.C);\
-	debugAssert(A.R == out.R);\
+	ASSERT(A.C == out.C);\
+	ASSERT(A.R == out.R);\
 							\
 	for (int i = R * C - 1; i >= 0; --i) {\
 		out.data[i] = A.data[i] OP B;\
@@ -693,8 +683,8 @@ IMPLEMENT_ARRAY_1(arraySin, ::sin)
 void Matrix::Impl::lsub(Matrix::T B, Impl& out) const {
 	const Impl& A = *this;
 
-	debugAssert(A.C == out.C);
-	debugAssert(A.R == out.R);
+	ASSERT(A.C == out.C);
+	ASSERT(A.R == out.R);
 
 	for (int i = R * C - 1; i >= 0; --i) {
 		out.data[i] = B - A.data[i];
@@ -703,7 +693,7 @@ void Matrix::Impl::lsub(Matrix::T B, Impl& out) const {
 
 
 void Matrix::Impl::inverseViaAdjoint(Impl& out) const {
-	debugAssert(&out != this);
+	ASSERT(&out != this);
 
 	// Inverse = adjoint / determinant
 
@@ -722,8 +712,8 @@ void Matrix::Impl::inverseViaAdjoint(Impl& out) const {
 
 
 void Matrix::Impl::transpose(Impl& out) const {
-	debugAssert(out.R == C);
-	debugAssert(out.C == R);
+	ASSERT(out.R == C);
+	ASSERT(out.C == R);
 
 	if (&out == this) {
 		// Square matrix in place
@@ -752,7 +742,7 @@ void Matrix::Impl::adjoint(Impl& out) const {
 
 
 void Matrix::Impl::cofactor(Impl& out) const {
-	debugAssert(&out != this);
+	ASSERT(&out != this);
 	for(int r = 0; r < R; ++r) {
 		for(int c = 0; c < C; ++c) {
 			out.set(r, c, cofactor(r, c));
@@ -770,8 +760,8 @@ Matrix::T Matrix::Impl::cofactor(int r, int c) const {
 
 
 Matrix::T Matrix::Impl::determinant(int nr, int nc) const {
-	debugAssert(R > 0);
-	debugAssert(C > 0);
+	ASSERT(R > 0);
+	ASSERT(C > 0);
 	Impl A(R - 1, C - 1);
 	withoutRowAndCol(nr, nc, A);
 	return A.determinant();
@@ -779,7 +769,7 @@ Matrix::T Matrix::Impl::determinant(int nr, int nc) const {
 
 
 void Matrix::Impl::setRow(int r, const T* vals) {
-	debugAssert(r >= 0);
+	ASSERT(r >= 0);
 	System::memcpy(elt[r], vals, sizeof(T) * C);
 }
 
@@ -793,7 +783,7 @@ void Matrix::Impl::setCol(int c, const T* vals) {
 
 Matrix::T Matrix::Impl::determinant() const {
 
-	debugAssert(R == C);
+	ASSERT(R == C);
 
 	// Compute using cofactors
 	switch(R) {
@@ -842,8 +832,8 @@ Matrix::T Matrix::Impl::determinant() const {
 
 
 void Matrix::Impl::withoutRowAndCol(int excludeRow, int excludeCol, Impl& out) const {
-	debugAssert(out.R == R - 1);
-	debugAssert(out.C == C - 1);
+	ASSERT(out.R == R - 1);
+	ASSERT(out.C == C - 1);
 
 	for (int r = 0; r < out.R; ++r) {
 		for (int c = 0; c < out.C; ++c) {
@@ -948,10 +938,8 @@ Matrix Matrix::svdPseudoInverse(float tolerance) const {
 		// both the transpose and the memory incoherence of striding across memory
 		// in big steps.
 
-		alwaysAssertM(A.cols() == r, 
-			"Internal dimension mismatch during pseudoInverse()");
-		alwaysAssertM(V.cols() >= r, 
-			"Internal dimension mismatch during pseudoInverse()");
+		ASSERT(A.cols() == r);
+		ASSERT(V.cols() >= r);
 
 		X = Matrix(V.rows(), A.rows());
 		T** Xelt = X.impl->elt;
@@ -971,7 +959,7 @@ Matrix Matrix::svdPseudoInverse(float tolerance) const {
 		// Test that results are the same after optimizations:
 		Matrix diff = X - testX;
 		T n = diff.norm();
-		debugAssert(n < 0.0001);
+		ASSERT(n < 0.0001);
 		*/
 	}
 	return X;
@@ -1002,7 +990,7 @@ Matrix Matrix::vectorPseudoInverse() const {
 Matrix Matrix::rowPartPseudoInverse() const{
 	int m = rows();
 	int n = cols();
-	alwaysAssertM((m<=n),"Row-partitioned block matrix pseudoinverse requires R<C");
+	ASSERT((m<=n));
 
 	// B = A * A'
 	Matrix A = *this;
@@ -1034,7 +1022,7 @@ Matrix Matrix::rowPartPseudoInverse() const{
 		return row4PseudoInverse(B);
 
 	default:
-		alwaysAssertM(false, "G3D internal error: Should have used the vector or general case!");
+		ASSERT(false);
 		return Matrix();
 	}
 }
@@ -1042,7 +1030,7 @@ Matrix Matrix::rowPartPseudoInverse() const{
 Matrix Matrix::colPartPseudoInverse() const{
 	int m = rows();
 	int n = cols();
-	alwaysAssertM((m>=n),"Column-partitioned block matrix pseudoinverse requires R>C");
+	ASSERT((m>=n));
 	// TODO: Put each of the individual cases in its own helper function
 	// TODO: Push the B computation down into the individual cases
 	// B = A' * A
@@ -1072,7 +1060,7 @@ Matrix Matrix::colPartPseudoInverse() const{
 		return col4PseudoInverse(B);
 
 	default:
-		alwaysAssertM(false, "G3D internal error: Should have used the vector or general case!");
+		ASSERT(false);
 		return Matrix();
 	}
 }
@@ -1320,11 +1308,7 @@ Matrix Matrix::partitionPseudoInverse() const {
 }
 
 void Matrix::Impl::inverseInPlaceGaussJordan() {
-	debugAssertM(R == C, 
-		format(
-		"Cannot perform Gauss-Jordan inverse on a non-square matrix."
-		" (Argument was %dx%d)",
-		R, C));
+	ASSERT(R == C);
 
 	// Exchange to float elements
 #   define SWAP(x, y) {float temp = x; x = y; y = temp;}
@@ -1389,7 +1373,7 @@ void Matrix::Impl::inverseInPlaceGaussJordan() {
 	
 		double piv = elt[col][col];
 
-		debugAssertM(piv != 0.0, "Matrix is singular");
+		ASSERT(piv != 0.0);
 
 		// Divide everything by the pivot (avoid computing the division
 		// multiple times).
@@ -1481,10 +1465,10 @@ const char* Matrix::svdCore(float** U, int rows, int cols, float* D, float** V) 
 	// Temp row vector
 	double* rv1;
   
-	debugAssertM(rows >= cols, "Must have more rows than columns");
+	ASSERT(rows >= cols);
   
 	rv1 = (double*)System::alignedMalloc(cols * sizeof(double), 16);
-	debugAssert(rv1);
+	ASSERT(rv1);
 
 	// Householder reduction to bidiagonal form
 	for (i = 0; i < cols; ++i) {

@@ -18,7 +18,7 @@ namespace G3D {
 void Ray::set(const Vector3& origin, const Vector3& direction) {
 	m_origin = origin;
 	m_direction = direction;
-	debugAssert(direction.isUnit());
+	ASSERT(direction.isUnit());
 
 	m_invDirection = Vector3::one() / direction;
 

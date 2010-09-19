@@ -42,12 +42,12 @@ public:
 	Vector3int32(const class Vector3& v);
 
 	inline int32& operator[] (int i) {
-		debugAssert(i <= 2);
+		ASSERT(i <= 2);
 		return ((int32*)this)[i];
 	}
 
 	inline const int32& operator[] (int i) const {
-		debugAssert(i <= 2);
+		ASSERT(i <= 2);
 		return ((int32*)this)[i];
 	}
 

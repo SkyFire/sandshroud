@@ -46,7 +46,7 @@ public:
 
 	/** Argument may be 0 or 1 */
 	inline Vector3 point(int i) const {
-		debugAssert(i == 0 || i == 1);
+		ASSERT(i == 0 || i == 1);
 		return (i == 0) ? p1 : p2;
 	}
 

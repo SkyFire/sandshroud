@@ -20,7 +20,6 @@
 
 #include "platform.h"
 #include "System.h"
-#include "debug.h"
 #include "format.h"
 
 #ifdef G3D_WIN32
@@ -190,7 +189,7 @@ private:
         // Note that we ignore the actual byte size
         // and create a constant size block.
         (void)bytes;
-        debugAssert(tinyBufferSize >= bytes);
+        ASSERT(tinyBufferSize >= bytes);
 
         void* ptr = NULL;
 
@@ -210,7 +209,7 @@ private:
     }
 
     void tinyFree(void* ptr) {
-        debugAssert(tinyPoolSize < maxTinyBuffers);
+        ASSERT(tinyPoolSize < maxTinyBuffers);
 
         // Put the pointer back into the free list
         tinyPool[tinyPoolSize] = ptr;
@@ -439,7 +438,7 @@ public:
             return;
         }
 
-        debugAssert(isValidPointer(ptr));
+        ASSERT(ptr != NULL);
 
         if (inTinyHeap(ptr)) {
             lock();
@@ -587,7 +586,7 @@ void System::free(void* p) {
 
 
 void* System::alignedMalloc(size_t bytes, size_t alignment) {
-    alwaysAssertM(isPow2((int)alignment), "alignment must be a power of 2");
+    ASSERT(isPow2((int)alignment));
 
     // We must align to at least a word boundary.
     alignment = iMax((int)alignment, sizeof(void *));
@@ -603,11 +602,11 @@ void* System::alignedMalloc(size_t bytes, size_t alignment) {
         return NULL;
     }
 
-    debugAssert(isValidHeapPointer(truePtr));
+    ASSERT(isValidHeapPointer(truePtr));
     #ifdef G3D_WIN32
     // The blocks we return will not be valid Win32 debug heap
     // pointers because they are offset 
-    //  debugAssert(_CrtIsValidPointer(truePtr, totalBytes, TRUE) );
+    //  ASSERT(_CrtIsValidPointer(truePtr, totalBytes, TRUE) );
     #endif
 
     // The return pointer will be the next aligned location (we must at least
@@ -627,17 +626,15 @@ void* System::alignedMalloc(size_t bytes, size_t alignment) {
     // assert((alignedPtr - truePtr) + bytes <= totalBytes);
 #endif
 
-    debugAssert((alignedPtr - truePtr) + bytes <= totalBytes);
-
     // Immediately before the aligned location, write the true array location
     // so that we can free it correctly.
     intptr_t* redirectPtr = (intptr_t*)(alignedPtr - sizeof(intptr_t));
     redirectPtr[0] = (intptr_t)truePtr;
 
-    debugAssert(isValidHeapPointer(truePtr));
+    ASSERT(isValidHeapPointer(truePtr));
 
     #ifdef G3D_WIN32
-        debugAssert( _CrtIsValidPointer(alignedPtr, bytes, TRUE) );
+        ASSERT( _CrtIsValidPointer(alignedPtr, bytes, TRUE) );
     #endif
     return (void*)alignedPtr;
 }
@@ -658,11 +655,9 @@ void System::alignedFree(void* _ptr) {
     // Dereference that pointer so that ptr = true start
     void* truePtr = (void*)(redirectPtr[0]);
 
-    debugAssert(isValidHeapPointer(truePtr));
+    ASSERT(isValidHeapPointer(truePtr));
     System::free(truePtr);
 }
-
-
 
 std::string System::currentDateString() {
 	time_t t1;

@@ -18,7 +18,6 @@
 
 #include "platform.h"
 #include "Array.h"
-#include "debug.h"
 #include "System.h"
 #include "g3dmath.h"
 #include "EqualsTrait.h"
@@ -166,12 +165,12 @@ private:
 
 	void checkIntegrity() const {
 #	   ifdef G3D_DEBUG
-		   debugAssert(m_bucket == NULL || isValidHeapPointer(m_bucket));
+		   ASSERT(m_bucket == NULL || isValidHeapPointer(m_bucket));
 		   for (size_t b = 0; b < m_numBuckets; ++b) {
 			   Node* node = m_bucket[b];
-			   debugAssert(node == NULL || isValidHeapPointer(node));
+			   ASSERT(node == NULL || isValidHeapPointer(node));
 			   while (node != NULL) {
-				   debugAssert(node == NULL || isValidHeapPointer(node));
+				   ASSERT(node == NULL || isValidHeapPointer(node));
 				   node = node->next;
 			   }
 		   }
@@ -216,7 +215,7 @@ private:
 		m_bucket = (Node**)alloc(sizeof(Node*) * newSize);
 		// Set all pointers to NULL
 		System::memset(m_bucket, 0, newSize * sizeof(Node*));
-		debugAssertM(m_bucket != NULL, "MemoryManager::alloc returned NULL. Out of memory.");
+		ASSERT(m_bucket != NULL);
 		// Move each node to its new hash location
 		for (size_t b = 0; b < m_numBuckets; ++b) {
 			Node* node = oldBucket[b];
@@ -252,7 +251,7 @@ private:
 			return;
 		}
 
-		debugAssert(m_bucket == NULL);
+		ASSERT(m_bucket == NULL);
 		m_size = h.m_size;
 		m_numBuckets = h.m_numBuckets;
 		m_bucket = (Node**)alloc(sizeof(Node*) * m_numBuckets);
@@ -306,7 +305,7 @@ public:
 	/** Changes the internal memory manager to m */
 	void clearAndSetMemoryManager(const MemoryManager::Ref& m) {
 		clear();
-		debugAssert(m_bucket == NULL);
+		ASSERT(m_bucket == NULL);
 		m_memoryManager = m;
 	}
 
@@ -618,7 +617,7 @@ private:
 	  } while (n != NULL);
 
 	  return false;
-	  //alwaysAssertM(false, "Tried to remove a key that was not in the table.");
+	  //alwaysASSERT(false, "Tried to remove a key that was not in the table.");
    }
 
 public:
@@ -682,7 +681,7 @@ public:
 	*/
    Value& get(const Key& key) const {
 	   Entry* e = getEntryPointer(key);
-	   debugAssertM(e != NULL, "Key not found");
+	   ASSERT(e != NULL);
 	   return e->value;
    }
 

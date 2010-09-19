@@ -17,7 +17,7 @@ namespace G3D {
 	
 
 int Crypto::smallPrime(int n) {
-	debugAssert(n < numSmallPrimes() && n >= 0);
+	ASSERT(n < numSmallPrimes() && n >= 0);
 
 	// From:
 	// http://primes.utm.edu/lists/small/1000.txt

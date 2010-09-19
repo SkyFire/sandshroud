@@ -221,7 +221,7 @@ Box CoordinateFrame::toWorldSpace(const Box& b) const {
 
 	for (int i = 0; i < 8; ++i) {
 		out._corner[i] = pointToWorldSpace(b._corner[i]);
-		debugAssert(! isNaN(out._corner[i].x));
+		ASSERT(! isNaN(out._corner[i].x));
 	}
 
 	for (int i = 0; i < 3; ++i) {

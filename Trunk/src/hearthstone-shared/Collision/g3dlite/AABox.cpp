@@ -339,7 +339,7 @@ Vector3 AABox::corner(int index) const {
 		break;
 
 	default:
-		debugAssertM(false, "Invalid corner index");
+		ASSERT(false);
 		break;
 	}
 

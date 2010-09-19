@@ -869,26 +869,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\debug.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\debugAssert.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\debugAssert.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\debugAssert2.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\debugPrintf.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\EqualsTrait.h"
 					>
 				</File>
@@ -1058,10 +1038,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Ray.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Collision\g3dlite\Rect2D.cpp"
 					>
 				</File>
 				<File

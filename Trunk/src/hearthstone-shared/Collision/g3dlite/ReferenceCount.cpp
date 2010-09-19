@@ -19,8 +19,7 @@ ReferenceCountedObject::ReferenceCountedObject() :
 	ReferenceCountedObject_refCount(0), 
 	ReferenceCountedObject_weakPointer(0) {
 
-	debugAssertM(isValidHeapPointer(this), 
-		"Reference counted objects must be allocated on the heap.");
+	ASSERT(isValidHeapPointer(this));
 }
 
 void ReferenceCountedObject::ReferenceCountedObject_zeroWeakPointers() {
@@ -46,8 +45,7 @@ ReferenceCountedObject::ReferenceCountedObject(const ReferenceCountedObject& not
 	ReferenceCountedObject_refCount(0),
 	ReferenceCountedObject_weakPointer(0) {
 	(void)notUsed;
-	debugAssertM(G3D::isValidHeapPointer(this), 
-		"Reference counted objects must be allocated on the heap.");
+	ASSERT(isValidHeapPointer(this));
 }
 
 ReferenceCountedObject& ReferenceCountedObject::operator=(const ReferenceCountedObject& other) {
