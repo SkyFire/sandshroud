@@ -1500,15 +1500,15 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 		if(pSourceItem == NULL)
 		{
 			/* splitting */
-			if(pDestItem != NULL && deposit_stack > 0 && pDestItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) > deposit_stack)
+			if(pDestItem != NULL && withdraw_stack > 0 && pDestItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) > withdraw_stack)
 			{
 				pSourceItem2 = pDestItem;
 
-				pSourceItem2->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT, -(int32)deposit_stack);
+				pSourceItem2->ModUnsigned32Value(ITEM_FIELD_STACK_COUNT, -(int32)withdraw_stack);
 				pSourceItem2->SaveToDB(0,0,true, NULL);
 
 				pDestItem = objmgr.CreateItem(pSourceItem2->GetEntry(), _player);
-				pDestItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, deposit_stack);
+				pDestItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, withdraw_stack);
 				pDestItem->SetUInt32Value(ITEM_FIELD_CREATOR, pSourceItem2->GetUInt32Value(ITEM_FIELD_CREATOR));
 			}
 			else
@@ -1546,6 +1546,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 		{
 			/* the guild was robbed by some n00b! :O */
 			pDestItem->SetOwner(_player);
+			pDestItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, withdraw_stack);
 			pDestItem->SetUInt32Value(ITEM_FIELD_OWNER, _player->GetLowGUID());
 			pDestItem->SaveToDB(source_bagslot, source_slot, true, NULL);
 
