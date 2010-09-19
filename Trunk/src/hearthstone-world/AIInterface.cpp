@@ -1569,7 +1569,7 @@ Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 				return m_Unit;
 			}
 		} // If we don't have a preset, just use a random chance less than 50.
-		else if(healthPercent < (rand()%50) && !m_Unit->HasActiveAura(sp->spell->Id, m_Unit->GetGUID()))
+		else if(healthPercent < (RandomUInt(50)) && !m_Unit->HasActiveAura(sp->spell->Id, m_Unit->GetGUID()))
 		{
 			sp->spelltargetType = TTYPE_CASTER;
 			if(!sp->procCount) // Limit our self heals so we don't cast every time we go below 50.
@@ -1596,7 +1596,7 @@ Unit* AIInterface::FindHealTargetForSpell(AI_Spell *sp)
 					return (*i); // heal Assist Target which has low HP
 				}
 			} // If we don't have a preset, just use a random chance less than 50.
-			else if(healthPercent < (rand()%50) && !(*i)->HasActiveAura(sp->spell->Id,m_Unit->GetGUID()))
+			else if(healthPercent < (RandomUInt(50)) && !(*i)->HasActiveAura(sp->spell->Id,m_Unit->GetGUID()))
 			{
 				sp->spelltargetType = TTYPE_SINGLETARGET;
 				if(!sp->procCount) // Limit our heals so we don't cast every time someone goes below 50.

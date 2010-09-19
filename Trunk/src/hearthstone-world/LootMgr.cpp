@@ -316,6 +316,10 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 				t.chance[i] = 0.0f;
 		}
 
+		for(uint i = 0; i < 4; i++)
+			if(t.chance[i] == -1.0f)
+				t.chance[i] = RandomFloat(100);
+
 		ttab.push_back( t );
 
 		last_entry = entry_id;
