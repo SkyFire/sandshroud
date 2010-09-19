@@ -441,6 +441,7 @@ bool World::SetInitialWorldSettings()
 	tl.wait();
 
 	ApplyNormalFixes();
+	MAKE_TASK(ObjectMgr, LoadQuestPOI);
 	MAKE_TASK(ObjectMgr, LoadAchievements);
 	MAKE_TASK(ObjectMgr, LoadCreatureWaypoints);
 	MAKE_TASK(ObjectMgr, LoadTrainers);
@@ -464,7 +465,6 @@ bool World::SetInitialWorldSettings()
 	MAKE_TASK(QuestMgr,  LoadExtraQuestStuff);
 	MAKE_TASK(ObjectMgr, LoadArenaTeams);
 	MAKE_TASK(ObjectMgr, LoadProfessionDiscoveries);
-	MAKE_TASK(ObjectMgr, LoadQuestPOI);
 
 #undef MAKE_TASK
 

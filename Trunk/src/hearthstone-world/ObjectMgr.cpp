@@ -2149,6 +2149,7 @@ void ObjectMgr::LoadCreatureWaypoints()
 	uint32 spawnid = 0;
 	WayPoint* wp = NULL;
 	WayPointMap* m = NULL;
+	uint32 waypointcounter = 0;
 
 	do
 	{
@@ -2228,11 +2229,12 @@ void ObjectMgr::LoadCreatureWaypoints()
 			}
 			(*(i->second))[wp->id -1] = wp;
 		}
+		waypointcounter++;
 	}while( result->NextRow() );
 
-	Log.Notice("ObjectMgr", "%u waypoints cached.", result->GetRowCount());
 	delete result;
 	delete result2;
+	Log.Notice("ObjectMgr", "%u waypoints cached.", waypointcounter);
 }
 
 WayPointMap*ObjectMgr::GetWayPointMap(uint32 spawnid)
