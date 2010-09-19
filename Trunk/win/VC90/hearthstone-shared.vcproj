@@ -108,8 +108,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\hearthstone-shared___Win32_Release_x64"
-			IntermediateDirectory=".\hearthstone-shared___Win32_Release_x64"
+			OutputDirectory=".\hearthstone-shared___x64_Release"
+			IntermediateDirectory=".\hearthstone-shared___x64_Release"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -148,7 +148,7 @@
 				EnableEnhancedInstructionSet="0"
 				FloatingPointModel="0"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\shared___Win32_Release_x64/shared.pch"
+				PrecompiledHeaderFile=".\shared___x64_Release/shared.pch"
 				AssemblerListingLocation="$(IntDir)/"
 				ObjectFile="$(IntDir)/"
 				ProgramDataBaseFileName="$(IntDir)/"
@@ -272,8 +272,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\hearthstone-shared___Win32_Debug_x64"
-			IntermediateDirectory=".\hearthstone-shared___Win32_Debug_x64"
+			OutputDirectory=".\hearthstone-shared___x64_Debug"
+			IntermediateDirectory=".\hearthstone-shared___x64_Debug"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -307,7 +307,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\shared___Win32_Debug_x64/shared.pch"
+				PrecompiledHeaderFile=".\shared___x64_Debug/shared.pch"
 				AssemblerListingLocation="$(IntDir)/"
 				ObjectFile="$(IntDir)/"
 				ProgramDataBaseFileName="$(IntDir)/"
