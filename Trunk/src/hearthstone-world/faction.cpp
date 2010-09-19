@@ -111,6 +111,10 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	if( objA->GetTypeId() == TYPEID_CORPSE || objB->GetTypeId() == TYPEID_CORPSE )
 		return false;
 
+	// Dead people can't attack anything.
+	if( (objA->IsUnit() && !TO_UNIT(objA)->isAlive()) || (objB->IsUnit() && !TO_UNIT(objB)->isAlive()) )
+		return false;
+
 	// We do need all factiondata for this
 	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL )
 		return false;
@@ -134,7 +138,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 
 	if( player_objA && player_objB && player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
 		return true;
-	else
+	else if(player_objA == NULL && player_objB == NULL) // Ignore players, we have critters in sanctuaries
 	{
 		// Do not let units attack each other in sanctuary
 		// We know they aren't dueling

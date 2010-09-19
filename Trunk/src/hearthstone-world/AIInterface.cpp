@@ -19,8 +19,6 @@
 
 #include "StdAfx.h"
 
-
-
 AIInterface::AIInterface()
 {
 	m_ChainAgroSet = NULL;
@@ -555,15 +553,10 @@ void AIInterface::Update(uint32 p_time)
 
 			SpellCastTargets targets(0);
 			if(!m_nextTarget ||
-				(m_nextTarget && 
-					(!m_Unit->GetMapMgr()->GetUnit(m_nextTarget->GetGUID()) || 
-					!m_nextTarget->isAlive() ||
+				(m_nextTarget && (!m_Unit->GetMapMgr()->GetUnit(m_nextTarget->GetGUID()) || !m_nextTarget->isAlive() ||
 					(m_nextTarget->GetTypeId() == TYPEID_UNIT && TO_CREATURE(m_nextTarget)->IsTotem()) ||
 					!IsInrange(m_Unit,m_nextTarget,pSpell->m_spellInfo->base_range_or_radius_sqr) ||
-					!isAttackable(m_Unit, m_nextTarget,!(pSpell->m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED))
-					)
-				)
-				)
+					!isAttackable(m_Unit, m_nextTarget,!(pSpell->m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))))
 			{
 				//we set no target and see if we managed to fid a new one
 				m_nextTarget=NULLUNIT;
@@ -572,6 +565,7 @@ void AIInterface::Update(uint32 p_time)
 				if(targets.m_targetMask & TARGET_FLAG_UNIT)
 					m_nextTarget = m_Unit->GetMapMgr()->GetUnit(targets.m_unitTarget);
 			}
+
 			if(m_nextTarget)
 			{
 				SpellCastTargets targets(m_nextTarget->GetGUID());
@@ -751,20 +745,6 @@ void AIInterface::_UpdateTargets()
 	if( m_updateAssist )
 	{
 		m_updateAssist = false;
-	/*	deque< Unit > tokill;
-
-		//modified for vs2005 compatibility
-		for(i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
-		{
-			if(m_Unit->GetDistanceSq((*i)) > 2500.0f|| !(*i)->isAlive() || !(*i)->CombatStatus.IsInCombat())
-			{
-				tokill.push_back(*i);
-			}
-		}
-
-		for(deque< Unit >::iterator i2 = tokill.begin(); i2 != tokill.end(); i2++)
-			m_assistTargets.erase(*i2);*/
-
 		for(i = m_assistTargets.begin(); i != m_assistTargets.end();)
 		{
 			i2 = i;
@@ -780,31 +760,18 @@ void AIInterface::_UpdateTargets()
 	if( m_updateTargets )
 	{
 		m_updateTargets = false;
-		/*deque< Unit > tokill;
-
-		//modified for vs2005 compatibility
-		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();itr++)
-		{
-			if(!itr->first->isAlive() || m_Unit->GetDistanceSq(itr->first) >= 6400.0f)
-			{
-				tokill.push_back(itr->first);
-			}
-		}
-		for(deque< Unit >::iterator itr = tokill.begin(); itr != tokill.end(); itr++)
-			m_aiTargets.erase((*itr));
-		tokill.clear();*/
 
 		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();)
 		{
 			it2 = itr++;
 
 			if( it2->first->event_GetCurrentInstanceId() != m_Unit->event_GetCurrentInstanceId() || !m_Unit->PhasedCanInteract(it2->first) ||
-				!it2->first->isAlive() || m_Unit->GetDistanceSq(it2->first) >= 6400.0f )
+				!isAttackable(m_Unit, it2->first) || m_Unit->GetDistanceSq(it2->first) >= 6400.0f)
 			{
 				m_aiTargets.erase( it2 );
 			}
 		}
-		
+
 		if(m_aiTargets.size() == 0 
 			&& m_AIState != STATE_IDLE && m_AIState != STATE_FOLLOWING 
 			&& m_AIState != STATE_EVADE && m_AIState != STATE_FEAR 
@@ -821,10 +788,6 @@ void AIInterface::_UpdateTargets()
 					firstLeaveCombat = false;
 				}
 			}
-			/*else
-			{
-				HandleEvent(EVENT_LEAVECOMBAT, m_Unit, 0);
-			}*/
 		}
 		else if( m_aiTargets.size() == 0 && (m_AIType == AITYPE_PET && (m_Unit->IsPet() && TO_PET(m_Unit)->GetPetState() == PET_STATE_AGGRESSIVE) || (!m_Unit->IsPet() && disable_melee == false ) ) )
 		{
@@ -836,6 +799,7 @@ void AIInterface::_UpdateTargets()
 
 		}
 	}
+
 	// Find new Targets when we are ooc
 	if((m_AIState == STATE_IDLE || m_AIState == STATE_SCRIPTIDLE) && m_assistTargets.size() == 0)
 	{
@@ -1490,7 +1454,7 @@ Unit* AIInterface::FindTarget()
 		if(pUnit->m_invisible) // skip invisible units
 			continue;
 		
-		if(!pUnit->isAlive()
+		if(!isAttackable(m_Unit, pUnit)
 			|| m_Unit == pUnit /* wtf? */
 			|| m_Unit->GetUInt64Value(UNIT_FIELD_CREATEDBY) == pUnit->GetGUID())
 			continue;
@@ -1526,12 +1490,6 @@ Unit* AIInterface::FindTarget()
 
 	if( target )
 	{
-/*		if(m_isGuard)
-		{
-			m_Unit->m_runSpeed = m_Unit->m_base_runSpeed * 2.0f;
-			m_fastMove = true;
-		}*/
-
 		AttackReaction(target, 1, 0);
 		WorldPacket data(SMSG_AI_REACTION, 12);
 		data << m_Unit->GetGUID() << uint32(2);		// Aggro sound
@@ -1551,14 +1509,6 @@ Unit* AIInterface::FindTarget()
 
 Unit* AIInterface::FindTargetForSpell(AI_Spell *sp)
 {
-	/*if(!m_Unit) return NULL;*/
-
-	/*if(!sp)
-	{
-		m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-		return NULL;
-	}*/
-
 	TargetMap::iterator itr, itr2;
 
 	if(sp)
