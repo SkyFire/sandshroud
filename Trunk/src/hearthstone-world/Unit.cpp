@@ -238,6 +238,9 @@ Unit::Unit()
 
 	m_damageShields.clear();
 	m_reflectSpellSchool.clear();
+#ifdef NERF_ENCHANTS
+	m_procSpellCounter.clear();
+#endif
 	m_procSpells.clear();
 	m_chargeSpells.clear();
 	m_chargeSpellRemoveQueue.clear();
@@ -322,6 +325,9 @@ Unit::~Unit()
 		delete (*itr);
 	m_reflectSpellSchool.clear();
 
+#ifdef NERF_ENCHANTS
+	m_procSpellCounter.clear();
+#endif
 	m_procSpells.clear();
 
 	DamageTakenPctModPerCaster.clear();
@@ -571,14 +577,14 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 			continue;
 		}
 
-		if (itr2->LastTrigger + 200 >= mstimenow || (CastingSpell != NULL && itr2->spellId == CastingSpell->Id))
+		if (itr2->LastTrigger + 200 >= mstimenow)
 			continue;
 
 		uint32 origId = itr2->origId;
 		if( CastingSpell != NULL )
 		{
 			//this is to avoid spell proc on spellcast loop. We use dummy that is same for both spells
-			if( CastingSpell->Id == itr2->origId || CastingSpell->Id == itr2->spellId )
+			if( CastingSpell->Id == origId || CastingSpell->Id == itr2->spellId )
 				continue;
 		}
 
@@ -7046,6 +7052,17 @@ void Unit::AddExtraStrikeTarget(SpellEntry *spell_info, uint32 charges)
 	es->deleted = false;
 	m_extraStrikeTargets.push_back(es);
 	m_extrastriketargetc++;
+}
+
+bool Unit::HasProcSpell(uint32 spellid)
+{
+	std::list<struct ProcTriggerSpell>::iterator itr;
+	for(itr = m_procSpells.begin(); itr != m_procSpells.end(); itr++)
+	{
+		if(itr->spellId == spellid)
+			return true;
+	}
+	return false;
 }
 
 void Unit::AddOnAuraRemoveSpell(uint32 NameHash, uint32 procSpell, uint32 procChance, bool procSelf)

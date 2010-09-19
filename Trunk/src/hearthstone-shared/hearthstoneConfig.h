@@ -89,5 +89,8 @@
 //Allow loading of unused testmaps.
 //#define EXCLUDE_TEST_MAPS 1
 
+// Crow: This will nerf all Enchantments, making all of them pretty much unique internally.
+//#define NERF_ENCHANTS
+
 #endif		// __HEARTHSTONECONFIG_H
 

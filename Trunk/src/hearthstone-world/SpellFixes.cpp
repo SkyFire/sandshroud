@@ -341,7 +341,7 @@ void ApplyNormalFixes()
 			}
 		}
 
-		if(!strcmp(sp->Name, "Hearthstone") || !strcmp(sp->Name, "Stuck") || !strcmp(sp->Name, "Astral Recall"))
+		if(strstr(sp->Name, "Hearthstone") || strstr(sp->Name, "Stuck") || strstr(sp->Name, "Astral Recall"))
 			sp->self_cast_only = true;
 
 		sp->proc_interval = 0;//trigger at each event
@@ -370,7 +370,10 @@ void ApplyNormalFixes()
 			|| strstr( sp->Name, "Instant Poison") || strstr( sp->Name, "Deadly Poison") || strstr( sp->Name, "Anesthetic Poison")
 			|| strstr( sp->Name, "Sharpen Blade"))
 			&& sp->Effect[0] == 54 )
+		{
 			sp->EffectBasePoints[0] = 3599;
+			sp->self_cast_only = true; // Just for double checks
+		}
 
 		// these mostly do not mix so we can use else
 		// look for seal, etc in name

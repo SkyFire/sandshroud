@@ -788,6 +788,55 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				}
 			}break;
 
+			/***********************/
+			/*******POISONS*********/
+			/***********************/
+		case 8680: // Instant Poison 1
+			{
+				if(u_caster != NULL)
+					dmg = (13+RandomUInt(4))+(0.1*u_caster->GetAP());
+			}break;
+		case 8685: // Instant Poison 2
+			{
+				if(u_caster != NULL)
+					dmg = (21+RandomUInt(4))+(0.1*u_caster->GetAP());
+			}break;
+		case 8689: // Instant Poison 3
+			{
+				if(u_caster != NULL)
+					dmg = (30+RandomUInt(8))+(0.1*u_caster->GetAP());
+			}break;
+		case 11335: // Instant Poison 4
+			{
+				if(u_caster != NULL)
+					dmg = (45+RandomUInt(12))+(0.1*u_caster->GetAP());
+			}break;
+		case 11336: // Instant Poison 5
+			{
+				if(u_caster != NULL)
+					dmg = (62+RandomUInt(18))+(0.1*u_caster->GetAP());
+			}break;
+		case 11337: // Instant Poison 6
+			{
+				if(u_caster != NULL)
+					dmg = (76+RandomUInt(24))+(0.1*u_caster->GetAP());
+			}break;
+		case 26890: // Instant Poison 7
+			{
+				if(u_caster != NULL)
+					dmg = (161+RandomUInt(54))+(0.1*u_caster->GetAP());
+			}break;
+		case 57964: // Instant Poison 8
+			{
+				if(u_caster != NULL)
+					dmg = (245+RandomUInt(82))+(0.1*u_caster->GetAP());
+			}break;
+		case 57965: // Instant Poison 9
+			{
+				if(u_caster != NULL)
+					dmg = (300+RandomUInt(100))+(0.1*u_caster->GetAP());
+			}break;
+
 			/************************
 			*		PRIEST			*
 			************************/
@@ -5210,7 +5259,7 @@ void Spell::SpellEffectEnchantItem(uint32 i) // Enchant Item Permanent
 	int32 Slot = itemTarget->AddEnchantment(Enchantment, 0, true, true, false, 0);
 	if(Slot < 0)
 		return; // Apply failed
-			
+
 	DetermineSkillUp(SKILL_ENCHANTING);
 	itemTarget->m_isDirty = true;
 }
@@ -5219,10 +5268,12 @@ void Spell::SpellEffectEnchantItemTemporary(uint32 i)  // Enchant Item Temporary
 {
 	if(itemTarget == NULL || p_caster == NULL )
 		return;
+
 	uint32 Duration = damage > 1 ? damage : 1800;
 
 	EnchantEntry * Enchantment = dbcEnchant.LookupEntry(m_spellInfo->EffectMiscValue[i]);
-	if(!Enchantment) return;
+	if(!Enchantment)
+		return;
 
 	itemTarget->RemoveEnchantment(1);
 	int32 Slot = itemTarget->AddEnchantment(Enchantment, Duration, false, true, false, 1);

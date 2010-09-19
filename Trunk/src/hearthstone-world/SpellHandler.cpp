@@ -300,7 +300,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 		}
 
 		// some anticheat stuff
-		if( spellInfo->self_cast_only )
+		if( spellInfo->self_cast_only == true )
 		{
 			if( targets.m_unitTarget && targets.m_unitTarget != _player->GetGUID() )
 			{
