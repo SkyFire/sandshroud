@@ -73,7 +73,7 @@ void WorldSession::HandleMoveWorldportAckOpcode( WorldPacket & recv_data )
 		// get outta here
 		return;
 	}
-	
+
 	if(_player->m_CurrentTransporter && _player->GetMapId() != _player->m_CurrentTransporter->GetMapId())
 	{
 		/* wow, our pc must really suck. */

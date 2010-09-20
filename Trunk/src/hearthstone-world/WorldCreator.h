@@ -175,16 +175,19 @@ public:
 		if( !pInstance->m_mapInfo || !pInstance->m_dbcMap) // ITS A TARP!
 			return OWNER_CHECK_NOT_EXIST;
 
-		// Matching the requested mode?
-		if( pInstance->m_difficulty != (pInstance->m_dbcMap->israid() ? pPlayer->iRaidType : pPlayer->iInstanceType) )
-			return OWNER_CHECK_DIFFICULT;
-
 		//Reached player limit?
 		if( pInstance->m_mapMgr && pInstance->m_mapInfo->playerlimit < uint32(pInstance->m_mapMgr->GetPlayerCount()))
 			return OWNER_CHECK_MAX_LIMIT;
 
+		if(!pInstance->m_isBattleground)
+		{
+			// Matching the requested mode?
+			if( pInstance->m_difficulty != (pInstance->m_dbcMap->israid() ? pPlayer->iRaidType : pPlayer->iInstanceType) )
+				return OWNER_CHECK_DIFFICULT;
+		}
+
 		//Meet level requirements?
-		if( pInstance->m_mapMgr && pPlayer->getLevel() < pInstance->m_mapInfo->minlevel )
+		if( pInstance->m_mapInfo && pPlayer->getLevel() < pInstance->m_mapInfo->minlevel )
 			return OWNER_CHECK_MIN_LEVEL;
 
 		//Need to be in group?
@@ -200,30 +203,33 @@ public:
 		}
 		pInstance->m_SavedLock.Release();
 
-		// Active raid?
-		if( pInstance->m_mapMgr && pInstance->m_mapMgr->HasPlayers() )
+		if(!pInstance->m_isBattleground)
 		{
-			//we have ensured the groupid is valid when it was created.
-			if( pPlayer->GetGroup() )
+			// Active raid?
+			if( pInstance->m_mapMgr && pInstance->m_mapMgr->HasPlayers() )
 			{
-				if(pPlayer->GetGroupID() != pInstance->m_creatorGroup)
-					return OWNER_CHECK_WRONG_GROUP;
+				//we have ensured the groupid is valid when it was created.
+				if( pPlayer->GetGroup() )
+				{
+					if(pPlayer->GetGroupID() != pInstance->m_creatorGroup)
+						return OWNER_CHECK_WRONG_GROUP;
+				}
 			}
-		}
 
-		// if we are not the creator, check if we are in same creator group.
-		// First player in should have set the correct instance_id.
-		if( pInstance->m_creatorGuid != pPlayer->GetLowGUID() )
-		{
-			if(pInstance->m_creatorGroup)
+			// if we are not the creator, check if we are in same creator group.
+			// First player in should have set the correct instance_id.
+			if( pInstance->m_creatorGuid != pPlayer->GetLowGUID() )
 			{
-				 if( pPlayer->GetGroupID() != pInstance->m_creatorGroup)
-					return OWNER_CHECK_WRONG_GROUP;
-			}
-			else // There is no group, so group checks will be wrong, check by guid.
-			{	// Since there is no group, if creator guid is wrong, fuck it.
-				if(pPlayer->GetLowGUID() != pInstance->m_creatorGuid)
-					return OWNER_CHECK_WRONG_GROUP;
+				if(pInstance->m_creatorGroup)
+				{
+					 if( pPlayer->GetGroupID() != pInstance->m_creatorGroup)
+						return OWNER_CHECK_WRONG_GROUP;
+				}
+				else // There is no group, so group checks will be wrong, check by guid.
+				{	// Since there is no group, if creator guid is wrong, fuck it.
+					if(pPlayer->GetLowGUID() != pInstance->m_creatorGuid)
+						return OWNER_CHECK_WRONG_GROUP;
+				}
 			}
 		}
 
