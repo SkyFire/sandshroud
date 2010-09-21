@@ -338,7 +338,8 @@ void ScriptMgr::register_creature_script(uint32 entry, exp_create_creature_ai ca
 			if( !cn->spells[i].empty() )
 			{
 				for(list<AI_Spell*>::iterator it = cn->spells[i].begin(); it != cn->spells[i].end(); it++)
-						delete (*it);
+					delete (*it);
+
 				cn->spells[i].clear();
 			}
 		}
@@ -366,6 +367,10 @@ void ScriptMgr::register_gossip_script(uint32 entry, GossipScript * gs)
 	CreatureInfo * ci = CreatureNameStorage.LookupEntry(entry);
 	if(ci)
 		ci->gossip_script = gs;
+
+	CreatureProto * cp = CreatureProtoStorage.LookupEntry(entry);
+	if(cp)
+		cp->TeleportInfoList.clear();
 
 	_customgossipscripts.insert(gs);
 }

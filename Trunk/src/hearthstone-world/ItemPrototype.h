@@ -27,7 +27,7 @@ class Spell;
 #define GEM_BLUE_SOCKET 8
 
 #define MAX_INVENTORY_SLOT 150
-#define MAX_BUYBACK_SLOT 12
+#define MAX_BUYBACK_SLOT 13
 
 #define ITEM_NO_SLOT_AVAILABLE -1 //works for all kind of slots now
 #define INVENTORY_SLOT_NOT_SET -1

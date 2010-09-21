@@ -1269,9 +1269,6 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			// Questgiver
 			if(obj->HasQuests())
 				sQuestMgr.OnActivateQuestGiver(obj, plyr);
-			// Gossip Script
-			else if(obj->GetInfo()->gossip_script)
-				obj->GetInfo()->gossip_script->GossipHello(obj, plyr, true);
 
 		}break;
 		case GAMEOBJECT_TYPE_SPELLCASTER:
@@ -2240,14 +2237,21 @@ void WorldSession::HandleFarsightOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleGameobjReportUseOpCode( WorldPacket& recv_data )
 {
-	if(!_player->GetMapMgr()) // Teleporting? :O
-	{ SKIP_READ_PACKET(recv_data); return; }
+	if(!_player->IsInWorld()) // Teleporting? :O
+	{
+		SKIP_READ_PACKET(recv_data);
+		return;
+	}
 
 	uint64 guid;
 	recv_data >> guid;
 	GameObject* gameobj = _player->GetMapMgr()->GetGameObject(uint32(guid));
 	if(gameobj != NULLGOB)
 	{
+		// Gossip Script
+		if(gameobj->GetInfo()->gossip_script)
+			gameobj->GetInfo()->gossip_script->GossipHello(gameobj, _player, true);
+
 		if(gameobj->CanActivate())
 			sQuestMgr.OnGameObjectActivate(_player, gameobj);
 	}

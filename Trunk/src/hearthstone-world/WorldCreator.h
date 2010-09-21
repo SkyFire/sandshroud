@@ -211,7 +211,9 @@ public:
 				//we have ensured the groupid is valid when it was created.
 				if( pPlayer->GetGroup() )
 				{
-					if(pPlayer->GetGroupID() != pInstance->m_creatorGroup)
+					if(pInstance->m_creatorGuid && pPlayer->GetGroup()->HasMember(objmgr.GetPlayerInfo(pInstance->m_creatorGuid)))
+						return OWNER_CHECK_OK;
+					else if(pPlayer->GetGroupID() != pInstance->m_creatorGroup)
 						return OWNER_CHECK_WRONG_GROUP;
 				}
 			}
