@@ -5922,7 +5922,10 @@ void Unit::EnableFlight()
 		SendMessageToSet(&data, true);
 
 		if( IsPlayer() )
+		{
 			TO_PLAYER(this)->m_setflycheat = true;
+			TO_PLAYER(this)->GetSession()->m_isFalling = false;
+		}
 	}
 	else
 	{
@@ -5932,6 +5935,7 @@ void Unit::EnableFlight()
 		SendMessageToSet(&data, true);
 		TO_PLAYER(this)->z_axisposition = 0.0f;
 		TO_PLAYER(this)->m_setflycheat = true;
+		TO_PLAYER(this)->GetSession()->m_isFalling = false;
 	}
 }
 

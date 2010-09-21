@@ -93,13 +93,18 @@ public:
 		};
 		fputs(colorstrings[color], stdout);
 #else
-        SetConsoleTextAttribute(stdout_handle, (WORD)color);
+		SetConsoleTextAttribute(stdout_handle, (WORD)color);
 #endif
 	}
 
 	HEARTHSTONE_INLINE void Time()
 	{
 		printf("%02u:%02u:%02u ", g_localTime.tm_hour, g_localTime.tm_min,g_localTime.tm_sec);
+	}
+
+	HEARTHSTONE_INLINE std::string GetTime()
+	{
+		return format("%02u:%02u:%02u ", g_localTime.tm_hour, g_localTime.tm_min,g_localTime.tm_sec);
 	}
 
 	void Notice(const char * source, const char * format, ...)
@@ -187,6 +192,7 @@ public:
 	{
 		if(log_level < 2)
 			return;
+
 		/* warning is old loglevel 2/detail */
 		LOCK_LOG;
 		va_list ap;

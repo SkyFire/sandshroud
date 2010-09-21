@@ -1352,6 +1352,9 @@ void WorldSession::HandleListInventoryOpcode( WorldPacket & recv_data )
 
 void WorldSession::SendInventoryList(Creature* unit)
 {
+	if(!_player || !_player->IsInWorld())
+		return;
+
 	if(!unit->HasItems())
 	{
 		sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
@@ -1369,18 +1372,21 @@ void WorldSession::SendInventoryList(Creature* unit)
 
 	for(std::vector<CreatureItem>::iterator itr = unit->GetSellItemBegin(); itr != unit->GetSellItemEnd(); itr++)
 	{
-		if(itr->itemid && (itr->max_amount == 0 || (itr->max_amount>0 && itr->available_amount >0)))
+		if(itr->itemid && (itr->max_amount == 0 || (itr->max_amount > 0 && itr->available_amount > 0)))
 		{
 			if((curItem = ItemPrototypeStorage.LookupEntry(itr->itemid)))
 			{
-				if(curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass))
-					continue;
-				if(curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace))
-					continue;
-				if( !sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL )
+				if(!itr->IsDependent && (curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass)))
 					continue;
 
-				int32 av_am = (itr->max_amount>0)?itr->available_amount:-1;
+				if(!itr->IsDependent && (curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace)))
+					continue;
+
+				if(!_player->GetSession()->HasGMPermissions() // Show free items for GMS no matter what.
+					&& !sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL )
+					continue;
+
+				int32 av_am = (itr->max_amount > 0) ? itr->available_amount : -1;
 				data << (counter + 1);
 				data << curItem->ItemId;
 				data << curItem->DisplayInfoID;

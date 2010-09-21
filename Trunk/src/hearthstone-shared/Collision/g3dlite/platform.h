@@ -77,9 +77,6 @@ inline bool isValidHeapPointer(const void* x) {
 // Detect 64-bit under various compilers
 #if (defined(_M_X64) || defined(_WIN64) || defined(__LP64__) || defined(_LP64))
 #	define G3D_64BIT
-	#if defined(WIN32)
-		#include <intrin.h>
-	#endif
 #else
 #	define G3D_32BIT
 #endif
@@ -114,7 +111,6 @@ inline bool isValidHeapPointer(const void* x) {
 
 #endif
 
-
 #ifdef _MSC_VER
 // Microsoft Visual C++ 8.0 ("Express")	   = 1400
 // Microsoft Visual C++ 7.1	("2003") _MSC_VER = 1310
@@ -146,21 +142,22 @@ inline bool isValidHeapPointer(const void* x) {
 
 #   define restrict
 
+// Crow: Not sure we need these anymore.
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
+	Enables printf parameter validation on gcc. * /
 #   define G3D_CHECK_PRINTF_ARGS
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
+	Enables printf parameter validation on gcc. * /
 #   define G3D_CHECK_VPRINTF_ARGS
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
+	Enables printf parameter validation on gcc. * /
 #   define G3D_CHECK_PRINTF_METHOD_ARGS
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
-#   define G3D_CHECK_VPRINTF_METHOD_ARGS
+	Enables printf parameter validation on gcc. * /
+#   define G3D_CHECK_VPRINTF_METHOD_ARGS*/
 
 	// On MSVC, we need to link against the multithreaded DLL version of
 	// the C++ runtime because that is what SDL and ZLIB are compiled
@@ -187,40 +184,7 @@ inline bool isValidHeapPointer(const void* x) {
 		#undef _STATIC_CPPLIB
 	#endif
 
-	#ifdef _DEBUG
-		#pragma comment (linker, "/NODEFAULTLIB:LIBCMTD.LIB")
-		#pragma comment (linker, "/NODEFAULTLIB:LIBCPMTD.LIB")
-		#pragma comment (linker, "/NODEFAULTLIB:LIBCPD.LIB")
-		#pragma comment (linker, "/DEFAULTLIB:MSVCPRTD.LIB")
-		#pragma comment(linker, "/NODEFAULTLIB:LIBCD.LIB")
-		#pragma comment(linker, "/DEFAULTLIB:MSVCRTD.LIB")
-	#else
-		#pragma comment(linker, "/NODEFAULTLIB:LIBC.LIB")
-		#pragma comment(linker, "/DEFAULTLIB:MSVCRT.LIB")
-		#pragma comment (linker, "/NODEFAULTLIB:LIBCMT.LIB")
-		#pragma comment (linker, "/NODEFAULTLIB:LIBCPMT.LIB")
-		#pragma comment(linker, "/NODEFAULTLIB:LIBCP.LIB")
-		#pragma comment (linker, "/DEFAULTLIB:MSVCPRT.LIB")
-	#endif
-
 	// Now set up external linking
-
-#	ifdef _DEBUG
-		// zlib was linked against the release MSVCRT; force
-		// the debug version.
-#		pragma comment(linker, "/NODEFAULTLIB:MSVCRT.LIB")
-#	 endif
-
-
-#	ifndef WIN32_LEAN_AND_MEAN
-#	   define WIN32_LEAN_AND_MEAN 1
-#	endif
-
-#   ifdef _G3D_INTERNAL_HIDE_WINSOCK_
-#	  undef _G3D_INTERNAL_HIDE_WINSOCK_
-#	  undef _WINSOCKAPI_
-#   endif
-
 
 /** @def G3D_START_AT_MAIN()
 	Defines necessary wrapper around WinMain on Windows to allow transfer of execution to main(). */
@@ -272,21 +236,22 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #	   endif
 #   endif // calling conventions
 
+// Crow: Not sure we need these anymore.
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
+	Enables printf parameter validation on gcc. * /
 #   define G3D_CHECK_PRINTF_METHOD_ARGS   __attribute__((__format__(__printf__, 2, 3)))
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
+	Enables printf parameter validation on gcc. * /
 #   define G3D_CHECK_VPRINTF_METHOD_ARGS  __attribute__((__format__(__printf__, 2, 0)))
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
+	Enables printf parameter validation on gcc. * /
 #   define G3D_CHECK_PRINTF_ARGS		  __attribute__((__format__(__printf__, 1, 2)))
 
 /** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. */
-#   define G3D_CHECK_VPRINTF_ARGS		 __attribute__((__format__(__printf__, 1, 0)))
+	Enables printf parameter validation on gcc. * /
+#   define G3D_CHECK_VPRINTF_ARGS		 __attribute__((__format__(__printf__, 1, 0)))*/
 #endif
 
 
@@ -330,8 +295,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #else
 #	define G3D_END_PACKED_CLASS(byteAlign)  ;
 #endif
-
-#include "format.h"
 
 // Header guard
 #endif

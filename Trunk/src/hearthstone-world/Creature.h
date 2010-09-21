@@ -36,6 +36,7 @@ struct CreatureItem
 	uint32 max_amount;
 	uint32 incrtime;
 	ItemExtendedCostEntry *extended_cost;
+	bool IsDependent;
 };
 
 SERVER_DECL bool Rand(float chance);

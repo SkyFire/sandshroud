@@ -229,9 +229,6 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\fileutils.cpp">
       <Filter>Collision\g3dlite</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\format.cpp">
-      <Filter>Collision\g3dlite</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dfnmatch.cpp">
       <Filter>Collision\g3dlite</Filter>
     </ClCompile>
@@ -257,9 +254,6 @@
       <Filter>Collision\g3dlite</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Plane.cpp">
-      <Filter>Collision\g3dlite</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\prompt.cpp">
       <Filter>Collision\g3dlite</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Quat.cpp">
@@ -580,9 +574,6 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\fileutils.h">
       <Filter>Collision\g3dlite</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\format.h">
-      <Filter>Collision\g3dlite</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\G3D.h">
       <Filter>Collision\g3dlite</Filter>
     </ClInclude>
@@ -625,9 +616,6 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\MemoryManager.h">
       <Filter>Collision\g3dlite</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\ParseError.h">
-      <Filter>Collision\g3dlite</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Plane.h">
       <Filter>Collision\g3dlite</Filter>
     </ClInclude>
@@ -635,9 +623,6 @@
       <Filter>Collision\g3dlite</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\PositionTrait.h">
-      <Filter>Collision\g3dlite</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\prompt.h">
       <Filter>Collision\g3dlite</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Quat.h">
@@ -712,5 +697,6 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\vectorMath.h">
       <Filter>Collision\g3dlite</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\format.h" />
   </ItemGroup>
 </Project>

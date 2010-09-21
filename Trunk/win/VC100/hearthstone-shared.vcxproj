@@ -267,7 +267,6 @@ RevisionExtractor.exe
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Crypto.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Cylinder.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\fileutils.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\format.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dfnmatch.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dmath.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Line.cpp" />
@@ -277,7 +276,6 @@ RevisionExtractor.exe
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\MemoryManager.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Plane.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\prompt.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Quat.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Random.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Ray.cpp" />
@@ -363,7 +361,6 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Cylinder.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\EqualsTrait.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\fileutils.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\format.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\G3D.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\G3DAll.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dfnmatch.h" />
@@ -378,11 +375,9 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix3.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\MemoryManager.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\ParseError.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Plane.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\platform.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\PositionTrait.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\prompt.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Quat.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Random.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Ray.h" />
@@ -429,6 +424,7 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\AuthPacketKey.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\BigNumber.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\crc32.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\format.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\hashmap.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\HMAC.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\MD5.h" />

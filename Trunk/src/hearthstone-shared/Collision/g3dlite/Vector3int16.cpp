@@ -22,7 +22,7 @@ Vector3int16::Vector3int16(const class Vector3& v) {
 }
 
 std::string Vector3int16::toString() const {
-	return G3D::format("(%d, %d, %d)", x, y, z);
+	return format("(%d, %d, %d)", x, y, z);
 }
 
 }

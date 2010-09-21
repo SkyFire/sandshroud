@@ -1,41 +1,32 @@
 /**
- @file format.cpp
+ @file format.h
+ 
+ @maintainer Morgan McGuire, http://graphics.cs.williams.edu
+ 
+ @author  2000-09-09
+ @edited  2005-11-03
 
- @author Morgan McGuire, graphics3d.com
+ Copyright 2000-2005, Morgan McGuire.
+ All rights reserved.
+ */
 
- @created 2000-09-09
- @edited  2006-08-14
-*/
+#ifndef FORMAT_H
+#define FORMAT_H
 
-#include "format.h"
-#include "platform.h"
-#include "System.h"
-
-#ifdef _MSC_VER
-	// disable: "C++ exception handler used"
-#   pragma warning (push)
-#   pragma warning (disable : 4530)
-#endif // _MSC_VER
+#include "Collision/g3dlite/platform.h"
+#include <string>
+#include <stdio.h>
+#include <cstdarg>
 
 // If your platform does not have vsnprintf, you can find a
 // implementation at http://www.ijs.si/software/snprintf/
-
-namespace G3D {
-
-std::string __cdecl format(const char* fmt,...) {
-	va_list argList;
-	va_start(argList,fmt);
-	std::string result = vformat(fmt, argList);
-	va_end(argList);
-
-	return result;
-}
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1300)
 // Both MSVC seems to use the non-standard vsnprintf
 // so we are using vscprintf to determine buffer size, however
 // only MSVC7 and up headers include vscprintf for some reason.
-std::string vformat(const char *fmt, va_list argPtr) {
+HEARTHSTONE_INLINE std::string vformat(const char *fmt, va_list argPtr)
+{
 	// We draw the line at a 1MB string.
 	const int maxSize = 1000000;
 
@@ -48,26 +39,29 @@ std::string vformat(const char *fmt, va_list argPtr) {
 	// MSVC does not support va_copy
 	int actualSize = _vscprintf(fmt, argPtr) + 1;
 
-	if (actualSize > bufSize) {
-
+	if (actualSize > bufSize)
+	{
 		// Now use the heap.
 		char* heapBuffer = NULL;
 
-		if (actualSize < maxSize) {
-
-			heapBuffer = (char*)System::malloc(maxSize + 1);
+		if (actualSize < maxSize)
+		{
+			heapBuffer = (char*)malloc(maxSize + 1);
 			_vsnprintf(heapBuffer, maxSize, fmt, argPtr);
 			heapBuffer[maxSize] = '\0';
-		} else {
-			heapBuffer = (char*)System::malloc(actualSize);
+		}
+		else
+		{
+			heapBuffer = (char*)malloc(actualSize);
 			vsprintf(heapBuffer, fmt, argPtr);			
 		}
 
 		std::string formattedString(heapBuffer);
-		System::free(heapBuffer);
+		free(heapBuffer);
 		return formattedString;
-	} else {
-
+	}
+	else
+	{
 		vsprintf(stackBuffer, fmt, argPtr);
 		return std::string(stackBuffer);
 	}
@@ -157,8 +151,14 @@ std::string vformat(const char* fmt, va_list argPtr) {
 
 #endif
 
-} // namespace
+HEARTHSTONE_INLINE std::string format(const char* fmt,...)
+{
+	va_list argList;
+	va_start(argList,fmt);
+	std::string result = vformat(fmt, argList);
+	va_end(argList);
 
-#ifdef _MSC_VER
-#   pragma warning (pop)
+	return result;
+}
+
 #endif

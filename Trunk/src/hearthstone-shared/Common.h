@@ -62,6 +62,7 @@ enum MsTimeVariables
 #endif
 
 #include "hearthstoneConfig.h"
+#include "format.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -653,5 +654,6 @@ unsigned int MakeIP(const char * str);
 
 #include "Log.h"
 #include "NGLog.h"
+#include "Collision/g3dlite/platform.h"
 
 #endif

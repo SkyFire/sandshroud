@@ -28,9 +28,11 @@ libshared_a_SOURCES = \
     hashmap.cpp \
     hashmap.h \
     FastQueue.h \
+    Storage.h \
+    format.h \
+    format.cpp \
     Threading/Mutex.cpp \
     Threading/ThreadPool.cpp \
-    Storage.h \
     hearthstone_getopt.h \
     hearthstone_getopt.cpp \
     CrashHandler.h \
@@ -123,8 +125,6 @@ libshared_a_SOURCES = \
     Collision/g3dlite/EqualsTrait.h \
     Collision/g3dlite/fileutils.cpp \
     Collision/g3dlite/fileutils.h \
-    Collision/g3dlite/format.cpp \
-    Collision/g3dlite/format.h \
     Collision/g3dlite/G3D.h \
     Collision/g3dlite/G3DAll.h \
     Collision/g3dlite/g3dfnmatch.cpp \
@@ -147,13 +147,10 @@ libshared_a_SOURCES = \
     Collision/g3dlite/Matrix4.h \
     Collision/g3dlite/MemoryManager.cpp \
     Collision/g3dlite/MemoryManager.h \
-    Collision/g3dlite/ParseError.h \
     Collision/g3dlite/Plane.cpp \
     Collision/g3dlite/Plane.h \
     Collision/g3dlite/platform.h \
     Collision/g3dlite/PositionTrait.h \
-    Collision/g3dlite/prompt.cpp \
-    Collision/g3dlite/prompt.h \
     Collision/g3dlite/Quat.cpp \
     Collision/g3dlite/Quat.h \
     Collision/g3dlite/Random.cpp \

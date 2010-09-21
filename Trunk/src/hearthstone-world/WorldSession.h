@@ -765,14 +765,14 @@ public:
 	float m_wLevel; // Level of water the player is currently in
 	bool m_bIsWLevelSet; // Does the m_wLevel variable contain up-to-date information about water level?
 
+	bool m_isFalling;
+	bool m_isJumping;
+	uint32 m_jumpHackChances;
+
 private:
 	friend class Player;
 	Player* _player;
 	WorldSocket *_socket;
-
-	bool m_isFalling;
-	bool m_isJumping;
-	uint32 m_jumpHackChances;
 
 	uint32 _accountId;
 	uint32 _accountFlags;

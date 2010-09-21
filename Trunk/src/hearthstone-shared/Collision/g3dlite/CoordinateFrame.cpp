@@ -149,7 +149,7 @@ Matrix4 CoordinateFrame::toMatrix4() const {
 
 
 std::string CoordinateFrame::toXML() const {
-	return G3D::format(
+	return format(
 		"<COORDINATEFRAME>\n  %lf,%lf,%lf,%lf,\n  %lf,%lf,%lf,%lf,\n  %lf,%lf,%lf,%lf,\n  %lf,%lf,%lf,%lf\n</COORDINATEFRAME>\n",
 		rotation[0][0], rotation[0][1], rotation[0][2], translation.x,
 		rotation[1][0], rotation[1][1], rotation[1][2], translation.y,
