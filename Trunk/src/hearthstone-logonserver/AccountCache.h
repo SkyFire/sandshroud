@@ -230,11 +230,12 @@ public:
 	}
 
 	Realm*		  AddRealm(uint32 realm_id, Realm * rlm);
-	Realm*        GetRealm(uint32 realm_id);
+	Realm*		  GetRealm(uint32 realm_id);
 	int32		  GetRealmIdByName(string Name);
 	map<uint32, Realm*> GetRealmMap() { return m_realms; }
 	void		  RemoveRealm(uint32 realm_id);
 	void		  UpdateRealmStatus(uint32 realm_id, uint8 Color);
+	void		  UpdateRealmPop(uint32 realm_id, float pop);
 	void		  SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss);
 
 	HEARTHSTONE_INLINE void   AddServerSocket(LogonCommServerSocket * sock) { serverSocketLock.Acquire(); m_serverSockets.insert( sock ); serverSocketLock.Release(); }

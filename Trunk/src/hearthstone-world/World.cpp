@@ -1200,6 +1200,7 @@ void World::Rehash(bool load)
 	if(!MailSystem::getSingletonPtr())
 		new MailSystem;
 
+	LogonServerType = Config.RealmConfig.GetIntDefault("LogonServer", "LogonType", LOGON_HEARTHSTONE);
 	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");

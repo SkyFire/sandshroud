@@ -54,7 +54,9 @@ public:
 	void HandleTestConsoleLogin(WorldPacket & recvData);
 	void HandleServerPong(WorldPacket &recvData);
 	void HandleDatabaseModify(WorldPacket& recvData);
+	void HandlePopulationRespond(WorldPacket& recvData);
 
+	void RefreshRealmsPop();
 	void SendPing();
 
 	uint32 last_ping;

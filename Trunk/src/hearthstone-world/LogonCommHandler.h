@@ -33,13 +33,31 @@ typedef struct
 
 typedef struct
 {
+	/* Ascent 
 	string Name;
 	string Address;
-	//uint32 Colour;
+	uint32 Colour;
+	uint32 Icon;
+	uint32 TimeZone;
+	float Population;*/
+
+	/* Aspire Hearthstone */
+	/* Sandshroud */
+	string Name;
+	string Address;
 	uint8 Icon;
 	uint8 WorldRegion;
 	float Population;
 	uint8 Lock;
+
+	/* ArcEmu 
+	string Arc_Name;
+	string Arc_Address;
+	uint32 Arc_Colour;
+	uint32 Arc_Icon;
+	uint32 Arc_TimeZone;
+	float Arc_Population;
+	uint8 Arc_Lock;*/
 }Realm;
 
 enum RealmType
@@ -72,6 +90,8 @@ class LogonCommHandler : public Singleton<LogonCommHandler>
 	bool pings;
 	int8 ReConCounter;
 	uint32 _realmType;
+	uint32 plrLimit;
+	float server_population;
 
 public:
 	uint8 sql_passhash[20];
@@ -91,6 +111,7 @@ public:
 	void ConnectAll();
 	//void LogonDatabaseSQLExecute(const char* str, ...);
 	//void LogonDatabaseReloadAccounts();
+	void RefreshRealmPop();
 
 	void Account_SetBanned(const char * account, uint32 banned, const char* reason);
 	void Account_SetGM(const char * account, const char * flags);
@@ -101,6 +122,7 @@ public:
 	void LoadRealmConfiguration();
 	void AddServer(string Name, string Address, uint32 Port);
 
+	float GetPopulation() { return server_population; }
 	HEARTHSTONE_INLINE uint32 GetRealmType() { return _realmType; }
 	void SetRealmType(uint32 type) { _realmType = type; }
 

@@ -110,6 +110,8 @@ void LogonCommClientSocket::HandlePacket(WorldPacket & recvData)
 		NULL,												// RCMSG_TEST_CONSOLE_LOGIN
 		&LogonCommClientSocket::HandleConsoleAuthResult,	// RSMSG_CONSOLE_LOGIN_RESULT
 		NULL,												// RCMSG_MODIFY_DATABASE
+		&LogonCommClientSocket::HandlePopulationRequest,	// RSMSG_REALM_POP_REQ
+		NULL,												// RCMSG_REALM_POP_RES
 		&LogonCommClientSocket::HandleServerPing,			// RCMSG_SERVER_PING
 		NULL,												// RSMSG_SERVER_PONG
 	};
@@ -403,6 +405,20 @@ void LogonCommClientSocket::HandleServerPing(WorldPacket &recvData)
 
 	WorldPacket data(RCMSG_SERVER_PONG, 4);
 	data << r;
+	SendPacket(&data, false);
+}
+
+void LogonCommClientSocket::HandlePopulationRequest(WorldPacket & recvData)
+{
+	uint32 realmId;
+	recvData >> realmId; // Grab the realm id
+
+	// Refresh the realm pop real quick.
+	sLogonCommHandler.RefreshRealmPop();
+
+	// Send the result
+	WorldPacket data(RCMSG_REALM_POP_RES, 16);
+	data << realmId << sLogonCommHandler.GetPopulation();
 	SendPacket(&data, false);
 }
 

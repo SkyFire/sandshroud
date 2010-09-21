@@ -34,6 +34,14 @@ class EventableObjectHolder;
 class MapMgr;
 class Battleground;
 
+enum LogonServerTypes
+{
+	LOGON_ASCENT		= 0x00,
+	LOGON_HEARTHSTONE	= 0x01,
+	LOGON_ARCEMU		= 0x02,
+	LOGON_MANGOS		= 0x04
+};
+
 enum Rates
 {
 	RATE_HEALTH=0,
@@ -604,6 +612,8 @@ public:
 	bool Collision;
 	bool PathFinding;
 	bool AHEnabled;
+	int LogonServerType;
+
 	uint32 mInWorldPlayerCount;
 	uint32 mAcceptedConnections;
 	uint32 SocketSendBufSize;

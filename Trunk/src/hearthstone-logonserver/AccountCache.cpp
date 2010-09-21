@@ -468,6 +468,31 @@ void InformationCore::UpdateRealmStatus(uint32 realm_id, uint8 Color)
 	realmLock.Release();
 }
 
+void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
+{
+	realmLock.Acquire();
+	map<uint32, Realm*>::iterator itr = m_realms.find(realm_id);
+	if(itr != m_realms.end())
+	{
+		if(itr->second->Population == 0)
+			return;
+
+		uint8 temp;
+		if( pop >= 3 )
+			temp =  0x81; // Full
+		else if ( pop >= 2 )
+			temp = 0x01; // Red
+		else if ( pop >= 0.5 )
+			temp = 0x00; // Green
+		else
+			temp = 0x20; // recommended
+
+		itr->second->Population = (pop > 0) ? (pop >= 1) ? (pop >= 2) ? 3.0f : 2.0f : 1.0f : 1.0f;
+		itr->second->Colour = temp;
+	}
+	realmLock.Release();
+}
+
 void InformationCore::SendRealms(AuthSocket * Socket)
 {
 #ifdef SELECTIVE_REALM_LIST
@@ -509,7 +534,7 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		// This part is the same for all.
 		data << itr->second->Name;
 		data << itr->second->Address;
-		data << itr->second->Population;
+		data << itr->second->Population-1.0f;
 
 		/* Get our character count */
 		it = itr->second->CharacterMap.find(Socket->GetAccountID());
