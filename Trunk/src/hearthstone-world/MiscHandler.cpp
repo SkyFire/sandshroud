@@ -2245,7 +2245,7 @@ void WorldSession::HandleGameobjReportUseOpCode( WorldPacket& recv_data )
 
 	uint64 guid;
 	recv_data >> guid;
-	GameObject* gameobj = _player->GetMapMgr()->GetGameObject(uint32(guid));
+	GameObject* gameobj = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
 	if(gameobj != NULLGOB)
 	{
 		// Gossip Script
