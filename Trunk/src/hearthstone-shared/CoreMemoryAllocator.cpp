@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include <new>
 
 #ifdef WIN32
