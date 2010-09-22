@@ -2084,6 +2084,3 @@ int gmwrap()
 {
   return(1);
 }
-
-
-

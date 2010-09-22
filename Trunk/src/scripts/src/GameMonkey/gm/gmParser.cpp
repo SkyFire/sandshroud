@@ -847,7 +847,7 @@ yynewstate:
 #endif
 
       /* Get the current used size of the three stacks, in elements.  */
-      int size = yyssp - yyss + 1;
+      int size = int(yyssp - yyss + 1);
 
 #ifdef yyoverflow
       /* Each stack pointer address is followed by the size of
@@ -1665,7 +1665,7 @@ case 110:
 case 111:
 {
       yyval = gmCodeTreeNode::Create(CTNT_EXPRESSION, CTNET_IDENTIFIER, gmlineno);
-      yyval->m_data.m_string = (char *) gmCodeTree::Get().Alloc(strlen(gmtext) + 1);
+      yyval->m_data.m_string = (char *) gmCodeTree::Get().Alloc((int)strlen(gmtext) + 1);
       strcpy(yyval->m_data.m_string, gmtext);
     ;
     break;}
@@ -1703,7 +1703,7 @@ case 117:
 {
       yyval = gmCodeTreeNode::Create(CTNT_EXPRESSION, CTNET_CONSTANT, gmlineno, CTNCT_INT);
 
-      char * c = (char *) gmCodeTree::Get().Alloc(strlen(gmtext) + 1);
+      char * c = (char *) gmCodeTree::Get().Alloc((int)strlen(gmtext) + 1);
       strcpy(c, gmtext);
       int result = 0;
       int shr = 0;
@@ -1766,7 +1766,7 @@ case 120:
 case 121:
 {
       yyval = gmCodeTreeNode::Create(CTNT_EXPRESSION, CTNET_CONSTANT, gmlineno, CTNCT_STRING);
-      yyval->m_data.m_string = (char *) gmCodeTree::Get().Alloc(strlen(gmtext) + 1);
+      yyval->m_data.m_string = (char *) gmCodeTree::Get().Alloc((int)strlen(gmtext) + 1);
       strcpy(yyval->m_data.m_string, gmtext);
       if(gmtext[0] == '"')
       {
@@ -1781,8 +1781,8 @@ case 121:
 case 122:
 {
       yyval = yyvsp[-1];
-      int alen = strlen(yyval->m_data.m_string);
-      int blen = strlen(gmtext);
+      int alen = (int)strlen(yyval->m_data.m_string);
+      int blen = (int)strlen(gmtext);
       char * str = (char *) gmCodeTree::Get().Alloc(alen + blen + 1);
       if(str)
       {
@@ -1877,7 +1877,7 @@ yyerrlab:   /* here on detecting error */
           for (x = (yyn < 0 ? -yyn : 0);
                x < (int)(sizeof(yytname) / sizeof(char *)); x++) //_GD_
             if (yycheck[x + yyn] == x)
-              size += strlen(yytname[x]) + 15, count++;
+              size += (int)strlen(yytname[x]) + 15, count++;
           //_GD_ msg = (char *) malloc(size + 15);
           msg = GM_NEW( char [size + 15] );
           if (msg != 0)

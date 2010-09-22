@@ -357,7 +357,7 @@ gmDebugSession &gmDebugSession::Pack(int a_val)
 gmDebugSession &gmDebugSession::Pack(const char * a_val)
 {
   if(a_val)
-    m_out.Write(a_val, strlen(a_val) + 1);
+    m_out.Write(a_val, (int)strlen(a_val) + 1);
   else
     m_out.Write("", 1);
   return *this;
@@ -382,7 +382,7 @@ gmDebugSession &gmDebugSession::Unpack(const char * &a_val)
 {
   // this is dangerous!!!
   a_val = &m_in.GetData()[m_in.Tell()];
-  int len = strlen(a_val);
+  int len = (int)strlen(a_val);
   m_in.Seek(m_in.Tell() + len + 1);
   return *this;
 }

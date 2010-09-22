@@ -42,7 +42,7 @@ void gmGetLineFromString(const char * a_string, int a_line, char * a_buffer, int
 
   eol = cp;
   while(*eol && *eol != '\n' && *eol != '\r') ++eol;
-  int len = eol - cp;
+  int len = int(eol - cp);
   len = ((a_len - 1) < len) ? (a_len - 1) : len;
   memcpy(a_buffer, cp, len);
   a_buffer[len] = '\0';

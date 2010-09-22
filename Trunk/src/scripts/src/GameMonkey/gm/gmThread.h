@@ -100,7 +100,7 @@ public:
   inline gmVariable * GetBottom() const { return m_stack; }
 
   /// \brief SetTop() will set the top of stack
-  inline void SetTop(gmVariable * a_top) { m_top = a_top - m_stack; }
+  inline void SetTop(gmVariable * a_top) { m_top = (int)(a_top - m_stack); }
 
   /// \brief GetBase() will return the current stack base.
   inline gmVariable * GetBase() const { return &m_stack[m_base]; }

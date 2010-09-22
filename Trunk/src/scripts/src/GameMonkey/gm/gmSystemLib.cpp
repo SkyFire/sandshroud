@@ -268,7 +268,7 @@ static int GM_CDECL gmfFileReadLine(gmThread * a_thread) // flag keep \n (0), re
     char * str = fgets(buffer, len, (FILE *) fileObject->m_user);
     if(str)
     {
-      int slen = strlen(str);
+      int slen = (int)strlen(str);
       if(!keepLF)
       {
         if(!feof((FILE *) fileObject->m_user))
@@ -476,7 +476,7 @@ bool RecurseDeletePath(const char * a_path)
   strcpy(path,a_path);
 
   // remove trailing '\' char
-  int last = strlen(path) - 1;
+  int last = int(strlen(path) - 1);
   if(path[last] == '\\')
   {
     path[last] = '\0';

@@ -720,7 +720,7 @@ int Unit_CreateWaypoint(gmThread * a_thread)
 		modelid = pCreature->GetUInt32Value(UNIT_FIELD_DISPLAYID);
 
 	WayPoint * wp = new WayPoint;
-	wp->id = pCreature->m_custom_waypoint_map->size() + 1;
+	wp->id = (int)pCreature->m_custom_waypoint_map->size() + 1;
 	wp->x = x;
 	wp->y = y;
 	wp->z = z;
@@ -1332,7 +1332,7 @@ int GM_SPRINTF(gmThread * a_thread)
 		break;
 	}
 
-    a_thread->PushNewString(buffer, strlen(buffer));
+    a_thread->PushNewString(buffer, (int)strlen(buffer));
 	delete [] params;
 	return GM_OK;
 }

@@ -34,7 +34,7 @@ void gmByteCodePrint(FILE * a_fp, const void * a_byteCode, int a_byteCodeLength)
     opiptr = false;
     opf32 = false;
 
-    int addr = instruction - start;
+    int addr = int(instruction - start);
 
     switch(*instruction)
     {

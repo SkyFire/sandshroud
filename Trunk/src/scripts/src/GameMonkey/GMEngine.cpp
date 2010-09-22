@@ -431,7 +431,7 @@ bool GMEngine::HasEventType(uint32 Entry, uint32 Event)
 bool GMEngine::CallGMFunction(const char *name, Object *forthis)
 {
 	m_lock.Acquire();
-	gmStringObject * fname = m_machine->AllocStringObject(name,strlen(name));
+	gmStringObject * fname = m_machine->AllocStringObject(name, (int)strlen(name));
 	ASSERT(fname);
 	gmCall call;
 	m_userObjectCounter=1;

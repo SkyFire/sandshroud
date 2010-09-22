@@ -22,11 +22,10 @@
 #pragma warning(disable : 4706) // assignment within conditional expression
 #pragma warning(disable : 4102) // unreferenced label
 #pragma warning(disable : 4710) // not inlined
+#pragma warning(disable : 4267) // Crow: Conversion from Size_t to Int, CBA to deal with because of macro.
 
 // These two are for MSVS 2005 security consciousness until safe std lib funcs are available
 #pragma warning(disable : 4996) // Deprecated functions
-#define _USE_32BIT_TIME_T // So system binds can use int for timestamps
-
 #include <malloc.h> // alloca
 #include <new>
 #include <cassert>

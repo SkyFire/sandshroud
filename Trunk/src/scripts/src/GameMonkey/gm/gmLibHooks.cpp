@@ -109,7 +109,7 @@ bool gmLibHooks::End(int a_errors)
     USymbol * symbol = m_symbols.GetLast();
     while(m_symbols.IsValid(symbol))
     {
-      m_stream->Write(symbol->m_string, strlen(symbol->m_string) + 1);
+      m_stream->Write(symbol->m_string, int(strlen(symbol->m_string) + 1));
       symbol = m_symbols.GetPrev(symbol);
     }
     GM_ASSERT(m_stream->Tell() == m_symbolOffset + offsets[0] + sizeof(gmuint32));
@@ -118,7 +118,7 @@ bool gmLibHooks::End(int a_errors)
     if(m_debug && m_source)
     {
       offsets[1] = m_stream->Tell();
-      t = strlen(m_source) + 1;
+      t = int(strlen(m_source) + 1);
       t1 = 0;
       *m_stream << t << t1;
       m_stream->Write(m_source, t);
@@ -167,7 +167,7 @@ gmptr gmLibHooks::GetSymbolId(const char * a_symbol)
   }
 
   // add a new symbol
-  unsigned int len = strlen(a_symbol) + 1;
+  unsigned int len = int(strlen(a_symbol) + 1);
   symbol = (USymbol *) m_allocator.AllocBytes(sizeof(USymbol), GM_DEFAULT_ALLOC_ALIGNMENT);
   symbol->m_string = (char *) m_allocator.AllocBytes(len, GM_DEFAULT_ALLOC_ALIGNMENT);
   memcpy(symbol->m_string, a_symbol, len);
