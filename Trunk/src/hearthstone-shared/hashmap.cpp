@@ -24,10 +24,6 @@
  */
  
 #include "SharedStdAfx.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include "Common.h"
-#include "hashmap.h"
 
 #define INITIAL_SIZE 1024
 

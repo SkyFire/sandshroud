@@ -666,24 +666,6 @@ std::string generateFilenameBase(const std::string& prefix, const std::string& s
 	return result;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-void copyFile(
-	const std::string&		  source,
-	const std::string&		  dest) {
-
-	#ifdef G3D_WIN32
-		CopyFileA(source.c_str(), dest.c_str(), FALSE);
-	#else
-		// TODO: don't use BinaryInput and BinaryOutput
-		// Read it all in, then dump it out
-		BinaryInput  in(source, G3D_LITTLE_ENDIAN);
-		BinaryOutput out(dest, G3D_LITTLE_ENDIAN);
-		out.writeBytes(in.getCArray(), in.size());
-		out.commit(false);
-	#endif
-}
-
 //////////////////////////////////////////////////////////////////////////////
 
 void parseFilename(

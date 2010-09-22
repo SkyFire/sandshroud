@@ -21,8 +21,7 @@
 #include "SharedStdAfx.h"
 #include "vmap/IVMapManager.h"
 #include "vmap/VMapManager2.h"
-#include "g3dlite/g3dmath.h"
-#include "g3dlite/platform.h"
+#include "g3dlite/G3DAll.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>

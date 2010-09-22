@@ -21,7 +21,6 @@
 #define G3D_G3DALL_H
 
 #include "G3D.h"
-#include "GLG3D/GLG3D.h"
 
 using namespace G3D;
 

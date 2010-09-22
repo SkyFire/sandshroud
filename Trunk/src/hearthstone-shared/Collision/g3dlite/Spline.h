@@ -139,11 +139,11 @@ public:
 	/** Appends a control point at a specific time that must be
 		greater than that of the previous point. */
 	void append(float t, const Control& c) {
-		debugAssertM((time.size() == 0) || (t > time.last()), 
+		ASSERTM((time.size() == 0) || (t > time.last()), 
 					 "Control points must have monotonically increasing times.");
 		time.append(t);
 		control.append(c);
-		debugAssert(control.size() == time.size());
+		ASSERT(control.size() == time.size());
 	}
 
 
@@ -167,7 +167,7 @@ public:
 		default:
 			append(2 * time[time.size() - 1] - time[time.size() - 2], c);
 		}
-		debugAssert(control.size() == time.size());
+		ASSERT(control.size() == time.size());
 	}
 
 	/** Erases all control points and times, but retains the state of 
@@ -181,7 +181,7 @@ public:
 
 	/** Number of control points */
 	int size() const {
-		debugAssert(time.size() == control.size());
+		ASSERT(time.size() == control.size());
 		return control.size();
 	}
 	
@@ -300,7 +300,7 @@ public:
 	   of the time samples by extrapolation or cycling.
 	 */
 	Control evaluate(float s) const {
-		debugAssertM(control.size() == time.size(), "Corrupt spline: wrong number of control points.");
+		ASSERTM(control.size() == time.size(), "Corrupt spline: wrong number of control points.");
 
 		/*
 		@cite http://www.gamedev.net/reference/articles/article1497.asp 

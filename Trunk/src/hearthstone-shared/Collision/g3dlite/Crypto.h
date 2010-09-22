@@ -59,10 +59,6 @@ public:
 	inline bool operator!=(const MD5Hash& other) const {
 		return !(*this == other);
 	}
-
-	void deserialize(class BinaryInput& b);
-
-	void serialize(class BinaryOutput& b) const;
 };
 
 

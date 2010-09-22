@@ -84,10 +84,6 @@ public:
 		hi = hi.max(a);
 	}
 
-	void serialize(class BinaryOutput& b) const;
-	
-	void deserialize(class BinaryInput& b);
-
 	inline bool isFinite() const {
 		return lo.isFinite() && hi.isFinite();
 	}

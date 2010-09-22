@@ -22,8 +22,7 @@
  */
 
 #include "SharedStdAfx.h"
-#include "ConfigEnv.h"
-#include "NGLog.h"
+
 ConfigMgr Config;
 
 //#define _CONFIG_DEBUG

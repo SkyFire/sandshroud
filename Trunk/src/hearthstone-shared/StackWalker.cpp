@@ -75,15 +75,6 @@
  **********************************************************************/
 
 #include "SharedStdAfx.h"
-#include <windows.h>
-#include <tchar.h>
-#include <stdio.h>
-#include <stdlib.h>
-#pragma comment(lib, "version.lib")  // for "VerQueryValue"
-#pragma warning(disable:4826)
-
-#include "StackWalker.h"
-
 
 // If VC7 and later, then use the shipped 'dbghelp.h'-file
 #pragma pack(push,8)
@@ -1022,7 +1013,13 @@ BOOL StackWalker::ShowCallstack(HANDLE hThread, const CONTEXT *context, PReadPro
 	// If no context is provided, capture the context
 	if (hThread == GetCurrentThread())
 	{
-	  GET_CURRENT_CONTEXT(c, USED_CONTEXT_FLAGS);
+//	  GET_CURRENT_CONTEXT(c, USED_CONTEXT_FLAGS);
+		memset(&c, 0, sizeof(CONTEXT));
+		c.ContextFlags = USED_CONTEXT_FLAGS;
+		if (GetThreadContext(hThread, &c) == FALSE)
+		{
+			return FALSE;
+		}
 	}
 	else
 	{

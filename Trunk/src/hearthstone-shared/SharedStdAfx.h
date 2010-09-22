@@ -22,6 +22,33 @@
 #ifndef SHARED_STDAFX
 #define SHARED_STDAFX
 
+#include "Database/dbcfile.h"
+#include <stdio.h>
+#include "Database/DBC.h"
+#include "NGLog.h"
+#include "Log.h"
+#include <math.h>
 #include "Common.h"
+#include "Database/DBCStores.h"
+#include "Database/DataStore.h"
+#include "Config/ConfigEnv.h"
+#include "ByteBuffer.h"
+#include "Auth/BigNumber.h"
+#include <openssl/bn.h>
+#include <algorithm>
+#include "crc32.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "hashmap.h"
+#include <openssl/md5.h>
+#include "Auth/MD5.h"
+
+#include <windows.h>
+#include <tchar.h>
+#include <stdio.h>
+#pragma comment(lib, "version.lib")  // for "VerQueryValue"
+#pragma warning(disable:4826)
+
+#include "StackWalker.h"
 
 #endif // SHARED_STDAFX

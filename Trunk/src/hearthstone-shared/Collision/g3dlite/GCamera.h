@@ -24,7 +24,7 @@
 #include "CoordinateFrame.h"
 #include "Vector3.h"
 #include "Plane.h"
-#include "debugAssert.h"
+#include "ASSERT.h"
 
 namespace G3D {
 
@@ -278,7 +278,7 @@ public:
 	 Expects a negative value
 	 */
 	inline void setFarPlaneZ(float z) {
-		debugAssert(z < 0);
+		ASSERT(z < 0);
 		m_farPlaneZ = z;
 	}
 	
@@ -287,7 +287,7 @@ public:
 	 Expects a negative value
 	 */
 	inline void setNearPlaneZ(float z) {
-		debugAssert(z < 0);
+		ASSERT(z < 0);
 		m_nearPlaneZ = z;
 	}
 

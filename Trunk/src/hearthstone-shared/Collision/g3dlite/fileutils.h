@@ -137,13 +137,6 @@ bool isZipfile(const std::string& filename);
 */
 int64 fileLength(const std::string& filename);
 
-/**
- Copies the file
- */
-void copyFile(
-	const std::string&		  source,
-	const std::string&		  dest);
-
 /** Returns a temporary file that is open for read/write access.  This
 	tries harder than the ANSI tmpfile, so it may succeed when that fails. */
 FILE* createTempFile();

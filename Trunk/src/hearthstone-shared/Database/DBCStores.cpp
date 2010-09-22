@@ -23,9 +23,6 @@
 
 // Crow: If it has more than 40 columns, break em up.
 #include "SharedStdAfx.h"
-#include "DBCStores.h"
-#include "DataStore.h"
-#include "NGLog.h"
 
 SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
 SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;

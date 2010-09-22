@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include <new>
 #include <malloc.h>
 

@@ -73,12 +73,12 @@ public:
 	}
 
 	inline float* operator[](int i) {
-		debugAssert(i >= 0 && i <= 2);
+		ASSERT(i >= 0 && i <= 2);
 		return data[i];
 	}
 
 	inline const float* operator[](int i) const {
-		debugAssert(i >= 0 && i <= 1);
+		ASSERT(i >= 0 && i <= 1);
 		return data[i];
 	}
 };

@@ -21,9 +21,8 @@
  *
  */
 
-#if !defined (CONFIG_H)
+#ifndef CONFIG_H
 #define CONFIG_H
-#include "../Common.h"
 
 using namespace std;
 struct SERVER_DECL ConfigSetting
