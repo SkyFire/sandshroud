@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * General Object Type File
- * Copyright (c) 2007 Team Ascent
+ * Copyright (c) 2007 Team Antrix
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0
  * License. To view a copy of this license, visit
