@@ -1,5 +1,9 @@
 /*
  * Sandshroud Hearthstone
+ * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2007 - 2008 Antrix Team
+ * Copyright (C) 2008 - 2009 AspireDev <http://www.aspiredev.org/>
+ * Copyright (C) 2009 - 2010 Sandshroud <http://www.sandshroud.org/>
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -562,25 +566,6 @@ HEARTHSTONE_INLINE uint32 now()
 #define Sleep(ms) usleep(1000*ms)
 #endif
 
-/*#ifdef WIN32
-#ifndef __SHOW_STUPID_WARNINGS__
-#pragma warning(disable:4018)
-#pragma warning(disable:4244)
-#pragma warning(disable:4305) 
-#pragma warning(disable:4748)
-#pragma warning(disable:4800) 
-#pragma warning(disable:4996)
-#pragma warning(disable:4251)
-#endif	  
-#endif
-
-#undef INTEL_COMPILER
-#ifdef INTEL_COMPILER
-#pragma warning(disable:279)
-#pragma warning(disable:1744)
-#pragma warning(disable:1740)
-#endif*/
-
 #include "Util.h"
 struct WayPoint
 {
@@ -652,8 +637,8 @@ HEARTHSTONE_INLINE std::string HEARTHSTONE_TOLOWER_RETURN(std::string str)
 bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits);
 unsigned int MakeIP(const char * str);
 
+//#include "Collision/g3dlite/G3DAll.h"
 #include "Log.h"
 #include "NGLog.h"
-#include "Collision/g3dlite/platform.h"
 
 #endif

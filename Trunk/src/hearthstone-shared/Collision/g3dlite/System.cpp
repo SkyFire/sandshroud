@@ -1,23 +1,23 @@
-/** 
-  @file System.cpp
- 
-  @maintainer Morgan McGuire, matrix@graphics3d.com
-
-  Note: every routine must call init() first.
-
-  There are two kinds of detection used in this file.  At compile
-  time, the _MSC_VER #define is used to determine whether x86 assembly
-  can be used at all.  At runtime, processor detection is used to
-  determine if we can safely call the routines that use that assembly.
-
-  @cite Rob Wyatt http://www.gamasutra.com/features/wyatts_world/19990709/processor_detection_01.htm
-  @cite Benjamin Jurke http://www.flipcode.com/cgi-bin/msg.cgi?showThread=COTD-ProcessorDetectionClass&forum=cotd&id=-1
-  @cite Michael Herf http://www.stereopsis.com/memcpy.html
-
-  @created 2003-01-25
-  @edited  2006-05-17
+/*
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
+#include "SharedStdAfx.h"
 #include "platform.h"
 #include "System.h"
 #include "format.h"

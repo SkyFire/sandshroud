@@ -1,6 +1,10 @@
 /*
- * Thread Pool Class
- * Copyright (C) Burlex <burlex@gmail.com>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2007 - 2008 Antrix Team
+ * Copyright (C) 2008 - 2009 AspireDev <http://www.aspiredev.org/>
+ * Copyright (C) 2009 - 2010 Sandshroud <http://www.sandshroud.org/>
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +21,7 @@
  *
  */
 
+#include "SharedStdAfx.h"
 #include "ThreadPool.h"
 #include "../NGLog.h"
 #include "../Log.h"
@@ -265,7 +270,11 @@ void CThreadPool::Shutdown()
 		{
 			DEBUG_LOG("ThreadPool", "%u active threads, %u free threads remaining...", m_activeThreads.size(), m_freeThreads.size() );
 			_mutex.Release();
+
+#ifdef WIN32
 			listcount++;
+#endif
+
 			Sleep(1000);
 			continue;
 		}

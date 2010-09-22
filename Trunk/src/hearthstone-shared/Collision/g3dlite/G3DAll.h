@@ -1,18 +1,20 @@
-/** 
-  @file G3DAll.h
- 
-  Includes all G3D and GLG3D files and uses the G3D namespace.
-  
-  This requires OpenGL and SDL headers.  If you don't want all of this,
-  \#include <G3D.h> separately.
-
-  @maintainer Morgan McGuire, http://graphics.cs.williams.edu
- 
-  @created 2002-01-01
-  @edited  2006-08-13
-
- Copyright 2000-2006, Morgan McGuire.
- All rights reserved.
+/*
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef G3D_G3DALL_H

@@ -1,5 +1,9 @@
 /*
  * Sandshroud Hearthstone
+ * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2007 - 2008 Antrix Team
+ * Copyright (C) 2008 - 2009 AspireDev <http://www.aspiredev.org/>
+ * Copyright (C) 2009 - 2010 Sandshroud <http://www.sandshroud.org/>
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,12 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-/* *
-   @file CrashHandler.h
-   Handles crashes/exceptions on a win32 based platform, writes a dump file,
-   for later bug fixing.
-*/
 
 #ifndef _CRASH_HANDLER_H
 #define _CRASH_HANDLER_H

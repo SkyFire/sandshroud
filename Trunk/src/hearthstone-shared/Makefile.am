@@ -4,6 +4,7 @@ noinst_LIBRARIES = libshared.a
 
 libshared_a_SOURCES = \
     Log.cpp \
+    Log.h \
     MemoryLeaks.cpp \
     MersenneTwister.cpp \
     MersenneTwister.h \
@@ -13,15 +14,12 @@ libshared_a_SOURCES = \
     BufferPool.cpp \
     Common.h \
     Errors.h \
-    Log.h \
     MemoryLeaks.h \
     Singleton.h \
-    Threading.h \
+    Threading/Threading.h \
     Timer.h \
-    UnixThreading.h \
     Util.h \
     Util.cpp \
-    WinThreading.h \
     WorldPacket.h \
     crc32.cpp \
     crc32.h \
@@ -30,7 +28,8 @@ libshared_a_SOURCES = \
     FastQueue.h \
     Storage.h \
     format.h \
-    format.cpp \
+    SharedStdAfx.cpp \
+    SharedStdAfx.h \
     Threading/Mutex.cpp \
     Threading/ThreadPool.cpp \
     hearthstone_getopt.h \

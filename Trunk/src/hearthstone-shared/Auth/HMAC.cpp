@@ -17,6 +17,7 @@
  *
  */
 
+#include "SharedStdAfx.h"
 #include "HMAC.h"
 #include <stdarg.h>
 

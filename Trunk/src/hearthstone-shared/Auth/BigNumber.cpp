@@ -17,6 +17,7 @@
  *
  */
 
+#include "SharedStdAfx.h"
 #include "BigNumber.h"
 #include <openssl/bn.h>
 #include <algorithm>

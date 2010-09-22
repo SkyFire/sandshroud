@@ -1,3 +1,5 @@
+
+#include "SharedStdAfx.h"
 #include "Common.h"
 #include "PacketLog.h"
 #include "Config/ConfigEnv.h"

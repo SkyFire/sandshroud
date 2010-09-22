@@ -1,10 +1,10 @@
 /*
- * Ascent MMORPG Server
- * Copyright (C) 2005-2008 Ascent Team <http://www.ascentemu.com/>
- *
- * Circular Buffer Class
- * Based on the Bip Buffer concept, from http://www.codeproject.com/KB/IP/bipbuffer.aspx
- * Implementation Copyright (C) 2008 - 2009 Burlex
+ * Sandshroud Hearthstone
+ * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2007 - 2008 Antrix Team
+ * Copyright (C) 2008 - 2009 AspireDev <http://www.aspiredev.org/>
+ * Copyright (C) 2009 - 2010 Sandshroud <http://www.sandshroud.org/>
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@
  *
  */
 
+#include "SharedStdAfx.h"
 #include "../Common.h"
 #include "CircularBuffer.h"
 

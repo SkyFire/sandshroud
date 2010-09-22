@@ -17,6 +17,7 @@
  *
  */
 
+#include "SharedStdAfx.h"
 #include "Common.h"
 
 using namespace std;

@@ -17,6 +17,7 @@
  *
  */
 
+#include "SharedStdAfx.h"
 #include "MD5.h"
 
 MD5Hash::MD5Hash()

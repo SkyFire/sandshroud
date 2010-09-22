@@ -1,6 +1,7 @@
 /*
- * Hearthstone
- * Copyright (C) 2005-2008 Hearthstone <http://www.hearthstone-project.com/>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2005 - 2008 Hearthstone <http://www.hearthstone-project.com/>
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by

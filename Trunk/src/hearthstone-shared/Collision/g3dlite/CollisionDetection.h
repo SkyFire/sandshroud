@@ -1,22 +1,20 @@
-/**
-  @file CollisionDetection.h
-
-
-  Moving collision detection for simple primitives.
-
-  @author Morgan McGuire, http://graphics.cs.williams.edu
-  @cite Spherical collision based on Paul Nettle's
-  ftp://ftp.3dmaileffects.com/pub/FluidStudios/CollisionDetection/Fluid_Studios_Generic_Collision_Detection_for_Games_Using_Ellipsoids.pdf
-  and comments by Max McGuire.  Ray-sphere intersection by Eric Haines.
-  Box-Box intersection written by Kevin Egan.
-  Thanks to Max McGuire of Iron Lore for various bug fixes.
-  Box-Triangle by Tomas Akenine-Moller
-
-  @created 2001-11-19
-  @edited  2008-12-19
-
-  Copyright 2000-2009, Morgan McGuire.
-  All rights reserved.
+/*
+ * Sandshroud Hearthstone
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef G3D_COLLISIONDETECTION_H

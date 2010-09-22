@@ -1,29 +1,24 @@
 /*
-
-crc32.h
-
-Author: Tatu Ylonen <ylo@cs.hut.fi>
-
-Copyright (c) 1992 Tatu Ylonen, Espoo, Finland
-				   All rights reserved
-
-Created: Tue Feb 11 14:37:27 1992 ylo
-
-Functions for computing 32-bit CRC.
-
-*/
-
-/*
- * $Id: crc32.h,v 1.1.1.1 1996/02/18 21:38:11 ylo Exp $
- * $Log: crc32.h,v $
- * Revision 1.1.1.1  1996/02/18 21:38:11  ylo
- * 	Imported ssh-1.2.13.
+ * Sandshroud Hearthstone
+ * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2007 - 2008 Antrix Team
+ * Copyright (C) 2008 - 2009 AspireDev <http://www.aspiredev.org/>
+ * Copyright (C) 2009 - 2010 Sandshroud <http://www.sandshroud.org/>
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
- * Revision 1.2  1995/07/13  01:21:45  ylo
- * 	Removed "Last modified" header.
- * 	Added cvs log.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
  *
- * $Endlog$
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #ifndef CRC32_H
