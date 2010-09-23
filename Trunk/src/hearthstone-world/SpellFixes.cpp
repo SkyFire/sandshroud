@@ -19,200 +19,6 @@
 
 #include "StdAfx.h"
 
-uint32 GetTriggerSpellFromDescription(std::string delimiter, std::string desc)
-{
-	std::string token;
-
-	// find the delimiter.
-	size_t i = desc.find(delimiter);
-	if (i == string::npos)
-		return 0;
-
-	// find the first character of the spell id.
-	size_t j = desc.find_first_not_of(delimiter, i);
-	if (j == string::npos)
-		return 0;
-
-	// find the end of the spell id.
-	size_t k = desc.find("s1", j);
-	if (k == string::npos)
-		return 0;
-
-	// get our token
-	token = desc.substr(j, k - j);
-
-	// convert to int
-	uint32 id = 0;
-	std::istringstream iss(token);
-	iss >> id;
-
-	// and return our spell id
-	return id;
-}
-
-SpellEntry* CreateDummySpell(uint32 id)
-{
-	std::string name = "Dummy Trigger";
-	SpellEntry* sp = new SpellEntry();
-	memset(sp, 0, sizeof(SpellEntry*));
-	sp->Id = id;
-	sp->Attributes = 384;
-	sp->AttributesEx = 268435456;
-	sp->Flags3 = 4;
-	sp->CastingTimeIndex = 1;
-	sp->procChance = 75;
-	sp->rangeIndex = 13;
-	sp->EquippedItemClass = uint32(-1);
-	sp->Effect[0] = SPELL_EFFECT_DUMMY;
-	sp->EffectImplicitTargetA[0] = 25;
-	sp->NameHash = crc32((const unsigned char*)name.c_str(), (unsigned int)name.length());
-	sp->dmg_multiplier[0] = 1.0f;
-	sp->StanceBarOrder = -1;
-	dbcSpell.SetRow(id, sp);
-	sWorld.dummyspells.push_back(sp);
-	return sp;
-}
-
-uint32 GetSpellClass(SpellEntry *sp)
-{
-	switch(sp->skilline)
-	{
-		case SKILL_ARMS:
-		case SKILL_FURY:
-		case SKILL_PROTECTION:
-			return WARRIOR;
-		case SKILL_HOLY2:
-		case SKILL_PROTECTION2:
-		case SKILL_RETRIBUTION:
-			return PALADIN;
-		case SKILL_BEAST_MASTERY:
-		case SKILL_SURVIVAL:
-		case SKILL_MARKSMANSHIP:
-			return HUNTER;
-		case SKILL_ASSASSINATION:
-		case SKILL_COMBAT:
-		case SKILL_SUBTLETY:
-			return ROGUE;
-		case SKILL_DISCIPLINE:
-		case SKILL_HOLY:
-		case SKILL_SHADOW:
-			return PRIEST;
-		case SKILL_ENHANCEMENT:
-		case SKILL_RESTORATION:
-		case SKILL_ELEMENTAL_COMBAT:
-			return SHAMAN;
-		case SKILL_FROST:
-		case SKILL_FIRE:
-		case SKILL_ARCANE:
-			return MAGE;
-		case SKILL_AFFLICTION:
-		case SKILL_DEMONOLOGY:
-		case SKILL_DESTRUCTION:
-			return WARLOCK;
-		case SKILL_RESTORATION2:
-		case SKILL_BALANCE:
-		case SKILL_FERAL_COMBAT:
-			return DRUID;
-		case SKILL_DK_FROST:
-		case SKILL_UNHOLY:
-		case SKILL_BLOOD:
-			return DEATHKNIGHT;
-	}
-
-	return 0;
-}
-
-// fills array 'arr' with integers in arguments and returns its new size. Last argument must be 0!
-uint32 fill( uint32* arr, ... ){
-	va_list vl;
-	uint32 i;
-	va_start( vl, arr );
-	for( i = 0; i < 100; i++ ){
-		arr[i] = va_arg( vl, uint32 );
-		if(arr[i] == 0)
-			break;
-	}
-	va_end( vl );
-	return i;
-}
-
-// Generates SpellNameHashes.h
-void GenerateNameHashesFile()
-{
-	const uint32 fieldSize = 81;
-	const char* prefix = "SPELL_HASH_";
-	uint32 prefixLen = uint32(strlen(prefix));
-	DBCFile dbc;
-
-	if( !dbc.open( "DBC/Spell.dbc" ) )
-	{
-		Log.Error("World", "Cannot find file ./DBC/Spell.dbc" );
-		return;
-	}
-
-	uint32 cnt = (uint32)dbc.getRecordCount();
-	uint32 namehash = 0;
-	FILE * f = fopen("SpellNameHashes.h", "w");
-	char spaces[fieldSize], namearray[fieldSize];
-	strcpy(namearray, prefix);
-	char* name = &namearray[prefixLen];
-	for(int i = 0;i < fieldSize-1; ++i)
-		spaces[i] = ' ';
-
-	std::set<uint32> namehashes;
-
-	spaces[fieldSize-1] = 0;
-	uint32 nameTextLen = 0, nameLen = 0;
-	for(uint32 x = 0; x < cnt; x++)
-	{
-		const char* nametext = dbc.getRecord(x).getString(136);
-		nameTextLen = (unsigned int)strlen(nametext);
-		strncpy(name, nametext, fieldSize-prefixLen-2);	// Cut it to fit in field size
-		name[fieldSize-prefixLen-2] = 0; // in case nametext is too long and strncpy didn't copy the null
-		nameLen = (unsigned int)strlen(name);
-		for(uint32 i = 0;i<nameLen;++i)
-		{
-			if(name[i] >= 'a' && name[i] <= 'z')
-				name[i] = toupper(name[i]);
-			else if(!(name[i] >= '0' && name[i] <= '9') &&
-				!(name[i] >= 'A' && name[i] <= 'Z'))
-				name[i] = '_';
-		}
-
-		namehash = crc32((const unsigned char*)nametext, nameTextLen);
-
-		if(namehashes.find(namehash) != namehashes.end())
-			continue; // Skip namehashes we've already done.
-
-		int32 numSpaces = fieldSize-prefixLen-nameLen-1;
-		if(numSpaces < 0)
-			fprintf(f, "WTF");
-
-		spaces[numSpaces] = 0;
-		fprintf(f, "#define %s%s0x%08X\n", namearray, spaces, namehash);
-		spaces[numSpaces] = ' ';
-		namehashes.insert(namehash);
-	}
-	fclose(f);
-}
-
-// Copies effect number 'fromEffect' in 'fromSpell' to effect number 'toEffect' in 'toSpell'
-void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, uint8 toEffect)
-{
-	if(!fromSpell || !toSpell || fromEffect > 2 || toEffect > 2)
-		return;
-
-	uint32 *from = fromSpell->Effect;
-	uint32 *to = toSpell->Effect;
-	// Copy 20 values starting at Effect
-	for(uint8 index = 0;index < 20;index++)
-	{
-		to[index * 3 + toEffect] = from[index * 3 + fromEffect];
-	}
-}
-
-void ApplySingleSpellFixes(SpellEntry *sp);
-
 void ApplyNormalFixes()
 {
 	//Updating spell.dbc
@@ -221,7 +27,6 @@ void ApplyNormalFixes()
 	uint32 cnt = uint32(dbcSpell.GetNumRows());
 	Log.Notice("World", "Processing %u spells...", cnt);
 	Log.Notice("World", "Highest spell found %u...", dbcSpell.GetMaxRow());
-	uint32 effect;
 	set<uint32> DummySpells;
 	map<uint32, uint32> talentSpells;
 	map<uint32,uint32>::iterator talentSpellIterator;
@@ -244,8 +49,6 @@ void ApplyNormalFixes()
 
 		if(DummySpells.find(sp->Id) != DummySpells.end())
 			continue; // Dummy spells will be handled later.
-
-		uint32 result = 0;
 
 		uint32 type = 0;
 		uint32 namehash = 0;
@@ -694,195 +497,7 @@ void ApplyNormalFixes()
 
 		// set extra properties
 		sp->buffType = type;
-
-		uint32 pr = sp->procFlags;
-		uint32 pr2 = sp->procflags2;
-		for(uint32 y=0;y < 3; y++)
-		{
-			// Get the effect number from the spell
-			effect = sp->Effect[y];
-
-			if(effect==SPELL_EFFECT_APPLY_AURA)
-			{
-				uint32 aura = sp->EffectApplyAuraName[y];
-				if( aura == SPELL_AURA_PROC_TRIGGER_SPELL ||
-					aura == SPELL_AURA_PROC_TRIGGER_DAMAGE )
-				{	// Search for spellid in description
-					const char *p = sp->Description;
-					while((p = strstr(p,"$")))
-					{
-						p++;
-						//got $  -> check if spell
-						if(*p >= '0' && *p <= '9')
-						{//woot this is spell id
-						
-							result = atoi(p);
-						}					
-					}
-					pr = 0;
-
-					char desc[4096];
-					strcpy(desc,sp->Description);
-					uint32 len = (uint32)strlen(desc);
-					for(i = 0; i < len; i++)
-						desc[i] = tolower(desc[i]);
-					//dirty code for procs, if any1 got any better idea-> u are welcome
-					//139944 --- some magic number, it will trigger on all hits etc
-					// Crow: All of the below should be in lower case, but its late.
-
-					if(strstr( desc,"chance on hit") || strstr( desc,"your auto attacks") || strstr( desc,"character strikes an enemy")
-						|| strstr( desc,"when it hits") || strstr( desc,"when successfully hit") || strstr( desc,"an enemy on hit")
-						|| strstr( desc,"when the caster is using melee attacks") || strstr( desc,"successful melee attack")
-						|| strstr( desc,"chance per hit") || strstr( desc,"you deal melee damage") || strstr( desc,"your melee attacks")
-						|| strstr( desc,"chance per attack") || strstr( desc,"damage with your sword") || strstr( desc,"on a successful hit")
-						|| strstr( desc,"takes damage") || strstr( desc,"when damaging an enemy in melee") || strstr( desc,"on a hit")
-						|| strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
-						|| strstr( desc,"damaging melee attacks") || strstr( desc,"attackers when hit") || strstr( desc,"on a melee swing")
-						|| strstr( desc,"on melee or ranged attack") || strstr( desc,"chance on melee") ||  strstr( desc,"melee attacks has")
-						|| strstr( desc,"giving each melee attack a chance") || strstr( desc, "a chance to deal additional")
-						|| strstr( desc,"chance to get an extra attack") || strstr( desc,"giving each melee attack")
-						|| strstr( desc,"each strike has") || strstr( desc,"chance on hit") || strstr( desc,"with a melee weapon")
-						|| strstr( desc,"damage to melee attackers") || strstr( desc,"into flame, causing an additional")
-						|| strstr( desc,"damage on every attack") || strstr( desc,"your melee and ranged attacks")
-						|| strstr( desc, "gives your melee"))
-						pr |= PROC_ON_MELEE_ATTACK;
-
-					if(strstr( desc,"attackers when hit") || strstr( desc,"strike you with a melee attack")
-						|| strstr( desc,"enemy strikes the caster") || strstr( desc,"strikes you with a melee attack")
-						|| strstr( desc,"enemy that strikes you in melee") || strstr( desc,"the next melee attack on the caster")
-						|| strstr( desc,"when struck in melee combat") ||  strstr( desc,"the next melee attack against the caster")
-						|| strstr( desc,"damage to attacker on hit") || strstr( desc,"melee and ranged attacks against you")
-						|| strstr( desc,"when struck in combat") || strstr( desc,"striking melee or ranged attackers")
-						|| strstr( desc,"strikes the caster") || strstr( desc,"each melee or ranged damage hit against the priest")
-						|| strstr( desc,"hit by a melee or ranged attack") || strstr( desc,"when struck in combat")
-						|| strstr( desc,"that strikes a party member") || strstr( desc,"when hit by a melee attack")
-						|| strstr( desc,"ranged and melee attacks to deal") || strstr( desc,"striking melee or ranged attackers")
-						|| strstr( desc,"damage to attackers when hit") || strstr( desc,"striking melee attackers")
-						|| strstr( desc,"striking melee attackers"))
-						pr |= PROC_ON_MELEE_ATTACK_VICTIM;
-
-					if( strstr( desc,"target casts a spell") || strstr( desc,"your harmful spells land")
-						|| strstr( desc, "any damage spell hits a target") || strstr( desc,"gives your finishing moves")
-						|| strstr( desc,"gives your sinister strike, backstab, gouge and shiv") || strstr( desc,"chance on spell hit")
-						|| strstr( desc,"your shadow word: pain, mind flay and vampiric touch spells also cause the target")
-						|| strstr( desc,"corruption, curse of agony, siphon life and seed of corruption spells also cause")
-						|| strstr( desc,"chance on spell hit") || strstr( desc,"your spell casts have") || strstr( desc,"chance on spell cast")
-						|| strstr( desc,"your spell casts have") || strstr( desc,"your Fire damage spell hits")
-						|| strstr( desc,"pain, mind flay and vampiric touch spells also cause")
-						|| strstr( desc,"next offensive ability") || strstr( desc,"on successful spellcast")
-						|| strstr( desc,"shadow damage spells have") || strstr( desc,"your next offensive ability"))
-						pr |= PROC_ON_CAST_SPELL;
-
-					if( strstr( desc,"any damage caused") || strstr( desc,"when caster takes damage") || strstr( desc,"damage on hit")
-						|| strstr( desc,"after being hit by any damaging attack") || strstr( desc,"whenever the caster takes damage")
-						|| strstr( desc, "damaging attack is taken") || strstr( desc,"a spell, melee or ranged attack hits the caster")
-						|| strstr( desc,"whenever damage is dealt to you") || strstr( desc, "damage when hit"))
-						pr |= PROC_ON_ANY_DAMAGE_VICTIM;
-
-					if(strstr( desc,"each melee or ranged damage hit against the priest")
-						|| strstr( desc,"melee and ranged attacks against you") || strstr( desc,"striking melee or ranged attackers")
-						|| strstr( desc,"hit by a melee or ranged attack") || strstr( desc,"striking melee or ranged attackers")
-						|| strstr( desc,"ranged and melee attacks to deal"))
-						pr |= PROC_ON_RANGED_ATTACK_VICTIM;
-
-					if( strstr( desc,"landing a melee critical strike") || strstr( desc,"your critical strikes") || strstr( desc,"critical hit")
-						|| strstr( desc, "melee critical strike") || strstr( desc,"after dealing a critical strike")
-						|| strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability")
-						|| strstr( desc,"after getting a critical strike"))
-						pr |= PROC_ON_CRIT_ATTACK;
-
-					if(strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
-						|| strstr( desc,"on melee or ranged attack") || strstr( desc,"damage on every attack")
-						|| strstr( desc,"your melee and ranged attacks") || strstr( desc,"whenever you deal ranged damage"))
-						pr |= PROC_ON_RANGED_ATTACK;
-
-					if( strstr( desc,"any successful spell cast against the priest") || strstr( desc,"chance to reflect Fire spells")
-						|| strstr( desc, "struck by a Stun or Immobilize"))
-						pr |= PROC_ON_SPELL_HIT_VICTIM;
-
-					if( strstr( desc,"your spell criticals have") || strstr( desc, "getting a critical effect from")
-						|| strstr( desc,"spell criticals against you"))
-						pr |= PROC_ON_SPELL_CRIT_HIT_VICTIM;
-
-					if( strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability")
-						|| strstr( desc,"your spell criticals have"))
-						pr2 |= PROC_ON_SPELL_CRIT_HIT;
-
-					if( strstr( desc,"hunter takes on the aspects of a hawk") || strstr( desc,"hunter takes on the aspects of a dragonhawk"))
-					{
-						pr |= PROC_ON_RANGED_ATTACK;
-						pr2 |= PROC_TARGET_SELF;
-					}
-
-					if( strstr( desc,"victim of a critical strike") || strstr( desc,"after being struck by a melee or ranged critical hit")
-						|| strstr( desc, "victim of a melee or ranged critical strike") || strstr( desc,"victim of a critical melee strike"))
-						pr |= PROC_ON_CRIT_HIT_VICTIM;
-
-					if(strstr( desc,"your ranged criticals"))
-						pr |= PROC_ON_RANGED_CRIT_ATTACK;
-
-					if( strstr( desc, "experience or honor"))
-						pr |= PROC_ON_GAIN_EXPIERIENCE;
-
-					if( strstr( desc,"after being hit with a shadow or fire spell"))
-						pr |= PROC_ON_SPELL_LAND_VICTIM;
-
-					if( strstr( desc,"successful auto shot attacks"))
-						pr |= PROC_ON_AUTO_SHOT_HIT;
-
-					if( strstr( desc, "gives your"))
-					{
-						if( strstr( desc,"chance to daze the target"))
-							pr |= PROC_ON_CAST_SPELL;
-						else // We should find that specific spell (or group) on what we will trigger
-							pr |= PROC_ON_CAST_SPECIFIC_SPELL;
-					}
-
-					if( strstr( desc, "chance to add an additional combo") && strstr(desc, "critical") )
-						pr |= PROC_ON_CRIT_ATTACK;
-					else if( strstr( desc, "chance to add an additional combo"))
-						pr |= PROC_ON_CAST_SPELL;
-
-					if( strstr( desc,"being able to resurrect"))
-						pr2 |= PROC_ON_DIE;
-
-					if( strstr( desc,"after dodging their attack"))
-					{
-						pr2 |= PROC_ON_DODGE_VICTIM;
-						if( strstr( desc,"add a combo point"))
-							pr2 |= PROC_TARGET_SELF;
-					}
-
-					if( strstr( sp->Name, "Bloodthirst"))
-					{
-						pr |= PROC_ON_MELEE_ATTACK;
-						pr2 |= PROC_TARGET_SELF;
-					}
-
-					if( strstr( desc,"fully resisting") || strstr( desc,"fully resist"))
-						pr2 |= PROC_ON_FULL_RESIST;
-
-					if( strstr( desc,"each attack blocked") || strstr( desc,"target blocks a melee attack")
-						|| strstr( desc,"when a block occurs"))
-						pr2 |= PROC_ON_BLOCK_VICTIM;
-
-					if( strstr( desc,"shadow bolt critical strikes increase shadow damage")
-						|| strstr( desc,"after getting a critical effect from your")
-						|| strstr( desc,"on spell critical hit") || strstr( desc,"spell critical strikes"))
-						pr2 |= PROC_ON_SPELL_CRIT_HIT;
-
-				}//end "if procspellaura"
-
-				// Aura 109 fix
-				if(sp->EffectApplyAuraName[y] == SPELL_AURA_ADD_TARGET_TRIGGER)
-				{
-					sp->EffectApplyAuraName[y] = SPELL_AURA_PROC_TRIGGER_SPELL;
-					pr = PROC_ON_CAST_SPELL;
-				}
-			}//end "if aura"
-		}//end "for each effect"
-		sp->procFlags = pr;
-		sp->procflags2 = pr2;
+		SetProcFlags(sp);
 
 		if( strstr( sp->Description, "Must remain seated"))
 		{
@@ -3718,7 +3333,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		// Nitro Boosts
 	case 55004:
 		{
-				CopyEffect(dbcSpell.LookupEntryForced(54861), 0, sp, 2);
+			CopyEffect(dbcSpell.LookupEntryForced(54861), 0, sp, 2);
 			sp->DurationIndex = 39;
 		}break;
 
@@ -6224,110 +5839,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
 		}break;
 
-			//////////////////////////////////////////
-			// TRINKETS								//
-			//////////////////////////////////////////
-
-		// Herkuml War Token ICC
-	case 71397:
-		{
-			sp->procChance	=	100;
-			sp->procFlags	=	PROC_ON_ANY_HOSTILE_ACTION;
-			sp->EffectTriggerSpell[0]	=	71396;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Althor's Abacus ICC
-	case 71611:
-		{
-			sp->procChance	=	30;
-			sp->procFlags	=	PROC_ON_ANY_HOSTILE_ACTION;
-			sp->EffectTriggerSpell[0]	=	71610;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Corpse Tongue Coin ICC
-	case 71634:
-	case 71640:
-		{
-			sp->procChance	=	100;
-			sp->procFlags	=	PROC_ON_PHYSICAL_ATTACK_VICTIM | PROC_ON_MELEE_ATTACK_VICTIM; // Skip.
-			sp->EffectTriggerSpell[0]	=	(sp->Id == 71640 ? 71639 : 71633);
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Dislodged Foreign Object ICC
-	case 71602:
-		{
-			sp->procChance	=	10;
-			sp->procFlags	=	PROC_ON_SPELL_LAND_VICTIM;
-			sp->EffectTriggerSpell[0]	=	71601;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Ephemeral Snowflake ICC
-	case 71567:
-		{
-			sp->procChance	=	100;
-			sp->procFlags	=	PROC_ON_SPELL_LAND_VICTIM;
-			sp->EffectTriggerSpell[0]	=	71566;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Muradin's Spyglass(H) ICC
-	case 71573:
-		{
-			sp->procChance	=	100;
-			sp->procFlags	=	PROC_ON_SPELL_LAND_VICTIM;
-			sp->EffectTriggerSpell[0]	=	71572;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Muradin's Spyglass ICC
-	case 71571:
-		{
-			sp->procChance	=	100;
-			sp->procFlags	=	PROC_ON_SPELL_LAND_VICTIM;
-			sp->EffectTriggerSpell[0]	=	71570;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Needle-Encrusted Scorpion ICC
-	case 71404:
-		{
-			sp->procChance	=	10;
-			sp->procFlags	=	PROC_ON_CRIT_ATTACK | PROC_ON_RANGED_CRIT_ATTACK;
-			sp->EffectTriggerSpell[0]	=	71403;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Purified Lunar Dust ICC
-	case 71585:
-		{
-			sp->procChance	=	10;
-			sp->procFlags	=	PROC_ON_CAST_SPELL;
-			sp->EffectTriggerSpell[0]	=	71584;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Unidentifiable Organ ICC
-	case 71578:
-		{
-			sp->procChance	=	60;
-			sp->procFlags	=	PROC_ON_MELEE_ATTACK_VICTIM;
-			sp->EffectTriggerSpell[0]	=	71577;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
-		// Whispering Fanged Skull ICC
-	case 71402:
-		{
-			sp->procChance	=	60;
-			sp->procFlags	=	PROC_ON_ANY_HOSTILE_ACTION;
-			sp->EffectTriggerSpell[0]	=	71401;
-			sp->EffectApplyAuraName[0]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
-		}break;
-
 		//////////////////////////////////////////
 		// ITEMSETS								//
 		//////////////////////////////////////////
@@ -6798,6 +6309,194 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		sp->c_is_flags |= SPELL_FLAG_CASTED_ON_ENEMIES;
 }
 
+void SetProcFlags(SpellEntry *sp)
+{
+	uint32 effect;
+	uint32 pr = sp->procFlags;
+	uint32 pr2 = sp->procflags2;
+	for(uint32 y = 0; y < 3; y++)
+	{
+		// Get the effect number from the spell
+		effect = sp->Effect[y];
+
+		if(effect == SPELL_EFFECT_APPLY_AURA)
+		{
+			uint32 aura = sp->EffectApplyAuraName[y];
+			if( aura == SPELL_AURA_PROC_TRIGGER_SPELL ||
+				aura == SPELL_AURA_PROC_TRIGGER_DAMAGE ||
+				aura == SPELL_AURA_DUMMY )
+			{
+				uint32 procspellid = 0;
+				for(uint j = 0; j < 3; j++)
+					if(sp->EffectTriggerSpell[j])
+						procspellid = sp->EffectTriggerSpell[j];
+
+				pr = 0;
+				pr2 = 0;
+				char desc[4096];
+				strcpy(desc, sp->Description);
+				uint32 len = (uint32)strlen(desc);
+				for(uint i = 0; i < len; i++)
+					desc[i] = tolower(desc[i]);
+
+				//dirty code for procs, if any1 got any better idea-> u are welcome
+				//139944 --- some magic number, it will trigger on all hits etc
+				// Crow: All of the below should be in lower case, but its late.
+				if(strstr( desc,"chance on hit") || strstr( desc,"your auto attacks") || strstr( desc,"character strikes an enemy")
+					|| strstr( desc,"when it hits") || strstr( desc,"when successfully hit") || strstr( desc,"an enemy on hit")
+					|| strstr( desc,"when the caster is using melee attacks") || strstr( desc,"successful melee attack")
+					|| strstr( desc,"chance per hit") || strstr( desc,"you deal melee damage") || strstr( desc,"your melee attacks")
+					|| strstr( desc,"chance per attack") || strstr( desc,"damage with your sword") || strstr( desc,"on a successful hit")
+					|| strstr( desc,"takes damage") || strstr( desc,"when damaging an enemy in melee") || strstr( desc,"on a hit")
+					|| strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
+					|| strstr( desc,"damaging melee attacks") || strstr( desc,"attackers when hit") || strstr( desc,"on a melee swing")
+					|| strstr( desc,"on melee or ranged attack") || strstr( desc,"chance on melee") ||  strstr( desc,"melee attacks has")
+					|| strstr( desc,"giving each melee attack a chance") || strstr( desc, "a chance to deal additional")
+					|| strstr( desc,"chance to get an extra attack") || strstr( desc,"giving each melee attack")
+					|| strstr( desc,"each strike has") || strstr( desc,"chance on hit") || strstr( desc,"with a melee weapon")
+					|| strstr( desc,"damage to melee attackers") || strstr( desc,"into flame, causing an additional")
+					|| strstr( desc,"damage on every attack") || strstr( desc,"your melee and ranged attacks")
+					|| strstr( desc, "gives your melee"))
+					pr |= PROC_ON_MELEE_ATTACK;
+
+				if(strstr( desc,"attackers when hit") || strstr( desc,"strike you with a melee attack")
+					|| strstr( desc,"enemy strikes the caster") || strstr( desc,"strikes you with a melee attack")
+					|| strstr( desc,"enemy that strikes you in melee") || strstr( desc,"the next melee attack on the caster")
+					|| strstr( desc,"when struck in melee combat") ||  strstr( desc,"the next melee attack against the caster")
+					|| strstr( desc,"damage to attacker on hit") || strstr( desc,"melee and ranged attacks against you")
+					|| strstr( desc,"when struck in combat") || strstr( desc,"striking melee or ranged attackers")
+					|| strstr( desc,"strikes the caster") || strstr( desc,"each melee or ranged damage hit against the priest")
+					|| strstr( desc,"hit by a melee or ranged attack") || strstr( desc,"when struck in combat")
+					|| strstr( desc,"that strikes a party member") || strstr( desc,"when hit by a melee attack")
+					|| strstr( desc,"ranged and melee attacks to deal") || strstr( desc,"striking melee or ranged attackers")
+					|| strstr( desc,"damage to attackers when hit") || strstr( desc,"striking melee attackers")
+					|| strstr( desc,"striking melee attackers"))
+					pr |= PROC_ON_MELEE_ATTACK_VICTIM;
+
+				if( strstr( desc,"target casts a spell") || strstr( desc,"your harmful spells land")
+					|| strstr( desc, "any damage spell hits a target") || strstr( desc,"gives your finishing moves")
+					|| strstr( desc,"gives your sinister strike, backstab, gouge and shiv") || strstr( desc,"chance on spell hit")
+					|| strstr( desc,"your shadow word: pain, mind flay and vampiric touch spells also cause the target")
+					|| strstr( desc,"corruption, curse of agony, siphon life and seed of corruption spells also cause")
+					|| strstr( desc,"chance on spell hit") || strstr( desc,"your spell casts have") || strstr( desc,"chance on spell cast")
+					|| strstr( desc,"your spell casts have") || strstr( desc,"your Fire damage spell hits")
+					|| strstr( desc,"pain, mind flay and vampiric touch spells also cause")
+					|| strstr( desc,"next offensive ability") || strstr( desc,"on successful spellcast")
+					|| strstr( desc,"shadow damage spells have") || strstr( desc,"your next offensive ability"))
+					pr |= PROC_ON_CAST_SPELL;
+
+				if( strstr( desc,"any damage caused") || strstr( desc,"when caster takes damage") || strstr( desc,"damage on hit")
+					|| strstr( desc,"after being hit by any damaging attack") || strstr( desc,"whenever the caster takes damage")
+					|| strstr( desc, "damaging attack is taken") || strstr( desc,"a spell, melee or ranged attack hits the caster")
+					|| strstr( desc,"whenever damage is dealt to you") || strstr( desc, "damage when hit"))
+					pr |= PROC_ON_ANY_DAMAGE_VICTIM;
+
+				if(strstr( desc,"each melee or ranged damage hit against the priest")
+					|| strstr( desc,"melee and ranged attacks against you") || strstr( desc,"striking melee or ranged attackers")
+					|| strstr( desc,"hit by a melee or ranged attack") || strstr( desc,"striking melee or ranged attackers")
+					|| strstr( desc,"ranged and melee attacks to deal"))
+					pr |= PROC_ON_RANGED_ATTACK_VICTIM;
+
+				if( strstr( desc,"landing a melee critical strike") || strstr( desc,"your critical strikes") || strstr( desc,"critical hit")
+					|| strstr( desc, "melee critical strike") || strstr( desc,"after dealing a critical strike")
+					|| strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability")
+					|| strstr( desc,"after getting a critical strike"))
+					pr |= PROC_ON_CRIT_ATTACK;
+
+				if(strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
+					|| strstr( desc,"on melee or ranged attack") || strstr( desc,"damage on every attack")
+					|| strstr( desc,"your melee and ranged attacks") || strstr( desc,"whenever you deal ranged damage"))
+					pr |= PROC_ON_RANGED_ATTACK;
+
+				if( strstr( desc,"any successful spell cast against the priest") || strstr( desc,"chance to reflect Fire spells")
+					|| strstr( desc, "struck by a Stun or Immobilize"))
+					pr |= PROC_ON_SPELL_HIT_VICTIM;
+
+				if( strstr( desc,"your spell criticals have") || strstr( desc, "getting a critical effect from")
+					|| strstr( desc,"spell criticals against you"))
+					pr |= PROC_ON_SPELL_CRIT_HIT_VICTIM;
+
+				if( strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability")
+					|| strstr( desc,"your spell criticals have"))
+					pr2 |= PROC_ON_SPELL_CRIT_HIT;
+
+				if( strstr( desc,"hunter takes on the aspects of a hawk") || strstr( desc,"hunter takes on the aspects of a dragonhawk"))
+				{
+					pr |= PROC_ON_RANGED_ATTACK;
+					pr2 |= PROC_TARGET_SELF;
+				}
+
+				if( strstr( desc,"victim of a critical strike") || strstr( desc,"after being struck by a melee or ranged critical hit")
+					|| strstr( desc, "victim of a melee or ranged critical strike") || strstr( desc,"victim of a critical melee strike"))
+					pr |= PROC_ON_CRIT_HIT_VICTIM;
+
+				if(strstr( desc,"your ranged criticals"))
+					pr |= PROC_ON_RANGED_CRIT_ATTACK;
+
+				if( strstr( desc, "experience or honor"))
+					pr |= PROC_ON_GAIN_EXPIERIENCE;
+
+				if( strstr( desc,"after being hit with a shadow or fire spell"))
+					pr |= PROC_ON_SPELL_LAND_VICTIM;
+
+				if( strstr( desc,"successful auto shot attacks"))
+					pr |= PROC_ON_AUTO_SHOT_HIT;
+
+				if( strstr( desc, "gives your"))
+				{
+					if( strstr( desc,"chance to daze the target"))
+						pr |= PROC_ON_CAST_SPELL;
+					else // We should find that specific spell (or group) on what we will trigger
+						pr |= PROC_ON_CAST_SPECIFIC_SPELL;
+				}
+
+				if( strstr( desc, "chance to add an additional combo") && strstr(desc, "critical") )
+					pr |= PROC_ON_CRIT_ATTACK;
+				else if( strstr( desc, "chance to add an additional combo"))
+					pr |= PROC_ON_CAST_SPELL;
+
+				if( strstr( desc,"being able to resurrect"))
+					pr2 |= PROC_ON_DIE;
+
+				if( strstr( desc,"after dodging their attack"))
+				{
+					pr2 |= PROC_ON_DODGE_VICTIM;
+					if( strstr( desc,"add a combo point"))
+						pr2 |= PROC_TARGET_SELF;
+				}
+
+				if( strstr( sp->Name, "Bloodthirst"))
+				{
+					pr |= PROC_ON_MELEE_ATTACK;
+					pr2 |= PROC_TARGET_SELF;
+				}
+
+				if( strstr( desc,"fully resisting") || strstr( desc,"fully resist"))
+					pr2 |= PROC_ON_FULL_RESIST;
+
+				if( strstr( desc,"each attack blocked") || strstr( desc,"target blocks a melee attack")
+					|| strstr( desc,"when a block occurs"))
+					pr2 |= PROC_ON_BLOCK_VICTIM;
+
+				if( strstr( desc,"shadow bolt critical strikes increase shadow damage")
+					|| strstr( desc,"after getting a critical effect from your")
+					|| strstr( desc,"on spell critical hit") || strstr( desc,"spell critical strikes"))
+					pr2 |= PROC_ON_SPELL_CRIT_HIT;
+
+			}//end "if procspellaura"
+
+			// Aura 109 fix
+			if(sp->EffectApplyAuraName[y] == SPELL_AURA_ADD_TARGET_TRIGGER)
+			{
+				sp->EffectApplyAuraName[y] = SPELL_AURA_PROC_TRIGGER_SPELL;
+				pr = PROC_ON_CAST_SPELL;
+			}
+		}//end "if aura"
+	}//end "for each effect"
+	sp->procFlags = pr;
+	sp->procflags2 = pr2;
+}
+
 // Kroze: Some commented stuff.
 
 // NEW SCHOOLS AS OF 2.4.0:
@@ -6824,3 +6523,195 @@ AURASTATE_FLAG_IMMOLATE				= 8192,		//14
 AURASTATE_FLAG_REJUVENATE			= 16384,	//15
 AURASTATE_FLAG_POISON				= 32768,	//16
 */
+
+uint32 GetTriggerSpellFromDescription(std::string delimiter, std::string desc)
+{
+	std::string token;
+
+	// find the delimiter.
+	size_t i = desc.find(delimiter);
+	if (i == string::npos)
+		return 0;
+
+	// find the first character of the spell id.
+	size_t j = desc.find_first_not_of(delimiter, i);
+	if (j == string::npos)
+		return 0;
+
+	// find the end of the spell id.
+	size_t k = desc.find("s1", j);
+	if (k == string::npos)
+		return 0;
+
+	// get our token
+	token = desc.substr(j, k - j);
+
+	// convert to int
+	uint32 id = 0;
+	std::istringstream iss(token);
+	iss >> id;
+
+	// and return our spell id
+	return id;
+}
+
+SpellEntry* CreateDummySpell(uint32 id)
+{
+	std::string name = "Dummy Trigger";
+	SpellEntry* sp = new SpellEntry();
+	memset(sp, 0, sizeof(SpellEntry*));
+	sp->Id = id;
+	sp->Attributes = 384;
+	sp->AttributesEx = 268435456;
+	sp->Flags3 = 4;
+	sp->CastingTimeIndex = 1;
+	sp->procChance = 75;
+	sp->rangeIndex = 13;
+	sp->EquippedItemClass = uint32(-1);
+	sp->Effect[0] = SPELL_EFFECT_DUMMY;
+	sp->EffectImplicitTargetA[0] = 25;
+	sp->NameHash = crc32((const unsigned char*)name.c_str(), (unsigned int)name.length());
+	sp->dmg_multiplier[0] = 1.0f;
+	sp->StanceBarOrder = -1;
+	dbcSpell.SetRow(id, sp);
+	sWorld.dummyspells.push_back(sp);
+	return sp;
+}
+
+uint32 GetSpellClass(SpellEntry *sp)
+{
+	switch(sp->skilline)
+	{
+	case SKILL_ARMS:
+	case SKILL_FURY:
+	case SKILL_PROTECTION:
+		return WARRIOR;
+	case SKILL_HOLY2:
+	case SKILL_PROTECTION2:
+	case SKILL_RETRIBUTION:
+		return PALADIN;
+	case SKILL_BEAST_MASTERY:
+	case SKILL_SURVIVAL:
+	case SKILL_MARKSMANSHIP:
+		return HUNTER;
+	case SKILL_ASSASSINATION:
+	case SKILL_COMBAT:
+	case SKILL_SUBTLETY:
+		return ROGUE;
+	case SKILL_DISCIPLINE:
+	case SKILL_HOLY:
+	case SKILL_SHADOW:
+		return PRIEST;
+	case SKILL_ENHANCEMENT:
+	case SKILL_RESTORATION:
+	case SKILL_ELEMENTAL_COMBAT:
+		return SHAMAN;
+	case SKILL_FROST:
+	case SKILL_FIRE:
+	case SKILL_ARCANE:
+		return MAGE;
+	case SKILL_AFFLICTION:
+	case SKILL_DEMONOLOGY:
+	case SKILL_DESTRUCTION:
+		return WARLOCK;
+	case SKILL_RESTORATION2:
+	case SKILL_BALANCE:
+	case SKILL_FERAL_COMBAT:
+		return DRUID;
+	case SKILL_DK_FROST:
+	case SKILL_UNHOLY:
+	case SKILL_BLOOD:
+		return DEATHKNIGHT;
+	}
+
+	return 0;
+}
+
+uint32 fill( uint32* arr, ... ) // fills array 'arr' with integers in arguments and returns its new size. Last argument must be 0!
+{
+	va_list vl;
+	uint32 i;
+	va_start( vl, arr );
+	for( i = 0; i < 100; i++ ){
+		arr[i] = va_arg( vl, uint32 );
+		if(arr[i] == 0)
+			break;
+	}
+	va_end( vl );
+	return i;
+}
+
+// Generates SpellNameHashes.h
+void GenerateNameHashesFile()
+{
+	const uint32 fieldSize = 81;
+	const char* prefix = "SPELL_HASH_";
+	uint32 prefixLen = uint32(strlen(prefix));
+	DBCFile dbc;
+
+	if( !dbc.open( "DBC/Spell.dbc" ) )
+	{
+		Log.Error("World", "Cannot find file ./DBC/Spell.dbc" );
+		return;
+	}
+
+	uint32 cnt = (uint32)dbc.getRecordCount();
+	uint32 namehash = 0;
+	FILE * f = fopen("SpellNameHashes.h", "w");
+	char spaces[fieldSize], namearray[fieldSize];
+	strcpy(namearray, prefix);
+	char* name = &namearray[prefixLen];
+	for(int i = 0;i < fieldSize-1; ++i)
+		spaces[i] = ' ';
+
+	std::set<uint32> namehashes;
+
+	spaces[fieldSize-1] = 0;
+	uint32 nameTextLen = 0, nameLen = 0;
+	for(uint32 x = 0; x < cnt; x++)
+	{
+		const char* nametext = dbc.getRecord(x).getString(136);
+		nameTextLen = (unsigned int)strlen(nametext);
+		strncpy(name, nametext, fieldSize-prefixLen-2);	// Cut it to fit in field size
+		name[fieldSize-prefixLen-2] = 0; // in case nametext is too long and strncpy didn't copy the null
+		nameLen = (unsigned int)strlen(name);
+		for(uint32 i = 0;i<nameLen;++i)
+		{
+			if(name[i] >= 'a' && name[i] <= 'z')
+				name[i] = toupper(name[i]);
+			else if(!(name[i] >= '0' && name[i] <= '9') &&
+				!(name[i] >= 'A' && name[i] <= 'Z'))
+				name[i] = '_';
+		}
+
+		namehash = crc32((const unsigned char*)nametext, nameTextLen);
+
+		if(namehashes.find(namehash) != namehashes.end())
+			continue; // Skip namehashes we've already done.
+
+		int32 numSpaces = fieldSize-prefixLen-nameLen-1;
+		if(numSpaces < 0)
+			fprintf(f, "WTF");
+
+		spaces[numSpaces] = 0;
+		fprintf(f, "#define %s%s0x%08X\n", namearray, spaces, namehash);
+		spaces[numSpaces] = ' ';
+		namehashes.insert(namehash);
+	}
+	fclose(f);
+}
+
+// Copies effect number 'fromEffect' in 'fromSpell' to effect number 'toEffect' in 'toSpell'
+void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, uint8 toEffect)
+{
+	if(!fromSpell || !toSpell || fromEffect > 2 || toEffect > 2)
+		return;
+
+	uint32 *from = fromSpell->Effect;
+	uint32 *to = toSpell->Effect;
+	// Copy 20 values starting at Effect
+	for(uint8 index = 0;index < 20;index++)
+	{
+		to[index * 3 + toEffect] = from[index * 3 + fromEffect];
+	}
+}

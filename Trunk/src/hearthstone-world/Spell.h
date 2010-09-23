@@ -147,7 +147,6 @@ enum SPELL_MODIFIER_TYPE
 	// 29 Mod Crowd Damage Test 45365 - Increases the critical strike damage bonus of your Frost spells by 100%
 };
 
-
 static void SM_FFValue( int32* m, float* v, uint32* group )
 {
 	if( m == 0 )
@@ -2036,5 +2035,13 @@ public:
 void ApplyDiminishingReturnTimer(int32 * Duration, Unit* Target, SpellEntry * spell);
 void UnapplyDiminishingReturnTimer(Unit* Target, SpellEntry * spell);
 uint32 GetDiminishingGroup(uint32 NameHash);
+uint32 GetTriggerSpellFromDescription(std::string delimiter, std::string desc);
+SpellEntry* CreateDummySpell(uint32 id);
+uint32 GetSpellClass(SpellEntry *sp);
+uint32 fill( uint32* arr, ... );
+void GenerateNameHashesFile();
+void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, uint8 toEffect);
+void ApplySingleSpellFixes(SpellEntry *sp);
+void SetProcFlags(SpellEntry *sp);
 
 #endif

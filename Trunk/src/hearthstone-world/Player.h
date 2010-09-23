@@ -981,6 +981,7 @@ public:
 	/************************************************************************/
 	bool HasSpell(uint32 spell);
 	SpellEntry* GetSpellWithNamehash(uint32 namehash);
+	bool HasHigherSpellForSkillLine(SpellEntry* sp);
 	void smsg_InitialSpells();
 	void smsg_TalentsInfo(bool pet);
 	void BuildPlayerTalentsInfo(WorldPacket *data, bool self);

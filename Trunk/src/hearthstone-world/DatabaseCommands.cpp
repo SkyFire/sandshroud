@@ -241,14 +241,14 @@ bool ChatHandler::HandleDBItemSetAllowableClassCommand(const char* args, WorldSe
 		proto->AllowableClass = -1;
 		WorldDatabase.Execute("UPDATE items SET allowableclass = '%i' WHERE entry = '%u'", -1, entry);
 	}
-	else if(masked && !(proto->AllowableClass & allowableclass)) 
+	else if(masked && (!(proto->AllowableClass & allowableclass) || proto->AllowableClass == -1)) 
 	{
 		if(proto->AllowableClass == -1)
 			proto->AllowableClass = 0;
 
 		BlueSystemMessage(m_session, "Changing item allowable class from %i to %i", proto->AllowableClass, proto->AllowableClass | allowableclass);
 		proto->AllowableClass |= allowableclass;
-		WorldDatabase.Execute("UPDATE items SET allowableclass = '%i' WHERE entry = '%u'", allowableclass, entry);
+		WorldDatabase.Execute("UPDATE items SET allowableclass = '%i' WHERE entry = '%u'", proto->AllowableClass, entry);
 	}
 	else if(!masked)
 	{
@@ -288,14 +288,14 @@ bool ChatHandler::HandleDBItemSetAllowableRaceCommand(const char* args, WorldSes
 		proto->AllowableRace = -1;
 		WorldDatabase.Execute("UPDATE items SET allowablerace = '%i' WHERE entry = '%u'", -1, entry);
 	}
-	else if(masked && !(proto->AllowableRace & allowablerace)) 
+	else if(masked && (!(proto->AllowableRace & allowablerace) || proto->AllowableRace == -1)) 
 	{
 		if(proto->AllowableRace == -1)
 			proto->AllowableRace = 0;
 
 		BlueSystemMessage(m_session, "Changing item allowable race from %i to %i", proto->AllowableRace, proto->AllowableRace | allowablerace);
 		proto->AllowableRace |= allowablerace;
-		WorldDatabase.Execute("UPDATE items SET allowablerace = '%i' WHERE entry = '%u'", allowablerace, entry);
+		WorldDatabase.Execute("UPDATE items SET allowablerace = '%i' WHERE entry = '%u'", proto->AllowableRace, entry);
 	}
 	else if(!masked)
 	{

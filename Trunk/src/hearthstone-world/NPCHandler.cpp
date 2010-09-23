@@ -279,6 +279,7 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 	if(!pSpell->pCastSpell && !pSpell->pLearnSpell)
 		return TRAINER_STATUS_NOT_LEARNABLE;
 
+	// Spells with the same names
 	SpellEntry* namehashSP = NULL;
 	if( pSpell->pCastRealSpell && ( _player->HasSpell(pSpell->pCastRealSpell->Id)
 		|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pCastRealSpell->NameHash))
@@ -289,6 +290,11 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 	if( pSpell->pLearnSpell && (_player->HasSpell(pSpell->pLearnSpell->Id)
 		|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pLearnSpell->NameHash))
 		&& (namehashSP->RankNumber ? namehashSP->RankNumber > pSpell->pLearnSpell->RankNumber : false)) ) )
+		return TRAINER_STATUS_ALREADY_HAVE;
+
+	// Spells with different names
+	if((pSpell->pLearnSpell && _player->HasHigherSpellForSkillLine(pSpell->pLearnSpell))
+		|| (pSpell->pCastRealSpell && _player->HasHigherSpellForSkillLine(pSpell->pCastRealSpell)))
 		return TRAINER_STATUS_ALREADY_HAVE;
 
 	uint8 ssform = (pSpell->pLearnSpell ? pSpell->pLearnSpell->RequiredShapeShift : 0);
@@ -327,9 +333,6 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 		|| (pSpell->IsProfession && pSpell->RequiredSkillLine == 0 && _player->GetUInt32Value(PLAYER_CHARACTER_POINTS2) == 0)//check level 1 professions if we can learn a new proffesion
 		|| (ssspell && !_player->HasSpell(ssspell)))
 	{
-		if(pSpell->pLearnSpell && pSpell->pLearnSpell->Id == 1943)
-			printf("Pieflavor NL\n");
-
 		return TRAINER_STATUS_NOT_LEARNABLE;
 	}
 

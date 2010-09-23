@@ -3573,6 +3573,42 @@ SpellEntry* Player::GetSpellWithNamehash(uint32 namehash)
 	return NULL;
 }
 
+bool Player::HasHigherSpellForSkillLine(SpellEntry* sp)
+{
+	uint32 oskillline = sp->skilline;
+	if(oskillline == 0)
+		return false;
+
+	skilllineentry* sle = dbcSkillLine.LookupEntry(oskillline);
+	if(sle == NULL)
+		return false;
+
+	if(sle->type == SKILL_TYPE_PROFESSION)
+		return false;
+
+	if(GetSpellClass(sp))
+		return false;
+
+	SpellSet::iterator itr;
+	SpellEntry* spell = NULL;
+	skilllinespell* spellls = NULL;
+	if(_HasSkillLine(oskillline))
+	{
+		for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
+		{
+			spell = NULL;
+			if((spell = dbcSpell.LookupEntry(*itr)) != NULL)
+			{
+				if(spell->skilline == oskillline)
+					if(spell->RankNumber > sp->RankNumber)
+						return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 uint32 Player::FindSpellWithNamehash(uint32 namehash)
 {
 	SpellSet::iterator itr = mSpells.begin();
@@ -10393,6 +10429,7 @@ void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)
 		m_skills.insert( make_pair( SkillLine, inf ) );
 		_UpdateSkillFields();
 	}
+
 	//Add to proficiency
 	if(( prof = (ItemProf *)GetProficiencyBySkill(SkillLine)) )
 	{
@@ -10414,7 +10451,7 @@ void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)
 	}
 
 	// hackfix for runeforging
-	if(SkillLine==SKILL_RUNEFORGING)
+	if(SkillLine == SKILL_RUNEFORGING)
 	{
 		if(!HasSpell(53341))
 			addSpell(53341); // Rune of Cinderglacier
