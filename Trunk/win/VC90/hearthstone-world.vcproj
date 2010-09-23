@@ -597,30 +597,6 @@
 			Name="Objects"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-world\Container.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Container.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Corpse.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Corpse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Creature.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Creature.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\hearthstone-world\DynamicObject.cpp"
 				>
 			</File>
@@ -645,14 +621,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\Item.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Item.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\hearthstone-world\Object.cpp"
 				>
 			</File>
@@ -660,46 +628,90 @@
 				RelativePath="..\..\src\hearthstone-world\Object.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Pet.cpp"
+			<Filter
+				Name="Auras"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Pet.h"
+				<File
+					RelativePath="..\..\src\hearthstone-world\SpellAuras.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\SpellAuras.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Units"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Player.cpp"
+				<File
+					RelativePath="..\..\src\hearthstone-world\Corpse.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Corpse.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Creature.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Creature.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Pet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Pet.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Player.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Player.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Unit.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Unit.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Vehicle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Vehicle.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Items"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Player.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\SpellAuras.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\SpellAuras.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Unit.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Unit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Vehicle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Vehicle.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Container.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Container.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Item.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Item.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Chat"

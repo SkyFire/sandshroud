@@ -733,10 +733,11 @@ bool Player::Create(WorldPacket& data )
 
 	m_mapId = info->mapId;
 	m_zoneId = info->zoneId;
-	SetPosition( info->positionX, info->positionY, info->positionZ, true);
+	SetPosition( info->positionX, info->positionY, info->positionZ, info->Orientation, true);
 	m_bind_pos_x = info->positionX;
 	m_bind_pos_y = info->positionY;
 	m_bind_pos_z = info->positionZ;
+	m_bind_pos_z = info->Orientation;
 	m_bind_mapid = info->mapId;
 	m_bind_zoneid = info->zoneId;
 	m_isResting = 0;

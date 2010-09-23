@@ -390,7 +390,8 @@ struct CreateInfo_ActionBarStruct
 	uint32  misc;
 };
 
-struct PlayerCreateInfo{
+struct PlayerCreateInfo
+{
 	uint8   index;
 	uint8   race;
 	uint32  factiontemplate;
@@ -400,6 +401,7 @@ struct PlayerCreateInfo{
 	float   positionX;
 	float   positionY;
 	float   positionZ;
+	float   Orientation;
 	uint16  displayId;
 	uint8   strength;
 	uint8   ability;

@@ -478,45 +478,47 @@ void ObjectMgr::LoadPlayerCreateInfo()
 		return;
 	}
 
-	if( result->GetFieldCount() < 24 )
+	if( result->GetFieldCount() < 25 )
 	{
-		Log.Error("PlayerCreateInfo", "Incorrect number of columns in playercreateinfo found %u, should be 24. check for sql updates", result->GetFieldCount());
+		Log.Error("PlayerCreateInfo", "Incorrect number of columns in playercreateinfo found %u, should be 25. check for sql updates", result->GetFieldCount());
 		delete result;
 		return;
 	}
 
 	PlayerCreateInfo *pPlayerCreateInfo;
+	int fieldcount = 0;
 
 	do
 	{
 		Field *fields = result->Fetch();
+		fieldcount = 0;
 
 		pPlayerCreateInfo = new PlayerCreateInfo;
-
-		pPlayerCreateInfo->index = fields[0].GetUInt8();
-		pPlayerCreateInfo->race = fields[1].GetUInt8();
-		pPlayerCreateInfo->factiontemplate = fields[2].GetUInt32();
-		pPlayerCreateInfo->class_ = fields[3].GetUInt8();
-		pPlayerCreateInfo->mapId = fields[4].GetUInt32();
-		pPlayerCreateInfo->zoneId = fields[5].GetUInt32();
-		pPlayerCreateInfo->positionX = fields[6].GetFloat();
-		pPlayerCreateInfo->positionY = fields[7].GetFloat();
-		pPlayerCreateInfo->positionZ = fields[8].GetFloat();
-		pPlayerCreateInfo->displayId = fields[9].GetUInt16();
-		pPlayerCreateInfo->strength = fields[10].GetUInt8();
-		pPlayerCreateInfo->ability = fields[11].GetUInt8();
-		pPlayerCreateInfo->stamina = fields[12].GetUInt8();
-		pPlayerCreateInfo->intellect = fields[13].GetUInt8();
-		pPlayerCreateInfo->spirit = fields[14].GetUInt8();
-		pPlayerCreateInfo->health = fields[15].GetUInt32();
-		pPlayerCreateInfo->mana = fields[16].GetUInt32();
-		pPlayerCreateInfo->rage = fields[17].GetUInt32();
-		pPlayerCreateInfo->focus = fields[18].GetUInt32();
-		pPlayerCreateInfo->energy = fields[19].GetUInt32();
-		pPlayerCreateInfo->runic = fields[20].GetUInt32();
-		pPlayerCreateInfo->attackpower = fields[21].GetUInt32();
-		pPlayerCreateInfo->mindmg = fields[22].GetFloat();
-		pPlayerCreateInfo->maxdmg = fields[23].GetFloat();
+		pPlayerCreateInfo->index = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->race = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->factiontemplate = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->class_ = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->mapId = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->zoneId = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->positionX = fields[fieldcount++].GetFloat();
+		pPlayerCreateInfo->positionY = fields[fieldcount++].GetFloat();
+		pPlayerCreateInfo->positionZ = fields[fieldcount++].GetFloat();
+		pPlayerCreateInfo->Orientation = fields[fieldcount++].GetFloat();
+		pPlayerCreateInfo->displayId = fields[fieldcount++].GetUInt16();
+		pPlayerCreateInfo->strength = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->ability = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->stamina = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->intellect = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->spirit = fields[fieldcount++].GetUInt8();
+		pPlayerCreateInfo->health = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->mana = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->rage = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->focus = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->energy = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->runic = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->attackpower = fields[fieldcount++].GetUInt32();
+		pPlayerCreateInfo->mindmg = fields[fieldcount++].GetFloat();
+		pPlayerCreateInfo->maxdmg = fields[fieldcount++].GetFloat();
 
 		QueryResult *sk_sql = WorldDatabase.Query("SELECT * FROM playercreateinfo_skills WHERE indexid = %u", pPlayerCreateInfo->index);
 		if(sk_sql)

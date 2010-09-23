@@ -976,41 +976,6 @@ void Aura::ApplyModifiers( bool apply )
 		else
 			DEBUG_LOG( "Aura","Unknown Aura id %d in spell %u", uint32(mod->m_type), GetSpellId());
 	}
-	
-	if(m_spellProto->procFlags)
-	{
-		for(uint32 x = 0; x < 3; x++)
-			if(m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PROC_TRIGGER_SPELL||GetSpellId()==974||GetSpellId()==32593||GetSpellId()==32594)
-				return;//already have proc for this aura
-
-		if(apply)
-		{
-			uint32 id = 0;
-			for(uint32 x=0; x<3; x++)
-			{
-				if(m_spellProto->EffectTriggerSpell[x] != 0)
-				{
-					id = m_spellProto->EffectTriggerSpell[x];
-					break;
-				}
-			}
-			if(id == 0)
-				return;
-
-			CreateProcTriggerSpell(m_target, m_casterGuid, GetSpellId(), id, m_spellProto->procChance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges);
-		}
-		else
-		{
-			for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
-			{
-				if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
-				{
-					itr->deleted = true;
-					break;
-				}
-			}
-		}
-	}
 }
 
 void Aura::UpdateModifiers( )
@@ -3297,12 +3262,58 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
+	case 72521:
+	case 72523:
+		{
+			// Visual Affects, we can add a shadowmourne check here.
+		}break;
+
 	default:
 		{
-			if(sLog.IsOutDevelopement())
-				printf("Dummy aura not handled: %u\n", GetSpellId());
+			if(m_spellProto->procFlags || m_spellProto->procflags2) // Quick Proc flag and Proc Chance check
+			{
+				for(uint32 x = 0; x < 3; x++)
+					if(m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PROC_TRIGGER_SPELL || m_spellProto->NameHash == SPELL_HASH_EARTH_SHIELD)
+						return;//already have proc for this aura
 
-			dummy_aura = true;
+				if(apply)
+				{
+					uint32 id = 0;
+					for(uint32 x = 0; x < 3; x++)
+					{
+						if(m_spellProto->EffectTriggerSpell[x] != 0)
+						{
+							id = m_spellProto->EffectTriggerSpell[x];
+							break;
+						}
+					}
+					if(id == 0)
+						return;
+
+					if(!m_spellProto->procChance)
+						m_spellProto->procChance = mod->m_amount;
+
+					CreateProcTriggerSpell(m_target, m_casterGuid, GetSpellId(), id, m_spellProto->procChance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges);
+				}
+				else
+				{
+					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
+					{
+						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+						{
+							itr->deleted = true;
+							break;
+						}
+					}
+				}
+			}
+			else
+			{
+				if(sLog.IsOutDevelopement())
+					printf("Dummy aura not handled: %u\n", GetSpellId());
+
+				dummy_aura = true;
+			}
 		}break;
 	}
 

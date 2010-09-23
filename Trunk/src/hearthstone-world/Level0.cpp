@@ -215,7 +215,7 @@ bool ChatHandler::HandleStartCommand(const char* args, WorldSession *m_session)
 
 	GreenSystemMessage(m_session, "Telporting %s to %s starting location.", m_plyr->GetName(), argument.c_str());
 
-	m_session->GetPlayer()->SafeTeleport(info->mapId, 0, LocationVector(info->positionX, info->positionY, info->positionZ));
+	m_session->GetPlayer()->SafeTeleport(info->mapId, 0, LocationVector(info->positionX, info->positionY, info->positionZ, info->Orientation));
 	return true;
 }
 

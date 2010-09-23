@@ -4435,7 +4435,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 
 void Spell::HandleTeleport(uint32 id, Unit* Target)
 {
-	if(Target == NULL || Target->GetTypeId() != TYPEID_PLAYER)
+	if(Target == NULL || Target->GetTypeId() != TYPEID_PLAYER || !id || id == 1)
 		return;
 
 	Player* pTarget = TO_PLAYER( Target );
