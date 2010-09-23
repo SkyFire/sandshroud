@@ -3815,7 +3815,7 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 
 	if(p_caster->GetMapMgr() && !IS_INSTANCE(p_caster->GetMapId()) && p_caster->GetMapMgr()->CanUseCollision(p_caster))
 	{
-		float ori = m_caster->GetOrientation();				
+		float ori = m_caster->GetOrientation();
 		float posX = m_caster->GetPositionX()+(radius*(cosf(ori)));
 		float posY = m_caster->GetPositionY()+(radius*(sinf(ori)));
 		float posZ;

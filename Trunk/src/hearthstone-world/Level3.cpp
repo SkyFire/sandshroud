@@ -3229,7 +3229,16 @@ bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_s
 	if(plr == NULL)
 		return true;
 
-	SystemMessage(m_session, "Results: No Water, Curr pos: %f; Water: %f;", plr->GetCHeightForPosition(), plr->GetCHeightForPosition(true));
+	if(sWorld.CalculatedHeightChecks)
+	{
+		SystemMessage(m_session, "CHeightChecks: Curr pos: %f; Water: %f;",
+			plr->GetCHeightForPosition(), plr->GetCHeightForPosition(true));
+	}
+	else
+	{
+		SystemMessage(m_session, "Results: Curr pos: %f; Water: %f;",
+			plr->GetCHeightForPosition(), plr->GetCHeightForPosition(true));
+	}
 	return true;
 }
 

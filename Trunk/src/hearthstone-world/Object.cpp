@@ -131,34 +131,76 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		return 0.0f;
 
 	MapMgr* mgr = GetMapMgr();
+	float offset = 0.02156f;
 	if(x == 0.0f && y == 0.0f)
 	{
 		x = GetPositionX();
 		y = GetPositionY();
 	}
 
-	float cmapheight = mgr->GetLandHeight(x, y);
+	float mapheight = mgr->GetLandHeight(x, y);
 	if(!mgr->CanUseCollision(this))
-		return cmapheight;
+		return mapheight+offset;
 
 	if(z == 0.0f)
 		z = GetPositionZ();
 
-	float phx = 0.0f;
-	float phy = 0.0f;
-	float ccollidemapheight = 0.0f;
-	float cvmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
-
+	float vmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
 	if(IS_INSTANCE(mgr->GetMapId()) || !sWorld.CalculatedHeightChecks)
 	{
-		if(cvmapheight != NO_WMO_HEIGHT)
-			return cvmapheight;
+		if(vmapheight != NO_WMO_HEIGHT)
+			return vmapheight+offset;
 
-		return cmapheight;
+		return mapheight+offset;
 	}
 
-	CollideInterface.GetFirstPoint(GetMapId(), x, y, NO_WMO_HEIGHT, x, y, WMO_MAX_HEIGHT, phx, phy, ccollidemapheight, 0.0f);
+	float phx = 0.0f;
+	float phy = 0.0f;
+	float phz = 0.0f;
+	float CMapHeight = NO_LAND_HEIGHT;
+	CollideInterface.GetFirstPoint(GetMapId(), x, y, z-50.0f, x, y, z+50.0f, phx, phy, CMapHeight, 0.0f);
 
+	// Mapheight first.
+	if(mapheight != NO_LAND_HEIGHT)
+	{
+		if(mapheight-2.0f < z)
+		{
+			if(mapheight+2.0f > z) // Accurate map height
+				return mapheight+offset;
+
+			if(!CollideInterface.GetFirstPoint(GetMapId(), x, y, mapheight, x, y, z, phx, phy, phz, 0.0f))
+				return mapheight+offset; // No breaks inbetween us, so its the right height, we're just a bunch of fuckers!
+
+			// TODO
+		}
+		else
+		{
+			// TODO
+		}
+	}
+
+	// Now Vmap Height
+	if(vmapheight != NO_WMO_HEIGHT)
+	{
+		if(vmapheight-2.0f < z)
+		{
+			if(vmapheight+2.0f > z) // Accurate map height
+				return vmapheight+offset;
+
+			if(!CollideInterface.GetFirstPoint(GetMapId(), x, y, vmapheight, x, y, z, phx, phy, phz, 0.0f))
+				return vmapheight+offset; // No breaks inbetween us, so its the right height, we're just a bunch of fuckers!
+
+			// TODO
+		}
+		else
+		{
+			// TODO
+		}
+	}
+
+	return CMapHeight+offset;
+
+/*
 	// Crow: WE SHOULD GET HIGHEST REASONABLE VALUE BASED ON Z AND THE CALCULATIONS BELOW
 	// For now return the lowest reasonable one!
 	if(ccollidemapheight != NO_WMO_HEIGHT)
@@ -196,7 +238,6 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 
 	return cmapheight + ((z-1.0f > cmapheight) ? 1.0f : 0.21563f);
 
-/*
 	float offset = 10.0f;
 	if(vmapheight < z) // Make sure we don't have some shit.
 	{
