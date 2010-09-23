@@ -1253,6 +1253,7 @@ void World::Rehash(bool load)
 	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
 	Collision = Config.MainConfig.GetBoolDefault("Server", "Collision", false);
 	PathFinding = Config.MainConfig.GetBoolDefault("Server", "Pathfinding", false);
+	CalculatedHeightChecks = Config.MainConfig.GetBoolDefault("Server", "CHeightChecks", false);
 	free_arena_teams = Config.MainConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
 	free_guild_charters = Config.MainConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
 	setRate(RATE_EOTS_CAPTURERATE, Config.MainConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));

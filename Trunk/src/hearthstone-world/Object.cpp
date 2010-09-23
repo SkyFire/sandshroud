@@ -142,22 +142,22 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		return cmapheight;
 
 	if(z == 0.0f)
-		z = cmapheight;
+		z = GetPositionZ();
 
 	float phx = 0.0f;
 	float phy = 0.0f;
 	float ccollidemapheight = 0.0f;
 	float cvmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
-	CollideInterface.GetFirstPoint(GetMapId(), x, y, NO_WMO_HEIGHT, x, y, WMO_MAX_HEIGHT, phx, phy, ccollidemapheight, 0.0f);
 
-	if(IS_INSTANCE(mgr->GetMapId()))
+	if(IS_INSTANCE(mgr->GetMapId()) || !sWorld.CalculatedHeightChecks)
 	{
-		if(CollideInterface.GetFirstPoint(GetMapId(), x, y, z-100.0f, x, y, z+100.0f, phx, phy, ccollidemapheight, 0.0f))
-			return ccollidemapheight; // Suprisingly works!
 		if(cvmapheight != NO_WMO_HEIGHT)
 			return cvmapheight;
+
 		return cmapheight;
 	}
+
+	CollideInterface.GetFirstPoint(GetMapId(), x, y, NO_WMO_HEIGHT, x, y, WMO_MAX_HEIGHT, phx, phy, ccollidemapheight, 0.0f);
 
 	// Crow: WE SHOULD GET HIGHEST REASONABLE VALUE BASED ON Z AND THE CALCULATIONS BELOW
 	// For now return the lowest reasonable one!

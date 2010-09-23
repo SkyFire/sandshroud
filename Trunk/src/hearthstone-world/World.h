@@ -611,6 +611,7 @@ public:
 	bool SpeedhackProtection;
 	bool Collision;
 	bool PathFinding;
+	bool CalculatedHeightChecks;
 	bool AHEnabled;
 	int LogonServerType;
 
