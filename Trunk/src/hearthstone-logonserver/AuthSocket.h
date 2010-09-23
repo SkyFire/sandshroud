@@ -54,6 +54,7 @@ public:
 	void HandleTransferAccept();
 	void HandleTransferResume();
 	void HandleTransferCancel();
+	void HandleCMD19();
 
 	///////////////////////////////////////////////////
 	// Server Packet Builders

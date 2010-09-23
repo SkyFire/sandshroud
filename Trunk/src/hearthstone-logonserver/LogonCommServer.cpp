@@ -157,9 +157,9 @@ void LogonCommServerSocket::HandlePacket(WorldPacket & recvData)
 		&LogonCommServerSocket::HandleServerPong,			// RCMSG_SERVER_PONG
 	};
 
-	if(recvData.GetOpcode() >= RMSG_COUNT || Handlers[recvData.GetOpcode()] == 0)
+	if(recvData.GetOpcode() >= RMSG_COUNT || Handlers[recvData.GetOpcode()] == NULL)
 	{
-		printf("Got unknwon packet from logoncomm: %u\n", recvData.GetOpcode());
+		printf("Got unknown packet from logoncomm: %u\n", recvData.GetOpcode());
 		return;
 	}
 

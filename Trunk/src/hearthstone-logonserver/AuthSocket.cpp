@@ -441,7 +441,7 @@ static AuthHandler Handlers[MAX_AUTH_CMD] = {
 		&AuthSocket::HandleRealmlist,			// 16
 		NULL,									// 17
 		NULL,									// 18
-		NULL,									// 19
+		&AuthSocket::HandleCMD19,				// 19
 		NULL,									// 20
 		NULL,									// 21
 		NULL,									// 22
@@ -476,6 +476,11 @@ static AuthHandler Handlers[MAX_AUTH_CMD] = {
 		&AuthSocket::HandleTransferResume,		// 51
 		&AuthSocket::HandleTransferCancel,		// 52
 };
+
+void AuthSocket::HandleCMD19()
+{
+	// Its actually sending a packet to the patcher, just ignore it
+}
 
 void AuthSocket::OnRead()
 {
