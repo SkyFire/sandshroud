@@ -227,11 +227,17 @@ public:
 	HEARTHSTONE_INLINE uint16 GetAreaID(float x, float y, float z = 0.0f)
 	{
 		uint16 aid = GetBaseMap()->GetAreaID(x, y);
-		if(GetMapId() == 571)
+		if(_mapId == 571)
 		{
-			//dirty fix for Dalaran sanctuary
-			if( z > 500.0f && (aid == 4551 || aid == 4553 || aid == 4556 || aid == 2817))
-				return 4395;
+			if((y < 1003.5413 && y > 269.7706) && (x < 6125.6840 && x > 5453.6235) && z > 546.0f)
+			{
+				if(z > 639.0f && z < 740.0f) // Better dirty fix for Dalaran
+					return 4395;
+				else if(z < 639.0f) // Dalaran Sewers: The Underbelly
+					return 4560;
+				else if(z > 740.0f) // Dalaran: The Violet Citadel
+					return 4619;
+			}
 		}
 		return aid;
 	}

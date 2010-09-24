@@ -13196,6 +13196,9 @@ void Player::SetPhase(int32 phase, bool save)
 
 	Object::SetPhase(phase);
 
+	if(IS_INSTANCE(GetMapId()))
+		return; // Don't save instance phases.
+
 	if(areaphases[GetAreaID()] != NULL)
 		areaphases[GetAreaID()]->phase = phase;
 	else if(save && phase != 1)
@@ -13218,6 +13221,9 @@ void Player::SetPhase(int32 phase, bool save)
 void Player::EnablePhase(int32 phaseMode, bool save)
 {
 	Object::EnablePhase(phaseMode);
+
+	if(IS_INSTANCE(GetMapId()))
+		return; // Don't save instance phases.
 
 	int32 phase = GetPhase();
 	if(areaphases[GetAreaID()] != NULL)
@@ -13242,6 +13248,9 @@ void Player::EnablePhase(int32 phaseMode, bool save)
 void Player::DisablePhase(int32 phaseMode, bool save)
 {
 	Object::DisablePhase(phaseMode);
+
+	if(IS_INSTANCE(GetMapId()))
+		return; // Don't save instance phases.
 
 	int32 phase = GetPhase();
 	if(areaphases[GetAreaID()] != NULL)
