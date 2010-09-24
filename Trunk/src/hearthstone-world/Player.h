@@ -1207,7 +1207,6 @@ public:
 	/************************************************************************/
 	/* Item Interface                                                       */
 	/************************************************************************/
-
 	HEARTHSTONE_INLINE ItemInterface* GetItemInterface() { return m_ItemInterface; } // Player Inventory Item storage
 	HEARTHSTONE_INLINE void ApplyItemMods(Item* item, int16 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply,justdrokedown); }
 
@@ -1216,7 +1215,8 @@ public:
 
 	HEARTHSTONE_INLINE AchievementInterface* GetAchievementInterface() { return m_achievementInterface; }
 	AchievementInterface * m_achievementInterface;
-	
+	void RebuildItemInfo();
+
 	/************************************************************************/
 	/* Loot                                                                 */
 	/************************************************************************/

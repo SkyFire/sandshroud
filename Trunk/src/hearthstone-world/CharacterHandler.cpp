@@ -353,7 +353,6 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 
 	//checking number of chars is useless since client will not allow to create more than 10 chars
 	//as the 'create' button will not appear (unless we want to decrease maximum number of characters)
-
 	Player* pNewChar = objmgr.CreatePlayer();
 	pNewChar->SetSession(this);
 	if(!pNewChar->Create( recv_data ))

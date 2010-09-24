@@ -938,7 +938,12 @@ bool Storage_ReloadTable(const char * TableName)
 {
 	// bur: mah god this is ugly :P
 	if(!stricmp(TableName, "items"))					// Items
+	{
 		ItemPrototypeStorage.Reload();
+#ifdef RECACHE_CLIENT_ON_RELOAD
+		sEventMgr.AddEvent(World::getSingletonPtr(), &World::UpdatePlayerItemInfos, EVENT_WORLD_UPDATESESSIONS, 10, 0, 0);
+#endif
+	}
 	else if(!stricmp(TableName, "creature_proto"))		// Creature Proto
 		CreatureProtoStorage.Reload();
 	else if(!stricmp(TableName, "creature_proto"))		// Creature Proto

@@ -646,8 +646,9 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 {
+	CHECK_INWORLD_RETURN;
 	CHECK_PACKET_SIZE(recv_data, 4);
- 
+
 	int i;
 	int32 statcount = 0;
 	uint32 itemid = 0;

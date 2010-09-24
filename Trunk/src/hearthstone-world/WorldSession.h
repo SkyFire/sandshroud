@@ -809,6 +809,20 @@ public:
 	uint32 m_lastWhoTime;
 	bool m_asyncQuery;
 
+	void SendItemInfo(uint32 entry)
+	{
+		WorldPacket data(CMSG_ITEM_QUERY_SINGLE, 4);
+		data << uint32(entry);
+		HandleItemQuerySingleOpcode(data);
+
+		data.clear();
+		data.Initialize(CMSG_ITEM_QUERY_SINGLE);
+		data.reserve(12);
+		data << uint32(entry) << uint64(0);
+		HandleItemNameQueryOpcode(data);
+		data.clear();
+	}
+
 protected:
 	uint32 m_repeatTime;
 	string m_repeatMessage;

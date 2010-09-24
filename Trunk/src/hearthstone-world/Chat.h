@@ -137,14 +137,14 @@ enum Languages
 class ChatCommand
 {
 public:
-	const char *	   Name;
-	char			   CommandGroup;
+	const char *		Name;
+	char				CommandGroup;
 	bool (ChatHandler::*Handler)(const char* args, WorldSession *m_session) ;
-	std::string		Help;
-	ChatCommand *    ChildCommands;
-	uint32			 NormalValueField;
-	uint32			 MaxValueField;
-	uint16			 ValueType;	// 0 = nothing, 1 = uint, 2 = float
+	std::string			Help;
+	ChatCommand *		ChildCommands;
+	uint32				NormalValueField;
+	uint32				MaxValueField;
+	uint16				ValueType;	// 0 = nothing, 1 = uint, 2 = float
 };
 
 class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
@@ -644,8 +644,10 @@ protected:
 	bool HandleDisableAH(const char *args, WorldSession *m_session);
 	bool HandleForceStartWintergrasp(const char *args, WorldSession *m_session);
 	bool HandleForceEndWintergrasp(const char *args, WorldSession *m_session);
-};
 
+private:
+	Mutex m_lock;
+};
 
 #define sChatHandler ChatHandler::getSingleton()
 #endif

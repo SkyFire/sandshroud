@@ -717,17 +717,20 @@ bool Player::Create(WorldPacket& data )
 	info = objmgr.GetPlayerCreateInfo(race, class_);
 	if(!info)
 	{
-		// info not found... disconnect
-		//sWorld.LogCheater(m_session, "tried to create invalid player with race %u and class %u", race, class_);
-		m_session->Disconnect();
+		// info not found.
+		WorldPacket data(SMSG_CHAR_CREATE, 1);
+		data << uint8(CHAR_CREATE_ERROR);
+		GetSession()->SendPacket(&data);
 		return false;
 	}
 
-	// check that the account CAN create TBC characters, if we're making some
-	if(race >= RACE_BLOODELF && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01))
+	// check that the account CAN create TBC or Cata characters, if we're making some
+	if((race >= RACE_GOBLIN && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01)) ||
+		(race == RACE_GOBLIN || race == RACE_WORGEN && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03)))
 	{
-		//sWorld.LogCheater(m_session, "tried to create player with race %u and class %u but no expansion flags", race, class_);
-		m_session->Disconnect();
+		WorldPacket data(SMSG_CHAR_CREATE, 1);
+		data << uint8(CHAR_CREATE_ERROR);
+		GetSession()->SendPacket(&data);
 		return false;
 	}
 
@@ -752,8 +755,9 @@ bool Player::Create(WorldPacket& data )
 	if(!myRace || !myClass)
 	{
 		// information not found
-		sWorld.LogCheater(m_session, "tried to create invalid player with race %u and class %u, dbc info not found", race, class_);
-		m_session->Disconnect();
+		WorldPacket data(SMSG_CHAR_CREATE, 1);
+		data << uint8(CHAR_CREATE_ERROR);
+		GetSession()->SendPacket(&data);
 		return false;
 	}
 
@@ -13265,4 +13269,9 @@ int32 Player::GetPhaseForArea(uint32 areaid)
 		return areaphases[areaid]->phase;
 
 	return 1;
+}
+
+void Player::RebuildItemInfo()
+{
+	GetItemInterface()->RebuildItemInfoForOwner();
 }

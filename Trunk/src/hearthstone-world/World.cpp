@@ -2559,3 +2559,16 @@ void NewsAnnouncer::_Init()
 		delete res;
 	}
 }
+
+void World::UpdatePlayerItemInfos()
+{
+	Player* plr = NULL;
+	SessionMap::iterator itr;
+	for(itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	{
+		if(plr = itr->second->GetPlayer())
+		{
+			plr->RebuildItemInfo();
+		}
+	}
+}

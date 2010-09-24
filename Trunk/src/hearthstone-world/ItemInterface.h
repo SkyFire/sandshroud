@@ -84,7 +84,8 @@ public:
 	bool SafeFullRemoveItemByGuid(uint64 guid); //destroys item fully
 	AddItemResult AddItemToFreeSlot(Item* item);
 	AddItemResult AddItemToFreeBankSlot(Item* item);
-	
+	void RebuildItemInfoForOwner();
+
 	/** Finds a stack that didn't reach max capacity
 	\param itemid The entry of the item to search for
 	\param cnt The item count you wish to add to the stack
@@ -134,6 +135,7 @@ public:
 		else 
 			return NULLITEM;
 	}
+
 	void AddBuyBackItem(Item* it, uint32 price);
 	void RemoveBuyBackItem(uint32 index);
 	void EmptyBuyBack();
