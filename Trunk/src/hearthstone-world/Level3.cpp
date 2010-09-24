@@ -2204,13 +2204,9 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	else
 	{
 		if(spVehicle)
-		{
 			TO_VEHICLE(p)->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f);
-		}
 		else
-		{
 			p->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f);
-		}
 	}
 
 	p->SetPhase(plr->GetPhase());

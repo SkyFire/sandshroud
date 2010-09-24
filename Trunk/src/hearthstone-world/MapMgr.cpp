@@ -1440,7 +1440,7 @@ bool MapMgr::Do()
 
 	for(CreatureSpawnList::iterator itr = _map->staticSpawns.CreatureSpawns.begin(); itr != _map->staticSpawns.CreatureSpawns.end(); itr++)
 	{
-		if((*itr)->vehicle)
+		if((*itr)->vehicle > 0)
 		{
 			Vehicle* obj = NULLVEHICLE;
 			obj = CreateVehicle((*itr)->entry);

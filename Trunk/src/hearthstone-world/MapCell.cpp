@@ -213,7 +213,8 @@ void MapCell::LoadObjects(CellSpawns * sp)
 /*				if((*i)->respawnNpcLink && pInstance->m_killedNpcs.find((*i)->respawnNpcLink) != pInstance->m_killedNpcs.end())
 					continue;*/
 			}
-			if((*i)->vehicle != 0)
+
+			if((*i)->vehicle > 0)
 			{
 				v =_mapmgr->CreateVehicle((*i)->entry);
 				if(v == NULLVEHICLE)
