@@ -26,10 +26,12 @@ extern bool bServerShutdown;
 
 LogonCommHandler::LogonCommHandler()
 {
+	idhigh = 1;
+	next_request = 1;
+	ReConCounter = 0;
+
 	if(!(sWorld.LogonServerType & LOGON_MANGOS))
 	{
-		idhigh = 1;
-		next_request = 1;
 		pings = !Config.MainConfig.GetBoolDefault("LogonServer", "DisablePings", false);
 		string logon_pass = Config.MainConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
 		plrLimit = sWorld.GetPlayerLimit();
@@ -41,7 +43,6 @@ LogonCommHandler::LogonCommHandler()
 		hash.UpdateData(logon_pass);
 		hash.Finalize();
 		memcpy(sql_passhash, hash.GetDigest(), 20);
-		ReConCounter = 0;
 	}
 }
 
@@ -113,8 +114,8 @@ class LogonCommWatcherThread : public ThreadContext
 #ifdef WIN32
 	HANDLE hEvent;
 #endif
-public:
 
+public:
 	LogonCommWatcherThread()
 	{
 		if(!(sWorld.LogonServerType & LOGON_MANGOS))
@@ -156,10 +157,8 @@ public:
 				Sleep( 3000 );
 #endif
 			}
-
-			return true;
 		}
-		return false;
+		return true;
 	}
 };
 
@@ -185,8 +184,39 @@ void LogonCommHandler::Startup()
 			} while (result->NextRow());
 			delete result;
 		}
-
 		ThreadPool.ExecuteTask( new LogonCommWatcherThread() );
+	}
+	else
+	{
+		Log.CNotice(TPURPLE, "LogonCommClient", "Starting up account database strings...");
+		string hostname, username, password, database;
+		int port = 0;
+
+		bool result = Config.RealmConfig.GetString( "AccountDatabase", "Username", &username );
+		result = Config.RealmConfig.GetString( "AccountDatabase", "Password", &password );
+		result = !result ? result : Config.RealmConfig.GetString( "AccountDatabase", "Hostname", &hostname );
+		result = !result ? result : Config.RealmConfig.GetString( "AccountDatabase", "Name", &database );
+		result = !result ? result : Config.RealmConfig.GetInt( "AccountDatabase", "Port", &port );
+
+		if(result == false)
+		{
+			Log.Error("Mangos DB Handler", "Incorrect parameter in Account DB settings, connection failed. Shutting down.");
+			sWorld.QueueShutdown(5, SERVER_SHUTDOWN_TYPE_SHUTDOWN);
+			return;
+		}
+
+		Database_Account = Database::Create();
+
+		// Initialize it
+		if( !(AccountDatabase.Initialize( hostname.c_str(), (uint)port, username.c_str(),
+			password.c_str(), database.c_str(), Config.MainConfig.GetIntDefault( "AccountDatabase", "ConnectionCount", 5 ), 16384 )) )
+		{
+			Log.Error("Mangos DB Handler", "Account Database Initialization failed. Shutting down.");
+			sWorld.QueueShutdown(5, SERVER_SHUTDOWN_TYPE_SHUTDOWN);
+			return;
+		}
+
+		Log.CNotice(TPURPLE, "LogonCommClient", "Allowing connections from Logon servers...");
 	}
 }
 
@@ -380,6 +410,7 @@ void LogonCommHandler::ConnectionDropped(uint32 ID)
 	{
 		if(bServerShutdown)
 			return;
+
 		mapLock.Acquire();
 		map<LogonServer*, LogonCommClientSocket*>::iterator itr = logons.begin();
 		for(; itr != logons.end(); itr++)
@@ -429,7 +460,7 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 			data.append( &acct[i], 1 );
 
 		data.append( "\0", 1 );
-		s->SendPacket(&data,false);
+		s->SendPacket(&data, false);
 
 		pending_logons[request_id] = Socket;
 		pendingLock.Release();
@@ -437,25 +468,32 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 
 		return request_id;
 	}
+	else
+	{
+		uint32 request_id = next_request++;
+		size_t i = 0;
+		DEBUG_LOG( "LogonCommHandler","Sending request for account information: `%s` (request %u).", AccountName.c_str(), request_id);
+
+		pendingLock.Acquire();
+		pending_logons[request_id] = Socket;
+		pendingLock.Release();
+
+		RefreshRealmPop();
+		return request_id;
+	}
 	return (uint32)-1;
 }
 
 void LogonCommHandler::UnauthedSocketClose(uint32 id)
 {
-	if(!(sWorld.LogonServerType & LOGON_MANGOS))
-	{
-		pendingLock.Acquire();
-		pending_logons.erase(id);
-		pendingLock.Release();
-	}
+	pendingLock.Acquire();
+	pending_logons.erase(id);
+	pendingLock.Release();
 }
 
 void LogonCommHandler::RemoveUnauthedSocket(uint32 id)
 {
-	if(!(sWorld.LogonServerType & LOGON_MANGOS))
-	{
-		pending_logons.erase(id);
-	}
+	pending_logons.erase(id);
 }
 
 void LogonCommHandler::LoadRealmConfiguration()

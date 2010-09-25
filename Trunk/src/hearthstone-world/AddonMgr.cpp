@@ -133,7 +133,6 @@ void AddonMgr::SendAddonInfoPacket(WorldPacket *source, uint32 pos, WorldSession
 	}
 	int32 result;
 	result = uncompress((uint8*)unpacked.contents(), &rsize, (uint8*)(*source).contents() + position, (uLong)((*source).size() - position));
-
 	if(result != Z_OK)
 	{
 		DEBUG_LOG("AddonMgr","Decompression of addon section of CMSG_AUTH_SESSION failed.");

@@ -53,8 +53,9 @@ class WeatherInfo;
 class World;
 class StrandOfTheAncients;
 
-#define WorldDatabase (*Database_World)
 #define CharacterDatabase (*Database_Character)
+#define AccountDatabase (*Database_Account)
+#define WorldDatabase (*Database_World)
 #define LogDatabase (*Database_Log)
 
 #define CAST(x, y) static_cast<x*>(y)
@@ -111,6 +112,7 @@ class StrandOfTheAncients;
 #define NULLINSTANCEMGR NULL
 
 SERVER_DECL extern Database* Database_Character;
+SERVER_DECL extern Database* Database_Account;
 SERVER_DECL extern Database* Database_World;
 SERVER_DECL extern Database* Database_Log;
 

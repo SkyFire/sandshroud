@@ -131,6 +131,30 @@ public:
 		UNLOCK_LOG;
 	}
 
+	void CNotice(int color, const char * source, const char * format, ...)
+	{
+		LOCK_LOG;
+		va_list ap;
+		va_start(ap, format);
+		Time();
+		fputs("N ", stdout);
+		if(*source)
+		{
+			Color(TWHITE);
+			fputs(source, stdout);
+			putchar(':');
+			putchar(' ');
+			Color(TNORMAL);
+		}
+
+		Color(color);
+		vprintf(format, ap);
+		putchar('\n');
+		va_end(ap);
+		Color(TNORMAL);
+		UNLOCK_LOG;
+	}
+
 	void Info(const char * source, const char * format, ...)
 	{
 		/* notice is old loglevel 0/string */
@@ -166,6 +190,7 @@ public:
 	{
 		if(log_level < 1)
 			return;
+
 		LOCK_LOG;
 		va_list ap;
 		va_start(ap, format);

@@ -30,6 +30,7 @@ volatile bool Master::m_stopEvent = false;
 
 // Database defines.
 SERVER_DECL Database* Database_Character;
+SERVER_DECL Database* Database_Account;
 SERVER_DECL Database* Database_World;
 SERVER_DECL Database* Database_Log;
 
@@ -403,6 +404,9 @@ bool Master::Run(int argc, char ** argv)
 	CharacterDatabase.EndThreads();
 	WorldDatabase.EndThreads();
 	LogDatabase.EndThreads();
+	if(sWorld.LogonServerType & LOGON_MANGOS)
+		if(Database_Account != NULL)
+			AccountDatabase.EndThreads();
 
 	Log.Notice("Server", "Shutting down random generator.");
 	CleanupRandomNumberGenerators();
@@ -562,7 +566,6 @@ bool Master::_StartDB()
 		OUT_DEBUG( "sql: Log database initialization failed. Exiting." );
 		return false;
 	}
-
 	return true;
 }
 
@@ -595,6 +598,9 @@ void segfault_handler(int c)
 			WorldDatabase.EndThreads();
 			CharacterDatabase.EndThreads();
 			LogDatabase.EndThreads();
+			if(sWorld.LogonServerType & LOGON_MANGOS)
+				if(Database_Account != NULL)
+					AccountDatabase.EndThreads();
 			sLog.outString( "All pending database operations cleared.\n" );
 			sWorld.SaveAllPlayers();
 			sLog.outString( "Data saved." );
@@ -707,6 +713,9 @@ void OnCrash( bool Terminate )
 			WorldDatabase.EndThreads();
 			CharacterDatabase.EndThreads();
 			LogDatabase.EndThreads();
+			if(sWorld.LogonServerType & LOGON_MANGOS)
+				if(Database_Account != NULL)
+					AccountDatabase.EndThreads();
 			sLog.outString( "All pending database operations cleared.\n" );
 			sWorld.SaveAllPlayers();
 			sLog.outString( "Data saved." );

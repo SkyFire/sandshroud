@@ -244,7 +244,7 @@ void LogonCommServerSocket::HandleSessionRequest(WorldPacket & recvData)
 		data.append(acct->Locale, 4);
 		data << acct->Muted;
 	}
-	
+
 	SendPacket(&data);
 }
 

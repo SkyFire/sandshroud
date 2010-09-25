@@ -521,7 +521,7 @@ void AuthSocket::HandleReconnectChallenge()
 		return;
 	}
 
-	DEBUG_LOG("ReconnectChallenge","got full packet.");
+	DEBUG_LOG("ReconnectChallenge", "got full packet.");
 
 	memcpy(&m_challenge, ReceiveBuffer, full_size + 4);
 	GetReadBuffer().Read(&m_challenge, full_size + 4);

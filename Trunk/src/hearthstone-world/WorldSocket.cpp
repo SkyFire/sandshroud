@@ -39,6 +39,8 @@ struct ServerPktHeader
 };
 #pragma pack(pop)
 
+bool BuildCallBackForMangos(WorldPacket & data, string name);
+
 WorldSocket::WorldSocket(SOCKET fd) : Socket(fd, sWorld.SocketSendBufSize, sWorld.SocketRecvBufSize)
 {
 	Authed = false;
@@ -239,23 +241,23 @@ void WorldSocket::OnConnect()
 void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 {
 	std::string account;
-	uint32 unk1, unk2, unk4, unk5, unk6;
+	uint32 unk;
 	uint64 unk3; // 3.2.2 Unk
 	_latency = getMSTime() - _latency;
 
 	try
 	{
 		*recvPacket >> mClientBuild;
-		*recvPacket >> unk1;
+		*recvPacket >> unk;
 		*recvPacket >> account;
-		*recvPacket >> unk2;
+		*recvPacket >> unk;
 		*recvPacket >> mClientSeed;
 		// 3.2.2
 		*recvPacket >> unk3;
 		// 3.3.5
-		*recvPacket >> unk4;
-		*recvPacket >> unk5;
-		*recvPacket >> unk6;
+		*recvPacket >> unk;
+		*recvPacket >> unk;
+		*recvPacket >> unk;
 	}
 	catch(ByteBuffer::error &)
 	{
@@ -271,7 +273,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
-	
+
 	if(mRequestID == 0xFFFFFFFF)
 	{
 		Disconnect();
@@ -283,6 +285,22 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// Set the authentication packet 
 	pAuthenticationPacket = recvPacket;
+
+	if(sWorld.LogonServerType & LOGON_MANGOS)
+	{
+		OUT_DEBUG("Recieving socket info.");
+
+		// find the socket with this request
+		WorldSocket * sock = sLogonCommHandler.GetSocketByRequest(mRequestID);
+		if(sock == 0 || sock->Authed || !sock->IsConnected())		// Expired/Client disconnected
+			return;
+
+		sock->Authed = true;
+		sLogonCommHandler.RemoveUnauthedSocket(mRequestID);
+		WorldPacket data(RSMSG_SESSION_RESULT);
+		if(BuildCallBackForMangos(data, account))
+			sock->InformationRetreiveCallback(data, mRequestID);
+	}
 }
 
 void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
@@ -308,7 +326,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	uint8 AccountFlags;
 	string lang = "enUS";
 	uint32 i;
-	
+
 	recvData >> AccountID >> AccountName >> GMFlags >> AccountFlags;
 	ForcedPermissions = sLogonCommHandler.GetForcedPermissions(AccountName);
 	if( ForcedPermissions != NULL )
@@ -319,23 +337,16 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 	mRequestID = 0;
 	//Pull the session key.
-	
-	recvData.read(K, 40);
 
-	_crypt.Init(K);
-	
 	BigNumber BNK;
-	BNK.SetBinary(K, 40);
-	
-	/*
-	uint8 key[20];
-	const uint8 SeedKeyLen = 16;
-	uint8 SeedKey[SeedKeyLen] = { 0x38, 0xA7, 0x83, 0x15, 0xF8, 0x92, 0x25, 0x30, 0x71, 0x98, 0x67, 0xB1, 0x8C, 0x4, 0xE2, 0xAA };
-	AutheticationPacketKey::GenerateKey(SeedKeyLen, (uint8*)SeedKey, key, K);
-	
-	// Initialize crypto.
-	_crypt.SetKey(key, 20);
-	*/
+	if(!(sWorld.LogonServerType&LOGON_MANGOS))
+	{
+		recvData.read(K, 40);
+
+		_crypt.Init(K);
+
+		BNK.SetBinary(K, 40);
+	}
 
 	//checking if player is already connected
 	//disconnect current player and login this one(blizzlike)
@@ -384,17 +395,20 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 		m_fullAccountName = NULL;
 	}
 
-	sha.UpdateData((uint8 *)&t, 4);
-	sha.UpdateData((uint8 *)&mClientSeed, 4);
-	sha.UpdateData((uint8 *)&mSeed, 4);
-	sha.UpdateBigNumbers(&BNK, NULL);
-	sha.Finalize();
-
-	if (memcmp(sha.GetDigest(), digest, 20))
+	if(!(sWorld.LogonServerType&LOGON_MANGOS))
 	{
-		// AUTH_UNKNOWN_ACCOUNT = 21
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
-		return;
+		sha.UpdateData((uint8 *)&t, 4);
+		sha.UpdateData((uint8 *)&mClientSeed, 4);
+		sha.UpdateData((uint8 *)&mSeed, 4);
+		sha.UpdateBigNumbers(&BNK, NULL);
+		sha.Finalize();
+
+		if (memcmp(sha.GetDigest(), digest, 20))
+		{
+			// AUTH_UNKNOWN_ACCOUNT = 21
+			OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
+			return;
+		}
 	}
 
 	// Allocate session
@@ -403,7 +417,6 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	ASSERT(mSession);
 	pSession->deleteMutex.Acquire();
 
-	
 	// Set session properties
 	pSession->permissioncount = 0;//just to make sure it's 0
 	pSession->SetClientBuild(mClientBuild);
@@ -418,10 +431,6 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	for(uint32 i = 0; i < 8; i++)
 		pSession->SetAccountData(i, NULL, true, 0);
 
-	// queue the account loading
-	/*AsyncQuery * aq = new AsyncQuery( new SQLClassCallbackP1<World, uint32>(World::getSingletonPtr(), &World::LoadAccountDataProc, AccountID) );
-	aq->AddQuery("SELECT * FROM account_data WHERE acct = %u", AccountID);
-	CharacterDatabase.QueueAsyncQuery(aq);*/
 	if(sWorld.m_useAccountData)
 	{
 		QueryResult * pResult = CharacterDatabase.Query("SELECT * FROM account_data WHERE acct = %u", AccountID);
@@ -449,14 +458,6 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	}
 
 	DEBUG_LOG("Auth", "%s from %s:%u [%ums]", AccountName.c_str(), GetRemoteIP().c_str(), GetRemotePort(), _latency);
-#ifdef SESSION_CAP
-	if( sWorld.GetSessionCount() >= SESSION_CAP )
-	{
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
-		Disconnect();
-		return;
-	}
-#endif
 
 	// Check for queue.
 	if( (sWorld.GetSessionCount() < sWorld.GetPlayerLimit()) || pSession->HasGMPermissions() ) {
@@ -481,7 +482,10 @@ void WorldSocket::Authenticate()
 	mQueued = false;
 
 	if(!pSession)
+	{
+		DEBUG_LOG( "WorldSocket","Lost Session");
 		return;
+	}
 
 	// Crow: Cata account flags = Wotlk account flags till Cata Release.
 	if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_03))
@@ -810,4 +814,63 @@ unsigned int FastGUIDPack(const uint64 & oldguid, unsigned char * buffer, uint32
 	}
 	buffer[pos] = guidmask;
 	return (j - pos);
+}
+
+bool BuildCallBackForMangos(WorldPacket & data, string name)
+{
+	string GMFlags;
+	uint32 AccountID;
+	uint8 AccountFlags = 0;
+
+	QueryResult * result = AccountDatabase.Query("SELECT id,gmlevel,expansion,locale,mutetime FROM `account` WHERE `username` = \"%s\"", HEARTHSTONE_TOLOWER_RETURN(name).c_str());
+	if(result)
+	{
+		Field* fields = result->Fetch();
+		AccountID = fields[0].GetUInt32();
+		uint8 GMflags = fields[1].GetUInt8();
+		switch(GMflags)
+		{
+		case 1:
+			GMFlags = "gm";
+			break;
+
+		case 2:
+			GMFlags = "am";
+			break;
+
+		case 3:
+			GMFlags = "az";
+			break;
+
+		default:
+			GMFlags = "";
+			break;
+		}
+
+		uint8 expansion = fields[2].GetUInt8();
+		switch(expansion)
+		{
+		case 1:
+			AccountFlags = ACCOUNT_FLAG_XPACK_01;
+			break;
+
+		case 2:
+			AccountFlags = ACCOUNT_FLAG_XPACK_01|ACCOUNT_FLAG_XPACK_02;
+			break;
+
+		case 3:
+			AccountFlags = ACCOUNT_FLAG_XPACK_01|ACCOUNT_FLAG_XPACK_02|ACCOUNT_FLAG_XPACK_03;
+			break;
+		}
+
+		std::string local = fields[3].GetString();
+		uint32 muted = fields[4].GetUInt32();
+
+		data << uint32(0) << AccountID << name.c_str() << GMFlags.c_str() << AccountFlags;
+		data.append(local.c_str(), 4);
+		data << muted;
+		return true;
+	}
+	data << uint32(1);
+	return false;
 }
