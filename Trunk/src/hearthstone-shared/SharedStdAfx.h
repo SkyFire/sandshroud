@@ -34,13 +34,13 @@
 #include "Config/ConfigEnv.h"
 #include "ByteBuffer.h"
 #include "Auth/BigNumber.h"
-#include <openssl/bn.h>
+#include "../../dependencies/VC/include/openssl/bn.h"
 #include <algorithm>
 #include "crc32.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "hashmap.h"
-#include <openssl/md5.h>
+#include "../../dependencies/VC/include/openssl/md5.h"
 #include "Auth/MD5.h"
 
 #include <windows.h>

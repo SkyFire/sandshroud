@@ -27,7 +27,7 @@
 #include <string>
 #include "../Threading/Queue.h"
 #include "../CallBack.h"
-#include <mysql/mysql.h>
+#include "../../../dependencies/VC/include/mysql/mysql.h"
 
 using namespace std;
 class QueryResult;

@@ -55,7 +55,7 @@
 #ifndef HEADER_SAFESTACK_H
 #define HEADER_SAFESTACK_H
 
-#include <openssl/stack.h>
+#include "stack.h"
 
 typedef void (*openssl_fptr)(void);
 #define openssl_fcast(f) ((openssl_fptr)f)

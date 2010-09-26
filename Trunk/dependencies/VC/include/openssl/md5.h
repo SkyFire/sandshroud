@@ -1,4 +1,4 @@
-/* crypto/hmac/hmac.h */
+/* crypto/md5/md5.h */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -55,52 +55,61 @@
  * copied and put under another distribution licence
  * [including the GNU Public Licence.]
  */
-#ifndef HEADER_HMAC_H
-#define HEADER_HMAC_H
 
-#include <openssl/opensslconf.h>
+#ifndef HEADER_MD5_H
+#define HEADER_MD5_H
 
-#ifdef OPENSSL_NO_HMAC
-#error HMAC is disabled.
-#endif
-
-#include <openssl/evp.h>
-
-#define HMAC_MAX_MD_CBLOCK	128	/* largest known is SHA512 */
+#include "e_os2.h"
+#include <stddef.h>
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
-typedef struct hmac_ctx_st
+#ifdef OPENSSL_NO_MD5
+#error MD5 is disabled.
+#endif
+
+/*
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * ! MD5_LONG has to be at least 32 bits wide. If it's wider, then !
+ * ! MD5_LONG_LOG2 has to be defined along.			   !
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
+
+#if defined(OPENSSL_SYS_WIN16) || defined(__LP32__)
+#define MD5_LONG unsigned long
+#elif defined(OPENSSL_SYS_CRAY) || defined(__ILP64__)
+#define MD5_LONG unsigned long
+#define MD5_LONG_LOG2 3
+/*
+ * _CRAY note. I could declare short, but I have no idea what impact
+ * does it have on performance on none-T3E machines. I could declare
+ * int, but at least on C90 sizeof(int) can be chosen at compile time.
+ * So I've chosen long...
+ *					<appro@fy.chalmers.se>
+ */
+#else
+#define MD5_LONG unsigned int
+#endif
+
+#define MD5_CBLOCK	64
+#define MD5_LBLOCK	(MD5_CBLOCK/4)
+#define MD5_DIGEST_LENGTH 16
+
+typedef struct MD5state_st
 	{
-	const EVP_MD *md;
-	EVP_MD_CTX md_ctx;
-	EVP_MD_CTX i_ctx;
-	EVP_MD_CTX o_ctx;
-	unsigned int key_length;
-	unsigned char key[HMAC_MAX_MD_CBLOCK];
-	} HMAC_CTX;
+	MD5_LONG A,B,C,D;
+	MD5_LONG Nl,Nh;
+	MD5_LONG data[MD5_LBLOCK];
+	unsigned int num;
+	} MD5_CTX;
 
-#define HMAC_size(e)	(EVP_MD_size((e)->md))
-
-
-void HMAC_CTX_init(HMAC_CTX *ctx);
-void HMAC_CTX_cleanup(HMAC_CTX *ctx);
-
-#define HMAC_cleanup(ctx) HMAC_CTX_cleanup(ctx) /* deprecated */
-
-void HMAC_Init(HMAC_CTX *ctx, const void *key, int len,
-	       const EVP_MD *md); /* deprecated */
-void HMAC_Init_ex(HMAC_CTX *ctx, const void *key, int len,
-		  const EVP_MD *md, ENGINE *impl);
-void HMAC_Update(HMAC_CTX *ctx, const unsigned char *data, size_t len);
-void HMAC_Final(HMAC_CTX *ctx, unsigned char *md, unsigned int *len);
-unsigned char *HMAC(const EVP_MD *evp_md, const void *key, int key_len,
-		    const unsigned char *d, size_t n, unsigned char *md,
-		    unsigned int *md_len);
-
-
+int MD5_Init(MD5_CTX *c);
+int MD5_Update(MD5_CTX *c, const void *data, size_t len);
+int MD5_Final(unsigned char *md, MD5_CTX *c);
+unsigned char *MD5(const unsigned char *d, size_t n, unsigned char *md);
+void MD5_Transform(MD5_CTX *c, const unsigned char *b);
 #ifdef  __cplusplus
 }
 #endif

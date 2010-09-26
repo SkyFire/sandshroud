@@ -21,7 +21,7 @@
 #include "platform.h"
 #include "Crypto.h"
 #include "g3dmath.h"
-#include <zlib.h>
+#include "../../../../dependencies/VC/include/zlib.h"
 
 namespace G3D {
 	

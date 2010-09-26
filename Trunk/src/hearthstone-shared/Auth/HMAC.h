@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 #include "Common.h"
-#include <openssl/hmac.h>
+#include "../../../dependencies/VC/include/openssl/hmac.h"
 #include "Auth/BigNumber.h"
 
 class HMACHash

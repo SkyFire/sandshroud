@@ -67,7 +67,7 @@
 #include "../hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h"
 #include "../hearthstone-shared/Pathfinding/Detour/DetourNavMeshBuilder.h"
 
-#include <zlib.h>
+#include "../../dependencies/VC/include/zlib.h"
 #include "Const.h"
 
 #include "../hearthstone-shared/RC4Engine.h"
@@ -224,7 +224,7 @@
 #endif
 
 extern "C" {
-#include <pcre.h>
+#include "../../dependencies/VC/include/pcre.h"
 };
 
 #endif

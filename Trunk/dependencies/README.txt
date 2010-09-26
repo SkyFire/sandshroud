@@ -2,14 +2,6 @@ Hearthstone Win32/64 Libraries Distribution
 ======================================
 
 Installation Instructions:
-Navigate to the directory of your chosen compiler (adjust pathes if necessary):
-
-  VS 2003: C:\Program Files\Microsoft Visual Studio .NET 2003\Vc7
-  VS 2005: C:\Program Files\Microsoft Visual Studio 8\VC
-  VS 2008: C:\Program Files\Microsoft Visual Studio 9.0\VC
-
-Copy the files in VC\include to VC\include.
-Copy the files in VC\lib to VC\lib.
 
 Next, you need to compile the zlib and PCRE libraries.
 Depending on your compiler, open the solution under Sources:
