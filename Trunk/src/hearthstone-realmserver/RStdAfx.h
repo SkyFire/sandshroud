@@ -37,7 +37,7 @@
 #include "../hearthstone-shared/crc32.h"
 #include "../hearthstone-shared/LocationVector.h"
 
-#include <zlib.h>
+#include "../../dependencies/VC/include/zlib.h"
 
 #include "../hearthstone-shared/Database/DatabaseEnv.h"
 #include "../hearthstone-shared/Database/DBCStores.h"

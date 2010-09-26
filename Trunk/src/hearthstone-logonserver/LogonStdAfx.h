@@ -34,7 +34,7 @@
 #include "../hearthstone-shared/Util.h"
 #include "../hearthstone-shared/ByteBuffer.h"
 #include "../hearthstone-shared/Config/ConfigEnv.h"
-#include <zlib.h>
+#include "../../dependencies/VC/include/zlib.h"
 
 #include "../hearthstone-shared/Database/DatabaseEnv.h"
 #include "../hearthstone-shared/Database/DBCStores.h"

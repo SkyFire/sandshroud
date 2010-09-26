@@ -173,7 +173,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
-				AdditionalLibraryDirectories="../../dependencies/VC/lib/"
+				AdditionalLibraryDirectories="../../dependencies/VC/lib/amd64/"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -365,7 +365,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../dependencies/VC/lib/"
+				AdditionalLibraryDirectories="../../dependencies/VC/lib/amd64/"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"

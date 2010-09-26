@@ -19,7 +19,7 @@
  */
 
 #include "LogonStdAfx.h"
-#include <openssl/md5.h>
+#include "../../dependencies/VC/include/openssl/md5.h"
 
 enum _errors
 {
