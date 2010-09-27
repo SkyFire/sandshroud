@@ -25,11 +25,11 @@
 #include "../LUAEngine.h"
 // Crow: Some of the following functions are based off of functions created by Hypersniper of LuaHypeArc.
 // Areas where this applies, credit has been given in the form of a name declaration.
+#include "FunctionSpell.h"
 #include "FunctionGameObjects.h"
 #include "FunctionGlobal.h"
 #include "FunctionItems.h"
 #include "FunctionPacket.h"
-#include "FunctionSpell.h"
 #include "FunctionAura.h"
 #include "FunctionTaxi.h"
 #include "FunctionUnits.h"
@@ -793,51 +793,55 @@ template<> RegType<Aura> * GetMethodTable<Aura>() { return AuraMethods; }
 
 void RegisterGlobalFunctions(lua_State *L)
 {
-	lua_register(L, "PerformIngameSpawn", &luaGlobalFunctions_PerformIngameSpawn);
-	lua_register(L, "GetPlayer", &luaGlobalFunctions_GetPlayer);
-	lua_register(L, "GetLUAEngine", &luaGlobalFunctions_GetLUAEngine);
-	lua_register(L, "GetLuaEngine", &luaGlobalFunctions_GetLUAEngine);
-	lua_register(L, "GetLuaEngineVersion", &luaGlobalFunctions_GetLuaEngineVersion);
-	lua_register(L, "GetGameTime", &luaGlobalFunctions_GetGameTime);
-	lua_register(L, "WorldDBQuery", &luaGlobalFunctions_WorldDBQuery);
-	lua_register(L, "CharDBQuery", &luaGlobalFunctions_CharDBQuery);
-	lua_register(L, "WorldDBQueryTable", &luaGlobalFunctions_WorldDBQueryTable);
-	lua_register(L, "CharDBQueryTable", &luaGlobalFunctions_CharDBQueryTable);
-	lua_register(L, "SendWorldMessage", &luaGlobalFunctions_SendWorldMessage);
-	lua_register(L, "ReloadTable", &luaGlobalFunctions_ReloadTable);
-	lua_register(L, "ReloadLuaEngine", &luaGlobalFunctions_ReloadLuaEngine);
-	lua_register(L, "Rehash", &luaGlobalFunctions_Rehash);
-	lua_register(L, "logcol", &luaGlobalFunctions_logcol);
-	lua_register(L, "GetPlayersInWorld", &luaGlobalFunctions_GetPlayersInWorld);
-	lua_register(L, "GetSandshroudRevision", &EmptyGlobalFunction /*&luaGlobalFunctions_GetSandshroudRevision*/);
-	lua_register(L, "GetPlayersInMap", &luaGlobalFunctions_GetPlayersInMap);
-	lua_register(L, "GetPlayersInZone", &luaGlobalFunctions_GetPlayersInZone);
-	lua_register(L, "SendMail", &luaGlobalFunctions_SendMail);
-	lua_register(L, "GetTaxiPath", &luaGlobalFunctions_GetTaxiPath);
-	lua_register(L, "SetDBCSpellVar", &EmptyGlobalFunction /*&luaGlobalFunctions_SetDBCSpellVar*/);
-	lua_register(L, "GetDBCSpellVar", &EmptyGlobalFunction /*&luaGlobalFunctions_GetDBCSpellVar*/);
+	lua_register(L, "PerformIngameSpawn", &LuaGlobalFunctions_PerformIngameSpawn);
+	lua_register(L, "GetPlayer", &LuaGlobalFunctions_GetPlayer);
+	lua_register(L, "GetLUAEngine", &LuaGlobalFunctions_GetLUAEngine);
+	lua_register(L, "GetLuaEngine", &LuaGlobalFunctions_GetLUAEngine);
+	lua_register(L, "GetLuaEngineVersion", &LuaGlobalFunctions_GetLuaEngineVersion);
+	lua_register(L, "GetGameTime", &LuaGlobalFunctions_GetGameTime);
+	lua_register(L, "WorldDBQuery", &LuaGlobalFunctions_WorldDBQuery);
+	lua_register(L, "CharDBQuery", &LuaGlobalFunctions_CharDBQuery);
+	lua_register(L, "WorldDBQueryTable", &LuaGlobalFunctions_WorldDBQueryTable);
+	lua_register(L, "CharDBQueryTable", &LuaGlobalFunctions_CharDBQueryTable);
+	lua_register(L, "SendWorldMessage", &LuaGlobalFunctions_SendWorldMessage);
+	lua_register(L, "ReloadTable", &LuaGlobalFunctions_ReloadTable);
+	lua_register(L, "ReloadLuaEngine", &LuaGlobalFunctions_ReloadLuaEngine);
+	lua_register(L, "Rehash", &LuaGlobalFunctions_Rehash);
+	lua_register(L, "logcol", &LuaGlobalFunctions_logcol);
+	lua_register(L, "GetPlayersInWorld", &LuaGlobalFunctions_GetPlayersInWorld);
+	lua_register(L, "GetSandshroudRevision", &LuaGlobalFunctions_GetSandshroudRevision);
+	lua_register(L, "SendPvPCaptureMessage", &LuaGlobalFunctions_SendPvPCaptureMessage);
+	lua_register(L, "GetPlayersInMap", &LuaGlobalFunctions_GetPlayersInMap);
+	lua_register(L, "GetPlayersInZone", &LuaGlobalFunctions_GetPlayersInZone);
+	lua_register(L, "SendMail", &LuaGlobalFunctions_SendMail);
+	lua_register(L, "GetTaxiPath", &LuaGlobalFunctions_GetTaxiPath);
+	lua_register(L, "SetDBCSpellVar", &LuaGlobalFunctions_SetDBCSpellVar);
+	lua_register(L, "GetDBCSpellVar", &LuaGlobalFunctions_GetDBCSpellVar);
 
 	//Lua's bit instructions
-	lua_register(L, "bit_and", &luaGlobalFunctions_bit_and);
-	lua_register(L, "bit_or", &luaGlobalFunctions_bit_or);
-	lua_register(L, "bit_xor", &luaGlobalFunctions_bit_xor);
-	lua_register(L, "bit_not", &luaGlobalFunctions_bit_not);
-	lua_register(L, "bit_shiftleft", &luaGlobalFunctions_bit_shiftleft);
-	lua_register(L, "bit_shiftright", &luaGlobalFunctions_bit_shiftright);
+	lua_register(L, "bit_and", &LuaGlobalFunctions_bit_and);
+	lua_register(L, "bit_or", &LuaGlobalFunctions_bit_or);
+	lua_register(L, "bit_xor", &LuaGlobalFunctions_bit_xor);
+	lua_register(L, "bit_not", &LuaGlobalFunctions_bit_not);
+	lua_register(L, "bit_shiftleft", &LuaGlobalFunctions_bit_shiftleft);
+	lua_register(L, "bit_shiftright", &LuaGlobalFunctions_bit_shiftright);
 
-	lua_register(L, "RemoveTimedEventsInTable", &EmptyGlobalFunction /*&luaGlobalFunctions_RemoveTimedEventsInTable*/);
-	lua_register(L, "RemoveTimedEventsWithName", &EmptyGlobalFunction /*&luaGlobalFunctions_RemoveTimedEventsWithName*/);
-	lua_register(L, "RemoveTimedEvent", &EmptyGlobalFunction /*&luaGlobalFunctions_RemoveTimedEvent*/);
-	lua_register(L, "HasTimedEvents", &EmptyGlobalFunction /*&luaGlobalFunctions_HasTimedEvents*/);
-	lua_register(L, "HasTimedEventInTable", &EmptyGlobalFunction /*&luaGlobalFunctions_HasTimedEventInTable*/);
-	lua_register(L, "HasTimedEventWithName", &EmptyGlobalFunction /*&luaGlobalFunctions_HasTimedEventWithName*/);
-	lua_register(L, "HasTimedEvent", &EmptyGlobalFunction /*&luaGlobalFunctions_HasTimedEvent*/);
-	lua_register(L, "GetPlatform", &EmptyGlobalFunction /*&luaGlobalFunctions_GetPlatform*/);
-	lua_register(L, "NumberToGUID", &EmptyGlobalFunction /*&luaGlobalFunctions_NumberToGUID*/);
-	lua_register(L, "SendPacketToWorld", &EmptyGlobalFunction /*&luaGlobalFunctions_SendPacketToWorld*/);
-	lua_register(L, "SendPacketToInstance", &EmptyGlobalFunction /*&luaGlobalFunctions_SendPacketToInstance*/);
-	lua_register(L, "SendPacketToZone", &EmptyGlobalFunction /*&luaGlobalFunctions_SendPacketToZone*/);
-	lua_register(L, "SendPacketToChannel", &EmptyGlobalFunction /*&luaGlobalFunctions_SendPacketToChannel*/);
+	lua_register(L, "RemoveTimedEventsInTable", &LuaGlobalFunctions_RemoveTimedEventsInTable);
+	lua_register(L, "RemoveTimedEventsWithName", &LuaGlobalFunctions_RemoveTimedEventsWithName);
+	lua_register(L, "RemoveTimedEvent", &LuaGlobalFunctions_RemoveTimedEvent);
+	lua_register(L, "HasTimedEvents", &LuaGlobalFunctions_HasTimedEvents);
+	lua_register(L, "HasTimedEventInTable", &LuaGlobalFunctions_HasTimedEventInTable);
+	lua_register(L, "HasTimedEventWithName", &LuaGlobalFunctions_HasTimedEventWithName);
+	lua_register(L, "HasTimedEvent", &LuaGlobalFunctions_HasTimedEvent);
+	lua_register(L, "GetPlatform", &LuaGlobalFunctions_GetPlatform);
+	lua_register(L, "NumberToGUID", &LuaGlobalFunctions_NumberToGUID);
+	lua_register(L, "SendPacketToWorld", &LuaGlobalFunctions_SendPacketToWorld);
+	lua_register(L, "SendPacketToInstance", &LuaGlobalFunctions_SendPacketToInstance);
+	lua_register(L, "SendPacketToZone", &LuaGlobalFunctions_SendPacketToZone);
+	lua_register(L, "SendPacketToChannel", &LuaGlobalFunctions_SendPacketToChannel);
+
+	lua_register(L, "ToLower", &LuaGlobalFunctions_ToLower);
+	lua_register(L, "tolower", &LuaGlobalFunctions_ToLower);
 }
 
 #endif // __TABLEFUNCTIONS_H

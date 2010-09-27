@@ -926,7 +926,7 @@ struct AreaGroup
 struct AreaTable
 {
 	uint32 AreaId;
-//	uint32 mapId;
+	uint32 mapId;
 	uint32 ZoneId;
 	uint32 explorationFlag;
 	uint32 AreaFlags;

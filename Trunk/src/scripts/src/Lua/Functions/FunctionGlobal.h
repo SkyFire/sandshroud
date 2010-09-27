@@ -25,7 +25,7 @@
 #define ENGINE_NAME "SandshroudLua" //You should check in your scripts that GetLuaEngine() == "LuaHypArc"
 #define ENGINE_VERSION 1.0f
 
-int luaGlobalFunctions_PerformIngameSpawn(lua_State * L)
+int LuaGlobalFunctions_PerformIngameSpawn(lua_State * L)
 {
 	uint32 spawntype = luaL_checkint(L, 1);
 	uint32 entry = luaL_checkint(L, 2);
@@ -142,13 +142,13 @@ int luaGlobalFunctions_PerformIngameSpawn(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_GetGameTime(lua_State * L)
+int LuaGlobalFunctions_GetGameTime(lua_State * L)
 {
 	lua_pushnumber(L, ((uint32)sWorld.GetGameTime())); //in seconds.
 	return 1;
 }
 
-int luaGlobalFunctions_WorldDBQuery(lua_State * L)
+int LuaGlobalFunctions_WorldDBQuery(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	if (!qStr)
@@ -162,7 +162,7 @@ int luaGlobalFunctions_WorldDBQuery(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_CharDBQuery(lua_State * L)
+int LuaGlobalFunctions_CharDBQuery(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	if (!qStr)
@@ -176,7 +176,7 @@ int luaGlobalFunctions_CharDBQuery(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_WorldDBQueryTable(lua_State * L)
+int LuaGlobalFunctions_WorldDBQueryTable(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	if(!qStr)
@@ -188,7 +188,7 @@ int luaGlobalFunctions_WorldDBQueryTable(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_CharDBQueryTable(lua_State * L)
+int LuaGlobalFunctions_CharDBQueryTable(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	if(!qStr)
@@ -200,7 +200,7 @@ int luaGlobalFunctions_CharDBQueryTable(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_GetPlayer(lua_State * L)
+int LuaGlobalFunctions_GetPlayer(lua_State * L)
 {
 	const char * plName = luaL_checkstring(L,1);
 	Player * plr = objmgr.GetPlayer(plName);
@@ -216,26 +216,26 @@ int luaGlobalFunctions_GetPlayer(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_GetLUAEngine(lua_State * L) //also mapped to GetLuaEngine()
+int LuaGlobalFunctions_GetLUAEngine(lua_State * L) //also mapped to GetLuaEngine()
 {
 	lua_pushstring(L, ENGINE_NAME);
 	return 1;
 }
 
-int luaGlobalFunctions_GetLuaEngineVersion(lua_State * L)
+int LuaGlobalFunctions_GetLuaEngineVersion(lua_State * L)
 {
 	lua_pushnumber(L, ENGINE_VERSION);
 	return 1;
 }
 
-int luaGlobalFunctions_logcol(lua_State * L)
+int LuaGlobalFunctions_logcol(lua_State * L)
 {
 	int color = luaL_checkint(L,1);
 	Log.Color(color);
 	return 0;
 }
 
-/*int luaGlobalFunctions_WorldDBQuery(lua_State * L)
+/*int LuaGlobalFunctions_WorldDBQuery(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	uint32 fID = luaL_optint(L,2,0); //column
@@ -247,7 +247,7 @@ int luaGlobalFunctions_logcol(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_CharDBQuery(lua_State * L)
+int LuaGlobalFunctions_CharDBQuery(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	uint32 fID = luaL_optint(L,2,0); //column
@@ -259,7 +259,7 @@ int luaGlobalFunctions_CharDBQuery(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_WorldDBQueryTable(lua_State * L)
+int LuaGlobalFunctions_WorldDBQueryTable(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	lua_newtable(L);
@@ -269,7 +269,7 @@ int luaGlobalFunctions_WorldDBQueryTable(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_CharDBQueryTable(lua_State * L)
+int LuaGlobalFunctions_CharDBQueryTable(lua_State * L)
 {
 	const char * qStr = luaL_checkstring(L,1);
 	lua_newtable(L);
@@ -279,7 +279,7 @@ int luaGlobalFunctions_CharDBQueryTable(lua_State * L)
 	return 1;
 }*/
 
-int luaGlobalFunctions_SendWorldMessage(lua_State * L)
+int LuaGlobalFunctions_SendWorldMessage(lua_State * L)
 {
 	const char * message = luaL_checkstring(L,1);
 	uint32 MsgType = luaL_checkint(L,2);
@@ -295,7 +295,7 @@ int luaGlobalFunctions_SendWorldMessage(lua_State * L)
 	return 0;
 }
 
-int luaGlobalFunctions_ReloadTable(lua_State * L)
+int LuaGlobalFunctions_ReloadTable(lua_State * L)
 {
 	const char * TableName = luaL_checkstring(L,1);
 	if (!stricmp(TableName, "spell_disable"))
@@ -344,7 +344,7 @@ int luaGlobalFunctions_ReloadTable(lua_State * L)
 	return 0;
 }
 
-int luaGlobalFunctions_ReloadLuaEngine(lua_State * L)
+int LuaGlobalFunctions_ReloadLuaEngine(lua_State * L)
 {
 	/*g_luaMgr.Restart();
 	MapMgr * mgr;
@@ -369,7 +369,7 @@ int luaGlobalFunctions_ReloadLuaEngine(lua_State * L)
 	return 0;
 }
 
-int luaGlobalFunctions_GetPlayersInWorld(lua_State * L)
+int LuaGlobalFunctions_GetPlayersInWorld(lua_State * L)
 {
 	Player * ret = NULL;
 	uint32 count = 0;
@@ -389,56 +389,37 @@ int luaGlobalFunctions_GetPlayersInWorld(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_Rehash(lua_State * L)
+int LuaGlobalFunctions_Rehash(lua_State * L)
 {
 	sWorld.Rehash(true);
 	return 0;
 }
 
-/*int luaGlobalFunctions_GetburningemuRevision(lua_State * L)
+int LuaGlobalFunctions_GetSandshroudRevision(lua_State * L)
 {
 	lua_pushnumber(L,BUILD_REVISION);
 	return 1;
-}*/
-
-/*int luaGlobalFunctions_GetInstanceIdsByMap(lua_State * L)
-{
-	uint32 mapid = luaL_checkint(L,1);
-	uint32 ret = NULL;
-	uint32 count = 0;
-	lua_newtable(L);
-
-	InstanceMap * instancemap = sInstanceMgr.GetInstanceMap(mapid);
-	for(InstanceMap::iterator itr = instancemap->begin(); itr != instancemap->end(); ++itr)
-	{
-		count++,
-		ret = itr->second->m_instanceId;
-		lua_pushinteger(L,count);
-		lua_pushinteger(L,ret);
-		lua_rawset(L,-3);
-	}
-	return 1;
-}*/
+}
 
 //////////////////////////////////////////////////////////////////////////
 // WORLD PVP NOT SUPPORTED!
 //////////////////////////////////////////////////////////////////////////
-/*
-int luaGlobalFunctions_SendPvPCaptureMessage(lua_State * L)
+int LuaGlobalFunctions_SendPvPCaptureMessage(lua_State * L)
 {
 	uint32 zoneid = luaL_checkint(L, 1);
 	const char* msg = luaL_checkstring(L, 2);
 	AreaTable * at = dbcArea.LookupEntry(zoneid);
 	if(!zoneid || !msg || !at)
 		return 1;
+
 	MapMgr* mapmgr = sInstanceMgr.GetMapMgr(at->mapId);
 	if (mapmgr)
 		mapmgr->SendPvPCaptureMessage(ZONE_MASK_ALL, zoneid, msg);
+
 	return 1;
 }
-*/
 
-int luaGlobalFunctions_GetPlayersInMap(lua_State * L)
+int LuaGlobalFunctions_GetPlayersInMap(lua_State * L)
 {
 	Player * ret = NULL;
 	uint32 count = 0;
@@ -458,7 +439,7 @@ int luaGlobalFunctions_GetPlayersInMap(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_GetPlayersInZone(lua_State * L)
+int LuaGlobalFunctions_GetPlayersInZone(lua_State * L)
 {
 	Player * ret = NULL;
 	uint32 count = 0;
@@ -481,7 +462,7 @@ int luaGlobalFunctions_GetPlayersInZone(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_SendMail(lua_State * L)
+int LuaGlobalFunctions_SendMail(lua_State * L)
 {
 	uint32 type = luaL_checkint(L,1);
 	uint64 sender_guid = GuidMgr::check(L,2);
@@ -496,7 +477,7 @@ int luaGlobalFunctions_SendMail(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_GetTaxiPath(lua_State * L)
+int LuaGlobalFunctions_GetTaxiPath(lua_State * L)
 {
 	uint32 path = luaL_checkint(L, 1);
 	TaxiPath * tp = sTaxiMgr.GetTaxiPath(path);
@@ -507,7 +488,7 @@ int luaGlobalFunctions_GetTaxiPath(lua_State * L)
 	return 1;
 }
 
-/*int luaGlobalFunctions_SetDBCSpellVar(lua_State * L)
+int LuaGlobalFunctions_SetDBCSpellVar(lua_State * L)
 {
 	uint32 entry = luaL_checkinteger(L,1);
 	const char* var = luaL_checkstring(L,2);
@@ -516,18 +497,25 @@ int luaGlobalFunctions_GetTaxiPath(lua_State * L)
 	{
 		subindex = luaL_optint(L,3,0);
 	}
+
 	int valindex = 3;
 	if (subindex)
 		valindex++;
+
 	SpellEntry * proto = dbcSpell.LookupEntryForced(entry);
 	if (!entry || !var || subindex < 0 || !proto) 
 	{ 
 		lua_pushboolean(L, 0); 
 		return 1; 
 	}
+
 	LuaSpellEntry l = GetLuaSpellEntryByName(var);
 	if (!l.name)
-		RET_NIL();
+	{ 
+		lua_pushnil(L);
+		return 1; 
+	}
+
 	switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
 	{
 	case 0:
@@ -550,7 +538,7 @@ int luaGlobalFunctions_GetTaxiPath(lua_State * L)
 	return 1;
 }
 
-int luaGlobalFunctions_GetDBCSpellVar(lua_State * L)
+int LuaGlobalFunctions_GetDBCSpellVar(lua_State * L)
 {
 	uint32 entry = luaL_checkinteger(L,1);
 	const char* var = luaL_checkstring(L,2);
@@ -561,9 +549,14 @@ int luaGlobalFunctions_GetDBCSpellVar(lua_State * L)
 		lua_pushnil(L);
 		return 1; 
 	}
+
 	LuaSpellEntry l = GetLuaSpellEntryByName(var);
 	if (!l.name)
-		RET_NIL();
+	{ 
+		lua_pushnil(L);
+		return 1; 
+	}
+
 	switch (l.typeId) //0: int, 1: char*, 2: bool, 3: float
 	{
 	case 0:
@@ -580,9 +573,9 @@ int luaGlobalFunctions_GetDBCSpellVar(lua_State * L)
 		break;
 	}
 	return 1;
-}*/
+}
 
-int luaGlobalFunctions_bit_and(lua_State *L)
+int LuaGlobalFunctions_bit_and(lua_State *L)
 {
 	uint32 left = CHECK_ULONG(L,1);
 	int top = lua_gettop(L);
@@ -597,7 +590,7 @@ int luaGlobalFunctions_bit_and(lua_State *L)
 	RET_NUMBER(left)
 }
 
-int luaGlobalFunctions_bit_or(lua_State * L)
+int LuaGlobalFunctions_bit_or(lua_State * L)
 {
 	uint32 left = CHECK_ULONG(L,1);
 	int top = lua_gettop(L);
@@ -612,7 +605,7 @@ int luaGlobalFunctions_bit_or(lua_State * L)
 	RET_NUMBER(left)
 }
 
-int luaGlobalFunctions_bit_xor(lua_State * L)
+int LuaGlobalFunctions_bit_xor(lua_State * L)
 {
 	uint32 left = CHECK_ULONG(L,1);
 	int top = lua_gettop(L);
@@ -627,110 +620,123 @@ int luaGlobalFunctions_bit_xor(lua_State * L)
 	RET_NUMBER(left)
 }
 
-int luaGlobalFunctions_bit_not(lua_State * L)
+int LuaGlobalFunctions_bit_not(lua_State * L)
 {
 	uint32 left = CHECK_ULONG(L,1);
 	RET_NUMBER(~left)
 }
 
-int luaGlobalFunctions_bit_shiftleft(lua_State * L)
+int LuaGlobalFunctions_bit_shiftleft(lua_State * L)
 {
 	uint32 left = CHECK_ULONG(L,1);
 	uint8 count = luaL_checkinteger(L,2) & 0x7F;
 	RET_NUMBER(left << count)
 }
 
-int luaGlobalFunctions_bit_shiftright(lua_State * L)
+int LuaGlobalFunctions_bit_shiftright(lua_State * L)
 {
 	uint32 left = CHECK_ULONG(L,1);
 	uint8 count = luaL_checkinteger(L,2) & 0x7F;
 	RET_NUMBER(left >> count)
 }
 
-/*int luaGlobalFunctions_RemoveTimedEvents(lua_State * L)
+int LuaGlobalFunctions_RemoveTimedEvents(lua_State * L)
 {
-	sLuaEventMgr.RemoveEvents();
-	return 0;
+	LuaEvent.RemoveEvents();
+	return 1;
 }
-int luaGlobalFunctions_RemoveTimedEventsWithName(lua_State * L)
+
+int LuaGlobalFunctions_RemoveTimedEventsWithName(lua_State * L)
 {
 	const char* name = luaL_checkstring(L,1);
-	sLuaEventMgr.RemoveEventsByName(name);
-	return 0;
+	LuaEvent.RemoveEventsByName(name);
+	return 1;
 }
-int luaGlobalFunctions_RemoveTimedEvent(lua_State * L)
+
+int LuaGlobalFunctions_RemoveTimedEvent(lua_State * L)
 {
 	int ref = luaL_checkint(L,1);
-	sLuaEventMgr.RemoveEventByRef(ref);
-	return 0;
+	LuaEvent.RemoveEventByRef(ref);
+	return 1;
 }
-int luaGlobalFunctions_RemoveTimedEventsInTable(lua_State * L)
+
+int LuaGlobalFunctions_RemoveTimedEventsInTable(lua_State * L)
 {
 	const char* table = luaL_checkstring(L,1);
-	sLuaEventMgr.RemoveEventsInTable(table);
-	return 0;
-}
-int luaGlobalFunctions_HasTimedEvents(lua_State * L)
-{
-	lua_pushboolean(L, sLuaEventMgr.event_HasEvents() ? 1 : 0);
+	LuaEvent.RemoveEventsInTable(table);
 	return 1;
 }
-int luaGlobalFunctions_HasTimedEvent(lua_State * L)
+
+int LuaGlobalFunctions_HasTimedEvents(lua_State * L)
+{
+	lua_pushboolean(L, LuaEvent.event_HasEvents() ? 1 : 0);
+	return 1;
+}
+
+int LuaGlobalFunctions_HasTimedEvent(lua_State * L)
 {
 	int ref = luaL_checkint(L,1);
-	lua_pushboolean(L, sLuaEventMgr.HasEvent(ref) ? 1 : 0);
+	lua_pushboolean(L, LuaEvent.HasEvent(ref) ? 1 : 0);
 	return 1;
 }
-int luaGlobalFunctions_HasTimedEventWithName(lua_State * L)
+
+int LuaGlobalFunctions_HasTimedEventWithName(lua_State * L)
 {
 	const char * name = luaL_checkstring(L,1);
-	lua_pushboolean(L, sLuaEventMgr.HasEventWithName(name) ? 1 : 0);
+	lua_pushboolean(L, LuaEvent.HasEventWithName(name) ? 1 : 0);
 	return 1;
 }
-int luaGlobalFunctions_HasTimedEventInTable(lua_State * L)
+
+int LuaGlobalFunctions_HasTimedEventInTable(lua_State * L)
 {
 	const char * table = luaL_checkstring(L,1);
-	lua_pushboolean(L, sLuaEventMgr.HasEventInTable(table) ? 1 : 0);
+	lua_pushboolean(L, LuaEvent.HasEventInTable(table) ? 1 : 0);
 	return 1;
 }
-int luaGlobalFunctions_GetPlatform(lua_State * L)
+
+int LuaGlobalFunctions_GetPlatform(lua_State * L)
 {
 	lua_pushliteral(L,PLATFORM_TEXT);
 	return 1;
 }
-int luaGlobalFunctions_NumberToGUID(lua_State * L)
+
+int LuaGlobalFunctions_NumberToGUID(lua_State * L)
 {
 	uint64 num = (uint64)luaL_checknumber(L,1);
-	PUSH_GUID(L,num);
+	GuidMgr::push(L, num);
 	return 1;
 }
-int luaGlobalFunctions_SendPacketToZone(lua_State * L)
+
+int LuaGlobalFunctions_SendPacketToZone(lua_State * L)
 {
 	WorldPacket * data = CHECK_PACKET(L,1);
 	uint32 zone_id = CHECK_ULONG(L,2);
 	if (data && zone_id)
 		sWorld.SendZoneMessage(data,zone_id);
-	return 0;
+
+	return 1;
 }
 
-int luaGlobalFunctions_SendPacketToInstance(lua_State * L)
+int LuaGlobalFunctions_SendPacketToInstance(lua_State * L)
 {
 	WorldPacket * data = CHECK_PACKET(L,1);
 	uint32 instance_id = CHECK_ULONG(L, 2);
 	if (data && instance_id)
 		sWorld.SendInstanceMessage(data,instance_id);
-	return 0;
+
+	return 1;
 }
 
-int luaGlobalFunctions_SendPacketToWorld(lua_State * L)
+int LuaGlobalFunctions_SendPacketToWorld(lua_State * L)
 {
 	WorldPacket * data = CHECK_PACKET(L,1);
 	if (data)
 		sWorld.SendGlobalMessage(data);
-	return 0;
+
+	return 1;
 }
 
-int luaGlobalFunctions_SendPacketToChannel(lua_State * L)
+int LuaGlobalFunctions_SendPacketToChannel(lua_State * L)
 {
 	WorldPacket * pack = CHECK_PACKET(L,1);
 	const char* channel_name = luaL_checkstring(L,2);
@@ -738,8 +744,22 @@ int luaGlobalFunctions_SendPacketToChannel(lua_State * L)
 	Channel* pChannel = channelmgr.GetChannel(channel_name, team);
 	if (!pChannel || !pack)
 		return 0;
+
 	pChannel->SendToAll(pack);
 	return 1;
-}*/
+}
+
+int LuaGlobalFunctions_ToLower(lua_State * L)
+{
+	std::string oldstring = luaL_checkstring(L,1);
+	if (!oldstring.size())
+	{
+		lua_pushnil(L);
+		return 0;
+	}
+
+	lua_pushstring(L, HEARTHSTONE_TOLOWER_RETURN(oldstring).c_str());
+	return 1;
+}
 
 #endif
