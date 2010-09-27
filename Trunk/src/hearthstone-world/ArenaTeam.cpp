@@ -48,7 +48,7 @@ ArenaTeam::ArenaTeam(uint32 Type, uint32 Id)
 	m_borderColour = 0;
 	m_borderStyle = 0;
 	m_backgroundColour = 0;
-	m_stat_rating = 1500;
+	m_stat_rating = 0;
 	m_stat_gamesplayedweek = 0;
 	m_stat_gamesplayedseason = 0;
 	m_stat_gameswonseason = 0;

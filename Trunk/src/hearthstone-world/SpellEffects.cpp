@@ -370,8 +370,7 @@ void Spell::SpellEffectInstantKill(uint32 i)
 		}break;
 	}
 	m_caster->DealDamage(unitTarget, unitTarget->GetUInt32Value(UNIT_FIELD_HEALTH), 0, 0, 0);
-	uint8 buffer[100];
-	StackPacket data(SMSG_SPELLINSTAKILLLOG, buffer, 100);
+	WorldPacket data(SMSG_SPELLINSTAKILLLOG, 200);
 	data << m_caster->GetGUID() << unitTarget->GetGUID() << spellId;
 	m_caster->SendMessageToSet(&data, true);
 }
@@ -4029,7 +4028,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 						
 				Lock *lock = dbcLock.LookupEntry( itemTarget->GetProto()->LockId );
 				if(!lock) return;
-				for(int i=0;i<5;++i)
+				for(int i=0; i < 8; ++i)
 					if(lock->locktype[i] == 2 && lock->minlockskill[i] && lockskill >= lock->minlockskill[i])
 					{
 						v = lock->minlockskill[i];
@@ -4048,7 +4047,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				if( lock == NULL )
 					return;
 
-				for(int i=0;i<5;++i)
+				for(int i=0; i < 8;++i)
 				{
 					if(lock->locktype[i] == 2 && lock->minlockskill[i] && lockskill >= lock->minlockskill[i])
 					{

@@ -336,7 +336,7 @@ void GameObject::InitAI()
 			Lock *pLock = dbcLock.LookupEntry(GetInfo()->SpellFocus);
 			if(pLock)
 			{
-				for(uint32 i=0; i < 5; i++)
+				for(uint32 i=0; i < 8; i++)
 				{
 					if(pLock->locktype[i])
 					{
@@ -344,9 +344,7 @@ void GameObject::InitAI()
 						{
 							//herbalism and mining;
 							if(pLock->lockmisc[i] == LOCKTYPE_MINING || pLock->lockmisc[i] == LOCKTYPE_HERBALISM)
-							{
 								CalcMineRemaining(true);
-							}
 						}
 					}
 				}
@@ -357,6 +355,12 @@ void GameObject::InitAI()
 		{
 			Health = pInfo->SpellFocus + pInfo->sound5;
 			SetByte(GAMEOBJECT_BYTES_1, 3, 255);
+		}break;
+		case GAMEOBJECT_TYPE_AURA_GENERATOR:
+		{
+			spellid = GetInfo()->sound1;
+			checkrate = 1;
+			sEventMgr.AddEvent(this, &GameObject::Update, uint32(200), EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 200, -1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		}break;
 	}
 
@@ -725,18 +729,19 @@ void GameObject::RemoveFromWorld(bool free_guid)
 
 uint32 GameObject::GetGOReqSkill()  
 {
-	if(GetEntry() == 180215) return 300;
-
 	if(GetInfo() == NULL)
 		return 0;
 
 	Lock *lock = dbcLock.LookupEntry( GetInfo()->SpellFocus );
-	if(!lock) return 0;
-	for(uint32 i=0;i<5;++i)
+	if(!lock) 
+		return 0;
+	for(uint32 i=0; i < 8; ++i)
+	{
 		if(lock->locktype[i] == 2 && lock->minlockskill[i])
 		{
 			return lock->minlockskill[i];
 		}
+	}
 	return 0;
 }
 
@@ -812,11 +817,11 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			else
 			SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->Unknown1);
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
-			/*amg nerf
-			if(pcaster != NULL)
+			
+			/*if(pcaster != NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
-					pcaster->WinterGrasp->GoDestroyEvent(GetEntry(),TO_PLAYER(mcaster));
+					pcaster->WinterGrasp->GoDestroyEvent(GetEntry(),pcaster);
 			}*/
 		}
 	}
@@ -832,11 +837,11 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			}
 			else
 				SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->sound4);
-			/*amg double nerf
-			if(pcaster!=NULL)
+			
+			/*if(pcaster!=NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
-					pcaster->WinterGrasp->GoDamageEvent(GetEntry(),TO_PLAYER(mcaster));
+					pcaster->WinterGrasp->GoDamageEvent(GetEntry(),pcaster);
 			}*/
 			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
 		}
@@ -851,11 +856,11 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			else
 				SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->Unknown1);
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
-			/*amg triple nerf
-			if(pcaster != NULL)
+			
+			/*if(pcaster != NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
-					pcaster->WinterGrasp->GoDestroyEvent(GetEntry(),TO_PLAYER(mcaster));
+					pcaster->WinterGrasp->GoDestroyEvent(GetEntry(),pcaster);
 			}*/
 		}
 	}

@@ -496,12 +496,10 @@ struct ItemSetEntry
 struct Lock
 {
 	uint32 Id;
-	uint32 locktype[5]; // 0 - no lock, 1 - item needed for lock, 2 - min lockping skill needed
-	//uint32 unk1[3];
-	uint32 lockmisc[5]; // if type is 1 here is a item to unlock, else is unknow for now
-	//uint32 unk2[3];
-	uint32 minlockskill[5]; // min skill in lockpiking to unlock.
-	//uint32 unk3[11];
+	uint32 locktype[8]; //0 - no lock, 1 - item needed for lock, 2 - min lockping skill needed
+	uint32 lockmisc[8]; //if type is 1 here is a item to unlock, else is unknow for now
+	uint32 minlockskill[8]; //min skill in lockpiking to unlock.
+	//uint32 unk[8]; //unknown
 };
 
 struct emoteentry
@@ -1228,7 +1226,7 @@ struct VehicleEntry
  
 struct VehicleSeatEntry
 {
-	uint32 m_ID; // 0
+	uint32 m_ID;					// 0
 	uint32 m_flags;					// 1
 //	int32 m_attachmentID;			// 2
 	float m_attachmentOffsetX;		// 3

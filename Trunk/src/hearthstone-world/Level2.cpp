@@ -882,6 +882,15 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	case GAMEOBJECT_TYPE_FLAGSTAND:	 gottext << "Flag Stand";	break;
 	case GAMEOBJECT_TYPE_FISHINGHOLE:   gottext << "Fishing Hole";	break;
 	case GAMEOBJECT_TYPE_FLAGDROP:	  gottext << "Flag Drop";	break;
+	case GAMEOBJECT_TYPE_MINI_GAME:	  gottext << "Mini Game";	break;
+	case GAMEOBJECT_TYPE_LOTTERY_KIOSK:	  gottext << "Lottery KIOSK";	break;
+	case GAMEOBJECT_TYPE_CAPTURE_POINT:	  gottext << "Capture Point";	break;
+	case GAMEOBJECT_TYPE_AURA_GENERATOR: gottext << "Aura Generator"; break;
+	case GAMEOBJECT_TYPE_DUNGEON_DIFFICULTY: gottext << "Dungeon Difficulty"; break;
+	case GAMEOBJECT_TYPE_BARBER_CHAIR: gottext << "Barber Chair"; break;
+	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING: gottext << "Destructible Building"; break;
+	case GAMEOBJECT_TYPE_GUILD_BANK: gottext << "Guild Bank"; break;
+	case GAMEOBJECT_TYPE_TRAPDOOR: gottext << "Trap Door"; break;
 	default:							gottext << "Unknown.";	break;
 	}
 	GreenSystemMessage(m_session, "Type: %s%u|r -- %s", MSG_COLOR_LIGHTBLUE, type, gottext.str().c_str());

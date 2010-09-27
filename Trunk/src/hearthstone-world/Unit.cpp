@@ -3916,7 +3916,7 @@ void Unit::smsg_AttackStop(Unit* pVictim)
 	if(!pVictim)
 		return;
 
-	WorldPacket data(SMSG_ATTACKSTOP, 24);
+	WorldPacket data(SMSG_ATTACKSTOP, 20);
 	if(m_objectTypeId == TYPEID_PLAYER)
 	{
 		data << pVictim->GetNewGUID();

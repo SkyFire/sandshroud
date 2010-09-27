@@ -60,8 +60,7 @@ void WorldStateManager::CreateWorldState(uint32 uWorldStateId, uint32 uInitialVa
 void WorldStateManager::UpdateWorldState(uint32 uWorldStateId, uint32 uValue)
 {
 	WorldStateMap::iterator itr;
-	uint8 msgdata[10];
-	StackPacket data(SMSG_UPDATE_WORLD_STATE, msgdata, 10);
+	WorldPacket data(SMSG_UPDATE_WORLD_STATE, 20);
 
 	// lockit!??
 	//m_lock.Acquire();
@@ -149,8 +148,7 @@ void WorldStateManager::SendWorldStates(Player* pPlayer)
 void WorldStateManager::ClearWorldStates(Player* pPlayer)
 {
 	// clears the clients view of world states for this map
-	uint8 msgdata[10];
-	StackPacket data(SMSG_INIT_WORLD_STATES, msgdata, 10);
+	WorldPacket data(SMSG_INIT_WORLD_STATES, 20);
 
 	// map=0
 	// data1=0

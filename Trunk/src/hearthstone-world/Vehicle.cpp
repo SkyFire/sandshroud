@@ -877,8 +877,7 @@ void Vehicle::SetSpeed(uint8 SpeedType, float value)
 	if( value < 0.1f )
 		value = 0.1f;
 
-	uint8 buf[200];
-	StackPacket data(SMSG_FORCE_RUN_SPEED_CHANGE, buf, 200);
+	WorldPacket data(SMSG_FORCE_RUN_SPEED_CHANGE, 400);
 
 	if( SpeedType != SWIMBACK )
 	{

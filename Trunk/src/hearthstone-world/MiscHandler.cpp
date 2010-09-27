@@ -368,7 +368,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 				Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
 				if( pLock )
 				{
-					for( uint32 i=0; i < 5; i++ )
+					for( uint32 i=0; i < 8; i++ )
 					{
 						if( pLock->locktype[i] )
 						{
@@ -1435,14 +1435,15 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 		}
 		case GAMEOBJECT_TYPE_CAMERA://eye of azora
 		{
-			/*WorldPacket pkt(SMSG_TRIGGER_CINEMATIC,4);
-			pkt << (uint32)1;//i ve found only on such item,id =1
-			SendPacket(&pkt);*/
-
-			/* these are usually scripted effects. but in the case of some, (e.g. orb of translocation) the spellid is located in unknown1 */
 			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->Unknown1);
 			if(sp != NULL)
 				_player->CastSpell(_player,sp,true);
+			else
+			{
+				WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
+				data << uint32(goinfo->sound1);
+				SendPacket(&data);
+			}
 		}break;
 		case GAMEOBJECT_TYPE_MEETINGSTONE:	// Meeting Stone
 		{
@@ -1914,11 +1915,11 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recv_data)
 
 	Lock *lock = dbcLock.LookupEntry( pItem->GetProto()->LockId );
 
-	uint32 removeLockItems[5] = {0,0,0,0,0};
+	uint32 removeLockItems[8] = {0,0,0,0,0,0,0,0};
 
 	if(lock) // locked item
 	{
-		for(int i=0;i<5;++i)
+		for(int i=0; i<8;++i)
 		{
 			if(lock->locktype[i] == 1 && lock->lockmisc[i] > 0)
 			{
@@ -1939,9 +1940,11 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recv_data)
 				return;
 			}
 		}
-		for(int i=0;i<5;++i)
-			if(removeLockItems[i])
-				_player->GetItemInterface()->RemoveItemAmt(removeLockItems[i],1);
+		for(int j=0; j<8;++j)
+		{
+			if(removeLockItems[j])
+				_player->GetItemInterface()->RemoveItemAmt(removeLockItems[j],1);
+		}
 	}
 
 	// fill loot

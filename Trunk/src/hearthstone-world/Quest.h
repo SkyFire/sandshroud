@@ -110,8 +110,8 @@ enum QUEST_SHARE
 	QUEST_SHARE_MSG_QUEST_TIMER_FINISHED	= 9,
 	QUEST_SHARE_MSG_NOT_IN_PARTY			= 10,
 };
-class QuestScript;
 #pragma pack(push,1)
+class QuestScript;
 struct Quest
 {
 	uint32 id;
@@ -168,7 +168,6 @@ struct Quest
 	int32 reward_replimit/*[5]*/;
 
 	uint32 reward_title;
-
 	uint32 reward_money;
 	uint32 reward_honor;
 	uint32 reward_xp;
@@ -187,7 +186,7 @@ struct Quest
 	uint32 required_quest_and_or;
 	uint32 receive_items[4];
 	uint32 receive_itemcount[4];
-	uint8 is_repeatable;
+	uint8  is_repeatable;
 	uint32 reward_arenapoints;
 	uint32 start_phase;
 	uint32 complete_phase;

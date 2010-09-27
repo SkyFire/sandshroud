@@ -634,7 +634,6 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_PLAYER_LOGOUT].handler							= &WorldSession::HandlePlayerLogoutOpcode;
 	WorldPacketHandlers[CMSG_LOGOUT_CANCEL].handler							= &WorldSession::HandleLogoutCancelOpcode;
 	WorldPacketHandlers[CMSG_ZONEUPDATE].handler							= &WorldSession::HandleZoneUpdateOpcode;
-	//WorldPacketHandlers[CMSG_SET_TARGET_OBSOLETE].handler					= &WorldSession::HandleSetTargetOpcode;
 	WorldPacketHandlers[CMSG_SET_SELECTION].handler							= &WorldSession::HandleSetSelectionOpcode;
 	WorldPacketHandlers[CMSG_STANDSTATECHANGE].handler						= &WorldSession::HandleStandStateChangeOpcode;
 	WorldPacketHandlers[CMSG_CANCEL_MOUNT_AURA].handler						= &WorldSession::HandleDismountOpcode;
