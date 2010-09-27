@@ -173,7 +173,7 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 
 	recvData >> Name;
 	tmp_RealmID = sInfoCore.GetRealmIdByName(Name);
-	
+
 	if (tmp_RealmID == -1)
 	{
 		tmp_RealmID = sInfoCore.GenerateRealmID();
@@ -193,15 +193,39 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	realm->Colour = 0;
 	realm->ServerSocket = this;
 
-	recvData >> realm->Address >> realm->Icon >> realm->WorldRegion >> realm->Population >> realm->Lock;
+	recvData >> realm->Address;
+	uint16 tester = 0;
+	recvData >> tester;
+	if(tester == 0x042) // Sandshroud :D
+		recvData >> realm->Icon >> realm->WorldRegion >> realm->Population;
+	else if(tester == 0) // ArcEmu's Colour
+	{
+		uint32 icon32 = 0;
+		uint32 region32 = 0;
+		// Take tester again, so we get the full uint32 of colour
+		recvData >> tester >> icon32 >> region32 >> realm->Population;
+		realm->Icon = icon32;
+		realm->WorldRegion = region32;
+	}
+	else // Original Aspire? Break the tester into two, and retrieve the rest of the data.
+	{
+		realm->Icon = (((uint8*)tester)[0]);
+		realm->WorldRegion = (((uint8*)tester)[1]);
+		recvData >> realm->Population;
+	}
+
+	if(recvData.rpos() != recvData.wpos())
+		recvData >> realm->Lock;
+	else
+		realm->Lock = 0;
 
 	// Add to the main realm list
 	sInfoCore.AddRealm(tmp_RealmID, realm);
 
 	// Send back response packet.
 	WorldPacket data(RSMSG_REALM_REGISTERED, 4);
-	data << uint32(0);	  // Error
-	data << tmp_RealmID;		  // Realm ID
+	data << uint32(0);			// Error
+	data << tmp_RealmID;		// Realm ID
 	data << realm->Name;
 	SendPacket(&data);
 	server_ids.insert(tmp_RealmID);

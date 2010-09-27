@@ -20,8 +20,6 @@
 
 #include "LogonStdAfx.h"
 
-#define SELECTIVE_REALM_LIST
-
 initialiseSingleton(AccountMgr);
 initialiseSingleton(IPBanner);
 initialiseSingleton(InformationCore);
@@ -495,11 +493,9 @@ void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
 
 void InformationCore::SendRealms(AuthSocket * Socket)
 {
-#ifdef SELECTIVE_REALM_LIST
 	Account * acct = sAccountMgr.GetAccount(Socket->GetAccountName());
 
 	bool isGM = ( acct ? (acct->GMFlags != NULL) : false );
-#endif
 
 	realmLock.Acquire();
 
@@ -520,18 +516,15 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	HM_NAMESPACE::hash_map<uint32, uint8>::iterator it;
 	for(; itr != m_realms.end(); ++itr)
 	{
-#ifdef SELECTIVE_REALM_LIST
 		if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
 		{
 			count -= 1;
 			continue;
 		}
-#endif
-		data << itr->second->Icon;
-		data << uint8(0);		// delete when using data << itr->second->Lock;
-		data << itr->second->Colour;		
 
-		// This part is the same for all.
+		data << itr->second->Icon;
+		data << uint8(0);
+		data << itr->second->Colour;
 		data << itr->second->Name;
 		data << itr->second->Address;
 		data << itr->second->Population-1.0f;
@@ -540,7 +533,7 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		it = itr->second->CharacterMap.find(Socket->GetAccountID());
 		data << uint8( (it == itr->second->CharacterMap.end()) ? 0 : it->second );
 		data << itr->second->WorldRegion;
-		data << uint8(6);    //Realm ID
+		data << uint8(GetRealmIdByName(itr->second->Name));		//Realm ID
 	}
 	realmLock.Release();
 

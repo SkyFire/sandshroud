@@ -97,6 +97,7 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 				Realm * realm = *itr;
 				data << realm->Name;
 				data << realm->Address;
+				data << uint16(0x042); // Six by nine. Forty two.
 				data << realm->Icon;
 				data << realm->WorldRegion;
 				data << realm->Population;
