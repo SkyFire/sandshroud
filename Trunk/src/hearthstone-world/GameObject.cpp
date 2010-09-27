@@ -358,7 +358,7 @@ void GameObject::InitAI()
 		}break;
 		case GAMEOBJECT_TYPE_AURA_GENERATOR:
 		{
-			spellid = GetInfo()->sound1;
+			spellid = GetInfo()->sound2;
 			checkrate = 1;
 			sEventMgr.AddEvent(this, &GameObject::Update, uint32(200), EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 200, -1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		}break;
