@@ -7285,6 +7285,12 @@ void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 	SetTaxiPath(path);
 	SetTaxiPos();
 	SetTaxiState(true);
+	if(GetSession())
+	{
+		GetSession()->m_isFalling = false;
+		GetSession()->m_isJumping = false;
+	}
+
 	m_taxi_ride_time = getMSTime();
 
 	//uint32 traveltime = uint32(path->getLength() * TAXI_TRAVEL_SPEED); // 36.7407

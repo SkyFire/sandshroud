@@ -550,7 +550,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		if(_player->blinktimer < getMSTime())
 		{
 			_player->blinked = false;
-			_player->m_fallDisabledUntil = UNIXTIME + 5;
+			_player->m_fallDisabledUntil = getMSTime() + 5;
 			_player->DelaySpeedHack( 5000 );
 		}
 	}
@@ -609,7 +609,8 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 			//checks that player has fallen more than 12 units, otherwise no damage will be dealt
 			//falltime check is also needed here, otherwise sudden changes in Z axis position, such as using !recall, may result in death
-			if( _player->isAlive() && !_player->GodModeCheat && falldistance > 12 && ( getMSTime() >= _player->m_fallDisabledUntil ) )
+			if( _player->isAlive() && !_player->GodModeCheat && falldistance > 12 && ( getMSTime() >= _player->m_fallDisabledUntil )
+				|| _player->HasAura(130) ) // Taxi path or slow fall.
 			{
 				// 1.7% damage for each unit fallen on Z axis over 13
 				Unit* toDamage = TO_UNIT(_player);

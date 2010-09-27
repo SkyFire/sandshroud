@@ -837,6 +837,7 @@ void GossipScript::GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, u
 				objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), 14393, Plr);
 				Menu->SendTo(Plr);
 				Plr->CastSpell(Plr, 63624, true);
+				Plr->GetAchievementInterface()->ForceEarnedAchievement(2716);
 			}break;
 		case 18: // Enable and disable XP.
 			{

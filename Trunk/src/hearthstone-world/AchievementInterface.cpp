@@ -397,10 +397,11 @@ bool AchievementInterface::IsHardCoded(uint32 id)
 {
 	switch(id)
 	{
-	//Crow: These shouldn't to be disabled.
+	case 2716: // Dual Talent Specialization
+
+	//Crow: These shouldn't be disabled.
 //	case 4396: // Onyxia's Lair (10 player)
 //	case 4397: // Onyxia's Lair (25 player)
-
 	case 4402: // More Dots! (10 player)
 	case 4403: // Many Whelps! Handle It! (10 player)
 	case 4404: // She Deep Breaths More (10 player)
@@ -1682,13 +1683,13 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 	I have kept GM checks though, bastards o.o */
 void AchievementInterface::ForceEarnedAchievement(uint32 achievementId)
 {
+	if(m_player->GetSession()->HasGMPermissions())
+		return;
 	AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(achievementId);
 	if(pAchievementEntry == NULL)
 		return;
 	AchievementData * ad = GetAchievementDataByAchievementID(achievementId);
 	if(ad->completed)
-		return;
-	if(m_player->GetSession()->HasGMPermissions())
 		return;
 
 	EventAchievementEarned(ad);
