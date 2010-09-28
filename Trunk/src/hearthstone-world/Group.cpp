@@ -708,7 +708,7 @@ bool Group::HasMember(Player* pPlayer)
 
 bool Group::HasMember(PlayerInfo * info)
 {
-	GroupMembersSet::iterator itr;
+//	GroupMembersSet::iterator itr;
 	uint32 i = 0;
 
 	m_groupLock.Acquire();
@@ -724,6 +724,29 @@ bool Group::HasMember(PlayerInfo * info)
 
 	m_groupLock.Release();
 	return false;
+}
+
+uint32 Group::GetOnlineMemberCount()
+{
+	GroupMembersSet::iterator itr;
+	uint32 i = 0;
+	uint32 count = 0;
+
+	m_groupLock.Acquire();
+	for(; i < m_SubGroupCount; i++)
+	{
+		if(m_SubGroups[i])
+		{
+			for(itr = m_SubGroups[i]->m_GroupMembers.begin(); itr != m_SubGroups[i]->m_GroupMembers.end(); itr++)
+			{
+				if((*itr)->m_loggedInPlayer)
+					count++;
+			}
+		}
+	}
+	m_groupLock.Release();
+
+	return count;
 }
 
 void Group::MovePlayer(PlayerInfo *info, uint8 subgroup)

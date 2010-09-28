@@ -382,8 +382,8 @@ void WorldSession::LogoutPlayer(bool Save)
 		if(_player->GetGroup()) // Init group logout checks.
 		{
 			// Remove player from the group if he is in a group and not in a raid.
-			if(!(_player->GetGroup()->GetGroupType() & GROUP_TYPE_RAID) && _socket)
-				_player->GetGroup()->RemovePlayer(_player->m_playerInfo);
+			if(!(_player->GetGroup()->GetGroupType() & GROUP_TYPE_RAID) && _socket && (_player->GetGroup()->GetOnlineMemberCount() <= 1))
+				_player->GetGroup()->Disband();
 			else
 				_player->m_playerInfo->m_Group->Update();
 		}

@@ -180,6 +180,7 @@ public:
 	bool HasMember(PlayerInfo * info);
 	HEARTHSTONE_INLINE uint32 MemberCount(void) { return m_MemberCount; }
 	HEARTHSTONE_INLINE bool IsFull() { return ((m_GroupType == GROUP_TYPE_PARTY && m_MemberCount >= MAX_GROUP_SIZE_PARTY) || (m_GroupType == GROUP_TYPE_RAID && m_MemberCount >= MAX_GROUP_SIZE_RAID)); }
+	HEARTHSTONE_INLINE uint32 GetOnlineMemberCount();
 
 	SubGroup* FindFreeSubGroup();
 
