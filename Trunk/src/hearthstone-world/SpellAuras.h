@@ -750,7 +750,6 @@ public:
 	void EventPeriodicRegenManaStatPct(uint32 perc,uint32 stat);
 	void EventPeriodicSpeedModify(int32 mod);
 	void EventModAttackPowerByArmorUpdate(uint32 i);
-	//void EventJumpAndHeal();
 	void RelocateEvents();
 	int32 event_GetInstanceID();
 

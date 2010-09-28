@@ -7053,6 +7053,16 @@ void Aura::SpellAuraDrinkNew(bool apply)
 		return;
 	}
 
+	if(m_spellProto->NameHash == SPELL_HASH_HYSTERIA)
+	{
+		if(apply)
+			sEventMgr.AddEvent( this, &Aura::EventPeriodicDamagePercent, (uint32)1, EVENT_AURA_PERIODIC_DAMAGE_PERCENT, 1000, 30, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		else
+		{
+			sEventMgr.RemoveEvents( this, EVENT_AURA_PERIODIC_DAMAGE_PERCENT ); 
+			EventPeriodicDamagePercent((uint32)1); 
+		}
+	}
 	if( apply && m_spellProto->NameHash == SPELL_HASH_CHAINS_OF_ICE )
 	{
 		mod->fixed_amount[0] = 0;
@@ -7286,7 +7296,8 @@ void Aura::EventPeriodicDamagePercent(uint32 amount)
 	if(m_target->SchoolImmunityList[m_spellProto->School])
 		return;
 
-	uint32 damage = float2int32(amount/100.0f*m_target->GetUInt32Value(UNIT_FIELD_MAXHEALTH));
+	uint32 damage = m_target->GetModPUInt32Value(UNIT_FIELD_MAXHEALTH, amount);
+	
 
 	Unit * m_caster = GetUnitCaster();
 	if(m_caster!=NULL)
