@@ -668,10 +668,19 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 
 		if( pCreature->GetEntry() == 35364 || pCreature->GetEntry() == 35365 )
 		{
-			if(Plr->m_XPoff)
-				Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I wish to start gaining experience again.", 18, false, 100000, "Are you certain you wish to start gaining experience?" );
-			else
-				Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I no longer wish to gain experience.", 18, false, 100000, "Are you certain you wish to stop gaining experience?" );
+			if(Plr->getLevel() > 9 && Plr->getLevel() < sWorld.GetMaxLevel(Plr))
+			{
+				if(Plr->m_XPoff)
+				{
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I wish to start gaining experience again.",
+						18, false, 100000, "Are you certain you wish to start gaining experience?" );
+				}
+				else
+				{
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I no longer wish to gain experience.", 18,
+						false, 100000, "Are you certain you wish to stop gaining experience?" );
+				}
+			}
 		}
 	}
 

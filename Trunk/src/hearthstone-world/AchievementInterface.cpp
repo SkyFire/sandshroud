@@ -384,8 +384,6 @@ bool AchievementInterface::HandleBeforeChecks(AchievementData * ad)
 	if((string(ach->description).find("Heroic Difficulty") != string::npos) || ach->ID == 4526)
 		if(m_player->iInstanceType < MODE_5PLAYER_HEROIC)
 			return false;
-	if(m_player->getLevel() < 10) // Blizzard says no.
-		return false;
 	if(m_player->GetSession()->HasGMPermissions())
 		return false;
 	if(IsHardCoded(ad->id))
