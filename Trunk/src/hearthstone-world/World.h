@@ -659,6 +659,7 @@ public:
 	bool antihack_teleport;
 	bool antihack_speed;
 	bool antihack_flight;
+	bool antihack_wallclimb;
 	bool antihack_cheatengine;
 	bool no_antihack_on_gm;
 

@@ -121,6 +121,9 @@ void Player::Init()
 	Lfgcomment = "";
 	m_flyHackChances = 5;
 
+	m_wallhackCheckTimer = 0;
+	m_wallhackChances = 5;
+
 	for(int i=0; i < 3; i++)
 	{
 		LfgType[i] = 0;
@@ -1155,6 +1158,12 @@ void Player::Update( uint32 p_time )
 	{
 		_SpeedhackCheck();
 		m_speedhackCheckTimer = mstime + 1000;
+	}
+
+	if( mstime >= m_wallhackCheckTimer )
+	{
+		_WallHackCheck();
+		m_wallhackCheckTimer = mstime + 500;
 	}
 }
 
@@ -3129,6 +3138,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	m_position.o										= get_next_field.GetFloat();
 	m_mapId												= get_next_field.GetUInt32();
 	m_zoneId											= get_next_field.GetUInt32();
+	LastWHPosition = m_position;
 
 	// Calculate the base stats now they're all loaded
 	for(uint32 i = 0; i < 5; i++)
@@ -11846,6 +11856,38 @@ void Player::_SpeedhackCheck()
 			}
 		}
 	}
+}
+
+void Player::_WallHackCheck()
+{
+	if(!sWorld.antihack_wallclimb || (GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm))
+		return;
+
+	if(!GetSession()->m_isJumping && !GetSession()->m_isFalling)
+	{	// Make sure we aren't jumping or falling.
+		float z1 = LastWHPosition.z;
+		float z2 = GetPositionZ();
+
+		if(z2 > z1) // Our new height is greater than our old height
+		{
+			double deltaz = z2-z1;
+			double run = CalcDistance(this, LastWHPosition.x, LastWHPosition.y, z2);
+
+			if(deltaz/run > 1.2)
+			{
+				sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, if this is incorrect, please report it to an admin. %f", deltaz/run);
+				m_wallhackChances--;
+				if(!m_wallhackChances)
+				{
+					Root();
+					SetPosition(LastWHPosition, true);
+					sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, you will be disconnected shortly.");
+					sEventMgr.AddEvent(this, &Player::SoftDisconnect, EVENT_PLAYER_SOFT_DISCONNECT, 3000, 0, 0);
+				}
+			}
+		}
+	}
+	LastWHPosition = GetPosition();
 }
 
 void Player::_Disconnect()

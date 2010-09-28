@@ -1805,7 +1805,7 @@ float Object::CalcDistance(float OaX, float OaY, float OaZ, float ObX, float ObY
 	float xdest = OaX - ObX;
 	float ydest = OaY - ObY;
 	float zdest = OaZ - ObZ;
-	return sqrtf(zdest*zdest + ydest*ydest + xdest*xdest);
+	return sqrtf((zdest*zdest) + (ydest*ydest) + (xdest*xdest));
 }
 
 float Object::calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y )
