@@ -2245,6 +2245,7 @@ public:
 	uint8 GetChatTag() const;
 	void AddArenaPoints( uint32 arenapoints );
 	uint32 LastPhase;
+	bool RequireAmmo;
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);

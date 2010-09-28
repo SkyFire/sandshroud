@@ -294,7 +294,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraModDamageTakenPctPerCaster,                     //271
 	&Aura::SpellAuraNULL,                                           //272
 	&Aura::SpellAuraNULL,                                           //273
-	&Aura::SpellAuraNULL,                                           //274
+	&Aura::SpellAuraRequireNoAmmo,                                  //274
 	&Aura::SpellAuraNULL,                                           //275
 	&Aura::SpellAuraNULL,                                           //276
 	&Aura::SpellAuraRedirectThreat,                                 //277
@@ -604,7 +604,7 @@ const char* SpellAuraNames[TOTAL_SPELL_AURAS] = {
 	"MOD_DAMAGE_TAKEN_PCT_PER_CASTER",					// 271
 	"",													// 272
 	"",													// 273
-	"",													// 274
+	"REQUIRE_NO_AMMO",									// 274
 	"",													// 275
 	"",													// 276
 	"",													// 277
@@ -5076,10 +5076,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		{
 			if(apply)
 			{
-				/*WorldPacket data(12);
-				data.SetOpcode(SMSG_COOLDOWN_EVENT);
-				data << (uint32)m_spellProto->Id << m_target->GetGUID();
-				TO_PLAYER( m_target )->GetSession()->SendPacket(&data);*/
 				packetSMSG_COOLDOWN_EVENT cd;
 				cd.spellid = m_spellProto->Id;
 				cd.guid = m_target->GetGUID();
@@ -6865,6 +6861,17 @@ void Aura::SpellAuraModDamageTakenPctPerCaster(bool apply)
 			}
 		}
 	}
+}
+
+void Aura::SpellAuraRequireNoAmmo(bool apply)
+{
+	if(!m_target->IsPlayer())
+		return;
+	
+	if(apply)
+		TO_PLAYER(m_target)->RequireAmmo = false;
+	else
+		TO_PLAYER(m_target)->RequireAmmo = true;
 }
 
 void Aura::SpellAuraModDamagePercDone(bool apply)

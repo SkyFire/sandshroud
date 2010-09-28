@@ -270,6 +270,7 @@ enum MOD_TYPES
 	SPELL_AURA_FROZEN_TARGET=262,
 	SPELL_AURA_INCREASE_AP_BY_ATTRIBUTE=268,
 	SPELL_AURA_INCREASE_SPELL_DOT_DAMAGE_PCT = 271,
+	SPELL_AURA_REQUIRE_NO_AMMO = 274,
 	SPELL_AURA_REDIRECT_THREAT = 277,
 	SPELL_AURA_IGNORE_ARMOR_PCT=280,
 	SPELL_AURA_MOD_BASE_HEALTH = 282,
@@ -701,6 +702,7 @@ public:
 	void SpellAuraSkipCanCastCheck(bool apply);
 	void EventPeriodicDrink(uint32 amount);
 	void SpellAuraModDamageTakenPctPerCaster(bool apply);
+	void SpellAuraRequireNoAmmo(bool apply);
 	void SpellAuraSetPhase(bool apply);
 	void SpellAuraIncreaseAPByAttribute(bool apply);
 	void SpellAuraVehiclePassenger(bool apply);

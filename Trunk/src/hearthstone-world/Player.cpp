@@ -485,6 +485,7 @@ void Player::Init()
 	WinterGrasp = NULL;
 	watchedchannel = NULL;
 	LastPhase = 1; // TODO: SAVE TO DB!
+	RequireAmmo = true;
 	Unit::Init();
 }
 
@@ -5462,8 +5463,7 @@ void Player::UpdateStats()
 				AP += 30;
 			}
 
-			if( GetShapeShift() == FORM_MOONKIN || GetShapeShift() == FORM_CAT
-				|| GetShapeShift() == FORM_BEAR || GetShapeShift() == FORM_DIREBEAR )
+			if( GetShapeShift() == FORM_MOONKIN || GetShapeShift() == FORM_CAT|| GetShapeShift() == FORM_BEAR || GetShapeShift() == FORM_DIREBEAR )
 			{
 				// counting and adding AP from weapon to total AP.
 				Item* it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
@@ -5629,9 +5629,7 @@ void Player::UpdateStats()
 		SetUInt32Value( PLAYER_SHIELD_BLOCK, blockable_damage );
 	}
 	else
-	{
 		SetUInt32Value( PLAYER_SHIELD_BLOCK, 0 );
-	}
 
 	UpdateChances();
 	CalcDamage();
@@ -5997,10 +5995,6 @@ void Player::OnRemoveInRangeObject(Object* pObj)
 	if( pObj->IsCreature() && pObj->m_faction && pObj->m_faction->FactionFlags & 0x1000 )
 		m_hasInRangeGuards--;
 
-	//if (/*!CanSee(pObj) && */IsVisible(pObj))
-	//{
-		//RemoveVisibleObject(pObj);
-	//}
 	if(m_tempSummon == pObj)
 	{
 		m_tempSummon->RemoveFromWorld(false, true);
@@ -6019,9 +6013,7 @@ void Player::OnRemoveInRangeObject(Object* pObj)
 		Unit* p = m_CurrentCharm;
 
 		if(pObj == m_CurrentVehicle)
-		{
 			m_CurrentVehicle->RemovePassenger(TO_PLAYER(this));
-		}
 		else
 			this->UnPossess();
 		if(m_currentSpell)
@@ -6035,13 +6027,9 @@ void Player::OnRemoveInRangeObject(Object* pObj)
 	if(pObj == m_Summon)
 	{
 		if(m_Summon->IsSummonedPet())
-		{
 			m_Summon->Dismiss(true);
-		}
 		else
-		{
 			m_Summon->Remove(true, true, false);
-		}
 		if(m_Summon)
 		{
 			m_Summon->ClearPetOwner();
@@ -6049,13 +6037,6 @@ void Player::OnRemoveInRangeObject(Object* pObj)
 		}
 	}
 
-	/* wehee loop unrolling */
-/*	if(m_spellTypeTargets[0] == pObj)
-		m_spellTypeTargets[0] = NULL;
-	if(m_spellTypeTargets[1] == pObj)
-		m_spellTypeTargets[1] = NULL;
-	if(m_spellTypeTargets[2] == pObj)
-		m_spellTypeTargets[2] = NULL;*/
 	if(pObj->IsUnit())
 	{
 		for(uint32 x = 0; x < NUM_SPELL_TYPE_INDEX; ++x)
@@ -6064,10 +6045,7 @@ void Player::OnRemoveInRangeObject(Object* pObj)
 	}
 
 	if( pObj == DuelingWith )
-	{
-		//EndDuel(DUEL_WINNER_RETREAT);
 		sEventMgr.AddEvent(TO_PLAYER(this), &Player::EndDuel, (uint8)DUEL_WINNER_RETREAT, EVENT_PLAYER_DUEL_COUNTDOWN, 1, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	}
 }
 
 void Player::ClearInRangeSet()
@@ -6075,7 +6053,6 @@ void Player::ClearInRangeSet()
 	m_visibleObjects.clear();
 	Unit::ClearInRangeSet();
 }
-
 
 void Player::EventReduceDrunk(bool full)
 {
@@ -6148,13 +6125,9 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 
 	// handle items
 	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_ITEM)
-	{
 		lootObj = m_ItemInterface->GetItemByGUID(guid);
-	}
 	else
-	{
 		lootObj = m_mapMgr->_GetObject(guid);
-	}
 
 	if( lootObj == NULL )
 		return;
@@ -6443,8 +6416,19 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 
 	// Check ammo
 	Item* itm = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_RANGED );
-	if( itm == NULL )
-		fail = SPELL_FAILED_NO_AMMO;
+	if( RequireAmmo )
+	{
+		if( itm == NULL )
+			fail = SPELL_FAILED_NO_AMMO;
+
+		ItemPrototype * ammo = ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
+		if( ammo && getLevel()< ammo->RequiredLevel)
+			return SPELL_FAILED_LOWLEVEL;
+
+		ItemPrototype * ranged = ItemPrototypeStorage.LookupEntry(itm->GetEntry());
+		if( ammo && ranged && ammo->SubClass != ranged->AmmoType )
+			return SPELL_FAILED_NEED_AMMO;
+	}
 
 	// Player has clicked off target. Fail spell.
 	if( m_curSelection != m_AutoShotTarget )
@@ -6454,9 +6438,6 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 		fail = SPELL_FAILED_TARGETS_DEAD;
 
 	if( GetCurrentSpell() )
-		return -1;
-
-	if( fail > 0 )
 		return -1;
 
 	// Supalosa - The hunter ability Auto Shot is using Shoot range, which is 5 yards shorter.
@@ -6489,7 +6470,7 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 
 	if( spellid == SPELL_RANGED_THROW || spellid == SPELL_RANGED_WAND)
 	{
-		if( itm != NULL ) // no need for this
+		if( itm != NULL && RequireAmmo) // no need for this
 			if( GetItemInterface()->GetItemCount( itm->GetEntry() ) == 0 )
 				fail = SPELL_FAILED_NO_AMMO;
 	}
@@ -6501,9 +6482,9 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 			fail = SPELL_FAILED_LINE_OF_SIGHT;
 		}
 	}
-	if( fail > 0 )// && fail != SPELL_FAILED_OUT_OF_RANGE)
+
+	if( fail > 0 )
 	{
-		//SendCastResult( autoshot ? 75 : spellid, fail, 0, 0 );
 		packetSMSG_CASTRESULT cr;
 		cr.SpellId = spellinfo->Id;
 		cr.ErrorMessage = fail;
@@ -6514,8 +6495,6 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 			uint32 spellid2 = spellinfo->Id;
 			m_session->OutPacket( SMSG_CANCEL_AUTO_REPEAT, 4, &spellid2 );
 		}
-		//sLog.outString( "Result for CanShootWIthRangedWeapon: %u" , fail );
-		//OUT_DEBUG( "Can't shoot with ranged weapon: %u (Timer: %u)" , fail , m_AutoShotAttackTimer );
 		return fail;
 	}
 
@@ -9964,7 +9943,7 @@ void Player::CalcDamage()
 				ap_bonus = GetRAP()/14000.0f;
 				bonus = ap_bonus*it->GetProto()->Delay;
 
-				if(GetUInt32Value(PLAYER_AMMO_ID))
+				if(GetUInt32Value(PLAYER_AMMO_ID) && RequireAmmo)
 				{
 					ItemPrototype * xproto=ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
 					if(xproto)
