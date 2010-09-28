@@ -6035,7 +6035,8 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->EffectImplicitTargetA[0] = 15;
 				sp->EffectRadiusIndex[0] = 13;
 			}
-
+			if(sp->NameHash == SPELL_HASH_WILD_QUIVER)
+				sp->EffectApplyAuraName[1] = 0;
 			//////////////////////////////////////////
 			// ROGUE								//
 			//////////////////////////////////////////
