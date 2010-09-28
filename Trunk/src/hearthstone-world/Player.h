@@ -2248,7 +2248,7 @@ public:
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);
-
+	uint32 GenerateShapeshiftModelId(uint32 form);
 public:
 
 };

@@ -4936,7 +4936,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 
 	uint32 spellId = 0;
 	uint32 spellId2 = 0;
-	uint32 modelId = 0;
+	uint32 modelId = TO_PLAYER(m_target)->GenerateShapeshiftModelId(mod->m_miscValue);
 
 	bool freeMovements = false;
 
@@ -4951,10 +4951,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				m_target->SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
 				m_target->SetUInt32Value(UNIT_FIELD_MAXPOWER4, 100);//100 Energy
 				m_target->SetUInt32Value(UNIT_FIELD_POWER4, 0);//0 Energy
-				if(m_target->getRace() == RACE_NIGHTELF)//NE
-					modelId = 892;
-				else //TAUREN
-					modelId = 8571;
 
 				if( m_target->HasDummyAura(SPELL_HASH_FUROR) )
 					m_target->SetUInt32Value(UNIT_FIELD_POWER4, m_target->GetDummyAura(SPELL_HASH_FUROR)->RankNumber * 20);
@@ -4981,7 +4977,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 
 	case FORM_TREE:
 		{
-			modelId  = 864;
 			freeMovements=true;
 			spellId = 5420;//3122;
 		} break;
@@ -4990,14 +4985,12 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		{//druid
 			freeMovements = true;
 			spellId = 5419;
-			modelId = 918;
 		} break;
 
 	case FORM_AQUA:
 		{//druid aqua
 			freeMovements = true;
 			spellId = 5421;
-			modelId = 2428;
 		} break;
 
 	case FORM_BEAR:
@@ -5019,11 +5012,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				m_target->SetByte(UNIT_FIELD_BYTES_0,3,POWER_TYPE_RAGE);
 				m_target->SetUInt32Value(UNIT_FIELD_MAXPOWER2, 1000);
 				m_target->SetUInt32Value(UNIT_FIELD_POWER2, 0);//0 rage
-
-				if(m_target->getRace() == RACE_NIGHTELF)
-					modelId = 2281;
-				else //TAUREN
-					modelId = 2289;
 			}
 			else //reset back to mana
 				m_target->SetByte(UNIT_FIELD_BYTES_0,3,POWER_TYPE_MANA);
@@ -5049,10 +5037,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				m_target->SetByte(UNIT_FIELD_BYTES_0,3,POWER_TYPE_RAGE);
 				m_target->SetUInt32Value(UNIT_FIELD_MAXPOWER2, 1000);
 				m_target->SetUInt32Value(UNIT_FIELD_POWER2, 0);//0 rage
-				if(m_target->getRace() == 4)//NE
-					modelId = 2281;
-				else //TAUREN
-					modelId = 2289;
 			}
 			else //reset back to mana
 				m_target->SetByte(UNIT_FIELD_BYTES_0,3,POWER_TYPE_MANA);
@@ -5061,7 +5045,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 
 	case FORM_GHOSTWOLF:
 		{
-			modelId = 4613;
 			if( apply )
 			{
 				if( m_target->IsPlayer() )
@@ -5072,11 +5055,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				if( m_target->IsPlayer() )
 					TO_PLAYER( m_target )->m_MountSpellId = 0;
 			}
-		} break;
-
-	case FORM_ZOMBIE:
-		{
-			modelId = 10626;
 		} break;
 
 	case FORM_BATTLESTANCE:
@@ -5113,13 +5091,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		{//druid
 			freeMovements = true;
 			spellId = 33948;
-			if (apply)
-			{
-				if(m_target->getRace() == 8) //  Nightelf
-					modelId = 20857;
-				else  //  Tauren
-					modelId = 20872;
-			}
 		}break;
 
 	case FORM_STEALTH:
@@ -5133,32 +5104,17 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		{//druid
 			freeMovements = true;
 			spellId = 24905;
-			if(apply)
-			{
-				if(m_target->getRace() == RACE_NIGHTELF)
-					modelId = 15374;
-				else 
-					modelId = 15375;
-			}
 		}break;
 
 	case FORM_SWIFT: //not tested yet, right now going on trust
 		{// druid
 			freeMovements = true;
 			spellId = 40121; //Swift Form Passive
-			if(apply)
-			{
-				if(m_target->getRace() == RACE_NIGHTELF)//NE
-					modelId = 21243;
-				else //TAUREN
-					modelId = 21244;
-			}
 		}break;
 
 	case FORM_SPIRITOFREDEMPTION:
 		{
 			spellId = 27795;
-			modelId = 12824;
 			TO_PLAYER(m_target)->m_canCastSpellsWhileDead = true;
 		}break;
 
@@ -5167,21 +5123,15 @@ void Aura::SpellAuraModShapeshift(bool apply)
 			if(GetSpellId() == 47241)
 			{
 				spellId = 59673;
-				modelId = 25277;
 				if(GetUnitCaster()->IsPlayer() && GetUnitCaster()->HasDummyAura(SPELL_HASH_GLYPH_OF_METAMORPHOSIS))
 					SetDuration(GetDuration() + 6000);
 			}
 			else if(GetSpellId() == 54840)
 			{
-				modelId = 25277;
 				if (apply)
-				{
 					m_target->CastSpell(m_target, 54817, true);
-				}
 				else
-				{
 					m_target->RemoveAura(54817);
-				}
 			}
 			else
 			{
@@ -5191,11 +5141,11 @@ void Aura::SpellAuraModShapeshift(bool apply)
 					OUT_DEBUG("Unknown Spell with Morph Form Demon");
 			}
 		}break;
-
+	
+	case FORM_ZOMBIE:
 	case FORM_GHOUL:
 		{
 			spellId = 0;
-			modelId = 25527;
 		}break;
 	}
 

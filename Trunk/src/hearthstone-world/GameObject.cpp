@@ -31,7 +31,7 @@ GameObject::GameObject(uint64 guid)
  
 	SetFloatValue( OBJECT_FIELD_SCALE_X, 1);//info->Size  );
 
-	SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
+	SetAnimProgress(100);
 
 	counter = 0;//not needed at all but to prevent errors that var was not inited, can be removed in release
 
@@ -116,9 +116,9 @@ bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, float x, float y, fl
 
 	UpdateRotation( orientation3,orientation4 );
 
-	SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE, 1);
-	SetUInt32Value( GAMEOBJECT_DISPLAYID, pInfo->DisplayID );
-	SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID, pInfo->Type);
+	SetState(1);
+	SetDisplayId(pInfo->DisplayID );
+	SetType(pInfo->Type);
    
 	InitAI();
 
@@ -169,7 +169,8 @@ void GameObject::Update(uint32 p_time)
 						ExpireAndDelete();
 						return;
 					}
-					if(!isAttackable(m_summoner,pUnit))continue;
+					if(!isAttackable(m_summoner,pUnit))
+						continue;
 				}
 				
 				Spell* sp= (new Spell(TO_OBJECT(this),spell,true,NULLAURA));
@@ -220,8 +221,8 @@ void GameObject::Despawn( uint32 delay, uint32 respawntime)
 	//This is for go get deleted while looting
 	if( m_spawn != NULL )
 	{
-		SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, m_spawn->state);
-		SetUInt32Value(GAMEOBJECT_FLAGS, m_spawn->flags);
+		SetState(m_spawn->state);
+		SetFlags(m_spawn->flags);
 	}
 
 	CALL_GO_SCRIPT_EVENT(TO_GAMEOBJECT(this), OnDespawn)();
@@ -351,16 +352,16 @@ void GameObject::InitAI()
 			}
 		}break;
 
-	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
+		case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
 		{
 			Health = pInfo->SpellFocus + pInfo->sound5;
-			SetByte(GAMEOBJECT_BYTES_1, 3, 255);
+			SetAnimProgress(255);
 		}break;
 		case GAMEOBJECT_TYPE_AURA_GENERATOR:
 		{
 			spellid = GetInfo()->sound2;
 			checkrate = 1;
-			sEventMgr.AddEvent(this, &GameObject::Update, uint32(200), EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 200, -1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			sEventMgr.AddEvent(this, &GameObject::Update, uint32(200), EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 200, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		}break;
 	}
 
@@ -403,8 +404,8 @@ bool GameObject::Load(GOSpawn *spawn)
 
 	m_phaseMode = spawn->phase;
 	m_spawn = spawn;
-	SetUInt32Value(GAMEOBJECT_FLAGS,spawn->flags);
-	SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE, spawn->state);
+	SetFlags(spawn->flags);
+	SetState(spawn->state);
 	if(spawn->faction)
 	{
 		SetUInt32Value(GAMEOBJECT_FACTION,spawn->faction);
@@ -415,7 +416,7 @@ bool GameObject::Load(GOSpawn *spawn)
 	SetFloatValue(OBJECT_FIELD_SCALE_X,spawn->scale);
 
 	if( spawn->flags & GO_FLAG_IN_USE || spawn->flags & GO_FLAG_LOCKED )
-		SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
+		SetAnimProgress(100);
 
 	CALL_GO_SCRIPT_EVENT(TO_GAMEOBJECT(this), OnCreate)();
 
@@ -431,7 +432,7 @@ void GameObject::DeleteFromDB()
 
 void GameObject::EventCloseDoor()
 {
-	SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
+	SetState(0);
 }
 
 void GameObject::UseFishingNode(Player* player)
@@ -506,7 +507,6 @@ void GameObject::EndFishing(Player* player, bool abort )
 		{
 			//FIXME: here 'failed' should appear over progress bar
 			spell->SendChannelUpdate(0);
-			//spell->cancel();
 			spell->finish();
 		}
 		else		// spell ended
@@ -527,11 +527,9 @@ void GameObject::FishHooked(Player* player)
 	WorldPacket  data(12);
 	data.Initialize(SMSG_GAMEOBJECT_CUSTOM_ANIM); 
 	data << GetGUID();
-	data << (uint32)(0); // value < 4
+	data << (uint32)0; // value < 4
 	player->GetSession()->SendPacket(&data);
-	//SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
-	//BuildFieldUpdatePacket(player, GAMEOBJECT_FLAGS, 32);
-	SetUInt32Value(GAMEOBJECT_FLAGS, 32);
+	SetFlags(32);
  }
 
 /////////////
@@ -597,8 +595,8 @@ void GameObject::_LoadQuests()
 	if( pInfo && pInfo->InvolvedQuestIds )
 	{
 		SetUInt32Value(GAMEOBJECT_DYNAMIC, 0);
-		SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
-		SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+		SetState(0);
+		SetFlags(GO_FLAG_IN_USE);
 	}
 }
 
@@ -774,17 +772,6 @@ void GameObject::UpdateRotation(float orientation3, float orientation4)
 	SetFloatValue(GAMEOBJECT_PARENTROTATION_3, orientation4);
 }
 
-//	custom functions for scripting
-void GameObject::SetState(uint8 state)
-{
-	SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE, state);
-}
-
-uint8 GameObject::GetState()
-{
-	return GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE);
-}
-
 //Destructable Buildings
 void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uint32 spellid)
 {
@@ -808,14 +795,14 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 		if(Health == 0)
 		{
 			RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
-			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED);
+			SetFlags(GO_FLAG_DESTROYED);
 			if(pInfo->Unknown9!=0)
 			{
 				DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-				SetUInt32Value(GAMEOBJECT_DISPLAYID,display->GetDisplayId(3));
+				SetDisplayId(display->GetDisplayId(3));
 			}
 			else
-			SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->Unknown1);
+			SetDisplayId(pInfo->Unknown1);
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
 			
 			/*if(pcaster != NULL)
@@ -833,10 +820,10 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			if(pInfo->Unknown9!=0)
 			{
 				DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-				SetUInt32Value(GAMEOBJECT_DISPLAYID,display->GetDisplayId(1));
+				SetDisplayId(display->GetDisplayId(1));
 			}
 			else
-				SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->sound4);
+				SetDisplayId(pInfo->sound4);
 			
 			/*if(pcaster!=NULL)
 			{
@@ -847,14 +834,14 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 		}
 		else
 		{
-			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED);
+			SetFlags(GO_FLAG_DESTROYED);
 			if(pInfo->Unknown9!=0)
 			{
 				DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-				SetUInt32Value(GAMEOBJECT_DISPLAYID,display->GetDisplayId(3));
+				SetDisplayId(display->GetDisplayId(3));
 			}
 			else
-				SetUInt32Value(GAMEOBJECT_DISPLAYID,pInfo->Unknown1);
+				SetDisplayId(pInfo->Unknown1);
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
 			
 			/*if(pcaster != NULL)
@@ -876,16 +863,16 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	data << spellid;
 	mcaster->SendMessageToSet(&data, (mcaster->IsPlayer() ? true : false));
 	if(IntactHealth!=0 && DamagedHealth!=0)
-		SetByte(GAMEOBJECT_BYTES_1, 3, Health*255/(IntactHealth + DamagedHealth));
+		SetAnimProgress(Health*255/(IntactHealth + DamagedHealth));
 }
 
 void GameObject::Rebuild()
 {
 	RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED+GO_FLAG_DESTROYED);
-	SetUInt32Value(GAMEOBJECT_DISPLAYID, pInfo->DisplayID);
+	SetDisplayId(pInfo->DisplayID);
 	uint32 IntactHealth = pInfo->SpellFocus;
 	uint32 DamagedHealth = pInfo->sound5;
 	if(IntactHealth!=0 && DamagedHealth!=0)
-		SetByte(GAMEOBJECT_BYTES_1, 3, Health*255/(IntactHealth + DamagedHealth));
+		SetAnimProgress(Health*255/(IntactHealth + DamagedHealth));
 	Health = pInfo->SpellFocus + pInfo->sound5;
 }
