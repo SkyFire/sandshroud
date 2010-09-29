@@ -22,7 +22,7 @@
 AIInterface::AIInterface()
 {
 	m_ChainAgroSet = NULL;
-	m_waypoints=NULL;
+	m_waypoints = NULL;
 	m_canMove = true;
 	usepathing = false;
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
@@ -1968,29 +1968,25 @@ void AIInterface::UpdateMove()
 {
 	//this should NEVER be called directly !!!!!!
 	//use MoveTo()
-	if(!usepathing && sWorld.PathFinding && m_Unit->GetMapMgr()->GetNavmesh(m_Unit))
-	{
-		// Reset our source position
-		m_sourceX = m_Unit->GetPositionX();
-		m_sourceY = m_Unit->GetPositionY();
-		m_sourceZ = m_Unit->GetPositionZ();
 
+	float posX = m_Unit->GetPositionX();
+	float posY = m_Unit->GetPositionY();
+	float posZ = m_Unit->GetPositionZ();
+
+	if(!usepathing && sWorld.PathFinding && m_Unit->GetMapMgr()->IsNavmeshLoaded(posX, posY))
+	{
 		usepathing = true;
-		if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit))
-			if(CollideInterface.CheckLOS(m_Unit->GetMapId(), m_sourceX, m_sourceY, m_sourceZ+1.0f, m_destinationX, m_destinationY, m_destinationZ+1.0f))
-				usepathing = false; // Don't need it for a straight line with no breaks.
+
+		// Reset our source position
+		m_sourceX = posX;
+		m_sourceY = posY;
+		m_sourceZ = posZ;
 	}
 
 	if(usepathing)
 	{
-//#define TEST_COLLISION_LOS // Use collision to reduce the amount of steps we take.
-#ifdef TEST_COLLISION_LOS
-		LocationVector PathLocation = m_Unit->GetMapMgr()->getBestPositionOnPathToLocation(
-			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
-#else
 		LocationVector PathLocation = m_Unit->GetMapMgr()->getNextPositionOnPathToLocation(
 			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
-#endif
 
 		m_nextPosX = PathLocation.x;
 		m_nextPosY = PathLocation.y;

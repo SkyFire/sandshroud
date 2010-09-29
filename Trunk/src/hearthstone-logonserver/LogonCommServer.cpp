@@ -209,8 +209,8 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	}
 	else // Original Aspire? Break the tester into two, and retrieve the rest of the data.
 	{
-		realm->Icon = (((uint8*)tester)[0]);
-		realm->WorldRegion = (((uint8*)tester)[1]);
+		realm->Icon = tester & 0xff;
+		realm->WorldRegion = tester >> 8;
 		recvData >> realm->Population;
 	}
 

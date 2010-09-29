@@ -2204,14 +2204,14 @@ void MapMgr::CallScriptUpdate()
 	mInstanceScript->UpdateEvent();
 }
 
-dtNavMesh* MapMgr::GetNavmesh(Object* obj)
+dtNavMesh* MapMgr::GetNavmesh(float x, float y)
 {
-	return m_navMesh[(GetPosX(obj->GetPositionX())/8)][(GetPosY(obj->GetPositionY())/8)];
+	return m_navMesh[(GetPosX(x)/8)][(GetPosY(y)/8)];
 }
 
-bool MapMgr::IsNavmeshLoaded(uint32 tileX, uint32 tileY)
+bool MapMgr::IsNavmeshLoaded(float x, float y)
 {
-	return m_navMeshLoaded[tileX][tileY];
+	return m_navMeshLoaded[GetPosX(x)/8][GetPosY(y)/8];
 }
 
 bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
@@ -2267,66 +2267,6 @@ void MapMgr::UnloadNavMesh(uint32 x, uint32 y)
 	delete m_navMesh[x][y];
 	m_navMesh[x][y] = NULL;
 	m_navMeshLoaded[x][y] = false;
-}
-
-/* Crow: This is a more advanced version of the pathing bool system we have in AI interface.
-Basically, it will try and find the farthest path we can travel to, without hitting a collision path.
-So say we have a tree: (Yes I made a shitty tree)
-
-|||||||||||||||||||||||
-|||||      ||      ||||
-|||||     ||||     ||||
-|||||    ||||||    ||||
-|||||   ||||||||   ||||
-|||||  ||||||||||  ||||
-||||| |||||||||||| ||||
-|||||  A   ||   B  ||||
-|||||   \  ||  /   ||||
-|||||    \ || /    ||||
-|||||     \||/     ||||
-|||||      \/      ||||
-|||||||||||||||||||||||
-
-If we are on one side going to the other, we would walk around it, but the pathfinding system goes around it with about 20 or so poly's.
-Using this system, if we have a clear sight to the next poly, we skip the current step and move to the next, so we have a clearer walk
-from Point A on one side of the tree, to Point B. However, its still very buggy, and we take too many steps, and we sort of circle around
-the tree instead of moving in two straight lines, but thats normal I guess.
-*/
-LocationVector MapMgr::getBestPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz)
-{
-	if(collision)
-	{
-		uint32 tileX = (GetPosX(startx)/8);
-		uint32 tileY = (GetPosY(starty)/8);
-		uint32 endtileX = (GetPosX(endx)/8);
-		uint32 endtileY = (GetPosY(endy)/8);
-		if(CollideInterface.IsActiveTile(_mapId, tileX, tileY) && CollideInterface.IsActiveTile(_mapId, endtileX, endtileY))
-		{
-			bool finding = true;
-			LocationVector sourcepos = LocationVector(startx, starty, startz);
-			LocationVector lastposition = sourcepos;
-			LocationVector nextposition;
-			while(finding)
-			{
-				nextposition = getNextPositionOnPathToLocation(lastposition.x, lastposition.y, lastposition.z, endx, endy, endz);
-				if(lastposition == sourcepos)
-					lastposition = nextposition;
-
-				if(CollideInterface.CheckLOS(_mapId, sourcepos.x, sourcepos.y, sourcepos.z+1.0f, nextposition.x, nextposition.y, nextposition.z+1.0f))
-				{
-					lastposition = nextposition;
-
-					if(lastposition.x == endx && lastposition.y == endy && lastposition.z == endz)
-						finding = false; // We reached our destination, so we should just stop.
-				}
-				else
-					finding = false;
-			}
-			return lastposition;
-		}
-	}
-
-	return getNextPositionOnPathToLocation(startx, starty, startz, endx, endy, endz);
 }
 
 LocationVector MapMgr::getNextPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz)

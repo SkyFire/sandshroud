@@ -3842,6 +3842,7 @@ void Player::OnPushToWorld()
 
 	if(m_FirstLogin)
 	{
+		sEventMgr.AddEvent(this, &Player::FullHPMP, EVENT_PLAYER_FULL_HPMP, 200, 0, 0);
 		sHookInterface.OnFirstEnterWorld(TO_PLAYER(this));
 		m_FirstLogin = false;
 	}
@@ -12450,6 +12451,7 @@ void Player::FullHPMP()
 	SetUInt32Value(UNIT_FIELD_HEALTH, GetUInt32Value(UNIT_FIELD_MAXHEALTH));
 	SetUInt32Value(UNIT_FIELD_POWER1, GetUInt32Value(UNIT_FIELD_MAXPOWER1));
 	SetUInt32Value(UNIT_FIELD_POWER4, GetUInt32Value(UNIT_FIELD_MAXPOWER4));
+	sEventMgr.RemoveEvents(this, EVENT_PLAYER_FULL_HPMP);
 }
 
 void Player::SetKnownTitle( int32 title, bool set )
