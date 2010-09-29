@@ -527,13 +527,14 @@ bool dtNavMesh::addTileAt(int x, int y, unsigned char* data, int dataSize, bool 
 	// Make sure there is enough space for new tile.
 	if (!m_nextFree)
 		return false;
+
 	// Make sure the data is in right format.
 	dtMeshHeader* header = (dtMeshHeader*)data;
 	if (header->magic != DT_NAVMESH_MAGIC)
 		return false;
 	if (header->version != DT_NAVMESH_VERSION)
 		return false;
-		
+
 	// Allocate a tile.
 	dtMeshTile* tile = m_nextFree;
 	m_nextFree = tile->next;

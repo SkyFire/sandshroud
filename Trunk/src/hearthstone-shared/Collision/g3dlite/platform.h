@@ -20,7 +20,7 @@
 #ifndef G3D_platform_h
 #define G3D_platform_h
 
-#include "Common.h"
+#include "../../Common.h"
 
 /**
  Useful for debugging purposes.

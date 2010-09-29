@@ -22,7 +22,7 @@
 #define _VMAPMANAGER2_H
 
 #include "IVMapManager.h"
-#include "Common.h"
+#include "../../Common.h"
 #include "../g3dlite/Vector3.h"
 
 //===========================================================

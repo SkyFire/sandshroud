@@ -227,9 +227,9 @@ namespace VMAP
 	bool VMapManager2::getObjectHitPos(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2, float& rx, float &ry, float& rz, float pModifyDist)
 	{
 		bool result = false;
-		rx=x2;
-		ry=y2;
-		rz=z2;
+		rx = x2;
+		ry = y2;
+		rz = z2;
 		if (isLineOfSightCalcEnabled())
 		{
 			InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);

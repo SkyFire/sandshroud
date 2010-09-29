@@ -22,7 +22,7 @@
 #define _IVMAPMANAGER_H
 
 #include <string>
-#include "Common.h"
+#include "../../Common.h"
 
 //===========================================================
 
