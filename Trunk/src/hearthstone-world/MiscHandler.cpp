@@ -848,7 +848,7 @@ void WorldSession::HandleCorpseReclaimOpcode(WorldPacket& recv_data)
 	}
 
 	// Check we are actually in range of our corpse
-	if ( pCorpse->GetDistance2dSq( _player ) > CORPSE_MINIMUM_RECLAIM_RADIUS_SQ )
+	if ( pCorpse->GetDistance2dSq( _player ) > CORPSE_MINIMUM_RECLAIM_RADIUS_SQ || GetPlayer()->PreventRes)
 	{
 		WorldPacket data( SMSG_RESURRECT_FAILED, 4 );
 		data << uint32(1);
@@ -874,7 +874,7 @@ void WorldSession::HandleResurrectResponseOpcode(WorldPacket & recv_data)
 	CHECK_INWORLD_RETURN;
 	OUT_DEBUG("WORLD: Received CMSG_RESURRECT_RESPONSE");
 
-	if(GetPlayer()->isAlive())
+	if(GetPlayer()->isAlive() || GetPlayer()->PreventRes)
 		return;
 
 	uint64 guid;

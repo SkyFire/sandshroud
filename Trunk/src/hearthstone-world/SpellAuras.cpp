@@ -327,6 +327,16 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraNULL,                                           //304
 	&Aura::SpellAuraNULL,                                           //305
 	&Aura::SpellAuraNULL,                                           //306
+	&Aura::SpellAuraNULL,                                           //307
+	&Aura::SpellAuraNULL,                                           //308
+	&Aura::SpellAuraNULL,                                           //309
+	&Aura::SpellAuraNULL,                                           //310
+	&Aura::SpellAuraNULL,                                           //311
+	&Aura::SpellAuraNULL,                                           //312
+	&Aura::SpellAuraPreventRessurection,                            //313
+	&Aura::SpellAuraNULL,                                           //314
+	&Aura::SpellAuraNULL,                                           //315
+	&Aura::SpellAuraNULL,                                           //316
 };
 
 const char* SpellAuraNames[TOTAL_SPELL_AURAS] = {
@@ -637,6 +647,16 @@ const char* SpellAuraNames[TOTAL_SPELL_AURAS] = {
 	"",													// 304
 	"",													// 305
 	"",													// 306
+	"",													// 307
+	"",													// 308
+	"",													// 309
+	"",													// 310
+	"",													// 311
+	"",													// 312
+	"",													// 313
+	"",													// 314
+	"",													// 315
+	"",													// 316
 };
 
 Unit* Aura::GetUnitCaster()
@@ -2110,34 +2130,6 @@ void Aura::SpellAuraDummy(bool apply)
 			else 
 				_ptarget->m_cheatDeathRank = 0;
 		}break;
-	// Death Knight: Shadow of Death!
-	case 54223:
-		{
-			if( !m_target->IsPlayer() )
-				return;
-
-			if(apply)
-			{
-				TO_PLAYER(m_target)->FullHPMP();
-				TO_PLAYER(m_target)->ResurrectPlayer();
-				m_target->SetUInt32Value( UNIT_FIELD_MAXPOWER1 + POWER_TYPE_ENERGY, 100 );
-				m_target->SetPowerType( POWER_TYPE_ENERGY );
-				
-			}
-			else
-			{
-				if( m_target->isAlive() )
-				{
-					m_target->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
-					TO_PLAYER(m_target)->KillPlayer();
-				}
-
-				m_target->SetUInt32Value( UNIT_FIELD_MAXPOWER1 + POWER_TYPE_ENERGY, 0 );
-				m_target->SetPowerType( POWER_TYPE_RUNIC );
-			}
-			
-		}break;
-
 	case 48181://Haunt
 	case 59161:
 	case 59163:
@@ -10419,6 +10411,19 @@ void Aura::SpellAuraModCritChanceAll(bool apply)
 
 	plr->UpdateChances();
 	plr->UpdateChanceFields();
+}
+
+void Aura::SpellAuraPreventRessurection(bool apply)
+{
+	if( !m_target || !m_target->IsPlayer() )
+		return;
+
+	Player* plr = TO_PLAYER(m_target);
+
+	if( apply )
+		plr->PreventRes = true;
+	else
+		plr->PreventRes = false;
 }
 
 // Crow: Could be a return for ProcTriggerSpell, thats what it originally was, but who cares.

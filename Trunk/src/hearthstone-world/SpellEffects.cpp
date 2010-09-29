@@ -6948,7 +6948,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 
 void Spell::SpellEffectSelfResurrect(uint32 i)
 {
-	if( p_caster == NULL || playerTarget->isAlive())
+	if( p_caster == NULL || playerTarget->isAlive() || playerTarget->PreventRes)
 		return;
 	uint32 mana;
 	uint32 health;
@@ -7631,7 +7631,7 @@ void Spell::SpellEffectResurrect(uint32 i) // Resurrect (Flat)
 			return;
 	}
 
-	if(playerTarget->isAlive() || !playerTarget->IsInWorld())
+	if(playerTarget->isAlive() || !playerTarget->IsInWorld() || playerTarget->PreventRes)
 		return;
 
 	uint32 health = m_spellInfo->EffectBasePoints[i];
@@ -7994,7 +7994,7 @@ void Spell::SpellEffectResurrectNew(uint32 i)
 			return;
 	}
 
-	if(playerTarget->isAlive() || !playerTarget->IsInWorld())
+	if(playerTarget->isAlive() || !playerTarget->IsInWorld() || playerTarget->PreventRes)
 		return;
 	//resurr
 	playerTarget->resurrector = p_caster->GetLowGUID();

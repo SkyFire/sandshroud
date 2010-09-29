@@ -486,6 +486,7 @@ void Player::Init()
 	watchedchannel = NULL;
 	LastPhase = 1; // TODO: SAVE TO DB!
 	RequireAmmo = true;
+	PreventRes = false;
 	Unit::Init();
 }
 
@@ -4756,7 +4757,8 @@ void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 {
 	if (!sHookInterface.OnResurrect(this))
 		return;
-
+	if(PreventRes)
+		return;
 	sEventMgr.RemoveEvents(TO_PLAYER(this),EVENT_PLAYER_FORCED_RESURECT); //in case somebody resurected us before this event happened
 	if( m_resurrectHealth )
 		SetUInt32Value(UNIT_FIELD_HEALTH, (uint32)min( m_resurrectHealth, m_uint32Values[UNIT_FIELD_MAXHEALTH] ) );

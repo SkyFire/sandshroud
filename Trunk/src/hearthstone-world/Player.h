@@ -2246,6 +2246,7 @@ public:
 	void AddArenaPoints( uint32 arenapoints );
 	uint32 LastPhase;
 	bool RequireAmmo;
+	bool PreventRes;
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);
