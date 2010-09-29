@@ -360,8 +360,10 @@ void LogonServer::Run(int argc, char ** argv)
 	Log.Notice("AccountMgr", "Precaching accounts...");
 	sAccountMgr.ReloadAccounts(true);
 	Log.Notice("AccountMgr", "%u accounts are loaded and ready.", sAccountMgr.GetCount());
-	Log.Line();
 
+	Log.CNotice(TPURPLE, "AccountMgr", "Loading static realms");
+	sInfoCore.LoadStaticRealms();
+	Log.Line();
 
 	// Spawn periodic function caller thread for account reload every 10mins
 	int atime = Config.MainConfig.GetIntDefault("Rates", "AccountRefresh",600);

@@ -192,6 +192,7 @@ typedef struct Realm
 	uint8 WorldRegion;
 	float Population;
 	uint8 Lock;
+	bool staticrealm;
 	Mutex m_charMapLock;
 	HM_NAMESPACE::hash_map<uint32, uint8> CharacterMap;
 	LogonCommServerSocket *ServerSocket;
@@ -229,6 +230,7 @@ public:
 		return ++realmhigh;
 	}
 
+	void		  LoadStaticRealms();
 	Realm*		  AddRealm(uint32 realm_id, Realm * rlm);
 	Realm*		  GetRealm(uint32 realm_id);
 	int32		  GetRealmIdByName(string Name);

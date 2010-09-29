@@ -591,7 +591,7 @@ void InformationCore::SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss
 	if( itr != m_realms.end() )
 	{
 		Realm * pr = itr->second;
-		if( pr->ServerSocket == ss )
+		if( pr->ServerSocket == ss && pr->staticrealm == false)
 		{
 			DEBUG_LOG("LogonServer","Realm: %s is now offline.\n", pr->Name.c_str());
 			pr->Colour = REALMCOLOUR_OFFLINE;
@@ -626,4 +626,28 @@ void InformationCore::CheckServers()
 	}
 
 	serverSocketLock.Release();
+}
+
+void InformationCore::LoadStaticRealms()
+{
+	Realm* realm = NULL;
+	QueryResult* result = sLogonSQL->Query("SELECT * FROM static_realms");
+	if(result != NULL)
+	{
+		do
+		{
+			Field* field = result->Fetch();
+			realm = new Realm;
+
+			realm->Name = field[0].GetString();
+			realm->Address = format("%s:%u", field[1].GetString(), field[2].GetUInt32());
+			realm->Colour = 0;
+			realm->Icon = field[3].GetUInt8();
+			realm->WorldRegion = field[4].GetUInt16();
+			realm->Population = field[5].GetFloat();
+			realm->staticrealm = true;
+			AddRealm(GenerateRealmID(), realm);
+		}while(result->NextRow());
+		delete result;
+	}
 }

@@ -219,6 +219,8 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	else
 		realm->Lock = 0;
 
+	realm->staticrealm = false;
+
 	// Add to the main realm list
 	sInfoCore.AddRealm(tmp_RealmID, realm);
 
