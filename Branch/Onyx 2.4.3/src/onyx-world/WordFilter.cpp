@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 extern "C" {
-#include <pcre.h>
+#include "../../dependencies/VC/include/pcre.h"
 };
 
 #define REPLACE_FILTER 1

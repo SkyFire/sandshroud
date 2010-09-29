@@ -48,7 +48,7 @@
 #include "../onyx-shared/crc32.h"
 #include "../onyx-shared/LocationVector.h"
 
-#include <zlib.h>
+#include "../../dependencies/VC/include/zlib.h"
 
 #include "../onyx-shared/Database/DatabaseEnv.h"
 #include "../onyx-shared/Database/DBCStores.h"

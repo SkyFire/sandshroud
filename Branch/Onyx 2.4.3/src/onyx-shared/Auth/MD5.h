@@ -21,7 +21,7 @@
 #define _MD5_H
 
 #include <stdlib.h>
-#include <openssl/md5.h>
+#include "../../dependencies/VC/include/openssl/md5.h"
 #include "Common.h"
 
 class MD5Hash

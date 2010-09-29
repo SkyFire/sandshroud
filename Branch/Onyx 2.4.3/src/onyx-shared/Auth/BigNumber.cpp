@@ -18,7 +18,7 @@
  */
 
 #include "BigNumber.h"
-#include <openssl/bn.h>
+#include "../../dependencies/VC/include/openssl/bn.h"
 #include <algorithm>
 
 BigNumber::BigNumber()

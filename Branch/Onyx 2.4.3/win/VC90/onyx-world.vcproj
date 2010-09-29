@@ -81,7 +81,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\Debug"
+				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\Debug; ../../dependencies/VC/libVC90/"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				FixedBaseAddress="1"
@@ -173,7 +173,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
-				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\x64\Debug"
+				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\x64\Debug; ../../dependencies/VC/libVC90/amd64"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -269,7 +269,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
-				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\Release"
+				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\Release; ../../dependencies/VC/libVC90/"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -363,7 +363,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
-				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\x64\Release"
+				AdditionalLibraryDirectories="..\..\extras\collision\collision_dll\x64\Release; ../../dependencies/VC/libVC90/amd64"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
