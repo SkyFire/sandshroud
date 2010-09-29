@@ -333,7 +333,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraNULL,                                           //310
 	&Aura::SpellAuraNULL,                                           //311
 	&Aura::SpellAuraNULL,                                           //312
-	&Aura::SpellAuraPreventRessurection,                            //313
+	&Aura::SpellAuraPreventResurrection,                            //313
 	&Aura::SpellAuraNULL,                                           //314
 	&Aura::SpellAuraNULL,                                           //315
 	&Aura::SpellAuraNULL,                                           //316
