@@ -220,6 +220,10 @@ public:
 	HEARTHSTONE_INLINE void SetSpawnZ(float z) { m_spawnLocation.z = z; }
 	HEARTHSTONE_INLINE void SetSpawnO(float o) { m_spawnLocation.o = o; }
 
+	HEARTHSTONE_INLINE bool canWalk();
+	HEARTHSTONE_INLINE bool canSwim();
+	HEARTHSTONE_INLINE bool canFly();
+
 	HEARTHSTONE_INLINE const LocationVector & GetPosition() { return m_position; }
 	HEARTHSTONE_INLINE LocationVector & GetPositionNC() { return m_position; }
 	HEARTHSTONE_INLINE LocationVector * GetPositionV() { return &m_position; }

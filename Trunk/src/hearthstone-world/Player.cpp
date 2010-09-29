@@ -11842,7 +11842,7 @@ void Player::_WallHackCheck()
 	if(!sWorld.antihack_wallclimb || (GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm))
 		return;
 
-	if(!GetSession()->m_isJumping && !GetSession()->m_isFalling)
+	if(!GetSession()->m_isJumping && !GetSession()->m_isFalling && !canFly())
 	{	// Make sure we aren't jumping or falling.
 		float z1 = LastWHPosition.z;
 		float z2 = GetPositionZ();
