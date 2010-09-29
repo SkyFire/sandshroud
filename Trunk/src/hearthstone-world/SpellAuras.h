@@ -301,7 +301,7 @@ enum MOD_TYPES
 	SPELL_AURA_311 = 311,
 	SPELL_AURA_312 = 312,
 	SPELL_AURA_313 = 313,
-	SPELL_AURA_PREVENT_RESSURECTION = 314,
+	SPELL_AURA_PREVENT_RESURRECTION = 314,
 	SPELL_AURA_315 = 315,
 	SPELL_AURA_316 = 316,
 	TOTAL_SPELL_AURAS = 317,
@@ -735,7 +735,7 @@ public:
 	void SpellAuraProcTriggerWithValue(bool apply);
 	void SpellAuraPeriodicTriggerSpellWithValue(bool apply);
 	void SpellAuraModCritChanceAll(bool apply);
-	void SpellAuraPreventRessurection(bool apply);
+	void SpellAuraPreventResurrection(bool apply);
 	void SpellAuraConvertRune(bool apply);
 
 	void CreateProcTriggerSpell(Unit* target, uint64 m_caster, uint32 origid, uint32 spellid, uint32 procChance, uint32 procFlags,

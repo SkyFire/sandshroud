@@ -10413,7 +10413,7 @@ void Aura::SpellAuraModCritChanceAll(bool apply)
 	plr->UpdateChanceFields();
 }
 
-void Aura::SpellAuraPreventRessurection(bool apply)
+void Aura::SpellAuraPreventResurrection(bool apply)
 {
 	if( !m_target || !m_target->IsPlayer() )
 		return;
