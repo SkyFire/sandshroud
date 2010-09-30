@@ -39,7 +39,8 @@ enum LogonServerTypes
 	LOGON_ASCENT		= 0x00,
 	LOGON_HEARTHSTONE	= 0x01,
 	LOGON_ARCEMU		= 0x02,
-	LOGON_MANGOS		= 0x04
+	LOGON_MANGOS		= 0x04,
+	LOGON_ASPIRE		= 0x08
 };
 
 enum Rates

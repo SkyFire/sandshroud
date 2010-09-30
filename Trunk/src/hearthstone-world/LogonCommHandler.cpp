@@ -91,9 +91,18 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 				if(sWorld.LogonServerType & LOGON_ARCEMU) // ArcEmu, so use Lock.
 					data << uint8(realm->Lock);
 			}
+			else if(sWorld.LogonServerType & LOGON_ASPIRE)
+			{
+				Realm * realm = *itr;
+				data << realm->Name;
+				data << realm->Address;
+				data << realm->Icon;
+				data << realm->WorldRegion;
+				data << realm->Population;
+				data << realm->Lock;
+			}
 			else // Hearthstone :D
 			{
-				// Add realm to the packet
 				Realm * realm = *itr;
 				data << realm->Name;
 				data << realm->Address;
