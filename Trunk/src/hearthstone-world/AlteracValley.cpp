@@ -23,139 +23,61 @@
 // Fire Locations
 //////////////////////////////////////////////////////////////////////////
 
-const AVSpawnLocation g_fireLocations[AV_NUM_CONTROL_POINTS][30] = {
-
-	{		// Aid Station
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// Stormpike Graveyard
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// Stonehearth Graveyard
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// Snowfall graveyard
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// coldtooth mine
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// irondeep mine
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// iceblood gy
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// frostwolf gy
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// frostwolf relief
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// dun baldar nth
-		{ 667.917297f, -137.020660f, 63.645058f, 1.094849f },
-		{ 680.675903f, -125.554802f, 63.666199f, 0.089540f },
-		{ 685.923828f, -148.394562f, 56.618328f, 1.138047f },
-		{ 667.368164f, -147.642548f, 56.621113f, 4.523115f },
-		{ 666.998413f, -143.095612f, 49.673607f, 4.122564f },
-		{ 676.130615f, -123.653824f, 49.672577f, 2.744190f },
-		{ 666.790649f, -127.394073f, 49.638577f, 3.348947f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// dun baldar sth
-		{ 568.422852f, -83.935478f, 51.942871f, 2.324003f },
-		{ 547.981018f, -93.095024f, 51.942841f, 0.898504f },
-		{ 549.647034f, -80.551971f, 44.820171f, 2.858073f },
-		{ 552.589355f, -96.653267f, 44.819138f, 0.619688f },
-		{ 562.575439f, -78.773170f, 37.949261f, 1.644633f },
-		{ 568.352722f, -92.772797f, 37.949261f, 0.761060f },
-		{ 575.015137f, -78.856613f, 37.921127f, 0.596126f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// icewing
-		{ 198.799316f, -361.116241f, 56.391476f, 5.363494f },
-		{ 217.211273f, -375.348236f, 56.368317f, 0.494023f },
-		{ 200.838547f, -362.912231f, 49.267738f, 2.708846f },
-		{ 208.172836f, -379.141357f, 49.267738f, 5.826873f },
-		{ 209.692886f, -356.993683f, 42.398838f, 2.335778f },
-		{ 223.358307f, -374.435516f, 42.396271f, 5.288878f },
-		{ 222.380539f, -357.525726f, 42.361271f, 1.208734f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// stonehearth
-		{ -162.115128f, -458.521393f, 40.389114f, 5.921130f },
-		{ -146.283035f, -451.985413f, 40.392101f, 1.593585f },
-		{ -154.911880f, -440.288513f, 33.280674f, 3.392147f },
-		{ -166.347992f, -458.094086f, 33.279636f, 4.809789f },
-		{ -146.530441f, -458.876343f, 26.394993f, 5.257466f },
-		{ -146.420120f, -445.917725f, 26.408756f, 1.020243f },
-		{ -139.567215f, -456.592163f, 26.380287f, 2.649942f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// iceblood
-		{ -569.760010f, -263.288513f, 75.008682f, 2.104091f },
-		{ -570.742493f, -271.907837f, 74.988449f, 3.238992f },
-		{ -578.531372f, -253.600327f, 74.959206f, 0.647177f },
-		{ -561.223206f, -260.727386f, 68.457199f, 3.820190f },
-		{ -579.971008f, -265.969604f, 68.469582f, 2.068751f },
-		{ -571.457458f, -256.716736f, 63.293938f, 0.509736f },
-		{ -567.616211f, -265.129028f, 59.324265f, 4.538830f },
-		{ -579.480103f, -261.568329f, 52.497894f, 1.821352f },
-		{ -566.202026f, -260.122009f, 52.728100f, 5.634461f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// tower point
-		{ -769.523010f, -358.549561f, 68.635841f, 3.853180f },
-		{ -762.504395f, -362.904480f, 68.543678f, 5.730278f },
-		{ -761.258606f, -360.407471f, 72.666672f, 1.618719f },
-		{ -772.757813f, -365.472168f, 79.463570f, 5.408264f },
-		{ -764.915161f, -358.086975f, 84.355766f, 3.004945f },
-		{ -773.573181f, -366.593475f, 84.355766f, 4.414734f },
-		{ -777.062927f, -370.895477f, 90.868019f, 5.832375f },
-		{ -758.860840f, -358.962280f, 90.825951f, 4.073083f },
-		{ -768.840515f, -362.985535f, 90.894974f, 4.304777f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// east frostwolf
-		{ -1304.755249f, -322.213409f, 91.419922f, 5.141234f },
-		{ -1304.633057f, -310.950684f, 91.677505f, 0.746931f },
-		{ -1301.672974f, -309.800598f, 95.747795f, 3.586145f },
-		{ -1303.074585f, -321.931915f, 102.658630f, 0.259982f },
-		{ -1303.221680f, -310.574463f, 107.328194f, 3.590071f },
-		{ -1302.911133f, -323.911835f, 107.328049f, 4.913466f },
-		{ -1302.600464f, -328.408600f, 113.846321f, 1.210312f },
-		{ -1303.177612f, -307.762390f, 113.797401f, 6.177956f },
-		{ -1305.213989f, -315.778412f, 113.867081f, 5.251186f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// west frostwolf
-		{ -1299.614014f, -263.684998f, 114.151276f, 4.944896f },
-		{ -1297.918335f, -269.959930f, 114.151276f, 4.772108f },
-		{ -1304.088379f, -272.878387f, 114.098404f, 5.200147f },
-		{ -1287.346313f, -267.391785f, 114.115089f, 1.826860f },
-		{ -1298.288818f, -272.091309f, 107.612137f, 2.883221f },
-		{ -1298.199463f, -258.249390f, 107.612183f, 3.052081f },
-		{ -1300.405640f, -273.112244f, 100.317612f, 4.929180f },
-		{ -1291.555908f, -261.006134f, 91.648979f, 3.244500f },
-		{ -1299.686279f, -273.323853f, 91.897820f, 3.876745f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
+const AVSpawnLocation g_fireLocations[AV_NUM_CONTROL_POINTS][30] =
+{
+	{ { 0.0f, 0.0f, 0.0f }, },	// Aid Station
+	{ { 0.0f, 0.0f, 0.0f }, },	// Stormpike Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Stonehearth Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Snowfall Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Coldtooth Mine
+	{ { 0.0f, 0.0f, 0.0f }, },	// Irondeep Mine
+	{ { 0.0f, 0.0f, 0.0f }, },	// Iceblood Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Frostwolf Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Frostwolf Relief
+	// Dun Baldar North
+	{ { 667.917297f, -137.020660f, 63.645058f, 1.094849f }, { 680.675903f, -125.554802f, 63.666199f, 0.089540f },
+	{ 685.923828f, -148.394562f, 56.618328f, 1.138047f }, { 667.368164f, -147.642548f, 56.621113f, 4.523115f },
+	{ 666.998413f, -143.095612f, 49.673607f, 4.122564f }, { 676.130615f, -123.653824f, 49.672577f, 2.744190f },
+	{ 666.790649f, -127.394073f, 49.638577f, 3.348947f }, { 0.0f, 0.0f, 0.0f },	},
+	// Dun Baldar South
+	{ { 568.422852f, -83.935478f, 51.942871f, 2.324003f }, { 547.981018f, -93.095024f, 51.942841f, 0.898504f },
+	{ 549.647034f, -80.551971f, 44.820171f, 2.858073f }, { 552.589355f, -96.653267f, 44.819138f, 0.619688f },
+	{ 562.575439f, -78.773170f, 37.949261f, 1.644633f }, { 568.352722f, -92.772797f, 37.949261f, 0.761060f },
+	{ 575.015137f, -78.856613f, 37.921127f, 0.596126f }, { 0.0f, 0.0f, 0.0f }, },
+	// Icewing
+	{ { 198.799316f, -361.116241f, 56.391476f, 5.363494f }, { 217.211273f, -375.348236f, 56.368317f, 0.494023f },
+	{ 200.838547f, -362.912231f, 49.267738f, 2.708846f }, { 208.172836f, -379.141357f, 49.267738f, 5.826873f },
+	{ 209.692886f, -356.993683f, 42.398838f, 2.335778f }, { 223.358307f, -374.435516f, 42.396271f, 5.288878f },
+	{ 222.380539f, -357.525726f, 42.361271f, 1.208734f }, { 0.0f, 0.0f, 0.0f }, },
+	// Stonehearth
+	{ { -162.115128f, -458.521393f, 40.389114f, 5.921130f }, { -146.283035f, -451.985413f, 40.392101f, 1.593585f },
+	{ -154.911880f, -440.288513f, 33.280674f, 3.392147f }, { -166.347992f, -458.094086f, 33.279636f, 4.809789f },
+	{ -146.530441f, -458.876343f, 26.394993f, 5.257466f }, { -146.420120f, -445.917725f, 26.408756f, 1.020243f },
+	{ -139.567215f, -456.592163f, 26.380287f, 2.649942f }, { 0.0f, 0.0f, 0.0f }, },
+	// Iceblood
+	{ { -569.760010f, -263.288513f, 75.008682f, 2.104091f }, { -570.742493f, -271.907837f, 74.988449f, 3.238992f },
+	{ -578.531372f, -253.600327f, 74.959206f, 0.647177f }, { -561.223206f, -260.727386f, 68.457199f, 3.820190f },
+	{ -579.971008f, -265.969604f, 68.469582f, 2.068751f }, { -571.457458f, -256.716736f, 63.293938f, 0.509736f },
+	{ -567.616211f, -265.129028f, 59.324265f, 4.538830f }, { -579.480103f, -261.568329f, 52.497894f, 1.821352f },
+	{ -566.202026f, -260.122009f, 52.728100f, 5.634461f }, { 0.0f, 0.0f, 0.0f }, },
+	// Tower Point
+	{ { -769.523010f, -358.549561f, 68.635841f, 3.853180f }, { -762.504395f, -362.904480f, 68.543678f, 5.730278f },
+	{ -761.258606f, -360.407471f, 72.666672f, 1.618719f }, { -772.757813f, -365.472168f, 79.463570f, 5.408264f },
+	{ -764.915161f, -358.086975f, 84.355766f, 3.004945f }, { -773.573181f, -366.593475f, 84.355766f, 4.414734f },
+	{ -777.062927f, -370.895477f, 90.868019f, 5.832375f }, { -758.860840f, -358.962280f, 90.825951f, 4.073083f },
+	{ -768.840515f, -362.985535f, 90.894974f, 4.304777f }, { 0.0f, 0.0f, 0.0f }, },
+	// East Frostwolf
+	{ { -1304.755249f, -322.213409f, 91.419922f, 5.141234f }, { -1304.633057f, -310.950684f, 91.677505f, 0.746931f },
+	{ -1301.672974f, -309.800598f, 95.7477953f, 3.586145f }, { -1303.074585f, -321.931915f, 102.658630f, 0.259982f },
+	{ -1303.221680f, -310.574463f, 107.328194f, 3.590071f }, { -1302.911133f, -323.911835f, 107.328049f, 4.913466f },
+	{ -1302.600464f, -328.408600f, 113.846321f, 1.210312f }, { -1303.177612f, -307.762390f, 113.797401f, 6.177956f },
+	{ -1305.213989f, -315.778412f, 113.867081f, 5.251186f }, { 0.0f, 0.0f, 0.0f }, },
+	// West Frostwolf
+	{ { -1299.614014f, -263.684998f, 114.151276f, 4.944896f }, { -1297.918335f, -269.959930f, 114.151276f, 4.772108f },
+	{ -1304.088379f, -272.878387f, 114.098404f, 5.200147f }, { -1287.346313f, -267.391785f, 114.115089f, 1.826860f },
+	{ -1298.288818f, -272.091309f, 107.612137f, 2.883221f }, { -1298.199463f, -258.249390f, 107.612183f, 3.052081f },
+	{ -1300.405640f, -273.112244f, 100.317612f, 4.929180f }, { -1291.555908f, -261.006134f, 91.648979f, 3.244500f },
+	{ -1299.686279f, -273.323853f, 91.8978200f, 3.876745f }, { 0.0f, 0.0f, 0.0f }, },
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -180,129 +102,58 @@ z: 6.667575
 o: 2.295235
 */
 
-static uint32 g_unitWaypoints[4][2] = {
-	{  },
-};
+static uint32 g_unitWaypoints[4][2] = { {  }, };
 
 //////////////////////////////////////////////////////////////////////////
 // Initial Guard Locations
 //////////////////////////////////////////////////////////////////////////
-
-const AVSpawnLocation g_initalGuardLocations[AV_NUM_CONTROL_POINTS][30] = {
-
-	{		// Aid Station
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// Stormpike Graveyard
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// Stonehearth Graveyard
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// Snowfall graveyard
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// coldtooth mine
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// irondeep mine
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// iceblood gy
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// frostwolf gy
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// frostwolf relief
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// dun baldar nth
-		{ 672.141296f, -120.239807f, 64.147659f, 2.379753f },
-		{ 664.585083f, -126.076088f, 64.120972f, 2.768524f },
-		{ 661.464905f, -137.339371f, 64.216965f, 3.436112f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// dun baldar sth
-		{ 564.124146f, -71.107430f, 52.488060f, 1.300614f },
-		{ 571.863770f, -77.084518f, 52.367657f, 0.295303f },
-		{ 574.969543f, -90.801270f, 52.412132f, 5.910901f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// icewing
-		{ 222.674530f, -378.605408f, 57.147060f, 5.577111f },
-		{ 210.093506f, -384.971558f, 56.793076f, 4.595366f },
-		{ 199.602188f, -380.995575f, 56.864891f, 3.754991f },
-		{ 192.782074f, -370.546204f, 57.015110f, 3.586132f },
-		{ 193.377426f, -360.313507f, 57.044708f, 2.891055f },
-		{ 201.253113f, -351.977631f, 56.802952f, 3.036354f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// stonehearth
-		{ -139.692780f, -445.390533f, 40.982857f, 0.527005f },
-		{ -140.723969f, -457.597168f, 40.862610f, 5.643875f },
-		{ -148.143784f, -464.959808f, 40.933720f, 5.639948f },
-		{ -161.013535f, -466.793640f, 41.118568f, 4.512904f },
-		{ -170.595215f, -457.926331f, 40.875153f, 3.385859f },
-		{ -172.157013f, -447.972717f, 40.888519f, 2.894984f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// iceblood
-		{ -568.816711f, -255.542038f, 75.008690f, 1.025736f },
-		{ -580.106445f, -264.803497f, 74.931145f, 3.931711f },
-		{ -572.966248f, -271.499786f, 74.933746f, 4.198746f },
-		{ -565.585876f, -268.645294f, 74.914063f, 5.459307f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// tower point
-		{ -760.347595f, -358.281586f, 90.885597f, 0.358147f },
-		{ -759.719116f, -367.059113f, 90.826775f, 5.722414f },
-		{ -768.441956f, -372.756653f, 90.933365f, 4.991992f },
-		{ -775.595032f, -365.525177f, 90.894867f, 2.989226f },
-		{ -771.311890f, -353.218842f, 90.821220f, 1.795420f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// east frostwolf
-		{ -1297.069092f, -309.338623f, 113.769043f, 1.002180f },
-		{ -1293.462036f, -316.529602f, 113.774048f, 0.067557f },
-		{ -1298.062256f, -326.274994f, 113.820679f, 5.015566f },
-		{ -1311.626953f, -317.071228f, 113.775551f, 2.977457f },
-		{ -1305.169922f, -309.871796f, 113.824280f, 5.192283f },
-		{ -1293.822021f, -317.798065f, 113.771339f, 3.103136f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
-
-	{		// west frostwolf
-		{ -1299.964233f, -275.591461f, 114.055862f, 1.241742f },
-		{ -1306.900757f, -268.969574f, 114.055481f, 3.464420f },
-		{ -1305.109375f, -261.103363f, 114.068550f, 2.298103f },
-		{ -1295.956177f, -258.076904f, 114.056999f, 1.277085f },
-		{ -1288.039917f, -264.262085f, 114.115341f, 0.224653f },
-		{ 0.0f, 0.0f, 0.0f },
-	},
+const AVSpawnLocation g_initalGuardLocations[AV_NUM_CONTROL_POINTS][30] =
+{
+	{ { 0.0f, 0.0f, 0.0f }, },	// Aid Station
+	{ { 0.0f, 0.0f, 0.0f }, },	// Stormpike Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Stonehearth Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Snowfall Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Coldtooth Mine
+	{ { 0.0f, 0.0f, 0.0f }, },	// Irondeep Mine
+	{ { 0.0f, 0.0f, 0.0f }, },	// Iceblood Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Frostwolf Graveyard
+	{ { 0.0f, 0.0f, 0.0f }, },	// Frostwolf Relief
+	// Dun Baldar North
+	{ { 672.141296f, -120.239807f, 64.147659f, 2.379753f }, { 664.585083f, -126.076088f, 64.120972f, 2.768524f },
+	{ 661.464905f, -137.339371f, 64.216965f, 3.436112f }, { 0.0f, 0.0f, 0.0f }, },
+	// Dun Baldar South
+	{ { 564.124146f, -71.107430f, 52.488060f, 1.300614f }, { 571.863770f, -77.084518f, 52.367657f, 0.295303f },
+	{ 574.969543f, -90.801270f, 52.412132f, 5.910901f }, { 0.0f, 0.0f, 0.0f }, },
+	// Icewing
+	{ { 222.674530f, -378.605408f, 57.147060f, 5.577111f }, { 210.093506f, -384.971558f, 56.793076f, 4.595366f },
+	{ 199.602188f, -380.995575f, 56.864891f, 3.754991f }, { 192.782074f, -370.546204f, 57.015110f, 3.586132f },
+	{ 193.377426f, -360.313507f, 57.044708f, 2.891055f }, { 201.253113f, -351.977631f, 56.802952f, 3.036354f }, { 0.0f, 0.0f, 0.0f }, },
+	// Stonehearth
+	{ { -139.692780f, -445.390533f, 40.982857f, 0.527005f }, { -140.723969f, -457.597168f, 40.862610f, 5.643875f },
+	{ -148.143784f, -464.959808f, 40.933720f, 5.639948f }, { -161.013535f, -466.793640f, 41.118568f, 4.512904f },
+	{ -170.595215f, -457.926331f, 40.875153f, 3.385859f }, { -172.157013f, -447.972717f, 40.888519f, 2.894984f }, { 0.0f, 0.0f, 0.0f }, },
+	// Iceblood
+	{ { -568.816711f, -255.542038f, 75.008690f, 1.025736f }, { -580.106445f, -264.803497f, 74.931145f, 3.931711f },
+	{ -572.966248f, -271.499786f, 74.933746f, 4.198746f }, { -565.585876f, -268.645294f, 74.914063f, 5.459307f }, { 0.0f, 0.0f, 0.0f }, },
+	// Tower Point
+	{ { -760.347595f, -358.281586f, 90.885597f, 0.358147f }, { -759.719116f, -367.059113f, 90.826775f, 5.722414f },
+	{ -768.441956f, -372.756653f, 90.933365f, 4.991992f }, { -775.595032f, -365.525177f, 90.894867f, 2.989226f },
+	{ -771.311890f, -353.218842f, 90.821220f, 1.795420f }, { 0.0f, 0.0f, 0.0f }, },
+	// East Frostwolf
+	{ { -1297.069092f, -309.338623f, 113.769043f, 1.002180f }, { -1293.462036f, -316.529602f, 113.774048f, 0.067557f },
+	{ -1298.062256f, -326.274994f, 113.820679f, 5.015566f }, { -1311.626953f, -317.071228f, 113.775551f, 2.977457f },
+	{ -1305.169922f, -309.871796f, 113.824280f, 5.192283f }, { -1293.822021f, -317.798065f, 113.771339f, 3.103136f }, { 0.0f, 0.0f, 0.0f }, },
+	// West Frostwolf
+	{ { -1299.964233f, -275.591461f, 114.055862f, 1.241742f }, { -1306.900757f, -268.969574f, 114.055481f, 3.464420f },
+	{ -1305.109375f, -261.103363f, 114.068550f, 2.298103f }, { -1295.956177f, -258.076904f, 114.056999f, 1.277085f },
+	{ -1288.039917f, -264.262085f, 114.115341f, 0.224653f }, { 0.0f, 0.0f, 0.0f }, },
 };
 
 //////////////////////////////////////////////////////////////////////////
 // Home NPCs (that sit in the base)
 //////////////////////////////////////////////////////////////////////////
-
-struct AVHomeNPC { uint32 id_a; uint32 id_h; float a_x; float a_y; float a_z; float a_o; float h_x; float h_y; float h_z; float h_o; };
-const AVHomeNPC g_HomeNpcInfo[AV_NUM_CONTROL_POINTS] = {
+const AVHomeNPC g_HomeNpcInfo[AV_NUM_CONTROL_POINTS] =
+{
 	{ 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },																		// stormpike aid station
 	{ 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },																		// stormpike graveyard
 	{ 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },																		// stonehearth graveyard
@@ -325,578 +176,145 @@ const AVHomeNPC g_HomeNpcInfo[AV_NUM_CONTROL_POINTS] = {
 //////////////////////////////////////////////////////////////////////////
 // Control Point Templates
 //////////////////////////////////////////////////////////////////////////
-
-static AVNodeTemplate g_nodeTemplates[AV_NUM_CONTROL_POINTS] = {
-	
-	// name,						GY?		cap?	graveyard location
-	{ "Stormpike Aid Station",		true,	true,	{ 634.607971f, 47.408627f, 69.890488f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	179286,		179286,		179284,		179287,		179285 },	639.184326f,	-31.640333f,	46.202557f,		1.3546723f,		0.9025853f,		-0.4305111f },
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	180102,		180102,		180100,		180102,		180101 },	639.184326f,	-31.640333f,	46.202557f,		1.3546723f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			12050,		12053 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		5,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_STORMPIKE_AID_STATION_ALLIANCE_ASSAULTING,
-		WORLDSTATE_AV_STORMPIKE_AID_STATION_ALLIANCE_CONTROLLED,
-		WORLDSTATE_AV_STORMPIKE_AID_STATION_HORDE_ASSAULTING,
-		WORLDSTATE_AV_STORMPIKE_AID_STATION_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_ALLIANCE_CONTROLLED,
-	},
-
-	// name,						GY?		cap?	graveyard location
-	{ "Stormpike Graveyard",		true,	true,	{ 675.970947f, -373.707336f, 29.780785f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	179286,		179286,		179284,		179287,		179285 },	670.904175f, -294.181641f, 30.283506f, 4.232887f,		0.4067366f, 0.9135454f },
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	180102,		180102,		180100,		180102,		180101 },	670.904175f,	-294.181641f,	30.283506f,		4.232887f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			12050,		12053 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		5,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_STORMPIKE_GRAVE_ALLIANCE_ASSAULTING,
-		WORLDSTATE_AV_STORMPIKE_GRAVE_ALLIANCE_CONTROLLED,
-		WORLDSTATE_AV_STORMPIKE_GRAVE_HORDE_ASSAULTING,
-		WORLDSTATE_AV_STORMPIKE_GRAVE_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_ALLIANCE_CONTROLLED,
-	},
-
-	// name,						GY?		cap?	graveyard location
-	{ "Stonehearth Graveyard",		true,	true,	{ 73.869370f, -495.597656f, 48.740143f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	179286,		179286,		179284,		179287,		179285 },	78.367012f, -404.769928f, 47.051014f, 4.350670f,		0.2672384f, 0.9636304f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	180102,		180102,		180100,		180102,		180101 },	78.367012f,	-404.769928f,	47.051014f,		4.350670f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			12050,		12053 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		5,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_STONEHEARTH_GRAVE_ALLIANCE_ASSAULTING,
-		WORLDSTATE_AV_STONEHEARTH_GRAVE_ALLIANCE_CONTROLLED,
-		WORLDSTATE_AV_STONEHEARTH_GRAVE_HORDE_ASSAULTING,
-		WORLDSTATE_AV_STONEHEARTH_GRAVE_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_ALLIANCE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Snowfall Graveyard",		true,	true,	{ -161.472916f, 34.797512f, 77.191841f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	180418,		179286,		179284,		179287,		179285 },	-202.571854f, -112.612862f, 78.489014f, 1.666146f,		0.9366722f, 0.3502073f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	180102,		180102,		180100,		180102,		180101 },	-202.571854f,	-112.612862f,	78.489014f,		1.666146f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			12050,		12053 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		5,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		WORLDSTATE_AV_SNOWFALL_GRAVE_NEUTRAL_CONTROLLED,
-		WORLDSTATE_AV_SNOWFALL_GRAVE_ALLIANCE_ASSAULTING,
-		WORLDSTATE_AV_SNOWFALL_GRAVE_ALLIANCE_CONTROLLED,
-		WORLDSTATE_AV_SNOWFALL_GRAVE_HORDE_ASSAULTING,
-		WORLDSTATE_AV_SNOWFALL_GRAVE_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_NEUTRAL_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Coldtooth Mine",			false,	true,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		WORLDSTATE_AV_COLDTOOTH_MINE_KOBOLD_CONTROLLED,
-		0,
-		WORLDSTATE_AV_COLDTOOTH_MINE_ALLIANCE_CONTROLLED,
-		0,
-		WORLDSTATE_AV_COLDTOOTH_MINE_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_NEUTRAL_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Irondeep Mine",			false,	true,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		WORLDSTATE_AV_IRONDEEP_MINE_TROGG_CONTROLLED,
-		0,
-		WORLDSTATE_AV_IRONDEEP_MINE_ALLIANCE_CONTROLLED,
-		0,
-		WORLDSTATE_AV_IRONDEEP_MINE_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_NEUTRAL_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Iceblood Graveyard",		true,	true,	{ -531.067627f, -405.459778f, 49.552971f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	179286,		179286,		179284,		179287,		179285 },	-611.891113f, -395.925751f, 60.798248f, 3.193738f,		0.9135455f, -0.4067366f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	180102,		180102,		180100,		180102,		180101 },	-611.891113f,	-395.925751f,	60.798248f,		3.193738f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			12050,		12053 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		5,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_ICEBLOOD_GRAVE_ALLIANCE_ASSAULTING,
-		WORLDSTATE_AV_ICEBLOOD_GRAVE_ALLIANCE_CONTROLLED,
-		WORLDSTATE_AV_ICEBLOOD_GRAVE_HORDE_ASSAULTING,
-		WORLDSTATE_AV_ICEBLOOD_GRAVE_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_HORDE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Frostwolf Graveyard",	true,	true,	{ -1088.008545f, -248.774918f, 57.680843f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	179286,		179286,		179284,		179287,		179285 },	-1082.267578f, -344.454590f, 55.272388f, 1.579743f,		0.9025853f, -0.4305111f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	180102,		180102,		180100,		180102,		180101 },	-1082.267578f,	-344.454590f,	55.272388f,		1.579743f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			12050,		12053 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		5,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_FROSTWOLF_GRAVE_ALLIANCE_ASSAULTING,
-		WORLDSTATE_AV_FROSTWOLF_GRAVE_ALLIANCE_CONTROLLED,
-		WORLDSTATE_AV_FROSTWOLF_GRAVE_HORDE_ASSAULTING,
-		WORLDSTATE_AV_FROSTWOLF_GRAVE_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_HORDE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Frostwolf Relief Hut",	true,	true,	{ -1500.063599f, -333.146393f, 101.133186f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	179286,		179286,		179284,		179287,		179285 },	-1401.263550f, -309.601624f, 89.412560f, 3.538534f,		0.4067366f, 0.9135454f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			0,			0,			0,			0 },		0.0f, 0.0f, 0.0f, 0.0f,									0.0f, 0.0f	},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{	180102,		180102,		180100,		180102,		180101 },	-1401.263550f,	-309.601624f,	89.412560f,		3.538534f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			12050,		12053 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		5,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		0,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_ALLIANCE_ASSAULTING,
-		WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_ALLIANCE_CONTROLLED,
-		WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_HORDE_ASSAULTING,
-		WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_HORDE_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_HORDE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "North Dun Baldar Bunker",false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179286,		179284,		179287,			0 },	673.361877f, -144.169357f, 63.651852f, 0.969958f,		0.2672384f, 0.9636304f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179446,		178927,		179446,			0 },	678.393250f, -136.145126f, 76.004265f, 4.515254f,		0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{		0,		180423,		180421,		180423,			0 },	678.393250f, -136.145126f, 76.004265f, 4.515254f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13358,
-
-		//	world state fields
-		0,
-		0,
-		WORLDSTATE_AV_DUN_BALDAR_NORTH_BUNKER_CONTROLLED,
-		WORLDSTATE_AV_DUN_BALDAR_NORTH_BUNKER_ASSAULTING,
-		WORLDSTATE_AV_DUN_BALDAR_NORTH_BUNKER_DESTROYED,
-
-		// default state
-		AV_NODE_STATE_ALLIANCE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "South Dun Baldar Bunker",false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179286,		179284,		179287,			0 },	552.990234f, -77.527374f, 51.926868f, 3.5410520f,		0.9366722f, 0.3502073f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179450,		178932,		179450,			0 },	556.081543f, -84.437355f, 64.411903f, 5.006125f,		0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{		0,		180423,		180421,		180423,			0 },	556.081543f, -84.437355f, 64.411903f, 5.006125f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13358,
-
-		//	world state fields
-		0,
-		0,
-		WORLDSTATE_AV_DUN_BALDAR_SOUTH_BUNKER_CONTROLLED,
-		WORLDSTATE_AV_DUN_BALDAR_SOUTH_BUNKER_ASSAULTING,
-		WORLDSTATE_AV_DUN_BALDAR_SOUTH_BUNKER_DESTROYED,
-
-		// default state
-		AV_NODE_STATE_ALLIANCE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Icewing Bunker",			false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179286,		179284,		179287,			0 },	201.845840f, -358.886963f, 56.370701f, 5.403111f,		0.9135455f, -0.4067366f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179454,		178947,		179454,			0 },	208.691223f, -367.553314f, 68.696632f, 3.317518f,		0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{		0,		180423,		180421,		180423,			0 },	208.691223f, -367.553314f, 68.696632f, 3.317518f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13358,
-
-		//	world state fields
-		0,
-		0,
-		WORLDSTATE_AV_ICEWING_BUNKER_CONTROLLED,
-		WORLDSTATE_AV_ICEWING_BUNKER_ASSAULTING,
-		WORLDSTATE_AV_ICEWING_BUNKER_DESTROYED,
-
-		// default state
-		AV_NODE_STATE_ALLIANCE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Stonehearth Bunker",		false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179286,		179284,		179287,			0 },	-151.776291f, -439.776245f, 40.381840f, 4.319230f,		0.9025853f, -0.4305111f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179458,		178948,		179458,			0 },	-156.257721f, -448.993652f, 52.797112f, 2.803080f,		0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{		0,		180423,		180421,		180423,			0 },	-156.257721f, -448.993652f, 52.797112f, 2.803080f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13358,
-
-		//	world state fields
-		0,
-		0,
-		WORLDSTATE_AV_STONEHEARTH_BUNKER_CONTROLLED,
-		WORLDSTATE_AV_STONEHEARTH_BUNKER_ASSAULTING,
-		WORLDSTATE_AV_STONEHEARTH_BUNKER_DESTROYED,
-
-		// default state
-		AV_NODE_STATE_ALLIANCE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Iceblood Tower",			false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{	0,			179286,			0,		179287,		179285 },	-572.502869f, -262.418365f, 75.008713f, 5.483192f,		0.4067366f, 0.9135454f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179436,			0,		179436,		178955 },	-572.408386f, -262.620422f, 88.636307f, 0.712354f,		0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		180423,			0,		180423,		180422 },	-572.408386f, -262.620422f, 88.636307f, 0.712354f,		0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13359,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_ICEBLOOD_TOWER_ASSAULTING,
-		WORLDSTATE_AV_ICEBLOOD_TOWER_DESTROYED,
-		0,
-		WORLDSTATE_AV_ICEBLOOD_TOWER_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_HORDE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "Tower Point",			false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179286,			0,		179287,		179285 },	-767.986511f, -363.091064f, 90.894920f, 4.265791f,		0.2672384f, 0.9636304f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179440,			0,		179440,		178956 },	-768.181519f, -362.942719f, 104.553452f, 4.761085f,		0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{		0,		180423,			0,		180423,		180422 },	-768.181519f, -362.942719f, 104.553452f, 4.761085f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13359,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_TOWERPOINT_ASSAULTING,
-		WORLDSTATE_AV_TOWERPOINT_DESTROYED,
-		0,
-		WORLDSTATE_AV_TOWERPOINT_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_HORDE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "East Frostwolf Tower",	false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179286,			0,		179287,		179285 },	-1302.814453f, -315.957458f, 113.867195f, 1.956738f,	0.9366722f, 0.3502073f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179442,			0,		179442,		178957 },	-1302.916626f, -316.606079f, 127.526337f, 6.176374f,	0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{		0,		180423,			0,		180423,		180422 },	-1302.916626f, -316.606079f, 127.526337f, 6.176374f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13359,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_FROSTWOLF_EAST_TOWER_ASSAULTING,
-		WORLDSTATE_AV_FROSTWOLF_EAST_TOWER_DESTROYED,
-		0,
-		WORLDSTATE_AV_FROSTWOLF_EAST_TOWER_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_HORDE_CONTROLLED,
-	},
-
-	// name,					GY?		cap?	graveyard location
-	{ "West Frostwolf Tower",	false,	false,	{ 0.0f, 0.0f, 0.0f },
-		
-		// control point definition, ids, position vector, rotations
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179286,			0,		179287,		179285 },	-1296.913818f, -266.521271f, 114.151245f, 3.336680f,	0.9135455f, -0.4067366f	},
-
-		// aura definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION												ROTATION
-		{	{		0,		179444,			0,		179444,		178958 },	-1297.889404f, -266.714233f, 127.789467f, 5.931325f,	0.0f, 0.0f				},
-
-		// glow definition
-			//	NEUTRAL		A-ASS		A-CON		H-ASS		H-CON		POSITION														ROTATION
-		{	{		0,		180423,			0,		180423,		180422 },	-1297.889404f, -266.714233f, 127.789467f, 5.931325f,											0.0f,			0.0f		},
-
-		// guard ids -	NEUTRAL,	ALLIANCE,	HORDE
-		{				0,			0,			0 },
-
-		//	guard count,		boss ids					peon locations		boss location				fire locations
-		0,						{ 0, 0, 0 },				NULL,				{ 0.0f, 0.0f, 0.0f },		13359,
-
-		//	world state fields
-		0,
-		WORLDSTATE_AV_FROSTWOLF_WEST_TOWER_ASSAULTING,
-		WORLDSTATE_AV_FROSTWOLF_WEST_TOWER_DESTROYED,
-		0,
-		WORLDSTATE_AV_FROSTWOLF_WEST_TOWER_CONTROLLED,
-
-		// default state
-		AV_NODE_STATE_HORDE_CONTROLLED,
-	},
+static AVNodeTemplate g_nodeTemplates[AV_NUM_CONTROL_POINTS] =
+{
+	//		Name				GY?	 Cap?			Graveyard Location
+	{ "Stormpike Aid Station", true, true, { 634.607971f, 47.408627f, 69.890488f },
+	// Control Point Definition, ids, position vector, rotations
+	// NEUTRAL	A-ASS	A-CON	H-ASS	H-CON							POSITION							ROTATION
+	{ { 179286, 179286, 179284, 179287, 179285 }, 639.184326f, -31.640333f, 46.202557f, 1.3546723f, 0.9025853f, -0.4305111f },
+	// Aura Definition
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f	},
+	// Glow Definition
+	{ { 180102, 180102, 180100, 180102, 180101 }, 639.184326f, -31.640333f, 46.202557f, 1.3546723f, 0.0f, 0.0f },
+	// Guard IDs
+	//N,   A,	  H   guardC  boss ids peon locs   boss location  fire locations
+	{ 0, 12050, 12053 }, 5, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, 0,
+	// World State Fields
+	WORLDSTATE_AV_STORMPIKE_AID_STATION_ALLIANCE_ASSAULTING, WORLDSTATE_AV_STORMPIKE_AID_STATION_ALLIANCE_CONTROLLED,
+	WORLDSTATE_AV_STORMPIKE_AID_STATION_HORDE_ASSAULTING, WORLDSTATE_AV_STORMPIKE_AID_STATION_HORDE_CONTROLLED,
+	AV_NODE_STATE_ALLIANCE_CONTROLLED, }, // Default World State
+
+	{ "Stormpike Graveyard", true, true, { 675.970947f, -373.707336f, 29.780785f },
+	{ { 179286, 179286, 179284, 179287, 179285 }, 670.904175f, -294.181641f, 30.283506f, 4.232887f, 0.4067366f, 0.9135454f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 180102, 180102, 180100, 180102, 180101 }, 670.904175f, -294.181641f, 30.283506f, 4.232887f, 0.0f, 0.0f },
+	{ 0, 12050, 12053 }, 5, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, 0,
+	WORLDSTATE_AV_STORMPIKE_GRAVE_ALLIANCE_ASSAULTING, WORLDSTATE_AV_STORMPIKE_GRAVE_ALLIANCE_CONTROLLED,
+	WORLDSTATE_AV_STORMPIKE_GRAVE_HORDE_ASSAULTING, WORLDSTATE_AV_STORMPIKE_GRAVE_HORDE_CONTROLLED, AV_NODE_STATE_ALLIANCE_CONTROLLED, },
+
+	{ "Stonehearth Graveyard", true, true, { 73.869370f, -495.597656f, 48.740143f },
+	{ { 179286, 179286, 179284, 179287, 179285 }, 78.367012f, -404.769928f, 47.051014f, 4.350670f, 0.2672384f, 0.9636304f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 180102, 180102, 180100, 180102, 180101 }, 78.367012f, -404.769928f, 47.051014f, 4.350670f, 0.0f, 0.0f },
+	{ 0, 12050, 12053 }, 5, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, 0, WORLDSTATE_AV_STONEHEARTH_GRAVE_ALLIANCE_ASSAULTING,
+	WORLDSTATE_AV_STONEHEARTH_GRAVE_ALLIANCE_CONTROLLED, WORLDSTATE_AV_STONEHEARTH_GRAVE_HORDE_ASSAULTING,
+	WORLDSTATE_AV_STONEHEARTH_GRAVE_HORDE_CONTROLLED, AV_NODE_STATE_ALLIANCE_CONTROLLED, },
+
+	{ "Snowfall Graveyard", true, true, { -161.472916f, 34.797512f, 77.191841f },
+	{ { 180418, 179286, 179284, 179287, 179285 }, -202.571854f, -112.612862f, 78.489014f, 1.666146f, 0.9366722f, 0.3502073f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 180102, 180102, 180100, 180102, 180101 }, -202.571854f, -112.612862f, 78.489014f, 1.666146f, 0.0f, 0.0f },
+	{ 0, 12050, 12053 }, 5, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, WORLDSTATE_AV_SNOWFALL_GRAVE_NEUTRAL_CONTROLLED,
+	WORLDSTATE_AV_SNOWFALL_GRAVE_ALLIANCE_ASSAULTING, WORLDSTATE_AV_SNOWFALL_GRAVE_ALLIANCE_CONTROLLED,
+	WORLDSTATE_AV_SNOWFALL_GRAVE_HORDE_ASSAULTING, WORLDSTATE_AV_SNOWFALL_GRAVE_HORDE_CONTROLLED, AV_NODE_STATE_NEUTRAL_CONTROLLED, },
+
+	{ "Coldtooth Mine", false, true, { 0.0f, 0.0f, 0.0f }, { { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }, { { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, WORLDSTATE_AV_COLDTOOTH_MINE_KOBOLD_CONTROLLED, 0,
+	WORLDSTATE_AV_COLDTOOTH_MINE_ALLIANCE_CONTROLLED, 0, WORLDSTATE_AV_COLDTOOTH_MINE_HORDE_CONTROLLED, AV_NODE_STATE_NEUTRAL_CONTROLLED, },
+
+	{ "Irondeep Mine", false, true, { 0.0f, 0.0f, 0.0f }, { { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }, { { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, WORLDSTATE_AV_IRONDEEP_MINE_TROGG_CONTROLLED, 0,
+	WORLDSTATE_AV_IRONDEEP_MINE_ALLIANCE_CONTROLLED, 0, WORLDSTATE_AV_IRONDEEP_MINE_HORDE_CONTROLLED, AV_NODE_STATE_NEUTRAL_CONTROLLED, },
+
+	{ "Iceblood Graveyard", true, true, { -531.067627f, -405.459778f, 49.552971f },
+	{ { 179286, 179286, 179284, 179287, 179285 }, -611.891113f, -395.925751f, 60.798248f, 3.193738f, 0.9135455f, -0.4067366f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 180102, 180102, 180100, 180102, 180101 }, -611.891113f, -395.925751f, 60.798248f, 3.193738f, 0.0f, 0.0f },
+	{ 0, 12050, 12053 }, 5, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, 0, WORLDSTATE_AV_ICEBLOOD_GRAVE_ALLIANCE_ASSAULTING,
+	WORLDSTATE_AV_ICEBLOOD_GRAVE_ALLIANCE_CONTROLLED, WORLDSTATE_AV_ICEBLOOD_GRAVE_HORDE_ASSAULTING,
+	WORLDSTATE_AV_ICEBLOOD_GRAVE_HORDE_CONTROLLED, AV_NODE_STATE_HORDE_CONTROLLED, },
+
+	{ "Frostwolf Graveyard", true, true, { -1088.008545f, -248.774918f, 57.680843f },
+	{ { 179286, 179286, 179284, 179287, 179285 }, -1082.267578f, -344.454590f, 55.272388f, 1.579743f, 0.9025853f, -0.4305111f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 180102, 180102, 180100, 180102, 180101 }, -1082.267578f, -344.454590f, 55.272388f, 1.579743f, 0.0f, 0.0f },
+	{ 0, 12050, 12053 }, 5, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, 0, WORLDSTATE_AV_FROSTWOLF_GRAVE_ALLIANCE_ASSAULTING,
+	WORLDSTATE_AV_FROSTWOLF_GRAVE_ALLIANCE_CONTROLLED, WORLDSTATE_AV_FROSTWOLF_GRAVE_HORDE_ASSAULTING,
+	WORLDSTATE_AV_FROSTWOLF_GRAVE_HORDE_CONTROLLED, AV_NODE_STATE_HORDE_CONTROLLED, },
+
+	{ "Frostwolf Relief Hut", true, true, { -1500.063599f, -333.146393f, 101.133186f },
+	{ { 179286, 179286, 179284, 179287, 179285 }, -1401.263550f, -309.601624f, 89.412560f, 3.538534f, 0.4067366f, 0.9135454f },
+	{ { 0, 0, 0, 0, 0 }, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+	{ { 180102, 180102, 180100, 180102, 180101 }, -1401.263550f, -309.601624f, 89.412560f, 3.538534f, 0.0f, 0.0f },
+	{ 0, 12050, 12053 }, 5, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 0, 0, WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_ALLIANCE_ASSAULTING,
+	WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_ALLIANCE_CONTROLLED, WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_HORDE_ASSAULTING,
+	WORLDSTATE_AV_FROSTWOLF_RELIEF_HUT_HORDE_CONTROLLED, AV_NODE_STATE_HORDE_CONTROLLED, },
+
+	{ "North Dun Baldar Bunker", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 179284, 179287, 0 }, 673.361877f, -144.169357f, 63.651852f, 0.969958f, 0.2672384f, 0.9636304f },
+	{ { 0, 179446, 178927, 179446, 0 }, 678.393250f, -136.145126f, 76.004265f, 4.515254f, 0.0f, 0.0f },
+	{ { 0, 180423, 180421, 180423, 0 }, 678.393250f, -136.145126f, 76.004265f, 4.515254f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13358, 0, 0, WORLDSTATE_AV_DUN_BALDAR_NORTH_BUNKER_CONTROLLED,
+	WORLDSTATE_AV_DUN_BALDAR_NORTH_BUNKER_ASSAULTING, WORLDSTATE_AV_DUN_BALDAR_NORTH_BUNKER_DESTROYED, AV_NODE_STATE_ALLIANCE_CONTROLLED, },
+
+	{ "South Dun Baldar Bunker", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 179284, 179287, 0 }, 552.990234f, -77.527374f, 51.926868f, 3.5410520f, 0.9366722f, 0.3502073f },
+	{ { 0, 179450, 178932, 179450, 0 }, 556.081543f, -84.437355f, 64.411903f, 5.006125f, 0.0f, 0.0f },
+	{ { 0, 180423, 180421, 180423, 0 }, 556.081543f, -84.437355f, 64.411903f, 5.006125f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13358, 0, 0, WORLDSTATE_AV_DUN_BALDAR_SOUTH_BUNKER_CONTROLLED,
+	WORLDSTATE_AV_DUN_BALDAR_SOUTH_BUNKER_ASSAULTING, WORLDSTATE_AV_DUN_BALDAR_SOUTH_BUNKER_DESTROYED, AV_NODE_STATE_ALLIANCE_CONTROLLED, },
+
+	{ "Icewing Bunker", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 179284, 179287, 0 }, 201.845840f, -358.886963f, 56.370701f, 5.403111f, 0.9135455f, -0.4067366f },
+	{ { 0, 179454, 178947, 179454, 0 }, 208.691223f, -367.553314f, 68.696632f, 3.317518f, 0.0f, 0.0f },
+	{ { 0, 180423, 180421, 180423, 0 }, 208.691223f, -367.553314f, 68.696632f, 3.317518f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13358, 0, 0, WORLDSTATE_AV_ICEWING_BUNKER_CONTROLLED,
+	WORLDSTATE_AV_ICEWING_BUNKER_ASSAULTING, WORLDSTATE_AV_ICEWING_BUNKER_DESTROYED, AV_NODE_STATE_ALLIANCE_CONTROLLED, },
+
+	{ "Stonehearth Bunker", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 179284, 179287, 0 }, -151.776291f, -439.776245f, 40.381840f, 4.319230f, 0.9025853f, -0.4305111f },
+	{ { 0, 179458, 178948, 179458, 0 }, -156.257721f, -448.993652f, 52.797112f, 2.803080f, 0.0f, 0.0f },
+	{ { 0, 180423, 180421, 180423, 0 }, -156.257721f, -448.993652f, 52.797112f, 2.803080f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13358, 0, 0, WORLDSTATE_AV_STONEHEARTH_BUNKER_CONTROLLED,
+	WORLDSTATE_AV_STONEHEARTH_BUNKER_ASSAULTING, WORLDSTATE_AV_STONEHEARTH_BUNKER_DESTROYED, AV_NODE_STATE_ALLIANCE_CONTROLLED, },
+
+	{ "Iceblood Tower", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 0, 179287, 179285 }, -572.502869f, -262.418365f, 75.008713f, 5.483192f, 0.4067366f, 0.9135454f },
+	{ { 0, 179436, 0, 179436, 178955 }, -572.408386f, -262.620422f, 88.636307f, 0.712354f, 0.0f, 0.0f },
+	{ { 0, 180423, 0, 180423, 180422 }, -572.408386f, -262.620422f, 88.636307f, 0.712354f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13359, 0, WORLDSTATE_AV_ICEBLOOD_TOWER_ASSAULTING,
+	WORLDSTATE_AV_ICEBLOOD_TOWER_DESTROYED, 0, WORLDSTATE_AV_ICEBLOOD_TOWER_CONTROLLED, AV_NODE_STATE_HORDE_CONTROLLED, },
+
+	{ "Tower Point", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 0, 179287, 179285 }, -767.986511f, -363.091064f, 90.894920f, 4.265791f, 0.2672384f, 0.9636304f },
+	{ { 0, 179440, 0, 179440, 178956 }, -768.181519f, -362.942719f, 104.553452f, 4.761085f, 0.0f, 0.0f },
+	{ { 0, 180423, 0, 180423, 180422 }, -768.181519f, -362.942719f, 104.553452f, 4.761085f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13359, 0, WORLDSTATE_AV_TOWERPOINT_ASSAULTING,
+	WORLDSTATE_AV_TOWERPOINT_DESTROYED, 0, WORLDSTATE_AV_TOWERPOINT_CONTROLLED, AV_NODE_STATE_HORDE_CONTROLLED, },
+
+	{ "East Frostwolf Tower", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 0, 179287, 179285 }, -1302.814453f, -315.957458f, 113.867195f, 1.956738f, 0.9366722f, 0.3502073f },
+	{ { 0, 179442, 0, 179442, 178957 }, -1302.916626f, -316.606079f, 127.526337f, 6.176374f, 0.0f, 0.0f },
+	{ { 0, 180423, 0, 180423, 180422 }, -1302.916626f, -316.606079f, 127.526337f, 6.176374f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13359, 0, WORLDSTATE_AV_FROSTWOLF_EAST_TOWER_ASSAULTING,
+	WORLDSTATE_AV_FROSTWOLF_EAST_TOWER_DESTROYED, 0, WORLDSTATE_AV_FROSTWOLF_EAST_TOWER_CONTROLLED, AV_NODE_STATE_HORDE_CONTROLLED, },
+
+	{ "West Frostwolf Tower", false, false, { 0.0f, 0.0f, 0.0f },
+	{ { 0, 179286, 0, 179287, 179285 }, -1296.913818f, -266.521271f, 114.151245f, 3.336680f, 0.9135455f, -0.4067366f },
+	{ { 0, 179444, 0, 179444, 178958 }, -1297.889404f, -266.714233f, 127.789467f, 5.931325f, 0.0f, 0.0f },
+	{ { 0, 180423, 0, 180423, 180422 }, -1297.889404f, -266.714233f, 127.789467f, 5.931325f, 0.0f, 0.0f },
+	{ 0, 0, 0 }, 0, { 0, 0, 0 }, NULL, { 0.0f, 0.0f, 0.0f }, 13359, 0, WORLDSTATE_AV_FROSTWOLF_WEST_TOWER_ASSAULTING,
+	WORLDSTATE_AV_FROSTWOLF_WEST_TOWER_DESTROYED, 0, WORLDSTATE_AV_FROSTWOLF_WEST_TOWER_CONTROLLED, AV_NODE_STATE_HORDE_CONTROLLED, },
 };
 
 // gameobject faction def'n
-static uint32 g_gameObjectFactions[AV_NODE_STATE_COUNT] = {
-	35,				// neutral
-	2,				// alliance assault
-	2,				// alliance	controlled
-	1,				// horde assault
-	1,				// horde controlled
-};
-
-const static int32 g_stateToGuardType[AV_NODE_STATE_COUNT] = {
-	0,				// neutral
-	-1,				// alliance assault
-	1,				// alliance	controlled
-	-2,				// horde assault
-	2,				// horde controlled
-};
-
-static const char *g_stateNames[AV_NODE_STATE_COUNT] = {
-	"AV_NODE_STATE_NEUTRAL_CONTROLLED",
-	"AV_NODE_STATE_ALLIANCE_ASSAULTING",
-	"AV_NODE_STATE_ALLIANCE_CONTROLLED",
-	"AV_NODE_STATE_HORDE_ASSAULTING",
-	"AV_NODE_STATE_HORDE_CONTROLLED",
-};
+static uint32 g_gameObjectFactions[AV_NODE_STATE_COUNT] = { 35, 2, 2, 1, 1, };
+const static int32 g_stateToGuardType[AV_NODE_STATE_COUNT] = { 0, -1, 1, -2, 2, };
+static const char *g_stateNames[AV_NODE_STATE_COUNT] = { "AV_NODE_STATE_NEUTRAL_CONTROLLED", "AV_NODE_STATE_ALLIANCE_ASSAULTING",
+"AV_NODE_STATE_ALLIANCE_CONTROLLED", "AV_NODE_STATE_HORDE_ASSAULTING", "AV_NODE_STATE_HORDE_CONTROLLED", };
 
 AVNode::AVNode( AlteracValley* parent, AVNodeTemplate *tmpl, uint32 nodeid) : m_template(tmpl), m_nodeId(nodeid)
 {
@@ -1194,15 +612,10 @@ void AVNode::Spawn()
 			{
 				float x = RandomUInt(10) * cos(RandomFloat(6.28f)) + m_template->m_flagLocation.x;
 				float y = RandomUInt(10) * cos(RandomFloat(6.28f)) + m_template->m_flagLocation.y;
-				float z;
-/*#ifdef COLLISION
-				z = CollideInterface.GetHeight(30, x, y, m_template->m_flagLocation.y + 2.0f);
-				if( z == NO_WMO_HEIGHT )
-					z = m_bg->GetMapMgr()->GetLandHeight(x, y);
-#else
-				z = m_bg->GetMapMgr()->GetLandHeight(x, y);
-#endif*/
-				z = m_bg->GetMapMgr()->GetLandHeight(x, y);
+				float z = m_bg->GetMapMgr()->GetLandHeight(x, y);
+				if(z == NO_LAND_HEIGHT)
+					z = m_template->m_flagLocation.z;
+
 				if( z != 0.0f )
 					m_guards.push_back(m_bg->SpawnCreature(m_template->m_guardId[t], x, y, z, 0.0f));
 			}
@@ -1722,18 +1135,15 @@ struct AVLoot
 	uint32 MaxCount;
 };
 
-const static AVLoot g_avLoot[] = {
-	
+const static AVLoot g_avLoot[] =
+{
 	// Alliance Loot
-	{ 17306,	0,		100.0f, 1, 1 },			// Stormpike Soldier's Blood
-	{ 17326,	0,		80.0, 1, 1 },				// Stormpike Soldier's Meat
-
-	// Horde Loot	
-	{ 17423,	1,		50.0f, 1, 1 },			// Crystal Cluster
-
+	// Stormpike Soldier's Blood	// Stormpike Soldier's Meat
+	{ 17306, 0, 100.0f, 1, 1 },		{ 17326, 0, 80.0, 1, 1 },
+	// Horde Loot
+	{ 17423, 1, 50.0f, 1, 1 },		// Crystal Cluster
 	// Global loot
-	{ 17422,	-1,		100.0f, 1, 5 },			// Armor Scrap
-
+	{ 17422, -1, 100.0f, 1, 5 },	// Armor Scrap
 	// EOF
 	{ 0, 0, 0},
 };
