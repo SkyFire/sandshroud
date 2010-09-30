@@ -1187,11 +1187,11 @@ void World::Rehash(bool load)
 {
 	if(load)
 	{
-		#ifdef WIN32
+#ifdef WIN32
 		Config.MainConfig.SetSource("hearthstone-world.conf", true);
-		#else
+#else
 		Config.MainConfig.SetSource((char*)CONFDIR "/hearthstone-world.conf", true);
-		#endif
+#endif
 	}
 
 	if(!ChannelMgr::getSingletonPtr())
@@ -1272,11 +1272,6 @@ void World::Rehash(bool load)
 	SocketRecvBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "RecvBufSize", WORLDSOCKET_RECVBUF_SIZE);
 	SocketSendBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "SendBufSize", WORLDSOCKET_SENDBUF_SIZE);
 #endif
-
-	LogCheaters = Config.MainConfig.GetBoolDefault("Log", "Cheaters", false);
-	LogCommands = Config.MainConfig.GetBoolDefault("Log", "GMCommands", false);
-	LogPlayers = Config.MainConfig.GetBoolDefault("Log", "Player", false);
-	LogChats = Config.MainConfig.GetBoolDefault("Log", "Chat", false);
 
 #ifdef WIN32
 	DWORD current_priority_class = GetPriorityClass( GetCurrentProcess() );

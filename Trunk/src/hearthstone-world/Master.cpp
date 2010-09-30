@@ -230,7 +230,13 @@ bool Master::Run(int argc, char ** argv)
 	new World;
 
 	/* load the config file */
-	sWorld.Rehash(false);
+	sWorld.Rehash(true);
+
+	// Because of our log DB system, these have to be initialized different then rehash.
+	sWorld.LogCheaters = Config.MainConfig.GetBoolDefault("Log", "Cheaters", false);
+	sWorld.LogCommands = Config.MainConfig.GetBoolDefault("Log", "GMCommands", false);
+	sWorld.LogPlayers = Config.MainConfig.GetBoolDefault("Log", "Player", false);
+	sWorld.LogChats = Config.MainConfig.GetBoolDefault("Log", "Chat", false);
 
 	// Initialize Opcode Table
 	WorldSession::InitPacketHandlerTable();
@@ -546,26 +552,31 @@ bool Master::_StartDB()
 		return false;
 	}
 
-	result = Config.MainConfig.GetString( "LogDatabase", "Username", &username );
-	Config.MainConfig.GetString( "LogDatabase", "Password", &password );
-	result = !result ? result : Config.MainConfig.GetString( "LogDatabase", "Hostname", &hostname );
-	result = !result ? result : Config.MainConfig.GetString( "LogDatabase", "Name", &database );
-	result = !result ? result : Config.MainConfig.GetInt( "LogDatabase", "Port", &port );
-	Database_Log = Database::Create();
-
-	if(result == false)
+	if(Config.MainConfig.GetBoolDefault("Log", "Cheaters", false) || Config.MainConfig.GetBoolDefault("Log", "GMCommands", false)
+		|| Config.MainConfig.GetBoolDefault("Log", "Player", false) || Config.MainConfig.GetBoolDefault("Log", "Chat", false))
 	{
-		OUT_DEBUG( "sql: One or more parameters were missing from Database directive." );
-		return false;
+		result = Config.MainConfig.GetString( "LogDatabase", "Username", &username );
+		Config.MainConfig.GetString( "LogDatabase", "Password", &password );
+		result = !result ? result : Config.MainConfig.GetString( "LogDatabase", "Hostname", &hostname );
+		result = !result ? result : Config.MainConfig.GetString( "LogDatabase", "Name", &database );
+		result = !result ? result : Config.MainConfig.GetInt( "LogDatabase", "Port", &port );
+		Database_Log = Database::Create();
+
+		if(result == false)
+		{
+			OUT_DEBUG( "sql: One or more parameters were missing from Database directive." );
+			return false;
+		}
+
+		// Initialize it
+		if( !(LogDatabase.Initialize( hostname.c_str(), (uint)port, username.c_str(),
+			password.c_str(), database.c_str(), Config.MainConfig.GetIntDefault( "LogDatabase", "ConnectionCount", 5 ), 16384 )) )
+		{
+			OUT_DEBUG( "sql: Log database initialization failed. Exiting." );
+			return false;
+		}
 	}
 
-	// Initialize it
-	if( !(LogDatabase.Initialize( hostname.c_str(), (uint)port, username.c_str(),
-		password.c_str(), database.c_str(), Config.MainConfig.GetIntDefault( "LogDatabase", "ConnectionCount", 5 ), 16384 )) )
-	{
-		OUT_DEBUG( "sql: Log database initialization failed. Exiting." );
-		return false;
-	}
 	return true;
 }
 

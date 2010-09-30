@@ -264,7 +264,7 @@ void TestConsoleLogin(string& username, string& password, uint32 requestno)
 bool HandleRehashCommand(BaseConsole * pConsole, int argc, const char * argv[])
 {
 	pConsole->Write("Config file re-parsed.\n");
-	sWorld.Rehash(true);
+	sWorld.Rehash(false);
 	return true;
 }
 

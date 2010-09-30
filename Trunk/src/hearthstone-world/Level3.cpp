@@ -2760,7 +2760,7 @@ bool ChatHandler::HandleRehashCommand(const char * args, WorldSession * m_sessio
 	snprintf(msg, 250, "%s is rehashing config file.", m_session->GetPlayer()->GetName());
 	sWorld.SendWorldWideScreenText(msg, 0);
 	sWorld.SendWorldText(msg, 0);
-	sWorld.Rehash(true);
+	sWorld.Rehash(false);
 	return true;
 }
 
