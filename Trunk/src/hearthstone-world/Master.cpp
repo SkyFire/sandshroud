@@ -409,7 +409,11 @@ bool Master::Run(int argc, char ** argv)
 	// kill the database thread first so we don't lose any queries/data
 	CharacterDatabase.EndThreads();
 	WorldDatabase.EndThreads();
-	LogDatabase.EndThreads();
+
+	if(Config.MainConfig.GetBoolDefault("Log", "Cheaters", false) || Config.MainConfig.GetBoolDefault("Log", "GMCommands", false)
+		|| Config.MainConfig.GetBoolDefault("Log", "Player", false) || Config.MainConfig.GetBoolDefault("Log", "Chat", false))
+		LogDatabase.EndThreads();
+
 	if(sWorld.LogonServerType & LOGON_MANGOS)
 		if(Database_Account != NULL)
 			AccountDatabase.EndThreads();
@@ -584,7 +588,10 @@ void Master::_StopDB()
 {
 	delete Database_World;
 	delete Database_Character;
-	delete Database_Log;
+
+	if(Config.MainConfig.GetBoolDefault("Log", "Cheaters", false) || Config.MainConfig.GetBoolDefault("Log", "GMCommands", false)
+		|| Config.MainConfig.GetBoolDefault("Log", "Player", false) || Config.MainConfig.GetBoolDefault("Log", "Chat", false))
+		delete Database_Log;
 }
 
 #ifndef WIN32
@@ -608,7 +615,10 @@ void segfault_handler(int c)
 			sLog.outString( "Waiting for all database queries to finish..." );
 			WorldDatabase.EndThreads();
 			CharacterDatabase.EndThreads();
-			LogDatabase.EndThreads();
+			if(Config.MainConfig.GetBoolDefault("Log", "Cheaters", false) || Config.MainConfig.GetBoolDefault("Log", "GMCommands", false)
+				|| Config.MainConfig.GetBoolDefault("Log", "Player", false) || Config.MainConfig.GetBoolDefault("Log", "Chat", false))
+				LogDatabase.EndThreads();
+
 			if(sWorld.LogonServerType & LOGON_MANGOS)
 				if(Database_Account != NULL)
 					AccountDatabase.EndThreads();
@@ -723,7 +733,11 @@ void OnCrash( bool Terminate )
 			sLog.outString( "Waiting for all database queries to finish..." );
 			WorldDatabase.EndThreads();
 			CharacterDatabase.EndThreads();
-			LogDatabase.EndThreads();
+
+			if(Config.MainConfig.GetBoolDefault("Log", "Cheaters", false) || Config.MainConfig.GetBoolDefault("Log", "GMCommands", false)
+				|| Config.MainConfig.GetBoolDefault("Log", "Player", false) || Config.MainConfig.GetBoolDefault("Log", "Chat", false))
+				LogDatabase.EndThreads();
+
 			if(sWorld.LogonServerType & LOGON_MANGOS)
 				if(Database_Account != NULL)
 					AccountDatabase.EndThreads();

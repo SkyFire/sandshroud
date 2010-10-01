@@ -6425,7 +6425,7 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 			fail = SPELL_FAILED_NO_AMMO;
 
 		ItemPrototype * ammo = ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
-		if( ammo && getLevel()< ammo->RequiredLevel)
+		if( ammo && getLevel() < ammo->RequiredLevel)
 			return SPELL_FAILED_LOWLEVEL;
 
 		ItemPrototype * ranged = ItemPrototypeStorage.LookupEntry(itm->GetEntry());
@@ -6535,7 +6535,7 @@ void Player::EventRepeatSpell()
 		if( f != SPELL_FAILED_OUT_OF_RANGE )
 		{
 			m_AutoShotAttackTimer = 0;
-			m_onAutoShot=false;
+			m_onAutoShot = false;
 		}
 		else
 		{

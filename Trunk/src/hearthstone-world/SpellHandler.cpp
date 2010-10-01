@@ -263,14 +263,14 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 			{
 				_player->m_AutoShotTarget = _player->GetSelection();
 				uint32 duration = _player->GetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME);
-				SpellCastTargets targets(recvPacket,GetPlayer()->GetGUID());
+				SpellCastTargets targets(recvPacket, GetPlayer()->GetGUID());
 				if(!targets.m_unitTarget)
 				{
 					sLog.outString( "Cancelling auto-shot cast because targets.m_unitTarget is null!" );
 					return;
 				}
 				SpellEntry *sp = dbcSpell.LookupEntry(spellid);
-			
+
 				_player->m_AutoShotSpell = sp;
 				_player->m_AutoShotDuration = duration;
 				//This will fix fast clicks

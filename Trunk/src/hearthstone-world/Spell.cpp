@@ -1107,7 +1107,6 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 
 	//let us make sure cast_time is within decent range
 	//this is a hax but there is no spell that has more then 10 minutes cast time
-
 	if( m_castTime < 0 )
 		m_castTime = 0;
 	else if( m_castTime > 60 * 10 * 1000)
@@ -2248,7 +2247,7 @@ void Spell::SendSpellStart()
 			else
 				ip = ItemPrototypeStorage.LookupEntry( 2512 );	/*rough arrow*/
 		}
-		
+
 		if( ip != NULL )
 			data << ip->DisplayInfoID << ip->InventoryType;
 	}
@@ -3202,36 +3201,27 @@ uint8 Spell::CanCast(bool tolerate)
 				if( !(((uint32)1 << (p_caster->GetShapeShift()-1)) & m_spellInfo->RequiredShapeShift) && !p_caster->HasDummyAura(SPELL_HASH_SHADOW_DANCE) )
 					return SPELL_FAILED_ONLY_STEALTHED;
 			}
-/*			else if( (m_spellInfo->RequiredShapeShift != 1073741824) && (m_spellInfo->RequiredShapeShift != 134217728) && (m_spellInfo->RequiredShapeShift != 2) )
-			{
-				if( !(((uint32)1 << (p_caster->GetShapeShift()-1)) & m_spellInfo->RequiredShapeShift) )
-					return SPELL_FAILED_ONLY_SHAPESHIFT;
-			}
-			else
-			{
-				if( !(((uint32)1 << (p_caster->GetShapeShift()-1)) & m_spellInfo->RequiredShapeShift) && p_caster->GetShapeShift() )
-					return SPELL_FAILED_ONLY_SHAPESHIFT;
-			}*/
 		}
 
 		// Disarm
 		if( u_caster!= NULL )
 		{
-				if (m_spellInfo->Attributes == ATTRIBUTES_REQ_OOC && u_caster->CombatStatus.IsInCombat())
-				{
-					// Charge In Combat
-					if ((m_spellInfo->Id !=  100 && m_spellInfo->Id != 6178 && m_spellInfo->Id != 11578 ) )
-					return SPELL_FAILED_TARGET_IN_COMBAT;
-				}
+			if (m_spellInfo->Attributes == ATTRIBUTES_REQ_OOC && u_caster->CombatStatus.IsInCombat())
+			{
+				// Charge In Combat
+				if ((m_spellInfo->Id !=  100 && m_spellInfo->Id != 6178 && m_spellInfo->Id != 11578 ) )
+				return SPELL_FAILED_TARGET_IN_COMBAT;
+			}
+
 			if( u_caster->disarmed )
 			{
 				if( m_spellInfo->is_melee_spell )
-					return SPELL_FAILED_EQUIPPED_ITEM_CLASS ;
+					return SPELL_FAILED_EQUIPPED_ITEM_CLASS;
 				else if( m_spellInfo->is_ranged_spell )
-					return SPELL_FAILED_EQUIPPED_ITEM_CLASS ;
+					return SPELL_FAILED_EQUIPPED_ITEM_CLASS;
 			}
 			if( u_caster->disarmedShield && m_spellInfo->RequiredItemFlags && (m_spellInfo->RequiredItemFlags & (1 << INVTYPE_SHIELD)) )
-					return SPELL_FAILED_EQUIPPED_ITEM_CLASS ;
+					return SPELL_FAILED_EQUIPPED_ITEM_CLASS;
 		}
 
 		// check for cooldowns
@@ -3308,39 +3298,24 @@ uint8 Spell::CanCast(bool tolerate)
 		{
 			switch(p_caster->GetShapeShift())
 			{
-				case FORM_TREE:
-				case FORM_BATTLESTANCE:
-				case FORM_DEFENSIVESTANCE:
-				case FORM_BERSERKERSTANCE:
-				case FORM_SHADOW:
-				case FORM_STEALTH:
-				case FORM_MOONKIN:
-				{
-					break;
-				}
+			case FORM_TREE:
+			case FORM_BATTLESTANCE:
+			case FORM_DEFENSIVESTANCE:
+			case FORM_BERSERKERSTANCE:
+			case FORM_SHADOW:
+			case FORM_STEALTH:
+			case FORM_MOONKIN:
+				break;
 
-				case FORM_SWIFT:
-				case FORM_FLIGHT:
+			case FORM_SWIFT:
+			case FORM_FLIGHT:
 				{
 					// check if item is allowed (only special items allowed in flight forms)
 					if(i_caster && !(i_caster->GetProto()->Flags & ITEM_FLAG_SHAPESHIFT_OK))
 						return SPELL_FAILED_NO_ITEMS_WHILE_SHAPESHIFTED;
+				}break;
 
-					break;
-				}
-
-				//case FORM_CAT: 
-				//case FORM_TRAVEL:
-				//case FORM_AQUA:
-				//case FORM_BEAR:
-				//case FORM_AMBIENT:
-				//case FORM_GHOUL:
-				//case FORM_DIREBEAR:
-				//case FORM_CREATUREBEAR:
-				//case FORM_GHOSTWOLF:
-				//case FORM_SPIRITOFREDEMPTION:
-
-				default:
+			default:
 				{
 					// check if item is allowed (only special & equipped items allowed in other forms)
 					if(i_caster && !(i_caster->GetProto()->Flags & ITEM_FLAG_SHAPESHIFT_OK))
@@ -3405,8 +3380,8 @@ uint8 Spell::CanCast(bool tolerate)
 								return SPELL_FAILED_SPELL_LEARNED;
 						}
 					}
-
 				}
+
 				// for items that combine to create a new item, check if we have the required quantity of the item
 				if(i_caster->GetProto()->ItemId == m_spellInfo->Reagent[0] && (i_caster->GetProto()->Flags != 268435520))
 					if(p_caster->GetItemInterface()->GetItemCount(m_spellInfo->Reagent[0]) < m_spellInfo->ReagentCount[0] + 1)
@@ -3428,6 +3403,7 @@ uint8 Spell::CanCast(bool tolerate)
 			uint32 AffectedSpellGroupType[3] = {0,0,0};
 			for(uint32 x=0;x<3;x++)
 				AffectedSpellGroupType[x] |= p_caster->GetUInt32Value(PLAYER_NO_REAGENT_COST_1+x);
+
 			if( AffectedSpellGroupType )
 			{
 				for(uint32 x=0;x<3;x++)
@@ -3576,13 +3552,14 @@ uint8 Spell::CanCast(bool tolerate)
 			switch( m_spellInfo->Effect[0] )
 			{
 				// only lockpicking and enchanting can target items in the trade box
-				case SPELL_EFFECT_OPEN_LOCK:
-				case SPELL_EFFECT_ENCHANT_ITEM:
-				case SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY:
+			case SPELL_EFFECT_OPEN_LOCK:
+			case SPELL_EFFECT_ENCHANT_ITEM:
+			case SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY:
 				{
 					// check for enchants that can only be done on your own items
 					if( m_spellInfo->Flags3 & FLAGS3_ENCHANT_OWN_ONLY )
 						return SPELL_FAILED_BAD_TARGETS;
+
 					// get the player we are trading with
 					Player* t_player = p_caster->GetTradeTarget();
 					// get the targeted trade item
