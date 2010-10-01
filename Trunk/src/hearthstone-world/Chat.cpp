@@ -68,6 +68,8 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _lookupCommandTable;
 	else if(!stricmp(name, "wintergrasp"))
 		return _wintergraspCommandTable;
+	else if(!stricmp(name, "faction"))
+		return _FactionCommandTable;
 
 	 // DB command Start
 	else if(!stricmp(name, "database"))
@@ -629,6 +631,14 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(wintergraspCommandTable, _wintergraspCommandTable);
 
+	static ChatCommand FactionCommandTable[] =
+	{
+		{ "modstanding", 'z', &ChatHandler::HandleFactionModStanding, "Mods a player's faction's standing based on a value", NULL, 0, 0, 0},
+		{ "setstanding", 'z', &ChatHandler::HandleFactionSetStanding, "Changes a player's faction's standing to a value", NULL, 0, 0, 0},
+		{ NULL, 0, NULL, "", NULL, 0, 0, 0},
+	};
+	dupe_command_table(FactionCommandTable, _FactionCommandTable);
+
 	static ChatCommand commandTable[] = {
 		//{ "renameguild", 'a', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.", NULL, 0, 0, 0 },
 		{ "commands",	'0', &ChatHandler::HandleCommandsCommand,		"Shows Commands",				 NULL, 0, 0, 0},
@@ -690,6 +700,7 @@ void CommandTableStorage::Init()
 		{ "title",		'm', NULL,									 "",				 TitleCommandTable, 0, 0, 0},
 		{ "lookup",     '0', NULL,                                   "",				 lookupCommandTable, 0, 0, 0},
 		{ "wintergrasp", '0', NULL,                                   "",				 wintergraspCommandTable, 0, 0, 0},
+		{ "faction", '0', NULL,                                   "",				 FactionCommandTable, 0, 0, 0},
 		{ "getpos"	  ,  'd', &ChatHandler::HandleGetPosCommand,		"",							   NULL, 0, 0, 0},
 		{ "clearcooldowns", 'm', &ChatHandler::HandleClearCooldownsCommand, "Clears all cooldowns for your class.", NULL, 0, 0, 0 },
 		{ "removeauras",   'm', &ChatHandler::HandleRemoveAurasCommand,   "Removes all auras from target",  NULL, 0, 0, 0},
@@ -976,10 +987,11 @@ Player* ChatHandler::getSelectedChar(WorldSession *m_session, bool showerror)
 	{
 		if(showerror) 
 			GreenSystemMessage(m_session, "Auto-targeting self.");
+
 		chr = m_session->GetPlayer(); // autoselect
 	}
 	else
-		chr = m_session->GetPlayer()->GetMapMgr()->GetPlayer((uint32)guid);
+		chr = m_session->GetPlayer()->GetMapMgr()->GetPlayer(GET_LOWGUID_PART(guid));
 
 	if(chr == NULL)
 	{

@@ -146,7 +146,7 @@ bool ChatHandler::HandleCommandsCommand(const char* args, WorldSession *m_sessio
 
 bool ChatHandler::HandleStartCommand(const char* args, WorldSession *m_session)
 {
-	Player* m_plyr = TO_PLAYER(getSelectedChar(m_session, false));
+	Player* m_plyr = TO_PLAYER(getSelectedChar(m_session, true));
 	if( m_plyr == NULL)
 		return false;
 
@@ -214,8 +214,7 @@ bool ChatHandler::HandleStartCommand(const char* args, WorldSession *m_session)
 
 
 	GreenSystemMessage(m_session, "Telporting %s to %s starting location.", m_plyr->GetName(), argument.c_str());
-
-	m_session->GetPlayer()->SafeTeleport(info->mapId, 0, LocationVector(info->positionX, info->positionY, info->positionZ, info->Orientation));
+	m_plyr->SafeTeleport(info->mapId, 0, LocationVector(info->positionX, info->positionY, info->positionZ, info->Orientation));
 	return true;
 }
 

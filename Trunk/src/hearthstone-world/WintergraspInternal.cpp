@@ -229,3 +229,18 @@ void WintergraspInternal::UpdateClock()
 	if(!WG_started)
 		UpdateClockDigit(timer, 4, 10);
 }
+
+void WintergraspInternal::StartWintergrasp()
+{
+	WG_started = true;
+	m_wintergrasp = 1;
+	SendInitWorldStates();
+}
+
+void WintergraspInternal::EndWintergrasp()
+{
+	WG_started = false;
+	WG = NULL;
+	m_wintergrasp = 0;
+	SendInitWorldStates();
+}

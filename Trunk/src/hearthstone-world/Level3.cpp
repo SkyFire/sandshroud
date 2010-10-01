@@ -3538,3 +3538,32 @@ bool ChatHandler::HandleForceEndWintergrasp(const char *args, WorldSession *m_se
 	}
 	return false;
 }
+
+bool ChatHandler::HandleFactionSetStanding(const char *args, WorldSession *m_session)
+{
+	Player* pPlayer = getSelectedChar(m_session, true);
+	if(pPlayer == NULL)
+		return true;
+
+	uint32 standing, faction;
+	if(sscanf(args, "%u %u", &faction, &standing) != 2)
+		return false;
+
+	pPlayer->SetStanding(faction, standing);
+	return true;
+}
+
+bool ChatHandler::HandleFactionModStanding(const char *args, WorldSession *m_session)
+{
+	Player* pPlayer = getSelectedChar(m_session, true);
+	if(pPlayer == NULL)
+		return true;
+
+	uint32 standing;
+	int32 faction;
+	if(sscanf(args, "%u %i", &faction, &standing) != 2)
+		return false;
+
+	pPlayer->SetStanding(faction, standing);
+	return true;
+}

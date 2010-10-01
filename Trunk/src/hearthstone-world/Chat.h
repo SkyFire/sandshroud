@@ -169,6 +169,7 @@ class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 	ChatCommand * _GuildCommandTable;
 	ChatCommand * _TitleCommandTable;
 	ChatCommand * _wintergraspCommandTable;
+	ChatCommand * _FactionCommandTable;
 
 	// DB commands
 	ChatCommand * _DBItemCommandTable;
@@ -644,6 +645,9 @@ protected:
 	bool HandleDisableAH(const char *args, WorldSession *m_session);
 	bool HandleForceStartWintergrasp(const char *args, WorldSession *m_session);
 	bool HandleForceEndWintergrasp(const char *args, WorldSession *m_session);
+
+	bool HandleFactionSetStanding(const char *args, WorldSession *m_session);
+	bool HandleFactionModStanding(const char *args, WorldSession *m_session);
 
 private:
 	Mutex m_lock;
