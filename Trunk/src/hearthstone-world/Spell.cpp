@@ -2875,7 +2875,6 @@ void Spell::HandleEffects(uint32 i)
 		DEBUG_LOG( "Spell","Redirecting Spell %u Effect id = %u to sScriptMgr", m_spellInfo->Id, m_spellInfo->Effect[i]); 
 		return;
 	}
-
 	damage = CalculateEffect(i, unitTarget);
 	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", m_spellInfo->Effect[i], damage);
 
@@ -5353,10 +5352,30 @@ void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (30*30))
+			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (15*15))
 			{
 				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
 		}
 	}
+}
+
+bool Spell::NegateKnockbackEffect(uint32 namehash)
+{   
+	if(!u_caster)
+		return false;
+	switch(namehash)
+	{
+	case SPELL_HASH_BLAST_WAVE:
+		{
+			if(u_caster->HasAura(62126))
+				return true;
+		}break;
+	case SPELL_HASH_THUNDERSTORM:
+		{
+			if(u_caster->HasAura(62132))
+				return true;
+		}break;
+	}
+	return false;
 }

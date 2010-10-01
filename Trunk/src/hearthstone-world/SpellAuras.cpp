@@ -9972,6 +9972,13 @@ void Aura::SpellAuraProcTriggerWithValue(bool apply)
 
 void Aura::SpellAuraVehiclePassenger(bool apply)
 {
+	if(!GetUnitCaster()->IsVehicle())
+		return;
+	if(apply)
+	{
+		TO_VEHICLE(GetCaster())->AddPassenger(m_target,-1,true);
+	}
+
 	if(!apply)
 	{
 		if( m_target && m_target->m_CurrentVehicle )

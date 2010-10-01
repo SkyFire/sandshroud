@@ -5962,6 +5962,29 @@ void Unit::DisableFlight()
 	}
 }
 
+void Unit::EventRegainFlight()
+{
+	if(!IsPlayer())
+	{
+		sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
+		return;
+	}
+	Player * plr = TO_PLAYER(this);
+	if(!plr->m_FlyingAura)
+	{
+		sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
+		return;
+	}
+	WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 13);
+	data << GetNewGUID();
+	data << uint32(2);
+	SendMessageToSet(&data, true);
+	plr->z_axisposition = 0.0f;
+	plr->m_setflycheat = true;
+	plr->GetSession()->m_isFalling = false;
+	sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
+}
+
 bool Unit::IsDazed()
 {
 	for(uint32 x = 0; x < MAX_AURAS; ++x)
@@ -7249,4 +7272,86 @@ void Unit::SetFaction(uint32 faction)
 	if(IsCreature() && TO_CREATURE(this)->m_spawn)
 		TO_CREATURE(this)->SaveToDB();
 //		WorldDatabase.Execute("UPDATE creature_spawns SET faction = %u WHERE id = %u;", faction, TO_CREATURE(this)->m_spawn->id);
+}
+
+void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool disengage )
+{
+	float dx, dy;
+	float value1 = float( basepoint );
+	float value2 = float( miscvalue );
+	float proportion;
+	float multiplier;
+
+	if( disengage )
+		multiplier = -1.0f;
+	else
+		multiplier = 1.0f;
+
+	if( value2 != 0 )
+		proportion = value1 / value2;
+	else
+		proportion = 0;
+
+	if(proportion)
+	{
+		value1 = value1 / (10 * proportion);
+		value2 = value2 / 10 * proportion;
+	}
+	else
+	{
+		value2 = value1 / 10;
+		value1 = 0.1f;
+	}
+
+	float angle = calcAngle(GetPositionX(), GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY()) * float(M_PI) / 180.0f;
+	dx = cosf(angle);
+	dy = sinf(angle);
+
+	if( unitTarget->IsCreature() )
+	{
+		float x = unitTarget->GetPositionX() + (value1 * dx);
+		float y = unitTarget->GetPositionY() + (value1 * dy);
+		float z = unitTarget->GetPositionZ();
+		float dist = unitTarget->CalcDistance(x, y, z);
+		uint32 movetime = unitTarget->GetAIInterface()->GetMovementTime(dist);
+		unitTarget->SetPosition(x, y, z, 0);
+		WorldPacket data(SMSG_MONSTER_MOVE, 50);
+		data << unitTarget->GetNewGUID();
+		data << uint8(0);
+		data << unitTarget->GetPositionX();
+		data << unitTarget->GetPositionY();
+		data << unitTarget->GetPositionZ();
+		data << getMSTime();
+		data << uint8(0);
+		data << uint32(MONSTER_MOVE_FLAG_JUMP);
+		data << movetime;
+		data << value2;
+		data << uint32(0);
+		data << uint32(1);
+		data << x << y << z;
+		unitTarget->SendMessageToSet(&data, true);
+		unitTarget->GetAIInterface()->StopMovement(movetime);
+
+		if (unitTarget->GetCurrentSpell() != NULL)
+			unitTarget->GetCurrentSpell()->cancel();
+	}
+	else
+	{
+		WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
+		data << GetNewGUID();
+		data << uint32( getMSTime() );
+		data << float( multiplier * dy );
+		data << float( multiplier * dx );
+		data << float( value1 );
+		data << float( -value2 );
+		Player *plr = TO_PLAYER(this);
+		plr->GetSession()->SendPacket( &data );
+		plr->ResetHeartbeatCoords();
+		plr->DelaySpeedHack(5000);
+		if(plr->m_FlyingAura)
+		{
+			plr->DisableFlight();
+			sEventMgr.AddEvent( this, &Unit::EventRegainFlight, EVENT_REGAIN_FLIGHT, 5000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+		}
+	}
 }

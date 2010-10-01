@@ -1206,6 +1206,7 @@ public:
 	void UpdateSpeed();
 	void EnableFlight();
 	void DisableFlight();
+	void EventRegainFlight();
 
 	void MoveToWaypoint(uint32 wp_id);	
 	void PlaySpellVisual(uint64 target, uint32 spellVisual);
@@ -1431,6 +1432,7 @@ public: // Virtual Script Callers
 	OnDeathScript* CallOnDeath;
 	OnEnterCombatScript* CallOnEnterCombat;
 	OnCastSpellScript* CallOnCastSpell;
+	void knockback(Unit * target, int32 basepoint, uint32 miscvalue, bool disengage = false );
 };
 
 #endif

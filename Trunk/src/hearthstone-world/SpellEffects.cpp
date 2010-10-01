@@ -7216,55 +7216,9 @@ void Spell::SummonNonCombatPet(uint32 i)
 
 void Spell::SpellEffectKnockBack(uint32 i)
 {
-	if(unitTarget == NULL || !unitTarget->isAlive())
+	if(unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
 		return;
-	if(unitTarget->IsPlayer())
-		playerTarget->knockback( m_caster->GetOrientation(), m_spellInfo->EffectBasePoints[ i ] + 1, m_spellInfo->EffectMiscValue[ i ] );
-	else
-	{
-		float dx, dy;
-		float value1 = float(m_spellInfo->EffectBasePoints[i]+1);
-		float value2 = float(m_spellInfo->EffectMiscValue[i]);
-		float proportion;
-		value2 ? proportion = value1/value2 : proportion = 0;
-		if(proportion)
-		{
-			value1 = value1 / (10 * proportion);
-			value2 = value2 / 10 * proportion;
-		}
-		else
-		{
-			value2 = value1 / 10;
-			value1 = 0.1f;
-		}
-		float angle = m_caster->calcAngle(m_caster->GetPositionX(), m_caster->GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY()) * float(M_PI) / 180.0f;
-		dx = cosf(angle);
-		dy = sinf(angle);
-		float x = unitTarget->GetPositionX() + (value1 * dx);
-		float y = unitTarget->GetPositionY() + (value1 * dy);
-		float z = unitTarget->GetPositionZ();
-		float dist = unitTarget->CalcDistance(x, y, z);
-		uint32 movetime = unitTarget->GetAIInterface()->GetMovementTime(dist);
-		unitTarget->SetPosition(x, y, z, 0);
-		WorldPacket data(SMSG_MONSTER_MOVE, 50);
-		data << unitTarget->GetNewGUID();
-		data << uint8(0);
-		data << unitTarget->GetPositionX();
-		data << unitTarget->GetPositionY();
-		data << unitTarget->GetPositionZ();
-		data << getMSTime();
-		data << uint8(0);
-		data << uint32(MONSTER_MOVE_FLAG_JUMP); //move flags
-		data << movetime;
-		data << value2; 
-		data << uint32(0); 
-		data << uint32(1);
-		data << x << y << z;
-		unitTarget->SendMessageToSet(&data, true);
-		unitTarget->GetAIInterface()->StopMovement(movetime);
-		if (unitTarget->GetCurrentSpell() != NULL)
-			unitTarget->GetCurrentSpell()->cancel();
-	}
+	unitTarget->knockback(unitTarget, GetSpellProto()->EffectBasePoints[i]+1, GetSpellProto()->EffectMiscValue[i]);
 }
 
 void Spell::SpellEffectDisenchant(uint32 i)
@@ -8207,30 +8161,19 @@ void Spell::SpellEffectJump(uint32 i)
 	if( u_caster == NULL)
 		return;
 
-	if(u_caster->IsCreature())
-		if(isTargetDummy(u_caster->GetEntry()))
-			return;
+	if(u_caster->IsCreature() && isTargetDummy(u_caster->GetEntry()))
+		return;
 
 	if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 	{
 		if(m_targets.m_destX == 0 || m_targets.m_destY == 0 || m_targets.m_destZ == 0)
 			return; //Hueston we haz a problem.
-		WorldPacket data(SMSG_MONSTER_MOVE, 500);
-		data << u_caster->GetNewGUID();
-		data << uint8(0);
-		data << u_caster->GetPositionX() << u_caster->GetPositionY() << u_caster->GetPositionZ();
-		data << getMSTime();
-		data << uint8(0);
-		data << uint32(MONSTER_MOVE_FLAG_JUMP);
-		data << uint32((m_spellInfo->EffectMiscValue[i])/10);
-		data << float(10.0f);
-		data << uint32(0);
-		data << uint32(1);
-		data << m_targets.m_destX << m_targets.m_destY << m_targets.m_destZ;
-		u_caster->SendMessageToSet(&data, true);
-		float newo = u_caster->calcRadAngle(u_caster->GetPositionX(),u_caster->GetPositionY(), m_targets.m_destX, m_targets.m_destY);
-		u_caster->SetPosition(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, newo);
-		u_caster->GetAIInterface()->StopMovement(1000);
+		float o = u_caster->calcRadAngle(  u_caster->GetPositionX(), u_caster->GetPositionY(), m_targets.m_destX, m_targets.m_destY );
+		// Time formula is derived from andy's logs, 271ms to move ~14.5 units
+		float distance = u_caster->GetDistanceSq( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o),m_targets.m_destZ );
+		uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
+		u_caster->GetAIInterface()->SendMoveToPacket( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, moveTime, u_caster->GetAIInterface()->getMoveFlags() );
+		u_caster->SetPosition( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, false );
 	}
 	else
 	{
@@ -8579,10 +8522,10 @@ void Spell::SpellEffectActivateTalentSpec(uint32 i)
 
 void Spell::SpellEffectDisengage(uint32 i)
 {
-	if( playerTarget == NULL || !playerTarget->isAlive() || m_caster == NULL )
+	if(unitTarget == NULL || !unitTarget->isAlive())
 		return;
 	
-	playerTarget->knockback( m_caster->GetOrientation(), GetSpellProto()->EffectBasePoints[ i ] + 1, GetSpellProto()->EffectMiscValue[ i ], true );
+	unitTarget->knockback(unitTarget, GetSpellProto()->EffectBasePoints[i]+1, GetSpellProto()->EffectMiscValue[i], true);
 }
 
 void Spell::SpellEffectClearFinishedQuest(uint32 i)
