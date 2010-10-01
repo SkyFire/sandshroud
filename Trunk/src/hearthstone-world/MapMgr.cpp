@@ -2216,6 +2216,7 @@ bool MapMgr::IsNavmeshLoaded(float x, float y)
 
 bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
 {
+	m_navMeshLoaded[x][y] = true;
 	if(m_navMesh[x][y])
 		return false; // Already exists
 
@@ -2235,12 +2236,14 @@ bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
 		nvmsh.read((char*) (navData),navDataSize);
 		nvmsh.close();
 		m_navMesh[x][y] = new dtNavMesh;
-		if(m_navMesh == NULL)
+
+		if(m_navMesh[x][y] == NULL)
 		{
 			delete [] navData;
 			m_navMeshLoaded[x][y] = false;
 			return false;
 		}
+
 		if(!m_navMesh[x][y]->init(navData, navDataSize, true, 2048))
 		{
 			delete [] navData;
@@ -2254,6 +2257,7 @@ bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
 		m_navMeshLoaded[x][y] = false;
 		return false;
 	}
+
 	delete[] tmp;
 	m_navMeshLoaded[x][y] = true;
 	return true;
@@ -2261,12 +2265,12 @@ bool MapMgr::LoadNavMesh(uint32 x, uint32 y)
 
 void MapMgr::UnloadNavMesh(uint32 x, uint32 y)
 {
+	m_navMeshLoaded[x][y] = false;
 	if(!m_navMesh[x][y])
 		return; // Already Gone
 
 	delete m_navMesh[x][y];
 	m_navMesh[x][y] = NULL;
-	m_navMeshLoaded[x][y] = false;
 }
 
 LocationVector MapMgr::getNextPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz)
