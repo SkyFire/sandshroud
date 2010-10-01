@@ -493,18 +493,11 @@ bool Master::Run(int argc, char ** argv)
 	remove( "hearthstone-world.pid" );
 	g_bufferPool.Destroy();
 
-	Log.Notice( "Shutdown", "Shutdown complete." );
-
 #ifdef WIN32
 	WSACleanup();
-
-	// Terminate Entire Application
-	//HANDLE pH = OpenProcess(PROCESS_TERMINATE, TRUE, GetCurrentProcessId());
-	//TerminateProcess(pH, 0);
-	//CloseHandle(pH);
-
 #endif
 
+	Log.Notice( "Shutdown", "Shutdown complete." );
 	return true;
 }
 
