@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{97193524-E639-4CBD-AFE4-0CFF84D9656E}</ProjectGuid>
+    <RootNamespace>MoveMapGen</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\$(ProjectName)__$(Platform)_$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\bin\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\$(ProjectName)__$(Platform)_$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;DEBUG;MMAP_GENERATOR;NO_CORE_FUNCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\dependencies\VC\libVC90;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <LargeAddressAware>true</LargeAddressAware>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>..\..\src\;..\..\..\..\src\shared\vmap;..\..\..\..\dep\include\g3dlite\;..\..\..\..\src\framework\;..\..\..\..\dep\ACE_wrappers\;..\..\..\..\dep\recastnavigation\Detour\Include\;..\..\..\..\dep\recastnavigation\Recast\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MMAP_GENERATOR;NO_CORE_FUNCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\dependencies\VC\libVC90;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <LargeAddressAware>true</LargeAddressAware>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\DebugAlloc.cpp" />
+    <ClCompile Include="..\..\src\generator.cpp" />
+    <ClCompile Include="..\..\src\MapBuilder.cpp" />
+    <ClCompile Include="..\..\src\TileBuilder.cpp" />
+    <ClCompile Include="..\..\src\VMapExtensions.cpp" />
+    <ClCompile Include="..\..\src\Collision\BIH.cpp" />
+    <ClCompile Include="..\..\src\Collision\MapTree.cpp" />
+    <ClCompile Include="..\..\src\Collision\ModelInstance.cpp" />
+    <ClCompile Include="..\..\src\Collision\TileAssembler.cpp" />
+    <ClCompile Include="..\..\src\Collision\VMapFactory.cpp" />
+    <ClCompile Include="..\..\src\Collision\VMapManager2.cpp" />
+    <ClCompile Include="..\..\src\Collision\WorldModel.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\AABox.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Box.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Capsule.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\CollisionDetection.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\CoordinateFrame.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Crypto.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Cylinder.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\fileutils.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\g3dfnmatch.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\g3dmath.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Line.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\LineSegment.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Matrix.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Matrix3.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Matrix4.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\MemoryManager.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Plane.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Quat.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Random.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Ray.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\ReferenceCount.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\RegistryUtil.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Sphere.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\stringutils.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\System.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Triangle.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\uint128.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\UprightFrame.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Vector2.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Vector2int16.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Vector3.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Vector3int16.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Vector3int32.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Vector4.cpp" />
+    <ClCompile Include="..\..\src\g3dlite\Vector4int8.cpp" />
+    <ClCompile Include="..\..\src\Recast\Recast.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastAlloc.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastArea.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastContour.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastFilter.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastMesh.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastMeshDetail.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastRasterization.cpp" />
+    <ClCompile Include="..\..\src\Recast\RecastRegion.cpp" />
+    <ClCompile Include="..\..\src\Detour\DetourAlloc.cpp" />
+    <ClCompile Include="..\..\src\Detour\DetourCommon.cpp" />
+    <ClCompile Include="..\..\src\Detour\DetourNavMesh.cpp" />
+    <ClCompile Include="..\..\src\Detour\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="..\..\src\Detour\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="..\..\src\Detour\DetourNode.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\DebugAlloc.h" />
+    <ClInclude Include="..\..\src\MangosMap.h" />
+    <ClInclude Include="..\..\src\MapBuilder.h" />
+    <ClInclude Include="..\..\src\MMapCommon.h" />
+    <ClInclude Include="..\..\src\TileBuilder.h" />
+    <ClInclude Include="..\..\src\Collision\BIH.h" />
+    <ClInclude Include="..\..\src\Collision\IVMapManager.h" />
+    <ClInclude Include="..\..\src\Collision\MapTree.h" />
+    <ClInclude Include="..\..\src\Collision\ModelInstance.h" />
+    <ClInclude Include="..\..\src\Collision\TileAssembler.h" />
+    <ClInclude Include="..\..\src\Collision\VMapDefinitions.h" />
+    <ClInclude Include="..\..\src\Collision\VMapFactory.h" />
+    <ClInclude Include="..\..\src\Collision\VMapManager2.h" />
+    <ClInclude Include="..\..\src\Collision\VMapTools.h" />
+    <ClInclude Include="..\..\src\Collision\WorldModel.h" />
+    <ClInclude Include="..\..\src\g3dlite\AABox.h" />
+    <ClInclude Include="..\..\src\g3dlite\Array.h" />
+    <ClInclude Include="..\..\src\g3dlite\AtomicInt32.h" />
+    <ClInclude Include="..\..\src\g3dlite\BoundsTrait.h" />
+    <ClInclude Include="..\..\src\g3dlite\Box.h" />
+    <ClInclude Include="..\..\src\g3dlite\Capsule.h" />
+    <ClInclude Include="..\..\src\g3dlite\CollisionDetection.h" />
+    <ClInclude Include="..\..\src\g3dlite\CoordinateFrame.h" />
+    <ClInclude Include="..\..\src\g3dlite\Crypto.h" />
+    <ClInclude Include="..\..\src\g3dlite\Cylinder.h" />
+    <ClInclude Include="..\..\src\g3dlite\EqualsTrait.h" />
+    <ClInclude Include="..\..\src\g3dlite\fileutils.h" />
+    <ClInclude Include="..\..\src\g3dlite\G3D.h" />
+    <ClInclude Include="..\..\src\g3dlite\G3DAll.h" />
+    <ClInclude Include="..\..\src\g3dlite\g3dfnmatch.h" />
+    <ClInclude Include="..\..\src\g3dlite\G3DGameUnits.h" />
+    <ClInclude Include="..\..\src\g3dlite\g3dmath.h" />
+    <ClInclude Include="..\..\src\g3dlite\GCamera.h" />
+    <ClInclude Include="..\..\src\g3dlite\HashTrait.h" />
+    <ClInclude Include="..\..\src\g3dlite\Line.h" />
+    <ClInclude Include="..\..\src\g3dlite\LineSegment.h" />
+    <ClInclude Include="..\..\src\g3dlite\Matrix.h" />
+    <ClInclude Include="..\..\src\g3dlite\Matrix2.h" />
+    <ClInclude Include="..\..\src\g3dlite\Matrix3.h" />
+    <ClInclude Include="..\..\src\g3dlite\Matrix4.h" />
+    <ClInclude Include="..\..\src\g3dlite\MemoryManager.h" />
+    <ClInclude Include="..\..\src\g3dlite\Plane.h" />
+    <ClInclude Include="..\..\src\g3dlite\platform.h" />
+    <ClInclude Include="..\..\src\g3dlite\PositionTrait.h" />
+    <ClInclude Include="..\..\src\g3dlite\Quat.h" />
+    <ClInclude Include="..\..\src\g3dlite\Random.h" />
+    <ClInclude Include="..\..\src\g3dlite\Ray.h" />
+    <ClInclude Include="..\..\src\g3dlite\Rect2D.h" />
+    <ClInclude Include="..\..\src\g3dlite\ReferenceCount.h" />
+    <ClInclude Include="..\..\src\g3dlite\RegistryUtil.h" />
+    <ClInclude Include="..\..\src\g3dlite\Set.h" />
+    <ClInclude Include="..\..\src\g3dlite\Sphere.h" />
+    <ClInclude Include="..\..\src\g3dlite\Spline.h" />
+    <ClInclude Include="..\..\src\g3dlite\stringutils.h" />
+    <ClInclude Include="..\..\src\g3dlite\System.h" />
+    <ClInclude Include="..\..\src\g3dlite\Table.h" />
+    <ClInclude Include="..\..\src\g3dlite\Triangle.h" />
+    <ClInclude Include="..\..\src\g3dlite\uint128.h" />
+    <ClInclude Include="..\..\src\g3dlite\units.h" />
+    <ClInclude Include="..\..\src\g3dlite\UprightFrame.h" />
+    <ClInclude Include="..\..\src\g3dlite\Vector2.h" />
+    <ClInclude Include="..\..\src\g3dlite\Vector2int16.h" />
+    <ClInclude Include="..\..\src\g3dlite\Vector3.h" />
+    <ClInclude Include="..\..\src\g3dlite\Vector3int16.h" />
+    <ClInclude Include="..\..\src\g3dlite\Vector3int32.h" />
+    <ClInclude Include="..\..\src\g3dlite\Vector4.h" />
+    <ClInclude Include="..\..\src\g3dlite\Vector4int8.h" />
+    <ClInclude Include="..\..\src\g3dlite\vectorMath.h" />
+    <ClInclude Include="..\..\src\Recast\Recast.h" />
+    <ClInclude Include="..\..\src\Recast\RecastAlloc.h" />
+    <ClInclude Include="..\..\src\Recast\RecastAssert.h" />
+    <ClInclude Include="..\..\src\Detour\DetourAlloc.h" />
+    <ClInclude Include="..\..\src\Detour\DetourAssert.h" />
+    <ClInclude Include="..\..\src\Detour\DetourCommon.h" />
+    <ClInclude Include="..\..\src\Detour\DetourNavMesh.h" />
+    <ClInclude Include="..\..\src\Detour\DetourNavMeshBuilder.h" />
+    <ClInclude Include="..\..\src\Detour\DetourNavMeshQuery.h" />
+    <ClInclude Include="..\..\src\Detour\DetourNode.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
