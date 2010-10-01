@@ -219,15 +219,6 @@ void ApplyNormalFixes()
 				ccchanged = true;
 			}break;
 
-		case SPELL_AURA_MOD_STAT:
-			{
-				if(sp->EffectMiscValue[0] == 3)
-				{
-					type |= SPELL_TYPE_MAGE_INTEL;
-					ccchanged = true;
-				}
-			}break;
-
 		case SPELL_HASH_AMPLIFY_MAGIC:
 		case SPELL_HASH_DAMPEN_MAGIC:
 			{
@@ -293,6 +284,14 @@ void ApplyNormalFixes()
 					type |= SPELL_TYPE_DK_PRESENCE;
 					ccchanged = true;
 				}
+			}break;
+		case SPELL_HASH_ARCANE_INTELLECT:
+		case SPELL_HASH_DALARAN_INTELLECT:
+		case SPELL_HASH_ARCANE_BRILLIANCE:
+		case SPELL_HASH_DALARAN_BRILLIANCE:
+			{
+				type |= SPELL_TYPE_MAGE_INTEL;
+				ccchanged = true;
 			}break;
 		}
 
@@ -3700,6 +3699,10 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectImplicitTargetB[2] = EFF_TARGET_NONE;
 		}break;
 
+	case 46699:
+		{
+			sp->EffectApplyAuraName[0] = SPELL_AURA_REQUIRE_NO_AMMO;
+		}break;
 	/**********************************************************
 	*	Misc stuff (ITEM SETS)
 	**********************************************************/

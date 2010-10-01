@@ -6641,7 +6641,7 @@ void Unit::Heal(Unit* target, uint32 SpellId, uint32 amount)
 		else 
 			target->SetUInt32Value(UNIT_FIELD_HEALTH, ch);
 
-		Spell::SendHealSpellOnPlayer(TO_UNIT(this), target, amount, false, overheal, SpellId);
+		Spell::SendHealSpellOnPlayer(this, target, amount, false, overheal, SpellId);
 	}
 }
 void Unit::Energize(Unit* target, uint32 SpellId, uint32 amount, uint32 type)
