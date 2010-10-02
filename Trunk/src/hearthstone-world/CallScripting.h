@@ -17,8 +17,8 @@
  *
  */
 
-/*	Crow: This style of scripting can be used with C++ scripts to add temporary hooks to what the player/creature is doing.
-	While it is up to the creater of the script to clean these up, the core will automatically delete it when a player changes maps. */
+/*    Crow: This style of scripting can be used with C++ scripts to add temporary hooks to what the player/creature is doing.
+    While it is up to the creater of the script to clean these up, the core will automatically delete it when a player changes maps. */
 
 #ifndef CALL_SCRIPTING_H
 #define CALL_SCRIPTING_H
@@ -28,41 +28,41 @@ class Unit;
 class SERVER_DECL OnKillUnitScript
 {
 public:
-	OnKillUnitScript() { links = 0; };
-	virtual ~OnKillUnitScript() {};
+    OnKillUnitScript() { links = 0; };
+    virtual ~OnKillUnitScript() {};
 
-	virtual void OnKillUnit(Unit* unit,  Unit* uVictim) {}
-	uint64 links;
+    virtual void OnKillUnit(Unit* unit,  Unit* uVictim) {}
+    uint64 links;
 };
 
 class SERVER_DECL OnDeathScript
 {
 public:
-	OnDeathScript() {};
-	virtual ~OnDeathScript() { links = 0; };
+    OnDeathScript() {};
+    virtual ~OnDeathScript() { links = 0; };
 
-	virtual void OnDeath(Unit* unit) {}
-	uint64 links;
+    virtual void OnDeath(Unit* unit) {}
+    uint64 links;
 };
 
 class SERVER_DECL OnEnterCombatScript
 {
 public:
-	OnEnterCombatScript() { links = 0; };
-	virtual ~OnEnterCombatScript() {};
+    OnEnterCombatScript() { links = 0; };
+    virtual ~OnEnterCombatScript() {};
 
-	virtual void OnEnterCombat(Unit* unit, Unit* uTarget) {}
-	uint64 links;
+    virtual void OnEnterCombat(Unit* unit, Unit* uTarget) {}
+    uint64 links;
 };
 
 class SERVER_DECL OnCastSpellScript
 {
 public:
-	OnCastSpellScript() { links = 0; };
-	virtual ~OnCastSpellScript() {};
+    OnCastSpellScript() { links = 0; };
+    virtual ~OnCastSpellScript() {};
 
-	virtual void OnCastSpell(Unit* unit, SpellEntry * uSpell) {}
-	uint64 links;
+    virtual void OnCastSpell(Unit* unit, SpellEntry * uSpell) {}
+    uint64 links;
 };
 
 #endif // CALL_SCRIPTING_H

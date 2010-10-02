@@ -194,8 +194,8 @@
 #include "IsleOfConquest.h"
 
 #ifdef CLUSTERING
-	#include "WorkerServerClient.h"
-	#include "ClusterInterface.h"
+    #include "WorkerServerClient.h"
+    #include "ClusterInterface.h"
 #endif
 
 #include "CollideInterface.h"

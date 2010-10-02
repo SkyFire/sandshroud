@@ -41,37 +41,37 @@ typedef std::set<Player*> WintergraspPlayerSet;
 class Wintergrasp
 {
 public:
-	Wintergrasp(WintergraspInternal* WGI, MapMgr* mgr);
-	~Wintergrasp();
-	static Wintergrasp* Create( WintergraspInternal* i, MapMgr* m) { return new Wintergrasp(i, m); }
-	void Init();
-	void End(Player*plr);
-	void ForceEnd();
-	void OnAddPlayer(Player* plr);
-	void OnRemovePlayer(Player* plr);
-	WintergraspPlayerSet WGPlayers;
-	CreatureSwapSet WGCreatures[2];
-	uint32 GetNumVehicles(uint32 team) { if(team > 1) return 0; return numvehicles[team]; };
-	uint32 GetNumWorkshops(uint32 team) { if(team > 1) return 0; return numworkshop[team]; };
-	void GoDestroyEvent(uint32 Entry, Player* Plr);
-	void GoDamageEvent(uint32 Entry, Player* Plr);
-	void _SendMessage(const char* text);
-	void ShortenBattle(uint32 Time);
-	HEARTHSTONE_INLINE uint64 GetID() { return WGID; };
-	// Workshops
-	uint32 numworkshop[2];
+    Wintergrasp(WintergraspInternal* WGI, MapMgr* mgr);
+    ~Wintergrasp();
+    static Wintergrasp* Create( WintergraspInternal* i, MapMgr* m) { return new Wintergrasp(i, m); }
+    void Init();
+    void End(Player*plr);
+    void ForceEnd();
+    void OnAddPlayer(Player* plr);
+    void OnRemovePlayer(Player* plr);
+    WintergraspPlayerSet WGPlayers;
+    CreatureSwapSet WGCreatures[2];
+    uint32 GetNumVehicles(uint32 team) { if(team > 1) return 0; return numvehicles[team]; };
+    uint32 GetNumWorkshops(uint32 team) { if(team > 1) return 0; return numworkshop[team]; };
+    void GoDestroyEvent(uint32 Entry, Player* Plr);
+    void GoDamageEvent(uint32 Entry, Player* Plr);
+    void _SendMessage(const char* text);
+    void ShortenBattle(uint32 Time);
+    HEARTHSTONE_INLINE uint64 GetID() { return WGID; };
+    // Workshops
+    uint32 numworkshop[2];
 
 private:
-	WintergraspInternal Internal;
-	// Counts
-	uint32 playercount[3];
-	// Vehicles
-	uint32 numvehicles[2];
-	// Same as BattleGround id
-	uint64 WGID;
-	bool FlameWatchDestroyed;
-	bool ShadowsightDestroyed;
-	bool WintersEdgeDestroyed;
+    WintergraspInternal Internal;
+    // Counts
+    uint32 playercount[3];
+    // Vehicles
+    uint32 numvehicles[2];
+    // Same as BattleGround id
+    uint64 WGID;
+    bool FlameWatchDestroyed;
+    bool ShadowsightDestroyed;
+    bool WintersEdgeDestroyed;
 };
 
 enum GameObjectEntries

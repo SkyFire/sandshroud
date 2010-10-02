@@ -26906,4 +26906,4 @@
 #define SPELL_HASH_MULTI_SHADOW_SHOT                                                    0xAD8B60FF
 #define SPELL_HASH_15_SEC_COOLDOWN_CREATURE_SPECIAL_2                                   0x5A6F0397
 
-#endif		// _SPELLHASHES_H
+#endif        // _SPELLHASHES_H

@@ -24,32 +24,32 @@
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleNameQueryOpcode( WorldPacket & recv_data )
 {
-	CHECK_PACKET_SIZE(recv_data, 8);
-	uint64 guid;
-	recv_data >> guid;
+    CHECK_PACKET_SIZE(recv_data, 8);
+    uint64 guid;
+    recv_data >> guid;
 
-	PlayerInfo *pn = objmgr.GetPlayerInfo( (uint32)guid );
-	WoWGuid pguid(guid);
+    PlayerInfo *pn = objmgr.GetPlayerInfo( (uint32)guid );
+    WoWGuid pguid(guid);
 
-	if(!pn)
-		return;
+    if(!pn)
+        return;
 
-	DEBUG_LOG("WorldSession","Received CMSG_NAME_QUERY for: %s", pn->name );
+    DEBUG_LOG("WorldSession","Received CMSG_NAME_QUERY for: %s", pn->name );
 
-	uint8 databuffer[5000];
-	StackPacket data(SMSG_NAME_QUERY_RESPONSE, databuffer, 5000);
-	data << pguid;
-	data << uint8(0);
-	data << pn->name;
-//	if(blablabla)
-//		data << std::string("");
-//	else
-		data << uint8(0);
-	data << uint8(pn->race);
-	data << uint8(pn->gender);
-	data << uint8(pn->cl);
-	data << uint8(0);
-	SendPacket( &data );
+    uint8 databuffer[5000];
+    StackPacket data(SMSG_NAME_QUERY_RESPONSE, databuffer, 5000);
+    data << pguid;
+    data << uint8(0);
+    data << pn->name;
+//    if(blablabla)
+//        data << std::string("");
+//    else
+        data << uint8(0);
+    data << uint8(pn->race);
+    data << uint8(pn->gender);
+    data << uint8(pn->cl);
+    data << uint8(0);
+    SendPacket( &data );
 }
 
 //////////////////////////////////////////////////////////////
@@ -57,8 +57,8 @@ void WorldSession::HandleNameQueryOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleQueryTimeOpcode( WorldPacket & recv_data )
 {
-	uint32 t = (uint32)UNIXTIME;
-	OutPacket(SMSG_QUERY_TIME_RESPONSE, 4, &t);
+    uint32 t = (uint32)UNIXTIME;
+    OutPacket(SMSG_QUERY_TIME_RESPONSE, 4, &t);
 }
 
 //////////////////////////////////////////////////////////////
@@ -66,62 +66,62 @@ void WorldSession::HandleQueryTimeOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 {
-	CHECK_PACKET_SIZE(recv_data, 12);
-	//WorldPacket data(SMSG_CREATURE_QUERY_RESPONSE, 150);
-	uint8 databuffer[10000];
-	StackPacket data(SMSG_CREATURE_QUERY_RESPONSE, databuffer, 10000);
-	uint32 entry;
-	uint64 guid;
-	CreatureInfo *ci;
+    CHECK_PACKET_SIZE(recv_data, 12);
+    //WorldPacket data(SMSG_CREATURE_QUERY_RESPONSE, 150);
+    uint8 databuffer[10000];
+    StackPacket data(SMSG_CREATURE_QUERY_RESPONSE, databuffer, 10000);
+    uint32 entry;
+    uint64 guid;
+    CreatureInfo *ci;
 
-	recv_data >> entry;
-	recv_data >> guid;
+    recv_data >> entry;
+    recv_data >> guid;
 
-	if(entry == 300000)
-	{
-		data << (uint32)entry;
-		data << "WayPoint";
-		data << uint8(0) << uint8(0) << uint8(0);
-		data << "Level is WayPoint ID";
-		for(uint32 i = 0; i < 8; i++)
-			data << uint32(0);
-		data << uint8(0);
-		SendPacket( &data );
-		return;
-	}
+    if(entry == 300000)
+    {
+        data << (uint32)entry;
+        data << "WayPoint";
+        data << uint8(0) << uint8(0) << uint8(0);
+        data << "Level is WayPoint ID";
+        for(uint32 i = 0; i < 8; i++)
+            data << uint32(0);
+        data << uint8(0);
+        SendPacket( &data );
+        return;
+    }
 
-	ci = CreatureNameStorage.LookupEntry(entry);
-	if(ci == NULL)
-		return;
+    ci = CreatureNameStorage.LookupEntry(entry);
+    if(ci == NULL)
+        return;
 
-	LocalizedCreatureName * lcn = (language > 0) ? sLocalizationMgr.GetLocalizedCreatureName(entry, language) : NULL;
+    LocalizedCreatureName * lcn = (language > 0) ? sLocalizationMgr.GetLocalizedCreatureName(entry, language) : NULL;
 
-	if(lcn)
-		DEBUG_LOG("WORLD","HandleCreatureQueryOpcode CMSG_CREATURE_QUERY '%s' (localized to %s)", ci->Name, lcn->Name);
-	else
-		DEBUG_LOG("WORLD","HandleCreatureQueryOpcode CMSG_CREATURE_QUERY '%s'", ci->Name);
-	data << (uint32)entry;
-	data << (lcn ? lcn->Name : ci->Name);
-	data << uint8(0) << uint8(0) << uint8(0);
-	data << (lcn ? lcn->SubName : ci->SubName);
-	data << ci->info_str; //!!! this is a string in 2.3.0 Example: stormwind guard has : "Direction"
-	data << ci->Flags1;
-	data << ci->Type;
-	data << ci->Family;
-	data << ci->Rank;
-	data << ci->Unknown1;
-	data << ci->SpellDataID;
-	data << ci->Male_DisplayID;
-	data << ci->Female_DisplayID;
-	data << ci->Male_DisplayID2;
-	data << ci->Female_DisplayID2;
-	data << ci->unkfloat1;
-	data << ci->unkfloat2;
-	data << ci->Leader;
-	for(uint32 i = 0; i < 6; i++)
-		data << uint32(0);	//QuestItems
-	data << uint32(0);	// CreatureMovementInfo.dbc
-	SendPacket( &data );
+    if(lcn)
+        DEBUG_LOG("WORLD","HandleCreatureQueryOpcode CMSG_CREATURE_QUERY '%s' (localized to %s)", ci->Name, lcn->Name);
+    else
+        DEBUG_LOG("WORLD","HandleCreatureQueryOpcode CMSG_CREATURE_QUERY '%s'", ci->Name);
+    data << (uint32)entry;
+    data << (lcn ? lcn->Name : ci->Name);
+    data << uint8(0) << uint8(0) << uint8(0);
+    data << (lcn ? lcn->SubName : ci->SubName);
+    data << ci->info_str; //!!! this is a string in 2.3.0 Example: stormwind guard has : "Direction"
+    data << ci->Flags1;
+    data << ci->Type;
+    data << ci->Family;
+    data << ci->Rank;
+    data << ci->Unknown1;
+    data << ci->SpellDataID;
+    data << ci->Male_DisplayID;
+    data << ci->Female_DisplayID;
+    data << ci->Male_DisplayID2;
+    data << ci->Female_DisplayID2;
+    data << ci->unkfloat1;
+    data << ci->unkfloat2;
+    data << ci->Leader;
+    for(uint32 i = 0; i < 6; i++)
+        data << uint32(0);    //QuestItems
+    data << uint32(0);    // CreatureMovementInfo.dbc
+    SendPacket( &data );
 }
 
 //////////////////////////////////////////////////////////////
@@ -129,70 +129,70 @@ void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 {
-	CHECK_PACKET_SIZE(recv_data, 12);
-	//WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 300);
-	uint8 databuffer[10000];
-	StackPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, databuffer, 10000);
+    CHECK_PACKET_SIZE(recv_data, 12);
+    //WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 300);
+    uint8 databuffer[10000];
+    StackPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, databuffer, 10000);
 
-	uint32 entryID;
-	uint64 guid;
-	GameObjectInfo *goinfo;
+    uint32 entryID;
+    uint64 guid;
+    GameObjectInfo *goinfo;
 
 
-	recv_data >> entryID;
-	recv_data >> guid;
+    recv_data >> entryID;
+    recv_data >> guid;
 
-	DEBUG_LOG("WORLD","HandleGameObjectQueryOpcode CMSG_GAMEOBJECT_QUERY '%u'", entryID);
+    DEBUG_LOG("WORLD","HandleGameObjectQueryOpcode CMSG_GAMEOBJECT_QUERY '%u'", entryID);
 
-	goinfo = GameObjectNameStorage.LookupEntry(entryID);
-	if(goinfo == NULL)
-		return;
+    goinfo = GameObjectNameStorage.LookupEntry(entryID);
+    if(goinfo == NULL)
+        return;
 
-	LocalizedGameObjectName * lgn = (language>0) ? sLocalizationMgr.GetLocalizedGameObjectName(entryID, language) : NULL;
+    LocalizedGameObjectName * lgn = (language>0) ? sLocalizationMgr.GetLocalizedGameObjectName(entryID, language) : NULL;
 
-	data << entryID;
-	data << goinfo->Type;
-	data << goinfo->DisplayID;
-	if(lgn)
-		data << lgn->Name;
-	else
-		data << goinfo->Name;
+    data << entryID;
+    data << goinfo->Type;
+    data << goinfo->DisplayID;
+    if(lgn)
+        data << lgn->Name;
+    else
+        data << goinfo->Name;
 
-	data << uint8(0);
-	data << uint8(0);
-	data << uint8(0);
-	data << uint8(0);
-	data << uint8(0);
-	data << uint8(0);
-	data << goinfo->SpellFocus;
-	data << goinfo->sound1;
-	data << goinfo->sound2;
-	data << goinfo->sound3;
-	data << goinfo->sound4;
-	data << goinfo->sound5;
-	data << goinfo->sound6;
-	data << goinfo->sound7;
-	data << goinfo->sound8;
-	data << goinfo->sound9;
-	data << goinfo->Unknown1;
-	data << goinfo->Unknown2;
-	data << goinfo->Unknown3;
-	data << goinfo->Unknown4;
-	data << goinfo->Unknown5;
-	data << goinfo->Unknown6;
-	data << goinfo->Unknown7;
-	data << goinfo->Unknown8;
-	data << goinfo->Unknown9;
-	data << goinfo->Unknown10;
-	data << goinfo->Unknown11;
-	data << goinfo->Unknown12;
-	data << goinfo->Unknown13;
-	data << goinfo->Unknown14;
-	data << float(1);
-	for(uint32 i = 0; i < 6; i++)
-		data << uint32(0);			// itemId[6], quest drop
+    data << uint8(0);
+    data << uint8(0);
+    data << uint8(0);
+    data << uint8(0);
+    data << uint8(0);
+    data << uint8(0);
+    data << goinfo->SpellFocus;
+    data << goinfo->sound1;
+    data << goinfo->sound2;
+    data << goinfo->sound3;
+    data << goinfo->sound4;
+    data << goinfo->sound5;
+    data << goinfo->sound6;
+    data << goinfo->sound7;
+    data << goinfo->sound8;
+    data << goinfo->sound9;
+    data << goinfo->Unknown1;
+    data << goinfo->Unknown2;
+    data << goinfo->Unknown3;
+    data << goinfo->Unknown4;
+    data << goinfo->Unknown5;
+    data << goinfo->Unknown6;
+    data << goinfo->Unknown7;
+    data << goinfo->Unknown8;
+    data << goinfo->Unknown9;
+    data << goinfo->Unknown10;
+    data << goinfo->Unknown11;
+    data << goinfo->Unknown12;
+    data << goinfo->Unknown13;
+    data << goinfo->Unknown14;
+    data << float(1);
+    for(uint32 i = 0; i < 6; i++)
+        data << uint32(0);            // itemId[6], quest drop
 
-	SendPacket( &data );
+    SendPacket( &data );
 }
 
 //////////////////////////////////////////////////////////////
@@ -200,74 +200,74 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleCorpseQueryOpcode(WorldPacket &recv_data)
 {
-	DEBUG_LOG("WORLD","HandleCorpseQueryOpcode Received MSG_CORPSE_QUERY");
+    DEBUG_LOG("WORLD","HandleCorpseQueryOpcode Received MSG_CORPSE_QUERY");
 
-	Corpse* pCorpse;
-	//WorldPacket data(MSG_CORPSE_QUERY, 21);
-	uint8 databuffer[100];
-	StackPacket data(MSG_CORPSE_QUERY, databuffer, 100);
+    Corpse* pCorpse;
+    //WorldPacket data(MSG_CORPSE_QUERY, 21);
+    uint8 databuffer[100];
+    StackPacket data(MSG_CORPSE_QUERY, databuffer, 100);
 
-	if(_player->isDead())
-		_player->BuildPlayerRepop();
+    if(_player->isDead())
+        _player->BuildPlayerRepop();
 
-	pCorpse = objmgr.GetCorpseByOwner(_player->GetLowGUID());
-	if(pCorpse)
-	{
-		MapInfo *pPMapinfo = NULL;
-		pPMapinfo = WorldMapInfoStorage.LookupEntry(pCorpse->GetMapId());
-		if(pPMapinfo == NULL)
-			data.Initialize(MSG_CORPSE_QUERY);
+    pCorpse = objmgr.GetCorpseByOwner(_player->GetLowGUID());
+    if(pCorpse)
+    {
+        MapInfo *pPMapinfo = NULL;
+        pPMapinfo = WorldMapInfoStorage.LookupEntry(pCorpse->GetMapId());
+        if(pPMapinfo == NULL)
+            data.Initialize(MSG_CORPSE_QUERY);
 
-		data << uint8(0x01); //show ?
+        data << uint8(0x01); //show ?
 
-		if(pPMapinfo != NULL && !(pPMapinfo->type == INSTANCE_NULL || pPMapinfo->type == INSTANCE_PVP))
-		{
-			data << pPMapinfo->repopmapid; // mapid (that tombstones shown on)
-			data << pPMapinfo->repopx;
-			data << pPMapinfo->repopy;
-			data << pPMapinfo->repopz;
-		}
-		else
-		{
-			data << pCorpse->GetMapId(); // mapid (that tombstones shown on)
-			data << pCorpse->GetPositionX();
-			data << pCorpse->GetPositionY();
-			data << pCorpse->GetPositionZ();
-		}
-		data << pCorpse->GetMapId(); //instance mapid (needs to be same as mapid to be able to recover corpse)
+        if(pPMapinfo != NULL && !(pPMapinfo->type == INSTANCE_NULL || pPMapinfo->type == INSTANCE_PVP))
+        {
+            data << pPMapinfo->repopmapid; // mapid (that tombstones shown on)
+            data << pPMapinfo->repopx;
+            data << pPMapinfo->repopy;
+            data << pPMapinfo->repopz;
+        }
+        else
+        {
+            data << pCorpse->GetMapId(); // mapid (that tombstones shown on)
+            data << pCorpse->GetPositionX();
+            data << pCorpse->GetPositionY();
+            data << pCorpse->GetPositionZ();
+        }
+        data << pCorpse->GetMapId(); //instance mapid (needs to be same as mapid to be able to recover corpse)
 
-		SendPacket(&data);
-	}
+        SendPacket(&data);
+    }
 }
 
 void WorldSession::HandlePageTextQueryOpcode( WorldPacket & recv_data )
 {
-	CHECK_PACKET_SIZE(recv_data, 4);
-	uint32 pageid = 0;
-	uint64 itemguid;
-	uint8 buffer[10000];
-	StackPacket data(SMSG_PAGE_TEXT_QUERY_RESPONSE,buffer, 10000);
-	recv_data >> pageid;
-	recv_data >> itemguid;
+    CHECK_PACKET_SIZE(recv_data, 4);
+    uint32 pageid = 0;
+    uint64 itemguid;
+    uint8 buffer[10000];
+    StackPacket data(SMSG_PAGE_TEXT_QUERY_RESPONSE,buffer, 10000);
+    recv_data >> pageid;
+    recv_data >> itemguid;
 
-	while(pageid)
-	{
-		ItemPage * page = ItemPageStorage.LookupEntry(pageid);
-		if(page == NULL)
-			return;
+    while(pageid)
+    {
+        ItemPage * page = ItemPageStorage.LookupEntry(pageid);
+        if(page == NULL)
+            return;
 
-		LocalizedItemPage * lpi = (language>0) ? sLocalizationMgr.GetLocalizedItemPage(pageid,language):NULL;
-		data.Clear();
-		data << pageid;
-		if(lpi)
-			data.Write((uint8*)lpi->Text, strlen(lpi->Text) + 1);
-		else
-			data.Write((uint8*)page->text, strlen(page->text) + 1);
+        LocalizedItemPage * lpi = (language>0) ? sLocalizationMgr.GetLocalizedItemPage(pageid,language):NULL;
+        data.Clear();
+        data << pageid;
+        if(lpi)
+            data.Write((uint8*)lpi->Text, strlen(lpi->Text) + 1);
+        else
+            data.Write((uint8*)page->text, strlen(page->text) + 1);
 
-		data << page->next_page;
-		pageid = page->next_page;
-		SendPacket(&data);
-	}
+        data << page->next_page;
+        pageid = page->next_page;
+        SendPacket(&data);
+    }
 }
 
 //////////////////////////////////////////////////////////////
@@ -275,65 +275,65 @@ void WorldSession::HandlePageTextQueryOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleItemNameQueryOpcode( WorldPacket & recv_data )
 {
-	CHECK_PACKET_SIZE(recv_data, 4);
-	uint8 databuffer[1000];
-	StackPacket reply(SMSG_ITEM_NAME_QUERY_RESPONSE, databuffer, 1000);
+    CHECK_PACKET_SIZE(recv_data, 4);
+    uint8 databuffer[1000];
+    StackPacket reply(SMSG_ITEM_NAME_QUERY_RESPONSE, databuffer, 1000);
 
-	uint32 itemid;
-	uint64 guid;
-	recv_data >> itemid;
-	recv_data >> guid;
+    uint32 itemid;
+    uint64 guid;
+    recv_data >> itemid;
+    recv_data >> guid;
 
-	ItemEntry* itemE = dbcItem.LookupEntry(itemid);
-	LocalizedItem* li = sLocalizationMgr.GetLocalizedItem(itemid, language);
-	ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(itemid);
+    ItemEntry* itemE = dbcItem.LookupEntry(itemid);
+    LocalizedItem* li = sLocalizationMgr.GetLocalizedItem(itemid, language);
+    ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(itemid);
 
-	reply << itemid;
-	if(proto)
-	{
-		reply << (li ? li->Name ? li->Name : proto->Name1 : proto->Name1);
-		reply << uint32(proto->InventoryType);
-	}
-	else
-	{
-		reply << (li ? li->Name ? li->Name : "Unknown Item" : "Unknown Item");
-		reply << (itemE ? itemE->InventoryType : uint32(0));
-	}
+    reply << itemid;
+    if(proto)
+    {
+        reply << (li ? li->Name ? li->Name : proto->Name1 : proto->Name1);
+        reply << uint32(proto->InventoryType);
+    }
+    else
+    {
+        reply << (li ? li->Name ? li->Name : "Unknown Item" : "Unknown Item");
+        reply << (itemE ? itemE->InventoryType : uint32(0));
+    }
 
-	SendPacket(&reply);
+    SendPacket(&reply);
 }
 
 void WorldSession::HandleInrangeQuestgiverQuery(WorldPacket & recv_data)
 {
-	CHECK_INWORLD_RETURN;
+    CHECK_INWORLD_RETURN;
 
-	//WorldPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, 1000);
-	uint8 databuffer[10000];
-	StackPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, databuffer, 10000);
-	Object::InRangeSet::iterator itr;
-	Creature* pCreature;
-	uint32 count = 0;
-	data << count;
+    //WorldPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, 1000);
+    uint8 databuffer[10000];
+    StackPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, databuffer, 10000);
+    Object::InRangeSet::iterator itr;
+    Creature* pCreature;
+    uint32 count = 0;
+    data << count;
 
-	// 32 count
-	// <foreach count>
-	//    64 guid
-	//    8 status
+    // 32 count
+    // <foreach count>
+    //    64 guid
+    //    8 status
 
-	for( itr = _player->m_objectsInRange.begin(); itr != _player->m_objectsInRange.end(); itr++ )
-	{
-		pCreature = TO_CREATURE(*itr);
-		if( pCreature->GetTypeId() != TYPEID_UNIT )
-			continue;
+    for( itr = _player->m_objectsInRange.begin(); itr != _player->m_objectsInRange.end(); itr++ )
+    {
+        pCreature = TO_CREATURE(*itr);
+        if( pCreature->GetTypeId() != TYPEID_UNIT )
+            continue;
 
-		if( pCreature->isQuestGiver() )
-		{
-			data << pCreature->GetGUID();
-			data << sQuestMgr.CalcStatus( pCreature, _player );
-			++count;
-		}
-	}
+        if( pCreature->isQuestGiver() )
+        {
+            data << pCreature->GetGUID();
+            data << sQuestMgr.CalcStatus( pCreature, _player );
+            ++count;
+        }
+    }
 
-	*(uint32*)(data.GetBufferPointer()) = count;
-	SendPacket(&data);
+    *(uint32*)(data.GetBufferPointer()) = count;
+    SendPacket(&data);
 }

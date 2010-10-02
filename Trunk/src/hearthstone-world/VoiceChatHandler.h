@@ -25,53 +25,53 @@
 class VoiceChatClientSocket;
 struct VoiceChatChannelRequest
 {
-	string channel_name;
-	uint32 team;
-	uint32 id;
-	uint32 groupid;
+    string channel_name;
+    uint32 team;
+    uint32 id;
+    uint32 groupid;
 };
 
 struct VoiceChannel
 {
-	void* miscPointer;
-	uint8 type;
-	uint8 team;
-	uint32 channelId;
+    void* miscPointer;
+    uint8 type;
+    uint8 team;
+    uint32 channelId;
 };
 
 class VoiceChatHandler : public Singleton<VoiceChatHandler>
 {
-	VoiceChatClientSocket * m_client;
-	Mutex m_lock;
-	vector<VoiceChatChannelRequest> m_requests;
-	uint32 request_high;
-	uint32 ip;
-	uint16 port;
-	time_t next_connect;
-	bool enabled;
-	string ip_s;
-	HM_NAMESPACE::hash_map<uint32, VoiceChannel*> m_voiceChannels;
+    VoiceChatClientSocket * m_client;
+    Mutex m_lock;
+    vector<VoiceChatChannelRequest> m_requests;
+    uint32 request_high;
+    uint32 ip;
+    uint16 port;
+    time_t next_connect;
+    bool enabled;
+    string ip_s;
+    HM_NAMESPACE::hash_map<uint32, VoiceChannel*> m_voiceChannels;
 public:
-	VoiceChatHandler();
-	void Startup();
-	void Update();
-	void SocketDisconnected();
-	void OnRead(WorldPacket* pck);
+    VoiceChatHandler();
+    void Startup();
+    void Update();
+    void SocketDisconnected();
+    void OnRead(WorldPacket* pck);
 
-	HEARTHSTONE_INLINE uint32 GetVoiceServerIP() { return ip; }
-	HEARTHSTONE_INLINE uint16 GetVoiceServerPort() { return port; }
-	void CreateVoiceChannel(Channel * chn);
-	void DestroyVoiceChannel(Channel * chn);
-	bool CanCreateVoiceChannel(Channel * chn);
-	bool CanUseVoiceChat();
+    HEARTHSTONE_INLINE uint32 GetVoiceServerIP() { return ip; }
+    HEARTHSTONE_INLINE uint16 GetVoiceServerPort() { return port; }
+    void CreateVoiceChannel(Channel * chn);
+    void DestroyVoiceChannel(Channel * chn);
+    bool CanCreateVoiceChannel(Channel * chn);
+    bool CanUseVoiceChat();
 
-	void CreateGroupChannel(Group * pGroup);
-	void DestroyGroupChannel(Group * pGroup);
-	void ActivateChannelSlot(uint16 channel_id, uint8 slot_id);
-	void DeactivateChannelSlot(uint16 channel_id, uint8 slot_id);
+    void CreateGroupChannel(Group * pGroup);
+    void DestroyGroupChannel(Group * pGroup);
+    void ActivateChannelSlot(uint16 channel_id, uint8 slot_id);
+    void DeactivateChannelSlot(uint16 channel_id, uint8 slot_id);
 };
 
 #define sVoiceChatHandler VoiceChatHandler::getSingleton()
 
-#endif		// VOICE_CHAT
-#endif		// _VOICECHATHANDLER_H
+#endif        // VOICE_CHAT
+#endif        // _VOICECHATHANDLER_H
