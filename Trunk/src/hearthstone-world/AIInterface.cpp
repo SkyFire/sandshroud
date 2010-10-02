@@ -1850,8 +1850,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	//use MoveTo()
 	bool orientation = (toO != 0.0f);
 
-	uint8 buffer[100];
-	StackPacket data(SMSG_MONSTER_MOVE, buffer, 100);
+	WorldPacket data(SMSG_MONSTER_MOVE, 200);
 	data << m_Unit->GetNewGUID();
 	data << uint8(0);
 	data << m_Unit->GetPositionX() << m_Unit->GetPositionY() << m_Unit->GetPositionZ();

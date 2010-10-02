@@ -8172,7 +8172,7 @@ void Spell::SpellEffectJump(uint32 i)
 		// Time formula is derived from andy's logs, 271ms to move ~14.5 units
 		float distance = u_caster->GetDistanceSq( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o),m_targets.m_destZ );
 		uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-		u_caster->GetAIInterface()->SendMoveToPacket( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, moveTime, u_caster->GetAIInterface()->getMoveFlags() );
+		u_caster->GetAIInterface()->SendMoveToPacket( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, moveTime, MONSTER_MOVE_FLAG_JUMP );
 		u_caster->SetPosition( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, false );
 	}
 	else
@@ -8183,7 +8183,7 @@ void Spell::SpellEffectJump(uint32 i)
 		// Time formula is derived from andy's logs, 271ms to move ~14.5 units
 		float distance = u_caster->GetDistanceSq( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o),unitTarget->GetPositionZ() );
 		uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-		u_caster->GetAIInterface()->SendMoveToPacket( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o), unitTarget->GetPositionZ(), 0.0f, moveTime, u_caster->GetAIInterface()->getMoveFlags() );
+		u_caster->GetAIInterface()->SendMoveToPacket( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o), unitTarget->GetPositionZ(), 0.0f, moveTime, MONSTER_MOVE_FLAG_JUMP );
 		u_caster->SetPosition( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o), unitTarget->GetPositionZ(), 0.0f, false );
 	}
 	if( p_caster != NULL)
