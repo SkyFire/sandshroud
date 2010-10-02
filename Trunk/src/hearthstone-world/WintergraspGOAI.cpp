@@ -416,7 +416,7 @@ public:
 	}
 };
 
-void Wintergrasp::WintergraspGOAIRegister()
+void WintergraspInternal::WintergraspGOAIRegister()
 {
 	sScriptMgr.register_gameobject_script(WORKSHOP_W, &WGWorkshopAI::Create);
 	sScriptMgr.register_gameobject_script(WORKSHOP_SW, &WGWorkshopAI::Create);

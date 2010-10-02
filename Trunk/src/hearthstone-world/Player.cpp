@@ -11868,7 +11868,6 @@ void Player::_WallHackCheck()
 			}
 		}
 	}
-	LastWHPosition = GetPosition();
 }
 
 void Player::_Disconnect()

@@ -43,7 +43,7 @@ public:
 	}
 };
 
-void Wintergrasp::WintergraspNPCAIRegister()
+void WintergraspInternal::WintergraspNPCAIRegister()
 {
 	GossipScript * WintergraspEngineer = (GossipScript*) new WintergraspEngineers;
 	sScriptMgr.register_gossip_script(30400, WintergraspEngineer);

@@ -24,7 +24,6 @@ AIInterface::AIInterface()
 	m_ChainAgroSet = NULL;
 	m_waypoints = NULL;
 	m_canMove = true;
-	usepathing = false;
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 	m_destinationX = m_destinationY = m_destinationZ = 0;
 	UnitToFollow = NULLCREATURE;
@@ -1918,6 +1917,29 @@ void AIInterface::MoveTo(float x, float y, float z)
 		return;
 	}
 
+	if(sWorld.PathFinding && NavMeshInterface.IsNavmeshLoaded(m_Unit->GetMapId(), m_Unit->GetMapMgr()->GetPosX(m_sourceX),
+		m_Unit->GetMapMgr()->GetPosY(m_sourceY)))
+	{
+		// Load our target navmesh.
+		if(!NavMeshInterface.IsNavmeshLoaded(m_Unit->GetMapId(), m_Unit->GetMapMgr()->GetPosX(x), m_Unit->GetMapMgr()->GetPosY(y)))
+			NavMeshInterface.LoadNavMesh(m_Unit->GetMapId(), m_Unit->GetMapMgr()->GetPosX(x), m_Unit->GetMapMgr()->GetPosY(y));
+
+		if(currentpath == NULL)
+			currentpath = new PathInfo(m_Unit, x, y, z);
+		else
+			currentpath->Update(x, y, z);
+
+		currentdestnode = currentpath->getNextPosition();
+	}
+	else
+	{
+		if(currentpath)
+		{
+			delete currentpath;
+			currentpath = NULL;
+		}
+	}
+
 	m_destinationX = x;
 	m_destinationY = y;
 	m_destinationZ = z;
@@ -1966,88 +1988,73 @@ uint32 AIInterface::getMoveFlags()
 
 void AIInterface::UpdateMove()
 {
-	//this should NEVER be called directly !!!!!!
-	//use MoveTo()
-
-	float posX = m_Unit->GetPositionX();
-	float posY = m_Unit->GetPositionY();
-	float posZ = m_Unit->GetPositionZ();
-
-	if(!usepathing && sWorld.PathFinding && m_Unit->GetMapMgr()->IsNavmeshLoaded(posX, posY))
+	if(sWorld.PathFinding && NavMeshInterface.IsNavmeshLoaded(m_Unit->GetMapId(), m_Unit->GetMapMgr()->GetPosX(m_sourceX),
+		m_Unit->GetMapMgr()->GetPosY(m_sourceY)) && currentpath != NULL)
 	{
-		usepathing = true;
+		m_nextPosX = currentdestnode.x;
+		m_nextPosY = currentdestnode.y;
+		m_nextPosZ = currentdestnode.z;
 
-		// Reset our source position
-		m_sourceX = posX;
-		m_sourceY = posY;
-		m_sourceZ = posZ;
-	}
-
-	if(usepathing)
-	{
-		LocationVector PathLocation = m_Unit->GetMapMgr()->getNextPositionOnPathToLocation(
-			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
-
-		m_nextPosX = PathLocation.x;
-		m_nextPosY = PathLocation.y;
-		m_nextPosZ = PathLocation.z;
-
-		if(m_nextPosX != m_sourceX && m_nextPosY != m_sourceY) // We can't find a path, so we use normal walking methods.
+		if(m_nextPosX != 0.0f && m_nextPosY != 0.0f)
 		{
-			if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
+			if(m_nextPosX != m_sourceX && m_nextPosY != m_sourceY) // We can't find a path, so we use normal walking methods.
 			{
-				jumptolocation = false;
-				usepathing = false;
-				m_destinationX = m_destinationY = m_destinationZ = 0.0f; // Pathfinding requires we keep our destination.
-			}
-
-			float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
-
-			uint32 moveTime = GetMovementTime(distance);
-
-			m_totalMoveTime = moveTime;
-
-			if(m_Unit->GetTypeId() == TYPEID_UNIT)
-			{
-				Creature* creature = TO_CREATURE(m_Unit);
-
-				float angle = 0.0f;
-				float c_reach = GetUnit()->GetFloatValue(UNIT_FIELD_COMBATREACH);
-
-				//We don't want little movements here and there; 
-				float DISTANCE_TO_SMALL_TO_WALK = c_reach - 1.0f <= 0.0f ? 1.0f : c_reach - 1.0f;
-
-				// don't move if we're well within combat range; rooted can't move neither
-				if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
-					return; 
-
-				// check if we're returning to our respawn location. if so, reset back to default
-				// orientation
-				if(creature->GetSpawnX() == m_nextPosX && creature->GetSpawnY() == m_nextPosY)
+				if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
 				{
-					angle = creature->GetSpawnO();
-					creature->SetOrientation(angle);
+					delete currentpath;
+					currentpath = NULL;
+					jumptolocation = false;
+					m_destinationX = m_destinationY = m_destinationZ = 0.0f; // Pathfinding requires we keep our destination.
 				}
-				else
+
+				float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
+
+				uint32 moveTime = GetMovementTime(distance);
+
+				m_totalMoveTime = moveTime;
+
+				if(m_Unit->GetTypeId() == TYPEID_UNIT)
 				{
-					// Calculate the angle to our next position
-					float dx = (float)m_nextPosX - m_Unit->GetPositionX();
-					float dy = (float)m_nextPosY - m_Unit->GetPositionY();
-					if(dy != 0.0f)
+					Creature* creature = TO_CREATURE(m_Unit);
+
+					float angle = 0.0f;
+					float c_reach = GetUnit()->GetFloatValue(UNIT_FIELD_COMBATREACH);
+
+					//We don't want little movements here and there; 
+					float DISTANCE_TO_SMALL_TO_WALK = c_reach - 1.0f <= 0.0f ? 1.0f : c_reach - 1.0f;
+
+					// don't move if we're well within combat range; rooted can't move neither
+					if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
+						return; 
+
+					// check if we're returning to our respawn location. if so, reset back to default
+					// orientation
+					if(creature->GetSpawnX() == m_nextPosX && creature->GetSpawnY() == m_nextPosY)
 					{
-						angle = atan2(dy, dx);
-						m_Unit->SetOrientation(angle);
+						angle = creature->GetSpawnO();
+						creature->SetOrientation(angle);
+					}
+					else
+					{
+						// Calculate the angle to our next position
+						float dx = (float)m_nextPosX - m_Unit->GetPositionX();
+						float dy = (float)m_nextPosY - m_Unit->GetPositionY();
+						if(dy != 0.0f)
+						{
+							angle = atan2(dy, dx);
+							m_Unit->SetOrientation(angle);
+						}
 					}
 				}
-			}
-			SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
+				SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
 
-			m_timeToMove = moveTime;
-			m_timeMoved = 0;
-			if(m_moveTimer == 0)
-				m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
-			m_creatureState = MOVING;
-			return;
+				m_timeToMove = moveTime;
+				m_timeMoved = 0;
+				if(m_moveTimer == 0)
+					m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
+				m_creatureState = MOVING;
+				return;
+			}
 		}
 	}
 
@@ -2102,6 +2109,12 @@ void AIInterface::UpdateMove()
 	m_timeMoved = 0;
 	if(m_moveTimer == 0)
 		m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
+
+	if(currentpath != NULL)
+	{
+		delete currentpath;
+		currentpath = NULL;
+	}
 
 	m_creatureState = MOVING;
 }
@@ -2468,7 +2481,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 		m_timeMoved = m_timeToMove <= p_time + m_timeMoved ? m_timeToMove : p_time + m_timeMoved;
 	}
 
-	if(usepathing)
+	if(currentpath != NULL)
 	{
 		if(m_destinationX != 0.0f && m_destinationY != 0.0f)
 		{

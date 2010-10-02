@@ -19,46 +19,35 @@
  */
 
 #include "SharedStdAfx.h"
-#include "RecastTimer.h"
+#include <stdlib.h>
+#include "DetourAlloc.h"
 
-#if defined(WIN32)
-
-// Win32
-#include <windows.h>
-
-rcTimeVal rcGetPerformanceTimer()
+static void *dtAllocDefault(int size, dtAllocHint)
 {
-	__int64 count;
-	QueryPerformanceCounter((LARGE_INTEGER*)&count);
-	return count;
+	return malloc(size);
 }
 
-int rcGetDeltaTimeUsec(rcTimeVal start, rcTimeVal end)
+static void dtFreeDefault(void *ptr)
 {
-	static __int64 freq = 0;
-	if (freq == 0)
-		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-	__int64 elapsed = end - start;
-	return (int)(elapsed*1000000 / freq);
+	free(ptr);
 }
 
-#else
+static dtAllocFunc* sAllocFunc = dtAllocDefault;
+static dtFreeFunc* sFreeFunc = dtFreeDefault;
 
-// Linux, BSD, OSX
-
-#include <cstddef>
-#include <sys/time.h>
-
-rcTimeVal rcGetPerformanceTimer()
+void dtAllocSetCustom(dtAllocFunc *allocFunc, dtFreeFunc *freeFunc)
 {
-	timeval now;
-	gettimeofday(&now, 0);
-	return (rcTimeVal)now.tv_sec*1000000L + (rcTimeVal)now.tv_usec;
+	sAllocFunc = allocFunc ? allocFunc : dtAllocDefault;
+	sFreeFunc = freeFunc ? freeFunc : dtFreeDefault;
 }
 
-int rcGetDeltaTimeUsec(rcTimeVal start, rcTimeVal end)
+void* dtAlloc(int size, dtAllocHint hint)
 {
-	return (int)(end - start);
+	return sAllocFunc(size, hint);
 }
 
-#endif
+void dtFree(void* ptr)
+{
+	if (ptr)
+		sFreeFunc(ptr);
+}

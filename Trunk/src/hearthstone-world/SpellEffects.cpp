@@ -8571,7 +8571,7 @@ void Spell::SpellEffectActivateRune(uint32 i)
 	if( p_caster->getClass() != DEATHKNIGHT )
 		return;
 
-	for( uint32 k = 0; k < GetSpellProto()->EffectBasePoints[i]+1; ++k )
+	for( int32 k = 0; k < GetSpellProto()->EffectBasePoints[i]+1; ++k )
 	{
 		for( uint8 j = 0; j < 6; ++j )
 		{

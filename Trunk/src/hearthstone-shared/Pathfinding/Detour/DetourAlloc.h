@@ -18,17 +18,21 @@
  *
  */
 
-#ifndef RECAST_TIMER_H
-#define RECAST_TIMER_H
+#ifndef DETOURALLOCATOR_H
+#define DETOURALLOCATOR_H
 
-#ifdef __GNUC__
-#include <stdint.h>
-typedef int64_t rcTimeVal;
-#else
-typedef __int64 rcTimeVal;
+enum dtAllocHint
+{
+	DT_ALLOC_PERM,		// Memory persist after a function call.
+	DT_ALLOC_TEMP		// Memory used temporarily within a function.
+};
+
+typedef void* (dtAllocFunc)(int size, dtAllocHint hint);
+typedef void (dtFreeFunc)(void* ptr);
+
+void dtAllocSetCustom(dtAllocFunc *allocFunc, dtFreeFunc *freeFunc);
+
+void* dtAlloc(int size, dtAllocHint hint);
+void dtFree(void* ptr);
+
 #endif
-
-rcTimeVal rcGetPerformanceTimer();
-int rcGetDeltaTimeUsec(rcTimeVal start, rcTimeVal end);
-
-#endif // RECAST_TIMER_H

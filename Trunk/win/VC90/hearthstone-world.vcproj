@@ -584,11 +584,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\hearthstone-world\WintergraspGOAI.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\hearthstone-world\WintergraspInternal.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-world\WintergraspInternal.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WintergraspNPCAI.cpp"
 					>
 				</File>
 			</Filter>
@@ -933,6 +941,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\hearthstone-world\NavMeshInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\NavMeshInterface.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\hearthstone-world\TerrainMgr.cpp"
 				>
 			</File>
@@ -1241,26 +1257,6 @@
 			Name="Brains"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-world\AIInterface.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\AIInterface.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\CallScripting.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\ChainAggroEntity.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\ChainAggroEntity.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\hearthstone-world\ScriptMgr.cpp"
 				>
 			</File>
@@ -1272,10 +1268,50 @@
 				RelativePath="..\..\src\hearthstone-world\ScriptSetup.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WayPoints.cpp"
+			<Filter
+				Name="Pathfinding"
 				>
-			</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Path.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\PathFinder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\PathFinder.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="AI"
+				>
+				<File
+					RelativePath="..\..\src\hearthstone-world\AIInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\AIInterface.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\CallScripting.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\ChainAggroEntity.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\ChainAggroEntity.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WayPoints.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Client Communication"

@@ -765,6 +765,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			_player->m_isMoving = true;
 			_player->m_startMoveTime = _player->movement_info.time;
 			_player->m_lastHeartbeatPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
+			_player->LastWHPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
 		}
 	}
 
@@ -772,6 +773,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	if( _player->m_isMoving && (_player->m_lastMoveTime - _player->m_startMoveTime) >= 5000 )
 	{
 		_player->m_lastHeartbeatPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
+		_player->LastWHPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
 		_player->m_startMoveTime = _player->m_lastMoveTime;
 		_player->m_cheatEngineChances = 2;
 	}

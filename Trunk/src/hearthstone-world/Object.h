@@ -227,6 +227,7 @@ public:
 	HEARTHSTONE_INLINE const LocationVector & GetPosition() { return m_position; }
 	HEARTHSTONE_INLINE LocationVector & GetPositionNC() { return m_position; }
 	HEARTHSTONE_INLINE LocationVector * GetPositionV() { return &m_position; }
+	HEARTHSTONE_INLINE void GetPosition(float &x, float &y, float &z) { x = m_position.x; y = m_position.y; z = m_position.z; }
 
 	//Distance Calculation
 	float CalcDistance(Object* Ob);

@@ -60,8 +60,6 @@ public:
 	HEARTHSTONE_INLINE uint64 GetID() { return WGID; };
 	// Workshops
 	uint32 numworkshop[2];
-	void WintergraspGOAIRegister();
-	void WintergraspNPCAIRegister();
 
 private:
 	WintergraspInternal Internal;

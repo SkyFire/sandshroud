@@ -18,36 +18,15 @@
  *
  */
 
-#ifndef MESHLOADER_OBJ
-#define MESHLOADER_OBJ
 
-class rcMeshLoaderObj
-{
-public:
-	rcMeshLoaderObj();
-	~rcMeshLoaderObj();
-	
-	bool load(const char* fileName);
+#ifndef DETOURASSERT_H
+#define DETOURASSERT_H
 
-	inline const float* getVerts() const { return m_verts; }
-	inline const float* getNormals() const { return m_normals; }
-	inline const int* getTris() const { return m_tris; }
-	inline int getVertCount() const { return m_vertCount; }
-	inline int getTriCount() const { return m_triCount; }
-	inline const char* getFileName() const { return m_filename; }
+#ifdef NDEBUG
+#	define dtAssert(x)
+#else
+#	include <assert.h> 
+#	define dtAssert assert
+#endif
 
-private:
-	
-	void addVertex(float x, float y, float z, int& cap);
-	void addTriangle(int a, int b, int c, int& cap);
-	
-	char m_filename[260];
-	
-	float* m_verts;
-	int* m_tris;
-	float* m_normals;
-	int m_vertCount;
-	int m_triCount;
-};
-
-#endif // MESHLOADER_OBJ
+#endif // DETOURASSERT_H

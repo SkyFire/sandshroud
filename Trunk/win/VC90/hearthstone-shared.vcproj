@@ -1177,30 +1177,6 @@
 		<Filter
 			Name="Pathfinding"
 			>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Pathfinding\InputGeom.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Pathfinding\InputGeom.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.h"
-				>
-			</File>
 			<Filter
 				Name="Recast"
 				>
@@ -1213,7 +1189,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastAlloc.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastAlloc.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastArea.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastAssert.h"
 					>
 				</File>
 				<File
@@ -1222,14 +1210,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastFilter.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.h"
 					>
 				</File>
 				<File
@@ -1248,18 +1228,22 @@
 					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRegion.cpp"
 					>
 				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Detour"
 				>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourAlloc.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourAlloc.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourAssert.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp"
 					>
@@ -1282,6 +1266,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshQuery.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshQuery.h"
 					>
 				</File>
 				<File
@@ -1326,22 +1318,6 @@
 			RelativePath="..\..\src\hearthstone-shared\SharedStdAfx.cpp"
 			>
 			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|x64"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
 				Name="Release|Win32"
 				>
 				<Tool
@@ -1351,6 +1327,22 @@
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release|x64"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|x64"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

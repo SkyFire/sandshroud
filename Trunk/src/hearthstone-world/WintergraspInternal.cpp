@@ -39,6 +39,8 @@ WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)
 	winnerteam = 2;
 	forcestart_WG = false;
 	WGCounter = 0;
+	WintergraspNPCAIRegister();
+	WintergraspGOAIRegister();
 }
 
 WintergraspInternal::~WintergraspInternal()
@@ -100,8 +102,6 @@ bool WintergraspInternal::run()
 					++WGCounter;
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
 					WG = Wintergrasp::Create(this, &WGMgr);
-					GetWintergrasp()->WintergraspGOAIRegister();
-					GetWintergrasp()->WintergraspNPCAIRegister();
 				}
 				counter = 0; // Reset our timer.
 				forcestart_WG = false;

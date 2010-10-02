@@ -388,18 +388,7 @@ public:
 	void RemovePositiveAuraFromPlayers(int32 iFactionMask, uint32 uAuraId);
 	void CastSpellOnPlayers(int32 iFactionMask, uint32 uSpellId);
 
-public: // Navmesh settings
-	dtNavMesh* GetNavmesh(float x, float y);
-	bool LoadNavMesh(uint32 x, uint32 y);
-	bool IsNavmeshLoaded(float x, float y);
-	void UnloadNavMesh(uint32 x, uint32 y);
-	LocationVector getNextPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz);
-
-private:
-	bool m_navMeshLoaded[64][64];
-	dtNavMesh *m_navMesh[64][64];
-
-public: // NavMesh End.
+public:
 
 	// stored iterators for safe checking
 	PetStorageMap::iterator __pet_iterator;

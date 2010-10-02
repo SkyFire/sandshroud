@@ -18,34 +18,14 @@
  *
  */
 
-#ifndef CHUNKYTRIMESH_H
-#define CHUNKYTRIMESH_H
+#ifndef RECASTASSERT_H
+#define RECASTASSERT_H
 
-struct rcChunkyTriMeshNode
-{
-	float bmin[2], bmax[2];
-	int i, n;
-};
+#ifdef NDEBUG
+#	define rcAssert(x)
+#else
+#	include <assert.h> 
+#	define rcAssert assert
+#endif
 
-struct rcChunkyTriMesh
-{
-	inline rcChunkyTriMesh() : nodes(0), tris(0) {};
-	inline ~rcChunkyTriMesh() { delete [] nodes; delete [] tris; }
-
-	rcChunkyTriMeshNode* nodes;
-	int nnodes;
-	int* tris;
-	int ntris;
-	int maxTrisPerChunk;
-};
-
-// Creates partitioned triangle mesh (AABB tree),
-// where each node contains at max trisPerChunk triangles.
-bool rcCreateChunkyTriMesh(const float* verts, const int* tris, int ntris,
-						   int trisPerChunk, rcChunkyTriMesh* cm);
-
-// Returns the chunk indices which touch the input rectable.
-int rcGetChunksInRect(const rcChunkyTriMesh* cm, float bmin[2], float bmax[2], int* ids, const int maxIds);
-
-
-#endif // CHUNKYTRIMESH_H
+#endif // RECASTASSERT_H
