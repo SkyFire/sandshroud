@@ -270,16 +270,12 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp">
       <Filter>Collision\G3D\Matrix</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.cpp">
-      <Filter>Pathfinding</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\InputGeom.cpp">
-      <Filter>Pathfinding</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.cpp">
-      <Filter>Pathfinding</Filter>
-    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\BufferPool.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-shared\SharedStdAfx.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.cpp">
+      <Filter>Pathfinding\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastAlloc.cpp">
       <Filter>Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastArea.cpp">
@@ -289,9 +285,6 @@
       <Filter>Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastFilter.cpp">
-      <Filter>Pathfinding\Recast</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.cpp">
       <Filter>Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastMesh.cpp">
@@ -306,8 +299,8 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRegion.cpp">
       <Filter>Pathfinding\Recast</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourAlloc.cpp">
+      <Filter>Pathfinding\Detour</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp">
       <Filter>Pathfinding\Detour</Filter>
@@ -318,11 +311,12 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.cpp">
       <Filter>Pathfinding\Detour</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshQuery.cpp">
+      <Filter>Pathfinding\Detour</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.cpp">
       <Filter>Pathfinding\Detour</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\BufferPool.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\SharedStdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\hearthstone-shared\Database\Database.h">
@@ -673,23 +667,28 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.h">
       <Filter>Collision\G3D\Matrix</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.h">
-      <Filter>Pathfinding</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\InputGeom.h">
-      <Filter>Pathfinding</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.h">
-      <Filter>Pathfinding</Filter>
-    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\AuthCodes.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\BufferPool.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\Common.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\FastQueue.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\format.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\hearthstoneConfig.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\SharedStdAfx.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\Storage.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.h">
       <Filter>Pathfinding\Recast</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.h">
+    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastAlloc.h">
       <Filter>Pathfinding\Recast</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.h">
+    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastAssert.h">
       <Filter>Pathfinding\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourAlloc.h">
+      <Filter>Pathfinding\Detour</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourAssert.h">
+      <Filter>Pathfinding\Detour</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.h">
       <Filter>Pathfinding\Detour</Filter>
@@ -700,16 +699,11 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.h">
       <Filter>Pathfinding\Detour</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshQuery.h">
+      <Filter>Pathfinding\Detour</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.h">
       <Filter>Pathfinding\Detour</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\AuthCodes.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\BufferPool.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Common.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\FastQueue.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\format.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\hearthstoneConfig.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\SharedStdAfx.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Storage.h" />
   </ItemGroup>
 </Project>
