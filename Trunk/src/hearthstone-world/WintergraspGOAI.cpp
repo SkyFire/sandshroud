@@ -187,7 +187,7 @@ public:
 	void OnSpawn()
 	{
 		m_workshopStatus = OWNER_NONE;
-		RegisterAIUpdateEvent(500);
+		RegisterAIUpdateEvent(3000);
 	}
 	void SpawnEngineer(uint32 Entry, uint32 Side)
 	{
@@ -373,7 +373,7 @@ public:
 	void OnSpawn()
 	{
 		m_TowerStatus = OWNER_NONE;
-		RegisterAIUpdateEvent(15000);
+		RegisterAIUpdateEvent(3000);
 	}
 };
 
