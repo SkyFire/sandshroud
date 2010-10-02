@@ -172,7 +172,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectKnockBack,					// unknown - 144 Spectral Blast
 	&Spell::SpellEffectNULL,						// unknown - 145 Black Hole Effect
 	&Spell::SpellEffectNULL,						// unknown - 146  unused
-	&Spell::SpellEffectNULL,						// unknown - 147 // Torch Tossing Training Failure
+	&Spell::SpellEffectActivateRune,				// unknown - 147 
 	&Spell::SpellEffectNULL,						// unknown - 148 unused
 	&Spell::SpellEffectNULL,						// unknown - 149
 	&Spell::SpellEffectNULL,						// unknown - 150 unused
@@ -8561,4 +8561,25 @@ void Spell::SpellEffectRemoveAura(uint32 i)
 		return;
 
 	unitTarget->RemoveAura(m_spellInfo->EffectTriggerSpell[i], unitTarget->GetGUID());
+}
+
+void Spell::SpellEffectActivateRune(uint32 i)
+{
+	if( !p_caster )
+		return;
+
+	if( p_caster->getClass() != DEATHKNIGHT )
+		return;
+
+	for( uint32 k = 0; k < GetSpellProto()->EffectBasePoints[i]+1; ++k )
+	{
+		for( uint8 j = 0; j < 6; ++j )
+		{
+			if( p_caster->GetRune(j) == RUNE_TYPE_RECHARGING && uint32(p_caster->GetBaseRune(j)) == GetSpellProto()->EffectMiscValue[i] )
+			{
+				p_caster->SetRune(j, p_caster->GetBaseRune(j));
+				p_caster->ClearRuneCooldown(j);
+			}
+		}
+	}
 }

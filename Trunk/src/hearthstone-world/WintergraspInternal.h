@@ -53,6 +53,8 @@ public:
 	void SendWSUpdateToAll(uint32 WorldState, uint32 Value);
 	void SendPacketToWG(WorldPacket*);
 	Wintergrasp* GetWintergrasp() { return WG; }
+	uint32 GetTimeRemaining() { return MatchTimer; }
+	void SetTimeRemaining(uint32 Amount) { MatchTimer = (MatchTimer - Amount); }
 
 	int m_wintergrasp;
 	uint64 WGCounter;
@@ -65,7 +67,7 @@ private:
 	int defendingteam;
 	uint32 m_timer;
 	uint32 m_clock[5];
-
+	int32 MatchTimer;
 	bool WG_started;
 public:
 	void SetWGTimer(uint32 time) { m_timer = time; };

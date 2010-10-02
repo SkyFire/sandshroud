@@ -470,7 +470,6 @@ const float baseDodge[12] = { 0.0f, 3.4636f, 3.2685f, -5.45f, -0.5900f, 3.1830f,
 // Crow: TODO: I only know the cap for paladins >.> 75 for the rest,
 // Dodge ( class Cap )		UNUSED  War		Paladin	  hunter rogue	priest	 DK	  Shaman  Mage   Lock  UNUSED  Druid
 const float DodgeCap[12] = { 75.0f, 75.0f, 88.129021f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f };
-
 enum RuneTypes
 {
 	RUNE_TYPE_BLOOD			= 0,
@@ -479,7 +478,7 @@ enum RuneTypes
 	RUNE_TYPE_DEATH			= 3,
 	RUNE_TYPE_RECHARGING	= 4
 };
-
+static const uint8 baseRunes[6] = {0,0,1,1,2,2};
 struct FactionReputation
 {
 	int32 standing;
@@ -2211,7 +2210,15 @@ public:
 	{
 		return m_runes[index];
 	}
-
+	uint8 GetBaseRune(uint8 index)
+	{
+		return baseRunes[index];
+	}
+	void SetRune(uint8 index, uint8 value)
+	{
+		m_runes[index] = value;
+	}
+	void ClearRuneCooldown(uint8 index);
 	void ConvertRune(uint8 index, uint8 value);
 	void ScheduleRuneRefresh(uint8 index, bool forceDeathRune = false);
 

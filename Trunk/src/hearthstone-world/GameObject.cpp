@@ -825,11 +825,11 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			else
 				SetDisplayId(pInfo->sound4);
 			
-			/*if(pcaster!=NULL)
+			if(pcaster!=NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
 					pcaster->WinterGrasp->GoDamageEvent(GetEntry(),pcaster);
-			}*/
+			}
 			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
 		}
 		else
@@ -844,11 +844,11 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 				SetDisplayId(pInfo->Unknown1);
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
 			
-			/*if(pcaster != NULL)
+			if(pcaster != NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
 					pcaster->WinterGrasp->GoDestroyEvent(GetEntry(),pcaster);
-			}*/
+			}
 		}
 	}
 

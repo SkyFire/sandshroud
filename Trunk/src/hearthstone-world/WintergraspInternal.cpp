@@ -100,6 +100,8 @@ bool WintergraspInternal::run()
 					++WGCounter;
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
 					WG = Wintergrasp::Create(this, &WGMgr);
+					GetWintergrasp()->WintergraspGOAIRegister();
+					GetWintergrasp()->WintergraspNPCAIRegister();
 				}
 				counter = 0; // Reset our timer.
 				forcestart_WG = false;
@@ -118,6 +120,19 @@ bool WintergraspInternal::run()
 #else
 		Sleep( 30000 );
 #endif
+		if(WG && WG_started)
+		{
+			MatchTimer = (MatchTimer - 30000);
+			float TimeLeft = ((MatchTimer/1000)/60);
+			UpdateClock();
+			printf("%u %f Minutes left till Wintergrasp ends\n",getMSTime(),TimeLeft);
+			SendWSUpdateToAll(A_NUMVEH_WORLDSTATE, WG->GetNumVehicles(ALLIANCE));
+			SendWSUpdateToAll(A_MAXVEH_WORLDSTATE, WG->GetNumWorkshops(ALLIANCE)*4);
+			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumVehicles(HORDE));
+			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumWorkshops(HORDE)*4);
+			if(MatchTimer <= 0)
+				GetWintergrasp()->ForceEnd();
+		}
 	}
 	return false;
 }
@@ -183,13 +198,12 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 void WintergraspInternal::UpdateClockDigit(uint32 timer, uint32 digit, uint32 mod)
 {
 	uint32 value = timer%mod;
-	timer /= mod;
-	if(m_clock[digit] != value)
+	if (m_clock[digit] != value)
 	{
 		m_clock[digit] = value;
-		SendWSUpdateToAll(ClockWorldState[digit], value);
+		SendWSUpdateToAll(ClockWorldState[digit], timer+time(NULL));
 	}
-	WGMgr.GetStateManager().UpdateWorldState(m_clock[digit], value);
+	WGMgr.GetStateManager().UpdateWorldState(m_clock[digit], timer+time(NULL));
 }
 
 void WintergraspInternal::SendWSUpdateToAll(uint32 WorldState, uint32 Value)
@@ -223,9 +237,6 @@ void WintergraspInternal::UpdateClock()
 {
 	uint32 timer = m_timer / 1000;
 	UpdateClockDigit(timer, 0, 10);
-	UpdateClockDigit(timer, 1, 6);
-	UpdateClockDigit(timer, 2, 10);
-	UpdateClockDigit(timer, 3, 6);
 	if(!WG_started)
 		UpdateClockDigit(timer, 4, 10);
 }
@@ -235,6 +246,7 @@ void WintergraspInternal::StartWintergrasp()
 	WG_started = true;
 	m_wintergrasp = 1;
 	SendInitWorldStates();
+	MatchTimer = 1800000;
 }
 
 void WintergraspInternal::EndWintergrasp()
@@ -243,4 +255,5 @@ void WintergraspInternal::EndWintergrasp()
 	WG = NULL;
 	m_wintergrasp = 0;
 	SendInitWorldStates();
+	MatchTimer = 0;
 }

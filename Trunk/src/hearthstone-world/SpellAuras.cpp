@@ -10548,15 +10548,18 @@ void Aura::SpellAuraConvertRune(bool apply)
     if( plr->getClass() != DEATHKNIGHT )
         return;
 
-    for(uint32 i = 0; i < 6; ++i)
+    for(uint32 j = 0; j < 6; ++j)
     {
         if( apply )
- 			plr->ConvertRune((uint8)i,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
+		{
+ 			plr->ConvertRune((uint8)j,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
+			break;
+		}
         else
         {
-            if(plr->m_runes[i] == GetSpellProto()->EffectMiscValueB[mod->i])
+            if(plr->GetRune(j) == GetSpellProto()->EffectMiscValueB[mod->i])
             {
-                plr->ConvertRune((uint8)i, plr->GetRune(i));
+                plr->ConvertRune((uint8)j, plr->GetRune(j));
                 break;
             }
         }

@@ -2410,7 +2410,8 @@ void SendHighlightedName(WorldSession * m_session, char* full_name, string& lowe
 
 bool ChatHandler::HandleLookupItemCommand(const char * args, WorldSession * m_session)
 {
-	if(!*args) return false;
+	if(!*args) 
+		return false;
 
 	string x = string(args);
 	HEARTHSTONE_TOLOWER(x);
@@ -3533,7 +3534,7 @@ bool ChatHandler::HandleForceEndWintergrasp(const char *args, WorldSession *m_se
 	{
 		BlueSystemMessage(m_session, "Wintergrasp ended, staff has been alerted.");
 		sWorld.SendMessageToGMs(m_session, "%s has forced wintergrasp to end.", (m_session->GetPlayer() ? m_session->GetPlayer()->GetName() : m_session->GetAccountNameS()));
-		sWintergraspI.GetWintergrasp()->End();
+		sWintergraspI.EndWintergrasp();
 		return true;
 	}
 	return false;

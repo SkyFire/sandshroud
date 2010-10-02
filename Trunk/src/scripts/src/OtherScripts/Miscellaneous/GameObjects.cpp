@@ -541,10 +541,8 @@ public:
 	{
 		if(!pPlayer)
 			return;
-		QuestLogEntry *qle = pPlayer->GetQuestLogForEntry(10111);
-		if(qle == NULL)
+		if(pPlayer->GetQuestLogForEntry(10111) == NULL)
 			return;
-
 		if(!pPlayer->HasAura(33382))
 			pPlayer->CastSpell(pPlayer, 33382, true);
 	}

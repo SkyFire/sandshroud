@@ -318,7 +318,9 @@
     <ClCompile Include="..\..\src\hearthstone-world\QuestCommands.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\RecallCommands.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Wintergrasp.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\WintergraspGOAI.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WintergraspInternal.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\WintergraspNPCAI.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WordFilter.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\ClusterInterface.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\LogonCommClient.cpp" />

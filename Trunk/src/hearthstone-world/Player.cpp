@@ -23,7 +23,6 @@ UpdateMask Player::m_visibleUpdateMask;
 
 #define COLLISION_MOUNT_CHECK_INTERVAL 1000
 
-static const uint8 baseRunes[6] = {0,0,1,1,2,2};
 static const uint32 DKNodesMask[12] = {4294967295,4093640703,830406655,0,33570816,1310944,3250593812,73752,896,67111952,0,0};//all old continents are available to DK's by default.
 
 Player::Player( uint32 guid )
@@ -12641,6 +12640,8 @@ void Player::ConvertRune(uint8 index, uint8 value)
 	ASSERT(index < 6);
 	m_runes[index] = value;
 	m_runemask |= (1 << index);
+	SetRune(index, value);
+
 	if(value >= RUNE_TYPE_RECHARGING)
 		return;
 
@@ -13479,4 +13480,11 @@ uint32 Player::GenerateShapeshiftModelId(uint32 form)
             break;
     }
     return 0;
+}
+
+void Player::ClearRuneCooldown(uint8 index)
+{
+	WorldPacket data(SMSG_ADD_RUNE_POWER, 4);
+	data << uint32(1 << index);
+	GetSession()->SendPacket(&data);
 }
