@@ -1341,7 +1341,7 @@ inline static const char *LookupOpcodeName(uint32 id)
 {
 	if( id >= NUM_MSG_TYPES )
 		return "(null)";
-	
+
 	return g_worldOpcodeNames[id].name;
 }
 
@@ -1382,7 +1382,7 @@ enum NPCFlags {
 	UNIT_NPC_FLAG_VENDOR_REAGENT	= 0x00000800,	//2048,			13
 	UNIT_NPC_FLAG_ARMORER			= 0x00001000,	//4096,			14
 	UNIT_NPC_FLAG_TAXIVENDOR		= 0x00002000,	//8192,			15	Taxi Vendor (CMSG_TAXIQUERYAVAILABLENODES)
-	UNIT_NPC_FLAG_SPIRITHEALER		= 0x00004000,	//16384,		16	Spirithealer 
+	UNIT_NPC_FLAG_SPIRITHEALER		= 0x00004000,	//16384,		16	Spirithealer
 	UNIT_NPC_FLAG_SPIRITGUIDE		= 0x00008000,	//32768,		17
 	UNIT_NPC_FLAG_INNKEEPER			= 0x00010000,	//65536,		18	Innkeeper Asking for Bind Point(CMSG_BINDER_ACTIVATE)
 	UNIT_NPC_FLAG_BANKER			= 0x00020000,	//131072,		19	Banker

@@ -95,7 +95,7 @@ void MailMessage::SaveToDB()
 	for( itr = items.begin( ); itr != items.end( ); itr++ )
 		ss << (*itr) << ",";
 
-	ss << "'," 
+	ss << "',"
 		<< cod << ","
 		<< stationary << ","
 		<< expire_time << ","
@@ -158,7 +158,7 @@ void Mailbox::Load(QueryResult * result)
 		return;
 
 	MailMessage msg;
-	do 
+	do
 	{
 		if (msg.LoadFromDB(result->Fetch()))
 		{
@@ -193,8 +193,8 @@ WorldPacket * Mailbox::MailboxListingPacket()
 		}
 	}
 
-	data->put<uint32>(0, realcount); 
-	data->put<uint8>(4, count); 
+	data->put<uint32>(0, realcount);
+	data->put<uint8>(4, count);
 
 	// do cleanup on request mail
 	//CleanupExpiredMessages();
@@ -431,7 +431,7 @@ void MailSystem::UpdateMessages()
 		return;
 
 	MailMessage msg;
-	do 
+	do
 	{
 		if (msg.LoadFromDB(result->Fetch()))
 		{
@@ -492,7 +492,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 
         pItem = _player->GetItemInterface()->GetItemByGUID( itemguid );
 		real_item_slot = _player->GetItemInterface()->GetInventorySlotByGuid( itemguid );
-		if( pItem == NULL || pItem->IsSoulbound() || pItem->HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) || 
+		if( pItem == NULL || pItem->IsSoulbound() || pItem->HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) ||
 			( pItem->IsContainer() && (TO_CONTAINER( pItem ))->HasItems() ) || real_item_slot >= 0 && real_item_slot < INVENTORY_SLOT_ITEM_START )
 		{
 			SendMailError(MAIL_ERR_INTERNAL_ERROR);
@@ -599,7 +599,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 			pItem->SetOwner( NULLPLR );
 			pItem->SaveToDB( INVENTORY_SLOT_NOT_SET, 0, true, NULL );
 			msg.items.push_back( pItem->GetUInt32Value(OBJECT_FIELD_GUID) );
-				
+
 			if( GetPermissionCount() > 0 )
 			{
 				/* log the message */
@@ -672,7 +672,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 
 	WorldPacket data(SMSG_SEND_MAIL_RESULT, 12);
 	data << message_id << uint32(MAIL_RES_ITEM_TAKEN);
-	
+
 	MailMessage * message = _player->m_mailBox->GetMessage(message_id);
 	if(message == 0 || message->Expired() || message->items.empty())
 	{
@@ -714,7 +714,7 @@ void WorldSession::HandleTakeItem(WorldPacket & recv_data )
 		// doesn't exist
 		data << uint32(MAIL_ERR_INTERNAL_ERROR);
 		SendPacket(&data);
-		
+
 		return;
 	}
 
@@ -807,7 +807,7 @@ void WorldSession::HandleTakeMoney(WorldPacket & recv_data )
 	}
 	else
 		_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, message->money);
-	
+
 	// force save
 	_player->SaveToDB(false);
 

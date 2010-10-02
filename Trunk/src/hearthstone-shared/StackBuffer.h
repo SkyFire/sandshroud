@@ -45,7 +45,7 @@ public:
 	~StackBuffer() { if(m_heapBuffer) free(m_heapBuffer); }
 
 	/** Re-allocates the buffer on the heap. This allows it to expand past the original specified size.
-	 * This is only a failsafe and should be avoided at all costs, as it is quite heavy. 
+	 * This is only a failsafe and should be avoided at all costs, as it is quite heavy.
 	 */
 	void ReallocateOnHeap()
 	{
@@ -199,7 +199,7 @@ public:
 		m_writePos += value.GetNewGuidLen();
 		return *this;
 	}
-	
+
 	StackBuffer& operator >> (WoWGuid & value)
 	{
 		uint8 mask = Read<uint8>();

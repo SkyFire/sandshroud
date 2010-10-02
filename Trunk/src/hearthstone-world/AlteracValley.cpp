@@ -390,7 +390,7 @@ void AVNode::Assault(Player* plr)
 	if( m_destroyed )
 		return;
 
-	// are we returning the node to us? 
+	// are we returning the node to us?
 	if( ( plr->GetTeam() == 0 && m_lastState == AV_NODE_STATE_ALLIANCE_CONTROLLED ) ||
 		( plr->GetTeam() == 1 && m_lastState == AV_NODE_STATE_HORDE_CONTROLLED ) )
 	{
@@ -422,7 +422,7 @@ void AVNode::Assault(Player* plr)
 		// send message
 		m_bg->SendChatMessage(CHAT_MSG_BG_SYSTEM_ALLIANCE + plr->GetTeam(), 0, "%s claims the %s! If left unchallenged, the %s will control it!", plr->GetName(), m_template->m_name,
 			plr->GetTeam() ? "Horde" : "Alliance");
-		
+
 		plr->m_bgScore.MiscData[BG_SCORE_AV_GRAVEYARDS_ASSAULTED]++;
 	}
 	else
@@ -600,7 +600,7 @@ void AVNode::Spawn()
 		OUT_DEBUG("AVNode::Spawn(%s) : despawning guards", m_template->m_name);
 		for(vector<Creature*>::iterator itr = m_guards.begin(); itr != m_guards.end(); itr++)
 			(*itr)->Despawn(0, 0);
-		
+
 		m_guards.clear();
 
 		// spawn guards if needed
@@ -658,7 +658,7 @@ void AVNode::Spawn()
 			OUT_DEBUG("AVNode::Spawn(%s) : spawning spirit guide", m_template->m_name);
 
 			// spawn new spirit guide
-			m_spiritGuide = m_bg->SpawnSpiritGuide(m_template->m_graveyardLocation.x, m_template->m_graveyardLocation.y, 
+			m_spiritGuide = m_bg->SpawnSpiritGuide(m_template->m_graveyardLocation.x, m_template->m_graveyardLocation.y,
 				m_template->m_graveyardLocation.z, m_template->m_graveyardLocation.z, 0);
 
 			// add
@@ -669,7 +669,7 @@ void AVNode::Spawn()
 			OUT_DEBUG("AVNode::Spawn(%s) : spawning spirit guide", m_template->m_name);
 
 			// spawn new spirit guide
-			m_spiritGuide = m_bg->SpawnSpiritGuide(m_template->m_graveyardLocation.x, m_template->m_graveyardLocation.y, 
+			m_spiritGuide = m_bg->SpawnSpiritGuide(m_template->m_graveyardLocation.x, m_template->m_graveyardLocation.y,
 				m_template->m_graveyardLocation.z, m_template->m_graveyardLocation.z, 1);
 
 			// add
@@ -923,7 +923,7 @@ void AlteracValley::OnCreate()
 				sm.CreateWorldState(g_nodeTemplates[i].m_worldStateFields[j], 0);
 		}
 	}
-	
+
 	for(uint32 x = 0; x < AV_NUM_CONTROL_POINTS; ++x)
 		m_nodes[x] = new AVNode(TO_ALTERACVALLEY(this), &g_nodeTemplates[x], x);
 
@@ -964,7 +964,7 @@ void AlteracValley::OnStart()
 }
 
 void AlteracValley::OnAddPlayer(Player* plr)
-{	
+{
 	if(!m_started)
 		plr->CastSpell(plr, BG_PREPARATION, true);
 
@@ -1040,7 +1040,7 @@ void AlteracValley::HookOnUnitKill(Player* plr, Unit* pVictim)
 	if(pVictim->IsPlayer())
 		return;
 
-	if(pVictim->GetEntry() == AV_NPC_GENERAL_VANNDAR_STORMPIKE) 
+	if(pVictim->GetEntry() == AV_NPC_GENERAL_VANNDAR_STORMPIKE)
 	{
 		Herald("The Stormpike General is dead!");
 		RemoveReinforcements( 0, AV_NUM_REINFORCEMENTS );
@@ -1231,11 +1231,11 @@ void AlteracValley::Herald(const char *format, ...)
 	m_mapMgr->SendPacketToPlayers(ZONE_MASK_ALL, FACTION_MASK_ALL, &data);
 }
 
-void AlteracValley::HookOnShadowSight() 
+void AlteracValley::HookOnShadowSight()
 {
 }
 
-void AlteracValley::SetIsWeekend(bool isweekend) 
+void AlteracValley::SetIsWeekend(bool isweekend)
 {
 	m_isWeekend = isweekend;
 }

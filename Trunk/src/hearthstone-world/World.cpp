@@ -133,12 +133,12 @@ World::~World()
 
 	//sLog.outString("Deleting Thread Manager..");
 	//delete ThreadMgr::getSingletonPtr();
-	
+
 	Log.Notice("WordFilter", "~WordFilter()");
 	delete g_chatFilter;
 	delete g_characterNameFilter;
 
-	for( AreaTriggerMap::iterator i = m_AreaTrigger.begin( ); i != m_AreaTrigger.end( ); ++ i ) 
+	for( AreaTriggerMap::iterator i = m_AreaTrigger.begin( ); i != m_AreaTrigger.end( ); ++ i )
 	{
 		delete i->second;
 	}
@@ -159,7 +159,7 @@ WorldSession* World::FindSession(uint32 id)
 
 	if(itr != m_sessions.end())
 		ret = m_sessions[id];
-	
+
 	m_sessionlock.ReleaseReadLock();
 
 	return ret;
@@ -280,7 +280,7 @@ void ApplyNormalFixes();
 void PreStartQueries()
 {
 	QueryResult * result;
-	
+
 	result = WorldDatabase.Query("SELECT * FROM prestartqueries ORDER BY seq ASC");
 	if(result)
 	{
@@ -474,7 +474,7 @@ bool World::SetInitialWorldSettings()
 
 	CommandTableStorage::getSingleton().Load();
 	Log.Notice("WordFilter", "Loading...");
-	
+
 	g_characterNameFilter = new WordFilter();
 	g_chatFilter = new WordFilter();
 	g_characterNameFilter->Load("wordfilter_character_names");
@@ -532,7 +532,7 @@ bool World::SetInitialWorldSettings()
 		Log.Notice("World", "Background loot loading...");
 
 		// loot background loading in a lower priority thread.
-		ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<LootMgr>(LootMgr::getSingletonPtr(), &LootMgr::LoadDelayedLoot), 
+		ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<LootMgr>(LootMgr::getSingletonPtr(), &LootMgr::LoadDelayedLoot),
 			BTE_PRIORITY_LOW));
 	}
 	else
@@ -649,7 +649,7 @@ void World::SendMessageToGMs(WorldSession *self, const char * text, ...)
 	WorldSession *gm_session;
 
 	WorldPacket *data = sChatHandler.FillSystemMessageData(buf);
-	gmList_lock.AcquireReadLock();	
+	gmList_lock.AcquireReadLock();
 	SessionSet::iterator itr;
 	for (itr = gmList.begin(); itr != gmList.end();itr++)
 	{
@@ -930,7 +930,7 @@ uint32 World::GetQueuePos(WorldSocket* Socket)
 void World::UpdateQueuedSessions(uint32 diff)
 {
 #ifndef CLUSTERING
-	if(diff >= m_queueUpdateTimer) 
+	if(diff >= m_queueUpdateTimer)
 	{
 		m_queueUpdateTimer = mQueueUpdateInterval;
 		queueMutex.Acquire();
@@ -940,7 +940,7 @@ void World::UpdateQueuedSessions(uint32 diff)
 			queueMutex.Release();
 			return;
 		}
-		
+
 		while(m_sessions.size() < m_playerLimit && mQueuedSessions.size())
 		{
 			// Yay. We can let another player in now.
@@ -975,8 +975,8 @@ void World::UpdateQueuedSessions(uint32 diff)
 			++iter;
 		}
 		queueMutex.Release();
-	} 
-	else 
+	}
+	else
 	{
 		m_queueUpdateTimer -= diff;
 	}
@@ -993,7 +993,7 @@ void World::SaveAllPlayers()
 	PlayerStorageMap::const_iterator itr;
 		// Servers started and obviously runing. lets save all players.
 	uint32 mt;
-	objmgr._playerslock.AcquireReadLock();   
+	objmgr._playerslock.AcquireReadLock();
 	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 		{
 			if(itr->second->GetSession())
@@ -1041,7 +1041,7 @@ void World::GetStats(uint32 * GMCount, float * AverageLatency)
 			avg += itr->second->GetSession()->GetLatency();
 			if(itr->second->GetSession()->GetPermissionCount())
 				gm++;
-		}			
+		}
 	}
 	objmgr._playerslock.ReleaseReadLock();
 
@@ -1351,7 +1351,7 @@ void World::Rehash(bool load)
 	// ======================================
 	m_movementCompressInterval = Config.MainConfig.GetIntDefault("Movement", "FlushInterval", 1000);
 	m_movementCompressRate = Config.MainConfig.GetIntDefault("Movement", "CompressRate", 1);
-	
+
 	m_movementCompressThresholdCreatures = Config.MainConfig.GetFloatDefault("Movement", "CompressThresholdCreatures", 15.0f);
 	m_movementCompressThresholdCreatures *= m_movementCompressThresholdCreatures;
 
@@ -1521,7 +1521,7 @@ void World::PollMailboxInsertQueue(DatabaseConnection * con)
 	if( result != NULL )
 	{
 		Log.Notice("MailboxQueue", "Sending queued messages....");
-		do 
+		do
 		{
 			f = result->Fetch();
 			itemid = f[6].GetUInt32();
@@ -1597,10 +1597,10 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 	result = CharacterDatabase.FQuery("SELECT * FROM playeritems_insert_queue", con);
 	if(result)
 	{
-		do 
+		do
 		{
 			f = result->Fetch();
-			
+
 			ipi.ownerguid = f[0].GetUInt32();
 			//skip itemguid, we'll generate a new one.
 			ipi.entry = f[2].GetUInt32();
@@ -1629,7 +1629,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			{
 				itr->second.push_back(ipi);
 			}
-		
+
 		} while(result->NextRow());
 		delete result;
 	}
@@ -1638,10 +1638,10 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 	result = CharacterDatabase.FQuery("SELECT * FROM playerskills_insert_queue", con);
 	if(result)
 	{
-		do 
+		do
 		{
 			f = result->Fetch();
-			
+
 			ips.player_guid = f[0].GetUInt32();
 			ips.skill_id = f[1].GetUInt32();
 			ips.type = f[2].GetUInt32();
@@ -1659,7 +1659,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			{
 				itr1->second.push_back(ips);
 			}
-		
+
 		} while(result->NextRow());
 		delete result;
 	}
@@ -1668,10 +1668,10 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 	result = CharacterDatabase.FQuery("SELECT * FROM questlog_insert_queue", con);
 	if(result)
 	{
-		do 
+		do
 		{
 			f = result->Fetch();
-			
+
 			ipq.player_guid = f[0].GetUInt32();
 			ipq.quest_id = f[1].GetUInt32();
 			ipq.slot = f[2].GetUInt32();
@@ -1697,7 +1697,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			{
 				itr2->second.push_back(ipq);
 			}
-		
+
 		} while(result->NextRow());
 		delete result;
 	}
@@ -1706,10 +1706,10 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 	result = CharacterDatabase.FQuery("SELECT * FROM playerglyphs_insert_queue", con);
 	if(result)
 	{
-		do 
+		do
 		{
 			f = result->Fetch();
-			
+
 			ipg.player_guid = f[0].GetUInt32();
 			ipg.spec = f[1].GetUInt32();
 			ipg.glyph1 = f[2].GetUInt32();
@@ -1730,7 +1730,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			{
 				itr3->second.push_back(ipg);
 			}
-		
+
 		} while(result->NextRow());
 		delete result;
 	}
@@ -1739,10 +1739,10 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 	result = CharacterDatabase.FQuery("SELECT * FROM playertalents_insert_queue", con);
 	if(result)
 	{
-		do 
+		do
 		{
 			f = result->Fetch();
-			
+
 			ipt.player_guid = f[0].GetUInt32();
 			ipt.spec = f[1].GetUInt32();
 			ipt.tid = f[2].GetUInt32();
@@ -1759,7 +1759,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			{
 				itr4->second.push_back(ipt);
 			}
-		
+
 		} while(result->NextRow());
 		delete result;
 	}
@@ -1768,10 +1768,10 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 	result = CharacterDatabase.FQuery("SELECT * FROM playerspells_insert_queue", con);
 	if(result)
 	{
-		do 
+		do
 		{
 			f = result->Fetch();
-			
+
 			ipsp.player_guid = f[0].GetUInt32();
 			ipsp.spellid = f[1].GetUInt32();
 
@@ -1786,7 +1786,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			{
 				itr5->second.push_back(ipsp);
 			}
-		
+
 		} while(result->NextRow());
 		delete result;
 	}
@@ -1802,7 +1802,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 		uint32 guid;
 		std::stringstream ss;
 		uint32 queuesize = result->GetRowCount();
-		do 
+		do
 		{
 			f = result->Fetch();
 			char * p = (char*)characterTableFormat;
@@ -1840,7 +1840,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 						inf->team=1;
 					}break;
 			}
-			
+
 			// Build our query
 			ss << "INSERT INTO characters VALUES(" << new_guid;
 			while(*p != 0)
@@ -1872,7 +1872,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 
 				case 'x':
 					{
-						// players guid (we generate a new one) 
+						// players guid (we generate a new one)
 					}break;
 				default:
 					ss << "," << f[i].GetUInt32();
@@ -2070,7 +2070,7 @@ void World::DisconnectUsersWithAccount(const char * account, WorldSession * m_se
 
 		if(!stricmp(account, worldsession->GetAccountNameS()))
 		{
-			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(), 
+			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(),
 				worldsession->GetSocket() ? worldsession->GetSocket()->GetRemoteIP().c_str() : "noip", worldsession->GetPlayer() ? worldsession->GetPlayer()->GetName() : "noplayer");
 
 			worldsession->Disconnect();
@@ -2095,7 +2095,7 @@ void World::DisconnectUsersWithIP(const char * ip, WorldSession * m_session)
 		string ip2 = worldsession->GetSocket()->GetRemoteIP().c_str();
 		if(!stricmp(ip, ip2.c_str()))
 		{
-			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(), 
+			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(),
 				ip2.c_str(), worldsession->GetPlayer() ? worldsession->GetPlayer()->GetName() : "noplayer");
 
 			worldsession->Disconnect();
@@ -2119,7 +2119,7 @@ void World::DisconnectUsersWithPlayerName(const char * plr, WorldSession * m_ses
 
 		if(!stricmp(plr, worldsession->GetPlayer()->GetName()))
 		{
-			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(), 
+			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(),
 				worldsession->GetSocket() ? worldsession->GetSocket()->GetRemoteIP().c_str() : "noip", worldsession->GetPlayer() ? worldsession->GetPlayer()->GetName() : "noplayer");
 
 			worldsession->Disconnect();
@@ -2493,7 +2493,7 @@ void NewsAnnouncer::_ReloadMessages()
 
 	if( res != NULL )
 	{
-		do 
+		do
 		{
 			f = res->Fetch();
 			id = f[0].GetUInt32();
@@ -2543,7 +2543,7 @@ void NewsAnnouncer::_Init()
 	QueryResult *res = CharacterDatabase.Query("SELECT * FROM news_timers");
 	if( res != NULL )
 	{
-		do 
+		do
 		{
 			uint32 id = res->Fetch()[0].GetUInt32();
 			uint32 t = res->Fetch()[1].GetUInt32();

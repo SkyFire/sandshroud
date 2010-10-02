@@ -33,7 +33,7 @@ void WorldStateManager::CreateWorldState(uint32 uWorldStateId, uint32 uInitialVa
 
 	// search away, for naughty people
 	itr = m_states.find(uWorldStateId);
-	
+
 	// does it already exist? naughty boy.
 	if( itr != m_states.end() )
 	{
@@ -142,7 +142,7 @@ void WorldStateManager::SendWorldStates(Player* pPlayer)
 
 	// append the count, and send away
 	*(uint16*)(&data.contents()[12]) = state_count;
-	pPlayer->GetSession()->SendPacket(&data);	
+	pPlayer->GetSession()->SendPacket(&data);
 }
 
 void WorldStateManager::ClearWorldStates(Player* pPlayer)
@@ -162,7 +162,7 @@ void WorldStateManager::ClearWorldStates(Player* pPlayer)
 
 const string WorldStateManager::GetPersistantSetting(const char *szKeyName, const char *szDefaultValue)
 {
-	QueryResult * pResult = CharacterDatabase.Query("SELECT setting_value FROM worldstate_save_data WHERE setting_id = \"%s\"", 
+	QueryResult * pResult = CharacterDatabase.Query("SELECT setting_value FROM worldstate_save_data WHERE setting_id = \"%s\"",
 		CharacterDatabase.EscapeString(string(szKeyName)).c_str());
 
 	if( pResult == NULL )
@@ -198,7 +198,7 @@ void WorldStateTemplateManager::LoadFromDB()
 	Field *fields;
 	WorldStateTemplate tmpl;
 	int32 mapid;
-	do 
+	do
 	{
 		fields = pResult->Fetch();
 		mapid = fields[0].GetInt32();
@@ -215,7 +215,7 @@ void WorldStateTemplateManager::LoadFromDB()
 		{
 			if( mapid >= NUM_MAPS )
 			{
-				Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Worldstate template for field %u on map %u (%s) contains out of range map.", 
+				Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Worldstate template for field %u on map %u (%s) contains out of range map.",
 					tmpl.uField, mapid, fields[5].GetString());
 
 				continue;

@@ -132,13 +132,13 @@ public:
 	void DeleteFromDB();
 };
 
-typedef HM_NAMESPACE::hash_map<uint32, Instance*> InstanceMap; 
+typedef HM_NAMESPACE::hash_map<uint32, Instance*> InstanceMap;
 
 class SERVER_DECL InstanceMgr
 {
 	friend class MapMgr;
 public:
-	InstanceMgr();	
+	InstanceMgr();
 	~InstanceMgr();
 
 	HEARTHSTONE_INLINE Map* GetMap(uint32 mapid)

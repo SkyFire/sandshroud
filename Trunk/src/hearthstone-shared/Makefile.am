@@ -218,4 +218,4 @@ libshared_a_SOURCES = \
     Pathfinding/Detour/DetourNavMesh.cpp \
     Pathfinding/Detour/DetourNavMesh.h \
     Pathfinding/Detour/DetourNode.cpp \
-    Pathfinding/Detour/DetourNode.h 
+    Pathfinding/Detour/DetourNode.h

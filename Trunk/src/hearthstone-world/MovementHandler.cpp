@@ -488,7 +488,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		{
 			if(recv_data.GetOpcode() != MSG_MOVE_JUMP)
 			{
-				if(!_player->movement_info.transGuid.GetOldGuid() && !_player->FlyCheat && 
+				if(!_player->movement_info.transGuid.GetOldGuid() && !_player->FlyCheat &&
 					!_player->m_FlyingAura && !(_player->movement_info.flags & MOVEFLAG_SWIMMING || _player->movement_info.flags & MOVEFLAG_FALLING)
 					&& _player->movement_info.z > _player->GetPositionZ()+3.0f && _player->movement_info.x == _player->GetPositionX()
 					&& _player->movement_info.y == _player->GetPositionY() )
@@ -609,7 +609,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 			//checks that player has fallen more than 12 units, otherwise no damage will be dealt
 			//falltime check is also needed here, otherwise sudden changes in Z axis position, such as using !recall, may result in death
-			if( _player->isAlive() && !_player->GodModeCheat && falldistance > 12 && ( getMSTime() >= _player->m_fallDisabledUntil ) && 
+			if( _player->isAlive() && !_player->GodModeCheat && falldistance > 12 && ( getMSTime() >= _player->m_fallDisabledUntil ) &&
 				!_player->HasAura(130) && !_player->GetTaxiState()) // Slow Fall or Taxi Path.
 			{
 				// 1.7% damage for each unit fallen on Z axis over 13
@@ -706,7 +706,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/* Anti-Speed Hack Checks                                               */
 	/************************************************************************/
 
-	
+
 
 	/************************************************************************/
 	/* Breathing System                                                     */
@@ -732,7 +732,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		_player->m_CurrentCharm->SetPosition(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, _player->movement_info.orientation);
 	else
 	{
-		if(!_player->m_CurrentTransporter) 
+		if(!_player->m_CurrentTransporter)
 		{
 			if( !_player->SetPosition(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, _player->movement_info.orientation) )
 			{
@@ -742,10 +742,10 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		}
 		else
 		{
-			_player->SetPosition(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, 
+			_player->SetPosition(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z,
 				_player->movement_info.orientation + _player->movement_info.transO, false);
 		}
-	}	
+	}
 
 	if(  !(_player->movement_info.flags & MOVEFLAG_MOTION_MASK) )
 	{
@@ -850,7 +850,7 @@ void WorldSession::HandleWorldportOpcode(WorldPacket & recv_data)
 	uint32 mapid;
 	float x,y,z,o;
 	recv_data >> mapid >> x >> y >> z >> o;
-	
+
 	CHECK_INWORLD_RETURN;
 
 	if(!HasGMPermissions())

@@ -155,8 +155,8 @@ enum EventTypes
 	EVENT_DEC_CORPSE_RECLAIM_COUNT,
 	EVENT_DODGE_BLOCK_FLAG_EXPIRE,	//yeah, there are more then 1 flags
 	EVENT_REJUVENATION_FLAG_EXPIRE,
-	EVENT_PARRY_FLAG_EXPIRE,		
-	EVENT_CRIT_FLAG_EXPIRE,		
+	EVENT_PARRY_FLAG_EXPIRE,
+	EVENT_CRIT_FLAG_EXPIRE,
 	EVENT_GMSCRIPT_EVENT,
 	EVENT_RELOCATE,
 	EVENT_BATTLEGROUNDMGR_QUEUE_UPDATE,
@@ -246,9 +246,9 @@ enum EventFlags
 class EventableObject;
 struct SERVER_DECL TimedEvent
 {
-	TimedEvent(void* object, CallbackBase* callback, uint32 type, time_t time, uint32 repeat, uint32 flags, uint32 auraid) : 
+	TimedEvent(void* object, CallbackBase* callback, uint32 type, time_t time, uint32 repeat, uint32 flags, uint32 auraid) :
 		obj(object), cb(callback), eventType(type), eventFlag(flags), msTime(time), currTime(time), repeats(repeat), deleted(false),ref(0), eventAuraid(auraid) {}
-		
+
 	void* obj;
 	CallbackBase *cb;
 	uint32 eventType;
@@ -277,9 +277,9 @@ struct SERVER_DECL TimedEvent
 	void IncRef() { InterlockedIncrement(&ref); }
 #else
 
-	void IncRef() 
+	void IncRef()
 	{
-		__sync_add_and_fetch(&ref, 1); 
+		__sync_add_and_fetch(&ref, 1);
 	}
 
 	void DecRef()

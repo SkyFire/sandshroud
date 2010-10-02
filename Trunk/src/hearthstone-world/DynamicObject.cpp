@@ -126,9 +126,9 @@ void DynamicObject::Create(Object* caster, Spell* pSpell, float x, float y, floa
 		caster->dynObj->UpdateTargets();
 	}
 	caster->dynObj = TO_DYNAMICOBJECT(this);
-	
+
 	PushToWorld(caster->GetMapMgr());
-	
+
 	sEventMgr.AddEvent(TO_DYNAMICOBJECT(this), &DynamicObject::UpdateTargets, EVENT_DYNAMICOBJECT_UPDATE, 200, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 }
 
@@ -141,7 +141,7 @@ void DynamicObject::AddInRangeObject( Object* pObj )
 			attackable = isAttackable( m_caster, pObj );
 		else
 			attackable = isAttackable( TO_DYNAMICOBJECT(this), pObj );
-		
+
 		if( attackable )
 			m_inRangeOppFactions.insert( TO_UNIT( pObj ) );
 	}
@@ -179,7 +179,7 @@ void DynamicObject::UpdateTargets()
 				continue;
 
 			target = TO_UNIT( *itr2 );
-			
+
 			if( !isAttackable( m_caster, target, !(m_spellProto->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
 				continue;
 
@@ -215,7 +215,7 @@ void DynamicObject::UpdateTargets()
 		DynamicObjectList::iterator jtr  = targets.begin();
 		DynamicObjectList::iterator jtr2;
 		DynamicObjectList::iterator jend = targets.end();
-		
+
 		while(jtr != jend)
 		{
 			target = *jtr;

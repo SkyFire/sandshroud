@@ -26,7 +26,7 @@ bool Transporter::CreateAsTransporter(uint32 EntryID, const char* Name)
 	// Try to spawn the Gameobject, no need for locations.
 	if(!CreateFromProto(EntryID,0,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f))
 		return false;
-	
+
 	SetUInt32Value(GAMEOBJECT_FLAGS,40);
 	SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 
@@ -290,7 +290,7 @@ bool Transporter::GenerateWaypoints()
 	m_pathTime = timer;
 	m_timer = 0;
 	m_period = t;
-	
+
 	return true;
 }
 
@@ -310,7 +310,7 @@ void Transporter::UpdatePosition()
 		return;
 
 	m_timer = getMSTime() % m_period;
-	
+
 	while (((m_timer - mCurrentWaypoint->first) % m_pathTime) >= ((mNextWaypoint->first - mCurrentWaypoint->first) % m_pathTime))
 	{
 		/*printf("%s from %u %f %f %f to %u %f %f %f\n", this->GetInfo()->Name,
@@ -362,7 +362,7 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 				mPassengers.erase(it2);
 				continue;
 			}
-			if(!plr->GetSession() || !plr->IsInWorld()) 
+			if(!plr->GetSession() || !plr->IsInWorld())
 				continue;
 
 			v.x = x + plr->m_transportPosition->x;
@@ -440,7 +440,7 @@ void ObjectMgr::LoadTransporters()
 	TransportersCount = total;
 	uint32 entry = NULL;
 	Transporter* pTransporter = NULL;
-	do 
+	do
 	{
 		entry = QR->Fetch()[0].GetUInt32();
 
@@ -458,7 +458,7 @@ void ObjectMgr::LoadTransporters()
 			QueryResult * result2 = WorldDatabase.Query("SELECT * FROM transport_creatures WHERE transport_entry = %u", entry);
 			if(result2)
 			{
-				do 
+				do
 				{
 					pTransporter->AddNPC(result2->Fetch()[1].GetUInt32(), result2->Fetch()[2].GetFloat(),
 						result2->Fetch()[3].GetFloat(), result2->Fetch()[4].GetFloat(),

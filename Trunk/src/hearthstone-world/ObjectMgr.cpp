@@ -181,13 +181,13 @@ ObjectMgr::~ObjectMgr()
 		delete (*itr);
 
 	Log.Notice("ObjectMgr", "Deleting Arena Teams...");
-	for(HM_NAMESPACE::hash_map<uint32, ArenaTeam*>::iterator itr = m_arenaTeams.begin(); itr != m_arenaTeams.end(); itr++) 
+	for(HM_NAMESPACE::hash_map<uint32, ArenaTeam*>::iterator itr = m_arenaTeams.begin(); itr != m_arenaTeams.end(); itr++)
 		delete itr->second;
-		
+
 	Log.Notice("ObjectMgr", "Deleting Profession Discoveries...");
 	std::set<ProfessionDiscovery*>::iterator itr = ProfessionDiscoveryTable.begin();
 	for ( ; itr != ProfessionDiscoveryTable.end(); itr++ )
-		delete (*itr);	
+		delete (*itr);
 
 	Log.Notice("ObjectMgr", "Deleting Achievement Cache...");
 	for(AchievementCriteriaMap::iterator itr = m_achievementCriteriaMap.begin(); itr != m_achievementCriteriaMap.end(); itr++)
@@ -731,7 +731,7 @@ void ObjectMgr::SaveGMTicket(GM_Ticket* ticket, QueryBuffer * buf)
 	ss << ticket->posZ << ", '";
 	ss << CharacterDatabase.EscapeString(ticket->message) << "', ";
 	ss << ticket->timestamp << ", ";
-	
+
 	if( ticket->deleted  )
 		ss << uint32( 1 );
 	else
@@ -1790,7 +1790,7 @@ void ObjectMgr::LoadTrainers()
 		for( uint32 i = 0; i < 2; i++)
 		{
 			tmptxtid[i] = fields[6+i].GetUInt32();
-			if( tmptxtid[i] ) 
+			if( tmptxtid[i] )
 			{
 				text = NpcTextStorage.LookupEntry(tmptxtid[i]);
 				if(text == 0)
@@ -1930,7 +1930,7 @@ void ObjectMgr::GenerateLevelUpInfo()
 				// At a future date, we should attempt to correct them for those levels by decreasing the amount at
 				// lower levels.
 				// The first attempt at doing so is below.
-				
+
 				switch(Class)
 				{
 				case PRIEST:
@@ -2665,8 +2665,8 @@ void ObjectMgr::LoadMonsterSay()
 		{
 			sLog.outError("Duplicate monstersay event %u for entry %u, skipping", Event, Entry	);
 			continue;
-		}	
-			
+		}
+
 		NpcMonsterSay * ms = new NpcMonsterSay;
 		ms->Chance = fields[2].GetFloat();
 		ms->Language = fields[3].GetUInt32();
@@ -3081,7 +3081,7 @@ void ObjectMgr::LoadPetLevelupSpellMap()
 					if(sk->skilline !=	SKILL_PET_OWL)
 						continue;
 				}break;
-			case FAMILY_BOAR:	
+			case FAMILY_BOAR:
 				{
 					if(sk->skilline	!= SKILL_PET_BOAR)
 						continue;

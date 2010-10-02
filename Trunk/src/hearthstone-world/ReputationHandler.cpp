@@ -19,29 +19,29 @@
 
 #include "StdAfx.h"
 
-#define FACTION_FLAG_HIDDEN 4                
-#define FACTION_FLAG_INVISIBLE_FORCED 8               
-#define FACTION_FLAG_PEACE_FORCED 16  
+#define FACTION_FLAG_HIDDEN 4
+#define FACTION_FLAG_INVISIBLE_FORCED 8
+#define FACTION_FLAG_PEACE_FORCED 16
 #define FACTION_FLAG_AT_WAR  2
 #define FACTION_FLAG_VISIBLE 1
 
 Standing Player::GetReputationRankFromStanding(int32 Standing_)
 {
-	if( Standing_ >= 42000 )  
-		return STANDING_EXALTED;  
-	else if( Standing_ >= 21000 )  
-		return STANDING_REVERED;  
-	else if( Standing_ >= 9000 )  
-		return STANDING_HONORED;  
-	else if( Standing_ >= 3000 )  
-		return STANDING_FRIENDLY;  
-	else if( Standing_ >= 0 )  
-		return STANDING_NEUTRAL;  
-	else if( Standing_ > -3000 )  
-		return STANDING_UNFRIENDLY;  
-	else if( Standing_ > -6000 )  
-		return STANDING_HOSTILE;  
-	return STANDING_HATED;  
+	if( Standing_ >= 42000 )
+		return STANDING_EXALTED;
+	else if( Standing_ >= 21000 )
+		return STANDING_REVERED;
+	else if( Standing_ >= 9000 )
+		return STANDING_HONORED;
+	else if( Standing_ >= 3000 )
+		return STANDING_FRIENDLY;
+	else if( Standing_ >= 0 )
+		return STANDING_NEUTRAL;
+	else if( Standing_ > -3000 )
+		return STANDING_UNFRIENDLY;
+	else if( Standing_ > -6000 )
+		return STANDING_HOSTILE;
+	return STANDING_HATED;
 }
 
 HEARTHSTONE_INLINE void SetFlagAtWar(uint8 & flag)
@@ -182,7 +182,7 @@ void Player::_InitialReputation()
 			{
 				SetForcedInvisible(rep->flag);
 			}
-				
+
 			reputationByListId[f->RepListId] = rep;
 		}
 		else
@@ -369,9 +369,9 @@ void Player::SetAtWar(uint32 Faction, bool Set)
 		return;
 
 	FactionReputation * rep = reputationByListId[Faction];
-	if(!rep) 
+	if(!rep)
 		return;
-	
+
 	if(GetReputationRankFromStanding(rep->standing) <= STANDING_HOSTILE && !Set) // At this point we have to be at war.
 		return;
 

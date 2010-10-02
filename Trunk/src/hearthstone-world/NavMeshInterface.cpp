@@ -118,7 +118,7 @@ bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 			dtFree(data);
 			return false;
 		}
-			DEBUG_LOG("NavMesh Interface", "%03u%02u%02u.mmtile successfully loaded.", mapid, x, y);
+		DEBUG_LOG("NavMesh Interface", "%03u%02u%02u.mmtile successfully loaded.", mapid, x, y);
 	}
 
 	m_navMeshLoadCount[mapid][x][y]++;
@@ -132,7 +132,7 @@ void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 
 	if(x == 0 && y == 0)
 	{
-		delete m_navMesh[mapid];
+        dtFreeNavMesh(m_navMesh[mapid]);
 		m_navMesh[mapid] = NULL;
 		return;
 	}

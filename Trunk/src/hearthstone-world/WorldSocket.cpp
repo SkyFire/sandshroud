@@ -283,7 +283,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 	// shitty hash !
 	m_fullAccountName = new string( account );
 
-	// Set the authentication packet 
+	// Set the authentication packet
 	pAuthenticationPacket = recvPacket;
 
 	if(sWorld.LogonServerType & LOGON_MANGOS)
@@ -367,7 +367,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 		}
 		// AUTH_FAILED = 0x0D
 		session->Disconnect();
-		
+
 		// clear the logout timer so he times out straight away
 		session->SetLogoutTimer(1);
 
@@ -389,7 +389,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	else
 	{
 		sha.UpdateData(*m_fullAccountName);
-		
+
 		// this is unused now. we may as well free up the memory.
 		delete m_fullAccountName;
 		m_fullAccountName = NULL;
@@ -520,7 +520,7 @@ void WorldSocket::UpdateQueuePosition(uint32 Position)
 void WorldSocket::_HandlePing(WorldPacket* recvPacket)
 {
 	uint32 ping;
-	
+
 	*recvPacket >> ping;
 	*recvPacket >> _latency;
 

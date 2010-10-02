@@ -57,15 +57,15 @@ public:
 		//actually int->bool conversion is not needed here
 	}
 
-	uint32 GetUpdateBlockCount() const 
+	uint32 GetUpdateBlockCount() const
 	{
 		uint32 x;
 		for( x=mBlocks-1;x;x--)
 			if(mUpdateMask[x])break;
-		return (x+1); 
+		return (x+1);
 	}
 	HEARTHSTONE_INLINE uint32 GetBlockCount() const {return mBlocks;}
-	
+
 	HEARTHSTONE_INLINE uint32 GetLength() const { return (mBlocks *sizeof(uint32)); }
 	HEARTHSTONE_INLINE uint32 GetCount() const { return mCount; }
 	HEARTHSTONE_INLINE const uint8* GetMask() const { return (uint8*)mUpdateMask; }

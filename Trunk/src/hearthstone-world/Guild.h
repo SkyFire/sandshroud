@@ -137,10 +137,10 @@ enum GuildRankRights
 	GR_RIGHT_VIEWOFFNOTE		= 0x00004000,
 	GR_RIGHT_EOFFNOTE			= 0x00008000,
 	GR_RIGHT_EGUILDINFO			= 0x00010000,
-	GR_RIGHT_REPAIR_FROM_GUILD	= 0x00020000, 
-	GR_RIGHT_WITHDRAW_REPAIR	= 0x00040000, 
-	GR_RIGHT_WITHDRAW_GOLD		= 0x00080000, 
-	GR_RIGHT_CREATE_GUILD_EVENT	= 0x00100000, 
+	GR_RIGHT_REPAIR_FROM_GUILD	= 0x00020000,
+	GR_RIGHT_WITHDRAW_REPAIR	= 0x00040000,
+	GR_RIGHT_WITHDRAW_GOLD		= 0x00080000,
+	GR_RIGHT_CREATE_GUILD_EVENT	= 0x00100000,
 	GR_RIGHT_ALL				= 0x001FF1FF,
 
 	GR_RIGHT_DEFAULT			= GR_RIGHT_EMPTY | GR_RIGHT_GCHATLISTEN | GR_RIGHT_GCHATSPEAK,
@@ -238,7 +238,7 @@ struct SERVER_DECL GuildMember
 
 	uint32 CalculateAllowedItemWithdraws(uint32 tab);
 	void OnItemWithdraw(uint32 tabid);
-	
+
 	uint32 CalculateAvailableAmount();
 	void OnMoneyWithdraw(uint32 amt);
 };
@@ -289,7 +289,7 @@ protected:
 	uint32 m_hiLogId;
 public:
 	uint32 GenerateGuildLogEventId();
-	
+
 	/* guild bank logging calls
 	 */
 	void LogGuildBankActionMoney(uint8 iAction, uint32 uGuid, uint32 uAmount);
@@ -359,7 +359,7 @@ public:
 	/** Logs a guild event and sends it to all online players.
 	 */
 	void LogGuildEvent(uint8 iEvent, uint8 iStringCount, ...);
-	
+
 	/** Guild event logging.
 	 */
 	void AddGuildLogEntry(uint8 iEvent, uint8 iParamCount, ...);
@@ -415,7 +415,7 @@ public:
 	Mutex* getLock() { return &m_lock; }
 	GuildMemberMap::iterator GetGuildMembersBegin() { return m_members.begin(); }
 	GuildMemberMap::iterator GetGuildMembersEnd() { return m_members.end(); }
-	
+
 	/** Creates a guild rank with the specified permissions.
 	 */
 	GuildRank * CreateGuildRank(const char * szRankName, uint32 iPermissions, bool bFullGuildBankPermissions);
@@ -424,7 +424,7 @@ public:
 	 */
 	void RemoveGuildRank(WorldSession * pClient);
 
-	/** Buys a new guild bank tab, usable only by guild master 
+	/** Buys a new guild bank tab, usable only by guild master
 	 */
 	void BuyBankTab(WorldSession * pClient);
 
@@ -439,7 +439,7 @@ public:
 	/** Retrieves a guild rank for editing
 	 */
 	HEARTHSTONE_INLINE GuildRank * GetGuildRank(uint32 Id)
-	{ 
+	{
 		if(Id >= MAX_GUILD_RANKS)
 			return NULL;
 
@@ -480,7 +480,7 @@ public:
 	/** Changes the tabard info.
 	 */
 	void SetTabardInfo(uint32 EmblemStyle, uint32 EmblemColor, uint32 BorderStyle, uint32 BorderColor, uint32 BackgroundColor);
-	
+
 	/** Sends the guild information packet to the specified client.
 	 */
 	void SendGuildInfo(WorldSession * pClient);
@@ -491,12 +491,12 @@ public:
 	void ForceLeaderChange(uint32 newGuid) { m_guildLeader = newGuid; }
 
 protected:
-	
+
 	/** Enables/disables command logging.
 	 * Use when performing mass events such as guild creation or destruction.
 	 */
 	bool m_commandLogging;
-	
+
 	/** Internal variables
 	 */
 	uint32 m_guildId;
@@ -515,7 +515,7 @@ protected:
 	char * m_guildName;
 	char * m_guildInfo;
 	char * m_motd;
-	
+
 	/** Guild Member Map.
 	 */
 	GuildMemberMap m_members;

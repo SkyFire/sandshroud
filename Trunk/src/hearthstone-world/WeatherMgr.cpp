@@ -50,9 +50,9 @@ void BuildWeatherPacket(WorldPacket * data, uint32 Effect, float Density )
 {
 	data->Initialize(SMSG_WEATHER);
 	if(Effect == 0 ) // set all parameter to 0 for sunny.
-		*data << uint32(0) << float(0) << uint32(0) << uint8(0);		
+		*data << uint32(0) << float(0) << uint32(0) << uint8(0);
 	else if (Effect == 1) // No sound/density for fog
-		*data << Effect << float(0) << uint32(0) << uint8(0);		
+		*data << Effect << float(0) << uint32(0) << uint8(0);
 	else
 		*data << Effect << Density << GetSound(Effect,Density) << uint8(0) ;
 //	OUT_DEBUG("Send Weather Update %d, Density %f, Sound %d, unint8(0)", Effect,Density,GetSound(Effect,Density));
@@ -67,7 +67,7 @@ uint32 GetSound(uint32 Effect, float Density)
 	switch(Effect)
     {
         case 2:                                             //rain
-        case 4:                                             
+        case 4:
             if(Density  <0.40f)
                  sound = WEATHER_RAINLIGHT;
             else if(Density  <0.70f)
@@ -191,15 +191,15 @@ void WeatherInfo::_GenerateWeather()
 
 	if (rv <= m_effectValues[4]) // %chance on changing weather from sunny to m_effectValues[5]
 	{
-		m_currentEffect = m_effectValues[5]; 
+		m_currentEffect = m_effectValues[5];
 	}
 	else if (rv <= m_effectValues[2]) // %chance on changing weather from sunny to m_effectValues[3]
 	{
-		m_currentEffect = m_effectValues[3]; 
+		m_currentEffect = m_effectValues[3];
 	}
 	else if (rv <= m_effectValues[0]) // %chance on changing weather from sunny to m_effectValues[1]
 	{
-		m_currentEffect = m_effectValues[1]; 
+		m_currentEffect = m_effectValues[1];
 	}
 
 	SendUpdate();
@@ -210,8 +210,8 @@ void WeatherInfo::_GenerateWeather()
 
 void WeatherInfo::BuildUp()
 {
-    // Increase until 0.5, start random counter when reached   
-	if (m_currentDensity >= 0.50f) 
+    // Increase until 0.5, start random counter when reached
+	if (m_currentDensity >= 0.50f)
 	{
 		sEventMgr.RemoveEvents(this, EVENT_WEATHER_UPDATE);
 		sEventMgr.AddEvent(this, &WeatherInfo::Update, EVENT_WEATHER_UPDATE, (uint32)(m_totalTime/ceil(m_maxDensity/WEATHER_DENSITY_UPDATE)*4), 0,0);
@@ -227,7 +227,7 @@ void WeatherInfo::BuildUp()
 void WeatherInfo::Update()
 {
     // There will be a 66% the weather density decreases. If Sunny, use as currentDensity as countdown
-	if (m_currentEffect == 0 || RandomUInt(100) < 66) 
+	if (m_currentEffect == 0 || RandomUInt(100) < 66)
 	{
 		m_currentDensity -= WEATHER_DENSITY_UPDATE;
 		if (m_currentDensity < 0.20f) //0.20 is considered fog, lower values are anoying

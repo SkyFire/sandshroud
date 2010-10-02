@@ -68,7 +68,7 @@ bool ConsoleThread::run()
 #ifdef WIN32
 
 		// Read in single line from "stdin"
-		memset( cmd, 0, sizeof( cmd ) ); 
+		memset( cmd, 0, sizeof( cmd ) );
 		if( fgets( cmd, 300, stdin ) == NULL )
 			continue;
 
@@ -89,7 +89,7 @@ bool ConsoleThread::run()
 		}
 
 		// Read in single line from "stdin"
-		memset( cmd, 0, sizeof( cmd ) ); 
+		memset( cmd, 0, sizeof( cmd ) );
 		if( fgets( cmd, 300, stdin ) == NULL )
 			continue;
 #endif

@@ -138,7 +138,7 @@ public:
 	uint32 GameObjectSpawnCount;
 
 	HEARTHSTONE_INLINE float  GetLandHeight(float x, float y)
-	{ 
+	{
 		if(_terrain)
 		{
 			return _terrain->GetLandHeight(x, y);
@@ -149,26 +149,26 @@ public:
 		}
 	}
 
-	HEARTHSTONE_INLINE float  GetWaterHeight(float x, float y) 
-	{ 
+	HEARTHSTONE_INLINE float  GetWaterHeight(float x, float y)
+	{
 		if(_terrain)
-		{ 
-			return _terrain->GetWaterHeight(x, y); 
+		{
+			return _terrain->GetWaterHeight(x, y);
 		}
 		else
-		{ 
-			return NO_LAND_HEIGHT; 
+		{
+			return NO_LAND_HEIGHT;
 		}
 	}
 
 	HEARTHSTONE_INLINE uint8  GetWaterType(float x, float y)
 	{
 		if(_terrain)
-		{ 
+		{
 			return _terrain->GetWaterType(x, y);
 		}
 		else
-		{ 
+		{
 			return 0;
 		}
 	}
@@ -176,39 +176,39 @@ public:
 	HEARTHSTONE_INLINE uint8  GetWalkableState(float x, float y)
 	{
 		if(_terrain)
-		{ 
+		{
 			return _terrain->GetWalkableState(x, y);
 		}
 		else
-		{ 
-			return 1; 
+		{
+			return 1;
 		}
 	}
 
 	HEARTHSTONE_INLINE uint16 GetAreaID(float x, float y)
 	{
 		if(_terrain)
-		{ 
+		{
 			return _terrain->GetAreaID(x, y);
 		}
 		else
-		{ 
+		{
 			return 0xFFFF;
 		}
 	}
 
 	HEARTHSTONE_INLINE void CellGoneActive(uint32 x, uint32 y)
-	{ 
+	{
 		if(_terrain)
-		{ 
+		{
 			_terrain->CellGoneActive(x,y);
 		}
 	}
 
 	HEARTHSTONE_INLINE void CellGoneIdle(uint32 x,uint32 y)
-	{ 
+	{
 		if(_terrain)
-		{ 
+		{
 			_terrain->CellGoneIdle(x,y);
 		}
 	}

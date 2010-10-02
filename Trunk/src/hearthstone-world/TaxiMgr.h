@@ -32,7 +32,7 @@ struct TaxiNode {
 	uint32 alliance_mount;
 };
 
-struct TaxiPathNode 
+struct TaxiPathNode
 {
 	float x,y,z;
 	uint32 mapid;
@@ -42,11 +42,11 @@ class SERVER_DECL TaxiPath {
 	friend class TaxiMgr;
 
 public:
-	TaxiPath() 
-	{ 
+	TaxiPath()
+	{
 	}
 
-	~TaxiPath() 
+	~TaxiPath()
 	{
 		while(m_pathNodes.size())
 		{
@@ -82,14 +82,14 @@ protected:
 class SERVER_DECL TaxiMgr :  public Singleton < TaxiMgr >
 {
 public:
-	TaxiMgr() 
+	TaxiMgr()
 	{
 		_LoadTaxiNodes();
 		_LoadTaxiPaths();
 	}
 
-	~TaxiMgr() 
-	{ 
+	~TaxiMgr()
+	{
 		while(m_taxiPaths.size())
 		{
 			TaxiPath *p = m_taxiPaths.begin()->second;

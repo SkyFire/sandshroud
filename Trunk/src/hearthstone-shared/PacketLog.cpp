@@ -40,7 +40,7 @@ int PacketLog::hextoint(char c) {
 }
 
 
-void PacketLog::HexDump(const unsigned char* data, size_t length, const char* file) 
+void PacketLog::HexDump(const unsigned char* data, size_t length, const char* file)
 {
     FILE *pFile;
     pFile = fopen(file, "a");

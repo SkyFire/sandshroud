@@ -96,7 +96,7 @@ uint32 CalculateXpToGive(Unit* pVictim, Unit* pAttacker)
 		return 0;
 
 	// Partha: this screws things up for pets and groups
-	// No need for it here - it does this later in Player::GiveXP 
+	// No need for it here - it does this later in Player::GiveXP
 	/*
 	uint32 max_level = 70;
 	if(pAttacker->IsPlayer())
@@ -287,7 +287,7 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 			case STAT_AGILITY:   { gain = CalculateStat(level, 1.1625f); } break;
 			case STAT_STAMINA:   { gain = CalculateStat(level, 1.825f); } break;
 			case STAT_INTELLECT: { gain = CalculateStat(level, 0.2f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.4875f); } break;	
+			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.4875f); } break;
 			}
 		}break;
 
@@ -299,7 +299,7 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 			case STAT_AGILITY:   { gain = CalculateStat(level, 0.5875f); } break;
 			case STAT_STAMINA:   { gain = CalculateStat(level, 0.95f); } break;
 			case STAT_INTELLECT: { gain = CalculateStat(level, 1.7125f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.8f); } break;		
+			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.8f); } break;
 			}
 		}break;
 
@@ -311,7 +311,7 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 			case STAT_AGILITY:   { gain = CalculateStat(level, 0.775f); } break;
 			case STAT_STAMINA:   { gain = CalculateStat(level, 0.975f); } break;
 			case STAT_INTELLECT: { gain = CalculateStat(level, 1.5125f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 2.0f); } break;	
+			case STAT_SPIRIT:	{ gain = CalculateStat(level, 2.0f); } break;
 			}
 		}break;
 
@@ -335,7 +335,7 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 			case STAT_AGILITY:   { gain = CalculateStat(level, 1.975f); } break;
 			case STAT_STAMINA:   { gain = CalculateStat(level, 1.3375f); } break;
 			case STAT_INTELLECT: { gain = CalculateStat(level, 0.875f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.95f); } break;	
+			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.95f); } break;
 			}
 		}break;
 
@@ -347,7 +347,7 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 			case STAT_AGILITY:   { gain = CalculateStat(level, 0.2875f); } break;
 			case STAT_STAMINA:   { gain = CalculateStat(level, 0.4875f); } break;
 			case STAT_INTELLECT: { gain = CalculateStat(level, 1.975f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.9625f); } break;		
+			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.9625f); } break;
 			}
 		}break;
 
@@ -359,7 +359,7 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 			case STAT_AGILITY:   { gain = CalculateStat(level, 0.675f); } break;
 			case STAT_STAMINA:   { gain = CalculateStat(level, 1.4375f); } break;
 			case STAT_INTELLECT: { gain = CalculateStat(level, 1.4875f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.5125f); } break;	
+			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.5125f); } break;
 			}
 		}break;
 

@@ -41,8 +41,8 @@ enum QUEST_STATUS
 	QMGR_QUEST_CHAT					= 0x02,	// Quest avaiable it shows a talk baloon.		| "No Mark"
 	QMGR_QUEST_NOT_FINISHED			= 0x05,	// Quest isnt finished yet.						| "Gray Question ? Mark"
 	QMGR_QUEST_REPEATABLE_FINISHED	= 0x06,
-	QMGR_QUEST_REPEATABLE			= 0x07,	// Quest repeatable								| "Blue Question ? Mark" 
-	QMGR_QUEST_AVAILABLE			= 0x08,	// Quest avaiable, and your level is enough		| "Yellow Quotation ! Mark" 
+	QMGR_QUEST_REPEATABLE			= 0x07,	// Quest repeatable								| "Blue Question ? Mark"
+	QMGR_QUEST_AVAILABLE			= 0x08,	// Quest avaiable, and your level is enough		| "Yellow Quotation ! Mark"
 	QMGR_QUEST_FINISHED_2			= 0x09,  // Quest has been finished                      | "No icon on the minimap"
 	QMGR_QUEST_FINISHED				= 0x0A,	// Quest has been finished.						| "Yellow Question  ? Mark" (7 has no minimap icon)
 	//QUEST_ITEM_UPDATE				= 0x06	 // Yellow Question "?" Mark. //Unknown
@@ -62,11 +62,11 @@ enum QUEST_TYPE
 
 enum QUEST_FLAG
 {
-	QUEST_FLAG_NONE		  = 0,   
-	QUEST_FLAG_DELIVER	   = 1,   
-	QUEST_FLAG_KILL		  = 2,   
+	QUEST_FLAG_NONE		  = 0,
+	QUEST_FLAG_DELIVER	   = 1,
+	QUEST_FLAG_KILL		  = 2,
 	QUEST_FLAG_SPEAKTO	   = 4,
-	QUEST_FLAG_REPEATABLE	= 8,   
+	QUEST_FLAG_REPEATABLE	= 8,
 	QUEST_FLAG_EXPLORATION   = 16,
 	QUEST_FLAG_TIMED		 = 32,
 	QUEST_FLAG_REPUTATION	= 128,
@@ -98,14 +98,14 @@ enum INVALID_REASON
 
 enum QUEST_SHARE
 {
-	QUEST_SHARE_MSG_SHARING_QUEST			= 0, 
-	QUEST_SHARE_MSG_CANT_TAKE_QUEST			= 1, 
+	QUEST_SHARE_MSG_SHARING_QUEST			= 0,
+	QUEST_SHARE_MSG_CANT_TAKE_QUEST			= 1,
 	QUEST_SHARE_MSG_ACCEPT_QUEST			= 2,
 	QUEST_SHARE_MSG_REFUSE_QUEST			= 3,
-	QUEST_SHARE_MSG_BUSY					= 4, 
-	QUEST_SHARE_MSG_LOG_FULL				= 5, 
-	QUEST_SHARE_MSG_HAVE_QUEST				= 6, 
-	QUEST_SHARE_MSG_FINISH_QUEST			= 7, 
+	QUEST_SHARE_MSG_BUSY					= 4,
+	QUEST_SHARE_MSG_LOG_FULL				= 5,
+	QUEST_SHARE_MSG_HAVE_QUEST				= 6,
+	QUEST_SHARE_MSG_FINISH_QUEST			= 7,
 	QUEST_SHARE_MSG_CANT_SHARE_TODAY		= 8,
 	QUEST_SHARE_MSG_QUEST_TIMER_FINISHED	= 9,
 	QUEST_SHARE_MSG_NOT_IN_PARTY			= 10,
@@ -132,7 +132,7 @@ struct Quest
 
 	uint32 time;
 	uint32 special_flags;
-	
+
 	uint32 previous_quest_id;
 	uint32 next_quest_id;
 
@@ -174,7 +174,7 @@ struct Quest
 	uint32 reward_spell;
 	uint32 reward_talents;
 	uint32 effect_on_player;
-	
+
 	uint32 point_mapid;
 	float point_x;
 	float point_y;
@@ -198,7 +198,7 @@ struct Quest
 	uint32 count_receiveitems;
 	uint32 count_reward_choiceitem;
 	uint32 count_required_item;
-	uint32 count_reward_facts; 
+	uint32 count_reward_facts;
 	uint32 required_mobtype[4];
 	uint32 count_reward_item;
 

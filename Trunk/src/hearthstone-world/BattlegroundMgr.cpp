@@ -307,7 +307,7 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 		m_session->SendNotification("You have been marked as a Deserter.");
 		return;
 	}
-	
+
 	MapInfo * inf = WorldMapInfoStorage.LookupEntry(BGMapIds[bgtype]);
 	if(inf == NULL)
 		return;
@@ -318,7 +318,7 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 		return;
 	}
 
-	if( joinasgroup && m_session->GetPlayer()->GetGroup() == NULL ) 
+	if( joinasgroup && m_session->GetPlayer()->GetGroup() == NULL )
 	{
 		//Correct? is there any message here at blizz?
 		sChatHandler.RedSystemMessage( m_session, "You are not in a Group." );
@@ -526,7 +526,7 @@ void CBattlegroundManager::AddPlayerToBg(CBattleground* bg, deque<Player*  > *pl
 		bg->AddPlayer(plr, plr->GetTeam());
 		ErasePlayerFromList(plr->GetLowGUID(), &m_queuedPlayers[i][j]);
 	}
-	else 
+	else
 	{
 		// Put again the player in the queue
 		playerVec->push_back(plr);
@@ -596,7 +596,7 @@ void CBattlegroundManager::EventQueueUpdate(bool forceStart)
 				{
 					if( m_instances[i].empty() )
 						continue;
-					
+
 					iitr = m_instances[i].find( plr->m_bgQueueInstanceId[queueSlot] );
 					if(iitr == m_instances[i].end())
 					{
@@ -719,7 +719,7 @@ void CBattlegroundManager::EventQueueUpdate(bool forceStart)
 							}
 						}
 						else
-						{						
+						{
 							// push as many as possible in
 							if (forceStart)
 							{
@@ -850,7 +850,7 @@ void CBattlegroundManager::RemovePlayerFromQueues(Player* plr)
 	m_queueLock.Acquire();
 
 	uint32 lgroup = GetLevelGrouping(plr->getLevel());
-	
+
 	uint32 i;
 	for(i = 0; i < 3; i++)
 	{
@@ -1013,7 +1013,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 				ratingPositiveChange[i] = m_deltaRating[i];
 			else
 				ratingNegativeChange[i] = -m_deltaRating[i];
-		}		
+		}
 		*data << ratingNegativeChange[0];
 		*data << ratingPositiveChange[0];
 		*data << ratingNegativeChange[1];
@@ -1120,7 +1120,7 @@ void CBattleground::RemovePendingPlayer(Player* plr)
 	/* send a null bg update (so they don't join) */
 	for(uint32 i = 0; i < 3; i++)
 	{
-		if( plr->m_pendingBattleground[i] && 
+		if( plr->m_pendingBattleground[i] &&
 			plr->m_pendingBattleground[i] == this )
 		{
 			if( plr->m_pendingBattleground[i]->IsArena() )
@@ -1142,7 +1142,7 @@ void CBattleground::OnPlayerPushed(Player* plr)
 		plr->GetGroup()->RemovePlayer(plr->m_playerInfo);
 
 	plr->ProcessPendingUpdates(&plr->GetMapMgr()->m_updateBuildBuffer, &plr->GetMapMgr()->m_compressionBuffer);
-	
+
 	if( plr->GetGroup() == NULL && !plr->m_isGmInvisible )
 		m_groups[plr->m_bgTeam]->AddMember( plr->m_playerInfo );
 }
@@ -1211,7 +1211,7 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 
 	/* remove from any auto queue remove events */
 	sEventMgr.RemoveEvents(plr, EVENT_BATTLEGROUND_QUEUE_UPDATE_SLOT_1 + plr->m_bgSlot);
-	
+
 	if(!plr->IsPvPFlagged())
 		plr->SetPvPFlag();
 
@@ -1243,7 +1243,7 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 	sEventMgr.RemoveEvents(this, EVENT_BATTLEGROUND_CLOSE);
 	if(!skip_teleport)
 	{
-		/* This is where we actually teleport the player to the battleground. */	
+		/* This is where we actually teleport the player to the battleground. */
 		plr->SafeTeleport(m_mapMgr,GetStartingCoords(plr->m_bgTeam));
 	}
 
@@ -1342,7 +1342,7 @@ CBattleground* CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGro
 
 	/* Call the create function */
 	iid = ++m_maxBattlegroundId;
-	bg = cfunc(mgr, iid, LevelGroup, Type);	
+	bg = cfunc(mgr, iid, LevelGroup, Type);
 	bg->Init();
 	bg->SetIsWeekend(isWeekend);
 	mgr->m_battleground = bg;
@@ -1365,7 +1365,7 @@ void CBattlegroundManager::DeleteBattleground(CBattleground* bg)
 	m_instanceLock.Acquire();
 	m_queueLock.Acquire();
 	m_instances[i].erase(bg->GetId());
-	
+
 	/* erase any queued players */
 	list<uint32>::iterator itr = m_queuedPlayers[i][j].begin();
 	list<uint32>::iterator it2;
@@ -1405,7 +1405,7 @@ GameObject* CBattleground::SpawnGameObject(uint32 entry,float x, float y, float 
 		return NULLGOB;
 
 	go->SetUInt32Value(GAMEOBJECT_FACTION,faction);
-	go->SetFloatValue(OBJECT_FIELD_SCALE_X,scale);	
+	go->SetFloatValue(OBJECT_FIELD_SCALE_X,scale);
 	go->SetUInt32Value(GAMEOBJECT_FLAGS, flags);
 	go->SetInstanceID(m_mapMgr->GetInstanceID());
 	go->m_battleground = this;
@@ -1559,7 +1559,7 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 		data << plr->m_bgQueueInstanceId[queueSlot];
 		data << uint8(0);
 	}
-	
+
 	// Im in a BG
 	if( plr->m_bg )
 	{
@@ -1582,7 +1582,7 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 	data << uint32(GetAverageQueueTime(Type)*1000);		// average time in msec
 	data << uint32(0);
 	plr->GetSession()->SendPacket(&data);
-	
+
 }
 
 /*void CBattlegroundManager::SendBattlefieldStatus(Player* plr, uint32 Status, uint32 Type, uint32 InstanceID, uint32 Time, uint32 MapId, uint8 RatedMatch)
@@ -1624,7 +1624,7 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 			data << InstanceID;
 			data << uint8(plr->m_bgTeam);
 		}
-		
+
 		data << Status;
 
 		switch(Status)
@@ -1683,7 +1683,7 @@ void CBattleground::RemovePlayer(Player* plr, bool logout)
 		plr->SetUInt32Value(UNIT_FIELD_HEALTH, plr->GetUInt32Value(UNIT_FIELD_MAXHEALTH));
 		plr->ResurrectPlayer();
 	}
-	
+
 	/* teleport out */
 	if(!logout)
 	{
@@ -1695,7 +1695,7 @@ void CBattleground::RemovePlayer(Player* plr, bool logout)
 				SpellCastTargets targets;
 				targets.m_unitTarget = plr->GetGUID();
 				Spell* sp(new Spell(plr,spellInfo,true,NULLAURA));
-				if ( sp != NULL ) 
+				if ( sp != NULL )
 				{
 					sp->prepare(&targets);
 					plr->SetAuraDuration(BG_DESERTER,60000*15);
@@ -1735,7 +1735,7 @@ void CBattleground::RemovePlayer(Player* plr, bool logout)
 }
 
 void CBattleground::SendPVPData(Player* plr)
-{              
+{
 	m_mainLock.Acquire();
 	if( m_players[0].size() == 0 && m_players[1].size() == 0 )
 	{
@@ -1753,7 +1753,7 @@ void CBattleground::SendPVPData(Player* plr)
 		BuildPvPUpdateDataPacket(&data);
 		plr->GetSession()->SendPacket(&data);
 	/*}*/
-	
+
 	m_mainLock.Release();
 }
 
@@ -2146,7 +2146,7 @@ void CBattlegroundManager::HandleArenaJoin(WorldSession * m_session, uint32 Batt
 			return;
 		}
 	}
-	
+
 
 	/* Queue him! */
 	m_queueLock.Acquire();

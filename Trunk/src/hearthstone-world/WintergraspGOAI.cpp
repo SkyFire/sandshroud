@@ -61,14 +61,14 @@ public:
 	void AIUpdate()
 	{
 		uint32 plrcounts[2] = { 0, 0 };
-		unordered_set<Player *>::iterator itr = _gameobject->GetInRangePlayerSetBegin();		
+		unordered_set<Player *>::iterator itr = _gameobject->GetInRangePlayerSetBegin();
 		unordered_set<Player *>::iterator itrend = _gameobject->GetInRangePlayerSetEnd();
 		map<uint32,uint32>::iterator it2, it3;
 		uint32 timeptr = (uint32)UNIXTIME;
 		bool in_range;
 		bool is_valid;
 		Player *plr = NULLPLR;
-		
+
 		for(; itr != itrend; ++itr)
 		{
 			if( (*itr)->WinterGrasp == NULL )
@@ -127,7 +127,7 @@ public:
 		{
 			if( m_workshopStatus == OWNER_ALLIANCE && Status <= 50 )
 			{
-				m_workshopStatus = OWNER_NONE;				
+				m_workshopStatus = OWNER_NONE;
 				sWintergraspI.GetWintergrasp()->numworkshop[0]--;
 				char Text[1024];
 				snprintf(Text, 1024, "%sThe Alliance has lost %s!", MSG_COLOR_YELLOW, ControlPointName);
@@ -136,7 +136,7 @@ public:
 			}
 			else if( m_workshopStatus == OWNER_HORDE && Status >= 50 )
 			{
-				m_workshopStatus = OWNER_NONE;				
+				m_workshopStatus = OWNER_NONE;
 				sWintergraspI.GetWintergrasp()->numworkshop[1]--;
 				char Text[1024];
 				snprintf(Text, 1024, "%sThe Horde has lost %s!", MSG_COLOR_YELLOW, ControlPointName);
@@ -269,7 +269,7 @@ public:
 	void AIUpdate()
 	{
 		uint32 plrcounts[2] = { 0, 0 };
-		unordered_set<Player *>::iterator itr = _gameobject->GetInRangePlayerSetBegin();		
+		unordered_set<Player *>::iterator itr = _gameobject->GetInRangePlayerSetBegin();
 		unordered_set<Player *>::iterator itrend = _gameobject->GetInRangePlayerSetEnd();
 		map<uint32,uint32>::iterator it2, it3;
 		uint32 timeptr = (uint32)UNIXTIME;

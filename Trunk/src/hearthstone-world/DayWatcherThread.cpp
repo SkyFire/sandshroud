@@ -277,7 +277,7 @@ void DayWatcherThread::update_arena()
 						//if(power < 1.0)
 						//	power = 1.0;
 
-						double divisor = pow(((double)(2.71828)), power);						
+						double divisor = pow(((double)(2.71828)), power);
 						divisor *= 1639.28;
 						divisor += 1.0;
 						//if(divisor < 1.0)
@@ -302,7 +302,7 @@ void DayWatcherThread::update_arena()
 					{
 						Y *= sWorld.getRate(RATE_ARENAPOINTMULTIPLIER5X);
 					}
-					
+
 					if(Y > 1.0)
 						arenapointsPerTeam[i] += long2int32(double(ceil(Y)));
 				}

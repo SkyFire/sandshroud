@@ -24,7 +24,7 @@
 /************************************************************************/
 
 /*
-	mage - arcane - 81			
+	mage - arcane - 81
 	mage - fire - 41
 	mage - frost - 61
 
@@ -64,8 +64,8 @@
 void WorldSession::HandleLearnTalentOpcode( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
- 	 
-	uint32 talent_id, requested_rank;	
+ 
+	uint32 talent_id, requested_rank;
 	recv_data >> talent_id >> requested_rank;
 
 	_player->LearnTalent(talent_id, requested_rank);
@@ -116,7 +116,7 @@ void WorldSession::HandleUnlearnSkillOpcode(WorldPacket& recv_data)
 
 	// Remove any spells within that line that the player has
 	_player->RemoveSpellsFromLine(skill_line);
-	
+
 	// Remove any quests finished and active for this skill
 	_player->RemoveQuestsFromLine(skill_line);
 

@@ -33,7 +33,7 @@ typedef struct
 
 typedef struct
 {
-	/* Ascent 
+	/* Ascent
 	string Name;
 	string Address;
 	uint32 Colour;
@@ -50,7 +50,7 @@ typedef struct
 	float Population;
 	uint8 Lock;
 
-	/* ArcEmu 
+	/* ArcEmu
 	string Arc_Name;
 	string Arc_Address;
 	uint32 Arc_Colour;
@@ -144,7 +144,7 @@ public:
 		//pendingLock.Release();
 		return sock;
 	}
-	HEARTHSTONE_INLINE Mutex & GetPendingLock() { return pendingLock; }		
+	HEARTHSTONE_INLINE Mutex & GetPendingLock() { return pendingLock; }
 	const string* GetForcedPermissions(string& username);
 
 	void TestConsoleLogon(string& username, string& password, uint32 requestnum);

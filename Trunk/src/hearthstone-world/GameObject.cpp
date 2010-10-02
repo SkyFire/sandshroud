@@ -28,7 +28,7 @@ GameObject::GameObject(uint64 guid)
 	SetUInt32Value( OBJECT_FIELD_TYPE,TYPE_GAMEOBJECT|TYPE_OBJECT);
 	SetUInt64Value( OBJECT_FIELD_GUID,guid);
 	m_wowGuid.Init(GetGUID());
- 
+
 	SetFloatValue( OBJECT_FIELD_SCALE_X, 1);//info->Size  );
 
 	SetAnimProgress(100);
@@ -119,7 +119,7 @@ bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, float x, float y, fl
 	SetState(1);
 	SetDisplayId(pInfo->DisplayID );
 	SetType(pInfo->Type);
-   
+
 	InitAI();
 
 	return true;
@@ -172,7 +172,7 @@ void GameObject::Update(uint32 p_time)
 					if(!isAttackable(m_summoner,pUnit))
 						continue;
 				}
-				
+
 				Spell* sp= (new Spell(TO_OBJECT(this),spell,true,NULLAURA));
 				SpellCastTargets tgt((*itr)->GetGUID());
 				tgt.m_destX = GetPositionX();
@@ -183,7 +183,7 @@ void GameObject::Update(uint32 p_time)
 				{
 					if(m_summoner != NULL)
 						m_summoner->HandleProc(PROC_ON_TRAP_TRIGGER, NULL, pUnit, spell);
-				} 
+				}
 
 				if(m_summonedGo)
 				{
@@ -201,7 +201,7 @@ void GameObject::Update(uint32 p_time)
 
 void GameObject::Spawn( MapMgr* m)
 {
-	PushToWorld(m);	
+	PushToWorld(m);
 	CALL_GO_SCRIPT_EVENT(TO_GAMEOBJECT(this), OnSpawn)();
 }
 
@@ -288,7 +288,7 @@ void GameObject::SaveToFile(std::stringstream & name)
 		ss << GetUInt32Value(index) << " ";
 
 	ss << "', ";
-	ss << GetEntry() << ", 0, 0)"; 
+	ss << GetEntry() << ", 0, 0)";
 
 	FILE * OutFile;
 
@@ -300,7 +300,7 @@ void GameObject::SaveToFile(std::stringstream & name)
 }
 
 void GameObject::InitAI()
-{	
+{
 	if(pInfo == NULL)
 		return;
 
@@ -328,7 +328,7 @@ void GameObject::InitAI()
 			}
 		}break;
 	case GAMEOBJECT_TYPE_RITUAL:
-		{	
+		{
 			m_ritualmembers = new uint32[pInfo->SpellFocus];
 			memset(m_ritualmembers,0,sizeof(uint32)*pInfo->SpellFocus);
 		}break;
@@ -376,8 +376,8 @@ void GameObject::InitAI()
 	else
 		spell = sp;
 	//ok got valid spell that will be casted on target when it comes close enough
-	//get the range for that 
-	
+	//get the range for that
+
 	float r = 0;
 
 	for(uint32 i=0;i<3;++i)
@@ -444,7 +444,7 @@ void GameObject::UseFishingNode(Player* player)
 		EndFishing( player, true );
 		return;
 	}
-	
+
 	/* Unused code: sAreaStore.LookupEntry(GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY()))->ZoneId*/
 
 	FishingZoneEntry *entry = NULL;
@@ -479,7 +479,7 @@ void GameObject::UseFishingNode(Player* player)
 	uint32 maxskill = entry->MaxSkill;
 	uint32 minskill = entry->MinSkill;
 
-	if( player->_GetSkillLineCurrent( SKILL_FISHING, false ) < maxskill )	
+	if( player->_GetSkillLineCurrent( SKILL_FISHING, false ) < maxskill )
 		player->_AdvanceSkillLine( SKILL_FISHING, float2int32( 1.0f * sWorld.getRate( RATE_SKILLRATE ) ) );
 
 	// Open loot on success, otherwise FISH_ESCAPED.
@@ -500,7 +500,7 @@ void GameObject::UseFishingNode(Player* player)
 void GameObject::EndFishing(Player* player, bool abort )
 {
 	Spell* spell = player->GetCurrentSpell();
-	
+
 	if(spell)
 	{
 		if(abort)   // abort becouse of a reason
@@ -525,7 +525,7 @@ void GameObject::EndFishing(Player* player, bool abort )
 void GameObject::FishHooked(Player* player)
 {
 	WorldPacket  data(12);
-	data.Initialize(SMSG_GAMEOBJECT_CUSTOM_ANIM); 
+	data.Initialize(SMSG_GAMEOBJECT_CUSTOM_ANIM);
 	data << GetGUID();
 	data << (uint32)0; // value < 4
 	player->GetSession()->SendPacket(&data);
@@ -555,7 +555,7 @@ void GameObject::DeleteQuest(QuestRelation *Q)
 }
 
 Quest* GameObject::FindQuest(uint32 quest_id, uint8 quest_relation)
-{   
+{
 	list< QuestRelation* >::iterator it;
 	for( it = m_quests->begin(); it != m_quests->end(); it++ )
 	{
@@ -725,13 +725,13 @@ void GameObject::RemoveFromWorld(bool free_guid)
 	Object::RemoveFromWorld(free_guid);
 }
 
-uint32 GameObject::GetGOReqSkill()  
+uint32 GameObject::GetGOReqSkill()
 {
 	if(GetInfo() == NULL)
 		return 0;
 
 	Lock *lock = dbcLock.LookupEntry( GetInfo()->SpellFocus );
-	if(!lock) 
+	if(!lock)
 		return 0;
 	for(uint32 i=0; i < 8; ++i)
 	{
@@ -804,7 +804,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			else
 			SetDisplayId(pInfo->Unknown1);
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
-			
+
 			/*if(pcaster != NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
@@ -824,7 +824,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			}
 			else
 				SetDisplayId(pInfo->sound4);
-			
+
 			if(pcaster!=NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
@@ -843,7 +843,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			else
 				SetDisplayId(pInfo->Unknown1);
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
-			
+
 			if(pcaster != NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
@@ -853,7 +853,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	}
 
 	WorldPacket data(SMSG_DESTRUCTIBLE_BUILDING_DAMAGE, 20);
-	data << GetNewGUID(); 
+	data << GetNewGUID();
 	data << mcaster->GetNewGUID();
 	if(pcaster!=NULL)
 		data << pcaster->GetNewGUID();

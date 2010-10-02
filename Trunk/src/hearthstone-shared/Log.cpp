@@ -79,7 +79,7 @@ void oLog::outString( const char * str, ... )
 	va_start(ap, str);
 	vsnprintf(buf, 32768, str, ap);
 	va_end(ap);
-	
+
 	if(m_screenLogLevel >= 0)
 	{
 		printf(buf);

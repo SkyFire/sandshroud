@@ -65,7 +65,7 @@ bool isHostile(Object* objA, Object* objB)// B is hostile for A?
 	//BG or PVP?
 	if( player_objA && player_objB )
 	{
-		if( player_objA->m_bg != NULL )	
+		if( player_objA->m_bg != NULL )
 		{
 			if( player_objA->m_bgTeam != player_objB->m_bgTeam )
 				return true;
@@ -83,7 +83,7 @@ bool isHostile(Object* objA, Object* objB)// B is hostile for A?
 		if(objB->m_factionDBC->RepListId >= 0)
 			hostile = player_objA->IsHostileBasedOnReputation( objB->m_factionDBC );
 	}
-	
+
 	if(player_objB && !player_objA)	   // PvE
 	{
 		if(objA->m_factionDBC->RepListId >= 0)
@@ -105,7 +105,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 {
 	// can't attack self.. this causes problems with buffs if we don't have it :p
 	if( !objA || !objB || objA == objB )
-		return false;   
+		return false;
 
 	// can't attack corpses neither...
 	if( objA->GetTypeId() == TYPEID_CORPSE || objB->GetTypeId() == TYPEID_CORPSE )
@@ -195,13 +195,13 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 			if( player_objA->GetAreaDBC()->AreaFlags & 0x800 )
 				return false;
 		}
-	}	
+	}
 
 	// same faction can't kill each other.
-	if(objA->m_faction == objB->m_faction)  
+	if(objA->m_faction == objB->m_faction)
 		return false;
 
-	//moved this from IsHostile(); 
+	//moved this from IsHostile();
 	// by doing so we skip a hell of a lot redundant checks, which we already passed in this routine.
 	uint32 faction = objB->m_faction->Mask;
 	uint32 host = objA->m_faction->HostileMask;
@@ -226,7 +226,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		if(objB->m_factionDBC->RepListId >= 0)
 			hostile = player_objA->IsHostileBasedOnReputation( objB->m_factionDBC );
 	}
-	
+
 	if(player_objB && !player_objA)	   // PvE
 	{
 		if(objA->m_factionDBC->RepListId >= 0)
@@ -264,7 +264,7 @@ Player* GetPlayerFromObject(Object* obj)
 	{
 		// If it's not a player nor a pet, it can still be a totem.
 		Creature* creature_obj = TO_CREATURE(obj);
-		if( creature_obj && creature_obj->IsTotem()) 
+		if( creature_obj && creature_obj->IsTotem())
 			player_obj =  TO_PLAYER(creature_obj->GetSummonOwner());
 	}
 	return player_obj;
@@ -272,7 +272,7 @@ Player* GetPlayerFromObject(Object* obj)
 bool isCombatSupport(Object* objA, Object* objB)// B combat supports A?
 {
 	if( !objA || !objB )
-		return false;   
+		return false;
 
 	// can't support corpses...
 	if( objA->GetTypeId() == TYPEID_CORPSE || objB->GetTypeId() == TYPEID_CORPSE )

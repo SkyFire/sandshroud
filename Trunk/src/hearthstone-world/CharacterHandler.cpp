@@ -699,7 +699,7 @@ void WorldSession::HandlePlayerLoginOpcode( WorldPacket & recv_data )
 	uint8 response = CHAR_LOGIN_NO_CHARACTER;
 
 	//already active?
-	if(objmgr.GetPlayer((uint32)playerGuid) != NULL || m_loggingInPlayer || _player) 
+	if(objmgr.GetPlayer((uint32)playerGuid) != NULL || m_loggingInPlayer || _player)
 		response = CHAR_LOGIN_DUPLICATE_CHARACTER;
 	else //Do we exist in DB yet?
 	{

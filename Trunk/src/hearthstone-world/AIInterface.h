@@ -31,7 +31,7 @@
 #define oocr 50.0f // out of combat range
 #define PLAYER_SIZE 1.5f
 #define CREATURE_SPELL_TO_DAZE 1604
-#define CREATURE_DAZE_TRIGGER_ANGLE M_PI/2 //for the beginners this means 45 degrees 
+#define CREATURE_DAZE_TRIGGER_ANGLE M_PI/2 //for the beginners this means 45 degrees
 
 class Object;
 class Creature;
@@ -331,7 +331,7 @@ public:
 	float _CalcCombatRange(Unit* target, bool ranged);
 	float _CalcDistanceFromHome();
 	uint32 _CalcThreat(uint32 damage, SpellEntry * sp, Unit* Attacker);
-	
+
 	void SetAllowedToEnterCombat(bool val) { m_AllowedToEnterCombat = val; }
 	HEARTHSTONE_INLINE bool GetAllowedToEnterCombat(void) { return m_AllowedToEnterCombat; }
 
@@ -375,9 +375,9 @@ public:
 	HEARTHSTONE_INLINE void AddStopTime(uint32 Time) { m_moveTimer += Time; }
 	HEARTHSTONE_INLINE void SetNextSpell(AI_Spell*sp) { m_nextSpell = sp; }
 	HEARTHSTONE_INLINE Unit* GetNextTarget() { return m_nextTarget; }
-	HEARTHSTONE_INLINE void SetNextTarget (Unit* nextTarget) 
+	HEARTHSTONE_INLINE void SetNextTarget (Unit* nextTarget)
 	{
-		m_nextTarget = nextTarget; 
+		m_nextTarget = nextTarget;
 		if(nextTarget)
 		{
 			m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, m_nextTarget->GetGUID());

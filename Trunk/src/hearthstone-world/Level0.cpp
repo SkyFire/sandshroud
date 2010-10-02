@@ -223,7 +223,7 @@ bool ChatHandler::HandleInfoCommand(const char* args, WorldSession *m_session)
 {
 	WorldPacket data;
 
-	
+
 	uint32 clientsNum = (uint32)sWorld.GetSessionCount();
 
 	int gm = 0;
@@ -239,7 +239,7 @@ bool ChatHandler::HandleInfoCommand(const char* args, WorldSession *m_session)
 			avg += itr->second->GetSession()->GetLatency();
 			if(itr->second->GetSession()->GetPermissionCount())
 				gm++;
-		}			
+		}
 	}
 	objmgr._playerslock.ReleaseReadLock();
 	GreenSystemMessage(m_session, "Server Uptime: |r%s", sWorld.GetUptimeString().c_str());
@@ -274,7 +274,7 @@ bool ChatHandler::HandleDismountCommand(const char* args, WorldSession *m_sessio
 		RedSystemMessage(m_session, "No target found.");
 	else if( !m_target->GetUInt32Value( UNIT_FIELD_MOUNTDISPLAYID) )
 		RedSystemMessage(m_session, "Target is not mounted.");
-	else 
+	else
 	{
 		m_target->Dismount();
 		BlueSystemMessage(m_session, "Unit has been dismounted.");
@@ -296,10 +296,10 @@ bool ChatHandler::HandleFullDismountCommand(const char * args, WorldSession *m_s
        return false;
 
 	WorldSession* sess = p_target->GetSession();
-   
+
 	if(!sess || !sess->GetSocket())
    	{
-       RedSystemMessage(m_session, "Not able to locate player %s.", sess->GetPlayer()->GetName()); 
+       RedSystemMessage(m_session, "Not able to locate player %s.", sess->GetPlayer()->GetName());
        return false;
 	}
 
@@ -346,7 +346,7 @@ bool ChatHandler::HandleGMListCommand(const char* args, WorldSession *m_session)
 	WorldSession *gm_session;
 	SessionSet::iterator itr;
 
-	sWorld.gmList_lock.AcquireReadLock();	
+	sWorld.gmList_lock.AcquireReadLock();
 	for (itr = sWorld.gmList.begin(); itr != sWorld.gmList.end();)
 	{
 		gm_session = (*itr);

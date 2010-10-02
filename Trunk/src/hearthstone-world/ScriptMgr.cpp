@@ -95,7 +95,7 @@ void ScriptMgr::LoadScripts()
 					uint32 stype = scall();
 					if(SCRIPTLIB_LOPART(version) == SCRIPTLIB_VERSION_MINOR && SCRIPTLIB_HIPART(version) == SCRIPTLIB_VERSION_MAJOR)
 					{
-						std::stringstream cmsg; 
+						std::stringstream cmsg;
 						cmsg << "Loading " << data.cFileName << ", crc:0x" << reinterpret_cast< uint32* >( mod );
 
 						if( stype & SCRIPT_TYPE_SCRIPT_ENGINE )
@@ -238,7 +238,7 @@ char *ext;
 								_handles.push_back(((SCRIPT_MODULE)mod));
 								printf("v%u.%u : ", SCRIPTLIB_HIPART(version), SCRIPTLIB_LOPART(version));
 								rcall(this);
-								printf("loaded.\n");						
+								printf("loaded.\n");
 							}
 
 							++count;
@@ -246,7 +246,7 @@ char *ext;
 						else
 						{
 							dlclose(mod);
-							printf("version mismatch!\n");						
+							printf("version mismatch!\n");
 						}
 					}
 				}
@@ -455,7 +455,7 @@ bool ScriptMgr::CallScriptedItem(Item* pItem, Player* pPlayer)
 		pItem->GetProto()->gossip_script->GossipHello(pItem,pPlayer,true);
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -512,7 +512,7 @@ void GameObjectAIScript::RegisterAIUpdateEvent(uint32 frequency)
 
 GossipScript::GossipScript()
 {
-	
+
 }
 
 void GossipScript::GossipEnd(Object* pObject, Player* Plr)
@@ -574,7 +574,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 				}
 			}
 			else
-			{	
+			{
 				if(pTrainer->Can_Train_Gossip_TextId)
 				{
 					//replace normal gossipid by Can_Train_GossipTextId.
@@ -659,7 +659,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Learn about Dual Talent Specialization.", 16);
 			}
 		}
-		
+
 		if( pTrainer &&
 				pTrainer->TrainerType == TRAINER_TYPE_PET &&	// pet trainer type
 				Plr->getClass() == HUNTER &&					// hunter class

@@ -43,7 +43,7 @@ public:
 	void SetAliveDuration(int32 dur){m_aliveDuration = dur;};
 
 protected:
-	
+
 	SpellEntry * m_spellProto;
 	Unit* u_caster;
 	Player* p_caster;

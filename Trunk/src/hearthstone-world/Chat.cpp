@@ -451,7 +451,7 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(GameObjectCommandTable, _GameObjectCommandTable);
 
-	static ChatCommand BattlegroundCommandTable[] = 
+	static ChatCommand BattlegroundCommandTable[] =
 	{
 		{ "setbgscore",		'e', &ChatHandler::HandleSetBGScoreCommand,	"<Teamid> <Score> - Sets battleground score. 2 Arguments. ", NULL, 0, 0, 0},
 		{ "startbg",		'e', &ChatHandler::HandleStartBGCommand,	   "Starts current battleground match.",  NULL, 0, 0, 0},
@@ -564,7 +564,7 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(honorCommandTable, _honorCommandTable);
 
-	static ChatCommand petCommandTable[] = 
+	static ChatCommand petCommandTable[] =
 	{
 		{ "createpet",		'm', &ChatHandler::HandleCreatePetCommand,		"Creates a pet with <entry>.",	NULL, 0, 0, 0 },
 		{ "renamepet",		'm', &ChatHandler::HandleRenamePetCommand,		"Renames a pet to <name>.",		NULL, 0, 0, 0 },
@@ -854,7 +854,7 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 
 			return true;
 		}
-		
+
 		// Check for field-based commands
 		if(table[i].Handler == NULL && (table[i].MaxValueField || table[i].NormalValueField))
 		{
@@ -963,7 +963,7 @@ WorldPacket* ChatHandler::FillSystemMessageData(const char *message) const
 	WorldPacket * data = new WorldPacket(SMSG_MESSAGECHAT, 30 + messageLength);
 	*data << (uint8)CHAT_MSG_SYSTEM;
 	*data << (uint32)LANG_UNIVERSAL;
-	
+
 	*data << (uint64)0; // Who cares about guid when there's no nickname displayed heh ?
 	*data << (uint32)0;
 	*data << (uint64)0;
@@ -980,12 +980,12 @@ Player* ChatHandler::getSelectedChar(WorldSession *m_session, bool showerror)
 {
 	uint64 guid;
 	Player* chr;
-	
+
 	guid = m_session->GetPlayer()->GetSelection();
 
 	if (guid == 0)
 	{
-		if(showerror) 
+		if(showerror)
 			GreenSystemMessage(m_session, "Auto-targeting self.");
 
 		chr = m_session->GetPlayer(); // autoselect
@@ -995,7 +995,7 @@ Player* ChatHandler::getSelectedChar(WorldSession *m_session, bool showerror)
 
 	if(chr == NULL)
 	{
-		if(showerror) 
+		if(showerror)
 			RedSystemMessage(m_session, "This command requires that you select a player.");
 		return NULLPLR;
 	}
@@ -1020,7 +1020,7 @@ Creature* ChatHandler::getSelectedCreature(WorldSession *m_session, bool showerr
 		return creature;
 	else
 	{
-		if(showerror) 
+		if(showerror)
 			RedSystemMessage(m_session, "This command requires that you select a creature.");
 		return NULLCREATURE;
 	}
@@ -1036,7 +1036,7 @@ void ChatHandler::SystemMessage(WorldSession *m_session, const char* message, ..
 	char msg1[1024];
 	vsnprintf(msg1,1024, message,ap);
 	WorldPacket * data = FillSystemMessageData(msg1);
-	if(m_session != NULL) 
+	if(m_session != NULL)
 		m_session->SendPacket(data);
 	delete data;
 }
@@ -1051,7 +1051,7 @@ void ChatHandler::ColorSystemMessage(WorldSession *m_session, const char* colorc
 	char msg[1024];
 	snprintf(msg, 1024, "%s%s|r", colorcode, msg1);
 	WorldPacket * data = FillSystemMessageData(msg);
-	if(m_session != NULL) 
+	if(m_session != NULL)
 		m_session->SendPacket(data);
 	delete data;
 }
@@ -1066,7 +1066,7 @@ void ChatHandler::RedSystemMessage(WorldSession *m_session, const char *message,
 	char msg[1024];
 	snprintf(msg, 1024,"%s%s|r", MSG_COLOR_LIGHTRED/*MSG_COLOR_RED*/, msg1);
 	WorldPacket * data = FillSystemMessageData(msg);
-	if(m_session != NULL) 
+	if(m_session != NULL)
 		m_session->SendPacket(data);
 	delete data;
 }
@@ -1081,7 +1081,7 @@ void ChatHandler::GreenSystemMessage(WorldSession *m_session, const char *messag
 	char msg[1024];
 	snprintf(msg, 1024, "%s%s|r", MSG_COLOR_GREEN, msg1);
 	WorldPacket * data = FillSystemMessageData(msg);
-	if(m_session != NULL) 
+	if(m_session != NULL)
 		m_session->SendPacket(data);
 	delete data;
 }
@@ -1096,7 +1096,7 @@ void ChatHandler::WhiteSystemMessage(WorldSession *m_session, const char *messag
 	char msg[1024];
 	snprintf(msg, 1024, "%s%s|r", MSG_COLOR_WHITE, msg1);
 	WorldPacket * data = FillSystemMessageData(msg);
-	if(m_session != NULL) 
+	if(m_session != NULL)
 		m_session->SendPacket(data);
 	delete data;
 }
@@ -1111,7 +1111,7 @@ void ChatHandler::BlueSystemMessage(WorldSession *m_session, const char *message
 	char msg[1024];
 	snprintf(msg, 1024,"%s%s|r", MSG_COLOR_LIGHTBLUE, msg1);
 	WorldPacket * data = FillSystemMessageData(msg);
-	if(m_session != NULL) 
+	if(m_session != NULL)
 		m_session->SendPacket(data);
 	delete data;
 }
@@ -1171,9 +1171,9 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 
 	if(fieldmax)
 	{
-		char* pvaluemax = strtok(NULL, " ");   
+		char* pvaluemax = strtok(NULL, " ");
 		if (!pvaluemax)
-			return false;  
+			return false;
 		else
 			mv = atol(pvaluemax);
 	}
@@ -1182,24 +1182,24 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 
 	//valid UNIT_FIELD?
 	if(field <= OBJECT_END || field > UNIT_END )
-	{  
+	{
 		RedSystemMessage(m_session, "Specified field is not valid.");
-		return true;   
+		return true;
 	}
 	if (av <= 0)
-	{  
+	{
 		RedSystemMessage(m_session, "Values are invalid. Value must be > 0.");
-		return true;   
+		return true;
 	}
 	if(fieldmax && (mv < av || mv <= 0))
 	{
 		RedSystemMessage(m_session, "Values are invalid. Max value must be >= new value.");
-		return true;  
+		return true;
 	}
 
 	Player* plr = getSelectedChar(m_session, false);
 	if(plr!=NULL)
-	{  
+	{
 		sWorld.LogGM(m_session, "used modify field value: %s, %u on %s", fieldname, av, plr->GetName());
 		if(fieldmax)
 		{
@@ -1213,7 +1213,7 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 		}
 
 		if(field == UNIT_FIELD_STAT1) av /= 2;
-		if(field == UNIT_FIELD_BASE_HEALTH) 
+		if(field == UNIT_FIELD_BASE_HEALTH)
 			plr->SetUInt32Value(UNIT_FIELD_HEALTH, av);
 
 		plr->SetUInt32Value(field, av);
@@ -1285,9 +1285,9 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 
 	if(fieldmax)
 	{
-		char* pvaluemax = strtok(NULL, " ");   
+		char* pvaluemax = strtok(NULL, " ");
 		if (!pvaluemax)
-			return false;  
+			return false;
 		else
 			mv = (float)atof(pvaluemax);
 	}
@@ -1297,22 +1297,22 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 	}
 
 	if (av <= 0)
-	{  
+	{
 		RedSystemMessage(m_session, "Values are invalid. Value must be < max (if max exists), and both must be > 0.");
-		return true;   
+		return true;
 	}
 	if(fieldmax)
 	{
 		if(mv < av || mv <= 0)
 		{
 			RedSystemMessage(m_session, "Values are invalid. Value must be < max (if max exists), and both must be > 0.");
-			return true;  
+			return true;
 		}
 	}
 
 	Player* plr = getSelectedChar(m_session, false);
 	if(plr != NULL)
-	{  
+	{
 		sWorld.LogGM(m_session, "used modify field value: %s, %f on %s", fieldname, av, plr->GetName());
 
 		if(fieldmax)

@@ -113,7 +113,7 @@ void GetDistinctLanguages(set<string>& dest, const char * table)
 		return;
 
 	string lc;
-	do 
+	do
 	{
 		lc = result->Fetch()[0].GetString();
 		sLocalizationMgr.Lower(lc);
@@ -230,7 +230,7 @@ void LocalizationMgr::Reload(bool first)
 		result = WorldDatabase.Query("SELECT * FROM creature_names_localized");
 		if(result)
 		{
-			do 
+			do
 			{
 				f = result->Fetch();
 				str = string(f[1].GetString());
@@ -261,7 +261,7 @@ void LocalizationMgr::Reload(bool first)
 		result = WorldDatabase.Query("SELECT * FROM gameobject_names_localized");
 		if(result)
 		{
-			do 
+			do
 			{
 				f = result->Fetch();
 				str = string(f[1].GetString());
@@ -291,7 +291,7 @@ void LocalizationMgr::Reload(bool first)
 		result = WorldDatabase.Query("SELECT * FROM items_localized");
 		if(result)
 		{
-			do 
+			do
 			{
 				f = result->Fetch();
 				str = string(f[1].GetString());
@@ -327,7 +327,7 @@ void LocalizationMgr::Reload(bool first)
 		result = WorldDatabase.Query("SELECT * FROM quests_localized");
 		if(result)
 		{
-			do 
+			do
 			{
 				f = result->Fetch();
 				str = string(f[1].GetString());
@@ -347,7 +347,7 @@ void LocalizationMgr::Reload(bool first)
 				q.ObjectiveText[1] = strdup(f[9].GetString());
 				q.ObjectiveText[2] = strdup(f[10].GetString());
 				q.ObjectiveText[3] = strdup(f[11].GetString());
-				
+
 				m_Quests[lid].insert(make_pair(entry, q));
 			} while(result->NextRow());
 			delete result;
@@ -368,7 +368,7 @@ void LocalizationMgr::Reload(bool first)
 		result = WorldDatabase.Query("SELECT * FROM npc_text_localized");
 		if(result)
 		{
-			do 
+			do
 			{
 				f = result->Fetch();
 				str = string(f[1].GetString());
@@ -403,7 +403,7 @@ void LocalizationMgr::Reload(bool first)
 		result = WorldDatabase.Query("SELECT * FROM itempages_localized");
 		if(result)
 		{
-			do 
+			do
 			{
 				f = result->Fetch();
 				str = string(f[1].GetString());

@@ -72,7 +72,7 @@ public:
 
 protected:
 	uint32 m_resourceRewards[2];
-	int32 m_CPStatus[EOTS_TOWER_COUNT];		
+	int32 m_CPStatus[EOTS_TOWER_COUNT];
 	uint32 m_flagHolder;
 
 	int m_bonusHonor;

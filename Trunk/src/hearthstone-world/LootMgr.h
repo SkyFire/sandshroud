@@ -121,7 +121,7 @@ struct tempy
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-typedef HM_NAMESPACE::hash_map<uint32, StoreLootList > LootStore;  
+typedef HM_NAMESPACE::hash_map<uint32, StoreLootList > LootStore;
 
 enum PARTY_LOOT
 {
@@ -161,7 +161,7 @@ public:
 	void LoadLoot();
 	void LoadDelayedLoot();
 	void LoadLootProp();
-	
+
 	LootStore	CreatureLoot;
 	LootStore	FishingLoot;
 	LootStore	GatheringLoot;
@@ -174,13 +174,13 @@ public:
 	ItemRandomSuffixEntry * GetRandomSuffix(ItemPrototype * proto);
 
 	bool is_loading;
- 
+
 	void FillObjectLootMap(map<uint32, vector<uint32> > *dest);
 
 private:
 	void LoadLootTables(const char * szTableName,LootStore * LootTable);
 	void PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool disenchant);
-	
+
 	map<uint32, RandomPropertyVector> _randomprops;
 	map<uint32, RandomSuffixVector> _randomsuffix;
 };

@@ -91,7 +91,7 @@ public:
 			m_lock.Release();
 			return reinterpret_cast<T>(0);
 		}
-        
+
 		T ret = first->element;
 		node * td = first;
 		first = td->next;

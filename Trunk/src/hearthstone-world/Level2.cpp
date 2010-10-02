@@ -72,7 +72,7 @@ bool ChatHandler::HandleInvisibleCommand(const char *args, WorldSession *m_sessi
 		pChar->m_isGmInvisible = true;
 		pChar->m_invisible = true;
 		pChar->bInvincible = true;
-		pChar->Social_TellFriendsOffline();		
+		pChar->Social_TellFriendsOffline();
 		strcat(msg,"ON. ");
 	}
 
@@ -171,7 +171,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		unit->GetPositionZ());
 
 	BlueSystemMessage(m_session, "Deleted creature ID %u", unit->spawnid);
-	
+
 	MapMgr* unitMgr = unit->GetMapMgr();
 
 	unit->DeleteFromDB();
@@ -405,7 +405,7 @@ bool ChatHandler::HandleKillCommand(const char *args, WorldSession *m_session)
 		sWorld.LogGM(m_session, "used kill command on CREATURE %s", TO_CREATURE( target )->GetCreatureInfo() ? TO_CREATURE( target )->GetCreatureInfo()->Name : "unknown");
 		break;
 	}
-	
+
 
 	// If we're killing a player, send a message indicating a gm killed them.
 	if(target->IsPlayer())
@@ -427,7 +427,7 @@ bool ChatHandler::HandleKillCommand(const char *args, WorldSession *m_session)
 
 /*		SpellEntry * se = dbcSpell.LookupEntry(20479);
 		if(se == 0) return false;
-		
+
 		SpellCastTargets targets(target->GetGUID());
 		Spell* sp(new Spell(target, se, true, NULLAURA));
 		sp->prepare(&targets);*/
@@ -477,7 +477,7 @@ bool ChatHandler::HandleCastSpellCommand(const char* args, WorldSession *m_sessi
 		RedSystemMessage(m_session, "Invalid spell id!");
 		return false;
 	}
-	
+
 	Spell* sp = new Spell(caster, spellentry, false, NULLAURA);
 	if(!sp)
 	{
@@ -503,7 +503,7 @@ bool ChatHandler::HandleMonsterCastCommand(const char * args, WorldSession * m_s
 	SpellEntry * tmpsp = NULL;
 	tmpsp = dbcSpell.LookupEntry(spellId);
 	if(tmpsp != NULL)
-		sEventMgr.AddEvent(TO_UNIT(crt), &Unit::EventCastSpell, TO_UNIT(m_session->GetPlayer()), tmpsp, EVENT_AURA_APPLY, 250, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT); 
+		sEventMgr.AddEvent(TO_UNIT(crt), &Unit::EventCastSpell, TO_UNIT(m_session->GetPlayer()), tmpsp, EVENT_AURA_APPLY, 250, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
 	return true;
 }
@@ -729,7 +729,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 		if(cellx < _sizeX && celly < _sizeY)
 		{
 			CellSpawns * c = GObj->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx, celly);
-			
+
 			GOSpawnList::iterator itr,itr2;
 			for(itr = c->GOSpawns.begin(); itr != c->GOSpawns.end();)
 			{
@@ -1029,7 +1029,7 @@ bool ChatHandler::HandleMountCommand(const char *args, WorldSession *m_session)
 		RedSystemMessage(m_session, "No target found.");
 		return true;
 	}
-	
+
 	if(m_target->GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID) != 0)
 	{
 		RedSystemMessage(m_session, "Target is already mounted.");
@@ -1038,7 +1038,7 @@ bool ChatHandler::HandleMountCommand(const char *args, WorldSession *m_session)
 
 	m_target->SetUInt32Value( UNIT_FIELD_MOUNTDISPLAYID , modelid);
 	//m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI);
-	
+
 	BlueSystemMessage(m_session, "Now mounted with model %d.", modelid);
 	return true;
 }
@@ -1164,7 +1164,7 @@ bool ChatHandler::HandleGOExport(const char * args, WorldSession * m_session)
 {
 	/*if(!m_session->GetPlayer()->m_GM_SelectedGO)
 		return false;
-	
+
 	std::stringstream name;
 	if (*args)
 	{
@@ -1174,7 +1174,7 @@ bool ChatHandler::HandleGOExport(const char * args, WorldSession * m_session)
 	{
 		name << "GO_" << m_session->GetPlayer()->m_GM_SelectedGO->GetEntry() << ".sql";
 	}
-   
+
 	m_session->GetPlayer()->m_GM_SelectedGO->SaveToFile(name);
 
 	BlueSystemMessage(m_session, "Go saved to: %s", name.str().c_str());*/
@@ -1187,7 +1187,7 @@ bool ChatHandler::HandleGOExport(const char * args, WorldSession * m_session)
 	QueryResult * qr = WorldDatabase.Query("SELECT * FROM vendors WHERE entry = %u", pCreature->GetEntry());
 	if(qr != NULL)
 	{
-		do 
+		do
 		{
 			WorldDatabase.WaitExecute("INSERT INTO items_export SELECT * FROM items WHERE entry = %u", qr->Fetch()[1].GetUInt32());
 		} while (qr->NextRow());
@@ -1248,7 +1248,7 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 		amount = atoi(pamount);
 
 //	For Regular additem, not set.
-//	ItemPrototype* tmpItem = ItemPrototypeStorage.LookupEntry(item);   
+//	ItemPrototype* tmpItem = ItemPrototypeStorage.LookupEntry(item);
 	ItemSetEntry* tmpItem = dbcItemSet.LookupEntry(item);
 
 	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(item);

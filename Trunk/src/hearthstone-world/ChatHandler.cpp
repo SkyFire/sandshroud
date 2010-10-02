@@ -252,7 +252,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		type = CHAT_MSG_BATTLEGROUND;
 	if( type == CHAT_MSG_RAID_LEADER && GetPlayer()->m_bg )
 		type = CHAT_MSG_BATTLEGROUND_LEADER;
-	
+
 
 	switch(type)
 	{
@@ -260,7 +260,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		{
 			if(GetPlayer()->m_modlanguage >=0)
 				data = sChatHandler.FillMessageData( CHAT_MSG_EMOTE, GetPlayer()->m_modlanguage,  msg.c_str(), _player->GetGUID(), _player->GetChatTag());
-			else	
+			else
 				data = sChatHandler.FillMessageData( CHAT_MSG_EMOTE, CanUseCommand('c') ? LANG_UNIVERSAL : lang,  msg.c_str(), _player->GetGUID(), _player->GetChatTag());
 
 			GetPlayer()->SendMessageToSet( data, true ,true );
@@ -309,9 +309,9 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				break;
 
 			Group *pGroup = _player->GetGroup();
-			if(pGroup == NULL) 
+			if(pGroup == NULL)
 				break;
-			
+
 			if(GetPlayer()->m_modlanguage >=0)
 				data=sChatHandler.FillMessageData( type, GetPlayer()->m_modlanguage,  msg.c_str(), _player->GetGUID(), _player->GetChatTag());
 			else
@@ -446,7 +446,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			}
 
 			//Sent the to Users id as the channel, this should be fine as it's not used for wisper
-		  
+
 			data = sChatHandler.FillMessageData(CHAT_MSG_WHISPER_INFORM, LANG_UNIVERSAL,msg.c_str(), player->GetGUID(), player->bGMTagOn ? 4 : 0  );
 			SendPacket(data);
 			delete data;
@@ -473,7 +473,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
 				break;
 
-			Channel *chn = channelmgr.GetChannel(misc.c_str(),GetPlayer()); 
+			Channel *chn = channelmgr.GetChannel(misc.c_str(),GetPlayer());
 			if(chn != NULL)
 				chn->Say(GetPlayer(),msg.c_str(), NULLPLR, false);
 			if(sWorld.LogChats && msg.c_str()[0] != '.')
@@ -501,7 +501,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 					GetPlayer()->m_bg->RemovePlayer( GetPlayer(), false );
 					//GetPlayer()->BroadcastMessage("You have been kicked from %s for inactivity.", GetPlayer()->m_bg->GetName());
 				}
-			}			
+			}
 		} break;
 	case CHAT_MSG_DND:
 		{

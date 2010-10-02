@@ -363,7 +363,7 @@ bool ChatHandler::HandleFaceCommand(const char* args, WorldSession *m_session)
 	data << obj->GetGUID();
 	data << obj->GetPositionX() << obj->GetPositionY() << obj->GetPositionZ() << obj->GetOrientation();
 	data << uint8(1);
-	
+
 	data << uint32(0x100); //run
 	data << uint32(0); //time
 	data << uint32(2);
@@ -981,7 +981,7 @@ bool ChatHandler::HandleSQLQueryCommand(const char* args, WorldSession *m_sessio
 		RedSystemMessage(m_session, "No query given.");
 		return false;
 	}
-	
+
 	bool isok = WorldDatabase.Execute(args);
 
 	if(isok)
@@ -1037,10 +1037,10 @@ bool ChatHandler::HandleSendpacket(const char * args, WorldSession * m_session)
 	opcodex |= opcodez;
 	data.Initialize(opcodex);
 
-	
+
 	int j = 3;
 	int x = 0;
-	do 
+	do
 	{
 		if (xstring[j] == '\0')
 		{
@@ -1092,7 +1092,7 @@ bool ChatHandler::HandleDebugGoRepair(const char* args, WorldSession *m_session)
 		return true;
 	}
 	GObj->Rebuild();
-	
+
 	BlueSystemMessage(m_session, "Gameobject rebuilt.");
 	return true;
 

@@ -60,7 +60,7 @@ int hearthstone_getopt_long_only(int ___argc, char *const *___argv, const char *
 					arg_counter++;		// Trash this next argument, we won't be needing it.
 					par = ___argv[arg_counter];
 				}
-			}			
+			}
 
 			// increment the argument for next time
 			arg_counter++;
@@ -95,7 +95,7 @@ int hearthstone_getopt_long_only(int ___argc, char *const *___argv, const char *
 					return 1;
 
 				return __longopts[i].val;
-			}			
+			}
 			break;
 		}
 	}

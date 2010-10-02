@@ -62,7 +62,7 @@ protected:
 
 struct keyFrame {
 	keyFrame(float _x, float _y, float _z, uint32 _mapid, int _actionflag, int _delay)
-	{ x = _x; y = _y; z = _z; mapid = _mapid; actionflag = _actionflag; delay = _delay; distFromPrev = -1; distSinceStop = -1; distUntilStop = -1; 
+	{ x = _x; y = _y; z = _z; mapid = _mapid; actionflag = _actionflag; delay = _delay; distFromPrev = -1; distSinceStop = -1; distUntilStop = -1;
 	tFrom = 0; tTo = 0;}
 
 	float x;
@@ -79,7 +79,7 @@ struct keyFrame {
 
 struct TWayPoint {
 	TWayPoint() : mapid(0), x(0), y(0), z(0), teleport(0), delayed(false) {}
-	TWayPoint(uint32 _mapid, float _x, float _y, float _z, bool _teleport) : 
+	TWayPoint(uint32 _mapid, float _x, float _y, float _z, bool _teleport) :
 	mapid(_mapid), x(_x), y(_y), z(_z), teleport(_teleport), delayed(false) {}
 	uint32 mapid;
 	float x;
@@ -132,7 +132,7 @@ public:
 	GameObject* GetGameObject(uint32 Guid);
 
 private:
-	
+
 	TransportNPCMap m_npcs;
 	WaypointMap m_WayPoints;
 	PassengerMap mPassengers;

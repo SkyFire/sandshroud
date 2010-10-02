@@ -105,7 +105,7 @@ void MapCell::SetActivity(bool state)
 		}
 	}
 
-	_active = state; 
+	_active = state;
 
 }
 void MapCell::RemoveObjects()
@@ -120,7 +120,7 @@ void MapCell::RemoveObjects()
 		pObject = *itr;
 		if(!pObject)
 			continue;
-		
+
 		switch(pObject->GetTypeId())
 		{
 		case TYPEID_UNIT:

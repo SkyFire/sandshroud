@@ -46,7 +46,7 @@ Arena::Arena( MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t, uint32 players_pe
 	case BATTLEGROUND_ARENA_3V3:
 		m_arenateamtype=1;
 		break;
-		
+
 	case BATTLEGROUND_ARENA_2V2:
 		m_arenateamtype=0;
 		break;
@@ -124,7 +124,7 @@ void Arena::OnAddPlayer(Player* plr)
 	/* Add the green/gold team flag */
 	Aura* aura(new Aura(dbcSpell.LookupEntry(32724+plr->m_bgTeam), -1, plr, plr));
 	plr->AddAura(aura);
-	
+
 	/* Set FFA PvP Flag */
 	plr->SetFFAPvPFlag();
 
@@ -152,7 +152,7 @@ void Arena::OnRemovePlayer(Player* plr)
 
 	/* plr left arena, call HookOnPlayerDeath as if he died */
 	HookOnPlayerDeath(plr);
-	
+
 	plr->RemoveAura(32724+plr->m_bgTeam);
 	plr->RemoveFFAPvPFlag();
 	plr->m_bgRatedQueue = false;
@@ -274,7 +274,7 @@ void Arena::OnCreate()
 				obj->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, 100);
 				m_gates.insert(obj);
 			}
-			
+
 			obj = SpawnGameObject(192642, 1327.2099609375f, 813.239990234375f, 20.5f, 0.0f, 32, 1375, 1.29783f);
 			if(obj)
 			{
@@ -315,7 +315,7 @@ void Arena::OnCreate()
 				obj->SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID, 5);
 				obj->PushToWorld(m_mapMgr);
 			}
-		
+
 			//moving 'things'
 			obj = SpawnGameObject(193458, 763.630f, -261.783f, 26.0f, 0.0f, 40, 1375, 1.0f);
 			if(obj)
@@ -330,7 +330,7 @@ void Arena::OnCreate()
 				obj->PushToWorld(m_mapMgr);
 
 			obj = SpawnGameObject(193461, 723.522f, -284.428f, 24.6f, 0.0f, 40, 1375, 1.0f);
-			if(obj)	
+			if(obj)
 				obj->PushToWorld(m_mapMgr);
 
 			//gates
@@ -360,7 +360,7 @@ void Arena::OnCreate()
 	for(set< GameObject* >::iterator itr = m_gates.begin(); itr != m_gates.end(); itr++)
 		(*itr)->PushToWorld(m_mapMgr);
 
-	
+
 	// known world states
 	sm.CreateWorldState(m_pcWorldStates[GREEN_TEAM], 0);
 	sm.CreateWorldState(m_pcWorldStates[GOLD_TEAM], 0);
@@ -425,7 +425,7 @@ void Arena::UpdatePlayerCounts()
 	Finish();
 }
 
-int32 Arena::CalcDeltaRating(uint32 oldRating, uint32 opponentRating, bool outcome) 
+int32 Arena::CalcDeltaRating(uint32 oldRating, uint32 opponentRating, bool outcome)
 {
 	// ---- Elo Rating System ----
 	// Expected Chance to Win for Team A vs Team B
@@ -482,7 +482,7 @@ void Arena::Finish()
 					if(tp != NULL)
 					{
 						tp->PersonalRating += CalcDeltaRating(tp->PersonalRating, teams[j]->m_stat_rating, outcome);
-						
+
 						if ((int32)tp->PersonalRating < 0)
 							tp->PersonalRating = 0;
 
@@ -494,7 +494,7 @@ void Arena::Finish()
 					}
 				}
 			}
-			
+
 			teams[i]->SaveToDB();
 			// send arena team stats update
 			WorldPacket data(256);
@@ -658,7 +658,7 @@ void Arena::HookOnAreaTrigger(Player* plr, uint32 id)
 
 	ASSERT(plr != NULL);
 
-	switch (id) 
+	switch (id)
 	{
 		case 4536:
 		case 4538:

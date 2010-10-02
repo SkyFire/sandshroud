@@ -92,10 +92,10 @@ public:
 
 	bool AddPlayer(PlayerInfo * info);
 	void RemovePlayer(PlayerInfo * info);
-	
+
 	HEARTHSTONE_INLINE bool IsFull(void)				{ return m_GroupMembers.size() >= MAX_GROUP_SIZE_PARTY; }
 	HEARTHSTONE_INLINE size_t GetMemberCount(void)		{ return m_GroupMembers.size(); }
-	
+
 	HEARTHSTONE_INLINE uint32 GetID(void)			   { return m_Id; }
 	HEARTHSTONE_INLINE void SetID(uint32 newid)		 { m_Id = newid; }
 
@@ -157,7 +157,7 @@ public:
 	void Disband();
 	Player* FindFirstPlayer();
 	bool HasDisenchanters();
-	
+
 	// Accessing functions
 	HEARTHSTONE_INLINE SubGroup* GetSubGroup(uint32 Id)
 	{

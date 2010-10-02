@@ -58,7 +58,7 @@ public:
 
 	//Packet Forging...
 	void BuildOfferReward(WorldPacket* data,Quest* qst, Object* qst_giver, uint32 menutype, uint32 language, Player* plr);
-	void BuildQuestDetails(WorldPacket* data, Quest* qst, Object* qst_giver, uint32 menutype, uint32 language, Player* plr);	
+	void BuildQuestDetails(WorldPacket* data, Quest* qst, Object* qst_giver, uint32 menutype, uint32 language, Player* plr);
 	void BuildRequestItems(WorldPacket* data, Quest* qst, Object* qst_giver, uint32 status, uint32 language);
 	void BuildQuestComplete(Player* , Quest* qst);
 	void BuildQuestList(WorldPacket* data, Object* qst_giver, Player* plr, uint32 language);
@@ -93,7 +93,7 @@ public:
 	void SendQuestUpdateFailed(Quest *pQuest, Player* plyr);
 	void SendQuestUpdateFailedTimer(Quest *pQuest, Player* plyr);
 	void SendQuestLogFull(Player* plyr);
-	
+
 	void LoadNPCQuests(Creature* qst_giver);
 	void LoadGOQuests(GameObject* go);
 

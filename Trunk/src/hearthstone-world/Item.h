@@ -64,7 +64,7 @@ const static uint32 weap_skills[21] = {	SKILL_AXES,
 										SKILL_CROSSBOWS,
 										SKILL_WANDS,
 										SKILL_FISHING };
-                                      
+
 const static float pricemod[9] = { 1.0f, // HATED
 								   1.0f, // HOSTILE
 								   1.0f, // UNFRIENDLY
@@ -129,14 +129,14 @@ public:
 	void SetOwner( Player* owner );
 
 	HEARTHSTONE_INLINE bool IsContainer(){ return ( m_objectTypeId == TYPEID_CONTAINER ) ? true : false; }
-	
+
 	//! DB Serialization
 	void LoadFromDB( Field *fields, Player* plr, bool light );
 	void SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffer* buf );
 	bool LoadAuctionItemFromDB( uint64 guid );
 	void DeleteFromDB();
 	bool IsEligibleForRefund();
-	
+
 	HEARTHSTONE_INLINE void SoulBind()
 	{
 		SetFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_SOULBOUND );
@@ -179,7 +179,7 @@ public:
 
 	//! Removes an enchantment from the item.
 	void RemoveEnchantment( uint32 EnchantmentSlot );
-	
+
 	// Removes related temporary enchants
 	void RemoveRelatedEnchants( EnchantEntry* newEnchant );
 

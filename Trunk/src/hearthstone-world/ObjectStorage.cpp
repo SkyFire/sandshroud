@@ -285,7 +285,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 							}
 							counter += 1;
 						}break;
-		
+
 						case AGENT_RANGED:
 						{
 							cn->m_canRangedAttack = true;
@@ -298,7 +298,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 
 						case AGENT_FLEE:
 						{
-							// % health 
+							// % health
 							cn->m_canFlee = true;
 							if(sp->floatMisc1)
 								cn->m_fleeHealth = sp->floatMisc1;
@@ -546,7 +546,7 @@ void ObjectMgr::LoadExtraItemStuff()
 			std::list<ItemPrototype*>* l;
 			if(itr == mItemSets.end())
 			{
-				l = new std::list<ItemPrototype*>;				
+				l = new std::list<ItemPrototype*>;
 				mItemSets.insert( ItemSetContentMap::value_type( pItemPrototype->ItemSet, l) );
 			} else {
 				l = itr->second;
@@ -980,7 +980,7 @@ bool Storage_ReloadTable(const char * TableName)
 	}
 	else
 		return false;
-	
+
 	uint32 len = (uint32)strlen(TableName);
 	uint32 len2;
 	for(vector<pair<string,string> >::iterator itr = additionalTables.begin(); itr != additionalTables.end(); itr++)

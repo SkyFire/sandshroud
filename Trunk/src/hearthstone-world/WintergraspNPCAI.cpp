@@ -8,14 +8,14 @@ public:
 		GossipMenu *Menu;
 		objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), 32000, Plr);
 		if(Plr->HasAura(33280))
-			Menu->AddItem(0, "Build Catapult", 1); 
+			Menu->AddItem(0, "Build Catapult", 1);
 		if(Plr->HasAura(55629))
 		{
-			Menu->AddItem(0, "Build Catapult", 1); 
-			Menu->AddItem(0, "Build Demolisher", 2); 
+			Menu->AddItem(0, "Build Catapult", 1);
+			Menu->AddItem(0, "Build Demolisher", 2);
 			Menu->AddItem(0, "Build Siege Engine", 3);
 		}
-		Menu->AddItem(0, "Nevermind", 4); 
+		Menu->AddItem(0, "Nevermind", 4);
 		Menu->SendTo(Plr);
 	}
 

@@ -80,7 +80,7 @@ bool ChatHandler::HandleRecallAddCommand(const char* args, WorldSession *m_sessi
 {
 	if(!*args)
 		return false;
-	
+
 	QueryResult *result = WorldDatabase.Query( "SELECT name FROM recall" );
 	if(!result)
 		return false;
@@ -99,18 +99,18 @@ bool ChatHandler::HandleRecallAddCommand(const char* args, WorldSession *m_sessi
 
 	Player* plr = m_session->GetPlayer();
 	std::stringstream ss;
-	
+
 	string rc_locname = string(args);
 
 	ss << "INSERT INTO recall (name, mapid, positionX, positionY, positionZ) VALUES ('"
 	<< WorldDatabase.EscapeString(rc_locname).c_str() << "' , "
 	<< plr->GetMapId() << ", "
-	<< plr->GetPositionX() << ", " 
+	<< plr->GetPositionX() << ", "
 	<< plr->GetPositionY() << ", "
 	<< plr->GetPositionZ() << ");";
 	WorldDatabase.Execute( ss.str( ).c_str( ) );
 
-	char buf[256]; 
+	char buf[256];
 	snprintf((char*)buf, 256, "Added location to DB with MapID: %d, X: %f, Y: %f, Z: %f",
 		(unsigned int)plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 	GreenSystemMessage(m_session, buf);
@@ -175,7 +175,7 @@ bool ChatHandler::HandleRecallListCommand(const char* args, WorldSession *m_sess
 		recout += locname;
 		recout += "|r, ";
 		count++;
-		
+
 		if(count == 5)
 		{
 			recout += "\n";

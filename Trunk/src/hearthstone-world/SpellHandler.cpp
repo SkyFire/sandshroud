@@ -54,7 +54,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 	{
 		// Item Starter
 		Quest *qst = QuestStorage.LookupEntry(itemProto->QuestId);
-		if(!qst) 
+		if(!qst)
 			return;
 
 		if( sQuestMgr.PlayerMeetsReqs(_player, qst, false) != QMGR_QUEST_AVAILABLE || qst->min_level > _player->getLevel() )
@@ -64,7 +64,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		sQuestMgr.BuildQuestDetails(&data, qst, tmpItem, 0, language, _player);
 		SendPacket(&data);
 	}
-	
+
 	SpellCastTargets targets(recvPacket, _player->GetGUID());
 	uint32 x;
 	bool matching = false;
@@ -96,7 +96,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 			_player->GetItemInterface()->BuildInventoryChangeError(tmpItem,NULLITEM,INV_ERR_CANT_DO_IN_COMBAT);
 			return;
 		}
-	
+
 		if(_player->GetStandState()!=STANDSTATE_SIT)
 			_player->SetStandState(STANDSTATE_SIT);
 	}
@@ -127,12 +127,12 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 			}
 		}
 	}
-	
+
 	if( itemProto->AllowableClass && !(_player->getClassMask() & itemProto->AllowableClass) || itemProto->AllowableRace && !(_player->getRaceMask() & itemProto->AllowableRace) )
 	{
 		_player->GetItemInterface()->BuildInventoryChangeError(tmpItem,NULLITEM,INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM);
 		return;
-	}		
+	}
 
 	if( !_player->Cooldown_CanCast( itemProto, x ) )
 	{
@@ -258,7 +258,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 
 			if(!spellid)
 				spellid = spellInfo->Id;
-			
+
 			if(!_player->m_onAutoShot)
 			{
 				_player->m_AutoShotTarget = _player->GetSelection();

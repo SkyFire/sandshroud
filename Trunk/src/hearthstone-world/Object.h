@@ -105,7 +105,7 @@ enum OBJECT_UPDATE_TYPE {
 };
 
 typedef struct
-{ 
+{
 	uint32 school_type;
 	int32 full_damage;
 	uint32 resisted_damage;
@@ -271,7 +271,7 @@ public:
 	void SetByte(uint32 index, uint32 index1,uint8 value);
 
 	HEARTHSTONE_INLINE uint8 GetByte(uint32 i,uint32 i1) { return ((uint8*)m_uint32Values)[i*4+i1]; }
-	
+
 	HEARTHSTONE_INLINE void SetNewGuid(uint32 Guid)
 	{
 		uint64 new_full_guid = Guid;
@@ -303,7 +303,7 @@ public:
 	void __fastcall RemoveByteFlag(const uint32 index, const uint32 flag, uint8 checkFlag);
 
 	HEARTHSTONE_INLINE bool HasFlag( const uint32 index, uint32 flag ) const { return (m_uint32Values[ index ] & flag) != 0;	}
-	
+
 	////////////////////////////////////////
 	void ClearUpdateMask( )
 	{
@@ -319,9 +319,9 @@ public:
 	// Use it to Check if a object is in front of another one
 	bool isInFront(Object* target);
 	bool isInBack(Object* target);
-	
+
 	// Check to see if an object is in front of a target in a specified arc (in degrees)
-	bool isInArc(Object* target , float degrees); 
+	bool isInArc(Object* target , float degrees);
 
 	/* Calculates the angle between two Positions */
 	float calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y );
@@ -369,7 +369,7 @@ public:
 	{
 		return !( m_objectsInRange.find( pObj ) == m_objectsInRange.end() );
 	}
-	
+
 	virtual void AddInRangeObject(Object* pObj)
 	{
 		if( pObj == NULL )
@@ -415,7 +415,7 @@ public:
 	InRangeSet::iterator FindInRangeSet(Object * obj) { return m_objectsInRange.find(obj); }
 
 	void RemoveInRangeObject(InRangeSet::iterator itr)
-	{ 
+	{
 		OnRemoveInRangeObject(*itr);
 		m_objectsInRange.erase(itr);
 	}
@@ -428,7 +428,7 @@ public:
 
 		if( itr == m_objectsInRange.end() )
 			return false;
-		
+
 		m_objectsInRange.erase( itr );
 		return true;
 	}
@@ -474,7 +474,7 @@ public:
 	float m_base_walkSpeed;
 
 	void SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage, bool allowProc, bool static_damage = false, bool no_remove_auras = false, uint32 AdditionalCritChance = 0);
-	
+
 	//*****************************************************************************************
 	//* SpellLog packets just to keep the code cleaner and better to read
 	//*****************************************************************************************
@@ -488,7 +488,7 @@ public:
 	//object faction
 	void _setFaction();
 	uint32 _getFaction(){return m_faction->Faction;}
-	
+
 	FactionTemplateDBC *m_faction;
 	FactionDBC *m_factionDBC;
 
@@ -594,7 +594,7 @@ protected:
 	unordered_set<Object* > m_objectsInRange;
 	unordered_set<Player* > m_inRangePlayers;
 	unordered_set<Object* > m_oppFactsInRange;
-   
+
 	int32 m_instanceId;
 
 	ExtensionSet * m_extensions;

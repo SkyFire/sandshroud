@@ -22,7 +22,7 @@
  * Generic map implementation.
  * free() must be invoked when only one thread has access to the hashmap.
  */
- 
+
 #include "SharedStdAfx.h"
 
 #define INITIAL_SIZE 1024
@@ -171,7 +171,7 @@ int hashmap_put(map_t in, int key, any_t value){
 	m->data[index].data = value;
 	m->data[index].key = key;
 	m->data[index].in_use = 1;
-	m->size++; 
+	m->size++;
 
 	return MAP_OK;
 }
@@ -424,7 +424,7 @@ int hashmap64_put(map_t in, int64 key, any_t value){
 	m->data[index].data = value;
 	m->data[index].key = key;
 	m->data[index].in_use = 1;
-	m->size++; 
+	m->size++;
 
 	return MAP_OK;
 }

@@ -158,7 +158,7 @@ bool Group::AddMember(PlayerInfo * info, int32 subgroupid/* =-1 */)
 		{
 			if(pPlayer)
 				sEventMgr.AddEvent(pPlayer,&Player::EventGroupFullUpdate,EVENT_PLAYER_UPDATE,1500,1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-            
+
 			m_dirty=true;
 			++m_MemberCount;
 			Update();	// Send group update
@@ -336,14 +336,14 @@ void Group::Update()
 								continue;
 
 							data << (*itr2)->name << (*itr2)->guid << uint32(0);	// highguid
-							
+
 							if( (*itr2)->m_loggedInPlayer != NULL )
 								data << uint8( 1 );
 							else
 								data << uint8( 0 );
 
 							data << uint8( sg2->GetID() );
-							
+
 							flags = 0;
 
 							if( (*itr2) == m_assistantLeader )
@@ -380,7 +380,7 @@ void Group::Update()
 					(*itr1)->m_loggedInPlayer->CopyAndSendDelayedPacket( &data );
 				else
 					(*itr1)->m_loggedInPlayer->GetSession()->SendPacket( &data );
-			}		
+			}
 		}
 	}
 
@@ -503,7 +503,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 		m_isqueued=false;
 		BattlegroundManager.RemoveGroupFromQueues(this);
 	}
-	
+
 	m_groupLock.Acquire();
 	SubGroup *sg=NULL;
 	if(info->subGroup >= 0 && info->subGroup <= 8)
@@ -540,7 +540,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 	m_dirty=true;
 	sg->RemovePlayer(info);
 	--m_MemberCount;
-	
+
 	m_groupLock.Release();
 
 	if( pPlayer != NULL )
@@ -560,8 +560,8 @@ void Group::RemovePlayer(PlayerInfo * info)
 		//Remove some party auras.
 		for (uint32 i=0;i<MAX_POSITIVE_AURAS;++i)
 		{
-			if (pPlayer->m_auras[i] != NULL && 
-				pPlayer->m_auras[i]->m_areaAura && 
+			if (pPlayer->m_auras[i] != NULL &&
+				pPlayer->m_auras[i]->m_areaAura &&
 				pPlayer->m_auras[i]->GetUnitCaster() &&
 				(!pPlayer->m_auras[i]->GetUnitCaster() ||(pPlayer->m_auras[i]->GetUnitCaster()->IsPlayer() && pPlayer!=pPlayer->m_auras[i]->GetUnitCaster())))
 				pPlayer->RemoveAuraBySlot(i);
@@ -570,7 +570,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 
 	if(m_MemberCount < 2)
 	{
-		// disband the group, except battleground groups. 
+		// disband the group, except battleground groups.
 		if(!(m_groupFlags & GROUP_FLAG_DONT_DISBAND_WITH_NO_MEMBERS))
 		{
 			Disband();
@@ -622,12 +622,12 @@ void Group::ExpandToRaid()
 }
 
 void Group::SetLooter(Player* pPlayer, uint8 method, uint16 threshold)
-{ 
+{
 	m_LootMethod = method;
 	m_Looter = pPlayer ? pPlayer->m_playerInfo : NULL;
 	m_LootThreshold  = threshold;
 	m_dirty = true;
-		
+
 	Update();
 }
 
@@ -644,7 +644,7 @@ void Group::SendPacketToAllButOne(WorldPacket *packet, Player* pSkipTarget)
 				(*itr)->m_loggedInPlayer->GetSession()->SendPacket(packet);
 		}
 	}
-	
+
 	m_groupLock.Release();
 }
 
@@ -755,7 +755,7 @@ void Group::MovePlayer(PlayerInfo *info, uint8 subgroup)
 		return;
 
 	m_groupLock.Acquire();
-	
+
 	if(m_SubGroups[subgroup]->IsFull())
 	{
 		m_groupLock.Release();
@@ -788,7 +788,7 @@ void Group::MovePlayer(PlayerInfo *info, uint8 subgroup)
 		m_groupLock.Release();
 		return;
 	}
-	
+
 	sg->RemovePlayer(info);
 
 	// Grab the new group, and insert
@@ -895,7 +895,7 @@ void Group::SaveToDB()
 		ss << m_assistantLeader->guid << ",";
 	else
 		ss << "0,";
-	
+
 	if(m_mainTank)
 		ss << m_mainTank->guid << ",";
 	else
@@ -978,7 +978,7 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 
 	if(Flags & GROUP_UPDATE_FLAG_ZONEID)
 		*data << uint16(pPlayer->GetPlayerAreaID());
-    
+
 
 	if(Flags & GROUP_UPDATE_FLAG_POSITION)
 	{
@@ -1024,7 +1024,7 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 		else
 			*data << uint32(0);
 	}
-	
+
 	if (Flags & GROUP_UPDATE_FLAG_PET_MAXHEALTH)
 	{
 		if (pPlayer->GetSummon() != NULL)
@@ -1048,7 +1048,7 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 		else
 			*data << uint16(0);
 	}
-	
+
 	if (Flags & GROUP_UPDATE_FLAG_PET_MAXPOWER)
 	{
 		if (pPlayer->GetSummon() != NULL && pPlayer->GetSummon()->GetPowerType() < 7)
@@ -1142,7 +1142,7 @@ void Group::HandleUpdateFieldChange(uint32 Index, Player* pPlayer)
 	case UNIT_FIELD_HEALTH:
 		Flags = GROUP_UPDATE_FLAG_HEALTH;
 		break;
-		
+
 	case UNIT_FIELD_MAXHEALTH:
 		Flags = GROUP_UPDATE_FLAG_MAXHEALTH;
 		break;
@@ -1421,7 +1421,7 @@ void Group::SendVoiceUpdate()
 	// these dont appear to be in network byte order.. gg
 	data << uint32(htonl(sVoiceChatHandler.GetVoiceServerIP()));
 	data << uint16(sVoiceChatHandler.GetVoiceServerPort());
-	
+
 	data << uint8( m_voiceMemberCount );
 	pos = data.wpos();
 

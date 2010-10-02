@@ -59,14 +59,14 @@ class SERVER_DECL CLog : public Singleton< CLog >
 #define LOCK_LOG mutex.Acquire()
 #define UNLOCK_LOG mutex.Release();
 #else
-#define LOCK_LOG 
-#define UNLOCK_LOG 
+#define LOCK_LOG
+#define UNLOCK_LOG
 #endif
 
 public:
 #ifdef WIN32
 	HANDLE stdout_handle, stderr_handle;
-#endif  
+#endif
 	int32 log_level;
 
 	CLog()
@@ -302,7 +302,7 @@ public:
 		char * pointer;
 		va_list ap;
 		va_start(ap, Colour);
-		
+
 		size_t i,j,k;
 		pointer = va_arg(ap, char*);
 		while( pointer != NULL )

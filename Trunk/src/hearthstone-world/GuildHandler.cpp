@@ -1030,7 +1030,7 @@ void WorldSession::HandleGuildLog(WorldPacket & recv_data)
 void WorldSession::HandleGuildBankBuyTab(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN;
-	
+
 	uint64 guid;
 	recv_data >> guid;
 
@@ -1257,7 +1257,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 		if(splitted_count)
 		{
 			uint32 source_count = pSourceItem->GetUInt32Value( ITEM_FIELD_STACK_COUNT );
-			
+
 			if(pDestItem == NULL)
 			{
 				if(source_count == splitted_count)
@@ -1269,18 +1269,18 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 				else
 				{
 					pSourceItem->ModUnsigned32Value( ITEM_FIELD_STACK_COUNT, -splitted_count );
-				
+
 					pDestItem = objmgr.CreateItem(pSourceItem->GetEntry(), NULL);
 					pDestItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, splitted_count);
 					pDestItem->SetUInt32Value(ITEM_FIELD_CREATOR, pSourceItem->GetUInt32Value(ITEM_FIELD_CREATOR));
-				
+
 					pDestTab->pSlots[dest_bankslot] = pDestItem;
 				}
 			}
 			else
-			{	
+			{
 				pDestItem->ModUnsigned32Value( ITEM_FIELD_STACK_COUNT, splitted_count );
-					
+
 				if(splitted_count != source_count)
 					pSourceItem->ModUnsigned32Value( ITEM_FIELD_STACK_COUNT, -splitted_count );
 				else
@@ -1321,7 +1321,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 		else
 		{
 			/* insert the new Item* */
-			CharacterDatabase.Execute("REPLACE INTO guild_bankitems VALUES(%u, %u, %u, %u)", 
+			CharacterDatabase.Execute("REPLACE INTO guild_bankitems VALUES(%u, %u, %u, %u)",
 				pGuild->GetGuildId(), (uint32)pSourceTab->iTabId, (uint32)source_bankslot, pDestItem->GetLowGUID());
 		}
 
@@ -1334,7 +1334,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 		else
 		{
 			/* insert the new Item* */
-			CharacterDatabase.Execute("REPLACE INTO guild_bankitems VALUES(%u, %u, %u, %u)", 
+			CharacterDatabase.Execute("REPLACE INTO guild_bankitems VALUES(%u, %u, %u, %u)",
 				pGuild->GetGuildId(), (uint32)pDestTab->iTabId, (uint32)dest_bankslot, pSourceItem->GetLowGUID());
 		}
 	}
@@ -1523,7 +1523,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 		{
 			/* there is a new item in that slot. */
 			pTab->pSlots[dest_bankslot] = pSourceItem;
-			CharacterDatabase.Execute("REPLACE INTO guild_bankitems VALUES(%u, %u, %u, %u)", 
+			CharacterDatabase.Execute("REPLACE INTO guild_bankitems VALUES(%u, %u, %u, %u)",
 				pGuild->GetGuildId(), (uint32)pTab->iTabId, (uint32)dest_bankslot, pSourceItem->GetLowGUID());
 
 			/* remove the item's association with the player* */
@@ -1532,7 +1532,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 			pSourceItem->SaveToDB(0, 0, true, NULL);
 
 			/* log it */
-			pGuild->LogGuildBankAction(GUILD_BANK_LOG_EVENT_DEPOSIT_ITEM, _player->GetLowGUID(), pSourceItem->GetEntry(), 
+			pGuild->LogGuildBankAction(GUILD_BANK_LOG_EVENT_DEPOSIT_ITEM, _player->GetLowGUID(), pSourceItem->GetEntry(),
 				(uint8)pSourceItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT), pTab);
 		}
 
@@ -1564,7 +1564,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 			else
 			{
 				/* log it */
-				pGuild->LogGuildBankAction(GUILD_BANK_LOG_EVENT_WITHDRAW_ITEM, _player->GetLowGUID(), pDestItem->GetEntry(), 
+				pGuild->LogGuildBankAction(GUILD_BANK_LOG_EVENT_WITHDRAW_ITEM, _player->GetLowGUID(), pDestItem->GetEntry(),
 					(uint8)pDestItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT), pTab);
 			}
 		}

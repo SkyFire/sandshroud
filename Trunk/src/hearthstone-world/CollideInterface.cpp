@@ -229,7 +229,7 @@ uint32 CCollideInterface::GetVmapAreaFlags(uint32 mapId, float x, float y, float
 	m_mapLocks[mapId]->m_lock.AcquireReadLock();
 
 	// get data
-	uint32 flags = CollisionMgr ? CollisionMgr->GetVmapFlags(mapId, x, y, z) : 0; 
+	uint32 flags = CollisionMgr ? CollisionMgr->GetVmapFlags(mapId, x, y, z) : 0;
 
 	// release write lock
 	m_mapLocks[mapId]->m_lock.ReleaseReadLock();

@@ -95,7 +95,7 @@ enum MOD_TYPES
 	SPELL_AURA_MOD_SHAPESHIFT = 36,						// Shapeshift
 	SPELL_AURA_EFFECT_IMMUNITY = 37,					// Immune Effect
 	SPELL_AURA_STATE_IMMUNITY = 38,						// Immune State
-	SPELL_AURA_SCHOOL_IMMUNITY = 39,					// Immune School	
+	SPELL_AURA_SCHOOL_IMMUNITY = 39,					// Immune School
 	SPELL_AURA_DAMAGE_IMMUNITY = 40,					// Immune Damage
 	SPELL_AURA_DISPEL_IMMUNITY = 41,					// Immune Dispel Type
 	SPELL_AURA_PROC_TRIGGER_SPELL = 42,					// Proc Trigger Spell
@@ -105,7 +105,7 @@ enum MOD_TYPES
 	SPELL_AURA_MOD_PARRY_SKILL = 46,					// Mod Parry Skill
 	SPELL_AURA_MOD_PARRY_PERCENT = 47,					// Mod Parry Percent
 	SPELL_AURA_MOD_DODGE_SKILL = 48,					// Mod Dodge Skill
-	SPELL_AURA_MOD_DODGE_PERCENT = 49,					// Mod Dodge Percent  
+	SPELL_AURA_MOD_DODGE_PERCENT = 49,					// Mod Dodge Percent
 	SPELL_AURA_MOD_BLOCK_SKILL = 50,					// Mod Block Skill
 	SPELL_AURA_MOD_BLOCK_PERCENT = 51,					// Mod Block Percent
 	SPELL_AURA_MOD_CRIT_PERCENT = 52,					// Mod Crit Percent
@@ -115,7 +115,7 @@ enum MOD_TYPES
 	SPELL_AURA_TRANSFORM = 56,							// Transform
 	SPELL_AURA_MOD_SPELL_CRIT_CHANCE = 57,				// Mod Spell Crit Chance
 	SPELL_AURA_MOD_INCREASE_SWIM_SPEED = 58,			// Mod Speed Swim
-	SPELL_AURA_MOD_DAMAGE_DONE_CREATURE = 59,			// Mod Creature Dmg Done   
+	SPELL_AURA_MOD_DAMAGE_DONE_CREATURE = 59,			// Mod Creature Dmg Done
 	SPELL_AURA_MOD_PACIFY_SILENCE = 60,					// Pacify & Silence
 	SPELL_AURA_MOD_SCALE = 61,							// Mod Scale
 	SPELL_AURA_PERIODIC_HEALTH_FUNNEL = 62,				// Periodic Health Funnel
@@ -125,7 +125,7 @@ enum MOD_TYPES
 	SPELL_AURA_FEIGN_DEATH = 66,						// Feign Death
 	SPELL_AURA_MOD_DISARM = 67,							// Disarm
 	SPELL_AURA_MOD_STALKED = 68,						// Mod Stalked
-	SPELL_AURA_SCHOOL_ABSORB = 69,						// School Absorb	
+	SPELL_AURA_SCHOOL_ABSORB = 69,						// School Absorb
 	SPELL_AURA_EXTRA_ATTACKS = 70,						// Extra Attacks
 	SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL = 71,		// Mod School Spell Crit Chance
 	SPELL_AURA_MOD_POWER_COST = 72,						// Mod Power Cost
@@ -135,7 +135,7 @@ enum MOD_TYPES
 	SPELL_AURA_FAR_SIGHT = 76,							// Far Sight
 	SPELL_AURA_MECHANIC_IMMUNITY = 77,					// Immune Mechanic
 	SPELL_AURA_MOUNTED = 78,							// Mounted
-	SPELL_AURA_MOD_DAMAGE_PERCENT_DONE = 79,			// Mod Dmg %   
+	SPELL_AURA_MOD_DAMAGE_PERCENT_DONE = 79,			// Mod Dmg %
 	SPELL_AURA_MOD_PERCENT_STAT = 80,					// Mod Stat %
 	SPELL_AURA_SPLIT_DAMAGE = 81,						// Split Damage
 	SPELL_AURA_WATER_BREATHING = 82,					// Water Breathing
@@ -145,7 +145,7 @@ enum MOD_TYPES
 	SPELL_AURA_CHANNEL_DEATH_ITEM = 86,					// Create Death Item
 	SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN = 87,			// Mod Dmg % Taken
 	SPELL_AURA_MOD_PERCENT_REGEN = 88,					// Mod Health Regen Percent
-	SPELL_AURA_PERIODIC_DAMAGE_PERCENT = 89,			// Periodic Damage Percent   
+	SPELL_AURA_PERIODIC_DAMAGE_PERCENT = 89,			// Periodic Damage Percent
 	SPELL_AURA_MOD_RESIST_CHANCE = 90,					// Mod Resist Chance
 	SPELL_AURA_MOD_DETECT_RANGE = 91,					// Mod Detect Range
 	SPELL_AURA_PREVENTS_FLEEING = 92,					// Prevent Fleeing
@@ -185,7 +185,7 @@ enum MOD_TYPES
 	SPELL_AURA_MOD_MELEE_DAMAGE_TAKEN_PCT = 126,		// Mod Melee % Dmg Taken
 	SPELL_AURA_RANGED_ATTACK_POWER_ATTACKER_BONUS = 127,// Rngd Atk Pwr Attckr Bonus
 	SPELL_AURA_MOD_POSSESS_PET = 128,					// Mod Possess Pet
-	SPELL_AURA_MOD_INCREASE_SPEED_ALWAYS = 129,			// Mod Speed Always   
+	SPELL_AURA_MOD_INCREASE_SPEED_ALWAYS = 129,			// Mod Speed Always
 	SPELL_AURA_MOD_MOUNTED_SPEED_ALWAYS = 130,			// Mod Mounted Speed Always
 	SPELL_AURA_MOD_CREATURE_RANGED_ATTACK_POWER = 131,  // Mod Creature Ranged Attack Power
 	SPELL_AURA_MOD_INCREASE_ENERGY_PERCENT = 132,		// Mod Increase Energy %
@@ -215,10 +215,10 @@ enum MOD_TYPES
 	SPELL_AURA_MOD_REPUTATION_ADJUST = 156,				// Mod Reputation Gain
 	SPELL_AURA_PET_DAMAGE_MULTI = 157,					// Mod Pet Damage
 	SPELL_AURA_MOD_SHIELD_BLOCK = 158,					// Mod Shield Block
-	SPELL_AURA_NO_PVP_CREDIT = 159,						// No PVP Credit 
-	SPELL_AURA_MOD_SIDE_REAR_PDAE_DAMAGE_TAKEN = 160,   // Mod Side/Rear PBAE Damage Taken 
+	SPELL_AURA_NO_PVP_CREDIT = 159,						// No PVP Credit
+	SPELL_AURA_MOD_SIDE_REAR_PDAE_DAMAGE_TAKEN = 160,   // Mod Side/Rear PBAE Damage Taken
 	SPELL_AURA_MOD_HEALTH_REGEN_IN_COMBAT = 161,		// Mod Health Regen In Combat
-	SPELL_AURA_POWER_BURN = 162,						// Power Burn 
+	SPELL_AURA_POWER_BURN = 162,						// Power Burn
 	SPELL_AURA_MOD_CRIT_DAMAGE_BONUS_MELEE = 163,		// Mod Critical Damage Bonus (Physical)
 	SPELL_AURA_MELEE_ATTACK_POWER_ATTACKER_BONUS = 165, // Melee AP Attacker Bonus
 	SPELL_AURA_MOD_ATTACK_POWER_PCT = 166,				// Mod Attack Power
@@ -230,13 +230,13 @@ enum MOD_TYPES
 	SPELL_AURA_INCREASE_SPELL_DAMAGE_PCT = 174,			// Increase Spell Damage by % status
 	SPELL_AURA_INCREASE_SPELL_HEALING_PCT = 175,		// Increase Spell Healing by % status
 	SPELL_AURA_SPIRIT_OF_REDEMPTION = 176,				// Spirit of Redemption Auras
-	SPELL_AURA_AREA_CHARM = 177,						// Area Charm 
+	SPELL_AURA_AREA_CHARM = 177,						// Area Charm
 	SPELL_AURA_INCREASE_ATTACKER_SPELL_CRIT = 179,		// Increase Attacker Spell Crit Type
 	SPELL_AURA_INCREASE_SPELL_DAMAGE_VS_TYPE = 180,		// Increase Spell Damage Type
 	SPELL_AURA_INCREASE_ARMOR_BASED_ON_INTELLECT_PCT = 182, // Increase Armor based on Intellect
 	SPELL_AURA_DECREASE_CRIT_THREAT = 183,				// Decrease Critical Threat by
 	SPELL_AURA_DECREASE_ATTACKER_CHANCE_TO_HIT_MELEE = 184,//Reduces Attacker Chance to Hit with Melee
-	SPELL_AURA_DECREASE_ATTACKER_CHANGE_TO_HIT_RANGED = 185,// Reduces Attacker Chance to Hit with Ranged 
+	SPELL_AURA_DECREASE_ATTACKER_CHANGE_TO_HIT_RANGED = 185,// Reduces Attacker Chance to Hit with Ranged
 	SPELL_AURA_DECREASE_ATTACKER_CHANGE_TO_HIT_SPELLS = 186,// Reduces Attacker Chance to Hit with Spells
 	SPELL_AURA_DECREASE_ATTACKER_CHANGE_TO_CRIT_MELEE = 187,// Reduces Attacker Chance to Crit with Melee (Ranged?)
 	SPELL_AURA_DECREASE_ATTACKER_CHANGE_TO_CRIT_RANGED = 188,// Reduces Attacker Chance to Crit with Ranged (Melee?)
@@ -336,7 +336,7 @@ enum AURAIMMUNE_FLAG
 	AURAIMMUNE_FEAR				= 0X4,			//SPELL_AURA_MOD_FEAR = 7
 	AURAIMMUNE_STUN				= 0x8,			//SPELL_AURA_MOD_STUN = 12
 	AURAIMMUNE_PACIFY			= 0x10,			//SPELL_AURA_MOD_PACIFY = 25
-	AURAIMMUNE_ROOT				= 0x20,			//SPELL_AURA_MOD_ROOT = 26	
+	AURAIMMUNE_ROOT				= 0x20,			//SPELL_AURA_MOD_ROOT = 26
 	AURAIMMUNE_SILENCE			= 0x40,			//SPELL_AURA_MOD_SILENCE = 27
 	AURAIMMUNE_INCSPEED			= 0x80,			//SPELL_AURA_MOD_INCREASE_SPEED = 31
 	AURAIMMUNE_DECSPEED			= 0x100,		//SPELL_AURA_MOD_DECREASE_SPEED = 33
@@ -490,7 +490,7 @@ public:
 	}
 
 	HEARTHSTONE_INLINE int32 GetMSExpiryTime()
-	{ 		
+	{ 
 		if (GetDuration() == -1)
 			return -1;
 
@@ -567,17 +567,17 @@ public:
 	void SpellAuraModSpellHitChance(bool apply);
 	void SpellAuraTransform(bool apply);
 	void SpellAuraModSpellCritChance(bool apply);
-	void SpellAuraIncreaseSwimSpeed(bool apply);	
+	void SpellAuraIncreaseSwimSpeed(bool apply);
 	void SpellAuraModCratureDmgDone(bool apply);
 	void SpellAuraPacifySilence(bool apply);
 	void SpellAuraModScale(bool apply);
-	void SpellAuraPeriodicHealthFunnel(bool apply);	
+	void SpellAuraPeriodicHealthFunnel(bool apply);
 	void SpellAuraPeriodicManaLeech(bool apply);
 	void SpellAuraModCastingSpeed(bool apply);
 	void SpellAuraFeignDeath(bool apply);
 	void SpellAuraModDisarm(bool apply);
 	void SpellAuraModStalked(bool apply);
-	void SpellAuraSchoolAbsorb(bool apply);	
+	void SpellAuraSchoolAbsorb(bool apply);
 	void SpellAuraModSpellCritChanceSchool(bool apply);
 	void SpellAuraModPowerCost(bool apply);
 	void SpellAuraModPowerCostSchool(bool apply);
@@ -618,13 +618,13 @@ public:
 	void SpellAuraAddFlatModifier(bool apply);
 	void SpellAuraAddPctMod(bool apply);
 	void SpellAuraAddTargetTrigger(bool apply);
-	void SpellAuraModPowerRegPerc(bool apply);	
+	void SpellAuraModPowerRegPerc(bool apply);
 	void SpellAuraOverrideClassScripts(bool apply);
-	void SpellAuraModRangedDamageTaken(bool apply);	
+	void SpellAuraModRangedDamageTaken(bool apply);
 	void SpellAuraModHealing(bool apply);
 	void SpellAuraIgnoreRegenInterrupt(bool apply);
 	void SpellAuraModMechanicResistance(bool apply);
-	void SpellAuraModHealingPCT(bool apply);   
+	void SpellAuraModHealingPCT(bool apply);
 	void SpellAuraEmphaty(bool apply);
 	void SpellAuraUntrackable(bool apply);
 	void SpellAuraModOffhandDamagePCT(bool apply);
@@ -787,7 +787,7 @@ public:
 	HEARTHSTONE_INLINE bool IsCombatStateAffecting()
 	{
 		for(uint32 x = 0; x < 3; ++x) {
-			if(m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PERIODIC_DAMAGE || 
+			if(m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PERIODIC_DAMAGE ||
 				m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PERIODIC_DAMAGE_PERCENT ||
 				m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PERIODIC_TRIGGER_SPELL ||
 				m_spellProto->EffectApplyAuraName[x] == SPELL_AURA_PERIODIC_LEECH ||

@@ -52,7 +52,7 @@ uint32 buffentrys[3] = {180380,180362,180146};
 
 	static uint32 ControlPointGoIds[AB_NUM_CONTROL_POINTS][AB_NUM_SPAWN_TYPES] = {
 		  // NEUTRAL    ALLIANCE-ATTACK    HORDE-ATTACK    ALLIANCE-CONTROLLED    HORDE_CONTROLLED
-		{ 180087,       180085,            180086,         180076,                180078 },			// STABLE	
+		{ 180087,       180085,            180086,         180076,                180078 },			// STABLE
 		{ 180089,       180085,            180086,         180076,                180078 },			// FARM
 		{ 180088,       180085,            180086,         180076,                180078 },			// BLACKSMITH
 		{ 180091,       180085,            180086,         180076,                180078 },			// MINE
@@ -253,7 +253,7 @@ void ArathiBasin::SpawnControlPoint(uint32 Id, uint32 Type)
 		// remove it if it exists
 		if(m_controlPointAuras[Id]!=NULL && m_controlPointAuras[Id]->IsInWorld())
 			m_controlPointAuras[Id]->RemoveFromWorld(false);
-			
+
 		return;
 	}
 
@@ -279,7 +279,7 @@ void ArathiBasin::SpawnControlPoint(uint32 Id, uint32 Type)
 		m_controlPointAuras[Id]->SetUInt32Value(GAMEOBJECT_DISPLAYID, gi_aura->DisplayID);
 		m_controlPointAuras[Id]->SetInfo(gi_aura);
 		m_controlPointAuras[Id]->PushToWorld(m_mapMgr);
-	}	
+	}
 }
 
 void ArathiBasin::OnCreate()
@@ -633,7 +633,7 @@ void ArathiBasin::HookOnAreaTrigger(Player* plr, uint32 id)
 		break;
 
 	case 3867:			// farm
-		buffslot=AB_BUFF_FARM;		
+		buffslot=AB_BUFF_FARM;
 		break;
 
 	case 3870:			// blacksmith
@@ -662,7 +662,7 @@ void ArathiBasin::HookOnAreaTrigger(Player* plr, uint32 id)
 	}
 
 	if(plr->isDead())		// dont apply to dead players... :P
-		return;	
+		return;
 
 	uint32 x = (uint32)buffslot;
 	if(m_buffs[x] && m_buffs[x]->IsInWorld())
@@ -723,7 +723,7 @@ void ArathiBasin::CaptureControlPoint(uint32 Id, uint32 Team)
 	if(m_basesAssaultedBy[Id] != (int32)Team)
 		return;
 
-	
+
 	m_basesLastOwnedBy[Id] = Team;
 
 	m_flagIsVirgin[Id] = false;
@@ -745,7 +745,7 @@ void ArathiBasin::CaptureControlPoint(uint32 Id, uint32 Team)
 	// send the chat message/sounds out
 	PlaySoundToAll(Team ? SOUND_HORDE_SCORES : SOUND_ALLIANCE_SCORES);
 	SendChatMessage(Team ? CHAT_MSG_BG_SYSTEM_HORDE : CHAT_MSG_BG_SYSTEM_ALLIANCE, 0, "The %s has taken the %s!", Team ? "Horde" : "Alliance", ControlPointNames[Id]);
-	
+
 	// update the overhead display on the clients (world states)
 	m_capturedBases[Team]++;
 	m_mapMgr->GetStateManager().UpdateWorldState(Team ? WORLDSTATE_AB_HORDE_CAPTUREBASE : WORLDSTATE_AB_ALLIANCE_CAPTUREBASE, m_capturedBases[Team]);
@@ -860,7 +860,7 @@ void ArathiBasin::AssaultControlPoint(Player* pPlayer, uint32 Id)
 		sEventMgr.RemoveEvents(this, EVENT_AB_CAPTURE_CP_1 + Id);
 
 		// no need to remove the spawn, SpawnControlPoint will do this.
-	} 
+	}
 
 	m_basesAssaultedBy[Id] = Team;
 
@@ -911,11 +911,11 @@ void ArathiBasin::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 	pCorpse->m_loot.gold = float2int32(gold);
 }
 
-void ArathiBasin::HookOnShadowSight() 
+void ArathiBasin::HookOnShadowSight()
 {
 }
 
-void ArathiBasin::SetIsWeekend(bool isweekend) 
+void ArathiBasin::SetIsWeekend(bool isweekend)
 {
 	m_isWeekend = isweekend;
 	if (isweekend)

@@ -49,7 +49,7 @@ void WorldSession::HandleChannelJoin(WorldPacket& recvPacket)
 
 	if( sWorld.GmClientChannel.size() && !stricmp(sWorld.GmClientChannel.c_str(), channelname.c_str()) && !GetPermissionCount())
 		return;
-	
+
 	chn = channelmgr.GetCreateChannel(channelname.c_str(), _player, dbc_id);
 	if(chn == NULL)
 		return;
@@ -108,7 +108,7 @@ void WorldSession::HandleChannelSetOwner(WorldPacket& recvPacket)
 
 	recvPacket >> channelname;
 	recvPacket >> newp;
-	
+
 	chn = channelmgr.GetChannel(channelname.c_str(), _player);
 	plr = objmgr.GetPlayer(newp.c_str(), false);
 	if( chn != NULL && plr != NULL )
@@ -260,7 +260,7 @@ void WorldSession::HandleChannelAnnounce(WorldPacket& recvPacket)
 	string channelname;
 	Channel * chn;
 	recvPacket >> channelname;
-	
+
 	chn = channelmgr.GetChannel(channelname.c_str(), _player);
 	if( chn != NULL )
 		chn->Announce(_player);

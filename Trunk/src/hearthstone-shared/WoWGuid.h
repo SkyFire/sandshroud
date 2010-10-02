@@ -30,37 +30,37 @@
 class SERVER_DECL WoWGuid
 {
 public:
-	
-	WoWGuid() 
+
+	WoWGuid()
 	{
 		Clear();
 	}
 
-	WoWGuid(uint64 guid) 
-	{
-		Clear();
-		Init(uint64(guid));
-	}
-
-	WoWGuid(uint32 guid) 
+	WoWGuid(uint64 guid)
 	{
 		Clear();
 		Init(uint64(guid));
 	}
 
-	WoWGuid(uint8 mask) 
+	WoWGuid(uint32 guid)
+	{
+		Clear();
+		Init(uint64(guid));
+	}
+
+	WoWGuid(uint8 mask)
 	{
 		Clear();
 		Init(uint8(mask));
 	}
 
-	WoWGuid(uint8 mask, uint8 *fields) 
+	WoWGuid(uint8 mask, uint8 *fields)
 	{
 		Clear();
 		Init(uint8(mask), fields);
 	}
 
-	~WoWGuid() 
+	~WoWGuid()
 	{
 		Clear();
 	}
@@ -104,9 +104,9 @@ public:
 		if (!BitCount8(guidmask))
 			return;
 
-		for(int i = 0; i < BitCount8(guidmask); i++)	 
+		for(int i = 0; i < BitCount8(guidmask); i++)
 			guidfields[i] = (fields[i]);
-		
+
 		fieldcount = BitCount8(guidmask);
 
 		_CompileByNew();

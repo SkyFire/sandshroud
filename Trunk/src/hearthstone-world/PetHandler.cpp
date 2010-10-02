@@ -34,7 +34,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
 	if(GET_TYPE_FROM_GUID(petGuid) == HIGHGUID_TYPE_UNIT)
 	{
 		Creature* pCharm = GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(petGuid));
-		if(!pCharm) 
+		if(!pCharm)
 			return;
 
 		// must be a mind controled creature..
@@ -77,14 +77,14 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
 
 
 			// Action time? Stand up !
-			if( misc!=PET_ACTION_STAY && pPet->GetStandState() == STANDSTATE_SIT ) 
+			if( misc!=PET_ACTION_STAY && pPet->GetStandState() == STANDSTATE_SIT )
 						pPet->SetStandState(STANDSTATE_STAND);
 
 			switch(misc)
 			{
 			case PET_ACTION_ATTACK:
 				{
-					
+
 					// make sure the target is attackable
 					if(pTarget == pPet || !isAttackable(pPet, pTarget))
 					{
@@ -140,7 +140,7 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
 		{
 			// misc == spellid
 			SpellEntry *entry = dbcSpell.LookupEntry(misc);
-			if(!entry) 
+			if(!entry)
 				return;
 
 			AI_Spell*sp = pPet->GetAISpellForSpellId(entry->Id);
@@ -237,14 +237,14 @@ void WorldSession::HandleStablePet(WorldPacket & recv_data)
 
 	// remove pet from world and association with player
 	Pet* pPet = _player->GetSummon();
-	if(pPet && pPet->GetUInt32Value(UNIT_CREATED_BY_SPELL) != 0) 
+	if(pPet && pPet->GetUInt32Value(UNIT_CREATED_BY_SPELL) != 0)
 		return;
-	
+
 	PlayerPet *pet = _player->GetPlayerPet(_player->GetUnstabledPetNumber());
 	if(!pet)
 		return;
 	pet->stablestate = STABLE_STATE_PASSIVE;
-	
+
 	if(pPet) pPet->Remove(false, true, true);	// no safedelete needed
 
 	WorldPacket data(1);
@@ -256,7 +256,7 @@ void WorldSession::HandleStablePet(WorldPacket & recv_data)
 void WorldSession::HandleUnstablePet(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN;
-	
+
 	uint64 npcguid = 0;
 	uint32 petnumber = 0;
 
@@ -267,7 +267,7 @@ void WorldSession::HandleUnstablePet(WorldPacket & recv_data)
 		OUT_DEBUG("PET SYSTEM: Player "I64FMT" tried to unstable non-existant pet %d", _player->GetGUID(), petnumber);
 		return;
 	}
-	
+
 	_player->SpawnPet(petnumber);
 	pet->stablestate = STABLE_STATE_ACTIVE;
 
@@ -380,7 +380,7 @@ void WorldSession::HandleBuyStableSlot(WorldPacket &recv_data)
 		return;
 	}
 	_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -cost);
-	
+
 	WorldPacket data(1);
 	data.SetOpcode(SMSG_STABLE_RESULT);
 	data << uint8(STABLERESULT_BUY_SLOT_SUCCESS);
@@ -472,7 +472,7 @@ void WorldSession::HandlePetUnlearn(WorldPacket & recv_data)
 		data << uint64( _player->GetGUID() );
 		data << uint32( 0 );
 		data << uint8( 2 );		//not enough money
-		return;	
+		return;
 	}
 	_player->ModUnsigned32Value( PLAYER_FIELD_COINAGE, -cost );
 	pPet->WipeSpells();
@@ -481,7 +481,7 @@ void WorldSession::HandlePetUnlearn(WorldPacket & recv_data)
 
 void WorldSession::HandleTotemDestroyed(WorldPacket & recv_data)
 {
-	// This code can handle destroying totem when it was right clicked in client. 
+	// This code can handle destroying totem when it was right clicked in client.
 	// But now this packet for some reason is also sent when server destroys the totem which leads to a bug.
 	// So leave it commented for now
 	/*if( !_player->IsInWorld() )
@@ -494,8 +494,8 @@ void WorldSession::HandleTotemDestroyed(WorldPacket & recv_data)
 	_player->SummonExpireSlot(slot);*/
 }
 
-void WorldSession::HandlePetLearnTalent( WorldPacket & recvPacket )  
-{  
+void WorldSession::HandlePetLearnTalent( WorldPacket & recvPacket )
+{
 	CHECK_INWORLD_RETURN;
 
 	uint64 guid = 0;

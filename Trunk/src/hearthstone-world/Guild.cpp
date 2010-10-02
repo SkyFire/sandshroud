@@ -317,8 +317,8 @@ void Guild::PromoteGuildMember(PlayerInfo * pMember, WorldSession * pClient)
 		return;
 	}
 
-	//as wowwiki says, a global rule should be set too: 
-	// Members of the guild can only perform promote/demote/remove actions on those of lower ranks than themselves. 
+	//as wowwiki says, a global rule should be set too:
+	// Members of the guild can only perform promote/demote/remove actions on those of lower ranks than themselves.
 	if(pClient != NULL )
 	{
 		PlayerInfo * Initiator = pClient->GetPlayer()->m_playerInfo;
@@ -394,8 +394,8 @@ void Guild::DemoteGuildMember(PlayerInfo * pMember, WorldSession * pClient)
 		return;
 	}
 
-	//as wowwiki says, a global rule should be set too: 
-	// Members of the guild can only perform promote/demote/remove actions on those of lower ranks than themselves. 
+	//as wowwiki says, a global rule should be set too:
+	// Members of the guild can only perform promote/demote/remove actions on those of lower ranks than themselves.
 	if(pClient != NULL )
 	{
 		PlayerInfo * Initiator = pClient->GetPlayer()->m_playerInfo;
@@ -814,8 +814,8 @@ void Guild::RemoveGuildMember(PlayerInfo * pMember, WorldSession * pClient)
 			Guild::SendGuildCommandResult(pClient, GUILD_CREATE_S, "", GUILD_PERMISSIONS);
 			return;
 		}
-		//as wowwiki says, a global rule should be set too: 
-		// Members of the guild can only perform promote/demote/remove actions on those of lower ranks than themselves. 
+		//as wowwiki says, a global rule should be set too:
+		// Members of the guild can only perform promote/demote/remove actions on those of lower ranks than themselves.
 		PlayerInfo * Initiator = pClient->GetPlayer()->m_playerInfo;
 		if( pMember != Initiator && pMember->guildRank->iId <= Initiator->guildRank->iId && Initiator->guildRank->iId != 0 )
 		{
@@ -1642,7 +1642,7 @@ void Guild::SendGuildInfo(WorldSession * pClient)
 void Guild::ChangeGuildName(char* name)
 {
 	m_guildName = name;
-	
+
 	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		Player* plr = itr->first->m_loggedInPlayer;
@@ -1654,11 +1654,11 @@ void Guild::ChangeGuildName(char* name)
 void Guild::ListGuildMembers(WorldSession* session)
 {
 	session->GetPlayer()->BroadcastMessage("Following Members are in the guild %s",m_guildName);
-	
+
 	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
 		if(itr->first != NULL)
 			session->GetPlayer()->BroadcastMessage("%s",itr->first->name);
 	}
-	
+
 }

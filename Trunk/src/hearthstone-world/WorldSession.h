@@ -52,7 +52,7 @@ enum MovementFlags
 
 	// Byte 2 (Resets on Situation Change)
 	MOVEFLAG_WALK						= 0x100,		//verified
-	MOVEFLAG_TAXI						= 0x200,		
+	MOVEFLAG_TAXI						= 0x200,
 	MOVEFLAG_NO_COLLISION				= 0x400,
 	MOVEFLAG_FLYING	    				= 0x800,		//verified
 	MOVEFLAG_REDIRECTED					= 0x1000,		//Jumping
@@ -136,14 +136,14 @@ struct AccountDataEntry
 // ? New 3.2.2 Account DataType Enums
 enum AccountDataTypes
 {
-	GLOBAL_CONFIG_CACHE				= 0,	// 0x01 
-	PER_CHARACTER_CONFIG_CACHE		= 1,	// 0x02 
-	GLOBAL_BINDINGS_CACHE			= 2,	// 0x04 
-	PER_CHARACTER_BINDINGS_CACHE	= 3,	// 0x08 
-	GLOBAL_MACROS_CACHE				= 4,	// 0x10 
-	PER_CHARACTER_MACROS_CACHE		= 5,	// 0x20 
-	PER_CHARACTER_LAYOUT_CACHE		= 6,	// 0x40 
-	PER_CHARACTER_CHAT_CACHE		= 7,	// 0x80 
+	GLOBAL_CONFIG_CACHE				= 0,	// 0x01
+	PER_CHARACTER_CONFIG_CACHE		= 1,	// 0x02
+	GLOBAL_BINDINGS_CACHE			= 2,	// 0x04
+	PER_CHARACTER_BINDINGS_CACHE	= 3,	// 0x08
+	GLOBAL_MACROS_CACHE				= 4,	// 0x10
+	PER_CHARACTER_MACROS_CACHE		= 5,	// 0x20
+	PER_CHARACTER_LAYOUT_CACHE		= 6,	// 0x40
+	PER_CHARACTER_CHAT_CACHE		= 7,	// 0x80
 	NUM_ACCOUNT_DATA_TYPES			= 8
 };
 #define GLOBAL_CACHE_MASK           0x15
@@ -208,7 +208,7 @@ public:
 
 	HEARTHSTONE_INLINE uint32 GetAccountId() const { return _accountId; }
 	HEARTHSTONE_INLINE Player* GetPlayer() { return _player; }
-	
+
 	/* Acct flags */
 	void SetAccountFlags(uint32 flags) { _accountFlags = flags; }
 	bool HasFlag(uint32 flag) { return (_accountFlags & flag) != 0; }
@@ -438,7 +438,7 @@ protected:
 	/// NPC opcodes (NPCHandler.cpp)
 	void HandleTabardVendorActivateOpcode(WorldPacket& recvPacket);
 	void HandleBankerActivateOpcode(WorldPacket& recvPacket);
-	void HandleBuyBankSlotOpcode(WorldPacket& recvPacket); 
+	void HandleBuyBankSlotOpcode(WorldPacket& recvPacket);
 	void HandleTrainerListOpcode(WorldPacket& recvPacket);
 	void HandleTrainerBuySpellOpcode(WorldPacket& recvPacket);
 	void HandleCharterShowListOpcode(WorldPacket& recvPacket);
@@ -574,9 +574,9 @@ protected:
 	void HandleSetTradeGold(WorldPacket & recv_data);
 
 	// Guild
-	void HandleGuildQuery(WorldPacket & recv_data);			   
-	void HandleInviteToGuild(WorldPacket & recv_data);			  
-	void HandleGuildAccept(WorldPacket & recv_data);			 
+	void HandleGuildQuery(WorldPacket & recv_data);
+	void HandleInviteToGuild(WorldPacket & recv_data);
+	void HandleGuildAccept(WorldPacket & recv_data);
 	void HandleGuildDecline(WorldPacket & recv_data);
 	void HandleGuildInfo(WorldPacket & recv_data);
 	void HandleGuildRoster(WorldPacket & recv_data);
@@ -659,7 +659,7 @@ protected:
 	void HandleTutorialReset( WorldPacket & recv_data );
 
 	// Other
-	void HandleMountSpecialAnimOpcode(WorldPacket& recv_data);	
+	void HandleMountSpecialAnimOpcode(WorldPacket& recv_data);
 	void HandleSelfResurrectOpcode(WorldPacket& recv_data);
 	void HandleUnlearnSkillOpcode(WorldPacket &recv_data);
 	void HandleRandomRollOpcode(WorldPacket &recv_data);

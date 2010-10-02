@@ -314,7 +314,7 @@ void StrandOfTheAncients::Respawn()
 		if(y == 0)
 			for(uint32 z = 0; z < 9; z++)
 				m_cannons[z]->Delete();
-	
+
 		m_gates[y]->Delete();
 		m_gateSigils[y]->Delete();
 		m_gateTransporters[y]->Delete();
@@ -348,7 +348,7 @@ void StrandOfTheAncients::Respawn()
 	{
 		m_gateTransporters[i] = m_mapMgr->CreateGameObject(192819);
 		if(m_gateTransporters[i] == NULL || !m_gateTransporters[i]->CreateFromProto(192819, m_mapMgr->GetMapId() , m_gateTransportersLocations[i][0] ,m_gateTransportersLocations[i][1], m_gateTransportersLocations[i][2], m_gateTransportersLocations[i][3], 0, 0, 0, 0))
-		{		
+		{
 			Log.LargeErrorMessage(LARGERRORMESSAGE_ERROR, "SOTA is being created and you are missing gameobjects. Terminating.");
 			abort();
 			return;
@@ -452,7 +452,7 @@ void StrandOfTheAncients::HookOnHK(Player* plr)
 LocationVector StrandOfTheAncients::GetStartingCoords(uint32 Team)
 {
 	uint32 sTeam = ( Team == Attackers ? 1 : 0 );
-	return LocationVector( SOTAStartLocations[sTeam][0], 
+	return LocationVector( SOTAStartLocations[sTeam][0],
 		SOTAStartLocations[sTeam][1],
 		SOTAStartLocations[sTeam][2] );
 }
@@ -468,11 +468,11 @@ void StrandOfTheAncients::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 {
 }
 
-void StrandOfTheAncients::HookOnShadowSight() 
+void StrandOfTheAncients::HookOnShadowSight()
 {
 }
 
-void StrandOfTheAncients::SetIsWeekend(bool isweekend) 
+void StrandOfTheAncients::SetIsWeekend(bool isweekend)
 {
 	m_isWeekend = isweekend;
 }

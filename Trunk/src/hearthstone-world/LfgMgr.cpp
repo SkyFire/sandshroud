@@ -51,8 +51,8 @@ LfgMgr::LfgMgr()
 
 LfgMgr::~LfgMgr()
 {
-	
-	
+
+
 }
 
 bool LfgMgr::AttemptLfgJoin(Player* pl, uint32 LfgDungeonId)

@@ -56,7 +56,7 @@ _logoutTime(0), permissions(NULL), permissioncount(0), _loggingOut(false), insta
 	m_jumpHackChances = 5;
 
 	for(uint32 x=0;x<8;x++)
-		sAccountData[x].data=NULL;	
+		sAccountData[x].data=NULL;
 }
 
 WorldSession::~WorldSession()
@@ -351,14 +351,14 @@ void WorldSession::LogoutPlayer(bool Save)
 		}
 
 		_player->GetItemInterface()->EmptyBuyBack();
-		
+
 		sLfgMgr.RemovePlayerFromLfgQueues( _player );
-		
+
 		// Save HP/Mana
 		_player->load_health = _player->GetUInt32Value( UNIT_FIELD_HEALTH );
 		_player->load_mana = _player->GetUInt32Value( UNIT_FIELD_POWER1 );
-		
-		objmgr.RemovePlayer( _player );		
+
+		objmgr.RemovePlayer( _player );
 		_player->ok_to_remove = true;
 
 		if( _player->GetSummon() != NULL )
@@ -376,7 +376,7 @@ void WorldSession::LogoutPlayer(bool Save)
 		_player->RemoveAllAuras();
 		if( _player->IsInWorld() )
 			_player->RemoveFromWorld();
-		
+
 		_player->m_playerInfo->m_loggedInPlayer = NULLPLR;
 
 		if(_player->GetGroup()) // Init group logout checks.
@@ -416,7 +416,7 @@ void WorldSession::LogoutPlayer(bool Save)
 					dirty = true;
 					sAccountData[ui].bIsDirty = false;
 				}
-			}			
+			}
 			if(dirty)
 			{
 				ss	<<" WHERE acct="<< _accountId <<";";
@@ -485,7 +485,7 @@ void WorldSession::LoadSecurity(std::string securitystring)
 	int k = 0;
 	for(std::list<char>::iterator itr = tmp.begin(); itr != tmp.end(); itr++)
 		permissions[k++] = (*itr);
-	
+
 	if(permissions[tmp.size()] != 0)
 		permissions[tmp.size()] = 0;
 
@@ -554,7 +554,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_CHAR_CUSTOMIZE].handler						= &WorldSession::HandleCharCustomizeOpcode;
 	WorldPacketHandlers[CMSG_CHAR_CUSTOMIZE].status							= STATUS_AUTHED;
 
-	WorldPacketHandlers[CMSG_PLAYER_LOGIN].handler							= &WorldSession::HandlePlayerLoginOpcode; 
+	WorldPacketHandlers[CMSG_PLAYER_LOGIN].handler							= &WorldSession::HandlePlayerLoginOpcode;
 	WorldPacketHandlers[CMSG_PLAYER_LOGIN].status							= STATUS_AUTHED;
 
 	// Queries

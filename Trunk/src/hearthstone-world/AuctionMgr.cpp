@@ -55,7 +55,7 @@ void AuctionMgr::LoadAuctionHouses()
 	res = WorldDatabase.Query("SELECT creature_entry, `group` FROM auctionhouse");
 	if(res)
 	{
-		do 
+		do
 		{
 			auctionHouseEntryMap.insert( make_pair( res->Fetch()[0].GetUInt32(), tempmap[res->Fetch()[1].GetUInt32()] ) );
 		} while(res->NextRow());
@@ -74,7 +74,7 @@ void AuctionMgr::Update()
 {
 	if((++loopcount % 100))
 		return;
-		
+
 	vector<AuctionHouse*>::iterator itr = auctionHouses.begin();
 	for(; itr != auctionHouses.end(); itr++)
 	{

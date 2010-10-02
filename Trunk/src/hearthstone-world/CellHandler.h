@@ -56,7 +56,7 @@ public:
 
 	HEARTHSTONE_INLINE bool Allocated(uint32 x, uint32 y) { return _cells[x][y] != NULL; }
 
-	static uint32 GetPosX(float x); 
+	static uint32 GetPosX(float x);
 	static uint32 GetPosY(float y);
 
 	HEARTHSTONE_INLINE Map *GetBaseMap() { return _map; }
@@ -119,7 +119,7 @@ CellHandler<Class>::~CellHandler()
 				if(_cells[i][j])
 					delete _cells[i][j];
 			}
-			delete [] _cells[i];	
+			delete [] _cells[i];
 		}
 		delete [] _cells;
 	}
@@ -128,8 +128,8 @@ CellHandler<Class>::~CellHandler()
 template <class Class>
 Class* CellHandler<Class>::Create(uint32 x, uint32 y)
 {
-	if( x >= _sizeX ||  y >= _sizeY ) 
-		return NULL; 
+	if( x >= _sizeX ||  y >= _sizeY )
+		return NULL;
 
 	if(!_cells[x])
 	{
@@ -154,8 +154,8 @@ Class* CellHandler<Class>::CreateByCoords(float x, float y)
 template <class Class>
 void CellHandler<Class>::Remove(uint32 x, uint32 y)
 {
-	if( x >= _sizeX ||  y >= _sizeY ) 
-		return; 
+	if( x >= _sizeX ||  y >= _sizeY )
+		return;
 
 	if(!_cells[x]) return;
 	ASSERT(_cells[x][y] != NULL);

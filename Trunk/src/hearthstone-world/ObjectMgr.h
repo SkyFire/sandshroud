@@ -50,9 +50,9 @@ enum
 	GM_TICKET_CHAT_OPCODE_CONTENT			= 4,
 	GM_TICKET_CHAT_OPCODE_APPENDCONTENT		= 5,
 	GM_TICKET_CHAT_OPCODE_REMOVED			= 6,
-	GM_TICKET_CHAT_OPCODE_UPDATED			= 7, 
+	GM_TICKET_CHAT_OPCODE_UPDATED			= 7,
 	GM_TICKET_CHAT_OPCODE_ASSIGNED			= 8,
-	GM_TICKET_CHAT_OPCODE_RELEASED			= 9, 
+	GM_TICKET_CHAT_OPCODE_RELEASED			= 9,
 	GM_TICKET_CHAT_OPCODE_COMMENT			= 10,
 	GM_TICKET_CHAT_OPCODE_ONLINESTATE		= 11
 };
@@ -269,7 +269,7 @@ enum AREATABLE_CATEGORY
 };
 
 #define MAX_PREDEFINED_NEXTLEVELXP 80
-static const uint32 NextLevelXp[MAX_PREDEFINED_NEXTLEVELXP]= 
+static const uint32 NextLevelXp[MAX_PREDEFINED_NEXTLEVELXP]=
 {
 	400,	900,	1400,	2100,	2800,	3600,	4500,	5400,	6500,	7600,
 	8700,	9800,	11000,	12300,	13600,	15000,	16400,	17800,	19300,	20800,
@@ -344,7 +344,7 @@ public:
 	{
 		delete [] Signatures;
 	}
-	
+
 	void SaveToDB();
 	void Destroy();		 // When item is deleted.
 
@@ -420,7 +420,7 @@ public:
 
 	// Set typedef's
 	typedef std::set<AchievementCriteriaEntry*>							AchievementCriteriaSet;
-	
+
 	// HashMap typedef's
 	typedef HM_NAMESPACE::hash_map<uint64, Item* >						ItemMap;
 	typedef HM_NAMESPACE::hash_map<uint32, CorpseData*>					CorpseCollectorMap;
@@ -454,7 +454,7 @@ public:
 
 	Player* GetPlayer(const char* name, bool caseSensitive = true);
 	Player* GetPlayer(uint32 guid);
-	
+
 	CorpseMap m_corpses;
 	Mutex _corpseslock;
 	Mutex m_corpseguidlock;
@@ -464,7 +464,7 @@ public:
 
 	Mutex m_achievementLock;
 	AchievementCriteriaMap m_achievementCriteriaMap;
-	
+
 	Item* CreateItem(uint32 entry,Player* owner);
 	Item* LoadItem(uint64 guid);
 
@@ -519,8 +519,8 @@ public:
 	void AddGuild(Guild *pGuild);
 	uint32 GetTotalGuildCount();
 	bool RemoveGuild(uint32 guildId);
-	Guild* GetGuild(uint32 guildId);  
-	Guild* GetGuildByLeaderGuid(uint64 leaderGuid);  
+	Guild* GetGuild(uint32 guildId);
+	Guild* GetGuildByLeaderGuid(uint64 leaderGuid);
 	Guild* GetGuildByGuildName(std::string guildName);
 
 	void LoadAchievements();
@@ -579,7 +579,7 @@ public:
 	PlayerStorageMap _players;
 	RWLock _playerslock;
 	uint32 m_hiPlayerGuid;
-	
+
 	void AddPlayer(Player* p);//add it to global storage
 	void RemovePlayer(Player* p);
 
@@ -619,7 +619,7 @@ public:
 	uint32 GenerateLowGuid(uint32 guidhigh);
 	uint32 GenerateMailID();
 	uint64 GenerateTicketID();
-	
+
 	uint64 GenerateEquipmentSetGuid();
 
 	void LoadTransporters();
@@ -635,7 +635,7 @@ public:
 	void LoadRandomItemCreation();
 	void LoadRandomCardCreation();
 	void LoadScrollCreation();
-	void CreateGossipMenuForPlayer(GossipMenu** Location, uint64 Guid, uint32 TextID, Player* Plr); 
+	void CreateGossipMenuForPlayer(GossipMenu** Location, uint64 Guid, uint32 TextID, Player* Plr);
 
 	QueryResult* SQLCheckExists(const char* tablename, const char* columnname, uint64 columnvalue);
 	LevelInfo * GetLevelInfo(uint32 Race, uint32 Class, uint32 Level);
@@ -732,13 +732,13 @@ protected:
 	HM_NAMESPACE::hash_map<uint32, InstanceReputationModifier*> m_reputation_instance;
 
 	HM_NAMESPACE::hash_map<uint32, Charter*> m_charters[NUM_CHARTER_TYPES];
-	
+
 	set<uint32> m_disabled_spells;
 
 	uint64 TransportersCount;
 	HM_NAMESPACE::hash_map<uint32,PlayerInfo*> m_playersinfo;
 	PlayerNameStringIndexMap m_playersInfoByName;
-	
+
 	HM_NAMESPACE::hash_map<uint32,WayPointMap*> m_waypoints;//stored by spawnid
 	uint32 m_hiCreatureSpawnId;
 
@@ -746,7 +746,7 @@ protected:
 	Mutex m_GOSpawnIdMutex;
 
 	uint32 m_hiGameObjectSpawnId;
-	
+
 	///// Object Tables ////
 	// These tables are modified as creatures are created and destroyed in the world
 

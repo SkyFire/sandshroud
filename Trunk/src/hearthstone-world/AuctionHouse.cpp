@@ -193,23 +193,23 @@ void AuctionHouse::RemoveAuction(Auction * auct)
 			Player* plr = objmgr.GetPlayer(auct->Owner);
 			if(cut && plr && plr->GetUInt32Value(PLAYER_FIELD_COINAGE) >= cut)
 				plr->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -((int32)cut));
-			
+
 			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, GetID(), auct->Owner, subject, "", 0, 0, auct->pItem->GetGUID(), 62,true);
-			
+
 			// return bidders money
 			if(auct->HighestBidder)
 			{
-				sMailSystem.DeliverMessage(MAILTYPE_AUCTION, GetID(), auct->HighestBidder, subject, "", auct->HighestBid, 
+				sMailSystem.DeliverMessage(MAILTYPE_AUCTION, GetID(), auct->HighestBidder, subject, "", auct->HighestBid,
 					0, 0, 62,true);
 			}
-			
+
 		}break;
 	}
 
 	// Remove the auction from the hashmap.
 	auctionLock.AcquireWriteLock();
 	itemLock.AcquireWriteLock();
-	
+
 	auctions.erase(auct->Id);
 	auctionedItems.erase(auct->pItem->GetGUID());
 
@@ -259,16 +259,16 @@ void Auction::AddToPacket(WorldPacket & data)
 	* For what I have seen ItemRandomSuffix is like RandomItemProperty
 	* The only difference is has is that it has a modifier.
 	* That is the result of jewelcrafting, the effect is that the
-	* enchantment is variable. That means that a enchantment can be +1 and 
+	* enchantment is variable. That means that a enchantment can be +1 and
 	* with more Jem's +12 or so.
 	* Decription for lookup: You get the enchantmentSuffixID and search the
 	* DBC for the last 1 - 3 value's(depending on the enchantment).
-	* That value is what I call EnchantmentValue. You guys might find a 
+	* That value is what I call EnchantmentValue. You guys might find a
 	* better name but for now its good enough. The formula to calculate
 	* The ingame "GAIN" is:
-	* (Modifier / 10000) * enchantmentvalue = EnchantmentGain;	
+	* (Modifier / 10000) * enchantmentvalue = EnchantmentGain;
 	*/
-	
+
 	data << uint32(0);				  // Unknown
 	data << uint32(0);				  // Unknown
 	data << uint32(0);				  // Unknown
@@ -308,7 +308,7 @@ void AuctionHouse::SendBidListPacket(Player* plr, WorldPacket * packet)
 			auct->AddToPacket(data);
 			(*(uint32*)&data.contents()[0])++;
 			++count;
-		}			
+		}
 	}
 	data << count;
 	auctionLock.ReleaseReadLock();
@@ -359,7 +359,7 @@ void AuctionHouse::SendOwnerListPacket(Player* plr, WorldPacket * packet)
 			auct->AddToPacket(data);
 			(*(uint32*)&data.contents()[0])++;
 			++count;
-		}			
+		}
 	}
 	data << count;
 	auctionLock.ReleaseReadLock();
@@ -369,14 +369,14 @@ void AuctionHouse::SendOwnerListPacket(Player* plr, WorldPacket * packet)
 void AuctionHouse::SendAuctionNotificationPacket(Player* plr, Auction * auct)
 {
 	WorldPacket data(SMSG_AUCTION_BIDDER_NOTIFICATION, 32);
-	data << GetID(); 
+	data << GetID();
 	data << auct->Id;
 	data << uint64(auct->HighestBidder);
 	data << uint32(0);
 	data << uint32(0);
 	data << auct->pItem->GetEntry();
 	data << uint32(0);
-	
+
 	plr->GetSession()->SendPacket(&data);
 }
 
@@ -654,11 +654,11 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 
 			if(proto->Class == 4 && proto->SubClass && !(plr->GetArmorProficiency()&(((uint32)(1))<<proto->SubClass)))
 				continue;
-			
+
 			if(proto->Class == 2 && proto->SubClass && !(plr->GetWeaponProficiency()&(((uint32)(1))<<proto->SubClass)))
 				continue;
 		}
-		
+
         // Page system.
         ++counted_items;
         if(counted_items >= start_index + 50)
@@ -670,7 +670,7 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 		itr->second->AddToPacket(data);
 		(*(uint32*)&data.contents()[0])++;
 	}
-	
+
 	// total count
 	data << uint32(1 + counted_items);
 	auctionLock.ReleaseReadLock();
@@ -705,7 +705,7 @@ void AuctionHouse::LoadAuctions()
 		fields = result->Fetch();
 		auct = new Auction;
 		auct->Id = fields[0].GetUInt32();
-		
+
 		//Field *itemfields = objmgr.GetCachedItem(fields[2].GetUInt32());
 		//Item* pItem = (itemfields == NULL) ? NULL : objmgr.LoadItem(itemfields);
 		Item* pItem = objmgr.LoadItem(fields[2].GetUInt64());

@@ -39,7 +39,7 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 }
 
 Vehicle::~Vehicle()
-{	
+{
 	m_ppassengerCount = 0;
 	if( IsInWorld() )
 		RemoveFromWorld(false, true);
@@ -600,7 +600,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 			}
 		}
 	}
-		
+
 	if(slot == 0)
 	{
 		m_redirectSpellPackets = NULLPLR;
@@ -860,7 +860,7 @@ void Vehicle::setDeathState(DeathState s)
 	if( s == JUST_DIED && m_CreatedFromSpell)
 		SafeDelete();
 }
-	
+
 
 /* To change a vehicles speed we must send a Force Speed
 change packet to the client. SpeedType takes values from
@@ -901,7 +901,7 @@ void Vehicle::SetSpeed(uint8 SpeedType, float value)
 		data << uint32(0);
 		data << value;
 	}
-	
+
 	switch(SpeedType)
 	{
 	case RUN:
@@ -931,7 +931,7 @@ void Vehicle::SetSpeed(uint8 SpeedType, float value)
 		}break;
 	default:return;
 	}
-	
+
 	SendMessageToSet(&data , true);
 
 }

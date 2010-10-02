@@ -284,7 +284,7 @@ Friendly		6,000
 Neutral			3,000
 Unfriendly		3,000	 Cannot buy, sell or interact.
 Hostile			3,000	 You will always be attacked on sight
-Hated			36,000 
+Hated			36,000
 */
 enum Standing
 {
@@ -643,7 +643,7 @@ enum DUEL_WINNER
 };
 
 #define PLAYER_ATTACK_TIMEOUT_INTERVAL	5000
-#define PLAYER_FORCED_RESURECT_INTERVAL	360000 // 1000*60*6= 6 minutes 
+#define PLAYER_FORCED_RESURECT_INTERVAL	360000 // 1000*60*6= 6 minutes
 
 // Crow: Equipment set shit.
 enum EquipmentSetUpdateState
@@ -694,7 +694,7 @@ enum SPELL_INDEX
 	SPELL_TYPE_INDEX_EARTH_SHIELD	= 7,
 	SPELL_TYPE_INDEX_CYCLONE		= 8,
 	SPELL_TYPE_INDEX_BANISH			= 9,
-	SPELL_TYPE_INDEX_JUDGEMENT		= 10,	
+	SPELL_TYPE_INDEX_JUDGEMENT		= 10,
 	SPELL_TYPE_INDEX_REPENTANCE		= 11,
 	SPELL_TYPE_INDEX_SLOW			= 12,
 	NUM_SPELL_TYPE_INDEX			= 13,
@@ -812,7 +812,7 @@ protected:
 	// COOLDOWNS
 	PlayerCooldownMap m_cooldownMap[NUM_COOLDOWN_TYPES];
 	uint32 m_globalCooldown;
-	
+
 public:
 	void Cooldown_OnCancel(SpellEntry *pSpell);
 	void Cooldown_AddStart(SpellEntry * pSpell);
@@ -845,9 +845,9 @@ public:
 	void AddToWorld(MapMgr* pMapMgr);
 	void RemoveFromWorld();
 	bool Create ( WorldPacket &data );
-	
+
 	void Update( uint32 time );
-	
+
 	void BuildFlagUpdateForNonGroupSet(uint32 index, uint32 flag);
 	std::string m_afk_reason;
 	void SetAFKReason(std::string reason) { m_afk_reason = reason; };
@@ -876,7 +876,7 @@ public:
 	HEARTHSTONE_INLINE void			SetTaxiPath		(TaxiPath *path) { m_CurrentTaxiPath = path; }
 	HEARTHSTONE_INLINE void			SetTaxiPos()	{m_taxi_pos_x = m_position.x; m_taxi_pos_y = m_position.y; m_taxi_pos_z = m_position.z;}
 	HEARTHSTONE_INLINE void			UnSetTaxiPos()	{m_taxi_pos_x = 0; m_taxi_pos_y = 0; m_taxi_pos_z = 0; }
- 
+
 	// Taxi related variables
 	vector<TaxiPath*>	m_taxiPaths;
 	TaxiPath*			m_CurrentTaxiPath;
@@ -893,7 +893,7 @@ public:
 	/************************************************************************/
 	/* Quests																*/
 	/************************************************************************/
-	bool HasQuests() 
+	bool HasQuests()
 	{
 #ifdef CATACLYSM
 		for(int i = 0; i < 50; i++)
@@ -925,7 +925,7 @@ public:
 	void				AddToFinishedQuests(uint32 quest_id);
 	void				AddToFinishedDailyQuests(uint32 quest_id);
 	void				EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_slot, uint32 interval);
-	
+
 	bool				HasFinishedQuest(uint32 quest_id);
 	bool				HasFinishedDailyQuest(uint32 quest_id);
 	bool				HasQuestForItem(uint32 itemid);
@@ -974,7 +974,7 @@ public:
 
 	const uint64& GetSelection( ) const { return m_curSelection; }
 	void SetSelection(const uint64 &guid) { m_curSelection = guid; }
-	
+
 	/************************************************************************/
 	/* Spells																*/
 	/************************************************************************/
@@ -1031,7 +1031,7 @@ public:
 	void				setAction(uint8 button, uint16 action, uint8 type, uint8 misc);
 	void				SendInitialActions();
 	bool				m_actionsDirty;
-	
+
 	/************************************************************************/
 	/* Reputation															*/
 	/************************************************************************/
@@ -1050,7 +1050,7 @@ public:
 
 	bool titanGrip;
 	void ResetTitansGrip();
-	
+
 	/************************************************************************/
 	/* Factions																*/
 	/************************************************************************/
@@ -1113,7 +1113,7 @@ public:
 	void CreateResetGuardHostileFlagEvent()
 	{
 		event_RemoveEvents( EVENT_GUARD_HOSTILE );
-		sEventMgr.AddEvent(this, &Player::SetGuardHostileFlag, false, EVENT_GUARD_HOSTILE, 10000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);	
+		sEventMgr.AddEvent(this, &Player::SetGuardHostileFlag, false, EVENT_GUARD_HOSTILE, 10000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
 
 	uint32 m_hasInRangeGuards;
@@ -1162,7 +1162,7 @@ public:
 		mTradeTarget = 0;
 		m_tradeSequence = 2;
 	}
-	
+
 	/************************************************************************/
 	/* Pets                                                                 */
 	/************************************************************************/
@@ -1453,7 +1453,7 @@ public:
 	uint32 m_bgSlot;
 	bool m_bgRatedQueue;
 	uint32 m_bgEntryPointMap;
-	float m_bgEntryPointX;	
+	float m_bgEntryPointX;
 	float m_bgEntryPointY;
 	float m_bgEntryPointZ;
 	float m_bgEntryPointO;
@@ -1484,7 +1484,7 @@ public:
 	bool m_massSummonEnabled;
 
 	uint32 m_moltenFuryDamageIncreasePct;
-	
+
 	void CalcResistance(uint32 type);
 	HEARTHSTONE_INLINE float res_M_crit_get(){return m_resist_critical[0];}
 	HEARTHSTONE_INLINE void res_M_crit_set(float newvalue){m_resist_critical[0]=newvalue;}
@@ -1508,7 +1508,7 @@ public:
 	uint32 m_ModInterrMRegenPCT;
 	int32 m_ModInterrMRegen;
 	uint32 m_casted_amount[7]; //Last casted spells amounts. Need for some spells. Like Ignite etc. DOesn't count HoTs and DoTs. Only directs
-	
+
 	uint32 FlatStatModPos[5];
 	uint32 FlatStatModNeg[5];
 	uint32 StatModPctPos[5];
@@ -1521,7 +1521,7 @@ public:
 	int32 DetectedRange;
 	float PctIgnoreRegenModifier;
 	uint32 m_retainedrage;
-/*	
+/*
 	union {
 		float mRatingToPct[37];
 		uint32 mRatingToPoint[37]; //block, skill.. cant be decimal values
@@ -1538,7 +1538,7 @@ public:
 	void LoseRage(int32 value);
 	void LooseRunic(int32 value);
 	void LoosePower(uint32 powerField, int32 value);
-	
+
     uint32 SoulStone;
 	uint32 SoulStoneReceiver;
 	void removeSoulStone();
@@ -1556,7 +1556,7 @@ public:
 	int32 rageFromDamageDealt;
 	// GameObject commands
 	GameObject* m_GM_SelectedGO;
-	
+
 #ifndef CLUSTERING
 	void _Relocate(uint32 mapid,const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id);
 #else
@@ -1571,7 +1571,7 @@ public:
 	uint32 m_MountSpellId;
 
 	HEARTHSTONE_INLINE bool IsMounted() {return (m_MountSpellId!=0 ? true : false); }
-	
+
 	bool bHasBindDialogOpen;
 	bool bGMTagOn;
 	uint32 TrackingSpell;
@@ -1584,7 +1584,7 @@ public:
 	uint32 m_KickDelay;
 	Unit* m_CurrentCharm;
 	Transporter* m_CurrentTransporter;
-	
+
 	Object* GetSummonedObject () {return m_SummonedObject;};
 	void SetSummonedObject (Object* t_SummonedObject) {m_SummonedObject = t_SummonedObject;};
 	uint32 roll;
@@ -1714,7 +1714,7 @@ public:
 	void SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase = 1);
 	void EjectFromInstance();
 	bool raidgrouponlysent;
-	
+
 	void EventSafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1)
 	{
 		SafeTeleport(MapID, InstanceID, vec, phase);
@@ -1725,10 +1725,10 @@ public:
 	******************/
 	uint32 m_pvpTimer;
 
-	HEARTHSTONE_INLINE void AddCoins( int32 coins ){ 
+	HEARTHSTONE_INLINE void AddCoins( int32 coins ){
 		ModUnsigned32Value( PLAYER_FIELD_COINAGE , coins );
 	}
-	HEARTHSTONE_INLINE void TakeCoins( int32 coins ){ 
+	HEARTHSTONE_INLINE void TakeCoins( int32 coins ){
 		ModUnsigned32Value(PLAYER_FIELD_COINAGE, -coins);
 	}
 
@@ -1736,7 +1736,7 @@ public:
 	HEARTHSTONE_INLINE void ResetPvPTimer();
 	//! Stop the timer for pvp off
 	HEARTHSTONE_INLINE void StopPvPTimer() { RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TIMER); m_pvpTimer = 0; }
-	
+
 	//! Called at login to add the honorless buff, etc.
 	void LoginPvPSetup();
 	//! Update our pvp area (called when zone changes)
@@ -1809,7 +1809,7 @@ public:
 	uint32 m_cheatDeathRank;
 
 	void SendAreaTriggerMessage(const char * message, ...);
-        
+
 	// Trade Target
 	//Player* getTradeTarget() {return mTradeTarget;};
 
@@ -2010,9 +2010,9 @@ protected:
 	Pet*        m_Summon;
 	uint32      m_PetNumberMax;
 	std::map<uint32, PlayerPet*> m_Pets;
-	
+
     uint32      m_invitersGuid; // It is guild inviters guid ,0 when its not used
-    
+
 
     // bind
 	float m_bind_pos_x;
@@ -2044,7 +2044,7 @@ protected:
 	uint32 m_manafromspell;
 	uint32 m_healthfromitems;
 	uint32 m_manafromitems;
-	
+
 	uint32 armor_proficiency;
 	uint32 weapon_proficiency;
 	// Talents
@@ -2117,10 +2117,10 @@ private:
 	set<uint32> m_hasFriendList;
 
 	void Social_SendFriendList(uint32 flag);
-	
+
 	void Social_AddFriend(const char * name, const char * note);
 	void Social_RemoveFriend(uint32 guid);
-	
+
 	void Social_AddIgnore(const char * name);
 	void Social_RemoveIgnore(uint32 guid);
 
@@ -2141,7 +2141,7 @@ public:
 	PlayerInfo * getPlayerInfo() const {return m_playerInfo;}
 	uint32 m_skipCastCheck[3];  // spell group relation of spell types that should ignore some cancast checks
 	bool m_castFilterEnabled;
-	uint32 m_castFilter[3];	// spell group relation of only spells that player can currently cast 
+	uint32 m_castFilter[3];	// spell group relation of only spells that player can currently cast
 
 	uint32 m_vampiricEmbrace;
 	void VampiricSpell(uint32 dmg, Unit* pTarget, SpellEntry *spellinfo);

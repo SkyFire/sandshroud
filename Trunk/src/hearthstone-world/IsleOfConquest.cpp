@@ -32,14 +32,14 @@
 // Graveyard locations
 	static float GraveyardLocations[IOC_NUM_CONTROL_POINTS][4] =
 	{
-		{ 0.0f, 0.0f, 0.0f },		// The Oil Derrick 
+		{ 0.0f, 0.0f, 0.0f },		// The Oil Derrick
 		{ 0.0f, 0.0f, 0.0f },		// The Cobalt Mine
 		{ 0.0f, 0.0f, 0.0f },		// The Docks
 		{ 0.0f, 0.0f, 0.0f },		// The Airship Hangar
 		{ 0.0f, 0.0f, 0.0f },		// The Siege Workshop
 	};
 
-	
+
 	static float NoBaseGYLocations[2][4] =
 	{
 		{ 278.28f, -883.65f, 49.92f, 1.57f },	// ALLIANCE
@@ -56,11 +56,11 @@
 		"Allaince Keep",
 		"Horde Keep",
 	};
-	
+
 	static uint32 ControlPointGoIds[IOC_NUM_CONTROL_POINTS][5] =
 	{
 		  // NEUTRAL    ALLIANCE-ATTACK    HORDE-ATTACK    ALLIANCE-CONTROLLED    HORDE_CONTROLLED
-		{ 195343,       180085,            180086,         180076,                180078 },			// The Oil Derrick	
+		{ 195343,       180085,            180086,         180076,                180078 },			// The Oil Derrick
 		{ 195338,       180085,            180086,         180076,                180078 },			// The Cobalt Mine
 		{ 195157,       180085,            180086,         180076,                180078 },			// The Docks
 		{ 195158,       180085,            180086,         180076,                180078 },			// The Airship Hangar
@@ -79,13 +79,13 @@
 		{ 301.04f, -780.49f, 48.91f, 6.03f},		// Alliance Keep
 		{ 1278.59f, -704.18f, 48.91f, 3.19f},		// Horde Keep
 	};
-	
+
 	static float demolisherSalesmen[2][5] =
 	{
 		{35345, 763.660f, -880.25f , 18.55f, 3.14f},	// Gnomish Mechanic (A)
 		{35346, 763.660f, -880.25f , 18.55f, 3.14f},	// Goblin Mechanic	(H)
 	};
-	
+
 	static float iocTransporterDestination[12][4] =
 	{
 		{429.79f, -800.825f, 49.03f, 3.23f},	// Alliance front gate out
@@ -101,7 +101,7 @@
 		{1196.47f, -861.29f, 49.17f, 4.04f},	// Horde east gate out
 		{1196.06f, -842.70f, 49.13f, 0.30f},	// Horde east gate in
 	};
-	
+
 	static float iocTransporterLocation[12][4] =
 	{
 		{429.79f, -800.825f, 49.03f, 3.23f},	// Alliance front gate out
@@ -117,8 +117,8 @@
 		{1196.47f, -861.29f, 49.17f, 4.04f},	// Horde east gate out
 		{1196.06f, -842.70f, 49.13f, 0.30f},	// Horde east gate in
 	};
-	
-	static float iocGatesLocation[6][4] = 
+
+	static float iocGatesLocation[6][4] =
 	{
 		{352.70269f, -762.66369f, 48.91628f, 4.6866f},		// Alliance West gate
 		{412.41436f, - 833.83011f, 48.5479f, 3.11868f},		// Alliance Front gate
@@ -127,7 +127,7 @@
 		{1218.54126f, -676.44390f, 48.68709f, 1.53727f},	// Horde West gate
 		{1218.35607f, -850.55456f, 48.91478f, 4.77781f},	// Horde East gate
 	};
-	
+
 	static uint32 gatesIds[6] =
 	{
 		195698,
@@ -188,7 +188,7 @@ float CalcDistance(float x1, float y1, float z1, float x2, float y2, float z2)
 	float dz = z1 - z2;
 	return sqrt(dx*dx + dy*dy + dz*dz);
 }
-	
+
 IsleOfConquest::IsleOfConquest(MapMgr* mgr, uint32 id, uint32 lgroup, uint32 t) : CBattleground(mgr,id,lgroup,t)
 {
 	for(uint32 i = 0; i < IOC_NUM_CONTROL_POINTS; i++)
@@ -385,7 +385,7 @@ void IsleOfConquest::SpawnControlPoint(uint32 Id, uint32 Type)
 		// remove it if it exists
 		if(m_ioccontrolPointAuras[Id]!=NULL && m_ioccontrolPointAuras[Id]->IsInWorld())
 			m_ioccontrolPointAuras[Id]->RemoveFromWorld(false);
-			
+
 		return;
 	}
 
@@ -411,7 +411,7 @@ void IsleOfConquest::SpawnControlPoint(uint32 Id, uint32 Type)
 		m_ioccontrolPointAuras[Id]->SetUInt32Value(GAMEOBJECT_DISPLAYID, gi_aura->DisplayID);
 		m_ioccontrolPointAuras[Id]->SetInfo(gi_aura);
 		m_ioccontrolPointAuras[Id]->PushToWorld(m_mapMgr);
-	}	
+	}
 }
 
 void IsleOfConquest::CaptureControlPoint(uint32 Id, uint32 Team)
@@ -427,7 +427,7 @@ void IsleOfConquest::CaptureControlPoint(uint32 Id, uint32 Team)
 	if(m_basesAssaultedBy[Id] != (int32)Team)
 		return;
 
-	
+
 	m_basesLastOwnedBy[Id] = Team;
 
 	m_flagIsVirgin[Id] = false;
@@ -449,7 +449,7 @@ void IsleOfConquest::CaptureControlPoint(uint32 Id, uint32 Team)
 	// send the chat message/sounds out
 	PlaySoundToAll(Team ? SOUND_HORDE_SCORES : SOUND_ALLIANCE_SCORES);
 	SendChatMessage(Team ? CHAT_MSG_BG_SYSTEM_HORDE : CHAT_MSG_BG_SYSTEM_ALLIANCE, 0, "The %s has taken the %s!", Team ? "Horde" : "Alliance", ControlPointNames[Id]);
-	
+
 	// update the overhead display on the clients (world states)
 	m_capturedBases[Team]++;
 	m_mapMgr->GetStateManager().UpdateWorldState(Team ? WORLDSTATE_AB_HORDE_CAPTUREBASE : WORLDSTATE_AB_ALLIANCE_CAPTUREBASE, m_capturedBases[Team]);
@@ -460,7 +460,7 @@ void IsleOfConquest::CaptureControlPoint(uint32 Id, uint32 Team)
 	// update the map
 	m_mapMgr->GetStateManager().UpdateWorldState(AssaultFields[Id][Team], 0);
 	m_mapMgr->GetStateManager().UpdateWorldState(OwnedFields[Id][Team], 1);
-	
+
 	if(Id == 5)
 		Updateworkshop(Team);
 }
@@ -469,9 +469,9 @@ void IsleOfConquest::Updateworkshop(uint32 Team)
 {
 	if(m_salesman != NULL)
 		m_salesman->Despawn(0,0);
-		
+
 	m_salesman = SpawnCreature(demolisherSalesmen[Team][0], demolisherSalesmen[Team][1], demolisherSalesmen[Team][2], demolisherSalesmen[Team][3], demolisherSalesmen[Team][4]);
-	
+
 	m_salesman->PushToWorld(m_mapMgr);
 }
 
@@ -560,7 +560,7 @@ void IsleOfConquest::AssaultControlPoint(Player* pPlayer, uint32 Id)
 		sEventMgr.RemoveEvents(this, EVENT_IOC_CAPTURE_CP_1 + Id);
 
 		// no need to remove the spawn, SpawnControlPoint will do this.
-	} 
+	}
 
 	m_basesAssaultedBy[Id] = Team;
 
@@ -647,14 +647,14 @@ void IsleOfConquest::OnCreate()
 
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_SCORE, 1);
 	sm.CreateWorldState(WORLDSTATE_IOC_HORDE_SCORE, 1);
-	
+
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_EAST_GATE, 1);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_GATE_DESTROYED_1, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_GATE_DESTROYED_2, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_GATE_DESTROYED_3, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_WEST_GATE, 1);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_FRONT_GATE, 1);
-	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_KEEP_ALLIANCE_CONTROLLED, 0);	
+	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_KEEP_ALLIANCE_CONTROLLED, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_KEEP_HORDE_CONTROLLED, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_KEEP_ALLIANCE_ASSAULTED, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_ALLIANCE_KEEP_HORDE_ASSAULTED, 0);
@@ -688,23 +688,23 @@ void IsleOfConquest::OnCreate()
 	sm.CreateWorldState(WORLDSTATE_IOC_WORKSHOP_HORDE_CONTROLLED, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_WORKSHOP_ALLIANCE_ASSAULTED, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_WORKSHOP_HORDE_ASSAULTED, 0);
-	sm.CreateWorldState(WORLDSTATE_IOC_WORKSHOP_NETURAL, 1);		
+	sm.CreateWorldState(WORLDSTATE_IOC_WORKSHOP_NETURAL, 1);
 	sm.CreateWorldState(WORLDSTATE_IOC_HORDE_EAST_GATE, 1);
 	sm.CreateWorldState(WORLDSTATE_IOC_HORDE_GATE_DESTROYED_1, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_HORDE_GATE_DESTROYED_2, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_HORDE_GATE_DESTROYED_3, 0);
 	sm.CreateWorldState(WORLDSTATE_IOC_HORDE_WEST_GATE, 1);
 	sm.CreateWorldState(WORLDSTATE_IOC_HORDE_FRONT_GATE, 1);
-	
+
 	// generals/leaders!
 	SpawnCreature(34924, 214.77f, -830.73f, 60.81f, 0.07f);	// High Commander Halford Wyrmbane (ALLIANCE)
 	SpawnCreature(34922, 1296.57f, -765.78f, 69.98f, 6.22f);	// Overlord Agmar (not sure this is the good general) (HORDE)
-	
+
 	// Spawn const spiritguides
 	AddSpiritGuide(SpawnSpiritGuide(NoBaseGYLocations[0][0], NoBaseGYLocations[0][1], NoBaseGYLocations[0][2], NoBaseGYLocations[0][3], 0));
 	AddSpiritGuide(SpawnSpiritGuide(NoBaseGYLocations[1][0], NoBaseGYLocations[1][1], NoBaseGYLocations[1][2], NoBaseGYLocations[1][3], 1));
-	
-	
+
+
 	// Spawn Teleporters
 	for(uint32 i = 0; i < 6; i++)	// Alliance
 	{
@@ -720,7 +720,7 @@ void IsleOfConquest::OnCreate()
 		m_teleeffect[i] = SpawnGameObject(TELEPORTER_EFFECT_H, iocTransporterLocation[i][0], iocTransporterLocation[i][1], iocTransporterLocation[i][2], iocTransporterLocation[i][3], 0, 1, 1.0f);
 		m_teleeffect[i]->PushToWorld(m_mapMgr);
 	}
-	
+
 	// Spawn Gates
 	for(uint32 x = 0; x < 3; x++)
 	{
@@ -733,7 +733,7 @@ void IsleOfConquest::OnCreate()
 		m_ogates[x]->SetUInt32Value(GAMEOBJECT_BYTES_1, 4278190081);
 		m_ogates[x]->PushToWorld(m_mapMgr);
 	}
-	
+
 	for(uint32 x = 3; x < 6; x++)
 	{
 		m_desgates[x] = SpawnGameObject(gatesIds[x], iocGatesLocation[x][0],  iocGatesLocation[x][1], iocGatesLocation[x][2], iocGatesLocation[x][3], 0, 2, 1.0f);
@@ -837,11 +837,11 @@ void IsleOfConquest::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 	pCorpse->m_loot.gold = float2int32(gold);
 }
 
-void IsleOfConquest::HookOnShadowSight() 
+void IsleOfConquest::HookOnShadowSight()
 {
 }
 
-void IsleOfConquest::SetIsWeekend(bool isweekend) 
+void IsleOfConquest::SetIsWeekend(bool isweekend)
 {
 }
 
@@ -850,7 +850,7 @@ void IsleOfConquest::HookOnUnitKill(Player* plr, Unit* pVictim)
 	if(pVictim->IsPlayer())
 		return;
 
-	if(pVictim->GetEntry() == 34924)	// High Commander Halford Wyrmbane 
+	if(pVictim->GetEntry() == 34924)	// High Commander Halford Wyrmbane
 	{
 		Herald("The 7th Legion General is dead!");
 		RemoveReinforcements( 0, IOC_NUM_REINFORCEMENTS );	// Horde Win

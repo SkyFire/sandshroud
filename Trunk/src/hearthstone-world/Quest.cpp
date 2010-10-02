@@ -182,7 +182,7 @@ void QuestLogEntry::Init(Quest* quest, Player* plr, uint32 slot)
 
 	// update slot
 	plr->SetQuestLogSlot(this, slot);
-	
+
 	mDirty = true;
 
 	memset(m_mobcount, 0, 4*4);
@@ -228,14 +228,14 @@ void QuestLogEntry::SaveToDB(QueryBuffer * buf)
 	ss << m_plr->GetLowGUID() << "," << m_quest->id << "," << m_slot << "," << m_time_left;
 	for(int i = 0; i < 4; i++)
 		ss << "," << m_explored_areas[i];
-	
+
 	for(int i = 0; i < 4; i++)
 		ss << "," << m_mobcount[i];
 
 	ss << "," << m_player_slain;
 
 	ss << ")";
-	
+
 	if( buf == NULL )
 		CharacterDatabase.Execute( ss.str().c_str() );
 	else
@@ -298,7 +298,7 @@ bool QuestLogEntry::CanBeFinished()
 	//Check for Gold & AreaTrigger Requirement s
 	for(i = 0; i < 4; i++)
 	{
-		if(m_quest->required_money && (m_plr->GetUInt32Value(PLAYER_FIELD_COINAGE) < m_quest->required_money)) 
+		if(m_quest->required_money && (m_plr->GetUInt32Value(PLAYER_FIELD_COINAGE) < m_quest->required_money))
 			return false;
 		if(m_quest->required_triggers[i])
 		{
@@ -378,7 +378,7 @@ void QuestLogEntry::UpdatePlayerFields()
 	// next field is kills and shit like that
 	uint64 field1 = 0;
 	int i;
-	
+
 	// explored areas
 	if(m_quest->count_requiredtriggers)
 	{

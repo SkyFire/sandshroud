@@ -74,7 +74,7 @@ public:
 	void CreateWorldState(uint32 uWorldStateId, uint32 uInitialValue, int32 iFactionMask = FACTION_MASK_ALL, int32 iZoneMask = ZONE_MASK_ALL);
 
 	// updates a world state (sets and stores value, updates in clients on map)
-	// NOTE: If the world state is not created/initialized, it WILL NOT BE UPDATED/SENT to the client!!!! 
+	// NOTE: If the world state is not created/initialized, it WILL NOT BE UPDATED/SENT to the client!!!!
 	void UpdateWorldState(uint32 uWorldStateId, uint32 uValue);
 
 	// sends the current world states to a new player on the map.
@@ -104,7 +104,7 @@ class WorldStateTemplateManager : public Singleton<WorldStateTemplateManager>
 	WorldStateTemplateList m_general;
 public:
 
-	// loads predefined fields from database 
+	// loads predefined fields from database
 	void LoadFromDB();
 
 	// applys a map template to a new instance

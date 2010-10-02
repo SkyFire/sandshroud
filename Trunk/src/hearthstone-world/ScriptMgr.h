@@ -129,11 +129,11 @@ typedef void(*tOnPostSpellCast)(Player* pPlayer, SpellEntry * pSpell, Unit* pTar
 typedef void(*tOnPlayerSaveToDB)(Player* pPlayer, QueryBuffer* buf);
 
 //Destructable building
-typedef void(*tOnDestroyBuilding)(GameObject* go); 
-typedef void(*tOnDamageBuilding)(GameObject* go); 
-typedef bool(*tOnMountFlying) (Player* plr); 
-typedef bool(*tOnPreAuraRemove)(Player* plr,uint32 spellID); 
-typedef void(*tOnSlowLockOpen)(GameObject* go,Player* plr); 
+typedef void(*tOnDestroyBuilding)(GameObject* go);
+typedef void(*tOnDamageBuilding)(GameObject* go);
+typedef bool(*tOnMountFlying) (Player* plr);
+typedef bool(*tOnPreAuraRemove)(Player* plr,uint32 spellID);
+typedef void(*tOnSlowLockOpen)(GameObject* go,Player* plr);
 
 class CreatureAIScript;
 class GossipScript;
@@ -280,7 +280,7 @@ class SERVER_DECL GossipScript
 {
 public:
 	GossipScript();
-	virtual ~GossipScript() {} 
+	virtual ~GossipScript() {}
 
 	virtual void GossipHello(Object* pObject, Player* Plr, bool AutoSend);
 	virtual void GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, uint32 IntId, const char * EnteredCode);
@@ -304,7 +304,7 @@ public:
 };
 
 /* * Class InstanceScript
-   * Instanced class created for each instance of the map, holds all 
+   * Instanced class created for each instance of the map, holds all
    * scriptable exports
 */
 

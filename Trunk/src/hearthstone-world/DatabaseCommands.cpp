@@ -280,7 +280,7 @@ bool ChatHandler::HandleDBItemSetAllowableClassCommand(const char* args, WorldSe
 		WorldDatabase.Execute("UPDATE items SET allowableclass = '%i' WHERE entry = '%u'", -1, entry);
 		m_lock.Release();
 	}
-	else if(masked && (!(proto->AllowableClass & allowableclass) || proto->AllowableClass == -1)) 
+	else if(masked && (!(proto->AllowableClass & allowableclass) || proto->AllowableClass == -1))
 	{
 		m_lock.Acquire();
 		if(proto->AllowableClass == -1)
@@ -334,7 +334,7 @@ bool ChatHandler::HandleDBItemSetAllowableRaceCommand(const char* args, WorldSes
 		WorldDatabase.Execute("UPDATE items SET allowablerace = '%i' WHERE entry = '%u'", -1, entry);
 		m_lock.Release();
 	}
-	else if(masked && (!(proto->AllowableRace & allowablerace) || proto->AllowableRace == -1)) 
+	else if(masked && (!(proto->AllowableRace & allowablerace) || proto->AllowableRace == -1))
 	{
 		m_lock.Acquire();
 		if(proto->AllowableRace == -1)

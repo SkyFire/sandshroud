@@ -204,7 +204,7 @@ bool Master::Run(int argc, char ** argv)
 	{
 		Log.Warning( "Config", "Die directive received: %s", die.c_str() );
 		return false;
-	}	
+	}
 
 	if(Config.RealmConfig.SetSource(realm_config_file))
 		Log.Success( "Config", ">> hearthstone-realms.conf" );
@@ -254,7 +254,7 @@ bool Master::Run(int argc, char ** argv)
 
 	g_bufferPool.Init();
 	sWorld.SetStartTime(uint32(UNIXTIME));
-	
+
 	WorldRunnable * wr = new WorldRunnable();
 	ThreadPool.ExecuteTask(wr);
 
@@ -506,7 +506,7 @@ bool Master::_StartDB()
 	string hostname, username, password, database;
 	int port = 0;
 	// Configure Main Database
-	
+
 	bool result = Config.MainConfig.GetString( "WorldDatabase", "Username", &username );
 	Config.MainConfig.GetString( "WorldDatabase", "Password", &password );
 	result = !result ? result : Config.MainConfig.GetString( "WorldDatabase", "Hostname", &hostname );
@@ -685,7 +685,7 @@ void Master::_HookSignals()
 #else
 	signal( SIGHUP, _OnSignal );
 	signal(SIGUSR1, _OnSignal);
-	
+
 	// crash handler
 	signal(SIGSEGV, segfault_handler);
 	signal(SIGFPE, segfault_handler);
@@ -745,10 +745,10 @@ void OnCrash( bool Terminate )
 	}
 
 	sLog.outString( "Closing." );
-	
+
 	// beep
 	//printf("\x7");
-	
+
 	// Terminate Entire Application
 	if( Terminate )
 	{

@@ -148,7 +148,7 @@ public:
 	HEARTHSTONE_INLINE void SetPetDiet() { m_Diet = myFamily->petdietflags; }
 
 	HEARTHSTONE_INLINE uint32 GetPetDiet(void) { return m_Diet; }
-	
+
 	HEARTHSTONE_INLINE AI_Spell* GetAISpellForSpellId(uint32 spellid)
 	{
 		std::map<uint32, AI_Spell*>::iterator itr = m_AISpellStore.find(spellid);
@@ -211,7 +211,7 @@ public:
 			return GetSpellState(sp);
 		return DEFAULT_SPELL_STATE;
 	}
-	
+
 	AI_Spell*CreateAISpell(SpellEntry * info);
 	HEARTHSTONE_INLINE PetSpellMap* GetSpells() { return &mSpells; }
 	HEARTHSTONE_INLINE bool IsSummonedPet() { return Summon; }
@@ -224,7 +224,7 @@ public:
 	void Rename(string NewName);
 	HEARTHSTONE_INLINE string& GetName() { return m_name; }
 	void AddPetSpellToOwner(uint32 spellId);
-	
+
 	void HandleAutoCastEvent(uint32 Type);
 	AI_Spell*HandleAutoCastEvent();
 	void SetAutoCast(AI_Spell*sp, bool on);
@@ -249,8 +249,8 @@ protected:
 	PetSpellMap mSpells;
 	PlayerPet * m_PlayerPetInfo;
 	uint32 ActionBar[10];   // 10 slots
-	
-	
+
+
 	std::map<uint32, AI_Spell*> m_AISpellStore;
 
 	uint32 m_AutoCombatSpell;

@@ -29,7 +29,7 @@ class LogonCommClientSocket : public Socket
 public:
 	LogonCommClientSocket(SOCKET fd);
 	~LogonCommClientSocket();
-	
+
 	void OnRead();
 	void SendPacket(WorldPacket * data, bool no_crypto);
 	void HandlePacket(WorldPacket & recvData);

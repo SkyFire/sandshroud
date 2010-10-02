@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 #ifndef __PACKETS_H
 #define __PACKETS_H
 
@@ -115,7 +115,7 @@ struct packetSMSG_LOG_XP_GAIN
 {
 	uint64	guid;                                    // Always 0
 	uint32	xp;                                      // Normal XP
-	uint8	type;                                    // Unknown.. seems to always be 0		
+	uint8	type;                                    // Unknown.. seems to always be 0
 	uint8   unk;									 // 2.4.0 unknown
 };
 

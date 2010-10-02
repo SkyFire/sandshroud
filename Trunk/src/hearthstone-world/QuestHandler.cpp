@@ -136,7 +136,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 		bValid = quest_giver->isQuestGiver();
 		if(bValid)
 			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id), false);
-	} 
+	}
 	else if(guidtype == HIGHGUID_TYPE_GAMEOBJECT)
 	{
 		GameObject* quest_giver = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
@@ -147,7 +147,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 		bValid = quest_giver->isQuestGiver();
 		if(bValid)
 			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id), false);
-	} 
+	}
 	else if(guidtype==HIGHGUID_TYPE_ITEM)
 	{
 		Item* quest_giver = GetPlayer()->GetItemInterface()->GetItemByGUID(guid);
@@ -161,7 +161,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 
 		status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, 1, false);
 	}
-	
+
 	if (!qst_giver)
 	{
 		OUT_DEBUG("WORLD: Invalid questgiver GUID.");
@@ -179,7 +179,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 		OUT_DEBUG("WORLD: QuestGiver doesn't have that quest.");
 		return;
 	}*/	// bleh.. not needed.. maybe for antihack later on would be a good idea though
-	
+
 	if ((status == QMGR_QUEST_AVAILABLE) || (status == QMGR_QUEST_REPEATABLE) || (status == QMGR_QUEST_CHAT))
 	{
 		sQuestMgr.BuildQuestDetails(&data, qst, qst_giver, 1, language, _player);	 // 0 because we want goodbye to function
@@ -233,7 +233,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 		hasquest = quest_giver->HasQuest(quest_id, 1);
 		if(bValid)
 			qst = QuestStorage.LookupEntry(quest_id);
-	} 
+	}
 	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
 	{
 		GameObject* quest_giver = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
@@ -245,7 +245,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 		//if(bValid)
 		bValid = true;
 			qst = QuestStorage.LookupEntry(quest_id);
-	} 
+	}
 	else if(guidtype==HIGHGUID_TYPE_ITEM)
 	{
 		Item* quest_giver = GetPlayer()->GetItemInterface()->GetItemByGUID(guid);
@@ -326,8 +326,8 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 			sQuestMgr.SendQuestFailed(FAILED_REASON_INV_FULL, qst, _player);
 			return;
 		}
-	}	
-	
+	}
+
 /*	if(qst_giver->GetTypeId() == TYPEID_UNIT && !ScriptSystem->OnQuestRequireEvent(qst, TO_CREATURE( qst_giver ), _player, QUEST_EVENT_CAN_ACCEPT))
 		return;*/
 
@@ -349,7 +349,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 					item = NULLITEM;
 				}
 				else
-					SendItemPushResult(item, false, true, false, true, 
+					SendItemPushResult(item, false, true, false, true,
 					_player->GetItemInterface()->LastSearchItemBagSlot(), _player->GetItemInterface()->LastSearchItemSlot(),
 					1);
 			}
@@ -407,14 +407,14 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 	if (!qEntry)
 	{
 		DEBUG_LOG("QuestHandler","No quest in slot %d.", quest_slot);
-		return;		
+		return;
 	}
 	Quest *qPtr = qEntry->GetQuest();
 
 	if (!qPtr)
 	{
 		DEBUG_LOG("QuestHandler","Quest %u does not exist in database", qPtr->id);
-		return;		
+		return;
 	}
 
 	CALL_QUESTSCRIPT_EVENT(qEntry, OnQuestCancel)(_player);
@@ -436,7 +436,7 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 	if(qPtr->time > 0)
 	{
 		if (sEventMgr.HasEvent(_player,EVENT_TIMED_QUEST_EXPIRE))
-			sEventMgr.RemoveEvents(_player, EVENT_TIMED_QUEST_EXPIRE); 	
+			sEventMgr.RemoveEvents(_player, EVENT_TIMED_QUEST_EXPIRE); 
 	}
 
 	if(qPtr->start_phase != 0)
@@ -507,7 +507,7 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode( WorldPacket & recv_data 
 			if(!qst)
 				qst = quest_giver->FindQuest(quest_id, QUESTGIVER_QUEST_START);
 
-			/*if(!qst) 
+			/*if(!qst)
 				qst = QuestStorage.LookupEntry(quest_id);*/
 			if(!qst)
 			{
@@ -516,7 +516,7 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode( WorldPacket & recv_data 
 			}
 			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
 		}
-	} 
+	}
 	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
 	{
 		GameObject* quest_giver = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
@@ -589,7 +589,7 @@ void WorldSession::HandleQuestgiverCompleteQuestOpcode( WorldPacket & recvPacket
 		if(bValid)
 		{
 			qst = quest_giver->FindQuest(quest_id, QUESTGIVER_QUEST_END);
-			/*if(!qst) 
+			/*if(!qst)
 				sQuestMgr.FindQuest(quest_id);*/
 			if(!qst)
 			{
@@ -598,7 +598,7 @@ void WorldSession::HandleQuestgiverCompleteQuestOpcode( WorldPacket & recvPacket
 			}
 			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
 		}
-	} 
+	}
 	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
 	{
 		GameObject* quest_giver = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
@@ -683,7 +683,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 		bValid = quest_giver->isQuestGiver();
 		if(bValid)
 			qst = QuestStorage.LookupEntry(quest_id);
-	} 
+	}
 	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
 	{
 		GameObject* quest_giver = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
@@ -786,7 +786,7 @@ void WorldSession::HandlePushQuestToPartyOpcode(WorldPacket &recv_data)
 							response = QUEST_SHARE_MSG_CANT_TAKE_QUEST;
 
 						}
-						
+
 						//CHECKS IF QUESTLOG ISN'T FULL
 						if(pPlayer->GetOpenQuestSlot() == -1)
 						{
@@ -794,7 +794,7 @@ void WorldSession::HandlePushQuestToPartyOpcode(WorldPacket &recv_data)
 						}
 
 						//CHEQUEA SI TIENE LA QUEST EN EL QUESTLOG | CHEKS IF HAVE ALREADY THE QUEST IN QUESTLOG
-						QuestLogEntry *qst = pPlayer->GetQuestLogForEntry(questid);							
+						QuestLogEntry *qst = pPlayer->GetQuestLogForEntry(questid);
 						if(qst)
 						{
 							response = QUEST_SHARE_MSG_HAVE_QUEST;
@@ -805,7 +805,7 @@ void WorldSession::HandlePushQuestToPartyOpcode(WorldPacket &recv_data)
 						{
 							response = QUEST_SHARE_MSG_FINISH_QUEST;
 						}
-						
+
 						//CHECKS IF  ALREADY HAVE COMPLETED THE DAILY QUEST
 						if(pPlayer->HasFinishedDailyQuest(questid))
 						{
@@ -825,7 +825,7 @@ void WorldSession::HandlePushQuestToPartyOpcode(WorldPacket &recv_data)
 						}
 
 						if(response > 0)
-						{	
+						{
 							sQuestMgr.SendPushToPartyResponse(_player, pPlayer, response);
 							continue;
 						}

@@ -62,7 +62,7 @@ public:
 
 protected:
 	list< GameObject* > m_gates;
-	
+
 	uint32 m_resources[2];
 	uint32 m_capturedBases[2];
 	uint32 m_lastHonorGainResources[2];

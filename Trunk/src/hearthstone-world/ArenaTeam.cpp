@@ -103,7 +103,7 @@ ArenaTeam::ArenaTeam(Field * f)
 		}
 		else
 			m_members[i].Info = NULL;
-	}	
+	}
 }
 
 void ArenaTeam::SendPacket(WorldPacket * data)
@@ -266,7 +266,7 @@ void ArenaTeam::SaveToDB()
 		<< m_stat_gamesplayedweek << " " << m_stat_gameswonweek << " "
 		<< m_stat_gamesplayedseason << " " << m_stat_gameswonseason << "',"
 		<< m_stat_ranking;
-    
+
 	for(i = 0; i < m_memberCount; i++)
 	{
 		if(m_members[i].Info)
@@ -627,7 +627,7 @@ void WorldSession::HandleArenaTeamDisbandOpcode(WorldPacket & recv_data)
 	team->Destroy();
 }
 
-void WorldSession::HandleArenaTeamPromoteOpcode(WorldPacket & recv_data) 
+void WorldSession::HandleArenaTeamPromoteOpcode(WorldPacket & recv_data)
 {
 	uint32 teamId;
 	uint8 slot;

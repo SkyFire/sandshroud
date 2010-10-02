@@ -31,7 +31,7 @@ public:
 	SkillNameMgr()
 	{
 		DBCFile SkillDBC;
-		
+
 		if( !SkillDBC.open( "DBC/SkillLine.dbc" ) )
 		{
 			Log.Error( "SkillNameMgr", "Cannot find file ./DBC/SkillLine.dbc" );

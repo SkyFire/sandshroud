@@ -130,7 +130,7 @@ bool TerrainMgr::LoadTerrainHeader()
 #else
 
 #ifdef WIN32
-	
+
 	DWORD sizehigh;
 
 	hMappedFile = CreateFile(File, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_ARCHIVE, NULL);
@@ -196,7 +196,7 @@ bool TerrainMgr::LoadCellInformation(uint32 x, uint32 y)
 	// Find our offset in our cached header.
 	uint32 Offset = CellOffsets[x][y];
 
-	// If our offset = 0, it means we don't have cell information for 
+	// If our offset = 0, it means we don't have cell information for
 	// these coords.
 	if(Offset == 0)
 		return false;
@@ -210,7 +210,7 @@ bool TerrainMgr::LoadCellInformation(uint32 x, uint32 y)
 		mutex.Release();
 		return true;
 	}
-	
+
 	// Seek to our specified offset.
 	if(fseek(FileDescriptor, Offset, SEEK_SET) == 0)
 	{

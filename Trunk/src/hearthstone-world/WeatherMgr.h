@@ -49,7 +49,7 @@ public:
 	~WeatherInfo();
 
 	void BuildUp();
-	void Update();	
+	void Update();
 	void SendUpdate();
 	void SendUpdate(Player* plr);
 

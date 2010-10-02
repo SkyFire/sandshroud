@@ -105,7 +105,7 @@ void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 	data << uint8(0) << uint8(0) << uint8(0);
 	data << (lcn ? lcn->SubName : ci->SubName);
 	data << ci->info_str; //!!! this is a string in 2.3.0 Example: stormwind guard has : "Direction"
-	data << ci->Flags1;  
+	data << ci->Flags1;
 	data << ci->Type;
 	data << ci->Family;
 	data << ci->Rank;
@@ -137,7 +137,7 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 	uint32 entryID;
 	uint64 guid;
 	GameObjectInfo *goinfo;
-	
+
 
 	recv_data >> entryID;
 	recv_data >> guid;
@@ -149,7 +149,7 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 		return;
 
 	LocalizedGameObjectName * lgn = (language>0) ? sLocalizationMgr.GetLocalizedGameObjectName(entryID, language) : NULL;
-    
+
 	data << entryID;
 	data << goinfo->Type;
 	data << goinfo->DisplayID;
@@ -300,7 +300,7 @@ void WorldSession::HandleItemNameQueryOpcode( WorldPacket & recv_data )
 		reply << (itemE ? itemE->InventoryType : uint32(0));
 	}
 
-	SendPacket(&reply);	
+	SendPacket(&reply);
 }
 
 void WorldSession::HandleInrangeQuestgiverQuery(WorldPacket & recv_data)

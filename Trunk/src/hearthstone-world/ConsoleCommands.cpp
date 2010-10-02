@@ -36,7 +36,7 @@ bool HandleInfoCommand(BaseConsole * pConsole, int argc, const char * argv[])
 			avg += itr->second->GetSession()->GetLatency();
 			if(itr->second->GetSession()->GetPermissionCount())
 				gm++;
-		}			
+		}
 	}
 	objmgr._playerslock.ReleaseReadLock();
 
@@ -186,9 +186,9 @@ bool HandleBanAccountCommand(BaseConsole * pConsole, int argc, const char * argv
 	/// apply instantly in db
 	sLogonCommHandler.Account_SetBanned(argv[1], banned, argv[3]);
 
-	pConsole->Write("Account '%s' has been banned %s%s. The change will be effective with the next reload cycle.\r\n", argv[1], 
+	pConsole->Write("Account '%s' has been banned %s%s. The change will be effective with the next reload cycle.\r\n", argv[1],
 		timeperiod ? "until " : "forever", timeperiod ? ConvertTimeStampToDataTime(timeperiod+(uint32)UNIXTIME).c_str() : "");
-	
+
 	return true;
 }
 

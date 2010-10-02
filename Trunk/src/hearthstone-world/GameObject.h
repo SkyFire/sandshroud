@@ -174,7 +174,7 @@ public:
 	void UseFishingNode(Player* player);
 	void EndFishing(Player* player,bool abort);
 	void FishHooked(Player* player);
-	
+
 	// Quests
 	void _LoadQuests();
 	bool HasQuests() { return m_quests != NULL; };
@@ -216,7 +216,7 @@ public:
 
 	void InitAI();
 	SpellEntry* spell;
-	
+
 	float range;
 	uint8 checkrate;
 	uint16 counter;

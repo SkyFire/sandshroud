@@ -67,7 +67,7 @@ typedef struct
 
 typedef std::list<Absorb*> SchoolAbsorb;
 
-typedef struct 
+typedef struct
 {
 	uint32 spellid;
 	uint32 mindmg;
@@ -412,7 +412,7 @@ typedef enum
 	EMOTE_ONESHOT_TRAIN			= 275, //DNR
 	EMOTE_ONESHOT_LAND			 = 293,
 	EMOTE_STATE_AT_EASE			= 313,
-	EMOTE_STATE_READY1H			= 333,	
+	EMOTE_STATE_READY1H			= 333,
 	EMOTE_STATE_SPELLKNEELSTART	= 353,
 	EMOTE_STATE_SUBMERGED		  = 373,
 	EMOTE_ONESHOT_SUBMERGE		 = 374,
@@ -801,7 +801,7 @@ public:
 		m_duelWield = enabled;
 	}
 
-	
+
 
 	/// State flags are server-only flags to help me know when to do stuff, like die, or attack
 	HEARTHSTONE_INLINE void addStateFlag(uint32 f) { m_state |= f; };
@@ -819,7 +819,7 @@ public:
 	HEARTHSTONE_INLINE uint8 getGender() { return GetByte(UNIT_FIELD_BYTES_0,2); }
 	HEARTHSTONE_INLINE void setGender(uint8 gender) { SetByte(UNIT_FIELD_BYTES_0,2,gender); }
 	HEARTHSTONE_INLINE uint8 getStandState() { return ((uint8)m_uint32Values[UNIT_FIELD_BYTES_1]); }
- 
+
 	uint32 GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability );
 	void Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability, int32 add_damage, int32 pct_dmg_mod, uint32 exclusive_damage, bool disable_proc, bool skip_hit_check, bool proc_extrastrike = false );
 
@@ -857,11 +857,11 @@ public:
 	void smsg_AttackStart(Unit* pVictim);
 	void smsg_AttackStop(Unit* pVictim);
 	void smsg_AttackStop(uint64 victimGuid);
-	
+
 	bool IsDazed();
 	float CalculateDazeCastChance(Unit* target);
 
-	// Stealth  
+	// Stealth
 	HEARTHSTONE_INLINE int32 GetStealthLevel() { return (m_stealthLevel + (getLevel() * 5)); }
 	HEARTHSTONE_INLINE int32 GetStealthDetectBonus() { return m_stealthDetectBonus; }
 	HEARTHSTONE_INLINE void SetStealth(uint32 id) { m_stealth = id; }
@@ -901,7 +901,7 @@ public:
 	bool HasAuraWithMechanic(uint32 mechanic);
 	bool HasPosAuraWithMechanic(uint32 mechanic);
 	bool HasNegAuraWithMechanic(uint32 mechanic);
-	
+
 	void GiveGroupXP(Unit* pVictim, Player* PlayerInGroup);
 
 	/// Combat / Death Status
@@ -942,7 +942,7 @@ public:
 	bool RemoveAllPosAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllNegAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllAurasByMechanic( uint32 MechanicType , uint32 MaxDispel , bool HostileOnly ); // Removes all (de)buffs on unit of a specific mechanic type.
-	
+
 	void RemoveAllNegativeAuras();
 
 	Aura* FindPositiveAuraByNameHash(uint32 namehash);
@@ -974,7 +974,7 @@ public:
 	uint32 m_canMove;
 
 	uint32 m_lastHauntInitialDamage;
-	
+
 	// Spell Effect Variables
 	int32 m_silenced;
 	bool m_damgeShieldsInUse;
@@ -1050,7 +1050,7 @@ public:
 	HEARTHSTONE_INLINE uint32 IsFeared() { return m_fearmodifiers; }
 	HEARTHSTONE_INLINE uint32 GetResistChanceMod() { return m_resistChance; }
 	HEARTHSTONE_INLINE void SetResistChanceMod(uint32 amount) { m_resistChance=amount; }
-	
+
 	HEARTHSTONE_INLINE uint16 HasNoInterrupt() { return m_noInterrupt; }
 	bool setDetectRangeMod(uint64 guid, int32 amount);
 	void unsetDetectRangeMod(uint64 guid);
@@ -1079,10 +1079,10 @@ public:
 	uint64 stalkedby;
 	uint32 dispels[10];
 	uint32 MechanicsDispels[NUM_MECHANIC];
-	float MechanicsResistancesPCT[NUM_MECHANIC]; 
+	float MechanicsResistancesPCT[NUM_MECHANIC];
 	float ModDamageTakenByMechPCT[NUM_MECHANIC];
 	float DispelResistancesPCT[10];
-	//int32 RangedDamageTakenPct; 
+	//int32 RangedDamageTakenPct;
 
 	//SM
 	int32 * SM[SPELL_MODIFIERS][2]; // 0 = flat, 1 = percent
@@ -1126,8 +1126,8 @@ public:
 	HEARTHSTONE_INLINE int32 GetHealthPct() { return (int32)(GetUInt32Value(UNIT_FIELD_HEALTH) * 100 / std::max(1, (int32)GetUInt32Value(UNIT_FIELD_MAXHEALTH))); }
     HEARTHSTONE_INLINE void SetHealthPct(uint32 val) { if (val>0) SetUInt32Value(UNIT_FIELD_HEALTH,float2int32(val*0.01f*GetUInt32Value(UNIT_FIELD_MAXHEALTH))); }
 	HEARTHSTONE_INLINE int32 GetManaPct() { return (int32)(GetUInt32Value(UNIT_FIELD_POWER1) * 100 / std::max(1, (int32)GetUInt32Value(UNIT_FIELD_MAXPOWER1))); }
-		
-	uint32 GetResistance(uint32 type);	
+
+	uint32 GetResistance(uint32 type);
 
 	uint32 m_teleportAckCounter;
 	//Vehicle
@@ -1151,7 +1151,7 @@ public:
 	uint32 m_CombatUpdateTimer;
 
 	HEARTHSTONE_INLINE void setcanperry(bool newstatus){can_parry=newstatus;}
-		
+
 	std::map<uint32,Aura* > tmpAura;
 
 	uint32 BaseResistance[7]; //there are resistances for silence, fear, mechanics ....
@@ -1183,7 +1183,7 @@ public:
 	int32 m_resistChance;
 	int32 m_powerRegenPCT;
 	int32 m_stunned;
-	int32 m_extraattacks[2];   
+	int32 m_extraattacks[2];
 	int32 m_extrastriketarget;
 	int32 m_extrastriketargetc;
 	std::list<ExtraStrike*> m_extraStrikeTargets;
@@ -1208,7 +1208,7 @@ public:
 	void DisableFlight();
 	void EventRegainFlight();
 
-	void MoveToWaypoint(uint32 wp_id);	
+	void MoveToWaypoint(uint32 wp_id);
 	void PlaySpellVisual(uint64 target, uint32 spellVisual);
 
 	void RemoveStealth();
@@ -1219,7 +1219,7 @@ public:
 	uint32 m_stealth;
 	bool m_can_stealth;
 
-	Aura* m_auras[MAX_AURAS+MAX_PASSIVE_AURAS];   
+	Aura* m_auras[MAX_AURAS+MAX_PASSIVE_AURAS];
 
 	int32 m_modlanguage;
 
@@ -1326,7 +1326,7 @@ public:
 	uint32 m_frozenTargetId;
 	uint32 polySpell;
 	uint32 m_special_state; //flags for special states (stunned,rooted etc)
-	
+
 //	uint32 fearSpell;
 	CombatStatusHandler CombatStatus;
 	bool m_temp_summon;
@@ -1395,8 +1395,8 @@ protected:
 
 	// Stealth
 	uint32 m_stealthLevel;
-	uint32 m_stealthDetectBonus;	
-	
+	uint32 m_stealthDetectBonus;
+
 	// DK:pet
 	//uint32 m_pet_state;
 	//uint32 m_pet_action;
@@ -1414,7 +1414,7 @@ protected:
 	int32 m_threatModifyer;
 	int32 m_generatedThreatModifyer;
 
-	//	float getDistance( float Position1X, float Position1Y, float Position2X, float Position2Y );	
+	//	float getDistance( float Position1X, float Position1Y, float Position2X, float Position2Y );
 
 	int32 m_manashieldamt;
 	SpellEntry * m_manaShieldSpell;

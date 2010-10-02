@@ -64,7 +64,7 @@ string RemoveQuestFromPlayer(Player* plr, Quest *qst)
 	{
 		QuestLogEntry * qLogEntry = plr->GetQuestLogForEntry(qst->id);
 		if (qLogEntry)
-		{	
+		{
 			CALL_QUESTSCRIPT_EVENT(qLogEntry, OnQuestCancel)(plr);
 			qLogEntry->Finish();
 
@@ -79,7 +79,7 @@ string RemoveQuestFromPlayer(Player* plr, Quest *qst)
 		recout += "Quest removed from current questlog.";
 		has = true;
 	}
-	
+
 	if(!has)
 		recout += "Quest not found on player.";
 
@@ -234,7 +234,7 @@ bool ChatHandler::HandleQuestStartCommand(const char * args, WorldSession * m_se
 					qle->UpdatePlayerFields();
 
 					CALL_QUESTSCRIPT_EVENT(qle, OnQuestStart)(plr, qle);
-		
+
 					// If the quest should give any items on begin, give them the items.
 					for(uint32 i = 0; i < 4; i++)
 					{
@@ -268,10 +268,10 @@ bool ChatHandler::HandleQuestStartCommand(const char * args, WorldSession * m_se
 							}
 						}
 					}
-				
+
 
 					plr->UpdateNearbyGameObjects();
-				
+
 					sHookInterface.OnQuestAccept( plr, qst, NULLOBJ );
 
 					recout += "Quest has been added to the player's quest log.";
@@ -295,7 +295,7 @@ bool ChatHandler::HandleQuestStartCommand(const char * args, WorldSession * m_se
 
 bool ChatHandler::HandleQuestFinishCommand(const char * args, WorldSession * m_session)
 {
-	if(!*args) 
+	if(!*args)
 		return false;
 
 	Player* plr = getSelectedChar(m_session, true);
@@ -319,7 +319,7 @@ bool ChatHandler::HandleQuestFinishCommand(const char * args, WorldSession * m_s
 		{
 			QuestLogEntry * IsPlrOnQuest = plr->GetQuestLogForEntry(quest_id);
 			if (IsPlrOnQuest)
-			{	
+			{
 				uint32 giver_id = 0;
 				std::string my_query = "";
 
@@ -445,7 +445,7 @@ bool ChatHandler::HandleQuestItemCommand(const char * args, WorldSession * m_ses
 		SendMultilineMessage(m_session, recout.c_str());
 
 		count++;
-		
+
 		if(count == 25)
 		{
 			RedSystemMessage(m_session, "More than 25 results returned. aborting.");
@@ -639,7 +639,7 @@ bool ChatHandler::HandleQuestListCommand(const char * args, WorldSession * m_ses
 				QueryResult *playerResult = CharacterDatabase.Query("SELECT quest_id FROM questlog WHERE player_guid=%u", plr->GetLowGUID());
 				if(playerResult)
 				{
-					do 
+					do
 					{
 						fields = playerResult->Fetch();
 						quest_id = fields[0].GetUInt32();
@@ -658,7 +658,7 @@ bool ChatHandler::HandleQuestListCommand(const char * args, WorldSession * m_ses
 						SendMultilineMessage(m_session, recout.c_str());
 
 						count++;
-						
+
 						if(count == 25)
 						{
 							RedSystemMessage(m_session, "More than 25 results returned. aborting.");
@@ -704,7 +704,7 @@ bool ChatHandler::HandleQuestListCommand(const char * args, WorldSession * m_ses
 			SendMultilineMessage(m_session, recout.c_str());
 
 			count++;
-			
+
 			if(count == 25)
 			{
 				RedSystemMessage(m_session, "More than 25 results returned. aborting.");

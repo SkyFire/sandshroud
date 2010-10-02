@@ -86,7 +86,7 @@ void EventableObject::event_RemoveByPointer(TimedEvent * ev)
 	EventMap::iterator it2;
 	if(itr != m_events.end())
 	{
-		do 
+		do
 		{
 			it2 = itr++;
 			if(it2->second == ev)
@@ -142,7 +142,7 @@ void EventableObject::event_RemoveEvents(uint32 EventType)
 		EventMap::iterator it2;
 		if(itr != m_events.end())
 		{
-			do 
+			do
 			{
 				it2 = itr++;
 				if( it2->second->eventFlag & EVENT_FLAG_FIRE_ON_DELETE && !it2->second->deleted )
@@ -180,7 +180,7 @@ void EventableObject::event_ModifyTimeLeft(uint32 EventType, uint32 TimeLeft,boo
 	EventMap::iterator itr = m_events.find(EventType);
 	if(itr != m_events.end())
 	{
-		do 
+		do
 		{
 			if(unconditioned)
 				itr->second->currTime = TimeLeft;
@@ -204,7 +204,7 @@ bool EventableObject::event_GetTimeLeft(uint32 EventType, uint32 * Time)
 	EventMap::iterator itr = m_events.find(EventType);
 	if(itr != m_events.end())
 	{
-		do 
+		do
 		{
 			if( itr->second->deleted )
 			{
@@ -236,7 +236,7 @@ void EventableObject::event_ModifyAuraTimeLeft(uint32 TimeLeft, uint32 Auraid)
 	EventMap::iterator itr = m_events.find(EVENT_AURA_REMOVE);
 	if(itr != m_events.end())
 	{
-		do 
+		do
 		{
 			//only update our requested aura
 			if(itr->second->eventAuraid == Auraid)
@@ -260,7 +260,7 @@ void EventableObject::event_ModifyTime(uint32 EventType, uint32 Time)
 	EventMap::iterator itr = m_events.find(EventType);
 	if(itr != m_events.end())
 	{
-		do 
+		do
 		{
 			itr->second->msTime = Time;
 			++itr;
@@ -282,7 +282,7 @@ void EventableObject::event_ModifyTimeAndTimeLeft(uint32 EventType, uint32 Time)
 	EventMap::iterator itr = m_events.find(EventType);
 	if(itr != m_events.end())
 	{
-		do 
+		do
 		{
 			itr->second->currTime = itr->second->msTime = Time;
 			++itr;
@@ -307,7 +307,7 @@ bool EventableObject::event_HasEvent(uint32 EventType)
 	EventMap::iterator itr = m_events.find(EventType);
 	if(itr != m_events.end())
 	{
-		do 
+		do
 		{
 			if(!itr->second->deleted)
 			{
@@ -367,7 +367,7 @@ void EventableObjectHolder::Update(uint32 time_difference)
 	while(itr != m_events.end())
 	{
 		it2 = itr++;
-		if((*it2)->instanceId != mInstanceId || (*it2)->deleted || 
+		if((*it2)->instanceId != mInstanceId || (*it2)->deleted ||
 			( mInstanceId == WORLD_INSTANCE && (*it2)->eventFlag & EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT))
 		{
 			// remove from this list.
@@ -397,7 +397,7 @@ void EventableObjectHolder::Update(uint32 time_difference)
 			if(ev->repeats && --ev->repeats == 0)
 			{
 				// Event expired :>
-				
+
 				/* remove the event from here */
 				ev->deleted = true;
 				ev->DecRef();
@@ -437,7 +437,7 @@ void EventableObject::event_Relocate()
 	{
 		// whee, we changed event holder :>
 		// doing this will change the instanceid on all the events, as well as add to the new holder.
-		
+
 		// no need to do this if we don't have any events, though.
 		if(nh == NULL)
 			nh = sEventMgr.GetEventHolder(-1);
@@ -460,7 +460,7 @@ uint32 EventableObject::event_GetEventPeriod(uint32 EventType)
 	EventMap::iterator itr = m_events.find(EventType);
 	if(itr != m_events.end())
 		ret = (uint32)itr->second->msTime;
-	
+
 	m_lock.Release();
 	return ret;
 }

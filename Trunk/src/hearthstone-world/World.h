@@ -46,9 +46,9 @@ enum LogonServerTypes
 enum Rates
 {
 	RATE_HEALTH=0,
-	RATE_POWER1,	
-	RATE_POWER2,	
-	RATE_POWER3,	
+	RATE_POWER1,
+	RATE_POWER2,
+	RATE_POWER3,
 	RATE_DROP0, // separate rates for each quality level
 	RATE_DROP1,
 	RATE_DROP2,
@@ -71,7 +71,7 @@ enum Rates
 	RATE_ARENAPOINTMULTIPLIER5X,
 	RATE_EOTS_CAPTURERATE,
 	MAX_RATES
-};		
+};
 
 enum IntRates
 {
@@ -290,47 +290,47 @@ struct insert_playerskill
 	uint32 maxlvl;
 };
 
-struct insert_playerquest 
-{ 
-	uint32 player_guid; 
-	uint32 quest_id; 
-	uint32 slot; 
-	uint32 time_left; 
-	uint32 explored_area1; 
-	uint32 explored_area2; 
-	uint32 explored_area3; 
-	uint32 explored_area4; 
-	uint32 mob_kill1; 
-	uint32 mob_kill2; 
-	uint32 mob_kill3; 
-	uint32 mob_kill4; 
+struct insert_playerquest
+{
+	uint32 player_guid;
+	uint32 quest_id;
+	uint32 slot;
+	uint32 time_left;
+	uint32 explored_area1;
+	uint32 explored_area2;
+	uint32 explored_area3;
+	uint32 explored_area4;
+	uint32 mob_kill1;
+	uint32 mob_kill2;
+	uint32 mob_kill3;
+	uint32 mob_kill4;
 	uint32 slain;
 };
 
-struct insert_playerglyph 
-{ 
-	uint32 player_guid; 
-	uint32 spec; 
-	uint32 glyph1; 
-	uint32 glyph2; 
-	uint32 glyph3; 
-	uint32 glyph4; 
-	uint32 glyph5; 
-	uint32 glyph6; 
+struct insert_playerglyph
+{
+	uint32 player_guid;
+	uint32 spec;
+	uint32 glyph1;
+	uint32 glyph2;
+	uint32 glyph3;
+	uint32 glyph4;
+	uint32 glyph5;
+	uint32 glyph6;
 };
 
-struct insert_playertalent 
-{ 
-	uint32 player_guid; 
-	uint32 spec; 
-	uint32 tid; 
-	uint32 rank; 
+struct insert_playertalent
+{
+	uint32 player_guid;
+	uint32 spec;
+	uint32 tid;
+	uint32 rank;
 };
 
-struct insert_playerspell 
-{ 
-	uint32 player_guid; 
-	uint32 spellid; 
+struct insert_playerspell
+{
+	uint32 player_guid;
+	uint32 spellid;
 };
 
 class BasicTaskExecutor : public ThreadContext
@@ -462,7 +462,7 @@ public:
 
 	uint32 GetMaxLevel(Player* plr);
 
-	/** Reloads the config and sets all of the setting variables 
+	/** Reloads the config and sets all of the setting variables
 	 */
 	void Rehash(bool load);
 
@@ -538,7 +538,7 @@ public:
 	{
 		return regen_values[index];
 	}
-	
+
 	HEARTHSTONE_INLINE uint32 getIntRate(int index)
 	{
 		return int_rates[index];

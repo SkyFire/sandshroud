@@ -257,7 +257,7 @@ enum UNIT_TYPE
 	UNIT_TYPE_MISC	= 10,
 	UNIT_TYPE_TOTEM = 11,
 	UNIT_TYPE_NONCOMBAT_PET = 12,
-	UNIT_TYPE_GAS_CLOUD = 13,   
+	UNIT_TYPE_GAS_CLOUD = 13,
 };
 
 enum FAMILY
@@ -278,7 +278,7 @@ enum FAMILY
 	FAMILY_SUCCUBUS,
 	FAMILY_DOOMGUARD		= 19,
 	FAMILY_SCORPID,
-	FAMILY_TURTLE, 
+	FAMILY_TURTLE,
 	FAMILY_IMP				= 23,
 	FAMILY_BAT,
 	FAMILY_HYENA,
@@ -365,12 +365,12 @@ public:
 	void RemoveFromWorld(bool addrespawnevent, bool free_guid);
 
 	/// Creation
-	void Create ( const char* creature_name, uint32 mapid, float x, float y, float z, float ang);	
+	void Create ( const char* creature_name, uint32 mapid, float x, float y, float z, float ang);
 	void CreateWayPoint ( uint32 WayPointID, uint32 mapid, float x, float y, float z, float ang);
 
 	/// Arena organizers
 	HEARTHSTONE_INLINE bool ArenaOrganizersFlags() const { return HasFlag( UNIT_NPC_FLAGS, UNIT_NPC_FLAG_TABARDCHANGER ); }
-	
+
 	/// Updates
 	virtual void Update( uint32 time );
 
@@ -390,7 +390,7 @@ public:
 			if(itr->itemid == itemid)
 				return slot;
 			else
-				++slot;			
+				++slot;
 		}
 		return -1;
 	}
@@ -416,7 +416,7 @@ public:
 		{
 			if(itr->itemid == itemid)
 			{
-				ci = (*itr);   
+				ci = (*itr);
 				return;
 			}
 		}
@@ -468,7 +468,7 @@ public:
 
 	HEARTHSTONE_INLINE void SetSheatheForAttackType(uint8 type) { SetByte(UNIT_FIELD_BYTES_2, 0, type); }
 	HEARTHSTONE_INLINE bool isQuestGiver() { return HasFlag( UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER ); };
-	
+
 	int32 FlatResistanceMod[7];
 	int32 BaseResistanceModPct[7];
 	int32 ResistanceModPct[7];
@@ -513,7 +513,7 @@ public:
 			{
 				if(GetStealthDetectBonus() > 500) return true; // immune to stealth
 				else detectRange = 0.0f;
-			}	
+			}
 
 			detectRange += GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS); // adjust range for size of creature
 			detectRange += obj->GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS); // adjust range for size of stealthed player
@@ -589,13 +589,13 @@ public:
 	CreatureInfo *creature_info;
 	HEARTHSTONE_INLINE CreatureInfo *GetCreatureInfo()
 	{
-		return creature_info; 
+		return creature_info;
 	}
 	// left this function for backwards compatibility with scripts
 	// please use GetCreatureInfo()
 	HEARTHSTONE_INLINE CreatureInfo *GetCreatureName()
 	{
-		return creature_info; 
+		return creature_info;
 	}
 	HEARTHSTONE_INLINE void SetCreatureName(CreatureInfo *ci) { creature_info = ci; }
 	HEARTHSTONE_INLINE Trainer* GetTrainer() { return mTrainer; }

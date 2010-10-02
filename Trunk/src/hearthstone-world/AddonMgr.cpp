@@ -34,7 +34,7 @@ AddonMgr::AddonMgr()
 AddonMgr::~AddonMgr()
 {
 	std::map<std::string, AddonEntry*>::iterator itr;
-	for(itr = KnownAddons.begin(); itr!=KnownAddons.end(); itr++) 
+	for(itr = KnownAddons.begin(); itr!=KnownAddons.end(); itr++)
 	{
 		delete itr->second;
 	}
@@ -87,7 +87,7 @@ bool AddonMgr::ShouldShowInList(std::string name, uint32 crc)
 	}
 	else
 	{
-		// New addon. It'll be saved to db at server shutdown.		
+		// New addon. It'll be saved to db at server shutdown.
 		AddonEntry *ent = new AddonEntry;
 		ent->name = name;
 		ent->crc = crc;
@@ -118,7 +118,7 @@ void AddonMgr::SendAddonInfoPacket(WorldPacket *source, uint32 pos, WorldSession
 	{
 		DEBUG_LOG("AddonMgr","Warning, Incomplete auth session sent.");
 		return;
-	}	
+	}
 	rsize = realsize;
 	size_t position = source->rpos();
 
@@ -147,12 +147,12 @@ void AddonMgr::SendAddonInfoPacket(WorldPacket *source, uint32 pos, WorldSession
 	uint32 unknown;
 
 	unpacked >> addons;
-	size_t p = unpacked.rpos(); 
-	if( p + (addons*10) > unpacked.size() - p - 4) 
-	{ 
-		// stupid fucker, trying to make us waste CPU cycles 
-		m_session->Disconnect(); 
-		return; 
+	size_t p = unpacked.rpos();
+	if( p + (addons*10) > unpacked.size() - p - 4)
+	{
+		// stupid fucker, trying to make us waste CPU cycles
+		m_session->Disconnect();
+		return;
 	}
 
 	std::string name;
@@ -229,7 +229,7 @@ void AddonMgr::LoadFromDB()
 		return;
 	}
 
-	do 
+	do
 	{
 		Field *field = result->Fetch();
 		AddonEntry *ent = new AddonEntry;

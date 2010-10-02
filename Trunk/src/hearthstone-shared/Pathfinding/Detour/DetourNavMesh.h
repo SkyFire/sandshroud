@@ -147,7 +147,7 @@ struct dtMeshTile
 	unsigned char* detailTris;				// Pointer to detail triangles (will be updated when tile added).
 	dtBVNode* bvTree;						// Pointer to BVtree nodes (will be updated when tile added).
 	dtOffMeshConnection* offMeshCons;		// Pointer to Off-Mesh links. (will be updated when tile added).
-		
+
 	unsigned char* data;					// Pointer to tile data.
 	int dataSize;							// Size of the tile data.
 	int flags;								// Tile flags, see dtTileFlags.

@@ -337,7 +337,7 @@ void EyeOfTheStorm::HookOnAreaTrigger(Player* plr, uint32 id)
 	* 1 towers controlled = 75 points
 	* 2 towers controlled = 85 points
 	* 3 towers controlled = 100 points
-	* 4 towers controlled = 500 points 
+	* 4 towers controlled = 500 points
 	*/
 
 	// 25 is guessed
@@ -356,16 +356,16 @@ void EyeOfTheStorm::HookOnAreaTrigger(Player* plr, uint32 id)
 		m_mapMgr->GetStateManager().UpdateWorldState( WORLDSTATE_EOTS_FLAG_NEUTRAL_DISPLAY, 1 );
 	}
 	// else bg ended
-	
+
 	plr->RemoveAura( EOTS_NETHERWING_FLAG_SPELL );
 }
 
 void EyeOfTheStorm::HookOnPlayerDeath(Player* plr)
 {
-		
+
 	if(plr->m_bgHasFlag)
 		plr->RemoveAura( EOTS_NETHERWING_FLAG_SPELL );
-	
+
 	plr->m_bgHasFlag = false;
 	plr->m_bgScore.Deaths++;
 	UpdatePvPData();
@@ -439,7 +439,7 @@ void EyeOfTheStorm::OnRemovePlayer(Player* plr)
 		plr->RemoveAura( EOTS_NETHERWING_FLAG_SPELL );
 		//DropFlag( plr );
 	}
-	
+
 	if(!m_started)
 		plr->RemoveAura(BG_PREPARATION);
 }
@@ -454,7 +454,7 @@ void EyeOfTheStorm::DropFlag(Player* plr)
 	plr->CastSpell(plr, BG_RECENTLY_DROPPED_FLAG, true);
 
 	/**
-	* let's apply the same rules as wsg, reallocate guid, 
+	* let's apply the same rules as wsg, reallocate guid,
 	* reposition, spawn.
 	 */
 	m_dropFlag->SetNewGuid(m_mapMgr->GenerateGameobjectGuid());
@@ -539,20 +539,20 @@ void EyeOfTheStorm::OnCreate()
 	sm.CreateWorldState(WORLDSTATE_EOTS_HORDE_BASES, 0);
 
 	sm.CreateWorldState(WORLDSTATE_EOTS_PVP_CAPTURE_BAR_DISPLAY, 0);
-	sm.CreateWorldState(WORLDSTATE_EOTS_PVP_CAPTURE_BAR_VALUE, 0);	
+	sm.CreateWorldState(WORLDSTATE_EOTS_PVP_CAPTURE_BAR_VALUE, 0);
 
 	sm.CreateWorldState(WORLDSTATE_EOTS_DRAENEI_RUINS_HORDE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_DRAENEI_RUINS_ALLIANCE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_DRAENEI_RUINS_NETURAL_DISPLAY, 1);
-	
+
 	sm.CreateWorldState(WORLDSTATE_EOTS_MAGE_TOWER_ALLIANCE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_MAGE_TOWER_HORDE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_MAGE_TOWER_NETURAL_DISPLAY, 1);
-	
+
 	sm.CreateWorldState(WORLDSTATE_EOTS_FELREAVER_RUINS_HORDE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_FELREAVER_RUINS_ALLIANCE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_FELREAVER_RUINS_NETURAL_DISPLAY, 1);
-	
+
 	sm.CreateWorldState(WORLDSTATE_EOTS_BLOODELF_TOWER_HORDE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_BLOODELF_TOWER_ALLIANCE_DISPLAY, 0);
 	sm.CreateWorldState(WORLDSTATE_EOTS_BLOODELF_TOWER_NEUTRAL_DISPLAY, 1);
@@ -697,7 +697,7 @@ void EyeOfTheStorm::UpdateCPs()
 		plrcounts[0] = plrcounts[1] = 0;
 
 		for(; itr != itrend; itr++)
-		{ 
+		{
 			if( !(*itr)->IsPvPFlagged() || (*itr)->InStealth() || (*itr)->m_invisible || (*itr)->SchoolImmunityList[0] || (*itr)->m_bgFlagIneligible )
 				is_valid = false;
 			else
@@ -741,8 +741,8 @@ void EyeOfTheStorm::UpdateCPs()
 		// change the flag depending on cp status
 		if( m_CPStatus[i] < 50 )
 		{
-			if( ( m_CPBanner[i] && m_CPBanner[i]->GetEntry() != EOTS_BANNER_HORDE ) || 
-			  ( m_CPBanner2[i] && m_CPBanner2[i]->GetEntry() != EOTS_BANNER_HORDE ) || 
+			if( ( m_CPBanner[i] && m_CPBanner[i]->GetEntry() != EOTS_BANNER_HORDE ) ||
+			  ( m_CPBanner2[i] && m_CPBanner2[i]->GetEntry() != EOTS_BANNER_HORDE ) ||
 			  ( m_CPBanner3[i] && m_CPBanner3[i]->GetEntry() != EOTS_BANNER_HORDE ) )
 			{
 				RespawnCPFlag(i, EOTS_BANNER_HORDE);
@@ -768,8 +768,8 @@ void EyeOfTheStorm::UpdateCPs()
 		}
 		else if( m_CPStatus[i] > 50 )
 		{
-			if( ( m_CPBanner[i] && m_CPBanner[i]->GetEntry() != EOTS_BANNER_ALLIANCE ) || 
-			  ( m_CPBanner2[i] && m_CPBanner2[i]->GetEntry() != EOTS_BANNER_ALLIANCE ) || 
+			if( ( m_CPBanner[i] && m_CPBanner[i]->GetEntry() != EOTS_BANNER_ALLIANCE ) ||
+			  ( m_CPBanner2[i] && m_CPBanner2[i]->GetEntry() != EOTS_BANNER_ALLIANCE ) ||
 			  ( m_CPBanner3[i] && m_CPBanner3[i]->GetEntry() != EOTS_BANNER_ALLIANCE ) )
 			{
 				RespawnCPFlag(i, EOTS_BANNER_ALLIANCE);
@@ -795,16 +795,16 @@ void EyeOfTheStorm::UpdateCPs()
 		}
 		else
 		{
-			if( ( m_CPBanner[i] && m_CPBanner[i]->GetEntry() != EOTS_BANNER_NEUTRAL ) || 
-			  ( m_CPBanner2[i] && m_CPBanner2[i]->GetEntry() != EOTS_BANNER_NEUTRAL ) || 
+			if( ( m_CPBanner[i] && m_CPBanner[i]->GetEntry() != EOTS_BANNER_NEUTRAL ) ||
+			  ( m_CPBanner2[i] && m_CPBanner2[i]->GetEntry() != EOTS_BANNER_NEUTRAL ) ||
 			  ( m_CPBanner3[i] && m_CPBanner3[i]->GetEntry() != EOTS_BANNER_NEUTRAL ) )
 			{
 				// has to be below or equal to 50, or above/equal
-				if( ( m_CPBanner[i]->GetEntry() == EOTS_BANNER_ALLIANCE && m_CPStatus[i] <= 50 ) || 
-					( m_CPBanner[i]->GetEntry() == EOTS_BANNER_HORDE && m_CPStatus[i] >= 50 ) || 
-					( m_CPBanner2[i]->GetEntry() == EOTS_BANNER_ALLIANCE && m_CPStatus[i] <= 50 ) || 
-					( m_CPBanner2[i]->GetEntry() == EOTS_BANNER_HORDE && m_CPStatus[i] >= 50 ) || 
-					( m_CPBanner3[i]->GetEntry() == EOTS_BANNER_ALLIANCE && m_CPStatus[i] <= 50 ) || 
+				if( ( m_CPBanner[i]->GetEntry() == EOTS_BANNER_ALLIANCE && m_CPStatus[i] <= 50 ) ||
+					( m_CPBanner[i]->GetEntry() == EOTS_BANNER_HORDE && m_CPStatus[i] >= 50 ) ||
+					( m_CPBanner2[i]->GetEntry() == EOTS_BANNER_ALLIANCE && m_CPStatus[i] <= 50 ) ||
+					( m_CPBanner2[i]->GetEntry() == EOTS_BANNER_HORDE && m_CPStatus[i] >= 50 ) ||
+					( m_CPBanner3[i]->GetEntry() == EOTS_BANNER_ALLIANCE && m_CPStatus[i] <= 50 ) ||
 					( m_CPBanner3[i]->GetEntry() == EOTS_BANNER_HORDE && m_CPStatus[i] >= 50 ) )
 				{
 					if( m_CPBanner[i] && m_CPBanner[i]->GetEntry() == EOTS_BANNER_ALLIANCE )
@@ -823,7 +823,7 @@ void EyeOfTheStorm::UpdateCPs()
 						if( m_towerCount[1] < 0 )
 							m_towerCount[1] = 0;
 
-						
+
 						m_mapMgr->GetStateManager().UpdateWorldState( WORLDSTATE_EOTS_HORDE_BASES, m_towerCount[1] );
 					}
 
@@ -886,7 +886,7 @@ void EyeOfTheStorm::UpdateCPs()
 			if( delta > 25 )
 				delta = 25;
 
-			
+
 			m_CPStatus[i] -= delta;
 			if( m_CPStatus[i] > 100 )
 				m_CPStatus[i] = 100;
@@ -908,7 +908,7 @@ void EyeOfTheStorm::GeneratePoints()
 	* 1 tower controlled = 1 point/tick (0.5 points per second)
 	* 2 towers controlled = 2 points/tick (1 point per second)
 	* 3 towers controlled = 5 points/tick (2.5 points per second)
-	* 4 towers controlled = 10 points/tick (5 points per second) 
+	* 4 towers controlled = 10 points/tick (5 points per second)
 
 	*/
 	uint32 pointspertick[5] = { 0, 1, 2, 5, 10 };
@@ -1093,7 +1093,7 @@ void EyeOfTheStorm::SpawnBuff(uint32 x)
 
 LocationVector EyeOfTheStorm::GetStartingCoords(uint32 Team)
 {
-	return LocationVector( EOTSStartLocations[Team][0], 
+	return LocationVector( EOTSStartLocations[Team][0],
 		EOTSStartLocations[Team][1],
 		EOTSStartLocations[Team][2] );
 }
@@ -1140,11 +1140,11 @@ void EyeOfTheStorm::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 	pCorpse->m_loot.gold = float2int32(gold);
 }
 
-void EyeOfTheStorm::HookOnShadowSight() 
+void EyeOfTheStorm::HookOnShadowSight()
 {
 }
 
-void EyeOfTheStorm::SetIsWeekend(bool isweekend) 
+void EyeOfTheStorm::SetIsWeekend(bool isweekend)
 {
 	m_isWeekend = isweekend;
 	if (isweekend)

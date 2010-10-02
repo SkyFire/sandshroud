@@ -61,10 +61,10 @@ public:
 	HEARTHSTONE_INLINE bool event_HasEvents() { return m_events.size() > 0 ? true : false; }
 	void event_AddEvent(TimedEvent * ptr);
 	void event_Relocate();
-	
+
 	// this func needs to be implemented by all eventable classes. use it to retreive the instance
 	// id that it needs to attach itself to.
-	
+
 	virtual int32 event_GetInstanceID() { return -1; }
 
 protected:
@@ -73,7 +73,7 @@ protected:
 	FastMutex m_lock;
 	EventMap m_events;
 	EventableObjectHolder * m_holder;
-	
+
 };
 
 /**

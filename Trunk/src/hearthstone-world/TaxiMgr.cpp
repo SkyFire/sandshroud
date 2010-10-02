@@ -55,7 +55,7 @@ void TaxiPath::ComputeLen()
 		}
 
 		*curptr += sqrt((itr->second->x - x)*(itr->second->x - x) +
-			(itr->second->y - y)*(itr->second->y - y) + 
+			(itr->second->y - y)*(itr->second->y - y) +
 			(itr->second->z - z)*(itr->second->z - z));
 
 		x = itr->second->x;
@@ -113,7 +113,7 @@ void TaxiPath::SetPosForTime(float &x, float &y, float &z, uint32 time, uint32 *
 			continue;
 		}
 
-		len = (uint32)sqrt((itr->second->x - nx)*(itr->second->x - nx) + (itr->second->y - ny)*(itr->second->y - ny) + 
+		len = (uint32)sqrt((itr->second->x - nx)*(itr->second->x - nx) + (itr->second->y - ny)*(itr->second->y - ny) +
 			(itr->second->z - nz)*(itr->second->z - nz));
 
 		if (len >= traveled_len)
@@ -196,7 +196,7 @@ void TaxiPath::SendMoveForTime(Player* riding, Player* to, uint32 time)
 		}
 
 		len = (uint32)sqrt((itr->second->x - nx)*(itr->second->x - nx) +
-			(itr->second->y - ny)*(itr->second->y - ny) + 
+			(itr->second->y - ny)*(itr->second->y - ny) +
 			(itr->second->z - nz)*(itr->second->z - nz));
 
 		if (len >= traveled_len)
@@ -244,7 +244,7 @@ void TaxiPath::SendMoveForTime(Player* riding, Player* to, uint32 time)
 		++itr;
 		++nodecounter;
 	}
-	
+
 	*(uint32*)&(data->contents()[pos]) = nodecounter;
 	to->delayedPackets.add(data);
 /*	if (!time)
@@ -262,13 +262,13 @@ void TaxiPath::SendMoveForTime(Player* riding, Player* to, uint32 time)
 
 	float nx = itr->second->x;
 	float ny = itr->second->y;
-	float nz = itr->second->z; 
+	float nz = itr->second->z;
 	++itr;
 
 	while (itr != m_pathNodes.end())
-	{		
+	{
 		len = (uint32)sqrt((itr->second->x - nx)*(itr->second->x - nx) +
-			(itr->second->y - ny)*(itr->second->y - ny) + 
+			(itr->second->y - ny)*(itr->second->y - ny) +
 			(itr->second->z - nz)*(itr->second->z - nz));
 
 		if (len > traveled_len)

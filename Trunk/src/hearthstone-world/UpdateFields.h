@@ -17,7 +17,7 @@
  *
  */
 
-/** 3.3.0.a UpdateFields 
+/** 3.3.0.a UpdateFields
  */
 
 #ifndef __ASCENT_UPDATEFIELDS_H

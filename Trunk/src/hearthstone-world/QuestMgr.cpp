@@ -129,13 +129,13 @@ uint32 QuestMgr::CalcQuestStatus(Object* quest_giver, Player* plr, Quest* qst, u
 			return PlayerMeetsReqs(plr, qst, skiplevelcheck);
 	}
 	else
-	{		
+	{
 		if (!qle->CanBeFinished())
 			return QMGR_QUEST_NOT_FINISHED;
 		else
 		{
-			if (type & QUESTGIVER_QUEST_END) 
-				return QMGR_QUEST_FINISHED;					
+			if (type & QUESTGIVER_QUEST_END)
+				return QMGR_QUEST_FINISHED;
 			else
 				return QMGR_QUEST_NOT_AVAILABLE;
 		}
@@ -160,7 +160,7 @@ uint8 QuestMgr::CalcStatus(Object* quest_giver, Player* plr)
 			q_begin = TO_GAMEOBJECT(quest_giver)->QuestsBegin();
 			q_end = TO_GAMEOBJECT(quest_giver)->QuestsEnd();
 		}
-	} 
+	}
 	else if( quest_giver->GetTypeId() == TYPEID_UNIT )
 	{
 		bValid = TO_CREATURE( quest_giver )->HasQuests();
@@ -221,9 +221,9 @@ uint32 QuestMgr::ActiveQuestsCount(Object* quest_giver, Player* plr)
 		{
 			q_begin = TO_GAMEOBJECT(quest_giver)->QuestsBegin();
 			q_end   = TO_GAMEOBJECT(quest_giver)->QuestsEnd();
-			
+
 		}
-	} 
+	}
 	else if(quest_giver->GetTypeId() == TYPEID_UNIT)
 	{
 		bValid = TO_CREATURE(quest_giver)->HasQuests();
@@ -442,7 +442,7 @@ void QuestMgr::BuildRequestItems(WorldPacket *data, Quest* qst, Object* qst_give
 	*data << qst->required_money;		// Required Money
 	*data << uint32(6);	// item count
 	uint32 count = 0;
-	
+
 	// (loop for each item)
 	for(uint32 i = 0; i < 6; i++)
 	{
@@ -510,7 +510,7 @@ void QuestMgr::BuildQuestList(WorldPacket *data, Object* qst_giver, Player* plr,
 	data->Initialize( SMSG_QUESTGIVER_QUEST_LIST );
 
 	*data << qst_giver->GetGUID();
-	*data << "How can I help you?"; //Hello line 
+	*data << "How can I help you?"; //Hello line
 	*data << uint32(1);//Emote Delay
 	*data << uint32(1);//Emote
 
@@ -523,7 +523,7 @@ void QuestMgr::BuildQuestList(WorldPacket *data, Object* qst_giver, Player* plr,
 			st = TO_GAMEOBJECT(qst_giver)->QuestsBegin();
 			ed = TO_GAMEOBJECT(qst_giver)->QuestsEnd();
 		}
-	} 
+	}
 	else if(qst_giver->GetTypeId() == TYPEID_UNIT)
 	{
 		bValid = TO_CREATURE(qst_giver)->HasQuests();
@@ -539,7 +539,7 @@ void QuestMgr::BuildQuestList(WorldPacket *data, Object* qst_giver, Player* plr,
 		*data << uint8(0);
 		return;
 	}
-	
+
 	*data << uint8(sQuestMgr.ActiveQuestsCount(qst_giver, plr));
 
 	for (it = st; it != ed; it++)
@@ -553,7 +553,7 @@ void QuestMgr::BuildQuestList(WorldPacket *data, Object* qst_giver, Player* plr,
 				LocalizedQuest * lq = (language>0) ? sLocalizationMgr.GetLocalizedQuest((*it)->qst->id,language):NULL;
 
 				*data << (*it)->qst->id;
-				
+
 				switch(status)
 				{
 				case QMGR_QUEST_NOT_FINISHED:
@@ -588,7 +588,7 @@ void QuestMgr::SendQuestUpdateAddKill(Player* plr, uint32 questid, uint32 entry,
 	data << questid;
 	data << entry;
 	data << count;
-	data << tcount; 
+	data << tcount;
 	data << guid;
 	plr->GetSession()->SendPacket(&data);
 }
@@ -705,7 +705,7 @@ void QuestMgr::_OnPlayerKill(Player* plr, uint32 creature_entry)
 		if(Group* pGroup = plr->GetGroup())
 		{
 //			removed by Zack How the hell will healers get the kills then ?
-//			if(pGroup->GetGroupType() != GROUP_TYPE_PARTY) 
+//			if(pGroup->GetGroupType() != GROUP_TYPE_PARTY)
 //				return;  // Raid's don't get shared kills.
 
 			GroupMembersSet::iterator gitr;
@@ -954,12 +954,12 @@ void QuestMgr::GiveQuestRewardReputation(Player* plr, Quest* qst, Object* qst_gi
 			if(qst->reward_repvalue[z])
 				amt = qst->reward_repvalue[z];
 		}
-		else 
+		else
 			continue;
 
 		if(amt)
 		{
-			amt = float2int32( float( amt ) * sWorld.getRate( RATE_QUESTREPUTATION ) ); // reputation rewards 
+			amt = float2int32( float( amt ) * sWorld.getRate( RATE_QUESTREPUTATION ) ); // reputation rewards
 			if(qst->reward_replimit && plr->GetStanding(fact)+ amt >= (int32)qst->reward_replimit)
 			{
 				amt = (int32)qst->reward_replimit - plr->GetStanding(fact);
@@ -973,7 +973,7 @@ void QuestMgr::GiveQuestRewardReputation(Player* plr, Quest* qst, Object* qst_gi
 }
 void QuestMgr::OnQuestAccepted(Player* plr, Quest* qst, Object* qst_giver)
 {
-	
+
 }
 
 void QuestMgr::GiveQuestTitleReward(Player* plr, Quest* qst)
@@ -1004,7 +1004,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		{
 			if (plr->HasQuestMob(qst->required_mob[x]))
 				plr->RemoveQuestMob(qst->required_mob[x]);
-		} 
+		}
 	}
 	qle->ClearAffectedUnits();
 
@@ -1016,7 +1016,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 			if( qst->required_mob[x] && plr->HasQuestMob(qst->required_mob[x]) )
 				qle->SetMobCount(x,0);
 		}
-		else 
+		else
 		{
 			//Remove aquired spells
 			if( qst->required_spell[x] && plr->HasQuestSpell(qle->GetRequiredSpell(x)) )
@@ -1036,7 +1036,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 	}
 
 	qle->Finish();
-	
+
 	if(qst_giver->GetTypeId() == TYPEID_UNIT)
 	{
 		if(!TO_CREATURE(qst_giver)->HasQuest(qst->id, 2))
@@ -1070,7 +1070,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 						OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
 				}
 				else
-				{   
+				{
 					Item* add;
 					SlotResult slotresult;
 					add = plr->GetItemInterface()->FindItemLessMax(qst->reward_item[i], qst->reward_itemcount[i], false);
@@ -1162,7 +1162,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 		plr->ModUnsigned32Value(PLAYER_FIELD_COINAGE, GenerateRewardMoney(plr, qst));
 		plr->ModUnsigned32Value(PLAYER_CHARACTER_POINTS1, qst->reward_talents);
 		HonorHandler::AddHonorPointsToPlayer(plr, qst->reward_honor);
-  	
+  
 		// Reputation reward
 		GiveQuestRewardReputation(plr, qst, qst_giver);
 		GiveQuestTitleReward(plr, qst);
@@ -1180,7 +1180,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 						OUT_DEBUG("Invalid item prototype in quest reward! ID %d, quest %d", qst->reward_item[i], qst->id);
 				}
 				else
-				{   
+				{
 					Item* add;
 					SlotResult slotresult;
 					add = plr->GetItemInterface()->FindItemLessMax(qst->reward_item[i], qst->reward_itemcount[i], false);
@@ -1234,7 +1234,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 					{
 						plr->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM, INV_ERR_INVENTORY_FULL);
 					}
-					else 
+					else
 					{
 						Item* itm = objmgr.CreateItem(qst->reward_choiceitem[reward_slot], plr);
 						itm->SetUInt32Value(ITEM_FIELD_STACK_COUNT, uint32(qst->reward_choiceitemcount[reward_slot]));
@@ -1312,7 +1312,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 
 	//Remove any timed events
 	if (sEventMgr.HasEvent(plr,EVENT_TIMED_QUEST_EXPIRE))
-		sEventMgr.RemoveEvents(plr, EVENT_TIMED_QUEST_EXPIRE); 	
+		sEventMgr.RemoveEvents(plr, EVENT_TIMED_QUEST_EXPIRE); 
 
 	if(qst->zone_id)
 		plr->GetAchievementInterface()->HandleAchievementCriteriaCompleteQuestsInZone(qst->zone_id);
@@ -1358,7 +1358,7 @@ void QuestMgr::AddItemQuestAssociation( uint32 itemId, Quest *qst, uint8 item_co
 	HM_NAMESPACE::hash_map<uint32, list<QuestAssociation *>* > &associationList = GetQuestAssociationList();
 	std::list<QuestAssociation *>* tempList;
 	QuestAssociation *ptr = NULL;
-	
+
 	// look for the item in the associationList
 	if (associationList.find( itemId ) == associationList.end() )
 	{
@@ -1372,7 +1372,7 @@ void QuestMgr::AddItemQuestAssociation( uint32 itemId, Quest *qst, uint8 item_co
 		// item found, now we'll search through its QuestAssociationList
 		tempList = associationList.find( itemId )->second;
 	}
-	
+
 	// look through this item's QuestAssociationList for a matching quest entry
 	list<QuestAssociation *>::iterator it;
 	for (it = tempList->begin(); it != tempList->end(); it++)
@@ -1397,7 +1397,7 @@ void QuestMgr::AddItemQuestAssociation( uint32 itemId, Quest *qst, uint8 item_co
 	}
 	else
 	{
-		// yep, update the QuestAssociation with the new item_count information 
+		// yep, update the QuestAssociation with the new item_count information
 		ptr->item_count = item_count;
 		sLog.outDebug( "WARNING: Duplicate entries found in item_quest_association, updating item #%d with new item_count: %d.", itemId, item_count );
 	}
@@ -1446,18 +1446,18 @@ template <class T> void QuestMgr::_AddQuest(uint32 entryid, Quest *qst, uint8 ty
 
 
 
-void QuestMgr::_CleanLine(std::string *str) 
+void QuestMgr::_CleanLine(std::string *str)
 {
 	_RemoveChar((char*)"\r", str);
 	_RemoveChar((char*)"\n", str);
 
-	while (str->c_str()[0] == 32) 
+	while (str->c_str()[0] == 32)
 	{
 		str->erase(0,1);
 	}
 }
 
-void QuestMgr::_RemoveChar(char *c, std::string *str) 
+void QuestMgr::_RemoveChar(char *c, std::string *str)
 {
 	string::size_type pos = str->find(c,0);
 
@@ -1465,7 +1465,7 @@ void QuestMgr::_RemoveChar(char *c, std::string *str)
 	{
 		str->erase(pos, 1);
 		pos = str->find(c, 0);
-	}	
+	}
 }
 
 uint32 QuestMgr::GenerateRewardMoney( Player* pl, Quest * qst )
@@ -1479,13 +1479,13 @@ uint32 QuestMgr::GenerateRewardMoney( Player* pl, Quest * qst )
 		return float2int32(qst->reward_money * sWorld.getRate(RATE_QUEST_MONEY));
 }
 
-uint32 QuestMgr::GenerateQuestXP(Player* plr, Quest *qst)	
-{	
+uint32 QuestMgr::GenerateQuestXP(Player* plr, Quest *qst)
+{
 	if(qst->is_repeatable)
-		return 0;	
-	{	
+		return 0;
+	{
   if( plr->getLevel() <= qst->max_level +  5 )
-	  return qst->reward_xp;	
+	  return qst->reward_xp;
   if( plr->getLevel() == qst->max_level +  6 )
 	  return (uint32)(qst->reward_xp * 0.8);
   if( plr->getLevel() == qst->max_level +  7 )
@@ -1494,10 +1494,10 @@ uint32 QuestMgr::GenerateQuestXP(Player* plr, Quest *qst)
 	  return (uint32)(qst->reward_xp * 0.4);
   if( plr->getLevel() == qst->max_level +  9 )
 	  return (uint32)(qst->reward_xp * 0.2);
-			 
+
   else
 	  return 0;
-   }   
+   }
 }
 /*
 #define XP_INC 50
@@ -1585,7 +1585,7 @@ uint32 QuestMgr::GetGameObjectLootQuest(uint32 GO_Entry)
 {
 	HM_NAMESPACE::hash_map<uint32, uint32>::iterator itr = m_ObjectLootQuestList.find(GO_Entry);
 	if(itr == m_ObjectLootQuestList.end()) return 0;
-	
+
 	return itr->second;
 }
 
@@ -1633,9 +1633,9 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 		return false;
 
 	uint32 questCount = sQuestMgr.ActiveQuestsCount(qst_giver, plr);
-	WorldPacket data(1000);	
+	WorldPacket data(1000);
 
-	if (questCount == 0) 
+	if (questCount == 0)
 	{
 		OUT_DEBUG("WORLD: Invalid NPC for CMSG_QUESTGIVER_HELLO.");
 		return false;
@@ -1656,7 +1656,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 				q_begin = TO_GAMEOBJECT(qst_giver)->QuestsBegin();
 				q_end   = TO_GAMEOBJECT(qst_giver)->QuestsEnd();
 			}
-		} 
+		}
 		else if(qst_giver->GetTypeId() == TYPEID_UNIT)
 		{
 			bValid = TO_CREATURE(qst_giver)->HasQuests();
@@ -1672,13 +1672,13 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 			OUT_DEBUG("QUESTS: Warning, invalid NPC "I64FMT" specified for OnActivateQuestGiver. TypeId: %d.", qst_giver->GetGUID(), qst_giver->GetTypeId());
 			return false;
 		}
-		
-		for(itr = q_begin; itr != q_end; itr++) 
+
+		for(itr = q_begin; itr != q_end; itr++)
 			if (sQuestMgr.CalcQuestStatus(qst_giver, plr, *itr) >= QMGR_QUEST_CHAT)
 				break;
 
 		if (sQuestMgr.CalcStatus(qst_giver, plr) < QMGR_QUEST_CHAT)
-			return false; 
+			return false;
 
 		ASSERT(itr != q_end);
 
@@ -1704,7 +1704,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 			DEBUG_LOG( "WORLD"," Sent SMSG_QUESTGIVER_REQUEST_ITEMS." );
 		}
 	}
-	else 
+	else
 	{
 		sQuestMgr.BuildQuestList(&data, qst_giver ,plr, plr->GetSession()->language);
 		plr->GetSession()->SendPacket(&data);
@@ -1736,7 +1736,7 @@ QuestMgr::~QuestMgr()
 		itr2->second->clear();
 		delete itr2->second;
 	}
-	m_obj_quests.clear(); 
+	m_obj_quests.clear();
 
 	for(itr2 = m_npc_quests.begin(); itr2 != m_npc_quests.end(); itr2++)
 	{
@@ -1766,7 +1766,7 @@ QuestMgr::~QuestMgr()
 		itr2->second->clear();
 		delete itr2->second;
 	}
-	m_itm_quests.clear(); 
+	m_itm_quests.clear();
 
 	for(itr4 = m_quest_associations.begin(); itr4 != m_quest_associations.end(); itr4++)
 	{
@@ -1909,7 +1909,7 @@ void QuestMgr::LoadExtraQuestStuff()
 								for(uint32 xx = 0; xx < itr->second.count; ++xx )
 								{
 									if( itr->second.items[xx].item.itemproto == NULL )
-										continue; 
+										continue;
 
 									if( itr->second.items[xx].item.itemproto->Class != ITEM_CLASS_QUEST )
 									{
@@ -1983,7 +1983,7 @@ void QuestMgr::LoadExtraQuestStuff()
 	if(pResult)
 	{
 		total = pResult->GetRowCount();
-		do 
+		do
 		{
 			Field *data = pResult->Fetch();
 			creature = data[0].GetUInt32();
@@ -2012,7 +2012,7 @@ void QuestMgr::LoadExtraQuestStuff()
 	if(pResult)
 	{
 		total = pResult->GetRowCount();
-		do 
+		do
 		{
 			Field *data = pResult->Fetch();
 			creature = data[0].GetUInt32();
@@ -2041,7 +2041,7 @@ void QuestMgr::LoadExtraQuestStuff()
 	if(pResult)
 	{
 		total = pResult->GetRowCount();
-		do 
+		do
 		{
 			Field *data = pResult->Fetch();
 			creature = data[0].GetUInt32();
@@ -2070,7 +2070,7 @@ void QuestMgr::LoadExtraQuestStuff()
 	if(pResult)
 	{
 		total = pResult->GetRowCount();
-		do 
+		do
 		{
 			Field *data = pResult->Fetch();
 			creature = data[0].GetUInt32();
@@ -2102,7 +2102,7 @@ void QuestMgr::LoadExtraQuestStuff()
 		uint32 item = 0;
 		uint8 item_count = 0;
 		total = pResult->GetRowCount();
-		do 
+		do
 		{
 			Field *data = pResult->Fetch();
 			item = data[0].GetUInt32();

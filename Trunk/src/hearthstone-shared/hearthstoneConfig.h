@@ -26,8 +26,8 @@
 
 #ifndef __HEARTHSTONECONFIG_H
 #define __HEARTHSTONECONFIG_H
- 
-/** Enable/disable hearthstone world server debugging. 
+
+/** Enable/disable hearthstone world server debugging.
  * Enabling this will cause massive spam in the world server window, but will list
  * packets recieved and certian player information.
  * Default: Disabled
@@ -35,7 +35,7 @@
 
 //#define _DEBUG 1
 
-/** Enable/disable hearthstone world server optimized player saving. 
+/** Enable/disable hearthstone world server optimized player saving.
  * It is not yet complete, things have to be updated, and player account data needs to be fixed.
  * Player guilds need to be updated as well, not saving correctly :|
  * Default: Disabled
@@ -44,7 +44,7 @@
 //#define OPTIMIZED_PLAYER_SAVING 1
 
 /** Enable/disable Hearthstone world server cluster support.
- * Warning: Hearthstone will no longer function independantly when built in cluster mode. 
+ * Warning: Hearthstone will no longer function independantly when built in cluster mode.
  * It will require a realmserver to function.
  * As of last update, it is nowhere near complete, only enable for dev use.
  * Default: Disabled

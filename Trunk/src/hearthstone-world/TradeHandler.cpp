@@ -50,7 +50,7 @@ void WorldSession::HandleInitiateTrade(WorldPacket & recv_data)
 			TradeStatus = TRADE_STATUS_WRONG_FACTION;
 		else if(_player->CalcDistance(pTarget) > 10.0f)		// This needs to be checked
 			TradeStatus = TRADE_STATUS_TOO_FAR_AWAY;
-	}	
+	}
 
 	if(TradeStatus != TRADE_STATUS_PROPOSED)
 	{
@@ -94,7 +94,7 @@ void WorldSession::HandleBeginTrade(WorldPacket & recv_data)
 	}
 
 	//Abort if not ok
-	if( TradeStatus != TRADE_STATUS_INITIATED)	
+	if( TradeStatus != TRADE_STATUS_INITIATED)
 	{
 		TradeStatus = TRADE_STATUS_PLAYER_NOT_FOUND;
 		_player->ResetTradeVariables();
@@ -347,7 +347,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 		if(TradeStatus == TRADE_STATUS_ACCEPTED)
 		{
 			uint64 Guid;
-			
+
 			//Swapp 6 itemslots (7th will not trade)
 			for(uint32 Index = 0; Index < 6; Index++)
 			{

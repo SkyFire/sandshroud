@@ -310,6 +310,7 @@ dtPolyRef dtNavMeshQuery::findNearestPoly(const float* center, const float* exte
 		float closestPtPoly[3];
 		if (!closestPointOnPoly(ref, center, closestPtPoly))
 			continue;
+
 		float d = dtVdistSqr(center, closestPtPoly);
 		if (d < nearestDistanceSqr)
 		{
@@ -319,7 +320,7 @@ dtPolyRef dtNavMeshQuery::findNearestPoly(const float* center, const float* exte
 			nearest = ref;
 		}
 	}
-	
+
 	return nearest;
 }
 
@@ -327,7 +328,6 @@ dtPolyRef dtNavMeshQuery::findNearestPolyInTile(const dtMeshTile* tile, const fl
 												const dtQueryFilter* filter, float* nearestPt) const
 {
 	dtAssert(m_nav);
-	
 	float bmin[3], bmax[3];
 	dtVsub(bmin, center, extents);
 	dtVadd(bmax, center, extents);

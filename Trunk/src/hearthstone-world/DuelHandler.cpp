@@ -28,7 +28,7 @@ void WorldSession::HandleDuelAccepted(WorldPacket & recv_data)
 
 	if( _player->m_duelState != DUEL_STATE_FINISHED )
 		return;
-	
+
 	if( _player->m_duelCountdownTimer > 0 )
 		return;
 

@@ -17,7 +17,7 @@
  *
  */
 
-enum LFGTypes 
+enum LFGTypes
 {
 	LFG_NONE					= 0,
 	LFG_DUNGEON					= 1,
@@ -38,7 +38,7 @@ enum LFGTypes
 class LfgMatch;
 class LfgMgr : public Singleton < LfgMgr >, EventableObject
 {
-public:	
+public:
 	typedef list<Player*  > LfgPlayerList;
 
 	LfgMgr();
@@ -57,7 +57,7 @@ public:
 	int32 event_GetInstanceId() { return -1; }
 
 protected:
-	
+
 	LfgPlayerList m_lookingForGroup[MAX_DUNGEONS];
 	LfgPlayerList m_lookingForMore[MAX_DUNGEONS];
 	Mutex m_lock;

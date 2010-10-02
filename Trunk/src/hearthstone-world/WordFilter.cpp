@@ -102,7 +102,7 @@ void WordFilter::Load(const char * szTableName)
 	if(pResult==NULL)
 		return;
 
-	do 
+	do
 	{
 		pMatch = new WordFilterMatch;
 		pMatch->szMatch = (strlen(pResult->Fetch()[0].GetString()) > 1) ? strdup(pResult->Fetch()[0].GetString()) : NULL;
@@ -167,7 +167,7 @@ bool WordFilter::Parse(string& sMessage, bool bAllowReplace /* = true */)
 	WordFilterMatch * pFilter;
 	const char * szInput = sMessage.c_str();
 	size_t iLen = sMessage.length();
-	//char 
+	//char
 
 	for(i = 0; i < m_filterCount; i++)
 	{

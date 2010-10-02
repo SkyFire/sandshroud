@@ -83,7 +83,7 @@ void LogonCommClientSocket::OnRead()
 
 		// handle the packet
 		HandlePacket(buff);
-		
+
 		remaining = 0;
 		opcode = 0;
 	}
@@ -210,7 +210,7 @@ void LogonCommClientSocket::OnDisconnect()
 	if(_id != 0)
 	{
 		DEBUG_LOG("LogonCommClientSocket","Calling ConnectionDropped() due to OnDisconnect().");
-		sLogonCommHandler.ConnectionDropped(_id);	
+		sLogonCommHandler.ConnectionDropped(_id);
 	}
 }
 
@@ -224,7 +224,7 @@ void LogonCommClientSocket::SendChallenge()
 	uint8 * key = sLogonCommHandler.sql_passhash;
 
 	_recvCrypto.Setup(key, 20);
-	_sendCrypto.Setup(key, 20);	
+	_sendCrypto.Setup(key, 20);
 
 	/* packets are encrypted from now on */
 	use_crypto = true;
@@ -278,7 +278,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 
 	if(result)
 	{
-		do 
+		do
 		{
 			account_id = result->Fetch()[0].GetUInt32();
 			itr = mapping_to_send.find(account_id);
@@ -304,7 +304,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 	{
 		// Send no more than 40000 characters at once.
 		uncompressed << realm_id;
-		
+
 		if(Remaining > 40000)
 			uncompressed << uint32(40000);
 		else
@@ -322,7 +322,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 			break;
 
 		uncompressed.clear();
-	}	
+	}
 	Log.Notice("LogonCommClient", "Build character mapping in %ums. (%u)", getMSTime()-t,mapping_to_send.size());
 }
 

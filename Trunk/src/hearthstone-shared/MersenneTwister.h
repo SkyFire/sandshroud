@@ -35,7 +35,7 @@ SERVER_DECL uint32 RandomUInt(uint32 n);
 
 /*************************** RANDOMC.H ***************** 2007-09-22 Agner Fog *
 *
-* This file contains class declarations and other definitions for the C++ 
+* This file contains class declarations and other definitions for the C++
 * library of uniform random number generators.
 *
 * Overview of classes:
@@ -76,17 +76,17 @@ SERVER_DECL uint32 RandomUInt(uint32 n);
 * int IRandom(int min, int max);
 * Gives an integer random number in the interval min <= x <= max.
 * (max-min < MAXINT).
-* The precision is 2^-32 (defined as the difference in frequency between 
+* The precision is 2^-32 (defined as the difference in frequency between
 * possible output values). The frequencies are exact if max-min+1 is a
 * power of 2.
 *
 * int IRandomX(int min, int max);
 * Same as IRandom, but exact. In CRandomMersenne only.
-* The frequencies of all output values are exactly the same for an 
+* The frequencies of all output values are exactly the same for an
 * infinitely long sequence. (Only relevant for extremely long sequences).
 *
 * uint32 BRandom();
-* Gives 32 random bits. 
+* Gives 32 random bits.
 *
 *
 * Example:
@@ -117,7 +117,7 @@ SERVER_DECL uint32 RandomUInt(uint32 n);
 * Copyright:
 ============
 * � 1997 - 2007 Agner Fog. All software in this library is published under the
-* GNU General Public License with the further restriction that it cannot be 
+* GNU General Public License with the further restriction that it cannot be
 * used for gambling applications. See licence.htm
 *******************************************************************************/
 
@@ -139,7 +139,7 @@ class CRandomMersenne {                // Encapsulate random number generator
 #define MERS_A   0xE4BD75F5
 #define MERS_B   0x655E5280
 #define MERS_C   0xFFD58000
-#else    
+#else
 	// or constants for type MT19937:
 #define MERS_N   624
 #define MERS_M   397
@@ -169,7 +169,7 @@ private:
 	uint32 RLimit;                      // Rejection limit used by IRandomX
 	enum TArch {LITTLE_ENDIAN1, BIG_ENDIAN1, NONIEEE}; // Definition of architecture
 	TArch Architecture;                 // Conversion to float depends on architecture
-};    
+};
 
 #endif
 

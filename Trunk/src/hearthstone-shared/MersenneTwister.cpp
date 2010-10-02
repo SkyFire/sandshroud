@@ -191,13 +191,13 @@ uint32 CRandomMersenne::BRandom() {
 		static const uint32 mag01[2] = {0, MERS_A};
 
 		int kk;
-		for (kk=0; kk < MERS_N-MERS_M; kk++) {    
+		for (kk=0; kk < MERS_N-MERS_M; kk++) {
 			y = (mt[kk] & UPPER_MASK) | (mt[kk+1] & LOWER_MASK);
 			mt[kk] = mt[kk+MERS_M] ^ (y >> 1) ^ mag01[y & 1];}
 
-		for (; kk < MERS_N-1; kk++) {    
+		for (; kk < MERS_N-1; kk++) {
 			y = (mt[kk] & UPPER_MASK) | (mt[kk+1] & LOWER_MASK);
-			mt[kk] = mt[kk+(MERS_M-MERS_N)] ^ (y >> 1) ^ mag01[y & 1];}      
+			mt[kk] = mt[kk+(MERS_M-MERS_N)] ^ (y >> 1) ^ mag01[y & 1];}
 
 		y = (mt[MERS_N-1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
 		mt[MERS_N-1] = mt[MERS_M-1] ^ (y >> 1) ^ mag01[y & 1];
@@ -224,10 +224,10 @@ double CRandomMersenne::Random() {
 	uint32 r = BRandom();               // Get 32 random bits
 	// The fastest way to convert random bits to floating point is as follows:
 	// Set the binary exponent of a floating point number to 1+bias and set
-	// the mantissa to random bits. This will give a random number in the 
+	// the mantissa to random bits. This will give a random number in the
 	// interval [1,2). Then subtract 1.0 to get a random number in the interval
 	// [0,1). This procedure requires that we know how floating point numbers
-	// are stored. The storing method is tested in function RandomInit and saved 
+	// are stored. The storing method is tested in function RandomInit and saved
 	// in the variable Architecture.
 
 	// This shortcut allows the compiler to optimize away the following switch
@@ -235,7 +235,7 @@ double CRandomMersenne::Random() {
 	convert.i[0] =  r << 20;
 	convert.i[1] = (r >> 12) | 0x3FF00000;
 	return convert.f - 1.0;
-	// This somewhat slower method works for all architectures, including 
+	// This somewhat slower method works for all architectures, including
 	// non-IEEE floating point representation:
 	//return (double)r * (1./((double)(uint32)(-1L)+1.));
 }
@@ -248,7 +248,7 @@ int CRandomMersenne::IRandom(int min, int max) {
 		if (max == min) return min; else return 0x80000000;
 	}
 	// Multiply interval with random and truncate
-	int r = int((max - min + 1) * Random()) + min; 
+	int r = int((max - min + 1) * Random()) + min;
 	if (r > max) r = max;
 	return r;
 }

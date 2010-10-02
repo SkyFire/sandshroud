@@ -85,7 +85,7 @@ class SERVER_DECL MapMgr : public CellHandler <MapCell>, public EventableObject,
 	friend class MapCell;
 	friend class MapScriptInterface;
 public:
-		
+
 	//This will be done in regular way soon
 
 	Mutex m_objectinsertlock;
@@ -143,7 +143,7 @@ public:
 	typedef HM_NAMESPACE::hash_map<const uint32, DynamicObject*> DynamicObjectStorageMap;
 	DynamicObjectStorageMap m_DynamicObjectStorage;
 	DynamicObject* CreateDynamicObject();
-	
+
 	HEARTHSTONE_INLINE DynamicObject* GetDynamicObject(const uint32 guid)
 	{
 		DynamicObjectStorageMap::iterator itr = m_DynamicObjectStorage.find(guid);
@@ -164,7 +164,7 @@ public:
 //////////////////////////////////////////////////////////
 // Local (mapmgr) storage of players for faster lookup
 ////////////////////////////////
-    
+
     // double typedef lolz// a compile breaker..
 	typedef HM_NAMESPACE::hash_map<const uint32, Player*> PlayerStorageMap;
 
@@ -397,7 +397,7 @@ public:
 	VehicleSet::iterator __vehicle_iterator;
 	CreatureSet::iterator __creature_iterator;
 	GameObjectSet::iterator __gameobject_iterator;
-	
+
 	SessionSet::iterator __session_iterator_1;
 	SessionSet::iterator __session_iterator_2;
 

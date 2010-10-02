@@ -20,7 +20,7 @@
 #include "StdAfx.h"
 
 /// Function pointer holder
-pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] = 
+pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 {
 	&Spell::SpellTargetDefault,						// 0
 	&Spell::SpellTargetSelf,						// 1
@@ -152,7 +152,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 //fear storm is nice
 //Score 5.7	 Vote: [-] [+] by plle, 1.5 years ago
 //when you set that ogre head on the top of the rock and all orges see it they /yell: FLEE (and) RUN!!
-//and then all ogres get fear storm =D 
+//and then all ogres get fear storm =D
 
 //this quest
 //Score 6.9	 Vote: [-] [+] by ewendim, 1.1 years ago
@@ -199,7 +199,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 // type 55 related to blink and Netherstep... I think this one sets the xyz where you should end...
 // type 56 is related to aura holder... Player 1 give's me a aura and that aura has as target me. I wear then the aura / spell and it targeting me
 
-// type 58 proc triggeret target... 
+// type 58 proc triggeret target...
 // Apply Aura: Proc Trigger Spell
 // Retching Plague
 // 10% chance.
@@ -226,7 +226,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 // type 78 units in front of caster ( test spell )
 // type 79 is not used
 // type 80 related to summon some unit
-// type 81 > N are not handled because they are test spells 
+// type 81 > N are not handled because they are test spells
 
 */
 
@@ -235,7 +235,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 void Spell::FillTargetMap(uint32 i)
 {
 	uint32 cur;
-	
+
 	uint32 TypeA = m_spellInfo->EffectImplicitTargetA[i];
 	uint32 TypeB = m_spellInfo->EffectImplicitTargetB[i];
 
@@ -320,7 +320,7 @@ void Spell::SpellTargetDefault(uint32 i, uint32 j)
 			_AddTargetForced(m_targets.m_unitTarget, i);
 		else if(m_targets.m_itemTarget)
 			_AddTargetForced(m_targets.m_itemTarget, i);
-		else if( m_spellInfo->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT || 
+		else if( m_spellInfo->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT ||
 				 m_spellInfo->Effect[i] == SPELL_EFFECT_SUMMON_DEMON )
 			_AddTargetForced(m_caster->GetGUID(), i);
 	}
@@ -340,7 +340,7 @@ void Spell::SpellTargetInvisibleAOE(uint32 i, uint32 j)
 void Spell::SpellTargetFriendly(uint32 i, uint32 j)
 {
 	// O fuck we are contagious...
-	// this off course is not tested yet. 
+	// this off course is not tested yet.
 	if (p_caster)
 		_AddTargetForced(p_caster->GetGUID(), i);
 }
@@ -365,9 +365,9 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 		return;
 
 	if(m_spellInfo->TargetCreatureType && pTarget->GetTypeId()==TYPEID_UNIT)
-	{		
+	{
 		Creature* cr = TO_CREATURE( pTarget );
-		
+
 		if( cr == NULL )
 			return;
 
@@ -451,7 +451,7 @@ void Spell::SpellTargetAreaOfEffect(uint32 i, uint32 j)
 /// Spell Target Handling for type 18: Land under caster
 void Spell::SpellTargetLandUnderCaster(uint32 i, uint32 j) /// I don't think this is the correct name for this one
 {
-	if(	m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_DEMON && 
+	if(	m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_DEMON &&
 		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_WILD &&
 		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT1 &&
 		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT2 &&
@@ -471,7 +471,7 @@ void Spell::SpellTargetAllPartyMembersRangeNR(uint32 i, uint32 j)
 	{
 		if( TO_CREATURE( u_caster)->IsTotem() )
 			p = TO_PLAYER( TO_CREATURE(u_caster)->GetSummonOwner());
-		else if( u_caster->IsPet() && TO_PET( u_caster )->GetPetOwner() ) 
+		else if( u_caster->IsPet() && TO_PET( u_caster )->GetPetOwner() )
 			p = TO_PET( u_caster )->GetPetOwner();
 	}
 
@@ -487,11 +487,11 @@ void Spell::SpellTargetAllPartyMembersRangeNR(uint32 i, uint32 j)
 	SubGroup* subgroup = p->GetGroup() ? p->GetGroup()->GetSubGroup( p->GetSubGroup() ) : 0;
 
 	if( subgroup != NULL )
-	{				
+	{
 		p->GetGroup()->Lock();
 		for(GroupMembersSet::iterator itr = subgroup->GetGroupMembersBegin(); itr != subgroup->GetGroupMembersEnd(); itr++)
 		{
-			if(!(*itr)->m_loggedInPlayer || m_caster == (*itr)->m_loggedInPlayer) 
+			if(!(*itr)->m_loggedInPlayer || m_caster == (*itr)->m_loggedInPlayer)
 				continue;
 			if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),(*itr)->m_loggedInPlayer,r))
 				_AddTargetForced( (*itr)->m_loggedInPlayer->GetGUID(), i );
@@ -605,7 +605,7 @@ void Spell::SpellTargetGameobject_itemTarget(uint32 i, uint32 j)
 
 /// Spell Target Handling for type 27: target is owner of pet
 void Spell::SpellTargetPetOwner(uint32 i, uint32 j)
-{ 
+{
 	if( u_caster->IsPet() && TO_PET(u_caster)->GetPetOwner() )
 		_AddTargetForced( TO_PET(u_caster)->GetPetOwner()->GetGUID(), i );
 }
@@ -646,7 +646,7 @@ void Spell::SpellTargetTypeTAOE(uint32 i, uint32 j)
 
 void Spell::SpellTargetPositionOfTarget(uint32 i, uint32 j)
 {
-	// Something with AOE. Who knows? 
+	// Something with AOE. Who knows?
 }
 
 /// Spell Target Handling for type 30: PBAE Party Based Area Effect
@@ -720,7 +720,7 @@ void Spell::SpellTargetNearbyPartyMembers(uint32 i, uint32 j)
 				r *= r;
 
 				Player* p = TO_PLAYER( TO_CREATURE(u_caster)->GetSummonOwner());
-				
+
 				if( p == NULL)
 					return;
 
@@ -736,7 +736,7 @@ void Spell::SpellTargetNearbyPartyMembers(uint32 i, uint32 j)
 					for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
 						itr != pGroup->GetGroupMembersEnd(); itr++)
 					{
-						if(!(*itr)->m_loggedInPlayer || p == (*itr)->m_loggedInPlayer) 
+						if(!(*itr)->m_loggedInPlayer || p == (*itr)->m_loggedInPlayer)
 							continue;
 						if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),(*itr)->m_loggedInPlayer,r))
 							_AddTargetForced((*itr)->m_loggedInPlayer->GetGUID(), i);
@@ -812,7 +812,7 @@ void Spell::SpellTargetDummyTarget(uint32 i, uint32 j)
 				return;
 			}
 		}
-	}				
+	}
 	else if( m_spellInfo->Id == 12938 )
 	{
 		//FIXME:this ll be immortal targets
@@ -840,7 +840,7 @@ void Spell::SpellTargetTotem(uint32 i, uint32 j)
 	_AddTargetForced(m_caster->GetGUID(), i);
 }
 
-/// Spell Target Handling for type 45: Chain,!!only for healing!! for chain lightning =6 
+/// Spell Target Handling for type 45: Chain,!!only for healing!! for chain lightning =6
 void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 {
 	if( !m_caster->IsInWorld() )
@@ -859,12 +859,12 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 	{
 		if( p_caster->InGroup() )
 			if( p_caster->GetSubGroup() == TO_PLAYER( firstTarget )->GetSubGroup() )
-				PartyOnly=true;					
+				PartyOnly=true;
 	}
 	else
 	{
 		firstTarget = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
-		if(!firstTarget) 
+		if(!firstTarget)
 			return;
 	}
 
@@ -1030,9 +1030,9 @@ void Spell::SpellTargetSameGroupSameClass(uint32 i, uint32 j)
 		{
 			for(GroupMembersSet::iterator itr = Target->GetGroup()->GetSubGroup( x )->GetGroupMembersBegin(); itr != Target->GetGroup()->GetSubGroup( x )->GetGroupMembersEnd(); itr++)
 			{
-				if(!(*itr)->m_loggedInPlayer || Target->getClass() != (*itr)->m_loggedInPlayer->getClass()) 
+				if(!(*itr)->m_loggedInPlayer || Target->getClass() != (*itr)->m_loggedInPlayer->getClass())
 					continue;
-				
+
 				_AddTargetForced((*itr)->m_loggedInPlayer->GetGUID(), i);
 			}
 		}

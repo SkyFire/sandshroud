@@ -64,7 +64,7 @@ bool ON_CRASH_BREAK_DEBUGGER;
 void StartCrashHandler()
 {
 	// Firstly, check if there is a debugger present. There isn't any point in
-	// handling crashes internally if we have a debugger attached, that would 
+	// handling crashes internally if we have a debugger attached, that would
 	// just piss us off. :P
 
 	// Check for a debugger.
@@ -107,39 +107,39 @@ static const TCHAR *GetExceptionDescription(DWORD ExceptionCode)
 	};
 
 #if 0  // from winnt.h
-#define STATUS_WAIT_0					((DWORD   )0x00000000L)	
-#define STATUS_ABANDONED_WAIT_0		  ((DWORD   )0x00000080L)	
-#define STATUS_USER_APC				  ((DWORD   )0x000000C0L)	
-#define STATUS_TIMEOUT				   ((DWORD   )0x00000102L)	
-#define STATUS_PENDING				   ((DWORD   )0x00000103L)	
-#define STATUS_SEGMENT_NOTIFICATION	  ((DWORD   )0x40000005L)	
-#define STATUS_GUARD_PAGE_VIOLATION	  ((DWORD   )0x80000001L)	
-#define STATUS_DATATYPE_MISALIGNMENT	 ((DWORD   )0x80000002L)	
-#define STATUS_BREAKPOINT				((DWORD   )0x80000003L)	
-#define STATUS_SINGLE_STEP			   ((DWORD   )0x80000004L)	
-#define STATUS_ACCESS_VIOLATION		  ((DWORD   )0xC0000005L)	
-#define STATUS_IN_PAGE_ERROR			 ((DWORD   )0xC0000006L)	
-#define STATUS_INVALID_HANDLE			((DWORD   )0xC0000008L)	
-#define STATUS_NO_MEMORY				 ((DWORD   )0xC0000017L)	
-#define STATUS_ILLEGAL_INSTRUCTION	   ((DWORD   )0xC000001DL)	
-#define STATUS_NONCONTINUABLE_EXCEPTION  ((DWORD   )0xC0000025L)	
-#define STATUS_INVALID_DISPOSITION	   ((DWORD   )0xC0000026L)	
-#define STATUS_ARRAY_BOUNDS_EXCEEDED	 ((DWORD   )0xC000008CL)	
-#define STATUS_FLOAT_DENORMAL_OPERAND	((DWORD   )0xC000008DL)	
-#define STATUS_FLOAT_DIVIDE_BY_ZERO	  ((DWORD   )0xC000008EL)	
-#define STATUS_FLOAT_INEXACT_RESULT	  ((DWORD   )0xC000008FL)	
-#define STATUS_FLOAT_INVALID_OPERATION   ((DWORD   )0xC0000090L)	
-#define STATUS_FLOAT_OVERFLOW			((DWORD   )0xC0000091L)	
-#define STATUS_FLOAT_STACK_CHECK		 ((DWORD   )0xC0000092L)	
-#define STATUS_FLOAT_UNDERFLOW		   ((DWORD   )0xC0000093L)	
-#define STATUS_INTEGER_DIVIDE_BY_ZERO	((DWORD   )0xC0000094L)	
-#define STATUS_INTEGER_OVERFLOW		  ((DWORD   )0xC0000095L)	
-#define STATUS_PRIVILEGED_INSTRUCTION	((DWORD   )0xC0000096L)	
-#define STATUS_STACK_OVERFLOW			((DWORD   )0xC00000FDL)	
-#define STATUS_CONTROL_C_EXIT			((DWORD   )0xC000013AL)	
-#define STATUS_FLOAT_MULTIPLE_FAULTS	 ((DWORD   )0xC00002B4L)	
-#define STATUS_FLOAT_MULTIPLE_TRAPS	  ((DWORD   )0xC00002B5L)	
-#define STATUS_ILLEGAL_VLM_REFERENCE	 ((DWORD   )0xC00002C0L)	 
+#define STATUS_WAIT_0					((DWORD   )0x00000000L)
+#define STATUS_ABANDONED_WAIT_0		  ((DWORD   )0x00000080L)
+#define STATUS_USER_APC				  ((DWORD   )0x000000C0L)
+#define STATUS_TIMEOUT				   ((DWORD   )0x00000102L)
+#define STATUS_PENDING				   ((DWORD   )0x00000103L)
+#define STATUS_SEGMENT_NOTIFICATION	  ((DWORD   )0x40000005L)
+#define STATUS_GUARD_PAGE_VIOLATION	  ((DWORD   )0x80000001L)
+#define STATUS_DATATYPE_MISALIGNMENT	 ((DWORD   )0x80000002L)
+#define STATUS_BREAKPOINT				((DWORD   )0x80000003L)
+#define STATUS_SINGLE_STEP			   ((DWORD   )0x80000004L)
+#define STATUS_ACCESS_VIOLATION		  ((DWORD   )0xC0000005L)
+#define STATUS_IN_PAGE_ERROR			 ((DWORD   )0xC0000006L)
+#define STATUS_INVALID_HANDLE			((DWORD   )0xC0000008L)
+#define STATUS_NO_MEMORY				 ((DWORD   )0xC0000017L)
+#define STATUS_ILLEGAL_INSTRUCTION	   ((DWORD   )0xC000001DL)
+#define STATUS_NONCONTINUABLE_EXCEPTION  ((DWORD   )0xC0000025L)
+#define STATUS_INVALID_DISPOSITION	   ((DWORD   )0xC0000026L)
+#define STATUS_ARRAY_BOUNDS_EXCEEDED	 ((DWORD   )0xC000008CL)
+#define STATUS_FLOAT_DENORMAL_OPERAND	((DWORD   )0xC000008DL)
+#define STATUS_FLOAT_DIVIDE_BY_ZERO	  ((DWORD   )0xC000008EL)
+#define STATUS_FLOAT_INEXACT_RESULT	  ((DWORD   )0xC000008FL)
+#define STATUS_FLOAT_INVALID_OPERATION   ((DWORD   )0xC0000090L)
+#define STATUS_FLOAT_OVERFLOW			((DWORD   )0xC0000091L)
+#define STATUS_FLOAT_STACK_CHECK		 ((DWORD   )0xC0000092L)
+#define STATUS_FLOAT_UNDERFLOW		   ((DWORD   )0xC0000093L)
+#define STATUS_INTEGER_DIVIDE_BY_ZERO	((DWORD   )0xC0000094L)
+#define STATUS_INTEGER_OVERFLOW		  ((DWORD   )0xC0000095L)
+#define STATUS_PRIVILEGED_INSTRUCTION	((DWORD   )0xC0000096L)
+#define STATUS_STACK_OVERFLOW			((DWORD   )0xC00000FDL)
+#define STATUS_CONTROL_C_EXIT			((DWORD   )0xC000013AL)
+#define STATUS_FLOAT_MULTIPLE_FAULTS	 ((DWORD   )0xC00002B4L)
+#define STATUS_FLOAT_MULTIPLE_TRAPS	  ((DWORD   )0xC00002B5L)
+#define STATUS_ILLEGAL_VLM_REFERENCE	 ((DWORD   )0xC00002C0L)
 #endif
 
 	ExceptionNames ExceptionMap[] =
@@ -248,7 +248,7 @@ void CStackWalker::OnCallstackEntry(CallstackEntryType eType, CallstackEntry &en
 		{
 			if(entry.name[0] == 0)
 				sprintf(entry.name, "%p", entry.offset);
-			
+
 			sprintf(buffer, "%s!%s Line %u\n", p, entry.name, entry.lineNumber );
 		}
 		else
@@ -284,7 +284,7 @@ int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs)
 		__except(HandleCrash(GetExceptionInformation()), EXCEPTION_CONTINUE_EXECUTION)
 		{
 
-		}		
+		}
 	}
 
 	/* only allow one thread to crash. */
@@ -312,12 +312,12 @@ int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs)
 		strcpy(modname, "UNKNOWN");
 
 	char * mname = strrchr(modname, '\\');
-	(void*)mname++;	 // Remove the last 
+	(void*)mname++;	 // Remove the last
 
 	sprintf(filename, "CrashDumps\\dump-%s-%u-%u-%u-%u-%u-%u-%u.dmp",
 		mname, pTime->tm_year+1900, pTime->tm_mon, pTime->tm_mday,
 		pTime->tm_hour, pTime->tm_min, pTime->tm_sec, GetCurrentThreadId());
-	
+
 
 	HANDLE hDump = CreateFile(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, 0);
@@ -332,7 +332,7 @@ int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs)
 
 	PrintCrashInformation(pExceptPtrs);
 	printf("\nCreating crash dump file %s\n", filename);
-	
+
 	if(hDump == INVALID_HANDLE_VALUE)
 	{
 		MessageBox(0, "Could not open crash dump file.", "Crash dump error.", MB_OK);
@@ -352,7 +352,7 @@ int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs)
 	}
 
 	SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
-	OnCrash(!ON_CRASH_BREAK_DEBUGGER);	  
+	OnCrash(!ON_CRASH_BREAK_DEBUGGER);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }

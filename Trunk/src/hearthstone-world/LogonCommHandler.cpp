@@ -183,7 +183,7 @@ void LogonCommHandler::Startup()
 		QueryResult * result = CharacterDatabase.Query("SELECT * FROM account_forced_permissions");
 		if( result != NULL )
 		{
-			do 
+			do
 			{
 				string acct = result->Fetch()[0].GetString();
 				string perm = result->Fetch()[1].GetString();

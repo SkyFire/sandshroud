@@ -128,11 +128,11 @@ public:
 	int16 GetInternalBankSlotFromPlayer(int16 islot); //converts inventory slots into 0-x numbers
 
 	//buyback stuff
-	HEARTHSTONE_INLINE Item* GetBuyBack(int32 slot) 
-	{ 
+	HEARTHSTONE_INLINE Item* GetBuyBack(int32 slot)
+	{
 		if(slot >= 0 && slot <= 12)
 			return m_pBuyBack[slot];
-		else 
+		else
 			return NULLITEM;
 	}
 
@@ -153,7 +153,7 @@ public:
 
 		if( ContainerSlot == -1 && (Slot >= INVENTORY_SLOT_ITEM_END  || Slot <= EQUIPMENT_SLOT_END) )
 			return false;
-			
+
 		return true;
 	}
 

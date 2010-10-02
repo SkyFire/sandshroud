@@ -38,7 +38,7 @@ void WorldSession::HandleBattlefieldPortOpcode(WorldPacket &recv_data)
 	{
 		for(uint32 i = 0; i < 3; i++)
 		{
-			if( GetPlayer()->m_pendingBattleground[i] && 
+			if( GetPlayer()->m_pendingBattleground[i] &&
 				(GetPlayer()->m_pendingBattleground[i]->GetType() == bgtype || bgtype == BATTLEGROUND_ARENA_5V5))
 			{
 				if( GetPlayer()->m_bg )
@@ -180,7 +180,7 @@ void WorldSession::HandleAreaSpiritHealerQueryOpcode(WorldPacket &recv_data)
 	Creature* psg = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 	if(psg == NULL)
 		return;
-	
+
 	uint32 restime = _player->m_bg->GetLastResurrect() + 30;
 	if((uint32)UNIXTIME > restime)
 		restime = 1000;
@@ -329,7 +329,7 @@ void WorldSession::HandleInspectHonorStatsOpcode( WorldPacket &recv_data )
 	Player* player =  _player->GetMapMgr()->GetPlayer( (uint32)guid );
 	if( player == NULL )
 		return;
-	
+
 	uint8 buf[100];
 	StackPacket data( MSG_INSPECT_HONOR_STATS, buf, 100 );
 

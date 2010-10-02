@@ -64,10 +64,10 @@ void Container::LoadFromDB( Field*fields )
 
 	ASSERT(m_itemProto);
 	SetUInt32Value( OBJECT_FIELD_ENTRY, itemid );
-	
+
 	SetUInt32Value( ITEM_FIELD_CREATOR, fields[5].GetUInt32() );
 	SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1);
-	
+
 	SetUInt32Value( ITEM_FIELD_FLAGS, fields[8].GetUInt32());
 	SetUInt32Value( ITEM_FIELD_RANDOM_PROPERTIES_ID, fields[9].GetUInt32());
 
@@ -103,9 +103,9 @@ int8 Container::FindFreeSlot()
 	int8 TotalSlots = GetSlotCount();
 	for (int8 i=0; i < TotalSlots; i++)
 	{
-		if(!m_Slot[i]) 
-		{ 
-			return i; 
+		if(!m_Slot[i])
+		{
+			return i;
 		}
 	}
 	DEBUG_LOG( "Container","FindFreeSlot: no slot available" );
@@ -117,9 +117,9 @@ bool Container::HasItems()
 	int8 TotalSlots = GetSlotCount();
 	for (int8 i=0; i < TotalSlots; i++)
 	{
-		if(m_Slot[i]) 
-		{ 
-			return true; 
+		if(m_Slot[i])
+		{
+			return true;
 		}
 	}
 	return false;
@@ -146,7 +146,7 @@ bool Container::AddItem(int16 slot, Item* item)
 	item->SetUInt64Value(ITEM_FIELD_CONTAINED, GetGUID());
 	item->SetOwner(m_owner);
 
-	if (item->GetProto()->Bonding == ITEM_BIND_ON_PICKUP) 
+	if (item->GetProto()->Bonding == ITEM_BIND_ON_PICKUP)
 		item->SoulBind();
 
 	SetUInt64Value(CONTAINER_FIELD_SLOT_1  + (slot*2), item->GetGUID());

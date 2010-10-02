@@ -144,8 +144,8 @@ class BufferPool
 			uint32 blocks = float2int32(((float(m_packetBufferCount) / float(m_packetBuffer.size())) * 50.0f) / 2.0f);
 			uint32 x;
 			uint32 mem = (m_packetBufferCount + m_used) * m_byteSize;
-			
-			printf(" Bucket[%u]: %u bytes: sz = %u resv = %u alloc: %d used: %u mem: %.3f K\n    [", m_size, m_byteSize, m_packetBufferCount, (uint32)m_packetBuffer.size(), 
+
+			printf(" Bucket[%u]: %u bytes: sz = %u resv = %u alloc: %d used: %u mem: %.3f K\n    [", m_size, m_byteSize, m_packetBufferCount, (uint32)m_packetBuffer.size(),
 				m_allocCounter, m_used, (float(mem) / 1024.0f));
 
 			for( x = 0; x < blocks; ++x )
@@ -228,7 +228,7 @@ public:
 		int8 bufPool = GetBufferPool(sz);
 		if( bufPool == -1 )
 			return new WorldPacket(0, sz);
-		
+
 		WorldPacket *ret;
 		m_buckets[bufPool]->m_lock.Acquire();
 		ret = m_buckets[bufPool]->m_bucket->Dequeue();

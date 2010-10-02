@@ -36,14 +36,14 @@ public:
 	LocationVector(float X, float Y, float Z) : x(X), y(Y), z(Z), o(0) {}
 	LocationVector(float X, float Y, float Z, float O) : x(X), y(Y), z(Z), o(O) {}
 	LocationVector() : x(0), y(0), z(0), o(0) {}
-	
+
 	// (dx * dx + dy * dy + dz * dz)
 	float DistanceSq(const LocationVector & comp)
 	{
 		float delta_x = comp.x - x;
 		float delta_y = comp.y - y;
 		float delta_z = comp.z - z;
-		
+
 		return (delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
 	}
 
@@ -110,7 +110,7 @@ public:
 		float dy = dest.y - y;
 		if(dy != 0.0f)
 			return atan2(dy, dx);
-		else 
+		else
 			return 0.0f;
 	}
 

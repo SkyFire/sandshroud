@@ -22,7 +22,7 @@
 void WorldSession::HandleConvertGroupToRaidOpcode(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN;
-	// This is just soooo easy now   
+	// This is just soooo easy now
 	Group *pGroup = _player->GetGroup();
 	if(!pGroup) return;
 
@@ -126,8 +126,8 @@ void WorldSession::HandleGroupPromote(WorldPacket& recv_data)
 }
 
 void WorldSession::HandleRequestRaidInfoOpcode(WorldPacket & recv_data)
-{  
-	//		  SMSG_RAID_INSTANCE_INFO			 = 716,  //(0x2CC)	
+{
+	//		  SMSG_RAID_INSTANCE_INFO			 = 716,  //(0x2CC)
 	sInstanceMgr.BuildSavedRaidInstancesForPlayer(_player);
 }
 

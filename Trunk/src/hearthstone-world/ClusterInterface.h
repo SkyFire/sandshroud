@@ -52,7 +52,7 @@ public:
 
 	void ForwardWoWPacket(uint16 opcode, uint32 size, const void * data, uint32 sessionid);
 	void ConnectToRealmServer();
-	
+
 	RPlayerInfo * GetPlayer(uint32 guid)
 	{
 		RPlayerInfo * inf;

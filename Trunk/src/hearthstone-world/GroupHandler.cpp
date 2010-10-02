@@ -75,7 +75,7 @@ void WorldSession::HandleGroupInviteOpcode( WorldPacket & recv_data )
 		player->GetSession()->SendPacket(&data);
 		return;
 	}
-	
+
 	if(player->GetTeam()!=_player->GetTeam() && _player->GetSession()->GetPermissionCount() == 0 && !sWorld.cross_faction_world)
 	{
 		SendPartyCommandResult(_player, 0, membername, ERR_PARTY_WRONG_FACTION);
@@ -141,10 +141,10 @@ void WorldSession::HandleGroupAcceptOpcode( WorldPacket & recv_data )
 	Player* player = objmgr.GetPlayer(_player->GetInviter());
 	if(!player)
 		return;
-	
+
 	player->SetInviter(0);
 	_player->SetInviter(0);
-	
+
 	Group *grp = player->GetGroup();
 
 	if(grp)
@@ -243,7 +243,7 @@ void WorldSession::HandleGroupSetLeaderOpcode( WorldPacket & recv_data )
 	Player* player;
 
 	recv_data >> MemberGuid;
-	
+
 	player = objmgr.GetPlayer((uint32)MemberGuid);
 
 	if ( player == NULL )
@@ -258,7 +258,7 @@ void WorldSession::HandleGroupSetLeaderOpcode( WorldPacket & recv_data )
 		SendPartyCommandResult(_player, 0, "", ERR_PARTY_YOU_ARE_NOT_LEADER);
 		return;
 	}
-	
+
 	if(player->GetGroup() != _player->GetGroup())
 	{
 		//SendPartyCommandResult(_player, 0, membername, ERR_PARTY_IS_NOT_IN_YOUR_PARTY);

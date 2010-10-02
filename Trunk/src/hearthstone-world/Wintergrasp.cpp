@@ -166,7 +166,7 @@ void Wintergrasp::GoDestroyEvent(uint32 Entry, Player* Plr)
 		default:
 			break;
 	}
-		
+
 }
 
 void Wintergrasp::GoDamageEvent(uint32 Entry, Player* Plr)
@@ -200,7 +200,7 @@ void Wintergrasp::GoDamageEvent(uint32 Entry, Player* Plr)
 		default:
 			break;
 	}
-		
+
 }
 
 void Wintergrasp::_SendMessage(const char* text)

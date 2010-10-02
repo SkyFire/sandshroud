@@ -52,7 +52,7 @@ void WSClient::OnRead()
 			/* optimized version for packet passing, to reduce latency! ;) */
 			uint32 sid = *(uint32*)&m_readBuffer[0];
 			uint16 op  = *(uint16*)&m_readBuffer[4];
-			uint32 sz  = *(uint32*)&m_readBuffer[6];			
+			uint32 sz  = *(uint32*)&m_readBuffer[6];
 			WorldSession * session = sClusterInterface.GetSession(sid);
 			if(session != NULL)
 			{
@@ -80,7 +80,7 @@ void WSClient::OnRead()
 			break;
 		default:
 			sClusterInterface.QueuePacket(pck);
-		}		
+		}
 	}
 }
 

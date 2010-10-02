@@ -107,7 +107,7 @@ public:
 	 */
 	T ** _array;
 
-	/** Maximum possible entry 
+	/** Maximum possible entry
 	 */
 	uint32 _max;
 
@@ -130,7 +130,7 @@ public:
 		_max = Max;
 		memset(_array, 0, sizeof(T*) * Max);
 	}
-	
+
 	/** Sets up the array with a different maximum
 	 */
 	void Resetup(uint32 Max)
@@ -487,7 +487,7 @@ protected:
 	char * _indexName;
 	char * _formatString;
 public:
-	
+
 	HEARTHSTONE_INLINE char * GetIndexName() { return _indexName; }
 	HEARTHSTONE_INLINE char * GetFormatString() { return _formatString; }
 
@@ -541,7 +541,7 @@ public:
 		free(_formatString);
 	}
 
-	/** Frees any string elements inside blocks. 
+	/** Frees any string elements inside blocks.
 	 */
 	void FreeBlock(T * Allocated)
 	{
@@ -561,7 +561,7 @@ public:
 			case 'f':
 				structpointer += sizeof(uint32);
 				break;
-				
+
 			case 'h':
 				structpointer += sizeof(uint16);
 				break;
@@ -697,7 +697,7 @@ public:
 #ifdef STORAGE_ALLOCATION_POOLS
 		Storage<T, StorageType>::_storage.InitPool( result->GetRowCount() );
 #endif
-		do 
+		do
 		{
 			Entry = fields[0].GetUInt32();
 			Allocated = Storage<T, StorageType>::_storage.AllocateEntry(Entry);
@@ -735,7 +735,7 @@ public:
 
 			Storage<T, StorageType>::_storage.Resetup(Max);
 		}
-		
+
 		size_t cols = strlen(FormatString);
 		result = WorldDatabase.Query("SELECT * FROM %s", IndexName);
 		if (!result)
@@ -758,7 +758,7 @@ public:
 
 		uint32 Entry;
 		T * Allocated;
-		do 
+		do
 		{
 			Entry = fields[0].GetUInt32();
 			Allocated = Storage<T, StorageType>::_storage.LookupEntryAllocate(Entry);
@@ -808,7 +808,7 @@ public:
 
 		uint32 Entry;
 		T * Allocated;
-		do 
+		do
 		{
 			Entry = fields[0].GetUInt32();
 			Allocated = Storage<T, StorageType>::_storage.LookupEntryAllocate(Entry);

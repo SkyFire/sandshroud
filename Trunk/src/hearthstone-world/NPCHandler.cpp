@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 
-trainertype trainer_types[TRAINER_TYPE_MAX] = 
+trainertype trainer_types[TRAINER_TYPE_MAX] =
 {
 {	"Warrior",			   0 },
 {	"Paladin",			   0 },
@@ -47,7 +47,7 @@ bool CanTrainAt(Player* plr, Trainer * trn)
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -203,7 +203,7 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 
 	if(TrainerGetSpellStatus(pSpell) > 0)
 		return;
-	
+
 	_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32)pSpell->Cost);
 
 	if( pSpell->pCastSpell)
@@ -391,7 +391,7 @@ void WorldSession::SendCharterRequest(Creature* pCreature)
 		{
 			data << uint16(0x16E7);	 // ItemId of the guild charter
 		}
-		
+
 		data << float(0.62890625);  // strange floating point
 		data << uint16(0);		  // unknown
 	//	data << uint32(0x3F21);	 // unknown
@@ -450,13 +450,13 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 
 	recv_data >> guid;
 	Creature* TalkingWith = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	if(!TalkingWith) 
+	if(!TalkingWith)
 		return;
 
 	//stop when talked to for 3 min
 	if(TalkingWith->GetAIInterface())
 		TalkingWith->GetAIInterface()->StopMovement(180000);
- 
+
 	// unstealth meh
 	if( _player->InStealth() )
 		_player->RemoveAllAurasOfType( SPELL_AURA_MOD_STEALTH );
@@ -488,7 +488,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 			if (status >= QMGR_QUEST_CHAT)
 			{
 				if (!ql.count((*it)->qst->id) )
-				{	
+				{
 					ql.insert((*it)->qst->id);
 					count++;
 					data << (*it)->qst->id;
@@ -624,7 +624,7 @@ void WorldSession::HandleSpiritHealerActivateOpcode( WorldPacket & recv_data )
 		if(_player->getLevel() > 10)
 		{
 			Aura* aur = _player->FindAura(15007);
-		
+
 			if(aur) // If the player already have the aura, just extend it.
 				_player->SetAuraDuration(15007,aur->GetDuration());
 			else // else add him one, that fucker, he think he will get away!?
@@ -675,8 +675,8 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 			for(e = 0; e < 6; e++)
 				data << uint32(pGossip->Texts[i].Emote[e]);
 		}
-	} 
-	else 
+	}
+	else
 	{
 		data << float(1.0f);	// Prob
 		data << "Hello, $N. What can I do for you?"; // Team

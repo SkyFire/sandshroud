@@ -209,7 +209,7 @@ bool ChatHandler::HandleWPShowCommand(const char* args, WorldSession *m_session)
 
 	if(pPlayer->waypointunit != ai)
 	{
-		if(ai->m_WayPointsShowing == true) 
+		if(ai->m_WayPointsShowing == true)
 		{
 			SystemMessage(m_session, "Some one else is also Viewing this Creatures WayPoints.");
 			SystemMessage(m_session, "Viewing WayPoints at the same time as some one else can cause undesireble results.");
@@ -226,7 +226,7 @@ bool ChatHandler::HandleWPShowCommand(const char* args, WorldSession *m_session)
 	}
 	else
 	{
-		if(ai->m_WayPointsShowing == true) 
+		if(ai->m_WayPointsShowing == true)
 		{
 			SystemMessage(m_session, "Waypoints Already Showing.");
 		}
@@ -505,7 +505,7 @@ bool ChatHandler::HandleWPWaitCommand(const char* args, WorldSession *m_session)
 }
 
 bool ChatHandler::HandleWaypointGettextCommand(const char* args, WorldSession *m_session)
-{ 
+{
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
 	{
@@ -976,7 +976,7 @@ bool ChatHandler::HandleWPHideCommand(const char* args, WorldSession *m_session)
 	{
 		if(ai->m_WayPointsShowing == true)
 			pPlayer->waypointunit->hideWayPoints(pPlayer);
-			
+
 		pPlayer->waypointunit = NULL;
 	}
 	else
@@ -1008,7 +1008,7 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 	}
 
 	if(cr->GetAIInterface()->GetWayPointsCount())//ALREADY HAVE WAYPOINTS
-	{	
+	{
 		SystemMessage(m_session, "The creature already has waypoints");
 		return false;
 	}
@@ -1045,7 +1045,7 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 		float x = cr->GetPositionX()+ran*sin(ang);
 		float y = cr->GetPositionY()+ran*cos(ang);
 		float z = cr->GetMapMgr()->GetBaseMap()->GetLandHeight(x,y);
-		 
+
 		WayPoint* wp = new WayPoint;
 		wp->id = (uint32)cr->GetAIInterface()->GetWayPointsCount()+1;
 		wp->x = x;
@@ -1066,7 +1066,7 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 		wp->backwardSpellToCast = 0;
 		wp->forwardSayText = "";
 		wp->backwardSayText = "";
-		
+
 		cr->GetAIInterface()->addWayPoint(wp);
 	}
 
@@ -1084,12 +1084,12 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 
 bool ChatHandler::HandleSaveWaypoints(const char* args, WorldSession * m_session)
 {
-	Creature* cr = 
+	Creature* cr =
 		m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
 	if(!cr)return false;
 	if(!cr->GetSQL_id())
 		return false;
-	
+
 	cr->GetAIInterface()->saveWayPoints();
 	return true;
 }
@@ -1097,7 +1097,7 @@ bool ChatHandler::HandleSaveWaypoints(const char* args, WorldSession * m_session
 
 bool ChatHandler::HandleDeleteWaypoints(const char* args, WorldSession * m_session)
 {
-	Creature* cr = 
+	Creature* cr =
 		m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
 	if(!cr)return false;
 	if(!cr->GetSQL_id())
@@ -1108,7 +1108,7 @@ bool ChatHandler::HandleDeleteWaypoints(const char* args, WorldSession * m_sessi
 		SystemMessage(m_session, "Waypoints are showing, hide them first.");
 		return true;
 	}
-	
+
 	WorldDatabase.Execute("DELETE FROM creature_waypoints WHERE spawnid=%u",cr->GetSQL_id());
 
 	cr->GetAIInterface()->deleteWaypoints();

@@ -69,12 +69,12 @@ bool WorldRunnable::run()
 		sWorld.UpdateSessions( diff );
 
 		now = getMSTime();
-		//we have to wait now 
+		//we have to wait now
 
 		if(execution_start > now)//overrun
 			diff = WORLD_UPDATE_DELAY - now;
 		else
-			diff = now - execution_start;//time used for updating 
+			diff = now - execution_start;//time used for updating
 
 		/* This is execution time compensating system
 		if execution took more than default delay

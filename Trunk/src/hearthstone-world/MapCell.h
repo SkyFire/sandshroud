@@ -42,7 +42,7 @@ public:
 	void Init(uint32 x, uint32 y, uint32 mapid, MapMgr* mapmgr);
 
 	//Object Managing
-	void AddObject(Object* obj); 
+	void AddObject(Object* obj);
 	void RemoveObject(Object* obj);
 	bool HasObject(Object* obj) { return (_objects.find(obj) != _objects.end()); }
 	bool HasPlayers() { return ((_playerCount > 0) ? true : false); }

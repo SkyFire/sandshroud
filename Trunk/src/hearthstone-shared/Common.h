@@ -95,7 +95,7 @@ enum MsTimeVariables
 
 #ifdef CONFIG_USE_SELECT
 #undef FD_SETSIZE
-#define FD_SETSIZE 2048 
+#define FD_SETSIZE 2048
 #endif
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
@@ -260,7 +260,7 @@ enum MsTimeVariables
 #	define __fastcall __attribute__((__fastcall__))
 #  endif
 #else
-#define __fastcall  
+#define __fastcall
 #endif
 #endif
 
@@ -421,7 +421,7 @@ typedef uint32_t DWORD;
 
 #endif
 
-/* 
+/*
 Scripting system exports/imports
 */
 
@@ -434,8 +434,8 @@ Scripting system exports/imports
 		#define SCRIPT_DECL __declspec(dllexport)
 	#endif
 #else
-	#define SERVER_DECL 
-	#define SCRIPT_DECL 
+	#define SERVER_DECL
+	#define SCRIPT_DECL
 #endif
 
 // Include all threading files
@@ -504,7 +504,7 @@ static inline uint32 int32abs2uint32( const int value )
 /// Fastest Method of float2int32
 static inline int float2int32(const float value)
 {
-#if !defined(X64) && COMPILER == COMPILER_MICROSOFT 
+#if !defined(X64) && COMPILER == COMPILER_MICROSOFT
 	int i;
 	__asm {
 		fld value
@@ -547,7 +547,7 @@ static inline int long2int32(const double value)
 #endif
 
 HEARTHSTONE_INLINE uint32 now()
-{	
+{
 #ifdef WIN32
 	return GetTickCount();
 #else

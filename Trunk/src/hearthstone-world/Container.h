@@ -40,10 +40,10 @@ public:
 		else
 			return NULLITEM;
 	}
-	
+
 	int8 FindFreeSlot();
 	bool HasItems();
-	
+
 	void SwapItems(int16 SrcSlot, int16 DstSlot);
 	Item* SafeRemoveAndRetreiveItemFromSlot(int16 slot, bool destroy); //doesnt destroy item from memory
 	bool SafeFullRemoveItemFromSlot(int16 slot); //destroys item fully
