@@ -149,7 +149,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectDummyMelee,					//SPELL_EFFECT_DUMMYMELEE	- 121
 	&Spell::SpellEffectNULL,						//unknown - 122 //not used
 	&Spell::SpellEffectSendTaxi,					//123 SPELL_EFFECT_SEND_TAXI  taxi/flight related (misc value is taxi path id)
-	&Spell::SpellEffectPlayerPull,					// SPELL_EFFECT_PLAYER_PULL - 124 - http://thottbot.com/e2312
+	&Spell::SpellEffectPull,					// SPELL_EFFECT_PLAYER_PULL - 124 - http://thottbot.com/e2312
 	&Spell::SpellEffectNULL,						//unknown - 125 // Reduce Threat by % //http://www.thottbot.com/?sp=32835
 	&Spell::SpellEffectSpellSteal,					//SPELL_EFFECT_SPELL_STEAL - 126 // Steal Beneficial Buff (Magic) //http://www.thottbot.com/?sp=30449
 	&Spell::SpellEffectProspecting,					//unknown - 127 // Search 5 ore of a base metal for precious gems.  This will destroy the ore in the process.
@@ -170,7 +170,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectTriggerSpellWithValue,		// unknown - 142 // triggers some kind of "Put spell on target" thing... (dono for sure) http://www.thottbot.com/s40872 and http://www.thottbot.com/s33076
 	&Spell::SpellEffectApplyDemonAura,				// 143  http://www.thottbot.com/s25228 and http://www.thottbot.com/s35696
 	&Spell::SpellEffectKnockBack,					// unknown - 144 Spectral Blast
-	&Spell::SpellEffectNULL,						// unknown - 145 Black Hole Effect
+	&Spell::SpellEffectTractorBeamFromDest,			// SPELL_EFFECT_TRACTOR_BEAM_FROM_DEST - 145
 	&Spell::SpellEffectNULL,						// unknown - 146  unused
 	&Spell::SpellEffectActivateRune,				// unknown - 147
 	&Spell::SpellEffectNULL,						// unknown - 148 unused
@@ -184,7 +184,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectAddPrismaticSocket,			// 156 Add Socket
 	&Spell::SpellEffectCreateRandomItem,			// 157 create/learn random item/spell for profession
 	&Spell::SpellEffectMilling,						// 158 milling
-	&Spell::SpellEffectNULL,						// 159 allow rename pet once again
+	&Spell::SpellEffectAllowPetRename,				// 159 allow rename pet once again
 	&Spell::SpellEffectNULL,						// 160
 	&Spell::SpellEffectSetTalentSpecsCount,			// 161 Sets number of talent specs available to the player
 	&Spell::SpellEffectActivateTalentSpec,			// 162 Activates one of talent specs
@@ -7138,36 +7138,34 @@ void Spell::SpellEffectSendTaxi( uint32 i )
 	playerTarget->TaxiStart( taxipath, modelid, 0 );
 }
 
-void Spell::SpellEffectPlayerPull( uint32 i )
+void Spell::SpellEffectPull( uint32 i )
 {
-	if( unitTarget == NULL || !unitTarget->isAlive() || !unitTarget->IsPlayer() )
+	if( unitTarget == NULL || !unitTarget->isAlive() )
 		return;
 
-	Player* p_target = TO_PLAYER( unitTarget );
-
 	// calculate destination
-	float pullD = p_target->CalcDistance( m_caster ) - p_target->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - m_caster->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - 1.0f;
-	float pullO = p_target->calcRadAngle( p_target->GetPositionX(), p_target->GetPositionY(), m_caster->GetPositionX(), m_caster->GetPositionY() );
-	float pullX = p_target->GetPositionX() + pullD * cosf( pullO );
-	float pullY = p_target->GetPositionY() + pullD * sinf( pullO );
+	float pullD = unitTarget->CalcDistance( m_caster ) - unitTarget->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - m_caster->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - 1.0f;
+	float pullO = unitTarget->calcRadAngle( unitTarget->GetPositionX(), unitTarget->GetPositionY(), m_caster->GetPositionX(), m_caster->GetPositionY() );
+	float pullX = unitTarget->GetPositionX() + pullD * cosf( pullO );
+	float pullY = unitTarget->GetPositionY() + pullD * sinf( pullO );
 	float pullZ = m_caster->GetPositionZ() + 0.3f;
 	uint32 time = uint32( pullD * 42.0f );
 
-	p_target->SetOrientation( pullO );
+	unitTarget->SetOrientation( pullO );
 
 	WorldPacket data( SMSG_MONSTER_MOVE, 60 );
-	data << p_target->GetNewGUID();
+	data << unitTarget->GetNewGUID();
 	data << uint8(0);
-	data << p_target->GetPositionX() << p_target->GetPositionY() << p_target->GetPositionZ();
+	data << unitTarget->GetPositionX() << unitTarget->GetPositionY() << unitTarget->GetPositionZ();
 	data << getMSTime();
 	data << uint8( 4 );
 	data << pullO;
-	data << uint32( MONSTER_MOVE_FLAG_WALK );
+	data << uint32( MONSTER_MOVE_FLAG_JUMP );
 	data << time;
 	data << uint32( 1 );
 	data << pullX << pullY << pullZ;
 
-	p_target->SendMessageToSet( &data, true );
+	unitTarget->SendMessageToSet( &data, true );
 }
 
 void Spell::SummonNonCombatPet(uint32 i)
@@ -8222,6 +8220,14 @@ void Spell::SpellEffectMilling(uint32 i)
 	}
 }
 
+void Spell::SpellEffectAllowPetRename( uint32 i )
+{
+	if( !unitTarget || !unitTarget->IsPet() )
+		return;
+
+	unitTarget->SetByte( UNIT_FIELD_BYTES_2, 2, 0x03);
+}
+
 // Spells: 46716-46730
 void Spell::SpellEffectCreatePet(uint32 i)
 {
@@ -8566,6 +8572,19 @@ void Spell::SpellEffectRemoveAura(uint32 i)
 	unitTarget->RemoveAura(m_spellInfo->EffectTriggerSpell[i], unitTarget->GetGUID());
 }
 
+void Spell::SpellEffectTractorBeamFromDest(uint32 i)
+{
+	if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+	{
+		SpellEffectJump(i);
+		return;
+	}
+	else
+	{
+		SpellEffectPull(i);
+		return;
+	}
+}
 void Spell::SpellEffectActivateRune(uint32 i)
 {
 	if( !p_caster )

@@ -6667,6 +6667,7 @@ void Unit::Heal(Unit* target, uint32 SpellId, uint32 amount)
 		Spell::SendHealSpellOnPlayer(this, target, amount, false, overheal, SpellId);
 	}
 }
+
 void Unit::Energize(Unit* target, uint32 SpellId, uint32 amount, uint32 type)
 {//Static energize
 	if( !target || !SpellId )
@@ -6901,7 +6902,6 @@ void Object::ClearLoot()
 	m_loot.items.clear();
 	m_loot.looters.clear();
 }
-
 
 void Creature::Tag(Player* plr)
 {
@@ -7188,8 +7188,6 @@ void Unit::SetPowerType(uint8 type)
 		SetFloatValue(PLAYER_RUNE_REGEN_1_2, 0.100000f);
 		SetFloatValue(PLAYER_RUNE_REGEN_1_3, 0.100000f);
 	}
-
-	//SendPowerUpdate();
 }
 
 //	custom functions for scripting

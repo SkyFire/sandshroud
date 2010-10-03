@@ -23,13 +23,12 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN;
 
-	//WorldPacket data;
 	uint64 petGuid = 0;
 	uint16 misc = 0;
 	uint16 action = 0;
 	uint64 targetguid = 0;
 
-	recv_data >> petGuid >> misc >> action >> targetguid;
+	recv_data >> petGuid >> misc >> action;
 
 	if(GET_TYPE_FROM_GUID(petGuid) == HIGHGUID_TYPE_UNIT)
 	{
@@ -65,8 +64,10 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
 
 	if(action == PET_ACTION_SPELL || action == PET_ACTION_SPELL_1 || action == PET_ACTION_SPELL_2 || (action == PET_ACTION_ACTION && misc == PET_ACTION_ATTACK )) // >> target
 	{
+		recv_data >> targetguid;
 		pTarget = _player->GetMapMgr()->GetUnit(targetguid);
-		if(!pTarget) pTarget = pPet;	// target self
+		if(!pTarget) 
+			pTarget = pPet;	// target self
 	}
 
 	switch(action)
@@ -223,7 +224,7 @@ void WorldSession::HandlePetNameQuery(WorldPacket & recv_data)
 	if(!pPet)
 		return;
 
-	WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE, 10 + pPet->GetName().size());
+	WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE, 9 + pPet->GetName().size());
 	data << reqNumber;
 	data << pPet->GetName().c_str();
 	data << pPet->GetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP);		// stops packet flood
@@ -400,12 +401,12 @@ void WorldSession::HandleBuyStableSlot(WorldPacket &recv_data)
 void WorldSession::HandlePetSetActionOpcode(WorldPacket& recv_data)
 {
 	CHECK_INWORLD_RETURN;
-	uint32 unk1;
-	uint32 unk2;
+	uint64 guid;
 	uint32 slot;
 	uint16 spell;
 	uint16 state;
-	recv_data >> unk1 >> unk2 >> slot >> spell >> state;
+	
+	recv_data >> guid >> slot >> spell >> state;
 	if(!_player->GetSummon())
 		return;
 
@@ -416,7 +417,7 @@ void WorldSession::HandlePetSetActionOpcode(WorldPacket& recv_data)
 
 	// do we have the spell? if not don't set it (exploit fix)
 	PetSpellMap::iterator itr = pet->GetSpells()->find( spe );
-	if( itr == pet->GetSpells()->end( ) )
+	if( itr == pet->GetSpells()->end() )
 		return;
 
 	pet->ActionBar[slot] = spell;

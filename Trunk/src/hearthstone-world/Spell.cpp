@@ -1812,12 +1812,6 @@ void Spell::AddTime(uint32 type)
 		{
 			float ch=0;
 			SM_FFValue(u_caster->SM[SMT_NONINTERRUPT][1],&ch,m_spellInfo->SpellGroupType);
-#ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
-			float spell_pct_modifers=0;
-			SM_FFValue(u_caster->SM[SMT_NONINTERRUPT][1],&spell_pct_modifers,m_spellInfo->SpellGroupType);
-			if(spell_pct_modifers!=0)
-				printf("!!!!!spell interrupt chance mod pct %f , uninterrupt chance %f, spell group %u\n",spell_pct_modifers,ch,m_spellInfo->SpellGroupType);
-#endif
 			if(Rand(ch))
 				return;
 		}
@@ -3701,14 +3695,6 @@ uint8 Spell::CanCast(bool tolerate)
 	{
 		SM_FFValue( u_caster->SM[SMT_RANGE][0], &maxRange, m_spellInfo->SpellGroupType );
 		SM_PFValue( u_caster->SM[SMT_RANGE][1], &maxRange, m_spellInfo->SpellGroupType );
-#ifdef COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS
-		float spell_flat_modifers=0;
-		float spell_pct_modifers=0;
-		SM_FFValue(u_caster->SM[SMT_RANGE][0],&spell_flat_modifers,m_spellInfo->SpellGroupType);
-		SM_FFValue(u_caster->SM[SMT_RANGE][1],&spell_pct_modifers,m_spellInfo->SpellGroupType);
-		if(spell_flat_modifers!=0 || spell_pct_modifers!=0)
-			printf("!!!!!spell range bonus mod flat %f , spell range bonus pct %f , spell range %f, spell group %u\n",spell_flat_modifers,spell_pct_modifers,maxRange,m_spellInfo->SpellGroupType);
-#endif
 	}
 
 	// Targeted Location Checks (AoE spells)

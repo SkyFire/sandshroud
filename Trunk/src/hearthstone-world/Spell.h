@@ -674,7 +674,6 @@ enum SpellEffects
 	SPELL_EFFECT_STEALTH,					//	48
 	SPELL_EFFECT_DETECT,					//	49
 	SPELL_EFFECT_SUMMON_OBJECT,				//	50
-	//SPELL_EFFECT_TRANS_DOOR,				//	50
 	SPELL_EFFECT_FORCE_CRITICAL_HIT,		//	51
 	SPELL_EFFECT_GUARANTEE_HIT,				//	52
 	SPELL_EFFECT_ENCHANT_ITEM,				//	53
@@ -767,11 +766,11 @@ enum SpellEffects
 	SPELL_EFFECT_FORCE_CAST,				//	140
 	SPELL_EFFECT_UNKNOWN20,					//	141
 	SPELL_EFFECT_TRIGGER_SPELL_WITH_VALUE,	//	142
-	SPELL_EFFECT_UNKNOWN23,					//	143
-	SPELL_EFFECT_UNKNOWN24,					//	144
-	SPELL_EFFECT_UNKNOWN25,					//	145
+	SPELL_EFFECT_APPLY_DEMON_AURA,			//	143
+	SPELL_EFFECT_KNOCKBACK_2,				//	144
+	SPELL_EFFECT_TRACTOR_BEAM_FROM_DEST,	//	145
 	SPELL_EFFECT_UNKNOWN26,					//	146
-	SPELL_EFFECT_UNKNOWN27,					//	147
+	SPELL_EFFECT_ACTIVATE_RUNE,				//	147
 	SPELL_EFFECT_UNKNOWN28,					//	148
 	SPELL_EFFECT_UNKNOWN29,					//	149
 	SPELL_EFFECT_UNKNOWN30,					//	150
@@ -783,12 +782,12 @@ enum SpellEffects
 	SPELL_EFFECT_UNKNOWN36,					//	156
 	SPELL_EFFECT_UNKNOWN37,					//	157
 	SPELL_EFFECT_MILLING,					//	158
-	SPELL_EFFECT_UNKNOWN39,					//	159
+	SPELL_EFFECT_ALLOW_PET_RENAME,			//	159
 	SPELL_EFFECT_UNKNOWN40,					//	160
 	SPELL_EFFECT_SET_TALENT_SPECS_COUNT,	//	161
 	SPELL_EFFECT_ACTIVATE_TALENT_SPEC,		//	162
 	SPELL_EFFECT_UNKNOWN41,					//	163
-	SPELL_EFFECT_UNKNOWN42,					//	164
+	SPELL_EFFECT_REMOVE_TARGET_AURA,		//	164
 	TOTAL_SPELL_EFFECTS						//	165
 };
 
@@ -1663,7 +1662,7 @@ public:
 	void SpellEffectSkill(uint32 i);
 	void SpellEffectApplyPetAura(uint32 i);
 	void SpellEffectDummyMelee(uint32 i);
-	void SpellEffectPlayerPull( uint32 i );
+	void SpellEffectPull( uint32 i );
 	void SpellEffectSpellSteal(uint32 i);
 	void SpellEffectProspecting(uint32 i);
 	void SpellEffectOpenLockItem(uint32 i);
@@ -1685,7 +1684,9 @@ public:
 	void SpellEffectTriggerSpellWithValue(uint32 i);
 	void SpellEffectJump(uint32 i);
 	void SpellEffectMilling(uint32 i);
+	void SpellEffectAllowPetRename(uint32 i);
 	void SpellEffectAddPrismaticSocket(uint32 i);
+	void SpellEffectTractorBeamFromDest(uint32 i);
 	void SpellEffectActivateRune(uint32 i);
 	void SpellEffectCreatePet(uint32 i);
 	void SpellEffectTitanGrip(uint32 i);
