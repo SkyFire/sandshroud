@@ -38,12 +38,12 @@ void WorldSocket::Disconnect()
 
 bool WorldSocket::IsConnected()
 {
-    return true;
+	return true;
 }
 
 void WorldSocket::OutPacket(uint16 opcode, uint16 len, const void* data)
 {
-    sClusterInterface.ForwardWoWPacket(opcode, len, data, m_sessionId);
+	sClusterInterface.ForwardWoWPacket(opcode, len, data, m_sessionId);
 }
 
 #endif

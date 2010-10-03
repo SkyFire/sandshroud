@@ -23,22 +23,22 @@
 // Class used to link multiple monsters together for agro.
 class SERVER_DECL ChainAggroEntity
 {
-    friend class AIInterface;
+	friend class AIInterface;
 
 private:
-    set<Creature*> m_agroEntitySet;
+	set<Creature*> m_agroEntitySet;
 public:
-    ChainAggroEntity(Creature* pOwner);
-    ~ChainAggroEntity();
+	ChainAggroEntity(Creature* pOwner);
+	~ChainAggroEntity();
 
-    static ChainAggroEntity* Create(Creature* pCreature) { return new ChainAggroEntity(pCreature); }
+	static ChainAggroEntity* Create(Creature* pCreature) { return new ChainAggroEntity(pCreature); }
 
-    void AddAggroEntity(Creature* pCreature);
-    void RemoveAggroEntity(Creature* pCreature);
+	void AddAggroEntity(Creature* pCreature);
+	void RemoveAggroEntity(Creature* pCreature);
 
-    void Delete();
+	void Delete();
 
-    void EventEnterCombat(Unit* pTarget);
+	void EventEnterCombat(Unit* pTarget);
 };
 
 

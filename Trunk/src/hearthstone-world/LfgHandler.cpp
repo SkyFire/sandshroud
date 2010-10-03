@@ -21,40 +21,40 @@
 
 void WorldSession::HandleLFDPlrLockOpcode( WorldPacket& recv_data )
 {
-    // Crow: Confirmed structure below
-    WorldPacket data(SMSG_LFD_PLAYER_LOCK_INFO_RESPONSE, 400);
-    uint8 cnt = 1;
-    data << cnt;
-    for(uint8 i = 0; i < cnt; i++)
-    {
-        data << uint32(0) << uint8(0);
-        data << uint64(0) << uint64(0);
+	// Crow: Confirmed structure below
+	WorldPacket data(SMSG_LFD_PLAYER_LOCK_INFO_RESPONSE, 400);
+	uint8 cnt = 1;
+	data << cnt;
+	for(uint8 i = 0; i < cnt; i++)
+	{
+		data << uint32(0) << uint8(0);
+		data << uint64(0) << uint64(0);
 
-        uint8 cnt2 = 3;
-        data << cnt2;
-        for(uint8 i = 0; i < cnt2; i++)
-        {
-            data << uint64(6) << uint32(7);
-        }
-    }
-    uint32 cnt3 = 2;
-    data << cnt3;
-    for(uint32 i = 0; i < cnt3; i++)
-    {
-        data << uint32(8) << uint32(9);
-    }
-    SendPacket(&data);
+		uint8 cnt2 = 3;
+		data << cnt2;
+		for(uint8 i = 0; i < cnt2; i++)
+		{
+			data << uint64(6) << uint32(7);
+		}
+	}
+	uint32 cnt3 = 2;
+	data << cnt3;
+	for(uint32 i = 0; i < cnt3; i++)
+	{
+		data << uint32(8) << uint32(9);
+	}
+	SendPacket(&data);
 }
 
 void WorldSession::HandleLFDPartyLockOpcode( WorldPacket& recv_data )
 {
-    // Crow: Confirmed structure below
-    WorldPacket data(SMSG_LFD_PARTY_LOCK_INFO_UPDATE, 400);
-    uint8 cnt = 2;
-    data << uint8(cnt);
-    for(uint8 i = 0; i < cnt; i++)
-    {
-        data << uint64(49426 << 2);
-    }
-    SendPacket(&data);
+	// Crow: Confirmed structure below
+	WorldPacket data(SMSG_LFD_PARTY_LOCK_INFO_UPDATE, 400);
+	uint8 cnt = 2;
+	data << uint8(cnt);
+	for(uint8 i = 0; i < cnt; i++)
+	{
+		data << uint64(49426 << 2);
+	}
+	SendPacket(&data);
 }

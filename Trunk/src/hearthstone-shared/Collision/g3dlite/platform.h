@@ -150,23 +150,6 @@ inline bool isValidHeapPointer(const void* x) {
 
 #   define restrict
 
-// Crow: Not sure we need these anymore.
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_PRINTF_ARGS
-
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_VPRINTF_ARGS
-
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_PRINTF_METHOD_ARGS
-
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_VPRINTF_METHOD_ARGS*/
-
 	// On MSVC, we need to link against the multithreaded DLL version of
 	// the C++ runtime because that is what SDL and ZLIB are compiled
 	// against.  This is not the default for MSVC, so we set the following
@@ -244,22 +227,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 #	   endif
 #   endif // calling conventions
 
-// Crow: Not sure we need these anymore.
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_PRINTF_METHOD_ARGS   __attribute__((__format__(__printf__, 2, 3)))
-
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_VPRINTF_METHOD_ARGS  __attribute__((__format__(__printf__, 2, 0)))
-
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_PRINTF_ARGS		  __attribute__((__format__(__printf__, 1, 2)))
-
-/** @def G3D_CHECK_PRINTF_METHOD_ARGS()
-	Enables printf parameter validation on gcc. * /
-#   define G3D_CHECK_VPRINTF_ARGS		 __attribute__((__format__(__printf__, 1, 0)))*/
 #endif
 
 

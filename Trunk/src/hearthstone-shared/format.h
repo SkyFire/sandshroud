@@ -25,7 +25,14 @@
 #define FORMAT_H
 
 #include "Collision/g3dlite/platform.h"
+
+#ifndef WIN32
+#include "Errors.h"
+#include <assert.h>
+#endif
+
 #include <string>
+#include <stdlib.h>
 #include <stdio.h>
 #include <cstdarg>
 

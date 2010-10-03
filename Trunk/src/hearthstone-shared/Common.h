@@ -68,11 +68,8 @@ enum MsTimeVariables
 #include "hearthstoneConfig.h"
 #include "format.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
-#include <math.h>
 #include <errno.h>
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )

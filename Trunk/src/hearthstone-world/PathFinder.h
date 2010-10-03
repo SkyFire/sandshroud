@@ -68,88 +68,88 @@ enum PathType
 class PathInfo
 {
 public:
-    PathInfo(Object* from, const float x, const float y, const float z);
-    ~PathInfo();
+	PathInfo(Object* from, const float x, const float y, const float z);
+	~PathInfo();
 
-    HEARTHSTONE_INLINE void getStartPosition(float &x, float &y, float &z) { x = m_startPosition.x; y = m_startPosition.y; z = m_startPosition.z; }
-    HEARTHSTONE_INLINE void getNextPosition(float &x, float &y, float &z) { x = m_nextPosition.x; y = m_nextPosition.y; z = m_nextPosition.z; }
-    HEARTHSTONE_INLINE void getEndPosition(float &x, float &y, float &z) { x = m_endPosition.x; y = m_endPosition.y; z = m_endPosition.z; }
+	HEARTHSTONE_INLINE void getStartPosition(float &x, float &y, float &z) { x = m_startPosition.x; y = m_startPosition.y; z = m_startPosition.z; }
+	HEARTHSTONE_INLINE void getNextPosition(float &x, float &y, float &z) { x = m_nextPosition.x; y = m_nextPosition.y; z = m_nextPosition.z; }
+	HEARTHSTONE_INLINE void getEndPosition(float &x, float &y, float &z) { x = m_endPosition.x; y = m_endPosition.y; z = m_endPosition.z; }
 
-    HEARTHSTONE_INLINE PathNode getStartPosition() { return m_startPosition; }
-    HEARTHSTONE_INLINE PathNode getNextPosition() { return m_nextPosition; }
-    HEARTHSTONE_INLINE PathNode getEndPosition() { return m_endPosition; }
+	HEARTHSTONE_INLINE PathNode getStartPosition() { return m_startPosition; }
+	HEARTHSTONE_INLINE PathNode getNextPosition() { return m_nextPosition; }
+	HEARTHSTONE_INLINE PathNode getEndPosition() { return m_endPosition; }
 
-    HEARTHSTONE_INLINE uint32 getPathPointer() { return m_pointPathPointer == 0 ? 1 : m_pointPathPointer; }
-    HEARTHSTONE_INLINE PointPath& getFullPath() { return m_pathPoints; }
+	HEARTHSTONE_INLINE uint32 getPathPointer() { return m_pointPathPointer == 0 ? 1 : m_pointPathPointer; }
+	HEARTHSTONE_INLINE PointPath& getFullPath() { return m_pathPoints; }
 
-    void Update(const float x, const float y, const float z);
-    bool noPath();
-    bool incompletePath();
+	void Update(const float x, const float y, const float z);
+	bool noPath();
+	bool incompletePath();
 
-    // only for debug
-    dtNavMesh *getMesh(){ return m_navMesh;}
-    dtNavMeshQuery *getMeshQuery(){ return m_navMeshQuery;}
-    dtPolyRef *getPathPolyRef(){ return m_pathPolyRefs;}
-    uint32 getPolyLength(){ return m_polyLength; }
+	// only for debug
+	dtNavMesh *getMesh(){ return m_navMesh;}
+	dtNavMeshQuery *getMeshQuery(){ return m_navMeshQuery;}
+	dtPolyRef *getPathPolyRef(){ return m_pathPolyRefs;}
+	uint32 getPolyLength(){ return m_polyLength; }
 
 private:
-    dtPolyRef   *   m_pathPolyRefs;     // array of detour polygon references
-    uint32          m_polyLength;       // number of polygons in the path
+	dtPolyRef   *   m_pathPolyRefs;     // array of detour polygon references
+	uint32          m_polyLength;       // number of polygons in the path
 
-    PointPath       m_pathPoints;       // our actual (x,y,z) path to the target
-    uint32          m_pointPathPointer; // points to current triple in m_pathPoints - used when dest do not change
-    // the triple is the one that is currently being moved toward
+	PointPath       m_pathPoints;       // our actual (x,y,z) path to the target
+	uint32          m_pointPathPointer; // points to current triple in m_pathPoints - used when dest do not change
+	// the triple is the one that is currently being moved toward
 
-    PathNode        m_startPosition;    // {x, y, z} of current location
-    PathNode        m_nextPosition;     // {x, y, z} of next location on the path
-    PathNode        m_endPosition;      // {x, y, z} of the destination
+	PathNode        m_startPosition;    // {x, y, z} of current location
+	PathNode        m_nextPosition;     // {x, y, z} of next location on the path
+	PathNode        m_endPosition;      // {x, y, z} of the destination
 
-    Object *        m_sourceObject;     // the object that is moving (safe pointer because PathInfo is only accessed from the mover?)
-    dtNavMesh   *   m_navMesh;          // the nav mesh
-    dtNavMeshQuery* m_navMeshQuery;     // the nav mesh query used to find the path
-    PathType        m_type;             // tells what kind of path this is
+	Object *		m_sourceObject;     // the object that is moving (safe pointer because PathInfo is only accessed from the mover?)
+	dtNavMesh   *   m_navMesh;          // the nav mesh
+	dtNavMeshQuery* m_navMeshQuery;     // the nav mesh query used to find the path
+	PathType        m_type;             // tells what kind of path this is
 
-    HEARTHSTONE_INLINE void setNextPosition(PathNode point) { m_nextPosition = point; }
-    HEARTHSTONE_INLINE void setStartPosition(PathNode point) { m_startPosition = point; }
-    HEARTHSTONE_INLINE void setEndPosition(PathNode point) { m_endPosition = point; }
+	HEARTHSTONE_INLINE void setNextPosition(PathNode point) { m_nextPosition = point; }
+	HEARTHSTONE_INLINE void setStartPosition(PathNode point) { m_startPosition = point; }
+	HEARTHSTONE_INLINE void setEndPosition(PathNode point) { m_endPosition = point; }
 
-    HEARTHSTONE_INLINE void clear()
-    {
-        delete [] m_pathPolyRefs;
-        m_pathPolyRefs = NULL;
+	HEARTHSTONE_INLINE void clear()
+	{
+		delete [] m_pathPolyRefs;
+		m_pathPolyRefs = NULL;
 
-        m_polyLength = 0;
+		m_polyLength = 0;
 
-        m_pathPoints.clear();
-        m_pointPathPointer = 0;
-    }
+		m_pathPoints.clear();
+		m_pointPathPointer = 0;
+	}
 
-    dtPolyRef getPathPolyByPosition(float x, float y, float z);
+	dtPolyRef getPathPolyByPosition(float x, float y, float z);
 
-    void BuildFreshPath();
-    void BuildPath(dtPolyRef startPoly, float* startPos, dtPolyRef endPoly, float* endPos);
-    // NODE: startPos, endPos is in Y,Z,X format!
+	void BuildFreshPath();
+	void BuildPath(dtPolyRef startPoly, float* startPos, dtPolyRef endPoly, float* endPos);
+	// NODE: startPos, endPos is in Y,Z,X format!
 
-    void updateNextPosition();
-    void shortcut();
+	void updateNextPosition();
+	void shortcut();
 
-    dtQueryFilter createFilter();
+	dtQueryFilter createFilter();
 
-    bool canFly();
-    bool canSwim();
-    NavTerrain getNavTerrain(float x, float y, float z);
+	bool canFly();
+	bool canSwim();
+	NavTerrain getNavTerrain(float x, float y, float z);
 
-    // smooth path functions
-    uint32 fixupCorridor(dtPolyRef* path, const uint32 npath, const uint32 maxPath,
-        const dtPolyRef* visited, const uint32 nvisited);
-    bool getSteerTarget(const float* startPos, const float* endPos, const float minTargetDist,
-        const dtPolyRef* path, const uint32 pathSize, float* steerPos,
-        unsigned char& steerPosFlag, dtPolyRef& steerPosRef,
-        float* outPoints = 0, uint32* outPountcount = 0);
+	// smooth path functions
+	uint32 fixupCorridor(dtPolyRef* path, const uint32 npath, const uint32 maxPath,
+		const dtPolyRef* visited, const uint32 nvisited);
+	bool getSteerTarget(const float* startPos, const float* endPos, const float minTargetDist,
+		const dtPolyRef* path, const uint32 pathSize, float* steerPos,
+		unsigned char& steerPosFlag, dtPolyRef& steerPosRef,
+		float* outPoints = 0, uint32* outPountcount = 0);
 
-    uint32 findSmoothPath(const float* startPos, const float* endPos,
-        const dtPolyRef* path, const uint32 pathSize,
-        float* smoothPath, const uint32 smoothPathMaxSize);
+	uint32 findSmoothPath(const float* startPos, const float* endPos,
+		const dtPolyRef* path, const uint32 pathSize,
+		float* smoothPath, const uint32 smoothPathMaxSize);
 };
 
 HEARTHSTONE_INLINE bool inRangeYZX(const float* v1, const float* v2, const float r, const float h)

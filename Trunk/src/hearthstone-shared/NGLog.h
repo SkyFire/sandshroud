@@ -351,7 +351,7 @@ public:
 		MessageBox(0, str.c_str(), "Error", MB_OK);
 #else
 		printf("Sleeping for 5 seconds.\n");
-		Sleep(5000);
+		usleep(5000*1000);
 #endif
 
 		Color(TNORMAL);

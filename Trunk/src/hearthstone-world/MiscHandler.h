@@ -29,8 +29,8 @@ struct GraveyardTeleport
     float Z;
     float O;
     uint32 ZoneId;
-    uint32 AdjacentZoneId;
-    uint32 MapId;
+	uint32 AdjacentZoneId;
+	uint32 MapId;
     uint32 FactionID;
 };
 #pragma pack(pop)

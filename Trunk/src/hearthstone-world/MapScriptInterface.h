@@ -34,71 +34,71 @@ class Player;
 class SERVER_DECL MapScriptInterface
 {
 public:
-    MapScriptInterface(MapMgr* mgr);
-    ~MapScriptInterface();
+	MapScriptInterface(MapMgr* mgr);
+	~MapScriptInterface();
 
-    template<class T, uint32 TypeId> T* GetObjectNearestCoords(uint32 Entry, float x, float y, float z, float ClosestDist)
-    {
-        MapCell * pCell = mapMgr->GetCell(mapMgr->GetPosX(x), mapMgr->GetPosY(y));
+	template<class T, uint32 TypeId> T* GetObjectNearestCoords(uint32 Entry, float x, float y, float z, float ClosestDist)
+	{
+		MapCell * pCell = mapMgr->GetCell(mapMgr->GetPosX(x), mapMgr->GetPosY(y));
 
-        if(pCell == NULL)
-            return CAST(T, NULLPLR);
+		if(pCell == NULL)
+			return CAST(T, NULLPLR);
 
-        Object* ClosestObject = NULLOBJ;
-        float CurrentDist = 0;
-        ObjectSet::const_iterator iter;
-        for(iter = pCell->Begin(); iter != pCell->End(); iter++)
-        {
-            CurrentDist = (*iter)->CalcDistance(x, y, (z != 0.0f ? z : (*iter)->GetPositionZ()));
-            if(CurrentDist < ClosestDist && (*iter)->GetTypeId() == TypeId)
-            {
-                if((Entry && (*iter)->GetEntry() == Entry) || !Entry)
-                {
-                    ClosestDist = CurrentDist;
-                    ClosestObject = (*iter);
-                }
-            }
-        }
+		Object* ClosestObject = NULLOBJ;
+		float CurrentDist = 0;
+		ObjectSet::const_iterator iter;
+		for(iter = pCell->Begin(); iter != pCell->End(); iter++)
+		{
+			CurrentDist = (*iter)->CalcDistance(x, y, (z != 0.0f ? z : (*iter)->GetPositionZ()));
+			if(CurrentDist < ClosestDist && (*iter)->GetTypeId() == TypeId)
+			{
+				if((Entry && (*iter)->GetEntry() == Entry) || !Entry)
+				{
+					ClosestDist = CurrentDist;
+					ClosestObject = (*iter);
+				}
+			}
+		}
 
-        return CAST(T, ClosestObject);
-    }
+		return CAST(T, ClosestObject);
+	}
 
-    HEARTHSTONE_INLINE GameObject* GetGameObjectNearestCoords(float x, float y, float z = 0.0f, uint32 Entry = 0, float ClosestDistance = 999999.0f)
-    {
-        return GetObjectNearestCoords<GameObject, TYPEID_GAMEOBJECT>(Entry, x, y, z, ClosestDistance);
-    }
+	HEARTHSTONE_INLINE GameObject* GetGameObjectNearestCoords(float x, float y, float z = 0.0f, uint32 Entry = 0, float ClosestDistance = 999999.0f)
+	{
+		return GetObjectNearestCoords<GameObject, TYPEID_GAMEOBJECT>(Entry, x, y, z, ClosestDistance);
+	}
 
-    HEARTHSTONE_INLINE Creature* GetCreatureNearestCoords(float x, float y, float z = 0.0f, uint32 Entry = 0, float ClosestDistance = 999999.0f)
-    {
-        return GetObjectNearestCoords<Creature, TYPEID_UNIT>(Entry, x, y, z, ClosestDistance);
-    }
+	HEARTHSTONE_INLINE Creature* GetCreatureNearestCoords(float x, float y, float z = 0.0f, uint32 Entry = 0, float ClosestDistance = 999999.0f)
+	{
+		return GetObjectNearestCoords<Creature, TYPEID_UNIT>(Entry, x, y, z, ClosestDistance);
+	}
 
-    HEARTHSTONE_INLINE Player* GetPlayerNearestCoords(float x, float y, float z = 0.0f, uint32 Entry = 0, float ClosestDistance = 999999.0f)
-    {
-        // Don't bother checking empty maps.
-        if(!mapMgr->GetPlayerCount())
-            return NULLPLR;
-        return GetObjectNearestCoords<Player, TYPEID_PLAYER>(Entry, x, y, z, ClosestDistance);
-    }
+	HEARTHSTONE_INLINE Player* GetPlayerNearestCoords(float x, float y, float z = 0.0f, uint32 Entry = 0, float ClosestDistance = 999999.0f)
+	{
+		// Don't bother checking empty maps.
+		if(!mapMgr->GetPlayerCount())
+			return NULLPLR;
+		return GetObjectNearestCoords<Player, TYPEID_PLAYER>(Entry, x, y, z, ClosestDistance);
+	}
 
-    uint32 GetPlayerCountInRadius(float x, float y, float z = 0.0f, float radius = 5.0f);
+	uint32 GetPlayerCountInRadius(float x, float y, float z = 0.0f, float radius = 5.0f);
 
-    GameObject* SpawnGameObject(uint32 Entry, float cX, float cY, float cZ, float cO, bool AddToWorld, uint32 Misc1, uint32 Misc2);
-    Creature* SpawnCreature(uint32 Entry, float cX, float cY, float cZ, float cO, bool AddToWorld, bool tmplate, uint32 Misc1, uint32 Misc2);
-    WayPoint * CreateWaypoint();
+	GameObject* SpawnGameObject(uint32 Entry, float cX, float cY, float cZ, float cO, bool AddToWorld, uint32 Misc1, uint32 Misc2);
+	Creature* SpawnCreature(uint32 Entry, float cX, float cY, float cZ, float cO, bool AddToWorld, bool tmplate, uint32 Misc1, uint32 Misc2);
+	WayPoint * CreateWaypoint();
 
-    void DeleteGameObject(GameObject* ptr);
-    void DeleteCreature(Creature* ptr);
+	void DeleteGameObject(GameObject* ptr);
+	void DeleteCreature(Creature* ptr);
 
 private:
-    MapMgr* mapMgr;
+	MapMgr* mapMgr;
 };
 
 class SERVER_DECL StructFactory : public Singleton<StructFactory>
 {
 public:
-    StructFactory() {}
-    WayPoint * CreateWaypoint();
+	StructFactory() {}
+	WayPoint * CreateWaypoint();
 };
 
 #define sStructFactory StructFactory::getSingleton()

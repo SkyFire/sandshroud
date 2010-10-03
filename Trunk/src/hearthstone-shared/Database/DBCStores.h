@@ -909,7 +909,7 @@ struct WMOAreaTableEntry
 {
 	uint32 Id;				// 0 index
 	int32 rootId;			// 1 used in root WMO
-	uint32 adtId;			// 2 used in adt file
+	int32 adtId;			// 2 used in adt file
 	int32 groupId;			// 3 used in group WMO
 	uint32 Flags;			// 9 used for indoor/outdoor determination
 	uint32 areaId;			// 10 link to AreaTableEntry.ID
@@ -1550,7 +1550,11 @@ public:
 		{
 			printf("!!! possible invalid format in file %s (us: %u, them: %u)\n", filename, (uint32)len, cols);
 			printf("!!! Core will pause for 10 seconds\n");
+#ifdef WIN32
 			Sleep(10000);
+#else
+			usleep(10000*1000)
+#endif
 			return;
 		}
 
@@ -1561,7 +1565,11 @@ public:
 				++t;
 				printf("!!! Read buffer overflow in DBC reading of file %s\n", filename);
 				printf("!!! Core will pause for 10 seconds\n");
+#ifdef WIN32
 				Sleep(10000);
+#else
+				usleep(10000*1000)
+#endif
 				break;
 			}
 

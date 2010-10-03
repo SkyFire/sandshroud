@@ -27,8 +27,8 @@
 class WorldRunnable : public ThreadContext
 {
 public:
-    WorldRunnable();
-    bool run();
+	WorldRunnable();
+	bool run();
 };
 
 #endif

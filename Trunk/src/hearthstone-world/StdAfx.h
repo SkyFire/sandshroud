@@ -28,10 +28,13 @@
 #endif
 
 #define _GAME // You just lost the game
+
+#ifdef WIN32
 #pragma warning(disable:4127)
 #pragma warning(disable:4100)
 #pragma warning(disable:4706)
 #pragma warning(disable:4714)
+#endif
 
 #include <list>
 #include <vector>
@@ -194,8 +197,8 @@
 #include "IsleOfConquest.h"
 
 #ifdef CLUSTERING
-    #include "WorkerServerClient.h"
-    #include "ClusterInterface.h"
+	#include "WorkerServerClient.h"
+	#include "ClusterInterface.h"
 #endif
 
 #include "CollideInterface.h"
