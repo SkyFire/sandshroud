@@ -86,21 +86,19 @@ bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 			if(m_navMesh[mapid][x][y] == NULL)
 			{
 				delete [] navData;
-				m_navMeshLoadCount[mapid][x][y] = false;
 				return false;
 			}
 
 			if(!m_navMesh[mapid][x][y]->init(navData, navDataSize, true, 2048))
 			{
+				delete[] tmp;
 				delete [] navData;
-				m_navMeshLoadCount[mapid][x][y] = false;
 				return false;
 			}
 		}
 		else
 		{
 			delete[] tmp;
-			m_navMeshLoadCount[mapid][x][y] = false;
 			return false;
 		}
 
