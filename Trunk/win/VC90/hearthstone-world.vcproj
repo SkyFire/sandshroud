@@ -1269,22 +1269,6 @@
 				>
 			</File>
 			<Filter
-				Name="Pathfinding"
-				>
-				<File
-					RelativePath="..\..\src\hearthstone-world\Path.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\PathFinder.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\PathFinder.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="AI"
 				>
 				<File

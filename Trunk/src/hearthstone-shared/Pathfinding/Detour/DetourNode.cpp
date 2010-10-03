@@ -1,5 +1,5 @@
 /*
- * Sandshroud Hearthstone
+ * Sandshroud Zeon
  * Copyright (c) 2009 Mikko Mononen memon@inside.org
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
@@ -20,14 +20,13 @@
 
 #include "SharedStdAfx.h"
 #include "DetourNode.h"
-#include "DetourAlloc.h"
-#include "DetourAssert.h"
 #include <string.h>
 
 static const unsigned short DT_NULL_IDX = 0xffff;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 dtNodePool::dtNodePool(int maxNodes, int hashSize) :
+
 	m_nodes(0),
 	m_first(0),
 	m_next(0),
@@ -35,23 +34,18 @@ dtNodePool::dtNodePool(int maxNodes, int hashSize) :
 	m_hashSize(hashSize),
 	m_nodeCount(0)
 {
-	m_nodes = (dtNode*)dtAlloc(sizeof(dtNode)*m_maxNodes, DT_ALLOC_PERM);
-	m_next = (unsigned short*)dtAlloc(sizeof(unsigned short)*m_maxNodes, DT_ALLOC_PERM);
-	m_first = (unsigned short*)dtAlloc(sizeof(unsigned short)*hashSize, DT_ALLOC_PERM);
-
-	dtAssert(m_nodes);
-	dtAssert(m_next);
-	dtAssert(m_first);
-
+	m_nodes = new dtNode[m_maxNodes];
+	m_next = new unsigned short[m_maxNodes];
+	m_first = new unsigned short[hashSize];
 	memset(m_first, 0xff, sizeof(unsigned short)*m_hashSize);
 	memset(m_next, 0xff, sizeof(unsigned short)*m_maxNodes);
 }
 
 dtNodePool::~dtNodePool()
 {
-	dtFree(m_nodes);
-	dtFree(m_next);
-	dtFree(m_first);
+	delete [] m_nodes;
+	delete [] m_next;
+	delete [] m_first;
 }
 
 void dtNodePool::clear()
@@ -112,13 +106,12 @@ dtNodeQueue::dtNodeQueue(int n) :
 	m_capacity(n),
 	m_size(0)
 {
-	m_heap = (dtNode**)dtAlloc(sizeof(dtNode*)*(m_capacity+1), DT_ALLOC_PERM);
-	dtAssert(m_heap);
+	m_heap = new dtNode*[m_capacity+1];
 }
 
 dtNodeQueue::~dtNodeQueue()
 {
-	dtFree(m_heap);
+	delete [] m_heap;
 }
 
 void dtNodeQueue::bubbleUp(int i, dtNode* node)

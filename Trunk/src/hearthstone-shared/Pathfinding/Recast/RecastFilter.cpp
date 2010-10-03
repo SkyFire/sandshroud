@@ -1,5 +1,5 @@
 /*
- * Sandshroud Hearthstone
+ * Sandshroud Zeon
  * Copyright (c) 2009 Mikko Mononen memon@inside.org
  * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
@@ -23,15 +23,13 @@
 #include <math.h>
 #include <stdio.h>
 #include "Recast.h"
-#include "RecastAssert.h"
+#include "RecastLog.h"
+#include "RecastTimer.h"
 
 
-void rcFilterLowHangingWalkableObstacles(rcBuildContext* ctx, const int walkableClimb, rcHeightfield& solid)
+// TODO: Missuses ledge flag, must be called before rcFilterLedgeSpans!
+void rcFilterLowHangingWalkableObstacles(const int walkableClimb, rcHeightfield& solid)
 {
-	rcAssert(ctx);
-
-	rcTimeVal startTime = ctx->getTime();
-	
 	const int w = solid.width;
 	const int h = solid.height;
 	
@@ -40,36 +38,36 @@ void rcFilterLowHangingWalkableObstacles(rcBuildContext* ctx, const int walkable
 		for (int x = 0; x < w; ++x)
 		{
 			rcSpan* ps = 0;
-			bool previousWalkable = false;
-			
 			for (rcSpan* s = solid.spans[x + y*w]; s; ps = s, s = s->next)
 			{
-				const bool walkable = s->area != RC_NULL_AREA;
+				const bool walkable = (s->flags & RC_WALKABLE) != 0;
+				const bool previousWalkable = ps && (ps->flags & RC_WALKABLE) != 0;
 				// If current span is not walkable, but there is walkable
 				// span just below it, mark the span above it walkable too.
+				// Missuse the edge flag so that walkable flag cannot propagate
+				// past multiple non-walkable objects.
 				if (!walkable && previousWalkable)
 				{
 					if (rcAbs((int)s->smax - (int)ps->smax) <= walkableClimb)
-						s->area = RC_NULL_AREA;
+						s->flags |= RC_LEDGE;
 				}
-				// Copy walkable flag so that it cannot propagate
-				// past multiple non-walkable objects.
-				previousWalkable = walkable;
+			}
+			// Transfer "fake ledges" to walkables.
+			for (rcSpan* s = solid.spans[x + y*w]; s; ps = s, s = s->next)
+			{
+				if (s->flags & RC_LEDGE)
+					s->flags |= RC_WALKABLE;
+				s->flags &= ~RC_LEDGE;
 			}
 		}
 	}
-
-	rcTimeVal endTime = ctx->getTime();
-	
-	ctx->reportBuildTime(RC_TIME_FILTER_LOW_OBSTACLES, ctx->getDeltaTimeUsec(startTime, endTime));
 }
 	
-void rcFilterLedgeSpans(rcBuildContext* ctx, const int walkableHeight, const int walkableClimb,
+void rcFilterLedgeSpans(const int walkableHeight,
+						const int walkableClimb,
 						rcHeightfield& solid)
 {
-	rcAssert(ctx);
-	
-	rcTimeVal startTime = ctx->getTime();
+	rcTimeVal startTime = rcGetPerformanceTimer();
 
 	const int w = solid.width;
 	const int h = solid.height;
@@ -83,7 +81,7 @@ void rcFilterLedgeSpans(rcBuildContext* ctx, const int walkableHeight, const int
 			for (rcSpan* s = solid.spans[x + y*w]; s; s = s->next)
 			{
 				// Skip non walkable spans.
-				if (s->area == RC_NULL_AREA)
+				if ((s->flags & RC_WALKABLE) == 0)
 					continue;
 				
 				const int bot = (int)(s->smax);
@@ -139,28 +137,29 @@ void rcFilterLedgeSpans(rcBuildContext* ctx, const int walkableHeight, const int
 				// The current span is close to a ledge if the drop to any
 				// neighbour span is less than the walkableClimb.
 				if (minh < -walkableClimb)
-					s->area = RC_NULL_AREA;
+					s->flags |= RC_LEDGE;
 					
 				// If the difference between all neighbours is too large,
 				// we are at steep slope, mark the span as ledge.
 				if ((asmax - asmin) > walkableClimb)
 				{
-					s->area = RC_NULL_AREA;
+					s->flags |= RC_LEDGE;
 				}
 			}
 		}
 	}
 	
-	rcTimeVal endTime = ctx->getTime();
-
-	ctx->reportBuildTime(RC_TIME_FILTER_BORDER, ctx->getDeltaTimeUsec(startTime, endTime));
+	rcTimeVal endTime = rcGetPerformanceTimer();
+//	if (rcGetLog())
+//		rcGetLog()->log(RC_LOG_PROGRESS, "Filter border: %.3f ms", rcGetDeltaTimeUsec(startTime, endTime)/1000.0f);
+	if (rcGetBuildTimes())
+		rcGetBuildTimes()->filterBorder += rcGetDeltaTimeUsec(startTime, endTime);
 }	
 
-void rcFilterWalkableLowHeightSpans(rcBuildContext* ctx, int walkableHeight, rcHeightfield& solid)
+void rcFilterWalkableLowHeightSpans(int walkableHeight,
+									rcHeightfield& solid)
 {
-	rcAssert(ctx);
-	
-	rcTimeVal startTime = ctx->getTime();
+	rcTimeVal startTime = rcGetPerformanceTimer();
 	
 	const int w = solid.width;
 	const int h = solid.height;
@@ -177,12 +176,15 @@ void rcFilterWalkableLowHeightSpans(rcBuildContext* ctx, int walkableHeight, rcH
 				const int bot = (int)(s->smax);
 				const int top = s->next ? (int)(s->next->smin) : MAX_HEIGHT;
 				if ((top - bot) <= walkableHeight)
-					s->area = RC_NULL_AREA;
+					s->flags &= ~RC_WALKABLE;
 			}
 		}
 	}
 	
-	rcTimeVal endTime = ctx->getTime();
+	rcTimeVal endTime = rcGetPerformanceTimer();
 
-	ctx->reportBuildTime(RC_TIME_FILTER_WALKABLE, ctx->getDeltaTimeUsec(startTime, endTime));
+//	if (rcGetLog())
+//		rcGetLog()->log(RC_LOG_PROGRESS, "Filter walkable: %.3f ms", rcGetDeltaTimeUsec(startTime, endTime)/1000.0f);
+	if (rcGetBuildTimes())
+		rcGetBuildTimes()->filterWalkable += rcGetDeltaTimeUsec(startTime, endTime);
 }

@@ -20,6 +20,7 @@
 #ifndef _NavMeshInterface_H
 #define _NavMeshInterface_H
 
+// Crow: TODO: Integrate Cell Handler royalties.
 class SERVER_DECL CNavMeshInterface
 {
 public:
@@ -27,27 +28,18 @@ public:
 	void DeInit();
 
 public: // Navmesh settings
+	uint32 GetPosX(float x);
+	uint32 GetPosY(float y);
 	dtNavMesh* GetNavmesh(uint32 mapid);
 	bool LoadNavMesh(uint32 mapid, uint32 x, uint32 y);
 	bool IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y);
+	bool IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y);
 	void UnloadNavMesh(uint32 mapid, uint32 x, uint32 y);
-	// DEPRECATED
-//	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
+	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 
 private:
-	dtNavMesh *m_navMesh[NUM_MAPS];
+	dtNavMesh *m_navMesh[NUM_MAPS][64][64];
 	int64 m_navMeshLoadCount[NUM_MAPS][64][64];
-};
-
-HEARTHSTONE_INLINE uint32 packTileID(uint32 tileX, uint32 tileY)
-{
-	return tileX << 16 | tileY;
-};
-
-HEARTHSTONE_INLINE void unpackTileID(uint32 ID, uint32 &tileX, uint32 &tileY)
-{
-	tileX = ID >> 16;
-	tileY = ID & 0xFF;
 };
 
 extern SERVER_DECL CNavMeshInterface NavMeshInterface;

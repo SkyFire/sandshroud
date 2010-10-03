@@ -191,7 +191,6 @@ uint32 CellHandler<Class>::GetPosY(float y)
 {
 	ASSERT((y >= _minY) && (y <= _maxY));
 	return (uint32)((_maxY-y)/_cellSize);
-
 }
 
 #endif

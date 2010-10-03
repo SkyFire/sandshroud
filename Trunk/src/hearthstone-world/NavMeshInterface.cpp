@@ -33,9 +33,29 @@ void CNavMeshInterface::DeInit()
 	// bleh.
 }
 
+// CellHandler.h
+uint32 CNavMeshInterface::GetPosX(float x)
+{
+	ASSERT((x >= _minX) && (x <= _maxX));
+	return (uint32)((_maxX-x)/_cellSize);
+}
+
+uint32 CNavMeshInterface::GetPosY(float y)
+{
+	ASSERT((y >= _minY) && (y <= _maxY));
+	return (uint32)((_maxY-y)/_cellSize);
+}
+
 dtNavMesh* CNavMeshInterface::GetNavmesh(uint32 mapid)
 {
-	return m_navMesh[mapid];
+	return m_navMesh[mapid][0][0];
+}
+
+bool CNavMeshInterface::IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y)
+{
+	int tileX = GetPosX(x)/8;
+	int tileY = GetPosY(y)/8;
+	return IsNavmeshLoaded(mapid, tileX, tileY);
 }
 
 bool CNavMeshInterface::IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y)
@@ -45,107 +65,60 @@ bool CNavMeshInterface::IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y)
 
 bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 {
-	char fileName[512];
-	FILE* file;
-	if(m_navMesh[mapid] == NULL)
+	if(m_navMesh[mapid][x][y])
+		return false; // Already exists
+
+	// map file name
+	uint32 len = uint32(sizeof(sWorld.MMapPath)+strlen("/%03u%02u%02u.mmap")+1);
+	char *tmp = new char[len];
+	snprintf(tmp, len, (char *)(sWorld.MMapPath+"/%03u%02u%02u.mmap").c_str(), mapid, x, y);
+
+	// woot no need for generation here: lets just load navmesh itself!
+	ifstream nvmsh( tmp, ofstream::binary );
+	if( nvmsh )
 	{
-		sprintf(fileName, "%s/%03i.mmap", sWorld.MMapPath.c_str(), mapid);
-		file = fopen(fileName, "rb");
-
-		if(!file)
+		nvmsh.seekg(0,std::ifstream::end);
+		int navDataSize = nvmsh.tellg();
+		nvmsh.seekg(0);
+		unsigned char *navData = new unsigned char[navDataSize];
+		nvmsh.read((char*) (navData),navDataSize);
+		nvmsh.close();
+		m_navMesh[mapid][x][y] = new dtNavMesh;
+		if(m_navMesh[mapid][x][y] == NULL)
 		{
-			DEBUG_LOG("NavMesh Interface", "Could not open mmap '%s'", fileName);
+			delete [] navData;
+			m_navMeshLoadCount[mapid][x][y] = false;
 			return false;
 		}
 
-		dtNavMeshParams params;
-		uint32 offset;
-		fread(&params, sizeof(dtNavMeshParams), 1, file);
-		fread(&offset, sizeof(uint32), 1, file);
-		fclose(file);
-
-		m_navMesh[mapid] = dtAllocNavMesh();
-		if(!m_navMesh[mapid]->init(&params))
+		if(!m_navMesh[mapid][x][y]->init(navData, navDataSize, true, 2048))
 		{
-			delete m_navMesh[mapid];
-			m_navMesh[mapid] = NULL;
-			DEBUG_LOG("NavMesh Interface", "%03u.mmap unsuccessfully loaded(1).", mapid);
+			delete [] navData;
+			m_navMeshLoadCount[mapid][x][y] = false;
 			return false;
 		}
-
-		DEBUG_LOG("NavMesh Interface", "%03u.mmap successfully loaded.", mapid);
+	}
+	else
+	{
+		delete[] tmp;
+		m_navMeshLoadCount[mapid][x][y] = false;
+		return false;
 	}
 
-	if(m_navMeshLoadCount[mapid][x][y] < 0)
-	{
-		m_navMeshLoadCount[mapid][x][y] = 0;
-
-		// mmaps/0000000.mmtile
-		sprintf(fileName, "%s/%03i%02i%02i.mmtile", sWorld.MMapPath.c_str(), mapid, x, y);
-		file = fopen(fileName, "rb");
-
-		if(!file)
-		{
-			DEBUG_LOG("NavMesh Interface", "Could not open mmtile '%s'", fileName);
-			return false;
-		}
-
-		fseek(file, 0, SEEK_END);
-		int length = ftell(file);
-		fseek(file, 0, SEEK_SET);
-
-		unsigned char* data =  (unsigned char*)dtAlloc(length, DT_ALLOC_PERM);
-		fread(data, length, 1, file);
-		fclose(file);
-
-		dtMeshHeader* header = (dtMeshHeader*)data;
-		if (header->magic != DT_NAVMESH_MAGIC)
-		{
-			DEBUG_LOG("NavMesh Interface", "%03u%02i%02i.mmtile has an invalid header", mapid, x, y);
-			dtFree(data);
-			return false;
-		}
-		if (header->version != DT_NAVMESH_VERSION)
-		{
-			DEBUG_LOG("NavMesh Interface", "%03u%02i%02i.mmtile was built with Detour v%i, expected v%i", mapid, x, y, header->version, DT_NAVMESH_VERSION);
-			dtFree(data);
-			return false;
-		}
-
-		if(!m_navMesh[mapid]->addTile(data, length, DT_TILE_FREE_DATA))
-		{
-			DEBUG_LOG("NavMesh Interface", "could not load %03u%02i%02i.mmtile into navmesh", mapid, x, y);
-			dtFree(data);
-			return false;
-		}
-		DEBUG_LOG("NavMesh Interface", "%03u%02u%02u.mmtile successfully loaded.", mapid, x, y);
-	}
-
-	m_navMeshLoadCount[mapid][x][y]++;
+	delete[] tmp;
+	m_navMeshLoadCount[mapid][x][y] = true;
 	return true;
 }
 
 void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 {
-	if(m_navMesh[mapid] == NULL)
+	if(m_navMesh[mapid][x][y] == NULL)
 		return;
 
-	if(x == 0 && y == 0)
-	{
-        dtFreeNavMesh(m_navMesh[mapid]);
-		m_navMesh[mapid] = NULL;
-		return;
-	}
-
-	if(--m_navMeshLoadCount[mapid][x][y] < 0)
-	{
-		DEBUG_LOG("NavMesh Interface", "Unloading Navmesh at %03u%02u%02u", mapid, x, y);
-		m_navMesh[mapid]->removeTile(m_navMesh[mapid]->getTileRefAt(x, y), NULL, NULL);
-	}
+	delete m_navMesh[mapid][x][y];
+	m_navMesh[mapid][x][y] = NULL;
 }
 
-// DEPRECATED
-/*
 LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
 {
 	//convert to nav coords.
@@ -153,31 +126,28 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 	float endPos[3] = { endy, endz, endx };
 	float mPolyPickingExtents[3] = { 2.00f, 4.00f, 2.00f };
 	dtQueryFilter* mPathFilter = new dtQueryFilter();
-	int gx = 32 - (startx/533.333333f);
-	int gy = 32 - (starty/533.333333f);
+	int gx = GetPosX(startx)/8;
+	int gy = GetPosY(starty)/8;
 	LocationVector pos;
 	pos.x = endx;
 	pos.y = endy;
 	pos.z = endz;
-
-	if (m_navMesh[mapid] != NULL)
+	dtNavMesh* myNavMesh = m_navMesh[mapid][gx][gy];
+	if(myNavMesh)
 	{
-		dtNavMeshQuery* m_navMeshQuery = dtAllocNavMeshQuery();
-		m_navMeshQuery->init(m_navMesh[mapid], 2048*64*64);
-		dtPolyRef mStartRef = m_navMeshQuery->findNearestPoly(startPos,mPolyPickingExtents,mPathFilter,0); // this maybe should be saved on mob for later
-		dtPolyRef mEndRef = m_navMeshQuery->findNearestPoly(endPos,mPolyPickingExtents,mPathFilter,0); // saved on player? probably waste since player moves to much
-
+		dtPolyRef mStartRef = myNavMesh->findNearestPoly(startPos,mPolyPickingExtents,mPathFilter,0); // this maybe should be saved on mob for later
+		dtPolyRef mEndRef = myNavMesh->findNearestPoly(endPos,mPolyPickingExtents,mPathFilter,0); // saved on player? probably waste since player moves to much
 		if (mStartRef != NULL && mEndRef != NULL)
 		{
 			dtPolyRef mPathResults[50];
-			int mNumPathResults = m_navMeshQuery->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter ,mPathResults,50);
+			int mNumPathResults = myNavMesh->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter ,mPathResults,50);//TODO: CHANGE ME
 			if(mNumPathResults <= 0)
 				return pos;
 
 			float actualpath[3*20];
 			unsigned char* flags = 0;
 			dtPolyRef* polyrefs = 0;
-			int mNumPathPoints = m_navMeshQuery->findStraightPath(startPos, endPos,mPathResults, mNumPathResults, actualpath, flags, polyrefs,20);
+			int mNumPathPoints = myNavMesh->findStraightPath(startPos, endPos,mPathResults, mNumPathResults, actualpath, flags, polyrefs,20);
 			if (mNumPathPoints < 3)
 				return pos;
 
@@ -188,4 +158,4 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 		}
 	}
 	return pos;
-}*/
+}
