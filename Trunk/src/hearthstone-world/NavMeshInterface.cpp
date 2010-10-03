@@ -65,58 +65,59 @@ bool CNavMeshInterface::IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y)
 
 bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 {
-	if(m_navMesh[mapid][x][y])
-		return false; // Already exists
-
-	// map file name
-	uint32 len = uint32(sizeof(sWorld.MMapPath)+strlen("/%03u%02u%02u.mmap")+1);
-	char *tmp = new char[len];
-	snprintf(tmp, len, (char *)(sWorld.MMapPath+"/%03u%02u%02u.mmap").c_str(), mapid, x, y);
-
-	// woot no need for generation here: lets just load navmesh itself!
-	ifstream nvmsh( tmp, ofstream::binary );
-	if( nvmsh )
+	if(m_navMeshLoadCount[mapid][x][y] < 1)
 	{
-		nvmsh.seekg(0,std::ifstream::end);
-		int navDataSize = nvmsh.tellg();
-		nvmsh.seekg(0);
-		unsigned char *navData = new unsigned char[navDataSize];
-		nvmsh.read((char*) (navData),navDataSize);
-		nvmsh.close();
-		m_navMesh[mapid][x][y] = new dtNavMesh;
-		if(m_navMesh[mapid][x][y] == NULL)
+		// map file name
+		uint32 len = uint32(sizeof(sWorld.MMapPath)+strlen("/%03u%02u%02u.mmap")+1);
+		char *tmp = new char[len];
+		snprintf(tmp, len, (char *)(sWorld.MMapPath+"/%03u%02u%02u.mmap").c_str(), mapid, x, y);
+
+		// woot no need for generation here: lets just load navmesh itself!
+		ifstream nvmsh( tmp, ofstream::binary );
+		if( nvmsh )
 		{
-			delete [] navData;
+			nvmsh.seekg(0,std::ifstream::end);
+			int navDataSize = nvmsh.tellg();
+			nvmsh.seekg(0);
+			unsigned char *navData = new unsigned char[navDataSize];
+			nvmsh.read((char*) (navData),navDataSize);
+			nvmsh.close();
+			m_navMesh[mapid][x][y] = new dtNavMesh;
+			if(m_navMesh[mapid][x][y] == NULL)
+			{
+				delete [] navData;
+				m_navMeshLoadCount[mapid][x][y] = false;
+				return false;
+			}
+
+			if(!m_navMesh[mapid][x][y]->init(navData, navDataSize, true, 2048))
+			{
+				delete [] navData;
+				m_navMeshLoadCount[mapid][x][y] = false;
+				return false;
+			}
+		}
+		else
+		{
+			delete[] tmp;
 			m_navMeshLoadCount[mapid][x][y] = false;
 			return false;
 		}
 
-		if(!m_navMesh[mapid][x][y]->init(navData, navDataSize, true, 2048))
-		{
-			delete [] navData;
-			m_navMeshLoadCount[mapid][x][y] = false;
-			return false;
-		}
-	}
-	else
-	{
 		delete[] tmp;
-		m_navMeshLoadCount[mapid][x][y] = false;
-		return false;
 	}
 
-	delete[] tmp;
-	m_navMeshLoadCount[mapid][x][y] = true;
+	m_navMeshLoadCount[mapid][x][y]++;
 	return true;
 }
 
 void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 {
-	if(m_navMesh[mapid][x][y] == NULL)
-		return;
-
-	delete m_navMesh[mapid][x][y];
-	m_navMesh[mapid][x][y] = NULL;
+	if((--m_navMeshLoadCount[mapid][x][y]) < 1)
+	{
+		delete m_navMesh[mapid][x][y];
+		m_navMesh[mapid][x][y] = NULL;
+	}
 }
 
 LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)

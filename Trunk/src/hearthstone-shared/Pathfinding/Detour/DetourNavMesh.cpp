@@ -147,13 +147,13 @@ bool dtNavMesh::init(const float* orig, float tileWidth, float tileHeight,
 	vcopy(m_orig, orig);
 	m_tileWidth = tileWidth;
 	m_tileHeight = tileHeight;
-	
+
 	// Init tiles
 	m_maxTiles = maxTiles;
 	m_tileLutSize = nextPow2(maxTiles/4);
 	if (!m_tileLutSize) m_tileLutSize = 1;
 	m_tileLutMask = m_tileLutSize-1;
-	
+
 	m_tiles = new dtMeshTile[m_maxTiles];
 	if (!m_tiles)
 		return false;
@@ -524,9 +524,11 @@ bool dtNavMesh::addTileAt(int x, int y, unsigned char* data, int dataSize, bool 
 {
 	if (getTileAt(x,y))
 		return false;
+
 	// Make sure there is enough space for new tile.
 	if (!m_nextFree)
 		return false;
+
 	// Make sure the data is in right format.
 	dtMeshHeader* header = (dtMeshHeader*)data;
 	if (header->magic != DT_NAVMESH_MAGIC)

@@ -1989,7 +1989,8 @@ void AIInterface::UpdateMove()
 		m_nextPosY = PathLocation.y;
 		m_nextPosZ = PathLocation.z;
 
-		if(m_nextPosX != m_sourceX && m_nextPosY != m_sourceY) // We can't find a path, so we use normal walking methods.
+		// We can't find a path, so we use normal walking methods.
+		if(m_nextPosX != m_sourceX && m_nextPosY != m_sourceY && m_nextPosX != 0.0f && m_nextPosY != 0.0f)
 		{
 			if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
 			{
@@ -2048,6 +2049,7 @@ void AIInterface::UpdateMove()
 		}
 	}
 
+	pathfinding = false;
 	float distance = m_Unit->CalcDistance(m_destinationX, m_destinationY, m_destinationZ);
 
 	m_nextPosX = m_destinationX;
