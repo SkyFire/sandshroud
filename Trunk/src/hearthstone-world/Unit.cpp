@@ -7271,6 +7271,28 @@ void Unit::SetFaction(uint32 faction)
 //		WorldDatabase.Execute("UPDATE creature_spawns SET faction = %u WHERE id = %u;", faction, TO_CREATURE(this)->m_spawn->id);
 }
 
+void Unit::ResetFaction()
+{
+	if(IsPlayer())
+	{
+		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, TO_PLAYER(this)->GetInfo()->factiontemplate);
+		m_faction = dbcFactionTemplate.LookupEntry(TO_PLAYER(this)->GetInfo()->factiontemplate);
+		m_factionDBC = dbcFaction.LookupEntry(TO_PLAYER(this)->GetInfo()->factiontemplate);
+	}
+	else
+	{
+		CreatureProto* cp = CreatureProtoStorage.LookupEntry(GetEntry());
+		uint32 faction = cp->Faction;
+		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
+		m_faction = dbcFactionTemplate.LookupEntry(faction);
+		m_factionDBC = dbcFaction.LookupEntry(faction);
+
+		if(TO_CREATURE(this)->m_spawn)
+			TO_CREATURE(this)->SaveToDB();
+	}
+	_setFaction();
+}
+
 void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool disengage )
 {
 	float dx, dy;

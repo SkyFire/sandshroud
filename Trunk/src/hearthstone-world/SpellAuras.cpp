@@ -261,10 +261,10 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraModSpellHealingFromAP,                          //238 Mod Healing from Attack Power
 	&Aura::SpellAuraModScale,                                       //239
 	&Aura::SpellAuraExpertise,                                      //240 Expertise
-	&Aura::SpellAuraNULL,                                           //241
+	&Aura::SpellAuraForceMoveFoward,                                //241
 	&Aura::SpellAuraNULL,                                           //242
-	&Aura::SpellAuraNULL,                                           //243
-	&Aura::SpellAuraNULL,                                           //244
+	&Aura::SpellAuraModFaction,                                     //243
+	&Aura::SpellAuraComprehendLanguage,                             //244
 	&Aura::SpellAuraNULL,                                           //245
 	&Aura::SpellAuraReduceEffectDuration,                           //246
 	&Aura::SpellAuraNULL,                                           //247
@@ -580,11 +580,11 @@ const char* SpellAuraNames[TOTAL_SPELL_AURAS] = {
 	"",													// 237
 	"",													// 238
 	"",													// 239
-	"MODIFY_AXE_SKILL",									// 240
-	"",													// 241
+	"MODIFY_EXPERTISE",									// 240
+	"FORCE_MOVE_FORWARD",								// 241
 	"",													// 242
-	"",													// 243
-	"",													// 244
+	"MOD_FACTION",										// 243
+	"COMPREHEND_LANGUAGE",								// 244
 	"",													// 245
 	"",													// 246
 	"",													// 247
@@ -653,7 +653,7 @@ const char* SpellAuraNames[TOTAL_SPELL_AURAS] = {
 	"",													// 310
 	"",													// 311
 	"",													// 312
-	"",													// 313
+	"PREVENT_RESURRECTION",								// 313
 	"",													// 314
 	"",													// 315
 	"",													// 316
@@ -9655,23 +9655,23 @@ void Aura::SpellAuraCastFilter(bool apply)
 {
 	// cannot perform any abilities (other than those in EffectMask)
 	if (!m_target->IsPlayer())
-		return;	// currently only works on players
+		return;	// only for players
 
 	// Generic
 	if(apply)
 	{
-		TO_PLAYER(m_target)->m_castFilterEnabled = true;
+		TO_PLAYER(m_target)->SetFlag(PLAYER_FLAGS,PLAYER_FLAG_ALLOW_ONLY_ABILITY);
 		for(uint32 x=0;x<3;x++)
+		{
 			TO_PLAYER(m_target)->m_castFilter[x] |= m_spellProto->EffectSpellClassMask[mod->i][x];
+		}
 	}
 	else
 	{
-		TO_PLAYER(m_target)->m_castFilterEnabled = false;	// check if we can turn it off
+		TO_PLAYER(m_target)->RemoveFlag(PLAYER_FLAGS,PLAYER_FLAG_ALLOW_ONLY_ABILITY);
 		for(uint32 x=0;x<3;x++)
 		{
 			TO_PLAYER(m_target)->m_castFilter[x] &= ~m_spellProto->EffectSpellClassMask[mod->i][x];
-			if(TO_PLAYER(m_target)->m_castFilter[x])
-				TO_PLAYER(m_target)->m_castFilterEnabled = true;
 		}
 	}
 }
@@ -9729,6 +9729,42 @@ void Aura::SpellAuraExpertise(bool apply)
 		m_target->ModUnsigned32Value( PLAYER_OFFHAND_EXPERTISE, amt );
 		TO_PLAYER(m_target)->UpdateStats();
 	}
+}
+
+void Aura::SpellAuraForceMoveFoward(bool apply)
+{
+	if(!m_target->IsPlayer())
+		return;
+	if(apply)
+		m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FORCE_MOVE);
+	else
+		m_target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FORCE_MOVE);
+}
+
+void Aura::SpellAuraModFaction(bool apply)
+{
+	if(apply)
+	{
+		m_target->SetFaction(GetSpellProto()->EffectMiscValue[mod->i]);
+		if(m_target->IsPlayer())
+			m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+	}
+	else
+	{
+		m_target->ResetFaction();
+		if(m_target->IsPlayer())
+			m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
+	}
+}
+
+void Aura::SpellAuraComprehendLanguage(bool apply)
+{
+	if(!m_target->IsPlayer())
+		return;
+    if(apply)
+		m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_COMPREHEND_LANG);
+	else
+		m_target->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_COMPREHEND_LANG);
 }
 
 // Sets time left before aura removal and sends update packet
@@ -10548,14 +10584,17 @@ void Aura::SpellAuraConvertRune(bool apply)
 	if( plr->getClass() != DEATHKNIGHT )
 		return;
 
-	for(uint32 j = 0; j < 6; ++j)
+	if( apply )
 	{
-		if( apply )
+		for(uint32 j = 0; j < 6; ++j)
 		{
 			plr->ConvertRune((uint8)j,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
 			break;
 		}
-		else
+	}
+	else
+	{
+		for(uint32 j = 0; j < 6; ++j)
 		{
 			if(plr->GetRune(j) == GetSpellProto()->EffectMiscValueB[mod->i])
 			{

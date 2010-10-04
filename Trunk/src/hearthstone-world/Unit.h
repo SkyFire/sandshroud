@@ -129,7 +129,6 @@ enum PowerType
 #define POWER_TYPE_PYRITE 41
 #define POWER_TYPE_STEAM 61
 
-#define HIGHEST_FACTION = 46
 enum Factions
 {
 	FACTION_BLOODSAIL_BUCCANEERS,
@@ -180,6 +179,7 @@ enum Factions
 	FACTION_SILVERWING_SENTINELS,
 	FACTION_WARSONG_OUTRIDERS
 };
+
 typedef enum
 {
 	TEXTEMOTE_AGREE			= 1,
@@ -1122,6 +1122,7 @@ public:
 	void SendChatMessageAlternateEntry(uint32 entry, uint8 type, uint32 lang, const char * msg);
 	void RegisterPeriodicChatMessage(uint32 delay, uint32 msgid, std::string message, bool sendnotify);
 	void SetFaction(uint32 faction);
+	void ResetFaction();
 
 	HEARTHSTONE_INLINE int32 GetHealthPct() { return (int32)(GetUInt32Value(UNIT_FIELD_HEALTH) * 100 / std::max(1, (int32)GetUInt32Value(UNIT_FIELD_MAXHEALTH))); }
     HEARTHSTONE_INLINE void SetHealthPct(uint32 val) { if (val>0) SetUInt32Value(UNIT_FIELD_HEALTH,float2int32(val*0.01f*GetUInt32Value(UNIT_FIELD_MAXHEALTH))); }

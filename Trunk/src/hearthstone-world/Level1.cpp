@@ -97,7 +97,6 @@ bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-
 bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 {
 	GreenSystemMessage(m_session, "Unsetting GM Flag on yourself...");
@@ -113,6 +112,21 @@ bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
+
+bool ChatHandler::HandleDevTagCommand(const char* args, WorldSession *m_session)
+{
+	if(m_session->GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER))
+	{
+		m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);
+		BlueSystemMessage(m_session, "Developer Flag is off.");
+	}
+	else
+	{
+		m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+		BlueSystemMessage(m_session, "Developer Flag is on.");
+	}
+	return true;
+}
 
 bool ChatHandler::HandleGPSCommand(const char* args, WorldSession *m_session)
 {

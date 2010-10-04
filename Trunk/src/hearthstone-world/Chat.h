@@ -248,6 +248,7 @@ protected:
 	bool HandleTaxiCheatCommand(const char* args, WorldSession *m_session);
 	bool HandleModifySpeedCommand(const char* args, WorldSession *m_session);
 	bool HandleModifyTPsCommand(const char* args, WorldSession *m_session);
+	bool HandleDevTagCommand(const char* args, WorldSession *m_session);
 
 	// Debug Commands
 	bool HandleDebugSetPhase(const char* args, WorldSession *m_session);
@@ -640,6 +641,7 @@ protected:
 
 	bool HandleDebugRetroactiveQuestAchievements(const char *args, WorldSession *m_session);
 	bool HandleModifyFactionCommand(const char *args, WorldSession *m_session);
+	bool HandleModifyPlayerFlagsCommand(const char *args, WorldSession *m_session);
 
 	bool HandleEnableAH(const char *args, WorldSession *m_session);
 	bool HandleDisableAH(const char *args, WorldSession *m_session);

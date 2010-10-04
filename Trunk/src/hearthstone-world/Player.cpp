@@ -363,8 +363,6 @@ void Player::Init()
 	UpdateLastSpeeds();
 
 	m_resist_critical[0] = m_resist_critical[1] = 0;
-	m_castFilterEnabled = false;
-
 
 	for (uint8 x = 0; x < 3; ++x)
 	{
@@ -2283,6 +2281,10 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 			player_flags &= ~PLAYER_FLAG_PVP_TIMER;
 		if(player_flags & PLAYER_FLAG_UNKNOWN2)
 			player_flags &= ~PLAYER_FLAG_UNKNOWN2;
+		if(player_flags & PLAYER_FLAG_DEVELOPER)
+			player_flags &= ~PLAYER_FLAG_DEVELOPER;
+		if(player_flags & PLAYER_FLAG_ALLOW_ONLY_ABILITY)
+			player_flags &= ~PLAYER_FLAG_ALLOW_ONLY_ABILITY;
 	}
 
 	ss << m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX] << ","

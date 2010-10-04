@@ -340,13 +340,11 @@ bool ChatHandler::HandleSaveCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleGMListCommand(const char* args, WorldSession *m_session)
 {
-	WorldPacket data;
-	bool first = true;
-
 	WorldSession *gm_session;
 	SessionSet::iterator itr;
 
 	sWorld.gmList_lock.AcquireReadLock();
+	bool first = true;
 	for (itr = sWorld.gmList.begin(); itr != sWorld.gmList.end();)
 	{
 		gm_session = (*itr);
@@ -412,4 +410,12 @@ bool ChatHandler::HandleRatingsCommand( const char *args , WorldSession *m_sessi
 	return true;
 }
 
-
+bool ChatHandler::HandleModifyPlayerFlagsCommand(const char *args, WorldSession *m_session)
+{
+	Player* player = getSelectedChar(m_session);
+	if(player == NULL || !args)
+		return true;
+	uint32 flags = atol(args);
+	player->SetFlag(PLAYER_FLAGS, flags);
+	return true;
+}

@@ -3116,7 +3116,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( m_spellInfo->Id == 53822 && p_caster->getClass()!=DEATHKNIGHT)			// DeathGate
 			return SPELL_FAILED_SPELL_UNAVAILABLE;
 
-		if(p_caster->m_castFilterEnabled &&
+		if(p_caster->HasFlag(PLAYER_FLAGS,PLAYER_FLAG_ALLOW_ONLY_ABILITY) &&
 			!((m_spellInfo->SpellGroupType[0] & p_caster->m_castFilter[0]) ||
 			(m_spellInfo->SpellGroupType[1] & p_caster->m_castFilter[1]) ||
 			(m_spellInfo->SpellGroupType[2] & p_caster->m_castFilter[2])))

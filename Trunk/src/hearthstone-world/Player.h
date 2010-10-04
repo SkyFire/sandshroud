@@ -314,7 +314,17 @@ enum PlayerFlags
     PLAYER_FLAG_NOCLOAK				= 0x800,
     PLAYER_FLAG_NEED_REST_3_HOURS	= 0x1000,
     PLAYER_FLAG_NEED_REST_5_HOURS	= 0x2000,
+    PLAYER_FLAG_UNK15				= 0x4000,
+    PLAYER_FLAG_DEVELOPER			= 0x8000,
+    PLAYER_FLAG_UNK17				= 0x10000,
+    PLAYER_FLAG_UNK18				= 0x20000,
 	PLAYER_FLAG_PVP_TIMER			= 0x40000,
+    PLAYER_FLAG_UNK20				= 0x80000,
+    PLAYER_FLAG_UNK21				= 0x100000,
+    PLAYER_FLAG_UNK22				= 0x200000,
+    PLAYER_FLAG_UNK23				= 0x400000,
+    PLAYER_FLAG_ALLOW_ONLY_ABILITY	= 0x800000,
+    PLAYER_FLAG_UNK25				= 0x1000000,
 };
 
 enum CharterTypes
@@ -2144,7 +2154,6 @@ public:
 	PlayerInfo * m_playerInfo;
 	PlayerInfo * getPlayerInfo() const {return m_playerInfo;}
 	uint32 m_skipCastCheck[3];  // spell group relation of spell types that should ignore some cancast checks
-	bool m_castFilterEnabled;
 	uint32 m_castFilter[3];	// spell group relation of only spells that player can currently cast
 
 	uint32 m_vampiricEmbrace;
@@ -2261,6 +2270,7 @@ public:
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);
 	uint32 GenerateShapeshiftModelId(uint32 form);
+	PlayerCreateInfo * GetInfo() const { return info;};
 public:
 
 };

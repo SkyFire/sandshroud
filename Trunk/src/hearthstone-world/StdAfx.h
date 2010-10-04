@@ -204,7 +204,6 @@
 #include "BaseConsole.h"
 #include "CConsole.h"
 #include "ConsoleCommands.h"
-//#define COLLECTION_OF_UNTESTED_STUFF_AND_TESTERS 1
 
 //#include <vld.h>
 #ifndef WIN32

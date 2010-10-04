@@ -262,7 +262,10 @@ enum MOD_TYPES
 	SPELL_AURA_REDUCE_AOE_DAMAGE_TAKEN = 229,
 	SPELL_AURA_INCREASE_MAX_HEALTH=230,//Used by Commanding Shout
 	SPELL_AURA_VEHICLE_PASSENGER=236,
-	SPELL_AURA_MODIFY_AXE_SKILL=240,
+	SPELL_AURA_MODIFY_EXPERTISE=240,
+	SPELL_AURA_FORCE_MOVE_FORWARD=241,
+	SPELL_AURA_MOD_FACTION=243,
+	SPELL_AURA_COMPREHEND_LANGUAGE=244,
 	SPELL_AURA_ADD_HEALTH=250,
 	SPELL_AURA_MOD_DOT_DAMAGE_DONE_BY_MECHANIC=255,
 	SPELL_AURA_NO_REAGENT=256,
@@ -706,6 +709,9 @@ public:
 	void SpellAuraModBlockValue(bool apply);
 	void SpellAuraFinishingMovesCannotBeDodged(bool apply);
 	void SpellAuraExpertise(bool apply);
+	void SpellAuraForceMoveFoward(bool apply);
+	void SpellAuraModFaction(bool apply);
+	void SpellAuraComprehendLanguage(bool apply);
 	void SpellAuraDrinkNew(bool apply);
 	void SpellAuraModSpellDamageFromAP(bool apply);
 	void SpellAuraModSpellHealingFromAP(bool apply);

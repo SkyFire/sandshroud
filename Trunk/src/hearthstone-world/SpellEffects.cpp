@@ -8184,29 +8184,34 @@ void Spell::SpellEffectJump(uint32 i)
 
 	if(u_caster->IsCreature() && isTargetDummy(u_caster->GetEntry()))
 		return;
-
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
 	if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 	{
 		if(m_targets.m_destX == 0 || m_targets.m_destY == 0 || m_targets.m_destZ == 0)
 			return; //Hueston we haz a problem.
-		float o = u_caster->calcRadAngle(  u_caster->GetPositionX(), u_caster->GetPositionY(), m_targets.m_destX, m_targets.m_destY );
-		// Time formula is derived from andy's logs, 271ms to move ~14.5 units
-		float distance = u_caster->GetDistanceSq( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o),m_targets.m_destZ );
-		uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-		u_caster->GetAIInterface()->SendMoveToPacket( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, moveTime, MONSTER_MOVE_FLAG_JUMP );
-		u_caster->SetPosition( m_targets.m_destX+cosf(o), m_targets.m_destY+sinf(o), m_targets.m_destZ, 0.0f, false );
+		x = m_targets.m_destX;
+		y = m_targets.m_destY;
+		z = m_targets.m_destZ + 0.3f;
 	}
 	else
 	{
 		if( unitTarget == NULL )
 			return; //Hueston we haz a problem.
-		float o = u_caster->calcRadAngle(  u_caster->GetPositionX(), u_caster->GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY() );
-		// Time formula is derived from andy's logs, 271ms to move ~14.5 units
-		float distance = u_caster->GetDistanceSq( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o),unitTarget->GetPositionZ() );
-		uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-		u_caster->GetAIInterface()->SendMoveToPacket( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o), unitTarget->GetPositionZ(), 0.0f, moveTime, MONSTER_MOVE_FLAG_JUMP );
-		u_caster->SetPosition( unitTarget->GetPositionX()+cosf(o), unitTarget->GetPositionY()+sinf(o), unitTarget->GetPositionZ(), 0.0f, false );
+		x = unitTarget->GetPositionX();
+		y = unitTarget->GetPositionY();
+		z = unitTarget->GetPositionZ() + 0.3f;
 	}
+	float o = u_caster->calcRadAngle(  u_caster->GetPositionX(), u_caster->GetPositionY(), x, y );
+	x = x+cosf(o);
+	y = y+sinf(o);
+	// Time formula is derived from andy's logs, 271ms to move ~14.5 units
+	float distance = u_caster->GetDistanceSq( x+cosf(o), y+sinf(o),z );
+	uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
+	u_caster->GetAIInterface()->SendMoveToPacket( x, y, z, 0.0f, moveTime, MONSTER_MOVE_FLAG_JUMP );
+	u_caster->SetPosition( x, y, z, 0.0f, false );
+	
 	if( p_caster != NULL)
 	{
 		p_caster->ResetHeartbeatCoords();

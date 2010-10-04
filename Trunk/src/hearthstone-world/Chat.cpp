@@ -243,6 +243,7 @@ void CommandTableStorage::Init()
 		{ "combatreach",'m',NULL,	 "Combat Reach",		NULL, UNIT_FIELD_COMBATREACH, 0, 2 },
 		{ "emotestate",'m', NULL,	 "NPC Emote State",	 NULL, UNIT_NPC_EMOTESTATE, 0, 1 },
 		{ "bytes",'m',NULL,"Bytes",NULL,UNIT_FIELD_BYTES_0,0,1},
+		{ "playerflags", 'm', &ChatHandler::HandleModifyPlayerFlagsCommand,	"modify a player's flags",		NULL, 0, 0, 0},
 		{ NULL,		  0, NULL,	 "",					NULL, 0, 0  }
 	};
 	dupe_command_table(modifyCommandTable, _modifyCommandTable);
@@ -504,6 +505,7 @@ void CommandTableStorage::Init()
 		{ "allowwhispers", 'c', &ChatHandler::HandleAllowWhispersCommand, "Allows whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "blockwhispers", 'c', &ChatHandler::HandleBlockWhispersCommand, "Blocks whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "ticket",		'c', NULL,									"",								GMTicketCommandTable, 0, 0, 0},
+		{ "devtag",		't', &ChatHandler::HandleDevTagCommand,		"Toggles <Dev> Tag",				NULL, 0, 0, 0},
 		{ NULL, 0, NULL, "", NULL, 0, 0 }
 	};
 	dupe_command_table(GMCommandTable, _gamemasterCommandTable);
