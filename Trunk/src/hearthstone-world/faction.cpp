@@ -58,7 +58,6 @@ bool isHostile(Object* objA, Object* objB)// B is hostile for A?
 	// PvP Flag System Checks
 	// We check this after the normal isHostile test, that way if we're
 	// on the opposite team we'll already know :p
-
 	Player* player_objA = GetPlayerFromObject(objA);
 	Player* player_objB = GetPlayerFromObject(objB);
 
@@ -149,14 +148,18 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		AreaTable *atB = dbcArea.LookupEntry(objB->GetAreaID());
 		if( atA && atB && (atA->AreaFlags & AREA_SANCTUARY || atB->AreaFlags & AREA_SANCTUARY) )
 			return false;
-	}
+		if(sWorld.FunServerMall != -1 && (objA->GetAreaID() == (uint32)sWorld.FunServerMall
+			|| objB->GetAreaID() == (uint32)sWorld.FunServerMall))
+			return false;
 
-	if(sWorld.FunServerMall != -1 && (objA->GetAreaID() == (uint32)sWorld.FunServerMall
-		|| objB->GetAreaID() == (uint32)sWorld.FunServerMall))
-		return false;
+	}
 
 	if( player_objA && player_objB )
 	{
+		if(sWorld.FunServerMall != -1 && (player_objA->GetAreaID() == (uint32)sWorld.FunServerMall
+			|| player_objB->GetAreaID() == (uint32)sWorld.FunServerMall))
+			return false;
+
 		//These area's are sanctuaries
 		for(uint32 i = 0; i < NUM_SANCTUARIES ; i++)
 		{
