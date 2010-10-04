@@ -1718,7 +1718,7 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 
 		if(IsEquipped(proto->ItemId))
 		{
-			if( proto->Unique ) //how did we end up here? We shouldn't have 2 of these...
+			if( proto->Unique == 1 ) //how did we end up here? We shouldn't have 2 of these...
 				return INV_ERR_CANT_CARRY_MORE_OF_THIS;
 
 			if( proto->Flags & ITEM_FLAG_UNIQUE_EQUIP)
