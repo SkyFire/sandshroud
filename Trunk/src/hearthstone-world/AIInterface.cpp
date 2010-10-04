@@ -1884,6 +1884,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 			(*itr)->GetSession()->SendPacket(&data);
 	}
 #endif
+	m_Unit->SetPosition(toX, toY, toZ, toO ? toO : 0.0f);
 }
 
 void AIInterface::StopMovement(uint32 time)

@@ -7089,9 +7089,7 @@ void Spell::SpellEffectCharge(uint32 i)
 	p_caster->GetAIInterface()->SendMoveToPacket(x, y, z, alpha, time, MONSTER_MOVE_FLAG_WALK);
 
 	if(unitTarget->GetTypeId() == TYPEID_UNIT)
-		unitTarget->GetAIInterface()->StopMovement(2000);
-
-	p_caster->SetPosition(x,y,z,alpha,true);
+		unitTarget->GetAIInterface()->StopMovement(time);
 
 	p_caster->addStateFlag(UF_ATTACKING);
 	p_caster->smsg_AttackStart( unitTarget );
@@ -7160,7 +7158,7 @@ void Spell::SpellEffectSendTaxi( uint32 i )
 
 void Spell::SpellEffectPull( uint32 i )
 {
-	if( unitTarget == NULL || !unitTarget->isAlive() )
+	if( unitTarget == NULL || !unitTarget->isAlive() || unitTarget == u_caster )
 		return;
 
 	// calculate destination
@@ -7170,22 +7168,7 @@ void Spell::SpellEffectPull( uint32 i )
 	float pullY = unitTarget->GetPositionY() + pullD * sinf( pullO );
 	float pullZ = m_caster->GetPositionZ() + 0.3f;
 	uint32 time = uint32( pullD * 42.0f );
-
-	unitTarget->SetOrientation( pullO );
-
-	WorldPacket data( SMSG_MONSTER_MOVE, 60 );
-	data << unitTarget->GetNewGUID();
-	data << uint8(0);
-	data << unitTarget->GetPositionX() << unitTarget->GetPositionY() << unitTarget->GetPositionZ();
-	data << getMSTime();
-	data << uint8( 4 );
-	data << pullO;
-	data << uint32( MONSTER_MOVE_FLAG_JUMP );
-	data << time;
-	data << uint32( 1 );
-	data << pullX << pullY << pullZ;
-
-	unitTarget->SendMessageToSet( &data, true );
+	unitTarget->GetAIInterface()->SendMoveToPacket( pullX, pullY, pullZ, pullO, time, MONSTER_MOVE_FLAG_JUMP );
 }
 
 void Spell::SummonNonCombatPet(uint32 i)
