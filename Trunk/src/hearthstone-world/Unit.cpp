@@ -4621,7 +4621,7 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	// coefficient
 	//---------------------------------------------------------
 
-	float coefficient = 0.0f;
+	float coefficient = 1.0f;
 
 	if( spellInfo->Dspell_coef_override > 0 && !isdot )
 		coefficient = spellInfo->Dspell_coef_override;
@@ -4662,7 +4662,6 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	// Apply coefficient, AP coefficient
 	//---------------------------------------------------------
-
 	if( !healing )
 	{
 		bonus_damage += caster->GetDamageDoneMod(school) * coefficient;
