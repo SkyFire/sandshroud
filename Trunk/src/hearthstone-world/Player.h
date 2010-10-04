@@ -1024,6 +1024,10 @@ public:
 	void RemoveShapeShiftSpell(uint32 id);
 	void CheckSpellUniqueTargets(SpellEntry *sp, uint64 guid);
 
+	/************************************************************************/
+	/* Talents																*/
+	/************************************************************************/
+	bool HasTalent(uint8 spec, uint32 talentid);
 
 	/************************************************************************/
 	/* Actionbar															*/

@@ -1014,12 +1014,8 @@ void WorldSession::FullLogin(Player* plr)
 	if(enter_world && !plr->GetMapMgr())
 		plr->AddToWorld(true);
 
-	// Doesn't create an aura, and don't have a way to check talents yet.
-	QueryResult* titansgrip = CharacterDatabase.Query("SELECT * FROM playertalents WHERE spec = '%u' AND tid = '1867' AND guid = '%u';", plr->m_talentActiveSpec, plr->GetGUID());
-	if(titansgrip == NULL)
-		plr->ResetTitansGrip();
-	else
-		delete titansgrip;
+	// If we have the talent, it returns anyway, so just call the function.
+	plr->ResetTitansGrip();
 
 	if(plr->GetItemInterface())
 		plr->GetItemInterface()->CheckAreaItems();

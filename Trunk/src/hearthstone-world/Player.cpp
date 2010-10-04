@@ -3639,6 +3639,11 @@ uint32 Player::FindSpellWithNamehash(uint32 namehash)
 	return 0;
 }
 
+bool Player::HasTalent(uint8 spec, uint32 talentid)
+{
+	return m_specs[spec].talents.find(talentid) != m_specs[spec].talents.end();
+}
+
 void Player::_LoadQuestLogEntry(QueryResult * result)
 {
 	QuestLogEntry *entry;
@@ -6803,8 +6808,8 @@ void Player::Reset_Spells()
 
 void Player::ResetTitansGrip()
 {
-	if(titanGrip || !GetItemInterface())
-		return;
+	if(titanGrip || !GetItemInterface() || HasSpell(46917) || HasTalent(m_talentActiveSpec, 1867) || GetSession()->HasGMPermissions())
+		return;	// If we have the aura, return, spell, return talent, return, GM, who gives a shit, return.
 
 	Item* mainhand = GetItemInterface()->GetInventoryItem(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_MAINHAND);
 	Item* offhand = GetItemInterface()->GetInventoryItem(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_OFFHAND);
