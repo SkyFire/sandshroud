@@ -1470,23 +1470,6 @@ void Player::_EventExploration()
 		}
 	}
 
-	if(GetMapMgr()->CanUseCollision(this))
-	{
-		uint32 vmflags = CollideInterface.GetVmapAreaFlags(GetMapId(), loc.x, loc.y, loc.z + 2.0f);
-
-		if(vmflags & VA_FLAG_IN_CITY || vmflags & VA_FLAG_IN_CITY2 || vmflags & VA_FLAG_IN_CITY3)
-		{
-			if((at->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == ALLIANCE) || (at->category == AREAC_HORDE_TERRITORY && GetTeam() == HORDE) )
-			{
-				rest_on = true;
-			}
-			else if(at->category != AREAC_ALLIANCE_TERRITORY && at->category != AREAC_HORDE_TERRITORY)
-			{
-				rest_on = true;
-			}
-		}
-	}
-
 	if (rest_on)
 	{
 		if(!m_isResting)
@@ -8509,8 +8492,10 @@ void Player::SendTradeUpdate()
 
 void Player::RequestDuel(Player* pTarget)
 {
-	// We Already Dueling or have already Requested a Duel
+	if( sWorld.FunServerMall != -1 && GetAreaID() == (uint32)sWorld.FunServerMall )
+		return;
 
+	// We Already Dueling or have already Requested a Duel
 	if( DuelingWith != NULL )
 		return;
 
@@ -8555,6 +8540,9 @@ void Player::RequestDuel(Player* pTarget)
 
 void Player::DuelCountdown()
 {
+	if( sWorld.FunServerMall != -1 && GetAreaID() != (uint32)sWorld.FunServerMall )
+		return;
+
 	if( DuelingWith == NULL )
 		return;
 
@@ -8583,6 +8571,9 @@ void Player::DuelCountdown()
 
 void Player::DuelBoundaryTest()
 {
+	if( sWorld.FunServerMall != -1 && GetAreaID() != (uint32)sWorld.FunServerMall )
+		return;
+
 	//check if in bounds
 	if(!IsInWorld())
 		return;
@@ -9185,6 +9176,9 @@ void Player::LoginPvPSetup()
 
 void Player::PvPToggle()
 {
+	if( sWorld.FunServerMall != -1 && GetAreaID() == (uint32)sWorld.FunServerMall )
+		return;
+
 	if(sWorld.GetRealmType() == REALM_PVE)
 	{
 		if(m_pvpTimer > 0)

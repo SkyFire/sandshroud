@@ -474,10 +474,38 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				break;
 
 			Channel *chn = channelmgr.GetChannel(misc.c_str(),GetPlayer());
-			if(chn != NULL)
-				chn->Say(GetPlayer(),msg.c_str(), NULLPLR, false);
-			if(sWorld.LogChats && msg.c_str()[0] != '.')
-				sWorld.LogChat(this, "[%s] %s: %s", misc.c_str(), _player->GetName(), msg.c_str());
+			if(sWorld.trade_world_chat && chn != NULL && chn->m_general == true && chn->pDBC && chn->pDBC->id == 2 && chn->pDBC->flags == 59)
+			{
+				char Message[512];
+
+				if( m_muted && m_muted >= (uint32)UNIXTIME )
+					return;
+
+				if( HasGMPermissions() && GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_GM) )
+				{
+					if( CanUseCommand('z') )
+						snprintf( Message, 512, "[ADMIN][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_ORANGEY, msg.c_str() );
+					else
+						snprintf( Message, 512, "[GM][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_CYAN, msg.c_str() );
+				}
+				else
+				{
+					if( GetPlayer()->GetTeam() )
+						snprintf( Message, 512, "[%s]: %s%s|r",	GetPlayer()->GetName(),	MSG_COLOR_RED,		msg.c_str() );
+					else
+						snprintf( Message, 512, "[%s]: %s%s|r",	GetPlayer()->GetName(),	MSG_COLOR_LIGHTBLUE,msg.c_str() );
+				}
+
+				// Send message to world, but don't put in the chat box :)
+				sWorld.SendWorldText( Message );
+			}
+			else
+			{
+				if(chn != NULL)
+					chn->Say(GetPlayer(),msg.c_str(), NULL, false);
+				if(sWorld.LogChats && msg.c_str()[0] != '.')
+					sWorld.LogChat(this, "[%s] %s: %s", misc.c_str(), _player->GetName(), msg.c_str());
+			}
 		} break;
 	case CHAT_MSG_AFK:
 		{

@@ -1260,8 +1260,10 @@ void World::Rehash(bool load)
 	CalculatedHeightChecks = Config.MainConfig.GetBoolDefault("Server", "CHeightChecks", false);
 	free_arena_teams = Config.MainConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
 	free_guild_charters = Config.MainConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
+	trade_world_chat = Config.MainConfig.GetBoolDefault("Server", "TradeWorldChat", false);
 	setRate(RATE_EOTS_CAPTURERATE, Config.MainConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));
 	SetPlayerLimit(Config.MainConfig.GetIntDefault("Server", "PlayerLimit", 1000));
+	FunServerMall = Config.MainConfig.GetIntDefault("Server", "MallAreaID", -1);
 
 	SetMotd(Config.MainConfig.GetStringDefault("Server", "Motd", "Hearthstone Default MOTD").c_str());
 	SetMotd2(Config.MainConfig.GetStringDefault("Server", "Motd2", "").c_str());

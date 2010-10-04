@@ -593,6 +593,7 @@ public:
 
 	bool cross_faction_world;
 	bool free_guild_charters;
+	bool trade_world_chat;
 	bool m_useIrc;
 	uint32 m_deathKnightReqLevel;
 	bool m_deathKnightOnePerAccount;
@@ -626,6 +627,7 @@ public:
 	uint32 PeakSessionCount;
 	bool SendStatsOnJoin;
 	bool SendMovieOnJoin;
+	int32 FunServerMall;
 	SessionSet gmList;
 	RWLock gmList_lock;
 

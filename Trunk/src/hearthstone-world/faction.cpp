@@ -116,7 +116,10 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		return false;
 
 	// We do need all factiondata for this
-	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL )
+	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL
+		|| (((objA->IsPlayer() && !TO_PLAYER(objA)->IsFFAPvPFlagged()) ? true : false)
+		&&  ((objB->IsPlayer() && !TO_PLAYER(objB)->IsFFAPvPFlagged()) ? true : false)
+		&& (objB->m_factionDBC == objA->m_factionDBC || objB->m_faction == objA->m_faction)))
 		return false;
 
 	// Checks for untouchable, unattackable
@@ -148,12 +151,16 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 			return false;
 	}
 
+	if(sWorld.FunServerMall != -1 && (objA->GetAreaID() == (uint32)sWorld.FunServerMall
+		|| objB->GetAreaID() == (uint32)sWorld.FunServerMall))
+		return false;
+
 	if( player_objA && player_objB )
 	{
 		//These area's are sanctuaries
 		for(uint32 i = 0; i < NUM_SANCTUARIES ; i++)
 		{
-			if( player_objA->GetPlayerAreaID() == SANCTUARY_ZONES[i] || player_objB->GetPlayerAreaID() == SANCTUARY_ZONES[i])
+			if( player_objA->GetPlayerAreaID() == SANCTUARY_AREAS[i] || player_objB->GetPlayerAreaID() == SANCTUARY_AREAS[i])
 				return false;
 		}
 

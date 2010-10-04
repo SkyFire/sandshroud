@@ -6597,6 +6597,26 @@ void Spell::SpellEffectDuel(uint32 i) // Duel
 	if( p_caster == NULL  || !p_caster->isAlive() || playerTarget == p_caster )
 		return;
 
+	uint32 areaId = p_caster->GetAreaID();
+	AreaTable * at = dbcArea.LookupEntryForced(areaId);
+	if( sWorld.FunServerMall != -1 && areaId == (uint32)sWorld.FunServerMall )
+	{
+		if(at != NULL)
+			p_caster->SendAreaTriggerMessage("Sandshroud System: Dueling is not allowed in %s.", at->name);
+		else
+			p_caster->SendAreaTriggerMessage("Sandshroud System: Dueling is not allowed in the mall.");
+		return;
+	}
+
+	for(uint32 i = 0; i < NUM_SANCTUARIES ; i++)
+	{
+		if( p_caster->GetAreaID() == SANCTUARY_AREAS[i] )
+		{
+			SendCastResult(SPELL_FAILED_NO_DUELING);
+			return;
+		}
+	}
+
 	if(p_caster->m_bg)
 	{
 		SendCastResult(SPELL_FAILED_NOT_IN_BATTLEGROUND);
@@ -6606,7 +6626,7 @@ void Spell::SpellEffectDuel(uint32 i) // Duel
 	if (p_caster->InStealth())
 	{
 		SendCastResult(SPELL_FAILED_CANT_DUEL_WHILE_STEALTHED);
-		return; // Player is stealth
+		return; // Player is stealth // Crow: No shit?
 	}
 
 	if(playerTarget == NULL)

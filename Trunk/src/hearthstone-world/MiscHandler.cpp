@@ -1105,7 +1105,30 @@ void WorldSession::HandleSetWatchedFactionIndexOpcode(WorldPacket &recvPacket)
 
 void WorldSession::HandleTogglePVPOpcode(WorldPacket& recv_data)
 {
-	_player->PvPToggle();
+	CHECK_INWORLD_RETURN;
+	uint32 areaId = _player->GetAreaID();
+	AreaTable * at = dbcArea.LookupEntryForced(areaId);
+	if(sWorld.FunServerMall != -1 && areaId == (uint32)sWorld.FunServerMall)
+	{
+		if(at != NULL)
+			sChatHandler.ColorSystemMessage(this, MSG_COLOR_WHITE, "You cannot flag for PvP while in the area: %s", at->name);
+		else
+			sChatHandler.ColorSystemMessage(this, MSG_COLOR_WHITE, "You cannot do that here");
+
+		if( _player->IsFFAPvPFlagged() || _player->IsPvPFlagged() )
+		{
+			if( _player->IsPvPFlagged() )
+				_player->RemovePvPFlag();
+			if( _player->IsFFAPvPFlagged() )
+				_player->RemoveFFAPvPFlag();
+		}
+		return;
+	}
+
+	if( at == NULL)
+		_player->PvPToggle(); // Crow: Should be a delayed pvp flag
+	else if(!(at->category == AREAC_SANCTUARY || at->AreaFlags & AREA_SANCTUARY))
+		_player->PvPToggle();
 }
 
 void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)
