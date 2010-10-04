@@ -292,7 +292,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\BattlegroundMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\EyeOfTheStorm.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\NavMeshInterface.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\PathFinder.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\StrandOfTheAncients.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WarsongGulch.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Container.cpp" />
@@ -420,7 +419,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\EyeOfTheStorm.h" />
     <ClInclude Include="..\..\src\hearthstone-world\NavMeshInterface.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Path.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\PathFinder.h" />
     <ClInclude Include="..\..\src\hearthstone-world\StrandOfTheAncients.h" />
     <ClInclude Include="..\..\src\hearthstone-world\WarsongGulch.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Container.h" />
