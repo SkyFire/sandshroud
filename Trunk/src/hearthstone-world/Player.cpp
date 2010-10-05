@@ -743,7 +743,6 @@ bool Player::Create(WorldPacket& data )
 	m_bind_pos_x = info->positionX;
 	m_bind_pos_y = info->positionY;
 	m_bind_pos_z = info->positionZ;
-	m_bind_pos_z = info->Orientation;
 	m_bind_mapid = info->mapId;
 	m_bind_zoneid = info->zoneId;
 	m_isResting = 0;
@@ -2474,25 +2473,53 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	sHookInterface.OnPlayerSaveToDB(TO_PLAYER(this), buf);
 
 	// Skills
-	_SaveSkillsToDB(buf);
+#ifndef BUFFER_SAVING
+	_SaveSkillsToDB(NULL);
+#else
+//	_SaveSkillsToDB(buf);
+#endif // BUFFER_SAVING
 
 	// Talents
-	_SaveTalentsToDB(buf);
+#ifndef BUFFER_SAVING
+	_SaveTalentsToDB(NULL);
+#else
+//	_SaveTalentsToDB(buf);
+#endif // BUFFER_SAVING
 
 	// Spells
-	_SaveSpellsToDB(buf);
+#ifndef BUFFER_SAVING
+	_SaveSpellsToDB(NULL);
+#else
+//	_SaveSpellsToDB(buf);
+#endif // BUFFER_SAVING
 
 	// Equipment Sets
-	_SaveEquipmentSets(buf);
+#ifndef BUFFER_SAVING
+	_SaveEquipmentSets(NULL);
+#else
+//	_SaveEquipmentSets(buf);
+#endif // BUFFER_SAVING
 
 	// Area Phase Info
-	_SaveAreaPhaseInfo(buf);
+#ifndef BUFFER_SAVING
+	_SaveAreaPhaseInfo(NULL);
+#else
+//	_SaveAreaPhaseInfo(buf);
+#endif // BUFFER_SAVING
 
 	// Glyphs
-	_SaveGlyphsToDB(buf);
+#ifndef BUFFER_SAVING
+	_SaveGlyphsToDB(NULL);
+#else
+//	_SaveGlyphsToDB(buf);
+#endif // BUFFER_SAVING
 
 	// Inventory
-	 GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, buf);
+#ifndef BUFFER_SAVING
+	 GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, NULL);
+#else
+//	 GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, buf);
+#endif // BUFFER_SAVING
 
 	// save quest progress
 	_SaveQuestLogEntry(buf);
@@ -2516,7 +2543,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	}
 
 	// Achievements
-	GetAchievementInterface()->SaveToDB( buf );
+	GetAchievementInterface()->SaveToDB( NULL );
 
 	m_nextSave = getMSTime() + sWorld.getIntRate(INTRATE_SAVE);
 

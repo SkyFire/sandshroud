@@ -2009,16 +2009,16 @@ protected:
 	uint32 mTradeStatus;
 	uint32 m_tradeSequence;
 
-    /************************************************************************/
-    /* Player Class systems, info and misc things                           */
-    /************************************************************************/
-    PlayerCreateInfo *info;
+	/************************************************************************/
+	/* Player Class systems, info and misc things                           */
+	/************************************************************************/
+	PlayerCreateInfo *info;
 	uint32      m_AttackMsgTimer;	// "too far away" and "wrong facing" timer
 	bool        m_attacking;
 	std::string m_name;	// max 21 character name
 	uint32      m_Tutorials[8];
 
-    // Character Ban
+	// Character Ban
 	uint32      m_banned;
 	string      m_banreason;
 	uint32      m_AreaID;
@@ -2027,10 +2027,10 @@ protected:
 	uint32      m_PetNumberMax;
 	std::map<uint32, PlayerPet*> m_Pets;
 
-    uint32      m_invitersGuid; // It is guild inviters guid ,0 when its not used
+	uint32      m_invitersGuid; // It is guild inviters guid ,0 when its not used
 
 
-    // bind
+	// bind
 	float m_bind_pos_x;
 	float m_bind_pos_y;
 	float m_bind_pos_z;
