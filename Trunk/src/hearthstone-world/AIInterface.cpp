@@ -1887,7 +1887,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	m_Unit->SetPosition(toX, toY, toZ, toO ? toO : 0.0f);
 }
 
-void AIInterface::StopMovement(uint32 time)
+void AIInterface::StopMovement(uint32 time, bool stopatcurrent)
 {
 	m_moveTimer = time; //set pause after stopping
 	m_creatureState = STOPPED;
@@ -1902,8 +1902,8 @@ void AIInterface::StopMovement(uint32 time)
 	m_destinationX = m_destinationY = m_destinationZ = 0;
 	m_timeMoved = 0;
 	m_timeToMove = 0;
-
-	SendMoveToPacket(m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), m_Unit->GetOrientation(), 0, getMoveFlags());
+	if(stopatcurrent)
+		SendMoveToPacket(m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), m_Unit->GetOrientation(), 0, getMoveFlags());
 }
 
 void AIInterface::MoveTo(float x, float y, float z)

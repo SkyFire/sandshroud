@@ -1057,7 +1057,7 @@ int LuaUnit_StopMovement(lua_State * L, Unit * ptr)
 {
 	CHECK_TYPEID(TYPEID_UNIT);
 	int tim = luaL_checkint(L,1);
-	ptr->GetAIInterface()->StopMovement(tim);
+	ptr->GetAIInterface()->StopMovement(tim,true);
 	return 1;
 }
 

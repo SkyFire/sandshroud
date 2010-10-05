@@ -3127,17 +3127,12 @@ uint8 Spell::CanCast(bool tolerate)
 		if( !p_caster->isAlive() && self_rez != m_spellInfo->Id)
 		{
 			// spirit of redemption
-			if( p_caster->m_canCastSpellsWhileDead )
-			{
 				// casting a spell on self
-				if( m_targets.m_targetMask & TARGET_FLAG_SELF || m_targets.m_unitTarget == p_caster->GetGUID() ||
-					!IsHealingSpell(m_spellInfo) )		// not a holy spell
+				if( (m_targets.m_targetMask & TARGET_FLAG_SELF  || m_targets.m_unitTarget == p_caster->GetGUID() ||
+					!IsHealingSpell(m_spellInfo)) && p_caster->GetShapeShift() == FORM_SPIRITOFREDEMPTION)		// not a holy spell
 				{
 					return SPELL_FAILED_SPELL_UNAVAILABLE;
 				}
-			}
-			else		// not SOR
-				return SPELL_FAILED_CASTER_DEAD;
 		}
 
 		if( m_spellInfo->NameHash == SPELL_HASH_HUNTER_S_MARK )

@@ -3260,6 +3260,21 @@ void Aura::SpellAuraDummy(bool apply)
 			// Visual Affects, we can add a shadowmourne check here.
 		}break;
 
+	case 46619:
+		{
+			if(m_caster->IsPlayer())
+			{
+				if(apply)
+				{
+					if(!TO_PLAYER(m_caster)->GetSummon())
+						return;
+					TO_PLAYER(m_caster)->Possess(TO_PLAYER(m_caster)->GetSummon());
+				}
+				else
+					TO_PLAYER(m_caster)->UnPossess();
+			}
+		}
+
 	default:
 		{
 			if(m_spellProto->procFlags || m_spellProto->procflags2) // Quick Proc flag and Proc Chance check

@@ -157,6 +157,8 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 			m_name = "Water Elemental";
 		else if( entry == 19668)
 			m_name = "Shadowfiend";
+		else if(entry == 30230)
+			m_name = "Risen Ally";
 		else
 			m_name = sWorld.GenerateName();
 

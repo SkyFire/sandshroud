@@ -1649,24 +1649,6 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	 * 35030 Focused Fire RANK 2		STATUS: ToDo
 	 *  --------------------------------------------
 	 *************************/
-
-		//Disengage
-		case 781:
-		{
-			if( p_caster == NULL )
-				return;
-
-			WorldPacket data(SMSG_MOVE_KNOCK_BACK, 39);
-			data << u_caster->GetNewGUID();
-			data << getMSTime();
-			float co = p_caster->GetOrientation() < 3.15f ? 6.3f - ( 3.15f - p_caster->GetOrientation()) : p_caster->GetOrientation() - 3.15f;
-			data << cosf(co) << sinf(co);
-			data << float(15.0f);
-			data << float(-9.0f);
-			p_caster->GetSession()->SendPacket(&data);
-			p_caster->DelaySpeedHack( 10000 );
-		}break;
-
 	/*************************
 	 * PALADIN SPELLS
 	 *************************
@@ -1931,6 +1913,24 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	case 49203: //Hungering Cold
 		{
                 unitTarget->CastSpell(u_caster, 51209, true);
+                return;
+		}break;
+	case 61999: //Raise Ally
+		{
+			if(!unitTarget->isDead() || !unitTarget->IsPlayer())
+				return;
+ 				CreatureInfo *ci = CreatureNameStorage.LookupEntry(30230);
+				Pet *summon = objmgr.CreatePet();
+				summon->CreateAsSummon(30230, ci, NULL, unitTarget, m_spellInfo, 1, (uint32)320000); //Give it an extra seconds for being unpossesed.
+				TO_PLAYER(unitTarget)->SetSummon(summon);
+				summon->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
+				summon->SetUInt32Value(UNIT_FIELD_MAXHEALTH, p_caster->GetMaxHealth());
+				summon->SetPowerType(POWER_TYPE_ENERGY);
+				summon->SetUInt32Value(UNIT_FIELD_MAXPOWER3, 100);
+				summon->SetUInt32Value(UNIT_FIELD_HEALTH, summon->GetMaxHealth());
+				summon->SetUInt32Value(UNIT_FIELD_POWER1, 100);
+				summon->SetUInt32Value(UNIT_FIELD_RESISTANCES, p_caster->GetUInt32Value(UNIT_FIELD_RESISTANCES));
+				unitTarget->CastSpell(unitTarget, 46619, true);
                 return;
 		}break;
 	/*************************

@@ -138,7 +138,7 @@ void MoonScriptCreatureAI::MoveToSpawnOrigin()
 
 void MoonScriptCreatureAI::StopMovement()
 {
-	_unit->GetAIInterface()->StopMovement(0);
+	_unit->GetAIInterface()->StopMovement(0,true);
 }
 
 void MoonScriptCreatureAI::SetFlyMode(bool pValue)

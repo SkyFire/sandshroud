@@ -304,7 +304,7 @@ public:
 	uint32 getMoveFlags();
 	void UpdateMove();
 	void SendCurrentMove(Player* plyr/*uint64 guid*/);
-	void StopMovement(uint32 time);
+	void StopMovement(uint32 time, bool stopatcurrent = true);
 	uint32 getCurrentWaypoint() { return m_currentWaypoint; }
 	void changeWayPointID(uint32 oldwpid, uint32 newwpid);
 	bool addWayPoint(WayPoint* wp);

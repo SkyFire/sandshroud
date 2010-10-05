@@ -5407,6 +5407,10 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->EffectMiscValue[0] = 7278;
 		}break;
+	case 46619:
+		{
+			sp->Effect[0] = SPELL_EFFECT_NULL;
+		}break;
 
 		//////////////////////////////////////////
 		// BOSSES								//

@@ -10236,7 +10236,7 @@ void Player::SetNoseLevel()
 
 void Player::Possess(Unit* pTarget)
 {
-	if( m_Summon || m_CurrentCharm )
+	if( m_CurrentCharm )
 		return;
 
 	ResetHeartbeatCoords();
@@ -10317,7 +10317,7 @@ void Player::Possess(Unit* pTarget)
 
 void Player::UnPossess()
 {
-	if(m_Summon || !m_CurrentCharm)
+	if(!m_CurrentCharm)
 		return;
 
 	Unit* pTarget = m_CurrentCharm;

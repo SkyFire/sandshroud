@@ -7333,23 +7333,8 @@ void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool 
 		float z = unitTarget->GetPositionZ();
 		float dist = unitTarget->CalcDistance(x, y, z);
 		uint32 movetime = unitTarget->GetAIInterface()->GetMovementTime(dist);
-		WorldPacket data(SMSG_MONSTER_MOVE, 50);
-		data << unitTarget->GetNewGUID();
-		data << uint8(0);
-		data << unitTarget->GetPositionX();
-		data << unitTarget->GetPositionY();
-		data << unitTarget->GetPositionZ();
-		data << getMSTime();
-		data << uint8(0);
-		data << uint32(MONSTER_MOVE_FLAG_JUMP);
-		data << movetime;
-		data << value2;
-		data << uint32(0);
-		data << uint32(1);
-		data << x << y << z;
-		unitTarget->SendMessageToSet(&data, true);
 		unitTarget->GetAIInterface()->SendMoveToPacket( x, y, z, 0.0f, movetime, MONSTER_MOVE_FLAG_JUMP );
-		unitTarget->GetAIInterface()->StopMovement(movetime);
+		unitTarget->GetAIInterface()->StopMovement(movetime,false);
 
 		if (unitTarget->GetCurrentSpell() != NULL)
 			unitTarget->GetCurrentSpell()->cancel();
