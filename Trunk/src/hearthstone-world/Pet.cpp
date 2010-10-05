@@ -487,44 +487,6 @@ void Pet::LoadFromDB(Player* owner, PlayerPet * playerPetInfo)
 		m_PlayerPetInfo->level = m_Owner->getLevel();
 		SetUInt32Value(UNIT_FIELD_LEVEL, m_PlayerPetInfo->level);
 	}
-	/*
-	SetUInt32Value(OBJECT_FIELD_ENTRY, m_PlayerPetInfo->entry);
-	if (m_PlayerPetInfo->level == 0)
-		m_PlayerPetInfo->level = m_Owner->getLevel();
-	SetUInt32Value(UNIT_FIELD_LEVEL, m_PlayerPetInfo->level);
-	SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);	// better set this one
-
-	SetUInt32Value(UNIT_FIELD_DISPLAYID, creature_info->Male_DisplayID);
-	SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, creature_info->Male_DisplayID);
-	SetUInt64Value(UNIT_FIELD_SUMMONEDBY, owner->GetGUID());
-	SetUInt64Value(UNIT_FIELD_CREATEDBY, owner->GetGUID());
-
-	SetUInt32Value(UNIT_FIELD_BYTES_0, 2048 | (0 << 24));
-	SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, 2000);
-	SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME, 2000); // Supalosa: 2.00 normalised attack speed
-	SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 1.0f);//created_from_creature->GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS));
-	SetFloatValue(UNIT_FIELD_COMBATREACH, 1.0f);//created_from_creature->GetFloatValue(UNIT_FIELD_COMBATREACH));
-
-	// These need to be checked.
-	SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED | UNIT_FLAG_COMBAT); // why combat ??
-	SetUInt32Value(UNIT_FIELD_POWER5, m_PlayerPetInfo->happiness );
-	SetUInt32Value(UNIT_FIELD_MAXPOWER5, 1000000);
-	SetUInt32Value(UNIT_FIELD_PETEXPERIENCE, 0);
-	SetUInt32Value(UNIT_FIELD_PETNEXTLEVELEXP, GetNextLevelXP(getLevel()));
-
-	// Focus
-	SetUInt32Value(UNIT_FIELD_POWER3, 100);
-	SetUInt32Value(UNIT_FIELD_MAXPOWER3, 100);
-
-	// 0x3 -> Enable pet rename.
-	SetUInt32Value(UNIT_FIELD_BYTES_2, 1 | (0x3 << 16));
-
-	SetUnspentPetTalentPoints(m_PlayerPetInfo->availableTalentPoints);
-
-	// Change the power type to FOCUS
-	SetPowerType(POWER_TYPE_FOCUS);
-	*/
-
 	ApplyStatsForLevel();
 
 	BaseDamage[0]=GetFloatValue(UNIT_FIELD_MINDAMAGE);

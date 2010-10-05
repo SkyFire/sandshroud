@@ -98,6 +98,9 @@ void World::LogoutPlayers()
 
 World::~World()
 {
+	Log.Notice("Tracker", "~Tracker()");
+	delete Tracker::getSingletonPtr();
+
 	Log.Notice("LocalizationMgr", "~LocalizationMgr()");
 	sLocalizationMgr.Shutdown();
 
@@ -419,6 +422,7 @@ bool World::SetInitialWorldSettings()
 	new AddonMgr;
 	new WorldLog;
 	new ChatHandler;
+	new Tracker;
 
 	// Fill the task list with jobs to do.
 	TaskList tl;
@@ -434,8 +438,11 @@ bool World::SetInitialWorldSettings()
 
 	Storage_LoadAdditionalTables();
 
+	ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<ObjectMgr>(ObjectMgr::getSingletonPtr(),
+		&ObjectMgr::LoadPlayersInfo), BTE_PRIORITY_MED));
+
 	MAKE_TASK(ObjectMgr, LoadPlayerCreateInfo);
-	MAKE_TASK(ObjectMgr, LoadPlayersInfo);
+//	MAKE_TASK(ObjectMgr, LoadPlayersInfo);
 	MAKE_TASK(ObjectMgr, LoadSpellSkills);
 
 	tl.wait();
@@ -460,6 +467,7 @@ bool World::SetInitialWorldSettings()
 	MAKE_TASK(ObjectMgr, LoadMonsterSay);
 	MAKE_TASK(WeatherMgr,LoadFromDB);
 	MAKE_TASK(ObjectMgr, LoadGroups);
+	MAKE_TASK(Tracker,   LoadFromDB);
 	MAKE_TASK(ObjectMgr, LoadExtraCreatureProtoStuff);
 	MAKE_TASK(ObjectMgr, LoadExtraItemStuff);
 	MAKE_TASK(QuestMgr,  LoadExtraQuestStuff);
@@ -551,6 +559,13 @@ bool World::SetInitialWorldSettings()
 	Log.Notice("World", "Starting CharacterLoaderThread...");
 	ThreadPool.ExecuteTask(new CharacterLoaderThread());
 	ThreadPool.ExecuteTask(new NewsAnnouncer());
+
+	if(GuildsLoading)
+	{
+		Log.Notice( "Shutdown", "Waiting for groups and players to finish loading..." );
+		while(GuildsLoading)
+			Sleep( 100 );
+	}
 
 #ifdef ENABLE_COMPRESSED_MOVEMENT
 	Log.Notice("World", "Starting MovementCompressorThread...");

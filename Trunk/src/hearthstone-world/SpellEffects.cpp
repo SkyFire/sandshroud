@@ -7165,6 +7165,9 @@ void Spell::SpellEffectPull( uint32 i )
 	if( unitTarget == NULL || !unitTarget->isAlive() || unitTarget == u_caster )
 		return;
 
+	if(unitTarget->IsCreature() && isTargetDummy(unitTarget->GetEntry()))
+		return;
+
 	// calculate destination
 	float pullD = unitTarget->CalcDistance( m_caster ) - unitTarget->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - m_caster->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - 1.0f;
 	float pullO = unitTarget->calcRadAngle( unitTarget->GetPositionX(), unitTarget->GetPositionY(), m_caster->GetPositionX(), m_caster->GetPositionY() );
@@ -7221,10 +7224,10 @@ void Spell::SummonNonCombatPet(uint32 i)
 
 void Spell::SpellEffectKnockBack(uint32 i)
 {
-	if(unitTarget->IsCreature() && isTargetDummy(unitTarget->GetEntry()))
+	if(unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
 		return;
 
-	if(unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
+	if(unitTarget->IsCreature() && isTargetDummy(unitTarget->GetEntry()))
 		return;
 
 	unitTarget->knockback(unitTarget, GetSpellProto()->EffectBasePoints[i]+1, GetSpellProto()->EffectMiscValue[i]);

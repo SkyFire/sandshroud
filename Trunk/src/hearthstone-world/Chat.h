@@ -129,6 +129,12 @@ enum Languages
 #define MSG_COLOR_CHOCOLATE		"|cffCD661D"
 #define MSG_COLOR_IVORY			"|cff8B8B83"
 #define MSG_COLOR_LIGHTYELLOW	"|cffFFFFE0"
+#define MSG_COLOR_SEXGREEN		"|cff71C671"
+#define MSG_COLOR_SEXTEAL		"|cff388E8E"
+#define MSG_COLOR_SEXPINK		"|cffC67171"
+#define MSG_COLOR_SEXBLUE		"|cff00E5EE"
+#define MSG_COLOR_SEXHOTPINK	"|cffFF6EB4"
+#define MSG_COLOR_BREAK			"|r"
 
 #define CHECKSESSION if(m_session == NULL) return NULL; \
 	if(m_session->GetPlayer() == NULL) return NULL;
@@ -157,6 +163,7 @@ class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 	ChatCommand * _BattlegroundCommandTable;
 	ChatCommand * _NPCCommandTable;
 	ChatCommand * _gamemasterCommandTable;
+	ChatCommand * _trackerCommandTable;
 	ChatCommand * _administratorCommandTable;
 	ChatCommand * _accountCommandTable;
 	ChatCommand * _CheatCommandTable;
@@ -650,6 +657,11 @@ protected:
 
 	bool HandleFactionSetStanding(const char *args, WorldSession *m_session);
 	bool HandleFactionModStanding(const char *args, WorldSession *m_session);
+
+	// GM Tracker related commands.
+	bool HandleTrackerListCommand(const char * args, WorldSession * m_session);
+	bool HandleAddTrackerCommand(const char * args, WorldSession * m_session);
+	bool HandleDelTrackerCommand(const char * args, WorldSession * m_session);
 
 private:
 	Mutex m_lock;

@@ -9746,8 +9746,9 @@ void Aura::SpellAuraExpertise(bool apply)
 
 void Aura::SpellAuraForceMoveFoward(bool apply)
 {
-	if(!m_target->IsPlayer())
+	if(m_target == NULL || !m_target->IsPlayer())
 		return;
+
 	if(apply)
 		m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FORCE_MOVE);
 	else
@@ -9756,6 +9757,9 @@ void Aura::SpellAuraForceMoveFoward(bool apply)
 
 void Aura::SpellAuraModFaction(bool apply)
 {
+	if(m_target == NULL)
+		return;
+
 	if(apply)
 	{
 		m_target->SetFaction(GetSpellProto()->EffectMiscValue[mod->i]);
@@ -9772,8 +9776,9 @@ void Aura::SpellAuraModFaction(bool apply)
 
 void Aura::SpellAuraComprehendLanguage(bool apply)
 {
-	if(!m_target->IsPlayer())
+	if(m_target == NULL || !m_target->IsPlayer())
 		return;
+
     if(apply)
 		m_target->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_COMPREHEND_LANG);
 	else

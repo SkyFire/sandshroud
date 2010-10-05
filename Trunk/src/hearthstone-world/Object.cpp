@@ -2623,7 +2623,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				}
 			}
 			//--------------------------------- PARTY LOG -----------------------------------------
-			pVictim->GetAIInterface()->OnDeath( this );
+			if(pVictim->IsCreature() && pVictim->GetAIInterface())
+				pVictim->GetAIInterface()->OnDeath( this );
+
 			if(GetTypeId() == TYPEID_PLAYER)
 			{
 				WorldPacket data(SMSG_PARTYKILLLOG, 16);

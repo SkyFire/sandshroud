@@ -411,7 +411,7 @@ enum BasicTaskExecutorPriorities
 {
 	BTE_PRIORITY_LOW		= 0,
 	BTE_PRIORITY_MED		= 1,
-	BTW_PRIORITY_HIGH	   = 2,
+	BTW_PRIORITY_HIGH		= 2,
 };
 
 class TaskExecutor : public ThreadContext
@@ -636,6 +636,7 @@ public:
 	void DeleteObject(Object* obj);
 
 	uint32 compression_threshold;
+	bool GuildsLoading;
 
 	uint8 StartLevel;
 	uint32 StartGold;

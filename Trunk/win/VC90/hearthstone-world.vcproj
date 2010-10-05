@@ -1252,6 +1252,14 @@
 				RelativePath="..\..\src\hearthstone-world\TaxiMgr.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\Tracker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\Tracker.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Brains"

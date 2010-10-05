@@ -1018,6 +1018,8 @@ void WorldSession::FullLogin(Player* plr)
 	if(enter_world && !plr->GetMapMgr())
 		plr->AddToWorld(true);
 
+	sTracker.CheckPlayerForTracker(plr, true);
+
 	// If we have the talent, it returns anyway, so just call the function.
 	plr->ResetTitansGrip();
 

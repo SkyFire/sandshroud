@@ -1363,7 +1363,7 @@ bool AIInterface::HealReaction(Unit* caster, Unit* victim, uint32 amount, SpellE
 
 void AIInterface::OnDeath(Object* pKiller)
 {
-	if(pKiller->GetTypeId() == TYPEID_PLAYER || pKiller->GetTypeId() == TYPEID_UNIT)
+	if(pKiller != NULL && (pKiller->GetTypeId() == TYPEID_PLAYER || pKiller->GetTypeId() == TYPEID_UNIT))
 		HandleEvent(EVENT_UNITDIED, TO_UNIT(pKiller), 0);
 	else
 		HandleEvent(EVENT_UNITDIED, m_Unit, 0);

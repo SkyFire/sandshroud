@@ -170,12 +170,15 @@ void DynamicObject::UpdateTargets()
 
 		float radius = m_floatValues[DYNAMICOBJECT_RADIUS]*m_floatValues[DYNAMICOBJECT_RADIUS];
 
+		if(m_caster ==	NULL || m_spellProto == NULL)
+			return;
+
 		Object::InRangeSet::iterator itr,itr2;
 		for( itr = GetInRangeSetBegin(); itr != GetInRangeSetEnd(); itr++)
 		{
 			itr2 = itr;
 
-			if( !( (*itr2)->IsUnit() ) || ! TO_UNIT( *itr2 )->isAlive() || ((*itr2)->GetTypeId()==TYPEID_UNIT && TO_CREATURE(*itr2)->IsTotem() ) )
+			if( !( (*itr2)->IsUnit() ) || ! TO_UNIT( *itr2 )->isAlive() || ((*itr2)->GetTypeId() == TYPEID_UNIT && TO_CREATURE(*itr2)->IsTotem() ) )
 				continue;
 
 			target = TO_UNIT( *itr2 );

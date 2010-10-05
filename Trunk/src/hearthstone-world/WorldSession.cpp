@@ -394,6 +394,9 @@ void WorldSession::LogoutPlayer(bool Save)
 		// Save Honor Points
 		//_player->SaveHonorFields();
 
+		// Update Tracker status
+		sTracker.CheckPlayerForTracker(_player, false);
+
 		// Update any dirty account_data fields.
 		bool dirty = false;
 		if( sWorld.m_useAccountData )

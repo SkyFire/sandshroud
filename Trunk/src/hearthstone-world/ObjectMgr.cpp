@@ -388,6 +388,8 @@ skilllinespell* ObjectMgr::GetSpellSkill(uint32 id)
 
 void ObjectMgr::LoadPlayersInfo()
 {
+	sWorld.GuildsLoading = true;
+
 	PlayerInfo * pn;
 	QueryResult *result = CharacterDatabase.Query("SELECT guid,name,race,class,level,gender,zoneId,timestamp,acct,instance_id,mapId,positionX,positionY,positionZ,orientation FROM characters");
 	uint32 period, c;
@@ -450,6 +452,8 @@ void ObjectMgr::LoadPlayersInfo()
 	}
 	Log.Notice("ObjectMgr", "%u players loaded.", m_playersinfo.size());
 	LoadGuilds();
+
+	sWorld.GuildsLoading = false;
 }
 
 PlayerInfo* ObjectMgr::GetPlayerInfoByName(const char * name)
@@ -869,6 +873,8 @@ void ObjectMgr::SetHighestGuids()
 		m_equipmentSetGuid = result->Fetch()[0].GetUInt64();
 		delete result;
 	}
+
+	sTracker.GetGUIDCount();
 
 	Log.Notice("ObjectMgr", "HighGuid(CORPSE) = %u", m_hiCorpseGuid);
 	Log.Notice("ObjectMgr", "HighGuid(PLAYER) = %u", m_hiPlayerGuid);

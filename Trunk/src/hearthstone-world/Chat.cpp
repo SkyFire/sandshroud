@@ -46,6 +46,8 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _NPCCommandTable;
 	else if(!stricmp(name, "gm"))
 		return _gamemasterCommandTable;
+	else if(!stricmp(name, "tracker"))
+		return _trackerCommandTable;
 	else if(!stricmp(name, "admin"))
 		return _administratorCommandTable;
 	else if(!stricmp(name, "cheat"))
@@ -196,6 +198,7 @@ void CommandTableStorage::Dealloc()
 	free( _BattlegroundCommandTable );
 	free( _NPCCommandTable );
 	free( _gamemasterCommandTable );
+	free( _trackerCommandTable );
 	free( _administratorCommandTable );
 	free( _CheatCommandTable );
 	free( _accountCommandTable );
@@ -510,6 +513,15 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(GMCommandTable, _gamemasterCommandTable);
 
+	static ChatCommand trackerCommandTable[] =
+	{
+		{ "add",				'z', &ChatHandler::HandleAddTrackerCommand,			"Attaches a tracker to a GM's IP allowing them to be followed across accounts.",	NULL, 0, 0, 0 },
+		{ "del",				'z', &ChatHandler::HandleDelTrackerCommand,			"Removes a tracker from a GM's IP, syntax: .tracker del <trackerId>",				NULL, 0, 0, 0 },
+		{ "list",				'z', &ChatHandler::HandleTrackerListCommand,		"Checks if there are any accounts connected from the tracked GMs' IP.",				NULL, 0, 0, 0 },
+		{ NULL,					'0', NULL,											"",																					NULL, 0, 0, 0 }
+	};
+	dupe_command_table(trackerCommandTable, _trackerCommandTable);
+
 	static ChatCommand AdminCommandTable[] =
 	{
 		{ "announce", 'z', &ChatHandler::HandleAdminAnnounceCommand,  "Command to Announce to Admin's", NULL, 0, 0, 0},
@@ -691,6 +703,7 @@ void CommandTableStorage::Init()
 		{ "battleground",  'e', NULL,									 "",		   BattlegroundCommandTable, 0, 0, 0},
 		{ "npc"		 ,  'n', NULL,									 "",					NPCCommandTable, 0, 0, 0},
 		{ "gm"		 ,  'n', NULL,									 "",					GMCommandTable, 0, 0, 0},
+		{ "tracker"	 ,  'n', NULL,									 "",					trackerCommandTable, 0, 0, 0},
 		{ "admin"	 ,  'z', NULL,									 "",					AdminCommandTable, 0, 0, 0},
 		{ "cheat"	   ,  'm', NULL,									 "",				  CheatCommandTable, 0, 0, 0},
 		{ "account"	   ,  'a', NULL,									 "",				  accountCommandTable, 0, 0, 0},
@@ -767,6 +780,121 @@ void CommandTableStorage::Init()
 		++p;
 	}
 }
+
+/*struct SpecStruct
+{
+	std::map<uint32, uint8> talents;	// map of <talentId, talentRank>
+	uint16  glyphs[GLYPHS_COUNT];
+};
+
+bool ChatHandler::xxx(const char* args, WorldSession *m_session)
+{
+	char * end;
+	char * start;
+	QueryResult* result = CharacterDatabase.Query("SELECT * FROM characters_extra");
+
+	do
+	{
+		std::set<uint32> m_spells;
+		SpecStruct m_spec[2];
+
+		Field *fields = result->Fetch();
+		uint32 i = 1;
+
+		// Load Spells from CSV data.
+		start = (char*)fields[i++].GetString();//buff;
+		SpellEntry * spProto;
+		while(true)
+		{
+			end = strchr(start,',');
+			if(!end)break;
+			*end = 0;
+			//mSpells.insert(atol(start));
+			spProto = dbcSpell.LookupEntryForced(atol(start));
+
+			if(spProto)
+				m_spells.insert(spProto->Id);
+
+			start = end +1;
+		}
+
+		for( uint8 s = 0; s < MAX_SPEC_COUNT; ++s )
+		{
+			start = (char*)fields[i++].GetString();
+			uint8 glyphid = 0;
+			while(glyphid < GLYPHS_COUNT)
+			{
+				end = strchr(start,',');
+				if(!end)break;
+				*end= 0;
+				m_spec[s].glyphs[glyphid] = (uint16)atol(start);
+				++glyphid;
+				start = end + 1;
+			}
+
+			//Load talents for spec
+			start = (char*)fields[i++].GetString();
+			while(end != NULL)
+			{
+				end = strchr(start,',');
+				if(!end)
+					break;
+				*end= 0;
+				uint32 talentid = atol(start);
+				start = end + 1;
+
+				end = strchr(start,',');
+				if(!end)
+					break;
+				*end = 0;
+				uint8 rank = (uint8)atol(start);
+				start = end + 1;
+
+				m_spec[s].talents.insert(make_pair<uint32, uint8>(talentid, rank));
+			}
+		}
+
+		std::stringstream ss;
+		ss << "INSERT INTO playerspells (guid, spellid) VALUES ";
+		SpellSet::iterator spellItr = m_spells.begin();
+		bool first = true;
+		for(; spellItr != m_spells.end(); ++spellItr)
+		{
+			SpellEntry * sp = dbcSpell.LookupEntry( *spellItr );
+			if( !sp)
+				continue;
+
+			if(!first)
+				ss << ",";
+			else
+				first = false;
+
+			ss << "("<< fields[0].GetUInt32() << "," << uint32(*spellItr) << ")";
+		}
+		CharacterDatabase.Execute(ss.str().c_str());
+
+		for(uint8 s = 0; s < 2; s++)
+		{
+			std::map<uint32, uint8> *talents = &m_spec[s].talents;
+			std::map<uint32, uint8>::iterator itr;
+			for(itr = talents->begin(); itr != talents->end(); itr++)
+			{
+				std::stringstream ss;
+				ss << "INSERT INTO playertalents (guid, spec, tid, rank) VALUES "
+					<< "(" << fields[0].GetUInt32() << ","
+					<< uint32(s) << ","
+					<< itr->first << ","
+					<< uint32(itr->second) << ")";
+
+				CharacterDatabase.Execute(ss.str().c_str());
+			}
+		}
+
+	}while(result->NextRow());
+
+	RedSystemMessage(m_session, "No values specified.");
+	return true;
+}*/
 
 ChatHandler::ChatHandler()
 {
