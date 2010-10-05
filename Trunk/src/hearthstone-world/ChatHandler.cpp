@@ -481,10 +481,13 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				if( m_muted && m_muted >= (uint32)UNIXTIME )
 					return;
 
-				if( HasGMPermissions() && GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_GM) )
+				if( HasGMPermissions() && _player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_GM) || _player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER) )
 				{
 					if( CanUseCommand('z') )
-						snprintf( Message, 512, "[ADMIN][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_ORANGEY, msg.c_str() );
+						if(_player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER))
+							snprintf( Message, 512, "[DEVELOPER][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_ORANGEY, msg.c_str() );
+						else
+							snprintf( Message, 512, "[ADMIN][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_ORANGEY, msg.c_str() );
 					else
 						snprintf( Message, 512, "[GM][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_CYAN, msg.c_str() );
 				}

@@ -1588,6 +1588,7 @@ public:
 
 	bool bHasBindDialogOpen;
 	bool bGMTagOn;
+	bool DisableDevTag;
 	uint32 TrackingSpell;
 	void _EventCharmAttack();
 	void _Warn(const char *message);

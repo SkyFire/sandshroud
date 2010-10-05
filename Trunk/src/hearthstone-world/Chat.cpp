@@ -501,11 +501,11 @@ void CommandTableStorage::Init()
 		{ "list",		'1', &ChatHandler::HandleGMListCommand,		"Shows active GM's",			NULL, 0, 0, 0},
 		{ "off",		't', &ChatHandler::HandleGMOffCommand,		"Sets GM tag off",				NULL, 0, 0, 0},
 		{ "on",			't', &ChatHandler::HandleGMOnCommand,		"Sets GM tag on",				NULL, 0, 0, 0},
+		{ "disabledev",	'z', &ChatHandler::HandleToggleDevCommand,	"Toggles <Dev> Tag",			NULL, 0, 0, 0},
 		{ "announce",	'u', &ChatHandler::HandleGMAnnounceCommand,	"Announce to GM's and Admin's",	NULL, 0, 0, 0},
 		{ "allowwhispers", 'c', &ChatHandler::HandleAllowWhispersCommand, "Allows whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "blockwhispers", 'c', &ChatHandler::HandleBlockWhispersCommand, "Blocks whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "ticket",		'c', NULL,									"",								GMTicketCommandTable, 0, 0, 0},
-		{ "devtag",		't', &ChatHandler::HandleDevTagCommand,		"Toggles <Dev> Tag",				NULL, 0, 0, 0},
 		{ NULL, 0, NULL, "", NULL, 0, 0 }
 	};
 	dupe_command_table(GMCommandTable, _gamemasterCommandTable);

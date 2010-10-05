@@ -211,9 +211,10 @@ void Player::Init()
 	// gm stuff
 	//m_invincible			= false;
 	bGMTagOn				= false;
-	CooldownCheat		   = false;
-	CastTimeCheat		   = false;
-	PowerCheat			  = false;
+	DisableDevTag			= false;
+	CooldownCheat			= false;
+	CastTimeCheat			= false;
+	PowerCheat				= false;
 	GodModeCheat			= false;
 	FlyCheat				= false;
 
@@ -13129,9 +13130,9 @@ uint8 Player::GetChatTag() const
 {
 	if(bGMTagOn)
 		return 4;
-	else if(HasFlag(PLAYER_FLAGS,PLAYER_FLAG_DND))
+	else if(HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DND))
 		return 3;
-	else if(HasFlag(PLAYER_FLAGS,PLAYER_FLAG_AFK))
+	else if(HasFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK))
 		return 1;
 	else
 		return 0;

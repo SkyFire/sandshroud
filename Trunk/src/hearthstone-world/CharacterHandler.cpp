@@ -797,11 +797,15 @@ void WorldSession::FullLogin(Player* plr)
 	if(HasGMPermissions())
 	{
 		plr->bGMTagOn = true;
-		plr->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);
 		plr->m_isGmInvisible = true;
 		plr->m_invisible = true;
 		if(CanUseCommand('z'))
+		{
+			plr->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);
 			plr->triggerpass_cheat = true; // Enable for admins automatically.
+		}
+		else
+			plr->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);
 	}
 
 	// Make sure our name exists (for premade system)

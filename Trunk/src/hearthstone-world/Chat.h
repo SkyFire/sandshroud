@@ -248,7 +248,7 @@ protected:
 	bool HandleTaxiCheatCommand(const char* args, WorldSession *m_session);
 	bool HandleModifySpeedCommand(const char* args, WorldSession *m_session);
 	bool HandleModifyTPsCommand(const char* args, WorldSession *m_session);
-	bool HandleDevTagCommand(const char* args, WorldSession *m_session);
+	bool HandleToggleDevCommand(const char* args, WorldSession *m_session);
 
 	// Debug Commands
 	bool HandleDebugSetPhase(const char* args, WorldSession *m_session);

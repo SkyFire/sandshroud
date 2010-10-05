@@ -84,6 +84,22 @@ bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_sessi
 
 bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 {
+	if(m_session->CanUseCommand('z') && !m_session->GetPlayer()->DisableDevTag)
+	{
+		GreenSystemMessage(m_session, "Setting Dev Flag on yourself...");
+		if(m_session->GetPlayer()->bGMTagOn)
+			RedSystemMessage(m_session, "Dev Flag is already set on. Use .gm off to disable it.");
+		else
+		{
+			m_session->GetPlayer()->bGMTagOn = true;
+			m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+			BlueSystemMessage(m_session, "Dev Flag Set. It will appear above your name and in chat messages until you use .gm off.");
+			BlueSystemMessage(m_session, "Dev flag is automatically set, you can disable it in order to use GM tag using .gm disabledev");
+		}
+
+		return true;
+	}
+
 	GreenSystemMessage(m_session, "Setting GM Flag on yourself...");
 	if(m_session->GetPlayer()->bGMTagOn)
 		RedSystemMessage(m_session, "GM Flag is already set on. Use .gm off to disable it.");
@@ -99,6 +115,21 @@ bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 {
+	if(m_session->CanUseCommand('z') && !m_session->GetPlayer()->DisableDevTag)
+	{
+		GreenSystemMessage(m_session, "Unsetting Dev Flag on yourself...");
+		if(!m_session->GetPlayer()->bGMTagOn)
+			RedSystemMessage(m_session, "Dev Flag not set. Use .gm on without the tag disabled to enable it.");
+		else
+		{
+			m_session->GetPlayer()->bGMTagOn = false;
+			m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
+			m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+			BlueSystemMessage(m_session, "Dev Flag Removed. <Dev> Will no longer show in chat messages or above your name.");
+		}
+		return true;
+	}
+
 	GreenSystemMessage(m_session, "Unsetting GM Flag on yourself...");
 	if(!m_session->GetPlayer()->bGMTagOn)
 		RedSystemMessage(m_session, "GM Flag not set. Use .gm on to enable it.");
@@ -113,18 +144,12 @@ bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 }
 
 
-bool ChatHandler::HandleDevTagCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleToggleDevCommand(const char* args, WorldSession *m_session)
 {
-	if(m_session->GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER))
-	{
-		m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);
-		BlueSystemMessage(m_session, "Developer Flag is off.");
-	}
-	else
-	{
-		m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
-		BlueSystemMessage(m_session, "Developer Flag is on.");
-	}
+	m_session->GetPlayer()->bGMTagOn = false;
+	m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
+	m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+	m_session->GetPlayer()->DisableDevTag = m_session->GetPlayer()->DisableDevTag ? false : true;
 	return true;
 }
 
