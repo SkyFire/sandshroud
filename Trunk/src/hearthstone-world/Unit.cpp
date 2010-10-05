@@ -2561,12 +2561,23 @@ double Unit::GetResistanceReducion(Unit* pVictim, uint32 school, float armorRedu
 	if(school == 0) // physical
 	{
 		if(IsPlayer()) // apply armor penetration
-			resistance -= PowerCostPctMod[0] + (resistance * (armorReducePct + TO_PLAYER(this)->CalcRating( PLAYER_RATING_MODIFIER_ARMOR_PENETRATION_RATING )) / 100.0f);
+		{
+			float arp = TO_PLAYER(this)->CalcRating(PLAYER_RATING_MODIFIER_ARMOR_PENETRATION_RATING);
+			if(arp > 1400)
+				arp = 1400;
 
-		if(getLevel() < 60) reduction = double(resistance) / double(resistance+400+(85*getLevel()));
-		else if(getLevel() > 59 && getLevel() < 80) reduction = double(resistance) / double(resistance-22167.5+(467.5*getLevel()));
-		else reduction = double(resistance) / double(resistance+15232.5);
-	} else { // non-physical
+			resistance -= PowerCostPctMod[0] + (resistance * (armorReducePct + arp) / 100.0f);
+		}
+
+		if(getLevel() < 60)
+			reduction = double(resistance) / double(resistance+400+(85*getLevel()));
+		else if(getLevel() > 59 && getLevel() < 80)
+			reduction = double(resistance) / double(resistance-22167.5+(467.5*getLevel()));
+		else
+			reduction = double(resistance) / double(resistance+15232.5);
+	}
+	else 
+	{ // non-physical
 		double RResist = resistance + float((pVictim->getLevel() > getLevel()) ? (pVictim->getLevel() - getLevel()) * 5 : 0) - PowerCostPctMod[school];
 		reduction = RResist / (double)(getLevel() * 5) * 0.75f;
 	}

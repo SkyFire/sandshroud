@@ -5383,10 +5383,10 @@ void Player::UpdateChances()
 	}
 
 	float cr = tmp + CalcRating( PLAYER_RATING_MODIFIER_MELEE_CRIT ) + melee_bonus;
-	SetFloatValue( PLAYER_CRIT_PERCENTAGE, min( cr, 95.0f ) );
+	SetFloatValue( PLAYER_CRIT_PERCENTAGE, min( cr, 71.0f ) );
 
 	float rcr = tmp + CalcRating( PLAYER_RATING_MODIFIER_RANGED_CRIT ) + ranged_bonus;
-	SetFloatValue( PLAYER_RANGED_CRIT_PERCENTAGE, min( rcr, 95.0f ) );
+	SetFloatValue( PLAYER_RANGED_CRIT_PERCENTAGE, min( rcr, 71.0f ) );
 
 	gtFloat* SpellCritBase  = dbcSpellCritBase.LookupEntry(pClass-1);
 	gtFloat* SpellCritPerInt = dbcSpellCrit.LookupEntry(pLevel - 1 + (pClass-1)*100);
@@ -5408,8 +5408,9 @@ void Player::UpdateChanceFields()
 
 void Player::UpdateAttackSpeed()
 {
-	uint32 speed=2000;
-	Item* weap ;
+	uint32 speed = 2000;
+	uint32 calspeed;
+	Item* weap;
 	if( GetShapeShift()==FORM_CAT )//cat form
 	{
 		speed = 1000;
@@ -5418,28 +5419,38 @@ void Player::UpdateAttackSpeed()
 	{
 		speed = 2500;
 	}
-	else //regular
-	if( !disarmed )
+	else if( !disarmed )
 	{
 		weap = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND ) ;
 		if( weap != NULL )
 			speed = weap->GetProto()->Delay;
 	}
-	SetUInt32Value( UNIT_FIELD_BASEATTACKTIME, uint32(( speed * m_meleeattackspeedmod ) * ( ( 100.0f - CalcRating( PLAYER_RATING_MODIFIER_MELEE_HASTE ) ) / 100.0f ) ));
+	calspeed = uint32((speed*m_meleeattackspeedmod)*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_MELEE_HASTE))/100.0f));
+	if(calspeed < 800)
+		calspeed = 800;
+
+	SetUInt32Value( UNIT_FIELD_BASEATTACKTIME, calspeed);
 
 	weap = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );
 	if( weap != NULL && weap->GetProto()->Class == ITEM_CLASS_WEAPON )
 	{
 		speed = weap->GetProto()->Delay;
-		SetUInt32Value( UNIT_FIELD_BASEATTACKTIME + 1, uint32(( speed * m_meleeattackspeedmod ) * ( ( 100.0f - CalcRating( PLAYER_RATING_MODIFIER_MELEE_HASTE ) ) / 100.0f ) ));
+		calspeed = uint32((speed*m_meleeattackspeedmod )*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_MELEE_HASTE))/100.0f));
+		if(calspeed < 800)
+			calspeed = 800;
+
+		SetUInt32Value( UNIT_FIELD_BASEATTACKTIME + 1, calspeed);
 	}
 
 	weap = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_RANGED );
 	if( weap != NULL )
 	{
 		speed = weap->GetProto()->Delay;
-		SetUInt32Value( UNIT_FIELD_RANGEDATTACKTIME,
-			uint32(( speed * m_rangedattackspeedmod ) * ( ( 100.0f - CalcRating( PLAYER_RATING_MODIFIER_RANGED_HASTE ) ) / 100.0f ) ));
+		calspeed = uint32((speed*m_rangedattackspeedmod)*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_RANGED_HASTE))/100.0f));
+		if(calspeed < 800)
+			calspeed = 800;
+
+		SetUInt32Value( UNIT_FIELD_RANGEDATTACKTIME, calspeed);
 	}
 }
 
@@ -12608,7 +12619,7 @@ void Player::InitGlyphsForLevel()
 	// Enable number of glyphs depending on level
 	uint32 level = getLevel();
 	uint32 glyph_mask = 0;
-	if(level > 80)
+	if(level >= 80)
 		glyph_mask = 6;
 	else if(level >= 70)
 		glyph_mask = 5;
