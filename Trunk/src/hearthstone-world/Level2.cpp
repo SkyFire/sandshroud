@@ -106,11 +106,20 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
 		}
 	}
 
+	Guild * pGuild = NULL;
+	pGuild = objmgr.GetGuildByGuildName(string(args));
+
+	if(pGuild)
+	{
+		RedSystemMessage(m_session, "Guild name is already taken.");
+		return true;
+	}
+
 	Charter tempCharter(0, ptarget->GetLowGUID(), CHARTER_TYPE_GUILD);
 	tempCharter.SignatureCount=0;
 	tempCharter.GuildName = string(args);
 
-	Guild * pGuild = Guild::Create();
+	pGuild = Guild::Create();
 	pGuild->CreateFromCharter(&tempCharter, ptarget->GetSession());
 	SystemMessage(m_session, "Guild created");
 	return true;

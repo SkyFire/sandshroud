@@ -989,6 +989,9 @@ void Player::Update( uint32 p_time )
 	Unit::Update( p_time );
 	uint32 mstime = getMSTime();
 	sHookInterface.OnUpdate(this);
+	if( sWorld.FunServerMall != -1 && GetAreaID() == sWorld.FunServerMall )
+		if( IsPvPFlagged() )
+			RemovePvPFlag();
 
 	if(m_attacking)
 	{
