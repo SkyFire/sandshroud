@@ -1129,7 +1129,7 @@ Guild* ObjectMgr::GetGuildByGuildName(std::string guildName)
 	GuildMap::const_iterator itr;
 	for (itr = mGuild.begin();itr != mGuild.end(); itr++)
 	{
-		if( itr->second->GetGuildName() == guildName )
+		if( HEARTHSTONE_TOLOWER_RETURN(itr->second->GetGuildName()) == HEARTHSTONE_TOLOWER_RETURN(guildName) )
 			return itr->second;
 	}
 	return NULL;
