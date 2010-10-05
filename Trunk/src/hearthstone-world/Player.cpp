@@ -3576,6 +3576,9 @@ SpellEntry* Player::GetSpellWithNamehash(uint32 namehash)
 
 bool Player::HasHigherSpellForSkillLine(SpellEntry* sp)
 {
+	if(sp->Id == 54198)
+		return false;	// Cold Weather Hackfix
+
 	uint32 oskillline = sp->skilline;
 	if(oskillline == 0)
 		return false;
