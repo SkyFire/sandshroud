@@ -1159,10 +1159,12 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					}break;
 				}
 
-				if( isAttackable(p_caster, unitTarget) ) // Do holy damage
+				if( isHostile(p_caster, unitTarget) ) // Do holy damage
 					p_caster->CastSpell(unitTarget, hostileSpell, true);
-				else // Heal
+				else if(isCombatSupport(p_caster, unitTarget))
 					p_caster->CastSpell(unitTarget, friendlySpell, true);
+				else
+					SendCastResult(SPELL_FAILED_BAD_TARGETS);
 			}
 		}break;
 

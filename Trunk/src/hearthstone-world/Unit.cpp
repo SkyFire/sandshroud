@@ -4621,7 +4621,7 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	// coefficient
 	//---------------------------------------------------------
 
-	float coefficient = 1.0f;
+	float coefficient = 0.3f;
 
 	if( spellInfo->Dspell_coef_override > 0 && !isdot )
 		coefficient = spellInfo->Dspell_coef_override;
