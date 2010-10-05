@@ -4066,7 +4066,6 @@ void Aura::SpellAuraModStealth(bool apply)
 {
 	if(apply)
 	{
-
 		if(m_target->IsPlayer() && TO_PLAYER(m_target)->m_bg != NULL && TO_PLAYER(m_target)->m_bgHasFlag )
 		{
 			switch( TO_PLAYER(m_target)->m_bg->GetType())
@@ -4112,7 +4111,6 @@ void Aura::SpellAuraModStealth(bool apply)
 			cd.spellid = m_spellProto->Id;
 			TO_PLAYER(m_target)->GetSession()->OutPacket( SMSG_COOLDOWN_EVENT, sizeof(packetSMSG_COOLDOWN_EVENT), &cd);
 		}
-
 
 		if( (m_target->HasDummyAura(SPELL_HASH_MASTER_OF_SUBTLETY) || m_target->HasDummyAura(SPELL_HASH_OVERKILL)) && m_spellProto->NameHash == SPELL_HASH_STEALTH )
 		{

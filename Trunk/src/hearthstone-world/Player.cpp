@@ -9245,7 +9245,8 @@ void Player::PvPToggle()
 
 				SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE);
 
-				if(!IsPvPFlagged()) SetPvPFlag();
+				if(!IsPvPFlagged())
+					SetPvPFlag();
 			}
 			else
 			{

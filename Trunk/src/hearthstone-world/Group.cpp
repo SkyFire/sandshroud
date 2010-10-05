@@ -41,7 +41,9 @@ enum PartyUpdateFlags
 	GROUP_UPDATE_FLAG_PET_POWER					= 65535,	// 0x00010000  uint16
 	GROUP_UPDATE_FLAG_PET_MAXPOWER				= 131070,	// 0x00020000  uint16
 	GROUP_UPDATE_FLAG_PET_AURAS					= 262144,	// 0x00040000  uint64, uint16 for each uint64
-	GROUP_UPDATE_FLAG_VEHICLE_ENTRY				= 524288,	// 0x00080000  uint32
+	GROUP_UPDATE_FLAG_VEHICLE_ENTRY				= 524288,	// 0x00080000
+	GROUP_UPDATE_PET							= 523264,	// 0x0007FC00
+	GROUP_UPDATE_FULL							= 524287,	// 0x0007FFFF
 };
 
 enum PartyUpdateFlagGroups
@@ -308,7 +310,6 @@ void Group::Update()
 
 				data.Initialize(SMSG_GROUP_LIST);
 				data << uint8(m_GroupType);	//0=party,1=raid
-				data << uint8(0);   // unk
 				data << uint8(sg1->GetID());
 				data << uint8(0);	// unk2
 				if(m_GroupType & GROUP_TYPE_LFD)
@@ -316,6 +317,7 @@ void Group::Update()
 					data << uint8(0);
 					data << uint32(0);
 				}
+				data << uint8(0);	// unk
 				data << uint64(0x500000000004BC0CULL);
 				data << uint32(0);
 				data << uint32(m_MemberCount-1);	// we don't include self
@@ -354,11 +356,10 @@ void Group::Update()
 								flags |= 4;
 
 							data << flags;
+							data << uint8(0);
 						}
 					}
 				}
-
-				data << uint8(0);
 
 				if( m_Leader != NULL )
 					data << m_Leader->guid << uint32( 0 );
@@ -373,8 +374,9 @@ void Group::Update()
 					data << uint64( 0 );
 
 				data << uint8( m_LootThreshold );
-				data << uint8( m_difficulty ); // 5 Normal/Heroic.
-				data << uint8( m_raiddifficulty ); // 10/25 man.
+				data << uint8( m_difficulty );		// 5 Normal/Heroic.
+				data << uint8( m_raiddifficulty );	// 10/25 man.
+				data << uint8(0);
 
 				if( !(*itr1)->m_loggedInPlayer->IsInWorld() )
 					(*itr1)->m_loggedInPlayer->CopyAndSendDelayedPacket( &data );
@@ -931,7 +933,6 @@ void Group::SaveToDB()
 
 void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribute, WorldPacket * Packet)
 {
-	uint8 member_flags = 0x01;
 	WorldPacket * data = Packet;
 	if(!data)
 		data = new WorldPacket(SMSG_PARTY_MEMBER_STATS, 500);
@@ -939,7 +940,14 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 	if(pPlayer->GetPowerType() != POWER_TYPE_MANA)
 		Flags |= GROUP_UPDATE_FLAG_POWER_TYPE;
 
+	if( Flags & GROUP_UPDATE_FLAG_POWER_TYPE )
+		Flags |= (GROUP_UPDATE_FLAG_POWER | GROUP_UPDATE_FLAG_MAXPOWER);
+
+	if( Flags & GROUP_UPDATE_FLAG_PET_POWER_TYPE )
+		Flags |= (GROUP_UPDATE_FLAG_PET_POWER | GROUP_UPDATE_FLAG_PET_MAXPOWER);
+
 	data->Initialize(SMSG_PARTY_MEMBER_STATS);
+
 	if((Flags & GROUP_UPDATE_TYPE_FULL_REQUEST_REPLY) == GROUP_UPDATE_TYPE_FULL_REQUEST_REPLY)
 		*data << uint8(0);
 
@@ -948,12 +956,15 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 
 	if(Flags & GROUP_UPDATE_FLAG_ONLINE)
 	{
-		if(pPlayer->IsPvPFlagged())
+		uint8 member_flags = 0x01;
+		if( pPlayer->IsPvPFlagged() )
 			member_flags |= 0x02;
-		if(pPlayer->getDeathState() == CORPSE)
+		if( pPlayer->getDeathState() == CORPSE )
 			member_flags |= 0x08;
-		else if(pPlayer->isDead())
+		else if( pPlayer->isDead() )
 			member_flags |= 0x10;
+		else if( !pPlayer->GetSession() )
+			member_flags = 0;
 
 		*data << uint8(member_flags) << uint8(0);
 	}
@@ -1065,7 +1076,7 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 			*data << uint32(0);
 	}
 
-	if(Distribute&&pPlayer->IsInWorld())
+	if(Distribute && pPlayer->IsInWorld())
 	{
 		Player* plr;
 		float dist = pPlayer->GetMapMgr()->m_UpdateDistance;
@@ -1200,11 +1211,41 @@ void Group::HandlePartialChange(uint32 Type, Player* pPlayer)
 
 void WorldSession::HandlePartyMemberStatsOpcode(WorldPacket & recv_data)
 {
+	CHECK_INWORLD_RETURN
 	uint64 guid;
 	recv_data >> guid;
-	guid = NULL;
-	return;
-	// This is handled in the core already :D
+
+	Player * plr = _player->GetMapMgr()->GetPlayer((uint32)guid);
+	if(!_player->GetGroup())
+		return;
+
+	if( plr )
+	{
+		if(!_player->GetGroup()->HasMember(plr))
+			return;			// invalid player
+	}
+	else
+	{
+		plr = objmgr.GetPlayer( (uint32)guid );
+		if( !plr )
+		{
+			WorldPacket data(SMSG_PARTY_MEMBER_STATS_FULL, 3+4+2);
+			data << uint8(0);
+			data << WoWGuid(guid);
+			data << uint32(GROUP_UPDATE_FLAG_ONLINE);
+			data << uint16(0);
+			SendPacket(&data);
+			return;
+		}
+	}
+
+	if(_player->IsVisible(plr))
+		return;
+
+	WorldPacket data(200);
+	_player->GetGroup()->UpdateOutOfRangePlayer(plr, GROUP_UPDATE_TYPE_FULL_CREATE | GROUP_UPDATE_TYPE_FULL_REQUEST_REPLY, false, &data);
+	data.SetOpcode(SMSG_PARTY_MEMBER_STATS_FULL);
+	SendPacket(&data);
 }
 
 Group* Group::Create()

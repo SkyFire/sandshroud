@@ -75,15 +75,14 @@ bool isHostile(Object* objA, Object* objB)// B is hostile for A?
 			return false;
 	}
 
-
 	// Reputation System Checks
-	if(player_objA && !player_objB)	   // PvE
+	if(player_objA && !player_objB)		// PvE
 	{
 		if(objB->m_factionDBC->RepListId >= 0)
 			hostile = player_objA->IsHostileBasedOnReputation( objB->m_factionDBC );
 	}
 
-	if(player_objB && !player_objA)	   // PvE
+	if(player_objB && !player_objA)		// PvE
 	{
 		if(objA->m_factionDBC->RepListId >= 0)
 			hostile = player_objB->IsHostileBasedOnReputation( objA->m_factionDBC );
@@ -218,6 +217,8 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 			return false;
 
 		if(player_objA->IsPvPFlagged() && !player_objB->IsPvPFlagged() && player_objA->DuelingWith != player_objB)
+			return false;
+		if(!player_objA->IsPvPFlagged() && !player_objB->IsPvPFlagged() && player_objA->DuelingWith != player_objB)
 			return false;
 
 		//These area's are sanctuaries
