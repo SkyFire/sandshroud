@@ -581,8 +581,9 @@ void WorldSession::HandleWhoOpcode( WorldPacket & recv_data )
 		}
 
 		// Team check
-		if(!gm && plr->GetTeam() != team && !plr->GetSession()->HasGMPermissions())
-			continue;
+		if(!sWorld.cross_faction_world)
+			if(!gm && plr->GetTeam() != team && !plr->GetSession()->HasGMPermissions())
+				continue;
 
 		++total_count;
 

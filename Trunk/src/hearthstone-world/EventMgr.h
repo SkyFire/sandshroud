@@ -149,6 +149,7 @@ enum EventTypes
 	EVENT_MUTE_PLAYER,			//Zack 2007 06 05: player gains his voice back
 	EVENT_PLAYER_FORCED_RESURECT,		//Zack 2007 06 08: After player not pushing release spirit for 6 minutes while dead
 	EVENT_PLAYER_SOFT_DISCONNECT,		//Zack 2007 06 12: Kick AFK players to not eat resources
+	EVENT_PLAYER_FORCE_LOGOUT,
 	EVENT_BATTLEGROUND_WSG_AUTO_RETURN_FLAG,
 	EVENT_BATTLEGROUND_WSG_AUTO_RETURN_FLAG_1,
 	EVENT_CORPSE_SPAWN_BONES,

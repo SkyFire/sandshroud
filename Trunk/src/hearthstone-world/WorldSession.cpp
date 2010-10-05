@@ -23,7 +23,7 @@
 
 #include "StdAfx.h"
 
-#define WORLDSOCKET_TIMEOUT		 80
+#define WORLDSOCKET_TIMEOUT 80
 
 OpcodeHandler WorldPacketHandlers[NUM_MSG_TYPES];
 

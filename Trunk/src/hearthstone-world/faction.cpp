@@ -114,13 +114,6 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	if( (objA->IsUnit() && !TO_UNIT(objA)->isAlive()) || (objB->IsUnit() && !TO_UNIT(objB)->isAlive()) )
 		return false;
 
-	// We do need all factiondata for this
-	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL
-		|| (((objA->IsPlayer() && !TO_PLAYER(objA)->IsFFAPvPFlagged()) ? true : false)
-		&&  ((objB->IsPlayer() && !TO_PLAYER(objB)->IsFFAPvPFlagged()) ? true : false)
-		&& (objB->m_factionDBC == objA->m_factionDBC || objB->m_faction == objA->m_faction)))
-		return false;
-
 	// Checks for untouchable, unattackable
 	if( objA->IsUnit() && objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 | UNIT_FLAG_MOUNTED_TAXI | UNIT_FLAG_NOT_SELECTABLE))
 		return false;
@@ -138,8 +131,21 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	if(!player_objA && objA->IsVehicle())
 		player_objA = TO_VEHICLE(objA)->m_redirectSpellPackets;
 
-	if( player_objA && player_objB && player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
-		return true;
+	if( player_objA && player_objB )
+	{
+		if(player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
+			return true;
+	}
+	else if(player_objA)
+	{
+		if(objB->IsPet() && TO_PET(objB)->GetOwner() == player_objA && player_objA->DuelingWith == player_objB)
+			return true;
+	}
+	else if(player_objB)
+	{
+		if(objA->IsPet() && TO_PET(objA)->GetOwner() == player_objB && player_objB->DuelingWith == player_objA)
+			return true;
+	}
 	else if(player_objA == NULL && player_objB == NULL) // Ignore players, we have critters in sanctuaries
 	{
 		// Do not let units attack each other in sanctuary
@@ -148,16 +154,71 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		AreaTable *atB = dbcArea.LookupEntry(objB->GetAreaID());
 		if( atA && atB && (atA->AreaFlags & AREA_SANCTUARY || atB->AreaFlags & AREA_SANCTUARY) )
 			return false;
+
 		if(sWorld.FunServerMall != -1 && (objA->GetAreaID() == (uint32)sWorld.FunServerMall
 			|| objB->GetAreaID() == (uint32)sWorld.FunServerMall))
 			return false;
-
 	}
+
+	if(objA->IsCreature())
+	{
+		if(objA->IsPet())
+		{
+			if(player_objB)
+			{
+				if(TO_PET(objA)->GetOwner())
+				{
+					if(TO_PET(objA)->GetOwner()->IsPvPFlagged() && !player_objB->IsPvPFlagged())
+						return false;
+					if(!TO_PET(objA)->GetOwner()->IsPvPFlagged() && !player_objB->IsPvPFlagged())
+						return false;
+					// the target is PvP, its okay.
+				}
+				else
+					return false;
+			}
+			else if(objB->IsPet())
+			{
+				// Do pet owner checks.
+			}
+		}
+		else if(TO_CREATURE(objA)->IsTotem())
+		{
+			if(player_objB)
+			{
+				if(TO_CREATURE(objA)->GetSummonOwner())
+				{
+					if(TO_PET(objA)->GetSummonOwner()->IsPvPFlagged() && !player_objB->IsPvPFlagged())
+						return false;
+					if(!TO_PET(objA)->GetSummonOwner()->IsPvPFlagged() && !player_objB->IsPvPFlagged())
+						return false;
+					// the target is PvP, its okay.
+				}
+				else
+					return false;
+			}
+			else if(objB->IsPet())
+			{
+				// Do pet owner checks.
+			}
+		}
+	}
+
+	// We do need all factiondata for this
+	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL
+		|| (((objA->IsPlayer() && !TO_PLAYER(objA)->IsFFAPvPFlagged()) ? true : false)
+		&&  ((objB->IsPlayer() && !TO_PLAYER(objB)->IsFFAPvPFlagged()) ? true : false)
+		&& (objB->m_factionDBC == objA->m_factionDBC || objB->m_faction == objA->m_faction)))
+		return false;
 
 	if( player_objA && player_objB )
 	{
 		if(sWorld.FunServerMall != -1 && (player_objA->GetAreaID() == (uint32)sWorld.FunServerMall
 			|| player_objB->GetAreaID() == (uint32)sWorld.FunServerMall))
+			return false;
+		if(player_objA->IsPvPFlagged() && !player_objB->IsPvPFlagged() && player_objA->DuelingWith != player_objB)
+			return false;
+		if(player_objB->IsPvPFlagged() && !player_objA->IsPvPFlagged() && player_objB->DuelingWith != player_objA)
 			return false;
 
 		//These area's are sanctuaries

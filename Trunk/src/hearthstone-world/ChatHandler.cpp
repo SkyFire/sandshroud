@@ -76,6 +76,9 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 	if( lang >= NUM_LANGUAGES )
 		return;
 
+	if( sWorld.cross_faction_world && lang > 0)
+		lang = LANG_UNIVERSAL;
+
 	if(GetPlayer()->IsBanned())
 	{
 		GetPlayer()->BroadcastMessage("You cannot do that when banned.");
@@ -253,7 +256,6 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 	if( type == CHAT_MSG_RAID_LEADER && GetPlayer()->m_bg )
 		type = CHAT_MSG_BATTLEGROUND_LEADER;
 
-
 	switch(type)
 	{
 	case CHAT_MSG_EMOTE:
@@ -283,7 +285,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				if(lang > 0 && LanguageSkills[lang] && _player->_HasSkillLine(LanguageSkills[lang]) == false)
 					return;
 
-				if(lang==0 && !CanUseCommand('c'))
+				if(!sWorld.cross_faction_world && lang == 0 && !CanUseCommand('c'))
 					return;
 
 				data = sChatHandler.FillMessageData( CHAT_MSG_SAY, lang, msg.c_str(), _player->GetGUID(), _player->GetChatTag());
@@ -378,7 +380,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			if(lang > 0 && LanguageSkills[lang] && _player->_HasSkillLine(LanguageSkills[lang]) == false)
 				return;
 
-			if(lang==0 && !CanUseCommand('c'))
+			if(!sWorld.cross_faction_world && lang == 0 && !CanUseCommand('c'))
 				return;
 
 			if(GetPlayer()->m_modlanguage >=0)
@@ -425,7 +427,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			if(lang > 0 && LanguageSkills[lang] && _player->_HasSkillLine(LanguageSkills[lang]) == false)
 				return;
 
-			if(lang==0 && !CanUseCommand('c'))
+			if(!sWorld.cross_faction_world && lang == 0 && !CanUseCommand('c'))
 				return;
 
 			if( player->Social_IsIgnoring( _player->GetLowGUID() ) )
@@ -519,13 +521,13 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			{
 				GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK);
 				if(sWorld.GetKickAFKPlayerTime())
-					sEventMgr.RemoveEvents(GetPlayer(),EVENT_PLAYER_SOFT_DISCONNECT);
+					sEventMgr.RemoveEvents(GetPlayer(),EVENT_PLAYER_FORCE_LOGOUT);
 			}
 			else
 			{
 				GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK);
 				if(sWorld.GetKickAFKPlayerTime())
-					sEventMgr.AddEvent(GetPlayer(),&Player::SoftDisconnect,EVENT_PLAYER_SOFT_DISCONNECT,sWorld.GetKickAFKPlayerTime(),1,0);
+					sEventMgr.AddEvent(GetPlayer(), &Player::ForceLogout, true, EVENT_PLAYER_FORCE_LOGOUT, sWorld.GetKickAFKPlayerTime(), 1, 0);
 
 				if( GetPlayer()->m_bg )
 				{

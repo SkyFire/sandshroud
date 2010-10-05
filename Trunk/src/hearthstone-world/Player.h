@@ -1552,15 +1552,16 @@ public:
 	void LoseRage(int32 value);
 	void LooseRunic(int32 value);
 	void LoosePower(uint32 powerField, int32 value);
+	void ForceLogout(bool save) { GetSession()->LogoutPlayer(save); };
 
-    uint32 SoulStone;
+	uint32 SoulStone;
 	uint32 SoulStoneReceiver;
 	void removeSoulStone();
 
-    HEARTHSTONE_INLINE uint32 GetSoulStoneReceiver(){return SoulStoneReceiver;}
-    HEARTHSTONE_INLINE void SetSoulStoneReceiver(uint32 StoneGUID){SoulStoneReceiver = StoneGUID;}
-    HEARTHSTONE_INLINE uint32 GetSoulStone(){return SoulStone;}
-    HEARTHSTONE_INLINE void SetSoulStone(uint32 StoneID){SoulStone = StoneID;}
+	HEARTHSTONE_INLINE uint32 GetSoulStoneReceiver(){return SoulStoneReceiver;}
+	HEARTHSTONE_INLINE void SetSoulStoneReceiver(uint32 StoneGUID){SoulStoneReceiver = StoneGUID;}
+	HEARTHSTONE_INLINE uint32 GetSoulStone(){return SoulStone;}
+	HEARTHSTONE_INLINE void SetSoulStone(uint32 StoneID){SoulStone = StoneID;}
 
 	bool bReincarnation;
 

@@ -6722,7 +6722,8 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	uint32 entry = m_spellInfo->EffectMiscValue[i];
 
 	CreatureInfo* ci = CreatureNameStorage.LookupEntry(entry);
-	if(!ci)
+	CreatureProto* cp = CreatureProtoStorage.LookupEntry(entry);
+	if(!ci || !cp)
 	{
 		if(sLog.IsOutDevelopement())
 			printf("Totem %u does not have any spells to cast, exiting\n",entry);
@@ -6784,6 +6785,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	//Make it a Totem
 	pTotem->SetTotem(true);
 
+	pTotem->Load(cp, 0, x, y, landh);
 	pTotem->Create(ci->Name, p_caster->GetMapId(), x, y, landh, p_caster->GetOrientation());
 
 	uint32 displayID = 0;

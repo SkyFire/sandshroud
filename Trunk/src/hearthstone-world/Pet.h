@@ -242,6 +242,7 @@ public:
 	bool ResetTalents(bool costs);
 	void InitializeTalents();
 	std::map<uint32, uint8> m_talents;
+	Player* GetOwner() { return m_Owner; };
 
 protected:
 	Player* m_Owner;
