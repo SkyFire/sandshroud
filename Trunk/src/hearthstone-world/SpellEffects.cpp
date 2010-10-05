@@ -1928,7 +1928,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				summon->SetPowerType(POWER_TYPE_ENERGY);
 				summon->SetUInt32Value(UNIT_FIELD_MAXPOWER3, 100);
 				summon->SetUInt32Value(UNIT_FIELD_HEALTH, summon->GetMaxHealth());
-				summon->SetUInt32Value(UNIT_FIELD_POWER1, 100);
+				summon->SetUInt32Value(UNIT_FIELD_POWER3, 100);
 				summon->SetUInt32Value(UNIT_FIELD_RESISTANCES, p_caster->GetUInt32Value(UNIT_FIELD_RESISTANCES));
 				unitTarget->CastSpell(unitTarget, 46619, true);
                 return;
