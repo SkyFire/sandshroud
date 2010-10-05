@@ -8549,7 +8549,7 @@ void Player::RequestDuel(Player* pTarget)
 
 void Player::DuelCountdown()
 {
-	if( sWorld.FunServerMall != -1 && GetAreaID() != (uint32)sWorld.FunServerMall )
+	if( sWorld.FunServerMall != -1 && GetAreaID() == (uint32)sWorld.FunServerMall )
 		return;
 
 	if( DuelingWith == NULL )
@@ -8580,7 +8580,7 @@ void Player::DuelCountdown()
 
 void Player::DuelBoundaryTest()
 {
-	if( sWorld.FunServerMall != -1 && GetAreaID() != (uint32)sWorld.FunServerMall )
+	if( sWorld.FunServerMall != -1 && GetAreaID() == (uint32)sWorld.FunServerMall )
 		return;
 
 	//check if in bounds

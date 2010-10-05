@@ -216,9 +216,8 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		if(sWorld.FunServerMall != -1 && (player_objA->GetAreaID() == (uint32)sWorld.FunServerMall
 			|| player_objB->GetAreaID() == (uint32)sWorld.FunServerMall))
 			return false;
+
 		if(player_objA->IsPvPFlagged() && !player_objB->IsPvPFlagged() && player_objA->DuelingWith != player_objB)
-			return false;
-		if(player_objB->IsPvPFlagged() && !player_objA->IsPvPFlagged() && player_objB->DuelingWith != player_objA)
 			return false;
 
 		//These area's are sanctuaries
