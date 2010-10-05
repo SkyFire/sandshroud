@@ -1022,6 +1022,15 @@ CREATE TABLE `social_ignores` (
   KEY `a` (`character_guid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+/*Table structure for table `tracker` */
+CREATE TABLE `tracker` (
+  `Id` int(10) unsigned NOT NULL,
+  `AcctId` int(20) unsigned NOT NULL,
+  `Name` varchar(21) NOT NULL,
+  `IP_Address` varchar(15) NOT NULL,
+  PRIMARY KEY  (`Id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 /*Table structure for table `tutorials` */
 
 DROP TABLE IF EXISTS `tutorials`;
