@@ -5079,14 +5079,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->Attributes |=	ATTRIBUTES_STOP_ATTACK;
 		}break;
 
-		// Feral Charge - cat
-	case 49376:
-		{
-			sp->Effect[2] = 0;
-			sp->EffectTriggerSpell[2] = 0;
-			sp->Effect[1] = SPELL_EFFECT_TELEPORT_UNITS;
-		}break;
-
 		// RAVAGE
 	case 6785:
 		{

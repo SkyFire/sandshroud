@@ -1904,12 +1904,12 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 	case 49576: // Death Grip
 		{
-			if( p_caster == NULL || unitTarget == NULL )
+			if( u_caster == NULL || unitTarget == NULL )
 				return;
 
 			// Move Effect
-			unitTarget->CastSpellAoF( p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), dbcSpell.LookupEntryForced(49575), true);
-			p_caster->CastSpell( unitTarget, 51399, true ); // Taunt Effect
+			unitTarget->CastSpellAoF( u_caster->GetPositionX(), u_caster->GetPositionY(), u_caster->GetPositionZ(), dbcSpell.LookupEntryForced(49575), true);
+			u_caster->CastSpell( unitTarget, 51399, true ); // Taunt Effect
 		}break;
 
 	case 49203: //Hungering Cold
@@ -1925,13 +1925,20 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				Pet *summon = objmgr.CreatePet();
 				summon->CreateAsSummon(30230, ci, NULL, unitTarget, m_spellInfo, 1, (uint32)320000); //Give it an extra seconds for being unpossesed.
 				TO_PLAYER(unitTarget)->SetSummon(summon);
-				summon->SetUInt32Value(UNIT_FIELD_LEVEL, p_caster->getLevel());
-				summon->SetUInt32Value(UNIT_FIELD_MAXHEALTH, p_caster->GetMaxHealth());
-				summon->SetPowerType(POWER_TYPE_ENERGY);
-				summon->SetUInt32Value(UNIT_FIELD_MAXPOWER3, 100);
+				summon->SetUInt32Value(UNIT_FIELD_LEVEL, unitTarget->getLevel());
+				summon->SetUInt32Value(UNIT_FIELD_MAXHEALTH, unitTarget->GetMaxHealth());
 				summon->SetUInt32Value(UNIT_FIELD_HEALTH, summon->GetMaxHealth());
-				summon->SetUInt32Value(UNIT_FIELD_POWER3, 100);
+				
 				summon->SetUInt32Value(UNIT_FIELD_RESISTANCES, p_caster->GetUInt32Value(UNIT_FIELD_RESISTANCES));
+				/*summon->AddSpell(dbcSpell.LookupEntry(62225), true); // Claw
+				summon->AddSpell(dbcSpell.LookupEntry(47480), true); // Thrash
+				summon->AddSpell(dbcSpell.LookupEntry(47481), true); // Gnaw
+				summon->AddSpell(dbcSpell.LookupEntry(47482), true); // Leap
+				summon->AddSpell(dbcSpell.LookupEntry(47484), true); // Huddle
+				summon->AddSpell(dbcSpell.LookupEntry(51874), true); // Explode*/
+				summon->SetPowerType(POWER_TYPE_ENERGY);
+				summon->SetPower(POWER_TYPE_ENERGY,100);
+				summon->SetMaxPower(POWER_TYPE_ENERGY,100);
 				unitTarget->CastSpell(unitTarget, 46619, true);
                 return;
 		}break;
@@ -2713,7 +2720,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 	case 20585:
 		{	// Stinking elves, make it available to all if they have the aura.
-			if(p_caster != NULL)
+			if(p_caster != NULL && p_caster->getRace() == RACE_NIGHTELF)
 				p_caster->Wispform = true;
 		}break;
 
@@ -2768,7 +2775,7 @@ void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
 		return;
 
 	// Shadowstep
-	if( (m_spellInfo->NameHash == SPELL_HASH_FERAL_CHARGE___CAT || m_spellInfo->NameHash == SPELL_HASH_SHADOWSTEP) && p_caster && p_caster->IsInWorld() )
+	if( (m_spellInfo->NameHash == SPELL_HASH_SHADOWSTEP) && p_caster && p_caster->IsInWorld() )
 	{
 		/* this is rather tricky actually. we have to calculate the orientation of the creature/player, and then calculate a little bit of distance behind that. */
 		float ang;
@@ -6728,9 +6735,9 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	if(!ci || !cp)
 	{
 		if(sLog.IsOutDevelopement())
-			printf("Totem %u does not have any spells to cast, exiting\n",entry);
+			printf("Totem entry %u doesn't exist, exiting\n",entry);
 		else
-			OUT_DEBUG("Totem %u does not have any spells to cast, exiting",entry);
+			OUT_DEBUG("Totem entry %u doesn't exist, exiting",entry);
 		return;
 	}
 
@@ -8204,8 +8211,7 @@ void Spell::SpellEffectJump(uint32 i)
 	// Time formula is derived from andy's logs, 271ms to move ~14.5 units
 	float distance = u_caster->GetDistanceSq( x+cosf(o), y+sinf(o),z );
 	uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-	u_caster->GetAIInterface()->SendMoveToPacket( x, y, z, 0.0f, moveTime, MONSTER_MOVE_FLAG_JUMP );
-	u_caster->SetPosition( x, y, z, 0.0f, false );
+	u_caster->GetAIInterface()->JumpTo( x, y, z, moveTime, GetSpellProto()->EffectMiscValue[i], GetSpellProto()->EffectDieSides[i] );
 	
 	if( p_caster != NULL)
 	{

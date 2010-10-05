@@ -3787,3 +3787,36 @@ uint32 AIInterface::GetMovementTime(float distance)
 	else
 		return m_walkSpeed ? float2int32(distance/m_walkSpeed) : 0xFFFFFFFF;
 }
+
+void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 time, float arc, uint32 unk)
+{
+	WorldPacket data(SMSG_MONSTER_MOVE, 500);
+	data << m_Unit->GetNewGUID();
+	data << uint8(0);
+	data << m_Unit->GetPositionX() << m_Unit->GetPositionY() << m_Unit->GetPositionZ();
+	data << getMSTime();
+	data << uint8(0);
+	data << MONSTER_MOVE_FLAG_JUMP;
+	data << time;
+	data << float(arc);
+	data << uint32(unk);
+	data << uint32(1);
+	data << toX << toY << toZ;
+
+#ifndef ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES
+	bool self = m_Unit->GetTypeId() == TYPEID_PLAYER;
+	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
+#else
+	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
+		TO_PLAYER(m_Unit)->GetSession()->SendPacket(&data);
+
+	for(unordered_set<Player*>::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); itr++)
+	{
+		if( (*itr)->GetPositionNC().Distance2DSq( m_Unit->GetPosition() ) >= sWorld.m_movementCompressThresholdCreatures )
+			(*itr)->AppendMovementData( SMSG_MONSTER_MOVE, uint32(data.size()), data.contents() );
+		else
+			(*itr)->GetSession()->SendPacket(&data);
+	}
+#endif
+	m_Unit->SetPosition(toX, toY, toZ, 0.0f);
+}

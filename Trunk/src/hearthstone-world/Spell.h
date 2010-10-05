@@ -2031,9 +2031,6 @@ private:
 	// magnet
 	Unit* m_magnetTarget;
 	std::vector<uint64> m_orderedObjects;
-
-public:
-
 };
 
 void ApplyDiminishingReturnTimer(int32 * Duration, Unit* Target, SpellEntry * spell);
