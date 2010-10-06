@@ -369,8 +369,8 @@ bool HandleOnlinePlayersCommand(BaseConsole * pConsole, int argc, const char * a
 
 bool HandleReloadAllScriptsCommand(BaseConsole * pConsole, int argc, const char * argv[])
 {
-	reloadgossipscripts();
-	sScriptMgr.ReloadScripts();
+//	reloadgossipscripts();
+//	sScriptMgr.ReloadScripts();
 	pConsole->Write("DLL Scripts reloaded.\n");
 	return true;
 }

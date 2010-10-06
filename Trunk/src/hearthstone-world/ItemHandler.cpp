@@ -1558,24 +1558,24 @@ void WorldSession::HandleReadItemOpcode(WorldPacket &recvPacket)
 
 HEARTHSTONE_INLINE uint32 RepairItemCost(Player* pPlayer, Item* pItem)
 {
-	DurabilityCostsEntry * dcosts = dbcDurabilityCosts.LookupEntry(pItem->GetProto()->ItemLevel);
+	DurabilityCostsEntry * dcosts = dbcDurabilityCosts.LookupEntryForced(pItem->GetProto()->ItemLevel);
 	if(!dcosts)
 	{
 		if(sLog.IsOutDevelopement())
 			printf("Repair: Unknown item level (%u)\n", dcosts);
 		else
 			OUT_DEBUG("Repair: Unknown item level (%u)", dcosts);
-		return 0;
+		return 1;
 	}
 
 	DurabilityQualityEntry * dquality = dbcDurabilityQuality.LookupEntry((pItem->GetProto()->Quality + 1) * 2);
 	if(!dquality)
 	{
 		if(sLog.IsOutDevelopement())
-			printf("Repair: Unknown item quality (%u)\n", dquality);
+			printf("Repair: Unknown item quality (%u)\n", pItem->GetProto()->Quality);
 		else
-			OUT_DEBUG("Repair: Unknown item quality (%u)", dquality);
-		return 0;
+			OUT_DEBUG("Repair: Unknown item quality (%u)", pItem->GetProto()->Quality);
+		return 1;
 	}
 
 	uint32 dmodifier = dcosts->modifier[pItem->GetProto()->Class == ITEM_CLASS_WEAPON ? pItem->GetProto()->SubClass : pItem->GetProto()->SubClass + 21];
@@ -1583,9 +1583,8 @@ HEARTHSTONE_INLINE uint32 RepairItemCost(Player* pPlayer, Item* pItem)
 	return cost / 2;
 }
 
-HEARTHSTONE_INLINE void RepairItem(Player* pPlayer, Item* pItem)
+HEARTHSTONE_INLINE void RepairItem(Player* pPlayer, Item* pItem, bool guild = false)
 {
-	//int32 cost = (int32)pItem->GetUInt32Value( ITEM_FIELD_MAXDURABILITY ) - (int32)pItem->GetUInt32Value( ITEM_FIELD_DURABILITY );
 	int32 cost = RepairItemCost(pPlayer, pItem);
 	if( cost <= 0 )
 		return;
@@ -1593,7 +1592,20 @@ HEARTHSTONE_INLINE void RepairItem(Player* pPlayer, Item* pItem)
 	if( cost > (int32)pPlayer->GetUInt32Value( PLAYER_FIELD_COINAGE ) )
 		return;
 
-	pPlayer->ModUnsigned32Value( PLAYER_FIELD_COINAGE, -cost );
+	if(guild)
+	{
+		uint32 amountavailable = pPlayer->GetGuild()->GetBankBalance();
+		uint32 amountallowed = pPlayer->GetGuildMember()->CalculateAvailableAmount();
+		uint32 available = (amountallowed == 0xFFFFFFFF ? amountavailable : amountallowed);
+		uint64 totalamount = (pPlayer->GetUInt32Value(PLAYER_FIELD_COINAGE) + available);
+		if(totalamount < pPlayer->GuildBankCost+cost)
+			return;
+
+		pPlayer->GuildBankCost += cost;
+	}
+	else
+		pPlayer->ModUnsigned32Value( PLAYER_FIELD_COINAGE, -cost );
+
 	pItem->SetDurabilityToMax();
 	pItem->m_isDirty = true;
 }
@@ -1607,16 +1619,20 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 		return;
 
 	uint64 npcguid, itemguid;
-	uint8 data;
+	bool guildmoney;
 	Item* pItem;
 	Container* pContainer;
 	uint32 j, i;
 
-	recvPacket >> npcguid >> itemguid >> data;
-
+	recvPacket >> npcguid >> itemguid >> guildmoney;
 	Creature* pCreature = _player->GetMapMgr()->GetCreature( GET_LOWGUID_PART(npcguid) );
 	if( pCreature == NULL )
 		return;
+
+	if(guildmoney && !_player->GetGuild())
+		return; // Fucking bastards
+	else if(guildmoney)
+		_player->GuildBankCost = 0; // Reset our guild cost.
 
 	if( !pCreature->HasFlag( UNIT_NPC_FLAGS, UNIT_NPC_FLAG_ARMORER ) )
 		return;
@@ -1635,22 +1651,39 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 					{
 						pItem = pContainer->GetItem( j );
 						if( pItem != NULL )
-							RepairItem( _player, pItem );
+							RepairItem( _player, pItem, guildmoney );
 					}
 				}
 				else
 				{
 					if( pItem->GetProto()->MaxDurability > 0 && i < INVENTORY_SLOT_BAG_END && pItem->GetDurability() <= 0 )
 					{
-						RepairItem( _player, pItem );
+						RepairItem( _player, pItem, guildmoney );
 						_player->ApplyItemMods( pItem, i, true );
 					}
 					else
 					{
-						RepairItem( _player, pItem );
+						RepairItem( _player, pItem, guildmoney );
 					}
 				}
 			}
+		}
+
+		if(guildmoney)
+		{	// Just grab the money.
+			uint32 amountavailable = _player->GetGuild()->GetBankBalance();
+			uint32 amountallowed = _player->GetGuildMember()->CalculateAvailableAmount();
+			uint32 available = (amountallowed == 0xFFFFFFFF ? amountavailable : amountallowed); // If we have an unlimited amount, take the max.
+			if(available)
+			{
+				if(_player->GuildBankCost > available)
+					_player->GetGuild()->WithdrawMoney(this, available);
+				else
+					_player->GetGuild()->WithdrawMoney(this, _player->GuildBankCost);
+			}
+
+			_player->ModUnsigned32Value( PLAYER_FIELD_COINAGE , (-(int32)(_player->GuildBankCost)) );
+			_player->GuildBankCost = 0; // Reset our guild cost.
 		}
 	}
 	else
@@ -1667,23 +1700,55 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 				if (dDurability <= _player->GetUInt32Value(PLAYER_FIELD_COINAGE))
 				{
 					int32 cDurability = item->GetDurability();
+					if(guildmoney) // Just grab the money.
+					{
+						uint32 amountavailable = _player->GetGuild()->GetBankBalance();
+						uint32 amountallowed = _player->GetGuildMember()->CalculateAvailableAmount();
+						uint32 available = (amountallowed == 0xFFFFFFFF ? amountavailable : amountallowed); // If we have an unlimited amount, take the max.
+						_player->GetGuild()->WithdrawMoney(this, available);
+					}
+
 					_player->ModUnsigned32Value( PLAYER_FIELD_COINAGE , -(int32)dDurability );
 					item->SetDurabilityToMax();
 					item->m_isDirty = true;
 
 					//only apply item mods if they are on char equiped
-	//printf("we are fixing a single item in inventory at bagslot %u and slot %u\n",searchres->ContainerSlot,searchres->Slot);
 					if(cDurability <= 0 && searchres->ContainerSlot==INVALID_BACKPACK_SLOT && searchres->Slot<INVENTORY_SLOT_BAG_END)
 						_player->ApplyItemMods(item, searchres->Slot, true);
 				}
 				else
 				{
-					// not enough money
+					if(guildmoney)
+					{
+						int32 cDurability = item->GetDurability();
+						uint32 amountavailable = _player->GetGuild()->GetBankBalance();
+						uint32 amountallowed = _player->GetGuildMember()->CalculateAvailableAmount();
+						uint32 available = (amountallowed == 0xFFFFFFFF ? amountavailable : amountallowed); // If we have an unlimited amount, take the max.
+						if(cDurability < int64(_player->GetUInt32Value(PLAYER_FIELD_COINAGE) + available))
+						{
+							_player->GetGuild()->WithdrawMoney(this, available);
+							_player->ModUnsigned32Value( PLAYER_FIELD_COINAGE , -(int32)dDurability );
+							item->SetDurabilityToMax();
+							item->m_isDirty = true;
+
+							//only apply item mods if they are on char equiped
+							if(cDurability <= 0 && searchres->ContainerSlot == INVALID_BACKPACK_SLOT && searchres->Slot < INVENTORY_SLOT_BAG_END)
+								_player->ApplyItemMods(item, searchres->Slot, true);
+						}
+						else
+						{
+							// not enough money
+						}
+					}
+					else
+					{
+						// not enough money
+					}
 				}
 			}
 		}
 	}
-	DEBUG_LOG("WorldSession","Received CMSG_REPAIR_ITEM %d", itemguid);
+	DEBUG_LOG("WorldSession","Received CMSG_REPAIR_ITEM %d, %s", itemguid, guildmoney ? "From Guild" : "From Player");
 }
 
 void WorldSession::HandleBuyBankSlotOpcode(WorldPacket& recvPacket)

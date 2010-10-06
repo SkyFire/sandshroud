@@ -468,6 +468,7 @@ bool World::SetInitialWorldSettings()
 	MAKE_TASK(WeatherMgr,LoadFromDB);
 	MAKE_TASK(ObjectMgr, LoadGroups);
 	MAKE_TASK(Tracker,   LoadFromDB);
+	MAKE_TASK(ObjectMgr, LoadExtraGameObjectStuff);
 	MAKE_TASK(ObjectMgr, LoadExtraCreatureProtoStuff);
 	MAKE_TASK(ObjectMgr, LoadExtraItemStuff);
 	MAKE_TASK(QuestMgr,  LoadExtraQuestStuff);

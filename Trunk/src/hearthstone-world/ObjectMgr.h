@@ -630,6 +630,7 @@ public:
 	Trainer* GetTrainer(uint32 Entry);
 
 	void LoadExtraItemStuff();
+	void LoadExtraGameObjectStuff();
 	void LoadExtraCreatureProtoStuff();
 	void LoadProfessionDiscoveries();
 	void LoadRandomItemCreation();

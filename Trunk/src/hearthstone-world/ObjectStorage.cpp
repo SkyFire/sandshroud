@@ -95,6 +95,21 @@ void ObjectMgr::LoadProfessionDiscoveries()
 	delete result;
 }
 
+void ObjectMgr::LoadExtraGameObjectStuff()
+{
+	GameObjectInfo * gInfo;
+	StorageContainerIterator<GameObjectInfo> * gOIitr = GameObjectNameStorage.MakeIterator();
+	while(!gOIitr->AtEnd())
+	{
+		gInfo = gOIitr->Get();
+		gInfo->gossip_script = sScriptMgr.GetDefaultGossipScript();
+
+		if(!gOIitr->Inc())
+			break;
+	}
+	gOIitr->Destruct();
+}
+
 void ObjectMgr::LoadExtraCreatureProtoStuff()
 {
 	CreatureProto * cn;

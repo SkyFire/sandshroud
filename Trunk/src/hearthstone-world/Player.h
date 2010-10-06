@@ -1402,6 +1402,7 @@ public:
 	void Gossip_Complete();
 	int m_lifetapbonus;
 	uint32 m_lastShotTime;
+	uint32 GuildBankCost;
 
 	bool m_bUnlimitedBreath;
 	uint32 m_UnderwaterTime;

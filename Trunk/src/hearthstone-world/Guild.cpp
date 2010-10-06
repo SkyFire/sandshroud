@@ -1430,7 +1430,7 @@ void Guild::WithdrawMoney(WorldSession * pClient, uint32 uAmount)
 {
 	PlayerInfo * pPlayer = pClient->GetPlayer()->m_playerInfo;
 	GuildMember * pMember = pClient->GetPlayer()->m_playerInfo->guildMember;
-	if(pMember==NULL)
+	if(pMember == NULL)
 		return;
 
 	if(uAmount == 0)
