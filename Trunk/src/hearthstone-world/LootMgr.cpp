@@ -756,7 +756,7 @@ void LootRoll::Finalize()
 
 	Loot * pLoot = 0;
 	uint32 guidtype = GET_TYPE_FROM_GUID(_guid);
-	if( guidtype == HIGHGUID_TYPE_UNIT )
+	if( guidtype == HIGHGUID_TYPE_CREATURE )
 	{
 		Creature* pc = _mgr->GetCreature(GET_LOWGUID_PART(_guid));
 		if(pc) pLoot = &pc->m_loot;

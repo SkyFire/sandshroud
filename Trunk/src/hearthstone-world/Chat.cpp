@@ -1141,7 +1141,7 @@ Creature* ChatHandler::getSelectedCreature(WorldSession *m_session, bool showerr
 	guid = m_session->GetPlayer()->GetSelection();
 	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PET)
 		creature = m_session->GetPlayer()->GetMapMgr()->GetPet( GET_LOWGUID_PART(guid) );
-	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_UNIT)
+	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE)
 		creature = m_session->GetPlayer()->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
 	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_VEHICLE)
 		creature = m_session->GetPlayer()->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );
@@ -1525,7 +1525,7 @@ bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_s
 		unit = player;
 	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PET)
 		unit = player->GetMapMgr()->GetPet( GET_LOWGUID_PART(guid) );
-	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_UNIT)
+	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE)
 		unit = player->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
 	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_VEHICLE)
 		unit = player->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );

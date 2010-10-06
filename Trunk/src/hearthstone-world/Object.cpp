@@ -676,10 +676,10 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 				{ //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time
 				case 22441: // Crow: Teribus the Cursed also doesn't attack unless he's on the ground.
 //				case : // Dragons in BRD
-					flyflags |= (MOVEFLAG_NO_COLLISION | MOVEFLAG_FLYING | MOVEFLAG_LEVITATE);
+					flyflags |= (MOVEFLAG_NO_COLLISION | MOVEFLAG_FLYING | MOVEFLAG_LEVITATE | MOVEFLAG_AIR_SWIMMING);
 					break;
 				default:
-					flyflags |= (MOVEFLAG_FLYING | MOVEFLAG_LEVITATE);
+					flyflags |= (MOVEFLAG_FLYING | MOVEFLAG_LEVITATE | MOVEFLAG_AIR_SWIMMING);
 					break;
 				}
 

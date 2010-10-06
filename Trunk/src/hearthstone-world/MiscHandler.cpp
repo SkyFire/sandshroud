@@ -464,7 +464,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	else if( GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_UNIT )
+	else if( GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE )
 	{
 		Unit* pLootTarget = _player->GetMapMgr()->GetUnit(guid);
 		if( pLootTarget != NULL )
@@ -1720,7 +1720,7 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		return;
 
 	//now its time to give the loot to the target player
-	if(GET_TYPE_FROM_GUID(GetPlayer()->GetLootGUID()) == HIGHGUID_TYPE_UNIT)
+	if(GET_TYPE_FROM_GUID(GetPlayer()->GetLootGUID()) == HIGHGUID_TYPE_CREATURE)
 	{
 		pCreature = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(creatureguid));
 		if (!pCreature)return;
@@ -1877,7 +1877,7 @@ void WorldSession::HandleLootRollOpcode(WorldPacket& recv_data)
 		if (pGO->GetInfo() && pGO->GetInfo()->Type == GAMEOBJECT_TYPE_CHEST)
 			li = pGO->m_loot.items[slotid].roll;
 	}
-	else if (guidtype == HIGHGUID_TYPE_UNIT)
+	else if (guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		// Creatures
 		Creature* pCreature = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(creatureguid));

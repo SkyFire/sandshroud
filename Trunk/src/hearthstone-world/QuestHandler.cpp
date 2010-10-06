@@ -32,7 +32,7 @@ void WorldSession::HandleQuestgiverStatusQueryOpcode( WorldPacket & recv_data )
 
 	recv_data >> guid;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -126,7 +126,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 	}
 
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
-	if(guidtype == HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -222,7 +222,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 	Object* qst_giver = NULLOBJ;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -493,7 +493,7 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode( WorldPacket & recv_data 
 	uint32 status = 0;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -578,7 +578,7 @@ void WorldSession::HandleQuestgiverCompleteQuestOpcode( WorldPacket & recvPacket
 	uint32 status = 0;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -673,7 +673,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 	Object* qst_giver = NULLOBJ;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)

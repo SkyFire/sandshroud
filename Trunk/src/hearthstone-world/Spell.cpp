@@ -1300,7 +1300,7 @@ void Spell::cast(bool check)
 
 	if(cancastresult == SPELL_CANCAST_OK)
 	{
-		if (p_caster && !m_triggeredSpell && p_caster->IsInWorld() && GET_TYPE_FROM_GUID(m_targets.m_unitTarget)==HIGHGUID_TYPE_UNIT)
+		if (p_caster && !m_triggeredSpell && p_caster->IsInWorld() && GET_TYPE_FROM_GUID(m_targets.m_unitTarget) == HIGHGUID_TYPE_CREATURE)
 		{
 			sQuestMgr.OnPlayerCast(p_caster,m_spellInfo->Id,m_targets.m_unitTarget);
 		}
@@ -2835,7 +2835,7 @@ void Spell::_SetTargets(const uint64& guid)
 			case HIGHGUID_TYPE_VEHICLE:
 				unitTarget = mgr->GetVehicle(GET_LOWGUID_PART(guid));
 				break;
-			case HIGHGUID_TYPE_UNIT:
+			case HIGHGUID_TYPE_CREATURE:
 				unitTarget = mgr->GetCreature(GET_LOWGUID_PART(guid));
 				break;
 			case HIGHGUID_TYPE_PET:

@@ -28,7 +28,7 @@ class DynamicObject;
 enum HIGHGUID_TYPE
 {
 	HIGHGUID_TYPE_VEHICLE			= 0xF1500000,
-	HIGHGUID_TYPE_UNIT				= 0xF1300000,
+	HIGHGUID_TYPE_CREATURE			= 0xF1300000,
 	HIGHGUID_TYPE_PET				= 0xF1400000,
 	HIGHGUID_TYPE_GAMEOBJECT		= 0xF1100000,
 	HIGHGUID_TYPE_ITEM				= 0x40000000,
@@ -42,6 +42,9 @@ enum HIGHGUID_TYPE
 	HIGHGUID_TYPE_MASK				= 0xFFF00000,
 	LOWGUID_ENTRY_MASK				= 0x00FFFFFF,
 };
+
+// Externals
+#define HIGHGUID_TYPE_UNIT HIGHGUID_TYPE_CREATURE
 
 #define GET_TYPE_FROM_GUID(x) (GUID_HIPART((x)) & HIGHGUID_TYPE_MASK)
 #define GET_LOWGUID_PART(x) (GUID_LOPART((x)) & LOWGUID_ENTRY_MASK)
@@ -279,7 +282,7 @@ public:
 			new_full_guid |= ((uint64)GetEntry() << 24) | ((uint64)HIGHGUID_TYPE_GAMEOBJECT << 32);
 
 		if( m_objectTypeId == TYPEID_UNIT )
-			new_full_guid |= ((uint64)GetEntry() << 24) | ((uint64)HIGHGUID_TYPE_UNIT << 32);
+			new_full_guid |= ((uint64)GetEntry() << 24) | ((uint64)HIGHGUID_TYPE_CREATURE << 32);
 
 		SetUInt64Value(OBJECT_FIELD_GUID, new_full_guid);
 		m_wowGuid.Init(GetGUID());

@@ -114,24 +114,36 @@ MapMgr::~MapMgr()
 	sEventMgr.RemoveEvents(this);
 	sEventMgr.RemoveEventHolder(m_instanceID);
 
-	delete ScriptInterface;
-	delete m_stateManager;
+	if( ScriptInterface != NULL )
+	{
+		delete ScriptInterface;
+		ScriptInterface = NULL;
+	}
 
-	if ( mInstanceScript != NULL )
+	if( m_stateManager != NULL )
+	{
+		delete m_stateManager;
+		m_stateManager = NULL;
+	}
+
+	if( mInstanceScript != NULL )
+	{
 		mInstanceScript->Destroy();
+		mInstanceScript = NULL;
+	}
 
 	// Remove objects
 	if(_cells)
 	{
 		for (uint32 i = 0; i < _sizeX; i++)
 		{
-			if(_cells[i] != 0)
+			if(_cells[i] != NULL)
 			{
 				for (uint32 j = 0; j < _sizeY; j++)
 				{
-					if(_cells[i][j] != 0)
+					if(_cells[i][j] != NULL)
 					{
-						_cells[i][j]->_unloadpending=false;
+						_cells[i][j]->_unloadpending = false;
 						_cells[i][j]->RemoveObjects();
 					}
 				}
@@ -154,7 +166,7 @@ MapMgr::~MapMgr()
 		case HIGHGUID_TYPE_VEHICLE:
 			delete TO_VEHICLE(pObject);
 			break;
-		case HIGHGUID_TYPE_UNIT:
+		case HIGHGUID_TYPE_CREATURE:
 			delete TO_CREATURE(pObject);
 			break;
 		case HIGHGUID_TYPE_GAMEOBJECT:
@@ -163,7 +175,7 @@ MapMgr::~MapMgr()
 		default:
 			delete pObject;
 		}
-		pObject = NULLOBJ;
+		pObject = NULL;
 	}
 	_mapWideStaticObjects.clear();
 
@@ -196,14 +208,14 @@ MapMgr::~MapMgr()
 	pMapInfo = NULL;
 	pdbcMap = NULL;
 
-	activeGameObjects.clear();
-	activeCreatures.clear();
 	activeVehicles.clear();
+	activeCreatures.clear();
+	activeGameObjects.clear();
 	_sqlids_vehicles.clear();
 	_sqlids_creatures.clear();
 	_sqlids_gameobjects.clear();
-	_reusable_guids_creature.clear();
 	_reusable_guids_vehicle.clear();
+	_reusable_guids_creature.clear();
 
 	m_battleground = NULLBATTLEGROUND;
 
@@ -229,6 +241,8 @@ void MapMgr::PushObject(Object* obj)
 		m_corpses.insert( TO_CORPSE(obj) );
 	}
 
+	obj->ClearInRangeSet();
+
 	Player* plObj = NULLPLR;
 
 	if(obj->GetTypeId() == TYPEID_PLAYER)
@@ -239,6 +253,7 @@ void MapMgr::PushObject(Object* obj)
 			DEBUG_LOG("MapMgr","Could not get a valid playerobject from object while trying to push to world");
 			return;
 		}
+
 		WorldSession * plSession = NULL;
 		plSession = plObj->GetSession();
 		if(plSession == NULL)
@@ -247,8 +262,6 @@ void MapMgr::PushObject(Object* obj)
 			return;
 		}
 	}
-
-	obj->ClearInRangeSet();
 
 	///////////////////////
 	// Get cell coordinates
@@ -300,6 +313,7 @@ void MapMgr::PushObject(Object* obj)
 		objCell = Create(cx,cy);
 		objCell->Init(cx, cy, _mapId, this);
 	}
+	ASSERT(objCell);
 
 	uint32 endX = (cx <= _sizeX) ? cx + 1 : (_sizeX-1);
 	uint32 endY = (cy <= _sizeY) ? cy + 1 : (_sizeY-1);
@@ -307,8 +321,6 @@ void MapMgr::PushObject(Object* obj)
 	uint32 startY = cy > 0 ? cy - 1 : 0;
 	uint32 posX, posY;
 	MapCell *cell;
-	MapCell::ObjectSet::iterator iter;
-
 	uint32 count;
 
 	if(plObj)
@@ -322,7 +334,6 @@ void MapMgr::PushObject(Object* obj)
 	//////////////////////
 	// Build in-range data
 	//////////////////////
-
 	for (posX = startX; posX <= endX; posX++ )
 	{
 		for (posY = startY; posY <= endY; posY++ )
@@ -353,7 +364,7 @@ void MapMgr::PushObject(Object* obj)
 			m_PetStorage[obj->GetUIdFromGUID()] = TO_PET( obj );
 			break;
 
-		case HIGHGUID_TYPE_UNIT:
+		case HIGHGUID_TYPE_CREATURE:
 			{
 				ASSERT((obj->GetUIdFromGUID()) <= m_CreatureHighGuid);
 				m_CreatureStorage[obj->GetUIdFromGUID()] = TO_CREATURE(obj);
@@ -426,7 +437,7 @@ void MapMgr::PushStaticObject(Object* obj)
 			m_VehicleStorage[obj->GetUIdFromGUID()] = TO_VEHICLE(obj);
 			break;
 
-		case HIGHGUID_TYPE_UNIT:
+		case HIGHGUID_TYPE_CREATURE:
 			m_CreatureStorage[obj->GetUIdFromGUID()] = TO_CREATURE(obj);
 			break;
 
@@ -472,7 +483,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 			m_CreatureStorage.erase(obj->GetUIdFromGUID());
 		}break;
 
-		case HIGHGUID_TYPE_UNIT:
+		case HIGHGUID_TYPE_CREATURE:
 		{
 			ASSERT(obj->GetUIdFromGUID() <= m_CreatureHighGuid);
 			if(TO_CREATURE(obj)->m_spawn != NULL)
@@ -639,15 +650,20 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 		{
 			curObj = *iter;
 			iter2 = iter++;
-			if( curObj->IsPlayer() && obj->IsPlayer() && plObj->m_TransporterGUID && plObj->m_TransporterGUID == TO_PLAYER( curObj )->m_TransporterGUID )
+			if( curObj->IsPlayer() && obj->IsPlayer() && plObj && plObj->m_TransporterGUID && plObj->m_TransporterGUID == TO_PLAYER( curObj )->m_TransporterGUID )
 				fRange = 0.0f; // unlimited distance for people on same boat
-			else if( curObj->IsPlayer() && obj->IsPlayer() && plObj->m_CurrentVehicle && plObj->m_CurrentVehicle == TO_PLAYER( curObj )->m_CurrentVehicle )
+			else if( curObj->IsPlayer() && obj->IsPlayer() && plObj && plObj->m_CurrentVehicle && plObj->m_CurrentVehicle == TO_PLAYER( curObj )->m_CurrentVehicle )
 				fRange = 0.0f; // unlimited distance for people on same vehicle
-			else if( curObj->GetTypeFromGUID() == HIGHGUID_TYPE_TRANSPORTER || curObj->GetTypeFromGUID() ==  HIGHGUID_TYPE_VEHICLE)
+			else if( curObj->GetTypeFromGUID() == HIGHGUID_TYPE_TRANSPORTER)
 				fRange = 0.0f; // unlimited distance for transporters (only up to 2 cells +/- anyway.)
-//TODO Implement distance by protoid
-//			else if (curObj->m_update_distance)
-//				frange = curObj->m_update_distance;
+			else if( curObj->IsGameObject() && TO_GAMEOBJECT(curObj)->GetInfo() )
+			{	// Crow: Arc, previous changes were only supporting Destructible.
+				uint32 type = TO_GAMEOBJECT(curObj)->GetInfo()->Type;
+				if( type == GAMEOBJECT_TYPE_TRANSPORT
+					|| type == GAMEOBJECT_TYPE_MAP_OBJECT
+					|| type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
+				fRange = 0.0f;
+			}
 			else
 				fRange = m_UpdateDistance; // normal distance
 
@@ -815,11 +831,16 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 			fRange = 0.0f; // unlimited distance for people on same boat
 		else if( curObj->IsPlayer() && obj->IsPlayer() && plObj && plObj->m_CurrentVehicle && plObj->m_CurrentVehicle == TO_PLAYER( curObj )->m_CurrentVehicle )
 			fRange = 0.0f; // unlimited distance for people on same vehicle
-		else if( curObj->GetTypeFromGUID() == HIGHGUID_TYPE_TRANSPORTER || curObj->GetTypeFromGUID() ==  HIGHGUID_TYPE_VEHICLE)
+		else if( curObj->GetTypeFromGUID() == HIGHGUID_TYPE_TRANSPORTER)
 			fRange = 0.0f; // unlimited distance for transporters (only up to 2 cells +/- anyway.)
-//TODO Implement distance by protoid
-//			else if (curObj->m_update_distance)
-//				frange = curObj->m_update_distance;
+		else if( curObj->IsGameObject() && TO_GAMEOBJECT(curObj)->GetInfo() )
+		{	// Crow: Arc, previous changes were only supporting Destructible.
+			uint32 type = TO_GAMEOBJECT(curObj)->GetInfo()->Type;
+			if( type == GAMEOBJECT_TYPE_TRANSPORT
+				|| type == GAMEOBJECT_TYPE_MAP_OBJECT
+				|| type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
+			fRange = 0.0f;
+		}
 		else
 			fRange = m_UpdateDistance; // normal distance
 
@@ -898,130 +919,6 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 			}
 		}
 	}
-/*
-#define IN_RANGE_LOOP_P1 \
-	while(iter != cell->End()) \
-	{ \
-		curObj = *iter; \
-		++iter; \
-		if(curObj->IsPlayer() && obj->IsPlayer() && plObj && plObj->m_TransporterGUID && plObj->m_TransporterGUID == TO_PLAYER( curObj )->m_TransporterGUID) \
-			fRange = 0.0f; \
-		else if((curObj->GetGUIDHigh() == HIGHGUID_TRANSPORTER ||obj->GetGUIDHigh() == HIGHGUID_TRANSPORTER)) \
-			fRange = 0.0f; \
-		else if((curObj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && curObj->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID) == GAMEOBJECT_TYPE_TRANSPORT || obj->GetGUIDHigh() == HIGHGUID_GAMEOBJECT && obj->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID) == GAMEOBJECT_TYPE_TRANSPORT)) \
-			fRange = 0.0f; \
-		else \
-			fRange = m_UpdateDistance; \
-		if ( curObj != obj && (fRange == 0.0f || curObj->GetDistance2dSq(obj) < fRange ) ) \
-		{ \
-			if(!obj->IsInRangeSet(curObj)) \
-			{ \
-				if(curObj->NeedsInRangeSet()) \
-				{ \
-					curObj->AddInRangeObject(obj); \
-				} else if(obj->IsPlayer()) \
-				{ \
-					curObj->AddInRangePlayer(obj); \
-				} \
-				if(curObj->IsPlayer()) \
-				{ \
-					plObj2 = TO_PLAYER( curObj ); \
-					if (plObj2->CanSee(obj) && !plObj2->IsVisible(obj))  \
-					{ \
-						CHECK_BUF; \
-						count = obj->BuildCreateUpdateBlockForPlayer(*buf, plObj2); \
-						plObj2->PushCreationData(*buf, count); \
-						plObj2->AddVisibleObject(obj); \
-						(*buf)->clear(); \
-					} \
-				}
-
-#define IN_RANGE_LOOP_P2 \
-			} \
-			else \
-			{ \
-				if(curObj->IsPlayer()) \
-				{ \
-					plObj2 = TO_PLAYER( curObj ); \
-					cansee = plObj2->CanSee(obj); \
-					isvisible = plObj2->GetVisibility(obj, &itr); \
-					if(!cansee && isvisible) \
-					{ \
-						plObj2->RemoveVisibleObject(itr); \
-						plObj2->PushOutOfRange(obj->GetNewGUID()); \
-					} \
-					else if(cansee && !isvisible) \
-					{ \
-						CHECK_BUF; \
-						count = obj->BuildCreateUpdateBlockForPlayer(*buf, plObj2); \
-						plObj2->PushCreationData(*buf, count); \
-						plObj2->AddVisibleObject(obj); \
-						(*buf)->clear(); \
-					} \
-				} \
-
-#define IN_RANGE_LOOP_P3 \
-			} \
-		} \
-	} \
-
-
-	if(plObj)
-	{
-		IN_RANGE_LOOP_P1
-
-			obj->AddInRangeObject(curObj);
-			if(plObj->CanSee(curObj) && !plObj->IsVisible(curObj))
-			{
-				CHECK_BUF;
-				count = curObj->BuildCreateUpdateBlockForPlayer(*buf, plObj);
-				plObj->PushCreationData(*buf, count);
-				plObj->AddVisibleObject(curObj);
-				(*buf)->clear();
-			}
-
-		IN_RANGE_LOOP_P2
-
-			if(plObj)
-			{
-				cansee = plObj->CanSee(curObj);
-				isvisible = plObj->GetVisibility(curObj, &itr);
-				if(!cansee && isvisible)
-				{
-					plObj->PushOutOfRange(curObj->GetNewGUID());
-					plObj->RemoveVisibleObject(itr);
-				}
-				else if(cansee && !isvisible)
-				{
-					CHECK_BUF;
-					count = curObj->BuildCreateUpdateBlockForPlayer(*buf, plObj);
-					plObj->PushCreationData(*buf, count);
-					plObj->AddVisibleObject(curObj);
-					(*buf)->clear();
-				}
-			}
-
-		IN_RANGE_LOOP_P3
-	} else if(obj->NeedsInRangeSet())
-	{
-		IN_RANGE_LOOP_P1
-			obj->AddInRangeObject(curObj);
-		IN_RANGE_LOOP_P2
-		IN_RANGE_LOOP_P3
-	}
-	else
-	{
-		IN_RANGE_LOOP_P1
-			if(curObj->IsPlayer())
-				obj->AddInRangePlayer(obj);
-
-		IN_RANGE_LOOP_P2
-		IN_RANGE_LOOP_P3
-	}
-
-#undef IN_RANGE_LOOP_P1
-#undef IN_RANGE_LOOP_P2
-#undef IN_RANGE_LOOP_P3*/
 }
 
 void MapMgr::_UpdateObjects()
@@ -1606,7 +1503,7 @@ Unit* MapMgr::GetUnit(const uint64 & guid)
 {
 	switch(GET_TYPE_FROM_GUID(guid))
 	{
-	case HIGHGUID_TYPE_UNIT:
+	case HIGHGUID_TYPE_CREATURE:
 		return GetCreature( GET_LOWGUID_PART(guid) );
 		break;
 
@@ -1636,7 +1533,7 @@ Object* MapMgr::_GetObject(const uint64 & guid)
 	case	HIGHGUID_TYPE_GAMEOBJECT:
 		return GetGameObject(GET_LOWGUID_PART(guid));
 		break;
-	case	HIGHGUID_TYPE_UNIT:
+	case	HIGHGUID_TYPE_CREATURE:
 		return GetCreature(GET_LOWGUID_PART(guid));
 		break;
 	case	HIGHGUID_TYPE_DYNAMICOBJECT:
@@ -2003,7 +1900,7 @@ Vehicle* MapMgr::CreateVehicle(uint32 entry)
 
 Creature* MapMgr::CreateCreature(uint32 entry)
 {
-	uint64 newguid = ( (uint64)HIGHGUID_TYPE_UNIT << 32 ) | ( (uint64)entry << 24 );
+	uint64 newguid = ( (uint64)HIGHGUID_TYPE_CREATURE << 32 ) | ( (uint64)entry << 24 );
 	Creature* cr = NULLCREATURE;
 	if(_reusable_guids_creature.size())
 	{
@@ -2018,7 +1915,7 @@ Creature* MapMgr::CreateCreature(uint32 entry)
 	cr = new Creature(newguid);
 	cr->Init();
 
-	ASSERT( cr->GetTypeFromGUID() == HIGHGUID_TYPE_UNIT );
+	ASSERT( cr->GetTypeFromGUID() == HIGHGUID_TYPE_CREATURE );
 	return cr;
 }
 

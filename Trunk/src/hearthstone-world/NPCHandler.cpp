@@ -548,7 +548,7 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 	Object* qst_giver = NULLOBJ;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype == HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_CREATURE)
 	{
 		Creature* crt = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(!crt)
