@@ -1777,12 +1777,14 @@ void Player::_SavePet(QueryBuffer * buf)
 	else
 		buf->AddQuery("DELETE FROM playerpetactionbar WHERE ownerguid=%u", GetLowGUID());
 
-	if(m_Summon&&m_Summon->IsInWorld()&&m_Summon->GetPetOwner()==TO_PLAYER(this))	// update PlayerPets array with current pet's info
+	std::stringstream ss;
+	if(m_Summon && m_Summon->IsInWorld() && m_Summon->GetPetOwner() == TO_PLAYER(this))	// update PlayerPets array with current pet's info
 	{
 		PlayerPet*pPet = GetPlayerPet(m_Summon->m_PetNumber);
 		if(!pPet || pPet->active == false)
 			m_Summon->UpdatePetInfo(true);
-		else m_Summon->UpdatePetInfo(false);
+		else
+			m_Summon->UpdatePetInfo(false);
 
 		if(!m_Summon->Summon)	   // is a pet
 		{
@@ -1794,31 +1796,62 @@ void Player::_SavePet(QueryBuffer * buf)
 			else
 				buf->AddQuery("DELETE FROM playerpetspells WHERE petnumber=%u AND ownerguid=%u", pn, GetLowGUID());
 
-			for(; itr != m_Summon->mSpells.end(); itr++)
+			// Start inserting spells into a bulk SQL
+			ss.rdbuf()->str("");
+			bool first = true;
+			if(m_Summon->mSpells.size())
 			{
+				ss << "INSERT INTO playerpetspells VALUES ";
+				for(; itr != m_Summon->mSpells.end(); itr++)
+				{
+					if(first)
+						first = false;
+					else
+						ss << ",";
+
+					ss << "(" << GetLowGUID() << ", " << pn << ", " << itr->first->Id << ", " <<  itr->second<< ")";
+				}
+				ss << ";";
+
 				if(buf == NULL)
-					CharacterDatabase.Execute("INSERT INTO playerpetspells VALUES(%u, %u, %u, %u)", GetLowGUID(), pn, itr->first->Id, itr->second);
-				else
-					buf->AddQuery("INSERT INTO playerpetspells VALUES(%u, %u, %u, %u)", GetLowGUID(), pn, itr->first->Id, itr->second);
+					CharacterDatabase.Execute(ss.str().c_str());
+				else // Execute or add our bulk inserts
+					buf->AddQuery(ss.str().c_str());
+				printf("Inserting %s", ss.str().c_str());
 			}
 
+			// Start our talent queries
 			if(buf == NULL)
 				CharacterDatabase.Execute("DELETE FROM playerpettalents WHERE petnumber=%u AND ownerguid=%u", pn, GetLowGUID());
 			else
 				buf->AddQuery("DELETE FROM playerpettalents WHERE petnumber=%u AND ownerguid=%u", pn, GetLowGUID());
 
-			PetTalentMap::iterator itr2 = m_Summon->m_talents.begin();
-			for(; itr2 != m_Summon->m_talents.end(); itr2++)
+			// Start inserting talents into a bulk SQL
+			ss.rdbuf()->str("");
+			if(m_Summon->m_talents.size())
 			{
+				PetTalentMap::iterator itr2 = m_Summon->m_talents.begin();
+				ss << "INSERT INTO playerpettalents VALUES ";
+				first = true;
+				for(; itr2 != m_Summon->m_talents.end(); itr2++)
+				{
+					if(first)
+						first = false;
+					else
+						ss << ",";
+
+					ss << "(" << GetLowGUID() << ", " << pn << ", " << itr2->first << ", " <<  itr2->second << ")";
+				}
+				ss << ";";
+
 				if(buf == NULL)
-					CharacterDatabase.Execute("INSERT INTO playerpettalents VALUES(%u, %u, %u, %u)", GetLowGUID(), pn, itr2->first, itr2->second);
-				else
-					buf->AddQuery("INSERT INTO playerpettalents VALUES(%u, %u, %u, %u)", GetLowGUID(), pn, itr2->first, itr2->second);
+					CharacterDatabase.Execute(ss.str().c_str());
+				else // Execute or add our bulk inserts
+					buf->AddQuery(ss.str().c_str());
+				printf("Inserting %s", ss.str().c_str());
 			}
 		}
 	}
-
-	std::stringstream ss;
 
 	for(std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin(); itr != m_Pets.end(); itr++)
 	{
@@ -1847,13 +1880,11 @@ void Player::_SavePet(QueryBuffer * buf)
 		ss << GetLowGUID() << "','"
 		<< itr->second->number << "','";
 		for(uint8 i = 0; i < 10; i++)
-		{
 			ss << itr->second->actionbarspell[i] << "','";
-		}
+
 		for(uint8 i = 0; i < 9; i++)
-		{
 			ss << itr->second->actionbarspellstate[i] << "','";
-		}
+
 		ss << itr->second->actionbarspellstate[9] << "')";
 
 		if(buf == NULL)
@@ -1872,19 +1903,34 @@ void Player::_SavePetSpells(QueryBuffer * buf)
 	else
 		buf->AddQuery("DELETE FROM playersummonspells WHERE ownerguid=%u", GetLowGUID());
 
-	// Save summon spells
-	map<uint32, set<uint32> >::iterator itr = SummonSpells.begin();
-	for(; itr != SummonSpells.end(); itr++)
+	if(SummonSpells.size())
 	{
-		set<uint32>::iterator it = itr->second.begin();
-		for(; it != itr->second.end(); it++)
+		// Save summon spells
+		map<uint32, set<uint32> >::iterator itr = SummonSpells.begin();
+		stringstream ss;
+		ss << "INSERT INTO playersummonspells VALUES ";
+		bool first = true;
+		for(; itr != SummonSpells.end(); itr++)
 		{
-			if(buf == NULL)
-				CharacterDatabase.Execute("INSERT INTO playersummonspells VALUES(%u, %u, %u)", GetLowGUID(), itr->first, (*it));
-			else
-				buf->AddQuery("INSERT INTO playersummonspells VALUES(%u, %u, %u)", GetLowGUID(), itr->first, (*it));
+			set<uint32>::iterator it = itr->second.begin();
+			for(; it != itr->second.end(); it++)
+			{
+				if(first)
+					first = false;
+				else
+					ss << ",";
+
+				ss << "(" << GetLowGUID() << ", " << itr->first << ", " << (*it) << ")";
+			}
 		}
+		ss << ";";
+
+		if(buf == NULL)
+			CharacterDatabase.Execute(ss.str().c_str());
+		else // Execute or add our bulk inserts
+			buf->AddQuery(ss.str().c_str());
 	}
+
 	m_lock.Release();
 }
 
@@ -2690,7 +2736,7 @@ void Player::_SaveSpellsToDB(QueryBuffer * buf)
 
 	// Dump spell data to stringstream
 	std::stringstream ss;
-	ss << "INSERT INTO playerspells (guid, spellid) VALUES ";
+	ss << "INSERT INTO playerspells VALUES ";
 	SpellSet::iterator spellItr = mSpells.begin();
 	bool first = true;
 	for(; spellItr != mSpells.end(); ++spellItr)
@@ -2751,15 +2797,22 @@ void Player::_SaveTalentsToDB(QueryBuffer * buf)
 		if(s > MAX_SPEC_COUNT)
 			break;
 		std::map<uint32, uint8> *talents = &m_specs[s].talents;
-		std::map<uint32, uint8>::iterator itr;
-		for(itr = talents->begin(); itr != talents->end(); itr++)
+		if(talents->size())
 		{
+			bool first = true;
 			std::stringstream ss;
-			ss << "INSERT INTO playertalents (guid, spec, tid, rank) VALUES "
-				<< "(" << GetLowGUID() << ","
-				<< uint32(s) << ","
-				<< itr->first << ","
-				<< uint32(itr->second) << ")";
+			ss << "INSERT INTO playertalents VALUES ";
+			std::map<uint32, uint8>::iterator itr;
+			for(itr = talents->begin(); itr != talents->end(); itr++)
+			{
+				if(first)
+					first = false;
+				else
+					ss << ",";
+
+				ss << "(" << GetLowGUID() << "," << uint32(s) << "," << itr->first << "," << uint32(itr->second) << ")";
+			}
+
 			if(buf == NULL)
 				CharacterDatabase.Execute(ss.str().c_str());
 			else
@@ -2772,14 +2825,24 @@ void Player::_SaveTalentsToDB(QueryBuffer * buf)
 void Player::_SaveQuestLogEntry(QueryBuffer * buf)
 {
 	m_lock.Acquire();
-	for(std::set<uint32>::iterator itr = m_removequests.begin(); itr != m_removequests.end(); itr++)
+	stringstream ss;
+	bool first = true;
+	if(m_removequests.size())
 	{
-		if(buf == NULL)
-			CharacterDatabase.Execute("DELETE FROM questlog WHERE player_guid=%u AND quest_id=%u", GetLowGUID(), (*itr));
-		else
-			buf->AddQuery("DELETE FROM questlog WHERE player_guid=%u AND quest_id=%u", GetLowGUID(), (*itr));
-	}
+		for(std::set<uint32>::iterator itr = m_removequests.begin(); itr != m_removequests.end(); itr++)
+		{
+			if(first)
+				first = false;
+			else
+				ss << ",";
+			ss << (*itr);
+		}
 
+		if(buf == NULL)
+			CharacterDatabase.Execute("DELETE FROM questlog WHERE player_guid = %u AND quest_id IN (%s)", GetLowGUID(), ss.str().c_str());
+		else
+			buf->AddQuery("DELETE FROM questlog WHERE player_guid = %u AND quest_id IN (%s)", GetLowGUID(), ss.str().c_str());
+	}
 	m_removequests.clear();
 
 #ifdef CATACLYSM

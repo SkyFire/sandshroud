@@ -7345,6 +7345,7 @@ void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool 
 		float dist = unitTarget->CalcDistance(x, y, z);
 		uint32 movetime = unitTarget->GetAIInterface()->GetMovementTime(dist);
 		unitTarget->GetAIInterface()->SendMoveToPacket( x, y, z, 0.0f, movetime, MONSTER_MOVE_FLAG_JUMP );
+		unitTarget->SetPosition(x, y, z, 0.0f);
 		unitTarget->GetAIInterface()->StopMovement(movetime,false);
 
 		if (unitTarget->GetCurrentSpell() != NULL)

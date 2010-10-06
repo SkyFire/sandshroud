@@ -1851,7 +1851,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	//use MoveTo()
 	bool orientation = (toO != 0.0f);
 
-	WorldPacket data(SMSG_MONSTER_MOVE, 200);
+	WorldPacket data(SMSG_MONSTER_MOVE, 100);
 	data << m_Unit->GetNewGUID();
 	data << uint8(0);
 	data << m_Unit->GetPositionX() << m_Unit->GetPositionY() << m_Unit->GetPositionZ();
@@ -1884,7 +1884,6 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 			(*itr)->GetSession()->SendPacket(&data);
 	}
 #endif
-	m_Unit->SetPosition(toX, toY, toZ, toO ? toO : 0.0f);
 }
 
 void AIInterface::StopMovement(uint32 time, bool stopatcurrent)
@@ -3787,7 +3786,7 @@ uint32 AIInterface::GetMovementTime(float distance)
 
 void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 time, float arc, uint32 unk)
 {
-	WorldPacket data(SMSG_MONSTER_MOVE, 500);
+	WorldPacket data(SMSG_MONSTER_MOVE, 100);
 	data << m_Unit->GetNewGUID();
 	data << uint8(0);
 	data << m_Unit->GetPositionX() << m_Unit->GetPositionY() << m_Unit->GetPositionZ();
@@ -3815,5 +3814,4 @@ void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 time, float arc
 			(*itr)->GetSession()->SendPacket(&data);
 	}
 #endif
-	m_Unit->SetPosition(toX, toY, toZ, 0.0f);
 }
