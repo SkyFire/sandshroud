@@ -487,7 +487,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				{
 					if( CanUseCommand('z') )
 						if(_player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER))
-							snprintf( Message, 512, "[DEVELOPER][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_ORANGEY, msg.c_str() );
+							snprintf( Message, 512, "[DEV][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_ORANGEY, msg.c_str() );
 						else
 							snprintf( Message, 512, "[ADMIN][%s]: %s%s|r", GetPlayer()->GetName(), MSG_COLOR_ORANGEY, msg.c_str() );
 					else
