@@ -735,30 +735,6 @@ void WorldSession::FullLogin(Player* plr)
 	plr->movement_packet[0] = m_MoverWoWGuid.GetNewGuidMask();
 	memcpy(&plr->movement_packet[1], m_MoverWoWGuid.GetNewGuid(), m_MoverWoWGuid.GetNewGuidLen());
 
-	WorldPacket datab(MSG_SET_DUNGEON_DIFFICULTY, 20);
-	datab << plr->iInstanceType;
-	datab << uint32(0x01);
-	datab << uint32(0x00);
-	SendPacket(&datab);
-
-	WorldPacket datac(MSG_SET_RAID_DIFFICULTY, 20);
-	datac << plr->iRaidType;
-	datac << uint32(0x01);
-	datac << uint32(0x00);
-	SendPacket(&datac);
-
-	// Send first line of MOTD
-	WorldPacket datat(SMSG_MOTD, sizeof(sWorld.GetMotd()) + 4);
-	datat << uint32(0x04);
-	datat << sWorld.GetMotd();
-	SendPacket(&datat);
-
-	// Send second line of MOTD
-	WorldPacket datat2(SMSG_MOTD, sizeof(sWorld.GetMotd2()) + 4);
-	datat2 << uint32(0x04);
-	datat2 << sWorld.GetMotd2();
-	SendPacket(&datat2);
-
 	/* world preload */
 	packetSMSG_LOGIN_VERIFY_WORLD vwpck;
 	vwpck.MapId = plr->GetMapId();
@@ -778,6 +754,7 @@ void WorldSession::FullLogin(Player* plr)
 	-------------------------------------------------------------------
 	*/
 
+	WorldPacket datab;
 #ifdef VOICE_CHAT
 	datab.Initialize(SMSG_FEATURE_SYSTEM_STATUS);
 	datab << uint8(2) << uint8(sVoiceChatHandler.CanUseVoiceChat() ? 1 : 0);
@@ -786,6 +763,11 @@ void WorldSession::FullLogin(Player* plr)
 	datab.Initialize(SMSG_FEATURE_SYSTEM_STATUS);
 	datab << uint8(2) << uint8(0);
 #endif
+
+	datab.Initialize(SMSG_LEARNED_DANCE_MOVES);
+	datab << uint32(0);
+	datab << uint32(0);
+	SendPacket(&datab);
 
 	plr->UpdateAttackSpeed();
 
@@ -945,8 +927,7 @@ void WorldSession::FullLogin(Player* plr)
 		Guild *pGuild = plr->m_playerInfo->guild;
 		if(pGuild)
 		{
-			WorldPacket data(50);
-			data.Initialize(SMSG_GUILD_EVENT);
+			WorldPacket data(SMSG_GUILD_EVENT, 50);
 			data << uint8(GUILD_EVENT_MOTD);
 			data << uint8(0x01);
 			if(pGuild->GetMOTD())
@@ -967,19 +948,33 @@ void WorldSession::FullLogin(Player* plr)
 	plr->Social_SendFriendList(7);
 
 	// Send revision
-	plr->BroadcastMessage("Server: %sSandshroud Hearthstone r%u-TRUNK/%s-%s", MSG_COLOR_WHITE, BUILD_REVISION, CONFIG, ARCH);
-
-	plr->BroadcastMessage("%sPlease report all bugs to %shttp://mantis.sandshroud.org", MSG_COLOR_WHITE, MSG_COLOR_RED);
+	plr->BroadcastMessage("%sServer:|r%s Sandshroud Hearthstone|r %s r%u-%s-%s", MSG_COLOR_GOLD,
+		MSG_COLOR_ORANGEY, MSG_COLOR_TORQUISEBLUE, BUILD_REVISION, ARCH, CONFIG);
+	plr->BroadcastMessage("%sPlease report all bugs to |r%shttp://mantis.sandshroud.org|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE);
 	if(sWorld.SendStatsOnJoin)
 	{
-		plr->BroadcastMessage("Online Players: %s%u |rPeak: %s%u|r Accepted Connections: %s%u",
-			MSG_COLOR_WHITE, sWorld.GetSessionCount(), MSG_COLOR_WHITE, sWorld.PeakSessionCount, MSG_COLOR_WHITE, sWorld.mAcceptedConnections);
-		plr->BroadcastMessage("Server Uptime: |r%s", sWorld.GetUptimeString().c_str());
+		plr->BroadcastMessage("%sOnline Players:|r%s %u |r%sPeak:|r%s %u |r%sAccepted Connections:|r%s %u |r", MSG_COLOR_GOLD,
+			MSG_COLOR_TORQUISEBLUE, sWorld.GetSessionCount(), MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE,
+			sWorld.PeakSessionCount, MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.mAcceptedConnections);
+
+		plr->BroadcastMessage("%sServer Uptime:|r%s %s|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.GetUptimeString().c_str());
 	}
 
 	// send to gms
 	if(HasGMPermissions())
-		sWorld.SendMessageToGMs(this, "%s %s (%s) is now online.", CanUseCommand('z') ? "Admin" : "GameMaster", plr->GetName(), GetAccountNameS(), GetPermissions());
+		sWorld.SendMessageToGMs(this, "%s%s %s (%s) is now online.|r", MSG_COLOR_GOLD, CanUseCommand('z') ? "Admin" : "GameMaster", plr->GetName(), GetAccountNameS(), GetPermissions());
+
+	// Send first line of MOTD
+	WorldPacket datat(SMSG_MOTD, 10);
+	datat << uint32(0x04);
+	datat << sWorld.GetMotd();
+	SendPacket(&datat);
+
+	// Send second line of MOTD
+	WorldPacket datat2(SMSG_MOTD, 10);
+	datat2 << uint32(0x04);
+	datat2 << sWorld.GetMotd2();
+	SendPacket(&datat2);
 
 	//Set current RestState
 	if( plr->m_isResting) 		// We are in a resting zone, turn on Zzz

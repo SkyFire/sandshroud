@@ -12273,7 +12273,7 @@ void Player::Social_TellFriendsOnline()
 	set<uint32>::iterator itr;
 	Player* pl;
 	data << uint8( FRIEND_ONLINE ) << GetGUID() << uint8( 1 );
-	data << GetPlayerAreaID() << getLevel() << uint32(getClass());
+	data << GetAreaID() << getLevel() << uint32(getClass());
 
 	m_socialLock.Acquire();
 	for( itr = m_hasFriendList.begin(); itr != m_hasFriendList.end(); itr++ )

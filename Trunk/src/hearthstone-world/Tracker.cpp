@@ -43,8 +43,8 @@ void Tracker::CheckPlayerForTracker(Player * plr, bool online)
 	if ( !tracker )
 		return;	// No tracker found on user!
 
-	sprintf(text, "%sTracker:%s %s has %s on character %s", MSG_COLOR_CYAN, MSG_COLOR_BREAK,
-		tracker->Name.c_str(), (online?"come online":"gone offline"), plr->GetName());
+	sprintf(text, "%sTracker:|r %s has %s on character %s", MSG_COLOR_CYAN, tracker->Name.c_str(),
+		(online?"come online":"gone offline"), plr->GetName());
 
 	uint32 textLen = (uint32)strlen((char*)text) + 1;
 
@@ -153,7 +153,7 @@ void Tracker::DelTracker(uint64 trackerId)
 			CharacterDatabase.Execute(ss.str().c_str());
 
 			char msg[128];
-			sprintf(msg, "%sTracker:%s %s is no longer being tracked.", MSG_COLOR_CYAN, MSG_COLOR_BREAK, (*i)->Name.c_str());
+			sprintf(msg, "%sTracker:|r %s is no longer being tracked.", MSG_COLOR_CYAN, (*i)->Name.c_str());
 			sWorld.SendGMWorldText( msg, true );
 
 			Tracked_List.erase(i);
@@ -239,7 +239,7 @@ void Tracker::CreateTracker(WorldSession * adder, const char * args)
 		AddTracker(user, false);
 
 		char msg[128];
-		sprintf(msg, "%sTracker:%s User [%s] is now being tracked (Tracker ID: %u)", MSG_COLOR_CYAN, MSG_COLOR_BREAK, toAddSession->GetAccountName().c_str(), user->Id);
+		sprintf(msg, "%sTracker:|r User [%s] is now being tracked (Tracker ID: %u)", MSG_COLOR_CYAN, toAddSession->GetAccountName().c_str(), user->Id);
 		sWorld.SendGMWorldText( msg );
 	}
 	else
@@ -271,7 +271,7 @@ void Tracker::List(WorldSession *m_session, uint32 listStart)
 		return;
 
 	char msg[128];
-	sprintf(msg, "%sTracker%s - tracked users:", MSG_COLOR_CYAN, MSG_COLOR_BREAK);
+	sprintf(msg, "%sTracker|r - tracked users:", MSG_COLOR_CYAN);
 	sChatHandler.SystemMessage(m_session, msg);
 
 	Tracked_List.sort();
