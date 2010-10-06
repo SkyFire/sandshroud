@@ -188,14 +188,14 @@ int stringPtrCompare(
 
 std::string toUpper(const std::string& x) {
 	std::string result = x;
-	std::transform(result.begin(), result.end(), result.begin(), toupper);
+	std::transform(result.begin(), result.end(), result.begin(), ::toupper);
 	return result;
 }
 
 
 std::string toLower(const std::string& x) {
 	std::string result = x;
-	std::transform(result.begin(), result.end(), result.begin(), tolower);
+	std::transform(result.begin(), result.end(), result.begin(), ::tolower);
 	return result;
 }
 

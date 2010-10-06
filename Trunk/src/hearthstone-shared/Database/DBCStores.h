@@ -1553,7 +1553,7 @@ public:
 #ifdef WIN32
 			Sleep(10000);
 #else
-			usleep(10000*1000)
+			usleep(10000*1000);
 #endif
 			return;
 		}
@@ -1568,7 +1568,7 @@ public:
 #ifdef WIN32
 				Sleep(10000);
 #else
-				usleep(10000*1000)
+				usleep(10000*1000);
 #endif
 				break;
 			}

@@ -139,7 +139,7 @@ public:
 	/** Appends a control point at a specific time that must be
 		greater than that of the previous point. */
 	void append(float t, const Control& c) {
-		ASSERT(time.size() == 0) || (t > time.last());
+		ASSERT((time.size() == 0) || (t > time.last()));
 		time.append(t);
 		control.append(c);
 		ASSERT(control.size() == time.size());

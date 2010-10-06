@@ -118,6 +118,8 @@ hearthstone_world_SOURCES = \
     MiscHandler.h \
     MovementHandler.cpp \
     NameTables.h \
+    NavMeshInterface.cpp \
+    NavMeshInterface.h \
     NPCHandler.cpp \
     NPCHandler.h \
     Object.cpp \
@@ -166,6 +168,8 @@ hearthstone_world_SOURCES = \
     TaxiMgr.h \
     TerrainMgr.cpp \
     TerrainMgr.h \
+    Tracker.cpp \
+    Tracker.h \
     TradeHandler.cpp \
     TransporterHandler.cpp \
     TransporterHandler.h \
@@ -180,6 +184,12 @@ hearthstone_world_SOURCES = \
     WayPoints.cpp \
     WeatherMgr.cpp \
     WeatherMgr.h \
+    Wintergrasp.cpp \
+    Wintergrasp.h \
+    WintergraspGOAI.cpp \
+    WintergraspInternal.cpp \
+    WintergraspInternal.h \
+    WintergraspNPCAI.cpp \
     World.cpp \
     World.h \
     WorldCreator.cpp \
@@ -198,10 +208,6 @@ hearthstone_world_SOURCES = \
     Main.cpp \
     Master.cpp \
     Master.h \
-    Wintergrasp.cpp \
-    Wintergrasp.h \
-    WintergraspInternal.cpp \
-    WintergraspInternal.h \
     CConsole.cpp \
     CConsole.h \
     BaseConsole.h \

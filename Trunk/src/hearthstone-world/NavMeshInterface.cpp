@@ -136,7 +136,7 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 	{
 		dtPolyRef mStartRef = myNavMesh->findNearestPoly(startPos,mPolyPickingExtents,mPathFilter,0); // this maybe should be saved on mob for later
 		dtPolyRef mEndRef = myNavMesh->findNearestPoly(endPos,mPolyPickingExtents,mPathFilter,0); // saved on player? probably waste since player moves to much
-		if (mStartRef != NULL && mEndRef != NULL)
+		if (mStartRef != 0 && mEndRef != 0)
 		{
 			dtPolyRef mPathResults[50];
 			int mNumPathResults = myNavMesh->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter ,mPathResults,50);//TODO: CHANGE ME
