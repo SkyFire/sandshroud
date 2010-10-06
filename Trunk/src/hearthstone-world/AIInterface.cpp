@@ -3761,10 +3761,7 @@ void AIInterface::CheckHeight()
 			z = (z > m_destinationZ ? z : m_destinationZ); // Crow: Call it hacky, but it works.
 		}
 
-		float landheight_z = m_Unit->GetMapMgr()->GetLandHeight(x, y);
-		if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit) && CollideInterface.GetHeight(m, x, y, z + 2.0f) != NO_WMO_HEIGHT /*&& CollideInterface.IsOutdoor(m, x, y, z)*/)
-			landheight_z = CollideInterface.GetHeight(m, x, y, z + 2.0f);
-
+		float landheight_z = m_Unit->GetCHeightForPosition(true, x, y, z);
 		if(landheight_z)
 		{
 			if(landheight_z < (z-3.0f))

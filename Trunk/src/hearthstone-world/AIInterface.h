@@ -64,11 +64,11 @@ enum MovementType
 
 enum LimitedMovementFlag
 {
-	LIMIT_ROOT		= 0x0,
-	LIMIT_GROUND	= 0x1,
-	LIMIT_WATER		= 0x2,
-	LIMIT_AIR		= 0x4,
-	LIMIT_ANYWHERE	= LIMIT_GROUND | LIMIT_WATER | LIMIT_AIR
+	LIMIT_ROOT			= 0x0,
+	LIMIT_GROUND		= 0x1,
+	LIMIT_WATER			= 0x2,
+	LIMIT_AIR			= 0x4,
+	LIMIT_ANYWHERE		= LIMIT_GROUND | LIMIT_WATER | LIMIT_AIR
 };
 
 /*struct AI_Target

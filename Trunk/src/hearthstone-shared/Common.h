@@ -178,9 +178,9 @@ enum MsTimeVariables
 #endif
 
 #ifdef X64
-#define ARCH "X64"
+#define ARCH "x64"
 #else
-#define ARCH "X86"
+#define ARCH "x86"
 #endif
 
 /*#if COMPILER == COMPILER_MICROSOFT
