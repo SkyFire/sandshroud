@@ -244,8 +244,8 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	uint32 Count = 0;
 
 	data.Initialize(SMSG_BATTLEFIELD_LIST);
-	data << m_session->GetPlayer()->GetGUID();		// Player Guid
-	data << uint8(!battlemaster);					// Joining from Player Screen?
+	data << (battlemaster ? uint64(0) : m_session->GetPlayer()->GetGUID());		// Guid
+	data << uint8(battlemaster);					// Joining from Player Screen?
 	data << BattlegroundType;						// BG ID
 	data << uint8(IS_ARENA(BattlegroundType));		// unk 3.3
 	data << uint8(0);								// unk 3.3
@@ -1118,7 +1118,7 @@ void CBattleground::RemovePendingPlayer(Player* plr)
 	m_pendPlayers[1].erase(plr->GetLowGUID());
 
 	/* send a null bg update (so they don't join) */
-	for(uint32 i = 0; i < 3; i++)
+	for(uint32 i = 0; i < 2; i++)
 	{
 		if( plr->m_pendingBattleground[i] &&
 			plr->m_pendingBattleground[i] == this )
@@ -1152,7 +1152,7 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 	m_mainLock.Acquire();
 	if(m_ended)
 	{
-		for(uint32 i = 0; i < 3; i++)
+		for(uint32 i = 0; i < 2; i++)
 		{
 			if( plr->m_pendingBattleground[i] == this )
 			{
@@ -1163,7 +1163,6 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 		sChatHandler.SystemMessage(plr->GetSession(), "You cannot join this battleground as it has already ended.");
 		BattlegroundManager.SendBattlegroundQueueStatus(plr, 0);
 		BattlegroundManager.SendBattlegroundQueueStatus(plr, 1);
-		BattlegroundManager.SendBattlegroundQueueStatus(plr, 2);
 		m_mainLock.Release();
 		return;
 	}
@@ -1199,7 +1198,7 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 			plr->RemoveFromWorld();
 	}
 
-	for(uint32 i = 0; i < 3; i++)
+	for(uint32 i = 0; i < 2; i++)
 	{
 		if( plr->m_pendingBattleground[i] == this )
 		{
@@ -1379,7 +1378,7 @@ void CBattlegroundManager::DeleteBattleground(CBattleground* bg)
 			continue;
 		}
 
-		for(uint32 z= 0; z < 3; ++z)
+		for(uint32 z= 0; z < 2; ++z)
 		{
 			if(plr && plr->m_bgQueueInstanceId[z] == bg->GetId())
 			{
@@ -1487,7 +1486,7 @@ void CBattleground::PlaySoundToTeam(uint32 Team, uint32 Sound)
 
 void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queueSlot)
 {
-	if( queueSlot > 2 )
+	if( queueSlot > 1 )
 		return;
 
 	WorldPacket data(SMSG_BATTLEFIELD_STATUS, 40);
@@ -1582,70 +1581,7 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 	data << uint32(GetAverageQueueTime(Type)*1000);		// average time in msec
 	data << uint32(0);
 	plr->GetSession()->SendPacket(&data);
-
 }
-
-/*void CBattlegroundManager::SendBattlefieldStatus(Player* plr, uint32 Status, uint32 Type, uint32 InstanceID, uint32 Time, uint32 MapId, uint8 RatedMatch)
-{
-	WorldPacket data(SMSG_BATTLEFIELD_STATUS, 30);
-	if(Status == 0)
-		data << uint64(0) << uint32(0);
-	else
-	{
-		if(Type >= BATTLEGROUND_ARENA_2V2 && Type <= BATTLEGROUND_ARENA_5V5)
-		{
-			data << uint32(plr->m_bgTeam);
-			switch(Type)
-			{
-			case BATTLEGROUND_ARENA_2V2:
-				data << uint8(2);
-				break;
-
-			case BATTLEGROUND_ARENA_3V3:
-				data << uint8(3);
-				break;
-
-			case BATTLEGROUND_ARENA_5V5:
-				data << uint8(5);
-				break;
-			}
-			data << uint8(0xC);
-			data << uint32(6);
-			data << uint16(0x1F90);
-			data << uint32(11);
-			data << uint8(RatedMatch);		// 1 = rated match
-		}
-		else
-		{
-			data << uint32(0);
-			data << uint8(0) << uint8(2);
-			data << Type;
-			data << uint16(0x1F90);
-			data << InstanceID;
-			data << uint8(plr->m_bgTeam);
-		}
-
-		data << Status;
-
-		switch(Status)
-		{
-		case 1:					// Waiting in queue
-			data << uint32(60) << uint32(0);				// Time / Elapsed time
-			break;
-		case 2:					// Ready to join!
-			data << MapId << Time;
-			break;
-		case 3:
-			if(Type >= BATTLEGROUND_ARENA_2V2 && Type <= BATTLEGROUND_ARENA_5V5)
-				data << MapId << uint32(0) << Time << uint8(0);
-			else
-				data << MapId << uint32(0) << Time << uint8(1);
-			break;
-		}
-	}
-
-	plr->GetSession()->SendPacket(&data);
-}*/
 
 void CBattleground::RemovePlayer(Player* plr, bool logout)
 {
@@ -1715,7 +1651,6 @@ void CBattleground::RemovePlayer(Player* plr, bool logout)
 		}
 		BattlegroundManager.SendBattlegroundQueueStatus(plr, 0);
 		BattlegroundManager.SendBattlegroundQueueStatus(plr, 1);
-		BattlegroundManager.SendBattlegroundQueueStatus(plr, 2);
 
 		/* send some null world states */
 		data.Initialize(SMSG_INIT_WORLD_STATES);
@@ -1742,17 +1677,10 @@ void CBattleground::SendPVPData(Player* plr)
 		m_mainLock.Release();
 		return;
 	}
-	/*if(m_type >= BATTLEGROUND_ARENA_2V2 && m_type <= BATTLEGROUND_ARENA_5V5)
-	{
-		m_mainLock.Release();
-		return;
-	}
-	else
-	{*/
-		WorldPacket data(10*(m_players[0].size()+m_players[1].size())+50);
-		BuildPvPUpdateDataPacket(&data);
-		plr->GetSession()->SendPacket(&data);
-	/*}*/
+
+	WorldPacket data(10*(m_players[0].size()+m_players[1].size())+50);
+	BuildPvPUpdateDataPacket(&data);
+	plr->GetSession()->SendPacket(&data);
 
 	m_mainLock.Release();
 }

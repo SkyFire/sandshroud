@@ -2496,3 +2496,9 @@ void WorldSession::HandleCalendarGetNumPending(WorldPacket & /*recv_data*/)
 	data << uint32(0);		// 0 - no pending invites, 1 - some pending invites
 	SendPacket(&data);
 }
+
+void WorldSession::HandleMeetingStoneInfo(WorldPacket& )
+{
+	DEBUG_LOG("WORLD"," Received CMSG_MEETINGSTONE_INFO");
+	//Used for LFR/LFG updates
+}

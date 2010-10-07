@@ -882,7 +882,7 @@ void Aura::Remove()
 		/**********************Cooldown**************************
 		* this is only needed for some spells
 		* for now only spells that have:
-		* (m_spellInfo->Attributes == 0x2050000) && !(m_spellInfo->AttributesEx) ||
+		* (GetSpellProto()->Attributes == 0x2050000) && !(GetSpellProto()->AttributesEx) ||
 		* m_spellProto->Attributes == 0x2040100
 		* are handled. Its possible there are more spells like this
 		*************************************************************/
@@ -10584,7 +10584,7 @@ void Aura::SpellAuraHealAndJump(bool apply)
 			Spell *spell = new Spell( caster, GetSpellProto(), true, NULL );
 			if( !spell )
 				return;
-			spell->m_spellInfo->procCharges = (Heal_and_Hump_Charges - 1);
+			spell->GetSpellProto()->procCharges = (Heal_and_Hump_Charges - 1);
 			SpellCastTargets targets(Heal_and_Hump_newtargy->GetGUID());
 			spell->prepare(&targets);
 			Heal_and_Hump_newtargy = NULL;

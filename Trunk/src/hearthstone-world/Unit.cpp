@@ -7333,9 +7333,8 @@ void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool 
 		value1 = 0.1f;
 	}
 
-	float angle = calcAngle(GetPositionX(), GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY()) * float(M_PI) / 180.0f;
-	dx = cosf(angle);
-	dy = sinf(angle);
+	dx = sinf( GetOrientation() );
+	dy = cosf( GetOrientation() );
 
 	if( unitTarget->IsCreature() )
 	{

@@ -680,6 +680,7 @@ protected:
 	void HandleCharRenameOpcode(WorldPacket & recv_data);
 	void HandlePartyMemberStatsOpcode(WorldPacket & recv_data);
 	void HandleSummonResponseOpcode(WorldPacket & recv_data);
+	void HandleMeetingStoneInfo(WorldPacket & recv_data);
 
 	void HandleArenaTeamAddMemberOpcode(WorldPacket & recv_data);
 	void HandleArenaTeamRemoveMemberOpcode(WorldPacket & recv_data);

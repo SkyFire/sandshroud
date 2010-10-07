@@ -901,6 +901,7 @@ void WorldSession::InitPacketHandlerTable()
 	// Battlegrounds
 	WorldPacketHandlers[CMSG_BATTLEFIELD_PORT].handler						= &WorldSession::HandleBattlefieldPortOpcode;
 	WorldPacketHandlers[CMSG_BATTLEFIELD_STATUS].handler					= &WorldSession::HandleBattlefieldStatusOpcode;
+	WorldPacketHandlers[CMSG_BATTLEFIELD_LIST].handler						= &WorldSession::HandleBattlefieldListOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_HELLO].handler					= &WorldSession::HandleBattleMasterHelloOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_JOIN_ARENA].handler				= &WorldSession::HandleArenaJoinOpcode;
 	WorldPacketHandlers[CMSG_BATTLEMASTER_JOIN].handler						= &WorldSession::HandleBattleMasterJoinOpcode;
@@ -926,6 +927,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_SUMMON_RESPONSE].handler						= &WorldSession::HandleSummonResponseOpcode;
 	WorldPacketHandlers[CMSG_RESET_INSTANCES].handler						= &WorldSession::HandleResetInstanceOpcode;
 	WorldPacketHandlers[CMSG_SELF_RES].handler								= &WorldSession::HandleSelfResurrectOpcode;
+	WorldPacketHandlers[CMSG_MEETINGSTONE_INFO].handler						= &WorldSession::HandleSelfResurrectOpcode;
 	WorldPacketHandlers[MSG_RANDOM_ROLL].handler							= &WorldSession::HandleRandomRollOpcode;
 	WorldPacketHandlers[MSG_SET_DUNGEON_DIFFICULTY].handler					= &WorldSession::HandleDungeonDifficultyOpcode;
 	WorldPacketHandlers[MSG_SET_RAID_DIFFICULTY].handler					= &WorldSession::HandleRaidDifficultyOpcode;

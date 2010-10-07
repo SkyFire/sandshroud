@@ -3521,8 +3521,8 @@ void AIInterface::Event_Summon_Elemental(uint32 summon_duration, uint32 TotemEnt
 		ourslave->BaseDamage[1]=450;
 		ourslave->CalcDamage();
 		ourslave->SetSummonOwnerSlot(m_Unit->GetGUID(),Slot);
-
 		m_Unit->m_SummonSlots[Slot] = ourslave;
+		ourslave->SetPhase(m_Unit->GetPhase());
 
 		/*
 			Spells can be added to AI_Agents for every summoned elemental ;)

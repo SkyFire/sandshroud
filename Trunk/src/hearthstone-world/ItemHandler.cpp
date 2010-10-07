@@ -32,11 +32,8 @@ void WorldSession::HandleSplitOpcode(WorldPacket& recv_data)
 	if(!GetPlayer())
 		return;
 
-	if(count >= 127)
-	{
-		/* exploit fix */
+	if(count >= 127) /* exploit fix */		
 		return;
-	}
 
 	// f*ck wpe
 	if( !_player->GetItemInterface()->VerifyBagSlotsWithBank(SrcInvSlot, SrcSlot) )
@@ -74,20 +71,13 @@ void WorldSession::HandleSplitOpcode(WorldPacket& recv_data)
 					i2->m_isDirty = true;
 				}
 				else
-				{
 					 GetPlayer()->GetItemInterface()->BuildInventoryChangeError(i1, i2, INV_ERR_ITEM_CANT_STACK);
-				}
 			}
-			else
-			{
-				//error cant split item
-				_player->GetItemInterface()->BuildInventoryChangeError(i1, i2, INV_ERR_COULDNT_SPLIT_ITEMS);
-			}
+			else		
+				_player->GetItemInterface()->BuildInventoryChangeError(i1, i2, INV_ERR_COULDNT_SPLIT_ITEMS); //error cant split item
 		}
 		else
-		{
 			 GetPlayer()->GetItemInterface()->BuildInventoryChangeError(i1, i2, INV_ERR_ITEM_CANT_STACK);
-		}
 	}
 	else
 	{
@@ -125,9 +115,7 @@ void WorldSession::HandleSplitOpcode(WorldPacket& recv_data)
 			}
 		}
 		else
-		{
 			_player->GetItemInterface()->BuildInventoryChangeError(i1, i2, INV_ERR_COULDNT_SPLIT_ITEMS);
-		}
 	}
 }
 
@@ -141,10 +129,6 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 	Item* DstItem = NULLITEM;
 
 	int8 DstInvSlot=0, DstSlot=0, SrcInvSlot=0, SrcSlot=0, error=0;
-	//	 20		   5			255	  26
-
-	if(!GetPlayer())
-		return;
 
 	recv_data >> DstInvSlot >> DstSlot >> SrcInvSlot >> SrcSlot;
 
@@ -255,12 +239,6 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 			}
 		}
 	}
-
-	/*if(GetPlayer()->CombatStatus.IsInCombat())
-	{
-		GetPlayer()->GetItemInterface()->BuildInventoryChangeError(SrcItem, NULL, INV_ERR_CANT_DO_IN_COMBAT);
-		return;
-	}*/
 
 	if( DstSlot < INVENTORY_SLOT_BAG_START && DstInvSlot == INVENTORY_SLOT_NOT_SET ) //equip
 	{
@@ -398,7 +376,6 @@ void WorldSession::HandleDestroyItemOpcode( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
 	CHECK_PACKET_SIZE(recv_data, 2);
-	//Player* plyr = GetPlayer();
 
 	int8 SrcInvSlot, SrcSlot;
 	uint32 data;
@@ -661,8 +638,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	uint8 databuffer[50000];
-	StackPacket data(SMSG_ITEM_QUERY_SINGLE_RESPONSE, databuffer, 50000);
+	WorldPacket data(SMSG_ITEM_QUERY_SINGLE_RESPONSE, 100000);
 
 	LocalizedItem* li = (language>0) ? sLocalizationMgr.GetLocalizedItem(itemid, language) : NULL;
 
@@ -879,9 +855,6 @@ void WorldSession::HandleSellItemOpcode( WorldPacket & recv_data )
 
 	uint64 vendorguid=0, itemguid=0;
 	int32 amount=0;
-	//uint8 slot = INVENTORY_NO_SLOT_AVAILABLE;
-	//uint8 bagslot = INVENTORY_NO_SLOT_AVAILABLE;
-	//int check = 0;
 
 	recv_data >> vendorguid;
 	recv_data >> itemguid;
@@ -926,7 +899,7 @@ void WorldSession::HandleSellItemOpcode( WorldPacket & recv_data )
 	}
 
 	// Check if item can be sold
-	if( it->SellPrice == 0 || item->wrapped_item_id != 0 /* || it->BuyPrice == 0 */)
+	if( it->SellPrice == 0 || item->wrapped_item_id != 0 )
 	{
 		SendSellItem(vendorguid, itemguid, 2);
 		return;
@@ -936,15 +909,12 @@ void WorldSession::HandleSellItemOpcode( WorldPacket & recv_data )
 	uint32 quantity = 0;
 
 	if (amount != 0)
-	{
 		quantity = amount;
-	}
 	else
-	{
 		quantity = stackcount; //allitems
-	}
 
-	if(quantity > stackcount) quantity = stackcount; //make sure we don't over do it
+	if(quantity > stackcount)
+		quantity = stackcount; //make sure we don't over do it
 
 	uint32 price = GetSellPriceForItem(it, quantity);
 
@@ -982,9 +952,6 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 	CHECK_PACKET_SIZE( recv_data, 22 );
 
 	DEBUG_LOG( "WORLD"," Received CMSG_BUY_ITEM_IN_SLOT" );
-
-	if( GetPlayer() == NULL )
-		return;
 
 	uint64 srcguid, bagguid;
 	uint32 itemid;
@@ -1031,7 +998,6 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 
 	if( it->MaxCount > 0 && ci.amount*amount > it->MaxCount)
 	{
-//		OUT_DEBUG( "SUPADBG can't carry #1 (%u>%u)" , ci.amount*amount , it->MaxCount );
 		_player->GetItemInterface()->BuildInventoryChangeError( NULLITEM, NULLITEM, INV_ERR_CANT_CARRY_MORE_OF_THIS );
 		return;
 	}
@@ -1148,7 +1114,6 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 		{
 			pItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, count_per_stack);
 			pItem->m_isDirty = true;
-//			OUT_DEBUG( "SUPADBG bagslot=%u, slot=%u" , bagslot, slot );
 			if(!_player->GetItemInterface()->SafeAddItem(pItem, bagslot, slot))
 			{
 				pItem->DeleteMe();
@@ -1196,8 +1161,6 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 	uint32 itemid=0;
 	int32 slot=0;
 	uint32 amount=0;
-//	int8 playerslot = 0;
-//	int8 bagslot = 0;
 	Item* add = NULLITEM;
 	uint8 error = 0;
 	SlotResult slotresult;
@@ -1358,7 +1321,12 @@ void WorldSession::SendInventoryList(Creature* unit)
 
 	if(!unit->HasItems())
 	{
-		sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
+        WorldPacket data(SMSG_LIST_INVENTORY, 10);
+		data << uint64(unit->GetGUID());
+		data << uint8(0);
+		data << uint8(0);
+		SendPacket(&data);
+ 		sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
 		return;
 	}
 
@@ -1393,7 +1361,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 				data << curItem->DisplayInfoID;
 				data << av_am;
 				data << GetBuyPriceForItem(curItem, 1, _player, unit);
-				data << int32(-1);			// wtf is dis?
+				data << curItem->MaxDurability;
 				data << itr->amount;
 
 				if( itr->extended_cost != NULL )
@@ -1544,11 +1512,9 @@ void WorldSession::HandleReadItemOpcode(WorldPacket &recvPacket)
 
 	if(item)
 	{
-		// Check if it has pagetext
-
 		if(item->GetProto()->PageId)
 		{
-			WorldPacket data(SMSG_READ_ITEM_OK, 4);
+			WorldPacket data(SMSG_READ_ITEM_OK, 8);
 			data << item->GetGUID();
 			SendPacket(&data);
 			DEBUG_LOG("WorldSession","Sent SMSG_READ_OK %d", item->GetGUID());
@@ -1614,9 +1580,6 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 {
 	CHECK_INWORLD_RETURN;
 	CHECK_PACKET_SIZE(recvPacket, 12);
-	CHECK_INWORLD_RETURN
-	if(!GetPlayer())
-		return;
 
 	uint64 npcguid, itemguid;
 	bool guildmoney;
@@ -1662,9 +1625,7 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 						_player->ApplyItemMods( pItem, i, true );
 					}
 					else
-					{
 						RepairItem( _player, pItem, guildmoney );
-					}
 				}
 			}
 		}
@@ -1735,14 +1696,6 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 							if(cDurability <= 0 && searchres->ContainerSlot == INVALID_BACKPACK_SLOT && searchres->Slot < INVENTORY_SLOT_BAG_END)
 								_player->ApplyItemMods(item, searchres->Slot, true);
 						}
-						else
-						{
-							// not enough money
-						}
-					}
-					else
-					{
-						// not enough money
 					}
 				}
 			}
@@ -2014,9 +1967,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 		if(truecolormatch && (FilledSlots >= TargetItem->GetSocketsCount()))
 		{
 			if(TargetItem->HasEnchantment(TargetItem->GetProto()->SocketBonus) > 0)
-			{
 				return;
-			}
 
 			Enchantment = dbcEnchant.LookupEntry(TargetItem->GetProto()->SocketBonus);
 			if(Enchantment)
@@ -2026,9 +1977,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 			}
 		}
 		else //remove
-		{
 			TargetItem->RemoveSocketBonusEnchant();
-		}
 	}
 
 	TargetItem->m_isDirty = true;

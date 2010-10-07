@@ -58,13 +58,12 @@ void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket &recv_data)
 {
 	BattlegroundManager.SendBattlegroundQueueStatus(GetPlayer(), 0);
 	BattlegroundManager.SendBattlegroundQueueStatus(GetPlayer(), 1);
-	BattlegroundManager.SendBattlegroundQueueStatus(GetPlayer(), 2);
 }
 
 void WorldSession::HandleBattlefieldListOpcode(WorldPacket &recv_data)
 {
+	return;
 	CHECK_INWORLD_RETURN;
-
 	uint32 battlegroundType;
 	uint8 requestType, unk1; // 0 = ShowBattlefieldList, 1 = RequestBattlegroundInstanceInfo
 
