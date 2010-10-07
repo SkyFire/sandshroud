@@ -4631,18 +4631,11 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	// coefficient
 	//---------------------------------------------------------
-
-	float coefficient = 0.3f;
-
-	if( spellInfo->Dspell_coef_override > 0 && !isdot )
-		coefficient = spellInfo->Dspell_coef_override;
-	else if( spellInfo->OTspell_coef_override > 0 && isdot )
-		coefficient = spellInfo->OTspell_coef_override;
+	float coefficient = spellInfo->spell_coef_override;
 
 	//---------------------------------------------------------
 	// modifiers (increase spell dmg by spell power)
 	//---------------------------------------------------------
-
 	if( spellInfo->SpellGroupType )
 	{
 		float modifier = 0;
@@ -4666,7 +4659,6 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	// MISC COEFFICIENT
 	//---------------------------------------------------------
-
 	if( spellInfo->NameHash == SPELL_HASH_IMMOLATE && HasDummyAura( SPELL_HASH_FIRE_AND_BRIMSTONE ))
 		coefficient += ( (GetDummyAura(SPELL_HASH_FIRE_AND_BRIMSTONE)->RankNumber * 3) / 100.0f );
 
@@ -4693,7 +4685,6 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	// modifiers (damage done by x)
 	//---------------------------------------------------------
-
 	if( spellInfo->SpellGroupType )
 	{
 		float dmg_bonus_pct = 0;
@@ -4749,7 +4740,7 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 		}
 	}
 
-	if( (spellInfo->c_is_flags & SPELL_FLAG_IS_DAMAGING) && (spellInfo->spell_coef_flags & SPELL_FLAG_AOE_SPELL) )
+	if( (spellInfo->c_is_flags & SPELL_FLAG_IS_DAMAGING) && (spellInfo->isAOE) )
 		bonus_damage *= pVictim->AOEDmgMod;
 
 	if( pVictim->RAPvModifier && spellInfo->is_ranged_spell )
@@ -6707,14 +6698,18 @@ void Unit::Energize(Unit* target, uint32 SpellId, uint32 amount, uint32 type)
 
 void Unit::InheritSMMods(Unit* inherit_from)
 {
-	for(uint32 x=0;x<SPELL_MODIFIERS;x++)
-		for(uint32 y=0;y<2;y++)
+	for(uint32 x = 0; x < SPELL_MODIFIERS; x++)
+	{
+		for(uint32 y = 0; y < 2; y++)
+		{
 			if(inherit_from->SM[x][y])
 			{
 				if(SM[x][y] == 0)
 					SM[x][y] = new int32[SPELL_GROUPS];
 				memcpy(SM[x][y], inherit_from->SM[x][y], sizeof(int32)*SPELL_GROUPS);
 			}
+		}
+	}
 }
 
 void Unit::CancelSpell(Spell* ptr)

@@ -371,7 +371,8 @@
     <ClCompile Include="..\..\src\hearthstone-world\SpellEffects.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellTarget.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\SpellFixes.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SpellFixes.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SingleSpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AchievementInterface.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AddonMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AuctionHouse.cpp" />

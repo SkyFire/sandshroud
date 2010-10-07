@@ -6451,21 +6451,24 @@ void Aura::SpellAuraSchoolAbsorb(bool apply)
 		Unit * m_caster = GetUnitCaster();
 		if( m_caster != NULL && m_caster->IsPlayer() )
 		{
-			float otcoef = m_spellProto->OTspell_coef_override;
-			float ddcoef = m_spellProto->Dspell_coef_override;
-			float coefmod = 0;
-			SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][0], &coefmod, m_spellProto->SpellGroupType );
-			SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][1], &coefmod, m_spellProto->SpellGroupType );
-
-			otcoef += coefmod / 100;
-			ddcoef += coefmod / 100;
+			float coefmod0 = 0.0f;
+			float coefmod1 = 0.0f;
+			float coefmod = m_spellProto->spell_coef_override;
+			SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][0], &coefmod0, m_spellProto->SpellGroupType );
+			SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][1], &coefmod1, m_spellProto->SpellGroupType );
 
 			//For spells Affected by Bonus Healing we use Dspell_coef_override.
-			if( ddcoef > 0 )
-				val += float2int32( float( TO_PLAYER(m_caster)->HealDoneMod[m_spellProto->School] ) * ddcoef );
+			if( coefmod0 > 0 )
+			{
+				coefmod += coefmod0 / 100;
+				val += float2int32( float( TO_PLAYER(m_caster)->HealDoneMod[m_spellProto->School] ) * coefmod );
+			}
 			//For spells Affected by Bonus Damage we use OTspell_coef_override.
-			else if( otcoef > 0 )
-				val += float2int32( float( TO_PLAYER(m_caster)->GetDamageDoneMod( m_spellProto->School ) ) * otcoef );
+			else if( coefmod1 > 0 )
+			{
+				coefmod += coefmod1 / 100;
+				val += float2int32( float( TO_PLAYER(m_caster)->GetDamageDoneMod( m_spellProto->School ) ) * coefmod );
+			}
 
 			if( m_spellProto->AP_coef_override > 0 )
 				val += float2int32(m_caster->GetAP() * m_spellProto->AP_coef_override);

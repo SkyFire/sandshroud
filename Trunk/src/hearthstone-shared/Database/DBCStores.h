@@ -767,9 +767,8 @@ struct SpellEntry
 	uint32 ThreatForSpell;
 	float cone_width; // love me or hate me, all "In a cone in front of the caster" spells don't necessarily mean "in front"
 	//Spell Coefficient
-	uint32 spell_coef_flags;			//!!! CUSTOM, store flags for spell coefficient calculations
-	float Dspell_coef_override;			//!!! CUSTOM, overrides any spell coefficient calculation and use this value in DD&DH
-	float OTspell_coef_override;		//!!! CUSTOM, overrides any spell coefficient calculation and use this value in HOT&DOT
+	bool isAOE;							//!!! CUSTOM, Obvious.
+	float spell_coef_override;			//!!! CUSTOM, overrides any spell coefficient calculation and use this value
 	float AP_coef_override;				//!!! CUSTOM, Additional coef from ap
 	float RAP_coef_override;			//!!! CUSTOM, Additional coef from RAP
 	bool self_cast_only;				//!!! CUSTOM, Obvious.

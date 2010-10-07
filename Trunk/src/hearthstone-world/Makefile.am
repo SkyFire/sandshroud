@@ -1,3 +1,5 @@
+SUBDIRS = Spellfixes
+
 INCLUDES += -I$(srcdir)/../hearthstone-shared
 
 bin_PROGRAMS = hearthstone-world
@@ -156,7 +158,8 @@ hearthstone_world_SOURCES = \
     Spell.h \
     SpellEffects.cpp \
     SpellHandler.cpp \
-    SpellFixes.cpp \
+    Spellfixes/SpellFixes.cpp \
+    Spellfixes/SingleSpellFixes.cpp \
     Stats.h \
     Stats.cpp \
     StdAfx.cpp \
