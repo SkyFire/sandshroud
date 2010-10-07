@@ -8838,6 +8838,7 @@ void Player::StopMirrorTimer(uint32 Type)
 void Player::EventTeleport(uint32 mapid, float x, float y, float z, float o = 0.0f, int32 phase)
 {
 	SafeTeleport(mapid, 0, LocationVector(x, y, z, o), phase);
+	sEventMgr.RemoveEvents(this,EVENT_PLAYER_TELEPORT);
 }
 
 void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)

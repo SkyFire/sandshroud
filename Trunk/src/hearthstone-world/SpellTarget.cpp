@@ -236,8 +236,8 @@ void Spell::FillTargetMap(uint32 i)
 {
 	uint32 cur;
 
-	uint32 TypeA = m_spellInfo->EffectImplicitTargetA[i];
-	uint32 TypeB = m_spellInfo->EffectImplicitTargetB[i];
+	uint32 TypeA = GetSpellProto()->EffectImplicitTargetA[i];
+	uint32 TypeB = GetSpellProto()->EffectImplicitTargetB[i];
 
 	// if all secondary targets are 0 then use only primary targets
 	if(!TypeB)
@@ -272,7 +272,7 @@ void Spell::FillTargetMap(uint32 i)
 	}
 
 	// j = 0
-	cur = m_spellInfo->EffectImplicitTargetA[i];
+	cur = GetSpellProto()->EffectImplicitTargetA[i];
 	if (cur < TOTAL_SPELL_TARGET)
 	{
 		(this->*SpellTargetHandler[cur])(i,0);	//0=A
@@ -286,7 +286,7 @@ void Spell::FillTargetMap(uint32 i)
 	}
 
 	// j = 1
-	cur = m_spellInfo->EffectImplicitTargetB[i];
+	cur = GetSpellProto()->EffectImplicitTargetB[i];
 	if (cur < TOTAL_SPELL_TARGET)
 	{
 		(this->*SpellTargetHandler[cur])(i,1);	//1=B
@@ -302,12 +302,12 @@ void Spell::FillTargetMap(uint32 i)
 
 void Spell::SpellTargetNULL(uint32 i, uint32 j)
 {
-	if(m_spellInfo->EffectImplicitTargetA[j] != 0 && m_spellInfo->EffectImplicitTargetB[j] != 0)
+	if(GetSpellProto()->EffectImplicitTargetA[j] != 0 && GetSpellProto()->EffectImplicitTargetB[j] != 0)
 	{
 		if(sLog.IsOutDevelopement())
-			printf("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u\n", m_spellInfo->EffectImplicitTargetA[j], m_spellInfo->EffectImplicitTargetB[j]);
+			printf("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u\n", GetSpellProto()->EffectImplicitTargetA[j], GetSpellProto()->EffectImplicitTargetB[j]);
 		else
-			OUT_DEBUG("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u", m_spellInfo->EffectImplicitTargetA[j], m_spellInfo->EffectImplicitTargetB[j]);
+			OUT_DEBUG("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u", GetSpellProto()->EffectImplicitTargetA[j], GetSpellProto()->EffectImplicitTargetB[j]);
 	}
 }
 
@@ -320,8 +320,8 @@ void Spell::SpellTargetDefault(uint32 i, uint32 j)
 			_AddTargetForced(m_targets.m_unitTarget, i);
 		else if(m_targets.m_itemTarget)
 			_AddTargetForced(m_targets.m_itemTarget, i);
-		else if( m_spellInfo->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT ||
-				 m_spellInfo->Effect[i] == SPELL_EFFECT_SUMMON_DEMON )
+		else if( GetSpellProto()->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT ||
+				 GetSpellProto()->Effect[i] == SPELL_EFFECT_SUMMON_DEMON )
 			_AddTargetForced(m_caster->GetGUID(), i);
 	}
 }
@@ -364,7 +364,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 	if(!pTarget)
 		return;
 
-	if(m_spellInfo->TargetCreatureType && pTarget->GetTypeId()==TYPEID_UNIT)
+	if(GetSpellProto()->TargetCreatureType && pTarget->GetTypeId()==TYPEID_UNIT)
 	{
 		Creature* cr = TO_CREATURE( pTarget );
 
@@ -372,7 +372,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 			return;
 
 		if( cr->GetCreatureInfo() )
-			if(!(1<<(cr->GetCreatureInfo()->Type-1) & m_spellInfo->TargetCreatureType))
+			if(!(1<<(cr->GetCreatureInfo()->Type-1) & GetSpellProto()->TargetCreatureType))
 				return;
 	}
 
@@ -389,7 +389,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 	// magnet!!!!!
 	if( pTarget->IsPlayer() && TO_PLAYER(pTarget)->m_magnetAura != NULL && m_magnetTarget == NULL )
 	{
-		if(!m_spellInfo->is_melee_spell && GetType() == SPELL_DMG_TYPE_MAGIC )
+		if(!GetSpellProto()->is_melee_spell && GetType() == SPELL_DMG_TYPE_MAGIC )
 		{
 			// redirect it to the magnet
 			m_magnetTarget = TO_PLAYER(pTarget)->m_magnetAura->GetUnitCaster();
@@ -408,10 +408,10 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 
 	_AddTarget(pTarget, i);
 
-	if(m_spellInfo->EffectChainTarget[i])
+	if(GetSpellProto()->EffectChainTarget[i])
 	{
-		uint32 jumps=m_spellInfo->EffectChainTarget[i]-1;
-		float range=GetMaxRange(dbcSpellRange.LookupEntry(m_spellInfo->rangeIndex));//this is probably wrong
+		uint32 jumps=GetSpellProto()->EffectChainTarget[i]-1;
+		float range=GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));//this is probably wrong
 		range*=range;
 		unordered_set<Object* >::iterator itr;
 		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
@@ -451,12 +451,12 @@ void Spell::SpellTargetAreaOfEffect(uint32 i, uint32 j)
 /// Spell Target Handling for type 18: Land under caster
 void Spell::SpellTargetLandUnderCaster(uint32 i, uint32 j) /// I don't think this is the correct name for this one
 {
-	if(	m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_DEMON &&
-		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_WILD &&
-		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT1 &&
-		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT2 &&
-		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT3 &&
-		m_spellInfo->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT4 )
+	if(	GetSpellProto()->Effect[i] != SPELL_EFFECT_SUMMON_DEMON &&
+		GetSpellProto()->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_WILD &&
+		GetSpellProto()->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT1 &&
+		GetSpellProto()->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT2 &&
+		GetSpellProto()->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT3 &&
+		GetSpellProto()->Effect[i] != SPELL_EFFECT_SUMMON_OBJECT_SLOT4 )
 		FillAllTargetsInArea(i, m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), GetRadius(i));
 	else
 		_AddTargetForced(m_caster->GetGUID(), i);
@@ -511,7 +511,7 @@ void Spell::SpellTargetSingleTargetFriend(uint32 i, uint32 j)
 	if(!Target)
 		return;
 
-	float r= GetMaxRange(dbcSpellRange.LookupEntry(m_spellInfo->rangeIndex));
+	float r= GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
 	if(IsInrange (m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),Target, r*r))
 		_AddTargetForced(Target->GetGUID(), i);
 }
@@ -536,7 +536,7 @@ void Spell::SpellTargetInFrontOfCaster(uint32 i, uint32 j)
 {
 	unordered_set< Object* >::iterator itr,itr2;
 
-	if( m_spellInfo->cone_width == 0.0f )
+	if( GetSpellProto()->cone_width == 0.0f )
 	{
 		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd();)
 		{
@@ -569,7 +569,7 @@ void Spell::SpellTargetInFrontOfCaster(uint32 i, uint32 j)
 				continue;
 
 			//is Creature in range
-			if(m_caster->isInArc(*itr2, m_spellInfo->cone_width))
+			if(m_caster->isInArc(*itr2, GetSpellProto()->cone_width))
 			{
 				if(m_caster->isInFront((*itr2)))
 				{
@@ -636,7 +636,7 @@ void Spell::SpellTargetTypeTAOE(uint32 i, uint32 j)
 		return;
 
 	// tranquility
-	if( u_caster != NULL && m_spellInfo->NameHash == SPELL_HASH_TRANQUILITY )
+	if( u_caster != NULL && GetSpellProto()->NameHash == SPELL_HASH_TRANQUILITY )
 		_AddTargetForced(u_caster->GetGUID(), i);
 	else
 	{
@@ -664,7 +664,7 @@ void Spell::SpellTargetAllyBasedAreaEffect(uint32 i, uint32 j)
 /// Spell Target Handling for type 31: related to scripted effects
 void Spell::SpellTargetScriptedEffects(uint32 i, uint32 j)
 {
-	if( m_spellInfo->NameHash == SPELL_HASH_WILD_GROWTH || m_spellInfo->NameHash == SPELL_HASH_CIRCLE_OF_HEALING )
+	if( GetSpellProto()->NameHash == SPELL_HASH_WILD_GROWTH || GetSpellProto()->NameHash == SPELL_HASH_CIRCLE_OF_HEALING )
 	{
 		if( p_caster == NULL || !p_caster->IsInWorld() )
 			return;
@@ -758,7 +758,7 @@ void Spell::SpellTargetSingleTargetPartyMember(uint32 i, uint32 j)
 	Unit* Target = m_caster->GetMapMgr()->GetPlayer((uint32)m_targets.m_unitTarget);
 	if(!Target)
 		return;
-	float r=GetMaxRange(dbcSpellRange.LookupEntry(m_spellInfo->rangeIndex));
+	float r=GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
 	if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),Target,r*r))
 		_AddTargetForced(m_targets.m_unitTarget, i);
 }
@@ -801,7 +801,7 @@ void Spell::SpellTargetPartyMember(uint32 i, uint32 j)
 void Spell::SpellTargetDummyTarget(uint32 i, uint32 j)
 {
 	//TargetsList *tmpMap=&m_targetUnits[i];
-	if( m_spellInfo->Id == 51699 )
+	if( GetSpellProto()->Id == 51699 )
 	{
 		if( p_caster )
 		{
@@ -813,7 +813,7 @@ void Spell::SpellTargetDummyTarget(uint32 i, uint32 j)
 			}
 		}
 	}
-	else if( m_spellInfo->Id == 12938 )
+	else if( GetSpellProto()->Id == 12938 )
 	{
 		//FIXME:this ll be immortal targets
 		FillAllTargetsInArea(i,m_targets.m_destX,m_targets.m_destY,m_targets.m_destZ,GetRadius(i));
@@ -850,7 +850,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 	Unit* firstTarget;
 
 	bool PartyOnly = false;
-	float range = GetMaxRange(dbcSpellRange.LookupEntry(m_spellInfo->rangeIndex));//this is probably wrong,
+	float range = GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));//this is probably wrong,
 	//this is cast distance, not searching distance
 	range *= range;
 
@@ -868,10 +868,10 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 			return;
 	}
 
-	uint32 jumps=m_spellInfo->EffectChainTarget[i];
-	if(m_spellInfo->SpellGroupType && u_caster)
+	uint32 jumps=GetSpellProto()->EffectChainTarget[i];
+	if(GetSpellProto()->SpellGroupType && u_caster)
 	{
-		SM_FIValue(u_caster->SM[SMT_ADDITIONAL_TARGET][0],(int32*)&jumps,m_spellInfo->SpellGroupType);
+		SM_FIValue(u_caster->SM[SMT_ADDITIONAL_TARGET][0],(int32*)&jumps,GetSpellProto()->SpellGroupType);
 	}
 
 	_AddTargetForced(firstTarget->GetGUID(), i);
@@ -1003,7 +1003,7 @@ void Spell::SpellTargetTargetPartyMember(uint32 i, uint32 j)
 	if(!Target)
 		return;
 
-	float r=GetMaxRange(dbcSpellRange.LookupEntry(m_spellInfo->rangeIndex));
+	float r=GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
 	if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),Target,r*r))
 		_AddTargetForced(Target->GetGUID(), i);
 }

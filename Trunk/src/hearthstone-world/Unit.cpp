@@ -5721,9 +5721,9 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 					case 34754:
 						{
 							if( m_currentSpell!=NULL &&
-									!(m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_FLASH_HEAL ||
-									m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_BINDING_HEAL ||
-									m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_GREATER_HEAL))
+									!(m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_FLASH_HEAL ||
+									m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_BINDING_HEAL ||
+									m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_GREATER_HEAL))
 								continue;
 							SpellEntry *spi = NULL;
 							spi = dbcSpell.LookupEntry( skip );
@@ -5734,8 +5734,8 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 					case 57529:
 					case 57531:
 						{
-							if( m_currentSpell != NULL && !(m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_PRESENCE_OF_MIND ||
-													m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_CLEARCASTING ))
+							if( m_currentSpell != NULL && !(m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_PRESENCE_OF_MIND ||
+													m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_CLEARCASTING ))
 												continue;
 
 							SpellEntry *spi = NULL;
@@ -5748,7 +5748,7 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 					case 53489:
 					case 59578:
 						{
-							if( m_currentSpell != NULL && m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_FLASH_OF_LIGHT )
+							if( m_currentSpell != NULL && m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_FLASH_OF_LIGHT )
 								continue;
 							SpellEntry *spi = NULL;
 							spi = dbcSpell.LookupEntry( skip );
@@ -5759,8 +5759,8 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 					case 53672:
 					case 54149:
 						{
-							if( m_currentSpell != NULL && !(m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_FLASH_OF_LIGHT ||
-												m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_HOLY_LIGHT))
+							if( m_currentSpell != NULL && !(m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_FLASH_OF_LIGHT ||
+												m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_HOLY_LIGHT))
 								continue;
 							SpellEntry *spi = NULL;
 							spi = dbcSpell.LookupEntry( skip );
@@ -5770,7 +5770,7 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 					//Mage - Firestarter
 					case 54741:
 						{
-							if( m_currentSpell != NULL && m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_FLAMESTRIKE )
+							if( m_currentSpell != NULL && m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_FLAMESTRIKE )
 								continue;
 							SpellEntry *spi = NULL;
 							spi = dbcSpell.LookupEntry( skip );
@@ -5795,7 +5795,7 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 					// Glyph of Revenge Proc
 					case 58363:
 						{
-							if( m_currentSpell != NULL && m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_HEROIC_STRIKE )
+							if( m_currentSpell != NULL && m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_HEROIC_STRIKE )
 								continue;
 							SpellEntry *spi = NULL;
 							spi = dbcSpell.LookupEntry( skip );
@@ -5831,7 +5831,7 @@ void Unit::RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip)
 						}break;
 					case 31834: // Light's Grace
 						{
-							if( m_currentSpell != NULL && m_currentSpell->m_spellInfo->NameHash == SPELL_HASH_HOLY_LIGHT )
+							if( m_currentSpell != NULL && m_currentSpell->GetSpellProto()->NameHash == SPELL_HASH_HOLY_LIGHT )
 								continue;
 
 							SpellEntry *spi = NULL;

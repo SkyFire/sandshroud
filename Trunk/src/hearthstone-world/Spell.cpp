@@ -301,9 +301,9 @@ Spell::~Spell()
 bool Spell::IsStealthSpell()
 {
 	//check if aura name is some stealth aura
-	if( m_spellInfo->EffectApplyAuraName[0] == 16 ||
-		m_spellInfo->EffectApplyAuraName[1] == 16 ||
-		m_spellInfo->EffectApplyAuraName[2] == 16 )
+	if( GetSpellProto()->EffectApplyAuraName[0] == 16 ||
+		GetSpellProto()->EffectApplyAuraName[1] == 16 ||
+		GetSpellProto()->EffectApplyAuraName[2] == 16 )
 		return true;
 	return false;
 }
@@ -312,9 +312,9 @@ bool Spell::IsStealthSpell()
 bool Spell::IsInvisibilitySpell()
 {
 	//check if aura name is some invisibility aura
-	if( m_spellInfo->EffectApplyAuraName[0] == 18 ||
-		m_spellInfo->EffectApplyAuraName[1] == 18 ||
-		m_spellInfo->EffectApplyAuraName[2] == 18 )
+	if( GetSpellProto()->EffectApplyAuraName[0] == 18 ||
+		GetSpellProto()->EffectApplyAuraName[1] == 18 ||
+		GetSpellProto()->EffectApplyAuraName[2] == 18 )
 		return true;
 	return false;
 }
@@ -338,13 +338,13 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 			continue;
 
 		//TO_UNIT(*itr)->InStealth()
-		if( m_spellInfo->TargetCreatureType)
+		if( GetSpellProto()->TargetCreatureType)
 		{
 			if((*itr)->GetTypeId() != TYPEID_UNIT)
 				continue;
 
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-			if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
+			if(!inf || !(1<<(inf->Type-1) & GetSpellProto()->TargetCreatureType))
 				continue;
 		}
 
@@ -354,7 +354,7 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -368,7 +368,7 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -380,16 +380,16 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 				{
 					if((*itr)->IsUnit())
 					{	//trap, check not to attack owner and friendly
-						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 							_AddTarget((TO_UNIT(*itr)), i);
 					}
 				}
 				else
 					_AddTargetForced((*itr)->GetGUID(), i);
 			}
-			if( m_spellInfo->MaxTargets)
+			if( GetSpellProto()->MaxTargets)
 			{
-				if( m_hitTargetCount >= m_spellInfo->MaxTargets )
+				if( m_hitTargetCount >= GetSpellProto()->MaxTargets )
 					return;
 			}
 		}
@@ -419,13 +419,13 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 			continue;
 
 		//TO_UNIT(*itr)->InStealth()
-		if( m_spellInfo->TargetCreatureType)
+		if( GetSpellProto()->TargetCreatureType)
 		{
 			if((*itr)->GetTypeId() != TYPEID_UNIT)
 				continue;
 
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-			if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
+			if(!inf || !(1<<(inf->Type-1) & GetSpellProto()->TargetCreatureType))
 				continue;
 		}
 
@@ -435,7 +435,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( m_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( m_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -449,7 +449,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 			{
 				if( (*itr)->IsUnit() )
 				{
-					if( isAttackable( u_caster, TO_UNIT( *itr ),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( u_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
 						_AddTarget((TO_UNIT(*itr)), i);
 					}
@@ -461,7 +461,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				{
 					if((*itr)->IsUnit())
 					{	//trap, check not to attack owner and friendly
-						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 							_AddTarget((TO_UNIT(*itr)), i);
 					}
 				}
@@ -469,9 +469,9 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 					_AddTargetForced((*itr)->GetGUID(), i);
 			}
 
-			if( m_spellInfo->MaxTargets)
+			if( GetSpellProto()->MaxTargets)
 			{
-				if( m_hitTargetCount >= m_spellInfo->MaxTargets )
+				if( m_hitTargetCount >= GetSpellProto()->MaxTargets )
 					return;
 			}
 		}
@@ -492,13 +492,13 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 		if((*itr)->PhasedCanInteract(m_caster) == false)
 			continue;
 
-		if( m_spellInfo->TargetCreatureType )
+		if( GetSpellProto()->TargetCreatureType )
 		{
 			if( (*itr)->IsCreature() == false )
 				continue;
 
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-			if( !inf || !( 1 << (inf->Type-1) & m_spellInfo->TargetCreatureType ) )
+			if( !inf || !( 1 << (inf->Type-1) & GetSpellProto()->TargetCreatureType ) )
 				continue;
 		}
 
@@ -506,7 +506,7 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 		{
 			if( u_caster != NULL )
 			{
-				if( isAttackable( u_caster, (*itr), !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
+				if( isAttackable( u_caster, (*itr), !(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
 				{
 					if((*itr)->IsUnit())
 						_AddTarget((TO_UNIT(*itr)), i);
@@ -521,14 +521,14 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 				if( g_caster != NULL && g_caster->GetUInt32Value( OBJECT_FIELD_CREATED_BY ) && g_caster->m_summoner != NULL )
 				{
 					//trap, check not to attack owner and friendly
-					if( isAttackable( g_caster->m_summoner, TO_UNIT(*itr), !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
+					if( isAttackable( g_caster->m_summoner, TO_UNIT(*itr), !(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED) ) )
 						_AddTarget((TO_UNIT(*itr)), i);
 				}
 				else
 					_AddTargetForced((*itr)->GetGUID(), i);
 			}
-			if( m_spellInfo->MaxTargets )
-				if( m_hitTargetCount >= m_spellInfo->MaxTargets )
+			if( GetSpellProto()->MaxTargets )
+				if( m_hitTargetCount >= GetSpellProto()->MaxTargets )
 					return;
 		}
 	}
@@ -541,11 +541,11 @@ uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
 		r = prange;
 	else
 	{
-		r = m_spellInfo->base_range_or_radius_sqr;
-		if( m_spellInfo->SpellGroupType && u_caster)
+		r = GetSpellProto()->base_range_or_radius_sqr;
+		if( GetSpellProto()->SpellGroupType && u_caster)
 		{
-			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&r,m_spellInfo->SpellGroupType);
-			SM_PFValue(u_caster->SM[SMT_RADIUS][1],&r,m_spellInfo->SpellGroupType);
+			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&r,GetSpellProto()->SpellGroupType);
+			SM_PFValue(u_caster->SM[SMT_RADIUS][1],&r,GetSpellProto()->SpellGroupType);
 		}
 	}
 	float srcx = m_caster->GetPositionX(), srcy = m_caster->GetPositionY(), srcz = m_caster->GetPositionZ();
@@ -554,19 +554,19 @@ uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
 		if( !( (*itr)->IsUnit() ) || !TO_UNIT(*itr)->isAlive() || !(*itr)->PhasedCanInteract(m_caster))
 			continue;
 
-		if( m_spellInfo->TargetCreatureType )
+		if( GetSpellProto()->TargetCreatureType )
 		{
 			if( (*itr)->GetTypeId() != TYPEID_UNIT )
 				continue;
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-			if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
+			if(!inf || !(1<<(inf->Type-1) & GetSpellProto()->TargetCreatureType))
 				continue;
 		}
 		if(IsInrange(srcx,srcy,srcz,(*itr),r))
 		{
 			if( u_caster != NULL || (g_caster && g_caster->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID) == GAMEOBJECT_TYPE_TRAP) )
 			{
-				if(isAttackable(u_caster, TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && _DidHit(TO_UNIT(*itr))==SPELL_DID_HIT_SUCCESS)
+				if(isAttackable(u_caster, TO_UNIT(*itr),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && _DidHit(TO_UNIT(*itr))==SPELL_DID_HIT_SUCCESS)
 					return (*itr)->GetGUID(); 
 			}
 			else //cast from GO
@@ -574,7 +574,7 @@ uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
 				if(g_caster && g_caster->GetUInt32Value(OBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
 				{
 					//trap, check not to attack owner and friendly
-					if( isAttackable( g_caster->m_summoner, TO_UNIT(*itr),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
+					if( isAttackable( g_caster->m_summoner, TO_UNIT(*itr),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 						return (*itr)->GetGUID();
 				}
 			}
@@ -590,11 +590,11 @@ uint64 Spell::GetSinglePossibleFriend(uint32 i,float prange)
 		r = prange;
 	else
 	{
-		r = m_spellInfo->base_range_or_radius_sqr;
-		if( m_spellInfo->SpellGroupType && u_caster)
+		r = GetSpellProto()->base_range_or_radius_sqr;
+		if( GetSpellProto()->SpellGroupType && u_caster)
 		{
-			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&r,m_spellInfo->SpellGroupType);
-			SM_PFValue(u_caster->SM[SMT_RADIUS][1],&r,m_spellInfo->SpellGroupType);
+			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&r,GetSpellProto()->SpellGroupType);
+			SM_PFValue(u_caster->SM[SMT_RADIUS][1],&r,GetSpellProto()->SpellGroupType);
 		}
 	}
 	float srcx=m_caster->GetPositionX(),srcy=m_caster->GetPositionY(),srcz=m_caster->GetPositionZ();
@@ -602,12 +602,12 @@ uint64 Spell::GetSinglePossibleFriend(uint32 i,float prange)
 	{
 		if( !( (*itr)->IsUnit() ) || !TO_UNIT(*itr)->isAlive() )
 			continue;
-		if( m_spellInfo->TargetCreatureType )
+		if( GetSpellProto()->TargetCreatureType )
 		{
 			if((*itr)->GetTypeId()!= TYPEID_UNIT)
 				continue;
 			CreatureInfo *inf = TO_CREATURE((*itr))->GetCreatureInfo();
-				if(!inf || !(1<<(inf->Type-1) & m_spellInfo->TargetCreatureType))
+				if(!inf || !(1<<(inf->Type-1) & GetSpellProto()->TargetCreatureType))
 					continue;
 		}
 		if(IsInrange(srcx,srcy,srcz,(*itr),r))
@@ -666,13 +666,13 @@ uint8 Spell::_DidHit(const Unit* target)
 	/************************************************************************/
 	/* Check if the target is immune to this spell school				   */
 	/************************************************************************/
-	if(u_victim->SchoolImmunityList[m_spellInfo->School])
+	if(u_victim->SchoolImmunityList[GetSpellProto()->School])
 		return SPELL_DID_HIT_IMMUNE;
 
 	/*************************************************************************/
 	/* Check if the target is immune to this mechanic						*/
 	/*************************************************************************/
-	if(u_victim->MechanicsDispels[m_spellInfo->MechanicsType])
+	if(u_victim->MechanicsDispels[GetSpellProto()->MechanicsType])
 	{
 		return SPELL_DID_HIT_IMMUNE; // Moved here from Spell::CanCast
 	}
@@ -680,14 +680,14 @@ uint8 Spell::_DidHit(const Unit* target)
 	/************************************************************************/
 	/* Check if the target has a % resistance to this mechanic			  */
 	/************************************************************************/
-	if( m_spellInfo->MechanicsType < MECHANIC_COUNT)
+	if( GetSpellProto()->MechanicsType < MECHANIC_COUNT)
 	{
 		float res;
 		if(p_victim)
 			res = p_victim->MechanicsResistancesPCT[Spell::GetMechanic(m_spellInfo)];
 		else
 			res = u_victim->MechanicsResistancesPCT[Spell::GetMechanic(m_spellInfo)];
-		if( !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_NOT_RESISTABLE) && Rand(res))
+		if( !(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_NOT_RESISTABLE) && Rand(res))
 			return SPELL_DID_HIT_RESIST;
 	}
 
@@ -695,14 +695,14 @@ uint8 Spell::_DidHit(const Unit* target)
 	/* Check if the spell is a melee attack and if it was missed/parried	*/
 	/************************************************************************/
 	uint32 melee_test_result;
-	if( m_spellInfo->is_melee_spell || m_spellInfo->is_ranged_spell )
+	if( GetSpellProto()->is_melee_spell || GetSpellProto()->is_ranged_spell )
 	{
 		uint32 _type;
 		if( GetType() == SPELL_DMG_TYPE_RANGED )
 			_type = RANGED;
 		else
 		{
-			if (m_spellInfo->Flags4 & FLAGS4_OFFHAND)
+			if (GetSpellProto()->Flags4 & FLAGS4_OFFHAND)
 				_type =  OFFHAND;
 			else
 				_type = MELEE;
@@ -716,7 +716,7 @@ uint8 Spell::_DidHit(const Unit* target)
 	/************************************************************************/
 	/* Check if the spell is resisted.									  */
 	/************************************************************************/
-	if( m_spellInfo->School==0  || m_spellInfo->is_ranged_spell ) // all ranged spells are physical too...
+	if( GetSpellProto()->School==0  || GetSpellProto()->is_ranged_spell ) // all ranged spells are physical too...
 		return SPELL_DID_HIT_SUCCESS;
 
 	bool pvp =(p_caster && p_victim);
@@ -743,8 +743,8 @@ uint8 Spell::_DidHit(const Unit* target)
 				resistchance = baseresist[2] + (((float)lvldiff-2.0f)*11.0f);
 		}
 	}
-	if (m_spellInfo->DispelType < NUM_DISPELS)
-		resistchance += u_victim->DispelResistancesPCT[m_spellInfo->DispelType];
+	if (GetSpellProto()->DispelType < NUM_DISPELS)
+		resistchance += u_victim->DispelResistancesPCT[GetSpellProto()->DispelType];
 	//rating bonus
 	if( p_caster != NULL )
 	{
@@ -755,36 +755,36 @@ uint8 Spell::_DidHit(const Unit* target)
 	if(p_victim)
 		resistchance += p_victim->m_resist_hit[2];
 
-	if( m_spellInfo->c_is_flags & SPELL_FLAG_IS_DISPEL_SPELL && m_spellInfo->SpellGroupType && u_caster)
+	if( GetSpellProto()->c_is_flags & SPELL_FLAG_IS_DISPEL_SPELL && GetSpellProto()->SpellGroupType && u_caster)
 	{
-		SM_FFValue(u_caster->SM[SMT_RESIST_DISPEL][0],&resistchance,m_spellInfo->SpellGroupType);
-		SM_PFValue(u_caster->SM[SMT_RESIST_DISPEL][1],&resistchance,m_spellInfo->SpellGroupType);
+		SM_FFValue(u_caster->SM[SMT_RESIST_DISPEL][0],&resistchance,GetSpellProto()->SpellGroupType);
+		SM_PFValue(u_caster->SM[SMT_RESIST_DISPEL][1],&resistchance,GetSpellProto()->SpellGroupType);
 	}
 
-	if(m_spellInfo->SpellGroupType && u_caster)
+	if(GetSpellProto()->SpellGroupType && u_caster)
 	{
 		float hitchance=0;
-		SM_FFValue(u_caster->SM[SMT_HITCHANCE][0],&hitchance,m_spellInfo->SpellGroupType);
-		SM_PFValue(u_caster->SM[SMT_HITCHANCE][1],&hitchance,m_spellInfo->SpellGroupType);
+		SM_FFValue(u_caster->SM[SMT_HITCHANCE][0],&hitchance,GetSpellProto()->SpellGroupType);
+		SM_PFValue(u_caster->SM[SMT_HITCHANCE][1],&hitchance,GetSpellProto()->SpellGroupType);
 		resistchance -= hitchance;
 	}
 
 	if(IsBinary(m_spellInfo))
 	{ // need to apply resistance mitigation
-		float mitigation = 1.0f - float (u_caster->GetResistanceReducion(u_victim, m_spellInfo->School, 0.0f));
+		float mitigation = 1.0f - float (u_caster->GetResistanceReducion(u_victim, GetSpellProto()->School, 0.0f));
 		resistchance = 100 - (100 - resistchance) * mitigation; // meaning hitchance * mitigation
 	}
 
 	if(resistchance < 1.0f)
 		resistchance = 1.0f;
 
-	if (m_spellInfo->Attributes & ATTRIBUTES_IGNORE_INVULNERABILITY)
+	if (GetSpellProto()->Attributes & ATTRIBUTES_IGNORE_INVULNERABILITY)
 		resistchance = 0.0f;
 
 	if(resistchance > 99.0f)
 		resistchance = 99.0f;
 
-	if( m_spellInfo->c_is_flags & SPELL_FLAG_IS_NOT_RESISTABLE )
+	if( GetSpellProto()->c_is_flags & SPELL_FLAG_IS_NOT_RESISTABLE )
 		resistchance = 0.0f;
 
 	uint32 res = (Rand(resistchance) ? SPELL_DID_HIT_RESIST : SPELL_DID_HIT_SUCCESS);
@@ -801,20 +801,20 @@ uint8 Spell::_DidHit(const Unit* target)
 //!!!disabled parts that were not tested !!
 void Spell::GenerateTargets(SpellCastTargets *store_buff)
 {
-	float r = m_spellInfo->base_range_or_radius_sqr;
-	if( m_spellInfo->SpellGroupType && u_caster)
+	float r = GetSpellProto()->base_range_or_radius_sqr;
+	if( GetSpellProto()->SpellGroupType && u_caster)
 	{
-		SM_FFValue(u_caster->SM[SMT_RADIUS][0],&r,m_spellInfo->SpellGroupType);
-		SM_PFValue(u_caster->SM[SMT_RADIUS][1],&r,m_spellInfo->SpellGroupType);
+		SM_FFValue(u_caster->SM[SMT_RADIUS][0],&r,GetSpellProto()->SpellGroupType);
+		SM_PFValue(u_caster->SM[SMT_RADIUS][1],&r,GetSpellProto()->SpellGroupType);
 	}
 	uint32 cur;
 	for(uint32 i=0;i<3;++i)
 		for(uint32 j=0;j<2;j++)
 		{
 			if(j==0)
-				cur = m_spellInfo->EffectImplicitTargetA[i];
+				cur = GetSpellProto()->EffectImplicitTargetA[i];
 			else // if(j==1)
-				cur = m_spellInfo->EffectImplicitTargetB[i];
+				cur = GetSpellProto()->EffectImplicitTargetB[i];
 			switch(cur)
 			{
 				case EFF_TARGET_NONE:
@@ -850,13 +850,13 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 						if( p_caster != NULL )
 						{
 							Unit* selected = p_caster->GetMapMgr()->GetUnit(p_caster->GetSelection());
-							if(isAttackable(p_caster,selected,!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && selected != p_caster )
+							if(isAttackable(p_caster,selected,!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) && selected != p_caster )
 								store_buff->m_unitTarget = p_caster->GetSelection();
 						}
 						else if( u_caster != NULL )
 						{
 							if(	u_caster->GetAIInterface()->GetNextTarget() &&
-								isAttackable(u_caster,u_caster->GetAIInterface()->GetNextTarget(),!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) &&
+								isAttackable(u_caster,u_caster->GetAIInterface()->GetNextTarget(),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)) &&
 								u_caster->GetDistanceSq(u_caster->GetAIInterface()->GetNextTarget()) <= r)
 							{
 								store_buff->m_unitTarget = u_caster->GetAIInterface()->GetNextTarget()->GetGUID();
@@ -871,7 +871,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 									if( /*m_caster->GetMapMgr()->GetUnit(itr->first->GetGUID()) &&*/ itr->first->GetMapMgr() == m_caster->GetMapMgr() &&
 										itr->first->isAlive() &&
 										m_caster->GetDistanceSq(itr->first) <= r &&
-										isAttackable(u_caster,itr->first,!(m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED))
+										isAttackable(u_caster,itr->first,!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED))
 										)
 									{
 										store_buff->m_unitTarget=itr->first->GetGUID();
@@ -1032,7 +1032,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 					{
 						if( u_caster != NULL )
 						{
-							SummonPropertiesEntry* summonprop = dbcSummonProps.LookupEntryForced( m_spellInfo->EffectMiscValueB[i] );
+							SummonPropertiesEntry* summonprop = dbcSummonProps.LookupEntryForced( GetSpellProto()->EffectMiscValueB[i] );
 							if(!summonprop)
 								return;
 							uint32 slot = summonprop->slot;
@@ -1062,7 +1062,7 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 {
 	uint8 ccr;
 	chaindamage = 0;
-	if( p_caster && m_spellInfo->Id == 51514 || m_spellInfo->NameHash == SPELL_HASH_ARCANE_SHOT || m_spellInfo->NameHash == SPELL_HASH_MIND_FLAY )
+	if( p_caster && GetSpellProto()->Id == 51514 || GetSpellProto()->NameHash == SPELL_HASH_ARCANE_SHOT || GetSpellProto()->NameHash == SPELL_HASH_MIND_FLAY )
 	{
 		targets->m_unitTarget = 0;
 		GenerateTargets( targets );
@@ -1076,12 +1076,12 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		m_castTime = 0;
 	else
 	{
-		m_castTime = GetCastTime( dbcSpellCastTime.LookupEntry( m_spellInfo->CastingTimeIndex ) );
+		m_castTime = GetCastTime( dbcSpellCastTime.LookupEntry( GetSpellProto()->CastingTimeIndex ) );
 
-		if( m_castTime && m_spellInfo->SpellGroupType && u_caster != NULL )
+		if( m_castTime && GetSpellProto()->SpellGroupType && u_caster != NULL )
 		{
-			SM_FIValue( u_caster->SM[SMT_CAST_TIME][0], (int32*)&m_castTime, m_spellInfo->SpellGroupType );
-			SM_PIValue( u_caster->SM[SMT_CAST_TIME][1], (int32*)&m_castTime, m_spellInfo->SpellGroupType );
+			SM_FIValue( u_caster->SM[SMT_CAST_TIME][0], (int32*)&m_castTime, GetSpellProto()->SpellGroupType );
+			SM_PIValue( u_caster->SM[SMT_CAST_TIME][1], (int32*)&m_castTime, GetSpellProto()->SpellGroupType );
 		}
 
 		// handle MOD_CAST_TIME
@@ -1115,7 +1115,7 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 	m_timer = m_castTime;
 
 	if( !m_triggeredSpell && p_caster != NULL && p_caster->CooldownCheat )
-		p_caster->ClearCooldownForSpell( m_spellInfo->Id );
+		p_caster->ClearCooldownForSpell( GetSpellProto()->Id );
 
 	if( m_triggeredSpell )
 		cancastresult = SPELL_CANCAST_OK;
@@ -1180,14 +1180,14 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		}
 
 		// aura state removal
-		if( m_spellInfo->CasterAuraState && m_spellInfo->CasterAuraState != AURASTATE_FLAG_JUDGEMENT )
-			u_caster->RemoveFlag( UNIT_FIELD_AURASTATE, m_spellInfo->CasterAuraState );
+		if( GetSpellProto()->CasterAuraState && GetSpellProto()->CasterAuraState != AURASTATE_FLAG_JUDGEMENT )
+			u_caster->RemoveFlag( UNIT_FIELD_AURASTATE, GetSpellProto()->CasterAuraState );
 	}
 
 	m_spellState = SPELL_STATE_PREPARING;
 
 	//instant cast(or triggered) and not channeling
-	if( u_caster != NULL && ( m_castTime > 0 || m_spellInfo->ChannelInterruptFlags ) && !m_triggeredSpell )
+	if( u_caster != NULL && ( m_castTime > 0 || GetSpellProto()->ChannelInterruptFlags ) && !m_triggeredSpell )
 	{
 		m_castPositionX = m_caster->GetPositionX();
 		m_castPositionY = m_caster->GetPositionY();
@@ -1208,7 +1208,7 @@ void Spell::cancel()
 	if(m_spellState == SPELL_STATE_CASTING)
 	{
 		if( u_caster != NULL )
-			u_caster->RemoveAura(m_spellInfo->Id);
+			u_caster->RemoveAura(GetSpellProto()->Id);
 
 		if(m_timer > 0 || m_Delayed)
 		{
@@ -1220,7 +1220,7 @@ void Spell::cancel()
 
 				if(pTarget)
 				{
-					pTarget->RemoveAura(m_spellInfo->Id, m_caster->GetGUID());
+					pTarget->RemoveAura(GetSpellProto()->Id, m_caster->GetGUID());
 				}
 				if(m_AreaAura)//remove of blizz and shit like this
 				{
@@ -1287,7 +1287,7 @@ void Spell::cast(bool check)
 		return;
 	}
 
-	DEBUG_LOG("Spell","Cast %u, Unit: %u", m_spellInfo->Id, m_caster->GetLowGUID());
+	DEBUG_LOG("Spell","Cast %u, Unit: %u", GetSpellProto()->Id, m_caster->GetLowGUID());
 
 	if(u_caster != NULL )
 		if(u_caster->CallOnCastSpell != NULL)
@@ -1302,11 +1302,11 @@ void Spell::cast(bool check)
 	{
 		if (p_caster && !m_triggeredSpell && p_caster->IsInWorld() && GET_TYPE_FROM_GUID(m_targets.m_unitTarget) == HIGHGUID_TYPE_CREATURE)
 		{
-			sQuestMgr.OnPlayerCast(p_caster,m_spellInfo->Id,m_targets.m_unitTarget);
+			sQuestMgr.OnPlayerCast(p_caster,GetSpellProto()->Id,m_targets.m_unitTarget);
 		}
 
 		// trigger on next attack
-		if( m_spellInfo->Attributes & ATTRIBUTE_ON_NEXT_ATTACK && !m_triggeredSpell )
+		if( GetSpellProto()->Attributes & ATTRIBUTE_ON_NEXT_ATTACK && !m_triggeredSpell )
 		{
 			// check power
 			if(!HasPower())
@@ -1320,12 +1320,12 @@ void Spell::cast(bool check)
 			// we're much better to remove this here, because otherwise spells that change powers etc,
 			// don't get applied.
 
-			u_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_CAST_SPELL, m_spellInfo->Id);
+			u_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_CAST_SPELL, GetSpellProto()->Id);
 
 			m_isCasting = false;
 			SendCastResult(cancastresult);
 			if( u_caster != NULL )
-				u_caster->SetOnMeleeSpell(m_spellInfo->Id, extra_cast_number);
+				u_caster->SetOnMeleeSpell(GetSpellProto()->Id, extra_cast_number);
 
 			finish();
 			return;
@@ -1344,7 +1344,7 @@ void Spell::cast(bool check)
 
 			for(uint32 i=0;i<3;++i)
 			{
-				if( m_spellInfo->Effect[i])
+				if( GetSpellProto()->Effect[i])
 					 FillTargetMap(i);
 			}
 
@@ -1365,7 +1365,7 @@ void Spell::cast(bool check)
 				}
 			}
 
-			if(p_caster && m_spellInfo->c_is_flags & SPELL_FLAG_ON_ONLY_ONE_TARGET &&
+			if(p_caster && GetSpellProto()->c_is_flags & SPELL_FLAG_ON_ONLY_ONE_TARGET &&
 			   m_targetList.size() == 1)
 			{
 				SpellTargetList::iterator itr = m_targetList.begin();
@@ -1380,7 +1380,7 @@ void Spell::cast(bool check)
 
 			if( u_caster )
 			{
-				if (u_caster->InStealth() && !(m_spellInfo->AttributesEx & ATTRIBUTESEX_NOT_BREAK_STEALTH) && !m_triggeredSpell)
+				if (u_caster->InStealth() && !(GetSpellProto()->AttributesEx & ATTRIBUTESEX_NOT_BREAK_STEALTH) && !m_triggeredSpell)
 					u_caster->RemoveStealth();
 
 			}
@@ -1388,7 +1388,7 @@ void Spell::cast(bool check)
 
 			if( p_caster != NULL )
 			{
-				if( m_spellInfo->NameHash == SPELL_HASH_SLAM)
+				if( GetSpellProto()->NameHash == SPELL_HASH_SLAM)
 				{
 					/* slam - reset attack timer */
 					p_caster->setAttackTimer( 0, true );
@@ -1398,7 +1398,7 @@ void Spell::cast(bool check)
 				// Arathi Basin opening spell, remove stealth, invisibility, etc.
 				// hacky but haven't found a better way that works
 				// Note: Same stuff but for picking flags is over AddAura
-				if (p_caster->m_bg && m_spellInfo->Id == 21651)
+				if (p_caster->m_bg && GetSpellProto()->Id == 21651)
 				{
 					p_caster->RemoveStealth();
 					p_caster->RemoveInvisibility();
@@ -1413,20 +1413,20 @@ void Spell::cast(bool check)
 			//******************** SHOOT SPELLS ***********************
 			//* Flags are now 1,4,19,22 (4718610) //0x480012
 
-			if(m_spellInfo->Flags4 & 0x8000 && (p_caster != NULL) && m_caster->IsInWorld())
+			if(GetSpellProto()->Flags4 & 0x8000 && (p_caster != NULL) && m_caster->IsInWorld())
 			{
 				/// Part of this function contains a hack fix
 				/// hack fix for shoot spells, should be some other resource for it
-				//p_caster->SendSpellCoolDown(m_spellInfo->Id, m_spellInfo->RecoveryTime ? m_spellInfo->RecoveryTime : 2300);
+				//p_caster->SendSpellCoolDown(GetSpellProto()->Id, GetSpellProto()->RecoveryTime ? GetSpellProto()->RecoveryTime : 2300);
 				WorldPacket data(SMSG_SPELL_COOLDOWN, 14);
-				data << m_spellInfo->Id;
+				data << GetSpellProto()->Id;
 				data << m_caster->GetNewGUID();
-				data << uint32(m_spellInfo->RecoveryTime ? m_spellInfo->RecoveryTime : 2300);
+				data << uint32(GetSpellProto()->RecoveryTime ? GetSpellProto()->RecoveryTime : 2300);
 				p_caster->GetSession()->SendPacket(&data);
 			}
 
 			// Note: [Warlock] Immolation Aura somehow has these flags, but it's not channeled
-			if( m_spellInfo->ChannelInterruptFlags != 0 && !m_triggeredSpell && m_spellInfo->Id != 50589 )
+			if( GetSpellProto()->ChannelInterruptFlags != 0 && !m_triggeredSpell && GetSpellProto()->Id != 50589 )
 			{
 				/*
 				Channeled spells are handled a little differently. The five second rule starts when the spell's channeling starts; i.e. when you pay the mana for it.
@@ -1456,7 +1456,7 @@ void Spell::cast(bool check)
 					{
 						if(p_caster->GetSelection())
 						{
-							if( m_spellInfo->Id == 60931 )
+							if( GetSpellProto()->Id == 60931 )
 								u_caster->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, p_caster->GetGUID());
 							else
 								u_caster->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, p_caster->GetSelection());
@@ -1492,12 +1492,12 @@ void Spell::cast(bool check)
 					sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, m_missileTravelTime, 1, 0);
 				else
 				{
-					if(m_spellInfo->speed <= 0)
+					if(GetSpellProto()->speed <= 0)
 						HandleDestLocationHit();
 					else
 					{
 						dist = m_caster->CalcDistance(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ);
-						float time = ((dist*1000.0f)/m_spellInfo->speed);
+						float time = ((dist*1000.0f)/GetSpellProto()->speed);
 						if(time <= 100)
 							HandleDestLocationHit();
 						else
@@ -1537,7 +1537,7 @@ void Spell::cast(bool check)
 			for( x = 0; x < 3; ++x )
 			{
 				//Don't handle effect now
-				if(m_spellInfo->Effect[x] == SPELL_EFFECT_SUMMON)
+				if(GetSpellProto()->Effect[x] == SPELL_EFFECT_SUMMON)
 				{
 					effects_done[x] = false;
 					continue;
@@ -1553,8 +1553,8 @@ void Spell::cast(bool check)
 			if( unitTarget != NULL )
 			{
 				// aura state
-				if( m_spellInfo->TargetAuraState )
-					unitTarget->RemoveFlag(UNIT_FIELD_AURASTATE, uint32(1) << (m_spellInfo->TargetAuraState - 1) );
+				if( GetSpellProto()->TargetAuraState )
+					unitTarget->RemoveFlag(UNIT_FIELD_AURASTATE, uint32(1) << (GetSpellProto()->TargetAuraState - 1) );
 
 				// proc!
 				if(!m_triggeredSpell)
@@ -1578,7 +1578,7 @@ void Spell::cast(bool check)
 		{
 			if(!effects_done[x])
 			{
-				switch (m_spellInfo->Effect[x])
+				switch (GetSpellProto()->Effect[x])
 				{
 					// Target ourself for these effects
 				case SPELL_EFFECT_TRIGGER_SPELL:
@@ -1598,8 +1598,8 @@ void Spell::cast(bool check)
 		}
 
 		/* don't call HandleAddAura unless we actually have auras... - Burlex*/
-		if( m_spellInfo->EffectApplyAuraName[0] != 0 || m_spellInfo->EffectApplyAuraName[1] != 0 ||
-		   m_spellInfo->EffectApplyAuraName[2] != 0)
+		if( GetSpellProto()->EffectApplyAuraName[0] != 0 || GetSpellProto()->EffectApplyAuraName[1] != 0 ||
+		   GetSpellProto()->EffectApplyAuraName[2] != 0)
 		{
 			itr = m_targetList.begin();
 			for(; itr != m_targetList.end(); itr++)
@@ -1617,10 +1617,10 @@ void Spell::cast(bool check)
 		// we're much better to remove this here, because otherwise spells that change powers etc,
 		// don't get applied.
 		if( u_caster && !m_projectileWait )
-			u_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_CAST_SPELL, m_spellInfo->Id);
+			u_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_CAST_SPELL, GetSpellProto()->Id);
 
 		//i don't think that's good idea
-		switch( m_spellInfo->NameHash )
+		switch( GetSpellProto()->NameHash )
 		{
 		case SPELL_HASH_FIREBALL:
 			{
@@ -1714,7 +1714,7 @@ void Spell::cast(bool check)
 			}break;
 		case SPELL_HASH_EARTHBIND:
 			{
-				if( m_spellInfo->Id == 3600 && u_caster && u_caster->IsCreature() && TO_CREATURE( u_caster )->IsTotem() )
+				if( GetSpellProto()->Id == 3600 && u_caster && u_caster->IsCreature() && TO_CREATURE( u_caster )->IsTotem() )
 				{
 					Player * p_totemOwner = NULL;
 					p_totemOwner = TO_PLAYER( TO_CREATURE(u_caster)->GetSummonOwner());
@@ -1735,10 +1735,10 @@ void Spell::cast(bool check)
 		}
 
 		if( p_caster && p_caster->HasDummyAura(SPELL_HASH_DEADLY_BREW) &&
-			m_spellInfo->poison_type && (
-			m_spellInfo->poison_type == POISON_TYPE_WOUND ||
-			m_spellInfo->poison_type == POISON_TYPE_INSTANT ||
-			m_spellInfo->poison_type == POISON_TYPE_MIND_NUMBING
+			GetSpellProto()->poison_type && (
+			GetSpellProto()->poison_type == POISON_TYPE_WOUND ||
+			GetSpellProto()->poison_type == POISON_TYPE_INSTANT ||
+			GetSpellProto()->poison_type == POISON_TYPE_MIND_NUMBING
 			))
 		{
 			Unit* u_target = p_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
@@ -1776,7 +1776,7 @@ void Spell::HandleDestLocationHit()
 	{
 		FillTargetMap(x);
 		// check if we actualy have a effect
-		if(m_spellInfo->Effect[x])
+		if(GetSpellProto()->Effect[x])
 		{
 			bool hit = false;
 			if (m_orderedObjects.size()>0)
@@ -1803,15 +1803,15 @@ void Spell::AddTime(uint32 type)
 {
 	if(u_caster && u_caster->IsPlayer())
 	{
-		if( m_spellInfo->InterruptFlags & CAST_INTERRUPT_ON_DAMAGE_TAKEN)
+		if( GetSpellProto()->InterruptFlags & CAST_INTERRUPT_ON_DAMAGE_TAKEN)
 		{
 			cancel();
 			return;
 		}
-		if( m_spellInfo->SpellGroupType && u_caster)
+		if( GetSpellProto()->SpellGroupType && u_caster)
 		{
 			float ch=0;
-			SM_FFValue(u_caster->SM[SMT_NONINTERRUPT][1],&ch,m_spellInfo->SpellGroupType);
+			SM_FFValue(u_caster->SM[SMT_NONINTERRUPT][1],&ch,GetSpellProto()->SpellGroupType);
 			if(Rand(ch))
 				return;
 		}
@@ -1853,7 +1853,7 @@ void Spell::AddTime(uint32 type)
 				p_caster->delayAttackTimer(delay);
 			}
 		}
-		else if( m_spellInfo->ChannelInterruptFlags != 48140)
+		else if( GetSpellProto()->ChannelInterruptFlags != 48140)
 		{
 			int32 delay = GetDuration()/4;
 			m_timer-=delay;
@@ -1890,7 +1890,7 @@ void Spell::update(uint32 difftime)
 	{
 		if( u_caster != NULL )
 		{
-			if(u_caster->HasNoInterrupt() == 0 && m_spellInfo->EffectMechanic[1] != 14)
+			if(u_caster->HasNoInterrupt() == 0 && GetSpellProto()->EffectMechanic[1] != 14)
 			{
 				cancel();
 				return;
@@ -1955,7 +1955,7 @@ void Spell::finish()
 	{
 		u_caster->m_canMove = true;
 		// mana		   channeled													 power type is mana
-		if(m_usesMana && (m_spellInfo->ChannelInterruptFlags == 0 && !m_triggeredSpell) && u_caster->GetPowerType()==POWER_TYPE_MANA)
+		if(m_usesMana && (GetSpellProto()->ChannelInterruptFlags == 0 && !m_triggeredSpell) && u_caster->GetPowerType()==POWER_TYPE_MANA)
 		{
 			/*
 			Five Second Rule
@@ -1978,7 +1978,7 @@ void Spell::finish()
 	//enable pvp when attacking another player with spells
 	if( p_caster != NULL )
 	{
-		if (m_spellInfo->Attributes & ATTRIBUTES_STOP_ATTACK)
+		if (GetSpellProto()->Attributes & ATTRIBUTES_STOP_ATTACK)
 		{
 			p_caster->EventAttackStop();
 			p_caster->smsg_AttackStop( unitTarget );
@@ -2008,14 +2008,14 @@ void Spell::finish()
 
 			if(pTarget)
 			{
-				pTarget->RemoveAura(m_spellInfo->Id, m_caster->GetGUID());
+				pTarget->RemoveAura(GetSpellProto()->Id, m_caster->GetGUID());
 			}
 		}
 	}
 
-	if( m_spellInfo->Effect[0] == SPELL_EFFECT_SUMMON_OBJECT ||
-		m_spellInfo->Effect[1] == SPELL_EFFECT_SUMMON_OBJECT ||
-		m_spellInfo->Effect[2] == SPELL_EFFECT_SUMMON_OBJECT)
+	if( GetSpellProto()->Effect[0] == SPELL_EFFECT_SUMMON_OBJECT ||
+		GetSpellProto()->Effect[1] == SPELL_EFFECT_SUMMON_OBJECT ||
+		GetSpellProto()->Effect[2] == SPELL_EFFECT_SUMMON_OBJECT)
 		if( p_caster != NULL )
 			p_caster->SetSummonedObject(NULLOBJ);
 	/*
@@ -2071,14 +2071,14 @@ void Spell::SendCastResult(uint8 result)
 	switch( result )
 	{
 	case SPELL_FAILED_REQUIRES_SPELL_FOCUS:
-		Extra = m_spellInfo->RequiresSpellFocus;
+		Extra = GetSpellProto()->RequiresSpellFocus;
 		break;
 
 	case SPELL_FAILED_REQUIRES_AREA:
-		if( m_spellInfo->AreaGroupId > 0 )
+		if( GetSpellProto()->AreaGroupId > 0 )
 		{
 			uint16 area_id = plr->GetAreaID();
-			AreaGroup *GroupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
+			AreaGroup *GroupEntry = dbcAreaGroup.LookupEntry( GetSpellProto()->AreaGroupId );
 
 			for( uint8 i = 0; i < 7; i++ )
 				if( GroupEntry->AreaId[i] != 0 && GroupEntry->AreaId[i] != area_id )
@@ -2090,17 +2090,17 @@ void Spell::SendCastResult(uint8 result)
 		break;
 
 	case SPELL_FAILED_TOTEMS:
-		Extra = m_spellInfo->Totem[1] ? m_spellInfo->Totem[1] : m_spellInfo->Totem[0];
+		Extra = GetSpellProto()->Totem[1] ? GetSpellProto()->Totem[1] : GetSpellProto()->Totem[0];
 		break;
 
 	//case SPELL_FAILED_TOTEM_CATEGORY: seems to be fully client sided.
 	}
 
-	//plr->SendCastResult(m_spellInfo->Id, result, extra_cast_number, Extra);
+	//plr->SendCastResult(GetSpellProto()->Id, result, extra_cast_number, Extra);
 	if( Extra )
 	{
 		packetSMSG_CASTRESULT_EXTRA pe;
-		pe.SpellId = m_spellInfo->Id;
+		pe.SpellId = GetSpellProto()->Id;
 		pe.ErrorMessage = result;
 		pe.MultiCast = extra_cast_number;
 		pe.Extra = Extra;
@@ -2109,7 +2109,7 @@ void Spell::SendCastResult(uint8 result)
 	else
 	{
 		packetSMSG_CASTRESULT pe;
-		pe.SpellId = m_spellInfo->Id;
+		pe.SpellId = GetSpellProto()->Id;
 		pe.ErrorMessage = result;
 		pe.MultiCast = extra_cast_number;
 		plr->GetSession()->OutPacket( SMSG_CAST_FAILED, sizeof( packetSMSG_CASTRESULT ), &pe );
@@ -2148,7 +2148,7 @@ enum SpellStartFlags
 void Spell::SendSpellStart()
 {
 	// no need to send this on passive spells
-	if( !m_caster->IsInWorld() || m_spellInfo->Attributes & 64 || m_triggeredSpell )
+	if( !m_caster->IsInWorld() || GetSpellProto()->Attributes & 64 || m_triggeredSpell )
 		return;
 
 	//WorldPacket data( 150 );
@@ -2157,7 +2157,7 @@ void Spell::SendSpellStart()
 
 	uint32 cast_flags = SPELL_START_FLAG_DEFAULT;
 
-	if(u_caster && !m_triggeredSpell && !(m_spellInfo->AttributesEx & ATTRIBUTESEX_AREA_OF_EFFECT))
+	if(u_caster && !m_triggeredSpell && !(GetSpellProto()->AttributesEx & ATTRIBUTESEX_AREA_OF_EFFECT))
 		cast_flags |= SPELL_START_FLAGS_POWER_UPDATE;
 
 	if(p_caster && p_caster->getClass() == DEATHKNIGHT)
@@ -2168,7 +2168,7 @@ void Spell::SendSpellStart()
 
 
 	// hacky yeaaaa
-	if( m_spellInfo->Id == 8326 ) // death
+	if( GetSpellProto()->Id == 8326 ) // death
 		cast_flags = 0x0F;
 	if (m_missileTravelTime)
 		cast_flags = 0x6000E;
@@ -2179,7 +2179,7 @@ void Spell::SendSpellStart()
 		data << m_caster->GetNewGUID() << m_caster->GetNewGUID();
 
 	data << extra_cast_number;
-	data << m_spellInfo->Id;
+	data << GetSpellProto()->Id;
 	data << cast_flags;
 	data << (uint32)m_castTime;
 
@@ -2189,7 +2189,7 @@ void Spell::SendSpellStart()
 		data << uint32( u_caster ? u_caster->GetUInt32Value(UNIT_FIELD_POWER1 + u_caster->GetPowerType()) : 0);
 	if( (p_caster != NULL) && cast_flags & SPELL_START_FLAGS_RUNE_UPDATE) //send new runes
 	{
-		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(m_spellInfo->runeCostID);
+		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
 		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
 		data << p_caster->m_runemask << theoretical;
 
@@ -2206,7 +2206,7 @@ void Spell::SendSpellStart()
 	if( GetType() == SPELL_DMG_TYPE_RANGED )
 	{
 		ItemPrototype* ip = NULL;
-		if( m_spellInfo->Id == SPELL_RANGED_THROW ) // throw
+		if( GetSpellProto()->Id == SPELL_RANGED_THROW ) // throw
 		{
 			if( p_caster != NULL )
 			{
@@ -2234,7 +2234,7 @@ void Spell::SendSpellStart()
 				}
 			}
 		}
-		else if( m_spellInfo->Flags4 & FLAGS4_PLAYER_RANGED_SPELLS )
+		else if( GetSpellProto()->Flags4 & FLAGS4_PLAYER_RANGED_SPELLS )
 		{
 			if( p_caster != NULL )
 				ip = ItemPrototypeStorage.LookupEntry( p_caster->GetUInt32Value( PLAYER_AMMO_ID ) );
@@ -2283,13 +2283,13 @@ enum SpellGoFlags
 void Spell::SendSpellGo()
 {
 	// no need to send this on passive spells
-	if( !m_caster->IsInWorld() || m_spellInfo->Attributes & 64 )
+	if( !m_caster->IsInWorld() || GetSpellProto()->Attributes & 64 )
 		return;
 
 	ItemPrototype* ip = NULL;
-	uint32 cast_flags = (m_triggeredSpell && !(m_spellInfo->Attributes & ATTRIBUTE_ON_NEXT_ATTACK)) ? 0x0105 : 0x0100;
+	uint32 cast_flags = (m_triggeredSpell && !(GetSpellProto()->Attributes & ATTRIBUTE_ON_NEXT_ATTACK)) ? 0x0105 : 0x0100;
 	if(u_caster && !m_triggeredSpell && (u_caster->GetPowerType() != POWER_TYPE_MANA || m_usesMana) &&
-		!(m_spellInfo->AttributesEx & ATTRIBUTESEX_AREA_OF_EFFECT))	// Hackfix for client bug which displays mana as 0 after receiving update for these spells
+		!(GetSpellProto()->AttributesEx & ATTRIBUTESEX_AREA_OF_EFFECT))	// Hackfix for client bug which displays mana as 0 after receiving update for these spells
 		cast_flags |= SPELL_GO_FLAGS_POWER_UPDATE;
 	SpellTargetList::iterator itr;
 	uint32 counter;
@@ -2300,13 +2300,13 @@ void Spell::SendSpellGo()
 	if (m_missileTravelTime)
 		cast_flags |= 0x20000;
 	// hacky..
-	if( m_spellInfo->Id == 8326 ) // death
+	if( GetSpellProto()->Id == 8326 ) // death
 		cast_flags = SPELL_GO_FLAGS_ITEM_CASTER | 0x0D;
 
 	if( GetType() == SPELL_DMG_TYPE_RANGED )
 	{
 		cast_flags |=SPELL_GO_FLAGS_RANGED;
-		if( m_spellInfo->Id == SPELL_RANGED_THROW )
+		if( GetSpellProto()->Id == SPELL_RANGED_THROW )
 		{
 			if( p_caster != NULL )
 			{
@@ -2341,7 +2341,7 @@ void Spell::SendSpellGo()
 		data << m_caster->GetNewGUID() << m_caster->GetNewGUID();
 
 	data << extra_cast_number;
-	data << m_spellInfo->Id;
+	data << GetSpellProto()->Id;
 	data << cast_flags;
 	data << getMSTime();
 
@@ -2394,7 +2394,7 @@ void Spell::SendSpellGo()
 	m_caster->SendMessageToSet( &data, (m_caster->IsPlayer() ? true : false) );
 	// spell log execute is still send 2.08
 	// as I see with this combination, need to test it more
-	//if (flags != 0x120 && m_spellInfo->Attributes & 16) // not ranged and flag 5
+	//if (flags != 0x120 && GetSpellProto()->Attributes & 16) // not ranged and flag 5
 	  //  SendLogExecute(0,m_targets.m_unitTarget);
 }
 void Spell::writeSpellGoTargets( WorldPacket * data )
@@ -2438,9 +2438,9 @@ void Spell::SendLogExecute(uint32 damage, uint64 & targetGuid)
 {
 	WorldPacket data(SMSG_SPELLLOGEXECUTE, 37);
 	data << m_caster->GetNewGUID();
-	data << m_spellInfo->Id;
+	data << GetSpellProto()->Id;
 	data << uint32(1);
-//	data << m_spellInfo->SpellVisual;
+//	data << GetSpellProto()->SpellVisual;
 //	data << uint32(1);
 	if (m_caster->GetGUID() != targetGuid)
 		data << targetGuid;
@@ -2470,7 +2470,7 @@ void Spell::SendInterrupted(uint8 result)
 	{
 		data << m_caster->GetNewGUID();
 		data << uint8(extra_cast_number);
-		data << uint32(m_spellInfo->Id);
+		data << uint32(GetSpellProto()->Id);
 		data << uint8(result);
 		plr->GetSession()->SendPacket(&data);
 	}
@@ -2478,7 +2478,7 @@ void Spell::SendInterrupted(uint8 result)
 	data.Initialize(SMSG_SPELL_FAILED_OTHER);
 	data << m_caster->GetNewGUID();
 	data << uint8(extra_cast_number);
-	data << uint32(m_spellInfo->Id);
+	data << uint32(GetSpellProto()->Id);
 	data << uint8(result);
 	m_caster->SendMessageToSet(&data, false);
 }
@@ -2532,7 +2532,7 @@ void Spell::SendChannelStart(int32 duration)
 		uint8 buf[30];
 		StackPacket data(MSG_CHANNEL_START, buf, 30);
 		data << m_caster->GetNewGUID();
-		data << m_spellInfo->Id;
+		data << GetSpellProto()->Id;
 		data << duration;
 		m_caster->SendMessageToSet(&data, true);
 	}
@@ -2540,7 +2540,7 @@ void Spell::SendChannelStart(int32 duration)
 	m_castTime = m_timer = duration;
 
 	if( u_caster != NULL )
-		u_caster->SetUInt32Value(UNIT_CHANNEL_SPELL,m_spellInfo->Id);
+		u_caster->SetUInt32Value(UNIT_CHANNEL_SPELL,GetSpellProto()->Id);
 
 	/*
 	Unit target = objmgr.GetCreature( TO_PLAYER( m_caster )->GetSelection());
@@ -2582,7 +2582,7 @@ bool Spell::HasPower()
 		return true; //GO's Don't use power.
 
 	int32 powerField;
-	switch(m_spellInfo->powerType)
+	switch(GetSpellProto()->powerType)
 	{
 	case POWER_TYPE_HEALTH:	{ powerField = UNIT_FIELD_HEALTH; }break;
 	case POWER_TYPE_MANA:	{ powerField = UNIT_FIELD_POWER1; m_usesMana=true; }break;
@@ -2591,9 +2591,9 @@ bool Spell::HasPower()
 	case POWER_TYPE_ENERGY:	{ powerField = UNIT_FIELD_POWER4; }break;
 	case POWER_TYPE_RUNE:
 		{
-			if(m_spellInfo->runeCostID && p_caster)
+			if(GetSpellProto()->runeCostID && p_caster)
 			{
-				SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(m_spellInfo->runeCostID);
+				SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
 				if( !p_caster->CanUseRunes( runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost) )
 					return false;
 			}
@@ -2601,7 +2601,7 @@ bool Spell::HasPower()
 		}
 	case POWER_TYPE_RUNIC:	{ powerField = UNIT_FIELD_POWER7; }break;
 	default:{
-		DEBUG_LOG("Spell","unknown power type %d", m_spellInfo->powerType);
+		DEBUG_LOG("Spell","unknown power type %d", GetSpellProto()->powerType);
 		// we should'nt be here to return
 		return false;
 			}break;
@@ -2613,23 +2613,23 @@ bool Spell::HasPower()
 	int32 currentPower = m_caster->GetUInt32Value(powerField);
 	int32 cost = m_caster->GetSpellBaseCost(m_spellInfo);
 
-	if((int32)m_spellInfo->powerType == POWER_TYPE_HEALTH)
-		cost -= m_spellInfo->baseLevel;//FIX for life tap
+	if((int32)GetSpellProto()->powerType == POWER_TYPE_HEALTH)
+		cost -= GetSpellProto()->baseLevel;//FIX for life tap
 	else if( u_caster != NULL )
 	{
-		if( m_spellInfo->powerType == POWER_TYPE_MANA)
-			cost += u_caster->PowerCostMod[m_spellInfo->School];//this is not percent!
+		if( GetSpellProto()->powerType == POWER_TYPE_MANA)
+			cost += u_caster->PowerCostMod[GetSpellProto()->School];//this is not percent!
 		else
 			cost += u_caster->PowerCostMod[0];
 
-		cost +=float2int32(cost*u_caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER+m_spellInfo->School));
+		cost +=float2int32(cost*u_caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER+GetSpellProto()->School));
 	}
 
 	//apply modifiers
-	if( m_spellInfo->SpellGroupType && u_caster)
+	if( GetSpellProto()->SpellGroupType && u_caster)
 	{
-		SM_FIValue(u_caster->SM[SMT_COST][0],&cost,m_spellInfo->SpellGroupType);
-		SM_PIValue(u_caster->SM[SMT_COST][1],&cost,m_spellInfo->SpellGroupType);
+		SM_FIValue(u_caster->SM[SMT_COST][0],&cost,GetSpellProto()->SpellGroupType);
+		SM_PIValue(u_caster->SM[SMT_COST][1],&cost,GetSpellProto()->SpellGroupType);
 	}
 
 	if (cost <=0)
@@ -2639,7 +2639,7 @@ bool Spell::HasPower()
 	}
 
 	//Stupid shiv
-	if( m_spellInfo->NameHash == SPELL_HASH_SHIV )
+	if( GetSpellProto()->NameHash == SPELL_HASH_SHIV )
 	{
 		Item* Offhand = p_caster->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND);
 
@@ -2679,7 +2679,7 @@ bool Spell::TakePower()
 		return true; //GO's Don't use power.
 
 	int32 powerField = 0;
-	switch(m_spellInfo->powerType)
+	switch(GetSpellProto()->powerType)
 	{
 		case POWER_TYPE_HEALTH:	{ powerField = UNIT_FIELD_HEALTH; }break;
 		case POWER_TYPE_MANA:	{ powerField = UNIT_FIELD_POWER1; m_usesMana=true; }break;
@@ -2689,9 +2689,9 @@ bool Spell::TakePower()
 		case POWER_TYPE_RUNIC:	{ powerField = UNIT_FIELD_POWER7; }break;
 		case POWER_TYPE_RUNE:
 		{
-			if(m_spellInfo->runeCostID && p_caster)
+			if(GetSpellProto()->runeCostID && p_caster)
 			{
-				SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(m_spellInfo->runeCostID);
+				SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
 				if( !p_caster->CanUseRunes( runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost) )
 					return false;
 
@@ -2703,7 +2703,7 @@ bool Spell::TakePower()
 		}break;
 		default:
 		{
-			DEBUG_LOG("Spell","Unknown power type %u for spell %u", m_spellInfo->powerType, m_spellInfo->Id);
+			DEBUG_LOG("Spell","Unknown power type %u for spell %u", GetSpellProto()->powerType, GetSpellProto()->Id);
 			// we shouldn't be here to return
 			return false;
 		}break;
@@ -2719,27 +2719,27 @@ bool Spell::TakePower()
 
 	if( u_caster != NULL )
 	{
-		if( m_spellInfo->AttributesEx & ATTRIBUTESEX_DRAIN_WHOLE_MANA ) // Uses %100 mana
+		if( GetSpellProto()->AttributesEx & ATTRIBUTESEX_DRAIN_WHOLE_MANA ) // Uses %100 mana
 		{
 			m_caster->SetUInt32Value(powerField, 0);
 			return true;
 		}
-		cost += u_caster->PowerCostMod[ m_usesMana ? m_spellInfo->School : 0 ];//this is not percent!
-		cost += float2int32(float(cost)* u_caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + m_spellInfo->School));
+		cost += u_caster->PowerCostMod[ m_usesMana ? GetSpellProto()->School : 0 ];//this is not percent!
+		cost += float2int32(float(cost)* u_caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + GetSpellProto()->School));
 	}
 
 	if( powerField == UNIT_FIELD_HEALTH )
-		cost -= m_spellInfo->baseLevel;//FIX for life tap
+		cost -= GetSpellProto()->baseLevel;//FIX for life tap
 
 	//apply modifiers
-	if( m_spellInfo->SpellGroupType && u_caster)
+	if( GetSpellProto()->SpellGroupType && u_caster)
 	{
-		SM_FIValue(u_caster->SM[SMT_COST][0],&cost,m_spellInfo->SpellGroupType);
-		SM_PIValue(u_caster->SM[SMT_COST][1],&cost,m_spellInfo->SpellGroupType);
+		SM_FIValue(u_caster->SM[SMT_COST][0],&cost,GetSpellProto()->SpellGroupType);
+		SM_PIValue(u_caster->SM[SMT_COST][1],&cost,GetSpellProto()->SpellGroupType);
 	}
 
 	//Stupid shiv
-	if( m_spellInfo->NameHash == SPELL_HASH_SHIV )
+	if( GetSpellProto()->NameHash == SPELL_HASH_SHIV )
 	{
 		Item* Offhand = p_caster->GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND);
 
@@ -2753,7 +2753,7 @@ bool Spell::TakePower()
 		return true;
 	}
 
-	if( u_caster && m_spellInfo->powerType == POWER_TYPE_MANA )
+	if( u_caster && GetSpellProto()->powerType == POWER_TYPE_MANA )
 		u_caster->m_LastSpellManaCost = cost;
 
 	//FIXME:DK:if field value < cost what happens
@@ -2864,21 +2864,21 @@ void Spell::_SetTargets(const uint64& guid)
 void Spell::HandleEffects(uint32 i)
 {
 	// Try a dummy SpellHandler
-	if(sScriptMgr.CallScriptedDummySpell(m_spellInfo->Id, i, this ))
+	if(sScriptMgr.CallScriptedDummySpell(GetSpellProto()->Id, i, this ))
 	{
-		DEBUG_LOG( "Spell","Redirecting Spell %u Effect id = %u to sScriptMgr", m_spellInfo->Id, m_spellInfo->Effect[i]);
+		DEBUG_LOG( "Spell","Redirecting Spell %u Effect id = %u to sScriptMgr", GetSpellProto()->Id, GetSpellProto()->Effect[i]);
 		return;
 	}
 	damage = CalculateEffect(i, unitTarget);
-	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", m_spellInfo->Effect[i], damage);
+	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", GetSpellProto()->Effect[i], damage);
 
-	if( m_spellInfo->Effect[i] < TOTAL_SPELL_EFFECTS)
-		(*this.*SpellEffectsHandler[m_spellInfo->Effect[i]])(i);
+	if( GetSpellProto()->Effect[i] < TOTAL_SPELL_EFFECTS)
+		(*this.*SpellEffectsHandler[GetSpellProto()->Effect[i]])(i);
 	else
 		if(sLog.IsOutDevelopement())
-			printf("Unknown spell effect %u in spell %u.\n",m_spellInfo->Effect[i],m_spellInfo->Id);
+			printf("Unknown spell effect %u in spell %u.\n",GetSpellProto()->Effect[i],GetSpellProto()->Id);
 		else
-			DEBUG_LOG("Spell","Unknown effect %u spellid %u",m_spellInfo->Effect[i], m_spellInfo->Id);
+			DEBUG_LOG("Spell","Unknown effect %u spellid %u",GetSpellProto()->Effect[i], GetSpellProto()->Id);
 }
 
 void Spell::HandleAddAura(uint64 guid)
@@ -2905,9 +2905,9 @@ void Spell::HandleAddAura(uint64 guid)
 
 	uint32 spellid = 0;
 
-	if( m_spellInfo->MechanicsType == 25 && m_spellInfo->Id != 25771 || m_spellInfo->Id == 31884 ) // Cast spell Forbearance
+	if( GetSpellProto()->MechanicsType == 25 && GetSpellProto()->Id != 25771 || GetSpellProto()->Id == 31884 ) // Cast spell Forbearance
 	{
-		if( m_spellInfo->Id != 31884 )
+		if( GetSpellProto()->Id != 31884 )
 			spellid = 25771;
 
 		if( Target->IsPlayer() )
@@ -2916,29 +2916,29 @@ void Spell::HandleAddAura(uint64 guid)
 			TO_PLAYER(Target)->mAvengingWrath = false;
 		}
 	}
-	else if( m_spellInfo->MechanicsType == 16 && m_spellInfo->Id != 11196) // Cast spell Recently Bandaged
+	else if( GetSpellProto()->MechanicsType == 16 && GetSpellProto()->Id != 11196) // Cast spell Recently Bandaged
 		spellid = 11196;
-	else if( m_spellInfo->MechanicsType == 19 && m_spellInfo->Id != 6788) // Cast spell Weakened Soul
+	else if( GetSpellProto()->MechanicsType == 19 && GetSpellProto()->Id != 6788) // Cast spell Weakened Soul
 		spellid = 6788;
-	else if( m_spellInfo->Id == 45438) // Cast spell Hypothermia
+	else if( GetSpellProto()->Id == 45438) // Cast spell Hypothermia
 		spellid = 41425;
-	else if( m_spellInfo->AdditionalAura )
-		spellid = m_spellInfo->AdditionalAura;
-	else if( m_spellInfo->NameHash == SPELL_HASH_HEROISM )
+	else if( GetSpellProto()->AdditionalAura )
+		spellid = GetSpellProto()->AdditionalAura;
+	else if( GetSpellProto()->NameHash == SPELL_HASH_HEROISM )
 		spellid = 57723;
-	else if( m_spellInfo->NameHash == SPELL_HASH_BLOODLUST )
+	else if( GetSpellProto()->NameHash == SPELL_HASH_BLOODLUST )
 		spellid = 57724;
-	else if( m_spellInfo->NameHash == SPELL_HASH_STEALTH )
+	else if( GetSpellProto()->NameHash == SPELL_HASH_STEALTH )
 	{
 		if( Target->HasDummyAura(SPELL_HASH_MASTER_OF_SUBTLETY) )
 			spellid = 31665;
 	}
-	else if( m_spellInfo->Id == 62124 && u_caster )
+	else if( GetSpellProto()->Id == 62124 && u_caster )
 	{
 		if( u_caster->HasDummyAura(SPELL_HASH_VINDICATION) )
 			spellid = u_caster->GetDummyAura(SPELL_HASH_VINDICATION)->RankNumber == 2 ? 26017 : 67;
 	}
-	else if( m_spellInfo->Id == 5229 &&
+	else if( GetSpellProto()->Id == 5229 &&
 		p_caster && (
 		p_caster->GetShapeShift() == FORM_BEAR ||
 		p_caster->GetShapeShift() == FORM_DIREBEAR ) &&
@@ -2954,18 +2954,18 @@ void Spell::HandleAddAura(uint64 guid)
 		SpellCastTargets targets(p_caster->GetGUID());
 		spell->prepare(&targets);
 	}
-	else if( m_spellInfo->Id == 19574 )
+	else if( GetSpellProto()->Id == 19574 )
 	{
 		if( u_caster->HasDummyAura(SPELL_HASH_THE_BEAST_WITHIN) )
 			u_caster->CastSpell(u_caster, 34471, true);
 	}
-	else if( m_spellInfo->NameHash == SPELL_HASH_RAPID_KILLING )
+	else if( GetSpellProto()->NameHash == SPELL_HASH_RAPID_KILLING )
 	{
 		if( u_caster->HasDummyAura(SPELL_HASH_RAPID_RECUPERATION) )
 			spellid = 56654;
 	}
 
-	switch( m_spellInfo->NameHash )
+	switch( GetSpellProto()->NameHash )
 	{
 	case SPELL_HASH_CLEARCASTING:
 	case SPELL_HASH_PRESENCE_OF_MIND:
@@ -2990,21 +2990,21 @@ void Spell::HandleAddAura(uint64 guid)
 		spell->prepare(&targets);
 	}
 
-	if( m_spellInfo->MechanicsType == 31 )
+	if( GetSpellProto()->MechanicsType == 31 )
 		Target->SetFlag(UNIT_FIELD_AURASTATE, AURASTATE_FLAG_ENRAGE);
 
 	// avoid map corruption
 	if(Target->GetInstanceID()!=m_caster->GetInstanceID())
 		return;
 
-	std::map<uint32,Aura* >::iterator itr=Target->tmpAura.find(m_spellInfo->Id);
+	std::map<uint32,Aura* >::iterator itr=Target->tmpAura.find(GetSpellProto()->Id);
 	if(itr!=Target->tmpAura.end())
 	{
 		Aura* aura = itr->second;
 		if(aura != NULL)
 		{
 			// did our effects kill the target?
-			if( Target->isDead() && !(m_spellInfo->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD))
+			if( Target->isDead() && !(GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD))
 			{
 				// free pointer
 				aura->m_tmpAuradeleted = true;
@@ -3015,7 +3015,7 @@ void Spell::HandleAddAura(uint64 guid)
 			}
 
 			//make sure bg/arena preparation aura's are positive.
-			if(m_spellInfo->Id == 32727 || m_spellInfo->Id == 44521)
+			if(GetSpellProto()->Id == 32727 || GetSpellProto()->Id == 44521)
 				aura->SetPositive(100);
 
 			Target->AddAura(aura);
@@ -3027,12 +3027,12 @@ void Spell::HandleAddAura(uint64 guid)
 
 bool Spell::IsAspect()
 {
-	return (m_spellInfo->buffType == SPELL_TYPE_ASPECT);
+	return (GetSpellProto()->buffType == SPELL_TYPE_ASPECT);
 }
 
 bool Spell::IsSeal()
 {
-	return (m_spellInfo->buffType == SPELL_TYPE_SEAL);
+	return (GetSpellProto()->buffType == SPELL_TYPE_SEAL);
 }
 
 bool Spell::IsBinary(SpellEntry * sp)
@@ -3047,11 +3047,11 @@ uint8 Spell::CanCast(bool tolerate)
 {
 	uint32 i;
 
-	bool skip = (p_caster && (p_caster->m_skipCastCheck[0] & m_spellInfo->SpellGroupType[0] ||
-		p_caster && p_caster->m_skipCastCheck[1] & m_spellInfo->SpellGroupType[1] ||
-		p_caster && p_caster->m_skipCastCheck[2] & m_spellInfo->SpellGroupType[2])); // related to aura 262
+	bool skip = (p_caster && (p_caster->m_skipCastCheck[0] & GetSpellProto()->SpellGroupType[0] ||
+		p_caster && p_caster->m_skipCastCheck[1] & GetSpellProto()->SpellGroupType[1] ||
+		p_caster && p_caster->m_skipCastCheck[2] & GetSpellProto()->SpellGroupType[2])); // related to aura 262
 
-	if(objmgr.IsSpellDisabled(m_spellInfo->Id))
+	if(objmgr.IsSpellDisabled(GetSpellProto()->Id))
 		return SPELL_FAILED_SPELL_UNAVAILABLE;
 
 	if( u_caster && u_caster->GetCurrentSpell() != NULL && u_caster->GetCurrentSpell() != this && !m_triggeredSpell )
@@ -3075,13 +3075,13 @@ uint8 Spell::CanCast(bool tolerate)
 				return SPELL_FAILED_BM_OR_INVISGOD;
 
 			//you can't mind control someone already mind controlled
-			if (m_spellInfo->NameHash == SPELL_HASH_MIND_CONTROL && target->GetAuraSpellIDWithNameHash(SPELL_HASH_MIND_CONTROL))
+			if (GetSpellProto()->NameHash == SPELL_HASH_MIND_CONTROL && target->GetAuraSpellIDWithNameHash(SPELL_HASH_MIND_CONTROL))
 				return SPELL_FAILED_BAD_TARGETS;
-			if(target == m_caster && m_spellInfo->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
+			if(target == m_caster && GetSpellProto()->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
 				return SPELL_FAILED_BAD_TARGETS;
 			//these spells can be cast only on certain objects. Otherwise cool exploit
 			//Most of this things goes to spell_forced_target table
-			switch (m_spellInfo->Id)
+			switch (GetSpellProto()->Id)
 			{
 				case 27907:// Disciplinary Rod
 				{
@@ -3094,13 +3094,13 @@ uint8 Spell::CanCast(bool tolerate)
 
 	if( p_caster != NULL )
 	{
-		if( m_spellInfo->Id == 51721 )
+		if( GetSpellProto()->Id == 51721 )
 		{
 			if( !(p_caster->GetPlayerAreaID() == 4281) )
 				return SPELL_FAILED_NOT_HERE;
 		}
 		// flying auras
-		if( m_spellInfo->c_is_flags & SPELL_FLAG_IS_FLYING )
+		if( GetSpellProto()->c_is_flags & SPELL_FLAG_IS_FLYING )
 		{
 			// can't fly in non-flying zones
 			if( p_caster->GetAreaDBC() != NULL && !(p_caster->GetAreaDBC()->AreaFlags & AREA_FLYING_PERMITTED) )
@@ -3113,18 +3113,18 @@ uint8 Spell::CanCast(bool tolerate)
 			}
 		}
 
-		if( m_spellInfo->Id == 53822 && p_caster->getClass()!=DEATHKNIGHT)			// DeathGate
+		if( GetSpellProto()->Id == 53822 && p_caster->getClass()!=DEATHKNIGHT)			// DeathGate
 			return SPELL_FAILED_SPELL_UNAVAILABLE;
 
 		if(p_caster->HasFlag(PLAYER_FLAGS,PLAYER_FLAG_ALLOW_ONLY_ABILITY) &&
-			!((m_spellInfo->SpellGroupType[0] & p_caster->m_castFilter[0]) ||
-			(m_spellInfo->SpellGroupType[1] & p_caster->m_castFilter[1]) ||
-			(m_spellInfo->SpellGroupType[2] & p_caster->m_castFilter[2])))
+			!((GetSpellProto()->SpellGroupType[0] & p_caster->m_castFilter[0]) ||
+			(GetSpellProto()->SpellGroupType[1] & p_caster->m_castFilter[1]) ||
+			(GetSpellProto()->SpellGroupType[2] & p_caster->m_castFilter[2])))
 			return SPELL_FAILED_SPELL_IN_PROGRESS;	// Need to figure the correct message
 
 		uint32 self_rez = p_caster->GetUInt32Value(PLAYER_SELF_RES_SPELL);
 		// if theres any spells that should be cast while dead let me know
-		if( !p_caster->isAlive() && self_rez != m_spellInfo->Id)
+		if( !p_caster->isAlive() && self_rez != GetSpellProto()->Id)
 		{
 			// spirit of redemption
 				// casting a spell on self
@@ -3135,7 +3135,7 @@ uint8 Spell::CanCast(bool tolerate)
 				}
 		}
 
-		if( m_spellInfo->NameHash == SPELL_HASH_HUNTER_S_MARK )
+		if( GetSpellProto()->NameHash == SPELL_HASH_HUNTER_S_MARK )
 		{
 			if( GetUnitTarget() && !isHostile( GetUnitTarget(), m_caster ))
 			{
@@ -3145,16 +3145,16 @@ uint8 Spell::CanCast(bool tolerate)
 
 		if (p_caster->GetMapMgr() && p_caster->GetMapMgr()->CanUseCollision(p_caster))
 		{
-			if (m_spellInfo->MechanicsType == MECHANIC_MOUNTED)
+			if (GetSpellProto()->MechanicsType == MECHANIC_MOUNTED)
 			{
 				// Qiraj battletanks work everywhere on map 531
-				if ( p_caster->GetMapId() == 531 && ( m_spellInfo->Id == 25953 || m_spellInfo->Id == 26054 || m_spellInfo->Id == 26055 || m_spellInfo->Id == 26056 ) )
+				if ( p_caster->GetMapId() == 531 && ( GetSpellProto()->Id == 25953 || GetSpellProto()->Id == 26054 || GetSpellProto()->Id == 26055 || GetSpellProto()->Id == 26056 ) )
 					return SPELL_CANCAST_OK;
 
 				if (CollideInterface.IsIndoor( p_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ))
 					return SPELL_FAILED_NO_MOUNTS_ALLOWED;
 			}
-			else if( m_spellInfo->Attributes & ATTRIBUTES_ONLY_OUTDOORS )
+			else if( GetSpellProto()->Attributes & ATTRIBUTES_ONLY_OUTDOORS )
 			{
 				if(CollideInterface.IsIndoor( p_caster->GetMapId(),p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() + 2.0f ) )
 					return SPELL_FAILED_ONLY_OUTDOORS;
@@ -3163,13 +3163,13 @@ uint8 Spell::CanCast(bool tolerate)
 		//are we in an arena and the spell cooldown is longer then 15mins?
 		if ( p_caster->m_bg && ( p_caster->m_bg->GetType() >= BATTLEGROUND_ARENA_2V2 && p_caster->m_bg->GetType() <= BATTLEGROUND_ARENA_5V5 ) )
 		{
-			if(  m_spellInfo->Flags5 & FLAGS5_NOT_USABLE_IN_ARENA )
+			if(  GetSpellProto()->Flags5 & FLAGS5_NOT_USABLE_IN_ARENA )
 				return SPELL_FAILED_NOT_IN_ARENA;
 
 			if( !p_caster->m_bg->HasStarted() )
 			{
 				// cannot cast spells in an arena if it hasn't started (blinking through gates, lalala)
-				if( m_spellInfo->NameHash == SPELL_HASH_BLINK )
+				if( GetSpellProto()->NameHash == SPELL_HASH_BLINK )
 					return SPELL_FAILED_SPELL_UNAVAILABLE;
 			}
 		}
@@ -3182,11 +3182,11 @@ uint8 Spell::CanCast(bool tolerate)
 		}
 
 		// Requires ShapeShift (stealth only atm, need more work)
-		if( m_spellInfo->RequiredShapeShift )
+		if( GetSpellProto()->RequiredShapeShift )
 		{
-			if( m_spellInfo->RequiredShapeShift == (uint32)1 << (FORM_STEALTH-1) )
+			if( GetSpellProto()->RequiredShapeShift == (uint32)1 << (FORM_STEALTH-1) )
 			{
-				if( !(((uint32)1 << (p_caster->GetShapeShift()-1)) & m_spellInfo->RequiredShapeShift) && !p_caster->HasDummyAura(SPELL_HASH_SHADOW_DANCE) )
+				if( !(((uint32)1 << (p_caster->GetShapeShift()-1)) & GetSpellProto()->RequiredShapeShift) && !p_caster->HasDummyAura(SPELL_HASH_SHADOW_DANCE) )
 					return SPELL_FAILED_ONLY_STEALTHED;
 			}
 		}
@@ -3194,21 +3194,21 @@ uint8 Spell::CanCast(bool tolerate)
 		// Disarm
 		if( u_caster!= NULL )
 		{
-			if (m_spellInfo->Attributes == ATTRIBUTES_REQ_OOC && u_caster->CombatStatus.IsInCombat())
+			if (GetSpellProto()->Attributes == ATTRIBUTES_REQ_OOC && u_caster->CombatStatus.IsInCombat())
 			{
 				// Charge In Combat
-				if ((m_spellInfo->Id !=  100 && m_spellInfo->Id != 6178 && m_spellInfo->Id != 11578 ) )
+				if ((GetSpellProto()->Id !=  100 && GetSpellProto()->Id != 6178 && GetSpellProto()->Id != 11578 ) )
 				return SPELL_FAILED_TARGET_IN_COMBAT;
 			}
 
 			if( u_caster->disarmed )
 			{
-				if( m_spellInfo->is_melee_spell )
+				if( GetSpellProto()->is_melee_spell )
 					return SPELL_FAILED_EQUIPPED_ITEM_CLASS;
-				else if( m_spellInfo->is_ranged_spell )
+				else if( GetSpellProto()->is_ranged_spell )
 					return SPELL_FAILED_EQUIPPED_ITEM_CLASS;
 			}
-			if( u_caster->disarmedShield && m_spellInfo->RequiredItemFlags && (m_spellInfo->RequiredItemFlags & (1 << INVTYPE_SHIELD)) )
+			if( u_caster->disarmedShield && GetSpellProto()->RequiredItemFlags && (GetSpellProto()->RequiredItemFlags & (1 << INVTYPE_SHIELD)) )
 					return SPELL_FAILED_EQUIPPED_ITEM_CLASS;
 		}
 
@@ -3220,8 +3220,8 @@ uint8 Spell::CanCast(bool tolerate)
 		{
 			for(i = 0; i < 3; i++)
 			{
-				if( m_spellInfo->Effect[i] && m_spellInfo->Effect[i] != SPELL_EFFECT_APPLY_AURA && m_spellInfo->Effect[i] != SPELL_EFFECT_APPLY_PET_AURA
-					&& m_spellInfo->Effect[i] != SPELL_EFFECT_APPLY_AREA_AURA)
+				if( GetSpellProto()->Effect[i] && GetSpellProto()->Effect[i] != SPELL_EFFECT_APPLY_AURA && GetSpellProto()->Effect[i] != SPELL_EFFECT_APPLY_PET_AURA
+					&& GetSpellProto()->Effect[i] != SPELL_EFFECT_APPLY_AREA_AURA)
 				{
 					return SPELL_FAILED_TARGET_DUELING;
 				}
@@ -3230,11 +3230,11 @@ uint8 Spell::CanCast(bool tolerate)
 
 		if( playerTarget != NULL && p_caster != playerTarget &&
 			playerTarget->GetDuelState() != DUEL_STATE_FINISHED &&
-			m_spellInfo->c_is_flags & SPELL_FLAG_CASTED_ON_FRIENDS )
+			GetSpellProto()->c_is_flags & SPELL_FLAG_CASTED_ON_FRIENDS )
 			return SPELL_FAILED_TARGET_DUELING;
 
 		// check for duel areas
-		if( m_spellInfo->Id == 7266 )
+		if( GetSpellProto()->Id == 7266 )
 		{
 			AreaTable* at = dbcArea.LookupEntry( p_caster->GetPlayerAreaID() );
 			if(at->AreaFlags & AREA_CITY_AREA)
@@ -3248,7 +3248,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if(p_caster->m_onTaxi)
 		{
 			// This uses the same flag as ordinary mounts
-			if(!(m_spellInfo->Attributes & ATTRIBUTES_MOUNT_CASTABLE))
+			if(!(GetSpellProto()->Attributes & ATTRIBUTES_MOUNT_CASTABLE))
 				return SPELL_FAILED_NOT_ON_TAXI;
 		}
 
@@ -3256,24 +3256,24 @@ uint8 Spell::CanCast(bool tolerate)
 		if(p_caster->m_CurrentTransporter)
 		{
 			// no mounts while on transporters
-			if( m_spellInfo->EffectApplyAuraName[0] == SPELL_AURA_MOUNTED || m_spellInfo->EffectApplyAuraName[1] == SPELL_AURA_MOUNTED || m_spellInfo->EffectApplyAuraName[2] == SPELL_AURA_MOUNTED)
+			if( GetSpellProto()->EffectApplyAuraName[0] == SPELL_AURA_MOUNTED || GetSpellProto()->EffectApplyAuraName[1] == SPELL_AURA_MOUNTED || GetSpellProto()->EffectApplyAuraName[2] == SPELL_AURA_MOUNTED)
 				return SPELL_FAILED_NOT_ON_TRANSPORT;
 		}
 
 		// check if spell is allowed while not mounted
 		if(!p_caster->IsMounted())
 		{
-			if( m_spellInfo->Id == 25860) // Reindeer Transformation
+			if( GetSpellProto()->Id == 25860) // Reindeer Transformation
 				return SPELL_FAILED_ONLY_MOUNTED;
 		}
 		else
 		{
-			if (!(m_spellInfo->Attributes & ATTRIBUTES_MOUNT_CASTABLE))
+			if (!(GetSpellProto()->Attributes & ATTRIBUTES_MOUNT_CASTABLE))
 				return SPELL_FAILED_NOT_MOUNTED;
 		}
 
 		// no mana drains on shifted druids :(
-		if( GetPlayerTarget() && GetPlayerTarget()->getClass() == DRUID && (m_spellInfo->Effect[0] == SPELL_EFFECT_POWER_DRAIN || m_spellInfo->Effect[1] == SPELL_EFFECT_POWER_DRAIN || m_spellInfo->Effect[2] == SPELL_EFFECT_POWER_DRAIN))
+		if( GetPlayerTarget() && GetPlayerTarget()->getClass() == DRUID && (GetSpellProto()->Effect[0] == SPELL_EFFECT_POWER_DRAIN || GetSpellProto()->Effect[1] == SPELL_EFFECT_POWER_DRAIN || GetSpellProto()->Effect[2] == SPELL_EFFECT_POWER_DRAIN))
 		{
 			if( GetPlayerTarget()->GetShapeShift() == FORM_BEAR ||
 				GetPlayerTarget()->GetShapeShift() == FORM_DIREBEAR ||
@@ -3316,7 +3316,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 		for(uint8 i = 0; i < 3; i++)
 		{
-			if( m_spellInfo->Effect[i] == SPELL_EFFECT_OPEN_LOCK && m_spellInfo->EffectMiscValue[i] == LOCKTYPE_SLOW_OPEN )
+			if( GetSpellProto()->Effect[i] == SPELL_EFFECT_OPEN_LOCK && GetSpellProto()->EffectMiscValue[i] == LOCKTYPE_SLOW_OPEN )
 			{
 				if( p_caster->m_MountSpellId )
 					p_caster->RemoveAura( p_caster->m_MountSpellId );
@@ -3335,7 +3335,7 @@ uint8 Spell::CanCast(bool tolerate)
 		// check if spell is allowed while we have a battleground flag
 		if(p_caster->m_bgHasFlag)
 		{
-			if( (m_spellInfo->NameHash == SPELL_HASH_DIVINE_SHIELD || m_spellInfo->NameHash == SPELL_HASH_ICE_BLOCK) )
+			if( (GetSpellProto()->NameHash == SPELL_HASH_DIVINE_SHIELD || GetSpellProto()->NameHash == SPELL_HASH_ICE_BLOCK) )
 			{
 					if(p_caster->m_bg && p_caster->m_bg->GetType() == BATTLEGROUND_WARSONG_GULCH)
 						TO_WARSONGGULCH(p_caster->m_bg)->DropFlag( p_caster );
@@ -3371,21 +3371,21 @@ uint8 Spell::CanCast(bool tolerate)
 				}
 
 				// for items that combine to create a new item, check if we have the required quantity of the item
-				if(i_caster->GetProto()->ItemId == m_spellInfo->Reagent[0] && (i_caster->GetProto()->Flags != 268435520))
-					if(p_caster->GetItemInterface()->GetItemCount(m_spellInfo->Reagent[0]) < m_spellInfo->ReagentCount[0] + 1)
+				if(i_caster->GetProto()->ItemId == GetSpellProto()->Reagent[0] && (i_caster->GetProto()->Flags != 268435520))
+					if(p_caster->GetItemInterface()->GetItemCount(GetSpellProto()->Reagent[0]) < GetSpellProto()->ReagentCount[0] + 1)
 						return SPELL_FAILED_ITEM_GONE;
 			}
 
 			// heal checks are only applied to item casters
-			if( m_spellInfo->c_is_flags & SPELL_FLAG_IS_HEALING_SPELL && p_caster->GetUInt32Value(UNIT_FIELD_HEALTH) == p_caster->GetUInt32Value(UNIT_FIELD_MAXHEALTH) )
+			if( GetSpellProto()->c_is_flags & SPELL_FLAG_IS_HEALING_SPELL && p_caster->GetUInt32Value(UNIT_FIELD_HEALTH) == p_caster->GetUInt32Value(UNIT_FIELD_MAXHEALTH) )
 				return SPELL_FAILED_ALREADY_AT_FULL_HEALTH;
 
-			if( p_caster->GetPowerType() == POWER_TYPE_MANA && m_spellInfo->c_is_flags & SPELL_FLAG_IS_HEALING_MANA_SPELL && p_caster->GetUInt32Value(UNIT_FIELD_POWER1) == p_caster->GetUInt32Value(UNIT_FIELD_MAXPOWER1) )
+			if( p_caster->GetPowerType() == POWER_TYPE_MANA && GetSpellProto()->c_is_flags & SPELL_FLAG_IS_HEALING_MANA_SPELL && p_caster->GetUInt32Value(UNIT_FIELD_POWER1) == p_caster->GetUInt32Value(UNIT_FIELD_MAXPOWER1) )
 				return SPELL_FAILED_ALREADY_AT_FULL_MANA;
 		}
 
 		bool CheckReagents = true;
-		if( m_spellInfo->SpellGroupType )
+		if( GetSpellProto()->SpellGroupType )
 		{
 			//lets check if we need regeants
 			uint32 AffectedSpellGroupType[3] = {0,0,0};
@@ -3395,7 +3395,7 @@ uint8 Spell::CanCast(bool tolerate)
 			if( AffectedSpellGroupType )
 			{
 				for(uint32 x=0;x<3;x++)
-					if( AffectedSpellGroupType[x] & m_spellInfo->SpellGroupType[x] )
+					if( AffectedSpellGroupType[x] & GetSpellProto()->SpellGroupType[x] )
 						CheckReagents = false;
 			}
 		}
@@ -3404,33 +3404,33 @@ uint8 Spell::CanCast(bool tolerate)
 		if( CheckReagents && (!i_caster || (i_caster->GetProto() && i_caster->GetProto()->Flags != 268435520)) )
 			for(i=0; i<8 ;++i)
 			{
-				if( m_spellInfo->Reagent[i] <= 0 || m_spellInfo->ReagentCount[i] <= 0)
+				if( GetSpellProto()->Reagent[i] <= 0 || GetSpellProto()->ReagentCount[i] <= 0)
 					continue;
 
-				if(p_caster->GetItemInterface()->GetItemCount(m_spellInfo->Reagent[i]) < m_spellInfo->ReagentCount[i])
+				if(p_caster->GetItemInterface()->GetItemCount(GetSpellProto()->Reagent[i]) < GetSpellProto()->ReagentCount[i])
 					return SPELL_FAILED_ITEM_GONE;
 			}
 
 		// check if we have the required tools, totems, etc
-		if( m_spellInfo->Totem[0] != 0)
+		if( GetSpellProto()->Totem[0] != 0)
 		{
-			if(!p_caster->GetItemInterface()->GetItemCount(m_spellInfo->Totem[0]))
+			if(!p_caster->GetItemInterface()->GetItemCount(GetSpellProto()->Totem[0]))
 				return SPELL_FAILED_TOTEMS;
 		}
-		if( m_spellInfo->Totem[1] != 0)
+		if( GetSpellProto()->Totem[1] != 0)
 		{
-			if(!p_caster->GetItemInterface()->GetItemCount(m_spellInfo->Totem[1]))
+			if(!p_caster->GetItemInterface()->GetItemCount(GetSpellProto()->Totem[1]))
 				return SPELL_FAILED_TOTEMS;
 		}
 
 		// stealth check
-		if( m_spellInfo->NameHash == SPELL_HASH_STEALTH || m_spellInfo->NameHash == SPELL_HASH_PROWL )
+		if( GetSpellProto()->NameHash == SPELL_HASH_STEALTH || GetSpellProto()->NameHash == SPELL_HASH_PROWL )
 		{
 			if( p_caster->CombatStatus.IsInCombat() )
 				return SPELL_FAILED_TARGET_IN_COMBAT;
 		}
 
-		if( ( m_spellInfo->NameHash == SPELL_HASH_CANNIBALIZE || m_spellInfo->Id == 46584 ))
+		if( ( GetSpellProto()->NameHash == SPELL_HASH_CANNIBALIZE || GetSpellProto()->Id == 46584 ))
 		{
 			bool check = false;
 			for(Object::InRangeSet::iterator i = p_caster->GetInRangeSetBegin(); i != p_caster->GetInRangeSetEnd(); i++)
@@ -3441,7 +3441,7 @@ uint8 Spell::CanCast(bool tolerate)
 							check = true;
 			}
 
-			if( !check && m_spellInfo->Id == 46584 )
+			if( !check && GetSpellProto()->Id == 46584 )
 			{
 				if( p_caster->HasDummyAura( SPELL_HASH_GLYPH_OF_RAISE_DEAD ) )
 					check = true;
@@ -3458,7 +3458,7 @@ uint8 Spell::CanCast(bool tolerate)
 		}
 
 		// check if we have the required gameobject focus
-		if( m_spellInfo->RequiresSpellFocus)
+		if( GetSpellProto()->RequiresSpellFocus)
 		{
 			float focusRange;
 			bool found = false;
@@ -3488,7 +3488,7 @@ uint8 Spell::CanCast(bool tolerate)
 				if(!IsInrange(p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), (*itr), (focusRange * focusRange)))
 					continue;
 
-				if(info->SpellFocus == m_spellInfo->RequiresSpellFocus)
+				if(info->SpellFocus == GetSpellProto()->RequiresSpellFocus)
 				{
 					found = true;
 					break;
@@ -3499,13 +3499,13 @@ uint8 Spell::CanCast(bool tolerate)
 				return SPELL_FAILED_REQUIRES_SPELL_FOCUS;
 		}
 
-		if( m_spellInfo->AreaGroupId > 0)
+		if( GetSpellProto()->AreaGroupId > 0)
 		{
 			bool found = false;
 			uint16 area_id = p_caster->GetAreaID();
 			uint32 zone_id = p_caster->GetZoneId();
 
-			AreaGroup const* groupEntry = dbcAreaGroup.LookupEntry( m_spellInfo->AreaGroupId );
+			AreaGroup const* groupEntry = dbcAreaGroup.LookupEntry( GetSpellProto()->AreaGroupId );
 			if( groupEntry )
 			{
 				for ( uint8 i=0; i<7; i++ )
@@ -3522,9 +3522,9 @@ uint8 Spell::CanCast(bool tolerate)
 		}
 
 		// aurastate check
-		if( m_spellInfo->CasterAuraState)
+		if( GetSpellProto()->CasterAuraState)
 		{
-			if( !p_caster->HasFlag( UNIT_FIELD_AURASTATE, 1 << (m_spellInfo->CasterAuraState-1) ) )
+			if( !p_caster->HasFlag( UNIT_FIELD_AURASTATE, 1 << (GetSpellProto()->CasterAuraState-1) ) )
 				return SPELL_FAILED_CASTER_AURASTATE;
 		}
 	}
@@ -3537,7 +3537,7 @@ uint8 Spell::CanCast(bool tolerate)
 		// check if the targeted item is in the trade box
 		if( m_targets.m_targetMask & TARGET_FLAG_TRADE_ITEM )
 		{
-			switch( m_spellInfo->Effect[0] )
+			switch( GetSpellProto()->Effect[0] )
 			{
 				// only lockpicking and enchanting can target items in the trade box
 			case SPELL_EFFECT_OPEN_LOCK:
@@ -3545,7 +3545,7 @@ uint8 Spell::CanCast(bool tolerate)
 			case SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY:
 				{
 					// check for enchants that can only be done on your own items
-					if( m_spellInfo->Flags3 & FLAGS3_ENCHANT_OWN_ONLY )
+					if( GetSpellProto()->Flags3 & FLAGS3_ENCHANT_OWN_ONLY )
 						return SPELL_FAILED_BAD_TARGETS;
 
 					// get the player we are trading with
@@ -3572,7 +3572,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if(!proto) return SPELL_FAILED_BAD_TARGETS;
 
 		// check to make sure the targeted item is acceptable
-		switch(m_spellInfo->Effect[0])
+		switch(GetSpellProto()->Effect[0])
 		{
 			// Lock Picking Targeted Item Check
 			case SPELL_EFFECT_OPEN_LOCK:
@@ -3586,21 +3586,21 @@ uint8 Spell::CanCast(bool tolerate)
 			case SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY:
 			{
 				// check for enchants that can only be done on your own items, make sure they are soulbound
-				if( m_spellInfo->Flags3 & FLAGS3_ENCHANT_OWN_ONLY && i_target->GetOwner() != p_caster)
+				if( GetSpellProto()->Flags3 & FLAGS3_ENCHANT_OWN_ONLY && i_target->GetOwner() != p_caster)
 					return SPELL_FAILED_BAD_TARGETS;
 
 				// check if we have the correct class, subclass, and inventory type of target item
-				if( m_spellInfo->EquippedItemClass != (int32)proto->Class && proto->Class != 7)
+				if( GetSpellProto()->EquippedItemClass != (int32)proto->Class && proto->Class != 7)
 					return SPELL_FAILED_BAD_TARGETS;
 
-				if( m_spellInfo->EquippedItemSubClass && !(m_spellInfo->EquippedItemSubClass & (1 << proto->SubClass)) &&  m_spellInfo->EffectMiscValueB[0] != (int32)proto->SubClass )
+				if( GetSpellProto()->EquippedItemSubClass && !(GetSpellProto()->EquippedItemSubClass & (1 << proto->SubClass)) &&  GetSpellProto()->EffectMiscValueB[0] != (int32)proto->SubClass )
 					return SPELL_FAILED_BAD_TARGETS;
 
-				if( m_spellInfo->RequiredItemFlags && !(m_spellInfo->RequiredItemFlags & (1 << proto->InventoryType)) && proto->InventoryType != 0 )
+				if( GetSpellProto()->RequiredItemFlags && !(GetSpellProto()->RequiredItemFlags & (1 << proto->InventoryType)) && proto->InventoryType != 0 )
 					return SPELL_FAILED_BAD_TARGETS;
 
-				if (m_spellInfo->Effect[0] == SPELL_EFFECT_ENCHANT_ITEM &&
-					m_spellInfo->baseLevel && (m_spellInfo->baseLevel > proto->ItemLevel))
+				if (GetSpellProto()->Effect[0] == SPELL_EFFECT_ENCHANT_ITEM &&
+					GetSpellProto()->baseLevel && (GetSpellProto()->baseLevel > proto->ItemLevel))
 					return int8(SPELL_FAILED_BAD_TARGETS); // maybe there is different err code
 
 				break;
@@ -3683,13 +3683,13 @@ uint8 Spell::CanCast(bool tolerate)
 	}
 
 	// set up our max Range
-	//float maxRange = GetMaxRange( dbcSpellRange.LookupEntry( m_spellInfo->rangeIndex ) );
-	float maxRange = m_spellInfo->base_range_or_radius;
+	//float maxRange = GetMaxRange( dbcSpellRange.LookupEntry( GetSpellProto()->rangeIndex ) );
+	float maxRange = GetSpellProto()->base_range_or_radius;
 
-	if( m_spellInfo->SpellGroupType && u_caster != NULL )
+	if( GetSpellProto()->SpellGroupType && u_caster != NULL )
 	{
-		SM_FFValue( u_caster->SM[SMT_RANGE][0], &maxRange, m_spellInfo->SpellGroupType );
-		SM_PFValue( u_caster->SM[SMT_RANGE][1], &maxRange, m_spellInfo->SpellGroupType );
+		SM_FFValue( u_caster->SM[SMT_RANGE][0], &maxRange, GetSpellProto()->SpellGroupType );
+		SM_PFValue( u_caster->SM[SMT_RANGE][1], &maxRange, GetSpellProto()->SpellGroupType );
 	}
 
 	// Targeted Location Checks (AoE spells)
@@ -3715,10 +3715,10 @@ uint8 Spell::CanCast(bool tolerate)
 		{
 			if( g_caster != NULL )
 			{
-				if(target->SchoolImmunityList[m_spellInfo->School])
+				if(target->SchoolImmunityList[GetSpellProto()->School])
 					return SPELL_FAILED_DAMAGE_IMMUNE;
 
-				if(target->MechanicsDispels[m_spellInfo->MechanicsType])
+				if(target->MechanicsDispels[GetSpellProto()->MechanicsType])
 					return SPELL_FAILED_DAMAGE_IMMUNE;
 			}
 
@@ -3743,17 +3743,17 @@ uint8 Spell::CanCast(bool tolerate)
 
 			if( p_caster != NULL )
 			{
-				if( m_spellInfo->forced_creature_target )
+				if( GetSpellProto()->forced_creature_target )
 				{
 					if( !target->IsCreature() )
 						return SPELL_FAILED_BAD_TARGETS;
 
 					if( TO_CREATURE( target )->GetCreatureInfo() != NULL )
-						if( m_spellInfo->forced_creature_target != TO_CREATURE( target )->GetCreatureInfo()->Id )
+						if( GetSpellProto()->forced_creature_target != TO_CREATURE( target )->GetCreatureInfo()->Id )
 							return SPELL_FAILED_BAD_TARGETS;
 				}
 
-				if( m_spellInfo->Id == SPELL_RANGED_THROW)
+				if( GetSpellProto()->Id == SPELL_RANGED_THROW)
 				{
 					Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
 					if(!itm || ((itm->GetDurability() == 0) && itm->GetDurabilityMax()))
@@ -3766,9 +3766,9 @@ uint8 Spell::CanCast(bool tolerate)
 				}
 
 				// check aurastate
-				if( m_spellInfo->TargetAuraState && !skip)
+				if( GetSpellProto()->TargetAuraState && !skip)
 				{
-					if( !target->HasFlag( UNIT_FIELD_AURASTATE, 1<<(m_spellInfo->TargetAuraState-1) ) )
+					if( !target->HasFlag( UNIT_FIELD_AURASTATE, 1<<(GetSpellProto()->TargetAuraState-1) ) )
 					{
 						return SPELL_FAILED_TARGET_AURASTATE;
 					}
@@ -3787,11 +3787,11 @@ uint8 Spell::CanCast(bool tolerate)
 					}
 				}
 
-				if( m_spellInfo->EffectApplyAuraName[0] == 2)//mind control
+				if( GetSpellProto()->EffectApplyAuraName[0] == 2)//mind control
 				{
-					if( m_spellInfo->EffectBasePoints[0])//got level req;
+					if( GetSpellProto()->EffectBasePoints[0])//got level req;
 					{
-						if((int32)target->getLevel() > m_spellInfo->EffectBasePoints[0]+1 + int32(p_caster->getLevel() - m_spellInfo->spellLevel))
+						if((int32)target->getLevel() > GetSpellProto()->EffectBasePoints[0]+1 + int32(p_caster->getLevel() - GetSpellProto()->spellLevel))
 							return SPELL_FAILED_HIGHLEVEL;
 						else if(target->GetTypeId() == TYPEID_UNIT)
 						{
@@ -3804,7 +3804,7 @@ uint8 Spell::CanCast(bool tolerate)
 			}
 
 			// scripted spell stuff
-			switch(m_spellInfo->Id)
+			switch(GetSpellProto()->Id)
 			{
 				case 603: //curse of doom, can't be casted on players
 				case 30910:
@@ -3858,36 +3858,36 @@ uint8 Spell::CanCast(bool tolerate)
 				**********************************************************/
 
 				/* burlex: units are always facing the target! */
-				if(p_caster && m_spellInfo->FacingCasterFlags)
+				if(p_caster && GetSpellProto()->FacingCasterFlags)
 				{
 					if(!p_caster->isInFront(target))
 						return SPELL_FAILED_UNIT_NOT_INFRONT;
-					if((m_spellInfo->Flags3 & FLAGS3_REQ_BEHIND_TARGET) && (m_spellInfo->Id != SPELL_RANGED_THROW) &&
+					if((GetSpellProto()->Flags3 & FLAGS3_REQ_BEHIND_TARGET) && (GetSpellProto()->Id != SPELL_RANGED_THROW) &&
 						target->isInFront(p_caster))
 						return SPELL_FAILED_NOT_BEHIND;
 				}
 			}
 
 			// if target is already skinned, don't let it be skinned again
-			if( m_spellInfo->Effect[0] == SPELL_EFFECT_SKINNING) // skinning
+			if( GetSpellProto()->Effect[0] == SPELL_EFFECT_SKINNING) // skinning
 				if(target->IsUnit() && (TO_CREATURE(target)->Skinned) )
 					return SPELL_FAILED_TARGET_UNSKINNABLE;
 
 			// pet's owner stuff
-			/*if (m_spellInfo->EffectImplicitTargetA[0] == 27 ||
-				m_spellInfo->EffectImplicitTargetA[1] == 27 ||
-				m_spellInfo->EffectImplicitTargetA[2] == 27)
+			/*if (GetSpellProto()->EffectImplicitTargetA[0] == 27 ||
+				GetSpellProto()->EffectImplicitTargetA[1] == 27 ||
+				GetSpellProto()->EffectImplicitTargetA[2] == 27)
 			{
 				if (!target->IsPlayer())
 					return SPELL_FAILED_TARGET_NOT_PLAYER; //if you are there something is very wrong
 			}*/
 
 			// target 39 is fishing, all fishing spells are handled
-			if( m_spellInfo->EffectImplicitTargetA[0] == 39 )//||
-			 //m_spellInfo->EffectImplicitTargetA[1] == 39 ||
-			 //m_spellInfo->EffectImplicitTargetA[2] == 39)
+			if( GetSpellProto()->EffectImplicitTargetA[0] == 39 )//||
+			 //GetSpellProto()->EffectImplicitTargetA[1] == 39 ||
+			 //GetSpellProto()->EffectImplicitTargetA[2] == 39)
 			{
-				uint32 entry = m_spellInfo->EffectMiscValue[0];
+				uint32 entry = GetSpellProto()->EffectMiscValue[0];
 				if(entry == GO_FISHING_BOBBER)
 				{
 					//uint32 mapid = p_caster->GetMapId();
@@ -3923,11 +3923,11 @@ uint8 Spell::CanCast(bool tolerate)
 
 			if( p_caster != NULL )
 			{
-				if( m_spellInfo->NameHash == SPELL_HASH_GOUGE )// Gouge
+				if( GetSpellProto()->NameHash == SPELL_HASH_GOUGE )// Gouge
 					if(!target->isInFront(p_caster))
 						return SPELL_FAILED_NOT_INFRONT;
 
-				if( m_spellInfo->Category==1131)//Hammer of wrath, requires target to have 20- % of hp
+				if( GetSpellProto()->Category==1131)//Hammer of wrath, requires target to have 20- % of hp
 				{
 					if(target->GetUInt32Value(UNIT_FIELD_HEALTH) == 0)
 						return SPELL_FAILED_BAD_TARGETS;
@@ -3935,28 +3935,28 @@ uint8 Spell::CanCast(bool tolerate)
 					if(target->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/target->GetUInt32Value(UNIT_FIELD_HEALTH)<5)
 						 return SPELL_FAILED_BAD_TARGETS;
 				}
-				else if( m_spellInfo->Category == 672)//Conflagrate, requires immolation spell on victim
+				else if( GetSpellProto()->Category == 672)//Conflagrate, requires immolation spell on victim
 				{
 					if(!target->HasAuraVisual(46))
 						return SPELL_FAILED_BAD_TARGETS;
 				}
 
-				if( m_spellInfo->NameHash == SPELL_HASH_ENVENOM )
+				if( GetSpellProto()->NameHash == SPELL_HASH_ENVENOM )
 				{
 					if( !target->HasAuraVisual(5100) )
 						return SPELL_FAILED_BAD_TARGETS ;
 				}
 
-				if(target->dispels[m_spellInfo->DispelType])
+				if(target->dispels[GetSpellProto()->DispelType])
 					return SPELL_FAILED_PREVENTED_BY_MECHANIC-1;			// hackfix - burlex
 
 				// Removed by Supalosa and moved to 'completed cast'
-				//if(target->MechanicsDispels[m_spellInfo->MechanicsType])
+				//if(target->MechanicsDispels[GetSpellProto()->MechanicsType])
 				//	return SPELL_FAILED_PREVENTED_BY_MECHANIC-1; // Why not just use 	SPELL_FAILED_DAMAGE_IMMUNE								   = 144,
 			}
 
 			// if we're replacing a higher rank, deny it
-			if( m_spellInfo->buffType > 0 && target != m_caster)
+			if( GetSpellProto()->buffType > 0 && target != m_caster)
 			{
 				AuraCheckResponse acr = target->AuraCheck(m_spellInfo);
 				if( acr.Error == AURA_CHECK_RESULT_HIGHER_BUFF_PRESENT )
@@ -3973,7 +3973,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 			if( target->IsPlayer() )
 			{
-				switch( m_spellInfo->NameHash )
+				switch( GetSpellProto()->NameHash )
 				{
 				case SPELL_HASH_DIVINE_PROTECTION:
 				case SPELL_HASH_DIVINE_SHIELD:
@@ -4023,7 +4023,7 @@ uint8 Spell::CanCast(bool tolerate)
 				}
 			}
 
-			if (m_spellInfo->MechanicsType == 16 && target->mRecentlyBandaged)
+			if (GetSpellProto()->MechanicsType == 16 && target->mRecentlyBandaged)
 				return SPELL_FAILED_DAMAGE_IMMUNE;
 		}
 	}
@@ -4031,17 +4031,17 @@ uint8 Spell::CanCast(bool tolerate)
 	// Special State Checks (for creatures & players)
 	if( u_caster )
 	{
-		if( u_caster->SchoolCastPrevent[m_spellInfo->School] )
+		if( u_caster->SchoolCastPrevent[GetSpellProto()->School] )
 		{
 			uint32 now_ = getMSTime();
-			if( now_ < u_caster->SchoolCastPrevent[m_spellInfo->School] )
+			if( now_ < u_caster->SchoolCastPrevent[GetSpellProto()->School] )
 				return SPELL_FAILED_SILENCED;
 		}
 
-		if( u_caster->m_silenced && m_spellInfo->School != NORMAL_DAMAGE )
+		if( u_caster->m_silenced && GetSpellProto()->School != NORMAL_DAMAGE )
 		{
 				// HACK FIX
-				switch( m_spellInfo->NameHash )
+				switch( GetSpellProto()->NameHash )
 				{
 					case SPELL_HASH_ICE_BLOCK: //Ice Block
 					case 0x9840A1A6: //Divine Shield
@@ -4084,28 +4084,28 @@ uint8 Spell::CanCast(bool tolerate)
 		{
 			for( int i = 0; i < 3; i++ ) // if is going to cast a spell that breaks stun remove stun auras, looks a bit hacky but is the best way i can find
 			{
-				if( m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MECHANIC_IMMUNITY )
+				if( GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MECHANIC_IMMUNITY )
 				{
-					target->RemoveAllAurasByMechanic( m_spellInfo->EffectMiscValue[i] , -1 , true );
+					target->RemoveAllAurasByMechanic( GetSpellProto()->EffectMiscValue[i] , -1 , true );
 					// Remove all debuffs of that mechanic type.
 					// This is also done in SpellAuras.cpp - wtf?
 				}
 				/*
-				if( m_spellInfo->EffectApplyAuraName[i] == SPELL_AURA_MECHANIC_IMMUNITY && (m_spellInfo->EffectMiscValue[i] == 12 || m_spellInfo->EffectMiscValue[i] == 17))
+				if( GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MECHANIC_IMMUNITY && (GetSpellProto()->EffectMiscValue[i] == 12 || GetSpellProto()->EffectMiscValue[i] == 17))
 				{
 					for(uint32 x=MAX_POSITIVE_AURAS;x<MAX_AURAS;x++)
 						if(target->m_auras[x])
-							if(target->m_auras[x]->GetSpellProto()->MechanicsType == m_spellInfo->EffectMiscValue[i])
+							if(target->m_auras[x]->GetSpellProto()->MechanicsType == GetSpellProto()->EffectMiscValue[i])
 								target->m_auras[x]->Remove();
 				}
 				*/
 			}
 		}
 
-		if( u_caster->IsPacified() && m_spellInfo->School == NORMAL_DAMAGE ) // only affects physical damage
+		if( u_caster->IsPacified() && GetSpellProto()->School == NORMAL_DAMAGE ) // only affects physical damage
 		{
 			// HACK FIX
-			switch( m_spellInfo->NameHash )
+			switch( GetSpellProto()->NameHash )
 			{
 				case SPELL_HASH_ICE_BLOCK: //Ice Block
 				case 0x9840A1A6: //Divine Shield
@@ -4127,7 +4127,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( u_caster->IsStunned() || u_caster->IsFeared())
 		{
 			// HACK FIX
-			switch( m_spellInfo->NameHash )
+			switch( GetSpellProto()->NameHash )
 			{
 				case SPELL_HASH_HAND_OF_FREEDOM:
 				{
@@ -4172,9 +4172,9 @@ uint8 Spell::CanCast(bool tolerate)
 			else if (t_spellInfo)
 			{
 				if(
-					t_spellInfo->EffectTriggerSpell[0] != m_spellInfo->Id &&
-					t_spellInfo->EffectTriggerSpell[1] != m_spellInfo->Id &&
-					t_spellInfo->EffectTriggerSpell[2] != m_spellInfo->Id)
+					t_spellInfo->EffectTriggerSpell[0] != GetSpellProto()->Id &&
+					t_spellInfo->EffectTriggerSpell[1] != GetSpellProto()->Id &&
+					t_spellInfo->EffectTriggerSpell[2] != GetSpellProto()->Id)
 				{
 					return SPELL_FAILED_SPELL_IN_PROGRESS;
 				}
@@ -4226,7 +4226,7 @@ void Spell::RemoveItems()
 	}
 
 	// Ammo Removal
-	if( p_caster && p_caster->RequireAmmo && GetSpellProto()->Id != 53254 && (m_spellInfo->Flags3 == FLAGS3_REQ_RANGED_WEAPON || m_spellInfo->Flags4 & FLAGS4_PLAYER_RANGED_SPELLS))
+	if( p_caster && p_caster->RequireAmmo && GetSpellProto()->Id != 53254 && (GetSpellProto()->Flags3 == FLAGS3_REQ_RANGED_WEAPON || GetSpellProto()->Flags4 & FLAGS4_PLAYER_RANGED_SPELLS))
 	{
 		p_caster->GetItemInterface()->RemoveItemAmt_ProtectPointer(p_caster->GetUInt32Value(PLAYER_AMMO_ID), 1, &i_caster);
 	}
@@ -4234,9 +4234,9 @@ void Spell::RemoveItems()
 	// Reagent Removal
 	for(uint32 i=0; i<8 ;++i)
 	{
-		if( p_caster && m_spellInfo->Reagent[i])
+		if( p_caster && GetSpellProto()->Reagent[i])
 		{
-			p_caster->GetItemInterface()->RemoveItemAmt_ProtectPointer(m_spellInfo->Reagent[i], m_spellInfo->ReagentCount[i], &i_caster);
+			p_caster->GetItemInterface()->RemoveItemAmt_ProtectPointer(GetSpellProto()->Reagent[i], GetSpellProto()->ReagentCount[i], &i_caster);
 		}
 	}
 }
@@ -4245,22 +4245,22 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 {
 	// TODO: Add ARMOR CHECKS; Add npc that have ranged weapons use them;
 	// Range checks
-/*	if(m_spellInfo->Id == SPELL_RANGED_GUN) // this includes bow and gun
+/*	if(GetSpellProto()->Id == SPELL_RANGED_GUN) // this includes bow and gun
 	{
 		if(!u_caster || !unitTarget)
 			return 0;
 
-		return ::CalculateDamage( u_caster, unitTarget, RANGED, m_spellInfo->SpellGroupType );
+		return ::CalculateDamage( u_caster, unitTarget, RANGED, GetSpellProto()->SpellGroupType );
 	}*/
 
-	if( m_spellInfo->Id == 3018 )
+	if( GetSpellProto()->Id == 3018 )
 		m_spellInfo = dbcSpell.LookupEntry(75);
 
 	int32 value = 0;
 
-	float basePointsPerLevel = m_spellInfo->EffectRealPointsPerLevel[i];
-	int32 basePoints = m_spellInfo->EffectBasePoints[i] + 1;
-	int32 randomPoints = m_spellInfo->EffectDieSides[i];
+	float basePointsPerLevel = GetSpellProto()->EffectRealPointsPerLevel[i];
+	int32 basePoints = GetSpellProto()->EffectBasePoints[i] + 1;
+	int32 randomPoints = GetSpellProto()->EffectDieSides[i];
 
 	//added by Zack : some talents inherit their basepoints from the previously casted spell: see mage - Master of Elements
 	if(forced_basepoints[i])
@@ -4268,9 +4268,9 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 
 	if( u_caster != NULL )
 	{
-		int32 diff = -(int32)m_spellInfo->baseLevel;
-		if (m_spellInfo->maxLevel && u_caster->getLevel()>m_spellInfo->maxLevel)
-			diff += m_spellInfo->maxLevel;
+		int32 diff = -(int32)GetSpellProto()->baseLevel;
+		if (GetSpellProto()->maxLevel && u_caster->getLevel()>GetSpellProto()->maxLevel)
+			diff += GetSpellProto()->maxLevel;
 		else
 			diff += u_caster->getLevel();
 //		Crow:
@@ -4290,7 +4290,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 
 	if( p_caster != NULL )
 	{
-		int32 comboDamage = (int32)m_spellInfo->EffectPointsPerComboPoint[i];
+		int32 comboDamage = (int32)GetSpellProto()->EffectPointsPerComboPoint[i];
 
 		if(comboDamage)
 		{
@@ -4336,7 +4336,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 					value += value*(0.125f*diseasecount);
 			}
 		}
-		SpellOverrideMap::iterator itr = p_caster->mSpellOverrideMap.find(m_spellInfo->Id);
+		SpellOverrideMap::iterator itr = p_caster->mSpellOverrideMap.find(GetSpellProto()->Id);
 		if(itr != p_caster->mSpellOverrideMap.end())
 		{
 			ScriptOverrideList::iterator itrSO;
@@ -4365,24 +4365,24 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 		int32 spell_flat_modifers=0;
 		int32 spell_pct_modifers=0;
 
-		SM_FIValue(caster->SM[SMT_MISC_EFFECT][0],&spell_flat_modifers,m_spellInfo->SpellGroupType);
-		SM_FIValue(caster->SM[SMT_MISC_EFFECT][1],&spell_pct_modifers,m_spellInfo->SpellGroupType);
+		SM_FIValue(caster->SM[SMT_MISC_EFFECT][0],&spell_flat_modifers,GetSpellProto()->SpellGroupType);
+		SM_FIValue(caster->SM[SMT_MISC_EFFECT][1],&spell_pct_modifers,GetSpellProto()->SpellGroupType);
 
 		if( i == 0 )
 		{
-			SM_FIValue(caster->SM[SMT_FIRST_EFFECT_BONUS][0],&spell_flat_modifers,m_spellInfo->SpellGroupType);
-			SM_FIValue(caster->SM[SMT_FIRST_EFFECT_BONUS][1],&spell_pct_modifers,m_spellInfo->SpellGroupType);
+			SM_FIValue(caster->SM[SMT_FIRST_EFFECT_BONUS][0],&spell_flat_modifers,GetSpellProto()->SpellGroupType);
+			SM_FIValue(caster->SM[SMT_FIRST_EFFECT_BONUS][1],&spell_pct_modifers,GetSpellProto()->SpellGroupType);
 		}else if( i == 1 )
 		{
-			SM_FIValue(caster->SM[SMT_SECOND_EFFECT_BONUS][0],&spell_flat_modifers,m_spellInfo->SpellGroupType);
-			SM_FIValue(caster->SM[SMT_SECOND_EFFECT_BONUS][1],&spell_pct_modifers,m_spellInfo->SpellGroupType);
+			SM_FIValue(caster->SM[SMT_SECOND_EFFECT_BONUS][0],&spell_flat_modifers,GetSpellProto()->SpellGroupType);
+			SM_FIValue(caster->SM[SMT_SECOND_EFFECT_BONUS][1],&spell_pct_modifers,GetSpellProto()->SpellGroupType);
 		}
 		if( ( i == 2 ) ||
-			( i == 1 && m_spellInfo->Effect[2] == 0 ) ||
-			( i == 0 && m_spellInfo->Effect[1] == 0 && m_spellInfo->Effect[2] == 0 ) )
+			( i == 1 && GetSpellProto()->Effect[2] == 0 ) ||
+			( i == 0 && GetSpellProto()->Effect[1] == 0 && GetSpellProto()->Effect[2] == 0 ) )
 		{
-			SM_FIValue(caster->SM[SMT_LAST_EFFECT_BONUS][0],&spell_flat_modifers,m_spellInfo->SpellGroupType);
-			SM_FIValue(caster->SM[SMT_LAST_EFFECT_BONUS][1],&spell_pct_modifers,m_spellInfo->SpellGroupType);
+			SM_FIValue(caster->SM[SMT_LAST_EFFECT_BONUS][0],&spell_flat_modifers,GetSpellProto()->SpellGroupType);
+			SM_FIValue(caster->SM[SMT_LAST_EFFECT_BONUS][1],&spell_pct_modifers,GetSpellProto()->SpellGroupType);
 		}
 		value += float2int32(value*(float)(spell_pct_modifers/100.0f)) + spell_flat_modifers;
 	}
@@ -4554,7 +4554,7 @@ void Spell::CreateItem(uint32 itemId)
 	{
 		if(unitTarget->isAlive())
 		{
-			m_caster->SpellNonMeleeDamageLog(unitTarget,m_spellInfo->Id, damageToHit);
+			m_caster->SpellNonMeleeDamageLog(unitTarget,GetSpellProto()->Id, damageToHit);
 		}
 		else
 		{	if( u_caster != NULL )
@@ -4640,12 +4640,12 @@ void Spell::Heal(int32 amount)
 		amount = u_caster->GetSpellBonusDamage(unitTarget, m_spellInfo, amount, false, true); // 3.0.2 Spellpower change: In order to keep the effective amount healed for a given spell the same, we’d expect the original coefficients to be multiplied by 1/0.532 or 1.88.
 
 		// Healing Way fix
- 		if(m_spellInfo->NameHash == SPELL_HASH_HEALING_WAVE)
+ 		if(GetSpellProto()->NameHash == SPELL_HASH_HEALING_WAVE)
 		{
 			if(unitTarget->HasActiveAura(29203))
 				amount += amount * 18 / 100;
 		}
-		else if( m_spellInfo->NameHash == SPELL_HASH_HOLY_LIGHT )
+		else if( GetSpellProto()->NameHash == SPELL_HASH_HOLY_LIGHT )
 		{
 			if( unitTarget->HasDummyAura(SPELL_HASH_GLYPH_OF_HOLY_LIGHT) )
 			{
@@ -4674,29 +4674,29 @@ void Spell::Heal(int32 amount)
 			}
 		}
 
-		if(m_spellInfo->spell_can_crit)
+		if(GetSpellProto()->spell_can_crit)
 		{
-			critchance = u_caster->spellcritperc + u_caster->SpellCritChanceSchool[m_spellInfo->School];
-			if( m_spellInfo->SpellGroupType )
+			critchance = u_caster->spellcritperc + u_caster->SpellCritChanceSchool[GetSpellProto()->School];
+			if( GetSpellProto()->SpellGroupType )
 			{
-				SM_FFValue(u_caster->SM[SMT_CRITICAL][0], &critchance, m_spellInfo->SpellGroupType);
-				SM_PFValue(u_caster->SM[SMT_CRITICAL][1], &critchance, m_spellInfo->SpellGroupType);
+				SM_FFValue(u_caster->SM[SMT_CRITICAL][0], &critchance, GetSpellProto()->SpellGroupType);
+				SM_PFValue(u_caster->SM[SMT_CRITICAL][1], &critchance, GetSpellProto()->SpellGroupType);
 			}
 
 			// Sacred Shield HOAX
-			if( unitTarget->HasDummyAura(SPELL_HASH_SACRED_SHIELD) && m_spellInfo->NameHash == SPELL_HASH_FLASH_OF_LIGHT )
+			if( unitTarget->HasDummyAura(SPELL_HASH_SACRED_SHIELD) && GetSpellProto()->NameHash == SPELL_HASH_FLASH_OF_LIGHT )
 				critchance += 50.0f;
 		}
 		if(critical = Rand(critchance))
 		{
 			/*int32 critbonus = amount >> 1;
-			if( m_spellInfo->SpellGroupType)
-					SM_PIValue(TO_UNIT(u_caster)->SM[SMT_CRITICAL_DAMAGE][1], &critbonus, m_spellInfo->SpellGroupType);
+			if( GetSpellProto()->SpellGroupType)
+					SM_PIValue(TO_UNIT(u_caster)->SM[SMT_CRITICAL_DAMAGE][1], &critbonus, GetSpellProto()->SpellGroupType);
 			amount += critbonus;*/
 
 			int32 critical_bonus = 100;
-			if( m_spellInfo->SpellGroupType )
-				SM_FIValue( u_caster->SM[SMT_CRITICAL_DAMAGE][1], &critical_bonus, m_spellInfo->SpellGroupType );
+			if( GetSpellProto()->SpellGroupType )
+				SM_FIValue( u_caster->SM[SMT_CRITICAL_DAMAGE][1], &critical_bonus, GetSpellProto()->SpellGroupType );
 
 			if( critical_bonus > 0 )
 			{
@@ -4706,10 +4706,10 @@ void Spell::Heal(int32 amount)
 			}
 
 			if( u_caster->HasDummyAura(SPELL_HASH_LIVING_SEED) &&
-				( m_spellInfo->NameHash == SPELL_HASH_SWIFTMEND ||
-				m_spellInfo->NameHash == SPELL_HASH_REGROWTH ||
-				m_spellInfo->NameHash == SPELL_HASH_NOURISH ||
-				m_spellInfo->NameHash == SPELL_HASH_HEALING_TOUCH) )
+				( GetSpellProto()->NameHash == SPELL_HASH_SWIFTMEND ||
+				GetSpellProto()->NameHash == SPELL_HASH_REGROWTH ||
+				GetSpellProto()->NameHash == SPELL_HASH_NOURISH ||
+				GetSpellProto()->NameHash == SPELL_HASH_HEALING_TOUCH) )
 			{
 				uint32 chance = ( u_caster->GetDummyAura(SPELL_HASH_LIVING_SEED)->RankNumber * 33 ) + 1;
 				if( Rand( chance ) )
@@ -4746,9 +4746,9 @@ void Spell::Heal(int32 amount)
 			u_caster->HandleProc(NULL, PROC_ON_SPELL_CRIT_HIT, unitTarget, m_spellInfo, amount);
 		}
 
-		if( unitTarget != NULL && (m_spellInfo->NameHash == SPELL_HASH_GREATER_HEAL ||
-			m_spellInfo->NameHash == SPELL_HASH_FLASH_HEAL ||
-			m_spellInfo->NameHash == SPELL_HASH_PENANCE ) &&
+		if( unitTarget != NULL && (GetSpellProto()->NameHash == SPELL_HASH_GREATER_HEAL ||
+			GetSpellProto()->NameHash == SPELL_HASH_FLASH_HEAL ||
+			GetSpellProto()->NameHash == SPELL_HASH_PENANCE ) &&
 			u_caster->HasDummyAura( SPELL_HASH_RAPTURE ) && u_caster->m_CustomTimers[CUSTOM_TIMER_RAPTURE] <= getMSTime() )
 		{
 			SpellEntry *spellInfo = dbcSpell.LookupEntry( 47755 );
@@ -4777,7 +4777,7 @@ void Spell::Heal(int32 amount)
 		unitTarget->ModUnsigned32Value(UNIT_FIELD_HEALTH, amount);
 
 	if( overheal && u_caster && u_caster->HasDummyAura(SPELL_HASH_SERENDIPITY) && u_caster->m_LastSpellManaCost &&
-		( m_spellInfo->NameHash == SPELL_HASH_GREATER_HEAL || m_spellInfo->NameHash == SPELL_HASH_FLASH_HEAL ) )
+		( GetSpellProto()->NameHash == SPELL_HASH_GREATER_HEAL || GetSpellProto()->NameHash == SPELL_HASH_FLASH_HEAL ) )
 	{
 		int32 amt = float2int32( u_caster->m_LastSpellManaCost * ( 0.08f * u_caster->GetDummyAura(SPELL_HASH_SERENDIPITY)->RankNumber ));
 		SpellEntry* SpellInfo = dbcSpell.LookupEntry( 47762 );
@@ -4807,7 +4807,7 @@ void Spell::Heal(int32 amount)
 
 	if( m_caster )
 	{
-		SendHealSpellOnPlayer( m_caster, unitTarget, amount, critical, overheal, m_spellInfo->logsId ? m_spellInfo->logsId : (pSpellId ? pSpellId : m_spellInfo->Id) );
+		SendHealSpellOnPlayer( m_caster, unitTarget, amount, critical, overheal, GetSpellProto()->logsId ? GetSpellProto()->logsId : (pSpellId ? pSpellId : GetSpellProto()->Id) );
 	}
 	if( p_caster != NULL )
 	{
@@ -4835,7 +4835,7 @@ void Spell::Heal(int32 amount)
 						amount = (HealTarget->GetUInt32Value(UNIT_FIELD_MAXHEALTH) - HealTarget->GetUInt32Value(UNIT_FIELD_HEALTH));
 
 					HealTarget->ModUnsigned32Value(UNIT_FIELD_HEALTH, amount);
-					SendHealSpellOnPlayer( p_caster, HealTarget, amount, critical, overheal, m_spellInfo->logsId ? m_spellInfo->logsId : (pSpellId ? pSpellId : m_spellInfo->Id) );
+					SendHealSpellOnPlayer( p_caster, HealTarget, amount, critical, overheal, GetSpellProto()->logsId ? GetSpellProto()->logsId : (pSpellId ? pSpellId : GetSpellProto()->Id) );
 				}
 				else
 					beaconmap.erase(itr);
@@ -4845,7 +4845,7 @@ void Spell::Heal(int32 amount)
 
 	if (p_caster)
 	{
-		p_caster->m_casted_amount[m_spellInfo->School]=amount;
+		p_caster->m_casted_amount[GetSpellProto()->School]=amount;
 	}
 
 	// add threat
@@ -4911,7 +4911,7 @@ void Spell::DetermineSkillUp(uint32 skillid)
 	if(p_caster == NULL)
 		return;
 	float chance = 0.0f;
-	skilllinespell* skill = objmgr.GetSpellSkill(m_spellInfo->Id);
+	skilllinespell* skill = objmgr.GetSpellSkill(GetSpellProto()->Id);
 	if( skill != NULL && TO_PLAYER( m_caster )->_HasSkillLine( skill->skilline ) )
 	{
 		uint32 amt = TO_PLAYER( m_caster )->_GetSkillLineCurrent( skill->skilline, false );
@@ -4943,29 +4943,29 @@ bool Spell::Reflect(Unit* refunit)
 	// if the spell to reflect is a reflect spell, do nothing.
 	for(int i=0; i<3; i++)
 	{
-		if( m_spellInfo->Effect[i] == 6 && (m_spellInfo->EffectApplyAuraName[i] == 74 || m_spellInfo->EffectApplyAuraName[i] == 28))
+		if( GetSpellProto()->Effect[i] == 6 && (GetSpellProto()->EffectApplyAuraName[i] == 74 || GetSpellProto()->EffectApplyAuraName[i] == 28))
 			return false;
 	}
 
 	for(std::list<struct ReflectSpellSchool*>::iterator i = refunit->m_reflectSpellSchool.begin();i != refunit->m_reflectSpellSchool.end();++i)
 	{
-		if(((*i)->school == -1 && m_spellInfo->School) || (*i)->school == (int32)m_spellInfo->School)
+		if(((*i)->school == -1 && GetSpellProto()->School) || (*i)->school == (int32)GetSpellProto()->School)
 		{
 			if(Rand((float)(*i)->chance))
 			{
 				//the god blessed special case : mage - Frost Warding = is an augmentation to frost warding
 				if((*i)->require_aura_hash && u_caster && !u_caster->GetAuraSpellIDWithNameHash((*i)->require_aura_hash))
 				{
-					if( !(m_spellInfo->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
+					if( !(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_DAMAGING ) )
 						continue;
 
 					int32 evilforce = 0;
 					uint32 effectid = 0;
 					for( uint32 loopnr = 0; loopnr < 3; loopnr++ )
 					{
-						if( m_spellInfo->EffectBasePoints[loopnr] > evilforce )
+						if( GetSpellProto()->EffectBasePoints[loopnr] > evilforce )
 						{
-							evilforce = m_spellInfo->EffectBasePoints[loopnr];
+							evilforce = GetSpellProto()->EffectBasePoints[loopnr];
 							effectid = loopnr;
 						}
 					}
@@ -5213,7 +5213,7 @@ uint32 GetDiminishingGroup(uint32 NameHash)
 
 	WorldPacket data(SMSG_CLEAR_EXTRA_AURA_INFO, 13);
 	data << ((target != 0) ? target->GetNewGUID() : uint8(0));
-	data << m_spellInfo->Id;
+	data << GetSpellProto()->Id;
 
 	plr->GetSession()->SendPacket(&data);
 }*/
@@ -5229,7 +5229,7 @@ uint32 GetDiminishingGroup(uint32 NameHash)
 	// fuck bytebuffers
 	unsigned char buffer[13];
 	uint32 c = FastGUIDPack(guid, buffer, 0);
-	*(uint32*)&buffer[c] = m_spellInfo->Id;					c += 4;
+	*(uint32*)&buffer[c] = GetSpellProto()->Id;					c += 4;
 	plr->GetSession()->OutPacket(SMSG_CLEAR_EXTRA_AURA_INFO, c, buffer);
 }*/
 

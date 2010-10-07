@@ -1764,7 +1764,7 @@ public:
 
 	// This returns SPELL_ENTRY_Spell_Dmg_Type where 0 = SPELL_DMG_TYPE_NONE, 1 = SPELL_DMG_TYPE_MAGIC, 2 = SPELL_DMG_TYPE_MELEE, 3 = SPELL_DMG_TYPE_RANGED
 	// It should NOT be used for weapon_damage_type which needs: 0 = MELEE, 1 = OFFHAND, 2 = RANGED
-	HEARTHSTONE_INLINE uint32 GetType() { return ( m_spellInfo->Spell_Dmg_Type == SPELL_DMG_TYPE_NONE ? SPELL_DMG_TYPE_MAGIC : m_spellInfo->Spell_Dmg_Type ); }
+	HEARTHSTONE_INLINE uint32 GetType() { return ( GetSpellProto()->Spell_Dmg_Type == SPELL_DMG_TYPE_NONE ? SPELL_DMG_TYPE_MAGIC : GetSpellProto()->Spell_Dmg_Type ); }
 	HEARTHSTONE_INLINE Item* GetItemTarget() { return itemTarget; }
 	HEARTHSTONE_INLINE Unit* GetUnitTarget() { return unitTarget; }
 	HEARTHSTONE_INLINE Player* GetPlayerTarget() { return playerTarget; }
@@ -1787,7 +1787,7 @@ public:
 		Dur = -1;
 		SpellDuration *sd = NULL;
 
-		if(m_spellInfo->DurationIndex && (sd = dbcSpellDuration.LookupEntry(m_spellInfo->DurationIndex)))
+		if(GetSpellProto()->DurationIndex && (sd = dbcSpellDuration.LookupEntry(GetSpellProto()->DurationIndex)))
 		{
 			Dur = sd->Duration1;
 			//check for negative and 0 durations.
@@ -1824,16 +1824,16 @@ public:
 				}
 			}
 
-			if(m_spellInfo->SpellGroupType && u_caster)
+			if(GetSpellProto()->SpellGroupType && u_caster)
 			{
-				SM_FIValue(u_caster->SM[SMT_DURATION][0], (int32*)&Dur, m_spellInfo->SpellGroupType);
-				SM_PIValue(u_caster->SM[SMT_DURATION][1], (int32*)&Dur, m_spellInfo->SpellGroupType);
+				SM_FIValue(u_caster->SM[SMT_DURATION][0], (int32*)&Dur, GetSpellProto()->SpellGroupType);
+				SM_PIValue(u_caster->SM[SMT_DURATION][1], (int32*)&Dur, GetSpellProto()->SpellGroupType);
 			}
 
 			// Limit duration in PvP but not applying diminishing returns
 			if(unitTarget != NULL && unitTarget->IsPlayer() && Dur > 10000)
 			{
-				switch(m_spellInfo->NameHash)
+				switch(GetSpellProto()->NameHash)
 				{
 				case SPELL_HASH_CURSE_OF_TONGUES:
 				case SPELL_HASH_BANISH:
@@ -1842,14 +1842,14 @@ public:
 			}
 			if( unitTarget != NULL && p_caster && unitTarget == p_caster )
 			{
-				if( m_spellInfo->NameHash == SPELL_HASH_THORNS )
+				if( GetSpellProto()->NameHash == SPELL_HASH_THORNS )
 				{
 					if( p_caster->HasDummyAura( SPELL_HASH_GLYPH_OF_THORNS ) )
 					{
 						Dur += (p_caster->GetDummyAura( SPELL_HASH_GLYPH_OF_THORNS )->EffectBasePoints[0]+1) * MSTIME_MINUTE;
 					}
 				}
-				else if( m_spellInfo->NameHash == SPELL_HASH_BLESSING_OF_MIGHT )
+				else if( GetSpellProto()->NameHash == SPELL_HASH_BLESSING_OF_MIGHT )
 				{
 					if( p_caster->HasDummyAura(SPELL_HASH_GLYPH_OF_BLESSING_OF_MIGHT) )
 						Dur += 20 * MSTIME_MINUTE;
@@ -1864,11 +1864,11 @@ public:
 	{
 		if(bRadSet[i])return Rad[i];
 		bRadSet[i]=true;
-		Rad[i]=::GetRadius(dbcSpellRadius.LookupEntry(m_spellInfo->EffectRadiusIndex[i]));
-		if(m_spellInfo->SpellGroupType && u_caster)
+		Rad[i]=::GetRadius(dbcSpellRadius.LookupEntry(GetSpellProto()->EffectRadiusIndex[i]));
+		if(GetSpellProto()->SpellGroupType && u_caster)
 		{
-			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&Rad[i],m_spellInfo->SpellGroupType);
-			SM_PFValue(u_caster->SM[SMT_RADIUS][1],&Rad[i],m_spellInfo->SpellGroupType);
+			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&Rad[i],GetSpellProto()->SpellGroupType);
+			SM_PFValue(u_caster->SM[SMT_RADIUS][1],&Rad[i],GetSpellProto()->SpellGroupType);
 		}
 
 		return Rad[i];
@@ -1877,7 +1877,7 @@ public:
 	HEARTHSTONE_INLINE static uint32 GetBaseThreat(uint32 dmg)
 	{
 		//there should be a formula to determine what spell cause threat and which don't
-/*		switch(m_spellInfo->NameHash)
+/*		switch(GetSpellProto()->NameHash)
 		{
 			//hunter's mark
 			case 4287212498:

@@ -555,8 +555,8 @@ void AIInterface::Update(uint32 p_time)
 			if(!m_nextTarget ||
 				(m_nextTarget && (!m_Unit->GetMapMgr()->GetUnit(m_nextTarget->GetGUID()) || !m_nextTarget->isAlive() ||
 					(m_nextTarget->GetTypeId() == TYPEID_UNIT && TO_CREATURE(m_nextTarget)->IsTotem()) ||
-					!IsInrange(m_Unit,m_nextTarget,pSpell->m_spellInfo->base_range_or_radius_sqr) ||
-					!isAttackable(m_Unit, m_nextTarget,!(pSpell->m_spellInfo->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))))
+					!IsInrange(m_Unit,m_nextTarget,pSpell->GetSpellProto()->base_range_or_radius_sqr) ||
+					!isAttackable(m_Unit, m_nextTarget,!(pSpell->GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))))
 			{
 				//we set no target and see if we managed to fid a new one
 				m_nextTarget=NULLUNIT;

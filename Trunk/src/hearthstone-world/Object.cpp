@@ -2463,7 +2463,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				Spell* spl = pVictim->GetCurrentSpell();
 				for(int i = 0; i < 3; i++)
 				{
-					if(spl->m_spellInfo->Effect[i] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
+					if(spl->GetSpellProto()->Effect[i] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
 					{
 						DynamicObject* dObj = GetMapMgr()->GetDynamicObject(pVictim->GetUInt32Value(UNIT_FIELD_CHANNEL_OBJECT));
 						if(!dObj)
@@ -2476,7 +2476,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 						dObj = NULL;
 					}
 				}
-				if(spl->m_spellInfo->ChannelInterruptFlags == 48140)
+				if(spl->GetSpellProto()->ChannelInterruptFlags == 48140)
 					spl->cancel();
 			}
 		}
