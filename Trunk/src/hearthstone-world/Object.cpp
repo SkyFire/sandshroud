@@ -1781,60 +1781,6 @@ void Object::RemoveFlag( const uint32 index, uint32 oldFlag )
 	}
 }
 
-bool Object::canWalk()
-{
-	if(IsCreature())
-	{
-		Creature* ctr = TO_CREATURE(this);
-		if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
-			return true;
-		if(ctr->GetProto()->CanMove & LIMIT_GROUND)
-			return true;
-	}
-	else if(IsPlayer())
-		return true;
-
-	return false;
-}
-
-bool Object::canSwim()
-{
-	if(IsCreature())
-	{
-		Creature* ctr = TO_CREATURE(this);
-		if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
-			return true;
-		if(ctr->GetProto()->CanMove & LIMIT_WATER)
-			return true;
-	}
-	else if(IsPlayer())
-		return true;
-
-	return false;
-}
-
-bool Object::canFly()
-{
-	if(IsCreature())
-	{
-		Creature* ctr = TO_CREATURE(this);
-		if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
-			return true;
-		if(ctr->GetProto()->CanMove & LIMIT_AIR)
-			return true;
-	}
-	else if(IsPlayer())
-	{
-		Player* plr = TO_PLAYER(this);
-		if(plr->m_FlyingAura)
-			return true;
-		if(plr->FlyCheat)
-			return true;
-	}
-
-	return false;
-}
-
 ////////////////////////////////////////////////////////////
 
 float Object::CalcDistance(Object* Ob)

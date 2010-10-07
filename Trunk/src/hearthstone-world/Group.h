@@ -180,7 +180,28 @@ public:
 	bool HasMember(PlayerInfo * info);
 	HEARTHSTONE_INLINE uint32 MemberCount(void) { return m_MemberCount; }
 	HEARTHSTONE_INLINE bool IsFull() { return ((m_GroupType == GROUP_TYPE_PARTY && m_MemberCount >= MAX_GROUP_SIZE_PARTY) || (m_GroupType == GROUP_TYPE_RAID && m_MemberCount >= MAX_GROUP_SIZE_RAID)); }
-	HEARTHSTONE_INLINE uint32 GetOnlineMemberCount();
+	HEARTHSTONE_INLINE uint32 GetOnlineMemberCount()
+	{
+		GroupMembersSet::iterator itr;
+		uint32 i = 0;
+		uint32 count = 0;
+
+		m_groupLock.Acquire();
+		for(; i < m_SubGroupCount; i++)
+		{
+			if(m_SubGroups[i])
+			{
+				for(itr = m_SubGroups[i]->m_GroupMembers.begin(); itr != m_SubGroups[i]->m_GroupMembers.end(); itr++)
+				{
+					if((*itr)->m_loggedInPlayer)
+						count++;
+				}
+			}
+		}
+		m_groupLock.Release();
+
+		return count;
+	};
 
 	SubGroup* FindFreeSubGroup();
 

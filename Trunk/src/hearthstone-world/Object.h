@@ -223,9 +223,59 @@ public:
 	HEARTHSTONE_INLINE void SetSpawnZ(float z) { m_spawnLocation.z = z; }
 	HEARTHSTONE_INLINE void SetSpawnO(float o) { m_spawnLocation.o = o; }
 
-	HEARTHSTONE_INLINE bool canWalk();
-	HEARTHSTONE_INLINE bool canSwim();
-	HEARTHSTONE_INLINE bool canFly();
+	HEARTHSTONE_INLINE bool canWalk()
+	{
+		if(IsCreature())
+		{
+			Creature* ctr = TO_CREATURE(this);
+			if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
+				return true;
+			if(ctr->GetProto()->CanMove & LIMIT_GROUND)
+				return true;
+		}
+		else if(IsPlayer())
+			return true;
+
+		return false;
+	};
+
+	HEARTHSTONE_INLINE bool canSwim()
+	{
+		if(IsCreature())
+		{
+			Creature* ctr = TO_CREATURE(this);
+			if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
+				return true;
+			if(ctr->GetProto()->CanMove & LIMIT_WATER)
+				return true;
+		}
+		else if(IsPlayer())
+			return true;
+
+		return false;
+	};
+
+	HEARTHSTONE_INLINE bool canFly()
+	{
+		if(IsCreature())
+		{
+			Creature* ctr = TO_CREATURE(this);
+			if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
+				return true;
+			if(ctr->GetProto()->CanMove & LIMIT_AIR)
+				return true;
+		}
+		else if(IsPlayer())
+		{
+			Player* plr = TO_PLAYER(this);
+			if(plr->m_FlyingAura)
+				return true;
+			if(plr->FlyCheat)
+				return true;
+		}
+
+		return false;
+	};
 
 	HEARTHSTONE_INLINE const LocationVector & GetPosition() { return m_position; }
 	HEARTHSTONE_INLINE LocationVector & GetPositionNC() { return m_position; }
