@@ -844,7 +844,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 	{
 		bool fly = true;
 		if(m_Unit->IsCreature())
-			if(!(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
+			if(!TO_CREATURE(m_Unit)->GetProto() || !(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
 				fly = false;
 
 		if(!fly)

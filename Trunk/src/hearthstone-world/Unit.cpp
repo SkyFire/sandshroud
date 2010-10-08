@@ -2608,18 +2608,18 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 {
 	Item* it = NULLITEM;
 
-	float hitchance          = 0.0f;
-	float dodge				 = 0.0f;
-	float parry				 = 0.0f;
-	float block				 = 0.0f;
+	float hitchance			= 0.0f;
+	float dodge				= 0.0f;
+	float parry				= 0.0f;
+	float block				= 0.0f;
 
-	float hitmodifier		 = 0;
+	float hitmodifier		= 0;
 	int32 self_skill;
 	int32 victim_skill;
-	uint32 SubClassSkill	 = SKILL_UNARMED;
+	uint32 SubClassSkill	= SKILL_UNARMED;
 
-	bool backAttack			 = isInBack( pVictim );
-	uint32 vskill            = 0;
+	bool backAttack			= isInBack( pVictim );
+	uint32 vskill			= 0;
 
 	//==========================================================================================
 	//==============================Victim Skill Base Calculation===============================
