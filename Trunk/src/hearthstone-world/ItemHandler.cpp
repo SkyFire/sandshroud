@@ -1345,13 +1345,15 @@ void WorldSession::SendInventoryList(Creature* unit)
 		{
 			if((curItem = ItemPrototypeStorage.LookupEntry(itr->itemid)))
 			{
-				if(itr->IsDependent && (curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass)))
+				if(!HasGMPermissions() && (itr->IsDependent && // Show all items for GMs no matter what.
+					(curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass))))
 					continue;
 
-				if(itr->IsDependent && (curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace)))
+				if(!HasGMPermissions() && (itr->IsDependent && // Show all items for GMs no matter what.
+					(curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace))))
 					continue;
 
-				if(!_player->GetSession()->HasGMPermissions() // Show free items for GMS no matter what.
+				if(!_player->GetSession()->HasGMPermissions() // Show free items for GMs no matter what.
 					&& !sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL )
 					continue;
 
