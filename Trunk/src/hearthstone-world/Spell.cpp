@@ -4596,8 +4596,8 @@ void Spell::SendHealSpellOnPlayer( Object* caster, Object* target, uint32 dmg, b
 	data << uint32(spellid);
 	data << uint32(dmg);
 	data << uint32(overheal);
-	data << uint8(critical ? 1 : 0);
-	data << uint8(0);
+	data << uint32(0);
+	data << uint8(critical);
 	caster->SendMessageToSet(&data, true);
 }
 
@@ -4605,6 +4605,7 @@ void Spell::SendHealManaSpellOnPlayer(Object* caster, Object* target, uint32 dmg
 {
 	if( caster == NULL || target == NULL || !target->IsPlayer())
 		return;
+
 	WorldPacket data(SMSG_SPELLENERGIZELOG, 29);
 	data.append(target->GetNewGUID());
 	data.append(caster->GetNewGUID());
