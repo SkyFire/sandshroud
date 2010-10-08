@@ -781,6 +781,7 @@ void WorldSession::FullLogin(Player* plr)
 		plr->bGMTagOn = true;
 		plr->m_isGmInvisible = true;
 		plr->m_invisible = true;
+		plr->SetFaction(35);
 		if(CanUseCommand('z'))
 		{
 			plr->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);
