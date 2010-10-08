@@ -3698,6 +3698,11 @@ void Spell::SpellEffectSummon(uint32 i)
 		{
 			SummonNonCombatPet(i);
 			break;
+	case SUMMON_TYPE_LIGHTWELL:
+		{
+			SummonLightwell(i);
+			break;
+		}
 		}
 	default:
 		{
@@ -4805,7 +4810,7 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 		//Spread spawns equally around summoner
 		float angle_for_each_spawn = damage ? - float(M_PI * 2.0f)/damage : - float(M_PI * 2.0f);
 
-		for( uint8 d = 0; d < damage; d++ )
+		for( uint8 d = 0; d < 7; d++ )
 		{
 			//skip already filled slots
 			if(u_caster->m_SummonSlots[ d ] != NULL)
@@ -6535,6 +6540,32 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				}
 			}
 		}break;
+	case 60123: //Priest Lightwell spellclick script effect
+		{
+			switch(u_caster->GetEntry())
+			{
+			case 31883:
+				{
+					u_caster->CastSpell(unitTarget,48085,true);
+				}break;
+			case 31893:
+				{
+					u_caster->CastSpell(unitTarget,48084,true);
+				}break;
+			case 31894:
+				{
+					u_caster->CastSpell(unitTarget,28276,true);
+				}break;
+			case 31895:
+				{
+					u_caster->CastSpell(unitTarget,27874,true);
+				}break;
+			case 31896:
+				{
+					u_caster->CastSpell(unitTarget,27873,true);
+				}break;
+			}break;
+		}
 	default:
 		{
 			if(sLog.IsOutDevelopement())
@@ -6775,7 +6806,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	float landh = p_caster->GetPositionZ() + 1.5f;
 
 	//We already emptied this slot in SpellEffectSummon
-	if( slot < 7 )
+	if( slot < 14 )
 		p_caster->m_SummonSlots[slot] = pTotem;
 
 	//record our owner guid and slotid
@@ -8297,30 +8328,38 @@ bool Spell::SpellEffectUpdateQuest(uint32 questid)
 
 void Spell::SummonLightwell(uint32 i)
 {
-	if( u_caster == NULL || !u_caster->IsInWorld() )
+	if( p_caster == NULL )
 		return;
 
-	/*uint32 LID =
-	CreatureInfo * ci = CreatureNameStorage.LookupEntry(SummonCritterID);
-	CreatureProto * cp = CreatureProtoStorage.LookupEntry(SummonCritterID);
+	uint32 cr_entry = GetSpellProto()->EffectMiscValue[i];
+	uint32 level = u_caster->getLevel();
 
-	if(!ci || !cp) return;
+	CreatureInfo * ci = CreatureNameStorage.LookupEntry(cr_entry);
+	CreatureProto * cp = CreatureProtoStorage.LookupEntry(cr_entry);
 
-	Creature* pCreature = u_caster->GetMapMgr()->CreateCreature(SummonCritterID);
-	pCreature->SetInstanceID(u_caster->GetMapMgr()->GetInstanceID());
-	pCreature->Load(cp, m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation());
-	pCreature->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, 35);
-	pCreature->_setFaction();
-	pCreature->SetUInt32Value(UNIT_FIELD_LEVEL, 1);
-	pCreature->GetAIInterface()->Init(pCreature,AITYPE_PET,MOVEMENTTYPE_NONE,u_caster);
-	pCreature->GetAIInterface()->SetUnitToFollow(u_caster);
-	pCreature->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
-	pCreature->GetAIInterface()->SetFollowDistance(3.0f);
-	pCreature->GetAIInterface()->disable_melee = true;
-	pCreature->bInvincible = true;
-	pCreature->PushToWorld(u_caster->GetMapMgr());
-	if( m_summonProperties->slot < 7 )
-		u_caster->m_SummonSlots[ m_summonProperties->slot ] = pCreature;*/
+	if(!ci || !cp) 
+		return;
+	Creature * summon = u_caster->GetMapMgr()->CreateCreature(cr_entry);
+	if(summon == NULL)
+		return;
+	summon->SetInstanceID(u_caster->GetMapMgr()->GetInstanceID());
+	summon->Load(cp, m_caster->GetMapMgr()->iInstanceMode, m_targets.m_destX,m_targets.m_destY, m_targets.m_destZ, m_caster->GetOrientation());
+	summon->PushToWorld(u_caster->GetMapMgr());
+	summon->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, u_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+	summon->_setFaction();
+	summon->GetAIInterface()->disable_melee = true;
+	summon->bInvincible = true;
+	summon->Root();
+	summon->AddAura(new Aura(dbcSpell.LookupEntry(59907), -1, summon, summon));
+	/*Aura * aur = summon->FindActiveAura(59907);
+	aur->ModStackSize(10);
+	aur->ModProcCharges(10);*/
+	summon->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 100);
+	summon->SetUInt32Value(UNIT_FIELD_HEALTH, 100);
+	summon->SetFlag(UNIT_FIELD_FLAGS,UNIT_NPC_FLAG_SPELLCLICK);
+	summon->SetSummonOwnerSlot(p_caster->GetGUID(), 0);
+	p_caster->m_SummonSlots[0] = summon;
+	summon->Despawn(180000,0);
 }
 
 void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item

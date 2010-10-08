@@ -97,7 +97,7 @@ void Vehicle::InstallAccessories()
 		return;
 	}
 
-	GetMovementInfo()->flags = acc->MovementFlags;
+	GetMovementInfo()->flag16 = acc->MovementFlags;
 	MapMgr* map = (GetMapMgr() ? GetMapMgr() : sInstanceMgr.GetMapMgr(GetMapId()));
 	if(map == NULL) // Shouldn't ever really happen.
 		return;
@@ -979,6 +979,19 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 		if(unit->IsCreature())
 		{
 			Creature* ctr = TO_CREATURE(unit);
+			if(ctr->IsLightwell(ctr->GetEntry()))
+			{
+				ctr->CastSpell(pPlayer, 60123, true);
+				/*if(ctr->FindActiveAura(59907))
+				{
+					Aura * aur = ctr->FindActiveAura(59907);
+					aur->ModStackSize((aur->stackSize - 1));
+					aur->ModProcCharges(aur->procCharges -1);
+					ctr->CastSpell(pPlayer, 60123, true);
+					if(aur->stackSize <= 0 || aur->procCharges <= 0 )
+						ctr->Despawn(300,0);
+				}*/
+			}
 			if(ctr->GetProto()->SpellClickid)
 				ctr->CastSpell(pPlayer, ctr->GetProto()->SpellClickid, true);
 			else

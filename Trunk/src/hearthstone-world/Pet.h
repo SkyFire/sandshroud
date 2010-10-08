@@ -134,7 +134,7 @@ public:
 
 	void InitializeSpells();
 	void ReInitializeSpells();
-	void InitializeMe(bool first);
+	void InitializeMe();
 	void SendSpellsToOwner();
 	void SendNullSpellsToOwner();
 

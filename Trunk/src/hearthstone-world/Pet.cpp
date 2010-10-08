@@ -161,8 +161,15 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 			m_name = "Risen Ally";
 		else
 			m_name = sWorld.GenerateName();
-
-	} else {
+		if(entry == 26125 || entry == 30230)
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetMaxPower(POWER_TYPE_ENERGY,100);
+			SetPower(POWER_TYPE_ENERGY,100);
+		}
+	} 
+	else 
+	{
 		SetUInt32Value(UNIT_FIELD_BYTES_0, 2048 | (0 << 24));
 		SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, 2000);
 		SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME, 2000); // Supalosa: 2.00 normalized attack speed
@@ -235,7 +242,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	m_base_runSpeed = m_runSpeed = owner->m_base_runSpeed; //should we be able to keep up with master ?
 	m_base_walkSpeed = m_walkSpeed = owner->m_base_walkSpeed; //should we be able to keep up with master ?
 	SetPhase(owner->GetPhase());
-	InitializeMe(true);
+	InitializeMe();
 }
 
 
@@ -533,10 +540,10 @@ void Pet::LoadFromDB(Player* owner, PlayerPet * playerPetInfo)
 		}
 	}
 
-	InitializeMe(false);
+	InitializeMe();
 }
 
-void Pet::InitializeMe(bool first)
+void Pet::InitializeMe()
 {
 	if( m_Owner->GetSummon() != NULL )
 	{

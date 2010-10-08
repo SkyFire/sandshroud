@@ -5162,33 +5162,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			if( sp->NameHash == SPELL_HASH_POWER_INFUSION )
 				sp->buffType = SPELL_TYPE_HASTE;
 
-			// Pure hax
-			if( sp->NameHash == SPELL_HASH_LIGHTWELL )
-			{
-				sp->Effect[0] = 50; //Spawn GO
-				switch(sp->Id)
-				{
-				case 724:
-					sp->EffectMiscValue[0] = 300000;
-					break;
-				case 27870:
-					sp->EffectMiscValue[0] = 300001;
-					break;
-				case 27871:
-					sp->EffectMiscValue[0] = 300002;
-					break;
-				case 28275:
-					sp->EffectMiscValue[0] = 300003;
-					break;
-				case 48086:
-					sp->EffectMiscValue[0] = 300004;
-					break;
-				case 48087:
-					sp->EffectMiscValue[0] = 300005;
-					break;
-				}
-			}
-
 			//////////////////////////////////////////
 			// SHAMAN								//
 			//////////////////////////////////////////

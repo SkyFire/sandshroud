@@ -690,6 +690,7 @@ public:
 
 	// used by bgs
 	bool m_noDeleteAfterDespawn;
+	bool IsLightwell(uint32 entry) { if(GetEntry() == 31883 || GetEntry() == 31893 || GetEntry() == 31894 || GetEntry() == 31895 || GetEntry() == 31896 || GetEntry() == 31897) return true; return false; }
 };
 
 #endif
