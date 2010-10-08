@@ -136,6 +136,15 @@ void Player::smsg_InitialFactions()
 	m_session->SendPacket(&data);
 }
 
+uint32 Player::GetInitialFactionId()
+{
+	PlayerCreateInfo * pci = objmgr.GetPlayerCreateInfo(getRace(), getClass());
+	if( pci )
+		return pci->factiontemplate;
+	else
+		return 35;
+}
+
 void Player::_InitialReputation()
 {
 	// Generate Initial Reputation Values

@@ -93,6 +93,7 @@ bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 		{
 			m_session->GetPlayer()->bGMTagOn = true;
 			m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+			m_session->GetPlayer()->SetFaction(35);
 			BlueSystemMessage(m_session, "Dev Flag Set. It will appear above your name and in chat messages until you use .gm off.");
 			BlueSystemMessage(m_session, "Dev flag is automatically set, you can disable it in order to use GM tag using .gm disabledev");
 		}
@@ -107,6 +108,7 @@ bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 	{
 		m_session->GetPlayer()->bGMTagOn = true;
 		m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
+		m_session->GetPlayer()->SetFaction(35);
 		BlueSystemMessage(m_session, "GM Flag Set. It will appear above your name and in chat messages until you use .gm off.");
 	}
 
@@ -125,6 +127,7 @@ bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 			m_session->GetPlayer()->bGMTagOn = false;
 			m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
 			m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+			m_session->GetPlayer()->SetFaction( m_session->GetPlayer()->GetInitialFactionId() );
 			BlueSystemMessage(m_session, "Dev Flag Removed. <Dev> Will no longer show in chat messages or above your name.");
 		}
 		return true;
@@ -137,6 +140,7 @@ bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 	{
 		m_session->GetPlayer()->bGMTagOn = false;
 		m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
+		m_session->GetPlayer()->SetFaction( m_session->GetPlayer()->GetInitialFactionId() );
 		BlueSystemMessage(m_session, "GM Flag Removed. <GM> Will no longer show in chat messages or above your name.");
 	}
 

@@ -521,7 +521,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			{
 				GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK);
 				if(sWorld.GetKickAFKPlayerTime())
-					sEventMgr.RemoveEvents(GetPlayer(),EVENT_PLAYER_FORCE_LOGOUT);
+					sEventMgr.RemoveEvents(GetPlayer(), EVENT_PLAYER_FORCE_LOGOUT);
 			}
 			else
 			{

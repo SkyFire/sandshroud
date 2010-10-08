@@ -1064,6 +1064,7 @@ public:
 	/* Factions																*/
 	/************************************************************************/
 	void smsg_InitialFactions();
+	uint32 GetInitialFactionId();
 	// factions variables
 	int32 pctReputationMod;
 

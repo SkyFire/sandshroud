@@ -3297,10 +3297,10 @@ void Aura::SpellAuraDummy(bool apply)
 					if(id == 0)
 						return;
 
-					if(!m_spellProto->procChance)
-						m_spellProto->procChance = mod->m_amount;
+					if(!mod->m_amount)
+						mod->m_amount = m_spellProto->procChance;
 
-					CreateProcTriggerSpell(m_target, m_casterGuid, GetSpellId(), id, m_spellProto->procChance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges);
+					CreateProcTriggerSpell(m_target, m_casterGuid, GetSpellId(), id, mod->m_amount, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges);
 				}
 				else
 				{
