@@ -2104,12 +2104,28 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		pVictim->SetStandState( STANDSTATE_STAND );//probably mobs also must standup
 	}
 
-	// This one is easy. If we're attacking a hostile target, and we're not flagged, flag us.
-	// Also, you WONT get flagged if you are dueling that person - FiShBaIt
-	if( pVictim->IsPlayer() && IsPlayer() )
+	// Player we are attacking, or the owner of totem/pet/etc
+	Player *pOwner = pVictim->IsPlayer() ? TO_PLAYER(pVictim) : NULL;
+
+	// This is the player or the player controlling the totem/pet/summon
+	Player *pAttacker = this->IsPlayer() ? TO_PLAYER(this) : NULL;
+
+	// We identified both the attacker and the victim as possible PvP combatants, if we are not dueling we will flag the attacker
+	if( pOwner != NULL && pAttacker != NULL && pOwner != pAttacker && pOwner != pAttacker->DuelingWith )
 	{
-		if( isHostile( this, pVictim ) && TO_PLAYER( pVictim )->DuelingWith != TO_PLAYER(this) )
-			TO_PLAYER(this)->SetPvPFlag();
+		if( !pAttacker->IsPvPFlagged() )
+		{
+			pAttacker->PvPToggle();
+		}
+	}
+
+	// PvP NPCs will flag the player when attacking them
+	if( pVictim->IsCreature() && pVictim->IsPvPFlagged() && pAttacker != NULL )
+	{
+		if( !pAttacker->IsPvPFlagged() )
+		{
+			pAttacker->PvPToggle();
+		}
 	}
 
 	//If our pet attacks  - flag us.

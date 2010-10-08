@@ -1617,25 +1617,6 @@ public:
 
 	T * LookupEntryForced(uint32 i)
 	{
-#if 0
-		if(m_entries)
-		{
-			if(i > m_max || m_entries[i] == NULL)
-			{
-				printf("LookupEntryForced failed for entry %u\n", i);
-				return NULL;
-			}
-			else
-				return m_entries[i];
-		}
-		else
-		{
-			if(i >= m_numrows)
-				return NULL;
-			else
-				return &m_heapBlock[i];
-		}
-#else
 		if(m_entries)
 		{
 			if(i > m_max || m_entries[i] == NULL)
@@ -1650,7 +1631,6 @@ public:
 			else
 				return &m_heapBlock[i];
 		}
-#endif
 	}
 
 	T * CreateCopy(T * obj)
@@ -1667,7 +1647,6 @@ public:
 			m_entries[i] = t;
 	}
 
-#ifdef SAFE_DBC_CODE_RETURNS
 	T * LookupEntry(uint32 i)
 	{
 		if(m_entries)
@@ -1693,36 +1672,6 @@ public:
 		else
 			return &m_heapBlock[i];
 	}
-
-#else
-
-	T * LookupEntry(uint32 i)
-	{
-		if(m_entries)
-		{
-			if(i > m_max || m_entries[i] == NULL)
-				return NULL;
-			else
-				return m_entries[i];
-		}
-		else
-		{
-			if(i >= m_numrows || &m_heapBlock[i] == NULL)
-				return NULL;
-			else
-				return &m_heapBlock[i];
-		}
-	}
-
-	T * LookupRow(uint32 i)
-	{
-		if(i >= m_numrows || &m_heapBlock[i] == NULL)
-			return NULL;
-		else
-			return &m_heapBlock[i];
-	}
-
-#endif
 };
 
 extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;

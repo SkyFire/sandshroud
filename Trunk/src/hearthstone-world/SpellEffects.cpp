@@ -386,6 +386,14 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		return;
 	}
 
+	if(p_caster != NULL && playerTarget != NULL && p_caster != playerTarget)
+	{
+		if( playerTarget->IsPvPFlagged() )
+			u_caster->SetPvPFlag();
+		if( playerTarget->IsFFAPvPFlagged() )
+			u_caster->SetFFAPvPFlag();
+	}
+
 	uint32 dmg = damage;
 	bool static_damage = false;
 	uint32 AdditionalCritChance = 0;
@@ -7207,6 +7215,14 @@ void Spell::SpellEffectPull( uint32 i )
 	float pullZ = m_caster->GetPositionZ() + 0.3f;
 	uint32 time = uint32( pullD * 42.0f );
 	unitTarget->GetAIInterface()->SendMoveToPacket( pullX, pullY, pullZ, pullO, time, MONSTER_MOVE_FLAG_JUMP );
+
+	if( u_caster && playerTarget)
+	{
+		if( playerTarget->IsPvPFlagged() )
+			u_caster->SetPvPFlag();
+		if( playerTarget->IsFFAPvPFlagged() )
+			u_caster->SetFFAPvPFlag();
+	}
 }
 
 void Spell::SummonNonCombatPet(uint32 i)
@@ -7875,6 +7891,17 @@ void Spell::SpellEffectSpellSteal( uint32 i )
 {
 	if ( unitTarget  == NULL ||  u_caster  == NULL || !unitTarget->isAlive())
 		return;
+
+	if( p_caster && p_caster->GetGUID() != unitTarget->GetGUID() )
+	{
+		if( unitTarget->IsPvPFlagged() )
+		{
+			if( p_caster->IsPlayer() )
+				TO_PLAYER( p_caster )->PvPToggle();
+			else
+				p_caster->SetPvPFlag();
+		}
+	}
 
 	Aura* aur = NULL;
 	uint32 start,end;

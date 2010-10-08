@@ -685,7 +685,7 @@ struct PlayerSkill
 	uint32 MaximumValue;
 	uint32 BonusValue;
 	float GetSkillUpChance();
-	void Reset(uint32 Id);
+	bool Reset(uint32 Id);
 };
 
 enum SPELL_INDEX

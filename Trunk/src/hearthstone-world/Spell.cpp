@@ -2895,10 +2895,15 @@ void Spell::HandleAddAura(uint64 guid)
 
 	// Applying an aura to a flagged target will cause you to get flagged.
 	// self casting doesnt flag himself.
-	if(Target->IsPlayer() && p_caster && p_caster != TO_PLAYER(Target))
+	if( p_caster && p_caster->GetGUID() != Target->GetGUID() )
 	{
-		if(TO_PLAYER(Target)->IsPvPFlagged())
-			p_caster->SetPvPFlag();
+		if( Target->IsPvPFlagged() )
+		{
+			if( !p_caster->IsPvPFlagged() )
+				p_caster->PvPToggle();
+			else
+				p_caster->SetPvPFlag();
+		}
 	}
 
 	uint32 spellid = 0;
@@ -4623,11 +4628,16 @@ void Spell::Heal(int32 amount)
 		p_caster->last_heal_spell=m_spellInfo;
 
 	//self healing shouldn't flag himself
-	if(p_caster != NULL && playerTarget && p_caster != playerTarget)
+	if( p_caster != NULL && p_caster->GetGUID() != unitTarget->GetGUID() )
 	{
 		// Healing a flagged target will flag you.
-		if(playerTarget->IsPvPFlagged())
-			p_caster->SetPvPFlag();
+		if( unitTarget->IsPvPFlagged() )
+		{
+			if( !p_caster->IsPvPFlagged() )
+				p_caster->PvPToggle();
+			else
+				p_caster->SetPvPFlag();
+		}
 	}
 
 	//Make it critical

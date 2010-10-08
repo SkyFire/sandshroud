@@ -3143,20 +3143,22 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 					/* add the skill */
 					if(v1)
 					{
-						sk.Reset(v1);
-						sk.CurrentValue = v2;
-						sk.MaximumValue = v3;
-						if (v1 == SKILL_RIDING)
-							sk.CurrentValue = sk.MaximumValue;
-						m_skills.insert(make_pair(v1, sk));
-
-						prof = GetProficiencyBySkill(v1);
-						if(prof)
+						if(sk.Reset(v1))
 						{
-							if(prof->itemclass==4)
-								armor_proficiency|=prof->subclass;
-							else
-								weapon_proficiency|=prof->subclass;
+							sk.CurrentValue = v2;
+							sk.MaximumValue = v3;
+							if (v1 == SKILL_RIDING)
+								sk.CurrentValue = sk.MaximumValue;
+							m_skills.insert(make_pair(v1, sk));
+
+							prof = GetProficiencyBySkill(v1);
+							if(prof)
+							{
+								if(prof->itemclass==4)
+									armor_proficiency|=prof->subclass;
+								else
+									weapon_proficiency|=prof->subclass;
+							}
 						}
 					}
 				}
@@ -5236,7 +5238,8 @@ void Player::_LoadSkills(QueryResult * result)
 			uint32 v1;
 			Field *fields = result->Fetch();
 			v1 = fields[1].GetUInt32();
-			sk.Reset(v1);
+			if(!sk.Reset(v1))
+				continue; // Just skip it, it'll be wiped when we save.
 
 			if ( sWorld.CheckProfessions && fields[2].GetUInt32() == SKILL_TYPE_PROFESSION )
 			{
@@ -8813,8 +8816,8 @@ void Player::EndDuel(uint8 WinCondition)
 	}
 
 	// removing auras that kills players after if low HP
-	/*RemoveNegativeAuras(); NOT NEEDED. External targets can always gank both duelers with DoTs. :D
-	DuelingWith->RemoveNegativeAuras();*/
+	RemoveAllNegativeAuras(); // NOT NEEDED. External targets can always gank both duelers with DoTs. :D
+	DuelingWith->RemoveAllNegativeAuras();
 
 	//Stop Players attacking so they don't kill the other player
 	m_session->OutPacket( SMSG_CANCEL_COMBAT );
@@ -10758,51 +10761,59 @@ void Player::_RemoveSkillLine(uint32 SkillLine)
 void Player::_UpdateMaxSkillCounts()
 {
 	uint32 new_max;
-	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
+	if(m_skills.size())
 	{
-
-		if( itr->second.Skill->id == SKILL_LOCKPICKING )
+		for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
 		{
-			new_max = 5 * getLevel();
-		}
-		else
-		{
-			switch(itr->second.Skill->type)
+			if(itr->second.Skill == NULL)
 			{
-				case SKILL_TYPE_WEAPON:
-				{
-					new_max = 5 * getLevel();
-				}break;
-
-				case SKILL_TYPE_LANGUAGE:
-				{
-					new_max = 300;
-				}break;
-
-				case SKILL_TYPE_PROFESSION:
-				case SKILL_TYPE_SECONDARY:
-				{
-					new_max = itr->second.MaximumValue;
-					if(itr->second.Skill->id == SKILL_RIDING)
-						itr->second.CurrentValue = new_max;
-				}break;
-
-				// default the rest to max = 1, so they won't mess up skill frame for player.
-				default:
-					new_max = 1;
+				m_skills.erase(itr->first);
+				continue;
 			}
+
+			if( itr->second.Skill->id == SKILL_LOCKPICKING )
+			{
+				new_max = 5 * getLevel();
+			}
+			else
+			{
+				switch(itr->second.Skill->type)
+				{
+					case SKILL_TYPE_WEAPON:
+					{
+						new_max = 5 * getLevel();
+					}break;
+
+					case SKILL_TYPE_LANGUAGE:
+					{
+						new_max = 300;
+					}break;
+
+					case SKILL_TYPE_PROFESSION:
+					case SKILL_TYPE_SECONDARY:
+					{
+						new_max = itr->second.MaximumValue;
+						if(itr->second.Skill->id == SKILL_RIDING)
+							itr->second.CurrentValue = new_max;
+					}break;
+
+					// default the rest to max = 1, so they won't mess up skill frame for player.
+					default:
+						new_max = 1;
+				}
+			}
+
+			uint32 customlvlcapskcap = 50+(sWorld.LevelCap_Custom_All*5);
+
+			//Update new max, forced to be within limits
+			itr->second.MaximumValue = new_max > customlvlcapskcap ? customlvlcapskcap : new_max < 1 ? 1 : new_max;
+
+			//Check if current is below nem max, if so, set new current to new max
+			itr->second.CurrentValue = itr->second.CurrentValue > new_max ? new_max : itr->second.CurrentValue;
 		}
-
-		uint32 customlvlcapskcap = 50+(sWorld.LevelCap_Custom_All*5);
-
-		//Update new max, forced to be within limits
-		itr->second.MaximumValue = new_max > customlvlcapskcap ? customlvlcapskcap : new_max < 1 ? 1 : new_max;
-
-		//Check if current is below nem max, if so, set new current to new max
-		itr->second.CurrentValue = itr->second.CurrentValue > new_max ? new_max : itr->second.CurrentValue;
+		//Always update client to prevent cached data messing up things later.
+		_UpdateSkillFields();
 	}
-	//Always update client to prevent cached data messing up things later.
-	_UpdateSkillFields();
 }
 
 void Player::_ModifySkillBonus(uint32 SkillLine, int32 Delta)
@@ -10859,12 +10870,16 @@ void Player::_RemoveLanguages()
 	}
 }
 
-void PlayerSkill::Reset(uint32 Id)
+bool PlayerSkill::Reset(uint32 Id)
 {
 	MaximumValue = 0;
 	CurrentValue = 0;
 	BonusValue = 0;
 	Skill = (Id == 0) ? NULL : dbcSkillLine.LookupEntry(Id);
+	if(Skill == NULL)
+		return false;
+
+	return true;
 }
 
 void Player::_AddLanguages(bool All)
@@ -10887,7 +10902,9 @@ void Player::_AddLanguages(bool All)
 			if(!skills[i])
 				break;
 
-			sk.Reset(skills[i]);
+			if(!sk.Reset(skills[i]))
+				continue;
+
 			sk.MaximumValue = sk.CurrentValue = 300;
 			m_skills.insert( make_pair(skills[i], sk) );
 			if((spell_id = ::GetSpellForLanguage(skills[i])))
@@ -10899,13 +10916,18 @@ void Player::_AddLanguages(bool All)
 		for(list<CreateInfo_SkillStruct>::iterator itr = info->skills.begin(); itr != info->skills.end(); itr++)
 		{
 			en = dbcSkillLine.LookupEntry(itr->skillid);
+			if(en == NULL)
+				info->skills.erase(itr);
+
 			if(en->type == SKILL_TYPE_LANGUAGE)
 			{
-				sk.Reset(itr->skillid);
-				sk.MaximumValue = sk.CurrentValue = 300;
-				m_skills.insert( make_pair(itr->skillid, sk) );
-				if((spell_id = ::GetSpellForLanguage(itr->skillid)))
-					addSpell(spell_id);
+				if(sk.Reset(itr->skillid))
+				{
+					sk.MaximumValue = sk.CurrentValue = 300;
+					m_skills.insert( make_pair(itr->skillid, sk) );
+					if((spell_id = ::GetSpellForLanguage(itr->skillid)))
+						addSpell(spell_id);
+				}
 			}
 		}
 	}
