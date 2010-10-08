@@ -3750,7 +3750,7 @@ void AIInterface::CheckHeight()
 	{
 		if(m_Unit->IsCreature())
 		{
-			if(!(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
+			if(!TO_CREATURE(m_Unit)->GetProto() || !(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
 			{
 				m_moveFly = false;
 				return;
