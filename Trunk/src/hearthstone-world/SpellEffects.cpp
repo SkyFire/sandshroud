@@ -6806,7 +6806,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	float landh = p_caster->GetPositionZ() + 1.5f;
 
 	//We already emptied this slot in SpellEffectSummon
-	if( slot < 14 )
+	if( slot < 7 )
 		p_caster->m_SummonSlots[slot] = pTotem;
 
 	//record our owner guid and slotid
