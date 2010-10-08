@@ -120,6 +120,8 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt)
 	m_MovementState = MOVEMENTSTATE_STOP;
 
 	m_Unit = un;
+	if(isTargetDummy(un->GetEntry()))
+		m_AllowedToEnterCombat = false;
 
 	m_walkSpeed = m_Unit->m_walkSpeed*0.001f;//move distance per ms time
 	m_runSpeed = m_Unit->m_runSpeed*0.001f;//move distance per ms time
@@ -1375,7 +1377,7 @@ void AIInterface::OnRespawn(Unit* unit)
 }
 
 Unit* AIInterface::FindTarget()
-{// find nearest hostile Target to attack
+{	// find nearest hostile Target to attack
 	if( !m_AllowedToEnterCombat )
 		return NULLUNIT;
 
