@@ -658,29 +658,30 @@ void WorldSession::HandleTextEmoteOpcode( WorldPacket & recv_data )
 		if(pUnit)
 			CALL_SCRIPT_EVENT(pUnit,OnEmote)(_player,(EmoteType)em->textid);
 
-        switch(em->textid)
-        {
-            case EMOTE_STATE_SLEEP:
-            case EMOTE_STATE_SIT:
-            case EMOTE_STATE_KNEEL:
-			case EMOTE_STATE_DANCE:
-				{
-					_player->SetUInt32Value(UNIT_NPC_EMOTESTATE, em->textid);
-				}break;
+		switch(em->textid)
+		{
+		case EMOTE_STATE_SLEEP:
+		case EMOTE_STATE_SIT:
+		case EMOTE_STATE_KNEEL:
+		case EMOTE_STATE_DANCE:
+			{
+				_player->SetUInt32Value(UNIT_NPC_EMOTESTATE, em->textid);
+			}break;
 		}
 
 		data << (uint32)em->textid;
 		data << (uint64)GetPlayer()->GetGUID();
-		GetPlayer()->SendMessageToSet(&data, true); //If player receives his own emote, his animation stops.
+		GetPlayer()->SendMessageToSet(&data, false); //If player receives his own emote, his animation stops.
 
 		data.Initialize(SMSG_TEXT_EMOTE);
 		data << (uint64)GetPlayer()->GetGUID();
 		data << (uint32)text_emote;
 		data << unk;
 		data << (uint32)namelen;
-		if( namelen > 1 )   data.append(name, namelen);
-		else				data << (uint8)0x00;
-
+		if( namelen > 1 )
+			data.append(name, namelen);
+		else
+			data << (uint8)0x00;
 		GetPlayer()->SendMessageToSet(&data, true);
 
 		GetPlayer()->GetAchievementInterface()->HandleAchievementCriteriaDoEmote(em->Id, pUnit);
@@ -691,8 +692,8 @@ void WorldSession::HandleReportSpamOpcode(WorldPacket & recvPacket)
 {
 	CHECK_PACKET_SIZE(recvPacket, 29);
 
-    // the 0 in the out packet is unknown
-    GetPlayer()->GetSession()->OutPacket(SMSG_COMPLAIN_RESULT, 1, 0 );
+	// the 0 in the out packet is unknown
+	GetPlayer()->GetSession()->OutPacket(SMSG_COMPLAIN_RESULT, 1, 0 );
 
 	/* This whole thing is guess-work */
 	/*uint8 unk1;

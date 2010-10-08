@@ -1928,8 +1928,6 @@ void Spell::update(uint32 difftime)
 					cast(true);
 				}
 			}
-
-
 		} break;
 	case SPELL_STATE_CASTING:
 		{
@@ -3077,6 +3075,7 @@ uint8 Spell::CanCast(bool tolerate)
 			//you can't mind control someone already mind controlled
 			if (GetSpellProto()->NameHash == SPELL_HASH_MIND_CONTROL && target->GetAuraSpellIDWithNameHash(SPELL_HASH_MIND_CONTROL))
 				return SPELL_FAILED_BAD_TARGETS;
+
 			if(target == m_caster && GetSpellProto()->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
 				return SPELL_FAILED_BAD_TARGETS;
 			//these spells can be cast only on certain objects. Otherwise cool exploit

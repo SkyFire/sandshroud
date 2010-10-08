@@ -195,7 +195,7 @@ private:
 	void SendCriteriaUpdate(AchievementData * ad, uint32 idx);
 	bool CanCompleteAchievement(AchievementData * ad);
 	bool HandleBeforeChecks(AchievementData * ad);
-	bool IsHardCoded(uint32 id);
+	bool IsHardCoded(AchievementEntry * ae);
 	AchievementData* CreateAchievementDataEntryForAchievement(AchievementEntry * ae);
 
 	// Gets AchievementData struct. If there is none, one will be created.

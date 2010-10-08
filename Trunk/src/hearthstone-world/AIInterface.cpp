@@ -106,7 +106,6 @@ AIInterface::AIInterface()
 	m_aiTargets.clear();
 	m_assistTargets.clear();
 	m_spells.clear();
-
 }
 
 void AIInterface::Init(Unit* un, AIType at, MovementType mt)
@@ -142,9 +141,10 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt)
 
 AIInterface::~AIInterface()
 {
-	for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
-		if(*itr)
-			delete (*itr);
+	if(m_spells.size())
+		for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
+			if(*itr)
+				delete (*itr);
 
 	m_spells.clear();
 
@@ -1022,7 +1022,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 					}
 
 					//FIXME: offhand shit
-					if(m_Unit->isAttackReady(false) && !m_fleeTimer)
+					if(m_Unit->isAttackReady(false) && !m_fleeTimer && m_RangedAttackSpell != 0 && m_RangedAttackSpell != 1)
 					{
 						m_creatureState = ATTACKING;
 						bool infront = m_Unit->isInFront(m_nextTarget);
@@ -2969,91 +2969,94 @@ AI_Spell *AIInterface::getSpell()
 		}
 		else
 		{
-			//start searching the list for a suitable spell.
-			for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
+			if(m_spells.size())
 			{
-				sp = (*itr);
-
-				//don't waste our time if we already have spell in priority
-				if (def_spell && def_spell->spellType > sp->spellType)
-					continue;
-
-				// Wtf?? There should be only spells on the list
-				if(sp->agent != AGENT_SPELL)
+				//start searching the list for a suitable spell.
+				for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
 				{
-					//Log.Warning("AI_Agent","Agent entry %u is loaded, but not valid",sp->agent);
-					continue;
-				}
+					sp = (*itr);
 
-				// skip when max proccount reached.
-				if((sp->procCount && sp->procCounter >= sp->procCount ))
-					continue;
+					//don't waste our time if we already have spell in priority
+					if (def_spell && def_spell->spellType > sp->spellType)
+						continue;
 
-				//skip when still cooling down.
-				if(sp->cooldown && sp->cooldowntime > nowtime )
-					continue;
-
-				//skip if proc change not met.
-				if(sp->procChance < 100 && !Rand(sp->procChance))
-					continue;
-
-				//checks by spell type
-				switch (sp->spellType)
-				{
-				case STYPE_ROOT:
+					// Wtf?? There should be only spells on the list
+					if(sp->agent != AGENT_SPELL)
 					{
+						//Log.Warning("AI_Agent","Agent entry %u is loaded, but not valid",sp->agent);
+						continue;
+					}
+
+					// skip when max proccount reached.
+					if((sp->procCount && sp->procCounter >= sp->procCount ))
+						continue;
+
+					//skip when still cooling down.
+					if(sp->cooldown && sp->cooldowntime > nowtime )
+						continue;
+
+					//skip if proc change not met.
+					if(sp->procChance < 100 && !Rand(sp->procChance))
+						continue;
+
+					//checks by spell type
+					switch (sp->spellType)
+					{
+					case STYPE_ROOT:
+						{
 // #define AI_ROOT_OVERRIDING
 #ifdef AI_ROOT_OVERRIDING
-						if(sp->spell->c_is_flags & SPELL_FLAG_CASTED_ON_ENEMIES)
-						{
-							if(sp->spelltargetType == TTYPE_CASTER || sp->spelltargetType == TTYPE_OWNER)
+							if(sp->spell->c_is_flags & SPELL_FLAG_CASTED_ON_ENEMIES)
 							{
-								sp->spelltargetType = TTYPE_SINGLETARGET;
-								WorldDatabase.Execute("UPDATE ai_agents SET spelltargettype = \"RANDOMTARGET\" WHERE spell = %u;", sp->spell->Id);
+								if(sp->spelltargetType == TTYPE_CASTER || sp->spelltargetType == TTYPE_OWNER)
+								{
+									sp->spelltargetType = TTYPE_SINGLETARGET;
+									WorldDatabase.Execute("UPDATE ai_agents SET spelltargettype = \"RANDOMTARGET\" WHERE spell = %u;", sp->spell->Id);
+									continue;
+								}
+							}
+							else if(sp->spell->c_is_flags & SPELL_FLAG_IS_HEALING || sp->spell->c_is_flags & SPELL_FLAG_IS_HEALING_SPELL)
+							{
+								sp->spellType = STYPE_HEAL;
+								WorldDatabase.Execute("UPDATE ai_agents SET spelltype = \"HEAL\" WHERE spell = %u;", sp->spell->Id);
 								continue;
 							}
-						}
-						else if(sp->spell->c_is_flags & SPELL_FLAG_IS_HEALING || sp->spell->c_is_flags & SPELL_FLAG_IS_HEALING_SPELL)
-						{
-							sp->spellType = STYPE_HEAL;
-							WorldDatabase.Execute("UPDATE ai_agents SET spelltype = \"HEAL\" WHERE spell = %u;", sp->spell->Id);
-							continue;
-						}
-						else if(sp->spell->c_is_flags & SPELL_FLAG_IS_DAMAGING)
-						{
-							if(sp->spell->base_range_or_radius)
-								sp->spellType = STYPE_AOEDAMAGE;
-							else
-								sp->spellType = STYPE_DAMAGE;
+							else if(sp->spell->c_is_flags & SPELL_FLAG_IS_DAMAGING)
+							{
+								if(sp->spell->base_range_or_radius)
+									sp->spellType = STYPE_AOEDAMAGE;
+								else
+									sp->spellType = STYPE_DAMAGE;
 
-							WorldDatabase.Execute("UPDATE ai_agents SET spelltype = \"%s\" WHERE spell = %u;", (sp->spellType == STYPE_AOEDAMAGE ? "AOEDAMAGE" : "DAMAGE"), sp->spell->Id);
-							continue;
-						}
+								WorldDatabase.Execute("UPDATE ai_agents SET spelltype = \"%s\" WHERE spell = %u;", (sp->spellType == STYPE_AOEDAMAGE ? "AOEDAMAGE" : "DAMAGE"), sp->spell->Id);
+								continue;
+							}
 #endif // AI_ROOT_OVERRIDING
-					}break;
-				case STYPE_DEBUFF:
-					{
-						if (!m_nextTarget || m_nextTarget->HasActiveAura(sp->spell->Id))
-							continue;
-					}break;
-				case STYPE_BUFF:
-					{
-						if (m_Unit->HasActiveAura(sp->spell->Id))
-							continue;
-					}break;
-				case STYPE_HEAL:
-					{
-						if (!FindHealTargetForSpell(sp))
-							continue;
-					}break;
-				case STYPE_INTERRUPT:
-					{
-						if (!m_nextTarget || !m_nextTarget->isCasting())
-							continue;
-					}break;
+						}break;
+					case STYPE_DEBUFF:
+						{
+							if (!m_nextTarget || m_nextTarget->HasActiveAura(sp->spell->Id))
+								continue;
+						}break;
+					case STYPE_BUFF:
+						{
+							if (m_Unit->HasActiveAura(sp->spell->Id))
+								continue;
+						}break;
+					case STYPE_HEAL:
+						{
+							if (!FindHealTargetForSpell(sp))
+								continue;
+						}break;
+					case STYPE_INTERRUPT:
+						{
+							if (!m_nextTarget || !m_nextTarget->isCasting())
+								continue;
+						}break;
+					}
+					//success
+					def_spell = sp;
 				}
-				//success
-				def_spell = sp;
 			}
 		}
 
@@ -3068,6 +3071,8 @@ AI_Spell *AIInterface::getSpell()
 void AIInterface::addSpellToList(AI_Spell *sp)
 {
 	if(sp->spell == NULL)
+		return;
+	if(sp->spell->Id == 0)
 		return;
 
 	if(sp->procCount || sp->cooldown)
@@ -3493,9 +3498,10 @@ void AIInterface::WipeReferences()
 
 void AIInterface::ResetProcCounts()
 {
-	for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
-		if((*itr)->procCount)
-			(*itr)->procCounter=0;
+	if(m_spells.size())
+		for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
+			if((*itr)->procCount)
+				(*itr)->procCounter = 0;
 }
 
 //we only cast once a spell and we will set his health and resistances. Note that this can be made with db too !

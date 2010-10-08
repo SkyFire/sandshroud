@@ -40,7 +40,7 @@ GameObject::GameObject(uint64 guid)
 	m_summonedGo = false;
 	invisible = false;
 	invisibilityFlag = INVIS_FLAG_NORMAL;
-	spell = 0;
+	spell = NULL;
 	m_summoner = NULLUNIT;
 	charges = -1;
 	m_ritualcaster = 0;
@@ -57,6 +57,7 @@ GameObject::GameObject(uint64 guid)
 	m_respawnCell=NULL;
 	m_battleground = NULLBATTLEGROUND;
 	Health = NULL;
+	initiated = false;
 }
 
 GameObject::~GameObject()
@@ -144,7 +145,7 @@ void GameObject::Update(uint32 p_time)
 	if(m_deleted)
 		return;
 
-	if(spell && (GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1))
+	if(spell != NULL && (GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1))
 	{
 		if(checkrate > 1)
 		{
@@ -173,7 +174,7 @@ void GameObject::Update(uint32 p_time)
 						continue;
 				}
 
-				Spell* sp= (new Spell(TO_OBJECT(this),spell,true,NULLAURA));
+				Spell* sp = (new Spell(TO_OBJECT(this),spell,true,NULLAURA));
 				SpellCastTargets tgt((*itr)->GetGUID());
 				tgt.m_destX = GetPositionX();
 				tgt.m_destY = GetPositionY();
@@ -301,7 +302,15 @@ void GameObject::SaveToFile(std::stringstream & name)
 
 void GameObject::InitAI()
 {
-	if(pInfo == NULL)
+	if(pInfo == NULL || initiated)
+		return;
+
+	if(pInfo->SpellFocus == 0 &&
+		pInfo->sound1 == 0 &&
+		pInfo->sound2 == 0 &&
+		pInfo->sound3 != 0 &&
+		pInfo->sound5 != 3 &&
+		pInfo->sound9 == 1)
 		return;
 
 	uint32 spellid = 0;
@@ -314,18 +323,18 @@ void GameObject::InitAI()
 
 	case GAMEOBJECT_TYPE_SPELL_FOCUS://redirect to properties of another go
 		{
-			uint32 new_entry = pInfo->sound2;
-			if(new_entry)
+			if( pInfo->sound2 == 0 )
+				return;
+
+			pInfo = GameObjectNameStorage.LookupEntry( pInfo->sound2 );
+			if(pInfo == NULL)
 			{
-				pInfo = GameObjectNameStorage.LookupEntry( new_entry );
-				if(pInfo == NULL)
-				{
-					Log.Warning("GameObject","Redirected gameobject %u doesn't seem to exists in database, skipping",new_entry);
-					return;
-				}
-				if(pInfo->sound3)
-					spellid = pInfo->sound3;
+				Log.Warning("GameObject","Redirected gameobject %u doesn't seem to exists in database, skipping",pInfo->sound2);
+				return;
 			}
+
+			if(pInfo->sound3)
+				spellid = pInfo->sound3;
 		}break;
 	case GAMEOBJECT_TYPE_RITUAL:
 		{
@@ -352,12 +361,13 @@ void GameObject::InitAI()
 			}
 		}break;
 
-		case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
+	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
 		{
 			Health = pInfo->SpellFocus + pInfo->sound5;
 			SetAnimProgress(255);
 		}break;
-		case GAMEOBJECT_TYPE_AURA_GENERATOR:
+
+	case GAMEOBJECT_TYPE_AURA_GENERATOR:
 		{
 			spellid = GetInfo()->sound2;
 			checkrate = 1;
@@ -365,19 +375,23 @@ void GameObject::InitAI()
 		}break;
 	}
 
+	if(!spellid || spellid == 22247)
+		return;
+
 	myScript = sScriptMgr.CreateAIScriptClassForGameObject(GetEntry(), this);
 
-	SpellEntry *sp= dbcSpell.LookupEntry(spellid);
+	SpellEntry *sp = dbcSpell.LookupEntry(spellid);
 	if(!sp)
 	{
+		spellid = 0;
 		spell = NULL;
 		return;
 	}
 	else
 		spell = sp;
+
 	//ok got valid spell that will be casted on target when it comes close enough
 	//get the range for that
-
 	float r = 0;
 
 	for(uint32 i=0;i<3;++i)
@@ -395,6 +409,7 @@ void GameObject::InitAI()
 
 	range = r*r;//square to make code faster
 	checkrate = 20;//once in 2 seconds
+	initiated = true;
 }
 
 bool GameObject::Load(GOSpawn *spawn)

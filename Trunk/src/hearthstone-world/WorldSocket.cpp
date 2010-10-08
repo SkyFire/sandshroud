@@ -117,8 +117,7 @@ void WorldSocket::OnDisconnect()
 
 void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 {
-/*	if(opcode != SMSG_UPDATE_OBJECT && opcode != SMSG_COMPRESSED_MOVES &&
-		opcode != SMSG_PONG && opcode != SMSG_WORLD_STATE_UI_TIMER_UPDATE && opcode != SMSG_WEATHER)
+/*	if(opcode != SMSG_UPDATE_OBJECT && opcode != SMSG_PONG && opcode != SMSG_WORLD_STATE_UI_TIMER_UPDATE && opcode != SMSG_WEATHER)
 		printf("Sent packet %s (0x%03X)\n", LookupOpcodeName(opcode), uint(opcode), uint(opcode));
 */
 	OUTPACKET_RESULT res;

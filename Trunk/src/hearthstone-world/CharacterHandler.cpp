@@ -915,9 +915,6 @@ void WorldSession::FullLogin(Player* plr)
 
 	DEBUG_LOG( "WorldSession","Created new player for existing players (%s)", plr->GetName() );
 
-	// Send Inital Packets?
-	plr->OnPrePushToWorld();
-
 	// Login time, will be used for played time calc
 	plr->m_playedtime[2] = (uint32)UNIXTIME;
 

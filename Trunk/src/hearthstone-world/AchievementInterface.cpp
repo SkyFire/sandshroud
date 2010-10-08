@@ -19,8 +19,6 @@
 
 #include "StdAfx.h"
 
-set<uint32> m_completedRealmFirstAchievements;
-
 AchievementInterface::AchievementInterface(Player* plr)
 {
 	m_player = plr;
@@ -70,10 +68,6 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 		ad->completed = completed;
 		ad->date = fields[3].GetUInt32();
 		ad->groupid = fields[4].GetUInt64();
-
-		if( ad->completed && string(ae->name).find("Realm First!") != string::npos ||
-			(ae->flags & ACHIEVEMENT_FLAG_REALM_FIRST_OBTAIN) || (ae->flags & ACHIEVEMENT_FLAG_REALM_FIRST_KILL))
-			m_completedRealmFirstAchievements.insert( ae->ID );
 
 		vector<string> Delim = StrSplit( criteriaprogress, "," );
 		for( uint32 i = 0; !completed && i < ae->AssociatedCriteriaCount; i++)
@@ -246,8 +240,6 @@ void AchievementInterface::EventAchievementEarned(AchievementData * pData)
 	// Realm First Achievements
 	if( string(ae->name).find("Realm First") != string::npos  ) // flags are wrong lol
 	{
-		m_completedRealmFirstAchievements.insert( ae->ID );
-
 		// Send to my team
 		WorldPacket data(SMSG_SERVER_FIRST_ACHIEVEMENT, 60);
 		data << m_player->GetName();
@@ -310,10 +302,6 @@ bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 	AchievementEntry * ach = dbcAchievement.LookupEntry(ad->id);
 
 	if( ach->categoryId == 1 || ach->flags & ACHIEVEMENT_FLAG_COUNTER ) // We cannot complete statistics
-		return false;
-
-	// realm first achievements
-	if( m_completedRealmFirstAchievements.find(ad->id) != m_completedRealmFirstAchievements.end() )
 		return false;
 
 	/* Crow: Needs work :|
@@ -386,14 +374,17 @@ bool AchievementInterface::HandleBeforeChecks(AchievementData * ad)
 			return false;
 	if(m_player->GetSession()->HasGMPermissions())
 		return false;
-	if(IsHardCoded(ad->id))
+	if(IsHardCoded(ach))
 		return false;
 	return true;
 }
 
-bool AchievementInterface::IsHardCoded(uint32 id)
+bool AchievementInterface::IsHardCoded(AchievementEntry * ae)
 {
-	switch(id)
+	if((ae->flags & ACHIEVEMENT_FLAG_REALM_FIRST_OBTAIN) || (ae->flags & ACHIEVEMENT_FLAG_REALM_FIRST_KILL))
+		return true;
+
+	switch(ae->ID)
 	{
 	case 2716: // Dual Talent Specialization
 

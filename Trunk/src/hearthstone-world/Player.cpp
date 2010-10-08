@@ -10405,7 +10405,7 @@ void Player::Possess(Unit* pTarget)
 	data << uint32(PET_SPELL_ATTACK);
 
 	// Send the actionbar
-	for(uint32 i = 1; i < 10; i++)
+	for(uint32 i = 1; i < 9; i++)
 	{
 		if(itr != avail_spells.end())
 		{

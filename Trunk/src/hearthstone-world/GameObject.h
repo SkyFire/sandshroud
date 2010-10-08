@@ -217,6 +217,7 @@ public:
 	void InitAI();
 	SpellEntry* spell;
 
+	bool initiated;
 	float range;
 	uint8 checkrate;
 	uint16 counter;
