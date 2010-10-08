@@ -3174,7 +3174,6 @@ void Object::SendSpellLog(Object* Caster, Object* Target, uint32 Ability, uint8 
 	Caster->SendMessageToSet(&data, true);
 }
 
-
 void Object::SendSpellNonMeleeDamageLog( Object* Caster, Unit* Target, uint32 SpellID, uint32 Damage, uint8 School, uint32 AbsorbedDamage, uint32 ResistedDamage, bool PhysicalDamage, uint32 BlockedDamage, bool CriticalHit, bool bToset )
 {
 	if ( !Caster || !Target )
@@ -3187,20 +3186,20 @@ void Object::SendSpellNonMeleeDamageLog( Object* Caster, Unit* Target, uint32 Sp
 	SpellID = sp->logsId ? sp->logsId : sp->Id;
 	uint32 overkill = Target->computeOverkill(Damage);
 
-	WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG,40);
+	WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG,48);
 	data << Target->GetNewGUID();
 	data << Caster->GetNewGUID();
-	data << SpellID;                    // SpellID / AbilityID
-	data << Damage;                     // All Damage
-	data << uint32(overkill);			// Overkill
-	data << uint8(g_spellSchoolConversionTable[School]);                     // School
-	data << AbsorbedDamage;             // Absorbed Damage
-	data << ResistedDamage;             // Resisted Damage
-	data << uint8(PhysicalDamage);      // Physical Damage (true/false)
-	data << uint8(0);                   // unknown or it binds with Physical Damage
-	data << BlockedDamage;				// Physical Damage (true/false)
-	data << uint8(CriticalHit ? 7 : 5);	// unknown const
-	data << uint32(0);
+	data << uint32(SpellID);				// SpellID / AbilityID
+	data << uint32(Damage);					// All Damage
+	data << uint32(overkill);				// Overkill
+	data << uint8(SchoolMask(School));		// School
+	data << uint32(AbsorbedDamage);      	// Absorbed Damage
+	data << uint32(ResistedDamage);      	// Resisted Damage
+	data << uint8(PhysicalDamage);      	// Physical Damage (true/false)
+	data << uint8(0);                   	// unknown or it binds with Physical Damage
+	data << uint32(BlockedDamage);      	// Physical Damage (true/false)
+	data << uint32(CriticalHit ? 7 : 5);	// Size
+	data << uint8(0);
 
 	Caster->SendMessageToSet( &data, bToset );
 }

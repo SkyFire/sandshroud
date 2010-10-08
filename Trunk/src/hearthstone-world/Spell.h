@@ -535,6 +535,11 @@ static const uint32 g_spellSchoolConversionTable[SCHOOL_ARCANE+1]	= {
 	64,				// SCHOOL_ARCANE
 };
 
+HEARTHSTONE_INLINE uint8 SchoolMask(uint8 school)
+{
+	return g_spellSchoolConversionTable[school];
+}
+
 enum ReplenishType
 {
 	REPLENISH_UNDEFINED	= 0,
