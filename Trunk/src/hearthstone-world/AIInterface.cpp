@@ -95,6 +95,7 @@ AIInterface::AIInterface()
 	disable_targeting = false;
 
 	next_spell_time = 0;
+	m_checkheighttime = 0;
 
 	waiting_for_cooldown = false;
 	UnitToFollow_backup = NULLUNIT;
@@ -580,13 +581,6 @@ void AIInterface::Update(uint32 p_time)
 				delete pSpell;
 				pSpell = NULL;
 			}
-			// these will *almost always* be AoE, so no need to find a target here.
-//			SpellCastTargets targets(m_Unit->GetGUID());
-//			Spell* pSpell = NULLSPELL
-//			pSpell = new Spell(m_Unit, totemspell, true, NULLAURA);
-//			pSpell->prepare(&targets);
-			// need proper cooldown time!
-//			m_totemspelltimer = m_totemspelltime;
 		}
 		else
 		{
@@ -633,23 +627,6 @@ void AIInterface::Update(uint32 p_time)
 			m_AIState = STATE_IDLE;
 			m_returnX = m_returnY = m_returnZ = 0.0f;
 			m_moveRun = false;
-			//remowed by zack : in scripted events if we keep reducing this it will bug the world out !
-			//On Blizz it will return to previous wp but we can accept the fact that it will move on to next one
-			/*
-			if(hasWaypoints())
-			{
-				if(m_moveBackward)
-				{
-					if(m_currentWaypoint != GetWayPointsCount()-1)
-						m_currentWaypoint++;
-				}
-				else
-				{
-					if(m_currentWaypoint != 0)
-						m_currentWaypoint--;
-				}
-			}
-			*/
 			// Set health to full if they at there last location before attacking
 			if(m_AIType != AITYPE_PET&&!skip_reset_hp)
 				m_Unit->SetUInt32Value(UNIT_FIELD_HEALTH,m_Unit->GetUInt32Value(UNIT_FIELD_MAXHEALTH));
@@ -689,7 +666,7 @@ void AIInterface::Update(uint32 p_time)
 	}
 
 	//Pet Dismiss after a certian ditance away
-	/*if(m_AIType == AITYPE_PET && m_PetOwner != NULL)
+	if(m_AIType == AITYPE_PET && m_PetOwner != NULL)
 	{
 		float dist = (m_Unit->GetInstanceID() == m_PetOwner->GetInstanceID()) ?
 			m_Unit->GetDistanceSq(m_PetOwner) : 99999.0f;
@@ -699,7 +676,7 @@ void AIInterface::Update(uint32 p_time)
 			DismissPet();
 			return;
 		}
-	}*/
+	}
 }
 
 void AIInterface::_UpdateTimer(uint32 p_time)
@@ -2709,7 +2686,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 	//Fear Code
 	if(m_AIState == STATE_FEAR && UnitToFear != NULL && m_creatureState == STOPPED)
 	{
-		if(getMSTime() > m_FearTimer)   // Wait at point for x ms ;)
+		if(p_time > m_FearTimer)   // Wait at point for x ms ;)
 		{
 			float Fx;
 			float Fy;
@@ -2736,12 +2713,12 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			Fz = m_Unit->GetCHeightForPosition(false); // We COULD check water height, but nah.
 			if( fabs( m_Unit->GetPositionZ() - Fz ) > 3.5f || ( wl != 0.0f && Fz < wl ) )		// in water
 			{
-				m_FearTimer = getMSTime() + 500;
+				m_FearTimer = p_time + 500;
 			}
 			else
 			{
 				MoveTo(Fx, Fy, Fz);
-				m_FearTimer = m_totalMoveTime + getMSTime() + 400;
+				m_FearTimer = m_totalMoveTime + p_time + 400;
 			}
 		}
 	}
@@ -2749,7 +2726,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 	// Wander AI movement code
 	if(m_AIState == STATE_WANDER && m_creatureState == STOPPED)
 	{
-		if(getMSTime() < m_WanderTimer) // is it time to move again?
+		if(p_time < m_WanderTimer) // is it time to move again?
 			return;
 
 		// calculate a random distance and angle to move
@@ -2780,13 +2757,13 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 
 			if( fabs( m_Unit->GetPositionZ() - Fz ) > 3.5f )
 			{
-				m_WanderTimer=getMSTime() + 1000;
+				m_WanderTimer = p_time + 1000;
 			}
 			else
 			{
 				m_Unit->SetOrientation(wanderO);
 				MoveTo(Fx, Fy, Fz);
-				m_WanderTimer = getMSTime() + m_totalMoveTime + 300; // time till next move (+ pause)
+				m_WanderTimer = p_time + m_totalMoveTime + 300; // time till next move (+ pause)
 			}
 		}
 		else
@@ -2802,13 +2779,13 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 			 || Fz < currentZ - 5.0f // is our destination land height too low? (possible WMO)
 			 || Fz > currentZ + wanderD) // is our destination too high to climb?
 			{
-				m_WanderTimer = getMSTime() + 1000; // wait 1 second before we try again
+				m_WanderTimer = p_time + 1000; // wait 1 second before we try again
 				return;
 			}
 
 			m_Unit->SetOrientation(wanderO);
 			MoveTo(Fx, Fy, Fz);
-			m_WanderTimer = getMSTime() + m_totalMoveTime + 300; // time till next move (+ pause)
+			m_WanderTimer = p_time + m_totalMoveTime + 300; // time till next move (+ pause)
 		}
 	}
 
@@ -2871,8 +2848,12 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 		}
 	}
 
-	// This is fly checks, mostly because of object updates.
-	CheckHeight();
+	if(p_time > m_checkheighttime)
+	{
+		m_checkheighttime = p_time+5000; // Five
+		// This is fly checks, mostly because of object updates.
+		CheckHeight();
+	}
 }
 
 uint8 AIInterface::CastSpell(Unit* caster, SpellEntry *spellInfo, SpellCastTargets targets)

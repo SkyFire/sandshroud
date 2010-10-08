@@ -510,8 +510,10 @@ public:
 
 	void WipeCurrentTarget();
 	void CheckHeight();
+	uint32 m_checkheighttime;
 	bool CheckCurrentTarget();
 	bool TargetUpdateCheck(Unit* ptr);
 	uint32 GetMovementTime(float distance);
 };
+
 #endif

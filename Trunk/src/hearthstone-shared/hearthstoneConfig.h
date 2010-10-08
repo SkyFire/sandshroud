@@ -90,10 +90,10 @@
 #define ENABLE_COMPRESSED_MOVEMENT_FOR_PLAYERS 1
 #define ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES 1
 
-/* Crow: Buffer saving is shitty, do not use.
+/* Crow: Buffer saving.
  * Default: disabled
  */
-//#define BUFFER_SAVING 1
+#define BUFFER_SAVING 1
 
 //Allow loading of unused testmaps.
 //#define EXCLUDE_TEST_MAPS 1
