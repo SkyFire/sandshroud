@@ -483,7 +483,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				if( m_muted && m_muted >= (uint32)UNIXTIME )
 					return;
 
-				if( HasGMPermissions() && _player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_GM) || _player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER) )
+				if( HasGMPermissions() && _player->bGMTagOn )
 				{
 					if( CanUseCommand('z') )
 						if(_player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER))
