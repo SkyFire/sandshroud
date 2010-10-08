@@ -95,6 +95,7 @@ void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 	if( m_player->GetSession()->HasGMPermissions() )
 		return;
 
+	uint32 count = 0;
 	std::stringstream ss;
 	if(m_achivementDataMap.size())
 	{
@@ -122,16 +123,26 @@ void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 			ss << ad->date << ",";
 			ss << ad->groupid << ")";
 			ad->m_isDirty = false;
+			count++;
 		}
-		ss << ";";
+		if(!count)
+			delete [] ss;
+		else
+			ss << ";";
 	}
 	else // If we have no achievements, delete all of our DB data.
+	{
+		count = 1; // Bwahahahahaha...
 		ss << "DELETE FROM achievements WHERE player = '" << m_player->GetLowGUID() << "';";
+	}
 
-	if(buffer == NULL)
-		CharacterDatabase.Execute(ss.str().c_str());
-	else // Execute or add our bulk inserts
-		buffer->AddQuery(ss.str().c_str());
+	if(count)
+	{
+		if(buffer == NULL)
+			CharacterDatabase.Execute(ss.str().c_str());
+		else // Execute or add our bulk inserts
+			buffer->AddQuery(ss.str().c_str());
+	}
 }
 
 WorldPacket* AchievementInterface::BuildAchievementData(bool forInspect)
