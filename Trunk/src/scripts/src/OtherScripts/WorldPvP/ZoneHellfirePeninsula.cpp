@@ -293,7 +293,79 @@ public:
 				
 				// they WILL be out of range at this point. this is guaranteed. means they left the set rly quickly.
 				if( plr != NULL )
+				{
 					plr->SendWorldStateUpdate(WORLDSTATE_HELLFIRE_PVP_CAPTURE_BAR_DISPLAY, 0);
+					if(Status == 0 && plr->GetTeam())
+					{
+						if(plr->HasQuest(13411))
+						{
+							QuestLogEntry *en = plr->GetQuestLogForEntry( 13411 );
+							if( en != NULL && en->GetMobCount( towerid ) < en->GetQuest()->required_mobcount[towerid])
+							{
+								en->SetMobCount( towerid, en->GetMobCount( towerid ) + 1 );//(collumn,count)
+								en->SendUpdateAddKill( towerid );//(collumn)
+								en->UpdatePlayerFields();
+							}
+						}
+
+						if(plr->HasQuest(13409))
+						{
+							QuestLogEntry *en = plr->GetQuestLogForEntry( 13409 );
+							if( en != NULL && en->GetMobCount( towerid ) < en->GetQuest()->required_mobcount[towerid])
+							{
+								en->SetMobCount( towerid, en->GetMobCount( towerid ) + 1 );//(collumn,count)
+								en->SendUpdateAddKill( towerid );//(collumn)
+								en->UpdatePlayerFields();
+							}
+						}
+
+						if(plr->HasQuest(10110))
+						{
+							QuestLogEntry *en = plr->GetQuestLogForEntry( 10110 );
+							if( en != NULL && en->GetMobCount( towerid ) < en->GetQuest()->required_mobcount[towerid])
+							{
+								en->SetMobCount( towerid, en->GetMobCount( towerid ) + 1 );//(collumn,count)
+								en->SendUpdateAddKill( towerid );//(collumn)
+								en->UpdatePlayerFields();
+							}
+						}
+					}
+					else if(Status == 100 && !plr->GetTeam())
+					{
+						if(plr->HasQuest(13410))
+						{
+							QuestLogEntry *en = plr->GetQuestLogForEntry( 13410 );
+							if( en != NULL && en->GetMobCount( towerid ) < en->GetQuest()->required_mobcount[towerid])
+							{
+								en->SetMobCount( towerid, en->GetMobCount( towerid ) + 1 );//(collumn,count)
+								en->SendUpdateAddKill( towerid );//(collumn)
+								en->UpdatePlayerFields();
+							}
+						}
+
+						if(plr->HasQuest(13408))
+						{
+							QuestLogEntry *en = plr->GetQuestLogForEntry( 13408 );
+							if( en != NULL && en->GetMobCount( towerid ) < en->GetQuest()->required_mobcount[towerid])
+							{
+								en->SetMobCount( towerid, en->GetMobCount( towerid ) + 1 );//(collumn,count)
+								en->SendUpdateAddKill( towerid );//(collumn)
+								en->UpdatePlayerFields();
+							}
+						}
+
+						if(plr->HasQuest(10106))
+						{
+							QuestLogEntry *en = plr->GetQuestLogForEntry( 10106 );
+							if( en != NULL && en->GetMobCount( towerid ) < en->GetQuest()->required_mobcount[towerid])
+							{
+								en->SetMobCount( towerid, en->GetMobCount( towerid ) + 1 );//(collumn,count)
+								en->SendUpdateAddKill( towerid );//(collumn)
+								en->UpdatePlayerFields();
+							}
+						}
+					}
+				}
 
 				StoredPlayers.erase(it3);
 			}

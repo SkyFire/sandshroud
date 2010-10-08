@@ -1139,7 +1139,7 @@ public:
 		if( _gameobject->CalcDistance( _gameobject, plr ) <= 1.5f && plr->GetMapId() == 609)
 		{
 			//plr->SafeTeleport( 609, 4298, 2390.18, -5640.28, 420.84, 0.57 );
-			EventMgr::getSingleton().AddEvent(plr, &Player::EventTeleport, (uint32)609, (float)2390.18, (float)-5640.28, (float)420.84, (float)0.57, 1, 110, 1000, 1, 1);
+			sEventMgr.AddEvent(plr, &Player::EventTeleport, (uint32)609, (float)2390.18, (float)-5640.28, (float)420.84, (float)0.57, 1, 110, 1000, 1, 1);
 		}
 
 		else if( _gameobject->CalcDistance( _gameobject, plr ) <= 1.5f && plr->GetMapId() == 0)
@@ -1169,7 +1169,7 @@ public:
 			return;
 
 		if( _gameobject->CalcDistance( _gameobject, plr ) <= 2.0f && plr->GetMapId() == 609)
-			EventMgr::getSingleton().AddEvent(plr, &Player::EventTeleport, (uint32)609, (float)2397.57, (float)-5636.03, (float)377.05, (float)0.57, 1, 110, 1000, 1, 1);
+			sEventMgr.AddEvent(plr, &Player::EventTeleport, (uint32)609, (float)2397.57, (float)-5636.03, (float)377.05, (float)0.57, 1, 110, 1000, 1, 1);
 		else if( _gameobject->CalcDistance( _gameobject, plr ) <= 2.0f && plr->GetMapId() == 0)
 			plr->SafeTeleport( 0, plr->GetInstanceID(), 2395.233154f, -5637.875488f, 377.086884f, 0.520721f);
 	}
