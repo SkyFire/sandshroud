@@ -4025,7 +4025,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 	uint32 locktype=GetSpellProto()->EffectMiscValue[i];
 	switch(locktype)
 	{
-		case LOCKTYPE_PICKLOCK:
+	case LOCKTYPE_PICKLOCK:
 		{
 			uint32 v = 0;
 			uint32 lockskill = p_caster->_GetSkillLineCurrent(SKILL_LOCKPICKING);
@@ -4071,7 +4071,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				}
 			}
 		}break;
-		case LOCKTYPE_HERBALISM:
+	case LOCKTYPE_HERBALISM:
 		{
 			if(!gameObjTarget) return;
 
@@ -4094,28 +4094,16 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 					else
 						bAlreadyUsed = true;
 				}
-				loottype = LOOT_SKINNING;
+				loottype = LOOT_GATHERING;
 			}
 			else
-			{
-				/*
-				if(rand()%100 <= 30)
-				{
-					//30% chance to not be able to reskin on fail
-					TO_CREATURE(unitTarget)->Skinned = true;
-					WorldPacket *pkt=unitTarget->BuildFieldUpdatePacket(UNIT_FIELD_FLAGS,0);
-					TO_PLAYER( m_caster )->GetSession()->SendPacket(pkt);
-					delete pkt;
-
-				}*/
 				SendCastResult(SPELL_FAILED_TRY_AGAIN);
-			}
+
 			//Skill up
 			if(!bAlreadyUsed) //Avoid cheats with opening/closing without taking the loot
 				DetermineSkillUp(SKILL_HERBALISM,v/5);
-		}
-		break;
-		case LOCKTYPE_MINING:
+		}break;
+	case LOCKTYPE_MINING:
 		{
 			if(!gameObjTarget) return;
 
@@ -4136,21 +4124,22 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				else
 					bAlreadyUsed = true;
 
-				loottype = LOOT_SKINNING;
+				loottype = LOOT_GATHERING;
 			}
 			else
-			{
 				SendCastResult(SPELL_FAILED_TRY_AGAIN);
-			}
+
 			//Skill up
 			if(!bAlreadyUsed) //Avoid cheats with opening/closing without taking the loot
 				DetermineSkillUp(SKILL_MINING,v/5);
-		}
-		break;
-		case LOCKTYPE_SLOW_OPEN: // used for BG go's
+		}break;
+	case LOCKTYPE_SLOW_OPEN: // used for BG go's
 		{
-			if(!gameObjTarget ) return;
-			if(p_caster->m_bgFlagIneligible) return;
+			if(!gameObjTarget )
+				return;
+
+			if(p_caster->m_bgFlagIneligible)
+				return;
 
 			if(p_caster && p_caster->m_bg)
 				if(p_caster->m_bg->HookSlowLockOpen(gameObjTarget,p_caster,this))
@@ -4164,17 +4153,19 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			SpellCastTargets tgt;
 			tgt.m_unitTarget=gameObjTarget->GetGUID();
 			sp->prepare(&tgt);
-		}
-		break;
-		case LOCKTYPE_QUICK_CLOSE:
-			{
-				if(!gameObjTarget ) return;
-				gameObjTarget->EventCloseDoor();
-			}
-		break;
-		default://not profession
+		}break;
+	case LOCKTYPE_QUICK_CLOSE:
 		{
-			if(!gameObjTarget ) return;
+			if(!gameObjTarget )
+				return;
+
+			gameObjTarget->EventCloseDoor();
+		}break;
+	default://not profession
+		{
+			if(!gameObjTarget)
+				return;
+
 			if(sQuestMgr.OnActivateQuestGiver(gameObjTarget, p_caster))
 				return;
 
@@ -4182,7 +4173,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			{
  				CALL_GO_SCRIPT_EVENT(gameObjTarget, OnActivate)(TO_PLAYER(p_caster));
 				CALL_INSTANCE_SCRIPT_EVENT( gameObjTarget->GetMapMgr(), OnGameObjectActivate )( gameObjTarget, p_caster );
-			};
+			}
 
 			if(sQuestMgr.OnGameObjectActivate(p_caster, gameObjTarget))
 			{
@@ -4194,9 +4185,8 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			{
 				lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 			}
-			loottype=LOOT_CORPSE;
-		}
-		break;
+			loottype = LOOT_CORPSE;
+		}break;
 	};
 	if( gameObjTarget != NULL && gameObjTarget->GetByte(GAMEOBJECT_BYTES_1, 1) == GAMEOBJECT_TYPE_CHEST)
 		TO_PLAYER( m_caster )->SendLoot( gameObjTarget->GetGUID(), gameObjTarget->GetMapId(), loottype );
@@ -5683,12 +5673,12 @@ void Spell::SpellEffectPickpocket(uint32 i) // pickpocket
 		return;
 	}
 
-  lootmgr.FillPickpocketingLoot(&TO_CREATURE(unitTarget)->m_loot,unitTarget->GetEntry());
+	lootmgr.FillPickpocketingLoot(&TO_CREATURE(unitTarget)->m_loot,unitTarget->GetEntry());
 
 	uint32 _rank = TO_CREATURE(unitTarget)->GetCreatureInfo() ? TO_CREATURE(unitTarget)->GetCreatureInfo()->Rank : 0;
 	unitTarget->m_loot.gold = float2int32((_rank+1) * unitTarget->getLevel() * (RandomUInt(5) + 1) * sWorld.getRate(RATE_MONEY));
 
-	p_caster->SendLoot(unitTarget->GetGUID(), unitTarget->GetMapId(), LOOT_PICKPOCKETING);
+	p_caster->SendLoot(unitTarget->GetGUID(), unitTarget->GetMapId(), LOOT_GATHERING);
 	target->SetPickPocketed(true);
 }
 
@@ -7268,7 +7258,7 @@ void Spell::SpellEffectDisenchant(uint32 i)
 					caster->_AdvanceSkillLine(SKILL_ENCHANTING, float2int32( 1.0f * sWorld.getRate(RATE_SKILLRATE)));
 			}
 			OUT_DEBUG("SpellEffect","Succesfully disenchanted item %d", uint32(itemTarget->GetEntry()));
-			p_caster->SendLoot( itemTarget->GetGUID(), itemTarget->GetMapId(), LOOT_DISENCHANTING );
+			p_caster->SendLoot( itemTarget->GetGUID(), itemTarget->GetMapId(), LOOT_GATHERING );
 		}
 		else
 		{

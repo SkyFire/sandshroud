@@ -151,9 +151,9 @@ void ApplyNormalFixes()
 		sp->ProcsPerMinute = 0;
 		sp->c_is_flags = 0;
 		sp->isAOE = 0;
-		sp->spell_coef_override = 0.3f;
-		sp->AP_coef_override = 0;
-		sp->RAP_coef_override = 0;
+		sp->spell_coef_override = 0.0f;
+		sp->AP_coef_override = 0.0f;
+		sp->RAP_coef_override = 0.0f;
 		sp->auraimmune_flag = 0;
 		sp->AllowBackAttack = false;
 		sp->procflags2 = 0;

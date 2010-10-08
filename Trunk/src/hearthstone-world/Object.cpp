@@ -541,7 +541,6 @@ WorldPacket *Object::BuildFieldUpdatePacket( uint32 index,uint32 value)
 void Object::BuildFieldUpdatePacket(Player* Target, uint32 Index, uint32 Value)
 {
 	ByteBuffer buf(500);
-
 	BuildFieldUpdatePacket(&buf, Index, Value);
 	Target->PushUpdateData(&buf, 1);
 }
@@ -554,7 +553,7 @@ void Object::BuildFieldUpdatePacket(ByteBuffer * buf, uint32 Index, uint32 Value
 	uint32 mBlocks = Index/32+1;
 	*buf << (uint8)mBlocks;
 
-	for(uint32 dword_n=mBlocks-1;dword_n;dword_n--)
+	for(uint32 dword_n = mBlocks-1; dword_n; dword_n--)
 		*buf <<(uint32)0;
 
 	*buf <<(((uint32)(1))<<(Index%32));

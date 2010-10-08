@@ -330,7 +330,6 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
 	uint64 guid;
-
 	recv_data >> guid;
 
 	WorldPacket data(SMSG_LOOT_RELEASE_RESPONSE, 9);
@@ -441,8 +440,6 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 					{
 						DespawnTime = 900000;	   // 15 for else
 					}
-
-
 					pGO->Despawn(0, DespawnTime);
 
 				}
@@ -450,7 +447,6 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 		}
 		return;
 	}
-
 	else if( GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_ITEM )
 	{
 		// if we have no items left, destroy the item.
@@ -463,7 +459,6 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 
 		return;
 	}
-
 	else if( GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE )
 	{
 		Unit* pLootTarget = _player->GetMapMgr()->GetUnit(guid);
@@ -483,7 +478,6 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 			}
 		}
 	}
-
 	else if( GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CORPSE )
 	{
 		Corpse* pCorpse = objmgr.GetCorpse((uint32)guid);
@@ -1988,7 +1982,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recv_data)
 		pItem->m_looted = true;
 	}
 
-	_player->SendLoot(pItem->GetGUID(), _player->GetMapId(), LOOT_DISENCHANTING);
+	_player->SendLoot(pItem->GetGUID(), _player->GetMapId(), LOOT_GATHERING);
 }
 
 void WorldSession::HandleCompleteCinematic(WorldPacket& recv_data)

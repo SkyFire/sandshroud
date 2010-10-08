@@ -4631,13 +4631,18 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	// coefficient
 	//---------------------------------------------------------
-	float coefficient = spellInfo->spell_coef_override;
+	float coefficient = 0.0f;
 
 	//---------------------------------------------------------
 	// modifiers (increase spell dmg by spell power)
 	//---------------------------------------------------------
 	if( spellInfo->SpellGroupType )
 	{
+		if(IsCreature())
+			coefficient = 1.0f;
+		else
+			coefficient = spellInfo->spell_coef_override;
+
 		float modifier = 0;
 		if( caster->HasDummyAura( SPELL_HASH_ARCANE_EMPOWERMENT ) )
 		{
@@ -4667,12 +4672,14 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	if( !healing )
 	{
-		bonus_damage += caster->GetDamageDoneMod(school) * coefficient;
+		if(coefficient) // Saves us some time.
+			bonus_damage += caster->GetDamageDoneMod(school) * coefficient;
 		bonus_damage += pVictim->DamageTakenMod[school];
 	}
 	else
 	{
-		bonus_damage += caster->HealDoneMod[school] * coefficient;
+		if(coefficient) // Saves us some time.
+			bonus_damage += caster->HealDoneMod[school] * coefficient;
 		bonus_damage += pVictim->HealTakenMod[school];
 	}
 

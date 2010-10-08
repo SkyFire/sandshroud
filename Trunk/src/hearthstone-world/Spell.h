@@ -1071,16 +1071,16 @@ HEARTHSTONE_INLINE bool IsHealingSpell(SpellEntry *sp)
 			{
 				switch( sp->EffectApplyAuraName[i] )
 				{
-					case 8://SPELL_AURA_PERIODIC_HEAL:
-					case 62://SPELL_AURA_PERIODIC_HEALTH_FUNNEL:
-						return true;
+				case 8://SPELL_AURA_PERIODIC_HEAL:
+				case 62://SPELL_AURA_PERIODIC_HEALTH_FUNNEL:
+					return true;
 
-					case 23://SPELL_AURA_PERIODIC_TRIGGER_SPELL:
-						{
-							SpellEntry * triggered = dbcSpell.LookupEntryForced(sp->EffectTriggerSpell[i]);
-							if(triggered && triggered != sp && IsHealingSpell(triggered))
-								return true;
-						}
+				case 23://SPELL_AURA_PERIODIC_TRIGGER_SPELL:
+					{
+						SpellEntry * triggered = dbcSpell.LookupEntryForced(sp->EffectTriggerSpell[i]);
+						if(triggered && triggered != sp && IsHealingSpell(triggered))
+							return true;
+					}break;
 				};
 			}
 		}
