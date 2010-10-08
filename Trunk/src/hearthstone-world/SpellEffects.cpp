@@ -3222,12 +3222,14 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 					}
 				}
 			}break;
+
 		case 379: // Earth Shield
 		case 54172: // Divine strom heal
 		case 54968: // Glyph of Holy Light
 			{
 				Heal((int32)forced_basepoints[0]);
 			}break;
+
 		case 23880: // Bloodthirst
 			{
 				Heal( float2int32( unitTarget->GetUInt32Value(UNIT_FIELD_MAXHEALTH) / 100.0f ) );

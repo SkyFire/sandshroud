@@ -2956,32 +2956,6 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
-	case 974: //Earth Shield
-	case 32593:
-	case 32594:
-	case 49283:
-	case 49284:
-		{
-			if(m_caster != NULL)
-			{
-				if(apply)
-				{
-					CreateProcTriggerSpell(m_caster, m_caster->GetGUID(), GetSpellId(), GetSpellId(), 100, PROC_ON_ANY_DAMAGE_VICTIM, PROC_REMOVEONUSE, 0, 0, 0, 0, 0, mod->m_amount);
-				}
-				else
-				{
-					for(std::list<struct ProcTriggerSpell>::iterator itr = m_target->m_procSpells.begin();itr != m_target->m_procSpells.end();itr++)
-					{
-						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
-						{
-							itr->deleted = true;
-							break;
-						}
-					}
-				}
-			}
-		}break;
-
 	case 71519: // Deathbringer's Will Normal.
 		{
 			if(m_caster != NULL && m_caster->IsPlayer())

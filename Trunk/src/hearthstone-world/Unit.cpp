@@ -1033,31 +1033,6 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									continue;
 							}break;
 
-						case 974:
-						case 32593:
-						case 32594:
-						case 49283:
-						case 49284: // Earth Shield
-							{
-								SpellEntry *spellInfo = dbcSpell.LookupEntry( 379 );
-								Unit* caster = NULLUNIT;
-								if(GET_TYPE_FROM_GUID(itr2->caster) == HIGHGUID_TYPE_PLAYER && IsInWorld())
-								{
-									caster = objmgr.GetPlayer(GUID_LOPART(itr2->caster));
-								}
-
-								if(!caster)
-									caster = TO_UNIT(this);
-
-								targets.m_unitTarget = GetGUID();
-								Spell* spell(new Spell(TO_UNIT(this), spellInfo, true, NULLAURA));
-								spell->forced_basepoints[0] = itr2->procValue;
-								spell->ProcedOnSpell = CastingSpell;
-								spell->pSpellId = origId;
-								spell->prepare(&targets);
-								continue;
-							}break;
-
 							//shaman - Healing Way
 						case 29203:
 							{
