@@ -1,5 +1,3 @@
-SUBDIRS = Spellfixes
-
 INCLUDES += -I$(srcdir)/../hearthstone-shared
 
 bin_PROGRAMS = hearthstone-world
