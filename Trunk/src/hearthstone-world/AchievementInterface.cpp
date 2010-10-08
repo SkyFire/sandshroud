@@ -95,39 +95,43 @@ void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 	if( m_player->GetSession()->HasGMPermissions() )
 		return;
 
-	bool NewBuffer = false;
-	if( !buffer )
+	std::stringstream ss;
+	if(m_achivementDataMap.size())
 	{
-		buffer = new QueryBuffer;
-		NewBuffer = true;
-	}
-
-	map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
-	for(; itr != m_achivementDataMap.end(); itr++)
-	{
-		AchievementData* ad = itr->second;
-		if( !ad->m_isDirty )
-			continue;
-
-		std::stringstream ss;
-		ss << "REPLACE INTO achievements (player,achievementid,progress,completed,groupid) VALUES (";
-		ss << m_player->GetLowGUID() << ",";
-		ss << ad->id << ",";
-		ss << "'";
-		for(uint32 i = 0; i < ad->num_criterias; i++)
+		map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
+		ss << "REPLACE INTO achievements (player,achievementid,progress,completed,groupid) VALUES ";
+		bool first = true;
+		for(; itr != m_achivementDataMap.end(); itr++)
 		{
-			ss << ad->counter[i] << ",";
+			AchievementData* ad = itr->second;
+			if( !ad->m_isDirty )
+				continue;
+
+			if(first)
+				first = false;
+			else
+				ss << ",";
+
+			ss << "(" << m_player->GetLowGUID() << ",";
+			ss << ad->id << ",";
+			ss << "'";
+			for(uint32 i = 0; i < ad->num_criterias; i++)
+				ss << ad->counter[i] << ",";
+
+			ss << "',";
+			ss << ad->date << ",";
+			ss << ad->groupid << ")";
+			ad->m_isDirty = false;
 		}
-		ss << "',";
-		ss << ad->date << ",";
-		ss << ad->groupid << ")";
-		buffer->AddQueryStr( ss.str().c_str() );
-
-		ad->m_isDirty = false;
+		ss << ";";
 	}
+	else // If we have no achievements, delete all of our DB data.
+		ss << "DELETE FROM achievements WHERE player = '" << m_player->GetLowGUID() << "';";
 
-	if( NewBuffer )
-		CharacterDatabase.AddQueryBuffer( buffer );
+	if(buffer == NULL)
+		CharacterDatabase.Execute(ss.str().c_str());
+	else // Execute or add our bulk inserts
+		buffer->AddQuery(ss.str().c_str());
 }
 
 WorldPacket* AchievementInterface::BuildAchievementData(bool forInspect)

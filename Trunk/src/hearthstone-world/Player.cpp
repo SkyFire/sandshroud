@@ -2522,56 +2522,64 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 #ifndef BUFFER_SAVING
 	_SaveSkillsToDB(NULL);
 #else
-//	_SaveSkillsToDB(buf);
+	_SaveSkillsToDB(buf);
 #endif // BUFFER_SAVING
 
 	// Talents
 #ifndef BUFFER_SAVING
 	_SaveTalentsToDB(NULL);
 #else
-//	_SaveTalentsToDB(buf);
+	_SaveTalentsToDB(buf);
 #endif // BUFFER_SAVING
 
 	// Spells
 #ifndef BUFFER_SAVING
 	_SaveSpellsToDB(NULL);
 #else
-//	_SaveSpellsToDB(buf);
+	_SaveSpellsToDB(buf);
 #endif // BUFFER_SAVING
 
 	// Equipment Sets
 #ifndef BUFFER_SAVING
 	_SaveEquipmentSets(NULL);
 #else
-//	_SaveEquipmentSets(buf);
+	_SaveEquipmentSets(buf);
 #endif // BUFFER_SAVING
 
 	// Area Phase Info
 #ifndef BUFFER_SAVING
 	_SaveAreaPhaseInfo(NULL);
 #else
-//	_SaveAreaPhaseInfo(buf);
+	_SaveAreaPhaseInfo(buf);
 #endif // BUFFER_SAVING
 
 	// Glyphs
 #ifndef BUFFER_SAVING
 	_SaveGlyphsToDB(NULL);
 #else
-//	_SaveGlyphsToDB(buf);
+	_SaveGlyphsToDB(buf);
 #endif // BUFFER_SAVING
 
 	// Inventory
 #ifndef BUFFER_SAVING
 	 GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, NULL);
 #else
-//	 GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, buf);
+	GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, buf);
 #endif // BUFFER_SAVING
 
 	// save quest progress
+#ifndef BUFFER_SAVING
+	_SaveQuestLogEntry(NULL);
+#else
 	_SaveQuestLogEntry(buf);
+#endif // BUFFER_SAVING
 
 	// Tutorials
+#ifndef BUFFER_SAVING
+	_SaveTutorials(NULL);
+#else
 	_SaveTutorials(buf);
+#endif // BUFFER_SAVING
 
 	// GM Ticket
 	GM_Ticket* ticket = objmgr.GetGMTicketByPlayer(GetGUID());
@@ -2579,17 +2587,30 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		objmgr.SaveGMTicket(ticket, buf);
 
 	// Cooldown Items
+#ifndef BUFFER_SAVING
+	_SavePlayerCooldowns( NULL );
+#else
 	_SavePlayerCooldowns( buf );
+#endif // BUFFER_SAVING
 
 	// Pets
 	if(getClass() == HUNTER || getClass() == WARLOCK)
 	{
+#ifndef BUFFER_SAVING
+		_SavePet(NULL);
+		_SavePetSpells(NULL);
+#else
 		_SavePet(buf);
 		_SavePetSpells(buf);
+#endif // BUFFER_SAVING
 	}
 
 	// Achievements
+#ifndef BUFFER_SAVING
 	GetAchievementInterface()->SaveToDB( NULL );
+#else
+	GetAchievementInterface()->SaveToDB( buf );
+#endif // BUFFER_SAVING
 
 	m_nextSave = getMSTime() + sWorld.getIntRate(INTRATE_SAVE);
 
