@@ -18,6 +18,7 @@
  */
 
 #include "StdAfx.h"
+
 GameObject::GameObject(uint64 guid)
 {
 	m_objectTypeId = TYPEID_GAMEOBJECT;
@@ -305,6 +306,8 @@ void GameObject::InitAI()
 	if(pInfo == NULL || initiated)
 		return;
 
+	initiated = true; // Initiate after check, so we do not spam if we return without a point.
+
 	if(pInfo->SpellFocus == 0 &&
 		pInfo->sound1 == 0 &&
 		pInfo->sound2 == 0 &&
@@ -409,7 +412,6 @@ void GameObject::InitAI()
 
 	range = r*r;//square to make code faster
 	checkrate = 20;//once in 2 seconds
-	initiated = true;
 }
 
 bool GameObject::Load(GOSpawn *spawn)
