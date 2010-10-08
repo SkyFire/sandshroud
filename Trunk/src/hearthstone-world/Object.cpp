@@ -2287,8 +2287,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		}
 		else if(pVictim->IsPlayer() && (health <= damage) && TO_PLAYER(pVictim)->DuelingWith != NULL && TO_PLAYER(pVictim)->DuelingWith != TO_PLAYER(this))
 		{
-			TO_PLAYER(pVictim)->DuelingWith->EndDuel(DUEL_WINNER_KNOCKOUT);
+			// We have to call the achievement interface from the duelingwith before, otherwise we crash.
 			TO_PLAYER(pVictim)->DuelingWith->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
+			TO_PLAYER(pVictim)->DuelingWith->EndDuel(DUEL_WINNER_KNOCKOUT);
 //			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel(); Disable because someone cheated!
 		}
 	}
