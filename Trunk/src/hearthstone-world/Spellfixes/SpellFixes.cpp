@@ -1128,10 +1128,10 @@ SpellEntry* CreateDummySpell(uint32 id)
 	sp->Attributes = 384;
 	sp->AttributesEx = 268435456;
 	sp->Flags3 = 4;
-	sp->Name = (char*)name.c_str();
-	sp->Rank = (char*)"";
-	sp->Description = (char*)"";
-	sp->BuffDescription = (char*)"";
+	sp->Name = ((char*)name.c_str());
+	sp->Rank = ((char*)" ");
+	sp->Description = ((char*)" ");
+	sp->BuffDescription = ((char*)" ");
 	sp->CastingTimeIndex = 1;
 	sp->procChance = 75;
 	sp->rangeIndex = 13;
