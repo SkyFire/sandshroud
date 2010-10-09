@@ -347,7 +347,7 @@ float MoonScriptCreatureAI::GetScale()
 
 void MoonScriptCreatureAI::SetBaseHealth(uint32 mHealth)
 {
-    if (mHealth != NULL)
+    if (mHealth > 0)
     {
         _unit->SetUInt32Value(UNIT_FIELD_MAXHEALTH, mHealth);
         _unit->SetUInt32Value(UNIT_FIELD_HEALTH, mHealth);

@@ -294,6 +294,7 @@ AC_CONFIG_FILES([
 	src/scripts/src/GossipScripts/Makefile
 	src/scripts/src/InstanceScripts/Makefile
 	src/scripts/src/Lua/Makefile
+	src/scripts/src/OtherScripts/Makefile
 	src/scripts/src/QuestScripts/Makefile
 	src/scripts/src/ServerStatusPlugin/Makefile
 	src/scripts/src/WorldPvPScripts/Makefile
@@ -334,13 +335,6 @@ fi
 
 echo -n "    improved ticket system: "
 if test "x$enable_ticketsystem" = "xyes" ; then
-	echo "enabled"
-else
-	echo "disabled"
-fi
-
-echo -n "    collision: "
-if test "x$enable_collision" = "xyes" ; then
 	echo "enabled"
 else
 	echo "disabled"

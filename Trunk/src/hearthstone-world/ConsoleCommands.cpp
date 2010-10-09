@@ -350,7 +350,7 @@ bool HandleOnlinePlayersCommand(BaseConsole * pConsole, int argc, const char * a
 	WorldPacket data;
 	//bool first = true;
 
-	pConsole->Write("There following players online on this server: \r\n");
+	pConsole->Write("The following players are online on this server: \r\n");
 	pConsole->Write("======================================================\r\n");
 	pConsole->Write("| %21s | %15s | % 04s  |\r\n" , "Name", "Level", "Latency");
 	pConsole->Write("======================================================\r\n");
