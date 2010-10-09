@@ -5733,11 +5733,12 @@ void Player::UpdateStats()
 	}
 
 	/////////////////////RATINGS STUFF/////////////////
-	float cast_speed = CalcRating( PLAYER_RATING_MODIFIER_SPELL_HASTE );
-	if( cast_speed != SpellHasteRatingBonus )
+	float haste = 1.0f + CalcRating( PLAYER_RATING_MODIFIER_SPELL_HASTE ) / 100.0f;
+	if( haste != SpellHasteRatingBonus )
 	{
-		ModFloatValue( UNIT_MOD_CAST_SPEED, ( SpellHasteRatingBonus - cast_speed ) / 100.0f);
-		SpellHasteRatingBonus = cast_speed;
+		float value = GetFloatValue(UNIT_MOD_CAST_SPEED) * SpellHasteRatingBonus / haste;
+		SetFloatValue( UNIT_MOD_CAST_SPEED, value);
+		SpellHasteRatingBonus = haste;
 	}
 	////////////////////RATINGS STUFF//////////////////////
 

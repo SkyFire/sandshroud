@@ -2438,8 +2438,8 @@ void Spell::SendLogExecute(uint32 damage, uint64 & targetGuid)
 	data << m_caster->GetNewGUID();
 	data << GetSpellProto()->Id;
 	data << uint32(1);
-//	data << GetSpellProto()->SpellVisual;
-//	data << uint32(1);
+	data << GetSpellProto()->SpellVisual[0];
+	data << uint32(1);
 	if (m_caster->GetGUID() != targetGuid)
 		data << targetGuid;
 	if (damage)

@@ -9779,9 +9779,10 @@ void Aura::SendPeriodicAuraLog(Unit* Caster, Unit* Target, SpellEntry *sp, uint3
 	Aura::SendPeriodicAuraLog(Caster->GetGUID(), Target, sp, Amount, abs_dmg, resisted_damage, Flags, pSpellId);
 }
 
-void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntry *sp, uint32 Amount, uint32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId)
+void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntry *sp, uint32 Amount, uint32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId, bool crit)
 {
 	uint32 spellId = sp->logsId ? sp->logsId : (pSpellId ? pSpellId : sp->Id);
+	uint8 isCritical = crit ? 1 : 0;
 
 	WorldPacket data(SMSG_PERIODICAURALOG, 46);
 	data << Target->GetNewGUID();		// target guid
@@ -9793,22 +9794,25 @@ void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntr
 	{
 		data << (uint32) Amount;	// Healing done
 		data << (uint32) abs_dmg; // overheal. just passed the value inside abs_dmg
+		data << uint32(0);				// UNK - Absorbed Heal?
+		data << uint8(isCritical);		// critical tick.
 	}
 	else if(Flags == FLAG_PERIODIC_LEECH)
 	{
-		data << (uint32) abs_dmg;	// power type. just passed the value inside abs_dmg
-		data << (uint32) Amount;	// amount drained
-		data << (float) 1.0f;	// percent gained from what is drained
+		data << (uint32) abs_dmg;			// power type. just passed the value inside abs_dmg
+		data << (uint32) Amount;			// amount drained
+		data << (float) resisted_damage;	// percent gained from what is drained
 	}
 	else if(Flags == FLAG_PERIODIC_ENERGIZE)
 		data << (uint32) Amount;
 	else if(Flags == FLAG_PERIODIC_DAMAGE)
 	{
-		data << (uint32) Amount;			// damage dealt
-		data << (uint32) Target->computeOverkill(Amount);			// overkill
-		data << (uint32) g_spellSchoolConversionTable[sp->School]; // spell school
+		data << (uint32) Amount;							// damage dealt
+		data << (uint32) Target->computeOverkill(Amount);	// overkill
+		data << (uint32) SchoolMask(sp->School);			// spell school
 		data << uint32(abs_dmg);
 		data << uint32(resisted_damage);
+		data << uint8(isCritical);							// critical tick.
 	}
 
 	Target->SendMessageToSet(&data, true);

@@ -2390,13 +2390,16 @@ void Unit::HandleProcDmgShield(uint32 flag, Unit* attacker)
 				data << (*i2).m_spellId;
 				data << (*i2).m_damage;
 				data << uint32(overkill);
-				data << g_spellSchoolConversionTable[(*i2).m_school];
+				data << SchoolMask((*i2).m_school);
 				SendMessageToSet(&data,true);
 				DealDamage(attacker,(*i2).m_damage,0,0,(*i2).m_spellId);
 			}
 			else
 			{
-				SpellEntry	*ability=dbcSpell.LookupEntry((*i2).m_spellId);
+				SpellEntry *ability = dbcSpell.LookupEntry((*i2).m_spellId);
+				if(!ability)
+					continue;
+
 				Strike( attacker, RANGED, ability, 0, 0, (*i2).m_damage, false, true );
 			}
 		}

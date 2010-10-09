@@ -3217,7 +3217,7 @@ void Object::SendSpellNonMeleeDamageLog( Object* Caster, Unit* Target, uint32 Sp
 	data << uint8(PhysicalDamage);      	// Physical Damage (true/false)
 	data << uint8(0);                   	// unknown or it binds with Physical Damage
 	data << uint32(BlockedDamage);      	// Physical Damage (true/false)
-	data << uint32(CriticalHit ? 7 : 5);	// Size
+	data << uint32((CriticalHit ? 7 : 5));	// Size
 	data << uint8(0);
 
 	Caster->SendMessageToSet( &data, bToset );
