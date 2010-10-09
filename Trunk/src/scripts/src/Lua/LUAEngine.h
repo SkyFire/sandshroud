@@ -203,6 +203,8 @@ std::vector<uint16> EventAsToFuncName[NUM_SERVER_HOOKS];
 std::map<uint32, uint16> m_luaDummySpells;
 
 template<typename T> const char * GetTClassName() { return "UNKNOWN"; };
+template<typename T> struct RegType { const char * name; int(*mfunc)(lua_State*,T*); };
+template<typename T> RegType<T>* GetMethodTable() { return NULL; }
 
 class LuaEngine
 {

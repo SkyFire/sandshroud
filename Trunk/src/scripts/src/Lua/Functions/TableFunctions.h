@@ -35,16 +35,8 @@
 #include "FunctionUnits.h"
 #include "LuaSqlApi.h"
 
-template<typename T>
-struct RegType
-{
-	const char * name;
-	int(*mfunc)(lua_State*,T*);
-};
-
 /*	Empty Functions: Both of these are used as placeholders for the actual code
 	so we can have the functions, but they won't do anything. */
-
 template<typename T> int EmptyLuaFunction(lua_State * L, T*)
 {
 	return 1;
@@ -780,7 +772,6 @@ RegType<Aura> AuraMethods[] =
 	{NULL, NULL},
 };
 
-template<typename T> RegType<T>* GetMethodTable() { return NULL; }
 template<> RegType<Item>* GetMethodTable<Item>() { return ItemMethods; }
 template<> RegType<Unit>* GetMethodTable<Unit>() { return UnitMethods; }
 template<> RegType<GameObject>* GetMethodTable<GameObject>() { return GOMethods; }
