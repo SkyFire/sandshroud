@@ -1,0 +1,281 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Functions">
+      <UniqueIdentifier>{9d138246-8f65-47ee-a6f6-6d5e46b3819f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GM">
+      <UniqueIdentifier>{ebb1edb6-a5d0-4de5-907f-1512be76f0b6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\GameMonkey\ScriptFunctions.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\ScriptFunctionTable.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmArrayLib.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmArraySimple.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmByteCode.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmByteCodeGen.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmCall.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmCodeGen.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmCodeGenHooks.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmCodeTree.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmCrc.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmDebug.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmDebugger.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmFunctionObject.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmGCRoot.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmGCRootUtil.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmHash.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmHelpers.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmIncGC.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmLibHooks.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmListDouble.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmLog.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmMachine.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmMachineLib.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmMathLib.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmMem.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmMemChain.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmMemFixed.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmMemFixedSet.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmOperators.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmParser.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmScanner.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmStream.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmStreamBuffer.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmStringLib.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmStringObject.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmSystemLib.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmTableObject.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmThread.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmUserObject.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmUtil.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmVariable.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\gm\gmVector3Lib.cpp">
+      <Filter>GM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GameMonkey\GMEngine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\GameMonkey\ScriptFunctions.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmArrayLib.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmArraySimple.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmByteCode.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmByteCodeGen.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmCall.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmCodeGen.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmCodeGenHooks.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmCodeTree.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmConfig.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmConfig_p.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmCrc.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmDebug.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmDebugger.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmFunctionObject.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmGCRoot.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmGCRootUtil.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmHash.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmHelpers.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmIncGC.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmIterator.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmLibHooks.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmListDouble.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmLog.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmMachine.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmMachineLib.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmMathLib.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmMem.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmMemChain.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmMemFixed.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmMemFixedSet.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmOperators.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmParser.cpp.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmScanner.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmStream.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmStreamBuffer.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmStringLib.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmStringObject.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmSystemLib.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmTableObject.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmThread.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmUserObject.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmUtil.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmVariable.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\gm\gmVector3Lib.h">
+      <Filter>GM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GameMonkey\GMEngine.h" />
+  </ItemGroup>
+</Project>
