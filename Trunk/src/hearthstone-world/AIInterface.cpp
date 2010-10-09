@@ -2355,6 +2355,11 @@ bool AIInterface::saveWayPoints()
 		ss << WorldDatabase.EscapeString(wp->forwardSayText) << "','";
 		ss << WorldDatabase.EscapeString(wp->backwardSayText) << "')\0";
 		WorldDatabase.Query( ss.str().c_str() );
+		if(sWorld.QueryLog)
+		{
+			FileLog * log = new FileLog("Waypoints.sql");
+			log->WriteToLog(ss.str().c_str());
+		}
 	}
 	return true;
 }

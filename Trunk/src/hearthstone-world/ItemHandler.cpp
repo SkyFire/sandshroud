@@ -1354,7 +1354,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 					continue;
 
 				if(!_player->GetSession()->HasGMPermissions() // Show free items for GMs no matter what.
-					&& !sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL )
+					&& !sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL && curItem->SellPrice > 0 )
 					continue;
 
 				int32 av_am = (itr->max_amount > 0) ? itr->available_amount : -1;

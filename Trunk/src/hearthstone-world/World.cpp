@@ -1222,6 +1222,7 @@ void World::Rehash(bool load)
 
 	LogonServerType = Config.RealmConfig.GetIntDefault("LogonServer", "LogonType", LOGON_HEARTHSTONE);
 	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
+	QueryLog = Config.MainConfig.GetBoolDefault("LogLevel", "Query", false);
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
 	vMapPath = Config.MainConfig.GetStringDefault("Terrain", "vMapPath", "vmaps");

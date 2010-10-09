@@ -539,9 +539,7 @@ public:
 
 	// Serialization
 	void SaveToDB(bool saveposition = false);
-	void SaveToFile(std::stringstream & name);
-	//bool LoadFromDB(uint32 guid);
-	//bool LoadFromDB(CreatureTemplate *t);
+	void SaveToFile(bool saveposition = false);
 	void LoadAIAgents(CreatureTemplate * t);
 	void LoadAIAgents();
 	void DeleteFromDB();
@@ -691,6 +689,7 @@ public:
 	// used by bgs
 	bool m_noDeleteAfterDespawn;
 	bool IsLightwell(uint32 entry) { if(GetEntry() == 31883 || GetEntry() == 31893 || GetEntry() == 31894 || GetEntry() == 31895 || GetEntry() == 31896 || GetEntry() == 31897) return true; return false; }
+	uint32 lightwellcharges;
 };
 
 #endif

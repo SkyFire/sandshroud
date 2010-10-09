@@ -802,12 +802,9 @@ public:
 				for(; *p != 0; ++p)
 				{
 					if(name[i] == *p)
-						goto cont;
+						continue;
 				}
-
-				return false;
-cont:
-				continue;
+				return false;				
 			}
 		}
 		else
@@ -825,6 +822,7 @@ cont:
 
 		return true;
 	}
+	bool QueryLog;
 };
 
 #define sCLT CharacterLoaderThread::getSingleton()

@@ -192,7 +192,7 @@
 #include "ChainAggroEntity.h"
 #include "StrandOfTheAncients.h"
 #include "IsleOfConquest.h"
-
+#include "filelog.h"
 #ifdef CLUSTERING
 	#include "WorkerServerClient.h"
 	#include "ClusterInterface.h"

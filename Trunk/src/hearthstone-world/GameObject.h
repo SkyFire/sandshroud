@@ -162,7 +162,7 @@ public:
 	void UpdateTrapState();
 	// Serialization
 	void SaveToDB();
-	void SaveToFile(std::stringstream & name);
+	void SaveToFile();
 	//bool LoadFromDB(uint32 guid);
 	//void LoadFromDB(GameObjectTemplate *t);
 	void DeleteFromDB();

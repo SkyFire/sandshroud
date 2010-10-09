@@ -1457,6 +1457,10 @@
 			RelativePath="..\..\src\hearthstone-world\UpdateMask.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\src\hearthstone-world\filelog.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

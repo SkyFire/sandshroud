@@ -104,6 +104,7 @@ Creature::Creature(uint64 guid)
 	m_noDeleteAfterDespawn = false;
 
 	spawnid = 0;
+	lightwellcharges = 0;
 }
 
 void Creature::Init()
@@ -307,6 +308,9 @@ void Creature::GenerateLoot()
 
 void Creature::SaveToDB(bool saveposition /*= false*/)
 {
+	if(sWorld.QueryLog)
+		SaveToFile(saveposition);
+
 	if(!spawnid)
 		spawnid = objmgr.GenerateCreatureSpawnID();
 
@@ -314,7 +318,6 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 	float savey = (!saveposition && (m_spawn != NULL)) ? m_spawn->y : m_position.y;
 	float savez = (!saveposition && (m_spawn != NULL)) ? m_spawn->z : m_position.z;
 	float saveo = (!saveposition && (m_spawn != NULL)) ? m_spawn->o : m_position.o;
-
 	std::stringstream ss;
 	ss << "REPLACE INTO creature_spawns VALUES("
 		<< spawnid << ","
@@ -350,41 +353,90 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 	WorldDatabase.Execute(ss.str().c_str());
 }
 
-void Creature::SaveToFile(std::stringstream & name)
+void Creature::SaveToFile(bool saveposition)
 {
-/*	FILE * OutFile;
+	FileLog * log = new FileLog("creature.sql");
+	if(!spawnid)
+	{
+		spawnid = objmgr.GenerateCreatureSpawnID();
+		float savex = (!saveposition && (m_spawn != NULL)) ? m_spawn->x : m_position.x;
+		float savey = (!saveposition && (m_spawn != NULL)) ? m_spawn->y : m_position.y;
+		float savez = (!saveposition && (m_spawn != NULL)) ? m_spawn->z : m_position.z;
+		float saveo = (!saveposition && (m_spawn != NULL)) ? m_spawn->o : m_position.o;
+		std::stringstream logreplace;
+		logreplace << "REPLACE INTO creature_spawns VALUES("
+		<< spawnid << ","
+		<< GetEntry() << ","
+		<< GetMapId() << ","
+		<< savex << ","
+		<< savey << ","
+		<< savez << ","
+		<< saveo << ","
+		<< m_aiInterface->getMoveType() << ","
+		<< 0 << "," //Uses random display from proto. Setting a displayid manualy will override proto lookup
+		<< m_uint32Values[UNIT_FIELD_FACTIONTEMPLATE] << ","
+		<< m_uint32Values[UNIT_FIELD_FLAGS] << ","
+		<< m_uint32Values[UNIT_FIELD_BYTES_0] << ","
+		<< m_uint32Values[UNIT_FIELD_BYTES_1] << ","
+		<< m_uint32Values[UNIT_FIELD_BYTES_2] << ","
+		<< m_uint32Values[UNIT_NPC_EMOTESTATE] << ",";
 
-	OutFile = fopen(name.str().c_str(), "wb");
-	if (!OutFile) return;
+		if(m_spawn)
+			logreplace << m_spawn->channel_spell << "," << m_spawn->channel_target_go << "," << m_spawn->channel_target_creature << ",";
+		else
+			logreplace << "0,0,0,";
 
-	uint32 creatureEntry = GetUInt32Value(OBJECT_FIELD_ENTRY);
-	if (!m_sqlid)
-		m_sqlid = objmgr.GenerateLowGuid(HIGHGUID_UNIT);
+		logreplace << uint32(GetStandState()) << ","
+		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
+		<< m_phaseMode << ","
+		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ")";
+		log->WriteToLog(logreplace.str().c_str());
+	}
+	else
+	{
+		float savex = (!saveposition && (m_spawn != NULL)) ? m_spawn->x : m_position.x;
+		float savey = (!saveposition && (m_spawn != NULL)) ? m_spawn->y : m_position.y;
+		float savez = (!saveposition && (m_spawn != NULL)) ? m_spawn->z : m_position.z;
+		float saveo = (!saveposition && (m_spawn != NULL)) ? m_spawn->o : m_position.o;
+		std::stringstream logupdate;
+		logupdate << "UPDATE creature_spawns set("
+		<< spawnid << ","
+		<< GetEntry() << ","
+		<< GetMapId() << ","
+		<< savex << ","
+		<< savey << ","
+		<< savez << ","
+		<< saveo << ","
+		<< m_aiInterface->getMoveType() << ","
+		<< 0 << "," //Uses random display from proto. Setting a displayid manualy will override proto lookup
+		<< m_uint32Values[UNIT_FIELD_FACTIONTEMPLATE] << ","
+		<< m_uint32Values[UNIT_FIELD_FLAGS] << ","
+		<< m_uint32Values[UNIT_FIELD_BYTES_0] << ","
+		<< m_uint32Values[UNIT_FIELD_BYTES_1] << ","
+		<< m_uint32Values[UNIT_FIELD_BYTES_2] << ","
+		<< m_uint32Values[UNIT_NPC_EMOTESTATE] << ",";
 
-	std::stringstream ss;
-	ss << "DELETE FROM creatures WHERE id=" << m_sqlid;
-	fwrite(ss.str().c_str(),1,ss.str().size(),OutFile);
+		if(m_spawn)
+			logupdate << m_spawn->channel_spell << "," << m_spawn->channel_target_go << "," << m_spawn->channel_target_creature << ",";
+		else
+			logupdate << "0,0,0,";
 
-	ss.rdbuf()->str("");
-	ss << "\nINSERT INTO creatures (id, mapId, zoneId, name_id, positionX, positionY, positionZ, orientation, moverandom, running, data) VALUES ( "
-		<< m_sqlid << ", "
-		<< GetMapId() << ", "
-		<< GetZoneId() << ", "
-		<< GetUInt32Value(OBJECT_FIELD_ENTRY) << ", "
-		<< m_position.x << ", "
-		<< m_position.y << ", "
-		<< m_position.z << ", "
-		<< m_position.o << ", "
-		<< GetAIInterface()->getMoveType() << ", "
-		<< GetAIInterface()->getMoveRunFlag() << ", '";
-	for( uint16 index = 0; index < m_valuesCount; index ++ )
-		ss << GetUInt32Value(index) << " ";
-
-	ss << "' )";
-	fwrite(ss.str().c_str(),1,ss.str().size(),OutFile);
-	fclose(OutFile);*/
+		logupdate << uint32(GetStandState()) << ","
+		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
+		<< m_phaseMode << ","
+		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ")";
+		logupdate << "Where id = ";
+		logupdate << spawnid << "and entry = ";
+		logupdate << GetEntry() << ";";
+		log->WriteToLog(logupdate.str().c_str());
+	}
 }
-
 
 void Creature::LoadScript()
 {

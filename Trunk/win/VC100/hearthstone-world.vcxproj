@@ -292,6 +292,8 @@
     <ClCompile Include="..\..\src\hearthstone-world\BattlegroundMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\EyeOfTheStorm.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\NavMeshInterface.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\SingleSpellFixes.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\SpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\StrandOfTheAncients.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Tracker.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WarsongGulch.cpp" />
@@ -371,8 +373,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\SpellEffects.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellTarget.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SpellFixes.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SingleSpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AchievementInterface.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AddonMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AuctionHouse.cpp" />
@@ -408,6 +408,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\hearthstone-world\filelog.h" />
     <ClInclude Include="..\..\src\hearthstone-world\IsleOfConquest.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Master.h" />
     <ClInclude Include="..\..\src\hearthstone-world\BaseConsole.h" />

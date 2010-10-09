@@ -214,7 +214,8 @@ hearthstone_world_SOURCES = \
     BaseConsole.h \
     ConsoleCommands.cpp \
     ConsoleCommands.h \
-    ConsoleListener.cpp
+    ConsoleListener.cpp \
+	filelog.h
 
 hearthstone_world_LDADD = -lshared -lz -lpcre
 

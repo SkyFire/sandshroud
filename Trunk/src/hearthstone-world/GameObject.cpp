@@ -249,6 +249,8 @@ void GameObject::Despawn( uint32 delay, uint32 respawntime)
 
 void GameObject::SaveToDB()
 {
+	if(sWorld.QueryLog)
+		SaveToFile();
 	std::stringstream ss;
 	ss << "REPLACE INTO gameobject_spawns VALUES("
 		<< ((m_spawn == NULL) ? 0 : m_spawn->id) << ","
@@ -270,35 +272,28 @@ void GameObject::SaveToDB()
 	WorldDatabase.Execute(ss.str().c_str());
 }
 
-void GameObject::SaveToFile(std::stringstream & name)
+void GameObject::SaveToFile()
 {
-/*	std::stringstream ss;
-	if (!m_sqlid)
-		m_sqlid = objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
-
-	 ss.rdbuf()->str("");
-	 ss << "INSERT INTO gameobjects VALUES ( "
-		<< m_sqlid << ", "
-		<< m_position.x << ", "
-		<< m_position.y << ", "
-		<< m_position.z << ", "
-		<< m_position.o << ", "
-		<< GetZoneId() << ", "
-		<< GetMapId() << ", '";
-
-	for( uint32 index = 0; index < m_valuesCount; index ++ )
-		ss << GetUInt32Value(index) << " ";
-
-	ss << "', ";
-	ss << GetEntry() << ", 0, 0)";
-
-	FILE * OutFile;
-
-	OutFile = fopen(name.str().c_str(), "wb");
-	if (!OutFile) return;
-	fwrite(ss.str().c_str(),1,ss.str().size(),OutFile);
-	fclose(OutFile);
-*/
+	std::stringstream ss;
+	ss << "REPLACE INTO gameobject_spawns VALUES("
+		<< ((m_spawn == NULL) ? 0 : m_spawn->id) << ","
+		<< GetEntry() << ","
+		<< GetMapId() << ","
+		<< GetPositionX() << ","
+		<< GetPositionY() << ","
+		<< GetPositionZ() << ","
+		<< GetOrientation() << ","
+		<< GetUInt64Value(GAMEOBJECT_ROTATION) << ","
+		<< GetFloatValue(GAMEOBJECT_PARENTROTATION) << ","
+		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_2) << ","
+		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_3) << ","
+		<< ( GetByte(GAMEOBJECT_BYTES_1, 0)? 1 : 0 ) << ","
+		<< GetUInt32Value(GAMEOBJECT_FLAGS) << ","
+		<< GetUInt32Value(GAMEOBJECT_FACTION) << ","
+		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
+		<< m_phaseMode << ")";
+	FileLog * log = new FileLog("gameobjects.sql");
+	log->WriteToLog(ss.str().c_str());
 }
 
 void GameObject::InitAI()

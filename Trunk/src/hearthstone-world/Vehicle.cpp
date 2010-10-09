@@ -612,6 +612,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		_setFaction();
 		UpdateOppFactionSet();
 		//Despawn(0,1000);
+		RemoveAura(62064);
 	}
 
 	m_passengers[slot] = NULL;
@@ -793,6 +794,12 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			UpdateOppFactionSet();
 
 			SendSpells(GetEntry(), pPlayer);
+			if(pPlayer->HasAura(62064))
+			{
+				uint32 stack = pPlayer->FindActiveAura(62064)->stackSize;
+				AddAura(new Aura(dbcSpell.LookupEntry(62064),-1,this,this));
+				FindActiveAura(62064)->ModStackSize(stack);
+			}
 		}
 
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
@@ -959,7 +966,8 @@ and checks if there is room for us then adds us as a passenger
 to that vehicle*/
 void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 {
-	if (GetPlayer() == NULL || GetPlayer()->m_CurrentVehicle)
+	CHECK_INWORLD_RETURN
+	if (GetPlayer()->m_CurrentVehicle)
 		return;
 
 	CHECK_PACKET_SIZE(recv_data, 8);
@@ -974,38 +982,53 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 	if(!unit)
 		return;
 
-	if(!unit->IsVehicle())
+	if(unit->IsCreature())
 	{
-		if(unit->IsCreature())
+		if(unit->IsVehicle())
 		{
-			Creature* ctr = TO_CREATURE(unit);
-			if(ctr->IsLightwell(ctr->GetEntry()))
-			{
-				ctr->CastSpell(pPlayer, 60123, true);
-				/*if(ctr->FindActiveAura(59907))
-				{
-					Aura * aur = ctr->FindActiveAura(59907);
-					aur->ModStackSize((aur->stackSize - 1));
-					aur->ModProcCharges(aur->procCharges -1);
-					ctr->CastSpell(pPlayer, 60123, true);
-					if(aur->stackSize <= 0 || aur->procCharges <= 0 )
-						ctr->Despawn(300,0);
-				}*/
-			}
+			Vehicle * ctr =	TO_VEHICLE(unit);
 			if(ctr->GetProto()->SpellClickid)
-				ctr->CastSpell(pPlayer, ctr->GetProto()->SpellClickid, true);
-			else
 			{
-				if(sLog.IsOutDevelopement())
-					printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
-				else
-					OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
+				SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
+				if(sp->EffectApplyAuraName[0] != SPELL_AURA_VEHICLE_PASSENGER && sp->EffectApplyAuraName[1] != SPELL_AURA_VEHICLE_PASSENGER && sp->EffectApplyAuraName[2] != SPELL_AURA_VEHICLE_PASSENGER)
+					return;
+				ctr->CastSpell(pPlayer, sp, true);
+				return;
 			}
 		}
-		return;
+		Creature* ctr = TO_CREATURE(unit);
+		if(ctr->IsLightwell(ctr->GetEntry()))
+		{
+			ctr->CastSpell(pPlayer, 60123, true);
+			ctr->lightwellcharges--;
+			if(ctr->lightwellcharges <= 0)
+				ctr->Despawn(300,0);
+			/*if(ctr->FindActiveAura(59907))
+			{
+				Aura * aur = ctr->FindActiveAura(59907);
+				aur->ModStackSize((aur->stackSize - 1));
+				aur->ModProcCharges(aur->procCharges -1);
+				ctr->CastSpell(pPlayer, 60123, true);
+				if(aur->stackSize <= 0 || aur->procCharges <= 0 )
+					ctr->Despawn(300,0);
+			}*/
+		}
+		SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
+		if(sp)
+		{
+			ctr->CastSpell(pPlayer, sp, true);
+			return;
+		}
+		else
+		{
+			if(sLog.IsOutDevelopement())
+				printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
+			else
+				OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
+		}
 	}
-	else
-		pVehicle = TO_VEHICLE(unit);
+
+	pVehicle = TO_VEHICLE(unit);
 
 	if(!pVehicle->GetMaxPassengerCount())
 		return;
@@ -1039,7 +1062,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 		int8 newseat = seat;
 		while(seat == _player->GetSeatID())
 		{
-			if(newseat < 1)
+			if(newseat > 7)
 				break;
 
 			--newseat;
