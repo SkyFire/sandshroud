@@ -6,18 +6,8 @@ INCLUDES += -I$(srcdir)/../../../hearthstone-shared/g3dlite -I$(srcdir)/../../..
 
 AM_CXXFLAGS = -DSCRIPTLIB
 
-lib_LTLIBRARIES = libOtherScripts.la
+lib_LTLIBRARIES = libCustomScripts.la
 
-libOtherScripts_la_SOURCES = \
-Miscellaneous/Creatures.cpp \
-Miscellaneous/GameObjects.cpp \
-Miscellaneous/RandomScripts.cpp \
-Miscellaneous/QuelDanasPortal.cpp \
-Miscellaneous/DarkmoonFaireObjects.cpp \
-EventScripts/Event_DarkPortal.cpp \
-EventScripts/Event_DarkPortal.h \
-EventScripts/Halloween.cpp \
-EventScripts/WinterVeil.cpp \
-NeutralGuards.cpp \
+libCustomScripts_la_SOURCES = \
 ScriptStdAfx.cpp \
 Setup.cpp

@@ -106,7 +106,7 @@ typedef float gmfloat;
 typedef int gmptr; // machine pointer size as int
 typedef unsigned int gmuptr; // machine pointer size as int
 
-
+#ifdef Win32
 #define GM_CRT_DEBUG
 //#undef GM_CRT_DEBUG
 
@@ -124,5 +124,6 @@ typedef unsigned int gmuptr; // machine pointer size as int
     #define _gmDumpLeaks() //Do nothing
   #endif
 #endif //GM_CRT_DEBUG
+#endif
 
 #endif // _GMCONFIG_P_H_

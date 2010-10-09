@@ -1,1 +1,1 @@
-SUBDIRS = hearthstone-shared hearthstone-logonserver hearthstone-world hearthstone-voicechat
+SUBDIRS = hearthstone-shared hearthstone-logonserver hearthstone-world hearthstone-voicechat scripts

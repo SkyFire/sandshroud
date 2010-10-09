@@ -43,10 +43,10 @@
 class TROLLGORE_AI : public CreatureAIScript
 {
 public:
-    ADD_CREATURE_FACTORY_FUNCTION(TROLLGORE_AI);
+	ADD_CREATURE_FACTORY_FUNCTION(TROLLGORE_AI);
 
-    TROLLGORE_AI(Creature *pCreature) : CreatureAIScript(pCreature)
-    {
+	TROLLGORE_AI(Creature *pCreature) : CreatureAIScript(pCreature)
+	{
 		heroic = ( _unit->GetMapMgr()->iInstanceMode == MODE_5PLAYER_HEROIC );
 		invastion_timer = 0;
 		spells.clear();
@@ -77,24 +77,24 @@ public:
 		Consume->time = 0;
 		Consume->target = SPELL_TARGET_SELF;
 		spells.push_back(Consume);
-    }
-    
-    void OnCombatStart(Unit *mTarget)
-    {
+	}
+
+	void OnCombatStart(Unit *mTarget)
+	{
 		RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
-    }
+	}
 
-    void OnCombatStop(Unit *mTarget)
-    {
-        _unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
-        _unit->GetAIInterface()->SetAIState(STATE_IDLE);
-        RemoveAIUpdateEvent();
-    }
-
-    void OnDied(Unit * mKiller)
-    {
+	void OnCombatStop(Unit *mTarget)
+	{
+		_unit->GetAIInterface()->setCurrentAgent(AGENT_NULL);
+		_unit->GetAIInterface()->SetAIState(STATE_IDLE);
 		RemoveAIUpdateEvent();
-    }
+	}
+
+	void OnDied(Unit * mKiller)
+	{
+		RemoveAIUpdateEvent();
+	}
 
 	void OnDamageTaken(Unit *mAttacker, float fAmount)
 	{
@@ -107,7 +107,7 @@ public:
 		}*/
 	}
 
-    void AIUpdate()
+	void AIUpdate()
 	{
 		if( spells.size() > 0 )
 		{
@@ -137,7 +137,7 @@ public:
 					c = _unit->GetMapMgr()->CreateCreature( DRAKKARI_INVADER_ENTRY );
 					if (c) {
 						//position is guessed
-						c->Load(cp,-259.532f, -618.976f, 26.669f, 0.0f);
+						c->Load(cp, c->GetMapMgr()->iInstanceMode,-259.532f, -618.976f, 26.669f, 0.0f);
 						c->PushToWorld(_unit->GetMapMgr());
 						//path finding would be usefull :)
 						//c->GetAIInterface()->m_moveRun = true;
@@ -146,7 +146,7 @@ public:
 				}
 			}
 		}
-    }
+	}
 
 	Player *GetRandomPlayerTarget()
 	{
@@ -233,10 +233,10 @@ protected:
 class NOVOS_THE_SUMMONER_AI : public CreatureAIScript
 {
 public:
-    ADD_CREATURE_FACTORY_FUNCTION(NOVOS_THE_SUMMONER_AI);
+	ADD_CREATURE_FACTORY_FUNCTION(NOVOS_THE_SUMMONER_AI);
 
-    NOVOS_THE_SUMMONER_AI(Creature *pCreature) : CreatureAIScript(pCreature)
-    {
+	NOVOS_THE_SUMMONER_AI(Creature *pCreature) : CreatureAIScript(pCreature)
+	{
 		heroic = ( _unit->GetMapMgr()->iInstanceMode == MODE_5PLAYER_HEROIC );
 		phase = 0;
 		invasion_timer = 0;
@@ -278,10 +278,10 @@ public:
 		WrathOfMisery->time = 0;
 		WrathOfMisery->target = SPELL_TARGET_RANDOM_PLAYER;
 		spells.push_back(WrathOfMisery);
-    }
-    
-    void OnCombatStart(Unit *mTarget)
-    {
+	}
+
+	void OnCombatStart(Unit *mTarget)
+	{
 		//these texts shouldn't be like this
 		_unit->SendChatMessage( CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, "The chill that you feel is the herald of your doom!");
 		_unit->CastSpell( _unit, 47346, false );
@@ -451,7 +451,7 @@ public:
 				c = _unit->GetMapMgr()->CreateCreature( mob_entry );
 				if (c) {
 					//position is guessed
-					c->Load(cp,-379.101227f, -824.835449f, 60.0f, 0.0f);
+					c->Load(cp, c->GetMapMgr()->iInstanceMode, -379.101227f, -824.835449f, 60.0f, 0.0f);
 					c->PushToWorld(_unit->GetMapMgr());
 					c->SetUInt64Value( UNIT_FIELD_SUMMONEDBY, _unit->GetGUID() );
 					//path finding would be usefull :)
@@ -483,7 +483,7 @@ public:
 					c = _unit->GetMapMgr()->CreateCreature( mob_entry );
 					if (c) {
 						//position is guessed
-						c->Load(cp,-379.101227f, -824.835449f, 60.0f, 0.0f);
+						c->Load(cp, c->GetMapMgr()->iInstanceMode, -379.101227f, -824.835449f, 60.0f, 0.0f);
 						c->PushToWorld(_unit->GetMapMgr());
 						//path finding would be usefull :)
 						Player *p_target = GetRandomPlayerTarget();

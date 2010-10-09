@@ -19,17 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MISC_SCRIPTS_SETUP_H
-#define MISC_SCRIPTS_SETUP_H
+#ifndef WORLD_PVP_SCRIPTS_SETUP_H
+#define WORLD_PVP_SCRIPTS_SETUP_H
 
-void SetupNeutralGuards(ScriptMgr* mgr);
-void SetupGoHandlers(ScriptMgr * mgr);
-void SetupQDGoHandlers(ScriptMgr * mgr);
-void SetupRandomScripts(ScriptMgr * mgr);
-void SetupMiscCreatures(ScriptMgr * mgr);
-void SetupDarkmoonFaireObjects(ScriptMgr * mgr);
-void SetupWinterVeil(ScriptMgr * mgr);
-void SetupHalloween(ScriptMgr * mgr);
-//void SetupEventDarkPortal(ScriptMgr * mgr);
+void SetupPvPTerokkarForest(ScriptMgr *mgr);
+void SetupPvPHellfirePeninsula(ScriptMgr *mgr);
+void SetupPvPSilithus(ScriptMgr *mgr);
+void SetupPvPZangarmarsh(ScriptMgr *mgr);
 
 #endif

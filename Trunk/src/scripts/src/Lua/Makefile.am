@@ -59,10 +59,15 @@ lua/lvm.h \
 lua/lzio.c \
 lua/lzio.h \
 lua/print.c \
-Functions/FunctionGameObjects.cpp \
-Functions/FunctionItems.cpp \
-Functions/FunctionUnits.cpp \
+Functions/FunctionAura.h \
+Functions/FunctionGameObjects.h \
+Functions/FunctionGlobal.h \
+Functions/FunctionItems.h \
+Functions/FunctionPacket.h \
+Functions/FunctionSpell.h \
+Functions/FunctionTaxi.h \
+Functions/FunctionUnits.h \
+Functions/LuaSqlApi.h \
 Functions/TableFunctions.h \
 LUAEngine.cpp \
-LUAEngine.h \
-LUAFunctions.h
+LUAEngine.h

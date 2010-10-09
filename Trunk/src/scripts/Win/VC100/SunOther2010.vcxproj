@@ -205,6 +205,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Battlemaster.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_BoreanTundra.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Dalaran.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_DarkmoonFaire.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Guard.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Innkeepers.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Moonglade.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Mulgore.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Shattrath.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Stormwind.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Tanaris.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Teldrassil.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Theramore.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Trainer.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_WyrmrestTemple.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Setup.cpp" />
     <ClCompile Include="..\..\src\OtherScripts\ScriptStdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -223,33 +239,21 @@
     <ClCompile Include="..\..\src\OtherScripts\EventScripts\Halloween.cpp" />
     <ClCompile Include="..\..\src\OtherScripts\EventScripts\WinterVeil.cpp" />
     <ClCompile Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneHellfirePeninsula.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneSilithus.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneTerokkarForest.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneZangarmarsh.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Battlemaster.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_BoreanTundra.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Dalaran.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_DarkmoonFaire.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Guard.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Innkeepers.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Moonglade.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Mulgore.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Shattrath.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Stormwind.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Tanaris.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Teldrassil.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Theramore.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Trainer.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_WyrmrestTemple.cpp" />
+    <ClCompile Include="..\..\src\WorldPvPScripts\Setup.cpp" />
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneHellfirePeninsula.cpp" />
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneSilithus.cpp" />
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneTerokkarForest.cpp" />
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneZangarmarsh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\GossipScripts\Setup.h" />
     <ClInclude Include="..\..\src\OtherScripts\ScriptStdAfx.h" />
     <ClInclude Include="..\..\src\OtherScripts\Setup.h" />
     <ClInclude Include="..\..\src\Common\Base.h" />
     <ClInclude Include="..\..\src\Common\EasyFunctions.h" />
     <ClInclude Include="..\..\src\Common\Instance_Base.h" />
     <ClInclude Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.h" />
+    <ClInclude Include="..\..\src\WorldPvPScripts\Setup.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

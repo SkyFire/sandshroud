@@ -19,17 +19,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MISC_SCRIPTS_SETUP_H
-#define MISC_SCRIPTS_SETUP_H
+#include "ScriptStdAfx.h"
+#include "Setup.h"
+#define SKIP_ALLOCATOR_SHARING 1
+#include <ScriptSetup.h>
 
-void SetupNeutralGuards(ScriptMgr* mgr);
-void SetupGoHandlers(ScriptMgr * mgr);
-void SetupQDGoHandlers(ScriptMgr * mgr);
-void SetupRandomScripts(ScriptMgr * mgr);
-void SetupMiscCreatures(ScriptMgr * mgr);
-void SetupDarkmoonFaireObjects(ScriptMgr * mgr);
-void SetupWinterVeil(ScriptMgr * mgr);
-void SetupHalloween(ScriptMgr * mgr);
-//void SetupEventDarkPortal(ScriptMgr * mgr);
+extern "C" SCRIPT_DECL uint32 _exp_get_script_type()
+{
+	return SCRIPT_TYPE_MISC;
+}
+
+extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any script to disable it
+{
+	SetupPvPTerokkarForest(mgr);
+	SetupPvPHellfirePeninsula(mgr);
+	SetupPvPSilithus(mgr);
+	SetupPvPZangarmarsh(mgr);
+}
+
+#ifdef WIN32
+
+BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved )
+{
+    return TRUE;
+}
 
 #endif

@@ -68,61 +68,67 @@
     <ClCompile Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.cpp">
       <Filter>Scripts\Events\Dark Portal</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneHellfirePeninsula.cpp">
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneZangarmarsh.cpp">
       <Filter>Scripts\WorldPvP</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneSilithus.cpp">
+    <ClCompile Include="..\..\src\WorldPvPScripts\Setup.cpp">
       <Filter>Scripts\WorldPvP</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneTerokkarForest.cpp">
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneHellfirePeninsula.cpp">
       <Filter>Scripts\WorldPvP</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\WorldPvP\ZoneZangarmarsh.cpp">
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneSilithus.cpp">
       <Filter>Scripts\WorldPvP</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Battlemaster.cpp">
+    <ClCompile Include="..\..\src\WorldPvPScripts\ZoneTerokkarForest.cpp">
+      <Filter>Scripts\WorldPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_WyrmrestTemple.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_BoreanTundra.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Setup.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Dalaran.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Battlemaster.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_DarkmoonFaire.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_BoreanTundra.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Guard.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Dalaran.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Innkeepers.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_DarkmoonFaire.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Moonglade.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Guard.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Mulgore.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Innkeepers.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Shattrath.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Moonglade.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Stormwind.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Mulgore.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Tanaris.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Shattrath.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Teldrassil.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Stormwind.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Theramore.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Tanaris.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_Trainer.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Teldrassil.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\GossipScripts\Gossip_WyrmrestTemple.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Theramore.cpp">
+      <Filter>Scripts\Gossip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Trainer.cpp">
       <Filter>Scripts\Gossip</Filter>
     </ClCompile>
   </ItemGroup>
@@ -144,6 +150,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.h">
       <Filter>Scripts\Events\Dark Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\WorldPvPScripts\Setup.h">
+      <Filter>Scripts\WorldPvP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GossipScripts\Setup.h">
+      <Filter>Scripts\Gossip</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -9,8 +9,7 @@ AM_CXXFLAGS = -DSCRIPTLIB
 
 lib_LTLIBRARIES = libSunQuestScripts.la
 
-libSunQuestScripts_la_SOURCES = Setup.cpp \
-../Common/Base.cpp \
+libSunQuestScripts_la_SOURCES = \
 ArathiHighlands.cpp \
 Azshara.cpp \
 Azuremyst_Isle.cpp \
@@ -30,8 +29,8 @@ FirstAid.cpp \
 Ghostlands.cpp \
 Hellfire_Peninsula.cpp \
 HillsbradFoothills.cpp \
-Isle_of_QuelDanas.cpp \
 Howling_Fjord.cpp \
+Isle_of_QuelDanas.cpp \
 LochModan.cpp \
 Mage.cpp \
 Mulgore.cpp \
@@ -43,6 +42,7 @@ QuestGossip.cpp \
 QuestHooks.cpp \
 RedridgeMountains.cpp \
 Shadowmoon.cpp \
+SholazarBasin.cpp \
 SilvermoonCity.cpp \
 Silverpine_Forest.cpp \
 Stormwind.cpp \
@@ -59,4 +59,6 @@ Unsorted.cpp \
 Warrior.cpp \
 Westfall.cpp \
 Zangarmarsh.cpp \
-SholazarBasin.cpp
+../Common/Base.cpp \
+ScriptStdAfx.cpp \
+Setup.cpp
