@@ -2596,7 +2596,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	int32 victim_skill;
 	uint32 SubClassSkill	= SKILL_UNARMED;
 
-	bool backAttack			= isInBack( pVictim );
+	bool backAttack			= !isInFront( pVictim );
 	uint32 vskill			= 0;
 
 	//==========================================================================================

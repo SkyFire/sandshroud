@@ -125,9 +125,7 @@ void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 			ad->m_isDirty = false;
 			count++;
 		}
-		if(!count)
-			delete [] ss;
-		else
+		if(count)
 			ss << ";";
 	}
 	else // If we have no achievements, delete all of our DB data.

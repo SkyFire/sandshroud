@@ -3273,6 +3273,8 @@ void Aura::SpellAuraDummy(bool apply)
 
 					if(!mod->m_amount)
 						mod->m_amount = m_spellProto->procChance;
+					if(mod->m_amount == 0)
+						return;
 
 					CreateProcTriggerSpell(m_target, m_casterGuid, GetSpellId(), id, mod->m_amount, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges);
 				}
@@ -5376,7 +5378,12 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 		if(spellid == 0)
 			return;
 
-		uint32 procchance = m_spellProto->procChance;
+		uint32 procchance = 0;
+		if(mod)
+			procchance = mod->m_amount;
+		if(procchance)
+			procchance = m_spellProto->procChance;
+
 		uint32 wdType = 0; // Doesn't depend on weapon
 
 		if(mod->m_miscValue == EQUIPMENT_SLOT_MAINHAND)
@@ -5414,6 +5421,9 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 					procchance = 50;
 			}
 		}
+
+		if(procchance == 0)
+			return;
 
 		CreateProcTriggerSpell(m_target, m_casterGuid, m_spellProto->Id, spellid, procchance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges, wdType, m_spellProto->EffectSpellClassMask[mod->i][0], m_spellProto->EffectSpellClassMask[mod->i][1], m_spellProto->EffectSpellClassMask[mod->i][2]);
 	}
@@ -9952,7 +9962,11 @@ void Aura::SpellAuraProcTriggerWithValue(bool apply)
 		if(spellid == 0)
 			return;
 
-		uint32 procchance = m_spellProto->procChance;
+		uint32 procchance = 0;
+		if(mod)
+			procchance = mod->m_amount;
+		if(procchance)
+			procchance = m_spellProto->procChance;
 
 		if( m_spellProto->NameHash == SPELL_HASH_THE_TWIN_BLADES_OF_AZZINOTH )
 		{
@@ -9984,6 +9998,9 @@ void Aura::SpellAuraProcTriggerWithValue(bool apply)
 					procchance = 50;
 			}
 		}
+
+		if(procchance == 0)
+			return;
 
 		CreateProcTriggerSpell(m_target, m_casterGuid, m_spellProto->Id, spellid, procchance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges, 0, 0, 0, 0, mod->m_amount );
 	}
