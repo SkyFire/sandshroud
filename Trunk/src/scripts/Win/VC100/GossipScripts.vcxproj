@@ -19,9 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>SunOtherScripts</ProjectName>
-    <ProjectGuid>{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}</ProjectGuid>
-    <RootNamespace>SunOtherScripts</RootNamespace>
+    <ProjectName>SunGossipScripts</ProjectName>
+    <ProjectGuid>{5E86E53F-6261-4372-A4FF-6D8B37156A29}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -64,17 +63,17 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\bin\debug_100\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2010_int_debug_SunOtherScripts\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2010_int_debug_SunGossipscripts\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\bin\debug_100_x64\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2010_int_debug_SunOtherScripts_x64\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">2010_int_debug_SunGossipscripts_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\bin\release_100\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2010_int_release_SunOtherScripts\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">2010_int_release_SunGossipscripts\</IntDir>
     <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PreBuildEventUseInBuild>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\bin\release_100_x64\script_bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2010_int_release_SunOtherScripts_x64\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">2010_int_release_SunGossipscripts_x64\</IntDir>
     <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreBuildEventUseInBuild>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
@@ -96,15 +95,15 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>..\..\..\..\bin\debug_100\hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/debug_100/script_bin/SunOtherScripts.dll</OutputFile>
+      <OutputFile>../../../../bin/debug_100/script_bin/SunGossipScripts.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\debug_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/debug_100/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/debug_100/script_bin/SunGossipScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SunGossipScripts.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -129,15 +128,15 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/debug_100_x64/script_bin/SunOtherScripts.dll</OutputFile>
+      <OutputFile>../../../../bin/debug_100_x64/script_bin/SunGossipScripts.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\debug_100_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/debug_100_x64/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/debug_100_x64/script_bin/SunGossipScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SunGossipScripts.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -148,7 +147,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ScriptStdAfx.h</PrecompiledHeaderFile>
@@ -157,17 +156,17 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/release_100/script_bin/SunOtherScripts.dll</OutputFile>
+      <OutputFile>../../../../bin/release_100/script_bin/SunGossipScripts.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\release_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/release_100/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/release_100/script_bin/SunGossipScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SunGossipScripts.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
@@ -181,7 +180,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SCRIPTLIB;X64;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ScriptStdAfx.h</PrecompiledHeaderFile>
@@ -190,47 +189,48 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../../../bin/release_100_x64/script_bin/SunOtherScripts.dll</OutputFile>
+      <OutputFile>../../../../bin/release_100_x64/script_bin/SunGossipScripts.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\..\bin\release_100_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>../../../../bin/release_100_x64/script_bin/SunOtherScripts.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>../../../../bin/release_100_x64/script_bin/SunGossipScripts.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(OutDir)SunOtherScripts.lib</ImportLibrary>
+      <ImportLibrary>$(OutDir)SunGossipScripts.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\OtherScripts\ScriptStdAfx.cpp">
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Battlemaster.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_BoreanTundra.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Dalaran.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_DarkmoonFaire.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Guard.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Innkeepers.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Moonglade.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Mulgore.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Shattrath.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Stormwind.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Tanaris.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Teldrassil.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Theramore.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_Trainer.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Gossip_WyrmrestTemple.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\ScriptStdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ScriptStdAfx.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\..\src\OtherScripts\Setup.cpp" />
-    <ClCompile Include="..\..\src\Common\Base.cpp" />
-    <ClCompile Include="..\..\src\Common\Instance_Base.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\NeutralGuards.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\Creatures.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\DarkmoonFaireObjects.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\GameObjects.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\QuelDanasPortal.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\Miscellaneous\RandomScripts.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\EventScripts\Halloween.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\EventScripts\WinterVeil.cpp" />
-    <ClCompile Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.cpp" />
+    <ClCompile Include="..\..\src\GossipScripts\Setup.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\OtherScripts\ScriptStdAfx.h" />
-    <ClInclude Include="..\..\src\OtherScripts\Setup.h" />
-    <ClInclude Include="..\..\src\Common\Base.h" />
-    <ClInclude Include="..\..\src\Common\EasyFunctions.h" />
-    <ClInclude Include="..\..\src\Common\Instance_Base.h" />
-    <ClInclude Include="..\..\src\OtherScripts\EventScripts\Event_DarkPortal.h" />
+    <ClInclude Include="..\..\src\GossipScripts\ScriptStdAfx.h" />
+    <ClInclude Include="..\..\src\GossipScripts\Setup.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
