@@ -441,9 +441,11 @@ public:
 			}
 		}
 	}
+
 	void AddVendorItem(uint32 itemid, uint32 amount, uint32 ec = 0);
 	void ModAvItemAmount(uint32 itemid, uint32 value);
 	void UpdateItemAmount(uint32 itemid);
+
 	/// Quests
 	void _LoadQuests();
 	bool HasQuests() { return m_quests != NULL; };
@@ -457,6 +459,7 @@ public:
 		}
 		return false;
 	}
+
 	void AddQuest(QuestRelation *Q);
 	void DeleteQuest(QuestRelation *Q);
 	Quest *FindQuest(uint32 quest_id, uint8 quest_relation);
@@ -469,22 +472,10 @@ public:
 	HEARTHSTONE_INLINE void SetSheatheForAttackType(uint8 type) { SetByte(UNIT_FIELD_BYTES_2, 0, type); }
 	HEARTHSTONE_INLINE bool isQuestGiver() { return HasFlag( UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER ); };
 
-	int32 FlatResistanceMod[7];
-	int32 BaseResistanceModPct[7];
-	int32 ResistanceModPct[7];
-
-	int32 FlatStatMod[5];
-	int32 StatModPct[5];
-	int32 TotalStatModPct[5];
-
-	int32 ModDamageDone[7];
-	float ModDamageDonePct[7];
 	void CalcResistance(uint32 type);
 	void CalcStat(uint32 type);
-	bool m_canRegenerateHP;
 	void RegenerateHealth(bool isinterrupted);
 	void RegenerateMana(bool isinterrupted);
-	int BaseAttackType;
 
 	bool CanSee(Unit* obj) // * Invisibility & Stealth Detection - Partha *
 	{
@@ -507,7 +498,8 @@ public:
 				int32 hide_level = (getLevel() * 5 + GetStealthDetectBonus()) - obj->GetStealthLevel();
 				detectRange = (hide_level * 0.15f) + 5;
 
-				if(detectRange < 1.0f) detectRange = 1.0f; // Minimum Detection Range = 1yd
+				if(detectRange < 1.0f)
+					detectRange = 1.0f; // Minimum Detection Range = 1yd
 			}
 			else // stealthed player is behind creature
 			{
@@ -604,11 +596,7 @@ public:
 	void FormationLinkUp(uint32 SqlId);
 	void ChannelLinkUpGO(uint32 SqlId);
 	void ChannelLinkUpCreature(uint32 SqlId);
-	bool haslinkupevent;
 	WayPoint * CreateWaypointStruct();
-	uint32 spawnid;
-	uint32 original_emotestate;
-	uint32 original_MountedDisplayID;
 	CreatureProto * proto;
 	HEARTHSTONE_INLINE CreatureProto *GetProto() { return proto; }
 	uint32 GetRespawnTime() { if(proto != NULL) return proto->RespawnTime; else return 0; }
@@ -619,8 +607,6 @@ public:
 	void TriggerScriptEvent(int);
 
 	AuctionHouse * auctionHouse;
-	bool has_waypoint_text;
-	bool has_combat_text;
 
 	void DeleteMe();
 	bool CanAddToWorld();
@@ -632,11 +618,8 @@ public:
 	uint32 GetLineByFamily(CreatureFamilyEntry * family){return family->skilline ? family->skilline : 0;};
 	void RemoveLimboState(Unit* healer);
 	void SetGuardWaypoints();
-	bool m_corpseEvent;
 	MapCell * m_respawnCell;
-	bool m_noRespawn;
 	uint8 GetCanMove() { return CanMove; };
-	uint8 CanMove;
 
 protected:
 	CreatureAIScript *_myScriptClass;
@@ -674,11 +657,6 @@ public:
 	void GenerateLoot();
 	uint32 GetRequiredLootSkill();
 
-	// tagging
-	uint32 m_taggingGroup;
-	uint32 m_taggingPlayer;
-	int8 m_lootMethod;
-
 	// updates the loot state, whether it is tagged or lootable, or no longer has items
 	void UpdateLootAnimation(Player* Looter);
 
@@ -689,9 +667,34 @@ public:
 	void Tag(Player* plr);
 
 	// used by bgs
-	bool m_noDeleteAfterDespawn;
 	bool IsLightwell(uint32 entry) { if(GetEntry() == 31883 || GetEntry() == 31893 || GetEntry() == 31894 || GetEntry() == 31895 || GetEntry() == 31896 || GetEntry() == 31897) return true; return false; }
+
+public: // values
+	bool m_corpseEvent;
+	bool m_noRespawn;
+	bool has_waypoint_text;
+	bool has_combat_text;
+	bool haslinkupevent;
+	bool m_canRegenerateHP;
+	bool m_noDeleteAfterDespawn;
 	uint32 lightwellcharges;
+	uint32 m_taggingGroup;
+	uint32 m_taggingPlayer;
+	uint32 spawnid;
+	uint32 original_emotestate;
+	uint32 original_MountedDisplayID;
+	int8 BaseAttackType;
+	int8 m_lootMethod;
+	int8 CanMove;
+	int32 FlatResistanceMod[7];
+	int32 BaseResistanceModPct[7];
+	int32 ResistanceModPct[7];
+	int32 FlatStatMod[5];
+	int32 StatModPct[5];
+	int32 TotalStatModPct[5];
+	int32 ModDamageDone[7];
+	float ModDamageDonePct[7];
+
 };
 
 #endif

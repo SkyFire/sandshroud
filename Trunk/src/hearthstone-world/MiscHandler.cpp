@@ -1306,7 +1306,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 		{
 			// store the members in the ritual, cast sacrifice spell, and summon.
 			uint32 i = 0;
-			if(!obj->m_ritualmembers || !obj->m_ritualspell || !obj->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER])
+			if(!obj->m_ritualmembers || !obj->GetGOui32Value(GO_UINT32_RIT_SPELL) || !obj->GetGOui32Value(GO_UINT32_M_RIT_CASTER))
 				return;
 
 			for(i=0;i<goinfo->SpellFocus;++i)
@@ -1315,7 +1315,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				{
 					obj->m_ritualmembers[i] = plyr->GetLowGUID();
 					plyr->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, obj->GetGUID());
-					plyr->SetUInt32Value(UNIT_CHANNEL_SPELL, obj->m_ritualspell);
+					plyr->SetUInt32Value(UNIT_CHANNEL_SPELL, obj->GetGOui32Value(GO_UINT32_RIT_SPELL));
 					break;
 				}else if(obj->m_ritualmembers[i] == plyr->GetLowGUID())
 				{
@@ -1329,7 +1329,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 
 			if(i == goinfo->SpellFocus - 1)
 			{
-				obj->m_ritualspell = 0;
+				obj->SetGOui32Value(GO_UINT32_RIT_SPELL, 0);
 				Player* plr;
 				for(i=0;i<goinfo->SpellFocus;++i)
 				{
@@ -1346,13 +1346,13 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				{
 				case 36727:// summon portal
 					{
-						if(!obj->m_Go_Uint32Values[GO_UINT32_M_RIT_TARGET])
+						if(!obj->GetGOui32Value(GO_UINT32_M_RIT_TARGET))
 							return;
 
 						info = dbcSpell.LookupEntry(goinfo->sound1);
 						if(!info)
 							break;
-						Player* target = _player->GetMapMgr()->GetPlayer(obj->m_Go_Uint32Values[GO_UINT32_M_RIT_TARGET]);
+						Player* target = _player->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_TARGET));
 						if(!target)
 							return;
 
@@ -1368,7 +1368,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 
 						// kill the sacrifice player
 						psacrifice = _player->GetMapMgr()->GetPlayer(obj->m_ritualmembers[(int)(rand()%(goinfo->SpellFocus-1))]);
-						Player* pCaster = obj->GetMapMgr()->GetPlayer(obj->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER]);
+						Player* pCaster = obj->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_CASTER));
 						if(!psacrifice || !pCaster)
 							return;
 
@@ -1388,11 +1388,11 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 					}break;
 				case 179944:// Summoning portal for meeting stones
 					{
-						Player* plr = _player->GetMapMgr()->GetPlayer(obj->m_Go_Uint32Values[GO_UINT32_M_RIT_TARGET]);
+						Player* plr = _player->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_TARGET));
 						if(!plr)
 							return;
 
-						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER]);
+						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_CASTER));
 						if(!pleader)
 							return;
 
@@ -1406,7 +1406,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 					}break;
 				case 194108:// Ritual of Summoning portal for warlocks
 					{
-						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER]);
+						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_CASTER));
 						if(!pleader)
 							return;
 
@@ -1421,7 +1421,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				case 186811://Ritual of Refreshment
 				case 193062:
 					{
-						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER]);
+						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_CASTER));
 						if(!pleader)
 							return;
 
@@ -1436,7 +1436,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				case 181622://Ritual of Souls
 				case 193168:
 					{
-						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER]);
+						Player* pleader = _player->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_CASTER));
 						if(!pleader)
 							return;
 
@@ -1485,15 +1485,15 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			if( gobj )
 				gobj->ExpireAndDelete();
 
-			pGo->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER] = _player->GetLowGUID();
-			pGo->m_Go_Uint32Values[GO_UINT32_M_RIT_TARGET] = pPlayer->GetLowGUID();
-			pGo->m_ritualspell = 61994;	// meh
+			pGo->SetGOui32Value(GO_UINT32_M_RIT_CASTER, _player->GetLowGUID());
+			pGo->SetGOui32Value(GO_UINT32_M_RIT_TARGET, pPlayer->GetLowGUID());
+			pGo->SetGOui32Value(GO_UINT32_RIT_SPELL, 61994);
 			pGo->PushToWorld(_player->GetMapMgr());
 
 			/* member one: the (w00t) caster */
 			pGo->m_ritualmembers[0] = _player->GetLowGUID();
 			_player->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, pGo->GetGUID());
-			_player->SetUInt32Value(UNIT_CHANNEL_SPELL, pGo->m_ritualspell);
+			_player->SetUInt32Value(UNIT_CHANNEL_SPELL, pGo->GetGOui32Value(GO_UINT32_RIT_SPELL));
 
 			/* expire after 2mins*/
 			sEventMgr.AddEvent(pGo, &GameObject::_Expire, EVENT_GAMEOBJECT_EXPIRE, 120000, 1,0);

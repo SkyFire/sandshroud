@@ -133,7 +133,8 @@ enum GoUInt32Types
 	GO_UINT32_MINES_REMAINING	= 1, // Used for mining to mark times it can be mined
 	GO_UINT32_M_RIT_CASTER		= 2,
 	GO_UINT32_M_RIT_TARGET		= 3,
-	GO_UINT32_MAX				= 4
+	GO_UINT32_RIT_SPELL			= 4,
+	GO_UINT32_MAX
 };
 
 #define CALL_GO_SCRIPT_EVENT(obj, func) if(obj->GetTypeId() == TYPEID_GAMEOBJECT && obj->GetScript() != NULL) obj->GetScript()->func
@@ -207,7 +208,6 @@ public:
 
 	uint32 *m_ritualmembers;
 	uint64 m_rotation;
-	uint16 m_ritualspell;
 
 	void InitAI();
 	SpellEntry* spell;
@@ -269,16 +269,27 @@ public:
 	void TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uint32 spellid = 0);
 	void Rebuild();
 
-	uint32 m_Go_Uint32Values[GO_UINT32_MAX];
+	uint32 GetGOui32Value(uint32 id)
+	{
+		if(id < GO_UINT32_MAX)
+			return m_Go_Uint32Values[id];
+
+		return 0;
+	};
+
+	void SetGOui32Value(uint32 id, uint32 value)
+	{
+		if(id < GO_UINT32_MAX)
+			m_Go_Uint32Values[id] = value;
+	};
+
 protected:
 	bool m_summonedGo;
 	bool m_deleted;
 	GameObjectInfo *pInfo;
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
-
-public:
-
+	uint32 m_Go_Uint32Values[GO_UINT32_MAX]; // Crow: We could probably get away with using doubles...
 };
 
 #endif

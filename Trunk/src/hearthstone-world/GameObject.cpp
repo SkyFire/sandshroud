@@ -41,7 +41,6 @@ GameObject::GameObject(uint64 guid)
 	m_summoner = NULLUNIT;
 	charges = -1;
 	m_ritualmembers = NULL;
-	m_ritualspell = 0;
 	m_rotation = 0;
 	m_quests = NULL;
 	pInfo = NULL;
@@ -52,7 +51,7 @@ GameObject::GameObject(uint64 guid)
 	m_battleground = NULLBATTLEGROUND;
 	initiated = false;
 
-	memset(m_Go_Uint32Values, 0, sizeof(uint32)*4);
+	memset(m_Go_Uint32Values, 0, sizeof(uint32)*GO_UINT32_MAX);
 	m_Go_Uint32Values[GO_UINT32_MINES_REMAINING] = 1;
 }
 

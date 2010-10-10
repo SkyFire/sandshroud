@@ -5121,27 +5121,27 @@ void Spell::SpellEffectSummonObject(uint32 i)
 				return;
 
 			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER] = p_caster->GetLowGUID();
-			go->m_Go_Uint32Values[GO_UINT32_M_RIT_TARGET] = pTarget->GetLowGUID();
-			go->m_ritualspell = GetSpellProto()->Id;
+			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+			go->SetGOui32Value(GO_UINT32_M_RIT_TARGET, pTarget->GetLowGUID());
+			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
 		}
 		else if(entry == 194108) // Ritual of Summoning
 		{
 			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER] = p_caster->GetLowGUID();
-			go->m_ritualspell = GetSpellProto()->Id;
+			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
 		}
 		else if( entry == 186811 || entry == 193062 ) // Ritual of refreshment
 		{
 			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER] = p_caster->GetLowGUID();
-			go->m_ritualspell = GetSpellProto()->Id;
+			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
 		}
 		else if( entry == 181622 || entry == 193168 ) // Ritual of Souls
 		{
 			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->m_Go_Uint32Values[GO_UINT32_M_RIT_CASTER] = p_caster->GetLowGUID();
-			go->m_ritualspell = GetSpellProto()->Id;
+			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
 		}
 		else
 		{

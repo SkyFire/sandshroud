@@ -2623,14 +2623,6 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 					parry = pVictim->GetFloatValue( PLAYER_PARRY_PERCENTAGE );
 				}
 			}
-			else if( IsPlayer() )
-			{			// you can dodge if anal attacked
-//--------------------------------dodge chance----------------------------------------------
-				if(pVictim->m_stunned<=0)
-				{
-					dodge = pVictim->GetFloatValue( PLAYER_DODGE_PERCENTAGE );
-				}
-			}
 		}
 		victim_skill = float2int32( vskill + TO_PLAYER( pVictim )->CalcRating( PLAYER_RATING_MODIFIER_DEFENCE ) );
 	}
