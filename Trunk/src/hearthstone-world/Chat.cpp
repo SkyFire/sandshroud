@@ -495,6 +495,7 @@ void CommandTableStorage::Init()
 		{ "select", 'n', &ChatHandler::HandleNpcSelectCommand, ".npc select - selects npc closest", NULL, 0, 0, 0 },
 		{ "cast", 'd', &ChatHandler::HandleMonsterCastCommand, ".npc cast <spellId> - Makes selected mob cast the specified spell on you.", NULL, 0, 0, 0 },
 		{ "equip",	'a', &ChatHandler::HandleNPCEquipCommand,    "Use: .npc equip <slot> <itemid> - use .npc equip <slot> 0 to remove the item",                                                                        NULL, 0, 0, 0 },
+		{ "setongameobject", 'a', &ChatHandler::HandleNPCSetOnObjectCommand,    "Use: .npc equip <slot> <itemid> - use .npc equip <slot> 0 to remove the item",                                                                        NULL, 0, 0, 0 },
 		{ NULL,		  2, NULL,						   "",										   NULL, 0, 0  }
 	};
 	dupe_command_table(NPCCommandTable, _NPCCommandTable);

@@ -95,7 +95,7 @@ Map::~Map()
 bool first_table_warning = true;
 bool CheckResultLengthCreatures(QueryResult * res)
 {
-	if( res->GetFieldCount() != 25 )
+	if( res->GetFieldCount() != 26 )
 	{
 		if( first_table_warning )
 		{
@@ -194,6 +194,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 					cspawn->ItemSlot3 = fields[22].GetUInt32();
 					cspawn->phase = fields[23].GetInt32();
 					cspawn->vehicle = fields[24].GetInt32();
+					cspawn->CanMove = fields[25].GetUInt8();
 					uint32 cellx = CellHandler<MapMgr>::GetPosX(cspawn->x);
 					uint32 celly = CellHandler<MapMgr>::GetPosY(cspawn->y);
 
@@ -298,6 +299,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 				cspawn->ItemSlot3 = fields[22].GetUInt32();
 				cspawn->phase = fields[23].GetInt32();
 				cspawn->vehicle = fields[24].GetInt32();
+				cspawn->CanMove = fields[25].GetUInt8();
 				staticSpawns.CreatureSpawns.push_back(cspawn);
 				++CreatureSpawnCount;
 			}while(result->NextRow());

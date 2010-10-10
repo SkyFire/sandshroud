@@ -1030,6 +1030,7 @@ void MovementInfo::write(WorldPacket & data)
 	{
 		data << transGuid << transX << transY << transZ << transO << transTime << transSeat;
 	}
+
 	if(flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20)
 	{
 		data << pitch;

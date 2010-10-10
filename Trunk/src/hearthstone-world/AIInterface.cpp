@@ -813,7 +813,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 	{
 		bool fly = true;
 		if(m_Unit->IsCreature())
-			if(!TO_CREATURE(m_Unit)->GetProto() || !(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
+			if(!(TO_CREATURE(m_Unit)->CanMove & LIMIT_AIR))
 				fly = false;
 
 		if(!fly)
@@ -1969,7 +1969,7 @@ void AIInterface::UpdateMove()
 				float DISTANCE_TO_SMALL_TO_WALK = c_reach - 1.0f <= 0.0f ? 1.0f : c_reach - 1.0f;
 
 				// don't move if we're well within combat range; rooted can't move neither
-				if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
+				if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->CanMove == LIMIT_ROOT ) )
 					return; 
 
 				// check if we're returning to our respawn location. if so, reset back to default
@@ -2025,7 +2025,7 @@ void AIInterface::UpdateMove()
 		float DISTANCE_TO_SMALL_TO_WALK = c_reach - 1.0f <= 0.0f ? 1.0f : c_reach - 1.0f;
 
 		// don't move if we're well within combat range; rooted can't move neither
-		if( distance < DISTANCE_TO_SMALL_TO_WALK || (creature->proto && creature->proto->CanMove == LIMIT_ROOT ) )
+		if( distance < DISTANCE_TO_SMALL_TO_WALK || creature->CanMove == LIMIT_ROOT )
 			return;
 
 		// check if we're returning to our respawn location. if so, reset back to default
@@ -3730,7 +3730,7 @@ void AIInterface::CheckHeight()
 	{
 		if(m_Unit->IsCreature())
 		{
-			if(!TO_CREATURE(m_Unit)->GetProto() || !(TO_CREATURE(m_Unit)->GetProto()->CanMove & LIMIT_AIR))
+			if(!(TO_CREATURE(m_Unit)->CanMove & LIMIT_AIR))
 			{
 				m_moveFly = false;
 				return;

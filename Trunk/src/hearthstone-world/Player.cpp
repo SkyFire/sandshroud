@@ -3650,7 +3650,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetFlag(UNIT_FIELD_FLAGS_2,UNIT_FLAG2_REGENERATE_POWER); // enables automatic power regen
 	m_session->FullLogin(this);
 	if(m_session)
-		m_session->m_loggingInPlayer=NULLPLR;
+		m_session->m_loggingInPlayer = NULLPLR;
 
 	if( !isAlive() )
 		myCorpse = objmgr.GetCorpseByOwner(GetLowGUID());

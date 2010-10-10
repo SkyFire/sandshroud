@@ -177,6 +177,7 @@ public:
 	WorldSession(uint32 id, string Name, WorldSocket *sock);
 	~WorldSession();
 
+	HEARTHSTONE_INLINE bool IsLoggingIn() { return (m_loggingInPlayer != NULL); };
 	Player* m_loggingInPlayer;
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket* packet)
 	{

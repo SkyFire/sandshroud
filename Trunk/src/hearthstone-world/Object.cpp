@@ -621,6 +621,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 
 	Unit* uThis = NULL;
 	Player* pThis = NULL;
+	Creature* cThis = NULL;
 	MovementInfo* moveinfo = NULL; // We are basically writing movement info, if exists.
 
 	if(m_objectTypeId == TYPEID_PLAYER)
@@ -635,6 +636,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 	else if(m_objectTypeId == TYPEID_UNIT)
 	{
 		uThis = TO_UNIT(this);
+		cThis = TO_CREATURE(this);
 		moveinfo = uThis->GetMovementInfo();
 	}
 
@@ -653,11 +655,10 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 			}
 		}
 
-		if(GetTypeId() == TYPEID_UNIT)
+		if(cThis)
 		{
 			//		 Don't know what this is, but I've only seen it applied to spirit healers.
 			//		 maybe some sort of invisibility flag? :/
-
 			switch(GetEntry())
 			{
 			case 6491:  // Spirit Healer
@@ -668,9 +669,11 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 				}break;
 			}
 
-			if( TO_UNIT(this)->GetAIInterface()->IsFlying())
+			uint32 flyflags = 0;
+			if( cThis->CanMove & LIMIT_ON_OBJ )
+				flyflags |= (MOVEFLAG_LEVITATE | MOVEFLAG_FLYING); // Keep us in the same spot.
+			else if( cThis->GetAIInterface()->IsFlying() )
 			{
-				uint32 flyflags = 0;
 				switch(GetEntry())
 				{ //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time
 				case 22441: // Crow: Teribus the Cursed also doesn't attack unless he's on the ground.
@@ -681,9 +684,10 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 					flyflags |= (MOVEFLAG_FLYING | MOVEFLAG_LEVITATE | MOVEFLAG_AIR_SWIMMING);
 					break;
 				}
-
-				moveflags |= flyflags;
 			}
+
+			if(flyflags)
+				moveflags |= flyflags;
 
 			if( TO_CREATURE(this)->proto && TO_CREATURE(this)->proto->extra_a9_flags)
 			{
@@ -696,6 +700,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 //		if(moveinfo != NULL && moveinfo->GetPosition())
 //		{
 //			WorldPacket* wpdata = ((WorldPacket*)data);
+//			moveinfo->flags = moveflags;
 //			moveinfo->write(*wpdata);
 //		}
 
@@ -1785,9 +1790,9 @@ bool Object::canWalk()
 	if(IsCreature())
 	{
 		Creature* ctr = TO_CREATURE(this);
-		if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
+		if(ctr->CanMove & LIMIT_ANYWHERE)
 			return true;
-		if(ctr->GetProto()->CanMove & LIMIT_GROUND)
+		if(ctr->CanMove & LIMIT_GROUND)
 			return true;
 	}
 	else if(IsPlayer())
@@ -1801,9 +1806,9 @@ bool Object::canSwim()
 	if(IsCreature())
 	{
 		Creature* ctr = TO_CREATURE(this);
-		if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
+		if(ctr->CanMove & LIMIT_ANYWHERE)
 			return true;
-		if(ctr->GetProto()->CanMove & LIMIT_WATER)
+		if(ctr->CanMove & LIMIT_WATER)
 			return true;
 	}
 	else if(IsPlayer())
@@ -1817,9 +1822,9 @@ bool Object::canFly()
 	if(IsCreature())
 	{
 		Creature* ctr = TO_CREATURE(this);
-		if(ctr->GetProto()->CanMove == LIMIT_ANYWHERE)
+		if(ctr->CanMove & LIMIT_ANYWHERE)
 			return true;
-		if(ctr->GetProto()->CanMove & LIMIT_AIR)
+		if(ctr->CanMove & LIMIT_AIR)
 			return true;
 	}
 	else if(IsPlayer())

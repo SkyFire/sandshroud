@@ -544,6 +544,23 @@ bool ChatHandler::HandleNPCEquipCommand(const char * args, WorldSession * m_sess
 	return true;
 }
 
+bool ChatHandler::HandleNPCSetOnObjectCommand(const char * args, WorldSession * m_session)
+{
+	Creature* crt = getSelectedCreature(m_session, false);
+	if(crt == NULL)
+	{
+		RedSystemMessage(m_session, "Please select a creature before using this command.");
+		return true;
+	}
+
+	crt->CanMove |= LIMIT_ON_OBJ;
+	if(crt->m_spawn)
+		crt->SaveToDB();
+
+	BlueSystemMessage(m_session, "Setting creature on Object(%u)", crt->CanMove);
+	return true;
+}
+
 bool ChatHandler::HandleCastSpellNECommand(const char* args, WorldSession *m_session)
 {
 	Unit* caster = m_session->GetPlayer();

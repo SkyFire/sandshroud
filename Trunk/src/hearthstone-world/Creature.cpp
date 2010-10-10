@@ -98,6 +98,7 @@ Creature::Creature(uint64 guid)
 	m_noRespawn=false;
 	m_canRegenerateHP = true;
 	BaseAttackType = SCHOOL_NORMAL;
+	CanMove = 0;
 
 	m_taggingPlayer = m_taggingGroup = 0;
 	m_lootMethod = -1;
@@ -342,13 +343,14 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 	else
 		ss << "0,0,0,";
 
-	ss << uint32(GetStandState()) << ","
-		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ","
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
-		<< m_phaseMode << ","
-		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ")";
+	ss << uint32(GetStandState()) << ", "
+		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ", "
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ", "
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ", "
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ", "
+		<< m_phaseMode << ", "
+		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ", "
+		<< (uint32)GetCanMove() << " )";
 
 	WorldDatabase.Execute(ss.str().c_str());
 }
@@ -392,7 +394,8 @@ void Creature::SaveToFile(bool saveposition)
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
 		<< m_phaseMode << ","
-		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ")";
+		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
+		<< (uint8)CanMove << ")";
 		log->WriteToLog(logreplace.str().c_str());
 	}
 	else
@@ -430,7 +433,8 @@ void Creature::SaveToFile(bool saveposition)
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
 		<< m_phaseMode << ","
-		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ")";
+		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
+		<< (uint8)CanMove << ")";
 		logupdate << "Where id = ";
 		logupdate << spawnid << "and entry = ";
 		logupdate << GetEntry() << ";";
@@ -911,9 +915,11 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	proto = CreatureProtoStorage.LookupEntry(spawn->entry);
 	if(!proto)
 		return false;
+
 	creature_info = CreatureNameStorage.LookupEntry(spawn->entry);
 	if(!creature_info)
 		return false;
+
 	uint32 health = 0;
 	uint32 power = 0;
 	float mindmg = 0.0f;
@@ -926,6 +932,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	m_runSpeed = m_base_runSpeed = proto->run_speed; //set speeds
 	m_flySpeed = proto->fly_speed;
 
+	CanMove = spawn->CanMove; // Set movement info
 	m_phaseMode = spawn->phase;
 
 	original_emotestate = spawn->emote_state;
@@ -1212,7 +1219,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	m_aiInterface->getMoveFlags();
 	//CanMove (overrules AI)
-	if(!proto->CanMove)
+	if(!CanMove)
 		Root();
 
 	/* creature death state */
@@ -1230,8 +1237,6 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	if( spawn->stand_state )
 		SetStandState( (uint8)spawn->stand_state );
 
-
-
 	return true;
 }
 
@@ -1246,6 +1251,7 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 
 	m_walkSpeed = m_base_walkSpeed = proto->walk_speed; //set speeds
 	m_runSpeed = m_base_runSpeed = proto->run_speed; //set speeds
+	CanMove = proto->CanMove; // Set movement info
 
 	//Set fields
 	SetUInt32Value(OBJECT_FIELD_ENTRY,proto->Id);
@@ -1497,7 +1503,7 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 
 	m_aiInterface->getMoveFlags();
 	//CanMove (overrules AI)
-	if(!proto->CanMove)
+	if(!CanMove)
 		Root();
 
 	/* creature death state */

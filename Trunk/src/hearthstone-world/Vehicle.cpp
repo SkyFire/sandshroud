@@ -97,7 +97,9 @@ void Vehicle::InstallAccessories()
 		return;
 	}
 
-	GetMovementInfo()->flag16 = acc->MovementFlags;
+	if(acc->MovementFlags)
+		GetMovementInfo()->flag16 = acc->MovementFlags;
+
 	MapMgr* map = (GetMapMgr() ? GetMapMgr() : sInstanceMgr.GetMapMgr(GetMapId()));
 	if(map == NULL) // Shouldn't ever really happen.
 		return;
@@ -982,50 +984,42 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 	if(!unit)
 		return;
 
-	if(unit->IsCreature())
+	if(!unit->IsVehicle())
 	{
-		if(unit->IsVehicle())
+		if(unit->IsCreature())
 		{
-			Vehicle * ctr =	TO_VEHICLE(unit);
-			if(ctr->GetProto()->SpellClickid)
+			Creature* ctr = TO_CREATURE(unit);
+			if(ctr->IsLightwell(ctr->GetEntry()))
 			{
-				SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
-				if(sp->EffectApplyAuraName[0] != SPELL_AURA_VEHICLE_PASSENGER && sp->EffectApplyAuraName[1] != SPELL_AURA_VEHICLE_PASSENGER && sp->EffectApplyAuraName[2] != SPELL_AURA_VEHICLE_PASSENGER)
-					return;
+				ctr->CastSpell(pPlayer, 60123, true);
+				ctr->lightwellcharges--;
+				if(ctr->lightwellcharges <= 0)
+					ctr->Despawn(300,0);
+				/*if(ctr->FindActiveAura(59907))
+				{
+					Aura * aur = ctr->FindActiveAura(59907);
+					aur->ModStackSize((aur->stackSize - 1));
+					aur->ModProcCharges(aur->procCharges -1);
+					ctr->CastSpell(pPlayer, 60123, true);
+					if(aur->stackSize <= 0 || aur->procCharges <= 0 )
+						ctr->Despawn(300,0);
+				}*/
+			}
+			SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
+			if(sp)
+			{
 				ctr->CastSpell(pPlayer, sp, true);
 				return;
 			}
-		}
-		Creature* ctr = TO_CREATURE(unit);
-		if(ctr->IsLightwell(ctr->GetEntry()))
-		{
-			ctr->CastSpell(pPlayer, 60123, true);
-			ctr->lightwellcharges--;
-			if(ctr->lightwellcharges <= 0)
-				ctr->Despawn(300,0);
-			/*if(ctr->FindActiveAura(59907))
-			{
-				Aura * aur = ctr->FindActiveAura(59907);
-				aur->ModStackSize((aur->stackSize - 1));
-				aur->ModProcCharges(aur->procCharges -1);
-				ctr->CastSpell(pPlayer, 60123, true);
-				if(aur->stackSize <= 0 || aur->procCharges <= 0 )
-					ctr->Despawn(300,0);
-			}*/
-		}
-		SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
-		if(sp)
-		{
-			ctr->CastSpell(pPlayer, sp, true);
-			return;
-		}
-		else
-		{
-			if(sLog.IsOutDevelopement())
-				printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
 			else
-				OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
+			{
+				if(sLog.IsOutDevelopement())
+					printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
+				else
+					OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
+			}
 		}
+		return;
 	}
 
 	pVehicle = TO_VEHICLE(unit);

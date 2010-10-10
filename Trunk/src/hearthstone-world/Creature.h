@@ -635,6 +635,8 @@ public:
 	bool m_corpseEvent;
 	MapCell * m_respawnCell;
 	bool m_noRespawn;
+	uint8 GetCanMove() { return CanMove; };
+	uint8 CanMove;
 
 protected:
 	CreatureAIScript *_myScriptClass;

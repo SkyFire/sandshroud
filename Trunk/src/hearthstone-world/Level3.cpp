@@ -2179,6 +2179,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		sp->ItemSlot1 = proto->Item1;
 		sp->ItemSlot2 = proto->Item2;
 		sp->ItemSlot3 = proto->Item3;
+		sp->CanMove = proto->CanMove;
 
 		CreatureInfoExtra* extrainfo = CreatureInfoExtraStorage.LookupEntry(entry);
 		if(extrainfo != NULL)

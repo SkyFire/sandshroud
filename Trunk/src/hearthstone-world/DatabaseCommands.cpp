@@ -46,7 +46,7 @@ bool ChatHandler::HandleDBItemCreateCommand(const char* args, WorldSession *m_se
 bool ChatHandler::HandleDBItemSetClassCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, iclass = 0;
-	if(sscanf(args, "%u %u", &entry, &iclass) != 1)
+	if(sscanf(args, "%u %u", &entry, &iclass) < 1)
 		return false;
 
 	if(!entry)
@@ -72,7 +72,7 @@ bool ChatHandler::HandleDBItemSetClassCommand(const char* args, WorldSession *m_
 bool ChatHandler::HandleDBItemSetSubClassCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, subclass = 0;
-	if(sscanf(args, "%u %u", &entry, &subclass) != 1)
+	if(sscanf(args, "%u %u", &entry, &subclass) < 1)
 		return false;
 
 	if(!entry)
@@ -122,7 +122,7 @@ bool ChatHandler::HandleDBItemSetNameCommand(const char* args, WorldSession *m_s
 bool ChatHandler::HandleDBItemSetDisplayIdCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, display = 0;
-	if(sscanf(args, "%u %u", &entry, &display) != 1)
+	if(sscanf(args, "%u %u", &entry, &display) < 1)
 		return false;
 
 	if(!entry)
@@ -148,7 +148,7 @@ bool ChatHandler::HandleDBItemSetDisplayIdCommand(const char* args, WorldSession
 bool ChatHandler::HandleDBItemSetQualityCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, quality = 0;
-	if(sscanf(args, "%u %u", &entry, &quality) != 1)
+	if(sscanf(args, "%u %u", &entry, &quality) < 1)
 		return false;
 
 	if(!entry)
@@ -174,7 +174,7 @@ bool ChatHandler::HandleDBItemSetQualityCommand(const char* args, WorldSession *
 bool ChatHandler::HandleDBItemSetFlagsCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, flags = 0;
-	if(sscanf(args, "%u %u", &entry, &flags) != 1)
+	if(sscanf(args, "%u %u", &entry, &flags) < 1)
 		return false;
 
 	if(!entry)
@@ -200,7 +200,7 @@ bool ChatHandler::HandleDBItemSetFlagsCommand(const char* args, WorldSession *m_
 bool ChatHandler::HandleDBItemSetBuyPriceCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, buyprice = 0;
-	if(sscanf(args, "%u %u", &entry, &buyprice) != 1)
+	if(sscanf(args, "%u %u", &entry, &buyprice) < 1)
 		return false;
 
 	if(!entry)
@@ -226,7 +226,7 @@ bool ChatHandler::HandleDBItemSetBuyPriceCommand(const char* args, WorldSession 
 bool ChatHandler::HandleDBItemSetSellPriceCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, sellprice = 0;
-	if(sscanf(args, "%u %u", &entry, &sellprice) != 1)
+	if(sscanf(args, "%u %u", &entry, &sellprice) < 1)
 		return false;
 
 	if(!entry)
@@ -252,7 +252,7 @@ bool ChatHandler::HandleDBItemSetSellPriceCommand(const char* args, WorldSession
 bool ChatHandler::HandleDBItemSetInventoryTypeCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, inventorytype = 0;
-	if(sscanf(args, "%u %u", &entry, &inventorytype) != 1)
+	if(sscanf(args, "%u %u", &entry, &inventorytype) < 1)
 		return false;
 
 	if(!entry)
@@ -279,7 +279,7 @@ bool ChatHandler::HandleDBItemSetAllowableClassCommand(const char* args, WorldSe
 {
 	uint32 entry;
 	int32 allowableclass = 0;
-	if(sscanf(args, "%u %i", &entry, &allowableclass) != 1)
+	if(sscanf(args, "%u %i", &entry, &allowableclass) < 1)
 		return false;
 
 	if(!entry)
@@ -337,7 +337,7 @@ bool ChatHandler::HandleDBItemSetAllowableRaceCommand(const char* args, WorldSes
 {
 	uint32 entry;
 	int32 allowablerace = 0;
-	if(sscanf(args, "%u %u", &entry, &allowablerace) != 1)
+	if(sscanf(args, "%u %u", &entry, &allowablerace) < 1)
 		return false;
 
 	if(!entry)
@@ -394,7 +394,7 @@ bool ChatHandler::HandleDBItemSetAllowableRaceCommand(const char* args, WorldSes
 bool ChatHandler::HandleDBItemSetItemLevelCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, itemlevel = 0;
-	if(sscanf(args, "%u %u", &entry, &itemlevel) != 1)
+	if(sscanf(args, "%u %u", &entry, &itemlevel) < 1)
 		return false;
 
 	if(!entry)
@@ -420,7 +420,7 @@ bool ChatHandler::HandleDBItemSetItemLevelCommand(const char* args, WorldSession
 bool ChatHandler::HandleDBItemSetRequiredLevelCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, requiredlevel = 0;
-	if(sscanf(args, "%u %u", &entry, &requiredlevel) != 1)
+	if(sscanf(args, "%u %u", &entry, &requiredlevel) < 1)
 		return false;
 
 	if(!entry)
@@ -446,7 +446,7 @@ bool ChatHandler::HandleDBItemSetRequiredLevelCommand(const char* args, WorldSes
 bool ChatHandler::HandleDBItemSetRequiredSkillCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, requiredskill = 0;
-	if(sscanf(args, "%u %u", &entry, &requiredskill) != 1)
+	if(sscanf(args, "%u %u", &entry, &requiredskill) < 1)
 		return false;
 
 	if(!entry)
@@ -472,7 +472,7 @@ bool ChatHandler::HandleDBItemSetRequiredSkillCommand(const char* args, WorldSes
 bool ChatHandler::HandleDBItemSetRequiredSkillRankCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, requiredskillrank = 0;
-	if(sscanf(args, "%u %u", &entry, &requiredskillrank) != 1)
+	if(sscanf(args, "%u %u", &entry, &requiredskillrank) < 1)
 		return false;
 
 	if(!entry)
@@ -498,7 +498,7 @@ bool ChatHandler::HandleDBItemSetRequiredSkillRankCommand(const char* args, Worl
 bool ChatHandler::HandleDBItemSetRequiredSpellCommand(const char* args, WorldSession *m_session)
 {
 	uint32 entry, requiredspell = 0;
-	if(sscanf(args, "%u %u", &entry, &requiredspell) != 1)
+	if(sscanf(args, "%u %u", &entry, &requiredspell) < 1)
 		return false;
 
 	if(!entry)
