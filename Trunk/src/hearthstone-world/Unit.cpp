@@ -2629,7 +2629,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	//--------------------------------mob defensive chances-------------------------------------
 	else
 	{
-		if( weapon_damage_type != RANGED && !backAttack )
+		if( weapon_damage_type != RANGED )
 			dodge = pVictim->GetUInt32Value(UNIT_FIELD_STAT1) / 14.5f; // what is this value?
 		victim_skill = pVictim->getLevel() * 5;
 		if(pVictim->m_objectTypeId == TYPEID_UNIT)
