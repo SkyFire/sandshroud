@@ -106,7 +106,7 @@ void GameObject::Init()
 
 bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, float x, float y, float z, float ang, float orientation1, float orientation2, float orientation3, float orientation4)
 {
-	pInfo= GameObjectNameStorage.LookupEntry(entry);
+	pInfo = GameObjectNameStorage.LookupEntry(entry);
 	if(!pInfo)
 		return false;
 
@@ -433,6 +433,7 @@ bool GameObject::Load(GOSpawn *spawn)
 	CALL_GO_SCRIPT_EVENT(TO_GAMEOBJECT(this), OnCreate)();
 
 	_LoadQuests();
+	m_loadedFromDB = true;
 	return true;
 }
 

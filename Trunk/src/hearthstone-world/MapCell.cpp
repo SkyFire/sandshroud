@@ -275,7 +275,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 	if(sp->GOSpawns.size())//got GOs
 	{
 		GameObject* go;
-		for(GOSpawnList::iterator i=sp->GOSpawns.begin();i!=sp->GOSpawns.end();++i)
+		for(GOSpawnList::iterator i = sp->GOSpawns.begin(); i != sp->GOSpawns.end(); i++)
 		{
 			go = _mapmgr->CreateGameObject((*i)->entry);
 			if(go == NULL)
@@ -283,7 +283,6 @@ void MapCell::LoadObjects(CellSpawns * sp)
 
 			if(go->Load(*i))
 			{
-				go->m_loadedFromDB = true;
 				go->PushToWorld(_mapmgr);
 				CALL_GO_SCRIPT_EVENT(go, OnSpawn)();
 			}

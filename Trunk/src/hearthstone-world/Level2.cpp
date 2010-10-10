@@ -786,13 +786,10 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		return true;
 	}
 
-	bool Save = false;
+	bool Save = m_session->HasGMPermissions() ? true : false;
 	char* pSave = strtok(NULL, " ");
 	if(pSave)
 		Save = (atoi(pSave) > 0 ? true : false);
-	else
-		if(m_session->HasGMPermissions())
-			Save = true;
 
 	GameObject* go = m_session->GetPlayer()->GetMapMgr()->CreateGameObject(EntryID);
 	if(go == NULL)
