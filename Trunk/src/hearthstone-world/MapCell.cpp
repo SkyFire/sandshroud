@@ -244,7 +244,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 			}
 			else
 			{
-				c=_mapmgr->CreateCreature((*i)->entry);
+				c = _mapmgr->CreateCreature((*i)->entry);
 				if(c == NULLCREATURE)
 					continue;
 
@@ -280,6 +280,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 			go = _mapmgr->CreateGameObject((*i)->entry);
 			if(go == NULL)
 				continue;
+
 			if(go->Load(*i))
 			{
 				go->m_loadedFromDB = true;

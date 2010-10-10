@@ -727,11 +727,11 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 		return true;
 	}
 
-	bool foundonmap = false;
+	bool foundonmap = true;
 	if(GObj->m_spawn && GObj->m_spawn->entry == GObj->GetEntry())
 	{
-		uint32 cellx=float2int32(((_maxX-GObj->m_spawn->x)/_cellSize));
-		uint32 celly=float2int32(((_maxY-GObj->m_spawn->y)/_cellSize));
+		uint32 cellx = float2int32(((_maxX-GObj->m_spawn->x)/_cellSize));
+		uint32 celly = float2int32(((_maxY-GObj->m_spawn->y)/_cellSize));
 
 		GObj->DeleteFromDB();
 
@@ -739,6 +739,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 		{
 			CellSpawns * c = GObj->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx, celly);
 
+			foundonmap = false;
 			GOSpawnList::iterator itr,itr2;
 			for(itr = c->GOSpawns.begin(); itr != c->GOSpawns.end();)
 			{
@@ -751,6 +752,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 				}
 			}
 		}
+
 		if(foundonmap)
 		{
 			delete GObj->m_spawn;
@@ -759,7 +761,10 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 	}
 	GObj->Despawn(0, 0); // Deleted through ExpireAndDelete
 	GObj = NULLGOB;
-	BlueSystemMessage(m_session, "Deleted selected object %s", foundonmap ? "and erased it from spawn map." : "but was unable to erase it from spawn map.");
+	if(foundonmap)
+		BlueSystemMessage(m_session, "Deleted selected object and erased it from spawn map.");
+	else
+		BlueSystemMessage(m_session, "Deleted selected object.");
 
 	m_session->GetPlayer()->m_GM_SelectedGO = NULLGOB;
 	return true;
@@ -785,6 +790,9 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 	char* pSave = strtok(NULL, " ");
 	if(pSave)
 		Save = (atoi(pSave) > 0 ? true : false);
+	else
+		if(m_session->HasGMPermissions())
+			Save = true;
 
 	GameObject* go = m_session->GetPlayer()->GetMapMgr()->CreateGameObject(EntryID);
 	if(go == NULL)
@@ -801,38 +809,45 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 	float z = chr->GetPositionZ();
 	float o = chr->GetOrientation();
 	BlueSystemMessage(m_session, "Spawning Gameobject(%u) at (X: %f, Y: %f, Z: %f, O: %f)", EntryID, x, y, z, o);
-
-	go->SetInstanceID(chr->GetInstanceID());
-	go->CreateFromProto(EntryID,mapid,x,y,z,o,0.0f,0.0f,0.0f,0.0f);
-
-	go->PushToWorld(m_session->GetPlayer()->GetMapMgr());
-
-	// Create sapwn instance
-	GOSpawn * gs = new GOSpawn;
-	gs->entry = go->GetEntry();
-	gs->facing = go->GetOrientation();
-	gs->faction = go->GetUInt32Value(GAMEOBJECT_FACTION);
-	gs->flags = go->GetUInt32Value(GAMEOBJECT_FLAGS);
-	gs->id = objmgr.GenerateGameObjectSpawnID();
-	gs->orientation1 = go->GetFloatValue(GAMEOBJECT_ROTATION);
-	gs->orientation2 = go->GetFloatValue(GAMEOBJECT_ROTATION_01);
-	gs->orientation3 = go->GetFloatValue(GAMEOBJECT_ROTATION_02);
-	gs->orientation4 = go->GetFloatValue(GAMEOBJECT_ROTATION_03);
-	gs->scale = go->GetFloatValue(OBJECT_FIELD_SCALE_X);
-	gs->x = go->GetPositionX();
-	gs->y = go->GetPositionY();
-	gs->z = go->GetPositionZ();
-	gs->state = go->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE);
-	gs->phase = chr->GetPhase();
-
-	uint32 cx = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
-	uint32 cy = m_session->GetPlayer()->GetMapMgr()->GetPosY(m_session->GetPlayer()->GetPositionY());
-
-	m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
-	go->m_spawn = gs;
+	GOSpawn * gs = NULL;
 
 	if(Save == true) // If we're saving, create template and add index
 	{
+		// Create sapwn instance
+		gs = new GOSpawn;
+		gs->entry = go->GetEntry();
+		gs->facing = go->GetOrientation();
+		gs->faction = go->GetUInt32Value(GAMEOBJECT_FACTION);
+		gs->flags = go->GetUInt32Value(GAMEOBJECT_FLAGS);
+		gs->id = objmgr.GenerateGameObjectSpawnID();
+		gs->orientation1 = go->GetFloatValue(GAMEOBJECT_ROTATION);
+		gs->orientation2 = go->GetFloatValue(GAMEOBJECT_ROTATION_01);
+		gs->orientation3 = go->GetFloatValue(GAMEOBJECT_ROTATION_02);
+		gs->orientation4 = go->GetFloatValue(GAMEOBJECT_ROTATION_03);
+		gs->scale = go->GetFloatValue(OBJECT_FIELD_SCALE_X);
+		gs->x = go->GetPositionX();
+		gs->y = go->GetPositionY();
+		gs->z = go->GetPositionZ();
+		gs->state = go->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE);
+		gs->phase = chr->GetPhase();
+		go->m_spawn = gs;
+	}
+	else
+	{
+		go->CreateFromProto(EntryID,mapid,x,y,z,o,0.0f,0.0f,0.0f,0.0f);
+
+	}
+
+	go->SetPhase(chr->GetPhase());
+	go->SetInstanceID(chr->GetInstanceID());
+	go->PushToWorld(m_session->GetPlayer()->GetMapMgr());
+
+	if(Save == true)
+	{
+		uint32 cx = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
+		uint32 cy = m_session->GetPlayer()->GetMapMgr()->GetPosY(m_session->GetPlayer()->GetPositionY());
+		m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
+		go->Load(gs);
 		go->SaveToDB();
 		go->m_loadedFromDB = true;
 	}

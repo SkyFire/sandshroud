@@ -245,6 +245,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 					gspawn->phase = fields[15].GetInt32();
 					uint32 cellx = CellHandler<MapMgr>::GetPosX(gspawn->x);
 					uint32 celly = CellHandler<MapMgr>::GetPosY(gspawn->y);
+
 					if(spawns[cellx] == NULL)
 					{
 						spawns[cellx] = new CellSpawns*[_sizeY];

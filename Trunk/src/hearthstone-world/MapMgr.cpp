@@ -1328,6 +1328,7 @@ bool MapMgr::Do()
 		GameObject* obj = CreateGameObject((*itr)->entry);
 		if(obj == NULL)
 			continue;
+
 		obj->Load((*itr));
 		_mapWideStaticObjects.insert(obj);
 	}
