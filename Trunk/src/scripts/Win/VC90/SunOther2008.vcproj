@@ -22,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\..\..\bin\debug\script_bin"
-			IntermediateDirectory="2003_int_debug_SunOtherScripts"
+			IntermediateDirectory="2008_int_debug_SunOtherScripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -193,7 +193,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\..\..\bin\release\script_bin"
-			IntermediateDirectory="2003_int_release_SunOtherScripts"
+			IntermediateDirectory="2008_int_release_SunOtherScripts"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
