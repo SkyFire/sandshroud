@@ -295,6 +295,7 @@ public:
 	LuaEngine * m_engine;
 	void Startup();
 	void Unload();
+//	void ReloadScripts();
 	lua_State* GLuas() { return m_engine->GetMainLuaState(); }
 	void RegisterEvent(uint8, uint32, uint32 , uint16);
 	void ResumeLuaThread(int);

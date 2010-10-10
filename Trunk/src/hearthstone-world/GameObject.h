@@ -127,21 +127,20 @@ enum GameObjectDynFlags
 	GO_DYNFLAG_QUEST		= 0x09,
 };
 
+enum GoUInt32Types
+{
+	GO_UINT32_HEALTH			= 0,
+	GO_UINT32_MINES_REMAINING	= 1, // Used for mining to mark times it can be mined
+	GO_UINT32_M_RIT_CASTER		= 2,
+	GO_UINT32_M_RIT_TARGET		= 3,
+	GO_UINT32_MAX				= 4
+};
+
 #define CALL_GO_SCRIPT_EVENT(obj, func) if(obj->GetTypeId() == TYPEID_GAMEOBJECT && obj->GetScript() != NULL) obj->GetScript()->func
 
 class SERVER_DECL GameObject : public Object
 {
 public:
-	/************************************************************************/
-	/* LUA Stuff                                                            */
-	/************************************************************************/
-/*	typedef struct { const char *name; int(*mfunc)(lua_State*,GameObject* ); } RegType;
-	static const char className[];
-	static RegType methods[];
-
-	// a lua script cannot create a unit.
-	GameObject(lua_State * L) { ASSERT(false); }*/
-
 	GameObject(uint64 guid);
 	~GameObject( );
 	virtual void Init();
@@ -157,17 +156,13 @@ public:
 
 	void Spawn( MapMgr* m);
 	void Despawn( uint32 delay, uint32 respawntime);
-
-	//void _EnvironmentalDamageUpdate();
 	void UpdateTrapState();
+
 	// Serialization
 	void SaveToDB();
 	void SaveToFile();
-	//bool LoadFromDB(uint32 guid);
-	//void LoadFromDB(GameObjectTemplate *t);
 	void DeleteFromDB();
 	void EventCloseDoor();
-	uint64 m_rotation;
 	void UpdateRotation(float orientation3 = 0.0f, float orientation4 = 0.0f);
 
 	//Fishing stuff
@@ -211,7 +206,7 @@ public:
 	std::list<QuestRelation *>* m_quests;
 
 	uint32 *m_ritualmembers;
-	uint32 m_ritualcaster,m_ritualtarget;
+	uint64 m_rotation;
 	uint16 m_ritualspell;
 
 	void InitAI();
@@ -241,11 +236,11 @@ public:
 	void OnRemoveInRangeObject(Object* pObj);
 	void RemoveFromWorld(bool free_guid);
 
-	HEARTHSTONE_INLINE bool CanMine(){return (mines_remaining > 0);}
-	HEARTHSTONE_INLINE void UseMine(){ if(mines_remaining) mines_remaining--;}
+	HEARTHSTONE_INLINE bool CanMine(){return (m_Go_Uint32Values[GO_UINT32_MINES_REMAINING] > 0);}
+	HEARTHSTONE_INLINE void UseMine(){ if(m_Go_Uint32Values[GO_UINT32_MINES_REMAINING]) m_Go_Uint32Values[GO_UINT32_MINES_REMAINING]--;}
 	void CalcMineRemaining(bool force)
 	{
-		mines_remaining = 0;//3.0.9
+		m_Go_Uint32Values[GO_UINT32_MINES_REMAINING] = 0; // 3.0.9
 	}
 
 	uint32 GetGOReqSkill();
@@ -271,17 +266,16 @@ public:
 	uint32 GetDisplayId() { return GetUInt32Value( GAMEOBJECT_DISPLAYID ); }
 
 	//Destructable Building
-	uint32 Health;
 	void TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uint32 spellid = 0);
 	void Rebuild();
 
+	uint32 m_Go_Uint32Values[GO_UINT32_MAX];
 protected:
 	bool m_summonedGo;
 	bool m_deleted;
 	GameObjectInfo *pInfo;
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
-	uint32 mines_remaining; //used for mining to mark times it can be mined
 
 public:
 

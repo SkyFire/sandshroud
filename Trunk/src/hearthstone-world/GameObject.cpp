@@ -29,23 +29,17 @@ GameObject::GameObject(uint64 guid)
 	SetUInt32Value( OBJECT_FIELD_TYPE,TYPE_GAMEOBJECT|TYPE_OBJECT);
 	SetUInt64Value( OBJECT_FIELD_GUID,guid);
 	m_wowGuid.Init(GetGUID());
-
 	SetFloatValue( OBJECT_FIELD_SCALE_X, 1);//info->Size  );
-
 	SetAnimProgress(100);
 
-	counter = 0;//not needed at all but to prevent errors that var was not inited, can be removed in release
-
+	counter = 0;
 	bannerslot = bannerauraslot = -1;
-
 	m_summonedGo = false;
 	invisible = false;
 	invisibilityFlag = INVIS_FLAG_NORMAL;
 	spell = NULL;
 	m_summoner = NULLUNIT;
 	charges = -1;
-	m_ritualcaster = 0;
-	m_ritualtarget = 0;
 	m_ritualmembers = NULL;
 	m_ritualspell = 0;
 	m_rotation = 0;
@@ -54,11 +48,12 @@ GameObject::GameObject(uint64 guid)
 	myScript = NULL;
 	m_spawn = 0;
 	m_deleted = false;
-	mines_remaining = 1;
-	m_respawnCell=NULL;
+	m_respawnCell = NULL;
 	m_battleground = NULLBATTLEGROUND;
-	Health = NULL;
 	initiated = false;
+
+	memset(m_Go_Uint32Values, 0, sizeof(uint32)*4);
+	m_Go_Uint32Values[GO_UINT32_MINES_REMAINING] = 1;
 }
 
 GameObject::~GameObject()
@@ -361,7 +356,7 @@ void GameObject::InitAI()
 
 	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
 		{
-			Health = pInfo->SpellFocus + pInfo->sound5;
+			m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->SpellFocus + pInfo->sound5;
 			SetAnimProgress(255);
 		}break;
 
@@ -647,7 +642,7 @@ Unit* GameObject::CreateTemporaryGuardian(uint32 guardian_entry,uint32 duration,
 		p->SetPowerType(p->GetProto()->Powertype);
 		p->SetUInt32Value(UNIT_FIELD_MAXPOWER1 + p->GetProto()->Powertype, p->GetUInt32Value(UNIT_FIELD_MAXPOWER1 + p->GetProto()->Powertype)+28+10*lvl);
 		p->SetUInt32Value(UNIT_FIELD_POWER1 + p->GetProto()->Powertype, p->GetUInt32Value(UNIT_FIELD_POWER1 + p->GetProto()->Powertype)+28+10*lvl);
-		/* HEALTH */
+		/* m_Go_Uint32Values[GO_UINT32_HEALTH] */
 		p->SetUInt32Value(UNIT_FIELD_MAXHEALTH,p->GetUInt32Value(UNIT_FIELD_MAXHEALTH)+28+30*lvl);
 		p->SetUInt32Value(UNIT_FIELD_HEALTH,p->GetUInt32Value(UNIT_FIELD_HEALTH)+28+30*lvl);
 		/* LEVEL */
@@ -794,18 +789,17 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED)) // Already destroyed
 		return;
 
-	printf("Gameobject Target Found\n");
 	uint32 IntactHealth = pInfo->SpellFocus;
 	uint32 DamagedHealth = pInfo->sound5;
 
-	if(Health > amount)
-		Health -= amount;
+	if(m_Go_Uint32Values[GO_UINT32_HEALTH] > amount)
+		m_Go_Uint32Values[GO_UINT32_HEALTH] -= amount;
 	else
-		Health = 0;
+		m_Go_Uint32Values[GO_UINT32_HEALTH] = 0;
 
 	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED))
 	{
-		if(Health == 0)
+		if(m_Go_Uint32Values[GO_UINT32_HEALTH] == 0)
 		{
 			RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
 			SetFlags(GO_FLAG_DESTROYED);
@@ -825,9 +819,9 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 			}*/
 		}
 	}
-	else if(!HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && Health <= DamagedHealth)
+	else if(!HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && m_Go_Uint32Values[GO_UINT32_HEALTH] <= DamagedHealth)
 	{
-		if(Health != 0)
+		if(m_Go_Uint32Values[GO_UINT32_HEALTH] != 0)
 		{
 			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
 			if(pInfo->Unknown9!=0)
@@ -875,8 +869,8 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	data << uint32(amount);
 	data << spellid;
 	mcaster->SendMessageToSet(&data, (mcaster->IsPlayer() ? true : false));
-	if(IntactHealth!=0 && DamagedHealth!=0)
-		SetAnimProgress(Health*255/(IntactHealth + DamagedHealth));
+	if(IntactHealth != 0 && DamagedHealth != 0)
+		SetAnimProgress(m_Go_Uint32Values[GO_UINT32_HEALTH]*255/(IntactHealth + DamagedHealth));
 }
 
 void GameObject::Rebuild()
@@ -885,7 +879,7 @@ void GameObject::Rebuild()
 	SetDisplayId(pInfo->DisplayID);
 	uint32 IntactHealth = pInfo->SpellFocus;
 	uint32 DamagedHealth = pInfo->sound5;
-	if(IntactHealth!=0 && DamagedHealth!=0)
-		SetAnimProgress(Health*255/(IntactHealth + DamagedHealth));
-	Health = pInfo->SpellFocus + pInfo->sound5;
+	if(IntactHealth != 0 && DamagedHealth != 0)
+		SetAnimProgress(m_Go_Uint32Values[GO_UINT32_HEALTH]*255/(IntactHealth + DamagedHealth));
+	m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->SpellFocus + pInfo->sound5;
 }

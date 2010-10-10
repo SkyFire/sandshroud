@@ -1721,7 +1721,7 @@ void LuaEngineMgr::ResumeLuaThread(int ref)
 
 /*void LuaEngineMgr::ReloadScripts()
 {
-	m_lock.Acquire();
+	m_engine->GetLock().Acquire();
 
 	// acquire the locks on all the luaengines so they don't do anything.
 	for(LuaEngineMap::iterator itr = m_engines.begin(); itr != m_engines.end(); ++itr)
@@ -1763,7 +1763,7 @@ void LuaEngineMgr::ResumeLuaThread(int ref)
 	}
 
 	// release the big lock
-	m_lock.Release();
+	m_engine->GetLock().Release();
 }*/
 
 void LuaEngineMgr::Unload()

@@ -670,9 +670,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 			}
 
 			uint32 flyflags = 0;
-			if( cThis->CanMove & LIMIT_ON_OBJ )
-				flyflags |= (MOVEFLAG_LEVITATE | MOVEFLAG_FLYING); // Keep us in the same spot.
-			else if( cThis->GetAIInterface()->IsFlying() )
+			if( cThis->GetAIInterface()->IsFlying() )
 			{
 				switch(GetEntry())
 				{ //Zack : Teribus the Cursed had flag 400 instead of 800 and he is flying all the time
@@ -685,6 +683,8 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 					break;
 				}
 			}
+			else if( cThis->CanMove & LIMIT_ON_OBJ )
+				flyflags |= (MOVEFLAG_LEVITATE | MOVEFLAG_FLYING); // Keep us in the same spot.
 
 			if(flyflags)
 				moveflags |= flyflags;
