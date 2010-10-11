@@ -276,7 +276,7 @@ void Creature::GenerateLoot()
 		m_loot.gold = 0;
 		return;
 	}
-	MapEntry* map = dbcMap.LookupEntry(GetMapId());
+
 	uint8 difficulty = (m_mapMgr ? (m_mapMgr->iInstanceMode) : 0);
 	lootmgr.FillCreatureLoot(&m_loot, GetEntry(), difficulty);
 

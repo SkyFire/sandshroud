@@ -6780,9 +6780,9 @@ void Unit::setAttackTimer(int32 time, bool offhand)
 	if(!time)
 		time = offhand ? m_uint32Values[UNIT_FIELD_BASEATTACKTIME + 1] : m_uint32Values[UNIT_FIELD_BASEATTACKTIME];
 
-	time = std::max(1000,float2int32(float(time)*GetFloatValue(UNIT_MOD_CAST_SPEED)));
-	if(time>300000)		// just in case.. shouldn't happen though
-		time=offhand ? m_uint32Values[UNIT_FIELD_BASEATTACKTIME + 1] : m_uint32Values[UNIT_FIELD_BASEATTACKTIME];
+	time = std::max(1000, float2int32(float(time) * GetFloatValue(UNIT_MOD_CAST_SPEED)));
+	if(time > 300000)		// just in case.. shouldn't happen though
+		time = offhand ? m_uint32Values[UNIT_FIELD_BASEATTACKTIME+1] : m_uint32Values[UNIT_FIELD_BASEATTACKTIME];
 
 	if(offhand)
 		m_attackTimer_1 = getMSTime() + time;
