@@ -318,15 +318,16 @@ void GameObject::InitAI()
 			if( pInfo->sound2 == 0 )
 				return;
 
-			pInfo = GameObjectNameStorage.LookupEntry( pInfo->sound2 );
-			if(pInfo == NULL)
+			uint32 objectid = pInfo->sound2;
+			GameObjectInfo* gopInfo = GameObjectNameStorage.LookupEntry( objectid );
+			if(gopInfo == NULL)
 			{
-				Log.Warning("GameObject","Redirected gameobject %u doesn't seem to exists in database, skipping",pInfo->sound2);
+				Log.Warning("GameObject", "Redirected gameobject %u doesn't seem to exists in database, skipping", objectid);
 				return;
 			}
 
-			if(pInfo->sound3)
-				spellid = pInfo->sound3;
+			if(gopInfo->sound3)
+				spellid = gopInfo->sound3;
 		}break;
 	case GAMEOBJECT_TYPE_RITUAL:
 		{
