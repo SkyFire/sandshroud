@@ -2644,7 +2644,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 		{
 			if( c->b_has_shield && !pVictim->disarmedShield && pVictim->GetUInt32Value(UNIT_FIELD_STRENGTH))
 			{	// We have a shield, wether data exists in DB or not.
-				if(c->IP_shield) // We have DB data for our shield, use it.
+				if(c->IP_shield && c->IP_shield->Block > 0) // We have DB data for our shield, use it.
 					block = 5.0f+(victim_skill*0.04f)+(c->IP_shield->Block*0.004f)+(pVictim->GetUInt32Value(UNIT_FIELD_STRENGTH)/2); // Crow: Shield Block Value + Strength/2
 				else // Just use some basic info, start at 5, go up based on strength
 					block = 5.0f+(pVictim->GetUInt32Value(UNIT_FIELD_STRENGTH)/2); // Crow: Strength/2
