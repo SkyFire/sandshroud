@@ -1237,6 +1237,41 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	if( spawn->stand_state )
 		SetStandState( (uint8)spawn->stand_state );
 
+	uint32 tmpitemid;
+	if(tmpitemid = m_spawn->ItemSlot1)
+	{
+		ItemEntry* DBCItem = dbcItem.LookupEntry(tmpitemid);
+		if(DBCItem)
+		{
+			if(DBCItem->InventoryType == INVTYPE_SHIELD)
+			{
+				b_has_shield = true;
+				IP_shield = ItemPrototypeStorage.LookupEntry(tmpitemid);
+			}
+			else if(getLevel() > 10)
+				setcanperry(true); // Who cares what else it is, set parry = true.
+		}
+	}
+
+	if(!b_has_shield && (tmpitemid = m_spawn->ItemSlot2))
+	{
+		ItemEntry* DBCItem = dbcItem.LookupEntry(tmpitemid);
+		if(DBCItem)
+		{
+			if(DBCItem->InventoryType == INVTYPE_SHIELD)
+			{
+				b_has_shield = true;
+				IP_shield = ItemPrototypeStorage.LookupEntry(tmpitemid);
+			}
+			else if(getLevel() > 10)
+			{
+				if(DBCItem->InventoryType == INVTYPE_WEAPONOFFHAND
+					|| DBCItem->InventoryType == INVTYPE_WEAPON)
+					setcanperry(true); // We can hold non weapons here, so we need to be careful and do checks.
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -1518,6 +1553,41 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 		SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DEAD);
 	}
 	m_invisFlag = proto->invisibility_type;
+
+	uint32 tmpitemid;
+	if(tmpitemid = proto->Item1)
+	{
+		ItemEntry* DBCItem = dbcItem.LookupEntry(tmpitemid);
+		if(DBCItem)
+		{
+			if(DBCItem->InventoryType == INVTYPE_SHIELD)
+			{
+				b_has_shield = true;
+				IP_shield = ItemPrototypeStorage.LookupEntry(tmpitemid);
+			}
+			else if(getLevel() > 10)
+				setcanperry(true); // Who cares what else it is, set parry = true.
+		}
+	}
+
+	if(!b_has_shield && (tmpitemid = proto->Item2))
+	{
+		ItemEntry* DBCItem = dbcItem.LookupEntry(tmpitemid);
+		if(DBCItem)
+		{
+			if(DBCItem->InventoryType == INVTYPE_SHIELD)
+			{
+				b_has_shield = true;
+				IP_shield = ItemPrototypeStorage.LookupEntry(tmpitemid);
+			}
+			else if(getLevel() > 10)
+			{
+				if(DBCItem->InventoryType == INVTYPE_WEAPONOFFHAND
+					|| DBCItem->InventoryType == INVTYPE_WEAPON)
+					setcanperry(true); // We can hold non weapons here, so we need to be careful and do checks.
+			}
+		}
+	}
 }
 
 void Creature::OnPushToWorld()

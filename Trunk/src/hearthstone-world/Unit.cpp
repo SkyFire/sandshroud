@@ -2627,18 +2627,31 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 		victim_skill = float2int32( vskill + TO_PLAYER( pVictim )->CalcRating( PLAYER_RATING_MODIFIER_DEFENCE ) );
 	}
 	//--------------------------------mob defensive chances-------------------------------------
-	else
+	else if(pVictim->IsCreature())
 	{
-		if( weapon_damage_type != RANGED )
-			dodge = pVictim->GetUInt32Value(UNIT_FIELD_STAT1) / 14.5f; // what is this value?
+		Creature* c = TO_CREATURE(pVictim);
+
+		if( weapon_damage_type != RANGED && pVictim->m_stunned <= 0)
+			dodge = pVictim->GetUInt32Value(UNIT_FIELD_AGILITY) / 14.5f; // what is this value?
+
 		victim_skill = pVictim->getLevel() * 5;
-		if(pVictim->m_objectTypeId == TYPEID_UNIT)
+		if(c && c->GetCreatureInfo() && c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS)
 		{
-			Creature* c = TO_CREATURE(pVictim);
-			if(c&&c->GetCreatureInfo()&&c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS)
-			{
-				victim_skill = std::max(victim_skill,((int32)getLevel()+3)*5); //used max to avoid situation when lowlvl hits boss.
+			victim_skill = std::max(victim_skill,((int32)getLevel()+3)*5); //used max to avoid situation when lowlvl hits boss.
+		}
+
+		if( !backAttack )
+		{
+			if( c->b_has_shield && !pVictim->disarmedShield && pVictim->GetUInt32Value(UNIT_FIELD_STRENGTH))
+			{	// We have a shield, wether data exists in DB or not.
+				if(c->IP_shield) // We have DB data for our shield, use it.
+					block = 5.0f+(victim_skill*0.04f)+(c->IP_shield->Block*0.004f)+(pVictim->GetUInt32Value(UNIT_FIELD_STRENGTH)/2); // Crow: Shield Block Value + Strength/2
+				else // Just use some basic info, start at 5, go up based on strength
+					block = 5.0f+(pVictim->GetUInt32Value(UNIT_FIELD_STRENGTH)/2); // Crow: Strength/2
 			}
+
+			if(pVictim->can_parry && !disarmed) // VictimSkill*0.04 per point
+				parry = (victim_skill*0.04f);
 		}
 	}
 	//==========================================================================================

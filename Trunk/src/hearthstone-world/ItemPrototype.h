@@ -665,7 +665,6 @@ struct ItemPrototype
 //	char * Name2;
 //	char * Name3;
 //	char * Name4;
-
 	uint32 DisplayInfoID;
 	uint32 Quality;
 	uint32 Flags;

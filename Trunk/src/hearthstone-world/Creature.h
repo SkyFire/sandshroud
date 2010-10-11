@@ -669,7 +669,10 @@ public:
 	// used by bgs
 	bool IsLightwell(uint32 entry) { if(GetEntry() == 31883 || GetEntry() == 31893 || GetEntry() == 31894 || GetEntry() == 31895 || GetEntry() == 31896 || GetEntry() == 31897) return true; return false; }
 
+	ItemPrototype* IP_shield;
+
 public: // values
+	bool b_has_shield;
 	bool m_corpseEvent;
 	bool m_noRespawn;
 	bool has_waypoint_text;
