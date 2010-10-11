@@ -5306,7 +5306,7 @@ void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() /*&& o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r*/ && Caster->isInRange(o,r) )
+			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r )
 			{
 				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
@@ -5317,7 +5317,7 @@ void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() && /*o->GetDistance2dSq(m_targets.m_srcX, m_targets.m_srcY) <= r*/ Caster->isInRange(o,r))
+			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_srcX, m_targets.m_srcY) <= r)
 			{
 				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
@@ -5328,7 +5328,7 @@ void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() && /*o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (15*15)*/ Caster->isInRange(o,r))
+			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (15*15))
 			{
 				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
