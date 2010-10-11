@@ -667,7 +667,7 @@ class MovementInfo
 public:
 	MovementInfo()
 	{
-		flags = flag16 = time = x = y = z = orientation = transX = transY = transZ = transO = 0;
+		flags = m_movementflags = time = x = y = z = orientation = transX = transY = transZ = transO = 0;
 		transTime = transSeat = pitch = FallTime = 0;
 		jump_sinAngle = jump_cosAngle = jump_xySpeed = jump_velocity = spline = 0;
 		transGuid = WoWGuid(uint64(NULL));
@@ -681,7 +681,7 @@ public:
 	LocationVector* GetPosition() { return (new LocationVector(x, y, z, orientation)); };
 
 	uint32 flags;
-	uint16 flag16;
+	uint16 m_movementflags;
 	uint32 time;
 	float x, y, z, orientation;
 	WoWGuid transGuid;

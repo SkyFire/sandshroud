@@ -98,7 +98,8 @@ void Vehicle::InstallAccessories()
 	}
 
 	if(acc->MovementFlags)
-		GetMovementInfo()->flag16 = acc->MovementFlags;
+		GetMovementInfo()->m_movementflags = acc->MovementFlags;
+
 
 	MapMgr* map = (GetMapMgr() ? GetMapMgr() : sInstanceMgr.GetMapMgr(GetMapId()));
 	if(map == NULL) // Shouldn't ever really happen.
@@ -290,7 +291,7 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 
 	uint8 count = 0;
 
-	WorldPacket data(SMSG_PET_SPELLS, 8+2+4+4+4*10+1+1);
+	WorldPacket data(SMSG_PET_SPELLS, 60);
 	data << uint64(GetGUID());
 	data << uint16(0);
 	data << uint32(0);
@@ -305,7 +306,6 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 		SpellEntry const *spellInfo = dbcSpell.LookupEntryForced( spellId );
 		if (!spellInfo)
 			continue;
-
 		if(spellInfo->Attributes & ATTRIBUTES_PASSIVE)
 		{
 			CastSpell(GetGUID(), spellId, true);
@@ -313,6 +313,23 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 		}
 		else
 		{
+			if(spellInfo->SpellDifficulty && GetMapMgr()->pInstance)
+			{
+				SpellDifficultyEntry * sd = dbcSpellDifficulty.LookupEntry(spellInfo->SpellDifficulty);
+				if( sd->SpellId[GetMapMgr()->iInstanceMode] == 0 )
+				{
+					uint32 mode;
+					if( GetMapMgr()->iInstanceMode == 3 )
+						mode = 1;
+					else
+						mode = 0;
+
+					if( sd->SpellId[mode] == 0 )
+						spellId = sd->SpellId[0];
+				}
+				else
+					spellId = sd->SpellId[GetMapMgr()->iInstanceMode];
+			}
 			switch(spellId)
 			{
 			case 62286: // Tar
@@ -613,7 +630,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		/* update target faction set */
 		_setFaction();
 		UpdateOppFactionSet();
-		//Despawn(0,1000);
 		RemoveAura(62064);
 	}
 
@@ -730,13 +746,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		pPlayer->m_CurrentVehicle = TO_VEHICLE(this);
 
 		pPlayer->SetFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
-
-		//pPlayer->ResetHeartbeatCoords();
 		pPlayer->SetUInt64Value(PLAYER_FARSIGHT, GetGUID());
-
-		//WorldPacket data3(SMSG_CONTROL_VEHICLE, 0);
-		//pPlayer->GetSession()->SendPacket(&data3);
-
 		pPlayer->SetPlayerStatus(TRANSFER_PENDING);
 		sEventMgr.AddEvent(pPlayer, &Player::CheckPlayerStatus, (uint8)TRANSFER_PENDING, EVENT_PLAYER_CHECK_STATUS_Transfer, 5000, 0, 0);
 		pPlayer->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());

@@ -981,7 +981,7 @@ void WorldSession::HandleForceSpeedChangeOpcodes( WorldPacket & recv_data )
 
 void MovementInfo::init(WorldPacket & data)
 {
-	data >> flags >> flag16 >> time;
+	data >> flags >> m_movementflags >> time;
 	data >> x >> y >> z >> orientation;
 
 	if((flags & MOVEFLAG_TAXI) && (flags & MOVEFLAG_FLYING) && (data.size() == 52))
@@ -1003,7 +1003,7 @@ void MovementInfo::init(WorldPacket & data)
 		data >> transGuid >> transX >> transY >> transZ >> transO >> transTime >> transSeat;
 	}
 
-	if (flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20)
+	if (flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || m_movementflags & 0x20)
 	{
 		data >> pitch;
 	}
@@ -1022,7 +1022,7 @@ void MovementInfo::init(WorldPacket & data)
 
 void MovementInfo::write(WorldPacket & data)
 {
-	data << flags << flag16 << getMSTime();
+	data << flags << m_movementflags << getMSTime();
 
 	data << x << y << z << orientation;
 
@@ -1031,7 +1031,7 @@ void MovementInfo::write(WorldPacket & data)
 		data << transGuid << transX << transY << transZ << transO << transTime << transSeat;
 	}
 
-	if(flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20)
+	if(flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || m_movementflags & 0x20)
 	{
 		data << pitch;
 	}

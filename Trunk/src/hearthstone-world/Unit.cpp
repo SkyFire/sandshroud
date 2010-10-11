@@ -2468,14 +2468,14 @@ void Unit::RegeneratePower(bool isinterrupted)
 				{
 					if (TO_PLAYER(this)->mAngerManagement)
 					{
-						TO_PLAYER(this)->LoseRage(20);
+						TO_PLAYER(this)->LoseRage(20*sWorld.getRate(RATE_POWER2));
 					}else{
-						TO_PLAYER(this)->LoseRage(30);
+						TO_PLAYER(this)->LoseRage(30*sWorld.getRate(RATE_POWER2));
 					}
 				}else{
 					if (TO_PLAYER(this)->mAngerManagement)
 					{
-						TO_PLAYER(this)->LoseRage(-10);
+						TO_PLAYER(this)->LoseRage(-10*sWorld.getRate(RATE_POWER2));
 					}
 				}
 

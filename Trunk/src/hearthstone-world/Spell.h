@@ -253,7 +253,7 @@ enum SpellCastTargetFlags
 	TARGET_FLAG_ITEM				= 0x0010,
 	TARGET_FLAG_SOURCE_LOCATION		= 0x0020,
 	TARGET_FLAG_DEST_LOCATION		= 0x0040,
-	TARGET_FLAG_UNK4				= 0x0080,
+	TARGET_FLAG_OBJECT_CASTER		= 0x0080,
 	TARGET_FLAG_CASTER				= 0x0100,
 	TARGET_FLAG_PLR_CORPSE			= 0x0200,
 	TARGET_FLAG_CORPSE				= 0x0400,
@@ -277,23 +277,17 @@ enum procFlags
 	PROC_ON_PHYSICAL_ATTACK_VICTIM		= 0x20,
 	PROC_ON_RANGED_ATTACK				= 0x40,
 	PROC_ON_RANGED_CRIT_ATTACK			= 0x80,
-//	PROC_ON_UNK_DAMAGE_VICTIM			= 0x80,//seems to be on ranged dmg victim 99% sure('each melee or ranged attack' -> flag	=680 (dec))
 	PROC_ON_PHYSICAL_ATTACK				= 0x100,
 	PROC_ON_MELEE_ATTACK_VICTIM			= 0x200,
-//	PROC_ON_ANY_ACTION					= 0x400,
 	PROC_ON_SPELL_LAND					= 0x400,
-//	PROC_UNK_DEFILLED					= 0x800,
 	PROC_ON_RANGED_CRIT_ATTACK_VICTIM	= 0x800,
 	PROC_ON_CRIT_ATTACK					= 0x1000,
 	PROC_ON_RANGED_ATTACK_VICTIM		= 0x2000,
-//	PROC_ANYTIME						= 0x4000,
 	PROC_ON_DISPEL_AURA_VICTIM			= 0x4000,
-//	PROC_UNK2_DEFILLED					= 0x8000,
 	PROC_ON_SPELL_LAND_VICTIM			= 0x8000,//custom flag. PROC only when spell landed on victim
 	PROC_ON_CAST_SPECIFIC_SPELL			= 0x10000,
 	PROC_ON_SPELL_HIT_VICTIM			= 0x20000,
 	PROC_ON_SPELL_CRIT_HIT_VICTIM		= 0x40000,
-//	PROC_ON_UNK2_DAMAGE_VICTIM			= 0x80000,
 	PROC_ON_TARGET_DIE					= 0x80000,
 	PROC_ON_ANY_DAMAGE_VICTIM			= 0x100000,
 	PROC_ON_TRAP_TRIGGER				= 0x200000,	//triggers on trap activation)
@@ -1960,6 +1954,26 @@ public:
 			(testSpell->SpellGroupType[1] && (spellEffect->EffectSpellClassMask[effectNum][1] & testSpell->SpellGroupType[1])) ||
 			(testSpell->SpellGroupType[2] && (spellEffect->EffectSpellClassMask[effectNum][2] & testSpell->SpellGroupType[2])));
 	}
+
+HEARTHSTONE_INLINE uint32 GetDifficultySpell(SpellEntry * sp, uint32 difficulty)
+{
+	uint32 spellid = 0;
+	SpellDifficultyEntry * sd = dbcSpellDifficulty.LookupEntry(sp->SpellDifficulty);
+	if( sd->SpellId[difficulty] == 0 )
+	{
+		uint32 mode;
+		if( difficulty == 3 )
+			mode = 1;
+		else
+			mode = 0;
+
+		if( sd->SpellId[mode] == 0 )
+			spellid = sd->SpellId[0];
+	}
+	else
+		spellid = sd->SpellId[difficulty];
+	return spellid;
+}
 
 protected:
 

@@ -312,7 +312,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraNULL,                                           //289
 	&Aura::SpellAuraModCritChanceAll,                               //290
 	&Aura::SpellAuraNULL,                                           //291
-	&Aura::SpellAuraNULL,                                           //292
+	&Aura::SpellAuraOpenStable,                                     //292
 	&Aura::SpellAuraNULL,                                           //293
 	&Aura::SpellAuraNULL,                                           //294 2 spells, possible prevent mana regen
 	&Aura::SpellAuraNULL,                                           //295
@@ -630,9 +630,9 @@ const char* SpellAuraNames[TOTAL_SPELL_AURAS] = {
 	"",													// 287
 	"",													// 288
 	"",													// 289
-	"",													// 290
+	"MOD_CRIT_CHANCE_ALL",								// 290
 	"",													// 291
-	"",													// 292
+	"OPEN_STABLE",										// 292
 	"",													// 293
 	"",													// 294
 	"",													// 295
@@ -6416,10 +6416,12 @@ void Aura::SpellAuraModStalked(bool apply)
 	{
 		m_target->stalkedby = m_casterGuid;
 		SetNegative();
+		m_target->SetFlag(UNIT_DYNAMIC_FLAGS, 0x0002);
 	}
 	else
 	{
 		m_target->stalkedby = 0;
+		m_target->RemoveFlag(UNIT_DYNAMIC_FLAGS, 0x0002);
 	}
 }
 
@@ -6720,8 +6722,8 @@ void Aura::SpellAuraMounted(bool apply)
 	bool warlockpet = false;
 
 	CreatureProto* cp = CreatureProtoStorage.LookupEntry(mod->m_miscValue);
-//	if(cp != NULL && cp->vehicle_entry > 0)
-//		isVehicleSpell = true; // Lack of proto means fuck it!
+	//if(cp != NULL && cp->vehicle_entry > 0)
+		//isVehicleSpell = true; // Lack of proto means fuck it!
 
 	if(pPlayer->GetSummon() && pPlayer->GetSummon()->IsWarlockPet() == true)
 		warlockpet = true;
@@ -6772,19 +6774,22 @@ void Aura::SpellAuraMounted(bool apply)
 			Vehicle* vehicle = map->CreateVehicle(mod->m_miscValue);
 			if(vehicle != NULL)
 			{
-				vehicle->Load(cp, (m_target->IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL),
-					m_target->GetPositionX(), m_target->GetPositionY(), m_target->GetPositionZ());
-
+				vehicle->Load( cp, (m_target->IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL), pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation());
 				vehicle->Init();
-				vehicle->InitSeats(cp->vehicle_entry);
+				vehicle->SetInstanceID( pPlayer->GetInstanceID() );
 				vehicle->PushToWorld(map);
-
-				vehicle->AddPassenger(m_target, 0, true); // Always add to first slot
-
+				vehicle->InitSeats(cp->vehicle_entry);
+				vehicle->m_mountSpell = GetSpellProto()->Id;
+				vehicle->AddPassenger(pPlayer, 0, true); // Always add to first slot
 				WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
 				data << m_target->GetNewGUID();
 				data << cp->vehicle_entry;
 				m_target->SendMessageToSet(&data, true);
+				vehicle->SetFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_VEHICLE_MOUNT);
+				vehicle->SetFaction(pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+				vehicle->SetSummonOwnerSlot(pPlayer->GetGUID(), 0);
+				pPlayer->m_SummonSlots[0] = vehicle;
+				pPlayer->SetSummon(TO_PET(vehicle));
 			}
 		}
 	}
@@ -6797,8 +6802,12 @@ void Aura::SpellAuraMounted(bool apply)
 		if( !isVehicleSpell )
 			m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
 		else
+		{
 			if(m_target->m_CurrentVehicle)
 				m_target->m_CurrentVehicle->RemovePassenger(m_target);
+			if(pPlayer->GetSummon())
+				pPlayer->GetSummon()->Despawn(300,0);
+		}
 
 		uint8 petnum = pPlayer->GetUnstabledPetNumber();
 
@@ -6832,17 +6841,17 @@ void Aura::SpellAuraModDamageTakenPctPerCaster(bool apply)
 	{
 		m_target->DamageTakenPctModPerCaster.insert(
 			make_pair(m_casterGuid, make_pair(m_spellProto->EffectSpellClassMask[mod->i], mod->m_amount)));
-	} else
+	} 
+	else
 	{
-		Unit::DamageTakenPctModPerCasterType::iterator it =
-			m_target->DamageTakenPctModPerCaster.find(m_casterGuid);
-		while(it != m_target->DamageTakenPctModPerCaster.end() &&
-			it->first == m_casterGuid)
+		Unit::DamageTakenPctModPerCasterType::iterator it = m_target->DamageTakenPctModPerCaster.find(m_casterGuid);
+		while(it != m_target->DamageTakenPctModPerCaster.end() && it->first == m_casterGuid)
 		{
 			if(it->second.first == m_spellProto->EffectSpellClassMask[mod->i])
 			{
 				it = m_target->DamageTakenPctModPerCaster.erase(it);
-			} else
+			}
+			else
 			{
 				it++;
 			}
@@ -10465,6 +10474,40 @@ void Aura::SpellAuraModCritChanceAll(bool apply)
 
 	plr->UpdateChances();
 	plr->UpdateChanceFields();
+}
+
+void Aura::SpellAuraOpenStable(bool apply)
+{
+	if( !m_target || !m_target->IsPlayer() )
+		return;
+
+	Player* _player = TO_PLAYER(m_target);
+
+	if(apply)
+	{
+		if( _player->getClass() == HUNTER)
+		{
+			WorldPacket data(10 + (_player->m_Pets.size() * 25));
+			data.SetOpcode(MSG_LIST_STABLED_PETS);
+			data << uint64(0);
+			data << uint8(_player->m_Pets.size());
+			data << uint8(_player->m_StableSlotCount);
+			for(std::map<uint32, PlayerPet*>::iterator itr = _player->m_Pets.begin(); itr != _player->m_Pets.end(); ++itr)
+			{
+				data << uint32( itr->first );			// pet no
+				data << uint32( itr->second->entry );	// entryid
+				data << uint32( itr->second->level );	// level
+				data << itr->second->name;			// name
+				if( itr->second->stablestate == STABLE_STATE_ACTIVE )
+					data << uint8(STABLE_STATE_ACTIVE);
+				else
+				{
+					data << uint8(STABLE_STATE_PASSIVE + 1);
+				}
+			}
+			_player->GetSession()->SendPacket(&data);
+		}
+	}
 }
 
 void Aura::SpellAuraPreventResurrection(bool apply)

@@ -1251,9 +1251,9 @@ void World::Rehash(bool load)
 
 	// load regeneration rates.
 	setRate(RATE_HEALTH,Config.MainConfig.GetFloatDefault("Rates", "Health",1));
-	setRate(RATE_POWER1,Config.MainConfig.GetFloatDefault("Rates", "Power1",1));
-	setRate(RATE_POWER2,Config.MainConfig.GetFloatDefault("Rates", "Power2",1));
-	setRate(RATE_POWER3,Config.MainConfig.GetFloatDefault("Rates", "Power4",1));
+	setRate(RATE_POWER1,Config.MainConfig.GetFloatDefault("Rates", "Mana",1));
+	setRate(RATE_POWER2,Config.MainConfig.GetFloatDefault("Rates", "Rage",1));
+	setRate(RATE_POWER3,Config.MainConfig.GetFloatDefault("Rates", "Energy",1));
 	setRate(RATE_DROP0,Config.MainConfig.GetFloatDefault("Rates", "DropGrey",1));
 	setRate(RATE_DROP1,Config.MainConfig.GetFloatDefault("Rates", "DropWhite",1));
 	setRate(RATE_DROP2,Config.MainConfig.GetFloatDefault("Rates", "DropGreen",1));
@@ -1286,6 +1286,9 @@ void World::Rehash(bool load)
 	setRate(RATE_EOTS_CAPTURERATE, Config.MainConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));
 	SetPlayerLimit(Config.MainConfig.GetIntDefault("Server", "PlayerLimit", 1000));
 	FunServerMall = Config.MainConfig.GetIntDefault("Server", "MallAreaID", -1);
+	LogoutDelay = Config.MainConfig.GetIntDefault("Server", "Logout_Delay", 20);
+	if(LogoutDelay <= 0)
+		LogoutDelay = 1;
 
 	SetMotd(Config.MainConfig.GetStringDefault("Server", "Motd", "Hearthstone Default MOTD").c_str());
 	SetMotd2(Config.MainConfig.GetStringDefault("Server", "Motd2", "").c_str());

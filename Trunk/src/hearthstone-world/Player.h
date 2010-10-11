@@ -1940,6 +1940,8 @@ public:
 	int32 m_feralAP;
 	bool	hasqueuedpet;
 	uint32 JudgementSpell;
+	std::map<uint32, PlayerPet*> m_Pets;
+	uint8 m_StableSlotCount;
 
 protected:
 	uint32 m_timeLogoff;
@@ -2021,7 +2023,6 @@ protected:
 	AreaTable  *m_areaDBC;
 	Pet*        m_Summon;
 	uint32      m_PetNumberMax;
-	std::map<uint32, PlayerPet*> m_Pets;
 
 	uint32      m_invitersGuid; // It is guild inviters guid ,0 when its not used
 
@@ -2079,7 +2080,6 @@ protected:
 	unordered_set<Object* > m_visibleObjects;
 	// Groups/Raids
 	uint32 m_GroupInviter;
-	uint8 m_StableSlotCount;
 
     // Fishing related
 	Object* m_SummonedObject;

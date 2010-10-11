@@ -7688,6 +7688,7 @@ void Player::RegenerateEnergy()
 		return;
 
 	float amt = 2.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY];
+	amt*= sWorld.getRate(RATE_POWER3);
 
 	cur += float2int32(amt);
 	m_toRegen += (amt - cur);

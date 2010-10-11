@@ -8390,7 +8390,7 @@ void Spell::SummonLightwell(uint32 i)
 	p_caster->m_SummonSlots[0] = summon;
 	summon->Despawn(180000,0);
 	summon->lightwellcharges = 10;
-	summon->SetUInt32Value(UNIT_FIELD_LEVEL,p_caster->getLevel());
+	summon->SetUInt32Value(UNIT_FIELD_LEVEL,level);
 }
 
 void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item

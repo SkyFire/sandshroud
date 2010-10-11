@@ -153,7 +153,7 @@ typedef struct Cords {
 	float x,y,z;
 }Cords;
 
-#define PLAYER_LOGOUT_DELAY (20*1000)		/* 20 seconds should be more than enough to gank ya. */
+#define PLAYER_LOGOUT_DELAY (sWorld.LogoutDelay*1000)
 
 #define CHECK_INWORLD_RETURN if(_player == NULL || !_player->IsInWorld()) { return; }
 #define CHECK_GUID_EXISTS(guidx) if(_player->GetMapMgr()->GetUnit((guidx)) == NULL) { return; }

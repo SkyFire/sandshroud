@@ -628,6 +628,7 @@ public:
 	bool SendStatsOnJoin;
 	bool SendMovieOnJoin;
 	int32 FunServerMall;
+	uint32 LogoutDelay;
 	SessionSet gmList;
 	RWLock gmList_lock;
 

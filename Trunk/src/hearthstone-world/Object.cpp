@@ -615,7 +615,6 @@ uint32 TimeStamp();
 
 void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 moveflags, Player* target )
 {
-	uint16 flag16 = 0;	// some other flag
 	ByteBuffer *splinebuf = (m_objectTypeId == TYPEID_UNIT) ? target->GetAndRemoveSplinePacket(GetGUID()) : 0;
 	*data << (uint16)flags;
 
@@ -705,7 +704,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 //		}
 
 		*data << uint32(moveflags);
-		*data << uint16(flag16);
+		*data << uint16(moveinfo->m_movementflags);
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
 		*data << m_position;
 		*data << (m_position.o);
@@ -752,7 +751,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 			}
 		}
 
-		if(moveflags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flag16 & 0x20) // Pitch
+		if(moveflags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || moveinfo->m_movementflags & 0x20) // Pitch
 		{
 			if(moveinfo != NULL)
 				*data << moveinfo->pitch;

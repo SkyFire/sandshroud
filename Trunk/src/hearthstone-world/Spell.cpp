@@ -337,6 +337,9 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 		if( (*itr)->IsUnit() && (!(TO_UNIT( *itr )->isAlive())))
 			continue;
 
+		if((*itr)->IsUnit() && u_caster && TO_UNIT(*itr)->GetGUID() == u_caster->GetGUID())
+			continue;
+
 		//TO_UNIT(*itr)->InStealth()
 		if( GetSpellProto()->TargetCreatureType)
 		{
@@ -416,6 +419,9 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	{
 		// don't add objects that are units and dead
 		if( (*itr)->IsUnit() && (!(TO_UNIT( *itr )->isAlive())))
+			continue;
+
+		if((*itr)->IsUnit() && u_caster && TO_UNIT(*itr)->GetGUID() == u_caster->GetGUID())
 			continue;
 
 		//TO_UNIT(*itr)->InStealth()
@@ -1062,6 +1068,15 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 {
 	uint8 ccr;
 	chaindamage = 0;
+
+	// check for current difficulty an change spellentry if needed
+	if( u_caster && !p_caster && u_caster->GetMapMgr() && u_caster->GetMapMgr()->pInstance && GetSpellProto()->SpellDifficulty )
+	{
+		uint32 spellid = GetDifficultySpell(GetSpellProto(), u_caster->GetMapMgr()->iInstanceMode);
+		if( spellid != GetSpellProto()->Id && spellid != 0 )
+			m_spellInfo = dbcSpell.LookupEntry( spellid );
+	}
+
 	if( p_caster && GetSpellProto()->Id == 51514 || GetSpellProto()->NameHash == SPELL_HASH_ARCANE_SHOT || GetSpellProto()->NameHash == SPELL_HASH_MIND_FLAY )
 	{
 		targets->m_unitTarget = 0;
@@ -5213,36 +5228,6 @@ uint32 GetDiminishingGroup(uint32 NameHash)
 	return ret;
 }
 
-/*void Spell::SendCastSuccess(Object* target)
-{
-	Player* plr = p_caster;
-	if(!plr && u_caster)
-		plr = u_caster->m_redirectSpellPackets;
-	if(!plr||!plr->IsPlayer())
-		return;
-
-	WorldPacket data(SMSG_CLEAR_EXTRA_AURA_INFO, 13);
-	data << ((target != 0) ? target->GetNewGUID() : uint8(0));
-	data << GetSpellProto()->Id;
-
-	plr->GetSession()->SendPacket(&data);
-}*/
-
-/*void Spell::SendCastSuccess(const uint64& guid)
-{
-	Player* plr = p_caster;
-	if(!plr && u_caster)
-		plr = u_caster->m_redirectSpellPackets;
-	if(!plr || !plr->IsPlayer())
-		return;
-
-	// fuck bytebuffers
-	unsigned char buffer[13];
-	uint32 c = FastGUIDPack(guid, buffer, 0);
-	*(uint32*)&buffer[c] = GetSpellProto()->Id;					c += 4;
-	plr->GetSession()->OutPacket(SMSG_CLEAR_EXTRA_AURA_INFO, c, buffer);
-}*/
-
 void Spell::_AddTarget(const Unit* target, const uint32 effectid)
 {
 	SpellTargetList::iterator itr;
@@ -5321,7 +5306,7 @@ void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r)
+			if (o->IsGameObject() /*&& o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r*/ && Caster->isInRange(o,r) )
 			{
 				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
@@ -5332,7 +5317,7 @@ void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_srcX, m_targets.m_srcY) <= r)
+			if (o->IsGameObject() && /*o->GetDistance2dSq(m_targets.m_srcX, m_targets.m_srcY) <= r*/ Caster->isInRange(o,r))
 			{
 				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}
@@ -5343,7 +5328,7 @@ void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell
 		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
 		{
 			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (15*15))
+			if (o->IsGameObject() && /*o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (15*15)*/ Caster->isInRange(o,r))
 			{
 				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
 			}

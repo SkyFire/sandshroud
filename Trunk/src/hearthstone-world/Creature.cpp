@@ -778,8 +778,9 @@ void Creature::RegenerateEnergy()
 
 	if(cur >= mm)
 		return;
-
+	
 	float amt = 2.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY];
+	amt*= sWorld.getRate(RATE_POWER3);
 	cur += (uint32)amt;
 	SetUInt32Value(UNIT_FIELD_POWER4,(cur >= mm) ? mm : cur);
 }

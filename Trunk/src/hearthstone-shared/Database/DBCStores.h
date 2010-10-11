@@ -746,6 +746,7 @@ struct SpellEntry
 //	uint32 unk4[3];						//235-237
 //	uint32 spellDescriptionVariableID;	//238
 //	uint32 unk5;						//239
+	uint32 SpellDifficulty;
 
 	/// CUSTOM: these fields are used for the modifications made in the world.cpp
 	uint32 proc_interval;				//!!! CUSTOM, Time(In MS) between proc's.
@@ -795,6 +796,16 @@ struct SpellEntry
 
 	// Crow: The following are customs made by me, mostly duplicate fields for handling more information.
 	uint32 procflags2; // We get two now, hurray. One does not take the place of the other.
+};
+
+struct SpellDifficultyEntry
+{
+	uint32 DifficultyID; // id from spell.dbc
+	// first is man 10 normal
+	// second is man 25 normal
+	// third is man 10 heroic
+	// fourth is man 25 heroic
+	uint32 SpellId[4];
 };
 
 struct SpellRuneCostEntry
@@ -1736,7 +1747,7 @@ extern SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
 extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
 extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
-
+extern SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
 bool LoadDBCs();
 
 HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)

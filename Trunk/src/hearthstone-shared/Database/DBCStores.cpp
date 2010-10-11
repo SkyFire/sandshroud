@@ -39,6 +39,7 @@ SERVER_DECL DBCStorage<SpellRuneCostEntry> dbcSpellRuneCost;
 SERVER_DECL DBCStorage<emoteentry> dbcEmoteEntry;
 SERVER_DECL DBCStorage<SpellRadius> dbcSpellRadius;
 SERVER_DECL DBCStorage<SpellCastTime> dbcSpellCastTime;
+SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
 SERVER_DECL DBCStorage<AreaTable> dbcArea;
 SERVER_DECL DBCStorage<FactionTemplateDBC> dbcFactionTemplate;
 SERVER_DECL DBCStorage<FactionDBC> dbcFaction;
@@ -186,8 +187,9 @@ const char* spellentryFormat =
 	"u" // School
 	"ux" // runeCostID and spellMissileID
 	"u" // PowerDisplayId
-	"xxxxx"; // Unk
-
+	"xxxx"// Unk
+	"u"; // SpellDifficultyID
+const char* spelldifficultyFormat = "uuuuu";
 const char* itemFormat = "uuuiiuuu";
 const char* itemextendedcostFormat = "uuuuuuuuuuuuuuux";
 const char* talententryFormat = "uuuuuuuuuxxxxuxxuxxxuxx";
@@ -390,6 +392,8 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/Spell.dbc", spellentryFormat, true, dbcSpell, true);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellCastTimes.dbc", spellcasttimeFormat, true, dbcSpellCastTime, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellDifficulty.dbc", spelldifficultyFormat, true, dbcSpellDifficulty, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellDuration.dbc", spelldurationFormat, true, dbcSpellDuration, false);
 	/* Needed for: */

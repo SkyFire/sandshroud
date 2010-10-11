@@ -741,6 +741,7 @@ public:
 	void SpellAuraProcTriggerWithValue(bool apply);
 	void SpellAuraPeriodicTriggerSpellWithValue(bool apply);
 	void SpellAuraModCritChanceAll(bool apply);
+	void SpellAuraOpenStable(bool apply);
 	void SpellAuraPreventResurrection(bool apply);
 	void SpellAuraConvertRune(bool apply);
 
