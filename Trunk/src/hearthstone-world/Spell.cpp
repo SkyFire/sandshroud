@@ -1059,7 +1059,7 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 								for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
 									itr != pGroup->GetGroupMembersEnd(); itr++)
 								{
-									if(!(*itr)->m_loggedInPlayer || p == (*itr)->m_loggedInPlayer)
+									if(!(*itr)->m_loggedInPlayer)
 										continue;
 									if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),(*itr)->m_loggedInPlayer,r) && (*itr)->m_loggedInPlayer->getClass() == p_caster->getClass())
 									{
