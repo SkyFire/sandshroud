@@ -1034,7 +1034,7 @@ bool Loot::HasItems(Player* Looter)
 	for(vector<__LootItem>::iterator itr = items.begin(); itr != items.end(); itr++)
 	{
 		ItemPrototype * proto = itr->item.itemproto;
-		if( proto->Bonding == ITEM_BIND_QUEST || proto->Bonding == ITEM_BIND_QUEST2 )
+		if( proto->Bonding == ITEM_BIND_QUEST || proto->Bonding == ITEM_BIND_QUEST2 || proto->Class == ITEM_CLASS_QUEST)
 		{
 			if( Looter->HasQuestForItem( proto->ItemId ) )
 				return true;
