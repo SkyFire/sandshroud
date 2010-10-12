@@ -230,7 +230,8 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 				m_moveRun = true; //run to the target
 
 				// dismount if mounted
-				m_Unit->Dismount();
+				if(cr && !(cr->GetCreatureInfo()->Flags1 & 2048))
+					m_Unit->Dismount();
 
 				if(m_AIState != STATE_ATTACKING)
 					StopMovement(0);
@@ -505,7 +506,7 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 			m_hasFled = false;
 			m_hasCalledForHelp = false;
 			m_nextSpell = NULL;
-
+			m_Unit->Dismount();
 			SetNextTarget(NULLUNIT);
 
 			//reset waypoint to 1

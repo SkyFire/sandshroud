@@ -29,13 +29,6 @@
 
 #define _GAME // You just lost the game
 
-#ifdef WIN32
-#pragma warning(disable:4127)
-#pragma warning(disable:4100)
-#pragma warning(disable:4706)
-#pragma warning(disable:4714)
-#endif
-
 #include <list>
 #include <vector>
 #include <map>
@@ -46,8 +39,6 @@
 #include <search.h>
 #include <fcntl.h>
 #include <signal.h>
-//#include <fstream>
-
 #include "../hearthstone-shared/Common.h"
 #include "../hearthstone-shared/svn_revision.h"
 #include "../hearthstone-shared/MersenneTwister.h"

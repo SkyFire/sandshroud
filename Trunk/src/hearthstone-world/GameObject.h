@@ -268,6 +268,7 @@ public:
 	//Destructable Building
 	void TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uint32 spellid = 0);
 	void Rebuild();
+	void AuraGenSearchTarget();
 
 	uint32 GetGOui32Value(uint32 id)
 	{

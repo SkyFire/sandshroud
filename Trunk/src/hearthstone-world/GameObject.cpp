@@ -140,7 +140,7 @@ void GameObject::Update(uint32 p_time)
 	if(m_deleted)
 		return;
 
-	if(spell != NULL && (GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1))
+	if(spell != NULL && (GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1) && GetType() != GAMEOBJECT_TYPE_AURA_GENERATOR)
 	{
 		if(checkrate > 1)
 		{
@@ -297,14 +297,6 @@ void GameObject::InitAI()
 
 	initiated = true; // Initiate after check, so we do not spam if we return without a point.
 
-	if(pInfo->SpellFocus == 0 &&
-		pInfo->sound1 == 0 &&
-		pInfo->sound2 == 0 &&
-		pInfo->sound3 != 0 &&
-		pInfo->sound5 != 3 &&
-		pInfo->sound9 == 1)
-		return;
-
 	uint32 spellid = 0;
 	switch(pInfo->Type)
 	{
@@ -363,12 +355,11 @@ void GameObject::InitAI()
 	case GAMEOBJECT_TYPE_AURA_GENERATOR:
 		{
 			spellid = GetInfo()->sound2;
-			checkrate = 1;
-			sEventMgr.AddEvent(this, &GameObject::Update, uint32(200), EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 200, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			sEventMgr.AddEvent(this, &GameObject::AuraGenSearchTarget, EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 1000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		}break;
 	}
 
-	if(!spellid || spellid == 22247)
+	if(!spellid)
 		return;
 
 	myScript = sScriptMgr.CreateAIScriptClassForGameObject(GetEntry(), this);
@@ -883,3 +874,27 @@ void GameObject::Rebuild()
 		SetAnimProgress(m_Go_Uint32Values[GO_UINT32_HEALTH]*255/(IntactHealth + DamagedHealth));
 	m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->SpellFocus + pInfo->sound5;
 }
+
+void GameObject::AuraGenSearchTarget()
+{
+	if(m_event_Instanceid != m_instanceId)
+	{
+		event_Relocate();
+		return;
+	}
+
+	if(!IsInWorld() || m_deleted || !spell)
+		return;
+	Object::InRangeSet::iterator itr,it2;
+	for( it2 = GetInRangeSetBegin(); it2 != GetInRangeSetEnd(); it2++)
+	{
+		itr = it2;
+		Unit* thing = NULL;
+		if( (*itr)->IsUnit() && GetDistanceSq((*itr)) <= pInfo->sound1 && ((*itr)->IsPlayer() || (*itr)->IsVehicle()) && !(TO_UNIT((*itr))->HasAura(spell->Id)))
+		{
+			thing = TO_UNIT((*itr));
+			thing->AddAura(new Aura(spell,-1,thing,thing));
+		}
+	}
+}
+
