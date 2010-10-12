@@ -2,6 +2,16 @@
 
 #include <stdio.h>
 #include <vector>
+#include <deque>
+#include <set>
+#include <cstdlib>
+
+#ifdef WIN32
+#include "direct.h"
+#else
+#include <sys/stat.h>
+#endif
+
 #include "dbcfile.h"
 #include "adt.h"
 #include "mpq_libmpq.h"
@@ -17,6 +27,7 @@ extern unsigned int iRes;
 bool ConvertADT(uint32 x, uint32 y, FILE * out_file, char* name);
 void reset();
 void CleanCache();
+extern ArchiveSet gOpenArchives;
 
 typedef struct{
 	char name[64];
@@ -29,6 +40,15 @@ typedef unsigned int uint32;
 map_id * map_ids;
 
 uint32 MapCount;
+
+void CreateDir( const std::string& Path )
+{
+    #ifdef WIN32
+    _mkdir( Path.c_str());
+    #else
+    mkdir( Path.c_str(), 0777 );
+    #endif
+}
 
 void SetProgressBar(int val, int max, const char* label)
 {
@@ -211,6 +231,7 @@ int main(int argc, char * arg[])
 		tf = fopen(tmp, "r");
 		if (!tf)
 			continue;
+
 		fclose(tf);
 		locale = i;
 		new MPQArchive(tmp);
@@ -289,6 +310,46 @@ int main(int argc, char * arg[])
 		fclose(tf);
 		new MPQArchive("Data/wow-update-13164.MPQ");
 	}
+
+    printf("Extracting dbc files...\n");
+
+    set<string> dbcfiles;
+
+    // get DBC file list
+    for(ArchiveSet::iterator i = gOpenArchives.begin(); i != gOpenArchives.end();++i)
+    {
+        vector<string> files;
+        (*i)->GetFileListTo(files);
+        for (vector<string>::iterator iter = files.begin(); iter != files.end(); ++iter)
+            if (iter->rfind(".dbc") == iter->length() - strlen(".dbc"))
+                    dbcfiles.insert(*iter);
+    }
+
+    string path = ".";
+    path += "/dbc/";
+    CreateDir(path);
+
+    // extract DBCs
+    int count = 0;
+    for (set<string>::iterator iter = dbcfiles.begin(); iter != dbcfiles.end(); ++iter)
+    {
+        string filename = path;
+        filename += (iter->c_str() + strlen("DBFilesClient\\"));
+
+        FILE *output = fopen(filename.c_str(), "wb");
+        if(!output)
+        {
+            printf("Can't create the output file '%s'\n", filename.c_str());
+            continue;
+        }
+        MPQFile m(iter->c_str());
+        if(!m.isEof())
+            fwrite(m.getPointer(), 1, m.getSize(), output);
+
+        fclose(output);
+        ++count;
+    }
+    printf("Extracted %u DBC files\n\n", count);
 
 	//map.dbc
 	DBCFile * dbc = new DBCFile("DBFilesClient\\Map.dbc");

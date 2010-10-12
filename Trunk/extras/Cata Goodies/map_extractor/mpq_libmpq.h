@@ -80,8 +80,37 @@ public:
         delete buffer;
         return filelist;
     }
+    void GetFileListTo(vector<string>& filelist) {
+        mpq_hash hash = GetHashEntry("(listfile)");
+        uint32 blockindex = hash.blockindex;
+
+        if ((blockindex == 0xFFFFFFFF) || (blockindex == 0))
+            return;
+
+        uint32 size = libmpq_file_info(&mpq_a, LIBMPQ_FILE_UNCOMPRESSED_SIZE, blockindex);
+        char *buffer = new char[size];
+
+        libmpq_file_getdata(&mpq_a, hash, blockindex, (unsigned char*)buffer);
+
+        char seps[] = "\n";
+        char *token;
+
+        token = strtok( buffer, seps );
+        uint32 counter = 0;
+        while ((token != NULL) && (counter < size)) {
+            //cout << token << endl;
+            token[strlen(token) - 1] = 0;
+            string s = token;
+            filelist.push_back(s);
+            counter += strlen(token) + 2;
+            token = strtok(NULL, seps);
+        }
+
+        delete[] buffer;
+    }
 };
 
+typedef std::vector<MPQArchive*> ArchiveSet;
 
 class MPQFile
 {
