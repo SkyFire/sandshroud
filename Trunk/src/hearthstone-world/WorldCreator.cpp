@@ -670,7 +670,12 @@ void InstanceMgr::BuildXMLStats(char * m_file)
 	{
 		if(m_singleMaps[i] != NULL)
 			BuildStats(m_singleMaps[i], m_file, NULL, m_singleMaps[i]->GetMapInfo());
-		else
+	}
+	// Crow: WE CAN MAKE THIS BETTER, FASTER, STRONGER!!!
+
+	for(i = 0; i < NUM_MAPS; i++)
+	{
+		if(m_singleMaps[i] == NULL)
 		{
 			instancemap = m_instances[i];
 			if(instancemap != NULL)
@@ -688,6 +693,7 @@ void InstanceMgr::BuildXMLStats(char * m_file)
 			}
 		}
 	}
+
 	m_mapLock.Release();
 	Log.Debug("InstanceMgr", "Dumping XML stats...");
 }
