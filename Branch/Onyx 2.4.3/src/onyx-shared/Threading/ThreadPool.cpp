@@ -187,13 +187,6 @@ void CThreadPool::IntegrityCheck()
 		// perfect! we have the ideal number of free threads.
 		Log.Debug("ThreadPool", "IntegrityCheck: Perfect!");
 	}
-	/*if(m_freeThreads.size() < 5)
-	{
-		uint32 j = 5 - m_freeThreads.size();
-		Log.Debug("ThreadPool", "Spawning %u threads.", j);
-		for(uint32 i = 0; i < j; ++i)
-			StartThread(NULL);
-	}*/
 
 	_threadsExitedSinceLastCheck = 0;
 	_threadsRequestedSinceLastCheck = 0;

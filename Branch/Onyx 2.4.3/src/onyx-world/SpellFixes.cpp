@@ -12737,26 +12737,24 @@ void ApplyNormalFixes()
 		sp->cone_width = 0.0f;
 		sp->area_aura_update_interval = 1000;
 
-#define SET_SCHOOL(x) sp->School = x
-		if(sp->School == NULL) // OH YEA!!!!11
-			SET_SCHOOL(SCHOOL_NORMAL);
-		else if(sp->School & 1)
-			SET_SCHOOL(SCHOOL_NORMAL);
-		else if(sp->School & 2)
-			SET_SCHOOL(SCHOOL_HOLY);
-		else if(sp->School & 4)
-			SET_SCHOOL(SCHOOL_FIRE);
-		else if(sp->School & 8)
-			SET_SCHOOL(SCHOOL_NATURE);
-		else if(sp->School & 16)
-			SET_SCHOOL(SCHOOL_FROST);
+		if(sp->School & 64)
+			sp->School = SCHOOL_ARCANE;
 		else if(sp->School & 32)
-			SET_SCHOOL(SCHOOL_SHADOW);
-		else if(sp->School & 64)
-			SET_SCHOOL(SCHOOL_ARCANE);
+			sp->School = SCHOOL_SHADOW;
+		else if(sp->School & 16)
+			sp->School = SCHOOL_FROST;
+		else if(sp->School & 8)
+			sp->School = SCHOOL_NATURE;
+		else if(sp->School & 4)
+			sp->School = SCHOOL_FIRE;
+		else if(sp->School & 2)
+			sp->School = SCHOOL_HOLY;
+		else if(sp->School & 1)
+			sp->School = SCHOOL_NORMAL;
+		else if(sp->School == NULL)
+			sp->School = SCHOOL_NORMAL;
 		else
 			printf("UNKNOWN SCHOOL %u in spell %u\n", sp->School, sp->Id);
-#undef SET_SCHOOL
 
 		// New 2.4.3 summon types
 		for(uint8 i = 0; i<3; i++)
@@ -12898,7 +12896,9 @@ void ApplyNormalFixes()
 		//there are some spells that change the "damage" value of 1 effect to another : devastate = bonus first then damage
 		//this is a total bullshit so remove it when spell system supports effect overwriting
 		for( uint32 col1_swap = 0; col1_swap < 2 ; col1_swap++ )
+		{
 			for( uint32 col2_swap = col1_swap ; col2_swap < 3 ; col2_swap++ )
+			{
 				if( sp->Effect[col1_swap] == SPELL_EFFECT_WEAPON_PERCENT_DAMAGE && sp->Effect[col2_swap] == SPELL_EFFECT_DUMMYMELEE )
 				{
 					uint32 temp;
@@ -12922,6 +12922,8 @@ void ApplyNormalFixes()
 					temp = sp->EffectTriggerSpell[col1_swap];	sp->EffectTriggerSpell[col1_swap] = sp->EffectTriggerSpell[col2_swap] ;	sp->EffectTriggerSpell[col2_swap] = temp;
 					ftemp = sp->EffectPointsPerComboPoint[col1_swap];	sp->EffectPointsPerComboPoint[col1_swap] = sp->EffectPointsPerComboPoint[col2_swap] ;	sp->EffectPointsPerComboPoint[col2_swap] = ftemp;
 				}
+			}
+		}
 
 		for(uint32 b=0;b<3;++b)
 		{
@@ -12942,28 +12944,7 @@ void ApplyNormalFixes()
 			{
 				sp->Attributes &= ~ATTRIBUTES_ONLY_OUTDOORS;
 			}
-
-			// fill in more here
-			/*switch( sp->EffectImplicitTargetA[b] )
-			{
-			case 1:
-			case 9:
-				sp->self_cast_only = true;
-				break;
-			}
-
-			// fill in more here too
-			switch( sp->EffectImplicitTargetB[b] )
-			{
-			case 1:
-			case 9:
-				sp->self_cast_only = true;
-				break;
-			}*/
 		}
-
-		/*if(sp->self_cast_only && !(sp->Attributes&64))
-			printf("SPELL SELF CAST ONLY: %s %u\n", sp->Name, sp->Id);*/
 
 		if(!strcmp(sp->Name, "Hearthstone") || !strcmp(sp->Name, "Stuck") || !strcmp(sp->Name, "Astral Recall"))
 			sp->self_cast_only = true;
@@ -13062,10 +13043,6 @@ void ApplyNormalFixes()
 			type |= SPELL_TYPE_FORTITUDE;
 		else if( sp->NameHash == SPELL_HASH_DIVINE_SPIRIT || sp->NameHash == SPELL_HASH_PRAYER_OF_SPIRIT )
 			type |= SPELL_TYPE_SPIRIT;
-//		else if( strstr( sp->Name, "Curse of Weakness") || strstr( sp->Name, "Curse of Agony") || strstr( sp->Name, "Curse of Recklessness") || strstr( sp->Name, "Curse of Tongues") || strstr( sp->Name, "Curse of the Elements") || strstr( sp->Name, "Curse of Idiocy") || strstr( sp->Name, "Curse of Shadow") || strstr( sp->Name, "Curse of Doom"))
-//		else if(sp->NameHash==4129426293 || sp->NameHash==885131426 || sp->NameHash==626036062 || sp->NameHash==3551228837 || sp->NameHash==2784647472 || sp->NameHash==776142553 || sp->NameHash==3407058720 || sp->NameHash==202747424)
-//		else if( strstr( sp->Name, "Curse of "))
-//			type |= SPELL_TYPE_WARLOCK_CURSES;
 		else if( strstr( sp->Name, "Immolate") || strstr( sp->Name, "Conflagrate"))
 			type |= SPELL_TYPE_WARLOCK_IMMOLATE;
 		else if( strstr( sp->Name, "Amplify Magic") || strstr( sp->Name, "Dampen Magic"))
@@ -13173,11 +13150,6 @@ void ApplyNormalFixes()
 			sp->buffIndexType = SPELL_TYPE_INDEX_HIBERNATE;
 			break;
 
-//		removed by Zack Earth shield stacks 10 times. Current code does not support it
-//		case SPELL_HASH_EARTH_SHIELD:		// Earth Shield
-//			sp->buffIndexType = SPELL_TYPE_INDEX_EARTH_SHIELD;
-//			break;
-
 		case SPELL_HASH_CYCLONE:			// Cyclone
 			sp->buffIndexType = SPELL_TYPE_INDEX_CYCLONE;
 			break;
@@ -13274,75 +13246,6 @@ void ApplyNormalFixes()
 			// get the effect number from the spell
 			effect = sp->Effect[0]; // spelleffect[0] = 64 // 2.0.1
 
-			//spell group
-			/*if(effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT1||effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT2||
-				effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT3||effect==SPELL_EFFECT_SUMMON_TOTEM_SLOT4)
-			{
-			
-					const char *p=sp->Description;
-					while(p=strstr(p,"$"))
-					{
-						p++;
-						//got $  -> check if spell
-						if(*p>='0' && *p <='9')
-						{//woot this is spell id
-							uint32 tmp=atoi(p);
-							SpellEntry*s=sSpellStore.LookupEntryForced(tmp);
-							bool ch=false;
-							for(uint32 i=0;i<3;i++)
-								if(s->EffectTriggerSpell[i])
-								{
-									ch=true;
-									result=tmp;
-									break;
-								}
-							if(ch)break;
-							result=tmp;
-							
-						}
-					
-					}
-				
-			}else*/
-			/*if(effect==SPELL_EFFECT_ENCHANT_ITEM)//add inventory type check
-			{
-				result=0;
-				//136--sp->Description field
-				//dirty code
-				if( strstr( sp->Description,"head"))
-					result|=(1<<INVTYPE_HEAD);
-				if( strstr( sp->Description,"leg"))
-					result|=(1<<INVTYPE_LEGS);
-				if( strstr( sp->Description,"neck"))
-					result|=(1<<INVTYPE_NECK);
-				if( strstr( sp->Description,"shoulder"))
-					result|=(1<<INVTYPE_SHOULDERS);
-				if( strstr( sp->Description,"body"))
-					result|=(1<<INVTYPE_BODY);
-				if( strstr( sp->Description,"chest"))
-					result|=((1<<INVTYPE_CHEST)|(1<<INVTYPE_ROBE));
-				if( strstr( sp->Description,"waist"))
-					result|=(1<<INVTYPE_WAIST);
-				if( strstr( sp->Description,"foot")||strstr(sp->Description,"feet")||strstr(sp->Description,"boot"))
-					result|=(1<<INVTYPE_FEET);
-				if( strstr( sp->Description,"wrist")||strstr(sp->Description,"bracer"))
-					result|=(1<<INVTYPE_WRISTS);
-				if( strstr( sp->Description,"hand")||strstr(sp->Description,"glove"))
-					result|=(1<<INVTYPE_HANDS);
-				if( strstr( sp->Description,"finger")||strstr(sp->Description,"ring"))
-					result|=(1<<INVTYPE_FINGER);
-				if( strstr( sp->Description,"trinket"))
-					result|=(1<<INVTYPE_TRINKET);
-				if( strstr( sp->Description,"shield"))
-					result|=(1<<INVTYPE_SHIELD);
-				if( strstr( sp->Description,"cloak"))
-					result|=(1<<INVTYPE_CLOAK);
-				if( strstr( sp->Description,"robe"))
-					result|=(1<<INVTYPE_ROBE);
-				//if( strstr( sp->Description,"two")||strstr(sp->Description,"Two"))
-				//	result|=(1<<INVTYPE_2HWEAPON);<-handled in subclass
-			}
-			else*/
 			if(effect==SPELL_EFFECT_APPLY_AURA)
 			{
 				uint32 aura = sp->EffectApplyAuraName[y]; // 58+30+3 = 91
@@ -13507,8 +13410,6 @@ void ApplyNormalFixes()
 							pr|=PROC_ON_CAST_SPELL;
 						else if( strstr( sp->Description,"finishing moves"))
 							pr|=PROC_ON_CAST_SPELL;
-//						else if( strstr( sp->Description,"shadow bolt, shadowburn, soul fire, incinerate, searing pain and conflagrate"))
-//							pr|=PROC_ON_CAST_SPELL|PROC_TARGET_SELF;
 						//we should find that specific spell (or group) on what we will trigger
 						else pr|=PROC_ON_CAST_SPECIFIC_SPELL;
 					}
@@ -13584,8 +13485,6 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_CAST_SPELL;
 					if( strstr( sp->Description,"your melee and ranged attacks"))
 						pr|=PROC_ON_MELEE_ATTACK|PROC_ON_RANGED_ATTACK;
-//					if( strstr( sp->Description,"chill effect to your Blizzard"))
-//						pr|=PROC_ON_CAST_SPELL;	
 					//////////////////////////////////////////////////
 					//proc dmg flags
 					//////////////////////////////////////////////////
@@ -13625,25 +13524,8 @@ void ApplyNormalFixes()
 						pr|=PROC_ON_AUTO_SHOT_HIT;
 					if( strstr( sp->Description,"after getting a critical effect from your"))
 						pr=PROC_ON_SPELL_CRIT_HIT;
-//					if( strstr( sp->Description,"Your critical strikes from Fire damage"))
-//						pr|=PROC_ON_SPELL_CRIT_HIT;
 				}//end "if procspellaura"
 				//dirty fix to remove auras that should expire on event and they are not
-//				else if(sp->procCharges>0)
-//				{
-					//there are at least 185 spells that should loose charge uppon some event.Be prepared to add more here !
-					// ! watch it cause this might conflict with our custom modified spells like : lighning shield !
-
-					//spells like : Presence of Mind,Nature's Swiftness, Inner Focus,Amplify Curse,Coup de Grace
-					//SELECT * FROM dbc_spell where proc_charges!=0 and (effect_aura_1=108 or effect_aura_2=108 and effect_aura_3=108) and sp->Descriptionription!=""
-//					if(aura == SPELL_AURA_ADD_PCT_MODIFIER)
-//						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_CAST_SPELL;
-					//most of them probably already have these flags...not sure if we should add to all of them without checking
-/*					if( strstr( sp->Description, "melee"))
-						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_START_ATTACK;
-					if( strstr( sp->Description, "ranged"))
-						sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_START_ATTACK;*/
-//				}
 			}//end "if aura"
 		}//end "for each effect"
 		sp->procFlags = pr;
@@ -13832,18 +13714,6 @@ void ApplyNormalFixes()
 		//mage Ice Floes affects these spells : Cone of Cold,Cold Snap,Ice Barrier,Ice Block
 		if( sp->NameHash == SPELL_HASH_CONE_OF_COLD || sp->NameHash == SPELL_HASH_COLD_SNAP || sp->NameHash == SPELL_HASH_ICE_BARRIER || sp->NameHash == SPELL_HASH_ICE_BLOCK )
 			sp->EffectSpellGroupRelation[0] = 0x00200000;
-
-/*		else if( strstr( sp->Name, "Anesthetic Poison"))
-			sp->SpellGroupType |= 0; //not yet known ? 
-		else if( strstr( sp->Name, "Blinding Powder"))
-			sp->SpellGroupType |= 0; //not yet known ?
-		else 
-		if( sp->NameHash == SPELL_HASH_ILLUMINATION )
-			sp->EffectTriggerSpell[0] = 20272;*/  // broken trigger spell, do not use
-		//sp->dummy=result;
-/*		//if there is a proc spell and has 0 as charges then it's probably going to triger infinite times. Better not save these
-		if(sp->procCharges==0)
-			sp->procCharges=-1;*/
 
 		//Set Silencing spells mech.
 				// Set default mechanics if we don't already have one
@@ -14176,18 +14046,7 @@ void ApplyNormalFixes()
 		sp = dbcSpell.LookupEntryForced( 34953 );
 		if( sp != NULL )
 			sp->EffectImplicitTargetA[0] = EFF_TARGET_PET;
-				
-		
-			// THESE FIXES ARE GROUPED FOR CODE CLEANLINESS.
-			/*
-			// Concussive Shot, Distracting Shot, Silencing Shot - ranged spells
-			if( sp->NameHash == SPELL_HASH_CONCUSSIVE_SHOT || sp->NameHash == SPELL_HASH_DISTRACTING_SHOT || sp->NameHash == SPELL_HASH_SILENCING_SHOT || sp->NameHash == SPELL_HASH_SCATTER_SHOT || sp->NameHash == SPELL_HASH_TRANQUILIZING_SHOT )
-				sp->is_ranged_spell = true;
 
-			// All stings - ranged spells
-			if( sp->NameHash == SPELL_HASH_SERPENT_STING || sp->NameHash == SPELL_HASH_SCORPID_STING || sp->NameHash == SPELL_HASH_VIPER_STING || sp->NameHash == SPELL_HASH_WYVERN STING )
-				sp->is_ranged_spell = true;
-			*/
 			// come to think of it... anything *castable* requiring a ranged weapon is a ranged spell -.-
 			// Note that talents etc also come under this, however it does not matter
 			// if they get flagged as ranged spells because is_ranged_spell is only used for
@@ -14283,9 +14142,6 @@ void ApplyNormalFixes()
 				}
 			}
 		}
-//junk code to get me has :P 
-//if(sp->Id==11267 || sp->Id==11289 || sp->Id==6409)
-//	printf("!!!!!!! name %s , id %u , hash %u \n",sp->Name,sp->Id, sp->NameHash);
 	}
 
 
