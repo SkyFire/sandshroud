@@ -455,7 +455,7 @@ void StatDumper::DumpStats()
         fprintf(f, "  </instances>\n");
     }
 
-  {
+	{
         // GM Information
         fprintf(f, "  <gms>\n");
         while(!gms.empty())
@@ -463,20 +463,23 @@ void StatDumper::DumpStats()
             plr = gms.front();
             gms.pop_front();
 
-            FillOnlineTime(t - plr->OnlineTime, otime);
-            fprintf(f, "    <gmplr>\n");
-            fprintf(f, "      <name>%s</name>\n", plr->GetName());
-            fprintf(f, "      <race>%u</race>\n", plr->getRace());
-            fprintf(f, "      <class>%u</class>\n", (unsigned int)plr->getClass());
-            fprintf(f, "      <gender>%u</gender>\n", (unsigned int)plr->getGender());
-            fprintf(f, "      <pvprank>%u</pvprank>\n", (unsigned int)plr->GetPVPRank());
-            fprintf(f, "      <level>%u</level>\n", (unsigned int)plr->GetUInt32Value(UNIT_FIELD_LEVEL));
-            fprintf(f, "      <map>%u</map>\n", (unsigned int)plr->GetMapId());
-            fprintf(f, "      <areaid>%u</areaid>\n", (unsigned int)plr->GetPlayerAreaID());
-            fprintf(f, "      <ontime>%s</ontime>\n", otime);
-            fprintf(f, "      <latency>%u</latency>\n", (unsigned int)plr->GetSession()->GetLatency());
-            fprintf(f, "      <permissions>%s</permissions>\n", plr->GetSession()->GetPermissions());
-            fprintf(f, "    </gmplr>\n");
+            if(plr->bGMTagOn)
+            {
+                FillOnlineTime(t - plr->OnlineTime, otime);
+                fprintf(f, "    <gmplr>\n");
+                fprintf(f, "      <name>%s%s</name>\n", (plr->bGMTagOn ? (plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER) ? "{Dev}" : (plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_GM) ? "{GM}" : "")) : ""), plr->GetName());
+                fprintf(f, "      <race>%u</race>\n", plr->getRace());
+                fprintf(f, "      <class>%u</class>\n", (unsigned int)plr->getClass());
+                fprintf(f, "      <gender>%u</gender>\n", (unsigned int)plr->getGender());
+                fprintf(f, "      <pvprank>%u</pvprank>\n", (unsigned int)plr->GetPVPRank());
+                fprintf(f, "      <level>%u</level>\n", (unsigned int)plr->GetUInt32Value(UNIT_FIELD_LEVEL));
+                fprintf(f, "      <map>%u</map>\n", (unsigned int)plr->GetMapId());
+                fprintf(f, "      <areaid>%u</areaid>\n", (unsigned int)plr->GetPlayerAreaID());
+                fprintf(f, "      <ontime>%s</ontime>\n", otime);
+                fprintf(f, "      <latency>%u</latency>\n", (unsigned int)plr->GetSession()->GetLatency());
+                fprintf(f, "      <permissions>%s</permissions>\n", plr->GetSession()->GetPermissions());
+                fprintf(f, "    </gmplr>\n");
+            }
         }
 
         fprintf(f, "  </gms>\n");

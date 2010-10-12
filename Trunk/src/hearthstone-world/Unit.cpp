@@ -5916,6 +5916,8 @@ void Unit::EnableFlight()
 		{
 			TO_PLAYER(this)->m_setflycheat = true;
 			TO_PLAYER(this)->GetSession()->m_isFalling = false;
+			TO_PLAYER(this)->GetSession()->m_isJumping = false;
+			TO_PLAYER(this)->GetSession()->m_isKnockedback = false;
 		}
 	}
 	else
@@ -5927,6 +5929,8 @@ void Unit::EnableFlight()
 		TO_PLAYER(this)->z_axisposition = 0.0f;
 		TO_PLAYER(this)->m_setflycheat = true;
 		TO_PLAYER(this)->GetSession()->m_isFalling = false;
+		TO_PLAYER(this)->GetSession()->m_isJumping = false;
+		TO_PLAYER(this)->GetSession()->m_isKnockedback = false;
 	}
 }
 
@@ -5973,6 +5977,8 @@ void Unit::EventRegainFlight()
 	plr->z_axisposition = 0.0f;
 	plr->m_setflycheat = true;
 	plr->GetSession()->m_isFalling = false;
+	plr->GetSession()->m_isJumping = false;
+	plr->GetSession()->m_isKnockedback = false;
 	sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
 }
 
@@ -7335,7 +7341,7 @@ void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool 
 		if (unitTarget->GetCurrentSpell() != NULL)
 			unitTarget->GetCurrentSpell()->cancel();
 	}
-	else
+	else if(IsPlayer())
 	{
 		WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
 		data << GetNewGUID();
@@ -7348,6 +7354,7 @@ void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool 
 		plr->GetSession()->SendPacket( &data );
 		plr->ResetHeartbeatCoords();
 		plr->DelaySpeedHack(5000);
+		plr->GetSession()->m_isKnockedback = true;
 		if(plr->m_FlyingAura)
 		{
 			plr->DisableFlight();

@@ -584,6 +584,17 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 						return;
 					}
 				}
+				else if(m_isKnockedback)
+				{
+					SystemMessage("Jump cheat detected. If this is wrong, please report it to an administrator.");
+					m_jumpHackChances--;
+					if(!m_jumpHackChances)
+					{
+						sWorld.LogCheater(this, "Disconnected for jump cheat.");
+						Disconnect();
+						return;
+					}
+				}
 
 				m_isFalling = true;
 				m_isJumping = true;
@@ -609,7 +620,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 
 			//checks that player has fallen more than 12 units, otherwise no damage will be dealt
 			//falltime check is also needed here, otherwise sudden changes in Z axis position, such as using !recall, may result in death
-			if( _player->isAlive() && !_player->GodModeCheat && falldistance > 12 && ( getMSTime() >= _player->m_fallDisabledUntil ) &&
+			if( _player->isAlive() && !_player->GodModeCheat && !_player->bGMTagOn && falldistance > 12 && ( getMSTime() >= _player->m_fallDisabledUntil ) &&
 				!_player->HasAura(130) && !_player->GetTaxiState()) // Slow Fall or Taxi Path.
 			{
 				// 1.7% damage for each unit fallen on Z axis over 13
@@ -645,6 +656,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		case MSG_MOVE_FALL_LAND:
 			m_isFalling = false;
 			m_isJumping = false;
+			m_isKnockedback = false;
 		}
 
 		if(!m_isFalling)

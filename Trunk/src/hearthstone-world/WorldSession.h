@@ -769,6 +769,7 @@ public:
 
 	bool m_isFalling;
 	bool m_isJumping;
+	bool m_isKnockedback;
 	uint32 m_jumpHackChances;
 
 private:

@@ -7406,6 +7406,7 @@ void Player::TaxiStart(TaxiPath *path, uint32 modelid, uint32 start_node)
 	{
 		GetSession()->m_isFalling = false;
 		GetSession()->m_isJumping = false;
+		GetSession()->m_isKnockedback = false;
 	}
 
 	m_taxi_ride_time = getMSTime();
