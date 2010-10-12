@@ -220,41 +220,41 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraModAttackerCritChance,                          //197 Apply Aura: Reduce Attacker Critical Hit Chance by %
 	&Aura::SpellAuraIncreaseAllWeaponSkill,                         //198
 	&Aura::SpellAuraIncreaseHitRate,                                //199 Apply Aura: Increases Spell % To Hit (Fire, Nature, Frost)
-	&Aura::SpellAuraNULL,                                           //200 // Increases experience earned by $s1%.  Lasts $d.
+	&Aura::SpellAuraModMobKillXPGain,                               //200 Increases experience earned by $s1%.  Lasts $d.
 	&Aura::SpellAuraEnableFlight,                                   //201 Enable Flight
-	&Aura::SpellAuraFinishingMovesCannotBeDodged,                   //202 // Finishing moves cannot be dodged - 32601, 44452
+	&Aura::SpellAuraFinishingMovesCannotBeDodged,                   //202  Finishing moves cannot be dodged - 32601, 44452
 	&Aura::SpellAuraReduceCritMeleeAttackDmg,                       //203 Apply Aura: Reduces Attacker Critical Hit Damage with Melee by %
 	&Aura::SpellAuraReduceCritRangedAttackDmg,                      //204 Apply Aura: Reduces Attacker Critical Hit Damage with Ranged by %
-	&Aura::SpellAuraNULL,                                           //205 // "School" Vulnerability
-	&Aura::SpellAuraEnableFlight,                                   //206 // Take flight on a worn old carpet. - Spell 43343
+	&Aura::SpellAuraNULL,                                           //205 "School" Vulnerability
+	&Aura::SpellAuraEnableFlight,                                   //206 Take flight on a worn old carpet. - Spell 43343
 	&Aura::SpellAuraEnableFlight,                                   //207 set fly
 	&Aura::SpellAuraEnableFlightWithUnmountedSpeed,                 //208
-	&Aura::SpellAuraNULL,                                           //209  // mod flight speed?
-	&Aura::SpellAuraIncreaseFlightSpeed,                            //210	// commentator's command - spell 42009
+	&Aura::SpellAuraNULL,                                           //209 mod flight speed?
+	&Aura::SpellAuraIncreaseFlightSpeed,                            //210 commentator's command - spell 42009
 	&Aura::SpellAuraIncreaseFlightSpeed,                            //211
 	&Aura::SpellAuraIncreaseRangedAPStatPCT,                        //SPELL_AURA_MOD_RANGED_ATTACK_POWER_OF_INTELLECT //212 Apply Aura: Increase Ranged Atk Power by % of Intellect
 	&Aura::SpellAuraIncreaseRageFromDamageDealtPCT,                 //213 Apply Aura: Increase Rage from Damage Dealt by %
-	&Aura::SpellAuraNULL,                                           //214 // Tamed Pet Passive (DND)
-	&Aura::SpellAuraNULL,                                           //215 // arena preparation buff - cancel soul shard requirement?
+	&Aura::SpellAuraNULL,                                           //214 Tamed Pet Passive (DND)
+	&Aura::SpellAuraNULL,                                           //215 arena preparation buff - cancel soul shard requirement?
 	&Aura::SpellAuraModCastingSpeed,                                //216 Increases casting time %, reuse existing handler...
-	&Aura::SpellAuraNULL,                                           //217 // not used
-	&Aura::SpellAuraHasteRanged,                                    //218 // increases time between ranged attacks
+	&Aura::SpellAuraNULL,                                           //217 not used
+	&Aura::SpellAuraHasteRanged,                                    //218 increases time between ranged attacks
 	&Aura::SpellAuraRegenManaStatPCT,                               //219 Regenerate mana equal to $s1% of your Intellect every 5 sec, even while casting
 	&Aura::SpellAuraSpellHealingStatPCT,                            //220 Increases your healing spells  by up to $s1% of your Strength
 	&Aura::SpellAuraIgnoreEnemy,                                    //221 Detaunt "Ignores an enemy, forcing the caster to not attack it unless there is no other target nearby. When the effect wears off, the creature will attack the most threatening target."
-	&Aura::SpellAuraNULL,                                           //222 // not used
-	&Aura::SpellAuraNULL,                                           //223 // used in one spell, cold stare 43593
-	&Aura::SpellAuraNULL,                                           //224 // not used
-	&Aura::SpellAuraHealAndJump,                                    //225 // Prayer of Mending "Places a spell on the target that heals them for $s1 the next time they take damage.  When the heal occurs, Prayer of Mending jumps to a raid member within $a1 yards.  Jumps up to $n times and lasts $d after each jump.  This spell can only be placed on one target at a time."
-	&Aura::SpellAuraDrinkNew,                                       //226 // used in brewfest spells, headless hoerseman
+	&Aura::SpellAuraNULL,                                           //222 not used
+	&Aura::SpellAuraNULL,                                           //223 used in one spell, cold stare 43593
+	&Aura::SpellAuraNULL,                                           //224 not used
+	&Aura::SpellAuraHealAndJump,                                    //225 Prayer of Mending "Places a spell on the target that heals them for $s1 the next time they take damage.  When the heal occurs, Prayer of Mending jumps to a raid member within $a1 yards.  Jumps up to $n times and lasts $d after each jump.  This spell can only be placed on one target at a time."
+	&Aura::SpellAuraDrinkNew,                                       //226 used in brewfest spells, headless hoerseman
 	&Aura::SpellAuraPeriodicTriggerSpellWithValue,                  //227 Inflicts [SPELL DAMAGE] damage to enemies in a cone in front of the caster. (based on combat range) http://www.thottbot.com/s40938
 	&Aura::SpellAuraAuraModInvisibilityDetection,                   //228 Stealth Detection. http://www.thottbot.com/s34709
 	&Aura::SpellAuraReduceAOEDamageTaken,                           //229 Apply Aura:Reduces the damage your pet takes from area of effect attacks http://www.thottbot.com/s35694
 	&Aura::SpellAuraIncreaseMaxHealth,                              //230 Increase Max Health (commanding shout);
     &Aura::SpellAuraProcTriggerWithValue,                           //231 curse a target http://www.thottbot.com/s40303
-    &Aura::SpellAuraReduceEffectDuration,                           //232 // Movement Slowing Effect Duration // Reduces duration of Magic effects by $s2%.
-    &Aura::SpellAuraNULL,                                           //233 // Beer Goggles
-    &Aura::SpellAuraReduceEffectDuration,                           //234 // modifies the duration of all (miscValue mechanic) effects used against you by % http://www.wowhead.com/?spell=16254
+    &Aura::SpellAuraReduceEffectDuration,                           //232 Movement Slowing Effect Duration // Reduces duration of Magic effects by $s2%.
+    &Aura::SpellAuraNULL,                                           //233 Beer Goggles
+    &Aura::SpellAuraReduceEffectDuration,                           //234 modifies the duration of all (miscValue mechanic) effects used against you by % http://www.wowhead.com/?spell=16254
 	&Aura::SpellAuraNULL,                                           //235 33206 Instantly reduces a friendly target's threat by $44416s1%, reduces all damage taken by $s1% and increases resistance to Dispel mechanics by $s2% for $d.
 	&Aura::SpellAuraVehiclePassenger,                               //236
 	&Aura::SpellAuraModSpellDamageFromAP,                           //237 Mod Spell Damage from Attack Power
@@ -9248,6 +9248,19 @@ void Aura::SpellAuraIncreaseHitRate( bool apply )
 		TO_PLAYER( m_target )->ModifyBonuses( SPELL_HIT_RATING, -mod->m_amount );
 	TO_PLAYER( m_target )->UpdateStats();
 }
+
+void Aura::SpellAuraModMobKillXPGain( bool apply )
+{
+	if( !m_target->IsPlayer() )
+		return;
+	if( apply )
+		TO_PLAYER( m_target )->MobXPGainRate += GetSpellProto()->EffectBasePoints[0]+1;
+	else
+		TO_PLAYER( m_target )->MobXPGainRate -= GetSpellProto()->EffectBasePoints[0]+1;
+	if(TO_PLAYER( m_target )->MobXPGainRate <= (float)0.0f)
+		TO_PLAYER( m_target )->MobXPGainRate = (float)0.0f;
+}
+
 
 void Aura::SpellAuraIncreaseRageFromDamageDealtPCT(bool apply)
 {

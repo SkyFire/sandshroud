@@ -2690,6 +2690,8 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 						uint32 xp = CalculateXpToGive( pVictim, TO_UNIT(this) );
 						if( xp > 0 )
 						{
+							if(TO_PLAYER(this)->MobXPGainRate)
+								xp += (xp*(TO_PLAYER(this)->MobXPGainRate/100));
 							TO_PLAYER(this)->GiveXP( xp, victimGuid, true );
 							if( TO_PLAYER(this)->GetSummon() && TO_PLAYER(this)->GetSummon()->GetUInt32Value( UNIT_CREATED_BY_SPELL ) == 0 )
 							{

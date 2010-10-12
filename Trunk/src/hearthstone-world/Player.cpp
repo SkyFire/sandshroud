@@ -399,7 +399,7 @@ void Player::Init()
 	m_lastMoveType = 0;
 	m_tempSummon = NULLCREATURE;
 	m_spellcomboPoints = 0;
-	memset( &m_pendingBattleground, 0, sizeof(CBattleground*) * 3);
+	memset( &m_pendingBattleground, 0, sizeof(CBattleground*) * 2);
 	m_deathVision = false;
 	m_retainComboPoints = false;
 	last_heal_spell = NULL;
@@ -485,6 +485,7 @@ void Player::Init()
 	LastPhase = 1; // TODO: SAVE TO DB!
 	RequireAmmo = true;
 	PreventRes = false;
+	MobXPGainRate = 0.0f;
 	Unit::Init();
 }
 

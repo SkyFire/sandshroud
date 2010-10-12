@@ -688,6 +688,7 @@ public:
 	void SpellAuraIncreaseAllWeaponSkill(bool apply);
 	void SpellAuraModAttackerCritChance(bool apply);
 	void SpellAuraIncreaseHitRate(bool apply);
+	void SpellAuraModMobKillXPGain(bool apply);
 	void SpellAuraReduceCritMeleeAttackDmg(bool apply);
 	void SpellAuraReduceCritRangedAttackDmg(bool apply);
 	void SpellAuraEnableFlight(bool apply);

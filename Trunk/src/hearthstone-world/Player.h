@@ -2281,8 +2281,7 @@ public:
 	void GenerateLoot(Corpse* pCorpse);
 	uint32 GenerateShapeshiftModelId(uint32 form);
 	PlayerCreateInfo * GetInfo() const { return info;};
-public:
-
+	float MobXPGainRate;
 };
 
 class SkillIterator
