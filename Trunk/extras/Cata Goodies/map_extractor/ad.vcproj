@@ -77,10 +77,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="zlib.lib winmm.lib"
-				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/"
 				OutputFile="ad debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="./ad debug.pdb"
@@ -121,6 +121,7 @@
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
+			EnableManagedIncrementalBuild="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -172,10 +173,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="zlib.lib winmm.lib"
-				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/"
 				OutputFile="./ad.exe"
-				LinkIncremental="1"
+				LinkIncremental="0"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="./ad.pdb"
