@@ -227,7 +227,8 @@ enum AccountFlags
 struct MapInfo
 {
 	uint32 mapid;
-	uint32 screenid;
+	char * name;
+	bool load;
 	uint32 type;
 	uint32 playerlimit;
 	uint32 minlevel;
@@ -235,7 +236,6 @@ struct MapInfo
 	float repopy;
 	float repopz;
 	uint32 repopmapid;
-	char * name;
 	uint32 flags;
 	uint32 cooldown;
  	uint32 required_quest;

@@ -86,15 +86,12 @@ void InstanceMgr::Load(TaskList * l)
 			continue;
 		}
 
-#ifdef EXCLUDE_TEST_MAPS
-		MapEntry *me = dbcMap.LookupEntry(mapinfo->mapid);
-		if (me != NULL && !me->multimap_id)
+		if( !mapinfo->load )
 		{
-			Log.Notice("InstanceMgr", "Skipped test map: %u (hearthstoneConfig.h)", mapinfo->mapid );
+			Log.Notice("InstanceMgr", "Skipping map %u", mapinfo->mapid);
 			itr->Inc();
 			continue;
 		}
-#endif
 
 		if(m_maps[mapinfo->mapid] == NULL)
 		{
