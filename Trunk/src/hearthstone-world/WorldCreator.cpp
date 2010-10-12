@@ -601,6 +601,10 @@ uint32 InstanceMgr::GenerateInstanceID()
 
 void BuildStats(MapMgr* mgr, char * m_file, Instance * inst, MapInfo * inf)
 {
+	MapEntry *me = dbcMap.LookupEntry(inf->mapid);
+	if (me == NULL || !inf->load) // Crow: dunno if we need the !load part
+		return;
+
 	char tmp[200];
 	strcpy(tmp, "");
 #define pushline strcat(m_file, tmp)
@@ -676,7 +680,7 @@ void InstanceMgr::BuildXMLStats(char * m_file)
 					in = itr->second;
 					++itr;
 
-					if(in->m_mapMgr==NULL)
+					if(in->m_mapMgr == NULL)
 						continue;
 
 					BuildStats(in->m_mapMgr, m_file, in, in->m_mapInfo);
@@ -685,6 +689,7 @@ void InstanceMgr::BuildXMLStats(char * m_file)
 		}
 	}
 	m_mapLock.Release();
+	Log.Debug("InstanceMgr", "Dumping XML stats...");
 }
 
 void InstanceMgr::_LoadInstances()

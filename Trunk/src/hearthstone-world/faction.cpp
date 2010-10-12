@@ -130,6 +130,9 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	if(!player_objA && objA->IsVehicle())
 		player_objA = TO_VEHICLE(objA)->m_redirectSpellPackets;
 
+	if(player_objA && player_objA->GetSession() && player_objA->GetSession()->HasGMPermissions())
+		return true;
+
 	if( player_objA && player_objB )
 	{
 		if(player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
