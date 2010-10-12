@@ -812,7 +812,7 @@ bool Player::Create(WorldPacket& data )
 
 	if( sWorld.StartLevel >= uint8(class_ != DEATHKNIGHT ? 10: 55) )
 	{
-		SetUInt32Value(PLAYER_CHARACTER_POINTS1, sWorld.StartLevel - uint32(class_ != DEATHKNIGHT ? 9: 55));
+		SetUInt32Value(PLAYER_CHARACTER_POINTS, sWorld.StartLevel - uint32(class_ != DEATHKNIGHT ? 9: 55));
 		SetUInt32Value(UNIT_FIELD_LEVEL,sWorld.StartLevel);
 	}
 	else
@@ -864,7 +864,7 @@ bool Player::Create(WorldPacket& data )
 	SetUInt32Value(PLAYER_BYTES_3, ((gender) | (0x00 << 8) | (0x00 << 16) | (GetPVPRank() << 24)));
 	SetUInt32Value(PLAYER_NEXT_LEVEL_XP, 400);
 	SetUInt32Value(PLAYER_FIELD_BYTES, 0x08 );
-	SetUInt32Value(PLAYER_CHARACTER_POINTS2,2);
+	SetUInt32Value(PLAYER_CHARACTER_POINTS+1,2);
 	SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 	SetUInt32Value(PLAYER_FIELD_MAX_LEVEL, sWorld.GetMaxLevel(TO_PLAYER(this)));
 
@@ -1695,7 +1695,7 @@ void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
 	if(m_talentSpecsCount > 2)
 		m_talentSpecsCount = 2; // Hack fix
 
-	*data << uint32(GetUInt32Value(PLAYER_CHARACTER_POINTS1)); // Unspent talents
+	*data << uint32(GetUInt32Value(PLAYER_CHARACTER_POINTS)); // Unspent talents
 	// TODO: probably shouldn't send both specs if target is not self
 	*data << uint8(m_talentSpecsCount);
 	*data << uint8(m_talentActiveSpec);
@@ -2113,7 +2113,7 @@ void Player::addSpell(uint32 spell_id)
 		{
 			case SKILL_TYPE_PROFESSION:
 				max=75*((spell->RankNumber)+1);
-				ModUnsigned32Value( PLAYER_CHARACTER_POINTS2, -1 ); // we are learning a proffesion, so substract a point.
+				ModUnsigned32Value( PLAYER_CHARACTER_POINTS+1, -1 ); // we are learning a proffesion, so substract a point.
 				break;
 			case SKILL_TYPE_SECONDARY:
 				max=75*((spell->RankNumber)+1);
@@ -2232,7 +2232,6 @@ void Player::InitVisibleUpdateBits()
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_TEAM);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_ARBITER);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_ARBITER+1);
-	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDID);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDRANK);
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_BYTES_2);
 
@@ -2272,8 +2271,8 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	if( m_bg != NULL && IS_ARENA( m_bg->GetType() ) )
 		in_arena = true;
 
-	if( m_uint32Values[PLAYER_CHARACTER_POINTS2] > 2)
-		m_uint32Values[PLAYER_CHARACTER_POINTS2] = 2;
+	if( m_uint32Values[PLAYER_CHARACTER_POINTS+1] > 2)
+		m_uint32Values[PLAYER_CHARACTER_POINTS+1] = 2;
 
 	//Calc played times
 	uint32 playedt = (uint32)UNIXTIME - m_playedtime[2];
@@ -2342,8 +2341,12 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES1) << ","
 	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES2) << ","
 	<< m_uint32Values[PLAYER_FIELD_COINAGE] << ","
+#ifndef CATACLYSM
 	<< m_uint32Values[PLAYER_AMMO_ID] << ","
-	<< m_uint32Values[PLAYER_CHARACTER_POINTS2] << ","
+#else
+	<< uint32(0) << ","
+#endif
+	<< m_uint32Values[PLAYER_CHARACTER_POINTS+1] << ","
 	<< m_maxTalentPoints << ","
 	<< load_health << ","
 	<< load_mana << ","
@@ -3222,8 +3225,12 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES1, get_next_field.GetUInt64() );
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES2, get_next_field.GetUInt64() );
 	m_uint32Values[PLAYER_FIELD_COINAGE]				= get_next_field.GetUInt32();
+#ifndef CATACLYSM
 	m_uint32Values[PLAYER_AMMO_ID]						= get_next_field.GetUInt32();
-	m_uint32Values[PLAYER_CHARACTER_POINTS2]			= get_next_field.GetUInt32();
+#else
+	get_next_field;
+#endif
+	m_uint32Values[PLAYER_CHARACTER_POINTS+1]			= get_next_field.GetUInt32();
 	m_maxTalentPoints									= get_next_field.GetUInt16();
 	load_health											= get_next_field.GetUInt32();
 	load_mana											= get_next_field.GetUInt32();
@@ -5301,7 +5308,7 @@ void Player::_LoadSkills(QueryResult * result)
 		}
 	}
 	//Update , GM's can still learn more
-	SetUInt32Value( PLAYER_CHARACTER_POINTS2, ( GetSession()->HasGMPermissions()? 2 : proff_counter ) );
+	SetUInt32Value( PLAYER_CHARACTER_POINTS+1, ( GetSession()->HasGMPermissions()? 2 : proff_counter ) );
 	_UpdateMaxSkillCounts();
 }
 
@@ -6542,9 +6549,9 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 	if( spellinfo == NULL )
 		return -1;
 
-	// Check ammo
 	Item* itm = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_RANGED );
-	if( RequireAmmo )
+#ifndef CATACLYSM
+	if( RequireAmmo ) // Check ammo
 	{
 		if( itm == NULL )
 			fail = SPELL_FAILED_NO_AMMO;
@@ -6557,6 +6564,7 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 		if( ammo && ranged && ammo->SubClass != ranged->AmmoType )
 			return SPELL_FAILED_NEED_AMMO;
 	}
+#endif
 
 	// Player has clicked off target. Fail spell.
 	if( m_curSelection != m_AutoShotTarget )
@@ -6985,7 +6993,7 @@ void Player::Reset_Talents()
 	if( getClass() == SHAMAN && _HasSkillLine( SKILL_DUAL_WIELD ) )
 		_RemoveSkillLine( SKILL_DUAL_WIELD );
 
-	SetUInt32Value(PLAYER_CHARACTER_POINTS1, GetMaxTalentPoints());
+	SetUInt32Value(PLAYER_CHARACTER_POINTS, GetMaxTalentPoints());
 
 	if( getClass() == WARRIOR )
 	{
@@ -7078,7 +7086,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 		newTalentPoints = 0;	// just in case
 	else
 		newTalentPoints = maxTalentPoints - spentPoints;
-	SetUInt32Value(PLAYER_CHARACTER_POINTS1, newTalentPoints);
+	SetUInt32Value(PLAYER_CHARACTER_POINTS, newTalentPoints);
 
 	// Apply glyphs
 	for(uint32 i = 0; i < GLYPHS_COUNT; i++)
@@ -7159,7 +7167,7 @@ void Player::LearnTalent(uint32 talent_id, uint32 requested_rank)
 	TalentEntry * talentInfo = dbcTalent.LookupEntryForced(talent_id);
 	if(!talentInfo)return;
 
-	uint32 CurTalentPoints = GetUInt32Value(PLAYER_CHARACTER_POINTS1);
+	uint32 CurTalentPoints = GetUInt32Value(PLAYER_CHARACTER_POINTS);
 	std::map<uint32, uint8> *talents = &m_specs[m_talentActiveSpec].talents;
 	uint8 currentRank = 0;
 	std::map<uint32, uint8>::iterator itr = talents->find(talent_id);
@@ -7230,7 +7238,7 @@ void Player::LearnTalent(uint32 talent_id, uint32 requested_rank)
 	}
 
 	(*talents)[talent_id] = requested_rank;
-	SetUInt32Value(PLAYER_CHARACTER_POINTS1, CurTalentPoints - RequiredTalentPoints);
+	SetUInt32Value(PLAYER_CHARACTER_POINTS, CurTalentPoints - RequiredTalentPoints);
 	// More cheat death hackage! :)
 	if(spellid == 31330)
 		m_cheatDeathRank = 3;
@@ -7279,8 +7287,8 @@ void Player::Reset_ToLevel1()
 	SetUInt32Value(UNIT_FIELD_STAT3, info->intellect );
 	SetUInt32Value(UNIT_FIELD_STAT4, info->spirit );
 	SetUInt32Value(UNIT_FIELD_ATTACK_POWER, info->attackpower );
-	SetUInt32Value(PLAYER_CHARACTER_POINTS1,0);
-	SetUInt32Value(PLAYER_CHARACTER_POINTS2,2);
+	SetUInt32Value(PLAYER_CHARACTER_POINTS,0);
+	SetUInt32Value(PLAYER_CHARACTER_POINTS+1,2);
 	for(uint32 x=0;x<7;x++)
 		SetFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT+x, 1.00);
 
@@ -8901,7 +8909,7 @@ void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
 	if(Talents < 0)
 		Reset_Talents();
 	else if(Level >= 10)
-		ModUnsigned32Value(PLAYER_CHARACTER_POINTS1, Talents);
+		ModUnsigned32Value(PLAYER_CHARACTER_POINTS, Talents);
 
 	// Set base fields
 	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, Info->BaseHP);
@@ -9170,6 +9178,7 @@ void Player::SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase)
 	}
 }
 
+#ifndef CATACLYSM
 void Player::SetGuildId(uint32 guildId)
 {
 	if(IsInWorld())
@@ -9183,6 +9192,7 @@ void Player::SetGuildId(uint32 guildId)
 		SetUInt32Value(PLAYER_GUILDID,guildId);
 	}
 }
+#endif
 
 void Player::SetGuildRank(uint32 guildRank)
 {
@@ -10086,6 +10096,7 @@ void Player::CalcDamage()
 				ap_bonus = GetRAP()/14000.0f;
 				bonus = ap_bonus*it->GetProto()->Delay;
 
+#ifndef CATACLYSM
 				if(GetUInt32Value(PLAYER_AMMO_ID) && RequireAmmo)
 				{
 					ItemPrototype * xproto=ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
@@ -10094,6 +10105,7 @@ void Player::CalcDamage()
 						bonus+=((xproto->Damage[0].Min+xproto->Damage[0].Max)*it->GetProto()->Delay)/2000.0f;
 					}
 				}
+#endif
 			}else bonus = 0;
 
 			r = BaseRangedDamage[0]+delta+bonus;
@@ -10616,7 +10628,7 @@ void Player::_UpdateSkillFields()
 			continue;
 		}
 
-		ASSERT(f <= PLAYER_CHARACTER_POINTS1);
+		ASSERT(f <= PLAYER_CHARACTER_POINTS+1);
 		if(itr->second.Skill->type == SKILL_TYPE_PROFESSION)
 			SetUInt32Value(f++, itr->first | 0x10000);
 		else
@@ -10727,7 +10739,7 @@ void Player::_UpdateSkillFields()
 	}
 
 	/* Null out the rest of the fields */
-	for(; f < PLAYER_CHARACTER_POINTS1; ++f)
+	for(; f < PLAYER_CHARACTER_POINTS; ++f)
 	{
 		if(m_uint32Values[f] != 0)
 			SetUInt32Value(f, 0);
@@ -11272,8 +11284,8 @@ void Player::save_Misc()
 
 	CharacterDatabase.Execute("UPDATE characters SET totalstableslots = %u, first_login = 0, TalentResetTimes = %u, playedTime = '%u %u %u ', isResting = %u, restState = %u, restTime = %u, timestamp = %u, watched_faction_index = %u, ammo_id = %u, available_prof_points = %u, available_talent_points = %u, bytes = %u, bytes2 = %u, player_flags = %u, player_bytes = %u",
 		GetStableSlotCount(), GetTalentResetTimes(), m_playedtime[0], m_playedtime[1], playedt, uint32(m_isResting), uint32(m_restState), m_restAmount, UNIXTIME,
-		m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX], m_uint32Values[PLAYER_AMMO_ID], m_uint32Values[PLAYER_CHARACTER_POINTS2],
-		m_uint32Values[PLAYER_CHARACTER_POINTS1], m_uint32Values[PLAYER_BYTES], m_uint32Values[PLAYER_BYTES_2], player_flags,
+		m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX], m_uint32Values[PLAYER_AMMO_ID], m_uint32Values[PLAYER_CHARACTER_POINTS+1],
+		m_uint32Values[PLAYER_CHARACTER_POINTS], m_uint32Values[PLAYER_BYTES], m_uint32Values[PLAYER_BYTES_2], player_flags,
 		m_uint32Values[PLAYER_FIELD_BYTES],
 		m_uint32Values[OBJECT_FIELD_GUID]);
 }
@@ -13014,6 +13026,7 @@ uint16 Player::FindQuestSlot( uint32 questid )
 
 void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 {
+#ifndef CATACLYSM
 	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
 	{
 		if(ctEntry)
@@ -13032,6 +13045,7 @@ void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 			}
 		}
 	}
+#endif
 }
 
 uint32 Player::GetTotalItemLevel()

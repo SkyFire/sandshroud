@@ -1128,6 +1128,7 @@ void WorldSession::HandleTogglePVPOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)
 {
+#ifndef CATACLYSM
 	uint32 ammoId;
 	recv_data >> ammoId;
 
@@ -1181,6 +1182,7 @@ void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)
 
 #ifdef OPTIMIZED_PLAYER_SAVING
 	_player->save_Misc();
+#endif
 #endif
 }
 

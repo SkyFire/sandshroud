@@ -346,8 +346,8 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 	ss << uint32(GetStandState()) << ", "
 		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ", "
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ", "
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ", "
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ", "
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+1] << ", "
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ", "
 		<< m_phaseMode << ", "
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ", "
 		<< (uint32)GetCanMove() << " )";
@@ -391,8 +391,8 @@ void Creature::SaveToFile(bool saveposition)
 		logreplace << uint32(GetStandState()) << ","
 		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+1] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ","
 		<< m_phaseMode << ","
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
 		<< (uint8)CanMove << ")";
@@ -430,8 +430,8 @@ void Creature::SaveToFile(bool saveposition)
 		logupdate << uint32(GetStandState()) << ","
 		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_1] << ","
-		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID_2] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+1] << ","
+		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ","
 		<< m_phaseMode << ","
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
 		<< (uint8)CanMove << ")";
@@ -1037,8 +1037,8 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,proto->RangedMaxDamage);
 
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, spawn->ItemSlot1);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, spawn->ItemSlot2);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_2, spawn->ItemSlot3);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+1, spawn->ItemSlot2);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+2, spawn->ItemSlot3);
 
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, spawn->factionid);
 	SetUInt32Value(UNIT_FIELD_FLAGS, spawn->flags);
@@ -1386,8 +1386,8 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,proto->RangedMaxDamage);
 
 	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, proto->Item1);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_1, proto->Item2);
-	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID_2, proto->Item3);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+1, proto->Item2);
+	SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+2, proto->Item3);
 
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, proto->Faction);
 	SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, proto->BoundingRadius);

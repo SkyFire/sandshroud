@@ -102,4 +102,3 @@
 //#define CATACLYSM
 
 #endif		// __HEARTHSTONECONFIG_H
-

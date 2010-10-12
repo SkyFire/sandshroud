@@ -1051,7 +1051,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 	if(IsQuestRepeatable(qst))
 	{
 		plr->ModUnsigned32Value(PLAYER_FIELD_COINAGE, GenerateRewardMoney(plr, qst));
-		plr->ModUnsigned32Value(PLAYER_CHARACTER_POINTS1, qst->reward_talents);
+		plr->ModUnsigned32Value(PLAYER_CHARACTER_POINTS, qst->reward_talents);
 		HonorHandler::AddHonorPointsToPlayer(plr, qst->reward_honor);
 		// Reputation reward
 		GiveQuestRewardReputation(plr, qst, qst_giver);
@@ -1160,7 +1160,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 	else
 	{
 		plr->ModUnsigned32Value(PLAYER_FIELD_COINAGE, GenerateRewardMoney(plr, qst));
-		plr->ModUnsigned32Value(PLAYER_CHARACTER_POINTS1, qst->reward_talents);
+		plr->ModUnsigned32Value(PLAYER_CHARACTER_POINTS, qst->reward_talents);
 		HonorHandler::AddHonorPointsToPlayer(plr, qst->reward_honor);
   
 		// Reputation reward

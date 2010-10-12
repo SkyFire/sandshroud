@@ -332,11 +332,16 @@ void WorldSession::HandleInspectHonorStatsOpcode( WorldPacket &recv_data )
 	uint8 buf[100];
 	StackPacket data( MSG_INSPECT_HONOR_STATS, buf, 100 );
 
+#ifndef CATACLYSM
 	data << player->GetGUID() << (uint8)player->GetUInt32Value( PLAYER_FIELD_HONOR_CURRENCY );
 	data << player->GetUInt32Value( PLAYER_FIELD_KILLS );
 	data << player->GetUInt32Value( PLAYER_FIELD_TODAY_CONTRIBUTION );
 	data << player->GetUInt32Value( PLAYER_FIELD_YESTERDAY_CONTRIBUTION );
 	data << player->GetUInt32Value( PLAYER_FIELD_LIFETIME_HONORABLE_KILLS );
+#else
+	data << player->GetGUID() << (uint8)0;
+	data << player->GetUInt32Value( PLAYER_FIELD_KILLS );
+#endif
 
 	SendPacket( &data );
 }

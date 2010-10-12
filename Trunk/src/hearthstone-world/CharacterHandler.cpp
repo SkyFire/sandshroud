@@ -811,7 +811,11 @@ void WorldSession::FullLogin(Player* plr)
 	plr->m_playerInfo = info;
 	if(plr->m_playerInfo->guild)
 	{
+#ifndef CATACLYSM
 		plr->m_uint32Values[PLAYER_GUILDID] = plr->m_playerInfo->guild->GetGuildId();
+#else
+		plr->GuildId = plr->m_playerInfo->guild->GetGuildId();
+#endif
 		plr->m_uint32Values[PLAYER_GUILDRANK] = plr->m_playerInfo->guildRank->iId;
 	}
 

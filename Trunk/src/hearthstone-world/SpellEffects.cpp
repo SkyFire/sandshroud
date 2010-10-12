@@ -689,10 +689,12 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				if( p_caster != NULL )
 				{
 					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
+#ifndef CATACLYSM
 					ItemPrototype* ip = ItemPrototypeStorage.LookupEntry(p_caster->GetUInt32Value(PLAYER_AMMO_ID));
+					float ammodmg;
+#endif
 					uint32 stundmg;
 					float bowdmg;
-					float ammodmg;
 					// Stun Damage
 					if(unitTarget->IsDazed())
 					{
@@ -707,6 +709,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 						bowdmg = (it->GetProto()->Damage[0].Min + it->GetProto()->Damage[0].Max) * 0.2f; //+unmodified weapon damage
 					else
 						bowdmg = 0;
+#ifndef CATACLYSM
 					// Ammo Damage
 					if(ip)
 						ammodmg = (ip->Damage[0].Min + ip->Damage[0].Max) * 0.2f; //+unmodified ammo damage
@@ -714,6 +717,10 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 						ammodmg = 0;
 					// Actual damage :D
 					dmg = float2int32(ammodmg + bowdmg) + stundmg;
+#else
+					// Actual damage :D
+					dmg = float2int32(bowdmg) + stundmg;
+#endif
 				}
 			}break;
 
@@ -4897,7 +4904,7 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 			return;*/
 
 		if( sk->type == SKILL_TYPE_PROFESSION )
-			target->ModUnsigned32Value( PLAYER_CHARACTER_POINTS2, -1 );
+			target->ModUnsigned32Value( PLAYER_CHARACTER_POINTS+1, -1 );
 
 		if( skill == SKILL_RIDING )
 			target->_AddSkillLine( skill, max, max );

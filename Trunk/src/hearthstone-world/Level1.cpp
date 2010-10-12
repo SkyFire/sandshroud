@@ -837,9 +837,7 @@ bool ChatHandler::HandleModifyTPsCommand(const char* args, WorldSession *m_sessi
 		return true;
 	}
 
-	if(TP1 != 0)
-		Pl->SetUInt32Value(PLAYER_CHARACTER_POINTS1, TP1);
-
+	Pl->ModUnsigned32Value(PLAYER_CHARACTER_POINTS, TP1);
 	Pl->smsg_TalentsInfo(false);
 	return true;
 }

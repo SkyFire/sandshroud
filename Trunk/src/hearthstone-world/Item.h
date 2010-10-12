@@ -252,6 +252,8 @@ public:
 	bool HasEnchantments() { return ( Enchantments.size() > 0 ) ? true : false; }
 
 	uint32 wrapped_item_id;
+	uint32 GetTextID() { return textid; };
+	void SetTextID(uint32 newtxt) { textid = newtxt; };
 
 protected:
 	ItemPrototype* m_itemProto;
@@ -260,6 +262,7 @@ protected:
 	Player* m_owner; // let's not bother the manager with unneeded requests
 	uint32 random_prop;
 	uint32 random_suffix;
+	uint32 textid;
 
 public:
 

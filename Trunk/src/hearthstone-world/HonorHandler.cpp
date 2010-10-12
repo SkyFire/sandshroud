@@ -237,6 +237,7 @@ void HonorHandler::OnPlayerKilledUnit( Player* pPlayer, Unit* pVictim )
 void HonorHandler::RecalculateHonorFields(Player* pPlayer)
 {
 	pPlayer->SetUInt32Value(PLAYER_FIELD_KILLS, uint16(pPlayer->m_killsToday) | ( pPlayer->m_killsYesterday << 16 ) );
+#ifndef CATACLYSM
 	pPlayer->SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, pPlayer->m_honorToday);
 	pPlayer->SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, pPlayer->m_honorYesterday);
 	pPlayer->SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, pPlayer->m_killsLifetime);
@@ -246,6 +247,7 @@ void HonorHandler::RecalculateHonorFields(Player* pPlayer)
 	// Currency tab - (Blizz Placeholders)
 	pPlayer->UpdateKnownCurrencies(43307, true); //Arena Points
 	pPlayer->UpdateKnownCurrencies(43308, true); //Honor Points
+#endif
 }
 
 bool ChatHandler::HandleAddKillCommand(const char* args, WorldSession* m_session)

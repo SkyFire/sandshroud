@@ -2826,7 +2826,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				SpellEntry *spentry = dbcSpell.LookupEntry( spellId );
 				if( (spentry->NameHash == SPELL_HASH_CORRUPTION || spentry->NameHash == SPELL_HASH_UNSTABLE_AFFLICTION) && plra->HasDummyAura(SPELL_HASH_PANDEMIC) )
 				{
-					if( Rand( plra->GetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1_5) ) && pVictim )
+					if( Rand( plra->GetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1+5) ) && pVictim )
 					{
 						Spell* sp(new Spell(this, dbcSpell.LookupEntry(58691), true, NULLAURA));
 						SpellCastTargets targets;

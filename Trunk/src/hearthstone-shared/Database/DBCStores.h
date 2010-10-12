@@ -679,8 +679,8 @@ struct SpellEntry
 	uint32 School;							// 23
 	uint32 runeCostID;						// 24
 	//uint32 spellMissileID;				// 25
-	//uint32 SpellDescriptionVariableID		// 26
-	//uint32 SpellDifficulty;				// 27
+	uint32 SpellDescriptionVariableID;		// 26
+	uint32 SpellDifficulty;					// 27
 	//float unk_f1;							// 28
 	uint32 SpellScalingId;					// 29	SpellScaling.dbc
 	uint32 SpellAuraOptionsId;				// 30	SpellAuraOptions.dbc
@@ -944,6 +944,137 @@ struct SpellEntry
 	// Crow: The following are customs made by me, mostly duplicate fields for handling more information.
 	uint32 procflags2; // We get two now, hurray. One does not take the place of the other.
 };
+
+#ifdef CATACLYSM
+
+// SpellScaling
+struct SpellScalingEntry
+{
+	uint32 Id;		// 0 m_ID
+	uint32 unk1;	// 1
+	uint32 unk2;	// 2
+	uint32 unk3;	// 3
+    uint32 unk4;	// 4 class?
+    float  unk5;	// 5
+    float  unk6;	// 6
+    float  unk7;	// 7
+    float  unk8;	// 8
+    float  unk9;	// 9
+    float  unk10;	// 10 all zeros
+    float  unk11;	// 11
+    float  unk12;	// 12 all zeros
+    float  unk13;	// 13 all zeros
+    float  unk14;	// 14
+    uint32 unk15;	// 15
+};
+
+// SpellReagents
+struct SpellReagentEntry
+{
+	uint32 ID;					// 0		Spell ID
+	uint32 Reagent[8];			// 1 - 8	Reagent ID
+	uint32 ReagentCount[8];		// 9 - 16	Reagent Count
+};
+
+// SpellTargetRestrictions
+struct SpellTargetRestrict
+{
+	//uint32 ID					// 0
+	uint32 MaxTargets;  		// 1
+	uint32 MaxTargetLevel;		// 2
+	uint32 TargetCreatureType;	// 3
+	uint32 Targets;				// 4
+};
+
+struct SpellAuraOptionEntry
+{
+	uint32 ID;
+	uint32 maxstack;
+	uint32 procChance;
+	uint32 procCharges;
+	uint32 procFlags;
+};
+
+struct SpellAuraRestrictionEntry
+{
+	uint32 ID;
+	uint32 CasterAuraState;
+	uint32 TargetAuraState;
+	uint32 CasterAuraStateNot;
+	uint32 TargetAuraStateNot;
+	uint32 casterAuraSpell;
+	uint32 targetAuraSpell;
+	uint32 excludeCasterAuraSpell; 
+	uint32 excludeTargetAuraSpell;
+};
+
+struct SpellCastingRequirementEntry
+{
+	uint32 ID;
+	uint32 FacingCasterFlags;
+	uint32 MinFactionID;
+	uint32 MinReputation;
+	int32 AreaGroupId;
+	uint32 RequiredAuraVision;
+	uint32 RequiresSpellFocus;
+};
+
+struct SpellCategoriesEntry
+{
+	uint32 ID;
+	uint32 Category;
+	uint32 Spell_Dmg_Type;
+	uint32 DispelType;
+	uint32 MechanicsType;
+	uint32 PreventionType;
+	uint32 StartRecoveryCategory;
+};
+
+struct SpellClassOptionEntry
+{
+	uint32 ID;
+	uint32 modalNextSpell;
+	uint32 SpellGroupType[3];
+	uint32 SpellFamilyName;
+};
+
+struct SpellCooldownEntry
+{
+	uint32 ID;
+	uint32 CategoryRecoveryTime;
+	uint32 RecoveryTime;
+	uint32 StartRecoveryTime;
+};
+
+struct SpellEffectEntry
+{
+	uint32 ID;
+	uint32 Effect;
+	float EffectMultipleValue;
+	uint32 EffectApplyAuraName;
+	uint32 EffectAmplitude;
+	int32 EffectBasePoints;
+	//float unk
+	float DmgMultiplier;
+	uint32 EffectChainTarget;
+	int32  EffectDieSides;
+	uint32 EffectItemType;
+	uint32 EffectMechanic;
+	int32 EffectMiscValue;
+	int32 EffectMiscValueB;
+	float EffectPointsPerComboPoint;
+	uint32 EffectRadiusIndex;
+	//uint32 unk_400
+	float  EffectRealPointsPerLevel;
+	uint32 EffectSpellClassMaskA[3];
+	uint32 EffectTriggerSpell;
+	uint32 EffectImplicitTargetA;
+	uint32 EffectImplicitTargetB;
+	uint32 EffectSpellId;
+	uint32 EffectIndex;
+};
+
+#endif
 
 struct SpellDifficultyEntry
 {
@@ -1832,6 +1963,8 @@ public:
 	}
 };
 
+#ifndef CATACLYSM
+
 extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
 extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
@@ -1895,6 +2028,83 @@ extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistri
 extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
 extern SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
+
+#else
+
+extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
+extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
+extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
+extern SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
+extern SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
+extern SERVER_DECL DBCStorage<Lock> dbcLock;
+extern SERVER_DECL DBCStorage<SpellEntry> dbcSpell;
+extern SERVER_DECL DBCStorage<SpellDuration> dbcSpellDuration;
+extern SERVER_DECL DBCStorage<SpellRange> dbcSpellRange;
+extern SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
+extern SERVER_DECL DBCStorage<SpellRuneCostEntry> dbcSpellRuneCost;
+extern SERVER_DECL DBCStorage<emoteentry> dbcEmoteEntry;
+extern SERVER_DECL DBCStorage<SpellRadius> dbcSpellRadius;
+extern SERVER_DECL DBCStorage<SpellCastTime> dbcSpellCastTime;
+extern SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
+extern SERVER_DECL DBCStorage<AreaTable> dbcArea;
+extern SERVER_DECL DBCStorage<FactionTemplateDBC> dbcFactionTemplate;
+extern SERVER_DECL DBCStorage<FactionDBC> dbcFaction;
+extern SERVER_DECL DBCStorage<EnchantEntry> dbcEnchant;
+extern SERVER_DECL DBCStorage<RandomProps> dbcRandomProps;
+extern SERVER_DECL DBCStorage<skilllinespell> dbcSkillLineSpell;
+extern SERVER_DECL DBCStorage<skilllineentry> dbcSkillLine;
+extern SERVER_DECL DBCStorage<DBCTaxiNode> dbcTaxiNode;
+extern SERVER_DECL DBCStorage<DBCTaxiPath> dbcTaxiPath;
+extern SERVER_DECL DBCStorage<DBCTaxiPathNode> dbcTaxiPathNode;
+extern SERVER_DECL DBCStorage<AuctionHouseDBC> dbcAuctionHouse;
+extern SERVER_DECL DBCStorage<TalentEntry> dbcTalent;
+extern SERVER_DECL DBCStorage<TalentTabEntry> dbcTalentTab;
+extern SERVER_DECL DBCStorage<CreatureDisplayInfo> dbcCreatureDisplayInfo;
+extern SERVER_DECL DBCStorage<CreatureSpellDataEntry> dbcCreatureSpellData;
+extern SERVER_DECL DBCStorage<CreatureFamilyEntry> dbcCreatureFamily;
+extern SERVER_DECL DBCStorage<CharClassEntry> dbcCharClass;
+extern SERVER_DECL DBCStorage<CharRaceEntry> dbcCharRace;
+extern SERVER_DECL DBCStorage<MapEntry> dbcMap;
+extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
+extern SERVER_DECL DBCStorage<ItemExtendedCostEntry> dbcItemExtendedCost;
+extern SERVER_DECL DBCStorage<ItemRandomSuffixEntry> dbcItemRandomSuffix;
+extern SERVER_DECL DBCStorage<CombatRatingDBC> dbcCombatRating;
+extern SERVER_DECL DBCStorage<ChatChannelDBC> dbcChatChannels;
+extern SERVER_DECL DBCStorage<DurabilityCostsEntry> dbcDurabilityCosts;
+extern SERVER_DECL DBCStorage<DurabilityQualityEntry> dbcDurabilityQuality;
+extern SERVER_DECL DBCStorage<BankSlotPrice> dbcBankSlotPrices;
+extern SERVER_DECL DBCStorage<BankSlotPrice> dbcStableSlotPrices; //uses same structure as Bank
+extern SERVER_DECL DBCStorage<BarberShopStyleEntry> dbcBarberShopStyle;
+extern SERVER_DECL DBCStorage<gtFloat> dbcBarberShopPrices;
+extern SERVER_DECL DBCStorage<gtFloat> dbcMeleeCrit;
+extern SERVER_DECL DBCStorage<gtFloat> dbcMeleeCritBase;
+extern SERVER_DECL DBCStorage<gtFloat> dbcSpellCrit;
+extern SERVER_DECL DBCStorage<gtFloat> dbcSpellCritBase;
+extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegen;
+extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
+extern SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
+extern SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
+extern SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
+extern SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
+extern SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
+extern SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
+extern SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
+extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
+extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
+extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
+extern SERVER_DECL DBCStorage<SpellTargetRestrict> dbcSpellTargetRestrict;
+extern SERVER_DECL DBCStorage<SpellReagentEntry> dbcSpellReagents;
+extern SERVER_DECL DBCStorage<SpellAuraOptionEntry> dbcSpellAuraOptions;
+extern SERVER_DECL DBCStorage<SpellAuraRestrictionEntry> dbcSpellAuraRestrict;
+extern SERVER_DECL DBCStorage<SpellCastingRequirementEntry> dbcSpellCastingReq;
+extern SERVER_DECL DBCStorage<SpellCategoriesEntry> dbcSpellCategories;
+extern SERVER_DECL DBCStorage<SpellClassOptionEntry> dbcSpellClassOptions;
+extern SERVER_DECL DBCStorage<SpellCooldownEntry> dbcSpellCooldowns;
+extern SERVER_DECL DBCStorage<SpellEffectEntry> dbcSpellEffect;
+extern SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
+
+#endif
+
 bool LoadDBCs();
 
 HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)

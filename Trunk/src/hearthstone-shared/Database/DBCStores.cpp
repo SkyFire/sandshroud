@@ -24,6 +24,8 @@
 // Crow: If it has more than 40 columns, break em up.
 #include "SharedStdAfx.h"
 
+#ifndef	CATACLYSM
+
 SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
 SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
@@ -290,6 +292,486 @@ const char* scalingstatvaluesformat =
 
 const char* DestructibleModelDataFormat = "uxxuxxxuxxxuxxxuxxx";
 
+#else // Cataclysm
+
+SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
+const char* achievementfmt=
+	"n" 	// 0 - Index
+	"i" 	// 1 - Faction
+	"i" 	// 2 - Mapid
+	"u" 	// 3 - Previous Achievement
+	"s" 	// 4 - Name
+	"s" 	// 5 - Description
+	"i" 	// 6 - Category Id
+	"x" 	// 7 - points
+	"x" 	// 8 - Order In Category
+	"i" 	// 9 - Flags
+	"x"		// 10 - Icon
+	"x"		// 11 - Title Reward
+	"x"		// 12 - Count
+	"x";	// 13 - Referenced Achievement
+
+SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
+const char* achievementCriteriafmt="niiiiiiiisiixixxx";
+
+SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
+const char* AreaGroupFormat =
+	"n"			// 0 		- AreaGroupID
+	"iiiiii"	// 1-7 		- AreaId[6]
+	"i";		// 8 		- nextGroup
+
+SERVER_DECL DBCStorage<AreaTable> dbcArea;
+const char* areatableFormat =
+	"u"				// 0 		- Area ID
+	"x"				// 1 		- Map ID
+	"u"				// 2 		- Zone ID
+	"u"				// 3 		- Exploration Flags
+	"u"				// 4 		- Area Flags
+	"xxxxx"			// 5 		- Unused
+	"u"				// 6 		- Area Level
+	"s"				// 7 		- Area Name
+	"x"				// 8 		- Team
+	"u"				// 9 		- Category
+	"xxxxxxxxxx";	// 10-19 	- Unk[10]
+
+SERVER_DECL DBCStorage<AuctionHouseDBC> dbcAuctionHouse;
+const char* auctionhousedbcFormat = 
+	"u"		// 0 - Auction House ID
+	"u"		// 1 - Faction
+	"u"		// 2 - Fee
+	"u"		// 3 - Tax
+	"x";	// 4 - Name
+
+SERVER_DECL DBCStorage<BankSlotPrice> dbcBankSlotPrices;
+SERVER_DECL DBCStorage<BankSlotPrice> dbcStableSlotPrices;
+const char* bankslotpriceformat = 
+	"u"		// 0 - Slot ID
+	"u";	// 1 - Slot Price
+
+SERVER_DECL DBCStorage<BarberShopStyleEntry> dbcBarberShopStyle;
+const char* barbershopstyleFormat=
+	"n"		// 0 - Barber Shop ID
+	"u"		// 1 - Type
+	"s"		// 2 - Name
+	"x"		// 3 - Name unk
+	"x"		// 4 - Cost Multplier
+	"u"		// 5 - Race
+	"u"		// 6 - Gender
+	"u";	// 7 - Hair ID
+
+SERVER_DECL DBCStorage<CharClassEntry> dbcCharClass;
+const char* charclassFormat = 
+	"u"		// 0 		- Class ID
+	"u"		// 1 		- Power Type
+	"x"		// 2 		- Unused
+	"s"		// 3 		- Name
+	"x"		// 4 		- Female Name
+	"x"		// 5 		- Neutral Name
+	"x"		// 6 		- Capitalized Name
+	"u"		// 7 		- Spell Family
+	"x"		// 8 		- Unused
+	"u"		// 9 		- Expansion
+	"xxxx";	// 10-14 	- unk[4]
+
+SERVER_DECL DBCStorage<CharRaceEntry> dbcCharRace;
+const char* charraceFormat = 
+	"u"		// 0 		- Race ID
+	"x"		// 1 		- UNUSED
+	"x"		// 2 		- Faction
+	"x"		// 3 		- UNUSED
+	"x"		// 4 		- Male Model
+	"x"		// 5 		- Female Model
+	"x"		// 6 		- UNUSED
+	"u"		// 7 		- Team ID
+	"xxxx"	// 8-11 	- UNUSED[4]
+	"u"		// 12 		- Cinematic ID
+	"x"		// 13 		- unk
+	"s"		// 14 		- Name
+	"x"		// 15 		- Female Name
+	"x"		// 16 		- Neutral Name
+	"xxx"	// 17-19 	- UNUSED[3]
+	"x"		// 20 		- Expansion (0 - Vanilla, 1 - TBC, 2 - WOTLK, 3 - Cataclysm)
+	"xxx";	// 21-23 	- Unk[3]
+
+SERVER_DECL DBCStorage<ChatChannelDBC> dbcChatChannels;
+const char* chatchannelformat = 
+	"u"		// 0 - Channel ID
+	"u"		// 1 - Channel Flags
+	"x"		// 2 - Unk
+	"s"		// 3 - Pattern
+	"x";	// 4 - Channel Name
+
+SERVER_DECL DBCStorage<CreatureDisplayInfo> dbcCreatureDisplayInfo;
+const char* creaturedisplayFormat = 
+	"u"					// 0 	- ID
+	"xxx"				// 1-3 	- UNUSED[3]
+	"f"					// 4 	- Scale
+	"xxxxxxxxxxxx";		// 5-16 - UNUSED[12]
+
+SERVER_DECL DBCStorage<CreatureFamilyEntry> dbcCreatureFamily;
+const char* creaturefamilyFormat = 
+	"u"		// 0 	- ID
+	"f"		// 1 	- Minimum Size
+	"u"		// 2 	- Minimum Level
+	"f"		// 3 	- Maximum Size
+	"u"		// 4 	- Maximum Level
+	"u"		// 5 	- Skill Line
+	"u"		// 6 	- Tameable
+	"u"		// 7 	- Pet Diet Flags
+	"u"		// 8 	- Pet Talent Type
+	"x"		// 9 	- Some kind of Category
+	"s"		// 10 	- Name
+	"x";	// 11 	- Icon
+
+SERVER_DECL DBCStorage<CreatureSpellDataEntry> dbcCreatureSpellData;
+const char* creaturespelldataFormat = 
+	"u"		// 0 	- ID
+	"uuuu"	// 1-4 	- Spell IDs
+	"uuuu";	// 5-8	- Availability
+
+SERVER_DECL DBCStorage<DBCTaxiNode> dbcTaxiNode;
+const char* dbctaxinodeFormat =
+	"u"		// 0 - ID
+	"u"		// 1 - Map ID
+	"f"		// 2 - X
+	"f"		// 3 - Y
+	"f"		// 4 - Z
+	"x"		// 5 - Name
+	"u"		// 6 - Horde Mount
+	"u";	// 7 - Alliance Mount
+
+SERVER_DECL DBCStorage<DBCTaxiPath> dbcTaxiPath;
+const char* dbctaxipathFormat = 
+		"u"		// 0 - ID
+		"u"		// 1 - From Node
+		"u"		// 2 - To Node
+		"u";	// 3 - Price
+
+SERVER_DECL DBCStorage<DBCTaxiPathNode> dbcTaxiPathNode;
+const char* dbctaxipathnodeFormat = 
+	"u"		// 0 	- ID
+	"u"		// 1 	- Path
+	"u"		// 2 	- Sequence
+	"u"		// 3 	- Map ID
+	"f"		// 4 	- X
+	"f"		// 5 	- Y
+	"f"		// 6 	- Z
+	"u"		// 7 	- Flag
+	"u"		// 8 	- Delay
+	"x"		// 9 	- Arrival Event ID
+	"x";	// 10 	- Departure Event ID
+
+/** Cataclysm Format Currently Unknown **/
+SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
+const char* DestructibleModelDataFormat =
+	"u"
+	"uxxx"	// ID and xx
+	"uxxxx"	// Display Id 1
+	"uxxxx"	// Display Id 2
+	"uxxxx"	// Display Id 3
+	"uxxx";	// Display Id 4
+
+SERVER_DECL DBCStorage<DurabilityCostsEntry> dbcDurabilityCosts;
+const char* durabilitycostsFormat = "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
+
+SERVER_DECL DBCStorage<DurabilityQualityEntry> dbcDurabilityQuality;
+const char* durabilityqualityFormat = "uf";
+
+SERVER_DECL DBCStorage<emoteentry> dbcEmoteEntry;
+const char* EmoteEntryFormat = "uxuxxxxxxxxxxxxxxxx";
+
+SERVER_DECL DBCStorage<EnchantEntry> dbcEnchant;
+const char* EnchantEntrYFormat = "uxuuuuuuuuuuuusuuuuxxxx";
+
+SERVER_DECL DBCStorage<FactionDBC> dbcFaction;
+const char* factiondbcFormat = "uiuuuuxxxxiiiixxxxuxxxxsxx";
+
+SERVER_DECL DBCStorage<FactionTemplateDBC> dbcFactionTemplate;
+const char* factiontemplatedbcFormat = "uuuuuuuuuuuuuu";
+
+SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
+const char* GemPropertyEntryFormat = "uuuuux";
+
+SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
+const char* GlyphPropertyEntryFormat = "uuuu";
+
+SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
+const char* spelldifficultyFormat = "uuuuu";
+
+SERVER_DECL DBCStorage<CombatRatingDBC> dbcCombatRating;
+SERVER_DECL DBCStorage<gtFloat> dbcBarberShopPrices;
+SERVER_DECL DBCStorage<gtFloat> dbcMeleeCrit;
+SERVER_DECL DBCStorage<gtFloat> dbcMeleeCritBase;
+SERVER_DECL DBCStorage<gtFloat> dbcSpellCrit;
+SERVER_DECL DBCStorage<gtFloat> dbcSpellCritBase;
+SERVER_DECL DBCStorage<gtFloat> dbcManaRegen;
+SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
+SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
+SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
+const char* gtfloatformat = "xf";
+
+SERVER_DECL DBCStorage<ItemEntry> dbcItem;
+const char* itemFormat = "uuuiiuuu";
+
+SERVER_DECL DBCStorage<ItemExtendedCostEntry> dbcItemExtendedCost;
+const char* itemextendedcostFormat = "uuuuuuuuuuuuuuuxxxxxxxxxxxxxxxx";
+
+SERVER_DECL DBCStorage<ItemRandomSuffixEntry> dbcItemRandomSuffix;
+const char* itemrandomsuffixformat = "usxuuuuuuuuuu";
+
+SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
+const char* ItemSetFormat = "uxuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
+
+SERVER_DECL DBCStorage<Lock> dbcLock;
+const char* LockFormat = "uuuuuuxxxuuuuuxxxuuuuuxxxxxxxxxxx";
+
+SERVER_DECL DBCStorage<MapEntry> dbcMap;
+const char* mapentryFormat =
+	"u"					// 0 	- id
+	"x"					// 1 	- name_internal
+	"u"					// 2 	- map_type
+	"x"					// 3 	- is_pvp_zone
+	"x"					// 4 	- 0 or 1 for battlegrounds (not arenas)
+	"x"					// 5 	- real_name
+	"x"					// 6 	- linked_zone
+	"x" 				// 7 	- hordeIntro
+	"x" 				// 8 	- allianceIntro
+	"u"					// 9 	- multimap_id
+	"x"					// 10  	- unk_float (all 1 but arathi 1.25)
+	"x"					// 11  	- parent_map
+	"x"					// 12  	- start_x
+	"x"					// 13  	- start_y
+	"x"					// 14  	- unk
+	"x"					// 15  	- addon
+	"x"					// 16  	- normalReqText
+	"u"					// 17  	- Max players
+	"x";				// 18 	- MaNGOS: Map ID, related to phasing.
+	
+SERVER_DECL DBCStorage<RandomProps> dbcRandomProps;
+const char* randompropsFormat = "usuuuuux";
+
+SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
+const char* scalingstatdistributionformat =
+	"u" // ID
+	"iiiiiiiiii" // Stat Mod
+	"uuuuuuuuuu" // Modifier
+	"x"
+	"u"; // Max Level
+	
+SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
+const char* scalingstatvaluesformat =
+	"x" // Id
+	"u" // Level
+	"uuuuuu" // DPS mod
+	"u" // Spell Power
+	"uuuuu" // ScalingStatD modifier
+	"uuuu" // Armor Mod
+	"uuuu" // Armor Type[level]
+	"xxxxxxxxxxxxxxxxxxxxxxx" // UNUSED
+	"xx"; // unk
+	
+SERVER_DECL DBCStorage<skilllineentry> dbcSkillLine;
+const char* skilllineentrYFormat = "uuusxxxx";
+
+SERVER_DECL DBCStorage<skilllinespell> dbcSkillLineSpell;
+const char* skilllinespellFormat = "uuuuuxxuuuuuxx";
+
+SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
+const char* SummonPropertiesfmt = "uuuuuu";
+
+SERVER_DECL DBCStorage<TalentEntry> dbcTalent;
+const char* talententryFormat = "uuuuuuuuuuxxuxxxuxx";
+
+SERVER_DECL DBCStorage<TalentTabEntry> dbcTalentTab;
+const char* talenttabentryFormat = "uxxuuuxxx";
+
+SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
+const char* vehicleentryFormat = "uxxxxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxuxxx";
+
+SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
+const char* vehicleseatentryFormat = "uuxfffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxuuxxxxxxxxxxxxxxxxxxx";
+
+SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
+const char* WMOAreaEntryfmt="niiixxxxxiixxxx";
+
+SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
+const char* WorldMapOverlayfmt="uxuxxxxxxxxxxxxxx";
+
+//=========================================================
+// Spell Handling DBCs
+//=========================================================
+
+SERVER_DECL DBCStorage<SpellCastTime> dbcSpellCastTime;
+const char* spellcasttimeFormat = "uuxx";
+
+SERVER_DECL DBCStorage<SpellDuration> dbcSpellDuration;
+const char* spelldurationFormat = "uiii";
+	
+SERVER_DECL DBCStorage<SpellRadius> dbcSpellRadius;
+const char* spellradiusFormat = "ufxf";
+
+SERVER_DECL DBCStorage<SpellRange> dbcSpellRange;
+const char* spellrangeFormat =
+	"u"					// Id
+	"f"					// MinRange
+	"x"
+	"f"					// MaxRange
+	"x"
+	"u"
+	"s"
+	"s";
+
+SERVER_DECL DBCStorage<SpellRuneCostEntry> dbcSpellRuneCost;
+const char* SpellRuneCostfmt="uuuuu";
+
+SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
+const char* spellshapeshiftformformat = "uxxxxxxxxxxuuuuuuuu";
+
+SERVER_DECL DBCStorage<SpellEntry> dbcSpell;
+const char* spellentryFormat =
+	"u" // Id
+	"uuuuuuu" // Flags
+	"x" 	// 400 Unk
+	"u" 	// CastingTimeIndex
+	"u" 	// DurationIndex
+	"f" 	// Speed
+	"u" 	// rangeIndex
+	"u" 	// powerType
+	"u" 	// SpellVisual
+	"u" 	// SpellIconID
+	"u" 	// activeIconID
+	"s" 	// Name
+	"s" 	// Rank
+	"s" 	// Spell Description
+	"s" 	// Buff Description
+	"u" 	// School
+	"u" 	// runeCostID
+	"x" 	// SpellMissileID
+	"u"		// SpellDescriptionVariableID
+	"u" 	// SpellDifficulty
+	"x"		// unk_float
+	"u"		// SpellScalingId
+	"u"		// SpellAuraOptionsId
+	"u"		// SpellAuraRestrictionsId
+	"u"		// SpellCastingRequirementsId
+	"u"		// SpellCategoriesId
+	"u"		// SpellClassOptionsId
+	"u"		// SpellCooldownsId
+	"x"		// unk_4_0_0
+	"u"		// SpellEquippedItemsId
+	"u"		// SpellInterruptsId
+	"u"		// SpellLevelsId
+	"u"		// SpellPowerId
+	"u"		// SpellReagentsId
+	"u"		// SpellShapeshiftId
+	"u"		// SpellTargetRestrictionsId
+	"u"		// SpellTotemsId
+	"uuu";	// unk_4_0_0?
+
+SERVER_DECL DBCStorage<SpellScalingEntry> dbcSpellScaling;
+const char* SpellScalingfmt =
+"u"			// 0: Spell ID
+"uuuuuuuu"	// 1 - 8: Reagent ID
+"uuuuuuuu";	// 9 - 16: Reagent Count
+
+SERVER_DECL DBCStorage<SpellReagentEntry> dbcSpellReagents;
+const char* SpellReagentfmt =
+"u"			// 0: Spell ID
+"uuuuuuuu"	// 1 - 8: Reagent ID
+"uuuuuuuu";	// 9 - 16: Reagent Count
+
+SERVER_DECL DBCStorage<SpellTargetRestrict> dbcSpellTargetRestrict;
+const char* spelltargetrestrictionfmt = 
+"x"		// ID
+"u"		// MaxTargets
+"u"		// MaxTargetLevel
+"u"		// TargetCreatureType
+"u";	// Targets
+
+SERVER_DECL DBCStorage<SpellAuraOptionEntry> dbcSpellAuraOptions;
+const char* SpellAuraOptionsfmt =
+"u"		// 0 - ID
+"u"		// 1 - maxstack
+"u"		// 2 - procChance
+"u"		// 3 - procCharges
+"u";	// 4 - procFlags
+
+SERVER_DECL DBCStorage<SpellAuraRestrictionEntry> dbcSpellAuraRestrict;
+const char* SpellAuraRestrictfmt =
+"u"		// 0 - ID
+"u"		// 1 - CasterAuraState
+"u"		// 2 - TargetAuraState
+"u"		// 3 - CasterAuraStateNot
+"u"		// 4 - TargetAuraStateNot
+"u"		// 5 - casterAuraSpell
+"u"		// 6 - targetAuraSpell
+"u"		// 7 - excludeCasterAuraSpell
+"u";	// 8 - excludeTargetAuraSpell
+
+SERVER_DECL DBCStorage<SpellCastingRequirementEntry> dbcSpellCastingReq;
+const char* SpellCastingReqfmt =
+"u"		// 0 - ID
+"u"		// 1 - FacingCasterFlags
+"u"		// 2 - MinFactionID
+"u"		// 3 - MinReputation
+"u"		// 4 - AreaGroupId
+"u"		// 5 - RequiredAuraVision
+"u";	// 6 - RequiresSpellFocus
+
+SERVER_DECL DBCStorage<SpellCategoriesEntry> dbcSpellCategories;
+const char* SpellCategoriesfmt =
+"u"		// 0 - ID;
+"u"		// 1 - Category;
+"u"		// 2 - Spell_Dmg_Type;
+"u"		// 3 - DispelType;
+"u"		// 4 - MechanicsType;
+"u"		// 5 - PreventionType;
+"u";	// 6 - StartRecoveryCategory;
+
+SERVER_DECL DBCStorage<SpellClassOptionEntry> dbcSpellClassOptions;
+const char* SpellClassOptionsfmt =
+"u"		// 0: ID
+"u"		// 1: modalNextSpell
+"uuu"	// 2 - 4: SpellGroupType[3]
+"x"		// 5: Unk
+"u";	// 6: SpellFamilyName
+
+SERVER_DECL DBCStorage<SpellCooldownEntry> dbcSpellCooldowns;
+const char* SpellCooldownsfmt =
+"u"		// 0 - ID
+"u"		// 1 - CategoryRecoveryTime
+"u"		// 2 - RecoveryTime
+"u";	// 3 - StartRecoveryTime
+
+SERVER_DECL DBCStorage<SpellEffectEntry> dbcSpellEffect;
+const char* SpellEffectfmt =
+"u"		// 0: ID;
+"u"		// 1: Effect;
+"f"		// 2: float EffectMultipleValue;
+"u"		// 3: EffectApplyAuraName;
+"u"		// 4: EffectAmplitude;
+"u"		// 5: EffectBasePoints;
+"x"		// 6: float unk
+"f"		// 7: float DmgMultiplier;
+"u"		// 8: EffectChainTarget;
+"u"		// 9: EffectDieSides;
+"u"		// 10: EffectItemType;
+"u"		// 11: EffectMechanic;
+"u"		// 12: EffectMiscValue;
+"u"		// 13: EffectMiscValueB;
+"f"		// 14: EffectPointsPerComboPoint;
+"u"		// 15: EffectRadiusIndex;
+"x"   	// 16: unk_400
+"f"		// 17: EffectRealPointsPerLevel;
+"uuu"	// 18 - 20: EffectSpellClassMaskA[3];
+"u"		// 21: EffectTriggerSpell;
+"u"		// 22: EffectImplicitTargetA;
+"u"		// 23: EffectImplicitTargetB;
+"u"		// 24: EffectSpellId;
+"u";	// 25: EffectIndex;
+
+#endif
+
 template<class T>
 bool loader_stub(const char * filename, const char * format, bool ind, T& l, bool loadstrs)
 {
@@ -318,8 +800,10 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/BarberShopStyle.dbc", barbershopstyleFormat, true, dbcBarberShopStyle, true);
 	/* Needed for: */
 	LOAD_DBC("DBC/ChatChannels.dbc", chatchannelformat, true, dbcChatChannels, true);
+#ifndef CATACLYSM
 	/* Needed for: */
 	LOAD_DBC("DBC/CurrencyTypes.dbc", CurrencyTypesEntryFormat, true, dbcCurrencyTypesStore, true);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/ChrClasses.dbc", charclassFormat, true, dbcCharClass, true);
 	/* Needed for: */

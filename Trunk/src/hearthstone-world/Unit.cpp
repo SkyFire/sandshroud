@@ -5244,7 +5244,11 @@ bool Unit::HasAuraVisual(uint32 visualid)
 {
 	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
 	{
+#ifdef CATACLYSM
+		if(m_auras[x] && m_auras[x]->GetSpellProto()->SpellVisual == visualid)
+#else
 		if(m_auras[x] && ((m_auras[x]->GetSpellProto()->SpellVisual[0] == visualid) || (m_auras[x]->GetSpellProto()->SpellVisual[1] == visualid)))
+#endif
 		{
 			return true;
 		}
@@ -7185,9 +7189,9 @@ void Unit::SetPowerType(uint8 type)
 	if(type == POWER_TYPE_RUNIC && IsPlayer())
 	{
 		SetFloatValue(PLAYER_RUNE_REGEN_1, 0.100000f);
-		SetFloatValue(PLAYER_RUNE_REGEN_1_1, 0.100000f);
-		SetFloatValue(PLAYER_RUNE_REGEN_1_2, 0.100000f);
-		SetFloatValue(PLAYER_RUNE_REGEN_1_3, 0.100000f);
+		SetFloatValue(PLAYER_RUNE_REGEN_1+1, 0.100000f);
+		SetFloatValue(PLAYER_RUNE_REGEN_1+2, 0.100000f);
+		SetFloatValue(PLAYER_RUNE_REGEN_1+3, 0.100000f);
 	}
 }
 
