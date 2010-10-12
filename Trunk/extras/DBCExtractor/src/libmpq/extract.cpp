@@ -27,11 +27,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#define HAVE_LIBZ
-#ifdef HAVE_LIBZ
-#include <zlib.h>
-#endif
-
 #include "mpq.h"
 #include "explode.h"
 #include "huffman.h"
