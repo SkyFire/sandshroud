@@ -234,6 +234,20 @@ int main(int argc, char * arg[])
 		new MPQArchive(tmp);
 	}
 
+	tf = fopen("Data/OldWorld.MPQ", "r");
+	if (tf)
+	{
+		fclose(tf);
+		new MPQArchive("Data/OldWorld.MPQ");
+		if ( -1 != locale )
+		{
+			sprintf(tmp, "Data/%s/OldWorld-%s.MPQ", localeNames[locale], localeNames[locale]);
+			new MPQArchive(tmp);
+			sprintf(tmp, "Data/%s/local-%s.MPQ", localeNames[locale], localeNames[locale]);
+			new MPQArchive(tmp);
+		}
+	}
+
 	tf = fopen("Data/expansion1.MPQ", "r");
 	if (tf)
 	{
@@ -258,7 +272,7 @@ int main(int argc, char * arg[])
 		}
 	}
 
-	tf = fopen("Data/expansion3.MPQ", "r");
+/*	tf = fopen("Data/expansion3.MPQ", "r");
 	if (tf)
 	{
 		fclose(tf);
@@ -268,42 +282,21 @@ int main(int argc, char * arg[])
 			sprintf(tmp, "Data/%s/expansion3-locale-%s.MPQ", localeNames[locale], localeNames[locale]);
 			new MPQArchive(tmp);
 		}
-	}
+	}*/
 
-	tf = fopen("Data/wow-update-12694.MPQ", "r");
+	tf = fopen("Data/wow-update-13164.MPQ", "r");
 	if (tf)
 	{
 		fclose(tf);
-		new MPQArchive("Data/wow-update-12694.MPQ");
-	}
-
-	tf = fopen("Data/wow-update-12759.MPQ", "r");
-	if (tf)
-	{
-		fclose(tf);
-		new MPQArchive("Data/wow-update-12759.MPQ");
-	}
-
-	tf = fopen("Data/wow-update-12803.MPQ", "r");
-	if (tf)
-	{
-		fclose(tf);
-		new MPQArchive("Data/wow-update-12803.MPQ");
-	}
-
-	tf = fopen("Data/wow-update-12857.MPQ", "r");
-	if (tf)
-	{
-		fclose(tf);
-		new MPQArchive("Data/wow-update-12857.MPQ");
+		new MPQArchive("Data/wow-update-13164.MPQ");
 	}
 
 	//map.dbc
-	DBCFile * dbc= new DBCFile("DBFilesClient\\Map.dbc");
+	DBCFile * dbc = new DBCFile("DBFilesClient\\Map.dbc");
 	dbc->open();
 
-	MapCount=dbc->getRecordCount ();
-	map_ids=new map_id[MapCount];
+	MapCount = dbc->getRecordCount();
+	map_ids = new map_id[MapCount];
 	for(unsigned int x = 0; x < MapCount; x++)
 	{
 		map_ids[x].id=dbc->getRecord (x).getUInt(0);
