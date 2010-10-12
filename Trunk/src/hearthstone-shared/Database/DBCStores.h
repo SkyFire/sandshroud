@@ -31,6 +31,25 @@
 #pragma pack(push,1)
 struct AchievementEntry
 {
+#ifndef CATACLYSM
+	uint32 ID;						// 0
+	uint32 factionFlag;				// 1 -1=all, 0=horde, 1=alliance
+	uint32 mapID;					// 2 -1=none
+	uint32 Previous_achievement;	// 3 Lots of 0's
+	char* name;						// 4
+	char* description;				// 5
+	uint32 categoryId;				// 6 Category
+//	uint32 points;					// 7 reward points
+//	uint32 OrderInCategory;			// 8
+	uint32 flags;					// 9
+//	uint32 icon;					// 10 - MaNGOS: SpellIcon.dbc
+//	char* RewardTitle;				// 11 - Rewarded Title
+
+//	Used for counting criteria.
+//	Example: http://www.wowhead.com/achievement=1872
+//	uint32 count;				// 12
+//	uint32 refAchievement;		// 13
+#else
 	uint32 ID;						// 0
 	uint32 factionFlag;				// 1 -1=all, 0=horde, 1=alliance
 	uint32 mapID;					// 2 -1=none
@@ -50,11 +69,12 @@ struct AchievementEntry
 //	uint32 unk_flags;				// 59
 //	uint32 count;					// 60
 //	uint32 refAchievement;			// 61
+#endif
 
 	uint32 AssociatedCriteria[32]; // Custom stuff
 	uint32 AssociatedCriteriaCount;
 };
- 
+
 struct AchievementCriteriaEntry
 {
 	uint32 ID;											// 0
@@ -633,6 +653,132 @@ struct SummonPropertiesEntry
 // Struct for the entry in Spell.dbc
 struct SpellEntry
 {
+#ifdef CATACLYSM
+	uint32 Id;								// 0
+	uint32 Attributes;						// 1
+	uint32 AttributesEx;					// 2
+	uint32 Flags3;							// 3
+	uint32 Flags4;							// 4
+	uint32 Flags5;							// 5
+	uint32 Flags6;							// 6
+	uint32 Flags7;							// 7
+	uint32 Flags8;							// 8
+	// uint32 unk400						// 10
+	uint32 CastingTimeIndex;				// 11
+	uint32 DurationIndex;					// 12
+	float  speed;							// 13
+	uint32 rangeIndex;						// 14
+	uint32 powerType;						// 15
+	uint32 SpellVisual;						// 16
+	uint32 SpellIconID;						// 17
+	uint32 activeIconID;					// 18
+	char* Name;								// 19
+	char * Rank;							// 20
+	char * Description;						// 21
+	char * BuffDescription;					// 22
+	uint32 School;							// 23
+	uint32 runeCostID;						// 24
+	//uint32 spellMissileID;				// 25
+	//uint32 SpellDescriptionVariableID		// 26
+	//uint32 SpellDifficulty;				// 27
+	//float unk_f1;							// 28
+	uint32 SpellScalingId;					// 29	SpellScaling.dbc
+	uint32 SpellAuraOptionsId;				// 30	SpellAuraOptions.dbc
+	uint32 SpellAuraRestrictionsId;			// 31	SpellAuraRestrictions.dbc
+	uint32 SpellCastingRequirementsId;		// 32	SpellCastingRequirements.dbc
+	uint32 SpellCategoriesId;				// 33	SpellCategories.dbc
+	uint32 SpellClassOptionsId;				// 34	SpellClassOptions.dbc
+	uint32 SpellCooldownsId;				// 35	SpellCooldowns.dbc
+	//uint32 unkIndex7;						// 36	all zeros...
+	uint32 SpellEquippedItemsId;			// 37	SpellEquippedItems.dbc
+	uint32 SpellInterruptsId;				// 38	SpellInterrupts.dbc
+	uint32 SpellLevelsId;					// 39	SpellLevels.dbc
+	uint32 SpellPowerId;					// 40	SpellPower.dbc
+	uint32 SpellReagentsId;					// 41	SpellReagents.dbc
+	uint32 SpellShapeshiftId;				// 42	SpellShapeshift.dbc
+	uint32 SpellTargetRestrictionsId;		// 43	SpellTargetRestrictions.dbc
+	uint32 SpellTotemsId;					// 44	SpellTotems.dbc
+	uint32 SpellEffectIndex[3];				// 45-47 SpellEffects.dbc
+
+	/// Place Holders! Will be set later.
+	uint32 Category;
+	uint32 DispelType;
+	uint32 MechanicsType;
+	uint32 RequiredShapeShift;
+	uint32 NotAllowedShapeShift;
+	uint32 Targets;
+	uint32 TargetCreatureType;
+	uint32 RequiresSpellFocus;
+	uint32 FacingCasterFlags;
+	uint32 CasterAuraState;
+	uint32 TargetAuraState;
+	uint32 CasterAuraStateNot;
+	uint32 TargetAuraStateNot;
+	uint32 casterAuraSpell;
+	uint32 targetAuraSpell;
+	uint32 excludeCasterAuraSpell;
+	uint32 excludeTargetAuraSpell;
+	uint32 RecoveryTime;
+	uint32 CategoryRecoveryTime;
+	uint32 InterruptFlags;
+	uint32 AuraInterruptFlags;
+	uint32 ChannelInterruptFlags;
+	uint32 procFlags;
+	uint32 procChance;
+	uint32 procCharges;
+	uint32 maxLevel;
+	uint32 baseLevel;
+	uint32 spellLevel;
+	uint32 manaCost;
+	uint32 manaCostPerlevel;
+	uint32 manaPerSecond;
+	uint32 manaPerSecondPerLevel;
+	uint32 modalNextSpell;
+	uint32 maxstack;
+	uint32 Totem[2];
+	uint32 Reagent[8];
+	uint32 ReagentCount[8];
+	int32 EquippedItemClass;
+	uint32 EquippedItemSubClass;
+	uint32 RequiredItemFlags;
+	uint32 Effect[3];
+	uint32 EffectDieSides[3];
+	float  EffectRealPointsPerLevel[3];
+	int32  EffectBasePoints[3];
+	int32  EffectMechanic[3];
+	uint32 EffectImplicitTargetA[3];
+	uint32 EffectImplicitTargetB[3];
+	uint32 EffectRadiusIndex[3];
+	uint32 EffectApplyAuraName[3];
+	uint32 EffectAmplitude[3];
+	float  EffectMultipleValue[3];
+	uint32 EffectChainTarget[3];
+	uint32 EffectItemType[3];
+	uint32 EffectMiscValue[3];
+	uint32 EffectMiscValueB[3];
+	uint32 EffectTriggerSpell[3];
+	float  EffectPointsPerComboPoint[3];
+	uint32 EffectSpellClassMask[3][3];
+	uint32 spellPriority;
+	uint32 ManaCostPercentage;
+	uint32 StartRecoveryCategory;
+	uint32 StartRecoveryTime;
+	uint32 MaxTargetLevel;
+	uint32 SpellFamilyName;
+	uint32 SpellGroupType[3];
+	uint32 MaxTargets;
+	uint32 Spell_Dmg_Type;
+	uint32 PreventionType;
+	int32 StanceBarOrder;
+	float dmg_multiplier[3];
+	uint32 MinFactionID;
+	uint32 MinReputation;
+	uint32 RequiredAuraVision;
+	uint32 TotemCategory[2];
+	int32 AreaGroupId;
+	uint32 PowerDisplayId;
+
+#else
 	uint32 Id;							//0
 	uint32 Category;					//1
 	uint32 DispelType;					//2
@@ -747,6 +893,7 @@ struct SpellEntry
 //	uint32 spellDescriptionVariableID;	//238
 //	uint32 unk5;						//239
 	uint32 SpellDifficulty;
+#endif
 
 	/// CUSTOM: these fields are used for the modifications made in the world.cpp
 	uint32 proc_interval;				//!!! CUSTOM, Time(In MS) between proc's.

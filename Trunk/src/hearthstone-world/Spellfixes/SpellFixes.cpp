@@ -19,6 +19,8 @@
 
 #include "StdAfx.h"
 
+void SetSingleSpellDefaults(SpellEntry *sp);
+
 void ApplyNormalFixes()
 {
 	//Updating spell.dbc
@@ -48,39 +50,11 @@ void ApplyNormalFixes()
 			continue;
 
 		if(DummySpells.find(sp->Id) != DummySpells.end())
-			continue; // Dummy spells will be handled later.
+			continue; // Dummy spells will be handled later.
+
+		SetSingleSpellDefaults(sp);
 
 		uint32 type = 0;
-		uint32 namehash = 0;
-
-		sp->forced_creature_target = 0;
-		sp->AdditionalAura = 0;
-		sp->poison_type = 0;
-		sp->self_cast_only = false;
-		sp->Unique = false;
-		sp->apply_on_shapeshift_change = false;
-		sp->always_apply = false;
-
-		// hash the name
-		//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
-		namehash = crc32((const unsigned char*)sp->Name, (unsigned int)strlen(sp->Name));
-		sp->NameHash = namehash; //need these set before we start processing spells
-
-		float radius = 0.0f;
-		if(sp->EffectRadiusIndex[0] != 0)
-			radius=::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[0]));
-
-		if( sp->EffectRadiusIndex[1] != 0 )
-			radius = std::max(radius,::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[1])));
-
-		if( sp->EffectRadiusIndex[2] != 0 )
-			radius=std::max(::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[2])),radius);
-
-		radius=std::max(GetMaxRange(dbcSpellRange.LookupEntry(sp->rangeIndex)),radius);
-		sp->base_range_or_radius = radius;
-		sp->base_range_or_radius_sqr = radius*radius;
-		sp->cone_width = 0.0f;
-		sp->area_aura_update_interval = 2000;
 
 		for(i = 0; i < 8; i++)
 		{
@@ -146,17 +120,6 @@ void ApplyNormalFixes()
 
 		if(strstr(sp->Name, "Hearthstone") || strstr(sp->Name, "Stuck") || strstr(sp->Name, "Astral Recall"))
 			sp->self_cast_only = true;
-
-		sp->proc_interval = 0;//trigger at each event
-		sp->ProcsPerMinute = 0;
-		sp->c_is_flags = 0;
-		sp->isAOE = 0;
-		sp->spell_coef_override = 0.0f;
-		sp->AP_coef_override = 0.0f;
-		sp->RAP_coef_override = 0.0f;
-		sp->auraimmune_flag = 0;
-		sp->AllowBackAttack = false;
-		sp->procflags2 = 0;
 
 		talentSpellIterator = talentSpells.find(sp->Id);
 		if(talentSpellIterator == talentSpells.end())
@@ -393,7 +356,7 @@ void ApplyNormalFixes()
 		}
 
 		sp->buffIndexType = 0;
-		switch(namehash)
+		switch(sp->NameHash)
 		{
 		case SPELL_HASH_HUNTER_S_MARK:		// Hunter's mark
 			sp->buffIndexType = SPELL_TYPE_INDEX_MARK;
@@ -1284,3 +1247,242 @@ void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, ui
 		to[index * 3 + toEffect] = from[index * 3 + fromEffect];
 	}
 }
+
+void SetSingleSpellDefaults(SpellEntry *sp)
+{
+#ifdef CATACLYSM
+	sp->Category = 0;
+	sp->DispelType = 0;
+	sp->MechanicsType = 0;
+	sp->RequiredShapeShift = 0;
+	sp->NotAllowedShapeShift = 0;
+	sp->Targets = 0;
+	sp->TargetCreatureType = 0;
+	sp->RequiresSpellFocus = 0;
+	sp->FacingCasterFlags = 0;
+	sp->CasterAuraState = 0;
+	sp->TargetAuraState = 0;
+	sp->CasterAuraStateNot = 0;
+	sp->TargetAuraStateNot = 0;
+	sp->casterAuraSpell = 0;
+	sp->targetAuraSpell = 0;
+	sp->excludeCasterAuraSpell = 0;
+	sp->excludeTargetAuraSpell = 0;
+	sp->RecoveryTime = 0;
+	sp->CategoryRecoveryTime = 0;
+	sp->InterruptFlags = 0;
+	sp->AuraInterruptFlags = 0;
+	sp->ChannelInterruptFlags = 0;
+	sp->procFlags = 0;
+	sp->procChance = 0;
+	sp->procCharges = 0;
+	sp->maxLevel = 0;
+	sp->baseLevel = 0;
+	sp->spellLevel = 0;
+	sp->manaCost = 0;
+	sp->manaCostPerlevel = 0;
+	sp->manaPerSecond = 0;
+	sp->manaPerSecondPerLevel = 0;
+	sp->modalNextSpell = 0;
+	sp->maxstack = 0;
+	sp->Totem[0] = 0;
+	sp->Totem[1] = 0;
+	sp->EquippedItemClass = 0;
+	sp->EquippedItemSubClass = 0;
+	sp->RequiredItemFlags = 0;
+	sp->spellPriority = 0;
+	sp->ManaCostPercentage = 0;
+	sp->StartRecoveryCategory = 0;
+	sp->StartRecoveryTime = 0;
+	sp->MaxTargetLevel = 0;
+	sp->SpellFamilyName = 0;
+	sp->MaxTargets = 0;
+	sp->Spell_Dmg_Type = 0;
+	sp->PreventionType = 0;
+	sp->StanceBarOrder = 0;
+	sp->MinFactionID = 0;
+	sp->MinReputation = 0;
+	sp->RequiredAuraVision = 0;
+	sp->TotemCategory[0] = 0;
+	sp->TotemCategory[1] = 0;
+	sp->AreaGroupId = 0;
+	sp->PowerDisplayId = 0;
+
+	for(uint r = 0; r < 8; r++)
+	{
+		sp->Reagent[r] = 0;
+		sp->ReagentCount[r] = 0;
+	}
+
+	for(uint e = 0; e < 3; e++)
+	{
+		sp->Effect[e] = 0;
+		sp->EffectDieSides[e] = 0;
+		sp->EffectRealPointsPerLevel[e] = 0;
+		sp->EffectBasePoints[e] = 0;
+		sp->EffectMechanic[e] = 0;
+		sp->EffectImplicitTargetA[e] = 0;
+		sp->EffectImplicitTargetB[e] = 0;
+		sp->EffectRadiusIndex[e] = 0;
+		sp->EffectApplyAuraName[e] = 0;
+		sp->EffectAmplitude[e] = 0;
+		sp->EffectMultipleValue[e] = 0;
+		sp->EffectChainTarget[e] = 0;
+		sp->EffectItemType[e] = 0;
+		sp->EffectMiscValue[e] = 0;
+		sp->EffectMiscValueB[e] = 0;
+		sp->EffectTriggerSpell[e] = 0;
+		sp->EffectPointsPerComboPoint[e] = 0;
+		for(uint i = 0; i < 3; i++)
+			sp->EffectSpellClassMask[e][i] = 0;
+
+		sp->SpellGroupType[e] = 0;
+		sp->dmg_multiplier[e] = 0;
+	}
+
+	SpellReagentEntry* SR = dbcSpellReagents.LookupEntry(sp->SpellReagentsId);
+	if(SR)
+	{
+		for(uint r = 0; r < 8; r++)
+		{
+			sp->ReagentCount[r] = SR->ReagentCount[r];
+			sp->Reagent[r] = SR->Reagent[r];
+		}
+	}
+
+	SpellTargetRestrict* STR = dbcSpellTargetRestrict.LookupEntry(sp->SpellTargetRestrictionsId);
+	if(SR)
+	{
+		sp->MaxTargets = STR->MaxTargets;
+		sp->MaxTargetLevel = STR->MaxTargetLevel;
+		sp->TargetCreatureType = STR->TargetCreatureType;
+		sp->Targets = STR->Targets;
+	}
+
+	SpellAuraOptionEntry* SAO = dbcSpellAuraOptions.LookupEntry(sp->SpellAuraOptionsId);
+	if(SAO)
+	{
+		sp->maxstack = SAO->maxstack;
+		sp->procChance = SAO->procChance;
+		sp->procCharges = SAO->procCharges;
+		sp->procFlags = SAO->procFlags;
+	}
+
+	SpellAuraRestrictionEntry* SAR = dbcSpellAuraRestrict.LookupEntry(sp->SpellAuraRestrictionsId);
+	if(SAR)
+	{
+		sp->casterAuraSpell = SAR->casterAuraSpell;
+		sp->CasterAuraState = SAR->CasterAuraState;
+		sp->CasterAuraStateNot = SAR->CasterAuraStateNot;
+		sp->excludeCasterAuraSpell = SAR->excludeCasterAuraSpell;
+		sp->excludeTargetAuraSpell = SAR->excludeTargetAuraSpell;
+		sp->targetAuraSpell = SAR->targetAuraSpell;
+		sp->TargetAuraState = SAR->TargetAuraState;
+		sp->TargetAuraStateNot = SAR->TargetAuraStateNot;
+	}
+
+	SpellCastingRequirementEntry* SCR = dbcSpellCastingReq.LookupEntry(sp->SpellCastingRequirementsId);
+	if(SCR)
+	{
+		sp->AreaGroupId = SCR->AreaGroupId;
+		sp->FacingCasterFlags = SCR->FacingCasterFlags;
+		sp->MinFactionID = SCR->MinFactionID;
+		sp->MinReputation = SCR->MinReputation;
+		sp->RequiredAuraVision = SCR->RequiredAuraVision;
+		sp->RequiresSpellFocus = SCR->RequiresSpellFocus;
+	}
+
+	SpellCategoriesEntry* SCa = dbcSpellCategories.LookupEntry(sp->SpellCategoriesId);
+	if(SCa)
+	{
+		sp->Category = SCa->Category;
+		sp->DispelType = SCa->DispelType;
+		sp->MechanicsType = SCa->MechanicsType;
+		sp->PreventionType = SCa->PreventionType;
+		sp->Spell_Dmg_Type = SCa->Spell_Dmg_Type;
+		sp->StartRecoveryCategory = SCa->StartRecoveryCategory;
+	}
+
+	SpellClassOptionEntry* SCO = dbcSpellClassOptions.LookupEntry(sp->SpellClassOptionsId);
+	if(SCO)
+	{
+		sp->modalNextSpell = SCO->modalNextSpell;
+		sp->SpellFamilyName = SCO->SpellFamilyName;
+		for(uint i = 0; i < 3; i++)
+			sp->SpellGroupType[i] = SCO->SpellGroupType[i];
+	}
+
+	SpellCooldownEntry* SCo = dbcSpellCooldowns.LookupEntry(sp->SpellCooldownsId);
+	if(SCo)
+	{
+		sp->CategoryRecoveryTime = SCo->CategoryRecoveryTime;
+		sp->RecoveryTime = SCo->RecoveryTime;
+		sp->StartRecoveryTime = SCo->StartRecoveryTime;
+	}
+
+	for(uint8 i = 0; i < 3; i++)
+	{
+		SpellEffectEntry* SE = dbcSpellEffect.LookupEntry(sp->SpellEffectIndex[i]);
+		if(SE)
+		{
+			sp->Effect[i] = SE->Effect;
+			sp->dmg_multiplier[i] = SE->DmgMultiplier;
+			sp->EffectAmplitude[i] = SE->EffectAmplitude;
+			sp->EffectApplyAuraName[i] = SE->EffectApplyAuraName;
+			sp->EffectBasePoints[i] = SE->EffectBasePoints;
+			sp->EffectChainTarget[i] = SE->EffectChainTarget;
+			sp->EffectDieSides[i] = SE->EffectDieSides;
+			sp->EffectImplicitTargetA[i] = SE->EffectImplicitTargetA;
+			sp->EffectImplicitTargetB[i] = SE->EffectImplicitTargetB;
+			sp->EffectItemType[i] = SE->EffectItemType;
+			sp->EffectMechanic[i] = SE->EffectMechanic;
+			sp->EffectMiscValue[i] = SE->EffectMiscValue;
+			sp->EffectMiscValueB[i] = SE->EffectMiscValueB;
+			sp->EffectMultipleValue[i] = SE->EffectMultipleValue;
+			sp->EffectPointsPerComboPoint[i] = SE->EffectPointsPerComboPoint;
+			sp->EffectRadiusIndex[i] = SE->EffectRadiusIndex;
+			sp->EffectRealPointsPerLevel[i] = SE->EffectRealPointsPerLevel;
+			sp->EffectTriggerSpell[i] = SE->EffectTriggerSpell;
+			for(uint8 b = 0; b < 3; b++)
+				sp->EffectSpellClassMask[i][b] = SE->EffectSpellClassMaskA[b];
+		}
+	}
+#endif
+
+	/// Custom defaults
+	sp->forced_creature_target = 0;
+	sp->AdditionalAura = 0;
+	sp->poison_type = 0;
+	sp->self_cast_only = false;
+	sp->Unique = false;
+	sp->apply_on_shapeshift_change = false;
+	sp->always_apply = false;
+	sp->proc_interval = 0; //trigger at each event
+	sp->ProcsPerMinute = 0;
+	sp->c_is_flags = 0;
+	sp->isAOE = false;
+	sp->spell_coef_override = 0;
+	sp->AP_coef_override = 0;
+	sp->RAP_coef_override = 0;
+	sp->auraimmune_flag = 0;
+	sp->AllowBackAttack = false;
+	sp->procflags2 = 0.0f;
+	sp->cone_width = 0.0f;
+	sp->area_aura_update_interval = 2000;
+
+	float radius = 0.0f;
+	if(sp->EffectRadiusIndex[0] != 0)
+		radius = ::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[0]));
+	if( sp->EffectRadiusIndex[1] != 0 )
+		radius = std::max(radius,::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[1])));
+	if( sp->EffectRadiusIndex[2] != 0 )
+		radius = std::max(::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[2])),radius);
+	radius = std::max(GetMaxRange(dbcSpellRange.LookupEntry(sp->rangeIndex)), radius);
+	sp->base_range_or_radius = radius;
+	sp->base_range_or_radius_sqr = radius*radius;
+
+	// hash the name
+	//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
+	sp->NameHash = crc32((const unsigned char*)sp->Name, (unsigned int)strlen(sp->Name)); //need these set before we start processing spells
+}
+
