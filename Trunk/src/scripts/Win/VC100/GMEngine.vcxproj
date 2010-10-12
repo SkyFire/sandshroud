@@ -150,7 +150,7 @@
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/release/script_bin/GameMonkey.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\release_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/release/script_bin/GameMonkey.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
