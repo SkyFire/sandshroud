@@ -6326,6 +6326,7 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 
 		if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
 			continue;
+
 		if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
 			continue;
 
@@ -12026,6 +12027,7 @@ void Player::_WallHackCheck()
 			}
 		}
 	}
+	LastWHPosition = GetPositionNC();
 }
 
 void Player::_Disconnect()

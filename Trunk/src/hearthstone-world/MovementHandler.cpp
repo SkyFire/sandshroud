@@ -765,7 +765,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			_player->m_isMoving = true;
 			_player->m_startMoveTime = _player->movement_info.time;
 			_player->m_lastHeartbeatPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
-			_player->LastWHPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
 		}
 	}
 
