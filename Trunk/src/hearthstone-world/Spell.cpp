@@ -1048,7 +1048,28 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 						}
 					}break;
 				case 61:{ // targets with the same group/raid and the same class
-					//shit again
+						if( p_caster != NULL )
+						{
+							SubGroup * pGroup = p_caster->GetGroup() ?
+								p_caster->GetGroup()->GetSubGroup(p_caster->GetSubGroup()) : 0;
+
+							if( pGroup )
+							{
+								p_caster->GetGroup()->Lock();
+								for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
+									itr != pGroup->GetGroupMembersEnd(); itr++)
+								{
+									if(!(*itr)->m_loggedInPlayer || p == (*itr)->m_loggedInPlayer)
+										continue;
+									if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),(*itr)->m_loggedInPlayer,r) && (*itr)->m_loggedInPlayer->getClass() == p_caster->getClass())
+									{
+										store_buff->m_unitTarget = (*itr)->m_loggedInPlayer->GetGUID();
+										break;
+									}
+								}
+								p_caster->GetGroup()->Unlock();
+							}
+						}
 				}break;
 				case EFF_TARGET_ALL_FRIENDLY_IN_AREA:{
 
