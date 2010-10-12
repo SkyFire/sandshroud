@@ -800,12 +800,16 @@ public:
 			for(i = 0; i < nlen; i++)
 			{
 				p = allowedCharacters;
+				bool Continue = false;
 				for(; *p != 0; ++p)
 				{
 					if(name[i] == *p)
-						continue;
+						Continue = true;
 				}
-				return false;				
+				if(Continue)
+					continue;
+
+				return false;
 			}
 		}
 		else

@@ -1033,7 +1033,7 @@ bool ChatHandler::HandleRenameCommand(const char * args, WorldSession * m_sessio
 	if(sscanf(args, "%s %s", name1, name2) != 2)
 		return false;
 
-	if(sWorld.VerifyName(name2, strlen(name2)) == false)
+	if(!sWorld.VerifyName(name2, strlen(name2)))
 	{
 		RedSystemMessage(m_session, "That name is invalid or contains invalid characters.");
 		return true;

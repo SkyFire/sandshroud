@@ -458,13 +458,13 @@ void ObjectMgr::LoadPlayersInfo()
 
 PlayerInfo* ObjectMgr::GetPlayerInfoByName(const char * name)
 {
-	string lpn=string(name);
+	string lpn = string(name);
 	HEARTHSTONE_TOLOWER(lpn);
 	PlayerNameStringIndexMap::iterator i;
 	PlayerInfo *rv = NULL;
 	playernamelock.AcquireReadLock();
 
-	i=m_playersInfoByName.find(lpn);
+	i = m_playersInfoByName.find(lpn);
 	if( i != m_playersInfoByName.end() )
 		rv = i->second;
 
