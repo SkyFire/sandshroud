@@ -205,6 +205,18 @@ int main(int argc, char * arg[])
 	int locale = -1;
 	char tmp[100];
 
+	for( size_t i = 0; localeNames[i] != 0; i++ )
+	{
+		sprintf(tmp, "Data/%s/locale-%s.MPQ", localeNames[i], localeNames[i]);
+		tf = fopen(tmp, "r");
+		if (!tf)
+			continue;
+		fclose(tf);
+		locale = i;
+		new MPQArchive(tmp);
+		break;
+	}
+
 	tf = fopen("Data/world.MPQ", "r");
 	if (!tf)
 	{
@@ -223,17 +235,6 @@ int main(int argc, char * arg[])
 	fclose(tf);
 	new MPQArchive("Data/art.MPQ");
 
-	for( size_t i = 0; localeNames[i] != 0; i++ )
-	{
-		sprintf(tmp, "Data/%s/locale-%s.MPQ", localeNames[i], localeNames[i]);
-		tf = fopen(tmp, "r");
-		if (!tf)
-			continue;
-		fclose(tf);
-		locale = i;
-		new MPQArchive(tmp);
-	}
-
 	tf = fopen("Data/OldWorld.MPQ", "r");
 	if (tf)
 	{
@@ -242,8 +243,6 @@ int main(int argc, char * arg[])
 		if ( -1 != locale )
 		{
 			sprintf(tmp, "Data/%s/OldWorld-%s.MPQ", localeNames[locale], localeNames[locale]);
-			new MPQArchive(tmp);
-			sprintf(tmp, "Data/%s/local-%s.MPQ", localeNames[locale], localeNames[locale]);
 			new MPQArchive(tmp);
 		}
 	}

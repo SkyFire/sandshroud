@@ -188,16 +188,11 @@ int main(int argc, char * arg[])
             LoadLocaleMPQFiles(i);
 
             //Extract DBC files
-            if(FirstLocale < 0)
-            {
-                ExtractDBCFiles(i, true);
-                FirstLocale = i;
-            }
-            else
-                ExtractDBCFiles(i, false);
+            ExtractDBCFiles(i, false);
 
             //Close MPQs
             CloseMPQFiles();
+            break;
         }
     }
 
