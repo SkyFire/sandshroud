@@ -235,7 +235,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraIncreaseRangedAPStatPCT,                        //SPELL_AURA_MOD_RANGED_ATTACK_POWER_OF_INTELLECT //212 Apply Aura: Increase Ranged Atk Power by % of Intellect
 	&Aura::SpellAuraIncreaseRageFromDamageDealtPCT,                 //213 Apply Aura: Increase Rage from Damage Dealt by %
 	&Aura::SpellAuraNULL,                                           //214 Tamed Pet Passive (DND)
-	&Aura::SpellAuraNULL,                                           //215 arena preparation buff - cancel soul shard requirement?
+	&Aura::SpellAuraNoReagentCost,                                  //215 arena preparation buff - cancel soul shard requirement?
 	&Aura::SpellAuraModCastingSpeed,                                //216 Increases casting time %, reuse existing handler...
 	&Aura::SpellAuraNULL,                                           //217 not used
 	&Aura::SpellAuraHasteRanged,                                    //218 increases time between ranged attacks
@@ -5092,7 +5092,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 	case FORM_SPIRITOFREDEMPTION:
 		{
 			spellId = 27795;
-			TO_PLAYER(m_target)->m_canCastSpellsWhileDead = true;
 		}break;
 
 	case FORM_DEMON:
@@ -5233,7 +5232,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 			if( spellId == 27795 ) //Spirit Redemption
 			{
 				m_target->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
-				TO_PLAYER(m_target)->m_canCastSpellsWhileDead = false;
 			}
 		}
 
@@ -9267,6 +9265,14 @@ void Aura::SpellAuraIncreaseRageFromDamageDealtPCT(bool apply)
 	if(!m_target->IsPlayer())
 		return;
 
+	TO_PLAYER( m_target )->NoReagentCost = apply;
+}
+
+void Aura::SpellAuraNoReagentCost(bool apply)
+{
+	if(!m_target->IsPlayer())
+		return;
+
 	TO_PLAYER( m_target )->rageFromDamageDealt += (apply) ? mod->m_amount : -mod->m_amount;
 }
 
@@ -9516,16 +9522,12 @@ void Aura::SpellAuraSpiritOfRedemption(bool apply)
 		SpellCastTargets targets;
 		targets.m_unitTarget = m_target->GetGUID();
 		sor->prepare(&targets);
-
-		TO_PLAYER(m_target)->m_canCastSpellsWhileDead = true;
 	}
 	else
 	{
 		//m_target->SetFloatValue(OBJECT_FIELD_SCALE_X, 1);
 		m_target->RemoveAura(27792);
 		m_target->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
-
-		TO_PLAYER(m_target)->m_canCastSpellsWhileDead = false;
 	}
 }
 

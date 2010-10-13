@@ -427,8 +427,6 @@ void Player::Init()
 	m_mountCheckTimer = 0;
 	m_taxiMapChangeNode = 0;
 	m_startMoveTime = 0;
-	m_canCastSpellsWhileDead = false;
-
 #ifdef ENABLE_COMPRESSED_MOVEMENT
 		m_movementBuffer.reserve(5000);
 #endif
@@ -436,7 +434,6 @@ void Player::Init()
 	m_heartbeatDisable = 0;
 	m_safeFall = 0;
 	safefall = false;
-	m_noFallDamage = false;
 	z_axisposition = 0.0f;
 	m_KickDelay = 0;
 	m_speedhackCheckTimer = 0;
@@ -486,6 +483,7 @@ void Player::Init()
 	RequireAmmo = true;
 	PreventRes = false;
 	MobXPGainRate = 0.0f;
+	NoReagentCost = false;
 	Unit::Init();
 }
 

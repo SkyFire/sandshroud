@@ -3449,7 +3449,7 @@ uint8 Spell::CanCast(bool tolerate)
 		}
 
 		// check if we have the required reagents
-		if( CheckReagents && (!i_caster || (i_caster->GetProto() && i_caster->GetProto()->Flags != 268435520)) )
+		if( CheckReagents && (!i_caster || (i_caster->GetProto() && i_caster->GetProto()->Flags != 268435520)) && !p_caster->NoReagentCost)
 			for(i=0; i<8 ;++i)
 			{
 				if( GetSpellProto()->Reagent[i] <= 0 || GetSpellProto()->ReagentCount[i] <= 0)
@@ -4284,7 +4284,7 @@ void Spell::RemoveItems()
 	// Reagent Removal
 	for(uint32 i=0; i<8 ;++i)
 	{
-		if( p_caster && GetSpellProto()->Reagent[i])
+		if( p_caster && GetSpellProto()->Reagent[i] && !p_caster->NoReagentCost)
 		{
 			p_caster->GetItemInterface()->RemoveItemAmt_ProtectPointer(GetSpellProto()->Reagent[i], GetSpellProto()->ReagentCount[i], &i_caster);
 		}

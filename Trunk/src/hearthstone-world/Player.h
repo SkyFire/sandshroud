@@ -1398,8 +1398,6 @@ public:
 	void AddCalculatedRestXP(uint32 seconds);
 	void ApplyPlayerRestState(bool apply);
 	void UpdateRestState();
-
-	bool m_noFallDamage;
 	float z_axisposition;
 	int32 m_safeFall;
 	bool safefall;
@@ -2172,9 +2170,6 @@ public:
 	// grounding totem
 	Aura* m_magnetAura;
 
-	// spirit of redemption
-	bool m_canCastSpellsWhileDead;
-
 	// area update for worldstates, etc.
 	void ForceAreaUpdate();
 
@@ -2282,6 +2277,7 @@ public:
 	uint32 GenerateShapeshiftModelId(uint32 form);
 	PlayerCreateInfo * GetInfo() const { return info;};
 	float MobXPGainRate;
+	bool NoReagentCost;
 };
 
 class SkillIterator

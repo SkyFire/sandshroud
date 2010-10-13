@@ -1319,8 +1319,8 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			{
 			if(p_caster != NULL)
 			{
-			Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
-			damage = ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + GetSpellProto()->EffectBasePoints[i];
+				Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+				damage = ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + GetSpellProto()->EffectBasePoints[i];
 			}
 		}break;
 
@@ -1336,7 +1336,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	case 47502:
  			{
  				if(u_caster)
-				damage = float2int32((GetSpellProto()->EffectBasePoints[0]+1)+ u_caster->GetAP() * 0.20f);
+					damage = float2int32((GetSpellProto()->EffectBasePoints[0]+1)+ u_caster->GetAP() * 0.20f);
  			}break;
 
 	case 5308:
@@ -2771,6 +2771,31 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 						gobj->Despawn(0, 0);
 					}
 				}
+			}
+		}break;
+	case 67799:
+		{
+			if(!p_caster || !unitTarget)
+				return;
+			uint32 result = RandomUInt(4);
+			switch(result)
+			{
+			case 1:
+				{
+					p_caster->CastSpell(unitTarget,605,true); // Don't know real spell :|
+				}break;
+			case 2:
+				{
+					unitTarget->CastSpell(p_caster,67809,true);
+				}break;
+			case 3:
+				{
+					p_caster->CastSpell(unitTarget,67810,true);
+				}break;
+			case 4:
+				{
+					unitTarget->CastSpell(p_caster,605,true); // Don't know real spell :|
+				}break;
 			}
 		}break;
 

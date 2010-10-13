@@ -694,6 +694,7 @@ public:
 	void SpellAuraEnableFlight(bool apply);
 	void SpellAuraEnableFlightWithUnmountedSpeed(bool apply);
 	void SpellAuraIncreaseRageFromDamageDealtPCT(bool apply);
+	void SpellAuraNoReagentCost(bool apply);
 	void SpellAuraIncreaseFlightSpeed(bool apply);
 	void SpellAuraIncreaseMovementAndMountedSpeed(bool apply);
 	void SpellAuraIncreaseRating(bool apply);
