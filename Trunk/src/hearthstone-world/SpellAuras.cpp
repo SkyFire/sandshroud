@@ -9265,7 +9265,7 @@ void Aura::SpellAuraIncreaseRageFromDamageDealtPCT(bool apply)
 	if(!m_target->IsPlayer())
 		return;
 
-	TO_PLAYER( m_target )->NoReagentCost = apply;
+	TO_PLAYER( m_target )->rageFromDamageDealt += (apply) ? mod->m_amount : -mod->m_amount;
 }
 
 void Aura::SpellAuraNoReagentCost(bool apply)
@@ -9273,7 +9273,7 @@ void Aura::SpellAuraNoReagentCost(bool apply)
 	if(!m_target->IsPlayer())
 		return;
 
-	TO_PLAYER( m_target )->rageFromDamageDealt += (apply) ? mod->m_amount : -mod->m_amount;
+	TO_PLAYER( m_target )->NoReagentCost = apply;
 }
 
 int32 Aura::event_GetInstanceID()
