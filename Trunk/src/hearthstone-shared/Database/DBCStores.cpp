@@ -892,8 +892,9 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/SpellCategories.dbc", SpellCategoriesfmt, true, dbcSpellCategories, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellClassOptions.dbc", SpellClassOptionsfmt, true, dbcSpellClassOptions, false);
-#endif
+	/* Needed for: */
 	LOAD_DBC("DBC/SpellCooldowns.dbc", SpellCooldownsfmt, true, dbcSpellCooldowns, false);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellDifficulty.dbc", spelldifficultyFormat, true, dbcSpellDifficulty, false);
 	/* Needed for: */
