@@ -300,7 +300,7 @@ public:
 
 	// Movement
 	void SendMoveToPacket(float toX, float toY, float toZ, float toO, uint32 time, uint32 MoveFlags);
-	void JumpTo(float toX, float toY, float toZ, uint32 time, float arc , uint32 unk);
+	void JumpTo(float toX, float toY, float toZ, uint32 time, float arc , uint32 unk = 0);
 	//void SendMoveToSplinesPacket(std::list<Waypoint> wp, bool run);
 	void MoveTo(float x, float y, float z);
 	uint32 getMoveFlags();

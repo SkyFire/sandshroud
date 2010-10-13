@@ -149,7 +149,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectDummyMelee,					//SPELL_EFFECT_DUMMYMELEE	- 121
 	&Spell::SpellEffectNULL,						//unknown - 122 //not used
 	&Spell::SpellEffectSendTaxi,					//123 SPELL_EFFECT_SEND_TAXI  taxi/flight related (misc value is taxi path id)
-	&Spell::SpellEffectPull,					// SPELL_EFFECT_PLAYER_PULL - 124 - http://thottbot.com/e2312
+	&Spell::SpellEffectPull,						// SPELL_EFFECT_PLAYER_PULL - 124 - http://thottbot.com/e2312
 	&Spell::SpellEffectNULL,						//unknown - 125 // Reduce Threat by % //http://www.thottbot.com/?sp=32835
 	&Spell::SpellEffectSpellSteal,					//SPELL_EFFECT_SPELL_STEAL - 126 // Steal Beneficial Buff (Magic) //http://www.thottbot.com/?sp=30449
 	&Spell::SpellEffectProspecting,					//unknown - 127 // Search 5 ore of a base metal for precious gems.  This will destroy the ore in the process.
@@ -7224,7 +7224,7 @@ void Spell::SpellEffectPull( uint32 i )
 	float pullZ = m_caster->GetPositionZ() + 0.3f;
 	uint32 time = uint32( pullD * 42.0f );
 	unitTarget->GetAIInterface()->SendMoveToPacket( pullX, pullY, pullZ, pullO, time, MONSTER_MOVE_FLAG_JUMP );
-
+	unitTarget->SetPosition(pullX,pullY,pullZ,pullO);
 	if( u_caster && playerTarget)
 	{
 		if( playerTarget->IsPvPFlagged() )
@@ -7532,7 +7532,7 @@ void Spell::SpellEffectSummonDeadPet(uint32 i)
 
 void Spell::SpellEffectDestroyAllTotems(uint32 i)
 {
-	if(p_caster  == NULL || !p_caster->IsInWorld())
+	if(p_caster == NULL || !p_caster->IsInWorld())
 		return;
 
 	uint32 energize_amt = 0;

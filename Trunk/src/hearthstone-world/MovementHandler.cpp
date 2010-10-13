@@ -627,12 +627,10 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 				Unit* toDamage = TO_UNIT(_player);
 				if( _player->m_CurrentVehicle )
 					toDamage = _player->m_CurrentVehicle;
+				else if(_player->m_CurrentCharm)
+					toDamage = _player->m_CurrentCharm;
 
-				if( _player->m_CurrentVehicle && _player->m_CurrentVehicle->GetControllingUnit() != _player )
-				{
-					// don't allow any player but the 'driver' to send for fall damage, or we could get duplicate fall dmg
-				}
-				else
+				if(!(_player->m_CurrentVehicle && _player->m_CurrentVehicle->GetControllingUnit() != _player))
 				{
 					uint32 health_loss = float2int32( float( toDamage->GetUInt32Value( UNIT_FIELD_MAXHEALTH ) * ( ( falldistance - 12 ) * 0.017 ) ) );
 
