@@ -31,7 +31,7 @@ LfgMgr::LfgMgr()
 		{
 			DBCFile::Record r = f.getRecord(i);
 			uint32 id = r.getUInt(0);
-			uint32 typ = r.getUInt(26);
+			uint32 typ = r.getUInt(10);
 
 			if(typ >= LFG_MAX_TYPES)
 			{

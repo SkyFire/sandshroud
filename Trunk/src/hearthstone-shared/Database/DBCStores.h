@@ -28,6 +28,8 @@
 #include "DataStore.h"
 #include "../Timer.h"
 
+typedef char const* const* PackedString;
+
 #pragma pack(push,1)
 struct AchievementEntry
 {
@@ -501,6 +503,7 @@ struct ItemEntry
 
 struct ItemSetEntry
 {
+#ifndef CATACLYSM
 	uint32 id;						//1
 //	char* name;						//2
 //	uint32 unused_shit[15];			//3 - 17
@@ -511,6 +514,15 @@ struct ItemSetEntry
 	uint32 itemscount[8];			//44 - 51
 	uint32 RequiredSkillID;			//52
 	uint32 RequiredSkillAmt;		//53
+#else
+	uint32 id;						//1
+//	char* name;						//2
+	uint32 itemid[17];				//19 - 28
+	uint32 SpellID[8];				//36 - 43
+	uint32 itemscount[8];			//44 - 51
+	uint32 RequiredSkillID;			//52
+	uint32 RequiredSkillAmt;		//53
+#endif
 };
 
 struct Lock
@@ -603,39 +615,8 @@ struct skilllineentry //SkillLine.dbc
 	uint32 type;
 	uint32 skillCostID;
 	char* Name;
-	//int32 NameAlt1;
-	//uint32 NameAlt2;
-	//uint32 NameAlt3;
-	//uint32 NameAlt4;
-	//uint32 NameAlt5;
-	//uint32 NameAlt6;
-	//uint32 NameAlt7;
-	//uint32 NameAlt8;
-	//uint32 NameAlt9;
-	//uint32 NameAlt10;
-	//uint32 NameAlt11;
-	//uint32 NameAlt12;
-	//uint32 NameAlt13;
-	//uint32 NameAlt14;
-	//uint32 NameAlt15;
-	//uint32 NameFlags;
 	//uint32 Description;
-	//uint32 DescriptionAlt1;
-	//uint32 DescriptionAlt2;
-	//uint32 DescriptionAlt3;
-	//uint32 DescriptionAlt4;
-	//uint32 DescriptionAlt5;
-	//uint32 DescriptionAlt6;
-	//uint32 DescriptionAlt7;
-	//uint32 DescriptionAlt8;
-	//uint32 DescriptionAlt9;
-	//uint32 DescriptionAlt10;
-	//uint32 DescriptionAlt11;
-	//uint32 DescriptionAlt12;
-	//uint32 DescriptionAlt13;
-	//uint32 DescriptionAlt14;
-	//uint32 DescriptionAlt15;
-	//uint32 DescriptionFlags;
+	//char* idk
 	//uint32 unk2;
 
 };
@@ -663,42 +644,42 @@ struct SpellEntry
 	uint32 Flags6;							// 6
 	uint32 Flags7;							// 7
 	uint32 Flags8;							// 8
-	// uint32 unk400						// 10
+	// uint32 unk400[2]						// 9-10
 	uint32 CastingTimeIndex;				// 11
 	uint32 DurationIndex;					// 12
 	float  speed;							// 13
 	uint32 rangeIndex;						// 14
 	uint32 powerType;						// 15
-	uint32 SpellVisual;						// 16
-	uint32 SpellIconID;						// 17
-	uint32 activeIconID;					// 18
-	char* Name;								// 19
-	char * Rank;							// 20
-	char * Description;						// 21
-	char * BuffDescription;					// 22
-	uint32 School;							// 23
-	uint32 runeCostID;						// 24
-	//uint32 spellMissileID;				// 25
-	uint32 SpellDescriptionVariableID;		// 26
-	uint32 SpellDifficulty;					// 27
-	//float unk_f1;							// 28
-	uint32 SpellScalingId;					// 29	SpellScaling.dbc
-	uint32 SpellAuraOptionsId;				// 30	SpellAuraOptions.dbc
-	uint32 SpellAuraRestrictionsId;			// 31	SpellAuraRestrictions.dbc
-	uint32 SpellCastingRequirementsId;		// 32	SpellCastingRequirements.dbc
-	uint32 SpellCategoriesId;				// 33	SpellCategories.dbc
-	uint32 SpellClassOptionsId;				// 34	SpellClassOptions.dbc
-	uint32 SpellCooldownsId;				// 35	SpellCooldowns.dbc
-	//uint32 unkIndex7;						// 36	all zeros...
-	uint32 SpellEquippedItemsId;			// 37	SpellEquippedItems.dbc
-	uint32 SpellInterruptsId;				// 38	SpellInterrupts.dbc
-	uint32 SpellLevelsId;					// 39	SpellLevels.dbc
-	uint32 SpellPowerId;					// 40	SpellPower.dbc
-	uint32 SpellReagentsId;					// 41	SpellReagents.dbc
-	uint32 SpellShapeshiftId;				// 42	SpellShapeshift.dbc
-	uint32 SpellTargetRestrictionsId;		// 43	SpellTargetRestrictions.dbc
-	uint32 SpellTotemsId;					// 44	SpellTotems.dbc
-	uint32 SpellEffectIndex[3];				// 45-47 SpellEffects.dbc
+	uint32 SpellVisual/*[2]*/;				// 16-17, second one is unnessessary.
+	uint32 SpellIconID;						// 18
+	uint32 activeIconID;					// 19
+	char* Name;								// 20
+	char* Rank;								// 21
+	char* Description;						// 22
+//	PackedString PackedBuffDescription;		// 23
+	uint32 School;							// 24
+	uint32 runeCostID;						// 25
+	//uint32 spellMissileID;				// 26
+	uint32 SpellDescriptionVariableID;		// 27
+	uint32 SpellDifficulty;					// 28
+    //float unk_f1;							// 29
+	uint32 SpellScalingId;					// 30	SpellScaling.dbc
+	uint32 SpellAuraOptionsId;				// 31	SpellAuraOptions.dbc
+	uint32 SpellAuraRestrictionsId;			// 32	SpellAuraRestrictions.dbc
+	uint32 SpellCastingRequirementsId;		// 33	SpellCastingRequirements.dbc
+	uint32 SpellCategoriesId;				// 34	SpellCategories.dbc
+	uint32 SpellClassOptionsId;				// 35	SpellClassOptions.dbc
+	uint32 SpellCooldownsId;				// 36	SpellCooldowns.dbc
+    //uint32 unkIndex7;						// 37	all zeros...
+	uint32 SpellEquippedItemsId;			// 38	SpellEquippedItems.dbc
+	uint32 SpellInterruptsId;				// 39	SpellInterrupts.dbc
+	uint32 SpellLevelsId;					// 40	SpellLevels.dbc
+	uint32 SpellPowerId;					// 41	SpellPower.dbc
+	uint32 SpellReagentsId;					// 42	SpellReagents.dbc
+	uint32 SpellShapeshiftId;				// 43	SpellShapeshift.dbc
+	uint32 SpellTargetRestrictionsId;		// 44	SpellTargetRestrictions.dbc
+	uint32 SpellTotemsId;					// 45	SpellTotems.dbc
+	//uint32 ResearchProject;				// 46	ResearchProject.dbc
 
 	/// Place Holders! Will be set later.
 	uint32 Category;
@@ -1113,7 +1094,6 @@ struct TalentEntry
 	uint32 Row;
 	uint32 Col;
 	uint32 RankID[5];
-	//uint32 unk[4];
 	uint32 DependsOn;
 	//uint32 unk1[2];
 	uint32 DependsOnRank;
@@ -1568,11 +1548,11 @@ struct VehicleSeatEntry
 struct DestructibleModelDataEntry
 {
 	uint32 entry; //Unknown9 from gameobject_names
-	uint32 displayId[4];
+	uint32 displayId[5];
 
 	uint32 GetDisplayId(uint8 state)
 	{
-		if(state > 4)
+		if(state > 5)
 			return 0;
 
 		if(!displayId[state])
@@ -2073,7 +2053,6 @@ extern SERVER_DECL DBCStorage<ChatChannelDBC> dbcChatChannels;
 extern SERVER_DECL DBCStorage<DurabilityCostsEntry> dbcDurabilityCosts;
 extern SERVER_DECL DBCStorage<DurabilityQualityEntry> dbcDurabilityQuality;
 extern SERVER_DECL DBCStorage<BankSlotPrice> dbcBankSlotPrices;
-extern SERVER_DECL DBCStorage<BankSlotPrice> dbcStableSlotPrices; //uses same structure as Bank
 extern SERVER_DECL DBCStorage<BarberShopStyleEntry> dbcBarberShopStyle;
 extern SERVER_DECL DBCStorage<gtFloat> dbcBarberShopPrices;
 extern SERVER_DECL DBCStorage<gtFloat> dbcMeleeCrit;
@@ -2082,8 +2061,6 @@ extern SERVER_DECL DBCStorage<gtFloat> dbcSpellCrit;
 extern SERVER_DECL DBCStorage<gtFloat> dbcSpellCritBase;
 extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegen;
 extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
-extern SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
-extern SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
 extern SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 extern SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 extern SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;

@@ -98,7 +98,7 @@
 // Crow: This will nerf all Enchantments, making all of them pretty much unique internally.
 //#define NERF_ENCHANTS
 
-// Crow: Definitely not ready.
+// Crow: Almost ready.
 //#define CATACLYSM
 
 #endif		// __HEARTHSTONECONFIG_H

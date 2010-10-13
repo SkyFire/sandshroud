@@ -1094,7 +1094,6 @@ SpellEntry* CreateDummySpell(uint32 id)
 	sp->Name = ((char*)name.c_str());
 	sp->Rank = ((char*)" ");
 	sp->Description = ((char*)" ");
-	sp->BuffDescription = ((char*)" ");
 	sp->CastingTimeIndex = 1;
 	sp->procChance = 75;
 	sp->rangeIndex = 13;
@@ -1422,7 +1421,7 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 
 	for(uint8 i = 0; i < 3; i++)
 	{
-		SpellEffectEntry* SE = dbcSpellEffect.LookupEntry(sp->SpellEffectIndex[i]);
+		SpellEffectEntry* SE = dbcSpellEffect.LookupEntry(sp->Id);
 		if(SE)
 		{
 			sp->Effect[i] = SE->Effect;
@@ -1485,4 +1484,3 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 	//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
 	sp->NameHash = crc32((const unsigned char*)sp->Name, (unsigned int)strlen(sp->Name)); //need these set before we start processing spells
 }
-

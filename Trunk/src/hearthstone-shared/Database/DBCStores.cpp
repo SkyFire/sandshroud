@@ -343,7 +343,6 @@ const char* auctionhousedbcFormat =
 	"x";	// 4 - Name
 
 SERVER_DECL DBCStorage<BankSlotPrice> dbcBankSlotPrices;
-SERVER_DECL DBCStorage<BankSlotPrice> dbcStableSlotPrices;
 const char* bankslotpriceformat = 
 	"u"		// 0 - Slot ID
 	"u";	// 1 - Slot Price
@@ -506,8 +505,6 @@ SERVER_DECL DBCStorage<gtFloat> dbcSpellCrit;
 SERVER_DECL DBCStorage<gtFloat> dbcSpellCritBase;
 SERVER_DECL DBCStorage<gtFloat> dbcManaRegen;
 SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
-SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
-SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
 const char* gtfloatformat = "xf";
 
 SERVER_DECL DBCStorage<ItemEntry> dbcItem;
@@ -527,24 +524,24 @@ const char* LockFormat = "uuuuuuxxxuuuuuxxxuuuuuxxxxxxxxxxx";
 
 SERVER_DECL DBCStorage<MapEntry> dbcMap;
 const char* mapentryFormat =
-	"u"					// 0 	- id
-	"x"					// 1 	- name_internal
-	"u"					// 2 	- map_type
-	"x"					// 3 	- is_pvp_zone
-	"x"					// 4 	- 0 or 1 for battlegrounds (not arenas)
-	"x"					// 5 	- real_name
-	"x"					// 6 	- linked_zone
-	"x" 				// 7 	- hordeIntro
-	"x" 				// 8 	- allianceIntro
-	"u"					// 9 	- multimap_id
-	"x"					// 10  	- unk_float (all 1 but arathi 1.25)
-	"x"					// 11  	- parent_map
-	"x"					// 12  	- start_x
-	"x"					// 13  	- start_y
-	"x"					// 14  	- unk
-	"x"					// 15  	- addon
-	"x"					// 16  	- normalReqText
-	"u"					// 17  	- Max players
+	"u"					// 0	- id
+	"x"					// 1	- name_internal
+	"u"					// 2	- map_type
+	"x"					// 3	- is_pvp_zone
+	"x"					// 4	- 0 or 1 for battlegrounds (not arenas)
+	"x"					// 5	- real_name
+	"x"					// 6	- linked_zone
+	"x" 				// 7	- hordeIntro
+	"x" 				// 8	- allianceIntro
+	"u"					// 9	- multimap_id
+	"x"					// 10	- unk_float (all 1 but arathi 1.25)
+	"x"					// 11	- parent_map
+	"x"					// 12	- start_x
+	"x"					// 13	- start_y
+	"x"					// 14	- unk
+	"x"					// 15	- addon
+	"x"					// 16	- normalReqText
+	"u"					// 17	- Max players
 	"x";				// 18 	- MaNGOS: Map ID, related to phasing.
 	
 SERVER_DECL DBCStorage<RandomProps> dbcRandomProps;
@@ -583,7 +580,7 @@ SERVER_DECL DBCStorage<TalentEntry> dbcTalent;
 const char* talententryFormat = "uuuuuuuuuuxxuxxxuxx";
 
 SERVER_DECL DBCStorage<TalentTabEntry> dbcTalentTab;
-const char* talenttabentryFormat = "uxxuuuxxx";
+const char* talenttabentryFormat = "uxxuuuxxxxx";
 
 SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 const char* vehicleentryFormat = "uxxxxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxuxxx";
@@ -629,44 +626,44 @@ const char* spellshapeshiftformformat = "uxxxxxxxxxxuuuuuuuu";
 
 SERVER_DECL DBCStorage<SpellEntry> dbcSpell;
 const char* spellentryFormat =
-	"u" // Id
-	"uuuuuuu" // Flags
-	"x" 	// 400 Unk
-	"u" 	// CastingTimeIndex
-	"u" 	// DurationIndex
-	"f" 	// Speed
-	"u" 	// rangeIndex
-	"u" 	// powerType
-	"u" 	// SpellVisual
-	"u" 	// SpellIconID
-	"u" 	// activeIconID
-	"s" 	// Name
-	"s" 	// Rank
-	"s" 	// Spell Description
-	"s" 	// Buff Description
-	"u" 	// School
-	"u" 	// runeCostID
-	"x" 	// SpellMissileID
-	"u"		// SpellDescriptionVariableID
-	"u" 	// SpellDifficulty
-	"x"		// unk_float
-	"u"		// SpellScalingId
-	"u"		// SpellAuraOptionsId
-	"u"		// SpellAuraRestrictionsId
-	"u"		// SpellCastingRequirementsId
-	"u"		// SpellCategoriesId
-	"u"		// SpellClassOptionsId
-	"u"		// SpellCooldownsId
-	"x"		// unk_4_0_0
-	"u"		// SpellEquippedItemsId
-	"u"		// SpellInterruptsId
-	"u"		// SpellLevelsId
-	"u"		// SpellPowerId
-	"u"		// SpellReagentsId
-	"u"		// SpellShapeshiftId
-	"u"		// SpellTargetRestrictionsId
-	"u"		// SpellTotemsId
-	"uuu";	// unk_4_0_0?
+	"u"			// Id
+	"uuuuuuuu"	// Flags
+	"xx"		// 400 Unk[2]
+	"u"			// CastingTimeIndex
+	"u"			// DurationIndex
+	"f"			// Speed
+	"u"			// rangeIndex
+	"u"			// powerType
+	"ux"		// SpellVisual, second one is unnessessary.
+	"u"			// SpellIconID
+	"u"			// activeIconID
+	"s"			// Name
+	"s"			// Rank
+	"s"			// Spell Description
+	"x"			// Buff Description
+	"u"			// School
+	"u"			// runeCostID
+	"x"			// SpellMissileID
+	"u"			// SpellDescriptionVariableID
+	"u"			// SpellDifficulty
+	"x"			// unk_f1
+	"u"			// SpellScalingId
+	"u"			// SpellAuraOptionsId
+	"u"			// SpellAuraRestrictionsId
+	"u"			// SpellCastingRequirementsId
+	"u"			// SpellCategoriesId
+	"u"			// SpellClassOptionsId
+	"u"			// SpellCooldownsId
+	"x"			// unkIndex7
+	"u"			// SpellEquippedItemsId
+	"u"			// SpellInterruptsId
+	"u"			// SpellLevelsId
+	"u"			// SpellPowerId
+	"u"			// SpellReagentsId
+	"u"			// SpellShapeshiftId
+	"u"			// SpellTargetRestrictionsId
+	"u"			// SpellTotemsId
+	"x";		// ResearchProject
 
 SERVER_DECL DBCStorage<SpellScalingEntry> dbcSpellScaling;
 const char* SpellScalingfmt =
@@ -840,12 +837,16 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/gtChanceToSpellCritBase.dbc", gtfloatformat, false, dbcSpellCritBase, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/gtCombatRatings.dbc", gtfloatformat, false, dbcCombatRating, false);
+#ifndef CATACLYSM
 	/* Needed for: */
 	LOAD_DBC("DBC/gtOCTRegenHP.dbc", gtfloatformat, false, dbcHPRegen, false);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/gtOCTRegenMP.dbc", gtfloatformat, false, dbcManaRegen, false);
+#ifndef CATACLYSM
 	/* Needed for: */
 	LOAD_DBC("DBC/gtRegenHPPerSpt.dbc", gtfloatformat, false, dbcHPRegenBase, false);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/gtRegenMPPerSpt.dbc", gtfloatformat, false, dbcManaRegenBase, false);
 	/* Needed for: */
@@ -866,30 +867,59 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/ScalingStatDistribution.dbc", scalingstatdistributionformat, true, dbcScalingStatDistribution, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/ScalingStatValues.dbc", scalingstatvaluesformat, true, dbcScalingStatValues, false);
+#ifndef CATACLYSM
 	/* Needed for: */
 	LOAD_DBC("DBC/StableSlotPrices.dbc", bankslotpriceformat, true, dbcStableSlotPrices, false);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/SkillLine.dbc", skilllineentrYFormat, true, dbcSkillLine, true);
 	/* Needed for: */
 	LOAD_DBC("DBC/SkillLineAbility.dbc", skilllinespellFormat, false, dbcSkillLineSpell, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/Spell.dbc", spellentryFormat, true, dbcSpell, true);
+#ifdef CATACLYSM
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellAuraOptions.dbc", SpellAuraOptionsfmt, true, dbcSpellAuraOptions, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellAuraRestrictions.dbc", SpellAuraRestrictfmt, true, dbcSpellAuraRestrict, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellCastingRequirements.dbc", SpellCastingReqfmt, true, dbcSpellCastingReq, false);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellCastTimes.dbc", spellcasttimeFormat, true, dbcSpellCastTime, false);
+#ifdef CATACLYSM
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellCategories.dbc", SpellCategoriesfmt, true, dbcSpellCategories, false);
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellClassOptions.dbc", SpellClassOptionsfmt, true, dbcSpellClassOptions, false);
+#endif
+	LOAD_DBC("DBC/SpellCooldowns.dbc", SpellCooldownsfmt, true, dbcSpellCooldowns, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellDifficulty.dbc", spelldifficultyFormat, true, dbcSpellDifficulty, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellDuration.dbc", spelldurationFormat, true, dbcSpellDuration, false);
+#ifdef CATACLYSM
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellEffect.dbc", SpellEffectfmt, true, dbcSpellEffect, false);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellItemEnchantment.dbc", EnchantEntrYFormat, true, dbcEnchant, true);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellRadius.dbc", spellradiusFormat, true, dbcSpellRadius, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellRange.dbc", spellrangeFormat, true, dbcSpellRange, false);
+#ifdef CATACLYSM
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellReagents.dbc", SpellReagentfmt, true, dbcSpellReagents, false);
+#endif
 	/* Needed for: Spell costs and calculations for dummy scripts or scripted spells for DK's. */
 	LOAD_DBC("DBC/SpellRuneCost.dbc", SpellRuneCostfmt, true, dbcSpellRuneCost, false);
 	/* Needed for: */
 	LOAD_DBC("DBC/SpellShapeshiftForm.dbc", spellshapeshiftformformat, true, dbcSpellShapeshiftForm, false);
+#ifdef CATACLYSM
+	/* Needed for: */
+	LOAD_DBC("DBC/SpellTargetRestrictions.dbc", spelltargetrestrictionfmt, true, dbcSpellTargetRestrict, false);
+#endif
 	/* Needed for: */
 	LOAD_DBC("DBC/SummonProperties.dbc", SummonPropertiesfmt, true, dbcSummonProps, false);
 	/* Needed for: */

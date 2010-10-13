@@ -7641,20 +7641,49 @@ void Player::RegenerateMana(bool is_interrupted)
 
 void Player::RegenerateHealth( bool inCombat )
 {
-
 	uint32 cur = GetUInt32Value(UNIT_FIELD_HEALTH);
 	uint32 mh = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
 	if(cur >= mh)
 		return;
 
-	gtFloat* HPRegenBase = dbcHPRegenBase.LookupEntry(getLevel()-1 + (getClass()-1)*100);
-	gtFloat* HPRegen =  dbcHPRegen.LookupEntry(getLevel()-1 + (getClass()-1)*100);
+	float Spirit = (float) GetUInt32Value(UNIT_FIELD_STAT4);
+	uint8 Class = getClass();
+	float amt = 0;
+	switch (Class)
+	{
+	case DRUID:
+		amt = (Spirit * 0.09 + 6.5);
+		break;
+	case HUNTER:
+		amt = (Spirit * 0.25 + 6);
+		break;
+	case MAGE:
+		amt = (Spirit * 0.10);
+		break;
+	case PALADIN:
+		amt = (Spirit * 0.25);
+		break;
+	case PRIEST:
+		amt = (Spirit * 0.10);
+		break;
+	case ROGUE:
+		amt = (Spirit * 0.50 + 2);
+		break;
+	case SHAMAN:
+		amt = (Spirit * 0.11 + 7);
+		break;
+	case WARLOCK:
+		amt = (Spirit * 0.07 + 6);
+		break;
+	case WARRIOR:
+		amt = (Spirit * 0.80 + 6);
+		break;
+    }
 
-	float amt = (m_uint32Values[UNIT_FIELD_STAT4]*HPRegen->val+HPRegenBase->val*100);
 	amt *= sWorld.getRate(RATE_HEALTH);//Apply shit from conf file
 
 	if(PctRegenModifier)
-		amt+= (amt * PctRegenModifier) / 100;
+		amt += (amt * PctRegenModifier) / 100;
 
 	if(inCombat)
 		amt *= PctIgnoreRegenModifier;
