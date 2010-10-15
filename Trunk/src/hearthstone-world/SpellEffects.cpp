@@ -158,15 +158,15 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectNULL,						// unknown - 130 // http://www.thottbot.com/s34477
 	&Spell::SpellEffectNULL,						// unknown - 131 // test spell
 	&Spell::SpellEffectNULL,						// unknown - 132 // no spells
-	&Spell::SpellEffectNULL,						// SPELL_EFFECT_FORGET_SPECIALIZATION - 133 // http://www.thottbot.com/s36441 // I think this is a gm/npc spell
+	&Spell::SpellEffectNULL,						// SPELL_EFFECT_FORGET_SPECIALIZATION - 133
 	&Spell::SpellEffectKillCredit,					// SPELL_EFFECT_KILL_CREDIT - 134  misc value is creature entry
-	&Spell::SpellEffectNULL,						// unknown - 135 // no spells
-	&Spell::SpellEffectRestoreHealthPct,			// Restore Health % - 136 // http://www.wowhead.com/?spell=48982
-	&Spell::SpellEffectRestoreManaPct,				// Restore Mana % - 137 // http://www.thottbot.com/s41542
-	&Spell::SpellEffectDisengage,					// unknown - 138 // related to superjump or even "*jump" spells http://www.thottbot.com/?e=Unknown%20138
-	&Spell::SpellEffectClearFinishedQuest,			// unknown - 139 // no spells
-	&Spell::SpellEffectTeleportUnits,				//SPELL_EFFECT_TELEPORT_UNITS - 140 IronForge teleport / portal only it seems
-	&Spell::SpellEffectNULL,						// unknown - 141 // triggers spell, magic one,  (Mother spell) http://www.thottbot.com/s41065
+	&Spell::SpellEffectNULL,						// unknown - 135 
+	&Spell::SpellEffectRestoreHealthPct,			// Restore Health % - 136
+	&Spell::SpellEffectRestoreManaPct,				// Restore Mana % - 137 
+	&Spell::SpellEffectDisengage,					// unknown - 138
+	&Spell::SpellEffectClearFinishedQuest,			// unknown - 139 
+	&Spell::SpellEffectTeleportUnits,				// SPELL_EFFECT_TELEPORT_UNITS - 140 IronForge teleport / portal only it seems
+	&Spell::SpellEffectTriggerSpell,				// unknown - 141 // triggers spell, magic one,  (Mother spell) http://www.thottbot.com/s41065
 	&Spell::SpellEffectTriggerSpellWithValue,		// unknown - 142 // triggers some kind of "Put spell on target" thing... (dono for sure) http://www.thottbot.com/s40872 and http://www.thottbot.com/s33076
 	&Spell::SpellEffectApplyDemonAura,				// 143  http://www.thottbot.com/s25228 and http://www.thottbot.com/s35696
 	&Spell::SpellEffectKnockBack,					// unknown - 144 Spectral Blast
@@ -174,7 +174,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectNULL,						// unknown - 146  unused
 	&Spell::SpellEffectActivateRune,				// unknown - 147
 	&Spell::SpellEffectNULL,						// unknown - 148 unused
-	&Spell::SpellEffectNULL,						// unknown - 149
+	&Spell::SpellEffectCharge,						// unknown - 149
 	&Spell::SpellEffectNULL,						// unknown - 150 unused
 	&Spell::SpellEffectTriggerSpell,				// 151 SPELL_EFFECT_TRIGGER_SPELL_2
 	&Spell::SpellEffectNULL,						// unknown - 152
@@ -2782,7 +2782,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			{
 			case 1:
 				{
-					p_caster->CastSpell(unitTarget,605,true); // Don't know real spell :|
+					p_caster->CastSpell(unitTarget,605,true);
 				}break;
 			case 2:
 				{
@@ -2794,7 +2794,10 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				}break;
 			case 4:
 				{
-					unitTarget->CastSpell(p_caster,605,true); // Don't know real spell :|
+					if(unitTarget->IsPlayer())
+						unitTarget->CastSpell(p_caster,605,true);
+					else
+						return;
 				}break;
 			}
 		}break;
@@ -7136,39 +7139,42 @@ void Spell::SpellEffectCharge(uint32 i)
 	if (u_caster->IsStunned() || u_caster->m_rooted || u_caster->IsPacified() || u_caster->IsFeared())
 		return;
 
-	float x, y, z;
 	float dx,dy;
 
-	//if(unitTarget->GetTypeId() == TYPEID_UNIT)
-	//	if(unitTarget->GetAIInterface())
-	//		unitTarget->GetAIInterface()->StopMovement(5000);
-	if(unitTarget->GetPositionX() == 0.0f || unitTarget->GetPositionY() == 0.0f)
-		return;
+	float x, y, z;
+	if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+	{
+		if(m_targets.m_destX == 0.0f || m_targets.m_destY == 0.0f)
+			return;
+		x = m_targets.m_destX;
+		y = m_targets.m_destY;
+		z = m_targets.m_destZ;
+	}
+	else
+	{
+		if(!unitTarget)
+			return;
+		x = unitTarget->GetPositionX();
+		y = unitTarget->GetPositionY();
+		z = unitTarget->GetPositionZ();
+	}
 
-	dx=unitTarget->GetPositionX()-m_caster->GetPositionX();
-	dy=unitTarget->GetPositionY()-m_caster->GetPositionY();
+	dx=x-m_caster->GetPositionX();
+	dy=y-m_caster->GetPositionY();
 	if(dx == 0.0f || dy == 0.0f)
 		return;
 
-	float d = sqrt(dx*dx+dy*dy)-unitTarget->GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS)-m_caster->GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS);
-	float alpha = atanf(dy/dx);
-	if(dx<0)
-		alpha += float(M_PI);
+	uint32 time = uint32( (m_caster->CalcDistance(LocationVector(x,y,z)) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
 
-	x = d*cosf(alpha)+m_caster->GetPositionX();
-	y = d*sinf(alpha)+m_caster->GetPositionY();
-	z = unitTarget->GetPositionZ();
+	u_caster->GetAIInterface()->SendMoveToPacket(x, y, z, 0.0f, time, MONSTER_MOVE_FLAG_WALK);
+	u_caster->SetPosition(x,y,z,0.0f,true);
 
-	uint32 time = uint32( (m_caster->CalcDistance(unitTarget) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
-
-	u_caster->GetAIInterface()->SendMoveToPacket(x, y, z, alpha, time, MONSTER_MOVE_FLAG_WALK);
-	u_caster->SetPosition(x,y,z,alpha,true);
-
-	if(unitTarget->GetTypeId() == TYPEID_UNIT)
+	if(unitTarget && unitTarget->GetTypeId() == TYPEID_UNIT)
 		unitTarget->GetAIInterface()->StopMovement(time);
 
 	u_caster->addStateFlag(UF_ATTACKING);
-	u_caster->smsg_AttackStart( unitTarget );
+	if(unitTarget)
+		u_caster->smsg_AttackStart( unitTarget );
 	u_caster->setAttackTimer(time, false);
 	u_caster->setAttackTimer(time, true);
 	if(p_caster)
@@ -8292,8 +8298,10 @@ void Spell::SpellEffectJump(uint32 i)
 	x = x+cosf(o);
 	y = y+sinf(o);
 	// Time formula is derived from andy's logs, 271ms to move ~14.5 units
-	float distance = u_caster->GetDistanceSq( x+cosf(o), y+sinf(o),z );
-	uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
+	//float distance = u_caster->GetDistanceSq( x+cosf(o), y+sinf(o),z );
+	//uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
+	uint32 moveTime = uint32( (m_caster->CalcDistance(LocationVector(x,y,z)) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
+
 	u_caster->GetAIInterface()->JumpTo( x, y, z, moveTime, GetSpellProto()->EffectMiscValue[i], GetSpellProto()->EffectDieSides[i] );
 	
 	if( p_caster != NULL)
