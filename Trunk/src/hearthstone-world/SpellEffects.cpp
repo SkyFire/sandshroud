@@ -7164,7 +7164,7 @@ void Spell::SpellEffectCharge(uint32 i)
 	if(dx == 0.0f || dy == 0.0f)
 		return;
 
-	uint32 time = uint32( (m_caster->CalcDistance(LocationVector(x,y,z)) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
+	uint32 time = uint32( (m_caster->CalcDistance(x,y,z) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
 
 	u_caster->GetAIInterface()->SendMoveToPacket(x, y, z, 0.0f, time, MONSTER_MOVE_FLAG_WALK);
 	u_caster->SetPosition(x,y,z,0.0f,true);
