@@ -8297,10 +8297,11 @@ void Spell::SpellEffectJump(uint32 i)
 	float o = u_caster->calcRadAngle(  u_caster->GetPositionX(), u_caster->GetPositionY(), x, y );
 	x = x+cosf(o);
 	y = y+sinf(o);
+
 	// Time formula is derived from andy's logs, 271ms to move ~14.5 units
 	//float distance = u_caster->GetDistanceSq( x+cosf(o), y+sinf(o),z );
 	//uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-	uint32 moveTime = uint32( (m_caster->CalcDistance(LocationVector(x,y,z)) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
+	uint32 moveTime = uint32( (m_caster->CalcDistance(x,y,z) / ((MONSTER_NORMAL_RUN_SPEED * 3.5) * 0.001f)) + 0.5);
 
 	u_caster->GetAIInterface()->JumpTo( x, y, z, moveTime, GetSpellProto()->EffectMiscValue[i], GetSpellProto()->EffectDieSides[i] );
 	
