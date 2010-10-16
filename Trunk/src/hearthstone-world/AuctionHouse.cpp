@@ -40,7 +40,7 @@ void Auction::UpdateInDB()
 
 AuctionHouse::AuctionHouse(uint32 ID)
 {
-	dbc = dbcAuctionHouse.LookupEntry(ID);
+	dbc = dbcAuctionHouse.LookupEntryForced(ID);
 	assert(dbc);
 
 	cut_percent = float( float(dbc->tax) / 100.0f );
@@ -154,7 +154,7 @@ void AuctionHouse::RemoveAuction(Auction * auct)
 			snprintf(subject, 100, "%u:0:3", (unsigned int)auct->pItem->GetEntry());
 
 			// Auction expired, resend item, no money to owner.
-			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, dbc->id, auct->Owner, subject, "", 0, 0, auct->pItem->GetGUID(), 62,true);
+			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, dbc->id, auct->Owner, subject, "", 0, 0, auct->pItem->GetGUID(), STATIONERY_AUCTION, true);
 		}break;
 
 	case AUCTION_REMOVE_WON:
@@ -166,7 +166,7 @@ void AuctionHouse::RemoveAuction(Auction * auct)
 			snprintf(body, 200, "%X:%u:%u", (unsigned int)auct->Owner, (unsigned int)auct->HighestBid, (unsigned int)auct->BuyoutPrice);
 
 			// Auction won by highest bidder. He gets the item.
-			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, dbc->id, auct->HighestBidder, subject, body, 0, 0, auct->pItem->GetGUID(), 62,true);
+			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, dbc->id, auct->HighestBidder, subject, body, 0, 0, auct->pItem->GetGUID(), STATIONERY_AUCTION, true);
 
 			// Send a mail to the owner with his cut of the price.
 			uint32 auction_cut = FL2UINT(float(cut_percent * float(auct->HighestBid)));
@@ -184,7 +184,7 @@ void AuctionHouse::RemoveAuction(Auction * auct)
 				snprintf(body, 200, "%X:%u:0:%u:%u", (unsigned int)auct->HighestBidder, (unsigned int)auct->HighestBid, (unsigned int)auct->DepositAmount, (unsigned int)auction_cut);
 
 			// send message away.
-			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, dbc->id, auct->Owner, subject, body, amount, 0, 0, 62,true);
+			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, dbc->id, auct->Owner, subject, body, amount, 0, 0, STATIONERY_AUCTION, true);
 		}break;
 	case AUCTION_REMOVE_CANCELLED:
 		{
@@ -194,13 +194,12 @@ void AuctionHouse::RemoveAuction(Auction * auct)
 			if(cut && plr && plr->GetUInt32Value(PLAYER_FIELD_COINAGE) >= cut)
 				plr->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -((int32)cut));
 
-			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, GetID(), auct->Owner, subject, "", 0, 0, auct->pItem->GetGUID(), 62,true);
+			sMailSystem.DeliverMessage(MAILTYPE_AUCTION, GetID(), auct->Owner, subject, "", 0, 0, auct->pItem->GetGUID(), STATIONERY_AUCTION, true);
 
 			// return bidders money
 			if(auct->HighestBidder)
 			{
-				sMailSystem.DeliverMessage(MAILTYPE_AUCTION, GetID(), auct->HighestBidder, subject, "", auct->HighestBid,
-					0, 0, 62,true);
+				sMailSystem.DeliverMessage(MAILTYPE_AUCTION, GetID(), auct->HighestBidder, subject, "", auct->HighestBid, 0, 0, STATIONERY_AUCTION, true);
 			}
 
 		}break;
@@ -261,7 +260,7 @@ void Auction::AddToPacket(WorldPacket & data)
 	* That is the result of jewelcrafting, the effect is that the
 	* enchantment is variable. That means that a enchantment can be +1 and
 	* with more Jem's +12 or so.
-	* Decription for lookup: You get the enchantmentSuffixID and search the
+	* Description for lookup: You get the enchantmentSuffixID and search the
 	* DBC for the last 1 - 3 value's(depending on the enchantment).
 	* That value is what I call EnchantmentValue. You guys might find a
 	* better name but for now its good enough. The formula to calculate
@@ -412,8 +411,7 @@ void WorldSession::HandleAuctionPlaceBid( WorldPacket & recv_data )
 		// Return the money to the last highest bidder.
 		char subject[100];
 		snprintf(subject, 100, "%u:0:0", (int)auct->pItem->GetEntry());
-		sMailSystem.DeliverMessage(MAILTYPE_AUCTION, ah->GetID(), auct->HighestBidder, subject, "", auct->HighestBid,
-			0, 0, 62,true);
+		sMailSystem.DeliverMessage(MAILTYPE_AUCTION, ah->GetID(), auct->HighestBidder, subject, "", auct->HighestBid, 0, 0, STATIONERY_AUCTION, true);
 
 	}
 
@@ -628,15 +626,15 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 			continue;
 
 		// rarity
-		if(rarityCheck != -1 && rarityCheck != (int32)proto->Quality)
+		if(rarityCheck != -1 && rarityCheck > (int32)proto->Quality)
 			continue;
 
 		// level range check - lower boundary
-		if(levelRange1 && proto->ItemLevel < levelRange1)
+		if(levelRange1 && proto->RequiredLevel < levelRange1)
 			continue;
 
 		// level range check - high boundary
-		if(levelRange2 && proto->ItemLevel > levelRange2)
+		if(levelRange2 && proto->RequiredLevel < levelRange2)
 			continue;
 
 		// usable check - this will hurt too :(
@@ -656,6 +654,9 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 				continue;
 
 			if(proto->Class == 2 && proto->SubClass && !(plr->GetWeaponProficiency()&(((uint32)(1))<<proto->SubClass)))
+				continue;
+
+			if(proto->RequiredSkill && (!plr->_HasSkillLine(proto->RequiredSkill) || proto->RequiredSkillRank > plr->_GetSkillLineCurrent(proto->RequiredSkill, true)))
 				continue;
 		}
 
@@ -679,7 +680,7 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 
 void WorldSession::HandleAuctionListItems( WorldPacket & recv_data )
 {
-	CHECK_INWORLD_RETURN
+	CHECK_INWORLD_RETURN;
 	uint64 guid;
 	recv_data >> guid;
 
