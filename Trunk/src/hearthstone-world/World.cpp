@@ -2339,7 +2339,7 @@ void World::LogGM(WorldSession* session, string message, ...)
 
 void World::LogCheater(WorldSession* session, string message, ...)
 {
-	if(LogCommands)
+	if(LogCheaters)
 	{
 		va_list ap;
 		va_start(ap, message);
