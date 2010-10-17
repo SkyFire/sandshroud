@@ -634,7 +634,7 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 			continue;
 
 		// level range check - high boundary
-		if(levelRange2 && proto->RequiredLevel < levelRange2)
+		if(levelRange2 && proto->RequiredLevel > levelRange2)
 			continue;
 
 		// usable check - this will hurt too :(
