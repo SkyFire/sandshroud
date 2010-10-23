@@ -1079,6 +1079,8 @@ void AlteracValley::Finish(uint32 losingTeam)
 	/* add the marks of honor to all players */
 	SpellEntry * winner_spell = dbcSpell.LookupEntry(24955);
 	SpellEntry * loser_spell = dbcSpell.LookupEntry(24954);
+	if(!loser_spell || !winner_spell)
+		return;
 	for(uint32 i = 0; i < 2; i++)
 	{
 		for(set<Player*  >::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)

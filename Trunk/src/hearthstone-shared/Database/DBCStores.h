@@ -886,6 +886,8 @@ struct SpellEntry
 	uint32 NameHash;					//!!! CUSTOM, related to custom spells, summon spell quest related spells
 	float base_range_or_radius;			//!!! CUSTOM, needed for aoe spells most of the time
 	float base_range_or_radius_sqr;		//!!! CUSTOM, needed for aoe spells most of the time
+	float base_range_or_radius_friendly;//!!! CUSTOM, needed for aoe spells most of the time
+	float base_range_or_radius_sqr_friendly;//!!! CUSTOM, needed for aoe spells most of the time
 	uint32 talent_tree;					//!!! CUSTOM, Used for dumping class spells.
 	bool is_melee_spell;				//!!! CUSTOM, Obvious.
 	bool is_ranged_spell;				//!!! CUSTOM, Obvious.
@@ -1133,19 +1135,21 @@ struct SpellCastTime
 struct SpellRadius
 {
 	uint32 ID;
-	float Radius;
+	float radiusHostile;
 //	float unk;
-	float Radius2;
+	float radiusFriend;
 };
 
 struct SpellRange
 {
 	uint32 ID;
-	float minRange;
-	float maxRange;
-	uint32 type;
-	char *longname;
-	char *name;
+	float     minRangeHostile;
+	float     minRangeFriend;
+	float     maxRangeHostile;
+	float     maxRangeFriend;
+	uint32    type;
+    //char*	  Name[17];
+	//char*	  Name2[17];
 };
 
 struct SpellDuration
@@ -1210,7 +1214,6 @@ struct FactionTemplateDBC
 	uint32 ID;
 	uint32 Faction;
 	uint32 FactionFlags;
-	//uint32 FactionGroup; unused
 	uint32 Mask;
 	uint32 FriendlyMask;
 	uint32 HostileMask;
@@ -1231,16 +1234,18 @@ struct AuctionHouseDBC
 struct FactionDBC
 {
 	uint32 ID;
-	int32 RepListId;
+	int32  RepListId;
 	uint32 baseRepMask[4];
-//	uint32 unk1[4];
-	int32 baseRepValue[4];
-//	uint32 unk2[4];
+	uint32 baseRepClassMask[4];
+	int32  baseRepValue[4];
+	uint32 reputationFlags[4];
 	uint32 parentFaction;
-	char* Name;
-//	uint32 shit[16];
-//	uint32 Description;
-//	uint32 shit2[16];
+    //float     unk1;
+    //float     unk2;
+    //uint32    unk3;
+    //uint32    unk4;
+ 	char* Name[16];
+	//char*     description[16];
 };
 
 struct DBCTaxiNode
@@ -1250,7 +1255,7 @@ struct DBCTaxiNode
 	float x;
 	float y;
 	float z;
-//	uint32 name[15];
+//	char* name[15];
 //	uint32 nameflags;
 	uint32 horde_mount;
 	uint32 alliance_mount;
@@ -1452,16 +1457,27 @@ struct DurabilityCostsEntry
 
 struct SpellShapeshiftForm
 {
-	uint32 id;
-	uint32 spells[7];
+	uint32 id;												// 0 id
+	//uint32 buttonPosition;                                // 1 unused
+	//char*  Name[16];                                      // 2-17 unused
+	//uint32 NameFlags;                                     // 18 unused
+	uint32 flags1;                                          // 19
+	int32  creatureType;                                    // 20 <= 0 humanoid, other normal creature types
+	//uint32 unk1;                                          // 21 unused
+	uint32 attackSpeed;                                     // 22
+	//uint32 modelID;                                       // 23 unused
+	//uint32 unk2;                                          // 24 unused
+	//uint32 unk3;                                          // 25 unused
+	//uint32 unk4;                                          // 26 unused
+	uint32 spells[8];
 };
 
 struct VehicleEntry
 {
 	uint32 m_ID;								// 0
 //	uint32 m_flags;								// 1
-//	float m_turnSpeed;							// 2
-//	float m_pitchSpeed;							// 3
+	float m_turnSpeed;							// 2
+	float m_pitchSpeed;							// 3
 //	float m_pitchMin;							// 4
 //	float m_pitchMax;							// 5
 	uint32 m_seatID[8];							// 6-13
@@ -1572,28 +1588,64 @@ struct DestructibleModelDataEntry
 
 HEARTHSTONE_INLINE float GetScale(CreatureDisplayInfo *Scale)
 {
-	return Scale->Scale;
+	if(Scale && Scale->Scale)
+		return Scale->Scale;
+
+	return 0.0f;
 }
 
 HEARTHSTONE_INLINE float GetRadius(SpellRadius *radius)
 {
-	return radius->Radius;
+	if(radius)
+	{
+		if(radius->radiusHostile)
+			return radius->radiusHostile;
+		else
+			return radius->radiusFriend;
+	}
+
+	return 0.0f;
 }
 HEARTHSTONE_INLINE uint32 GetCastTime(SpellCastTime *time)
 {
-	return time->CastTime;
+	if(time && time->CastTime)
+		return time->CastTime;
+
+	return 0.0f;
 }
+
 HEARTHSTONE_INLINE float GetMaxRange(SpellRange *range)
 {
-	return range->maxRange;
+	if(range)
+	{
+		if(range->maxRangeHostile)
+			return range->maxRangeHostile;
+		else
+			return range->maxRangeFriend;
+	}
+
+	return 0.0f;
 }
+
 HEARTHSTONE_INLINE float GetMinRange(SpellRange *range)
 {
-	return range->minRange;
+	if(range)
+	{
+		if(range->minRangeHostile)
+			return range->minRangeHostile;
+		else
+			return range->minRangeFriend;
+	}
+
+	return 0.0f;
 }
+
 HEARTHSTONE_INLINE int32 GetDuration(SpellDuration *dur)
 {
-	return dur->Duration1;
+	if(dur && dur->Duration1)
+		return dur->Duration1;
+
+	return -1;
 }
 
 HEARTHSTONE_INLINE uint32 GetscalestatMultiplier(ScalingStatValuesEntry *ssvrow, uint32 flags)
@@ -1659,6 +1711,39 @@ HEARTHSTONE_INLINE uint32 GetscalestatDPSMod(ScalingStatValuesEntry *ssvrow, uin
 			return ssvrow->dpsMod[5];
 	}
 	return 0;
+}
+
+HEARTHSTONE_INLINE float GetFriendlyRadius(SpellRadius *radius)
+{
+	if(radius == NULL)
+		return 0.0f;
+
+	if(radius->radiusFriend)
+		return radius->radiusFriend;
+
+	return GetRadius(radius);
+}
+
+HEARTHSTONE_INLINE float GetFriendlyMaxRange(SpellRange *range)
+{
+	if(range == NULL)
+		return 0.0f;
+
+	if(range->maxRangeFriend)
+		return range->maxRangeFriend;
+
+	return GetMaxRange(range);
+}
+
+HEARTHSTONE_INLINE float GetFriendlyMinRange(SpellRange *range)
+{
+	if(range == NULL)
+		return 0.0f;
+
+	if(range->minRangeFriend)
+		return range->minRangeFriend;
+
+	return GetMinRange(range);
 }
 
 #define SAFE_DBC_CODE_RETURNS			/* undefine this to make out of range/nulls return null. */
@@ -1888,7 +1973,7 @@ public:
 	{
 		if(m_entries)
 		{
-			if(i > m_max || m_entries[i] == NULL)
+			if(i > m_max)
 				return NULL;
 			else
 				return m_entries[i];
@@ -1920,7 +2005,8 @@ public:
 	{
 		if(m_entries)
 		{
-			if(i > m_max || m_entries[i] == NULL)
+			if(i > m_max)
+//				return NULL;
 				return m_firstEntry;
 			else
 				return m_entries[i];
@@ -1928,6 +2014,7 @@ public:
 		else
 		{
 			if(i >= m_numrows)
+//				return NULL;
 				return &m_heapBlock[0];
 			else
 				return &m_heapBlock[i];

@@ -122,19 +122,14 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt)
 
 	m_Unit = un;
 	if(isTargetDummy(un->GetEntry()))
+	{
+		m_AIType = AITYPE_DUMMY;
 		m_AllowedToEnterCombat = false;
+	}
 
 	m_walkSpeed = m_Unit->m_walkSpeed*0.001f;//move distance per ms time
 	m_runSpeed = m_Unit->m_runSpeed*0.001f;//move distance per ms time
 	m_flySpeed = m_Unit->m_flySpeed * 0.001f;
-	/*if(m_DefaultMeleeSpell == NULL)
-	{
-		m_DefaultMeleeSpell = new AI_Spell;
-		m_DefaultMeleeSpell->entryId = 0;
-		m_DefaultMeleeSpell->spellType = 0;
-		m_DefaultMeleeSpell->agent = AGENT_MELEE;
-		m_DefaultSpell = m_DefaultMeleeSpell;
-	}*/
 	m_sourceX = un->GetPositionX();
 	m_sourceY = un->GetPositionY();
 	m_sourceZ = un->GetPositionZ();
@@ -184,7 +179,7 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt, Unit* owner)
 	m_sourceZ = un->GetPositionZ();
 }
 
-void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
+void AIInterface::HandleEvent(uint32 eevent, Unit* pUnit, uint32 misc1)
 {
 	ASSERT(m_Unit != NULL);
 
@@ -195,13 +190,14 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 		if(cr == NULL)
 			return;
 
-		if(isTargetDummy(cr->GetEntry()) && event != EVENT_LEAVECOMBAT)
+		if(isTargetDummy(cr->GetEntry()) && eevent != EVENT_LEAVECOMBAT
+			&& eevent != EVENT_DAMAGETAKEN && eevent != EVENT_ENTERCOMBAT)
 			return;
 	}
 
 	if(m_AIState != STATE_EVADE)
 	{
-		switch(event)
+		switch(eevent)
 		{
 		case EVENT_ENTERCOMBAT:
 			{
@@ -392,7 +388,8 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 
 		case EVENT_FEAR:
 			{
-				if( pUnit == NULL ) return;
+				if( pUnit == NULL )
+					return;
 
 				m_FearTimer = 0;
 				SetUnitToFear(pUnit);
@@ -431,7 +428,8 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 
 		case EVENT_WANDER:
 			{
-				if( pUnit == NULL ) return;
+				if( pUnit == NULL )
+					return;
 
 				m_WanderTimer = 0;
 
@@ -468,9 +466,9 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 	}
 
 	//Should be able to do this stuff even when evading
-	switch(event)
+	switch(eevent)
 	{
-		case EVENT_UNITDIED:
+	case EVENT_UNITDIED:
 		{
 			if( pUnit == NULL )
 				return;
@@ -791,9 +789,15 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 	if( m_AIType != AITYPE_PET && disable_combat )
 		return;
 
-	//just make sure we are not hitting self. This was reported as an exploit.Should never ocure anyway
-	if( m_nextTarget == m_Unit )
+	// Check if our target is attackable, if not, change to the most hated.
+	if(!isAttackable(m_Unit, m_nextTarget, false))
+	{
 		m_nextTarget = GetMostHated();
+
+		// Check if our new target is unattackable, or doesn't exist
+		if(!isAttackable(m_Unit, m_nextTarget, false))
+			m_nextTarget = FindTarget();
+	}
 
 	uint16 agent = m_aiCurrentAgent;
 
@@ -846,7 +850,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 		}
 	}
 
-	if( m_nextTarget != NULL && m_nextTarget->isAlive() && m_AIState != STATE_EVADE && !m_Unit->isCasting() )
+	if( m_nextTarget != NULL && m_nextTarget->isAlive() && m_AIState != STATE_EVADE && !m_Unit->isCasting())
 	{
 		if( agent == AGENT_NULL || ( m_AIType == AITYPE_PET && !m_nextSpell ) ) // allow pets autocast
 		{
@@ -947,6 +951,8 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 									if(fabs(our_facing-his_facing)<CREATURE_DAZE_TRIGGER_ANGLE && !m_nextTarget->HasNegativeAura(CREATURE_SPELL_TO_DAZE))
 									{
 										SpellEntry *info = dbcSpell.LookupEntry(CREATURE_SPELL_TO_DAZE);
+										if(!info)
+											return;
 										Spell* sp = NULLSPELL;
 										sp = new Spell(m_Unit, info, false, NULLAURA);
 										SpellCastTargets targets;
@@ -1326,15 +1332,13 @@ Unit* AIInterface::FindTarget()
 	Object* pObj;
 	Unit* pUnit;
 	float dist;
-	bool pvp=true;
-	if(m_Unit->GetTypeId()==TYPEID_UNIT&&TO_CREATURE(m_Unit)->GetCreatureInfo()&&TO_CREATURE(m_Unit)->GetCreatureInfo()->Civilian)
-		pvp=false;
+	bool pvp = true;
+	if(m_Unit->GetTypeId() == TYPEID_UNIT && TO_CREATURE(m_Unit)->GetCreatureInfo() && TO_CREATURE(m_Unit)->GetCreatureInfo()->Civilian)
+		pvp = false;
 
 	//target is immune to all form of attacks, cant attack either.
 	if(m_Unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
-	{
 		return NULLUNIT;
-	}
 
 	for( itr = m_Unit->GetInRangeOppFactsSetBegin(); itr != m_Unit->GetInRangeOppFactsSetEnd(); )
 	{
@@ -1354,9 +1358,8 @@ Unit* AIInterface::FindTarget()
 		if( pUnit->bInvincible )
 			continue;
 
-		// don't agro players on flying mounts
-		/*if(pUnit->GetTypeId() == TYPEID_PLAYER && TO_PLAYER(pUnit)->FlyCheat)
-			continue;*/
+		if(!isAttackable(m_Unit, pUnit, false))
+			continue;
 
 		//do not agro units that are faking death. Should this be based on chance ?
 		if( pUnit->HasFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_FEIGN_DEATH ) )
@@ -1365,12 +1368,8 @@ Unit* AIInterface::FindTarget()
 		//target is immune to unit attacks however can be targeted
 		//as a part of AI we allow this mode to attack creatures as seen many times on oficial.
 		if( m_Unit->HasFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 ) )
-		{
 			if( pUnit->IsPlayer() || pUnit->IsPet() )
-			{
 				continue;
-			}
-		}
 
 		/* is it a player? we have to check for our pvp flag. */
 //		if(m_U)
@@ -1380,9 +1379,7 @@ Unit* AIInterface::FindTarget()
 
 		z_diff = fabs(m_Unit->GetPositionZ() - pUnit->GetPositionZ());
 		if(z_diff > crange)
-		{
 			continue;
-		}
 
 		if( !m_Unit->PhasedCanInteract( pUnit ) )
 			continue;
@@ -1463,9 +1460,8 @@ Unit* AIInterface::FindTargetForSpell(AI_Spell *sp)
 			for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
 			{
 				if(!(*i)->isAlive())
-				{
 					continue;
-				}
+
 				cur = (*i)->GetUInt32Value(UNIT_FIELD_HEALTH);
 				max = (*i)->GetUInt32Value(UNIT_FIELD_MAXHEALTH);
 				healthPercent = float(cur) / float(max);
@@ -3787,20 +3783,5 @@ void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 time, float arc
 	data << uint32(unk);
 	data << uint32(1);
 	data << toX << toY << toZ;
-
-#ifndef ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES
-	bool self = m_Unit->GetTypeId() == TYPEID_PLAYER;
 	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
-#else
-	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
-		TO_PLAYER(m_Unit)->GetSession()->SendPacket(&data);
-
-	for(unordered_set<Player*>::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); itr++)
-	{
-		if( (*itr)->GetPositionNC().Distance2DSq( m_Unit->GetPosition() ) >= sWorld.m_movementCompressThresholdCreatures )
-			(*itr)->AppendMovementData( SMSG_MONSTER_MOVE, uint32(data.size()), data.contents() );
-		else
-			(*itr)->GetSession()->SendPacket(&data);
-	}
-#endif
 }

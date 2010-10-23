@@ -1321,12 +1321,11 @@ void WorldSession::SendInventoryList(Creature* unit)
 
 	if(!unit->HasItems())
 	{
-        WorldPacket data(SMSG_LIST_INVENTORY, 10);
+		WorldPacket data(SMSG_LIST_INVENTORY, 10);
 		data << uint64(unit->GetGUID());
-		data << uint8(0);
-		data << uint8(0);
+		data << uint8(10);
 		SendPacket(&data);
- 		sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
+//		sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
 		return;
 	}
 
@@ -1358,7 +1357,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 					continue;
 
 				int32 av_am = (itr->max_amount > 0) ? itr->available_amount : -1;
-				data << (counter + 1);
+				data << (++counter);
 				data << curItem->ItemId;
 				data << curItem->DisplayInfoID;
 				data << av_am;
@@ -1370,8 +1369,6 @@ void WorldSession::SendInventoryList(Creature* unit)
 					data << itr->extended_cost->costid;
 				else
 					data << uint32(0);
-
-				++counter;
 			}
 		}
 	}

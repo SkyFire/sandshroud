@@ -42,7 +42,6 @@ public:
 	bool HasPassenger(Unit* pPassenger);
 	void SendSpells(uint32 entry, Player* plr);
 	void setDeathState(DeathState s);
-	void SetSpeed(uint8 SpeedType, float value);
 	void ChangeSeats(Unit* pPassenger, uint8 seatid);
 	//---------------------------------------
 	// Accessors
@@ -66,7 +65,7 @@ public:
 		return m_passengers[seat];
 	}
 
-	uint8 GetPassengerSlot(Unit* pPassenger);
+	int8 GetPassengerSlot(Unit* pPassenger);
 	void InstallAccessories();
 	//---------------------------------------
 	// End accessors
@@ -88,7 +87,6 @@ protected:
 	uint64 vehicleguid;
 	Unit* m_controllingUnit;
 	Unit* m_passengers[8];
-
 	uint8 m_ppassengerCount;
 	uint8 m_maxPassengers;
 	int8 m_seatSlotMax;

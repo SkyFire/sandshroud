@@ -37,7 +37,8 @@ void WorldSession::HandleRepopRequestOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 {
-	if(!_player->IsInWorld() || !_player->GetLootGUID()) return;
+	if(!_player->IsInWorld() || !_player->GetLootGUID()) 
+		return;
 //	uint8 slot = 0;
 	uint32 itemid = 0;
 	uint32 amt = 1;
@@ -1586,7 +1587,7 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 
 	WorldPacket data(SMSG_INSPECT_TALENT, 1000);
 	data << player->GetNewGUID();
-	player->BuildPlayerTalentsInfo(&data, false);
+	player->BuildPlayerTalentsInfo(&data);
 
 	// build items inspect part. could be sent separately as SMSG_INSPECT
 	uint32 slotUsedMask = 0;
@@ -1598,7 +1599,7 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 		Item* item = player->GetItemInterface()->GetInventoryItem(slot);
 		if( item )
 		{
-			slotUsedMask |= 1 << slot;
+			slotUsedMask |= (1 << slot);
 
 			data << uint32(item->GetEntry());
 
@@ -1608,17 +1609,23 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 
 			for(uint32 ench = 0; ench < 12; ench++)
 			{
-				uint16 enchId = (uint16) item->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 + ench * 3);
+				uint16 enchId = (uint16) item->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 + (ench * 3));
 				if( enchId )
 				{
-					enchantmentMask |= 1 << ench;
+					enchantmentMask |= (1 << ench);
 					data << uint16(enchId);
 				}
 			}
 			*(uint16*)&data.contents()[maskPosEnch] = enchantmentMask;
 
 			data << uint16(0);	// unk
-			data << WoWGuid(item->GetUInt64Value(ITEM_FIELD_CREATOR));
+
+			uint64 creatorguid = item->GetUInt64Value(ITEM_FIELD_CREATOR);
+			if(creatorguid)
+				data << WoWGuid(creatorguid);
+			else
+				data << uint8(0);
+
 			data << uint32(0);	// unk
 		}
 	}
@@ -2293,14 +2300,13 @@ void WorldSession::HandleTalentWipeConfirmOpcode( WorldPacket& recv_data )
 	if( playerGold < price )
 		return;
 
-	_player->SetTalentResetTimes(GetPlayer()->GetTalentResetTimes() + 1);
 	_player->SetUInt32Value( PLAYER_FIELD_COINAGE, playerGold - price );
-	_player->Reset_Talents();
 
 	_player->GetAchievementInterface()->HandleAchievementCriteriaTalentResetCostTotal( price );
 	_player->GetAchievementInterface()->HandleAchievementCriteriaTalentResetCount();
 
 	_player->CastSpell(_player, 14867, true);	// Spell: "Untalent Visual Effect"
+	_player->CastSpell(_player, 46331, true);	// Spell: "Trainer: Untrain Talents"
 
 	WorldPacket data( MSG_TALENT_WIPE_CONFIRM, 12);	// You don't have any talent.
 	data << uint64(0);
@@ -2498,4 +2504,11 @@ void WorldSession::HandleMeetingStoneInfo(WorldPacket& )
 {
 	DEBUG_LOG("WORLD"," Received CMSG_MEETINGSTONE_INFO");
 	//Used for LFR/LFG updates
+}
+
+void WorldSession::HandleHearthandResurrect(WorldPacket &recv_data)
+{
+	CHECK_INWORLD_RETURN
+	_player->ResurrectPlayer();
+	_player->SafeTeleport(_player->GetBindMapId(),0,_player->GetBindPositionX(),_player->GetBindPositionY(),_player->GetBindPositionZ(),_player->GetOrientation());
 }

@@ -1847,6 +1847,12 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						dmg = int32((base + uint32(modif*float(ap)))*(3+cp)/(float(timer[cp])/3));
 					}
 				}
+				case SPELL_HASH_BLOOD_PLAGUE:
+				case SPELL_HASH_FROST_FEVER:
+				{
+					if( m_caster != NULL )
+						dmg += float2int32(TO_PLAYER(m_caster)->GetAP() * 0.055f*1.15); //If this is wrong fuck you spell description!
+				}break;
 			}
 		};
 
@@ -2396,25 +2402,15 @@ void Aura::SpellAuraDummy(bool apply)
 	}break;
 	case 126: //Eye of Killrog
 		{
-			/*if(m_target->IsInWorld() == false)
+			if(!m_target->IsPlayer())
 				return;
-
-			if(!apply)
-			{
-				m_target->SetUInt64Value(PLAYER_FARSIGHT,0);
-				Creature *summon = m_target->GetMapMgr()->GetCreature(m_target->GetUInt32Value(UNIT_FIELD_SUMMON));
-				m_target->SetUInt64Value(UNIT_FIELD_SUMMON, 0);
-				m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER);
-
-				if(summon)
-				{
-					summon->RemoveFromWorld(false,true);
-					delete summon;
-				}
-				m_target->m_noInterrupt--;
-				if(m_target->m_noInterrupt < 0)
-					m_target->m_noInterrupt = 0;
-			}*/
+			Player * p = TO_PLAYER(m_target);
+			if(!p->GetSummon())
+				return;
+			if(apply)
+				p->Possess(p->GetSummon());
+			else
+				p->UnPossess();
 		}break;
 	case 12295:
 	case 12676:
@@ -2575,7 +2571,8 @@ void Aura::SpellAuraDummy(bool apply)
 			if(apply)
 			{
 				m_target->DisableAI();
-				m_caster->SetUInt64Value(UNIT_FIELD_SUMMON, 0);
+				TO_PLAYER(m_caster)->Possess(m_target);
+				/*m_caster->SetUInt64Value(UNIT_FIELD_SUMMON, 0);
 				m_target->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, 0);
 				m_caster->SetUInt64Value(UNIT_FIELD_CHARM, m_target->GetGUID());
 				m_target->SetUInt64Value(UNIT_FIELD_CHARMEDBY, m_caster->GetGUID());
@@ -2588,12 +2585,13 @@ void Aura::SpellAuraDummy(bool apply)
 
 				WorldPacket data(SMSG_CLIENT_CONTROL_UPDATE, 10);
 				data << m_target->GetNewGUID() << uint8(0);
-				TO_PLAYER(m_caster)->GetSession()->SendPacket(&data);
+				TO_PLAYER(m_caster)->GetSession()->SendPacket(&data);*/
 			}
 			else
 			{
-				m_caster->EnableAI();
-				m_caster->SetUInt64Value(UNIT_FIELD_SUMMON, m_target->GetGUID());
+				m_target->EnableAI();
+				TO_PLAYER(m_caster)->UnPossess();
+				/*m_caster->SetUInt64Value(UNIT_FIELD_SUMMON, m_target->GetGUID());
 				m_target->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_caster->GetGUID());
 				m_caster->SetUInt64Value(UNIT_FIELD_CHARM, 0);
 				m_target->SetUInt64Value(UNIT_FIELD_CHARMEDBY, 0);
@@ -2606,7 +2604,7 @@ void Aura::SpellAuraDummy(bool apply)
 
 				WorldPacket data(SMSG_CLIENT_CONTROL_UPDATE, 10);
 				data << m_caster->GetNewGUID() << uint8(1);
-				TO_PLAYER(m_caster)->GetSession()->SendPacket(&data);
+				TO_PLAYER(m_caster)->GetSession()->SendPacket(&data);*/
 			}
 		}break;
 	/*case 570:   // far sight
@@ -3376,7 +3374,11 @@ void Aura::SpellAuraDummy(bool apply)
 				else
 					TO_PLAYER(m_caster)->UnPossess();
 			}
-		}
+		}break;
+	case 59907:
+		{
+			printf("Lightwell is applied");
+		}break;
 
 	default:
 		{
@@ -3927,14 +3929,11 @@ void Aura::SpellAuraModThreatGenerated(bool apply)
 void Aura::SpellAuraModTaunt(bool apply)
 {
 	Unit * m_caster = GetUnitCaster();
-	if( m_caster == NULL || !m_caster->isAlive())
+	if( m_caster == NULL || !m_caster->isAlive() || m_target->IsPlayer())
 		return;
 
 	SetNegative();
 
-	// NEWBS, TAUNT DOES NOT EFFECT PLAYERS!1oneoneeleven
-	if(m_target->IsPlayer())
-		return;
 
 	if(apply)
 	{
@@ -4450,7 +4449,6 @@ void Aura::SpellAuraPeriodicTriggerSpell(bool apply)
 		SpellEntry *spe = dbcSpell.LookupEntry(sp);
 		if(!sp || !spe)
 		{
-			//	sp=22845;
 			return;//null spell
 		}
 
@@ -4819,23 +4817,23 @@ void Aura::SpellAuraModStat(bool apply)
 	}
 	else if(stat >= 0)
 	{
-		ASSERT(mod->m_miscValue < 5);
+		ASSERT(stat < 5);
 		if(m_target->IsPlayer())
 		{
 			if(mod->m_amount>0)
-				TO_PLAYER( m_target )->FlatStatModPos[mod->m_miscValue] += val;
+				TO_PLAYER( m_target )->FlatStatModPos[stat] += val;
 			else
-				TO_PLAYER( m_target )->FlatStatModNeg[mod->m_miscValue] -= val;
+				TO_PLAYER( m_target )->FlatStatModNeg[stat] -= val;
 
-			TO_PLAYER( m_target )->CalcStat(mod->m_miscValue);
+			TO_PLAYER( m_target )->CalcStat(stat);
 
 			TO_PLAYER( m_target )->UpdateStats();
 			TO_PLAYER( m_target )->UpdateChances();
 		}
 		else if(m_target->GetTypeId() == TYPEID_UNIT)
 		{
-			TO_CREATURE(m_target)->FlatStatMod[mod->m_miscValue]+=val;
-			TO_CREATURE(m_target)->CalcStat(mod->m_miscValue);
+			TO_CREATURE(m_target)->FlatStatMod[stat] += val;
+			TO_CREATURE(m_target)->CalcStat(stat);
 		}
 	}
 }
@@ -6758,23 +6756,32 @@ void Aura::SpellAuraMechanicImmunity(bool apply)
 		switch(m_spellProto->Id)
 		{
 		case 25771:
-			TO_PLAYER(m_target)->mForbearance = apply;
-			SetNegative();
-			break;
+			{
+				TO_PLAYER(m_target)->mForbearance = apply;
+				SetNegative();
+			}break;
 
 		case 6788:
-			TO_PLAYER(m_target)->mWeakenedSoul = apply;
-			SetNegative();
-			break;
+			{
+				TO_PLAYER(m_target)->mWeakenedSoul = apply;
+				SetNegative();
+			}break;
 
 		case 41425:
-			TO_PLAYER(m_target)->mHypothermia = apply;
-			SetNegative();
-			break;
+			{
+				TO_PLAYER(m_target)->mHypothermia = apply;
+				SetNegative();
+			}break;
 		case 11196:
-			TO_PLAYER(m_target)->mRecentlyBandaged = apply;
-			SetNegative();
-			break;
+			{
+				TO_PLAYER(m_target)->mRecentlyBandaged = apply;
+				SetNegative();
+			}break;
+		case 49039:
+			{
+				if(apply)
+					GetUnitCaster()->CastSpell(m_target,50397,true);
+			}
 		}
 	}
 
@@ -7685,15 +7692,13 @@ void Aura::SpellAuraFeatherFall( bool apply )
 void Aura::SpellAuraHover( bool apply )
 {
 	SetPositive();
+	SpellAuraWaterWalk(apply);
 
-	//TODO: FIXME: Find true flag for this
-	if (m_target->IsPlayer())
-	{
-		WorldPacket data( apply ? SMSG_MOVE_SET_HOVER : SMSG_MOVE_UNSET_HOVER, 13 );
-		data << m_target->GetNewGUID();
-		data << uint32( 0 );
-		TO_PLAYER( m_target )->GetSession()->SendPacket( &data );
-	}
+	WorldPacket data( apply ? SMSG_MOVE_SET_HOVER : SMSG_MOVE_UNSET_HOVER, 13 );
+	data << m_target->GetNewGUID();
+	data << uint32(0);
+	m_target->SendMessageToSet(&data, true);
+	m_target->SetFloatValue(UNIT_FIELD_HOVERHEIGHT,apply ? float(float(mod->m_amount)/2) : 0.0f);
 }
 
 void Aura::SpellAuraAddPctMod( bool apply )
@@ -8829,16 +8834,12 @@ void Aura::SpellAuraIncreaseCricticalTypePCT(bool apply)
 
 void Aura::SpellAuraIncreasePartySpeed(bool apply)
 {
-	if(m_target->IsPlayer() && m_target->isAlive() && m_target->GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID) == 0)
+	if(m_target->isAlive())
 	{
 		if(apply)
-		{
 			m_target->m_speedModifier += mod->m_amount;
-		}
 		else
-		{
 			m_target->m_speedModifier -= mod->m_amount;
-		}
 		m_target->UpdateSpeed();
 	}
 }
@@ -9721,15 +9722,6 @@ void Aura::SpellAuraIncreaseRangedAPStatPCT(bool apply)
 
 }
 
-/* not used
-void Aura::SpellAuraModRangedDamageTakenPCT(bool apply)
-{
-	if(apply)
-		m_target->RangedDamageTakenPct += mod->m_amount;
-	else
-		m_target->RangedDamageTakenPct -= mod->m_amount;
-}*/
-
 void Aura::SpellAuraModBlockValue(bool apply)
 {
 	if( m_target->IsPlayer())
@@ -10165,7 +10157,7 @@ void Aura::SpellAuraVehiclePassenger(bool apply)
 		return;
 	if(apply)
 	{
-		TO_VEHICLE(GetCaster())->AddPassenger(m_target,-1,true);
+		TO_VEHICLE(GetCaster())->AddPassenger(m_target,GetSpellProto()->EffectMiscValue[mod->i],true);
 	}
 
 	if(!apply)
@@ -10297,8 +10289,40 @@ void Aura::ModProcCharges(int32 mod)
 	if(mod == 0)
 		return;
 	// could also check that procCharges + mod <= GetMaxProcCharges()
-	procCharges = (uint32) std::max((int32)procCharges + mod, 0);
+	procCharges = mod;
 	if(procCharges > 0)
+		BuildAuraUpdate();
+	else
+		Remove();
+}
+
+void Aura::SetProcCharges(int32 mod)
+{
+	if(mod == 0)
+		return;
+
+	procCharges = mod;
+	if(procCharges > 0)
+		BuildAuraUpdate();
+}
+
+void Aura::RemoveProcCharges(int32 mod)
+{
+	if(mod == 0)
+		return;
+
+	procCharges -= mod;
+	if(procCharges > 0)
+		BuildAuraUpdate();
+}
+
+void Aura::RemoveStackSize(int32 mod)
+{
+	if(mod == 0)
+		return;
+
+	stackSize -= mod;
+	if(stackSize > 0)
 		BuildAuraUpdate();
 	else
 		Remove();
@@ -10351,32 +10375,13 @@ void Aura::SpellAuraRedirectThreat(bool apply)
 		m_target->isDead() )
 		return;
 
-
+	//Unapply is handled via function
 	if( apply )
 	{
 		if( m_spellProto->Id == 50720 )
-		{
-			m_target->mThreatRTarget = m_caster;
-			m_target->mThreatRAmount = 0.1f;
-		}
+			m_target->SetRedirectThreat(m_caster,0.1f,GetDuration());
 		else
-		{
-			m_caster->mThreatRTarget = m_target;
-			m_caster->mThreatRAmount = 1;
-		}
-	}
-	else
-	{
-		if( m_spellProto->Id == 50720 )
-		{
-			m_target->mThreatRAmount = 0;
-			m_target->mThreatRTarget = NULLUNIT;
-		}
-		else
-		{
-			m_caster->mThreatRAmount = 0;
-			m_caster->mThreatRTarget = NULLUNIT;
-		}
+			m_target->SetRedirectThreat(m_caster,1.0f, GetDuration());
 	}
 }
 
@@ -10770,24 +10775,25 @@ void Aura::SpellAuraConvertRune(bool apply)
 
 	if( plr->getClass() != DEATHKNIGHT )
 		return;
-
+	uint32 runes = mod->m_amount;
 	if( apply )
 	{
-		for(uint32 j = 0; j < 6; ++j)
+		for(uint32 j = 0; j < 6 && runes; ++j)
 		{
-			plr->ConvertRune((uint8)j,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
-			break;
+			if((uint8)GetSpellProto()->EffectMiscValueB[mod->i] != plr->GetRune(j))
+				continue;
+			if(!(plr->GetRune(j) == RUNE_TYPE_RECHARGING))
+				plr->ConvertRune((uint8)j,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
 		}
 	}
 	else
 	{
 		for(uint32 j = 0; j < 6; ++j)
 		{
+			if((uint8)GetSpellProto()->EffectMiscValueB[mod->i] != plr->GetRune(j))
+				continue;
 			if(plr->GetRune(j) == GetSpellProto()->EffectMiscValueB[mod->i])
-			{
 				plr->ConvertRune((uint8)j, plr->GetRune(j));
-				break;
-			}
 		}
 	}
 }

@@ -729,6 +729,7 @@ protected:
 	void HandleEquipmentSetSave(WorldPacket &recv_data);
 	void HandleEquipmentSetDelete(WorldPacket &recv_data);
 	void HandleEquipmentSetUse(WorldPacket &recv_data);
+	void HandleHearthandResurrect(WorldPacket &recv_data);
 
 	//Calendar
 	void HandleCalendarGetCalendar( WorldPacket & recv_data );

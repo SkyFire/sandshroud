@@ -36,7 +36,7 @@ DynamicObject::DynamicObject(uint32 high, uint32 low)
 	m_parentSpell=NULLSPELL;
 	m_aliveDuration = 0;
 	u_caster = NULLUNIT;
-	m_spellProto = 0;
+	m_spellProto = NULLSPELL;
 	p_caster = NULLPLR;
 	m_caster = NULLOBJ;
 	g_caster = NULLGOB;
@@ -129,7 +129,7 @@ void DynamicObject::Create(Object* caster, Spell* pSpell, float x, float y, floa
 
 	PushToWorld(caster->GetMapMgr());
 
-	sEventMgr.AddEvent(TO_DYNAMICOBJECT(this), &DynamicObject::UpdateTargets, EVENT_DYNAMICOBJECT_UPDATE, 200, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	sEventMgr.AddEvent(TO_DYNAMICOBJECT(this), &DynamicObject::UpdateTargets, EVENT_DYNAMICOBJECT_UPDATE, 100, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 }
 
 void DynamicObject::AddInRangeObject( Object* pObj )
@@ -164,7 +164,7 @@ void DynamicObject::UpdateTargets()
 	if(m_aliveDuration == 0)
 		return;
 
-	if(m_aliveDuration >= 200)
+	if(m_aliveDuration >= 100)
 	{
 		Unit* target;
 
@@ -196,7 +196,7 @@ void DynamicObject::UpdateTargets()
 
 				for(uint32 i = 0; i < 3; i++)
 				{
-					if(m_spellProto->Effect[i] == 27)
+					if(m_spellProto->Effect[i] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
 					{
 						pAura->AddMod(m_spellProto->EffectApplyAuraName[i],
 							m_spellProto->EffectBasePoints[i]+1, m_spellProto->EffectMiscValue[i], i);
@@ -232,7 +232,7 @@ void DynamicObject::UpdateTargets()
 			}
 		}
 
-		m_aliveDuration -= 200;
+		m_aliveDuration -= 100;
 	}
 	else
 	{
@@ -257,9 +257,17 @@ void DynamicObject::UpdateTargets()
 
 void DynamicObject::Remove()
 {
-	if(IsInWorld())
-		RemoveFromWorld(true);
+    if( !IsInWorld() )
+	{
+        delete this;
+        return;
+    }
 
+	WorldPacket data( SMSG_GAMEOBJECT_DESPAWN_ANIM, 8 );
+	data << GetGUID();
+	SendMessageToSet( &data, false );
+
+	if( IsInWorld() )
+		RemoveFromWorld(true);
 	delete this;
 }
-

@@ -249,6 +249,9 @@ void Item::ApplyRandomProperties( bool apply )
 		if( int32( m_uint32Values[ITEM_FIELD_RANDOM_PROPERTIES_ID] ) > 0 )		// Random Property
 		{
 			RandomProps* rp= dbcRandomProps.LookupEntry( m_uint32Values[ITEM_FIELD_RANDOM_PROPERTIES_ID] );
+			if(rp == NULL)
+				return;
+
 			int32 Slot;
 			for( int k = 0; k < 3; k++ )
 			{
@@ -270,6 +273,8 @@ void Item::ApplyRandomProperties( bool apply )
 		else
 		{
 			ItemRandomSuffixEntry* rs = dbcItemRandomSuffix.LookupEntry( abs( int( m_uint32Values[ITEM_FIELD_RANDOM_PROPERTIES_ID] ) ) );
+			if(rs == NULL)
+				return;
 			int32 Slot;
 			for( uint32 k = 0; k < 3; ++k )
 			{
@@ -493,7 +498,6 @@ void Item::RemoveFromWorld()
 	if( !IsInWorld() )
 		return;
 
-	mSemaphoreTeleport = true;
 	m_mapMgr->RemoveObject( TO_OBJECT(this), false );
 	m_mapMgr = NULLMAPMGR;
 

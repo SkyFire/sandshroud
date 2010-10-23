@@ -715,9 +715,6 @@ void WorldSession::HandleBinderActivateOpcode( WorldPacket & recv_data )
 
 void WorldSession::SendInnkeeperBind(Creature* pCreature)
 {
-#define ITEM_ID_HEARTH_STONE 6948
-#define BIND_SPELL_ID 3286
-
 	CHECK_INWORLD_RETURN;
 	WorldPacket data(45);
 
@@ -733,46 +730,15 @@ void WorldSession::SendInnkeeperBind(Creature* pCreature)
 		return;
 	}
 
-	// Add a hearthstone if they don't have one
-	if(!_player->GetItemInterface()->GetItemCount(ITEM_ID_HEARTH_STONE, true))
-	{
-		// We don't have a hearthstone. Add one.
-		if(_player->GetItemInterface()->CalculateFreeSlots(NULL) > 0)
-		{
-			Item* item = objmgr.CreateItem( ITEM_ID_HEARTH_STONE, _player);
-			if( _player->GetItemInterface()->AddItemToFreeSlot(item) )
-			{
-				SlotResult * lr = _player->GetItemInterface()->LastSearchResult();
-				SendItemPushResult(item,false,true,false,true,lr->ContainerSlot,lr->Slot,1);
-			}
-			else
-			{
-				item->DeleteMe();
-				item = NULLITEM;
-			}
-		}
-	}
-
-	_player->SetBindPoint(_player->GetPositionX(),_player->GetPositionY(),_player->GetPositionZ(),_player->GetMapId(),_player->GetZoneId());
+	pCreature->CastSpell(_player,3286,true);
 
 	data.Initialize(SMSG_BINDPOINTUPDATE);
 	data << _player->GetBindPositionX() << _player->GetBindPositionY() << _player->GetBindPositionZ() << _player->GetBindMapId() << _player->GetBindZoneId();
 	SendPacket( &data );
-
 	data.Initialize(SMSG_PLAYERBOUND);
 	data << pCreature->GetGUID() << _player->GetBindZoneId();
 	SendPacket(&data);
-
 	OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
-
-	//Animate and send the spell too
-	Spell* BindSpell = (new Spell(pCreature, dbcSpell.LookupEntry( BIND_SPELL_ID ), false, NULLAURA));
-	SpellCastTargets targets;
-	targets.m_unitTarget = GetPlayer()->GetGUID();
-	BindSpell->prepare(&targets);
-
-#undef ITEM_ID_HEARTH_STONE
-#undef BIND_SPELL_ID
 }
 
 void WorldSession::SendSpiritHealerRequest(Creature* pCreature)

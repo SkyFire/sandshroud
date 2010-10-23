@@ -231,7 +231,7 @@ void CommandTableStorage::Init()
 		{ "shadow",				'm', NULL,											"Shadow Resistance",		NULL, UNIT_FIELD_RESISTANCES+5,		0,						1 },
 		{ "arcane",				'm', NULL,											"Arcane Resistance",		NULL, UNIT_FIELD_RESISTANCES+6,		0,						1 },
 		{ "damage",				'm', NULL,											"Unit Damage Min/Max",		NULL, UNIT_FIELD_MINDAMAGE,			UNIT_FIELD_MAXDAMAGE,	2 },
-		{ "scale",				'm', NULL,											"Size/Scale",				NULL, OBJECT_FIELD_SCALE_X,			0,						2 },
+		{ "scale",				'm', &ChatHandler::HandleModifyScaleCommand,		"Size/Scale",				NULL, 0,							0,						2 },
 		{ "gold",				'm', &ChatHandler::HandleModifyGoldCommand,			"Gold/Money/Copper",		NULL, 0,							0,						0 },
 		{ "speed",				'm', &ChatHandler::HandleModifySpeedCommand,		"Movement Speed",			NULL, 0,							0,						0 },
 		{ "nativedisplayid",	'm', NULL,											"Native Display ID",		NULL, UNIT_FIELD_NATIVEDISPLAYID,	0,						1 },
@@ -1545,5 +1545,47 @@ bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_s
 	BlueSystemMessage(m_session, "Set target's faction to %u", faction);
 
 	unit->SetFaction(faction);
+	return true;
+}
+
+bool ChatHandler::HandleModifyScaleCommand(const char *args, WorldSession *m_session)
+{
+	Player* player = m_session->GetPlayer();
+	if(player == NULL)
+		return true;
+
+	Unit* unit = NULL;
+	uint64 guid = player->GetSelection();
+	if(guid == player->GetGUID())
+		unit = player;
+
+	switch(GET_TYPE_FROM_GUID(guid))
+	{
+	case HIGHGUID_TYPE_PET:
+		unit = player->GetMapMgr()->GetPet( GET_LOWGUID_PART(guid) );
+		break;
+	case HIGHGUID_TYPE_CREATURE:
+		unit = player->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
+		break;
+	case HIGHGUID_TYPE_VEHICLE:
+		unit = player->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );
+		break;
+	case HIGHGUID_TYPE_PLAYER:
+		unit = objmgr.GetPlayer(GET_LOWGUID_PART(guid));
+		break;
+	}
+
+	if(unit == NULL)
+		unit = player;
+
+	float scale = atof(args);
+	if(!scale && unit->IsCreature())
+		scale = TO_CREATURE(unit)->GetProto() ? TO_CREATURE(unit)->GetProto()->Scale : 0.0f;
+
+	BlueSystemMessage(m_session, "Set target's scale to %f", scale);
+	unit->SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
+	if(unit->IsCreature())
+		WorldDatabase.Execute("UPDATE creature_proto SET scale = '%f' WHERE entry = '%u';", scale, TO_CREATURE(unit)->GetEntry());
+
 	return true;
 }

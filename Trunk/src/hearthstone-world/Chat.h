@@ -77,8 +77,14 @@ enum ChatMsg
 	CHAT_MSG_RESTRICTED								= 46,
 	CHAT_MSG_ACHIEVEMENT							= 47,
 	CHAT_MSG_GUILD_ACHIEVEMENT						= 48,
-	CHAT_MSG_UNK									= 50,
-	CHAT_MSG_PARTY_LEADER							= 51
+	CHAT_MSG_UNK50									= 50,
+	CHAT_MSG_PARTY_LEADER							= 51,
+#ifdef CATACLYSM
+	CHAT_MSG_UNK52									= 52,
+	CHAT_MSG_BN_WISPER								= 53,
+	CHAT_MSG_BN_WISPER_INFORM						= 54,
+	CHAT_MSG_BN_CONVERSATION						= 55
+#endif
 };
 
 enum Languages
@@ -647,6 +653,7 @@ protected:
 	bool HandleGetRepCommand(const char *args, WorldSession *m_session);
 
 	bool HandleDebugRetroactiveQuestAchievements(const char *args, WorldSession *m_session);
+	bool HandleModifyScaleCommand(const char *args, WorldSession *m_session);
 	bool HandleModifyFactionCommand(const char *args, WorldSession *m_session);
 	bool HandleModifyPlayerFlagsCommand(const char *args, WorldSession *m_session);
 

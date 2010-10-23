@@ -128,13 +128,13 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
 bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid == 0)
+	if(guid == 0)
 	{
 		SystemMessage(m_session, "No selection.");
 		return true;
 	}
-	Creature* unit = NULLUNIT;
 
+	Creature* unit = NULLUNIT;
 	if(m_session->GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid)))
 		unit = m_session->GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
 	else
@@ -150,14 +150,12 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 		SystemMessage(m_session, "You can't delete playerpets.");
 		return true;
 	}
+
 	if( unit->m_spawn != NULL && !m_session->CanUseCommand('z') )
 	{
 		SystemMessage(m_session, "You do not have permission to do that. Please contact higher staff for removing of saved spawns.");
 		return true;
 	}
-
-//	if(unit->GetAIInterface())
-//		unit->GetAIInterface()->StopMovement(0);
 
 	if(unit->IsVehicle())
 	{
@@ -190,8 +188,8 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 
 	if(unit->m_spawn)
 	{
-		uint32 cellx=float2int32(((_maxX-unit->m_spawn->x)/_cellSize));
-		uint32 celly=float2int32(((_maxY-unit->m_spawn->y)/_cellSize));
+		uint32 cellx = unit->GetMapMgr()->GetPosX(unit->m_spawn->x);
+		uint32 celly = unit->GetMapMgr()->GetPosX(unit->m_spawn->y);
 		if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL)
 		{
 			CellSpawns * c = unitMgr->GetBaseMap()->GetSpawnsList(cellx, celly);
@@ -747,28 +745,26 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 	bool foundonmap = true;
 	if(GObj->m_spawn && GObj->m_spawn->entry == GObj->GetEntry())
 	{
-		uint32 cellx = float2int32(((_maxX-GObj->m_spawn->x)/_cellSize));
-		uint32 celly = float2int32(((_maxY-GObj->m_spawn->y)/_cellSize));
-
-		GObj->DeleteFromDB();
+		uint32 cellx = GObj->GetMapMgr()->GetPosX(GObj->m_spawn->x);
+		uint32 celly = GObj->GetMapMgr()->GetPosY(GObj->m_spawn->y);
 
 		if(cellx < _sizeX && celly < _sizeY)
 		{
-			CellSpawns * c = GObj->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx, celly);
-
 			foundonmap = false;
-			GOSpawnList::iterator itr,itr2;
-			for(itr = c->GOSpawns.begin(); itr != c->GOSpawns.end();)
+			GOSpawnList::iterator itr;
+			CellSpawns * c = GObj->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx, celly);
+			for(itr = c->GOSpawns.begin(); itr != c->GOSpawns.end(); itr++)
 			{
-				itr2 = itr++;
-				if((*itr2) == GObj->m_spawn)
+				if((*itr) == GObj->m_spawn)
 				{
 					foundonmap = true;
-					c->GOSpawns.erase(itr2);
+					c->GOSpawns.erase(itr);
 					break;
 				}
 			}
 		}
+
+		GObj->DeleteFromDB();
 
 		if(foundonmap)
 		{
@@ -822,13 +818,13 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 	float y = chr->GetPositionY();
 	float z = chr->GetPositionZ();
 	float o = chr->GetOrientation();
-	BlueSystemMessage(m_session, "Spawning Gameobject(%u) at (X: %f, Y: %f, Z: %f, O: %f)", EntryID, x, y, z, o);
-	GOSpawn * gs = NULL;
+	go->CreateFromProto(EntryID,mapid,x,y,z,o,0.0f,0.0f,0.0f,0.0f);
+	BlueSystemMessage(m_session, "Spawning Gameobject(%u) at current position", EntryID);
 
 	if(Save == true) // If we're saving, create template and add index
 	{
-		// Create sapwn instance
-		gs = new GOSpawn;
+		// Create spawn instance
+		GOSpawn *gs = new GOSpawn;
 		gs->entry = go->GetEntry();
 		gs->facing = go->GetOrientation();
 		gs->faction = go->GetUInt32Value(GAMEOBJECT_FACTION);
@@ -839,32 +835,22 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		gs->orientation3 = go->GetFloatValue(GAMEOBJECT_ROTATION_02);
 		gs->orientation4 = go->GetFloatValue(GAMEOBJECT_ROTATION_03);
 		gs->scale = go->GetFloatValue(OBJECT_FIELD_SCALE_X);
-		gs->x = go->GetPositionX();
-		gs->y = go->GetPositionY();
-		gs->z = go->GetPositionZ();
+		gs->x = x;
+		gs->y = y;
+		gs->z = z;
 		gs->state = go->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE);
 		gs->phase = chr->GetPhase();
-		go->m_spawn = gs;
-	}
-	else
-	{
-		go->CreateFromProto(EntryID,mapid,x,y,z,o,0.0f,0.0f,0.0f,0.0f);
+		go->Load(gs);
+		go->SaveToDB();
 
+		uint32 cx = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
+		uint32 cy = m_session->GetPlayer()->GetMapMgr()->GetPosY(m_session->GetPlayer()->GetPositionY());
+		m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
 	}
 
 	go->SetPhase(chr->GetPhase());
 	go->SetInstanceID(chr->GetInstanceID());
 	go->PushToWorld(m_session->GetPlayer()->GetMapMgr());
-
-	if(Save == true)
-	{
-		uint32 cx = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
-		uint32 cy = m_session->GetPlayer()->GetMapMgr()->GetPosY(m_session->GetPlayer()->GetPositionY());
-		m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
-		go->Load(gs);
-		go->SaveToDB();
-		go->m_loadedFromDB = true;
-	}
 	return true;
 }
 
@@ -1193,7 +1179,7 @@ bool ChatHandler::HandleGOAnimProgress(const char * args, WorldSession * m_sessi
 		return false;
 
 	uint32 ap = atol(args);
-	m_session->GetPlayer()->m_GM_SelectedGO->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_ANIMPROGRESS, ap);
+	m_session->GetPlayer()->m_GM_SelectedGO->SetAnimProgress(ap);
 	BlueSystemMessage(m_session, "Set ANIMPROGRESS to %u", ap);
 	return true;
 }

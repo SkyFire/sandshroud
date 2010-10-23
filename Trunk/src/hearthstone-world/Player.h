@@ -244,28 +244,18 @@ enum RankTitles
 
 enum PvPAreaStatus
 {
-    AREA_ALLIANCE = 1,
-    AREA_HORDE = 2,
-    AREA_CONTESTED = 3,
-    AREA_PVPARENA = 4,
+	AREA_ALLIANCE	= 1,
+	AREA_HORDE		= 2,
+	AREA_CONTESTED	= 3,
+	AREA_PVPARENA	= 4,
 };
 
 enum PlayerMovementType
 {
-    MOVE_ROOT	    = 1,
-    MOVE_UNROOT	    = 2,
-    MOVE_WATER_WALK = 3,
-    MOVE_LAND_WALK  = 4,
-};
-
-enum PlayerSpeedType
-{
-    RUN	            = 1,
-    RUNBACK         = 2,
-    SWIM	        = 3,
-    SWIMBACK        = 4,
-    WALK	        = 5,
-    FLY	            = 6,
+	MOVE_ROOT		= 1,
+	MOVE_UNROOT		= 2,
+	MOVE_WATER_WALK	= 3,
+	MOVE_LAND_WALK	= 4,
 };
 
 enum LFGroleflags
@@ -676,8 +666,6 @@ struct EquipmentSet
 
 #define MAX_EQUIPMENT_SET_INDEX 10	// client limit
 
-typedef std::map<uint32, EquipmentSet> EquipmentSets;
-
 struct PlayerSkill
 {
 	skilllineentry * Skill;
@@ -888,7 +876,7 @@ public:
 	uint32				taxi_model_id;
 	uint32				lastNode;
 	uint32				m_taxi_ride_time;
-	uint32				m_taximask[12];
+	uint32				m_taximask[14];
 	float				m_taxi_pos_x;
 	float				m_taxi_pos_y;
 	float				m_taxi_pos_z;
@@ -988,7 +976,7 @@ public:
 	bool HasHigherSpellForSkillLine(SpellEntry* sp);
 	void smsg_InitialSpells();
 	void smsg_TalentsInfo(bool pet);
-	void BuildPlayerTalentsInfo(WorldPacket *data, bool self);
+	void BuildPlayerTalentsInfo(WorldPacket *data);
 	void BuildPetTalentsInfo(WorldPacket *data);
 	void addSpell(uint32 spell_idy);
 	void removeSpellByHashName(uint32 hash);
@@ -1480,9 +1468,9 @@ public:
 	int32 m_bgEntryPointInstance;
 	bool m_bgHasFlag;
 	bool m_bgIsQueued[3];
-	uint32 m_bgQueueType[3];
-	uint32 m_bgQueueInstanceId[3];
-	uint32 m_bgQueueTime[3];
+	uint32 m_bgQueueType[2];
+	uint32 m_bgQueueInstanceId[2];
+	uint32 m_bgQueueTime[2];
 	uint32 m_bgFlagIneligible;
 
 	bool HasBattlegroundQueueSlot();
@@ -1952,6 +1940,8 @@ public:
 	uint32 JudgementSpell;
 	std::map<uint32, PlayerPet*> m_Pets;
 	uint8 m_StableSlotCount;
+	//Player Action Bar
+	ActionButton mActions[PLAYER_ACTION_BUTTON_SIZE];
 
 protected:
 	uint32 m_timeLogoff;
@@ -2078,8 +2068,6 @@ protected:
 	uint64 m_curSelection;
 	// Raid
 	uint8 m_targetIcon;
-	//Player Action Bar
-	ActionButton mActions[PLAYER_ACTION_BUTTON_SIZE];
 	// Player Reputation
 	ReputationMap m_reputation;
 	// Pointer to this char's game client
@@ -2109,6 +2097,7 @@ protected:
 	float       m_lastSwimSpeed;
 	float       m_lastBackSwimSpeed;
 	float       m_lastFlySpeed;
+	float       m_lastBackFlySpeed;
 
 	uint32 m_mountCheckTimer;
 	void RemovePendingPlayer();
@@ -2247,7 +2236,6 @@ public:
 	uint32 m_deathRuneMasteryChance;
 
 	// Equipment Sets
-	EquipmentSets m_EquipmentSets;
 	void SendEquipmentSets();
 	void SetEquipmentSet(uint32 index, EquipmentSet eqset);
 	void DeleteEquipmentSet(uint64 setGuid);
@@ -2278,6 +2266,7 @@ public:
 	PlayerCreateInfo * GetInfo() const { return info;};
 	float MobXPGainRate;
 	bool NoReagentCost;
+	void StartQuest(uint32 id);
 };
 
 class SkillIterator

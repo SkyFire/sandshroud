@@ -248,25 +248,15 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->Effect[1] = 0;
 		}break;
 
-	case 51975:
+	case 51975:// shaman	-	Poison Cleansing Totem
+	case 52025:// shaman	-	Disease	Cleansing	Totem
 		{
-				// shaman	-	Poison Cleansing Totem
+				
 			SpellEntry*  sp2 = dbcSpell.LookupEntryForced( 58780 );
 			if( sp2 != NULL)
 			{
-			sp->EffectRadiusIndex[0] = sp2->EffectRadiusIndex[0];	//30 yards
-			sp->EffectImplicitTargetA[0] = EFF_TARGET_ALL_PARTY_IN_AREA;
-			}
-		}break;
-
-	case 52025:
-		{
-				// shaman	-	Disease	Cleansing	Totem
-			SpellEntry*  sp2 = dbcSpell.LookupEntryForced( 58780 );
-			if( sp2 != NULL)
-			{
-			sp->EffectRadiusIndex[0] = sp2->EffectRadiusIndex[0];	//30 yards
-			sp->EffectImplicitTargetA[0] = EFF_TARGET_ALL_PARTY_IN_AREA;
+				sp->EffectRadiusIndex[0] = sp2->EffectRadiusIndex[0];	//30 yards
+				sp->EffectImplicitTargetA[0] = EFF_TARGET_ALL_PARTY_IN_AREA;
 			}
 		}break;
 
@@ -387,7 +377,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_CAST_SPELL;
 		}break;
 
-			//Priest - Holy	Nova
+		//Priest - Holy	Nova
 	case 15237:
 		{
 			sp->Effect[1]	=	SPELL_EFFECT_TRIGGER_SPELL;
@@ -4456,6 +4446,12 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->Effect[0] = SPELL_EFFECT_NULL;
 		}break;
+	
+	case 55666:
+	case 55667:
+		{
+			sp->procFlags	=	PROC_ON_CAST_SPELL;
+		}break;
 
 		//////////////////////////////////////////
 		// BOSSES								//
@@ -5333,4 +5329,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		sp->c_is_flags |= SPELL_FLAG_CASTED_ON_FRIENDS;
 	if( IsCastedOnEnemies(sp) )
 		sp->c_is_flags |= SPELL_FLAG_CASTED_ON_ENEMIES;
+	if(sp->Flags3 & FLAGS3_CANT_CRIT) //I can haz hacky? :O
+		sp->spell_can_crit = false;
 }

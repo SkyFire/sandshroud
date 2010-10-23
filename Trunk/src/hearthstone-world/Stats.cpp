@@ -22,9 +22,8 @@
 uint32 getConColor(uint16 AttackerLvl, uint16 VictimLvl)
 {
 
-	//	const uint32 grayLevel[sWorld.LevelCap+1] = {0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,13,14,15,16,17,18,19,20,21,22,22,23,24,25,26,27,28,29,30,31,31,32,33,34,35,35,36,37,38,39,39,40,41,42,43,43,44,45,46,47,47,48,49,50,51,51,52,53,54,55,55};
-#define PLAYER_LEVEL_CAP 70
-	const uint32 grayLevel[PLAYER_LEVEL_CAP+1] = {0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,13,14,15,16,17,18,19,20,21,22,22,23,24,25,26,27,28,29,30,31,31,32,33,34,35,35,36,37,38,39,39,40,41,42,43,43,44,45,46,47,47,48,49,50,51,51,52,53,54,55,55};
+#define PLAYER_LEVEL_CAP 80
+	const uint32 grayLevel[PLAYER_LEVEL_CAP+1] = {0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,13,14,15,16,17,18,19,20,21,22,22,23,24,25,26,27,28,29,30,31,31,32,33,34,35,35,36,37,38,39,39,40,41,42,43,43,44,45,46,47,47,48,49,50,51,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,65};
 	if(AttackerLvl + 5 <= VictimLvl)
 	{
 		if(AttackerLvl + 10 <= VictimLvl)
@@ -96,21 +95,6 @@ uint32 CalculateXpToGive(Unit* pVictim, Unit* pAttacker)
 		return 0;
 
 	// Partha: this screws things up for pets and groups
-	// No need for it here - it does this later in Player::GiveXP
-	/*
-	uint32 max_level = 70;
-	if(pAttacker->IsPlayer())
-	max_level = pAttacker->GetUInt32Value(PLAYER_FIELD_MAX_LEVEL);
-	else if(pAttacker->IsPet())
-	max_level = TO_PET( pAttacker )->GetPetOwner()->GetUInt32Value(PLAYER_FIELD_MAX_LEVEL);
-
-	if(pAttacker->getLevel() >= max_level)
-	return 0;
-	*/
-
-
-	/*if(VictimLvl+7>AttackerLvl)
-	VictimLvl = AttackerLvl + 7;*/
 
 	float zd = 5;
 	float g = 5;
@@ -118,7 +102,17 @@ uint32 CalculateXpToGive(Unit* pVictim, Unit* pAttacker)
 	// get zero diff
 	// get grey diff
 
-	if(AttackerLvl >= 70)
+	if(AttackerLvl >= 80)
+	{
+		zd = 21;
+		g = 17;
+	}
+	else if(AttackerLvl >= 75)
+	{
+		zd = 20;
+		g = 16;
+	}
+	else if(AttackerLvl >= 70)
 	{
 		zd = 19;
 		g = 15;
@@ -126,12 +120,12 @@ uint32 CalculateXpToGive(Unit* pVictim, Unit* pAttacker)
 	else if(AttackerLvl >= 65)
 	{
 		zd = 18;
-		g = 13;
+		g = 14;
 	}
 	else if(AttackerLvl >= 60)
 	{
 		zd = 17;
-		g = 14;
+		g = 13;
 	}
 	else if(AttackerLvl >= 55)
 	{

@@ -161,7 +161,7 @@ public:
 
 	// Serialization
 	void SaveToDB();
-	void SaveToFile();
+	void SaveToFile(std::stringstream & ss);
 	void DeleteFromDB();
 	void EventCloseDoor();
 	void UpdateRotation(float orientation3 = 0.0f, float orientation4 = 0.0f);
@@ -213,6 +213,7 @@ public:
 	SpellEntry* spell;
 
 	bool initiated;
+	bool m_created;
 	float range;
 	uint8 checkrate;
 	uint16 counter;
@@ -267,7 +268,10 @@ public:
 
 	//Destructable Building
 	void TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uint32 spellid = 0);
+	void Destroy();
+	void Damage();
 	void Rebuild();
+	//Aura Generator
 	void AuraGenSearchTarget();
 
 	uint32 GetGOui32Value(uint32 id)

@@ -103,9 +103,7 @@ Creature::Creature(uint64 guid)
 	m_taggingPlayer = m_taggingGroup = 0;
 	m_lootMethod = -1;
 	m_noDeleteAfterDespawn = false;
-
 	spawnid = 0;
-	lightwellcharges = 0;
 }
 
 void Creature::Init()
@@ -578,14 +576,16 @@ void Creature::AddToWorld(MapMgr* pMapMgr)
 
 bool Creature::CanAddToWorld()
 {
-	if(creature_info == 0 || proto == 0)
+	if(creature_info == NULL || proto == NULL)
 		return false;
 
-	if(m_faction == 0 || m_factionDBC == 0)
+	if(m_faction == NULL || m_factionDBC == NULL)
+	{
 		_setFaction();
 
-	if(m_faction == 0 || m_factionDBC == 0)
-		return false;
+		if(m_faction == NULL || m_factionDBC == NULL)
+			return false;
+	}
 
 	return true;
 }
@@ -1160,54 +1160,58 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	{
 	case POWER_TYPE_MANA:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_MANA);
+			SetPowerType(POWER_TYPE_MANA);
 			SetUInt32Value(UNIT_FIELD_POWER1, power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER1, power);
+			SetMaxPower(POWER_TYPE_MANA,power);
 			SetUInt32Value(UNIT_FIELD_BASE_MANA, power);
 		}break;
 	case POWER_TYPE_RAGE:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RAGE);
-			SetUInt32Value(UNIT_FIELD_POWER2, power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER2, power * 10);
+			SetPowerType(POWER_TYPE_RAGE);
+			SetPower(POWER_TYPE_RAGE, power*10);
+			SetMaxPower(POWER_TYPE_RAGE,power*10);
 		}break;
 	case POWER_TYPE_FOCUS:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_FOCUS);
-			SetUInt32Value(UNIT_FIELD_POWER3, power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER3, power);
+			SetPowerType(POWER_TYPE_FOCUS);
+			SetPower(POWER_TYPE_FOCUS, power);
+			SetMaxPower(POWER_TYPE_FOCUS,power);
 		}break;
 	case POWER_TYPE_ENERGY:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
-			SetUInt32Value(UNIT_FIELD_POWER4, power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER4, power);
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetPower(POWER_TYPE_ENERGY, power);
+			SetMaxPower(POWER_TYPE_ENERGY,power);
 		}break;
 	case POWER_TYPE_RUNE:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNE);
-			SetUInt32Value(UNIT_FIELD_POWER6, power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER6, power * 10);
+			SetPowerType(POWER_TYPE_RUNE);
+			SetPower(POWER_TYPE_RUNE, power*10);
+			SetMaxPower(POWER_TYPE_RUNE,power*10);
 		}break;
 	case POWER_TYPE_RUNIC:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNIC);
-			SetUInt32Value(UNIT_FIELD_POWER7, power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER7, power * 10);
+			SetPowerType(POWER_TYPE_RUNIC);
+			SetPower(POWER_TYPE_RUNIC, power*10);
+			SetMaxPower(POWER_TYPE_RUNIC,power*10);
 		}break;
 		//Special vehicle power type cases.
-		case 61:
-		case 141:
-		case 121:
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
-			SetUInt32Value(UNIT_FIELD_POWER4, 100);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER4, 100);
-		break;
-		case 41:
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
-			SetUInt32Value(UNIT_FIELD_POWER4, 50);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER4, 50);
-		break;
+	case POWER_TYPE_STEAM:
+	case POWER_TYPE_HEAT:
+	case POWER_TYPE_OOZ:
+	case POWER_TYPE_BLOOD:
+	case POWER_TYPE_WRATH:
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetPower(POWER_TYPE_ENERGY, 100);
+			SetMaxPower(POWER_TYPE_ENERGY,100);
+		}break;
+	case POWER_TYPE_PYRITE:
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetMaxPower(POWER_TYPE_ENERGY,50);
+			m_interruptRegen = true;
+		}break;
 	default:
 		{
 			sLog.outError("Creature %u has an unhandled powertype.", GetEntry());
@@ -1492,44 +1496,61 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	{
 	case POWER_TYPE_MANA:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_MANA);
-			SetUInt32Value(UNIT_FIELD_POWER1, power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER1, power);
+			SetPowerType(POWER_TYPE_MANA);
+			SetPower(POWER_TYPE_MANA,power);
+			SetMaxPower(POWER_TYPE_MANA,power);
 			SetUInt32Value(UNIT_FIELD_BASE_MANA, power);
 		}break;
 	case POWER_TYPE_RAGE:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RAGE);
-			SetUInt32Value(UNIT_FIELD_POWER2, power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER2, power * 10);
+			SetPowerType(POWER_TYPE_RAGE);
+			SetPower(POWER_TYPE_RAGE,power*10);
+			SetMaxPower(POWER_TYPE_RAGE,power*10);
 		}break;
 	case POWER_TYPE_FOCUS:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_FOCUS);
-			SetUInt32Value(UNIT_FIELD_POWER3, power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER3, power);
+			SetPowerType(POWER_TYPE_FOCUS);
+			SetPower(POWER_TYPE_FOCUS,power);
+			SetMaxPower(POWER_TYPE_FOCUS,power);
 		}break;
 	case POWER_TYPE_ENERGY:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_ENERGY);
-			SetUInt32Value(UNIT_FIELD_POWER4, power);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER4, power);
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetPower(POWER_TYPE_ENERGY,power);
+			SetMaxPower(POWER_TYPE_ENERGY,power);
 		}break;
 	case POWER_TYPE_RUNE:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNE);
-			SetUInt32Value(UNIT_FIELD_POWER6, power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER6, power * 10);
+			SetPowerType(POWER_TYPE_RUNE);
+			SetPower(POWER_TYPE_RUNE,power*10);
+			SetMaxPower(POWER_TYPE_RUNE,power*10);
 		}break;
 	case POWER_TYPE_RUNIC:
 		{
-			SetByte(UNIT_FIELD_BYTES_0, 3, POWER_TYPE_RUNIC);
-			SetUInt32Value(UNIT_FIELD_POWER7, power * 10);
-			SetUInt32Value(UNIT_FIELD_MAXPOWER7, power * 10);
+			SetPowerType(POWER_TYPE_RUNIC);
+			SetPower(POWER_TYPE_RUNIC,power*10);
+			SetMaxPower(POWER_TYPE_RUNIC,power*10);
+		}break;
+		//Special vehicle power type cases.
+	case POWER_TYPE_STEAM:
+	case POWER_TYPE_HEAT:
+	case POWER_TYPE_OOZ:
+	case POWER_TYPE_BLOOD:
+	case POWER_TYPE_WRATH:
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetPower(POWER_TYPE_ENERGY,100);
+			SetMaxPower(POWER_TYPE_ENERGY,100);
+		}break;
+	case POWER_TYPE_PYRITE:
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetMaxPower(POWER_TYPE_ENERGY,50);
+			m_interruptRegen = true;
 		}break;
 	default:
 		{
-			sLog.outError("Creature %u has an incorrect powertype.", this->GetEntry());
+			sLog.outError("Creature %u has an unhandled powertype.", GetEntry());
 		}break;
 	}
 

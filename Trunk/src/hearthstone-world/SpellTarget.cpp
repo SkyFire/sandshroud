@@ -364,15 +364,9 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 	if(!pTarget)
 		return;
 
-	if(GetSpellProto()->TargetCreatureType && pTarget->GetTypeId()==TYPEID_UNIT)
+	if(GetSpellProto()->TargetCreatureType)
 	{
-		Creature* cr = TO_CREATURE( pTarget );
-
-		if( cr == NULL )
-			return;
-
-		if( cr->GetCreatureInfo() )
-			if(!(1<<(cr->GetCreatureInfo()->Type-1) & GetSpellProto()->TargetCreatureType))
+		if(!(1<<(pTarget->GetCreatureType()-1) & GetSpellProto()->TargetCreatureType))
 				return;
 	}
 
@@ -478,7 +472,7 @@ void Spell::SpellTargetAllPartyMembersRangeNR(uint32 i, uint32 j)
 	if( p == NULL )
 		return;
 
-	float r = GetRadius(i);
+	float r = GetFriendlyRadius(i);
 
 	r *= r;
 	if( IsInrange( m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), p, r ) )
@@ -511,7 +505,7 @@ void Spell::SpellTargetSingleTargetFriend(uint32 i, uint32 j)
 	if(!Target)
 		return;
 
-	float r= GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
+	float r= GetFriendlyMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
 	if(IsInrange (m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),Target, r*r))
 		_AddTargetForced(Target->GetGUID(), i);
 }
@@ -658,7 +652,7 @@ void Spell::SpellTargetAllyBasedAreaEffect(uint32 i, uint32 j)
 	// Used in
 	26043 -> Battle Shout
 	*/
-	FillAllFriendlyInArea(i,m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),GetRadius(i));
+	FillAllFriendlyInArea(i,m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),GetFriendlyRadius(i));
 }
 
 /// Spell Target Handling for type 31: related to scripted effects
@@ -758,7 +752,7 @@ void Spell::SpellTargetSingleTargetPartyMember(uint32 i, uint32 j)
 	Unit* Target = m_caster->GetMapMgr()->GetPlayer((uint32)m_targets.m_unitTarget);
 	if(!Target)
 		return;
-	float r=GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
+	float r=GetFriendlyMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
 	if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),Target,r*r))
 		_AddTargetForced(m_targets.m_unitTarget, i);
 }
@@ -1003,7 +997,7 @@ void Spell::SpellTargetTargetPartyMember(uint32 i, uint32 j)
 	if(!Target)
 		return;
 
-	float r=GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
+	float r=GetFriendlyMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
 	if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),Target,r*r))
 		_AddTargetForced(Target->GetGUID(), i);
 }

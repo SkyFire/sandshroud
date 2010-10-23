@@ -260,7 +260,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 					++GameObjectSpawnCount;
 				}while(result->NextRow());
 			}
-
 			delete result;
 		}
 	}

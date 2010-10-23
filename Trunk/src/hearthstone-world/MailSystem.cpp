@@ -945,6 +945,8 @@ void WorldSession::SendMailError(uint32 error)
 
 void WorldSession::HandleGetMail(WorldPacket & recv_data )
 {
+    uint64 mailbox;
+    recv_data >> mailbox;
 	WorldPacket * data = _player->m_mailBox->MailboxListingPacket();
 	SendPacket(data);
 	delete data;

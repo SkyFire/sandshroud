@@ -45,8 +45,9 @@ GameObject::GameObject(uint64 guid)
 	m_quests = NULL;
 	pInfo = NULL;
 	myScript = NULL;
-	m_spawn = 0;
+	m_spawn = NULL;
 	m_deleted = false;
+	m_created = false;
 	m_respawnCell = NULL;
 	m_battleground = NULLBATTLEGROUND;
 	initiated = false;
@@ -104,6 +105,14 @@ bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, float x, float y, fl
 	if(!pInfo)
 		return false;
 
+	if(m_created) // Already created, just push back.
+	{
+		if(!initiated)
+			InitAI();
+		return true;
+	}
+
+	m_created = true;
 	Object::_Create( mapid, x, y, z, ang );
 	SetUInt32Value( OBJECT_FIELD_ENTRY, entry );
 
@@ -117,7 +126,6 @@ bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, float x, float y, fl
 	SetType(pInfo->Type);
 
 	InitAI();
-
 	return true;
 }
 
@@ -243,11 +251,12 @@ void GameObject::Despawn( uint32 delay, uint32 respawntime)
 
 void GameObject::SaveToDB()
 {
-	if(sWorld.QueryLog)
-		SaveToFile();
+	if(m_spawn == NULL)
+		return;
+
 	std::stringstream ss;
 	ss << "REPLACE INTO gameobject_spawns VALUES("
-		<< ((m_spawn == NULL) ? 0 : m_spawn->id) << ","
+		<< m_spawn->id << ","
 		<< GetEntry() << ","
 		<< GetMapId() << ","
 		<< GetPositionX() << ","
@@ -263,29 +272,15 @@ void GameObject::SaveToDB()
 		<< GetUInt32Value(GAMEOBJECT_FACTION) << ","
 		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
 		<< m_phaseMode << ")";
+
+	if(sWorld.QueryLog)
+		SaveToFile(ss);
+
 	WorldDatabase.Execute(ss.str().c_str());
 }
 
-void GameObject::SaveToFile()
+void GameObject::SaveToFile(std::stringstream & ss)
 {
-	std::stringstream ss;
-	ss << "REPLACE INTO gameobject_spawns VALUES("
-		<< ((m_spawn == NULL) ? 0 : m_spawn->id) << ","
-		<< GetEntry() << ","
-		<< GetMapId() << ","
-		<< GetPositionX() << ","
-		<< GetPositionY() << ","
-		<< GetPositionZ() << ","
-		<< GetOrientation() << ","
-		<< GetUInt64Value(GAMEOBJECT_ROTATION) << ","
-		<< GetFloatValue(GAMEOBJECT_PARENTROTATION) << ","
-		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_2) << ","
-		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_3) << ","
-		<< ( GetByte(GAMEOBJECT_BYTES_1, 0)? 1 : 0 ) << ","
-		<< GetUInt32Value(GAMEOBJECT_FLAGS) << ","
-		<< GetUInt32Value(GAMEOBJECT_FACTION) << ","
-		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
-		<< m_phaseMode << ")";
 	FileLog * log = new FileLog("gameobjects.sql");
 	log->WriteToLog(ss.str().c_str());
 }
@@ -792,15 +787,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	{
 		if(m_Go_Uint32Values[GO_UINT32_HEALTH] == 0)
 		{
-			RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
-			SetFlags(GO_FLAG_DESTROYED);
-			if(pInfo->Unknown9!=0)
-			{
-				DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-				SetDisplayId(display->GetDisplayId(3));
-			}
-			else
-			SetDisplayId(pInfo->Unknown1);
+			Destroy();
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
 
 			if(pcaster != NULL)
@@ -814,15 +801,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	{
 		if(m_Go_Uint32Values[GO_UINT32_HEALTH] != 0)
 		{
-			SetFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
-			if(pInfo->Unknown9!=0)
-			{
-				DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-				SetDisplayId(display->GetDisplayId(1));
-			}
-			else
-				SetDisplayId(pInfo->sound4);
-
+			Damage();
 			if(pcaster!=NULL)
 			{
 				if(pcaster->WinterGrasp!=NULL)
@@ -832,14 +811,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 		}
 		else
 		{
-			SetFlags(GO_FLAG_DESTROYED);
-			if(pInfo->Unknown9!=0)
-			{
-				DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
-				SetDisplayId(display->GetDisplayId(3));
-			}
-			else
-				SetDisplayId(pInfo->Unknown1);
+			Destroy();
 			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
 
 			if(pcaster != NULL)
@@ -896,5 +868,29 @@ void GameObject::AuraGenSearchTarget()
 			thing->AddAura(new Aura(spell,-1,thing,thing));
 		}
 	}
+}
+void GameObject::Damage()
+{
+	SetFlags(GO_FLAG_DAMAGED);
+	if(pInfo->Unknown9!=0)
+	{
+		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
+		SetDisplayId(display->GetDisplayId(1));
+	}
+	else
+		SetDisplayId(pInfo->sound4);
+}
+
+void GameObject::Destroy()
+{
+	RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
+	SetFlags(GO_FLAG_DESTROYED);
+	if(pInfo->Unknown9!=0)
+	{
+		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
+		SetDisplayId(display->GetDisplayId(3));
+	}
+	else
+		SetDisplayId(pInfo->Unknown1);
 }
 

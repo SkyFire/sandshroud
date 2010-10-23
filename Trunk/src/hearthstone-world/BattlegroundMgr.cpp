@@ -24,7 +24,7 @@ typedef CBattleground*(*CreateBattlegroundFunc)( MapMgr* mgr,uint32 iid,uint32 g
 
 const static uint32 BGMapIds[BATTLEGROUND_NUM_TYPES] = {
 	0,		// 0
-	30,		// AV
+	30,		// AV 
 	489,	// WSG
 	529,	// AB
 	0,		// 2v2
@@ -127,7 +127,7 @@ const static uint32 BGMinimumPlayers[BATTLEGROUND_NUM_TYPES] = {
 	0,							// Non existant.
  	40,							// IOC
 	0,							// Non existant.
-	0,							// Unknown
+	0,							// Random
 };
 
 const static uint32 BGPvPDataFieldCount[BATTLEGROUND_NUM_TYPES] = {
@@ -163,7 +163,7 @@ const static uint32 BGPvPDataFieldCount[BATTLEGROUND_NUM_TYPES] = {
 	0,							// Non existant.
 	0,							// IOC
 	0,							// Non existant.
-	0,							// Unknown
+	0,							// Random
 };
 
 #define IS_ARENA(x) ( (x) >= BATTLEGROUND_ARENA_2V2 && (x) <= BATTLEGROUND_ARENA_5V5 )
@@ -234,9 +234,9 @@ void CBattlegroundManager::AddAverageQueueTime(uint32 BgType, uint32 queueTime)
 	m_averageQueueTimes[BgType][0] = queueTime;
 }
 
-void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session, uint32 BattlegroundType, bool battlemaster, bool random)
+void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session, uint32 BattlegroundType, uint8 requestType)
 {
-	if( BattlegroundType >= BATTLEGROUND_NUM_TYPES )
+	if( !IsValidBG(BattlegroundType))
 		return;
 
 	WorldPacket data;
@@ -244,8 +244,11 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	uint32 Count = 0;
 
 	data.Initialize(SMSG_BATTLEFIELD_LIST);
-	data << (battlemaster ? uint64(0) : m_session->GetPlayer()->GetGUID());		// Guid
-	data << uint8(battlemaster);					// Joining from Player Screen?
+	if( requestType == 0 )
+		data << uint64( m_session->GetPlayer()->GetGUID() );
+	else
+		data << uint64( 0 );
+	data << uint8(requestType);					// Joining from Player Screen?
 	data << BattlegroundType;						// BG ID
 	data << uint8(IS_ARENA(BattlegroundType));		// unk 3.3
 	data << uint8(0);								// unk 3.3
@@ -253,7 +256,7 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	data << uint32(0);								// Arena points
 	data << uint32(0);								// Honor points
 	data << uint32(0);								// Lose honor
-
+	bool random = BattlegroundType == 33;
 	data << uint8(random);
 	if(random)
 	{
@@ -371,7 +374,7 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 	if( plr->HasBGQueueSlotOfType( bgtype ) != 4)
 		queueSlot = plr->HasBGQueueSlotOfType( bgtype );
 
-	if( queueSlot >= 3 )
+	if( queueSlot >= 2 )
 	{
 		m_queueLock.Release();
 		return;
@@ -852,7 +855,7 @@ void CBattlegroundManager::RemovePlayerFromQueues(Player* plr)
 	uint32 lgroup = GetLevelGrouping(plr->getLevel());
 
 	uint32 i;
-	for(i = 0; i < 3; i++)
+	for(i = 0; i < 2; i++)
 	{
 		list<uint32>::iterator itr2;
 		list<uint32>::iterator itr = m_queuedPlayers[plr->m_bgQueueType[i]][lgroup].begin();
@@ -2158,5 +2161,12 @@ bool CBattleground::HookSlowLockOpen(GameObject* pGo, Player* pPlayer, Spell* pS
 	if( pPlayer->m_stealth )
 		pPlayer->RemoveAura( pPlayer->m_stealth );
 
+	return false;
+}
+
+bool CBattlegroundManager::IsValidBG(uint32 BgType)
+{
+	if(BgType && (BgType < 12 || BgType == 31 || BgType == 33))
+       return true;
 	return false;
 }

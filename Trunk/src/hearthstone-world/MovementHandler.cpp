@@ -313,7 +313,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 
 void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 {
-	if(!_player->IsInWorld() || _player->m_uint32Values[UNIT_FIELD_CHARMEDBY] || _player->GetPlayerStatus() == TRANSFER_PENDING || _player->GetTaxiState())
+	if(!_player->IsInWorld() || _player->m_uint32Values[UNIT_FIELD_CHARMEDBY] || _player->GetPlayerStatus() == TRANSFER_PENDING && !_player->m_CurrentVehicle || _player->GetTaxiState())
 		return;
 
 	// spell cancel on movement, for now only fishing is added
@@ -990,7 +990,7 @@ void WorldSession::HandleForceSpeedChangeOpcodes( WorldPacket & recv_data )
 
 void MovementInfo::init(WorldPacket & data)
 {
-	data >> flags >> m_movementflags >> time;
+	data >> flags >> flags16 >> time;
 	data >> x >> y >> z >> orientation;
 
 	if((flags & MOVEFLAG_TAXI) && (flags & MOVEFLAG_FLYING) && (data.size() == 52))
@@ -1012,7 +1012,7 @@ void MovementInfo::init(WorldPacket & data)
 		data >> transGuid >> transX >> transY >> transZ >> transO >> transTime >> transSeat;
 	}
 
-	if (flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || m_movementflags & 0x20)
+	if (flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flags16 & 0x20)
 	{
 		data >> pitch;
 	}
@@ -1031,7 +1031,7 @@ void MovementInfo::init(WorldPacket & data)
 
 void MovementInfo::write(WorldPacket & data)
 {
-	data << flags << m_movementflags << getMSTime();
+	data << flags << flags16 << getMSTime();
 
 	data << x << y << z << orientation;
 
@@ -1040,7 +1040,7 @@ void MovementInfo::write(WorldPacket & data)
 		data << transGuid << transX << transY << transZ << transO << transTime << transSeat;
 	}
 
-	if(flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || m_movementflags & 0x20)
+	if(flags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || flags16 & 0x20)
 	{
 		data << pitch;
 	}

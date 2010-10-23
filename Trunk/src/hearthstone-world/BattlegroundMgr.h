@@ -167,7 +167,7 @@ public:
 	void Init();
 
 	/* Packet Handlers */
-	void HandleBattlegroundListPacket(WorldSession * m_session, uint32 BattlegroundType, bool battlemaster = true, bool random = false);
+	void HandleBattlegroundListPacket(WorldSession * m_session, uint32 BattlegroundType, uint8 requestType);
 	void HandleArenaJoin(WorldSession * m_session, uint32 BattlegroundType, uint8 as_group, uint8 rated_match);
 
 	/* Player Logout Handler */
@@ -217,6 +217,7 @@ public:
 
 	/* Adds a new queueTime for average calculation */
 	void AddAverageQueueTime(uint32 BgType, uint32 queueTime);
+	bool IsValidBG(uint32 BgType);
 };
 
 class CBattleground : public EventableObject

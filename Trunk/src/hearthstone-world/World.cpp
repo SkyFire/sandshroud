@@ -700,6 +700,22 @@ void World::SendGlobalMessage(WorldPacket *packet, WorldSession *self)
 	m_sessionlock.ReleaseReadLock();
 }
 
+void World::BanEveryoneOnline()
+{
+	m_sessionlock.AcquireReadLock();
+
+	SessionMap::iterator itr;
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	{
+		if (itr->second->GetPlayer() &&itr->second->GetPlayer()->IsInWorld())
+		{
+			itr->second->GetPlayer()->SetBanned("Being Online!!!!11!!!!elevenoneoneoneexclamationpoint");
+			itr->second->GetPlayer()->GetSession()->Disconnect();
+		}
+	}
+	m_sessionlock.ReleaseReadLock();
+}
+
 void World::SendFactionMessage(WorldPacket *packet, uint8 teamId)
 {
 	m_sessionlock.AcquireReadLock();

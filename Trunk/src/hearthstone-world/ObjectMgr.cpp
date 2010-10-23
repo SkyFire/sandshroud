@@ -2011,21 +2011,11 @@ void ObjectMgr::GenerateLevelUpInfo()
 				// Calculate next level XP
 				uint32 nextLvlXP = 0;
 
-				//this is a fixed table taken from 2.3.0 wow. This can't get more blizzlike with the "if" cases ;)
+				// This is a fixed table taken from 2.3.0 wow. This can't get more blizzlike with the "if" cases ;)
 				if( ( Level - 1 ) < MAX_PREDEFINED_NEXTLEVELXP )
-				{
 					nextLvlXP = NextLevelXp[( Level - 1 )];
-				}
-				else
-				{
-					// 2.2
-					//double MXP = 45 + ( 5 * level );
-					// 2.3
-					double MXP = 235 + ( 5 * Level );
-					double DIFF = Level < 29 ? 0.0 : Level < 30 ? 1.0 : Level < 31 ? 3.0 : Level < 32 ? 6.0 : 5.0 * ( double( Level ) - 30.0 );
-					double XP = ( ( 8.0 * double( Level ) ) + DIFF ) * MXP;
-					nextLvlXP = (int)( ( XP / 100.0 ) + 0.5 ) * 100;
-				}
+				else // Crow: 81: 2472670 82: 2504605 83: 2536680 84: 2568895 85: 2601250
+					nextLvlXP = uint32(((((255+(14*Level))*(5*55+Level))/100)+0.5)*500);
 
 				lvl->XPToNextLevel = nextLvlXP;
 

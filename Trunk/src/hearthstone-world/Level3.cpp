@@ -1055,31 +1055,45 @@ bool ChatHandler::HandleShowCheatsCommand(const char* args, WorldSession* m_sess
 
 bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 {
-	WorldPacket fly(SMSG_MOVE_SET_CAN_FLY, 13);
 
-	Player* chr = getSelectedChar(m_session);
+	Player* chr = getSelectedChar(m_session, false);
 
 	if(!chr)
-		chr = m_session->GetPlayer();
+	{
+		Creature* ctr = getSelectedCreature(m_session, false);
+		if(ctr != NULL)
+		{
+			ctr->EnableFlight();
+			return true;
+		}
+	}
+	chr = m_session->GetPlayer();
 
 	chr->m_setflycheat = true;
+	WorldPacket fly(SMSG_MOVE_SET_CAN_FLY, 13);
 	fly << chr->GetNewGUID();
 	fly << uint32(2);
 	chr->SendMessageToSet(&fly, true);
 	BlueSystemMessage(chr->GetSession(), "Flying mode enabled.");
-	return 1;
+	return true;
 }
 
 bool ChatHandler::HandleLandCommand(const char* args, WorldSession* m_session)
 {
-	WorldPacket fly(SMSG_MOVE_UNSET_CAN_FLY, 13);
-
-	Player* chr = getSelectedChar(m_session);
+	Player* chr = getSelectedChar(m_session, false);
 
 	if(!chr)
-		chr = m_session->GetPlayer();
-
+	{
+		Creature* ctr = getSelectedCreature(m_session, false);
+		if(ctr != NULL)
+		{
+			ctr->DisableFlight();
+			return true;
+		}
+	}
+	chr = m_session->GetPlayer();
 	chr->m_setflycheat = false;
+	WorldPacket fly(SMSG_MOVE_UNSET_CAN_FLY, 13);
 	fly << chr->GetNewGUID();
 	fly << uint32(5);
 	chr->SendMessageToSet(&fly, true);
@@ -1155,7 +1169,14 @@ bool ChatHandler::HandleFlySpeedCheatCommand(const char* args, WorldSession* m_s
 bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
-	if(plr == 0) return true;
+	if(plr == NULL)
+	{
+		Creature* ctr = getSelectedCreature(m_session, false);
+		if(ctr != NULL)
+			ctr->SetUInt32Value(UNIT_FIELD_LEVEL, atol(args));
+
+		return true;
+	}
 
 	uint32 Level = args ? atol(args) : 0;
 	if(Level == 0 || Level > sWorld.GetMaxLevel(plr))
@@ -1172,7 +1193,7 @@ bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_ses
 
 	// lookup level information
 	LevelInfo * Info = objmgr.GetLevelInfo(plr->getRace(), plr->getClass(), Level);
-	if(Info == 0)
+	if(Info == NULL)
 	{
 		RedSystemMessage(m_session, "Levelup information not found.");
 		return true;
@@ -2124,7 +2145,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	}
 
 	//Are we on a transporter?
-	if(m_session->GetPlayer()->m_TransporterGUID != 0)
+	if(m_session->GetPlayer()->m_TransporterGUID != 0 && !m_session->GetPlayer()->m_CurrentVehicle )
 	{
 		Transporter* t = objmgr.GetTransporter(GUID_LOPART(plr->m_TransporterGUID));
 		if(t)

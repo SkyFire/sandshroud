@@ -748,7 +748,7 @@ bool Player::Create(WorldPacket& data )
 	m_restAmount = 0;
 	m_restState = 0;
 
-	memset(m_taximask, 0, sizeof(uint32)*12);
+	memset(m_taximask, 0, sizeof(uint32)*14);
 
 	// set race dbc
 	myRace = dbcCharRace.LookupEntry(race);
@@ -769,7 +769,7 @@ bool Player::Create(WorldPacket& data )
 	memset(m_taximask,0,sizeof(m_taximask));
 	if(class_ == DEATHKNIGHT)
 	{
-		for(uint8 i=0;i<12;++i)
+		for(uint8 i=0;i<14;++i)
 			m_taximask[i] |= DKNodesMask[i];
 	}
 
@@ -1689,48 +1689,38 @@ void Player::smsg_InitialSpells()
 	GetSession()->OutPacket(0x041d, 4, &v);
 }
 
-void Player::BuildPlayerTalentsInfo(WorldPacket *data, bool self)
+void Player::BuildPlayerTalentsInfo(WorldPacket *data)
 {
 	if(m_talentSpecsCount > 2)
 		m_talentSpecsCount = 2; // Hack fix
 
 	*data << uint32(GetUInt32Value(PLAYER_CHARACTER_POINTS)); // Unspent talents
-	// TODO: probably shouldn't send both specs if target is not self
 	*data << uint8(m_talentSpecsCount);
 	*data << uint8(m_talentActiveSpec);
-	if(self)
+	if(m_talentSpecsCount)
 	{
 		for(uint8 s = 0; s < m_talentSpecsCount; ++s)
 		{
 			PlayerSpec spec = m_specs[s];
+
 			// Send Talents
-			*data << uint8(spec.talents.size());
-			std::map<uint32, uint8>::iterator itr;
-			for(itr = spec.talents.begin(); itr != spec.talents.end(); itr++)
+			uint32 size = (uint32)spec.talents.size();
+			*data << uint8(size);
+			if(size)
 			{
-				*data << uint32(itr->first);	// TalentId
-				*data << uint8(itr->second);	// TalentRank
+				std::map<uint32, uint8>::iterator itr;
+				for(itr = spec.talents.begin(); itr != spec.talents.end(); itr++)
+				{
+					*data << uint32(itr->first);	// TalentId
+					*data << uint8(itr->second);	// TalentRank
+				}
 			}
+
 			// Send Glyph info
 			*data << uint8(GLYPHS_COUNT);
 			for(uint8 i = 0; i < GLYPHS_COUNT; i++)
-			{
 				*data << uint16(spec.glyphs[i]);
-			}
 		}
-	}
-	else
-	{
-		PlayerSpec spec = m_specs[m_talentActiveSpec];
-		// Send Talents
-		*data << uint8(spec.talents.size());
-		std::map<uint32, uint8>::iterator itr;
-		for(itr = spec.talents.begin(); itr != spec.talents.end(); itr++)
-		{
-			*data << uint32(itr->first);	// TalentId
-			*data << uint8(itr->second);	// TalentRank
-		}
-		*data << uint8(0);	// glyphs not sent when inspecting another player
 	}
 }
 
@@ -1758,7 +1748,7 @@ void Player::smsg_TalentsInfo(bool pet)
 	if(pet)
 		BuildPetTalentsInfo(&data);
 	else	// initialize sending all info
-		BuildPlayerTalentsInfo(&data, true);
+		BuildPlayerTalentsInfo(&data);
 
 	GetSession()->SendPacket(&data);
 }
@@ -2399,7 +2389,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 
 	ss << m_zoneId << ", '";
 
-	for(uint8 i = 0; i < 12; i++ )
+	for(uint8 i = 0; i < 14; i++ )
 		ss << m_taximask[i] << " ";
 	ss << "', "
 
@@ -4611,6 +4601,8 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			if( item->GetProto()->Spells[k].Trigger == 1 )
 			{
 				SpellEntry* spells = dbcSpell.LookupEntry( item->GetProto()->Spells[k].Id );
+				if(!spells)
+					return;
 				if( spells->RequiredShapeShift )
 					RemoveShapeShiftSpell( spells->Id );
 				else
@@ -4726,6 +4718,7 @@ void Player::SetPlayerSpeed(uint8 SpeedType, float value)
 			m_runSpeed = value;
 			m_lastRunSpeed = value;
 		}break;
+
 	case RUNBACK:
 		{
 			if(value == m_lastRunBackSpeed)
@@ -4735,6 +4728,7 @@ void Player::SetPlayerSpeed(uint8 SpeedType, float value)
 			m_backWalkSpeed = value;
 			m_lastRunBackSpeed = value;
 		}break;
+
 	case SWIM:
 		{
 			if(value == m_lastSwimSpeed)
@@ -4744,6 +4738,7 @@ void Player::SetPlayerSpeed(uint8 SpeedType, float value)
 			m_swimSpeed = value;
 			m_lastSwimSpeed = value;
 		}break;
+
 	case SWIMBACK:
 		{
 			if(value == m_lastBackSwimSpeed)
@@ -4753,6 +4748,13 @@ void Player::SetPlayerSpeed(uint8 SpeedType, float value)
 			m_backSwimSpeed = value;
 			m_lastBackSwimSpeed = value;
 		}break;
+
+	case TURN:
+		{
+			data.SetOpcode(SMSG_FORCE_TURN_RATE_CHANGE);
+			m_turnRate = value;
+		}break;
+
 	case FLY:
 		{
 			if(value == m_lastFlySpeed)
@@ -4762,7 +4764,25 @@ void Player::SetPlayerSpeed(uint8 SpeedType, float value)
 			m_flySpeed = value;
 			m_lastFlySpeed = value;
 		}break;
-	default:return;
+
+	case FLYBACK:
+		{
+			if(value == m_lastBackFlySpeed)
+				return;
+
+			data.SetOpcode(SMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE);
+			m_backFlySpeed = value;
+			m_lastBackFlySpeed = value;
+		}break;
+
+	case PITCH_RATE:
+		{
+			data.SetOpcode(SMSG_FORCE_PITCH_RATE_CHANGE);
+			m_pitchRate = value;
+		}break;
+
+	default:
+		return;
 	}
 
 	SendMessageToSet(&data , true);
@@ -5504,13 +5524,11 @@ void Player::UpdateAttackSpeed()
 	uint32 speed = 2000;
 	uint32 calspeed;
 	Item* weap;
-	if( GetShapeShift()==FORM_CAT )//cat form
+	if( GetShapeShift() )
 	{
-		speed = 1000;
-	}
-	else if( GetShapeShift() == FORM_BEAR || GetShapeShift() == FORM_DIREBEAR )
-	{
-		speed = 2500;
+		SpellShapeshiftForm* ssf = dbcSpellShapeshiftForm.LookupEntry(GetShapeShift());
+		if(ssf && ssf->attackSpeed)
+			speed = ssf->attackSpeed;
 	}
 	else if( !disarmed )
 	{
@@ -5664,7 +5682,7 @@ void Player::UpdateStats()
 	}
 
 	/* modifiers */
-	RAP += int32(float(float(m_rap_mod_pct) * float(float(m_uint32Values[UNIT_FIELD_STAT3]) / 100.0f)));
+	RAP += int32((float(m_rap_mod_pct) * (float(m_uint32Values[UNIT_FIELD_STAT3]) / 100.0f)));
 
 	if( RAP < 0 )
 		RAP = 0;
@@ -5739,8 +5757,8 @@ void Player::UpdateStats()
 	}
 
 	/////////////////////RATINGS STUFF/////////////////
-	float haste = (CalcRating( PLAYER_RATING_MODIFIER_SPELL_HASTE ) / 100.0f);
-	haste += 1.0f;
+	float haste = std::max((CalcRating( PLAYER_RATING_MODIFIER_SPELL_HASTE ) / 100.0f), 0.0f); // Must be positive
+	haste += 1.0f; // Must be more than 0
 	if( haste != SpellHasteRatingBonus )
 	{
 		float value = GetFloatValue(UNIT_MOD_CAST_SPEED) * SpellHasteRatingBonus / haste; // remove previous mod and apply current
@@ -6204,7 +6222,7 @@ void Player::LoadTaxiMask(const char* data)
 	vector<string>::iterator iter;
 
 	for (iter = tokens.begin(), index = 0;
-		(index < 12) && (iter != tokens.end()); iter++, ++index)
+		(index < 14) && (iter != tokens.end()); iter++, ++index)
 	{
 		m_taximask[index] = atol((*iter).c_str());
 	}
@@ -7000,6 +7018,7 @@ void Player::Reset_Talents()
 		ResetTitansGrip();
 	}
 	smsg_TalentsInfo(false);
+	SetTalentResetTimes(GetTalentResetTimes() + 1);
 }
 
 uint16 Player::GetMaxTalentPoints()
@@ -7103,9 +7122,7 @@ void Player::ApplyTalent(uint32 spellid)
 		return;	// not found
 
 	if(!(spellInfo->Attributes & ATTRIBUTES_PASSIVE))
-	{
 		addSpell(spellid);	// in this case we need to learn the spell itself
-	}
 
 	if( (spellInfo->Attributes & ATTRIBUTES_PASSIVE || (spellInfo->Effect[0] == SPELL_EFFECT_LEARN_SPELL ||
 		spellInfo->Effect[1] == SPELL_EFFECT_LEARN_SPELL ||
@@ -7113,11 +7130,7 @@ void Player::ApplyTalent(uint32 spellid)
 		&& ( (spellInfo->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET) == 0 || ( (spellInfo->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET) && GetSummon() ) ) )
 		)
 	{
-		if( spellInfo->RequiredShapeShift && !( (uint32)1 << (GetShapeShift()-1) & spellInfo->RequiredShapeShift ) )
-		{
-			// do nothing
-		}
-		else
+		if( !(spellInfo->RequiredShapeShift && !( (uint32)1 << (GetShapeShift()-1) & spellInfo->RequiredShapeShift ) ) )
 		{
 			Spell* sp = new Spell(this,spellInfo,true,NULLAURA);
 			SpellCastTargets tgt;
@@ -7335,7 +7348,8 @@ void Player::UpdateNearbyGameObjects()
 			{
 				Log.Error("Player","go->GetInfo returned NULL for go entry = %d, missing database info?", go->GetEntry());
 				continue;
-			} else if( info->InvolvedQuestIds != NULL )
+			} 
+			else if( info->InvolvedQuestIds != NULL )
 			{
 				uint32 v = 0;
 				for(; v < info->InvolvedQuestCount; ++v)
@@ -10554,7 +10568,9 @@ void Player::SummonRequest(Object* Requestor, uint32 ZoneID, uint32 MapID, uint3
 
 void Player::RemoveFromBattlegroundQueue(uint32 queueSlot, bool forced)
 {
-	if(queueSlot > 2) return;
+	if(queueSlot > 1)
+		return;
+
 	if( m_pendingBattleground[queueSlot] )
 	{
 		m_pendingBattleground[queueSlot]->RemovePendingPlayer(TO_PLAYER(this));
@@ -12838,12 +12854,9 @@ uint8 Player::SetGlyph(uint32 slot, uint32 glyphId)
 void Player::ConvertRune(uint8 index, uint8 value)
 {
 	ASSERT(index < 6);
-	m_runes[index] = value;
 	m_runemask |= (1 << index);
 	SetRune(index, value);
 
-	if(value >= RUNE_TYPE_RECHARGING)
-		return;
 
 	WorldPacket data(SMSG_CONVERT_RUNE, 2);
 	data << (uint8)index;
@@ -13097,173 +13110,47 @@ uint32 Player::GetTotalItemLevel()
 
 void Player::_LoadEquipmentSets(QueryResult *result)
 {
-	if(!result)
-		return;
 
-	uint32 count = 0;
-	do
-	{
-		Field *fields = result->Fetch();
-
-		EquipmentSet eqSet;
-
-		eqSet.Guid		= fields[1].GetUInt64();
-		eqSet.Name		= fields[2].GetString();
-		eqSet.IconName	= fields[3].GetString();
-		eqSet.state		= EQUIPMENT_SET_UNCHANGED;
-
-		for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
-			eqSet.Items[i].Init(fields[4+i].GetUInt64());
-
-		m_EquipmentSets[count] = eqSet;
-		++count;
-
-		if(count >= MAX_EQUIPMENT_SET_INDEX)	// client limit
-			break;
-
-	} while (result->NextRow());
 }
 
 void Player::SendEquipmentSets()
 {
-	uint32 count = 0;
+/*	uint32 count = 0;
 	WorldPacket data(SMSG_EQUIPMENT_SET_LIST, 4);
 	size_t count_pos = data.wpos();
 	data << uint32(count);
-	if(m_EquipmentSets.size()) // Why go through the trouble if we have nothing.
+	for(count)
 	{
-		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
+		data << WoWGuid(setguid);
+		data << Index;
+		data << Name;
+		data << IconName;
+		for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
 		{
-			if(itr->second.state == EQUIPMENT_SET_DELETED)
-				continue;
-
-			data << WoWGuid(itr->second.Guid);
-			data << count;
-			data << itr->second.Name;
-			data << itr->second.IconName;
-			for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
-				data << itr->second.Items[i];
-
-			++count;
+			if(itr->second.Items[i].GetOldGuid())
+				data << uint32(Ignore/Equip) << WoWGuid(ItemGuid);
+			else
+				data << uint32(0) << uint8(0);
 		}
-		data.put<uint32>(count_pos, count);
+
+		++count;
 	}
-	GetSession()->SendPacket(&data);
+	GetSession()->SendPacket(&data);*/
 }
 
 void Player::SetEquipmentSet(uint32 index, EquipmentSet eqset)
 {
-	if(eqset.Guid != 0)
-	{
-		bool found = false;
 
-		for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
-		{
-			if((itr->second.Guid == eqset.Guid) && (itr->first == index))
-			{
-				found = true;
-				break;
-			}
-		}
-
-		if(!found)	// something wrong...
-		{
-			sLog.outError("Player %s tried to save equipment set %u (index %u), but that equipment set not found!", GetName(), eqset.Guid, index);
-			return;
-		}
-	}
-
-	EquipmentSet& eqslot = m_EquipmentSets[index];
-
-	EquipmentSetUpdateState old_state = eqslot.state;
-
-	eqslot = eqset;
-
-	if(eqset.Guid == 0)
-	{
-		eqslot.Guid = objmgr.GenerateEquipmentSetGuid();
-
-		WorldPacket data(SMSG_EQUIPMENT_SET_SAVED, 4 + 1);
-		data << uint32(index);
-		data << WoWGuid(eqslot.Guid);
-		GetSession()->SendPacket(&data);
-	}
-
-	eqslot.state = (old_state == EQUIPMENT_SET_NEW ? EQUIPMENT_SET_NEW : EQUIPMENT_SET_CHANGED);
-	SendEquipmentSets();
 }
 
 void Player::DeleteEquipmentSet(uint64 setGuid)
 {
-	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
-	{
-		if(itr->second.Guid == setGuid)
-		{
-			if(itr->second.state == EQUIPMENT_SET_NEW)
-				m_EquipmentSets.erase(itr);
-			else
-				itr->second.state = EQUIPMENT_SET_DELETED;
-			break;
-		}
-	}
+
 }
 
 void Player::_SaveEquipmentSets(QueryBuffer* buff)
 {
-	if(!m_EquipmentSets.size())
-		return;
 
-	m_lock.Acquire();
-	for(EquipmentSets::iterator itr = m_EquipmentSets.begin(); itr != m_EquipmentSets.end(); itr++)
-	{
-		EquipmentSet& eqset = itr->second;
-		switch(eqset.state)
-		{
-		case EQUIPMENT_SET_UNCHANGED:
-			{
-
-			}break; // nothing do
-
-		case EQUIPMENT_SET_CHANGED: // Todo: Use a text column and store them all in that.
-			{
-				if(buff == NULL)
-					CharacterDatabase.Execute("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
-					eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
-				else
-					buff->AddQuery("UPDATE equipmentsets SET name='%s', iconname='%s', item0='%u', item1='%u', item2='%u', item3='%u', item4='%u', item5='%u', item6='%u', item7='%u', item8='%u', item9='%u', item10='%u', item11='%u', item12='%u', item13='%u', item14='%u', item15='%u', item16='%u', item17='%u', item18='%u' WHERE guid='%u' AND setguid='%u'",
-					eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid(), GetLowGUID(), eqset.Guid);
-
-				eqset.state = EQUIPMENT_SET_UNCHANGED;
-			}break;
-
-		case EQUIPMENT_SET_NEW:
-			{
-				if(buff == NULL)
-					CharacterDatabase.Execute("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
-					GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
-				else
-					buff->AddQuery("INSERT INTO equipmentsets VALUES ('%u', '%u', '%s', '%s', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')",
-					GetLowGUID(), eqset.Guid, eqset.Name.c_str(), eqset.IconName.c_str(), eqset.Items[0].GetOldGuid(), eqset.Items[1].GetOldGuid(), eqset.Items[2].GetOldGuid(), eqset.Items[3].GetOldGuid(), eqset.Items[4].GetOldGuid(), eqset.Items[5].GetOldGuid(), eqset.Items[6].GetOldGuid(), eqset.Items[7].GetOldGuid(),
-					eqset.Items[8].GetOldGuid(), eqset.Items[9].GetOldGuid(), eqset.Items[10].GetOldGuid(), eqset.Items[11].GetOldGuid(), eqset.Items[12].GetOldGuid(), eqset.Items[13].GetOldGuid(), eqset.Items[14].GetOldGuid(), eqset.Items[15].GetOldGuid(), eqset.Items[16].GetOldGuid(), eqset.Items[17].GetOldGuid(), eqset.Items[18].GetOldGuid());
-
-				eqset.state = EQUIPMENT_SET_UNCHANGED;
-			}break;
-
-		case EQUIPMENT_SET_DELETED:
-			{
-				if(buff == NULL)
-					CharacterDatabase.Execute("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
-				else
-					buff->AddQuery("DELETE FROM equipmentsets WHERE setguid=%u", eqset.Guid);
-
-				m_EquipmentSets.erase(itr);
-			}break;
-		}
-	}
-	m_lock.Release();
 }
 
 bool Player::AllowDisenchantLoot()
@@ -13689,4 +13576,66 @@ void Player::ClearRuneCooldown(uint8 index)
 	WorldPacket data(SMSG_ADD_RUNE_POWER, 4);
 	data << uint32(1 << index);
 	GetSession()->SendPacket(&data);
+}
+
+void Player::StartQuest(uint32 Id)
+{
+	Quest * qst = QuestStorage.LookupEntry(Id);
+	if(!qst)
+		return;
+	
+	if( GetQuestLogForEntry( qst->id ) || HasFinishedQuest(qst->id))
+		return;
+
+	int32 log_slot = GetOpenQuestSlot();
+
+	if (log_slot == -1)
+	{
+		sQuestMgr.SendQuestLogFull(this);
+		return;
+	}
+	QuestLogEntry *qle = new QuestLogEntry();
+	qle->Init(qst, this, log_slot);
+	qle->UpdatePlayerFields();
+
+	// If the quest should give any items on begin, give them the items.
+	for(uint32 i = 0; i < 4; i++)
+	{
+		if(qst->receive_items[i])
+		{
+			Item* item = objmgr.CreateItem( qst->receive_items[i], this);
+			if(item)
+			{
+				if(!GetItemInterface()->AddItemToFreeSlot(item))
+				{
+					item->DeleteMe();
+					item = NULLITEM;
+				}
+				else
+					GetSession()->SendItemPushResult(item, false, true, false, true, GetItemInterface()->LastSearchItemBagSlot(), GetItemInterface()->LastSearchItemSlot(),1);
+			}
+		}
+	}
+
+	if(qst->srcitem && qst->srcitem != qst->receive_items[0])
+	{
+		Item* item = objmgr.CreateItem( qst->srcitem, this );
+		if(item)
+		{
+			item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, qst->srcitemcount ? qst->srcitemcount : 1);
+			if(!GetItemInterface()->AddItemToFreeSlot(item))
+			{
+				item->DeleteMe();
+				item = NULLITEM;
+			}
+		}
+	}
+	CALL_QUESTSCRIPT_EVENT(qle, OnQuestStart)(this, qle);
+
+	sQuestMgr.OnQuestAccepted(this,qst,NULL);
+
+	if(qst->start_phase != 0 )
+		SetPhase(qst->start_phase, true);
+
+	sHookInterface.OnQuestAccept(this, qst, NULL);
 }

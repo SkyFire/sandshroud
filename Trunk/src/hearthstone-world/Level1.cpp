@@ -81,79 +81,83 @@ bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_sessi
 	return true;
 }
 
-
 bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 {
-	if(m_session->CanUseCommand('z') && !m_session->GetPlayer()->DisableDevTag)
-	{
-		GreenSystemMessage(m_session, "Setting Dev Flag on yourself...");
-		if(m_session->GetPlayer()->bGMTagOn)
-			RedSystemMessage(m_session, "Dev Flag is already set on. Use .gm off to disable it.");
-		else
-		{
-			m_session->GetPlayer()->bGMTagOn = true;
-			m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
-			m_session->GetPlayer()->SetFaction(35);
-			BlueSystemMessage(m_session, "Dev Flag Set. It will appear above your name and in chat messages until you use .gm off.");
-			BlueSystemMessage(m_session, "Dev flag is automatically set, you can disable it in order to use GM tag using .gm disabledev");
-		}
-
-		return true;
-	}
-
-	GreenSystemMessage(m_session, "Setting GM Flag on yourself...");
-	if(m_session->GetPlayer()->bGMTagOn)
-		RedSystemMessage(m_session, "GM Flag is already set on. Use .gm off to disable it.");
+	Player* gm = m_session->GetPlayer();
+	if(gm->bGMTagOn)
+		RedSystemMessage(m_session, "Permission flags are already set. Use .gm off to disable them.");
 	else
 	{
-		m_session->GetPlayer()->bGMTagOn = true;
-		m_session->GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
-		m_session->GetPlayer()->SetFaction(35);
-		BlueSystemMessage(m_session, "GM Flag Set. It will appear above your name and in chat messages until you use .gm off.");
-	}
+		gm->RemovePvPFlag();
+		gm->RemoveFFAPvPFlag();
+		gm->bGMTagOn = true;
+		if(m_session->CanUseCommand('z') && !gm->DisableDevTag)
+		{
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);			// <GM>
+			gm->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);		// <Dev>
+		}
+		else
+		{
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+			gm->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);				// <GM>
+		}
 
+		gm->SetFaction(35);
+		BlueSystemMessage(m_session, "Permission flags set. It will appear above your name and in chat messages until you use .gm off.");
+	}
 	return true;
 }
 
 bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 {
-	if(m_session->CanUseCommand('z') && !m_session->GetPlayer()->DisableDevTag)
-	{
-		GreenSystemMessage(m_session, "Unsetting Dev Flag on yourself...");
-		if(!m_session->GetPlayer()->bGMTagOn)
-			RedSystemMessage(m_session, "Dev Flag not set. Use .gm on without the tag disabled to enable it.");
-		else
-		{
-			m_session->GetPlayer()->bGMTagOn = false;
-			m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
-			m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
-			m_session->GetPlayer()->SetFaction( m_session->GetPlayer()->GetInitialFactionId() );
-			BlueSystemMessage(m_session, "Dev Flag Removed. <Dev> Will no longer show in chat messages or above your name.");
-		}
-		return true;
-	}
-
-	GreenSystemMessage(m_session, "Unsetting GM Flag on yourself...");
-	if(!m_session->GetPlayer()->bGMTagOn)
-		RedSystemMessage(m_session, "GM Flag not set. Use .gm on to enable it.");
+	Player* gm = m_session->GetPlayer();
+	if(!gm->bGMTagOn)
+		RedSystemMessage(m_session, "Permission flags not set. Use .gm on to enable it.");
 	else
 	{
-		m_session->GetPlayer()->bGMTagOn = false;
-		m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
-		m_session->GetPlayer()->SetFaction( m_session->GetPlayer()->GetInitialFactionId() );
-		BlueSystemMessage(m_session, "GM Flag Removed. <GM> Will no longer show in chat messages or above your name.");
+		gm->bGMTagOn = false;
+		gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);			// <GM>
+		gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+		gm->SetFaction( m_session->GetPlayer()->GetInitialFactionId() );
+		BlueSystemMessage(m_session, "Permission flags removed. Tags will no longer show in chat messages or above your name.");
 	}
-
 	return true;
 }
 
-
 bool ChatHandler::HandleToggleDevCommand(const char* args, WorldSession *m_session)
 {
-	m_session->GetPlayer()->bGMTagOn = false;
-	m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);	// <GM>
-	m_session->GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
-	m_session->GetPlayer()->DisableDevTag = m_session->GetPlayer()->DisableDevTag ? false : true;
+	Player* gm = m_session->GetPlayer();
+	if(gm->DisableDevTag)
+	{
+		if(gm->bGMTagOn)
+		{	// Change the flag to the correct one
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);			// <GM>
+			gm->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);		// <Dev>
+		}
+		else
+		{	// Remove both flags
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);			// <GM>
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+		}
+
+		gm->DisableDevTag = false;
+	}
+	else
+	{
+		if(gm->bGMTagOn)
+		{	// Change the flag to the correct one
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <GM>
+			gm->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);				// <Dev>
+		}
+		else
+		{	// Remove both flags
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);			// <GM>
+			gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
+		}
+
+		gm->DisableDevTag = true;
+	}
+	GreenSystemMessage(m_session, "Toggling Permission flags");
 	return true;
 }
 
@@ -205,7 +209,7 @@ bool ChatHandler::HandleKickCommand(const char* args, WorldSession *m_session)
 			kickreason = reason;
 
 		BlueSystemMessage(m_session, "Attempting to kick %s from the server for \"%s\".", chr->GetName(), kickreason.c_str());
-		sWorld.LogGM(m_session, "Kicked player %s from the server for %s", chr->GetName(), kickreason.c_str());
+		sWorld.LogGM(m_session, "Attempting to kicked player %s from the server for %s", chr->GetName(), kickreason.c_str());
 		if(!m_session->CanUseCommand('z') && chr->GetSession()->CanUseCommand('z'))
 		{
 			RedSystemMessage(m_session, "You cannot kick %s, as they are a higher level gm than you.", chr->GetName());
@@ -241,14 +245,15 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 		count = 1;
 
 	Player* chr = getSelectedChar(m_session);
-	if (chr == NULL) return true;
+	if (chr == NULL)
+		return true;
 
 	ItemPrototype* it = ItemPrototypeStorage.LookupEntry(itemid);
 	if(it)
 	{
 		sWorld.LogGM(m_session, "used add item command, item id %u [%s] to %s", it->ItemId, it->Name1, chr->GetName());
 
-		if(!chr->GetItemInterface()->AddItemById(itemid, count, randomprop, false))
+		if(!chr->GetItemInterface()->AddItemById(itemid, count, randomprop, false, m_session->GetPlayer()))
 		{
 			m_session->SendNotification("No free slots were found in your inventory!");
 			return true;
@@ -285,12 +290,6 @@ bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
 		// send message to user
 		char buf[256];
 		char buf0[256];
-		if(chr->IsBeingTeleported()==true)
-		{
-			snprintf((char*)buf,256, "%s is already being teleported.", chr->GetName());
-			SystemMessage(m_session, buf);
-			return true;
-		}
 		snprintf((char*)buf,256, "You are summoning %s.", chr->GetName());
 		SystemMessage(m_session, buf);
 
@@ -342,12 +341,6 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 	Player* chr = objmgr.GetPlayer( args, false );
 	if(chr && chr->IsInWorld())
 	{
-		if(chr->IsBeingTeleported())
-		{
-			SystemMessage(m_session, "%s is already being teleported.", chr->GetName());
-			return true;
-		}
-
 		SystemMessage(m_session, "Appearing at %s's location.", chr->GetName());
 
 		if(!m_session->GetPlayer()->m_isGmInvisible)
@@ -440,32 +433,61 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_sessi
 
 bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_session)
 {
-	WorldPacket data;
-
-	if (!*args)
+	uint32 type = 0;
+	float Speed = 0.0f;
+	if( sscanf(args, "%u %f", &type, &Speed) < 1 )
 		return false;
-
-	float Speed = (float)atof((char*)args);
 
 	if (Speed > 255 || Speed < 0)
 	{
 		RedSystemMessage(m_session, "Incorrect value. Range is 1..255");
 		return true;
 	}
+	char* speedname = "run";
+	switch(type)
+	{
+	case RUN:
+		speedname = "run";
+		break;
+	case RUNBACK:
+		speedname = "backwards run";
+		break;
+	case SWIM:
+		speedname = "swim";
+		break;
+	case SWIMBACK:
+		speedname = "backwards swim";
+		break;
+	case TURN:
+		speedname = "turn(WARNING!!! May cause serious injury to eyes)";
+		break;
+	case FLY:
+		speedname = "flying";
+		break;
+	case FLYBACK:
+		speedname = "backwards flying";
+		break;
+	case PITCH_RATE:
+		speedname = "pitch";
+		break;
+	default:
+		return false;
+	}
 
 	Player* chr = getSelectedChar(m_session, false);
 	if(!chr)
 	{
 		Creature* ctr = getSelectedCreature(m_session, false);
-		if(ctr != NULL && ctr->IsVehicle())
+		if(ctr != NULL)
 		{
-			TO_VEHICLE(ctr)->SetSpeed(RUN,Speed);
+			ctr->SetSpeed(type,Speed);
+			BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname,  ctr->GetCreatureInfo()->Name, Speed);
 			return true;
 		}
-		RedSystemMessage(m_session, "You have no target!");
-		return false;
+		chr = m_session->GetPlayer();
 	}
-
+	if (!*args)
+		return false;
 
 	if(Speed == 0)
 		Speed = chr->m_base_runSpeed*(1.0f + ((float)chr->m_speedModifier)/100.0f);
@@ -473,17 +495,13 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 	// send message to user/player
 	if(chr != m_session->GetPlayer())
 	{
-		BlueSystemMessage(m_session, "You set the speed of %s to %2.2f.", chr->GetName(), Speed);
-		SystemMessage(chr->GetSession(), "%s set your speed to %2.2f.", m_session->GetPlayer()->GetName(), Speed);
+		BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname,  chr->GetName(), Speed);
+		SystemMessage(chr->GetSession(), "%s set your %s speed to %2.2f.", speedname,  m_session->GetPlayer()->GetName(), Speed);
 	}
 	else
-		BlueSystemMessage(m_session, "Speed set to %2.2f.", Speed);
+		BlueSystemMessage(m_session, "Your %s speed is now set to %2.2f.", speedname, Speed);
 
-	chr->SetPlayerSpeed(RUN, Speed);
-	chr->SetPlayerSpeed(SWIM, Speed);
-	chr->SetPlayerSpeed(RUNBACK, (Speed * 0.5));
-	chr->SetPlayerSpeed(FLY, Speed);
-
+	chr->SetPlayerSpeed(type, Speed);
 	return true;
 }
 
@@ -544,7 +562,7 @@ bool ChatHandler::HandleModifySkillCommand(const char *args, WorldSession *m_ses
 	Player* plr = getSelectedChar(m_session, true);
 	if(!plr) plr = m_session->GetPlayer();
 	if(!plr) return false;
-	sWorld.LogGM(m_session, "used modify skill of %u %u on %s", skill, cnt,plr->GetName());
+	sWorld.LogGM(m_session, "used modify skill of %u %u on %s", skill, cnt, plr->GetName());
 
 	if(!plr->_HasSkillLine(skill))
 	{
@@ -695,7 +713,7 @@ bool ChatHandler::HandleModifyGoldCommand(const char* args, WorldSession *m_sess
 	uint32 silver = (uint32) floor( ((float)int32abs( total ) / 100.0f) ) % 100;
 	uint32 copper = int32abs2uint32( total ) % 100;
 
-	sWorld.LogGM( m_session, "used modify gold on %s, gold: %d", chr->GetName(), total );
+	sWorld.LogGM( m_session, "used modify gold on %s, gold: %i", chr->GetName(), total );
 
 	int32 newgold = chr->GetUInt32Value( PLAYER_FIELD_COINAGE ) + total;
 

@@ -49,6 +49,7 @@ enum AIType
 	AITYPE_PET,
 	AITYPE_TOTEM,
 	AITYPE_GUARDIAN, //we got a master but he cannot control us, we follow and battle oposite factions
+	AITYPE_DUMMY
 };
 
 enum MovementType

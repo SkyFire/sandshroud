@@ -340,7 +340,6 @@ void WorldSession::LogoutPlayer(bool Save)
 
 		_player->RemoveFromBattlegroundQueue(0); // Pending BGs
 		_player->RemoveFromBattlegroundQueue(1); // Pending BGs
-		_player->RemoveFromBattlegroundQueue(2); // Pending BGs
 		BattlegroundManager.RemovePlayerFromQueues( _player );
 
 		//Issue a message telling all guild members that this player signed off
@@ -945,6 +944,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_EQUIPMENT_SET_SAVE].handler					= &WorldSession::HandleEquipmentSetSave;
 	WorldPacketHandlers[CMSG_EQUIPMENT_SET_DELETE].handler					= &WorldSession::HandleEquipmentSetDelete;
 	WorldPacketHandlers[CMSG_EQUIPMENT_SET_USE].handler						= &WorldSession::HandleEquipmentSetUse;
+	WorldPacketHandlers[CMSG_HEARTH_AND_RESURRECT].handler					= &WorldSession::HandleHearthandResurrect;
 
 	// Arenas
 	WorldPacketHandlers[CMSG_ARENA_TEAM_QUERY].handler						= &WorldSession::HandleArenaTeamQueryOpcode;

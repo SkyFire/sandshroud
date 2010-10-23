@@ -194,10 +194,7 @@ public:
 
 	virtual void DestroyForPlayer( Player* target ) const;
 
-	void BuildHeartBeatMsg( WorldPacket *data ) const;
 	WorldPacket * BuildTeleportAckMsg( const LocationVector & v);
-	bool IsBeingTeleported() { return mSemaphoreTeleport; }
-	void SetSemaphoreTeleport(bool semphsetting) { mSemaphoreTeleport = semphsetting; }
 
 	bool SetPosition( float newX, float newY, float newZ, float newOrientation, bool allowPorting = false );
 	bool SetPosition( const LocationVector & v, bool allowPorting = false);
@@ -474,11 +471,13 @@ public:
 	float m_swimSpeed;
 	float m_backSwimSpeed;
 	float m_turnRate;
+	float m_pitchRate;
 	float m_flySpeed;
 	float m_backFlySpeed;
 
 	float m_base_runSpeed;
 	float m_base_walkSpeed;
+	uint16 m_movementflags;
 
 	void SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage, bool allowProc, bool static_damage = false, bool no_remove_auras = false, uint32 AdditionalCritChance = 0);
 

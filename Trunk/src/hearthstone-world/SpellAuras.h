@@ -508,6 +508,9 @@ public:
 	uint32 procCharges;
 	uint32 GetMaxProcCharges(Unit* caster);
 	void ModProcCharges(int32 mod);
+	void RemoveProcCharges(int32 mod);
+	void RemoveStackSize(int32 mod);
+	void SetProcCharges(int32 mod);
 	uint32 stackSize;
 	void ModStackSize(int32 mod);
 	void UpdateModAmounts();

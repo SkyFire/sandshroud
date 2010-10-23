@@ -26,6 +26,7 @@
 
 #ifndef CLUSTERING
 #pragma pack(push, 1)
+
 struct ClientPktHeader
 {
 	uint16 size;
@@ -37,6 +38,7 @@ struct ServerPktHeader
 	uint16 size;
 	uint16 cmd;
 };
+
 #pragma pack(pop)
 
 bool BuildCallBackForMangos(WorldPacket & data, string name);

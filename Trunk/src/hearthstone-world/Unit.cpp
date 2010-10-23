@@ -1919,6 +1919,12 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if( TO_PLAYER(this)->m_runes[0] == RUNE_TYPE_BLOOD || TO_PLAYER(this)->m_runes[1] == RUNE_TYPE_BLOOD )
 									continue; // oh snap, still have blood runes, this doesn't count.
 							}break;
+						case 55666: // Desecration Rank 1
+						case 55667: // Desecration Rank 2
+							{
+								if(CastingSpell->NameHash != SPELL_HASH_PLAGUE_STRIKE && CastingSpell->NameHash != SPELL_HASH_SCOURGE_STRIKE)
+									continue;
+							}break;
 						}
 					}
 
@@ -2829,12 +2835,16 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 		return;
 
 	if(!isInFront(pVictim))
+	{
 		if(IsPlayer())
+		{
 			if( !(ability && ability->AllowBackAttack) )
 			{
 				TO_PLAYER(this)->GetSession()->OutPacket(SMSG_ATTACKSWING_BADFACING);
 				return;
 			}
+		}
+	}
 //==========================================================================================
 //==============================Variables Initialization====================================
 //==========================================================================================
@@ -2844,34 +2854,34 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 
 	float armorreducepct = 	m_ignoreArmorPct;
 
-	float hitchance          = 0.0f;
-	float dodge				 = 0.0f;
-	float parry				 = 0.0f;
-	float glanc              = 0.0f;
-	float block				 = 0.0f;
-	float crit				 = 0.0f;
-	float crush              = 0.0f;
+	float hitchance			= 0.0f;
+	float dodge				= 0.0f;
+	float parry				= 0.0f;
+	float glanc				= 0.0f;
+	float block				= 0.0f;
+	float crit				= 0.0f;
+	float crush				= 0.0f;
 
-	uint32 targetEvent		 = 0;
-	uint32 hit_status		 = 0;
+	uint32 targetEvent		= 0;
+	uint32 hit_status		= 0;
 
-	uint32 blocked_damage	 = 0;
-	int32  realdamage		 = 0;
+	uint32 blocked_damage	= 0;
+	int32  realdamage		= 0;
 
-	uint32 vstate			 = 1;
-	uint32 aproc			 = 0;
-	uint32 aproc2			 = 0;
-	uint32 vproc			 = 0;
-	uint32 vproc2			 = 0;
+	uint32 vstate			= 1;
+	uint32 aproc			= 0;
+	uint32 aproc2			= 0;
+	uint32 vproc			= 0;
+	uint32 vproc2			= 0;
 
-	float hitmodifier		 = 0;
+	float hitmodifier		= 0;
 	int32 self_skill;
 	int32 victim_skill;
-	uint32 SubClassSkill	 = SKILL_UNARMED;
+	uint32 SubClassSkill	= SKILL_UNARMED;
 
-	bool backAttack			 = !pVictim->isInFront( TO_UNIT(this) );
-	uint32 vskill            = 0;
-	bool disable_dR			 = false;
+	bool backAttack			= !pVictim->isInFront( TO_UNIT(this) );
+	uint32 vskill			= 0;
+	bool disable_dR			= false;
 
 	if(ability)
 		dmg.school_type = ability->School;
@@ -4571,6 +4581,8 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	Unit* caster = TO_UNIT(this);
 	uint32 school = spellInfo->School;
 	float summaryPCTmod = 0.0f;
+	if(spellInfo->Flags5 & FLAGS5_STATIC_DAMAGE)
+		return bonus_damage;
 
 	if( caster->IsPet() )
 		caster = TO_UNIT(TO_PET(caster)->GetPetOwner());
@@ -5313,41 +5325,24 @@ void Unit::EventDeathAuraRemoval()
 void Unit::UpdateSpeed()
 {
 	if(GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID) == 0)
-	{
-		if(IsPlayer())
-			m_runSpeed = m_base_runSpeed*(1.0f + ((float)m_speedModifier)/100.0f);
-		else
-			m_runSpeed = m_base_runSpeed*(1.0f + ((float)m_speedModifier)/100.0f);
-	}
+		m_runSpeed = m_base_runSpeed*(1.0f + ((float)m_speedModifier)/100.0f);
 	else
 	{
-		if(IsPlayer())
-		{
-			m_runSpeed = m_base_runSpeed*(1.0f + ((float)m_mountedspeedModifier)/100.0f);
-			m_runSpeed += (m_speedModifier<0) ? (m_base_runSpeed*((float)m_speedModifier)/100.0f) : 0;
-		}
-		else
-		{
-			m_runSpeed = m_base_runSpeed*(1.0f + ((float)m_mountedspeedModifier)/100.0f);
-			m_runSpeed += (m_speedModifier<0) ? (m_base_runSpeed*((float)m_speedModifier)/100.0f) : 0;
-		}
+		m_runSpeed = m_base_runSpeed*(1.0f + ((float)m_mountedspeedModifier)/100.0f);
+		m_runSpeed += (m_speedModifier < 0) ? (m_base_runSpeed*((float)m_speedModifier)/100.0f) : 0;
 	}
 
 	m_flySpeed = PLAYER_NORMAL_FLIGHT_SPEED*(1.0f + ((float)m_flyspeedModifier)/100.0f);
 
 	// Limit speed due to effects such as http://www.wowhead.com/?spell=31896 [Judgement of Justice]
 	if( m_maxSpeed && m_runSpeed > m_maxSpeed )
-	{
-		m_runSpeed = m_maxSpeed;
-	}
+			m_runSpeed = m_maxSpeed;
 
 	if(IsVehicle() && TO_VEHICLE(this)->GetControllingUnit())
 	{
 		Unit* pUnit = TO_VEHICLE(this)->GetControllingUnit();
 		pUnit->m_runSpeed = m_runSpeed;
 		pUnit->m_flySpeed = m_flySpeed;
-		TO_VEHICLE(this)->SetSpeed(RUN, m_runSpeed);
-		TO_VEHICLE(this)->SetSpeed(FLY, m_flySpeed);
 
 		if(pUnit->IsPlayer())
 		{
@@ -5358,18 +5353,16 @@ void Unit::UpdateSpeed()
 				TO_PLAYER(pUnit)->SetPlayerSpeed(RUN, m_runSpeed);
 				TO_PLAYER(pUnit)->SetPlayerSpeed(FLY, m_flySpeed);
 			}
+		}
 	}
-	}
+
+	SetSpeed(RUN, m_runSpeed);
+	SetSpeed(FLY, m_flySpeed);
 
 	if(IsPlayer())
 	{
 		if(TO_PLAYER(this)->m_changingMaps)
 			TO_PLAYER(this)->resend_speed = true;
-		else
-		{
-			TO_PLAYER(this)->SetPlayerSpeed(RUN, m_runSpeed);
-			TO_PLAYER(this)->SetPlayerSpeed(FLY, m_flySpeed);
-		}
 	}
 }
 
@@ -5916,6 +5909,12 @@ void Unit::EnableFlight()
 		data << uint32(2);
 		SendMessageToSet(&data, true);
 
+		if(IsCreature()) // give them a "flying" animation so they don't just airwalk lul
+		{
+			SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
+			GetMovementInfo()->flags = (0x1000000 | 0x2000000);
+		}
+
 		if( IsPlayer() )
 		{
 			TO_PLAYER(this)->m_setflycheat = true;
@@ -5947,6 +5946,12 @@ void Unit::DisableFlight()
 		data << uint32(5);
 		SendMessageToSet(&data, true);
 
+		if(IsCreature()) // Remove their "flying"
+		{
+			RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x03);
+			GetMovementInfo()->flags = (MONSTER_MOVE_FLAG_STAND);
+		}
+
 		if( IsPlayer() )
 			TO_PLAYER(this)->m_setflycheat = false;
 	}
@@ -5965,15 +5970,19 @@ void Unit::EventRegainFlight()
 {
 	if(!IsPlayer())
 	{
-		sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
+		if(sEventMgr.HasEvent(this,EVENT_REGAIN_FLIGHT))
+			sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
 		return;
 	}
 	Player * plr = TO_PLAYER(this);
+
 	if(!plr->m_FlyingAura)
 	{
-		sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
+		if(sEventMgr.HasEvent(this,EVENT_REGAIN_FLIGHT))
+			sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
 		return;
 	}
+
 	WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 13);
 	data << GetNewGUID();
 	data << uint32(2);
@@ -5983,7 +5992,8 @@ void Unit::EventRegainFlight()
 	plr->GetSession()->m_isFalling = false;
 	plr->GetSession()->m_isJumping = false;
 	plr->GetSession()->m_isKnockedback = false;
-	sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
+	if(sEventMgr.HasEvent(this,EVENT_REGAIN_FLIGHT))
+		sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
 }
 
 bool Unit::IsDazed()
@@ -6930,8 +6940,6 @@ void Creature::Tag(Player* plr)
 
 void Unit::SetPower(uint32 type, int32 value)
 {
-	uint32 maxpower = GetUInt32Value(UNIT_FIELD_MAXPOWER1 + type);
-	value = value < 0 ? 0 : value > (int32)maxpower ? maxpower : value;
 	SetUInt32Value(UNIT_FIELD_POWER1 + type, value);
 	SendPowerUpdate();
 }
@@ -7259,6 +7267,20 @@ void Unit::RemoveAuraBySlot(uint16 Slot)
 	}
 }
 
+void Unit::RemoveAuraBySlotOrRemoveStack(uint16 Slot)
+{
+	if(m_auras[Slot]!=NULL)
+	{
+		if(m_auras[Slot]->stackSize >= 10)
+		{
+			m_auras[Slot]->RemoveStackSize(1);
+			return;
+		}
+		m_auras[Slot]->Remove();
+		m_auras[Slot] = NULL;
+	}
+}
+
 void Unit::RemoveBeacons()
 {
 	//reset this fucker
@@ -7365,4 +7387,153 @@ void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool 
 			sEventMgr.AddEvent( this, &Unit::EventRegainFlight, EVENT_REGAIN_FLIGHT, 5000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		}
 	}
+}
+
+void Unit::Teleport(float x, float y, float z, float O, uint32 phase)
+{
+	if(IsPlayer())
+		TO_PLAYER(this)->SafeTeleport(GetMapId(), GetInstanceID(), x,y,z,O,phase);
+	else
+	{
+		WorldPacket data(SMSG_MONSTER_MOVE, 50);
+		data << GetNewGUID();
+		data << uint8(0);
+		data << GetPositionX();
+		data << GetPositionY();
+		data << GetPositionZ();
+		data << getMSTime();
+		data << uint8(0x00);
+		data << uint32(256);
+		data << uint32(1);
+		data << uint32(1);
+		data << x << y << z;
+		SendMessageToSet(&data, true);
+		SetPosition( x, y, z, O );
+	}
+}
+
+void Unit::SetRedirectThreat(Unit * target, float amount, uint32 Duration)
+{
+	mThreatRTarget = target;
+	mThreatRAmount = amount;
+	if(Duration)
+		sEventMgr.AddEvent( this, &Unit::EventResetRedirectThreat, EVENT_RESET_REDIRECT_THREAT, Duration, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+}
+
+void Unit::EventResetRedirectThreat()
+{
+	mThreatRTarget = NULLUNIT;
+	mThreatRAmount = 0.0f;
+	sEventMgr.RemoveEvents(this,EVENT_RESET_REDIRECT_THREAT);
+}
+
+void Unit::SetSpeed(uint8 SpeedType, float value)
+{
+	if( value < 0.1f )
+		value = 0.1f;
+
+	WorldPacket data(SMSG_FORCE_RUN_SPEED_CHANGE, 400);
+
+	if( SpeedType != SWIMBACK )
+	{
+		data << GetNewGUID();
+		data << uint32(0);
+		if( SpeedType == RUN )
+			data << uint8(1);
+
+		data << value;
+	}
+	else
+	{
+		data << GetNewGUID();
+		data << uint32(0);
+		data << uint8(0);
+		data << uint32(getMSTime());
+		data << m_position.x;
+		data << m_position.y;
+		data << m_position.z;
+		data << m_position.o;
+		data << uint32(0);
+		data << value;
+	}
+
+	switch(SpeedType)
+	{
+	case RUN:
+		{
+			data.SetOpcode(SMSG_FORCE_RUN_SPEED_CHANGE);
+			m_runSpeed = value;
+		}break;
+	case RUNBACK:
+		{
+			data.SetOpcode(SMSG_FORCE_RUN_BACK_SPEED_CHANGE);
+			m_backWalkSpeed = value;
+		}break;
+	case SWIM:
+		{
+			data.SetOpcode(SMSG_FORCE_SWIM_SPEED_CHANGE);
+			m_swimSpeed = value;
+		}break;
+	case SWIMBACK:
+		{
+			data.SetOpcode(SMSG_FORCE_SWIM_BACK_SPEED_CHANGE);
+			m_backSwimSpeed = value;
+		}break;
+	case TURN:
+		{
+			data.SetOpcode(SMSG_FORCE_TURN_RATE_CHANGE);
+			m_turnRate = value;
+		}break;
+	case FLY:
+		{
+			data.SetOpcode(SMSG_FORCE_FLIGHT_SPEED_CHANGE);
+			m_flySpeed = value;
+		}break;
+	case FLYBACK:
+		{
+			data.SetOpcode(SMSG_FORCE_FLIGHT_BACK_SPEED_CHANGE);
+			m_backFlySpeed = value;
+		}break;
+	case PITCH_RATE:
+		{
+			data.SetOpcode(SMSG_FORCE_PITCH_RATE_CHANGE);
+			m_pitchRate = value;
+		}break;
+	default:
+		return;
+	}
+	SendMessageToSet(&data , true);
+}
+
+void Unit::SendHeartBeatMsg( bool toself )
+{
+	WorldPacket data(MSG_MOVE_HEARTBEAT, 64);
+	data << GetNewGUID();
+	movement_info.write(data);
+	SendMessageToSet(&data, toself);
+}
+
+uint32 Unit::GetCreatureType()
+{
+	if(IsCreature())
+	{
+		CreatureInfo * ci = TO_CREATURE(this)->GetCreatureInfo();
+		if(ci && ci->Type)
+			return ci->Type;
+		else
+			return NULL;
+	}
+	if(IsPlayer())
+	{
+		Player *plr = TO_PLAYER(this);
+		if(plr->GetShapeShift())
+		{
+			SpellShapeshiftForm* ssf = dbcSpellShapeshiftForm.LookupEntry(plr->GetShapeShift());
+			if(ssf && ssf->creatureType)
+				return ssf->creatureType;
+			else
+				return NULL;
+		}
+	}
+	return NULL;
 }

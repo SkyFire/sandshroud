@@ -59,33 +59,36 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 		bool completed = (fields[3].GetUInt32() > 0);
 
 		AchievementEntry * ae = dbcAchievement.LookupEntry( achievementid );
-		AchievementData * ad = new AchievementData;
-		memset(ad, 0, sizeof(AchievementData));
-		std::string criteriaprogress = fields[2].GetString();
-
-		ad->id = achievementid;
-		ad->num_criterias = ae->AssociatedCriteriaCount;
-		ad->completed = completed;
-		ad->date = fields[3].GetUInt32();
-		ad->groupid = fields[4].GetUInt64();
-
-		vector<string> Delim = StrSplit( criteriaprogress, "," );
-		for( uint32 i = 0; !completed && i < ae->AssociatedCriteriaCount; i++)
+		if(ae != NULL)
 		{
-			if( i >= Delim.size() )
-				continue;
+			AchievementData * ad = new AchievementData;
+			memset(ad, 0, sizeof(AchievementData));
+			std::string criteriaprogress = fields[2].GetString();
 
-			string posValue = Delim[i];
-			if( !posValue.size() )
-				continue;
+			ad->id = achievementid;
+			ad->num_criterias = ae->AssociatedCriteriaCount;
+			ad->completed = completed;
+			ad->date = fields[3].GetUInt32();
+			ad->groupid = fields[4].GetUInt64();
 
-			uint32 r = atoi(posValue.c_str());
-			ad->counter[i] = r;
+			vector<string> Delim = StrSplit( criteriaprogress, "," );
+			for( uint32 i = 0; !completed && i < ae->AssociatedCriteriaCount; i++)
+			{
+				if( i >= Delim.size() )
+					continue;
 
-			//printf("Loaded achievement: %u, %s\n", ae->ID, ad->completed ? "completed" : "incomplete" );
+				string posValue = Delim[i];
+				if( !posValue.size() )
+					continue;
+
+				uint32 r = atoi(posValue.c_str());
+				ad->counter[i] = r;
+
+				//printf("Loaded achievement: %u, %s\n", ae->ID, ad->completed ? "completed" : "incomplete" );
+			}
+
+			m_achivementDataMap.insert( make_pair( achievementid, ad) );
 		}
-
-		m_achivementDataMap.insert( make_pair( achievementid, ad) );
 	} while ( pResult->NextRow() );
 }
 
@@ -170,7 +173,11 @@ WorldPacket* AchievementInterface::BuildAchievementData(bool forInspect)
 		{
 			AchievementEntry * ae = dbcAchievement.LookupEntry( itr->second->id );
 			if(ae == NULL)
+			{
+				m_achivementDataMap.erase(itr);
 				continue;
+			}
+
 			// Loop over the associated criteria
 			for(uint32 i = 0; i < ae->AssociatedCriteriaCount; i++)
 			{
@@ -324,16 +331,17 @@ bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 	maybe just do those by hand.
 	*/
 	for(uint32 i = 0; i < ad->num_criterias; i++)
-	{
 		if(ad->counter[i] == 0)
 			return false;
-	}
 
 	bool failedOne = false;
 	for(uint32 i = 0; i < ad->num_criterias; i++)
 	{
 		bool thisFail = false;
 		AchievementCriteriaEntry * ace = dbcAchievementCriteria.LookupEntry(ach->AssociatedCriteria[i]);
+		if(ace == NULL)
+			continue;
+
 		uint32 ReqCount = ace->raw.field4 ? ace->raw.field4 : 1;
 
 		if( ace->groupFlag & ACHIEVEMENT_CRITERIA_GROUP_NOT_IN_GROUP && m_player->GetGroup() )
@@ -369,7 +377,7 @@ bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 bool AchievementInterface::HandleBeforeChecks(AchievementData * ad)
 {
 	AchievementEntry * ach = dbcAchievement.LookupEntry(ad->id);
-	if(!ach) // Doh?
+	if(ach == NULL) // Doh?
 		return false;
 
 	// Difficulty checks
@@ -432,7 +440,7 @@ AchievementData* AchievementInterface::GetAchievementDataByAchievementID(uint32 
 	{
 		AchievementEntry * ae = dbcAchievement.LookupEntryForced(ID);
 		if(ae == NULL)
-			printf("No achievement for %u!\n", ID);
+			return NULL;
 		return CreateAchievementDataEntryForAchievement(ae);
 	}
 }
@@ -470,7 +478,7 @@ void AchievementInterface::SendCriteriaUpdate(AchievementData * ad, uint32 idx)
 void AchievementInterface::HandleAchievementCriteriaConditionDeath()
 {
 	// We died, so reset all our achievements that have ACHIEVEMENT_CRITERIA_CONDITION_NO_DEATH
-	if( !m_achivementDataMap.size() )
+	if( m_achivementDataMap.empty() )
 		return;
 
 	map<uint32,AchievementData*>::iterator itr = m_achivementDataMap.begin();
@@ -481,7 +489,11 @@ void AchievementInterface::HandleAchievementCriteriaConditionDeath()
 			continue;
 		AchievementEntry * ae = dbcAchievement.LookupEntry( ad->id );
 		if(ae == NULL)
+		{
+			m_achivementDataMap.erase(itr);
 			continue;
+		}
+
 		for(uint32 i = 0; i < ad->num_criterias; i++)
 		{
 			uint32 CriteriaID = ae->AssociatedCriteria[i];
@@ -520,6 +532,8 @@ void AchievementInterface::HandleAchievementCriteriaKillCreature(uint32 killedMo
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -565,6 +579,8 @@ void AchievementInterface::HandleAchievementCriteriaWinBattleground(uint32 bgMap
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -646,6 +662,8 @@ void AchievementInterface::HandleAchievementCriteriaRequiresAchievement(uint32 a
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -721,6 +739,8 @@ void AchievementInterface::HandleAchievementCriteriaLevelUp(uint32 level)
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -766,6 +786,8 @@ void AchievementInterface::HandleAchievementCriteriaOwnItem(uint32 itemId, uint3
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if( ad->completed )
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -813,6 +835,8 @@ void AchievementInterface::HandleAchievementCriteriaLootItem(uint32 itemId, uint
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -854,6 +878,8 @@ void AchievementInterface::HandleAchievementCriteriaQuestCount(uint32 questCount
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -900,6 +926,8 @@ void AchievementInterface::HandleAchievementCriteriaHonorableKillClass(uint32 cl
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -945,6 +973,8 @@ void AchievementInterface::HandleAchievementCriteriaHonorableKillRace(uint32 rac
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -986,6 +1016,8 @@ void AchievementInterface::HandleAchievementCriteriaTalentResetCostTotal(uint32 
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1027,6 +1059,8 @@ void AchievementInterface::HandleAchievementCriteriaTalentResetCount()
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1069,6 +1103,8 @@ void AchievementInterface::HandleAchievementCriteriaBuyBankSlot(bool retroactive
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1118,6 +1154,8 @@ void AchievementInterface::HandleAchievementCriteriaFlightPathsTaken()
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1177,6 +1215,8 @@ void AchievementInterface::HandleAchievementCriteriaExploreArea(uint32 areaId, u
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1223,6 +1263,8 @@ void AchievementInterface::HandleAchievementCriteriaHonorableKill()
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1309,6 +1351,8 @@ void AchievementInterface::HandleAchievementCriteriaDoEmote(uint32 emoteId, Unit
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1354,6 +1398,8 @@ void AchievementInterface::HandleAchievementCriteriaCompleteQuestsInZone(uint32 
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1401,6 +1447,8 @@ void AchievementInterface::HandleAchievementCriteriaReachSkillLevel(uint32 skill
 
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1444,6 +1492,8 @@ void AchievementInterface::HandleAchievementCriteriaWinDuel()
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1486,6 +1536,8 @@ void AchievementInterface::HandleAchievementCriteriaLoseDuel()
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1531,6 +1583,8 @@ void AchievementInterface::HandleAchievementCriteriaKilledByCreature(uint32 kill
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1572,6 +1626,8 @@ void AchievementInterface::HandleAchievementCriteriaKilledByPlayer()
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1613,6 +1669,8 @@ void AchievementInterface::HandleAchievementCriteriaDeath()
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1660,6 +1718,8 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 			continue;
 		AchievementCriteriaEntry * compareCriteria = NULL;
 		AchievementData * ad = GetAchievementDataByAchievementID(AchievementID);
+		if(ad == NULL)
+			continue;
 		if(ad->completed)
 			continue;
 		if(!HandleBeforeChecks(ad))
@@ -1691,6 +1751,8 @@ void AchievementInterface::ForceEarnedAchievement(uint32 achievementId)
 	if(pAchievementEntry == NULL)
 		return;
 	AchievementData * ad = GetAchievementDataByAchievementID(achievementId);
+	if(ad == NULL)
+		return;
 	if(ad->completed)
 		return;
 

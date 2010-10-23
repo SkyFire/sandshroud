@@ -200,13 +200,12 @@ const char* spellcasttimeFormat = "uuxx";
 const char* spellradiusFormat = "ufxf";
 const char* spellrangeFormat =
 	"u"					// Id
-	"f"					// MinRange
-	"x"
-	"f"					// MaxRange
-	"x"
-	"u"
-	"sxxxxxxxxxxxxxxxx"
-	"sxxxxxxxxxxxxxxxx";
+	"f"					// minRangeHostile
+	"f"					// minRangeFriend
+	"f"					// maxRangeHostile
+	"f"					// maxRangeFriend
+	"u"					// type
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
 const char* WorldMapOverlayfmt="uxuxxxxxxxxxxxxxx";
 const char* WMOAreaEntryfmt="niiixxxxxiixxxxxxxxxxxxxxxxx";
@@ -216,7 +215,7 @@ const char* randompropsFormat = "usuuuxxxxxxxxxxxxxxxxxxx";
 const char* areatableFormat = "uuuuuxxxxxusxxxxxxxxxxxxxxxxuxxxxxxx";
 const char* factiontemplatedbcFormat = "uuuuuuuuuuuuuu";
 const char* auctionhousedbcFormat = "uuuuxxxxxxxxxxxxxxxxx";
-const char* factiondbcFormat = "uiuuuuxxxxiiiixxxxxxxxusxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+const char* factiondbcFormat = "uiuuuuuuuuuuuuuuuuuxxxxssssssssssssssssxxxxxxxxxxxxxxxxxx";
 const char* dbctaxinodeFormat = "uufffxxxxxxxxxxxxxxxxxuu";
 const char* dbctaxipathFormat = "uuuu";
 const char* dbctaxipathnodeFormat = "uuuufffuuxx";
@@ -252,10 +251,10 @@ const char* durabilitycostsFormat = "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
 const char* bankslotpriceformat = "uu";
 const char* barbershopstyleFormat="nusxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxuuu";
 const char* gtfloatformat = "f";
-const char* spellshapeshiftformformat = "uxxxxxxxxxxxxxxxxxxxxxxxxxxxuuuuuuu";
+const char* spellshapeshiftformformat = "uxxxxxxxxxxxxxxxxxxuixuxxxxuuuuuuuu";
 
 const char* vehicleseatentryFormat = "uuxfffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxuuxxxxxxxxxxxx";
-const char* vehicleentryFormat = "uxxxxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxuxxx";
+const char* vehicleentryFormat = "uxffxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxuxxx";
 
 const char* achievementfmt=
 	"n" // Index

@@ -56,18 +56,17 @@ Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 	m_base_walkSpeed = m_walkSpeed;
 
 	m_flySpeed = 7.0f;
+	m_pitchRate = 3.141593f;
 	m_backFlySpeed = 4.5f;
 
 	m_backWalkSpeed = 4.5f;	// this should really be named m_backRunSpeed
 	m_swimSpeed = 4.722222f;
 	m_backSwimSpeed = 2.5f;
 	m_turnRate = 3.141593f;
+	m_movementflags = 0;
 
 	m_mapMgr = NULLMAPMGR;
 	m_mapCell = 0;
-
-	mSemaphoreTeleport = false;
-
 	dynObj = NULLDYN;
 
 	m_faction = NULL;
@@ -704,7 +703,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 //		}
 
 		*data << uint32(moveflags);
-		*data << uint16(moveinfo->m_movementflags);
+		*data << uint16(m_movementflags);
 		*data << getMSTime(); // this appears to be time in ms but can be any thing
 		*data << m_position;
 		*data << (m_position.o);
@@ -751,7 +750,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 			}
 		}
 
-		if(moveflags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || moveinfo->m_movementflags & 0x20) // Pitch
+		if(moveflags & (MOVEFLAG_SWIMMING | MOVEFLAG_AIR_SWIMMING) || m_movementflags & 0x20) // Pitch
 		{
 			if(moveinfo != NULL)
 				*data << moveinfo->pitch;
@@ -798,7 +797,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 		*data << m_flySpeed;		// fly speed
 		*data << m_backFlySpeed;	// back fly speed
 		*data << m_turnRate;		// turn rate
-		*data << float(7);			//pitch rate
+		*data << m_pitchRate;		// pitch rate
 
 		if(splinebuf)	// client expects that flags2 & 0x8000000 != 0 in this case
 		{
@@ -972,19 +971,6 @@ void Object::_BuildValuesUpdate(ByteBuffer * data, UpdateMask *updateMask, Playe
 
 }
 
-void Object::BuildHeartBeatMsg(WorldPacket *data) const
-{
-	data->Initialize(MSG_MOVE_HEARTBEAT);
-
-	*data << GetGUID();
-
-	*data << uint32(0); // flags
-	*data << getMSTime(); // mysterious value #1
-
-	*data << m_position;
-	*data << m_position.o;
-}
-
 WorldPacket * Object::BuildTeleportAckMsg(const LocationVector & v)
 {
 	///////////////////////////////////////
@@ -994,17 +980,13 @@ WorldPacket * Object::BuildTeleportAckMsg(const LocationVector & v)
 
 	WorldPacket * data = new WorldPacket(MSG_MOVE_TELEPORT_ACK, 80);
 	*data << GetNewGUID();
-
-	//First 4 bytes = no idea what it is
+	*data << uint32(0); // m_teleportAckCounter;
 	*data << uint32(2); // flags
-	*data << getMSTime(); // mysterious value #1
 	*data << uint16(0);
-
-	*data << float(0);
+	*data << getMSTime();
 	*data << v;
 	*data << v.o;
-	*data << uint16(2);
-	*data << uint8(0);
+	*data << uint32(0);
 	return data;
 }
 
@@ -1242,8 +1224,6 @@ void Object::AddToWorld()
 
 	// correct incorrect instance id's
 	m_instanceId = m_mapMgr->GetInstanceID();
-
-	mSemaphoreTeleport = false;
 }
 
 void Object::AddToWorld(MapMgr* pMapMgr)
@@ -1258,8 +1238,6 @@ void Object::AddToWorld(MapMgr* pMapMgr)
 
 	// correct incorrect instance id's
 	m_instanceId = pMapMgr->GetInstanceID();
-
-	mSemaphoreTeleport = false;
 
 	if(IsUnit())
 	{
@@ -1306,7 +1284,6 @@ void Object::PushToWorld(MapMgr* mgr)
 	if(mgr == NULL)
 	{
 		// Reset these so session will get updated properly.
-		mSemaphoreTeleport = false;
 		m_inQueue = false;
 
 		if(IsPlayer())
@@ -1326,7 +1303,6 @@ void Object::PushToWorld(MapMgr* mgr)
 	mgr->PushObject(this);
 
 	// correct incorrect instance id's
-	mSemaphoreTeleport = false;
 	m_inQueue = false;
 
 	event_Relocate();
@@ -1728,7 +1704,7 @@ void Object::RemoveFlag( const uint32 index, uint32 oldFlag )
 	ASSERT( index < m_valuesCount );
 
 	//no change -> no update
-	if((m_uint32Values[ index ] & oldFlag)==0)
+	if((m_uint32Values[ index ] & oldFlag) == 0)
 		return;
 
 	m_uint32Values[ index ] &= ~oldFlag;
@@ -2048,6 +2024,10 @@ bool Object::IsPet()
 
 void Object::_setFaction()
 {
+	// Clear our old faction info
+	m_faction = NULL;
+	m_factionDBC = NULL;
+
 	FactionTemplateDBC* factT = NULL;
 
 	if(GetTypeId() == TYPEID_UNIT || GetTypeId() == TYPEID_PLAYER)
@@ -2061,6 +2041,7 @@ void Object::_setFaction()
 		m_factionDBC = dbcFaction.LookupEntry(factT->Faction);
 	}
 }
+
 void Object::UpdateOppFactionSet()
 {
 	m_oppFactsInRange.clear();
@@ -2074,7 +2055,6 @@ void Object::UpdateOppFactionSet()
 					(*i)->m_oppFactsInRange.insert(this);
 				if (!IsInRangeOppFactSet((*i)))
 					m_oppFactsInRange.insert((*i));
-
 			}
 			else
 			{
@@ -2104,15 +2084,13 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		return;
 
 	if( pVictim->GetStandState() )//not standing-> standup
-	{
 		pVictim->SetStandState( STANDSTATE_STAND );//probably mobs also must standup
-	}
 
 	// Player we are attacking, or the owner of totem/pet/etc
 	Player *pOwner = pVictim->IsPlayer() ? TO_PLAYER(pVictim) : NULL;
 
 	// This is the player or the player controlling the totem/pet/summon
-	Player *pAttacker = this->IsPlayer() ? TO_PLAYER(this) : NULL;
+	Player *pAttacker = IsPlayer() ? TO_PLAYER(this) : NULL;
 
 	// We identified both the attacker and the victim as possible PvP combatants, if we are not dueling we will flag the attacker
 	if( pOwner != NULL && pAttacker != NULL && pOwner != pAttacker && pOwner != pAttacker->DuelingWith )
@@ -2342,15 +2320,19 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	bool isCritter = false;
 	if(pVictim->GetTypeId() == TYPEID_UNIT && TO_CREATURE(pVictim)->GetCreatureInfo())
 	{
-			if(TO_CREATURE(pVictim)->GetCreatureInfo()->Type == CRITTER)
-				isCritter = true;
+		if(TO_CREATURE(pVictim)->GetCreatureInfo()->Type == CRITTER)
+			isCritter = true;
 		else if(TO_CREATURE(pVictim)->proto)
 		{
 			//Dummy trainers can't die
-			if(isTargetDummy(TO_CREATURE(pVictim)->proto->Id))
+			if(isTargetDummy(TO_CREATURE(pVictim)->proto->Id) && health <= damage)
 			{
-				//Just limit to 5HP (can't use 1HP here).
-				pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 5);
+				// Just limit to 5HP (can't use 1HP here).
+				uint32 newh = 5;
+				if(pVictim->GetMaxHealth() < 5)
+					newh = pVictim->GetMaxHealth();
+
+				pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, newh);
 				return;
 			}
 		}
@@ -2839,6 +2821,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				}
 			}
 		}
+		if(pVictim == TO_UNIT(this))
+			if(pVictim->IsVehicle())
+				return;
 
 		pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, health - damage );
 	}
@@ -2855,6 +2840,10 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 	SpellEntry *spellInfo = dbcSpell.LookupEntry( spellID );
 	if(!spellInfo)
         return;
+
+	if(pVictim == TO_UNIT(this))
+		if(pVictim->IsVehicle())
+			return;
 
 	if (IsPlayer() && !TO_PLAYER(this)->canCast(spellInfo))
 		return;
@@ -3203,11 +3192,12 @@ void Object::SendSpellNonMeleeDamageLog( Object* Caster, Unit* Target, uint32 Sp
 {
 	if ( !Caster || !Target )
 		return;
-
+	if(Caster == Target)
+		if(Caster->IsVehicle())
+			return;
 	SpellEntry *sp = dbcSpell.LookupEntry(SpellID);
 	if( !sp )
 		return;
-
 	SpellID = sp->logsId ? sp->logsId : sp->Id;
 	uint32 overkill = Target->computeOverkill(Damage);
 

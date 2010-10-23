@@ -503,17 +503,6 @@ void ApplyNormalFixes()
 			sp->School = 5;
 		}
 
-		//this starts to be an issue for trigger spell id : Deep Wounds
-		else if( strstr( sp->Name, "Holy Shock"))
-		{
-			//check if we can find in the description
-			if( strstr(sp->Description, "causing $") )
-				sp->EffectTriggerSpell[0] = GetTriggerSpellFromDescription("causing $", sp->Description);
-
-			//check if we can find in the description
-			if( strstr(sp->Description, " or $") )
-				sp->EffectTriggerSpell[1] = GetTriggerSpellFromDescription(" or $", sp->Description);
-		}
 		else if( strstr( sp->Name, "Touch of Weakness"))
 		{
 			//check if we can find in the description
@@ -1479,6 +1468,16 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 	radius = std::max(GetMaxRange(dbcSpellRange.LookupEntry(sp->rangeIndex)), radius);
 	sp->base_range_or_radius = radius;
 	sp->base_range_or_radius_sqr = radius*radius;
+	float radius2 = 0.0f;
+	if(sp->EffectRadiusIndex[0] != 0)
+		radius2 = ::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[0]));
+	if( sp->EffectRadiusIndex[1] != 0 )
+		radius2 = std::max(radius,::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[1])));
+	if( sp->EffectRadiusIndex[2] != 0 )
+		radius2 = std::max(::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[2])),radius);
+	radius2 = std::max(GetFriendlyMaxRange(dbcSpellRange.LookupEntry(sp->rangeIndex)), radius);
+	sp->base_range_or_radius_friendly = radius2;
+	sp->base_range_or_radius_sqr_friendly = radius2*radius2;
 
 	// hash the name
 	//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)

@@ -331,21 +331,6 @@ void MapMgr::PushObject(Object* obj)
 		m_createBuffer.clear();
 	}
 
-	//////////////////////
-	// Build in-range data
-	//////////////////////
-	for (posX = startX; posX <= endX; posX++ )
-	{
-		for (posY = startY; posY <= endY; posY++ )
-		{
-			cell = GetCell(posX, posY);
-			if (cell)
-			{
-				UpdateInRangeSet(obj, plObj, cell);
-			}
-		}
-	}
-
 	//Add to the cell's object list
 	objCell->AddObject(obj);
 
@@ -424,8 +409,20 @@ void MapMgr::PushObject(Object* obj)
 
 	if(plObj && InactiveMoveTime && !forced_expire)
 		InactiveMoveTime = 0;
-}
 
+	//////////////////////
+	// Build in-range data
+	//////////////////////
+	for (posX = startX; posX <= endX; posX++ )
+	{
+		for (posY = startY; posY <= endY; posY++ )
+		{
+			cell = GetCell(posX, posY);
+			if (cell)
+				UpdateInRangeSet(obj, plObj, cell);
+		}
+	}
+}
 
 void MapMgr::PushStaticObject(Object* obj)
 {
@@ -433,21 +430,21 @@ void MapMgr::PushStaticObject(Object* obj)
 
 	switch(obj->GetTypeFromGUID())
 	{
-		case HIGHGUID_TYPE_VEHICLE:
-			m_VehicleStorage[obj->GetUIdFromGUID()] = TO_VEHICLE(obj);
-			break;
+	case HIGHGUID_TYPE_VEHICLE:
+		m_VehicleStorage[obj->GetUIdFromGUID()] = TO_VEHICLE(obj);
+		break;
 
-		case HIGHGUID_TYPE_CREATURE:
-			m_CreatureStorage[obj->GetUIdFromGUID()] = TO_CREATURE(obj);
-			break;
+	case HIGHGUID_TYPE_CREATURE:
+		m_CreatureStorage[obj->GetUIdFromGUID()] = TO_CREATURE(obj);
+		break;
 
-		case HIGHGUID_TYPE_GAMEOBJECT:
-			m_gameObjectStorage.insert(make_pair(obj->GetUIdFromGUID(), TO_GAMEOBJECT(obj)));
-			break;
+	case HIGHGUID_TYPE_GAMEOBJECT:
+		m_gameObjectStorage.insert(make_pair(obj->GetUIdFromGUID(), TO_GAMEOBJECT(obj)));
+		break;
 
-		default:
-			// maybe add a warning, shouldnt be needed
-			break;
+	default:
+		// maybe add a warning, shouldnt be needed
+		break;
 	}
 }
 
@@ -473,7 +470,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 
 	switch(obj->GetTypeFromGUID())
 	{
-		case HIGHGUID_TYPE_VEHICLE:
+	case HIGHGUID_TYPE_VEHICLE:
 		{
 			ASSERT(obj->GetUIdFromGUID() <= m_VehicleHighGuid);
 			if(TO_VEHICLE(obj)->m_spawn != NULL)
@@ -483,7 +480,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 			m_CreatureStorage.erase(obj->GetUIdFromGUID());
 		}break;
 
-		case HIGHGUID_TYPE_CREATURE:
+	case HIGHGUID_TYPE_CREATURE:
 		{
 			ASSERT(obj->GetUIdFromGUID() <= m_CreatureHighGuid);
 			if(TO_CREATURE(obj)->m_spawn != NULL)
@@ -493,7 +490,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 			m_CreatureStorage.erase(obj->GetUIdFromGUID());
 		}break;
 
-		case HIGHGUID_TYPE_PET:
+	case HIGHGUID_TYPE_PET:
 		{
 			// check iterator
 			if( __pet_iterator != m_PetStorage.end() && __pet_iterator->second == TO_PET(obj) )
@@ -501,19 +498,19 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 			m_PetStorage.erase(obj->GetUIdFromGUID());
 		}break;
 
-		case HIGHGUID_TYPE_DYNAMICOBJECT:
+	case HIGHGUID_TYPE_DYNAMICOBJECT:
 		{
 			m_DynamicObjectStorage.erase(obj->GetLowGUID());
 		}break;
 
-		case HIGHGUID_TYPE_GAMEOBJECT:
+	case HIGHGUID_TYPE_GAMEOBJECT:
 		{
 			m_gameObjectStorage.erase(obj->GetUIdFromGUID());
 			if(TO_GAMEOBJECT(obj)->m_spawn != NULL)
 				_sqlids_gameobjects.erase(TO_GAMEOBJECT(obj)->m_spawn->id);
 		}break;
 
-		case HIGHGUID_TYPE_PLAYER:
+	case HIGHGUID_TYPE_PLAYER:
 		{
 			// check iterator
 			if( __player_iterator != m_PlayerStorage.end() && __player_iterator->second == TO_PLAYER(obj) )
@@ -526,14 +523,10 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 
 	// That object types are not map objects. TODO: add AI groups here?
 	if(obj->GetTypeId() == TYPEID_ITEM || obj->GetTypeId() == TYPEID_CONTAINER || obj->GetTypeId()==TYPEID_UNUSED)
-	{
 		return;
-	}
 
 	if(obj->GetTypeId() == TYPEID_CORPSE)
-	{
 		m_corpses.erase( TO_CORPSE(obj) );
-	}
 
 	if(!obj->GetMapCell())
 	{
@@ -622,9 +615,7 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 {
 	// Items and containers are of no interest for us
 	if( obj->GetTypeId() == TYPEID_ITEM || obj->GetTypeId() == TYPEID_CONTAINER || obj->GetMapMgr() != this )
-	{
 		return;
-	}
 
 	Player* plObj;
 
@@ -644,9 +635,9 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	// Update in-range data for old objects
 	///////////////////////////////////////
 
-	if(obj->HasInRangeObjects()) {
-		for (Object::InRangeSet::iterator iter = obj->GetInRangeSetBegin(), iter2;
-			iter != obj->GetInRangeSetEnd();)
+	if(obj->HasInRangeObjects())
+	{
+		for (Object::InRangeSet::iterator iter = obj->GetInRangeSetBegin(), iter2; iter != obj->GetInRangeSetEnd();)
 		{
 			curObj = *iter;
 			iter2 = iter++;
@@ -678,11 +669,8 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 
 				curObj->RemoveInRangeObject(obj);
 
-				if( obj->GetMapMgr() != this )
-				{
-					/* Something removed us. */
-					return;
-				}
+				if(obj->GetMapMgr() != this)
+					return; /* Something removed us. */
 				obj->RemoveInRangeObject(iter2);
 			}
 		}
@@ -692,10 +680,7 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	// Get new cell coordinates
 	///////////////////////////
 	if(obj->GetMapMgr() != this)
-	{
-		/* Something removed us. */
-		return;
-	}
+		return; /* Something removed us. */
 
 	if(obj->GetPositionX() >= _maxX || obj->GetPositionX() <= _minX ||
 		obj->GetPositionY() >= _maxY || obj->GetPositionY() <= _minY)
@@ -728,9 +713,7 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	uint32 cellY = GetPosY(obj->GetPositionY());
 
 	if(cellX >= _sizeX || cellY >= _sizeY)
-	{
 		return;
-	}
 
 	MapCell *objCell = GetCell(cellX, cellY);
 	MapCell * pOldCell = obj->GetMapCell();

@@ -98,7 +98,7 @@ bool isHostile(Object* objA, Object* objB)// B is hostile for A?
 }
 
 /// Where we check if we object A can attack object B. This is used in many feature's
-/// Including the spell class and the player class.
+/// Including the spell class, the player class, and the AI interface class.
 bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack B?
 {
 	// can't attack self.. this causes problems with buffs if we don't have it :p
@@ -114,9 +114,11 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		return false;
 
 	// Checks for untouchable, unattackable
-	if( objA->IsUnit() && objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 | UNIT_FLAG_MOUNTED_TAXI | UNIT_FLAG_NOT_SELECTABLE))
+	if( objA->IsUnit() && (objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9) ||
+		objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI) || objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
 		return false;
-	if( objB->IsUnit() && objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9 | UNIT_FLAG_MOUNTED_TAXI | UNIT_FLAG_NOT_SELECTABLE))
+	if( objB->IsUnit() && (objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9) ||
+		objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI) || objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
 		return false;
 
 	// we cannot attack sheathed units. Maybe checked in other places too ?
@@ -124,30 +126,44 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	if( CheckStealth && objB->IsUnit() && TO_UNIT(objB)->InStealth() )
 		return false;
 
-	//Get players (or owners of pets/totems)
+	// Get players (or owners of pets/totems)
 	Player* player_objA = GetPlayerFromObject(objA);
 	Player* player_objB = GetPlayerFromObject(objB);
-	if(!player_objA && objA->IsVehicle())
-		player_objA = TO_VEHICLE(objA)->m_redirectSpellPackets;
 
-	if(player_objA && player_objA->GetSession() && player_objA->GetSession()->HasGMPermissions())
+	if(objA->IsUnit() && objB->IsVehicle())
+		if(TO_VEHICLE(objB)->GetPassengerSlot(TO_UNIT(objA)) != -1)
+			return false;
+	else if(objB->IsUnit() && objA->IsVehicle())
+		if(TO_VEHICLE(objA)->GetPassengerSlot(TO_UNIT(objB)) != -1)
+			return false;
+
+
+	// Allow GM's to attack any creatures, but players are a no.
+	if(player_objA && !player_objB && player_objA->bGMTagOn)
 		return true;
+
+	// Creatures cannot attack a GM with tag on.
+	if(!player_objA && player_objB && player_objB->bGMTagOn)
+		return false;
 
 	if( player_objA && player_objB )
 	{
 		if(player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
 			return true;
 	}
+
 	else if(player_objA)
 	{
 		if(objB->IsPet() && TO_PET(objB)->GetOwner() == player_objA && player_objA->DuelingWith == player_objB)
 			return true;
 	}
+
 	else if(player_objB)
 	{
 		if(objA->IsPet() && TO_PET(objA)->GetOwner() == player_objB && player_objB->DuelingWith == player_objA)
 			return true;
 	}
+
 	else if(player_objA == NULL && player_objB == NULL) // Ignore players, we have critters in sanctuaries
 	{
 		// Do not let units attack each other in sanctuary
@@ -320,6 +336,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	}
 	return hostile;
 }
+
 Player* GetPlayerFromObject(Object* obj)
 {
 	Player* player_obj = NULLPLR;
@@ -343,6 +360,7 @@ Player* GetPlayerFromObject(Object* obj)
 	}
 	return player_obj;
 }
+
 bool isCombatSupport(Object* objA, Object* objB)// B combat supports A?
 {
 	if( !objA || !objB )

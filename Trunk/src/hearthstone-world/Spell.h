@@ -103,8 +103,10 @@ enum SUMMON_TYPE
 	SUMMON_TYPE_TOTEM_4		= 83,
 	SUMMON_TYPE_SUMMON		= 67,
 	SUMMON_TYPE_CRITTER		= 41,
+	SUMMON_TYPE_FROSTBROOD_VANQUISHER = 607,
 	SUMMON_TYPE_GHOUL		= 829,
 	SUMMON_TYPE_LIGHTWELL	= 1141,
+	SUMMON_TYPE_WG_VEHICLE  = 1162,
 };
 
 //wooohooo, there are 19 spells that actually require to add a proccounter for these
@@ -495,9 +497,107 @@ enum Flags5
 	FLAGS5_PROCCHANCE_COMBOBASED		= 0x2,
 	FLAGS5_CANT_PROC_FROM_SELFCAST		= 0x8,
 	FLAGS5_NOT_STEALABLE				= 0x40,
+	FLAGS5_STATIC_DAMAGE				= 0x100,
 	FLAGS5_NOT_USABLE_IN_ARENA			= 0x10000,
 	FLAGS5_USABLE_IN_ARENA 				= 0x20000,
+	FLAGS5_IGNORE_AURA_RANK_CHECK		= 0x100000,
 	FLAGS5_ONLY_IN_OUTLAND 				= 0x4000000,
+};
+
+enum Flags6
+{
+	FLAGS6_UNK0                       = 0x1,
+	FLAGS6_NO_REAGENT_WHILE_PREP      = 0x2,
+	FLAGS6_UNK2                       = 0x4,
+	FLAGS6_USABLE_WHILE_STUNNED       = 0x8,
+	FLAGS6_UNK4                       = 0x10,
+	FLAGS6_SINGLE_TARGET_SPELL        = 0x20,
+	FLAGS6_UNK6                       = 0x40,
+	FLAGS6_UNK7                       = 0x80,
+	FLAGS6_UNK8                      =  0x100,
+	FLAGS6_START_PERIODIC_AT_APPLY   =  0x200,
+	FLAGS6_UNK10                      = 0x400,
+	FLAGS6_UNK11                      = 0x800,
+	FLAGS6_UNK12                      = 0x1000,
+	FLAGS6_UNK13                      = 0x2000,
+	FLAGS6_UNK14                      = 0x4000,
+	FLAGS6_UNK15                      = 0x8000,
+	FLAGS6_UNK16                      = 0x10000,
+	FLAGS6_USABLE_WHILE_FEARED        = 0x20000,
+	FLAGS6_USABLE_WHILE_CONFUSED      = 0x40000,
+	FLAGS6_UNK19                      = 0x80000,
+	FLAGS6_UNK20                      = 0x100000,
+	FLAGS6_UNK21                      = 0x200000,
+	FLAGS6_UNK22                      = 0x400000,
+	FLAGS6_UNK23                      = 0x800000,
+	FLAGS6_UNK24                      = 0x1000000,
+	FLAGS6_UNK25                      = 0x2000000,
+	FLAGS6_UNK26                      = 0x4000000,
+	FLAGS6_UNK27                      = 0x8000000,
+	FLAGS6_UNK28                      = 0x10000000,
+	FLAGS6_UNK29                      = 0x20000000,
+	FLAGS6_UNK30                      = 0x40000000,
+	FLAGS6_UNK31                      = 0x80000000,
+};
+
+enum Flags7
+{
+	FLAGS7_UNK0                       = 0x1,
+	FLAGS7_ONLY_IN_ARENA              = 0x2,
+	FLAGS7_IGNORE_CASTER_AURAS        = 0x4,
+	FLAGS7_UNK3                       = 0x8,
+	FLAGS7_UNK4                       = 0x10,
+	FLAGS7_UNK5                       = 0x20,
+	FLAGS7_UNK6                       = 0x40,
+	FLAGS7_UNK7                       = 0x80,
+	FLAGS7_UNK8                       = 0x100,
+	FLAGS7_UNK9                       = 0x200,
+	FLAGS7_UNK10                      = 0x400,
+	FLAGS7_NOT_IN_RAID_INSTANCE       = 0x800,
+	FLAGS7_UNK12                      = 0x1000,
+	FLAGS7_UNK13                      = 0x2000,
+	FLAGS7_UNK14                      = 0x4000,
+	FLAGS7_UNK15                      = 0x8000,
+	FLAGS7_UNK16                      = 0x10000,
+	FLAGS7_UNK17                      = 0x20000,
+	FLAGS7_UNK18                      = 0x40000,
+	FLAGS7_UNK19                      = 0x80000,
+	FLAGS7_UNK20                      = 0x100000,
+	FLAGS7_CLIENT_UI_TARGET_EFFECTS   = 0x200000,
+	FLAGS7_UNK22                      = 0x400000,
+	FLAGS7_UNK23                      = 0x800000,
+	FLAGS7_UNK24                      = 0x1000000,
+	FLAGS7_UNK25                      = 0x2000000,
+	FLAGS7_UNK26                      = 0x4000000,
+	FLAGS7_UNK27                      = 0x8000000,
+	FLAGS7_UNK28                      = 0x10000000,
+	FLAGS7_UNK29                      = 0x20000000,
+	FLAGS7_UNK30                      = 0x40000000,
+	FLAGS7_UNK31                      = 0x80000000,
+};
+
+enum Flags8
+{
+	FLAGS8_UNK0                       = 0x1,
+	FLAGS8_UNK1                       = 0x2,
+	FLAGS8_REACTIVATE_AT_RESURRECT    = 0x4,
+	FLAGS8_DISABLED_CLIENT_SIDE       = 0x8,//fuckers
+	FLAGS8_UNK4                       = 0x10,
+	FLAGS8_SUMMON_PLAYER_TOTEM        = 0x20,
+	FLAGS8_UNK6                       = 0x40,
+	FLAGS8_UNK7                       = 0x80,
+	FLAGS8_UNK8                       = 0x100,
+	FLAGS8_UNK9                       = 0x200,
+	FLAGS8_DISPEL_CHARGES             = 0x400,
+	FLAGS8_INTERRUPT_ONLY_NONPLAYER   = 0x800,
+	FLAGS8_UNK12                      = 0x1000,
+	FLAGS8_UNK13                      = 0x2000,
+	FLAGS8_UNK14                      = 0x4000,
+	FLAGS8_UNK15                      = 0x8000,
+	FLAGS8_UNK16                      = 0x10000,
+	FLAGS8_UNK17                      = 0x20000,
+	FLAGS8_HAS_CHARGE_EFFECT          = 0x40000,
+	FLAGS8_ZONE_TELEPORT              = 0x80000,
 };
 
 enum SpellCastFlags
@@ -710,8 +810,8 @@ enum SpellEffects
 	SPELL_EFFECT_ACTIVATE_OBJECT,			//	86
 	SPELL_EFFECT_WMO_DAMAGE,				//	87
  	SPELL_EFFECT_WMO_REPAIR,				//	88
-	SPELL_EFFECT_SUMMON_TOTEM_SLOT3,		//	89
-	SPELL_EFFECT_SUMMON_TOTEM_SLOT4,		//	90
+	SPELL_EFFECT_CHANGE_WMO,				//	89
+	SPELL_EFFECT_KILL_CREDIT,				//	90
 	SPELL_EFFECT_THREAT_ALL,				//	91
 	SPELL_EFFECT_ENCHANT_HELD_ITEM,			//	92
 	SPELL_EFFECT_SUMMON_PHANTASM,			//	93
@@ -755,7 +855,7 @@ enum SpellEffects
 	SPELL_EFFECT_UNKNOWN11,					//	131
 	SPELL_EFFECT_UNKNOWN12,					//	132
 	SPELL_EFFECT_FORGET_SPECIALIZATION,		//	133
-	SPELL_EFFECT_KILL_CREDIT,				//	134
+	SPELL_EFFECT_KILL_CREDIT_2,				//	134
 	SPELL_EFFECT_UNKNOWN15,					//	135
 	SPELL_EFFECT_UNKNOWN16,					//	136
 	SPELL_EFFECT_UNKNOWN17,					//	137
@@ -1578,6 +1678,7 @@ public:
 	void SpellEffectPowerDrain(uint32 i);
 	void SpellEffectHealthLeech(uint32 i);
 	void SpellEffectHeal(uint32 i);
+	void SpellEffectBind(uint32 i);
 	void SpellEffectQuestComplete(uint32 i);
 	void SpellEffectWeapondamageNoschool(uint32 i);
 	void SpellEffectResurrect(uint32 i);
@@ -1617,6 +1718,7 @@ public:
 	void SpellEffectDistract(uint32 i);
 	void SpellEffectPickpocket(uint32 i);
 	void SpellEffectAddFarsight(uint32 i);
+	void SpellEffectResetTalents(uint32 i);
 	void SummonPossessed(uint32 i);
 	void SpellEffectUseGlyph(uint32 i);
 	void SpellEffectHealMechanical(uint32 i);
@@ -1630,12 +1732,14 @@ public:
 	void SpellEffectSummonPlayer(uint32 i);
 	void SpellEffectActivateObject(uint32 i);
 	void SpellEffectWMODamage(uint32 i);
- 	void SpellEffectWMORepair(uint32 i);
+	void SpellEffectWMORepair(uint32 i);
+	void SpellEffectChangeWMOState(uint32 i);
 	void SummonTotem(uint32 i);
 	void SpellEffectProficiency(uint32 i);
 	void SpellEffectSendEvent(uint32 i);
 	void SpellEffectSkinning(uint32 i);
 	void SpellEffectCharge(uint32 i);
+	void SpellEffectPlaceTotemsOnBar(uint32 i);
 	void SummonNonCombatPet(uint32 i);
 	void SpellEffectKnockBack(uint32 i);
 	void SpellEffectInebriate(uint32 i);
@@ -1670,13 +1774,18 @@ public:
 	void SpellEffectAddHonor(uint32 i);
 	void SpellEffectSpawn(uint32 i);
 	void SpellEffectApplyAura128(uint32 i);
+	void SpellEffectRedirectThreat(uint32 i);
+	void SpellEffectPlayMusic(uint32 i);
 	void SpellEffectTriggerSpellWithValue(uint32 i);
 	void SpellEffectJump(uint32 i);
+	void SpellEffectTeleportToCaster(uint32 i);
 	void SpellEffectMilling(uint32 i);
 	void SpellEffectAllowPetRename(uint32 i);
 	void SpellEffectAddPrismaticSocket(uint32 i);
 	void SpellEffectTractorBeamFromDest(uint32 i);
 	void SpellEffectActivateRune(uint32 i);
+	void SpellEffectFailQuest(uint32 i);
+	void SpellEffectStartQuest(uint32 i);
 	void SpellEffectCreatePet(uint32 i);
 	void SpellEffectTitanGrip(uint32 i);
 	void SummonLightwell(uint32 i);
@@ -1829,6 +1938,7 @@ public:
 					Dur = 10000;
 				}
 			}
+
 			if( unitTarget != NULL && p_caster && unitTarget == p_caster )
 			{
 				if( GetSpellProto()->NameHash == SPELL_HASH_THORNS )
@@ -1851,9 +1961,25 @@ public:
 
 	HEARTHSTONE_INLINE float GetRadius(uint32 i)
 	{
-		if(bRadSet[i])return Rad[i];
+		if(bRadSet[i])
+			return Rad[i];
 		bRadSet[i]=true;
 		Rad[i]=::GetRadius(dbcSpellRadius.LookupEntry(GetSpellProto()->EffectRadiusIndex[i]));
+		if(GetSpellProto()->SpellGroupType && u_caster)
+		{
+			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&Rad[i],GetSpellProto()->SpellGroupType);
+			SM_PFValue(u_caster->SM[SMT_RADIUS][1],&Rad[i],GetSpellProto()->SpellGroupType);
+		}
+
+		return Rad[i];
+	}
+
+	HEARTHSTONE_INLINE float GetFriendlyRadius(uint32 i)
+	{
+		if(bRadSet[i])
+			return Rad[i];
+		bRadSet[i]=true;
+		Rad[i]=::GetFriendlyRadius(dbcSpellRadius.LookupEntry(GetSpellProto()->EffectRadiusIndex[i]));
 		if(GetSpellProto()->SpellGroupType && u_caster)
 		{
 			SM_FFValue(u_caster->SM[SMT_RADIUS][0],&Rad[i],GetSpellProto()->SpellGroupType);

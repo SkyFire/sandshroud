@@ -288,7 +288,7 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 			{
 				item->SetOwner( m_pOwner );
 				item->SetUInt64Value(ITEM_FIELD_CONTAINED, m_pOwner->GetGUID());
-				m_pItems[(int)slot] = item;
+				m_pItems[slot] = item;
 
 				if (item->GetProto()->Bonding == ITEM_BIND_ON_PICKUP)
 					item->SoulBind();
@@ -313,7 +313,7 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 			if( GetInventoryItem(ContainerSlot) && GetInventoryItem(ContainerSlot)->IsContainer() &&
 				slot < (int32)GetInventoryItem(ContainerSlot)->GetProto()->ContainerSlots) //container exists
 			{
-				bool result = TO_CONTAINER(m_pItems[(int)ContainerSlot])->AddItem(slot, item);
+				bool result = TO_CONTAINER(m_pItems[ContainerSlot])->AddItem(slot, item);
 				if( !result )
 				{
 					return ADD_ITEM_RESULT_ERROR;
@@ -398,7 +398,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemFromSlot(int16 ContainerSlot, int1
 			return NULLITEM;
 		}
 
-		m_pItems[(int)slot] = NULLITEM;
+		m_pItems[slot] = NULLITEM;
 		if(pItem->GetOwner() == m_pOwner)
 		{
 			pItem->m_isDirty = true;
@@ -650,7 +650,7 @@ bool ItemInterface::SafeFullRemoveItemFromSlot(int16 ContainerSlot, int16 slot)
 			return false;
 		}
 
-		m_pItems[(int)slot] = NULLITEM;
+		m_pItems[slot] = NULLITEM;
 		// hacky crashfix
 		if( pItem->GetOwner() == m_pOwner )
 		{
@@ -793,7 +793,7 @@ Item* ItemInterface::GetInventoryItem(int16 slot)
 	if(slot < 0 || slot > MAX_INVENTORY_SLOT)
 		return NULLITEM;
 
-	return m_pItems[(int)slot];
+	return m_pItems[slot];
 }
 
 //-------------------------------------------------------------------//
@@ -806,15 +806,15 @@ Item* ItemInterface::GetInventoryItem(int16 ContainerSlot, int16 slot)
 		if(slot < 0 || slot > MAX_INVENTORY_SLOT)
 			return NULLITEM;
 
-		return m_pItems[(int)slot];
+		return m_pItems[slot];
 	}
 	else
 	{
 		if(IsBagSlot(ContainerSlot))
 		{
-			if(m_pItems[(int)ContainerSlot])
+			if(m_pItems[ContainerSlot])
 			{
-				return TO_CONTAINER(m_pItems[(int)ContainerSlot])->GetItem(slot);
+				return TO_CONTAINER(m_pItems[ContainerSlot])->GetItem(slot);
 			}
 		}
 	}
@@ -2716,22 +2716,22 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 	//src item was equiped previously
 	if( srcslot < INVENTORY_SLOT_BAG_END )
 	{
-		if( m_pItems[(int)srcslot] != NULL )
-			m_pOwner->ApplyItemMods( m_pItems[(int)srcslot], srcslot, false );
+		if( m_pItems[srcslot] != NULL )
+			m_pOwner->ApplyItemMods( m_pItems[srcslot], srcslot, false );
 	}
 
 	//dst item was equiped previously
 	if( dstslot < INVENTORY_SLOT_BAG_END )
 	{
-		if( m_pItems[(int)dstslot] != NULL )
-			m_pOwner->ApplyItemMods( m_pItems[(int)dstslot], dstslot, false );
+		if( m_pItems[dstslot] != NULL )
+			m_pOwner->ApplyItemMods( m_pItems[dstslot], dstslot, false );
 	}
 
 	//OUT_DEBUG( "Putting items into slots..." );
 
 
 
-	m_pItems[(int)dstslot] = SrcItem;
+	m_pItems[dstslot] = SrcItem;
 
 	// Moving a bag with items to a empty bagslot
 	if ( (DstItem == NULL) && (SrcItem->IsContainer()) )
@@ -2740,7 +2740,7 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 
 		for ( uint32 Slot = 0; Slot < SrcItem->GetProto()->ContainerSlots; Slot++ )
 		{
-			tSrcItem = (TO_CONTAINER(m_pItems[(int)srcslot]))->GetItem(Slot);
+			tSrcItem = (TO_CONTAINER(m_pItems[srcslot]))->GetItem(Slot);
 
 			m_pOwner->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(srcslot, Slot, false);
 
@@ -2751,7 +2751,7 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 		}
 	}
 
-	m_pItems[(int)srcslot] = DstItem;
+	m_pItems[srcslot] = DstItem;
 
 	// swapping 2 bags filled with items
 	if ( DstItem && SrcItem->IsContainer() && DstItem->IsContainer() )
@@ -2769,8 +2769,8 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 		// swap items in the bags
 		for( uint32 Slot = 0; Slot < TotalSlots; Slot++ )
 		{
-			tSrcItem = (TO_CONTAINER(m_pItems[(int)srcslot]))->GetItem(Slot);
-			tDstItem = (TO_CONTAINER(m_pItems[(int)dstslot]))->GetItem(Slot);
+			tSrcItem = (TO_CONTAINER(m_pItems[srcslot]))->GetItem(Slot);
+			tDstItem = (TO_CONTAINER(m_pItems[dstslot]))->GetItem(Slot);
 
 			if( tSrcItem != NULL )
 				m_pOwner->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(srcslot, Slot, false);
@@ -2789,10 +2789,10 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 	if( SrcItem != NULL )
 		SrcItem->m_isDirty = true;
 
-	if( m_pItems[(int)dstslot] != NULL )
+	if( m_pItems[dstslot] != NULL )
 	{
-		//OUT_DEBUG( "(SrcItem) PLAYER_FIELD_INV_SLOT_HEAD + %u is now %u" , dstslot * 2 , m_pItems[(int)dstslot]->GetGUID() );
-		m_pOwner->SetUInt64Value( PLAYER_FIELD_INV_SLOT_HEAD + (dstslot*2),  m_pItems[(int)dstslot]->GetGUID() );
+		//OUT_DEBUG( "(SrcItem) PLAYER_FIELD_INV_SLOT_HEAD + %u is now %u" , dstslot * 2 , m_pItems[dstslot]->GetGUID() );
+		m_pOwner->SetUInt64Value( PLAYER_FIELD_INV_SLOT_HEAD + (dstslot*2),  m_pItems[dstslot]->GetGUID() );
 	}
 	else
 	{
@@ -2800,10 +2800,10 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 		m_pOwner->SetUInt64Value( PLAYER_FIELD_INV_SLOT_HEAD + (dstslot*2), 0 );
 	}
 
-	if( m_pItems[(int)srcslot] != NULL )
+	if( m_pItems[srcslot] != NULL )
 	{
-		//OUT_DEBUG( "(DstItem) PLAYER_FIELD_INV_SLOT_HEAD + %u is now %u" , dstslot * 2 , m_pItems[(int)srcslot]->GetGUID() );
-		m_pOwner->SetUInt64Value( PLAYER_FIELD_INV_SLOT_HEAD + (srcslot*2), m_pItems[(int)srcslot]->GetGUID() );
+		//OUT_DEBUG( "(DstItem) PLAYER_FIELD_INV_SLOT_HEAD + %u is now %u" , dstslot * 2 , m_pItems[srcslot]->GetGUID() );
+		m_pOwner->SetUInt64Value( PLAYER_FIELD_INV_SLOT_HEAD + (srcslot*2), m_pItems[srcslot]->GetGUID() );
 	}
 	else
 	{
@@ -2813,19 +2813,19 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 
 	if( srcslot < INVENTORY_SLOT_BAG_END )	// source item is equiped
 	{
-		if( m_pItems[(int)srcslot] ) // dstitem goes into here.
+		if( m_pItems[srcslot] ) // dstitem goes into here.
 		{
 			// Bags aren't considered "visible".
 			if( srcslot < EQUIPMENT_SLOT_END )
 			{
 				int VisibleBase = PLAYER_VISIBLE_ITEM_1_ENTRYID + (srcslot * PLAYER_VISIBLE_ITEM_LENGTH);
-				m_pOwner->SetUInt32Value( VisibleBase, m_pItems[(int)srcslot]->GetEntry() );
-				m_pOwner->SetUInt32Value( VisibleBase + 1, m_pItems[(int)srcslot]->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 ) );
+				m_pOwner->SetUInt32Value( VisibleBase, m_pItems[srcslot]->GetEntry() );
+				m_pOwner->SetUInt32Value( VisibleBase + 1, m_pItems[srcslot]->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 ) );
 			}
 
 			// handle bind on equip
-			if( m_pItems[(int)srcslot]->GetProto()->Bonding == ITEM_BIND_ON_EQUIP )
-				m_pItems[(int)srcslot]->SoulBind();
+			if( m_pItems[srcslot]->GetProto()->Bonding == ITEM_BIND_ON_EQUIP )
+				m_pItems[srcslot]->SoulBind();
 
 			// 2.4.3: Casting a spell is cancelled when you equip
 			if( GetOwner() && GetOwner()->GetCurrentSpell() )
@@ -2847,19 +2847,19 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 
 	if( dstslot < INVENTORY_SLOT_BAG_END )   // source item is inside inventory
 	{
-		if( m_pItems[(int)dstslot] != NULL ) // srcitem goes into here.
+		if( m_pItems[dstslot] != NULL ) // srcitem goes into here.
 		{
 			// Bags aren't considered "visible".
 			if( dstslot < EQUIPMENT_SLOT_END )
 			{
 				int VisibleBase = PLAYER_VISIBLE_ITEM_1_ENTRYID + (dstslot * PLAYER_VISIBLE_ITEM_LENGTH);
-				m_pOwner->SetUInt32Value( VisibleBase, m_pItems[(int)dstslot]->GetEntry() );
-				m_pOwner->SetUInt32Value( VisibleBase + 1, m_pItems[(int)dstslot]->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 ) );
+				m_pOwner->SetUInt32Value( VisibleBase, m_pItems[dstslot]->GetEntry() );
+				m_pOwner->SetUInt32Value( VisibleBase + 1, m_pItems[dstslot]->GetUInt32Value( ITEM_FIELD_ENCHANTMENT_1_1 ) );
 			}
 
 			// handle bind on equip
-			if( m_pItems[(int)dstslot]->GetProto()->Bonding == ITEM_BIND_ON_EQUIP )
-				m_pItems[(int)dstslot]->SoulBind();
+			if( m_pItems[dstslot]->GetProto()->Bonding == ITEM_BIND_ON_EQUIP )
+				m_pItems[dstslot]->SoulBind();
 
 		}
 		else
@@ -2887,8 +2887,8 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 	//src item is equiped now
 	if( srcslot < INVENTORY_SLOT_BAG_END )
  	{
-		if( m_pItems[(int)srcslot] != NULL )
-			m_pOwner->ApplyItemMods( m_pItems[(int)srcslot], srcslot, true );
+		if( m_pItems[srcslot] != NULL )
+			m_pOwner->ApplyItemMods( m_pItems[srcslot], srcslot, true );
 		else if( srcslot == EQUIPMENT_SLOT_MAINHAND || srcslot == EQUIPMENT_SLOT_OFFHAND )
 			m_pOwner->CalcDamage();
 	}
@@ -2896,8 +2896,8 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 	//dst item is equiped now
 	if( dstslot < INVENTORY_SLOT_BAG_END )
 	{
-		if( m_pItems[(int)dstslot] != NULL )
-			m_pOwner->ApplyItemMods( m_pItems[(int)dstslot], dstslot, true );
+		if( m_pItems[dstslot] != NULL )
+			m_pOwner->ApplyItemMods( m_pItems[dstslot], dstslot, true );
 		else if( dstslot == EQUIPMENT_SLOT_MAINHAND || dstslot == EQUIPMENT_SLOT_OFFHAND )
 			m_pOwner->CalcDamage();
 	}
@@ -3338,6 +3338,9 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 		if( item == NULL )
 			return false;
 
+		if(creator != NULL)
+			item->SetUInt64Value(ITEM_FIELD_CREATOR, creator->GetGUID());
+
 		if( it->Bonding == ITEM_BIND_ON_PICKUP )
 			item->SoulBind();
 
@@ -3374,7 +3377,7 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 	return true;
 }
 
-void ItemInterface::SwapItems(uint16 SrcInvSlot, uint16 DstInvSlot, uint16 SrcSlot, uint16 DstSlot)
+void ItemInterface::SwapItems(int16 SrcInvSlot, int16 DstInvSlot, int16 SrcSlot, int16 DstSlot)
 {
 	if(SrcInvSlot == DstInvSlot)
 	{

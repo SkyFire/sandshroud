@@ -1075,9 +1075,9 @@ bool ChatHandler::HandleRenameCommand(const char * args, WorldSession * m_sessio
 		CharacterDatabase.WaitExecute("UPDATE characters SET name = '%s' WHERE guid = %u", CharacterDatabase.EscapeString(new_name).c_str(), (uint32)pi->guid);
 	}
 
-	GreenSystemMessage(m_session, "Changed name of '%s' to '%s'.", name1, name2);
-	sWorld.LogGM(m_session, "renamed character %s (GUID: %u) to %s", name1, pi->guid, name2);
-	sWorld.LogPlayer(m_session, "GM renamed character %s (GUID: %u) to %s", name1, pi->guid, name2);
+	GreenSystemMessage(m_session, "Changed name of '%s' to '%s'.", (char*)name1, (char*)name2);
+	sWorld.LogGM(m_session, "renamed character %s (GUID: %u) to %s", (char*)name1, pi->guid, (char*)name2);
+	sWorld.LogPlayer(m_session, "GM renamed character %s (GUID: %u) to %s", (char*)name1, pi->guid, ((char*)name2));
 	return true;
 }
 
@@ -1230,7 +1230,7 @@ void WorldSession::HandleCharCustomizeOpcode(WorldPacket & recv_data)
 void WorldSession::HandleEquipmentSetSave(WorldPacket &recv_data)
 {
 	sLog.outDebug("CMSG_EQUIPMENT_SET_SAVE");
-	WoWGuid guid;
+/*	WoWGuid guid;
 	recv_data >> guid;
 
 	uint32 index;
@@ -1274,22 +1274,22 @@ void WorldSession::HandleEquipmentSetSave(WorldPacket &recv_data)
 		eqSet.Items[i] = itemGuid;
 	}
 
-	_player->SetEquipmentSet(index, eqSet);
+	_player->SetEquipmentSet(index, eqSet);*/
 }
 
 void WorldSession::HandleEquipmentSetDelete(WorldPacket &recv_data)
 {
 	sLog.outDebug("CMSG_EQUIPMENT_SET_DELETE");
 
-	WoWGuid setGuid;
+/*	WoWGuid setGuid;
 	recv_data >> setGuid;
-	_player->DeleteEquipmentSet(setGuid.GetOldGuid());
+	_player->DeleteEquipmentSet(setGuid.GetOldGuid());*/
 }
 
 void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 {
 	sLog.outDebug("CMSG_EQUIPMENT_SET_USE");
-	bool failed = false;
+/*	bool failed = false;
 	for(uint32 i = 0; i < EQUIPMENT_SLOT_END; i++)
 	{
 		WoWGuid itemGuid;
@@ -1318,7 +1318,7 @@ void WorldSession::HandleEquipmentSetUse(WorldPacket &recv_data)
 
 	WorldPacket data(SMSG_EQUIPMENT_SET_USE_RESULT, 1);
 	data << uint8(0);	// 4 = failed(inventory is full)
-	SendPacket(&data);
+	SendPacket(&data);*/
 }
 
 #else

@@ -36,7 +36,7 @@ void WorldSession::HandleBattlefieldPortOpcode(WorldPacket &recv_data)
 	}
 	else
 	{
-		for(uint32 i = 0; i < 3; i++)
+		for(uint32 i = 0; i < 2; i++)
 		{
 			if( GetPlayer()->m_pendingBattleground[i] &&
 				(GetPlayer()->m_pendingBattleground[i]->GetType() == bgtype || bgtype == BATTLEGROUND_ARENA_5V5))
@@ -62,14 +62,11 @@ void WorldSession::HandleBattlefieldStatusOpcode(WorldPacket &recv_data)
 
 void WorldSession::HandleBattlefieldListOpcode(WorldPacket &recv_data)
 {
-	return;
 	CHECK_INWORLD_RETURN;
 	uint32 battlegroundType;
 	uint8 requestType, unk1; // 0 = ShowBattlefieldList, 1 = RequestBattlegroundInstanceInfo
-
 	recv_data >> battlegroundType >> requestType >> unk1;
-
-	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, false);
+	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, requestType);
 }
 
 // Returns -1 if indeterminable.
@@ -159,7 +156,7 @@ void WorldSession::HandleBattleMasterHelloOpcode(WorldPacket &recv_data)
 	if( pCreature == NULL )
 		return;
 
-	SendBattlegroundList( pCreature, 0 );
+	SendBattlegroundList( pCreature, pCreature->GetMapId() );
 }
 
 void WorldSession::HandleLeaveBattlefieldOpcode(WorldPacket &recv_data)

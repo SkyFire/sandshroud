@@ -183,8 +183,6 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 {
 	CHECK_INWORLD_RETURN;
-	if(_player->getDeathState() == CORPSE)
-		return;
 
 	uint32 spellId;
 	uint8 cn; // cn: Cast count.
@@ -204,8 +202,10 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	DEBUG_LOG("WORLD","Received cast_spell packet, spellId - %i (%s), data length = %i",
-		spellId, spellInfo->Name, recvPacket.size());
+	if(_player->getDeathState() == CORPSE && !(spellInfo->Attributes & ATTRIBUTES_CASTABLE_WHILE_DEAD))
+		return;
+
+	DEBUG_LOG("WORLD","Received cast_spell packet, spellId - %i (%s), data length = %i", spellId, spellInfo->Name, recvPacket.size());
 
 	// Cheat Detection only if player and not from an item
 	// this could fuck up things but meh it's needed ALOT of the newbs are using WPE now
@@ -333,9 +333,10 @@ void WorldSession::HandleCancelCastOpcode(WorldPacket& recvPacket)
 {
 	uint32 spellId;
 	recvPacket >> spellId;
-
-	if(GetPlayer()->m_currentSpell)
+	if(GetPlayer()->m_currentSpell && !_player->m_CurrentVehicle)
 		GetPlayer()->m_currentSpell->cancel();
+	if(_player->m_CurrentVehicle)
+		_player->m_CurrentVehicle->GetCurrentSpell()->cancel();
 }
 
 void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
@@ -353,7 +354,7 @@ void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
 	for(uint32 x = 0; x < MAX_AURAS+MAX_POSITIVE_AURAS; x++)
 	{
 		if(_player->m_auras[x] && _player->m_auras[x]->GetSpellId() == spellId && _player->m_auras[x]->IsPositive())
-			_player->RemoveAuraBySlot(x);
+			_player->RemoveAuraBySlotOrRemoveStack(x);
 	}
 	DEBUG_LOG("Aura","Removing aura %u",spellId);
 }
@@ -363,7 +364,7 @@ void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
-	if(_player)
+	if(!_player->m_CurrentVehicle)
 	{
 		if(_player->m_currentSpell)
 		{
@@ -371,6 +372,16 @@ void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
 				DEBUG_LOG("Spell","Player cancelled spell that was not being channeled: %u", spellId);
 
 			_player->m_currentSpell->cancel();
+		}
+	}
+	if(_player->m_CurrentVehicle)
+	{
+		if(_player->m_CurrentVehicle->GetCurrentSpell())
+		{
+			if(_player->m_CurrentVehicle->GetCurrentSpell()->GetSpellProto()->Id != spellId)
+				DEBUG_LOG("Spell","Player vehicle cancelled spell that was not being channeled: %u", spellId);
+
+			_player->m_CurrentVehicle->GetCurrentSpell()->cancel();
 		}
 	}
 }
@@ -383,8 +394,7 @@ void WorldSession::HandleCancelAutoRepeatSpellOpcode(WorldPacket& recv_data)
 
 void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 {
-	if(!_player || !_player->IsInWorld())
-		return;
+	CHECK_INWORLD_RETURN
 
 	Object* caster = NULL;
 	if (_player->m_CurrentCharm != NULL)

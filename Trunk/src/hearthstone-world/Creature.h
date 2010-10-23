@@ -208,7 +208,7 @@ struct CreatureProto
 	std::set<TeleportInfo*> TeleportInfoList;
 };
 
-struct AccessoryInfo
+struct SeatInfo
 {
 	uint32 accessoryentry;
 	bool ejectfromvehicleondeath;
@@ -222,7 +222,7 @@ struct CreatureProtoVehicle
 	uint32 healthunitfromitemlev;
 	uint32 VehicleSpells[6]; // Vehicle spells.
 	uint32 MovementFlags;
-	AccessoryInfo accessories[8]; // Accessories.
+	SeatInfo seats[8]; // Accessories.
 };
 
 struct CreatureInfoExtra
@@ -680,7 +680,6 @@ public: // values
 	bool haslinkupevent;
 	bool m_canRegenerateHP;
 	bool m_noDeleteAfterDespawn;
-	uint32 lightwellcharges;
 	uint32 m_taggingGroup;
 	uint32 m_taggingPlayer;
 	uint32 spawnid;

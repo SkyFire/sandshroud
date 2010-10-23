@@ -1054,7 +1054,7 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 
 	if (Flags & GROUP_UPDATE_FLAG_PET_POWER)
 	{
-		if (pPlayer->GetSummon() != NULL && pPlayer->GetSummon()->GetPowerType() < 7)
+		if (pPlayer->GetSummon() != NULL && pPlayer->GetSummon()->GetPowerType() < MAX_POWER_TYPE)
 			*data << uint16(pPlayer->GetSummon()->GetUInt32Value(UNIT_FIELD_POWER1 + pPlayer->GetSummon()->GetPowerType()));
 		else
 			*data << uint16(0);
@@ -1062,7 +1062,7 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 
 	if (Flags & GROUP_UPDATE_FLAG_PET_MAXPOWER)
 	{
-		if (pPlayer->GetSummon() != NULL && pPlayer->GetSummon()->GetPowerType() < 7)
+		if (pPlayer->GetSummon() != NULL && pPlayer->GetSummon()->GetPowerType() < MAX_POWER_TYPE)
 			*data << uint16(pPlayer->GetSummon()->GetUInt32Value(UNIT_FIELD_MAXPOWER1 + pPlayer->GetSummon()->GetPowerType()));
 		else
 			*data << uint16(0);
