@@ -433,9 +433,12 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_sessi
 
 bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_session)
 {
-	uint32 type = 0;
+	if (!*args)
+		return false;
+
+	int32 type = -1;
 	float Speed = 0.0f;
-	if( sscanf(args, "%u %f", &type, &Speed) < 1 )
+	if( sscanf(args, "%f %i", &Speed, &type) < 1 )
 		return false;
 
 	if (Speed > 255 || Speed < 0)
@@ -443,9 +446,16 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 		RedSystemMessage(m_session, "Incorrect value. Range is 1..255");
 		return true;
 	}
+
+	if(Speed == 0.0f)
+		type = -1;
+
 	char* speedname = "run";
 	switch(type)
 	{
+	case -1:
+		speedname = "total";
+		break;
 	case RUN:
 		speedname = "run";
 		break;
@@ -486,10 +496,8 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 		}
 		chr = m_session->GetPlayer();
 	}
-	if (!*args)
-		return false;
 
-	if(Speed == 0)
+	if(Speed == 0.0f)
 		Speed = chr->m_base_runSpeed*(1.0f + ((float)chr->m_speedModifier)/100.0f);
 
 	// send message to user/player
@@ -501,7 +509,19 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 	else
 		BlueSystemMessage(m_session, "Your %s speed is now set to %2.2f.", speedname, Speed);
 
-	chr->SetPlayerSpeed(type, Speed);
+	if(type == -1)
+	{
+		chr->SetPlayerSpeed(RUN, Speed);
+		chr->SetPlayerSpeed(RUNBACK, (Speed * 0.5));
+		chr->SetPlayerSpeed(SWIM, Speed);
+		chr->SetPlayerSpeed(SWIMBACK, (Speed * 0.5));
+		chr->SetPlayerSpeed(TURN, 3.141593f);
+		chr->SetPlayerSpeed(FLY, Speed*3);
+		chr->SetPlayerSpeed(FLYBACK, (Speed * 1.5));
+		chr->SetPlayerSpeed(PITCH_RATE, 3.141593f);
+	}
+	else
+		chr->SetPlayerSpeed(type, Speed);
 	return true;
 }
 
