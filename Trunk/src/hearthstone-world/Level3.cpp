@@ -1055,19 +1055,19 @@ bool ChatHandler::HandleShowCheatsCommand(const char* args, WorldSession* m_sess
 
 bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 {
-
 	Player* chr = getSelectedChar(m_session, false);
-
 	if(!chr)
 	{
 		Creature* ctr = getSelectedCreature(m_session, false);
 		if(ctr != NULL)
 		{
 			ctr->EnableFlight();
+			if(ctr->GetCreatureInfo())
+				BlueSystemMessage(m_session, "Enabling fly mode on %s", ctr->GetCreatureInfo()->Name);
 			return true;
 		}
+		chr = m_session->GetPlayer();
 	}
-	chr = m_session->GetPlayer();
 
 	chr->m_setflycheat = true;
 	WorldPacket fly(SMSG_MOVE_SET_CAN_FLY, 13);
