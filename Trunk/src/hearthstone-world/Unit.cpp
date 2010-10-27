@@ -7323,6 +7323,9 @@ void Unit::ResetFaction()
 
 void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool disengage )
 {
+	if(!unitTarget)
+		return;
+
 	float dx, dy;
 	float value1 = float( basepoint );
 	float value2 = float( miscvalue );

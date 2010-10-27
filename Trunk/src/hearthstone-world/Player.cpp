@@ -12060,7 +12060,7 @@ void Player::_WallHackCheck()
 	if(!sWorld.antihack_wallclimb || (GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm))
 		return;
 
-	if(!GetSession()->m_isJumping && !GetSession()->m_isFalling && !canFly())
+	if(!GetSession()->m_isJumping && !GetSession()->m_isFalling && !GetSession()->m_isKnockedback && !canFly())
 	{	// Make sure we aren't jumping or falling.
 		float z1 = LastWHPosition.z;
 		float z2 = GetPositionZ();
@@ -12070,16 +12070,19 @@ void Player::_WallHackCheck()
 			double deltaz = z2-z1;
 			double run = CalcDistance(this, LastWHPosition.x, LastWHPosition.y, z2);
 
-			if(deltaz/run > 1.2)
+			if(run > 0)
 			{
-				sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, if this is incorrect, please report it to an admin. %f", deltaz/run);
-				m_wallhackChances--;
-				if(!m_wallhackChances)
+				if(deltaz/run > 1.4)
 				{
-					Root();
-					SetPosition(LastWHPosition, true);
-					sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, you will be disconnected shortly.");
-					sEventMgr.AddEvent(this, &Player::SoftDisconnect, EVENT_PLAYER_SOFT_DISCONNECT, 3000, 0, 0);
+					sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, if this is incorrect, please report it to an admin. %f", deltaz/run);
+					m_wallhackChances--;
+					if(!m_wallhackChances)
+					{
+						Root();
+						SetPosition(LastWHPosition, true);
+						sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, you will be disconnected shortly.");
+						sEventMgr.AddEvent(this, &Player::SoftDisconnect, EVENT_PLAYER_SOFT_DISCONNECT, 3000, 0, 0);
+					}
 				}
 			}
 		}
