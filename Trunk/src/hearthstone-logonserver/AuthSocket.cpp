@@ -235,7 +235,6 @@ void AuthSocket::HandleChallenge()
 
 	BigNumber unk;
 	unk.SetRand(128);
-
 	uint8 response[200];
 	uint32 c = 0;
 	response[c] = 0;										c += 1;
@@ -256,7 +255,7 @@ void AuthSocket::HandleChallenge()
 void AuthSocket::HandleProof()
 {
 	if(GetReadBuffer().GetSize() < sizeof(sAuthLogonProof_C))
-		return ;
+		return;
 
 	// patch
 	if(m_patch&&!m_account)

@@ -1148,8 +1148,6 @@ struct SpellRange
 	float     maxRangeHostile;
 	float     maxRangeFriend;
 	uint32    type;
-    //char*	  Name[17];
-	//char*	  Name2[17];
 };
 
 struct SpellDuration

@@ -610,12 +610,12 @@ SERVER_DECL DBCStorage<SpellRange> dbcSpellRange;
 const char* spellrangeFormat =
 	"u"					// Id
 	"f"					// MinRange
-	"x"
+	"f"
 	"f"					// MaxRange
-	"x"
+	"f"
 	"u"
-	"s"
-	"s";
+	"x"
+	"x";
 
 SERVER_DECL DBCStorage<SpellRuneCostEntry> dbcSpellRuneCost;
 const char* SpellRuneCostfmt="uuuuu";

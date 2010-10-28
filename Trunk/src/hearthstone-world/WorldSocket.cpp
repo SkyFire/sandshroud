@@ -29,14 +29,24 @@
 
 struct ClientPktHeader
 {
+#ifdef CATACLYSM
 	uint16 size;
 	uint32 cmd;
+#else
+	uint16 size;
+	uint32 cmd;
+#endif
 };
 
 struct ServerPktHeader
 {
+#ifdef CATACLYSM
 	uint16 size;
 	uint16 cmd;
+#else
+	uint16 size;
+	uint16 cmd;
+#endif
 };
 
 #pragma pack(pop)
@@ -236,6 +246,12 @@ void WorldSocket::OnConnect()
 	data << uint32(0x6E8547B9);	// 3.2.2
 	data << uint32(0x9A6AA2F8);	// 3.2.2
 	data << uint32(0xA4F170F4);	// 3.2.2
+#ifdef CATACLYSM
+	data << uint32(0xF3632DA3);	// 4
+	data << uint32(0x278BV343);	// 4
+	data << uint32(0x97EYT2F8);	// 4
+	data << uint32(0x82HE26F4);	// 4
+#endif
 	SendPacket(&data);
 }
 

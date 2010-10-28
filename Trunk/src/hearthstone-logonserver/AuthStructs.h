@@ -82,7 +82,6 @@ typedef struct {
 	uint8   error;
 	uint8   M2[20];
 	uint32  unk2;
-	uint16  unk203;
 } sAuthLogonProof_S;
 
 

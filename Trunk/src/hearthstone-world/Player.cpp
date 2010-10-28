@@ -3740,6 +3740,39 @@ uint32 Player::FindSpellWithNamehash(uint32 namehash)
 	return 0;
 }
 
+// Use instead of cold weather flying
+bool Player::CanFlyInCurrentZoneOrMap()
+{
+	if(GetAreaDBC() != NULL && !(GetAreaDBC()->AreaFlags & AREA_FLYING_PERMITTED))
+		return false; // can't fly in non-flying zones
+
+	if(GetMapId() == 530)
+		return true; // We can fly in outlands all the time
+
+	if(GetMapId() == 571)
+	{
+		if(WinterGrasp != NULL) // Since WG is set on entering zone, and only when active, this is all we need.
+			return false;
+
+		if(HasDummyAura(SPELL_HASH_COLD_WEATHER_FLYING))
+			return true;
+
+		if(HasSpell(54197)) // Cold Weather Flying, incase it wasn't casted.
+			return true;
+	}
+
+#ifdef CATACLYSM
+	// EK, Kal, Deepholm
+	if(!GetMapId() || GetMapId() == 1 || GetMapId() == 646)
+	{
+		if(p_caster->HasSpell(90267))
+			return true;
+	}
+#endif
+
+	return false;
+}
+
 bool Player::HasTalent(uint8 spec, uint32 talentid)
 {
 	return m_specs[spec].talents.find(talentid) != m_specs[spec].talents.end();

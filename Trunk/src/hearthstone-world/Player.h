@@ -982,6 +982,7 @@ public:
 	void removeSpellByHashName(uint32 hash);
 	bool removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpell, uint32 SupercededSpellID);
 	uint32 FindSpellWithNamehash(uint32 namehash);
+	bool CanFlyInCurrentZoneOrMap();
 
 	// PLEASE DO NOT INLINE!
 	void AddOnStrikeSpell(SpellEntry* sp, uint32 delay)

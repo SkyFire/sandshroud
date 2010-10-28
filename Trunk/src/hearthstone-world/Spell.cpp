@@ -3112,21 +3112,16 @@ uint8 Spell::CanCast(bool tolerate)
 		if(GetSpellProto()->Flags7 & FLAGS7_NOT_IN_RAID_INSTANCE && p_caster->GetMapMgr()->GetdbcMap()->israid())
 			return SPELL_FAILED_NOT_HERE;
 
-		if(GetSpellProto()->Flags5 & FLAGS5_ONLY_IN_OUTLAND && p_caster->GetMapId() != 530)
-			return SPELL_FAILED_NOT_HERE;
-
 		// flying auras
 		if( GetSpellProto()->c_is_flags & SPELL_FLAG_IS_FLYING )
 		{
-			// can't fly in non-flying zones
-			if( p_caster->GetAreaDBC() != NULL && !(p_caster->GetAreaDBC()->AreaFlags & AREA_FLYING_PERMITTED) )
-			{
+			if(!p_caster->CanFlyInCurrentZoneOrMap()) // Check our area
 				return SPELL_FAILED_NOT_HERE;
-			}
-			else if( p_caster->GetMapId() == 571 && !p_caster->HasDummyAura(SPELL_HASH_COLD_WEATHER_FLYING) )
-			{
-				return SPELL_FAILED_TARGET_AURASTATE;
-			}
+		}
+		else
+		{
+			if(GetSpellProto()->Flags5 & FLAGS5_ONLY_IN_OUTLAND && p_caster->GetMapId() != 530)
+				return SPELL_FAILED_NOT_HERE;
 		}
 
 		if( GetSpellProto()->Id == 53822 && p_caster->getClass()!=DEATHKNIGHT)			// DeathGate
