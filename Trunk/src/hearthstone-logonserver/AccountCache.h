@@ -236,6 +236,7 @@ public:
 	int32		  GetRealmIdByName(string Name);
 	map<uint32, Realm*> GetRealmMap() { return m_realms; }
 	void		  RemoveRealm(uint32 realm_id);
+	bool		  FindRealmWithAdress(string Address);
 	void		  UpdateRealmStatus(uint32 realm_id, uint8 Color);
 	void		  UpdateRealmPop(uint32 realm_id, float pop);
 	void		  SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss);

@@ -33,7 +33,7 @@ LogonCommServerSocket::LogonCommServerSocket(SOCKET fd) : Socket(fd, 65536, 5242
 {
 	// do nothing
 	last_ping = (uint32)UNIXTIME;
-	next_server_ping = last_ping + 30;
+	next_server_ping = last_ping + 20;
 	remaining = opcode = 0;
 	removed = true;
 
@@ -179,12 +179,29 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 		tmp_RealmID = sInfoCore.GenerateRealmID();
 		Log.Notice("LogonCommServer","Registering realm `%s` under ID %u.", Name.c_str(), tmp_RealmID);
 	}
-	else 
+	else
 	{
-		sInfoCore.RemoveRealm(tmp_RealmID);
-		int new_tmp_RealmID = sInfoCore.GenerateRealmID(); //socket timout will DC old id after a while, make sure it's not the one we restarted
-		Log.Notice("LogonCommServer","Updating realm `%s` with ID %u to new ID %u.", Name.c_str(), tmp_RealmID, new_tmp_RealmID );
-		tmp_RealmID = new_tmp_RealmID;
+		sInfoCore.TimeoutSockets();
+		Realm* oldrealm = sInfoCore.GetRealm(tmp_RealmID);
+		if(oldrealm == NULL || oldrealm->Colour == REALMCOLOUR_OFFLINE) // The oldrealm should always exist.
+		{
+			sInfoCore.RemoveRealm(tmp_RealmID);
+//			int new_tmp_RealmID = sInfoCore.GenerateRealmID(); //socket timout will DC old id after a while, make sure it's not the one we restarted
+			Log.Notice("LogonCommServer","Updating realm `%s` with ID %u to new ID %u.",
+				Name.c_str(), tmp_RealmID, (tmp_RealmID = sInfoCore.GenerateRealmID()));
+//			tmp_RealmID = new_tmp_RealmID;
+		}
+		else
+		{
+			// We already have a realm here, and it's not offline, this may be dangerous, but meh.
+			WorldPacket data(RSMSG_REALM_REGISTERED, 4);
+			data << uint32(1); // Error
+			data << uint32(0);
+			data << string("ERROR");
+			SendPacket(&data);
+			Log.Notice("LogonCommServer", "Realm(%s) addition denied, realm already connected.", Name.c_str());
+			return;
+		}
 	}
 
 	Realm * realm = new Realm;
@@ -192,7 +209,6 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	realm->Name = Name;
 	realm->Colour = 0;
 	realm->ServerSocket = this;
-
 	recvData >> realm->Address;
 	uint16 tester = 0;
 	recvData >> tester;
@@ -209,8 +225,8 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	}
 	else // Original Aspire? Break the tester into two, and retrieve the rest of the data.
 	{
-		realm->Icon = tester & 0xff;
-		realm->WorldRegion = tester >> 8;
+		realm->Icon = uint8(tester & 0xff);
+		realm->WorldRegion = uint8(tester >> 8);
 		recvData >> realm->Population;
 	}
 
@@ -220,6 +236,19 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 		realm->Lock = 0;
 
 	realm->staticrealm = false;
+
+	// Check if we have a conflicting realm that is using the same adress.
+	if(sInfoCore.FindRealmWithAdress(realm->Address))
+	{
+		WorldPacket data(RSMSG_REALM_REGISTERED, 4);
+		data << uint32(1); // Error
+		data << uint32(0); // Error
+		data << string("ERROR"); // Error
+		SendPacket(&data);
+		Log.Notice("LogonCommServer", "Realm(%s) addition denied, adress already used.", realm->Name.c_str());
+		Log.Line();
+		return;
+	}
 
 	// Add to the main realm list
 	sInfoCore.AddRealm(tmp_RealmID, realm);
@@ -236,6 +265,8 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	data.Initialize(RSMSG_REQUEST_ACCOUNT_CHARACTER_MAPPING);
 	data << tmp_RealmID;
 	SendPacket(&data);
+
+	Log.Notice("LogonCommServer", "Realm(%s) successfully added.", realm->Name.c_str());
 }
 
 void LogonCommServerSocket::HandleSessionRequest(WorldPacket & recvData)

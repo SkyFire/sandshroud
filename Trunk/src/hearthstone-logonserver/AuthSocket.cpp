@@ -77,7 +77,13 @@ void AuthSocket::HandleChallenge()
 {
 	// No header
 	if(GetReadBuffer().GetContiguiousBytes() < 4)
-		return;	
+		return;
+
+	if(sInfoCore.GetRealmMap().empty())
+	{	// If we lack a realm to connect to, block em, it's better then making them sit and get locked into an empty list.
+		SendChallengeError(CE_IPBAN);
+		return;
+	}
 
 	// Check the rest of the packet is complete.
 	uint8 * ReceiveBuffer = (uint8*)GetReadBuffer().GetBufferStart();
@@ -150,16 +156,16 @@ void AuthSocket::HandleChallenge()
 
 	switch(ipb)
 	{
-		case BAN_STATUS_PERMANENT_BAN:
-			SendChallengeError(CE_ACCOUNT_CLOSED);
-			return;
+	case BAN_STATUS_PERMANENT_BAN:
+		SendChallengeError(CE_ACCOUNT_CLOSED);
+		return;
 
-		case BAN_STATUS_TIME_LEFT_ON_BAN:
-			SendChallengeError(CE_ACCOUNT_FREEZED);
-			return;
+	case BAN_STATUS_TIME_LEFT_ON_BAN:
+		SendChallengeError(CE_ACCOUNT_FREEZED);
+		return;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	// Null-terminate the account string
@@ -183,7 +189,6 @@ void AuthSocket::HandleChallenge()
 		SendChallengeError(CE_NO_ACCOUNT);
 		return;
 	}
-
 
 	// Check that the account isn't banned.
 	if(m_account->Banned == 1)

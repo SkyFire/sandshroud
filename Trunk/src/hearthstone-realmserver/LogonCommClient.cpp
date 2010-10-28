@@ -123,10 +123,16 @@ void LogonCommClientSocket::HandlePacket(WorldPacket & recvData)
 
 void LogonCommClientSocket::HandleRegister(WorldPacket & recvData)
 {
-	uint32 realmlid;
 	uint32 error;
+	uint32 realmlid;
 	string realmname;
 	recvData >> error >> realmlid >> realmname;
+
+	if(error || realmlid == 0) // Adress already used, or realm is active on our slot/name
+	{
+		// FUUUUU
+		return;
+	}
 
 	sLog.outColor(TNORMAL, "\n        >> realm `%s` registered under id ", realmname.c_str());
 	sLog.outColor(TGREEN, "%u", realmlid);

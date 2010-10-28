@@ -317,12 +317,12 @@ void LogonCommHandler::Connect(LogonServer * server)
 
 		RequestAddition(conn);
 
-		uint32 st = (uint32)UNIXTIME + 10;
+		uint32 st = (uint32)UNIXTIME + 15;
 
 		// Wait for register ACK
 		while(server->Registered == false)
 		{
-			// Don't wait more than.. like 10 seconds for a registration
+			// Don't wait more than.. like 15 seconds for a registration, thats our ping timeout
 			if((uint32)UNIXTIME >= st)
 			{
 				Log.Notice("LogonCommClient", "Realm registration timed out.");

@@ -435,10 +435,12 @@ int32 InformationCore::GetRealmIdByName(string Name)
 {
 	map<uint32, Realm*>::iterator itr = m_realms.begin();
 	for(; itr != m_realms.end(); ++itr)
+	{
 		if (itr->second->Name == Name)
 		{
 			return itr->first;
 		}
+	}
 	return -1;
 }
 
@@ -452,6 +454,17 @@ void InformationCore::RemoveRealm(uint32 realm_id)
 		m_realms.erase(itr);
 	}
 	realmLock.Release();
+}
+
+bool InformationCore::FindRealmWithAdress(string Address)
+{
+	map<uint32, Realm*>::iterator itr = m_realms.begin();
+	for(; itr != m_realms.end(); itr++)
+	{
+		if (itr->second->Address == Address)
+			return true;
+	}
+	return false;
 }
 
 void InformationCore::UpdateRealmStatus(uint32 realm_id, uint8 Color)
@@ -568,7 +581,7 @@ void InformationCore::TimeoutSockets()
 		it2 = itr;
 		++itr;
 
-		if(!s->removed && (t - s->last_ping) > 60)
+		if(!s->removed && (t - s->last_ping) > 40)
 		{
 			// ping timeout
 			s->removed = true;
@@ -595,7 +608,7 @@ void InformationCore::SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss
 		{
 			DEBUG_LOG("LogonServer","Realm: %s is now offline.\n", pr->Name.c_str());
 			pr->Colour = REALMCOLOUR_OFFLINE;
-	
+
 			// clear the mapping, when its re-registered it will send it again
 			pr->m_charMapLock.Acquire();
 			pr->CharacterMap.clear();

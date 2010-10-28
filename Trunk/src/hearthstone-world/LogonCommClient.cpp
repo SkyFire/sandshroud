@@ -127,10 +127,16 @@ void LogonCommClientSocket::HandlePacket(WorldPacket & recvData)
 
 void LogonCommClientSocket::HandleRegister(WorldPacket & recvData)
 {
-	uint32 realmlid;
 	uint32 error;
+	uint32 realmlid;
 	string realmname;
 	recvData >> error >> realmlid >> realmname;
+
+	if(error || realmlid == 0) // Adress already used, or realm is active on our slot/name
+	{
+		// FUUUUU
+		return;
+	}
 
 	Log.Notice("LogonCommClient", "Realm `%s` registered as realm %u.", realmname.c_str(), realmlid);
 	LogonCommHandler::getSingleton().AdditionAck(_id, realmlid);
