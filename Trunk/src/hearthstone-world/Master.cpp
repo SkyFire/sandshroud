@@ -241,8 +241,8 @@ bool Master::Run(int argc, char ** argv)
 	// Initialize Opcode Table
 	WorldSession::InitPacketHandlerTable();
 
-	string host = Config.MainConfig.GetStringDefault( "Listen", "Host", DEFAULT_HOST );
-	int wsport = Config.MainConfig.GetIntDefault( "Listen", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
+	string host = Config.RealmConfig.GetStringDefault( "Listen", "Host", DEFAULT_HOST );
+	int wsport = Config.RealmConfig.GetIntDefault( "Listen", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
 
 	new ScriptMgr;
 

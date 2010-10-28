@@ -20,14 +20,14 @@
 #include "RStdAfx.h"
 #include "../hearthstone-shared/AuthCodes.h"
 
+struct player_item
+{
+	uint32 displayid;
+	uint8 invtype;
+};
+
 void Session::HandleCharacterEnum(WorldPacket & pck)
 {
-	struct player_item
-	{
-		uint32 displayid;
-		uint8 invtype;
-	};
-
 	player_item items[20];
 	uint32 slot;
 	uint32 i;
@@ -124,8 +124,12 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 				delete res;
 			}
 
-			for( i = 0; i < 20; ++i )
+			for( i = 0; i < 19; ++i )
 				data << items[i].displayid << items[i].invtype << uint32(0);
+
+			for(uint8 c = 0; c < 4; ++c)
+				data << uint32(0)/*bags[i].displayid*/ << uint8(18) << uint32(0);
+			//			Displayid						  // Bag	  // Enchant
 
 			num++;
 		}
