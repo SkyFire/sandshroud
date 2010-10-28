@@ -589,7 +589,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 		}
 
 		SpellEntry* sp = dbcSpell.LookupEntry( itr2->spellId );
-		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );//no need to check if exists or not since we were not able to register this trigger if it would not exist :P
+		SpellEntry* ospinfo = dbcSpell.LookupEntry( origId );
 		if(sp == NULL)
 			continue;
 
@@ -684,7 +684,9 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 					continue;
 			}
 
-			SM_FIValue( SM[SMT_PROC_CHANCE][0], (int32*)&proc_Chance, ospinfo->SpellGroupType );
+			if(ospinfo != NULL)
+				SM_FIValue( SM[SMT_PROC_CHANCE][0], (int32*)&proc_Chance, ospinfo->SpellGroupType );
+
 			if( spellId && Rand( proc_Chance ) )
 			{
 				SpellCastTargets targets;
@@ -716,13 +718,14 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 				}
 
 				//check if we can trigger due to time limitation
-				if( ospinfo->proc_interval )
+				if( ospinfo != NULL && ospinfo->proc_interval )
 				{
 					uint32 now_in_ms=getMSTime();
 					if( itr2->LastTrigger + ospinfo->proc_interval > now_in_ms )
 						continue; //we can't trigger it yet.
 					itr2->LastTrigger = now_in_ms; // consider it triggered
 				}
+
 				//since we did not allow to remove auras like these with interrupt flag we have to remove them manually.
 				if( itr2->procflags2 & PROC_REMOVEONUSE )
 				{
@@ -884,6 +887,9 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							{
 								if( !IsPlayer() )
 									continue;
+								if(ospinfo == NULL)
+									continue;
+
 								Player* plr = TO_PLAYER(this);
 								if(!plr->m_currentSpell || !plr->m_currentSpell->GetSpellProto() ||
 									plr->m_currentSpell->GetSpellProto()->NameHash != SPELL_HASH_DRAIN_SOUL)
@@ -895,6 +901,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							// warlock - Unstable Affliction
 						case 31117:
 							{
+								if(ospinfo == NULL)
+									continue;
 								//null check was made before like 2 times already :P
 								dmg_overwrite = ( ospinfo->EffectBasePoints[0] + 1 ) * 9;
 								if( itr2->caster && GetMapMgr()->GetUnit(itr2->caster) )
@@ -964,6 +972,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							//warlock - Soul Leech
 						case 30294:
 							{
+								if(ospinfo == NULL)
+									continue;
 								if( dmg == (uint32) -1 )
 									continue;
 
@@ -1171,6 +1181,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							//rogue - Relentless Strikes
 						case 14181:
 							{
+								if(ospinfo == NULL)
+									continue;
 								if(!IsPlayer() || TO_UNIT(this) != victim)	// to prevent it proccing 2 times
 									continue;//this should not ocur unless we made a fuckup somewhere
 
@@ -1237,12 +1249,16 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							//mage - Master of Elements
 						case 29077:
 							{
+								if(ospinfo == NULL)
+									continue;
 								dmg_overwrite = float2int32(GetSpellBaseCost(CastingSpell) * ((ospinfo->EffectBasePoints[0] + 1) / 100));
 							}break;
 
 							// Burnout
 						case 44450:
 							{
+								if(ospinfo == NULL)
+									continue;
 								int32 addcost = float2int32(GetSpellBaseCost(CastingSpell) * ((ospinfo->EffectBasePoints[1] + 1) / 100));
 								if( (GetUInt32Value(UNIT_FIELD_POWER1) - addcost) < 0 )
 									SetUInt32Value(UNIT_FIELD_POWER1, 0);
@@ -1281,6 +1297,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							//paladin - Spiritual Attunement
 						case 31786:
 							{
+								if(ospinfo == NULL)
+									continue;
 								//trigger only on heal spell cast by NOT us
 								if( !( CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING ) || TO_UNIT(this) == victim )
 									continue;
@@ -1291,6 +1309,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							//paladin - Eye for an Eye
 						case 25997:
 							{
+								if(ospinfo == NULL)
+									continue;
 								if( victim == TO_UNIT(this) )
 									continue; //not self casted crits
 
@@ -1331,6 +1351,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							// Righteous Vengeance (judgements damage is broken also crusader strike was added in 3.1 need update on 3.1)
 						case 61840:
 							{
+								if(ospinfo == NULL)
+									continue;
 								if( CastingSpell->NameHash != SPELL_HASH_DIVINE_STORM &&
 									CastingSpell->buffType != SPELL_TYPE_JUDGEMENT )
 									continue;
@@ -1340,6 +1362,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							// Paladin - Sheat of Light
 						case 54203:
 							{
+								if(ospinfo == NULL)
+									continue;
 								if(!(CastingSpell->c_is_flags & SPELL_FLAG_IS_HEALING))
 									continue;
 								dmg_overwrite = dmg * (ospinfo->EffectBasePoints[1] + 1) / 400;
@@ -1636,6 +1660,8 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 
 						case 52752: // Ancestral Awakening
 							{
+								if(ospinfo == NULL)
+									continue;
 								if((CastingSpell->NameHash != SPELL_HASH_HEALING_WAVE &&
 									CastingSpell->NameHash != SPELL_HASH_LESSER_HEALING_WAVE &&
 									CastingSpell->NameHash != SPELL_HASH_RIPTIDE) ||
@@ -1944,6 +1970,9 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 
 					case 31616: // Nature's Guardian
 						{
+							if(ospinfo == NULL)
+								continue;
+
 							if(GetHealthPct() > 30)
 								continue;
 
@@ -2091,6 +2120,9 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 						//priest - Reflective Shield
 					case 33619:
 						{
+							if(ospinfo == NULL)
+								continue;
+
 							//requires Power Word: Shield active
 							int power_word_id = GetAuraSpellIDWithNameHash( SPELL_HASH_POWER_WORD__SHIELD );
 							if( !power_word_id )

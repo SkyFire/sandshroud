@@ -1007,6 +1007,12 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 		return true;
 	}
 
+	if(cr->GetAIInterface() == NULL)
+	{
+		SystemMessage(m_session, "Creature was not initialized correctly.");
+		return true;
+	}
+
 	if(cr->GetAIInterface()->GetWayPointsCount())//ALREADY HAVE WAYPOINTS
 	{
 		SystemMessage(m_session, "The creature already has waypoints");
@@ -1025,26 +1031,26 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 		return true;
 	}
 
-	int r;
-	int n;
+	uint32 r;
+	uint32 n;
 	if(sscanf(args, "%u %u", &r, &n) != 2)
 	{
 		SystemMessage(m_session, "Randomly generate wps params: range count");
 		return true;
 	}
 
-	for(int i=0;i<n;++i)
+	for(uint32 i = 0; i < n; i++)
 	{
 		float ang = rand()/100.0f;
 		float ran = (rand()%(r*10))/10.0f;
-		while(ran<1)
+		while(ran < 1)
 		{
 			ran = (rand()%(r*10))/10.0f;
 		}
 
 		float x = cr->GetPositionX()+ran*sin(ang);
 		float y = cr->GetPositionY()+ran*cos(ang);
-		float z = cr->GetMapMgr()->GetBaseMap()->GetLandHeight(x,y);
+		float z = cr->GetCHeightForPosition(true, x, y, cr->GetPositionZ());
 
 		WayPoint* wp = new WayPoint;
 		wp->id = (uint32)cr->GetAIInterface()->GetWayPointsCount()+1;
@@ -1066,7 +1072,6 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 		wp->backwardSpellToCast = 0;
 		wp->forwardSayText = "";
 		wp->backwardSayText = "";
-
 		cr->GetAIInterface()->addWayPoint(wp);
 	}
 
@@ -1076,9 +1081,9 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 		cr->GetAIInterface()->m_moveType = 1;
 		WorldDatabase.Execute("UPDATE creature_spawns SET movetype = 1 WHERE id = %u", cr->GetSQL_id());
 	}
+
 	m_session->GetPlayer()->waypointunit = cr->GetAIInterface();
 	cr->GetAIInterface()->showWayPoints(m_session->GetPlayer(),cr->GetAIInterface()->m_WayPointsShowBackwards);
-
 	return true;
 }
 

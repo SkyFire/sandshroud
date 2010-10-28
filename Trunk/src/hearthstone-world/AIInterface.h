@@ -352,10 +352,10 @@ public:
 	bool m_moveFly;
 	bool m_moveSprint;
 	CreatureState m_creatureState;
-	size_t GetWayPointsCount()
+	uint32 GetWayPointsCount()
 	{
-		if(m_waypoints && !m_waypoints->empty())
-			return m_waypoints->size();
+		if(m_waypoints)
+			return uint32(m_waypoints->size());
 		else
 			return 0;
 	}

@@ -476,6 +476,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Additionalz"
+				>
+				<File
+					RelativePath="..\..\src\hearthstone-world\icon.ico"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\resources.rc"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Battlegrounds"
@@ -741,51 +753,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\Chat.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Chat.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\hearthstone-world\ChatHandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\DatabaseCommands.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\debugcmds.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\GMTicketCommands.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Level0.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Level1.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Level2.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Level3.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\QuestCommands.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\RecallCommands.cpp"
 				>
 			</File>
 			<File
@@ -796,108 +764,152 @@
 				RelativePath="..\..\src\hearthstone-world\WordFilter.h"
 				>
 			</File>
+			<Filter
+				Name="Commands"
+				>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Chat.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Chat.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\DatabaseCommands.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\debugcmds.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\GMTicketCommands.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Level0.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Level1.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Level2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Level3.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\QuestCommands.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\RecallCommands.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Interserver"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-world\ClusterInterface.cpp"
+				RelativePath="..\..\src\hearthstone-world\EventMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\ClusterInterface.h"
+				RelativePath="..\..\src\hearthstone-world\EventMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\LogonCommClient.cpp"
+				RelativePath="..\..\src\hearthstone-world\filelog.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\LogonCommClient.h"
+				RelativePath="..\..\src\hearthstone-world\ObjectMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\LogonCommHandler.cpp"
+				RelativePath="..\..\src\hearthstone-world\ObjectMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\LogonCommHandler.h"
+				RelativePath="..\..\src\hearthstone-world\ObjectStorage.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-world\VoiceChatClientSocket.cpp"
+				RelativePath="..\..\src\hearthstone-world\ObjectStorage.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\VoiceChatClientSocket.h"
+			<Filter
+				Name="Clustering"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorkdSocketCluster.cpp"
+				<File
+					RelativePath="..\..\src\hearthstone-world\ClusterInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\ClusterInterface.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WorkdSocketCluster.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WorkerServerClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WorkerServerClient.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Voice Chat"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorkerServerClient.cpp"
+				<File
+					RelativePath="..\..\src\hearthstone-world\VoiceChatClientSocket.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\VoiceChatClientSocket.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Logon"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorkerServerClient.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\LogonCommClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\LogonCommClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\LogonCommHandler.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\LogonCommHandler.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Map System"
 			>
-			<File
-				RelativePath="..\..\src\hearthstone-world\CellHandler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Map.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\Map.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\MapCell.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\MapCell.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\MapMgr.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\MapMgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\MapScriptInterface.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\MapScriptInterface.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-world\World.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-world\World.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorldCreator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorldCreator.h"
 				>
 			</File>
 			<File
@@ -908,18 +920,58 @@
 				RelativePath="..\..\src\hearthstone-world\WorldRunnable.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorldStateManager.cpp"
+			<Filter
+				Name="Map Interface"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorldStateManager.h"
+				<File
+					RelativePath="..\..\src\hearthstone-world\CellHandler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Map.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\Map.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\MapCell.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\MapCell.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Map Managers"
 				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-world\WorldStates.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\MapMgr.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\MapMgr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\MapScriptInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\MapScriptInterface.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WorldCreator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\WorldCreator.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Environment"
@@ -964,6 +1016,18 @@
 				RelativePath="..\..\src\hearthstone-world\WeatherMgr.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WorldStateManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WorldStateManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WorldStates.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Packet Handlers"
@@ -1006,6 +1070,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-world\MiscHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\MiscHandler.h"
 				>
 			</File>
 			<File
@@ -1253,6 +1321,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\hearthstone-world\Stats.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\Stats.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\hearthstone-world\TaxiMgr.cpp"
 				>
 			</File>
@@ -1272,6 +1348,14 @@
 		<Filter
 			Name="Brains"
 			>
+			<File
+				RelativePath="..\..\src\hearthstone-world\faction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\faction.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\src\hearthstone-world\ScriptMgr.cpp"
 				>
@@ -1358,58 +1442,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-world\EventMgr.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\EventMgr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\faction.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\faction.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\icon.ico"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\MiscHandler.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\ObjectMgr.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\ObjectMgr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\ObjectStorage.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\ObjectStorage.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\resources.rc"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\Stats.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\Stats.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\hearthstone-world\StdAfx.cpp"
 			>
 			<FileConfiguration
@@ -1455,10 +1487,6 @@
 		</File>
 		<File
 			RelativePath="..\..\src\hearthstone-world\UpdateMask.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-world\filelog.h"
 			>
 		</File>
 	</Files>

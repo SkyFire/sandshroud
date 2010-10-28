@@ -3762,7 +3762,7 @@ bool Player::CanFlyInCurrentZoneOrMap()
 	}
 
 #ifdef CATACLYSM
-	// EK, Kal, Deepholm
+	//	 EK,				Kal,			Deepholm
 	if(!GetMapId() || GetMapId() == 1 || GetMapId() == 646)
 	{
 		if(p_caster->HasSpell(90267))
