@@ -6154,7 +6154,7 @@ void Player::AddInRangeObject(Object* pObj)
 					data << uint8(aur->m_auraSlot);
 					data << uint32(aur->GetSpellId());
 					data << uint16(flags);
-					data << uint8(aur->procCharges ? (aur->procCharges*aur->stackSize) : aur->stackSize);
+					data << uint8(aur->procCharges ? (abs(aur->procCharges)*aur->stackSize) : aur->stackSize);
 
 					if(!(flags & AFLAG_NOT_GUID))
 						if(aur->GetCasterGUID())

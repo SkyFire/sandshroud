@@ -407,7 +407,7 @@ struct ProcTriggerSpell
 	uint32 procChance;
 	uint32 procFlags;
 	uint32 procflags2;
-	uint32 procCharges;
+	int32 procCharges;
 	uint32 LastTrigger;
 	uint32 ProcType; //0=triggerspell/1=triggerclassspell
 	uint32 SpellClassMask[3];
@@ -505,7 +505,7 @@ public:
 		return (GetDuration() - n);
 	}
 
-	uint32 procCharges;
+	int32 procCharges;
 	uint32 GetMaxProcCharges(Unit* caster);
 	void ModProcCharges(int32 mod);
 	void RemoveProcCharges(int32 mod);
@@ -751,7 +751,7 @@ public:
 	void SpellAuraConvertRune(bool apply);
 
 	void CreateProcTriggerSpell(Unit* target, uint64 m_caster, uint32 origid, uint32 spellid, uint32 procChance, uint32 procFlags,
-		uint32 procFlags2, uint32 procCharges = 0, uint32 wdtype = 0, uint32 SCM1 = 0, uint32 SCM2 = 0, uint32 SCM3 = 0, int32 procValue = 0);
+		uint32 procFlags2, int32 procCharges = 0, uint32 wdtype = 0, uint32 SCM1 = 0, uint32 SCM2 = 0, uint32 SCM3 = 0, int32 procValue = 0);
 
 	void UpdateAuraModDecreaseSpeed();
 	void SendModifierLog(int32 ** m,int32 v,uint32 *mask,uint8 type,bool pct = false);

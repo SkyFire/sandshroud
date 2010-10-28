@@ -833,14 +833,14 @@ void Aura::Remove()
 		}
 	}
 
-	int32 procCharges = m_spellProto->procCharges;
+	int32 proccharges = m_spellProto->procCharges;
 	if( m_caster != NULL && m_spellProto->SpellGroupType )
 	{
-		SM_FIValue(m_caster->SM[SMT_CHARGES][0],&procCharges, m_spellProto->SpellGroupType);
-		SM_PIValue(m_caster->SM[SMT_CHARGES][1],&procCharges, m_spellProto->SpellGroupType);
+		SM_FIValue(m_caster->SM[SMT_CHARGES][0],&proccharges, m_spellProto->SpellGroupType);
+		SM_PIValue(m_caster->SM[SMT_CHARGES][1],&proccharges, m_spellProto->SpellGroupType);
 	}
 
-	if( procCharges > 0 && !(m_spellProto->procflags2 & PROC_REMOVEONUSE) )
+	if( proccharges > 0 && !(m_spellProto->procflags2 & PROC_REMOVEONUSE) )
 	{
 		if( m_target->m_chargeSpellsInUse )
 		{
@@ -10663,7 +10663,7 @@ void Aura::SpellAuraPreventResurrection(bool apply)
 
 // Crow: Could be a return for ProcTriggerSpell, thats what it originally was, but who cares.
 void Aura::CreateProcTriggerSpell( Unit* target, uint64 m_caster, uint32 origid, uint32 spellid, uint32 procChance,
-uint32 procFlags, uint32 procFlags2, uint32 procCharges, uint32 wdtype, uint32 SCM1,
+uint32 procFlags, uint32 procFlags2, int32 procCharges, uint32 wdtype, uint32 SCM1,
 uint32 SCM2, uint32 SCM3, int32 procValue)
 {
 	if(!m_caster)
