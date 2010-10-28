@@ -28,7 +28,6 @@ extern SQLStorage<GameObjectInfo, HashMapStorageContainer<GameObjectInfo> >			Ga
 extern SQLStorage<ItemPage, HashMapStorageContainer<ItemPage> >						ItemPageStorage;
 extern SQLStorage<Quest, HashMapStorageContainer<Quest> >							QuestStorage;
 extern SQLStorage<GossipText, HashMapStorageContainer<GossipText> >					NpcTextStorage;
-//extern SQLStorage<SpellExtraInfo, HashMapStorageContainer<SpellExtraInfo> >			SpellExtraStorage;
 //extern SQLStorage<GraveyardTeleport, HashMapStorageContainer<GraveyardTeleport> >	GraveyardStorage;
 //extern SQLStorage<TeleportCoords, HashMapStorageContainer<TeleportCoords> >			TeleportCoordStorage;
 //extern SQLStorage<FishingZoneEntry, HashMapStorageContainer<FishingZoneEntry> >		FishingZoneStorage;

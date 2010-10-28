@@ -102,7 +102,7 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 			}
 
 			if(info)  //PET INFO uint32 displayid,	uint32 level,		 uint32 familyid
-				data << uint32(info->DisplayID) << uint32(10) << uint32(info->Family);
+				data << uint32(info->Male_DisplayID) << uint32(10) << uint32(info->Family);
 			else
 				data << uint32(0) << uint32(0) << uint32(0);
 

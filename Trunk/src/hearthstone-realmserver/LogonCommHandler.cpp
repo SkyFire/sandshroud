@@ -25,8 +25,8 @@ LogonCommHandler::LogonCommHandler()
 	idhigh = 1;
 	next_request = 1;
 	pings = !Config.RealmConfig.GetBoolDefault("LogonServer", "DisablePings", false);
-	string logon_pass = Config.RealmConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
-	
+	string logon_pass = Config.ClusterConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
+
 	// sha1 hash it
 	Sha1Hash hash;
 	hash.UpdateData(logon_pass);
@@ -61,10 +61,11 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 		Realm * realm = *itr;
 		data << realm->Name;
 		data << realm->Address;
-		data << realm->Colour;
-		data << realm->Icon;
-		data << realm->WorldRegion;
+		data << uint16(0x042); // Six by nine. Forty two.
+		data << uint8(realm->Icon);
+		data << uint8(realm->WorldRegion);
 		data << realm->Population;
+		data << uint8(0);
 		Socket->SendPacket(&data);
 	}
 }
@@ -320,9 +321,8 @@ void LogonCommHandler::LoadRealmConfiguration()
 	ls->Address = Config.RealmConfig.GetStringDefault("LogonServer", "Address", "127.0.0.1");
 	ls->Port = Config.RealmConfig.GetIntDefault("LogonServer", "Port", 8093);
 	servers.insert(ls);
-	sLog.outColor(TYELLOW, "1 servers, ");
-
 	uint32 realmcount = Config.RealmConfig.GetIntDefault("LogonServer", "RealmCount", 1);
+	sLog.outColor(TYELLOW, "%u servers, ", realmcount);
 	if(realmcount == 0)
 	{
 		sLog.outColor(TRED, "\n   >> no realms found. this server will not be online anywhere!\n");
@@ -334,9 +334,9 @@ void LogonCommHandler::LoadRealmConfiguration()
 			Realm * realm = new Realm;
 			realm->Name = Config.RealmConfig.GetStringVA("Name", "SomeRealm", "Realm%u", i);
 			realm->Address = Config.RealmConfig.GetStringVA("Address", "127.0.0.1:8129", "Realm%u", i);
-			realm->Colour = Config.RealmConfig.GetIntVA("Colour", 1, "Realm%u", i);
+			realm->Colour = Config.RealmConfig.GetIntVA("Color", 1, "Realm%u", i);
 			realm->WorldRegion = Config.RealmConfig.GetIntVA("WorldRegion", 1, "Realm%u", i);
-			realm->Population = Config.RealmConfig.GetFloatVA("Population", 0, "Realm%u", i);
+			realm->Population = Config.RealmConfig.GetFloatVA("Population", 1, "Realm%u", i);
 			string rt = Config.RealmConfig.GetStringVA("Icon", "Normal", "Realm%u", i);
 			uint32 type;
 

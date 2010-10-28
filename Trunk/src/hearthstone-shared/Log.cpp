@@ -246,6 +246,8 @@ WorldLog::~WorldLog()
 		fclose(m_xml);
 		m_xml = NULL;
 	}
+
+	free(onlyPlayer);
 }
 
 void oLog::outColor(uint32 colorcode, const char * str, ...)

@@ -49,10 +49,6 @@
  * As of last update, it is nowhere near complete, only enable for dev use.
  * Default: Disabled
  */
-#ifdef ENABLE_CLUSTERING
-#  error Sorry but clustering is not finished yet. dont bother to try to compile it. it wont work.
-#  define CLUSTERING 1
-#endif
 //#define CLUSTERING 1
 
 #ifndef ENABLE_IMPROVED_TICKETSYSTEM

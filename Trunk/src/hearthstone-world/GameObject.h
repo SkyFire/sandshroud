@@ -55,6 +55,7 @@ struct GameObjectInfo
 	uint32 Unknown12;
 	uint32 Unknown13;
 	uint32 Unknown14;
+
 	uint32 *InvolvedQuestIds;
 	uint32 InvolvedQuestCount;
 	GossipScript* gossip_script;

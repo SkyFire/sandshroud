@@ -49,26 +49,23 @@ void Session::HandleCreatureQueryOpcode(WorldPacket & pck)
 		data << ci->Name;
 		data << uint8(0) << uint8(0) << uint8(0);	// 3 CStrings
 		data << ci->SubName;
-		data << uint8(0); // unk CString
-		data << uint32(ci->Flags1);  
-		data << uint32(ci->Type);
-		data << uint32(ci->Family);
-		data << uint32(ci->Rank);
-		data << uint32(ci->Unknown1);
-		data << uint32(ci->SpellDataID);
-		data << uint32(ci->DisplayID);
-		data << uint32(0);	// unk
-		data << uint32(0);	// unk
-		data << uint32(0);	// unk
-		data << float(ci->unk2);
-		data << float(ci->unk3);
-		data << uint8(ci->Civilian);
-		//data << ci->Leader; // only one uint8 is here
-		data << uint32(0);	// unk
-		data << uint32(0);	// unk
-		data << uint32(0);	// unk
-		data << uint32(0);	// unk
-		data << uint32(0);	// unk
+		data << ci->info_str; //!!! this is a string in 2.3.0 Example: stormwind guard has : "Direction"
+		data << ci->Flags1;
+		data << ci->Type;
+		data << ci->Family;
+		data << ci->Rank;
+		data << ci->Unknown1;
+		data << ci->SpellDataID;
+		data << ci->Male_DisplayID;
+		data << ci->Female_DisplayID;
+		data << ci->Male_DisplayID2;
+		data << ci->Female_DisplayID2;
+		data << ci->unkfloat1;
+		data << ci->unkfloat2;
+		data << ci->Leader;
+		for(uint32 i = 0; i < 6; i++)
+			data << uint32(0);	//QuestItems
+		data << uint32(0);	// CreatureMovementInfo.dbc
 	}
 
 	SendPacket( &data );
@@ -128,114 +125,113 @@ void Session::HandleGameObjectQueryOpcode(WorldPacket & pck)
 void Session::HandleItemQuerySingleOpcode(WorldPacket & pck)
 {
 	int i;
-	uint32 itemid;
+	int32 statcount = 0;
+	uint32 itemid = 0;
 	pck >> itemid;
 
 	DEBUG_LOG("World", "CMSG_ITEM_QUERY_SINGLE for item id %d",	itemid );
 
 	ItemPrototype *itemProto = ItemPrototypeStorage.LookupEntry(itemid);
 	if(!itemProto)
-	{
 		return;
-	} 
 
-	WorldPacket data(SMSG_ITEM_QUERY_SINGLE_RESPONSE, 600 + strlen(itemProto->Name1) + strlen(itemProto->Description) );
-	data << itemProto->ItemId;
-	data << itemProto->Class;
-	data << itemProto->SubClass;
-	data << itemProto->unknown_bc;
-	data << itemProto->Name1;
-	/*data << itemProto->Name2;
-	data << itemProto->Name3;
-	data << itemProto->Name4;*/
-	data << uint8(0) << uint8(0) << uint8(0); // name 2,3,4
-	data << itemProto->DisplayInfoID;
-	data << itemProto->Quality;
-	data << itemProto->Flags;
-	data << itemProto->BuyPrice;
-	data << itemProto->SellPrice;
-	data << itemProto->InventoryType;
-	data << itemProto->AllowableClass;
-	data << itemProto->AllowableRace;
-	data << itemProto->ItemLevel;
-	data << itemProto->RequiredLevel;
-	data << itemProto->RequiredSkill;
-	data << itemProto->RequiredSkillRank;
-	data << itemProto->RequiredSkillSubRank;
-	data << itemProto->RequiredPlayerRank1;
-	data << itemProto->RequiredPlayerRank2;
-	data << itemProto->RequiredFaction;
-	data << itemProto->RequiredFactionStanding;
-	data << itemProto->Unique;
-	data << itemProto->MaxCount;
-	data << itemProto->ContainerSlots;
-	data << uint32(10);	// Count of following stats
-	for(i = 0; i < 10; i++)
+	for(int i = 0; i < 10; i++)
 	{
-		data << itemProto->Stats[i].Type;
-		data << itemProto->Stats[i].Value;
+		if(itemProto->Stats[i].Type)
+			statcount = i + 1; // Crow Classic.
 	}
-	data << uint32(0); // unk
-	data << uint32(0); // unk
+
+	pck << itemProto->ItemId;
+	pck << itemProto->Class;
+	pck << itemProto->SubClass;
+	pck << itemProto->unknown_bc;
+	pck << itemProto->Name1;
+	pck << uint8(0) << uint8(0) << uint8(0); // name 2,3,4
+	pck << itemProto->DisplayInfoID;
+	pck << itemProto->Quality;
+	pck << itemProto->Flags;
+	pck << uint32(0);
+	pck << itemProto->BuyPrice;
+	pck << itemProto->SellPrice;
+	pck << itemProto->InventoryType;
+	pck << itemProto->AllowableClass;
+	pck << itemProto->AllowableRace;
+	pck << itemProto->ItemLevel;
+	pck << itemProto->RequiredLevel;
+	pck << itemProto->RequiredSkill;
+	pck << itemProto->RequiredSkillRank;
+	pck << itemProto->RequiredSpell;
+	pck << itemProto->RequiredPlayerRank1;
+	pck << itemProto->RequiredPlayerRank2;
+	pck << itemProto->RequiredFaction;
+	pck << itemProto->RequiredFactionStanding;
+	pck << itemProto->Unique;
+	pck << itemProto->MaxCount;
+	pck << itemProto->ContainerSlots;
+	pck << uint32(statcount);
+	for(i = 0; i < statcount; i++)
+	{
+		pck << itemProto->Stats[i].Type;
+		pck << itemProto->Stats[i].Value;
+	}
+	pck << uint32(itemProto->ScalingStatsEntry);
+	pck << uint32(itemProto->ScalingStatsFlag);
 	for(i = 0; i < 2; i++)
 	{
-		data << itemProto->Damage[i].Min;
-		data << itemProto->Damage[i].Max;
-		data << itemProto->Damage[i].Type;
+		pck << itemProto->Damage[i].Min;
+		pck << itemProto->Damage[i].Max;
+		pck << itemProto->Damage[i].Type;
 	}
 	// 7 resistances
-	data << itemProto->Armor;
-	data << itemProto->HolyRes;
-	data << itemProto->FireRes;
-	data << itemProto->NatureRes;
-	data << itemProto->FrostRes;
-	data << itemProto->ShadowRes;
-	data << itemProto->ArcaneRes;
-
-	data << itemProto->Delay;
-	data << itemProto->AmmoType;
-	data << itemProto->Range;
-	for(i = 0; i < 5; i++) {
-		data << itemProto->Spells[i].Id;
-		data << itemProto->Spells[i].Trigger;
-		data << itemProto->Spells[i].Charges;
-		data << itemProto->Spells[i].Cooldown;
-		data << itemProto->Spells[i].Category;
-		data << itemProto->Spells[i].CategoryCooldown;
+	pck << itemProto->Armor;
+	pck << itemProto->HolyRes;
+	pck << itemProto->FireRes;
+	pck << itemProto->NatureRes;
+	pck << itemProto->FrostRes;
+	pck << itemProto->ShadowRes;
+	pck << itemProto->ArcaneRes;
+	pck << itemProto->Delay;
+	pck << itemProto->AmmoType;
+	pck << itemProto->Range;
+	for(i = 0; i < 5; i++)
+	{
+		pck << itemProto->Spells[i].Id;
+		pck << itemProto->Spells[i].Trigger;
+		pck << itemProto->Spells[i].Charges;
+		pck << itemProto->Spells[i].Cooldown;
+		pck << itemProto->Spells[i].Category;
+		pck << itemProto->Spells[i].CategoryCooldown;
 	}
-	data << itemProto->Bonding;
-	data << itemProto->Description;
-	data << itemProto->PageId;
-	data << itemProto->PageLanguage;
-	data << itemProto->PageMaterial;
-	data << itemProto->QuestId;
-	data << itemProto->LockId;
-	data << itemProto->LockMaterial;
-	data << itemProto->Field108;
-	data << itemProto->RandomPropId;
-	data << itemProto->RandomSuffixId;
-	data << itemProto->Block;
-	data << itemProto->ItemSet;
-	data << itemProto->MaxDurability;
-	data << itemProto->ZoneNameID;
-	data << itemProto->MapID;
-	data << itemProto->BagFamily;
-	data << itemProto->ToolCategory;
+	pck << itemProto->Bonding;
+	pck << itemProto->Description;
+	pck << itemProto->PageId;
+	pck << itemProto->PageLanguage;
+	pck << itemProto->PageMaterial;
+	pck << itemProto->QuestId;
+	pck << itemProto->LockId;
+	pck << int32(itemProto->LockMaterial);
+	pck << itemProto->SheathId;
+	pck << itemProto->RandomPropId;
+	pck << itemProto->RandomSuffixId;
+	pck << itemProto->Block;
+	pck << itemProto->ItemSet;
+	pck << itemProto->MaxDurability;
+	pck << itemProto->ZoneNameID;
+	pck << itemProto->MapID;
+	pck << itemProto->BagFamily;
+	pck << itemProto->TotemCategory;
 	// 3 sockets
-	data << itemProto->Sockets[0].SocketColor ;
-	data << itemProto->Sockets[0].Unk;
-	data << itemProto->Sockets[1].SocketColor ;
-	data << itemProto->Sockets[1].Unk ;
-	data << itemProto->Sockets[2].SocketColor ;
-	data << itemProto->Sockets[2].Unk ;
-
-	data << itemProto->SocketBonus;
-	data << itemProto->GemProperties;
-	data << itemProto->ItemExtendedCost;
-	data << itemProto->DisenchantReqSkill;	// float should be in this place
-	data << itemProto->ArmorDamageModifier;
-	data << uint32(1); // unk
-	data << uint32(1); // unk
-	//WPAssert(data.size() == 453 + itemProto->Name1.length() + itemProto->Description.length());
-	SendPacket( &data );
+	for(i = 0; i < 3; i++)
+	{
+		pck << itemProto->Sockets[i].SocketColor;
+		pck << itemProto->Sockets[i].Unk;
+	}
+	pck << itemProto->SocketBonus;
+	pck << itemProto->GemProperties;
+	pck << itemProto->DisenchantReqSkill;
+	pck << float(itemProto->ArmorDamageModifier);	// should be a float?
+	pck << uint32(0);								// 2.4.2 Item duration in seconds
+	pck << uint32(0);								// ItemLimitCategory
+	pck << uint32(0);								// HolidayId.
+	SendPacket( &pck );
 }

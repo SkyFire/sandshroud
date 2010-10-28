@@ -493,6 +493,7 @@ void AuthSocket::OnRead()
 		return;
 
 	uint8 Command = *(uint8*)GetReadBuffer().GetBufferStart();
+	Log.Notice("AuthSocket", "Got cmd %u", Command);
 	last_recv = UNIXTIME;
 	if(Command < MAX_AUTH_CMD && Handlers[Command] != NULL)
 		(this->*Handlers[Command])();
@@ -502,6 +503,7 @@ void AuthSocket::OnRead()
 
 void AuthSocket::HandleRealmlist()
 {
+	DEBUG_LOG("AuthSocket","HandleRealmlist.");
 	sInfoCore.SendRealms(this);
 }
 

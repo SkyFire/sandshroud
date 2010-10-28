@@ -294,7 +294,10 @@ public:
 		return instance == map->end() ? NULL : instance->second;
 	}
 
+#ifndef CLUSTERING
 private:
+#endif
+
 	void _LoadInstances();
 	void _CreateMap(uint32 mapid);
 	MapMgr* _CreateInstance(Instance* in);

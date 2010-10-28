@@ -777,6 +777,15 @@ bool loader_stub(const char * filename, const char * format, bool ind, T& l, boo
 
 #define LOAD_DBC(filename, format, ind, stor, strings) if(!loader_stub(filename, format, ind, stor, strings)) { return false; } 
 
+bool LoadRSDBCs()
+{
+	/* Needed for: */
+	LOAD_DBC("DBC/AreaTable.dbc", areatableFormat, true, dbcArea, true);
+	/* Needed for: */
+	LOAD_DBC("DBC/ChatChannels.dbc", chatchannelformat, true, dbcChatChannels, true);
+	return true;
+}
+
 bool LoadDBCs()
 {
 	/* Needed for: Used in loading of achievements and finding saving information and grabbing criteria
@@ -942,6 +951,5 @@ bool LoadDBCs()
 	LOAD_DBC("DBC/WMOAreaTable.dbc", WMOAreaEntryfmt, true, dbcWMOAreaTable, true);
 	/* Needed for: */
 	LOAD_DBC("DBC/DestructibleModelData.dbc", DestructibleModelDataFormat, true, dbcDestructibleModelDataEntry, false);
-
 	return true;
 }

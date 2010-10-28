@@ -57,7 +57,8 @@ struct RPlayerInfo
 
 #ifndef _GAME
 /* Copied structures from game */
-struct SocketInfo {
+struct SocketInfo
+{
 	uint32 SocketColor;
 	uint32 Unk;
 };
@@ -90,24 +91,24 @@ struct ItemPrototype
 	uint32 ItemId;
 	uint32 Class;
 	uint32 SubClass;
-	uint32 unknown_bc;
+	int32 unknown_bc;
 	char * Name1;
-	char * Name2;
-	char * Name3;
-	char * Name4;
+//	char * Name2;
+//	char * Name3;
+//	char * Name4;
 	uint32 DisplayInfoID;
 	uint32 Quality;
 	uint32 Flags;
 	uint32 BuyPrice;
 	uint32 SellPrice;
 	uint32 InventoryType;
-	uint32 AllowableClass;
-	uint32 AllowableRace;
+	int32 AllowableClass;
+	int32 AllowableRace;
 	uint32 ItemLevel;
 	uint32 RequiredLevel;
 	uint32 RequiredSkill;
 	uint32 RequiredSkillRank;
-	uint32 RequiredSkillSubRank;
+	uint32 RequiredSpell;
 	uint32 RequiredPlayerRank1;
 	uint32 RequiredPlayerRank2;
 	uint32 RequiredFaction;
@@ -116,7 +117,9 @@ struct ItemPrototype
 	uint32 MaxCount;
 	uint32 ContainerSlots;
 	ItemStat Stats[10];
-	ItemDamage Damage[5];
+	uint32 ScalingStatsEntry;
+	uint32 ScalingStatsFlag;
+	ItemDamage Damage[2];
 	uint32 Armor;
 	uint32 HolyRes;
 	uint32 FireRes;
@@ -136,7 +139,7 @@ struct ItemPrototype
 	uint32 QuestId;
 	uint32 LockId;
 	uint32 LockMaterial;
-	uint32 Field108;
+	uint32 SheathId;
 	uint32 RandomPropId;
 	uint32 RandomSuffixId;
 	uint32 Block;
@@ -145,12 +148,12 @@ struct ItemPrototype
 	uint32 ZoneNameID;
 	uint32 MapID;
 	uint32 BagFamily;
-	uint32 ToolCategory;
+	uint32 TotemCategory;
 	SocketInfo Sockets[3];
 	uint32 SocketBonus;
 	uint32 GemProperties;
-	uint32 ItemExtendedCost;
-	uint32 DisenchantReqSkill;
+	int32 DisenchantReqSkill;
+	int32 Lootgold;
 	uint32 ArmorDamageModifier;
 };
 
@@ -159,15 +162,20 @@ struct CreatureInfo
 	uint32 Id;
 	char * Name;
 	char * SubName;
+	char * info_str;
 	uint32 Flags1;
 	uint32 Type;
+	uint32 TypeFlags;
 	uint32 Family;
 	uint32 Rank;
 	uint32 Unknown1;
 	uint32 SpellDataID;
-	uint32 DisplayID;
-	float unk2;
-	float unk3;
+	uint32 Male_DisplayID;
+	uint32 Female_DisplayID;
+	uint32 Male_DisplayID2;
+	uint32 Female_DisplayID2;
+	float unkfloat1; // Something to do with elites.
+	float unkfloat2; // Something to do with unkfloat1.
 	uint8  Civilian;
 	uint8  Leader;
 };
@@ -203,11 +211,6 @@ struct GameObjectInfo
 	uint32 Unknown12;
 	uint32 Unknown13;
 	uint32 Unknown14;
-	/*float UnknownFloat;	// uncomment when DB has the fields
-	uint32 Unknown15;
-	uint32 Unknown16;
-	uint32 Unknown17;
-	uint32 Unknown18;*/
 };
 
 struct ItemPage
@@ -221,8 +224,8 @@ struct ItemPage
 struct Quest
 {
 	uint32 id;
-	uint32 quest_sort;
 	uint32 zone_id;
+	uint32 quest_sort;
 	uint32 quest_flags;
 	uint32 min_level;
 	uint32 max_level;
@@ -230,8 +233,11 @@ struct Quest
 	uint32 required_races;
 	uint32 required_class;
 	uint32 required_tradeskill;
+	uint32 required_tradeskill_value;
 	uint32 required_rep_faction;
 	uint32 required_rep_value;
+
+	uint32 suggested_players;
 
 	uint32 time;
 	uint32 special_flags;
@@ -251,11 +257,14 @@ struct Quest
 
 	char * objectivetexts[4];
 
-	uint32 required_item[4];
-	uint32 required_itemcount[4];
+	uint32 required_item[6];
+	uint32 required_itemcount[6];
+
+	uint32 required_kill_player;
 
 	uint32 required_mob[4];
 	uint32 required_mobcount[4];
+	uint32 required_spell[4];
 
 	uint32 reward_choiceitem[6];
 	uint32 reward_choiceitemcount[6];
@@ -263,40 +272,34 @@ struct Quest
 	uint32 reward_item[4];
 	uint32 reward_itemcount[4];
 
-	uint32 reward_repfaction[2];
-	int32 reward_repvalue[2];
-	uint32 reward_replimit;
+	uint32 reward_repfaction[5];
+	int32 reward_repvalue[5];
+	int32 reward_replimit/*[5]*/;
 
-	uint32 reward_rank;
-
+	uint32 reward_title;
 	uint32 reward_money;
+	uint32 reward_honor;
 	uint32 reward_xp;
 	uint32 reward_spell;
+	uint32 reward_talents;
 	uint32 effect_on_player;
 
 	uint32 point_mapid;
-	uint32 point_x;
-	uint32 point_y;
+	float point_x;
+	float point_y;
 	uint32 point_opt;
 
 	uint32 required_money;
 	uint32 required_triggers[4];
 	uint32 required_quests[4];
+	uint32 required_quest_and_or;
 	uint32 receive_items[4];
 	uint32 receive_itemcount[4];
-	int is_repeatable;
-
-	uint32 count_required_mob;
-	uint32 count_requiredquests;
-	uint32 count_requiredtriggers;
-	uint32 count_receiveitems;
-	uint32 count_reward_choiceitem;
-	uint32 count_required_item;
-	uint32 required_mobtype[4];
-	uint32 count_reward_item;
-	uint32 reward_xp_as_money;
+	uint8  is_repeatable;
+	uint32 reward_arenapoints;
+	uint32 start_phase;
+	uint32 complete_phase;
 };
-
 
 struct GossipText_Text
 {
@@ -315,7 +318,8 @@ struct GossipText
 struct MapInfo
 {
 	uint32 mapid;
-	uint32 screenid;
+	char * name;
+	bool load;
 	uint32 type;
 	uint32 playerlimit;
 	uint32 minlevel;
@@ -323,11 +327,16 @@ struct MapInfo
 	float repopy;
 	float repopz;
 	uint32 repopmapid;
-	char * name;
 	uint32 flags;
 	uint32 cooldown;
-	uint32 required_quest;
+ 	uint32 required_quest;
 	uint32 required_item;
+	uint32 heroic_key[2];
+	float update_distance;
+	uint32 checkpoint_id;
+	uint32 phasehorde;
+	uint32 phasealliance;
+	bool collision;
 
 	bool HasFlag(uint32 flag)
 	{

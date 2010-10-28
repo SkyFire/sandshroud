@@ -107,14 +107,15 @@ void LogonCommClientSocket::HandlePacket(WorldPacket & recvData)
 		NULL,												// RCMSG_TEST_CONSOLE_LOGIN
 		NULL,												// RSMSG_CONSOLE_LOGIN_RESULT
 		NULL,												// RCMSG_MODIFY_DATABASE
+		NULL,												// RSMSG_REALM_POP_REQ
+		NULL,												// RCMSG_REALM_POP_RES
 		&LogonCommClientSocket::HandlePong,					// RCMSG_SERVER_PING
 		&LogonCommClientSocket::HandlePong,					// RSMSG_SERVER_PONG
 	};
 
-
 	if(recvData.GetOpcode() >= RMSG_COUNT || Handlers[recvData.GetOpcode()] == 0)
 	{
-		printf("Got unknwon packet from logoncomm: %u\n", recvData.GetOpcode());
+		printf("Got unknown packet from logoncomm: %u\n", recvData.GetOpcode());
 		return;
 	}
 
@@ -151,7 +152,7 @@ void LogonCommClientSocket::HandleSessionInfo(WorldPacket & recvData)
 
 	// find the socket with this request
 	WorldSocket * sock = sLogonCommHandler.GetSocketByRequest(request_id);
-	if(sock == 0 || sock->Authed)	   // Expired/Client disconnected
+	if(sock == 0 || sock->Authed || !sock->IsConnected())	   // Expired/Client disconnected
 	{
 		m.Release();
 		return;
@@ -181,24 +182,27 @@ void LogonCommClientSocket::SendPing()
 	last_ping = uint32(time(NULL));
 }
 
-void LogonCommClientSocket::SendPacket(WorldPacket * data)
+void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 {
 	logonpacket header;
 	bool rv;
+	if(!m_connected || m_deleted)
+		return;
 
 	BurstBegin();
 
 	header.opcode = data->GetOpcode();
-	header.size   = uint32(ntohl((u_long)data->size()));
+	header.size = (uint32)data->size();
+	swap32(&header.size);
 
-	if(use_crypto)
+	if(use_crypto && !no_crypto)
 		_sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
 
 	rv = BurstSend((const uint8*)&header, 6);
 
 	if(data->size() > 0 && rv)
 	{
-		if(use_crypto)
+		if(use_crypto && !no_crypto)
 			_sendCrypto.Process((unsigned char*)data->contents(), (unsigned char*)data->contents(), (unsigned int)data->size());
 
 		rv = BurstSend((const uint8*)data->contents(), (uint32)data->size());
@@ -226,25 +230,20 @@ void LogonCommClientSocket::SendChallenge()
 {
 	uint8 * key = sLogonCommHandler.sql_passhash;
 
+	_recvCrypto.Setup(key, 20);
+	_sendCrypto.Setup(key, 20);
+
+	/* packets are encrypted from now on */
+	use_crypto = true;
+
 	WorldPacket data(RCMSG_AUTH_CHALLENGE, 20);
 	data.append(key, 20);
-	SendPacket(&data);
-
-	/* initialize rc4 keys */
-
-	printf("Key:");
-	sLog.outColor(TGREEN, " ");
-	for(int i = 0; i < 20; ++i)
-		printf("%.2X ", key[i]);
-	sLog.outColor(TNORMAL, "\n");
-
-	_recvCrypto.Setup(key, 20);
-	_sendCrypto.Setup(key, 20);	
+	SendPacket(&data, true);
 }
 
 void LogonCommClientSocket::HandleAuthResponse(WorldPacket & recvData)
 {
-	uint8 result;
+	uint32 result = 0;
 	recvData >> result;
 	if(result != 1)
 	{

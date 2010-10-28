@@ -51,14 +51,12 @@ int main(int argc, char *argv[])
 
 	ThreadPool.Startup();
 
-    /* Print Banner */
+	/* Print Banner */
 	Log.Notice("Server", "==============================================================");
 	Log.Notice("Server", "| Hearthstone - Realm Server                     |");
 	Log.Notice("Server", "| Revision %04u                                 |", BUILD_REVISION);
 	Log.Notice("Server", "==============================================================");
 	Log.Line();
-
-	
 
 	Database_Character = Database::Create();
 	Database_World = Database::Create();
@@ -66,20 +64,20 @@ int main(int argc, char *argv[])
 
 	new ClusterMgr;
 	new ClientMgr;
-	
+
 	Log.Line();
 	Config.ClusterConfig.SetSource("./hearthstone-realmserver.conf");
 	Config.RealmConfig.SetSource("./hearthstone-realms.conf");
 	Log.Notice("Database", "Connecting to databases...");
 	if(!_StartCharacterDatabase() ||
-	   !_StartWorldDatabase() )
+		!_StartWorldDatabase() )
 	{
 		Log.Error("Database", "One or more errors occured while connecting to databases.");
 		exit(-1);
 	}
 	else
 	{
-		Log.Error("Database", "Connections established successfully.");
+		Log.Success("Database", "Connections established successfully.");
 	}
 
 	ThreadPool.ShowStats();
@@ -120,7 +118,7 @@ int main(int argc, char *argv[])
 	/* main loop */
 	for(;;)
 	{
-        sLogonCommHandler.UpdateSockets();
+		sLogonCommHandler.UpdateSockets();
 		//wsl->Update();
 		//isl->Update();
 		sClientMgr.Update();

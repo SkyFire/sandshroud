@@ -18,6 +18,7 @@
  */
 
 #ifdef CLUSTERING
+
 #ifndef _CLUSTERINTERFACE_H
 #define _CLUSTERINTERFACE_H
 
@@ -28,9 +29,6 @@ typedef void(ClusterInterface::*ClusterInterfaceHandler)(WorldPacket&);
 
 class ClusterInterface : public Singleton<ClusterInterface>
 {
-	Mutex m_onlinePlayerMapMutex;
-	typedef HM_NAMESPACE::hash_map<uint32,RPlayerInfo*> OnlinePlayerStorageMap;
-	OnlinePlayerStorageMap _onlinePlayers;
 	WSClient * _clientSocket;
 	FastQueue<WorldPacket*, Mutex> _pckQueue;
 	time_t _lastConnectTime;
@@ -41,6 +39,9 @@ class ClusterInterface : public Singleton<ClusterInterface>
 	Mutex m_mapMutex;
 
 public:
+	Mutex m_onlinePlayerMapMutex;
+	typedef HM_NAMESPACE::hash_map<uint32,RPlayerInfo*> OnlinePlayerStorageMap;
+	OnlinePlayerStorageMap _onlinePlayers;
 
 	string GenerateVersionString();
 
@@ -55,7 +56,6 @@ public:
 
 	RPlayerInfo * GetPlayer(uint32 guid)
 	{
-		RPlayerInfo * inf;
 		OnlinePlayerStorageMap::iterator itr;
 		m_onlinePlayerMapMutex.Acquire();
 		itr = _onlinePlayers.find(guid);
@@ -79,6 +79,7 @@ public:
 
 	void Update();
 	void DestroySession(uint32 sid);
+	void ConnectionDropped();
 
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket * data) { if(_clientSocket) _clientSocket->SendPacket(data); }
 	HEARTHSTONE_INLINE void SetSocket(WSClient * s) { _clientSocket = s; }
@@ -89,4 +90,5 @@ public:
 #define sClusterInterface ClusterInterface::getSingleton()
 
 #endif
+
 #endif

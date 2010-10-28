@@ -645,11 +645,15 @@ public:
 		}
 	}
 
+	void Load(std::string IndexName, const char * FormatString)
+	{
+		Load(IndexName.c_str(), FormatString);
+	}
+
 	/** Loads from the table.
 	 */
 	void Load(const char * IndexName, const char * FormatString)
 	{
-		//printf("Loading database cache from `%s`...\n", IndexName);
 		Storage<T, StorageType>::Load(IndexName, FormatString);
 		QueryResult * result;
 		if(Storage<T, StorageType>::_storage.NeedsMax())
@@ -661,7 +665,8 @@ public:
 				Max = result->Fetch()[0].GetUInt32() + 1;
 				if(Max > STORAGE_ARRAY_MAX)
 				{
-					Log.Warning("Storage", "The table, '%s', has been limited to maximum of %u entries. Any entry higher than %u will be discarded.",
+					Log.Warning("Storage", "The table, '%s', has been limited to maximum of %u entries.\
+						Any entry higher than %u will be discarded.",
 						IndexName, STORAGE_ARRAY_MAX, Max );
 
 					Max = STORAGE_ARRAY_MAX;

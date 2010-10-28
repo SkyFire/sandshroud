@@ -627,7 +627,8 @@ enum SOCKET_GEM_COLOR
 };
 
 #pragma pack(push,1)
-struct SocketInfo {
+struct SocketInfo
+{
 	uint32 SocketColor;
 	uint32 Unk;
 };

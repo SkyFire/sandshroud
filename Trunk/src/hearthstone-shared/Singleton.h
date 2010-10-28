@@ -22,16 +22,6 @@
 
 #include "Errors.h"
 
-/// Should be placed in the appropriate .cpp file somewhere
-#define initialiseSingleton( type ) \
-  template <> type * Singleton < type > :: mSingleton = 0
-
-/// To be used as a replacement for initialiseSingleton( )
-///  Creates a file-scoped Singleton object, to be retrieved with getSingleton
-#define createFileSingleton( type ) \
-  initialiseSingleton( type ); \
-  type the##type
-
 template < class type > class SERVER_DECL Singleton {
 public:
   /// Constructor
@@ -58,6 +48,13 @@ protected:
   /// Singleton pointer, must be set to 0 prior to creating the object
   static type * mSingleton;
 };
+
+/// Should be placed in the appropriate .cpp file somewhere
+#define initialiseSingleton( type ) template <> type * Singleton < type > :: mSingleton = 0
+
+/// To be used as a replacement for initialiseSingleton( )
+///  Creates a file-scoped Singleton object, to be retrieved with getSingleton
+#define createFileSingleton( type ) initialiseSingleton( type ); type the##type
 
 #endif
 

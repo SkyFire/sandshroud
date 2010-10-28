@@ -764,6 +764,9 @@ public:
 	void SendAuctionList(Creature* pCreature);
 	void SendSpiritHealerRequest(Creature* pCreature);
 	void FullLogin(Player* plr);
+#ifdef CLUSTERING
+	bool ClusterTryPlayerLogin(uint32 Guid, string GMPermissions, uint32 Account_Flags);
+#endif
 
 	float m_wLevel; // Level of water the player is currently in
 	bool m_bIsWLevelSet; // Does the m_wLevel variable contain up-to-date information about water level?

@@ -302,12 +302,16 @@ bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
 
 		Player* plr = m_session->GetPlayer();
 
-		if(plr->GetMapMgr()==chr->GetMapMgr())
+#ifndef CLUSTERING
+		if(plr->GetMapMgr() == chr->GetMapMgr())
 			chr->_Relocate(plr->GetMapId(),plr->GetPosition(),false,false,plr->GetInstanceID());
 		else
 		{
+#endif
 			sEventMgr.AddEvent(chr,&Player::EventPortToGM,plr->GetLowGUID(),0,1,1,0);
+#ifndef CLUSTERING
 		}
+#endif
 	}
 	else
 	{

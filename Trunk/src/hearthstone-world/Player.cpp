@@ -8276,7 +8276,7 @@ void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompre
 	while(delayedPackets.size())
 	{
 		pck = delayedPackets.next();
-		if(pck->GetOpcode() > NUM_MSG_TYPES || pck->size() > WORLDSOCKET_SENDBUF_SIZE)
+		if(pck->GetOpcode() > NUM_MSG_TYPES || pck->size() > 131078)
 		{	// FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
 			if(delayedPackets.size() == pck->size())
 				delayedPackets.clear();

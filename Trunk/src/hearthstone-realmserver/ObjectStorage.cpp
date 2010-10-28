@@ -21,20 +21,18 @@
 
 /** Table formats converted to strings
  */
-const char * gItemPrototypeFormat						= "uuuussssuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuffuffuffuffuuuuuuuuuufuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuusuuuuuuuuuuuuuuuuuuuuuuuuuu";
-const char * gCreatureNameFormat						= "usssuuuuuuuuuuffcc";
+const char * gItemPrototypeFormat						= "uuuisxxxuuuuuuiiuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuffuuuuuuuuuufuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuusuuuuuuuuuuuuuuuuuuuuuuuuuuu";
+const char * gCreatureNameFormat						= "usssuuuuuuuuuuuffcc";
 const char * gGameObjectNameFormat						= "uuusuuuuuuuuuuuuuuuuuuuuuuuu";
-const char * gCreatureProtoFormat						= "uuuuuuufuuuffuffuuuuuuuuuuuuuuuuuuffsuuuufffu";
+const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuibuufffuuiuc";
 const char * gAreaTriggerFormat							= "ucuusffffuu";
 const char * gItemPageFormat							= "usu";
 const char * gNpcTextFormat								= "ufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuu";
-const char * gQuestFormat								= "uuuuuuuuuuuuuuuuuuussssssssssuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
-const char * gSpellExtraFormat							= "uuuu";
+const char * gQuestFormat								= "uuuuuuuuuuuuuuuuuuuussssssssssuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuuuuuuuuuuuuuuuuuuucuuu";
 const char * gGraveyardFormat							= "uffffuuuux";
 const char * gTeleportCoordFormat						= "uxufffx";
-const char * gPvPAreaFormat								= "ush";
 const char * gFishingFormat								= "uuu";
-const char * gWorldMapInfoFormat						= "uuuuufffusuuuuuuufuu";
+const char * gWorldMapInfoFormat						= "usbuuufffuuuuuuufuuub";
 const char * gZoneGuardsFormat							= "uuu";
 
 /** SQLStorage symbols
@@ -47,7 +45,6 @@ SQLStorage<GameObjectInfo, HashMapStorageContainer<GameObjectInfo> >			GameObjec
 SQLStorage<ItemPage, HashMapStorageContainer<ItemPage> >						ItemPageStorage;
 SQLStorage<Quest, HashMapStorageContainer<Quest> >								QuestStorage;
 SQLStorage<GossipText, HashMapStorageContainer<GossipText> >					NpcTextStorage;
-//SQLStorage<SpellExtraInfo, HashMapStorageContainer<SpellExtraInfo> >			SpellExtraStorage;
 //SQLStorage<GraveyardTeleport, HashMapStorageContainer<GraveyardTeleport> >		GraveyardStorage;
 //SQLStorage<TeleportCoords, HashMapStorageContainer<TeleportCoords> >			TeleportCoordStorage;
 //SQLStorage<FishingZoneEntry, HashMapStorageContainer<FishingZoneEntry> >		FishingZoneStorage;

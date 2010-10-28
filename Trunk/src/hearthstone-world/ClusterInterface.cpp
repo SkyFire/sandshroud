@@ -49,8 +49,15 @@ ClusterInterface::~ClusterInterface()
 string ClusterInterface::GenerateVersionString()
 {
 	char str[200];
-	snprintf(str, 200, "Hearthstone r%u/%s-%s-%s", g_getRevision(), CONFIG, PLATFORM_TEXT, ARCH);
+	snprintf(str, 200, "Hearthstone r%u/%s-%s-%s", BUILD_REVISION, CONFIG, PLATFORM_TEXT, ARCH);
 	return string(str);
+}
+
+void ClusterInterface::ConnectionDropped()
+{
+	Log.Warning("ClusterInterface", "Socket disconnected, will attempt reconnect later");
+	m_connected = false;
+	_clientSocket = NULL;
 }
 
 void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void * data, uint32 sessionid)
@@ -117,7 +124,7 @@ void ClusterInterface::HandleAuthRequest(WorldPacket & pck)
 
 	WorldPacket data(ICMSG_AUTH_REPLY, 50);
 	data.append(key, 20);
-	data << uint32(g_getRevision());
+	data << uint32(BUILD_REVISION);
 	data << GenerateVersionString();
 	SendPacket(&data);
 
@@ -159,8 +166,7 @@ void ClusterInterface::HandleCreateInstance(WorldPacket & pck)
 	uint32 mapid, instanceid;
 	pck >> mapid >> instanceid;
 	OUT_DEBUG("ClusterInterface", "Creating Instance %u on Map %u", instanceid, mapid);
-	Map * pMap = sWorldCreator.GetMap(mapid);
-	pMap->CreateMapMgrInstance(instanceid);
+	sInstanceMgr._CreateInstance(mapid, instanceid);
 }
 
 void ClusterInterface::HandleDestroyInstance(WorldPacket & pck)
@@ -171,40 +177,38 @@ void ClusterInterface::HandleDestroyInstance(WorldPacket & pck)
 void ClusterInterface::HandlePlayerLogin(WorldPacket & pck)
 {
 	/* player x logging into instance y */
-	uint32 guid, instance, mapid;
-	uint32 accountid, accountflags, sessionid;
-	string gmpermissions, accountname;
-	pck >> guid >> mapid >> instance >> accountid >> accountflags >> sessionid >> gmpermissions >> accountname;
+	uint32 Guid, instance, mapid;
+	uint32 AccountId, Account_Flags, sessionid;
+	string GMPermissions, accountname;
+	pck >> Guid >> mapid >> instance >> AccountId >> Account_Flags >> sessionid >> GMPermissions >> accountname;
 
 	/* find the instance */
-	Map * ma = sWorldCreator.GetMap(mapid);
-	ASSERT(ma);
-	MapMgr* mm = ma->GetInstance(instance);
+	MapMgr* mm = sInstanceMgr.GetMapMgr(mapid);
 	ASSERT(mm);
 
 	/* create the session */
-	WorldSession * s = sWorld.FindSession(accountid);
-	ASSERT(!s);
+	WorldSession * s = sWorld.FindSession(AccountId);
 
 	/* create the socket */
 	WorldSocket * so = new WorldSocket(sessionid);
-	s = new WorldSession(accountid, accountname, so);
+	if (s == NULL)
+		s = new WorldSession(AccountId, accountname, so);
 	_sessions[sessionid] = s;
 	sWorld.AddSession(s);
 
-	bool login_result = s->PlayerLogin(guid, mapid, instance);
+	bool login_result = s->ClusterTryPlayerLogin(Guid, GMPermissions, Account_Flags);
 	if(login_result)
 	{
 		/* login was ok. send a message to the realm server telling him to distribute our info to all other realm server */
 		WorldPacket data(ICMSG_PLAYER_LOGIN_RESULT, 5);
-		data << guid << sessionid <<  uint8(1);
+		data << Guid << sessionid <<  uint8(1);
 		SendPacket(&data);
 	}
 	else
 	{
 		/* for some reason the login failed */
 		WorldPacket data(ICMSG_PLAYER_LOGIN_RESULT, 5);
-		data << guid << sessionid << uint8(0);
+		data << Guid << sessionid << uint8(0);
 		SendPacket(&data);
 
 		/* tell the client his login failed before deleting the session */
@@ -301,12 +305,12 @@ void ClusterInterface::HandlePlayerChangedServers(WorldPacket & pck)
 
 	/* build the packet with the players information */
 	WorldPacket data(ICMSG_PLAYER_CHANGE_SERVER_INFO, 1000);
-	data << sessionid << plr->GetGUIDLow();
+	data << sessionid << plr->GetLowGUID();
 
 	/* pack */
 	//data << plr->
 	/* remove the player from our world. */
-	sEventMgr.AddEvent(plr, &Player::EventRemoveAndDelete, EVENT_GAMEOBJECT_EXPIRE	/* meh :P */, 1000, 1);
+	sEventMgr.AddEvent(plr, &Player::EventRemoveAndDelete, EVENT_GAMEOBJECT_EXPIRE	/* meh :P */, 1000, 1, 0);
 
 	/* dereference the session */
 }
