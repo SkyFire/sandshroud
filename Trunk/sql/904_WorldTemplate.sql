@@ -65,7 +65,7 @@ CREATE TABLE `auctionhouse` (
   `group` tinyint(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `a` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=latin1 COMMENT='Auction House';
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='Auction House';
 
 -- ----------------------------
 -- Table structure for clientaddons
@@ -78,7 +78,7 @@ CREATE TABLE `clientaddons` (
   `showinlist` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `index` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=167 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Client Addons';
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Client Addons';
 
 -- ----------------------------
 -- Table structure for command_overrides
@@ -320,7 +320,7 @@ CREATE TABLE `creature_spawns` (
   `CanMove` int(8) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `b` (`map`)
-) ENGINE=MyISAM AUTO_INCREMENT=137662 DEFAULT CHARSET=utf8 COMMENT='Spawn System';
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='Spawn System';
 
 -- ----------------------------
 -- Table structure for creature_staticspawns
@@ -574,7 +574,7 @@ CREATE TABLE `gameobject_spawns` (
   `phase` tinyint(3) NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID`),
   KEY `Map` (`Map`)
-) ENGINE=MyISAM AUTO_INCREMENT=2132063 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0 ROW_FORMAT=FIXED COMMENT='Spawn System';
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0 ROW_FORMAT=FIXED COMMENT='Spawn System';
 
 -- ----------------------------
 -- Table structure for gameobject_staticspawns
@@ -617,7 +617,7 @@ CREATE TABLE `graveyards` (
   `faction` smallint(5) unsigned NOT NULL DEFAULT '0',
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM AUTO_INCREMENT=1721 DEFAULT CHARSET=latin1 COMMENT='Graveyard System';
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='Graveyard System';
 
 -- ----------------------------
 -- Table structure for item_quest_association
@@ -1064,7 +1064,7 @@ CREATE TABLE `playercreateinfo` (
   `mindmg` float NOT NULL DEFAULT '0',
   `maxdmg` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`Index`,`race`)
-) ENGINE=MyISAM AUTO_INCREMENT=66 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Player System';
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Player System';
 
 -- ----------------------------
 -- Table structure for playercreateinfo_bars
@@ -1368,7 +1368,7 @@ CREATE TABLE `recall` (
   `positionY` float NOT NULL DEFAULT '0',
   `positionZ` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8 COMMENT='Tele Command';
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='Tele Command';
 
 -- ----------------------------
 -- Table structure for reputation_creature_onkill
