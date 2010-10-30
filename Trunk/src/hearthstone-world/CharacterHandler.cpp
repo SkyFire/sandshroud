@@ -569,6 +569,18 @@ uint8 WorldSession::DeleteCharacter(uint32 guid)
 
 		sWorld.LogPlayer(this, "deleted character %s (GUID: %u)", name.c_str(), (uint32)guid);
 
+/*		if ( sWorld.char_restore_enabled )
+		{
+			//insert data into "deleted" tables
+			CharacterDatabase.WaitExecute("INSERT INTO characters_deleted SELECT UNIX_TIMESTAMP(NOW()),characters.* FROM characters WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playerglyphs_deleted SELECT playerglyphs.* FROM playerglyphs WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playeritems_deleted SELECT playeritems.* FROM playeritems WHERE ownerguid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playerskills_deleted SELECT playerskills.* FROM playerskills WHERE player_guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playerspells_deleted SELECT playerspells.* FROM playerspells WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playertalents_deleted SELECT playertalents.* FROM playertalents WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO questlog_deleted SELECT questlog.* FROM questlog WHERE player_guid = %u", (uint32)guid);
+		}*/
+
 		CharacterDatabase.WaitExecute("DELETE FROM characters WHERE guid = %u", (uint32)guid);
 
 		Corpse* c=objmgr.GetCorpseByOwner((uint32)guid);
@@ -673,7 +685,7 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 	CapitalizeString(name);
 	objmgr.RenamePlayerInfo(pi, pi->name, name.c_str());
 
-	sWorld.LogPlayer(this, "a rename was pending. renamed character %s (GUID: %u) to %s.", pi->name, pi->guid, name.c_str());
+	sWorld.LogPlayer(this, "a rename was pending. Renamed character %s (GUID: %u) to %s.", pi->name, pi->guid, name.c_str());
 
 	// If we're here, the name is okay.
 	CharacterDatabase.Query("UPDATE characters SET name = \'%s\',  forced_rename_pending  = 0 WHERE guid = %u AND acct = %u",name.c_str(), (uint32)guid, _accountId);
@@ -953,7 +965,7 @@ void WorldSession::FullLogin(Player* plr)
 	plr->BroadcastMessage("%sServer:|r%s Sandshroud Hearthstone|r %s r%u-%s-%s", MSG_COLOR_GOLD,
 		MSG_COLOR_ORANGEY, MSG_COLOR_TORQUISEBLUE, BUILD_REVISION, ARCH, CONFIG);
 	plr->BroadcastMessage("%sPlease report all bugs to |r%shttp://mantis.sandshroud.org|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE);
-	if(sWorld.SendStatsOnJoin)
+	if(sWorld.SendStatsOnJoin || HasGMPermissions()) // Send to GMs regardless
 	{
 		plr->BroadcastMessage("%sOnline Players:|r%s %u |r%sPeak:|r%s %u |r%sAccepted Connections:|r%s %u |r", MSG_COLOR_GOLD,
 			MSG_COLOR_TORQUISEBLUE, sWorld.GetSessionCount(), MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE,

@@ -3765,7 +3765,7 @@ bool Player::CanFlyInCurrentZoneOrMap()
 	//	 EK,				Kal,			Deepholm
 	if(!GetMapId() || GetMapId() == 1 || GetMapId() == 646)
 	{
-		if(p_caster->HasSpell(90267))
+		if(HasSpell(90267))
 			return true;
 	}
 #endif

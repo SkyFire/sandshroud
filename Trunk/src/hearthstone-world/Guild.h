@@ -370,7 +370,11 @@ public:
 
 	/** Sends a packet to all online players.
 	 */
-	void SendPacket(WorldPacket * data);
+	HEARTHSTONE_INLINE void SendPacket(WorldPacket * data){ SendPacketToAllButOne(data, NULL); }
+ 
+	/** Sends a packet to all online players except by one.
+	*/
+	void SendPacketToAllButOne(WorldPacket * data, Player* pSkipTarget);
 
 	/** Sends a guild chat message.
 	 */

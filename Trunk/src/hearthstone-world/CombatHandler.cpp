@@ -53,10 +53,13 @@ void WorldSession::HandleAttackSwingOpcode( WorldPacket & recv_data )
 		return;
 
 	// Faction "Hack" by Deathshit
+	// Implemented Hackfix for quest 1640
 	if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
 	{
-		if(sWorld.antihack_cheatengine && !isAttackable( GetPlayer(), pEnemy, false ) && !pEnemy->IsInRangeOppFactSet(_player) && !pEnemy->CombatStatus.DidDamageTo(GetPlayer()->GetGUID()))
+		if(sWorld.antihack_cheatengine && !isAttackable( GetPlayer(), pEnemy, false ) && !pEnemy->IsInRangeOppFactSet(_player) &&
+			!pEnemy->CombatStatus.DidDamageTo(_player->GetGUID())  && !_player->HasQuest(1640) && !HasGMPermissions())
 		{
+			sWorld.LogCheater(this, "Faction exploit detected. Damagetype: Melee.");
 			GetPlayer()->BroadcastMessage("Faction exploit detected. You will be disconnected in 5 seconds.");
 			GetPlayer()->Kick(5000);
 			return;

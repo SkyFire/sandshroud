@@ -583,6 +583,9 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 		msg.expire_time = (uint32)UNIXTIME + (TIME_DAY * 30);
 	}
 
+	if (items.empty() && msg.money != 0 && HasGMPermissions())
+		sWorld.LogGM(this, "sent mail with %u gold to %s (Acct: %u, Charid: %u).", msg.money, player->name, player->acct, player->guid);
+
 	// Sending Message
 	// take the money
 	_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -cost);
@@ -600,11 +603,8 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 			pItem->SaveToDB( INVENTORY_SLOT_NOT_SET, 0, true, NULL );
 			msg.items.push_back( pItem->GetUInt32Value(OBJECT_FIELD_GUID) );
 
-			if( GetPermissionCount() > 0 )
-			{
-				/* log the message */
+			if( HasGMPermissions() )
 				sWorld.LogGM(this, "sent mail with item entry %u to %s, with gold %u.", pItem->GetEntry(), player->name, msg.money);
-			}
 
 			pItem->DeleteMe();
 			pItem = NULLITEM;

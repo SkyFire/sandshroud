@@ -731,12 +731,6 @@ bool ChatHandler::HandleAccountBannedCommand(const char * args, WorldSession * m
 		return false;
 
 	uint32 banned = (timeperiod ? (uint32)UNIXTIME+timeperiod : 1);
-
-	/*stringstream my_sql;
-	my_sql << "UPDATE accounts SET banned = " << banned << " WHERE login = '" << CharacterDatabase.EscapeString(string(pAccount)) << "'";
-
-	sLogonCommHandler.LogonDatabaseSQLExecute(my_sql.str().c_str());
-	sLogonCommHandler.LogonDatabaseReloadAccounts();*/
 	sLogonCommHandler.Account_SetBanned(pAccount, banned, pReason);
 
 	GreenSystemMessage(m_session, "Account '%s' has been banned %s%s. The change will be effective immediately.", pAccount,
@@ -2071,6 +2065,12 @@ bool ChatHandler::HandleIPBanCommand(const char * args, WorldSession * m_session
 	if(timeperiod < 1)
 		return false;
 
+	char * pReason = strchr(pDuration, ' ');
+	if( pReason == NULL )
+		return false;
+
+	*pReason = 0;
+	++pReason;
 
 	uint32 o1, o2, o3, o4;
 	if ( sscanf(pIp, "%3u.%3u.%3u.%3u", (unsigned int*)&o1, (unsigned int*)&o2, (unsigned int*)&o3, (unsigned int*)&o4) != 4
@@ -2087,7 +2087,7 @@ bool ChatHandler::HandleIPBanCommand(const char * args, WorldSession * m_session
 		expire_time = UNIXTIME + (time_t)timeperiod;
 
 	SystemMessage(m_session, "Adding [%s] to IP ban table, expires %s", pIp, (expire_time == 0)? "Never" : ctime( &expire_time ));
-	sLogonCommHandler.IPBan_Add( pIp, (uint32)expire_time );
+	sLogonCommHandler.IPBan_Add( pIp, (uint32)expire_time, pReason );
 	sWorld.DisconnectUsersWithIP(pIp, m_session);
 	sWorld.LogGM(m_session, "banned ip address %s, expires %s", pIp, (expire_time == 0)? "Never" : ctime( &expire_time ));
 	return true;
@@ -3582,11 +3582,11 @@ bool ChatHandler::HandleFactionModStanding(const char *args, WorldSession *m_ses
 	if(pPlayer == NULL)
 		return true;
 
-	uint32 standing;
-	int32 faction;
+	uint32 faction;
+	int32 standing;
 	if(sscanf(args, "%u %i", &faction, &standing) != 2)
 		return false;
 
-	pPlayer->SetStanding(faction, standing);
+	pPlayer->ModStanding(faction, standing);
 	return true;
 }

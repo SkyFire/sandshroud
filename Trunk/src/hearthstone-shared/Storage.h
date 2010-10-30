@@ -687,11 +687,11 @@ public:
 		{
 			if(result->GetFieldCount() > cols)
 			{
-				Log.Warning("Storage", "Invalid format in %s (%u/%u), loading anyway because we have enough data\n", IndexName, (unsigned int)cols, (unsigned int)result->GetFieldCount());
+				Log.Warning("Storage", "Invalid format in %s (%u/%u), loading anyway because we have enough data\n", IndexName, (unsigned int)result->GetFieldCount(), (unsigned int)cols);
 			}
 			else
 			{
-				Log.Error("Storage", "Invalid format in %s (%u/%u), not enough data to proceed.\n", IndexName, (unsigned int)cols, (unsigned int)result->GetFieldCount());
+				Log.Error("Storage", "Invalid format in %s (%u/%u), not enough data to proceed.\n", IndexName, (unsigned int)result->GetFieldCount(), (unsigned int)cols);
 				delete result;
 				return;
 			}

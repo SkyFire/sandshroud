@@ -663,7 +663,7 @@ void LogonCommHandler::Account_SetMute(const char * account, uint32 muted)
 	}
 }
 
-void LogonCommHandler::IPBan_Add(const char * ip, uint32 duration)
+void LogonCommHandler::IPBan_Add(const char * ip, uint32 duration, const char* reason)
 {
 	if(!(sWorld.LogonServerType & LOGON_MANGOS))
 	{
@@ -678,6 +678,7 @@ void LogonCommHandler::IPBan_Add(const char * ip, uint32 duration)
 		data << uint32(4);		// 4 = ipban add
 		data << ip;
 		data << duration;
+		data << reason;
 		itr->second->SendPacket(&data, false);
 	}
 }

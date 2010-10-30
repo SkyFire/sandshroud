@@ -25,14 +25,14 @@
 
 bool ChatHandler::HandleAnnounceCommand(const char* args, WorldSession *m_session)
 {
-	if( !*args || strlen(args) < 4 || strchr(args, '%'))
+	if( !*args || strlen(args) < 3 || strchr(args, '%'))
 	{
-		m_session->SystemMessage("Announces cannot contain the %% character and must be at least 4 characters.");
+		m_session->SystemMessage("Announces cannot contain the %% character and must be at least 3 characters.");
 		return true;
 	}
 
 	char msg[1024];
-	snprintf(msg, 1024, "[Server Notice]"MSG_COLOR_GREEN" %s: %s", m_session->GetPlayer()->GetName(), args);
+	snprintf(msg, 1024, "[Server Notice]"MSG_COLOR_GREEN" %s: %s|r", m_session->GetPlayer()->GetName(), args);
 	sWorld.SendWorldText(msg); // send message
 	sWorld.LogGM(m_session, "used announce command, [%s]", args);
 	return true;
@@ -454,7 +454,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 	if(Speed == 0.0f)
 		type = -1;
 
-	char* speedname = "run";
+	std::string speedname = "run";
 	switch(type)
 	{
 	case -1:
@@ -495,7 +495,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 		if(ctr != NULL)
 		{
 			ctr->SetSpeed(type,Speed);
-			BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname,  ctr->GetCreatureInfo()->Name, Speed);
+			BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname.c_str(),  ctr->GetCreatureInfo()->Name, Speed);
 			return true;
 		}
 		chr = m_session->GetPlayer();
@@ -507,11 +507,11 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 	// send message to user/player
 	if(chr != m_session->GetPlayer())
 	{
-		BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname,  chr->GetName(), Speed);
-		SystemMessage(chr->GetSession(), "%s set your %s speed to %2.2f.", speedname,  m_session->GetPlayer()->GetName(), Speed);
+		BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname.c_str(),  chr->GetName(), Speed);
+		SystemMessage(chr->GetSession(), "%s set your %s speed to %2.2f.", speedname.c_str(),  m_session->GetPlayer()->GetName(), Speed);
 	}
 	else
-		BlueSystemMessage(m_session, "Your %s speed is now set to %2.2f.", speedname, Speed);
+		BlueSystemMessage(m_session, "Your %s speed is now set to %2.2f.", speedname.c_str(), Speed);
 
 	if(type == -1)
 	{

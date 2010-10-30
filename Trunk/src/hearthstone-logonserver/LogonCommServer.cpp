@@ -590,13 +590,13 @@ void LogonCommServerSocket::HandleDatabaseModify(WorldPacket& recvData)
 	case 4:		// ip ban add
 		{
 			string ip;
+			string reason;
 			uint32 duration;
 
-			recvData >> ip >> duration;
+			recvData >> ip >> duration >> reason;
 
 			if( sIPBanner.Add( ip.c_str(), duration ) )
-				sLogonSQL->Execute("INSERT INTO ipbans SET ip = \"%s\", expire = %u", sLogonSQL->EscapeString(ip).c_str(), duration);
-
+				sLogonSQL->Execute("INSERT INTO ipbans (ip, expire, banreason) VALUES(\"%s\", %u, \"%s\")", sLogonSQL->EscapeString(ip).c_str(), duration, sLogonSQL->EscapeString(reason).c_str() );
 		}break;
 
 	case 5:		// ip ban reomve

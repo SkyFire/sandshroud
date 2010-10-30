@@ -526,6 +526,7 @@ void Arena::Finish()
 				continue;
 
 			sHookInterface.OnArenaFinish(plr, m_arenateamtype, plr->m_playerInfo->arenaTeam[m_arenateamtype], victorious, rated_match);
+			plr->ResetAllCooldowns();
 		}
 	}
 }

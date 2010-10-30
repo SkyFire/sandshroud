@@ -206,13 +206,15 @@ void Guild::AddGuildLogEntry(uint8 iEvent, uint8 iParamCount, ...)
 	m_lock.Release();
 }
 
-void Guild::SendPacket(WorldPacket * data)
+void Guild::SendPacketToAllButOne(WorldPacket * data, Player* pSkipTarget)
 {
 	m_lock.Acquire();
+	Player* plr = NULL;
 	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
 	{
-		if(itr->first->m_loggedInPlayer != NULL && itr->first->m_loggedInPlayer->GetSession())
-			itr->first->m_loggedInPlayer->GetSession()->SendPacket(data);
+		if(((plr = itr->first->m_loggedInPlayer) != NULL) && plr->GetSession() && plr != pSkipTarget)
+			plr->GetSession()->SendPacket(data);
+		plr = NULL;
 	}
 	m_lock.Release();
 }

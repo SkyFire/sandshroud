@@ -248,9 +248,9 @@ void WorldSocket::OnConnect()
 	data << uint32(0xA4F170F4);	// 3.2.2
 #ifdef CATACLYSM
 	data << uint32(0xF3632DA3);	// 4
-	data << uint32(0x278BV343);	// 4
-	data << uint32(0x97EYT2F8);	// 4
-	data << uint32(0x82HE26F4);	// 4
+	data << uint32(0x278BB343);	// 4
+	data << uint32(0x97EEF2F8);	// 4
+	data << uint32(0x82FE26F4);	// 4
 #endif
 	SendPacket(&data);
 }
