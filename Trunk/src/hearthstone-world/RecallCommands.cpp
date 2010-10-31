@@ -30,50 +30,32 @@ bool ChatHandler::HandleRecallGoCommand(const char* args, WorldSession *m_sessio
 	if( m_session == NULL )
 		return false;
 
-	QueryResult *result = WorldDatabase.Query( "SELECT * FROM recall ORDER BY name" );
-
+	QueryResult *result = WorldDatabase.Query( "SELECT * FROM recall WHERE name LIKE '%s' ORDER BY name", args);
 	if( result == NULL)
-		return false;
-
-	do
 	{
-		Field* fields = result->Fetch();
-		const char* locname = fields[1].GetString();
-		uint32 locmap = fields[2].GetUInt32();
-		float x = fields[3].GetFloat();
-		float y = fields[4].GetFloat();
-		float z = fields[5].GetFloat();
+		GreenSystemMessage(m_session, "Recall information not found.");
+		return true;
+	}
 
-		if( strnicmp( const_cast< char* >( args ), locname, strlen( args ) ) == 0 )
-		{
-			if(m_session->GetPlayer())
-			{
-				uint8 available = m_session->CheckTeleportPrerequisites(NULL, m_session, m_session->GetPlayer(), locmap);
-				if((available == AREA_TRIGGER_FAILURE_OK) || (!m_session->GetPlayer()->triggerpass_cheat &&
-					(available != AREA_TRIGGER_FAILURE_NO_RAID && available != AREA_TRIGGER_FAILURE_NO_GROUP)))
-					m_session->GetPlayer()->SafeTeleport(locmap, 0, LocationVector(x, y, z));
-				else
-				{
-					WorldPacket data(SMSG_AREA_TRIGGER_MESSAGE, 50);
-					data << uint32(0);
-					data << "You do not reach the requirements to teleport here.";
-					data << uint8(0);
-					m_session->SendPacket(&data);
-				}
-				delete result;
-				return true;
-			}
-			else
-			{
-				delete result;
-				return false;
-			}
-		}
+	Field* fields = result->Fetch();
+	const char* locname = fields[1].GetString();
+	uint32 locmap = fields[2].GetUInt32();
+	if(!WorldMapInfoStorage.LookupEntry(locmap) || !WorldMapInfoStorage.LookupEntry(locmap)->load)
+	{
+		GreenSystemMessage(m_session, "Map is non existant, or not loaded.");
+		delete result;
+		return true;
+	}
 
-	}while (result->NextRow());
+	float x = fields[3].GetFloat();
+	float y = fields[4].GetFloat();
+	float z = fields[5].GetFloat();
+
+	if(m_session->GetPlayer())
+		m_session->GetPlayer()->SafeTeleport(locmap, 0, LocationVector(x, y, z));
 
 	delete result;
-	return false;
+	return true;
 }
 
 bool ChatHandler::HandleRecallAddCommand(const char* args, WorldSession *m_session)
@@ -199,44 +181,32 @@ bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession *
 	if(!plr)
 		return false;
 
-	QueryResult *result = WorldDatabase.Query( "SELECT * FROM recall ORDER BY name" );
-	if(!result)
-		return false;
-
-	do
+	QueryResult *result = WorldDatabase.Query( "SELECT * FROM recall WHERE name LIKE '%s' ORDER BY name", args);
+	if( result == NULL)
 	{
-		Field *fields = result->Fetch();
-		const char * locname = fields[1].GetString();
-		uint32 locmap = fields[2].GetUInt32();
-		float x = fields[3].GetFloat();
-		float y = fields[4].GetFloat();
-		float z = fields[5].GetFloat();
+		GreenSystemMessage(m_session, "Recall information not found.");
+		return true;
+	}
 
-		if (strnicmp((char*)location,locname,strlen(args))==0)
-		{
-			uint8 available = m_session->CheckTeleportPrerequisites(NULL, m_session, plr, locmap);
-			if((available == AREA_TRIGGER_FAILURE_OK) || (!plr->triggerpass_cheat &&
-				(available != AREA_TRIGGER_FAILURE_NO_RAID && available != AREA_TRIGGER_FAILURE_NO_GROUP)))
-			{
-				if(plr->GetInstanceID() != m_session->GetPlayer()->GetInstanceID())
-					sEventMgr.AddEvent(plr, &Player::EventSafeTeleport, locmap, uint32(0), LocationVector(x, y, z), 1, EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-				else
-					plr->SafeTeleport(locmap, 0, LocationVector(x, y, z));
-			}
-			else
-			{
-				WorldPacket data(SMSG_AREA_TRIGGER_MESSAGE, 50);
-				data << uint32(0);
-				data << "Player does not meet the requirements to go here!";
-				data << uint8(0);
-				m_session->SendPacket(&data);
-			}
-			delete result;
-			return true;
-		}
+	Field* fields = result->Fetch();
+	const char* locname = fields[1].GetString();
+	uint32 locmap = fields[2].GetUInt32();
+	if(!WorldMapInfoStorage.LookupEntry(locmap) || !WorldMapInfoStorage.LookupEntry(locmap)->load)
+	{
+		GreenSystemMessage(m_session, "Map is non existant, or not loaded.");
+		delete result;
+		return true;
+	}
 
-	}while (result->NextRow());
+	float x = fields[3].GetFloat();
+	float y = fields[4].GetFloat();
+	float z = fields[5].GetFloat();
+
+	if(m_session->GetPlayer() && plr->GetInstanceID() != m_session->GetPlayer()->GetInstanceID())
+		sEventMgr.AddEvent(plr, &Player::EventSafeTeleport, locmap, uint32(0), LocationVector(x, y, z), 1, EVENT_PLAYER_TELEPORT, 1, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	else
+		plr->SafeTeleport(locmap, 0, LocationVector(x, y, z));
 
 	delete result;
-	return false;
+	return true;
 }

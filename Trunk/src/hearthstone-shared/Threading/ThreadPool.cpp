@@ -244,7 +244,7 @@ void CThreadPool::Shutdown()
 				for(ThreadSet::iterator itr = m_activeThreads.begin(); itr != m_activeThreads.end(); ++itr)
 				{
 					if((*itr)->ExecutionTarget)
-						DEBUG_LOG("ThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
+						DEBUG_LOG("ActiveThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
 				}
 			}
 
@@ -253,7 +253,7 @@ void CThreadPool::Shutdown()
 				for(ThreadSet::iterator itr = m_freeThreads.begin(); itr != m_freeThreads.end(); ++itr)
 				{
 					if((*itr)->ExecutionTarget)
-						DEBUG_LOG("ThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
+						DEBUG_LOG("FreeThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
 				}
 			}
 		}
