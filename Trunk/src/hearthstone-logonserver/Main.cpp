@@ -345,7 +345,6 @@ void LogonServer::Run(int argc, char ** argv)
 	Log.Notice("ThreadMgr", "Starting...");
 
 	ThreadPool.Startup(4);
-
 	if(!startdb())
 		return;
 

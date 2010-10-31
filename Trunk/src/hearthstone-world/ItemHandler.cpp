@@ -1319,24 +1319,33 @@ void WorldSession::SendInventoryList(Creature* unit)
 	if(!_player || !_player->IsInWorld())
 		return;
 
+	uint32 counter = 0;
 	if(!unit->HasItems())
 	{
 		WorldPacket data(SMSG_LIST_INVENTORY, 10);
 		data << uint64(unit->GetGUID());
 		data << uint8(10);
+		for(int i = 0; i < 10; i++) // Send null items
+		{
+			data << (++counter);
+			data << uint32(0);
+			data << uint32(0);
+			data << int32(0);
+			data << uint32(0);
+			data << uint32(0);
+			data << uint32(0);
+			data << uint32(0);
+		}
+
 		SendPacket(&data);
 //		sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
 		return;
 	}
 
-	WorldPacket data(((unit->GetSellItemCount() * 28) + 9));	   // allocate
-
-	data.SetOpcode( SMSG_LIST_INVENTORY );
+	ItemPrototype * curItem;
+	WorldPacket data(SMSG_LIST_INVENTORY, ((unit->GetSellItemCount() * 28) + 9));	   // allocate
 	data << unit->GetGUID();
 	data << uint8( 0 ); // placeholder for item count
-
-	ItemPrototype * curItem;
-	uint32 counter = 0;
 
 	for(std::vector<CreatureItem>::iterator itr = unit->GetSellItemBegin(); itr != unit->GetSellItemEnd(); itr++)
 	{

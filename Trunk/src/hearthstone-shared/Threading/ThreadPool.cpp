@@ -130,7 +130,7 @@ void CThreadPool::ExecuteTask(ThreadContext * ExecutionTarget)
 
 void CThreadPool::Startup(uint8 ThreadCount /* = 8 */)
 {
-	for(int i = 0; i < ThreadCount; ++i)
+	for(uint8 i = 0; i < ThreadCount; ++i)
 		StartThread(NULL);
 
 	DEBUG_LOG("ThreadPool", "Startup, launched %u threads.", ThreadCount);
@@ -243,9 +243,7 @@ void CThreadPool::Shutdown()
 			{
 				for(ThreadSet::iterator itr = m_activeThreads.begin(); itr != m_activeThreads.end(); ++itr)
 				{
-					if(!(*itr)->ExecutionTarget)
-						m_activeThreads.erase(itr);
-					else
+					if((*itr)->ExecutionTarget)
 						DEBUG_LOG("ThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
 				}
 			}
@@ -254,9 +252,7 @@ void CThreadPool::Shutdown()
 			{
 				for(ThreadSet::iterator itr = m_freeThreads.begin(); itr != m_freeThreads.end(); ++itr)
 				{
-					if(!(*itr)->ExecutionTarget)
-						m_activeThreads.erase(itr);
-					else
+					if((*itr)->ExecutionTarget)
 						DEBUG_LOG("ThreadPool", "%u(%s) thread...", (*itr)->ControlInterface.GetId(), (*itr)->threadinfo.szName );
 				}
 			}
@@ -351,7 +347,6 @@ Thread * CThreadPool::StartThread(ThreadContext * ExecutionTarget)
 	t->SetupMutex.Acquire();
 	t->ControlInterface.Setup(CreateThread(NULL, 0, &thread_proc, (LPVOID)t, 0, (LPDWORD)&t->ControlInterface.thread_id));
 	t->SetupMutex.Release();
-
 	return t;
 }
 

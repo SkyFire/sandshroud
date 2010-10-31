@@ -441,6 +441,7 @@ bool World::SetInitialWorldSettings()
 	ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<ObjectMgr>(ObjectMgr::getSingletonPtr(),
 		&ObjectMgr::LoadPlayersInfo), BTE_PRIORITY_MED));
 
+	MAKE_TASK(ObjectMgr, LoadGuilds);
 	MAKE_TASK(ObjectMgr, LoadPlayerCreateInfo);
 //	MAKE_TASK(ObjectMgr, LoadPlayersInfo);
 	MAKE_TASK(ObjectMgr, LoadSpellSkills);

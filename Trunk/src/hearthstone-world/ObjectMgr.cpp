@@ -388,8 +388,6 @@ skilllinespell* ObjectMgr::GetSpellSkill(uint32 id)
 
 void ObjectMgr::LoadPlayersInfo()
 {
-	sWorld.GuildsLoading = true;
-
 	PlayerInfo * pn;
 	QueryResult *result = CharacterDatabase.Query("SELECT guid,name,race,class,level,gender,zoneId,timestamp,acct,instance_id,mapId,positionX,positionY,positionZ,orientation FROM characters");
 	uint32 period, c;
@@ -451,9 +449,6 @@ void ObjectMgr::LoadPlayersInfo()
 		delete result;
 	}
 	Log.Notice("ObjectMgr", "%u players loaded.", m_playersinfo.size());
-	LoadGuilds();
-
-	sWorld.GuildsLoading = false;
 }
 
 PlayerInfo* ObjectMgr::GetPlayerInfoByName(const char * name)
@@ -590,7 +585,9 @@ void ObjectMgr::LoadPlayerCreateInfo()
 
 // DK:LoadGuilds()
 void ObjectMgr::LoadGuilds()
-{
+{	// Todo: Hash extras, then set.
+	sWorld.GuildsLoading = true;
+	Log.Notice("ObjectMgr", "Loading Guilds.");
 	QueryResult *result = CharacterDatabase.Query( "SELECT * FROM guilds" );
 	if(result)
 	{
@@ -600,9 +597,7 @@ void ObjectMgr::LoadGuilds()
 		{
 			Guild * pGuild = Guild::Create();
 			if(!pGuild->LoadFromDB(result->Fetch()))
-			{
 				delete pGuild;
-			}
 			else
 				mGuild.insert(make_pair(pGuild->GetGuildId(), pGuild));
 
@@ -613,6 +608,7 @@ void ObjectMgr::LoadGuilds()
 		delete result;
 	}
 	Log.Notice("ObjectMgr", "%u guilds loaded.", mGuild.size());
+	sWorld.GuildsLoading = false;
 }
 
 Corpse* ObjectMgr::LoadCorpse(uint32 guid)

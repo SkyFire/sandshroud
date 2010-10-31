@@ -472,7 +472,7 @@ bool Guild::LoadFromDB(Field * f)
 	// load ranks
 	uint32 j;
 	QueryResult * result = CharacterDatabase.Query("SELECT * FROM guild_ranks WHERE guildId = %u ORDER BY rankId ASC", m_guildId);
-	if(result== NULL)
+	if(result == NULL)
 		return false;
 
 	uint32 sid = 0;
@@ -482,13 +482,13 @@ bool Guild::LoadFromDB(Field * f)
 		GuildRank * r = new GuildRank;
 		Field * f2 = result->Fetch();
 		r->iId = f2[1].GetUInt32();
-		if(r->iId!=sid)
+		if(r->iId != sid)
 		{
 			Log.Notice("Guild", "Renaming rank %u of guild %s to %u.", r->iId, m_guildName, sid);
 			CharacterDatabase.Execute("UPDATE guild_ranks SET rankId = %u WHERE guildId = %u AND rankName = \'%s\'", r->iId,
 				m_guildId, CharacterDatabase.EscapeString(string(f2[2].GetString())).c_str());
 
-			r->iId=sid;
+			r->iId = sid;
 		}
 		sid++;
 		r->szRankName = strdup(f2[2].GetString());
