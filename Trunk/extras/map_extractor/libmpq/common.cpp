@@ -590,7 +590,7 @@ int libmpq_file_read_block(mpq_archive *mpq_a, mpq_file *mpq_f, unsigned int blo
 
 	/* Set file pointer, if necessary. */
 	if (mpq_a->filepos != readpos) {
-		mpq_a->filepos = _lseeki64(mpq_a->fd, readpos, SEEK_SET);
+		mpq_a->filepos = (unsigned int)_lseeki64(mpq_a->fd, readpos, SEEK_SET);
 	}
 
 	/* 15018F87 - Read all requested blocks. */

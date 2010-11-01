@@ -30,52 +30,6 @@ map_id * map_ids;
 
 uint32 MapCount;
 
-void SetProgressBar(int val, int max, const char* label)
-{
-    printf("\r");
-    for(int i = 0; i < 78; ++i)
-        printf(" ");
-
-    printf("\r");
-    printf ("[%s]",&label[6]);
-    int total = strlen(label) + 12;
-    int diff = 78 - total;
-    for(int i = 0; i < diff; ++i)
-        printf(" ");
-
-    printf("|");
-    int barPos = val * 8/*30*/ / max + 1;
-
-
-    int p;
-    for (p = 0; p < barPos; p++) putchar ('=');
-    for (; p <8/*30*/; p++) putchar (' ');
-
-    printf ("| %d%%\r", val * 100 / max);
-    fflush(stdout);
-}
-
-void ClearProgressBar()
-{
-    for(int p = 0; p<70;p++)
-        putchar(' ');
-    printf("\r");
-}
-
-void SimpleProgressBar(int val, int max)
-{
-    printf("\r");
-    printf("\xba");
-    int barPos = val * 60 / max + 1;
-    int p;
-    for (p = 0; p < barPos; p++) putchar (0xb1);
-    for (; p <60; p++) putchar (' ');
-
-    printf ("\xba %d%%\r", val * 100 / max);
-    fflush(stdout);
-}
-
-
 void ExtractMapsFromMpq()
 {
     bool Available_Maps[64][64];
@@ -123,14 +77,9 @@ void ExtractMapsFromMpq()
                     ++AvailableTiles;
                 }
                 ++TotalTiles;
-
-                // Update Progress Bar
-                SimpleProgressBar( (x * 64 + y), 64 * 64 );
             }
         }
 
-        // Clear progress bar.
-        ClearProgressBar();
 
         // Calculate the estimated size.
         float Estimated_Size = 1048576.0f;
@@ -155,7 +104,6 @@ void ExtractMapsFromMpq()
         printf("  %u of %u tiles are available. Estimated file size will be %.4fMB.\n", AvailableTiles, TotalTiles, Estimated_Size);
         printf("  %u passes in total have to be performed, it may take a while.\n", TilesToExtract);
         printf("  Extracting data...\n");
-        uint32 DoneTiles = 0;
         uint32 start_time = timeGetTime();
         reset();
 
@@ -171,8 +119,6 @@ void ExtractMapsFromMpq()
                     if(ConvertADT(x, y, out_file, map->name))
                         Offsets[x][y] = Offset;
 
-                    ++DoneTiles;
-                    SimpleProgressBar( DoneTiles, TilesToExtract );
                 }
             }
 
@@ -180,7 +126,6 @@ void ExtractMapsFromMpq()
             if(!(x % 8))
                 CleanCache();
         }
-        ClearProgressBar();
         // clean any leftover cells
         CleanCache();
 
