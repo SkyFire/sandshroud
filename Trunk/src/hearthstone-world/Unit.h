@@ -25,6 +25,7 @@ class AIInterface;
 #define MAX_POSITIVE_AURAS 40 // ?
 #define MAX_AURAS 86 // 40 buff slots, 46 debuff slots.
 #define MAX_PASSIVE_AURAS 192   // grep: i mananged to break this.. :p seems we need more
+#define TOTAL_AURAS 278
 
 bool SERVER_DECL Rand(float);
 #define MAKE_ACTION_BUTTON(A,T) uint32(uint32(A) | (uint32(T) << 24))
@@ -1242,7 +1243,7 @@ public:
 	uint32 m_stealth;
 	bool m_can_stealth;
 
-	Aura* m_auras[MAX_AURAS+MAX_PASSIVE_AURAS];
+	Aura* m_auras[TOTAL_AURAS];
 
 	int32 m_modlanguage;
 

@@ -17,7 +17,9 @@
  *
  */
 
-#pragma once
+//HEADER GUARDS!
+#ifndef __RSTDAFX_H
+#define __RSTDAFX_H
 
 #include <list>
 #include <vector>
@@ -69,3 +71,5 @@
 #include "LogonCommHandler.h"
 #include "../hearthstone-shared/Storage.h"
 #include "ObjectStorage.h"
+
+#endif

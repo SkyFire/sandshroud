@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 	Log.Success("Network", "Network Subsystem Started.");
 
 	Log.Notice("Network", "Opening Client Port...");
-	ListenSocket<WorldSocket> * wsl = new ListenSocket<WorldSocket>("0.0.0.0", 8129);
+	ListenSocket<WorldSocket> * wsl = new ListenSocket<WorldSocket>(Config.ClusterConfig.GetStringDefault("Listen", "Host", "0.0.0.0").c_str(), Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129));
 	bool lsc = wsl->IsOpen();
 
 	Log.Notice("Network", "Opening Server Port...");

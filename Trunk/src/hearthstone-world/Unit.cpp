@@ -182,7 +182,7 @@ Unit::Unit()
 
 	m_threatModifyer = 0;
 	m_generatedThreatModifyer = 0;
-	for(uint32 i = 0; i < MAX_AURAS+MAX_PASSIVE_AURAS; i++)
+	for(uint32 i = 0; i < TOTAL_AURAS; i++)
 		m_auras[i] = NULLAURA;
 
 
@@ -4149,13 +4149,13 @@ void Unit::AddAura(Aura* aur)
 
 	////////////////////////////////////////////////////////
 
-	if( aur->m_auraSlot != 0xffffffff )
+	if( aur->m_auraSlot != 0xffffffff && aur->m_auraSlot < TOTAL_AURAS)
 	{
 		if( m_auras[aur->m_auraSlot] != NULL )
 			RemoveAuraBySlot(aur->m_auraSlot);
 	}
 
-	aur->m_auraSlot=255;
+	aur->m_auraSlot = 255;
 
 	Unit* target = aur->GetUnitTarget();
 	if(target == NULL)
@@ -4171,7 +4171,7 @@ void Unit::AddAura(Aura* aur)
 		if(aur->m_auraSlot==255)
 		{
 			//add to invisible slot
-			for(x=MAX_AURAS;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+			for(x = MAX_AURAS; x < TOTAL_AURAS; x++)
 			{
 				if(!m_auras[x])
 				{
@@ -4198,7 +4198,7 @@ void Unit::AddAura(Aura* aur)
 		{
 			aur->AddAuraVisual();
 		}
-		for(x=MAX_AURAS;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+		for(x = MAX_AURAS; x < TOTAL_AURAS; x++)
 		{
 			if(!m_auras[x])
 			{
@@ -4292,7 +4292,7 @@ void Unit::RemoveAura(Aura* aur)
 {
 	if(aur == NULL)
 		return;
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x] != NULL && m_auras[x] == aur)
 			RemoveAuraBySlot(x);
@@ -4331,7 +4331,7 @@ bool Unit::RemoveAuras(uint32 * SpellIds)
 		return false;
 
 	bool res = false;
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x]!=NULL)
 		{
@@ -4349,8 +4349,8 @@ bool Unit::RemoveAuras(uint32 * SpellIds)
 }
 
 void Unit::RemoveAuraNoReturn(uint32 spellId)
-{//this can be speed up, if we know passive \pos neg
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+{	//this can be speed up, if we know passive \pos neg
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x]!=NULL)
 		{
@@ -4366,7 +4366,7 @@ void Unit::RemoveAuraNoReturn(uint32 spellId)
 
 bool Unit::RemoveAura(uint32 spellId, uint64 guid )
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x] != NULL && m_auras[x]->GetSpellId()==spellId && (!guid || m_auras[x]->GetCasterGUID() == guid))
 		{
@@ -4379,7 +4379,7 @@ bool Unit::RemoveAura(uint32 spellId, uint64 guid )
 bool Unit::RemoveAllAuras(uint32 spellId, uint64 guid)
 {
 	bool res = false;
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x] != NULL && m_auras[x]->GetSpellId()==spellId && (!guid || m_auras[x]->GetCasterGUID() == guid) )
 		{
@@ -4473,7 +4473,7 @@ void Unit::RemoveAllNegativeAuras()
 
 void Unit::RemoveAllAuras()
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x]!= NULL)
 			RemoveAuraBySlot(x);
@@ -4569,7 +4569,7 @@ Aura* Unit::FindActiveAuraWithNameHash(uint32 namehash, uint64 guid)
 
 Aura* Unit::FindAura(uint32 spellId, uint64 guid)
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x] != NULL && m_auras[x]->GetSpellId() == spellId && (!guid || m_auras[x]->GetCasterGUID() == guid))
 		{
@@ -5286,7 +5286,7 @@ void Unit::RemoveAurasByInterruptFlag(uint32 flag)
 
 bool Unit::HasAuraVisual(uint32 visualid)
 {
-	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
+	for(uint32 x = 0; x < TOTAL_AURAS; ++x)
 	{
 #ifdef CATACLYSM
 		if(m_auras[x] && m_auras[x]->GetSpellProto()->SpellVisual == visualid)
@@ -5303,7 +5303,7 @@ bool Unit::HasAuraVisual(uint32 visualid)
 
 bool Unit::HasAura(uint32 spellid)
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 		if(m_auras[x] != NULL && m_auras[x]->GetSpellId()== spellid)
 			return true;
 
@@ -5342,7 +5342,7 @@ bool Unit::HasNegAuraWithMechanic(uint32 mechanic)
 
 void Unit::EventDeathAuraRemoval()
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x] != NULL && !m_auras[x]->IsPassive())
 		{
@@ -5639,7 +5639,7 @@ AuraCheckResponse Unit::AuraCheck(SpellEntry *info)
 
 void Unit::OnPushToWorld()
 {
-	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
+	for(uint32 x = 0; x < TOTAL_AURAS; ++x)
 	{
 		if(m_auras[x] != NULL)
 			m_auras[x]->BuildAuraUpdate();
@@ -5662,7 +5662,7 @@ void Unit::RemoveFromWorld(bool free_guid)
 
 	// Delete AAura's from our targets (must be done before object is removed from world)
 
-	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
+	for(uint32 x = 0; x < TOTAL_AURAS; ++x)
 	{
 		if(m_auras[x] != NULL)
 		{
@@ -5700,7 +5700,7 @@ void Unit::RemoveFromWorld(bool free_guid)
 	m_aiInterface->WipeReferences();
 
 	//Relocate our aura's (must be done after object is removed from world
-	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
+	for(uint32 x = 0; x < TOTAL_AURAS; ++x)
 	{
 		if(m_auras[x] != NULL)
 			m_auras[x]->RelocateEvents();
@@ -5900,7 +5900,7 @@ bool Unit::HasNegativeAura(uint32 spell_id)
 
 bool Unit::IsPoisoned()
 {
-	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x)
+	for(uint32 x = 0; x < TOTAL_AURAS; ++x)
 	{
 		if( m_auras[x] != NULL && m_auras[x]->GetSpellProto()->poison_type )
 			return true;

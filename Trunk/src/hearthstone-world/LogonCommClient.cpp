@@ -455,7 +455,7 @@ void LogonCommHandler::Account_SetMute(const char * account, uint32 muted)
 
 }
 
-void LogonCommHandler::IPBan_Add(const char * ip, uint32 duration)
+void LogonCommHandler::IPBan_Add(const char * ip, uint32 duration, const char* reason)
 {
 
 }

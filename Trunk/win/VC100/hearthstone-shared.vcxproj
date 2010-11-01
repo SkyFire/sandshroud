@@ -247,6 +247,7 @@ RevisionExtractor.exe
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\hearthstone-shared\Console\CConsole.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Database\Database.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Database\dbcfile.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Database\DBC.cpp" />
@@ -343,6 +344,8 @@ RevisionExtractor.exe
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\hearthstone-shared\Console\BaseConsole.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\Console\CConsole.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Database\Database.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Database\DatabaseEnv.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Database\dbcfile.h" />

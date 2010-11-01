@@ -193,8 +193,6 @@
 #include "NavMeshInterface.h"
 
 #include "Master.h"
-#include "BaseConsole.h"
-#include "CConsole.h"
 #include "ConsoleCommands.h"
 
 //#include <vld.h>

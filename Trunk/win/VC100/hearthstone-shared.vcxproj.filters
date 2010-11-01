@@ -58,6 +58,9 @@
     <Filter Include="Pathfinding\Detour">
       <UniqueIdentifier>{c2554b65-03d4-4fed-9c89-3672e2045f66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Console">
+      <UniqueIdentifier>{940655e0-9365-44f0-bf59-90ad4fca466f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\hearthstone-shared\Database\Database.cpp">
@@ -322,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.cpp">
       <Filter>Pathfinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Console\CConsole.cpp">
+      <Filter>Console</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -710,6 +716,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.h">
       <Filter>Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Console\BaseConsole.h">
+      <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Console\CConsole.h">
+      <Filter>Console</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

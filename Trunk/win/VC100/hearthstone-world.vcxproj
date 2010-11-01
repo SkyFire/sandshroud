@@ -276,13 +276,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\ConsoleListener.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\DatabaseCommands.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\IsleOfConquest.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Main.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Master.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\CConsole.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\ConsoleCommands.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\ConsoleListener.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\AlteracValley.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\ArathiBasin.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Arenas.cpp" />
@@ -411,8 +410,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\filelog.h" />
     <ClInclude Include="..\..\src\hearthstone-world\IsleOfConquest.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Master.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\BaseConsole.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\CConsole.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ConsoleCommands.h" />
     <ClInclude Include="..\..\src\hearthstone-world\AlteracValley.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ArathiBasin.h" />

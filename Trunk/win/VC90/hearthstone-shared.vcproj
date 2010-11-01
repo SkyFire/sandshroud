@@ -1294,6 +1294,22 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="Console"
+			>
+			<File
+				RelativePath="..\..\src\hearthstone-shared\Console\BaseConsole.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-shared\Console\CConsole.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-shared\Console\CConsole.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\src\hearthstone-shared\AuthCodes.h"
 			>

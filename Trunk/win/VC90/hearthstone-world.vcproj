@@ -401,6 +401,18 @@
 			Name="Launcher"
 			>
 			<File
+				RelativePath="..\..\src\hearthstone-world\ConsoleCommands.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\ConsoleCommands.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\ConsoleListener.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\hearthstone-shared\CoreMemoryAllocator_Core.cpp"
 				>
 				<FileConfiguration
@@ -448,34 +460,6 @@
 				RelativePath="..\..\src\hearthstone-world\Master.h"
 				>
 			</File>
-			<Filter
-				Name="Console"
-				>
-				<File
-					RelativePath="..\..\src\hearthstone-world\BaseConsole.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\CConsole.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\CConsole.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\ConsoleCommands.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\ConsoleCommands.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\ConsoleListener.cpp"
-					>
-				</File>
-			</Filter>
 			<Filter
 				Name="Additionalz"
 				>

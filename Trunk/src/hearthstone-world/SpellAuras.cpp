@@ -1050,9 +1050,8 @@ void Aura::AddAuraVisual()
 	}
 
 	if (slot == 0xFF)
-	{
 		return;
-	}
+
 	m_auraSlot = slot;
 	BuildAuraUpdate();
 }
@@ -1310,7 +1309,7 @@ void Aura::EventUpdatePlayerAA(float r)
 	{
 		//this event is no longer valid, remove it.
 		sEventMgr.RemoveEvents(this);
-		Log.Error("Aura","Encountered an illegal EventUpdatePlayerAAura, removing it from event-holder.");
+//		Log.Error("Aura","Encountered an illegal EventUpdatePlayerAAura, removing it from event-holder.");
 		return;
 	}
 

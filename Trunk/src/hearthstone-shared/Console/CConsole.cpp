@@ -24,6 +24,7 @@
 #include "SharedStdAfx.h"
 #include "CConsole.h"
 #include "BaseConsole.h"
+
 LocalConsole g_localConsole;
 
 #ifndef WIN32

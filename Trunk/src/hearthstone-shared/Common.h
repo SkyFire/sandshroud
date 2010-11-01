@@ -637,5 +637,6 @@ unsigned int MakeIP(const char * str);
 //#include "Collision/g3dlite/G3DAll.h"
 #include "Log.h"
 #include "NGLog.h"
+#include "Console/CConsole.h"
 
 #endif
