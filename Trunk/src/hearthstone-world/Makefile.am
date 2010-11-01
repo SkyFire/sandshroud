@@ -209,9 +209,6 @@ hearthstone_world_SOURCES = \
     Main.cpp \
     Master.cpp \
     Master.h \
-    CConsole.cpp \
-    CConsole.h \
-    BaseConsole.h \
     ConsoleCommands.cpp \
     ConsoleCommands.h \
     ConsoleListener.cpp \

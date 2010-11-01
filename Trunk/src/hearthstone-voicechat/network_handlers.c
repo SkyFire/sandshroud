@@ -71,7 +71,7 @@ int voicechat_init_clientsocket()
 	network_init_socket(s, fd, 0);
 
 	// set the handler
-	s->event_handler = voicechat_client_socket_read_handler;
+	s->event_handler = (network_io_callback)voicechat_client_socket_read_handler;
 	s->write_handler = NULL;
 
 	// add it to the network map (platform-specific)
@@ -132,8 +132,8 @@ int voicechat_init_serversocket()
 	network_init_socket(s, fd, 0);
 
 	// set the handlers
-	s->event_handler = voicechat_hearthstone_listen_socket_read_handler;
-	s->write_handler = default_tcp_write_handler;
+	s->event_handler = (network_io_callback)voicechat_hearthstone_listen_socket_read_handler;
+	s->write_handler = (network_io_callback)default_tcp_write_handler;
 
 	// add it to the network map (platform-specific)
 	network_add_socket(s);

@@ -192,6 +192,9 @@ libshared_a_SOURCES = \
     Collision/g3dlite/Vector4int8.cpp \
     Collision/g3dlite/Vector4int8.h \
     Collision/g3dlite/vectorMath.h \
+    Console/CConsole.cpp \
+    Console/BaseConsole.h \
+    Console/CConsole.h \
     Pathfinding/ChunkyTriMesh.h \
     Pathfinding/ChunkyTriMesh.cpp \
     Pathfinding/InputGeom.h \
