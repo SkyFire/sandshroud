@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="ad"
+	Name="MapExtractor"
 	ProjectGUID="{D7552D4F-408F-4F8E-859B-366659150CF4}"
-	RootNamespace="ad"
+	RootNamespace="MapExtractor"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -80,6 +80,7 @@
 				OutputFile="ad debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="./ad debug.pdb"
@@ -171,9 +172,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="zlib.lib winmm.lib"
-				OutputFile="./ad.exe"
+				OutputFile="./MapExtractor.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="./ad.pdb"
