@@ -543,6 +543,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\hearthstone-realmserver\Main.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\hearthstone-realmserver\Master.cpp"
 			>
 		</File>

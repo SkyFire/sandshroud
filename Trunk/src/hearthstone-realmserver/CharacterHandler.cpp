@@ -20,26 +20,17 @@
 #include "RStdAfx.h"
 #include "../hearthstone-shared/AuthCodes.h"
 
-struct player_item
-{
-	uint32 displayid;
-	uint8 invtype;
-};
-
 void Session::HandleCharacterEnum(WorldPacket & pck)
 {
-	player_item items[20];
-	uint32 slot;
-	uint32 i;
-	ItemPrototype * proto;
-
 	uint32 start_time = getMSTime();
+	OUT_DEBUG("CharacterHandler", "Enum Build started at %u.", start_time);
 
 	// loading characters
 	QueryResult* result = CharacterDatabase.Query("SELECT guid, level, race, class, gender, bytes, bytes2, bytes2, name, positionX, positionY, positionZ, mapId, zoneId, banned, restState, deathstate, forced_rename_pending FROM characters WHERE acct=%u ORDER BY guid", GetAccountId());
-	QueryResult * res;
-	CreatureInfo *info = NULL;
 	uint8 num = 0;
+
+	//Erm, reset it here in case player deleted his DK.
+	m_hasDeathKnight= false;
 
 	// should be more than enough.. 200 bytes per char..
 	WorldPacket data((result ? result->GetRowCount() * 200 : 1));	
@@ -51,83 +42,133 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 	data << num;
 	if( result )
 	{
-		uint64 guid;
-		uint8 Class;
-		uint32 bytes2;
+		CreatureInfo *info = NULL;
+		player_item items[19];
+		ItemPrototype * proto;
+//		player_item bags[4];
+		QueryResult * res;
 		Field *fields;
+		int8 slot;
+		int8 containerslot;
+		uint8 Class;
+		uint8 race;
+		uint32 i;
+		uint32 bytes2;
+		uint32 flags;
+		uint32 banned;
+		uint64 guid;
 		do
 		{
 			fields = result->Fetch();
 			guid = fields[0].GetUInt32();
 			bytes2 = fields[6].GetUInt32();
-			Class = fields[3].GetUInt8();			
+			Class = fields[3].GetUInt8();
+			flags = fields[17].GetUInt32();
+			race = fields[3].GetUInt8();
 
 			/* build character enum, w0000t :p */
 			data << fields[0].GetUInt64();		// guid
-			data << fields[8].GetString();		// name
+			data << fields[7].GetString();		// name
 			data << fields[2].GetUInt8();		// race
-			data << fields[3].GetUInt8();		// class
+			data << race;						// class
 			data << fields[4].GetUInt8();		// gender
 			data << fields[5].GetUInt32();		// PLAYER_BYTES
 			data << uint8(bytes2 & 0xFF);		// facial hair
 			data << fields[1].GetUInt8();		// Level
-			data << fields[13].GetUInt32();		// zoneid
-			data << fields[12].GetUInt32();		// Mapid
-			data << fields[11].GetFloat();		// X
-			data << fields[10].GetFloat();		// Y
-			data << fields[9].GetFloat();		// Z
-			data << fields[7].GetUInt32();		// GuildID
+			data << fields[12].GetUInt32();		// zoneid
+			data << fields[11].GetUInt32();		// Mapid
+			data << fields[8].GetFloat();		// X
+			data << fields[9].GetFloat();		// Y
+			data << fields[10].GetFloat();		// Z
+			data << fields[18].GetUInt32();		// GuildID
 
-			if(fields[14].GetBool())
-				data << (uint32)7;	// Banned (cannot login)
-			else if(fields[17].GetBool())
-				data << uint32(0x00A04342);  // wtf blizz? :P (rename pending)
-			else if(fields[16].GetUInt32() != 0)
-				data << (uint32)8704; // Dead (displaying as Ghost)
+			if( fields[1].GetUInt8() > m_highestLevel )
+				m_highestLevel = fields[1].GetUInt8();
+
+			if( Class == 6 )
+				m_hasDeathKnight = true;
+
+			banned = fields[13].GetUInt32();
+			if(banned && (banned<10 || banned > (uint32)UNIXTIME))
+				data << uint32(0x01A04040);
 			else
-				data << uint32(1);		// alive
-
-			data << uint32(0);
-			data << fields[15].GetUInt8();		// Rest State
-
-			if(Class==9 || Class==3)
 			{
-				res = CharacterDatabase.Query("SELECT entryid FROM playerpets WHERE ownerguid=%u AND active=1", guid);
+				if(fields[16].GetUInt32() != 0)
+					data << uint32(0x00A04342);
+				else if(fields[15].GetUInt32() != 0)
+					data << (uint32)8704; // Dead (displaying as Ghost)
+				else
+					data << uint32(1);		// alive
+			}
+
+			data << uint32(fields[19].GetUInt8());	// Character Customization
+			data << fields[14].GetUInt8();			// Rest State
+
+			if( Class == WARLOCK || Class == HUNTER )
+			{
+				res = CharacterDatabase.Query("SELECT entry FROM playerpets WHERE ownerguid="I64FMTD" AND ( active MOD 10 ) =1", guid);
 
 				if(res)
 				{
 					info = CreatureNameStorage.LookupEntry(res->Fetch()[0].GetUInt32());
 					delete res;
 				}
+				else
+					info=NULL;
 			}
+			else
+				info=NULL;
 
 			if(info)  //PET INFO uint32 displayid,	uint32 level,		 uint32 familyid
 				data << uint32(info->Male_DisplayID) << uint32(10) << uint32(info->Family);
 			else
 				data << uint32(0) << uint32(0) << uint32(0);
 
-			res = CharacterDatabase.Query("SELECT slot, entry FROM playeritems WHERE ownerguid=%u and containerslot=-1 and slot < 19 and slot >= 0", guid);
+			res = CharacterDatabase.Query("SELECT containerslot, slot, entry, enchantments FROM playeritems WHERE ownerguid=%u", GUID_LOPART(guid));
 
-			memset(items, 0, sizeof(player_item) * 20);
+			uint32 enchantid;
+			EnchantEntry * enc;
+			memset(items, 0, sizeof(player_item) * 19);
 			if(res)
 			{
-				do 
+				do
 				{
-					proto = ItemPrototypeStorage.LookupEntry(res->Fetch()[1].GetUInt32());
-					if(proto)
+					containerslot = res->Fetch()[0].GetInt8();
+					slot = res->Fetch()[1].GetInt8();
+					if( containerslot == -1 && slot < EQUIPMENT_SLOT_END && slot >= 0 )
 					{
-						slot = res->Fetch()[0].GetUInt32();
-						items[slot].displayid = proto->DisplayInfoID;
-						items[slot].invtype = proto->InventoryType;
+						proto = ItemPrototypeStorage.LookupEntry(res->Fetch()[2].GetUInt32());
+						if(proto)
+						{
+							// slot0 = head, slot14 = cloak 0x400 = no helm, 0x800 = no cloak
+							if(!(slot == 0 && (flags & (uint32)0x400) != 0) && !(slot == 14 && (flags & (uint32)0x800) != 0))
+							{
+								items[slot].displayid = proto->DisplayInfoID;
+								items[slot].invtype = proto->InventoryType;
+								if( slot == EQUIPMENT_SLOT_MAINHAND || slot == EQUIPMENT_SLOT_OFFHAND )
+								{
+									// get enchant visual ID
+									const char * enchant_field = res->Fetch()[3].GetString();
+									if( sscanf( enchant_field , "%u,0,0;" , (unsigned int *)&enchantid ) == 1 && enchantid > 0 )
+									{
+										enc = dbcEnchant.LookupEntry( enchantid );
+										if( enc != NULL )
+											items[slot].enchantment = enc->visual;
+										else
+											items[slot].enchantment = 0;;
+									}
+								}
+							}
+						}
 					}
 				} while(res->NextRow());
 				delete res;
 			}
 
-			for( i = 0; i < 19; ++i )
-				data << items[i].displayid << items[i].invtype << uint32(0);
+			for( i = 0; i < EQUIPMENT_SLOT_END; i++ )
+				data << items[i].displayid << items[i].invtype << uint32(items[i].enchantment);
 
-			for(uint8 c = 0; c < 4; ++c)
+			for( i = 0; i < 4; i++)
 				data << uint32(0)/*bags[i].displayid*/ << uint8(18) << uint32(0);
 			//			Displayid						  // Bag	  // Enchant
 
@@ -140,7 +181,7 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 
 	data.put<uint8>(0, num);
 
-	DEBUG_LOG("Character Enum", "Built in %u ms.", getMSTime() - start_time);
+	OUT_DEBUG("CharacterHandler", "Enum Built in %u ms.", getMSTime() - start_time);
 	SendPacket( &data );
 }
 

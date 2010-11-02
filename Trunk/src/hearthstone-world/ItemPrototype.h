@@ -19,7 +19,9 @@
 
 #ifndef _ITEMPROTOTYPE_H
 #define _ITEMPROTOTYPE_H
+
 class Spell;
+class GossipScript;
 
 #define GEM_META_SOCKET 1
 #define GEM_RED_SOCKET 2

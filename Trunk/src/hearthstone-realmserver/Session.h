@@ -43,6 +43,8 @@ protected:
 	string m_GMPermissions;
 	string m_accountName;
 	uint32 m_build;
+	bool m_hasDeathKnight;
+	uint8 m_highestLevel;
 	static SessionPacketHandler Handlers[NUM_MSG_TYPES];
 	bool m_loadedPlayerData;
 

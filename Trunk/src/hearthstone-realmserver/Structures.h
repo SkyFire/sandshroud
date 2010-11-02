@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef STRUCTURES_H
+#define STRUCTURES_H
+
 struct RPlayerInfo
 {
 	uint32 Guid;
@@ -56,105 +59,16 @@ struct RPlayerInfo
 };
 
 #ifndef _GAME
+
+// This way we can grab enums and defines
+#include "../hearthstone-world/ItemPrototype.h"
+
 /* Copied structures from game */
-struct SocketInfo
+struct player_item
 {
-	uint32 SocketColor;
-	uint32 Unk;
-};
-
-struct ItemSpell
-{
-	uint32 Id;
-	uint32 Trigger;
-	int32 Charges;
-	int32 Cooldown;
-	uint32 Category;
-	int32 CategoryCooldown;
-};
-
-struct ItemDamage
-{
-	float Min;
-	float Max;
-	uint32 Type;
-};
-
-struct ItemStat
-{
-	uint32 Type;
-	int32 Value;
-};
-
-struct ItemPrototype
-{
-	uint32 ItemId;
-	uint32 Class;
-	uint32 SubClass;
-	int32 unknown_bc;
-	char * Name1;
-//	char * Name2;
-//	char * Name3;
-//	char * Name4;
-	uint32 DisplayInfoID;
-	uint32 Quality;
-	uint32 Flags;
-	uint32 BuyPrice;
-	uint32 SellPrice;
-	uint32 InventoryType;
-	int32 AllowableClass;
-	int32 AllowableRace;
-	uint32 ItemLevel;
-	uint32 RequiredLevel;
-	uint32 RequiredSkill;
-	uint32 RequiredSkillRank;
-	uint32 RequiredSpell;
-	uint32 RequiredPlayerRank1;
-	uint32 RequiredPlayerRank2;
-	uint32 RequiredFaction;
-	uint32 RequiredFactionStanding;
-	uint32 Unique;
-	uint32 MaxCount;
-	uint32 ContainerSlots;
-	ItemStat Stats[10];
-	uint32 ScalingStatsEntry;
-	uint32 ScalingStatsFlag;
-	ItemDamage Damage[2];
-	uint32 Armor;
-	uint32 HolyRes;
-	uint32 FireRes;
-	uint32 NatureRes;
-	uint32 FrostRes;
-	uint32 ShadowRes;
-	uint32 ArcaneRes;
-	uint32 Delay;
-	uint32 AmmoType;
-	float  Range;
-	ItemSpell Spells[5];
-	uint32 Bonding;
-	char * Description;
-	uint32 PageId;
-	uint32 PageLanguage;
-	uint32 PageMaterial;
-	uint32 QuestId;
-	uint32 LockId;
-	uint32 LockMaterial;
-	uint32 SheathId;
-	uint32 RandomPropId;
-	uint32 RandomSuffixId;
-	uint32 Block;
-	uint32 ItemSet;
-	uint32 MaxDurability;
-	uint32 ZoneNameID;
-	uint32 MapID;
-	uint32 BagFamily;
-	uint32 TotemCategory;
-	SocketInfo Sockets[3];
-	uint32 SocketBonus;
-	uint32 GemProperties;
-	int32 DisenchantReqSkill;
-	int32 Lootgold;
-	uint32 ArmorDamageModifier;
+	uint32 displayid;
+	uint8 invtype;
+	uint32 enchantment; // added in 2.4
 };
 
 struct CreatureInfo
@@ -179,7 +93,6 @@ struct CreatureInfo
 	uint8  Civilian;
 	uint8  Leader;
 };
-
 
 struct GameObjectInfo
 {
@@ -344,4 +257,36 @@ struct MapInfo
 	}
 };
 
-#endif
+enum Classes
+{
+	WARRIOR = 1,
+	PALADIN = 2,
+	HUNTER = 3,
+	ROGUE = 4,
+	PRIEST = 5,
+	DEATHKNIGHT = 6,
+	SHAMAN = 7,
+	MAGE = 8,
+	WARLOCK = 9,
+	DRUID = 11,
+};
+
+enum Races
+{
+	RACE_HUMAN = 1,
+	RACE_ORC = 2,
+	RACE_DWARF = 3,
+	RACE_NIGHTELF = 4,
+	RACE_UNDEAD = 5,
+	RACE_TAUREN = 6,
+	RACE_GNOME = 7,
+	RACE_TROLL = 8,
+	RACE_GOBLIN	= 9,
+	RACE_BLOODELF = 10,
+	RACE_DRAENEI = 11,
+	RACE_WORGEN	= 22
+};
+
+#endif // The game.
+
+#endif // STRUCTURES_H

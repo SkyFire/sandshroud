@@ -26,8 +26,10 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <signal.h>
 //#include <fstream>
 
+#include "../hearthstone-shared/svn_revision.h"
 #include "../hearthstone-shared/Common.h"
 #include "../hearthstone-shared/MersenneTwister.h"
 #include "../hearthstone-shared/WorldPacket.h"

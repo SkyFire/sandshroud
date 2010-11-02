@@ -176,7 +176,7 @@ bool Master::Run(int argc, char ** argv)
 #ifdef _DEBUG
 	sLog.Init(3);
 #else
-	sLog.Init(2);
+	sLog.Init(1);
 #endif // _DEBUG
 
 #ifndef WIN32

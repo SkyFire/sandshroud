@@ -18,8 +18,8 @@
  */
 
 #include "RStdAfx.h"
-#include "../hearthstone-shared/svn_revision.h"
 
+createFileSingleton( Master );
 Database * Database_Character;
 Database * Database_World;
 
@@ -43,13 +43,72 @@ bool _StartWorldDatabase()
 	return Database_World->Initialize(host.c_str(), port, user.c_str(), pw.c_str(), database.c_str(), 5, 16384);
 }
 
-int main(int argc, char *argv[])
+void Master::_OnSignal(int s)
+{
+	switch (s)
+	{
+#ifndef WIN32
+	case SIGHUP:
+		sWorld.Rehash(true);
+		break;
+#endif
+	case SIGINT:
+	case SIGTERM:
+	case SIGABRT:
+#ifdef _WIN32
+	case SIGBREAK:
+#endif
+		Master::m_stopEvent = true;
+		break;
+	}
+
+	signal(s, _OnSignal);
+}
+
+volatile bool Master::m_stopEvent = false;
+
+Master::Master()
+{
+
+}
+
+Master::~Master()
+{
+
+}
+
+bool Master::_StartDB()
+{
+	Database_Character = Database::Create();
+	Database_World = Database::Create();
+	Log.Success("Database", "Interface Created.");
+	Log.Notice("Database", "Connecting to databases...");
+	if(!_StartCharacterDatabase() ||
+		!_StartWorldDatabase() )
+	{
+		Log.Error("Database", "One or more errors occured while connecting to databases.");
+		return false;
+	}
+	else
+		Log.Success("Database", "Connections established successfully.");
+
+	return true;
+}
+
+bool Master::Run(int argc, char ** argv)
 {
 	//sLog.outString("TexT");
 	/* Initialize global timestamp */
 	UNIXTIME = time(NULL);
 
 	ThreadPool.Startup();
+
+	//use these log_level until we are fully started up.
+#ifdef _DEBUG
+	sLog.Init(3);
+#else
+	sLog.Init(1);
+#endif // _DEBUG
 
 	/* Print Banner */
 	Log.Notice("Server", "==============================================================");
@@ -58,27 +117,20 @@ int main(int argc, char *argv[])
 	Log.Notice("Server", "==============================================================");
 	Log.Line();
 
-	Database_Character = Database::Create();
-	Database_World = Database::Create();
-	Log.Success("Database", "Interface Created.");
-
 	new ClusterMgr;
 	new ClientMgr;
 
 	Log.Line();
 	Config.ClusterConfig.SetSource("./hearthstone-realmserver.conf");
 	Config.RealmConfig.SetSource("./hearthstone-realms.conf");
-	Log.Notice("Database", "Connecting to databases...");
-	if(!_StartCharacterDatabase() ||
-		!_StartWorldDatabase() )
+
+	if(!_StartDB())
 	{
-		Log.Error("Database", "One or more errors occured while connecting to databases.");
-		exit(-1);
+		Database::CleanupLibs();
+		return false;
 	}
-	else
-	{
-		Log.Success("Database", "Connections established successfully.");
-	}
+
+	_HookSignals();
 
 	ThreadPool.ShowStats();
 	Log.Line();
@@ -91,12 +143,6 @@ int main(int argc, char *argv[])
 	new SocketMgr;
 	new SocketGarbageCollector;
 	sSocketMgr.SpawnWorkerThreads();
-
-	/* connect to LS */
-	new LogonCommHandler;
-	sLogonCommHandler.Startup();
-
-	Log.Success("Network", "Network Subsystem Started.");
 
 	Log.Notice("Network", "Opening Client Port...");
 	ListenSocket<WorldSocket> * wsl = new ListenSocket<WorldSocket>(Config.ClusterConfig.GetStringDefault("Listen", "Host", "0.0.0.0").c_str(), Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129));
@@ -115,16 +161,63 @@ int main(int argc, char *argv[])
 	ThreadPool.ExecuteTask( isl );
 	ThreadPool.ExecuteTask( wsl );
 
+	/* connect to LS */
+	new LogonCommHandler;
+	sLogonCommHandler.Startup();
+
+	Log.Success("Network", "Network Subsystem Started.");
+
+#ifdef WIN32
+	HANDLE hThread = GetCurrentThread();
+#endif
 	/* main loop */
-	for(;;)
+	while(!m_stopEvent)
 	{
 		sLogonCommHandler.UpdateSockets();
 		//wsl->Update();
 		//isl->Update();
 		sClientMgr.Update();
 		sClusterMgr.Update();
-		Sleep(10);
+#ifdef WIN32
+			WaitForSingleObject( hThread, 10);
+#else
+			Sleep(10);
+#endif
 	}
+
+	_UnhookSignals();
+	return true;
+}
+
+void Master::_HookSignals()
+{
+	signal( SIGINT, _OnSignal );
+	signal( SIGTERM, _OnSignal );
+	signal( SIGABRT, _OnSignal );
+#ifdef _WIN32
+	signal( SIGBREAK, _OnSignal );
+#else
+	signal( SIGHUP, _OnSignal );
+	signal(SIGUSR1, _OnSignal);
+
+	// crash handler
+	signal(SIGSEGV, segfault_handler);
+	signal(SIGFPE, segfault_handler);
+	signal(SIGILL, segfault_handler);
+	signal(SIGBUS, segfault_handler);
+#endif
+}
+
+void Master::_UnhookSignals()
+{
+	signal( SIGINT, 0 );
+	signal( SIGTERM, 0 );
+	signal( SIGABRT, 0 );
+#ifdef _WIN32
+	signal( SIGBREAK, 0 );
+#else
+	signal( SIGHUP, 0 );
+#endif
 
 }
 
@@ -132,5 +225,3 @@ void OnCrash(bool Terminate)
 {
 
 }
-
-

@@ -64,24 +64,7 @@ void CapitalizeString(string& arg)
 
 void WorldSession::CharacterEnumProc(QueryResult * result)
 {
-	struct player_item
-	{
-		uint32 displayid;
-		uint8 invtype;
-		uint32 enchantment; // added in 2.4
-	};
-
-	player_item items[19];
-//	player_item bags[4];
-	int8 slot;
-	int8 containerslot;
-	uint32 i;
-	ItemPrototype * proto;
-	QueryResult * res;
-	CreatureInfo *info = NULL;
 	uint8 num = 0;
-	uint8 race;
-
 	m_asyncQuery = false;
 
 	//Erm, reset it here in case player deleted his DK.
@@ -95,12 +78,21 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 	data << num;
 	if( result )
 	{
-		uint64 guid;
+		CreatureInfo *info = NULL;
+		player_item items[19];
+		ItemPrototype * proto;
+//		player_item bags[4];
+		QueryResult * res;
+		Field *fields;
+		int8 slot;
+		int8 containerslot;
 		uint8 Class;
+		uint8 race;
+		uint32 i;
 		uint32 bytes2;
 		uint32 flags;
 		uint32 banned;
-		Field *fields;
+		uint64 guid;
 		do
 		{
 			fields = result->Fetch();
@@ -219,7 +211,7 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 			for( i = 0; i < EQUIPMENT_SLOT_END; i++ )
 				data << items[i].displayid << items[i].invtype << uint32(items[i].enchantment);
 
-			for(uint8 c = 0; c < 4; ++c)
+			for( i = 0; i < 4; i++)
 				data << uint32(0)/*bags[i].displayid*/ << uint8(18) << uint32(0);
 			//			Displayid						  // Bag	  // Enchant
 

@@ -26,4 +26,28 @@ extern Database * Database_Character;
 #define WorldDatabase (*Database_World)
 #define CharacterDatabase (*Database_Character)
 
+#define DEFAULT_LOG_LEVEL 0
+#define DEFAULT_HOST "0.0.0.0"
+
+class SERVER_DECL Master : public Singleton<Master>
+{
+public:
+	Master();
+	~Master();
+	bool Run(int argc, char ** argv);
+
+	static volatile bool m_stopEvent;
+
+private:
+	bool _StartDB();
+	void _StopDB();
+
+	void _HookSignals();
+	void _UnhookSignals();
+
+	static void _OnSignal(int s);
+};
+
+#define sMaster Master::getSingleton()
+
 #endif
