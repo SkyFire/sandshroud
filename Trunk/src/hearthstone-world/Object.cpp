@@ -137,12 +137,15 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		y = GetPositionY();
 	}
 
+	if(z == 0.0f)
+		z = GetPositionZ();
+
+	if(!mgr->GetBaseMap() || !mgr->GetBaseMap()->GetMapTerrain())
+		return z;
+
 	float mapheight = mgr->GetLandHeight(x, y);
 	if(!mgr->CanUseCollision(this))
 		return mapheight+offset;
-
-	if(z == 0.0f)
-		z = GetPositionZ();
 
 	float vmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
 	if(IS_INSTANCE(mgr->GetMapId()) || !sWorld.CalculatedHeightChecks)
@@ -197,7 +200,10 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		}
 	}
 
-	return CMapHeight+offset;
+	if(CMapHeight != NO_LAND_HEIGHT)
+		return CMapHeight+offset;
+
+	return z;
 
 /*
 	// Crow: WE SHOULD GET HIGHEST REASONABLE VALUE BASED ON Z AND THE CALCULATIONS BELOW
@@ -361,17 +367,6 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 	}
 
 	return vmapheight+0.00321f; // We have a direct offset*/
-}
-
-float Object::GetCHeightForPosition2(bool checkwater, float x, float y, float z)
-{
-	bool usingcollision = true;
-	float newz = 0.0f;
-	float ztwo = 0.0f;
-	if(!IsInWorld())
-		return newz;
-
-	return newz+0.00321f; // We have a direct offset
 }
 
 void Object::SetPhase(int32 phase)
@@ -1199,6 +1194,7 @@ void Object::AddToWorld()
 		else
 			return; //instance add failed
 	}
+
 	if( IsPlayer() )
 	{
 		// battleground checks
@@ -1215,6 +1211,15 @@ void Object::AddToWorld()
 		// players who's group disbanded cannot remain in a raid instances alone(no soloing them:P)
 		if( !p->triggerpass_cheat && p->GetGroup()== NULL && (mapMgr->GetdbcMap()->israid() || mapMgr->GetMapInfo()->type == INSTANCE_MULTIMODE))
 			return;
+	}
+	else if(IsCreature())
+	{
+		uint32 areaid = GetAreaID(mapMgr);
+		if(areaid == 4395 || areaid == 4560 || areaid == 4619)
+		{	// Set us on objects, since it's dalaran.
+			// This isn't really needed, but it's probably a good idea.
+			TO_CREATURE(this)->CanMove |= LIMIT_ON_OBJ;
+		}
 	}
 
 	m_mapMgr = mapMgr;
@@ -3317,26 +3322,30 @@ void Object::SetZoneId(uint32 newZone)
 		TO_PLAYER(this)->GetGroup()->HandlePartialChange( PARTY_UPDATE_FLAG_ZONEID, TO_PLAYER(this) );
 }
 
-uint32 Object::GetAreaID()
+uint32 Object::GetAreaID(MapMgr* mgr)
 {
-	return (GetMapMgr() ? GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY(),GetPositionZ()) : 0);
+	if(mgr == NULL)
+		mgr = GetMapMgr();
+	return (mgr ? mgr->GetAreaID(GetPositionX(),GetPositionY(),GetPositionZ()) : 0);
 }
 
-uint32 Object::GetAreaID(float x, float y, float z, int32 mapid)
+uint32 Object::GetAreaID(float x, float y, float z, int32 mapid, MapMgr* mgr)
 {
+	if(mgr == NULL)
+		mgr = GetMapMgr();
 	if(mapid > -1)
 	{
 		if(mapid != m_mapId)
 		{
 			uint32 areaid = 0;
-			MapMgr* mgr = sInstanceMgr.GetMapMgr(mapid);
-			if(mgr != NULL)
-				areaid = mgr->GetAreaID(x, y, z);
+			MapMgr* mgr2 = sInstanceMgr.GetMapMgr(mapid);
+			if(mgr2 != NULL)
+				areaid = mgr2->GetAreaID(x, y, z);
 
 			return areaid;
 		}
 	}
-	return (GetMapMgr() ? GetMapMgr()->GetAreaID(x, y, z) : 0);
+	return (mgr ? mgr->GetAreaID(x, y, z) : 0);
 }
 
 void Object::PlaySoundToPlayer( Player* plr, uint32 sound_entry )
@@ -3363,7 +3372,6 @@ void Object::_SetExtension(const string& name, void* ptr)
 
 	m_extensions->insert( make_pair( name, ptr ) );
 }
-
 
 void Object::SendAttackerStateUpdate( Unit* Target, dealdamage *dmg, uint32 realdamage, uint32 abs, uint32 blocked_damage, uint32 hit_status, uint32 vstate )
 {

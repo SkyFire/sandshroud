@@ -928,7 +928,6 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	uint32 level = 0;
 
 	spawnid = spawn->id;
-
 	m_walkSpeed = m_base_walkSpeed = proto->walk_speed; //set speeds
 	m_runSpeed = m_base_runSpeed = proto->run_speed; //set speeds
 	m_flySpeed = proto->fly_speed;

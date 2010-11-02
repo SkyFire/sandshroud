@@ -1190,14 +1190,10 @@ void AIInterface::AttackReaction(Unit* pUnit, uint32 damage_dealt, uint32 spellI
 	ASSERT(m_Unit != NULL);
 
 	if( m_AIState == STATE_EVADE || m_fleeTimer != 0 || !pUnit || !pUnit->isAlive() || !m_Unit->isAlive() )
-	{
 		return;
-	}
 
 	if( m_Unit == pUnit || m_Unit->IsVehicle() )
-	{
 		return;
-	}
 
 	if(pUnit->IsVehicle())
 	{

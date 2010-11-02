@@ -103,9 +103,12 @@ void ObjectMgr::LoadExtraGameObjectStuff()
 	{
 		gInfo = gOIitr->Get();
 		gInfo->gossip_script = sScriptMgr.GetDefaultGossipScript();
+		gInfo->InvolvedQuestCount = 0;
+		gInfo->InvolvedQuestIds = NULL;
 
 		if(!gOIitr->Inc())
 			break;
+
 	}
 	gOIitr->Destruct();
 }
@@ -541,15 +544,6 @@ void ObjectMgr::LoadExtraItemStuff()
 		delete result;
 	}
 
-	StorageContainerIterator<GameObjectInfo> *gtr = GameObjectNameStorage.MakeIterator();
-	while(!gtr->AtEnd())
-	{
-		gtr->Get()->InvolvedQuestCount =0;
-		gtr->Get()->InvolvedQuestIds = NULL;
-		gtr->Inc();
-	}
-	gtr->Destruct();
-
 	StorageContainerIterator<ItemPrototype> * itr = ItemPrototypeStorage.MakeIterator();
 	ItemPrototype * pItemPrototype;
 	while(!itr->AtEnd())
@@ -569,6 +563,10 @@ void ObjectMgr::LoadExtraItemStuff()
 			l->push_back(pItemPrototype);
 		}
 
+		if(pItemPrototype->Damage[0].Max < pItemPrototype->Damage[0].Min)
+			pItemPrototype->Damage[0].Max = pItemPrototype->Damage[0].Min;
+		if(pItemPrototype->Damage[1].Max < pItemPrototype->Damage[1].Min)
+			pItemPrototype->Damage[1].Max = pItemPrototype->Damage[1].Min;
 
 		// lowercase name, used for searches
 		pItemPrototype->lowercase_name = itr->Get()->Name1;

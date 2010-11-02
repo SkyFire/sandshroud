@@ -146,7 +146,6 @@ public:
 	//! True if object exists in world
 
 	float GetCHeightForPosition(bool checkwater = false, float x = 0.0f, float y = 0.0f, float z = 0.0f);
-	float GetCHeightForPosition2(bool checkwater = false, float x = 0.0f, float y = 0.0f, float z = 0.0f);
 
 	HEARTHSTONE_INLINE bool IsInWorld() { return m_mapMgr != NULL; }
 	virtual void AddToWorld();
@@ -254,8 +253,8 @@ public:
 	HEARTHSTONE_INLINE const uint32& GetZoneId( ) const { return m_zoneId; }
 
 	// Area id
-	uint32 GetAreaID(); // Finds the area id for the object.
-	uint32 GetAreaID(float x, float y, float z = 0.0f, int32 mapid = -1);
+	uint32 GetAreaID(MapMgr* mgr = NULL); // Finds the area id for the object.
+	uint32 GetAreaID(float x, float y, float z = 0.0f, int32 mapid = -1, MapMgr* mgr = NULL);
 
 	//! Get uint32 property
 	HEARTHSTONE_INLINE const uint32& GetUInt32Value( uint32 index ) const { return m_uint32Values[ index ]; }
@@ -366,7 +365,6 @@ public:
 	{
 		return m_position.Distance2DSq( x, y );
 	}
-
 
 	// In-range object management, not sure if we need it
 	HEARTHSTONE_INLINE bool IsInRangeSet( Object* pObj )

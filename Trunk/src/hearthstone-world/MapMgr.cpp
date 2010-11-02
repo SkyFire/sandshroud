@@ -659,7 +659,7 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 				fRange = m_UpdateDistance; // normal distance
 
 			//If we have a update_distance, check if we are in range.
-			if( fRange > 0.0f && curObj->GetDistance2dSq(obj) > fRange )
+			if( curObj != obj && (fRange > 0.0f && curObj->CalcDistance(obj) > fRange) )
 			{
 				if( plObj )
 					plObj->RemoveIfVisible(curObj);
@@ -827,8 +827,8 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 		else
 			fRange = m_UpdateDistance; // normal distance
 
-		//Add if we are not ourself and  range ==0 or distance is withing range.
-		if ( curObj != obj && (fRange == 0.0f || curObj->GetDistance2dSq( obj ) <= fRange ))
+		// Add if we are not ourself and range == 0 or distance is withing range.
+		if ( curObj != obj && (fRange == 0.0f || curObj->CalcDistance( obj ) <= fRange ))
 		{
 			if( !obj->IsInRangeSet( curObj ) )
 			{
