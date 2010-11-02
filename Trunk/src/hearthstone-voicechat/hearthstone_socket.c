@@ -101,9 +101,9 @@ int voicechat_hearthstone_listen_socket_read_handler(network_socket *s, int act)
 	// create the socket structure.
 	ns = (network_socket*)vc_malloc(sizeof(network_socket));
 	network_init_socket(ns, new_fd, 5000);
-	ns->event_handler = voicechat_hearthstone_socket_read_handler;
+	ns->event_handler = (network_io_callback)voicechat_hearthstone_socket_read_handler;
 	ns->miscdata = (void*)ascentsocket_allocate(ns);		// used for voicechat struct later
-	ns->write_handler = default_tcp_write_handler;
+	ns->write_handler = (network_io_callback)default_tcp_write_handler;
 
 	// add it
 	if( network_add_socket(ns) < 0 )

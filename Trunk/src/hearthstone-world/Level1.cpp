@@ -610,7 +610,8 @@ bool ChatHandler::HandleGetSkillLevelCommand(const char *args, WorldSession *m_s
 		skill = atol(pSkill);
 
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr) return false;
+	if(!plr)
+		return false;
 
 	if(skill > SkillNameManager->maxskill)
 	{
@@ -643,7 +644,8 @@ bool ChatHandler::HandleGetSkillLevelCommand(const char *args, WorldSession *m_s
 bool ChatHandler::HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr) return false;
+	if(!plr)
+		return false;
 
 	uint32 nobonus = 0;
 	int32  bonus = 0;

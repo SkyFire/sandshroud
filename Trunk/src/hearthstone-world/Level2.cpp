@@ -26,7 +26,7 @@
 bool ChatHandler::HandleResetReputationCommand(const char *args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr)
+	if(plr == NULL)
 	{
 		SystemMessage(m_session, "Select a player or yourself first.");
 		return true;
@@ -88,7 +88,8 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
 		return false;
 
 	Player* ptarget = getSelectedChar(m_session);
-	if(!ptarget) return false;
+	if(ptarget == NULL)
+		return true;
 
 	if(strlen((char*)args)>75)
 	{
@@ -879,43 +880,43 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	uint8 type = GObj->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID);
 	switch(type)
 	{
-	case GAMEOBJECT_TYPE_DOOR:		  gottext << "Door";	break;
-	case GAMEOBJECT_TYPE_BUTTON:		gottext << "Button";	break;
-	case GAMEOBJECT_TYPE_QUESTGIVER:	gottext << "Quest Giver";	break;
-	case GAMEOBJECT_TYPE_CHEST:		 gottext << "Chest";	break;
-	case GAMEOBJECT_TYPE_BINDER:		gottext << "Binder";	break;
-	case GAMEOBJECT_TYPE_GENERIC:	   gottext << "Generic";	break;
-	case GAMEOBJECT_TYPE_TRAP:		  gottext << "Trap";	break;
-	case GAMEOBJECT_TYPE_CHAIR:		 gottext << "Chair";	break;
-	case GAMEOBJECT_TYPE_SPELL_FOCUS:   gottext << "Spell Focus";	break;
-	case GAMEOBJECT_TYPE_TEXT:		  gottext << "Text";	break;
-	case GAMEOBJECT_TYPE_GOOBER:		gottext << "Goober";	break;
-	case GAMEOBJECT_TYPE_TRANSPORT:	 gottext << "Transport";	break;
-	case GAMEOBJECT_TYPE_AREADAMAGE:	gottext << "Area Damage";	break;
-	case GAMEOBJECT_TYPE_CAMERA:		gottext << "Camera";	break;
-	case GAMEOBJECT_TYPE_MAP_OBJECT:	gottext << "Map Object";	break;
-	case GAMEOBJECT_TYPE_MO_TRANSPORT:  gottext << "Mo Transport";	break;
-	case GAMEOBJECT_TYPE_DUEL_ARBITER:  gottext << "Duel Arbiter";	break;
-	case GAMEOBJECT_TYPE_FISHINGNODE:   gottext << "Fishing Node";	break;
-	case GAMEOBJECT_TYPE_RITUAL:		gottext << "Ritual";	break;
-	case GAMEOBJECT_TYPE_MAILBOX:	   gottext << "Mailbox";	break;
-	case GAMEOBJECT_TYPE_AUCTIONHOUSE:  gottext << "Auction House";	break;
-	case GAMEOBJECT_TYPE_GUARDPOST:	 gottext << "Guard Post";	break;
-	case GAMEOBJECT_TYPE_SPELLCASTER:   gottext << "Spell Caster";	break;
-	case GAMEOBJECT_TYPE_MEETINGSTONE:  gottext << "Meeting Stone";	break;
-	case GAMEOBJECT_TYPE_FLAGSTAND:	 gottext << "Flag Stand";	break;
-	case GAMEOBJECT_TYPE_FISHINGHOLE:   gottext << "Fishing Hole";	break;
-	case GAMEOBJECT_TYPE_FLAGDROP:	  gottext << "Flag Drop";	break;
-	case GAMEOBJECT_TYPE_MINI_GAME:	  gottext << "Mini Game";	break;
-	case GAMEOBJECT_TYPE_LOTTERY_KIOSK:	  gottext << "Lottery KIOSK";	break;
-	case GAMEOBJECT_TYPE_CAPTURE_POINT:	  gottext << "Capture Point";	break;
-	case GAMEOBJECT_TYPE_AURA_GENERATOR: gottext << "Aura Generator"; break;
-	case GAMEOBJECT_TYPE_DUNGEON_DIFFICULTY: gottext << "Dungeon Difficulty"; break;
-	case GAMEOBJECT_TYPE_BARBER_CHAIR: gottext << "Barber Chair"; break;
-	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING: gottext << "Destructible Building"; break;
-	case GAMEOBJECT_TYPE_GUILD_BANK: gottext << "Guild Bank"; break;
-	case GAMEOBJECT_TYPE_TRAPDOOR: gottext << "Trap Door"; break;
-	default:							gottext << "Unknown.";	break;
+	case GAMEOBJECT_TYPE_DOOR:						gottext << "Door";	break;
+	case GAMEOBJECT_TYPE_BUTTON:					gottext << "Button";	break;
+	case GAMEOBJECT_TYPE_QUESTGIVER:				gottext << "Quest Giver";	break;
+	case GAMEOBJECT_TYPE_CHEST:						gottext << "Chest";	break;
+	case GAMEOBJECT_TYPE_BINDER:					gottext << "Binder";	break;
+	case GAMEOBJECT_TYPE_GENERIC:					gottext << "Generic";	break;
+	case GAMEOBJECT_TYPE_TRAP:						gottext << "Trap";	break;
+	case GAMEOBJECT_TYPE_CHAIR:						gottext << "Chair";	break;
+	case GAMEOBJECT_TYPE_SPELL_FOCUS:				gottext << "Spell Focus";	break;
+	case GAMEOBJECT_TYPE_TEXT:						gottext << "Text";	break;
+	case GAMEOBJECT_TYPE_GOOBER:					gottext << "Goober";	break;
+	case GAMEOBJECT_TYPE_TRANSPORT:					gottext << "Transport";	break;
+	case GAMEOBJECT_TYPE_AREADAMAGE:				gottext << "Area Damage";	break;
+	case GAMEOBJECT_TYPE_CAMERA:					gottext << "Camera";	break;
+	case GAMEOBJECT_TYPE_MAP_OBJECT:				gottext << "Map Object";	break;
+	case GAMEOBJECT_TYPE_MO_TRANSPORT:				gottext << "Mo Transport";	break;
+	case GAMEOBJECT_TYPE_DUEL_ARBITER:				gottext << "Duel Arbiter";	break;
+	case GAMEOBJECT_TYPE_FISHINGNODE:				gottext << "Fishing Node";	break;
+	case GAMEOBJECT_TYPE_RITUAL:					gottext << "Ritual";	break;
+	case GAMEOBJECT_TYPE_MAILBOX:					gottext << "Mailbox";	break;
+	case GAMEOBJECT_TYPE_AUCTIONHOUSE:				gottext << "Auction House";	break;
+	case GAMEOBJECT_TYPE_GUARDPOST:					gottext << "Guard Post";	break;
+	case GAMEOBJECT_TYPE_SPELLCASTER:				gottext << "Spell Caster";	break;
+	case GAMEOBJECT_TYPE_MEETINGSTONE:				gottext << "Meeting Stone";	break;
+	case GAMEOBJECT_TYPE_FLAGSTAND:					gottext << "Flag Stand";	break;
+	case GAMEOBJECT_TYPE_FISHINGHOLE:				gottext << "Fishing Hole";	break;
+	case GAMEOBJECT_TYPE_FLAGDROP:					gottext << "Flag Drop";	break;
+	case GAMEOBJECT_TYPE_MINI_GAME:					gottext << "Mini Game";	break;
+	case GAMEOBJECT_TYPE_LOTTERY_KIOSK:				gottext << "Lottery KIOSK";	break;
+	case GAMEOBJECT_TYPE_CAPTURE_POINT:				gottext << "Capture Point";	break;
+	case GAMEOBJECT_TYPE_AURA_GENERATOR:			gottext << "Aura Generator"; break;
+	case GAMEOBJECT_TYPE_DUNGEON_DIFFICULTY:		gottext << "Dungeon Difficulty"; break;
+	case GAMEOBJECT_TYPE_BARBER_CHAIR:				gottext << "Barber Chair"; break;
+	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:		gottext << "Destructible Building"; break;
+	case GAMEOBJECT_TYPE_GUILD_BANK:				gottext << "Guild Bank"; break;
+	case GAMEOBJECT_TYPE_TRAPDOOR:					gottext << "Trap Door"; break;
+	default:										gottext << "Unknown.";	break;
 	}
 	GreenSystemMessage(m_session, "Type: %s%u|r -- %s", MSG_COLOR_LIGHTBLUE, type, gottext.str().c_str());
 	GreenSystemMessage(m_session, "Distance: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->CalcDistance((Object*)m_session->GetPlayer()));
@@ -1225,7 +1226,8 @@ bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session
 	// moves npc to players location
 	Player* plr = m_session->GetPlayer();
 	Creature* crt = getSelectedCreature(m_session, true);
-	if(!crt) return true;
+	if(!crt)
+		return true;
 
 	crt->GetAIInterface()->MoveTo(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ());
 	return true;

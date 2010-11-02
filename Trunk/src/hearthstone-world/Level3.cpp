@@ -53,12 +53,8 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 	uint32 guid = (uint32)m_session->GetPlayer()->GetSelection();
 	Player* plr = getSelectedChar(m_session, true);
 
-	if(!plr)
-	{
-		plr = m_session->GetPlayer();
-		SystemMessage(m_session, "Auto-targeting self.");
-	}
-	if(!plr) return false;
+	if(plr == NULL)
+		return false;
 
 	if(plr->getClass()==WARRIOR)
 	{
@@ -68,7 +64,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Warrior cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==PALADIN)
+	else if(plr->getClass()==PALADIN)
 	{
 		plr->ClearCooldownsOnLine(594, guid);
 		plr->ClearCooldownsOnLine(267, guid);
@@ -76,7 +72,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Paladin cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==HUNTER)
+	else if(plr->getClass()==HUNTER)
 	{
 		plr->ClearCooldownsOnLine(50, guid);
 		plr->ClearCooldownsOnLine(51, guid);
@@ -84,7 +80,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Hunter cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==ROGUE)
+	else if(plr->getClass()==ROGUE)
 	{
 		plr->ClearCooldownsOnLine(253, guid);
 		plr->ClearCooldownsOnLine(38, guid);
@@ -92,7 +88,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Rogue cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==PRIEST)
+	else if(plr->getClass()==PRIEST)
 	{
 		plr->ClearCooldownsOnLine(56, guid);
 		plr->ClearCooldownsOnLine(78, guid);
@@ -100,7 +96,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Priest cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==SHAMAN)
+	else if(plr->getClass()==SHAMAN)
 	{
 		plr->ClearCooldownsOnLine(373, guid);
 		plr->ClearCooldownsOnLine(374, guid);
@@ -108,7 +104,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Shaman cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==DEATHKNIGHT)
+	else if(plr->getClass()==DEATHKNIGHT)
 	{
 		plr->ClearCooldownsOnLine(770, guid);
 		plr->ClearCooldownsOnLine(771, guid);
@@ -116,7 +112,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Death Knight cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==MAGE)
+	else if(plr->getClass()==MAGE)
 	{
 		plr->ClearCooldownsOnLine(6, guid);
 		plr->ClearCooldownsOnLine(8, guid);
@@ -124,7 +120,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Mage cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==WARLOCK)
+	else if(plr->getClass()==WARLOCK)
 	{
 		plr->ClearCooldownsOnLine(355, guid);
 		plr->ClearCooldownsOnLine(354, guid);
@@ -132,7 +128,7 @@ bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_
 		BlueSystemMessage(m_session, "Cleared all Warlock cooldowns.");
 		return true;
 	}
-	if(plr->getClass()==DRUID)
+	else if(plr->getClass()==DRUID)
 	{
 		plr->ClearCooldownsOnLine(573, guid);
 		plr->ClearCooldownsOnLine(574, guid);
@@ -282,7 +278,7 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 bool ChatHandler::HandleReviveCommand(const char* args, WorldSession *m_session)
 {
 	Player* SelectedPlayer = getSelectedChar(m_session, false);
-	if(!SelectedPlayer)
+	if(SelectedPlayer == NULL) 
 	{
 		Creature* ctr = getSelectedCreature(m_session, false);
 		if(ctr != NULL)
@@ -455,7 +451,7 @@ bool ChatHandler::HandleUnBanCharacterCommand(const char* args, WorldSession *m_
 		GreenSystemMessage(m_session, "Player %s not found ingame.", Character);
 	}
 
-	// Ban in database
+	// Unban in database
 	CharacterDatabase.Execute("UPDATE characters SET banned = 0 WHERE name = '%s'", CharacterDatabase.EscapeString(string(Character)).c_str());
 
 	SystemMessage(m_session, "Unbanned character %s in database.", Character);
@@ -629,7 +625,7 @@ bool ChatHandler::HandleIncreaseWeaponSkill(const char *args, WorldSession *m_se
 
 	if(!SubClassSkill)
 	{
-		RedSystemMessage(m_session, "Can't find skill ID :-/");
+		RedSystemMessage(m_session, "Can't find skill ID");
 		return false;
 	}
 
@@ -654,7 +650,8 @@ bool ChatHandler::HandleIncreaseWeaponSkill(const char *args, WorldSession *m_se
 bool ChatHandler::HandleResetTalentsCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = this->getSelectedChar(m_session);
-	if(!plr) return true;
+	if(plr == NULL)
+		return true;
 
 	plr->Reset_Talents();
 
@@ -667,7 +664,8 @@ bool ChatHandler::HandleResetTalentsCommand(const char* args, WorldSession *m_se
 bool ChatHandler::HandleResetSpellsCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = this->getSelectedChar(m_session);
-	if(!plr) return true;
+	if(plr == NULL)
+		return true;;
 
 	plr->Reset_Spells();
 
@@ -731,6 +729,7 @@ bool ChatHandler::HandleAccountBannedCommand(const char * args, WorldSession * m
 		return false;
 
 	uint32 banned = (timeperiod ? (uint32)UNIXTIME+timeperiod : 1);
+
 	sLogonCommHandler.Account_SetBanned(pAccount, banned, pReason);
 
 	GreenSystemMessage(m_session, "Account '%s' has been banned %s%s. The change will be effective immediately.", pAccount,
@@ -793,10 +792,9 @@ bool ChatHandler::HandleAccountUnmuteCommand(const char * args, WorldSession * m
 
 bool ChatHandler::HandleGetTransporterTime(const char* args, WorldSession* m_session)
 {
-	//Player* plyr = m_session->GetPlayer();
 	Creature* crt = getSelectedCreature(m_session, false);
 	if( crt == NULL )
-		return false;
+		return true;
 
 	WorldPacket data(SMSG_ATTACKERSTATEUPDATE, 1000);
 	data << uint32(0x00000102);
@@ -821,7 +819,8 @@ bool ChatHandler::HandleGetTransporterTime(const char* args, WorldSession* m_ses
 bool ChatHandler::HandleRemoveAurasCommand(const char *args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr) return false;
+	if(plr == NULL)
+		return true;
 
 	BlueSystemMessage(m_session, "Removing all auras...");
 	for(uint32 i = 0; i < MAX_AURAS; i++)
@@ -835,7 +834,8 @@ bool ChatHandler::HandleRemoveAurasCommand(const char *args, WorldSession *m_ses
 bool ChatHandler::HandleRemoveRessurectionSickessAuraCommand(const char *args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
-	if(!plr) return false;
+	if(plr == NULL)
+		return true;
 
 	BlueSystemMessage(m_session, "Removing ressurection sickness...");
 	plr->RemoveAura( 15007 );
@@ -908,10 +908,8 @@ bool ChatHandler::HandleAddItemSetCommand(const char* args, WorldSession* m_sess
 	}
 
 	Player* chr = getSelectedChar(m_session);
-	if (chr == NULL) {
-	RedSystemMessage(m_session, "Unable to select character.");
-	return true;
-	}
+	if (chr == NULL)
+		return true;
 
 	ItemSetEntry *entry = dbcItemSet.LookupEntry(setid);
 	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(setid);
@@ -1023,7 +1021,8 @@ bool ChatHandler::HandlePowerCheatCommand(const char* args, WorldSession* m_sess
 bool ChatHandler::HandleShowCheatsCommand(const char* args, WorldSession* m_session)
 {
 	Player* plyr = getSelectedChar(m_session, true);
-	if(!plyr) return true;
+	if(plyr == NULL)
+		return true;
 
 	uint32 active = 0, inactive = 0;
 #define print_cheat_status(CheatName, CheatVariable) SystemMessage(m_session, "%s%s: %s%s", MSG_COLOR_LIGHTBLUE, CheatName, \
@@ -1149,8 +1148,8 @@ bool ChatHandler::HandleFlySpeedCheatCommand(const char* args, WorldSession* m_s
 	if(Speed == 0)
 		Speed = 20;
 
-	Player* plr = getSelectedChar(m_session);
-	if(plr == 0)
+	Player * plr = getSelectedChar(m_session);
+	if(plr == NULL)
 		return true;
 
 	BlueSystemMessage(m_session, "Setting the fly speed of %s to %f.", plr->GetName(), Speed);
@@ -1174,7 +1173,6 @@ bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_ses
 		Creature* ctr = getSelectedCreature(m_session, false);
 		if(ctr != NULL)
 			ctr->SetUInt32Value(UNIT_FIELD_LEVEL, atol(args));
-
 		return true;
 	}
 
