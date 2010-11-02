@@ -3535,8 +3535,8 @@ void AIInterface::CallGuards()
 		if(!cp)
 			return;
 
-		float x = m_Unit->GetPositionX() + (float(rand() % 150 + 100) / 1000.0f );
-		float y = m_Unit->GetPositionY() + (float(rand() % 150 + 100) / 1000.0f );
+		float x = m_Unit->GetPositionX() + (float((rand() % 150) + 100) / 1000.0f );
+		float y = m_Unit->GetPositionY() + (float((rand() % 150) + 100) / 1000.0f );
 		float z = 0.0f;
 
 		if(m_Unit->GetMapMgr()->CanUseCollision(m_Unit))

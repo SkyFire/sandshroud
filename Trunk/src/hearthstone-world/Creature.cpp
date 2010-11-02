@@ -291,9 +291,9 @@ void Creature::GenerateLoot()
 		if (info && info->Type != BEAST)
 		{
 			if(m_uint32Values[UNIT_FIELD_MAXHEALTH] <= 1667)
-				m_loot.gold = uint32((info->Rank+1)*getLevel()*(rand()%5 + 1)); //generate copper
+				m_loot.gold = uint32((info->Rank+1)*getLevel()*((rand()%5) + 1)); //generate copper
 			else
-				m_loot.gold = uint32((info->Rank+1)*getLevel()*(rand()%5 + 1)*(GetUInt32Value(UNIT_FIELD_MAXHEALTH)*0.0006)); //generate copper
+				m_loot.gold = uint32((info->Rank+1)*getLevel()*((rand()%5) + 1)*(GetUInt32Value(UNIT_FIELD_MAXHEALTH)*0.0006)); //generate copper
 		}
 		else //Beast don't drop money
 			m_loot.gold = 0;

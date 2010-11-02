@@ -1370,7 +1370,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 						Spell* spell = NULLSPELL;
 
 						// kill the sacrifice player
-						psacrifice = _player->GetMapMgr()->GetPlayer(obj->m_ritualmembers[(int)(rand()%(goinfo->SpellFocus-1))]);
+						psacrifice = _player->GetMapMgr()->GetPlayer(obj->m_ritualmembers[(int)(rand()%((goinfo->SpellFocus != 1) ? (goinfo->SpellFocus-1) : goinfo->SpellFocus))]);
 						Player* pCaster = obj->GetMapMgr()->GetPlayer(obj->GetGOui32Value(GO_UINT32_M_RIT_CASTER));
 						if(!psacrifice || !pCaster)
 							return;
