@@ -1122,9 +1122,13 @@ void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
 		if(plr == NULL)
 			return;
 
-		if(_player->GetGroup() == NULL || plr->GetGroup() != _player->GetGroup())
+		if(plr->m_CurrentVehicle == NULL)
 			return;
-		_player->m_CurrentVehicle->AddPassenger(plr,-1);
+
+		if(plr->GetGroup() == NULL || plr->GetGroup() != _player->GetGroup())
+			return;
+
+		plr->m_CurrentVehicle->AddPassenger(_player,-1);
 	}
 }
 
