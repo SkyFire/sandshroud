@@ -113,7 +113,7 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 				data << realm->Lock;
 			}
 
-			Socket->SendPacket(&data,false);
+			Socket->SendPacket(&data);
 		}
 	}
 }
@@ -162,9 +162,9 @@ public:
 			{
 				sLogonCommHandler.UpdateSockets();
 #ifdef WIN32
-				WaitForSingleObject( hEvent, 3000 );
+				WaitForSingleObject( hEvent, 10 );
 #else
-				Sleep( 3000 );
+				Sleep( 10 );
 #endif
 			}
 		}
@@ -281,6 +281,7 @@ void LogonCommHandler::Connect(LogonServer * server)
 			Log.Notice("LogonCommClient", "Connection failed. Will try again in 10 seconds.");
 			return;
 		}
+
 		Log.Notice("LogonCommClient", "Authenticating...");
 		uint32 tt = (uint32)UNIXTIME + 10;
 		conn->SendChallenge();
@@ -289,21 +290,19 @@ void LogonCommHandler::Connect(LogonServer * server)
 			if((uint32)UNIXTIME >= tt || bServerShutdown)
 			{
 				Log.Notice("LogonCommClient", "Authentication timed out.");
-				conn->_id = 0;
 				conn->Disconnect();
 				logons[server] = NULL;
 				return;
 			}
 
-			Sleep(50);
+			Sleep(10);
 		}
 
 		if(conn->authenticated != 1)
 		{
 			Log.Notice("LogonCommClient","Authentication failed.");
-			conn->_id = 0;
-			conn->Disconnect();
 			logons[server] = NULL;
+			conn->Disconnect();
 			return;
 		}
 		else
@@ -326,7 +325,6 @@ void LogonCommHandler::Connect(LogonServer * server)
 			if((uint32)UNIXTIME >= st)
 			{
 				Log.Notice("LogonCommClient", "Realm registration timed out.");
-				conn->_id = 0;
 				conn->Disconnect();
 				logons[server] = NULL;
 				break;
@@ -510,8 +508,7 @@ void LogonCommHandler::LoadRealmConfiguration()
 {
 	if(!(sWorld.LogonServerType & LOGON_MANGOS))
 	{
-		LogonServer * ls = NULL;
-		ls = new LogonServer;
+		LogonServer * ls = new LogonServer;
 		ls->ID = idhigh++;
 		ls->Name = Config.RealmConfig.GetStringDefault("LogonServer", "Name", "UnkLogon");
 		ls->Address = Config.RealmConfig.GetStringDefault("LogonServer", "Address", "127.0.0.1");

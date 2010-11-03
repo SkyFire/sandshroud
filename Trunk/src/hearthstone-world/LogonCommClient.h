@@ -31,7 +31,7 @@ public:
 	~LogonCommClientSocket();
 
 	void OnRead();
-	void SendPacket(WorldPacket * data, bool no_crypto);
+	void SendPacket(WorldPacket * data, bool no_crypto = false);
 	void HandlePacket(WorldPacket & recvData);
 	void SendPing();
 	void SendChallenge();

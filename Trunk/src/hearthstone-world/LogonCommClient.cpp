@@ -30,10 +30,10 @@ typedef struct
 
 HEARTHSTONE_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
 
-LogonCommClientSocket::LogonCommClientSocket(SOCKET fd) : Socket(fd, 724288, 262444)
+LogonCommClientSocket::LogonCommClientSocket(SOCKET fd) : Socket(fd, 524288, 65536)
 {
 	// do nothing
-	last_ping = last_pong = (uint32)UNIXTIME;
+	last_ping = last_pong = uint32(time(NULL));
 	remaining = opcode = 0;
 	_id=0;
 	latency = 0;
@@ -54,14 +54,13 @@ void LogonCommClientSocket::OnRead()
 			readBuffer.Read(&opcode, 2);
 			readBuffer.Read(&remaining, 4);
 
-			// decrypt the first two bytes
 			if(use_crypto)
 			{
-				_recvCrypto.Process((uint8*)&opcode, (uint8*)&opcode, 2);
-				_recvCrypto.Process((uint8*)&remaining, (uint8*)&remaining, 4);
+				_recvCrypto.Process((unsigned char*)&opcode, (unsigned char*)&opcode, 2);
+				_recvCrypto.Process((unsigned char*)&remaining, (unsigned char*)&remaining, 4);
 			}
 
-			// convert network byte order
+			/* reverse byte order */
 			swap32(&remaining);
 		}
 
@@ -74,10 +73,9 @@ void LogonCommClientSocket::OnRead()
 		if(remaining)
 		{
 			buff.resize(remaining);
-			readBuffer.Read((void*)buff.contents(), remaining);
+			readBuffer.Read((uint8*)buff.contents(), remaining);
 		}
 
-		// decrypt the rest of the packet
 		if(use_crypto && remaining)
 			_recvCrypto.Process((unsigned char*)buff.contents(), (unsigned char*)buff.contents(), remaining);
 
@@ -169,16 +167,16 @@ void LogonCommClientSocket::HandleSessionInfo(WorldPacket & recvData)
 void LogonCommClientSocket::HandlePong(WorldPacket & recvData)
 {
 	latency = getMSTime() - pingtime;
-	last_pong = (uint32)UNIXTIME;
+	last_pong = uint32(time(NULL));
 }
 
 void LogonCommClientSocket::SendPing()
 {
 	pingtime = getMSTime();
 	WorldPacket data(RCMSG_PING, 4);
-	SendPacket(&data,false);
+	SendPacket(&data);
 
-	last_ping = (uint32)UNIXTIME;
+	last_ping = uint32(time(NULL));
 }
 
 void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
@@ -252,6 +250,7 @@ void LogonCommClientSocket::HandleAuthResponse(WorldPacket & recvData)
 	{
 		authenticated = 1;
 	}
+	use_crypto = true;
 }
 
 void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, uint8 add)
@@ -263,7 +262,7 @@ void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, uint8 add)
 	{
 		data.clear();
 		data << (*itr) << account_id << add;
-		SendPacket(&data,false);
+		SendPacket(&data);
 	}
 }
 
@@ -304,13 +303,13 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 
 	ByteBuffer uncompressed(40000 * 5 + 8);
 	//uint32 Count = 0;
-	uint32 Remaining = (uint32)mapping_to_send.size();
+	uint32 Remaining = uint32(mapping_to_send.size());
 	itr = mapping_to_send.begin();
 	for(;;)
 	{
-		// Send no more than 40000 characters at once.
 		uncompressed << realm_id;
 
+		// Send no more than 40000 characters at once.
 		if(Remaining > 40000)
 			uncompressed << uint32(40000);
 		else
@@ -318,7 +317,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 
 		for(uint32 i = 0; i < 40000; i++, itr++)
 		{
-            uncompressed << uint32(itr->first) << uint8(itr->second);
+			uncompressed << uint32(itr->first) << uint8(itr->second);
 			if(!--Remaining)
 				break;
 		}
@@ -382,7 +381,7 @@ void LogonCommClientSocket::CompressAndSend(ByteBuffer & uncompressed)
 
 	*(uint32*)data.contents() = (uint32)uncompressed.size();
 	data.resize(stream.total_out + 4);
-	SendPacket(&data,false);
+	SendPacket(&data);
 }
 
 void LogonCommClientSocket::HandleDisconnectAccount(WorldPacket & recvData)
@@ -429,17 +428,7 @@ void LogonCommClientSocket::HandlePopulationRequest(WorldPacket & recvData)
 }
 
 #else
-/*
-void LogonCommHandler::LogonDatabaseReloadAccounts()
-{
 
-}
-
-void LogonCommHandler::LogonDatabaseSQLExecute(const char* str, ...)
-{
-
-}
-*/
 void LogonCommHandler::Account_SetBanned(const char * account, uint32 banned, const char* reason)
 {
 
