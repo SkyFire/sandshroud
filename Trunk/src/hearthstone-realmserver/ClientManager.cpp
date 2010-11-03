@@ -25,8 +25,16 @@ ClientMgr::ClientMgr()
 {
 	Session::InitHandlers();
 	m_maxSessionId = 0;
+	m_hiPlayerGuid = 0;
 	memset(m_sessions, 0, MAX_SESSIONS * sizeof(Session*));
 	Log.Success("ClientMgr", "Interface Created");
+
+	QueryResult *result = CharacterDatabase.Query( "SELECT MAX(guid) FROM characters" );
+	if( result )
+	{
+		m_hiPlayerGuid = result->Fetch()[0].GetUInt32();
+		delete result;
+	}
 }
 
 ClientMgr::~ClientMgr()
@@ -51,7 +59,7 @@ void ClientMgr::SendPackedClientInfo(WServer * server)
 		pi->Pack(data);
 	}
 
-    /* TODO: compress the packet */
+	/* TODO: compress the packet */
 	server->SendPacket(&data);
 }
 
@@ -115,4 +123,14 @@ void ClientMgr::DestroyRPlayerInfo(uint32 guid)
 		m_clients.erase(itr);
 		delete rp;
 	}
+}
+
+int ClientMgr::CreateNewPlayer()
+{
+	return 2; // Till this works, don't fuck up our available guids.
+	if(m_hiPlayerGuid+1 == 0) // We've reset the count :O
+		return 1;
+
+	uint32 guid = GeneratePlayerGuid();
+	return 0;
 }

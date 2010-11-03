@@ -23,10 +23,20 @@ SessionPacketHandler Session::Handlers[NUM_MSG_TYPES];
 void Session::InitHandlers()
 {
 	memset(Handlers, 0, sizeof(void*) * NUM_MSG_TYPES);
-	Handlers[CMSG_PLAYER_LOGIN] = &Session::HandlePlayerLogin;
-	Handlers[CMSG_CHAR_ENUM] = &Session::HandleCharacterEnum;
-	Handlers[CMSG_ITEM_QUERY_SINGLE] = &Session::HandleItemQuerySingleOpcode;
-	Handlers[CMSG_REALM_SPLIT] = &Session::HandleRealmSplitQuery;
+	Handlers[CMSG_PLAYER_LOGIN]					= &Session::HandlePlayerLogin;
+	Handlers[CMSG_CHAR_ENUM]					= &Session::HandleCharacterEnum;
+	Handlers[CMSG_ITEM_QUERY_SINGLE]			= &Session::HandleItemQuerySingleOpcode;
+	Handlers[CMSG_REALM_SPLIT]					= &Session::HandleRealmSplitQuery;
+	Handlers[CMSG_CHAR_CREATE]					= &Session::HandleCharacterCreate;
+	Handlers[CMSG_CHAR_DELETE]					= &Session::HandleCharacterDelete;
+	Handlers[CMSG_CHAR_RENAME]					= &Session::HandleCharacterRename;
+
+	// Crow: TODO, but not really. Each DB should hold the same info as far as this is concerned, but maybe things that are guid dependent.
+/*	Handlers[CMSG_ITEM_QUERY_SINGLE]			= &Session::HandleItemQuerySingleOpcode;
+	Handlers[CMSG_CREATURE_QUERY]				= &Session::HandleCreatureQueryOpcode;
+	Handlers[CMSG_GAMEOBJECT_QUERY]				= &Session::HandleGameObjectQueryOpcode;
+	Handlers[CMSG_ITEM_QUERY_SINGLE]			= &Session::HandleItemPageQueryOpcode;
+	Handlers[CMSG_NPC_TEXT_QUERY]				= &Session::HandleNpcTextQueryOpcode;*/
 }
 
 Session::Session(uint32 id) : m_sessionId(id)
@@ -61,7 +71,8 @@ void Session::Update()
 		else
 		{
 			/* no? pass it back to the worker server for handling. */
-			if(m_server) m_server->SendWoWPacket(this, pck);
+			if(m_server)
+				m_server->SendWoWPacket(this, pck);
 		}
 		delete pck;
 	}

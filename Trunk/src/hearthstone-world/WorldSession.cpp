@@ -1173,7 +1173,7 @@ void WorldSession::HandleRealmSplit(WorldPacket & recv_data)
 	uint32 v;
 	recv_data >> v;
 
-	WorldPacket data(0x038B, 17);
+	WorldPacket data(SMSG_REALM_SPLIT, 17);
 	data << v << uint32(0);
 	data << "01/01/01";
 	SendPacket(&data);

@@ -235,16 +235,15 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 {
 	uint32 request_id = next_request++;
 	printf( " >> sending request for account information: `%s` (request %u).", AccountName.c_str(), request_id);
-  //  sLog.outColor(TNORMAL, "\n");
-	
+
 	// Send request packet to server.
 	map<LogonServer*, LogonCommClientSocket*>::iterator itr = logons.begin();
 	if(logons.size() == 0 || itr->second == 0)
 	{
-		// No valid logonserver is connected.
-		return (uint32)-1;
 		printf("No valid loginserver is connected.\n");
+		return (uint32)-1;
 	}
+	printf("\n");
 	pendingLock.Acquire();
 
 	WorldPacket data(RCMSG_REQUEST_SESSION, 100);
@@ -254,14 +253,10 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 	uint32 i = 0;
 	for(; AccountName[i] != '#' && AccountName[i] != '\0'; ++i )
 		data.append( &AccountName[i], 1 );
-
 	data.append( "\0", 1 );
 	itr->second->SendPacket(&data);
-
 	pending_logons[request_id] = Socket;
-
 	pendingLock.Release();
-
 	return request_id;
 }
 

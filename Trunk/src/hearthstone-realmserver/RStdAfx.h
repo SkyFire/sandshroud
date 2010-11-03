@@ -29,6 +29,7 @@
 #include <signal.h>
 //#include <fstream>
 
+#include "../hearthstone-shared/AuthCodes.h"
 #include "../hearthstone-shared/svn_revision.h"
 #include "../hearthstone-shared/Common.h"
 #include "../hearthstone-shared/MersenneTwister.h"

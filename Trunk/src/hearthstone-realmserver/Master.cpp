@@ -47,11 +47,6 @@ void Master::_OnSignal(int s)
 {
 	switch (s)
 	{
-#ifndef WIN32
-	case SIGHUP:
-		sWorld.Rehash(true);
-		break;
-#endif
 	case SIGINT:
 	case SIGTERM:
 	case SIGABRT:
@@ -116,11 +111,6 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice("Server", "| Revision %04u                                 |", BUILD_REVISION);
 	Log.Notice("Server", "==============================================================");
 	Log.Line();
-
-	new ClusterMgr;
-	new ClientMgr;
-
-	Log.Line();
 	Config.ClusterConfig.SetSource("./hearthstone-realmserver.conf");
 	Config.RealmConfig.SetSource("./hearthstone-realms.conf");
 
@@ -130,15 +120,15 @@ bool Master::Run(int argc, char ** argv)
 		return false;
 	}
 
+	new ClusterMgr;
+	new ClientMgr;
+
 	_HookSignals();
 
 	ThreadPool.ShowStats();
-	Log.Line();
 
 	Log.Success("Storage", "DBC Files Loaded...");
 	Storage_Load();
-
-	Log.Line();
 
 	new SocketMgr;
 	new SocketGarbageCollector;
@@ -164,8 +154,10 @@ bool Master::Run(int argc, char ** argv)
 	/* connect to LS */
 	new LogonCommHandler;
 	sLogonCommHandler.Startup();
-
 	Log.Success("Network", "Network Subsystem Started.");
+
+	//Update sLog to obey config setting
+	sLog.Init(Config.ClusterConfig.GetIntDefault("LogLevel", "Screen", 1));
 
 #ifdef WIN32
 	HANDLE hThread = GetCurrentThread();
@@ -174,8 +166,6 @@ bool Master::Run(int argc, char ** argv)
 	while(!m_stopEvent)
 	{
 		sLogonCommHandler.UpdateSockets();
-		//wsl->Update();
-		//isl->Update();
 		sClientMgr.Update();
 		sClusterMgr.Update();
 #ifdef WIN32
@@ -197,7 +187,6 @@ void Master::_HookSignals()
 #ifdef _WIN32
 	signal( SIGBREAK, _OnSignal );
 #else
-	signal( SIGHUP, _OnSignal );
 	signal(SIGUSR1, _OnSignal);
 
 	// crash handler
@@ -215,8 +204,6 @@ void Master::_UnhookSignals()
 	signal( SIGABRT, 0 );
 #ifdef _WIN32
 	signal( SIGBREAK, 0 );
-#else
-	signal( SIGHUP, 0 );
 #endif
 
 }

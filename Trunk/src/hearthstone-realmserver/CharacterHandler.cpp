@@ -18,7 +18,109 @@
  */
 
 #include "RStdAfx.h"
-#include "../hearthstone-shared/AuthCodes.h"
+
+void Session::HandlePlayerLogin(WorldPacket & pck)
+{
+	WorldPacket data(SMSG_CHARACTER_LOGIN_FAILED, 30);
+	LocationVector LoginCoord;
+	Instance * dest;
+	ASSERT(!m_currentPlayer);
+	uint64 guid;
+	pck >> guid;
+
+	if(sClientMgr.GetRPlayer((uint32)guid) != NULL)
+	{
+		data << uint8(CHAR_LOGIN_DUPLICATE_CHARACTER);
+		SendPacket(&data);
+		return;
+	}
+
+	m_currentPlayer = sClientMgr.CreateRPlayer((uint32)guid);
+
+	/* Load player data */
+	QueryResult * result = CharacterDatabase.Query("SELECT acct, name, level, guild_data.guildid, positionX, positionY, zoneId, mapId, race, class, gender, instance_id, entrypointmap, entrypointx, entrypointy, entrypointz, entrypointo FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE guid = %u", guid);
+	if(result)
+	{
+		Field * f = result->Fetch();
+		m_currentPlayer->AccountId = f[0].GetUInt32();
+		m_currentPlayer->Name = f[1].GetString();
+		m_currentPlayer->Level = f[2].GetUInt32();
+		m_currentPlayer->GuildId = f[3].GetUInt32();
+		m_currentPlayer->PositionX = f[4].GetFloat();
+		m_currentPlayer->PositionY = f[5].GetFloat();
+		m_currentPlayer->ZoneId = f[6].GetUInt32();
+		m_currentPlayer->MapId = f[7].GetUInt32();
+		m_currentPlayer->Race = f[8].GetUInt8();
+		m_currentPlayer->Class = f[9].GetUInt8();
+		m_currentPlayer->Gender = f[10].GetUInt8();
+		m_currentPlayer->Latency = m_latency;
+		m_currentPlayer->GMPermissions = m_GMPermissions;
+		m_currentPlayer->Account_Flags = m_accountFlags;
+		m_currentPlayer->InstanceId = f[11].GetUInt32();
+		m_currentPlayer->RecoveryMapId = f[12].GetUInt32();
+		m_currentPlayer->RecoveryPosition.ChangeCoords(f[13].GetFloat(), f[14].GetFloat(), f[15].GetFloat(), f[16].GetFloat());
+		delete result;
+	}
+	else
+	{
+		data << uint8(CHAR_LOGIN_NO_CHARACTER);
+		SendPacket(&data);
+		sClientMgr.DestroyRPlayerInfo((uint32)guid);
+		m_currentPlayer = NULL;
+		return;
+	}
+
+	if(IS_MAIN_MAP(m_currentPlayer->MapId))
+	{
+		/* we're on a continent, try to find the world server we're going to */
+		dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);		
+	}
+	else
+	{
+		/* we're in an instanced map, try to find the world server we're going to */
+		dest = sClusterMgr.GetInstanceByInstanceId(m_currentPlayer->InstanceId);
+
+		if(!dest)
+		{
+			/* our instance has been deleted or no longer valid */
+			m_currentPlayer->MapId = m_currentPlayer->RecoveryMapId;
+			LoginCoord = m_currentPlayer->RecoveryPosition;
+
+			/* obtain instance */
+			dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);
+			if(dest)
+			{
+				data.SetOpcode(SMSG_NEW_WORLD);
+				data << m_currentPlayer->MapId << m_currentPlayer->RecoveryPosition << float(0);
+				SendPacket(&data);
+				data.clear();
+			}
+		}
+	}
+
+	if(!dest ||	!dest->Server)		// Shouldn't happen
+	{
+		/* world server is down */
+		data << uint8(CHAR_LOGIN_NO_WORLD);
+		SendPacket(&data);
+		sClientMgr.DestroyRPlayerInfo((uint32)guid);
+		m_currentPlayer = NULL;
+		return;
+	}
+
+	/* log the player into that WS */
+	data.SetOpcode(ISMSG_PLAYER_LOGIN);
+
+	/* append info */
+	data << uint32(guid) << uint32(dest->MapId) << uint32(dest->InstanceId);
+
+	/* append the account information */
+	data << uint32(m_accountId) << uint32(m_accountFlags) << uint32(m_sessionId)
+		<< m_GMPermissions << m_accountName;
+
+	dest->Server->SendPacket(&data);
+	m_nextServer = dest->Server;
+}
 
 void Session::HandleCharacterEnum(WorldPacket & pck)
 {
@@ -26,7 +128,7 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 	OUT_DEBUG("CharacterHandler", "Enum Build started at %u.", start_time);
 
 	// loading characters
-	QueryResult* result = CharacterDatabase.Query("SELECT guid, level, race, class, gender, bytes, bytes2, bytes2, name, positionX, positionY, positionZ, mapId, zoneId, banned, restState, deathstate, forced_rename_pending FROM characters WHERE acct=%u ORDER BY guid", GetAccountId());
+	QueryResult* result = CharacterDatabase.Query("SELECT guid, level, race, class, gender, bytes, bytes2, name, positionX, positionY, positionZ, mapId, zoneId, banned, restState, deathstate, forced_rename_pending, player_flags, guild_data.guildid, customizable FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE acct=%u ORDER BY guid ASC LIMIT 10", GetAccountId());
 	uint8 num = 0;
 
 	//Erm, reset it here in case player deleted his DK.
@@ -64,13 +166,13 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 			bytes2 = fields[6].GetUInt32();
 			Class = fields[3].GetUInt8();
 			flags = fields[17].GetUInt32();
-			race = fields[3].GetUInt8();
+			race = fields[2].GetUInt8();
 
 			/* build character enum, w0000t :p */
 			data << fields[0].GetUInt64();		// guid
 			data << fields[7].GetString();		// name
-			data << fields[2].GetUInt8();		// race
-			data << race;						// class
+			data << race;						// race
+			data << Class;						// class
 			data << fields[4].GetUInt8();		// gender
 			data << fields[5].GetUInt32();		// PLAYER_BYTES
 			data << uint8(bytes2 & 0xFF);		// facial hair
@@ -114,10 +216,10 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 					delete res;
 				}
 				else
-					info=NULL;
+					info = NULL;
 			}
 			else
-				info=NULL;
+				info = NULL;
 
 			if(info)  //PET INFO uint32 displayid,	uint32 level,		 uint32 familyid
 				data << uint32(info->Male_DisplayID) << uint32(10) << uint32(info->Family);
@@ -185,110 +287,111 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 	SendPacket( &data );
 }
 
-
-void Session::HandlePlayerLogin(WorldPacket & pck)
+void Session::HandleCharacterCreate(WorldPacket & pck)
 {
-	WorldPacket data(SMSG_CHARACTER_LOGIN_FAILED, 30);
-	LocationVector LoginCoord;
-	Instance * dest;
-	ASSERT(!m_currentPlayer);
-	uint64 guid;
-	pck >> guid;
+	std::string name;
+	uint8 race, class_;
 
-	if(sClientMgr.GetRPlayer((uint32)guid) != NULL)
+	pck >> name >> race >> class_;
+	pck.rpos(0);
+
+	WorldPacket data(SMSG_CHAR_CREATE, 1);
+//	if(!VerifyName(name.c_str(), name.length()))
+//	{
+//		data << uint8(CHAR_CREATE_NAME_IN_USE);
+//		SendPacket(&data);
+//		return;
+//	}
+
+	if(CharacterDatabase.Query("SELECT name FROM characters WHERE name = '%s'", name.c_str()) != NULL)
 	{
-		data << uint8(CHAR_LOGIN_DUPLICATE_CHARACTER);
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
 		SendPacket(&data);
 		return;
 	}
 
-	m_currentPlayer = sClientMgr.CreateRPlayer((uint32)guid);
-	RPlayerInfo * p = m_currentPlayer;
+	//reserved for console whisper
+	if(HEARTHSTONE_TOLOWER_RETURN(name) == "console")
+	{
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
+		return;
+	}
 
-	/* Load player data */
-	QueryResult * result = CharacterDatabase.Query("SELECT acct, name, level, guildid, positionX, positionY, zoneId, mapId, race, class, gender, instance_id, entrypointmap, entrypointx, entrypointy, entrypointz, entrypointo FROM characters WHERE guid = %u", guid);
+	if(sClientMgr.GetRPlayerByName(name.c_str()) != NULL)
+	{
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
+		return;
+	}
+
+/*	if( class_ == DEATHKNIGHT && (!HasFlag(ACCOUNT_FLAG_XPACK_02) || !CanCreateDeathKnight() ) )
+	{
+		if(CanCreateDeathKnight())
+			data << uint8(CHAR_CREATE_EXPANSION);
+		else
+			data << uint8(CHAR_CREATE_LEVEL_REQUIREMENT);
+		SendPacket(&data);
+		return;
+	}
+
+	if( (race == RACE_GOBLIN || race == RACE_WORGEN) && !HasFlag(ACCOUNT_FLAG_XPACK_03) )
+	{
+		data << uint8(CHAR_CREATE_EXPANSION);
+		SendPacket(&data);
+		return;
+	}*/
+
+	QueryResult * result = CharacterDatabase.Query("SELECT COUNT(*) FROM banned_names WHERE name = '%s'", CharacterDatabase.EscapeString(name).c_str());
 	if(result)
 	{
-		Field * f = result->Fetch();
-		p->AccountId = f[0].GetUInt32();
-		p->Name = f[1].GetString();
-		p->Level = f[2].GetUInt32();
-		p->GuildId = f[3].GetUInt32();
-		p->PositionX = f[4].GetFloat();
-		p->PositionY = f[5].GetFloat();
-		p->ZoneId = f[6].GetUInt32();
-		p->MapId = f[7].GetUInt32();
-		p->Race = f[8].GetUInt8();
-		p->Class = f[9].GetUInt8();
-		p->Gender = f[10].GetUInt8();
-		p->Latency = m_latency;
-		p->GMPermissions = m_GMPermissions;
-		p->Account_Flags = m_accountFlags;
-		p->InstanceId = f[11].GetUInt32();
-		p->RecoveryMapId = f[12].GetUInt32();
-		p->RecoveryPosition.ChangeCoords(f[13].GetFloat(), f[14].GetFloat(), f[15].GetFloat(), f[16].GetFloat());
+		if(result->Fetch()[0].GetUInt32() > 0)
+		{
+			// That name is banned!
+			data << uint8(CHAR_NAME_PROFANE);
+			SendPacket(&data);
+			delete result;
+			return;
+		}
 		delete result;
 	}
-	else
-	{
-		data << uint8(CHAR_LOGIN_NO_CHARACTER);
-		SendPacket(&data);
-		sClientMgr.DestroyRPlayerInfo((uint32)guid);
-		m_currentPlayer = NULL;
-		return;
-	}
 
-	if(IS_MAIN_MAP(m_currentPlayer->MapId))
+	int error = sClientMgr.CreateNewPlayer();
+	if(error > 0)
 	{
-		/* we're on a continent, try to find the world server we're going to */
-		dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);		
-	}
-	else
-	{
-		/* we're in an instanced map, try to find the world server we're going to */
-		dest = sClusterMgr.GetInstanceByInstanceId(m_currentPlayer->InstanceId);
-
-		if(!dest)
+		switch(error)
 		{
-			/* our instance has been deleted or no longer valid */
-			m_currentPlayer->MapId = m_currentPlayer->RecoveryMapId;
-			LoginCoord = m_currentPlayer->RecoveryPosition;
-
-			/* obtain instance */
-			dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);
-			if(dest)
-			{
-				data.SetOpcode(SMSG_NEW_WORLD);
-                data << m_currentPlayer->MapId << m_currentPlayer->RecoveryPosition << float(0);
-				SendPacket(&data);
-				data.clear();
-			}
+		case 1:
+			data << uint8(CHAR_CREATE_DISABLED);
+			break;
+		case 2:
+			data << uint8(CHAR_CREATE_FAILED);
+			break;
+		default:
+			data << uint8(CHAR_CREATE_ERROR);
+			break;
 		}
-	}
-
-	if(!dest ||
-		!dest->Server)		// Shouldn't happen
-	{
-		/* world server is down */
-		data << uint8(CHAR_LOGIN_NO_WORLD);
 		SendPacket(&data);
-		sClientMgr.DestroyRPlayerInfo((uint32)guid);
-		m_currentPlayer = NULL;
 		return;
 	}
 
-	/* log the player into that WS */
-	data.SetOpcode(ISMSG_PLAYER_LOGIN);
+	// CHAR_CREATE_SUCCESS
+	data << uint8(CHAR_CREATE_SUCCESS);
+	SendPacket(&data);
 
-	/* append info */
-	data << uint32(guid) << uint32(dest->MapId) << uint32(dest->InstanceId);
+	sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
+}
 
-	/* append the account information */
-	data << uint32(m_accountId) << uint32(m_accountFlags) << uint32(m_sessionId)
-		<< m_GMPermissions << m_accountName;
+void Session::HandleCharacterDelete(WorldPacket & pck)
+{
 
-	dest->Server->SendPacket(&data);
-	m_nextServer = dest->Server;
+
+}
+
+void Session::HandleCharacterRename(WorldPacket & pck)
+{
+
+
 }
 
 void Session::HandleRealmSplitQuery(WorldPacket & pck)

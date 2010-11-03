@@ -93,29 +93,56 @@ void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 
 void WorldSocket::OnConnect()
 {
-	OutPacket(SMSG_AUTH_CHALLENGE, 4, &mSeed);
 	_latency = getMSTime();
+	WorldPacket data (SMSG_AUTH_CHALLENGE, 25);
+	data << uint32(1);			// Unk
+	data << mSeed;
+	data << uint32(0xF3539DA3);	// Generated Random.
+	data << uint32(0x6E8547B9);	// 3.2.2
+	data << uint32(0x9A6AA2F8);	// 3.2.2
+	data << uint32(0xA4F170F4);	// 3.2.2
+#ifdef CATACLYSM
+	data << uint32(0xF3632DA3);	// 4
+	data << uint32(0x278BB343);	// 4
+	data << uint32(0x97EEF2F8);	// 4
+	data << uint32(0x82FE26F4);	// 4
+#endif
+	SendPacket(&data);
 }
 
 void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 {
 	std::string account;
-	uint32 unk2, unk3;
+	uint32 unk;
+	uint64 unk3; // 3.2.2 Unk
 	_latency = getMSTime() - _latency;
 
 	try
 	{
 		*recvPacket >> mClientBuild;
-		*recvPacket >> unk2;
+		*recvPacket >> unk;
 		*recvPacket >> account;
-		*recvPacket >> unk3;
+		*recvPacket >> unk;
 		*recvPacket >> mClientSeed;
+		// 3.2.2
+		*recvPacket >> unk3;
+		// 3.3.5
+		*recvPacket >> unk;
+		*recvPacket >> unk;
+		*recvPacket >> unk;
 	}
 	catch(ByteBuffer::error &)
 	{
-		printf("Incomplete copy of AUTH_SESSION Received.");
+		OUT_DEBUG("Incomplete copy of AUTH_SESSION Received.");
 		return;
 	}
+
+	if(mClientBuild != CL_BUILD_SUPPORT)
+	{
+		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x14");
+		return;
+	}
+
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
 
@@ -138,11 +165,10 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	uint32 error;
 	recvData >> error;
 
-	if(error != 0)
+	if(error != 0 || pAuthenticationPacket == NULL)
 	{
 		// something happened wrong @ the logon server
 		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
-		printf("Information callback returns failure.\n");
 		return;
 	}
 
@@ -151,48 +177,28 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	uint32 AccountID;
 	string GMFlags;
 	uint8 AccountFlags;
+	string lang = "enUS";
 
 	recvData >> AccountID >> AccountName >> GMFlags >> AccountFlags;
-	printf( " >> got information packet from logon: `%s` ID %u (request %u)", AccountName.c_str(), AccountID, mRequestID);
-	//	sLog.outColor(TNORMAL, "\n");
+
+	DEBUG_LOG( "WorldSocket","Received information packet from logon: `%s` ID %u (request %u)", AccountName.c_str(), AccountID, mRequestID);
+//	sLog.outColor(TNORMAL, "\n");
 
 	mRequestID = 0;
-	// Pull the session key.
-	uint8 K[40];
-	recvData.read(K, 40);
+	//Pull the session key.
 
 	BigNumber BNK;
+	recvData.read(K, 40);
+	_crypt.Init(K);
 	BNK.SetBinary(K, 40);
 
-	
-	//uint8 *key = new uint8[20];
-	//AutheticationPacketKey::GenerateKey(key, K);
-
-	// Initialize crypto.
-	//_crypt.SetKey(key, 20);
-	//_crypt.Init();
-	//_crypt.Init(K);
-	//delete [] key;
-
 	//checking if player is already connected
-	//disconnect corrent player and login this one(blizzlike)
+	//disconnect current player and login this one(blizzlike)
 
-	string lang = "enUS";
 	if(recvData.rpos() != recvData.wpos())
 		recvData.read((uint8*)lang.data(), 4);
 
-	Session * session = sClientMgr.CreateSession(AccountID);
-	if(session == NULL)
-	{
-		/* we are already logged in. send auth failed. (if anyone has a better error lemme know :P) */
-		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
-		printf("Duplicate client error.\n");
-		return;
-	}
-
-	m_session = session;
-	session->m_socket = this;
-    Sha1Hash sha;
+	Sha1Hash sha;
 
 	uint8 digest[20];
 	pAuthenticationPacket->read(digest, 20);
@@ -222,16 +228,21 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 		return;
 	}
 
-	_crypt.Init(digest);
+	Session * session = sClientMgr.CreateSession(AccountID);
+	m_session = session;
+	m_session->m_socket = this;
 
-	// Allocate session
+	// Set session properties
 	m_session->m_accountFlags = AccountFlags;
 	m_session->m_GMPermissions = GMFlags;
 	m_session->m_accountId = AccountID;
 	m_session->m_latency = _latency;
 	m_session->m_accountName = AccountName;
 
-	Log.Notice("Auth", "%s from %s:%u [%ums]", AccountName.c_str(), GetRemoteIP().c_str(), GetRemotePort(), _latency);
+	if(recvData.rpos() != recvData.wpos())
+		recvData >> m_session->m_muted;
+
+	DEBUG_LOG("Auth", "%s from %s:%u [%ums]", AccountName.c_str(), GetRemoteIP().c_str(), GetRemotePort(), _latency);
 	Authenticate();
 }
 

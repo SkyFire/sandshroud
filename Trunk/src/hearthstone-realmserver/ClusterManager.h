@@ -18,7 +18,7 @@
  */
 
 #define MAX_WORKER_SERVERS 100
-#define MAX_SINGLE_MAPID 600
+#define MAX_SINGLE_MAPID 750
 
 struct Instance
 {
@@ -28,7 +28,7 @@ struct Instance
 };
 
 #define IS_INSTANCE(a) (((a)>1)&&((a)!=530))
-#define IS_MAIN_MAP(a) (((a)<2)||((a)==530))
+#define IS_MAIN_MAP(a) (((a)<2)||((a)==530)||((a)==571))
 
 class ClusterMgr : public Singleton<ClusterMgr>
 {

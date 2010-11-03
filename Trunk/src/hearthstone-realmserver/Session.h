@@ -43,6 +43,7 @@ protected:
 	string m_GMPermissions;
 	string m_accountName;
 	uint32 m_build;
+	uint32 m_muted;
 	bool m_hasDeathKnight;
 	uint8 m_highestLevel;
 	static SessionPacketHandler Handlers[NUM_MSG_TYPES];
@@ -69,21 +70,16 @@ public:
 	}
 
 	void HandlePlayerLogin(WorldPacket & pck);
-
 	void HandleCharacterEnum(WorldPacket & pck);
-	void HandleCharacterEnumProc();
-
 	void HandleCharacterCreate(WorldPacket & pck);
 	void HandleCharacterDelete(WorldPacket & pck);
 	void HandleCharacterRename(WorldPacket & pck);
-	
+	void HandleRealmSplitQuery(WorldPacket & pck);
 	void HandleItemQuerySingleOpcode(WorldPacket & pck);
 	void HandleCreatureQueryOpcode(WorldPacket & pck);
 	void HandleGameObjectQueryOpcode(WorldPacket & pck);
 	void HandleItemPageQueryOpcode(WorldPacket & pck);
 	void HandleNpcTextQueryOpcode(WorldPacket & pck);
-
-	void HandleRealmSplitQuery(WorldPacket & pck);
 };
 
 #endif

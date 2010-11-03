@@ -20,6 +20,12 @@
 #ifndef _R_MASTER_H
 #define _R_MASTER_H
 
+#ifdef CATACLYSM
+#define CL_BUILD_SUPPORT 13205
+#else
+#define CL_BUILD_SUPPORT 12340
+#endif
+
 extern Database * Database_World;
 extern Database * Database_Character;
 

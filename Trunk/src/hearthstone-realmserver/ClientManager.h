@@ -17,6 +17,8 @@
  *
  */
 
+// Crow: USE THIS AS OUR OBJECTMANAGER REPLACEMENT!
+
 #define MAX_SESSIONS 3000
 
 class ClientMgr : public Singleton<ClientMgr>
@@ -25,6 +27,8 @@ public:
 	typedef HM_NAMESPACE::hash_map<uint32, RPlayerInfo*> ClientMap;
 
 protected:
+	uint32 m_hiPlayerGuid;
+
 	ClientMap m_clients;
 	uint32 m_maxSessionId;
 	Session * m_sessions[MAX_SESSIONS];
@@ -45,6 +49,27 @@ public:
 		ClientMap::iterator itr = m_clients.find(guid);
 		return (itr != m_clients.end()) ? itr->second : 0;
 	}
+
+	/* get rplayer */
+	HEARTHSTONE_INLINE RPlayerInfo * GetRPlayerByName(const char* name)
+	{
+		string lpn = HEARTHSTONE_TOLOWER_RETURN(string(name));
+		ClientMap::iterator i;
+		RPlayerInfo *rv = NULL;
+
+		i = m_clients.begin();
+		while(i != m_clients.end())
+		{
+			if(HEARTHSTONE_TOLOWER_RETURN(i->second->Name) == lpn)
+			{
+				rv = i->second;
+				break;
+			}
+		}
+
+		return rv;
+	};
+
 	/* send "mini" client data to all servers */
 	void SendPackedClientInfo(WServer * server);
 
@@ -58,8 +83,10 @@ public:
 
 	/* updates sessions */
 	void Update();
+
+public: // Player Creation and deletion/rename shit
+	uint32 GeneratePlayerGuid() { return ++m_hiPlayerGuid; };
+	int CreateNewPlayer();
 };
 
 #define sClientMgr ClientMgr::getSingleton()
-
-
