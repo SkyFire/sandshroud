@@ -39,7 +39,6 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 {
 	if(!_player->IsInWorld() || !_player->GetLootGUID()) 
 		return;
-//	uint8 slot = 0;
 	uint32 itemid = 0;
 	uint32 amt = 1;
 	uint8 lootSlot = 0;
@@ -349,7 +348,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 			return;
 
 		pGO->m_loot.looters.erase(_player->GetLowGUID());
-		switch( pGO->GetByte(GAMEOBJECT_BYTES_1, 1) )
+		switch( pGO->GetType())
 		{
 		case GAMEOBJECT_TYPE_FISHINGNODE:
 			{
@@ -380,10 +379,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 									//we still have loot inside.
 									if( pGO->m_loot.HasItems(_player) )
 									{
-										pGO->SetByte(GAMEOBJECT_BYTES_1, 0, 1 );
-										// TODO : redo this temporary fix, because for some reason hasloot is true even when we loot everything
-										// my guess is we need to set up some even that rechecks the GO in 10 seconds or something
-										//pGO->Despawn( 600000 + ( RandomUInt( 300000 ) ) );
+										pGO->SetState(1);
 										return;
 									}
 
@@ -404,7 +400,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 								{
 									if(pGO->m_loot.HasItems(_player))
 									{
-										pGO->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
+										pGO->SetState(1);
 										return;
 									}
 
@@ -431,7 +427,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 				{
 					if( pGO->m_loot.HasItems(_player) )
 					{
-						pGO->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
+						pGO->SetState(1);
 						return;
 					}
 					uint32 DespawnTime = 0;
@@ -708,9 +704,6 @@ void WorldSession::HandleLogoutRequestOpcode( WorldPacket & recv_data )
 		pPlayer->SetStandState(STANDSTATE_SIT);
 		SetLogoutTimer(PLAYER_LOGOUT_DELAY);
 	}
-	/*
-	> 0 = You can't Logout Now
-	*/
 }
 
 void WorldSession::HandlePlayerLogoutOpcode( WorldPacket & recv_data )
@@ -720,9 +713,9 @@ void WorldSession::HandlePlayerLogoutOpcode( WorldPacket & recv_data )
 	{
 		// send "You do not have permission to use this"
 		SendNotification(NOTIFICATION_MESSAGE_NO_PERMISSION);
-	} else {
+	} 
+	else
 		LogoutPlayer(true);
-	}
 }
 
 void WorldSession::HandleLogoutCancelOpcode( WorldPacket & recv_data )
@@ -1058,12 +1051,11 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
 	if(action==0)
 	{
 		OUT_DEBUG( "MISC: Remove action from button %u", button );
-		//remove the action button from the db
 		GetPlayer()->setAction(button, 0, 0, 0);
 	}
 	else
 	{
-		if(button >= 120)
+		if(button >= 0x00FFFFFF+1)
 			return;
 
 		if(type == 64 || type == 65)
@@ -1239,12 +1231,12 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 		case GAMEOBJECT_TYPE_DOOR:
 		{
 			// door
-			if((obj->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1) && (obj->GetUInt32Value(GAMEOBJECT_FLAGS) == 33))
+			if((obj->GetState() == 1) && (obj->GetFlags() == 33))
 				obj->EventCloseDoor();
 			else
 			{
-				obj->SetUInt32Value(GAMEOBJECT_FLAGS, 33);
-				obj->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
+				obj->SetFlags(33);
+				obj->SetState(0);
 				sEventMgr.AddEvent(obj,&GameObject::EventCloseDoor,EVENT_GAMEOBJECT_DOOR_CLOSE,20000,1,0);
 			}
 		}break;
@@ -1265,7 +1257,6 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				if(!plyr->m_bgFlagIneligible)
 					plyr->m_bg->HookFlagStand(plyr, obj);
 			}
-
 		}break;
 		case GAMEOBJECT_TYPE_FLAGDROP:
 		{
@@ -1283,14 +1274,12 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 
 				plyr->m_bg->HookFlagDrop(plyr, obj);
 			}
-
 		}break;
 		case GAMEOBJECT_TYPE_QUESTGIVER:
 		{
 			// Questgiver
 			if(obj->HasQuests())
 				sQuestMgr.OnActivateQuestGiver(obj, plyr);
-
 		}break;
 		case GAMEOBJECT_TYPE_SPELLCASTER:
 		{
@@ -1298,7 +1287,6 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			if(!info)
 				break;
 			Spell* spell(new Spell(plyr, info, false, NULLAURA));
-			//spell->SpellByOther = true;
 			SpellCastTargets targets;
 			targets.m_unitTarget = plyr->GetGUID();
 			spell->prepare(&targets);
@@ -1686,7 +1674,6 @@ void WorldSession::HandleRandomRollOpcode(WorldPacket& recv_data)
 void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 {
 	CHECK_INWORLD_RETURN;
-//	uint8 slot = 0;
 	uint32 itemid = 0;
 	uint32 amt = 1;
 	uint8 error = 0;
@@ -1828,22 +1815,6 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 	{
 		pLoot->items.at(slotid).has_looted.insert(player->GetLowGUID());
 	}
-
-	/*WorldPacket idata(45);
-	if(it->Class == ITEM_CLASS_QUEST)
-	{
-		uint32 pcount = player->GetItemInterface()->GetItemCount(it->ItemId, true);
-		BuildItemPushResult(&idata, GetPlayer()->GetGUID(), ITEM_PUSH_TYPE_LOOT, amt, itemid, pLoot->items.at(slotid).iRandomProperty ? pLoot->items.at(slotid).iRandomProperty->ID : 0,0xFF,0,0xFFFFFFFF,pcount);
-	}
-	else
-	{
-		BuildItemPushResult(&idata, player->GetGUID(), ITEM_PUSH_TYPE_LOOT, amt, itemid, pLoot->items.at(slotid).iRandomProperty ? pLoot->items.at(slotid).iRandomProperty->ID : 0);
-	}
-
-	if(_player->InGroup())
-		_player->GetGroup()->SendPacketToAll(&idata);
-	else
-		SendPacket(&idata);*/
 }
 
 void WorldSession::HandleLootRollOpcode(WorldPacket& recv_data)
@@ -2253,7 +2224,6 @@ void WorldSession::HandleReadyForAccountDataTimes(WorldPacket& recv_data)
 		}
 	}
 	SendPacket(&data);
-
 }
 
 void WorldSession::HandleFarsightOpcode(WorldPacket& recv_data)

@@ -1470,6 +1470,16 @@ typedef enum SpellEffectTarget
 	EFF_TARGET_SIMPLE_AOE								= 87,	//just seems to be a simple aoe target, with a little circle
 	EFF_TARGET_SMALL_AOE								= 88,	//even smaller aoe circle
 	EFF_TARGET_NONCOMBAT_PET							= 90,	//target non-combat pet :P
+	EFF_TARGET_VEHICLE									= 94,
+	EFF_TARGET_VEHICLEDRIVER							= 95,
+	EFF_TARGET_VEHICLE_PASSENGER_0						= 96,
+	EFF_TARGET_VEHICLE_PASSENGER_1						= 97,
+	EFF_TARGET_VEHICLE_PASSENGER_2						= 98,
+	EFF_TARGET_VEHICLE_PASSENGER_3						= 99,
+	EFF_TARGET_VEHICLE_PASSENGER_4						= 100,
+	EFF_TARGET_VEHICLE_PASSENGER_5						= 101,
+	EFF_TARGET_VEHICLE_PASSENGER_6						= 102,
+	EFF_TARGET_VEHICLE_PASSENGER_7						= 103,
 	EFF_TARGET_IN_FRONT_OF_CASTER_30					= 104,
 	TOTAL_SPELL_TARGET									= 111	// note: This is the highest known as of 3.3.3
 } SpellEffectTarget;
@@ -1844,6 +1854,15 @@ public:
 	void SpellTargetProjectile(uint32 i, uint32 j);
 	void SpellTargetAllTargetsInArea(uint32 i, uint32 j);
 	void SpellTargetVehicle(uint32 i, uint32 j);
+	void SpellTargetVehicleDriver(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger1(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger2(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger3(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger4(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger5(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger6(uint32 i, uint32 j);
+	void SpellTargetVehiclePassenger7(uint32 i, uint32 j);
 
 	uint64 static FindLowestHealthRaidMember(Player* Target, uint32 dist);
 

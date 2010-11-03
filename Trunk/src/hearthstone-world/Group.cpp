@@ -183,7 +183,6 @@ bool Group::AddMember(PlayerInfo * info, int32 subgroupid/* =-1 */)
 			info->subGroup=-1;
 			return false;
 		}
-
 	}
 	else
 	{

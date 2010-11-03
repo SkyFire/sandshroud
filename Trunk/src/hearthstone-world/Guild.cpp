@@ -115,7 +115,6 @@ GuildRank * Guild::FindLowestRank()
 		if(m_ranks[i] != NULL)
 			return m_ranks[i];
 	}
-
 	return NULL;
 }
 
@@ -126,7 +125,6 @@ GuildRank * Guild::FindHighestRank()
 		if(m_ranks[i] != NULL)
 			return m_ranks[i];
 	}
-
 	return NULL;
 }
 

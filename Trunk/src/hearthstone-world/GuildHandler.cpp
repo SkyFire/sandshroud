@@ -27,7 +27,8 @@ void WorldSession::HandleGuildQuery(WorldPacket & recv_data)
 	recv_data >> guildId;
 
 	// we can skip some searches here if this is our guild
-	if(_player && _player->GetGuildId() == guildId && _player->m_playerInfo->guild) {
+	if(_player && _player->GetGuildId() == guildId && _player->m_playerInfo->guild) 
+	{
 		_player->m_playerInfo->guild->SendGuildQuery(this);
 		return;
 	}
@@ -114,14 +115,10 @@ void WorldSession::HandleGuildAccept(WorldPacket & recv_data)
 
 	Guild *pGuild = inviter->m_playerInfo->guild;
 	if(!pGuild)
-	{
 		return;
-	}
 
 	if(pGuild->GetNumMembers() >= MAX_GUILD_MEMBERS)
-	{
 		return;
-	}
 
 	pGuild->AddGuildMember(plyr->m_playerInfo, NULL);
 }
@@ -610,8 +607,6 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 			}
 
 			c->SaveToDB();
-
-
 			SendItemPushResult(i, false, true, false, true, _player->GetItemInterface()->LastSearchItemBagSlot(), _player->GetItemInterface()->LastSearchItemSlot(), 1);
 
 			if(!sWorld.free_arena_teams)

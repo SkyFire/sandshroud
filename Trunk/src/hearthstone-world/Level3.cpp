@@ -2557,15 +2557,17 @@ bool ChatHandler::HandleLookupSpellCommand(const char * args, WorldSession * m_s
 		HEARTHSTONE_TOLOWER(y);
 		if(FindXinYString(x, y))
  		{
- 			sprintf((char*)itoabuf,"Spell %u ",spell->Id);
+			sprintf((char*)itoabuf,"%u",spell->Id);
 			recout = (const char*)itoabuf;
-			recout += "|cff71d5ff|Hspell:";
+			recout += ": |cff71d5ff|Hspell:";
 			recout += (const char*)itoabuf;
 			recout += "|h[";
 			recout += spell->Name;
 			recout += "]|h|r";
+			std::string::size_type pos = recout.find('%');
+			if( pos != std::string::npos )
+				recout.insert( pos + 1, "%");
 			SendMultilineMessage(m_session, recout.c_str());
-
 			++count;
 			if(count == 25)
 			{

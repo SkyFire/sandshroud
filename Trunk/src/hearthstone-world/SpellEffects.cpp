@@ -3805,7 +3805,6 @@ void Spell::SummonCreature(uint32 i) // Summon
 			pCreature->SetUInt32Value(UNIT_FIELD_MAXHEALTH, health);
 			pCreature->SetUInt32Value(UNIT_FIELD_HEALTH, health);
 		}
-		pCreature->_setFaction();
 		pCreature->GetAIInterface()->Init(pCreature,AITYPE_PET,MOVEMENTTYPE_NONE,u_caster);
 		pCreature->GetAIInterface()->SetUnitToFollow(u_caster);
 		pCreature->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
@@ -4353,7 +4352,6 @@ void Spell::SpellEffectSendEvent(uint32 i) //Send Event
 
 			pCreature* pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
 			pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
-			pCreature->_setFaction();
 			pCreature->GetAIInterface()->Init(pCreature,AITYPE_AGRO,MOVEMENTTYPE_NONE);
 			pCreature->GetAIInterface()->taunt(p_caster,true);
 			pCreature->_setFaction();
@@ -4374,7 +4372,6 @@ void Spell::SpellEffectSendEvent(uint32 i) //Send Event
 
 			Creature* pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
 			pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
-			pCreature->_setFaction();
 			pCreature->GetAIInterface()->Init(pCreature,AITYPE_AGRO,MOVEMENTTYPE_NONE);
 			pCreature->GetAIInterface()->taunt(p_caster,true);
 			pCreature->_setFaction();
@@ -4392,7 +4389,6 @@ void Spell::SpellEffectSendEvent(uint32 i) //Send Event
 
 			Creature* pCreature = p_caster->GetMapMgr()->CreateCreature(cp->Id);
 			pCreature->Load(cp, p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), p_caster->GetOrientation());
-			pCreature->_setFaction();
 			pCreature->GetAIInterface()->Init(pCreature,AITYPE_AGRO,MOVEMENTTYPE_NONE);
 			pCreature->GetAIInterface()->taunt(p_caster,true);
 			pCreature->_setFaction();
@@ -7263,6 +7259,7 @@ void Spell::SpellEffectPull( uint32 i )
 	float pullY = unitTarget->GetPositionY() + pullD * sinf( pullO );
 	float pullZ = m_caster->GetPositionZ() + 0.3f;
 	uint32 time = uint32( pullD * 42.0f );
+	unitTarget->GetAIInterface()->StopMovement(time);
 	unitTarget->GetAIInterface()->SendMoveToPacket( pullX, pullY, pullZ, pullO, time, MONSTER_MOVE_FLAG_JUMP );
 	unitTarget->SetPosition(pullX,pullY,pullZ,pullO);
 	if( u_caster && playerTarget)
@@ -8328,7 +8325,7 @@ void Spell::SpellEffectJump(uint32 i)
 	//float distance = u_caster->GetDistanceSq( x+cosf(o), y+sinf(o),z );
 	//uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
 	uint32 moveTime = uint32( (m_caster->CalcDistance(x,y,z) / ((u_caster->m_runSpeed * 3.5) * 0.001f)) + 0.5);
-
+	u_caster->GetAIInterface()->StopMovement(moveTime);
 	u_caster->GetAIInterface()->JumpTo( x, y, z, moveTime, GetSpellProto()->EffectMiscValue[i] ? GetSpellProto()->EffectMiscValue[i] : GetSpellProto()->EffectMiscValueB[i], GetSpellProto()->EffectDieSides[i] );
 	
 	if( p_caster != NULL)
@@ -8468,8 +8465,6 @@ void Spell::SummonLightwell(uint32 i)
 	summon->_setFaction();
 	summon->AddAura(new Aura(dbcSpell.LookupEntry(59907), GetDuration(), summon, summon));
 	summon->FindActiveAura(59907)->SetProcCharges(10);
-	summon->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 100);
-	summon->SetUInt32Value(UNIT_FIELD_HEALTH, 100);
 	summon->SetSummonOwnerSlot(p_caster->GetGUID(), 0);
 	p_caster->m_SummonSlots[0] = summon;
 	sEventMgr.AddEvent( summon, &Creature::SafeDelete, EVENT_CREATURE_SAFE_DELETE, GetDuration(), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );

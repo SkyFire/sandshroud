@@ -29,9 +29,8 @@ GameObject::GameObject(uint64 guid)
 	SetUInt32Value( OBJECT_FIELD_TYPE,TYPE_GAMEOBJECT|TYPE_OBJECT);
 	SetUInt64Value( OBJECT_FIELD_GUID,guid);
 	m_wowGuid.Init(GetGUID());
-	SetFloatValue( OBJECT_FIELD_SCALE_X, 1);//info->Size  );
+	SetFloatValue( OBJECT_FIELD_SCALE_X, 1);
 	SetAnimProgress(100);
-
 	counter = 0;
 	bannerslot = bannerauraslot = -1;
 	m_summonedGo = false;
@@ -51,7 +50,6 @@ GameObject::GameObject(uint64 guid)
 	m_respawnCell = NULL;
 	m_battleground = NULLBATTLEGROUND;
 	initiated = false;
-
 	memset(m_Go_Uint32Values, 0, sizeof(uint32)*GO_UINT32_MAX);
 	m_Go_Uint32Values[GO_UINT32_MINES_REMAINING] = 1;
 }
@@ -148,7 +146,7 @@ void GameObject::Update(uint32 p_time)
 	if(m_deleted)
 		return;
 
-	if(spell != NULL && (GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1) && GetType() != GAMEOBJECT_TYPE_AURA_GENERATOR)
+	if(spell != NULL && GetState() == 1 && GetType() != GAMEOBJECT_TYPE_AURA_GENERATOR)
 	{
 		if(checkrate > 1)
 		{
@@ -439,8 +437,6 @@ void GameObject::UseFishingNode(Player* player)
 		return;
 	}
 
-	/* Unused code: sAreaStore.LookupEntry(GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY()))->ZoneId*/
-
 	FishingZoneEntry *entry = NULL;
 
 	uint32 zone = player->GetPlayerAreaID();
@@ -628,7 +624,6 @@ Unit* GameObject::CreateTemporaryGuardian(uint32 guardian_entry,uint32 duration,
 		p->SetPowerType(p->GetProto()->Powertype);
 		p->SetUInt32Value(UNIT_FIELD_MAXPOWER1 + p->GetProto()->Powertype, p->GetUInt32Value(UNIT_FIELD_MAXPOWER1 + p->GetProto()->Powertype)+28+10*lvl);
 		p->SetUInt32Value(UNIT_FIELD_POWER1 + p->GetProto()->Powertype, p->GetUInt32Value(UNIT_FIELD_POWER1 + p->GetProto()->Powertype)+28+10*lvl);
-		/* m_Go_Uint32Values[GO_UINT32_HEALTH] */
 		p->SetUInt32Value(UNIT_FIELD_MAXHEALTH,p->GetUInt32Value(UNIT_FIELD_MAXHEALTH)+28+30*lvl);
 		p->SetUInt32Value(UNIT_FIELD_HEALTH,p->GetUInt32Value(UNIT_FIELD_HEALTH)+28+30*lvl);
 		/* LEVEL */
@@ -769,7 +764,7 @@ void GameObject::UpdateRotation(float orientation3, float orientation4)
 //Destructable Buildings
 void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uint32 spellid)
 {
-	if(pInfo->Type != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
+	if(GetType() != GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
 		return;
 
 	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED)) // Already destroyed
@@ -838,7 +833,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 
 void GameObject::Rebuild()
 {
-	RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED+GO_FLAG_DESTROYED);
+	RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_DESTROYED);
 	SetDisplayId(pInfo->DisplayID);
 	uint32 IntactHealth = pInfo->SpellFocus;
 	uint32 DamagedHealth = pInfo->sound5;

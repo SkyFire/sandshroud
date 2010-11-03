@@ -664,7 +664,10 @@ public:
 	void ClearLoot();
 
 public:
-
+	uint16 GetMovementFlags() { return m_movementflags; }
+	void AddMovementFlags(uint32 flags) { m_movementflags &= (uint16)flags;}
+	void SetMovementFlags(uint32 flags){ m_movementflags = (uint16)flags;}
+	void RemoveMovementFlags(uint32 flags){ m_movementflags &= ~(uint16)flags;}
 };
 
 #endif

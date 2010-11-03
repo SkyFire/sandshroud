@@ -173,11 +173,7 @@ void Channel::Part(Player* plr, bool silent)
 		SetOwner(NULLPLR, NULLPLR);
 	}
 
-	if(plr->GetSession() && plr->GetSession()->IsLoggingOut())
-	{
-
-	}
-	else
+	if(!(plr->GetSession() && plr->GetSession()->IsLoggingOut()))
 	{
 		if( !silent )
 		{

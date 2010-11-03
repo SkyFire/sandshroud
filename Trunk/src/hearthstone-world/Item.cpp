@@ -185,19 +185,6 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 				AddEnchantment( entry, time_left, ( time_left == 0 ), false, false, enchslot );
 				//(enchslot != 2) ? false : true, false);
 			}
-			else
-			{
-				/*
-				EnchantEntry *pEnchant = new EnchantEntry;
-				memset(pEnchant,0,sizeof(EnchantEntry));
-
-				pEnchant->Id = enchant_id;
-				if(enchslot != 2)
-					AddEnchantment(pEnchant,0,true, false);
-				else
-					AddEnchantment(pEnchant,0,false,false);
-				*/
-			}
 		}
 	}
 
@@ -886,15 +873,6 @@ void Item::EventRemoveEnchantment( uint32 Slot )
 
 int32 Item::FindFreeEnchantSlot( EnchantEntry* Enchantment, uint32 random_type )
 {
-	//if(!Enchantment) return -1;
-
-	/* uint32 Slot = Enchantment->type ? 3 : 0;
-	for(uint32 Index = ITEM_FIELD_ENCHANTMENT_09; Index < ITEM_FIELD_ENCHANTMENT_32; Index += 3)
-	{
-		if(m_uint32Values[Index] == 0) return Slot;
-		++Slot;
-	}*/
-
 	uint32 GemSlotsReserve = GetSocketsCount();
 	if( GetProto()->SocketBonus )
 		GemSlotsReserve++;

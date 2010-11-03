@@ -42,10 +42,6 @@ MapMgr::MapMgr(Map *map, uint32 mapId, uint32 instanceid) : CellHandler<MapCell>
 	m_CreatureArraySize = map->CreatureSpawnCount;
 	m_VehicleArraySize = 0;
 
-	//m_CreatureStorage = new Creature*[m_CreatureArraySize];
-	//m_CreatureStorage = (Creature**)malloc(sizeof(Creature*) * m_CreatureArraySize);
-	//memset(m_CreatureStorage,0,sizeof(Creature*)*m_CreatureArraySize);
-
 	m_GOHighGuid = 0;
 	m_CreatureHighGuid = 0;
 	m_VehicleHighGuid = 0;
@@ -231,15 +227,10 @@ void MapMgr::PushObject(Object* obj)
 
 	// That object types are not map objects. TODO: add AI groups here?
 	if(obj->GetTypeId() == TYPEID_ITEM || obj->GetTypeId() == TYPEID_CONTAINER)
-	{
-		// mark object as updatable and exit
 		return;
-	}
 
 	if(obj->GetTypeId() == TYPEID_CORPSE)
-	{
 		m_corpses.insert( TO_CORPSE(obj) );
-	}
 
 	obj->ClearInRangeSet();
 
@@ -456,8 +447,6 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 
 	ASSERT(obj);
 	ASSERT(obj->GetMapId() == _mapId);
-	//ASSERT(obj->GetPositionX() > _minX && obj->GetPositionX() < _maxX);
-	//ASSERT(obj->GetPositionY() > _minY && obj->GetPositionY() < _maxY);
 	ASSERT(_cells);
 
 	_updates.erase(obj);
@@ -531,15 +520,8 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 	if(!obj->GetMapCell())
 	{
 		/* set the map cell correctly */
-		if(obj->GetPositionX() >= _maxX || obj->GetPositionX() <= _minY ||
-			obj->GetPositionY() >= _maxY || obj->GetPositionY() <= _minY)
-		{
-			// do nothing
-		}
-		else
-		{
+		if(!(obj->GetPositionX() >= _maxX || obj->GetPositionX() <= _minY || obj->GetPositionY() >= _maxY || obj->GetPositionY() <= _minY))
 			obj->SetMapCell(this->GetCellByCoords(obj->GetPositionX(), obj->GetPositionY()));
-		}
 	}
 
 	if(obj->GetMapCell())
@@ -561,8 +543,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 	}
 
 	// Remove object from all objects 'seeing' him
-	for (Object::InRangeSet::iterator iter = obj->GetInRangeSetBegin();
-		iter != obj->GetInRangeSetEnd(); iter++)
+	for (Object::InRangeSet::iterator iter = obj->GetInRangeSetBegin(); iter != obj->GetInRangeSetEnd(); iter++)
 	{
 		if( (*iter) )
 		{
@@ -620,13 +601,9 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	Player* plObj;
 
 	if( obj->GetTypeId() == TYPEID_PLAYER )
-	{
 		plObj = TO_PLAYER( obj );
-	}
 	else
-	{
 		plObj = NULLPLR;
-	}
 
 	Object* curObj = NULL;
 	float fRange;
@@ -650,10 +627,8 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 			else if( curObj->IsGameObject() && TO_GAMEOBJECT(curObj)->GetInfo() )
 			{	// Crow: Arc, previous changes were only supporting Destructible.
 				uint32 type = TO_GAMEOBJECT(curObj)->GetInfo()->Type;
-				if( type == GAMEOBJECT_TYPE_TRANSPORT
-					|| type == GAMEOBJECT_TYPE_MAP_OBJECT
-					|| type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
-				fRange = 0.0f;
+				if( type == GAMEOBJECT_TYPE_TRANSPORT || type == GAMEOBJECT_TYPE_MAP_OBJECT || type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
+					fRange = 0.0f;
 			}
 			else
 				fRange = m_UpdateDistance; // normal distance
@@ -819,9 +794,7 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 		else if( curObj->IsGameObject() && TO_GAMEOBJECT(curObj)->GetInfo() )
 		{	// Crow: Arc, previous changes were only supporting Destructible.
 			uint32 type = TO_GAMEOBJECT(curObj)->GetInfo()->Type;
-			if( type == GAMEOBJECT_TYPE_TRANSPORT
-				|| type == GAMEOBJECT_TYPE_MAP_OBJECT
-				|| type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
+			if( type == GAMEOBJECT_TYPE_TRANSPORT || type == GAMEOBJECT_TYPE_MAP_OBJECT || type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
 			fRange = 0.0f;
 		}
 		else
@@ -907,21 +880,14 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 void MapMgr::_UpdateObjects()
 {
 	if(!_updates.size() && !_processQueue.size())
-	{
 		return;
-	}
-	//m_updateMutex.Release();
-
 	Object* pObj;
 	Player* pOwner;
-	//std::set<Object* >::iterator it_start, it_end, itr;
 	unordered_set<Player*  >::iterator it_start, it_end, itr;
 	Player* lplr;
 	uint32 count = 0;
 
-	//m_updateMutex.Acquire();
 	UpdateQueue::iterator iter = _updates.begin();
-	//m_updateMutex.Release();
 	PUpdateQueue::iterator it, eit;
 
 	for(; iter != _updates.end();)
@@ -985,9 +951,6 @@ void MapMgr::_UpdateObjects()
 		}
 		pObj->ClearUpdateMask();
 	}
-	//_updates.clear();
-	//m_updateMutex.Release();
-
 	// generate pending a9packets and send to clients.
 	Player* plyr;
 	m_updateMutex.Acquire();
@@ -1020,7 +983,7 @@ void MapMgr::LoadAllCells()
 				// There is no spoon. Err... cell.
 				cellInfo = Create( x , y );
 				cellInfo->Init( x , y , _mapId , this );
-				DEBUG_LOG("MapMgr","Created cell [%u,%u] on map %d (instance %d)." , x , y , _mapId , m_instanceID );
+				DEBUG_LOG("MapMgr","Created cell [%u,%u] on map %u (instance %u)." , x , y , _mapId , m_instanceID );
 				cellInfo->SetActivity( true );
 				_map->CellGoneActive( x , y );
 				ASSERT( !cellInfo->IsLoaded() );
@@ -1034,14 +997,12 @@ void MapMgr::LoadAllCells()
 				// Cell exists, but is inactive
 				if ( !cellInfo->IsActive() )
 				{
-					DEBUG_LOG("MapMgr","Activated cell [%u,%u] on map %d (instance %d).", x, y, _mapId, m_instanceID );
+					DEBUG_LOG("MapMgr","Activated cell [%u,%u] on map %u (instance %u).", x, y, _mapId, m_instanceID );
 					_map->CellGoneActive( x , y );
 					cellInfo->SetActivity( true );
 
 					if (!cellInfo->IsLoaded())
 					{
-						//DEBUG_LOG("MapMgr","Loading objects for Cell [%d][%d] on map %d (instance %d)...",
-						//	posX, posY, this->_mapId, m_instanceID);
 						spawns = _map->GetSpawnsList( x , y );
 						if( spawns )
 							cellInfo->LoadObjects( spawns );
@@ -1075,17 +1036,9 @@ void MapMgr::UpdateCellActivity(uint32 x, uint32 y, int radius)
 				{
 					objCell = Create(posX, posY);
 					objCell->Init(posX, posY, _mapId, this);
-
-//					DEBUG_LOG("MapMgr","Cell [%d,%d] on map %d (instance %d) is now active.",
-//						posX, posY, this->_mapId, m_instanceID);
 					objCell->SetActivity(true);
 					_map->CellGoneActive(posX, posY);
-
 					ASSERT(!objCell->IsLoaded());
-
-//					DEBUG_LOG("MapMgr","Loading objects for Cell [%d][%d] on map %d (instance %d)...",
-//						posX, posY, this->_mapId, m_instanceID);
-
 					sp = _map->GetSpawnsList(posX, posY);
 					if(sp) objCell->LoadObjects(sp);
 				}
@@ -1095,15 +1048,11 @@ void MapMgr::UpdateCellActivity(uint32 x, uint32 y, int radius)
 				//Cell is now active
 				if (_CellActive(posX, posY) && !objCell->IsActive())
 				{
-//					DEBUG_LOG("MapMgr","Cell [%d,%d] on map %d (instance %d) is now active.",
-//						posX, posY, this->_mapId, m_instanceID);
 					_map->CellGoneActive(posX, posY);
 					objCell->SetActivity(true);
 
 					if (!objCell->IsLoaded())
 					{
-//						DEBUG_LOG("MapMgr","Loading objects for Cell [%d][%d] on map %d (instance %d)...",
-//							posX, posY, this->_mapId, m_instanceID);
 						sp = _map->GetSpawnsList(posX, posY);
 						if(sp) objCell->LoadObjects(sp);
 					}
@@ -1111,8 +1060,6 @@ void MapMgr::UpdateCellActivity(uint32 x, uint32 y, int radius)
 				//Cell is no longer active
 				else if (!_CellActive(posX, posY) && objCell->IsActive())
 				{
-//					DEBUG_LOG("MapMgr","Cell [%d,%d] on map %d (instance %d) is now idle.",
-//						posX, posY, this->_mapId, m_instanceID);
 					_map->CellGoneIdle(posX, posY);
 					objCell->SetActivity(false);
 				}
@@ -1153,13 +1100,10 @@ bool MapMgr::_CellActive(uint32 x, uint32 y)
 			if (objCell)
 			{
 				if (objCell->HasPlayers() || objCell->IsForcedActive() )
-				{
 					return true;
-				}
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -1175,7 +1119,6 @@ void MapMgr::PushToProcessed(Player* plr)
 {
 	_processQueue.insert(plr);
 }
-
 
 void MapMgr::ChangeFarsightLocation(Player* plr, Unit* farsight, bool apply)
 {
@@ -1367,7 +1310,7 @@ bool MapMgr::Do()
 	{
 		exec_start=getMSTime();
 		//first push to world new objects
-		m_objectinsertlock.Acquire();//<<<<<<<<<<<<<<<<
+		m_objectinsertlock.Acquire();
 		if(m_objectinsertpool.size())
 		{
 			for(i=m_objectinsertpool.begin();i!=m_objectinsertpool.end();++i)
@@ -1375,8 +1318,7 @@ bool MapMgr::Do()
 
 			m_objectinsertpool.clear();
 		}
-		m_objectinsertlock.Release();//>>>>>>>>>>>>>>>>
-		//-------------------------------------------------------
+		m_objectinsertlock.Release();
 
 		//Now update sessions of this map + objects
 		_PerformObjectDuties();
@@ -1424,10 +1366,7 @@ bool MapMgr::Do()
 			sInstanceMgr._DeleteInstance(pInstance, true);
 		}
 		else
-		{
-			// just null out the pointer
 			pInstance->m_mapMgr = NULLMAPMGR;
-		}
 	}
 	else if(GetMapInfo()->type == INSTANCE_NULL)
 		sInstanceMgr.m_singleMaps[GetMapId()] = NULLMAPMGR;
@@ -1477,9 +1416,9 @@ void MapMgr::BeginInstanceExpireCountdown()
 
 void MapMgr::AddObject(Object* obj)
 {
-	m_objectinsertlock.Acquire();//<<<<<<<<<<<<
+	m_objectinsertlock.Acquire();
 	m_objectinsertpool.insert(obj);
-	m_objectinsertlock.Release();//>>>>>>>>>>>>
+	m_objectinsertlock.Release();
 }
 
 
@@ -1808,7 +1747,6 @@ void MapMgr::SendChatMessageToCellPlayers(Object* obj, WorldPacket * packet, uin
 				{
 					if((*iter)->IsPlayer())
 					{
-						//TO_PLAYER(*iter)->GetSession()->SendPacket(packet);
 						if(originator->GetPlayer()->PhasedCanInteract((*iter))) // Matching phases.
 							TO_PLAYER(*iter)->GetSession()->SendChatPacket(packet, langpos, lang, originator);
 					}
@@ -1843,16 +1781,8 @@ void MapMgr::HookOnAreaTrigger(Player* plr, uint32 id)
 	case 4591:
 		//Only opens when the first one steps in, if 669 if you find a way, put it in :P (else was used to increase the time the door stays opened when another one steps on it)
 		GameObject* door = GetInterface()->GetGameObjectNearestCoords(803.827f, 6869.38f, -38.5434f, 184212);
-		if (door && (door->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1))
-		{
-			door->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
-			//sEventMgr.AddEvent(door, &GameObject::SetUInt32Value, GAMEOBJECT_STATE, 1, EVENT_SCRIPT_UPDATE_EVENT, 10000, 1, 0);
-		}
-		//else
-		//{
-			//sEventMgr.RemoveEvents(door);
-			//sEventMgr.AddEvent(door, &GameObject::SetUInt32Value,GAMEOBJECT_STATE, 0, EVENT_SCRIPT_UPDATE_EVENT, 10000, 1, 0);
-		//}
+		if (door && (door->GetState() == 1))
+			door->SetState(0);
 		break;
 	}
 }

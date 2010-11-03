@@ -696,7 +696,6 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 	}
 
 	SendPacket(&data);
-	return;
 }
 
 void WorldSession::HandleBinderActivateOpcode( WorldPacket & recv_data )

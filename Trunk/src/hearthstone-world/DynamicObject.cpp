@@ -31,8 +31,6 @@ DynamicObject::DynamicObject(uint32 high, uint32 low)
 	m_uint32Values[OBJECT_FIELD_GUID+1] = high;
 	m_wowGuid.Init(GetGUID());
 	m_floatValues[OBJECT_FIELD_SCALE_X] = 1;
-
-
 	m_parentSpell=NULLSPELL;
 	m_aliveDuration = 0;
 	u_caster = NULLUNIT;
@@ -89,7 +87,6 @@ void DynamicObject::Create(Object* caster, Spell* pSpell, float x, float y, floa
 			u_caster = pSpell->u_caster;
 			if(!u_caster && p_caster)
 				u_caster = TO_UNIT(p_caster);
-
 			g_caster = TO_GAMEOBJECT(caster);
 		}break;
 	case TYPEID_UNIT:
@@ -111,9 +108,9 @@ void DynamicObject::Create(Object* caster, Spell* pSpell, float x, float y, floa
 	m_uint32Values[DYNAMICOBJECT_SPELLID] = m_spellProto->Id;
 
 	m_floatValues[DYNAMICOBJECT_RADIUS] = radius;
-	m_position.x = x; //m_floatValues[DYNAMICOBJECT_POS_X]  = x;
-	m_position.y = y; //m_floatValues[DYNAMICOBJECT_POS_Y]  = y;
-	m_position.z = z; //m_floatValues[DYNAMICOBJECT_POS_Z]  = z;
+	m_position.x = x;
+	m_position.y = y;
+	m_position.z = z;
 	m_uint32Values[DYNAMICOBJECT_CASTTIME] = (uint32)UNIXTIME;
 
 	m_aliveDuration = duration;
@@ -266,8 +263,6 @@ void DynamicObject::Remove()
 	WorldPacket data( SMSG_GAMEOBJECT_DESPAWN_ANIM, 8 );
 	data << GetGUID();
 	SendMessageToSet( &data, false );
-
-	if( IsInWorld() )
-		RemoveFromWorld(true);
+	RemoveFromWorld(true);
 	delete this;
 }

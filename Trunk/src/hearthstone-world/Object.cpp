@@ -2045,6 +2045,8 @@ void Object::_setFaction()
 		m_faction = factT;
 		m_factionDBC = dbcFaction.LookupEntry(factT->Faction);
 	}
+	//Lets update our faction sets since we have changed faction.
+	UpdateOppFactionSet();
 }
 
 void Object::UpdateOppFactionSet()

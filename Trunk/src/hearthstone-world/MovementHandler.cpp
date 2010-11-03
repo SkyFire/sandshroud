@@ -740,6 +740,8 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/************************************************************************/
 	if( _player->m_CurrentCharm )
 		_player->m_CurrentCharm->SetPosition(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, _player->movement_info.orientation);
+	else if( _player->m_CurrentVehicle )
+		_player->m_CurrentVehicle->MoveVehicle(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, _player->movement_info.orientation);
 	else
 	{
 		if(!_player->m_CurrentTransporter)

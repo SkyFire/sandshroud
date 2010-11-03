@@ -1011,6 +1011,8 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_NEXT_SEAT].handler				= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_SWITCH_SEAT].handler			= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE].handler	= &WorldSession::HandleRequestSeatChange;
+	WorldPacketHandlers[CMSG_EJECT_PASSENGER].handler						= &WorldSession::HandleEjectPassenger;
+	WorldPacketHandlers[CMSG_PLAYER_VEHICLE_ENTER].handler					= &WorldSession::HandleVehicleMountEnter;
 
 	// Minion Cast Spell
 	WorldPacketHandlers[CMSG_PET_CAST_SPELL].handler						= &WorldSession::HandleCharmForceCastSpell;

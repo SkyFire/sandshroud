@@ -1033,15 +1033,15 @@ void World::SaveAllPlayers()
 	uint32 mt;
 	objmgr._playerslock.AcquireReadLock();
 	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
+	{
+		if(itr->second->GetSession())
 		{
-			if(itr->second->GetSession())
-			{
-				mt = getMSTime();
-				itr->second->SaveToDB(false);
-				sLog.outString("Saved player `%s` (level %u) in %ums.", itr->second->GetName(), itr->second->GetUInt32Value(UNIT_FIELD_LEVEL), getMSTime() - mt);
-				++count;
-			}
+			mt = getMSTime();
+			itr->second->SaveToDB(false);
+			sLog.outString("Saved player `%s` (level %u) in %ums.", itr->second->GetName(), itr->second->GetUInt32Value(UNIT_FIELD_LEVEL), getMSTime() - mt);
+			++count;
 		}
+	}
 	objmgr._playerslock.ReleaseReadLock();
 	sLog.outString("Saved %u players.", count);
 }

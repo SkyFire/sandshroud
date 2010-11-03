@@ -376,7 +376,6 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		} break;
 	case CHAT_MSG_YELL:
 		{
-
 			if(lang > 0 && LanguageSkills[lang] && _player->_HasSkillLine(LanguageSkills[lang]) == false)
 				return;
 

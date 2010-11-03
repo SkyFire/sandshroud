@@ -1102,7 +1102,7 @@ void Player::Update( uint32 p_time )
 		float vposy = m_CurrentVehicle->GetPositionY();
 		float vposz = m_CurrentVehicle->GetPositionZ();
 		float vposo = m_CurrentVehicle->GetOrientation();
-		SetPosition(vposx, vposy, vposz, vposo, false);
+		m_CurrentVehicle->MoveVehicle(vposx, vposy, vposz, vposo);
 	}
 
 	// Exploration
@@ -10498,7 +10498,6 @@ void Player::Possess(Unit* pTarget)
 
 	/* update target faction set */
 	pTarget->_setFaction();
-	pTarget->UpdateOppFactionSet();
 
 	list<uint32> avail_spells;
 	for(list<AI_Spell*>::iterator itr = pTarget->GetAIInterface()->m_spells.begin(); itr != pTarget->GetAIInterface()->m_spells.end(); itr++)
@@ -10572,7 +10571,6 @@ void Player::UnPossess()
 	pTarget->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE);
 	pTarget->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, pTarget->GetCharmTempVal());
 	pTarget->_setFaction();
-	pTarget->UpdateOppFactionSet();
 
 	/* send "switch mover" packet */
 	WorldPacket data(SMSG_CLIENT_CONTROL_UPDATE, 10);

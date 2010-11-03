@@ -185,11 +185,7 @@ void Container::SwapItems(int16 SrcSlot, int16 DstSlot)
 		}
 		else
 		{
-			if(m_Slot[DstSlot]->GetUInt32Value(ITEM_FIELD_STACK_COUNT) == m_Slot[DstSlot]->GetProto()->MaxCount)
-			{
-
-			}
-			else
+			if(!(m_Slot[DstSlot]->GetUInt32Value(ITEM_FIELD_STACK_COUNT) == m_Slot[DstSlot]->GetProto()->MaxCount))
 			{
 				int32 delta=m_Slot[DstSlot]->GetProto()->MaxCount-m_Slot[DstSlot]->GetUInt32Value(ITEM_FIELD_STACK_COUNT);
 				m_Slot[DstSlot]->SetUInt32Value(ITEM_FIELD_STACK_COUNT,m_Slot[DstSlot]->GetProto()->MaxCount);
@@ -209,9 +205,7 @@ void Container::SwapItems(int16 SrcSlot, int16 DstSlot)
 		m_Slot[DstSlot]->m_isDirty = true;
 	}
 	else
-	{
 		SetUInt64Value(CONTAINER_FIELD_SLOT_1  + (DstSlot*2), 0 );
-	}
 
 	if( m_Slot[SrcSlot])
 	{
@@ -219,9 +213,7 @@ void Container::SwapItems(int16 SrcSlot, int16 DstSlot)
 		m_Slot[SrcSlot]->m_isDirty = true;
 	}
 	else
-	{
 		SetUInt64Value(CONTAINER_FIELD_SLOT_1  + (SrcSlot*2), 0 );
-	}
 }
 
 Item* Container::SafeRemoveAndRetreiveItemFromSlot(int16 slot, bool destroy)
@@ -242,9 +234,7 @@ Item* Container::SafeRemoveAndRetreiveItemFromSlot(int16 slot, bool destroy)
 		if(destroy)
 		{
 			if(pItem->IsInWorld())
-			{
 				pItem->RemoveFromWorld();
-			}
 			pItem->DeleteFromDB();
 		}
 	}
@@ -261,16 +251,14 @@ bool Container::SafeFullRemoveItemFromSlot(int16 slot)
 
 	Item* pItem = m_Slot[slot];
 
-	if (pItem == NULL ||pItem == TO_ITEM(this)) return false;
-	m_Slot[slot] = NULLITEM;
+	if(pItem == NULL ||pItem == TO_ITEM(this)) return false;
+		m_Slot[slot] = NULLITEM;
 
 	SetUInt64Value(CONTAINER_FIELD_SLOT_1  + slot*2, 0 );
 	pItem->SetUInt64Value(ITEM_FIELD_CONTAINED, 0);
 
 	if(pItem->IsInWorld())
-	{
 		pItem->RemoveFromWorld();
-	}
 	pItem->DeleteFromDB();
 	pItem->DeleteMe();
 	pItem = NULL;

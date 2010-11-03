@@ -721,6 +721,8 @@ protected:
 	void HandleVehicleDismiss(WorldPacket & recv_data);
 	void HandleSpellClick( WorldPacket & recv_data );
 	void HandleRequestSeatChange( WorldPacket & recv_data );
+	void HandleEjectPassenger( WorldPacket & recv_data );
+	void HandleVehicleMountEnter( WorldPacket & recv_data );
 
 	//MISC
 	void HandleReadyForAccountDataTimes(WorldPacket &recv_data);

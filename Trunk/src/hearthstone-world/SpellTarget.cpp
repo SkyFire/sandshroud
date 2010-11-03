@@ -117,15 +117,15 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetNULL,						// 92
 	&Spell::SpellTargetNULL,						// 93
 	&Spell::SpellTargetVehicle,						// 94
-	&Spell::SpellTargetNULL,						// 95
-	&Spell::SpellTargetNULL,						// 96
-	&Spell::SpellTargetNULL,						// 97
-	&Spell::SpellTargetNULL,						// 98
-	&Spell::SpellTargetNULL,						// 99
-	&Spell::SpellTargetNULL,						// 100
-	&Spell::SpellTargetNULL,						// 101
-	&Spell::SpellTargetNULL,						// 102
-	&Spell::SpellTargetNULL,						// 103
+	&Spell::SpellTargetVehicleDriver,				// 95
+	&Spell::SpellTargetVehiclePassenger,			// 96
+	&Spell::SpellTargetVehiclePassenger1,			// 97
+	&Spell::SpellTargetVehiclePassenger2,			// 98
+	&Spell::SpellTargetVehiclePassenger3,			// 99
+	&Spell::SpellTargetVehiclePassenger4,			// 100
+	&Spell::SpellTargetVehiclePassenger5,			// 101
+	&Spell::SpellTargetVehiclePassenger6,			// 102
+	&Spell::SpellTargetVehiclePassenger7,			// 103
 	&Spell::SpellTargetInFrontOfCaster,				// 104
 	&Spell::SpellTargetNULL,						// 105
 	&Spell::SpellTargetNULL,						// 106
@@ -1102,4 +1102,84 @@ void Spell::SpellTargetVehicle(uint32 i, uint32 j)
 		if( p_caster->m_CurrentVehicle != NULL )
 			_AddTargetForced( p_caster->m_CurrentVehicle->GetGUID(), i );
 	}
+}
+
+void Spell::SpellTargetVehicleDriver(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+	if(v_caster->GetPassenger(0))
+		_AddTargetForced(v_caster->GetPassenger(0)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(0))
+		_AddTargetForced(v_caster->GetPassenger(0)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger1(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(1))
+		_AddTargetForced(v_caster->GetPassenger(1)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger2(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(2))
+		_AddTargetForced(v_caster->GetPassenger(2)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger3(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(3))
+		_AddTargetForced(v_caster->GetPassenger(3)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger4(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(4))
+		_AddTargetForced(v_caster->GetPassenger(4)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger5(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(5))
+		_AddTargetForced(v_caster->GetPassenger(5)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger6(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(6))
+		_AddTargetForced(v_caster->GetPassenger(6)->GetGUID(), i );
+}
+
+void Spell::SpellTargetVehiclePassenger7(uint32 i, uint32 j)
+{
+	if(!v_caster)
+		return;
+
+	if(v_caster->GetPassenger(7))
+		_AddTargetForced(v_caster->GetPassenger(7)->GetGUID(), i );
 }

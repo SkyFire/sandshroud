@@ -1557,6 +1557,7 @@ struct VehicleSeatEntry
 //									// 46-57
 
 	bool IsUsable() const { return (m_flags & 0x2000000 ? true : false); }
+	bool IsControllable() const { return (m_flags & 0x800 ? true : false); }
 };
 
 struct DestructibleModelDataEntry

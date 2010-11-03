@@ -1040,7 +1040,7 @@ int ChatHandler::ParseCommands(const char* text, WorldSession *session)
 	if(session->GetPermissionCount() == 0 && sWorld.m_reqGmForCommands)
 		return 0;
 
-	if(text[0] != '!' && text[0] != '.') // let's not confuse users
+	if(text[0] != '.') // let's not confuse users
 		return 0;
 
 	/* skip '..' :P that pisses me off */
@@ -1065,7 +1065,7 @@ WorldPacket * ChatHandler::FillMessageData( uint32 type, int32 language, const c
 	//uint64	guid;
 	//uint64	guid;
 	//uint32	len_of_text;
-	//char		text[];			// not sure ? i think is null terminated .. not null terminated
+	//char		text[];	not sure ? i think is null terminated .. not null terminated
 	//uint8		afk_state;
 	ASSERT(type != CHAT_MSG_CHANNEL);
 	//channels are handled in channel handler and so on
@@ -1390,10 +1390,10 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 			if(fieldmax)
 			{
 				cr->SetUInt32Value(fieldmax, mv);
-				BlueSystemMessage(m_session, "Setting %s of %s to %d/%d.", fieldname, creaturename.c_str(), av, mv);
+				BlueSystemMessage(m_session, "Setting %s of %s to %u/%u.", fieldname, creaturename.c_str(), av, mv);
 			}
 			else
-				BlueSystemMessage(m_session, "Setting %s of %s to %d.", fieldname, creaturename.c_str(), av);
+				BlueSystemMessage(m_session, "Setting %s of %s to %u.", fieldname, creaturename.c_str(), av);
 
 			cr->SaveToDB();
 		}
@@ -1501,7 +1501,7 @@ bool ChatHandler::HandleGetPosCommand(const char* args, WorldSession *m_session)
 	uint32 spell = atol(args);
 	SpellEntry *se = dbcSpell.LookupEntry(spell);
 	if(se)
-		BlueSystemMessage(m_session, "SpellIcon for %d is %d", se->Id, se->SpellIconID);
+		BlueSystemMessage(m_session, "SpellIcon for %u is %u", se->Id, se->SpellIconID);
 	return true;
 }
 
@@ -1585,7 +1585,7 @@ bool ChatHandler::HandleModifyScaleCommand(const char *args, WorldSession *m_ses
 	BlueSystemMessage(m_session, "Set target's scale to %f", scale);
 	unit->SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
 	if(unit->IsCreature())
-		WorldDatabase.Execute("UPDATE creature_proto SET scale = '%f' WHERE entry = '%u';", scale, TO_CREATURE(unit)->GetEntry());
+		WorldDatabase.Execute("UPDATE creature_proto SET scale = '%f' WHERE entry = '%u';", scale, unit->GetEntry());
 
 	return true;
 }

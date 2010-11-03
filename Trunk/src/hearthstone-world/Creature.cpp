@@ -35,23 +35,16 @@ Creature::Creature(uint64 guid)
 	SetUInt32Value( OBJECT_FIELD_TYPE, TYPE_UNIT|TYPE_OBJECT);
 	SetUInt64Value( OBJECT_FIELD_GUID, guid);
 	m_wowGuid.Init(GetGUID());
-
-
 	m_quests = NULL;
 	proto = NULL;
 	creature_info=NULL;
-
-
 	m_H_regenTimer=0;
 	m_P_regenTimer=0;
 	m_useAI = true;
 	mTaxiNode = 0;
-
 	Skinned = false;
-
 	m_enslaveCount = 0;
 	m_enslaveSpell = 0;
-
 	for(uint32 x=0;x<7;x++)
 	{
 		FlatResistanceMod[x]=0;
@@ -60,24 +53,20 @@ Creature::Creature(uint64 guid)
 		ModDamageDone[x]=0;
 		ModDamageDonePct[x]=1.0;
 	}
-
 	for(uint32 x=0;x<5;x++)
 	{
 		TotalStatModPct[x]=0;
 		StatModPct[x]=0;
 		FlatStatMod[x]=0;
 	}
-
 	SummonOwner = 0;
 	SummonSlot = -1;
 	Totem = false;
-
 	m_PickPocketed = false;
 	m_SellItems = NULL;
 	_myScriptClass = NULL;
 	m_TaxiNode = 0;
 	myFamily = 0;
-
 	haslinkupevent = false;
 	original_emotestate = 0;
 	mTrainer = 0;
@@ -99,7 +88,6 @@ Creature::Creature(uint64 guid)
 	m_canRegenerateHP = true;
 	BaseAttackType = SCHOOL_NORMAL;
 	CanMove = 0;
-
 	m_taggingPlayer = m_taggingGroup = 0;
 	m_lootMethod = -1;
 	m_noDeleteAfterDespawn = false;
@@ -137,7 +125,6 @@ void Creature::Update( uint32 p_time )
 	if(IsTotem() && isDead())
 	{
 		RemoveFromWorld(false, true);
-//		Unit::RemoveFromWorld( true);
 		return;
 	}
 
@@ -196,12 +183,7 @@ void Creature::OnRemoveCorpse()
 		else
 			setDeathState(DEAD);
 
-
 		SetPosition(m_spawnLocation, true);
-	}
-	else
-	{
-		// if we got here it's pretty bad
 	}
 }
 
@@ -219,7 +201,6 @@ void Creature::OnRespawn( MapMgr* m)
 
 	RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 	Skinned = false;
-	//ClearTag();
 	m_taggingGroup = m_taggingPlayer = 0;
 	m_lootMethod = -1;
 
@@ -309,6 +290,9 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 {
 	if(sWorld.QueryLog)
 		SaveToFile(saveposition);
+
+	if(IsPet() || IsSummon()) //Just in case.
+		return;
 
 	if(!spawnid)
 		spawnid = objmgr.GenerateCreatureSpawnID();
@@ -548,9 +532,9 @@ void Creature::AddToWorld()
 	}
 
 	// force set faction
-	if(m_faction == 0 || m_factionDBC == 0)
+	if(m_faction == NULL || m_factionDBC == NULL)
 		_setFaction();
-	if(m_faction == 0 || m_factionDBC == 0)
+	if(m_faction == NULL || m_factionDBC == NULL)
 		return;
 
 	Object::AddToWorld();
@@ -558,17 +542,17 @@ void Creature::AddToWorld()
 
 void Creature::AddToWorld(MapMgr* pMapMgr)
 {
-	if(creature_info == 0)
+	if(creature_info == NULL)
 	{
 		creature_info = CreatureNameStorage.LookupEntry(GetEntry());
-		if(creature_info == 0)
+		if(creature_info == NULL)
 			return;
 	}
 
 	// force set faction
-	if(m_faction == 0 || m_factionDBC == 0)
+	if(m_faction == NULL || m_factionDBC == NULL)
 		_setFaction();
-	if(m_faction == 0 || m_factionDBC == 0)
+	if(m_faction == NULL || m_factionDBC == NULL)
 		return;
 
 	Object::AddToWorld(pMapMgr);
@@ -597,7 +581,7 @@ void Creature::RemoveFromWorld(bool addrespawnevent, bool free_guid)
 
 	RemoveAllAuras();
 
-	if(IsPet()) /* Is a pet: IsPet() actually returns false on a pet? o_X */
+	if(IsPet())
 	{
 		if(IsInWorld())
 			Unit::RemoveFromWorld(true);
@@ -616,7 +600,6 @@ void Creature::RemoveFromWorld(bool addrespawnevent, bool free_guid)
 
 void Creature::EnslaveExpire()
 {
-
 	m_enslaveCount++;
 	Player* caster = objmgr.GetPlayer(GetUInt32Value(UNIT_FIELD_CHARMEDBY));
 	if(caster)
@@ -634,16 +617,10 @@ void Creature::EnslaveExpire()
 
 	m_walkSpeed = m_base_walkSpeed;
 	m_runSpeed = m_base_runSpeed;
-
-	switch(GetCreatureInfo()->Type)
-	{
-	case DEMON:
+	if(proto)
+		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, proto->Faction);
+	else
 		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, 90);
-		break;
-	default:
-		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, 954);
-		break;
-	};
 	_setFaction();
 
 	GetAIInterface()->Init(TO_UNIT(this), AITYPE_AGRO, MOVEMENTTYPE_NONE);
@@ -665,10 +642,7 @@ void Creature::AddInRangeObject(Object* pObj)
 void Creature::OnRemoveInRangeObject(Object* pObj)
 {
 	if(IsTotem() && SummonOwner && SummonOwner == pObj->GetLowGUID())		// player gone out of range of the totem
-	{
-		// Expire next loop.
 		event_ModifyTimeLeft(EVENT_TOTEM_EXPIRE, 1);
-	}
 
 	if(m_escorter == pObj)
 	{
@@ -700,7 +674,8 @@ void Creature::CalcStat(uint32 type)
 	int32 res=(BaseStats[type]*(100+StatModPct[type]))/100;
 
 	res+=FlatStatMod[type];
-	if(res<0)res=0;
+	if(res<0)
+		res=0;
 
 	res+=(res*(TotalStatModPct[type]))/100;
 	SetUInt32Value(UNIT_FIELD_STAT0+type,res>0?res:0);
@@ -714,7 +689,8 @@ void Creature::RegenerateHealth(bool isinterrupted)
 
 	uint32 cur=GetUInt32Value(UNIT_FIELD_HEALTH);
 	uint32 mh=GetUInt32Value(UNIT_FIELD_MAXHEALTH);
-	if(cur>=mh)return;
+	if(cur>=mh)
+		return;
 
 	//though creatures have their stats we use some wierd formula for amt
 	float amt = 0.0f;
@@ -814,6 +790,7 @@ void Creature::AddVendorItem(uint32 itemid, uint32 amount, uint32 ec)
 	}
 	m_SellItems->push_back(ci);
 }
+
 void Creature::ModAvItemAmount(uint32 itemid, uint32 value)
 {
 	for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
@@ -837,6 +814,7 @@ void Creature::ModAvItemAmount(uint32 itemid, uint32 value)
 		}
 	}
 }
+
 void Creature::UpdateItemAmount(uint32 itemid)
 {
 	for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)
@@ -853,8 +831,6 @@ void Creature::UpdateItemAmount(uint32 itemid)
 		}
 	}
 }
-
-
 
 void Creature::FormationLinkUp(uint32 SqlId)
 {
@@ -899,16 +875,10 @@ void Creature::ChannelLinkUpCreature(uint32 SqlId)
 	}
 }
 
-void Creature::LoadAIAgents()
-{
-//moved to ObjectStorage
-}
-
 WayPoint * Creature::CreateWaypointStruct()
 {
 	return new WayPoint();
 }
-//#define SAFE_FACTIONS
 
 bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 {
@@ -1147,13 +1117,9 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		m_aiInterface->m_CallForHelpHealth = 100;
 
 	//HACK!
-	if(m_uint32Values[UNIT_FIELD_DISPLAYID] == 17743 ||
-		m_uint32Values[UNIT_FIELD_DISPLAYID] == 20242 ||
-		m_uint32Values[UNIT_FIELD_DISPLAYID] == 15435 ||
-		(creature_info->Family == UNIT_TYPE_MISC))
-	{
+	if(m_uint32Values[UNIT_FIELD_DISPLAYID] == 17743 || m_uint32Values[UNIT_FIELD_DISPLAYID] == 20242 || 
+		m_uint32Values[UNIT_FIELD_DISPLAYID] == 15435 || creature_info->Family == UNIT_TYPE_MISC)
 		m_useAI = false;
-	}
 
 	switch(proto->Powertype)
 	{
@@ -1216,6 +1182,8 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 			sLog.outError("Creature %u has an unhandled powertype.", GetEntry());
 		}break;
 	}
+	if(IsVehicle())
+		TO_VEHICLE(this)->ChangePowerType();
 
 	has_combat_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_ENTER_COMBAT);
 	has_waypoint_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_RANDOM_WAYPOINT);
@@ -1483,13 +1451,9 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 		m_aiInterface->m_CallForHelpHealth = 100;
 
 	//HACK!
-	if(m_uint32Values[UNIT_FIELD_DISPLAYID] == 17743 ||
-		m_uint32Values[UNIT_FIELD_DISPLAYID] == 20242 ||
-		m_uint32Values[UNIT_FIELD_DISPLAYID] == 15435 ||
-		(creature_info->Family == UNIT_TYPE_MISC))
-	{
+	if(m_uint32Values[UNIT_FIELD_DISPLAYID] == 17743 || m_uint32Values[UNIT_FIELD_DISPLAYID] == 20242 ||
+		m_uint32Values[UNIT_FIELD_DISPLAYID] == 15435 || creature_info->Family == UNIT_TYPE_MISC)
 		m_useAI = false;
-	}
 
 	switch(proto->Powertype)
 	{
@@ -1552,6 +1516,8 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 			sLog.outError("Creature %u has an unhandled powertype.", GetEntry());
 		}break;
 	}
+	if(IsVehicle())
+		TO_VEHICLE(this)->ChangePowerType();
 
 	has_combat_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_ENTER_COMBAT);
 	has_waypoint_text = objmgr.HasMonsterSay(GetEntry(), MONSTER_SAY_EVENT_RANDOM_WAYPOINT);
@@ -1663,14 +1629,10 @@ void Creature::OnPushToWorld()
 		}
 
 		if(m_spawn->channel_target_creature)
-		{
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::ChannelLinkUpCreature, m_spawn->channel_target_creature, EVENT_CREATURE_CHANNEL_LINKUP, 1000, 5, 0);	// only 5 attempts
-		}
 
 		if(m_spawn->channel_target_go)
-		{
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::ChannelLinkUpGO, m_spawn->channel_target_go, EVENT_CREATURE_CHANNEL_LINKUP, 1000, 5, 0);	// only 5 attempts
-		}
 	}
 
 	m_aiInterface->m_is_in_instance = (m_mapMgr->GetMapInfo()->type!=INSTANCE_NULL) ? true : false;
@@ -1721,9 +1683,7 @@ void Creature::Despawn(uint32 delay, uint32 respawntime)
 		m_respawnCell = pCell;
 	}
 	else
-	{
 		Unit::RemoveFromWorld(true);
-	}
 }
 
 void Creature::TriggerScriptEvent(int ref)

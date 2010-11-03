@@ -85,22 +85,22 @@ void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 
 	if( pRider != NULL)
 		AddPassenger( pRider );
+	CreatureProtoVehicle* veh = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+	if(veh->MovementFlags)
+		m_movementflags = (uint16)veh->MovementFlags;
+	SetSpeed(TURN,ve->m_turnSpeed);
+	SetSpeed(PITCH_RATE,ve->m_pitchSpeed);
+
 }
 
 void Vehicle::InstallAccessories()
 {
-	//Disabled.
 	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 	if(acc == NULL)
 	{
 		sLog.outDetail("Vehicle %u has no accessories.", GetEntry());
 		return;
 	}
-	VehicleEntry * ve = dbcVehicle.LookupEntry( m_vehicleEntry );
-	if(acc->MovementFlags)
-		m_movementflags = (uint16)acc->MovementFlags;
-	m_turnRate = ve->m_turnSpeed;
-	m_pitchRate = ve->m_pitchSpeed;
 
 	MapMgr* map = (GetMapMgr() ? GetMapMgr() : sInstanceMgr.GetMapMgr(GetMapId()));
 	if(map == NULL) // Shouldn't ever really happen.
@@ -628,11 +628,8 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		pPassenger->SetUInt64Value( UNIT_FIELD_CHARM, 0 );
 		SetUInt64Value(UNIT_FIELD_CHARMEDBY, 0);
 
-		if(!m_faction || m_faction->ID == 35)
-		{
-			/* update target faction set */
+		if(!m_faction || m_faction->ID == 35 || m_faction->ID == 2105)
 			SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, GetCharmTempVal());
-		}
 		RemoveAura(62064);
 	}
 
@@ -668,7 +665,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	if(canFly())
 		DisableFlight();
 	_setFaction();
-	UpdateOppFactionSet();
 }
 
 void Vehicle::DeletePassengerData(Unit* pPassenger)
@@ -749,7 +745,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			else
 				pPlayer->GetSummon()->Remove(false, true, true);	// hunter pet -> just remove for later re-call
 		}
-
 		pPlayer->m_CurrentVehicle = TO_VEHICLE(this);
 		pPlayer->SetUInt64Value(PLAYER_FARSIGHT, GetGUID());
 		pPlayer->SetPlayerStatus(TRANSFER_PENDING);
@@ -786,46 +781,54 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 
 		if(slot == 0)
 		{
-			SetControllingUnit(pPlayer);
-			m_redirectSpellPackets = pPlayer;
+			if(m_vehicleSeats[slot]->IsControllable())
+			{
+				SetControllingUnit(pPlayer);
+				m_redirectSpellPackets = pPlayer;
 
-			SetSpeed(RUN, m_runSpeed);
-			SetSpeed(FLY, m_flySpeed);
+				SetSpeed(RUN, m_runSpeed);
+				SetSpeed(FLY, m_flySpeed);
+				// send "switch mover" packet
+				data.Initialize(SMSG_CLIENT_CONTROL_UPDATE);
+				data << GetNewGUID() << uint8(1);
+				pPlayer->GetSession()->SendPacket(&data);
 
-			// send "switch mover" packet
+				pPlayer->m_CurrentCharm = TO_UNIT(this);
+				pPlayer->SetUInt64Value(UNIT_FIELD_CHARM, GetGUID());
+	
+				SetUInt64Value(UNIT_FIELD_CHARMEDBY, pPlayer->GetGUID());
+				SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE);
+
+				if(!m_faction || m_faction->ID == 35 || m_faction->ID == 2105)
+				{
+					SetCharmTempVal(pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+					SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+				}
+
+				if(vehicleproto && vehicleproto->healthfromdriver)
+				{
+					uint32 health = GetUInt32Value(UNIT_FIELD_HEALTH);
+					uint32 maxhealth = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+					uint32 healthdiff = maxhealth - health;
+
+					SetUInt32Value(UNIT_FIELD_MAXHEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))));
+					SetUInt32Value(UNIT_FIELD_HEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))) - healthdiff);
+				}
+
+				SendSpells(GetEntry(), pPlayer);
+				if(pPlayer->HasAura(62064))
+				{
+					uint32 stack = pPlayer->FindActiveAura(62064)->stackSize;
+					AddAura(new Aura(dbcSpell.LookupEntry(62064),-1,this,this));
+					FindActiveAura(62064)->ModStackSize(stack);
+				}
+			}
+		}
+		else
+		{
 			data.Initialize(SMSG_CLIENT_CONTROL_UPDATE);
-			data << GetNewGUID() << uint8(1);
+			data << GetNewGUID() << uint8(0);
 			pPlayer->GetSession()->SendPacket(&data);
-
-			pPlayer->m_CurrentCharm = TO_UNIT(this);
-			pPlayer->SetUInt64Value(UNIT_FIELD_CHARM, GetGUID());
-
-			SetUInt64Value(UNIT_FIELD_CHARMEDBY, pPlayer->GetGUID());
-			SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE);
-
-			if(!m_faction || m_faction->ID == 35)
-			{
-				SetCharmTempVal(pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-				SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-			}
-
-			if(vehicleproto && vehicleproto->healthfromdriver)
-			{
-				uint32 health = GetUInt32Value(UNIT_FIELD_HEALTH);
-				uint32 maxhealth = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
-				uint32 healthdiff = maxhealth - health;
-
-				SetUInt32Value(UNIT_FIELD_MAXHEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))));
-				SetUInt32Value(UNIT_FIELD_HEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))) - healthdiff);
-			}
-
-			SendSpells(GetEntry(), pPlayer);
-			if(pPlayer->HasAura(62064))
-			{
-				uint32 stack = pPlayer->FindActiveAura(62064)->stackSize;
-				AddAura(new Aura(dbcSpell.LookupEntry(62064),-1,this,this));
-				FindActiveAura(62064)->ModStackSize(stack);
-			}
 		}
 
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
@@ -859,7 +862,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	if(canFly())
 		EnableFlight();
 	_setFaction();
-	UpdateOppFactionSet();
 }
 
 /* This function changes a vehicles position server side to
@@ -933,45 +935,37 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 	Vehicle* pVehicle = NULL;
 	Unit* unit = GetPlayer()->GetMapMgr()->GetUnit(guid);
 	Unit* pPlayer = TO_UNIT(GetPlayer());
-	if(!pPlayer->isAlive() || !unit->isAlive())
-		return;
 
 	if(!unit)
 		return;
 
+	if(!pPlayer->isAlive() || !unit->isAlive())
+		return;
+
 	if(!unit->IsVehicle())
 	{
-		if(unit->IsCreature())
+		Creature* ctr = TO_CREATURE(unit);
+		if(ctr->IsLightwell(ctr->GetEntry()))
 		{
-			Creature* ctr = TO_CREATURE(unit);
-			if(ctr->IsLightwell(ctr->GetEntry()))
+			Aura * aur = ctr->FindActiveAura(59907);
+			if(aur && aur->procCharges >= 0)
 			{
+				aur->RemoveProcCharges(1);
 				ctr->CastSpell(pPlayer, 60123, true);
-				if(ctr->FindActiveAura(59907))
-				{
-					Aura *aur = ctr->FindActiveAura(59907);
-					aur->RemoveProcCharges(1);
-					ctr->CastSpell(pPlayer, 60123, true);
-					if( ctr->FindActiveAura(59907)->procCharges <= 0 )
-					{
-						sEventMgr.RemoveEvents(ctr,EVENT_CREATURE_SAFE_DELETE);
-						ctr->SafeDelete();
-					}
-				}
+				if( aur->procCharges <= 0 )
+					ctr->SafeDelete();
 			}
-			SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
-			if(sp)
-			{
-				ctr->CastSpell(pPlayer, sp, true);
-				return;
-			}
+			return;
+		}
+		SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
+		if(sp)
+			ctr->CastSpell(pPlayer, sp, true);
+		else
+		{
+			if(sLog.IsOutDevelopement())
+				printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
 			else
-			{
-				if(sLog.IsOutDevelopement())
-					printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
-				else
-					OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
-			}
+				OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
 		}
 		return;
 	}
@@ -1084,4 +1078,95 @@ void Vehicle::ChangeSeats(Unit* unit, uint8 seatid)
 
 	unit->m_TransporterGUID = GetGUID();
 	AddPassenger(unit, seatid);
+}
+
+void WorldSession::HandleEjectPassenger( WorldPacket & recv_data )
+{
+	CHECK_INWORLD_RETURN;
+	if(_player->m_CurrentVehicle)
+	{
+		uint64 guid;
+		recv_data >> guid;
+		if(objmgr.GetPlayer(guid))
+		{
+			Player *plr = objmgr.GetPlayer(guid);
+			if(plr && plr->m_CurrentVehicle)
+			{
+				if(plr->m_CurrentVehicle->GetGUID() == _player->m_CurrentVehicle->GetGUID())
+					_player->m_CurrentVehicle->RemovePassenger(plr);
+			}
+			return;
+		}
+		else
+		{
+			Creature * cr = _player->GetMapMgr()->GetCreature(guid);
+			if(cr)
+			{
+				_player->m_CurrentVehicle->RemovePassenger(cr);
+				cr->SafeDelete();
+				return;
+			}
+		}
+			OUT_DEBUG("CMSG_EJECT_PASSENGER has an invalid guid.");
+	}
+}
+
+void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
+{
+	CHECK_INWORLD_RETURN;
+	uint64 guid;
+	recv_data >> guid;
+	if(objmgr.GetPlayer(guid))
+	{
+		Player *plr = objmgr.GetPlayer(guid);
+		if(plr == NULL)
+			return;
+
+		if(_player->GetGroup() == NULL || plr->GetGroup() != _player->GetGroup())
+			return;
+		_player->m_CurrentVehicle->AddPassenger(plr,-1);
+	}
+}
+
+void Vehicle::ChangePowerType()
+{
+	VehicleEntry * ve = dbcVehicle.LookupEntry( GetVehicleEntry() );
+	if(ve == NULL)
+		return;
+	switch(ve->m_powerType)
+	{
+	case POWER_TYPE_MANA:
+		{
+			SetPowerType(POWER_TYPE_MANA);
+			SetUInt32Value(UNIT_FIELD_POWER1, proto ? proto->Power : 100);
+			SetMaxPower(POWER_TYPE_MANA,proto ? proto->Power : 100);
+			SetUInt32Value(UNIT_FIELD_BASE_MANA, proto ? proto->Power : 100);
+		}break;
+	case POWER_TYPE_ENERGY:
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetPower(POWER_TYPE_ENERGY, proto ? proto->Power : 100);
+			SetMaxPower(POWER_TYPE_ENERGY,proto ? proto->Power : 100);
+		}break;
+	case POWER_TYPE_STEAM:
+	case POWER_TYPE_HEAT:
+	case POWER_TYPE_OOZ:
+	case POWER_TYPE_BLOOD:
+	case POWER_TYPE_WRATH:
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetPower(POWER_TYPE_ENERGY, 100);
+			SetMaxPower(POWER_TYPE_ENERGY,100);
+		}break;
+	case POWER_TYPE_PYRITE:
+		{
+			SetPowerType(POWER_TYPE_ENERGY);
+			SetMaxPower(POWER_TYPE_ENERGY,50);
+			m_interruptRegen = true;
+		}break;
+	default:
+		{
+			sLog.outError("Vehicle %u, Vehicle Entry %u has an unknown powertype.", GetEntry(), GetVehicleEntry());
+		}break;
+	}
 }

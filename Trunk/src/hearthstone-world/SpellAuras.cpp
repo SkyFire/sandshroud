@@ -1717,7 +1717,6 @@ void Aura::SpellAuraModPossess(bool apply)
 			m_target->RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE );
 			m_target->SetUInt32Value( UNIT_FIELD_FACTIONTEMPLATE, m_target->GetCharmTempVal() );
 			m_target->_setFaction();
-			m_target->UpdateOppFactionSet();
 		}
 	}
 }
@@ -3619,7 +3618,6 @@ void Aura::SpellAuraModCharm(bool apply)
 		m_target->SetCharmTempVal( m_target->GetUInt32Value( UNIT_FIELD_FACTIONTEMPLATE ) );
 		m_target->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, m_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
 		m_target->_setFaction();
-		m_target->UpdateOppFactionSet();
 		m_target->GetAIInterface()->Init(m_target, AITYPE_PET, MOVEMENTTYPE_NONE, m_caster);
 		m_target->SetUInt64Value(UNIT_FIELD_CHARMEDBY, m_caster->GetGUID());
 		m_caster->SetUInt64Value(UNIT_FIELD_CHARM, target->GetGUID());

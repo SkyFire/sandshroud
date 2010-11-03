@@ -42,10 +42,6 @@ EventableObject::~EventableObject()
 
 EventableObject::EventableObject()
 {
-	/* commented, these will be allocated when the first event is added. */
-	//m_event_Instanceid = event_GetInstanceID();
-	//m_holder = sEventMgr.GetEventHolder(m_event_Instanceid);
-
 	m_holder = 0;
 	m_event_Instanceid = -1;
 	m_events.clear();
@@ -497,9 +493,6 @@ void EventableObjectHolder::AddObject(EventableObject* obj)
 			// ignore deleted events (shouldn't be any in here, actually)
 			if(itr->second->deleted)
 			{
-				/*it2 = itr++;
-				itr->second->DecRef();
-				obj->m_events.erase(it2);*/
 				continue;
 			}
 
