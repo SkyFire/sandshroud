@@ -105,7 +105,7 @@ class WorldStateTemplateManager : public Singleton<WorldStateTemplateManager>
 public:
 
 	// loads predefined fields from database
-	void LoadFromDB();
+	void LoadFromDB(int32 mapid = -1);
 
 	// applys a map template to a new instance
 	void ApplyMapTemplate(MapMgr* pmgr);

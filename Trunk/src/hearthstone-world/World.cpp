@@ -442,7 +442,11 @@ bool World::SetInitialWorldSettings()
 		&ObjectMgr::LoadPlayersInfo), BTE_PRIORITY_MED));
 
 	MAKE_TASK(ObjectMgr, LoadGuilds);
+
+#ifndef CLUSTERING
 	MAKE_TASK(ObjectMgr, LoadPlayerCreateInfo);
+#endif
+
 //	MAKE_TASK(ObjectMgr, LoadPlayersInfo);
 	MAKE_TASK(ObjectMgr, LoadSpellSkills);
 
@@ -500,8 +504,14 @@ bool World::SetInitialWorldSettings()
 
 	sScriptMgr.LoadScripts();
 
+#ifndef CLUSTERING
 	// calling this puts all maps into our task list.
 	sInstanceMgr.Load(&tl);
+#else
+	new FormationMgr;
+	new WorldStateTemplateManager;
+	sInstanceMgr._LoadInstances();
+#endif
 
 	// wait for the events to complete.
 	tl.wait();

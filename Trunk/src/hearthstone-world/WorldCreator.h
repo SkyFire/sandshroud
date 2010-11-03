@@ -154,6 +154,7 @@ public:
 	uint32 GenerateInstanceID();
 	void BuildXMLStats(char * m_file);
 	void Load(TaskList * l);
+	void Load(uint32 mapid);
 
 	// deletes all instances owned by this player.
 	void ResetSavedInstances(Player* plr);

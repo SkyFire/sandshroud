@@ -55,7 +55,6 @@ Instance * ClusterMgr::GetInstanceByMapId(uint32 MapId)
 	return SingleInstanceMaps[MapId];
 }
 
-
 WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
 {
 	/* find an id */
@@ -69,7 +68,7 @@ WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
 	if(i == MAX_WORKER_SERVERS)
 		return 0;		// No spaces
 
-	DEBUG_LOG("ClusterMgr", "Allocating worker server %u to %s:%u", i, s->GetRemoteIP().c_str(), s->GetRemotePort());
+	Log.Notice("ClusterMgr", "Allocating worker server %u to %s:%u", i, s->GetRemoteIP().c_str(), s->GetRemotePort());
 	WorkerServers[i] = new WServer(i, s);
 	if(m_maxWorkerServer < i)
 		m_maxWorkerServer = i;
@@ -92,6 +91,8 @@ void ClusterMgr::AllocateInitialInstances(WServer * server, vector<uint32>& pref
 	for(vector<uint32>::iterator itr = result.begin(); itr != result.end(); ++itr)
 	{
 		CreateInstance(*itr, server);
+		if(IS_MAIN_MAP(*itr))
+			break; // Only make main map.
 	}
 }
 

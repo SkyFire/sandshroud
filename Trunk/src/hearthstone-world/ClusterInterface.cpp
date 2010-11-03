@@ -148,8 +148,11 @@ void ClusterInterface::HandleAuthResult(WorldPacket & pck)
 	/* hardcoded to perfer 0, 530 */
 	WorldPacket data(ICMSG_REGISTER_WORKER, 4 + 12);
 	data << uint32(69);
-	data << uint32(1);
+	data << uint32(4);
 	data << uint32(0);
+	data << uint32(1);
+	data << uint32(530);
+	data << uint32(571);
 	SendPacket(&data);
 }
 
@@ -166,7 +169,7 @@ void ClusterInterface::HandleCreateInstance(WorldPacket & pck)
 	uint32 mapid, instanceid;
 	pck >> mapid >> instanceid;
 	OUT_DEBUG("ClusterInterface", "Creating Instance %u on Map %u", instanceid, mapid);
-	sInstanceMgr._CreateInstance(mapid, instanceid);
+	sInstanceMgr.Load(mapid);
 }
 
 void ClusterInterface::HandleDestroyInstance(WorldPacket & pck)

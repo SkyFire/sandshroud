@@ -21,6 +21,8 @@
 
 #define MAX_SESSIONS 3000
 
+typedef HM_NAMESPACE::hash_map<uint32, PlayerCreateInfo*> PlayerCreateInfoMap;
+
 class ClientMgr : public Singleton<ClientMgr>
 {
 public:
@@ -83,6 +85,10 @@ public:
 
 	/* updates sessions */
 	void Update();
+
+public: // PlayerCreateInfo
+	PlayerCreateInfoMap mPlayerCreateInfo;
+	PlayerCreateInfo* GetPlayerCreateInfo(uint8 race, uint8 class_) const;
 
 public: // Player Creation and deletion/rename shit
 	uint32 GeneratePlayerGuid() { return ++m_hiPlayerGuid; };

@@ -63,6 +63,61 @@ struct RPlayerInfo
 // This way we can grab enums and defines
 #include "../hearthstone-world/ItemPrototype.h"
 
+struct CreateInfo_ItemStruct
+{
+	uint32	protoid;
+	uint8	slot;
+	uint32	amount;
+};
+
+struct CreateInfo_SkillStruct
+{
+	uint32	skillid;
+	uint32	currentval;
+	uint32	maxval;
+};
+
+struct CreateInfo_ActionBarStruct
+{
+	uint32	button;
+	uint32	action;
+	uint32	type;
+	uint32	misc;
+};
+
+struct PlayerCreateInfo
+{
+	uint8	index;
+	uint8	race;
+	uint32	factiontemplate;
+	uint8	class_;
+	uint32	mapId;
+	uint32	zoneId;
+	float	positionX;
+	float	positionY;
+	float	positionZ;
+	float	Orientation;
+	uint16	displayId;
+	uint8	strength;
+	uint8	ability;
+	uint8	stamina;
+	uint8	intellect;
+	uint8	spirit;
+	uint32	health;
+	uint32	mana;
+	uint32	rage;
+	uint32	focus;
+	uint32	energy;
+	uint32	runic;
+	uint32	attackpower;
+	float	mindmg;
+	float	maxdmg;
+	std::list<CreateInfo_ItemStruct> items;
+	std::list<CreateInfo_SkillStruct> skills;
+	std::list<CreateInfo_ActionBarStruct> actionbars;
+	std::set<uint32> spell_list;
+};
+
 /* Copied structures from game */
 struct player_item
 {

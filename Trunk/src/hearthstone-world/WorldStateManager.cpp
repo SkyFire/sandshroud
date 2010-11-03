@@ -189,15 +189,19 @@ void WorldStateManager::SetPersistantSetting(const char *szKeyName, const char *
 // Template Manager
 //////////////////////////////////////////////////////////////////////////
 
-void WorldStateTemplateManager::LoadFromDB()
+void WorldStateTemplateManager::LoadFromDB(int32 mapid)
 {
-	QueryResult * pResult = WorldDatabase.Query("SELECT * FROM worldstate_template");
+	QueryResult * pResult = NULL;
+	if(mapid == -1)
+		pResult = WorldDatabase.Query("SELECT * FROM worldstate_template");
+	else
+		pResult = WorldDatabase.Query("SELECT * FROM worldstate_template WHERE mapid = '%i' OR mapid = '-1'", mapid);
+
 	if( pResult == NULL )
 		return;
 
 	Field *fields;
 	WorldStateTemplate tmpl;
-	int32 mapid;
 	do
 	{
 		fields = pResult->Fetch();

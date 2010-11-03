@@ -125,6 +125,17 @@ void ClientMgr::DestroyRPlayerInfo(uint32 guid)
 	}
 }
 
+PlayerCreateInfo* ClientMgr::GetPlayerCreateInfo(uint8 race, uint8 class_) const
+{
+	PlayerCreateInfoMap::const_iterator itr;
+	for (itr = mPlayerCreateInfo.begin(); itr != mPlayerCreateInfo.end(); itr++)
+	{
+		if( (itr->second->race == race) && (itr->second->class_ == class_) )
+			return itr->second;
+	}
+	return NULL;
+}
+
 int ClientMgr::CreateNewPlayer()
 {
 	return 2; // Till this works, don't fuck up our available guids.
