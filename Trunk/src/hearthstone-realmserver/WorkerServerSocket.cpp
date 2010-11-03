@@ -65,23 +65,30 @@ void WSSocket::OnRead()
 			//_remaining = ntohl(_remaining);
 		}
 
-        if(_remaining && readBuffer.GetSize() < _remaining)
+		if(_remaining && readBuffer.GetSize() < _remaining)
 			break;
 
 		if(_cmd == ICMSG_WOW_PACKET)
 		{
 			/* optimized version for packet passing, to reduce latency! ;) */
-			/*uint32 sid = *(uint32*)&m_readBuffer[0];
-			uint16 op  = *(uint16*)&m_readBuffer[4];
-			uint32 sz  = *(uint32*)&m_readBuffer[6];
+			uint32 sid;
+			uint16 op;
+			uint32 sz;
+			readBuffer.Read(&sid, 4);
+			readBuffer.Read(&op, 2);
+			readBuffer.Read(&sz, 4);
+			WorldPacket * pck = new WorldPacket(op, sz);
+			pck->resize(sz);
+			readBuffer.Read((uint8*)pck->contents(), sz);
+
 			Session * session = sClientMgr.GetSession(sid);
 			if(session != NULL && session->GetSocket() != NULL)
-				session->GetSocket()->OutPacket(op, sz, m_readBuffer + 10);*/
+				session->GetSocket()->SendPacket(pck);
 
-			//RemoveReadBufferBytes(sz + 10/*header*/, false);
 			_cmd = 0;
 			continue;
 		}
+
 		WorldPacket * pck = new WorldPacket(_cmd, _remaining);
 		_cmd = 0;
 		pck->resize(_remaining);
@@ -111,7 +118,6 @@ void WSSocket::OnRead()
 				Disconnect();
 			else
 				HandleAuthRequest(*pck);
-			
 			delete pck;
 		}
 	}

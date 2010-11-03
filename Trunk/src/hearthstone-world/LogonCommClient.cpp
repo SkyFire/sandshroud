@@ -268,7 +268,7 @@ void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, uint8 add)
 
 void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 {
-	uint32 t= getMSTime();
+	uint32 t = getMSTime();
 	uint32 realm_id;
 	uint32 account_id;
 	QueryResult * result;

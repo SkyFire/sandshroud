@@ -442,10 +442,7 @@ bool World::SetInitialWorldSettings()
 		&ObjectMgr::LoadPlayersInfo), BTE_PRIORITY_MED));
 
 	MAKE_TASK(ObjectMgr, LoadGuilds);
-
-#ifndef CLUSTERING
 	MAKE_TASK(ObjectMgr, LoadPlayerCreateInfo);
-#endif
 
 //	MAKE_TASK(ObjectMgr, LoadPlayersInfo);
 	MAKE_TASK(ObjectMgr, LoadSpellSkills);

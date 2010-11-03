@@ -70,8 +70,8 @@ WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
 
 	Log.Notice("ClusterMgr", "Allocating worker server %u to %s:%u", i, s->GetRemoteIP().c_str(), s->GetRemotePort());
 	WorkerServers[i] = new WServer(i, s);
-	if(m_maxWorkerServer < i)
-		m_maxWorkerServer = i;
+	if(m_maxWorkerServer <= i)
+		m_maxWorkerServer = i+1;
 	return WorkerServers[i];
 }
 
@@ -169,14 +169,14 @@ Instance * ClusterMgr::CreateInstance(uint32 InstanceId, uint32 MapId)
 
 void ClusterMgr::Update()
 {
-	for(uint32 i = 1; i <= m_maxWorkerServer; ++i)
+	for(uint32 i = 1; i < m_maxWorkerServer; i++)
 		if(WorkerServers[i])
 			WorkerServers[i]->Update();
 }
 
 void ClusterMgr::DistributePacketToAll(WorldPacket * data, WServer * exclude)
 {
-	for(uint32 i = 0; i <= m_maxWorkerServer; ++i)
+	for(uint32 i = 0; i < m_maxWorkerServer; i++)
 		if(WorkerServers[i] && WorkerServers[i] != exclude)
 			WorkerServers[i]->SendPacket(data);
 }

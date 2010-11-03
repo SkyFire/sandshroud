@@ -56,12 +56,16 @@ void WServer::HandleWoWPacket(WorldPacket & pck)
 
 	/* get session */
 	pck >> sessionid >> opcode >> size;
+	DEBUG_LOG("HandleWoWPacket", "Recieved packet %u to forward.", opcode);
+
 	Session * session = sClientMgr.GetSession(sessionid);
-	if(!session) return;
+	if(!session)
+		return;
 
 	/* write it to that session's output buffer */
 	WorldSocket * s = session->GetSocket();
-	if(s) s->OutPacket(opcode, size, size ? ((const void*)(pck.contents() + 10)) : 0);
+	if(s)
+		s->OutPacket(opcode, size, size ? ((const void*)(pck.contents() + 10)) : 0);
 }
 
 void WServer::HandlePlayerLogout(WorldPacket & pck)
@@ -150,6 +154,7 @@ void WServer::HandleTeleportRequest(WorldPacket & pck)
 		}
 	}
 }
+
 void WServer::HandlePlayerLoginResult(WorldPacket & pck)
 {
 	uint32 guid, sessionid;
@@ -199,5 +204,3 @@ void WServer::Update()
 			Log.Error("WServer", "Unhandled packet %u\n", opcode);
 	}
 }
-
-

@@ -62,24 +62,25 @@ void ClusterInterface::ConnectionDropped()
 
 void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void * data, uint32 sessionid)
 {
-	OUT_DEBUG("ForwardWoWPacket", "Forwarding %s to server", LookupName(opcode, g_worldOpcodeNames));
 	bool rv;
+	uint16 id = ICMSG_WOW_PACKET;
 	uint32 size2 = 10 + size;
-	uint16 opcode2 = ICMSG_WOW_PACKET;
 
 	if(!_clientSocket)
 		return;			// Shouldn't happen
+	DEBUG_LOG("ForwardWoWPacket", "Forwarding %s to server", LookupName(opcode, g_worldOpcodeNames));
 
 	_clientSocket->BurstBegin();
-	_clientSocket->BurstSend((const uint8*)&opcode2, 2);
+	_clientSocket->BurstSend((const uint8*)&id, 2);
 	_clientSocket->BurstSend((const uint8*)&size2, 4);
 	_clientSocket->BurstSend((const uint8*)&sessionid, 4);
 	_clientSocket->BurstSend((const uint8*)&opcode, 2);
 	rv = _clientSocket->BurstSend((const uint8*)&size, 4);
-	if(size&&rv)
-		rv=_clientSocket->BurstSend((const uint8*)data, size);
+	if(size && rv)
+		rv =_clientSocket->BurstSend((const uint8*)data, size);
 
-	if(rv) _clientSocket->BurstPush();
+	if(rv)
+		_clientSocket->BurstPush();
 	_clientSocket->BurstEnd();
 }
 
@@ -283,7 +284,7 @@ void ClusterInterface::HandleWoWPacket(WorldPacket & pck)
 		return;
 	}
 
-	OUT_DEBUG("HandleWoWPacket", "Forwarding %s to client", LookupName(opcode, g_worldOpcodeNames));
+	DEBUG_LOG("HandleWoWPacket", "Forwarding %s to client", LookupName(opcode, g_worldOpcodeNames));
 
 	WorldPacket * npck = new WorldPacket(opcode, size);
 	npck->resize(size);

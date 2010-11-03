@@ -861,12 +861,15 @@ void WorldSession::FullLogin(Player* plr)
 		data << uint32(UNIXTIME) << uint8(1) << uint32(0xEA);
 		for (int i = 0; i < 8; i++)
 		{
-			AccountDataEntry* acct_data = GetAccountData(i);
 			if(0xEA & (1 << i))
 				data << uint32(0);
-			md5hash.Initialize();
-			md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
-			md5hash.Finalize();
+			AccountDataEntry* acct_data = GetAccountData(i);
+			if(acct_data)
+			{
+				md5hash.Initialize();
+				md5hash.UpdateData((const uint8*)acct_data->data, acct_data->sz);
+				md5hash.Finalize();
+			}
 		}
 		SendPacket(&data);
 	}
