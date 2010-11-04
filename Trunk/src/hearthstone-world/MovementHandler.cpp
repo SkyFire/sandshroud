@@ -375,7 +375,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	_player->m_lastMovementPacketTimestamp = mstime;
 	_player->m_lastMoveTime = _player->movement_info.time;
 
-
 	/************************************************************************/
 	/* Remove Emote State                                                   */
 	/************************************************************************/

@@ -10619,10 +10619,77 @@ void Player::RemoveFromBattlegroundQueue(uint32 queueSlot, bool forced)
 }
 
 #ifdef CLUSTERING
+
 void Player::EventRemoveAndDelete()
 {
+	sEventMgr.RemoveEvents(this);
+	if( DuelingWith != NULL )
+		EndDuel( DUEL_WINNER_RETREAT );
 
+	if( m_currentLoot && IsInWorld() )
+	{
+		Object* obj = GetMapMgr()->_GetObject( m_currentLoot );
+		if( obj != NULL )
+			obj->m_loot.looters.erase(GetLowGUID());
+		obj = NULLOBJ;
+	}
+
+	// part channels
+	CleanupChannels();
+
+	// Remove from vehicle for now.
+	if(m_CurrentVehicle)
+		m_CurrentVehicle->RemovePassenger(this);
+
+	if( m_CurrentTransporter != NULL )
+	{
+		m_CurrentTransporter->RemovePlayer( this );
+		m_CurrentTransporter = NULLTRANSPORT;
+		m_TransporterGUID = 0;
+	}
+
+	// cancel current spell
+	if( m_currentSpell != NULL )
+		m_currentSpell->cancel();
+
+	if( GetTeam() == 1 )
+	{
+		if( sWorld.HordePlayers )
+			sWorld.HordePlayers--;
+	}
+	else
+	{
+		if( sWorld.AlliancePlayers )
+			sWorld.AlliancePlayers--;
+	}
+
+	if( m_bg )
+		m_bg->RemovePlayer( this, true );
+
+	// Save HP/Mana
+	load_health = GetUInt32Value( UNIT_FIELD_HEALTH );
+	load_mana = GetUInt32Value( UNIT_FIELD_POWER1 );
+
+	objmgr.RemovePlayer( this );
+	ok_to_remove = true;
+
+	if( GetSummon() != NULL )
+		GetSummon()->Remove( false, true, false );
+
+	RemoveAllAuras();
+	if( IsInWorld() )
+		RemoveFromWorld();
+
+	// Remove the "player locked" flag, to allow movement on next login
+	RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER );
+
+	// Update Tracker status
+	sTracker.CheckPlayerForTracker(this, false);
+	ObjUnlock();
+
+	delete this;
 }
+
 #endif
 
 void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)

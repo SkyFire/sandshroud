@@ -80,6 +80,9 @@ public:
 	void HandleGameObjectQueryOpcode(WorldPacket & pck);
 	void HandleItemPageQueryOpcode(WorldPacket & pck);
 	void HandleNpcTextQueryOpcode(WorldPacket & pck);
+
+	std::string GetAccountPermissions() { return m_GMPermissions; };
+	std::string GetAccountName() { return m_accountName; };
 };
 
 #endif
