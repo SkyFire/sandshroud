@@ -253,7 +253,7 @@ void LogonCommClientSocket::HandleAuthResponse(WorldPacket & recvData)
 	use_crypto = true;
 }
 
-void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, uint8 add)
+void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, int8 add)
 {
 	WorldPacket data(RCMSG_UPDATE_CHARACTER_MAPPING_COUNT, 9);
 	set<uint32>::iterator itr = realm_ids.begin();
@@ -463,7 +463,7 @@ void LogonCommHandler::Startup()
 
 }
 
-void LogonCommHandler::UpdateAccountCount(uint32 account_id, uint8 add)
+void LogonCommHandler::UpdateAccountCount(uint32 account_id, int8 add)
 {
 
 }

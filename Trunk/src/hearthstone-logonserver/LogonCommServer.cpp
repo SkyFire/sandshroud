@@ -454,21 +454,28 @@ void LogonCommServerSocket::HandleUpdateMapping(WorldPacket & recvData)
 {
 	uint32 realm_id;
 	uint32 account_id;
-	uint8 chars_to_add;
+	int8 toadd;
 	recvData >> realm_id;
 
 	Realm * realm = sInfoCore.GetRealm(realm_id);
 	if(!realm)
 		return;
-	
+
 	sInfoCore.getRealmLock().Acquire();
-	recvData >> account_id >> chars_to_add;
+	recvData >> account_id >> toadd;
 
 	HM_NAMESPACE::hash_map<uint32, uint8>::iterator itr = realm->CharacterMap.find(account_id);
 	if(itr != realm->CharacterMap.end())
-		itr->second += chars_to_add;
+	{
+		if(itr->second > 0 || toadd > 0)
+			itr->second += toadd; // Crow: Bwahahahahaha....
+	}
 	else
-		realm->CharacterMap.insert( make_pair( account_id, chars_to_add ) );
+	{
+		if(toadd < 0)
+			toadd = 0;
+		realm->CharacterMap.insert( make_pair( account_id, toadd ) );
+	}
 
 	sInfoCore.getRealmLock().Release();
 }

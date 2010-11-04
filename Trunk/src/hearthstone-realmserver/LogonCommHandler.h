@@ -71,7 +71,7 @@ public:
 	~LogonCommHandler();
 
 	LogonCommClientSocket * ConnectToLogon(string Address, uint32 Port);
-	void UpdateAccountCount(uint32 account_id, uint8 add);
+	void UpdateAccountCount(uint32 account_id, int8 add);
 	void RequestAddition(LogonCommClientSocket * Socket);
 	void CheckAllServers();
 	void Startup();

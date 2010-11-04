@@ -38,7 +38,10 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 	m_currentPlayer = sClientMgr.CreateRPlayer((uint32)guid);
 
 	/* Load player data */
-	QueryResult * result = CharacterDatabase.Query("SELECT acct, name, level, guild_data.guildid, positionX, positionY, zoneId, mapId, race, class, gender, instance_id, entrypointmap, entrypointx, entrypointy, entrypointz, entrypointo FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE guid = %u", guid);
+	QueryResult * result = CharacterDatabase.Query("SELECT acct, name, level, guild_data.guildid, \
+			positionX, positionY, zoneId, mapId, race, class, gender, \
+			instance_id, entrypointmap, entrypointx, entrypointy, entrypointz, \
+			entrypointo FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE guid = %u", guid);
 	if(result)
 	{
 		Field * f = result->Fetch();
@@ -128,7 +131,11 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 	OUT_DEBUG("CharacterHandler", "Enum Build started at %u.", start_time);
 
 	// loading characters
-	QueryResult* result = CharacterDatabase.Query("SELECT guid, level, race, class, gender, bytes, bytes2, name, positionX, positionY, positionZ, mapId, zoneId, banned, restState, deathstate, forced_rename_pending, player_flags, guild_data.guildid, customizable FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE acct=%u ORDER BY guid ASC LIMIT 10", GetAccountId());
+	QueryResult* result = CharacterDatabase.Query("SELECT guid, level, race, class, gender, \
+		bytes, bytes2, name, positionX, positionY, positionZ, mapId, zoneId, banned, \
+		restState, deathstate, forced_rename_pending, player_flags, guild_data.guildid, \
+		customizable FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid \
+		WHERE acct=%u ORDER BY guid ASC LIMIT 10", GetAccountId());
 	uint8 num = 0;
 
 	//Erm, reset it here in case player deleted his DK.
@@ -385,12 +392,85 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 void Session::HandleCharacterDelete(WorldPacket & pck)
 {
 
-
+	sLogonCommHandler.UpdateAccountCount(GetAccountId(), -1);
 }
 
 void Session::HandleCharacterRename(WorldPacket & pck)
 {
+	uint64 guid;
+	string name;
+	pck >> guid >> name;
 
+	QueryResult * result = CharacterDatabase.Query("SELECT forced_rename_pending FROM characters WHERE guid = %u AND acct = %u", (uint32)guid, GetAccountId());
+	if(result == NULL)
+		return;
+
+	WorldPacket data(SMSG_CHAR_RENAME, pck.size() + 1);
+
+	// Check name for rule violation.
+	const char * szName=name.c_str();
+	for(uint32 x = 0; x < strlen(szName); x++)
+	{
+		if((int)szName[x] < 65 || ((int)szName[x] > 90 && (int)szName[x] < 97) || (int)szName[x] > 122)
+		{
+			if((int)szName[x] < 65)
+			{
+				data << uint8(CHAR_NAME_TOO_SHORT); // Name is too short.
+			}
+			else if((int)szName[x] > 122) // Name is too long.
+			{
+				data << uint8(CHAR_NAME_TOO_LONG);
+			}
+			else
+			{
+				data << uint8(CHAR_NAME_FAILURE); // No clue.
+			}
+			data << guid << name;
+			SendPacket(&data);
+			return;
+		}
+	}
+
+	QueryResult * result2 = CharacterDatabase.Query("SELECT COUNT(*) FROM banned_names WHERE name = '%s'", CharacterDatabase.EscapeString(name).c_str());
+	if(result2)
+	{
+		if(result2->Fetch()[0].GetUInt32() > 0)
+		{
+			// That name is banned!
+			data << uint8(CHAR_NAME_PROFANE);
+			data << guid << name;
+			SendPacket(&data);
+			delete result2;
+			return;
+		}
+		delete result2;
+	}
+
+	// Check if name is in use.
+	if(sClientMgr.GetRPlayerByName(name.c_str()) != NULL)
+	{
+		data << uint8(CHAR_NAME_FAILURE);
+		data << guid << name;
+		SendPacket(&data);
+		return;
+	}
+
+	// correct capitalization
+	CapitalizeString(name);
+
+	CharacterDatabase.Query("UPDATE characters SET name = \'%s\', forced_rename_pending \
+		= 0 WHERE guid = %u AND acct = %u", name.c_str(), (uint32)guid, GetAccountId());
+
+	RPlayerInfo* pi = sClientMgr.GetRPlayer(uint32(guid));
+	if(pi != NULL)
+		pi->Name = name;
+
+	data << uint8(0) << guid << name;
+	SendPacket(&data);
+}
+
+void Session::HandleCharacterCustomize(WorldPacket & pck)
+{
 
 }
 

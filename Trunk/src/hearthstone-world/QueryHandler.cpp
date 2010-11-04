@@ -29,16 +29,13 @@ void WorldSession::HandleNameQueryOpcode( WorldPacket & recv_data )
 	recv_data >> guid;
 
 	PlayerInfo *pn = objmgr.GetPlayerInfo( (uint32)guid );
-	WoWGuid pguid(guid);
-
-	if(!pn)
+	if(pn == NULL)
 		return;
 
 	DEBUG_LOG("WorldSession","Received CMSG_NAME_QUERY for: %s", pn->name );
-
 	uint8 databuffer[5000];
 	StackPacket data(SMSG_NAME_QUERY_RESPONSE, databuffer, 5000);
-	data << pguid;
+	data << WoWGuid(guid);
 	data << uint8(0);
 	data << pn->name;
 //	if(blablabla)

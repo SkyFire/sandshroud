@@ -44,7 +44,7 @@ public:
 	void HandlePong(WorldPacket & recvData);
 	void HandleSessionInfo(WorldPacket & recvData);
 	void HandleRequestAccountMapping(WorldPacket & recvData);
-	void UpdateAccountCount(uint32 account_id, uint8 add);
+	void UpdateAccountCount(uint32 account_id, int8 add);
 
 	void OnDisconnect();
 	void CompressAndSend(ByteBuffer & uncompressed);

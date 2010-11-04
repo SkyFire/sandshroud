@@ -511,6 +511,8 @@ void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 		m_lastEnumTime = 0;
 	}
 	OutPacket(SMSG_CHAR_DELETE, 1, &fail);
+	if(fail == CHAR_DELETE_SUCCESS)
+		sLogonCommHandler.UpdateAccountCount(GetAccountId(), -1);
 }
 
 uint8 WorldSession::DeleteCharacter(uint32 guid)
@@ -617,14 +619,12 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 	recv_data >> guid >> name;
 
 	PlayerInfo * pi = objmgr.GetPlayerInfo((uint32)guid);
-	if(pi == 0) return;
+	if(pi == NULL)
+		return;
 
 	QueryResult * result = CharacterDatabase.Query("SELECT forced_rename_pending FROM characters WHERE guid = %u AND acct = %u", (uint32)guid, _accountId);
-	if(result == 0)
-	{
-		delete result;
+	if(result == NULL)
 		return;
-	}
 	delete result;
 
 	// Check name for rule violation.
@@ -660,6 +660,8 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 			data << uint8(CHAR_NAME_PROFANE);
 			data << guid << name;
 			SendPacket(&data);
+			delete result2;
+			return;
 		}
 		delete result2;
 	}

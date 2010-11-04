@@ -252,12 +252,8 @@ public:
 
 	HEARTHSTONE_INLINE AccountDataEntry* GetAccountData(uint32 index)
 	{
-#ifndef CLUSTERING
 		ASSERT(index < 8);
 		return &sAccountData[index];
-#else
-		return NULL;
-#endif
 	}
 
 	void SetLogoutTimer(uint32 ms)

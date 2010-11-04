@@ -256,7 +256,7 @@ void LogonCommClientSocket::HandleAuthResponse(WorldPacket & recvData)
 	use_crypto = true;
 }
 
-void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, uint8 add)
+void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, int8 add)
 {
 	WorldPacket data(RCMSG_UPDATE_CHARACTER_MAPPING_COUNT, 9);
 	set<uint32>::iterator itr = realm_ids.begin();
@@ -321,7 +321,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 
 		for(uint32 i = 0; i < 40000; ++i, ++itr)
 		{
-            uncompressed << uint32(itr->first) << uint8(itr->second);
+			uncompressed << uint32(itr->first) << uint8(itr->second);
 			if(!--Remaining)
 				break;
 		}

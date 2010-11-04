@@ -552,7 +552,7 @@ void LogonCommHandler::LoadRealmConfiguration()
 	}
 }
 
-void LogonCommHandler::UpdateAccountCount(uint32 account_id, uint8 add)
+void LogonCommHandler::UpdateAccountCount(uint32 account_id, int8 add)
 {
 	if(!(sWorld.LogonServerType & LOGON_MANGOS))
 	{

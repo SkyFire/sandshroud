@@ -19,6 +19,9 @@
 
 #include "RStdAfx.h"
 
+//////////////////////////////////////////////////////////////
+/// This function handles CMSG_CREATURE_QUERY:
+//////////////////////////////////////////////////////////////
 void Session::HandleCreatureQueryOpcode(WorldPacket & pck)
 {
 	WorldPacket data(SMSG_CREATURE_QUERY_RESPONSE, 150);
@@ -71,6 +74,9 @@ void Session::HandleCreatureQueryOpcode(WorldPacket & pck)
 	SendPacket( &data );
 }
 
+//////////////////////////////////////////////////////////////
+/// This function handles CMSG_GAMEOBJECT_QUERY:
+//////////////////////////////////////////////////////////////
 void Session::HandleGameObjectQueryOpcode(WorldPacket & pck)
 {
 	WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 300);
@@ -122,6 +128,10 @@ void Session::HandleGameObjectQueryOpcode(WorldPacket & pck)
 
 	SendPacket( &data );
 }
+
+//////////////////////////////////////////////////////////////
+/// This function handles CMSG_ITEM_QUERY_SINGLE:
+//////////////////////////////////////////////////////////////
 void Session::HandleItemQuerySingleOpcode(WorldPacket & pck)
 {
 	int i;
@@ -234,4 +244,74 @@ void Session::HandleItemQuerySingleOpcode(WorldPacket & pck)
 	pck << uint32(0);								// ItemLimitCategory
 	pck << uint32(0);								// HolidayId.
 	SendPacket( &pck );
+}
+
+//////////////////////////////////////////////////////////////
+/// This function handles CMSG_PAGE_TEXT_QUERY
+/*/////////////////////////////////////////////////////////////
+void Session::HandlePageTextQueryOpcode( WorldPacket & recv_data )
+{
+	//CHECK_PACKET_SIZE(recv_data, 4);
+	uint32 pageid = 0;
+	uint8 buffer[10000];
+	StackPacket data(SMSG_PAGE_TEXT_QUERY_RESPONSE,buffer, 10000);
+	recv_data >> pageid;
+
+	while(pageid)
+	{
+		ItemPage * page = ItemPageStorage.LookupEntry(pageid);
+		if(page == NULL)
+			return;
+
+		LocalizedItemPage * lpi = (language>0) ? sLocalizationMgr.GetLocalizedItemPage(pageid,language):NULL;
+		data.Clear();
+		data << pageid;
+		if(lpi)
+			data.Write((uint8*)lpi->Text, strlen(lpi->Text) + 1);
+		else
+			data.Write((uint8*)page->text, strlen(page->text) + 1);
+
+		data << page->next_page;
+		pageid = page->next_page;
+		SendPacket(&data);
+	}
+}*/
+
+//////////////////////////////////////////////////////////////
+/// This function handles CMSG_QUERY_TIME:
+//////////////////////////////////////////////////////////////
+void Session::HandleQueryTimeOpcode( WorldPacket & recv_data )
+{
+	uint32 t = (uint32)UNIXTIME;
+	OutPacket(SMSG_QUERY_TIME_RESPONSE, 4, &t);
+}
+
+//////////////////////////////////////////////////////////////
+/// This function handles CMSG_NAME_QUERY:
+//////////////////////////////////////////////////////////////
+void Session::HandleNameQueryOpcode( WorldPacket & recv_data )
+{
+	//CHECK_PACKET_SIZE(recv_data, 8);
+	uint64 guid;
+	recv_data >> guid;
+
+	RPlayerInfo *pn = sClientMgr.GetRPlayer( (uint32)guid );
+	if(pn == NULL)
+		return;
+
+	DEBUG_LOG("WorldSession","Received CMSG_NAME_QUERY for: %s", pn->Name );
+	uint8 databuffer[5000];
+	StackPacket data(SMSG_NAME_QUERY_RESPONSE, databuffer, 5000);
+	data << WoWGuid(guid);
+	data << uint8(0);
+	data << pn->Name;
+//	if(blablabla)
+//		data << std::string("");
+//	else
+		data << uint8(0);
+	data << uint8(pn->Race);
+	data << uint8(pn->Gender);
+	data << uint8(pn->Class);
+	data << uint8(0);
+	SendPacket( &data );
 }

@@ -354,7 +354,7 @@ void LogonCommHandler::LoadRealmConfiguration()
 	}
 }
 
-void LogonCommHandler::UpdateAccountCount(uint32 account_id, uint8 add)
+void LogonCommHandler::UpdateAccountCount(uint32 account_id, int8 add)
 {
 	// Send request packet to server.
 	map<LogonServer*, LogonCommClientSocket*>::iterator itr = logons.begin();

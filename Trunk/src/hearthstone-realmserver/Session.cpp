@@ -23,32 +23,43 @@ SessionPacketHandler Session::Handlers[NUM_MSG_TYPES];
 void Session::InitHandlers()
 {
 	memset(Handlers, 0, sizeof(void*) * NUM_MSG_TYPES);
+	Handlers[CMSG_NAME_QUERY]					= &Session::HandleNameQueryOpcode;
 	Handlers[CMSG_PLAYER_LOGIN]					= &Session::HandlePlayerLogin;
 	Handlers[CMSG_CHAR_ENUM]					= &Session::HandleCharacterEnum;
-	Handlers[CMSG_ITEM_QUERY_SINGLE]			= &Session::HandleItemQuerySingleOpcode;
-	Handlers[CMSG_REALM_SPLIT]					= &Session::HandleRealmSplitQuery;
 	Handlers[CMSG_CHAR_CREATE]					= &Session::HandleCharacterCreate;
 	Handlers[CMSG_CHAR_DELETE]					= &Session::HandleCharacterDelete;
 	Handlers[CMSG_CHAR_RENAME]					= &Session::HandleCharacterRename;
+	Handlers[CMSG_CHAR_CUSTOMIZE]				= &Session::HandleCharacterCustomize;
+	Handlers[CMSG_REALM_SPLIT]					= &Session::HandleRealmSplitQuery;
+	Handlers[CMSG_QUERY_TIME]					= &Session::HandleQueryTimeOpcode;
 
 	// Crow: TODO, but not really. Each DB should hold the same info as far as this is concerned, but maybe things that are guid dependent.
-/*	Handlers[CMSG_ITEM_QUERY_SINGLE]			= &Session::HandleItemQuerySingleOpcode;
-	Handlers[CMSG_CREATURE_QUERY]				= &Session::HandleCreatureQueryOpcode;
+/*	Handlers[CMSG_CREATURE_QUERY]				= &Session::HandleCreatureQueryOpcode;
 	Handlers[CMSG_GAMEOBJECT_QUERY]				= &Session::HandleGameObjectQueryOpcode;
-	Handlers[CMSG_ITEM_QUERY_SINGLE]			= &Session::HandleItemPageQueryOpcode;
+	Handlers[CMSG_ITEM_QUERY_SINGLE]			= &Session::HandleItemQuerySingleOpcode;
+	Handlers[CMSG_PAGE_TEXT_QUERY]				= &Session::HandleItemPageQueryOpcode;
 	Handlers[CMSG_NPC_TEXT_QUERY]				= &Session::HandleNpcTextQueryOpcode;*/
 }
 
 Session::Session(uint32 id) : m_sessionId(id)
 {
-	m_socket = 0;
-	m_server = 0;
+	m_socket = NULL;
+	m_server = NULL;
+	m_nextServer = NULL;
 	m_accountId = 0;
-	m_currentPlayer = 0;
+	m_ClientBuild = 0;
+	m_currentPlayer = NULL;
 	m_latency = 0;
 	m_accountFlags = 0;
-	m_build = 0;
-	m_nextServer = 0;
+	m_language = 0;
+	m_muted = 0;
+	m_hasDeathKnight = false;
+	m_highestLevel = 1;
+	m_loadedPlayerData = false;
+	deleted = false;
+
+	for(uint32 x = 0; x < 8; x++)
+		sAccountData[x].data = NULL;
 }
 
 Session::~Session()
