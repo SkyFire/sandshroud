@@ -254,7 +254,7 @@ const char* gtfloatformat = "f";
 const char* spellshapeshiftformformat = "uxxxxxxxxxxxxxxxxxxuixuxxxxuuuuuuuu";
 
 const char* vehicleseatentryFormat = "uuxfffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxuuxxxxxxxxxxxx";
-const char* vehicleentryFormat = "uxffxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxuxxx";
+const char* vehicleentryFormat = "uxffxxuuuuuuuuxxxxxxxxxxxxxxxxxxxxxxxuxx";
 
 const char* achievementfmt=
 	"n" // Index
