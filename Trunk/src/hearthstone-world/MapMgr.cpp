@@ -633,9 +633,23 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 			else
 				fRange = m_UpdateDistance; // normal distance
 
-			//If we have a update_distance, check if we are in range.
-			if( curObj != obj && (fRange > 0.0f && curObj->CalcDistance(obj) > fRange) )
+			// If we have a update_distance, check if we are in range.
+			if( curObj != obj )
 			{
+				if(fRange > 0.0f)
+				{
+					// First distance check, are we in range?
+					if(curObj->GetDistance2dSq( obj ) >= fRange )
+						continue;
+
+					// Second distance Check, we are in range, but are we in distance?
+					if(curObj->CalcDistance(obj) >= fRange)
+					{	// We aren't in distance, but since we are in range, check if we are in the same Area.
+						if(curObj->GetAreaID() != obj->GetAreaID())
+							continue;	// We are not in the same area, fuck it.
+					}
+				}
+
 				if( plObj )
 					plObj->RemoveIfVisible(curObj);
 
@@ -646,6 +660,7 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 
 				if(obj->GetMapMgr() != this)
 					return; /* Something removed us. */
+
 				obj->RemoveInRangeObject(iter2);
 			}
 		}
@@ -801,8 +816,20 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 			fRange = m_UpdateDistance; // normal distance
 
 		// Add if we are not ourself and range == 0 or distance is withing range.
-		if ( curObj != obj && (fRange == 0.0f || curObj->CalcDistance( obj ) <= fRange ))
+		if ( curObj != obj )
 		{
+			if(fRange != 0.0f)
+			{
+				if(curObj->GetDistance2dSq( obj ) >= fRange )
+					continue;
+
+				if(curObj->CalcDistance(obj) >= fRange)
+				{
+					if(curObj->GetAreaID() != obj->GetAreaID())
+						continue;
+				}
+			}
+
 			if( !obj->IsInRangeSet( curObj ) )
 			{
 				// Object in range, add to set
