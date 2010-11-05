@@ -108,7 +108,7 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 	recv_data >> flags >> time;
 	if(guid == _player->GetGUID())
 	{
-		if(!_player->m_CurrentVehicle && sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->GetPlayerStatus() != TRANSFER_PENDING)
+		if(!_player->GetVehicle() && sWorld.antihack_teleport && !(HasGMPermissions() && sWorld.no_antihack_on_gm) && _player->GetPlayerStatus() != TRANSFER_PENDING)
 		{
 			/* we're obviously cheating */
 			sWorld.LogCheater(this, "Used teleport hack, disconnecting.");
@@ -313,7 +313,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 
 void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 {
-	if(!_player->IsInWorld() || _player->m_uint32Values[UNIT_FIELD_CHARMEDBY] || _player->GetPlayerStatus() == TRANSFER_PENDING && !_player->m_CurrentVehicle || _player->GetTaxiState())
+	if(!_player->IsInWorld() || _player->m_uint32Values[UNIT_FIELD_CHARMEDBY] || _player->GetPlayerStatus() == TRANSFER_PENDING && !_player->GetVehicle() || _player->GetTaxiState())
 		return;
 
 	// spell cancel on movement, for now only fishing is added
@@ -624,12 +624,12 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			{
 				// 1.7% damage for each unit fallen on Z axis over 13
 				Unit* toDamage = TO_UNIT(_player);
-				if( _player->m_CurrentVehicle )
-					toDamage = _player->m_CurrentVehicle;
+				if( _player->GetVehicle() )
+					toDamage = _player->GetVehicle();
 				else if(_player->m_CurrentCharm)
 					toDamage = _player->m_CurrentCharm;
 
-				if(!(_player->m_CurrentVehicle && _player->m_CurrentVehicle->GetControllingUnit() != _player))
+				if(!(_player->GetVehicle() && _player->GetVehicle()->GetControllingUnit() != _player))
 				{
 					uint32 health_loss = float2int32( float( toDamage->GetUInt32Value( UNIT_FIELD_MAXHEALTH ) * ( ( falldistance - 12 ) * 0.017 ) ) );
 
@@ -687,8 +687,8 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					TO_UNIT(_player)->Dismount();
 
 				// vehicles, meh
-				if( _player->m_CurrentVehicle )
-					_player->m_CurrentVehicle->RemovePassenger( _player );
+				if( _player->GetVehicle() )
+					_player->GetVehicle()->RemovePassenger( _player );
 
 				uint64 transporterGUID = _player->movement_info.transGuid.GetOldGuid();
 				_player->m_CurrentTransporter = objmgr.GetTransporter(GUID_LOPART(transporterGUID));
@@ -739,8 +739,8 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	/************************************************************************/
 	if( _player->m_CurrentCharm )
 		_player->m_CurrentCharm->SetPosition(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, _player->movement_info.orientation);
-	else if( _player->m_CurrentVehicle )
-		_player->m_CurrentVehicle->MoveVehicle(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, _player->movement_info.orientation);
+	else if( _player->GetVehicle() )
+		_player->GetVehicle()->MoveVehicle(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z, _player->movement_info.orientation);
 	else
 	{
 		if(!_player->m_CurrentTransporter)

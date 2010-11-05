@@ -191,8 +191,9 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	{
 		uint32 cellx = unit->GetMapMgr()->GetPosX(unit->m_spawn->x);
 		uint32 celly = unit->GetMapMgr()->GetPosX(unit->m_spawn->y);
-		if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL)
+		if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL )
 		{
+			ASSERT(unitMgr->GetBaseMap() != NULL)
 			CellSpawns * c = unitMgr->GetBaseMap()->GetSpawnsList(cellx, celly);
 			if( c != NULL )
 			{

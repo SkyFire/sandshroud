@@ -387,8 +387,8 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 			if(plr->isDead())
 				plr->RemoteRevive();
 
-			if( plr->m_CurrentVehicle )
-				plr->m_CurrentVehicle->RemovePassenger( plr );
+			if( plr->GetVehicle() )
+				plr->GetVehicle()->RemovePassenger( plr );
 
 			plr->m_lockTransportVariables = true;
 			plr->GetSession()->SendPacket(&Pending);

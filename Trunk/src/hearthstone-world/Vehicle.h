@@ -93,5 +93,4 @@ protected:
 	int8 m_seatSlotMax;
 	uint32 m_vehicleEntry;
 };
-
 #endif

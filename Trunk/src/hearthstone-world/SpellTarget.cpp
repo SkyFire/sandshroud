@@ -1099,8 +1099,8 @@ void Spell::SpellTargetVehicle(uint32 i, uint32 j)
 {
 	if(p_caster)
 	{
-		if( p_caster->m_CurrentVehicle != NULL )
-			_AddTargetForced( p_caster->m_CurrentVehicle->GetGUID(), i );
+		if( p_caster->GetVehicle() != NULL )
+			_AddTargetForced( p_caster->GetVehicle()->GetGUID(), i );
 	}
 }
 

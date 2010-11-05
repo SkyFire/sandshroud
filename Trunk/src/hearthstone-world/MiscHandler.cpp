@@ -29,8 +29,8 @@ void WorldSession::HandleRepopRequestOpcode( WorldPacket & recv_data )
 	if(_player->m_CurrentTransporter)
 		_player->m_CurrentTransporter->RemovePlayer(_player);
 
-	if(_player->m_CurrentVehicle)
-		_player->m_CurrentVehicle->RemovePassenger(_player);
+	if(_player->GetVehicle())
+		_player->GetVehicle()->RemovePassenger(_player);
 
 	  GetPlayer()->RepopRequestedPlayer();
 }
@@ -1251,8 +1251,8 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				if( plyr->m_MountSpellId )
 					plyr->RemoveAura( plyr->m_MountSpellId );
 
-				if( plyr->m_CurrentVehicle )
-					plyr->m_CurrentVehicle->RemovePassenger( plyr );
+				if( plyr->GetVehicle() )
+					plyr->GetVehicle()->RemovePassenger( plyr );
 
 				if(!plyr->m_bgFlagIneligible)
 					plyr->m_bg->HookFlagStand(plyr, obj);
@@ -1269,8 +1269,8 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				if( plyr->m_MountSpellId )
 					plyr->RemoveAura( plyr->m_MountSpellId );
 
-				if( plyr->m_CurrentVehicle )
-					plyr->m_CurrentVehicle->RemovePassenger( plyr );
+				if( plyr->GetVehicle() )
+					plyr->GetVehicle()->RemovePassenger( plyr );
 
 				plyr->m_bg->HookFlagDrop(plyr, obj);
 			}

@@ -635,7 +635,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 
 	if(flags & 0x20)
 	{
-		if(uThis && (uThis->m_TransporterGUID != uint64(NULL) || uThis->m_CurrentVehicle != NULL))
+		if(uThis && (uThis->m_TransporterGUID != uint64(NULL) || uThis->GetVehicle() != NULL))
 			moveflags |= MOVEFLAG_TAXI;
 
 		if(splinebuf)
@@ -710,20 +710,20 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 				*data << moveinfo->transGuid << moveinfo->transX << moveinfo->transY
 					<< moveinfo->transZ << moveinfo->transO << moveinfo->transTime << moveinfo->transSeat;
 			}
-			else if (IsUnit() && TO_UNIT(this)->m_CurrentVehicle != NULL)
+			else if (IsUnit() && TO_UNIT(this)->GetVehicle() != NULL)
 			{
 				Unit* pUnit = TO_UNIT(this);
-				Vehicle* vehicle = TO_UNIT(this)->m_CurrentVehicle;
+				Vehicle* vehicle = TO_UNIT(this)->GetVehicle();
 
-				if (pUnit->m_inVehicleSeatId != 0xFF && vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId] != NULL)
+				if (pUnit->GetSeatID() != 0xFF && vehicle->m_vehicleSeats[pUnit->GetSeatID()] != NULL)
 				{
-					*data << pUnit->m_CurrentVehicle->GetNewGUID();
-					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetX;
-					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetY;
-					*data << vehicle->m_vehicleSeats[pUnit->m_inVehicleSeatId]->m_attachmentOffsetZ;
+					*data << pUnit->GetVehicle()->GetNewGUID();
+					*data << vehicle->m_vehicleSeats[pUnit->GetSeatID()]->m_attachmentOffsetX;
+					*data << vehicle->m_vehicleSeats[pUnit->GetSeatID()]->m_attachmentOffsetY;
+					*data << vehicle->m_vehicleSeats[pUnit->GetSeatID()]->m_attachmentOffsetZ;
 					*data << vehicle->GetOrientation();
 					*data << uint32(0);
-					*data << pUnit->m_inVehicleSeatId;
+					*data << pUnit->GetSeatID();
 				}
 				else
 				{

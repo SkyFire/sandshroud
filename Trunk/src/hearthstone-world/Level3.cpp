@@ -2139,6 +2139,12 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		return true;
 	}
 
+	if(m_session->GetPlayer()->GetVehicle())
+	{
+		SystemMessage(m_session, "You my not spawn on a vehicle.");
+		return true;
+	}
+
 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
 	CreatureInfo * info = CreatureNameStorage.LookupEntry(entry);
 	if(proto == NULL || info == NULL || (objmgr.SQLCheckExists("creature_names", "entry", entry) == NULL)
@@ -2149,7 +2155,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	}
 
 	//Are we on a transporter?
-	if(m_session->GetPlayer()->m_TransporterGUID != 0 && !m_session->GetPlayer()->m_CurrentVehicle )
+	if(m_session->GetPlayer()->m_TransporterGUID != 0 )
 	{
 		Transporter* t = objmgr.GetTransporter(GUID_LOPART(plr->m_TransporterGUID));
 		if(t)

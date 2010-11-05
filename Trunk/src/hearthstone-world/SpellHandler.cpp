@@ -333,10 +333,10 @@ void WorldSession::HandleCancelCastOpcode(WorldPacket& recvPacket)
 {
 	uint32 spellId;
 	recvPacket >> spellId;
-	if(GetPlayer()->m_currentSpell && !_player->m_CurrentVehicle)
+	if(GetPlayer()->m_currentSpell && !_player->GetVehicle())
 		GetPlayer()->m_currentSpell->cancel();
-	if(_player->m_CurrentVehicle)
-		_player->m_CurrentVehicle->GetCurrentSpell()->cancel();
+	if(_player->GetVehicle())
+		_player->GetVehicle()->GetCurrentSpell()->cancel();
 }
 
 void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
@@ -364,7 +364,7 @@ void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
-	if(!_player->m_CurrentVehicle)
+	if(!_player->GetVehicle())
 	{
 		if(_player->m_currentSpell)
 		{
@@ -374,14 +374,14 @@ void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
 			_player->m_currentSpell->cancel();
 		}
 	}
-	if(_player->m_CurrentVehicle)
+	if(_player->GetVehicle())
 	{
-		if(_player->m_CurrentVehicle->GetCurrentSpell())
+		if(_player->GetVehicle()->GetCurrentSpell())
 		{
-			if(_player->m_CurrentVehicle->GetCurrentSpell()->GetSpellProto()->Id != spellId)
+			if(_player->GetVehicle()->GetCurrentSpell()->GetSpellProto()->Id != spellId)
 				DEBUG_LOG("Spell","Player vehicle cancelled spell that was not being channeled: %u", spellId);
 
-			_player->m_CurrentVehicle->GetCurrentSpell()->cancel();
+			_player->GetVehicle()->GetCurrentSpell()->cancel();
 		}
 	}
 }
@@ -401,8 +401,8 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 		caster = _player->m_CurrentCharm;
 	else if (_player->m_Summon != NULL)
 		caster = _player->m_Summon;
-	else if (_player->m_CurrentVehicle != NULL)
-		caster = _player->m_CurrentVehicle;
+	else if (_player->GetVehicle() != NULL)
+		caster = _player->GetVehicle();
 
 	if (caster == NULL)
 		return;
@@ -422,7 +422,7 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 		if (!_player->m_Summon)
 			return;
 	}
-	else if ((!_player->m_CurrentCharm || guid != _player->m_CurrentCharm->GetGUID()) && _player->m_CurrentVehicle == NULL)
+	else if ((!_player->m_CurrentCharm || guid != _player->m_CurrentCharm->GetGUID()) && _player->GetVehicle() == NULL)
 	{
 		return;
 	}

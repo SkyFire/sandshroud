@@ -43,7 +43,6 @@ class Spell;
 class AIInterface;
 class GameObject;
 class Creature;
-
 struct CreatureInfo;
 struct FactionTemplateDBC;
 struct FactionDBC;
@@ -149,57 +148,6 @@ enum VehiclePowerType
 	POWER_TYPE_BLOOD	= 141,
 	POWER_TYPE_WRATH	= 142,
 };
-/*
-enum Factions
-{
-	FACTION_BLOODSAIL_BUCCANEERS,
-	FACTION_BOOTY_BAY,
-	FACTION_GELKIS_CLAN_CENTAUR,
-	FACTION_MAGRAM_CLAN_CENTAUR,
-	FACTION_THORIUM_BROTHERHOOD,
-	FACTION_RAVENHOLDT,
-	FACTION_SYNDICATE,
-	FACTION_GADGETZAN,
-	FACTION_WILDHAMMER_CLAN,
-	FACTION_RATCHET,
-	FACTION_UNK1,
-	FACTION_UNK2,
-	FACTION_UNK3,
-	FACTION_ARGENT_DAWN,
-	FACTION_ORGRIMMAR,
-	FACTION_DARKSPEAR_TROLLS,
-	FACTION_THUNDER_BLUFF,
-	FACTION_UNDERCITY,
-	FACTION_GNOMEREGAN_EXILES,
-	FACTION_STORMWIND,
-	FACTION_IRONFORGE,
-	FACTION_DARNASSUS,
-	FACTION_LEATHERWORKING_DRAGON,
-	FACTION_LEATHERWORKING_ELEMENTAL,
-	FACTION_LEATHERWORKING_TRIBAL,
-	FACTION_ENGINEERING_GNOME,
-	FACTION_ENGINEERING_GOBLIN,
-	FACTION_WINTERSABER_TRAINERS,
-	FACTION_EVERLOOK,
-	FACTION_BLACKSMITHING_ARMOR,
-	FACTION_BLACKSMITHING_WEAPON,
-	FACTION_BLACKSMITHING_AXE,
-	FACTION_BLACKSMITHING_SWORD,
-	FACTION_BLACKSMITHING_HAMMER,
-	FACTION_CAER_DARROW,
-	FACTION_TIMBERMAW_FURBOLGS,
-	FACTION_CENARION_CIRCLE,
-	FACTION_SHATTERSPEAR_TROLLS,
-	FACTION_RAVASAUR_TRAINERS,
-	FACTION_BATTLEGROUND_NEUTRAL,
-	FACTION_STORMPIKE_GUARDS,
-	FACTION_FROSTWOLF_CLAN,
-	FACTION_HYDRAXIAN_WATERLORDS,
-	FACTION_MORO_GAI,
-	FACTION_SHEN_DRALAR,
-	FACTION_SILVERWING_SENTINELS,
-	FACTION_WARSONG_OUTRIDERS
-};*/
 
 typedef enum
 {
@@ -656,8 +604,8 @@ struct AuraCheckResponse
 enum AURA_CHECK_RESULT
 {
 	AURA_CHECK_RESULT_NONE				  = 1,
-	AURA_CHECK_RESULT_HIGHER_BUFF_PRESENT   = 2,
-	AURA_CHECK_RESULT_LOWER_BUFF_PRESENT	= 3,
+	AURA_CHECK_RESULT_HIGHER_BUFF_PRESENT = 2,
+	AURA_CHECK_RESULT_LOWER_BUFF_PRESENT  = 3,
 };
 
 enum CUSTOM_TIMERS
@@ -809,7 +757,6 @@ public:
 
 	friend class AIInterface;
 	friend class Aura;
-
 	virtual void Update( uint32 time );
 	virtual void RemoveFromWorld(bool free_guid);
 	virtual void OnPushToWorld();
@@ -1155,11 +1102,12 @@ public:
 
 	uint32 m_teleportAckCounter;
 	//Vehicle
-	uint8 m_inVehicleSeatId;
-	Vehicle* m_CurrentVehicle;
 	bool ExitingVehicle;
 	bool ChangingSeats;
 	HEARTHSTONE_INLINE int8 GetSeatID() { return m_inVehicleSeatId; }
+	HEARTHSTONE_INLINE Vehicle* GetVehicle() { return m_CurrentVehicle ? m_CurrentVehicle : NULL; }
+	void SetSeatID(int8 seat) { m_inVehicleSeatId = seat; }
+	void SetVehicle(Vehicle *v) { m_CurrentVehicle = v; }
 
 	//Pet
 	HEARTHSTONE_INLINE void SetIsPet(bool chck) { m_isPet = chck; }
@@ -1450,7 +1398,6 @@ protected:
 	uint32 m_charmtemp;
 
 	std::map<uint32, SpellEntry*> m_DummyAuras;
-
 public: // Virtual Script Callers
 	OnKillUnitScript* CallOnKillUnit;
 	OnDeathScript* CallOnDeath;
@@ -1463,6 +1410,9 @@ public: // Virtual Script Callers
 	void SetSpeed(uint8 SpeedType, float value);
 	void SendHeartBeatMsg( bool toself );
 	uint32 GetCreatureType();
+private:
+	uint8 m_inVehicleSeatId;
+	Vehicle* m_CurrentVehicle;
 };
 
 #endif

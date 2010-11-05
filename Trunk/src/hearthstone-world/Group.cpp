@@ -1069,8 +1069,8 @@ void Group::UpdateOutOfRangePlayer(Player* pPlayer, uint32 Flags, bool Distribut
 
 	if (Flags & GROUP_UPDATE_FLAG_VEHICLE_ENTRY)
 	{
-		if (pPlayer->m_CurrentVehicle != NULL)
-			*data << pPlayer->m_CurrentVehicle->GetVehicleEntry();
+		if (pPlayer->GetVehicle() != NULL)
+			*data << pPlayer->GetVehicle()->GetVehicleEntry();
 		else
 			*data << uint32(0);
 	}

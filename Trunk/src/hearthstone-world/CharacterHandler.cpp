@@ -914,8 +914,8 @@ void WorldSession::FullLogin(Player* plr)
 	}
 #endif
 
-	if(plr->m_CurrentVehicle)
-		plr->m_CurrentVehicle->RemovePassenger(plr);
+	if(plr->GetVehicle())
+		plr->GetVehicle()->RemovePassenger(plr);
 
 	DEBUG_LOG( "WorldSession","Player %s logged in.", plr->GetName());
 

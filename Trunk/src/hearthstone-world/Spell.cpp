@@ -486,7 +486,7 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 	for( unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		if((*itr)->IsUnit())
-			if( TO_UNIT(*itr)->m_CurrentVehicle == m_caster || (!(TO_UNIT(*itr)->isAlive())) || ( (*itr)->IsCreature() && TO_CREATURE(*itr)->IsTotem() ))
+			if( (!(TO_UNIT(*itr)->isAlive())) || ( (*itr)->IsCreature() && TO_CREATURE(*itr)->IsTotem() ))
 				continue;
 
 		if((*itr)->PhasedCanInteract(m_caster) == false)
@@ -3324,8 +3324,8 @@ uint8 Spell::CanCast(bool tolerate)
 				if( p_caster->m_MountSpellId )
 					p_caster->RemoveAura( p_caster->m_MountSpellId );
 
-				if( p_caster->m_CurrentVehicle )
-					p_caster->m_CurrentVehicle->RemovePassenger( p_caster );
+				if( p_caster->GetVehicle() )
+					p_caster->GetVehicle()->RemovePassenger( p_caster );
 
 				if( p_caster->m_stealth )
 				{

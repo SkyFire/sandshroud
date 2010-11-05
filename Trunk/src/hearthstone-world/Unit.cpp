@@ -284,10 +284,10 @@ Unit::~Unit()
 	if(m_currentSpell)
 		m_currentSpell->cancel();
 
-	if( m_CurrentVehicle != NULL )
+	if( GetVehicle() != NULL )
 	{
-		m_CurrentVehicle->RemovePassenger( TO_UNIT(this) );
-		m_CurrentVehicle = NULLVEHICLE;
+		GetVehicle()->RemovePassenger( TO_UNIT(this) );
+		SetVehicle(NULLVEHICLE);
 	}
 
 	// clear tmpAura pointers
@@ -5650,14 +5650,14 @@ void Unit::RemoveFromWorld(bool free_guid)
 {
 	SummonExpireAll(false);
 
-	if( m_CurrentVehicle )
+	if( GetVehicle() )
 	{
 		if(IsPlayer())
-			m_CurrentVehicle->RemovePassenger(this);
+			GetVehicle()->RemovePassenger(this);
 		else
-			m_CurrentVehicle->DeletePassengerData(this);
+			GetVehicle()->DeletePassengerData(this);
 
-		m_CurrentVehicle = NULLVEHICLE;
+		SetVehicle(NULLVEHICLE);
 	}
 
 	// Delete AAura's from our targets (must be done before object is removed from world)
@@ -7262,9 +7262,9 @@ void Unit::RemoveFFAPvPFlag()
 
 void Unit::OnPositionChange()
 {
-	if (m_CurrentVehicle != NULL && m_CurrentVehicle->GetControllingUnit() == TO_UNIT(this) && (m_position != m_CurrentVehicle->GetPosition() || GetOrientation() != m_CurrentVehicle->GetOrientation())) //check orientation too since == operator of locationvector doesnt
+	if (GetVehicle() != NULL && GetVehicle()->GetControllingUnit() == TO_UNIT(this) && (m_position != GetVehicle()->GetPosition() || GetOrientation() != GetVehicle()->GetOrientation())) //check orientation too since == operator of locationvector doesnt
 	{
-		m_CurrentVehicle->MoveVehicle(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+		GetVehicle()->MoveVehicle(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
 	}
 }
 

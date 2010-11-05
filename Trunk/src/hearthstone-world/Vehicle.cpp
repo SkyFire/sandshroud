@@ -455,8 +455,8 @@ void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool f
 		InitSeats(m_vehicleEntry);
 	}
 
-	if(pPassenger->m_CurrentVehicle)
-		pPassenger->m_CurrentVehicle->RemovePassenger(pPassenger);
+	if(pPassenger->GetVehicle())
+		pPassenger->GetVehicle()->RemovePassenger(pPassenger);
 
 	OUT_DEBUG("AddPassenger: Max Vehicle Slot: %u, Max Passengers: %u\n", m_seatSlotMax, m_maxPassengers);
 
@@ -527,10 +527,10 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	if(pPassenger == NULL) // We have enough problems that we need to do this :(
 		return;
 
-	uint8 slot = pPassenger->m_inVehicleSeatId;
+	uint8 slot = pPassenger->GetSeatID();
 
-	pPassenger->m_CurrentVehicle = NULL;
-	pPassenger->m_inVehicleSeatId = 0;
+	pPassenger->SetVehicle(NULL);
+	pPassenger->SetSeatID(NULL);
 
 	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
 	if( pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_MountSpellId != m_mountSpell )
@@ -653,7 +653,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		}
 	}
 
-	if(!haspassengers && !m_CurrentVehicle) // Passenger and accessory checks.
+	if(!haspassengers && !GetVehicle()) // Passenger and accessory checks.
 	{
 		if( m_spawn == NULL )
 			SafeDelete();
@@ -669,8 +669,8 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 
 void Vehicle::DeletePassengerData(Unit* pPassenger)
 {
-	uint8 slot = pPassenger->m_inVehicleSeatId;
-	pPassenger->m_inVehicleSeatId = 0;
+	uint8 slot = pPassenger->GetSeatID();
+	pPassenger->SetSeatID(NULL);
 	m_passengers[slot] = NULL;
 }
 
@@ -696,7 +696,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		sChatHandler.GreenSystemMessage(TO_PLAYER(pPassenger)->GetSession(), "Please turn off invis before entering vehicle.");
 		return;
 	}
-
+	CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 	m_passengers[slot] = pPassenger;
 
 	LocationVector v;
@@ -712,7 +712,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	pPassenger->movement_info.transO = GetOrientation();
 	pPassenger->movement_info.transSeat = slot;
 	pPassenger->movement_info.transGuid = WoWGuid(GetGUID());
-	pPassenger->m_inVehicleSeatId = slot;
+	pPassenger->SetSeatID(slot);
 	pPassenger->m_TransporterGUID = GetGUID();
 
 	if( m_CastSpellOnMount )
@@ -745,7 +745,8 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			else
 				pPlayer->GetSummon()->Remove(false, true, true);	// hunter pet -> just remove for later re-call
 		}
-		pPlayer->m_CurrentVehicle = TO_VEHICLE(this);
+
+		pPlayer->SetVehicle(this);
 		pPlayer->SetUInt64Value(PLAYER_FARSIGHT, GetGUID());
 		pPlayer->SetPlayerStatus(TRANSFER_PENDING);
 		sEventMgr.AddEvent(pPlayer, &Player::CheckPlayerStatus, (uint8)TRANSFER_PENDING, EVENT_PLAYER_CHECK_STATUS_Transfer, 5000, 0, 0);
@@ -770,7 +771,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		data << v.z;											// GetTransOffsetZ();
 		SendMessageToSet(&data, true);
 
-		CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 		if(vehicleproto)
 		{	// We have proto, no accessory in slot, and slot sets unselectable, unlike some seats
 			if(!vehicleproto->seats[slot].accessoryentry && vehicleproto->seats[slot].unselectableaccessory)
@@ -839,9 +839,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	}
 	else
 	{
-		pPassenger->m_CurrentVehicle = TO_VEHICLE(this);
-
-		CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+		pPassenger->SetVehicle(this);
 		if(vehicleproto != NULL)
 			if(vehicleproto->seats[slot].accessoryentry == pPassenger->GetEntry())
 				if(vehicleproto->seats[slot].unselectableaccessory == true)
@@ -905,16 +903,16 @@ leave a vehicle, it removes us server side from our current
 vehicle*/
 void WorldSession::HandleVehicleDismiss(WorldPacket & recv_data)
 {
-	Player* plr = GetPlayer();
-	if(plr == NULL || !plr->m_CurrentVehicle)
+	CHECK_INWORLD_RETURN
+	if(!_player->GetVehicle())
 		return;
 
-	plr->ExitingVehicle = true;
+	_player->ExitingVehicle = true;
 	if((recv_data.rpos() != recv_data.wpos()) && (/*So we don't get disconnected due to size checks.*/recv_data.size() <= 90))
 		HandleMovementOpcodes(recv_data);
 
-	plr->m_CurrentVehicle->RemovePassenger(GetPlayer());
-	plr->ExitingVehicle = false;
+	_player->GetVehicle()->RemovePassenger(GetPlayer());
+	_player->ExitingVehicle = false;
 }
 
 /* This function handles the packet from the client which is
@@ -924,8 +922,6 @@ to that vehicle*/
 void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN
-	if (GetPlayer()->m_CurrentVehicle)
-		return;
 
 	CHECK_PACKET_SIZE(recv_data, 8);
 
@@ -934,12 +930,14 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 
 	Vehicle* pVehicle = NULL;
 	Unit* unit = GetPlayer()->GetMapMgr()->GetUnit(guid);
-	Unit* pPlayer = TO_UNIT(GetPlayer());
 
 	if(!unit)
 		return;
 
-	if(!pPlayer->isAlive() || !unit->isAlive())
+	if (_player->GetVehicle())
+		return;
+
+	if(!_player->isAlive() || !unit->isAlive())
 		return;
 
 	if(!unit->IsVehicle())
@@ -951,21 +949,21 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 			if(aur && aur->procCharges >= 0)
 			{
 				aur->RemoveProcCharges(1);
-				ctr->CastSpell(pPlayer, 60123, true);
+				unit->CastSpell(_player, 60123, true);
 				if( aur->procCharges <= 0 )
 					ctr->SafeDelete();
 			}
 			return;
 		}
 		SpellEntry * sp = dbcSpell.LookupEntry(ctr->GetProto()->SpellClickid);
-		if(sp)
-			ctr->CastSpell(pPlayer, sp, true);
+		if(sp != NULL)
+			unit->CastSpell(_player, sp, true);
 		else
 		{
 			if(sLog.IsOutDevelopement())
-				printf("[SPELL][CLICK]: Unknown spell click spell on creature %u\n", ctr->GetEntry());
+				printf("[SPELLCLICK]: Invalid Spell ID %u creature %u\n", ctr->GetProto()->SpellClickid, ctr->GetEntry());
 			else
-				OUT_DEBUG("[SPELL][CLICK]: Unknown spell click spell on creature %u", ctr->GetEntry());
+				OUT_DEBUG("[SPELLCLICK]: Invalid Spell ID %u creature %u", ctr->GetProto()->SpellClickid, ctr->GetEntry());
 		}
 		return;
 	}
@@ -982,10 +980,7 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 	if( sEventMgr.HasEvent( pVehicle, EVENT_VEHICLE_SAFE_DELETE ) )
 		return;
 
-	if(pVehicle->HasPassenger(pPlayer))
-		pVehicle->RemovePassenger(pPlayer);
-
-	pVehicle->AddPassenger(pPlayer);
+	pVehicle->AddPassenger(_player);
 }
 
 /* This function handles the packet sent from the client when we
@@ -995,7 +990,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 {
 	WoWGuid Vehicleguid;
 	int8 RequestedSeat;
-	Vehicle* cv = _player->m_CurrentVehicle;
+	Vehicle* cv = _player->GetVehicle();
 	_player->ChangingSeats = true;
 
 	if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_PREV_SEAT)
@@ -1053,7 +1048,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	uint64 guid = Vehicleguid.GetOldGuid();
 	Vehicle* vehicle = GetPlayer()->GetMapMgr()->GetVehicle(GET_LOWGUID_PART(guid));
 
-	if(cv->GetPassengerSlot(vehicle) != -1 || cv->m_CurrentVehicle == vehicle)
+	if(cv->GetPassengerSlot(vehicle) != -1 || cv->GetVehicle() == vehicle)
 	{
 		cv->RemovePassenger(_player);
 		vehicle->AddPassenger(_player, RequestedSeat);
@@ -1073,8 +1068,8 @@ void Vehicle::ChangeSeats(Unit* unit, uint8 seatid)
 		return;
 	}
 
-	if(unit->m_CurrentVehicle != NULL)
-		unit->m_CurrentVehicle->RemovePassenger(unit);
+	if(unit->GetVehicle() != NULL)
+		unit->GetVehicle()->RemovePassenger(unit);
 
 	unit->m_TransporterGUID = GetGUID();
 	AddPassenger(unit, seatid);
@@ -1083,26 +1078,27 @@ void Vehicle::ChangeSeats(Unit* unit, uint8 seatid)
 void WorldSession::HandleEjectPassenger( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
-	if(_player->m_CurrentVehicle)
+	if(_player->GetVehicle())
 	{
 		uint64 guid;
 		recv_data >> guid;
 		if(objmgr.GetPlayer(guid))
 		{
 			Player *plr = objmgr.GetPlayer(guid);
-			if(plr && plr->m_CurrentVehicle)
+			if(plr && plr->GetVehicle())
 			{
-				if(plr->m_CurrentVehicle->GetGUID() == _player->m_CurrentVehicle->GetGUID())
-					_player->m_CurrentVehicle->RemovePassenger(plr);
+				if(plr->GetVehicle() == _player->GetVehicle())
+					_player->GetVehicle()->RemovePassenger(plr);
 			}
 			return;
 		}
 		else
 		{
 			Creature * cr = _player->GetMapMgr()->GetCreature(guid);
-			if(cr)
+			if(cr && cr->GetVehicle())
 			{
-				_player->m_CurrentVehicle->RemovePassenger(cr);
+				if(cr->GetVehicle() == _player->GetVehicle())
+					_player->GetVehicle()->RemovePassenger(cr);
 				cr->SafeDelete();
 				return;
 			}
@@ -1122,13 +1118,13 @@ void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
 		if(plr == NULL)
 			return;
 
-		if(plr->m_CurrentVehicle == NULL)
+		if(plr->GetVehicle() == NULL)
 			return;
 
 		if(plr->GetGroup() == NULL || plr->GetGroup() != _player->GetGroup())
 			return;
 
-		plr->m_CurrentVehicle->AddPassenger(_player,-1);
+		plr->GetVehicle()->AddPassenger(_player,-1);
 	}
 }
 

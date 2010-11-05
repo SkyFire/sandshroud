@@ -6934,8 +6934,8 @@ void Aura::SpellAuraMounted(bool apply)
 			m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
 		else
 		{
-			if(m_target->m_CurrentVehicle)
-				m_target->m_CurrentVehicle->RemovePassenger(m_target);
+			if(m_target->GetVehicle())
+				m_target->GetVehicle()->RemovePassenger(m_target);
 			if(pPlayer->GetSummon())
 				pPlayer->GetSummon()->Despawn(300,0);
 		}
@@ -10159,8 +10159,8 @@ void Aura::SpellAuraVehiclePassenger(bool apply)
 
 	if(!apply)
 	{
-		if( m_target && m_target->m_CurrentVehicle )
-			m_target->m_CurrentVehicle->RemovePassenger(m_target);
+		if( m_target && m_target->GetVehicle() )
+			m_target->GetVehicle()->RemovePassenger(m_target);
 	}
 }
 

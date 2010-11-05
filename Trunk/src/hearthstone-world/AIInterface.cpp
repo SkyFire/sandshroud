@@ -473,8 +473,8 @@ void AIInterface::HandleEvent(uint32 eevent, Unit* pUnit, uint32 misc1)
 			if( pUnit == NULL )
 				return;
 
-			if( pUnit->m_CurrentVehicle )
-				pUnit->m_CurrentVehicle->RemovePassenger(pUnit);
+			if( pUnit->GetVehicle() )
+				pUnit->GetVehicle()->RemovePassenger(pUnit);
 
 			if( cr != NULL )
 			{
