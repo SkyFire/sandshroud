@@ -214,6 +214,20 @@ public:
 	void ChangeObjectLocation(Object* obj); // update inrange lists
 	void ChangeFarsightLocation(Player* plr, Unit* farsight, bool apply);
 	void ChangeFarsightLocation(Player* plr, float X, float Y, bool apply);
+	bool IsInRange(float fRange, Object* obj, Object* currentobj)
+	{
+		// First distance check, are we in range?
+		if(currentobj->GetDistance2dSq( obj ) > fRange )
+			return false;
+
+		// Second distance Check, we are in range, but are we in distance?
+		if(currentobj->CalcDistance(obj) > fRange)
+		{	// We aren't in distance, but since we are in range, check if we are in the same Area.
+			if(currentobj->GetAreaID() != obj->GetAreaID())
+				return false;	// We are not in the same area, fuck it.
+		}
+		return true;
+	}
 
 	//! Mark object as updated
 	void ObjectUpdated(Object* obj);
