@@ -2171,9 +2171,7 @@ void Spell::SendSpellStart()
 	if( !m_caster->IsInWorld() || GetSpellProto()->Attributes & 64 || m_triggeredSpell )
 		return;
 
-	//WorldPacket data( 150 );
-	uint8 buf[1000];			// should be more than enough
-	StackPacket data(SMSG_SPELL_START, buf, 1000);
+	WorldPacket data(SMSG_SPELL_START, 2000);
 
 	uint32 cast_flags = SPELL_START_FLAG_DEFAULT;
 
@@ -2207,7 +2205,7 @@ void Spell::SendSpellStart()
 
 	if(cast_flags & SPELL_START_FLAGS_POWER_UPDATE) //send new mana
 		data << uint32( u_caster ? u_caster->GetUInt32Value(UNIT_FIELD_POWER1 + u_caster->GetPowerType()) : 0);
-	if( (p_caster != NULL) && cast_flags & SPELL_START_FLAGS_RUNE_UPDATE) //send new runes
+	if( (p_caster != NULL) && cast_flags & SPELL_START_FLAGS_RUNE_UPDATE && dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID) != NULL) //send new runes
 	{
 		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
 		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
