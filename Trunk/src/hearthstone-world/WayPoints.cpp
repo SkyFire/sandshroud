@@ -1042,10 +1042,10 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 	for(uint32 i = 0; i < n; i++)
 	{
 		float ang = rand()/100.0f;
-		float ran = (rand()%(r*10))/10.0f;
+		float ran = (RandomUInt(r*10))/10.0f;
 		while(ran < 1)
 		{
-			ran = (rand()%(r*10))/10.0f;
+			ran = (RandomUInt(r*10))/10.0f;
 		}
 
 		float x = cr->GetPositionX()+ran*sin(ang);

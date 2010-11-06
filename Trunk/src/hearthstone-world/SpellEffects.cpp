@@ -415,7 +415,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				WMAX = it->GetProto()->Damage[0].Max;
 				MWS = it->GetProto()->Delay / 1000.0f;
 			}	// Crow: Do not randomize 0, it will crash.
-			dmg = float2int32(((WMIN + (WMAX != WMIN ? (rand()%(int32)(WMAX-WMIN)) : 0)) / (2 * MWS)) * 4 + (u_caster->GetStrength() / 5.5f) * 4 + (u_caster->GetAP() / 14) * 4);
+			dmg = float2int32(((WMIN + RandomUInt(WMAX-WMIN)) / (2 * MWS)) * 4 + (u_caster->GetStrength() / 5.5f) * 4 + (u_caster->GetAP() / 14) * 4);
 		}
 		else
 		{
@@ -753,7 +753,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				if( p_caster != NULL )
 				{
 					uint32 perc = p_caster->m_comboPoints * 3;
-					perc += (rand()%5) * p_caster->m_comboPoints ;
+					perc += (RandomUInt(5) * p_caster->m_comboPoints);
 					dmg += float2int32(p_caster->GetAP() * ( perc * 0.01f ));//UINT =+ INT + FLOAT = 0 LOL
 					if( p_caster->HasDummyAura(SPELL_HASH_CUT_TO_THE_CHASE) )
 					{

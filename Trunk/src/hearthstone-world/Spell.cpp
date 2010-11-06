@@ -4265,7 +4265,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 	if(randomPoints <= 1)
 		value = basePoints;
 	else
-		value = basePoints + rand() % randomPoints;
+		value = basePoints + RandomUInt((uint32)randomPoints);
 
 	if( p_caster != NULL )
 	{

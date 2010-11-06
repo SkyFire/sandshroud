@@ -1984,7 +1984,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							if(randomPoints <= 1)
 								value = basePoints;
 							else
-								value = basePoints + rand() % randomPoints;
+								value = basePoints + RandomUInt(randomPoints);
 							dmg_overwrite = GetUInt32Value(UNIT_FIELD_MAXHEALTH) * value / 100;
 						}break;
 

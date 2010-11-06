@@ -24,7 +24,7 @@
 #define NUMBER_OF_GENERATORS 5
 Mutex * m_locks[NUMBER_OF_GENERATORS];
 CRandomMersenne * m_generators[NUMBER_OF_GENERATORS];
-uint32 counter=0;
+uint32 counter = 0;
 
 uint32 generate_seed()
 {
