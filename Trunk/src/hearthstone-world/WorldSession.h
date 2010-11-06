@@ -217,6 +217,7 @@ public:
 	/* GM Permission System */
 	void LoadSecurity(std::string securitystring);
 	void SetSecurity(std::string securitystring);
+	HEARTHSTONE_INLINE uint32 GetAccountFlags() { return _accountFlags; }
 	HEARTHSTONE_INLINE char* GetPermissions() { return permissions; }
 	HEARTHSTONE_INLINE int GetPermissionCount() { return permissioncount; }
 	HEARTHSTONE_INLINE bool HasPermissions() { return (permissioncount > 0) ? true : false; }
@@ -767,7 +768,7 @@ public:
 	void SendSpiritHealerRequest(Creature* pCreature);
 	void FullLogin(Player* plr);
 #ifdef CLUSTERING
-	bool ClusterTryPlayerLogin(uint32 Guid, string GMPermissions, uint32 Account_Flags);
+	bool ClusterTryPlayerLogin(uint32 Guid, uint32 ClientBuild, string GMPermissions, uint32 Account_Flags);
 #endif
 
 	float m_wLevel; // Level of water the player is currently in

@@ -56,11 +56,6 @@ void WorldSocket::OnDisconnect()
 		sLogonCommHandler.UnauthedSocketClose(mRequestID);
 		mRequestID = 0;
 	}
-
-	if( m_session )
-	{
-		sClientMgr.RemoveSession(m_session);
-	}
 }
 
 void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)

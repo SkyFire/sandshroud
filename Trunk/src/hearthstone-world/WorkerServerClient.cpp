@@ -49,25 +49,6 @@ void WSClient::OnRead()
 
 		if(_cmd == ISMSG_WOW_PACKET)
 		{
-			/*
-			uint8 * ReceiveBuffer = (uint8*)GetReadBuffer().GetBufferStart();
-						/ * optimized version for packet passing, to reduce latency! ;) * /
-						uint32 sid = *(uint32*)&ReceiveBuffer[0];
-						uint16 op  = *(uint16*)&ReceiveBuffer[4];
-						uint32 sz  = *(uint32*)&ReceiveBuffer[6];			
-						WorldSession * session = sClusterInterface.GetSession(sid);
-						if(session != NULL)
-						{
-							WorldPacket * pck = new WorldPacket(op, sz);
-							pck->resize(sz);
-							memcpy((void*)pck->contents(), &ReceiveBuffer[10], sz);
-							session->QueuePacket(pck);
-						}
-						readBuffer.Remove(sz + 10/ *header* /);
-						_cmd = 0;
-						continue;*/
-			
-
 			uint32 sid = 0;
 			uint16 op = 0;
 			uint32 sz = 0;
@@ -84,8 +65,10 @@ void WSClient::OnRead()
 					pck->resize(sz);
 					GetReadBuffer().Read((void*)pck->contents(), sz);
 				}
-				if(session) session->QueuePacket(pck);
-				else delete pck;
+				if(session)
+					session->QueuePacket(pck);
+				else
+					delete pck;
 			}
 			_cmd = 0;
 			continue;

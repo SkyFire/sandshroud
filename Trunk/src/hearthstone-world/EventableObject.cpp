@@ -64,7 +64,7 @@ void EventableObject::event_AddEvent(TimedEvent * ptr)
 	m_lock.Release();
 
 	/* Add to event manager */
-	if(!m_holder)
+	if(!m_holder || ptr->eventFlag & EVENT_FLAG_MOVE_TO_WORLD_CONTEXT)
 	{
 		/* relocate to -1 eventholder :/ */
 		m_event_Instanceid = -1;
@@ -106,7 +106,7 @@ void EventableObject::event_RemoveByPointer(TimedEvent * ev)
 	m_lock.Release();
 }
 
-void EventableObject::event_RemoveEvents(uint32 EventType)
+void EventableObject::event_RemoveEvents(int32 EventType)
 {
 	m_lock.Acquire();
 	if(!m_events.size())

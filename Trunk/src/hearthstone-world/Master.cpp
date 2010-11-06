@@ -107,6 +107,8 @@ bool Master::Run(int argc, char ** argv)
 		{ "checkconf",			hearthstone_no_argument,			&do_check_conf,			1		},
 		{ "screenloglevel",		hearthstone_required_argument,		&screen_log_level,		1		},
 		{ "version",			hearthstone_no_argument,			&do_version,			1		},
+		{ "cheater",			hearthstone_no_argument,			&do_cheater_check,		1		},
+		{ "cleandb",			hearthstone_no_argument,			&do_database_clean,		1		},
 		{ "conf",				hearthstone_required_argument,		NULL,					'c'		},
 		{ "realmconf",			hearthstone_required_argument,		NULL,					'r'		},
 		{ 0, 0, 0, 0 }

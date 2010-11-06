@@ -121,6 +121,16 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 	data << uint32(m_accountId) << uint32(m_accountFlags) << uint32(m_sessionId)
 		<< m_GMPermissions << m_accountName;
 
+	AccountDataEntry* acd = NULL;
+	for(uint8 i = 0; i < 8; i++)
+	{
+		acd = GetAccountData(i);
+		if(acd && acd->sz)
+			data << acd->sz << acd->data;
+		else
+			data << uint32(0);
+	}
+
 	dest->Server->SendPacket(&data);
 	m_nextServer = dest->Server;
 }

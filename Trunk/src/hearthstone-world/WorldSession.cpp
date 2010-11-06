@@ -1050,35 +1050,6 @@ void WorldSession::HandlePingOpcode(WorldPacket& recvPacket)
 	SendPacket(&data);
 }
 
-bool WorldSession::ClusterTryPlayerLogin(uint32 Guid, string GMPermissions, uint32 Account_Flags)
-{
-	DEBUG_LOG( "WorldSession"," Recvd Player Logon Message" );
-
-	if(objmgr.GetPlayer(Guid) != NULL || m_loggingInPlayer || _player)
-	{
-		// A character with that name already exists 0x3E
-		uint8 respons = 0x3E;
-		OutPacket(SMSG_CHARACTER_LOGIN_FAILED, 1, &respons);
-		return false;
-	}
-
-	Player* plr = new Player(Guid);
-	ASSERT(plr);
-	plr->Init();
-
-	permissioncount = 0;//just to make sure it's 0
-	LoadSecurity(GMPermissions);
-	SetAccountFlags(Account_Flags);
-
-	plr->SetSession(this);
-	m_bIsWLevelSet = false;
-
-	DEBUG_LOG("WorldSession", "Async loading player %u", Guid);
-	m_loggingInPlayer = plr;
-	plr->LoadFromDB(Guid);
-	return true;
-}
-
 #endif
 
 void WorldSession::SystemMessage(const char * format, ...)

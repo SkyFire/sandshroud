@@ -24,103 +24,96 @@
 
 bool SymbolOfLife(uint32 i, Spell *pSpell) // Alliance ress. quests
 {
-  if(!pSpell->u_caster->IsPlayer())
-    return true;
+	if(!pSpell->u_caster || !pSpell->u_caster->IsPlayer())
+		return true;
 
-  Player *plr = TO_PLAYER(pSpell->u_caster);
-  Creature *target = plr->GetMapMgr()->GetCreature(GET_LOWGUID_PART(plr->GetSelection()));
-  
-  if(target == NULL)
-    return true;
+	Player *plr = TO_PLAYER(pSpell->u_caster);
+	Creature *target = plr->GetMapMgr()->GetCreature(GET_LOWGUID_PART(plr->GetSelection()));
 
-  const uint32 targets[] = {17542, 6177, 6172}; 
-  const uint32 quests[] =  {9600,  1783, 1786};
-  bool questOk = false;
-  bool targetOk = false;
+	if(target == NULL)
+		return true;
 
-  for(int i = 0; i<3; i++)
-  {
-    if(target->GetEntry() == targets[i])
-    {
-      targetOk = true;
-      
-      break;
-    }
-  }
-  
-  if(!targetOk)
-    return true;
-  
-  QuestLogEntry *qle;
-  
-  for(int i = 0; i<3; i++)
-  {
-    if(plr->GetQuestLogForEntry(quests[i]) != NULL)
-    {
-      qle = plr->GetQuestLogForEntry(quests[i]);
-      questOk = true;
-      
-      break;
-    }
-  }
-  
-  if(!questOk)
-    return true;
+	const uint32 targets[] = {17542, 6177, 6172}; 
+	const uint32 quests[] =  {9600,  1783, 1786};
+	bool questOk = false;
+	bool targetOk = false;
 
-  target->SetStandState(0);
-  target->setDeathState(ALIVE);
+	for(int i = 0; i<3; i++)
+	{
+		if(target->GetEntry() == targets[i])
+		{
+			targetOk = true;
 
-  target->Despawn(10*1000, 1*60*1000);
+			break;
+		}
+	}
 
-  qle->SetMobCount(0, 1);
-  qle->SendUpdateAddKill(0);
-  qle->UpdatePlayerFields();
-  
-  return true;
+	if(!targetOk)
+		return true;
+
+	QuestLogEntry *qle;
+
+	for(int i = 0; i<3; i++)
+	{
+		if(plr->GetQuestLogForEntry(quests[i]) != NULL)
+		{
+			qle = plr->GetQuestLogForEntry(quests[i]);
+			questOk = true;
+			break;
+		}
+	}
+
+	if(!questOk)
+		return true;
+
+	target->SetStandState(0);
+	target->setDeathState(ALIVE);
+	target->Despawn(10*1000, 1*60*1000);
+	qle->SetMobCount(0, 1);
+	qle->SendUpdateAddKill(0);
+	qle->UpdatePlayerFields();
+	return true;
 }
 
 bool FilledShimmeringVessel(uint32 i, Spell *pSpell) // Blood Elf ress. quest
 {
-  if(!pSpell->u_caster->IsPlayer())
-    return true;
+	if(!pSpell->u_caster || !pSpell->u_caster->IsPlayer())
+		return true;
 
-  Player *plr = TO_PLAYER(pSpell->u_caster);
-  
-  Creature *target = plr->GetMapMgr()->GetCreature(GET_LOWGUID_PART(plr->GetSelection()));
-  if(target == NULL)
-    return true;
+	Player *plr = TO_PLAYER(pSpell->u_caster);
 
-  if(target->GetEntry() != 17768)
-    return true;
+	Creature *target = plr->GetMapMgr()->GetCreature(GET_LOWGUID_PART(plr->GetSelection()));
+	if(target == NULL)
+		return true;
 
-  QuestLogEntry *qle = plr->GetQuestLogForEntry(9685);
-  if(qle == NULL)
-    return true;
+	if(target->GetEntry() != 17768)
+		return true;
 
-  target->SetStandState(0);
-  target->setDeathState(ALIVE);
+	QuestLogEntry *qle = plr->GetQuestLogForEntry(9685);
+	if(qle == NULL)
+		return true;
 
-  target->Despawn(30*1000, 1*60*1000);
-
-  qle->SetMobCount(0, 1);
-  qle->SendUpdateAddKill(0);
-  qle->UpdatePlayerFields();
-
-  return true;
+	target->SetStandState(0);
+	target->setDeathState(ALIVE);
+	target->Despawn(30*1000, 1*60*1000);
+	qle->SetMobCount(0, 1);
+	qle->SendUpdateAddKill(0);
+	qle->UpdatePlayerFields();
+	return true;
 }
 
 class PaladinDeadNPC : public CreatureAIScript
 {
 public:
-  ADD_CREATURE_FACTORY_FUNCTION(PaladinDeadNPC);
-  PaladinDeadNPC(Creature *pCreature) : CreatureAIScript(pCreature) {}
+	ADD_CREATURE_FACTORY_FUNCTION(PaladinDeadNPC);
+	PaladinDeadNPC(Creature *pCreature) : CreatureAIScript(pCreature) {}
 
-  void OnLoad()
-  {
-    _unit->SetStandState(7);
-    _unit->setDeathState(CORPSE);
-    _unit->GetAIInterface()->m_canMove = false;
-  }
+	void OnLoad()
+	{
+		_unit->SetStandState(7);
+		_unit->setDeathState(CORPSE);
+		_unit->GetAIInterface()->m_canMove = false;
+	}
 };
 
 /*--------------------------------------------------------------------------------------------------------*/
@@ -169,7 +162,7 @@ public:
 		float SSY = mKiller->GetPositionY();
 		float SSZ = mKiller->GetPositionZ();
 		float SSO = mKiller->GetOrientation();
-			
+
 		GameObject *Brazier = mKiller->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( SSX, SSY, SSZ, 181956);
 		if (Brazier)
 		{

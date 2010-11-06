@@ -521,6 +521,66 @@ MapMgr* InstanceMgr::GetInstance(Object* obj)
 	}
 }
 
+MapMgr* InstanceMgr::GetInstance(uint32 MapId, uint32 InstanceId)
+{
+	Instance * in;
+	InstanceMap::iterator itr;
+	InstanceMap * instancemap;
+	MapInfo * inf = WorldMapInfoStorage.LookupEntry(MapId);
+
+	// we can *never* teleport to maps without a mapinfo.
+	if( inf == NULL || MapId >= NUM_MAPS )
+		return NULLMAPMGR;
+
+
+	// single-instance maps never go into the instance set.
+	if( inf->type == INSTANCE_NULL )
+		return m_singleMaps[MapId];
+
+	m_mapLock.Acquire();
+	instancemap = m_instances[MapId];
+	if(instancemap != NULL)
+	{
+		// check our saved instance id. see if its valid, and if we can join before trying to find one.
+		itr = instancemap->find(InstanceId);
+		if(itr != instancemap->end())
+		{
+			if(itr->second->m_mapMgr)
+			{
+				m_mapLock.Release();
+				return itr->second->m_mapMgr;
+			}
+		}
+
+		// iterate over our instances, and see if any of them are owned/joinable by him.
+		for(itr = instancemap->begin(); itr != instancemap->end();)
+		{
+			in = itr->second;
+			++itr;
+
+			// this is our instance.
+			if(in->m_mapMgr == NULL)
+			{
+				// create the actual instance.
+				in->m_mapMgr = _CreateInstance(in);
+				m_mapLock.Release();
+				return in->m_mapMgr;
+			}
+			else
+			{
+				// instance is already created.
+				m_mapLock.Release();
+				return in->m_mapMgr;
+			}
+		}
+	}
+
+	// if we're here, it means there are no instances on that map, or none of the instances on that map are joinable
+	// by this player.
+	m_mapLock.Release();
+	return NULLMAPMGR;
+}
+
 MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 {
 	MapInfo* inf = WorldMapInfoStorage.LookupEntry(mapid);
@@ -1223,6 +1283,62 @@ void InstanceMgr::DeleteBattlegroundInstance(uint32 mapid, uint32 instanceid)
 
 	m_instances[mapid]->erase( itr );
 	m_mapLock.Release();
+}
+
+MapMgr* InstanceMgr::ClusterCreateInstance( uint32 mapid, uint32 instanceid )
+{
+	// shouldn't happen
+	if( mapid >= NUM_MAPS )
+		return NULLMAPMGR;
+
+	MapInfo * info = WorldMapInfoStorage.LookupEntry( mapid );
+	if( !info )
+		return NULLMAPMGR;
+
+	if( !m_maps[mapid] )
+	{
+		_CreateMap(mapid);
+		if(!m_maps[mapid])
+			return NULLMAPMGR;
+	}
+
+	MapMgr* mgr = new MapMgr(m_maps[mapid],mapid,instanceid);
+	if( !mgr )
+		return NULLMAPMGR;
+	mgr->Init();
+
+	Instance * pInstance = new Instance();
+	if( !pInstance )
+	{
+		delete mgr;
+		return NULLMAPMGR;
+	}
+	pInstance->m_creation = UNIXTIME;
+	pInstance->m_creatorGroup = 0;
+	pInstance->m_creatorGuid = 0;
+	pInstance->m_difficulty = 0;
+	pInstance->m_expiration = 0;
+	pInstance->m_instanceId = mgr->GetInstanceID();
+	pInstance->m_isBattleground = true;
+	pInstance->m_mapId = mapid;
+	pInstance->m_mapInfo = info;
+	pInstance->m_mapMgr = mgr;
+	m_mapLock.Acquire();
+	InstanceMap * pInstanceMap = new InstanceMap;
+	if( !pInstanceMap )
+	{
+		m_mapLock.Release();
+		delete mgr;
+		delete pInstance;
+		return NULLMAPMGR;
+	}
+	if( m_instances[mapid] == NULL )
+		m_instances[mapid] = pInstanceMap;
+
+	m_instances[mapid]->insert( make_pair( pInstance->m_instanceId, pInstance ) );
+	m_mapLock.Release();
+	ThreadPool.ExecuteTask(mgr);
+	return mgr;
 }
 
 FormationMgr::FormationMgr()

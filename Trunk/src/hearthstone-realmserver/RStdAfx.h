@@ -48,6 +48,7 @@
 #include "../hearthstone-shared/Database/DBCStores.h"
 #include "../hearthstone-shared/Database/dbcfile.h"
 #include "../hearthstone-shared/FastQueue.h"
+#include "../hearthstone-shared/Threading/RWLock.h"
 
 #include <Network/Network.h>
 

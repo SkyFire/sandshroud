@@ -55,6 +55,50 @@ Instance * ClusterMgr::GetInstanceByMapId(uint32 MapId)
 	return SingleInstanceMaps[MapId];
 }
 
+Instance* ClusterMgr::GetAnyInstance()
+{
+	//
+	m_lock.AcquireReadLock();
+	for (uint32 i=0; i<MAX_SINGLE_MAPID; ++i)
+	{
+		if (SingleInstanceMaps[i] != NULL)
+		{
+			m_lock.ReleaseReadLock();
+			return SingleInstanceMaps[i];
+		}
+	}
+	m_lock.ReleaseReadLock();
+	return NULL;
+
+}
+
+Instance * ClusterMgr::GetPrototypeInstanceByMapId(uint32 MapId)
+{
+	m_lock.AcquireReadLock();
+	//lets go through all the instances of this map and find the one with the least instances :P
+	std::multimap<uint32, Instance*>::iterator itr = InstancedMaps.find(MapId);
+
+	if (itr == InstancedMaps.end())
+	{
+		m_lock.ReleaseReadLock();
+		return NULL;
+	}
+
+	Instance* i = NULL;
+	uint32 min = 500000;
+	for (; itr != InstancedMaps.upper_bound(MapId); ++itr)
+	{
+		if (itr->second->MapCount < min)
+		{
+			min = itr->second->MapCount;
+			i = itr->second;
+		}
+	}
+
+	m_lock.ReleaseReadLock();
+	return i;
+}
+
 WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
 {
 	/* find an id */

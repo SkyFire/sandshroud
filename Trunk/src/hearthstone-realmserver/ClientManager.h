@@ -27,13 +27,17 @@ class ClientMgr : public Singleton<ClientMgr>
 {
 public:
 	typedef HM_NAMESPACE::hash_map<uint32, RPlayerInfo*> ClientMap;
+	ClientMap m_clients;
+	RWLock m_lock;
 
 protected:
 	uint32 m_hiPlayerGuid;
-
-	ClientMap m_clients;
 	uint32 m_maxSessionId;
+
 	Session * m_sessions[MAX_SESSIONS];
+	HM_NAMESPACE::hash_map<RPlayerInfo*, Session*> m_sessionsbyinfo;
+	std::vector<uint32> m_reusablesessions;
+	std::vector<uint32> m_pendingdeletesessionids;
 
 public:
 	ClientMgr();
@@ -44,6 +48,27 @@ public:
 
 	/* destroy rplayerinfo struct */
 	void DestroyRPlayerInfo(uint32 guid);
+
+	HEARTHSTONE_INLINE Session* GetSessionByRPInfo(RPlayerInfo* p)
+	{
+		m_lock.AcquireReadLock();
+		HM_NAMESPACE::hash_map<RPlayerInfo*, Session*>::iterator itr = m_sessionsbyinfo.find(p);
+		if (itr == m_sessionsbyinfo.end())
+		{
+			m_lock.ReleaseReadLock();
+			return NULL;
+		}
+		Session* s = itr->second;
+		m_lock.ReleaseReadLock();
+		return s;
+	}
+
+	HEARTHSTONE_INLINE void AddSessionRPInfo(Session* s, RPlayerInfo* p)
+	{
+		m_lock.AcquireWriteLock();
+		m_sessionsbyinfo.insert(std::make_pair<RPlayerInfo*, Session*>(p, s));
+		m_lock.ReleaseWriteLock();
+	}
 
 	/* get rplayer */
 	HEARTHSTONE_INLINE RPlayerInfo * GetRPlayer(uint32 guid)
@@ -76,12 +101,27 @@ public:
 	void SendPackedClientInfo(WServer * server);
 
 	/* get session by id */
-	HEARTHSTONE_INLINE Session * GetSession(uint32 Id) { return (Id < MAX_SESSIONS) ? m_sessions[Id] : 0; }
+	HEARTHSTONE_INLINE Session * GetSession(uint32 Id)
+	{
+		if(Id < MAX_SESSIONS)
+			return m_sessions[Id];
+		return NULL;
+	}
+
+	HEARTHSTONE_INLINE Session* GetSessionByAccountId(uint32 Id)
+	{
+		for(uint32 id = 0; id < MAX_SESSIONS; id++)
+		{
+			if(m_sessions[Id] && m_sessions[Id]->GetAccountId() == Id)
+				return m_sessions[Id];
+		}
+		return NULL;
+	}
 
 	/* create a new session, returns null if the player is already logged in */
 	Session * CreateSession(uint32 AccountId);
 
-	void RemoveSession(Session * sess);
+	void DestroySession(uint32 sessionid);
 
 	/* updates sessions */
 	void Update();

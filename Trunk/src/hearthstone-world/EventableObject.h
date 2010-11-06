@@ -32,7 +32,7 @@ class EventableObjectHolder;
 typedef list<TimedEvent*> EventList;
 typedef multimap<uint32, TimedEvent*> EventMap;
 
-#define EVENT_REMOVAL_FLAG_ALL 0xFFFFFFFF
+#define EVENT_REMOVAL_FLAG_ALL -1
 #define WORLD_INSTANCE -1
 
 class SERVER_DECL EventableObject
@@ -42,7 +42,7 @@ class SERVER_DECL EventableObject
 
 protected:
 	void event_RemoveEvents();
-	void event_RemoveEvents(uint32 EventType);
+	void event_RemoveEvents(int32 EventType);
 	void event_ModifyTimeLeft(uint32 EventType, uint32 TimeLeft,bool unconditioned=false);
 	void event_ModifyTime(uint32 EventType, uint32 Time);
 	void event_ModifyTimeAndTimeLeft(uint32 EventType, uint32 Time);

@@ -915,7 +915,7 @@ void Player::Update( uint32 p_time )
 	Unit::Update( p_time );
 	uint32 mstime = getMSTime();
 	sHookInterface.OnUpdate(this);
-	if( sWorld.FunServerMall != -1 && GetAreaID() == sWorld.FunServerMall )
+	if( sWorld.FunServerMall != -1 && GetAreaID() == uint32(sWorld.FunServerMall) )
 		if( IsPvPFlagged() )
 			RemovePvPFlag();
 
@@ -3037,7 +3037,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		Counter = 0;
 		start = (char*)get_next_field.GetString();//buff old system;
 
-		if(start != "0")
+		if(!(start == "0"))
 		{
 			const ItemProf * prof;
 			if(!strchr(start, ' ') && !strchr(start,';'))
@@ -3635,7 +3635,6 @@ bool Player::HasHigherSpellForSkillLine(SpellEntry* sp)
 
 	SpellSet::iterator itr;
 	SpellEntry* spell = NULL;
-	skilllinespell* spellls = NULL;
 	if(_HasSkillLine(oskillline))
 	{
 		for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
@@ -4089,7 +4088,7 @@ void Player::RemoveFromWorld()
 	{
 		if(m_SummonedObject->GetInstanceID() != GetInstanceID())
 		{
-			sEventMgr.AddEvent(m_SummonedObject, &Object::Delete, EVENT_GAMEOBJECT_EXPIRE, 100, 1,0);
+			sEventMgr.AddEvent(m_SummonedObject, &Object::Delete, true, EVENT_GAMEOBJECT_EXPIRE, 100, 1,0);
 		}
 		else
 		{
@@ -6733,7 +6732,7 @@ void Player::EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_sl
 	else
 		sEventMgr.AddEvent(TO_PLAYER(this), &Player::EventTimedQuestExpire, qst, qle, log_slot, interval, EVENT_TIMED_QUEST_EXPIRE, interval, 1, 0);
 }
-void Player::RemoveQuestsFromLine(int skill_line)
+void Player::RemoveQuestsFromLine(uint32 skill_line)
 {
 #ifdef CATACLYSM
 	for(int i = 0; i < 50; i++)

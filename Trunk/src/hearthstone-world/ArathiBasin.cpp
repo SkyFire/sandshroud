@@ -837,7 +837,7 @@ void ArathiBasin::AssaultControlPoint(Player* pPlayer, uint32 Id)
 	}
 
 	// Contested Flag, not ours, and is not virgin
-	if( !isVirgin && m_basesLastOwnedBy[Id] == Team && m_basesOwnedBy[Id] == -1 )
+	if( !isVirgin && m_basesLastOwnedBy[Id] == int32(Team) && m_basesOwnedBy[Id] == -1 )
 	{
 		m_mapMgr->GetStateManager().UpdateWorldState(AssaultFields[Id][Team ? 0 : 1], 0);
 		this->event_RemoveEvents(EVENT_AB_CAPTURE_CP_1 + Id);

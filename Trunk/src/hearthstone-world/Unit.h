@@ -911,7 +911,7 @@ public:
 	bool RemoveAllAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllPosAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllNegAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
-	bool RemoveAllAurasByMechanic( uint32 MechanicType , uint32 MaxDispel , bool HostileOnly ); // Removes all (de)buffs on unit of a specific mechanic type.
+	bool RemoveAllAurasByMechanic( uint32 MechanicType, int32 MaxDispel, bool HostileOnly ); // Removes all (de)buffs on unit of a specific mechanic type.
 
 	void RemoveAllNegativeAuras();
 

@@ -1155,7 +1155,7 @@ void AlteracValley::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 	const AVLoot *loot_ptr = &g_avLoot[0];
 	while(loot_ptr->ItemId != 0)
 	{
-		if( loot_ptr->Faction == -1 || loot_ptr->Faction == plr->GetTeam() )
+		if( loot_ptr->Faction == -1 || loot_ptr->Faction == int8(plr->GetTeam()) )
 		{
 			if( Rand(loot_ptr->Chance * sWorld.getRate(RATE_DROP0)) )
 			{

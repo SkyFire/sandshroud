@@ -3337,7 +3337,7 @@ uint32 Object::GetAreaID(float x, float y, float z, int32 mapid, MapMgr* mgr)
 		mgr = GetMapMgr();
 	if(mapid > -1)
 	{
-		if(mapid != m_mapId)
+		if(uint32(mapid) != m_mapId)
 		{
 			uint32 areaid = 0;
 			MapMgr* mgr2 = sInstanceMgr.GetMapMgr(mapid);

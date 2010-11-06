@@ -508,10 +508,11 @@ public:
 	bool m_inQueue;
 	HEARTHSTONE_INLINE void SetMapMgr(MapMgr* mgr) { m_mapMgr = mgr; }
 
-	void Delete()
+	void Delete(bool remove = true)
 	{
-		if(IsInWorld())
-			RemoveFromWorld(true);
+		if(remove)
+			if(IsInWorld())
+				RemoveFromWorld(true);
 
 		// this is a suicidal maniac o.o
 		delete this;

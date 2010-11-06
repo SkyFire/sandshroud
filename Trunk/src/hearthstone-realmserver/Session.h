@@ -72,6 +72,7 @@ public:
 	HEARTHSTONE_INLINE void ClearCurrentPlayer() { m_currentPlayer = 0; }
 	HEARTHSTONE_INLINE void ClearServers() { m_nextServer = m_server = 0; }
 	HEARTHSTONE_INLINE void SetNextServer() { m_server = m_nextServer; }
+	HEARTHSTONE_INLINE void SetNextServer(WServer* s) { m_nextServer = s; };
 	HEARTHSTONE_INLINE void SetServer(WServer * s) { m_server = s; }
 	HEARTHSTONE_INLINE WServer * GetServer() { return m_server; }
 	HEARTHSTONE_INLINE WorldSocket * GetSocket() { return m_socket; }

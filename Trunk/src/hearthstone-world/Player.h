@@ -934,7 +934,7 @@ public:
 	void				RemoveQuestSpell(uint32 spellid);
 	bool				HasQuestMob(uint32 entry);
 	void				RemoveQuestMob(uint32 entry);
-	void				RemoveQuestsFromLine(int skill_line);
+	void				RemoveQuestsFromLine(uint32 skill_line);
 	void				ResetDailyQuests();
 	uint16				FindQuestSlot(uint32 questid);
 	uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * 5 + (uint32)NULL); }
@@ -1733,6 +1733,34 @@ public:
 	void EjectFromInstance();
 	bool raidgrouponlysent;
 
+#ifdef CLUSTERING
+	RPlayerInfo * UpdateRPlayerInfo(RPlayerInfo * pRPlayer, bool newRplr = false)
+	{
+		pRPlayer->Guid = GetLowGUID();
+		pRPlayer->AccountId = GetSession()->GetAccountId();
+		pRPlayer->Name = GetName();
+		pRPlayer->Level= getLevel() ;
+		pRPlayer->GuildId = GetGuildId();
+		pRPlayer->PositionX = GetPositionX();
+		pRPlayer->PositionY = GetPositionY();
+		pRPlayer->ZoneId = m_zoneId;
+		pRPlayer->Race = getRace();
+		pRPlayer->Class = getClass();
+		pRPlayer->Gender = getGender();
+		pRPlayer->Latency = GetSession()->GetLatency();
+		pRPlayer->GMPermissions = GetSession()->GetPermissions();
+		pRPlayer->Account_Flags = GetSession()->GetAccountFlags();
+		pRPlayer->InstanceId = GetInstanceID();
+		pRPlayer->MapId = GetMapId();
+		pRPlayer->iInstanceType = iInstanceType;
+		pRPlayer->ClientBuild = GetSession()->GetClientBuild();
+		pRPlayer->Team = m_team;
+		if(newRplr)
+			pRPlayer->references = 1;
+		return pRPlayer;
+	}
+#endif
+
 	void EventSafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1)
 	{
 		SafeTeleport(MapID, InstanceID, vec, phase);
@@ -2275,6 +2303,11 @@ public:
 	float MobXPGainRate;
 	bool NoReagentCost;
 	void StartQuest(uint32 id);
+
+#ifdef CLUSTERING
+	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
+	void HandleClusterRemove();
+#endif
 };
 
 class SkillIterator

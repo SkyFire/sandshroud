@@ -24,6 +24,7 @@ struct Instance
 {
 	uint32 InstanceId;
 	uint32 MapId;
+	uint32 MapCount; // Used for load balancing for things like battleground servers
 	WServer * Server;
 };
 
@@ -33,6 +34,7 @@ struct Instance
 class ClusterMgr : public Singleton<ClusterMgr>
 {
 	typedef map<uint32, Instance*> InstanceMap;
+	RWLock m_lock;
 
 	WServer * WorkerServers[MAX_WORKER_SERVERS];
 	Instance * SingleInstanceMaps[MAX_SINGLE_MAPID];
@@ -44,11 +46,19 @@ class ClusterMgr : public Singleton<ClusterMgr>
 public:
 	ClusterMgr();
 
+	// This is the prototype for instanced maps that haven't been created yet
+	// Yes, its a multimap, you can have multiple servers per map (battleground servers)
+	std::multimap<uint32, Instance*> InstancedMaps;
+
 	WServer * GetServerByInstanceId(uint32 InstanceId);
 	WServer * GetServerByMapId(uint32 MapId);
 
 	Instance * GetInstanceByInstanceId(uint32 InstanceId);
 	Instance * GetInstanceByMapId(uint32 MapId);
+	Instance * GetAnyInstance();
+	Instance * GetPrototypeInstanceByMapId(uint32 MapId);
+
+	void OnServerDisconnect(WServer* s);
 
 	WServer * CreateWorkerServer(WSSocket * s);
 	HEARTHSTONE_INLINE WServer * GetWorkerServer(uint32 Id) { return (Id < MAX_WORKER_SERVERS) ? WorkerServers[Id] : 0; }

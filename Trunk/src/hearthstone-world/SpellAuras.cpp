@@ -5842,7 +5842,7 @@ void Aura::EventPeriodicLeech(uint32 amount)
 		Amount += bonus;
 	}
 
-	SendPeriodicAuraLog(m_caster, m_target, m_spellProto, Amount, -1, 0, FLAG_PERIODIC_DAMAGE);
+	SendPeriodicAuraLog(m_caster, m_target, m_spellProto, Amount, -1, 0, (uint32)FLAG_PERIODIC_DAMAGE);
 
 	//deal damage before we add healing bonus to damage
 	m_caster->DealDamage(m_target, Amount, 0, 0, m_spellProto->Id, true);
@@ -5864,7 +5864,7 @@ void Aura::EventPeriodicLeech(uint32 amount)
 	else
 		m_caster->SetUInt32Value(UNIT_FIELD_HEALTH, mh);
 
-	SendPeriodicAuraLog(m_caster, m_caster, m_spellProto, Amount, -1, 0, FLAG_PERIODIC_HEAL);
+	SendPeriodicAuraLog(m_caster, m_caster, m_spellProto, Amount, -1, 0, (uint32)FLAG_PERIODIC_HEAL);
 }
 
 void Aura::SpellAuraModHitChance(bool apply)
@@ -6338,7 +6338,7 @@ void Aura::EventPeriodicHealthFunnel(uint32 amount)
 		else
 			m_caster->SetUInt32Value(UNIT_FIELD_HEALTH, mh);
 
-		SendPeriodicAuraLog(m_target, m_target, m_spellProto, amount, -1, 0, FLAG_PERIODIC_LEECH);
+		SendPeriodicAuraLog(m_target, m_target, m_spellProto, amount, -1, 0, (uint32)FLAG_PERIODIC_LEECH);
 	}
 }
 
@@ -9915,15 +9915,17 @@ void Aura::SendPeriodicAuraLog(uint32 amt, uint32 Flags)
 }
 
 // log message's
-void Aura::SendPeriodicAuraLog(Unit* Caster, Unit* Target, SpellEntry *sp, uint32 Amount, uint32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId)
+void Aura::SendPeriodicAuraLog(Unit* Caster, Unit* Target, SpellEntry *sp, uint32 Amount, int32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId)
 {
 	Aura::SendPeriodicAuraLog(Caster->GetGUID(), Target, sp, Amount, abs_dmg, resisted_damage, Flags, pSpellId);
 }
 
-void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntry *sp, uint32 Amount, uint32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId, bool crit)
+void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntry *sp, uint32 Amount, int32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId, bool crit)
 {
 	uint32 spellId = sp->logsId ? sp->logsId : (pSpellId ? pSpellId : sp->Id);
 	uint8 isCritical = crit ? 1 : 0;
+	if(abs_dmg == -1)
+		abs_dmg = Amount;
 
 	WorldPacket data(SMSG_PERIODICAURALOG, 46);
 	data << Target->GetNewGUID();		// target guid
@@ -9933,8 +9935,8 @@ void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntr
 	data << uint32(Flags);				// Log type
 	if(Flags == FLAG_PERIODIC_HEAL)
 	{
-		data << (uint32) Amount;	// Healing done
-		data << (uint32) abs_dmg; // overheal. just passed the value inside abs_dmg
+		data << (uint32) Amount;		// Healing done
+		data << (uint32) abs_dmg;		// overheal. just passed the value inside abs_dmg
 		data << uint32(0);				// UNK - Absorbed Heal?
 		data << uint8(isCritical);		// critical tick.
 	}

@@ -51,4 +51,14 @@ protected:
 	void HandlePlayerLoginResult(WorldPacket & pck);
 	void HandlePlayerLogout(WorldPacket & pck);
 	void HandleTeleportRequest(WorldPacket & pck);
+	void HandleError(WorldPacket & pck);
+	void HandleSwitchServer(WorldPacket & pck);
+	void HandleCreatePlayerResult(WorldPacket & pck);
+	void HandleTransporterMapChange(WorldPacket & pck);
+	void HandleSaveAllPlayers(WorldPacket & pck);
+	void HandlePlayerTeleport(WorldPacket & pck);
+	void HandlePlayerInfo(WorldPacket & pck);
+	void HandleChannelAction(WorldPacket & pck);
+	void HandleChannelUpdate(WorldPacket & pck);
+	void HandleChannelLFGDungeonStatusReply(WorldPacket& pck);
 };

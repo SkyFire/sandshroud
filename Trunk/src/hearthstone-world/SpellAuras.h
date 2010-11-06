@@ -778,8 +778,8 @@ public:
 
 	// log message's
 	void SendPeriodicAuraLog(uint32 amt, uint32 Flags);
-	static void SendPeriodicAuraLog(Unit* Caster, Unit* Target, SpellEntry *sp, uint32 Amount, uint32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId = 0);
-	static void SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntry *sp, uint32 Amount, uint32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId = 0, bool crit = false);
+	static void SendPeriodicAuraLog(Unit* Caster, Unit* Target, SpellEntry *sp, uint32 Amount, int32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId = 0);
+	static void SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntry *sp, uint32 Amount, int32 abs_dmg, uint32 resisted_damage, uint32 Flags, uint32 pSpellId = 0, bool crit = false);
 
 	bool WasCastInDuel() { return m_castInDuel; }
 

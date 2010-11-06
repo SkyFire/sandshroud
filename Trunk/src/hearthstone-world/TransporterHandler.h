@@ -110,6 +110,7 @@ public:
 	bool CreateAsTransporter(uint32 EntryID, const char* Name);
 	void UpdatePosition();
 	void TransportPassengers(uint32 mapid, uint32 oldmap, float x, float y, float z);
+	void EventClusterMapChange(uint32 mapid, LocationVector l);
 
 	bool GenerateWaypoints();
 

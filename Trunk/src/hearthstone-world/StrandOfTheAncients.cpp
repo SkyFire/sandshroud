@@ -527,7 +527,7 @@ void StrandOfTheAncients::TimeTick()
 			{
 				for(set<Player*>::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 				{
-					if(pPlayer = (*itr))
+					if((pPlayer = (*itr)) != NULL)
 					{
 						pPlayer->CastSpell(pPlayer,52459,true);
 						if(pPlayer->GetTeam() == Attackers)
@@ -575,7 +575,7 @@ void StrandOfTheAncients::EndGame()
 		m_losingteam = ALLIANCE;
 	else if(allywins > hordewins)
 		m_losingteam = HORDE;
-	else if(allywins = hordewins)
+	else if(allywins == hordewins)
 		m_losingteam = 2;
 	m_nextPvPUpdateTime = 0;
 
@@ -595,7 +595,7 @@ void StrandOfTheAncients::EndGame()
 			if( (*itr)->HasFlag(PLAYER_FLAGS, 0x2) )
 				continue;
 
-			if(m_losingteam = 2)
+			if(m_losingteam == 2)
 				(*itr)->CastSpell((*itr), loser_spell, true);
 			else if(i == m_losingteam)
 				(*itr)->CastSpell((*itr), loser_spell, true);

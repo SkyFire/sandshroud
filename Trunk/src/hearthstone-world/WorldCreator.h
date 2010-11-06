@@ -151,6 +151,9 @@ public:
 
 	uint32 PreTeleport(uint32 mapid, Player* plr, uint32 instanceid);
 	MapMgr* GetInstance(Object* obj);
+	MapMgr* GetInstance(uint32 MapId, uint32 InstanceId);
+	MapMgr* ClusterCreateInstance(uint32 mapid, uint32 instanceid);
+
 	uint32 GenerateInstanceID();
 	void BuildXMLStats(char * m_file);
 	void Load(TaskList * l);

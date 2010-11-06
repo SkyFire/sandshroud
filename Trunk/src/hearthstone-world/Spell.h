@@ -1904,7 +1904,7 @@ public:
 		Dur = -1;
 		SpellDuration *sd = NULL;
 
-		if(GetSpellProto()->DurationIndex && (sd = dbcSpellDuration.LookupEntry(GetSpellProto()->DurationIndex)))
+		if(GetSpellProto()->DurationIndex && ((sd = dbcSpellDuration.LookupEntry(GetSpellProto()->DurationIndex)) != NULL))
 		{
 			Dur = sd->Duration1;
 			//check for negative and 0 durations.

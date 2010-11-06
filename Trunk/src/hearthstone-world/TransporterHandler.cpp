@@ -527,3 +527,27 @@ uint32 Transporter::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* ta
 
 	return cnt;
 }
+
+void Transporter::EventClusterMapChange( uint32 mapid, LocationVector l )
+{
+	m_WayPoints.clear();
+
+	if (!GenerateWaypoints())
+		return;
+
+	SetPosition(l.x, l.y, l.z, 0);
+
+	//hmmm, ok
+	for (WaypointMap::iterator itr=m_WayPoints.begin(); itr!=m_WayPoints.end(); ++itr)
+	{
+		if (itr->second.x == l.x && itr->second.y == l.y && itr->second.z == l.z)
+		{
+			mCurrentWaypoint = itr;
+			break;
+		}
+	}
+
+	mNextWaypoint = GetNextWaypoint();
+
+	//m_canMove = true;
+}

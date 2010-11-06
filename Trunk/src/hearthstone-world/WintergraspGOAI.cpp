@@ -90,21 +90,25 @@ public:
 
 		for(; itr != itrend; ++itr)
 		{
-			if( (*itr)->WinterGrasp == NULL )
+			plr = (*itr);
+			if(plr == NULL)
+				continue;
+
+			if( plr->WinterGrasp == NULL )
 				is_valid = false;
 			else
 				is_valid = true;
 
-			in_range = (_gameobject->GetDistance2dSq((*itr)) <= 600) ? true : false;
+			in_range = (_gameobject->GetDistance2dSq(plr) <= 600) ? true : false;
 
-			it2 = StoredPlayers.find((*itr)->GetLowGUID());
+			it2 = StoredPlayers.find(plr->GetLowGUID());
 			if( it2 == StoredPlayers.end() )
 			{
 				if( in_range )
 				{
-					StoredPlayers.insert(make_pair((*itr)->GetLowGUID(), timeptr));
+					StoredPlayers.insert(make_pair(plr->GetLowGUID(), timeptr));
 					if( is_valid )
-						plrcounts[(*itr)->GetTeam()]++;
+						plrcounts[plr->GetTeam()]++;
 				}
 			}
 			else
@@ -117,9 +121,10 @@ public:
 				{
 					it2->second = timeptr;
 					if( is_valid )
-						plrcounts[(*itr)->GetTeam()]++;
+						plrcounts[plr->GetTeam()]++;
 				}
 			}
+			plr = NULL;
 		}
 
 		if( Status == 100 && m_workshopStatus != OWNER_ALLIANCE )
@@ -299,21 +304,25 @@ public:
 			return;
 		for(; itr != itrend; ++itr)
 		{
-			if( (*itr)->WinterGrasp == NULL )
+			plr = (*itr);
+			if(plr == NULL)
+				continue;
+
+			if( plr->WinterGrasp == NULL )
 				is_valid = false;
 			else
 				is_valid = true;
 
-			in_range = (_gameobject->GetDistance2dSq((*itr)) <= 600) ? true : false;
+			in_range = (_gameobject->GetDistance2dSq(plr) <= 600) ? true : false;
 
-			it2 = StoredPlayers.find((*itr)->GetLowGUID());
+			it2 = StoredPlayers.find(plr->GetLowGUID());
 			if( it2 == StoredPlayers.end() )
 			{
 				if( in_range )
 				{
-					StoredPlayers.insert(make_pair((*itr)->GetLowGUID(), timeptr));
+					StoredPlayers.insert(make_pair(plr->GetLowGUID(), timeptr));
 					if( is_valid )
-						plrcounts[(*itr)->GetTeam()]++;
+						plrcounts[plr->GetTeam()]++;
 				}
 			}
 			else
@@ -326,7 +335,7 @@ public:
 				{
 					it2->second = timeptr;
 					if( is_valid )
-						plrcounts[(*itr)->GetTeam()]++;
+						plrcounts[plr->GetTeam()]++;
 				}
 			}
 		}
