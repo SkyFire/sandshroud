@@ -175,6 +175,9 @@ void DynamicObject::UpdateTargets()
 		{
 			itr2 = itr;
 
+			if(!(*itr2)) //Have no idea how this happens.
+				continue;
+
 			if( !( (*itr2)->IsUnit() ) || ! TO_UNIT( *itr2 )->isAlive() || ((*itr2)->GetTypeId() == TYPEID_UNIT && TO_CREATURE(*itr2)->IsTotem() ) )
 				continue;
 

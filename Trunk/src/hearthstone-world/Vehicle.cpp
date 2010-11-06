@@ -21,14 +21,15 @@
 
 Vehicle::Vehicle(uint64 guid) : Creature(guid)
 {
-	m_vehicleEntry = 0;
-	m_ppassengerCount = 0;
-	m_maxPassengers = 0;
-	m_seatSlotMax = 0;
+	m_vehicleEntry = NULL;
+	m_ppassengerCount = NULL;
+	m_maxPassengers = NULL;
+	m_seatSlotMax = NULL;
 	m_isVehicle = true;
 	Initialised = false;
 	m_CreatedFromSpell = false;
-	m_mountSpell = 0;
+	m_mountSpell = NULL;
+	m_CastSpellOnMount = NULL;
 
 	for(uint8 i = 0; i < 8; i++)
 	{
@@ -40,7 +41,7 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 
 Vehicle::~Vehicle()
 {
-	m_ppassengerCount = 0;
+	m_ppassengerCount = NULL;
 	if( IsInWorld() )
 		RemoveFromWorld(false, true);
 }
@@ -1166,7 +1167,7 @@ void Vehicle::ChangePowerType()
 		}break;
 	default:
 		{
-			sLog.outError("Vehicle %u, Vehicle Entry %u has an unknown powertype.", GetEntry(), GetVehicleEntry());
+			sLog.outError("Vehicle %u, Vehicle Entry %u has an unknown powertype %u.", GetEntry(), GetVehicleEntry(), ve->m_powerType);
 		}break;
 	}
 }

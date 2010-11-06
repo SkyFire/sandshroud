@@ -251,9 +251,12 @@ bool ChatHandler::HandleLearnCommand(const char* args, WorldSession *m_session)
 	}
 
 	uint32 spell = atol((char*)args);
+	if( spell == 0 )
+		spell = GetSpellIDFromLink( args );
+
 	sWorld.LogGM(m_session, "taught %s spell %u", plr->GetName(), spell);
 
-	SpellEntry * sp = dbcSpell.LookupEntry(spell);
+	SpellEntry * sp = dbcSpell.LookupEntryForced(spell);
 	if(!plr->GetSession()->HasGMPermissions() && (sp->Effect[0]==SPELL_EFFECT_INSTANT_KILL||sp->Effect[1]==SPELL_EFFECT_INSTANT_KILL||sp->Effect[2]==SPELL_EFFECT_INSTANT_KILL))
 	{
 		SystemMessage(m_session, "don't be an idiot and teach players instakill spells. this action has been logged.");
@@ -1472,6 +1475,8 @@ bool ChatHandler::HandleRemovePetSpellCommand(const char* args, WorldSession* m_
 	}
 
 	uint32 SpellId = atol(args);
+	if(SpellId == 0)
+		SpellId = GetSpellIDFromLink( args );
 	SpellEntry * spell = dbcSpell.LookupEntry(SpellId);
 	if(!SpellId || !spell)
 	{
@@ -1685,8 +1690,11 @@ bool ChatHandler::HandleCastAllCommand(const char* args, WorldSession* m_session
 	}
 	Player* plr;
 	uint32 spellid = atol(args);
-	SpellEntry * info = dbcSpell.LookupEntry(spellid);
-	if(!info)
+	if(spellid == 0)
+		spellid = GetSpellIDFromLink( args );
+
+	SpellEntry * info = dbcSpell.LookupEntryForced(spellid);
+	if(info == NULL)
 	{
 		RedSystemMessage(m_session, "Invalid spell specified.");
 		return true;
@@ -2291,7 +2299,6 @@ bool ChatHandler::HandleRemoveItemCommand(const char * args, WorldSession * m_se
 		count = 1;
 	else if(argc != 2 || !count)
 		return false;
-
 	ocount = count;
 	Player* plr = getSelectedChar(m_session, true);
 	if(!plr)

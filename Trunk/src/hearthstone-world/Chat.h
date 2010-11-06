@@ -669,7 +669,9 @@ protected:
 	bool HandleTrackerListCommand(const char * args, WorldSession * m_session);
 	bool HandleAddTrackerCommand(const char * args, WorldSession * m_session);
 	bool HandleDelTrackerCommand(const char * args, WorldSession * m_session);
-
+	//Id from links
+	uint16 GetItemIDFromLink(const char* link, uint32* itemid);
+	int32 GetSpellIDFromLink(const char* link);
 private:
 	Mutex m_lock;
 };

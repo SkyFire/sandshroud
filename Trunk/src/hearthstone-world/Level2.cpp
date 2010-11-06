@@ -480,8 +480,11 @@ bool ChatHandler::HandleCastSpellCommand(const char* args, WorldSession *m_sessi
 	}
 
 	uint32 spellid = atol(args);
-	SpellEntry *spellentry = dbcSpell.LookupEntry(spellid);
-	if(!spellentry)
+	if(spellid == 0)
+		spellid = GetSpellIDFromLink( args );
+
+	SpellEntry *spellentry = dbcSpell.LookupEntryForced(spellid);
+	if(spellentry == NULL)
 	{
 		RedSystemMessage(m_session, "Invalid spell id!");
 		return false;
@@ -509,8 +512,10 @@ bool ChatHandler::HandleMonsterCastCommand(const char * args, WorldSession * m_s
 		return true;
 	}
 	uint32 spellId = (uint32)atoi(args);
-	SpellEntry * tmpsp = NULL;
-	tmpsp = dbcSpell.LookupEntry(spellId);
+	if(spellId == 0)
+		spellId = GetSpellIDFromLink( args );
+
+	SpellEntry * tmpsp = dbcSpell.LookupEntryForced(spellId);
 	if(tmpsp != NULL)
 		sEventMgr.AddEvent(TO_UNIT(crt), &Unit::EventCastSpell, TO_UNIT(m_session->GetPlayer()), tmpsp, EVENT_AURA_APPLY, 250, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
@@ -754,6 +759,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 		{
 			foundonmap = false;
 			GOSpawnList::iterator itr;
+			ASSERT(GObj->GetMapMgr()->GetBaseMap() != NULL)
 			CellSpawns * c = GObj->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cellx, celly);
 			for(itr = c->GOSpawns.begin(); itr != c->GOSpawns.end(); itr++)
 			{

@@ -238,8 +238,14 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 	if(strlen(args) < 1)
 		return false;
 
-	if(sscanf(args, "%u %u %d", &itemid, &count, &randomprop) < 1)
-		return false;
+	if(sscanf(args, "%u %u %i", &itemid, &count, &randomprop) < 1)
+	{
+		// check for item link
+		uint16 ofs = GetItemIDFromLink(args, &itemid);
+		if(itemid == 0)
+			return false;
+		sscanf(args+ofs,"%u %i", &count, &randomprop); // these may be empty
+	}
 
 	if(count < 1)
 		count = 1;
@@ -771,7 +777,7 @@ bool ChatHandler::HandleTriggerCommand(const char* args, WorldSession* m_session
 {
 	int32 instance_id;
 	uint32 trigger_id;
-	int valcount = sscanf(args, "%u %d", (unsigned int*)&trigger_id, (int*)&instance_id);
+	int valcount = sscanf(args, "%u %i", (unsigned int*)&trigger_id, (int*)&instance_id);
 	if(!valcount)
 		return false;
 	if(valcount == 1)
@@ -796,6 +802,9 @@ bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_sessio
 		return true;
 
 	uint32 SpellId = atol(args);
+	if(SpellId == 0)
+		SpellId = GetSpellIDFromLink( args );
+
 	if(SpellId == 0)
 	{
 		RedSystemMessage(m_session, "You must specify a spell id.");
@@ -826,7 +835,7 @@ bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_se
 	int valcount = sscanf(args, "%u", (unsigned int*)&id);
 	if(valcount && target->m_spawn != NULL)
 	{
-		snprintf(sql, 512, "UPDATE creature_spawns SET respawnlink = '%u' WHERE id = '%u'", (unsigned int)id, (unsigned int)target->GetSQL_id());
+		snprintf(sql, 512, "UPDATE creature_spawns SET respawnlink = '%u' WHERE id = '%u'", id, target->GetSQL_id());
 		WorldDatabase.Execute( sql );
 		BlueSystemMessage(m_session, "Spawn linking for this NPC has been updated: %u", id);
 	}
