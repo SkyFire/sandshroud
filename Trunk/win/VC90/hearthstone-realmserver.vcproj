@@ -127,7 +127,7 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory=".\..\..\bin\Release_x64"
-			IntermediateDirectory=".\hearthstone-realmserver___Win32_Release_x64"
+			IntermediateDirectory=".\hearthstone-realmserver___x64_Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
