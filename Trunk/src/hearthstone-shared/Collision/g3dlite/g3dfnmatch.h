@@ -26,20 +26,20 @@ namespace G3D {
 
 #if defined(G3D_WIN32) 
 
-#   if ! defined(FNM_NOMATCH)
-#	   define FNM_NOMATCH		1	  /* Match failed. */
-#	   define FNM_NOESCAPE	0x01	  /* Disable backslash escaping. */
-#	   define FNM_PATHNAME	0x02	  /* Slash must be matched by slash. */
-#	   define FNM_PERIOD	  0x04	  /* Period must be matched by period. */
-#	   define FNM_LEADING_DIR 0x08	  /* Ignore /<tail> after Imatch. */
-#	   define FNM_CASEFOLD	0x10	  /* Case insensitive search. */
-#	   define FNM_PREFIX_DIRS 0x20	  /* Directory prefixes of pattern match too. */
+#if ! defined(FNM_NOMATCH)
+#define FNM_NOMATCH		1	  /* Match failed. */
+#define FNM_NOESCAPE	0x01	  /* Disable backslash escaping. */
+#define FNM_PATHNAME	0x02	  /* Slash must be matched by slash. */
+#define FNM_PERIOD	  0x04	  /* Period must be matched by period. */
+#define FNM_LEADING_DIR 0x08	  /* Ignore /<tail> after Imatch. */
+#define FNM_CASEFOLD	0x10	  /* Case insensitive search. */
+#define FNM_PREFIX_DIRS 0x20	  /* Directory prefixes of pattern match too. */
 #	endif
 
 #else 
 
 	// On non-windows systems, include fnmatch directly
-#   include <fnmatch.h>
+#include <fnmatch.h>
 #endif
 
 

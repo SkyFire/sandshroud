@@ -28,7 +28,7 @@ namespace G3D {
 #ifdef _MSC_VER
 // Turn off "conditional expression is constant" warning; MSVC generates this
 // for debug assertions in inlined methods.
-#   pragma warning (disable : 4127)
+#pragma warning (disable : 4127)
 #endif
 
 /** Base class for WeakReferenceCountedPointer */
@@ -262,7 +262,7 @@ public:
 		setPointer(p.pointer());
 	}
 
-#   if (! defined(MSC_VER) || (MSC_VER >= 1300))
+#if (! defined(MSC_VER) || (MSC_VER >= 1300))
 	/**
 	  Explicit cast to a subclass.  Acts like dynamic cast; the result will be NULL if
 	  the cast cannot succeed.  Not supported on VC6.
@@ -281,7 +281,7 @@ public:
 	const ReferenceCountedPointer<S> downcast() const {
 		return ReferenceCountedPointer<S>(dynamic_cast<const S*>(m_pointer));
 	}
-#   endif
+#endif
 
 	// We need an explicit version of the copy constructor as well or 
 	// the default copy constructor will be used.

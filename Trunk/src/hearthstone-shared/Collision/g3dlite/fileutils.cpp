@@ -260,14 +260,14 @@ static int isFileGood(FILE* f) {
 FILE* createTempFile() {
 	FILE* t = NULL;
 
-//#   ifdef G3D_WIN32
+//#ifdef G3D_WIN32
 		t = tmpfile();
-//#   else
+//#else
 //		// On Unix, tmpfile generates a warning for any code that links against it.
 //		const char* tempfilename = "/tmp/g3dtemp.XXXXXXXX";
 //		mktemp(tempfilename);
 //		t = fopen(tempfilename, "w");	
-//#   endif
+//#endif
 
 #	ifdef _WIN32
 		char* n = NULL;
@@ -278,7 +278,7 @@ FILE* createTempFile() {
 		return t;
 	}
 
-#   ifdef G3D_WIN32
+#ifdef G3D_WIN32
 	/* tmpfile failed; try the tmpnam routine */
 	t = fopen(tmpnam(NULL), "w+");
 	if (isFileGood(t)) {
@@ -318,7 +318,7 @@ FILE* createTempFile() {
 	if (isFileGood(t)) {
 		return t;
 	}
-#   else
+#else
 	sprintf(name, "%s/tmp%d", "/tmp", rand());
 	t = fopen(name, "w+");
 	if (isFileGood(t)) {
@@ -504,12 +504,12 @@ bool fileExists
 	const std::string& filename = (endsWith(_filename, "/") || endsWith(_filename, "\\")) ? _filename.substr(0, _filename.length() - 1) : _filename;
 
 	if (trustCache && lookInZipfiles) {
-#	   ifdef G3D_WIN32
+#ifdef G3D_WIN32
 			// Case insensitive
 			return FileSystemCache::instance().fileExists(toLower(filename));
-#	   else
+#else
 			return FileSystemCache::instance().fileExists(filename);
-#	   endif
+#endif
 	}
 
 	// Useful for debugging
@@ -826,7 +826,7 @@ static void getFileOrDirListNormal
 		path = path.substr(0, path.size() - 1);
 	}
 
-#   ifdef G3D_WIN32
+#ifdef G3D_WIN32
 	{
 	   struct _finddata_t fileinfo;
 
@@ -848,7 +848,7 @@ static void getFileOrDirListNormal
 			result = _findnext(handle, &fileinfo);
 		}
 	}
-#   else
+#else
 	{
 		if (path == "") {
 			// Empty paths don't work on Unix
@@ -896,7 +896,7 @@ static void getFileOrDirListNormal
 			closedir(dir);
 		}
 	}
-#   endif
+#endif
 }
 
 #if _HAVE_ZIP
@@ -1037,12 +1037,12 @@ std::string filenameBaseExt(const std::string& filename) {
 		i = j;
 	}
 
-#   ifdef G3D_WIN32
+#ifdef G3D_WIN32
 		j = (int)filename.rfind(":");
 		if ((i == -1) && (j >= 0)) {
 			i = j;
 		}
-#   endif
+#endif
 
 	if (i == -1) {
 		return filename;
@@ -1081,12 +1081,12 @@ std::string filenamePath(const std::string& filename) {
 		i = j;
 	}
 
-#   ifdef G3D_WIN32
+#ifdef G3D_WIN32
 		j = (int)filename.rfind(":");
 		if ((i == -1) && (j >= 0)) {
 			i = j;
 		}
-#   endif
+#endif
 
 	if (i == -1) {
 		return "";

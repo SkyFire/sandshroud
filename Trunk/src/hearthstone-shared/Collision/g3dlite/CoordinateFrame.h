@@ -34,7 +34,7 @@
 #ifdef _MSC_VER
 // Turn off "conditional expression is constant" warning; MSVC generates this
 // for debug assertions in inlined methods.
-#   pragma warning (disable : 4127)
+#pragma warning (disable : 4127)
 #endif
 
 

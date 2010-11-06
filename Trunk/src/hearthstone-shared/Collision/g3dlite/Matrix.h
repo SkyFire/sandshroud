@@ -454,7 +454,7 @@ public:
 	void arrayDivInPlace(const Matrix& B);
 
 	// Declares an array unary method and its explicit-argument counterpart
-#   define DECLARE_METHODS_1(method)\
+#define DECLARE_METHODS_1(method)\
 	inline Matrix method() const {\
 		Matrix C(impl->R, impl->C);\
 		impl->method(*C.impl);\
@@ -471,7 +471,7 @@ public:
 	DECLARE_METHODS_1(arraySin)
 	DECLARE_METHODS_1(negate)
 
-#   undef DECLARE_METHODS_1
+#undef DECLARE_METHODS_1
 
 	inline Matrix operator-() const {
 		return negate();

@@ -42,21 +42,21 @@ inline bool isValidHeapPointer(const void* x) {
 
 // fatal error for unsupported architectures
 #if defined(__powerpc__)
-#   error PowerPC is not supported by G3D!
+#error PowerPC is not supported by G3D!
 #endif
 
 #if defined(G3D_RELEASEDEBUG)
-#   define G3D_DEBUGRELEASE
+#define G3D_DEBUGRELEASE
 #endif
 
 #if defined(G3D_DEBUGRELEASE) && defined(_DEBUG)
-#   undef _DEBUG
+#undef _DEBUG
 #endif
 
 /** @def G3D_DEBUG()
 	Defined if G3D is built in debug mode. */
 #if !defined(G3D_DEBUG) && (defined(_DEBUG) || defined(G3D_DEBUGRELEASE))
-#   define G3D_DEBUG
+#define G3D_DEBUG
 #endif
 
 #ifndef _MSC_VER
@@ -99,9 +99,9 @@ inline bool isValidHeapPointer(const void* x) {
 // processor.
 
 #ifdef G3D_LINUX
-#   ifndef __GNUC__
-#	   error G3D only supports the gcc compiler on Linux.
-#   endif
+#ifndef __GNUC__
+#error G3D only supports the gcc compiler on Linux.
+#endif
 #endif
 
 #ifdef G3D_OSX
@@ -127,7 +127,7 @@ inline bool isValidHeapPointer(const void* x) {
 // Microsoft Visual C++ 5.0	_MSC_VER		  = 1100
 
 // Turn off warnings about deprecated C routines
-#   pragma warning (disable : 4996)
+#pragma warning (disable : 4996)
 
 // Turn off "conditional expression is constant" warning; MSVC generates this
 // for debug assertions in inlined methods.
@@ -138,17 +138,17 @@ inline bool isValidHeapPointer(const void* x) {
 #  define G3D_DEPRECATED __declspec(deprecated)
 
 // Prevent Winsock conflicts by hiding the winsock API
-#   ifndef _WINSOCKAPI_
-#	   define _G3D_INTERNAL_HIDE_WINSOCK_
-#	   define _WINSOCKAPI_
-#   endif
+#ifndef _WINSOCKAPI_
+#define _G3D_INTERNAL_HIDE_WINSOCK_
+#define _WINSOCKAPI_
+#endif
 
 // Disable 'name too long for browse information' warning
-#   pragma warning (disable : 4786)
+#pragma warning (disable : 4786)
 // TODO: remove
-#   pragma warning (disable : 4244)
+#pragma warning (disable : 4244)
 
-#   define restrict
+#define restrict
 
 	// On MSVC, we need to link against the multithreaded DLL version of
 	// the C++ runtime because that is what SDL and ZLIB are compiled
@@ -179,7 +179,7 @@ inline bool isValidHeapPointer(const void* x) {
 
 /** @def G3D_START_AT_MAIN()
 	Defines necessary wrapper around WinMain on Windows to allow transfer of execution to main(). */
-#   define G3D_START_AT_MAIN()\
+#define G3D_START_AT_MAIN()\
 int WINAPI G3D_WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw);\
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 	return G3D_WinMain(hInst, hPrev, szCmdLine, sw);\
@@ -189,7 +189,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 
 /** @def G3D_START_AT_MAIN()
 	Defines necessary wrapper around WinMain on Windows to allow transfer of execution to main(). */
-#   define G3D_START_AT_MAIN()
+#define G3D_START_AT_MAIN()
 
 #endif  // win32
 
@@ -197,35 +197,35 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) {\
 
 #	include <stdint.h>
 
-#   if __STDC_VERSION__ < 199901
+#if __STDC_VERSION__ < 199901
 #		define restrict __restrict__
-#   endif
+#endif
 
 /** @def G3D_DEPRECATED()
 	Creates deprecated warning. */
-#   define G3D_DEPRECATED __attribute__((__deprecated__))
+#define G3D_DEPRECATED __attribute__((__deprecated__))
 
 // setup function calling conventions
-#   if defined(__i386__) && ! defined(__x86_64__)
+#if defined(__i386__) && ! defined(__x86_64__)
 
-#	   ifndef __cdecl
+#ifndef __cdecl
 #		   define __cdecl __attribute__((cdecl))
-#	   endif
+#endif
 
-#	   ifndef __stdcall
+#ifndef __stdcall
 #		   define __stdcall __attribute__((stdcall))
-#	   endif
+#endif
 
-#   elif defined(__x86_64__)
+#elif defined(__x86_64__)
 
-#	   ifndef __cdecl
+#ifndef __cdecl
 #		   define __cdecl
-#	   endif
+#endif
 
-#	   ifndef __stdcall
+#ifndef __stdcall
 #		   define __stdcall
-#	   endif
-#   endif // calling conventions
+#endif
+#endif // calling conventions
 
 #endif
 

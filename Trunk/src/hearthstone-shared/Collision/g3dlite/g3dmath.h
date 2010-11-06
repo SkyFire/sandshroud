@@ -22,10 +22,10 @@
 
 #ifdef _MSC_VER
 // Disable conditional expression is constant, which occurs incorrectly on inlined functions
-#   pragma warning (push)
-#   pragma warning (disable : 4127)
+#pragma warning (push)
+#pragma warning (disable : 4127)
 // disable: "C++ exception handler used"
-#   pragma warning (disable : 4530)
+#pragma warning (disable : 4530)
 #endif
 
 #include "platform.h"
@@ -36,9 +36,9 @@
 
 #ifdef _MSC_VER
 	// Visual Studio is missing inttypes.h
-#   ifndef PRId64
-#	   define PRId64 "I64d"
-#   endif
+#ifndef PRId64
+#define PRId64 "I64d"
+#endif
 #else
 #include <inttypes.h>
 #endif
@@ -824,7 +824,7 @@ inline uint16 flipEndian16(const uint16 x) {
 } // namespace
 
 #ifdef _MSC_VER
-#   pragma warning (pop)
+#pragma warning (pop)
 #endif
 
 #endif

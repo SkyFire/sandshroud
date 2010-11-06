@@ -31,12 +31,12 @@
 #include <algorithm>
 
 #ifdef _MSC_VER
-#   include <new>
+#include <new>
 	
-#   pragma warning (push)
+#pragma warning (push)
 	// debug information too long
-#   pragma warning( disable : 4312)
-#   pragma warning( disable : 4786)
+#pragma warning( disable : 4312)
+#pragma warning( disable : 4786)
 #endif
 
 
@@ -1272,7 +1272,7 @@ template<class T> bool contains(const T* array, int len, const T& e) {
 } // namespace
 
 #ifdef _MSC_VER
-#   pragma warning (pop)
+#pragma warning (pop)
 #endif
 
 #endif

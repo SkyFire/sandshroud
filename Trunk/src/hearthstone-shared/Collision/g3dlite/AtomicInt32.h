@@ -24,7 +24,7 @@
 #include "g3dmath.h"
 
 #if defined(G3D_OSX)
-#   include <libkern/OSAtomic.h>
+#include <libkern/OSAtomic.h>
 #endif
 
 namespace G3D {
@@ -39,13 +39,13 @@ namespace G3D {
  */
 class AtomicInt32 {
 private:
-#   if defined(G3D_WIN32) 
+#if defined(G3D_WIN32) 
 	volatile long		   m_value;
-#   elif defined(G3D_OSX)
+#elif defined(G3D_OSX)
 	int32_t				 m_value;
-#   else
+#else
 	volatile int32		  m_value;
-#   endif
+#endif
 
 
 public:
@@ -81,11 +81,11 @@ public:
 
 	/** Returns the old value, before the add. */
 	int32 add(const int32 x) {
-#	   if defined(G3D_WIN32)
+#if defined(G3D_WIN32)
 
 			return InterlockedExchangeAdd(&m_value, x);
 
-#	   elif defined(G3D_LINUX) || defined(G3D_FREEBSD)
+#elif defined(G3D_LINUX) || defined(G3D_FREEBSD)
 
 			int32 old;
 			asm volatile ("lock; xaddl %0,%1"
@@ -94,13 +94,13 @@ public:
 				  : "memory", "cc");
 			return old;
 			
-#	   elif defined(G3D_OSX)
+#elif defined(G3D_OSX)
 
 			int32 old = m_value;
 			OSAtomicAdd32(x, &m_value);
 			return old;
 
-#	   endif
+#endif
 	}
 
 	/** Returns old value. */
@@ -109,23 +109,23 @@ public:
 	}
 
 	void increment() {
-#	   if defined(G3D_WIN32)
+#if defined(G3D_WIN32)
 			// Note: returns the newly incremented value
 			InterlockedIncrement(&m_value);
-#	   elif defined(G3D_LINUX) || defined(G3D_FREEBSD)
+#elif defined(G3D_LINUX) || defined(G3D_FREEBSD)
 			add(1);
-#	   elif defined(G3D_OSX)
+#elif defined(G3D_OSX)
 			// Note: returns the newly incremented value
 			OSAtomicIncrement32(&m_value);
-#	   endif
+#endif
 	}
 
 	/** Returns zero if the result is zero after decrement, non-zero otherwise.*/
 	int32 decrement() {
-#	   if defined(G3D_WIN32)
+#if defined(G3D_WIN32)
 			// Note: returns the newly decremented value
 			return InterlockedDecrement(&m_value);
-#	   elif defined(G3D_LINUX)  || defined(G3D_FREEBSD)
+#elif defined(G3D_LINUX)  || defined(G3D_FREEBSD)
 			unsigned char nz;
 
 			asm volatile ("lock; decl %1;\n\t"
@@ -134,10 +134,10 @@ public:
 						  : "m" (m_value)
 						  : "memory", "cc");
 			return nz;
-#	   elif defined(G3D_OSX)
+#elif defined(G3D_OSX)
 			// Note: returns the newly decremented value
 			return OSAtomicDecrement32(&m_value);
-#	   endif
+#endif
 	}
 
 
@@ -151,9 +151,9 @@ public:
 		Under VC6 the sign bit may be lost.
 	 */ 
 	int32 compareAndSet(const int32 comperand, const int32 exchange) {
-#	   if defined(G3D_WIN32)
+#if defined(G3D_WIN32)
 			return InterlockedCompareExchange(&m_value, exchange, comperand);
-#	   elif defined(G3D_LINUX) || defined(G3D_FREEBSD) || defined(G3D_OSX)
+#elif defined(G3D_LINUX) || defined(G3D_FREEBSD) || defined(G3D_OSX)
 			// Based on Apache Portable Runtime
 			// http://koders.com/c/fid3B6631EE94542CDBAA03E822CA780CBA1B024822.aspx
 			int32 ret;
@@ -165,7 +165,7 @@ public:
 
 			// Note that OSAtomicCompareAndSwap32 does not return a useful value for us
 			// so it can't satisfy the cmpxchgl contract.
-#	   endif
+#endif
 	}
 
 };

@@ -70,8 +70,8 @@ Vector3 CollisionDetection::separatingAxisForSolidBoxSolidBox(
 }
 
 #ifdef _MSC_VER
-#   pragma warning (push)
-#   pragma warning (disable : 4244)
+#pragma warning (push)
+#pragma warning (disable : 4244)
 #endif
 
 float CollisionDetection::projectedDistanceForSolidBoxSolidBox(
@@ -1661,7 +1661,7 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 		// The intersection point is inside the triangle; that is the location where
 		// the sphere hits the triangle.
 
-#	   ifdef G3D_DEBUG
+#ifdef G3D_DEBUG
 		{
 			// Internal consistency checks
 			ASSERT(b[0] >= 0.0 && b[0] <= 1.0f);
@@ -1676,7 +1676,7 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 			// isPointInsideTriangle(triangle.vertex(0), triangle.vertex(1), triangle.vertex(2), triangle.normal(), 
 			// outLocation, b, triangle.primaryAxis());
 		}
-#	   endif
+#endif
 
 		return time;
 	}
@@ -1712,7 +1712,7 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 
 		b[next[next[edgeIndex]]] = 0.0f;
 
-#	   ifdef G3D_DEBUG
+#ifdef G3D_DEBUG
 		{
 			// Internal consistency checks
 			for (int i = 0; i < 3; ++i) {
@@ -1727,7 +1727,7 @@ float CollisionDetection::collisionTimeForMovingSphereFixedTriangle(
 			// Call again so that we can debug the problem
 			collisionTimeForMovingPointFixedSphere(point, -velocity, sphere, dummy, dummy);
 		}
-#	   endif
+#endif
 
 		// Due to tiny roundoffs, these values might be slightly out of bounds.
 		// Ensure that they are legal.  Note that the above debugging code
@@ -1988,7 +1988,7 @@ Vector3 CollisionDetection::closestPointOnTrianglePerimeter(
 		}
 	}
 
-#   ifdef G3D_DEBUG
+#ifdef G3D_DEBUG
 	{
 		Vector3 diff = r[edgeIndex] - v[edgeIndex];
 		ASSERT(fuzzyEq(diff.direction().dot(edgeDirection[edgeIndex]), 1.0f) ||
@@ -1997,7 +1997,7 @@ Vector3 CollisionDetection::closestPointOnTrianglePerimeter(
 		ASSERT(frac >= -0.000001);
 		ASSERT(frac <= 1.000001);
 	}
-#   endif
+#endif
 
 	return r[edgeIndex];
 }
@@ -2046,7 +2046,7 @@ bool CollisionDetection::isPointInsideTriangle(
 	// See if all barycentric coordinates are non-negative
 
 	// 2D area via cross product
-#   define AREA2(d, e, f)  (((e)[i] - (d)[i]) * ((f)[j] - (d)[j]) - ((f)[i] - (d)[i]) * ((e)[j] - (d)[j]))
+#define AREA2(d, e, f)  (((e)[i] - (d)[i]) * ((f)[j] - (d)[j]) - ((f)[i] - (d)[i]) * ((e)[j] - (d)[j]))
 
 	// Area of the polygon
 	float area = AREA2(v0, v1, v2);
@@ -2074,7 +2074,7 @@ bool CollisionDetection::isPointInsideTriangle(
 
 	b[2] = 1.0f - b[0] - b[1];
 
-#   undef AREA2
+#undef AREA2
 
 	return (b[2] >= 0.0f) && (b[2] <= 1.0f);
 }

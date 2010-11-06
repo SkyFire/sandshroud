@@ -29,7 +29,7 @@
 
 #ifdef G3D_WIN32
 // For chdir, mkdir, etc.
-#   include <direct.h>
+#include <direct.h>
 #endif
 
 namespace G3D {

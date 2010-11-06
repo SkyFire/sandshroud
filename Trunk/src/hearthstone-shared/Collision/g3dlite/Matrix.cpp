@@ -1327,7 +1327,7 @@ void Matrix::Impl::inverseInPlaceGaussJordan() {
 	ASSERT(R == C);
 
 	// Exchange to float elements
-#   define SWAP(x, y) {float temp = x; x = y; y = temp;}
+#define SWAP(x, y) {float temp = x; x = y; y = temp;}
 
 	// The integer arrays pivot, rowIndex, and colIndex are
 	// used for bookkeeping on the pivoting
@@ -1425,7 +1425,7 @@ void Matrix::Impl::inverseInPlaceGaussJordan() {
 		}
 	} 
 	
-#   undef SWAP
+#undef SWAP
 }
 
 

@@ -22,8 +22,8 @@
 
 #ifdef _MSC_VER
 // Disable conditional expression is constant, which occurs incorrectly on inlined functions
-#   pragma warning (push)
-#   pragma warning( disable : 4127 )
+#pragma warning (push)
+#pragma warning( disable : 4127 )
 #endif
 
 #include "platform.h"
@@ -241,7 +241,7 @@ public:
 } // namespace
 
 #ifdef _MSC_VER
-#   pragma warning (pop)
+#pragma warning (pop)
 #endif
 
 #endif

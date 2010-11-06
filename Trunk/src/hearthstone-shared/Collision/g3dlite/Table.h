@@ -32,9 +32,9 @@
 #include "MemoryManager.h"
 
 #ifdef _MSC_VER
-#   pragma warning (push)
+#pragma warning (push)
 	// Debug name too long warning
-#   pragma warning (disable : 4786)
+#pragma warning (disable : 4786)
 #endif
 
 namespace G3D {
@@ -171,7 +171,7 @@ private:
 	};
 
 	void checkIntegrity() const {
-#	   ifdef G3D_DEBUG
+#ifdef G3D_DEBUG
 		   ASSERT(m_bucket == NULL || isValidHeapPointer(m_bucket));
 		   for (size_t b = 0; b < m_numBuckets; ++b) {
 			   Node* node = m_bucket[b];
@@ -181,7 +181,7 @@ private:
 				   node = node->next;
 			   }
 		   }
-#	   endif
+#endif
 	}
 
 	/** Number of elements in the table.*/
@@ -924,7 +924,7 @@ public:
 } // namespace
 
 #ifdef _MSC_VER
-#   pragma warning (pop)
+#pragma warning (pop)
 #endif
 
 #endif
