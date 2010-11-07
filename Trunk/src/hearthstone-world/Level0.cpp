@@ -159,25 +159,24 @@ bool ChatHandler::HandleStartCommand(const char* args, WorldSession *m_session)
 	{
 		switch (raceid)
 		{
-			case 1: argument = "human";		break;
-			case 2:	argument = "orc";		break;
-			case 3:	argument = "dwarf";		break;
-			case 4:	argument = "nightelf";	break;
-			case 5:	argument = "undead";	break;
-			case 6:	argument = "tauren";	break;
-			case 7: argument = "gnome";		break;
-			case 8:	argument = "troll";		break;
-			case 10:argument = "bloodelf";	break;
-			case 11:argument = "draenei";	break;
-			default:
+		case 1:	argument = "human";		break;
+		case 2:	argument = "orc";		break;
+		case 3:	argument = "dwarf";		break;
+		case 4:	argument = "nightelf";	break;
+		case 5:	argument = "undead";	break;
+		case 6:	argument = "tauren";	break;
+		case 7: argument = "gnome";		break;
+		case 8:	argument = "troll";		break;
+		case 10:argument = "bloodelf";	break;
+		case 11:argument = "draenei";	break;
+		default:
 			{
 				RedSystemMessage(m_session, "Could not extract race from slected character.");
 				return true;
 			}
 
 		}
-	}
-	//Optional argument
+	} // Optional argument
 	else if(m_plyr && args && strlen(args) > 2)
 	{
 		HEARTHSTONE_TOLOWER(argument);
@@ -417,5 +416,21 @@ bool ChatHandler::HandleModifyPlayerFlagsCommand(const char *args, WorldSession 
 		return true;
 	uint32 flags = atol(args);
 	player->SetFlag(PLAYER_FLAGS, flags);
+	return true;
+}
+
+bool ChatHandler::HandleMirrorTimerCommand( const char *args , WorldSession *m_session )
+{
+	uint32 type = 0, spellid = 0;
+	sscanf(args, "%u %u", &type, &spellid);
+
+	WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
+	data << uint32(atol(args));
+	data << int32(60000);
+	data << int32(60000);
+	data << uint32(0xFFFFFFFF);
+	data << uint8(0);
+	data << uint32(spellid);
+	m_session->SendPacket(&data);
 	return true;
 }

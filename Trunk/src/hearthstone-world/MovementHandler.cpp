@@ -202,10 +202,9 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 	//player is swiming and not flagged as in the water
 	if( movement_info.flags & MOVEFLAG_SWIMMING && !( _player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING ) )
 	{
-		// Changed in 3.1 TODO: dismount for flying mounts only
-		// dismount if mounted
-		//if(_player->IsMounted())
-		//	TO_UNIT(_player)->Dismount();
+		// Dismount from flying mount.
+		if(_player->m_FlyingAura)
+			TO_UNIT(_player)->Dismount();
 
 		// get water level only if it was not set before
 		if( !pSession->m_bIsWLevelSet )

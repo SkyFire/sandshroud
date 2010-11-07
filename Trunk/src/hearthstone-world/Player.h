@@ -1629,7 +1629,6 @@ public:
 
 	// speedhack buster!
 	LocationVector						m_lastHeartbeatPosition;
-	float								m_lastHeartbeatV; // velocity
 	uint32								m_startMoveTime;	// time
 	uint32								m_lastMovementPacketTimestamp;
 	int32								m_heartbeatDisable;
@@ -1641,6 +1640,7 @@ public:
 	uint32 m_wallhackCheckTimer;
 	uint32 m_wallhackChances;
 	void _WallHackCheck();
+	bool IsWallHackEligible();
 	LocationVector LastWHPosition;
 
 	void AddSplinePacket(uint64 guid, ByteBuffer* packet);

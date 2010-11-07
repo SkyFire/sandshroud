@@ -288,6 +288,7 @@ void CommandTableStorage::Init()
 		{ "sqlquery",				'd', &ChatHandler::HandleSQLQueryCommand,						"<sql query>",																											NULL, 0, 0, 0 },
 		{ "rangecheck",				'd', &ChatHandler::HandleRangeCheckCommand,						"Checks the 'yard' range and internal range between the player and the target.",										NULL, 0, 0, 0 },
 		{ "setallratings",			'd', &ChatHandler::HandleRatingsCommand,						"Sets rating values to incremental numbers based on their index.",														NULL, 0, 0, 0 },
+		{ "sendmirrortimer",		'd', &ChatHandler::HandleMirrorTimerCommand,					"Sends a mirror Timer opcode to target syntax: <type>",																	NULL, 0, 0, 0 },
 		{ NULL,						'0', NULL,														"",																														NULL, 0, 0, 0 }
 	};
 	dupe_command_table(debugCommandTable, _debugCommandTable);

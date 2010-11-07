@@ -179,6 +179,21 @@
     <ClCompile Include="..\..\src\QuestScripts\Zangarmarsh.cpp">
       <Filter>Scripts\Zone</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\QuestScripts\BoreanTundra.cpp">
+      <Filter>Scripts\Zone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\QuestScripts\BurningSteppes.cpp">
+      <Filter>Scripts\Zone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\QuestScripts\Silithus.cpp">
+      <Filter>Scripts\Zone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\QuestScripts\TheStormPeaks.cpp">
+      <Filter>Scripts\Zone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\QuestScripts\Winterspring.cpp">
+      <Filter>Scripts\Zone</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\QuestScripts\ScriptStdAfx.h">

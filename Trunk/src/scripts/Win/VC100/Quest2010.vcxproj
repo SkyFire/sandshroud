@@ -204,6 +204,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\QuestScripts\BoreanTundra.cpp" />
+    <ClCompile Include="..\..\src\QuestScripts\BurningSteppes.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\ScriptStdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -215,6 +217,8 @@
     <ClCompile Include="..\..\src\Common\Base.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\QuestGossip.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\QuestHooks.cpp" />
+    <ClCompile Include="..\..\src\QuestScripts\Silithus.cpp" />
+    <ClCompile Include="..\..\src\QuestScripts\TheStormPeaks.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\Unsorted.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\DeathKnight.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\Druid.cpp" />
@@ -261,6 +265,7 @@
     <ClCompile Include="..\..\src\QuestScripts\Undercity.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\UnGoro.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\Westfall.cpp" />
+    <ClCompile Include="..\..\src\QuestScripts\Winterspring.cpp" />
     <ClCompile Include="..\..\src\QuestScripts\Zangarmarsh.cpp" />
   </ItemGroup>
   <ItemGroup>

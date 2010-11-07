@@ -656,6 +656,7 @@ protected:
 	bool HandleModifyScaleCommand(const char *args, WorldSession *m_session);
 	bool HandleModifyFactionCommand(const char *args, WorldSession *m_session);
 	bool HandleModifyPlayerFlagsCommand(const char *args, WorldSession *m_session);
+	bool HandleMirrorTimerCommand(const char *args, WorldSession *m_session);
 
 	bool HandleEnableAH(const char *args, WorldSession *m_session);
 	bool HandleDisableAH(const char *args, WorldSession *m_session);
