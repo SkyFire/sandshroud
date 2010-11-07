@@ -1349,6 +1349,13 @@ void WorldSession::SendInventoryList(Creature* unit)
 
 	for(std::vector<CreatureItem>::iterator itr = unit->GetSellItemBegin(); itr != unit->GetSellItemEnd(); itr++)
 	{
+		if(counter >= 150)
+		{
+			Log.Error("VendorListing", "Creature %u contains too many items, Displaying (150/%u) items.",
+				unit->GetEntry(), uint32(unit->GetSellItemCount()));
+			break;
+		}
+
 		if(itr->itemid && (itr->max_amount == 0 || (itr->max_amount > 0 && itr->available_amount > 0)))
 		{
 			if((curItem = ItemPrototypeStorage.LookupEntry(itr->itemid)))
@@ -1387,6 +1394,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 	SendPacket( &data );
 	DEBUG_LOG( "WORLD"," Sent SMSG_LIST_INVENTORY" );
 }
+
 void WorldSession::HandleAutoStoreBagItemOpcode( WorldPacket & recv_data )
 {
 	CHECK_PACKET_SIZE(recv_data, 3);
