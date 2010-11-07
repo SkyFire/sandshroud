@@ -520,39 +520,74 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	// dunno what this is..
 	data << uint32(0);
 
-	size_t count_pos = data.wpos();
-	uint16 count = uint16(m_realms.size());
-	data << uint16(count);
-
-	// loop realms :/
 	map<uint32, Realm*>::iterator itr = m_realms.begin();
 	HM_NAMESPACE::hash_map<uint32, uint8>::iterator it;
-	for(; itr != m_realms.end(); ++itr)
+	if(Socket->GetBuild() <= 6005) // PreBC
 	{
-		if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
+		size_t count_pos = data.wpos();
+		uint8 count = uint8(m_realms.size());
+		data << uint8(count);
+
+		// loop realms :/
+		for(; itr != m_realms.end(); ++itr)
 		{
-			count -= 1;
-			continue;
+			if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
+			{
+				count -= 1;
+				continue;
+			}
+
+			data << uint32(itr->second->Icon);
+			data << itr->second->Colour;
+			data << itr->second->Name;
+			data << itr->second->Address;
+			data << itr->second->Population-1.0f;
+
+			/* Get our character count */
+			it = itr->second->CharacterMap.find(Socket->GetAccountID());
+			data << uint8( (it == itr->second->CharacterMap.end()) ? 0 : it->second );
+			data << itr->second->WorldRegion;
+			data << uint8(0);
 		}
+		realmLock.Release();
 
-		data << itr->second->Icon;
-		data << uint8(0);
-		data << itr->second->Colour;
-		data << itr->second->Name;
-		data << itr->second->Address;
-		data << itr->second->Population-1.0f;
-
-		/* Get our character count */
-		it = itr->second->CharacterMap.find(Socket->GetAccountID());
-		data << uint8( (it == itr->second->CharacterMap.end()) ? 0 : it->second );
-		data << itr->second->WorldRegion;
-		data << uint8(GetRealmIdByName(itr->second->Name));		//Realm ID
+		data.put<uint8>(count_pos, count);
+		data << uint8(0x15);
 	}
-	realmLock.Release();
+	else
+	{
+		size_t count_pos = data.wpos();
+		uint16 count = uint16(m_realms.size());
+		data << uint16(count);
 
-	data.put<uint16>(count_pos, count);
+		// loop realms :/
+		for(; itr != m_realms.end(); ++itr)
+		{
+			if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
+			{
+				count -= 1;
+				continue;
+			}
 
-	data << uint8(0x17);
+			data << itr->second->Icon;
+			data << uint8(0);
+			data << itr->second->Colour;
+			data << itr->second->Name;
+			data << itr->second->Address;
+			data << itr->second->Population-1.0f;
+
+			/* Get our character count */
+			it = itr->second->CharacterMap.find(Socket->GetAccountID());
+			data << uint8( (it == itr->second->CharacterMap.end()) ? 0 : it->second );
+			data << itr->second->WorldRegion;
+			data << uint8(GetRealmIdByName(itr->second->Name));		//Realm ID
+		}
+		realmLock.Release();
+
+		data.put<uint16>(count_pos, count);
+
+		data << uint8(0x17);
+	}
 	data << uint8(0);
 
 	// Re-calculate size.

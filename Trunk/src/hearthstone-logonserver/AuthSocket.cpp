@@ -104,18 +104,15 @@ void AuthSocket::HandleChallenge()
 	DEBUG_LOG("AuthChallenge","got full packet.");
 
 	GetReadBuffer().Read(&m_challenge, full_size + 4);
- 
-	// Check client build.
-	uint16 build = m_challenge.build;
 
-	if(build > LogonServer::getSingleton().max_build)
+	// Check client build.
+	if(GetBuild() > LogonServer::getSingleton().max_build)
 	{
-		// wtf?
 		SendChallengeError(CE_WRONG_BUILD_NUMBER);
 		return;
 	}
 
-	if(build < LogonServer::getSingleton().min_build)
+	if(GetBuild() < LogonServer::getSingleton().min_build)
 	{
 		// can we patch?
 		char flippedloc[5] = {0,0,0,0,0};
@@ -124,7 +121,7 @@ void AuthSocket::HandleChallenge()
 		flippedloc[2] = m_challenge.country[1];
 		flippedloc[3] = m_challenge.country[0];
 
-		m_patch = PatchMgr::getSingleton().FindPatchForClient(build, flippedloc);
+		m_patch = PatchMgr::getSingleton().FindPatchForClient(GetBuild(), flippedloc);
 		if(m_patch == NULL)
 		{
 			// could not find a valid patch

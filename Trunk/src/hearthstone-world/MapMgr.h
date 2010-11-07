@@ -91,6 +91,7 @@ public:
 	Mutex m_objectinsertlock;
 	ObjectSet m_objectinsertpool;
 	void AddObject(Object*);
+	Object* GetObjectClosestToCoords(uint32 entry, float x, float y, float z, float ClosestDist, int32 forcedtype = -1);
 
 ////////////////////////////////////////////////////////
 // Local (mapmgr) storage/generation of GameObjects
@@ -132,7 +133,7 @@ public:
 	HM_NAMESPACE::hash_map<const uint32,Creature*> m_CreatureStorage;
 	Creature* CreateCreature(uint32 entry);
 
-	__inline Creature* GetCreature(const uint32 guid)
+	HEARTHSTONE_INLINE Creature* GetCreature(const uint32 guid)
 	{
 		return guid <= m_CreatureHighGuid ? m_CreatureStorage[guid] : NULLCREATURE;
 	}

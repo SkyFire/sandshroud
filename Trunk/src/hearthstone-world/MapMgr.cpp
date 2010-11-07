@@ -1475,6 +1475,34 @@ Object* MapMgr::_GetObject(const uint64 & guid)
 	}
 }
 
+Object* MapMgr::GetObjectClosestToCoords(uint32 entry, float x, float y, float z, float ClosestDist, int32 forcedtype)
+{
+	MapCell * pCell = GetCell(GetPosX(x), GetPosY(y));
+	if(pCell == NULL)
+		return NULL;
+
+	Object* ClosestObject = NULLOBJ;
+	float CurrentDist = 0;
+	ObjectSet::const_iterator iter;
+	for(iter = pCell->Begin(); iter != pCell->End(); iter++)
+	{
+		CurrentDist = (*iter)->CalcDistance(x, y, (z != 0.0f ? z : (*iter)->GetPositionZ()));
+		if(CurrentDist < ClosestDist)
+		{
+			if(forcedtype > -1 && forcedtype != (*iter)->GetTypeId())
+				continue;
+
+			if((entry && (*iter)->GetEntry() == entry) || !entry)
+			{
+				ClosestDist = CurrentDist;
+				ClosestObject = (*iter);
+			}
+		}
+	}
+
+	return ClosestObject;
+}
+
 bool MapMgr::CanUseCollision(Object* obj)
 {
 	if(collision)

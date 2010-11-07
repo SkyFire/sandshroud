@@ -223,6 +223,18 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 		realm->Icon = icon32;
 		realm->WorldRegion = region32;
 	}
+	else if(recvData.size()-recvData.rpos() > 13) // Ascent
+	{
+		uint16 tester2;
+		recvData >> tester2;
+		uint32 colour = uint32(uint32(tester) << tester2);
+		uint32 icon32 = 0;
+		uint32 region32 = 0;
+		recvData >> icon32 >> region32 >> realm->Population;
+		realm->Colour = colour;
+		realm->Icon = icon32;
+		realm->WorldRegion = region32;
+	}
 	else // Original Aspire? Break the tester into two, and retrieve the rest of the data.
 	{
 		realm->Icon = uint8(tester & 0xff);

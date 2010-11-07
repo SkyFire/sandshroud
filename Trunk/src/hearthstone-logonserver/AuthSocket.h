@@ -69,6 +69,7 @@ public:
 	bool removedFromSet;
 	HEARTHSTONE_INLINE uint32 GetAccountID() { return m_account ? m_account->AccountId : 0; }
 	HEARTHSTONE_INLINE string GetAccountName() { return AccountName; }
+	uint16 GetBuild() { return m_challenge.build; };
 
 protected:
 

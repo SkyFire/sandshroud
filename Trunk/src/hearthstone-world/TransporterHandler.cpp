@@ -56,12 +56,12 @@ bool FillPathVector(uint32 PathID, TransportPath & Path)
 		DBCTaxiPathNode *pathnode = dbcTaxiPathNode.LookupRow(j);
 		if(pathnode->path == PathID)
 		{
-			Path[i].mapid	   = pathnode->mapid;
-			Path[i].x		   = pathnode->x;
-			Path[i].y		   = pathnode->y;
-			Path[i].z		   = pathnode->z;
-			Path[i].actionFlag = pathnode->flag;
-			Path[i].delay	   = pathnode->waittime;
+			Path[i].mapid		= pathnode->mapid;
+			Path[i].x			= pathnode->x;
+			Path[i].y			= pathnode->y;
+			Path[i].z			= pathnode->z;
+			Path[i].actionFlag	= pathnode->flag;
+			Path[i].delay		= pathnode->waittime;
 			++i;
 		}
 	}
@@ -123,8 +123,9 @@ bool Transporter::GenerateWaypoints()
 				pow(keyFrames[i].y - keyFrames[i - 1].y, 2) +
 				pow(keyFrames[i].z - keyFrames[i - 1].z, 2));
 		}
-		if (keyFrames[i].actionflag == 2) {
-            if(firstStop<0)
+		if (keyFrames[i].actionflag == 2)
+		{
+			if(firstStop<0)
 				firstStop=(int)i;
 
 			lastStop = (int)i;
@@ -188,7 +189,7 @@ bool Transporter::GenerateWaypoints()
 	t += keyFrames[0].delay * 1000;
 
 	int cM = keyFrames[0].mapid;
-	for (size_t i = 0; i < keyFrames.size() - 1; i++)	   //
+	for (size_t i = 0; i < keyFrames.size() - 1; i++)		//
 	{
 		float d = 0;
 		float tFrom = keyFrames[i].tFrom;
