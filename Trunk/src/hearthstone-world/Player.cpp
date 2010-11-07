@@ -12087,6 +12087,8 @@ bool Player::IsWallHackEligible()
 		return false;
 	if(m_UnderwaterState & UNDERWATERSTATE_UNDERWATER)
 		return false;
+	if(GetTaxiState())
+		return false;
 
 	if(GetSession())
 	{
