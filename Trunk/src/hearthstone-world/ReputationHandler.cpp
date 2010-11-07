@@ -313,8 +313,9 @@ bool Player::IsHostileBasedOnReputation(FactionDBC * dbc)
 void Player::ModStanding(uint32 Faction, int32 Value)
 {
 	ReputationMap::iterator itr = m_reputation.find(Faction);
-	FactionDBC * dbc = dbcFaction.LookupEntry(Faction);
-	if(dbc == 0) return;
+	FactionDBC* dbc = dbcFaction.LookupEntryForced(Faction);
+	if (dbc == NULL || dbc->RepListId < 0)
+		return;
 
 	if(itr == m_reputation.end())
 	{
@@ -384,7 +385,7 @@ void Player::SetAtWar(uint32 Faction, bool Set)
 	if(GetReputationRankFromStanding(rep->standing) <= STANDING_HOSTILE && !Set) // At this point we have to be at war.
 		return;
 
-	if(rep->flag & 0x4)
+	if(rep->flag & 0x4 || rep->flag & 16 )
 		return;
 
 	if(Set)
