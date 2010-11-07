@@ -2251,6 +2251,9 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	p->SetPhase(plr->GetPhase());
 	p->PushToWorld(plr->GetMapMgr());
+	
+	if(spVehicle)
+		TO_VEHICLE(p)->ChangePowerType();//Hate to do this but it is needed...
 
 	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u in phase %u", info->Name,
 		entry, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetMapId(), plr->GetPhase());
