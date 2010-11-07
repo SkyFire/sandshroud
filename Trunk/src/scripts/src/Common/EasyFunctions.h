@@ -329,6 +329,46 @@ public:
 			return NULLGOB;
 		return plr->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), goid);
 	}
+
+	QuestLogEntry* GetQuest( Player* pPlayer, uint32 pQuestId )
+	{
+		return pPlayer->GetQuestLogForEntry(pQuestId);
+	}
+
+	void KillMobForQuest( Player* pPlayer, QuestLogEntry* pQuest, uint32 pRequiredMobCount )
+	{
+		if ( pPlayer == NULL )
+			return;
+		
+		uint32 i = pRequiredMobCount;
+		if ( !pQuest )
+			return;
+
+		if ( pQuest->GetMobCount( i ) < pQuest->GetQuest()->required_mobcount[i] )
+		{
+			pQuest->SetMobCount( i, pQuest->GetMobCount( i ) + 1 );
+			pQuest->SendUpdateAddKill( i );
+			pQuest->UpdatePlayerFields();
+		}
+	}
+
+	void KillMobForQuest( Player* pPlayer, uint32 pQuestId, uint32 pRequiredMobCount )
+	{
+		if ( pPlayer == NULL )
+			return;
+		
+		uint32 i = pRequiredMobCount;
+		QuestLogEntry* pQuest = GetQuest( pPlayer, pQuestId );
+		if ( !pQuest )
+			return;
+
+		if ( pQuest->GetMobCount( i ) < pQuest->GetQuest()->required_mobcount[i] )
+		{
+			pQuest->SetMobCount( i, pQuest->GetMobCount( i ) + 1 );
+			pQuest->SendUpdateAddKill( i );
+			pQuest->UpdatePlayerFields();
+		}
+	}
 };
 
 #define sEAS EasyFunctions::GetInstance()

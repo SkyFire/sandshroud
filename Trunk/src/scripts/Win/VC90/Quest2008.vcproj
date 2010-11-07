@@ -510,6 +510,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\QuestScripts\BoreanTundra.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\QuestScripts\BurningSteppes.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\QuestScripts\Darkshore.cpp"
 					>
 				</File>
@@ -590,6 +598,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\QuestScripts\Silithus.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\QuestScripts\SilvermoonCity.cpp"
 					>
 				</File>
@@ -622,6 +634,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\QuestScripts\TheStormPeaks.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\QuestScripts\ThousandNeedles.cpp"
 					>
 				</File>
@@ -639,6 +655,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\QuestScripts\Westfall.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\QuestScripts\Winterspring.cpp"
 					>
 				</File>
 				<File
