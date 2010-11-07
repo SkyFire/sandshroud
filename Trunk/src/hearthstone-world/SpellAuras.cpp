@@ -7648,9 +7648,10 @@ void Aura::SpellAuraWaterWalk( bool apply )
 {
 	if( m_target->IsPlayer() )
 	{
+		Player* plr = TO_PLAYER(m_target);
 		if( m_spellProto->NameHash == SPELL_HASH_SPRINT )
-		{//rogues sprint, water walk with glyph
-			if( !m_target->HasDummyAura(SPELL_HASH_GLYPH_OF_BLURRED_SPEED) )
+		{	// rogues sprint, water walk with glyph
+			if( !plr->HasDummyAura(SPELL_HASH_GLYPH_OF_BLURRED_SPEED) )
 				return;
 		}
 
@@ -7661,16 +7662,18 @@ void Aura::SpellAuraWaterWalk( bool apply )
 			data.SetOpcode( SMSG_MOVE_WATER_WALK );
 			data << m_target->GetNewGUID();
 			data << uint32( 8 );
-			TO_PLAYER( m_target )->m_isWaterWalking++;
+			plr->m_isWaterWalking++;
 		}
 		else
 		{
 			data.SetOpcode( SMSG_MOVE_LAND_WALK );
 			data << m_target->GetNewGUID();
 			data << uint32( 4 );
-			TO_PLAYER( m_target )->m_isWaterWalking--;
+			plr->m_isWaterWalking--;
+			if(!plr->m_isWaterWalking)
+				plr->m_WaterWalkTimer = getMSTime()+500;
 		}
-		TO_PLAYER( m_target )->GetSession()->SendPacket( &data );
+		plr->GetSession()->SendPacket( &data );
 	}
 }
 

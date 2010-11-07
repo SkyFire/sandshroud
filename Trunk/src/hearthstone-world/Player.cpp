@@ -108,6 +108,7 @@ void Player::Init()
 	m_flyHackChances				= 5;
 	m_wallhackCheckTimer			= 0;
 	m_wallhackChances				= 5;
+	m_WaterWalkTimer				= 0;
 	for(int i=0; i < 3; i++)
 	{
 		LfgType[i]		= 0;
@@ -4624,6 +4625,7 @@ void Player::SetMovement(uint8 pType, uint32 flag)
 	case MOVE_LAND_WALK:
 		{
 			m_setwaterwalk = false;
+			m_WaterWalkTimer = getMSTime()+500;
 			data.SetOpcode(SMSG_MOVE_LAND_WALK);
 			data << GetNewGUID();
 			data << flag;

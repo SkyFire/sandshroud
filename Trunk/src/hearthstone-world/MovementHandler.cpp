@@ -204,7 +204,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 	{
 		// Dismount from flying mount.
 		if(_player->m_FlyingAura)
-			TO_UNIT(_player)->Dismount();
+			_player->Dismount();
 
 		// get water level only if it was not set before
 		if( !pSession->m_bIsWLevelSet )
@@ -432,12 +432,23 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		}
 	}
 
-	//Water walk hack
-	if (_player->movement_info.flags & MOVEFLAG_WATER_WALK && !GetPlayer()->m_isWaterWalking)
+	// Water walk hack
+	if (_player->movement_info.flags & MOVEFLAG_WATER_WALK && !_player->m_isWaterWalking && !_player->m_setwaterwalk)
 	{
-		/* Need to check if aura has just been dispelled recently and client didn't have time to update
-		sWorld.LogCheater(this, "Used water walk hack");
-		Disconnect();*/
+		if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
+		{
+			WorldPacket data( SMSG_MOVE_LAND_WALK );
+			data << _player->GetNewGUID();
+			data << uint32( 4 );
+			SendPacket( &data );
+
+			if(getMSTime() >= _player->m_WaterWalkTimer)
+			{
+				sWorld.LogCheater(this, "Used water walk hack");
+				Disconnect();
+				return;
+			}
+		}
 	}
 
 	/************************************************************************/

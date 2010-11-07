@@ -1308,6 +1308,7 @@ public:
 	uint8 m_currentMovement;
 	bool m_isMoving;
 	uint8 m_isWaterWalking;
+	uint32 m_WaterWalkTimer;
 	//Invisibility stuff
 	bool m_isGmInvisible;
 
