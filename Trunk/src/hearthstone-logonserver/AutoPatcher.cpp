@@ -205,8 +205,8 @@ Patch * PatchMgr::FindPatchForClient(uint32 Version, const char * Locality)
 	vector<Patch*>::iterator itr;
 	Patch * fallbackPatch = NULL;
 	for(i = 0; i < 4; ++i)
-		tmplocality[i]=tolower(Locality[i]);
-	tmplocality[4]=0;
+		tmplocality[i] = tolower(Locality[i]);
+	tmplocality[4] = 0;
 	ulocality = *(uint32*)tmplocality;
 
 	for(itr = m_patches.begin(); itr != m_patches.end(); ++itr)
@@ -217,7 +217,7 @@ Patch * PatchMgr::FindPatchForClient(uint32 Version, const char * Locality)
 		{
 			if(fallbackPatch==NULL && (*itr)->Version==0)
 				fallbackPatch = (*itr);
-			
+
 			if((*itr)->Version == Version)
 				return (*itr);
 		}
