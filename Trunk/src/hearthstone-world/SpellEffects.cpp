@@ -3752,8 +3752,10 @@ void Spell::SpellEffectSummon(uint32 i)
 		}break;
 	default:
 		{
-			SummonGuardian(i);
-		}break;
+			sLog.outError("Spell Id %u, has an invalid summon type %u report this to devs.", GetSpellProto()->Id, spe->Id);
+			//SummonGuardian(i);
+			break;
+		}
 	}
 }
 
@@ -4255,7 +4257,7 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 
 	CALL_GO_SCRIPT_EVENT(gameObjTarget, OnActivate)(TO_PLAYER(caster));
 	CALL_INSTANCE_SCRIPT_EVENT( gameObjTarget->GetMapMgr(), OnGameObjectActivate )( gameObjTarget, TO_PLAYER( caster ) );
-	gameObjTarget->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
+	gameObjTarget->SetState(0);
 
 	if( gameObjTarget->GetEntry() == 183146)
 	{
@@ -4295,12 +4297,7 @@ void Spell::SpellEffectProficiency(uint32 i)
 	{
 		if(playerTarget != NULL)
 		{
-			if(playerTarget->_HasSkillLine(skill))
-			{
-				// Increase it by one
-			   // playerTarget->AdvanceSkillLine(skill);
-			}
-			else
+			if(!playerTarget->_HasSkillLine(skill))
 			{
 				// Don't add skills to players logging in.
 				/*if((GetSpellProto()->Attributes & 64) && playerTarget->m_TeleportState == 1)
@@ -4425,9 +4422,7 @@ void Spell::SpellEffectApplyAA(uint32 i) // Apply Area Aura
 		}
 	}
 	else
-	{
 		pAura = itr->second;
-	}
 
 	pAura->AddMod(GetSpellProto()->EffectApplyAuraName[i],damage,GetSpellProto()->EffectMiscValue[i],i);
 }
@@ -4670,9 +4665,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_COMMON, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_COMMON );
-		}
 
 		if(pPlayer->GetTeam() == HORDE)
 		{
@@ -4680,9 +4673,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_ORCISH, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_ORCISH );
-		}
 
 		if(pPlayer->getRace() == RACE_DWARF)
 		{
@@ -4690,9 +4681,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_DWARVEN, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_DWARVEN );
-		}
 
 		if(pPlayer->getRace() == RACE_NIGHTELF)
 		{
@@ -4700,9 +4689,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_DARNASSIAN, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_DARNASSIAN );
-		}
 
 		if(pPlayer->getRace() == RACE_UNDEAD)
 		{
@@ -4710,9 +4697,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_GUTTERSPEAK, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_GUTTERSPEAK );
-		}
 
 		if(pPlayer->getRace() == RACE_TAUREN)
 		{
@@ -4720,9 +4705,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_TAURAHE, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_TAURAHE );
-		}
 
 		if(pPlayer->getRace() == RACE_GNOME)
 		{
@@ -4730,9 +4713,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_GNOMISH, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_GNOMISH );
-		}
 
 		if(pPlayer->getRace() == RACE_TROLL)
 		{
@@ -4740,9 +4721,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_TROLL, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_TROLL );
-		}
 
 		if(pPlayer->getRace() == RACE_BLOODELF)
 		{
@@ -4750,9 +4729,7 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_THALASSIAN, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_THALASSIAN );
-		}
 
 		if(pPlayer->getRace() == RACE_DRAENEI)
 		{
@@ -4760,21 +4737,17 @@ void Spell::SpellEffectLanguage(uint32 i)
 				pPlayer->_AddSkillLine( SKILL_LANG_DRAENEI, 300, 300 );
 		}
 		else
-		{
 			pPlayer->_RemoveSkillLine( SKILL_LANG_DRAENEI );
-		}
 	}
 }
 
 void Spell::SpellEffectDualWield(uint32 i)
 {
-	if(m_caster->GetTypeId() != TYPEID_PLAYER)
+	if(p_caster == NULL)
 		return;
 
-	Player* pPlayer = TO_PLAYER( m_caster );
-
-	if( !pPlayer->_HasSkillLine( SKILL_DUAL_WIELD ) )
-		 pPlayer->_AddSkillLine( SKILL_DUAL_WIELD, 1, 1 );
+	if( !p_caster->_HasSkillLine( SKILL_DUAL_WIELD ) )
+		 p_caster->_AddSkillLine( SKILL_DUAL_WIELD, 1, 1 );
 
 		// Increase it by one
 		//dual wield is 1/1 , it never increases it's not even displayed in skills tab
@@ -4922,10 +4895,6 @@ void Spell::SpellEffectSkillStep(uint32 i) // Skill Step
 		target->_ModifySkillMaximum( skill, max );
 	else
 	{
-		// Don't add skills to players logging in.
-		/*if((GetSpellProto()->Attributes & 64) && playerTarget->m_TeleportState == 1)
-			return;*/
-
 		if( sk->type == SKILL_TYPE_PROFESSION )
 			target->ModUnsigned32Value( PLAYER_CHARACTER_POINTS+1, -1 );
 
@@ -5026,7 +4995,7 @@ void Spell::SpellEffectDetect(uint32 i)
 
 void Spell::SpellEffectSummonObject(uint32 i)
 {
-	if( p_caster == NULL )
+	if( u_caster == NULL )
 		return;
 
 	uint32 entry = GetSpellProto()->EffectMiscValue[i];
@@ -5038,7 +5007,7 @@ void Spell::SpellEffectSummonObject(uint32 i)
 	float orient = m_caster->GetOrientation();
 	float posx = 0,posy = 0,posz = 0;
 
-	if( entry == GO_FISHING_BOBBER )
+	if( entry == GO_FISHING_BOBBER && p_caster)
 	{
 		float co = cos( orient );
 		float si = sin( orient );
@@ -5117,67 +5086,68 @@ void Spell::SpellEffectSummonObject(uint32 i)
 			return;
 
 		go->SetInstanceID(m_caster->GetInstanceID());
-		go->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
+		go->SetState(1);
 		go->SetUInt64Value(OBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
 		go->PushToWorld(m_caster->GetMapMgr());
 		go->ExpireAndDelete(GetDuration());
-		if(entry ==17032)//this is a portal
+		if(p_caster)
 		{
-			//enable it for party only
-			go->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
-
-			//disable by default
-			WorldPacket *pkt = go->BuildFieldUpdatePacket(GAMEOBJECT_BYTES_1, 1);
-			SubGroup * pGroup = p_caster->GetGroup() ? p_caster->GetGroup()->GetSubGroup(p_caster->GetSubGroup()) : NULL;
-
-			if(pGroup)
+			if(entry ==17032)//this is a portal
 			{
-				p_caster->GetGroup()->Lock();
-				for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
-					itr != pGroup->GetGroupMembersEnd(); itr++)
-				{
-					if((*itr)->m_loggedInPlayer && m_caster != (*itr)->m_loggedInPlayer)
-						(*itr)->m_loggedInPlayer->GetSession()->SendPacket(pkt);
-				}
-				p_caster->GetGroup()->Unlock();
-			}
-			delete pkt;
-		}
-		else if(entry == 36727 || entry == 177193) // Portal of doom
-		{
-			Player* pTarget = NULL;
-			pTarget = p_caster->GetMapMgr()->GetPlayer((uint32)p_caster->GetSelection());
-			if(pTarget == NULL)
-				return;
+				//enable it for party only
+				go->SetByte(GAMEOBJECT_BYTES_1, 0, 0);
 
-			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
-			go->SetGOui32Value(GO_UINT32_M_RIT_TARGET, pTarget->GetLowGUID());
-			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
+				//disable by default
+				WorldPacket *pkt = go->BuildFieldUpdatePacket(GAMEOBJECT_BYTES_1, 1);
+				SubGroup * pGroup = p_caster->GetGroup() ? p_caster->GetGroup()->GetSubGroup(p_caster->GetSubGroup()) : NULL;
+
+				if(pGroup)
+				{
+					p_caster->GetGroup()->Lock();
+					for(GroupMembersSet::iterator itr = pGroup->GetGroupMembersBegin();
+						itr != pGroup->GetGroupMembersEnd(); itr++)
+					{
+						if((*itr)->m_loggedInPlayer && m_caster != (*itr)->m_loggedInPlayer)
+							(*itr)->m_loggedInPlayer->GetSession()->SendPacket(pkt);
+					}
+					p_caster->GetGroup()->Unlock();
+				}
+				delete pkt;
+			}
+			else if(entry == 36727 || entry == 177193) // Portal of doom
+			{
+				Player* pTarget = NULL;
+				pTarget = p_caster->GetMapMgr()->GetPlayer((uint32)p_caster->GetSelection());
+				if(pTarget == NULL)
+					return;
+
+				go->m_ritualmembers[0] = p_caster->GetLowGUID();
+				go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+				go->SetGOui32Value(GO_UINT32_M_RIT_TARGET, pTarget->GetLowGUID());
+				go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
+			}
+			else if(entry == 194108) // Ritual of Summoning
+			{
+				go->m_ritualmembers[0] = p_caster->GetLowGUID();
+				go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+				go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
+			}
+			else if( entry == 186811 || entry == 193062 ) // Ritual of refreshment
+			{
+				go->m_ritualmembers[0] = p_caster->GetLowGUID();
+				go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+				go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
+			}
+			else if( entry == 181622 || entry == 193168 ) // Ritual of Souls
+			{
+				go->m_ritualmembers[0] = p_caster->GetLowGUID();
+				go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
+				go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
+			}
+			else
+				go->charges = 10;
+			p_caster->SetSummonedObject(go);
 		}
-		else if(entry == 194108) // Ritual of Summoning
-		{
-			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
-			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
-		}
-		else if( entry == 186811 || entry == 193062 ) // Ritual of refreshment
-		{
-			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
-			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
-		}
-		else if( entry == 181622 || entry == 193168 ) // Ritual of Souls
-		{
-			go->m_ritualmembers[0] = p_caster->GetLowGUID();
-			go->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p_caster->GetLowGUID());
-			go->SetGOui32Value(GO_UINT32_RIT_SPELL, GetSpellProto()->Id);
-		}
-		else
-		{
-			go->charges = 10;
-		}
-		p_caster->SetSummonedObject(go);
 	}
 }
 
@@ -6577,8 +6547,8 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 				{
 					u_caster->CastSpell(unitTarget,27873,true);
 				}break;
-			}break;
-		}
+			}
+		}break;
 	default:
 		{
 			if(sLog.IsOutDevelopement())
@@ -6744,8 +6714,8 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	if(p_caster == NULL)
-		p_caster = TO_PLAYER(v_caster->GetControllingUnit());
+	if(p_caster == NULL && v_caster && v_caster->GetControllingPlayer() )
+		p_caster = TO_PLAYER(v_caster->GetControllingPlayer());
 	DamageGosAround(m_caster,p_caster, i, damage,GetSpellProto()->Id);
 }
 

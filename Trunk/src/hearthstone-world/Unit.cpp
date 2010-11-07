@@ -7437,7 +7437,7 @@ void Unit::Teleport(float x, float y, float z, float O, uint32 phase)
 		data << GetPositionY();
 		data << GetPositionZ();
 		data << getMSTime();
-		data << uint8(0x00);
+		data << uint8(0x0);
 		data << uint32(256);
 		data << uint32(1);
 		data << uint32(1);

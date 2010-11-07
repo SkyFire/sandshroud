@@ -1083,13 +1083,12 @@ void Object::OutPacketToSet(uint16 Opcode, uint16 Len, const void * Data, bool s
 
 void Object::SendMessageToSet(WorldPacket *data, bool bToSelf,bool myteam_only)
 {
-	if(bToSelf && m_objectTypeId == TYPEID_PLAYER)
-	{
-		TO_PLAYER(this)->GetSession()->SendPacket(data);
-	}
-
 	if(!IsInWorld())
 		return;
+
+	if(bToSelf && m_objectTypeId == TYPEID_PLAYER)
+		TO_PLAYER(this)->GetSession()->SendPacket(data);
+
 
 	unordered_set<Player*>::iterator itr = m_inRangePlayers.begin();
 	unordered_set<Player*>::iterator it_end = m_inRangePlayers.end();
@@ -1098,7 +1097,7 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf,bool myteam_only)
 	//		   saving cpu cycles. Chat messages will be sent to everybody even if player is invisible.
 	if(myteam_only)
 	{
-		uint32 myteam=TO_PLAYER(this)->GetTeam();
+		uint32 myteam = TO_PLAYER(this)->GetTeam();
 		if(gminvis && data->GetOpcode()!=SMSG_MESSAGECHAT)
 		{
 			for(; itr != it_end; itr++)
