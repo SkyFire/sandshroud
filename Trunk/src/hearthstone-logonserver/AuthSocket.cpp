@@ -367,8 +367,18 @@ void AuthSocket::HandleProof()
 	sha.Initialize();
 	sha.UpdateBigNumbers(&A, &M, &m_sessionkey, 0);
 	sha.Finalize();
+	if(GetBuild() <= 6005)
+	{
+		sAuthLogonProof_S proof;
+		proof.cmd = 0x01;
+		proof.error = 0;
+		memcpy(proof.M2, sha.GetDigest(), 20);
+		proof.unk2 = 0;
+		SendPacket( (uint8*) &proof, sizeof(proof) );
+	}
+	else
+		SendProofError(0, sha.GetDigest());
 
-	SendProofError(0, sha.GetDigest());
 	DEBUG_LOG("AuthLogonProof","Authentication Success.");
 
 	// we're authenticated now :)
