@@ -247,6 +247,7 @@ void AuthSocket::HandleChallenge()
 	response[c] = 0;										c += 1;
 
 	Send(response, c);
+	DEBUG_LOG("AuthSocket","Sending Success Response");
 }
 
 void AuthSocket::HandleProof()
@@ -602,14 +603,31 @@ void AuthSocket::HandleReconnectChallenge()
 	/** Mangos figured this out, thanks for the structure.
 	 */
 
-    ///- Sending response
-    ByteBuffer pkt;
-    pkt << (uint8)  0x02;	//ReconnectChallenge
-    pkt << (uint8)  0x00;
-    rs.SetRand(16*8);
-    pkt.append(rs.AsByteBuffer());	// 16 bytes random
-    pkt << (uint64) 0x00 << (uint64) 0x00;	// 16 bytes zeros
-    Send(pkt.contents(), uint32(pkt.size()));
+	///- Sending response
+	if(GetBuild() <= 6005)
+	{
+		MD5_CTX ctx;
+		MD5_Init(&ctx);
+		MD5_Update(&ctx, m_account->SessionKey, 40);
+		uint8 buffer[20];
+		MD5_Final(buffer, &ctx);
+		ByteBuffer buf;
+		buf << uint16(2);
+		buf.append(buffer, 20);
+		buf << uint64(0);
+		buf << uint64(0);
+		Send(buf.contents(), 34);
+	}
+	else
+	{
+		ByteBuffer pkt;
+		pkt << (uint8)  0x02;	//ReconnectChallenge
+		pkt << (uint8)  0x00;
+		rs.SetRand(16*8);
+		pkt.append(rs.AsByteBuffer());	// 16 bytes random
+		pkt << uint64(0x00) << uint64(0x00);	// 16 bytes zeros
+		Send(pkt.contents(), uint32(pkt.size()));
+	}
 }
 
 void AuthSocket::HandleReconnectProof()
@@ -627,9 +645,30 @@ void AuthSocket::HandleReconnectProof()
 	}
 	else
 	{
-	    // Disconnect if the sessionkey invalid or not found
+		// Disconnect if the sessionkey invalid or not found
 		DEBUG_LOG("AuthReConnectProof","No matching SessionKey found while user %s tried to login.", AccountName.c_str());
 		Disconnect();
+		return;
+	}
+
+	if(GetBuild() <= 6005)
+	{
+		GetReadBuffer().Remove(GetWriteBuffer().GetSize());
+
+		if(!m_account->SessionKey)
+		{
+			uint8 buffer[4];
+			buffer[0] = 3;
+			buffer[1] = 0;
+			buffer[2] = 1;
+			buffer[3] = 0;
+			Send(buffer, 4);
+		}
+		else
+		{
+			uint32 x = 3;
+			Send((const uint8*)&x, 4);
+		}
 		return;
 	}
 

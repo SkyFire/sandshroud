@@ -498,16 +498,62 @@ void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
 		else
 			temp = 0x20; // recommended
 
-		itr->second->Population = (pop > 0) ? (pop >= 1) ? (pop >= 2) ? 3.0f : 2.0f : 1.0f : 1.0f;
+		itr->second->Population = pop+1.0f;
 		itr->second->Colour = temp;
+		if(temp == 0x81)
+			itr->second->Lock = 1;
 	}
 	realmLock.Release();
 }
 
 void InformationCore::SendRealms(AuthSocket * Socket)
 {
-	Account * acct = sAccountMgr.GetAccount(Socket->GetAccountName());
+	if(Socket->GetBuild() <= 6005) // PreBC
+	{
+		// packet header
+		ByteBuffer data(m_realms.size() * 150 + 20);
+		data << uint8(0x10);
+		data << uint16(0);	  // Size Placeholder
 
+		// dunno what this is..
+		data << uint32(0);
+
+		// loop realms :/
+		data << uint8(m_realms.size());
+		map<uint32, Realm*>::iterator itr = m_realms.begin();
+		for(; itr != m_realms.end(); ++itr)
+		{
+			data << uint32(itr->second->Icon);
+			data << uint8(itr->second->Colour);		
+
+			// This part is the same for all.
+			data << itr->second->Name;
+			data << itr->second->Address;
+			data << itr->second->Population;
+
+			/* Get our character count */
+			data << uint8(0); //We can fix this later, character count. 
+			data << uint8(itr->second->WorldRegion);
+			data << uint8(0);	// Online/Offline?
+		}
+		realmLock.Release();
+
+		data << uint8(0x15);
+		data << uint8(0);
+
+		// Re-calculate size.
+#ifdef USING_BIG_ENDIAN
+		*(uint16*)&data.contents()[1] = swap16(uint16(data.size() - 3));
+#else
+		*(uint16*)&data.contents()[1] = uint16(data.size() - 3);
+#endif
+
+		// Send to the socket.
+		Socket->Send((const uint8*)data.contents(), uint32(data.size()));
+		return;
+	}
+
+	Account * acct = sAccountMgr.GetAccount(Socket->GetAccountName());
 	bool isGM = ( acct ? (acct->GMFlags != NULL) : false );
 
 	realmLock.Acquire();
@@ -523,78 +569,40 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	map<uint32, Realm*>::iterator itr = m_realms.begin();
 	HM_NAMESPACE::hash_map<uint32, uint8>::iterator it;
 	Realm* realm = NULL;
-	if(Socket->GetBuild() == 6005) // PreBC
+	size_t count_pos = data.wpos();
+	uint16 count = uint16(m_realms.size());
+	data << uint16(count);
+
+	// loop realms :/
+	for(; itr != m_realms.end(); ++itr)
 	{
-		size_t count_pos = data.wpos();
-		uint8 count = uint8(m_realms.size());
-		data << uint8(count);
-
-		// loop realms :/
-		for(; itr != m_realms.end(); ++itr)
+		realm = itr->second;
+		if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
 		{
-			realm = itr->second;
-			if( !isGM && realm->Population == 0 ) // Crow: Thanks Egari.
-			{
-				count -= 1;
-				realm = NULL;
-				continue;
-			}
-
-			data << uint32(realm->Icon);
-			data << uint8(realm->Colour);
-			data << realm->Name;
-			data << realm->Address;
-			data << realm->Population-1.0f;
-
-			/* Get our character count */
-			it = realm->CharacterMap.find(Socket->GetAccountID());
-			data << uint8( (it == realm->CharacterMap.end()) ? 0 : it->second );
-			data << uint8(realm->WorldRegion);
-			data << uint8(0);
+			count -= 1;
 			realm = NULL;
+			continue;
 		}
-		realmLock.Release();
 
-		data.put<uint8>(count_pos, count);
-		data << uint8(0x15);
+		data << realm->Icon;
+		data << uint8(0);
+		data << realm->Colour;
+		data << realm->Name;
+		data << realm->Address;
+		data << realm->Population-1.0f;
+
+		/* Get our character count */
+		it = realm->CharacterMap.find(Socket->GetAccountID());
+		data << uint8( (it == realm->CharacterMap.end()) ? 0 : it->second );
+		data << realm->WorldRegion;
+		data << uint8(GetRealmIdByName(realm->Name));		//Realm ID
+		realm = NULL;
 	}
-	else
-	{
-		size_t count_pos = data.wpos();
-		uint16 count = uint16(m_realms.size());
-		data << uint16(count);
+	realmLock.Release();
 
-		// loop realms :/
-		for(; itr != m_realms.end(); ++itr)
-		{
-			realm = itr->second;
-			if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
-			{
-				count -= 1;
-				realm = NULL;
-				continue;
-			}
+	data.put<uint16>(count_pos, count);
 
-			data << realm->Icon;
-			data << uint8(0);
-			data << realm->Colour;
-			data << realm->Name;
-			data << realm->Address;
-			data << realm->Population-1.0f;
-
-			/* Get our character count */
-			it = realm->CharacterMap.find(Socket->GetAccountID());
-			data << uint8( (it == realm->CharacterMap.end()) ? 0 : it->second );
-			data << realm->WorldRegion;
-			data << uint8(GetRealmIdByName(realm->Name));		//Realm ID
-			realm = NULL;
-		}
-		realmLock.Release();
-
-		data.put<uint16>(count_pos, count);
-
-		data << uint8(0x17);
-	}
+	data << uint8(0x17);
 	data << uint8(0);
 
 	// Re-calculate size.
