@@ -668,7 +668,7 @@ bool ChatHandler::HandleResetSpellsCommand(const char* args, WorldSession *m_ses
 {
 	Player* plr = this->getSelectedChar(m_session);
 	if(plr == NULL)
-		return true;;
+		return true;
 
 	plr->Reset_Spells();
 

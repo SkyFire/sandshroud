@@ -21,6 +21,7 @@ ClientManager.cpp \
 ClusterManager.cpp \
 LogonCommClient.cpp \
 LogonCommHandler.cpp \
+Main.cpp \
 Master.cpp \
 ObjectStorage.cpp \
 QueryHandler.cpp \

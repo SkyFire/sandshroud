@@ -299,6 +299,7 @@
     <ClCompile Include="..\..\src\hearthstone-realmserver\LogonCommClient.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\LogonCommHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\CharacterHandler.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-realmserver\Main.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\QueryHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\Session.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\WorldSocket.cpp" />

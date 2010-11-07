@@ -16,6 +16,8 @@ Azuremyst_Isle.cpp \
 BladeEdge_Mountains.cpp \
 BlastedLands.cpp \
 BloodmystIsle.cpp \
+BoreanTundra.cpp \
+BurningSteppes.cpp \
 Darkshore.cpp \
 DeathKnight.cpp \
 Desolace.cpp \
@@ -43,6 +45,7 @@ QuestHooks.cpp \
 RedridgeMountains.cpp \
 Shadowmoon.cpp \
 SholazarBasin.cpp \
+Silithus.cpp \
 SilvermoonCity.cpp \
 Silverpine_Forest.cpp \
 Stormwind.cpp \
@@ -51,6 +54,7 @@ Tanaris.cpp \
 Teldrassil.cpp \
 Terrokar_Forest.cpp \
 The_Barrens.cpp \
+TheStormPeaks.cpp \
 ThousandNeedles.cpp \
 TirisfalGlades.cpp \
 Undercity.cpp \
@@ -58,6 +62,7 @@ UnGoro.cpp \
 Unsorted.cpp \
 Warrior.cpp \
 Westfall.cpp \
+Winterspring.cpp \
 Zangarmarsh.cpp \
 ../Common/Base.cpp \
 ScriptStdAfx.cpp \
