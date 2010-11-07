@@ -127,9 +127,7 @@ void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 {
 	CHECK_PACKET_SIZE(recv_data, 12);
-	//WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 300);
-	uint8 databuffer[10000];
-	StackPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, databuffer, 10000);
+	WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 20000);
 
 	uint32 entryID;
 	uint64 guid;
@@ -158,8 +156,8 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 	data << uint8(0);
 	data << uint8(0);
 	data << uint8(0);
-	data << uint8(0);
-	data << uint8(0);
+	data << goinfo->Icon;
+	data << goinfo->CastBarText;
 	data << uint8(0);
 	data << goinfo->SpellFocus;
 	data << goinfo->sound1;

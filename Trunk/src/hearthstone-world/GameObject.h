@@ -31,6 +31,8 @@ struct GameObjectInfo
 	uint32 Type;
 	uint32 DisplayID;
 	char * Name;
+	char * Icon;
+	char * CastBarText;
 	uint32 SpellFocus;
 	uint32 sound1;
 	uint32 sound2;
