@@ -723,5 +723,8 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Console\CConsole.h">
       <Filter>Console</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\int24.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

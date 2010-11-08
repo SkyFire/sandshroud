@@ -363,6 +363,7 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\MD5.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\Sha1.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\WowCrypt.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\int24.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\CircularBuffer.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\ListenSocketWin32.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\Network.h" />

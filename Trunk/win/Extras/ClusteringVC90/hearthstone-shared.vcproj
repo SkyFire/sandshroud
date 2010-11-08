@@ -642,6 +642,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\hearthstone-shared\int24.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\hearthstone-shared\LocationVector.h"
 				>
 			</File>

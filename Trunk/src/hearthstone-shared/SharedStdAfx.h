@@ -43,6 +43,7 @@
 #include "hashmap.h"
 #include "../../dependencies/VC/include/openssl/md5.h"
 #include "Auth/MD5.h"
+#include "int24.h"
 
 #ifdef WIN32
 #include <windows.h>
