@@ -2150,6 +2150,7 @@ void Player::InitVisibleUpdateBits()
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_TEAM);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_ARBITER);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_DUEL_ARBITER+1);
+	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDID);
 	Player::m_visibleUpdateMask.SetBit(PLAYER_GUILDRANK);
 	Player::m_visibleUpdateMask.SetBit(UNIT_FIELD_BYTES_2);
 

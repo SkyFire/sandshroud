@@ -1247,7 +1247,7 @@ void Guild::SendGuildQuery(WorldSession * pClient)
 {
 	uint32 i = 0;
 	GuildRank * r;
-	WorldPacket data(SMSG_GUILD_QUERY_RESPONSE, 300);
+	WorldPacket data(SMSG_GUILD_QUERY_RESPONSE, 456);
 	data << m_guildId;
 	data << m_guildName;
 

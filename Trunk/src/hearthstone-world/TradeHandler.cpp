@@ -42,14 +42,21 @@ void WorldSession::HandleInitiateTrade(WorldPacket & recv_data)
 		// Handle possible error outcomes
 		if(_player->isDead())
 			TradeStatus = TRADE_STATUS_DEAD;
-		if(pTarget->isDead())
+		else if(pTarget->isDead())
 			TradeStatus = TRADE_STATUS_TARGET_DEAD;
+		else if(_player->IsStunned())
+			TradeStatus = TRADE_STATUS_YOU_STUNNED;
+		else if(pTarget->IsStunned())
+			TradeStatus = TRADE_STATUS_TARGET_STUNNED;
 		else if(pTarget->mTradeTarget != 0)
 			TradeStatus = TRADE_STATUS_ALREADY_TRADING;
 		else if(pTarget->GetTeam() != _player->GetTeam() && GetPermissionCount() == 0)
 			TradeStatus = TRADE_STATUS_WRONG_FACTION;
 		else if(_player->CalcDistance(pTarget) > 10.0f)		// This needs to be checked
 			TradeStatus = TRADE_STATUS_TOO_FAR_AWAY;
+		set<uint32>::iterator itr = pTarget->m_ignores.find(_player->GetLowGUID());
+		if(itr != pTarget->m_ignores.end())
+			TradeStatus = TRADE_STATUS_PLAYER_IGNORED;
 	}
 
 	if(TradeStatus != TRADE_STATUS_PROPOSED)

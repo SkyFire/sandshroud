@@ -33,8 +33,7 @@ void WorldSession::HandleNameQueryOpcode( WorldPacket & recv_data )
 		return;
 
 	DEBUG_LOG("WorldSession","Received CMSG_NAME_QUERY for: %s", pn->name );
-	uint8 databuffer[5000];
-	StackPacket data(SMSG_NAME_QUERY_RESPONSE, databuffer, 5000);
+	WorldPacket data(SMSG_NAME_QUERY_RESPONSE, 10000);
 	data << WoWGuid(guid);
 	data << uint8(0);
 	data << pn->name;
@@ -148,11 +147,7 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 	data << entryID;
 	data << goinfo->Type;
 	data << goinfo->DisplayID;
-	if(lgn)
-		data << lgn->Name;
-	else
-		data << goinfo->Name;
-
+	data << (lgn ? lgn->Name : goinfo->Name);
 	data << uint8(0);
 	data << uint8(0);
 	data << uint8(0);

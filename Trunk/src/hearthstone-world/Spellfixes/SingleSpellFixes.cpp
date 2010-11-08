@@ -2604,7 +2604,18 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->procFlags = PROC_ON_CAST_SPELL;
 			sp->proc_interval = 45000;
-			sp->EffectTriggerSpell[0] = 60229;
+		}break;
+
+	case 67702: // Death's Choice/Verdict
+		{
+			sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
+			sp->proc_interval = 45000;
+		}break;
+
+	case 67771: // Death's Choice/Verdict (heroic)
+		{
+			sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
+			sp->proc_interval = 45000;
 		}break;
 
 		// Swordguard Embroidery

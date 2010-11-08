@@ -5496,6 +5496,70 @@ void Aura::SpellAuraProcTriggerSpell(bool apply)
 	if(apply)
 	{
 		uint32 spellid = 0;
+		switch(GetSpellProto()->Id)
+		{
+			case 57345: // Darkmoon Card: Greatness
+			{
+				float stat = 0.0f;
+				Unit * c = GetUnitCaster();
+				uint32 triggerspell = 0;
+				if (c->GetStat(STAT_STRENGTH)) 
+				{ 
+					triggerspell = 60229;
+					stat = c->GetStat(STAT_STRENGTH); 
+				}
+				if (c->GetStat(STAT_AGILITY) > stat) 
+				{ 
+					triggerspell = 60233;
+					stat = c->GetStat(STAT_AGILITY);  
+				}
+ 				if (c->GetStat(STAT_INTELLECT) > stat) 
+				{ 
+					triggerspell = 60234;
+					stat = c->GetStat(STAT_INTELLECT);
+				}
+				if (c->GetStat(STAT_SPIRIT) > stat) 
+				{ 
+				   triggerspell = 60235;                               
+				}
+				CreateProcTriggerSpell(m_target, m_casterGuid, m_spellProto->Id, triggerspell, m_spellProto->procChance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges, 0, m_spellProto->EffectSpellClassMask[mod->i][0], m_spellProto->EffectSpellClassMask[mod->i][1], m_spellProto->EffectSpellClassMask[mod->i][2]);
+				return;
+			}break;
+			case 67702: // Death's Choice/Verdict
+			{
+				float stat = 0.0f;
+				Unit * c = GetUnitCaster();
+				uint32 triggerspell = 0;
+				if (c->GetStat(STAT_STRENGTH)) 
+				{ 
+					triggerspell = 67708;
+					stat = c->GetStat(STAT_STRENGTH); 
+				}
+				if (c->GetStat(STAT_AGILITY) > stat) 
+				{ 
+					triggerspell = 67703;
+				}
+				CreateProcTriggerSpell(m_target, m_casterGuid, m_spellProto->Id, triggerspell, m_spellProto->procChance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges, 0, m_spellProto->EffectSpellClassMask[mod->i][0], m_spellProto->EffectSpellClassMask[mod->i][1], m_spellProto->EffectSpellClassMask[mod->i][2]);
+				return;
+			}break;
+			case 67771: // Death's Choice/Verdict (heroic)
+			{
+				float stat = 0.0f;
+				Unit * c = GetUnitCaster();
+				uint32 triggerspell = 0;
+				if (c->GetStat(STAT_STRENGTH)) 
+				{ 
+					triggerspell = 67773;
+					stat = c->GetStat(STAT_STRENGTH); 
+				}
+				if (c->GetStat(STAT_AGILITY) > stat) 
+				{ 
+					triggerspell = 67772;
+				}
+				CreateProcTriggerSpell(m_target, m_casterGuid, m_spellProto->Id, triggerspell, m_spellProto->procChance, m_spellProto->procFlags, m_spellProto->procflags2, m_spellProto->procCharges, 0, m_spellProto->EffectSpellClassMask[mod->i][0], m_spellProto->EffectSpellClassMask[mod->i][1], m_spellProto->EffectSpellClassMask[mod->i][2]);
+				return;
+			}break;
+		}
 		spellid = m_spellProto->EffectTriggerSpell[mod->i];
 		if(spellid == 0)
 			return;
