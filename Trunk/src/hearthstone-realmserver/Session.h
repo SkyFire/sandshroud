@@ -70,6 +70,7 @@ public:
 	static void InitHandlers();
 	void Update();
 
+	HEARTHSTONE_INLINE void QueuePacket(WorldPacket* packet) { m_readQueue.Push(packet); }
 	HEARTHSTONE_INLINE RPlayerInfo * GetPlayer() { return m_currentPlayer; }
 	HEARTHSTONE_INLINE void ClearCurrentPlayer() { m_currentPlayer = 0; }
 	HEARTHSTONE_INLINE void ClearServers() { m_nextServer = m_server = 0; }

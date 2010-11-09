@@ -328,7 +328,7 @@ void WorldSocket::OnRead()
 					delete Packet;
 				}
 				else
-					m_session->m_readQueue.Push(Packet);				
+					m_session->QueuePacket(Packet);
 			}break;
 		case CMSG_AUTH_SESSION:
 			{
@@ -336,8 +336,10 @@ void WorldSocket::OnRead()
 			}break;
 		default:
 			{
-				if(m_session) m_session->m_readQueue.Push(Packet);
-				else delete Packet;
+				if(m_session)
+					m_session->QueuePacket(Packet);
+				else
+					delete Packet;
 			}break;
 		}
 	}

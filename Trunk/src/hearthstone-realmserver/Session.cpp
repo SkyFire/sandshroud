@@ -83,10 +83,10 @@ void Session::Update()
 	{
 		opcode = pck->GetOpcode();
 
-		if(m_server)
-			m_server->SendWoWPacket(this, pck);
-		else if(Session::Handlers[opcode] != 0) // can we handle it ourselves?
+		if(Session::Handlers[opcode] != 0) // can we handle it ourselves?
 			(this->*Session::Handlers[opcode])(*pck);
+		else if(m_server)
+			m_server->SendWoWPacket(this, pck);
 		else
 			Log.Warning("Session", "Received unhandled packet with opcode (0x%.4X)", opcode);
 

@@ -1089,7 +1089,6 @@ void Object::SendMessageToSet(WorldPacket *data, bool bToSelf,bool myteam_only)
 	if(bToSelf && m_objectTypeId == TYPEID_PLAYER)
 		TO_PLAYER(this)->GetSession()->SendPacket(data);
 
-
 	unordered_set<Player*>::iterator itr = m_inRangePlayers.begin();
 	unordered_set<Player*>::iterator it_end = m_inRangePlayers.end();
 	bool gminvis = (m_objectTypeId == TYPEID_PLAYER ? TO_PLAYER(this)->m_isGmInvisible : false);

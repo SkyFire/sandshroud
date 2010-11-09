@@ -65,7 +65,7 @@ public:
 
 	HEARTHSTONE_INLINE WorldSession * GetSession(uint32 sid)
 	{
-		if(_sessions[sid])
+		if(sid < MAX_SESSIONS && _sessions[sid])
 			return _sessions[sid];
 		return NULL;
 	}
@@ -81,7 +81,6 @@ public:
 	void HandlePackedPlayerInfo(WorldPacket & pck);
 	void HandlePlayerInfo(WorldPacket & pck);
 	void HandleWoWPacket(WorldPacket & pck);
-	void HandlePlayerChangedServers(WorldPacket & pck);
 	void HandleSaveAllPlayers(WorldPacket & pck);
 	void HandleTransporterMapChange(WorldPacket & pck);
 	void HandlePlayerTeleport(WorldPacket & pck);

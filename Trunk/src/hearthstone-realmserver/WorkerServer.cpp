@@ -63,13 +63,9 @@ void WServer::HandleRegisterWorker(WorldPacket & pck)
 	{
 		for (std::vector<uint32>::iterator itr = instancedmaps.begin(); itr != instancedmaps.end(); itr++)
 		{
-			if(!IS_MAIN_MAP((*itr)) && (sClusterMgr.InstancedMaps.find(*itr) == sClusterMgr.InstancedMaps.end()))
+			if(!IS_MAIN_MAP((*itr)) && sClusterMgr.GetPrototypeInstanceByMapId(*itr) == NULL)
 			{
-				Instance* i = new Instance;
-				i->InstanceId = 0;
-				i->MapId = (*itr);
-				i->MapCount = 0;
-				i->Server = this;
+				Instance* i = sClusterMgr.CreateInstance((*itr), this);
 				sClusterMgr.InstancedMaps.insert(std::pair<uint32, Instance*>((*itr), i));
 				Log.Debug("ClusterMgr", "Allocating instance prototype on map %u to worker %u", (*itr), GetID());
 			}
@@ -142,7 +138,7 @@ void WServer::HandlePlayerLogout(WorldPacket & pck)
 	{
 		/* tell all other servers this player has gone offline */
 		WorldPacket data(ISMSG_DESTROY_PLAYER_INFO, 4);
-		data << guid;
+		data << sessionid << guid;
 		sClusterMgr.DistributePacketToAll(&data, this);
 
 		/* clear the player from the session */
@@ -654,4 +650,3 @@ void WServer::HandleChannelLFGDungeonStatusReply(WorldPacket& pck)
 	chn->AttemptJoin(pRplayer, pass.c_str());
 	DEBUG_LOG("LfgChannelJoin", "%s, unk %u", channelname.c_str(), unk);*/
 }
-

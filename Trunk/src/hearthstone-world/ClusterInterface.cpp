@@ -286,8 +286,8 @@ void ClusterInterface::HandlePlayerLogin(WorldPacket & pck)
 
 void ClusterInterface::HandleDestroyPlayerInfo(WorldPacket & pck)
 {
-	uint32 guid;
-	pck >> guid;
+	uint32 sessionid, guid;
+	pck >> sessionid >> guid;
 
 	if(_onlinePlayers[guid])
 	{
@@ -304,10 +304,9 @@ void ClusterInterface::HandleDestroyPlayerInfo(WorldPacket & pck)
 			player->SetSession(NULL);
 			session->SetPlayer(NULL);
 			session->SetSocket(NULL);
-			delete session;
+			DestroySession(sessionid);
 		}
 	}
-
 }
 
 void ClusterInterface::HandlePackedPlayerInfo(WorldPacket & pck)
@@ -344,7 +343,7 @@ void ClusterInterface::Update()
 void ClusterInterface::DestroySession(uint32 sid)
 {
 	WorldSession * s = _sessions[sid];
-	_sessions[sid] = 0;
+	_sessions[sid] = NULL;
 	if(s)
 	{
 		/* todo: replace this with an event so we don't remove from the wrong thread */
@@ -352,7 +351,8 @@ void ClusterInterface::DestroySession(uint32 sid)
 			s->LogoutPlayer(true);
 
 		delete s->GetSocket();
-		delete s;
+		sWorld.RemoveGlobalSession(s);
+		sWorld.RemoveSession(sid);
 	}
 }
 
@@ -375,33 +375,6 @@ void ClusterInterface::HandleWoWPacket(WorldPacket & pck)
 	npck->resize(size);
 	memcpy((void*)npck->contents(), pck.contents()+10, size);
 	_sessions[sid]->QueuePacket(npck);
-}
-
-void ClusterInterface::HandlePlayerChangedServers(WorldPacket & pck)
-{
-	uint32 sessionid, dsid;
-	pck >> sessionid >> dsid;
-	if(!_sessions[dsid])
-	{
-		Log.Error("HandlePlayerChangedServers", "Invalid session: %u", sessionid);
-		return;
-	}
-
-	WorldSession * s = _sessions[sessionid];
-	Player* plr = s->GetPlayer();
-
-
-
-	/* build the packet with the players information */
-	WorldPacket data(ICMSG_PLAYER_CHANGE_SERVER_INFO, 1000);
-	data << sessionid << plr->GetLowGUID();
-
-	/* pack */
-	//data << plr->
-	/* remove the player from our world. */
-	sEventMgr.AddEvent(plr, &Player::EventRemoveAndDelete, EVENT_GAMEOBJECT_EXPIRE	/* meh :P */, 1000, 1, 0);
-
-	/* dereference the session */
 }
 
 void ClusterInterface::RequestTransfer(Player* plr, uint32 MapId, uint32 InstanceId, LocationVector & vec)
@@ -615,9 +588,7 @@ void ClusterInterface::HandleSessionRemoved(WorldPacket & pck)
 {
 	uint32 sessionid;
 	pck >> sessionid;
-	WorldSession* s=GetSession(sessionid);
-	if (s != NULL)
-		delete s;
+	DestroySession(sessionid);
 }
 
 void ClusterInterface::HandleSaveAllPlayers(WorldPacket & pck)

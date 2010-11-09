@@ -82,8 +82,8 @@ void WSSocket::OnRead()
 			readBuffer.Read((uint8*)pck->contents(), sz);
 
 			Session * session = sClientMgr.GetSession(sid);
-			if(session != NULL && session->GetSocket() != NULL)
-				session->GetSocket()->SendPacket(pck);
+			if(session != NULL)
+				session->SendPacket(pck);
 
 			_cmd = 0;
 			continue;
@@ -130,7 +130,7 @@ void WSSocket::HandleRegisterWorker(WorldPacket & pck)
 
 	// TODO: Check the build of the server
 	WServer * new_server = sClusterMgr.CreateWorkerServer(this);
-    if(new_server == 0)
+	if(new_server == 0)
 	{
 		WorldPacket data(ISMSG_REGISTER_RESULT, 10);
 		data << uint32(0);
