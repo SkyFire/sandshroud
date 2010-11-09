@@ -9970,12 +9970,12 @@ void Player::SetShapeShift(uint8 ss)
 	}
 
 	// now dummy-handler stupid hacky fixed shapeshift spells (leader of the pack, etc)
-	for( itr = mShapeShiftSpells.begin(); itr != mShapeShiftSpells.end(); ++itr;)
+	for( itr = mShapeShiftSpells.begin(); itr != mShapeShiftSpells.end(); )
 	{
 		sp = dbcSpell.LookupEntry( *itr );
 		if( sp == NULL)
 			continue;
-		
+		++itr;
 
 		if( sp->RequiredShapeShift && ((uint32)1 << (ss-1)) & sp->RequiredShapeShift )
 		{
