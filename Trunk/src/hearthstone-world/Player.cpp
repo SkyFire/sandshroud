@@ -413,6 +413,9 @@ void Player::Init()
 	PreventRes				= false;
 	MobXPGainRate			= 0.0f;
 	NoReagentCost			= false;
+	fromrandombg			= false;
+	randombgwinner			= false;
+
 	Unit::Init();
 }
 
@@ -3456,7 +3459,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	iInstanceType = get_next_field.GetUInt32();
 	iRaidType = get_next_field.GetUInt32();
 
-	HonorHandler::RecalculateHonorFields(TO_PLAYER(this));
+	HonorHandler::RecalculateHonorFields(this);
 
 	for(uint8 x = 0; x < 5; x++ )
 		BaseStats[x]=GetUInt32Value(UNIT_FIELD_STAT0+x);
@@ -13284,7 +13287,7 @@ uint8 Player::GetChatTag() const
 
 void Player::AddArenaPoints( uint32 arenapoints )
 {
-	this->m_arenaPoints += arenapoints;
+	m_arenaPoints += arenapoints;
 	HonorHandler::RecalculateHonorFields(this);
 }
 

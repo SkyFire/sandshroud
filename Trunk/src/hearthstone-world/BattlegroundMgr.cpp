@@ -238,7 +238,9 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 {
 	if( !IsValidBG(BattlegroundType))
 		return;
-
+	uint32 ArenaP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),25);
+	uint32 HonorP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),30);
+	uint32 LoseHonorP = m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),5);
 	WorldPacket data;
 	uint32 LevelGroup = GetLevelGrouping(m_session->GetPlayer()->getLevel());
 	uint32 Count = 0;
@@ -252,18 +254,18 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	data << BattlegroundType;						// BG ID
 	data << uint8(IS_ARENA(BattlegroundType));		// unk 3.3
 	data << uint8(0);								// unk 3.3
-	data << uint8(0);								// Has Reward?
-	data << uint32(0);								// Arena points
-	data << uint32(0);								// Honor points
-	data << uint32(0);								// Lose honor
-	bool random = BattlegroundType == 33;
+	data << uint8(m_session->GetPlayer()->randombgwinner); // Has Reward?
+	data << ArenaP;	// Arena points
+	data << HonorP;	// Honor points
+	data << LoseHonorP;	// Lose honor
+	bool random = BattlegroundType == 32;
 	data << uint8(random);
 	if(random)
 	{
-		data << uint8(0);							// Has Reward?
-		data << uint32(0);							// Arena points
-		data << uint32(0);							// Honor points
-		data << uint32(0);							// Lose honor
+		data << uint8(m_session->GetPlayer()->randombgwinner);	// Has Reward?
+		data << ArenaP;	// Arena points
+		data << HonorP;	// Honor points
+		data << LoseHonorP;	// Lose honor
 	}
 
 	size_t CountPos = data.wpos();
@@ -299,6 +301,12 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 	uint32 lgroup = GetLevelGrouping(plr->getLevel());
 
 	pck >> guid >> bgtype >> instance >> joinasgroup;
+	if(bgtype == 32)
+	{
+		bgtype = GenerateRandomBGType();
+		plr->fromrandombg = true;
+	}
+
 	if(bgtype >= BATTLEGROUND_NUM_TYPES || BGMapIds[bgtype] == 0)
 	{
 		m_session->Disconnect();
@@ -2166,7 +2174,39 @@ bool CBattleground::HookSlowLockOpen(GameObject* pGo, Player* pPlayer, Spell* pS
 
 bool CBattlegroundManager::IsValidBG(uint32 BgType)
 {
-	if(BgType && (BgType < 12 || BgType == 31 || BgType == 33))
+	if(BgType && (BgType < 12 || BgType == 31 || BgType == 32))
        return true;
 	return false;
+}
+
+uint32 CBattlegroundManager::GenerateRandomBGType()
+{
+	uint32 Type = RandomUInt(6);
+	switch(Type)
+	{
+		case 1:
+			{
+				return 1;
+			}break;
+		case 2:
+			{
+				return 2;
+			}break;
+		case 3:
+			{
+				return 3;
+			}break;
+		case 4:
+			{
+				return 7;
+			}break;
+		case 5:
+			{
+				return 9;
+			}break;
+		case 6:
+			{
+				return 30;
+			}break;
+	}
 }

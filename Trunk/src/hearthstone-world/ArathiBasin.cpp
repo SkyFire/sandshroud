@@ -549,6 +549,12 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 					(*itr)->CastSpell((*itr), loser_spell, true);
 					(*itr)->m_bgScore.BonusHonor += m_bonusHonor;
 					HonorHandler::AddHonorPointsToPlayer((*itr), m_bonusHonor);
+					if((*itr)->fromrandombg)
+					{
+						(*itr)->m_honorToday += (*itr)->GetHkHonor((*itr)->getLevel(),5);
+						HonorHandler::RecalculateHonorFields((*itr));
+						(*itr)->fromrandombg = false;
+					}
 				}
 				else
 				{
@@ -557,6 +563,15 @@ void ArathiBasin::EventUpdateResources(uint32 Team)
 					HonorHandler::AddHonorPointsToPlayer((*itr), 2*m_bonusHonor);
 					uint32 diff = abs((int32)(m_resources[i] - m_resources[i ? 0 : 1]));
 					(*itr)->GetAchievementInterface()->HandleAchievementCriteriaWinBattleground( m_mapMgr->GetMapId(), diff, ((uint32)UNIXTIME - m_startTime) / 1000, TO_CBATTLEGROUND(this));
+					if((*itr)->fromrandombg)
+					{
+						Player * p = (*itr);
+						p->AddArenaPoints(p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),25) : p->GetHkHonor(p->getLevel(),0));
+						p->m_honorToday += p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),30) : p->GetHkHonor(p->getLevel(),15);
+						HonorHandler::RecalculateHonorFields(p);
+						p->randombgwinner = true;
+						p->fromrandombg = false;
+					}
 				}
 			}
 		}

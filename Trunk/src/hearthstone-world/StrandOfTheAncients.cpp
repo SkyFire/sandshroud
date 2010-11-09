@@ -595,13 +595,28 @@ void StrandOfTheAncients::EndGame()
 			if( (*itr)->HasFlag(PLAYER_FLAGS, 0x2) )
 				continue;
 
-			if(m_losingteam == 2)
+			if(i == m_losingteam)
+			{
 				(*itr)->CastSpell((*itr), loser_spell, true);
-			else if(i == m_losingteam)
-				(*itr)->CastSpell((*itr), loser_spell, true);
+				if((*itr)->fromrandombg)
+				{
+					(*itr)->m_honorToday += (*itr)->GetHkHonor((*itr)->getLevel(),5);
+					HonorHandler::RecalculateHonorFields((*itr));
+					(*itr)->fromrandombg = false;
+				}
+			}
 			else
 			{
 				(*itr)->CastSpell((*itr), winner_spell, true);
+				if((*itr)->fromrandombg)
+				{
+					Player * p = (*itr);
+					p->AddArenaPoints(p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),25) : p->GetHkHonor(p->getLevel(),0));
+					p->m_honorToday += p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),30) : p->GetHkHonor(p->getLevel(),15);
+					HonorHandler::RecalculateHonorFields(p);
+					p->randombgwinner = true;
+					p->fromrandombg = false;
+				}
 			}
 		}
 	}

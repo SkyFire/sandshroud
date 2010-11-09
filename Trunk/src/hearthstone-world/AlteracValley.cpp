@@ -1093,12 +1093,27 @@ void AlteracValley::Finish(uint32 losingTeam)
 			if(i == losingTeam)
 			{
 				(*itr)->CastSpell((*itr), loser_spell, true);
+				if((*itr)->fromrandombg)
+				{
+					(*itr)->m_honorToday += (*itr)->GetHkHonor((*itr)->getLevel(),5);
+					HonorHandler::RecalculateHonorFields((*itr));
+					(*itr)->fromrandombg = false;
+				}
 			}
 			else
 			{
 				(*itr)->CastSpell((*itr), winner_spell, true);
 				uint32 diff = abs((int32)(m_reinforcements[i] - m_reinforcements[i ? 0 : 1]));
 				(*itr)->GetAchievementInterface()->HandleAchievementCriteriaWinBattleground( m_mapMgr->GetMapId(), diff, ((uint32)UNIXTIME - m_startTime) / 1000, TO_CBATTLEGROUND(this));
+				if((*itr)->fromrandombg)
+				{
+					Player * p = (*itr);
+					p->AddArenaPoints(p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),25) : p->GetHkHonor(p->getLevel(),0));
+					p->m_honorToday += p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),30) : p->GetHkHonor(p->getLevel(),15);
+					HonorHandler::RecalculateHonorFields(p);
+					p->randombgwinner = true;
+					p->fromrandombg = false;
+				}
 			}
 		}
 		if (m_LiveCaptain[i])

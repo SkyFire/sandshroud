@@ -988,6 +988,12 @@ bool EyeOfTheStorm::GivePoints(uint32 team, uint32 points)
 				{
 					(*itr)->m_bgScore.BonusHonor += 2*m_bonusHonor;
 					HonorHandler::AddHonorPointsToPlayer( (*itr), 2*m_bonusHonor );
+					if((*itr)->fromrandombg)
+					{
+						(*itr)->m_honorToday += (*itr)->GetHkHonor((*itr)->getLevel(),5);
+						HonorHandler::RecalculateHonorFields((*itr));
+						(*itr)->fromrandombg = false;
+					}
 				}
 				else
 				{
@@ -995,6 +1001,15 @@ bool EyeOfTheStorm::GivePoints(uint32 team, uint32 points)
 					HonorHandler::AddHonorPointsToPlayer( (*itr), m_bonusHonor );
 					uint32 diff = abs((int32)(m_points[i] - m_points[i ? 0 : 1]));
 					(*itr)->GetAchievementInterface()->HandleAchievementCriteriaWinBattleground( m_mapMgr->GetMapId(), diff, ((uint32)UNIXTIME - m_startTime) / 1000, TO_CBATTLEGROUND(this));
+					if((*itr)->fromrandombg)
+					{
+						Player * p = (*itr);
+						p->AddArenaPoints(p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),25) : p->GetHkHonor(p->getLevel(),0));
+						p->m_honorToday += p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),30) : p->GetHkHonor(p->getLevel(),15);
+						HonorHandler::RecalculateHonorFields(p);
+						p->randombgwinner = true;
+						p->fromrandombg = false;
+					}
 				}
 
 				Item* pReward;

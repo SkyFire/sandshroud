@@ -1048,13 +1048,13 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
 	uint16 action;
 	recv_data >> button >> action >> misc >> type;
 	OUT_DEBUG( "BUTTON: %u ACTION: %u TYPE: %u MISC: %u", button, action, type, misc );
-	if(action==0)
+	/*if(action==0)
 	{
 		OUT_DEBUG( "MISC: Remove action from button %u", button );
 		GetPlayer()->setAction(button, 0, 0, 0);
 	}
 	else
-	{
+	{*/
 		if(button >= 0x00FFFFFF+1)
 			return;
 
@@ -1073,7 +1073,7 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
 			OUT_DEBUG( "MISC: Added Spell %u into button %u", action, button );
 			GetPlayer()->setAction(button,action,type,misc);
 		}
-	}
+	//}
 
 #ifdef OPTIMIZED_PLAYER_SAVING
 	_player->save_Actions();
@@ -1204,7 +1204,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 	CALL_GO_SCRIPT_EVENT(obj, OnActivate)(_player);
 	CALL_INSTANCE_SCRIPT_EVENT( _player->GetMapMgr(), OnGameObjectActivate )( obj, _player );
 
-	uint32 type = obj->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_TYPE_ID);
+	uint32 type = obj->GetType();
 	switch (type)
 	{
 		case GAMEOBJECT_TYPE_CHAIR:

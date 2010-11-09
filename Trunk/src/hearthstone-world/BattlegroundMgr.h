@@ -214,10 +214,13 @@ public:
 
 	/* Gets the average queue time (from last 10 players) */
 	uint32 GetAverageQueueTime(uint32 BgType);
-
+	
 	/* Adds a new queueTime for average calculation */
 	void AddAverageQueueTime(uint32 BgType, uint32 queueTime);
+	//Check if it be valid mun
 	bool IsValidBG(uint32 BgType);
+	//Generate BG Type for random
+	uint32 GenerateRandomBGType();
 };
 
 class CBattleground : public EventableObject
