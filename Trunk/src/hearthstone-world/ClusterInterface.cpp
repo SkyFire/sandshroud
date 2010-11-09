@@ -50,6 +50,7 @@ ClusterInterface::ClusterInterface()
 {
 	ClusterInterface::InitHandlers();
 	m_connected = false;
+	memset(_sessions, NULL, sizeof(WorldSession*)*MAX_SESSIONS);
 }
 
 ClusterInterface::~ClusterInterface()
@@ -157,29 +158,37 @@ void ClusterInterface::HandleAuthResult(WorldPacket & pck)
 		return;
 	}
 
-	std::vector<uint32> maps;
+	std::vector<uint32> basemaps;
 	std::vector<uint32> instancedmaps;
 
 	//send info for all the maps we will handle
 	StorageContainerIterator<MapInfo>* itr = WorldMapInfoStorage.MakeIterator();
 	MapInfo* info = NULL;
 
+	Log.Notice("ClusterInterface", "Loading BaseMap and InstanceMap Info");
 	while(!itr->AtEnd())
 	{
 		info = itr->Get();
 
-		if (info->type == INSTANCE_NULL)
-			maps.push_back(info->mapid);
-		else
-			instancedmaps.push_back(info->mapid);
+		if(info->load)
+		{
+			if (info->type == INSTANCE_NULL)
+				basemaps.push_back(info->mapid);
+			else
+				instancedmaps.push_back(info->mapid);
+		}
 
 		if(!itr->Inc())
 			break;
 	}
 
-	WorldPacket data(ICMSG_REGISTER_WORKER, 4 + (sizeof(std::vector<uint32>::size_type) * maps.size()) + (sizeof(std::vector<uint32>::size_type) * instancedmaps.size()));
+	if(basemaps.size() > 8000 || instancedmaps.size() > 8000)
+		return; // IT'S OVER 8000!!!!
+
+	uint32 vectorsize = sizeof(std::vector<uint32>::size_type);
+	WorldPacket data(ICMSG_REGISTER_WORKER, 4 + (vectorsize * basemaps.size()) + (vectorsize * instancedmaps.size()));
 	data << uint32(BUILD_REVISION);
-	data << maps;
+	data << basemaps;
 	data << instancedmaps;
 	SendPacket(&data);
 }
@@ -189,14 +198,14 @@ void ClusterInterface::HandleRegisterResult(WorldPacket & pck)
 {
 	uint32 res;
 	pck >> res;
-	OUT_DEBUG("ClusterInterface", "Register Result: %u", res);
+	DEBUG_LOG("ClusterInterface", "Register Result: %u", res);
 }
 
 void ClusterInterface::HandleCreateInstance(WorldPacket & pck)
 {
 	uint32 mapid, instanceid;
 	pck >> mapid >> instanceid;
-	OUT_DEBUG("ClusterInterface", "Creating Instance %u on Map %u", instanceid, mapid);
+	DEBUG_LOG("ClusterInterface", "Creating Instance %u on Map %u", instanceid, mapid);
 	sInstanceMgr.Load(mapid);
 }
 
@@ -228,6 +237,27 @@ void ClusterInterface::HandlePlayerLogin(WorldPacket & pck)
 		s = new WorldSession(AccountId, accountname, so);
 	_sessions[sessionid] = s;
 	sWorld.AddSession(s);
+
+	for(uint8 i = 0; i < 8; i++)
+		s->SetAccountData(i, NULL, true, 0);
+
+	if(pck.rpos() != pck.wpos())
+	{
+		uint32 size = 0;
+		for(uint8 i = 0; i < 8; i++)
+		{
+			if(pck.rpos()+4 > pck.wpos())
+				break; // Out of packet.
+
+			pck >> size;
+			if(size)
+			{
+				char* data = new char[size];
+				pck.read(((uint8*)data), size);
+				s->SetAccountData(i, data, true, size);
+			}
+		}
+	}
 
 	bool login_result = s->ClusterTryPlayerLogin(Guid, ClientBuild, GMPermissions, Account_Flags);
 	if(login_result)
@@ -268,10 +298,13 @@ void ClusterInterface::HandleDestroyPlayerInfo(WorldPacket & pck)
 	Player * player = objmgr.GetPlayer(guid);
 	if(player)
 	{
-		if(player->GetSession())
+		WorldSession* session = NULL;
+		if((session = player->GetSession()) != NULL)
 		{
-			player->GetSession()->SetSocket(NULL);
 			player->SetSession(NULL);
+			session->SetPlayer(NULL);
+			session->SetSocket(NULL);
+			delete session;
 		}
 	}
 

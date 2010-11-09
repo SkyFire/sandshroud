@@ -63,7 +63,12 @@ public:
 		return (itr == _onlinePlayers.end()) ? 0 : itr->second;
 	}
 
-	HEARTHSTONE_INLINE WorldSession * GetSession(uint32 sid) { return _sessions[sid]; }
+	HEARTHSTONE_INLINE WorldSession * GetSession(uint32 sid)
+	{
+		if(_sessions[sid])
+			return _sessions[sid];
+		return NULL;
+	}
 
 	void HandleSessionRemoved(WorldPacket & pck);
 	void HandleTeleportResult(WorldPacket & pck);

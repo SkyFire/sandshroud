@@ -52,9 +52,9 @@ void WSClient::OnRead()
 			uint32 sid = 0;
 			uint16 op = 0;
 			uint32 sz = 0;
-			GetReadBuffer().Read(&sid, 4);
-			GetReadBuffer().Read(&op, 2);
-			GetReadBuffer().Read(&sz, 4);
+			readBuffer.Read(&sid, 4);
+			readBuffer.Read(&op, 2);
+			readBuffer.Read(&sz, 4);
 
 			WorldSession * session = sClusterInterface.GetSession(sid);
 			if(session != NULL)
@@ -63,8 +63,9 @@ void WSClient::OnRead()
 				if (sz > 0)
 				{
 					pck->resize(sz);
-					GetReadBuffer().Read((void*)pck->contents(), sz);
+					readBuffer.Read((void*)pck->contents(), sz);
 				}
+
 				if(session)
 					session->QueuePacket(pck);
 				else
@@ -88,7 +89,7 @@ void WSClient::OnRead()
 			break;
 		default:
 			sClusterInterface.QueuePacket(pck);
-		}		
+		}
 	}
 }
 

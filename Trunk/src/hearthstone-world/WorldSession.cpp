@@ -56,8 +56,11 @@ _logoutTime(0), permissions(NULL), permissioncount(0), _loggingOut(false), insta
 	m_isKnockedback = false;
 	m_jumpHackChances = 5;
 
-	for(uint32 x=0;x<8;x++)
-		sAccountData[x].data=NULL;
+	for(uint32 x = 0; x < 8; x++)
+	{
+		sAccountData[x].sz = NULL;
+		sAccountData[x].data = NULL;
+	}
 }
 
 WorldSession::~WorldSession()

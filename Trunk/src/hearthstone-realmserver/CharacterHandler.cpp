@@ -42,29 +42,7 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 			positionX, positionY, zoneId, mapId, race, class, gender, \
 			instance_id, entrypointmap, entrypointx, entrypointy, entrypointz, \
 			entrypointo FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE guid = %u", guid);
-	if(result)
-	{
-		Field * f = result->Fetch();
-		m_currentPlayer->AccountId = f[0].GetUInt32();
-		m_currentPlayer->Name = f[1].GetString();
-		m_currentPlayer->Level = f[2].GetUInt32();
-		m_currentPlayer->GuildId = f[3].GetUInt32();
-		m_currentPlayer->PositionX = f[4].GetFloat();
-		m_currentPlayer->PositionY = f[5].GetFloat();
-		m_currentPlayer->ZoneId = f[6].GetUInt32();
-		m_currentPlayer->MapId = f[7].GetUInt32();
-		m_currentPlayer->Race = f[8].GetUInt8();
-		m_currentPlayer->Class = f[9].GetUInt8();
-		m_currentPlayer->Gender = f[10].GetUInt8();
-		m_currentPlayer->Latency = m_latency;
-		m_currentPlayer->GMPermissions = m_GMPermissions;
-		m_currentPlayer->Account_Flags = m_accountFlags;
-		m_currentPlayer->InstanceId = f[11].GetUInt32();
-		m_currentPlayer->RecoveryMapId = f[12].GetUInt32();
-		m_currentPlayer->RecoveryPosition.ChangeCoords(f[13].GetFloat(), f[14].GetFloat(), f[15].GetFloat(), f[16].GetFloat());
-		delete result;
-	}
-	else
+	if(!result)
 	{
 		data << uint8(CHAR_LOGIN_NO_CHARACTER);
 		SendPacket(&data);
@@ -72,6 +50,26 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 		m_currentPlayer = NULL;
 		return;
 	}
+
+	Field * f = result->Fetch();
+	m_currentPlayer->AccountId = f[0].GetUInt32();
+	m_currentPlayer->Name = f[1].GetString();
+	m_currentPlayer->Level = f[2].GetUInt32();
+	m_currentPlayer->GuildId = f[3].GetUInt32();
+	m_currentPlayer->PositionX = f[4].GetFloat();
+	m_currentPlayer->PositionY = f[5].GetFloat();
+	m_currentPlayer->ZoneId = f[6].GetUInt32();
+	m_currentPlayer->MapId = f[7].GetUInt32();
+	m_currentPlayer->Race = f[8].GetUInt8();
+	m_currentPlayer->Class = f[9].GetUInt8();
+	m_currentPlayer->Gender = f[10].GetUInt8();
+	m_currentPlayer->Latency = m_latency;
+	m_currentPlayer->GMPermissions = m_GMPermissions;
+	m_currentPlayer->Account_Flags = m_accountFlags;
+	m_currentPlayer->InstanceId = f[11].GetUInt32();
+	m_currentPlayer->RecoveryMapId = f[12].GetUInt32();
+	m_currentPlayer->RecoveryPosition.ChangeCoords(f[13].GetFloat(), f[14].GetFloat(), f[15].GetFloat(), f[16].GetFloat());
+	delete result;
 
 	if(IS_MAIN_MAP(m_currentPlayer->MapId))
 	{
@@ -101,7 +99,7 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 		}
 	}
 
-	if(!dest ||	!dest->Server)		// Shouldn't happen
+	if(!dest ||	!dest->Server)
 	{
 		/* world server is down */
 		data << uint8(CHAR_LOGIN_NO_WORLD);
@@ -119,7 +117,7 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 
 	/* append the account information */
 	data << uint32(m_accountId) << uint32(m_accountFlags) << uint32(m_sessionId)
-		<< m_GMPermissions << m_accountName;
+		<< m_GMPermissions << m_accountName << m_ClientBuild;
 
 	AccountDataEntry* acd = NULL;
 	for(uint8 i = 0; i < 8; i++)
@@ -136,6 +134,11 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 }
 
 void Session::HandleCharacterEnum(WorldPacket & pck)
+{
+	SendChars();
+}
+
+void Session::SendChars()
 {
 	uint32 start_time = getMSTime();
 	OUT_DEBUG("CharacterHandler", "Enum Build started at %u.", start_time);
@@ -482,6 +485,193 @@ void Session::HandleCharacterRename(WorldPacket & pck)
 void Session::HandleCharacterCustomize(WorldPacket & pck)
 {
 
+}
+
+void Session::HandleUpdateAccountData(WorldPacket & pck)
+{
+	uint32 uiID;
+	pck >> uiID;
+
+	if(uiID > 8)
+	{
+		// Shit..
+		sLog.outString("WARNING: Accountdata > 8 (%d) was requested to be updated by account %s(%u)!", uiID, GetAccountName().c_str(), GetAccountId());
+		return;
+	}
+
+	uint32 _time;
+	pck >> _time;
+
+	uint32 uiDecompressedSize;
+	pck >> uiDecompressedSize;
+	uLongf uid = uiDecompressedSize;
+
+	// client wants to 'erase' current entries
+	if(uiDecompressedSize == 0)
+	{
+		SKIP_READ_PACKET(pck);
+		SetAccountData(uiID, NULL, false,0);
+		return;
+	}
+
+	if(uiDecompressedSize > 100000)
+	{
+		SKIP_READ_PACKET(pck); // Spam cleanup.
+		Disconnect();
+		return;
+	}
+
+	if(uiDecompressedSize >= 65534)
+	{
+		SKIP_READ_PACKET(pck); // Spam cleanup.
+		// BLOB fields can't handle any more than this.
+		return;
+	}
+
+	size_t ReceivedPackedSize = pck.size() - 12;
+	char* data = new char[uiDecompressedSize+1];
+	memset(data, 0, uiDecompressedSize+1);	/* fix umr here */
+
+	if(uiDecompressedSize > ReceivedPackedSize) // if packed is compressed
+	{
+		int32 ZlibResult;
+
+		ZlibResult = uncompress((uint8*)data, &uid, pck.contents() + 12, (uLong)ReceivedPackedSize);
+
+		switch (ZlibResult)
+		{
+		case Z_OK:				  //0 no error decompression is OK
+			SetAccountData(uiID, data, false, uiDecompressedSize);
+			OUT_DEBUG("WORLD: Successfully decompressed account data %d for %s, and updated storage array.", uiID, GetAccountName().c_str());
+			break;
+
+		case Z_ERRNO:				//-1
+		case Z_STREAM_ERROR:		//-2
+		case Z_DATA_ERROR:			//-3
+		case Z_MEM_ERROR:			//-4
+		case Z_BUF_ERROR:			//-5
+		case Z_VERSION_ERROR:		//-6
+		{
+			delete [] data;
+			sLog.outString("WORLD WARNING: Decompression of account data %d for %s FAILED.", uiID, GetAccountName().c_str());
+			break;
+		}
+
+		default:
+			delete [] data;
+			sLog.outString("WORLD WARNING: Decompression gave a unknown error: %x, of account data %d for %s FAILED.", ZlibResult, uiID, GetAccountName().c_str());
+			break;
+		}
+	}
+	else
+	{
+		memcpy(data, pck.contents() + 12, uiDecompressedSize);
+		SetAccountData(uiID, data, false, uiDecompressedSize);
+	}SKIP_READ_PACKET(pck); // Spam cleanup for packet size checker... Because who cares about this dataz
+}
+
+void Session::HandleRequestAccountData(WorldPacket & pck)
+{
+	uint32 id;
+	pck >> id;
+
+	if(id > 8)
+	{
+		// Shit..
+		sLog.outString("WARNING: Accountdata > 8 (%d) was requested by account %s(%u)!", id, GetAccountName().c_str(), GetAccountId());
+		return;
+	}
+
+	AccountDataEntry* res = GetAccountData(id);
+	uLongf destSize = compressBound(res->sz);
+	ByteBuffer bbuff;
+	bbuff.resize(destSize);
+
+	if(res->sz && compress(const_cast<uint8*>(bbuff.contents()), &destSize, (uint8*)res->data, res->sz) != Z_OK)
+	{
+		OUT_DEBUG("Error while compressing ACCOUNT_DATA");
+		SKIP_READ_PACKET(pck);
+		return;
+	}
+
+	WorldPacket data;
+	data.SetOpcode(SMSG_UPDATE_ACCOUNT_DATA);
+	data << uint64(GetPlayer() ? GetPlayer()->Guid : 0);
+	data << id;
+	// if red does not exists if ID == 7 and if there is no data send 0
+	if(!res || !res->data) // if error, send a NOTHING packet
+	{
+		data << (uint32)0;
+		data << (uint32)0;
+	}
+	else
+	{
+		data << uint32(res->Time);
+		data << res->sz;
+	}
+	data.append(bbuff);
+	SendPacket(&data);
+}
+
+void Session::HandleReadyForAccountDataTimes(WorldPacket & pck)
+{
+	DEBUG_LOG( "WORLD","Received CMSG_READY_FOR_ACCOUNT_DATA_TIMES" );
+
+	// account data == UI config
+	WorldPacket data(SMSG_ACCOUNT_DATA_TIMES, 4+1+4+8*4);
+	data << uint32(UNIXTIME) << uint8(1) << uint32(0x15);
+	for (int i = 0; i < 8; i++)
+	{
+		if(0x15 & (1 << i))
+		{
+			data << uint32(0);
+		}
+	}
+	SendPacket(&data);
+}
+
+void Session::HandleEnableMicrophoneOpcode(WorldPacket & pck)
+{
+#ifdef VOICE_CHAT
+	OUT_DEBUG("WORLD: Received CMSG_VOICE_SESSION_ENABLE with VOICE CHAT");
+	uint8 voice, mic;
+	pck >> voice >> mic;
+
+	WorldPacket data(SMSG_VOICE_SESSION_ENABLE, 2);
+	data << voice;
+	data << mic;
+	SendPacket(&data);
+#else
+	SKIP_READ_PACKET(pck);
+#endif
+}
+
+void Session::HandleVoiceChatQueryOpcode(WorldPacket & pck)
+{
+#ifdef VOICE_CHAT
+	uint8 type;
+	uint32 id; // I think this is channel crap, 5 is custom,
+
+	pck >> type >> id;
+
+/*	if(type == 5)
+	{
+		// custom channel
+		Channel * chn = channelmgr.GetChannel(id);
+
+		if(chn == NULL)
+			return;
+
+		if(chn->m_general || !chn->voice_enabled)
+			return;
+
+		chn->JoinVoiceChannel(_player);
+		chn->List(_player);
+		_player->watchedchannel = chn;
+	}*/
+#else
+	SKIP_READ_PACKET(pck);
+#endif
 }
 
 void Session::HandleRealmSplitQuery(WorldPacket & pck)

@@ -24,6 +24,8 @@ typedef void(Session::*SessionPacketHandler)(WorldPacket&);
 
 #ifndef _GAME
 
+#define SKIP_READ_PACKET(pckt) pckt.rpos(pckt.wpos())
+
 struct AccountDataEntry
 {
 	time_t Time;
@@ -147,6 +149,7 @@ public:
 		if(m_socket && m_socket->IsConnected())
 			m_socket->Disconnect();
 	}
+	void SendChars();
 
 	void HandleNameQueryOpcode(WorldPacket & pck);
 	void HandlePlayerLogin(WorldPacket & pck);
@@ -157,6 +160,11 @@ public:
 	void HandleCharacterCustomize(WorldPacket & pck);
 	void HandleRealmSplitQuery(WorldPacket & pck);
 	void HandleQueryTimeOpcode(WorldPacket & pck);
+	void HandleUpdateAccountData(WorldPacket & pck);
+	void HandleRequestAccountData(WorldPacket & pck);
+	void HandleReadyForAccountDataTimes(WorldPacket & pck);
+	void HandleEnableMicrophoneOpcode(WorldPacket & pck);
+	void HandleVoiceChatQueryOpcode(WorldPacket & pck);
 
 	void HandleItemQuerySingleOpcode(WorldPacket & pck);
 	void HandleCreatureQueryOpcode(WorldPacket & pck);

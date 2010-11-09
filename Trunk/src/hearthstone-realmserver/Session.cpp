@@ -20,6 +20,7 @@
 #include "RStdAfx.h"
 
 SessionPacketHandler Session::Handlers[NUM_MSG_TYPES];
+
 void Session::InitHandlers()
 {
 	memset(Handlers, 0, sizeof(void*) * NUM_MSG_TYPES);
@@ -32,6 +33,11 @@ void Session::InitHandlers()
 	Handlers[CMSG_CHAR_CUSTOMIZE]				= &Session::HandleCharacterCustomize;
 	Handlers[CMSG_REALM_SPLIT]					= &Session::HandleRealmSplitQuery;
 	Handlers[CMSG_QUERY_TIME]					= &Session::HandleQueryTimeOpcode;
+	Handlers[CMSG_UPDATE_ACCOUNT_DATA]			= &Session::HandleUpdateAccountData;
+	Handlers[CMSG_REQUEST_ACCOUNT_DATA]			= &Session::HandleRequestAccountData;
+	Handlers[CMSG_READY_FOR_ACCOUNT_DATA_TIMES]	= &Session::HandleReadyForAccountDataTimes;
+	Handlers[CMSG_VOICE_SESSION_ENABLE]			= &Session::HandleEnableMicrophoneOpcode;
+	Handlers[CMSG_SET_ACTIVE_VOICE_CHANNEL]		= &Session::HandleVoiceChatQueryOpcode;
 
 	// Crow: TODO, but not really. Each DB should hold the same info as far as this is concerned, but maybe things that are guid dependent.
 /*	Handlers[CMSG_CREATURE_QUERY]				= &Session::HandleCreatureQueryOpcode;
@@ -59,7 +65,10 @@ Session::Session(uint32 id) : m_sessionId(id)
 	deleted = false;
 
 	for(uint32 x = 0; x < 8; x++)
+	{
+		sAccountData[x].sz = NULL;
 		sAccountData[x].data = NULL;
+	}
 }
 
 Session::~Session()
@@ -74,17 +83,13 @@ void Session::Update()
 	{
 		opcode = pck->GetOpcode();
 
-		/* can we handle it ourselves? */
-		if(Session::Handlers[opcode] != 0)
-		{
+		if(m_server)
+			m_server->SendWoWPacket(this, pck);
+		else if(Session::Handlers[opcode] != 0) // can we handle it ourselves?
 			(this->*Session::Handlers[opcode])(*pck);
-		}
 		else
-		{
-			/* no? pass it back to the worker server for handling. */
-			if(m_server)
-				m_server->SendWoWPacket(this, pck);
-		}
+			Log.Warning("Session", "Received unhandled packet with opcode (0x%.4X)", opcode);
+
 		delete pck;
 	}
 }

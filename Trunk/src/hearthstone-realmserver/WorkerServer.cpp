@@ -59,15 +59,21 @@ void WServer::HandleRegisterWorker(WorldPacket & pck)
 	/* allocate initial instances for this worker */
 	sClusterMgr.AllocateInitialInstances(this, maps);
 
-	for (std::vector<uint32>::iterator itr = instancedmaps.begin(); itr != instancedmaps.end(); itr++)
+	if(instancedmaps.size())
 	{
-		Instance* i = new Instance;
-		i->InstanceId = 0;
-		i->MapId = (*itr);
-		i->MapCount = 0;
-		i->Server = this;
-		sClusterMgr.InstancedMaps.insert(std::pair<uint32, Instance*>((*itr), i));
-		Log.Debug("ClusterMgr", "Allocating instance prototype on map %u to worker %u", (*itr), GetID());
+		for (std::vector<uint32>::iterator itr = instancedmaps.begin(); itr != instancedmaps.end(); itr++)
+		{
+			if(!IS_MAIN_MAP((*itr)) && (sClusterMgr.InstancedMaps.find(*itr) == sClusterMgr.InstancedMaps.end()))
+			{
+				Instance* i = new Instance;
+				i->InstanceId = 0;
+				i->MapId = (*itr);
+				i->MapCount = 0;
+				i->Server = this;
+				sClusterMgr.InstancedMaps.insert(std::pair<uint32, Instance*>((*itr), i));
+				Log.Debug("ClusterMgr", "Allocating instance prototype on map %u to worker %u", (*itr), GetID());
+			}
+		}
 	}
 }
 
@@ -267,7 +273,15 @@ void WServer::HandleSwitchServer(WorldPacket & pck)
 	data << guid << mapid << instanceid;
 	data << s->GetAccountId() << s->GetAccountFlags() << s->GetSessionId();
 	data << s->GetAccountPermissions() << s->GetAccountName() << s->GetClientBuild();
-
+	AccountDataEntry* acd = NULL;
+	for(uint8 i = 0; i < 8; i++)
+	{
+		acd = s->GetAccountData(i);
+		if(acd && acd->sz)
+			data << acd->sz << acd->data;
+		else
+			data << uint32(0);
+	}
 
 	s->GetServer()->SendPacket(&data);
 }
