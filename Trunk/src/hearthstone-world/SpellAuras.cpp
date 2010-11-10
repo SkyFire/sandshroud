@@ -295,7 +295,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraNULL,                                           //272
 	&Aura::SpellAuraNULL,                                           //273
 	&Aura::SpellAuraRequireNoAmmo,                                  //274
-	&Aura::SpellAuraNULL,                                           //275
+	&Aura::SpellAuraSkipCanCastCheck,                               //275
 	&Aura::SpellAuraNULL,                                           //276
 	&Aura::SpellAuraRedirectThreat,                                 //277
 	&Aura::SpellAuraNULL,                                           //278
@@ -333,8 +333,8 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraNULL,                                           //310
 	&Aura::SpellAuraNULL,                                           //311
 	&Aura::SpellAuraNULL,                                           //312
-	&Aura::SpellAuraPreventResurrection,                            //313
-	&Aura::SpellAuraNULL,                                           //314
+	&Aura::SpellAuraNULL,                                           //313
+	&Aura::SpellAuraPreventResurrection,                            //314
 	&Aura::SpellAuraNULL,                                           //315
 	&Aura::SpellAuraNULL,                                           //316
 };
@@ -653,8 +653,8 @@ const char* SpellAuraNames[TOTAL_SPELL_AURAS] = {
 	"",													// 310
 	"",													// 311
 	"",													// 312
-	"PREVENT_RESURRECTION",								// 313
-	"",													// 314
+	"",													// 313
+	"PREVENT_RESURRECTION",								// 314
 	"",													// 315
 	"",													// 316
 };
@@ -4262,10 +4262,13 @@ void Aura::SpellAuraModInvisibility(bool apply)
 	if(m_spellProto->Effect[mod->i] == 128)
 		return;
 
-	if(apply) {
+	if(apply) 
+	{
 		m_target->SetInvisibility(GetSpellId());
 		m_target->m_invisFlag = mod->m_miscValue;
-	} else {
+	}
+	else 
+	{
 		m_target->SetInvisibility(0);
 		m_target->m_invisFlag = INVIS_FLAG_NORMAL;
 	}
