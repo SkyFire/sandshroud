@@ -22,7 +22,7 @@
 
 const int INT24_MAX = 8388607;
 
-class int24
+class SERVER_DECL int24
 {
 protected:
 	uint8 blocks[3];

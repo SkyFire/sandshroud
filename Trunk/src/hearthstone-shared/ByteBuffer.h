@@ -28,6 +28,7 @@
 #include "WoWGuid.h"
 #include "LocationVector.h"
 #include "Log.h"
+#include "int24.h"
 
 class SERVER_DECL ByteBuffer {
 public:
@@ -113,6 +114,12 @@ public:
 	ByteBuffer &operator<<(int16 value)
 	{
 		append<int16>(value);
+		return *this;
+	}
+
+	ByteBuffer &operator<<(int24 value)
+	{
+		append<int24>(value);
 		return *this;
 	}
 
