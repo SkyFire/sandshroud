@@ -2618,6 +2618,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->proc_interval = 45000;
 		}break;
 
+	case 72413: //Ashen Bands
+		{
+			procChance = 10;
+		}break;
+
 		// Swordguard Embroidery
 	case 55776:
 		{
