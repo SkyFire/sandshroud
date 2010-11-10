@@ -1388,8 +1388,11 @@ public:
 	//Tutorials
 	uint32 GetTutorialInt(uint32 intId );
 	void SetTutorialInt(uint32 intId, uint32 value);
+	void SendCinematic(uint32 cinematicid) { GetSession()->OutPacket(SMSG_TRIGGER_CINEMATIC, 4, &cinematicid); };
+
 	//Base stats calculations
 	//void CalcBaseStats();
+
 	// Rest
 	uint32 SubtractRestXP(uint32 amount);
 	void AddCalculatedRestXP(uint32 seconds);

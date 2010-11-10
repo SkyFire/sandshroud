@@ -925,7 +925,7 @@ void WorldSession::FullLogin(Player* plr)
 		sWorld.AlliancePlayers++;
 
 	if(sWorld.SendMovieOnJoin && plr->m_FirstLogin && !HasGMPermissions())
-		OutPacket(SMSG_TRIGGER_CINEMATIC, 4, &plr->myRace->cinematic_id);
+		plr->SendCinematic(plr->myRace->cinematic_id);
 
 	DEBUG_LOG( "WorldSession","Created new player for existing players (%s)", plr->GetName() );
 
