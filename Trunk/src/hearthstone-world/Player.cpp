@@ -7656,6 +7656,9 @@ void Player::RegenerateHealth( bool inCombat )
 	case WARRIOR:
 		amt = (Spirit * 0.80 + 6);
 		break;
+	case DEATHKNIGHT:
+		amt = (Spirit * 0.80 + 6);
+		break;
     }
 
 	amt *= sWorld.getRate(RATE_HEALTH);//Apply shit from conf file

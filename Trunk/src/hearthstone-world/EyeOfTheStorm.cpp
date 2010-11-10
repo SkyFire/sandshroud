@@ -990,7 +990,7 @@ bool EyeOfTheStorm::GivePoints(uint32 team, uint32 points)
 					HonorHandler::AddHonorPointsToPlayer( (*itr), 2*m_bonusHonor );
 					if((*itr)->fromrandombg)
 					{
-						(*itr)->m_honorToday += (*itr)->GetHkHonor((*itr)->getLevel(),5);
+						(*itr)->m_honorToday += (*itr)->GenerateRBGReward((*itr)->getLevel(),5);
 						HonorHandler::RecalculateHonorFields((*itr));
 						(*itr)->fromrandombg = false;
 					}
@@ -1004,8 +1004,8 @@ bool EyeOfTheStorm::GivePoints(uint32 team, uint32 points)
 					if((*itr)->fromrandombg)
 					{
 						Player * p = (*itr);
-						p->AddArenaPoints(p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),25) : p->GetHkHonor(p->getLevel(),0));
-						p->m_honorToday += p->randombgwinner == false ? p->GetHkHonor(p->getLevel(),30) : p->GetHkHonor(p->getLevel(),15);
+						p->AddArenaPoints(p->randombgwinner == false ? p->GenerateRBGReward(p->getLevel(),25) : p->GenerateRBGReward(p->getLevel(),0));
+						p->m_honorToday += p->randombgwinner == false ? p->GenerateRBGReward(p->getLevel(),30) : p->GenerateRBGReward(p->getLevel(),15);
 						HonorHandler::RecalculateHonorFields(p);
 						p->randombgwinner = true;
 						p->fromrandombg = false;

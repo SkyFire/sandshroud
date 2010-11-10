@@ -342,6 +342,17 @@ void Spell::SpellEffectInstantKill(uint32 i)
 			if( unitTarget->GetEntry() != 25213 )
 				return;
 		}break;
+	case 48743:
+		{
+			if(p_caster == NULL || p_caster->GetSummon() == NULL)
+				return;
+			m_caster->DealDamage(p_caster->GetSummon(), p_caster->GetSummon()->GetUInt32Value(UNIT_FIELD_HEALTH), 0, 0, 0);
+			WorldPacket data(SMSG_SPELLINSTAKILLLOG, 200);
+			data << m_caster->GetGUID() << p_caster->GetSummon()->GetGUID() << spellId;
+			m_caster->SendMessageToSet(&data, true);
+			return; //We do not want the generated targets!!!!!!!!!!
+		}break;
+
 	}
 
 	switch( GetSpellProto()->NameHash )
@@ -362,7 +373,7 @@ void Spell::SpellEffectInstantKill(uint32 i)
 	default:
 		{
 			// moar cheaters
-			if( p_caster == NULL || (u_caster != NULL && u_caster->IsPet() ) )
+			if( p_caster == NULL || (u_caster != NULL && u_caster->IsPet() )
 				return;
 
 			if( p_caster->GetSession()->GetPermissionCount() == 0 )
@@ -1245,25 +1256,6 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				sp->prepare(&targets);
 			}
 		}break;
-
-	case SPELL_HASH_VANISH:
-		{
-			SpellEntry *p;
-			if( p_caster != NULL)
-			{
-				for( uint32 x = MAX_POSITIVE_AURAS ; x < MAX_AURAS ; x++ )
-				{
-					if( p_caster->m_auras[x] != NULL && !p_caster->m_auras[x]->IsPositive())
-					{
-						p = p_caster->m_auras[x]->GetSpellProto();
-						if( Spell::HasMechanic(p, 7) || Spell::HasMechanic(p, 11) )
-							p_caster->m_auras[x]->AttemptDispel( p_caster );
-					}
-				}
-
-				p_caster->RemoveAuraNegByNameHash(SPELL_HASH_HUNTER_S_MARK);
-			}
-		}break;
 	}
 
 	switch(spellId)
@@ -1615,6 +1607,24 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				spell->prepare( &targets );
 			}
 		}break;
+		//Vanish dummy spell lets give it a use kk?
+	case 18461:
+		{
+			if(p_caster == NULL)
+				return;
+			SpellEntry *p = NULL;
+			for( uint32 x = MAX_POSITIVE_AURAS ; x < MAX_AURAS ; x++ )
+			{
+				if( p_caster->m_auras[x] != NULL && !p_caster->m_auras[x]->IsPositive())
+				{
+					p = p_caster->m_auras[x]->GetSpellProto();
+					if( Spell::HasMechanic(p, 7) || Spell::HasMechanic(p, 11) )
+						p_caster->m_auras[x]->AttemptDispel( p_caster );
+				}
+			}
+			p_caster->RemoveAuraNegByNameHash(SPELL_HASH_HUNTER_S_MARK);
+			p_caster->AddAura(new Aura(dbcSpell.LookupEntryForced(1784),10000,p_caster,p_caster));
+		}break;
 	/*************************
 	 * DRUID SPELLS
 	 *************************
@@ -1947,7 +1957,10 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			summon->SetPower(POWER_TYPE_ENERGY,100);
 			summon->SetMaxPower(POWER_TYPE_ENERGY,100);
 			unitTarget->CastSpell(unitTarget, 46619, true);
-		return;
+		}break;
+	case 48743:
+		{
+			//uhhh what to do here?
 		}break;
 	/*************************
 		Non-Class spells
@@ -3191,12 +3204,10 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 			}break;
 		case 48743://death pact
 			{
-				if( p_caster == NULL )
+				if( p_caster == NULL || p_caster->GetSummon() == NULL)
 					return;
 
-				uint32 maxhp = p_caster->GetMaxHealth();
-				int32 realdmg = float2int32(float(maxhp) * 0.4f);
-				Heal( realdmg );
+				Heal( float2int32(float(p_caster->GetMaxHealth()) * 0.3f) );
 			}break;
 		case 50464:
 			{

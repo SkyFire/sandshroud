@@ -2309,8 +2309,8 @@ public:
 	void StartQuest(uint32 id);
 	bool fromrandombg;
 	bool randombgwinner;
-	//Calculate honor for bgs
-	uint32 GetHkHonor(uint32 level, uint32 count = 1) { uint32 honor = uint32(ceil(float(count * level * 1.55f))); return honor; }
+	//Calculate honor for random bgs
+	uint32 GenerateRBGReward(uint32 level, uint32 count = 1) { uint32 honor = uint32(ceil(float(count * level * 1.55f))); return honor; }
 #ifdef CLUSTERING
 	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
 	void HandleClusterRemove();

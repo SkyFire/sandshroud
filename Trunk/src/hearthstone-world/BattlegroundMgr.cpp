@@ -238,9 +238,9 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 {
 	if( !IsValidBG(BattlegroundType))
 		return;
-	uint32 ArenaP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),25);
-	uint32 HonorP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),30);
-	uint32 LoseHonorP = m_session->GetPlayer()->GetHkHonor(m_session->GetPlayer()->getLevel(),5);
+	uint32 ArenaP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),25);
+	uint32 HonorP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),30);
+	uint32 LoseHonorP = m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),5);
 	WorldPacket data;
 	uint32 LevelGroup = GetLevelGrouping(m_session->GetPlayer()->getLevel());
 	uint32 Count = 0;
@@ -2208,5 +2208,5 @@ uint32 CBattlegroundManager::GenerateRandomBGType()
 				return 30;
 			}break;
 	}
-	return NULL;
+	return 0;
 }

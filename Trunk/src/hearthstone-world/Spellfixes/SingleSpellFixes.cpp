@@ -3636,15 +3636,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->procChance	=	20;
 		}break;
 
-		// Vanish - remove imparing movement effects
-	case 11327:
-	case 11329:
-	case 26888:
-		{
-			sp->Effect[0] = SPELL_EFFECT_DUMMY;
-			sp->EffectApplyAuraName[1] = 154;
-		}
-
 		//////////////////////////////////////////
 		// PRIEST									//
 		//////////////////////////////////////////
@@ -4458,6 +4449,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->EffectMiscValue[0] = 7278;
 		}break;
+
 	case 46619:
 		{
 			sp->Effect[0] = SPELL_EFFECT_NULL;
@@ -4466,7 +4458,12 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 55666:
 	case 55667:
 		{
-			sp->procFlags	=	PROC_ON_CAST_SPELL;
+			sp->proc_interval = 15000;
+		}break;
+
+	case 50397:
+		{
+			sp->NameHash = 0;
 		}break;
 
 		//////////////////////////////////////////
@@ -4505,7 +4502,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
 			sp->DurationIndex	=	6; //	10 minutes.
 			sp->c_is_flags |=	SPELL_FLAG_IS_FORCEDDEBUFF;
-
 			sp->Effect[1]	=	SPELL_EFFECT_APPLY_AURA;
 			sp->EffectApplyAuraName[1] = SPELL_AURA_ADD_PCT_MODIFIER;
 			sp->EffectMiscValue[1] = SMT_RESIST_DISPEL;
@@ -4730,10 +4726,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 51456:	// Improved Icy Touch
 		{
 			sp->EffectApplyAuraName[0] = SPELL_AURA_ADD_PCT_MODIFIER;
-		}break;
-	case 48743:	// Death Pact
-		{
-			sp->Effect[1] = SPELL_EFFECT_NULL;	// Incorrect targetting makes it kill everyone around
 		}break;
 	case 49143:
 	case 51416:

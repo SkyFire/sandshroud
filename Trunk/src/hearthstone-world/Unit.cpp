@@ -1730,20 +1730,6 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							{
 								if(!(CastingSpell->c_is_flags & (SPELL_FLAG_IS_DAMAGING | SPELL_FLAG_IS_HEALING) ))
 									continue;
-
-								// find the maximum stat and proc appropriate spell
-								static const uint32 greatness[4] = {60229, 60233, 60234, 60235};
-								uint32 stats[4], maxstat = 0;
-								stats[0] = GetUInt32Value(UNIT_FIELD_STRENGTH);
-								stats[1] = GetUInt32Value(UNIT_FIELD_AGILITY);
-								stats[2] = GetUInt32Value(UNIT_FIELD_INTELLECT);
-								stats[3] = GetUInt32Value(UNIT_FIELD_SPIRIT);
-								for(uint32 i=0; i<4; i++)
-								{
-									if(stats[i] > stats[maxstat])
-										maxstat = i;
-								}
-								spellId = greatness[maxstat];
 							}break;
 
 						case 49694://Improved Spirit Tap
@@ -1937,8 +1923,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								if( !IsPlayer() )
 									continue;
 
-								SpellEntry * sp = dbcSpell.LookupEntryForced( CastingSpell->Id );
-								SpellRuneCostEntry * sr = dbcSpellRuneCost.LookupEntryForced( sp->runeCostID );
+								SpellRuneCostEntry * sr = dbcSpellRuneCost.LookupEntryForced( CastingSpell->runeCostID );
 								if( !sr || sr->bloodRuneCost == 0 ) // not costing blood.
 									continue;
 
@@ -2070,9 +2055,11 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 									if( it->GetProto()->Class != ITEM_CLASS_WEAPON )
 										continue;
 								}
-								else continue; //no weapon no joy
+								else 
+									continue; //no weapon no joy
 							}
-							else continue; //no weapon no joy
+							else 
+								continue; //no weapon no joy
 						}break;
 
 						//warrior - Unbridled Wrath

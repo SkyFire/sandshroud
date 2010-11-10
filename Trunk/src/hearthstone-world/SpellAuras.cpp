@@ -6843,7 +6843,7 @@ void Aura::SpellAuraMechanicImmunity(bool apply)
 			}break;
 		case 49039:
 			{
-				if(apply)
+				if(apply && !m_target->HasAura(50397))
 					GetUnitCaster()->CastSpell(m_target,50397,true);
 			}
 		}
@@ -7315,7 +7315,7 @@ void Aura::EventPeriodicDrink(uint32 amount)
 
 void Aura::EventPeriodicHeal1(uint32 amount)
 {
-	if(m_target == NULL || m_target->GetMapMgr() == NULL )
+	if(m_target == NULL )
 		return;
 
 	if(!m_target->isAlive())
@@ -8642,25 +8642,6 @@ void Aura::SpellAuraModStealthLevel(bool apply)
 	{
 		SetPositive();
 		m_target->m_stealthLevel += mod->m_amount;
-
-		if( m_spellProto->NameHash == SPELL_HASH_VANISH && m_target->IsPlayer() ) // Vanish
-		{
-			// check for stealh spells
-			uint32 stealth_id = 1784;
-			for(SpellSet::iterator itr = TO_PLAYER(m_target)->mSpells.begin(); itr != TO_PLAYER(m_target)->mSpells.end(); itr++)
-			{
-				if((*itr) == 1787 || (*itr) == 1786 || (*itr) == 1785 || (*itr) == 1784)
-				{
-					if( (*itr) > stealth_id )
-						stealth_id = (*itr);
-
-					if( (*itr) > 1787 )
-						break;
-				}
-			}
-			if(stealth_id)
-				m_target->CastSpell(m_target, dbcSpell.LookupEntry(stealth_id), true);
-		}
 	}
 	else
 		m_target->m_stealthLevel -= mod->m_amount;
@@ -8739,11 +8720,11 @@ void Aura::SpellAuraNoPVPCredit(bool apply)
 
 void Aura::SpellAuraModHealthRegInCombat(bool apply)
 {
+	if(m_target == NULL)
+		return;
 	// demon armor etc, they all seem to be 5 sec.
 	if(apply)
-	{
 		sEventMgr.AddEvent(this, &Aura::EventPeriodicHeal1, uint32(mod->m_amount), EVENT_AURA_PERIODIC_HEALINCOMB, 5000, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	}
 }
 
 void Aura::EventPeriodicBurn(uint32 amount, uint32 misc)

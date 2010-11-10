@@ -1048,13 +1048,13 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
 	uint16 action;
 	recv_data >> button >> action >> misc >> type;
 	OUT_DEBUG( "BUTTON: %u ACTION: %u TYPE: %u MISC: %u", button, action, type, misc );
-	/*if(action==0)
+	if(action==0)
 	{
 		OUT_DEBUG( "MISC: Remove action from button %u", button );
 		GetPlayer()->setAction(button, 0, 0, 0);
 	}
 	else
-	{*/
+	{
 		if(button >= 0x00FFFFFF+1)
 			return;
 
@@ -1073,7 +1073,7 @@ void WorldSession::HandleSetActionButtonOpcode(WorldPacket& recv_data)
 			OUT_DEBUG( "MISC: Added Spell %u into button %u", action, button );
 			GetPlayer()->setAction(button,action,type,misc);
 		}
-	//}
+	}
 
 #ifdef OPTIMIZED_PLAYER_SAVING
 	_player->save_Actions();
