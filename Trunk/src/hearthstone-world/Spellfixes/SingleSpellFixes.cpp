@@ -2620,7 +2620,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 
 	case 72413: //Ashen Bands
 		{
-			procChance = 10;
+			sp->procChance = 10;
 		}break;
 
 		// Swordguard Embroidery
