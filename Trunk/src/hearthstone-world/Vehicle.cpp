@@ -947,12 +947,15 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 		if(ctr->IsLightwell(ctr->GetEntry()))
 		{
 			Aura * aur = ctr->FindActiveAura(59907);
-			if(aur && aur->procCharges >= 0)
+			if(aur)
 			{
 				aur->RemoveProcCharges(1);
 				unit->CastSpell(_player, 60123, true);
 				if( aur->procCharges <= 0 )
+				{
+					unit->RemoveAura(aur);
 					ctr->SafeDelete();
+				}
 			}
 			return;
 		}

@@ -2181,8 +2181,7 @@ bool CBattlegroundManager::IsValidBG(uint32 BgType)
 
 uint32 CBattlegroundManager::GenerateRandomBGType()
 {
-	uint32 Type = RandomUInt(6);
-	switch(Type)
+	switch(RandomUInt(6))
 	{
 		case 1:
 			{
@@ -2209,4 +2208,5 @@ uint32 CBattlegroundManager::GenerateRandomBGType()
 				return 30;
 			}break;
 	}
+	return NULL;
 }
