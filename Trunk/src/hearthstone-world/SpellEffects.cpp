@@ -373,7 +373,7 @@ void Spell::SpellEffectInstantKill(uint32 i)
 	default:
 		{
 			// moar cheaters
-			if( p_caster == NULL || (u_caster != NULL && u_caster->IsPet() )
+			if( p_caster == NULL || (u_caster != NULL && u_caster->IsPet() ))
 				return;
 
 			if( p_caster->GetSession()->GetPermissionCount() == 0 )
