@@ -1360,20 +1360,17 @@ void WorldSession::SendInventoryList(Creature* unit)
 		{
 			if((curItem = ItemPrototypeStorage.LookupEntry(itr->itemid)))
 			{
-				bool gm = false;
-				if(_player->HasFlag(PLAYER_FLAGS,PLAYER_FLAG_GM) || _player->HasFlag(PLAYER_FLAGS,PLAYER_FLAG_DEVELOPER))
-					gm = true;
-				if(!gm && (itr->IsDependent && // Show all items for GMs no matter what.
-					(curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass))))
-					continue;
+				if(!_player->bGMTagOn)
+				{
+					if(itr->IsDependent && (curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass)))
+						continue;
 
-				if(!gm && (itr->IsDependent && // Show all items for GMs no matter what.
-					(curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace))))
-					continue;
+					if(itr->IsDependent && (curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace)))
+						continue;
 
-				if(!gm // Show free items for GMs no matter what.
-					&& !sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL && curItem->SellPrice > 0 )
-					continue;
+					if(!sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL && curItem->SellPrice > 0 )
+						continue;
+				}
 
 				int32 av_am = (itr->max_amount > 0) ? itr->available_amount : -1;
 				data << (++counter);

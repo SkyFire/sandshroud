@@ -289,7 +289,7 @@ void ApplyNormalFixes()
 			else if( strstr( sp->Description, "Battle and Guardian elixir"))
 				type |= SPELL_TYPE_ELIXIR_FLASK;
 			else if( strstr( sp->Description, "Finishing move")==sp->Description)
-			sp->c_is_flags |= SPELL_FLAG_IS_FINISHING_MOVE;
+				sp->c_is_flags |= SPELL_FLAG_IS_FINISHING_MOVE;
 		}
 
 		for(uint32 b = 0; b < 3; ++b)
