@@ -777,179 +777,179 @@ bool loader_stub(const char * filename, const char * format, bool ind, T& l, boo
 
 #define LOAD_DBC(filename, format, ind, stor, strings) if(!loader_stub(filename, format, ind, stor, strings)) { return false; } 
 
-bool LoadRSDBCs()
+bool LoadRSDBCs(const char* datapath)
 {
 	/* Needed for: */
-	LOAD_DBC("DBC/AreaTable.dbc", areatableFormat, true, dbcArea, true);
+	LOAD_DBC(format("%s/AreaTable.dbc", datapath).c_str(), areatableFormat, true, dbcArea, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/ChatChannels.dbc", chatchannelformat, true, dbcChatChannels, true);
+	LOAD_DBC(format("%s/ChatChannels.dbc", datapath).c_str(), chatchannelformat, true, dbcChatChannels, true);
 	return true;
 }
 
-bool LoadDBCs()
+bool LoadDBCs(const char* datapath)
 {
 	/* Needed for: Used in loading of achievements and finding saving information and grabbing criteria
 	info to see if player deserves achievement. */
-	LOAD_DBC("DBC/Achievement.dbc", achievementfmt,true, dbcAchievement,true);
+	LOAD_DBC(format("%s/Achievement.dbc", datapath).c_str(), achievementfmt,true, dbcAchievement,true);
 	/* Needed for: */
-	LOAD_DBC("DBC/Achievement_Criteria.dbc", achievementCriteriafmt,true,dbcAchievementCriteria,true);
+	LOAD_DBC(format("%s/Achievement_Criteria.dbc", datapath).c_str(), achievementCriteriafmt,true,dbcAchievementCriteria,true);
 	/* Needed for: */
-	LOAD_DBC("DBC/AreaGroup.dbc", AreaGroupFormat, true, dbcAreaGroup, true);
+	LOAD_DBC(format("%s/AreaGroup.dbc", datapath).c_str(), AreaGroupFormat, true, dbcAreaGroup, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/AreaTable.dbc", areatableFormat, true, dbcArea, true);
+	LOAD_DBC(format("%s/AreaTable.dbc", datapath).c_str(), areatableFormat, true, dbcArea, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/AuctionHouse.dbc", auctionhousedbcFormat, true, dbcAuctionHouse, false);
+	LOAD_DBC(format("%s/AuctionHouse.dbc", datapath).c_str(), auctionhousedbcFormat, true, dbcAuctionHouse, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/BankBagSlotPrices.dbc", bankslotpriceformat, true, dbcBankSlotPrices, false);
+	LOAD_DBC(format("%s/BankBagSlotPrices.dbc", datapath).c_str(), bankslotpriceformat, true, dbcBankSlotPrices, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/BarberShopStyle.dbc", barbershopstyleFormat, true, dbcBarberShopStyle, true);
+	LOAD_DBC(format("%s/BarberShopStyle.dbc", datapath).c_str(), barbershopstyleFormat, true, dbcBarberShopStyle, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/ChatChannels.dbc", chatchannelformat, true, dbcChatChannels, true);
+	LOAD_DBC(format("%s/ChatChannels.dbc", datapath).c_str(), chatchannelformat, true, dbcChatChannels, true);
 #ifndef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/CurrencyTypes.dbc", CurrencyTypesEntryFormat, true, dbcCurrencyTypesStore, true);
+	LOAD_DBC(format("%s/CurrencyTypes.dbc", datapath).c_str(), CurrencyTypesEntryFormat, true, dbcCurrencyTypesStore, true);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/ChrClasses.dbc", charclassFormat, true, dbcCharClass, true);
+	LOAD_DBC(format("%s/ChrClasses.dbc", datapath).c_str(), charclassFormat, true, dbcCharClass, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/ChrRaces.dbc", charraceFormat, true, dbcCharRace, true);
+	LOAD_DBC(format("%s/ChrRaces.dbc", datapath).c_str(), charraceFormat, true, dbcCharRace, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/CreatureDisplayInfo.dbc", creaturedisplayFormat, true, dbcCreatureDisplayInfo, true);
+	LOAD_DBC(format("%s/CreatureDisplayInfo.dbc", datapath).c_str(), creaturedisplayFormat, true, dbcCreatureDisplayInfo, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/CreatureFamily.dbc", creaturefamilyFormat, true, dbcCreatureFamily, true);
+	LOAD_DBC(format("%s/CreatureFamily.dbc", datapath).c_str(), creaturefamilyFormat, true, dbcCreatureFamily, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/CreatureSpellData.dbc", creaturespelldataFormat, true, dbcCreatureSpellData, false);
+	LOAD_DBC(format("%s/CreatureSpellData.dbc", datapath).c_str(), creaturespelldataFormat, true, dbcCreatureSpellData, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/DurabilityQuality.dbc", durabilityqualityFormat, true, dbcDurabilityQuality, false);
+	LOAD_DBC(format("%s/DurabilityQuality.dbc", datapath).c_str(), durabilityqualityFormat, true, dbcDurabilityQuality, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/DurabilityCosts.dbc", durabilitycostsFormat, true, dbcDurabilityCosts, false);
+	LOAD_DBC(format("%s/DurabilityCosts.dbc", datapath).c_str(), durabilitycostsFormat, true, dbcDurabilityCosts, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/EmotesText.dbc", EmoteEntryFormat, true, dbcEmoteEntry, false);
+	LOAD_DBC(format("%s/EmotesText.dbc", datapath).c_str(), EmoteEntryFormat, true, dbcEmoteEntry, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/Faction.dbc", factiondbcFormat, true, dbcFaction, true);
+	LOAD_DBC(format("%s/Faction.dbc", datapath).c_str(), factiondbcFormat, true, dbcFaction, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/FactionTemplate.dbc", factiontemplatedbcFormat, true, dbcFactionTemplate, false);
+	LOAD_DBC(format("%s/FactionTemplate.dbc", datapath).c_str(), factiontemplatedbcFormat, true, dbcFactionTemplate, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/GemProperties.dbc", GemPropertyEntryFormat, true, dbcGemProperty, false);
+	LOAD_DBC(format("%s/GemProperties.dbc", datapath).c_str(), GemPropertyEntryFormat, true, dbcGemProperty, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/GlyphProperties.dbc", GlyphPropertyEntryFormat, true, dbcGlyphProperty, false);
+	LOAD_DBC(format("%s/GlyphProperties.dbc", datapath).c_str(), GlyphPropertyEntryFormat, true, dbcGlyphProperty, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/gtBarberShopCostBase.dbc", gtfloatformat, false, dbcBarberShopPrices, false);
+	LOAD_DBC(format("%s/gtBarberShopCostBase.dbc", datapath).c_str(), gtfloatformat, false, dbcBarberShopPrices, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/gtChanceToMeleeCrit.dbc", gtfloatformat, false, dbcMeleeCrit, false);
+	LOAD_DBC(format("%s/gtChanceToMeleeCrit.dbc", datapath).c_str(), gtfloatformat, false, dbcMeleeCrit, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/gtChanceToMeleeCritBase.dbc", gtfloatformat, false, dbcMeleeCritBase, false);
+	LOAD_DBC(format("%s/gtChanceToMeleeCritBase.dbc", datapath).c_str(), gtfloatformat, false, dbcMeleeCritBase, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/gtChanceToSpellCrit.dbc", gtfloatformat, false, dbcSpellCrit, false);
+	LOAD_DBC(format("%s/gtChanceToSpellCrit.dbc", datapath).c_str(), gtfloatformat, false, dbcSpellCrit, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/gtChanceToSpellCritBase.dbc", gtfloatformat, false, dbcSpellCritBase, false);
+	LOAD_DBC(format("%s/gtChanceToSpellCritBase.dbc", datapath).c_str(), gtfloatformat, false, dbcSpellCritBase, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/gtCombatRatings.dbc", gtfloatformat, false, dbcCombatRating, false);
+	LOAD_DBC(format("%s/gtCombatRatings.dbc", datapath).c_str(), gtfloatformat, false, dbcCombatRating, false);
 #ifndef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/gtOCTRegenHP.dbc", gtfloatformat, false, dbcHPRegen, false);
+	LOAD_DBC(format("%s/gtOCTRegenHP.dbc", datapath).c_str(), gtfloatformat, false, dbcHPRegen, false);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/gtOCTRegenMP.dbc", gtfloatformat, false, dbcManaRegen, false);
+	LOAD_DBC(format("%s/gtOCTRegenMP.dbc", datapath).c_str(), gtfloatformat, false, dbcManaRegen, false);
 #ifndef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/gtRegenHPPerSpt.dbc", gtfloatformat, false, dbcHPRegenBase, false);
+	LOAD_DBC(format("%s/gtRegenHPPerSpt.dbc", datapath).c_str(), gtfloatformat, false, dbcHPRegenBase, false);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/gtRegenMPPerSpt.dbc", gtfloatformat, false, dbcManaRegenBase, false);
+	LOAD_DBC(format("%s/gtRegenMPPerSpt.dbc", datapath).c_str(), gtfloatformat, false, dbcManaRegenBase, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/Item.dbc", itemFormat, true, dbcItem, false);
+	LOAD_DBC(format("%s/Item.dbc", datapath).c_str(), itemFormat, true, dbcItem, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/ItemExtendedCost.dbc", itemextendedcostFormat, true, dbcItemExtendedCost, false);
+	LOAD_DBC(format("%s/ItemExtendedCost.dbc", datapath).c_str(), itemextendedcostFormat, true, dbcItemExtendedCost, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/ItemSet.dbc", ItemSetFormat, true, dbcItemSet, true);
+	LOAD_DBC(format("%s/ItemSet.dbc", datapath).c_str(), ItemSetFormat, true, dbcItemSet, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/ItemRandomProperties.dbc", randompropsFormat, true, dbcRandomProps, false);
+	LOAD_DBC(format("%s/ItemRandomProperties.dbc", datapath).c_str(), randompropsFormat, true, dbcRandomProps, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/ItemRandomSuffix.dbc", itemrandomsuffixformat, true, dbcItemRandomSuffix, false);
+	LOAD_DBC(format("%s/ItemRandomSuffix.dbc", datapath).c_str(), itemrandomsuffixformat, true, dbcItemRandomSuffix, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/Lock.dbc", LockFormat, true, dbcLock, false);
+	LOAD_DBC(format("%s/Lock.dbc", datapath).c_str(), LockFormat, true, dbcLock, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/Map.dbc", mapentryFormat, true, dbcMap, true);
+	LOAD_DBC(format("%s/Map.dbc", datapath).c_str(), mapentryFormat, true, dbcMap, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/ScalingStatDistribution.dbc", scalingstatdistributionformat, true, dbcScalingStatDistribution, false);
+	LOAD_DBC(format("%s/ScalingStatDistribution.dbc", datapath).c_str(), scalingstatdistributionformat, true, dbcScalingStatDistribution, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/ScalingStatValues.dbc", scalingstatvaluesformat, true, dbcScalingStatValues, false);
+	LOAD_DBC(format("%s/ScalingStatValues.dbc", datapath).c_str(), scalingstatvaluesformat, true, dbcScalingStatValues, false);
 #ifndef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/StableSlotPrices.dbc", bankslotpriceformat, true, dbcStableSlotPrices, false);
+	LOAD_DBC(format("%s/StableSlotPrices.dbc", datapath).c_str(), bankslotpriceformat, true, dbcStableSlotPrices, false);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/SkillLine.dbc", skilllineentrYFormat, true, dbcSkillLine, true);
+	LOAD_DBC(format("%s/SkillLine.dbc", datapath).c_str(), skilllineentrYFormat, true, dbcSkillLine, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/SkillLineAbility.dbc", skilllinespellFormat, false, dbcSkillLineSpell, false);
+	LOAD_DBC(format("%s/SkillLineAbility.dbc", datapath).c_str(), skilllinespellFormat, false, dbcSkillLineSpell, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/Spell.dbc", spellentryFormat, true, dbcSpell, true);
+	LOAD_DBC(format("%s/Spell.dbc", datapath).c_str(), spellentryFormat, true, dbcSpell, true);
 #ifdef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellAuraOptions.dbc", SpellAuraOptionsfmt, true, dbcSpellAuraOptions, false);
+	LOAD_DBC(format("%s/SpellAuraOptions.dbc", datapath).c_str(), SpellAuraOptionsfmt, true, dbcSpellAuraOptions, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellAuraRestrictions.dbc", SpellAuraRestrictfmt, true, dbcSpellAuraRestrict, false);
+	LOAD_DBC(format("%s/SpellAuraRestrictions.dbc", datapath).c_str(), SpellAuraRestrictfmt, true, dbcSpellAuraRestrict, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellCastingRequirements.dbc", SpellCastingReqfmt, true, dbcSpellCastingReq, false);
+	LOAD_DBC(format("%s/SpellCastingRequirements.dbc", datapath).c_str(), SpellCastingReqfmt, true, dbcSpellCastingReq, false);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellCastTimes.dbc", spellcasttimeFormat, true, dbcSpellCastTime, false);
+	LOAD_DBC(format("%s/SpellCastTimes.dbc", datapath).c_str(), spellcasttimeFormat, true, dbcSpellCastTime, false);
 #ifdef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellCategories.dbc", SpellCategoriesfmt, true, dbcSpellCategories, false);
+	LOAD_DBC(format("%s/SpellCategories.dbc", datapath).c_str(), SpellCategoriesfmt, true, dbcSpellCategories, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellClassOptions.dbc", SpellClassOptionsfmt, true, dbcSpellClassOptions, false);
+	LOAD_DBC(format("%s/SpellClassOptions.dbc", datapath).c_str(), SpellClassOptionsfmt, true, dbcSpellClassOptions, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellCooldowns.dbc", SpellCooldownsfmt, true, dbcSpellCooldowns, false);
+	LOAD_DBC(format("%s/SpellCooldowns.dbc", datapath).c_str(), SpellCooldownsfmt, true, dbcSpellCooldowns, false);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellDifficulty.dbc", spelldifficultyFormat, true, dbcSpellDifficulty, false);
+	LOAD_DBC(format("%s/SpellDifficulty.dbc", datapath).c_str(), spelldifficultyFormat, true, dbcSpellDifficulty, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellDuration.dbc", spelldurationFormat, true, dbcSpellDuration, false);
+	LOAD_DBC(format("%s/SpellDuration.dbc", datapath).c_str(), spelldurationFormat, true, dbcSpellDuration, false);
 #ifdef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellEffect.dbc", SpellEffectfmt, true, dbcSpellEffect, false);
+	LOAD_DBC(format("%s/SpellEffect.dbc", datapath).c_str(), SpellEffectfmt, true, dbcSpellEffect, false);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellItemEnchantment.dbc", EnchantEntrYFormat, true, dbcEnchant, true);
+	LOAD_DBC(format("%s/SpellItemEnchantment.dbc", datapath).c_str(), EnchantEntrYFormat, true, dbcEnchant, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellRadius.dbc", spellradiusFormat, true, dbcSpellRadius, false);
+	LOAD_DBC(format("%s/SpellRadius.dbc", datapath).c_str(), spellradiusFormat, true, dbcSpellRadius, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellRange.dbc", spellrangeFormat, true, dbcSpellRange, false);
+	LOAD_DBC(format("%s/SpellRange.dbc", datapath).c_str(), spellrangeFormat, true, dbcSpellRange, false);
 #ifdef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellReagents.dbc", SpellReagentfmt, true, dbcSpellReagents, false);
+	LOAD_DBC(format("%s/SpellReagents.dbc", datapath).c_str(), SpellReagentfmt, true, dbcSpellReagents, false);
 #endif
 	/* Needed for: Spell costs and calculations for dummy scripts or scripted spells for DK's. */
-	LOAD_DBC("DBC/SpellRuneCost.dbc", SpellRuneCostfmt, true, dbcSpellRuneCost, false);
+	LOAD_DBC(format("%s/SpellRuneCost.dbc", datapath).c_str(), SpellRuneCostfmt, true, dbcSpellRuneCost, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellShapeshiftForm.dbc", spellshapeshiftformformat, true, dbcSpellShapeshiftForm, false);
+	LOAD_DBC(format("%s/SpellShapeshiftForm.dbc", datapath).c_str(), spellshapeshiftformformat, true, dbcSpellShapeshiftForm, false);
 #ifdef CATACLYSM
 	/* Needed for: */
-	LOAD_DBC("DBC/SpellTargetRestrictions.dbc", spelltargetrestrictionfmt, true, dbcSpellTargetRestrict, false);
+	LOAD_DBC(format("%s/SpellTargetRestrictions.dbc", datapath).c_str(), spelltargetrestrictionfmt, true, dbcSpellTargetRestrict, false);
 #endif
 	/* Needed for: */
-	LOAD_DBC("DBC/SummonProperties.dbc", SummonPropertiesfmt, true, dbcSummonProps, false);
+	LOAD_DBC(format("%s/SummonProperties.dbc", datapath).c_str(), SummonPropertiesfmt, true, dbcSummonProps, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/Talent.dbc", talententryFormat, true, dbcTalent, false);
+	LOAD_DBC(format("%s/Talent.dbc", datapath).c_str(), talententryFormat, true, dbcTalent, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/TalentTab.dbc", talenttabentryFormat, true, dbcTalentTab, false);
+	LOAD_DBC(format("%s/TalentTab.dbc", datapath).c_str(), talenttabentryFormat, true, dbcTalentTab, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/TaxiNodes.dbc", dbctaxinodeFormat, false, dbcTaxiNode, false);
+	LOAD_DBC(format("%s/TaxiNodes.dbc", datapath).c_str(), dbctaxinodeFormat, false, dbcTaxiNode, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/TaxiPath.dbc", dbctaxipathFormat, false, dbcTaxiPath, false);
+	LOAD_DBC(format("%s/TaxiPath.dbc", datapath).c_str(), dbctaxipathFormat, false, dbcTaxiPath, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/TaxiPathNode.dbc", dbctaxipathnodeFormat, false, dbcTaxiPathNode, false);
+	LOAD_DBC(format("%s/TaxiPathNode.dbc", datapath).c_str(), dbctaxipathnodeFormat, false, dbcTaxiPathNode, false);
 	/* Needed for: */
-	LOAD_DBC("DBC/Vehicle.dbc", vehicleentryFormat, true, dbcVehicle, true);
+	LOAD_DBC(format("%s/Vehicle.dbc", datapath).c_str(), vehicleentryFormat, true, dbcVehicle, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/VehicleSeat.dbc", vehicleseatentryFormat, true, dbcVehicleSeat, true);
+	LOAD_DBC(format("%s/VehicleSeat.dbc", datapath).c_str(), vehicleseatentryFormat, true, dbcVehicleSeat, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/WorldMapOverlay.dbc", WorldMapOverlayfmt, true, dbcWorldMapOverlay, true);
+	LOAD_DBC(format("%s/WorldMapOverlay.dbc", datapath).c_str(), WorldMapOverlayfmt, true, dbcWorldMapOverlay, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/WMOAreaTable.dbc", WMOAreaEntryfmt, true, dbcWMOAreaTable, true);
+	LOAD_DBC(format("%s/WMOAreaTable.dbc", datapath).c_str(), WMOAreaEntryfmt, true, dbcWMOAreaTable, true);
 	/* Needed for: */
-	LOAD_DBC("DBC/DestructibleModelData.dbc", DestructibleModelDataFormat, true, dbcDestructibleModelDataEntry, false);
+	LOAD_DBC(format("%s/DestructibleModelData.dbc", datapath).c_str(), DestructibleModelDataFormat, true, dbcDestructibleModelDataEntry, false);
 	return true;
 }

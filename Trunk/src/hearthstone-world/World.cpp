@@ -376,7 +376,7 @@ bool World::SetInitialWorldSettings()
 
 	// Start
 	uint32 start_time = getMSTime();
-	if( !LoadDBCs() )
+	if( !LoadDBCs(sWorld.DBCPath.c_str()) )
 	{
 		Log.LargeErrorMessage(LARGERRORMESSAGE_ERROR, "One or more of the DBC files are missing.", "These are absolutely necessary for the server to function.", "The server will not start without them.", NULL);
 		return false;
@@ -384,9 +384,9 @@ bool World::SetInitialWorldSettings()
 
 	/* Convert area table ids/flags */
 	DBCFile area;
-	if( !area.open( "DBC/AreaTable.dbc" ) )
+	if( !area.open( format("%s/AreaTable.dbc", sWorld.DBCPath.c_str()).c_str() ) )
 	{
-		Log.Error( "World", "Cannot find file ./DBC/AreaTable.dbc" );
+		Log.Error( "World", "Cannot find file %s/AreaTable.dbc", sWorld.DBCPath.c_str() );
 		return false;
 	}
 
@@ -1253,10 +1253,11 @@ void World::Rehash(bool load)
 	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 	QueryLog = Config.MainConfig.GetBoolDefault("LogLevel", "Query", false);
 	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
-	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
-	vMapPath = Config.MainConfig.GetStringDefault("Terrain", "vMapPath", "vmaps");
-	MMapPath = Config.MainConfig.GetStringDefault("Terrain", "MMapPath", "mmaps");
-	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Terrain", "UnloadMapFiles", true);
+	DBCPath = Config.MainConfig.GetStringDefault("Data", "DBCPath", "dbc");
+	MapPath = Config.MainConfig.GetStringDefault("Data", "MapPath", "maps");
+	vMapPath = Config.MainConfig.GetStringDefault("Data", "vMapPath", "vmaps");
+	MMapPath = Config.MainConfig.GetStringDefault("Data", "MMapPath", "mmaps");
+	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Data", "UnloadMapFiles", true);
 	BreathingEnabled = Config.MainConfig.GetBoolDefault("Server", "EnableBreathing", true);
 	SendStatsOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendStatsOnJoin", true);
 	SendMovieOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendMovieOnJoin", true);

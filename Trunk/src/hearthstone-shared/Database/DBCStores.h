@@ -2168,7 +2168,7 @@ extern SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
 
 #endif
 
-bool LoadDBCs();
+bool LoadDBCs(const char* datapath);
 
 HEARTHSTONE_INLINE uint32 GetscalestatSpellBonus(ScalingStatValuesEntry *ssvrow)
 {

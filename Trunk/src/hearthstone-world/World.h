@@ -606,6 +606,7 @@ public:
 	bool LogPlayers;
 	bool LogChats;
 
+	string DBCPath;
 	string MapPath;
 	string vMapPath;
 	string MMapPath;
