@@ -24,6 +24,8 @@ LogonCommHandler.cpp \
 Main.cpp \
 Master.cpp \
 ObjectStorage.cpp \
+Player.cpp \
+Player.h \
 QueryHandler.cpp \
 RStdAfx.cpp \
 Session.cpp \
