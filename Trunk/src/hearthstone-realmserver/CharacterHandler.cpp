@@ -316,12 +316,12 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 	pck.rpos(0);
 
 	WorldPacket data(SMSG_CHAR_CREATE, 1);
-//	if(!VerifyName(name.c_str(), name.length()))
-//	{
-//		data << uint8(CHAR_CREATE_NAME_IN_USE);
-//		SendPacket(&data);
-//		return;
-//	}
+	if(!VerifyName(name.c_str(), name.length()))
+	{
+		data << uint8(CHAR_CREATE_NAME_IN_USE);
+		SendPacket(&data);
+		return;
+	}
 
 	if(CharacterDatabase.Query("SELECT name FROM characters WHERE name = '%s'", name.c_str()) != NULL)
 	{
@@ -386,6 +386,10 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 			break;
 		case 2:
 			data << uint8(CHAR_CREATE_FAILED);
+			break;
+		case 3: // Our char is being created via worldserver
+			sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
+			return;
 			break;
 		default:
 			data << uint8(CHAR_CREATE_ERROR);

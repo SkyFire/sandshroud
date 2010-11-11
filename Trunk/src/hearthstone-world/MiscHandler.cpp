@@ -720,7 +720,6 @@ void WorldSession::HandlePlayerLogoutOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleLogoutCancelOpcode( WorldPacket & recv_data )
 {
-
 	DEBUG_LOG( "WORLD"," Recvd CMSG_LOGOUT_CANCEL Message" );
 
 	Player* pPlayer = GetPlayer();

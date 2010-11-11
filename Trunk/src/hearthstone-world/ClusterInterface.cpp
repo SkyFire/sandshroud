@@ -708,7 +708,7 @@ void ClusterInterface::HandleCreatePlayer(WorldPacket & pck)
 
 	//now lets send the info back, send accountid, we have no sessionid
 	WorldPacket result(ICMSG_CREATE_PLAYER, 5);
-	data << accountid << uint8(0x2F); //CHAR_CREATE_SUCCESS
+	result << accountid << uint8(0x2F); //CHAR_CREATE_SUCCESS
 	SendPacket(&result);
 }
 
@@ -795,6 +795,13 @@ void ClusterInterface::HandleChannelLFGDungeonStatusRequest(WorldPacket & pck)
 	data << channelname;
 	data << pass;
 	sClusterInterface.SendPacket(&data);*/
+}
+
+void ClusterInterface::PlayerLoggedOut(uint32 sid, uint32 guid)
+{
+	WorldPacket result(ICMSG_PLAYER_LOGOUT, 8);
+	result << sid << guid;
+	SendPacket(&result);
 }
 
 #endif

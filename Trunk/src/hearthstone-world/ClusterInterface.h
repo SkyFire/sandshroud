@@ -94,6 +94,7 @@ public:
 	void Update();
 	void DestroySession(uint32 sid);
 	void ConnectionDropped();
+	void PlayerLoggedOut(uint32 sid, uint32 guid);
 
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket * data) { if(_clientSocket) _clientSocket->SendPacket(data); }
 	HEARTHSTONE_INLINE void SetSocket(WSClient * s) { _clientSocket = s; }

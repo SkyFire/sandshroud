@@ -306,6 +306,10 @@ void Player::SetTaximaskNode(uint32 nodeidx, bool Unset)
 
 void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)
 {
+	skilllineentry * CheckedSkill = dbcSkillLine.LookupEntry(SkillLine);
+	if (!CheckedSkill) //skill doesn't exist, exit here
+		return;
+
 	uint32 customlvlcapskcap = 50+(80*5);
 
 	// force to be within limits

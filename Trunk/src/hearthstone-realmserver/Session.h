@@ -195,6 +195,33 @@ HEARTHSTONE_INLINE void CapitalizeString(string& arg)
 		arg[x] = tolower(arg[x]);
 }
 
+HEARTHSTONE_INLINE bool VerifyName(const char * name, size_t nlen)
+{
+	const char * p;
+	size_t i;
+
+	static const char * bannedCharacters = "\t\v\b\f\a\n\r\\\"\'\?<>[](){}_=+-|/!@#$%^&*~`.,0123456789\0";
+	static const char * allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	for(i = 0; i < nlen; i++)
+	{
+		p = allowedCharacters;
+		bool Continue = false;
+		for(; *p != 0; ++p)
+		{
+			if(name[i] == *p)
+			{
+				Continue = true;
+				break;
+			}
+		}
+		if(Continue)
+			continue;
+
+		return false;
+	}
+	return true;
+}
+
 #endif
 
 

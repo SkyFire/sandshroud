@@ -79,7 +79,10 @@ void ClientMgr::DestroySession(uint32 sessionid)
 	//session doesn't exist
 	Session* s = GetSession(sessionid);
 	if (s == NULL)
+	{
+		m_lock.ReleaseWriteLock();
 		return;
+	}
 
 	s->deleted = true;
 	m_pendingdeletesessionids.push_back(sessionid);
@@ -276,8 +279,19 @@ int ClientMgr::CreateNewPlayer(Session* session, WorldPacket& data)
 	if(m_hiPlayerGuid+1 == 0) // We've reset the count :O
 		return 1;
 
-	DEBUG_LOG("ClientMgr", "Account(%u) creating a player", session->GetAccountId());
 	uint32 guid = GeneratePlayerGuid();
+	DEBUG_LOG("ClientMgr", "Account(%u) creating a player", session->GetAccountId());
+	Instance* i = sClusterMgr.GetAnyInstance();
+	if(i != NULL)
+	{
+		WorldPacket data2(ISMSG_CREATE_PLAYER, 4+6+data.size());
+		data2 << session->GetAccountId() << data.GetOpcode() << uint32(data.size());
+		data2.resize(10 + data.size());
+		memcpy((void*)(data2.contents() + 10), data.contents(), data.size());
+		i->Server->SendPacket(&data2);
+		return 3;
+	}
+
 	Player* plr = new Player(guid);
 	plr->m_session = session;
 
