@@ -1061,6 +1061,11 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				dmg = unitTarget->GetMaxHealth() / 10;
 			}break;
+
+		case 53353:
+			{
+				dmg += forced_basepoints[0];
+			}break;
 		}
 	}
 
