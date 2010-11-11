@@ -1856,12 +1856,13 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 
 		if(dmg <= 0)
 			return; //who would want a neagtive dmg here ?
+		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+			EventPeriodicDamage((uint32)dmg);
 
 		uint32 time = 3000;
 
 		if( m_spellProto->EffectAmplitude[mod->i] > 0 )
 			time = m_spellProto->EffectAmplitude[mod->i];
-
 		sEventMgr.AddEvent(this, &Aura::EventPeriodicDamage, (uint32)dmg,
 			EVENT_AURA_PERIODIC_DAMAGE, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
@@ -3748,6 +3749,9 @@ void Aura::SpellAuraPeriodicHeal( bool apply )
 		if( m_spellProto->EffectAmplitude[mod->i] > 0 )
 			time = m_spellProto->EffectAmplitude[mod->i];
 
+		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+			EventPeriodicHeal((uint32)amount);
+
 		sEventMgr.AddEvent( this, &Aura::EventPeriodicHeal,(uint32)amount, EVENT_AURA_PERIODIC_HEAL, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
 
 		if( m_spellProto->NameHash == SPELL_HASH_REJUVENATION || m_spellProto->NameHash == SPELL_HASH_REGROWTH )
@@ -3767,7 +3771,7 @@ void Aura::SpellAuraPeriodicHeal( bool apply )
 
 void Aura::EventPeriodicHeal( uint32 amount )
 {
-		if(m_target == NULL || m_target->GetMapMgr() == NULL )
+	if(m_target == NULL || m_target->GetMapMgr() == NULL )
 		return;
 
 	if( !m_target->isAlive() )
@@ -4468,12 +4472,16 @@ void Aura::SpellAuraPeriodicTriggerSpell(bool apply)
 			EVENT_AURA_PERIODIC_TRIGGERSPELL, amplitude, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
             periodic_target = m_caster->GetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT);
+			if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+				EventPeriodicTriggerSpell(spe);
 		}
 		else if(m_target)
 		{
 			sEventMgr.AddEvent(this, &Aura::EventPeriodicTriggerSpell, spe,
 				EVENT_AURA_PERIODIC_TRIGGERSPELL, amplitude, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 			periodic_target = m_target->GetGUID();
+			if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+				EventPeriodicTriggerSpell(spe);
 		}
 	}
 }
@@ -4593,6 +4601,8 @@ void Aura::SpellAuraPeriodicEnergize(bool apply)
 
 		if( m_spellProto->EffectAmplitude[mod->i] > 0 )
 			time = m_spellProto->EffectAmplitude[mod->i];
+		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+			EventPeriodicEnergize((uint32)mod->m_amount, (uint32)mod->m_miscValue);
 
 		sEventMgr.AddEvent(this, &Aura::EventPeriodicEnergize, (uint32)mod->m_amount, (uint32)mod->m_miscValue,
 			EVENT_AURA_PERIODIC_ENERGIZE, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
@@ -5856,6 +5866,8 @@ void Aura::SpellAuraPeriodicLeech(bool apply)
 		if( amt < 0 )
 			amt = 0;
 
+		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+			EventPeriodicLeech(amt);
 		sEventMgr.AddEvent(this, &Aura::EventPeriodicLeech, amt,
 			EVENT_AURA_PERIODIC_LEECH, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
@@ -6382,6 +6394,9 @@ void Aura::SpellAuraPeriodicHealthFunnel(bool apply)
 
 		if( m_spellProto->EffectAmplitude[mod->i] > 0 )
 			time = m_spellProto->EffectAmplitude[mod->i];
+
+		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+			EventPeriodicHealthFunnel(amt);
 
 		sEventMgr.AddEvent(this, &Aura::EventPeriodicHealthFunnel, amt,
 			EVENT_AURA_PERIODIC_HEALTH_FUNNEL, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
@@ -7454,30 +7469,16 @@ void Aura::SpellAuraPeriodicDamagePercent(bool apply)
 {
 	if( apply )
 	{
-		//uint32 gr = m_spellProto->SpellGroupType;
-		//if(gr&& m_caster!=NULL)
-		//{
-		//	SM_FIValue(m_caster->SM[SMT_SPELL_VALUE_PCT][0],(int32*)&dmg,gr);
-		//	SM_PIValue(m_caster->SM[SMT_SPELL_VALUE_PCT][1],(int32*)&dmg,gr);
-		//}
+		uint32 dmg = mod->m_amount;
+		uint32 time = 3000;
+		if( m_spellProto->EffectAmplitude[mod->i] > 0 )
+			time = m_spellProto->EffectAmplitude[mod->i];
 
-		/*if(m_spellProto->Id == 28347) //Dimensional Siphon
-		{
-			uint32 dmg = (m_target->GetUInt32Value(UNIT_FIELD_MAXHEALTH)*5)/100;
-			sEventMgr.AddEvent(this, &Aura::EventPeriodicDamagePercent, dmg,
-				EVENT_AURA_PERIODIC_DAMAGE_PERCENT, 1000, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-		}
-		else*/
-		{
-			uint32 dmg = mod->m_amount;
-			uint32 time = 3000;
+		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+			EventPeriodicDamagePercent(dmg);
 
-			if( m_spellProto->EffectAmplitude[mod->i] > 0 )
-				time = m_spellProto->EffectAmplitude[mod->i];
-
-			sEventMgr.AddEvent(this, &Aura::EventPeriodicDamagePercent, dmg,
-				EVENT_AURA_PERIODIC_DAMAGE_PERCENT, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-		}
+		sEventMgr.AddEvent(this, &Aura::EventPeriodicDamagePercent, dmg,
+			EVENT_AURA_PERIODIC_DAMAGE_PERCENT, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		SetNegative();
 	}
 }
@@ -10609,12 +10610,16 @@ void Aura::SpellAuraPeriodicTriggerSpellWithValue(bool apply)
 			sEventMgr.AddEvent(this, &Aura::EventPeriodicTriggerSpell, spe,
 			EVENT_AURA_PERIODIC_TRIGGERSPELL,m_spellProto->EffectAmplitude[mod->i], 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 			periodic_target = m_caster->GetUInt64Value( UNIT_FIELD_CHANNEL_OBJECT );
+			if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+				EventPeriodicTriggerSpell(spe);
 		}
 		else if(m_target)
 		{
 			sEventMgr.AddEvent(this, &Aura::EventPeriodicTriggerSpell, spe,
 				EVENT_AURA_PERIODIC_TRIGGERSPELL,m_spellProto->EffectAmplitude[mod->i], 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 			periodic_target = m_target->GetGUID();
+			if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+				EventPeriodicTriggerSpell(spe);
 		}
 	}
 }

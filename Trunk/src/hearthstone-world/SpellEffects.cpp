@@ -795,8 +795,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 
 						uint32 bpdamage = GetSpellProto()->EffectBasePoints[i] + 1;
 						dmg = ( bpdamage * dosestoate) + float2int32(p_caster->GetAP() * (0.07f * dosestoate));
-						m_requiresCP = true;
-
 						// Remove deadly poisons
 						for(uint32 x = MAX_POSITIVE_AURAS; x < MAX_AURAS; ++x)
 						{
@@ -947,7 +945,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				{
 					p_caster->EventAttackStop();
 					p_caster->smsg_AttackStop( unitTarget );
-				}return;
+				}
 			}break;
 
 		case 22568: case 22827:  //Ferocious Bite dmg correction
@@ -4829,6 +4827,7 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 			summon2->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
 			summon2->AddSpell(dbcSpell.LookupEntry(58857), true); // Twin Howl
 			summon2->AddSpell(dbcSpell.LookupEntry(58861), true); // Spirit Bash
+			return;
 		};
 
 		//Spread spawns equally around summoner
@@ -4845,6 +4844,8 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 			duration = duration <= 3600000 ? duration : 3600000; //limit to 1hr max.
 			if ( g_caster )
 			{
+				if(g_caster->m_summoner == NULL)
+					return;
 				u_caster = g_caster->m_summoner;
 				u_caster->m_SummonSlots[d] = TO_CREATURE(g_caster->CreateTemporaryGuardian(cr_entry, duration, m_fallowAngle, u_caster, d));
 			}
@@ -4853,6 +4854,7 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 
 			if(u_caster->m_SummonSlots[d]!=NULL)
 				u_caster->m_SummonSlots[d]->SetSummonOwnerSlot(u_caster->GetGUID(),d);
+			break;
 		}
 	}
 }
@@ -6585,10 +6587,15 @@ void Spell::SpellEffectSanctuary(uint32 i) // Stop all attacks made to you
 		if( pUnit->GetTypeId() == TYPEID_UNIT )
 			pUnit->GetAIInterface()->RemoveThreatByPtr( unitTarget );
 	}
+	
 
 	// also cancel any spells we are casting
 	if( unitTarget->GetCurrentSpell() != NULL && unitTarget->GetCurrentSpell() != this && unitTarget->GetCurrentSpell()->getState() == SPELL_STATE_PREPARING )
 		unitTarget->InterruptCurrentSpell();
+	unitTarget->smsg_AttackStop( unitTarget );
+
+	if( playerTarget != NULL )
+		playerTarget->EventAttackStop();
 }
 
 void Spell::SpellEffectAddComboPoints(uint32 i) // Add Combo Points
@@ -7243,7 +7250,7 @@ void Spell::SpellEffectPull( uint32 i )
 	unitTarget->GetAIInterface()->StopMovement(time);
 	unitTarget->GetAIInterface()->SendMoveToPacket( pullX, pullY, pullZ, pullO, time, MONSTER_MOVE_FLAG_JUMP );
 	unitTarget->SetPosition(pullX,pullY,pullZ,pullO);
-	if( u_caster && playerTarget)
+	if(playerTarget)
 	{
 		if( playerTarget->IsPvPFlagged() )
 			u_caster->SetPvPFlag();

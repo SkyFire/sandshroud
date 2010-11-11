@@ -582,7 +582,7 @@ enum Flags8
 	FLAGS8_UNK0							= 0x1,
 	FLAGS8_UNK1							= 0x2,
 	FLAGS8_REACTIVATE_AT_RESURRECT		= 0x4,
-	FLAGS8_DISABLED_CLIENT_SIDE			= 0x8,//fuckers
+	FLAGS8_DISABLED_CLIENT_SIDE			= 0x8, //fuckers
 	FLAGS8_UNK4							= 0x10,
 	FLAGS8_SUMMON_PLAYER_TOTEM			= 0x20,
 	FLAGS8_UNK6							= 0x40,
@@ -1651,8 +1651,12 @@ public:
 		m_spellInfo_override = dbcSpell.CreateCopy(m_spellInfo);
 	}
 
-	/*ToDo: Replace requirescp with this
-	HEARTHSTONE_INLINE bool NeedCP(SpellEntry const* spellInfo){ return (spellInfo->AttributesEx & (ATTRIBUTESEX_REQ_COMBO_POINTS1 | ATTRIBUTESEX_REQ_COMBO_POINTS2)); }*/
+	HEARTHSTONE_INLINE bool RequiresComboPoints(SpellEntry const* spellInfo)
+	{
+		if(spellInfo->AttributesEx & ATTRIBUTESEX_REQ_COMBO_POINTS1 || spellInfo->AttributesEx & ATTRIBUTESEX_REQ_COMBO_POINTS2)
+			return true;
+		return false;
+	}
 	// Send Packet functions
 	void SendCastResult(uint8 result);
 	void SendSpellStart();
@@ -2069,7 +2073,6 @@ public:
 	bool m_AreaAura;
 	//uint32 TriggerSpellId;		// used to set next spell to use
 	//uint64 TriggerSpellTarget;	// used to set next spell target
-	bool m_requiresCP;
 	float m_castPositionX;
 	float m_castPositionY;
 	float m_castPositionZ;

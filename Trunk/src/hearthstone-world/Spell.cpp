@@ -250,7 +250,6 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 
 	cancastresult = SPELL_CANCAST_OK;
 
-	m_requiresCP = false;
 	unitTarget = NULLUNIT;
 	itemTarget = NULLITEM;
 	gameObjTarget = NULLGOB;
@@ -2004,7 +2003,7 @@ void Spell::finish()
 			p_caster->smsg_AttackStop( unitTarget );
 		}
 
-		if(m_requiresCP && !GetSpellFailed())
+		if(RequiresComboPoints(GetSpellProto()) && !GetSpellFailed())
 		{
 			if(p_caster->m_spellcomboPoints)
 			{
@@ -3190,6 +3189,9 @@ uint8 Spell::CanCast(bool tolerate)
 				return SPELL_FAILED_SPELL_UNAVAILABLE;
 		}
 
+		if(p_caster->m_bg == NULL && GetSpellProto()->Flags4 & FLAGS4_BG_ONLY)
+			return SPELL_FAILED_ONLY_BATTLEGROUNDS;
+
 		// Requires ShapeShift (stealth only atm, need more work)
 		if( GetSpellProto()->RequiredShapeShift )
 		{
@@ -4061,7 +4063,7 @@ uint8 Spell::CanCast(bool tolerate)
 					}
 
 					default:
-						return SPELL_FAILED_SILENCED;
+							return SPELL_FAILED_SILENCED;
 				}
 		}
 
@@ -4095,15 +4097,10 @@ uint8 Spell::CanCast(bool tolerate)
 					return SPELL_FAILED_PACIFIED;
 			}
 		}
-		if(u_caster->IsStunned() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_STUNNED))
-			return SPELL_FAILED_STUNNED;
 
-		if(u_caster->IsFeared() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_FEARED))
-			return SPELL_FAILED_STUNNED;
-
-		/*if( u_caster->IsStunned() || u_caster->IsFeared())
+		if( u_caster->IsStunned() || u_caster->IsFeared())
 		{
-			 HACK FIX
+			 //HACK FIX
 			switch( GetSpellProto()->NameHash )
 			{
 				case SPELL_HASH_HAND_OF_FREEDOM:
@@ -4117,15 +4114,15 @@ uint8 Spell::CanCast(bool tolerate)
 				case 0xCD4CDF55: //Barkskin
 					break;
 				/* -Supalosa- For some reason, being charmed or sleep'd is counted as 'Stunned'.
-				Check it: http://www.wowhead.com/?spell=700 
+				Check it: http://www.wowhead.com/?spell=700 */
 
-				case 0xC7C45478: /* Immune Movement Impairment and Loss of Control (PvP Trinkets) 
+				case 0xC7C45478: /* Immune Movement Impairment and Loss of Control (PvP Trinkets) */
 					break;
 
-				case 0x3DFA70E5: /* Will of the Forsaken (Undead Racial) 
+				case 0x3DFA70E5: /* Will of the Forsaken (Undead Racial) */
 					break;
 
-				case SPELL_HASH_PVP_TRINKET: // insignia of the alliance/horde 2.4.3
+				case SPELL_HASH_PVP_TRINKET: // insignia of the alliance/horde 2.4.3*/
 				case SPELL_HASH_EVERY_MAN_FOR_HIMSELF:
 					break;
 
@@ -4136,9 +4133,13 @@ uint8 Spell::CanCast(bool tolerate)
 					break;
 
 				default:
-					return SPELL_FAILED_STUNNED;
+					{
+						if(u_caster->IsStunned() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_STUNNED) || 
+							u_caster->IsFeared() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_FEARED))
+							return SPELL_FAILED_STUNNED;
+					}
 			}
-		}*/
+		}
 
 		if(u_caster->GetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT) > 0)
 		{
@@ -4274,7 +4275,6 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 		if(comboDamage)
 		{
 			value += ( comboDamage * p_caster->m_comboPoints );
-			m_requiresCP = true;
 			//this is ugly so i will explain the case maybe someone ha a better idea :
 			// while casting a spell talent will trigger uppon the spell prepare faze
 			// the effect of the talent is to add 1 combo point but when triggering spell finishes it will clear the extra combo point
