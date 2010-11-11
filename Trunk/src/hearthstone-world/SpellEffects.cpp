@@ -1309,11 +1309,11 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	case 47474:
 	case 47475:
 			{
-			if(p_caster != NULL)
-			{
-				Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
-				damage = ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + GetSpellProto()->EffectBasePoints[i];
-			}
+				if(p_caster != NULL)
+				{
+					Item* itm = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+					damage = ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + GetSpellProto()->EffectBasePoints[i];
+				}
 		}break;
 
     //warrior - thunder clap
@@ -1931,9 +1931,8 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 
 	case 49203: //Hungering Cold
 		{
-                unitTarget->CastSpell(u_caster, 51209, true);
-                return;
-		}break;
+			unitTarget->CastSpell(u_caster, 51209, true);
+ 		}break;
 	case 61999: //Raise Ally
 		{
 			if(!unitTarget->isDead() || !playerTarget)
@@ -2585,18 +2584,16 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				unitTarget->SetUInt32Value(UNIT_FIELD_DISPLAYID, 347);
 				sQuestMgr._OnPlayerKill(p_caster, TO_CREATURE(unitTarget)->GetLowGUID());
 				TO_CREATURE(unitTarget)->Despawn(5000, 360000);
-			}else
-				if(unitTarget->GetEntry() == 12296 && unitTarget->HasActiveAura(19502))
-				{
-					//unitTarget->AddAuraVisual(19502, -1, true);
-					unitTarget->SetUInt32Value(UNIT_FIELD_DISPLAYID, 1547);
-					sQuestMgr._OnPlayerKill(p_caster, TO_CREATURE(unitTarget)->GetLowGUID());
-					TO_CREATURE(unitTarget)->Despawn(5000, 360000);
-				}else
-				{
-					SendCastResult(SPELL_FAILED_BAD_TARGETS);
-					return;
-				}
+			}
+			else if(unitTarget->GetEntry() == 12296 && unitTarget->HasActiveAura(19502))
+			{
+				//unitTarget->AddAuraVisual(19502, -1, true);
+				unitTarget->SetUInt32Value(UNIT_FIELD_DISPLAYID, 1547);
+				sQuestMgr._OnPlayerKill(p_caster, TO_CREATURE(unitTarget)->GetLowGUID());
+				TO_CREATURE(unitTarget)->Despawn(5000, 360000);
+			}
+			else
+				SendCastResult(SPELL_FAILED_BAD_TARGETS);
 		}break;
 	case 20804:// Triage
 		{
@@ -3232,7 +3229,8 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 				{
 					int32 new_dmg = damage + float2int32(damage*0.2f);
 					Heal(new_dmg);
-				}else
+				}
+				else
 					Heal((int32)damage);
 			}break;
 		case 48153: // Guardian spirit
@@ -3302,9 +3300,7 @@ void Spell::SpellEffectWeapondamageNoschool(uint32 i) // Weapon damage + (no Sch
 		return;
 
 	if( GetType() == SPELL_DMG_TYPE_RANGED && GetSpellProto()->speed > 0.0f )
-	{
 		u_caster->Strike( unitTarget, RANGED, GetSpellProto(), 0, 0, 0, false, true );
-	}
 	else
 		u_caster->Strike( unitTarget, ( GetType() == SPELL_DMG_TYPE_RANGED ? RANGED : MELEE ), GetSpellProto(), damage, 0, 0, false, true );
 }
@@ -3760,6 +3756,10 @@ void Spell::SpellEffectSummon(uint32 i)
 	case SUMMON_TYPE_LIGHTWELL:
 		{
 			SummonLightwell(i);
+		}break;
+	case SUMMON_TYPE_TOTEM_COPY:
+		{
+			SummonTotemCopy(i);
 		}break;
 	default:
 		{
@@ -8449,6 +8449,91 @@ void Spell::SummonLightwell(uint32 i)
 	summon->SetSummonOwnerSlot(p_caster->GetGUID(), 0);
 	p_caster->m_SummonSlots[0] = summon;
 	sEventMgr.AddEvent( summon, &Creature::SafeDelete, EVENT_CREATURE_SAFE_DELETE, GetDuration(), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
+}
+
+void Spell::SummonTotemCopy(uint32 i)
+{
+	if(u_caster== NULL)
+		return;
+
+	uint32 entry = GetSpellProto()->EffectMiscValue[i];
+
+	CreatureInfo* ci = CreatureNameStorage.LookupEntry(entry);
+	CreatureProto* cp = CreatureProtoStorage.LookupEntry(entry);
+	if(!ci || !cp)
+		return;
+
+	// Obtain the spell we will be casting.
+	SpellEntry * TotemSpell = ObjectMgr::getSingleton().GetTotemSpell(GetSpellProto()->Id);
+	if(TotemSpell == 0)
+	{
+		OUT_DEBUG("SummonTotemCopy has no spell to cast for summon spellid %u, Creature Id %u",GetSpellProto()->Id, entry);
+		return;
+	}
+
+	Creature* pTotem = NULLCREATURE;
+	pTotem = u_caster->GetMapMgr()->CreateCreature(entry);
+	if(pTotem == NULL)
+		return;
+
+	uint32 slot = m_summonProperties->slot;
+	if( slot < 7 )
+		u_caster->m_SummonSlots[slot] = pTotem;
+	pTotem->SetSummonOwnerSlot(u_caster->GetGUID(),int8(slot));
+	pTotem->SetTotem(true);
+	float x,y,z;
+	if( m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && m_targets.m_destX && m_targets.m_destY && m_targets.m_destZ )
+	{
+		x = m_targets.m_destX;
+		y = m_targets.m_destY;
+		z = m_targets.m_destZ;
+	}
+	else
+	{
+		x = u_caster->GetPositionX();
+		y = u_caster->GetPositionY();
+		z = u_caster->GetPositionZ();
+	}
+	pTotem->Load(cp, 0, x, y, z);
+	pTotem->Create(ci->Name, u_caster->GetMapId(), x, y, z, u_caster->GetOrientation());
+	uint32 displayID = ci->Male_DisplayID;
+	pTotem->SetUInt32Value(OBJECT_FIELD_ENTRY, entry);
+	pTotem->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
+	pTotem->SetUInt64Value(UNIT_FIELD_CREATEDBY, u_caster->GetGUID());
+	pTotem->SetUInt32Value(UNIT_FIELD_LEVEL, u_caster->getLevel());
+	pTotem->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, u_caster->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+	pTotem->SetUInt32Value(UNIT_FIELD_BYTES_0, (1 << 8) | (2 << 16) | (1 << 24));
+	pTotem->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED | UNIT_FLAG_SELF_RES);
+	pTotem->SetUInt32Value(UNIT_FIELD_BASEATTACKTIME, 2000);
+	pTotem->SetUInt32Value(UNIT_FIELD_RANGEDATTACKTIME, 2000);
+	pTotem->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 1.0f);
+	pTotem->SetFloatValue(UNIT_FIELD_COMBATREACH, 1.0f);
+	pTotem->SetUInt32Value(UNIT_FIELD_DISPLAYID, displayID);
+	pTotem->SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, displayID);
+	pTotem->SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
+	pTotem->SetUInt32Value(UNIT_CREATED_BY_SPELL, GetSpellProto()->Id);
+	pTotem->SetPhase(u_caster->GetPhase());
+	pTotem->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
+	if( u_caster->IsPvPFlagged() )
+		pTotem->SetPvPFlag();
+
+	if( u_caster->IsFFAPvPFlagged() )
+		pTotem->SetFFAPvPFlag();
+
+	// Initialize faction stuff.
+	pTotem->m_faction = u_caster->m_faction;
+	pTotem->m_factionDBC = u_caster->m_factionDBC;
+	pTotem->PushToWorld(m_caster->GetMapMgr());
+	sEventMgr.AddEvent( pTotem, &Creature::SafeDelete, EVENT_CREATURE_SAFE_DELETE, GetDuration(), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
+	pTotem->DisableAI();
+	pTotem->GetAIInterface()->totemspell = GetSpellProto();
+	Spell* pSpell(new Spell(pTotem, TotemSpell, true, NULLAURA));
+	SpellCastTargets targets;
+	targets.m_destX = pTotem->GetPositionX();
+	targets.m_destY = pTotem->GetPositionY();
+	targets.m_destZ = pTotem->GetPositionZ();
+	targets.m_targetMask = TARGET_FLAG_DEST_LOCATION;
+	pSpell->prepare(&targets);
 }
 
 void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item

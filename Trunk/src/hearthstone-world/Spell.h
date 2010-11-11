@@ -93,16 +93,17 @@ Range ID|Range|Description
 
 enum SUMMON_TYPE
 {
-	SUMMON_TYPE_POSSESSED	= 65,
+	SUMMON_TYPE_CRITTER		= 41,
 	SUMMON_TYPE_GUARDIAN	= 61,
-	SUMMON_TYPE_WILD		= 64,
-	SUMMON_TYPE_DEMON		= 66,
 	SUMMON_TYPE_TOTEM_1		= 63,
+	SUMMON_TYPE_WILD		= 64,
+	SUMMON_TYPE_POSSESSED	= 65,
+	SUMMON_TYPE_DEMON		= 66,
+	SUMMON_TYPE_SUMMON		= 67,
 	SUMMON_TYPE_TOTEM_2		= 81,
 	SUMMON_TYPE_TOTEM_3		= 82,
 	SUMMON_TYPE_TOTEM_4		= 83,
-	SUMMON_TYPE_SUMMON		= 67,
-	SUMMON_TYPE_CRITTER		= 41,
+	SUMMON_TYPE_TOTEM_COPY = 121,
 	SUMMON_TYPE_FROSTBROOD_VANQUISHER = 607,
 	SUMMON_TYPE_GHOUL		= 829,
 	SUMMON_TYPE_LIGHTWELL	= 1141,
@@ -1799,6 +1800,7 @@ public:
 	void SpellEffectCreatePet(uint32 i);
 	void SpellEffectTitanGrip(uint32 i);
 	void SummonLightwell(uint32 i);
+	void SummonTotemCopy(uint32 i);
 	void SpellEffectCreateRandomItem(uint32 i);
 	void SpellEffectSendTaxi(uint32 i);
 	void SpellEffectKillCredit(uint32 i);
