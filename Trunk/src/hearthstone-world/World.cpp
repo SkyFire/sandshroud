@@ -1447,9 +1447,9 @@ void World::LoadNameGenData()
 {
 	DBCFile dbc;
 
-	if( !dbc.open( "DBC/NameGen.dbc" ) )
+	if( !dbc.open( format("%s/NameGen.dbc", sWorld.DBCPath.c_str()).c_str() ) )
 	{
-		Log.Error( "World", "Cannot find file ./DBC/NameGen.dbc" );
+		Log.Error( "World", "Cannot find file %s/NameGen.dbc", sWorld.DBCPath.c_str() );
 		return;
 	}
 
