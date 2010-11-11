@@ -20,7 +20,7 @@
 #ifndef __WORLD_H
 #define __WORLD_H
 
-#define IS_INSTANCE(a) (a>1 && a!=530 && a != 571)
+#define IS_INSTANCE(a) (a > 1 && a != 530 && a != 571 && a != 609)
 
 class Object;
 class WorldPacket;
@@ -57,7 +57,7 @@ enum Rates
 	RATE_DROP5,
 	RATE_DROP6,
 	RATE_MONEY,
-    RATE_QUEST_MONEY,
+	RATE_QUEST_MONEY,
 	RATE_XP,
 	RATE_RESTXP,
 	RATE_QUESTXP,

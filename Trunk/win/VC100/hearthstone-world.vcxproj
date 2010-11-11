@@ -291,6 +291,7 @@
     <ClCompile Include="..\..\src\hearthstone-world\BattlegroundMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\EyeOfTheStorm.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\NavMeshInterface.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-world\SkillNameMgr.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SingleSpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SpellFixes.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\StrandOfTheAncients.cpp" />

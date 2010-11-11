@@ -148,6 +148,8 @@ hearthstone_world_SOURCES = \
     ScriptMgr.h \
     Skill.h \
     SkillHandler.cpp \
+    SkillNameMgr.h \
+    SkillNameMgr.cpp \
     SocialHandler.cpp \
     SpellAuras.cpp \
     SpellAuras.h \

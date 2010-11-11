@@ -1308,6 +1308,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\hearthstone-world\SkillNameMgr.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\hearthstone-world\SkillNameMgr.h"
 				>
 			</File>

@@ -28,8 +28,8 @@ struct Instance
 	WServer * Server;
 };
 
-#define IS_INSTANCE(a) (((a)>1)&&((a)!=530))
-#define IS_MAIN_MAP(a) (((a)<2)||((a)==530)||((a)==571))
+#define IS_INSTANCE(a) (a > 1 && a != 530 && a != 571 && a != 609)
+#define IS_MAIN_MAP(a) (((a)<2)||((a)==530)||((a)==571)||((a)==609))
 
 class ClusterMgr : public Singleton<ClusterMgr>
 {

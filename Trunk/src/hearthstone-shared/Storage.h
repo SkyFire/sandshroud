@@ -658,7 +658,7 @@ public:
 		QueryResult * result;
 		if(Storage<T, StorageType>::_storage.NeedsMax())
 		{
-			result = WorldDatabase.Query("SELECT MAX(entry) FROM %s", IndexName);
+			result = WorldDatabase.Query("SELECT MAX(entry) FROM %s ORDER BY `entry`", IndexName);
 			uint32 Max = STORAGE_ARRAY_MAX;
 			if(result)
 			{
