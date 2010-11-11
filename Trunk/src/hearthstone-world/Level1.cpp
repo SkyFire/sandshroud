@@ -500,7 +500,19 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 		Creature* ctr = getSelectedCreature(m_session, false);
 		if(ctr != NULL)
 		{
-			ctr->SetSpeed(type,Speed);
+			if(type == -1)
+			{
+				ctr->SetSpeed(RUN, Speed);
+				ctr->SetSpeed(RUNBACK, (Speed * 0.5));
+				ctr->SetSpeed(SWIM, Speed);
+				ctr->SetSpeed(SWIMBACK, (Speed * 0.5));
+				ctr->SetSpeed(TURN, 3.141593f);
+				ctr->SetSpeed(FLY, Speed*3);
+				ctr->SetSpeed(FLYBACK, (Speed * 1.5));
+				ctr->SetSpeed(PITCH_RATE, 3.141593f);
+			}
+			else
+				ctr->SetSpeed(type,Speed);
 			BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname.c_str(),  ctr->GetCreatureInfo()->Name, Speed);
 			return true;
 		}
