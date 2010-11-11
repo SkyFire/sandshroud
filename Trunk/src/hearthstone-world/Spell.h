@@ -1653,7 +1653,7 @@ public:
 
 	HEARTHSTONE_INLINE bool RequiresComboPoints(SpellEntry const* spellInfo)
 	{
-		if(spellInfo->AttributesEx & ATTRIBUTESEX_REQ_COMBO_POINTS1 || spellInfo->AttributesEx & ATTRIBUTESEX_REQ_COMBO_POINTS2)
+		if(spellInfo->AttributesEx & ATTRIBUTESEX_REQ_COMBO_POINTS1 || spellInfo->AttributesEx & ATTRIBUTESEX_REQ_COMBO_POINTS2 || spellInfo->c_is_flags & SPELL_FLAG_IS_FINISHING_MOVE)
 			return true;
 		return false;
 	}
