@@ -267,10 +267,6 @@ void WorldSession::LogoutPlayer(bool Save)
 	if( _loggingOut )
 		return;
 
-#ifdef CATACLYSM
-	uint32 guid = 0;
-	uint32 sessionid = GetSocket()->GetSessionId();
-#endif
 	_loggingOut = true;
 	_recentlogout = true;
 
@@ -278,9 +274,6 @@ void WorldSession::LogoutPlayer(bool Save)
 	{
 		_player->ObjLock();
 
-#ifdef CATACLYSM
-		guid = _player->GetLowGUID();
-#endif
 		sHookInterface.OnLogout( _player );
 
 		sEventMgr.RemoveEvents(_player);
@@ -449,10 +442,6 @@ void WorldSession::LogoutPlayer(bool Save)
 	SetLogoutTimer(0);
 	if(_player != NULL)
 		_player = NULLPLR;
-
-#ifdef CATACLYSM
-	sClusterInterface.PlayerLoggedOut(sessionid, guid);
-#endif
 }
 
 void WorldSession::SendBuyFailed(uint64 guid, uint32 itemid, uint8 error)
