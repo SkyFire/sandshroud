@@ -345,7 +345,7 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 		return;
 	}
 
-/*	if( class_ == DEATHKNIGHT && (!HasFlag(ACCOUNT_FLAG_XPACK_02) || !CanCreateDeathKnight() ) )
+	if( class_ == DEATHKNIGHT && (!HasFlag(0x10) || !CanCreateDeathKnight() ) )
 	{
 		if(CanCreateDeathKnight())
 			data << uint8(CHAR_CREATE_EXPANSION);
@@ -355,12 +355,12 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 		return;
 	}
 
-	if( (race == RACE_GOBLIN || race == RACE_WORGEN) && !HasFlag(ACCOUNT_FLAG_XPACK_03) )
+	if( (race == RACE_GOBLIN || race == RACE_WORGEN) && !HasFlag(0x20) )
 	{
 		data << uint8(CHAR_CREATE_EXPANSION);
 		SendPacket(&data);
 		return;
-	}*/
+	}
 
 	QueryResult * result = CharacterDatabase.Query("SELECT COUNT(*) FROM banned_names WHERE name = '%s'", CharacterDatabase.EscapeString(name).c_str());
 	if(result)
@@ -376,7 +376,7 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 		delete result;
 	}
 
-	int error = sClientMgr.CreateNewPlayer();
+	int error = sClientMgr.CreateNewPlayer(this, pck);
 	if(error > 0)
 	{
 		switch(error)

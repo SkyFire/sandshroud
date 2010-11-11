@@ -32,6 +32,7 @@ public:
 
 protected:
 	uint32 m_hiPlayerGuid;
+	uint32 m_hiItemGuid;
 	uint32 m_maxSessionId;
 
 	Session * m_sessions[MAX_SESSIONS];
@@ -127,12 +128,13 @@ public:
 	void Update();
 
 public: // PlayerCreateInfo
+	void LoadPlayerCreateInfo();
 	PlayerCreateInfoMap mPlayerCreateInfo;
 	PlayerCreateInfo* GetPlayerCreateInfo(uint8 race, uint8 class_) const;
 
 public: // Player Creation and deletion/rename shit
 	uint32 GeneratePlayerGuid() { return ++m_hiPlayerGuid; };
-	int CreateNewPlayer();
+	int CreateNewPlayer(Session* session, WorldPacket& data);
 };
 
 #define sClientMgr ClientMgr::getSingleton()

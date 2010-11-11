@@ -783,6 +783,10 @@ bool LoadRSDBCs(const char* datapath)
 	LOAD_DBC(format("%s/AreaTable.dbc", datapath).c_str(), areatableFormat, true, dbcArea, true);
 	/* Needed for: */
 	LOAD_DBC(format("%s/ChatChannels.dbc", datapath).c_str(), chatchannelformat, true, dbcChatChannels, true);
+	/* Needed for: */
+	LOAD_DBC(format("%s/ChrClasses.dbc", datapath).c_str(), charclassFormat, true, dbcCharClass, true);
+	/* Needed for: */
+	LOAD_DBC(format("%s/ChrRaces.dbc", datapath).c_str(), charraceFormat, true, dbcCharRace, true);
 	return true;
 }
 

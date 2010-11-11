@@ -454,6 +454,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\hearthstone-realmserver\Player.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\hearthstone-realmserver\Player.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\hearthstone-realmserver\QueryHandler.cpp"
 				>
 			</File>

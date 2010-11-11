@@ -25,7 +25,7 @@ initialiseSingleton( LfgMgr );
 LfgMgr::LfgMgr()
 {
 	DBCFile f;
-	if(f.open("DBC/LFGDungeons.dbc"))
+	if(f.open(format("%s/LFGDungeons.dbc", sWorld.DBCPath.c_str()).c_str()))
 	{
 		for(uint32 i = 0; i < f.getRecordCount(); i++)
 		{

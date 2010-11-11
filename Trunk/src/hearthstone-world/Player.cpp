@@ -881,7 +881,6 @@ bool Player::Create(WorldPacket& data )
 
 void Player::EquipInit(PlayerCreateInfo *EquipInfo)
 {
-
 	for(std::list<CreateInfo_ItemStruct>::iterator is = EquipInfo->items.begin(); is!=EquipInfo->items.end(); is++)
 	{
 		if ( (*is).protoid != 0)

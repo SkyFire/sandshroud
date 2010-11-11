@@ -136,6 +136,23 @@ struct player_item
 	uint32 enchantment; // added in 2.4
 };
 
+struct ActionButton
+{
+	uint16	Action;
+	uint8	Misc;
+	uint8	Type;
+};
+
+struct PlayerSkill
+{
+	skilllineentry * Skill;
+	uint32 CurrentValue;
+	uint32 MaximumValue;
+	uint32 BonusValue;
+	float GetSkillUpChance();
+	bool Reset(uint32 Id);
+};
+
 struct CreatureInfo
 {
 	uint32 Id;

@@ -106,6 +106,17 @@ public:
 
 	bool HasFlag(uint32 flag) { return (m_accountFlags & flag) != 0; }
 
+	bool CanCreateDeathKnight()
+	{
+		if( m_hasDeathKnight )
+			return false;
+
+		if( m_highestLevel < 55 )
+			return false;
+
+		return true;
+	}
+
 	HEARTHSTONE_INLINE void SetAccountData(uint32 index, char* data, bool initial, uint32 sz)
 	{
 		ASSERT(index < 8);
