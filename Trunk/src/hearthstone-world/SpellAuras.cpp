@@ -1021,6 +1021,8 @@ void Aura::UpdateModifiers( )
 
 void Aura::AddAuraVisual()
 {
+	if(GetSpellProto()->Attributes & ATTRIBUTES_NO_VISUAL_AURA || GetCasterGUID() == m_target->GetGUID() && (GetSpellProto()->Attributes & ATTRIBUTES_NO_VISUAL_FOR_CASTER))
+		return;
 	uint8 slot, i;
 	slot = 0xFF;
 

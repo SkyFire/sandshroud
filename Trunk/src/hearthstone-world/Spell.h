@@ -381,7 +381,7 @@ enum Attributes
 	ATTRIBUTES_REQ_AMMO							= 0x2,	// requires ammo
 	ATTRIBUTE_ON_NEXT_ATTACK					= 0x4,
 	ATTRIBUTES_UNUSED0							= 0x8,
-	ATTRIBUTES_UNK6								= 0x10,
+	ATTRIBUTES_NO_VISUAL_FOR_CASTER				= 0x10,
 	ATTRIBUTES_UNK7								= 0x20,	// Tradeskill recipies
 	ATTRIBUTES_PASSIVE							= 0x40,
 	ATTRIBUTES_NO_VISUAL_AURA					= 0x80,
@@ -1797,7 +1797,6 @@ public:
 	void SpellEffectMilling(uint32 i);
 	void SpellEffectAllowPetRename(uint32 i);
 	void SpellEffectAddPrismaticSocket(uint32 i);
-	void SpellEffectTractorBeamFromDest(uint32 i);
 	void SpellEffectActivateRune(uint32 i);
 	void SpellEffectFailQuest(uint32 i);
 	void SpellEffectStartQuest(uint32 i);
