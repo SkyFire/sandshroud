@@ -2025,15 +2025,10 @@ void Aura::EventPeriodicDamage(uint32 amount)
 		m_caster = GetUnitCaster();
 		if( m_caster != NULL)
 		{
-			uint32 aproc = PROC_ON_ANY_HOSTILE_ACTION;
-			uint32 vproc = PROC_ON_ANY_HOSTILE_ACTION | PROC_ON_ANY_DAMAGE_VICTIM;
-			aproc |= PROC_ON_SPELL_LAND;
-			vproc |= PROC_ON_SPELL_LAND_VICTIM;
-
-			m_caster->HandleProc(aproc, NULL, mtarget, sp, float2int32(res));
+			m_caster->HandleProc(PROC_ON_ANY_HOSTILE_ACTION|PROC_ON_SPELL_LAND, NULL, mtarget, sp, float2int32(res));
 			m_caster->m_procCounter = 0;
 
-			mtarget->HandleProc(vproc, NULL, m_caster, sp, float2int32(res));
+			mtarget->HandleProc(PROC_ON_ANY_HOSTILE_ACTION|PROC_ON_ANY_DAMAGE_VICTIM|PROC_ON_SPELL_LAND_VICTIM, NULL, m_caster, sp, float2int32(res));
 			mtarget->m_procCounter = 0;
 		}
 
@@ -3256,10 +3251,10 @@ void Aura::SpellAuraDummy(bool apply)
 						break;
 					}
 
-					if(mod->i == 0 && spellid)
-						CreateProcTriggerSpell(plr, plr->GetGUID(), GetSpellId(), spellid, procchance, (PROC_ON_MELEE_ATTACK | PROC_ON_PHYSICAL_ATTACK), NULL);
-					else
+					if(mod->i == 2)
 						plr->JudgementSpell = mod->m_amount;
+					else if(spellid)
+						CreateProcTriggerSpell(plr, plr->GetGUID(), GetSpellId(), spellid, procchance, PROC_ON_MELEE_ATTACK, NULL);
 				}
 				else
 				{

@@ -3969,6 +3969,7 @@ void Unit::smsg_AttackStart(Unit* pVictim)
 {
 	if(GetTypeId() != TYPEID_PLAYER)
 		return;
+
 	// Send out ATTACKSTART
 	WorldPacket data(SMSG_ATTACKSTART, 16);
 	data << GetGUID();
