@@ -360,9 +360,11 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 				break;
 
 			if(_player->m_playerInfo->guild != NULL)
+			{
 				_player->m_playerInfo->guild->GuildChat(msg.c_str(), this, lang);
-			if(sWorld.LogChats && msg.c_str()[0] != '.')
-				sWorld.LogChat(this, "[guild: %s] %s: %s", _player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
+				if(sWorld.LogChats && msg.c_str()[0] != '.')
+					sWorld.LogChat(this, "[guild: %s] %s: %s", _player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
+			}
 		} break;
 	case CHAT_MSG_OFFICER:
 		{

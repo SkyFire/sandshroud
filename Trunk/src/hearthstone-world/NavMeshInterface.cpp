@@ -24,7 +24,7 @@ SERVER_DECL CNavMeshInterface NavMeshInterface;
 void CNavMeshInterface::Init()
 {
 	Log.Notice("NavMeshInterface", "Init");
-	memset( m_navMesh, 0, sizeof(dtNavMesh*)*NUM_MAPS );
+	memset( m_navMesh, 0, sizeof(dtNavMesh*)*NUM_MAPS*64*64 );
 	memset( m_navMeshLoadCount, 0, sizeof(int64)*NUM_MAPS*64*64 );
 }
 
