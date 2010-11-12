@@ -1259,6 +1259,14 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				sp->prepare(&targets);
 			}
 		}break;
+	case SPELL_HASH_EXPOSE_ARMOR:
+	case SPELL_HASH_KIDNEY_SHOT:
+		{
+			if(p_caster == NULL)
+				return;
+
+			p_caster->NullComboPoints();
+		}
 	}
 
 	switch(spellId)

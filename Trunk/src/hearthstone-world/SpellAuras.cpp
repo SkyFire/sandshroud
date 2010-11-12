@@ -4394,7 +4394,7 @@ void Aura::SpellAuraModResistance(bool apply)
 	else
 		amt = -mod->m_amount;
 
-	if( this->m_spellProto && ( this->m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE || this->m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE__FERAL_ ) )
+	if( m_spellProto && ( this->m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE || this->m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE__FERAL_ ) )
 		m_target->m_can_stealth = !apply;
 
 	if( m_target->IsPlayer() )
