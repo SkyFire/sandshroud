@@ -381,7 +381,7 @@ enum Attributes
 	ATTRIBUTES_REQ_AMMO							= 0x2,	// requires ammo
 	ATTRIBUTE_ON_NEXT_ATTACK					= 0x4,
 	ATTRIBUTES_UNUSED0							= 0x8,
-	ATTRIBUTES_NO_VISUAL_FOR_CASTER				= 0x10,
+	ATTRIBUTES_UNK6								= 0x10,
 	ATTRIBUTES_UNK7								= 0x20,	// Tradeskill recipies
 	ATTRIBUTES_PASSIVE							= 0x40,
 	ATTRIBUTES_NO_VISUAL_AURA					= 0x80,
@@ -599,6 +599,7 @@ enum Flags8
 	FLAGS8_UNK17						= 0x20000,
 	FLAGS8_HAS_CHARGE_EFFECT			= 0x40000,
 	FLAGS8_ZONE_TELEPORT				= 0x80000,
+	FLAGS8_RAID_BUFF					= 0x10000000,
 };
 
 enum SpellCastFlags
