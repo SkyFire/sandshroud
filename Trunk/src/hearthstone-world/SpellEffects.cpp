@@ -7315,7 +7315,7 @@ void Spell::SummonNonCombatPet(uint32 i)
 
 void Spell::SpellEffectKnockBack(uint32 i)
 {
-	if(unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
+	if(u_caster == NULL || unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
 		return;
 
 	if(unitTarget->IsCreature() && isTargetDummy(unitTarget->GetEntry()))

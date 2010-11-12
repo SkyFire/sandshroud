@@ -510,7 +510,6 @@ public:
 	void SendWorldText(const char *text, WorldSession *self = 0);
 	void SendWorldWideScreenText(const char *text, WorldSession *self = 0);
 	void SendGlobalMessage(WorldPacket *packet, WorldSession *self = 0);
-	void BanEveryoneOnline();
 	void SendZoneMessage(WorldPacket *packet, uint32 zoneid, WorldSession *self = 0);
 	void SendInstanceMessage(WorldPacket *packet, uint32 instanceid, WorldSession *self = 0);
 	void SendFactionMessage(WorldPacket *packet, uint8 teamId);

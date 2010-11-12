@@ -1325,7 +1325,6 @@ public:
 	void EventDeath();
 	//Note:ModSkillLine -> value+=amt;ModSkillMax -->value=amt; --wierd
 	float GetSkillUpChance(uint32 id);
-	//HEARTHSTONE_INLINE std::list<struct skilllines>getSkillLines() { return m_skilllines; }
 	float SpellCrtiticalStrikeRatingBonus;
 	float SpellHasteRatingBonus;
 	void UpdateAttackSpeed();
@@ -1541,12 +1540,6 @@ public:
 	int32 DetectedRange;
 	float PctIgnoreRegenModifier;
 	uint32 m_retainedrage;
-/*
-	union {
-		float mRatingToPct[37];
-		uint32 mRatingToPoint[37]; //block, skill.. cant be decimal values
-	};
-*/
 	HEARTHSTONE_INLINE uint32* GetPlayedtime() { return m_playedtime; };
 	void CalcStat(uint32 t);
 	HEARTHSTONE_INLINE float CalcRating(uint32 index) { return CalcPercentForRating(index, m_uint32Values[index]); };
