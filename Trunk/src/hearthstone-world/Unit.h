@@ -1403,7 +1403,7 @@ public: // Virtual Script Callers
 	OnDeathScript* CallOnDeath;
 	OnEnterCombatScript* CallOnEnterCombat;
 	OnCastSpellScript* CallOnCastSpell;
-	void knockback(Unit * target, int32 basepoint, uint32 miscvalue, bool disengage = false );
+	void knockback(int32 basepoint, uint32 miscvalue, bool disengage = false );
 	void Teleport(float x, float y, float z, float O, uint32 phase = 1);
 	void SetRedirectThreat(Unit * target, float amount, uint32 Duaration);
 	void EventResetRedirectThreat();

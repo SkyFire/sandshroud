@@ -1198,34 +1198,33 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 	if (!goinfo)
 		return;
 
-	Player* plyr = GetPlayer();
+	uint32 type = obj->GetType();
 
 	CALL_GO_SCRIPT_EVENT(obj, OnActivate)(_player);
 	CALL_INSTANCE_SCRIPT_EVENT( _player->GetMapMgr(), OnGameObjectActivate )( obj, _player );
 
-	uint32 type = obj->GetType();
 	switch (type)
 	{
 		case GAMEOBJECT_TYPE_CHAIR:
 		{
 			/// if players are mounted they are not able to sit on a chair
-			if( plyr->IsMounted() )
-				plyr->RemoveAura( plyr->m_MountSpellId );
+			if( _player->IsMounted() )
+				_player->RemoveAura( _player->m_MountSpellId );
 
-			plyr->SafeTeleport( plyr->GetMapId(), plyr->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
-			plyr->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
+			_player->SafeTeleport( _player->GetMapId(), _player->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
+			_player->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
 		}break;
 		case GAMEOBJECT_TYPE_CHEST://cast da spell
 		{
 			spellInfo = dbcSpell.LookupEntry( OPEN_CHEST );
-			spell = (new Spell(plyr, spellInfo, true, NULLAURA));
+			spell = (new Spell(_player, spellInfo, true, NULLAURA));
 			_player->m_currentSpell = spell;
 			targets.m_unitTarget = obj->GetGUID();
 			spell->prepare(&targets);
 		}break;
 		case GAMEOBJECT_TYPE_FISHINGNODE:
 		{
-			obj->UseFishingNode(plyr);
+			obj->UseFishingNode(_player);
 		}break;
 		case GAMEOBJECT_TYPE_DOOR:
 		{
@@ -1242,54 +1241,54 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 		case GAMEOBJECT_TYPE_FLAGSTAND:
 		{
 			// battleground/warsong gulch flag
-			if(plyr->m_bg)
+			if(_player->m_bg)
 			{
-				if( plyr->m_stealth )
-					plyr->RemoveAura( plyr->m_stealth );
+				if( _player->m_stealth )
+					_player->RemoveAura( _player->m_stealth );
 
-				if( plyr->m_MountSpellId )
-					plyr->RemoveAura( plyr->m_MountSpellId );
+				if( _player->m_MountSpellId )
+					_player->RemoveAura( _player->m_MountSpellId );
 
-				if( plyr->GetVehicle() )
-					plyr->GetVehicle()->RemovePassenger( plyr );
+				if( _player->GetVehicle() )
+					_player->GetVehicle()->RemovePassenger( _player );
 
-				if(!plyr->m_bgFlagIneligible)
-					plyr->m_bg->HookFlagStand(plyr, obj);
+				if(!_player->m_bgFlagIneligible)
+					_player->m_bg->HookFlagStand(_player, obj);
 			}
 		}break;
 		case GAMEOBJECT_TYPE_FLAGDROP:
 		{
 			// Dropped flag
-			if(plyr->m_bg)
+			if(_player->m_bg)
 			{
-				if( plyr->m_stealth )
-					plyr->RemoveAura( plyr->m_stealth );
+				if( _player->m_stealth )
+					_player->RemoveAura( _player->m_stealth );
 
-				if( plyr->m_MountSpellId )
-					plyr->RemoveAura( plyr->m_MountSpellId );
+				if( _player->m_MountSpellId )
+					_player->RemoveAura( _player->m_MountSpellId );
 
-				if( plyr->GetVehicle() )
-					plyr->GetVehicle()->RemovePassenger( plyr );
+				if( _player->GetVehicle() )
+					_player->GetVehicle()->RemovePassenger( _player );
 
-				plyr->m_bg->HookFlagDrop(plyr, obj);
+				_player->m_bg->HookFlagDrop(_player, obj);
 			}
 		}break;
 		case GAMEOBJECT_TYPE_QUESTGIVER:
 		{
 			// Questgiver
 			if(obj->HasQuests())
-				sQuestMgr.OnActivateQuestGiver(obj, plyr);
+				sQuestMgr.OnActivateQuestGiver(obj, _player);
 		}break;
 		case GAMEOBJECT_TYPE_SPELLCASTER:
 		{
 			SpellEntry *info = dbcSpell.LookupEntry(goinfo->SpellFocus);
 			if(!info)
 				break;
-			Spell* spell(new Spell(plyr, info, false, NULLAURA));
+			Spell* spell(new Spell(_player, info, false, NULLAURA));
 			SpellCastTargets targets;
-			targets.m_unitTarget = plyr->GetGUID();
+			targets.m_unitTarget = _player->GetGUID();
 			spell->prepare(&targets);
-			if(obj->charges>0 && !--obj->charges)
+			if(obj->charges > 0 && !--obj->charges)
 				obj->ExpireAndDelete();
 		}break;
 		case GAMEOBJECT_TYPE_RITUAL:
@@ -1303,16 +1302,16 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			{
 				if(!obj->m_ritualmembers[i])
 				{
-					obj->m_ritualmembers[i] = plyr->GetLowGUID();
-					plyr->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, obj->GetGUID());
-					plyr->SetUInt32Value(UNIT_CHANNEL_SPELL, obj->GetGOui32Value(GO_UINT32_RIT_SPELL));
+					obj->m_ritualmembers[i] = _player->GetLowGUID();
+					_player->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, obj->GetGUID());
+					_player->SetUInt32Value(UNIT_CHANNEL_SPELL, obj->GetGOui32Value(GO_UINT32_RIT_SPELL));
 					break;
-				}else if(obj->m_ritualmembers[i] == plyr->GetLowGUID())
+				}else if(obj->m_ritualmembers[i] == _player->GetLowGUID())
 				{
 					// we're deselecting :(
 					obj->m_ritualmembers[i] = 0;
-					plyr->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
-					plyr->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
+					_player->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
+					_player->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
 					return;
 				}
 			}
@@ -1490,12 +1489,12 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 		}break;
 		case GAMEOBJECT_TYPE_BARBER_CHAIR:
 		{
-			plyr->SafeTeleport( plyr->GetMapId(), plyr->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
-			plyr->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
-			plyr->m_lastRunSpeed = 0; //counteract mount-bug; reset speed to zero to force update SetPlayerSpeed in next line.
-			plyr->SetPlayerSpeed(RUN,plyr->m_base_runSpeed);
+			_player->SafeTeleport( _player->GetMapId(), _player->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
+			_player->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
+			_player->m_lastRunSpeed = 0; //counteract mount-bug; reset speed to zero to force update SetPlayerSpeed in next line.
+			_player->SetPlayerSpeed(RUN,_player->m_base_runSpeed);
 			WorldPacket data(SMSG_ENABLE_BARBER_SHOP, 0);
-			plyr->GetSession()->SendPacket(&data);
+			_player->GetSession()->SendPacket(&data);
 		}break;
 	}
 }

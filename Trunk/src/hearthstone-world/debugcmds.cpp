@@ -691,7 +691,7 @@ bool ChatHandler::HandleKnockBackCommand(const char* args, WorldSession *m_sessi
 	if(sscanf(args, "%f %f", &hspeed, &vspeed) != 2)
 		return false;
 
-	m_session->GetPlayer()->knockback(target, hspeed, vspeed, false);
+	target->knockback(hspeed, vspeed, false);
 	return true;
 }
 

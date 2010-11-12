@@ -170,7 +170,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectTriggerSpellWithValue,		// 142 - triggers some kind of "Put spell on target" thing... (dono for sure) http://www.thottbot.com/s40872 and http://www.thottbot.com/s33076
 	&Spell::SpellEffectApplyDemonAura,				// 143 - Apply pet aura for summons :3
 	&Spell::SpellEffectKnockBack,					// 144 - Spectral Blast
-	&Spell::SpellEffectTractorBeamFromDest,			// SPELL_EFFECT_TRACTOR_BEAM_FROM_DEST - 145
+	&Spell::SpellEffectPull,						// SPELL_EFFECT_TRACTOR_BEAM_FROM_DEST - 145
 	&Spell::SpellEffectActivateRune,				// 146 - Finish a rune's cooldown
 	&Spell::SpellEffectFailQuest,					// 147 - Fail quest.
 	&Spell::SpellEffectTriggerSpell,				// 148 - Appears to trigger a spell?
@@ -3973,8 +3973,7 @@ void Spell::SpellEffectEnergize(uint32 i) // Energize
 		}break;
 	case 31930:
 		{
-			if( u_caster )
-				modEnergy = float2int32(0.25f * u_caster->GetUInt32Value(UNIT_FIELD_BASE_MANA));
+			modEnergy = float2int32(0.25f * u_caster->GetUInt32Value(UNIT_FIELD_BASE_MANA));
 		}break;
 	case 31786:
 		{
@@ -4000,9 +3999,9 @@ void Spell::SpellEffectEnergize(uint32 i) // Energize
 			modEnergy = damage;
 			if( p_caster != NULL )
 			{
-				if(p_caster->mSpells.find(12818) != p_caster->mSpells.end())
+				if(p_caster->HasSpell(12818))
 					modEnergy += 60;
-				if(p_caster->mSpells.find(12301) != p_caster->mSpells.end())
+				if(p_caster->HasSpell(12301))
 					modEnergy += 30;
 			}
 		}break;
@@ -4122,7 +4121,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 			}
 			else if(gameObjTarget)
 			{
-				if(gameObjTarget->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 0)
+				if(gameObjTarget->GetState() == 0)
 					return;
 
 				Lock *lock = dbcLock.LookupEntryForced(gameObjTarget->GetInfo()->SpellFocus);
@@ -4135,7 +4134,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 					{
 						v = lock->minlockskill[i];
 						gameObjTarget->SetFlags(0);
-						gameObjTarget->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
+						gameObjTarget->SetState(1);
 						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 						loottype = LOOT_CORPSE;
 						DetermineSkillUp(SKILL_LOCKPICKING,v/5);
@@ -4280,12 +4279,6 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 	CALL_GO_SCRIPT_EVENT(gameObjTarget, OnActivate)(TO_PLAYER(caster));
 	CALL_INSTANCE_SCRIPT_EVENT( gameObjTarget->GetMapMgr(), OnGameObjectActivate )( gameObjTarget, TO_PLAYER( caster ) );
 	gameObjTarget->SetState(0);
-
-	if( gameObjTarget->GetEntry() == 183146)
-	{
-		gameObjTarget->Despawn(0, 1);
-		return;
-	}
 
 	if( gameObjTarget->GetType() == GAMEOBJECT_TYPE_CHEST)
 	{
@@ -7247,22 +7240,37 @@ void Spell::SpellEffectSendTaxi( uint32 i )
 
 void Spell::SpellEffectPull( uint32 i )
 {
-	if( unitTarget == NULL || !unitTarget->isAlive() || unitTarget == u_caster )
+	if( unitTarget == NULL && u_caster != NULL)
+	{
+		unitTarget = u_caster;
+	}
+
+	if(unitTarget == NULL)
 		return;
+
 
 	if(unitTarget->IsCreature() && isTargetDummy(unitTarget->GetEntry()))
 		return;
 
-	// calculate destination
-	float pullD = unitTarget->CalcDistance( m_caster ) - unitTarget->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - m_caster->GetFloatValue( UNIT_FIELD_BOUNDINGRADIUS ) - 1.0f;
-	float pullO = unitTarget->calcRadAngle( unitTarget->GetPositionX(), unitTarget->GetPositionY(), m_caster->GetPositionX(), m_caster->GetPositionY() );
-	float pullX = unitTarget->GetPositionX() + pullD * cosf( pullO );
-	float pullY = unitTarget->GetPositionY() + pullD * sinf( pullO );
-	float pullZ = m_caster->GetPositionZ() + 0.3f;
-	uint32 time = uint32( pullD * 42.0f );
+	float pullX = 0.0f;
+	float pullY = 0.0f;
+	float pullZ = 0.0f;
+	if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+	{
+		pullX = m_targets.m_destX;
+		pullY = m_targets.m_destY;
+		pullZ = m_targets.m_destZ;
+	}
+	else
+	{
+		pullX = m_caster->GetPositionX();
+		pullY = m_caster->GetPositionY();
+		pullZ = m_caster->GetPositionZ();
+	}
+	uint32 time = uint32((CalculateEffect(i, unitTarget) / 10.0f) * 100);
 	unitTarget->GetAIInterface()->StopMovement(time);
-	unitTarget->GetAIInterface()->SendMoveToPacket( pullX, pullY, pullZ, pullO, time, MONSTER_MOVE_FLAG_JUMP );
-	unitTarget->SetPosition(pullX,pullY,pullZ,pullO);
+	unitTarget->GetAIInterface()->JumpTo(pullX, pullY,pullZ,time, GetSpellProto()->EffectMiscValue[i]/10);
+	unitTarget->SetPosition(pullX,pullY,pullZ, 0.0f);
 	if(playerTarget)
 	{
 		if( playerTarget->IsPvPFlagged() )
@@ -7315,13 +7323,13 @@ void Spell::SummonNonCombatPet(uint32 i)
 
 void Spell::SpellEffectKnockBack(uint32 i)
 {
-	if(u_caster == NULL || unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
+	if(unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
 		return;
 
 	if(unitTarget->IsCreature() && isTargetDummy(unitTarget->GetEntry()))
 		return;
 
-	unitTarget->knockback(unitTarget, GetSpellProto()->EffectBasePoints[i]+1, GetSpellProto()->EffectMiscValue[i]);
+	unitTarget->knockback(GetSpellProto()->EffectBasePoints[i]+1, GetSpellProto()->EffectMiscValue[i]);
 }
 
 void Spell::SpellEffectDisenchant(uint32 i)
@@ -8314,18 +8322,20 @@ void Spell::SpellEffectJump(uint32 i)
 	else
 	{
 		if( unitTarget == NULL )
-			return; //Hueston we haz a problem.
+			return;
 		x = unitTarget->GetPositionX();
 		y = unitTarget->GetPositionY();
 		z = unitTarget->GetPositionZ();
 	}
-	float o = u_caster->calcRadAngle(  u_caster->GetPositionX(), u_caster->GetPositionY(), x, y );
-	x += cosf(o);
-	y += sinf(o);
-	// Time formula is derived from andy's logs, 271ms to move ~14.5 units
-	//float distance = u_caster->GetDistanceSq( x+cosf(o), y+sinf(o),z );
-	//uint32 moveTime = FL2UINT((distance * 271.0f) / 212.65f);
-	uint32 moveTime = uint32( (m_caster->CalcDistance(x,y,z) / ((u_caster->m_runSpeed * 3.5) * 0.001f)) + 0.5);
+
+	float speed;
+	if (m_spellInfo->EffectMiscValue[i])
+		speed = float(m_spellInfo->EffectMiscValue[i])/10;
+	else if (m_spellInfo->EffectMiscValueB[i])
+		speed = float(m_spellInfo->EffectMiscValueB[i])/10;
+	else
+		speed = 10.0f;
+	uint32 moveTime = uint32(speed * 100);
 	u_caster->GetAIInterface()->StopMovement(moveTime);
 	u_caster->GetAIInterface()->JumpTo( x, y, z, moveTime, GetSpellProto()->EffectMiscValue[i] ? GetSpellProto()->EffectMiscValue[i] : GetSpellProto()->EffectMiscValueB[i], GetSpellProto()->EffectDieSides[i] );
 	
@@ -8784,7 +8794,7 @@ void Spell::SpellEffectDisengage(uint32 i)
 	if(unitTarget == NULL || !unitTarget->isAlive())
 		return;
 
-	unitTarget->knockback(unitTarget, GetSpellProto()->EffectBasePoints[i]+1, GetSpellProto()->EffectMiscValue[i], true);
+	unitTarget->knockback(GetSpellProto()->EffectBasePoints[i]+1, GetSpellProto()->EffectMiscValue[i], true);
 }
 
 void Spell::SpellEffectClearFinishedQuest(uint32 i)
@@ -8822,19 +8832,6 @@ void Spell::SpellEffectRemoveAura(uint32 i)
 	unitTarget->RemoveAura(GetSpellProto()->EffectTriggerSpell[i], unitTarget->GetGUID());
 }
 
-void Spell::SpellEffectTractorBeamFromDest(uint32 i)
-{
-	if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
-	{
-		SpellEffectJump(i);
-		return;
-	}
-	else
-	{
-		SpellEffectPull(i);
-		return;
-	}
-}
 void Spell::SpellEffectActivateRune(uint32 i)
 {
 	if( !p_caster )

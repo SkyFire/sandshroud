@@ -1028,7 +1028,6 @@ void Aura::AddAuraVisual()
 	{
 		for (i = 0; i < MAX_POSITIVE_AURAS; i++)
 		{
-			//if (m_target->GetUInt32Value((uint16)(UNIT_FIELD_AURA + i)) == 0)
 			if(m_target->m_auras[i] == NULL)
 			{
 				slot = i;
@@ -1040,7 +1039,6 @@ void Aura::AddAuraVisual()
 	{
 		for (i = MAX_POSITIVE_AURAS; i < MAX_AURAS; i++)
 		{
-			//if (m_target->GetUInt32Value((uint16)(UNIT_FIELD_AURA + i)) == 0)
 			if(m_target->m_auras[i] == NULL )
 			{
 				slot = i;

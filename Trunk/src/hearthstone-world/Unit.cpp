@@ -4000,7 +4000,6 @@ void Unit::AddAura(Aura* aur)
 
 		SpellEntry * info = aur->GetSpellProto();
 
-		WorldPacket data( 21 );
 		bool deleteAur = false;
 		Aura* curAura = NULLAURA;
 		//check if we already have this aura by this caster -> update duration
@@ -4182,10 +4181,9 @@ void Unit::AddAura(Aura* aur)
 	}
 	else
 	{
-		if((aur->m_spellProto->AttributesEx & 1024))
-		{
+		if(aur->m_spellProto->AttributesEx & 1024)
 			aur->AddAuraVisual();
-		}
+
 		for(x = MAX_AURAS; x < TOTAL_AURAS; x++)
 		{
 			if(!m_auras[x])
@@ -7341,11 +7339,8 @@ void Unit::ResetFaction()
 	_setFaction();
 }
 
-void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool disengage )
+void Unit::knockback(int32 basepoint, uint32 miscvalue, bool disengage )
 {
-	if(!unitTarget)
-		return;
-
 	float dx, dy;
 	float value1 = float( basepoint );
 	float value2 = float( miscvalue );
@@ -7376,19 +7371,19 @@ void Unit::knockback(Unit * unitTarget, int32 basepoint, uint32 miscvalue, bool 
 	dx = sinf( GetOrientation() );
 	dy = cosf( GetOrientation() );
 
-	if( unitTarget->IsCreature() )
+	if( IsCreature() )
 	{
-		float x = unitTarget->GetPositionX() + (value1 * dx);
-		float y = unitTarget->GetPositionY() + (value1 * dy);
-		float z = unitTarget->GetPositionZ();
-		float dist = unitTarget->CalcDistance(x, y, z);
-		uint32 movetime = unitTarget->GetAIInterface()->GetMovementTime(dist);
-		unitTarget->GetAIInterface()->SendMoveToPacket( x, y, z, 0.0f, movetime, MONSTER_MOVE_FLAG_JUMP );
-		unitTarget->SetPosition(x, y, z, 0.0f);
-		unitTarget->GetAIInterface()->StopMovement(movetime,false);
+		float x = GetPositionX() + (value1 * dx);
+		float y = GetPositionY() + (value1 * dy);
+		float z = GetPositionZ();
+		float dist = CalcDistance(x, y, z);
+		uint32 movetime = GetAIInterface()->GetMovementTime(dist);
+		GetAIInterface()->SendMoveToPacket( x, y, z, 0.0f, movetime, MONSTER_MOVE_FLAG_JUMP );
+		SetPosition(x, y, z, 0.0f);
+		GetAIInterface()->StopMovement(movetime,false);
 
-		if (unitTarget->GetCurrentSpell() != NULL)
-			unitTarget->GetCurrentSpell()->cancel();
+		if (GetCurrentSpell() != NULL)
+			GetCurrentSpell()->cancel();
 	}
 	else if(IsPlayer())
 	{

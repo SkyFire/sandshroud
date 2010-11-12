@@ -3773,7 +3773,7 @@ void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 time, float arc
 	data << m_Unit->GetPositionX() << m_Unit->GetPositionY() << m_Unit->GetPositionZ();
 	data << getMSTime();
 	data << uint8(0);
-	data << MONSTER_MOVE_FLAG_JUMP;
+	data << 6144; //Jump + walking for the run on land.
 	data << time;
 	data << float(arc);
 	data << uint32(unk);
