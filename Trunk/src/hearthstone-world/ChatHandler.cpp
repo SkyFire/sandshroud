@@ -359,20 +359,22 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
 				break;
 
-			if(_player->m_playerInfo->guild != NULL)
-			{
-				_player->m_playerInfo->guild->GuildChat(msg.c_str(), this, lang);
-				if(sWorld.LogChats && msg.c_str()[0] != '.')
-					sWorld.LogChat(this, "[guild: %s] %s: %s", _player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
-			}
+			if(_player->m_playerInfo == NULL || _player->m_playerInfo->guild == NULL)
+				break;
+
+			_player->m_playerInfo->guild->GuildChat(msg.c_str(), this, lang);
+			if(sWorld.LogChats && msg.c_str()[0] != '.')
+				sWorld.LogChat(this, "[guild: %s] %s: %s", _player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
 		} break;
 	case CHAT_MSG_OFFICER:
 		{
 			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
 				break;
 
-			if(_player->m_playerInfo->guild != NULL)
-				_player->m_playerInfo->guild->OfficerChat(msg.c_str(), this, lang);
+			if(_player->m_playerInfo == NULL || _player->m_playerInfo->guild == NULL)
+				break;
+
+			_player->m_playerInfo->guild->OfficerChat(msg.c_str(), this, lang);
 			if(sWorld.LogChats && msg.c_str()[0] != '.')
 				sWorld.LogChat(this, "[Officer Chat Guild: %s] %s: %s" ,_player->GetGuild()->GetGuildName(), _player->GetName(), msg.c_str());
 		} break;
