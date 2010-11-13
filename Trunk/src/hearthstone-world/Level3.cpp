@@ -1064,49 +1064,63 @@ bool ChatHandler::HandleShowCheatsCommand(const char* args, WorldSession* m_sess
 bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 {
 	Player* chr = getSelectedChar(m_session, false);
+
 	if(!chr)
 	{
 		Creature* ctr = getSelectedCreature(m_session, false);
 		if(ctr != NULL)
 		{
-			ctr->EnableFlight();
-			if(ctr->GetCreatureInfo())
-				BlueSystemMessage(m_session, "Enabling fly mode on %s", ctr->GetCreatureInfo()->Name);
-			return true;
+			if(!*args) 
+				if (ctr->HasByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02)) 
+					args = "off"; 
+				else 
+					args = "on";
+
+			if(strcmp(args, "on") == 0)
+			{
+				ctr->EnableFlight();
+				if(ctr->GetCreatureInfo())
+					BlueSystemMessage(m_session, "Enabling fly mode on %s", ctr->GetCreatureInfo()->Name);
+				return true;
+			}
+			else if(strcmp(args, "off") == 0)
+			{
+				ctr->DisableFlight();
+				if(ctr->GetCreatureInfo())
+					BlueSystemMessage(m_session, "Disabling fly mode on %s", ctr->GetCreatureInfo()->Name);
+				return true;
+			}
+			else
+				return false;
 		}
+
 		chr = m_session->GetPlayer();
 	}
 
-	chr->m_setflycheat = true;
-	WorldPacket fly(SMSG_MOVE_SET_CAN_FLY, 13);
-	fly << chr->GetNewGUID();
-	fly << uint32(2);
-	chr->SendMessageToSet(&fly, true);
-	BlueSystemMessage(chr->GetSession(), "Flying mode enabled.");
-	return true;
-}
+	if(!*args) 
+		if (chr->FlyCheat) 
+			args = "off"; 
+		else 
+			args = "on";
 
-bool ChatHandler::HandleLandCommand(const char* args, WorldSession* m_session)
-{
-	Player* chr = getSelectedChar(m_session, false);
-
-	if(!chr)
+	if(strcmp(args, "on") == 0)
 	{
-		Creature* ctr = getSelectedCreature(m_session, false);
-		if(ctr != NULL)
-		{
-			ctr->DisableFlight();
-			return true;
-		}
+		chr->EnableFlight();
+		BlueSystemMessage(m_session, "activated the fly cheat on %s.", chr->GetName());
+		if(chr != m_session->GetPlayer())
+			sWorld.LogGM(m_session, "enabled flying mode for %s", chr->GetName());
+		return true;
 	}
-	chr = m_session->GetPlayer();
-	chr->m_setflycheat = false;
-	WorldPacket fly(SMSG_MOVE_UNSET_CAN_FLY, 13);
-	fly << chr->GetNewGUID();
-	fly << uint32(5);
-	chr->SendMessageToSet(&fly, true);
-	BlueSystemMessage(chr->GetSession(), "Flying mode disabled.");
-	return 1;
+	else if(strcmp(args, "off") == 0)
+	{
+		chr->DisableFlight();
+		BlueSystemMessage(m_session, "deactivated the fly cheat on %s.", chr->GetName());
+		if( chr != m_session->GetPlayer() )
+			sWorld.LogGM( m_session, "disabled flying mode for %s", chr->GetName() );
+		return true;
+	}
+	else
+		return false;
 }
 
 bool ChatHandler::HandleDBReloadCommand(const char* args, WorldSession* m_session)
