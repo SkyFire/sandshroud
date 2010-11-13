@@ -2318,6 +2318,17 @@ void Spell::SendSpellGo()
 	if( i_caster != NULL )
 		cast_flags |= SPELL_GO_FLAGS_ITEM_CASTER; // 0x100 ITEM CASTER
 
+	if(p_caster && p_caster->getClass() == DEATHKNIGHT && m_spellInfo->runeCostID && m_spellInfo->powerType == POWER_RUNE)
+		cast_flags |= SPELL_GO_FLAGS_RUNE_UPDATE;
+
+	for(uint8 i = 0; i < 3; i++)
+	{
+		if( GetSpellProto()->Effect[i] == SPELL_EFFECT_ACTIVATE_RUNE)
+		{
+			cast_flags |= SPELL_GO_FLAGS_RUNE_UPDATE;
+		}
+	}
+
 	if (m_missileTravelTime)
 		cast_flags |= 0x20000;
 	// hacky..
@@ -2357,8 +2368,7 @@ void Spell::SendSpellGo()
 	// this has room for every type of spell target type,
 	// as well as 100 missed and 100 hit targets.
 	// if you're doing that, you're NUTS.
-	uint8 packet[1882];
-	StackPacket data(SMSG_SPELL_GO, packet, 1882);
+	WorldPacket data(SMSG_SPELL_GO, 3764);
 
 	if( i_caster != NULL && u_caster != NULL ) // this is needed for correct cooldown on items
 		data << i_caster->GetNewGUID() << u_caster->GetNewGUID();
@@ -2412,6 +2422,20 @@ void Spell::SendSpellGo()
 
 	if (cast_flags & SPELL_GO_FLAGS_POWER_UPDATE) //send new power
 		data << uint32( u_caster ? u_caster->GetUInt32Value(UNIT_FIELD_POWER1 + u_caster->GetPowerType()) : 0);
+
+	if( (p_caster != NULL) && cast_flags & SPELL_GO_FLAGS_RUNE_UPDATE && dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID) != NULL) //send new runes
+	{
+		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
+		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
+		data << p_caster->m_runemask << theoretical;
+
+		for (uint8 i=0; i<6; i++)
+		{
+			if ((1 << i) & p_caster->m_runemask)
+				if (!((1 << i) & theoretical))
+					data << uint8(0);
+		}
+	}
 
 	if( ip != NULL)
 		data << ip->DisplayInfoID << ip->InventoryType;
@@ -2478,11 +2502,10 @@ void Spell::SendInterrupted(uint8 result)
 {
 	SetSpellFailed();
 
-	if(!m_caster->IsInWorld()) return;
+	if(!m_caster->IsInWorld()) 
+		return;
 
-	//WorldPacket data(SMSG_SPELL_FAILURE, 20);
-	uint8 buf[50];
-	StackPacket data(SMSG_SPELL_FAILURE, buf, 50);
+	WorldPacket data(SMSG_SPELL_FAILURE, 100);
 
 	// send the failure to pet owner if we're a pet
 	Player* plr = p_caster;
@@ -2582,10 +2605,8 @@ bool Spell::HasPower()
 		return true;
 	//Seems to be an issue since 3.0.9, as many elixers/potions got powertype 4
 	//Haven't found any items taking power, so guess it's safe to skip them.
-	if(i_caster)
+	if(i_caster || g_caster)
 		return true;
-	if(g_caster)
-		return true; //GO's Don't use power.
 
 	int32 powerField;
 	switch(GetSpellProto()->powerType)

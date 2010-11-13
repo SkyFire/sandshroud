@@ -12999,8 +12999,7 @@ void Player::ConvertRune(uint8 index, uint8 value)
 	WorldPacket data(SMSG_CONVERT_RUNE, 2);
 	data << (uint8)index;
 	data << (uint8)value;
-	if( GetSession() )
-		GetSession()->SendPacket(&data);
+	GetSession()->SendPacket(&data);
 }
 
 bool Player::CanUseRunes(uint8 blood, uint8 frost, uint8 unholy)

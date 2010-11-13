@@ -1021,7 +1021,7 @@ void Aura::UpdateModifiers( )
 
 void Aura::AddAuraVisual()
 {
-	if(GetSpellProto()->Attributes & ATTRIBUTES_NO_VISUAL_AURA || IsPassive() && m_target && GetUnitCaster()->GetGUID() == m_target->GetGUID())
+	if(GetSpellProto()->Attributes & ATTRIBUTES_NO_VISUAL_AURA || (GetSpellProto()->Attributes & ATTRIBUTES_PASSIVE) && m_target && GetUnitCaster()->GetGUID() == m_target->GetGUID())
 		return;
 	uint8 slot, i;
 	slot = 0xFF;
