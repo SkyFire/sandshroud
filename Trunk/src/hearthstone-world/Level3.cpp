@@ -1070,13 +1070,10 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 		Creature* ctr = getSelectedCreature(m_session, false);
 		if(ctr != NULL)
 		{
-			if(!*args)
-			{
-				if (ctr->HasByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02))
-					args = "off";
-				else
-					args = "on";
-			}
+			if (ctr->HasByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02))
+				args = "off";
+			else
+				args = "on";
 
 			if(strcmp(args, "on") == 0)
 			{
@@ -1098,13 +1095,10 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 		chr = m_session->GetPlayer();
 	}
 
-	if(!*args)
-	{
-		if (chr->FlyCheat)
-			args = "off";
-		else
-			args = "on";
-	}
+	if (chr->FlyCheat)
+		args = "off";
+	else
+		args = "on";
 
 	if(strcmp(args, "on") == 0)
 	{
