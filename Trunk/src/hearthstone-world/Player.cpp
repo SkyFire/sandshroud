@@ -12101,9 +12101,8 @@ void Player::_SpeedhackCheck()
 	if(!sWorld.antihack_speed || !sWorld.antihack_cheatengine)
 		return;
 
-	if(GetSession()->HasGMPermissions())
-		if(!sWorld.no_antihack_on_gm)
-			return;
+	if(GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm)
+		return;
 
 	if(!m_isMoving)
 		return;
@@ -12144,7 +12143,7 @@ void Player::_SpeedhackCheck()
 		{
 			BroadcastMessage("Speedhack detected. Please contact an admin with the below information if you believe this is a false detection." );
 			BroadcastMessage("%sSpeed: %f diff: %i dist: %f move: %u tdiff: %u\n", MSG_COLOR_WHITE, speed, difference, distance, move_time, time_diff );
-			if( m_speedhackChances < 1 )
+			if( m_speedhackChances == 0 )
 			{
 				SetMovement( MOVE_ROOT, 1 );
 				BroadcastMessage( "You will be disconnected in 10 seconds." );

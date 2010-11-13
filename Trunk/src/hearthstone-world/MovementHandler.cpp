@@ -508,9 +508,9 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					SendPacket(&data);
 
 					_player->m_flyHackChances--;
-					if(!_player->m_flyHackChances)
+					if(_player->m_flyHackChances == 0)
 					{
-						sWorld.LogCheater(this, "Disconnected for fly cheat.");
+						sWorld.LogCheater(this, "Disconnected for fly cheat. (1)");
 						Disconnect();
 						return;
 					}
@@ -524,9 +524,9 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					SendPacket(&data);
 
 					_player->m_flyHackChances--;
-					if(!_player->m_flyHackChances)
+					if(_player->m_flyHackChances == 0)
 					{
-						sWorld.LogCheater(this, "Disconnected for fly cheat.");
+						sWorld.LogCheater(this, "Disconnected for fly cheat. (2)");
 						Disconnect();
 						return;
 					}
@@ -577,7 +577,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					m_jumpHackChances--;
 					if(!m_jumpHackChances)
 					{
-						sWorld.LogCheater(this, "Disconnected for jump cheat.");
+						sWorld.LogCheater(this, "Disconnected for jump cheat. (1)");
 						Disconnect();
 						return;
 					}
@@ -588,7 +588,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					m_jumpHackChances--;
 					if(!m_jumpHackChances)
 					{
-						sWorld.LogCheater(this, "Disconnected for jump cheat.");
+						sWorld.LogCheater(this, "Disconnected for jump cheat. (2)");
 						Disconnect();
 						return;
 					}
@@ -599,7 +599,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 					m_jumpHackChances--;
 					if(!m_jumpHackChances)
 					{
-						sWorld.LogCheater(this, "Disconnected for jump cheat.");
+						sWorld.LogCheater(this, "Disconnected for jump cheat. (3)");
 						Disconnect();
 						return;
 					}
