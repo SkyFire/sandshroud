@@ -1058,9 +1058,13 @@ void Aura::AddAuraVisual()
 
 void Aura::BuildAuraUpdate()
 {
-	uint32 spellid = m_spellProto->Id;
-	if( m_target == NULL || !spellid)
+	if( m_target == NULL || !GetSpellProto()->Id)
 		return;
+
+	if(GetSpellProto()->Attributes & ATTRIBUTES_NO_VISUAL_AURA || (GetSpellProto()->Attributes & ATTRIBUTES_PASSIVE) && m_target && GetUnitCaster()->GetGUID() == m_target->GetGUID())
+		return; //YOU BASTARD!
+
+	uint32 spellid = m_spellProto->Id;
 
 	WorldPacket data(SMSG_AURA_UPDATE, 50);
 	FastGUIDPack(data, m_target->GetGUID());

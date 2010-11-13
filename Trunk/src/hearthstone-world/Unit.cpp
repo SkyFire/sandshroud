@@ -5920,34 +5920,19 @@ void Unit::RemoveAurasOfSchool(uint32 School, bool Positive, bool Immune)
 
 void Unit::EnableFlight()
 {
-	if(m_objectTypeId != TYPEID_PLAYER || TO_PLAYER(this)->m_changingMaps)
+	WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 13);
+	data << GetNewGUID();
+	data << uint32(2);
+	SendMessageToSet(&data, true);
+
+	if(IsCreature()) // give them a "flying" animation so they don't just airwalk lul
 	{
-		WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 13);
-		data << GetNewGUID();
-		data << uint32(2);
-		SendMessageToSet(&data, true);
-
-		if(IsCreature()) // give them a "flying" animation so they don't just airwalk lul
-		{
-			SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
-			GetMovementInfo()->flags = (0x1000000 | 0x2000000);
-		}
-
-		if( IsPlayer() )
-		{
-			TO_PLAYER(this)->m_setflycheat = true;
-			TO_PLAYER(this)->GetSession()->m_isFalling = false;
-			TO_PLAYER(this)->GetSession()->m_isJumping = false;
-			TO_PLAYER(this)->GetSession()->m_isKnockedback = false;
-		}
+		SetByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02);
+		GetMovementInfo()->flags = (0x1000000 | 0x2000000);
 	}
-	else
+
+	if( IsPlayer() )
 	{
-		WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 13);
-		data << GetNewGUID();
-		data << uint32(2);
-		SendMessageToSet(&data, true);
-		TO_PLAYER(this)->z_axisposition = 0.0f;
 		TO_PLAYER(this)->m_setflycheat = true;
 		TO_PLAYER(this)->GetSession()->m_isFalling = false;
 		TO_PLAYER(this)->GetSession()->m_isJumping = false;
@@ -5957,28 +5942,19 @@ void Unit::EnableFlight()
 
 void Unit::DisableFlight()
 {
-	if(m_objectTypeId != TYPEID_PLAYER || TO_PLAYER(this)->m_changingMaps)
+	WorldPacket data(SMSG_MOVE_UNSET_CAN_FLY, 13);
+	data << GetNewGUID();
+	data << uint32(5);
+	SendMessageToSet(&data, true);
+
+	if(IsCreature()) // Remove their "flying"
 	{
-		WorldPacket data(SMSG_MOVE_UNSET_CAN_FLY, 13);
-		data << GetNewGUID();
-		data << uint32(5);
-		SendMessageToSet(&data, true);
-
-		if(IsCreature()) // Remove their "flying"
-		{
-			RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x03);
-			GetMovementInfo()->flags = (MONSTER_MOVE_FLAG_STAND);
-		}
-
-		if( IsPlayer() )
-			TO_PLAYER(this)->m_setflycheat = false;
+		RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, 0x03);
+		GetMovementInfo()->flags = (MONSTER_MOVE_FLAG_STAND);
 	}
-	else
+
+	if( IsPlayer() )
 	{
-		WorldPacket data( SMSG_MOVE_UNSET_CAN_FLY, 13 );
-		data << GetNewGUID();
-		data << uint32(5);
-		SendMessageToSet(&data, true);
 		TO_PLAYER(this)->z_axisposition = 0.0f;
 		TO_PLAYER(this)->m_setflycheat = false;
 	}
@@ -6001,15 +5977,7 @@ void Unit::EventRegainFlight()
 		return;
 	}
 
-	WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 13);
-	data << GetNewGUID();
-	data << uint32(2);
-	SendMessageToSet(&data, true);
-	plr->z_axisposition = 0.0f;
-	plr->m_setflycheat = true;
-	plr->GetSession()->m_isFalling = false;
-	plr->GetSession()->m_isJumping = false;
-	plr->GetSession()->m_isKnockedback = false;
+	EnableFlight();
 	if(sEventMgr.HasEvent(this,EVENT_REGAIN_FLIGHT))
 		sEventMgr.RemoveEvents(this,EVENT_REGAIN_FLIGHT);
 }
