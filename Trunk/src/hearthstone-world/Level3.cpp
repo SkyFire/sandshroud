@@ -1070,10 +1070,13 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 		Creature* ctr = getSelectedCreature(m_session, false);
 		if(ctr != NULL)
 		{
-			if (ctr->HasByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02))
-				args = "off";
-			else
-				args = "on";
+			if(!*args)
+			{
+				if (ctr->HasByteFlag(UNIT_FIELD_BYTES_1, 3, 0x02))
+					args = "off";
+				else 
+					args = "on";
+			}
 
 			if(strcmp(args, "on") == 0)
 			{
@@ -1082,7 +1085,6 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 					BlueSystemMessage(m_session, "Enabling fly mode on %s", ctr->GetCreatureInfo()->Name);
 				return true;
 			}
-
 			else if(strcmp(args, "off") == 0)
 			{
 				ctr->DisableFlight();
@@ -1090,15 +1092,20 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 					BlueSystemMessage(m_session, "Disabling fly mode on %s", ctr->GetCreatureInfo()->Name);
 				return true;
 			}
+
 			return false;
 		}
+
 		chr = m_session->GetPlayer();
 	}
 
-	if (chr->FlyCheat)
-		args = "off";
-	else
-		args = "on";
+	if(!*args)
+	{
+		if (chr->FlyCheat)
+			args = "off";
+		else 
+			args = "on";
+	}
 
 	if(strcmp(args, "on") == 0)
 	{
@@ -1108,7 +1115,6 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 			sWorld.LogGM(m_session, "enabled flying mode for %s", chr->GetName());
 		return true;
 	}
-
 	else if(strcmp(args, "off") == 0)
 	{
 		chr->DisableFlight();
@@ -1117,7 +1123,8 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 			sWorld.LogGM( m_session, "disabled flying mode for %s", chr->GetName() );
 		return true;
 	}
-	return true;
+
+	return false;
 }
 
 bool ChatHandler::HandleDBReloadCommand(const char* args, WorldSession* m_session)
