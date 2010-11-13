@@ -7011,7 +7011,83 @@ void Player::ApplySpec(uint8 spec, bool init)
 
 	std::map<uint32, uint8> *talents;
 	std::map<uint32, uint8>::iterator itr;
+	//#define UNTESTED_NEW_SPEC_CHANGE_SYSTEM
+	#ifdef UNTESTED_NEW_SPEC_CHANGE_SYSTEM
+	if(init == false)	// unapply old spec
+	{
+		for (uint32 i = 0; i < dbcTalent.GetNumRows(); ++i)
+		{
+			TalentEntry const *talentInfo = dbcTalent.LookupEntryForced(i);
 
+			if (!talentInfo)
+				continue;
+
+			TalentTabEntry const *talentTabInfo = dbcTalentTab.LookupEntry(talentInfo->TalentTree);
+
+			if (!talentTabInfo)
+				continue;
+
+			if ((getClassMask() & talentTabInfo->ClassMask) == 0)
+				continue;
+
+			for (int8 rank = 5-1; rank >= 0; --rank)
+			{
+				// skip non-existant talent ranks
+				if (talentInfo->RankID[rank] == 0)
+					continue;
+					RemoveTalent(talentInfo->RankID[rank]);
+
+				if (const SpellEntry *_spellEntry = dbcSpell.LookupEntry(talentInfo->RankID[rank]))
+					for (uint8 i = 0; i < 3; ++i)                  // search through the SpellEntry for valid trigger spells
+						if (_spellEntry->EffectTriggerSpell[i] > 0 && _spellEntry->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
+							removeSpell(_spellEntry->EffectTriggerSpell[i], false, false, 0); // and remove any spells that the talent teaches
+			}
+		}
+		if( getClass() == WARRIOR )
+		{
+			titanGrip = false;
+			ResetTitansGrip();
+		}
+		if( getClass() == DRUID )
+			SetShapeShift(0);
+
+		//Dismiss any pets
+		if(GetSummon())
+		{
+			if(GetSummon()->GetUInt32Value(UNIT_CREATED_BY_SPELL) > 0)
+				GetSummon()->Dismiss(false);				// warlock summon -> dismiss
+			else
+				GetSummon()->Remove(false, true, true);	// hunter pet -> just remove for later re-call
+		}
+	}
+
+	// apply new spec
+	talents = &m_specs[spec].talents;
+	uint32 spentPoints = 0;
+
+	for (uint32 talentId = 0; talentId < dbcTalent.GetNumRows(); ++talentId)
+	{
+		TalentEntry const *talentInfo = dbcTalent.LookupEntry(talentId);
+		if (!talentInfo)
+			continue;
+		TalentTabEntry const *talentTabInfo = dbcTalentTab.LookupEntry(talentInfo->TalentTree);
+		if (!talentTabInfo)
+			continue;
+		if ((getClassMask() & talentTabInfo->ClassMask) == 0)
+			continue;
+
+		for (int8 rank = 5-1; rank >= 0; --rank)
+		{
+			if (talentInfo->RankID[rank] == 0)
+				continue;
+			if (HasTalent(spec, talentInfo->RankID[rank]))
+			{
+				ApplyTalent(talentInfo->RankID[rank]);
+				spentPoints += (rank + 1);
+			}
+		}
+	}
+#else
 	if(init == false)	// unapply old spec
 	{
 		talents = &m_specs[m_talentActiveSpec].talents;
@@ -7060,6 +7136,7 @@ void Player::ApplySpec(uint8 spec, bool init)
 			spentPoints += itr->second + 1;
 		}
 	}
+#endif
 	m_talentActiveSpec = spec;
 
 	// update available Talent Points
