@@ -175,7 +175,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	}
 
 	sWorld.LogGM(m_session, "used npc delete, sqlid %u, creature %s, pos %f %f %f",
-		unit->m_spawn ? unit->m_spawn : 0, unit->GetCreatureInfo() ? unit->GetCreatureInfo()->Name : "wtfbbqhax", unit->GetPositionX(), unit->GetPositionY(),
+		unit->m_spawn ? unit->m_spawn->id : 0, unit->GetCreatureInfo() ? unit->GetCreatureInfo()->Name : "wtfbbqhax", unit->GetPositionX(), unit->GetPositionY(),
 		unit->GetPositionZ());
 
 	BlueSystemMessage(m_session, "Deleted creature ID %u", unit->spawnid);
