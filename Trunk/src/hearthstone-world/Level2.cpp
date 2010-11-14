@@ -240,17 +240,10 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	if (!pitem)
 		return false;
 
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid == 0)
+	Creature* pCreature = getSelectedCreature(m_session, false);
+	if(!pCreature || !(pCreature->GetUInt32Value(UNIT_NPC_FLAGS) & UNIT_NPC_FLAG_VENDOR))
 	{
-		SystemMessage(m_session, "No selection.");
-		return true;
-	}
-
-	Creature* pCreature = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	if(!pCreature)
-	{
-		SystemMessage(m_session, "You should select a creature.");
+		SystemMessage(m_session, "You should select a vendor.");
 		return true;
 	}
 
@@ -267,7 +260,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	if(tmpItem)
 	{
 		std::stringstream ss;
-		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << item << "', '" << amount << "', 0, 0, 0, 1 )" << '\0';
+		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << item << "', '" << amount << "', 0, 0, 0, 1 )" << '\0';
 		WorldDatabase.Execute( ss.str().c_str() );
 
 		pCreature->AddVendorItem(item, amount);
@@ -290,19 +283,13 @@ bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_sess
 	if (!args)
 		return false;
 
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid == 0)
+	Creature* pCreature = getSelectedCreature(m_session, false);
+	if(!pCreature || !(pCreature->GetUInt32Value(UNIT_NPC_FLAGS) & UNIT_NPC_FLAG_VENDOR))
 	{
-		SystemMessage(m_session, "No selection.");
+		SystemMessage(m_session, "You should select a vendor.");
 		return true;
 	}
 
-	Creature* pCreature = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	if(!pCreature)
-	{
-		SystemMessage(m_session, "You should select a creature.");
-		return true;
-	}
 
 	uint32 itemguid = 0;
 	if(sscanf(args, "%u", &itemguid) != 1)
@@ -315,10 +302,9 @@ bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_sess
 	std::stringstream sstext;
 	if(slot != -1)
 	{
-		uint32 guidlow = GUID_LOPART(guid);
 
 		std::stringstream ss;
-		ss << "DELETE FROM vendors WHERE entry = " << guidlow << " AND item = " << itemguid << " LIMIT 1;";
+		ss << "DELETE FROM vendors WHERE entry = " << pCreature->GetEntry() << " AND item = " << itemguid << " LIMIT 1;";
 		WorldDatabase.Execute( ss.str().c_str() );
 
 		pCreature->RemoveVendorItem(itemguid);
@@ -348,26 +334,17 @@ bool ChatHandler::HandleNPCFlagCommand(const char* args, WorldSession *m_session
 	if (!*args)
 		return false;
 
-	uint32 npcFlags = (uint32) atoi((char*)args);
-
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid == 0)
-	{
-		SystemMessage(m_session, "No selection.");
-		return true;
-	}
-
-	Creature* pCreature = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
+	Creature* pCreature = getSelectedCreature(m_session, false);
 	if(!pCreature)
 	{
 		SystemMessage(m_session, "You should select a creature.");
 		return true;
 	}
 
+	uint32 npcFlags = (uint32) atoi((char*)args);
 	pCreature->SetUInt32Value(UNIT_NPC_FLAGS , npcFlags);
 	pCreature->SaveToDB();
 	SystemMessage(m_session, "Value saved, you may need to rejoin or clean your client cache.");
-
 	return true;
 }
 
@@ -391,7 +368,6 @@ bool ChatHandler::HandleSaveAllCommand(const char *args, WorldSession *m_session
 	sWorld.SendWorldText(msg);
 	sWorld.SendWorldWideScreenText(msg);
 	sWorld.LogGM(m_session, "saved all players");
-	//sWorld.SendIRCMessage(msg);
 	return true;
 }
 

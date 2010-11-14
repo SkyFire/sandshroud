@@ -9975,7 +9975,7 @@ void Player::SaveAuras(stringstream &ss)
 				continue;
 
 			// We are going to cast passive spells anyway on login so no need to save auras for them
-			if( aur->IsPassive() || aur->m_spellProto->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET || aur->m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP )
+			if( aur->m_spellProto->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET || aur->m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP )
 				continue; // To prevent food/drink bug
 
 			ss << aur->GetSpellId() << "," << aur->GetTimeLeft() << ",";
