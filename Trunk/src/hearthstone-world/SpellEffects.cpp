@@ -2815,6 +2815,14 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			}
 		}break;
 
+	case 63624:
+		{
+			if(!playerTarget)
+				return;
+			u_caster->CastSpell(playerTarget, 63680, false);
+		}break;
+
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())

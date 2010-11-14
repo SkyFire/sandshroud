@@ -1926,7 +1926,6 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 								SpellRuneCostEntry * sr = dbcSpellRuneCost.LookupEntryForced( CastingSpell->runeCostID );
 								if( !sr || sr->bloodRuneCost == 0 ) // not costing blood.
 									continue;
-
 								if( TO_PLAYER(this)->m_runes[0] == RUNE_TYPE_BLOOD || TO_PLAYER(this)->m_runes[1] == RUNE_TYPE_BLOOD )
 									continue; // oh snap, still have blood runes, this doesn't count.
 							}break;
@@ -1934,6 +1933,36 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 						case 55667: // Desecration Rank 2
 							{
 								if(CastingSpell->NameHash != SPELL_HASH_PLAGUE_STRIKE && CastingSpell->NameHash != SPELL_HASH_SCOURGE_STRIKE)
+									continue;
+							}break;
+
+						case 64745:
+							{
+								if(CastingSpell->NameHash != SPELL_HASH_ANTI_MAGIC_SHELL)
+									continue;
+							}break;
+
+						case 64936:
+							{
+								if(CastingSpell->NameHash != SPELL_HASH_SHIELD_BLOCK)
+									continue;
+							}break;
+						case 60675:
+						case 60685:
+						case 60686:
+						case 60687:
+						case 60688:
+						case 60690:
+							{
+								if(CastingSpell->NameHash != SPELL_HASH_PLAGUE_STRIKE)
+									continue;
+							}break;
+
+						case 50040:
+						case 50041:
+						case 50043:
+							{
+								if(CastingSpell->NameHash != SPELL_HASH_FROST_FEVER)
 									continue;
 							}break;
 						}

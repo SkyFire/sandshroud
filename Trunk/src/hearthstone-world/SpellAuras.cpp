@@ -2036,9 +2036,9 @@ void Aura::EventPeriodicDamage(uint32 amount)
 		}
 
 		if( m_caster != NULL)
-			m_caster->DealDamage(mtarget, float2int32(res), 2, 0, GetSpellId ());
+			m_caster->DealDamage(mtarget, float2int32(res), 2, 0, GetSpellId());
 		else
-			mtarget->DealDamage(mtarget, float2int32(res), 2, 0, GetSpellId ());
+			mtarget->DealDamage(mtarget, float2int32(res), 2, 0, GetSpellId());
 	}
 }
 
@@ -2391,9 +2391,10 @@ void Aura::SpellAuraDummy(bool apply)
 		if(apply)
 		{
 			SetPositive();
-			mod->realamount = (mod->m_amount * m_target->getLevel())/100;
+			mod->realamount = (GetSpellProto()->EffectBasePoints[0]+1 * m_target->getLevel())/100;
 			m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS,mod->realamount);
-		}else
+		}
+		else
 			m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, -mod->realamount);
 		m_target->CalcDamage();
 	}break;
@@ -10833,20 +10834,20 @@ void Aura::SpellAuraConvertRune(bool apply)
 	{
 		for(uint32 j = 0; j < 6 && runes; ++j)
 		{
-			if((uint8)GetSpellProto()->EffectMiscValueB[mod->i] != plr->GetRune(j))
+			if((uint8)GetSpellProto()->EffectMiscValue[mod->i] != plr->GetRune(j))
 				continue;
-			if(!(plr->GetRune(j) == RUNE_TYPE_RECHARGING))
-				plr->ConvertRune((uint8)j,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
+			plr->ConvertRune((uint8)j,(uint8)GetSpellProto()->EffectMiscValueB[mod->i]);
+			break;
 		}
 	}
 	else
 	{
-		for(uint32 j = 0; j < 6; ++j)
+		for(uint32 j = 0; j < 6 && runes; ++j)
 		{
 			if((uint8)GetSpellProto()->EffectMiscValueB[mod->i] != plr->GetRune(j))
 				continue;
-			if(plr->GetRune(j) == GetSpellProto()->EffectMiscValueB[mod->i])
-				plr->ConvertRune((uint8)j, plr->GetRune(j));
+			plr->ConvertRune((uint8)j, (uint8)GetSpellProto()->EffectMiscValue[mod->i]);
+			break;
 		}
 	}
 }

@@ -2225,29 +2225,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->procChance = 20;
 			sp->proc_interval	=	3000;
 			sp->maxstack = 1;
-					// Current proc system doesn't support common proc_interval for 2
-					// procs making dual wielding WF overpowered. So it is disabled for now
-					//sp->always_apply = true; //	so that	we can apply 2 wf	auras	while	dual-wielding
+			// Current proc system doesn't support common proc_interval for 2
+			// procs making dual wielding WF overpowered. So it is disabled for now
+			//sp->always_apply = true; 
+			//so that	we can apply 2 wf	auras	while	dual-wielding
 		}break;
-
-		//for	test only
-		//case 32796:
-		//	{
-		//{
-			//printf("!!!!!!hash %u	\n",sp->NameHash);
-			//sp->procChance=100;
-			//SpellDuration	*sd=sSpellDuration.LookupEntryForced(sp->DurationIndex);
-			//printf("iterruptflag %u, duration	%u",sp->AuraInterruptFlags,GetDuration(sd));
-		//}
-
-		//improoved	berserker	stance should	be triggered on	berserker	stance use
-		//sp = sSpellStore.LookupEntryForced(12704);
-		//	{	sp->procFlags	=	PROC_ON_CAST_SPECIFIC_SPELL;
-
-		//sp = sSpellStore.LookupEntryForced(16280);
-		//	{	printf("!!Interrupt	flags	%u interval	%u charges %u\n",sp->AuraInterruptFlags,sp->proc_interval,sp->procCharges);
-		//sp = sSpellStore.LookupEntryForced(16284);
-		//	{	printf("Interrupt	flags	%u\n",sp->AuraInterruptFlags);
 
 		// dot heals
 	case 38394:
@@ -3365,7 +3347,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->procFlags = PROC_ON_TRAP_TRIGGER;
 			sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
 			sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
-			sp->Effect[2] = 0;  //stop strange effects
 		}break;
 
 		//Snakes from Snake Trap cast this, shouldn't stack
@@ -4438,6 +4419,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->proc_interval = 6000;//6 secs
 		}break;
+	case 49376:
+		{
+			sp->Effect[1] = 41;
+			sp->EffectImplicitTargetA[1] = 6;
+		}break;
 
 		//////////////////////////////////////////
 		// DEATH KNIGHT							//
@@ -4454,11 +4440,13 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->Effect[0] = SPELL_EFFECT_NULL;
 		}break;
-	
-	case 55666:
+
+	//Desecration
+	case 55666: 
 	case 55667:
 		{
 			sp->proc_interval = 15000;
+			sp->procFlags = PROC_ON_CAST_SPELL;
 		}break;
 
 	case 50397:
@@ -4860,12 +4848,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 20578:
 			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_MOVEMENT|AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
 		break;
-		// Learn Dual Talent Specialization
-	case 63624:
-		{
-			sp->Effect[1] = SPELL_EFFECT_TRIGGER_SPELL;
-			sp->EffectTriggerSpell[1] = 63680;
-		}break;
 	case 51729:
 		{
 			sp->buffIndexType = 0;
@@ -4920,6 +4902,25 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->AreaAuraTarget = AA_TARGET_RAID;
 		}break;
+	
+	//Spells using Aura 109
+	case 50040:
+	case 50041:
+	case 50043:
+	case 64745:
+	case 60675:
+	case 60685:
+	case 60686:
+	case 60687:
+	case 60688:
+	case 60690:
+	case 64936:
+		{
+			sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+			sp->procChance = sp->EffectBasePoints[0]+1;
+			sp->procFlags = PROC_ON_CAST_SPELL;
+		}break;
+
 	}
 
 	switch( sp->NameHash )
