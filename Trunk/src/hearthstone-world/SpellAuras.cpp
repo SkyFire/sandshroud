@@ -1021,6 +1021,7 @@ void Aura::UpdateModifiers( )
 
 void Aura::AddAuraVisual()
 {
+
 	uint8 slot, i;
 	slot = 0xFF;
 
@@ -1059,7 +1060,7 @@ void Aura::BuildAuraUpdate()
 	if( m_target == NULL || !GetSpellProto()->Id)
 		return;
 
-	if(GetSpellProto()->Attributes & ATTRIBUTES_NO_VISUAL_AURA || (GetSpellProto()->Attributes & ATTRIBUTES_PASSIVE) && m_target && GetUnitCaster()->GetGUID() == m_target->GetGUID())
+	if(GetSpellProto()->Attributes & ATTRIBUTES_NO_VISUAL_AURA || (GetSpellProto() && GetSpellProto()->Attributes & ATTRIBUTES_PASSIVE) && (m_target && GetUnitCaster() && GetUnitCaster()->GetGUID() == m_target->GetGUID()))
 		return; //Update our visual auras only.
 
 	uint32 spellid = m_spellProto->Id;

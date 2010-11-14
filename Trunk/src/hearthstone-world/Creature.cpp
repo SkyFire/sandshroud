@@ -37,9 +37,10 @@ Creature::Creature(uint64 guid)
 	m_wowGuid.Init(GetGUID());
 	m_quests = NULL;
 	proto = NULL;
-	creature_info=NULL;
-	m_H_regenTimer=0;
-	m_P_regenTimer=0;
+	LoadedProto = NULL;
+	creature_info = NULL;
+	m_H_regenTimer = 0;
+	m_P_regenTimer = 0;
 	m_useAI = true;
 	mTaxiNode = 0;
 	Skinned = false;
@@ -914,16 +915,16 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	// Heroic stats
 	if(mode)
 	{
-		CreatureProtoMode* crmode = proto->ModeProto[mode];
-		if(crmode != NULL)
+		LoadedProto = proto->ModeProto[mode];
+		if(LoadedProto != NULL)
 		{
-			health = crmode->Minhealth + RandomUInt(crmode->Maxhealth - crmode->Minhealth);
-			power = crmode->Power;
-			mindmg = crmode->Mindmg;
-			maxdmg = crmode->Maxdmg;
-			level =  crmode->Minlevel + (RandomUInt(crmode->Maxlevel - crmode->Minlevel));
+			health = LoadedProto->Minhealth + RandomUInt(LoadedProto->Maxhealth - LoadedProto->Minhealth);
+			power = LoadedProto->Power;
+			mindmg = LoadedProto->Mindmg;
+			maxdmg = LoadedProto->Maxdmg;
+			level = LoadedProto->Minlevel + RandomUInt(LoadedProto->Maxlevel - LoadedProto->Minlevel);
 			for(uint32 i = 0; i < 7; i++)
-				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, crmode->Resistances[i]);
+				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, LoadedProto->Resistances[i]);
 		}
 		else
 		{
@@ -1272,16 +1273,16 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	// Heroic stats
 	if(mode)
 	{
-		CreatureProtoMode* crmode = proto->ModeProto[mode];
-		if(crmode != NULL)
+		LoadedProto = proto->ModeProto[mode];
+		if(LoadedProto != NULL)
 		{
-			health = crmode->Minhealth + RandomUInt(crmode->Maxhealth - crmode->Minhealth);
-			power = crmode->Power;
-			mindmg = crmode->Mindmg;
-			maxdmg = crmode->Maxdmg;
-			level =  crmode->Minlevel + (RandomUInt(crmode->Maxlevel - crmode->Minlevel));
+			health = LoadedProto->Minhealth + RandomUInt(LoadedProto->Maxhealth - LoadedProto->Minhealth);
+			power = LoadedProto->Power;
+			mindmg = LoadedProto->Mindmg;
+			maxdmg = LoadedProto->Maxdmg;
+			level =  LoadedProto->Minlevel + (RandomUInt(LoadedProto->Maxlevel - LoadedProto->Minlevel));
 			for(uint32 i = 0; i < 7; i++)
-				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, crmode->Resistances[i]);
+				SetUInt32Value(UNIT_FIELD_RESISTANCES + i, LoadedProto->Resistances[i]);
 		}
 		else
 		{

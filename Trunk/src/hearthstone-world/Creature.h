@@ -598,6 +598,7 @@ public:
 	void ChannelLinkUpCreature(uint32 SqlId);
 	WayPoint * CreateWaypointStruct();
 	CreatureProto * proto;
+	CreatureProtoMode* LoadedProto;
 	HEARTHSTONE_INLINE CreatureProto *GetProto() { return proto; }
 	uint32 GetRespawnTime() { if(proto != NULL) return proto->RespawnTime; else return 0; }
 	CreatureSpawn * m_spawn;

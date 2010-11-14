@@ -2890,23 +2890,16 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 	if ( playerTarget == NULL)
 	{
 		Creature* c = TO_CREATURE( unitTarget );
-		if(c != NULL && c->GetMapMgr() && c->proto != NULL)
+		if(c != NULL)
 		{
-			uint8 imode = c->GetMapMgr()->iInstanceMode;
-			CreatureProtoMode* mode = NULL;
-			if(imode)
-				c->proto->ModeProto[imode];
-
-			if(mode != NULL)
+			if(c->LoadedProto != NULL)
 			{
-				if(mode->auraimmune_flag && (mode->auraimmune_flag & GetSpellProto()->auraimmune_flag))
+				if(c->LoadedProto->auraimmune_flag && (c->LoadedProto->auraimmune_flag & GetSpellProto()->auraimmune_flag))
 					return;
 			}
-			else
-			{
+			else if(c->proto != NULL)
 				if( c->proto->auraimmune_flag && (c->proto->auraimmune_flag & GetSpellProto()->auraimmune_flag ))
 					return;
-			}
 		}
 	}
 
