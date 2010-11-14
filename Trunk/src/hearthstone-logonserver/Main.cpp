@@ -176,7 +176,7 @@ bool Rehash()
 #ifdef WIN32
 	char * config_file = "configs/hearthstone-logonserver.conf";
 #else
-	char * config_file = (char*)CONFDIR "/configs/hearthstone-logonserver.conf";
+	char * config_file = (char*)CONFDIR "/hearthstone-logonserver.conf";
 #endif
 	if(!Config.MainConfig.SetSource(config_file))
 	{

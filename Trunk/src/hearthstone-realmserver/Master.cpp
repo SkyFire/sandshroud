@@ -111,9 +111,9 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice("Server", "| Revision %04u                                 |", BUILD_REVISION);
 	Log.Notice("Server", "==============================================================");
 	Log.Line();
-	Config.ClusterConfig.SetSource("./configs/hearthstone-realmserver.conf");
-	Config.RealmConfig.SetSource("./configs/hearthstone-realms.conf");
-	Config.MainConfig.SetSource("./configs/hearthstone-world.conf");
+	Config.ClusterConfig.SetSource(default_cluster_config_file);
+	Config.RealmConfig.SetSource(default_realm_config_file);
+	Config.MainConfig.SetSource(default_world_config_file);
 
 	if(!_StartDB())
 	{

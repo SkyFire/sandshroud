@@ -35,6 +35,16 @@ extern Database * Database_Character;
 #define DEFAULT_LOG_LEVEL 0
 #define DEFAULT_HOST "0.0.0.0"
 
+#ifdef WIN32
+	static const char* default_cluster_config_file = "configs/hearthstone-realmserver.conf";
+	static const char* default_world_config_file = "configs/hearthstone-world.conf";
+	static const char* default_realm_config_file = "configs/hearthstone-realms.conf";
+#else
+	static const char* default_cluster_config_file = CONFDIR "/hearthstone-realmserver.conf";
+	static const char* default_world_config_file = CONFDIR "/hearthstone-world.conf";
+	static const char* default_realm_config_file = CONFDIR "/hearthstone-realms.conf";
+#endif
+
 class SERVER_DECL Master : public Singleton<Master>
 {
 public:
