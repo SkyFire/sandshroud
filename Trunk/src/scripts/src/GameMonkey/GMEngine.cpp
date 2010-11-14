@@ -104,16 +104,18 @@ void GMEngine::Reload()
 	}
 
 	Log.Notice("GMEngine", "Compiling GameMonkey Scripts...");
+	string scriptpath = sWorld.GameMonkeyScriptPath;
+	scriptpath += "/";
 
 #ifdef WIN32
 	/* compile the scripts */
 	WIN32_FIND_DATA fd;
-	HANDLE f = FindFirstFile("scripts\\*.gm", &fd);
+	HANDLE f = FindFirstFile(format("%s\\*.gm", sWorld.GameMonkeyScriptPath).c_str(), &fd);
 	if(f != INVALID_HANDLE_VALUE)
 	{
 		do 
 		{
-			string fname = "scripts/";
+			string fname = scriptpath.c_str();
 			fname += fd.cFileName;
 
 			ExecuteScriptFile(fname.c_str());
@@ -123,7 +125,7 @@ void GMEngine::Reload()
 #else
 	/* compile scripts */
 	struct dirent ** list;
-	int filecount = scandir("scripts/", &list, 0, 0);
+	int filecount = scandir(scriptpath.c_str(), &list, 0, 0);
 	if(!filecount || !list || filecount < 0)
 		return;
 
@@ -133,7 +135,7 @@ void GMEngine::Reload()
 		ext = strrchr(list[filecount]->d_name, '.');
 		if(ext != NULL && !strcmp(ext, ".gm"))
 		{
-			string full_path = "scripts/" + string(list[filecount]->d_name);
+			string full_path = scriptpath + string(list[filecount]->d_name);
 			ExecuteScriptFile(full_path.c_str());
 		}
 		free(list[filecount]);

@@ -1221,9 +1221,9 @@ void World::Rehash(bool load)
 	if(load)
 	{
 #ifdef WIN32
-		Config.MainConfig.SetSource("hearthstone-world.conf", true);
+		Config.MainConfig.SetSource("configs/hearthstone-world.conf", true);
 #else
-		Config.MainConfig.SetSource((char*)CONFDIR "/hearthstone-world.conf", true);
+		Config.MainConfig.SetSource((char*)CONFDIR "/configs/hearthstone-world.conf", true);
 #endif
 	}
 
@@ -1236,20 +1236,47 @@ void World::Rehash(bool load)
 	LogonServerType = Config.RealmConfig.GetIntDefault("LogonServer", "LogonType", LOGON_HEARTHSTONE);
 	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 	QueryLog = Config.MainConfig.GetBoolDefault("LogLevel", "Query", false);
-	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
+
+	// Script configs
+	LuaScriptPath = Config.MainConfig.GetStringDefault("Script", "LuaScriptsLocation", "scripts");
+	AngelScriptPath = Config.MainConfig.GetStringDefault("Script", "AngelScriptsLocation", "scripts");
+	GameMonkeyScriptPath = Config.MainConfig.GetStringDefault("Script", "GameMonkeyScriptsLocation", "scripts");
+
+	// Data configs
 	DBCPath = Config.MainConfig.GetStringDefault("Data", "DBCPath", "dbc");
 	MapPath = Config.MainConfig.GetStringDefault("Data", "MapPath", "maps");
 	vMapPath = Config.MainConfig.GetStringDefault("Data", "vMapPath", "vmaps");
 	MMapPath = Config.MainConfig.GetStringDefault("Data", "MMapPath", "mmaps");
 	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Data", "UnloadMapFiles", true);
-	BreathingEnabled = Config.MainConfig.GetBoolDefault("Server", "EnableBreathing", true);
+	map_unload_time = Config.MainConfig.GetIntDefault("Data", "MapUnloadTime", 0);
+
+	// Server Configs
+	StartGold = Config.MainConfig.GetIntDefault("Server", "StartGold", 1);
+	StartLevel = Config.MainConfig.GetIntDefault("Server", "StartLevel", 1);
+	SetMotd(Config.MainConfig.GetStringDefault("Server", "Motd", "Hearthstone Default MOTD").c_str());
+	SetMotd2(Config.MainConfig.GetStringDefault("Server", "Motd2", "").c_str());
+	Collision = Config.MainConfig.GetBoolDefault("Server", "Collision", false);
+	PathFinding = Config.MainConfig.GetBoolDefault("Server", "Pathfinding", false);
 	SendStatsOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendStatsOnJoin", true);
 	SendMovieOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendMovieOnJoin", true);
+	BreathingEnabled = Config.MainConfig.GetBoolDefault("Server", "EnableBreathing", true);
 	compression_threshold = Config.MainConfig.GetIntDefault("Server", "CompressionThreshold", 1000);
+	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", true);
 	display_free_items = Config.MainConfig.GetBoolDefault("Server", "DisplayFreeItems", false);
-
-	StartLevel = Config.MainConfig.GetIntDefault("Server", "StartLevel", 1);
-	StartGold = Config.MainConfig.GetIntDefault("Server", "StartGold", 1);
+	mQueueUpdateInterval = Config.MainConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
+	SetKickAFKPlayerTime(Config.MainConfig.GetIntDefault("Server", "KickAFKPlayersTimer", 0));
+	gm_skip_attunement = Config.MainConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);
+	gm_force_robes = Config.MainConfig.GetBoolDefault("Server", "ForceRobesForGM", false);
+	CheckProfessions = Config.MainConfig.GetBoolDefault("Server", "CheckProfessions", false);
+	CalculatedHeightChecks = Config.MainConfig.GetBoolDefault("Server", "CHeightChecks", false);
+	free_arena_teams = Config.MainConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
+	free_guild_charters = Config.MainConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
+	trade_world_chat = Config.MainConfig.GetBoolDefault("Server", "TradeWorldChat", false);
+	SetPlayerLimit(Config.MainConfig.GetIntDefault("Server", "PlayerLimit", 1000));
+	FunServerMall = Config.MainConfig.GetIntDefault("Server", "MallAreaID", -1);
+	LogoutDelay = Config.MainConfig.GetIntDefault("Server", "Logout_Delay", 20);
+	if(LogoutDelay <= 0)
+		LogoutDelay = 1;
 
 	// Battlegrounds
 	wg_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableWG", false);
@@ -1286,27 +1313,7 @@ void World::Rehash(bool load)
 	setRate(RATE_ARENAPOINTMULTIPLIER2X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier2x", 1.0f));
 	setRate(RATE_ARENAPOINTMULTIPLIER3X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier3x", 1.0f));
 	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
-	Collision = Config.MainConfig.GetBoolDefault("Server", "Collision", false);
-	PathFinding = Config.MainConfig.GetBoolDefault("Server", "Pathfinding", false);
-	CalculatedHeightChecks = Config.MainConfig.GetBoolDefault("Server", "CHeightChecks", false);
-	free_arena_teams = Config.MainConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
-	free_guild_charters = Config.MainConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
-	trade_world_chat = Config.MainConfig.GetBoolDefault("Server", "TradeWorldChat", false);
 	setRate(RATE_EOTS_CAPTURERATE, Config.MainConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));
-	SetPlayerLimit(Config.MainConfig.GetIntDefault("Server", "PlayerLimit", 1000));
-	FunServerMall = Config.MainConfig.GetIntDefault("Server", "MallAreaID", -1);
-	LogoutDelay = Config.MainConfig.GetIntDefault("Server", "Logout_Delay", 20);
-	if(LogoutDelay <= 0)
-		LogoutDelay = 1;
-
-	SetMotd(Config.MainConfig.GetStringDefault("Server", "Motd", "Hearthstone Default MOTD").c_str());
-	SetMotd2(Config.MainConfig.GetStringDefault("Server", "Motd2", "").c_str());
-	mQueueUpdateInterval = Config.MainConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
-	SetKickAFKPlayerTime(Config.MainConfig.GetIntDefault("Server", "KickAFKPlayers", 0));
-	gm_skip_attunement = Config.MainConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);
-	gm_force_robes = Config.MainConfig.GetBoolDefault("Server", "ForceRobesForGM", false);
-
-	CheckProfessions = Config.MainConfig.GetBoolDefault("Server", "CheckProfessions", false);
 
 #ifndef CLUSTERING
 	SocketRecvBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "RecvBufSize", WORLDSOCKET_RECVBUF_SIZE);
@@ -1372,9 +1379,7 @@ void World::Rehash(bool load)
 	if(!flood_lines || !flood_seconds)
 		flood_lines = flood_seconds = 0;
 
-	map_unload_time=Config.MainConfig.GetIntDefault("Server", "MapUnloadTime", 0);
 	cross_faction_world = Config.MainConfig.GetBoolDefault("Server", "CrossFactionInteraction", false);
-
 	antihack_teleport = Config.MainConfig.GetBoolDefault("AntiHack", "Teleport", true);
 	antihack_speed = Config.MainConfig.GetBoolDefault("AntiHack", "Speed", true);
 	antihack_flight = Config.MainConfig.GetBoolDefault("AntiHack", "Flight", true);

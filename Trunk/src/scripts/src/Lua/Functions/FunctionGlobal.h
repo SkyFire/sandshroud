@@ -391,7 +391,7 @@ int LuaGlobalFunctions_GetPlayersInWorld(lua_State * L)
 
 int LuaGlobalFunctions_Rehash(lua_State * L)
 {
-	sWorld.Rehash(true);
+	sWorld.Rehash(false);
 	return 0;
 }
 

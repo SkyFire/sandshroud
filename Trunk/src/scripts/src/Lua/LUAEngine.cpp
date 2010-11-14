@@ -159,7 +159,7 @@ void LuaEngine::LoadScripts()
 {
 	LUALoadScripts rtn;
 	Log.Notice("LuaEngine", "Scanning Script-Directories...");
-	ScriptLoadDir((char*)"scripts", &rtn);
+	ScriptLoadDir(((char*)sWorld.LuaScriptPath.c_str()), &rtn);
 
 	unsigned int cnt_uncomp = 0;
 	luaL_openlibs(L);

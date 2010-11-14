@@ -78,11 +78,11 @@ struct Addr
 #define DEF_VALUE_NOT_SET 0xDEADBEEF
 
 #ifdef WIN32
-static const char* default_config_file = "hearthstone-world.conf";
-static const char* default_realm_config_file = "hearthstone-realms.conf";
+static const char* default_config_file = "configs/hearthstone-world.conf";
+static const char* default_realm_config_file = "configs/hearthstone-realms.conf";
 #else
-static const char* default_config_file = CONFDIR "/hearthstone-world.conf";
-static const char* default_realm_config_file = CONFDIR "/hearthstone-realms.conf";
+static const char* default_config_file = CONFDIR "/configs/hearthstone-world.conf";
+static const char* default_realm_config_file = CONFDIR "/configs/hearthstone-realms.conf";
 #endif
 
 bool bServerShutdown = false;
@@ -192,12 +192,12 @@ bool Master::Run(int argc, char ** argv)
 	ThreadPool.Startup();
 	uint32 LoadingTime = getMSTime();
 
-	Log.Notice( "Config", "Loading Config Files..." );
+	Log.Notice( "Config", "Loading Config Files from config folder..." );
 	if( Config.MainConfig.SetSource( config_file ) )
-		Log.Success( "Config", ">> hearthstone-world.conf" );
+		Log.Success( "Config", ">> configs/hearthstone-world.conf" );
 	else
 	{
-		Log.Error( "Config", ">> hearthstone-world.conf" );
+		Log.Error( "Config", ">> configs/hearthstone-world.conf" );
 		return false;
 	}
 
@@ -209,10 +209,10 @@ bool Master::Run(int argc, char ** argv)
 	}
 
 	if(Config.RealmConfig.SetSource(realm_config_file))
-		Log.Success( "Config", ">> hearthstone-realms.conf" );
+		Log.Success( "Config", ">> configs/hearthstone-realms.conf" );
 	else
 	{
-		Log.Error( "Config", ">> hearthstone-realms.conf" );
+		Log.Error( "Config", ">> configs/hearthstone-realms.conf" );
 		return false;
 	}
 

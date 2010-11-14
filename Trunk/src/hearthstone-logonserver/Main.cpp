@@ -174,9 +174,9 @@ bool IsServerAllowedMod(unsigned int IP)
 bool Rehash()
 {
 #ifdef WIN32
-	char * config_file = "hearthstone-logonserver.conf";
+	char * config_file = "configs/hearthstone-logonserver.conf";
 #else
-	char * config_file = (char*)CONFDIR "/hearthstone-logonserver.conf";
+	char * config_file = (char*)CONFDIR "/configs/hearthstone-logonserver.conf";
 #endif
 	if(!Config.MainConfig.SetSource(config_file))
 	{
@@ -263,9 +263,9 @@ void LogonServer::Run(int argc, char ** argv)
 	UNIXTIME = time(NULL);
 	g_localTime = *localtime(&UNIXTIME);
 #ifdef WIN32
-	char * config_file = "hearthstone-logonserver.conf";
+	char * config_file = "configs/hearthstone-logonserver.conf";
 #else
-	char * config_file = (char*)CONFDIR "/hearthstone-logonserver.conf";
+	char * config_file = (char*)CONFDIR "/configs/hearthstone-logonserver.conf";
 #endif
 	int file_log_level = DEF_VALUE_NOT_SET;
 	int screen_log_level = DEF_VALUE_NOT_SET;
