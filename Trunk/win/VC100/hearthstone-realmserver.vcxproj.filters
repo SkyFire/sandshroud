@@ -57,6 +57,9 @@
     <ClCompile Include="..\..\src\hearthstone-realmserver\Master.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\RStdAfx.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\Main.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-realmserver\Player.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\hearthstone-realmserver\LogonCommClient.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\Master.h" />
     <ClInclude Include="..\..\src\hearthstone-realmserver\RStdAfx.h" />
+    <ClInclude Include="..\..\src\hearthstone-realmserver\Player.h">
+      <Filter>Client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\hearthstone-shared\Icon.ico" />
