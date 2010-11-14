@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 	log_open();
 
 	// read config file
-	if( configfile_load_config("hearthstone-voicechat.conf") < 0 )
+	if( configfile_load_config("configs/hearthstone-voicechat.conf") < 0 )
 	{
 		// this needs to be cmd-line overrideable
 		log_write(ERROR, "FATAL: Could not open a valid config file. Exiting.");

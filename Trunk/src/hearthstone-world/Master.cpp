@@ -49,6 +49,7 @@ void Master::_OnSignal(int s)
 #ifdef _WIN32
 	case SIGBREAK:
 #endif
+		remove( "hearthstone-world.pid" );
 		Master::m_stopEvent = true;
 		break;
 	}

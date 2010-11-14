@@ -24,6 +24,22 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#ifndef EOL
+#ifdef WIN32
+#define EOL "\r\n"
+#else
+#define EOL "\n"
+#endif
+#endif
+
+#ifndef EOL_SIZE
+#ifdef WIN32
+#define EOL_SIZE 2
+#else
+#define EOL_SIZE 1
+#endif
+#endif
+
 using namespace std;
 struct SERVER_DECL ConfigSetting
 {
