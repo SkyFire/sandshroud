@@ -245,6 +245,7 @@ public:
 	{
 		if(log_level < 2)
 			return;
+
 		LOCK_LOG;
 		va_list ap;
 		va_start(ap, format);

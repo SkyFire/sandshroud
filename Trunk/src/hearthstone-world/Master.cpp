@@ -205,7 +205,7 @@ bool Master::Run(int argc, char ** argv)
 	string die;
 	if( Config.MainConfig.GetString( "die", "msg", &die) || Config.MainConfig.GetString( "die2", "msg", &die ) )
 	{
-		Log.Warning( "Config", "Die directive received: %s", die.c_str() );
+		Log.Error( "Config", "Die directive received: %s", die.c_str() );
 		return false;
 	}
 
