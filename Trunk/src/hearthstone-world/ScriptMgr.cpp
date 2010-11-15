@@ -54,9 +54,7 @@ void ScriptMgr::LoadScripts()
 		new HookInterface;
 
 	Log.Notice("ScriptMgr","Loading External Script Libraries..." );
-//	int32 bcklvl = Log.log_level;
-	Log.log_level = 3;
-	string start_path = Config.MainConfig.GetStringDefault( "Script", "BinaryLocation", "script_bin" ) + "\\";
+	string start_path = string(Config.MainConfig.GetStringDefault( "Script", "BinaryLocation", "script_bin" ).c_str()) + "\\";
 	string search_path = start_path + "*.";
 
 	vector< ScriptingEngine > ScriptEngines;

@@ -226,9 +226,6 @@ bool Master::Run(int argc, char ** argv)
 	Log.Line();
 	sLog.outString( "" );
 
-	//ScriptSystem = new ScriptEngine;
-	//ScriptSystem->Reload();
-
 	new EventMgr;
 	new World;
 
@@ -240,6 +237,9 @@ bool Master::Run(int argc, char ** argv)
 	sWorld.LogCommands = Config.MainConfig.GetBoolDefault("Log", "GMCommands", false);
 	sWorld.LogPlayers = Config.MainConfig.GetBoolDefault("Log", "Player", false);
 	sWorld.LogChats = Config.MainConfig.GetBoolDefault("Log", "Chat", false);
+
+	//Update sLog to obey config setting
+	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 
 	// Initialize Opcode Table
 	WorldSession::InitPacketHandlerTable();
@@ -293,9 +293,6 @@ bool Master::Run(int argc, char ** argv)
 
 	LoadingTime = getMSTime() - LoadingTime;
 	Log.Success("Server","Ready for connections. Startup time: %ums\n", LoadingTime );
-
-	//Update sLog to obey config setting
-	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 
 	/* write pid file */
 	FILE * fPid = fopen( "hearthstone-world.pid", "w" );

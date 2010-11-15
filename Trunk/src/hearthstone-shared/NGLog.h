@@ -158,25 +158,12 @@ public:
 	void Info(const char * source, const char * format, ...)
 	{
 		/* notice is old loglevel 0/string */
-		LOCK_LOG;
 		va_list ap;
 		va_start(ap, format);
-		Time();
-		fputs("N ", stdout);
-		if(*source)
-		{
-			Color(TWHITE);
-			fputs(source, stdout);
-			putchar(':');
-			putchar(' ');
-			Color(TPURPLE);
-		}
-
-		vprintf(format, ap);
-		putchar('\n');
+		char msg0[1024];
+		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		Color(TNORMAL);
-		UNLOCK_LOG;
+		CNotice(TPURPLE, source, msg0);
 	}
 
 	void Line()
@@ -191,26 +178,12 @@ public:
 		if(log_level < 1)
 			return;
 
-		LOCK_LOG;
 		va_list ap;
 		va_start(ap, format);
-		Time();
-		Color(TRED);
-		fputs("E ", stdout);
-		if(*source)
-		{
-			Color(TWHITE);
-			fputs(source, stdout);
-			putchar(':');
-			putchar(' ');
-			Color(TRED);
-		}
-
-		vprintf(format, ap);
-		putchar('\n');
+		char msg0[1024];
+		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		Color(TNORMAL);
-		UNLOCK_LOG;
+		CNotice(TGREEN, source, msg0);
 	}
 
 	void Warning(const char * source, const char * format, ...)
@@ -219,79 +192,35 @@ public:
 			return;
 
 		/* warning is old loglevel 2/detail */
-		LOCK_LOG;
 		va_list ap;
 		va_start(ap, format);
-		Time();
-		Color(TYELLOW);
-		fputs("W ", stdout);
-		if(*source)
-		{
-			Color(TWHITE);
-			fputs(source, stdout);
-			putchar(':');
-			putchar(' ');
-			Color(TYELLOW);
-		}
-
-		vprintf(format, ap);
-		putchar('\n');
+		char msg0[1024];
+		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		Color(TNORMAL);
-		UNLOCK_LOG;
+		CNotice(TGREEN, source, msg0);
 	}
 
 	void Success(const char * source, const char * format, ...)
 	{
-		if(log_level < 2)
-			return;
-
-		LOCK_LOG;
 		va_list ap;
 		va_start(ap, format);
-		Time();
-		Color(TGREEN);
-		fputs("S ", stdout);
-		if(*source)
-		{
-			Color(TWHITE);
-			fputs(source, stdout);
-			putchar(':');
-			putchar(' ');
-			Color(TGREEN);
-		}
-
-		vprintf(format, ap);
-		putchar('\n');
+		char msg0[1024];
+		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		Color(TNORMAL);
-		UNLOCK_LOG;
+		CNotice(TGREEN, source, msg0);
 	}
+
 	void Debug(const char * source, const char * format, ...)
 	{
 		if(log_level != 3 && log_level != 6)
 			return;
 
-		LOCK_LOG;
 		va_list ap;
 		va_start(ap, format);
-		Time();
-		Color(TBLUE);
-		fputs("D ", stdout);
-		if(*source)
-		{
-			Color(TWHITE);
-			fputs(source, stdout);
-			putchar(':');
-			putchar(' ');
-			Color(TBLUE);
-		}
-
-		vprintf(format, ap);
-		putchar('\n');
+		char msg0[1024];
+		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		Color(TNORMAL);
-		UNLOCK_LOG;
+		CNotice(TGREEN, source, msg0);
 	}
 
 #define LARGERRORMESSAGE_ERROR 1

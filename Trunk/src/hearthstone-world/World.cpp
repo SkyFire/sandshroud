@@ -104,9 +104,6 @@ World::~World()
 	Log.Notice("LocalizationMgr", "~LocalizationMgr()");
 	sLocalizationMgr.Shutdown();
 
-	Log.Notice("WorldLog", "~WorldLog()");
-	delete WorldLog::getSingletonPtr();
-
 	Log.Notice("ObjectMgr", "~ObjectMgr()");
 	delete ObjectMgr::getSingletonPtr();
 
@@ -420,7 +417,6 @@ bool World::SetInitialWorldSettings()
 	new WeatherMgr;
 	new TaxiMgr;
 	new AddonMgr;
-	new WorldLog;
 	new ChatHandler;
 	new Tracker;
 

@@ -306,7 +306,7 @@ void LogonCommHandler::Connect(LogonServer * server)
 			return;
 		}
 		else
-			Log.Notice("LogonCommClient","Authentication succeeded.");
+			Log.Success("LogonCommClient","Authentication succeeded.");
 
 		// Send the initial ping
 		conn->SendPing();
@@ -338,7 +338,7 @@ void LogonCommHandler::Connect(LogonServer * server)
 		// Wait for all realms to register
 		Sleep(200);
 
-		Log.Notice("LogonCommClient", "Logonserver latency is %ums.", conn->latency);
+		Log.Success("LogonCommClient", "Logonserver latency is %ums.", conn->latency);
 
 		// We have connected, reset our attempt counter.
 		ReConCounter = 0;

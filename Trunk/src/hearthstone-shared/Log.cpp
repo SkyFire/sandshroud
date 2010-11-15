@@ -51,7 +51,6 @@ string FormatOutputString(const char * Prefix, const char * Description, bool us
 
 createFileSingleton( oLog );
 createFileSingleton(CLog);
-initialiseSingleton( WorldLog );
 
 SERVER_DECL time_t UNIXTIME;
 SERVER_DECL tm g_localTime;
@@ -187,67 +186,6 @@ void oLog::Init(int32 screenLogLevel)
 void oLog::SetScreenLoggingLevel(int32 level)
 {
 	m_screenLogLevel = level;
-}
-
-WorldLog::WorldLog()
-{
-	bEnabledXml = false;
-	onlyPlayer = NULL;
-	m_xml=NULL;
-
-	if (Config.MainConfig.GetBoolDefault("LogLevel", "WorldXml", false))
-	{
-		Log.Notice("WorldLog", "Enabling packetlog output to \"world.xml\"");
-		EnableXml();
-	} else {
-		DisableXml();
-	}
-
-}
-
-void WorldLog::EnableXml()
-{
-	if(bEnabledXml)
-		return;
-
-	bEnabledXml = true;
-	if(m_xml != NULL)
-	{
-		DisableXml();
-		bEnabledXml=true;
-	}
-	m_xml = fopen("world.xml", "w");
-	if (m_xml)
-	{
-		fprintf(m_xml, "<?xml version=\"1.0\" ?><log>");
-	}
-}
-
-void WorldLog::DisableXml()
-{
-	if(!bEnabledXml)
-		return;
-
-	bEnabledXml = false;
-	if(!m_xml)
-		return;
-
-	fprintf(m_xml, "</log>");
-	fflush(m_xml);
-	fclose(m_xml);
-	m_xml=NULL;
-}
-
-WorldLog::~WorldLog()
-{
-	if (m_xml)
-	{
-		fprintf(m_xml, "</log>");
-		fclose(m_xml);
-		m_xml = NULL;
-	}
-
-	free(onlyPlayer);
 }
 
 void oLog::outColor(uint32 colorcode, const char * str, ...)

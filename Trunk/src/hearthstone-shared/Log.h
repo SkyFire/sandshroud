@@ -84,22 +84,5 @@ public:
 
 #define sLog oLog::getSingleton()
 
-class WorldLog : public Singleton<WorldLog>
-{
-public:
-	WorldLog();
-	~WorldLog();
-
-	void EnableXml();
-	void DisableXml();
-private:
-	FILE * m_xml;
-	Mutex mutex;
-	bool bEnabledXml;
-	char *onlyPlayer;
-};
-
-#define sWorldLog WorldLog::getSingleton()
-
 #endif
 
