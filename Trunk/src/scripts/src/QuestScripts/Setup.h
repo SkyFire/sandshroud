@@ -39,6 +39,8 @@ void SetupAzuremystIsle(ScriptMgr * mgr);
 void SetupBladeEdgeMountains(ScriptMgr * mgr);
 void SetupBlastedLands(ScriptMgr * mgr);
 void SetupBloodmystIsle(ScriptMgr * mgr);
+void SetupBoreanTundra(ScriptMgr * mgr);
+void SetupBurningSteppes(ScriptMgr * mgr);
 //void SetupDarkshore(ScriptMgr * mgr)
 void SetupDeathKnight(ScriptMgr * mgr);
 void SetupDesolace(ScriptMgr * mgr);
@@ -59,6 +61,8 @@ void SetupNetherstorm(ScriptMgr * mgr);
 void SetupOldHillsbrad(ScriptMgr * mgr);
 void SetupRedrigeMountains(ScriptMgr * mgr);
 void SetupShadowmoon(ScriptMgr * mgr);
+void SetupSholazarBasin( ScriptMgr * mgr );
+void SetupSilithus( ScriptMgr * mgr );
 void SetupSilvermoonCity(ScriptMgr * mgr);
 void SetupSilverpineForest(ScriptMgr * mgr);
 void SetupStormwind(ScriptMgr * mgr);
@@ -66,14 +70,15 @@ void SetupStranglethornVale(ScriptMgr * mgr);
 void SetupTanaris(ScriptMgr * mgr);
 void SetupTeldrassil(ScriptMgr *mgr);
 void SetupTerrokarForest(ScriptMgr * mgr);
+void SetupTheBarrens(ScriptMgr * mgr);
+void SetupTheStormPeaks(ScriptMgr * mgr);
 void SetupThousandNeedles(ScriptMgr * mgr);
 void SetupTirisfalGlades(ScriptMgr * mgr);
 void SetupUndercity(ScriptMgr * mgr);
 void SetupUnGoro(ScriptMgr * mgr);
 void SetupWestfall(ScriptMgr * mgr);
+void SetupWinterspring(ScriptMgr * mgr);
 void SetupZangarmarsh(ScriptMgr * mgr);
-void SetupBarrens(ScriptMgr * mgr);
-void SetupSholazarBasin( ScriptMgr * mgr );
 
 //	###		Misc	###
 void SetupQuestGossip(ScriptMgr * mgr);

@@ -325,7 +325,7 @@ public:
 
 	void OnQuestStart( Player *mTarget, QuestLogEntry * qLogEntry)
 	{
-				if( mTarget == NULL || mTarget->GetMapMgr() == NULL || mTarget->GetMapMgr()->GetInterface() == NULL )
+		if( mTarget == NULL || mTarget->GetMapMgr() == NULL || mTarget->GetMapMgr()->GetInterface() == NULL )
 			return;
 		float SSX = mTarget->GetPositionX();
 		float SSY = mTarget->GetPositionY();
@@ -335,7 +335,7 @@ public:
 		Creature *creat = mTarget->GetMapMgr()->GetInterface()->GetCreatureNearestCoords(SSX, SSY, SSZ, 3465);
 		if(creat == NULL)
 			return;		
-		creat->m_escorter = mTarget;   
+		creat->m_escorter = mTarget;
 		creat->GetAIInterface()->setMoveType(11);
 		creat->GetAIInterface()->SetAllowedToEnterCombat(false);
 		creat->GetAIInterface()->StopMovement(3000);
@@ -470,7 +470,7 @@ public:
 };
 
 #define SendQuickMenu(textid) objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), textid, plr); \
-    Menu->SendTo(plr);
+	Menu->SendTo(plr);
 
 int kolkarskilled = 0;
 class VerogtheDervish : public CreatureAIScript
@@ -498,24 +498,24 @@ public:
 
 bool Echeyakee(uint32 i, Spell *pSpell)
 {
-  Player *pPlayer = TO_PLAYER(pSpell->u_caster);
-  if(!pPlayer)
-    return true;
-  if(!pSpell->u_caster->IsPlayer())
-    return true;
-  QuestLogEntry *en = pPlayer->GetQuestLogForEntry( 881 );
-  if(en == NULL)
-    return true;
-  Creature *Echeyakee = pPlayer->GetMapMgr()->GetInterface()->GetCreatureNearestCoords( 459.78, -3034.95, 91.68,3475 );
-    if (Echeyakee==NULL)
-    {
-    Creature *EcheyakeeSpawn = sEAS.SpawnCreature( pPlayer, 3475, 459.78, -3034.95, 91.68, 3.87,120000 );
-    EcheyakeeSpawn->GetAIInterface()->MoveTo(pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ());
-    }
-    return true;
+	Player *pPlayer = TO_PLAYER(pSpell->u_caster);
+	if(!pPlayer)
+		return true;
+	if(!pSpell->u_caster->IsPlayer())
+		return true;
+	QuestLogEntry *en = pPlayer->GetQuestLogForEntry( 881 );
+	if(en == NULL)
+		return true;
+	Creature *Echeyakee = pPlayer->GetMapMgr()->GetInterface()->GetCreatureNearestCoords( 459.78, -3034.95, 91.68,3475 );
+	if (Echeyakee==NULL)
+	{
+		Creature *EcheyakeeSpawn = sEAS.SpawnCreature( pPlayer, 3475, 459.78, -3034.95, 91.68, 3.87,120000 );
+		EcheyakeeSpawn->GetAIInterface()->MoveTo(pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ());
+	}
+	return true;
 };
 
-void SetupBarrens(ScriptMgr *mgr)
+void SetupTheBarrens(ScriptMgr *mgr)
 {
 	GossipScript *gos = (GossipScript*) new BeatenCorpse;
 	mgr->register_gossip_script(10668, gos);

@@ -47,6 +47,8 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 	SetupBladeEdgeMountains(mgr);
 	SetupBlastedLands(mgr);
 	SetupBloodmystIsle(mgr);
+	SetupBoreanTundra(mgr);
+	SetupBurningSteppes(mgr);
 	//SetupDarkshore(mgr);
 	SetupDeathKnight(mgr);
 	SetupDesolace(mgr);
@@ -67,6 +69,8 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 	SetupOldHillsbrad(mgr);
 	SetupRedrigeMountains(mgr);
 	SetupShadowmoon(mgr);
+	SetupSholazarBasin(mgr);
+	SetupSilithus(mgr);
 	SetupSilvermoonCity(mgr);
 	SetupSilverpineForest(mgr);
 	SetupStormwind(mgr);
@@ -74,14 +78,16 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 	SetupTanaris(mgr);
 	SetupTeldrassil(mgr);
 	SetupTerrokarForest(mgr);
+	SetupTheBarrens(mgr);
+	SetupTheStormPeaks(mgr);
 	SetupThousandNeedles(mgr);
 	SetupTirisfalGlades(mgr);
 	SetupUndercity(mgr);
 	SetupUnGoro(mgr);
 	SetupWestfall(mgr);
+	SetupWinterspring(mgr);
 	SetupZangarmarsh(mgr);
-	SetupBarrens(mgr);
-	SetupSholazarBasin(mgr);
+
 //	###		Misc		###
 	SetupQuestGossip(mgr);
 	SetupQuestHooks(mgr);
@@ -92,7 +98,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved )
 {
-    return TRUE;
+	return TRUE;
 }
 
 #endif
