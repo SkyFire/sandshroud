@@ -1,4 +1,4 @@
-
+/*
  * Sandshroud Hearthstone
  * Copyright (C) 2004 - 2005 Antrix Team
  * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
