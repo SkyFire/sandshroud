@@ -7536,7 +7536,7 @@ uint32 Unit::GetCreatureType()
 		if(ci && ci->Type)
 			return ci->Type;
 		else
-			return NULL;
+			return 0;
 	}
 	if(IsPlayer())
 	{
@@ -7547,8 +7547,8 @@ uint32 Unit::GetCreatureType()
 			if(ssf && ssf->creatureType)
 				return ssf->creatureType;
 			else
-				return NULL;
+				return 0;
 		}
 	}
-	return NULL;
+	return 0;
 }

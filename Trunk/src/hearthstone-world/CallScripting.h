@@ -24,44 +24,45 @@
 #define CALL_SCRIPTING_H
 
 class Unit;
+class Creature;
 
-class SERVER_DECL OnKillUnitScript
+class SERVER_DECL UnitOnKillUnitScript
 {
 public:
-	OnKillUnitScript() { links = 0; };
-	virtual ~OnKillUnitScript() {};
+	UnitOnKillUnitScript() { links = 0; };
+	virtual ~UnitOnKillUnitScript() {};
 
-	virtual void OnKillUnit(Unit* unit,  Unit* uVictim) {}
+	virtual void UnitOnKillUnit(Unit* unit,  Unit* uVictim) {}
 	uint64 links;
 };
 
-class SERVER_DECL OnDeathScript
+class SERVER_DECL UnitOnDeathScript
 {
 public:
-	OnDeathScript() {};
-	virtual ~OnDeathScript() { links = 0; };
+	UnitOnDeathScript() {};
+	virtual ~UnitOnDeathScript() { links = 0; };
 
-	virtual void OnDeath(Unit* unit) {}
+	virtual void UnitOnDeath(Unit* unit) {}
 	uint64 links;
 };
 
-class SERVER_DECL OnEnterCombatScript
+class SERVER_DECL UnitOnEnterCombatScript
 {
 public:
-	OnEnterCombatScript() { links = 0; };
-	virtual ~OnEnterCombatScript() {};
+	UnitOnEnterCombatScript() { links = 0; };
+	virtual ~UnitOnEnterCombatScript() {};
 
-	virtual void OnEnterCombat(Unit* unit, Unit* uTarget) {}
+	virtual void UnitOnEnterCombat(Unit* unit, Unit* uTarget) {}
 	uint64 links;
 };
 
-class SERVER_DECL OnCastSpellScript
+class SERVER_DECL UnitOnCastSpellScript
 {
 public:
-	OnCastSpellScript() { links = 0; };
-	virtual ~OnCastSpellScript() {};
+	UnitOnCastSpellScript() { links = 0; };
+	virtual ~UnitOnCastSpellScript() {};
 
-	virtual void OnCastSpell(Unit* unit, SpellEntry * uSpell) {}
+	virtual void UnitOnCastSpell(Unit* unit, SpellEntry * uSpell) {}
 	uint64 links;
 };
 

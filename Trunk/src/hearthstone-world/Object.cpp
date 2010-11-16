@@ -2169,11 +2169,11 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 
 		if(!pVictim->CombatStatus.IsInCombat())
 			if(pVictim->CallOnEnterCombat != NULL)
-				pVictim->CallOnEnterCombat->OnEnterCombat(pVictim, TO_UNIT(this));
+				pVictim->CallOnEnterCombat->UnitOnEnterCombat(pVictim, TO_UNIT(this));
 
 		if(!TO_UNIT(this)->CombatStatus.IsInCombat())
 			if(TO_UNIT(this)->CallOnEnterCombat != NULL)
-				TO_UNIT(this)->CallOnEnterCombat->OnEnterCombat(TO_UNIT(this), pVictim);
+				TO_UNIT(this)->CallOnEnterCombat->UnitOnEnterCombat(TO_UNIT(this), pVictim);
 
 		if(pVictim->IsPlayer() && !pVictim->CombatStatus.IsInCombat())
 			sHookInterface.OnEnterCombat( TO_PLAYER( pVictim ), TO_UNIT(this) );
@@ -2587,10 +2587,10 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			Unit* SUnit = TO_UNIT(this);
 
 			if( SUnit->CallOnKillUnit != NULL )
-				SUnit->CallOnKillUnit->OnKillUnit(SUnit, pVictim);
+				SUnit->CallOnKillUnit->UnitOnKillUnit(SUnit, pVictim);
 
 			if( pVictim->CallOnDeath != NULL )
-				pVictim->CallOnDeath->OnDeath(SUnit);
+				pVictim->CallOnDeath->UnitOnDeath(SUnit);
 		}
 		/* -------------------------------------- CALL SCRIPTING END ------------------------------- */
 

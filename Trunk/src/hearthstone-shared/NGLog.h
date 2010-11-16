@@ -124,6 +124,7 @@ public:
 			Color(TNORMAL);
 		}
 
+		Color(TNORMAL);
 		vprintf(format, ap);
 		putchar('\n');
 		va_end(ap);

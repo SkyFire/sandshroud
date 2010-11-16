@@ -1312,7 +1312,7 @@ void Spell::cast(bool check)
 
 	if(u_caster != NULL )
 		if(u_caster->CallOnCastSpell != NULL)
-			u_caster->CallOnCastSpell->OnCastSpell(u_caster, m_spellInfo);
+			u_caster->CallOnCastSpell->UnitOnCastSpell(u_caster, m_spellInfo);
 
 	if(check)
 		cancastresult = CanCast(true);

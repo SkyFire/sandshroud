@@ -1399,10 +1399,12 @@ protected:
 
 	std::map<uint32, SpellEntry*> m_DummyAuras;
 public: // Virtual Script Callers
-	OnKillUnitScript* CallOnKillUnit;
-	OnDeathScript* CallOnDeath;
-	OnEnterCombatScript* CallOnEnterCombat;
-	OnCastSpellScript* CallOnCastSpell;
+	UnitOnKillUnitScript* CallOnKillUnit;
+	UnitOnDeathScript* CallOnDeath;
+	UnitOnEnterCombatScript* CallOnEnterCombat;
+	UnitOnCastSpellScript* CallOnCastSpell;
+
+public:
 	void knockback(int32 basepoint, uint32 miscvalue, bool disengage = false );
 	void Teleport(float x, float y, float z, float O, uint32 phase = 1);
 	void SetRedirectThreat(Unit * target, float amount, uint32 Duaration);
