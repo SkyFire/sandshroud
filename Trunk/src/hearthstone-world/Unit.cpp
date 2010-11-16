@@ -5507,6 +5507,7 @@ void Unit::CastSpell(uint64 targetGuid, uint32 SpellID, bool triggered)
 
 	CastSpell(targetGuid, ent, triggered);
 }
+
 uint8 Unit::CastSpellAoF(float x,float y,float z,SpellEntry* Sp, bool triggered)
 {
 	if( Sp == NULL )

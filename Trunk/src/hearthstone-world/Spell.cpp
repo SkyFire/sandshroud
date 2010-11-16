@@ -3296,6 +3296,9 @@ uint8 Spell::CanCast(bool tolerate)
 				return SPELL_FAILED_NOT_MOUNTED;
 		}
 
+		if((GetSpellProto()->Id == 1850 || GetSpellProto()->Id == 9821 || GetSpellProto()->Id == 33357) && p_caster->GetShapeShift() != FORM_CAT)
+			return SPELL_FAILED_ONLY_SHAPESHIFT;
+
 		// no mana drains on shifted druids :(
 		if( GetPlayerTarget() && GetPlayerTarget()->getClass() == DRUID && (GetSpellProto()->Effect[0] == SPELL_EFFECT_POWER_DRAIN || GetSpellProto()->Effect[1] == SPELL_EFFECT_POWER_DRAIN || GetSpellProto()->Effect[2] == SPELL_EFFECT_POWER_DRAIN))
 		{

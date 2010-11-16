@@ -245,6 +245,8 @@ uint32 Creature::GetRequiredLootSkill()
 		return SKILL_HERBALISM;     // herbalism
 	else if(GetCreatureInfo()->TypeFlags & CREATURE_TYPEFLAGS_MININGLOOT)
 		return SKILL_MINING;        // mining
+	else if(GetCreatureInfo()->Flags1 & CREATURE_FLAG1_ENGINEERLOOT)
+		return SKILL_ENGINERING;
 	else
 		return SKILL_SKINNING;      // skinning
 };
@@ -520,6 +522,8 @@ void Creature::setDeathState(DeathState s)
 
 		m_deathState = CORPSE;
 		m_corpseEvent = true;
+		if ( lootmgr.IsSkinnable(GetEntry()))
+			SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
 	}
 }
 

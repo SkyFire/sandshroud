@@ -467,8 +467,8 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 				TO_CREATURE(pLootTarget)->UpdateLootAnimation(_player);
 
 				// skinning
-				if(!TO_CREATURE(pLootTarget)->IsPet() && !TO_CREATURE(pLootTarget)->IsSummon()
-					&& lootmgr.IsSkinnable( pLootTarget->GetEntry()))
+				if(!pLootTarget->IsPet() && !TO_CREATURE(pLootTarget)->IsSummon()
+					&& lootmgr.IsSkinnable( pLootTarget->GetEntry()) && !TO_CREATURE(pLootTarget)->Skinned)
 				{
 					pLootTarget->BuildFieldUpdatePacket( _player, UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE );
 				}

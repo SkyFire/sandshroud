@@ -10203,18 +10203,12 @@ void Aura::SpellAuraProcTriggerWithValue(bool apply)
 
 void Aura::SpellAuraVehiclePassenger(bool apply)
 {
-	if(!GetUnitCaster()->IsVehicle())
+	if(!GetUnitCaster() || !GetUnitCaster()->IsVehicle())
 		return;
 	if(apply)
-	{
 		TO_VEHICLE(GetCaster())->AddPassenger(m_target,GetSpellProto()->EffectMiscValue[mod->i],true);
-	}
-
-	if(!apply)
-	{
-		if( m_target && m_target->GetVehicle() )
-			m_target->GetVehicle()->RemovePassenger(m_target);
-	}
+	else
+		TO_VEHICLE(GetCaster())->RemovePassenger(m_target);
 }
 
 void Aura::SpellAuraReduceEffectDuration(bool apply)
@@ -10820,6 +10814,7 @@ void Aura::SpellAuraHealAndJump(bool apply)
 		}
 	}
 }
+
 void Aura::SpellAuraConvertRune(bool apply)
 {
 	if( !m_target || !m_target->IsPlayer() )

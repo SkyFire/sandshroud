@@ -1634,7 +1634,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				}
 			}
 			p_caster->RemoveAuraNegByNameHash(SPELL_HASH_HUNTER_S_MARK);
-			p_caster->AddAura(new Aura(dbcSpell.LookupEntryForced(1784),10000,p_caster,p_caster));
+			p_caster->CastSpell(p_caster->GetGUID(), dbcSpell.LookupEntryForced(1784), true);
 		}break;
 	/*************************
 	 * DRUID SPELLS
@@ -2821,8 +2821,6 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				return;
 			u_caster->CastSpell(playerTarget, 63680, false);
 		}break;
-
-
 	default:
 		{
 			if(sLog.IsOutDevelopement())
@@ -7096,19 +7094,13 @@ void Spell::SpellEffectSkinning(uint32 i)
 		TO_PLAYER( m_caster )->SendLoot( cr->GetGUID(), cr->GetMapId(), 2 );
 
 		//Not skinable again
-		cr->BuildFieldUpdatePacket( p_caster, UNIT_FIELD_FLAGS, 0 );
-
-		if(!cr->Skinned)
-		{
-			cr->Skinned = true;
-			//double chance from elite
-			if(cr->GetCreatureInfo()->Rank > 0)
-				DetermineSkillUp(skill ,sk < lvl * 5 ? sk/5 : lvl, 2);
-			else
-				DetermineSkillUp(skill ,sk < lvl * 5 ? sk/5 : lvl, 1);
-		}
+		cr->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+		cr->Skinned = true;
+		//double chance from elite
+		if(cr->GetCreatureInfo()->Rank > 0)
+			DetermineSkillUp(skill ,sk < lvl * 5 ? sk/5 : lvl, 2);
 		else
-			cr->Skinned = true;
+			DetermineSkillUp(skill ,sk < lvl * 5 ? sk/5 : lvl, 1);
 	}
 	else
 		SendCastResult(SPELL_FAILED_TARGET_UNSKINNABLE);
@@ -8315,7 +8307,7 @@ void Spell::SpellEffectJump(uint32 i)
 	if (m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
 	{
 		if(m_targets.m_destX == 0 || m_targets.m_destY == 0 || m_targets.m_destZ == 0)
-			return; //Hueston we haz a problem.
+			return;
 		x = m_targets.m_destX;
 		y = m_targets.m_destY;
 		z = m_targets.m_destZ;
