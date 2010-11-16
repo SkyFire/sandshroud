@@ -8319,6 +8319,11 @@ void Spell::SpellEffectJump(uint32 i)
 		x = unitTarget->GetPositionX();
 		y = unitTarget->GetPositionY();
 		z = unitTarget->GetPositionZ();
+		float ang = m_caster->calcAngle(m_caster->GetPositionX(), m_caster->GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY());
+		ang = ang * float(M_PI) / 180.0f;
+		const static float distance = 1.6f * unitTarget->GetFloatValue(OBJECT_FIELD_SCALE_X);
+		x = x - (distance * cosf(ang));
+		y = y - (distance * sinf(ang));
 	}
 
 	float speed;

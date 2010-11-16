@@ -10007,7 +10007,7 @@ void Player::SetShapeShift(uint8 ss)
 				}
 			}
 
-			if( this->getClass() == DRUID )
+			if( getClass() == DRUID )
 			{
 				for (uint8 y = 0; y < 3; ++y )
 				{
@@ -10046,7 +10046,7 @@ void Player::SetShapeShift(uint8 ss)
 		{
 			if( sp->RequiredShapeShift && ((uint32)1 << (ss-1)) & sp->RequiredShapeShift )
 			{
-				spe = (new Spell( TO_PLAYER(this), sp, true, NULLAURA ));
+				spe = (new Spell( this, sp, true, NULLAURA ));
 				spe->prepare( &t );
 			}
 		}
@@ -10062,7 +10062,7 @@ void Player::SetShapeShift(uint8 ss)
 
 		if( sp->RequiredShapeShift && ((uint32)1 << (ss-1)) & sp->RequiredShapeShift )
 		{
-			spe = (new Spell( TO_PLAYER(this), sp, true, NULLAURA ));
+			spe = (new Spell( this, sp, true, NULLAURA ));
 			spe->prepare( &t );
 		}
 	}
