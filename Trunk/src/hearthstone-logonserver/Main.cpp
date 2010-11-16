@@ -61,6 +61,7 @@ void _OnSignal(int s)
 #ifdef _WIN32
 	case SIGBREAK:
 #endif
+		remove("logonserver.pid");
 		mrunning = false;
 		break;
 	}
