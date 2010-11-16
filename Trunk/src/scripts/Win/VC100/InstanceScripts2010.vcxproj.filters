@@ -313,6 +313,9 @@
     <ClInclude Include="..\..\src\InstanceScripts\Ulduar\Raid_Ulduar.h">
       <Filter>Scripts\The Lich King\Ulduar\Ulduar</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\InstanceScripts\MagistersTerrace\Magisters_Terrace_InstanceScript.h">
+      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\InstanceScripts\ScriptStdAfx.cpp">
@@ -444,9 +447,6 @@
     <ClCompile Include="..\..\src\InstanceScripts\Karazhan\Raid_Karazhan.cpp">
       <Filter>Scripts\The Burning Crusade\Karazhan</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Instance_MagistersTerrace.cpp">
-      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\InstanceScripts\SunwellPlateau\Raid_SunwellPlateau.cpp">
       <Filter>Scripts\The Burning Crusade\Sunwell Plateau</Filter>
     </ClCompile>
@@ -506,6 +506,21 @@
     </ClCompile>
     <ClCompile Include="..\..\src\InstanceScripts\Ulduar\Raid_Ulduar.cpp">
       <Filter>Scripts\The Lich King\Ulduar\Ulduar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Felblood_Kaelthas.cpp">
+      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Magisters_Terrace_InstanceScript.cpp">
+      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Priestess_Delrissa.cpp">
+      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Selin_Fireheart.cpp">
+      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Vexallus.cpp">
+      <Filter>Scripts\The Burning Crusade\Magisters%27 Terrace</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

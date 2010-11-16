@@ -216,6 +216,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\InstanceScripts\garbage.h" />
+    <ClInclude Include="..\..\src\InstanceScripts\MagistersTerrace\Magisters_Terrace_InstanceScript.h" />
     <ClInclude Include="..\..\src\InstanceScripts\ScriptStdAfx.h" />
     <CustomBuildStep Include="..\..\src\Common\Base.h" />
     <ClInclude Include="..\..\src\InstanceScripts\Setup.h" />
@@ -227,6 +228,11 @@
     <ClInclude Include="..\..\src\InstanceScripts\Ulduar\Raid_Ulduar.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Felblood_Kaelthas.cpp" />
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Magisters_Terrace_InstanceScript.cpp" />
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Priestess_Delrissa.cpp" />
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Selin_Fireheart.cpp" />
+    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Vexallus.cpp" />
     <ClCompile Include="..\..\src\InstanceScripts\ScriptStdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -281,7 +287,6 @@
     <ClCompile Include="..\..\src\InstanceScripts\TheShatteredHalls\Instance_TheShatteredHalls.cpp" />
     <ClCompile Include="..\..\src\InstanceScripts\MagtheridonsLair\Raid_MagtheridonsLair.cpp" />
     <ClCompile Include="..\..\src\InstanceScripts\Karazhan\Raid_Karazhan.cpp" />
-    <ClCompile Include="..\..\src\InstanceScripts\MagistersTerrace\Instance_MagistersTerrace.cpp" />
     <ClCompile Include="..\..\src\InstanceScripts\SunwellPlateau\Raid_SunwellPlateau.cpp" />
     <ClCompile Include="..\..\src\InstanceScripts\Arcatraz\Instance_Arcatraz.cpp" />
     <ClCompile Include="..\..\src\InstanceScripts\TheEye\Raid_TheEye.cpp" />

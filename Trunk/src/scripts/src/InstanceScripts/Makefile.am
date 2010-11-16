@@ -33,7 +33,12 @@ HellfireRamparts/Instance_HellfireRamparts.cpp \
 HyjalSummit/Raid_HyjalSummit.cpp \
 IcecrownCitadel/ICC_tele.cpp \
 Karazhan/Raid_Karazhan.cpp \
-MagistersTerrace/Instance_MagistersTerrace.cpp \
+MagistersTerrace/Magisters_Terrace_InstanceScript.h \
+MagistersTerrace/Magisters_Terrace_InstanceScript.cpp \
+MagistersTerrace/Felblood_Kaelthas.cpp \
+MagistersTerrace/Priestess_Delrissa.cpp \
+MagistersTerrace/Selin_Fireheart.cpp \
+MagistersTerrace/Vexallus.cpp \
 MagtheridonsLair/Raid_MagtheridonsLair.cpp \
 ManaTombs/Instance_ManaTombs.cpp \
 Mauradon/Instance_Mauradon.cpp \

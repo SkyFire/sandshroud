@@ -866,7 +866,27 @@
 					Name="Magisters&apos; Terrace"
 					>
 					<File
-						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Instance_MagistersTerrace.cpp"
+						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Felblood_Kaelthas.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Magisters_Terrace_InstanceScript.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Magisters_Terrace_InstanceScript.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Priestess_Delrissa.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Selin_Fireheart.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\InstanceScripts\MagistersTerrace\Vexallus.cpp"
 						>
 					</File>
 				</Filter>
