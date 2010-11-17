@@ -419,22 +419,6 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="Config"
-			>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Config\Config.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Config\Config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\hearthstone-shared\Config\ConfigEnv.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Auth"
 			>
 			<File
@@ -718,6 +702,22 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-shared\NGLog.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Config"
+				>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Config\Config.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Config\Config.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-shared\Config\ConfigEnv.h"
 					>
 				</File>
 			</Filter>

@@ -181,6 +181,7 @@ struct CreatureProto
 	uint32 boss;
 	int32 money;
 	bool no_xp;
+	bool no_skill_up;
 	uint32 invisibility_type;
 	uint32 death_state;
 	float	walk_speed;//base movement

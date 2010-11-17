@@ -3818,9 +3818,9 @@ else
 			 TO_PLAYER(this)->GetItemInterface()->ReduceItemDurability();
 		}
 	}
-	else
-	{
-		if(IsPlayer())//not pvp
+	else if(pVictim->IsCreature() && TO_CREATURE(pVictim)->GetProto())
+	{	// Not PvP, proto, and skill up.
+		if(IsPlayer() && !TO_CREATURE(pVictim)->GetProto()->no_skill_up)
 		{
 			TO_PLAYER(this)->GetItemInterface()->ReduceItemDurability();
 			Player* pr = TO_PLAYER(this);
