@@ -1313,6 +1313,16 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectApplyAuraName[1]	=	SPELL_AURA_PROC_TRIGGER_SPELL;
 			sp->procFlags = PROC_ON_CAST_SPELL;
 		}break;
+		
+	// Druid - Nurturing Instinct
+	case 33872:
+		{
+			sp->AdditionalAura = 47179;
+		}break;
+	case 33873:
+		{
+			sp->AdditionalAura = 47180;
+		}break;
 
 		//Improved Sprint
 	case 13743:
@@ -4195,7 +4205,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 9821:
 	case 33357:
 		{
-			sp->RequiredShapeShift = 1;
+			sp->RequiredShapeShift	=	1;
 		}break;
 
 		// Totem of Wrath
