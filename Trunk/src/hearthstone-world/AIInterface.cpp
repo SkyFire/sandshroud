@@ -3765,7 +3765,7 @@ uint32 AIInterface::GetMovementTime(float distance)
 		return m_walkSpeed ? float2int32(distance/m_walkSpeed) : 0xFFFFFFFF;
 }
 
-void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 time, float arc, uint32 unk)
+void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 moveTime, float arc, uint32 unk)
 {
 	WorldPacket data(SMSG_MONSTER_MOVE, 100);
 	data << m_Unit->GetNewGUID();
@@ -3774,7 +3774,7 @@ void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 time, float arc
 	data << getMSTime();
 	data << uint8(0);
 	data << 6144; //Jump + walking for the run on land.
-	data << time;
+	data << moveTime;
 	data << float(arc);
 	data << uint32(unk);
 	data << uint32(1);

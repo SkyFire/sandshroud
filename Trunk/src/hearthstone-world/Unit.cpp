@@ -2689,7 +2689,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 			dodge = pVictim->GetUInt32Value(UNIT_FIELD_AGILITY) / 14.5f; // what is this value?
 
 		victim_skill = pVictim->getLevel() * 5;
-		if(c && c->GetCreatureInfo() && c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS)
+		if(c && c->GetCreatureInfo() && (c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS || c->GetCreatureInfo()->Flags1 & CREATURE_FLAGS1_BOSS))
 		{
 			victim_skill = std::max(victim_skill,((int32)getLevel()+3)*5); //used max to avoid situation when lowlvl hits boss.
 		}
@@ -2773,7 +2773,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 		if(m_objectTypeId == TYPEID_UNIT)
 		{
 			Creature* c = TO_CREATURE(this);
-			if(c&&c->GetCreatureInfo()&&c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS)
+			if(c && c->GetCreatureInfo() && (c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS || c->GetCreatureInfo()->Flags1 & CREATURE_FLAGS1_BOSS))
 				self_skill = std::max(self_skill,((int32)pVictim->getLevel()+3)*5);//used max to avoid situation when lowlvl hits boss.
 		}
 	}
@@ -2985,7 +2985,7 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 		if( pVictim->m_objectTypeId == TYPEID_UNIT )
 		{
 			Creature* c = TO_CREATURE( pVictim );
-			if( c != NULL && c->GetCreatureInfo()&&c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS )
+			if( c != NULL && c->GetCreatureInfo() && (c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS || c->GetCreatureInfo()->Flags1 & CREATURE_FLAGS1_BOSS) )
 			{
 				victim_skill = std::max( victim_skill, ( (int32)getLevel() + 3 ) * 5 ); //used max to avoid situation when lowlvl hits boss.
 			}
@@ -3061,7 +3061,7 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 		if(m_objectTypeId == TYPEID_UNIT)
 		{
 			Creature* c = TO_CREATURE(this);
-			if(c&&c->GetCreatureInfo()&&c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS)
+			if(c && c->GetCreatureInfo() && (c->GetCreatureInfo()->Rank == ELITE_WORLDBOSS || c->GetCreatureInfo()->Flags1 & CREATURE_FLAGS1_BOSS))
 				self_skill = std::max(self_skill,((int32)pVictim->getLevel()+3)*5);//used max to avoid situation when lowlvl hits boss.
 		}
 		crit = 5.0f; //will be modified later

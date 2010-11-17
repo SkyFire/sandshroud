@@ -286,7 +286,7 @@ bool ChatHandler::HandleAddHonorCommand(const char* args, WorldSession* m_sessio
 bool ChatHandler::HandlePVPCreditCommand(const char* args, WorldSession* m_session)
 {
 	uint32 Rank, Points;
-	if(sscanf(args, "%u %u", (unsigned int*)&Rank, (unsigned int*)&Points) != 2)
+	if(sscanf(args, "%u %u", &Rank, &Points) != 2)
 	{
 		RedSystemMessage(m_session, "Command must be in format <rank> <points>.");
 		return true;

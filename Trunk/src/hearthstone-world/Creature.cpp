@@ -134,7 +134,7 @@ void Creature::Update( uint32 p_time )
 		sEventMgr.RemoveEvents(this);
 		if(proto==NULL)
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::OnRemoveCorpse, EVENT_CREATURE_REMOVE_CORPSE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-		else if (creature_info->Rank == ELITE_WORLDBOSS)
+		else if (creature_info->Rank == ELITE_WORLDBOSS || creature_info->Flags1 & CREATURE_FLAGS1_BOSS)
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::OnRemoveCorpse, EVENT_CREATURE_REMOVE_CORPSE, TIME_CREATURE_REMOVE_BOSSCORPSE, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		else if ( creature_info->Rank == ELITE_RAREELITE || creature_info->Rank == ELITE_RARE)
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::OnRemoveCorpse, EVENT_CREATURE_REMOVE_CORPSE, TIME_CREATURE_REMOVE_RARECORPSE, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
@@ -241,11 +241,11 @@ void Creature::CreateWayPoint (uint32 WayPointID, uint32 mapid, float x, float y
 /// Looting
 uint32 Creature::GetRequiredLootSkill()
 {
-	if(GetCreatureInfo()->TypeFlags & CREATURE_TYPEFLAGS_HERBLOOT)
+	if(GetCreatureInfo()->TypeFlags & CREATURE_FLAGS1_HERBLOOT)
 		return SKILL_HERBALISM;     // herbalism
-	else if(GetCreatureInfo()->TypeFlags & CREATURE_TYPEFLAGS_MININGLOOT)
+	else if(GetCreatureInfo()->TypeFlags & CREATURE_FLAGS1_MININGLOOT)
 		return SKILL_MINING;        // mining
-	else if(GetCreatureInfo()->Flags1 & CREATURE_FLAG1_ENGINEERLOOT)
+	else if(GetCreatureInfo()->Flags1 & CREATURE_FLAGS1_ENGINEERLOOT)
 		return SKILL_ENGINERING;
 	else
 		return SKILL_SKINNING;      // skinning
@@ -628,7 +628,7 @@ void Creature::EnslaveExpire()
 		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, 90);
 	_setFaction();
 
-	GetAIInterface()->Init(TO_UNIT(this), AITYPE_AGRO, MOVEMENTTYPE_NONE);
+	GetAIInterface()->Init(this, AITYPE_AGRO, MOVEMENTTYPE_NONE);
 
 	// Update InRangeSet
 	UpdateOppFactionSet();
