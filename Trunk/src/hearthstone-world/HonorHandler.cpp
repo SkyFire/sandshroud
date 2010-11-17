@@ -95,6 +95,9 @@ void HonorHandler::OnPlayerKilledUnit( Player* pPlayer, Unit* pVictim )
 		{
 			if( pPlayer->GetTeam() == TO_PLAYER( pVictim )->GetTeam() )
 				return;
+			if(pPlayer->GetSession() && TO_PLAYER( pVictim )->GetSession() && pPlayer->GetSession()->GetSocket() && TO_PLAYER( pVictim )->GetSession()->GetSocket())
+				if(pPlayer->GetSession()->GetSocket()->GetRemoteIP() == TO_PLAYER( pVictim )->GetSession()->GetSocket()->GetRemoteIP())
+					return;
 		}
 	}
 
@@ -260,8 +263,8 @@ bool ChatHandler::HandleAddKillCommand(const char* args, WorldSession* m_session
 	BlueSystemMessage(m_session, "Adding %u kills to player %s.", KillAmount, plr->GetName());
 	GreenSystemMessage(plr->GetSession(), "You have had %u honor kills added to your character.", KillAmount);
 
-	for(uint32 i = 0; i < KillAmount; i++)
-		HonorHandler::OnPlayerKilledUnit(plr, NULLPLR);
+	plr->m_killsToday += KillAmount;
+	plr->RecalculateHonor();
 
 	return true;
 }
