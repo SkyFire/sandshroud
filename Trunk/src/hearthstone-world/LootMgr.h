@@ -136,7 +136,7 @@ enum PARTY_ROLL
 	NEED		= 1,
 	GREED		= 2,
 	DISENCHANT	= 3,
-	PASS		= 4,
+	PASS		= 4
 };
 
 class SERVER_DECL LootMgr : public Singleton < LootMgr >

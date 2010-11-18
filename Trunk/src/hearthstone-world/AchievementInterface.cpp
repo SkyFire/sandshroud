@@ -210,7 +210,6 @@ void AchievementInterface::GiveRewardsForAchievement(AchievementEntry * ae)
 	{
 		m_player->GetGUID();
 		Item* pItem = objmgr.CreateItem(ar->ItemID, m_player);
-		m_player->GetItemInterface()->AddItemToFreeSlot(pItem);
 		if( !m_player->GetItemInterface()->AddItemToFreeSlot(pItem) )
 		{
 			// Inventory full? Send it by mail.

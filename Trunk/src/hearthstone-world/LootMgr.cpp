@@ -839,7 +839,6 @@ void LootRoll::Finalize()
 			Item * Titem = objmgr.CreateItem( itemid, _player);
 			if( Titem == NULLITEM )
 				continue;
-			_player->GetItemInterface()->AddItemToFreeSlot(Titem);
 			if( !_player->GetItemInterface()->AddItemToFreeSlot(Titem) )
 			{
 				_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
