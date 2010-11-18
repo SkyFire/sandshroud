@@ -393,6 +393,11 @@ void Transporter::TransportPassengers(uint32 mapid, uint32 oldmap, float x, floa
 
 			plr->m_lockTransportVariables = true;
 			plr->GetSession()->SendPacket(&Pending);
+#ifndef CLUSTERING
+			plr->_Relocate(mapid, v, false, true, 0);
+#else
+			plr->SafeTeleport(mapid, 0, v);
+#endif
 		}
 	}
 
