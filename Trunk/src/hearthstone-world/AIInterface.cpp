@@ -246,7 +246,7 @@ void AIInterface::HandleEvent(uint32 eevent, Unit* pUnit, uint32 misc1)
 				//Mark raid as combat in progress if it concerns a boss
 				if(pUnit->GetMapMgr() && pUnit->GetMapMgr()->GetMapInfo() && pUnit->GetMapMgr()->GetdbcMap()->israid())
 					if(m_Unit->GetTypeId() == TYPEID_UNIT && m_Unit->m_loadedFromDB )
-						if(cr->GetCreatureInfo() && cr->GetCreatureInfo()->Rank == ELITE_WORLDBOSS)
+						if(cr->GetCreatureInfo() && (cr->GetCreatureInfo()->Rank == ELITE_WORLDBOSS || cr->GetCreatureInfo()->Flags1 & CREATURE_FLAGS1_BOSS))
 							 pUnit->GetMapMgr()->AddCombatInProgress(m_Unit->GetGUID());
 			}break;
 		case EVENT_LEAVECOMBAT:

@@ -724,6 +724,7 @@ void OnCrash( bool Terminate )
 		if( World::getSingletonPtr() != 0 )
 		{
 			sLog.outString( "Waiting for all database queries to finish..." );
+			sWorld.SaveAllPlayers();
 			WorldDatabase.EndThreads();
 			CharacterDatabase.EndThreads();
 
@@ -735,7 +736,6 @@ void OnCrash( bool Terminate )
 				if(Database_Account != NULL)
 					AccountDatabase.EndThreads();
 			sLog.outString( "All pending database operations cleared.\n" );
-			sWorld.SaveAllPlayers();
 			sLog.outString( "Data saved." );
 		}
 	}
@@ -745,9 +745,6 @@ void OnCrash( bool Terminate )
 	}
 
 	sLog.outString( "Closing." );
-
-	// beep
-	//printf("\x7");
 
 	// Terminate Entire Application
 	if( Terminate )
