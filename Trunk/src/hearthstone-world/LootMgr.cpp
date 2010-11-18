@@ -858,7 +858,6 @@ void LootRoll::Finalize()
 				plr->GetSession()->SendPacket(&data);
 		}
 
-
 		delete this;	//end here and skip the rest
 		return;
 	}
@@ -941,9 +940,8 @@ void LootRoll::PlayerRolled(PlayerInfo* pInfo, uint8 choice)
 
 	int roll = RandomUInt(99)+1;
 	// create packet
-	WorldPacket data(34);
-	data.SetOpcode(SMSG_LOOT_ROLL);
-	data << _guid << _slotid << pInfo->guid;
+	WorldPacket data(SMSG_LOOT_ROLL, 34);
+	data << _guid << _slotid << uint64(pInfo->guid);
 	data << _itemid << _randomsuffixid << _randompropertyid;
 
 	switch(choice)
