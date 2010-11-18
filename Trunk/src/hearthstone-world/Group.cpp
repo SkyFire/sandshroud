@@ -360,18 +360,9 @@ void Group::Update()
 					}
 				}
 
-				if( m_Leader != NULL )
-					data << m_Leader->guid << uint32( 0 );
-				else
-					data << uint64( 0 );
-
+				data << uint64( m_Leader ? m_Leader->guid : 0 );
 				data << uint8( m_LootMethod );
-
-				if( m_Looter != NULL )
-					data << m_Looter->guid << uint32( 0 );
-				else
-					data << uint64( 0 );
-
+				data << uint64( m_Looter ? m_Looter->guid : 0);
 				data << uint8( m_LootThreshold );
 				data << uint8( m_difficulty );		// 5 Normal/Heroic.
 				data << uint8( m_raiddifficulty );	// 10/25 man.

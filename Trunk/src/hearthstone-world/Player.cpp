@@ -2371,7 +2371,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< m_bgEntryPointInstance << ", ";
 
 	// taxi
-	if(m_onTaxi&&m_CurrentTaxiPath) {
+	if(m_onTaxi && m_CurrentTaxiPath) {
 		ss << m_CurrentTaxiPath->GetID() << ", ";
 		ss << lastNode << ", ";
 		ss << GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID);
@@ -2379,7 +2379,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	else
 		ss << "0, 0, 0";
 
-	ss << "," << (m_CurrentTransporter ? m_CurrentTransporter->GetEntry() : uint32(0));
+	ss << "," << (m_CurrentTransporter && GetVehicle() == NULL ? m_CurrentTransporter->GetEntry() : uint32(0));
 	ss << ",'" << m_transportPosition->x << "','" << m_transportPosition->y << "','" << m_transportPosition->z << "'";
 	ss << ",'";
 
@@ -2440,7 +2440,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		buf->AddQueryStr(ss.str());
 
 	//Save Other related player stuff
-	sHookInterface.OnPlayerSaveToDB(TO_PLAYER(this), buf);
+	sHookInterface.OnPlayerSaveToDB(this, buf);
 
 	// Skills
 #ifndef BUFFER_SAVING

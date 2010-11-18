@@ -840,6 +840,11 @@ void LootRoll::Finalize()
 			if( Titem == NULLITEM )
 				continue;
 			_player->GetItemInterface()->AddItemToFreeSlot(Titem);
+			if( !_player->GetItemInterface()->AddItemToFreeSlot(Titem) )
+			{
+				_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
+				sMailSystem.DeliverMessage(MAILTYPE_NORMAL, _player->GetGUID(), _player->GetGUID(), "Loot Roll", "Here is your reward.", 0, 0, itemid, 1, true);
+			}
 			Titem->DeleteMe();
 			Titem = NULLITEM;
 		}
@@ -878,7 +883,17 @@ void LootRoll::Finalize()
 		SlotResult slotresult = _player->GetItemInterface()->FindFreeInventorySlot(it);
 		if(!slotresult.Result)
 		{
-			_player->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM, INV_ERR_INVENTORY_FULL);
+			_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
+			sMailSystem.DeliverMessage(MAILTYPE_NORMAL, _player->GetGUID(), _player->GetGUID(), "Loot Roll", "Here is your reward.", 0, 0, it->ItemId, 1, true);
+			data.Initialize(SMSG_LOOT_REMOVED);
+			data << uint8(_slotid);
+			Player* plr;
+			for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); itr++)
+			{
+				if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
+					plr->GetSession()->SendPacket(&data);
+			}
+			delete this;
 			return;
 		}
 
