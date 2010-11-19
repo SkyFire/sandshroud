@@ -7378,8 +7378,10 @@ void Spell::SpellEffectInebriate(uint32 i) // lets get drunk!
 	b2 += damage;	// 10 beers will get you smassssshed!
 
 	m_caster->SetByte(PLAYER_BYTES_3,1,b2>90?90:b2);
+	p_caster->m_invisDetect[INVIS_FLAG_DRUNK] += b2;
 	sEventMgr.RemoveEvents(p_caster, EVENT_PLAYER_REDUCEDRUNK);
 	sEventMgr.AddEvent(p_caster, &Player::EventReduceDrunk, false, EVENT_PLAYER_REDUCEDRUNK, 300000, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+	p_caster->UpdateVisibility();
 }
 
 void Spell::SpellEffectFeedPet(uint32 i)  // Feed Pet

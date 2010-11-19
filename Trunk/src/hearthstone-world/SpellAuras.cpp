@@ -226,7 +226,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraReduceCritMeleeAttackDmg,                       //203 Apply Aura: Reduces Attacker Critical Hit Damage with Melee by %
 	&Aura::SpellAuraReduceCritRangedAttackDmg,                      //204 Apply Aura: Reduces Attacker Critical Hit Damage with Ranged by %
 	&Aura::SpellAuraNULL,                                           //205 "School" Vulnerability
-	&Aura::SpellAuraEnableFlight,                                   //206 Take flight on a worn old carpet. - Spell 43343
+	&Aura::SpellAuraIncreaseFlightSpeed,                            //206 Increase Vehicle fly speed.
 	&Aura::SpellAuraEnableFlight,                                   //207 set fly
 	&Aura::SpellAuraEnableFlightWithUnmountedSpeed,                 //208
 	&Aura::SpellAuraNULL,                                           //209 mod flight speed?
@@ -324,8 +324,8 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraNULL,                                           //301
 	&Aura::SpellAuraNULL,                                           //302
 	&Aura::SpellAuraNULL,                                           //303
-	&Aura::SpellAuraNULL,                                           //304
-	&Aura::SpellAuraNULL,                                           //305
+	&Aura::SpellAuraFakeInebriation,                                //304
+	&Aura::SpellAuraModIncreaseSpeed,                               //305
 	&Aura::SpellAuraNULL,                                           //306
 	&Aura::SpellAuraNULL,                                           //307
 	&Aura::SpellAuraNULL,                                           //308
@@ -4998,28 +4998,31 @@ void Aura::SpellAuraModIncreaseHealth(bool apply)
 
 	if(apply)
 	{
-		SpecialCases();
 		SetPositive();
 		amt = mod->m_amount;
 	}
 	else
 		amt =- mod->m_amount;
 
+	if(apply)
+	{
+		m_target->ModUnsigned32Value(UNIT_FIELD_MAXHEALTH, amt);
+		SpecialCases();
+		m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH,amt);
+	}
+	else
+	{
+		if((int32)m_target->GetUInt32Value(UNIT_FIELD_HEALTH)>-amt)//watch it on remove value is negative
+			m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH, amt);
+		else 
+			m_target->SetUInt32Value(UNIT_FIELD_HEALTH,1); //do not kill player but do strip him good
+		m_target->ModUnsigned32Value(UNIT_FIELD_MAXHEALTH, amt);
+	}
 	if(m_target->IsPlayer())
 	{
-		if(apply)
-			m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH,amt);
-		else
-		{
-			if((int32)m_target->GetUInt32Value(UNIT_FIELD_HEALTH)>-amt)//watch it on remove value is negative
-				m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH,amt);
-			else m_target->SetUInt32Value(UNIT_FIELD_HEALTH,1); //do not kill player but do strip him good
-		}
 		TO_PLAYER( m_target )->SetHealthFromSpell(TO_PLAYER( m_target )->GetHealthFromSpell() + amt);
 		TO_PLAYER( m_target )->UpdateStats();
 	}
-	else
-		m_target->ModUnsigned32Value(UNIT_FIELD_MAXHEALTH, amt);
 }
 
 void Aura::SpellAuraModIncreaseEnergy(bool apply)
@@ -5095,20 +5098,20 @@ void Aura::SpellAuraModShapeshift(bool apply)
 	case FORM_TREE:
 		{
 			freeMovements=true;
-			spellId = 5420;//3122;
-		} break;
+			spellId = 34123;
+		}break;
 
 	case FORM_TRAVEL:
 		{//druid
 			freeMovements = true;
 			spellId = 5419;
-		} break;
+		}break;
 
 	case FORM_AQUA:
 		{//druid aqua
 			freeMovements = true;
 			spellId = 5421;
-		} break;
+		}break;
 
 	case FORM_BEAR:
 		{//druid only
@@ -5133,7 +5136,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 			else //reset back to mana
 				m_target->SetByte(UNIT_FIELD_BYTES_0,3,POWER_TYPE_MANA);
 
-		} break;
+		}break;
 
 	case FORM_DIREBEAR:
 		{//druid only
@@ -5158,10 +5161,11 @@ void Aura::SpellAuraModShapeshift(bool apply)
 			else //reset back to mana
 				m_target->SetByte(UNIT_FIELD_BYTES_0,3,POWER_TYPE_MANA);
 
-		} break;
+		}break;
 
 	case FORM_GHOSTWOLF:
 		{
+			spellId = 67116;
 			if( apply )
 			{
 				if( m_target->IsPlayer() )
@@ -5172,25 +5176,27 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				if( m_target->IsPlayer() )
 					TO_PLAYER( m_target )->m_MountSpellId = 0;
 			}
-		} break;
+		}break;
 
 	case FORM_BATTLESTANCE:
 		{
 			spellId = 21156;
-		} break;
+		}break;
 
 	case FORM_DEFENSIVESTANCE:
 		{
 			spellId = 7376;
-		} break;
+		}break;
 
 	case FORM_BERSERKERSTANCE:
 		{
 			spellId = 7381;
-		} break;
+		}break;
 
 	case FORM_SHADOW:
 		{
+			spellId = 49868;
+			spellId2 = 71167;
 			if(apply)
 			{
 				packetSMSG_COOLDOWN_EVENT cd;
@@ -5204,6 +5210,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		{//druid
 			freeMovements = true;
 			spellId = 33948;
+			spellId2 = 34764;
 		}break;
 
 	case FORM_STEALTH:
@@ -5217,41 +5224,28 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		{//druid
 			freeMovements = true;
 			spellId = 24905;
+			spellId2 = 69366;
 		}break;
 
 	case FORM_SWIFT: //not tested yet, right now going on trust
 		{// druid
 			freeMovements = true;
 			spellId = 40121; //Swift Form Passive
+			spellId2 = 40122;
 		}break;
 
 	case FORM_SPIRITOFREDEMPTION:
 		{
 			spellId = 27795;
+			spellId2 = 27795;
 		}break;
 
 	case FORM_DEMON:
 		{
-			if(GetSpellId() == 47241)
-			{
-				spellId = 59673;
-				if(GetUnitCaster()->IsPlayer() && GetUnitCaster()->HasDummyAura(SPELL_HASH_GLYPH_OF_METAMORPHOSIS))
-					SetDuration(GetDuration() + 6000);
-			}
-			else if(GetSpellId() == 54840)
-			{
-				if (apply)
-					m_target->CastSpell(m_target, 54817, true);
-				else
-					m_target->RemoveAura(54817);
-			}
-			else
-			{
-				if(sLog.IsOutDevelopement())
-					printf("Unknown Spell with Morph Form Demon\n");
-				else
-					OUT_DEBUG("Unknown Spell with Morph Form Demon");
-			}
+			spellId  = 54817;
+			spellId2 = 54879;
+			if(GetUnitCaster()->IsPlayer() && GetUnitCaster()->HasDummyAura(SPELL_HASH_GLYPH_OF_METAMORPHOSIS))
+				SetDuration(GetDuration() + 6000);
 		}break;
 
 	case FORM_ZOMBIE:
@@ -10694,6 +10688,26 @@ void Aura::SpellAuraOpenStable(bool apply)
 			_player->GetSession()->SendPacket(&data);
 		}
 	}
+}
+
+void Aura::SpellAuraFakeInebriation(bool apply)
+{
+	if( !m_target || !m_target->IsPlayer() )
+		return;
+
+	Player* plr = TO_PLAYER(m_target);
+
+	if( apply )
+	{
+		plr->m_invisDetect[INVIS_FLAG_DRUNK] += mod->m_amount;
+		plr->ModSignedInt32Value(PLAYER_FAKE_INEBRIATION, mod->m_amount);
+	}
+	else
+	{
+		plr->m_invisDetect[INVIS_FLAG_DRUNK] -= mod->m_amount;
+		plr->ModSignedInt32Value(PLAYER_FAKE_INEBRIATION, -mod->m_amount);
+	}
+	plr->UpdateVisibility();
 }
 
 void Aura::SpellAuraPreventResurrection(bool apply)

@@ -6173,10 +6173,15 @@ void Player::ClearInRangeSet()
 void Player::EventReduceDrunk(bool full)
 {
 	uint8 drunk = ((GetUInt32Value(PLAYER_BYTES_3) >> 8) & 0xFF);
-	if(full) drunk = 0;
-	else drunk -= 10;
+	if(full) 
+		drunk = 0;
+	else 
+		drunk -= 10;
 	SetUInt32Value(PLAYER_BYTES_3, ((GetUInt32Value(PLAYER_BYTES_3) & 0xFFFF00FF) | (drunk << 8)));
-	if(drunk == 0) sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_REDUCEDRUNK);
+	m_invisDetect[INVIS_FLAG_DRUNK] -= (drunk << 8);
+	if(drunk == 0) 
+		sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_REDUCEDRUNK);
+	UpdateVisibility();
 }
 
 void Player::LoadTaxiMask(const char* data)
