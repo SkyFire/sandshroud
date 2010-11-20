@@ -95,7 +95,7 @@ AIInterface::AIInterface()
 	disable_targeting = false;
 
 	next_spell_time = 0;
-	m_checkheighttime = 0;
+//	m_checkheighttime = 0;
 
 	waiting_for_cooldown = false;
 	UnitToFollow_backup = NULLUNIT;
@@ -126,6 +126,10 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt)
 		m_AIType = AITYPE_DUMMY;
 		m_AllowedToEnterCombat = false;
 	}
+
+	if(un->IsCreature())
+		if(TO_CREATURE(un)->GetProto() && TO_CREATURE(un)->GetProto()->CanMove & 4)
+			m_moveFly = true;
 
 	m_walkSpeed = m_Unit->m_walkSpeed*0.001f;//move distance per ms time
 	m_runSpeed = m_Unit->m_runSpeed*0.001f;//move distance per ms time
@@ -1860,7 +1864,7 @@ void AIInterface::MoveTo(float x, float y, float z)
 	m_destinationX = x;
 	m_destinationY = y;
 	m_destinationZ = z;
-	CheckHeight();
+//	CheckHeight();
 
 	if(m_creatureState != MOVING)
 		UpdateMove();
@@ -1883,7 +1887,7 @@ uint32 AIInterface::getMoveFlags()
 {
 	ASSERT(m_Unit != NULL);
 
-	CheckHeight();
+//	CheckHeight();
 	uint32 MoveFlags = MONSTER_MOVE_FLAG_WALK;
 	if(jumptolocation == true)
 	{
@@ -2811,12 +2815,12 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 		}
 	}
 
-	if(p_time > m_checkheighttime)
+/*	if(p_time > m_checkheighttime)
 	{
 		m_checkheighttime = p_time+5000; // Five
 		// This is fly checks, mostly because of object updates.
 		CheckHeight();
-	}
+	}*/
 }
 
 uint8 AIInterface::CastSpell(Unit* caster, SpellEntry *spellInfo, SpellCastTargets targets)
@@ -3714,7 +3718,7 @@ void AIInterface::WipeCurrentTarget()
 		UnitToFollow_backup = NULLUNIT;
 }
 
-// Crow: THIS FUNCTION IS HEAVILY DEPENDENT ON THE CREATURE PROTO COLUMN!
+/* Crow: THIS FUNCTION IS HEAVILY DEPENDENT ON THE CREATURE PROTO COLUMN!
 void AIInterface::CheckHeight()
 {
 	ASSERT(m_Unit != NULL);
@@ -3751,7 +3755,7 @@ void AIInterface::CheckHeight()
 		}
 		m_Unit->UpdateVisibility();
 	}
-}
+}*/
 
 uint32 AIInterface::GetMovementTime(float distance)
 {

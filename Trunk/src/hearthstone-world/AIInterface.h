@@ -511,8 +511,8 @@ public:
 	bool skip_reset_hp;
 
 	void WipeCurrentTarget();
-	void CheckHeight();
-	uint32 m_checkheighttime;
+//	void CheckHeight();
+//	uint32 m_checkheighttime;
 	bool CheckCurrentTarget();
 	bool TargetUpdateCheck(Unit* ptr);
 	uint32 GetMovementTime(float distance);
