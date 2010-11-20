@@ -6471,17 +6471,10 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 
 void Player::SendXPToggleConfirm()
 {
-//	sChatHandler.SystemMessageToPlr(this, "XP %s.", m_XPoff ? "Disabled" : "Enabled");
 	if(m_XPoff)
 		m_XPoff = false;
 	else
 		m_XPoff = true;
-/*	std::string message = "Xp Disabled or Enabled message.";
-	WorldPacket data(SMSG_TOGGLE_XP_GAIN, 20);
-	data << GetGUID();
-	data << uint32(message.size());
-	data << message;
-	GetSession()->SendPacket(&data);*/
 }
 
 void Player::EventAllowTiggerPort(bool enable)

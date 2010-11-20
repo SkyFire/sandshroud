@@ -58,7 +58,7 @@ public:
 		if(pObject->GetTypeId()!=TYPEID_UNIT)
 			return;
 
-        plr->GetSession()->SendBattlegroundList((TO_CREATURE(pObject)), 2);  // WSG = 2
+        plr->GetSession()->SendBattlegroundList(TO_CREATURE(pObject), 2);  // WSG = 2
     }
 
     void Destroy()
@@ -103,7 +103,7 @@ public:
 		if(pObject->GetTypeId()!=TYPEID_UNIT)
 			return;
 
-		plr->GetSession()->SendBattlegroundList((TO_CREATURE(pObject)), 3);  // AB = 3
+		plr->GetSession()->SendBattlegroundList(TO_CREATURE(pObject), 3);  // AB = 3
     }
 
     void Destroy()
@@ -148,7 +148,7 @@ public:
 		if(pObject->GetTypeId()!=TYPEID_UNIT)
 			return;
 
-		plr->GetSession()->SendBattlegroundList((TO_CREATURE(pObject)), 1);  // AV = 1
+		plr->GetSession()->SendBattlegroundList(TO_CREATURE(pObject), 1);  // AV = 1
     }
 
     void Destroy()
@@ -193,7 +193,7 @@ public:
 		if(pObject->GetTypeId()!=TYPEID_UNIT)
 			return;
 
-        plr->GetSession()->SendBattlegroundList((TO_CREATURE(pObject)), 7);  // EOTS = 7
+        plr->GetSession()->SendBattlegroundList(TO_CREATURE(pObject), 7);  // EOTS = 7
     }
 
     void Destroy()

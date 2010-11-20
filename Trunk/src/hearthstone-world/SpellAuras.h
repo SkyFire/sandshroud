@@ -748,6 +748,7 @@ public:
 	void SpellAuraModCritChanceAll(bool apply);
 	void SpellAuraOpenStable(bool apply);
 	void SpellAuraFakeInebriation(bool apply);
+	void SpellAuraModWalkSpeed(bool apply);
 	void SpellAuraPreventResurrection(bool apply);
 	void SpellAuraConvertRune(bool apply);
 

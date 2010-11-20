@@ -325,7 +325,7 @@ pSpellAura SpellAuraHandler[TOTAL_SPELL_AURAS] = {
 	&Aura::SpellAuraNULL,                                           //302
 	&Aura::SpellAuraNULL,                                           //303
 	&Aura::SpellAuraFakeInebriation,                                //304
-	&Aura::SpellAuraModIncreaseSpeed,                               //305
+	&Aura::SpellAuraModWalkSpeed,									//305
 	&Aura::SpellAuraNULL,                                           //306
 	&Aura::SpellAuraNULL,                                           //307
 	&Aura::SpellAuraNULL,                                           //308
@@ -5244,14 +5244,8 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		{
 			spellId  = 54817;
 			spellId2 = 54879;
-			if(GetUnitCaster()->IsPlayer() && GetUnitCaster()->HasDummyAura(SPELL_HASH_GLYPH_OF_METAMORPHOSIS))
-				SetDuration(GetDuration() + 6000);
-		}break;
-
-	case FORM_ZOMBIE:
-	case FORM_GHOUL:
-		{
-			spellId = 0;
+			//if(GetUnitCaster()->IsPlayer() && GetUnitCaster()->HasDummyAura(SPELL_HASH_GLYPH_OF_METAMORPHOSIS))
+				//SetDuration(GetDuration() + 6000);
 		}break;
 	}
 
@@ -5303,22 +5297,23 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		TO_PLAYER( m_target )->SetShapeShift( mod->m_miscValue );
 
 		// check for spell id
-		if( spellId == 0 )
-			return;
-
-		SpellEntry* spellInfo = dbcSpell.LookupEntry(spellId );
-
-		Spell* sp = NULLSPELL;
-		sp = (new Spell( m_target, spellInfo, true, NULLAURA ));
-		SpellCastTargets tgt;
-		tgt.m_unitTarget = m_target->GetGUID();
-		sp->prepare( &tgt );
+		if( spellId != 0 )
+		{
+			SpellEntry* spellInfo = dbcSpell.LookupEntry(spellId );
+			Spell* sp = NULLSPELL;
+			sp = (new Spell( m_target, spellInfo, true, NULLAURA ));
+			SpellCastTargets tgt;
+			tgt.m_unitTarget = m_target->GetGUID();
+			sp->prepare( &tgt );
+		}
 
 		if( spellId2 != 0 )
 		{
-			spellInfo = dbcSpell.LookupEntry(spellId2);
-			sp = NULLSPELL;
+			SpellEntry* spellInfo = dbcSpell.LookupEntry(spellId2);
+			Spell* sp = NULLSPELL;
 			sp = (new Spell( m_target, spellInfo, true, NULLAURA ));
+			SpellCastTargets tgt;
+			tgt.m_unitTarget = m_target->GetGUID();
 			sp->prepare(&tgt);
 		}
 
@@ -5355,15 +5350,17 @@ void Aura::SpellAuraModShapeshift(bool apply)
 	{
 		//execute before changing shape back
 		TO_PLAYER( m_target )->EventTalentHeartOfWildChange( false );
-		m_target->SetUInt32Value( UNIT_FIELD_DISPLAYID, m_target->GetUInt32Value( UNIT_FIELD_NATIVEDISPLAYID ) );
-		if( spellId != GetSpellId() && spellId )
+		m_target->SetUInt32Value(UNIT_FIELD_DISPLAYID, m_target->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
+
+		if(spellId != 0)
 		{
-			m_target->RemoveAura( spellId );
+			m_target->RemoveAura(spellId);
 			if( spellId == 27795 ) //Spirit Redemption
-			{
 				m_target->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
-			}
 		}
+
+		if(spellId2 != 0)
+			m_target->RemoveAura(spellId2);
 
 		TO_PLAYER( m_target )->m_ShapeShifted = 0;
 		TO_PLAYER( m_target )->SetShapeShift(0);
@@ -10859,4 +10856,14 @@ void Aura::SpellAuraConvertRune(bool apply)
 			break;
 		}
 	}
+}
+
+void Aura::SpellAuraModWalkSpeed(bool apply)
+{
+	if(apply)
+		m_target->m_walkSpeed += mod->m_amount;
+	else
+		m_target->m_walkSpeed -= mod->m_amount;
+
+	m_target->UpdateSpeed();
 }

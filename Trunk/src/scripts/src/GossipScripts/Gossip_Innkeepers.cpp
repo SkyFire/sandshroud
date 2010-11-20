@@ -44,7 +44,7 @@ public:
 
 void InnkeeperGossip::GossipHello(Object *pObject, Player *Plr, bool AutoSend)
 {
-	Creature *pCreature = (pObject->GetTypeId()==TYPEID_UNIT)?(TO_CREATURE(pObject)):NULLCREATURE;
+	Creature *pCreature = (pObject->GetTypeId()==TYPEID_UNIT)?TO_CREATURE(pObject):NULLCREATURE;
 	if(pCreature==NULLCREATURE)
 		return;
 
@@ -79,7 +79,7 @@ void InnkeeperGossip::GossipHello(Object *pObject, Player *Plr, bool AutoSend)
 
 void InnkeeperGossip::GossipSelectOption(Object *pObject, Player *Plr, uint32 Id, uint32 IntId, const char * Code)
 {
-	Creature *pCreature = (pObject->GetTypeId()==TYPEID_UNIT)?(TO_CREATURE(pObject)):NULLCREATURE;
+	Creature *pCreature = (pObject->GetTypeId()==TYPEID_UNIT)?TO_CREATURE(pObject):NULLCREATURE;
 	if(pCreature==NULLCREATURE)
 		return;
 

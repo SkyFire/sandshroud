@@ -5403,6 +5403,7 @@ void Unit::UpdateSpeed()
 		}
 	}
 
+	SetSpeed(WALK, m_walkSpeed);
 	SetSpeed(RUN, m_runSpeed);
 	SetSpeed(FLY, m_flySpeed);
 

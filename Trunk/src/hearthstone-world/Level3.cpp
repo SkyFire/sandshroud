@@ -514,19 +514,19 @@ bool ChatHandler::HandleNpcInfoCommand(const char *args, WorldSession *m_session
 	if(!crt) return false;
 	if(crt->GetCreatureInfo())
 		BlueSystemMessage(m_session, "Showing creature info for %s", crt->GetCreatureInfo()->Name);
-	snprintf(msg,512,"GUID: %d\nFaction: %d\nNPCFlags: %d\nDisplayID: %d\n Scale %f", (int)guid, (int)crt->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE), (int)crt->GetUInt32Value(UNIT_NPC_FLAGS), (int)crt->GetUInt32Value(UNIT_FIELD_DISPLAYID), crt->proto->Scale);
+	snprintf(msg,512,"GUID: %u\nFaction: %u\nNPCFlags: %u\nDisplayID: %u\n Scale %f", guid, crt->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE), crt->GetUInt32Value(UNIT_NPC_FLAGS), crt->GetUInt32Value(UNIT_FIELD_DISPLAYID), crt->proto->Scale);
 	SystemMessage(m_session, msg);
 	if(crt->m_faction)
 		GreenSystemMessage(m_session, "Combat Support: 0x%.3X", crt->m_faction->FriendlyMask);
-	GreenSystemMessage(m_session, "Base Health: %d", crt->GetUInt32Value(UNIT_FIELD_BASE_HEALTH));
-	GreenSystemMessage(m_session, "Base Armor: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES));
-	GreenSystemMessage(m_session, "Base Mana: %d", crt->GetUInt32Value(UNIT_FIELD_MAXPOWER1));
-	GreenSystemMessage(m_session, "Base Holy: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+1));
-	GreenSystemMessage(m_session, "Base Fire: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+2));
-	GreenSystemMessage(m_session, "Base Nature: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+3));
-	GreenSystemMessage(m_session, "Base Frost: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+4));
-	GreenSystemMessage(m_session, "Base Shadow: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+5));
-	GreenSystemMessage(m_session, "Base Arcane: %d", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+6));
+	GreenSystemMessage(m_session, "Base Health: %u", crt->GetUInt32Value(UNIT_FIELD_BASE_HEALTH));
+	GreenSystemMessage(m_session, "Base Armor: %u", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES));
+	GreenSystemMessage(m_session, "Base Mana: %u", crt->GetUInt32Value(UNIT_FIELD_MAXPOWER1));
+	GreenSystemMessage(m_session, "Base Holy: %u", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+1));
+	GreenSystemMessage(m_session, "Base Fire: %u", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+2));
+	GreenSystemMessage(m_session, "Base Nature: %u", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+3));
+	GreenSystemMessage(m_session, "Base Frost: %u", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+4));
+	GreenSystemMessage(m_session, "Base Shadow: %u", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+5));
+	GreenSystemMessage(m_session, "Base Arcane: %u", crt->GetUInt32Value(UNIT_FIELD_RESISTANCES+6));
 	GreenSystemMessage(m_session, "Damage min/max: %f/%f", crt->GetFloatValue(UNIT_FIELD_MINDAMAGE),crt->GetFloatValue(UNIT_FIELD_MAXDAMAGE));
 
 	ColorSystemMessage(m_session, MSG_COLOR_RED, "Entry ID: %d", crt->GetUInt32Value(OBJECT_FIELD_ENTRY));
