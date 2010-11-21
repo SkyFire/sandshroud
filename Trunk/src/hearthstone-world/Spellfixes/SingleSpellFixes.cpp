@@ -5056,9 +5056,12 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 				sp->procFlags = PROC_ON_CAST_SPELL;
 			}
 		}break;
-
-	default:
+	case SPELL_HASH_DEVOURING_PLAGUE:
 		{
+			sp->MaxTargets = 1;
+		}break;
+		}
+
 			if( sp->NameHash == SPELL_HASH_IMPROVED_DEVOTION_AURA )
 			{
 				sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_HEALING_PCT;
@@ -5329,8 +5332,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			// fuck you too
 			if( sp->NameHash == SPELL_HASH_PROWL )
 				sp->EffectBasePoints[0] = 0;
-		}break;
-	}
 
 	//////////////////////////////////////////////////////////////////
 	//AREA AURA TARGETS - END

@@ -198,8 +198,8 @@ void MoonScriptCreatureAI::SetBehavior(BehaviorType pBehavior)
 		case Behavior_Melee:		_unit->GetAIInterface()->setCurrentAgent(AGENT_MELEE); break;
 		case Behavior_Ranged:		_unit->GetAIInterface()->setCurrentAgent(AGENT_RANGED); break;
 		case Behavior_Spell:		_unit->GetAIInterface()->setCurrentAgent(AGENT_SPELL); break;
-		case Behavior_Flee:			_unit->GetAIInterface()->setCurrentAgent(AGENT_FLEE); break;
-		case Behavior_CallForHelp:	_unit->GetAIInterface()->setCurrentAgent(AGENT_CALLFORHELP); break;
+		//case Behavior_Flee:			_unit->GetAIInterface()->setCurrentAgent(AGENT_FLEE); break;
+		//case Behavior_CallForHelp:	_unit->GetAIInterface()->setCurrentAgent(AGENT_CALLFORHELP); break;
 		default:					sLog.outDebug("MoonScriptCreatureAI::SetBehavior() : Invalid behavior type!\n"); break;
 	}
 }
@@ -211,9 +211,9 @@ BehaviorType MoonScriptCreatureAI::GetBehavior()
 		case AGENT_NULL:		return Behavior_Default;
 		case AGENT_MELEE:		return Behavior_Melee;
 		case AGENT_RANGED:		return Behavior_Ranged;
-		case AGENT_FLEE:		return Behavior_Flee;
+		//case AGENT_FLEE:		return Behavior_Flee;
 		case AGENT_SPELL:		return Behavior_Spell;
-		case AGENT_CALLFORHELP:	return Behavior_CallForHelp;
+		//case AGENT_CALLFORHELP:	return Behavior_CallForHelp;
 		default:				sLog.outDebug("MoonScriptCreatureAI::SetBehavior() : Invalid behavior type!\n"); return Behavior_Default;
 	}
 }

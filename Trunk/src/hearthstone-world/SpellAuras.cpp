@@ -2587,8 +2587,8 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 			else
 			{
-				m_target->EnableAI();
 				TO_PLAYER(m_caster)->UnPossess();
+				m_target->EnableAI();
 				/*m_caster->SetUInt64Value(UNIT_FIELD_SUMMON, m_target->GetGUID());
 				m_target->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, m_caster->GetGUID());
 				m_caster->SetUInt64Value(UNIT_FIELD_CHARM, 0);
@@ -3375,7 +3375,6 @@ void Aura::SpellAuraDummy(bool apply)
 		}break;
 	case 59907:
 		{
-			printf("Lightwell is applied");
 		}break;
 
 	default:
