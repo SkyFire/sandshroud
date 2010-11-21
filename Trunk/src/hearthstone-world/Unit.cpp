@@ -3818,16 +3818,19 @@ else
 			 TO_PLAYER(this)->GetItemInterface()->ReduceItemDurability();
 		}
 	}
-	else if(pVictim->IsCreature() && TO_CREATURE(pVictim)->GetProto())
+	else if(pVictim->IsCreature())
 	{	// Not PvP, proto, and skill up.
-		if(IsPlayer() && !TO_CREATURE(pVictim)->GetProto()->no_skill_up)
+		if(IsPlayer())
 		{
-			TO_PLAYER(this)->GetItemInterface()->ReduceItemDurability();
-			Player* pr = TO_PLAYER(this);
-			if( Rand( pr->GetSkillUpChance( SubClassSkill) * sWorld.getRate( RATE_SKILLCHANCE ) ) )
+			if(!TO_CREATURE(pVictim)->GetExtraInfo() || !TO_CREATURE(pVictim)->GetExtraInfo()->no_skill_up)
 			{
-				pr->_AdvanceSkillLine( SubClassSkill, float2int32( 1.0f * sWorld.getRate(RATE_SKILLRATE)));
-				pr->UpdateChances();
+				TO_PLAYER(this)->GetItemInterface()->ReduceItemDurability();
+				Player* pr = TO_PLAYER(this);
+				if( Rand( pr->GetSkillUpChance( SubClassSkill) * sWorld.getRate( RATE_SKILLCHANCE ) ) )
+				{
+					pr->_AdvanceSkillLine( SubClassSkill, float2int32( 1.0f * sWorld.getRate(RATE_SKILLRATE)));
+					pr->UpdateChances();
+				}
 			}
 		}
 	}
@@ -4930,8 +4933,7 @@ void Unit::SendChatMessageAlternateEntry(uint32 entry, uint8 type, uint32 lang, 
 void Unit::SendChatMessage(uint8 type, uint32 lang, const char *msg)
 {
 	size_t UnitNameLength = 0, MessageLength = 0;
-	CreatureInfo *ci = (m_objectTypeId == TYPEID_UNIT) ? TO_CREATURE(this)->creature_info : NULL;
-
+	CreatureInfo *ci = (m_objectTypeId == TYPEID_UNIT) ? TO_CREATURE(this)->GetCreatureInfo() : NULL;
 	if(ci == NULL)
 		return;
 

@@ -1583,8 +1583,19 @@ bool ChatHandler::HandleShutdownCommand(const char* args, WorldSession* m_sessio
 	if( !args )
 		shutdowntime = 5;
 
-	sWorld.LogGM(m_session, "initiated server shutdown timer %u sec", shutdowntime);
+	sWorld.LogGM(m_session, "initiated server shutdown, timer %u sec", shutdowntime);
 	sWorld.QueueShutdown(shutdowntime, SERVER_SHUTDOWN_TYPE_SHUTDOWN);
+	return true;
+}
+
+bool ChatHandler::HandleRestartCommand(const char* args, WorldSession* m_session)
+{
+	uint32 restarttime = atol(args);
+	if( !args )
+		restarttime = 5;
+
+	sWorld.LogGM(m_session, "initiated server restart, timer %u sec", restarttime);
+	sWorld.QueueShutdown(restarttime, SERVER_SHUTDOWN_TYPE_RESTART);
 	return true;
 }
 

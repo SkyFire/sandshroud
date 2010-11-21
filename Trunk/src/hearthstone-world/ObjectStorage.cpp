@@ -32,9 +32,9 @@ x = skip
 const char * gAchievementRewardFormat					= "uuuu";
 const char * gAreaTriggerFormat							= "ucuusffffuu";
 const char * gCreatureNameFormat						= "usssuuuuuuuuuuuffcc";
-const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuibbuufffuuiuc";
+const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuiuufffuuiuc";
 const char * gCreatureVehicleProto						= "ubuuuuuuuuubbubbubbubbubbubbubbubb";
-const char * gCreatureInfoExtra							= "uuuhu";
+const char * gCreatureInfoExtra							= "uuuhubbfbfuisbb";
 const char * gFishingFormat								= "uuu";
 const char * gGameObjectNameFormat						= "uuusssuuuuuuuuuuuuuuuuuuuuuuuu";
 const char * gGraveyardFormat							= "uffffuuuux";
@@ -115,6 +115,7 @@ void ObjectMgr::LoadExtraGameObjectStuff()
 
 void ObjectMgr::LoadExtraCreatureProtoStuff()
 {
+	CreatureInfoExtra * cix;
 	CreatureProto * cn;
 	CreatureInfo * ci;
 	uint32 entry;
@@ -143,12 +144,8 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		if (cn->AttackType > SCHOOL_ARCANE)
 			cn->AttackType = SCHOOL_NORMAL;
 
-		cn->m_canFlee = cn->m_canRangedAttack = cn->m_canCallForHelp = false;
-		cn->m_fleeHealth = 0.0f;
-		cn->m_fleeDuration = 0;
 		cn->ModeProto.clear();
 		cn->TeleportInfoList.clear();
-
 		if(!cpitr->Inc())
 			break;
 	}
@@ -212,6 +209,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					int32 tcd = fields[8].GetInt32();
 
 					cn = CreatureProtoStorage.LookupEntry(entry);
+					cix = CreatureInfoExtraStorage.LookupEntry(entry);
 					if( cn == NULL )
 					{
 						Log.Warning("AIAgent", "Agent skipped, NPC %u does not exist.", fields[0].GetUInt32());
@@ -251,17 +249,30 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					sp->cooldown = (tcd <0 ? 0 : tcd);
 					sp->floatMisc1 = fields[9].GetFloat();
 					sp->Misc2 = fields[10].GetUInt32();
-					sp->autocast_type=(uint32)-1;
-					sp->custom_pointer=false;
-					sp->procCounter=0;
+					sp->autocast_type = (uint32)-1;
+					sp->custom_pointer = false;
+					sp->procCounter = 0;
 
 					//Set cooldowntimer
-					sp->cooldowntime=getMSTime();
+					sp->cooldowntime = getMSTime();
 
 					switch(sp->agent)
 					{
-						case AGENT_SPELL:
+
+					case AGENT_RANGED:
+					case AGENT_SPELL:
 						{
+							if(sp->agent == AGENT_RANGED)
+							{
+								if(cix == NULL || !cix->m_canRangedAttack)
+								{
+									Log.Warning("AIAgent","SpellId %u skipped in ai_agent because NPC %u cannot attack from a range.", spellID, sp->entryId);
+									delete sp;
+									sp = NULL;
+									continue;
+								}
+							}
+
 							if(sp->spell->Effect[0] == SPELL_EFFECT_LEARN_SPELL || sp->spell->Effect[1] == SPELL_EFFECT_LEARN_SPELL ||
 								sp->spell->Effect[2] == SPELL_EFFECT_LEARN_SPELL)
 							{
@@ -304,56 +315,15 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 							counter += 1;
 						}break;
 
-						case AGENT_RANGED:
-						{
-							cn->m_canRangedAttack = true;
-							cn->m_RangedAttackSpell = (spellID?spellID:15620);
-							cn->m_SpellSoundid = sp->Misc2;
-							delete sp;
-							sp = NULL;
-							counter += 1;
-						}break;
-
-						case AGENT_FLEE:
-						{
-							// % health
-							cn->m_canFlee = true;
-							if(sp->floatMisc1)
-								cn->m_fleeHealth = sp->floatMisc1;
-							else //if left to zero, start running inmeadetely
-								cn->m_fleeHealth = 100.0f;
-
-							if(sp->Misc2)
-								cn->m_fleeDuration = sp->Misc2;
-							else
-								cn->m_fleeDuration = 10000;
-
-							delete sp;
-							sp = NULL;
-							counter += 1;
-						}break;
-
-						case AGENT_CALLFORHELP:
-						{
-							cn->m_canCallForHelp = true;
-							if(sp->floatMisc1)
-								cn->m_callForHelpHealth = sp->floatMisc1;
-							else
-								cn->m_callForHelpHealth = 0.2f;
-
-							delete sp;
-							sp = NULL;
-							counter += 1;
-						}break;
-
 						//Unsupported Agent type, don't add to list
-						default:
+					default:
 						{
 							Log.Warning("AIAgent","Skipping in-valid  entry %u for ai_type %u.", sp->entryId, sp->agent );
 							delete sp;
 							sp = NULL;
 						}break;
 					}
+
 					//Valid; add to list
 					if(sp != NULL)
 					{

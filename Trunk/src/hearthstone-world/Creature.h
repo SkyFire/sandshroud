@@ -180,8 +180,6 @@ struct CreatureProto
 	char * aura_string;
 	uint32 boss;
 	int32 money;
-	bool no_xp;
-	bool no_skill_up;
 	uint32 invisibility_type;
 	uint32 death_state;
 	float	walk_speed;//base movement
@@ -192,16 +190,6 @@ struct CreatureProto
 	int32 vehicle_entry;
 	uint32 SpellClickid;
 	uint8 CanMove;
-
-	/* AI Stuff */
-	bool m_canRangedAttack;
-	uint32 m_RangedAttackSpell;
-	uint32 m_SpellSoundid;
-	bool m_canFlee;
-	float m_fleeHealth;
-	uint32 m_fleeDuration;
-	bool m_canCallForHelp;
-	float m_callForHelpHealth;
 
 	set<uint32> start_auras;
 	list<AI_Spell*> spells[4];
@@ -233,6 +221,16 @@ struct CreatureInfoExtra
 	uint32 default_flags;
 	uint16 default_stand_state;
 	uint32 default_MountedDisplayID;
+	bool   m_canRangedAttack;
+	bool   m_canCallForHelp;
+	float  m_callForHelpHP;
+	bool   m_canFlee;
+	float  m_fleeHealth;
+	uint32 m_fleeDuration;
+	int    sendflee_message;
+	string flee_message;
+	bool   no_skill_up;
+	bool   no_xp;
 };
 
 #pragma pack(pop)
@@ -601,8 +599,11 @@ public:
 	void ChannelLinkUpCreature(uint32 SqlId);
 	WayPoint * CreateWaypointStruct();
 	CreatureProto * proto;
-	CreatureProtoMode* LoadedProto;
 	HEARTHSTONE_INLINE CreatureProto *GetProto() { return proto; }
+	CreatureProtoMode* LoadedProto;
+	HEARTHSTONE_INLINE CreatureProtoMode *GetLoadedProto() { return LoadedProto; }
+	CreatureInfoExtra * ExtraInfo;
+	HEARTHSTONE_INLINE CreatureInfoExtra *GetExtraInfo() { return ExtraInfo; }
 	uint32 GetRespawnTime() { if(proto != NULL) return proto->RespawnTime; else return 0; }
 	CreatureSpawn * m_spawn;
 	EventIdInfo * m_event;

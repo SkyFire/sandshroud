@@ -697,7 +697,8 @@ struct TotemSpells
 	uint32 spellToCast[3];
 };
 
-enum LOCKTYPES{
+enum LOCKTYPES
+{
 	LOCKTYPE_PICKLOCK				= 1,
 	LOCKTYPE_HERBALISM				= 2,
 	LOCKTYPE_MINING					= 3,

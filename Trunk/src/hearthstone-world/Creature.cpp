@@ -893,6 +893,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		return false;
 
 	creature_info = CreatureNameStorage.LookupEntry(spawn->entry);
+	ExtraInfo = CreatureInfoExtraStorage.LookupEntry(proto->Id);
 	if(!creature_info)
 		return false;
 
@@ -1084,14 +1085,28 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		m_aiInterface->addSpellToList(*itr);
 	}
 
-	m_aiInterface->m_canRangedAttack = proto->m_canRangedAttack;
-	m_aiInterface->m_RangedAttackSpell = proto->m_RangedAttackSpell;
-	m_aiInterface->m_SpellSoundid = proto->m_SpellSoundid;
-	m_aiInterface->m_canCallForHelp = proto->m_canCallForHelp;
-	m_aiInterface->m_CallForHelpHealth = proto->m_callForHelpHealth;
-	m_aiInterface->m_canFlee = proto->m_canFlee;
-	m_aiInterface->m_FleeHealth = proto->m_fleeHealth;
-	m_aiInterface->m_FleeDuration = proto->m_fleeDuration;
+	if(ExtraInfo != NULL)
+	{
+		m_aiInterface->m_canRangedAttack = ExtraInfo->m_canRangedAttack;
+		m_aiInterface->m_canCallForHelp = ExtraInfo->m_canCallForHelp;
+		m_aiInterface->m_CallForHelpHealth = ExtraInfo->m_callForHelpHP;
+		m_aiInterface->m_canFlee = ExtraInfo->m_canFlee;
+		m_aiInterface->m_FleeHealth = ExtraInfo->m_fleeHealth;
+		m_aiInterface->m_FleeDuration = ExtraInfo->m_fleeDuration;
+		m_aiInterface->sendflee_message = ExtraInfo->sendflee_message;
+		m_aiInterface->flee_message = ExtraInfo->flee_message;
+	}
+	else
+	{
+		m_aiInterface->m_canRangedAttack = false;
+		m_aiInterface->m_canCallForHelp = false;
+		m_aiInterface->m_CallForHelpHealth = 0.0f;
+		m_aiInterface->m_canFlee = false;
+		m_aiInterface->m_FleeHealth = 0.0f;
+		m_aiInterface->m_FleeDuration = 0;
+		m_aiInterface->sendflee_message = false;
+		m_aiInterface->flee_message = "";
+	}
 
 	//these fields are always 0 in db
 	GetAIInterface()->setMoveType(0);
@@ -1258,6 +1273,7 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	proto = proto_;
 
 	creature_info = CreatureNameStorage.LookupEntry(proto->Id);
+	ExtraInfo = CreatureInfoExtraStorage.LookupEntry(proto->Id);
 	if(!creature_info)
 		return;
 
@@ -1427,14 +1443,24 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 		m_aiInterface->addSpellToList(*itr);
 	}
 
-	m_aiInterface->m_canRangedAttack = proto->m_canRangedAttack;
-	m_aiInterface->m_RangedAttackSpell = proto->m_RangedAttackSpell;
-	m_aiInterface->m_SpellSoundid = proto->m_SpellSoundid;
-	m_aiInterface->m_canCallForHelp = proto->m_canCallForHelp;
-	m_aiInterface->m_CallForHelpHealth = proto->m_callForHelpHealth;
-	m_aiInterface->m_canFlee = proto->m_canFlee;
-	m_aiInterface->m_FleeHealth = proto->m_fleeHealth;
-	m_aiInterface->m_FleeDuration = proto->m_fleeDuration;
+	if(ExtraInfo != NULL)
+	{
+		m_aiInterface->m_canRangedAttack = ExtraInfo->m_canRangedAttack;
+		m_aiInterface->m_canCallForHelp = ExtraInfo->m_canCallForHelp;
+		m_aiInterface->m_CallForHelpHealth = ExtraInfo->m_callForHelpHP;
+		m_aiInterface->m_canFlee = ExtraInfo->m_canFlee;
+		m_aiInterface->m_FleeHealth = ExtraInfo->m_fleeHealth;
+		m_aiInterface->m_FleeDuration = ExtraInfo->m_fleeDuration;
+	}
+	else
+	{
+		m_aiInterface->m_canRangedAttack = false;
+		m_aiInterface->m_canCallForHelp = false;
+		m_aiInterface->m_CallForHelpHealth = 0.0f;
+		m_aiInterface->m_canFlee = false;
+		m_aiInterface->m_FleeHealth = 0.0f;
+		m_aiInterface->m_FleeDuration = 0;
+	}
 
 	//these fields are always 0 in db
 	GetAIInterface()->setMoveType(0);

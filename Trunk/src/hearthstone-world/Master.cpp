@@ -26,7 +26,8 @@ std::string LogFileName;
 bool bLogChat;
 bool crashed = false;
 
-volatile bool Master::m_stopEvent = false;
+volatile bool Master::m_stopEvent;
+extern bool killit;
 
 // Database defines.
 SERVER_DECL Database* Database_Character;
@@ -49,6 +50,7 @@ void Master::_OnSignal(int s)
 #ifdef _WIN32
 	case SIGBREAK:
 #endif
+		killit = true;
 		remove( "hearthstone-world.pid" );
 		Master::m_stopEvent = true;
 		break;
@@ -93,9 +95,9 @@ ThreadContext * GetConsoleListener();
 
 bool Master::Run(int argc, char ** argv)
 {
+	m_stopEvent = false;
 	char * config_file = (char*)default_config_file;
 	char * realm_config_file = (char*)default_realm_config_file;
-
 	int screen_log_level = DEF_VALUE_NOT_SET;
 	int do_check_conf = 0;
 	int do_version = 0;
@@ -498,6 +500,7 @@ bool Master::Run(int argc, char ** argv)
 #endif
 
 	Log.Notice( "Shutdown", "Shutdown complete." );
+	Sleep(5000);
 	return true;
 }
 
@@ -705,6 +708,11 @@ void Master::_UnhookSignals()
 	signal( SIGHUP, 0 );
 #endif
 
+}
+
+void Master::KillIt()
+{
+	killit = true;
 }
 
 #ifdef WIN32

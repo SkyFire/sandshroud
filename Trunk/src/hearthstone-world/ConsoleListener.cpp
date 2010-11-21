@@ -349,6 +349,7 @@ void HandleConsoleInput(BaseConsole * pConsole, const char * szInput)
 		{ &HandleQuitCommand, "exit", "[delay]", "Shuts down server with optional delay in seconds." },
 		{ &HandleQuitCommand, "quit", "[delay]", "Shuts down server with optional delay in seconds." },
 		{ &HandleQuitCommand, "shutdown", "[delay]", "Shuts down server with optional delay in seconds." },
+		{ &HandleRestartCommand, "restart", "[delay]", "Restarts the server with optional delay in seconds." },
 		{ &HandleRehashCommand, "rehash", "none", "Reloads the config file" },
 		{ &HandleUnbanAccountCommand, "unban", "<account>", "Unbans account x." },
 		{ &HandleUnbanAccountCommand, "unbanaccount", "<account>", "Unbans account x." },

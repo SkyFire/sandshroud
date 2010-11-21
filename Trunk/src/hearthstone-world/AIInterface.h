@@ -84,9 +84,7 @@ enum AI_Agent
 	AGENT_NULL,
 	AGENT_MELEE,
 	AGENT_RANGED,
-	AGENT_FLEE,
-	AGENT_SPELL,
-	AGENT_CALLFORHELP
+	AGENT_SPELL
 };
 
 enum AI_SpellType
@@ -359,15 +357,16 @@ public:
 		else
 			return 0;
 	}
-	bool m_canFlee;
-	bool m_canCallForHelp;
-	bool m_canRangedAttack;
-	uint32 m_RangedAttackSpell;
-	uint32 m_SpellSoundid;
 
+	bool m_canCallForHelp;
+	float m_CallForHelpHealth;
+	bool m_canRangedAttack;
+	bool m_canFlee;
 	float m_FleeHealth;
 	uint32 m_FleeDuration;
-	float m_CallForHelpHealth;
+	int sendflee_message;
+	string flee_message;
+
 	uint32 m_totemspelltimer;
 	uint32 m_totemspelltime;
 	SpellEntry * totemspell;
@@ -388,18 +387,9 @@ public:
 			have_graceful_hit=false;
 #endif
 		}
-		else m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+		else
+			m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 	}
-
-	/*HEARTHSTONE_INLINE void ResetProcCounts()
-	{
-		AI_Spell*sp;
-		for(list<AI_Spell*>::iterator itr = m_spells.begin(); itr != m_spells.end(); itr++)
-				{
-					sp = *itr;
-					sp->procCount =sp->procCountDB;
-				}
-	}*/
 
 	Creature* m_formationLinkTarget;
 	float m_formationFollowDistance;

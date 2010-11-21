@@ -175,8 +175,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
 				AdditionalOptions="/NODEFAULTLIB:MSVCRT"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/amd64/"
 				IgnoreAllDefaultLibraries="false"

@@ -858,10 +858,51 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 	{
 		if( agent == AGENT_NULL || ( m_AIType == AITYPE_PET && !m_nextSpell ) ) // allow pets autocast
 		{
-			if(m_canFlee && !m_hasFled && ( m_FleeHealth ? float(m_Unit->GetUInt32Value(UNIT_FIELD_HEALTH) / m_Unit->GetUInt32Value(UNIT_FIELD_MAXHEALTH)) < m_FleeHealth : 1))
-				agent = AGENT_FLEE;
+			if(m_canFlee && !m_hasFled && ( float(m_Unit->GetHealthPct()) < (m_FleeHealth ? m_FleeHealth : 1)))
+			{
+				m_moveRun = false;
+				if(m_fleeTimer == 0)
+					m_fleeTimer = m_FleeDuration;
+
+				_CalcDestinationAndMove(m_nextTarget, 5.0f);
+				if(!m_hasFled)
+					CALL_SCRIPT_EVENT(m_Unit, OnFlee)(m_nextTarget);
+
+				m_AIState = STATE_FLEEING;
+				SetNextTarget(NULLUNIT);
+
+				switch(sendflee_message)
+				{
+				case 1:
+					{
+						if(flee_message.size())
+							m_Unit->SendChatMessage(CHAT_MSG_MONSTER_SAY, LANG_UNIVERSAL, flee_message.c_str());
+					}break;
+				case 2:
+					{
+						if(flee_message.size())
+							m_Unit->SendChatMessage(CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, flee_message.c_str());
+					}break;
+				default:
+					{
+						stringstream ss;
+						ss << TO_CREATURE( m_Unit )->GetCreatureInfo()->Name << " attempts to run away in fear!";
+						m_Unit->SendChatMessage(CHAT_MSG_MONSTER_EMOTE, LANG_UNIVERSAL, ss.str().c_str());
+					}break;
+				}
+
+				m_hasFled = true;
+				return;
+			}
 			else if(m_canCallForHelp && !m_hasCalledForHelp )
-				agent = AGENT_CALLFORHELP;
+			{
+				FindFriends( 50.0f /*7.0f*/ );
+				m_hasCalledForHelp = true; // We only want to call for Help once in a Fight.
+				if( m_Unit->GetTypeId() == TYPEID_UNIT )
+					objmgr.HandleMonsterSayEvent( TO_CREATURE( m_Unit ), MONSTER_SAY_EVENT_CALL_HELP );
+				CALL_SCRIPT_EVENT( m_Unit, OnCallForHelp )();
+				return;
+			}
 			else //default to melee if no spells found
 			{
 				m_nextSpell = getSpell();
@@ -1002,7 +1043,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 					}
 
 					//FIXME: offhand shit
-					if(m_Unit->isAttackReady(false) && !m_fleeTimer && m_RangedAttackSpell != 0 && m_RangedAttackSpell != 1)
+					if(m_Unit->isAttackReady(false) && !m_fleeTimer)
 					{
 						m_creatureState = ATTACKING;
 						bool infront = m_Unit->isInFront(m_nextTarget);
@@ -1020,17 +1061,13 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 						if(infront)
 						{
 							m_Unit->setAttackTimer(0, false);
-							SpellEntry *info = dbcSpell.LookupEntry(m_RangedAttackSpell);
+							SpellEntry *info = dbcSpell.LookupEntry(3018);
 							if(info)
 							{
 								Spell* sp = NULLSPELL;
 								sp = new Spell(m_Unit, info, false, NULLAURA);
 								SpellCastTargets targets(m_nextTarget->GetGUID());
 								sp->prepare(&targets);
-
-								//Did we give it a sound ID?
-								if(m_SpellSoundid)
-									m_Unit->PlaySoundToSet(m_SpellSoundid);
 							}
 						}
 					}
@@ -1139,41 +1176,6 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				}
 				//Null out the agent, so we force the lookup of the next spell.
 				m_aiCurrentAgent = AGENT_NULL;
-			}break;
-		case AGENT_FLEE:
-			{
-				m_moveRun = false;
-				if(m_fleeTimer == 0)
-					m_fleeTimer = m_FleeDuration;
-
-				_CalcDestinationAndMove(m_nextTarget, 5.0f);
-				if(!m_hasFled)
-					CALL_SCRIPT_EVENT(m_Unit, OnFlee)(m_nextTarget);
-
-				m_AIState = STATE_FLEEING;
-				SetNextTarget(NULLUNIT);
-
-				WorldPacket data( SMSG_MESSAGECHAT, 100 );
-				string msg = "%s attempts to run away in fear!";
-				data << (uint8)CHAT_MSG_CHANNEL;
-				data << (uint32)LANG_UNIVERSAL;
-				data << (uint32)( strlen( TO_CREATURE( m_Unit )->GetCreatureInfo()->Name ) + 1 );
-				data << TO_CREATURE( m_Unit )->GetCreatureInfo()->Name;
-				data << (uint64)0;
-				data << (uint32)(msg.size() + 1);
-				data << msg;
-				data << uint8(0);
-
-				m_Unit->SendMessageToSet(&data, false);
-				m_hasFled = true;
-			}break;
-		case AGENT_CALLFORHELP:
-			{
-				FindFriends( 50.0f /*7.0f*/ );
-				m_hasCalledForHelp = true; // We only want to call for Help once in a Fight.
-				if( m_Unit->GetTypeId() == TYPEID_UNIT )
-						objmgr.HandleMonsterSayEvent( TO_CREATURE( m_Unit ), MONSTER_SAY_EVENT_CALL_HELP );
-				CALL_SCRIPT_EVENT( m_Unit, OnCallForHelp )();
 			}break;
 		}
 	}

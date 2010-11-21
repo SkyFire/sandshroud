@@ -542,6 +542,7 @@ protected:
 
 	// Shutdown
 	bool HandleShutdownCommand(const char* args, WorldSession* m_session);
+	bool HandleRestartCommand(const char* args, WorldSession* m_session);
 
 	// Whispers
 	bool HandleAllowWhispersCommand(const char* args, WorldSession* m_session);

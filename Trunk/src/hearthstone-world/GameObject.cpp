@@ -318,6 +318,7 @@ void GameObject::InitAI()
 		{
 			m_ritualmembers = new uint32[pInfo->SpellFocus];
 			memset(m_ritualmembers,0,sizeof(uint32)*pInfo->SpellFocus);
+			return;
 		}break;
 	case GAMEOBJECT_TYPE_CHEST:
  		{
@@ -337,18 +338,21 @@ void GameObject::InitAI()
 					}
 				}
 			}
+			return;
 		}break;
 
 	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
 		{
 			m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->SpellFocus + pInfo->sound5;
 			SetAnimProgress(255);
+			return;
 		}break;
 
 	case GAMEOBJECT_TYPE_AURA_GENERATOR:
 		{
 			spellid = GetInfo()->sound2;
 			sEventMgr.AddEvent(this, &GameObject::AuraGenSearchTarget, EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 1000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
+			return;
 		}break;
 	}
 

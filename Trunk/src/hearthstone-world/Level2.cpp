@@ -1106,11 +1106,7 @@ bool ChatHandler::HandleAddAIAgentCommand(const char* args, WorldSession *m_sess
 	sp->custom_pointer=false;
 	sp->minrange = GetMinRange(dbcSpellRange.LookupEntry(dbcSpell.LookupEntry(atoi(spellId))->rangeIndex));
 	sp->maxrange = GetMaxRange(dbcSpellRange.LookupEntry(dbcSpell.LookupEntry(atoi(spellId))->rangeIndex));
-	if(sp->agent == AGENT_CALLFORHELP)
-		target->GetAIInterface()->m_canCallForHelp = true;
-	else if(sp->agent == AGENT_FLEE)
-		target->GetAIInterface()->m_canFlee = true;
-	else if(sp->agent == AGENT_RANGED)
+	if(sp->agent == AGENT_RANGED)
 		target->GetAIInterface()->m_canRangedAttack = true;
 	else if(sp->agent == AGENT_SPELL)
 		target->GetAIInterface()->addSpellToList(sp);

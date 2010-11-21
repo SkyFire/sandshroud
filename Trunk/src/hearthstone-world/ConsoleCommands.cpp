@@ -147,6 +147,17 @@ bool HandleKickCommand(BaseConsole * pConsole, int argc, const char * argv[])
 	return true;
 }
 
+bool HandleRestartCommand(BaseConsole * pConsole, int argc, const char * argv[])
+{
+	uint32 delay = 5;
+	if(argc >= 2)
+		delay = atoi(argv[1]);
+
+	pConsole->Write("Shutdown initiated.\r\n");
+	sWorld.QueueShutdown(delay, SERVER_SHUTDOWN_TYPE_RESTART);
+	return true;
+}
+
 bool HandleQuitCommand(BaseConsole * pConsole, int argc, const char * argv[])
 {
 	uint32 delay = 5;

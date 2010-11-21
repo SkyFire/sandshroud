@@ -20,6 +20,7 @@
 #include "StdAfx.h"
 
 uint8 loglevel = DEFAULT_LOG_LEVEL;
+bool killit = false;
 
 #ifndef WIN32
 int unix_main(int argc, char ** argv)
@@ -51,7 +52,8 @@ int win32_main( int argc, char ** argv )
 
 	THREAD_TRY_EXECUTION
 	{
-		sMaster.Run( argc, argv );
+		for(;killit != true;)
+			sMaster.Run( argc, argv );
 	}
 	THREAD_HANDLE_CRASH;
 	exit( 0 );

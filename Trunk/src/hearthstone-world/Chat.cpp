@@ -535,7 +535,7 @@ void CommandTableStorage::Init()
 		{ "enableauctionhouse",		'z', &ChatHandler::HandleEnableAH,					"Enables Auctionhouse",							NULL, 0, 0, 0 },
 		{ "disableauctionhouse",	'z', &ChatHandler::HandleDisableAH,					"Disables Auctionhouse",						NULL, 0, 0, 0 },
 		{ "masssummon",				'z', &ChatHandler::HandleMassSummonCommand,			"Summons all players.",							NULL, 0, 0, 0 },
-		{ "restart",				'z', &ChatHandler::HandleShutdownCommand,			"Initiates server restart in <x> seconds.",		NULL, 0, 0, 0 },
+		{ "restart",				'z', &ChatHandler::HandleRestartCommand,			"Initiates server restart in <x> seconds.",		NULL, 0, 0, 0 },
 		{ "shutdown",				'z', &ChatHandler::HandleShutdownCommand,			"Initiates server shutdown in <x> seconds.",	NULL, 0, 0, 0 },
 		{ NULL,						'0', NULL,											"",												NULL, 0, 0, 0 }
 	};

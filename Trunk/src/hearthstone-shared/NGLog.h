@@ -184,7 +184,7 @@ public:
 		char msg0[1024];
 		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		CNotice(TGREEN, source, msg0);
+		CNotice(TRED, source, msg0);
 	}
 
 	void Warning(const char * source, const char * format, ...)
@@ -198,7 +198,7 @@ public:
 		char msg0[1024];
 		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		CNotice(TGREEN, source, msg0);
+		CNotice(TYELLOW, source, msg0);
 	}
 
 	void Success(const char * source, const char * format, ...)
@@ -221,7 +221,7 @@ public:
 		char msg0[1024];
 		vsnprintf(msg0, 1024, format, ap);
 		va_end(ap);
-		CNotice(TGREEN, source, msg0);
+		CNotice(TBLUE, source, msg0);
 	}
 
 #define LARGERRORMESSAGE_ERROR 1

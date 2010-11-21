@@ -552,8 +552,9 @@ public:
 			switch(*p)
 			{
 			case 's':		// string is the only one we have to actually do anything for here
+				if(string(structpointer).size())
 					free((*(char**)structpointer));
-					structpointer += sizeof(char*);
+				structpointer += sizeof(char*);
 				break;
 
 			case 'u':

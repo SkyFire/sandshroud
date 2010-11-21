@@ -2263,8 +2263,9 @@ void World::QueueShutdown(uint32 delay, uint32 type)
 	char buf[1000];
 	snprintf(buf, 1000, "Server %s initiated. Server will save and shut down in approx. %u seconds.", type == SERVER_SHUTDOWN_TYPE_RESTART ? "restart" : "shutdown", delay);
 	SendWorldText(buf, NULL);
+	if(type == SERVER_SHUTDOWN_TYPE_SHUTDOWN)
+		sMaster.KillIt();
 }
-
 
 void World::BackupDB()
 {
