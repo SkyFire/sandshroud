@@ -851,11 +851,11 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 		return true;
 	}
 
-	WhiteSystemMessage(m_session, "Informations:");
+	WhiteSystemMessage(m_session, "Information:");
 	GreenSystemMessage(m_session, "Entry: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetEntry());
-	GreenSystemMessage(m_session, "Model: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_DISPLAYID));
+	GreenSystemMessage(m_session, "Model: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetDisplayId());
 	GreenSystemMessage(m_session, "State: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetState());
-	GreenSystemMessage(m_session, "flags: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_FLAGS));
+	GreenSystemMessage(m_session, "flags: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetFlags());
 	GreenSystemMessage(m_session, "dynflags: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_DYNAMIC));
 	GreenSystemMessage(m_session, "faction: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetUInt32Value(GAMEOBJECT_FACTION));
 
@@ -906,6 +906,7 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	GreenSystemMessage(m_session, "Size: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->GetFloatValue(OBJECT_FIELD_SCALE_X));
 	if(GObj->GetInfo())
 		GreenSystemMessage(m_session, "Name: %s%s|r", MSG_COLOR_LIGHTBLUE, GObj->GetInfo()->Name);
+	GreenSystemMessage(m_session, "Phase: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetPhase());
 	SystemMessage(m_session, sstext.str().c_str());
 	return true;
 }
@@ -942,15 +943,17 @@ bool ChatHandler::HandleGOActivate(const char* args, WorldSession *m_session)
 		RedSystemMessage(m_session, "No selected GameObject...");
 		return true;
 	}
-	if(GObj->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE) == 1)
+	if(GObj->GetState() == 1)
 	{
 		// Close/Deactivate
-		GObj->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
-		GObj->SetUInt32Value(GAMEOBJECT_FLAGS, (GObj->GetUInt32Value(GAMEOBJECT_FLAGS)-1));
-	} else {
+		GObj->SetState(0);
+		GObj->SetFlags(GObj->GetFlags()-1);
+	} 
+	else 
+	{
 		// Open/Activate
-		GObj->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 1);
-		GObj->SetUInt32Value(GAMEOBJECT_FLAGS, (GObj->GetUInt32Value(GAMEOBJECT_FLAGS)+1));
+		GObj->SetState(1);
+		GObj->SetFlags(GObj->GetFlags()+1);
 	}
 	BlueSystemMessage(m_session, "Gameobject opened/closed.");
 	return true;

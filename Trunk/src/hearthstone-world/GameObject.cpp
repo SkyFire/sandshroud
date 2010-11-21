@@ -782,12 +782,12 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	else
 		m_Go_Uint32Values[GO_UINT32_HEALTH] = 0;
 
-	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED))
+	if(HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED))
 	{
 		if(m_Go_Uint32Values[GO_UINT32_HEALTH] == 0)
 		{
 			Destroy();
-			sHookInterface.OnDestroyBuilding(TO_GAMEOBJECT(this));
+			sHookInterface.OnDestroyBuilding(this);
 
 			if(pcaster != NULL)
 			{
@@ -806,7 +806,7 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 				if(pcaster->WinterGrasp!=NULL)
 					pcaster->WinterGrasp->GoDamageEvent(GetEntry(),pcaster);
 			}
-			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
+			sHookInterface.OnDamageBuilding(this);
 		}
 		else
 		{

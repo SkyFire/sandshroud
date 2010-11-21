@@ -255,8 +255,6 @@ void CommandTableStorage::Init()
 	{
 		{ "retroactivequest",		'd', &ChatHandler::HandleDebugRetroactiveQuestAchievements,		"",																														NULL, 0, 0, 0 },
 		{ "setphase",				'd', &ChatHandler::HandleDebugSetPhase,							"",																														NULL, 0, 0, 0 },
-		{ "damagego",				'd', &ChatHandler::HandleDebugGoDamage,							"",																														NULL, 0, 0, 0 },
-		{ "repairgo",				'd', &ChatHandler::HandleDebugGoRepair,							"",																														NULL, 0, 0, 0 },
 		{ "infront",				'd', &ChatHandler::HandleDebugInFrontCommand,					"",																														NULL, 0, 0, 0 },
 		{ "showreact",				'd', &ChatHandler::HandleShowReactionCommand,					"",																														NULL, 0, 0, 0 },
 		{ "aimove",					'd', &ChatHandler::HandleAIMoveCommand,							"",																														NULL, 0, 0, 0 },
@@ -445,12 +443,14 @@ void CommandTableStorage::Init()
 		{ "activate",		'o', &ChatHandler::HandleGOActivate,		"Activates/Opens the selected GO.",				NULL, 0,					0, 0 },
 		{ "enable",			'o', &ChatHandler::HandleGOEnable,			"Enables the selected GO for use.",				NULL, 0,					0, 0 },
 		{ "scale",			'o', &ChatHandler::HandleGOScale,			"Sets scale of selected GO",					NULL, 0,					0, 0 },
-		//{ "animprogress",	'o', &ChatHandler::HandleGOAnimProgress,	"Sets anim progress",							NULL, 0,					0, 0 },
+		{ "animprogress",	'o', &ChatHandler::HandleGOAnimProgress,	"Sets anim progress",							NULL, 0,					0, 0 },
 		// Crow: Export... Hm...
 		// Firehunter: once it was working ^^
 		//{ "export",		'o', &ChatHandler::HandleGOExport,			"Exports the current GO selected",				NULL, 0,					0, 0 },
 		{ "move",			'g', &ChatHandler::HandleGOMove,			"Moves gameobject to player xyz",				NULL, 0,					0, 0 },
 		{ "rotate",			'g', &ChatHandler::HandleGORotate,			"Rotates gameobject x degrees",					NULL, 0,					0, 0 },
+		{ "damage",			'g', &ChatHandler::HandleDebugGoDamage,		"Damages the gameobject for <args>",			NULL, 0,					0, 0 },
+		{ "rebuild",		'g', &ChatHandler::HandleDebugGoRepair,		"Resets the gameobject health and state",		NULL, 0,					0, 0 },
 		{ "f_flags",		'g', NULL,									"Flags",										NULL, GAMEOBJECT_FLAGS,		0, 3 },
 		{ "f_dynflags",		'g', NULL,									"Dynflags",										NULL, GAMEOBJECT_DYNAMIC,	0, 3 },
 		{ NULL,				'0', NULL,									"",												NULL, 0,					0, 0 }

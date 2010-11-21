@@ -34,6 +34,9 @@ bool isHostile(Object* objA, Object* objB)// B is hostile for A?
 	if( objA->m_faction == NULL || objB->m_faction == NULL || objA->m_factionDBC == NULL || objB->m_factionDBC == NULL )
 		return true;
 
+	if(objA->GetPhase() != objB->GetPhase())
+		return false;
+
 	uint32 faction = objB->m_faction->Mask;
 	uint32 host = objA->m_faction->HostileMask;
 
@@ -121,6 +124,9 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI) || objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
 		return false;
 
+	if(objA->GetPhase() != objB->GetPhase())
+		return false;
+
 	// we cannot attack sheathed units. Maybe checked in other places too ?
 	// !! warning, this presumes that objA is attacking ObjB
 	if( CheckStealth && objB->IsUnit() && TO_UNIT(objB)->InStealth() )
@@ -195,10 +201,6 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 				else
 					return false;
 			}
-			else if(objB->IsPet())
-			{
-				// Do pet owner checks.
-			}
 		}
 		else if(TO_CREATURE(objA)->IsTotem())
 		{
@@ -214,10 +216,6 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 				}
 				else
 					return false;
-			}
-			else if(objB->IsPet())
-			{
-				// Do pet owner checks.
 			}
 		}
 	}
@@ -372,6 +370,9 @@ bool isCombatSupport(Object* objA, Object* objB)// B combat supports A?
 
 	// We do need all factiondata for this
 	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL )
+		return false;
+
+	if(objA->GetPhase() != objB->GetPhase())
 		return false;
 
 	bool combatSupport = false;
