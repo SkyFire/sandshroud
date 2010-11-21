@@ -2663,7 +2663,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 					if(TO_CREATURE(pVictim)->GetExtraInfo())
 						can_give_xp = (TO_CREATURE(pVictim)->GetExtraInfo()->no_xp ? false : true);
 					else
-						can_give_xp = false; // creatures without proto should not give any xp
+						can_give_xp = true; // creatures without extra info should give xp
 				}
 				if(can_give_xp)
 				{
