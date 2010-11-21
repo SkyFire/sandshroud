@@ -1000,6 +1000,8 @@ bool Object::SetPosition(const LocationVector & v, bool allowPorting /* = false 
 	{
 		m_position.z = 500;
 		OUT_DEBUG( "setPosition: fell through map; height ported" );
+		if(IsPlayer())
+			TO_PLAYER(this)->RepopAtGraveyard( GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId() );
 
 		result = false;
 	}

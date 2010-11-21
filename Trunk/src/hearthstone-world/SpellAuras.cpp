@@ -5045,18 +5045,19 @@ void Aura::SpellAuraModShapeshift(bool apply)
 {
 	if( !m_target->IsPlayer())
 		return;
+	Player *p = TO_PLAYER(m_target);
 
-	if( TO_PLAYER(m_target)->m_MountSpellId && TO_PLAYER(m_target)->m_MountSpellId != m_spellProto->Id )
+	if( p->m_MountSpellId && p->m_MountSpellId != m_spellProto->Id )
 		if( !(mod->m_miscValue & FORM_BATTLESTANCE | FORM_DEFENSIVESTANCE | FORM_BERSERKERSTANCE ) )
-			m_target->RemoveAura( TO_PLAYER(m_target)->m_MountSpellId ); // these spells are not compatible
+			m_target->RemoveAura( p->m_MountSpellId ); // these spells are not compatible
 
 	//reset hp
-	TO_PLAYER(m_target)->SetHealthFromSpell( 0 );
-	TO_PLAYER(m_target)->UpdateStats();
+	p->SetHealthFromSpell( 0 );
+	p->UpdateStats();
 
 	uint32 spellId = 0;
 	uint32 spellId2 = 0;
-	uint32 modelId = TO_PLAYER(m_target)->GenerateShapeshiftModelId(mod->m_miscValue);
+	uint32 modelId = p->GenerateShapeshiftModelId(mod->m_miscValue);
 
 	bool freeMovements = false;
 
@@ -5092,7 +5093,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				if(m_target->HasActiveAura(33357))
 					m_target->RemoveAura(33357);//Dash rank3
 			}
-			TO_PLAYER( m_target )->UpdateAttackSpeed();
+			p->UpdateAttackSpeed();
 		}break;
 
 	case FORM_TREE:
@@ -5124,7 +5125,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				amt = m_target->GetDummyAura(SPELL_HASH_SURVIVAL_OF_THE_FITTEST)->EffectBasePoints[2];
 
 			if( amt )
-				TO_PLAYER(m_target)->BaseResistanceModPctPos[0] += apply ? amt : -amt;
+				p->BaseResistanceModPctPos[0] += apply ? amt : -amt;
 
 
 			if(apply)
@@ -5149,7 +5150,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				amt = m_target->GetDummyAura(SPELL_HASH_SURVIVAL_OF_THE_FITTEST)->EffectBasePoints[2];
 
 			if( amt )
-				TO_PLAYER(m_target)->BaseResistanceModPctPos[0] += apply ? amt : -amt;
+				p->BaseResistanceModPctPos[0] += apply ? amt : -amt;
 
 
 			if(apply)
@@ -5169,12 +5170,12 @@ void Aura::SpellAuraModShapeshift(bool apply)
 			if( apply )
 			{
 				if( m_target->IsPlayer() )
-					TO_PLAYER( m_target )->m_MountSpellId = m_spellProto->Id;
+					p->m_MountSpellId = m_spellProto->Id;
 			}
 			else
 			{
 				if( m_target->IsPlayer() )
-					TO_PLAYER( m_target )->m_MountSpellId = 0;
+					p->m_MountSpellId = 0;
 			}
 		}break;
 
@@ -5202,7 +5203,7 @@ void Aura::SpellAuraModShapeshift(bool apply)
 				packetSMSG_COOLDOWN_EVENT cd;
 				cd.spellid = m_spellProto->Id;
 				cd.guid = m_target->GetGUID();
-				TO_PLAYER(m_target)->GetSession()->OutPacket(SMSG_COOLDOWN_EVENT, sizeof(packetSMSG_COOLDOWN_EVENT), &cd);
+				p->GetSession()->OutPacket(SMSG_COOLDOWN_EVENT, sizeof(packetSMSG_COOLDOWN_EVENT), &cd);
 			}
 		}break;
 
@@ -5250,14 +5251,14 @@ void Aura::SpellAuraModShapeshift(bool apply)
 	}
 
 	if( mod->m_miscValue == FORM_CAT || mod->m_miscValue == FORM_BEAR || mod->m_miscValue == FORM_DIREBEAR || mod->m_miscValue == FORM_MOONKIN )
-		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, apply ? TO_PLAYER(m_target)->m_feralAP : -TO_PLAYER(m_target)->m_feralAP);
+		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, apply ? p->m_feralAP : -p->m_feralAP);
 
 	if( apply )
 	{
 		if( m_target->getClass() == WARRIOR )
 		{
-			if( m_target->GetUInt32Value( UNIT_FIELD_POWER2 ) > TO_PLAYER( m_target )->m_retainedrage )
-				m_target->SetUInt32Value(UNIT_FIELD_POWER2, TO_PLAYER( m_target )->m_retainedrage );
+			if( m_target->GetUInt32Value( UNIT_FIELD_POWER2 ) > p->m_retainedrage )
+				m_target->SetUInt32Value(UNIT_FIELD_POWER2, p->m_retainedrage );
 			else
 				m_target->SetUInt32Value(UNIT_FIELD_POWER2, m_target->GetUInt32Value(UNIT_FIELD_POWER2));
 		}
@@ -5285,16 +5286,16 @@ void Aura::SpellAuraModShapeshift(bool apply)
 
 		if( spellId != GetSpellId() )
 		{
-			if( TO_PLAYER( m_target )->m_ShapeShifted )
-				TO_PLAYER( m_target )->RemoveAura( TO_PLAYER( m_target )->m_ShapeShifted );
+			if( p->m_ShapeShifted )
+				p->RemoveAura( p->m_ShapeShifted );
 
-			TO_PLAYER( m_target )->m_ShapeShifted = GetSpellId();
+			p->m_ShapeShifted = GetSpellId();
 		}
 
 		if( modelId != 0 )
 			m_target->SetUInt32Value( UNIT_FIELD_DISPLAYID, modelId );
 
-		TO_PLAYER( m_target )->SetShapeShift( mod->m_miscValue );
+		p->SetShapeShift( mod->m_miscValue );
 
 		// check for spell id
 		if( spellId != 0 )
@@ -5344,12 +5345,12 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		}
 
 		//execute after we changed shape
-		TO_PLAYER( m_target )->EventTalentHeartOfWildChange( true );
+		p->EventTalentHeartOfWildChange( true );
 	}
 	else
 	{
 		//execute before changing shape back
-		TO_PLAYER( m_target )->EventTalentHeartOfWildChange( false );
+		p->EventTalentHeartOfWildChange( false );
 		m_target->SetUInt32Value(UNIT_FIELD_DISPLAYID, m_target->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
 
 		if(spellId != 0)
@@ -5362,14 +5363,14 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		if(spellId2 != 0)
 			m_target->RemoveAura(spellId2);
 
-		TO_PLAYER( m_target )->m_ShapeShifted = 0;
-		TO_PLAYER( m_target )->SetShapeShift(0);
+		p->m_ShapeShifted = 0;
+		p->SetShapeShift(0);
 
 		if(m_target->HasAura(52610))
 			m_target->RemoveAura(52610);
 	}
-	TO_PLAYER( m_target )->UpdateStats();
-	TO_PLAYER( m_target )->CalcResistance(RESISTANCE_ARMOR);
+	p->UpdateStats();
+	p->CalcResistance(RESISTANCE_ARMOR);
 }
 
 void Aura::SpellAuraModEffectImmunity(bool apply)
