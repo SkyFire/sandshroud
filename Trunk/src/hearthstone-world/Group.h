@@ -46,8 +46,8 @@ enum GroupTypes
 
 enum MaxGroupCount
 {
-	MAX_GROUP_SIZE_PARTY				= 5,
-	MAX_GROUP_SIZE_RAID					= 40,
+	MAX_GROUP_SIZE_PARTY	= 5,
+	MAX_GROUP_SIZE_RAID		= 40,
 };
 
 enum QuickGroupUpdateFlags

@@ -809,9 +809,10 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 			&& (m_outOfCombatRange && m_Unit->GetDistanceSq(m_returnX,m_returnY,m_returnZ) > m_outOfCombatRange)
 			&& m_AIState != STATE_EVADE
 			&& m_AIState != STATE_SCRIPTMOVE
+			&& !m_fleeTimer
 			&& !m_is_in_instance)
 		HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0 );
-	else if( m_nextTarget == NULL && m_AIState != STATE_FOLLOWING && m_AIState != STATE_SCRIPTMOVE )
+	else if( m_nextTarget == NULL && m_AIState != STATE_FOLLOWING && m_AIState != STATE_SCRIPTMOVE && !m_fleeTimer )
 	{
 		m_nextTarget = GetMostHated();
 		if( m_nextTarget == NULL )
@@ -864,7 +865,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 				if(m_fleeTimer == 0)
 					m_fleeTimer = m_FleeDuration;
 
-				_CalcDestinationAndMove(m_nextTarget, 5.0f);
+				_CalcDestinationAndMove(m_nextTarget, 10.0f);
 				if(!m_hasFled)
 					CALL_SCRIPT_EVENT(m_Unit, OnFlee)(m_nextTarget);
 
@@ -1321,7 +1322,7 @@ Unit* AIInterface::FindTarget()
 {
 	ASSERT(m_Unit != NULL);
 	// find nearest hostile Target to attack
-	if( !m_AllowedToEnterCombat )
+	if( !m_AllowedToEnterCombat || m_fleeTimer )
 		return NULLUNIT;
 
 	Unit* target = NULLUNIT;
@@ -3075,6 +3076,10 @@ Unit* AIInterface::GetMostHated()
 {
 	ASSERT(m_Unit != NULL);
 
+	// Fleeing means we shit our pants and hate no one
+	if( m_fleeTimer )
+		return NULLUNIT;
+
 	Unit* ResultUnit = NULLUNIT;
 
 	//override mosthated with taunted target. Basic combat checks are made for it.
@@ -3114,9 +3119,14 @@ Unit* AIInterface::GetMostHated()
 
 	return currentTarget.first;
 }
+
 Unit* AIInterface::GetSecondHated()
 {
 	ASSERT(m_Unit != NULL);
+
+	// Fleeing means we shit our pants and hate no one
+	if( m_fleeTimer )
+		return NULLUNIT;
 
 	Unit* ResultUnit = GetMostHated();
 
@@ -3150,6 +3160,7 @@ Unit* AIInterface::GetSecondHated()
 
 	return currentTarget.first;
 }
+
 bool AIInterface::modThreatByGUID(uint64 guid, int32 mod)
 {
 	ASSERT(m_Unit != NULL);

@@ -2659,12 +2659,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				//Not all NPC's give XP, check for it in proto no_XP
 				bool can_give_xp = true;
 				if(pVictim->IsCreature())
-				{
 					if(TO_CREATURE(pVictim)->GetExtraInfo())
 						can_give_xp = (TO_CREATURE(pVictim)->GetExtraInfo()->no_xp ? false : true);
-					else
-						can_give_xp = true; // creatures without extra info should give xp
-				}
+
 				if(can_give_xp)
 				{
 					// Is this player part of a group
@@ -2681,16 +2678,18 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 						{
 							if(TO_PLAYER(this)->MobXPGainRate)
 								xp += (xp*(TO_PLAYER(this)->MobXPGainRate/100));
+
 							TO_PLAYER(this)->GiveXP( xp, victimGuid, true );
 							if( TO_PLAYER(this)->GetSummon() && TO_PLAYER(this)->GetSummon()->GetUInt32Value( UNIT_CREATED_BY_SPELL ) == 0 )
 							{
 								xp = CalculateXpToGive( pVictim, TO_PLAYER(this)->GetSummon() );
 								if( xp > 0 )
-								TO_PLAYER(this)->GetSummon()->GiveXP( xp );
+									TO_PLAYER(this)->GetSummon()->GiveXP( xp );
 							}
 						}
 					}
 				}
+
 				// Achievement: on kill unit
 				if( !pVictim->IsPlayer() && IsPlayer() )
 				{

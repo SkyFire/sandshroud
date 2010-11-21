@@ -49,10 +49,10 @@ void ApplyNormalFixes()
 		if(sp == NULL)
 			continue;
 
-		if(DummySpells.find(sp->Id) != DummySpells.end())
-			continue; // Dummy spells will be handled later.
-
 		SetSingleSpellDefaults(sp);
+
+		if(DummySpells.find(sp->Id) != DummySpells.end())
+			continue; // Dummy spells will be handled later.
 
 		uint32 type = 0;
 

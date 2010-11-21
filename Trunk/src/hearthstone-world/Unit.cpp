@@ -486,15 +486,14 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 	//we only take into count players that are near us, on same map
 	GroupMembersSet::iterator itr;
 	pGroup->Lock();
-	for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++) {
+	for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++)
+	{
 		for(itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 		{
 			pGroupGuy = (*itr)->m_loggedInPlayer;
-			if( pGroupGuy &&
-				pGroupGuy->isAlive() &&
-				pVictim->GetMapMgr() == pGroupGuy->GetMapMgr() &&
-				pGroupGuy->GetDistanceSq(pVictim)<100*100
-				)
+			if( pGroupGuy && pGroupGuy->isAlive()
+				&& pVictim->GetMapMgr() == pGroupGuy->GetMapMgr()
+				&& pGroupGuy->GetDistanceSq(pVictim)<100*100 )
 			{
 				active_player_list[active_player_count] = pGroupGuy;
 				active_player_count++;
