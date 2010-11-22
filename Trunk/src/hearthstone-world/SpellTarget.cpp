@@ -109,7 +109,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetNULL,						// 84
 	&Spell::SpellTargetNULL,						// 85
 	&Spell::SpellTargetNULL,						// 86
-	&Spell::SpellTargetGameObjectsInArea,			// 87
+	&Spell::SpellTargetAreaOfEffect87,				// 87
 	&Spell::SpellTargetNULL,						// 88
 	&Spell::SpellTargetProjectile,					// 89 Fill Targets Trajectory
 	&Spell::SpellTargetNULL,						// 90
