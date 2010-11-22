@@ -1536,11 +1536,8 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			if( p_caster == NULL || gameObjTarget == NULL )
 				return;
 
-			if( gameObjTarget->GetTypeId() == TYPEID_GAMEOBJECT )
-			{
-				if( gameObjTarget->GetType() == GAMEOBJECT_TYPE_TRAP )
-					gameObjTarget->_Expire();
-			}
+			if( gameObjTarget->GetType() == GAMEOBJECT_TYPE_TRAP )
+				gameObjTarget->_Expire();
 		}break;
 	/*
 		Preparation
@@ -6739,7 +6736,13 @@ void Spell::SpellEffectWMODamage(uint32 i)
 {
 	if(p_caster == NULL && v_caster && v_caster->GetControllingPlayer() )
 		p_caster = TO_PLAYER(v_caster->GetControllingPlayer());
-	DamageGosAround(m_caster,p_caster, i, damage,GetSpellProto()->Id);
+	if(gameObjTarget == NULL)
+	{
+		DamageGosAround(m_caster,p_caster, i, damage,GetSpellProto()->Id);
+		return;
+	}
+
+	gameObjTarget->TakeDamage(damage,m_caster,p_caster, GetSpellProto()->Id);
 }
 
 void Spell::SpellEffectWMORepair(uint32 i)

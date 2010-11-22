@@ -530,6 +530,25 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 	}
 }
 
+/// We fill all the targets in the area, including the stealth ed one's
+void Spell::FillAllGameObjectTargetsInArea(uint32 i,float srcx,float srcy,float srcz, float range)
+{
+	float r = range*range;
+
+	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+	{
+		// don't add objects that are units and dead
+		if(!(*itr)->IsGameObject())
+			continue;
+		GameObject * o = TO_GAMEOBJECT(*itr);
+
+		if( IsInrange( srcx, srcy, srcz, o, r ))
+		{
+			_AddTargetForced(o, i);
+		}
+	}
+}
+
 uint64 Spell::GetSinglePossibleEnemy(uint32 i,float prange)
 {
 	float r;
@@ -5232,11 +5251,31 @@ void Spell::_AddTargetForced(const uint64& guid, const uint32 effectid)
 		++m_missTargetCount;
 }
 
+void Spell::_AddTargetForced(Object * target, const uint32 effectid)
+{
+	SpellTargetList::iterator itr;
+	SpellTarget tgt;
+
+	for( itr = m_targetList.begin(); itr != m_targetList.end(); itr++ )
+	{
+		if( itr->Guid == target->GetGUID() )
+		{
+			itr->EffectMask |= (1 << effectid);
+			return;
+		}
+	}
+	tgt.Guid = target->GetGUID();
+	tgt.EffectMask = (1 << effectid);
+	tgt.HitResult = SPELL_DID_HIT_SUCCESS;
+	m_targetList.push_back(tgt);
+	++m_hitTargetCount;
+}
+
 void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell_damage , uint32 spell_id)
 {
 	if(!Caster)
 		return; //Lets put that here just incase something happens mmk?
-
+	printf("gameObjTarget not found for spell %u",spell_id);
 	float r = GetRadius(i);
 	r *= r;
 	Object* o;

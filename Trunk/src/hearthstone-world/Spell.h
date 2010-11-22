@@ -1598,6 +1598,8 @@ public:
 	void FillAllTargetsInArea(LocationVector & location,uint32 ind);
 	// Fills the targets at the area of effect. We suppose we already inited this spell and know the details
 	void FillAllFriendlyInArea(uint32 i, float srcx,float srcy,float srcz, float range);
+	// Fills the gameobject targets at the area of effect
+	void FillAllGameObjectTargetsInArea(uint32 i, float srcx,float srcy,float srcz, float range);
 	//get single Enemy as target
 	uint64 GetSinglePossibleEnemy(uint32 i, float prange=0);
 	//get single Enemy as target
@@ -1850,6 +1852,8 @@ public:
 	void SpellTargetType40(uint32 i, uint32 j);
 	void SpellTargetTotem(uint32 i, uint32 j);
 	void SpellTargetChainTargeting(uint32 i, uint32 j);
+	void SpellTargetGameObjectsInByCasterPos(uint32 i, uint32 j);
+	void SpellTargetGameObjectsInArea(uint32 i, uint32 j);
 	void SpellTargetSimpleTargetAdd(uint32 i, uint32 j);
 	void SpellTarget56(uint32 o, uint32 j);
 	void SpellTargetTargetAreaSelectedUnit(uint32 i, uint32 j);
@@ -2171,6 +2175,7 @@ private:
 
 	// adds a target to the list, negating DidHit checks
 	void _AddTargetForced(const uint64& guid, const uint32 effectid);
+	void _AddTargetForced(Object * target, const uint32 effectid);
 
 	// didhit checker
 	uint8 _DidHit(const Unit* target);

@@ -74,7 +74,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetSimpleTargetAdd,				// 49
 	&Spell::SpellTargetSimpleTargetAdd,				// 50
 	&Spell::SpellTargetNULL,						// 51
-	&Spell::SpellTargetSimpleTargetAdd,				// 52
+	&Spell::SpellTargetGameObjectsInArea,			// 52
 	&Spell::SpellTargetTargetAreaSelectedUnit,		// 53
 	&Spell::SpellTargetInFrontOfCaster2,			// 54
 	&Spell::SpellTargetNULL,						// 55 Not handled (Not realy handled by the current spell system)
@@ -109,7 +109,7 @@ pSpellTarget SpellTargetHandler[TOTAL_SPELL_TARGET] =
 	&Spell::SpellTargetNULL,						// 84
 	&Spell::SpellTargetNULL,						// 85
 	&Spell::SpellTargetNULL,						// 86
-	&Spell::SpellTargetAreaOfEffect87,				// 87
+	&Spell::SpellTargetGameObjectsInArea,			// 87
 	&Spell::SpellTargetNULL,						// 88
 	&Spell::SpellTargetProjectile,					// 89 Fill Targets Trajectory
 	&Spell::SpellTargetNULL,						// 90
@@ -934,6 +934,22 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 void Spell::SpellTargetSimpleTargetAdd(uint32 i, uint32 j)
 {
 	_AddTargetForced(m_caster->GetGUID(), i);
+}
+
+void Spell::SpellTargetGameObjectsInByCasterPos(uint32 i, uint32 j)
+{
+	if(m_caster == NULL)
+		return;
+
+	FillAllGameObjectTargetsInArea(i, m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), GetRadius(i));
+}
+
+void Spell::SpellTargetGameObjectsInArea(uint32 i, uint32 j)
+{
+	if(m_caster == NULL)
+		return;
+
+	FillAllGameObjectTargetsInArea(i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, GetRadius(i));
 }
 
 /// Spell Target Handling for type 53: Target Area by Players CurrentSelection()
