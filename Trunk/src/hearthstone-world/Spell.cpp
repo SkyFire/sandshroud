@@ -5271,46 +5271,33 @@ void Spell::_AddTargetForced(Object * target, const uint32 effectid)
 	++m_hitTargetCount;
 }
 
-void Spell::DamageGosAround(Object*Caster,Player*pcaster, uint32 i, uint32 spell_damage , uint32 spell_id)
+void Spell::DamageGosAround(uint32 i)
 {
-	if(!Caster)
-		return; //Lets put that here just incase something happens mmk?
-	printf("gameObjTarget not found for spell %u",spell_id);
+	uint32 spell_id = GetSpellProto()->Id;
+	printf("gameObjTarget not found for spell Id %u report on mantis\n",spell_id);
 	float r = GetRadius(i);
 	r *= r;
 	Object* o;
 
-	if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION)
+	for (Object::InRangeSet::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); ++itr)
 	{
-		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
+		o = *itr;
+		if (!o->IsGameObject())
+			continue;
+		if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r )
 		{
-			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_destX, m_targets.m_destY) <= r )
-			{
-				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
-			}
+			TO_GAMEOBJECT(o)->TakeDamage(damage,m_caster,p_caster,spell_id);
+			return;
 		}
-	}
-	else if(m_targets.m_targetMask & TARGET_FLAG_SOURCE_LOCATION)
-	{
-		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
+		else if(m_targets.m_targetMask & TARGET_FLAG_SOURCE_LOCATION && o->GetDistance2dSq(m_targets.m_srcX, m_targets.m_srcY) <= r)
 		{
-			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(m_targets.m_srcX, m_targets.m_srcY) <= r)
-			{
-				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
-			}
+			TO_GAMEOBJECT(o)->TakeDamage(damage,m_caster,p_caster,spell_id);
+			return;
 		}
-	}
-	else
-	{
-		for (Object::InRangeSet::iterator itr = Caster->GetInRangeSetBegin(); itr != Caster->GetInRangeSetEnd(); ++itr)
+		else
 		{
-			o = *itr;
-			if (o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= r || o->IsGameObject() && o->GetDistance2dSq(Caster->GetPositionX(), Caster->GetPositionY()) <= (15*15))
-			{
-				TO_GAMEOBJECT(o)->TakeDamage(spell_damage,Caster,pcaster,spell_id);
-			}
+			if(o->GetDistance2dSq(m_caster->GetPositionX(), m_caster->GetPositionY()) <= r)
+				TO_GAMEOBJECT(o)->TakeDamage(damage,m_caster,p_caster,spell_id);
 		}
 	}
 }
