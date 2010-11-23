@@ -3289,10 +3289,10 @@ void Spell::SpellEffectBind(uint32 i) // Innkeeper Bind
 
 void Spell::SpellEffectQuestComplete(uint32 i) // Quest Complete
 {
-	if( p_caster != NULL )
+	if( playerTarget != NULL )
 	{
 		QuestLogEntry *qle;
-		qle = p_caster->GetQuestLogForEntry(GetSpellProto()->EffectMiscValue[i]);
+		qle = playerTarget->GetQuestLogForEntry(GetSpellProto()->EffectMiscValue[i]);
 		if( qle == NULL )
 			return;
 
@@ -6738,7 +6738,7 @@ void Spell::SpellEffectWMODamage(uint32 i)
 		p_caster = TO_PLAYER(v_caster->GetControllingPlayer());
 	if(gameObjTarget == NULL)
 	{
-		DamageGosAround(m_caster,p_caster, i, damage,GetSpellProto()->Id);
+		DamageGosAround(i);
 		return;
 	}
 
@@ -6895,7 +6895,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	pTotem->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 1.0f);
 	pTotem->SetFloatValue(UNIT_FIELD_COMBATREACH, 1.0f);
 	pTotem->SetUInt32Value(UNIT_FIELD_DISPLAYID, displayID);
-	pTotem->SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, ci->Male_DisplayID); //blizzlike :P
+	pTotem->SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, displayID); //blizzlike :P
 	pTotem->SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 	pTotem->SetUInt32Value(UNIT_CREATED_BY_SPELL, GetSpellProto()->Id);
 	pTotem->SetPhase(p_caster->GetPhase());
@@ -7373,18 +7373,16 @@ void Spell::SpellEffectDisenchant(uint32 i)
 }
 void Spell::SpellEffectInebriate(uint32 i) // lets get drunk!
 {
-	if( p_caster == NULL )
+	if( playerTarget == NULL )
 		return;
 
-	// Drunkee!
-	uint8 b2 = m_caster->GetByte(PLAYER_BYTES_3,1);
-	b2 += damage;	// 10 beers will get you smassssshed!
-
-	m_caster->SetByte(PLAYER_BYTES_3,1,b2>90?90:b2);
-	p_caster->m_invisDetect[INVIS_FLAG_DRUNK] += b2;
-	sEventMgr.RemoveEvents(p_caster, EVENT_PLAYER_REDUCEDRUNK);
-	sEventMgr.AddEvent(p_caster, &Player::EventReduceDrunk, false, EVENT_PLAYER_REDUCEDRUNK, 300000, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	p_caster->UpdateVisibility();
+	uint16 currentDrunk = playerTarget->m_drunk;
+	uint16 drunkMod = damage * 256;
+	if (currentDrunk + drunkMod > 0xFFFF)
+		currentDrunk = 0xFFFF;
+	else
+		currentDrunk += drunkMod;
+	playerTarget->SetDrunk(currentDrunk, i_caster ? i_caster->GetProto()->ItemId : 0);
 }
 
 void Spell::SpellEffectFeedPet(uint32 i)  // Feed Pet
@@ -7470,8 +7468,8 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 			if( GoSummon->IsInWorld() )
 				GoSummon->RemoveFromWorld(true);
 
-			delete GoSummon;
 			GoSummon = NULLGOB;
+			delete GoSummon;
 		}
 	}
 	//create a new GoSummon

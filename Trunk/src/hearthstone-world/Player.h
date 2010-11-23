@@ -355,6 +355,15 @@ enum LootType
 	LOOT_FISHING				= 3,
 };
 
+enum DrunkenState
+{
+    DRUNKEN_SOBER	= 0,
+    DRUNKEN_TIPSY	= 1,
+    DRUNKEN_DRUNK	= 2,
+    DRUNKEN_SMASHED = 3,
+	DRUNKEN_VOMIT	= 4 //Custom to mark when to barf.
+};
+
 struct spells
 {
 	uint16  spellId;
@@ -1051,6 +1060,8 @@ public:
 	void				UpdateInrangeSetsBasedOnReputation();
 	void				Reputation_OnKilledUnit(Unit* pUnit, bool InnerLoop);
 	void				Reputation_OnTalk(FactionDBC * dbc);
+	bool				AddNewFaction( FactionDBC * dbc, int32 standing, bool base );
+	void				OnModStanding( FactionDBC * dbc, FactionReputation * rep );
 	static Standing		GetReputationRankFromStanding(int32 Standing_);
 
 	bool titanGrip;
@@ -1448,7 +1459,8 @@ public:
 	HEARTHSTONE_INLINE InRangeSet::iterator GetVisibleSetEnd() { return m_visibleObjects.end(); }
 
 	// Misc
-	void EventReduceDrunk(bool full);
+	void SetDrunk(uint16 value, uint32 itemId = 0);
+	void EventHandleSobering();
 	bool m_AllowAreaTriggerPort;
 	void EventAllowTiggerPort(bool enable);
 	float m_rangedattackspeedmod;
@@ -2304,6 +2316,10 @@ public:
 	bool randombgwinner;
 	//Calculate honor for random bgs
 	uint32 GenerateRBGReward(uint32 level, uint32 count = 1) { uint32 honor = uint32(ceil(float(count * level * 1.55f))); return honor; }
+	uint16 m_drunk;
+	uint32 m_drunkTimer;
+	static DrunkenState GetDrunkenstateByValue(uint16 value);
+	void EventDrunkenVomit();
 #ifdef CLUSTERING
 	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
 	void HandleClusterRemove();

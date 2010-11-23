@@ -536,9 +536,6 @@ protected:
 	bool HandleAddPetTalentPoints(const char* args, WorldSession* m_session);
 	bool HandleResetPetTalents(const char* args, WorldSession* m_session);
 	bool HandleRenamePetCommand(const char* args, WorldSession* m_session);
-#ifdef USE_SPECIFIC_AIAGENTS
-	bool HandlePetSpawnAIBot(const char * args, WorldSession * m_session);
-#endif
 
 	// Shutdown
 	bool HandleShutdownCommand(const char* args, WorldSession* m_session);

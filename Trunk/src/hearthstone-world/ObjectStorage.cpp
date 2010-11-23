@@ -929,8 +929,6 @@ bool Storage_ReloadTable(const char * TableName)
 	}
 	else if(!stricmp(TableName, "creature_proto"))		// Creature Proto
 		CreatureProtoStorage.Reload();
-	else if(!stricmp(TableName, "creature_proto"))		// Creature Proto
-		CreatureProtoStorage.Reload();
 	else if(!stricmp(TableName, "creature_proto_vehicle"))	// Creature Vehicle Proto
 		CreatureProtoVehicleStorage.Reload();
 	else if(!stricmp(TableName, "creature_names"))		// Creature Names
@@ -955,6 +953,12 @@ bool Storage_ReloadTable(const char * TableName)
 		WorldMapInfoStorage.Reload();
 	else if(!stricmp(TableName, "zoneguards"))
 		ZoneGuardStorage.Reload();
+	else if(!stricmp(TableName, "spell_disable"))
+		objmgr.ReloadDisabledSpells();
+	else if(!stricmp(TableName, "spellfixes"))
+		objmgr.LoadSpellFixes();
+	else if(!stricmp(TableName, "vendors"))
+		objmgr.ReloadVendors();
 	else if(!stricmp(TableName, "command_overrides"))	// Command Overrides
 	{
 		CommandTableStorage::getSingleton().Dealloc();

@@ -415,7 +415,8 @@ void Player::Init()
 	NoReagentCost			= false;
 	fromrandombg			= false;
 	randombgwinner			= false;
-
+	m_drunkTimer			= 0;
+	m_drunk					= 0;
 	Unit::Init();
 }
 
@@ -1096,6 +1097,13 @@ void Player::Update( uint32 p_time )
 	{
 		_WallHackCheck();
 		m_wallhackCheckTimer = mstime + 500;
+	}
+	if (m_drunk)
+	{
+		m_drunkTimer += p_time;
+
+		if (m_drunkTimer > 10*1000)
+			EventHandleSobering();
 	}
 }
 
@@ -2008,6 +2016,9 @@ void Player::addSpell(uint32 spell_id)
 {
 	SpellSet::iterator iter = mSpells.find(spell_id);
 	if(iter != mSpells.end())
+		return;
+	if(spell_id == 3018 && (getClass() == DEATHKNIGHT || getClass() == WARLOCK 
+		|| getClass() == PRIEST || getClass() == MAGE || getClass() == PALADIN))
 		return;
 
 	mSpells.insert(spell_id);
@@ -6170,18 +6181,33 @@ void Player::ClearInRangeSet()
 	Unit::ClearInRangeSet();
 }
 
-void Player::EventReduceDrunk(bool full)
+void Player::SetDrunk(uint16 value, uint32 itemId)
 {
-	uint8 drunk = ((GetUInt32Value(PLAYER_BYTES_3) >> 8) & 0xFF);
-	if(full) 
-		drunk = 0;
-	else 
-		drunk -= 10;
-	SetUInt32Value(PLAYER_BYTES_3, ((GetUInt32Value(PLAYER_BYTES_3) & 0xFFFF00FF) | (drunk << 8)));
-	m_invisDetect[INVIS_FLAG_DRUNK] -= (drunk << 8);
-	if(drunk == 0) 
-		sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_REDUCEDRUNK);
+	uint32 oldDrunkenState = GetDrunkenstateByValue(m_drunk);
+	m_invisDetect[INVIS_FLAG_DRUNK] = int32(value - m_drunk) / 256;
+	m_drunk = value;
+	SetUInt32Value(PLAYER_BYTES_3,(GetUInt32Value(PLAYER_BYTES_3) & 0xFFFF0001) | (m_drunk & 0xFFFE));
+	uint32 newDrunkenState = GetDrunkenstateByValue(m_drunk);
+	if(newDrunkenState == DRUNKEN_VOMIT)
+	{
+		EventDrunkenVomit();
+		return;
+	}
 	UpdateVisibility();
+	if (newDrunkenState == oldDrunkenState)
+		return;
+	WorldPacket data(SMSG_CROSSED_INEBRIATION_THRESHOLD, 16);
+	data << GetGUID();
+	data << newDrunkenState;
+	data << itemId;
+	GetSession()->SendPacket(&data);
+}
+
+void Player::EventHandleSobering()
+{
+	m_drunkTimer = 0;
+	uint32 drunk = (m_drunk <= 256) ? 0 : (m_drunk - 256);
+	SetDrunk(drunk);
 }
 
 void Player::LoadTaxiMask(const char* data)
@@ -6888,7 +6914,10 @@ void Player::Reset_Spells()
 
 	for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
 	{
-		SpellEntry *sp = dbcSpell.LookupEntry((*itr));
+		SpellEntry *sp = dbcSpell.LookupEntryForced((*itr));
+		if(sp == NULL)
+			continue;
+
 		for( uint32 lp = 0; lp < 3; lp++ )
 		{
 			if( sp->Effect[lp] == SPELL_EFFECT_SKILL )
@@ -13773,4 +13802,23 @@ void Player::StartQuest(uint32 Id)
 		SetPhase(qst->start_phase, true);
 
 	sHookInterface.OnQuestAccept(this, qst, NULL);
+}
+
+DrunkenState Player::GetDrunkenstateByValue(uint16 value)
+{
+	if(value >= 25560)
+		return DRUNKEN_VOMIT;
+	if(value >= 23000)
+		return DRUNKEN_SMASHED;
+	if(value >= 12800)
+		return DRUNKEN_DRUNK;
+	if(value & 0xFFFE)
+		return DRUNKEN_TIPSY;
+	return DRUNKEN_SOBER;
+}
+
+void Player::EventDrunkenVomit()
+{
+	CastSpell(this, 67468, false);
+	m_drunk -= 2560;
 }
