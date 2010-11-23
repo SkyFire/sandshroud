@@ -133,8 +133,6 @@ bool CheckResultLengthGameObject(QueryResult * res)
 void Map::LoadSpawns(bool reload /* = false */)
 {
 	//uint32 st = getMSTime();
-	CreatureSpawnCount = 0;
-	GameObjectSpawnCount = 0;
 	QueryResult* result;
 	set<string>::iterator tableiterator;
 	if(reload)//perform cleanup
@@ -208,9 +206,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 						spawns[cellx][celly] = new CellSpawns;
 
 					spawns[cellx][celly]->CreatureSpawns.push_back(cspawn);
-
-					++CreatureSpawnCount;
-
 				}while(result->NextRow());
 			}
 
@@ -257,7 +252,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 						spawns[cellx][celly] = new CellSpawns;
 
 					spawns[cellx][celly]->GOSpawns.push_back(gspawn);
-					++GameObjectSpawnCount;
 				}while(result->NextRow());
 			}
 			delete result;
@@ -300,7 +294,6 @@ void Map::LoadSpawns(bool reload /* = false */)
 				cspawn->vehicle = fields[24].GetInt32();
 				cspawn->CanMove = fields[25].GetUInt8();
 				staticSpawns.CreatureSpawns.push_back(cspawn);
-				++CreatureSpawnCount;
 			}while(result->NextRow());
 		}
 
@@ -331,13 +324,10 @@ void Map::LoadSpawns(bool reload /* = false */)
 				gspawn->scale = fields[14].GetFloat();
 				gspawn->phase = fields[15].GetInt32();
 				staticSpawns.GOSpawns.push_back(gspawn);
-				++GameObjectSpawnCount;
 			}while(result->NextRow());
 		}
 
 		delete result;
 	}
-
-	Log.Notice("Map", "%u creatures / %u gameobjects on map %u cached.", CreatureSpawnCount, GameObjectSpawnCount, _mapId);
 }
 

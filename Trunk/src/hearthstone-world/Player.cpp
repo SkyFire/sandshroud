@@ -6190,7 +6190,7 @@ void Player::SetDrunk(uint16 value, uint32 itemId)
 	uint32 newDrunkenState = GetDrunkenstateByValue(m_drunk);
 	if(newDrunkenState == DRUNKEN_VOMIT)
 	{
-		EventDrunkenVomit();
+		sEventMgr.AddEvent(this, &Player::EventDrunkenVomit, EVENT_DRUNKEN_VOMIT, 5000, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		return;
 	}
 	UpdateVisibility();
@@ -13821,4 +13821,5 @@ void Player::EventDrunkenVomit()
 {
 	CastSpell(this, 67468, false);
 	m_drunk -= 2560;
+	sEventMgr.RemoveEvents(this, EVENT_DRUNKEN_VOMIT);
 }
