@@ -27,13 +27,15 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 	if(_player->getDeathState()==CORPSE)
 		return;
 
-	uint64 item_guid;
-	uint32 spellId, glyphIndex;
-	int8 tmp1,slot, cn;
+	uint8 bagIndex, slot, castFlags;
+	uint8 castCount;
+	uint64 itemGUID;
+	uint32 glyphIndex;
+	uint32 spellId;
+	recvPacket >> bagIndex >> slot >> castCount >> spellId >> itemGUID >> glyphIndex >> castFlags;
 
-	recvPacket >> tmp1 >> slot >> cn >> spellId >> item_guid >> glyphIndex;
 	Item* tmpItem = NULLITEM;
-	tmpItem = _player->GetItemInterface()->GetInventoryItem(tmp1,slot);
+	tmpItem = _player->GetItemInterface()->GetInventoryItem(bagIndex,slot);
 
 	if (!tmpItem)
 		tmpItem = _player->GetItemInterface()->GetInventoryItem(slot);
@@ -66,6 +68,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 	}
 
 	SpellCastTargets targets(recvPacket, _player->GetGUID());
+
 	uint32 x;
 	bool matching = false;
 	for(x = 0; x < 5; x++)
@@ -77,6 +80,10 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 				break;
 			}
 	}
+
+	if(tmpItem->HasEnchantedOnUseSpell(spellId))
+		matching = true;
+
 	if(!matching)
 		return;
 
@@ -136,13 +143,13 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
 	if( !_player->Cooldown_CanCast( itemProto, x ) )
 	{
-		_player->SendCastResult(spellInfo->Id, SPELL_FAILED_NOT_READY, cn, 0);
+		_player->SendCastResult(spellInfo->Id, SPELL_FAILED_NOT_READY, castCount, 0);
 		return;
 	}
 
 	if(_player->m_currentSpell)
 	{
-		_player->SendCastResult(spellInfo->Id, SPELL_FAILED_SPELL_IN_PROGRESS, cn, 0);
+		_player->SendCastResult(spellInfo->Id, SPELL_FAILED_SPELL_IN_PROGRESS, castCount, 0);
 		return;
 	}
 
@@ -152,7 +159,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		{
 			if( _player->GetGUID() != targets.m_unitTarget )
 			{
-				_player->SendCastResult(spellInfo->Id, SPELL_FAILED_BAD_TARGETS, cn, 0);
+				_player->SendCastResult(spellInfo->Id, SPELL_FAILED_BAD_TARGETS, castCount, 0);
 				return;
 			}
 		}
@@ -160,7 +167,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		{
 			if( !_player->GetSummon() || _player->GetSummon()->GetEntry() != (uint32)itemProto->ForcedPetId )
 			{
-				_player->SendCastResult(spellInfo->Id, SPELL_FAILED_SPELL_IN_PROGRESS, cn, 0);
+				_player->SendCastResult(spellInfo->Id, SPELL_FAILED_SPELL_IN_PROGRESS, castCount, 0);
 				return;
 			}
 		}
@@ -168,12 +175,12 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
 	if(!sHookInterface.OnCastSpell(_player, spellInfo))
 	{
-		_player->SendCastResult(spellInfo->Id, SPELL_FAILED_UNKNOWN, cn, 0);
+		_player->SendCastResult(spellInfo->Id, SPELL_FAILED_UNKNOWN, castCount, 0);
 		return;
 	}
 
 	Spell* spell = new Spell(_player, spellInfo, false, NULLAURA);
-	spell->extra_cast_number=cn;
+	spell->extra_cast_number= castCount;
 	spell->m_glyphIndex = glyphIndex;
 	spell->i_caster = tmpItem;
 	if( spell->prepare(&targets) == SPELL_CANCAST_OK )
@@ -185,9 +192,9 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 	CHECK_INWORLD_RETURN;
 
 	uint32 spellId;
-	uint8 cn; // cn: Cast count.
+	uint8  cn, castFlags;
+	recvPacket >> cn >> spellId >> castFlags;
 
-	recvPacket >> cn >> spellId;
 	if(!spellId)
 	{
 		OUT_DEBUG("WORLD: unknown spell id %i\n", spellId);
@@ -410,11 +417,12 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 	uint64 guid;
 	uint32 spellid;
 	uint8 castnumber;
-	recvPacket >> guid >> castnumber >> spellid;
+	uint8 castFlags;
+	recvPacket >> guid >> castnumber >> spellid >> castFlags;
 
 	SpellEntry* sp = dbcSpell.LookupEntryForced(spellid);
 	SpellCastTargets targets;
-	targets.read(recvPacket, caster->GetGUID());
+	targets.read(recvPacket, caster->GetGUID(), castFlags);
 
 	// Summoned Elemental's Freeze
 	if (spellid == 33395)

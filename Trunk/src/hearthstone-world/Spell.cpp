@@ -32,15 +32,14 @@ enum SpellTargetSpecification
 	TARGET_SPEC_DEAD		= 2,
 };
 
-void SpellCastTargets::read( WorldPacket & data, uint64 caster )
+void SpellCastTargets::read( WorldPacket & data, uint64 caster, uint8 castFlags )
 {
 	WoWGuid guid;
 	m_unitTarget = m_itemTarget = 0;
 	m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = missilespeed = missilepitch = traveltime = 0.0f;
-	missileflags = missileunkcheck = 0;
 	//m_strTarget = "";
 
-	data >> missileflags >> m_targetMask;
+	data >> m_targetMask;
 
 	if( m_targetMask == TARGET_FLAG_SELF  || m_targetMask & TARGET_FLAG_GLYPH )
 	{
@@ -93,10 +92,10 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster )
 		}
 	}
 
-	if(missileflags & 0x2)
+	if(castFlags & 0x2)
 	{
+		uint8 missileunkcheck;
 		data >> missilepitch >> missilespeed >> missileunkcheck;
-
 		if(missileunkcheck == 1)
 		{
 			uint32 unkdoodah, unkdoodah2;

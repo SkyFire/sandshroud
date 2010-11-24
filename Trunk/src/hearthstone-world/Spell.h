@@ -1247,7 +1247,7 @@ HEARTHSTONE_INLINE bool TargetTypeCheck(Object* obj,uint32 ReqCreatureTypeMask)
 class SpellCastTargets
 {
 public:
-	void read ( WorldPacket & data,uint64 caster );
+	void read ( WorldPacket & data,uint64 caster, uint8 castFlags = 0 );
 	void write ( WorldPacket & data);
 	void write ( StackPacket & data);
 
@@ -1291,7 +1291,6 @@ public:
 	uint64 m_itemTarget;
 	float m_srcX, m_srcY, m_srcZ;
 	float m_destX, m_destY, m_destZ;
-	uint8 missileflags, missileunkcheck;
 	float missilespeed, missilepitch, traveltime;
 	//std::string m_strTarget;
 };

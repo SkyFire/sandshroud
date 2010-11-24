@@ -50,6 +50,8 @@ Item::Item( uint32 high, uint32 low )
 	random_prop = 0;
 	random_suffix = 0;
 	wrapped_item_id = 0;
+	for( uint32 i = 0; i < 3; ++i )
+		OnUseSpells[i] = 0;
 }
 
 void Item::Init()
@@ -834,6 +836,23 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 					}
 					m_owner->UpdateStats();
 				}break;
+
+			case 7:
+				{
+				if( Apply )
+				{
+					for( uint32 i = 0; i < 3; ++i )
+						OnUseSpells[ i ] = Entry->spell[ i ];
+
+				}
+				else
+				{
+					for( uint32 i = 0; i < 3; ++i )
+						OnUseSpells[ i ] = 0;
+				}
+				}break;
+
+			case 8:{}break;
 
 			default:
 				{

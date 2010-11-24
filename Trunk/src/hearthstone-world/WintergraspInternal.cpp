@@ -96,20 +96,6 @@ bool WintergraspInternal::run()
 
 	while(m_threadRunning)
 	{
-		if(WG && WG_started)
-		{
-			MatchTimer = (MatchTimer - 30000);
-			float TimeLeft = ((MatchTimer/1000)/60);
-			UpdateClock();
-			printf("%u %f Minutes left till Wintergrasp ends\n",getMSTime(),TimeLeft);
-			SendWSUpdateToAll(A_NUMVEH_WORLDSTATE, WG->GetNumVehicles(ALLIANCE));
-			SendWSUpdateToAll(A_MAXVEH_WORLDSTATE, WG->GetNumWorkshops(ALLIANCE)*4);
-			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumVehicles(HORDE));
-			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumWorkshops(HORDE)*4);
-			if(MatchTimer <= 0)
-				GetWintergrasp()->ForceEnd();
-		}
-
 		if(has_timeout_expired(&local_currenttime, &local_last_countertime) || forcestart_WG == true)
 		{
 			++counter;
@@ -141,6 +127,19 @@ bool WintergraspInternal::run()
 #else
 		Sleep( 30000 );
 #endif
+		if(WG && WG_started)
+		{
+			MatchTimer = (MatchTimer - 30000);
+			float TimeLeft = ((MatchTimer/1000)/60);
+			UpdateClock();
+			printf("%u %f Minutes left till Wintergrasp ends\n",getMSTime(),TimeLeft);
+			SendWSUpdateToAll(A_NUMVEH_WORLDSTATE, WG->GetNumVehicles(ALLIANCE));
+			SendWSUpdateToAll(A_MAXVEH_WORLDSTATE, WG->GetNumWorkshops(ALLIANCE)*4);
+			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumVehicles(HORDE));
+			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumWorkshops(HORDE)*4);
+			if(MatchTimer <= 0)
+				GetWintergrasp()->ForceEnd();
+		}
 	}
 	return false;
 }

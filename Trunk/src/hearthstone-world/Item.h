@@ -265,7 +265,15 @@ protected:
 	uint32 textid;
 
 public:
-
+	uint32 OnUseSpells[3];
+	bool HasEnchantedOnUseSpell( uint32 id )
+	{
+		for( uint32 i = 0; i < 3; ++i )
+			if( OnUseSpells[ i ] == id )
+				return true;
+		return false;
+	}
+ 
 };
 
 uint32 GetSkillByProto( uint32, uint32 );
