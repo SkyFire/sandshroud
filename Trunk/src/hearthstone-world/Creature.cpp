@@ -46,14 +46,13 @@ Creature::Creature(uint64 guid)
 	Skinned = false;
 	m_enslaveCount = 0;
 	m_enslaveSpell = 0;
-	for(uint32 x=0;x<7;x++)
+	for(uint32 x = 0; x < 7; x++)
 	{
-		FlatResistanceMod[x]=0;
-		BaseResistanceModPct[x]=0;
-		ResistanceModPct[x]=0;
-		ModDamageDone[x]=0;
-		ModDamageDonePct[x]=1.0;
+		FlatResistanceMod[x] = 0;
+		BaseResistanceModPct[x] = 0;
+		ResistanceModPct[x] = 0;
 	}
+
 	for(uint32 x=0;x<5;x++)
 	{
 		TotalStatModPct[x]=0;

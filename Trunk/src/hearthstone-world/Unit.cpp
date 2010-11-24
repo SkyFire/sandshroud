@@ -134,7 +134,12 @@ Unit::Unit()
 	m_can_stealth = true;
 
 	for(uint32 x=0;x<5;x++)
-		BaseStats[x]=0;
+	{
+		BaseStats[x] = 0;
+		SpellHealDoneByAttribute[x] = 0;
+		for(uint32 i = 0; i < 7; i++)
+			SpellDmgDoneByAttribute[x][i] = 0;
+	}
 
 	m_H_regenTimer = 2000;
 	m_P_regenTimer = 2000;
@@ -151,24 +156,31 @@ Unit::Unit()
 	BaseRangedDamage[1]=0;
 
 	m_CombatUpdateTimer = 0;
+
+	HealDoneMod = 0;
+	HealDonePctMod = 1.0f;
+	HealTakenMod = 0;
+	HealTakenPctMod = 1.0f;
+	SpellHealFromAP = 0;
+	SpellDamageFromAP = 0;
+
 	for(uint32 x=0;x<7;x++)
 	{
 		m_SummonSlots[x] = NULLCREATURE;
 		SchoolImmunityList[x] = 0;
 		BaseResistance[x] = 0;
-		HealDoneMod[x] = 0;
-		HealDonePctMod[x] = 1.0f;
-		HealTakenMod[x] = 0;
-		HealTakenPctMod[x] = 1.0f;
+		DamageDonePosMod[x] = 0;
+		DamageDoneNegMod[x] = 0;
+		DamageDonePctMod[x] = 1.0f;
 		DamageTakenMod[x] = 0;
-		SchoolCastPrevent[x]=0;
+		SchoolCastPrevent[x] = 0;
 		DamageTakenPctMod[x] = 1;
 		SpellCritChanceSchool[x] = 0;
 		PowerCostMod[x] = 0;
 		PowerCostPctMod[x] = 0; // armor penetration & spell penetration
-		AttackerCritChanceMod[x]=0;
-		CritMeleeDamageTakenPctMod[x]=0;
-		CritRangedDamageTakenPctMod[x]=0;
+		AttackerCritChanceMod[x] = 0;
+		CritMeleeDamageTakenPctMod[x] = 0;
+		CritRangedDamageTakenPctMod[x] = 0;
 	}
 
 	RangedDamageTaken = 0;
@@ -4644,28 +4656,6 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 		return bonus_damage;
 
 	//---------------------------------------------------------
-	// attribute
-	//---------------------------------------------------------
-
-	if( caster->IsPlayer() )
-	{
-		if( !healing )
-		{
-			for(uint32 a = 0; a < 5; a++)
-			{
-				bonus_damage += float2int32(TO_PLAYER(caster)->SpellDmgDoneByAttribute[a][school] * caster->GetUInt32Value(UNIT_FIELD_STAT0 + a));
-			}
-		}
-		else
-		{
-			for(uint32 a = 0; a < 5; a++)
-			{
-				bonus_damage += float2int32(TO_PLAYER(caster)->SpellHealDoneByAttribute[a][school] * caster->GetUInt32Value(UNIT_FIELD_STAT0 + a));
-			}
-		}
-	}
-
-	//---------------------------------------------------------
 	// victim type
 	//---------------------------------------------------------
 
@@ -4723,8 +4713,8 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	else
 	{
 		if(coefficient) // Saves us some time.
-			bonus_damage += caster->HealDoneMod[school] * coefficient;
-		bonus_damage += pVictim->HealTakenMod[school];
+			bonus_damage += caster->GetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS) * coefficient;
+		bonus_damage += pVictim->GetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS);
 	}
 
 	if( spellInfo->AP_coef_override > 0 )
@@ -4767,7 +4757,7 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 		if( plrCaster->IsInFeralForm() )
 		{
 			if( plrCaster->GetShapeShift() == FORM_TREE && plrCaster->HasDummyAura(SPELL_HASH_IMPROVED_TREE_OF_LIFE) )
-				bonus_damage += float2int32( (plrCaster->GetDummyAura(SPELL_HASH_IMPROVED_TREE_OF_LIFE)->RankNumber * 0.05f) * plrCaster->HealDoneMod[school] );
+				bonus_damage += float2int32( (plrCaster->GetDummyAura(SPELL_HASH_IMPROVED_TREE_OF_LIFE)->RankNumber * 0.05f) * plrCaster->GetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS) );
 			else if( pVictim->IsPlayer() && TO_PLAYER( pVictim )->GetShapeShift() == FORM_CAT )
 			{
 				if( pVictim->HasDummyAura(SPELL_HASH_NURTURING_INSTINCT) && healing )
@@ -4812,8 +4802,8 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	}
 	else
 	{
-		summaryPCTmod += caster->HealDonePctMod[school]-1;
-		summaryPCTmod += pVictim->HealTakenPctMod[school]-1;
+		summaryPCTmod += caster->HealDonePctMod-1;
+		summaryPCTmod += pVictim->HealTakenPctMod-1;
 	}
 
 	if((spellInfo->SpellGroupType[0] & 0x100821 || spellInfo->SpellGroupType[1] & 0x8000) &&
@@ -4979,12 +4969,12 @@ void Unit::OnRemoveInRangeObject(Object* pObj)
 			if(m_currentSpell)
 				m_currentSpell->cancel();
 
-        Object::OnRemoveInRangeObject(pObj);
+		Object::OnRemoveInRangeObject(pObj);
 	}
-    else
-    {
-        Object::OnRemoveInRangeObject(pObj);
-    }
+	else
+	{
+		Object::OnRemoveInRangeObject(pObj);
+	}
 }
 
 void Unit::ClearInRangeSet()
@@ -5047,26 +5037,10 @@ void Unit::MoveToWaypoint(uint32 wp_id)
 	}
 }
 
-int32 Unit::GetDamageDoneMod(uint32 school)
-{
-	if( IsPlayer() )
-		return (int32)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school ) - (int32)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + school );
-	else
-		return TO_CREATURE(this)->ModDamageDone[school];
-}
-
-float Unit::GetDamageDonePctMod(uint32 school)
-{
-	if(IsPlayer())
-		return m_floatValues[PLAYER_FIELD_MOD_DAMAGE_DONE_PCT+school];
-	else
-		return TO_CREATURE(this)->ModDamageDonePct[school];
-}
-
 void Unit::CalcDamage()
 {
 	if( IsPlayer() )
-		TO_PLAYER(this)->CalcDamage();
+		TO_PLAYER(this)->UpdateStats();
 	else
 	{
 		float r;
@@ -5077,8 +5051,8 @@ void Unit::CalcDamage()
 
 		float bonus = ap_bonus*GetUInt32Value(UNIT_FIELD_BASEATTACKTIME);
 
-		delta = float(TO_CREATURE(this)->ModDamageDone[0]);
-		mult = float(TO_CREATURE(this)->ModDamageDonePct[0]);
+		delta = float(DamageDonePosMod[0]) - float(DamageDoneNegMod[0]);
+		mult = DamageDonePctMod[0];
 		r = BaseDamage[0]*mult+delta+bonus;
 		// give some diversity to pet damage instead of having a 77-78 damage range (as an example)
 		SetFloatValue(UNIT_FIELD_MINDAMAGE,r > 0 ? ( IsPet() ? r * 0.9f : r ) : 0 );

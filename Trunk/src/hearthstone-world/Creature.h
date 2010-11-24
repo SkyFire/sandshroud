@@ -699,9 +699,6 @@ public: // values
 	int32 FlatStatMod[5];
 	int32 StatModPct[5];
 	int32 TotalStatModPct[5];
-	int32 ModDamageDone[7];
-	float ModDamageDonePct[7];
-
 };
 
 #endif

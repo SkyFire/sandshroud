@@ -1235,7 +1235,7 @@ public:
 	/* Item Interface                                                       */
 	/************************************************************************/
 	HEARTHSTONE_INLINE ItemInterface* GetItemInterface() { return m_ItemInterface; } // Player Inventory Item storage
-	HEARTHSTONE_INLINE void ApplyItemMods(Item* item, int16 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply,justdrokedown); }
+	HEARTHSTONE_INLINE void ApplyItemMods(Item* item, int16 slot, bool apply,bool justdrokedown=false) {  _ApplyItemMods(item, slot, apply, justdrokedown); }
 
 	// item interface variables
 	ItemInterface* m_ItemInterface;
@@ -1529,8 +1529,6 @@ public:
 	uint32 ResistanceModPctNeg[7];
 	float m_resist_critical[2];//when we are a victim we can have talents to decrease chance for critical hit. This is a negative value and it's added to critchances
 	float m_resist_hit[3]; // 0 = melee; 1= ranged; 2=spells
-	float SpellDmgDoneByAttribute[5][7];
-	float SpellHealDoneByAttribute[5][7];
 	uint32 m_modphyscritdmgPCT;
 	uint32 m_RootedCritChanceBonus; // Class Script Override: Shatter
 	uint32 m_Illumination_amount; // Class Script Override: Illumination

@@ -1815,7 +1815,6 @@ bool ChatHandler::HandleResetSkillsCommand(const char* args, WorldSession * m_se
 
 	//Chances depend on stats must be in this order!
 	plr->UpdateStats();
-	plr->UpdateChances();
 	plr->_UpdateMaxSkillCounts();
 	plr->_AddLanguages(false);
 	BlueSystemMessage(m_session, "Reset skills to default.");

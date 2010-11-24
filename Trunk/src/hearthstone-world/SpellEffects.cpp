@@ -6912,9 +6912,12 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	//added by Zack : Some shaman talents are casted on player but it should be inherited or something by totems
 	pTotem->InheritSMMods(p_caster);
 	// Totems get spell damage and healing bonus from the Shaman
-	for(int school=0;school<7;school++){
-		pTotem->ModDamageDone[school] = (int32)(p_caster->GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school ) - (int32)p_caster->GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + school ));
-		pTotem->HealDoneMod[school] = p_caster->HealDoneMod[school];
+	for(int school=0;school<7;school++)
+	{
+		pTotem->DamageDonePosMod[school] = p_caster->DamageDonePosMod[school];
+		pTotem->DamageDoneNegMod[school] = p_caster->DamageDoneNegMod[school];
+		pTotem->DamageDonePctMod[school] = p_caster->DamageDonePctMod[school];
+		pTotem->HealDoneMod = p_caster->HealDoneMod;
 	}
 
 	// Set up AI, depending on our spells.

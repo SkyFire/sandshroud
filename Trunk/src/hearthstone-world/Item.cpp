@@ -743,10 +743,10 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 						val = RANDOM_SUFFIX_MAGIC_CALCULATION( RandomSuffixAmount, GetItemRandomSuffixFactor() );
 
 					if( Apply )
-						m_owner->ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS, val );
+						m_owner->DamageDonePosMod[0] += val;
 					else
-						m_owner->ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS, -val );
-					m_owner->CalcDamage();
+						m_owner->DamageDonePosMod[0] -= val;
+					m_owner->UpdateStats();
 				}break;
 
 			case 3:		 // Cast spell (usually means apply aura)
@@ -815,14 +815,13 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 				{
 					if( Apply )
 					{
-						//m_owner->ModUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS, Entry->min[c]);
 						//if i'm not wrong then we should apply DMPS formula for this. This will have somewhat a larger value 28->34
 						int32 val = Entry->min[c];
 						if( RandomSuffixAmount )
 							val = RANDOM_SUFFIX_MAGIC_CALCULATION( RandomSuffixAmount, GetItemRandomSuffixFactor() );
 
 						int32 value = GetProto()->Delay * val / 1000;
-						m_owner->ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS, value );
+						m_owner->DamageDonePosMod[0] += val;
 					}
 					else
 					{
@@ -831,9 +830,9 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 							val = RANDOM_SUFFIX_MAGIC_CALCULATION( RandomSuffixAmount, GetItemRandomSuffixFactor() );
 
 						int32 value =- (int32)(GetProto()->Delay * val / 1000 );
-						m_owner->ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS, value );
+						m_owner->DamageDonePosMod[0] += val;
 					}
-					m_owner->CalcDamage();
+					m_owner->UpdateStats();
 				}break;
 
 			default:

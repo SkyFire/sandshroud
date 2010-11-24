@@ -190,6 +190,7 @@ void Player::Init()
 	m_AutoShotSpell					= NULL;
 	m_AttackMsgTimer				= 0;
 	m_GM_SelectedGO					= NULLGOB;
+
 	for(uint8 x = 0;x < 7; ++x)
 	{
 		FlatResistanceModifierPos[x] = 0;
@@ -201,14 +202,7 @@ void Player::Init()
 		SpellDelayResist[x] = 0;
 		m_casted_amount[x] = 0;
 	}
-	for(uint8 a = 0; a < 5; ++a)
-	{
-		for(uint8 x = 0; x < 7; ++x)
-		{
-			SpellDmgDoneByAttribute[a][x] = 0;
-			SpellHealDoneByAttribute[a][x] = 0;
-		}
-	}
+
 	for(uint8 x = 0; x < 5; ++x)
 	{
 		FlatStatModPos[x] = 0;
@@ -218,6 +212,7 @@ void Player::Init()
 		TotalStatModPctPos[x] = 0;
 		TotalStatModPctNeg[x] = 0;
 	}
+
 	for(uint8 x = 0; x < 12; ++x)
 	{
 		IncreaseDamageByType[x] = 0;
@@ -5491,7 +5486,35 @@ void Player::UpdateChanceFields()
 	for(uint32 i = 0; i < 7; i++)
 	{
 		SetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1 + i, SpellCritChanceSchool[i]+spellcritperc);
+		SetFloatValue( PLAYER_FIELD_MOD_DAMAGE_DONE_PCT + i, DamageDonePctMod[i] );
+
+		int32 damagedonepos = DamageDonePosMod[i];
+		for(uint32 stat = 0; stat < 5; stat++)
+		{
+			CalcStat(stat);
+			if(SpellDmgDoneByAttribute[stat][i] && GetStat(stat) > 0)
+			{
+				damagedonepos += ((SpellDmgDoneByAttribute[stat][i]*GetStat(stat))/100);
+			}
+		}
+		damagedonepos += (SpellDamageFromAP*GetAP())/100;
+
+		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + i, damagedonepos );
+		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, DamageDoneNegMod[i] );
 	}
+
+	int32 healingdone = HealDoneMod;
+	for(uint32 stat = 0; stat < 5; stat++)
+	{
+		if(SpellDmgDoneByAttribute[stat] && GetStat(stat) > 0)
+		{
+			healingdone += ((SpellHealDoneByAttribute[stat]*GetStat(stat))/100);
+		}
+	}
+	healingdone += (SpellHealFromAP*GetAP())/100;
+
+	SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS, healingdone);
+	SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_PCT, HealDonePctMod);
 }
 
 void Player::UpdateAttackSpeed()
@@ -7692,7 +7715,7 @@ void Player::CalcStat(uint32 type)
 
 	SetUInt32Value( UNIT_FIELD_POSSTAT0 + type, pos );
 	SetUInt32Value( UNIT_FIELD_NEGSTAT0 + type, neg );
-	SetUInt32Value( UNIT_FIELD_STAT0 + type, res > 0 ?res : 0 );
+	SetUInt32Value( UNIT_FIELD_STAT0 + type, res > 0 ? res : 0 );
 	if( type == 1 )
 		CalcResistance(RESISTANCE_ARMOR);
 }
@@ -9894,18 +9917,12 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 		}break;
 	case SPELL_HEALING_DONE:
 		{
-			for( uint8 school = 1; school < 7; ++school )
-			{
-				HealDoneMod[school] += val;
-			}
-			ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
+			HealDoneMod += val;
 		}break;
 	case SPELL_DAMAGE_DONE:
 		{
 			for( uint8 school = 1; school < 7; ++school )
-			{
-				ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
-			}
+				DamageDonePosMod[school] += val;
 		}break;
 	case MANA_REGENERATION:
 		{
@@ -9919,12 +9936,12 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 		{
 			for( uint8 school = 1; school < 7; ++school )
 			{
-				ModUnsigned32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + school, val );
-				HealDoneMod[ school ] += val;
+				DamageDonePosMod[ school ] += val;
 			}
-			ModUnsigned32Value( PLAYER_FIELD_MOD_HEALING_DONE_POS, val );
+			HealDoneMod += val;
 		}break;
 	}
+	UpdateStats();
 }
 
 bool Player::CanSignCharter(Charter * charter, Player* requester)
@@ -9944,7 +9961,7 @@ bool Player::CanSignCharter(Charter * charter, Player* requester)
 void Player::SaveAuras(stringstream &ss)
 {
 	// Add player auras
-	for(uint32 x = 0; x < TOTAL_AURAS; x++)
+	for(uint32 x = 0; x < MAX_AURAS; x++) // Crow: Changed to max auras in r1432, since we skip passive auras.
 	{
 		if(m_auras[x] != NULL)
 		{
@@ -10002,7 +10019,7 @@ void Player::SaveAuras(stringstream &ss)
 				continue;
 
 			// We are going to cast passive spells anyway on login so no need to save auras for them
-			if( aur->m_spellProto->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET || aur->m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP )
+			if( aur->IsPassive() || aur->m_spellProto->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET || aur->m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP )
 				continue; // To prevent food/drink bug
 
 			ss << aur->GetSpellId() << "," << aur->GetTimeLeft() << ",";
@@ -10098,7 +10115,6 @@ void Player::SetShapeShift(uint8 ss)
 	DelaySpeedHack( 2000 );
 
 	UpdateStats();
-	UpdateChances();
 }
 
 void Player::CalcDamage()
@@ -10107,158 +10123,145 @@ void Player::CalcDamage()
 	float r;
 	int ss = GetShapeShift();
 /////////////////MAIN HAND
-		float ap_bonus = GetAP()/14000.0f;
-		delta = (float)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS ) - (float)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG );
+	float ap_bonus = GetAP()/14000.0f;
+	delta = (float)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS ) - (float)GetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG );
 
-		if(IsInFeralForm())
-		{
-			uint32 lev = getLevel();
+	if(IsInFeralForm())
+	{
+		uint32 lev = getLevel();
 
-			if(ss == FORM_CAT)
-				r = lev + delta + ap_bonus * 1000.0f;
-			else
-				r = lev + delta + ap_bonus * 2500.0f;
+		if(ss == FORM_CAT)
+			r = lev + delta + ap_bonus * 1000.0f;
+		else
+			r = lev + delta + ap_bonus * 2500.0f;
 
-			//SetFloatValue(UNIT_FIELD_MINDAMAGE,r);
-			//SetFloatValue(UNIT_FIELD_MAXDAMAGE,r);
+		//SetFloatValue(UNIT_FIELD_MINDAMAGE,r);
+		//SetFloatValue(UNIT_FIELD_MAXDAMAGE,r);
 
-			r *= 0.9f;
-			r *= 1.1f;
-
-			SetFloatValue(UNIT_FIELD_MINDAMAGE,r>0?r:0);
-			SetFloatValue(UNIT_FIELD_MAXDAMAGE,r>0?r:0);
-
-			return;
-		}
-//////no druid ss
-		uint32 speed=2000;
-		Item* it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
-
-		if(!disarmed)
-		{
-			if(it)
-				speed = it->GetProto()->Delay;
-		}
-
-		float bonus=ap_bonus*speed;
-		float tmp = GetDamageDonePctMod(SCHOOL_NORMAL);
-
-		r = BaseDamage[0]+delta+bonus;
-		r *= tmp;
-		if( it )
-			r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
+		r *= 0.9f;
+		r *= 1.1f;
 
 		SetFloatValue(UNIT_FIELD_MINDAMAGE,r>0?r:0);
-
-		r = BaseDamage[1]+delta+bonus;
-		r *= tmp;
-		if( it )
-			r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
-
 		SetFloatValue(UNIT_FIELD_MAXDAMAGE,r>0?r:0);
 
-		uint32 cr = 0;
-		if( it )
-		{
-			if( m_wratings.size() )
-			{
-				std::map<uint32, uint32>::iterator itr = m_wratings.find( it->GetProto()->SubClass );
-				if( itr != m_wratings.end() )
-					cr=itr->second;
-			}
-		}
-		SetUInt32Value( PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL, cr );
-		/////////////// MAIN HAND END
+		return;
+	}
+//////no druid ss
+	uint32 speed=2000;
+	Item* it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
 
-		/////////////// OFF HAND START
-		cr = 0;
-		it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND);
+	if(!disarmed)
+	{
 		if(it)
+			speed = it->GetProto()->Delay;
+	}
+
+	float bonus=ap_bonus*speed;
+	float tmp = GetDamageDonePctMod(SCHOOL_NORMAL);
+
+	r = BaseDamage[0]+delta+bonus;
+	r *= tmp;
+	if( it )
+		r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
+
+	SetFloatValue(UNIT_FIELD_MINDAMAGE,r>0?r:0);
+
+	r = BaseDamage[1]+delta+bonus;
+	r *= tmp;
+	if( it )
+		r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
+
+	SetFloatValue(UNIT_FIELD_MAXDAMAGE,r>0?r:0);
+
+	uint32 cr = 0;
+	if( it )
+	{
+		if( m_wratings.size() )
 		{
-			if(!disarmed)
-			{
-				speed =it->GetProto()->Delay;
-			}
-			else speed  = 2000;
-
-			bonus = ap_bonus * speed;
-
-			r = (BaseOffhandDamage[0]+delta+bonus)*offhand_dmg_mod;
-			r *= tmp;
-			r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
-			SetFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE,r>0?r:0);
-
-			r = (BaseOffhandDamage[1]+delta+bonus)*offhand_dmg_mod;
-			r *= tmp;
-			r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
-			SetFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE,r>0?r:0);
-
-			if(m_wratings.size ())
-			{
-				std::map<uint32, uint32>::iterator itr=m_wratings.find(it->GetProto()->SubClass);
-				if(itr!=m_wratings.end())
-					cr=itr->second;
-			}
+			std::map<uint32, uint32>::iterator itr = m_wratings.find( it->GetProto()->SubClass );
+			if( itr != m_wratings.end() )
+				cr=itr->second;
 		}
-		SetUInt32Value( PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL, cr );
+	}
+	SetUInt32Value( PLAYER_RATING_MODIFIER_MELEE_MAIN_HAND_SKILL, cr );
+/////////////// MAIN HAND END
+
+/////////////// OFF HAND START
+	cr = 0;
+	it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_OFFHAND);
+	if(it)
+	{
+		if(!disarmed)
+		{
+			speed =it->GetProto()->Delay;
+		}
+		else speed  = 2000;
+
+		bonus = ap_bonus * speed;
+
+		r = (BaseOffhandDamage[0]+delta+bonus)*offhand_dmg_mod;
+		r *= tmp;
+		r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
+		SetFloatValue(UNIT_FIELD_MINOFFHANDDAMAGE,r>0?r:0);
+
+		r = (BaseOffhandDamage[1]+delta+bonus)*offhand_dmg_mod;
+		r *= tmp;
+		r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
+		SetFloatValue(UNIT_FIELD_MAXOFFHANDDAMAGE,r>0?r:0);
+
+		if(m_wratings.size ())
+		{
+			std::map<uint32, uint32>::iterator itr=m_wratings.find(it->GetProto()->SubClass);
+			if(itr!=m_wratings.end())
+				cr=itr->second;
+		}
+	}
+	SetUInt32Value( PLAYER_RATING_MODIFIER_MELEE_OFF_HAND_SKILL, cr );
 
 /////////////second hand end
 ///////////////////////////RANGED
-		cr = 0;
-		if((it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED)))
+	cr = 0;
+	if((it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED)))
+	{
+		if(it->GetProto()->SubClass != 19)//wands do not have bonuses from RAP & ammo
 		{
-			if(it->GetProto()->SubClass != 19)//wands do not have bonuses from RAP & ammo
-			{
 //				ap_bonus = (GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER)+(int32)GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MODS))/14000.0;
-				//modified by Zack : please try to use premade functions if possible to avoid forgetting stuff
-				ap_bonus = GetRAP()/14000.0f;
-				bonus = ap_bonus*it->GetProto()->Delay;
+			//modified by Zack : please try to use premade functions if possible to avoid forgetting stuff
+			ap_bonus = GetRAP()/14000.0f;
+			bonus = ap_bonus*it->GetProto()->Delay;
 
 #ifndef CATACLYSM
-				if(GetUInt32Value(PLAYER_AMMO_ID) && RequireAmmo)
-				{
-					ItemPrototype * xproto=ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
-					if(xproto)
-					{
-						bonus+=((xproto->Damage[0].Min+xproto->Damage[0].Max)*it->GetProto()->Delay)/2000.0f;
-					}
-				}
-#endif
-			}else bonus = 0;
-
-			r = BaseRangedDamage[0]+delta+bonus;
-			r *= tmp;
-			r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
-			SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,r>0?r:0);
-
-			r = BaseRangedDamage[1]+delta+bonus;
-			r *= tmp;
-			r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
-			SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,r>0?r:0);
-
-			if(m_wratings.size ())
+			if(GetUInt32Value(PLAYER_AMMO_ID) && RequireAmmo)
 			{
-				std::map<uint32, uint32>::iterator i=m_wratings.find(it->GetProto()->SubClass);
-				if(i != m_wratings.end())
-					cr=i->second;
+				ItemPrototype * xproto=ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
+				if(xproto)
+				{
+					bonus+=((xproto->Damage[0].Min+xproto->Damage[0].Max)*it->GetProto()->Delay)/2000.0f;
+				}
 			}
+#endif
+		}else bonus = 0;
 
+		r = BaseRangedDamage[0]+delta+bonus;
+		r *= tmp;
+		r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
+		SetFloatValue(UNIT_FIELD_MINRANGEDDAMAGE,r>0?r:0);
+
+		r = BaseRangedDamage[1]+delta+bonus;
+		r *= tmp;
+		r *= m_WeaponSubClassDamagePct[it->GetProto()->SubClass];
+		SetFloatValue(UNIT_FIELD_MAXRANGEDDAMAGE,r>0?r:0);
+
+		if(m_wratings.size ())
+		{
+			std::map<uint32, uint32>::iterator i=m_wratings.find(it->GetProto()->SubClass);
+			if(i != m_wratings.end())
+				cr=i->second;
 		}
-		SetUInt32Value( PLAYER_RATING_MODIFIER_RANGED_SKILL, cr );
 
+	}
+	SetUInt32Value( PLAYER_RATING_MODIFIER_RANGED_SKILL, cr );
 /////////////////////////////////RANGED end
-
-	/*	//tmp = 1;
-		tmp = 0;
-		for(i = damagedone.begin();i != damagedone.end();++i)
-		if(i->second.wclass==(uint32)-1)  //any weapon
-			tmp += i->second.value/100.0f;
-
-		//display only modifiers for any weapon
-
-		// OMG?
-		ModFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT ,tmp);*/
-
 }
 
 uint32 Player::GetMainMeleeDamage(uint32 AP_owerride)
@@ -11274,7 +11277,6 @@ void Player::EventTalentHeartOfWildChange(bool apply)
 		TotalStatModPctPos[STAT_STAMINA] += tval;
 		CalcStat(STAT_STAMINA);
 		UpdateStats();
-		UpdateChances();
 	}
 	//increase attackpower if :
 	else if(SS == FORM_CAT)
@@ -11282,7 +11284,6 @@ void Player::EventTalentHeartOfWildChange(bool apply)
 		SetFloatValue(UNIT_FIELD_ATTACK_POWER_MULTIPLIER,GetFloatValue(UNIT_FIELD_ATTACK_POWER_MULTIPLIER)+float(tval/200.0f));
 		SetFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER, GetFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER)+float(tval/200.0f));
 		UpdateStats();
-		UpdateChances();
 	}
 }
 

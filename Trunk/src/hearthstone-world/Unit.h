@@ -1030,8 +1030,8 @@ public:
 
 	uint32 SchoolCastPrevent[7];
 	float MechanicDurationPctMod[NUM_MECHANIC];
-	int32 GetDamageDoneMod(uint32 school);
-	float GetDamageDonePctMod(uint32 school);
+	int32 GetDamageDoneMod(uint32 school) { return DamageDonePosMod[school] - DamageDoneNegMod[school]; };
+	float GetDamageDonePctMod(uint32 school) { return DamageDonePctMod[school]; };
 	int32 DamageTakenMod[7];
 	float DamageTakenPctMod[7];
 	//float DamageTakenPctModOnHP35; DEPRECATED, YAY!
@@ -1128,10 +1128,20 @@ public:
 
 	uint32 BaseResistance[7]; //there are resistances for silence, fear, mechanics ....
 	uint32 BaseStats[5];
-	int32 HealDoneMod[7];
-	float HealDonePctMod[7];
-	int32 HealTakenMod[7];
-	float HealTakenPctMod[7];
+
+	int32 DamageDonePosMod[7];
+	int32 DamageDoneNegMod[7];
+	float DamageDonePctMod[7];
+	int32 SpellDmgDoneByAttribute[5][7];
+	int32 SpellDamageFromAP;
+
+	int32 HealDoneMod;
+	float HealDonePctMod;
+	int32 HealTakenMod;
+	float HealTakenPctMod;
+	int32 SpellHealDoneByAttribute[5];
+	int32 SpellHealFromAP;
+
 	uint32 SchoolImmunityList[7];
 	float SpellCritChanceSchool[7];
 	int32 PowerCostMod[7];

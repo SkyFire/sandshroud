@@ -1144,7 +1144,7 @@ void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)
 		{
 			GetPlayer()->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_ITEM_RANK_NOT_ENOUGH);
 			_player->SetUInt32Value(PLAYER_AMMO_ID, 0);
-			_player->CalcDamage();
+			_player->UpdateStats();
 			return;
 		}
 	}
@@ -1154,7 +1154,7 @@ void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)
 		{
 			GetPlayer()->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_ITEM_RANK_NOT_ENOUGH);
 			_player->SetUInt32Value(PLAYER_AMMO_ID, 0);
-			_player->CalcDamage();
+			_player->UpdateStats();
 			return;
 		}
 
@@ -1164,13 +1164,13 @@ void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)
 			{
 				GetPlayer()->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_ITEM_RANK_NOT_ENOUGH);
 				_player->SetUInt32Value(PLAYER_AMMO_ID, 0);
-				_player->CalcDamage();
+				_player->UpdateStats();
 				return;
 			}
 		}
 	}
 	_player->SetUInt32Value(PLAYER_AMMO_ID, ammoId);
-	_player->CalcDamage();
+	_player->UpdateStats();
 
 #ifdef OPTIMIZED_PLAYER_SAVING
 	_player->save_Misc();

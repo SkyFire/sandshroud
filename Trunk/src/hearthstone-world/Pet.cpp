@@ -583,7 +583,10 @@ void Pet::InitializeMe()
 		{
 			float parentfrost = (float)m_Owner->GetDamageDoneMod(SCHOOL_FROST);
 			parentfrost *= 0.40f;
-			ModDamageDone[SCHOOL_FROST] = (uint32)parentfrost;
+			if(parentfrost > 0)
+				DamageDonePosMod[SCHOOL_FROST] = (uint32)parentfrost;
+			else
+				DamageDoneNegMod[SCHOOL_FROST] = (uint32)parentfrost;
 		}
 	}
 	else

@@ -2890,7 +2890,7 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 		if( m_pItems[srcslot] != NULL )
 			m_pOwner->ApplyItemMods( m_pItems[srcslot], srcslot, true );
 		else if( srcslot == EQUIPMENT_SLOT_MAINHAND || srcslot == EQUIPMENT_SLOT_OFFHAND )
-			m_pOwner->CalcDamage();
+			m_pOwner->UpdateStats();
 	}
 
 	//dst item is equiped now
@@ -2899,7 +2899,7 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 		if( m_pItems[dstslot] != NULL )
 			m_pOwner->ApplyItemMods( m_pItems[dstslot], dstslot, true );
 		else if( dstslot == EQUIPMENT_SLOT_MAINHAND || dstslot == EQUIPMENT_SLOT_OFFHAND )
-			m_pOwner->CalcDamage();
+			m_pOwner->UpdateStats();
 	}
 	return true;
 }

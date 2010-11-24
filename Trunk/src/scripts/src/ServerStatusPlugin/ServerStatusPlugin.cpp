@@ -182,37 +182,48 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)
 
 void SetThreadName(const char* format, ...)
 {
+
 }
+
+bool first = true;
 
 void GenerateUptimeString(char * Dest)
 {
-    uint32 seconds = sWorld.GetUptime();
-    uint32 mins = 0;
-    uint32 hours = 0;
-    uint32 days = 0;
-    if(seconds >= 60)
-    {
-        mins = seconds / 60;
-        if(mins)
-        {
-            seconds -= mins*60;
-            if(mins >= 60)
-            {
-                hours = mins / 60;
-                if(hours)
-                {
-                    mins -= hours*60;
-                    if(hours >= 24)
-                    {
-                        days = hours/24;
-                        if(days)
-                            hours -= days*24;
-                    }
-                }
-            }
-        }
-    }
-    sprintf(Dest, "%d days, %d hours, %d minutes, %d seconds", (int)days, (int)hours, (int)mins, (int)seconds);
+	if(first)
+	{
+		sprintf(Dest, "0 days, 0 hours, 0 minutes, 0 seconds");
+		first = false;
+		return;
+	}
+
+	uint32 seconds = sWorld.GetUptime();
+	uint32 mins = 0;
+	uint32 hours = 0;
+	uint32 days = 0;
+	if(seconds >= 60)
+	{
+		mins = seconds / 60;
+		if(mins)
+		{
+			seconds -= mins*60;
+			if(mins >= 60)
+			{
+				hours = mins / 60;
+				if(hours)
+				{
+					mins -= hours*60;
+					if(hours >= 24)
+					{
+						days = hours/24;
+						if(days)
+							hours -= days*24;
+					}
+				}
+			}
+		}
+	}
+
+	sprintf(Dest, "%d days, %d hours, %d minutes, %d seconds", (int)days, (int)hours, (int)mins, (int)seconds);
 }
 
 #ifdef WIN32
@@ -379,7 +390,6 @@ void StatDumper::DumpStats()
         fprintf(f, "    <ram>%.3f</ram>\n", GetRAMUsage());
         fprintf(f, "    <avglat>%.3f</avglat>\n", AvgLat);
 		fprintf(f, "    <threads>%u</threads>\n", (unsigned int)ThreadPool.GetActiveThreadCount());
-		fprintf(f, "    <fthreads>%u</fthreads>\n", (unsigned int)ThreadPool.GetFreeThreadCount());
         time_t t = (time_t)UNIXTIME;
         fprintf(f, "    <gmcount>%u</gmcount>\n", (unsigned int)GMCount);
         fprintf(f, "    <lastupdate>%s</lastupdate>\n", asctime(localtime(&t)));
