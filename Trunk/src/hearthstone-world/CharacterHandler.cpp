@@ -237,7 +237,6 @@ void WorldSession::HandleCharEnumOpcode( WorldPacket & recv_data )
 	q->AddQuery("SELECT guid, level, race, class, gender, bytes, bytes2, name, positionX, positionY, positionZ, mapId, zoneId, banned, restState, deathstate, forced_rename_pending, player_flags, guild_data.guildid, customizable FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE acct=%u ORDER BY guid ASC LIMIT 10", GetAccountId());
 	m_asyncQuery = true;
 	CharacterDatabase.QueueAsyncQuery(q);
-	m_lastEnumTime = (uint32)UNIXTIME;
 }
 
 void WorldSession::LoadAccountDataProc(QueryResult * result)
@@ -395,7 +394,6 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	SendPacket(&data);
 
 	sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
-	m_lastEnumTime = 0;
 }
 
 /* Last Checked at patch 3.0.2 Specfic SMSG_CHAR_CREATE Error Codes:
@@ -508,7 +506,6 @@ void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 	else
 	{
 		fail = DeleteCharacter((uint32)guid);
-		m_lastEnumTime = 0;
 	}
 	OutPacket(SMSG_CHAR_DELETE, 1, &fail);
 	if(fail == CHAR_DELETE_SUCCESS)
@@ -688,7 +685,6 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 
 	data << uint8(0) << guid << name;
 	SendPacket(&data);
-	m_lastEnumTime = 0;
 }
 
 

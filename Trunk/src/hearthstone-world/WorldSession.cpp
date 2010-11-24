@@ -46,7 +46,6 @@ _logoutTime(0), permissions(NULL), permissioncount(0), _loggingOut(false), insta
 	language=0;
 	m_muted = 0;
 	_side = -1;
-	m_lastEnumTime = 0;
 	m_repeatTime = 0;
 	m_repeatEmoteTime = 0;
 	m_repeatEmoteId = 0;

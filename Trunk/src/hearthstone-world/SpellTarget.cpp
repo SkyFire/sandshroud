@@ -1004,7 +1004,7 @@ void Spell::SpellTargetAreaOfEffect87(uint32 i, uint32 j)
 	if( !m_caster || !m_caster->IsInWorld() )
 		return;
 
-	_AddTargetForced(m_caster->GetGUID(), i);
+	FillAllGameObjectTargetsInArea(i, m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, GetRadius(i));
 }
 
 /// Spell Target Handling for type 89

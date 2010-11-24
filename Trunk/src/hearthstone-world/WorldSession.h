@@ -815,7 +815,6 @@ public:
 	uint32 language;
 	WorldPacket* BuildQuestQueryResponse(Quest *qst);
 	uint32 m_muted;
-	uint32 m_lastEnumTime;
 	uint32 m_lastWhoTime;
 	bool m_asyncQuery;
 

@@ -395,25 +395,21 @@ void VoiceChatHandler::Update()
 
 void WorldSession::HandleChannelWatchOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: Received CMSG_SET_CHANNEL_WATCH");
 	SKIP_READ_PACKET(recv_data);
 }
 
 void WorldSession::HandleEnableMicrophoneOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: Received CMSG_VOICE_SESSION_ENABLE");
 	SKIP_READ_PACKET(recv_data);
 }
 
 void WorldSession::HandleChannelVoiceOnOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: CMSG_CHANNEL_VOICE_ON");
 	SKIP_READ_PACKET(recv_data);
 }
 
 void WorldSession::HandleVoiceChatQueryOpcode(WorldPacket & recv_data)
 {
-	OUT_DEBUG("WORLD: Received CMSG_SET_ACTIVE_VOICE_CHANNEL");
 	SKIP_READ_PACKET(recv_data);
 }
 

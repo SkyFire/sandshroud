@@ -7175,8 +7175,9 @@ void Spell::SpellEffectPlaceTotemsOnBar(uint32 i)
 	uint32 button_count = m_spellInfo->EffectMiscValueB[i];
 	for (; button_count;button_count--, button++)
 	{
-		if(!p_caster->mActions[button].Type != 0)
+		if(p_caster->mActions[button].Type != 0)
 			 continue;
+
 		uint32 spell = p_caster->mActions[button].Action;
 		if(!spell)
 			continue;

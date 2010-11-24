@@ -3747,6 +3747,9 @@ uint8 Spell::CanCast(bool tolerate)
 			return SPELL_FAILED_OUT_OF_RANGE;
 	}
 
+	if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && m_caster->IsInLineOfSight(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ))
+		return SPELL_FAILED_LINE_OF_SIGHT;
+
 	Unit* target = NULLUNIT;
 	if( m_targets.m_targetMask == TARGET_FLAG_SELF )
 		target = u_caster;
@@ -3812,6 +3815,7 @@ uint8 Spell::CanCast(bool tolerate)
 				{
 					return SPELL_FAILED_LINE_OF_SIGHT;
 				}
+
 
 				// check aurastate
 				if( GetSpellProto()->TargetAuraState && !skip)

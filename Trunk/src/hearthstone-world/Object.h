@@ -647,6 +647,7 @@ public:
 	HEARTHSTONE_INLINE uint32 GetMaxMana() { return m_uint32Values[UNIT_FIELD_MAXPOWER1]; }
 
 	bool IsInLineOfSight(Object* pObj);
+	bool IsInLineOfSight(float x, float y, float z);
 	int32 GetSpellBaseCost(SpellEntry *sp);
 
 	/************************************************************************/

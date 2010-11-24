@@ -3501,6 +3501,18 @@ bool Object::IsInLineOfSight(Object* pObj)
 		return true;
 }
 
+bool Object::IsInLineOfSight(float x, float y, float z)
+{
+	float Onoselevel = 2.0f;
+	if(IsPlayer())
+		Onoselevel = TO_PLAYER(this)->m_noseLevel;
+
+	if (GetMapMgr() && GetMapMgr()->CanUseCollision(this))
+		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + Onoselevel, x, y, z) );
+	else
+		return true;
+}
+
 bool Object::PhasedCanInteract(Object* pObj)
 {
 	bool ret = false;
