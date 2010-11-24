@@ -5482,6 +5482,10 @@ void Player::UpdateChances()
 
 void Player::UpdateChanceFields()
 {
+	uint32 stat = 0;
+	for(; stat < 5; stat++)
+		CalcStat(stat);
+
 	// Update spell crit values in fields
 	for(uint32 i = 0; i < 7; i++)
 	{
@@ -5489,9 +5493,8 @@ void Player::UpdateChanceFields()
 		SetFloatValue( PLAYER_FIELD_MOD_DAMAGE_DONE_PCT + i, DamageDonePctMod[i] );
 
 		int32 damagedonepos = DamageDonePosMod[i];
-		for(uint32 stat = 0; stat < 5; stat++)
+		for(stat = 0; stat < 5; stat++)
 		{
-			CalcStat(stat);
 			if(SpellDmgDoneByAttribute[stat][i] && GetStat(stat) > 0)
 			{
 				damagedonepos += ((SpellDmgDoneByAttribute[stat][i]*GetStat(stat))/100);
@@ -5504,7 +5507,7 @@ void Player::UpdateChanceFields()
 	}
 
 	int32 healingdone = HealDoneMod;
-	for(uint32 stat = 0; stat < 5; stat++)
+	for(stat = 0; stat < 5; stat++)
 	{
 		if(SpellDmgDoneByAttribute[stat] && GetStat(stat) > 0)
 		{
