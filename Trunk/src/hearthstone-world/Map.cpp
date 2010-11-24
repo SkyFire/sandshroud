@@ -133,6 +133,7 @@ bool CheckResultLengthGameObject(QueryResult * res)
 void Map::LoadSpawns(bool reload /* = false */)
 {
 	//uint32 st = getMSTime();
+	CreatureSpawnCount = 0;
 	QueryResult* result;
 	set<string>::iterator tableiterator;
 	if(reload)//perform cleanup
@@ -206,6 +207,9 @@ void Map::LoadSpawns(bool reload /* = false */)
 						spawns[cellx][celly] = new CellSpawns;
 
 					spawns[cellx][celly]->CreatureSpawns.push_back(cspawn);
+
+					++CreatureSpawnCount;
+
 				}while(result->NextRow());
 			}
 
@@ -294,6 +298,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 				cspawn->vehicle = fields[24].GetInt32();
 				cspawn->CanMove = fields[25].GetUInt8();
 				staticSpawns.CreatureSpawns.push_back(cspawn);
+				++CreatureSpawnCount;
 			}while(result->NextRow());
 		}
 

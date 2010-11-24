@@ -3175,9 +3175,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( !p_caster->isAlive() && self_rez != GetSpellProto()->Id)
 		{
 			if( (m_targets.m_targetMask & TARGET_FLAG_SELF  || m_targets.m_unitTarget == p_caster->GetGUID() || !IsHealingSpell(m_spellInfo)) && p_caster->GetShapeShift() == FORM_SPIRITOFREDEMPTION)		// not a holy spell
-			{
 					return SPELL_FAILED_SPELL_UNAVAILABLE;
-			}
 
 			if(!(GetSpellProto()->Attributes & ATTRIBUTES_CASTABLE_WHILE_DEAD))
 				return SPELL_FAILED_NOT_WHILE_GHOST;
@@ -3186,9 +3184,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( GetSpellProto()->NameHash == SPELL_HASH_HUNTER_S_MARK )
 		{
 			if( GetUnitTarget() && !isHostile( GetUnitTarget(), m_caster ))
-			{
 				return SPELL_FAILED_BAD_TARGETS;
-			}
 		}
 
 		if (p_caster->GetMapMgr() && p_caster->GetMapMgr()->CanUseCollision(p_caster))
@@ -3241,6 +3237,8 @@ uint8 Spell::CanCast(bool tolerate)
 					return SPELL_FAILED_ONLY_STEALTHED;
 			}
 		}
+		if(!u_caster->CombatStatus.IsInCombat() && GetSpellProto()->NameHash == SPELL_HASH_DISENGAGE)
+			return SPELL_FAILED_AFFECTING_COMBAT;
 
 		// Disarm
 		if( u_caster!= NULL )
@@ -3251,6 +3249,7 @@ uint8 Spell::CanCast(bool tolerate)
 				//if ((GetSpellProto()->Id !=  100 && GetSpellProto()->Id != 6178 && GetSpellProto()->Id != 11578 ) )
 				return SPELL_FAILED_TARGET_IN_COMBAT;
 			}
+
 
 			if( u_caster->disarmed )
 			{

@@ -135,6 +135,7 @@ public:
 	}
 
 	void LoadSpawns(bool reload = false);//set to true to make clean up
+	uint32 CreatureSpawnCount;
 	TerrainMgr* GetMapTerrain() { return _terrain; };
 
 	HEARTHSTONE_INLINE float  GetLandHeight(float x, float y)
