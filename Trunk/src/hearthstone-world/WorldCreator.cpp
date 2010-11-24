@@ -587,7 +587,12 @@ MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 	ASSERT(inf != NULL && inf->type == INSTANCE_NULL);
 	ASSERT(mapid < NUM_MAPS && m_maps[mapid] != NULL);
 
-	Log.Notice("InstanceMgr", "Creating continent %s.", m_maps[mapid]->GetName());
+	const char* name = m_maps[mapid]->GetName();
+	bool transportmap = (strstr(name, "Transport") ? true : false);
+	if(transportmap) // Only list transports on debug.
+		Log.Debug("InstanceMgr", "Creating transport map %u.", mapid);
+	else
+		Log.Notice("InstanceMgr", "Creating continent %s.", name);
 
 	MapMgr* ret(new MapMgr(m_maps[mapid], mapid, instanceid));
 	ret->Init();
@@ -598,7 +603,7 @@ MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 	// assign pointer
 	m_singleMaps[mapid] = ret;
 
-	if(ret->IsCollisionEnabled())
+	if(ret->IsCollisionEnabled() && !transportmap)
 		Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
 
 	return ret;

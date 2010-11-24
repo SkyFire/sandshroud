@@ -40,7 +40,11 @@ public:
 	pthread_t THREAD_HANDLE;
 #endif
 
-	HEARTHSTONE_INLINE void Terminate() { m_threadRunning = false; }
+	HEARTHSTONE_INLINE void Terminate()
+	{
+		m_threadRunning = false;
+	}
+
 	virtual void OnShutdown() { Terminate(); }
 
 protected:

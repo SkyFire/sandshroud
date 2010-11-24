@@ -63,7 +63,7 @@ public:
 private:
 	Wintergrasp* WG;
 
-	MapMgr WGMgr;
+	MapMgr* WGMgr;
 	int winnerteam; // 0 alliance 1 horde 2 = ??
 
 	int defendingteam;

@@ -28,11 +28,12 @@ static pthread_cond_t abortcondWGI;
 static pthread_mutex_t abortmutex;
 #endif
 
-WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)))
+WintergraspInternal::WintergraspInternal()
 {
 	m_threadRunning = true;
 	m_timer = 0;
 	m_wintergrasp = 0;
+	WGMgr = sInstanceMgr.GetMapMgr(571);
 	WG = NULL;
 	WG_started = false;
 	defendingteam = 2;
@@ -45,11 +46,17 @@ WintergraspInternal::WintergraspInternal() : WGMgr(*(sInstanceMgr.GetMapMgr(571)
 
 WintergraspInternal::~WintergraspInternal()
 {
-	// Did we died'd?
+#ifdef WIN32
+	CloseHandle(m_abortEventWGI);
+#else
+	pthread_cond_destroy(&cond);
+	pthread_mutex_destroy(&mutex);
+#endif
 }
 
 void WintergraspInternal::terminate()
 {
+	WGMgr = NULL;
 	m_threadRunning = false;
 #ifdef WIN32
 	SetEvent(m_abortEventWGI);
@@ -89,6 +96,20 @@ bool WintergraspInternal::run()
 
 	while(m_threadRunning)
 	{
+		if(WG && WG_started)
+		{
+			MatchTimer = (MatchTimer - 30000);
+			float TimeLeft = ((MatchTimer/1000)/60);
+			UpdateClock();
+			printf("%u %f Minutes left till Wintergrasp ends\n",getMSTime(),TimeLeft);
+			SendWSUpdateToAll(A_NUMVEH_WORLDSTATE, WG->GetNumVehicles(ALLIANCE));
+			SendWSUpdateToAll(A_MAXVEH_WORLDSTATE, WG->GetNumWorkshops(ALLIANCE)*4);
+			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumVehicles(HORDE));
+			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumWorkshops(HORDE)*4);
+			if(MatchTimer <= 0)
+				GetWintergrasp()->ForceEnd();
+		}
+
 		if(has_timeout_expired(&local_currenttime, &local_last_countertime) || forcestart_WG == true)
 		{
 			++counter;
@@ -101,7 +122,7 @@ bool WintergraspInternal::run()
 					StartWintergrasp();
 					++WGCounter;
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
-					WG = Wintergrasp::Create(this, &WGMgr);
+					WG = Wintergrasp::Create(this, WGMgr);
 				}
 				counter = 0; // Reset our timer.
 				forcestart_WG = false;
@@ -120,19 +141,6 @@ bool WintergraspInternal::run()
 #else
 		Sleep( 30000 );
 #endif
-		if(WG && WG_started)
-		{
-			MatchTimer = (MatchTimer - 30000);
-			float TimeLeft = ((MatchTimer/1000)/60);
-			UpdateClock();
-			printf("%u %f Minutes left till Wintergrasp ends\n",getMSTime(),TimeLeft);
-			SendWSUpdateToAll(A_NUMVEH_WORLDSTATE, WG->GetNumVehicles(ALLIANCE));
-			SendWSUpdateToAll(A_MAXVEH_WORLDSTATE, WG->GetNumWorkshops(ALLIANCE)*4);
-			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumVehicles(HORDE));
-			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumWorkshops(HORDE)*4);
-			if(MatchTimer <= 0)
-				GetWintergrasp()->ForceEnd();
-		}
 	}
 	return false;
 }
@@ -178,9 +186,9 @@ void WintergraspInternal::SendInitWorldStates(Player* plr)
 		}
 		else
 		{
-			if(WGMgr.m_PlayerStorage.size())
+			if(WGMgr->m_PlayerStorage.size())
 			{
-				for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); itr++)
+				for(PlayerStorageMap::iterator itr =  WGMgr->m_PlayerStorage.begin(); itr != WGMgr->m_PlayerStorage.end(); itr++)
 				{
 					plr = itr->second;
 					if((plr->GetPlayerAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))
@@ -203,7 +211,7 @@ void WintergraspInternal::UpdateClockDigit(uint32 timer, uint32 digit, uint32 mo
 		m_clock[digit] = value;
 		SendWSUpdateToAll(ClockWorldState[digit], timer+time(NULL));
 	}
-	WGMgr.GetStateManager().UpdateWorldState(m_clock[digit], timer+time(NULL));
+	WGMgr->GetStateManager().UpdateWorldState(m_clock[digit], timer+time(NULL));
 }
 
 void WintergraspInternal::SendWSUpdateToAll(uint32 WorldState, uint32 Value)
@@ -224,7 +232,7 @@ void WintergraspInternal::SendPacketToWG(WorldPacket* data)
 	}
 	else
 	{
-		for(PlayerStorageMap::iterator itr =  WGMgr.m_PlayerStorage.begin(); itr != WGMgr.m_PlayerStorage.end(); itr++)
+		for(PlayerStorageMap::iterator itr =  WGMgr->m_PlayerStorage.begin(); itr != WGMgr->m_PlayerStorage.end(); itr++)
 		{
 			plr = itr->second;
 			if((plr->GetPlayerAreaID() == WINTERGRASP) || (plr->GetZoneId() == WINTERGRASP))

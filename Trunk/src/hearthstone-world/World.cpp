@@ -128,6 +128,18 @@ World::~World()
 	Log.Notice("ChatHandler", "~ChatHandler()");
 	delete ChatHandler::getSingletonPtr();
 
+	Log.Notice("CBattlegroundManager", "~CBattlegroundManager()");
+	delete CBattlegroundManager::getSingletonPtr();
+
+	Log.Notice("AuctionMgr", "~AuctionMgr()");
+	delete AuctionMgr::getSingletonPtr();
+
+	Log.Notice("WorldStateTemplateManager", "~WorldStateTemplateManager()");
+	delete WorldStateTemplateManager::getSingletonPtr();
+
+	Log.Notice("DayWatcherThread", "~DayWatcherThread()");
+	delete DayWatcherThread::getSingletonPtr();
+
 	Log.Notice("InstanceMgr", "~InstanceMgr()");
 	sInstanceMgr.Shutdown();
 
@@ -536,12 +548,12 @@ bool World::SetInitialWorldSettings()
 	new AuctionMgr;
 	sAuctionMgr.LoadAuctionHouses();
 
-	ThreadPool.ExecuteTask(new DayWatcherThread());
+	new DayWatcherThread();
 
 	if(wg_enabled && sInstanceMgr.GetMapMgr(571))
 	{
 		sMaster.wintergrasp = true;
-		ThreadPool.ExecuteTask(new WintergraspInternal());
+		new WintergraspInternal();
 	}
 
 	m_queueUpdateTimer = mQueueUpdateInterval;

@@ -137,6 +137,7 @@ bool Master::Run(int argc, char ** argv)
 		default:
 			sLog.m_screenLogLevel = 3;
 			printf("Usage: %s [--checkconf] [--conf <filename>] [--realmconf <filename>] [--version]\n", argv[0]);
+			killit = true;
 			return true;
 		}
 	}
@@ -171,6 +172,7 @@ bool Master::Run(int argc, char ** argv)
 		if( Config.MainConfig.GetString( "die", "msg", &die) || Config.MainConfig.GetString("die2", "msg", &die ) )
 			Log.Warning( "Config", "Die directive received: %s", die.c_str() );
 
+		killit = true;
 		return true;
 	}
 
@@ -200,6 +202,7 @@ bool Master::Run(int argc, char ** argv)
 		Log.Success( "Config", ">> hearthstone-world.conf" );
 	else
 	{
+		killit = true;
 		Log.Error( "Config", ">> hearthstone-world.conf" );
 		return false;
 	}
@@ -207,6 +210,7 @@ bool Master::Run(int argc, char ** argv)
 	string die;
 	if( Config.MainConfig.GetString( "die", "msg", &die) || Config.MainConfig.GetString( "die2", "msg", &die ) )
 	{
+		killit = true;
 		Log.Error( "Config", "Die directive received: %s", die.c_str() );
 		return false;
 	}
@@ -215,12 +219,14 @@ bool Master::Run(int argc, char ** argv)
 		Log.Success( "Config", ">> hearthstone-realms.conf" );
 	else
 	{
+		killit = true;
 		Log.Error( "Config", ">> hearthstone-realms.conf" );
 		return false;
 	}
 
 	if(!_StartDB())
 	{
+		killit = true;
 		Database::CleanupLibs();
 		return false;
 	}
@@ -253,6 +259,7 @@ bool Master::Run(int argc, char ** argv)
 
 	if( !sWorld.SetInitialWorldSettings() )
 	{
+		killit = true;
 		Log.Error( "Server", "SetInitialWorldSettings() failed. Something went wrong? Exiting." );
 		return false;
 	}
@@ -446,9 +453,6 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice("AddonMgr", "~AddonMgr()");
 	delete AddonMgr::getSingletonPtr();
 
-	Log.Notice("AuctionMgr", "~AuctionMgr()");
-	delete AuctionMgr::getSingletonPtr();
-
 	Log.Notice("LootMgr", "~LootMgr()");
 	delete LootMgr::getSingletonPtr();
 
@@ -460,6 +464,15 @@ bool Master::Run(int argc, char ** argv)
 #ifndef CLUSTERING
 	delete ls;
 #endif
+
+	Log.Notice("CharacterLoaderThread", "~CharacterLoaderThread()");
+	delete CharacterLoaderThread::getSingletonPtr();
+
+	if(wintergrasp)
+	{
+		Log.Notice("WintergraspInternal", "~WintergraspInternal()");
+		delete WintergraspInternal::getSingletonPtr();
+	}
 
 	Log.Notice("LogonComm", "~LogonCommHandler()");
 	delete LogonCommHandler::getSingletonPtr();
@@ -489,7 +502,6 @@ bool Master::Run(int argc, char ** argv)
 	sLog.outString("Deleting Script Engine...");
 	LuaEngineMgr::getSingleton().Unload();
 #endif
-	//delete ScriptSystem;
 
 	// remove pid
 	remove( "hearthstone-world.pid" );

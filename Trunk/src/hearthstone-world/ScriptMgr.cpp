@@ -67,7 +67,7 @@ void ScriptMgr::LoadScripts()
 	uint32 count = 0;
 	HANDLE find_handle = FindFirstFile( search_path.c_str(), &data );
 	if(find_handle == INVALID_HANDLE_VALUE)
-		Log.Error("ScriptMgr","No external scripts found! Server will start up with limited functionality." );
+		Log.Warning("ScriptMgr","No external scripts found! Server will start up with limited functionality." );
 	else
 	{
 		do
