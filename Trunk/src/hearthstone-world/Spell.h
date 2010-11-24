@@ -617,11 +617,14 @@ enum School
 	SCHOOL_NATURE	= 3,
 	SCHOOL_FROST	= 4,
 	SCHOOL_SHADOW	= 5,
-	SCHOOL_ARCANE	= 6
+	SCHOOL_ARCANE	= 6,
+	SCHOOL_SPELL	= 7,
+	SCHOOL_MAGIC	= 8,
+	SCHOOL_ALL		= 9
 };
 
 // converting schools for 2.4.0 client
-static const uint32 g_spellSchoolConversionTable[SCHOOL_ARCANE+1]	= {
+static const uint32 spellMaskArray[SCHOOL_ALL+1] = {
 	1,				// SCHOOL_NORMAL
 	2,				// SCHOOL_HOLY
 	4,				// SCHOOL_FIRE
@@ -629,11 +632,16 @@ static const uint32 g_spellSchoolConversionTable[SCHOOL_ARCANE+1]	= {
 	16,				// SCHOOL_FROST
 	32,				// SCHOOL_SHADOW
 	64,				// SCHOOL_ARCANE
+	124,			// SCHOOL_SPELL
+	126,			// SCHOOL_MAGIC
+	127				// SCHOOL_ALL
 };
 
 HEARTHSTONE_INLINE uint8 SchoolMask(uint8 school)
 {
-	return g_spellSchoolConversionTable[school];
+	if(school > SCHOOL_ALL)
+		return uint8(0);
+	return spellMaskArray[school];
 }
 
 enum ReplenishType

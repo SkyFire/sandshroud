@@ -3387,7 +3387,7 @@ void Object::SendAttackerStateUpdate( Unit* Target, dealdamage *dmg, uint32 real
 	}
 
 	uint32 overkill = Target->computeOverkill(realdamage);
-	uint32 schooldam = g_spellSchoolConversionTable[dmg->school_type];
+	uint32 schooldam = SchoolMask(dmg->school_type);
 
 	data << uint32(hit_status);
 	data << GetNewGUID();

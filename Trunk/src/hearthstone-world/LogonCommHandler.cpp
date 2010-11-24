@@ -118,60 +118,6 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 	}
 }
 
-class LogonCommWatcherThread : public ThreadContext
-{
-	bool running;
-#ifdef WIN32
-	HANDLE hEvent;
-#endif
-
-public:
-	LogonCommWatcherThread()
-	{
-		if(!(sWorld.LogonServerType & LOGON_MANGOS))
-		{
-#ifdef WIN32
-			hEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
-#endif
-			running = true;
-		}
-	}
-
-	~LogonCommWatcherThread()
-	{
-
-	}
-
-	void OnShutdown()
-	{
-		if(!(sWorld.LogonServerType & LOGON_MANGOS))
-		{
-			m_threadRunning = false;
-#ifdef WIN32
-			SetEvent( hEvent );
-#endif
-		}
-	}
-
-	bool run()
-	{
-		if(!(sWorld.LogonServerType & LOGON_MANGOS))
-		{
-			sLogonCommHandler.ConnectAll();
-			while( m_threadRunning )
-			{
-				sLogonCommHandler.UpdateSockets();
-#ifdef WIN32
-				WaitForSingleObject( hEvent, 10 );
-#else
-				Sleep( 10 );
-#endif
-			}
-		}
-		return true;
-	}
-};
-
 void LogonCommHandler::Startup()
 {
 	if(!(sWorld.LogonServerType & LOGON_MANGOS))
@@ -194,7 +140,7 @@ void LogonCommHandler::Startup()
 			} while (result->NextRow());
 			delete result;
 		}
-		ThreadPool.ExecuteTask( new LogonCommWatcherThread() );
+		ThreadPool.ExecuteTask(new LogonCommWatcherThread());
 	}
 	else
 	{

@@ -4050,13 +4050,10 @@ void Aura::SpellAuraModDamageDone(bool apply)
 		if( apply )
 		{
 			SetPositive();
-			val += mod->m_amount;
+			val = mod->m_amount;
 		}
 		else
-		{
-			val += -mod->m_amount;
-		}
-
+			val = -mod->m_amount;
 	}
 	else
 	{
@@ -4064,12 +4061,10 @@ void Aura::SpellAuraModDamageDone(bool apply)
 		if( apply )
 		{
 			SetNegative();
-			val += mod->m_amount;
+			val = mod->m_amount;
 		}
 		else
-		{
-			val += -mod->m_amount;
-		}
+			val = -mod->m_amount;
 	}
 
 	for( uint32 x = 0; x < 7; x++ )
@@ -8841,17 +8836,22 @@ void Aura::SpellAuraIncreaseSpellDamageByAttribute(bool apply)
 	else
 		val = -mod->realamount;
 
-	uint32 stat;
-	if (mod->m_miscValue < 5)
-		stat = mod->m_miscValue;
-	else
-		return;
+	uint32 stat = 0;
+	for(uint32 i = 0; i < 3; i++)
+	{	// bit hacky but it will work with all currently available spells
+		if (m_spellProto->EffectApplyAuraName[i] == SPELL_AURA_INCREASE_SPELL_HEALING_PCT)
+		{
+			if (m_spellProto->EffectMiscValue[i] < 5)
+				stat = m_spellProto->EffectMiscValue[i];
+			else
+				return;
+		}
+	}
 
 	ASSERT(stat < 5);
-
 	for(uint32 x = 0; x < 7; x++)
 	{
-		if(mod->m_miscValue & (((uint32)1) << x))
+		if(mod->m_miscValue & SchoolMask(x))
 		{
 			m_target->SpellDmgDoneByAttribute[stat][x] += val;
 		}

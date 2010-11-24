@@ -543,13 +543,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectSpellClassMask[0][1] = 0x00001000;
 			sp->EffectSpellClassMask[0][2] = 0x00001000;
 		}break;
-		// Touched by the Light
-	case 53590:
-	case 53591:
-	case 53592:
-		{
-			sp->EffectMiscValue[0] = 2; // stamina
-		}break;
 		//Shield of the Templar
 	case 53709:
 	case 53710:
