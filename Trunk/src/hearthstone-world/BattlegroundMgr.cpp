@@ -29,13 +29,12 @@ const static uint32 BGMapIds[BATTLEGROUND_NUM_TYPES] = {
 	529,	// AB
 	0,		// 2v2
 	0,		// 3v3
- 	0,		// 5v5
- 	566,	// EOTS
+	0,		// 5v5
+	566,	// EOTS
 	572,
 	607,	// SOTA
 	617,
 	618,
- 	0,
 	0,
 	0,
 	0,
@@ -53,7 +52,8 @@ const static uint32 BGMapIds[BATTLEGROUND_NUM_TYPES] = {
 	0,
 	0,
 	0,
- 	628,	// IOC
+	0,
+	628,	// IOC
 	0,
 	489,
 };
@@ -89,22 +89,22 @@ const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
 	NULL,							// Non existant.
 	NULL,							// Non existant.
 	NULL,							// Non existant.
- 	&IsleOfConquest::Create,		// IOC
+	&IsleOfConquest::Create,		// IOC
 	NULL,							// Non existant.
 	NULL,							// Random
 };
 
 const static uint32 BGMinimumPlayers[BATTLEGROUND_NUM_TYPES] = {
 	0,							// 0
-	20,							// AV
-	5,							// WSG
-	7,							// AB
+	sWorld.av_minplrs,			// AV
+	sWorld.wsg_minplrs,			// WSG
+	sWorld.ab_minplrs,			// AB
 	4,							// 2v2
 	6,							// 3v3
 	10,							// 5v5
-	7,							// EOTS
+	sWorld.eots_minplrs,		// EOTS
 	0,							// Unknown
- 	15,							// SOTA
+	sWorld.sota_minplrs,		// SOTA
 	0,							// Unknown
 	0,							// Unknown
 	0,							// Non existant.
@@ -125,7 +125,7 @@ const static uint32 BGMinimumPlayers[BATTLEGROUND_NUM_TYPES] = {
 	0,							// Non existant.
 	0,							// Non existant.
 	0,							// Non existant.
- 	40,							// IOC
+	sWorld.ioc_minplrs,			// IOC
 	0,							// Non existant.
 	0,							// Random
 };
@@ -512,6 +512,9 @@ void CBattlegroundManager::AddGroupToArena(CBattleground* bg, Group * group, int
 
 int CBattlegroundManager::CreateArenaType(int type, Group * group1, Group * group2)
 {
+	if(!CanCreateInstance(type, LEVEL_GROUP_RATED_ARENA))
+		return -1;
+
 	Arena* ar = TO_ARENA(CreateInstance(type, LEVEL_GROUP_RATED_ARENA));
 	if (ar == NULL)
 	{
@@ -920,17 +923,49 @@ void CBattlegroundManager::RemoveGroupFromQueues(Group * grp)
 
 bool CBattlegroundManager::CanCreateInstance(uint32 Type, uint32 LevelGroup)
 {
-	/*uint32 lc = 0;
-	for(map<uint32, CBattleground* >::iterator itr = m_instances[Type].begin(); itr != m_instances[Type].end(); itr++)
+	switch(Type)
 	{
-		if(itr->second->GetLevelGroup() == LevelGroup)
+	case BATTLEGROUND_ALTERAC_VALLEY:
 		{
-			lc++;
-			if(lc >= MAXIMUM_BATTLEGROUNDS_PER_LEVEL_GROUP)
+			if(!sWorld.av_enabled)
 				return false;
-		}
-	}*/
+		}break;
 
+	case BATTLEGROUND_WARSONG_GULCH:
+		{
+			if(!sWorld.wsg_enabled)
+				return false;
+		}break;
+
+	case BATTLEGROUND_ARATHI_BASIN:
+		{
+			if(!sWorld.ab_enabled)
+				return false;
+		}break;
+
+	case BATTLEGROUND_EYE_OF_THE_STORM:
+		{
+			if(!sWorld.eots_enabled)
+				return false;
+		}break;
+
+	case BATTLEGROUND_STRAND_OF_THE_ANCIENTS:
+		{
+			if(!sWorld.sota_enabled)
+				return false;
+		}break;
+
+	case BATTLEGROUND_ISLE_OF_CONQUEST:
+		{
+			if(!sWorld.ioc_enabled)
+				return false;
+		}break;
+
+	case BATTLEGROUND_RANDOM:
+		{
+			return false;
+		}break;
+	}
 	return true;
 }
 

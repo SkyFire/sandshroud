@@ -678,10 +678,19 @@ public:
 
 	//Enable/Disable specific battlegrounds/arenas
 	bool wg_enabled;
+
 	bool av_enabled;
+	uint32 av_minplrs;
 	bool ab_enabled;
+	uint32 ab_minplrs;
 	bool wsg_enabled;
+	uint32 wsg_minplrs;
 	bool eots_enabled;
+	uint32 eots_minplrs;
+	bool sota_enabled;
+	uint32 sota_minplrs;
+	bool ioc_enabled;
+	uint32 ioc_minplrs;
 
 	// Level Caps
 	uint32 LevelCap_Custom_All;

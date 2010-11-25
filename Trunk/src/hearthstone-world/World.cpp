@@ -1287,11 +1287,32 @@ void World::Rehash(bool load)
 		LogoutDelay = 1;
 
 	// Battlegrounds
+	// Wintergrasp
 	wg_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableWG", false);
+
+	// Alterac Valley
 	av_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableAV", true);
-	ab_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableAB", true);
+	av_minplrs = Config.MainConfig.GetIntDefault("Battlegrounds", "AVMinPlayers", 20);
+
+	// Warsong Gulch
 	wsg_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableWSG", true);
+	wsg_minplrs = Config.MainConfig.GetIntDefault("Battlegrounds", "WSGMinPlayers", 5);
+
+	// Arathi Basin
+	ab_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableAB", true);
+	ab_minplrs = Config.MainConfig.GetIntDefault("Battlegrounds", "ABMinPlayers", 7);
+
+	// Eye of the Storm
 	eots_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableEOTS", true);
+	eots_minplrs = Config.MainConfig.GetIntDefault("Battlegrounds", "EOTSMinPlayers", 7);
+
+	// Strand of the Ancients
+	sota_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableSOTA", true);
+	sota_minplrs = Config.MainConfig.GetIntDefault("Battlegrounds", "SOTAMinPlayers", 15);
+
+	// Isle of Conquest
+	ioc_enabled = Config.MainConfig.GetBoolDefault("Battlegrounds", "EnableIOC", true);
+	ioc_minplrs = Config.MainConfig.GetIntDefault("Battlegrounds", "IOCMinPlayers", 15);
 
 	// load regeneration rates.
 	setRate(RATE_HEALTH,Config.OptionalConfig.GetFloatDefault("Rates", "Health",1));
