@@ -102,41 +102,25 @@ const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
 	NULL,							// Random
 };
 
-const static uint32 BGMinimumPlayers[BATTLEGROUND_NUM_TYPES] = {
-	0,							// 0
-	sWorld.av_minplrs,			// AV
-	sWorld.wsg_minplrs,			// WSG
-	sWorld.ab_minplrs,			// AB
-	4,							// 2v2
-	6,							// 3v3
-	10,							// 5v5
-	sWorld.eots_minplrs,		// EOTS
-	0,							// Unknown
-	sWorld.sota_minplrs,		// SOTA
-	0,							// Unknown
-	0,							// Unknown
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	sWorld.ioc_minplrs,			// IOC
-	0,							// Non existant.
-	0,							// Random
-};
+const static uint32 GetBGMinPlayers(uint32 type)
+{
+	switch(type)
+	{
+	case BATTLEGROUND_ALTERAC_VALLEY:
+		return sWorld.av_minplrs;
+	case BATTLEGROUND_WARSONG_GULCH:
+		return sWorld.wsg_minplrs;
+	case BATTLEGROUND_ARATHI_BASIN:
+		return sWorld.ab_minplrs;
+	case BATTLEGROUND_EYE_OF_THE_STORM:
+		return sWorld.eots_minplrs;
+	case BATTLEGROUND_STRAND_OF_THE_ANCIENTS:
+		return sWorld.sota_minplrs;
+	case BATTLEGROUND_ISLE_OF_CONQUEST:
+		return sWorld.ioc_minplrs;
+	}
+	return 0;
+}
 
 const static uint32 BGPvPDataFieldCount[BATTLEGROUND_NUM_TYPES] = {
 	0,							// NONE
@@ -698,7 +682,7 @@ void CBattlegroundManager::EventQueueUpdate(bool forceStart)
 			{
 				// enough players to start a round?
 				if((forceStart == true && tempPlayerVec[0].size() >= 1) ||
-				   (tempPlayerVec[0].size() >= BGMinimumPlayers[i]))
+				   (tempPlayerVec[0].size() >= GetBGMinPlayers(i)))
 				{
 					if(CanCreateInstance(i,j))
 					{
@@ -722,7 +706,7 @@ void CBattlegroundManager::EventQueueUpdate(bool forceStart)
 			else
 			{
 				if( (forceStart == true && (tempPlayerVec[0].size() >= 1 || tempPlayerVec[1].size() >= 1)) ||
-					(tempPlayerVec[0].size() >= BGMinimumPlayers[i] && tempPlayerVec[1].size() >= BGMinimumPlayers[i]) )
+					(tempPlayerVec[0].size() >= GetBGMinPlayers(i) && tempPlayerVec[1].size() >= GetBGMinPlayers(i)) )
 				{
 					if(CanCreateInstance(i,j))
 					{
