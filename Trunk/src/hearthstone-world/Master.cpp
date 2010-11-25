@@ -83,9 +83,11 @@ struct Addr
 #ifdef WIN32
 static const char* default_config_file = "configs/hearthstone-world.conf";
 static const char* default_realm_config_file = "configs/hearthstone-realms.conf";
+static const char* default_options_config_file = "configs/hearthstone-options.conf";
 #else
 static const char* default_config_file = CONFDIR "/hearthstone-world.conf";
 static const char* default_realm_config_file = CONFDIR "/hearthstone-realms.conf";
+static const char* default_options_config_file = CONFDIR "/hearthstone-options.conf";
 #endif
 
 bool bServerShutdown = false;
@@ -98,6 +100,7 @@ bool Master::Run(int argc, char ** argv)
 	m_stopEvent = false;
 	char * config_file = (char*)default_config_file;
 	char * realm_config_file = (char*)default_realm_config_file;
+	char * options_config_file = (char*)default_options_config_file;
 	int screen_log_level = DEF_VALUE_NOT_SET;
 	int do_check_conf = 0;
 	int do_version = 0;
@@ -132,6 +135,11 @@ bool Master::Run(int argc, char ** argv)
 			strcpy(realm_config_file, hearthstone_optarg);
 			break;
 
+		case 'o':
+			options_config_file = new char[strlen(hearthstone_optarg)];
+			strcpy(options_config_file, hearthstone_optarg);
+			break;
+
 		case 0:
 			break;
 		default:
@@ -163,6 +171,12 @@ bool Master::Run(int argc, char ** argv)
 
 		Log.Notice( "Config", "Checking config file: %s\n", realm_config_file );
 		if( Config.RealmConfig.SetSource( realm_config_file, true ) )
+			Log.Success( "Config", "Passed without errors.\n" );
+		else
+			Log.Warning( "Config", "Encountered one or more errors.\n" );
+
+		Log.Notice( "Config", "Checking config file: %s\n", options_config_file );
+		if( Config.OptionalConfig.SetSource( options_config_file, true ) )
 			Log.Success( "Config", "Passed without errors.\n" );
 		else
 			Log.Warning( "Config", "Encountered one or more errors.\n" );
@@ -221,6 +235,15 @@ bool Master::Run(int argc, char ** argv)
 	{
 		killit = true;
 		Log.Error( "Config", ">> hearthstone-realms.conf" );
+		return false;
+	}
+
+	if(Config.OptionalConfig.SetSource(options_config_file))
+		Log.Success( "Config", ">> hearthstone-options.conf" );
+	else
+	{
+		killit = true;
+		Log.Error( "Config", ">> hearthstone-options.conf" );
 		return false;
 	}
 

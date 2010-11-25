@@ -1993,7 +1993,7 @@ void QuestMgr::LoadExtraQuestStuff()
 			if(!qst)
 			{
 				Log.Warning("QuestMgr","Tried to add starter to npc %u for non-existant quest %u.", creature, quest);
-				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 				{
 					WorldDatabase.Execute("DELETE FROM creature_quest_starter where quest = '%u'", quest);
 				}
@@ -2022,7 +2022,7 @@ void QuestMgr::LoadExtraQuestStuff()
 			if(!qst)
 			{
 				Log.Warning("QuestMgr","Tried to add finisher to npc %d for non-existant quest %d.", creature, quest);
-				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 				{
 					WorldDatabase.Execute("DELETE FROM creature_quest_finisher where quest = '%u'", quest);
 				}
@@ -2051,7 +2051,7 @@ void QuestMgr::LoadExtraQuestStuff()
 			if(!qst)
 			{
 				Log.Warning("QuestMgr","Tried to add starter to go %d for non-existant quest %d.", creature, quest);
-				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 				{
 					WorldDatabase.Execute("DELETE FROM gameobject_quest_starter where quest = '%u'", quest);
 				}
@@ -2080,7 +2080,7 @@ void QuestMgr::LoadExtraQuestStuff()
 			if(!qst)
 			{
 				Log.Warning("QuestMgr","Tried to add finisher to go %d for non-existant quest %d.\n", creature, quest);
-				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 				{
 					WorldDatabase.Execute("DELETE FROM gameobject_quest_finisher where quest = '%u'", quest);
 				}
@@ -2113,7 +2113,7 @@ void QuestMgr::LoadExtraQuestStuff()
 			if(!qst)
 			{
 				Log.Warning("QuestMgr","Tried to add association to item %d for non-existant quest %d.", item, quest);
-				if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+				if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 				{
 					WorldDatabase.Execute("DELETE FROM item_quest_association where quest = '%u'", quest);
 				}

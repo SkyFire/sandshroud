@@ -88,6 +88,7 @@ public:
 	ConfigFile MainConfig;
 	ConfigFile RealmConfig;
 	ConfigFile ClusterConfig;
+	ConfigFile OptionalConfig;
 };
 
 extern SERVER_DECL ConfigMgr Config;

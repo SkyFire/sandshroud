@@ -118,14 +118,14 @@ StatDumperThread::~StatDumperThread()
 
 bool StatDumperThread::run()
 {
-	int delay_ms = Config.MainConfig.GetIntDefault( "StatDumper", "Interval", 120000 );
+	int delay_ms = Config.OptionalConfig.GetIntDefault( "StatDumper", "Interval", 120000 );
 
 	if( delay_ms < 1000 )
 		delay_ms = 1000;
 
 	int delay_s = delay_ms / 1000;
 
-	if( !Config.MainConfig.GetString( "StatDumper", Filename, "Filename", "stats.xml", MAX_PATH ) )
+	if( !Config.OptionalConfig.GetString( "StatDumper", Filename, "Filename", "stats.xml", MAX_PATH ) )
 		strcpy( Filename, "stats.xml" );
 
 #ifdef WIN32
@@ -329,8 +329,6 @@ void StatDumper::DumpStats()
     FILE* f = fopen( Filename, "w" );
     if( !f )
         return;
-
-	//Log.Debug( "StatDumper", "Writing %s", Filename );
 
     // Dump Header
     fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");

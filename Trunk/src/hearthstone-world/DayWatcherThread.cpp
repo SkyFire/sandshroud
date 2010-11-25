@@ -66,7 +66,7 @@ void DayWatcherThread::update_settings()
 
 void DayWatcherThread::load_settings()
 {
-	string arena_timeout = Config.MainConfig.GetStringDefault("Periods", "ArenaUpdate", "weekly");
+	string arena_timeout = Config.OptionalConfig.GetStringDefault("Periods", "ArenaUpdate", "weekly");
 	arena_period = get_timeout_from_string(arena_timeout.c_str(), WEEKLY);
 
 	QueryResult * result = CharacterDatabase.Query("SELECT setting_value FROM server_settings WHERE setting_id = \"last_arena_update_time\"");

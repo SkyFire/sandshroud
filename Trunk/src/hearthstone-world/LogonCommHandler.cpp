@@ -32,8 +32,8 @@ LogonCommHandler::LogonCommHandler()
 
 	if(!(sWorld.LogonServerType & LOGON_MANGOS))
 	{
-		pings = !Config.MainConfig.GetBoolDefault("LogonServer", "DisablePings", false);
-		string logon_pass = Config.MainConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
+		pings = !Config.RealmConfig.GetBoolDefault("LogonServer", "DisablePings", false);
+		string logon_pass = Config.RealmConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
 		plrLimit = sWorld.GetPlayerLimit();
 		if(!plrLimit)
 			plrLimit = 1;

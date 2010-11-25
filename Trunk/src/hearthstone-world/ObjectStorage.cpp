@@ -179,7 +179,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 
 	cn = NULL;
 	// Load AI Agents
-	if(Config.MainConfig.GetBoolDefault("Server", "LoadAIAgents", true))
+	if(Config.OptionalConfig.GetBoolDefault("Server", "LoadAIAgents", true))
 	{
 		QueryResult* result = WorldDatabase.Query( "SELECT Entry,difficulty,Type+0,Chance,MaxCount,Spell,SpellType+0,TargetType+0,CoolDown,floatMisc1,Misc2 FROM ai_agents" );
 
@@ -214,7 +214,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					{
 						Log.Warning("AIAgent", "Agent skipped, NPC %u does not exist.", fields[0].GetUInt32());
 
-						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+						if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 							WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u'", entry);
 						continue;
 					}
@@ -231,7 +231,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 					{
 						Log.Warning("AIAgent", "Agent skipped, wrong difficulty type %i in npc %u", difficulty, entry);
 
-						if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+						if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 							WorldDatabase.Execute("UPDATE ai_agents SET `difficulty` = '-1' where entry = '%u' AND difficulty = '%i'", entry, difficulty);
 						difficulty = -1;
 					}
@@ -441,7 +441,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 				{
 					Log.Warning("ObjectStorage","Incorrect instance mode %u for creature %u, instance mode 3 max.", mode, entry);
 
-					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 						WorldDatabase.Execute("DELETE FROM creature_proto_mode WHERE entry = %u AND mode = %u;", entry, mode);
 
 					continue;

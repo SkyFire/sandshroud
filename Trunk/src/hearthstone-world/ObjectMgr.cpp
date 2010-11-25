@@ -1277,7 +1277,7 @@ void ObjectMgr::LoadVendors()
 				itm.extended_cost = dbcItemExtendedCost.LookupEntryForced(ec);
 				if( itm.extended_cost == NULL )
 				{
-					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 					{
 						WorldDatabase.Execute("UPDATE vendors set extendedcost = '0' where item = '%u' AND entry = '%u'", itm.itemid, fields[0].GetUInt32());
 					}
@@ -1354,7 +1354,7 @@ void ObjectMgr::LoadAIThreatToSpellId()
 			sp->ThreatForSpell = fields[1].GetUInt32();
 		else
 		{
-			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+			if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 			{
 				WorldDatabase.Execute( "DELETE FROM ai_threattospellid where spell = '%u'", spellid);
 			}
@@ -1725,7 +1725,7 @@ void ObjectMgr::LoadTrainers()
 
 		if( ts.pCastSpell == NULL && ts.pLearnSpell == NULL )
 		{
-			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+			if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 			{
 				if(ts.pCastSpell == NULL)
 					WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u' AND learn_spell='%u'",entry, LearnSpellID);
@@ -1763,7 +1763,7 @@ void ObjectMgr::LoadTrainers()
 		if(!trainer_info)
 		{
 			Log.Warning("Trainers", "NPC id for Trainer %u does not exist, skipping.", entry);
-			if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+			if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 			{
 				WorldDatabase.Execute("DELETE FROM trainer_defs where entry='%u'",entry);
 				WorldDatabase.Execute("DELETE FROM trainer_spells where entry='%u'",entry);
@@ -1797,7 +1797,7 @@ void ObjectMgr::LoadTrainers()
 				text = NpcTextStorage.LookupEntry(tmptxtid[i]);
 				if(text == 0)
 				{
-					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 					{
 						std::string columnname = (i == 0 ? "can_train_gossip_textid" : "cannot_train_gossip_textid");
 						WorldDatabase.Execute("UPDATE trainer_defs SET %s = '0' where entry = '%u'", columnname.c_str(), entry);

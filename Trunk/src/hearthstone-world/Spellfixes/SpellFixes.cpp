@@ -798,7 +798,7 @@ void ApplyNormalFixes()
 				}
 				else
 				{
-					if(Config.MainConfig.GetBoolDefault("Server", "CleanDatabase", false))
+					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
 					{
 						WorldDatabase.Query("DELETE FROM spell_coef_override where id = '%u'", spellid);
 					}

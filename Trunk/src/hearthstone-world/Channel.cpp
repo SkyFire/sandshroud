@@ -24,7 +24,7 @@ vector<string> m_bannedChannels;
 
 void Channel::LoadConfSettings()
 {
-	string BannedChannels = Config.MainConfig.GetStringDefault("Channels", "BannedChannels", "");
+	string BannedChannels = Config.OptionalConfig.GetStringDefault("Channels", "BannedChannels", "");
 	m_confSettingLock.Acquire();
 	m_bannedChannels = StrSplit(BannedChannels, ";");
 	m_confSettingLock.Release();
