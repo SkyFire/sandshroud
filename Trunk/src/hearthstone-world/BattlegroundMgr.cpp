@@ -22,40 +22,24 @@
 initialiseSingleton(CBattlegroundManager);
 typedef CBattleground*(*CreateBattlegroundFunc)( MapMgr* mgr,uint32 iid,uint32 group, uint32 type);
 
-const static uint32 BGMapIds[BATTLEGROUND_NUM_TYPES] = {
-	0,		// 0
-	30,		// AV 
-	489,	// WSG
-	529,	// AB
-	0,		// 2v2
-	0,		// 3v3
-	0,		// 5v5
-	566,	// EOTS
-	572,
-	607,	// SOTA
-	617,
-	618,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	628,	// IOC
-	0,
-	489,
+const static uint32 GetBGMapID(uint32 type)
+{
+	switch(type)
+	{
+	case BATTLEGROUND_ALTERAC_VALLEY:
+		return 30;
+	case BATTLEGROUND_WARSONG_GULCH:
+		return 489;
+	case BATTLEGROUND_ARATHI_BASIN:
+		return 529;
+	case BATTLEGROUND_EYE_OF_THE_STORM:
+		return 566;
+	case BATTLEGROUND_STRAND_OF_THE_ANCIENTS:
+		return 607;
+	case BATTLEGROUND_ISLE_OF_CONQUEST:
+		return 628;
+	}
+	return 0;
 };
 
 const static uint32 arena_map_ids[5] = {
@@ -66,40 +50,25 @@ const static uint32 arena_map_ids[5] = {
 	618
 };
 
-const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
-	NULL,							// 0
-	&AlteracValley::Create,			// AV
-	&WarsongGulch::Create,			// WSG
-	&ArathiBasin::Create,			// AB
-	NULL,							// 2v2
-	NULL,							// 3v3
-	NULL,							// 5v5
-	&EyeOfTheStorm::Create,			// EOTS
-	NULL,							// Arena
-	&StrandOfTheAncients::Create,	// SOTA
-	NULL,							// Dalaran Sewer
-	NULL,							// Ring of Valor
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	NULL,							// Non existant.
-	&IsleOfConquest::Create,		// IOC
-	NULL,							// Non existant.
-	NULL,							// Random
+const static CreateBattlegroundFunc GetBGCFunc(uint32 type)
+{
+	switch(type)
+	{
+	case BATTLEGROUND_ALTERAC_VALLEY:
+		return &AlteracValley::Create;
+	case BATTLEGROUND_WARSONG_GULCH:
+		return &WarsongGulch::Create;
+	case BATTLEGROUND_ARATHI_BASIN:
+		return &ArathiBasin::Create;
+	case BATTLEGROUND_EYE_OF_THE_STORM:
+		return &EyeOfTheStorm::Create;
+	case BATTLEGROUND_STRAND_OF_THE_ANCIENTS:
+		return &StrandOfTheAncients::Create;
+	case BATTLEGROUND_ISLE_OF_CONQUEST:
+		return &IsleOfConquest::Create;
+	}
+	// Should never happen.
+	return NULL;
 };
 
 const static uint32 GetBGMinPlayers(uint32 type)
@@ -122,41 +91,20 @@ const static uint32 GetBGMinPlayers(uint32 type)
 	return 0;
 }
 
-const static uint32 BGPvPDataFieldCount[BATTLEGROUND_NUM_TYPES] = {
-	0,							// NONE
-	5,							// AV
-	2,							// WSG
-	2,							// AB
-	0,							// 2v2
-	0,							// 3v3
-	0,							// 5v5
-	1,							// EOTS
-	0,							// Unknown
-	0,							// SOTA
-	0,							// Unknown
-	0,							// Unknown
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// Non existant.
-	0,							// IOC
-	0,							// Non existant.
-	0,							// Random
-};
+const static uint32 GetBGPvPDataCount(uint32 type)
+{
+	switch(type)
+	{
+	case BATTLEGROUND_ALTERAC_VALLEY:
+		return 5;
+	case BATTLEGROUND_WARSONG_GULCH:
+	case BATTLEGROUND_ARATHI_BASIN:
+		return 2;
+	case BATTLEGROUND_EYE_OF_THE_STORM:
+		return 1;
+	}
+	return 0;
+}
 
 #define IS_ARENA(x) ( (x) >= BATTLEGROUND_ARENA_2V2 && (x) <= BATTLEGROUND_ARENA_5V5 )
 
@@ -299,7 +247,7 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 		plr->fromrandombg = true;
 	}
 
-	if(bgtype >= BATTLEGROUND_NUM_TYPES || BGMapIds[bgtype] == 0)
+	if(bgtype >= BATTLEGROUND_NUM_TYPES || GetBGMapID(bgtype) == 0)
 	{
 		m_session->Disconnect();
 		return;		// cheater!
@@ -311,7 +259,7 @@ void CBattlegroundManager::HandleBattlegroundJoin(WorldSession * m_session, Worl
 		return;
 	}
 
-	MapInfo * inf = WorldMapInfoStorage.LookupEntry(BGMapIds[bgtype]);
+	MapInfo * inf = WorldMapInfoStorage.LookupEntry(GetBGMapID(bgtype));
 	if(inf == NULL)
 		return;
 
@@ -1083,7 +1031,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 	*data << uint32(0); //will be set to correct number later //uint32(m_players[0].size() + m_players[1].size());
 
 	uint32 count = 0;
-	uint32 fcount = BGPvPDataFieldCount[GetType()];
+	uint32 fcount = GetBGPvPDataCount(GetType());
 	for(uint32 i = 0; i < 2; i++)
 	{
 		for(set<Player*>::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
@@ -1293,7 +1241,7 @@ CBattleground* CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGro
 	if(!CanCreateInstance(Type, LevelGroup))
 		return NULLBATTLEGROUND;
 
-	CreateBattlegroundFunc cfunc = BGCFuncs[Type];
+	CreateBattlegroundFunc cfunc = GetBGCFunc(Type);
 	MapMgr* mgr = NULLMAPMGR;
 	CBattleground* bg = NULL;
 	bool isWeekend = false;
@@ -1351,10 +1299,10 @@ CBattleground* CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGro
 	}
 
 	/* Create Map Manager */
-	mgr = sInstanceMgr.CreateBattlegroundInstance(BGMapIds[Type]);
+	mgr = sInstanceMgr.CreateBattlegroundInstance(GetBGMapID(Type));
 	if(mgr == NULL)
 	{
-		Log.Error("BattlegroundManager", "CreateInstance() call failed for map %u, type %u, level group %u", BGMapIds[Type], Type, LevelGroup);
+		Log.Error("BattlegroundManager", "CreateInstance() call failed for map %u, type %u, level group %u", GetBGMapID(Type), Type, LevelGroup);
 		return NULLBATTLEGROUND;		// Shouldn't happen
 	}
 
