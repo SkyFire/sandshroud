@@ -58,6 +58,14 @@ const static uint32 BGMapIds[BATTLEGROUND_NUM_TYPES] = {
 	489,
 };
 
+const static uint32 arena_map_ids[5] = {
+	559,
+	562,
+	572,
+	617,
+	618
+};
+
 const static CreateBattlegroundFunc BGCFuncs[BATTLEGROUND_NUM_TYPES] = {
 	NULL,							// 0
 	&AlteracValley::Create,			// AV
@@ -1297,6 +1305,10 @@ void CBattleground::PortPlayer(Player* plr, bool skip_teleport /* = false*/)
 
 CBattleground* CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGroup)
 {
+	// Crow: Just in case.
+	if(!CanCreateInstance(Type, LevelGroup))
+		return NULLBATTLEGROUND;
+
 	CreateBattlegroundFunc cfunc = BGCFuncs[Type];
 	MapMgr* mgr = NULLMAPMGR;
 	CBattleground* bg = NULL;
@@ -1309,9 +1321,7 @@ CBattleground* CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGro
 	if(Type == BATTLEGROUND_ARENA_2V2 || Type == BATTLEGROUND_ARENA_3V3 || Type == BATTLEGROUND_ARENA_5V5)
 	{
 		/* arenas follow a different procedure. */
-		static const uint32 arena_map_ids[5] = { 559, 562, 572, 617, 618 };
 		uint32 mapid = arena_map_ids[RandomUInt(4)];
-		uint32 players_per_side;
 		mgr = sInstanceMgr.CreateBattlegroundInstance(mapid);
 		if(mgr == NULL)
 		{
@@ -1319,6 +1329,7 @@ CBattleground* CBattlegroundManager::CreateInstance(uint32 Type, uint32 LevelGro
 			return NULLBATTLEGROUND;		// Shouldn't happen
 		}
 
+		uint32 players_per_side;
 		switch(Type)
 		{
 		case BATTLEGROUND_ARENA_2V2:
