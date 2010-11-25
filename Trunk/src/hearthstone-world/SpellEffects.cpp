@@ -3608,7 +3608,10 @@ void Spell::SpellEffectWeapon(uint32 i)
 		// if we do not have the skill line
 		if(!playerTarget->_HasSkillLine(skill))
 		{
-			playerTarget->_AddSkillLine(skill, 1, playerTarget->getLevel()*5);
+			if(sWorld.StartLevel > 1)
+				playerTarget->_AddSkillLine(skill, 5*sWorld.StartLevel, playerTarget->getLevel()*5);
+			else
+				playerTarget->_AddSkillLine(skill, 1, playerTarget->getLevel()*5);
 		}
 	}
 }
@@ -4315,7 +4318,12 @@ void Spell::SpellEffectProficiency(uint32 i)
 					return;*/
 
 				if(sk && sk->type == SKILL_TYPE_WEAPON)
-					playerTarget->_AddSkillLine(skill, 1, 5*playerTarget->getLevel());
+				{
+					if(sWorld.StartLevel > 1)
+						playerTarget->_AddSkillLine(skill, 5*sWorld.StartLevel, 5*playerTarget->getLevel());
+					else
+						playerTarget->_AddSkillLine(skill, 1, 5*playerTarget->getLevel());
+				}
 				else
 					playerTarget->_AddSkillLine(skill, 1, 1);
 			}

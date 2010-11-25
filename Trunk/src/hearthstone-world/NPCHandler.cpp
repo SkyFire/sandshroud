@@ -253,8 +253,11 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 					_player->_AddSkillLine( skill, val, val );
 				else
 				{
+					skilllineentry* sle = dbcSkillLine.LookupEntryForced(pSpell->RequiredSkillLine);
 					if( _player->_HasSkillLine(skill) )
 						_player->_ModifySkillMaximum(skill, val);
+					else if(sWorld.StartLevel > 1 && (sle == NULL || sle->type != SKILL_TYPE_PROFESSION))
+						_player->_AddSkillLine( skill, 5*sWorld.StartLevel, val);
 					else
 						_player->_AddSkillLine( skill, 1, val);
 				}
