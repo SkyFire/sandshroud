@@ -629,6 +629,8 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 				uint32 type = TO_GAMEOBJECT(curObj)->GetInfo()->Type;
 				if( type == GAMEOBJECT_TYPE_TRANSPORT || type == GAMEOBJECT_TYPE_MAP_OBJECT || type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
 					fRange = 0.0f;
+				else
+					fRange = m_UpdateDistance; // normal distance
 			}
 			else
 				fRange = m_UpdateDistance; // normal distance
@@ -796,7 +798,9 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 		{	// Crow: Arc, previous changes were only supporting Destructible.
 			uint32 type = TO_GAMEOBJECT(curObj)->GetInfo()->Type;
 			if( type == GAMEOBJECT_TYPE_TRANSPORT || type == GAMEOBJECT_TYPE_MAP_OBJECT || type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
-			fRange = 0.0f;
+				fRange = 0.0f;
+			else
+				fRange = m_UpdateDistance; // normal distance
 		}
 		else
 			fRange = m_UpdateDistance; // normal distance
