@@ -1391,7 +1391,6 @@ void World::Rehash(bool load)
 	antihack_teleport = Config.MainConfig.GetBoolDefault("AntiHack", "Teleport", true);
 	antihack_speed = Config.MainConfig.GetBoolDefault("AntiHack", "Speed", true);
 	antihack_flight = Config.MainConfig.GetBoolDefault("AntiHack", "Flight", true);
-	antihack_wallclimb = Config.MainConfig.GetBoolDefault("AntiHack", "WallClimb", true);
 	no_antihack_on_gm = Config.MainConfig.GetBoolDefault("AntiHack", "DisableOnGM", false);
 	SpeedhackProtection = antihack_speed;
 	m_limitedNames = Config.MainConfig.GetBoolDefault("Server", "LimitedNames", true);
@@ -1412,7 +1411,7 @@ void World::Rehash(bool load)
 	m_speedHackResetInterval = Config.MainConfig.GetIntDefault("AntiHack", "SpeedResetPeriod", 5000);
 	antihack_cheatengine = Config.MainConfig.GetBoolDefault("AntiHack", "CheatEngine", false);
 	m_CEThreshold = Config.MainConfig.GetIntDefault("AntiHack", "CheatEngineTimeDiff", 10000);
-	m_wallhackthreshold = Config.MainConfig.GetFloatDefault("AntiHack", "WallHackThreshold", 5.0f);
+	m_wallhackthreshold = Config.MainConfig.GetFloatDefault("AntiHack", "WallHackThreshold", 4.0f);
 	// ======================================
 
 	m_deathKnightOnePerAccount = Config.MainConfig.GetBoolDefault("DeathKnight", "OnePerRealm", true);
@@ -2356,7 +2355,8 @@ void World::LogGM(WorldSession* session, string message, ...)
 			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
-		LogDatabase.Execute("INSERT INTO gmlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+		const char* execute = format("INSERT INTO gmlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
+		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
 
@@ -2389,7 +2389,8 @@ void World::LogCheater(WorldSession* session, string message, ...)
 			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
-		LogDatabase.Execute("INSERT INTO cheaterlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+		const char* execute = format("INSERT INTO cheaterlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
+		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
 
@@ -2422,7 +2423,8 @@ void World::LogPlayer(WorldSession* session, string message, ...)
 			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
-		LogDatabase.Execute("INSERT INTO playerlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+		const char* execute = format("INSERT INTO playerlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
+		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
 
@@ -2455,7 +2457,8 @@ void World::LogChat(WorldSession* session, string message, ...)
 			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
-		LogDatabase.Execute("INSERT INTO chatlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str());
+		const char* execute = format("INSERT INTO chatlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
+		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
 

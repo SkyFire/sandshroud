@@ -12223,7 +12223,7 @@ bool Player::IsWallHackEligible()
 
 void Player::_WallHackCheck()
 {
-	if(!sWorld.antihack_wallclimb || (GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm))
+	if(!sWorld.m_wallhackthreshold || (GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm))
 		return;
 
 	if(IsWallHackEligible())
@@ -12238,7 +12238,7 @@ void Player::_WallHackCheck()
 
 			if(run > 0)
 			{
-				if(deltaz/run > 1.4)
+				if(deltaz/run > sWorld.m_wallhackthreshold)
 				{
 					sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, if this is incorrect, please report it to an admin. %f", deltaz/run);
 					m_wallhackChances--;

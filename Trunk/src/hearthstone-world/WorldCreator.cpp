@@ -38,6 +38,7 @@ void InstanceMgr::Load(TaskList * l)
 	new FormationMgr;
 	new WorldStateTemplateManager;
 	QueryResult *result;
+	MapInfo* mapinfo = NULL;
 
 	sWorldStateTemplateManager.LoadFromDB();
 
@@ -57,7 +58,8 @@ void InstanceMgr::Load(TaskList * l)
 	{
 		do
 		{
-			if( !WorldMapInfoStorage.LookupEntry(result->Fetch()[0].GetUInt32()) )
+			mapinfo = WorldMapInfoStorage.LookupEntry(result->Fetch()[0].GetUInt32());
+			if( !mapinfo )
 				continue;
 
 			if( result->Fetch()[0].GetUInt32() >= NUM_MAPS )
@@ -66,7 +68,9 @@ void InstanceMgr::Load(TaskList * l)
 				continue;
 			}
 
-			//_CreateMap(result->Fetch()[0].GetUInt32());
+			if( !mapinfo->load )
+				continue;
+
 			l->AddTask(new Task(new CallbackP1<InstanceMgr,uint32>(this, &InstanceMgr::_CreateMap, result->Fetch()[0].GetUInt32())));
 		} while(result->NextRow());
 		delete result;
@@ -88,15 +92,12 @@ void InstanceMgr::Load(TaskList * l)
 
 		if( !mapinfo->load )
 		{
-			Log.Notice("InstanceMgr", "Skipping map %u", mapinfo->mapid);
 			itr->Inc();
 			continue;
 		}
 
 		if(m_maps[mapinfo->mapid] == NULL)
-		{
 			l->AddTask(new Task(new CallbackP1<InstanceMgr,uint32>(this, &InstanceMgr::_CreateMap, mapinfo->mapid)));
-		}
 
 		if( mapinfo->flags != 1 && mapinfo->cooldown == 0 )
 		{
@@ -155,7 +156,7 @@ void InstanceMgr::Shutdown()
 			}
 
 			delete m_instances[i];
-			m_instances[i]=NULL;
+			m_instances[i] = NULL;
 		}
 
 		if(m_singleMaps[i] != NULL)
@@ -170,7 +171,7 @@ void InstanceMgr::Shutdown()
 		if(m_maps[i] != NULL)
 		{
 			delete m_maps[i];
-			m_maps[i]=NULL;
+			m_maps[i] = NULL;
 		}
 	}
 
@@ -584,28 +585,29 @@ MapMgr* InstanceMgr::GetInstance(uint32 MapId, uint32 InstanceId)
 MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 {
 	MapInfo* inf = WorldMapInfoStorage.LookupEntry(mapid);
-	ASSERT(inf != NULL && inf->type == INSTANCE_NULL);
+	ASSERT(inf != NULL && inf->type == INSTANCE_NULL && inf->load);
 	ASSERT(mapid < NUM_MAPS && m_maps[mapid] != NULL);
+
+	MapMgr* ret(new MapMgr(m_maps[mapid], mapid, instanceid));
+	ret->Init();
 
 	const char* name = m_maps[mapid]->GetName();
 	bool transportmap = (strstr(name, "Transport") ? true : false);
 	if(transportmap) // Only list transports on debug.
-		Log.Debug("InstanceMgr", "Creating transport map %u.", mapid);
+		Log.Debug("InstanceMgr", "Created transport map %u.", mapid);
 	else
-		Log.Notice("InstanceMgr", "Creating continent %s.", name);
-
-	MapMgr* ret(new MapMgr(m_maps[mapid], mapid, instanceid));
-	ret->Init();
+	{
+		if(ret->IsCollisionEnabled())
+			Log.Notice("InstanceMgr", "Created Collision continent %s.", name);
+		else
+			Log.Notice("InstanceMgr", "Created continent %s.", name);
+	}
 
 	// start its thread
 	ThreadPool.ExecuteTask(ret);
 
 	// assign pointer
 	m_singleMaps[mapid] = ret;
-
-	if(ret->IsCollisionEnabled() && !transportmap)
-		Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
-
 	return ret;
 }
 
