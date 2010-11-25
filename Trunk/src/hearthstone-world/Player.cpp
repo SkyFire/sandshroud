@@ -2054,7 +2054,10 @@ void Player::addSpell(uint32 spell_id)
 				break;
 		};
 
-		_AddSkillLine(sk->skilline, 1, max);
+		if(sWorld.StartLevel > 1 && skill->type != SKILL_TYPE_PROFESSION && skill->type != SKILL_TYPE_SECONDARY)
+			_AddSkillLine(sk->skilline, sWorld.StartLevel*5, max);
+		else
+			_AddSkillLine(sk->skilline, 1, max);
 		_UpdateMaxSkillCounts();
 	}
 }
