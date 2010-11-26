@@ -236,6 +236,39 @@ uint32 CalculateXpToGive(Unit* pVictim, Unit* pAttacker)
 	return (uint32)xp;
 }
 
+/*
+Author: pionere
+
+Calculate the stat increase. Using 3rd grade polynome.
+
+Parameter level The level the character reached.
+Parameter a3 The factor for x^3.
+Parameter a2 The factor for x^2.
+Parameter a1 The factor for x^1.
+Parameter a0 The constant factor for the polynome.
+Return stat gain
+*/
+uint32 CalculateStat(uint16 level,double a3, double a2, double a1, double a0)
+{
+	int result1;
+	int result2;
+	int diff;
+
+	result1 =	(int)(a3*level*level*level +
+		a2*level*level +
+		a1*level +
+		a0);
+
+	result2 =	(int)(a3*(level-1)*(level-1)*(level-1) +
+		a2*(level-1)*(level-1) +
+		a1*(level-1) +
+		a0);
+
+	//get difference
+	diff = result1-result2;
+	return diff;
+}
+
 uint32 CalculateStat(uint16 level, float inc)
 {
 	float a = level * inc;
@@ -253,10 +286,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 2.56f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 1.64f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 2.36f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 0.4f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 2.56f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 1.64f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 2.36f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.4f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.76f); } break;
 			}
 		}break;
@@ -265,10 +298,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 0.2875f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 0.3875f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 0.5875f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 1.9f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.2875f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.3875f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.5875f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.9f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 2.0875f); } break;
 			}
 		}break;
@@ -277,10 +310,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 2.0125f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 1.1625f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 1.825f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 0.2f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 2.0125f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 1.1625f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.825f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.2f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.4875f); } break;
 			}
 		}break;
@@ -289,10 +322,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 0.4875f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 0.5875f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 0.95f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 1.7125f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.4875f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.5875f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.95f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.7125f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.8f); } break;
 			}
 		}break;
@@ -301,10 +334,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 0.85f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 0.775f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 0.975f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 1.5125f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.85f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.775f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.975f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.5125f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 2.0f); } break;
 			}
 		}break;
@@ -313,10 +346,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 1.8875f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 0.875f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 1.5125f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 0.975f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 1.8875f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.875f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.5125f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.975f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.05f); } break;
 			}
 		}break;
@@ -325,10 +358,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 0.675f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 1.975f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 1.3375f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 0.875f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.675f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 1.975f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.3375f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.875f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.95f); } break;
 			}
 		}break;
@@ -337,10 +370,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 0.2f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 0.2875f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 0.4875f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 1.975f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.2f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.2875f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.4875f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.975f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.9625f); } break;
 			}
 		}break;
@@ -349,10 +382,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 1.2375f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 0.675f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 1.4375f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 1.4875f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 1.2375f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.675f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.4375f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.4875f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.5125f); } break;
 			}
 		}break;
@@ -361,10 +394,10 @@ uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
 		{
 			switch(Stat)
 			{
-			case STAT_STRENGTH:  { gain = CalculateStat(level, 1.15f); } break;
-			case STAT_AGILITY:   { gain = CalculateStat(level, 2.075f); } break;
-			case STAT_STAMINA:   { gain = CalculateStat(level, 1.1f); } break;
-			case STAT_INTELLECT: { gain = CalculateStat(level, 0.2875f); } break;
+			case STAT_STRENGTH:	{ gain = CalculateStat(level, 1.15f); } break;
+			case STAT_AGILITY:	{ gain = CalculateStat(level, 2.075f); } break;
+			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.1f); } break;
+			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.2875f); } break;
 			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.6125f); } break;
 			}
 		}break;

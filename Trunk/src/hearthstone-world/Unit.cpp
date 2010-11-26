@@ -4193,7 +4193,11 @@ void Unit::AddAura(Aura* aur)
 
 	aur->SetAuraFlags(AFLAG_VISIBLE | AFLAG_EFF_INDEX_1 | AFLAG_EFF_INDEX_2 | AFLAG_NOT_GUID | (aur->GetDuration() ? AFLAG_HAS_DURATION : AFLAG_NONE)
 		| (aur->IsPositive() ? (AFLAG_POSITIVE | ((aur->GetSpellProto()->Attributes & ATTRIBUTES_CANT_CANCEL) ? AFLAG_NONE : AFLAG_CANCELLABLE)) : (AFLAG_NEGATIVE | AFLAG_NONE)));
-	aur->SetAuraLevel(aur->GetUnitCaster()!=NULL ? aur->GetUnitCaster()->getLevel() : sWorld.LevelCap_Custom_All ? sWorld.LevelCap_Custom_All : MAXIMUM_ATTAINABLE_LEVEL);
+
+	uint32 maxlevel = MAXIMUM_ATTAINABLE_LEVEL;
+	if(sWorld.LevelCap_Custom_All > 0 && sWorld.LevelCap_Custom_All != 80)
+		maxlevel = sWorld.LevelCap_Custom_All;
+	aur->SetAuraLevel(aur->GetUnitCaster() != NULL ? aur->GetUnitCaster()->getLevel() : maxlevel);
 
 	if(!aur->IsPassive())
 	{

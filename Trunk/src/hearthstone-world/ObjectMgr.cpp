@@ -1847,6 +1847,9 @@ Trainer* ObjectMgr::GetTrainer(uint32 Entry)
 	return iter->second;
 }
 
+uint32 GetBaseHPForLevel(uint32 level, uint32 Class);
+uint32 GetBaseManaForLevel(uint32 level, uint32 Class);
+
 void ObjectMgr::GenerateLevelUpInfo()
 {
 	// Generate levelup information for each class.
@@ -1868,6 +1871,9 @@ void ObjectMgr::GenerateLevelUpInfo()
 
 			// Generate each level's information
 			uint32 MaxLevel = MAXIMUM_ATTAINABLE_LEVEL + 1;
+			if(sWorld.LevelCap_Custom_All > 0 && sWorld.LevelCap_Custom_All != 80)
+				MaxLevel = sWorld.LevelCap_Custom_All+1;
+
 			lvl0 = new LevelInfo;
 			lvl0->HP = PCI->health;
 			lvl0->Mana = PCI->mana;
@@ -1926,78 +1932,103 @@ void ObjectMgr::GenerateLevelUpInfo()
 
 				uint32 BaseHP = 0;
 				uint32 BaseMana = 0;
-
-				// Description: We're calculating the Base Mana and HP that we get per level. These are based off of
-				// the total value at level 80 and are probably incorrect at lower levels.
-				// At a future date, we should attempt to correct them for those levels by decreasing the amount at
-				// lower levels.
-				// The first attempt at doing so is below.
-
-				switch(Class)
+				if(Level <= MAX_PREDEFINED_NEXTLEVELXP+5)
 				{
-				case PRIEST:
+					float coefficient = 0;
+					float dividingcoefficient = 1;
+					if(Level > MAX_PREDEFINED_NEXTLEVELXP+5)
+						dividingcoefficient = 1.041f;
+
+					// Description: We're calculating the Base Mana and HP that we get per level. These are based off of
+					// the total value at level 80 and are probably incorrect at lower levels.
+					// At a future date, we should attempt to correct them for those levels by decreasing the amount at
+					// lower levels.
+					// The first attempt at doing so is below.
+					switch(Class)
 					{
-						BaseHP = uint32(87 * Level);
-						BaseMana = uint32(48.2875f * Level);
-						break;
+					case PRIEST:
+						{
+							coefficient = 87/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+
+							coefficient = 48.2875f/dividingcoefficient;
+							BaseMana = uint32(coefficient * Level);
+						}break;
+					case WARRIOR:
+						{
+							coefficient = 101.5125f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+						}break;
+					case DEATHKNIGHT:
+						{
+							coefficient = 101.5125f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+						}break;
+					case HUNTER:
+						{
+							coefficient = 91.55f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+
+							coefficient = 63.075f/dividingcoefficient;
+							BaseMana = uint32(coefficient * Level);
+						}break;
+					case ROGUE:
+						{
+							coefficient = 95.05f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+						}break;
+					case SHAMAN:
+						{
+							coefficient = 81.0625f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+
+							coefficient = 54.95f/dividingcoefficient;
+							BaseMana = uint32(coefficient * Level);
+						}break;
+					case DRUID:
+						{
+							coefficient = 92.7125f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+
+							coefficient = 43.7f/dividingcoefficient;
+							BaseMana = uint32(coefficient * Level);
+						}break;
+					case PALADIN:
+						{
+							coefficient = 86.675f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+
+							coefficient = 54.925f/dividingcoefficient;
+							BaseMana = uint32(coefficient * Level);
+						}break;
+					case MAGE:
+						{
+							coefficient = 87.0375f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+
+							coefficient = 40.85f/dividingcoefficient;
+							BaseMana = uint32(coefficient * Level);
+						}break;
+					case WARLOCK:
+						{
+							coefficient = 89.55f/dividingcoefficient;
+							BaseHP = uint32(coefficient * Level);
+
+							coefficient = 48.2f/dividingcoefficient;
+							BaseMana = uint32(coefficient * Level);
+						}break;
 					}
-				case WARRIOR:
-					{
-						BaseHP = uint32(101.5125f * Level);
-						break;
-					}
-				case DEATHKNIGHT:
-					{
-						BaseHP = uint32(101.5125f * Level);
-						break;
-					}
-				case HUNTER:
-					{
-						BaseHP = uint32(91.55f * Level);
-						BaseMana = uint32(63.075f * Level);
-						break;
-					}
-				case ROGUE:
-					{
-						BaseHP = uint32(95.05f * Level);
-						break;
-					}
-				case SHAMAN:
-					{
-						BaseHP = uint32(81.0625f * Level);
-						BaseMana = uint32(54.95f * Level);
-						break;
-					}
-				case DRUID:
-					{
-						BaseHP = uint32(92.7125f * Level);
-						BaseMana = uint32(43.7f * Level);
-						break;
-					}
-				case PALADIN:
-					{
-						BaseHP = uint32(86.675f * Level);
-						BaseMana = uint32(54.925f * Level);
-						break;
-					}
-				case MAGE:
-					{
-						BaseHP = uint32(87.0375f * Level);
-						BaseMana = uint32(40.85f * Level);
-						break;
-					}
-				case WARLOCK:
-					{
-						BaseHP = uint32(89.55f * Level);
-						BaseMana = uint32(48.2f * Level);
-						break;
-					}
+
+					float perlevmod = 4.0f + (Level / 16.0f);
+
+					BaseMana = uint32(BaseMana / (perlevmod - (Level / 10.0f)));
+					BaseHP = uint32(BaseHP / (perlevmod - (Level / 10.0f)));
 				}
-
-				float perlevmod = 4.0f + (Level / 16.0f);
-
-				BaseMana = uint32(BaseMana / (perlevmod - (Level / 10.0f)));
-				BaseHP = uint32(BaseHP / (perlevmod - (Level / 10.0f)));
+				else
+				{
+					BaseHP = GetBaseHPForLevel(Level, Class);
+					BaseMana = GetBaseManaForLevel(Level, Class);
+				}
 
 				lvl->HP = HP + BaseHP;
 				lvl->Mana = Mana + BaseMana;
@@ -2033,6 +2064,10 @@ void ObjectMgr::GenerateLevelUpInfo()
 
 LevelInfo* ObjectMgr::GetLevelInfo(uint32 Race, uint32 Class, uint32 Level)
 {
+	uint32 maxlevel = MAXIMUM_ATTAINABLE_LEVEL;
+	if(sWorld.LevelCap_Custom_All > 0 && sWorld.LevelCap_Custom_All != 80)
+		maxlevel = sWorld.LevelCap_Custom_All;
+
 	// Iterate levelinfo map until we find the right class+race.
 	LevelInfoMap::iterator itr = mLevelInfo.begin();
 	for(; itr != mLevelInfo.end(); itr++ )
@@ -2041,8 +2076,8 @@ LevelInfo* ObjectMgr::GetLevelInfo(uint32 Race, uint32 Class, uint32 Level)
 		{
 			// We got a match.
 			// Let's check that our level is valid first.
-			if( Level > MAXIMUM_ATTAINABLE_LEVEL ) // too far.
-				Level = MAXIMUM_ATTAINABLE_LEVEL;
+			if( Level > maxlevel ) // too far.
+				Level = maxlevel;
 
 			// Pull the level information from the second map.
 			LevelMap::iterator it2 = itr->second->find( Level );
@@ -3245,4 +3280,97 @@ QueryResult* ObjectMgr::SQLCheckExists(const char* tablename, const char* column
 
 	QueryResult* result = WorldDatabase.Query("SELECT %s FROM %s WHERE %s = '%u' LIMIT 1", columnname, tablename, columnname, columnvalue);
 	return result;
+}
+
+/* Crow: This is for my server, but feel free to change it if you want.
+This is an attempt to maintain a blizzlike health gain after the blizz cap. */
+uint32 GetBaseHPForLevel(uint32 level, uint32 Class)
+{
+	uint32 coeff = 0;
+	switch(Class)
+	{
+	case PRIEST:
+		{
+			coeff = 4.35f;
+		}break;
+	case WARRIOR:
+	case DEATHKNIGHT:
+		{
+			coeff = 5.075625f;
+		}break;
+	case HUNTER:
+		{
+			coeff = 4.5775f;
+		}break;
+	case ROGUE:
+		{
+			coeff = 4.7525f;
+		}break;
+	case SHAMAN:
+		{
+			coeff = 4.053125f;
+		}break;
+	case DRUID:
+		{
+			coeff = 4.635625f;
+		}break;
+	case PALADIN:
+		{
+			coeff = 4.33375f;
+		}break;
+	case MAGE:
+		{
+			coeff = 4.351875f;
+		}break;
+	case WARLOCK:
+		{
+			coeff = 4.4775f;
+		}break;
+	}
+
+	return (200+((level-(MAX_PREDEFINED_NEXTLEVELXP+5))*coeff))*level;
+}
+
+uint32 GetBaseManaForLevel(uint32 level, uint32 Class)
+{
+	uint32 coeff = 0;
+	switch(Class)
+	{
+	case WARRIOR:
+	case ROGUE:
+	case DEATHKNIGHT:
+		{
+			return 0;
+		}break;
+	case PRIEST:
+		{
+			coeff = 2.4432f;
+		}break;
+	case HUNTER:
+		{
+			coeff = 3.15375f;
+		}break;
+	case SHAMAN:
+		{
+			coeff = 2.7475f;
+		}break;
+	case DRUID:
+		{
+			coeff = 2.185f;
+		}break;
+	case PALADIN:
+		{
+			coeff = 2.74625f;
+		}break;
+	case MAGE:
+		{
+			coeff = 2.0425f;
+		}break;
+	case WARLOCK:
+		{
+			coeff = 2.41f;
+		}break;
+	}
+
+	return (100+((level-(MAX_PREDEFINED_NEXTLEVELXP+5))*coeff))*level;
 }

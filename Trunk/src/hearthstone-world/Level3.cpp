@@ -1208,6 +1208,7 @@ bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_ses
 	}
 
 	plr->ApplyLevelInfo(Info, Level);
+	plr->SetUInt32Value(PLAYER_XP, 0);
 	return true;
 }
 

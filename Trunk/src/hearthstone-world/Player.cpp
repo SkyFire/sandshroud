@@ -1530,10 +1530,6 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 
 		_UpdateMaxSkillCounts();
 
-		GetAchievementInterface()->HandleAchievementCriteriaLevelUp( getLevel() );
-		SetUInt32Value(UNIT_FIELD_HEALTH,GetUInt32Value(UNIT_FIELD_MAXHEALTH));
-		SetUInt32Value(UNIT_FIELD_POWER1,GetUInt32Value(UNIT_FIELD_MAXPOWER1));
-
 		// ScriptMgr hook for OnPostLevelUp
 		sHookInterface.OnPostLevelUp(this);
 	}
@@ -3012,7 +3008,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	lvlinfo = objmgr.GetLevelInfo(getRace(), getClass(), getLevel());
 	if( lvlinfo == NULL )
 	{
-		printf("guid %u level %u class %u race %u levelinfo not found!\n", (unsigned int)GetLowGUID(), (unsigned int)getLevel(), (unsigned int)getClass(), (unsigned int)getRace());
+		printf("Guid %u level %u class %u race %u levelinfo not found!\n", GetLowGUID(), getLevel(), getClass(), getRace());
 		RemovePendingPlayer();
 		return;
 	}
@@ -5569,11 +5565,10 @@ void Player::UpdateAttackSpeed()
 	}
 }
 
+// formulas from wowwiki
 void Player::UpdateStats()
 {
 	UpdateAttackSpeed();
-
-	// formulas from wowwiki
 
 	int32 AP = 0;
 	int32 RAP = 0;
@@ -9041,10 +9036,10 @@ void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
 	CalculateBaseStats();
 
 	// Set health / mana
-	SetUInt32Value(UNIT_FIELD_MAXHEALTH, Info->HP);
-	SetUInt32Value(UNIT_FIELD_HEALTH, Info->HP);
-	SetUInt32Value(UNIT_FIELD_MAXPOWER1, Info->Mana);
-	SetUInt32Value(UNIT_FIELD_POWER1, Info->Mana);
+	SetUInt32Value(UNIT_FIELD_MAXHEALTH, Info->BaseHP+Info->HP);
+	SetUInt32Value(UNIT_FIELD_HEALTH, Info->BaseHP+Info->HP);
+	SetUInt32Value(UNIT_FIELD_MAXPOWER1, Info->BaseMana+Info->Mana);
+	SetUInt32Value(UNIT_FIELD_POWER1, Info->BaseMana+Info->Mana);
 
 	int32 Talents = Level - PreviousLevel;
 	if(PreviousLevel < 9)
