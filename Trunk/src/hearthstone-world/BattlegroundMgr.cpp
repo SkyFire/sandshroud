@@ -1036,11 +1036,9 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 	{
 		for(set<Player*>::iterator itr = m_players[i].begin(); itr != m_players[i].end(); itr++)
 		{
-			// Crow: TODO: Show invisible GMs who are PvPing.
-			if( (*itr)->m_isGmInvisible )
-				continue;
-
 			bs = &(*itr)->m_bgScore;
+			if( (*itr)->m_isGmInvisible && bs->DamageDone < (500*(*itr)->getLevel()))
+				continue; // We have about about 20k 
 
 			*data << (*itr)->GetGUID();
 			*data << bs->KillingBlows;
@@ -1055,7 +1053,6 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 
 			*data << bs->DamageDone;
 			*data << bs->HealingDone;
-
 			*data << fcount;	// count of values after this
 			for(uint32 j = 0; j < fcount; ++j)
 				*data << bs->MiscData[j];
@@ -1063,6 +1060,7 @@ void CBattleground::BuildPvPUpdateDataPacket(WorldPacket * data)
 			count++;
 		}
 	}
+
 	// Have to set correct number of players sent in log since we skip invisible GMs
 	*(uint32*)&data->contents()[pos] = count;
 	*data << uint32(0); // unknown

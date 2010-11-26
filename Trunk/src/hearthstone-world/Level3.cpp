@@ -1177,7 +1177,7 @@ bool ChatHandler::HandleFlySpeedCheatCommand(const char* args, WorldSession* m_s
 
 bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_session)
 {
-	Player* plr = getSelectedChar(m_session, true);
+	Player* plr = getSelectedChar(m_session, false);
 	if(plr == NULL)
 	{
 		Creature* ctr = getSelectedCreature(m_session, false);

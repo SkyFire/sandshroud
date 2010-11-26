@@ -1233,6 +1233,9 @@ void World::Rehash(bool load)
 #else
 		Config.MainConfig.SetSource((char*)CONFDIR "/hearthstone-world.conf", true);
 #endif
+
+		if(!Config.MainConfig.GetBoolDefault("Internal", "UseInternalRestarter", false))
+			sMaster.KillIt();
 	}
 
 	if(!ChannelMgr::getSingletonPtr())
