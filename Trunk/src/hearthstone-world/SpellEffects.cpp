@@ -2796,7 +2796,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				}break;
 			case 2:
 				{
-					unitTarget->CastSpell(p_caster,67809,true);
+					p_caster->CastSpell(p_caster,67809,true);
 				}break;
 			case 3:
 				{
@@ -2910,7 +2910,7 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 	if(GetSpellProto()->EffectApplyAuraName[i] == SPELL_AURA_MOD_SILENCE && unitTarget->HasAura(31821) && unitTarget->HasAura(19746))
 		return;
 
-	if( unitTarget->isDead() && !(GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD) )
+	if( unitTarget->isDead() && !(GetSpellProto()->Flags4 & FLAGS4_DEATH_PERSISTENT) )
 		return;
 
 	//we shouldn't apply fireball dot if we have fireball glyph
@@ -4058,7 +4058,7 @@ void Spell::SpellEffectTriggerMissile(uint32 i) // Trigger Missile
 {
 	//Used by mortar team
 	//Triggers area affect spell at destinatiom
-	if(m_caster == NULL )
+	if(u_caster == NULL )
 		return;
 
 	uint32 spellid = GetSpellProto()->EffectTriggerSpell[i];
@@ -4071,13 +4071,7 @@ void Spell::SpellEffectTriggerMissile(uint32 i) // Trigger Missile
 		return;
 
 	// Just send this spell where he wants :S
-	Spell* sp=CREATESPELL(m_caster, spInfo, true, NULLAURA);
-	SpellCastTargets tgt;
-	tgt.m_destX = m_targets.m_destX;
-	tgt.m_destY = m_targets.m_destY;
-	tgt.m_destZ = m_targets.m_destZ;
-	tgt.m_unitTarget = m_caster->GetGUID();
-	sp->prepare(&tgt);
+	u_caster->CastSpellAoF(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, spInfo, true);
 }
 
 void Spell::SpellEffectOpenLock(uint32 i) // Open Lock

@@ -376,7 +376,6 @@ enum ChannelInterruptFlags
 
 enum Attributes
 {
-	ATTRIBUTES_NULL								= 0x0,
 	ATTRIBUTES_UNK2								= 0x1,
 	ATTRIBUTES_REQ_AMMO							= 0x2,	// requires ammo
 	ATTRIBUTE_ON_NEXT_ATTACK					= 0x4,
@@ -389,11 +388,11 @@ enum Attributes
 	ATTRIBUTES_UNK11							= 0x200,	// looks like temp enchants.
 	ATTRIBUTES_UNK12							= 0x400,	//completely the same as ATTRIBUTE_ON_NEXT_ATTACK for class spells. So difference somewhere in mob abilities.
 	ATTRIBUTES_UNK13							= 0x800,
-	ATTRIBUTES_UNUSED1							= 0x1000,
-	ATTRIBUTES_UNUSED2							= 0x2000,
-	ATTRIBUTES_UNUSED3							= 0x4000,
+	ATTRIBUTES_DAYTIME_ONLY						= 0x1000,
+	ATTRIBUTES_NIGHT_ONLY						= 0x2000,
+	ATTRIBUTES_INDOORS_ONLY						= 0x4000,
 	ATTRIBUTES_ONLY_OUTDOORS					= 0x8000,
-	ATTRIBUTES_UNK								= 0x10000,
+	ATTRIBUTES_NOT_SHAPESHIFT					= 0x10000,
 	ATTRIBUTES_REQ_STEALTH						= 0x20000,
 	ATTRIBUTES_UNK20							= 0x40000,//it's not : must be behind
 	ATTRIBUTES_LEVEL_DAMAGE_CALCULATION			= 0x80000, //spelldamage depends on caster level
@@ -405,15 +404,14 @@ enum Attributes
 	ATTRIBUTES_TRIGGER_COOLDOWN					= 0x2000000,	//also requires atributes ex	= 32 ?
 	ATTRIBUTES_BREAKABLE_BY_DAMAGE				= 0x4000000,
 	ATTRIBUTES_CANCAST_WHILE_SITTING			= 0x8000000,
-	ATTRIBUTES_REQ_OOC							= 0x10000000,	//	 ATTRIBUTES_REQ_OUT_OF_COMBAT
-	ATTRIBUTES_IGNORE_INVULNERABILITY			= 0x20000000,	//debuffs that can't be removed by any spell and spells that can't be resisted in any case
+	ATTRIBUTES_REQ_OOC							= 0x10000000,	// ATTRIBUTES_REQ_OUT_OF_COMBAT
+	ATTRIBUTES_IGNORE_INVULNERABILITY			= 0x20000000,	// debuffs that can't be removed by any spell and spells that can't be resisted in any case
 	ATTRIBUTES_UNK32							= 0x40000000,	// seems like IS_DIMINISHING but some spells not there (f.e. Gouge)
 	ATTRIBUTES_CANT_CANCEL						= 0x80000000,
 };
 
 enum AttributesEx
 {
-	ATTRIBUTESEX_NULL						= 0x0,
 	ATTRIBUTESEX_DISMISS_PET				= 0x1,	// pet summonings
 	ATTRIBUTESEX_DRAIN_WHOLE_MANA			= 0x2,
 	ATTRIBUTESEX_CHANNELED_1				= 0x4,
@@ -425,9 +423,9 @@ enum AttributesEx
 	ATTRIBUTESEX_NOT_IN_COMBAT_TARGET		= 0x100,
 	ATTRIBUTESEX_UNK11						= 0x200,
 	ATTRIBUTESEX_UNK12						= 0x400,
-	ATTRIBUTESEX_UNK13						= 0x800,
+	ATTRIBUTESEX_NO_THREAT					= 0x800,
 	ATTRIBUTESEX_UNK14						= 0x1000,	// related to pickpocket
-	ATTRIBUTESEX_UNK15						= 0x2000,	// related to remote control
+	ATTRIBUTESEX_USE_RADIUS_AS_MAX_DISTANCE	= 0x2000,	// related to remote control
 	ATTRIBUTESEX_STACK_FOR_DIFF_CASTERS  	= 0x4000,
 	ATTRIBUTESEX_DISPEL_AURAS_ON_IMMUNITY 	= 0x8000,	// remove auras on immunity
 	ATTRIBUTESEX_UNAFFECTED_SCHOOL_IMMUNE   = 0x10000,	// on immunity
@@ -449,8 +447,7 @@ enum AttributesEx
 
 enum Flags3
 {
-	FLAGS3_NULL					= 0x0,
-	FLAGS3_UNK2					= 0x1,
+	FLAGS3_ALLOW_DEAD_TARGET	= 0x1,
 	FLAGS3_UNK3					= 0x2,	// Can be used while stealthed
 	FLAGS3_UNK4					= 0x4,	// request pet maybe
 	FLAGS3_UNK5					= 0x8,	// something todo with temp enchanted items
@@ -485,10 +482,15 @@ enum Flags3
 
 enum Flags4
 {
+	FLAGS4_BLOCKABLE_SPELL				= 0x8,
+	FLAGS4_PLAYERS_ONLY					= 0x100,
+	FLAGS4_MAIN_HAND					= 0x400,
 	FLAGS4_BG_ONLY						= 0x800,
+	FLAGS4_REQUIRE_DEAD_TARGET			= 0x1000,
 	FLAGS4_PLAYER_RANGED_SPELLS			= 0x8000,
+	FLAGS4_NO_INITIAL_AGGRO				= 0x20000,
 	FLAGS4_DISABLE_PROC					= 0x80000,
-	CAN_PERSIST_AND_CASTED_WHILE_DEAD	= 0x100000,
+	FLAGS4_DEATH_PERSISTENT				= 0x100000,
 	FLAGS4_PLAYER_RANGED_WAND			= 0x400000,
 	FLAGS4_OFFHAND						= 0x1000000,
 };

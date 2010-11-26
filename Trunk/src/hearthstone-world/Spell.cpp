@@ -3048,7 +3048,7 @@ void Spell::HandleAddAura(uint64 guid)
 		if(aura != NULL)
 		{
 			// did our effects kill the target?
-			if( Target->isDead() && !(GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD))
+			if( Target->isDead() && !(GetSpellProto()->Flags4 & FLAGS4_DEATH_PERSISTENT))
 			{
 				// free pointer
 				aura->m_tmpAuradeleted = true;
@@ -3745,9 +3745,9 @@ uint8 Spell::CanCast(bool tolerate)
 		if( !IsInrange( m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, m_caster, ( maxRange * maxRange ) ) )
 			return SPELL_FAILED_OUT_OF_RANGE;
 	}
-
-	if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && !m_caster->IsInLineOfSight(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ))
-		return SPELL_FAILED_LINE_OF_SIGHT;
+	// Collision 2 broken for this :|
+	//if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && !m_caster->IsInLineOfSight(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ))
+		//return SPELL_FAILED_LINE_OF_SIGHT;
 
 	Unit* target = NULLUNIT;
 	if( m_targets.m_targetMask == TARGET_FLAG_SELF )
@@ -3971,9 +3971,9 @@ uint8 Spell::CanCast(bool tolerate)
 					if(target->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/target->GetUInt32Value(UNIT_FIELD_HEALTH)<5)
 						 return SPELL_FAILED_BAD_TARGETS;
 				}
-				else if( GetSpellProto()->Category == 672)//Conflagrate, requires immolation spell on victim
+				else if( GetSpellProto()->NameHash == SPELL_HASH_CONFLAGRATE)//Conflagrate, requires immolation spell on victim
 				{
-					if(!target->HasAurasOfNameHashWithCaster(SPELL_HASH_IMMOLATION,NULL))
+					if(!target->HasAurasOfNameHashWithCaster(SPELL_HASH_IMMOLATION, NULL))
 						return SPELL_FAILED_BAD_TARGETS;
 				}
 
@@ -4837,7 +4837,9 @@ void Spell::Heal(int32 amount)
 	// add threat
 	if( u_caster != NULL )
 	{
-		uint32 base_threat=Spell::GetBaseThreat(amount);
+		if(GetSpellProto()->AttributesEx & ATTRIBUTESEX_NO_THREAT)
+			return;
+		uint32 base_threat= GetBaseThreat(amount);
 		int count = 0;
 		Unit* unit;
 		std::vector<Unit* > target_threat;

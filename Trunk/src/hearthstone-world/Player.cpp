@@ -3189,9 +3189,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	//UpdateChances();
 
 	// Initialize 'normal' fields
-	//SetFloatValue(OBJECT_FIELD_SCALE_X, ((getRace()==RACE_TAUREN)?1.3f:1.0f));
 	SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
-	//SetUInt32Value(UNIT_FIELD_POWER2, 0);
 	SetUInt32Value(UNIT_FIELD_POWER3, info->focus);
 	SetUInt32Value(UNIT_FIELD_POWER4, info->energy );
 	SetUInt32Value(UNIT_FIELD_POWER6, 8);
@@ -3225,7 +3223,6 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, info->factiontemplate);
 	if(cfaction)
 	{
-		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, info->factiontemplate);
 		// re-calculate team
 		switch(cfaction)
 		{

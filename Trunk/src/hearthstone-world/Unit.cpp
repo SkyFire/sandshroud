@@ -568,6 +568,8 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 
 uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* CastingSpell, uint32 dmg, uint32 abs, uint32 weapon_damage_type )
 {
+	if(HasAuraWithFlags4(FLAGS4_DISABLE_PROC) || victim == this && HasAuraWithFlags5(FLAGS5_CANT_PROC_FROM_SELFCAST) )
+		return 0;
 	uint32 resisted_dmg = 0;
 	++m_procCounter;
 	bool can_delete = !bProcInUse; //if this is a nested proc then we should have this set to TRUE by the father proc
@@ -4494,7 +4496,7 @@ void Unit::RemoveAllNegativeAuras()
 	{
 		if(m_auras[x] != NULL)
 		{
-			if(m_auras[x]->GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
+			if(m_auras[x]->GetSpellProto()->Flags4 & FLAGS4_DEATH_PERSISTENT)
 				continue;
 			else
 			{
@@ -5340,7 +5342,7 @@ void Unit::EventDeathAuraRemoval()
 	{
 		if(m_auras[x] != NULL && !m_auras[x]->IsPassive())
 		{
-			if(m_auras[x] != NULL && m_auras[x]->GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
+			if(m_auras[x] != NULL && m_auras[x]->GetSpellProto()->Flags4 & FLAGS4_DEATH_PERSISTENT)
 				continue;
 			else
 				RemoveAuraBySlot(x);
@@ -7532,4 +7534,24 @@ uint32 Unit::GetCreatureType()
 		}
 	}
 	return 0;
+}
+
+bool Unit::HasAuraWithFlags4(uint32 Flags)
+{
+	for(uint32 x = 0; x < MAX_AURAS; ++x)
+	{
+		if(m_auras[x] != NULL && m_auras[x]->GetSpellProto()->Flags4 & Flags)
+			return true;
+	}
+	return false;
+}
+
+bool Unit::HasAuraWithFlags5(uint32 Flags)
+{
+	for(uint32 x = 0; x < MAX_AURAS; ++x)
+	{
+		if(m_auras[x] != NULL && m_auras[x]->GetSpellProto()->Flags5 & Flags)
+			return true;
+	}
+	return false;
 }

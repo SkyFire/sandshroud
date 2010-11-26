@@ -4759,7 +4759,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->Effect[2]	=	SPELL_EFFECT_APPLY_AURA;
 			sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
-			sp->Flags4 |=	CAN_PERSIST_AND_CASTED_WHILE_DEAD;
+			sp->Flags4 |=	FLAGS4_DEATH_PERSISTENT;
 		}break;
 	case 54749://Burning Determination
 	case 54747:

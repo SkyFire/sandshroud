@@ -1422,6 +1422,8 @@ public:
 	void SetSpeed(uint8 SpeedType, float value);
 	void SendHeartBeatMsg( bool toself );
 	uint32 GetCreatureType();
+	bool HasAuraWithFlags4(uint32 Flags);
+	bool HasAuraWithFlags5(uint32 Flags);
 private:
 	uint8 m_inVehicleSeatId;
 	Vehicle* m_CurrentVehicle;

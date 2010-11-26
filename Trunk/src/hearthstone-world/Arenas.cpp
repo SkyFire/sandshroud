@@ -106,7 +106,7 @@ void Arena::OnAddPlayer(Player* plr)
 	{
 		if(plr->m_auras[x])
 		{
-			if(plr->m_auras[x] && !plr->m_auras[x]->GetSpellProto()->DurationIndex && plr->m_auras[x]->GetSpellProto()->Flags4 & CAN_PERSIST_AND_CASTED_WHILE_DEAD)
+			if(plr->m_auras[x] && !plr->m_auras[x]->GetSpellProto()->DurationIndex && plr->m_auras[x]->GetSpellProto()->Flags4 & FLAGS4_DEATH_PERSISTENT)
 				continue;
 			else
 				plr->RemoveAuraBySlot(x);

@@ -355,7 +355,7 @@ void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
 	if(spellInfo == NULL)
 		return;
 
-	if(spellInfo->Attributes & ATTRIBUTES_CANT_CANCEL)
+	if(spellInfo->Attributes & ATTRIBUTES_CANT_CANCEL || spellInfo->Attributes & ATTRIBUTES_PASSIVE)
 		return;
 
 	for(uint32 x = 0; x < MAX_AURAS+MAX_POSITIVE_AURAS; x++)
