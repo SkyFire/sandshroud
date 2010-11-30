@@ -200,7 +200,8 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		}
 	}
 
-	if(CMapHeight != NO_LAND_HEIGHT)
+	// I think it's safe to say, no one is ever perfect.
+	if((CMapHeight != z+50.0f) && (CMapHeight != z-50.0f))
 		return CMapHeight+offset;
 
 	return z;

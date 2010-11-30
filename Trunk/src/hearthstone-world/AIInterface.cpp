@@ -87,11 +87,9 @@ AIInterface::AIInterface()
 	m_currentHighestThreat = 0;
 
 	disable_combat = false;
-
 	disable_melee = false;
 	disable_ranged = false;
 	disable_spell = false;
-
 	disable_targeting = false;
 
 	next_spell_time = 0;
@@ -623,7 +621,7 @@ void AIInterface::Update(uint32 p_time)
 	}
 
 	_UpdateMovement(p_time);
-	if(m_AIState==STATE_EVADE)
+	if(m_AIState == STATE_EVADE)
 	{
 		tdist = m_Unit->GetDistanceSq(m_returnX,m_returnY,m_returnZ);
 		if(tdist <= 4.0f/*2.0*/)

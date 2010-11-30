@@ -1159,6 +1159,7 @@ public:
 
 	void RemoveAurasByInterruptFlag(uint32 flag);
 	void RemoveAurasByInterruptFlagButSkip(uint32 flag, uint32 skip);
+
 	// Auras Modifiers
 	int32 m_pacified;
 	int32 m_interruptRegen;
@@ -1263,11 +1264,13 @@ public:
 
 	void RemoveAurasByBuffIndexType(uint32 buff_index_type, const uint64 &guid);
 	void RemoveAurasByBuffType(uint32 buff_type, const uint64 &guid,uint32 skip);
+
 	bool HasAurasOfBuffType(uint32 buff_type, const uint64 &guid,uint32 skip);
 	int	 GetAuraSpellIDWithNameHash(uint32 name_hash);
 	bool HasNegativeAuraWithNameHash(uint32 name_hash); //just to reduce search range in some cases
 	bool HasNegativeAura(uint32 spell_id); //just to reduce search range in some cases
 	bool IsPoisoned();
+
 	uint32 GetPoisonDosesCount( uint32 poison_type );
 
 	AuraCheckResponse AuraCheck(SpellEntry *info);

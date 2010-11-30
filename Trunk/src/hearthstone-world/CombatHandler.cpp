@@ -54,28 +54,23 @@ void WorldSession::HandleAttackSwingOpcode( WorldPacket & recv_data )
 
 	// Faction "Hack" by Deathshit
 	// Implemented Hackfix for quest 1640
-	if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
+	if(sWorld.antihack_cheatengine)
 	{
-		if(sWorld.antihack_cheatengine && !isAttackable( GetPlayer(), pEnemy, false ) && !pEnemy->IsInRangeOppFactSet(_player) &&
-			!pEnemy->CombatStatus.DidDamageTo(_player->GetGUID())  && !_player->HasQuest(1640) && !HasGMPermissions())
+		if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
 		{
-			sWorld.LogCheater(this, "Faction exploit detected. Damagetype: Melee.");
-			GetPlayer()->BroadcastMessage("Faction exploit detected. You will be disconnected in 5 seconds.");
-			GetPlayer()->Kick(5000);
-			return;
+			if(!isAttackable( GetPlayer(), pEnemy, false ) && !pEnemy->IsInRangeOppFactSet(_player) &&
+				!pEnemy->CombatStatus.DidDamageTo(_player->GetGUID()) && !_player->HasQuest(1640))
+			{
+				sWorld.LogCheater(this, "Faction exploit detected. Damagetype: Melee.");
+				GetPlayer()->BroadcastMessage("Faction exploit detected. You will be disconnected in 5 seconds.");
+				GetPlayer()->Kick(5000);
+				return;
+			}
 		}
 	}
 
 	GetPlayer()->smsg_AttackStart(pEnemy);
 	GetPlayer()->EventAttackStart();
-
-	// Set PVP Flag.
-	/*if(pEnemy->IsPlayer() && isHostile(_player, pEnemy))
-	{
-		// don't in duel.. this should be done in dealdamage anyway :S
-		if( TO_PLAYER( pEnemy )->GetTeam() != _player->GetTeam() )
-			_player->SetPvPFlag();
-	}*/
 }
 
 void WorldSession::HandleAttackStopOpcode( WorldPacket & recv_data )
@@ -91,12 +86,6 @@ void WorldSession::HandleAttackStopOpcode( WorldPacket & recv_data )
 		{
 			GetPlayer()->EventAttackStop();
 			GetPlayer()->smsg_AttackStop(pEnemy);
-
-			/*WorldPacket data(SMSG_ATTACKSTOP, 20);
-			data << _player->GetNewGUID();
-			data << uint8(0);
-			data << uint32(0);
-			SendPacket(&data);*/
 		}
 	}
 }

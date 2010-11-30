@@ -94,7 +94,7 @@ void WorldSession::HandleGroupInviteOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	if( player->bGMTagOn && !HasPermissions())
+	if( player->bGMTagOn && !HasGMPermissions())
 	{
 		SendPartyCommandResult(_player, 0, membername, ERR_PARTY_CANNOT_FIND);
 		return;

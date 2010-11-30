@@ -3373,6 +3373,7 @@ uint8 Spell::CanCast(bool tolerate)
 					p_caster->RemovePositiveAura( p_caster->m_stealth );
 					p_caster->RemoveAuraByNameHash( SPELL_HASH_VANISH );
 				}
+				break;
 			}
 		}
 

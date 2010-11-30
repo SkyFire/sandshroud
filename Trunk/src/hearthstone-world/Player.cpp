@@ -4423,14 +4423,14 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 	{
 		// This is Dfighter's code for Heirlooms, modified slightly. Danke Dfighter.
 		ScalingStatDistributionEntry *ssdrow = dbcScalingStatDistribution.LookupEntry( proto->ScalingStatsEntry );
-		ScalingStatValuesEntry *ssvrow = dbcScalingStatValues.LookupEntry(getLevel() < 81 ? getLevel() : 80);
+		ScalingStatValuesEntry *ssvrow = dbcScalingStatValues.LookupEntry(getLevel() > 80 ? 80 : getLevel());
 
 		int i = 0;
 		int32 StatValue;
 		for(i = 0; ssdrow->StatMod[i] != -1; i++)
 		{
 			uint32 StatType = ssdrow->StatMod[i];
-			StatValue = (ssdrow->Modifier[i]*GetscalestatSpellBonus(ssvrow))/10000;
+			StatValue = (ssdrow->Modifier[i])/10000;
 			ModifyBonuses(StatType, (apply ? StatValue : -StatValue));
 		}
 
@@ -5536,6 +5536,8 @@ void Player::UpdateAttackSpeed()
 	calspeed = uint32((speed*m_meleeattackspeedmod)*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_MELEE_HASTE))/100.0f));
 	if(calspeed < 800)
 		calspeed = 800;
+	if(calspeed > 8000)
+		calspeed = 8000;
 
 	SetUInt32Value( UNIT_FIELD_BASEATTACKTIME, calspeed);
 
@@ -5546,6 +5548,8 @@ void Player::UpdateAttackSpeed()
 		calspeed = uint32((speed*m_meleeattackspeedmod )*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_MELEE_HASTE))/100.0f));
 		if(calspeed < 800)
 			calspeed = 800;
+		if(calspeed > 8000)
+			calspeed = 8000;
 
 		SetUInt32Value( UNIT_FIELD_BASEATTACKTIME + 1, calspeed);
 	}
@@ -5557,6 +5561,8 @@ void Player::UpdateAttackSpeed()
 		calspeed = uint32((speed*m_rangedattackspeedmod)*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_RANGED_HASTE))/100.0f));
 		if(calspeed < 800)
 			calspeed = 800;
+		if(calspeed > 8000)
+			calspeed = 8000;
 
 		SetUInt32Value( UNIT_FIELD_RANGEDATTACKTIME, calspeed);
 	}
@@ -5587,21 +5593,17 @@ void Player::UpdateStats()
 			//Agility - 10
 			RAP = agi - 10;
 
-			if( GetShapeShift() == FORM_MOONKIN )
-			{
-				// Checked 3.3.2 No AP modifiers
-			}
 			if( GetShapeShift() == FORM_CAT )
 			{
 				// Checked 3.3.2, Agil + 40
 				AP += agi + 40;
 			}
-			if( GetShapeShift() == FORM_DIREBEAR)
+			else if( GetShapeShift() == FORM_DIREBEAR)
 			{
 				// Checked 3.3.2, 120
 				AP += 120;
 			}
-			if( GetShapeShift() == FORM_BEAR)
+			else if( GetShapeShift() == FORM_BEAR)
 			{
 				// Checked 3.3.2, 30
 				AP += 30;
@@ -5617,15 +5619,34 @@ void Player::UpdateStats()
 					ItemPrototype *ip = it->GetProto();
 					if(ip)
 					{
-						float wpndmg = ((ip->Damage[0].Max + ip->Damage[0].Min)/2);
-						float wpnspeed = (float(ip->Delay))/1000;
-						dps = wpndmg/wpnspeed;
+						if(ip->ScalingStatsEntry) // Heirlooms
+						{	// Crow: This could be done easier, but I'm lazy.
+							ScalingStatValuesEntry *ssvrow = dbcScalingStatValues.LookupEntry(getLevel() > 80 ? 80 : getLevel());
+							uint32 scaleddps = GetscalestatDPSMod(ssvrow, ip->ScalingStatsFlag);
+							float dpsmod = 1.0;
+
+							if (ip->ScalingStatsFlag & 0x1400)
+								dpsmod = 0.2f;
+							else
+								dpsmod = 0.3f;
+
+							float wpnspeed = (float(ip->Delay)/1000);
+							float scaledmindmg = (scaleddps - (scaleddps * dpsmod)) * wpnspeed;
+							float scaledmaxdmg = (scaleddps * (dpsmod+1.0f)) * wpnspeed;
+							dps = (((scaledmindmg + scaledmaxdmg)/2)/wpnspeed);
+						}
+						else
+						{
+							float wpndmg = ((ip->Damage[0].Max + ip->Damage[0].Min)/2);
+							float wpnspeed = (float(ip->Delay)/1000);
+							dps = wpndmg/wpnspeed;
+						}
 					}
+
 					if(dps > 54.8)
 					{
 						dps = ((dps - 54.8) * 14);
-						int32 feralAP = float2int32(dps);
-						AP += feralAP;
+						AP += float2int32(dps);
 					}
 				}
 			}

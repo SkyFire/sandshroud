@@ -1074,7 +1074,7 @@ void Guild::GuildChat(const char * szMessage, WorldSession * pClient, int32 iTyp
 	}
 
 	WorldPacket * data = sChatHandler.FillMessageData( CHAT_MSG_GUILD, iType == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL, szMessage,
-		pClient->GetPlayer()->GetGUID(), pClient->GetPlayer()->bGMTagOn ? 4 : 0);
+		pClient->GetPlayer()->GetGUID(), pClient->GetPlayer()->GetChatTag());
 
 	m_lock.Acquire();
 	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)
@@ -1099,7 +1099,7 @@ void Guild::OfficerChat(const char * szMessage, WorldSession * pClient, int32 iT
 	}
 
 	WorldPacket * data = sChatHandler.FillMessageData( CHAT_MSG_OFFICER, iType == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL, szMessage,
-		pClient->GetPlayer()->GetGUID(), pClient->GetPlayer()->bGMTagOn ? 4 : 0);
+		pClient->GetPlayer()->GetGUID(), pClient->GetPlayer()->GetChatTag());
 
 	m_lock.Acquire();
 	for(GuildMemberMap::iterator itr = m_members.begin(); itr != m_members.end(); itr++)

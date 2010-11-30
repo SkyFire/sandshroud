@@ -1242,27 +1242,27 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		//rogue	-	Seal Fate
 	case 14186:
 		{
-			sp->procFlags	=	PROC_ON_CRIT_ATTACK;
+			sp->procFlags = PROC_ON_CRIT_ATTACK;
 			sp->procChance = 20;
 		}break;
 	case 14190:
 		{
-			sp->procFlags	=	PROC_ON_CRIT_ATTACK;
+			sp->procFlags = PROC_ON_CRIT_ATTACK;
 			sp->procChance = 40;
 		}break;
 	case 14193:
 		{
-			sp->procFlags	=	PROC_ON_CRIT_ATTACK;
+			sp->procFlags = PROC_ON_CRIT_ATTACK;
 			sp->procChance = 60;
 		}break;
 	case 14194:
 		{
-			sp->procFlags	=	PROC_ON_CRIT_ATTACK;
+			sp->procFlags = PROC_ON_CRIT_ATTACK;
 			sp->procChance = 80;
 		}break;
 	case 14195:
 		{
-			sp->procFlags	=	PROC_ON_CRIT_ATTACK;
+			sp->procFlags = PROC_ON_CRIT_ATTACK;
 			sp->procChance = 100;
 		}break;
 

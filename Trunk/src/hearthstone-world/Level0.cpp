@@ -419,6 +419,17 @@ bool ChatHandler::HandleModifyPlayerFlagsCommand(const char *args, WorldSession 
 	return true;
 }
 
+bool ChatHandler::HandleModifyAuraStateCommand(const char *args, WorldSession *m_session)
+{
+	Player* player = getSelectedChar(m_session);
+	if(player == NULL || !args)
+		return true;
+
+	uint32 flags = uint32(uint32(1) << (atol(args) - 1));
+	player->SetFlag(UNIT_FIELD_AURASTATE, flags);
+	return true;
+}
+
 bool ChatHandler::HandleMirrorTimerCommand( const char *args , WorldSession *m_session )
 {
 	uint32 type = 0, spellid = 0;

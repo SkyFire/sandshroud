@@ -787,6 +787,10 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 							}break;
 
 						case 14189: //Seal Fate
+							{
+								continue; // Fuck this shit.
+							}break;
+
 						case 16953: //Blood Frenzy
 							{
 								if( !IsPlayer() ||
@@ -2265,6 +2269,11 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 					case 63375: // Improved Stormstrike
 						{
 							dmg_overwrite = (spe->EffectBasePoints[0] + 1) * GetUInt32Value(UNIT_FIELD_BASE_MANA) / 100;
+						}break;
+
+					case 14189: //Seal Fate
+						{
+							continue; // Fuck this shit.
 						}break;
 
 					case 71484:
@@ -4243,7 +4252,7 @@ void Unit::AddAura(Aura* aur)
 			}
 		}
 
-		if(aur->m_auraSlot==255)
+		if(aur->m_auraSlot == 255)
 		{
 			DEBUG_LOG("Unit","AddAura error in passive aura. removing. SpellId: %u", aur->GetSpellProto()->Id);
 			RemoveAuraBySlot(aur->m_auraSlot);
@@ -4259,10 +4268,10 @@ void Unit::AddAura(Aura* aur)
 	aur->ApplyModifiers(true);
 
 	// We add 500ms here to allow for the last tick in DoT spells. This is a dirty hack, but at least it doesn't crash like my other method.
-	// - Burlex
+	// - Burlex, Crow: Changed to 400ms
 	if(aur->GetDuration() > 0)
 	{
-		uint32 addTime = 500;
+		uint32 addTime = 400;
 		for(uint32 spx = 0; spx < 3; spx++)
 		{
 			if( aur->GetSpellProto()->EffectApplyAuraName[spx] == SPELL_AURA_MOD_STUN ||
@@ -4424,6 +4433,7 @@ bool Unit::RemoveAllAuras(uint32 spellId, uint64 guid)
 	}
 	return res;
 }
+
 bool Unit::RemoveAuraByNameHash(uint32 namehash)
 {
 	return RemoveAuraPosByNameHash(namehash) || RemoveAuraNegByNameHash(namehash);
@@ -7258,7 +7268,7 @@ void Unit::Dismount()
 
 void Unit::RemoveAuraBySlot(uint16 Slot)
 {
-	if(m_auras[Slot]!=NULL)
+	if(m_auras[Slot] != NULL)
 	{
 		m_auras[Slot]->Remove();
 		m_auras[Slot] = NULL;

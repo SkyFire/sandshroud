@@ -802,7 +802,7 @@ void Aura::Remove()
 	if(!m_added)
 		return;
 
-	if( !IsPassive() || m_spellProto->AttributesEx & 1024 )
+	if( !IsPassive() || m_spellProto->AttributesEx & ATTRIBUTESEX_UNK12 )
 		BuildAuraUpdate();
 
 	if( m_auraSlot < MAX_AURAS+MAX_PASSIVE_AURAS && m_target->m_auras[m_auraSlot] == this )
@@ -987,7 +987,6 @@ void Aura::ApplyModifiers( bool apply )
 		mod = &m_modList[x];
 		//DEBUG_LOG( "Aura","Applying Aura modifiers target = %u, slot = %u , Spell Aura id = %u (%s), SpellId  = %u, i = %u, apply = %s, duration = %i, damage = %d", m_target->GetLowGUID(), m_auraSlot, mod->m_type, SpellAuraNames[mod->m_type], m_spellProto->Id, mod->i, apply ? "true" : "false", GetDuration(),mod->m_amount);
 
-
 		if(mod->m_type<TOTAL_SPELL_AURAS)
 		{
 			DEBUG_LOG( "Aura","Known Aura id %d, value %d", uint32(mod->m_type), uint32(mod->m_amount));
@@ -1021,7 +1020,6 @@ void Aura::UpdateModifiers( )
 
 void Aura::AddAuraVisual()
 {
-
 	uint8 slot, i;
 	slot = 0xFF;
 
@@ -1742,7 +1740,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 				case 8818:
 				case 11289:
 				case 11290:
-						m_caster->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_START_ATTACK);  // remove stealth
+						m_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_START_ATTACK, GetSpellId());	// remove stealth
 					break;
 				case 47855:
 					if(m_target->GetHealthPct() <= 25)
@@ -1918,7 +1916,7 @@ void Aura::EventPeriodicDamage(uint32 amount)
 			if( proto->NameHash == SPELL_HASH_EXPLOSIVE_SHOT || proto->NameHash == SPELL_HASH_MIND_FLAY )
 				DOTCanCrit = true;
 
-			m_caster->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_START_ATTACK);
+			m_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_START_ATTACK, GetSpellId());
 
 			if(res < 0)
 				res = 0;
@@ -4128,11 +4126,11 @@ void Aura::SpellAuraModStealth(bool apply)
 		{
 			switch( TO_PLAYER(m_target)->m_bg->GetType())
 			{
-				case BATTLEGROUND_WARSONG_GULCH:
-					TO_WARSONGGULCH(TO_PLAYER(m_target)->m_bg)->DropFlag(TO_PLAYER(m_target));
+			case BATTLEGROUND_WARSONG_GULCH:
+				TO_WARSONGGULCH(TO_PLAYER(m_target)->m_bg)->DropFlag(TO_PLAYER(m_target));
 				break;
-				case BATTLEGROUND_EYE_OF_THE_STORM:
-					TO_EYEOFTHESTORM(TO_PLAYER(m_target)->m_bg)->DropFlag(TO_PLAYER(m_target));
+			case BATTLEGROUND_EYE_OF_THE_STORM:
+				TO_EYEOFTHESTORM(TO_PLAYER(m_target)->m_bg)->DropFlag(TO_PLAYER(m_target));
 				break;
 			}
 		}
@@ -4149,7 +4147,7 @@ void Aura::SpellAuraModStealth(bool apply)
 		if( m_target->IsPlayer() )
 			m_target->SetFlag(PLAYER_FIELD_BYTES2, 0x2000);
 
-		m_target->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_STEALTH);
+		m_target->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_STEALTH, GetSpellId());
 
 		if( m_target->HasDummyAura(SPELL_HASH_OVERKILL) )
 			m_target->CastSpell(m_target, 58427, true);
@@ -5253,31 +5251,42 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		if( spellId != 0 )
 		{
 			SpellEntry* spellInfo = dbcSpell.LookupEntry(spellId );
-			Spell* sp = NULLSPELL;
-			sp = (new Spell( m_target, spellInfo, true, NULLAURA ));
-			SpellCastTargets tgt;
-			tgt.m_unitTarget = m_target->GetGUID();
-			sp->prepare( &tgt );
+			if(spellInfo->NameHash != GetSpellProto()->NameHash)
+			{
+				Spell* sp = NULLSPELL;
+				sp = (new Spell( m_target, spellInfo, true, NULLAURA ));
+				SpellCastTargets tgt;
+				tgt.m_unitTarget = m_target->GetGUID();
+				sp->prepare( &tgt );
+			}
 		}
 
 		if( spellId2 != 0 )
 		{
 			SpellEntry* spellInfo = dbcSpell.LookupEntry(spellId2);
-			Spell* sp = NULLSPELL;
-			sp = (new Spell( m_target, spellInfo, true, NULLAURA ));
-			SpellCastTargets tgt;
-			tgt.m_unitTarget = m_target->GetGUID();
-			sp->prepare(&tgt);
+			if(spellInfo->NameHash != GetSpellProto()->NameHash)
+			{
+				Spell* sp = NULLSPELL;
+				sp = (new Spell( m_target, spellInfo, true, NULLAURA ));
+				SpellCastTargets tgt;
+				tgt.m_unitTarget = m_target->GetGUID();
+				sp->prepare(&tgt);
+			}
 		}
 
 		// remove the caster from imparing movements
 		if( freeMovements )
 		{
+			Aura* aura = NULL;
 			for( uint32 x = MAX_POSITIVE_AURAS; x < MAX_AURAS; x++ )
 			{
 				if( m_target->m_auras[x] != NULL )
 				{
-					if( m_target->m_auras[x]->HasMechanic(MECHANIC_ROOTED) || m_target->m_auras[x]->HasMechanic(MECHANIC_ENSNARED) ) // Remove roots and slow spells
+					aura = m_target->m_auras[x];
+					if(aura->GetSpellId() == GetSpellId())
+						continue; // Removing ourself would kill us dead.
+
+					if(aura->HasMechanic(MECHANIC_ROOTED) || aura->HasMechanic(MECHANIC_ENSNARED)) // Remove roots and slow spells
 					{
 						m_target->RemoveAuraBySlot(x);
 					}
@@ -5285,13 +5294,14 @@ void Aura::SpellAuraModShapeshift(bool apply)
 					{
 						for( int i = 0; i < 3; i++ )
 						{
-							if( m_target->m_auras[x]->m_spellProto->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || m_target->m_auras[x]->m_spellProto->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
+							if( aura->m_spellProto->EffectApplyAuraName[i] == SPELL_AURA_MOD_DECREASE_SPEED || aura->m_spellProto->EffectApplyAuraName[i] == SPELL_AURA_MOD_ROOT )
 							{
 								m_target->RemoveAuraBySlot(x);
 								break;
 							}
 						}
 					}
+					aura = NULL;
 				}
 			}
 		}
@@ -6908,7 +6918,7 @@ void Aura::SpellAuraMounted(bool apply)
 		if(pPlayer->m_bg)
 			pPlayer->m_bg->HookOnMount(pPlayer);
 
-		m_target->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_MOUNT);
+		m_target->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_MOUNT, GetSpellId());
 
 		CreatureInfo* ci = CreatureNameStorage.LookupEntry(mod->m_miscValue);
 		if(!isVehicleSpell && ci != NULL && ci->Male_DisplayID != 0)
@@ -6984,7 +6994,7 @@ void Aura::SpellAuraMounted(bool apply)
 			pPlayer->hasqueuedpet = false;
 		}
 		//m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI);
-		pPlayer->RemoveAurasByInterruptFlag( AURA_INTERRUPT_ON_DISMOUNT );
+		pPlayer->RemoveAurasByInterruptFlagButSkip( AURA_INTERRUPT_ON_DISMOUNT, GetSpellId() );
 	}
 }
 

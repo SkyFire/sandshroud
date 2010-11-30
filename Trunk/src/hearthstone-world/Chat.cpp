@@ -247,6 +247,7 @@ void CommandTableStorage::Init()
 		{ "emotestate",			'm', NULL,											"NPC Emote State",			NULL, UNIT_NPC_EMOTESTATE,			0,						1 },
 		{ "bytes",				'm', NULL,											"Bytes",					NULL, UNIT_FIELD_BYTES_0,			0,						1 },
 		{ "playerflags",		'm', &ChatHandler::HandleModifyPlayerFlagsCommand,	"modify a player's flags",	NULL, 0,							0,						0 },
+		{ "aurastate",			'm', &ChatHandler::HandleModifyAuraStateCommand,	"mods player's aurastate",	NULL, 0,							0,						0 },
 		{ NULL,					'0', NULL,											"",							NULL, 0,							0,						0 }
 	};
 	dupe_command_table(modifyCommandTable, _modifyCommandTable);

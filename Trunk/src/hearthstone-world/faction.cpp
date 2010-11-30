@@ -145,8 +145,8 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 
 
 	// Allow GM's to attack any creatures, but players are a no.
-	if(player_objA && !player_objB && player_objA->bGMTagOn)
-		return true;
+	if(player_objA && player_objB && player_objA->bGMTagOn)
+		return false;
 
 	// Creatures cannot attack a GM with tag on.
 	if(!player_objA && player_objB && player_objB->bGMTagOn)
@@ -157,19 +157,16 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		if(player_objA->DuelingWith == player_objB && player_objA->GetDuelState() == DUEL_STATE_STARTED )
 			return true;
 	}
-
 	else if(player_objA)
 	{
 		if(objB->IsPet() && TO_PET(objB)->GetOwner() == player_objA && player_objA->DuelingWith == player_objB)
 			return true;
 	}
-
 	else if(player_objB)
 	{
 		if(objA->IsPet() && TO_PET(objA)->GetOwner() == player_objB && player_objB->DuelingWith == player_objA)
 			return true;
 	}
-
 	else if(player_objA == NULL && player_objB == NULL) // Ignore players, we have critters in sanctuaries
 	{
 		// Do not let units attack each other in sanctuary
