@@ -286,4 +286,57 @@ int CRandomMersenne::IRandomX(int min, int max) {
 	return (int32)iran + min;
 }
 
+#ifdef WIN32
 
+long LDerive(long number, int32 times)
+{
+	if(times == 0)
+		return 1;
+
+	uint32 realtimes = abs(times);
+	if(times > 0) // Positive
+	{
+		for(uint32 i = 0; i < realtimes; i++)
+		{
+			number *= number;
+		}
+	}
+	else // Negative
+	{
+		for(uint32 i = 0; i < realtimes; i++)
+		{
+			number /= number;
+		}
+	}
+	return number;
+}
+
+double FDerive(double number, int32 times)
+{
+	if(times == 0)
+		return 1;
+
+	uint32 realtimes = abs(times);
+	if(times > 0) // Positive
+	{
+		for(uint32 i = 0; i < realtimes; i++)
+		{
+			number *= number;
+		}
+	}
+	else // Negative
+	{
+		for(uint32 i = 0; i < realtimes; i++)
+		{
+			number /= number;
+		}
+	}
+	return number;
+}
+
+inline long __cdecl expon(_In_ long _X, _In_ long _Y)
+		{return (LDerive(_X, _Y)); }
+inline double __cdecl expon(_In_ double _X, _In_ long _Y)
+		{return (FDerive(_X, _Y)); }
+
+#endif
