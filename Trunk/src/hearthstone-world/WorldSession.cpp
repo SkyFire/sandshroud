@@ -310,8 +310,8 @@ void WorldSession::LogoutPlayer(bool Save)
 		_player->CleanupChannels();
 
 		// Remove from vehicle for now.
-		if(_player->GetVehicle())
-			_player->GetVehicle()->RemovePassenger(_player);
+		if(_player->GetVehicle(true))
+			TO_VEHICLE(_player->GetVehicle())->RemovePassenger(_player);
 
 		if( _player->m_CurrentTransporter != NULL )
 		{
@@ -1014,6 +1014,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_REQUEST_VEHICLE_SWITCH_SEAT].handler			= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE].handler	= &WorldSession::HandleRequestSeatChange;
 	WorldPacketHandlers[CMSG_EJECT_PASSENGER].handler						= &WorldSession::HandleEjectPassenger;
+
 	WorldPacketHandlers[CMSG_PLAYER_VEHICLE_ENTER].handler					= &WorldSession::HandleVehicleMountEnter;
 
 	// Minion Cast Spell

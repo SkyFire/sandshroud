@@ -35,10 +35,8 @@ public:
 	void Despawn(uint32 delay, uint32 respawntime);
 	void DeleteMe();
 	void SafeDelete();
-	void MoveVehicle(float x, float y, float z, float o);
 	void AddPassenger(Unit* pPassenger, int8 requestedseat = -1, bool force = false);
 	void RemovePassenger(Unit* pPassenger);
-	void DeletePassengerData(Unit* pPassenger);
 	bool HasPassenger(Unit* pPassenger);
 	void SendSpells(uint32 entry, Player* plr);
 	void setDeathState(DeathState s);
@@ -50,13 +48,6 @@ public:
 	uint32 GetMaxPassengerCount() { return m_maxPassengers; }
 	uint32 GetPassengerCount() { return m_ppassengerCount; }
 
-	uint32 GetVehicleEntry() { return m_vehicleEntry; }
-	void SetVehicleEntry(uint32 entry) { m_vehicleEntry = entry; }
-
-	Unit* GetControllingUnit() { return m_passengers[0]; }
-	Player* GetControllingPlayer() { return (m_passengers[0] ? m_passengers[0]->IsPlayer() ? TO_PLAYER(m_passengers[0]) : NULL : NULL); }
-	void SetControllingUnit(Unit* pUnit) { m_controllingUnit = pUnit; }
-
 	int8 GetMaxSeat() { return m_seatSlotMax; }
 	Unit* GetPassenger(uint8 seat)
 	{
@@ -66,19 +57,14 @@ public:
 		return m_passengers[seat];
 	}
 
-	int8 GetPassengerSlot(Unit* pPassenger);
 	void InstallAccessories();
 	//---------------------------------------
 	// End accessors
 	//---------------------------------------
 
 	bool IsFull() { return m_ppassengerCount >= m_maxPassengers; }
-
-	VehicleSeatEntry* m_vehicleSeats[8];
-	bool seatisusable[8];
 	bool Initialised;
 	bool m_CreatedFromSpell;
-	uint32 m_mountSpell;
 	uint32 m_CastSpellOnMount;
 
 private:
@@ -86,11 +72,9 @@ private:
 
 protected:
 	uint64 vehicleguid;
-	Unit* m_controllingUnit;
-	Unit* m_passengers[8];
 	uint8 m_ppassengerCount;
 	uint8 m_maxPassengers;
 	int8 m_seatSlotMax;
-	uint32 m_vehicleEntry;
 };
+
 #endif

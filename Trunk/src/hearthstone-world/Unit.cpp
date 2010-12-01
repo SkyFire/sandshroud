@@ -271,6 +271,16 @@ Unit::Unit()
 	CallOnDeath = NULL;
 	CallOnEnterCombat = NULL;
 	CallOnCastSpell = NULL;
+
+	m_mountSpell = 0;
+	m_vehicleEntry = 0;
+	for(uint8 i = 0; i < 8; i++)
+	{
+		m_vehicleSeats[i] = NULL;
+		seatisusable[i] = false;
+		m_passengers[i] = NULL;
+	}
+	pVehicle = NULL;
 }
 
 Unit::~Unit()
@@ -7564,4 +7574,56 @@ bool Unit::HasAuraWithFlags5(uint32 Flags)
 			return true;
 	}
 	return false;
+}
+
+void Unit::RemovePassenger(Unit* pPassenger)
+{
+	if(IsVehicle())
+		TO_VEHICLE(this)->RemovePassenger(pPassenger);
+	if(IsPlayer())
+		TO_PLAYER(this)->RemovePassenger(pPassenger);
+}
+
+void Unit::ChangeSeats(Unit* pPassenger, uint8 seatid)
+{
+	if(IsVehicle())
+		TO_VEHICLE(this)->ChangeSeats(pPassenger, seatid);
+	if(IsPlayer())
+		TO_PLAYER(this)->ChangeSeats(pPassenger, seatid);
+}
+
+/* This function changes a vehicles position server side to
+keep us in sync with the client, so that the vehicle doesn't
+get dismissed because the server thinks its gone out of range
+of its passengers*/
+void Unit::MoveVehicle(float x, float y, float z, float o) //thanks andy
+{
+	SetPosition(x, y, z, o, false);
+	for(uint8 i = 0; i < 8; i++)
+	{
+		if(m_passengers[i] != NULL)
+		{
+			m_passengers[i]->SetPosition(x,y,z,o,false);
+		}
+	}
+}
+
+int8 Unit::GetPassengerSlot(Unit* pPassenger)
+{
+	for(uint8 i = 0; i < 9; i++)
+	{
+		if( m_passengers[i] == pPassenger ) // Found a slot
+		{
+			return i;
+			break;
+		}
+	}
+	return -1;
+}
+
+void Unit::DeletePassengerData(Unit* pPassenger)
+{
+	uint8 slot = pPassenger->GetSeatID();
+	pPassenger->SetSeatID(NULL);
+	m_passengers[slot] = NULL;
 }

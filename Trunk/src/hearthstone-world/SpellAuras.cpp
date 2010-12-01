@@ -6884,21 +6884,37 @@ void Aura::SpellAuraMounted(bool apply)
 		pPlayer->RemoveAura(id);
 	}
 
-	bool isVehicleSpell = false;
-	bool warlockpet = false;
-
 	CreatureProto* cp = CreatureProtoStorage.LookupEntry(mod->m_miscValue);
-	//if(cp != NULL && cp->vehicle_entry > 0)
-		//isVehicleSpell = true; // Lack of proto means fuck it!
+	if(cp != NULL && cp->vehicle_entry > 0)
+	{
+		if(apply)
+		{
+			CreatureInfo* ci = CreatureNameStorage.LookupEntry(mod->m_miscValue);
+			if(ci == NULL || ci->Male_DisplayID == 0)
+			{	// 2 sec negative aura, so they know.
+				SetNegative();
+				SetDuration(2000);
+				return;
+			}
 
+			pPlayer->m_mountSpell = GetSpellId();
+			pPlayer->SetVehicleEntry(cp->vehicle_entry);
+			pPlayer->InitAsVehicle();
+		}
+		else
+		{
+			pPlayer->m_mountSpell = 0;
+			pPlayer->SetVehicleEntry(0);
+			pPlayer->DeInitAsVehicle();
+		}
+	}
+
+	bool warlockpet = false;
 	if(pPlayer->GetSummon() && pPlayer->GetSummon()->IsWarlockPet() == true)
 		warlockpet = true;
 
 	if(apply)
 	{
-		if( isVehicleSpell ) // get rid of meeeee, I'm a useless placeholder!
-			SetDuration(100);
-
 		pPlayer->m_bgFlagIneligible++;
 		SetPositive();
 
@@ -6921,62 +6937,30 @@ void Aura::SpellAuraMounted(bool apply)
 		m_target->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_MOUNT, GetSpellId());
 
 		CreatureInfo* ci = CreatureNameStorage.LookupEntry(mod->m_miscValue);
-		if(!isVehicleSpell && ci != NULL && ci->Male_DisplayID != 0)
-			m_target->SetUInt32Value( UNIT_FIELD_MOUNTDISPLAYID , ci->Male_DisplayID);
+		if(ci == NULL || ci->Male_DisplayID == 0)
+		{	// 2 sec negative aura, so they know.
+			SetNegative();
+			SetDuration(2000);
+			return;
+		}
 
+		m_target->SetUInt32Value( UNIT_FIELD_MOUNTDISPLAYID , ci->Male_DisplayID);
 		pPlayer->m_MountSpellId = m_spellProto->Id;
 		pPlayer->m_FlyingAura = 0;
-
-		//m_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI);
 
 		if( pPlayer->GetShapeShift() &&
 				!(pPlayer->GetShapeShift() & FORM_BATTLESTANCE | FORM_DEFENSIVESTANCE | FORM_BERSERKERSTANCE ) &&
 				pPlayer->m_ShapeShifted != m_spellProto->Id )
 			m_target->RemoveAura( pPlayer->m_ShapeShifted );
-
-		if(isVehicleSpell)
-		{
-			MapMgr* map = m_target->GetMapMgr();
-			Vehicle* vehicle = map->CreateVehicle(mod->m_miscValue);
-			if(vehicle != NULL)
-			{
-				vehicle->Load( cp, (m_target->IsInInstance() ? map->iInstanceMode : MODE_5PLAYER_NORMAL), pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation());
-				vehicle->Init();
-				vehicle->SetInstanceID( pPlayer->GetInstanceID() );
-				vehicle->PushToWorld(map);
-				vehicle->InitSeats(cp->vehicle_entry);
-				vehicle->m_mountSpell = GetSpellProto()->Id;
-				vehicle->AddPassenger(pPlayer, 0, true); // Always add to first slot
-				WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
-				data << m_target->GetNewGUID();
-				data << cp->vehicle_entry;
-				m_target->SendMessageToSet(&data, true);
-				vehicle->SetFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_VEHICLE_MOUNT);
-				vehicle->SetFaction(pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-				vehicle->SetSummonOwnerSlot(pPlayer->GetGUID(), 0);
-				pPlayer->m_SummonSlots[0] = vehicle;
-				pPlayer->SetSummon(TO_PET(vehicle));
-			}
-		}
 	}
 	else
 	{
 		pPlayer->m_bgFlagIneligible--;
 		pPlayer->m_MountSpellId = 0;
 		pPlayer->m_FlyingAura = 0;
-
-		if( !isVehicleSpell )
-			m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
-		else
-		{
-			if(m_target->GetVehicle())
-				m_target->GetVehicle()->RemovePassenger(m_target);
-			if(pPlayer->GetSummon())
-				pPlayer->GetSummon()->Despawn(300,0);
-		}
+		m_target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
 
 		uint8 petnum = pPlayer->GetUnstabledPetNumber();
-
 		if(warlockpet && !petnum)
 			petnum = pPlayer->GetFirstPetNumber();
 
@@ -6993,7 +6977,6 @@ void Aura::SpellAuraMounted(bool apply)
 			}
 			pPlayer->hasqueuedpet = false;
 		}
-		//m_target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI);
 		pPlayer->RemoveAurasByInterruptFlagButSkip( AURA_INTERRUPT_ON_DISMOUNT, GetSpellId() );
 	}
 }

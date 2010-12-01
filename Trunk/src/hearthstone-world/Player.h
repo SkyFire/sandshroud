@@ -2289,14 +2289,17 @@ private:
 	// Stuff for "Talent Inspect"
 	#define TALENT_INSPECT_BYTES 71
 	uint8 m_talentInspectBuffer[TALENT_INSPECT_BYTES];
+public:
+	HEARTHSTONE_INLINE const uint8 *GetTalentInspectBuffer() { return m_talentInspectBuffer; }
+	void UpdateTalentInspectBuffer();
+	static void InitializeTalentInspectSupport();
+
+private:
 	void SetTaximaskNode(uint32 nodeidx, bool UnSet = false);
 public:
 	void AddTaximaskNode(uint32 nodeidx){SetTaximaskNode(nodeidx, false);}
 	void RemoveTaximaskNode(uint32 nodeidx){SetTaximaskNode(nodeidx, true);}
 
-	HEARTHSTONE_INLINE const uint8 *GetTalentInspectBuffer() { return m_talentInspectBuffer; }
-	void UpdateTalentInspectBuffer();
-	static void InitializeTalentInspectSupport();
 	uint8 GetChatTag() const;
 	void AddArenaPoints( uint32 arenapoints );
 	uint32 LastPhase;
@@ -2322,6 +2325,15 @@ public:
 	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
 	void HandleClusterRemove();
 #endif
+
+	// Player Vehicles
+public:
+	void InitAsVehicle();
+	void DeInitAsVehicle();
+	void AddPassenger(Unit* unit, int8 slot = -1);
+	void ChangeSeats(Unit* pPassenger, uint8 seatid);
+	void RemovePassenger(Unit* pPassenger);
+	void InstallExtras();
 };
 
 class SkillIterator

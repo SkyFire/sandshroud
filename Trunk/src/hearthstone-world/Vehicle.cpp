@@ -21,22 +21,13 @@
 
 Vehicle::Vehicle(uint64 guid) : Creature(guid)
 {
-	m_vehicleEntry = NULL;
 	m_ppassengerCount = NULL;
 	m_maxPassengers = NULL;
 	m_seatSlotMax = NULL;
 	m_isVehicle = true;
 	Initialised = false;
 	m_CreatedFromSpell = false;
-	m_mountSpell = NULL;
 	m_CastSpellOnMount = NULL;
-
-	for(uint8 i = 0; i < 8; i++)
-	{
-		m_vehicleSeats[i] = NULL;
-		seatisusable[i] = false;
-		m_passengers[i] = NULL;
-	}
 }
 
 Vehicle::~Vehicle()
@@ -487,7 +478,7 @@ void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool f
 		}
 	}
 	else
-	{ // Find us a slot!
+	{	// Find us a slot!
 		for(uint8 i = 0; i < m_seatSlotMax; i++)
 		{
 			if(pPassenger->IsPlayer())
@@ -508,19 +499,6 @@ void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool f
 			}
 		}
 	}
-}
-
-int8 Vehicle::GetPassengerSlot(Unit* pPassenger)
-{
-	for(uint8 i = 0; i < m_seatSlotMax; i++)
-	{
-		if( m_passengers[i] == pPassenger ) // Found a slot
-		{
-			return i;
-			break;
-		}
-	}
-	return -1;
 }
 
 void Vehicle::RemovePassenger(Unit* pPassenger)
@@ -668,13 +646,6 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	_setFaction();
 }
 
-void Vehicle::DeletePassengerData(Unit* pPassenger)
-{
-	uint8 slot = pPassenger->GetSeatID();
-	pPassenger->SetSeatID(NULL);
-	m_passengers[slot] = NULL;
-}
-
 bool Vehicle::HasPassenger(Unit* pPassenger)
 {
 	for(uint8 i = 0; i < m_seatSlotMax; i++)
@@ -784,7 +755,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		{
 			if(m_vehicleSeats[slot]->IsControllable())
 			{
-				SetControllingUnit(pPlayer);
 				m_redirectSpellPackets = pPlayer;
 
 				SetSpeed(RUN, m_runSpeed);
@@ -861,22 +831,6 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	if(canFly())
 		EnableFlight();
 	_setFaction();
-}
-
-/* This function changes a vehicles position server side to
-keep us in sync with the client, so that the vehicle doesn't
-get dismissed because the server thinks its gone out of range
-of its passengers*/
-void Vehicle::MoveVehicle(float x, float y, float z, float o) //thanks andy
-{
-	SetPosition(x, y, z, o, false);
-	for(uint8 i = 0; i < m_seatSlotMax; i++)
-	{
-		if(m_passengers[i] != NULL)
-		{
-			m_passengers[i]->SetPosition(x,y,z,o,false);
-		}
-	}
 }
 
 void Vehicle::setDeathState(DeathState s)
@@ -994,7 +948,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 {
 	WoWGuid Vehicleguid;
 	int8 RequestedSeat;
-	Vehicle* cv = _player->GetVehicle();
+	Unit* cv = _player->GetVehicle();
 	_player->ChangingSeats = true;
 
 	if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_PREV_SEAT)
@@ -1011,6 +965,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 			if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
 				break;
 		}
+
 		if(cv->m_vehicleSeats[newseat] && cv->seatisusable[newseat])
 			cv->ChangeSeats(_player, newseat);
 
@@ -1086,7 +1041,7 @@ void WorldSession::HandleEjectPassenger( WorldPacket & recv_data )
 	{
 		uint64 guid;
 		recv_data >> guid;
-		if(objmgr.GetPlayer(guid))
+		if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
 		{
 			Player *plr = objmgr.GetPlayer(guid);
 			if(plr && plr->GetVehicle())
@@ -1107,7 +1062,7 @@ void WorldSession::HandleEjectPassenger( WorldPacket & recv_data )
 				return;
 			}
 		}
-			OUT_DEBUG("CMSG_EJECT_PASSENGER has an invalid guid.");
+		OUT_DEBUG("CMSG_EJECT_PASSENGER has an invalid guid.");
 	}
 }
 
@@ -1116,19 +1071,19 @@ void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
 	CHECK_INWORLD_RETURN;
 	uint64 guid;
 	recv_data >> guid;
-	if(objmgr.GetPlayer(guid))
+	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
 	{
 		Player *plr = objmgr.GetPlayer(guid);
 		if(plr == NULL)
 			return;
 
-		if(plr->GetVehicle() == NULL)
+		if(plr->GetVehicleEntry() == 0)
 			return;
 
 		if(plr->GetGroup() == NULL || plr->GetGroup() != _player->GetGroup())
 			return;
 
-		plr->GetVehicle()->AddPassenger(_player,-1);
+		plr->AddPassenger(_player,-1);
 	}
 }
 

@@ -1104,10 +1104,49 @@ public:
 	//Vehicle
 	bool ExitingVehicle;
 	bool ChangingSeats;
+	Player* pVehicle;
+	bool seatisusable[8];
+	Unit* m_passengers[8];
+	uint32 m_mountSpell;
+	uint32 m_vehicleEntry;
+	VehicleSeatEntry* m_vehicleSeats[8];
+	Unit* GetControllingUnit() { return m_passengers[0]; }
+	Player* GetControllingPlayer() { return (m_passengers[0] ? m_passengers[0]->IsPlayer() ? TO_PLAYER(m_passengers[0]) : NULL : NULL); }
+
+	uint32 GetVehicleEntry() { return m_vehicleEntry; };
+	void SetVehicleEntry(uint32 entry) { m_vehicleEntry = entry; }
+
+	void RemovePassenger(Unit* passenger);
+	int8 GetPassengerSlot(Unit* pPassenger);
+	void DeletePassengerData(Unit* pPassenger);
+	void ChangeSeats(Unit* pPassenger, uint8 seatid);
+	void MoveVehicle(float x, float y, float z, float o);
+
 	HEARTHSTONE_INLINE int8 GetSeatID() { return m_inVehicleSeatId; }
-	HEARTHSTONE_INLINE Vehicle* GetVehicle() { return m_CurrentVehicle ? m_CurrentVehicle : NULL; }
+	HEARTHSTONE_INLINE Unit* GetVehicle(bool forcevehicle = false)
+	{
+		if(m_CurrentVehicle)
+			return TO_UNIT(m_CurrentVehicle);
+		if(pVehicle && !forcevehicle)
+			return TO_UNIT(pVehicle);
+		return NULL;
+	}
+
 	void SetSeatID(int8 seat) { m_inVehicleSeatId = seat; }
-	void SetVehicle(Vehicle *v) { m_CurrentVehicle = v; }
+	void SetVehicle(Unit *v)
+	{
+		if(v == NULL)
+		{
+			m_CurrentVehicle = NULL;
+			pVehicle = NULL;
+			return;
+		}
+
+		if(v->IsVehicle())
+			m_CurrentVehicle = TO_VEHICLE(v);
+		else if(v->IsPlayer())
+			pVehicle = TO_PLAYER(v);
+	}
 
 	//Pet
 	HEARTHSTONE_INLINE void SetIsPet(bool chck) { m_isPet = chck; }

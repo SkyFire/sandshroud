@@ -12800,7 +12800,6 @@ void Player::UpdateTalentInspectBuffer()
 
 		if( itr != sWorld.InspectTalentTabSize.end() )
 			talent_tab_pos += itr->second;
-
 	}
 }
 
@@ -13842,4 +13841,401 @@ void Player::EventDrunkenVomit()
 	CastSpell(this, 67468, false);
 	m_drunk -= 2560;
 	sEventMgr.RemoveEvents(this, EVENT_DRUNKEN_VOMIT);
+}
+
+void Player::InitAsVehicle()
+{
+	VehicleEntry * ve = dbcVehicle.LookupEntry(m_vehicleEntry);
+	if(!ve)
+	{
+		if(sLog.IsOutDevelopement())
+			printf("Attempted to create non-existant vehicle %u.\n", m_vehicleEntry);
+		else
+			OUT_DEBUG("Attempted to create non-existant vehicle %u.", m_vehicleEntry);
+		return;
+	}
+
+	for( uint32 i = 0; i < 8; i++ )
+	{
+		if( ve->m_seatID[i] )
+		{
+			m_vehicleSeats[i] = dbcVehicleSeat.LookupEntry( ve->m_seatID[i] );
+			if(m_vehicleSeats[i]->IsUsable())
+				seatisusable[i] = true;
+		}
+	}
+
+	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
+	data << GetNewGUID() << uint32(GetVehicleEntry());
+	SendMessageToSet(&data, true);
+	m_passengers[0] = this;
+	SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+
+	InstallExtras();
+}
+
+void Player::DeInitAsVehicle()
+{
+	for(uint32 i = 0; i < 8; i++)
+	{
+		if(i > 0)
+		{
+			if(m_passengers[i])
+			{
+				if(m_passengers[i]->IsPlayer())
+					RemovePassenger(m_passengers[i]);
+				else if(m_passengers[i]->IsCreature())
+				{
+					TO_CREATURE(m_passengers[i])->Despawn(5000, 0);
+					RemovePassenger(m_passengers[i]);
+				}
+			}
+		}
+
+		m_passengers[i] = NULL;
+		m_vehicleSeats[i] = NULL;
+		seatisusable[i] = false;
+	}
+
+	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
+	data << GetNewGUID() << uint32(0);
+	SendMessageToSet(&data, true);
+
+	if(HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK))
+		RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+}
+
+void Player::AddPassenger(Unit* unit, int8 slot)
+{
+	if(slot > 7)
+		return;
+
+	if(slot == -1)
+	{
+		for(uint8 i = 0; i < 8; i++)
+		{
+			if(m_vehicleSeats[i] != NULL && m_passengers[i] == NULL)
+				slot = i;
+		}
+	}
+
+	if(slot == -1)
+		return;
+
+	if(m_vehicleSeats[slot] == NULL)
+		return;
+
+	if(unit->IsPlayer() && TO_PLAYER(unit)->m_CurrentCharm)
+		return;
+
+	if(unit->IsPlayer() && TO_PLAYER(unit)->m_isGmInvisible)
+	{
+		sChatHandler.GreenSystemMessage(TO_PLAYER(unit)->GetSession(), "Please turn off invis before entering vehicle.");
+		return;
+	}
+
+	m_passengers[slot] = unit;
+	LocationVector v;
+	v.x = m_vehicleSeats[slot]->m_attachmentOffsetX;
+	v.y = m_vehicleSeats[slot]->m_attachmentOffsetY;
+	v.z = m_vehicleSeats[slot]->m_attachmentOffsetZ;
+	v.o = 0;
+
+	unit->movement_info.flags |= MOVEFLAG_TAXI;
+	unit->movement_info.transX = v.x;
+	unit->movement_info.transY = v.y;
+	unit->movement_info.transZ = v.z;
+	unit->movement_info.transO = GetOrientation();
+	unit->movement_info.transSeat = slot;
+	unit->movement_info.transGuid = WoWGuid(GetGUID());
+	unit->SetVehicle(this);
+	unit->SetSeatID(slot);
+	unit->m_TransporterGUID = GetGUID();
+
+	// This is where the real magic happens
+	if( unit->IsPlayer() )
+	{
+		Player* pPlayer = TO_PLAYER(unit);
+
+		//Dismount
+		if(pPlayer->m_MountSpellId && pPlayer->m_MountSpellId != m_mountSpell)
+			pPlayer->RemoveAura(pPlayer->m_MountSpellId);
+
+		//Remove morph spells
+		if(pPlayer->GetUInt32Value(UNIT_FIELD_DISPLAYID) != pPlayer->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID))
+		{
+			pPlayer->RemoveAllAurasOfType(SPELL_AURA_TRANSFORM);
+			pPlayer->RemoveAllAurasOfType(SPELL_AURA_MOD_SHAPESHIFT);
+		}
+
+		//Dismiss any pets
+		if(pPlayer->GetSummon())
+		{
+			if(pPlayer->GetSummon()->GetUInt32Value(UNIT_CREATED_BY_SPELL) > 0)
+				pPlayer->GetSummon()->Dismiss(false);				// warlock summon -> dismiss
+			else
+				pPlayer->GetSummon()->Remove(false, true, true);	// hunter pet -> just remove for later re-call
+		}
+
+		pPlayer->SetUInt64Value(PLAYER_FARSIGHT, GetGUID());
+		pPlayer->SetPlayerStatus(TRANSFER_PENDING);
+		sEventMgr.AddEvent(pPlayer, &Player::CheckPlayerStatus, (uint8)TRANSFER_PENDING, EVENT_PLAYER_CHECK_STATUS_Transfer, 5000, 0, 0);
+		pPlayer->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
+
+		WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
+		data << pPlayer->GetNewGUID();							// Passengerguid
+		data << GetNewGUID();									// Transporterguid (vehicleguid)
+		data << uint8(slot);									// Vehicle Seat ID
+		data << uint8(0);										// Unknown
+		data << GetPositionX() - pPlayer->GetPositionX();		// OffsetTransporterX
+		data << GetPositionY() - pPlayer->GetPositionY();		// OffsetTransporterY
+		data << GetPositionZ() - pPlayer->GetPositionZ();		// OffsetTransporterZ
+		data << getMSTime();									// Timestamp
+		data << uint8(0x04);									// Flags
+		data << float(0);										// Orientation Offset
+		data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
+		data << uint32(0);										// MoveTime
+		data << uint32(1);										// Points
+		data << v.x;											// GetTransOffsetX();
+		data << v.y;											// GetTransOffsetY();
+		data << v.z;											// GetTransOffsetZ();
+		SendMessageToSet(&data, true);
+
+		data.Initialize(SMSG_CLIENT_CONTROL_UPDATE);
+		data << GetNewGUID() << uint8(0);
+		pPlayer->GetSession()->SendPacket(&data);
+
+		data.Initialize(SMSG_PET_DISMISS_SOUND);
+		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
+		data << pPlayer->GetPosition();
+		pPlayer->GetSession()->SendPacket(&data);
+	}
+	else
+		unit->SetPosition(GetPositionX()+v.x, GetPositionY()+v.y, GetPositionZ()+v.z, GetOrientation());
+
+	SendHeartBeatMsg(false);
+
+	_setFaction();
+}
+
+void Player::ChangeSeats(Unit* pPassenger, uint8 seatid)
+{
+	if(seatid == pPassenger->GetSeatID())
+	{
+		OUT_DEBUG("Return, Matching Seats. Requsted: %u, current: %u", seatid, pPassenger->GetSeatID());
+		return;
+	}
+
+	if(pPassenger->GetVehicle() != NULL)
+		pPassenger->GetVehicle()->RemovePassenger(pPassenger);
+
+	pPassenger->m_TransporterGUID = GetGUID();
+	AddPassenger(pPassenger, seatid);
+}
+
+void Player::RemovePassenger(Unit* pPassenger)
+{
+	if(pPassenger == NULL) // We have enough problems that we need to do this :(
+		return;
+
+	if(pPassenger == pVehicle)
+		return; // Fuck you.
+
+	uint8 slot = pPassenger->GetSeatID();
+
+	pPassenger->SetVehicle(NULL);
+	pPassenger->SetSeatID(NULL);
+
+	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
+	if( pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_MountSpellId != m_mountSpell )
+		pPassenger->RemoveAura(TO_PLAYER(pPassenger)->m_MountSpellId);
+
+	WorldPacket data(SMSG_MONSTER_MOVE, 85);
+	data << pPassenger->GetNewGUID();			// PlayerGUID
+	data << uint8(0x40);						// Unk - blizz uses 0x40
+	data << pPassenger->GetPosition();			// Player Position xyz
+	data << getMSTime();						// Timestamp
+	data << uint8(0x4);							// Flags
+	data << pPassenger->GetOrientation();		// Orientation
+	data << uint32(MOVEFLAG_AIR_SUSPENSION);	// MovementFlags
+	data << uint32(0);							// MovementTime
+	data << uint32(1);							// Pointcount
+	data << GetPosition();						// Vehicle Position xyz
+	SendMessageToSet(&data, false);
+
+	pPassenger->movement_info.flags &= ~MOVEFLAG_TAXI;
+	pPassenger->movement_info.transX = 0;
+	pPassenger->movement_info.transY = 0;
+	pPassenger->movement_info.transZ = 0;
+	pPassenger->movement_info.transO = 0;
+	pPassenger->movement_info.transTime = 0;
+	pPassenger->movement_info.transSeat = 0;
+	pPassenger->movement_info.transGuid = WoWGuid(uint64(NULL));
+
+	if(pPassenger->IsPlayer())
+	{
+		Player* plr = TO_PLAYER(pPassenger);
+		RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_PLAYER_CONTROLLED_CREATURE | UNIT_FLAG_PLAYER_CONTROLLED));
+
+		plr->SetPlayerStatus(TRANSFER_PENDING); // We get an ack later, if we don't set this now, we get disconnected.
+		sEventMgr.AddEvent(plr, &Player::CheckPlayerStatus, (uint8)TRANSFER_PENDING, EVENT_PLAYER_CHECK_STATUS_Transfer, 5000, 0, 0);
+		plr->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
+		plr->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+
+		data.Initialize(MSG_MOVE_TELEPORT_ACK);
+		data << plr->GetNewGUID();
+		data << plr->m_teleportAckCounter;
+		plr->m_teleportAckCounter++;
+		data << uint32(MOVEFLAG_FLYING);
+		data << uint16(0x40);
+		data << getMSTime();
+		data << GetPositionX();
+		data << GetPositionY();
+		data << GetPositionZ();
+		data << GetOrientation();
+		data << uint32(0);
+		plr->GetSession()->SendPacket(&data);
+
+		plr->SetUInt64Value( PLAYER_FARSIGHT, 0 );
+
+		data.Initialize(SMSG_PET_DISMISS_SOUND);
+		data << uint32(m_vehicleSeats[slot]->m_exitUISoundID);
+		data << plr->GetPosition();
+		plr->GetSession()->SendPacket(&data);
+
+		data.Initialize(SMSG_PET_SPELLS);
+		data << uint64(0);
+		data << uint32(0);
+		plr->GetSession()->SendPacket(&data);
+	}
+	else
+	{
+		TO_CREATURE(pPassenger)->Despawn(10000, 0);
+		pPassenger->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+	}
+
+	SendHeartBeatMsg(false);
+	m_passengers[slot] = NULL;
+	pPassenger->m_TransporterGUID = NULL; // We need to null this out
+}
+
+void Player::InstallExtras()
+{
+	uint32 i = 1;
+	Creature* pass = NULL;
+	CreatureProto* proto = NULL;
+	switch(m_mountSpell)
+	{
+	case 61447: // Horde
+		{
+			proto = CreatureProtoStorage.LookupEntry(32641);
+			if(proto != NULL)
+			{
+				pass = GetMapMgr()->CreateCreature(32641);
+				if(pass != NULL)
+				{
+					for(; i < 8; i++)
+						if(m_vehicleSeats[i] && !m_passengers[i])
+							break;
+
+					if(i == 8)
+						return;
+
+					pass->Load(proto, GetMapMgr()->iInstanceMode,
+						GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+						GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
+						GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
+
+					pass->m_TransporterGUID = GetGUID();
+					AddPassenger(pass, i);
+					pass->PushToWorld(GetMapMgr());
+					++i;
+					pass = NULL;
+				}
+				proto = NULL;
+			}
+
+			proto = CreatureProtoStorage.LookupEntry(32642);
+			if(proto != NULL)
+			{
+				pass = GetMapMgr()->CreateCreature(32642);
+				if(pass != NULL)
+				{
+					for(; i < 8; i++)
+						if(m_vehicleSeats[i] && !m_passengers[i])
+							break;
+
+					if(i == 8)
+						return;
+
+					pass->Load(proto, GetMapMgr()->iInstanceMode,
+						GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+						GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
+						GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
+
+					pass->m_TransporterGUID = GetGUID();
+					AddPassenger(pass, i);
+					pass->PushToWorld(GetMapMgr());
+					pass = NULL;
+				}
+				proto = NULL;
+			}
+		}break;
+
+	case 61425: // Alliance
+		{
+			proto = CreatureProtoStorage.LookupEntry(32638);
+			if(proto != NULL)
+			{
+				pass = GetMapMgr()->CreateCreature(32638);
+				if(pass != NULL)
+				{
+					for(; i < 8; i++)
+						if(m_vehicleSeats[i] && !m_passengers[i])
+							break;
+
+					if(i == 8)
+						return;
+
+					pass->Load(proto, GetMapMgr()->iInstanceMode,
+						GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+						GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
+						GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
+
+					pass->Init();
+					pass->m_TransporterGUID = GetGUID();
+					AddPassenger(pass, i);
+					pass->PushToWorld(GetMapMgr());
+					++i;
+				}
+				pass = NULL;
+			}
+
+			proto = CreatureProtoStorage.LookupEntry(32639);
+			if(proto != NULL)
+			{
+				pass = GetMapMgr()->CreateCreature(32639);
+				if(pass != NULL)
+				{
+					for(; i < 8; i++)
+						if(m_vehicleSeats[i] && !m_passengers[i])
+							break;
+
+					if(i == 8)
+						return;
+
+					pass->Load(proto, GetMapMgr()->iInstanceMode,
+						GetPositionX()+m_vehicleSeats[i]->m_attachmentOffsetX,
+						GetPositionY()+m_vehicleSeats[i]->m_attachmentOffsetY,
+						GetPositionZ()+m_vehicleSeats[i]->m_attachmentOffsetZ);
+
+					pass->Init();
+					pass->m_TransporterGUID = GetGUID();
+					AddPassenger(pass, i);
+					pass->PushToWorld(GetMapMgr());
+				}
+				pass = NULL;
+			}
+		}break;
+	}
 }

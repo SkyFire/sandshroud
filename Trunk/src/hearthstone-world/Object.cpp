@@ -711,10 +711,10 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 				*data << moveinfo->transGuid << moveinfo->transX << moveinfo->transY
 					<< moveinfo->transZ << moveinfo->transO << moveinfo->transTime << moveinfo->transSeat;
 			}
-			else if (IsUnit() && TO_UNIT(this)->GetVehicle() != NULL)
+			else if (IsUnit() && TO_UNIT(this)->GetVehicle(true) != NULL)
 			{
 				Unit* pUnit = TO_UNIT(this);
-				Vehicle* vehicle = TO_UNIT(this)->GetVehicle();
+				Vehicle* vehicle = TO_VEHICLE(TO_UNIT(this)->GetVehicle());
 
 				if (pUnit->GetSeatID() != 0xFF && vehicle->m_vehicleSeats[pUnit->GetSeatID()] != NULL)
 				{

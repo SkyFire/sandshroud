@@ -475,8 +475,8 @@ void AIInterface::HandleEvent(uint32 eevent, Unit* pUnit, uint32 misc1)
 			if( pUnit == NULL )
 				return;
 
-			if( pUnit->GetVehicle() )
-				pUnit->GetVehicle()->RemovePassenger(pUnit);
+			if( pUnit->GetVehicle(true) )
+				TO_VEHICLE(pUnit->GetVehicle())->RemovePassenger(pUnit);
 
 			if( cr != NULL )
 			{
@@ -1831,6 +1831,8 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 void AIInterface::StopMovement(uint32 time, bool stopatcurrent)
 {
 	ASSERT(m_Unit != NULL);
+	if(m_Unit->GetVehicle())
+		return;
 
 	m_moveTimer = time; //set pause after stopping
 	m_creatureState = STOPPED;
