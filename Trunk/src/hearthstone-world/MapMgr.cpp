@@ -1873,6 +1873,8 @@ GameObject* MapMgr::CreateGameObject(uint32 entry)
 	if( goi == NULL )
 	{
 		Log.Warning("MapMgr", "Skipping CreateGameObject for entry %u due to incomplete database.", entry);
+		if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
+			WorldDatabase.Execute("DELETE FROM gameobject_spawns WHERE entry = '%u';", entry);
 		return NULLGOB;
 	}
 
