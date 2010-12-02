@@ -120,6 +120,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	if( objA->IsUnit() && (objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9) ||
 		objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI) || objA->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
 		return false;
+
 	if( objB->IsUnit() && (objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_9) ||
 		objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI) || objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
 		return false;
@@ -135,14 +136,12 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	// Get players (or owners of pets/totems)
 	Player* player_objA = GetPlayerFromObject(objA);
 	Player* player_objB = GetPlayerFromObject(objB);
-
 	if(objA->IsUnit() && objB->IsVehicle())
 		if(TO_VEHICLE(objB)->GetPassengerSlot(TO_UNIT(objA)) != -1)
 			return false;
 	else if(objB->IsUnit() && objA->IsVehicle())
 		if(TO_VEHICLE(objA)->GetPassengerSlot(TO_UNIT(objB)) != -1)
 			return false;
-
 
 	// Allow GM's to attack any creatures, but players are a no.
 	if(player_objA && player_objB && player_objA->bGMTagOn)
@@ -151,6 +150,9 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	// Creatures cannot attack a GM with tag on.
 	if(!player_objA && player_objB && player_objB->bGMTagOn)
 		return false;
+
+	if(objA->IsCreature() && isTargetDummy(objA->GetEntry()))
+		return false; // Bwahahaha
 
 	if( player_objA && player_objB )
 	{
@@ -280,13 +282,15 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 			if( player_objA->GetAreaDBC()->AreaFlags & 0x800 )
 				return false;
 		}
+
+		return true; // Skip the rest of this, it's all faction shit.
 	}
 
 	// same faction can't kill each other.
 	if(objA->m_faction == objB->m_faction)
 		return false;
 
-	//moved this from IsHostile();
+	// moved this from IsHostile();
 	// by doing so we skip a hell of a lot redundant checks, which we already passed in this routine.
 	uint32 faction = objB->m_faction->Mask;
 	uint32 host = objA->m_faction->HostileMask;
@@ -306,29 +310,30 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 	}
 
 	// Reputation System Checks
-	if(player_objA && !player_objB)	   // PvE
+	if(player_objA)
 	{
 		if(objB->m_factionDBC->RepListId >= 0)
 			hostile = player_objA->IsHostileBasedOnReputation( objB->m_factionDBC );
-	}
 
-	if(player_objB && !player_objA)	   // PvE
-	{
-		if(objA->m_factionDBC->RepListId >= 0)
-			hostile = player_objB->IsHostileBasedOnReputation( objA->m_factionDBC );
-	}
+		if(hostile == false)
+		{
+			if(objB->m_factionDBC->RepListId == -1 && objB->m_faction->HostileMask == 0 && objB->m_faction->FriendlyMask == 0)
+				hostile = true;
 
-	// Neutral Creature Check
-	if(player_objA)
-	{
-		if(objB->m_factionDBC->RepListId == -1 && objB->m_faction->HostileMask == 0 && objB->m_faction->FriendlyMask == 0)
-			hostile =  true;
+			if(player_objA->bGMTagOn)
+				hostile = true;
+		}
 	}
 	else if(player_objB)
 	{
-		if(objA->m_factionDBC->RepListId == -1 && objA->m_faction->HostileMask == 0 && objA->m_faction->FriendlyMask == 0)
-			hostile =  true;
+		if(objA->m_factionDBC->RepListId >= 0)
+			hostile = player_objB->IsHostileBasedOnReputation( objA->m_factionDBC );
+
+		if(hostile == false)
+			if(objA->m_factionDBC->RepListId == -1 && objA->m_faction->HostileMask == 0 && objA->m_faction->FriendlyMask == 0)
+				hostile = true;
 	}
+
 	return hostile;
 }
 

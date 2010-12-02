@@ -98,8 +98,8 @@ AIInterface::AIInterface()
 	waiting_for_cooldown = false;
 	UnitToFollow_backup = NULLUNIT;
 	m_isGuard = false;
-	m_is_in_instance=false;
-	skip_reset_hp=false;
+	m_is_in_instance = false;
+	skip_reset_hp = false;
 	m_guardCallTimer = 0;
 
 	m_aiTargets.clear();
@@ -123,6 +123,10 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt)
 	{
 		m_AIType = AITYPE_DUMMY;
 		m_AllowedToEnterCombat = false;
+		un->m_runSpeed = 0.0f;
+		un->m_flySpeed = 0.0f;
+		un->m_walkSpeed = 0.0f;
+		un->m_swimSpeed = 0.0f;
 	}
 
 	if(un->IsCreature())
@@ -171,7 +175,14 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt, Unit* owner)
 	m_Unit = un;
 	m_PetOwner = owner;
 	if(isTargetDummy(un->GetEntry()))
+	{
+		m_AIType = AITYPE_DUMMY;
 		m_AllowedToEnterCombat = false;
+		un->m_runSpeed = 0.0f;
+		un->m_flySpeed = 0.0f;
+		un->m_walkSpeed = 0.0f;
+		un->m_swimSpeed = 0.0f;
+	}
 
 	m_walkSpeed = m_Unit->m_walkSpeed*0.001f;//move distance per ms time
 	m_runSpeed = m_Unit->m_runSpeed*0.001f;//move/ms
@@ -190,10 +201,6 @@ void AIInterface::HandleEvent(uint32 eevent, Unit* pUnit, uint32 misc1)
 	{
 		cr = TO_CREATURE( m_Unit );
 		if(cr == NULL)
-			return;
-
-		if(isTargetDummy(cr->GetEntry()) && eevent != EVENT_LEAVECOMBAT
-			&& eevent != EVENT_DAMAGETAKEN && eevent != EVENT_ENTERCOMBAT)
 			return;
 	}
 
@@ -810,7 +817,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 			&& !m_fleeTimer
 			&& !m_is_in_instance)
 		HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0 );
-	else if( m_nextTarget == NULL && m_AIState != STATE_FOLLOWING && m_AIState != STATE_SCRIPTMOVE && !m_fleeTimer )
+	else if( m_nextTarget == NULL && m_AIState != STATE_FOLLOWING && m_AIState != STATE_SCRIPTMOVE && !m_fleeTimer && !m_AllowedToEnterCombat )
 	{
 		m_nextTarget = GetMostHated();
 		if( m_nextTarget == NULL )
@@ -962,7 +969,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 						FollowDistance = 0.0f;
 					}
 
-					if(m_Unit->isAttackReady(false) && !m_fleeTimer)
+					if(m_Unit->isAttackReady(false) && !m_fleeTimer && !m_AllowedToEnterCombat)
 					{
 						m_creatureState = ATTACKING;
 						bool infront = m_Unit->isInFront(m_nextTarget);
@@ -1042,7 +1049,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 					}
 
 					//FIXME: offhand shit
-					if(m_Unit->isAttackReady(false) && !m_fleeTimer)
+					if(m_Unit->isAttackReady(false) && !m_fleeTimer && !m_AllowedToEnterCombat)
 					{
 						m_creatureState = ATTACKING;
 						bool infront = m_Unit->isInFront(m_nextTarget);
@@ -1194,7 +1201,7 @@ void AIInterface::AttackReaction(Unit* pUnit, uint32 damage_dealt, uint32 spellI
 {
 	ASSERT(m_Unit != NULL);
 
-	if( m_AIState == STATE_EVADE || m_fleeTimer != 0 || !pUnit || !pUnit->isAlive() || !m_Unit->isAlive() )
+	if( m_AIState == STATE_EVADE || m_fleeTimer != 0 || !pUnit || !pUnit->isAlive() || !m_Unit->isAlive() || !m_AllowedToEnterCombat )
 		return;
 
 	if( m_Unit == pUnit || m_Unit->IsVehicle() )
@@ -3077,7 +3084,7 @@ Unit* AIInterface::GetMostHated()
 	ASSERT(m_Unit != NULL);
 
 	// Fleeing means we shit our pants and hate no one
-	if( m_fleeTimer )
+	if( m_fleeTimer || !m_AllowedToEnterCombat)
 		return NULLUNIT;
 
 	Unit* ResultUnit = NULLUNIT;
@@ -3125,7 +3132,7 @@ Unit* AIInterface::GetSecondHated()
 	ASSERT(m_Unit != NULL);
 
 	// Fleeing means we shit our pants and hate no one
-	if( m_fleeTimer )
+	if( m_fleeTimer || !m_AllowedToEnterCombat )
 		return NULLUNIT;
 
 	Unit* ResultUnit = GetMostHated();

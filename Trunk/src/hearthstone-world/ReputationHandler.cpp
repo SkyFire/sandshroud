@@ -238,7 +238,7 @@ void Player::ModStanding(uint32 Faction, int32 Value)
 		itr->second->standing = newValue < -42000 ? -42000 : newValue > 42999 ? 42999 : newValue;
 		if (RankChanged(oldValue, modValue)) 
 			UpdateInrangeSetsBasedOnReputation();
- 	    OnModStanding(dbc, itr->second);
+		OnModStanding(dbc, itr->second);
 	}
 
 #ifdef OPTIMIZED_PLAYER_SAVING
@@ -423,7 +423,7 @@ bool Player::AddNewFaction( FactionDBC * dbc, int32 standing, bool base )
 			( dbc->baseRepClassMask[i] & ClassMask || dbc->baseRepClassMask[i] == 0 ) )
 		{
 			FactionReputation * rep = new FactionReputation;
-			rep->flag = static_cast<uint8>( dbc->reputationFlags[i] );
+			rep->flag = uint8(dbc->reputationFlags[i]);
 			rep->baseStanding = dbc->baseRepValue[i];
 			rep->standing = ( base ) ? dbc->baseRepValue[i] : standing;
 			m_reputation[dbc->ID] = rep;

@@ -7309,8 +7309,7 @@ void Unit::RemoveBeacons()
 void Unit::SetFaction(uint32 faction)
 {
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
-	m_faction = dbcFactionTemplate.LookupEntry(faction);
-	m_factionDBC = dbcFaction.LookupEntry(faction);
+	_setFaction();
 
 	if(IsCreature() && TO_CREATURE(this)->m_spawn)
 		TO_CREATURE(this)->SaveToDB();
@@ -7319,24 +7318,17 @@ void Unit::SetFaction(uint32 faction)
 
 void Unit::ResetFaction()
 {
+	uint32 faction = 35;
 	if(IsPlayer())
 	{
-		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, TO_PLAYER(this)->GetInfo()->factiontemplate);
-		m_faction = dbcFactionTemplate.LookupEntry(TO_PLAYER(this)->GetInfo()->factiontemplate);
-		m_factionDBC = dbcFaction.LookupEntry(TO_PLAYER(this)->GetInfo()->factiontemplate);
+		faction = TO_PLAYER(this)->GetInfo()->factiontemplate;
 	}
 	else
 	{
 		CreatureProto* cp = CreatureProtoStorage.LookupEntry(GetEntry());
-		uint32 faction = cp->Faction;
-		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
-		m_faction = dbcFactionTemplate.LookupEntry(faction);
-		m_factionDBC = dbcFaction.LookupEntry(faction);
-
-		if(TO_CREATURE(this)->m_spawn)
-			TO_CREATURE(this)->SaveToDB();
+		faction = cp->Faction;
 	}
-	_setFaction();
+	SetFaction(faction);
 }
 
 void Unit::knockback(int32 basepoint, uint32 miscvalue, bool disengage )

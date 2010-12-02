@@ -2197,7 +2197,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		{
 			if(pVictim->IsCreature())
 			{
-				 if(!isTargetDummy(pVictim->GetEntry()))
+				if(!isTargetDummy(pVictim->GetEntry()))
 					 TO_UNIT(this)->CombatStatus.OnDamageDealt( pVictim, damage );
 			}
 			else // Set our attack target to the victim.
@@ -2790,7 +2790,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		if(pVictim != TO_UNIT(this) /* && updateskill */)
 		{
 			// Send AI Reaction UNIT vs UNIT
-			if( GetTypeId() ==TYPEID_UNIT )
+			if( GetTypeId() == TYPEID_UNIT )
 			{
 				TO_UNIT(this)->GetAIInterface()->AttackReaction( pVictim, damage, spellId );
 			}

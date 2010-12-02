@@ -23,8 +23,8 @@
 
 #include "StdAfx.h"
 
+extern bool bServerShutdown;
 #define WORLDSOCKET_TIMEOUT 80
-
 OpcodeHandler WorldPacketHandlers[NUM_MSG_TYPES];
 
 WorldSession::WorldSession(uint32 id, string Name, WorldSocket *sock) : _socket(sock), _accountId(id), _accountName(Name),
@@ -372,7 +372,7 @@ void WorldSession::LogoutPlayer(bool Save)
 			_player->SaveToDB(false);
 
 		// send to gms
-		if( HasGMPermissions() )
+		if( HasGMPermissions() && !bServerShutdown )
 			sWorld.SendMessageToGMs(this, "GM %s (%s) is now offline. (Permissions: [%s])", _player->GetName(), GetAccountNameS(), GetPermissions());
 
 		_player->RemoveAllAuras();

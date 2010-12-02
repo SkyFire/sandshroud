@@ -58,8 +58,15 @@ void WorldSession::HandleAttackSwingOpcode( WorldPacket & recv_data )
 	{
 		if(!HasGMPermissions() || !sWorld.no_antihack_on_gm)
 		{
+			if(pEnemy->GetEntry() == 6090 && _player->HasQuest(1640))
+			{
+				GetPlayer()->smsg_AttackStart(pEnemy);
+				GetPlayer()->EventAttackStart();
+				return;
+			}
+
 			if(!isAttackable( GetPlayer(), pEnemy, false ) && !pEnemy->IsInRangeOppFactSet(_player) &&
-				!pEnemy->CombatStatus.DidDamageTo(_player->GetGUID()) && !_player->HasQuest(1640))
+				!pEnemy->CombatStatus.DidDamageTo(_player->GetGUID()))
 			{
 				sWorld.LogCheater(this, "Faction exploit detected. Damagetype: Melee.");
 				GetPlayer()->BroadcastMessage("Faction exploit detected. You will be disconnected in 5 seconds.");
