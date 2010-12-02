@@ -1037,32 +1037,43 @@ void Vehicle::ChangeSeats(Unit* unit, uint8 seatid)
 void WorldSession::HandleEjectPassenger( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
+	uint64 guid;
+	recv_data >> guid;
 	if(_player->GetVehicle())
 	{
-		uint64 guid;
-		recv_data >> guid;
 		if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
 		{
-			Player *plr = objmgr.GetPlayer(guid);
-			if(plr && plr->GetVehicle())
+			Player *plr = objmgr.GetPlayer((uint32)guid);
+			if(!plr)
 			{
-				if(plr->GetVehicle() == _player->GetVehicle())
-					_player->GetVehicle()->RemovePassenger(plr);
-			}
-			return;
-		}
-		else
-		{
-			Creature * cr = _player->GetMapMgr()->GetCreature(guid);
-			if(cr && cr->GetVehicle())
-			{
-				if(cr->GetVehicle() == _player->GetVehicle())
-					_player->GetVehicle()->RemovePassenger(cr);
-				cr->SafeDelete();
+				OUT_DEBUG("CMSG_EJECT_PASSENGER couldn't find player with recv'd guid %u.", guid);
 				return;
 			}
+			if(!plr->GetVehicle())
+			{
+				OUT_DEBUG("CMSG_EJECT_PASSENGER player has no vehicle.");
+				return;
+			}
+			if(plr->GetVehicle() == _player->GetVehicle())
+				_player->GetVehicle()->RemovePassenger(plr);
 		}
-		OUT_DEBUG("CMSG_EJECT_PASSENGER has an invalid guid.");
+		if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE)
+		{
+			Creature * cr = _player->GetMapMgr()->GetCreature((uint32)guid);
+			if(!cr)
+			{
+				OUT_DEBUG("CMSG_EJECT_PASSENGER couldn't find creature with recv'd guid %u.", guid);
+				return;
+			}
+			if(!cr->GetVehicle())
+			{
+				OUT_DEBUG("CMSG_EJECT_PASSENGER creature has no vehicle.");
+				return;
+			}
+			if(cr->GetVehicle() == _player->GetVehicle())
+				_player->GetVehicle()->RemovePassenger(cr);
+			cr->SafeDelete();
+		}
 	}
 }
 

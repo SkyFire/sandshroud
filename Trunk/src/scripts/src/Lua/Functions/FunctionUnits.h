@@ -3700,7 +3700,7 @@ int LuaUnit_GetVehicle(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER();
 	Player * plr = TO_PLAYER(ptr);
-	Vehicle * ride = plr->GetVehicle();
+	Vehicle * ride = TO_VEHICLE(plr->GetVehicle(true));
 	if(ride != NULL)
 		Lunar<Unit>::push(L,ride); 
 	else
@@ -3712,7 +3712,7 @@ int LuaUnit_RemoveFromVehicle(lua_State * L, Unit * ptr)
 {
 	TEST_PLAYER();
 	Player * plr = TO_PLAYER(ptr);
-	Vehicle * veh = plr->GetVehicle();
+	Vehicle * veh = TO_VEHICLE(plr->GetVehicle(true));
 	if(veh != NULL)
 		veh->RemovePassenger(plr);
 	return 1;

@@ -332,11 +332,9 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
 		// don't add objects that are units and dead
-		if( (*itr)->IsUnit() && (!(TO_UNIT( *itr )->isAlive())))
+		if( (*itr)->IsUnit() && !(TO_UNIT( *itr )->isAlive()))
 			continue;
 
-		if((*itr)->IsUnit() && u_caster && TO_UNIT(*itr)->GetGUID() == u_caster->GetGUID())
-			continue;
 
 		//TO_UNIT(*itr)->InStealth()
 		if( GetSpellProto()->TargetCreatureType && (*itr)->IsUnit())
@@ -359,7 +357,7 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 				}
 				else if((*itr)->IsGameObject())
 				{
-					_AddTargetForced((*itr)->GetGUID(), i);
+					_AddTargetForced((*itr), i);
 				}
 			}
 			else if( u_caster != NULL )
@@ -383,7 +381,7 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 					}
 				}
 				else
-					_AddTargetForced((*itr)->GetGUID(), i);
+					_AddTargetForced((*itr), i);
 			}
 			if( GetSpellProto()->MaxTargets)
 			{
@@ -440,7 +438,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				}
 				else if((*itr)->IsGameObject())
 				{
-					_AddTargetForced((*itr)->GetGUID(), i);
+					_AddTargetForced((*itr), i);
 				}
 			}
 			else if( u_caster != NULL )
@@ -464,7 +462,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 					}
 				}
 				else
-					_AddTargetForced((*itr)->GetGUID(), i);
+					_AddTargetForced((*itr), i);
 			}
 
 			if( GetSpellProto()->MaxTargets)
@@ -529,7 +527,7 @@ void Spell::FillAllFriendlyInArea( uint32 i, float srcx, float srcy, float srcz,
 	}
 }
 
-/// We fill all the targets in the area, including the stealth ed one's
+/// We fill all the gameobject targets in the area
 void Spell::FillAllGameObjectTargetsInArea(uint32 i,float srcx,float srcy,float srcz, float range)
 {
 	float r = range*range;
@@ -736,15 +734,11 @@ uint8 Spell::_DidHit(const Unit* target)
 	else
 		lvldiff = u_victim->getLevel() - u_caster->getLevel();
 	if (lvldiff < 0)
-	{
 		resistchance = baseresist[0] +lvldiff;
-	}
 	else
 	{
 		if(lvldiff < 3)
-		{
-				resistchance = baseresist[lvldiff];
-		}
+			resistchance = baseresist[lvldiff];
 		else
 		{
 			if(pvp)
@@ -1103,9 +1097,11 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		targets->m_unitTarget = 0;
 		GenerateTargets( targets );
 	}
-
-	m_missileTravelTime = (uint32)m_targets.traveltime;
-	m_missilePitch = (uint32)m_targets.missilepitch;
+	if(UseMissileDelay())
+	{
+		m_missileTravelTime = (uint32)m_targets.traveltime;
+		m_missilePitch = m_targets.missilepitch;
+	}
 	m_targets = *targets;
 
 	if( !m_triggeredSpell && p_caster != NULL && p_caster->CastTimeCheat )
@@ -1258,12 +1254,10 @@ void Spell::cancel()
 					pTarget = p_caster->GetMapMgr()->GetUnit(p_caster->GetSelection());
 
 				if(pTarget)
-				{
 					pTarget->RemoveAura(GetSpellProto()->Id, m_caster->GetGUID());
-				}
+
 				if(m_AreaAura)//remove of blizz and shit like this
 				{
-
 					DynamicObject* dynObj = m_caster->GetMapMgr()->GetDynamicObject(m_caster->GetUInt32Value(UNIT_FIELD_CHANNEL_OBJECT));
 					if(dynObj)
 					{
@@ -1292,12 +1286,6 @@ void Spell::cancel()
 	if (m_timer > 0)
 		m_ForceConsumption = true;
 
-	//m_spellState = SPELL_STATE_FINISHED;
-
-	// prevent memory corruption. free it up later.
-	// if this is true it means we are currently in the cast() function somewhere else down the stack
-	// (recursive spells) and we don't wanna have this class delete'd when we return to it.
-	// at the end of cast() it will get freed anyway.
 	if( !m_isCasting )
 		finish();
 }
@@ -1374,7 +1362,6 @@ void Spell::cast(bool check)
 		{
 			if(!TakePower() && !m_triggeredSpell) //not enough mana
 			{
-				//OUT_DEBUG("Spell::Not Enough Mana");
 				SendInterrupted(SPELL_FAILED_NO_POWER);
 				SendCastResult(SPELL_FAILED_NO_POWER);
 				finish();
@@ -1421,7 +1408,6 @@ void Spell::cast(bool check)
 			{
 				if (u_caster->InStealth() && !(GetSpellProto()->AttributesEx & ATTRIBUTESEX_NOT_BREAK_STEALTH) && !m_triggeredSpell)
 					u_caster->RemoveStealth();
-
 			}
 
 
@@ -1531,7 +1517,7 @@ void Spell::cast(bool check)
 					sEventMgr.AddEvent(this, &Spell::HandleDestLocationHit, EVENT_SPELL_HIT, m_missileTravelTime, 1, 0);
 				else
 				{
-					if(GetSpellProto()->speed <= 0)
+					if(GetSpellProto()->speed <= 0 || !UseMissileDelay())
 						HandleDestLocationHit();
 					else
 					{
@@ -1637,8 +1623,7 @@ void Spell::cast(bool check)
 		}
 
 		/* don't call HandleAddAura unless we actually have auras... - Burlex*/
-		if( GetSpellProto()->EffectApplyAuraName[0] != 0 || GetSpellProto()->EffectApplyAuraName[1] != 0 ||
-		   GetSpellProto()->EffectApplyAuraName[2] != 0)
+		if( GetSpellProto()->EffectApplyAuraName[0] != 0 || GetSpellProto()->EffectApplyAuraName[1] != 0 || GetSpellProto()->EffectApplyAuraName[2] != 0)
 		{
 			itr = m_targetList.begin();
 			for(; itr != m_targetList.end(); itr++)
@@ -5325,4 +5310,13 @@ bool Spell::NegateKnockbackEffect(uint32 namehash)
 		}break;
 	}
 	return false;
+}
+
+bool Spell::UseMissileDelay()
+{
+	if(HasSpellEffect(SPELL_EFFECT_CHARGE) || HasSpellEffect(SPELL_EFFECT_JUMP_TO_TARGET) ||
+		HasSpellEffect(SPELL_EFFECT_JUMP_TO_DESTIONATION) || HasSpellEffect(SPELL_EFFECT_TRACTOR_BEAM_FROM_DEST) || 
+		HasSpellEffect(SPELL_EFFECT_PLAYER_PULL))
+		return false;
+	return true;
 }

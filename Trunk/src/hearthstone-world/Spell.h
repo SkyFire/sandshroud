@@ -2167,6 +2167,14 @@ protected:
 	bool			m_isCasting;
 	bool			m_projectileWait;
 	void DamageGosAround(uint32 i);
+	bool UseMissileDelay();
+	bool HasSpellEffect( uint32 effect )
+	{
+		for( uint32 i = 0; i < 3; ++i )
+			if( GetSpellProto()->Effect[ i ] == effect )
+				return true;
+		return false;
+	}
 
 private:
 	struct SpellTarget
