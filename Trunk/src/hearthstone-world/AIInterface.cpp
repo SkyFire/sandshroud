@@ -817,7 +817,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 			&& !m_fleeTimer
 			&& !m_is_in_instance)
 		HandleEvent( EVENT_LEAVECOMBAT, m_Unit, 0 );
-	else if( m_nextTarget == NULL && m_AIState != STATE_FOLLOWING && m_AIState != STATE_SCRIPTMOVE && !m_fleeTimer && !m_AllowedToEnterCombat )
+	else if( m_nextTarget == NULL && m_AIState != STATE_FOLLOWING && m_AIState != STATE_SCRIPTMOVE && !m_fleeTimer )
 	{
 		m_nextTarget = GetMostHated();
 		if( m_nextTarget == NULL )
@@ -969,7 +969,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 						FollowDistance = 0.0f;
 					}
 
-					if(m_Unit->isAttackReady(false) && !m_fleeTimer && !m_AllowedToEnterCombat)
+					if(m_Unit->isAttackReady(false) && !m_fleeTimer && m_AllowedToEnterCombat)
 					{
 						m_creatureState = ATTACKING;
 						bool infront = m_Unit->isInFront(m_nextTarget);
@@ -983,6 +983,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 								infront = true;
 							}
 						}
+
 						if(infront)
 						{
 							m_Unit->setAttackTimer(0, false);
@@ -1049,7 +1050,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 					}
 
 					//FIXME: offhand shit
-					if(m_Unit->isAttackReady(false) && !m_fleeTimer && !m_AllowedToEnterCombat)
+					if(m_Unit->isAttackReady(false) && !m_fleeTimer && m_AllowedToEnterCombat)
 					{
 						m_creatureState = ATTACKING;
 						bool infront = m_Unit->isInFront(m_nextTarget);
