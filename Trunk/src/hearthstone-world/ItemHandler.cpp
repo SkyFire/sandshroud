@@ -1338,7 +1338,8 @@ void WorldSession::SendInventoryList(Creature* unit)
 		}
 
 		SendPacket(&data);
-//		sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
+		if(sLog.IsOutDevelopement())
+			sChatHandler.BlueSystemMessageToPlr(_player, "No sell template found. Report this to devs: %d (%s)", unit->GetEntry(), unit->GetCreatureInfo()->Name);
 		return;
 	}
 
@@ -1386,6 +1387,21 @@ void WorldSession::SendInventoryList(Creature* unit)
 				else
 					data << uint32(0);
 			}
+		}
+	}
+
+	if(!counter)
+	{
+		for(int i = 0; i < 10; i++) // Send null items
+		{
+			data << (++counter);
+			data << uint32(0);
+			data << uint32(0);
+			data << int32(0);
+			data << uint32(0);
+			data << uint32(0);
+			data << uint32(0);
+			data << uint32(0);
 		}
 	}
 
