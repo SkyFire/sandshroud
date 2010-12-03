@@ -1365,17 +1365,6 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 
 			switch(field)
 			{
-			case UNIT_FIELD_FACTIONTEMPLATE:
-				{
-					if(cr->m_spawn)
-						WorldDatabase.Execute("UPDATE creature_spawns SET faction = %u WHERE id = %u", av, cr->m_spawn->id);
-					cr->_setFaction();
-				}break;
-			case UNIT_NPC_FLAGS:
-				{
-					if(cr->proto)
-						WorldDatabase.Execute("UPDATE creature_proto SET npcflags = %u WHERE entry = %u", av, cr->proto->Id);
-				}break;
 			case UNIT_FIELD_STAT1:
 				{
 					av /= 2;

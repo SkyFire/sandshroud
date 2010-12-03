@@ -4835,7 +4835,7 @@ Corpse* Player::RepopRequestedPlayer()
 		myCorpse->ResetDeathClock();
 
 	MapInfo * pPMapinfo = NULL;
-	pPMapinfo = WorldMapInfoStorage.LookupEntry( GetMapId() );
+	pPMapinfo = LimitedMapInfoStorage.LookupEntry( GetMapId() );
 	if( pPMapinfo != NULL )
 	{
 		if( pPMapinfo->type == INSTANCE_NULL || pPMapinfo->type == INSTANCE_PVP )
@@ -8543,7 +8543,7 @@ void Player::SaveEntryPoint(uint32 mapId)
 		return; // don't save if we're not on the main continent.
 	//otherwise we could end up in an endless loop :P
 	MapInfo * pPMapinfo = NULL;
-	pPMapinfo = WorldMapInfoStorage.LookupEntry(mapId);
+	pPMapinfo = LimitedMapInfoStorage.LookupEntry(mapId);
 
 	if(pPMapinfo != NULL)
 	{
@@ -9227,7 +9227,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 	bool force_new_world = false;
 
 	// Lookup map info
-	MapInfo * mi = WorldMapInfoStorage.LookupEntry(MapID);
+	MapInfo * mi = LimitedMapInfoStorage.LookupEntry(MapID);
 	if(!mi)
 		return false;
 
@@ -9692,7 +9692,7 @@ void Player::OnWorldPortAck()
 {
 	//only resurrect if player is porting to a instance portal
 	MapInfo *pPMapinfo = NULL;
-	pPMapinfo = WorldMapInfoStorage.LookupEntry(GetMapId());
+	pPMapinfo = LimitedMapInfoStorage.LookupEntry(GetMapId());
 	MapEntry* map = dbcMap.LookupEntry(GetMapId());
 
 	if(pPMapinfo != NULL)
@@ -11583,11 +11583,12 @@ void Player::EjectFromInstance()
 			return;
 
 	MapInfo* map = WorldMapInfoStorage.LookupEntry(mapid);
-	if(map)
-		if(map->repopmapid && !IS_INSTANCE(map->repopmapid))
-			if(map->repopx && map->repopy && map->repopz)
-				if(SafeTeleport(map->repopmapid, 0, map->repopx, map->repopy, map->repopz, 0)) // Should be nearest graveyard.
-					return;
+	if(map && (map->repopmapid && !IS_INSTANCE(map->repopmapid)))
+	{
+		if(map->repopx && map->repopy && map->repopz)
+			if(SafeTeleport(map->repopmapid, 0, map->repopx, map->repopy, map->repopz, 0)) // Should be nearest graveyard.
+				return;
+	}
 
 	SafeTeleport(m_bind_mapid, 0, m_bind_pos_x, m_bind_pos_y, m_bind_pos_z, 0);
 }
@@ -12165,13 +12166,7 @@ void Player::_SpeedhackCheck()
 		return;
 
 	// simplified; just take the fastest speed. less chance of fuckups too
-	float speed = ( m_FlyingAura ) ? m_flySpeed : m_runSpeed;
-	if( m_FlyingAura )
-	{
-		if( m_runSpeed > m_flySpeed )
-			speed = m_runSpeed;
-	}
-
+	float speed = (( m_FlyingAura || FlyCheat ) ? (m_runSpeed > m_flySpeed ? m_runSpeed : m_flySpeed) : m_runSpeed);
 	if( m_swimSpeed > speed )
 		speed = m_swimSpeed;
 

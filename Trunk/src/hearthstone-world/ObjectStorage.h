@@ -34,6 +34,7 @@ extern SERVER_DECL SQLStorage<GraveyardTeleport, HashMapStorageContainer<Graveya
 extern SERVER_DECL SQLStorage<TeleportCoords, HashMapStorageContainer<TeleportCoords> >				TeleportCoordStorage;
 extern SERVER_DECL SQLStorage<FishingZoneEntry, HashMapStorageContainer<FishingZoneEntry> >			FishingZoneStorage;
 extern SERVER_DECL SQLStorage<MapInfo, ArrayStorageContainer<MapInfo> >								WorldMapInfoStorage;
+extern SERVER_DECL SQLStorage<MapInfo, ArrayStorageContainer<MapInfo> >								LimitedMapInfoStorage;
 extern SERVER_DECL SQLStorage<ZoneGuardEntry, HashMapStorageContainer<ZoneGuardEntry> >				ZoneGuardStorage;
 extern SERVER_DECL SQLStorage<AchievementReward, HashMapStorageContainer<AchievementReward> >		AchievementRewardStorage;
 extern SERVER_DECL SQLStorage<RandomItemCreation, HashMapStorageContainer<RandomItemCreation> >		RandomItemCreationStorage;

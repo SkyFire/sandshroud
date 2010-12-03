@@ -2501,7 +2501,7 @@ bool Unit::isCasting()
 bool Unit::IsInInstance()
 {
 	MapInfo *pUMapinfo = NULL;
-	pUMapinfo = WorldMapInfoStorage.LookupEntry(GetMapId());
+	pUMapinfo = LimitedMapInfoStorage.LookupEntry(GetMapId());
 	return (pUMapinfo == NULL ? false : (pUMapinfo->type != INSTANCE_NULL));
 }
 

@@ -91,7 +91,7 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 		{
 			if(_player->GetPlayerStatus() != TRANSFER_PENDING) //only ports if player is out of pendings
 			{
-				MapInfo * pMi = WorldMapInfoStorage.LookupEntry(pAreaTrigger->Mapid);
+				MapInfo * pMi = LimitedMapInfoStorage.LookupEntry(pAreaTrigger->Mapid);
 				MapEntry* map = dbcMap.LookupEntry(pAreaTrigger->Mapid);
 				if(!pMi)
 					return;

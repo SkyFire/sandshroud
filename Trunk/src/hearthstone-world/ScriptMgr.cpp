@@ -557,7 +557,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 		{
 			if(pTrainer != NULL)
 			{
-				if(CanTrainAt(Plr, pTrainer))
+				if(CanTrainAt(Plr, pTrainer) || Plr->bGMTagOn)
 					Menu->AddItem(GOSSIP_ICON_GOSSIP_VENDOR, "I would like to browse your goods", 1);
 			}
 			else

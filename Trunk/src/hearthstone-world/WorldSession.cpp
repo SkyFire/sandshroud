@@ -1170,7 +1170,7 @@ void WorldSession::HandleAchievementInspect(WorldPacket &recv_data)
 
 uint8 WorldSession::CheckTeleportPrerequisites(AreaTrigger * pAreaTrigger, WorldSession * pSession, Player* pPlayer, uint32 mapid)
 {
-	MapInfo* pMapInfo = WorldMapInfoStorage.LookupEntry(mapid);
+	MapInfo* pMapInfo = LimitedMapInfoStorage.LookupEntry(mapid);
 	MapEntry* map = dbcMap.LookupEntry(mapid);
 
 	//is this map enabled?

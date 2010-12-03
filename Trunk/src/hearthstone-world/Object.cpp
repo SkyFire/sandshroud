@@ -2435,7 +2435,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 
 		/* Zone Under Attack */
 		MapInfo * pZMapInfo = NULL;
-		pZMapInfo = WorldMapInfoStorage.LookupEntry(GetMapId());
+		pZMapInfo = LimitedMapInfoStorage.LookupEntry(GetMapId());
 		if( pZMapInfo != NULL && pZMapInfo->type == INSTANCE_NULL && !pVictim->IsPlayer() && !pVictim->IsPet() && ( IsPlayer() || IsPet() ) )
 		{
 			// Only NPCs that bear the PvP flag can be truly representing their faction.

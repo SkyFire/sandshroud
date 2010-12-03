@@ -66,11 +66,11 @@ SERVER_DECL SQLStorage<GossipText, HashMapStorageContainer<GossipText> >						Np
 SERVER_DECL SQLStorage<Quest, HashMapStorageContainer<Quest> >									QuestStorage;
 SERVER_DECL SQLStorage<TeleportCoords, HashMapStorageContainer<TeleportCoords> >				TeleportCoordStorage;
 SERVER_DECL SQLStorage<MapInfo, ArrayStorageContainer<MapInfo> >								WorldMapInfoStorage;
+SERVER_DECL SQLStorage<MapInfo, ArrayStorageContainer<MapInfo> >								LimitedMapInfoStorage;
 SERVER_DECL SQLStorage<ZoneGuardEntry, HashMapStorageContainer<ZoneGuardEntry> >				ZoneGuardStorage;
 SERVER_DECL SQLStorage<RandomItemCreation, HashMapStorageContainer<RandomItemCreation> >		RandomItemCreationStorage;
 SERVER_DECL SQLStorage<RandomCardCreation, HashMapStorageContainer<RandomCardCreation> >		RandomCardCreationStorage;
 SERVER_DECL SQLStorage<ScrollCreation, HashMapStorageContainer<ScrollCreation> >				ScrollCreationStorage;
-
 
 SERVER_DECL set<string> ExtraMapCreatureTables;
 SERVER_DECL set<string> ExtraMapGameObjectTables;
@@ -693,6 +693,10 @@ void ObjectMgr::LoadExtraItemStuff()
 	new CallbackP2< SQLStorage< itype, storagetype< itype > >, const char *, const char *> \
 	(&storage, &SQLStorage< itype, storagetype< itype > >::Load, tablename, format) ) )
 
+#define make_task2(storage, itype, storagetype, tablename, format) tl.AddTask( new Task( \
+	new CallbackP2< SQLStorage< itype, storagetype< itype > >, const char *, const char *> \
+	(&storage, &SQLStorage< itype, storagetype< itype > >::LoadWithLoadColumn, tablename, format) ) )
+
 void Storage_FillTaskList(TaskList & tl)
 {
 	make_task(ItemPrototypeStorage, ItemPrototype, ArrayStorageContainer, "items", gItemPrototypeFormat);
@@ -709,6 +713,7 @@ void Storage_FillTaskList(TaskList & tl)
 	make_task(FishingZoneStorage, FishingZoneEntry, HashMapStorageContainer, "fishing", gFishingFormat);
 	make_task(NpcTextStorage, GossipText, HashMapStorageContainer, "npc_text", gNpcTextFormat);
 	make_task(WorldMapInfoStorage, MapInfo, ArrayStorageContainer, "worldmap_info", gWorldMapInfoFormat);
+	make_task2(LimitedMapInfoStorage, MapInfo, ArrayStorageContainer, "worldmap_info", gWorldMapInfoFormat);
 	make_task(ZoneGuardStorage, ZoneGuardEntry, HashMapStorageContainer, "zoneguards", gZoneGuardsFormat);
 	make_task(AchievementRewardStorage, AchievementReward, HashMapStorageContainer, "achievement_rewards", gAchievementRewardFormat);
 	make_task(RandomItemCreationStorage, RandomItemCreation, HashMapStorageContainer, "randomitemcreation", gRandomItemCreationFormat);
@@ -865,9 +870,25 @@ void Storage_Cleanup()
 		if(!MIitr->Inc())
 			break;
 	}
+
+	MIitr = LimitedMapInfoStorage.MakeIterator();
+	while(!MIitr->AtEnd())
+	{
+		m = MIitr->Get();
+
+		if (m->name)
+		{
+			free(m->name);
+			m->name = NULL;
+		}
+
+		if(!MIitr->Inc())
+			break;
+	}
 	MIitr->Destruct();
 
 	WorldMapInfoStorage.Cleanup();
+	LimitedMapInfoStorage.Cleanup();
 	ZoneGuardStorage.Cleanup();
 }
 
@@ -908,7 +929,10 @@ bool LoadAdditionalTable(const char * TableName, const char * SecondName)
 	else if(!stricmp(TableName, "graveyards"))			// Graveyards
 		GraveyardStorage.LoadAdditionalData(SecondName, gGraveyardFormat);
 	else if(!stricmp(TableName, "worldmap_info"))		// WorldMapInfo
+	{
+		LimitedMapInfoStorage.LoadAdditionalData(SecondName, gWorldMapInfoFormat);
 		WorldMapInfoStorage.LoadAdditionalData(SecondName, gWorldMapInfoFormat);
+	}
 	else if(!stricmp(TableName, "zoneguards"))
 		ZoneGuardStorage.LoadAdditionalData(SecondName, gZoneGuardsFormat);
 	else
@@ -950,7 +974,10 @@ bool Storage_ReloadTable(const char * TableName)
 	else if(!stricmp(TableName, "graveyards"))			// Graveyards
 		GraveyardStorage.Reload();
 	else if(!stricmp(TableName, "worldmap_info"))		// WorldMapInfo
+	{
+		LimitedMapInfoStorage.Reload();
 		WorldMapInfoStorage.Reload();
+	}
 	else if(!stricmp(TableName, "zoneguards"))
 		ZoneGuardStorage.Reload();
 	else if(!stricmp(TableName, "spell_disable"))

@@ -40,9 +40,9 @@ bool ChatHandler::HandleRecallGoCommand(const char* args, WorldSession *m_sessio
 	Field* fields = result->Fetch();
 	const char* locname = fields[1].GetString();
 	uint32 locmap = fields[2].GetUInt32();
-	if(!WorldMapInfoStorage.LookupEntry(locmap) || !WorldMapInfoStorage.LookupEntry(locmap)->load)
+	if(!LimitedMapInfoStorage.LookupEntry(locmap))
 	{
-		GreenSystemMessage(m_session, "Map is non existant, or not loaded.");
+		GreenSystemMessage(m_session, "Map is (non existant/not loaded).");
 		delete result;
 		return true;
 	}
@@ -191,7 +191,7 @@ bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession *
 	Field* fields = result->Fetch();
 	const char* locname = fields[1].GetString();
 	uint32 locmap = fields[2].GetUInt32();
-	if(!WorldMapInfoStorage.LookupEntry(locmap) || !WorldMapInfoStorage.LookupEntry(locmap)->load)
+	if(!LimitedMapInfoStorage.LookupEntry(locmap))
 	{
 		GreenSystemMessage(m_session, "Map is non existant, or not loaded.");
 		delete result;

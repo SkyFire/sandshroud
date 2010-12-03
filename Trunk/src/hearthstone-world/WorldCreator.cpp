@@ -37,10 +37,9 @@ void InstanceMgr::Load(TaskList * l)
 {
 	new FormationMgr;
 	new WorldStateTemplateManager;
+	sWorldStateTemplateManager.LoadFromDB();
 	QueryResult *result;
 	MapInfo* mapinfo = NULL;
-
-	sWorldStateTemplateManager.LoadFromDB();
 
 	// Create all non-instance type maps.
 	result = CharacterDatabase.Query( "SELECT MAX(id) FROM instances" );
@@ -52,46 +51,14 @@ void InstanceMgr::Load(TaskList * l)
 	else
 		m_InstanceHigh = 1;
 
-	// load each map we have in the database.
-	result = WorldDatabase.Query("SELECT DISTINCT Map FROM creature_spawns");
-	if(result)
-	{
-		do
-		{
-			mapinfo = WorldMapInfoStorage.LookupEntry(result->Fetch()[0].GetUInt32());
-			if( !mapinfo )
-				continue;
-
-			if( result->Fetch()[0].GetUInt32() >= NUM_MAPS )
-			{
-				Log.Warning("InstanceMgr", "One or more of your creature_spawns rows specifies an invalid map: %u", result->Fetch()[0].GetUInt32() );
-				continue;
-			}
-
-			if( !mapinfo->load )
-				continue;
-
-			l->AddTask(new Task(new CallbackP1<InstanceMgr,uint32>(this, &InstanceMgr::_CreateMap, result->Fetch()[0].GetUInt32())));
-		} while(result->NextRow());
-		delete result;
-	}
-
-	l->wait();
-
 	// create maps for any we don't have yet.
-	StorageContainerIterator<MapInfo> * itr = WorldMapInfoStorage.MakeIterator();
+	StorageContainerIterator<MapInfo> * itr = LimitedMapInfoStorage.MakeIterator();
 	while(!itr->AtEnd())
 	{
 		MapInfo* mapinfo = itr->Get();
 		if( mapinfo->mapid >= NUM_MAPS )
 		{
 			Log.Warning("InstanceMgr", "One or more of your worldmap_info rows specifies an invalid map: %u", mapinfo->mapid );
-			itr->Inc();
-			continue;
-		}
-
-		if( !mapinfo->load )
-		{
 			itr->Inc();
 			continue;
 		}
@@ -181,7 +148,7 @@ void InstanceMgr::Shutdown()
 uint32 InstanceMgr::PreTeleport(uint32 mapid, Player* plr, uint32 instanceid)
 {
 	// preteleport is where all the magic happens :P instance creation, etc.
-	MapInfo * inf = WorldMapInfoStorage.LookupEntry(mapid);
+	MapInfo * inf = LimitedMapInfoStorage.LookupEntry(mapid);
 	MapEntry* map = dbcMap.LookupEntry(mapid);
 	InstanceMap * instancemap;
 	Instance * in = NULL;
@@ -666,6 +633,7 @@ void InstanceMgr::_CreateMap(uint32 mapid)
 {
 	if( mapid >= NUM_MAPS )
 		return;
+
 	MapInfo* inf = WorldMapInfoStorage.LookupEntry(mapid);
 	if(!inf || m_maps[mapid])
 		return;

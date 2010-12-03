@@ -1868,7 +1868,7 @@ Creature* MapMgr::CreateCreature(uint32 entry)
 
 GameObject* MapMgr::CreateGameObject(uint32 entry)
 {
-	//Validate the entry
+	// Validate the entry
 	GameObjectInfo *goi = GameObjectNameStorage.LookupEntry( entry );
 	if( goi == NULL )
 	{

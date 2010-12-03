@@ -718,6 +718,72 @@ public:
 		//Log.Success("Storage", "Loaded database cache from `%s`.", IndexName);
 	}
 
+	/** Loads from the worldmapinfo table.
+	Crow: Instead of deleting data, we can just skip it.
+	Usable for other tables, with a few changes to their structure. */
+	void LoadWithLoadColumn(const char * IndexName, const char * FormatString)
+	{
+		Storage<T, StorageType>::Load(IndexName, FormatString);
+		QueryResult * result;
+		if(Storage<T, StorageType>::_storage.NeedsMax())
+		{
+			result = WorldDatabase.Query("SELECT MAX(entry) FROM %s ORDER BY `entry`", IndexName);
+			uint32 Max = STORAGE_ARRAY_MAX;
+			if(result)
+			{
+				Max = result->Fetch()[0].GetUInt32() + 1;
+				if(Max > STORAGE_ARRAY_MAX)
+				{
+					Log.Warning("Storage", "The table, '%s', has been limited to maximum of %u entries.\
+						Any entry higher than %u will be discarded.",
+						IndexName, STORAGE_ARRAY_MAX, Max );
+
+					Max = STORAGE_ARRAY_MAX;
+				}
+				delete result;
+			}
+
+			Storage<T, StorageType>::_storage.Setup(Max);
+		}
+
+		size_t cols = strlen(FormatString);
+		result = WorldDatabase.Query("SELECT * FROM %s WHERE `load` = '1'", IndexName);
+		if (!result)
+			return;
+
+		Field * fields = result->Fetch();
+		if(result->GetFieldCount() != cols)
+		{
+			if(result->GetFieldCount() > cols)
+			{
+				Log.Warning("Storage", "Invalid format in %s (%u/%u), loading anyway because we have enough data\n", IndexName, (unsigned int)result->GetFieldCount(), (unsigned int)cols);
+			}
+			else
+			{
+				Log.Error("Storage", "Invalid format in %s (%u/%u), not enough data to proceed.\n", IndexName, (unsigned int)result->GetFieldCount(), (unsigned int)cols);
+				delete result;
+				return;
+			}
+		}
+
+		uint32 Entry;
+		T * Allocated;
+#ifdef STORAGE_ALLOCATION_POOLS
+		Storage<T, StorageType>::_storage.InitPool( result->GetRowCount() );
+#endif
+		do
+		{
+			Entry = fields[0].GetUInt32();
+			Allocated = Storage<T, StorageType>::_storage.AllocateEntry(Entry);
+			if(!Allocated)
+				continue;
+
+			LoadBlock(fields, Allocated);
+		} while(result->NextRow());
+		Log.Notice("Storage", "%u entries loaded from table %s.", result->GetRowCount(), IndexName);
+		delete result;
+	}
+
 	void LoadAdditionalData(const char * IndexName, const char * FormatString)
 	{
 		Storage<T, StorageType>::Load(IndexName, FormatString);

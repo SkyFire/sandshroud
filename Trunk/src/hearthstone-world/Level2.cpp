@@ -342,8 +342,10 @@ bool ChatHandler::HandleNPCFlagCommand(const char* args, WorldSession *m_session
 	}
 
 	uint32 npcFlags = (uint32) atoi((char*)args);
-	pCreature->SetUInt32Value(UNIT_NPC_FLAGS , npcFlags);
+	pCreature->SetUInt32Value(UNIT_NPC_FLAGS, npcFlags);
 	pCreature->SaveToDB();
+	WorldDatabase.Execute("UPDATE creature_proto SET npcflags = %u WHERE entry = %u", npcFlags, pCreature->GetEntry());
+
 	SystemMessage(m_session, "Value saved, you may need to rejoin or clean your client cache.");
 	return true;
 }
