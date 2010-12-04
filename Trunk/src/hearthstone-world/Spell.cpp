@@ -2804,8 +2804,6 @@ bool Spell::TakePower()
 			m_caster->SetUInt32Value(powerField, currentPower - cost);
 			return true;
 		}
-		else
-			return false;
 	}
 	return false;
 }

@@ -38,7 +38,6 @@ bool ChatHandler::HandleRecallGoCommand(const char* args, WorldSession *m_sessio
 	}
 
 	Field* fields = result->Fetch();
-	const char* locname = fields[1].GetString();
 	uint32 locmap = fields[2].GetUInt32();
 	if(!LimitedMapInfoStorage.LookupEntry(locmap))
 	{
@@ -189,7 +188,6 @@ bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession *
 	}
 
 	Field* fields = result->Fetch();
-	const char* locname = fields[1].GetString();
 	uint32 locmap = fields[2].GetUInt32();
 	if(!LimitedMapInfoStorage.LookupEntry(locmap))
 	{

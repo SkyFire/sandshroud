@@ -173,7 +173,6 @@ WorldPacket * Mailbox::MailboxListingPacket()
 	MessageMap::iterator itr;
 	uint32 realcount = 0;
 	uint32 count = 0;
-	uint32 t = (uint32)UNIXTIME;
 	*data << uint32(0);	 // realcount - this can be used to tell the client we have more mail than that fits into this packet
 	*data << uint8(0);	 // size placeholder
 

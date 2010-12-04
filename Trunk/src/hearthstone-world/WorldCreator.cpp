@@ -39,8 +39,6 @@ void InstanceMgr::Load(TaskList * l)
 	new WorldStateTemplateManager;
 	sWorldStateTemplateManager.LoadFromDB();
 	QueryResult *result;
-	MapInfo* mapinfo = NULL;
-
 	// Create all non-instance type maps.
 	result = CharacterDatabase.Query( "SELECT MAX(id) FROM instances" );
 	if( result )

@@ -2052,7 +2052,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 
 	if(m_session->GetPlayer()->GetVehicle())
 	{
-		SystemMessage(m_session, "You my not spawn on a vehicle.");
+		SystemMessage(m_session, "You may not spawn on a vehicle.");
 		return true;
 	}
 

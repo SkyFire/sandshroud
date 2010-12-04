@@ -422,20 +422,13 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 
 		return request_id;
 	}
-	else
-	{
-		uint32 request_id = next_request++;
-		size_t i = 0;
-		DEBUG_LOG( "LogonCommHandler","Sending request for account information: `%s` (request %u).", AccountName.c_str(), request_id);
-
-		pendingLock.Acquire();
-		pending_logons[request_id] = Socket;
-		pendingLock.Release();
-
-		RefreshRealmPop();
-		return request_id;
-	}
-	return (uint32)-1;
+	uint32 request_id = next_request++;
+	DEBUG_LOG( "LogonCommHandler","Sending request for account information: `%s` (request %u).", AccountName.c_str(), request_id);
+	pendingLock.Acquire();
+	pending_logons[request_id] = Socket;
+	pendingLock.Release();
+	RefreshRealmPop();
+	return request_id;
 }
 
 void LogonCommHandler::UnauthedSocketClose(uint32 id)

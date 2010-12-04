@@ -1255,7 +1255,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 
 			if(pDestItem == NULL)
 			{
-				if(source_count == splitted_count)
+				if(source_count == (uint32)splitted_count)
 				{
 					// swap
 					pSourceTab->pSlots[source_bankslot] = pDestItem;
@@ -1276,7 +1276,7 @@ void WorldSession::HandleGuildBankSwapItem(WorldPacket & recv_data)
 			{
 				pDestItem->ModUnsigned32Value( ITEM_FIELD_STACK_COUNT, splitted_count );
 
-				if(splitted_count != source_count)
+				if((uint32)splitted_count != source_count)
 					pSourceItem->ModUnsigned32Value( ITEM_FIELD_STACK_COUNT, -splitted_count );
 				else
 				{

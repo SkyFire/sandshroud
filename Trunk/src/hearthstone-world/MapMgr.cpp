@@ -26,10 +26,6 @@
 #define MAPMGR_INACTIVE_MOVE_TIME 10
 extern bool bServerShutdown;
 
-#ifdef WIN32
-#pragma warning(disable:4355)
-#endif
-
 MapMgr::MapMgr(Map *map, uint32 mapId, uint32 instanceid) : CellHandler<MapCell>(map), _mapId(mapId), eventHolder(instanceid)
 {
 	m_instanceID = instanceid;

@@ -152,6 +152,7 @@ public:
 	HEARTHSTONE_INLINE GameObjectInfo* GetInfo() { return pInfo; }
 	HEARTHSTONE_INLINE void SetInfo(GameObjectInfo * goi) { pInfo = goi; }
 
+	bool CreateFromProto(uint32 entry,uint32 mapid, const LocationVector vec, float orientation1 = 0.0f, float orientation2 = 0.0f, float orientation3 = 0.0f, float orientation4 = 0.0f);
 	bool CreateFromProto(uint32 entry,uint32 mapid, float x, float y, float z, float ang, float orientation1, float orientation2, float orientation3, float orientation4);
 
 	bool Load(GOSpawn *spawn);

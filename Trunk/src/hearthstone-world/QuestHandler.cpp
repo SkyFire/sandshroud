@@ -441,7 +441,7 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 
 	if(qPtr->start_phase != 0)
 	{
-		if(_player->GetPhase() == qPtr->start_phase)
+		if(_player->GetPhase() == (int32)qPtr->start_phase)
 			_player->SetPhase(_player->LastPhase, true);
 	}
 

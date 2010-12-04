@@ -97,6 +97,13 @@ void GameObject::Init()
 	Object::Init();
 }
 
+bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, const LocationVector vec, float orientation1, float orientation2, float orientation3, float orientation4)
+{
+	if(CreateFromProto(entry, mapid, vec.x, vec.y, vec.z, vec.o, orientation1, orientation2, orientation3, orientation4))
+		return true;
+	return false;
+}
+
 bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, float x, float y, float z, float ang, float orientation1, float orientation2, float orientation3, float orientation4)
 {
 	pInfo = GameObjectNameStorage.LookupEntry(entry);

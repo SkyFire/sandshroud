@@ -2678,8 +2678,8 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	float block				= 0.0f;
 
 	float hitmodifier		= 0;
-	int32 self_skill;
-	int32 victim_skill;
+	int32 self_skill		= 0;
+	int32 victim_skill		= 0;
 	uint32 SubClassSkill	= SKILL_UNARMED;
 
 	bool backAttack			= !isInFront( pVictim );

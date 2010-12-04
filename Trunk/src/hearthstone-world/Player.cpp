@@ -6229,11 +6229,11 @@ void Player::SetDrunk(uint16 value, uint32 itemId)
 	m_drunk = value;
 	SetUInt32Value(PLAYER_BYTES_3,(GetUInt32Value(PLAYER_BYTES_3) & 0xFFFF0001) | (m_drunk & 0xFFFE));
 	uint32 newDrunkenState = GetDrunkenstateByValue(m_drunk);
-	if(newDrunkenState == DRUNKEN_VOMIT)
+	/*if(newDrunkenState == DRUNKEN_VOMIT)
 	{
 		sEventMgr.AddEvent(this, &Player::EventDrunkenVomit, EVENT_DRUNKEN_VOMIT, 5000, 0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		return;
-	}
+	}*/
 	UpdateVisibility();
 	if (newDrunkenState == oldDrunkenState)
 		return;
@@ -12853,7 +12853,7 @@ void Player::SetKnownTitle( int32 title, bool set )
 		title < 1 || title >= TITLE_END)
 		return;
 
-	if(title == GetUInt32Value(PLAYER_CHOSEN_TITLE)) // if it's the chosen title, remove it
+	if((uint32)title == GetUInt32Value(PLAYER_CHOSEN_TITLE)) // if it's the chosen title, remove it
 		SetUInt32Value(PLAYER_CHOSEN_TITLE, 0);
 
 	uint32 field = PLAYER__FIELD_KNOWN_TITLES;
@@ -13818,8 +13818,8 @@ void Player::StartQuest(uint32 Id)
 
 DrunkenState Player::GetDrunkenstateByValue(uint16 value)
 {
-	if(value >= 25560)
-		return DRUNKEN_VOMIT;
+	/*if(value >= 25560)
+		return DRUNKEN_VOMIT;*/
 	if(value >= 23000)
 		return DRUNKEN_SMASHED;
 	if(value >= 12800)

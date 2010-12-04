@@ -843,7 +843,6 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 {
 	std::stringstream sstext;
-	GameObjectInfo *GOInfo = NULL;
 	GameObject *GObj = NULL;
 
 	GObj = m_session->GetPlayer()->m_GM_SelectedGO;

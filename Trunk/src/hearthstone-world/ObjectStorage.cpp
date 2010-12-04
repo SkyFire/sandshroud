@@ -118,7 +118,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	CreatureInfoExtra * cix;
 	CreatureProto * cn;
 	CreatureInfo * ci;
-	uint32 entry;
+	uint32 entry = 0;
 
 	StorageContainerIterator<CreatureProto> * cpitr = CreatureProtoStorage.MakeIterator();
 	while(!cpitr->AtEnd())

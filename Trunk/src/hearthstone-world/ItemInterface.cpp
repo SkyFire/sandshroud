@@ -3326,7 +3326,7 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 			if( free_stack_item != NULL )
 			{
 				// increase stack by new amount
-				chr->GetSession()->SendItemPushResult( free_stack_item, created ? true : false, created ? false : true, true, true, -1, -1, count);
+				chr->GetSession()->SendItemPushResult( free_stack_item, created ? true : false, created ? false : true, true, true, (uint8)-1, (uint32)-1, count);
 				free_stack_item->SetUInt32Value( ITEM_FIELD_STACK_COUNT, free_stack_item->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + count );
 				free_stack_item->m_isDirty = true;
 				return true;

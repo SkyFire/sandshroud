@@ -1039,42 +1039,26 @@ void WorldSession::HandleEjectPassenger( WorldPacket & recv_data )
 	CHECK_INWORLD_RETURN;
 	uint64 guid;
 	recv_data >> guid;
-	if(_player->GetVehicle())
+	if(!_player->GetVehicle())
 	{
-		if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
-		{
-			Player *plr = objmgr.GetPlayer((uint32)guid);
-			if(!plr)
-			{
-				OUT_DEBUG("CMSG_EJECT_PASSENGER couldn't find player with recv'd guid %u.", guid);
-				return;
-			}
-			if(!plr->GetVehicle())
-			{
-				OUT_DEBUG("CMSG_EJECT_PASSENGER player has no vehicle.");
-				return;
-			}
-			if(plr->GetVehicle() == _player->GetVehicle())
-				_player->GetVehicle()->RemovePassenger(plr);
-		}
-		if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE)
-		{
-			Creature * cr = _player->GetMapMgr()->GetCreature((uint32)guid);
-			if(!cr)
-			{
-				OUT_DEBUG("CMSG_EJECT_PASSENGER couldn't find creature with recv'd guid %u.", guid);
-				return;
-			}
-			if(!cr->GetVehicle())
-			{
-				OUT_DEBUG("CMSG_EJECT_PASSENGER creature has no vehicle.");
-				return;
-			}
-			if(cr->GetVehicle() == _player->GetVehicle())
-				_player->GetVehicle()->RemovePassenger(cr);
-			cr->SafeDelete();
-		}
+		sWorld.LogCheater(this, "Player possibly hacking, received CMSG_EJECT_PASSENGER while player isn't in a vehicle.");
+		return;
 	}
+
+	Unit* u = _player->GetMapMgr()->GetUnit(guid);
+	if(!u)
+	{
+		OUT_DEBUG("CMSG_EJECT_PASSENGER couldn't find unit with recv'd guid %u.", guid);
+		return;
+	}
+	if((u->GetVehicle() != _player->GetVehicle() || !u->GetVehicle()) && !(HasGMPermissions() && sWorld.no_antihack_on_gm))
+	{
+		sWorld.LogCheater(this, "Player possibly hacking, CMSG_EJECT_PASSENGER received unit guid for a unit not in their vehicle.");
+		return;
+	}
+	_player->GetVehicle()->RemovePassenger(u);
+	if(u->IsCreature())
+		TO_CREATURE(u)->SafeDelete();
 }
 
 void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
@@ -1084,7 +1068,7 @@ void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
 	recv_data >> guid;
 	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
 	{
-		Player *plr = objmgr.GetPlayer(guid);
+		Player *plr = objmgr.GetPlayer((uint32)guid);
 		if(plr == NULL)
 			return;
 

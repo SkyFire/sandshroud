@@ -822,7 +822,7 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 						if( RandomSuffixAmount )
 							val = RANDOM_SUFFIX_MAGIC_CALCULATION( RandomSuffixAmount, GetItemRandomSuffixFactor() );
 
-						int32 value = GetProto()->Delay * val / 1000;
+						//int32 value = GetProto()->Delay * val / 1000;
 						m_owner->DamageDonePosMod[0] += val;
 					}
 					else
@@ -831,7 +831,7 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 						if( RandomSuffixAmount )
 							val = RANDOM_SUFFIX_MAGIC_CALCULATION( RandomSuffixAmount, GetItemRandomSuffixFactor() );
 
-						int32 value =- (int32)(GetProto()->Delay * val / 1000 );
+						//int32 value =- (int32)(GetProto()->Delay * val / 1000 );
 						m_owner->DamageDonePosMod[0] += val;
 					}
 					m_owner->UpdateStats();

@@ -152,7 +152,6 @@ bool DayWatcherThread::run()
 	_firstrun[0] = true;
 	_firstrun[1] = true;
 	m_heroic_reset = false;
-	uint32 WGcounter = 0;
 
 #ifdef WIN32
 	m_abortEvent = CreateEvent(NULL, NULL, FALSE, NULL);

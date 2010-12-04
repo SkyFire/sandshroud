@@ -1858,13 +1858,13 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 		//Demonic Circle
 	case 48020:
 		{
-			if( p_caster == NULL )
+			if( u_caster == NULL )
 				return;
 
-			GameObject* DemonicCircle = p_caster->GetMapMgr()->GetGameObject( p_caster->m_ObjectSlots[0] );
+			GameObject* DemonicCircle = u_caster->GetMapMgr()->GetGameObject( u_caster->m_ObjectSlots[0] );
 			if( DemonicCircle )
 			{
-				p_caster->SafeTeleport( DemonicCircle->GetMapId(), DemonicCircle->GetInstanceID(), DemonicCircle->GetPosition());
+				u_caster->Teleport( DemonicCircle->GetPositionX(), DemonicCircle->GetPositionY(), DemonicCircle->GetPositionZ(), DemonicCircle->GetOrientation());
 			}
 		}break;
 	/*************************
@@ -2772,8 +2772,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 						MapMgr* mgr = gobj->GetMapMgr();
 						GameObject* newobj = NULL;
 						newobj = mgr->CreateGameObject(179562);
-						if(newobj == NULL || !newobj->CreateFromProto(179562, mgr->GetMapId(), gobj->GetPositionX(), gobj->GetPositionY(),
-							gobj->GetPositionZ(), gobj->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f))
+						if(newobj == NULL || !newobj->CreateFromProto(179562, mgr->GetMapId(), gobj->GetPosition()))
 							return;
 
 						newobj->SetInstanceID(mgr->GetInstanceID());
@@ -5792,16 +5791,14 @@ void Spell::SpellEffectSummonObjectWild(uint32 i)
 
 	// spawn a new one
 	GameObject* GoSummon = u_caster->GetMapMgr()->CreateGameObject(GetSpellProto()->EffectMiscValue[i]);
-	if( GoSummon == NULL || !GoSummon->CreateFromProto(GetSpellProto()->EffectMiscValue[i],	m_caster->GetMapId(), m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f ))
+	if( GoSummon == NULL || !GoSummon->CreateFromProto(GetSpellProto()->EffectMiscValue[i],	m_caster->GetMapId(), m_caster->GetPosition()))
 		return;
 
-	GoSummon->SetInstanceID(m_caster->GetInstanceID());
 	GoSummon->SetUInt32Value(GAMEOBJECT_LEVEL, u_caster->getLevel());
 	GoSummon->SetUInt64Value(OBJECT_FIELD_CREATED_BY, m_caster->GetGUID());
-	GoSummon->SetByte(GAMEOBJECT_BYTES_1,GAMEOBJECT_BYTES_STATE, 0);
+	GoSummon->SetState(0);
 	GoSummon->PushToWorld(u_caster->GetMapMgr());
 	GoSummon->SetSummoned(u_caster);
-
 	GoSummon->ExpireAndDelete(GetDuration());
 }
 
@@ -7437,7 +7434,6 @@ void Spell::SpellEffectReputation(uint32 i)
 	if( playerTarget == NULL)
 		return;
 
-	//playerTarget->modReputation(GetSpellProto()->EffectMiscValue[i], damage, true);
 	playerTarget->ModStanding(GetSpellProto()->EffectMiscValue[i], damage);
 }
 
@@ -7486,7 +7482,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 	if( GetSpellProto()->EffectImplicitTargetA[i] == EFF_TARGET_SIMPLE_AOE )
 		GoSummon->CreateFromProto( goi->ID, m_caster->GetMapId(), m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, m_caster->GetOrientation(), 0, 0, 0, 0 );
 	else
-		GoSummon->CreateFromProto( goi->ID, m_caster->GetMapId(), m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), m_caster->GetOrientation(), 0, 0, 0, 0 );
+		GoSummon->CreateFromProto( goi->ID, m_caster->GetMapId(), m_caster->GetPosition());
 
 	GoSummon->SetRotation( m_caster->GetOrientation() );
 	GoSummon->SetUInt32Value(GAMEOBJECT_LEVEL, u_caster->getLevel());

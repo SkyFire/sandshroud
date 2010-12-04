@@ -1252,7 +1252,7 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 				itm = NULL;
 			}
 			else
-				SendItemPushResult(itm, false, true, false, true, INVENTORY_SLOT_NOT_SET, slotresult.Result, amount*item.amount);
+				SendItemPushResult(itm, false, true, false, true,(uint8)INVENTORY_SLOT_NOT_SET, slotresult.Result, amount*item.amount);
 		}
 		else
 		{

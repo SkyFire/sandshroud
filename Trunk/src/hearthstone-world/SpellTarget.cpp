@@ -1030,8 +1030,8 @@ void Spell::SpellTargetVehicleDriver(uint32 i, uint32 j)
 {
 	if(!v_caster)
 		return;
-	if(v_caster->GetPassenger(0))
-		_AddTargetForced(v_caster->GetPassenger(0)->GetGUID(), i );
+	if(v_caster->GetControllingUnit())
+		_AddTargetForced(v_caster->GetControllingUnit(), i );
 }
 
 void Spell::SpellTargetVehiclePassenger(uint32 i, uint32 j)
@@ -1040,68 +1040,159 @@ void Spell::SpellTargetVehiclePassenger(uint32 i, uint32 j)
 		return;
 
 	if(v_caster->GetPassenger(0))
-		_AddTargetForced(v_caster->GetPassenger(0)->GetGUID(), i );
+		_AddTargetForced(v_caster->GetPassenger(0), i );
 }
 
 void Spell::SpellTargetVehiclePassenger1(uint32 i, uint32 j)
 {
-	if(!v_caster)
+	if(v_caster)
+	{
+		if(v_caster->GetPassenger(1))
+			_AddTargetForced(v_caster->GetPassenger(1), i );
 		return;
-
-	if(v_caster->GetPassenger(1))
-		_AddTargetForced(v_caster->GetPassenger(1)->GetGUID(), i );
+	}
+	Unit* target = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
+	if(!target)
+		return;
+	if(target->IsVehicle())
+	{
+		if(TO_VEHICLE(target)->GetPassenger(1))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(1), i );
+		return;
+	}
+	if(target->GetVehicle(true))
+		if(TO_VEHICLE(target->GetVehicle(true))->GetPassenger(1))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(1), i );
 }
 
 void Spell::SpellTargetVehiclePassenger2(uint32 i, uint32 j)
 {
-	if(!v_caster)
+	if(v_caster)
+	{
+		if(v_caster->GetPassenger(2))
+			_AddTargetForced(v_caster->GetPassenger(2), i );
 		return;
-
-	if(v_caster->GetPassenger(2))
-		_AddTargetForced(v_caster->GetPassenger(2)->GetGUID(), i );
+	}
+	Unit* target = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
+	if(!target)
+		return;
+	if(target->IsVehicle())
+	{
+		if(TO_VEHICLE(target)->GetPassenger(2))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(2), i );
+		return;
+	}
+	if(target->GetVehicle(true))
+		if(TO_VEHICLE(target->GetVehicle(true))->GetPassenger(2))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(2), i );
 }
 
 void Spell::SpellTargetVehiclePassenger3(uint32 i, uint32 j)
 {
-	if(!v_caster)
+	if(v_caster)
+	{
+		if(v_caster->GetPassenger(3))
+			_AddTargetForced(v_caster->GetPassenger(3), i );
 		return;
-
-	if(v_caster->GetPassenger(3))
-		_AddTargetForced(v_caster->GetPassenger(3)->GetGUID(), i );
+	}
+	Unit* target = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
+	if(!target)
+		return;
+	if(target->IsVehicle())
+	{
+		if(TO_VEHICLE(target)->GetPassenger(3))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(3), i );
+		return;
+	}
+	if(target->GetVehicle(true))
+		if(TO_VEHICLE(target->GetVehicle(true))->GetPassenger(3))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(3), i );
 }
 
 void Spell::SpellTargetVehiclePassenger4(uint32 i, uint32 j)
 {
-	if(!v_caster)
+	if(v_caster)
+	{
+		if(v_caster->GetPassenger(4))
+			_AddTargetForced(v_caster->GetPassenger(4), i );
 		return;
-
-	if(v_caster->GetPassenger(4))
-		_AddTargetForced(v_caster->GetPassenger(4)->GetGUID(), i );
+	}
+	Unit* target = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
+	if(!target)
+		return;
+	if(target->IsVehicle())
+	{
+		if(TO_VEHICLE(target)->GetPassenger(4))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(4), i );
+		return;
+	}
+	if(target->GetVehicle(true))
+		if(TO_VEHICLE(target->GetVehicle(true))->GetPassenger(4))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(4), i );
 }
 
 void Spell::SpellTargetVehiclePassenger5(uint32 i, uint32 j)
 {
-	if(!v_caster)
+	if(v_caster)
+	{
+		if(v_caster->GetPassenger(5))
+			_AddTargetForced(v_caster->GetPassenger(5), i );
 		return;
-
-	if(v_caster->GetPassenger(5))
-		_AddTargetForced(v_caster->GetPassenger(5)->GetGUID(), i );
+	}
+	Unit* target = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
+	if(!target)
+		return;
+	if(target->IsVehicle())
+	{
+		if(TO_VEHICLE(target)->GetPassenger(5))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(5), i );
+		return;
+	}
+	if(target->GetVehicle(true))
+		if(TO_VEHICLE(target->GetVehicle(true))->GetPassenger(5))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(5), i );
 }
 
 void Spell::SpellTargetVehiclePassenger6(uint32 i, uint32 j)
 {
-	if(!v_caster)
+	if(v_caster)
+	{
+		if(v_caster->GetPassenger(6))
+			_AddTargetForced(v_caster->GetPassenger(6), i );
 		return;
-
-	if(v_caster->GetPassenger(6))
-		_AddTargetForced(v_caster->GetPassenger(6)->GetGUID(), i );
+	}
+	Unit* target = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
+	if(!target)
+		return;
+	if(target->IsVehicle())
+	{
+		if(TO_VEHICLE(target)->GetPassenger(6))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(6), i );
+		return;
+	}
+	if(target->GetVehicle(true))
+		if(TO_VEHICLE(target->GetVehicle(true))->GetPassenger(6))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(6), i );
 }
 
 void Spell::SpellTargetVehiclePassenger7(uint32 i, uint32 j)
 {
-	if(!v_caster)
+	if(v_caster)
+	{
+		if(v_caster->GetPassenger(3))
+			_AddTargetForced(v_caster->GetPassenger(7), i );
 		return;
-
-	if(v_caster->GetPassenger(7))
-		_AddTargetForced(v_caster->GetPassenger(7)->GetGUID(), i );
+	}
+	Unit* target = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
+	if(!target)
+		return;
+	if(target->IsVehicle())
+	{
+		if(TO_VEHICLE(target)->GetPassenger(3))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(7), i );
+		return;
+	}
+	if(target->GetVehicle(true))
+		if(TO_VEHICLE(target->GetVehicle(true))->GetPassenger(7))
+			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(7), i );
 }
