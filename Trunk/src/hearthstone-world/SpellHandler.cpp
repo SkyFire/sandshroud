@@ -205,12 +205,28 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 
 	if(!spellInfo || !sHookInterface.OnCastSpell(_player, spellInfo))
 	{
+		SKIP_READ_PACKET(recvPacket);
 		OUT_DEBUG("WORLD: unknown spell id %i\n", spellId);
 		return;
 	}
 
-	if(_player->getDeathState() == CORPSE && !(spellInfo->Attributes & ATTRIBUTES_CASTABLE_WHILE_DEAD))
+	if(!_player->isAlive() && !(spellInfo->Attributes & ATTRIBUTES_CASTABLE_WHILE_DEAD))
+	{
+		SKIP_READ_PACKET(recvPacket);
 		return;
+	}
+
+	if(_player->GetUInt32Value(UNIT_FIELD_CHARMEDBY))
+	{
+		SKIP_READ_PACKET(recvPacket);
+		_player->SendCastResult(spellInfo->Id, SPELL_FAILED_CHARMED, cn, 0);
+		return;
+	}
+	if(_player->m_CurrentCharm)
+	{
+		SKIP_READ_PACKET(recvPacket);
+		return;
+	}
 
 	DEBUG_LOG("WORLD","Received cast_spell packet, spellId - %i (%s), data length = %i", spellId, spellInfo->Name, recvPacket.size());
 
@@ -227,7 +243,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 		if(!ssf) return;
 
 		bool ok = false;
-		for(uint8 i = 0; i < 7; i++)
+		for(uint8 i = 0; i < 8; i++)
 			if( ssf->spells[i] == spellId)
 				ok = true;
 
@@ -371,25 +387,12 @@ void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
-	if(!_player->GetVehicle())
+	if(_player->m_currentSpell)
 	{
-		if(_player->m_currentSpell)
-		{
-			if(_player->m_currentSpell->GetSpellProto()->Id != spellId)
-				DEBUG_LOG("Spell","Player cancelled spell that was not being channeled: %u", spellId);
+		if(_player->m_currentSpell->GetSpellProto()->Id != spellId)
+			DEBUG_LOG("Spell","Player cancelled spell that was not being channeled: %u", spellId);
 
-			_player->m_currentSpell->cancel();
-		}
-	}
-	if(_player->GetVehicle())
-	{
-		if(_player->GetVehicle()->GetCurrentSpell())
-		{
-			if(_player->GetVehicle()->GetCurrentSpell()->GetSpellProto()->Id != spellId)
-				DEBUG_LOG("Spell","Player vehicle cancelled spell that was not being channeled: %u", spellId);
-
-			_player->GetVehicle()->GetCurrentSpell()->cancel();
-		}
+		_player->m_currentSpell->cancel();
 	}
 }
 

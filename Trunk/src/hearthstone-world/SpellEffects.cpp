@@ -137,7 +137,7 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectSummonDeadPet,				// 109 - SPELL_EFFECT_SUMMON_DEAD_PET
 	&Spell::SpellEffectDestroyAllTotems,			// 110 - SPELL_EFFECT_DESTROY_ALL_TOTEMS
 	&Spell::SpellEffectNULL,						// 111 - SPELL_EFFECT_DURABILITY_DAMAGE
-	&Spell::SpellEffectNULL,						// 112 - SPELL_EFFECT_SUMMON_DEMON
+	&Spell::SpellEffectNULL,						// 112 - Unused
 	&Spell::SpellEffectResurrectNew,				// 113 - SPELL_EFFECT_RESURRECT_NEW
 	&Spell::SpellEffectAttackMe,					// 114 - SPELL_EFFECT_ATTACK_ME
 	&Spell::SpellEffectNULL,						// 115 - SPELL_EFFECT_DURABILITY_DAMAGE_PCT
@@ -147,14 +147,14 @@ pSpellEffect SpellEffectsHandler[TOTAL_SPELL_EFFECTS] = {
 	&Spell::SpellEffectApplyPetAura,				// 119 - SPELL_EFFECT_APPLY_PET_AURA
 	&Spell::SpellEffectNULL,						// 120 - SPELL_EFFECT_TELEPORT_GRAVEYARD
 	&Spell::SpellEffectDummyMelee,					// 121 - SPELL_EFFECT_DUMMYMELEE
-	&Spell::SpellEffectNULL,						// 122 - not used
+	&Spell::SpellEffectNULL,						// 122 - Unused
 	&Spell::SpellEffectSendTaxi,					// 123 - SPELL_EFFECT_SEND_TAXI  taxi/flight related (misc value is taxi path id)
 	&Spell::SpellEffectPull,						// 124 - SPELL_EFFECT_PULL
 	&Spell::SpellEffectNULL,						// 125 - Reduce Threat by % http://www.thottbot.com/?sp=32835
 	&Spell::SpellEffectSpellSteal,					// 126 - SPELL_EFFECT_SPELL_STEAL Steal Beneficial Buff (Magic) //http://www.thottbot.com/?sp=30449
 	&Spell::SpellEffectProspecting,					// 127 Search 5 ore of a base metal for precious gems.  This will destroy the ore in the process.
-	&Spell::SpellEffectApplyAura128,				// 128 - Adjust a stats by %: Mod Stat // ITS FLAT
-	&Spell::SpellEffectApplyAura128,				// 129 - ^ this
+	&Spell::SpellEffectApplyAA,						// 128 - Area Aura
+	&Spell::SpellEffectApplyAA,						// 129 - Aura Aura
 	&Spell::SpellEffectRedirectThreat,				// 130 - Redirect your threat.
 	&Spell::SpellEffectNULL,						// 131 - send notifaction like "You have entered a no-fly zone"
 	&Spell::SpellEffectPlayMusic,					// 132 - Play music derp
@@ -8026,14 +8026,13 @@ void Spell::SpellEffectProspecting(uint32 i)
 		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
 	}
 	else // this should never happen either
-	{
-		SendCastResult(SPELL_FAILED_ITEM_GONE);
-		return;
-	}
+		SendCastResult(SPELL_FAILED_NEED_MORE_ITEMS);
 }
 
 void Spell::SpellEffectResurrectNew(uint32 i)
 {
+	if(!u_caster)
+		return;
 	//base p =hp,misc mana
 	if( playerTarget == NULL)
 	{
@@ -8075,10 +8074,10 @@ void Spell::SpellEffectResurrectNew(uint32 i)
 	if(playerTarget->isAlive() || !playerTarget->IsInWorld() || playerTarget->PreventRes)
 		return;
 	//resurr
-	playerTarget->resurrector = p_caster->GetLowGUID();
+	playerTarget->resurrector = u_caster->GetLowGUID();
 	playerTarget->m_resurrectHealth = damage;
 	playerTarget->m_resurrectMana = GetSpellProto()->EffectMiscValue[i];
-	playerTarget->m_resurrectLoction = p_caster->GetPosition();
+	playerTarget->m_resurrectLoction = u_caster->GetPosition();
 
 	SendResurrectRequest(playerTarget);
 }
@@ -8330,18 +8329,16 @@ void Spell::SpellEffectJump(uint32 i)
 		z = unitTarget->GetPositionZ();
 		float ang = m_caster->calcAngle(m_caster->GetPositionX(), m_caster->GetPositionY(), unitTarget->GetPositionX(), unitTarget->GetPositionY());
 		ang = ang * float(M_PI) / 180.0f;
-		const static float distance = 1.6f * unitTarget->GetFloatValue(OBJECT_FIELD_SCALE_X);
+		float distance = 1.6f * unitTarget->GetFloatValue(OBJECT_FIELD_SCALE_X);
 		x = x - (distance * cosf(ang));
 		y = y - (distance * sinf(ang));
 	}
 
-	float speed;
+	float speed = 10.0f;
 	if (m_spellInfo->EffectMiscValue[i])
 		speed = float(m_spellInfo->EffectMiscValue[i])/10;
 	else if (m_spellInfo->EffectMiscValueB[i])
 		speed = float(m_spellInfo->EffectMiscValueB[i])/10;
-	else
-		speed = 10.0f;
 	uint32 moveTime = uint32(speed * 100);
 	u_caster->GetAIInterface()->StopMovement(moveTime);
 	u_caster->GetAIInterface()->JumpTo( x, y, z, moveTime, GetSpellProto()->EffectMiscValue[i] ? GetSpellProto()->EffectMiscValue[i] : GetSpellProto()->EffectMiscValueB[i], GetSpellProto()->EffectDieSides[i] );
@@ -8383,10 +8380,7 @@ void Spell::SpellEffectMilling(uint32 i)
 		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
 	}
 	else
-	{
-		SendCastResult(SPELL_FAILED_ITEM_GONE);
-		return;
-	}
+		SendCastResult(SPELL_FAILED_NEED_MORE_ITEMS);
 }
 
 void Spell::SpellEffectAllowPetRename( uint32 i )

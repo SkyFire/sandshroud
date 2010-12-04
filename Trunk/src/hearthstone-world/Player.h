@@ -1297,7 +1297,7 @@ public:
 	void SpawnCorpseBones();
 	Corpse* CreateCorpse();
 	void KillPlayer();
-	void ResurrectPlayer(Player* pResurrector = NULLPLR);
+	void ResurrectPlayer(Unit* pResurrector = NULLPLR);
 	void BuildPlayerRepop();
 	Corpse* RepopRequestedPlayer();
 	void DecReclaimCount() { if(ReclaimCount > 0) --ReclaimCount; };

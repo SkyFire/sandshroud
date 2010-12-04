@@ -878,14 +878,8 @@ void WorldSession::HandleResurrectResponseOpcode(WorldPacket & recv_data)
 	}
 
 	// need to check guid
-	Player* pl = _player->GetMapMgr()->GetPlayer((uint32)guid);
-	if(!pl)
-		pl = objmgr.GetPlayer((uint32)guid);
-
-	// reset resurrector
-	_player->resurrector = 0;
-
-	if(pl == 0 || status != 1)
+	Unit* pl = _player->GetMapMgr()->GetUnit(guid);
+	if(!pl || status != 1)
 	{
 		_player->m_resurrectHealth = 0;
 		_player->m_resurrectMana = 0;
@@ -893,6 +887,8 @@ void WorldSession::HandleResurrectResponseOpcode(WorldPacket & recv_data)
 		return;
 	}
 
+	// reset resurrector
+	_player->resurrector = 0;
 	_player->SetMovement(MOVE_UNROOT, 1);
 	_player->ResurrectPlayer(pl);
 	_player->m_resurrectHealth = 0;

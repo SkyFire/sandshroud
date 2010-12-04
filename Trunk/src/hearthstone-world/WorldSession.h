@@ -631,6 +631,7 @@ protected:
 	void HandlePetAbandon(WorldPacket & recv_data);
 	void HandlePetUnlearn(WorldPacket & recv_data);
 	void HandlePetLearnTalent(WorldPacket & recv_data);
+	void HandleCancelPetAura(WorldPacket & recv_data);
 
 	// Totems
 	void HandleTotemDestroyed(WorldPacket & recv_data);

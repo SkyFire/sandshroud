@@ -34,7 +34,7 @@ bool isHostile(Object* objA, Object* objB)// B is hostile for A?
 	if( objA->m_faction == NULL || objB->m_faction == NULL || objA->m_factionDBC == NULL || objB->m_factionDBC == NULL )
 		return true;
 
-	if(objA->GetPhase() != objB->GetPhase())
+	if(objA->PhasedCanInteract(objB))
 		return false;
 
 	uint32 faction = objB->m_faction->Mask;
@@ -125,7 +125,7 @@ bool isAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attack 
 		objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNTED_TAXI) || objB->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)))
 		return false;
 
-	if(objA->GetPhase() != objB->GetPhase())
+	if(objA->PhasedCanInteract(objB))
 		return false;
 
 	// we cannot attack sheathed units. Maybe checked in other places too ?
@@ -374,7 +374,7 @@ bool isCombatSupport(Object* objA, Object* objB)// B combat supports A?
 	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL )
 		return false;
 
-	if(objA->GetPhase() != objB->GetPhase())
+	if(objA->PhasedCanInteract(objB))
 		return false;
 
 	bool combatSupport = false;

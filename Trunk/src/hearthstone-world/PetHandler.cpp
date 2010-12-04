@@ -22,13 +22,14 @@
 void WorldSession::HandlePetAction(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN;
-
-	uint64 petGuid = 0;
-	uint16 misc = 0;
-	uint16 action = 0;
-	uint64 targetguid = 0;
-
-	recv_data >> petGuid >> misc >> action;
+    uint64 petGuid;
+	uint16 misc;
+	uint16 action;
+ 	uint64 targetguid;
+	recv_data >> petGuid;
+	recv_data >> misc;
+    recv_data >> action;
+    recv_data >> targetguid;
 
 	if(GET_TYPE_FROM_GUID(petGuid) == HIGHGUID_TYPE_CREATURE)
 	{
@@ -64,7 +65,6 @@ void WorldSession::HandlePetAction(WorldPacket & recv_data)
 
 	if(action == PET_ACTION_SPELL || action == PET_ACTION_SPELL_1 || action == PET_ACTION_SPELL_2 || (action == PET_ACTION_ACTION && misc == PET_ACTION_ATTACK )) // >> target
 	{
-		recv_data >> targetguid;
 		pTarget = _player->GetMapMgr()->GetUnit(targetguid);
 		if(!pTarget) 
 			pTarget = pPet;	// target self
@@ -588,4 +588,68 @@ void WorldSession::HandlePetLearnTalent( WorldPacket & recvPacket )
 		pPet->SendSpellsToOwner();
 	}
 	_player->smsg_TalentsInfo(true);
+}
+
+void WorldSession::HandleCancelPetAura(WorldPacket& recvPacket)
+{
+    uint64 guid;
+    uint32 spellId;
+
+    recvPacket >> guid;
+    recvPacket >> spellId;
+
+    SpellEntry const *spellInfo = dbcSpell.LookupEntryForced(spellId);
+    if (!spellInfo)
+    {
+        sLog.outError("WORLD: unknown PET spell id %u", spellId);
+        return;
+    }
+	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PET)
+	{
+		Pet* p = _player->GetMapMgr()->GetPet((uint32)guid);
+		if (!p)
+		{
+			sLog.outError("Pet %u not exist.", uint32(GUID_LOPART(guid)));
+			return;
+		}
+
+		if (p->GetOwner() != _player)
+		{
+			sLog.outError("HandleCancelPetAura %u isn't pet of player %s", uint32(GUID_LOPART(guid)),GetPlayer()->GetName());
+			return;
+		}
+
+		if (!p->isAlive())
+		{
+			WorldPacket data(SMSG_PET_ACTION_FEEDBACK, 1);
+			data << uint8(1);
+			SendPacket(&data);
+			return;
+		}
+		p->RemoveAura(spellId);
+	}
+	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_VEHICLE)
+	{
+		Vehicle* p = _player->GetMapMgr()->GetVehicle((uint32)guid);
+		if (!p)
+		{
+			sLog.outError("Vehicle %u not exist.", uint32(GUID_LOPART(guid)));
+			return;
+		}
+
+		if (p->GetControllingPlayer() != _player)
+		{
+			sLog.outError("HandleCancelPetAura %u isn't the vehicle of player %s", uint32(GUID_LOPART(guid)),GetPlayer()->GetName());
+			return;
+		}
+
+		if (!p->isAlive())
+		{
+			WorldPacket data(SMSG_PET_ACTION_FEEDBACK, 1);
+			data << uint8(1);
+			SendPacket(&data);
+			return;
+		}
+		p->RemoveAura(spellId);
+	}
 }

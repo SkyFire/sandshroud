@@ -3687,10 +3687,7 @@ bool Player::CanFlyInCurrentZoneOrMap()
 		if(WinterGrasp != NULL) // Since WG is set on entering zone, and only when active, this is all we need.
 			return false;
 
-		if(HasDummyAura(SPELL_HASH_COLD_WEATHER_FLYING))
-			return true;
-
-		if(HasSpell(54197)) // Cold Weather Flying, incase it wasn't casted.
+		if(HasDummyAura(SPELL_HASH_COLD_WEATHER_FLYING) || HasSpell(54197))
 			return true;
 	}
 
@@ -4855,7 +4852,7 @@ Corpse* Player::RepopRequestedPlayer()
 	return ret;
 }
 
-void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
+void Player::ResurrectPlayer(Unit* pResurrector /* = NULLPLR */)
 {
 	if (!sHookInterface.OnResurrect(this))
 		return;
@@ -4888,11 +4885,13 @@ void Player::ResurrectPlayer(Player* pResurrector /* = NULLPLR */)
 		{
 			if( m_resurrectLoction.x == 0.0f && m_resurrectLoction.y == 0.0f && m_resurrectLoction.z == 0.0f )
 			{
-				SafeTeleport(pResurrector->GetMapId(),pResurrector->GetInstanceID(),pResurrector->GetPosition());
+				if(pResurrector->IsPlayer())
+					SafeTeleport(pResurrector->GetMapId(),pResurrector->GetInstanceID(),pResurrector->GetPosition());
 			}
 			else
 			{
-				SafeTeleport(GetMapId(), GetInstanceID(), m_resurrectLoction);
+				if(pResurrector->IsPlayer())
+					SafeTeleport(GetMapId(), GetInstanceID(), m_resurrectLoction);
 				m_resurrectLoction.ChangeCoords(0.0f, 0.0f, 0.0f);
 			}
 		}
@@ -13400,8 +13399,7 @@ uint8 Player::GetChatTag() const
 		return 3;
 	else if(HasFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK))
 		return 1;
-	else
-		return 0;
+	return 0;
 }
 
 void Player::AddArenaPoints( uint32 arenapoints )
@@ -13859,7 +13857,7 @@ void Player::InitAsVehicle()
 				seatisusable[i] = true;
 		}
 	}
-
+	SetVehicle(this);
 	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
 	data << GetNewGUID() << uint32(GetVehicleEntry());
 	SendMessageToSet(&data, true);
@@ -13891,7 +13889,7 @@ void Player::DeInitAsVehicle()
 		m_vehicleSeats[i] = NULL;
 		seatisusable[i] = false;
 	}
-
+	SetVehicle(NULL);
 	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
 	data << GetNewGUID() << uint32(0);
 	SendMessageToSet(&data, true);

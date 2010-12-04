@@ -37,7 +37,7 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster, uint8 castFlags 
 	WoWGuid guid;
 	m_unitTarget = m_itemTarget = 0;
 	m_srcX = m_srcY = m_srcZ = m_destX = m_destY = m_destZ = missilespeed = missilepitch = traveltime = 0.0f;
-	//m_strTarget = "";
+	m_strTarget = "";
 
 	data >> m_targetMask;
 
@@ -92,6 +92,9 @@ void SpellCastTargets::read( WorldPacket & data, uint64 caster, uint8 castFlags 
 		}
 	}
 
+	if( m_targetMask & TARGET_FLAG_STRING )
+		data >> m_strTarget;
+
 	if(castFlags & 0x2)
 	{
 		uint8 missileunkcheck;
@@ -128,6 +131,9 @@ void SpellCastTargets::write( WorldPacket& data )
 			{FastGUIDPack( data, m_unitTarget ); data << m_destX << m_destY << m_destZ;}
 		else
 			data << uint8(0) << m_destX << m_destY << m_destZ;
+ 
+	if (m_targetMask & TARGET_FLAG_STRING)
+        data << m_strTarget;
 }
 
 void SpellCastTargets::write( StackPacket& data )
@@ -151,6 +157,8 @@ void SpellCastTargets::write( StackPacket& data )
 			data << uint8(0);
 		data << m_destX << m_destY << m_destZ;
 	}
+    if (m_targetMask & TARGET_FLAG_STRING)
+        data << m_strTarget;
 }
 
 Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
@@ -230,8 +238,6 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 	m_spellState = SPELL_STATE_NULL;
 
 	m_castPositionX = m_castPositionY = m_castPositionZ = 0;
-	//TriggerSpellId = 0;
-	//TriggerSpellTarget = 0;
 	m_triggeredSpell = triggered;
 	m_AreaAura = false;
 
@@ -414,10 +420,6 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 		if( (*itr)->IsUnit() && (!(TO_UNIT( *itr )->isAlive())))
 			continue;
 
-		if((*itr)->IsUnit() && u_caster && TO_UNIT(*itr)->GetGUID() == u_caster->GetGUID())
-			continue;
-
-		//TO_UNIT(*itr)->InStealth()
 		if( GetSpellProto()->TargetCreatureType && (*itr)->IsUnit())
 		{
 			Unit* Target = TO_UNIT((*itr));
@@ -2591,10 +2593,13 @@ void Spell::SendChannelStart(int32 duration)
 
 void Spell::SendResurrectRequest(Player* target)
 {
-	WorldPacket data(SMSG_RESURRECT_REQUEST, 13);
+	const char* name = m_caster->IsCreature() ? TO_CREATURE(m_caster)->GetCreatureInfo()->Name : "";
+	WorldPacket data(SMSG_RESURRECT_REQUEST, 12+strlen(name)+3);
 	data << m_caster->GetGUID();
-	data << uint32(0) << uint8(0);
-
+	data << uint32(strlen(name) + 1);
+	data << name;
+	data << uint8(0);
+	data << uint8(m_caster->IsCreature() ? 1 : 0);
 	target->GetSession()->SendPacket(&data);
 }
 
@@ -3105,7 +3110,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 			//you can't mind control someone already mind controlled
 			if (GetSpellProto()->NameHash == SPELL_HASH_MIND_CONTROL && target->GetAuraSpellIDWithNameHash(SPELL_HASH_MIND_CONTROL))
-				return SPELL_FAILED_BAD_TARGETS;
+				return SPELL_FAILED_CANT_BE_CHARMED;
 
 			if(target == m_caster && GetSpellProto()->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
 				return SPELL_FAILED_BAD_TARGETS;
@@ -3221,8 +3226,9 @@ uint8 Spell::CanCast(bool tolerate)
 					return SPELL_FAILED_ONLY_STEALTHED;
 			}
 		}
+
 		if(!u_caster->CombatStatus.IsInCombat() && GetSpellProto()->NameHash == SPELL_HASH_DISENGAGE)
-			return SPELL_FAILED_AFFECTING_COMBAT;
+			return SPELL_FAILED_SPELL_UNAVAILABLE;;
 
 		// Disarm
 		if( u_caster!= NULL )
@@ -3403,7 +3409,7 @@ uint8 Spell::CanCast(bool tolerate)
 				// for items that combine to create a new item, check if we have the required quantity of the item
 				if(i_caster->GetProto()->ItemId == GetSpellProto()->Reagent[0] && (i_caster->GetProto()->Flags != 268435520))
 					if(p_caster->GetItemInterface()->GetItemCount(GetSpellProto()->Reagent[0]) < GetSpellProto()->ReagentCount[0] + 1)
-						return SPELL_FAILED_ITEM_GONE;
+						return SPELL_FAILED_NEED_MORE_ITEMS;
 			}
 
 			// heal checks are only applied to item casters
@@ -3438,7 +3444,7 @@ uint8 Spell::CanCast(bool tolerate)
 					continue;
 
 				if(p_caster->GetItemInterface()->GetItemCount(GetSpellProto()->Reagent[i]) < GetSpellProto()->ReagentCount[i])
-					return SPELL_FAILED_ITEM_GONE;
+					return SPELL_FAILED_NEED_MORE_ITEMS;
 			}
 
 		// check if we have the required tools, totems, etc
@@ -3567,24 +3573,19 @@ uint8 Spell::CanCast(bool tolerate)
 		// check if the targeted item is in the trade box
 		if( m_targets.m_targetMask & TARGET_FLAG_TRADE_ITEM )
 		{
-			switch( GetSpellProto()->Effect[0] )
-			{
 				// only lockpicking and enchanting can target items in the trade box
-			case SPELL_EFFECT_OPEN_LOCK:
-			case SPELL_EFFECT_ENCHANT_ITEM:
-			case SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY:
-				{
-					// check for enchants that can only be done on your own items
-					if( GetSpellProto()->Flags3 & FLAGS3_ENCHANT_OWN_ONLY )
-						return SPELL_FAILED_BAD_TARGETS;
+			if(HasSpellEffect(SPELL_EFFECT_OPEN_LOCK) || HasSpellEffect(SPELL_EFFECT_ENCHANT_ITEM) || HasSpellEffect(SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY))
+			{
+				// check for enchants that can only be done on your own items
+				if( GetSpellProto()->Flags3 & FLAGS3_ENCHANT_OWN_ONLY )
+					return SPELL_FAILED_BAD_TARGETS;
 
-					// get the player we are trading with
-					Player* t_player = p_caster->GetTradeTarget();
-					// get the targeted trade item
-					if( t_player != NULL )
-						i_target = t_player->getTradeItem((uint32)m_targets.m_itemTarget);
+				// get the player we are trading with
+				Player* t_player = p_caster->GetTradeTarget();
+				// get the targeted trade item
+				if( t_player != NULL )
+					i_target = t_player->getTradeItem((uint32)m_targets.m_itemTarget);
 				}
-			}
 		}
 		// targeted item is not in a trade box, so get our own item
 		else
@@ -3603,113 +3604,83 @@ uint8 Spell::CanCast(bool tolerate)
 			return SPELL_FAILED_BAD_TARGETS;
 
 		// check to make sure the targeted item is acceptable
-		switch(GetSpellProto()->Effect[0])
+		// Enchanting Targeted Item Check
+		if(HasSpellEffect(SPELL_EFFECT_ENCHANT_ITEM) || HasSpellEffect(SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY))
 		{
-			// Lock Picking Targeted Item Check
-			case SPELL_EFFECT_OPEN_LOCK:
-			{
-				// this is currently being handled in SpellEffects
-				break;
-			}
+			// check for enchants that can only be done on your own items, make sure they are soulbound
+			if( GetSpellProto()->Flags3 & FLAGS3_ENCHANT_OWN_ONLY && i_target->GetOwner() != p_caster)
+				return SPELL_FAILED_BAD_TARGETS;
+			// check if we have the correct class, subclass, and inventory type of target item
+			if( GetSpellProto()->EquippedItemClass != (int32)proto->Class && proto->Class != 7)
+				return SPELL_FAILED_BAD_TARGETS;
 
-			// Enchanting Targeted Item Check
-			case SPELL_EFFECT_ENCHANT_ITEM:
-			case SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY:
-			{
-				// check for enchants that can only be done on your own items, make sure they are soulbound
-				if( GetSpellProto()->Flags3 & FLAGS3_ENCHANT_OWN_ONLY && i_target->GetOwner() != p_caster)
-					return SPELL_FAILED_BAD_TARGETS;
+			if( GetSpellProto()->EquippedItemSubClass && !(GetSpellProto()->EquippedItemSubClass & (1 << proto->SubClass)) &&  GetSpellProto()->EffectMiscValueB[0] != (int32)proto->SubClass )
+				return SPELL_FAILED_BAD_TARGETS;
 
-				// check if we have the correct class, subclass, and inventory type of target item
-				if( GetSpellProto()->EquippedItemClass != (int32)proto->Class && proto->Class != 7)
-					return SPELL_FAILED_BAD_TARGETS;
+			if( GetSpellProto()->RequiredItemFlags && !(GetSpellProto()->RequiredItemFlags & (1 << proto->InventoryType)) && proto->InventoryType != 0 )
+				return SPELL_FAILED_BAD_TARGETS;
 
-				if( GetSpellProto()->EquippedItemSubClass && !(GetSpellProto()->EquippedItemSubClass & (1 << proto->SubClass)) &&  GetSpellProto()->EffectMiscValueB[0] != (int32)proto->SubClass )
-					return SPELL_FAILED_BAD_TARGETS;
-
-				if( GetSpellProto()->RequiredItemFlags && !(GetSpellProto()->RequiredItemFlags & (1 << proto->InventoryType)) && proto->InventoryType != 0 )
-					return SPELL_FAILED_BAD_TARGETS;
-
-				if (GetSpellProto()->Effect[0] == SPELL_EFFECT_ENCHANT_ITEM &&
-					GetSpellProto()->baseLevel && (GetSpellProto()->baseLevel > proto->ItemLevel))
-					return int8(SPELL_FAILED_BAD_TARGETS); // maybe there is different err code
-
-				break;
-			}
+			if (GetSpellProto()->Effect[0] == SPELL_EFFECT_ENCHANT_ITEM &&
+				GetSpellProto()->baseLevel && (GetSpellProto()->baseLevel > proto->ItemLevel))
+				return int8(SPELL_FAILED_BAD_TARGETS); // maybe there is different err code
+		}
 
 			// Disenchanting Targeted Item Check
-			case SPELL_EFFECT_DISENCHANT:
-			{
-				// check if item can be disenchanted
-				if(proto->DisenchantReqSkill < 1)
-					return SPELL_FAILED_CANT_BE_DISENCHANTED;
+		if(HasSpellEffect(SPELL_EFFECT_DISENCHANT))
+		{
+			// check if item can be disenchanted
+			if(proto->DisenchantReqSkill < 1)
+				return SPELL_FAILED_CANT_BE_DISENCHANTED;
+			// check if we have high enough skill
+			if((int32)p_caster->_GetSkillLineCurrent(SKILL_ENCHANTING) < proto->DisenchantReqSkill)
+				return SPELL_FAILED_CANT_BE_DISENCHANTED_SKILL;
+		}
 
-				// check if we have high enough skill
-				if((int32)p_caster->_GetSkillLineCurrent(SKILL_ENCHANTING) < proto->DisenchantReqSkill)
-					return SPELL_FAILED_CANT_BE_DISENCHANTED_SKILL;
+		// Feed Pet Targeted Item Check
+		if(HasSpellEffect(SPELL_EFFECT_FEED_PET))
+		{
+			Pet* pPet = p_caster->GetSummon();
+			// check if we have a pet
+			if(!pPet)
+				return SPELL_FAILED_NO_PET;
+			// check if item is food
+			if(!proto->FoodType)
+				return SPELL_FAILED_BAD_TARGETS;
 
-				break;
-			}
-
-			// Feed Pet Targeted Item Check
-			case SPELL_EFFECT_FEED_PET:
-			{
-				Pet* pPet = p_caster->GetSummon();
-
-				// check if we have a pet
-				if(!pPet)
-					return SPELL_FAILED_NO_PET;
-
-				// check if item is food
-				if(!proto->FoodType)
-					return SPELL_FAILED_BAD_TARGETS;
-
-				// check if food type matches pets diet
-				if(!(pPet->GetPetDiet() & (1 << (proto->FoodType - 1))))
-					return SPELL_FAILED_WRONG_PET_FOOD;
-
-				// check food level: food should be max 30 lvls below pets level
-				if(pPet->getLevel() > proto->ItemLevel + 30)
-					return SPELL_FAILED_FOOD_LOWLEVEL;
-
-				break;
-			}
+			// check if food type matches pets diet
+			if(!(pPet->GetPetDiet() & (1 << (proto->FoodType - 1))))
+				return SPELL_FAILED_WRONG_PET_FOOD;
+			// check food level: food should be max 30 lvls below pets level
+			if(pPet->getLevel() > proto->ItemLevel + 30)
+				return SPELL_FAILED_FOOD_LOWLEVEL;
+		}
 
 			// Prospecting Targeted Item Check
-			case SPELL_EFFECT_PROSPECTING:
-			{
-				// check if the item can be prospected
-				if(!(proto->Flags & ITEM_FLAG_PROSPECTABLE))
-					return SPELL_FAILED_CANT_BE_PROSPECTED;
-
-				// check if we have at least 5 of the item
-				if(p_caster->GetItemInterface()->GetItemCount(proto->ItemId) < 5)
-					return SPELL_FAILED_ITEM_GONE;
-
-				// check if we have high enough skill
-				if(p_caster->_GetSkillLineCurrent(SKILL_JEWELCRAFTING) < proto->RequiredSkillRank)
-					return SPELL_FAILED_LOW_CASTLEVEL;
-
-				break;
-			}
+		if(HasSpellEffect(SPELL_EFFECT_PROSPECTING))
+		{
+			// check if the item can be prospected
+			if(!(proto->Flags & ITEM_FLAG_PROSPECTABLE))
+				return SPELL_FAILED_CANT_BE_PROSPECTED;
+			// check if we have at least 5 of the item
+			if(p_caster->GetItemInterface()->GetItemCount(proto->ItemId) < 5)
+				return SPELL_FAILED_NEED_MORE_ITEMS;
+			// check if we have high enough skill
+			if(p_caster->_GetSkillLineCurrent(SKILL_JEWELCRAFTING) < proto->RequiredSkillRank)
+				return SPELL_FAILED_LOW_CASTLEVEL;
+		}
 
 			// Milling Targeted Item Check
-			case SPELL_EFFECT_MILLING:
-			{
-				// check if the item can be milled
-				if(!(proto->Flags & ITEM_FLAG_MILLABLE))
-					return SPELL_FAILED_CANT_BE_MILLED;
-
-				// check if we have at least 5 of the item
-				if(p_caster->GetItemInterface()->GetItemCount(proto->ItemId) < 5)
-					return SPELL_FAILED_ITEM_GONE;
-
-				// check if we have high enough skill
-				if(p_caster->_GetSkillLineCurrent(SKILL_INSCRIPTION) < proto->RequiredSkillRank)
-					return SPELL_FAILED_LOW_CASTLEVEL;
-
-				break;
-			}
+		if(HasSpellEffect(SPELL_EFFECT_MILLING))
+		{
+			// check if the item can be milled
+			if(!(proto->Flags & ITEM_FLAG_MILLABLE))
+				return SPELL_FAILED_CANT_BE_MILLED;
+			// check if we have at least 5 of the item
+			if(p_caster->GetItemInterface()->GetItemCount(proto->ItemId) < 5)
+				return SPELL_FAILED_NEED_MORE_ITEMS;
+			// check if we have high enough skill
+			if(p_caster->_GetSkillLineCurrent(SKILL_INSCRIPTION) < proto->RequiredSkillRank)
+				return SPELL_FAILED_LOW_CASTLEVEL;
 		}
 	}
 

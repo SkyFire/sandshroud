@@ -1302,7 +1302,7 @@ public:
 	float m_srcX, m_srcY, m_srcZ;
 	float m_destX, m_destY, m_destZ;
 	float missilespeed, missilepitch, traveltime;
-	//std::string m_strTarget;
+	std::string m_strTarget;
 };
 
 enum SpellState
