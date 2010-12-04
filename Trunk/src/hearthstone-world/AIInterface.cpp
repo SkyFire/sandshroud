@@ -1744,7 +1744,7 @@ float AIInterface::_CalcCombatRange(Unit* target, bool ranged)
 	float targetradius = target->GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS);
 	float selfradius = m_Unit->GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS);
 	float targetscale = GetScale( dbcCreatureDisplayInfo.LookupEntry( target->GetUInt32Value(UNIT_FIELD_DISPLAYID)));
-	float selfscale =  GetScale( dbcCreatureDisplayInfo.LookupEntry( m_Unit->GetUInt32Value(UNIT_FIELD_DISPLAYID)));
+	float selfscale = GetScale( dbcCreatureDisplayInfo.LookupEntry( m_Unit->GetUInt32Value(UNIT_FIELD_DISPLAYID)));
 
 	range = ((((targetradius*targetradius)*targetscale) + selfreach) + ((selfradius*selfscale) + rang));
 	if(range > 28.29f) range = 28.29f;

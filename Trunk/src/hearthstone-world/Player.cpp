@@ -12151,7 +12151,7 @@ void Player::_SpeedhackCheck()
 	if(GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm)
 		return;
 
-	if(!m_isMoving)
+	if(!m_isMoving || GetSession()->m_isFalling)
 		return;
 
 	if(m_TransporterGUID || !IsInWorld())

@@ -4821,6 +4821,8 @@ void Aura::SpellAuraModIncreaseSpeed(bool apply)
 		m_target->m_speedModifier -= mod->m_amount;
 
 	m_target->UpdateSpeed();
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraModIncreaseMountedSpeed(bool apply)
@@ -4849,6 +4851,8 @@ void Aura::SpellAuraModIncreaseMountedSpeed(bool apply)
 	else
 		m_target->m_mountedspeedModifier -= mod->m_amount;
 	m_target->UpdateSpeed();
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraModCreatureRangedAttackPower(bool apply)
@@ -4920,6 +4924,8 @@ void Aura::SpellAuraModDecreaseSpeed(bool apply)
 	if(m_target->GetSpeedDecrease())
 		m_target->UpdateSpeed();
 
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::UpdateAuraModDecreaseSpeed()
@@ -4940,6 +4946,8 @@ void Aura::UpdateAuraModDecreaseSpeed()
 		if( m_caster != NULL && m_target != NULL )
 			m_caster->EventChill( m_target );
 	}
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraModIncreaseHealth(bool apply)
@@ -5331,8 +5339,10 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		if(m_target->HasAura(52610))
 			m_target->RemoveAura(52610);
 	}
+
 	p->UpdateStats();
 	p->CalcResistance(RESISTANCE_ARMOR);
+	p->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraModEffectImmunity(bool apply)
@@ -6266,6 +6276,7 @@ void Aura::SpellAuraIncreaseSwimSpeed(bool apply)
 		data << (uint32)2;
 		data << m_target->m_swimSpeed;
 		TO_PLAYER( m_target )->GetSession()->SendPacket(&data);
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 	}
 }
 
@@ -6979,6 +6990,7 @@ void Aura::SpellAuraMounted(bool apply)
 		}
 		pPlayer->RemoveAurasByInterruptFlagButSkip( AURA_INTERRUPT_ON_DISMOUNT, GetSpellId() );
 	}
+	pPlayer->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraModDamageTakenPctPerCaster(bool apply)
@@ -7245,6 +7257,8 @@ void Aura::EventPeriodicSpeedModify(int32 modifier)
 {
 	m_target->m_speedModifier += modifier;
 	m_target->UpdateSpeed();
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 
 	if( m_spellProto->NameHash == SPELL_HASH_CHAINS_OF_ICE )
 	{
@@ -8169,7 +8183,7 @@ void Aura::SpellAuraModPossessPet(bool apply)
 	else
 	{
 		m_caster->SetUInt64Value(PLAYER_FARSIGHT, 0);
-	m_target->RemoveFlag(UNIT_FIELD_FLAGS, 0x01000000);
+		m_target->RemoveFlag(UNIT_FIELD_FLAGS, 0x01000000);
 	}
 }
 
@@ -8184,6 +8198,8 @@ void Aura::SpellAuraModIncreaseSpeedAlways(bool apply)
 		m_target->m_speedModifier -= mod->m_amount;
 
 	m_target->UpdateSpeed();
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraModIncreaseEnergyPerc( bool apply )
@@ -8804,6 +8820,9 @@ void Aura::SpellAuraIncreasePartySpeed(bool apply)
 		else
 			m_target->m_speedModifier -= mod->m_amount;
 		m_target->UpdateSpeed();
+
+		if(m_target->IsPlayer())
+			TO_PLAYER(m_target)->DelaySpeedHack(1000);
 	}
 }
 
@@ -9148,6 +9167,8 @@ void Aura::SpellAuraUseNormalMovementSpeed( bool apply )
 	int32 amount = ( apply ) ? mod->m_amount : -mod->m_amount;
 	m_target->m_maxSpeed += (float)amount;
 	m_target->UpdateSpeed();
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraIncreaseTimeBetweenAttacksPCT(bool apply)
@@ -9387,6 +9408,8 @@ void Aura::SpellAuraEnableFlight(bool apply)
 		}
 		m_target->MechanicsDispels[MECHANIC_POLYMORPHED]--;
 	}
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraEnableFlightWithUnmountedSpeed(bool apply)
@@ -9412,6 +9435,8 @@ void Aura::SpellAuraEnableFlightWithUnmountedSpeed(bool apply)
 			TO_PLAYER( m_target )->m_FlyingAura = 0;
 		}
 	}
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraIncreaseMovementAndMountedSpeed( bool apply )
@@ -9421,6 +9446,9 @@ void Aura::SpellAuraIncreaseMovementAndMountedSpeed( bool apply )
 	else
 		m_target->m_mountedspeedModifier -= mod->m_amount;
 	m_target->UpdateSpeed();
+
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
 
 void Aura::SpellAuraIncreaseFlightSpeed( bool apply )
@@ -9430,8 +9458,10 @@ void Aura::SpellAuraIncreaseFlightSpeed( bool apply )
 	else
 		m_target->m_flyspeedModifier -= mod->m_amount;
 	m_target->UpdateSpeed();
-}
 
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
+}
 
 void Aura::SpellAuraIncreaseRating( bool apply )
 {
@@ -10720,4 +10750,6 @@ void Aura::SpellAuraModWalkSpeed(bool apply)
 		m_target->m_walkSpeed -= mod->m_amount;
 
 	m_target->UpdateSpeed();
+	if(m_target->IsPlayer())
+		TO_PLAYER(m_target)->DelaySpeedHack(1000);
 }
