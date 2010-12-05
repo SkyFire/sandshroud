@@ -603,10 +603,10 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				if(p_caster != NULL)
 				{
 					if( p_caster->HasAura(34258) )
-						p_caster->CastSpell(TO_UNIT(p_caster), 34260, true);
+						p_caster->CastSpell(p_caster, 34260, true);
 
 					if((p_caster->HasAura(53696) || p_caster->HasAura(53695)))
-						p_caster->CastSpell(TO_UNIT(p_caster), 68055, true);
+						p_caster->CastSpell(p_caster, 68055, true);
 
 					if( p_caster->HasAura(37186) )
 						dmg += 33;
@@ -1016,23 +1016,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				}
 			}break;
 
-		// Meteor like spells (divided damage to targets)
-		case 24340:	case 26558:	case 28884:		// Meteor
-		case 36837:	case 38903:	case 41276:		// Meteor
-		case 57467:								// Meteor
-		case 66765:	case 66809:	case 67331:		// Meteor Fist
-		case 67333:								// Meteor Fist
-		case 31436:								// Malevolent Cleave
-		case 35181:								// Dive Bomb
-		case 40810:	case 43267:	case 43268:		// Saber Lash
-		case 42384:	case 55319:	case 55324:		// Brutal Swipe
-		case 56586:								// Brutal Swipe
-		case 45150:								// Meteor Slash
-		case 64422:	case 64688:					// Sonic Screech
-			{
-				dmg /= m_hitTargetCount;					// divide to all targets
-			}break;
-
 			// Cataclysmic Bolt
 		case 38441:
 			{
@@ -1068,6 +1051,9 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			}break;
 		}
 	}
+
+	if(GetSpellProto()->isAOE && dmg < 0)
+		dmg /= m_hitTargetCount;
 
 	// check for no more damage left (chains)
 	if( dmg < 0 )

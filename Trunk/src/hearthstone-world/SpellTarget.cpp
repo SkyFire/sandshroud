@@ -1179,7 +1179,7 @@ void Spell::SpellTargetVehiclePassenger7(uint32 i, uint32 j)
 {
 	if(v_caster)
 	{
-		if(v_caster->GetPassenger(3))
+		if(v_caster->GetPassenger(7))
 			_AddTargetForced(v_caster->GetPassenger(7), i );
 		return;
 	}
@@ -1188,7 +1188,7 @@ void Spell::SpellTargetVehiclePassenger7(uint32 i, uint32 j)
 		return;
 	if(target->IsVehicle())
 	{
-		if(TO_VEHICLE(target)->GetPassenger(3))
+		if(TO_VEHICLE(target)->GetPassenger(7))
 			_AddTargetForced(TO_VEHICLE(target)->GetPassenger(7), i );
 		return;
 	}
