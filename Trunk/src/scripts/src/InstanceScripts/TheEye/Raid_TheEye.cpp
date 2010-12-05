@@ -2014,7 +2014,7 @@ public:
 		spells[6].info = dbcSpell.LookupEntry(REBIRTH);
 		spells[6].targettype = TARGET_SELF;
 		spells[6].instant = false;
-		spells[6].cooldown = -1;
+		spells[6].cooldown = (uint32)-1;
 		spells[6].perctrigger = 0.0f;
 		spells[6].attackstoptimer = 1000;
 

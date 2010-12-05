@@ -76,10 +76,6 @@ bool PlantForsakenBanner(uint32 i, Spell *pSpell)
 	if (target == NULL)
 		return true;
 
-	float X = target->GetPositionX();
-	float Y = target->GetPositionY();
-	float Z = target->GetPositionZ();
-
 	uint32 cit = target->GetEntry();
 	
 	switch(cit)

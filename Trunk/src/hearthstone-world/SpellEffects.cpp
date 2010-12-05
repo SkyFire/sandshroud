@@ -5757,14 +5757,13 @@ void Spell::SpellEffectUseGlyph(uint32 i)
 	result = p_caster->SetGlyph(m_glyphIndex, GetSpellProto()->EffectMiscValue[i]);
 	if(result) // there was an error
 		SendCastResult(result);
-	else		// success, need to update client display
+	else // success, need to update client display
 		p_caster->smsg_TalentsInfo(false);
 }
 
 void Spell::SpellEffectHealMechanical(uint32 i)
 {
-	if(unitTarget == NULL || unitTarget->GetTypeId() != TYPEID_UNIT ||
-			TO_CREATURE(unitTarget)->GetCreatureInfo()->Type != MECHANICAL)
+	if(unitTarget == NULL || unitTarget->GetCreatureType() != MECHANICAL)
 		return;
 
 	Heal((int32)damage);

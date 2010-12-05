@@ -1650,21 +1650,21 @@ public:
 		spells[6].instant = true;
 		spells[6].perctrigger = 0.0f;
 		spells[6].attackstoptimer = 1000;
-		spells[6].cooldown = -1;
+		spells[6].cooldown = (uint32)-1;
 
         spells[7].info = dbcSpell.LookupEntry(SUMMON_SYTH_ARCANE_ELEMENTAL);
 		spells[7].targettype = TARGET_SELF;
 		spells[7].instant = true;
 		spells[7].perctrigger = 0.0f;
 		spells[7].attackstoptimer = 1000;
-		spells[7].cooldown = -1;
+		spells[7].cooldown = (uint32)-1;
 
         spells[8].info = dbcSpell.LookupEntry(SUMMON_SYTH_SHADOW_ELEMENTAL);
 		spells[8].targettype = TARGET_SELF;
 		spells[8].instant = true;
 		spells[8].perctrigger = 0.0f;
 		spells[8].attackstoptimer = 1000;
-		spells[8].cooldown = -1;
+		spells[8].cooldown = (uint32)-1;
 
 		Summons = 0;
     }
@@ -1891,7 +1891,7 @@ public:
 		spells[3].instant = false;
 		spells[3].perctrigger = 0.0f;
 		spells[3].attackstoptimer = 1000;
-		spells[3].cooldown = -1;
+		spells[3].cooldown = (uint32)-1;
 
 		Blink = false;
 	} 

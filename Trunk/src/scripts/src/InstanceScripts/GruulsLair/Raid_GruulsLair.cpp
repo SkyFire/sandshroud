@@ -184,7 +184,7 @@ class HighKingMaulgarAI : public MoonScriptBossAI
 			if (mAliveAdds > 1)
 			{
 				uint32 RandomText = RandomUInt(1);
-				while (RandomText == mLastYell)
+				while (RandomText == (uint32)mLastYell)
 				{
 					RandomText = RandomUInt(1);
 				}

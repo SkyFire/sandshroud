@@ -1732,7 +1732,7 @@ public:
 		spells[2].info = dbcSpell.LookupEntry(PRAYER_OF_HEALING);
 		spells[2].targettype = TARGET_VARIOUS;
 		spells[2].instant = false;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 		spells[2].perctrigger = 0.0f;
 		spells[2].attackstoptimer = 1000;
 /*

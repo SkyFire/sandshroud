@@ -51,7 +51,7 @@ bool SymbolOfLife(uint32 i, Spell *pSpell) // Alliance ress. quests
 	if(!targetOk)
 		return true;
 
-	QuestLogEntry *qle;
+	QuestLogEntry *qle = NULL;
 
 	for(int i = 0; i<3; i++)
 	{
@@ -161,8 +161,6 @@ public:
 		float SSX = mKiller->GetPositionX();
 		float SSY = mKiller->GetPositionY();
 		float SSZ = mKiller->GetPositionZ();
-		float SSO = mKiller->GetOrientation();
-
 		GameObject *Brazier = mKiller->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords( SSX, SSY, SSZ, 181956);
 		if (Brazier)
 		{

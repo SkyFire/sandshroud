@@ -513,21 +513,21 @@ public:
 		spells[0].info = dbcSpell.LookupEntry(ARCANE_RESONANCE);
 		spells[0].targettype = TARGET_ATTACKING;
 		spells[0].instant = true;
-		spells[0].cooldown = -1;
+		spells[0].cooldown = (uint32)-1;
 		spells[0].perctrigger = 7.0f;
 		spells[0].attackstoptimer = 1000;
 
 		spells[1].info = dbcSpell.LookupEntry(ARCANE_DEVASTATION);
 		spells[1].targettype = TARGET_ATTACKING;
 		spells[1].instant = true;
-		spells[1].cooldown = -1;
+		spells[1].cooldown = (uint32)-1;
 		spells[1].perctrigger = 15.0f;
 		spells[1].attackstoptimer = 1000;
 
 		spells[2].info = dbcSpell.LookupEntry(SUMMON_REINFORCEMENTS);
 		spells[2].targettype = TARGET_SELF;
 		spells[2].instant = true;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 		spells[2].perctrigger = 0.0f;
 		spells[2].attackstoptimer = 1000;
 
@@ -705,35 +705,35 @@ public:
 		spells[0].info = dbcSpell.LookupEntry(PLANT_RED_SEEDLING);
 		spells[0].targettype = TARGET_SELF;
 		spells[0].instant = true;
-		spells[0].cooldown = -1;
+		spells[0].cooldown = (uint32)-1;
 		spells[0].perctrigger = 0.0f;
 		spells[0].attackstoptimer = 1000;
 
 		spells[1].info = dbcSpell.LookupEntry(PLANT_GREEN_SEEDLING);
 		spells[1].targettype = TARGET_SELF;
 		spells[1].instant = true;
-		spells[1].cooldown = -1;
+		spells[1].cooldown = (uint32)-1;
 		spells[1].perctrigger = 0.0f;
 		spells[1].attackstoptimer = 1000;
 
 		spells[2].info = dbcSpell.LookupEntry(PLANT_WHITE_SEEDLING);
 		spells[2].targettype = TARGET_SELF;
 		spells[2].instant = true;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 		spells[2].perctrigger = 0.0f;
 		spells[2].attackstoptimer = 1000;
 
 		spells[3].info = dbcSpell.LookupEntry(PLANT_BLUE_SEEDLING);
 		spells[3].targettype = TARGET_SELF;
 		spells[3].instant = true;
-		spells[3].cooldown = -1;
+		spells[3].cooldown = (uint32)-1;
 		spells[3].perctrigger = 0.0f;
 		spells[3].attackstoptimer = 1000;
 
 		spells[4].info = dbcSpell.LookupEntry(SUMMON_FRAYER_PROTECTOR);
 		spells[4].targettype = TARGET_SELF;
 		spells[4].instant = true;
-		spells[4].cooldown = -1;
+		spells[4].cooldown = (uint32)-1;
 		spells[4].perctrigger = 5.0f;
 		spells[4].attackstoptimer = 1000;
 
@@ -747,7 +747,7 @@ public:
 		spells[6].info = dbcSpell.LookupEntry(TRANQUILITY);
 		spells[6].targettype = TARGET_VARIOUS;
 		spells[6].instant = false;
-		spells[6].cooldown = -1;
+		spells[6].cooldown = (uint32)-1;
 		spells[6].perctrigger = 0.0f;
 		spells[6].attackstoptimer = 1000;
 
@@ -954,21 +954,21 @@ public:
 		spells[0].info = dbcSpell.LookupEntry(HELLFIRE);
 		spells[0].targettype = TARGET_VARIOUS;
 		spells[0].instant = false;
-		spells[0].cooldown = -1;
+		spells[0].cooldown = (uint32)-1;
 		spells[0].perctrigger = 9.0f;
 		spells[0].attackstoptimer = 1000;
 
 		spells[1].info = dbcSpell.LookupEntry(SACRIFICE);
 		spells[1].targettype = TARGET_ATTACKING;
 		spells[1].instant = false;
-		spells[1].cooldown = -1;
+		spells[1].cooldown = (uint32)-1;
 		spells[1].perctrigger = 6.0f;
 		spells[1].attackstoptimer = 1000;
 
 		spells[2].info = dbcSpell.LookupEntry(ENRAGE);
 		spells[2].targettype = TARGET_SELF;
 		spells[2].instant = true;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 		spells[2].perctrigger = 0.0f;
 		spells[2].attackstoptimer = 1000;
 
@@ -1168,28 +1168,28 @@ public:
 		spells[0].info = dbcSpell.LookupEntry(ALERGIC_REACTION);
 		spells[0].targettype = TARGET_ATTACKING;
 		spells[0].instant = false;
-		spells[0].cooldown = -1;
+		spells[0].cooldown = (uint32)-1;
 		spells[0].perctrigger = 10.0f;
 		spells[0].attackstoptimer = 1000;
 
 		spells[1].info = dbcSpell.LookupEntry(SUMMON_THORN_LASHER);
 		spells[1].targettype = TARGET_SELF;
 		spells[1].instant = true;
-		spells[1].cooldown = -1;
+		spells[1].cooldown = (uint32)-1;
 		spells[1].perctrigger = 6.0f;
 		spells[1].attackstoptimer = 1000;
 
 		spells[2].info = dbcSpell.LookupEntry(SUMMON_THORN_FLAYER);
 		spells[2].targettype = TARGET_SELF;
 		spells[2].instant = true;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 		spells[2].perctrigger = 6.0f;
 		spells[2].attackstoptimer = 1000;
 
 		spells[3].info = dbcSpell.LookupEntry(TELEPORT_SELF);
 		spells[3].targettype = TARGET_SELF;
 		spells[3].instant = true;
-		spells[3].cooldown = -1; // will take this spell separately as it needs additional coding for changing position
+		spells[3].cooldown = (uint32)-1; // will take this spell separately as it needs additional coding for changing position
 		spells[3].perctrigger = 0.0f;
 		spells[3].attackstoptimer = 1000;
 
@@ -1328,21 +1328,21 @@ public:
 		spells[0].info = dbcSpell.LookupEntry(STOMP);
 		spells[0].targettype = TARGET_VARIOUS;
 		spells[0].instant = true;
-		spells[0].cooldown = -1;
+		spells[0].cooldown = (uint32)-1;
 		spells[0].perctrigger = 8.0f;
 		spells[0].attackstoptimer = 1000;
 
 		spells[1].info = dbcSpell.LookupEntry(SUMMON_SAPLINGS);
 		spells[1].targettype = TARGET_SELF;
 		spells[1].instant = true;
-		spells[1].cooldown = -1;
+		spells[1].cooldown = (uint32)-1;
 		spells[1].perctrigger = 0.0f;
 		spells[1].attackstoptimer = 1000;
 
 		spells[2].info = dbcSpell.LookupEntry(ARCANE_VOLLEY);
 		spells[2].targettype = TARGET_VARIOUS;	// VARIOUS
 		spells[2].instant = false;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 		spells[2].perctrigger = 12.0f;
 		spells[2].attackstoptimer = 1000;
 

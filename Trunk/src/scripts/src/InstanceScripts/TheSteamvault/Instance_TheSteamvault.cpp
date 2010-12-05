@@ -630,7 +630,7 @@ public:
 		spells[3].info = dbcSpell.LookupEntry(DISEASE_CLOUD);
 		spells[3].targettype = TARGET_SELF;
 		spells[3].instant = true;
-		spells[3].cooldown = -1;	// not sure to this and...
+		spells[3].cooldown = (uint32)-1;	// not sure to this and...
 		spells[3].perctrigger = 0.0f;
 		spells[3].attackstoptimer = 1000;
 
@@ -945,7 +945,7 @@ public:
 		spells[7].info = dbcSpell.LookupEntry(SHOOT);
 		spells[7].targettype = TARGET_ATTACKING;
 		spells[7].instant = true;
-		spells[7].cooldown = -1;	// disabled for now
+		spells[7].cooldown = (uint32)-1;	// disabled for now
 		spells[7].perctrigger = 0.0f;
 		spells[7].attackstoptimer = 1000;
 

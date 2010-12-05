@@ -1625,7 +1625,7 @@ public:
 		spells[3].instant = true;
 		spells[3].perctrigger = 0.0f;
 		spells[3].attackstoptimer = 1000;
-		spells[3].cooldown = -1;
+		spells[3].cooldown = (uint32)-1;
 
 		Teleported = false;
     }

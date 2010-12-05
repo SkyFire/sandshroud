@@ -175,7 +175,6 @@ public:
 				MarkTimer--;
 				if(!MarkTimer)
 				{
-					uint32 spellid = 0;
 					switch(MarkCount)
 					{
 					case 0:
@@ -259,7 +258,6 @@ public:
 				MarkTimer--;
 				if(!MarkTimer)
 				{
-					uint32 spellid = 0;
 					switch(MarkCount)
 					{
 					case 0:
@@ -1048,7 +1046,7 @@ public:
 				Leotheras->SetStandState(STANDSTATE_STAND);
 
 				//attack nearest player
-				Player *NearestPlayer;
+				Player *NearestPlayer = NULL;
 				float NearestDist = 0;
 				for(unordered_set<Player *>::iterator itr = _unit->GetInRangePlayerSetBegin(); itr != _unit->GetInRangePlayerSetEnd(); ++itr) 
 				{
@@ -2583,7 +2581,7 @@ public:
 		spells[0].info = dbcSpell.LookupEntry(TOXIC_SPORES);
 		spells[0].targettype = TARGET_VARIOUS;
 		spells[0].instant = true;
-		spells[0].cooldown = -1;
+		spells[0].cooldown = (uint32)-1;
 		spells[0].perctrigger = 0.0f;
 		spells[0].attackstoptimer = 1000;
 		

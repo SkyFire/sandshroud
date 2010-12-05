@@ -30,7 +30,7 @@ void SetupMiscCreatures(ScriptMgr * mgr);
 void SetupDarkmoonFaireObjects(ScriptMgr * mgr);
 void SetupWinterVeil(ScriptMgr * mgr);
 void SetupHalloween(ScriptMgr * mgr);
-
+#if _MSC_VER <= 1500
 void SetupBattlemaster(ScriptMgr * mgr);
 void SetupBoreanTundraGossip(ScriptMgr * mgr);
 void SetupDalaranGossip(ScriptMgr * mgr);
@@ -46,5 +46,6 @@ void SetupTheramoreGossip(ScriptMgr * mgr);
 void SetupTrainerScript(ScriptMgr * mgr);
 void SetupWyrmrestTempleGossip(ScriptMgr * mgr);
 //void SetupEventDarkPortal(ScriptMgr * mgr);
+#endif
 
 #endif

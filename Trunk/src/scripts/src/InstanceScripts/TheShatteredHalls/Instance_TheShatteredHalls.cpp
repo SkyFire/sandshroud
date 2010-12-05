@@ -292,7 +292,7 @@ public:
         spells[0].info = dbcSpell.LookupEntry(AURA_OF_DISCIPLINE);
 		spells[0].targettype = TARGET_VARIOUS;
 		spells[0].instant = true;
-		spells[0].cooldown = -1;	// no idea if this should be like that
+		spells[0].cooldown = (uint32)-1;	// no idea if this should be like that
 		spells[0].perctrigger = 0.0f;
 		spells[0].attackstoptimer = 1000;
 
@@ -713,14 +713,14 @@ public:
         spells[0].info = dbcSpell.LookupEntry(SAP);
 		spells[0].targettype = TARGET_ATTACKING;
 		spells[0].instant = true;
-		spells[0].cooldown = -1;
+		spells[0].cooldown = (uint32)-1;
 		spells[0].perctrigger = 0.0f;
 		spells[0].attackstoptimer = 1000;
 
         spells[1].info = dbcSpell.LookupEntry(STEALTH);
 		spells[1].targettype = TARGET_SELF;
 		spells[1].instant = true;
-		spells[1].cooldown = -1;
+		spells[1].cooldown = (uint32)-1;
 		spells[1].perctrigger = 0.0f;
 		spells[1].attackstoptimer = 1000;
 
@@ -1358,7 +1358,7 @@ public:
 		spells[1].info = dbcSpell.LookupEntry(CHARGE);
 		spells[1].targettype = TARGET_ATTACKING;
 		spells[1].instant = true;
-		spells[1].cooldown = -1;
+		spells[1].cooldown = (uint32)-1;
 		spells[1].perctrigger = 0.0f;
 		spells[1].attackstoptimer = 1000;
     }
@@ -1502,7 +1502,7 @@ public:
         spells[2].info = dbcSpell.LookupEntry(SHOT);	// disabled for now
 		spells[2].targettype = TARGET_ATTACKING;
 		spells[2].instant = true;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 		spells[2].perctrigger = 0.0f;
 		spells[2].attackstoptimer = 1000;
 

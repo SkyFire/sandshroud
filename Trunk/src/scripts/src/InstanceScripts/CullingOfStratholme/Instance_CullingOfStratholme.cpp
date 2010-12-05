@@ -795,7 +795,7 @@ public:
 			scene = false;
 			Creature *citizen = NULLCREATURE;
 			uint32 entry = 0;
-			for (int i = 0; i != _unit->GetMapMgr()->m_CreatureHighGuid; ++i)
+			for (uint32 i = 0; i != _unit->GetMapMgr()->m_CreatureHighGuid; ++i)
 			{
 				if (_unit->GetMapMgr()->m_CreatureStorage[i] != NULL)
 				{

@@ -125,7 +125,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -245,14 +244,14 @@ public:
 		    Unit *target = NULLUNIT;
 			for(int i=0;i<nrspells;i++)
 			{
-				if(!spells[i].perctrigger) continue;
+				if(!spells[i].perctrigger) 
+					continue;
 				
 				if(m_spellcheck[i])
 				{
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -371,7 +370,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -497,7 +495,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -631,7 +628,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -742,7 +738,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -855,7 +850,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -977,7 +971,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -1091,7 +1084,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -1212,7 +1204,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 
@@ -1325,7 +1316,6 @@ public:
 					target = _unit->GetAIInterface()->GetNextTarget();
 					switch(spells[i].targettype)
 					{
-						target = _unit->GetAIInterface()->GetNextTarget();
 						case TARGET_SELF:
 						case TARGET_VARIOUS:
 							_unit->CastSpell(_unit, spells[i].info, spells[i].instant); 

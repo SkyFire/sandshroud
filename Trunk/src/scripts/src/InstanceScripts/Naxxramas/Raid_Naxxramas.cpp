@@ -1759,7 +1759,7 @@ void HeiganTheUncleanAI::CallEruptionEvent( int32 pTimerId, int32 pNewTime )
 
 	for ( set< pair< uint32, PlagueFissureGO* > >::iterator Iter = mFissures.begin(); Iter != mFissures.end(); ++Iter )
 	{
-		if ( ( *Iter ).first == mEruptionPhase )
+		if ( ( *Iter ).first == (uint32)mEruptionPhase )
 			continue;
 
 		( *Iter ).second->SetState( 0 );
@@ -1767,7 +1767,7 @@ void HeiganTheUncleanAI::CallEruptionEvent( int32 pTimerId, int32 pNewTime )
 
 	for ( set< pair< uint32, FissureTriggerAI* > >::iterator Iter = mFissureTriggers.begin(); Iter != mFissureTriggers.end(); ++Iter )
 	{
-		if ( ( *Iter ).first == mEruptionPhase )
+		if ( ( *Iter ).first == (uint32)mEruptionPhase )
 			continue;
 
 		( *Iter ).second->GetUnit()->CastSpell( ( *Iter ).second->GetUnit(), FISSURE_TRIGGER_ERUPTION, true );

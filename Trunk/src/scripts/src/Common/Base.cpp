@@ -406,11 +406,9 @@ bool MoonScriptCreatureAI::IsHeroic() // Crow: Add correct Raid checks.
         case MODE_10PLAYER_HEROIC:
         case MODE_25PLAYER_HEROIC:
 		    return true;
-        default:
-            return false;
     }
 
-	return true;
+	return false;
 };
 
 uint32 MoonScriptCreatureAI::GetInstanceMode()

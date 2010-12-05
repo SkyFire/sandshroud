@@ -66,7 +66,7 @@ public:
       return;
 
     bool casterOk = false;
-    Player *p_caster;
+    Player *p_caster = NULL;
 
     for(int i = 0; i<MAX_AURAS+MAX_PASSIVE_AURAS; i++)
     {
@@ -75,9 +75,11 @@ public:
 
       if(_unit->m_auras[i]->GetSpellId() == current_aura)
       {
+		if(_unit->m_auras[i]->GetCaster() == NULL)
+			break;
+
         if(!_unit->m_auras[i]->GetCaster()->IsPlayer())
           break;
-
         p_caster = TO_PLAYER(_unit->m_auras[i]->GetCaster());
 
         if(p_caster == NULLPLR)

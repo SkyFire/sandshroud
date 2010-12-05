@@ -44,7 +44,7 @@ class SCRIPT_DECL WyrmrestTemple_FlightGossip : public GossipScript
 public:
     void GossipHello(Object *pObject, Player *plr, bool AutoSend)
     {
-        GossipMenu *Menu;
+		GossipMenu *Menu;
 		
 		switch(pObject->GetEntry())
         {

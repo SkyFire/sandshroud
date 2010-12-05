@@ -87,7 +87,7 @@ public:
       if(_unit->GetHealthPct() > 0)
       {
          uint32 sound = 0;
-         const char* text;
+         const char* text = "";
          switch(RandomUInt(1))
          {
          case 0:
@@ -242,7 +242,7 @@ public:
       if(_unit->GetHealthPct() > 0)
       {
          uint32 sound = 0;
-         const char* text;
+         const char* text = "";
          switch(RandomUInt(1))
          {
          case 0:
@@ -397,7 +397,7 @@ public:
       if(_unit->GetHealthPct() > 0)
       {
          uint32 sound = 0;
-         const char* text;
+         const char* text = "";
          switch(RandomUInt(1))
          {
          case 0:

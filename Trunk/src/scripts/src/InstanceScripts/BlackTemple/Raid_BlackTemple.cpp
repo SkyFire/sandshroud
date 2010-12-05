@@ -7106,7 +7106,7 @@ class IllidanStormrageAI : public MoonScriptBossAI
 			{
 				if (mMiscEventPart == 1)
 				{
-					uint32 FireWall = RandomUInt(7);
+					(uint32)FireWall = RandomUInt(7);
 					while (FireWall == mLastFireWall || FireWall == 7 - mLastFireWall)
 					{
 						FireWall = RandomUInt(7);

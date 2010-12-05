@@ -473,7 +473,6 @@ void MoonInstanceScript::OnLoad()
 
 void MoonInstanceScript::UpdateEvent()
 {
-	uint32 CurrentTime = static_cast< uint32 >( time( NULL ) );
 	for ( TimerArray::iterator TimerIter = mTimers.begin(); TimerIter != mTimers.end(); ++TimerIter )
 	{
 		TimerIter->second -= mUpdateFrequency;

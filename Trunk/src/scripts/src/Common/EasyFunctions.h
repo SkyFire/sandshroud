@@ -280,15 +280,10 @@ public:
 				return true;
 			};
 		}
-		else
-		{
-			ItemStack->SetCount( ItemStack->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + pCount );
-			ItemStack->m_isDirty = true;
-			pPlayer->GetSession()->SendItemPushResult( ItemStack, false, true, true, false, pPlayer->GetItemInterface()->GetBagSlotByGuid( ItemStack->GetGUID() ), 0xFFFFFFFF, pCount );
-			return true;
-		};
-
-		return false;
+		ItemStack->SetCount( ItemStack->GetUInt32Value( ITEM_FIELD_STACK_COUNT ) + pCount );
+		ItemStack->m_isDirty = true;
+		pPlayer->GetSession()->SendItemPushResult( ItemStack, false, true, true, false, pPlayer->GetItemInterface()->GetBagSlotByGuid( ItemStack->GetGUID() ), 0xFFFFFFFF, pCount );
+		return true;
 	};
 
 	void EventCreatureDelete(Creature *creat, uint32 time)	// Creature and time in ms

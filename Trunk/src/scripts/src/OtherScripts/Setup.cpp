@@ -39,7 +39,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any 
 	SetupDarkmoonFaireObjects(mgr);
 	SetupWinterVeil(mgr);
 	SetupHalloween(mgr);
-
+	#if _MSC_VER <= 1500
 	SetupBattlemaster(mgr);
 	SetupBoreanTundraGossip(mgr);
 	SetupDalaranGossip(mgr);
@@ -55,6 +55,7 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any 
 	SetupTrainerScript(mgr);
 	SetupWyrmrestTempleGossip(mgr);
 	//SetupEventDarkPortal(mgr);
+	#endif
 }
 
 #ifdef WIN32

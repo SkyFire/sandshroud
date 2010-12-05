@@ -263,7 +263,7 @@ public:
 		spells[2].instant = true;
 		spells[2].perctrigger = 0.0f;
 		spells[2].attackstoptimer = 1000;
-		spells[2].cooldown = -1;
+		spells[2].cooldown = (uint32)-1;
 
 		RegisterAIUpdateEvent(_unit->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME));
 
@@ -415,7 +415,7 @@ public:
 		spells[3].instant = false;
 		spells[3].perctrigger = 0.0f;
 		spells[3].attackstoptimer = 1000;
-		spells[3].cooldown = -1;
+		spells[3].cooldown = (uint32)-1;
 
 		Avatar = false;
 	} 

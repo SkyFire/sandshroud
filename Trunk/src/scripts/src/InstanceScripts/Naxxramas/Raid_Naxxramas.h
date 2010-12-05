@@ -4277,7 +4277,7 @@ public:
 			else if (!WaveTimer && PhaseTimer > 5)
 			{
 				uint32 SpawnPoint = RandomUInt(7);
-				uint32 RandomSU;
+				uint32 RandomSU = 0;
 				if (PhaseTimer > 250)
 					RandomSU = RandomUInt(4);
 				if (PhaseTimer <= 250 && PhaseTimer >= 150)
