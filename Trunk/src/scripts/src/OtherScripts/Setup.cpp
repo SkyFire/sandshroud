@@ -39,6 +39,21 @@ extern "C" SCRIPT_DECL void _exp_script_register(ScriptMgr* mgr)	// Comment any 
 	SetupDarkmoonFaireObjects(mgr);
 	SetupWinterVeil(mgr);
 	SetupHalloween(mgr);
+
+	SetupBattlemaster(mgr);
+	SetupBoreanTundraGossip(mgr);
+	SetupDalaranGossip(mgr);
+	SetupDarkmoonFaireBarker(mgr);
+	SetupGuardGossip(mgr);
+	SetupInnkeepers(mgr);
+	SetupMoongladeGossip(mgr);
+	SetupShattrathGossip(mgr);
+	SetupStormwindGossip(mgr);
+	SetupTanarisGossip(mgr);
+	SetupTeldrassilGossip(mgr);
+	SetupTheramoreGossip(mgr);
+	SetupTrainerScript(mgr);
+	SetupWyrmrestTempleGossip(mgr);
 	//SetupEventDarkPortal(mgr);
 }
 
