@@ -286,9 +286,7 @@ int CRandomMersenne::IRandomX(int min, int max) {
 	return (int32)iran + min;
 }
 
-#ifdef WIN32
-
-long LDerive(long number, int32 times)
+long LDerive(long number, int times)
 {
 	if(times == 0)
 		return 1;
@@ -311,7 +309,7 @@ long LDerive(long number, int32 times)
 	return number;
 }
 
-double FDerive(double number, int32 times)
+double FDerive(double number, int times)
 {
 	if(times == 0)
 		return 1;
@@ -334,9 +332,10 @@ double FDerive(double number, int32 times)
 	return number;
 }
 
-inline long __cdecl expon(_In_ long _X, _In_ long _Y)
+HEARTHSTONE_INLINE int expon(_In_ int _X, _In_ int _Y)
 		{return (LDerive(_X, _Y)); }
-inline double __cdecl expon(_In_ double _X, _In_ long _Y)
+HEARTHSTONE_INLINE long expon(_In_ long _X, _In_ int _Y)
+		{return (LDerive(_X, _Y)); }
+HEARTHSTONE_INLINE double expon(_In_ double _X, _In_ int _Y)
 		{return (FDerive(_X, _Y)); }
 
-#endif
