@@ -815,6 +815,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Setup"
+			>
+			<File
+				RelativePath="..\..\Source\Setup\Setup.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\Setup\Setup.h"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath="..\..\Source\Lacrimi.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\Source\Lacrimi.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

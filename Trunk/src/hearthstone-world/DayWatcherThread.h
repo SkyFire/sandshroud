@@ -65,6 +65,7 @@ public:
 	void update_daily();
 	void Reset_Heroic_Instances();
 };
+
 #define sDayWatcher DayWatcherThread::getSingleton()
 
 #endif

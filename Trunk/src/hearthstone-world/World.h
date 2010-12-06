@@ -33,6 +33,7 @@ class Player;
 class EventableObjectHolder;
 class MapMgr;
 class Battleground;
+class Lacrimi;
 
 enum LogonServerTypes
 {
@@ -772,6 +773,7 @@ protected:
 	uint32	m_KickAFKPlayers;//don't lag the server if you are useless anyway :P
 
 public:
+	Lacrimi* LacrimiPtr;
 	std::string GmClientChannel;
 	bool m_reqGmForCommands;
 	bool m_lfgForNonLfg;

@@ -14,13 +14,27 @@
  *
  */
 
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef LACRIMI_H
+#define LACRIMI_H
 
-SCRIPT_DECL Creature* CreateAndLoadCreature(
-	MapMgr* mgr, uint32 entry, uint32 instancemode, float x, float y, float z, float o, int32 phase = 1, bool push = true);
+Database* LacrimiDB;
+#define LacrimiDatabase (*LacrimiDB)
 
-SCRIPT_DECL GameObject* CreateAndLoadGameObject(MapMgr* mgr, uint32 entry, float x, float y, float z, float o,
-												int32 phase = 1, bool push = true);
+class SCRIPT_DECL Lacrimi : public ThreadContext
+{
+private:
+	ScriptMgr* sMgr;
 
-#endif // FUNCTIONS_H
+public:
+	Lacrimi(ScriptMgr* mgr);
+	~Lacrimi();
+
+	bool run();
+	void terminate();
+	void Delay(uint32 time);
+
+public: // Script Related
+	void SetupScripts();
+};
+
+#endif
