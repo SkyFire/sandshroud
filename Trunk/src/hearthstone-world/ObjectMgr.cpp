@@ -1932,12 +1932,9 @@ void ObjectMgr::GenerateLevelUpInfo()
 
 				uint32 BaseHP = 0;
 				uint32 BaseMana = 0;
-				if(Level <= MAX_PREDEFINED_NEXTLEVELXP+5)
+				if(Level <= MAX_PREDEFINED_NEXTLEVELXP)
 				{
 					float coefficient = 0;
-					float dividingcoefficient = 1;
-					if(Level > MAX_PREDEFINED_NEXTLEVELXP+5)
-						dividingcoefficient = 1.041f;
 
 					// Description: We're calculating the Base Mana and HP that we get per level. These are based off of
 					// the total value at level 80 and are probably incorrect at lower levels.
@@ -1948,74 +1945,50 @@ void ObjectMgr::GenerateLevelUpInfo()
 					{
 					case PRIEST:
 						{
-							coefficient = 87/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
-
-							coefficient = 48.2875f/dividingcoefficient;
-							BaseMana = uint32(coefficient * Level);
+							BaseHP = uint32(87 * Level);
+							BaseMana = uint32(48.2875f * Level);
 						}break;
 					case WARRIOR:
 						{
-							coefficient = 101.5125f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
+							BaseHP = uint32(101.5125f * Level);
 						}break;
 					case DEATHKNIGHT:
 						{
-							coefficient = 101.5125f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
+							BaseHP = uint32(101.5125f * Level);
 						}break;
 					case HUNTER:
 						{
-							coefficient = 91.55f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
-
-							coefficient = 63.075f/dividingcoefficient;
-							BaseMana = uint32(coefficient * Level);
+							BaseHP = uint32(91.55f * Level);
+							BaseMana = uint32(63.075f * Level);
 						}break;
 					case ROGUE:
 						{
-							coefficient = 95.05f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
+							BaseHP = uint32(95.05f * Level);
 						}break;
 					case SHAMAN:
 						{
-							coefficient = 81.0625f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
-
-							coefficient = 54.95f/dividingcoefficient;
-							BaseMana = uint32(coefficient * Level);
+							BaseHP = uint32(81.0625f * Level);
+							BaseMana = uint32(54.95f * Level);
 						}break;
 					case DRUID:
 						{
-							coefficient = 92.7125f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
-
-							coefficient = 43.7f/dividingcoefficient;
-							BaseMana = uint32(coefficient * Level);
+							BaseHP = uint32(92.7125f * Level);
+							BaseMana = uint32(43.7f * Level);
 						}break;
 					case PALADIN:
 						{
-							coefficient = 86.675f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
-
-							coefficient = 54.925f/dividingcoefficient;
-							BaseMana = uint32(coefficient * Level);
+							BaseHP = uint32(86.675f * Level);
+							BaseMana = uint32(54.925f * Level);
 						}break;
 					case MAGE:
 						{
-							coefficient = 87.0375f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
-
-							coefficient = 40.85f/dividingcoefficient;
-							BaseMana = uint32(coefficient * Level);
+							BaseHP = uint32(87.0375f * Level);
+							BaseMana = uint32(40.85f * Level);
 						}break;
 					case WARLOCK:
 						{
-							coefficient = 89.55f/dividingcoefficient;
-							BaseHP = uint32(coefficient * Level);
-
-							coefficient = 48.2f/dividingcoefficient;
-							BaseMana = uint32(coefficient * Level);
+							BaseHP = uint32(89.55f * Level);
+							BaseMana = uint32(48.2f * Level);
 						}break;
 					}
 
@@ -3328,7 +3301,7 @@ uint32 GetBaseHPForLevel(uint32 level, uint32 Class)
 		}break;
 	}
 
-	return (200+((level-(MAX_PREDEFINED_NEXTLEVELXP+5))*coeff))*level;
+	return ((200+((level-(MAX_PREDEFINED_NEXTLEVELXP))*coeff))*level)/2;
 }
 
 uint32 GetBaseManaForLevel(uint32 level, uint32 Class)
@@ -3372,5 +3345,5 @@ uint32 GetBaseManaForLevel(uint32 level, uint32 Class)
 		}break;
 	}
 
-	return (100+((level-(MAX_PREDEFINED_NEXTLEVELXP+5))*coeff))*level;
+	return ((100+((level-(MAX_PREDEFINED_NEXTLEVELXP))*coeff))*level)/2;
 }
