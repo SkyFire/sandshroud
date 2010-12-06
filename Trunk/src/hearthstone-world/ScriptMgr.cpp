@@ -78,6 +78,13 @@ void ScriptMgr::LoadScripts()
 				Log.Error("ScriptMgr","Loading %s failed, crc=0x%p", data.cFileName, reinterpret_cast< uint32* >( mod ));
 			else
 			{
+				if(HEARTHSTONE_TOLOWER_RETURN(data.cFileName) == "lacrimi.dll")
+				{
+					Log.Error("ScriptMgr", "Lacrimi must be loaded from world directory.");
+					FreeLibrary(mod);
+					continue;
+				}
+
 				// find version import
 				exp_get_version vcall = (exp_get_version)GetProcAddress(mod, "_exp_get_version");
 				exp_script_register rcall = (exp_script_register)GetProcAddress(mod, "_exp_script_register");
@@ -195,7 +202,7 @@ char *ext;
 #ifdef HAVE_DARWIN
 			if (ext != NULL && strstr(list[filecount]->d_name, ".0.dylib") == NULL && !strcmp(ext, ".dylib")) {
 #else
-                        if (ext != NULL && !strcmp(ext, ".so")) {
+			if (ext != NULL && !strcmp(ext, ".so")) {
 #endif
 				string full_path = "../lib/" + string(list[filecount]->d_name);
 				SCRIPT_MODULE mod = dlopen(full_path.c_str(), RTLD_NOW);
@@ -204,6 +211,14 @@ char *ext;
 					printf("error! [%s]\n", dlerror());
 				else
 				{
+					if(HEARTHSTONE_TOLOWER_RETURN(list[filecount]->d_name) == "lacrimi.dll")
+					{
+						printf("Lacrimi must be loaded from world directory.");
+						free(list[filecount]);
+						dlclose(mod);
+						continue;
+					}
+
 					// find version import
 					exp_get_version vcall = (exp_get_version)dlsym(mod, "_exp_get_version");
 					exp_script_register rcall = (exp_script_register)dlsym(mod, "_exp_script_register");
@@ -296,15 +311,12 @@ char *ext;
 	}
 #endif
 
-#ifdef LOAD_LACRIMI
-	Log.Notice("ScriptMgr","Starting Lacrimi load...");
-
 #ifdef WIN32 // Win
-	HMODULE mod = LoadLibrary("Lacrimi.lib");
-	if( mod == 0 )
-		Log.Error("ScriptMgr","Lacrimi loading failed, crc=0x%p", reinterpret_cast< uint32* >( mod ));
-	else
+
+	HMODULE mod = LoadLibrary("Lacrimi.dll");
+	if( mod != 0 )
 	{
+		Log.Notice("ScriptMgr","Starting Lacrimi load...");
 		// find version import
 		exp_get_version vcall = (exp_get_version)GetProcAddress(mod, "_exp_get_version");
 		exp_script_register rcall = (exp_script_register)GetProcAddress(mod, "_exp_script_register");
@@ -334,12 +346,13 @@ char *ext;
 			}
 		}
 	}
+
 #else // Nux
-	SCRIPT_MODULE mod = dlopen("Lacrimi.lib", RTLD_NOW);
-	printf("  %s : 0x%p : ", "Lacrimi.lib", mod);
-	if(mod == 0)
-		printf("error! [%s]\n", dlerror());
-	else
+
+#ifdef LOAD_LACRIMI
+
+	SCRIPT_MODULE mod = dlopen("Lacrimi.dll", RTLD_NOW);
+	if(mod != 0)
 	{
 		// find version import
 		exp_get_version vcall = (exp_get_version)dlsym(mod, "_exp_get_version");
@@ -368,9 +381,10 @@ char *ext;
 			}
 		}
 	}
-#endif // Win/Nux
 
 #endif // LOAD_LACRIMI
+
+#endif // Win/Nux
 }
 
 void ScriptMgr::UnloadScripts()
