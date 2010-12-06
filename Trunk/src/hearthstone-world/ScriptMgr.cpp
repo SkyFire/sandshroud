@@ -295,6 +295,82 @@ char *ext;
 		Log.Success("ScriptMgr","Done loading script engines...");
 	}
 #endif
+
+#ifdef LOAD_LACRIMI
+	Log.Notice("ScriptMgr","Starting Lacrimi load...");
+
+#ifdef WIN32 // Win
+	HMODULE mod = LoadLibrary("Lacrimi.lib");
+	if( mod == 0 )
+		Log.Error("ScriptMgr","Lacrimi loading failed, crc=0x%p", reinterpret_cast< uint32* >( mod ));
+	else
+	{
+		// find version import
+		exp_get_version vcall = (exp_get_version)GetProcAddress(mod, "_exp_get_version");
+		exp_script_register rcall = (exp_script_register)GetProcAddress(mod, "_exp_script_register");
+		exp_get_script_type scall = (exp_get_script_type)GetProcAddress(mod, "_exp_get_script_type");
+		if(vcall == 0 || rcall == 0 || scall == 0)
+		{
+			Log.Error("ScriptMgr","Lacrimi loading failed, version info not found");
+			FreeLibrary(mod);
+		}
+		else
+		{
+			uint32 version = vcall();
+			uint32 stype = scall();
+			if(SCRIPTLIB_LOPART(version) == SCRIPTLIB_VERSION_MINOR && SCRIPTLIB_HIPART(version) == SCRIPTLIB_VERSION_MAJOR)
+			{
+				std::stringstream cmsg;
+				cmsg << "Loading Lacrimi, crc:0x" << reinterpret_cast< uint32* >( mod );
+				_handles.push_back(((SCRIPT_MODULE)mod));
+				cmsg << ", Version:" << SCRIPTLIB_HIPART(version) << SCRIPTLIB_LOPART(version);
+				rcall(this);
+				Log.Success("ScriptMgr",cmsg.str().c_str());
+			}
+			else
+			{
+				Log.Error("ScriptMgr","Lacrimi loading failed, version mismatch");
+				FreeLibrary(mod);
+			}
+		}
+	}
+#else // Nux
+	SCRIPT_MODULE mod = dlopen("Lacrimi.lib", RTLD_NOW);
+	printf("  %s : 0x%p : ", "Lacrimi.lib", mod);
+	if(mod == 0)
+		printf("error! [%s]\n", dlerror());
+	else
+	{
+		// find version import
+		exp_get_version vcall = (exp_get_version)dlsym(mod, "_exp_get_version");
+		exp_script_register rcall = (exp_script_register)dlsym(mod, "_exp_script_register");
+		exp_get_script_type scall = (exp_get_script_type)dlsym(mod, "_exp_get_script_type");
+		if(vcall == 0 || rcall == 0 || scall == 0)
+		{
+			printf("version functions not found!\n");
+			dlclose(mod);
+		}
+		else
+		{
+			int32 version = vcall();
+			uint32 stype = scall();
+			if(SCRIPTLIB_LOPART(version) == SCRIPTLIB_VERSION_MINOR && SCRIPTLIB_HIPART(version) == SCRIPTLIB_VERSION_MAJOR)
+			{
+				_handles.push_back(((SCRIPT_MODULE)mod));
+				printf("v%u.%u : ", SCRIPTLIB_HIPART(version), SCRIPTLIB_LOPART(version));
+				rcall(this);
+				printf("loaded.\n");
+			}
+			else
+			{
+				dlclose(mod);
+				printf("version mismatch!\n");
+			}
+		}
+	}
+#endif // Win/Nux
+
+#endif // LOAD_LACRIMI
 }
 
 void ScriptMgr::UnloadScripts()

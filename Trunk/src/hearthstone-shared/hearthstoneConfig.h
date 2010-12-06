@@ -97,4 +97,7 @@
 // Crow: Almost ready.
 //#define CATACLYSM
 
+// Crow: Yea no, don't even try.
+//#define LOAD_LACRIMI
+
 #endif		// __HEARTHSTONECONFIG_H
