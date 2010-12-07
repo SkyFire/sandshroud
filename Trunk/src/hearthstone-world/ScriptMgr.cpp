@@ -729,7 +729,15 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 			Menu->AddItem(GOSSIP_ICON_GOSSIP_AUCTION, "I would like to make a bid.", 4);
 
 		if(flags & UNIT_NPC_FLAG_INNKEEPER)
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_EXTRA, "What can I do at an Inn.", 15);
+		{
+			Menu->AddItem(GOSSIP_ICON_GOSSIP_ENGINEER2, "Make this inn your home.", 5);
+			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "What can I do at an Inn.", 15);
+			if(sWorld.Halloween)
+			{
+				if(!Plr->HasAura(24755)) // Trick or Treat
+					Menu->AddItem(0, "Trick or Treat!", 19);
+			}
+		}
 
 		if(flags & UNIT_NPC_FLAG_BANKER)
 			Menu->AddItem(GOSSIP_ICON_GOSSIP_COIN, "I would like to check my deposit box.", 6);
@@ -948,6 +956,64 @@ void GossipScript::GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, u
 			{
 				Plr->Gossip_Complete();
 				Plr->SendXPToggleConfirm();
+			}break;
+		case 19: // Trick or fucking treat.
+			{
+				if(!Plr->HasAura(24755))
+				{
+					pCreature->CastSpell(Plr, 24755, true);
+
+					// either trick or treat, 50% chance
+					if(rand()%2)
+					{
+						Plr->CastSpell(Plr, 24715, true);
+					}
+					else
+					{
+						int32 trickspell = 0;
+						switch (rand()%9)
+						{
+						case 0:
+							trickspell = 24753; // cannot cast, random 30sec
+							break;
+
+						case 1:
+							trickspell = 24713; // lepper gnome costume
+							break;
+
+						case 2:
+							{
+								if(!Plr->getGender())
+									trickspell = 24735; // male ghost costume
+								else
+									trickspell = 24736; // female ghostcostume
+							}break;
+
+						case 3:
+							{
+								if(!Plr->getGender())
+									trickspell = 24711; // male ninja costume
+								else
+									trickspell = 24710; // female ninja costume
+							}break;
+
+						case 4:
+							{
+								if(!Plr->getGender())
+									trickspell = 24708; // male pirate costume
+								else
+									trickspell = 24709; // female pirate costume
+							}break;
+
+						case 5:
+							trickspell = 24723; // skeleton costume
+							break;
+						}
+						if(trickspell)
+							pCreature->CastSpell(Plr, trickspell, true);
+					}
+				}
+				Plr->Gossip_Complete();
 			}break;
 		case 99:		// Aborting current action
 			{

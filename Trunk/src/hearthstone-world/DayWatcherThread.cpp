@@ -153,23 +153,32 @@ bool DayWatcherThread::run()
 	_firstrun[1] = true;
 	m_heroic_reset = false;
 
+	uint32 interv = 120000;//Daywatcher check interval (in ms), must be >> 30secs !
+
 #ifdef WIN32
 	m_abortEvent = CreateEvent(NULL, NULL, FALSE, NULL);
 #else
-
 	struct timeval now;
 	struct timespec tv;
 
 	pthread_mutex_init(&abortmutex,NULL);
 	pthread_cond_init(&abortcond,NULL);
 #endif
-	uint32 interv = 120000;//Daywatcher check interval (in ms), must be >> 30secs !
 
 	while(m_threadRunning)
 	{
 		m_busy = true;
 		currenttime = UNIXTIME;
 		dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
+
+		// Crow: Halloween is the 10th month, but we use months since the first, so 9.
+		if(local_currenttime.tm_mon == 9)
+		{
+			if(local_currenttime.tm_mday == 31)
+				sWorld.Halloween = true;
+			else if(sWorld.Halloween)
+				sWorld.Halloween = false;
+		}
 
 		if(has_timeout_expired(&local_currenttime, &local_last_arena_time, arena_period))
 			update_arena();
@@ -197,7 +206,8 @@ bool DayWatcherThread::run()
 			break;
 
 #ifdef WIN32
-		WaitForSingleObject(m_abortEvent, interv);
+		if (m_abortEvent)
+			WaitForSingleObject(m_abortEvent, interv);
 #else
 		gettimeofday(&now, NULL);
 		tv.tv_sec = now.tv_sec + 120;
@@ -210,7 +220,8 @@ bool DayWatcherThread::run()
 			break;
 	}
 #ifdef WIN32
-	CloseHandle(m_abortEvent);
+	if (m_abortEvent)
+		CloseHandle(m_abortEvent);		
 #else
 	pthread_mutex_destroy(&abortmutex);
 	pthread_cond_destroy(&abortcond);

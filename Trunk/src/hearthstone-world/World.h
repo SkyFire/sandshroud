@@ -623,6 +623,7 @@ public:
 	bool AHEnabled;
 	int LogonServerType;
 
+	bool Halloween;
 	uint32 mInWorldPlayerCount;
 	uint32 mAcceptedConnections;
 	uint32 SocketSendBufSize;

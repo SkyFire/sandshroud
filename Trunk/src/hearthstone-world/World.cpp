@@ -45,6 +45,7 @@ World::World()
 	gm_force_robes = false;
 	CheckProfessions = false;
 	AHEnabled = true;
+	Halloween = false;
 
 	show_gm_in_who_list = true;
 	map_unload_time=0;
@@ -548,12 +549,12 @@ bool World::SetInitialWorldSettings()
 	new AuctionMgr;
 	sAuctionMgr.LoadAuctionHouses();
 
-	new DayWatcherThread();
+	ThreadPool.ExecuteTask( new DayWatcherThread() );
 
 	if(wg_enabled && sInstanceMgr.GetMapMgr(571))
 	{
 		sMaster.wintergrasp = true;
-		new WintergraspInternal();
+		ThreadPool.ExecuteTask( new WintergraspInternal() );
 	}
 
 	m_queueUpdateTimer = mQueueUpdateInterval;
