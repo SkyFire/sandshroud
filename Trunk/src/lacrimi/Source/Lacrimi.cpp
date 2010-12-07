@@ -60,6 +60,7 @@ void Lacrimi::Delay(uint32 time)
 
 bool Lacrimi::run()
 {
+	SetThreadName("Lacrimi");
 	Log.Success("Lacrimi", "Lacrimi Engine Started");
 	SetupScripts();
 
@@ -75,8 +76,100 @@ bool Lacrimi::run()
 	return true;
 }
 
+void SetThreadName(const char* format, ...)
+{
+	// This isn't supported on nix?
+	va_list ap;
+	va_start(ap, format);
+
+#ifdef WIN32
+	char thread_name[200];
+	vsnprintf(thread_name, 200, format, ap);
+
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.dwThreadID = GetCurrentThreadId();
+	info.dwFlags = 0;
+	info.szName = thread_name;
+	DEBUG_LOG("ThreadMaker", "Creating thread %u with name %s", info.dwThreadID, info.szName);
+	ThreadPool.SetThreadInfo(info.dwThreadID, info);
+
+	__try
+	{
+#ifdef _WIN64
+		RaiseException(0x406D1388, 0, sizeof(info)/sizeof(DWORD), (ULONG_PTR*)&info);
+#else
+		RaiseException(0x406D1388, 0, sizeof(info)/sizeof(DWORD), (DWORD*)&info);
+#endif
+	}
+	__except(EXCEPTION_CONTINUE_EXECUTION)
+	{
+
+	}
+#endif
+
+	va_end(ap);
+}
+
 // Use sMgr for Script Mgr.
 void Lacrimi::SetupScripts()
 {
+	SetupZoneScripts();
+}
 
+void Lacrimi::SetupZoneScripts()
+{
+	SetupOutlandScripts();
+	SetupKalimdorScripts();
+	SetupEbonHoldScripts();
+	SetupNorthrendScripts();
+	SetupEasternKingdomScripts();
+}
+
+void Lacrimi::SetupOutlandScripts()
+{
+
+}
+
+void Lacrimi::SetupKalimdorScripts()
+{
+
+}
+
+void Lacrimi::SetupEbonHoldScripts()
+{
+
+}
+
+void Lacrimi::SetupNorthrendScripts()
+{
+
+}
+
+void Lacrimi::SetupEasternKingdomScripts()
+{
+	SetupAlteracMountains();
+	SetupArathiHighlands();
+	SetupBlastedLands();
+	SetupBurningSteppes();
+	SetupDunMorogh();
+	SetupDuskwood();
+	SetupEasternPlaguelands();
+	SetupElwynnForest();
+	SetupEversongWoods();
+	SetupGhostlands();
+	SetupHinterlands();
+	SetupIsleOfQuelDanas();
+	SetupLochModan();
+	SetupSearingGorge();
+	SetupSilverpineForest();
+	SetupStranglethornVale();
+	SetupTrisfalGlades();
+	SetupWesternPlaguelands();
+	SetupWestfall();
+	SetupWetlands();
+	SetupIronforge();
+	SetupSilvermoon();
+	SetupStormwind();
+	SetupUndercity();
 }
