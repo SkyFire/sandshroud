@@ -77,12 +77,12 @@ void SilithusZoneHook(Player *plr, uint32 Zone, uint32 OldZone)
 
 	if( Zone == ZONE_SILITHUS )
 	{
-		if( winners == plr->GetTeam() )
+		if( winners == (int32)plr->GetTeam() )
 			plr->CastSpell(plr, dbcSpell.LookupEntry(CENARION_FAVOR), true);
 	}
 	else if( OldZone == ZONE_SILITHUS )
 	{
-		if( winners == plr->GetTeam() )
+		if( winners == (int32)plr->GetTeam() )
 			plr->RemovePositiveAura(CENARION_FAVOR);
 	}
 }

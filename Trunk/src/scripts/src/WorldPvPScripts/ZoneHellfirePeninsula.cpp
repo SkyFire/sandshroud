@@ -480,12 +480,12 @@ void ZoneHook(Player *plr, uint32 Zone, uint32 OldZone)
 	static uint32 spellids[2] = { HELLFIRE_SUPERORITY_ALLIANCE, HELLFIRE_SUPERORITY_HORDE };
 	if( Zone == ZONE_HELLFIRE_PENINSULA )
 	{
-		if( g_superiorTeam == plr->GetTeam() )
+		if( g_superiorTeam == (int32)plr->GetTeam() )
 			plr->CastSpell(plr, dbcSpell.LookupEntry(spellids[plr->GetTeam()]), true);
 	}
 	else if( OldZone == ZONE_HELLFIRE_PENINSULA )
 	{
-		if( g_superiorTeam == plr->GetTeam() )
+		if( g_superiorTeam == (int32)plr->GetTeam() )
 			plr->RemovePositiveAura(spellids[plr->GetTeam()]);
 	}
 }

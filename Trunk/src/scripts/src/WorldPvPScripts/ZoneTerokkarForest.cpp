@@ -408,12 +408,12 @@ void TFZoneHook(Player *plr, uint32 Zone, uint32 OldZone)
 
 	if( Zone == ZONE_TEROKKAR_FOREST )
 	{
-		if( TFg_superiorTeam == plr->GetTeam() )
+		if( TFg_superiorTeam == (int32)plr->GetTeam() )
 			plr->CastSpell(plr, dbcSpell.LookupEntry(BLESSING_OF_AUCHINDOUND), true);
 	}
 	else if( OldZone == ZONE_TEROKKAR_FOREST )
 	{
-		if( TFg_superiorTeam == plr->GetTeam() )
+		if( TFg_superiorTeam == (int32)plr->GetTeam() )
 			plr->RemovePositiveAura(BLESSING_OF_AUCHINDOUND);
 	}
 }

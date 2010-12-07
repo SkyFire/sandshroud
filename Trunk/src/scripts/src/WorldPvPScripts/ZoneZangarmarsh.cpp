@@ -472,7 +472,7 @@ public:
 		if( pObject->GetUInt32Value(UNIT_NPC_FLAGS) & UNIT_NPC_FLAG_VENDOR )
 			Menu->AddItem( 0, "I would like to browse your goods.", 3 );
 
-		if( ZMg_superiorTeam == Team && ZMCityOwners != Team && !plr->HasAura( Team == 0 ? 32430 : 32431 ) )
+		if( ZMg_superiorTeam == (int32)Team && ZMCityOwners != (int32)Team && !plr->HasAura( Team == 0 ? 32430 : 32431 ) )
 			Menu->AddItem( 0, Team == 0 ? "Give me the flag, I'll take it to the Central Tower for the glory of the Alliance!" : "Give me the flag, I'll take it to the Central Tower for the glory of the Horde!" , Team+1);
 		if(AutoSend)
 			Menu->SendTo(plr);
@@ -521,7 +521,7 @@ public:
 		uint32 pTeam = pPlayer->GetTeam();
 		if(pTeam > 1) pTeam = 1;
 
-		if( ZMg_superiorTeam != pTeam || ZMCityOwners == pTeam )
+		if( ZMg_superiorTeam != (int32)pTeam || ZMCityOwners == (int32)pTeam )
 			return;
 
 		uint32 flagaura = ( pTeam == 0 ? 32430 : 32431 );
@@ -564,12 +564,12 @@ void ZMZoneHook(Player *plr, uint32 Zone, uint32 OldZone)
 
 	if( Zone == ZONE_ZANGARMARSH )
 	{
-		if( ZMCityOwners == plr->GetTeam() )
+		if( ZMCityOwners == (int32)plr->GetTeam() )
 			plr->CastSpell(plr, dbcSpell.LookupEntry(TWIN_SPIRE_BLESSING), true);
 	}
 	else if( OldZone == ZONE_ZANGARMARSH )
 	{
-		if( ZMCityOwners == plr->GetTeam() )
+		if( ZMCityOwners == (int32)plr->GetTeam() )
 			plr->RemovePositiveAura(TWIN_SPIRE_BLESSING);
 	}
 }
