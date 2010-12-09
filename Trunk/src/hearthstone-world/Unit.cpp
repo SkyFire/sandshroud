@@ -5304,11 +5304,7 @@ bool Unit::HasAuraVisual(uint32 visualid)
 {
 	for(uint32 x = 0; x < TOTAL_AURAS; ++x)
 	{
-#ifdef CATACLYSM
-		if(m_auras[x] && m_auras[x]->GetSpellProto()->SpellVisual == visualid)
-#else
 		if(m_auras[x] && ((m_auras[x]->GetSpellProto()->SpellVisual[0] == visualid) || (m_auras[x]->GetSpellProto()->SpellVisual[1] == visualid)))
-#endif
 		{
 			return true;
 		}

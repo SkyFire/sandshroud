@@ -2262,7 +2262,6 @@ void Spell::SendSpellStart()
 				}
 			}
 		}
-#ifndef CATACLYSM
 		else if( GetSpellProto()->Flags4 & FLAGS4_PLAYER_RANGED_SPELLS )
 		{
 			if( p_caster != NULL )
@@ -2270,9 +2269,6 @@ void Spell::SendSpellStart()
 			else
 				ip = ItemPrototypeStorage.LookupEntry( 2512 );	/*rough arrow*/
 		}
-#else
-		ip = ItemPrototypeStorage.LookupEntry( 2512 );	/*rough arrow*/
-#endif
 
 		if( ip != NULL )
 			data << ip->DisplayInfoID << ip->InventoryType;
@@ -2364,14 +2360,10 @@ void Spell::SendSpellGo()
 		}
 		else
 		{
-#ifndef CATACLYSM
 			if( p_caster != NULL )
 				ip = ItemPrototypeStorage.LookupEntry(p_caster->GetUInt32Value( PLAYER_AMMO_ID ) );
 			else // HACK FIX
 				ip = ItemPrototypeStorage.LookupEntry(2512);	//rough arrow
-#else
-			ip = ItemPrototypeStorage.LookupEntry(2512);	//rough arrow
-#endif
 		}
 	}
 
@@ -4209,13 +4201,11 @@ void Spell::RemoveItems()
 		}
 	}
 
-#ifndef CATACLYSM
 	// Ammo Removal
 	if( p_caster && p_caster->RequireAmmo && GetSpellProto()->Id != 53254 && (GetSpellProto()->Flags3 == FLAGS3_REQ_RANGED_WEAPON || GetSpellProto()->Flags4 & FLAGS4_PLAYER_RANGED_SPELLS))
 	{
 		p_caster->GetItemInterface()->RemoveItemAmt_ProtectPointer(p_caster->GetUInt32Value(PLAYER_AMMO_ID), 1, &i_caster);
 	}
-#endif
 
 	// Reagent Removal
 	for(uint32 i=0; i<8 ;++i)

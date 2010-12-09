@@ -28,12 +28,9 @@
 #include "DataStore.h"
 #include "../Timer.h"
 
-typedef char const* const* PackedString;
-
 #pragma pack(push,1)
 struct AchievementEntry
 {
-#ifndef CATACLYSM
 	uint32 ID;						// 0
 	uint32 factionFlag;				// 1 -1=all, 0=horde, 1=alliance
 	uint32 mapID;					// 2 -1=none
@@ -51,27 +48,6 @@ struct AchievementEntry
 //	Example: http://www.wowhead.com/achievement=1872
 //	uint32 count;				// 12
 //	uint32 refAchievement;		// 13
-#else
-	uint32 ID;						// 0
-	uint32 factionFlag;				// 1 -1=all, 0=horde, 1=alliance
-	uint32 mapID;					// 2 -1=none
-	uint32 Previous_achievement;	// 3 Lots of 0's
-	char* name;						// 4
-//	uint32 unk1[14];				// 5-19
-//	uint32 name_flags;				// 20
-	char* description;				// 21
-//	char *descriptionextra[14];		// 22-36
-//	uint32 desc_flags;				// 37
-	uint32 categoryId;				// 38 Category
-//	uint32 points;					// 39 reward points
-//	uint32 OrderInCategory;			// 40
-	uint32 flags;					// 41
-//	uint32 flags;					// 42 not flags, some unknown value...
-//	char *unk1[16];					// 43-58
-//	uint32 unk_flags;				// 59
-//	uint32 count;					// 60
-//	uint32 refAchievement;			// 61
-#endif
 
 	uint32 AssociatedCriteria[32]; // Custom stuff
 	uint32 AssociatedCriteriaCount;
@@ -503,7 +479,6 @@ struct ItemEntry
 
 struct ItemSetEntry
 {
-#ifndef CATACLYSM
 	uint32 id;						//1
 //	char* name;						//2
 //	uint32 unused_shit[15];			//3 - 17
@@ -514,15 +489,6 @@ struct ItemSetEntry
 	uint32 itemscount[8];			//44 - 51
 	uint32 RequiredSkillID;			//52
 	uint32 RequiredSkillAmt;		//53
-#else
-	uint32 id;						//1
-//	char* name;						//2
-	uint32 itemid[17];				//19 - 28
-	uint32 SpellID[8];				//36 - 43
-	uint32 itemscount[8];			//44 - 51
-	uint32 RequiredSkillID;			//52
-	uint32 RequiredSkillAmt;		//53
-#endif
 };
 
 struct Lock
@@ -634,132 +600,6 @@ struct SummonPropertiesEntry
 // Struct for the entry in Spell.dbc
 struct SpellEntry
 {
-#ifdef CATACLYSM
-	uint32 Id;								// 0
-	uint32 Attributes;						// 1
-	uint32 AttributesEx;					// 2
-	uint32 Flags3;							// 3
-	uint32 Flags4;							// 4
-	uint32 Flags5;							// 5
-	uint32 Flags6;							// 6
-	uint32 Flags7;							// 7
-	uint32 Flags8;							// 8
-	// uint32 unk400[2]						// 9-10
-	uint32 CastingTimeIndex;				// 11
-	uint32 DurationIndex;					// 12
-	float  speed;							// 13
-	uint32 rangeIndex;						// 14
-	uint32 powerType;						// 15
-	uint32 SpellVisual/*[2]*/;				// 16-17, second one is unnessessary.
-	uint32 SpellIconID;						// 18
-	uint32 activeIconID;					// 19
-	char* Name;								// 20
-	char* Rank;								// 21
-	char* Description;						// 22
-//	PackedString PackedBuffDescription;		// 23
-	uint32 School;							// 24
-	uint32 runeCostID;						// 25
-	//uint32 spellMissileID;				// 26
-	uint32 SpellDescriptionVariableID;		// 27
-	uint32 SpellDifficulty;					// 28
-    //float unk_f1;							// 29
-	uint32 SpellScalingId;					// 30	SpellScaling.dbc
-	uint32 SpellAuraOptionsId;				// 31	SpellAuraOptions.dbc
-	uint32 SpellAuraRestrictionsId;			// 32	SpellAuraRestrictions.dbc
-	uint32 SpellCastingRequirementsId;		// 33	SpellCastingRequirements.dbc
-	uint32 SpellCategoriesId;				// 34	SpellCategories.dbc
-	uint32 SpellClassOptionsId;				// 35	SpellClassOptions.dbc
-	uint32 SpellCooldownsId;				// 36	SpellCooldowns.dbc
-    //uint32 unkIndex7;						// 37	all zeros...
-	uint32 SpellEquippedItemsId;			// 38	SpellEquippedItems.dbc
-	uint32 SpellInterruptsId;				// 39	SpellInterrupts.dbc
-	uint32 SpellLevelsId;					// 40	SpellLevels.dbc
-	uint32 SpellPowerId;					// 41	SpellPower.dbc
-	uint32 SpellReagentsId;					// 42	SpellReagents.dbc
-	uint32 SpellShapeshiftId;				// 43	SpellShapeshift.dbc
-	uint32 SpellTargetRestrictionsId;		// 44	SpellTargetRestrictions.dbc
-	uint32 SpellTotemsId;					// 45	SpellTotems.dbc
-	//uint32 ResearchProject;				// 46	ResearchProject.dbc
-
-	/// Place Holders! Will be set later.
-	uint32 Category;
-	uint32 DispelType;
-	uint32 MechanicsType;
-	uint32 RequiredShapeShift;
-	uint32 NotAllowedShapeShift;
-	uint32 Targets;
-	uint32 TargetCreatureType;
-	uint32 RequiresSpellFocus;
-	uint32 FacingCasterFlags;
-	uint32 CasterAuraState;
-	uint32 TargetAuraState;
-	uint32 CasterAuraStateNot;
-	uint32 TargetAuraStateNot;
-	uint32 casterAuraSpell;
-	uint32 targetAuraSpell;
-	uint32 excludeCasterAuraSpell;
-	uint32 excludeTargetAuraSpell;
-	uint32 RecoveryTime;
-	uint32 CategoryRecoveryTime;
-	uint32 InterruptFlags;
-	uint32 AuraInterruptFlags;
-	uint32 ChannelInterruptFlags;
-	uint32 procFlags;
-	uint32 procChance;
-	uint32 procCharges;
-	uint32 maxLevel;
-	uint32 baseLevel;
-	uint32 spellLevel;
-	uint32 manaCost;
-	uint32 manaCostPerlevel;
-	uint32 manaPerSecond;
-	uint32 manaPerSecondPerLevel;
-	uint32 modalNextSpell;
-	uint32 maxstack;
-	uint32 Totem[2];
-	uint32 Reagent[8];
-	uint32 ReagentCount[8];
-	int32 EquippedItemClass;
-	uint32 EquippedItemSubClass;
-	uint32 RequiredItemFlags;
-	uint32 Effect[3];
-	uint32 EffectDieSides[3];
-	float  EffectRealPointsPerLevel[3];
-	int32  EffectBasePoints[3];
-	int32  EffectMechanic[3];
-	uint32 EffectImplicitTargetA[3];
-	uint32 EffectImplicitTargetB[3];
-	uint32 EffectRadiusIndex[3];
-	uint32 EffectApplyAuraName[3];
-	uint32 EffectAmplitude[3];
-	float  EffectMultipleValue[3];
-	uint32 EffectChainTarget[3];
-	uint32 EffectItemType[3];
-	uint32 EffectMiscValue[3];
-	uint32 EffectMiscValueB[3];
-	uint32 EffectTriggerSpell[3];
-	float  EffectPointsPerComboPoint[3];
-	uint32 EffectSpellClassMask[3][3];
-	uint32 spellPriority;
-	uint32 ManaCostPercentage;
-	uint32 StartRecoveryCategory;
-	uint32 StartRecoveryTime;
-	uint32 MaxTargetLevel;
-	uint32 SpellFamilyName;
-	uint32 SpellGroupType[3];
-	uint32 MaxTargets;
-	uint32 Spell_Dmg_Type;
-	uint32 PreventionType;
-	int32 StanceBarOrder;
-	float dmg_multiplier[3];
-	uint32 MinFactionID;
-	uint32 MinReputation;
-	uint32 RequiredAuraVision;
-	uint32 TotemCategory[2];
-	int32 AreaGroupId;
-	uint32 PowerDisplayId;
-
-#else
 	uint32 Id;							//0
 	uint32 Category;					//1
 	uint32 DispelType;					//2
@@ -874,7 +714,6 @@ struct SpellEntry
 //	uint32 spellDescriptionVariableID;	//238
 //	uint32 unk5;						//239
 	uint32 SpellDifficulty;
-#endif
 
 	/// CUSTOM: these fields are used for the modifications made in the world.cpp
 	uint32 proc_interval;				//!!! CUSTOM, Time(In MS) between proc's.
@@ -927,137 +766,6 @@ struct SpellEntry
 	// Crow: The following are customs made by me, mostly duplicate fields for handling more information.
 	uint32 procflags2; // We get two now, hurray. One does not take the place of the other.
 };
-
-#ifdef CATACLYSM
-
-// SpellScaling
-struct SpellScalingEntry
-{
-	uint32 Id;		// 0 m_ID
-	uint32 unk1;	// 1
-	uint32 unk2;	// 2
-	uint32 unk3;	// 3
-    uint32 unk4;	// 4 class?
-    float  unk5;	// 5
-    float  unk6;	// 6
-    float  unk7;	// 7
-    float  unk8;	// 8
-    float  unk9;	// 9
-    float  unk10;	// 10 all zeros
-    float  unk11;	// 11
-    float  unk12;	// 12 all zeros
-    float  unk13;	// 13 all zeros
-    float  unk14;	// 14
-    uint32 unk15;	// 15
-};
-
-// SpellReagents
-struct SpellReagentEntry
-{
-	uint32 ID;					// 0		Spell ID
-	uint32 Reagent[8];			// 1 - 8	Reagent ID
-	uint32 ReagentCount[8];		// 9 - 16	Reagent Count
-};
-
-// SpellTargetRestrictions
-struct SpellTargetRestrict
-{
-	//uint32 ID					// 0
-	uint32 MaxTargets;  		// 1
-	uint32 MaxTargetLevel;		// 2
-	uint32 TargetCreatureType;	// 3
-	uint32 Targets;				// 4
-};
-
-struct SpellAuraOptionEntry
-{
-	uint32 ID;
-	uint32 maxstack;
-	uint32 procChance;
-	uint32 procCharges;
-	uint32 procFlags;
-};
-
-struct SpellAuraRestrictionEntry
-{
-	uint32 ID;
-	uint32 CasterAuraState;
-	uint32 TargetAuraState;
-	uint32 CasterAuraStateNot;
-	uint32 TargetAuraStateNot;
-	uint32 casterAuraSpell;
-	uint32 targetAuraSpell;
-	uint32 excludeCasterAuraSpell; 
-	uint32 excludeTargetAuraSpell;
-};
-
-struct SpellCastingRequirementEntry
-{
-	uint32 ID;
-	uint32 FacingCasterFlags;
-	uint32 MinFactionID;
-	uint32 MinReputation;
-	int32 AreaGroupId;
-	uint32 RequiredAuraVision;
-	uint32 RequiresSpellFocus;
-};
-
-struct SpellCategoriesEntry
-{
-	uint32 ID;
-	uint32 Category;
-	uint32 Spell_Dmg_Type;
-	uint32 DispelType;
-	uint32 MechanicsType;
-	uint32 PreventionType;
-	uint32 StartRecoveryCategory;
-};
-
-struct SpellClassOptionEntry
-{
-	uint32 ID;
-	uint32 modalNextSpell;
-	uint32 SpellGroupType[3];
-	uint32 SpellFamilyName;
-};
-
-struct SpellCooldownEntry
-{
-	uint32 ID;
-	uint32 CategoryRecoveryTime;
-	uint32 RecoveryTime;
-	uint32 StartRecoveryTime;
-};
-
-struct SpellEffectEntry
-{
-	uint32 ID;
-	uint32 Effect;
-	float EffectMultipleValue;
-	uint32 EffectApplyAuraName;
-	uint32 EffectAmplitude;
-	int32 EffectBasePoints;
-	//float unk
-	float DmgMultiplier;
-	uint32 EffectChainTarget;
-	int32  EffectDieSides;
-	uint32 EffectItemType;
-	uint32 EffectMechanic;
-	int32 EffectMiscValue;
-	int32 EffectMiscValueB;
-	float EffectPointsPerComboPoint;
-	uint32 EffectRadiusIndex;
-	//uint32 unk_400
-	float  EffectRealPointsPerLevel;
-	uint32 EffectSpellClassMaskA[3];
-	uint32 EffectTriggerSpell;
-	uint32 EffectImplicitTargetA;
-	uint32 EffectImplicitTargetB;
-	uint32 EffectSpellId;
-	uint32 EffectIndex;
-};
-
-#endif
 
 struct SpellDifficultyEntry
 {
@@ -2029,8 +1737,6 @@ public:
 	}
 };
 
-#ifndef CATACLYSM
-
 extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
 extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
@@ -2094,79 +1800,6 @@ extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistri
 extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
 extern SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
-
-#else
-
-extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
-extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
-extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
-extern SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
-extern SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
-extern SERVER_DECL DBCStorage<Lock> dbcLock;
-extern SERVER_DECL DBCStorage<SpellEntry> dbcSpell;
-extern SERVER_DECL DBCStorage<SpellDuration> dbcSpellDuration;
-extern SERVER_DECL DBCStorage<SpellRange> dbcSpellRange;
-extern SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
-extern SERVER_DECL DBCStorage<SpellRuneCostEntry> dbcSpellRuneCost;
-extern SERVER_DECL DBCStorage<emoteentry> dbcEmoteEntry;
-extern SERVER_DECL DBCStorage<SpellRadius> dbcSpellRadius;
-extern SERVER_DECL DBCStorage<SpellCastTime> dbcSpellCastTime;
-extern SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
-extern SERVER_DECL DBCStorage<AreaTable> dbcArea;
-extern SERVER_DECL DBCStorage<FactionTemplateDBC> dbcFactionTemplate;
-extern SERVER_DECL DBCStorage<FactionDBC> dbcFaction;
-extern SERVER_DECL DBCStorage<EnchantEntry> dbcEnchant;
-extern SERVER_DECL DBCStorage<RandomProps> dbcRandomProps;
-extern SERVER_DECL DBCStorage<skilllinespell> dbcSkillLineSpell;
-extern SERVER_DECL DBCStorage<skilllineentry> dbcSkillLine;
-extern SERVER_DECL DBCStorage<DBCTaxiNode> dbcTaxiNode;
-extern SERVER_DECL DBCStorage<DBCTaxiPath> dbcTaxiPath;
-extern SERVER_DECL DBCStorage<DBCTaxiPathNode> dbcTaxiPathNode;
-extern SERVER_DECL DBCStorage<AuctionHouseDBC> dbcAuctionHouse;
-extern SERVER_DECL DBCStorage<TalentEntry> dbcTalent;
-extern SERVER_DECL DBCStorage<TalentTabEntry> dbcTalentTab;
-extern SERVER_DECL DBCStorage<CreatureDisplayInfo> dbcCreatureDisplayInfo;
-extern SERVER_DECL DBCStorage<CreatureSpellDataEntry> dbcCreatureSpellData;
-extern SERVER_DECL DBCStorage<CreatureFamilyEntry> dbcCreatureFamily;
-extern SERVER_DECL DBCStorage<CharClassEntry> dbcCharClass;
-extern SERVER_DECL DBCStorage<CharRaceEntry> dbcCharRace;
-extern SERVER_DECL DBCStorage<MapEntry> dbcMap;
-extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
-extern SERVER_DECL DBCStorage<ItemExtendedCostEntry> dbcItemExtendedCost;
-extern SERVER_DECL DBCStorage<ItemRandomSuffixEntry> dbcItemRandomSuffix;
-extern SERVER_DECL DBCStorage<CombatRatingDBC> dbcCombatRating;
-extern SERVER_DECL DBCStorage<ChatChannelDBC> dbcChatChannels;
-extern SERVER_DECL DBCStorage<DurabilityCostsEntry> dbcDurabilityCosts;
-extern SERVER_DECL DBCStorage<DurabilityQualityEntry> dbcDurabilityQuality;
-extern SERVER_DECL DBCStorage<BankSlotPrice> dbcBankSlotPrices;
-extern SERVER_DECL DBCStorage<BarberShopStyleEntry> dbcBarberShopStyle;
-extern SERVER_DECL DBCStorage<gtFloat> dbcBarberShopPrices;
-extern SERVER_DECL DBCStorage<gtFloat> dbcMeleeCrit;
-extern SERVER_DECL DBCStorage<gtFloat> dbcMeleeCritBase;
-extern SERVER_DECL DBCStorage<gtFloat> dbcSpellCrit;
-extern SERVER_DECL DBCStorage<gtFloat> dbcSpellCritBase;
-extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegen;
-extern SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
-extern SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
-extern SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
-extern SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
-extern SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
-extern SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
-extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistribution;
-extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
-extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
-extern SERVER_DECL DBCStorage<SpellTargetRestrict> dbcSpellTargetRestrict;
-extern SERVER_DECL DBCStorage<SpellReagentEntry> dbcSpellReagents;
-extern SERVER_DECL DBCStorage<SpellAuraOptionEntry> dbcSpellAuraOptions;
-extern SERVER_DECL DBCStorage<SpellAuraRestrictionEntry> dbcSpellAuraRestrict;
-extern SERVER_DECL DBCStorage<SpellCastingRequirementEntry> dbcSpellCastingReq;
-extern SERVER_DECL DBCStorage<SpellCategoriesEntry> dbcSpellCategories;
-extern SERVER_DECL DBCStorage<SpellClassOptionEntry> dbcSpellClassOptions;
-extern SERVER_DECL DBCStorage<SpellCooldownEntry> dbcSpellCooldowns;
-extern SERVER_DECL DBCStorage<SpellEffectEntry> dbcSpellEffect;
-extern SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
-
-#endif
 
 bool LoadRSDBCs(const char* datapath);
 bool LoadDBCs(const char* datapath);

@@ -89,8 +89,9 @@ bool WintergraspInternal::run()
 	dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
 	last_countertime = UNIXTIME;
 	dupe_tm_pointer(localtime(&last_countertime), &local_last_countertime);
-	m_timer = 180000; // 3 hours. TODO: sWorld.WintergraspHourInterval*60*1000
+	uint32 interval = 5*60*1000;
 	uint32 counter = 0;
+	m_timer = 180000; // 3 hours. TODO: sWorld.WintergraspHourInterval*60*1000
 
 	Log.Notice("WintergraspInternal", "Wintergrasp Handler Initiated.");
 
@@ -109,6 +110,7 @@ bool WintergraspInternal::run()
 					++WGCounter;
 					Log.Notice("WintergraspInternal", "Starting Wintergrasp.");
 					WG = Wintergrasp::Create(this, WGMgr);
+					interval = interval/10;
 				}
 				counter = 0; // Reset our timer.
 				forcestart_WG = false;
@@ -123,10 +125,13 @@ bool WintergraspInternal::run()
 		if(!m_threadRunning)
 			break;
 #ifdef WIN32
-		WaitForSingleObject(m_abortEventWGI, 30000); // 30 second delay.
+		WaitForSingleObject(m_abortEventWGI, interval); // 5min/30sec delay.
 #else
-		Sleep( 30000 );
+		Sleep( interval );
 #endif
+		if(!m_threadRunning)
+			break;
+
 		if(WG && WG_started)
 		{
 			MatchTimer = (MatchTimer - 30000);
@@ -138,7 +143,10 @@ bool WintergraspInternal::run()
 			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumVehicles(HORDE));
 			SendWSUpdateToAll(H_NUMVEH_WORLDSTATE, WG->GetNumWorkshops(HORDE)*4);
 			if(MatchTimer <= 0)
+			{
+				interval = interval*10;
 				GetWintergrasp()->ForceEnd();
+			}
 		}
 	}
 	return false;

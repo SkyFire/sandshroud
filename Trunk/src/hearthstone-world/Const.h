@@ -21,12 +21,7 @@
 #define __CONST_H__
 
 #define NUM_MAPS 750
-
-#ifdef CATACLYSM
-#define CL_BUILD_SUPPORT 13205
-#else
 #define CL_BUILD_SUPPORT 12340
-#endif
 
 class Database;
 class CBattleground;

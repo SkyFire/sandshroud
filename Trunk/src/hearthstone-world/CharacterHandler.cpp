@@ -320,13 +320,6 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	if( (race == RACE_GOBLIN || race == RACE_WORGEN) && !HasFlag(ACCOUNT_FLAG_XPACK_03) )
-	{
-		data << uint8(CHAR_CREATE_EXPANSION);
-		SendPacket(&data);
-		return;
-	}
-
 	QueryResult * result = CharacterDatabase.Query("SELECT COUNT(*) FROM banned_names WHERE name = '%s'", CharacterDatabase.EscapeString(name).c_str());
 	if(result)
 	{
@@ -813,11 +806,7 @@ void WorldSession::FullLogin(Player* plr)
 	plr->m_playerInfo = info;
 	if(plr->m_playerInfo->guild)
 	{
-#ifndef CATACLYSM
 		plr->m_uint32Values[PLAYER_GUILDID] = plr->m_playerInfo->guild->GetGuildId();
-#else
-		plr->GuildId = plr->m_playerInfo->guild->GetGuildId();
-#endif
 		plr->m_uint32Values[PLAYER_GUILDRANK] = plr->m_playerInfo->guildRank->iId;
 	}
 
@@ -1003,7 +992,7 @@ void WorldSession::FullLogin(Player* plr)
 	if(info->m_Group)
 		info->m_Group->Update();
 
-	if((plr->getLevel() >= 10) && !HasGMPermissions())
+	if(!sWorld.m_blockgmachievements || !HasGMPermissions())
 	{
 		// Retroactive: Level achievement
 		plr->GetAchievementInterface()->HandleAchievementCriteriaLevelUp( plr->getLevel() );

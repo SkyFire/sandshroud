@@ -82,10 +82,8 @@ enum Races
 	RACE_TAUREN = 6,
 	RACE_GNOME = 7,
 	RACE_TROLL = 8,
-	RACE_GOBLIN	= 9,
 	RACE_BLOODELF = 10,
-	RACE_DRAENEI = 11,
-	RACE_WORGEN	= 22
+	RACE_DRAENEI = 11
 };
 
 enum PlayerStatus
@@ -901,11 +899,7 @@ public:
 	/************************************************************************/
 	bool HasQuests()
 	{
-#ifdef CATACLYSM
-		for(int i = 0; i < 50; i++)
-#else
 		for(int i = 0; i < 25; i++)
-#endif
 		{
 			if(m_questlog[i] != 0)
 				return true;
@@ -946,12 +940,7 @@ public:
 	uint32 GetQuestSlotQuestId(uint16 slot) const { return GetUInt32Value(PLAYER_QUEST_LOG_1_1 + slot * 5 + (uint32)NULL); }
 
 	//Quest related variables
-#ifdef CATACLYSM
-	QuestLogEntry*		m_questlog[50];
-#else
 	QuestLogEntry*		m_questlog[25];
-#endif
-
 	std::set<uint32>	m_QuestGOInProgress;
 	std::set<uint32>	m_removequests;
 	std::set<uint32>	m_finishedQuests;
@@ -1134,7 +1123,6 @@ public:
 	/************************************************************************/
 	/* Guilds																*/
 	/************************************************************************/
-#ifndef CATACLYSM
 	HEARTHSTONE_INLINE bool		IsInGuild() {return (m_uint32Values[PLAYER_GUILDID] != 0) ? true : false;}
 	HEARTHSTONE_INLINE uint32	GetGuildId() { return m_uint32Values[PLAYER_GUILDID]; }
 	void						SetGuildId(uint32 guildId);
@@ -1143,17 +1131,6 @@ public:
 	uint32						GetGuildInvitersGuid() { return m_invitersGuid; }
 	void						SetGuildInvitersGuid( uint32 guid ) { m_invitersGuid = guid; }
 	void						UnSetGuildInvitersGuid() { m_invitersGuid = 0; }
-#else
-	uint32 GuildId;
-	HEARTHSTONE_INLINE bool		IsInGuild() {return (GuildId != 0 ? true : false);}
-	HEARTHSTONE_INLINE uint32	GetGuildId() { return GuildId; }
-	void						SetGuildId(uint32 guildId) { GuildId = guildId; };
-	HEARTHSTONE_INLINE uint32	GetGuildRank() { return m_uint32Values[PLAYER_GUILDRANK]; }
-	void						SetGuildRank(uint32 guildRank);
-	uint32						GetGuildInvitersGuid() { return m_invitersGuid; }
-	void						SetGuildInvitersGuid( uint32 guid ) { m_invitersGuid = guid; }
-	void						UnSetGuildInvitersGuid() { m_invitersGuid = 0; }
-#endif
 
 	// You better have guild checks before this or its gonna crash.
 	map<PlayerInfo*, GuildMember*>::iterator GetGuildMembersBegin() { return m_playerInfo->guild->GetGuildMembersBegin(); }

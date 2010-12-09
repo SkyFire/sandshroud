@@ -732,7 +732,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 		{
 			Menu->AddItem(GOSSIP_ICON_GOSSIP_ENGINEER2, "Make this inn your home.", 5);
 			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "What can I do at an Inn.", 15);
-			if(sWorld.Halloween)
+			if(sWorld.HallowsEnd)
 			{
 				if(!Plr->HasAura(24755)) // Trick or Treat
 					Menu->AddItem(0, "Trick or Treat!", 19);

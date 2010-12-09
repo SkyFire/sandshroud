@@ -153,32 +153,14 @@ bool DayWatcherThread::run()
 	_firstrun[1] = true;
 	m_heroic_reset = false;
 
-	uint32 interv = 120000;//Daywatcher check interval (in ms), must be >> 30secs !
-
-#ifdef WIN32
-	m_abortEvent = CreateEvent(NULL, NULL, FALSE, NULL);
-#else
-	struct timeval now;
-	struct timespec tv;
-
-	pthread_mutex_init(&abortmutex,NULL);
-	pthread_cond_init(&abortcond,NULL);
-#endif
+	// Crow: Breaking this shit into 4
+	uint32 interv = 120000/4;//Daywatcher check interval (in ms), must be >> 30secs !
 
 	while(m_threadRunning)
 	{
 		m_busy = true;
 		currenttime = UNIXTIME;
 		dupe_tm_pointer(localtime(&currenttime), &local_currenttime);
-
-		// Crow: Halloween is the 10th month, but we use months since the first, so 9.
-		if(local_currenttime.tm_mon == 9)
-		{
-			if(local_currenttime.tm_mday == 31)
-				sWorld.Halloween = true;
-			else if(sWorld.Halloween)
-				sWorld.Halloween = false;
-		}
 
 		if(has_timeout_expired(&local_currenttime, &local_last_arena_time, arena_period))
 			update_arena();
@@ -201,31 +183,41 @@ bool DayWatcherThread::run()
 		if(m_dirty)
 			update_settings();
 
-		m_busy = false;
-		if(!m_threadRunning)
-			break;
+		CheckSpecialTimes(&local_currenttime);
 
-#ifdef WIN32
-		if (m_abortEvent)
-			WaitForSingleObject(m_abortEvent, interv);
-#else
-		gettimeofday(&now, NULL);
-		tv.tv_sec = now.tv_sec + 120;
-		tv.tv_nsec = now.tv_usec * 1000;
-		pthread_mutex_lock(&abortmutex);
-		pthread_cond_timedwait(&abortcond, &abortmutex, &tv);
-		pthread_mutex_unlock(&abortmutex);
-#endif
+		m_busy = false;
+
 		if(!m_threadRunning)
 			break;
-	}
 #ifdef WIN32
-	if (m_abortEvent)
-		CloseHandle(m_abortEvent);		
+		WaitForSingleObject(m_abortEvent, interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
+		WaitForSingleObject(m_abortEvent, interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
+		WaitForSingleObject(m_abortEvent, interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
+		WaitForSingleObject(m_abortEvent, interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
 #else
-	pthread_mutex_destroy(&abortmutex);
-	pthread_cond_destroy(&abortcond);
+		Sleep(interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
+		Sleep(interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
+		Sleep(interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
+		Sleep(interv); // 30 second delay.
+		if(!m_threadRunning)
+			break;
 #endif
+	}
+
 	return true;
 }
 
@@ -364,4 +356,49 @@ void DayWatcherThread::Reset_Heroic_Instances()
 {
 	Log.Notice("DayWatcherThread", "Reseting heroic instances...");
 	sInstanceMgr.ResetHeroicInstances();
+}
+
+void DayWatcherThread::CheckSpecialTimes(tm*time)
+{
+	switch(time->tm_mon)
+	{
+	case 9:
+		{
+			if(!sWorld.HallowsEnd)
+				if(time->tm_mday == 31)
+					sWorld.SpawnHallowsEnd(true);
+		}break;
+	case 10:
+		{
+			// No need for a date check.
+			if(sWorld.HallowsEnd)
+				sWorld.SpawnHallowsEnd(false);
+		}break;
+	case 11:
+		{
+			if(!sWorld.WintersVeil)
+				if(time->tm_mday == 25)
+					sWorld.SpawnWintersVeil(true);
+			if(time->tm_mday == 26)
+				if(sWorld.WintersVeil)
+					sWorld.SpawnWintersVeil(false);
+		}break;
+	}
+
+	switch(time->tm_year)
+	{
+		// Crow: TODO: Date requirements... Oh well.
+	case 108: // 4th Anniversary
+		{
+			sWorld.SetAnniversary(4);
+		}break;
+	case 109: // 5th Anniversary
+		{
+			sWorld.SetAnniversary(5);
+		}break;
+	case 110: // 6th Anniversary
+		{
+			sWorld.SetAnniversary(6);
+		}break;
+	}
 }

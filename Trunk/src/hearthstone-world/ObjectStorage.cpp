@@ -29,7 +29,7 @@ f = float
 s = string
 x = skip
 */
-const char * gAchievementRewardFormat					= "uuuu";
+const char * gAchievementRewardFormat					= "uuuubuss";
 const char * gAreaTriggerFormat							= "ucuusffffuu";
 const char * gCreatureNameFormat						= "usssuuuuuuuuuuuffcc";
 const char * gCreatureProtoFormat						= "uuuuuucufuuuffuffuuuuuuuuuuuffsuiuufffuuiuc";

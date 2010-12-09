@@ -1328,8 +1328,6 @@ int16 ItemInterface::GetInventorySlotById(uint32 ID)
 			}
 		}
 	}
-#ifndef CATACLYSM
-
 	ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(ID);
 	if(proto->BagFamily & ITEM_TYPE_CURRENCY)
 	{
@@ -1339,7 +1337,6 @@ int16 ItemInterface::GetInventorySlotById(uint32 ID)
 			return (CURRENCYTOKEN_SLOT_START + (store->BitIndex - 1));
 		}
 	}
-#endif
 
 	return ITEM_NO_SLOT_AVAILABLE;
 }
@@ -1370,8 +1367,6 @@ int16 ItemInterface::GetInventorySlotByGuid(uint64 guid)
 			}
 		}
 	}
-#ifndef CATACLYSM
-
 	ItemPrototype* proto = GetItemByGUID(guid) ? GetItemByGUID(guid)->GetProto() : NULL;
 	if(proto && proto->BagFamily & ITEM_TYPE_CURRENCY)
 	{
@@ -1381,7 +1376,6 @@ int16 ItemInterface::GetInventorySlotByGuid(uint64 guid)
 			return (CURRENCYTOKEN_SLOT_START + (store->BitIndex - 1));
 		}
 	}
-#endif
 
 	return ITEM_NO_SLOT_AVAILABLE; //was changed from 0 cuz 0 is the slot for head
 }
@@ -1461,7 +1455,6 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 				}
 			}
 		}
-#ifndef CATACLYSM
 		else if( item->GetProto()->BagFamily & ITEM_TYPE_CURRENCY )
 		{
 			CurrencyTypesEntry* currency = dbcCurrencyTypesStore.LookupEntry(item->GetProto()->ItemId);
@@ -1507,7 +1500,6 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 				}
 			}
 		}
-#endif
 		else
 		{
 			for(i=INVENTORY_SLOT_BAG_START;i<INVENTORY_SLOT_BAG_END;++i)
@@ -2227,7 +2219,6 @@ void ItemInterface::BuyItem(ItemPrototype *item, uint32 total_amount, Creature* 
 
 		int32 val = (int32)(ec->honor * total_amount);
 
-#ifndef CATACLYSM
 		if( m_pOwner->GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY) >= (uint32)val )
 		{
 			m_pOwner->ModUnsigned32Value( PLAYER_FIELD_HONOR_CURRENCY, -val );
@@ -2240,7 +2231,6 @@ void ItemInterface::BuyItem(ItemPrototype *item, uint32 total_amount, Creature* 
 			m_pOwner->ModUnsigned32Value( PLAYER_FIELD_ARENA_CURRENCY, -val );
 			m_pOwner->m_arenaPoints -= val;
 		}
-#endif
 	}
 }
 
@@ -2271,12 +2261,10 @@ int8 ItemInterface::CanAffordItem(ItemPrototype * item,uint32 amount, Creature* 
 			}
 		}
 
-#ifndef CATACLYSM
 		if(m_pOwner->GetUInt32Value(PLAYER_FIELD_HONOR_CURRENCY) < (ec->honor*amount))
 			return CAN_AFFORD_ITEM_ERROR_DONT_HAVE_ENOUGH_MONEY;
 		if(m_pOwner->GetUInt32Value(PLAYER_FIELD_ARENA_CURRENCY ) < (ec->arena*amount))
 			return CAN_AFFORD_ITEM_ERROR_DONT_HAVE_ENOUGH_MONEY;
-#endif
  		if(m_pOwner->GetMaxPersonalRating() < ec->personalrating)
 			return CAN_AFFORD_ITEM_ERROR_NOT_REQUIRED_RANK;
 	}
@@ -3074,7 +3062,6 @@ SlotResult ItemInterface::FindFreeInventorySlot(ItemPrototype *proto)
 					}
 				}
 			}
-#ifndef CATACLYSM
 			else if( proto->BagFamily & ITEM_TYPE_CURRENCY )
 			{
 				CurrencyTypesEntry* store = dbcCurrencyTypesStore.LookupEntry(proto->ItemId);
@@ -3086,7 +3073,6 @@ SlotResult ItemInterface::FindFreeInventorySlot(ItemPrototype *proto)
 					return result;
 				}
 			}
-#endif
 			else
 			{
 				for( uint32 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++ )

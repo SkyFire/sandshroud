@@ -240,11 +240,7 @@ void Player::Init()
 	mOutOfRangeIdCount				= 0;
 	bProcessPending					= false;
 
-#ifdef CATACLYSM
-	for(int i = 0; i < 50; i++)
-#else
 	for(int i = 0; i < 25; i++)
-#endif
 		m_questlog[i] = NULL;
 
 	CurrentGossipMenu				= NULL;
@@ -486,11 +482,7 @@ Player::~Player ( )
 
 	CleanupChannels();
 
-#ifdef CATACLYSM
-	for(int i = 0; i < 50; i++)
-#else
 	for(int i = 0; i < 25; i++)
-#endif
 	{
 		if(m_questlog[i] != NULL)
 		{
@@ -655,8 +647,7 @@ bool Player::Create(WorldPacket& data )
 	}
 
 	// check that the account CAN create TBC or Cata characters, if we're making some
-	if((race >= RACE_GOBLIN && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01)) ||
-		(race == RACE_GOBLIN || race == RACE_WORGEN && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03)))
+	if(race >= RACE_BLOODELF && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01))
 	{
 		WorldPacket data(SMSG_CHAR_CREATE, 1);
 		data << uint8(CHAR_CREATE_ERROR);
@@ -2267,11 +2258,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES1) << ","
 	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES2) << ","
 	<< m_uint32Values[PLAYER_FIELD_COINAGE] << ","
-#ifndef CATACLYSM
 	<< m_uint32Values[PLAYER_AMMO_ID] << ","
-#else
-	<< uint32(0) << ","
-#endif
 	<< m_uint32Values[PLAYER_CHARACTER_POINTS+1] << ","
 	<< m_maxTalentPoints << ","
 	<< load_health << ","
@@ -2795,11 +2782,7 @@ void Player::_SaveQuestLogEntry(QueryBuffer * buf)
 	}
 	m_removequests.clear();
 
-#ifdef CATACLYSM
-	for(int i = 0; i < 50; i++)
-#else
 	for(int i = 0; i < 25; i++)
-#endif
 	{
 		if(m_questlog[i] != NULL)
 			m_questlog[i]->SaveToDB(buf);
@@ -3151,11 +3134,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES1, get_next_field.GetUInt64() );
 	SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES2, get_next_field.GetUInt64() );
 	m_uint32Values[PLAYER_FIELD_COINAGE]				= get_next_field.GetUInt32();
-#ifndef CATACLYSM
 	m_uint32Values[PLAYER_AMMO_ID]						= get_next_field.GetUInt32();
-#else
-	get_next_field;
-#endif
 	m_uint32Values[PLAYER_CHARACTER_POINTS+1]			= get_next_field.GetUInt32();
 	m_maxTalentPoints									= get_next_field.GetUInt16();
 	load_health											= get_next_field.GetUInt32();
@@ -3691,15 +3670,6 @@ bool Player::CanFlyInCurrentZoneOrMap()
 			return true;
 	}
 
-#ifdef CATACLYSM
-	//	 EK,				Kal,			Deepholm
-	if(!GetMapId() || GetMapId() == 1 || GetMapId() == 646)
-	{
-		if(HasSpell(90267))
-			return true;
-	}
-#endif
-
 	return false;
 }
 
@@ -3717,11 +3687,7 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 	uint32 baseindex;
 
 	// clear all fields
-#ifdef CATACLYSM
-	for(int i = 0; i < 50; i++)
-#else
 	for(int i = 0; i < 25; i++)
-#endif
 	{
 		baseindex = PLAYER_QUEST_LOG_1_1 + (i * 5);
 		SetUInt32Value(baseindex + 0, 0);
@@ -3751,11 +3717,7 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 			if(m_questlog[slot] != 0)
 				continue;
 
-#ifdef CATACLYSM
-			if(slot >= 50)
-#else
 			if(slot >= 25)
-#endif
 				break;
 
 			entry = NULL;
@@ -3770,11 +3732,7 @@ void Player::_LoadQuestLogEntry(QueryResult * result)
 
 QuestLogEntry* Player::GetQuestLogForEntry(uint32 quest)
 {
-#ifdef CATACLYSM
-	for(int i = 0; i < 50; i++)
-#else
 	for(int i = 0; i < 25; i++)
-#endif
 	{
 		if(m_questlog[i] == ((QuestLogEntry*)0x00000001))
 			m_questlog[i] = NULL;
@@ -3798,12 +3756,7 @@ QuestLogEntry* Player::GetQuestLogForEntry(uint32 quest)
 
 void Player::SetQuestLogSlot(QuestLogEntry *entry, uint32 slot)
 {
-#ifdef CATACLYSM
-	ASSERT(slot < 50);
-#else
 	ASSERT(slot < 25);
-#endif
-
 	m_questlog[slot] = entry;
 }
 
@@ -4007,6 +3960,14 @@ void Player::OnPushToWorld()
 		if(info != NULL && (info->phasehorde == 0 && info->phasealliance == 0 ))
 			if(GetPhase() == 1)
 				SetPhase(GetPhaseForArea(GetAreaID()), false);
+	}
+
+	if(!sWorld.m_blockgmachievements || !GetSession()->HasGMPermissions())
+	{
+		if(sWorld.RealAchievement && !GetAchievementInterface()->HasAchievement(sWorld.AnniversaryAchievement))
+		{	// Doh!
+			GetAchievementInterface()->ForceEarnedAchievement(sWorld.AnniversaryAchievement);
+		}
 	}
 }
 
@@ -5189,11 +5150,7 @@ bool Player::IsGroupMember(Player* plyr)
 
 int32 Player::GetOpenQuestSlot()
 {
-#ifdef CATACLYSM
-	for(uint32 i = 0; i < 50; i++)
-#else
 	for(uint32 i = 0; i < 25; i++)
-#endif
 		if (m_questlog[i] == NULL)
 			return i;
 
@@ -5226,11 +5183,7 @@ void Player::ResetDailyQuests()
 {
 	m_finishedDailyQuests.clear();
 
-#ifdef CATACLYSM
-	for(uint32 i = 0; i < 50; i++)
-#else
 	for(uint32 i = 0; i < 25; i++)
-#endif
 		SetUInt32Value(PLAYER_FIELD_DAILY_QUESTS_1 + i, 0);
 }
 
@@ -6268,11 +6221,7 @@ void Player::LoadTaxiMask(const char* data)
 bool Player::HasQuestForItem(uint32 itemid)
 {
 	Quest *qst;
-#ifdef CATACLYSM
-	for(uint32 i = 0; i < 50; i++)
-#else
 	for(uint32 i = 0; i < 25; i++)
-#endif
 	{
 		if( m_questlog[i] != NULL )
 		{
@@ -6597,7 +6546,6 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 		return -1;
 
 	Item* itm = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_RANGED );
-#ifndef CATACLYSM
 	if( RequireAmmo ) // Check ammo
 	{
 		if( itm == NULL )
@@ -6611,7 +6559,6 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 		if( ammo && ranged && ammo->SubClass != ranged->AmmoType )
 			return SPELL_FAILED_NEED_AMMO;
 	}
-#endif
 
 	// Player has clicked off target. Fail spell.
 	if( m_curSelection != m_AutoShotTarget )
@@ -6804,11 +6751,7 @@ void Player::EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_sl
 }
 void Player::RemoveQuestsFromLine(uint32 skill_line)
 {
-#ifdef CATACLYSM
-	for(int i = 0; i < 50; i++)
-#else
 	for(int i = 0; i < 25; i++)
-#endif
 	{
 		if (m_questlog[i])
 		{
@@ -9245,8 +9188,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 	if( force_new_world )
 	{
 		//Do we need TBC expansion?
-		if(mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02)
-			&& !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03))
+		if(mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
 		{
 			WorldPacket msg(SMSG_MOTD, 50);
 			msg << uint32(3) << "You must have The Burning Crusade Expansion to access this content." << uint8(0);
@@ -9255,19 +9197,10 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 		}
 
 		//Do we need WOTLK expansion?
-		if(mi->flags & WMI_INSTANCE_XPACK_02 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03))
+		if(mi->flags & WMI_INSTANCE_XPACK_02 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
 		{
 			WorldPacket msg(SMSG_MOTD, 50);
 			msg << uint32(3) << "You must have Wrath of the Lich King Expansion to access this content." << uint8(0);
-			m_session->SendPacket(&msg);
-			return false;
-		}
-
-		//Do we need Cataclysm expansion?
-		if(mi->flags & WMI_INSTANCE_XPACK_03 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_03))
-		{
-			WorldPacket msg(SMSG_MOTD, 50);
-			msg << uint32(3) << "You must have World of Warcraft: Cataclysm to access this content." << uint8(0);
 			m_session->SendPacket(&msg);
 			return false;
 		}
@@ -9333,7 +9266,6 @@ void Player::SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase)
 	}
 }
 
-#ifndef CATACLYSM
 void Player::SetGuildId(uint32 guildId)
 {
 	if(IsInWorld())
@@ -9347,7 +9279,6 @@ void Player::SetGuildId(uint32 guildId)
 		SetUInt32Value(PLAYER_GUILDID,guildId);
 	}
 }
-#endif
 
 void Player::SetGuildRank(uint32 guildRank)
 {
@@ -10248,7 +10179,6 @@ void Player::CalcDamage()
 			ap_bonus = GetRAP()/14000.0f;
 			bonus = ap_bonus*it->GetProto()->Delay;
 
-#ifndef CATACLYSM
 			if(GetUInt32Value(PLAYER_AMMO_ID) && RequireAmmo)
 			{
 				ItemPrototype * xproto=ItemPrototypeStorage.LookupEntry(GetUInt32Value(PLAYER_AMMO_ID));
@@ -10257,7 +10187,6 @@ void Player::CalcDamage()
 					bonus+=((xproto->Damage[0].Min+xproto->Damage[0].Max)*it->GetProto()->Delay)/2000.0f;
 				}
 			}
-#endif
 		}else bonus = 0;
 
 		r = BaseRangedDamage[0]+delta+bonus;
@@ -13227,24 +13156,15 @@ void Player::SetTaximaskNode(uint32 nodeidx, bool Unset)
 
 uint16 Player::FindQuestSlot( uint32 questid )
 {
-#ifdef CATACLYSM
-	for(uint16 i = 0; i < 50; i++)
-#else
 	for(uint16 i = 0; i < 25; i++)
-#endif
 		if( (GetUInt32Value(PLAYER_QUEST_LOG_1_1 + i * 5)) == questid )
 			return i;
 
-#ifdef CATACLYSM
 	return 25;
-#else
-	return 50;
-#endif
 }
 
 void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 {
-#ifndef CATACLYSM
 	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
 	{
 		if(ctEntry)
@@ -13263,7 +13183,6 @@ void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 			}
 		}
 	}
-#endif
 }
 
 uint32 Player::GetTotalItemLevel()

@@ -78,6 +78,10 @@ struct AchievementReward
 	uint32 AllianceTitle;
 	uint32 HordeTitle;
 	uint32 ItemID;
+	bool MailMessage;
+	uint32 SenderEntry;
+	char* MessageHeader;
+	char* MessageBody;
 };
 
 struct ProfessionDiscovery

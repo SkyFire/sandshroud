@@ -94,9 +94,6 @@
 // Crow: This will nerf all Enchantments, making all of them pretty much unique internally.
 //#define NERF_ENCHANTS
 
-// Crow: Almost ready.
-//#define CATACLYSM
-
 // Crow: Yea no, don't even try.
 //#define LOAD_LACRIMI
 

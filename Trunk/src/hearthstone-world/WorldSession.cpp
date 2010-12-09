@@ -1186,10 +1186,6 @@ uint8 WorldSession::CheckTeleportPrerequisites(AreaTrigger * pAreaTrigger, World
 	if(!pSession->HasFlag(ACCOUNT_FLAG_XPACK_02) && pMapInfo->HasFlag(WMI_INSTANCE_XPACK_02))
 		return AREA_TRIGGER_FAILURE_NO_WOTLK;
 
-	//Do we need Cataclysm expansion?
-	if(!pSession->HasFlag(ACCOUNT_FLAG_XPACK_03) && pMapInfo->HasFlag(WMI_INSTANCE_XPACK_03))
-		return 17;
-
 	//Do we meet the areatrigger level requirements?
 	if( pAreaTrigger != NULL && pAreaTrigger->required_level && pPlayer->getLevel() < pAreaTrigger->required_level)
 		return AREA_TRIGGER_FAILURE_LEVEL;

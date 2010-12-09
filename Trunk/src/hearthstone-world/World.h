@@ -210,8 +210,7 @@ enum WorldMapInfoFlag
 	WMI_INSTANCE_WELCOME	= 0x2,
 	WMI_INSTANCE_MULTIMODE	= 0x4,
 	WMI_INSTANCE_XPACK_01	= 0x8, //The Burning Crusade expansion
-	WMI_INSTANCE_XPACK_02	= 0x10, //Wrath of the Lich King expansion
-	WMI_INSTANCE_XPACK_03	= 0x20, //Cataclysm expansion
+	WMI_INSTANCE_XPACK_02	= 0x10 //Wrath of the Lich King expansion
 };
 
 enum AccountFlags
@@ -220,8 +219,7 @@ enum AccountFlags
 	ACCOUNT_FLAG_NO_AUTOJOIN	= 0x2,
 	//ACCOUNT_FLAG_XTEND_INFO	= 0x4,
 	ACCOUNT_FLAG_XPACK_01		= 0x8,
-	ACCOUNT_FLAG_XPACK_02		= 0x10,
-	ACCOUNT_FLAG_XPACK_03		= 0x20,
+	ACCOUNT_FLAG_XPACK_02		= 0x10
 };
 
 #pragma pack(push,1)
@@ -623,7 +621,6 @@ public:
 	bool AHEnabled;
 	int LogonServerType;
 
-	bool Halloween;
 	uint32 mInWorldPlayerCount;
 	uint32 mAcceptedConnections;
 	uint32 SocketSendBufSize;
@@ -781,6 +778,7 @@ public:
 	list<SpellEntry*> dummyspells;
 	bool m_limitedNames;
 	bool m_useAccountData;
+	bool m_blockgmachievements;
 
 	char * m_banTable;
 
@@ -844,6 +842,17 @@ public:
 		return true;
 	}
 	bool QueryLog;
+
+public: // Events! :D
+	void SetAnniversary(uint32 anniversarynumber);
+	uint32 AnniversaryAchievement;
+	bool RealAchievement;
+
+	void SpawnHallowsEnd(bool apply) { HallowsEnd = apply; };
+	bool HallowsEnd;
+
+	void SpawnWintersVeil(bool apply) { WintersVeil = apply; };
+	bool WintersVeil;
 };
 
 #define sCLT CharacterLoaderThread::getSingleton()

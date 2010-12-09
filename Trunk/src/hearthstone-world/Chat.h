@@ -78,13 +78,7 @@ enum ChatMsg
 	CHAT_MSG_ACHIEVEMENT							= 47,
 	CHAT_MSG_GUILD_ACHIEVEMENT						= 48,
 	CHAT_MSG_UNK50									= 50,
-	CHAT_MSG_PARTY_LEADER							= 51,
-#ifdef CATACLYSM
-	CHAT_MSG_UNK52									= 52,
-	CHAT_MSG_BN_WISPER								= 53,
-	CHAT_MSG_BN_WISPER_INFORM						= 54,
-	CHAT_MSG_BN_CONVERSATION						= 55
-#endif
+	CHAT_MSG_PARTY_LEADER							= 51
 };
 
 enum Languages

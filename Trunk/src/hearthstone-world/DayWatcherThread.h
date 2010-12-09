@@ -64,6 +64,7 @@ public:
 	void update_arena();
 	void update_daily();
 	void Reset_Heroic_Instances();
+	void CheckSpecialTimes(tm*time);
 };
 
 #define sDayWatcher DayWatcherThread::getSingleton()

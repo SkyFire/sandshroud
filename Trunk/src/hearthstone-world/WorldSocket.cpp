@@ -29,24 +29,14 @@
 
 struct ClientPktHeader
 {
-#ifdef CATACLYSM
 	uint16 size;
 	uint32 cmd;
-#else
-	uint16 size;
-	uint32 cmd;
-#endif
 };
 
 struct ServerPktHeader
 {
-#ifdef CATACLYSM
 	uint16 size;
 	uint16 cmd;
-#else
-	uint16 size;
-	uint16 cmd;
-#endif
 };
 
 #pragma pack(pop)
@@ -244,12 +234,6 @@ void WorldSocket::OnConnect()
 	data << uint32(0x6E8547B9);	// 3.2.2
 	data << uint32(0x9A6AA2F8);	// 3.2.2
 	data << uint32(0xA4F170F4);	// 3.2.2
-#ifdef CATACLYSM
-	data << uint32(0xF3632DA3);	// 4
-	data << uint32(0x278BB343);	// 4
-	data << uint32(0x97EEF2F8);	// 4
-	data << uint32(0x82FE26F4);	// 4
-#endif
 	SendPacket(&data);
 }
 
@@ -502,11 +486,7 @@ void WorldSocket::Authenticate()
 		return;
 	}
 
-	// Crow: Cata account flags = Wotlk account flags till Cata Release.
-	if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_03))
-		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
-//		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x03");
-	else if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_02))
+	if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_02))
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
 	else if(pSession->HasFlag(ACCOUNT_FLAG_XPACK_01))
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x01");
@@ -871,10 +851,6 @@ bool BuildCallBackForMangos(WorldPacket & data, string name)
 
 		case 2:
 			AccountFlags = ACCOUNT_FLAG_XPACK_01|ACCOUNT_FLAG_XPACK_02;
-			break;
-
-		case 3:
-			AccountFlags = ACCOUNT_FLAG_XPACK_01|ACCOUNT_FLAG_XPACK_02|ACCOUNT_FLAG_XPACK_03;
 			break;
 		}
 

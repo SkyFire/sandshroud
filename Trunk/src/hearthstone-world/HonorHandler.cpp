@@ -80,7 +80,7 @@ void HonorHandler::OnPlayerKilledUnit( Player* pPlayer, Unit* pVictim )
 	if( TO_PLAYER( pVictim )->m_honorless )
 		return;
 
-    if( pVictim->IsPlayer() )
+	if( pVictim->IsPlayer() )
 	{
 		if( pPlayer->m_bg )
 		{
@@ -149,98 +149,99 @@ void HonorHandler::OnPlayerKilledUnit( Player* pPlayer, Unit* pVictim )
 			pPlayer->m_bg->Unlock();
 		}
 		else if(pPlayer->GetGroup())
-        {
-            Group *pGroup = pPlayer->GetGroup();
-            Player* gPlayer = NULLPLR;
-            int32 GroupPoints;
+		{
+			Group *pGroup = pPlayer->GetGroup();
+			Player* gPlayer = NULLPLR;
+			int32 GroupPoints;
 			pGroup->Lock();
-            GroupPoints = (Points / (pGroup->MemberCount() ? pGroup->MemberCount() : 1));
-            GroupMembersSet::iterator gitr;
+			GroupPoints = (Points / (pGroup->MemberCount() ? pGroup->MemberCount() : 1));
+			GroupMembersSet::iterator gitr;
 			for(uint32 k = 0; k < pGroup->GetSubGroupCount(); k++)
 			{
 				for(gitr = pGroup->GetSubGroup(k)->GetGroupMembersBegin(); gitr != pGroup->GetSubGroup(k)->GetGroupMembersEnd(); ++gitr)
 				{
 					gPlayer = (*gitr)->m_loggedInPlayer;
 
-                    if(gPlayer && (gPlayer == pPlayer || gPlayer->isInRange(pPlayer,100.0f))) // visible range
-                    {
+					if(gPlayer && (gPlayer == pPlayer || gPlayer->isInRange(pPlayer,100.0f))) // visible range
+					{
 						gPlayer->GetAchievementInterface()->HandleAchievementCriteriaHonorableKill();
 						gPlayer->GetAchievementInterface()->HandleAchievementCriteriaHonorableKillClass( pVictim->getClass() );
 						gPlayer->GetAchievementInterface()->HandleAchievementCriteriaHonorableKillRace( pVictim->getRace() );
-                        gPlayer->m_killsToday++;
-                        gPlayer->m_killsLifetime++;
+						gPlayer->m_killsToday++;
+						gPlayer->m_killsLifetime++;
 						if(gPlayer->m_bg)
 							gPlayer->m_bg->HookOnHK(gPlayer);
 
 						sHookInterface.OnHonorableKill(gPlayer, TO_PLAYER(pVictim));
-		                AddHonorPointsToPlayer(gPlayer, GroupPoints);
-                        if(pVictim)
-		                {
-			                // Send PVP credit
-			                WorldPacket data(SMSG_PVP_CREDIT, 12);
-			                uint32 pvppoints = GroupPoints * 10;
-			                data << pvppoints << pVictim->GetGUID() << uint32(TO_PLAYER(pVictim)->GetPVPRank());
-			                gPlayer->GetSession()->SendPacket(&data);
-		                }
-						//patch by emsy
-                        // If we are in Halaa
-                        if(pPlayer->GetZoneId() == 3518)
-                        {
-                            // Add Halaa Battle Token
-                            SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 33004 : 33005);
-                            gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
-                        }
-                        // If we are in Hellfire Peninsula
-                        if(pPlayer->GetZoneId() == 3483)
-                        {
-                            // Add Mark of Thrallmar/Honor Hold
-                            SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 32158 : 32155);
-                            gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
-                        }
-                    }
+						AddHonorPointsToPlayer(gPlayer, GroupPoints);
+						if(pVictim)
+						{
+							// Send PVP credit
+							WorldPacket data(SMSG_PVP_CREDIT, 12);
+							uint32 pvppoints = GroupPoints * 10;
+							data << pvppoints << pVictim->GetGUID() << uint32(TO_PLAYER(pVictim)->GetPVPRank());
+							gPlayer->GetSession()->SendPacket(&data);
+						}
 
-                }
-            }
+						//patch by emsy
+						// If we are in Halaa
+						if(pPlayer->GetZoneId() == 3518)
+						{
+							// Add Halaa Battle Token
+							SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 33004 : 33005);
+							gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
+						}
+						// If we are in Hellfire Peninsula
+						if(pPlayer->GetZoneId() == 3483)
+						{
+							// Add Mark of Thrallmar/Honor Hold
+							SpellEntry * pvp_token_spell = dbcSpell.LookupEntry(gPlayer->GetTeam()? 32158 : 32155);
+							gPlayer->CastSpell(gPlayer, pvp_token_spell, true);
+						}
+					}
+
+				}
+			}
 			pGroup->Unlock();
 
-        }
-        else
-        {
+		}
+		else
+		{
 			pPlayer->GetAchievementInterface()->HandleAchievementCriteriaHonorableKill();
 			pPlayer->GetAchievementInterface()->HandleAchievementCriteriaHonorableKillClass( pVictim->getClass() );
 			pPlayer->GetAchievementInterface()->HandleAchievementCriteriaHonorableKillRace( pVictim->getRace() );
-		    pPlayer->m_killsToday++;
-		    pPlayer->m_killsLifetime++;
-		    AddHonorPointsToPlayer(pPlayer, Points);
-    
+			pPlayer->m_killsToday++;
+			pPlayer->m_killsLifetime++;
+			AddHonorPointsToPlayer(pPlayer, Points);
+
 			if(pPlayer->m_bg)
 				pPlayer->m_bg->HookOnHK(pPlayer);
 
 			sHookInterface.OnHonorableKill(pPlayer, TO_PLAYER(pVictim));
-		    if(pVictim)
-		    {
-			    // Send PVP credit
-			    WorldPacket data(SMSG_PVP_CREDIT, 12);
-			    uint32 pvppoints = Points * 10;
-			    data << pvppoints << pVictim->GetGUID() << uint32(TO_PLAYER(pVictim)->GetPVPRank());
-			    pPlayer->GetSession()->SendPacket(&data);
-		    }
+			if(pVictim)
+			{
+				// Send PVP credit
+				WorldPacket data(SMSG_PVP_CREDIT, 12);
+				uint32 pvppoints = Points * 10;
+				data << pvppoints << pVictim->GetGUID() << uint32(TO_PLAYER(pVictim)->GetPVPRank());
+				pPlayer->GetSession()->SendPacket(&data);
+			}
+
 			//patch by emsy
-            // If we are in Halaa
-            if(pPlayer->GetZoneId() == 3518)
-            {
-                // Add Halaa Battle Token
-                SpellEntry * halaa_spell = dbcSpell.LookupEntry(pPlayer->GetTeam()? 33004 : 33005);
-                pPlayer->CastSpell(pPlayer, halaa_spell, true);
-            }
-        }
+			// If we are in Halaa
+			if(pPlayer->GetZoneId() == 3518)
+			{
+				// Add Halaa Battle Token
+				SpellEntry * halaa_spell = dbcSpell.LookupEntry(pPlayer->GetTeam()? 33004 : 33005);
+				pPlayer->CastSpell(pPlayer, halaa_spell, true);
+			}
+		}
 	}
 }
 
 void HonorHandler::RecalculateHonorFields(Player* pPlayer)
 {
 	pPlayer->SetUInt32Value(PLAYER_FIELD_KILLS, uint16(pPlayer->m_killsToday) | ( pPlayer->m_killsYesterday << 16 ) );
-#ifndef CATACLYSM
 	pPlayer->SetUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, pPlayer->m_honorToday);
 	pPlayer->SetUInt32Value(PLAYER_FIELD_YESTERDAY_CONTRIBUTION, pPlayer->m_honorYesterday);
 	pPlayer->SetUInt32Value(PLAYER_FIELD_LIFETIME_HONORABLE_KILLS, pPlayer->m_killsLifetime);
@@ -250,7 +251,6 @@ void HonorHandler::RecalculateHonorFields(Player* pPlayer)
 	// Currency tab - (Blizz Placeholders)
 	pPlayer->UpdateKnownCurrencies(43307, true); //Arena Points
 	pPlayer->UpdateKnownCurrencies(43308, true); //Honor Points
-#endif
 }
 
 bool ChatHandler::HandleAddKillCommand(const char* args, WorldSession* m_session)

@@ -212,7 +212,15 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 	if(msg->deleted_flag || msg->Expired() || (uint32)UNIXTIME < msg->delivery_time)
 		return false;
 
-	data << uint16(0x0032);
+	uint8 guidsize;
+	if( msg->message_type )
+		guidsize = 4;
+	else
+		guidsize = 8;
+
+	size_t msize = 2 + 4 + 1 + guidsize + 7 * 4 + ( msg->subject.size() + 1 ) + ( msg->body.size() + 1 ) + 1 + ( msg->items.size() * ( 1 + 2*4 + 7 * ( 3*4 ) + 6*4 + 1 ) );
+
+	data << uint16(msize);
 	data << msg->message_id;
 	data << uint8(msg->message_type);
 	if(msg->message_type)
@@ -224,9 +232,9 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 	data << uint32(0);
 	data << msg->stationary;
 	data << msg->money; // money
-	data << uint32(0);
 	data << uint32(0x10);
-	data << uint32((msg->expire_time - uint32(UNIXTIME)) / 86400.0f);
+	data << float((msg->expire_time - uint32(UNIXTIME)) / 86400.0f);
+	data << uint32( 0 );	// mail template
 	data << msg->subject;
 	data << msg->body; // subjectbody
 	pos = data.wpos();
@@ -241,7 +249,7 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 				continue;
 
 			data << uint8(i++);
-			data << pItem->GetUInt32Value(OBJECT_FIELD_GUID);
+			data << pItem->GetLowGUID();
 			data << pItem->GetEntry();
 
 			for( j = 0; j < 7; ++j )
@@ -257,11 +265,11 @@ bool Mailbox::AddMessageToListingPacket(WorldPacket& data,MailMessage *msg)
 			else
 				data << uint32( 0 );
 
-			data << uint8( pItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) );
+			data << uint32( pItem->GetUInt32Value(ITEM_FIELD_STACK_COUNT) );
 			data << uint32( pItem->GetChargesLeft() );
 			data << pItem->GetUInt32Value( ITEM_FIELD_MAXDURABILITY );
 			data << pItem->GetUInt32Value( ITEM_FIELD_DURABILITY );
-			data << uint32(0);
+			data << uint8(0);
 			pItem->DeleteMe();
 			pItem = NULLITEM;
 		}
@@ -314,7 +322,6 @@ bool Mailbox::AddMessageToTimePacket(WorldPacket& data,MailMessage *msg)
 	data << uint32(msg->stationary);
 	//data << float(UNIXTIME-msg->delivery_time);
 	data << float(-9.0f);	// maybe the above?
-
 	return true;
 }
 

@@ -1928,9 +1928,7 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 		(plr->getGender()?"She":"He"), sess->GetAccountName().c_str(), sess->GetAccountId(), sess->GetPermissions());
 
 	const char *client;
-	if(sess->HasFlag(ACCOUNT_FLAG_XPACK_03))
-		client = "Cataclysm";
-	else if(sess->HasFlag(ACCOUNT_FLAG_XPACK_02))
+	if(sess->HasFlag(ACCOUNT_FLAG_XPACK_02))
 		client = "Wrath of the Lich King";
 	else if(sess->HasFlag(ACCOUNT_FLAG_XPACK_01))
 		client = "The Burning Crusade";

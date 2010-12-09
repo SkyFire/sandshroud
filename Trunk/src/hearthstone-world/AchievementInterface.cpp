@@ -43,7 +43,7 @@ AchievementInterface::~AchievementInterface()
 void AchievementInterface::LoadFromDB( QueryResult * pResult )
 {
 	// don't allow GMs to complete achievements
-	if( m_player->GetSession()->HasGMPermissions() )
+	if( sWorld.m_blockgmachievements && m_player->GetSession()->HasGMPermissions() )
 	{
 		CharacterDatabase.Execute("DELETE FROM achievements WHERE player = %u;", m_player->GetGUID());
 		return;
@@ -95,7 +95,7 @@ void AchievementInterface::LoadFromDB( QueryResult * pResult )
 void AchievementInterface::SaveToDB(QueryBuffer * buffer)
 {
 	// don't allow GMs to save achievements
-	if( m_player->GetSession()->HasGMPermissions() )
+	if( sWorld.m_blockgmachievements && m_player->GetSession()->HasGMPermissions() )
 		return;
 
 	uint32 count = 0;
@@ -203,22 +203,8 @@ WorldPacket* AchievementInterface::BuildAchievementData(bool forInspect)
 void AchievementInterface::GiveRewardsForAchievement(AchievementEntry * ae)
 {
 	AchievementReward * ar = AchievementRewardStorage.LookupEntry( ae->ID );
-	if(!ar) return;
-
-	// Reward: Item
-	if( ar->ItemID )
-	{
-		m_player->GetGUID();
-		Item* pItem = objmgr.CreateItem(ar->ItemID, m_player);
-		if( !m_player->GetItemInterface()->AddItemToFreeSlot(pItem) )
-		{
-			// Inventory full? Send it by mail.
-			m_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
-			sMailSystem.DeliverMessage(MAILTYPE_NORMAL, m_player->GetGUID(), m_player->GetGUID(), "Achievement Reward", "Here is your reward.", 0, 0, ar->ItemID, 1, true);
-			pItem->DeleteMe();
-			pItem = NULL;
-		}
-	}
+	if(!ar)
+		return;
 
 	// Define: Alliance Title
 	if(m_player->GetTeam() == ALLIANCE)
@@ -229,6 +215,54 @@ void AchievementInterface::GiveRewardsForAchievement(AchievementEntry * ae)
 	if(m_player->GetTeam() == HORDE)
 		if( ar->HordeTitle )
 			m_player->SetKnownTitle(ar->HordeTitle, true);
+
+	// Reward: Item
+	if( ar->ItemID && !ar->MailMessage)
+	{
+		m_player->GetGUID();
+		Item* pItem = objmgr.CreateItem(ar->ItemID, m_player);
+		if( !m_player->GetItemInterface()->AddItemToFreeSlot(pItem) )
+		{
+			// Inventory full? Send it by mail.
+			pItem->SaveToDB(-1, -1, true, NULL);
+			m_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
+			sMailSystem.DeliverMessage(MAILTYPE_NORMAL, m_player->GetGUID(), m_player->GetGUID(), "Achievement Reward", "Here is your reward.", 0, 0, pItem->GetGUID(), 1, true);
+			pItem->DeleteMe();
+			pItem = NULL;
+		}
+	}
+	else
+	{
+		uint32 Sender = ar->SenderEntry;
+		uint32 language = m_player->GetSession()->language;
+		char* messageheader = ar->MessageHeader;
+		char* messagebody = ar->MessageBody;
+		// Crow: TODO: Localization
+		if(ar->MailMessage || messagebody)
+		{
+			if(ar->ItemID)
+			{
+				Item* pItem = objmgr.CreateItem(ar->ItemID, m_player);
+				if(pItem != NULL)
+				{
+					pItem->SaveToDB(-1, -1, true, NULL);
+					sMailSystem.DeliverMessage(MAILTYPE_CREATURE, Sender, m_player->GetGUID(),
+						messageheader, messagebody, 0, 0, pItem->GetGUID(), 1, true);
+					pItem->DeleteMe();
+					pItem = NULL;
+				}
+				else
+				{
+					printf("MISSING ITEM PROTO FOR AN ACHIEVEMENT REWARD!!!(%u)\n", ar->ItemID);
+				}
+			}
+			else
+			{
+				sMailSystem.DeliverMessage(MAILTYPE_CREATURE, Sender, m_player->GetGUID(),
+					messageheader, messagebody, 0, 0, 0, 1, true);
+			}
+		}
+	}
 }
 
 void AchievementInterface::EventAchievementEarned(AchievementData * pData)
@@ -311,7 +345,7 @@ bool AchievementInterface::CanCompleteAchievement(AchievementData * ad)
 		return false;
 
 	// don't allow GMs to complete achievements
-	if( m_player->GetSession()->HasGMPermissions() )
+	if( sWorld.m_blockgmachievements && m_player->GetSession()->HasGMPermissions() )
 		return false;
 
 	if( ad->completed )
@@ -392,7 +426,7 @@ bool AchievementInterface::HandleBeforeChecks(AchievementData * ad)
 	if((string(ach->description).find("Heroic Difficulty") != string::npos) || ach->ID == 4526)
 		if(m_player->iInstanceType < MODE_5PLAYER_HEROIC)
 			return false;
-	if(m_player->GetSession()->HasGMPermissions())
+	if(sWorld.m_blockgmachievements && m_player->GetSession()->HasGMPermissions())
 		return false;
 	if(IsHardCoded(ach))
 		return false;
@@ -406,17 +440,16 @@ bool AchievementInterface::IsHardCoded(AchievementEntry * ae)
 
 	switch(ae->ID)
 	{
+	case 2398: // 4th Anniversary
 	case 2716: // Dual Talent Specialization
-
-	//Crow: These shouldn't be disabled.
-//	case 4396: // Onyxia's Lair (10 player)
-//	case 4397: // Onyxia's Lair (25 player)
+	case 4400: // 5th Anniversary
 	case 4402: // More Dots! (10 player)
 	case 4403: // Many Whelps! Handle It! (10 player)
 	case 4404: // She Deep Breaths More (10 player)
 	case 4405: // More Dots! (25 player)
 	case 4406: // Many Whelps! Handle It! (25 player)
 	case 4407: // She Deep Breaths More (25 player)
+	case 5512: // 6th Anniversary
 		return true;
 	}return false;
 }
@@ -1744,7 +1777,7 @@ void AchievementInterface::HandleAchievementCriteriaDeathAtMap(uint32 mapId)
 	I have kept GM checks though, bastards o.o */
 void AchievementInterface::ForceEarnedAchievement(uint32 achievementId)
 {
-	if(m_player->GetSession()->HasGMPermissions())
+	if(sWorld.m_blockgmachievements && m_player->GetSession()->HasGMPermissions())
 		return;
 	AchievementEntry * pAchievementEntry = dbcAchievement.LookupEntryForced(achievementId);
 	if(pAchievementEntry == NULL)

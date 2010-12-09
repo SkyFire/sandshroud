@@ -45,7 +45,8 @@ World::World()
 	gm_force_robes = false;
 	CheckProfessions = false;
 	AHEnabled = true;
-	Halloween = false;
+	HallowsEnd = false;
+	WintersVeil = false;
 
 	show_gm_in_who_list = true;
 	map_unload_time=0;
@@ -68,12 +69,10 @@ uint32 World::GetMaxLevel(Player* plr)
 		return LevelCap_Custom_All;
 
 	uint32 level = 60; // Classic World of Warcraft
-	if( plr->GetSession()->HasFlag(WMI_INSTANCE_XPACK_01) )
+	if( plr->GetSession()->HasFlag(ACCOUNT_FLAG_XPACK_01) )
 		level = 70;
-	if( plr->GetSession()->HasFlag(WMI_INSTANCE_XPACK_02) )
+	if( plr->GetSession()->HasFlag(ACCOUNT_FLAG_XPACK_02) )
 		level = 80;
-	if( plr->GetSession()->HasFlag(WMI_INSTANCE_XPACK_03) )
-		level = 85;
 
 	return level;
 }
@@ -1265,7 +1264,10 @@ void World::Rehash(bool load)
 	// Server Configs
 	StartGold = Config.OptionalConfig.GetIntDefault("Server", "StartGold", 1);
 	StartLevel = Config.OptionalConfig.GetIntDefault("Server", "StartLevel", 1);
+	m_limitedNames = Config.OptionalConfig.GetBoolDefault("Server", "LimitedNames", true);
+	m_useAccountData = Config.OptionalConfig.GetBoolDefault("Server", "UseAccountData", false);
 	SetMotd(Config.OptionalConfig.GetStringDefault("Server", "Motd", "Hearthstone Default MOTD").c_str());
+	cross_faction_world = Config.OptionalConfig.GetBoolDefault("Server", "CrossFactionInteraction", false);
 	SetMotd2(Config.OptionalConfig.GetStringDefault("Server", "Motd2", "").c_str());
 	Collision = Config.OptionalConfig.GetBoolDefault("Server", "Collision", false);
 	PathFinding = Config.OptionalConfig.GetBoolDefault("Server", "Pathfinding", false);
@@ -1273,6 +1275,7 @@ void World::Rehash(bool load)
 	SendMovieOnJoin = Config.OptionalConfig.GetBoolDefault("Server", "SendMovieOnJoin", true);
 	BreathingEnabled = Config.OptionalConfig.GetBoolDefault("Server", "EnableBreathing", true);
 	compression_threshold = Config.OptionalConfig.GetIntDefault("Server", "CompressionThreshold", 1000);
+	m_blockgmachievements = Config.OptionalConfig.GetBoolDefault("Server", "DisableAchievementsForGM", true);
 	channelmgr.seperatechannels = Config.OptionalConfig.GetBoolDefault("Server", "SeperateChatChannels", true);
 	display_free_items = Config.OptionalConfig.GetBoolDefault("Server", "DisplayFreeItems", false);
 	mQueueUpdateInterval = Config.OptionalConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
@@ -1412,14 +1415,11 @@ void World::Rehash(bool load)
 	if(!flood_lines || !flood_seconds)
 		flood_lines = flood_seconds = 0;
 
-	cross_faction_world = Config.OptionalConfig.GetBoolDefault("Server", "CrossFactionInteraction", false);
 	antihack_teleport = Config.MainConfig.GetBoolDefault("AntiHack", "Teleport", true);
 	antihack_speed = Config.MainConfig.GetBoolDefault("AntiHack", "Speed", true);
 	antihack_flight = Config.MainConfig.GetBoolDefault("AntiHack", "Flight", true);
 	no_antihack_on_gm = Config.MainConfig.GetBoolDefault("AntiHack", "DisableOnGM", false);
 	SpeedhackProtection = antihack_speed;
-	m_limitedNames = Config.OptionalConfig.GetBoolDefault("Server", "LimitedNames", true);
-	m_useAccountData = Config.OptionalConfig.GetBoolDefault("Server", "UseAccountData", false);
 
 	// ======================================
 	m_movementCompressInterval = Config.MainConfig.GetIntDefault("Movement", "FlushInterval", 1000);
@@ -2649,4 +2649,31 @@ void World::UpdatePlayerItemInfos()
 			plr->RebuildItemInfo();
 		}
 	}
+}
+
+void World::SetAnniversary(uint32 anniversarynumber)
+{
+	// Set these here.
+	RealAchievement = false;
+
+	// Crow: The rest is handled via the achievement system, so just set achievements.
+	switch(anniversarynumber)
+	{
+	case 4:
+		{
+			AnniversaryAchievement = 2398;
+		}break;
+	case 5:
+		{
+			AnniversaryAchievement = 4400;
+		}break;
+	case 6:
+		{
+			// WHAT?! NO PET?!!? RAGE!!!!!!!!!
+			// Note, this won't work with 3.3.5, its just here for flavor.
+			AnniversaryAchievement = 5512;
+		}break;
+	}
+	if(AnniversaryAchievement)
+		RealAchievement = (dbcAchievement.LookupEntryForced(AnniversaryAchievement) != NULL);
 }
