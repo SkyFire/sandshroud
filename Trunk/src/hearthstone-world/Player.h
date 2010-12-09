@@ -432,9 +432,6 @@ struct PlayerCreateInfo
 	std::list<CreateInfo_SkillStruct> skills;
 	std::list<CreateInfo_ActionBarStruct> actionbars;
 	std::set<uint32> spell_list;
-	//uint32 item[10];
-	//uint8 item_slot[10];
-	//uint16 spell[10];
 };
 
 struct DamageSplit

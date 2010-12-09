@@ -1629,8 +1629,8 @@ public:
 	void finish();
 	// Handle the Effects of the Spell
 	void HandleEffects(uint32 i);
-	// Stop knockback effect due to glyph
-	bool NegateKnockbackEffect(uint32 namehash);
+	// Cancel spell effect due to things like a glyph
+	bool CanHandleSpellEffect(uint32 i, uint32 namehash);
 	// Take Power from the caster based on spell power usage
 	bool TakePower();
 	// Has power?

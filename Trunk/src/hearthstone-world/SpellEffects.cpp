@@ -2898,14 +2898,6 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 	if( unitTarget->isDead() && !(GetSpellProto()->Flags4 & FLAGS4_DEATH_PERSISTENT) )
 		return;
 
-	//we shouldn't apply fireball dot if we have fireball glyph
-	if( GetSpellProto()->NameHash == SPELL_HASH_FIREBALL && p_caster && p_caster->HasDummyAura(SPELL_HASH_GLYPH_OF_FIREBALL) )
-		return;
-
-	//dont apply frostbolt dot with frostbolt glyph
-	if( GetSpellProto()->NameHash == SPELL_HASH_FROSTBOLT && p_caster && p_caster->HasDummyAura( SPELL_HASH_GLYPH_OF_FROSTBOLT ) )
-		return;
-
 	// avoid map corruption.
 	if(unitTarget->GetInstanceID()!=m_caster->GetInstanceID())
 		return;
@@ -7307,7 +7299,7 @@ void Spell::SummonNonCombatPet(uint32 i)
 
 void Spell::SpellEffectKnockBack(uint32 i)
 {
-	if(unitTarget == NULL || !unitTarget->isAlive() || NegateKnockbackEffect(GetSpellProto()->NameHash))
+	if(unitTarget == NULL || !unitTarget->isAlive())
 		return;
 
 	if(unitTarget->IsCreature() && isTargetDummy(unitTarget->GetEntry()))

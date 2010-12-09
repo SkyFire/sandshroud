@@ -1563,6 +1563,8 @@ void Spell::cast(bool check)
 			// call effect handlers
 			for( x = 0; x < 3; ++x )
 			{
+				if(!CanHandleSpellEffect(x, m_spellInfo->NameHash))
+					continue;
 				//Don't handle effect now
 				if(GetSpellProto()->Effect[x] == SPELL_EFFECT_SUMMON)
 				{
@@ -1603,6 +1605,8 @@ void Spell::cast(bool check)
 		//Handle remaining effects for which we did not find targets.
 		for( x = 0; x < 3; ++x )
 		{
+			if(!CanHandleSpellEffect(x, m_spellInfo->NameHash))
+				continue;
 			if(!effects_done[x])
 			{
 				switch (GetSpellProto()->Effect[x])
@@ -1814,6 +1818,8 @@ void Spell::HandleDestLocationHit()
 						if((*itr2).Guid == *itr && ((*itr2).EffectMask & (1 << x)) && (m_caster && ((*itr2).Guid != m_caster->GetGUID())))
 						{
 							if((*itr2).Guid == m_caster->GetGUID() || TO_OBJECT((*itr))->GetGUID() == m_caster->GetGUID())
+								continue;
+							if(!CanHandleSpellEffect(x, m_spellInfo->NameHash))
 								continue;
 							HandleEffects(x);
 							hit = true;
@@ -5261,24 +5267,52 @@ void Spell::DamageGosAround(uint32 i)
 	}
 }
 
-bool Spell::NegateKnockbackEffect(uint32 namehash)
+bool Spell::CanHandleSpellEffect(uint32 i, uint32 namehash)
 {
 	if(!u_caster)
 		return false;
-	switch(namehash)
+	switch(i)
 	{
-	case SPELL_HASH_BLAST_WAVE:
+		case 1:
 		{
-			if(u_caster->HasAura(62126))
-				return true;
+			switch(namehash)
+			{
+				case SPELL_HASH_FROSTBOLT:
+				{
+					if(u_caster->HasDummyAura( SPELL_HASH_GLYPH_OF_FROSTBOLT ))
+						return false;
+				}break;
+			}break;
 		}break;
-	case SPELL_HASH_THUNDERSTORM:
+		case 2:
 		{
-			if(u_caster->HasAura(62132))
-				return true;
+			switch(namehash)
+			{
+				case SPELL_HASH_FIREBALL:
+				{
+					if(u_caster->HasDummyAura( SPELL_HASH_GLYPH_OF_FIREBALL ))
+						return false;
+				}break;
+			}break;
+		}break;
+		case 3:
+		{
+			switch(namehash)
+			{
+				case SPELL_HASH_BLAST_WAVE:
+				{
+					if(u_caster->HasAura(62126))
+						return false;
+				}break;		
+				case SPELL_HASH_THUNDERSTORM:
+				{
+					if(u_caster->HasAura(62132))
+						return false;
+				}break;
+			}break;
 		}break;
 	}
-	return false;
+	return true;
 }
 
 bool Spell::UseMissileDelay()
