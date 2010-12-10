@@ -199,7 +199,7 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 {
 	// sanity checks
-	if(!_player->IsInWorld() || !_player->GetLootGUID()) return;
+	CHECK_INWORLD_RETURN
 
 	// lookup the object we will be looting
 	Object* pLootObj = NULL;
@@ -259,8 +259,7 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 
 		uint32 share = money / uint32(targets.size());
 
-		uint8 databuf[50];
-		StackPacket pkt(SMSG_LOOT_MONEY_NOTIFY, databuf, 50);
+		WorldPacket pkt(SMSG_LOOT_MONEY_NOTIFY, 100);
 		pkt << share;
 
 		for(vector<Player*>::iterator itr = targets.begin(); itr != targets.end(); itr++)
@@ -1433,19 +1432,15 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 		}break;
 		case GAMEOBJECT_TYPE_GOOBER:
 		{
-			//Quest related mostly
-		}
-		case GAMEOBJECT_TYPE_CAMERA://eye of azora
-		{
 			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->Unknown1);
 			if(sp != NULL)
 				_player->CastSpell(_player,sp,true);
-			else
-			{
-				WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
-				data << uint32(goinfo->sound1);
-				SendPacket(&data);
-			}
+		}break;
+		case GAMEOBJECT_TYPE_CAMERA://eye of azora
+		{
+			WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
+			data << uint32(goinfo->sound1);
+			SendPacket(&data);
 		}break;
 		case GAMEOBJECT_TYPE_MEETINGSTONE:	// Meeting Stone
 		{
