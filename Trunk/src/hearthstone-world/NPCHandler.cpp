@@ -487,7 +487,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 		data << uint32(count);
 		for (it = TalkingWith->QuestsBegin(); it != TalkingWith->QuestsEnd(); it++)
 		{
-			uint32 status = sQuestMgr.CalcQuestStatus(TalkingWith, GetPlayer(), *it);
+			uint32 status = sQuestMgr.CalcQuestStatus(GetPlayer(), *it);
 			if (status >= QMGR_QUEST_CHAT)
 			{
 				if (!ql.count((*it)->qst->id) )

@@ -52,8 +52,8 @@ public:
 	uint32 PlayerMeetsReqs(Player* plr, Quest* qst, bool skiplevelcheck);
 
 	uint8 CalcStatus(Object* quest_giver, Player* plr);
-	uint32 CalcQuestStatus(Object* quest_giver, Player* plr, QuestRelation* qst);
-	uint32 CalcQuestStatus(Object* quest_giver, Player* plr, Quest* qst, uint8 type, bool skiplevelcheck);
+	uint32 CalcQuestStatus(Player* plr, QuestRelation* qst);
+	uint32 CalcQuestStatus(Player* plr, Quest* qst, uint8 type, bool skiplevelcheck);
 	uint32 ActiveQuestsCount(Object* quest_giver, Player* plr);
 
 	//Packet Forging...

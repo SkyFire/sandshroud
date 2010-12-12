@@ -440,6 +440,7 @@ bool AchievementInterface::IsHardCoded(AchievementEntry * ae)
 
 	switch(ae->ID)
 	{
+	case 16: // Skill shit, it's broken, so disable it.
 	case 2398: // 4th Anniversary
 	case 2716: // Dual Talent Specialization
 	case 4400: // 5th Anniversary

@@ -874,8 +874,8 @@ public:
 	void GiveGroupXP(Unit* pVictim, Player* PlayerInGroup);
 
 	/// Combat / Death Status
-	HEARTHSTONE_INLINE bool isAlive() { return m_deathState == ALIVE; };
-	HEARTHSTONE_INLINE bool isDead() { return  m_deathState != ALIVE; };
+	HEARTHSTONE_INLINE bool isAlive() { return (GetHealthPct() != 0); };
+	HEARTHSTONE_INLINE bool isDead() { return (GetHealthPct() == 0); };
 	virtual void setDeathState(DeathState s) { m_deathState = s; };
 	DeathState getDeathState() { return m_deathState; }
 	void OnDamageTaken();

@@ -2797,6 +2797,28 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				return;
 			u_caster->CastSpell(playerTarget, 63680, false);
 		}break;
+	case 31225: // Filled Shimmering Vessel, Redeeming the Dead.
+		{
+			if(p_caster != NULL)
+			{
+				QuestLogEntry* qle = p_caster->GetQuestLogForEntry(9685);
+				if(qle == NULL || qle->CanBeFinished())
+					return;
+
+				qle->SetMobCount(0, 1);
+				qle->SendUpdateAddKill(1);
+				qle->UpdatePlayerFields();
+				qle->SendQuestComplete();
+				Creature* ctr = GetUnitTarget() ? (GetUnitTarget()->IsCreature() ? TO_CREATURE(GetUnitTarget()) : NULL) : NULL;
+				if(ctr != NULL)
+				{
+					ctr->setDeathState(ALIVE);
+					ctr->SetStandState(STANDSTATE_STAND);
+					ctr->Despawn(10000, ctr->GetProto()->RespawnTime);
+				}
+			}
+		}break;
+
 	default:
 		{
 			if(sLog.IsOutDevelopement())

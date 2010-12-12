@@ -5157,6 +5157,11 @@ int32 Player::GetOpenQuestSlot()
 	return -1;
 }
 
+uint32 Player::GetQuestStatusForQuest(uint32 questid, uint8 type, bool skiplevelcheck)
+{
+	return sQuestMgr.CalcQuestStatus(this, GetQuestLogForEntry(questid)->GetQuest(), type, skiplevelcheck);
+}
+
 void Player::AddToFinishedQuests(uint32 quest_id)
 {
 	m_finishedQuests.insert(quest_id);

@@ -913,9 +913,10 @@ public:
 	}
 
 	int32				GetOpenQuestSlot();
-	QuestLogEntry*GetQuestLogForEntry(uint32 quest);
-	HEARTHSTONE_INLINE QuestLogEntry*GetQuestLogInSlot(uint32 slot){ return m_questlog[slot]; }
-	HEARTHSTONE_INLINE uint32 GetQuestSharer(){ return m_questSharer; }
+	uint32				GetQuestStatusForQuest(uint32 questid, uint8 type = 1, bool skiplevelcheck = false);
+	QuestLogEntry*		GetQuestLogForEntry(uint32 quest);
+	HEARTHSTONE_INLINE	QuestLogEntry*GetQuestLogInSlot(uint32 slot){ return m_questlog[slot]; }
+	HEARTHSTONE_INLINE	uint32 GetQuestSharer(){ return m_questSharer; }
 
 	HEARTHSTONE_INLINE void	SetQuestSharer(uint32 guid){ m_questSharer = guid; }
 	void				SetQuestLogSlot(QuestLogEntry *entry, uint32 slot);

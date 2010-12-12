@@ -220,7 +220,6 @@ class SERVER_DECL QuestLogEntry : public EventableObject
 	friend class QuestMgr;
 
 public:
-
 	QuestLogEntry();
 	~QuestLogEntry();
 

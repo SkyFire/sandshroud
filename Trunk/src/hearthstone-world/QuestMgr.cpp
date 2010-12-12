@@ -19,9 +19,9 @@
 
 #include "StdAfx.h"
 
-uint32 QuestMgr::CalcQuestStatus(Object* quest_giver, Player* plr, QuestRelation* qst)
+uint32 QuestMgr::CalcQuestStatus(Player* plr, QuestRelation* qst)
 {
-	return CalcQuestStatus(quest_giver, plr, qst->qst, qst->type, false);
+	return CalcQuestStatus(plr, qst->qst, qst->type, false);
 }
 
 bool QuestMgr::isRepeatableQuestFinished(Player* plr, Quest *qst)
@@ -117,12 +117,9 @@ uint32 QuestMgr::PlayerMeetsReqs(Player* plr, Quest* qst, bool skiplevelcheck)
 	return status;
 }
 
-uint32 QuestMgr::CalcQuestStatus(Object* quest_giver, Player* plr, Quest* qst, uint8 type, bool skiplevelcheck)
+uint32 QuestMgr::CalcQuestStatus(Player* plr, Quest* qst, uint8 type, bool skiplevelcheck)
 {
-	QuestLogEntry* qle;
-
-	qle = plr->GetQuestLogForEntry(qst->id);
-
+	QuestLogEntry* qle = plr->GetQuestLogForEntry(qst->id);
 	if (!qle)
 	{
 		if (type & QUESTGIVER_QUEST_START)
@@ -189,14 +186,14 @@ uint8 QuestMgr::CalcStatus(Object* quest_giver, Player* plr)
 		qr.qst = pQuest;
 		qr.type = 1;
 
-		uint32 tmp_status = CalcQuestStatus(quest_giver,plr, &qr);
+		uint32 tmp_status = CalcQuestStatus(plr, &qr);
 		if(tmp_status > status)
 			status = tmp_status;
 	}
 
 	for(itr = q_begin; itr != q_end; itr++)
 	{
-		uint32 tmp_status = CalcQuestStatus(quest_giver, plr, *itr);	// save a call
+		uint32 tmp_status = CalcQuestStatus(plr, *itr);	// save a call
 		if (tmp_status > status)
 			status = tmp_status;
 	}
@@ -242,7 +239,7 @@ uint32 QuestMgr::ActiveQuestsCount(Object* quest_giver, Player* plr)
 
 	for(itr = q_begin; itr != q_end; itr++)
 	{
-		if (CalcQuestStatus(quest_giver, plr, *itr) >= QMGR_QUEST_CHAT)
+		if (CalcQuestStatus(plr, *itr) >= QMGR_QUEST_CHAT)
 		{
 			if (tmp_map.find((*itr)->qst->id) == tmp_map.end())
 			{
@@ -544,7 +541,7 @@ void QuestMgr::BuildQuestList(WorldPacket *data, Object* qst_giver, Player* plr,
 
 	for (it = st; it != ed; it++)
 	{
-		status = sQuestMgr.CalcQuestStatus(qst_giver, plr, *it);
+		status = sQuestMgr.CalcQuestStatus(plr, *it);
 		if (status >= QMGR_QUEST_CHAT)
 		{
 			if (tmp_map.find((*it)->qst->id) == tmp_map.end())
@@ -1674,7 +1671,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 		}
 
 		for(itr = q_begin; itr != q_end; itr++)
-			if (sQuestMgr.CalcQuestStatus(qst_giver, plr, *itr) >= QMGR_QUEST_CHAT)
+			if (sQuestMgr.CalcQuestStatus(plr, *itr) >= QMGR_QUEST_CHAT)
 				break;
 
 		if (sQuestMgr.CalcStatus(qst_giver, plr) < QMGR_QUEST_CHAT)

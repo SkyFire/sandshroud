@@ -135,7 +135,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 			return;
 		bValid = quest_giver->isQuestGiver();
 		if(bValid)
-			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id), false);
+			status = sQuestMgr.CalcQuestStatus(GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id), false);
 	}
 	else if(guidtype == HIGHGUID_TYPE_GAMEOBJECT)
 	{
@@ -146,7 +146,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 			return;
 		bValid = quest_giver->isQuestGiver();
 		if(bValid)
-			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id), false);
+			status = sQuestMgr.CalcQuestStatus(GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id), false);
 	}
 	else if(guidtype==HIGHGUID_TYPE_ITEM)
 	{
@@ -159,7 +159,7 @@ void WorldSession::HandleQuestGiverQueryQuestOpcode( WorldPacket & recv_data )
 		if( qst->id != quest_giver->GetProto()->QuestId )
 			return;
 
-		status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, 1, false);
+		status = sQuestMgr.CalcQuestStatus(GetPlayer(), qst, 1, false);
 	}
 
 	if (!qst_giver)
@@ -293,7 +293,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 
 	// Check the player hasn't already taken this quest, or
 	// it isn't available.
-	uint32 status = sQuestMgr.CalcQuestStatus(qst_giver, _player,qst,3, bSkipLevelCheck);
+	uint32 status = sQuestMgr.CalcQuestStatus(_player,qst,3, bSkipLevelCheck);
 
 	if((!sQuestMgr.IsQuestRepeatable(qst) && _player->HasFinishedQuest(qst->id)) || ( status != QMGR_QUEST_AVAILABLE && status != QMGR_QUEST_REPEATABLE && status != QMGR_QUEST_CHAT )
 		|| !hasquest)
@@ -514,7 +514,7 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode( WorldPacket & recv_data 
 				OUT_DEBUG("WARNING: Cannot complete quest, as it doesnt exist.");
 				return;
 			}
-			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
+			status = sQuestMgr.CalcQuestStatus(GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
 		}
 	}
 	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
@@ -534,7 +534,7 @@ void WorldSession::HandleQuestgiverRequestRewardOpcode( WorldPacket & recv_data 
 				OUT_DEBUG("WARNING: Cannot complete quest, as it doesnt exist.");
 				return;
 			}
-			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
+			status = sQuestMgr.CalcQuestStatus(GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
 		}
 	}
 
@@ -596,7 +596,7 @@ void WorldSession::HandleQuestgiverCompleteQuestOpcode( WorldPacket & recvPacket
 				OUT_DEBUG("WARNING: Cannot complete quest, as it doesnt exist.");
 				return;
 			}
-			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
+			status = sQuestMgr.CalcQuestStatus(GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
 		}
 	}
 	else if(guidtype==HIGHGUID_TYPE_GAMEOBJECT)
@@ -616,7 +616,7 @@ void WorldSession::HandleQuestgiverCompleteQuestOpcode( WorldPacket & recvPacket
 				OUT_DEBUG("WARNING: Cannot complete quest, as it doesnt exist.");
 				return;
 			}
-			status = sQuestMgr.CalcQuestStatus(qst_giver, GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
+			status = sQuestMgr.CalcQuestStatus(GetPlayer(), qst, (uint8)quest_giver->GetQuestRelation(qst->id),false);
 		}
 	}
 

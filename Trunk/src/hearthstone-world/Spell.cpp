@@ -3110,6 +3110,7 @@ uint8 Spell::CanCast(bool tolerate)
 
 			if(target == m_caster && GetSpellProto()->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
 				return SPELL_FAILED_BAD_TARGETS;
+
 			//these spells can be cast only on certain objects. Otherwise cool exploit
 			//Most of this things goes to spell_forced_target table
 			switch (GetSpellProto()->Id)

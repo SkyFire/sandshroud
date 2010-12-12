@@ -17,13 +17,14 @@
 #ifndef LACRIMI_H
 #define LACRIMI_H
 
-Database* LacrimiDB;
-#define LacrimiDatabase (*LacrimiDB)
-
 class SCRIPT_DECL Lacrimi : public ThreadContext
 {
 private:
+	ConfigFile LacrimiConfig;
+	Database* LacrimiDB;
 	ScriptMgr* sMgr;
+	bool database;
+	bool config;
 
 public:
 	Lacrimi(ScriptMgr* mgr);
@@ -32,13 +33,20 @@ public:
 	bool run();
 	void terminate();
 	void Delay(uint32 time);
+	bool _StartDB();
+	void _StopDB();
+	Database* GetLDB() { if(database == true) return LacrimiDB; return NULL; };
 
 public: // Script Related
 	void SetupScripts();
 	void SetupZoneScripts();
+	void SetupCityScripts();
 
-	// Zone Setups.
+///////////////////
+////// Zone Setups.
+///////////////////
 
+	// Eastern Kingdom
 	void SetupEasternKingdomScripts();
 	void SetupAlteracMountains();
 	void SetupArathiHighlands();
@@ -60,18 +68,77 @@ public: // Script Related
 	void SetupWesternPlaguelands();
 	void SetupWestfall();
 	void SetupWetlands();
+
+	// Kalimdor
+	void SetupKalimdorScripts();
+	void SetupAshenvale();
+	void SetupAzshara();
+	void SetupAzuremystIsle();
+	void SetupBloodmystIsle();
+	void SetupDarkshore();
+	void SetupDesolace();
+	void SetupDustwallowMarsh();
+	void SetupFelwood();
+	void SetupFeralas();
+	void SetupMoonglade();
+	void SetupMulgore();
+	void SetupSilithus();
+	void SetupStonetalonMountains();
+	void SetupTanaris();
+	void SetupTeldrassil();
+	void SetupTheBarrens();
+	void SetupThousandNeedles();
+	void SetupUngoroCrater();
+	void SetupWinterspring();
+
+	// Outland
+	void SetupOutlandScripts();
+	void SetupBladesEdgeMountains();
+	void SetupHellfirePeninsula();
+	void SetupNagrand();
+	void SetupNetherstorm();
+	void SetupShadowmoonValley();
+	void SetupTerrokarForest();
+	void SetupZangarmarsh();
+
+	// Northrend
+	void SetupNorthrendScripts();
+	void SetupBoreanTundra();
+	void SetupDragonblight();
+	void SetupGrizzlyHills();
+	void SetupHowlingFjord();
+	void SetupIcecrown();
+	void SetupSholazarBasin();
+	void SetupStormPeaks();
+	void SetupZulDrak();
+
+	// Ebon Hold
+	void SetupEbonHoldScripts();
+
+///////////////////
+////// City Setups.
+///////////////////
+
+	// Eastern Kingdom
 	void SetupIronforge();
 	void SetupSilvermoon();
 	void SetupStormwind();
 	void SetupUndercity();
 
-	void SetupKalimdorScripts();
+	// Kalimdor
+	void SetupDarnassus();
+	void SetupExodar();
+	void SetupOrgrimmar();
+	void SetupThunderbluff();
 
-	void SetupOutlandScripts();
+	// Outlands
+	void SetupShattrath();
 
-	void SetupEbonHoldScripts();
+	// Northrend
+	void SetupDalaran();
 
-	void SetupNorthrendScripts();
 };
+
+#define LacrimiDatabase (*(sWorld.LacrimiPtr->GetLDB()))
 
 #endif
