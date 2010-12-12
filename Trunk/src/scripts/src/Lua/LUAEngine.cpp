@@ -105,7 +105,8 @@ void LuaEngine::ScriptLoadDir(char* Dirname, LUALoadScripts *pak)
 					break;
 			}
 			ext[i++] = '\0';
-			if ( !_stricmp(ext,"aul.") ) pak->luaFiles.insert(fname);
+			if ( !_stricmp(ext,"aul.") ) 
+				pak->luaFiles.insert(fname);
 		}
 	}
 	FindClose(hFile);

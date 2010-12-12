@@ -605,7 +605,6 @@ public:
 	bool LogChats;
 
 	string LuaScriptPath;
-	string AngelScriptPath;
 	string GameMonkeyScriptPath;
 
 	string DBCPath;

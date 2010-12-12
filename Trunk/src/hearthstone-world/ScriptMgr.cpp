@@ -164,19 +164,6 @@ void ScriptMgr::LoadScripts()
 					FreeLibrary( (*itr).Handle );
 				}
 			}
-			else if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_AS )
-			{
-				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "AS", false) )
-				{
-					Log.Notice("ScriptMgr","Initializing AngelScript script engine...");
-					itr->InitializeCall(this);
-					_handles.push_back( (SCRIPT_MODULE)itr->Handle );
-				}
-				else
-				{
-					FreeLibrary( (*itr).Handle );
-				}
-			}
 			else
 			{
 				Log.Error("ScriptMgr","Unknown script engine type: 0x%.2X, please contact developers.", (*itr).Type );
@@ -286,19 +273,6 @@ char *ext;
 				else
 				{
 					dlclose( itr->Handle );
-				}
-			}
-			else if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_AS )
-			{
-				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "AS", false) )
-				{
-					sLog.outString("   Initializing AngelScript script engine...");
-					itr->InitializeCall(this);
-					_handles.push_back( (SCRIPT_MODULE)itr->Handle );
-				}
-				else
-				{
-					dlclose( (*itr).Handle );
 				}
 			}
 			else

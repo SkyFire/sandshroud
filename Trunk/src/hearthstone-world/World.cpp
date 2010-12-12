@@ -1250,7 +1250,6 @@ void World::Rehash(bool load)
 
 	// Script configs
 	LuaScriptPath = Config.MainConfig.GetStringDefault("Script", "LuaScriptsLocation", "scripts");
-	AngelScriptPath = Config.MainConfig.GetStringDefault("Script", "AngelScriptsLocation", "scripts");
 	GameMonkeyScriptPath = Config.MainConfig.GetStringDefault("Script", "GameMonkeyScriptsLocation", "scripts");
 
 	// Data configs
