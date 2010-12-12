@@ -19,13 +19,13 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleSetBGScoreCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleSetBGScoreCommand(const char* args)
 {
 	SystemMessage(m_session, "Command not yet implemented.");
 	return true;
 }
 
-bool ChatHandler::HandleStartBGCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleStartBGCommand(const char *args)
 {
 	if(m_session->GetPlayer()->m_bg && sEventMgr.HasEvent(m_session->GetPlayer()->m_bg, EVENT_BATTLEGROUND_COUNTDOWN))
 	{
@@ -35,19 +35,19 @@ bool ChatHandler::HandleStartBGCommand(const char *args, WorldSession *m_session
 	return true;
 }
 
-bool ChatHandler::HandlePauseBGCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandlePauseBGCommand(const char *args)
 {
 	SystemMessage(m_session, "Command not yet implemented.");
 	return true;
 }
 
-bool ChatHandler::HandleBGInfoCommnad(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleBGInfoCommnad(const char *args)
 {
 	SystemMessage(m_session, "Command not yet implemented.");
 	return true;
 }
 
-bool ChatHandler::HandleBattlegroundCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleBattlegroundCommand(const char* args)
 {
 	uint32 type = atoi(args);
 	if(type != 1 && type != 2 && type != 3 && type != 4 && type != 5 && type != 7)
@@ -59,7 +59,7 @@ bool ChatHandler::HandleBattlegroundCommand(const char* args, WorldSession *m_se
 	return true;
 }
 
-bool ChatHandler::HandleSetWorldStateCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleSetWorldStateCommand(const char* args)
 {
 	uint32 id,val;
 	if(sscanf(args,"%u %u", &id,&val)!=2)
@@ -74,20 +74,20 @@ bool ChatHandler::HandleSetWorldStateCommand(const char* args, WorldSession *m_s
 	return true;
 }
 
-bool ChatHandler::HandlePlaySoundCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandlePlaySoundCommand(const char* args)
 {
 	SystemMessage(m_session, "Command not yet implemented.");
 	return true;
 }
 
-bool ChatHandler::HandleSetBattlefieldStatusCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleSetBattlefieldStatusCommand(const char* args)
 {
 	uint32 type = atoi(args);
 	BattlegroundManager.SendBattlegroundQueueStatus(m_session->GetPlayer(), type);
 	return true;
 }
 
-bool ChatHandler::HandleBattlegroundExitCommand(const char* args, WorldSession* m_session)
+bool ChatHandler::HandleBattlegroundExitCommand(const char* args)
 {
 	Player* plr = getSelectedChar(m_session, false);
 	if(plr==NULL)
@@ -103,7 +103,7 @@ bool ChatHandler::HandleBattlegroundExitCommand(const char* args, WorldSession* 
 	return true;
 }
 
-bool ChatHandler::HandleBattlegroundForcestartCommand(const char* args, WorldSession* m_session)
+bool ChatHandler::HandleBattlegroundForcestartCommand(const char* args)
 {
 	BattlegroundManager.EventQueueUpdate(true);
 	return true;

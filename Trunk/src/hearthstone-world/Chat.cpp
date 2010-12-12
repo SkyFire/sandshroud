@@ -790,7 +790,7 @@ void CommandTableStorage::Init()
 	uint16 glyphs[GLYPHS_COUNT];
 };
 
-bool ChatHandler::xxx(const char* args, WorldSession *m_session)
+bool ChatHandler::xxx(const char* args)
 {
 	char * end;
 	char * start;
@@ -944,8 +944,12 @@ void ChatHandler::SendMultilineMessage(WorldSession *m_session, const char *str)
 		SystemMessage(m_session, start);
 }
 
-bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, WorldSession *m_session)
+bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, WorldSession* session)
 {
+	if(!m_session)
+		m_session = session;
+	if(m_session == NULL)
+		return false;
 	std::string cmd = "";
 
 	// get command
@@ -970,7 +974,7 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 
 		if(table[i].ChildCommands != NULL)
 		{
-			if(!ExecuteCommandInTable(table[i].ChildCommands, text, m_session))
+			if(!ExecuteCommandInTable(table[i].ChildCommands, text,m_session))
 			{
 				if(table[i].Help != "")
 					SendMultilineMessage(m_session, table[i].Help.c_str());
@@ -1014,7 +1018,7 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 		}
 		else
 		{
-			if(!(this->*(table[i].Handler))(text, m_session))
+			if(!(this->*(table[i].Handler))(text))
 			{
 				if(table[i].Help != "")
 					SendMultilineMessage(m_session, table[i].Help.c_str());
@@ -1049,12 +1053,11 @@ int ChatHandler::ParseCommands(const char* text, WorldSession *session)
 		return 0;
 
 	text++;
-
-	if(!ExecuteCommandInTable(CommandTableStorage::getSingleton().Get(), text, session))
+	m_session = session;
+	if(!ExecuteCommandInTable(CommandTableStorage::getSingleton().Get(), text, m_session))
 	{
 		SystemMessage(session, "There is no such command, or you do not have access to it.");
 	}
-
 	return 1;
 }
 
@@ -1478,7 +1481,7 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 	return true;
 }
 
-bool ChatHandler::HandleGetPosCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGetPosCommand(const char* args)
 {
 	//Firehunter: FTW?
 	/*if(m_session->GetPlayer()->GetSelection() == 0) return false;
@@ -1496,7 +1499,7 @@ bool ChatHandler::HandleGetPosCommand(const char* args, WorldSession *m_session)
 }
 
 
-bool ChatHandler::HandleDebugRetroactiveQuestAchievements(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleDebugRetroactiveQuestAchievements(const char *args)
 {
 	Player* pTarget = getSelectedChar(m_session, true );
 	if(!pTarget) return true;
@@ -1506,7 +1509,7 @@ bool ChatHandler::HandleDebugRetroactiveQuestAchievements(const char *args, Worl
 	return true;
 }
 
-bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleModifyFactionCommand(const char *args)
 {
 	Player* player = m_session->GetPlayer();
 	if(player == NULL)
@@ -1538,7 +1541,7 @@ bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_s
 	return true;
 }
 
-bool ChatHandler::HandleModifyScaleCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleModifyScaleCommand(const char *args)
 {
 	Player* player = m_session->GetPlayer();
 	if(player == NULL)

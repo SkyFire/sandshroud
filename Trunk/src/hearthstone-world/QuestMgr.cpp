@@ -1634,7 +1634,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 
 	if (questCount == 0)
 	{
-		OUT_DEBUG("WORLD: Invalid NPC for CMSG_QUESTGIVER_HELLO.");
+		sLog.outError("WORLD: Invalid Questgiver for CMSG_QUESTGIVER_HELLO.");
 		return false;
 	}
 	else if (questCount == 1)
@@ -1666,7 +1666,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 
 		if(!bValid)
 		{
-			OUT_DEBUG("QUESTS: Warning, invalid NPC "I64FMT" specified for OnActivateQuestGiver. TypeId: %d.", qst_giver->GetGUID(), qst_giver->GetTypeId());
+			sLog.outError("QUESTS: Warning, invalid Questgiver "I64FMT" specified for OnActivateQuestGiver. TypeId: %d.", qst_giver->GetGUID(), qst_giver->GetTypeId());
 			return false;
 		}
 
@@ -1681,7 +1681,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 
 		uint8 status = sQuestMgr.CalcStatus(qst_giver, plr);
 
-		if ((status == QMGR_QUEST_AVAILABLE) || (status == QMGR_QUEST_REPEATABLE) || (status == QMGR_QUEST_CHAT))
+		if (status == QMGR_QUEST_AVAILABLE || status == QMGR_QUEST_REPEATABLE || status == QMGR_QUEST_CHAT)
 		{
 			sQuestMgr.BuildQuestDetails(&data, (*itr)->qst, qst_giver, 1, plr->GetSession()->language, plr);		// 1 because we have 1 quest, and we want goodbye to function
 			plr->GetSession()->SendPacket(&data);

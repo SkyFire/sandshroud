@@ -23,7 +23,7 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleResetReputationCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleResetReputationCommand(const char *args)
 {
 	Player* plr = getSelectedChar(m_session);
 	if(plr == NULL)
@@ -38,7 +38,7 @@ bool ChatHandler::HandleResetReputationCommand(const char *args, WorldSession *m
 	return true;
 }
 
-bool ChatHandler::HandleInvincibleCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleInvincibleCommand(const char *args)
 {
 	Player* chr = getSelectedChar(m_session);
 	char msg[100];
@@ -55,7 +55,7 @@ bool ChatHandler::HandleInvincibleCommand(const char *args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleInvisibleCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleInvisibleCommand(const char *args)
 {
 	char msg[256];
 	Player* pChar =m_session->GetPlayer();
@@ -82,7 +82,7 @@ bool ChatHandler::HandleInvisibleCommand(const char *args, WorldSession *m_sessi
 	return true;
 }
 
-bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::CreateGuildCommand(const char* args)
 {
 	if(!*args)
 		return false;
@@ -126,7 +126,7 @@ bool ChatHandler::CreateGuildCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleDeleteCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if(guid == 0)
@@ -222,7 +222,7 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleDeMorphCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleDeMorphCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	Unit *unit = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid);
@@ -234,7 +234,7 @@ bool ChatHandler::HandleDeMorphCommand(const char* args, WorldSession *m_session
 	return false;
 }
 
-bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleItemCommand(const char* args)
 {
 	char* pitem = strtok((char*)args, " ");
 	if (!pitem)
@@ -278,7 +278,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleItemRemoveCommand(const char* args)
 {
 	if (!args)
 		return false;
@@ -329,7 +329,7 @@ bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleNPCFlagCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleNPCFlagCommand(const char* args)
 {
 	if (!*args)
 		return false;
@@ -350,7 +350,7 @@ bool ChatHandler::HandleNPCFlagCommand(const char* args, WorldSession *m_session
 	return true;
 }
 
-bool ChatHandler::HandleSaveAllCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleSaveAllCommand(const char *args)
 {
 	PlayerStorageMap::const_iterator itr;
 	uint32 stime = now();
@@ -373,7 +373,7 @@ bool ChatHandler::HandleSaveAllCommand(const char *args, WorldSession *m_session
 	return true;
 }
 
-bool ChatHandler::HandleKillCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleKillCommand(const char *args)
 {
 	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
 	if(target == 0)
@@ -423,7 +423,7 @@ bool ChatHandler::HandleKillCommand(const char *args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleKillByPlrCommand( const char *args , WorldSession *m_session )
+bool ChatHandler::HandleKillByPlrCommand(const char *args)
 {
 	Player* plr = objmgr.GetPlayer(args, false);
 	if(!plr)
@@ -445,7 +445,7 @@ bool ChatHandler::HandleKillByPlrCommand( const char *args , WorldSession *m_ses
 	}
 	return true;
 }
-bool ChatHandler::HandleCastSpellCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleCastSpellCommand(const char* args)
 {
 	Unit* caster = m_session->GetPlayer();
 	Unit* target = getSelectedChar(m_session, false);
@@ -481,7 +481,7 @@ bool ChatHandler::HandleCastSpellCommand(const char* args, WorldSession *m_sessi
 	return true;
 }
 
-bool ChatHandler::HandleMonsterCastCommand(const char * args, WorldSession * m_session)
+bool ChatHandler::HandleMonsterCastCommand(const char * args)
 {
 	Unit* crt = getSelectedCreature(m_session, false);
 	if(!crt)
@@ -500,7 +500,7 @@ bool ChatHandler::HandleMonsterCastCommand(const char * args, WorldSession * m_s
 	return true;
 }
 
-bool ChatHandler::HandleNPCEquipCommand(const char * args, WorldSession * m_session)
+bool ChatHandler::HandleNPCEquipCommand(const char * args)
 {
 	Creature* crt = getSelectedCreature(m_session, false);
 	if(crt == NULL)
@@ -527,7 +527,7 @@ bool ChatHandler::HandleNPCEquipCommand(const char * args, WorldSession * m_sess
 	return true;
 }
 
-bool ChatHandler::HandleNPCSetOnObjectCommand(const char * args, WorldSession * m_session)
+bool ChatHandler::HandleNPCSetOnObjectCommand(const char * args)
 {
 	Creature* crt = getSelectedCreature(m_session, false);
 	if(crt == NULL)
@@ -544,7 +544,7 @@ bool ChatHandler::HandleNPCSetOnObjectCommand(const char * args, WorldSession * 
 	return true;
 }
 
-bool ChatHandler::HandleCastSpellNECommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleCastSpellNECommand(const char* args)
 {
 	Unit* caster = m_session->GetPlayer();
 	Unit* target = getSelectedChar(m_session, false);
@@ -593,7 +593,7 @@ bool ChatHandler::HandleCastSpellNECommand(const char* args, WorldSession *m_ses
 	return true;
 }
 
-bool ChatHandler::HandleMonsterSayCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleMonsterSayCommand(const char* args)
 {
 	Unit* crt = getSelectedCreature(m_session, false);
 	if(!crt)
@@ -618,7 +618,7 @@ bool ChatHandler::HandleMonsterSayCommand(const char* args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleMonsterYellCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleMonsterYellCommand(const char* args)
 {
 	Unit* crt = getSelectedCreature(m_session, false);
 	if(!crt)
@@ -644,7 +644,7 @@ bool ChatHandler::HandleMonsterYellCommand(const char* args, WorldSession *m_ses
 }
 
 
-bool ChatHandler::HandleGOSelect(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGOSelect(const char *args)
 {
 	GameObject* GObj = NULLGOB;
 
@@ -718,7 +718,7 @@ bool ChatHandler::HandleGOSelect(const char *args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGODelete(const char *args)
 {
 	GameObject* GObj = m_session->GetPlayer()->m_GM_SelectedGO;
 	if( !GObj )
@@ -769,7 +769,7 @@ bool ChatHandler::HandleGODelete(const char *args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGOSpawn(const char *args)
 {
 	if(!args || !m_session)
 		return false;
@@ -840,7 +840,7 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGOInfo(const char *args)
 {
 	std::stringstream sstext;
 	GameObject *GObj = NULL;
@@ -903,7 +903,7 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	default:										gottext << "Unknown.";	break;
 	}
 	GreenSystemMessage(m_session, "Type: %s%u|r -- %s", MSG_COLOR_LIGHTBLUE, type, gottext.str().c_str());
-	GreenSystemMessage(m_session, "Distance: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->CalcDistance((Object*)m_session->GetPlayer()));
+	GreenSystemMessage(m_session, "Distance: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->CalcDistance(m_session->GetPlayer()));
 	GreenSystemMessage(m_session, "Size: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->GetFloatValue(OBJECT_FIELD_SCALE_X));
 	if(GObj->GetInfo())
 		GreenSystemMessage(m_session, "Name: %s%s|r", MSG_COLOR_LIGHTBLUE, GObj->GetInfo()->Name);
@@ -912,7 +912,7 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGOEnable(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGOEnable(const char *args)
 {
 	GameObject* GObj = NULLGOB;
 
@@ -934,7 +934,7 @@ bool ChatHandler::HandleGOEnable(const char *args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGOActivate(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGOActivate(const char* args)
 {
 	GameObject* GObj = NULLGOB;
 
@@ -960,7 +960,7 @@ bool ChatHandler::HandleGOActivate(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGOScale(const char* args, WorldSession* m_session)
+bool ChatHandler::HandleGOScale(const char* args)
 {
 	GameObject* go = m_session->GetPlayer()->m_GM_SelectedGO;
 	if( !go )
@@ -988,7 +988,7 @@ bool ChatHandler::HandleGOScale(const char* args, WorldSession* m_session)
 	return true;
 }
 
-bool ChatHandler::HandleReviveStringcommand(const char* args, WorldSession* m_session)
+bool ChatHandler::HandleReviveStringcommand(const char* args)
 {
 	Player* plr = objmgr.GetPlayer(args, false);
 	if(!plr)
@@ -1011,7 +1011,7 @@ bool ChatHandler::HandleReviveStringcommand(const char* args, WorldSession* m_se
 	return true;
 }
 
-bool ChatHandler::HandleMountCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleMountCommand(const char *args)
 {
 	if(!args)
 	{
@@ -1055,7 +1055,7 @@ bool ChatHandler::HandleMountCommand(const char *args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleAddAIAgentCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleAddAIAgentCommand(const char* args)
 {
 	char* agent = strtok((char*)args, " ");
 	if(!agent)
@@ -1121,7 +1121,7 @@ bool ChatHandler::HandleAddAIAgentCommand(const char* args, WorldSession *m_sess
 
 	return true;
 }
-bool ChatHandler::HandleListAIAgentCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleListAIAgentCommand(const char* args)
 {
 	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
 	if(!target)
@@ -1157,7 +1157,7 @@ bool ChatHandler::HandleListAIAgentCommand(const char* args, WorldSession *m_ses
 	return true;
 }
 
-bool ChatHandler::HandleGOAnimProgress(const char * args, WorldSession * m_session)
+bool ChatHandler::HandleGOAnimProgress(const char * args)
 {
 	if(!m_session->GetPlayer()->m_GM_SelectedGO)
 		return false;
@@ -1168,7 +1168,7 @@ bool ChatHandler::HandleGOAnimProgress(const char * args, WorldSession * m_sessi
 	return true;
 }
 
-bool ChatHandler::HandleGOExport(const char * args, WorldSession * m_session)
+bool ChatHandler::HandleGOExport(const char * args)
 {
 	/*if(!m_session->GetPlayer()->m_GM_SelectedGO)
 		return false;
@@ -1204,7 +1204,7 @@ bool ChatHandler::HandleGOExport(const char * args, WorldSession * m_session)
 	return true;
 }
 
-bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session)
+bool ChatHandler::HandleNpcComeCommand(const char* args)
 {
 	// moves npc to players location
 	Player* plr = m_session->GetPlayer();
@@ -1216,7 +1216,7 @@ bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session
 	return true;
 }
 
-bool ChatHandler::HandleNpcJumpCommand(const char* args, WorldSession* m_session)
+bool ChatHandler::HandleNpcJumpCommand(const char* args)
 {
 	// moves npc to players location
 	Player* plr = m_session->GetPlayer();
@@ -1229,7 +1229,7 @@ bool ChatHandler::HandleNpcJumpCommand(const char* args, WorldSession* m_session
 	return true;
 }
 
-bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleItemSetCommand(const char* args)
 {
 	char* pitem = strtok((char*)args, " ");
 	if(!pitem)

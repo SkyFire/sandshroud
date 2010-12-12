@@ -23,7 +23,7 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleWPAddCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPAddCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -129,7 +129,7 @@ bool ChatHandler::HandleWPAddCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleWPMoveTypeCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPMoveTypeCommand(const char* args)
 {
 	if(!*args)
 		return false;
@@ -178,7 +178,7 @@ bool ChatHandler::HandleWPMoveTypeCommand(const char* args, WorldSession *m_sess
 }
 
 
-bool ChatHandler::HandleWPShowCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPShowCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -238,7 +238,7 @@ bool ChatHandler::HandleWPShowCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleWPDeleteCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPDeleteCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -286,7 +286,7 @@ bool ChatHandler::HandleWPDeleteCommand(const char* args, WorldSession *m_sessio
 	return true;
 }
 
-bool ChatHandler::HandleWPChangeNoCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPChangeNoCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -343,7 +343,7 @@ bool ChatHandler::HandleWPChangeNoCommand(const char* args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleWPFlagsCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPFlagsCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -392,7 +392,7 @@ bool ChatHandler::HandleWPFlagsCommand(const char* args, WorldSession *m_session
 	return true;
 }
 
-bool ChatHandler::HandleWPMoveHereCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPMoveHereCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -448,7 +448,7 @@ bool ChatHandler::HandleWPMoveHereCommand(const char* args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleWPWaitCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPWaitCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -504,7 +504,7 @@ bool ChatHandler::HandleWPWaitCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleWaypointGettextCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWaypointGettextCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -550,7 +550,7 @@ bool ChatHandler::HandleWaypointGettextCommand(const char* args, WorldSession *m
 	return true;
 }
 
-bool ChatHandler::HandleWaypointForwardTextCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWaypointForwardTextCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -598,7 +598,7 @@ bool ChatHandler::HandleWaypointForwardTextCommand(const char* args, WorldSessio
 	}
 	return true;
 }
-bool ChatHandler::HandleWaypointBackwardTextCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWaypointBackwardTextCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -645,7 +645,7 @@ bool ChatHandler::HandleWaypointBackwardTextCommand(const char* args, WorldSessi
 	}
 	return true;
 }
-bool ChatHandler::HandleWPSpellToCastCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPSpellToCastCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -704,7 +704,7 @@ bool ChatHandler::HandleWPSpellToCastCommand(const char* args, WorldSession *m_s
 	return true;
 }
 
-bool ChatHandler::HandleWPStandStateCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPStandStateCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -761,7 +761,7 @@ bool ChatHandler::HandleWPStandStateCommand(const char* args, WorldSession *m_se
 	return true;
 }
 
-bool ChatHandler::HandleWPEmoteCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPEmoteCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -825,7 +825,7 @@ bool ChatHandler::HandleWPEmoteCommand(const char* args, WorldSession *m_session
 	return true;
 }
 
-bool ChatHandler::HandleWPSkinCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPSkinCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -884,7 +884,7 @@ bool ChatHandler::HandleWPSkinCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleWPInfoCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPInfoCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -946,7 +946,7 @@ bool ChatHandler::HandleWPInfoCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleWPHideCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWPHideCommand(const char* args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -992,7 +992,7 @@ bool ChatHandler::HandleWPHideCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_session)
+bool ChatHandler::HandleGenerateWaypoints(const char* args)
 {
 	Creature* cr = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
 	if(!cr)
@@ -1087,7 +1087,7 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 	return true;
 }
 
-bool ChatHandler::HandleSaveWaypoints(const char* args, WorldSession * m_session)
+bool ChatHandler::HandleSaveWaypoints(const char* args)
 {
 	Creature* cr =
 		m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
@@ -1100,7 +1100,7 @@ bool ChatHandler::HandleSaveWaypoints(const char* args, WorldSession * m_session
 }
 
 
-bool ChatHandler::HandleDeleteWaypoints(const char* args, WorldSession * m_session)
+bool ChatHandler::HandleDeleteWaypoints(const char* args)
 {
 	Creature* cr =
 		m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
@@ -1121,7 +1121,7 @@ bool ChatHandler::HandleDeleteWaypoints(const char* args, WorldSession * m_sessi
 	return true;
 }
 
-bool ChatHandler::HandleWaypointAddFlyCommand(const char * args, WorldSession * m_session)
+bool ChatHandler::HandleWaypointAddFlyCommand(const char * args)
 {
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
@@ -1218,7 +1218,7 @@ bool ChatHandler::HandleWaypointAddFlyCommand(const char * args, WorldSession * 
 	return true;
 }
 
-bool ChatHandler::HandleNpcSelectCommand(const char * args, WorldSession * m_session)
+bool ChatHandler::HandleNpcSelectCommand(const char * args)
 {
 	Creature* un = NULLCREATURE;
 	float dist = 999999.0f;

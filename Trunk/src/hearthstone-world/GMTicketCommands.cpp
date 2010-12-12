@@ -21,7 +21,7 @@
 
 #ifdef GM_TICKET_MY_MASTER_COMPATIBLE
 
-bool ChatHandler::HandleGMTicketListCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketListCommand(const char* args)
 {
 	Player *cplr = m_session->GetPlayer();
 
@@ -55,7 +55,7 @@ bool ChatHandler::HandleGMTicketListCommand(const char* args, WorldSession *m_se
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args)
 {
 	if(!*args)
 		return false;
@@ -109,7 +109,7 @@ bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args, WorldSession *m
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketRemoveByIdCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketRemoveByIdCommand(const char* args)
 {
 	if(!*args)
 		return false;
@@ -164,7 +164,7 @@ void ChatHandler::SendGMSurvey()
 
 }
 
-bool ChatHandler::HandleGMTicketListCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketListCommand(const char* args)
 {
 	Player *cplr = m_session->GetPlayer();
 
@@ -206,7 +206,7 @@ bool ChatHandler::HandleGMTicketListCommand(const char* args, WorldSession *m_se
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args)
 {
 	uint64 ticketGuid = (args ? atoi(args) : 0);
 	if(!ticketGuid)
@@ -262,7 +262,7 @@ bool ChatHandler::HandleGMTicketGetByIdCommand(const char* args, WorldSession *m
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketRemoveByIdCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketRemoveByIdCommand(const char* args)
 {
 	uint64 ticketGuid = (args ? atoi(args) : 0);
 	if(!ticketGuid)
@@ -316,7 +316,7 @@ bool ChatHandler::HandleGMTicketRemoveByIdCommand(const char* args, WorldSession
 }
 
 
-bool ChatHandler::HandleGMTicketAssignToCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketAssignToCommand(const char* args)
 {
 	uint64 ticketGuid;
 	char guidString[100], name[100];
@@ -403,7 +403,7 @@ bool ChatHandler::HandleGMTicketAssignToCommand(const char* args, WorldSession *
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketReleaseCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketReleaseCommand(const char* args)
 {
 	uint64 ticketGuid = (args ? atoi(args) : 0);
 	if(!ticketGuid)
@@ -448,7 +448,7 @@ bool ChatHandler::HandleGMTicketReleaseCommand(const char* args, WorldSession *m
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketCommentCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketCommentCommand(const char* args)
 {
 	uint64 ticketGuid;
 	int argc = 1;
@@ -502,7 +502,7 @@ bool ChatHandler::HandleGMTicketCommentCommand(const char* args, WorldSession *m
 	return true;
 }
 
-bool ChatHandler::HandleGMTicketDeletePermanentCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketDeletePermanentCommand(const char* args)
 {
 	uint64 ticketGuid = (args ? atoi(args) : 0);
 	if(!ticketGuid)
@@ -557,7 +557,7 @@ bool ChatHandler::HandleGMTicketDeletePermanentCommand(const char* args, WorldSe
 
 #endif
 
-bool ChatHandler::HandleGMTicketToggleTicketSystemStatusCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMTicketToggleTicketSystemStatusCommand(const char* args)
 {
 	if(sWorld.toggleGMTicketStatus())
 		GreenSystemMessage(m_session, "TicketSystem enabled.");

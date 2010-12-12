@@ -1248,6 +1248,8 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				if(!_player->m_bgFlagIneligible)
 					_player->m_bg->HookFlagStand(_player, obj);
 			}
+			else
+				sLog.outError("Gameobject Type FlagStand activated while the player is not in a battleground, entry %u", goinfo->ID);
 		}break;
 		case GAMEOBJECT_TYPE_FLAGDROP:
 		{
@@ -1265,18 +1267,25 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 
 				_player->m_bg->HookFlagDrop(_player, obj);
 			}
+			else
+				sLog.outError("Gameobject Type Flag Drop activated while the player is not in a battleground, entry %u", goinfo->ID);
 		}break;
 		case GAMEOBJECT_TYPE_QUESTGIVER:
 		{
 			// Questgiver
 			if(obj->HasQuests())
 				sQuestMgr.OnActivateQuestGiver(obj, _player);
+			else
+				sLog.outError("Gameobject Type Questgiver doesn't have any quests entry %u", goinfo->ID);
 		}break;
 		case GAMEOBJECT_TYPE_SPELLCASTER:
 		{
 			SpellEntry *info = dbcSpell.LookupEntry(goinfo->SpellFocus);
 			if(!info)
-				break;
+			{
+				sLog.outError("Gameobject Type Spellcaster doesn't have a spell to cast entry %u", goinfo->ID);
+				return;
+			}
 			Spell* spell(new Spell(_player, info, false, NULLAURA));
 			SpellCastTargets targets;
 			targets.m_unitTarget = _player->GetGUID();
@@ -1435,12 +1444,19 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->Unknown1);
 			if(sp != NULL)
 				_player->CastSpell(_player,sp,true);
+			else
+				sLog.outError("Gameobject Type Goober doesn't have a spell to cast entry %u", goinfo->ID);
 		}break;
 		case GAMEOBJECT_TYPE_CAMERA://eye of azora
 		{
-			WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
-			data << uint32(goinfo->sound1);
-			SendPacket(&data);
+			if(goinfo->sound1)
+			{
+				WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
+				data << uint32(goinfo->sound1);
+				SendPacket(&data);
+			}
+			else
+				sLog.outError("Gameobject Type Camera doesn't have a cinematic to play id, entry %u", goinfo->ID);
 		}break;
 		case GAMEOBJECT_TYPE_MEETINGSTONE:	// Meeting Stone
 		{
@@ -1483,7 +1499,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			_player->m_lastRunSpeed = 0; //counteract mount-bug; reset speed to zero to force update SetPlayerSpeed in next line.
 			_player->SetPlayerSpeed(RUN,_player->m_base_runSpeed);
 			WorldPacket data(SMSG_ENABLE_BARBER_SHOP, 0);
-			_player->GetSession()->SendPacket(&data);
+			SendPacket(&data);
 		}break;
 	}
 }

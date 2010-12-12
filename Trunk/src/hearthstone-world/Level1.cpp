@@ -23,7 +23,7 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleAnnounceCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleAnnounceCommand(const char* args)
 {
 	if( !*args || strlen(args) < 3 || strchr(args, '%'))
 	{
@@ -38,7 +38,7 @@ bool ChatHandler::HandleAnnounceCommand(const char* args, WorldSession *m_sessio
 	return true;
 }
 
-bool ChatHandler::HandleAdminAnnounceCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleAdminAnnounceCommand(const char* args)
 {
 	if(!*args || !m_session->CanUseCommand('z'))
 		return false;
@@ -49,7 +49,7 @@ bool ChatHandler::HandleAdminAnnounceCommand(const char* args, WorldSession *m_s
 	return true;
 }
 
-bool ChatHandler::HandleGMAnnounceCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMAnnounceCommand(const char* args)
 {
 	if(!*args)
 		return false;
@@ -60,7 +60,7 @@ bool ChatHandler::HandleGMAnnounceCommand(const char* args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleWAnnounceCommand(const char* args)
 {
 	if(!*args)
 		return false;
@@ -81,7 +81,7 @@ bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_sessi
 	return true;
 }
 
-bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMOnCommand(const char* args)
 {
 	Player* gm = m_session->GetPlayer();
 	if(gm->bGMTagOn)
@@ -108,7 +108,7 @@ bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGMOffCommand(const char* args)
 {
 	Player* gm = m_session->GetPlayer();
 	if(!gm->bGMTagOn)
@@ -124,7 +124,7 @@ bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleToggleDevCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleToggleDevCommand(const char* args)
 {
 	Player* gm = m_session->GetPlayer();
 	if(gm->DisableDevTag)
@@ -161,7 +161,7 @@ bool ChatHandler::HandleToggleDevCommand(const char* args, WorldSession *m_sessi
 	return true;
 }
 
-bool ChatHandler::HandleGPSCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGPSCommand(const char* args)
 {
 	Object* obj;
 
@@ -188,7 +188,7 @@ bool ChatHandler::HandleGPSCommand(const char* args, WorldSession *m_session)
 }
 
 
-bool ChatHandler::HandleKickCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleKickCommand(const char* args)
 {
 	char pname[20];
 	if(sscanf(args, "%s", &pname) != 1)
@@ -230,7 +230,7 @@ bool ChatHandler::HandleKickCommand(const char* args, WorldSession *m_session)
 	}
 }
 
-bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleAddInvItemCommand(const char *args)
 {
 	uint32 itemid, count = 1;
 	int32 randomprop = 0;
@@ -283,7 +283,7 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 	}
 }
 
-bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleSummonCommand(const char* args)
 {
 	if(!*args)
 		return false;
@@ -343,7 +343,7 @@ bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
 }
 
 
-bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleAppearCommand(const char* args)
 {
 	if( !*args )
 		return false;
@@ -389,7 +389,7 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleTaxiCheatCommand(const char* args)
 {
 	if (!*args)
 		return false;
@@ -441,7 +441,7 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_sessi
 	return true;
 }
 
-bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleModifySpeedCommand(const char* args)
 {
 	if (!*args)
 		return false;
@@ -547,7 +547,7 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_ses
 	return true;
 }
 
-bool ChatHandler::HandleLearnSkillCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleLearnSkillCommand(const char *args)
 {
 	uint32 skill, min, max;
 	min = max = 1;
@@ -580,7 +580,7 @@ bool ChatHandler::HandleLearnSkillCommand(const char *args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleModifySkillCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleModifySkillCommand(const char *args)
 {
 	uint32 skill, min, max;
 	min = max = 1;
@@ -618,7 +618,7 @@ bool ChatHandler::HandleModifySkillCommand(const char *args, WorldSession *m_ses
 }
 
 /// DGM: Get skill level command for getting information about a skill
-bool ChatHandler::HandleGetSkillLevelCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGetSkillLevelCommand(const char *args)
 {
 	uint32 skill = 0;
 	char *pSkill = strtok((char*)args, " ");
@@ -659,7 +659,7 @@ bool ChatHandler::HandleGetSkillLevelCommand(const char *args, WorldSession *m_s
 	return true;
 }
 
-bool ChatHandler::HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGetSkillsInfoCommand(const char *args)
 {
 	Player* plr = getSelectedChar(m_session, true);
 	if(!plr)
@@ -694,7 +694,7 @@ bool ChatHandler::HandleGetSkillsInfoCommand(const char *args, WorldSession *m_s
 }
 
 
-bool ChatHandler::HandleRemoveSkillCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleRemoveSkillCommand(const char *args)
 {
 	uint32 skill = 0;
 	char *pSkill = strtok((char*)args, " ");
@@ -713,7 +713,7 @@ bool ChatHandler::HandleRemoveSkillCommand(const char *args, WorldSession *m_ses
 }
 
 
-bool ChatHandler::HandleEmoteCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleEmoteCommand(const char* args)
 {
 	uint32 emote = atoi((char*)args);
 	Unit* target = this->getSelectedCreature(m_session);
@@ -723,7 +723,7 @@ bool ChatHandler::HandleEmoteCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleGenderChanger(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleGenderChanger(const char* args)
 {
 	int gender;
 	Player* target = objmgr.GetPlayer((uint32)m_session->GetPlayer()->GetSelection());
@@ -743,7 +743,7 @@ bool ChatHandler::HandleGenderChanger(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleModifyGoldCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleModifyGoldCommand(const char* args)
 {
 	if ( *args == 0 )
 		return false;
@@ -785,7 +785,7 @@ bool ChatHandler::HandleModifyGoldCommand(const char* args, WorldSession *m_sess
 	return true;
 }
 
-bool ChatHandler::HandleTriggerCommand(const char* args, WorldSession* m_session)
+bool ChatHandler::HandleTriggerCommand(const char* args)
 {
 	int32 instance_id;
 	uint32 trigger_id;
@@ -807,7 +807,7 @@ bool ChatHandler::HandleTriggerCommand(const char* args, WorldSession* m_session
 	return true;
 }
 
-bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_session)
+bool ChatHandler::HandleUnlearnCommand(const char* args)
 {
 	Player* plr = getSelectedChar(m_session, true);
 	if(plr == 0)
@@ -836,7 +836,7 @@ bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_sessio
 	return true;
 }
 
-bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args)
 {
 	uint32 id;
 	char sql[512];
@@ -857,7 +857,7 @@ bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_se
 	return true;
 }
 
-bool ChatHandler::HandleGuildSetLeaderCommand(const char *args, WorldSession *m_session)
+bool ChatHandler::HandleGuildSetLeaderCommand(const char *args)
 {
 	Player* plr = getSelectedChar(m_session);
 	if( plr == NULL )
@@ -882,7 +882,7 @@ bool ChatHandler::HandleGuildSetLeaderCommand(const char *args, WorldSession *m_
 	return true;
 }
 
-bool ChatHandler::HandleModifyTPsCommand(const char* args, WorldSession *m_session)
+bool ChatHandler::HandleModifyTPsCommand(const char* args)
 {
 	if(!args)
 		return false;
