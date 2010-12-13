@@ -54,7 +54,7 @@ bool ChatHandler::ShowHelpForCommand(WorldSession *m_session, ChatCommand *table
 	return false;
 }
 
-bool ChatHandler::HandleHelpCommand(const char* args)
+bool ChatHandler::HandleHelpCommand(const char* args, WorldSession *m_session)
 {
 //	ChatCommand *table = getCommandTable();
 	WorldPacket data;
@@ -75,7 +75,7 @@ bool ChatHandler::HandleHelpCommand(const char* args)
 }
 
 
-bool ChatHandler::HandleCommandsCommand(const char* args)
+bool ChatHandler::HandleCommandsCommand(const char* args, WorldSession *m_session)
 {
 	ChatCommand *table = sComTableStore.Get();
 	WorldPacket data;
@@ -144,7 +144,7 @@ bool ChatHandler::HandleCommandsCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleStartCommand(const char* args)
+bool ChatHandler::HandleStartCommand(const char* args, WorldSession *m_session)
 {
 	Player* m_plyr = TO_PLAYER(getSelectedChar(m_session, true));
 	if( m_plyr == NULL)
@@ -218,7 +218,7 @@ bool ChatHandler::HandleStartCommand(const char* args)
 }
 
 
-bool ChatHandler::HandleInfoCommand(const char* args)
+bool ChatHandler::HandleInfoCommand(const char* args, WorldSession *m_session)
 {
 	WorldPacket data;
 
@@ -248,13 +248,13 @@ bool ChatHandler::HandleInfoCommand(const char* args)
 }
 
 
-bool ChatHandler::HandleNYICommand(const char* args)
+bool ChatHandler::HandleNYICommand(const char* args, WorldSession *m_session)
 {
 	RedSystemMessage(m_session, "Not yet implemented.");
 	return true;
 }
 
-bool ChatHandler::HandleDismountCommand(const char* args)
+bool ChatHandler::HandleDismountCommand(const char* args, WorldSession *m_session)
 {
 	Unit* m_target = NULLUNIT;
 
@@ -282,7 +282,7 @@ bool ChatHandler::HandleDismountCommand(const char* args)
 
 }
 
-bool ChatHandler::HandleFullDismountCommand(const char * args)
+bool ChatHandler::HandleFullDismountCommand(const char * args, WorldSession *m_session)
 {
 	Player* p_target = getSelectedChar(m_session, false);
 	if(!p_target)
@@ -320,7 +320,7 @@ bool ChatHandler::HandleFullDismountCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleSaveCommand(const char* args)
+bool ChatHandler::HandleSaveCommand(const char* args, WorldSession *m_session)
 {
 	WorldPacket data;
 	if(m_session->GetPlayer()->m_nextSave < 300000 || m_session->CanUseCommand('s')) //5min out of 10 left so 5 min since last save
@@ -337,7 +337,7 @@ bool ChatHandler::HandleSaveCommand(const char* args)
 }
 
 
-bool ChatHandler::HandleGMListCommand(const char* args)
+bool ChatHandler::HandleGMListCommand(const char* args, WorldSession *m_session)
 {
 	WorldSession *gm_session;
 	SessionSet::iterator itr;
@@ -362,7 +362,7 @@ bool ChatHandler::HandleGMListCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleRangeCheckCommand(const char *args)
+bool ChatHandler::HandleRangeCheckCommand( const char *args , WorldSession *m_session )
 {
 	WorldPacket data;
 	uint64 guid = m_session->GetPlayer()->GetSelection();
@@ -389,7 +389,7 @@ bool ChatHandler::HandleRangeCheckCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleGmLogCommentCommand(const char *args)
+bool ChatHandler::HandleGmLogCommentCommand( const char *args , WorldSession *m_session )
 {
 	if(!args || !strlen(args)) return false;
 	BlueSystemMessage(m_session, "Added Logcomment: %s",args);
@@ -397,7 +397,7 @@ bool ChatHandler::HandleGmLogCommentCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleRatingsCommand(const char *args)
+bool ChatHandler::HandleRatingsCommand( const char *args , WorldSession *m_session )
 {
 	m_session->SystemMessage("Ratings!!!");
 	Player* m_plyr = getSelectedChar(m_session, false);
@@ -409,7 +409,7 @@ bool ChatHandler::HandleRatingsCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleModifyPlayerFlagsCommand(const char *args)
+bool ChatHandler::HandleModifyPlayerFlagsCommand(const char *args, WorldSession *m_session)
 {
 	Player* player = getSelectedChar(m_session);
 	if(player == NULL || !args)
@@ -419,7 +419,7 @@ bool ChatHandler::HandleModifyPlayerFlagsCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleModifyAuraStateCommand(const char *args)
+bool ChatHandler::HandleModifyAuraStateCommand(const char *args, WorldSession *m_session)
 {
 	Player* player = getSelectedChar(m_session);
 	if(player == NULL || !args)
@@ -430,7 +430,7 @@ bool ChatHandler::HandleModifyAuraStateCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleMirrorTimerCommand(const char *args)
+bool ChatHandler::HandleMirrorTimerCommand( const char *args , WorldSession *m_session )
 {
 	uint32 type = 0, spellid = 0;
 	sscanf(args, "%u %u", &type, &spellid);

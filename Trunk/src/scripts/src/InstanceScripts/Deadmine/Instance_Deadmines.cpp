@@ -437,11 +437,7 @@ class VanCleefAI : public MoonScriptBossAI
     void OnTargetDied(Unit *pTarget)
     {
         char msg[200];
-        if(pTarget->GetTypeId() == TYPEID_PLAYER)
-            sprintf(msg, "And stay down, %s.", TO_PLAYER(pTarget)->GetName());
-        else if (pTarget->GetTypeFromGUID() == HIGHGUID_TYPE_PET)
-            sprintf(msg, "And stay down, %s.", TO_PET(pTarget)->GetName().c_str());
-
+            sprintf(msg, "And stay down, %s.", pTarget->IsPet() ? TO_PET(pTarget)->GetName() : pTarget->GetName());
 		Emote(msg, Text_Yell, 5781);
 		ParentClass::OnTargetDied(pTarget);
     }

@@ -1466,6 +1466,7 @@ public:
 	uint32 GetCreatureType();
 	bool HasAuraWithFlags4(uint32 Flags);
 	bool HasAuraWithFlags5(uint32 Flags);
+	virtual const char* GetName() = 0;
 private:
 	uint8 m_inVehicleSeatId;
 	Vehicle* m_CurrentVehicle;

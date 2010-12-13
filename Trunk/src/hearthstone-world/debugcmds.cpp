@@ -23,7 +23,7 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleDebugInFrontCommand(const char* args)
+bool ChatHandler::HandleDebugInFrontCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj;
 
@@ -47,7 +47,7 @@ bool ChatHandler::HandleDebugInFrontCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleShowReactionCommand(const char* args)
+bool ChatHandler::HandleShowReactionCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj = NULLOBJ;
 
@@ -81,7 +81,7 @@ bool ChatHandler::HandleShowReactionCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleDistanceCommand(const char* args)
+bool ChatHandler::HandleDistanceCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj;
 
@@ -105,7 +105,7 @@ bool ChatHandler::HandleDistanceCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleMoveInfoCommand(const char* args)
+bool ChatHandler::HandleMoveInfoCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj;
 
@@ -157,7 +157,7 @@ bool ChatHandler::HandleMoveInfoCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleDebugSetPhase(const char* args)
+bool ChatHandler::HandleDebugSetPhase(const char* args, WorldSession *m_session)
 {
 	Unit* pUnit = getSelectedChar(m_session, false);
 	if(!pUnit)
@@ -195,7 +195,7 @@ bool ChatHandler::HandleDebugSetPhase(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleAIMoveCommand(const char* args)
+bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj = NULLOBJ;
 
@@ -331,7 +331,7 @@ bool ChatHandler::HandleAIMoveCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleFaceCommand(const char* args)
+bool ChatHandler::HandleFaceCommand(const char* args, WorldSession *m_session)
 {
 
 	Object* obj = NULLOBJ;
@@ -494,7 +494,7 @@ TO_CREATURE(obj)->SendMessageToSet( &data, false );
 return true;
 }
 */
-bool ChatHandler::HandleSetBytesCommand(const char* args)
+bool ChatHandler::HandleSetBytesCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj;
 
@@ -547,7 +547,7 @@ bool ChatHandler::HandleSetBytesCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGetBytesCommand(const char* args)
+bool ChatHandler::HandleGetBytesCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj;
 
@@ -590,7 +590,7 @@ bool ChatHandler::HandleGetBytesCommand(const char* args)
 	SystemMessage(m_session, sstext.str().c_str());
 	return true;
 }
-bool ChatHandler::HandleDebugLandWalk(const char* args)
+bool ChatHandler::HandleDebugLandWalk(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
 	char buf[256];
@@ -606,7 +606,7 @@ bool ChatHandler::HandleDebugLandWalk(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleDebugWaterWalk(const char* args)
+bool ChatHandler::HandleDebugWaterWalk(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
 	char buf[256];
@@ -622,7 +622,7 @@ bool ChatHandler::HandleDebugWaterWalk(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleDebugUnroot(const char* args)
+bool ChatHandler::HandleDebugUnroot(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
 	char buf[256];
@@ -640,7 +640,7 @@ bool ChatHandler::HandleDebugUnroot(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleDebugRoot(const char* args)
+bool ChatHandler::HandleDebugRoot(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
 	char buf[256];
@@ -656,7 +656,7 @@ bool ChatHandler::HandleDebugRoot(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleAggroRangeCommand(const char* args)
+bool ChatHandler::HandleAggroRangeCommand(const char* args, WorldSession *m_session)
 {
 	Unit* obj = NULLUNIT;
 
@@ -684,7 +684,7 @@ bool ChatHandler::HandleAggroRangeCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleKnockBackCommand(const char* args)
+bool ChatHandler::HandleKnockBackCommand(const char* args, WorldSession *m_session)
 {
 	float hspeed, vspeed;
 	Unit* target = getSelectedChar(m_session, true);
@@ -695,7 +695,7 @@ bool ChatHandler::HandleKnockBackCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleFadeCommand(const char* args)
+bool ChatHandler::HandleFadeCommand(const char* args, WorldSession *m_session)
 {
 	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
 	if(!target)
@@ -713,7 +713,7 @@ bool ChatHandler::HandleFadeCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleThreatModCommand(const char* args)
+bool ChatHandler::HandleThreatModCommand(const char* args, WorldSession *m_session)
 {
 	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
 	if(!target)
@@ -731,7 +731,7 @@ bool ChatHandler::HandleThreatModCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleCalcThreatCommand(const char* args)
+bool ChatHandler::HandleCalcThreatCommand(const char* args, WorldSession *m_session)
 {
 	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
 	if(!target)
@@ -755,7 +755,7 @@ bool ChatHandler::HandleCalcThreatCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleThreatListCommand(const char* args)
+bool ChatHandler::HandleThreatListCommand(const char* args, WorldSession *m_session)
 {
 	Unit* target = NULLUNIT;
 	target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
@@ -782,7 +782,7 @@ bool ChatHandler::HandleThreatListCommand(const char* args)
 	SendMultilineMessage(m_session, sstext.str().c_str());
 	return true;
 }
-bool ChatHandler::HandleSendItemPushResult(const char* args)
+bool ChatHandler::HandleSendItemPushResult(const char* args, WorldSession* m_session)
 {
 	uint32 itemid, count, type, unk1, unk2, unk3, unk4;
 	char* arg = const_cast<char*>(args);
@@ -815,7 +815,7 @@ bool ChatHandler::HandleSendItemPushResult(const char* args)
 	//data << ((proto != NULL) ? proto->Quality : uint32(0)); // quality
 }
 
-bool ChatHandler::HandleModifyBitCommand(const char* args)
+bool ChatHandler::HandleModifyBitCommand(const char* args, WorldSession* m_session)
 {
 
 	Object* obj;
@@ -872,7 +872,7 @@ bool ChatHandler::HandleModifyBitCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleModifyValueCommand(const char* args)
+bool ChatHandler::HandleModifyValueCommand(const char* args,  WorldSession* m_session)
 {
 	Object* obj;
 
@@ -926,7 +926,7 @@ bool ChatHandler::HandleModifyValueCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleDebugDumpCoordsCommmand(const char * args)
+bool ChatHandler::HandleDebugDumpCoordsCommmand(const char * args, WorldSession * m_session)
 {
 	Player* p = m_session->GetPlayer();
 	//char buffer[200] = {0};
@@ -941,7 +941,7 @@ bool ChatHandler::HandleDebugDumpCoordsCommmand(const char * args)
 
 //As requested by WaRxHeAd for database development.
 //This should really only be available in special cases and NEVER on real servers... -DGM
-bool ChatHandler::HandleSQLQueryCommand(const char* args)
+bool ChatHandler::HandleSQLQueryCommand(const char* args, WorldSession *m_session)
 {
 	#ifdef _ONLY_FOOLS_TRY_THIS_
 	if(!*args)
@@ -964,7 +964,7 @@ bool ChatHandler::HandleSQLQueryCommand(const char* args)
 
 //#define _ONLY_FOOLS_TRY_THIS_
 
-bool ChatHandler::HandleSendpacket(const char * args)
+bool ChatHandler::HandleSendpacket(const char * args, WorldSession * m_session)
 {
 #ifdef _ONLY_FOOLS_TRY_THIS_
 
@@ -1033,7 +1033,7 @@ bool ChatHandler::HandleSendpacket(const char * args)
 #endif
 	return true;
 }
-bool ChatHandler::HandleDebugGoDamage(const char* args)
+bool ChatHandler::HandleDebugGoDamage(const char* args, WorldSession *m_session)
 {
 	GameObject* GObj = NULLGOB;
 
@@ -1049,7 +1049,7 @@ bool ChatHandler::HandleDebugGoDamage(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleDebugGoRepair(const char* args)
+bool ChatHandler::HandleDebugGoRepair(const char* args, WorldSession *m_session)
 {
 	GameObject* GObj = NULLGOB;
 

@@ -23,7 +23,7 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleAnnounceCommand(const char* args)
+bool ChatHandler::HandleAnnounceCommand(const char* args, WorldSession *m_session)
 {
 	if( !*args || strlen(args) < 3 || strchr(args, '%'))
 	{
@@ -38,7 +38,7 @@ bool ChatHandler::HandleAnnounceCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleAdminAnnounceCommand(const char* args)
+bool ChatHandler::HandleAdminAnnounceCommand(const char* args, WorldSession *m_session)
 {
 	if(!*args || !m_session->CanUseCommand('z'))
 		return false;
@@ -49,7 +49,7 @@ bool ChatHandler::HandleAdminAnnounceCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGMAnnounceCommand(const char* args)
+bool ChatHandler::HandleGMAnnounceCommand(const char* args, WorldSession *m_session)
 {
 	if(!*args)
 		return false;
@@ -60,7 +60,7 @@ bool ChatHandler::HandleGMAnnounceCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleWAnnounceCommand(const char* args)
+bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_session)
 {
 	if(!*args)
 		return false;
@@ -81,7 +81,7 @@ bool ChatHandler::HandleWAnnounceCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGMOnCommand(const char* args)
+bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 {
 	Player* gm = m_session->GetPlayer();
 	if(gm->bGMTagOn)
@@ -108,7 +108,7 @@ bool ChatHandler::HandleGMOnCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGMOffCommand(const char* args)
+bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 {
 	Player* gm = m_session->GetPlayer();
 	if(!gm->bGMTagOn)
@@ -124,7 +124,7 @@ bool ChatHandler::HandleGMOffCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleToggleDevCommand(const char* args)
+bool ChatHandler::HandleToggleDevCommand(const char* args, WorldSession *m_session)
 {
 	Player* gm = m_session->GetPlayer();
 	if(gm->DisableDevTag)
@@ -161,21 +161,14 @@ bool ChatHandler::HandleToggleDevCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGPSCommand(const char* args)
+bool ChatHandler::HandleGPSCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj;
-
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
-	{
-		if(!(obj = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid)))
-		{
-			SystemMessage(m_session, "You should select a character or a creature.");
-			return true;
-		}
-	}
-	else
-		obj = TO_OBJECT(m_session->GetPlayer());
+	Object* obj = TO_OBJECT(getSelectedUnit(m_session, false));
+	if(obj == NULL)
+		if(m_session->GetPlayer()->m_GM_SelectedGO)
+			obj = m_session->GetPlayer()->m_GM_SelectedGO;
+		else
+			obj = m_session->GetPlayer();
 
 	AreaTable * at = dbcArea.LookupEntry(obj->GetAreaID());
 
@@ -188,7 +181,7 @@ bool ChatHandler::HandleGPSCommand(const char* args)
 }
 
 
-bool ChatHandler::HandleKickCommand(const char* args)
+bool ChatHandler::HandleKickCommand(const char* args, WorldSession *m_session)
 {
 	char pname[20];
 	if(sscanf(args, "%s", &pname) != 1)
@@ -207,15 +200,14 @@ bool ChatHandler::HandleKickCommand(const char* args)
 		std::string kickreason = "No reason";
 		if(reason)
 			kickreason = reason;
-
-		BlueSystemMessage(m_session, "Attempting to kick %s from the server for \"%s\".", chr->GetName(), kickreason.c_str());
-		sWorld.LogGM(m_session, "Attempting to kicked player %s from the server for %s", chr->GetName(), kickreason.c_str());
 		if(!m_session->CanUseCommand('z') && chr->GetSession()->CanUseCommand('z'))
 		{
 			RedSystemMessage(m_session, "You cannot kick %s, as they are a higher level gm than you.", chr->GetName());
+			sWorld.LogGM(m_session, "Attempted to kicked admin %s from the server for %s", chr->GetName(), kickreason.c_str());
 			return true;
 		}
-
+		BlueSystemMessage(m_session, "Kicked %s from the server for \"%s\".", chr->GetName(), kickreason.c_str());
+		sWorld.LogGM(m_session, "Kicked player %s from the server for %s", chr->GetName(), kickreason.c_str());
 		char msg[200];
 		snprintf(msg, 200, "%s%s was kicked by %s (%s)", MSG_COLOR_WHITE, chr->GetName(), m_session->GetPlayer()->GetName(), kickreason.c_str());
 		sWorld.SendWorldText(msg, NULL);
@@ -230,7 +222,7 @@ bool ChatHandler::HandleKickCommand(const char* args)
 	}
 }
 
-bool ChatHandler::HandleAddInvItemCommand(const char *args)
+bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_session)
 {
 	uint32 itemid, count = 1;
 	int32 randomprop = 0;
@@ -283,7 +275,7 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args)
 	}
 }
 
-bool ChatHandler::HandleSummonCommand(const char* args)
+bool ChatHandler::HandleSummonCommand(const char* args, WorldSession *m_session)
 {
 	if(!*args)
 		return false;
@@ -318,6 +310,7 @@ bool ChatHandler::HandleSummonCommand(const char* args)
 #ifndef CLUSTERING
 		}
 #endif
+		sWorld.LogGM(m_session, "Summoned player %s", plr->GetName());
 	}
 	else
 	{
@@ -337,13 +330,14 @@ bool ChatHandler::HandleSummonCommand(const char* args)
 			char buf[256];
 			snprintf((char*)buf,256,"(Offline) %s has been summoned.", pinfo->name);
 			SystemMessage(m_session, buf);
+			sWorld.LogGM(m_session, "Summoned offline player %s", pinfo->name);
 		}
 	}
 	return true;
 }
 
 
-bool ChatHandler::HandleAppearCommand(const char* args)
+bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 {
 	if( !*args )
 		return false;
@@ -354,7 +348,7 @@ bool ChatHandler::HandleAppearCommand(const char* args)
 		SystemMessage(m_session, "Appearing at %s's location.", chr->GetName());
 
 		if(!m_session->GetPlayer()->m_isGmInvisible)
-			SystemMessageToPlr(chr, "%s is appearing to your location.", m_session->GetPlayer()->GetName());
+			SystemMessageToPlr(chr, "%s appeared to your location.", m_session->GetPlayer()->GetName());
 
 		//If the GM is on the same map as the player, use the normal safeteleport method
 		if ( m_session->GetPlayer()->GetMapId() == chr->GetMapId() && m_session->GetPlayer()->GetInstanceID() == chr->GetInstanceID() )
@@ -362,6 +356,7 @@ bool ChatHandler::HandleAppearCommand(const char* args)
 		else
 			m_session->GetPlayer()->SafeTeleport(chr->GetMapMgr(), chr->GetPosition());
 		//The player and GM are not on the same map. We use this method so we can port to BG's (Above method doesn't support them)
+		sWorld.LogGM(m_session, "Appeared to %s", chr->GetName());
 	}
 	else
 	{
@@ -378,6 +373,7 @@ bool ChatHandler::HandleAppearCommand(const char* args)
 			{
 				m_session->GetPlayer()->SafeTeleport(PI->lastmapid, PI->curInstanceID, PI->lastpositionx, PI->lastpositiony, PI->lastpositionz+1.0f, PI->lastorientation);
 				ss << "\nTeleporting to last known location of player " << args;
+				sWorld.LogGM(m_session, "Appeared to the last known location of %s", args);
 			}
 		}
 		else
@@ -389,7 +385,7 @@ bool ChatHandler::HandleAppearCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleTaxiCheatCommand(const char* args)
+bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_session)
 {
 	if (!*args)
 		return false;
@@ -441,7 +437,7 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleModifySpeedCommand(const char* args)
+bool ChatHandler::HandleModifySpeedCommand(const char* args, WorldSession *m_session)
 {
 	if (!*args)
 		return false;
@@ -493,61 +489,34 @@ bool ChatHandler::HandleModifySpeedCommand(const char* args)
 	default:
 		return false;
 	}
-
-	Player* chr = getSelectedChar(m_session, false);
-	if(!chr)
-	{
-		Creature* ctr = getSelectedCreature(m_session, false);
-		if(ctr != NULL)
-		{
-			if(type == -1)
-			{
-				ctr->SetSpeed(RUN, Speed);
-				ctr->SetSpeed(RUNBACK, (Speed * 0.5));
-				ctr->SetSpeed(SWIM, Speed);
-				ctr->SetSpeed(SWIMBACK, (Speed * 0.5));
-				ctr->SetSpeed(TURN, 3.141593f);
-				ctr->SetSpeed(FLY, Speed*3);
-				ctr->SetSpeed(FLYBACK, (Speed * 1.5));
-				ctr->SetSpeed(PITCH_RATE, 3.141593f);
-			}
-			else
-				ctr->SetSpeed(type,Speed);
-			BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname.c_str(),  ctr->GetCreatureInfo()->Name, Speed);
-			return true;
-		}
-		chr = m_session->GetPlayer();
-	}
+	Unit * u = getSelectedUnit(m_session, false);
+	if(!u)
+		u = m_session->GetPlayer();
 
 	if(Speed == 0.0f)
-		Speed = chr->m_base_runSpeed*(1.0f + ((float)chr->m_speedModifier)/100.0f);
+		Speed = u->m_base_runSpeed*(1.0f + ((float)u->m_speedModifier)/100.0f);
 
-	// send message to user/player
-	if(chr != m_session->GetPlayer())
-	{
-		BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname.c_str(),  chr->GetName(), Speed);
-		SystemMessage(chr->GetSession(), "%s set your %s speed to %2.2f.", speedname.c_str(),  m_session->GetPlayer()->GetName(), Speed);
-	}
-	else
-		BlueSystemMessage(m_session, "Your %s speed is now set to %2.2f.", speedname.c_str(), Speed);
+	BlueSystemMessage(m_session, "You set the %s speed of %s to %2.2f.", speedname.c_str(),  u->GetName(), Speed);
+	if(u->IsPlayer() && TO_PLAYER(u) != m_session->GetPlayer())
+		SystemMessage(TO_PLAYER(u)->GetSession(), "%s set your %s speed to %2.2f.", speedname.c_str(),  m_session->GetPlayer()->GetName(), Speed);
 
 	if(type == -1)
 	{
-		chr->SetPlayerSpeed(RUN, Speed);
-		chr->SetPlayerSpeed(RUNBACK, (Speed * 0.5));
-		chr->SetPlayerSpeed(SWIM, Speed);
-		chr->SetPlayerSpeed(SWIMBACK, (Speed * 0.5));
-		chr->SetPlayerSpeed(TURN, 3.141593f);
-		chr->SetPlayerSpeed(FLY, Speed*3);
-		chr->SetPlayerSpeed(FLYBACK, (Speed * 1.5));
-		chr->SetPlayerSpeed(PITCH_RATE, 3.141593f);
+		u->SetSpeed(RUN, Speed);
+		u->SetSpeed(RUNBACK, (Speed * 0.5));
+		u->SetSpeed(SWIM, Speed);
+		u->SetSpeed(SWIMBACK, (Speed * 0.5));
+		u->SetSpeed(TURN, 3.141593f);
+		u->SetSpeed(FLY, Speed*3);
+		u->SetSpeed(FLYBACK, (Speed * 1.5));
+		u->SetSpeed(PITCH_RATE, 3.141593f);
 	}
 	else
-		chr->SetPlayerSpeed(type, Speed);
+		u->SetSpeed(type, Speed);
 	return true;
 }
 
-bool ChatHandler::HandleLearnSkillCommand(const char *args)
+bool ChatHandler::HandleLearnSkillCommand(const char *args, WorldSession *m_session)
 {
 	uint32 skill, min, max;
 	min = max = 1;
@@ -580,7 +549,7 @@ bool ChatHandler::HandleLearnSkillCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleModifySkillCommand(const char *args)
+bool ChatHandler::HandleModifySkillCommand(const char *args, WorldSession *m_session)
 {
 	uint32 skill, min, max;
 	min = max = 1;
@@ -618,7 +587,7 @@ bool ChatHandler::HandleModifySkillCommand(const char *args)
 }
 
 /// DGM: Get skill level command for getting information about a skill
-bool ChatHandler::HandleGetSkillLevelCommand(const char *args)
+bool ChatHandler::HandleGetSkillLevelCommand(const char *args, WorldSession *m_session)
 {
 	uint32 skill = 0;
 	char *pSkill = strtok((char*)args, " ");
@@ -659,7 +628,7 @@ bool ChatHandler::HandleGetSkillLevelCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleGetSkillsInfoCommand(const char *args)
+bool ChatHandler::HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
 	if(!plr)
@@ -694,7 +663,7 @@ bool ChatHandler::HandleGetSkillsInfoCommand(const char *args)
 }
 
 
-bool ChatHandler::HandleRemoveSkillCommand(const char *args)
+bool ChatHandler::HandleRemoveSkillCommand(const char *args, WorldSession *m_session)
 {
 	uint32 skill = 0;
 	char *pSkill = strtok((char*)args, " ");
@@ -713,7 +682,7 @@ bool ChatHandler::HandleRemoveSkillCommand(const char *args)
 }
 
 
-bool ChatHandler::HandleEmoteCommand(const char* args)
+bool ChatHandler::HandleEmoteCommand(const char* args, WorldSession *m_session)
 {
 	uint32 emote = atoi((char*)args);
 	Unit* target = this->getSelectedCreature(m_session);
@@ -723,7 +692,7 @@ bool ChatHandler::HandleEmoteCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGenderChanger(const char* args)
+bool ChatHandler::HandleGenderChanger(const char* args, WorldSession *m_session)
 {
 	int gender;
 	Player* target = objmgr.GetPlayer((uint32)m_session->GetPlayer()->GetSelection());
@@ -743,7 +712,7 @@ bool ChatHandler::HandleGenderChanger(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleModifyGoldCommand(const char* args)
+bool ChatHandler::HandleModifyGoldCommand(const char* args, WorldSession *m_session)
 {
 	if ( *args == 0 )
 		return false;
@@ -785,7 +754,7 @@ bool ChatHandler::HandleModifyGoldCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleTriggerCommand(const char* args)
+bool ChatHandler::HandleTriggerCommand(const char* args, WorldSession* m_session)
 {
 	int32 instance_id;
 	uint32 trigger_id;
@@ -807,7 +776,7 @@ bool ChatHandler::HandleTriggerCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleUnlearnCommand(const char* args)
+bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_session)
 {
 	Player* plr = getSelectedChar(m_session, true);
 	if(plr == 0)
@@ -836,7 +805,7 @@ bool ChatHandler::HandleUnlearnCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args)
+bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_session)
 {
 	uint32 id;
 	char sql[512];
@@ -857,7 +826,7 @@ bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGuildSetLeaderCommand(const char *args)
+bool ChatHandler::HandleGuildSetLeaderCommand(const char *args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
 	if( plr == NULL )
@@ -882,17 +851,14 @@ bool ChatHandler::HandleGuildSetLeaderCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleModifyTPsCommand(const char* args)
+bool ChatHandler::HandleModifyTPsCommand(const char* args, WorldSession *m_session)
 {
 	if(!args)
 		return false;
 
-	Player * Pl = getSelectedChar(m_session, false);
+	Player * Pl = getSelectedChar(m_session);
 	if(!Pl)
-	{
-		SystemMessage(m_session, "Invalid or no target provided, please target a player to modify its talentpoints.");
 		return true;
-	}
 
 	uint32 TP1 = 0;
 
@@ -904,5 +870,6 @@ bool ChatHandler::HandleModifyTPsCommand(const char* args)
 
 	Pl->ModUnsigned32Value(PLAYER_CHARACTER_POINTS, TP1);
 	Pl->smsg_TalentsInfo(false);
+	sWorld.LogGM(m_session, "Modified %s talents to %u", Pl->GetName(), TP1);
 	return true;
 }

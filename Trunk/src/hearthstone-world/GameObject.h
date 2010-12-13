@@ -166,6 +166,7 @@ public:
 	// Serialization
 	void SaveToDB();
 	void SaveToFile(std::stringstream & ss);
+	void Export(std::stringstream & name);
 	void DeleteFromDB();
 	void EventCloseDoor();
 	void UpdateRotation(float orientation3 = 0.0f, float orientation4 = 0.0f);

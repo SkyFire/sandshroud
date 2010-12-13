@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleRecallGoCommand(const char* args)
+bool ChatHandler::HandleRecallGoCommand(const char* args, WorldSession *m_session)
 {
 	if( args == NULL )
 		return false;
@@ -57,7 +57,7 @@ bool ChatHandler::HandleRecallGoCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleRecallAddCommand(const char* args)
+bool ChatHandler::HandleRecallAddCommand(const char* args, WorldSession *m_session)
 {
 	if(!*args)
 		return false;
@@ -100,7 +100,7 @@ bool ChatHandler::HandleRecallAddCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleRecallDelCommand(const char* args)
+bool ChatHandler::HandleRecallDelCommand(const char* args, WorldSession *m_session)
 {
 	if(!*args)
 		return false;
@@ -132,7 +132,7 @@ bool ChatHandler::HandleRecallDelCommand(const char* args)
 	return false;
 }
 
-bool ChatHandler::HandleRecallListCommand(const char* args)
+bool ChatHandler::HandleRecallListCommand(const char* args, WorldSession *m_session)
 {
 	QueryResult *result;
 	if( args == NULL )
@@ -169,7 +169,7 @@ bool ChatHandler::HandleRecallListCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleRecallPortPlayerCommand(const char* args)
+bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession * m_session)
 {
 	char player[20];
 	char location[50];

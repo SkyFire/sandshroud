@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 
-bool ChatHandler::HandleRenameAllCharacter(const char * args)
+bool ChatHandler::HandleRenameAllCharacter(const char * args, WorldSession * m_session)
 {
 	uint32 uCount = 0;
 	uint32 ts = getMSTime();
@@ -1019,7 +1019,7 @@ void WorldSession::FullLogin(Player* plr)
 	objmgr.AddPlayer(plr);
 }
 
-bool ChatHandler::HandleRenameCommand(const char * args)
+bool ChatHandler::HandleRenameCommand(const char * args, WorldSession * m_session)
 {
 	// prevent buffer overflow
 	if(strlen(args) > 100)

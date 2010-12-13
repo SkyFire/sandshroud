@@ -270,7 +270,7 @@ void Creature::GenerateLoot()
 
 	if(proto->money == 0)
 	{
-		CreatureInfo *info=GetCreatureName();
+		CreatureInfo *info = GetCreatureInfo();
 		if (info && info->Type != BEAST)
 		{
 			if(m_uint32Values[UNIT_FIELD_MAXHEALTH] <= 1667)

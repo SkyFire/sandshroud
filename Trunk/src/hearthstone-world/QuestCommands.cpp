@@ -89,7 +89,7 @@ string RemoveQuestFromPlayer(Player* plr, Quest *qst)
 
 }
 
-bool ChatHandler::HandleQuestLookupCommand(const char * args)
+bool ChatHandler::HandleQuestLookupCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -152,7 +152,7 @@ bool ChatHandler::HandleQuestLookupCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestStatusCommand(const char * args)
+bool ChatHandler::HandleQuestStatusCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -194,7 +194,7 @@ bool ChatHandler::HandleQuestStatusCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestStartCommand(const char * args)
+bool ChatHandler::HandleQuestStartCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -293,7 +293,7 @@ bool ChatHandler::HandleQuestStartCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestFinishCommand(const char * args)
+bool ChatHandler::HandleQuestFinishCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args)
 		return false;
@@ -405,7 +405,7 @@ bool ChatHandler::HandleQuestFinishCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestItemCommand(const char * args)
+bool ChatHandler::HandleQuestItemCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -464,7 +464,7 @@ bool ChatHandler::HandleQuestItemCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestGiverCommand(const char * args)
+bool ChatHandler::HandleQuestGiverCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -582,7 +582,7 @@ bool ChatHandler::HandleQuestGiverCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestListCommand(const char * args)
+bool ChatHandler::HandleQuestListCommand(const char * args, WorldSession * m_session)
 {
 	uint32 quest_giver = 0;
 	if(*args)
@@ -724,7 +724,7 @@ bool ChatHandler::HandleQuestListCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestAddStartCommand(const char * args)
+bool ChatHandler::HandleQuestAddStartCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -807,7 +807,7 @@ bool ChatHandler::HandleQuestAddStartCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestAddFinishCommand(const char * args)
+bool ChatHandler::HandleQuestAddFinishCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args)
 		return false;
@@ -891,20 +891,20 @@ bool ChatHandler::HandleQuestAddFinishCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestAddBothCommand(const char * args)
+bool ChatHandler::HandleQuestAddBothCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args)
 		return false;
 
-	bool bValid = ChatHandler::HandleQuestAddStartCommand(args);
+	bool bValid = ChatHandler::HandleQuestAddStartCommand(args, m_session);
 
 	if (bValid)
-		ChatHandler::HandleQuestAddFinishCommand(args);
+		ChatHandler::HandleQuestAddFinishCommand(args, m_session);
 
 	return true;
 }
 
-bool ChatHandler::HandleQuestDelStartCommand(const char * args)
+bool ChatHandler::HandleQuestDelStartCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args)
 		return false;
@@ -988,7 +988,7 @@ bool ChatHandler::HandleQuestDelStartCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestDelFinishCommand(const char * args)
+bool ChatHandler::HandleQuestDelFinishCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args)
 		return false;
@@ -1072,20 +1072,20 @@ bool ChatHandler::HandleQuestDelFinishCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestDelBothCommand(const char * args)
+bool ChatHandler::HandleQuestDelBothCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args)
 		return false;
 
-	bool bValid = ChatHandler::HandleQuestDelStartCommand(args);
+	bool bValid = ChatHandler::HandleQuestDelStartCommand(args, m_session);
 
 	if (bValid)
-		ChatHandler::HandleQuestDelFinishCommand(args);
+		ChatHandler::HandleQuestDelFinishCommand(args, m_session);
 
 	return true;
 }
 
-bool ChatHandler::HandleQuestFinisherCommand(const char * args)
+bool ChatHandler::HandleQuestFinisherCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -1203,7 +1203,7 @@ bool ChatHandler::HandleQuestFinisherCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestSpawnCommand(const char * args)
+bool ChatHandler::HandleQuestSpawnCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -1273,7 +1273,7 @@ bool ChatHandler::HandleQuestSpawnCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestLoadCommand(const char * args)
+bool ChatHandler::HandleQuestLoadCommand(const char * args, WorldSession * m_session)
 {
 	BlueSystemMessage(m_session, "Load of quests from the database has been initiated ...", "");
 	uint32 t = getMSTime();
@@ -1299,7 +1299,7 @@ bool ChatHandler::HandleQuestLoadCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestRemoveCommand(const char * args)
+bool ChatHandler::HandleQuestRemoveCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 
@@ -1324,7 +1324,7 @@ bool ChatHandler::HandleQuestRemoveCommand(const char * args)
 	return true;
 }
 
-bool ChatHandler::HandleQuestRewardCommand(const char * args)
+bool ChatHandler::HandleQuestRewardCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) return false;
 

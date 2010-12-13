@@ -578,13 +578,13 @@ public:
 
 	uint32 m_TaxiNode;
 	CreatureInfo *creature_info;
-	HEARTHSTONE_INLINE CreatureInfo *GetCreatureInfo()
+	const char* GetName()
 	{
-		return creature_info;
+		return creature_info->Name;
 	}
 	// left this function for backwards compatibility with scripts
 	// please use GetCreatureInfo()
-	HEARTHSTONE_INLINE CreatureInfo *GetCreatureName()
+	HEARTHSTONE_INLINE CreatureInfo *GetCreatureInfo()
 	{
 		return creature_info;
 	}
@@ -625,6 +625,13 @@ public:
 	void SetGuardWaypoints();
 	MapCell * m_respawnCell;
 	uint8 GetCanMove() { return CanMove; };
+
+	bool HasNpcFlag(uint32 Flag)
+	{
+		if(GetUInt32Value(UNIT_NPC_FLAGS) & Flag)
+			return true;
+		return false;
+	}
 
 protected:
 	CreatureAIScript *_myScriptClass;

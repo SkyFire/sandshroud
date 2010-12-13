@@ -253,7 +253,7 @@ void HonorHandler::RecalculateHonorFields(Player* pPlayer)
 	pPlayer->UpdateKnownCurrencies(43308, true); //Honor Points
 }
 
-bool ChatHandler::HandleAddKillCommand(const char* args)
+bool ChatHandler::HandleAddKillCommand(const char* args, WorldSession* m_session)
 {
 	uint32 KillAmount = args ? atol(args) : 1;
 	Player* plr = getSelectedChar(m_session, true);
@@ -269,7 +269,7 @@ bool ChatHandler::HandleAddKillCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleAddHonorCommand(const char* args)
+bool ChatHandler::HandleAddHonorCommand(const char* args, WorldSession* m_session)
 {
 	uint32 HonorAmount = args ? atol(args) : 1;
 	Player* plr = getSelectedChar(m_session, true);
@@ -283,7 +283,7 @@ bool ChatHandler::HandleAddHonorCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandlePVPCreditCommand(const char* args)
+bool ChatHandler::HandlePVPCreditCommand(const char* args, WorldSession* m_session)
 {
 	uint32 Rank, Points;
 	if(sscanf(args, "%u %u", &Rank, &Points) != 2)
@@ -308,12 +308,12 @@ bool ChatHandler::HandlePVPCreditCommand(const char* args)
 	return true;
 }
 
-bool ChatHandler::HandleGlobalHonorDailyMaintenanceCommand(const char* args)
+bool ChatHandler::HandleGlobalHonorDailyMaintenanceCommand(const char* args, WorldSession* m_session)
 {
 	return false;
 }
 
-bool ChatHandler::HandleNextDayCommand(const char* args)
+bool ChatHandler::HandleNextDayCommand(const char* args, WorldSession* m_session)
 {
 	return false;
 }

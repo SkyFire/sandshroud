@@ -446,9 +446,7 @@ void CommandTableStorage::Init()
 		{ "enable",			'o', &ChatHandler::HandleGOEnable,			"Enables the selected GO for use.",				NULL, 0,					0, 0 },
 		{ "scale",			'o', &ChatHandler::HandleGOScale,			"Sets scale of selected GO",					NULL, 0,					0, 0 },
 		{ "animprogress",	'o', &ChatHandler::HandleGOAnimProgress,	"Sets anim progress",							NULL, 0,					0, 0 },
-		// Crow: Export... Hm...
-		// Firehunter: once it was working ^^
-		//{ "export",		'o', &ChatHandler::HandleGOExport,			"Exports the current GO selected",				NULL, 0,					0, 0 },
+		{ "export",			'o', &ChatHandler::HandleGOExport,			"Exports the current GO selected",				NULL, 0,					0, 0 },
 		{ "move",			'g', &ChatHandler::HandleGOMove,			"Moves gameobject to player xyz",				NULL, 0,					0, 0 },
 		{ "rotate",			'g', &ChatHandler::HandleGORotate,			"Rotates gameobject x degrees",					NULL, 0,					0, 0 },
 		{ "damage",			'g', &ChatHandler::HandleDebugGoDamage,		"Damages the gameobject for <args>",			NULL, 0,					0, 0 },
@@ -791,7 +789,7 @@ void CommandTableStorage::Init()
 	uint16 glyphs[GLYPHS_COUNT];
 };
 
-bool ChatHandler::xxx(const char* args)
+bool ChatHandler::xxx(const char* args, WorldSession *m_session)
 {
 	char * end;
 	char * start;
@@ -945,12 +943,8 @@ void ChatHandler::SendMultilineMessage(WorldSession *m_session, const char *str)
 		SystemMessage(m_session, start);
 }
 
-bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, WorldSession* session)
+bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, WorldSession *m_session)
 {
-	if(!m_session)
-		m_session = session;
-	if(m_session == NULL)
-		return false;
 	std::string cmd = "";
 
 	// get command
@@ -975,7 +969,7 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 
 		if(table[i].ChildCommands != NULL)
 		{
-			if(!ExecuteCommandInTable(table[i].ChildCommands, text,m_session))
+			if(!ExecuteCommandInTable(table[i].ChildCommands, text, m_session))
 			{
 				if(table[i].Help != "")
 					SendMultilineMessage(m_session, table[i].Help.c_str());
@@ -1019,7 +1013,7 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 		}
 		else
 		{
-			if(!(this->*(table[i].Handler))(text))
+			if(!(this->*(table[i].Handler))(text, m_session))
 			{
 				if(table[i].Help != "")
 					SendMultilineMessage(m_session, table[i].Help.c_str());
@@ -1035,43 +1029,35 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 	return false;
 }
 
-int ChatHandler::ParseCommands(const char* text, WorldSession *session)
+int ChatHandler::ParseCommands(const char* text, WorldSession *m_session)
 {
-	if (!session)
+	if (!m_session)
 		return 0;
 
 	if(!*text)
 		return 0;
 
-	if(session->GetPermissionCount() == 0 && sWorld.m_reqGmForCommands)
+	if(m_session->GetPermissionCount() == 0 && sWorld.m_reqGmForCommands)
 		return 0;
 
 	if(text[0] != '.') // let's not confuse users
 		return 0;
 
-	/* skip '..' :P that pisses me off */
+	//skip '..' :P that pisses me off
 	if(text[1] == '.')
 		return 0;
 
 	text++;
-	m_session = session;
-	if(!ExecuteCommandInTable(sComTableStore.Get(), text, session))
+	if(!ExecuteCommandInTable(CommandTableStorage::getSingleton().Get(), text, m_session))
 	{
-		SystemMessage(session, "There is no such command, or you do not have access to it.");
+		SystemMessage(m_session, "There is no such command, or you do not have access to it.");
 	}
+
 	return 1;
 }
 
 WorldPacket * ChatHandler::FillMessageData( uint32 type, int32 language, const char *message,uint64 guid , uint8 flag) const
 {
-	//Packet	structure
-	//uint8		type;
-	//uint32	language;
-	//uint64	guid;
-	//uint64	guid;
-	//uint32	len_of_text;
-	//char		text[];	not sure ? i think is null terminated .. not null terminated
-	//uint8		afk_state;
 	ASSERT(type != CHAT_MSG_CHANNEL);
 	//channels are handled in channel handler and so on
 	uint32 messageLength = (uint32)strlen((char*)message) + 1;
@@ -1160,6 +1146,21 @@ Creature* ChatHandler::getSelectedCreature(WorldSession *m_session, bool showerr
 		if(showerror)
 			RedSystemMessage(m_session, "This command requires that you select a creature.");
 		return NULLCREATURE;
+	}
+}
+
+Unit* ChatHandler::getSelectedUnit(WorldSession *m_session, bool showerror)
+{
+	uint64 guid;
+	guid = m_session->GetPlayer()->GetSelection();
+	Unit * unit = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid);
+	if(unit != NULL)
+		return unit;
+	else
+	{
+		if(showerror)
+			RedSystemMessage(m_session, "This command requires that you select a unit.");
+		return NULLUNIT;
 	}
 }
 
@@ -1469,10 +1470,8 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 				BlueSystemMessage(m_session, "Setting %s of %s to %.1f.", fieldname, creaturename.c_str(), av);
 			cr->SetFloatValue(field, av);
 			sWorld.LogGM(m_session, "used modify field value: [creature]%s, %f on %s", fieldname, av, creaturename.c_str());
-			if(fieldmax) {
+			if(fieldmax)
 				cr->SetFloatValue(fieldmax, mv);
-			}
-			//cr->SaveToDB();
 		}
 		else
 		{
@@ -1482,25 +1481,17 @@ bool ChatHandler::CmdSetFloatField(WorldSession *m_session, uint32 field, uint32
 	return true;
 }
 
-bool ChatHandler::HandleGetPosCommand(const char* args)
+bool ChatHandler::HandleGetPosCommand(const char* args, WorldSession *m_session)
 {
-	//Firehunter: FTW?
-	/*if(m_session->GetPlayer()->GetSelection() == 0) return false;
-	Creature* creature = objmgr.GetCreature(m_session->GetPlayer()->GetSelection());
-
-	if(!creature) return false;
+	Creature* creature = getSelectedCreature(m_session);
+	if(!creature) 
+		return false;
 	BlueSystemMessage(m_session, "Creature Position: \nX: %f\nY: %f\nZ: %f\n", creature->GetPositionX(), creature->GetPositionY(), creature->GetPositionZ());
-	return true;*/
-
-	uint32 spell = atol(args);
-	SpellEntry *se = dbcSpell.LookupEntry(spell);
-	if(se)
-		BlueSystemMessage(m_session, "SpellIcon for %u is %u", se->Id, se->SpellIconID);
 	return true;
 }
 
 
-bool ChatHandler::HandleDebugRetroactiveQuestAchievements(const char *args)
+bool ChatHandler::HandleDebugRetroactiveQuestAchievements(const char *args, WorldSession *m_session)
 {
 	Player* pTarget = getSelectedChar(m_session, true );
 	if(!pTarget) return true;
@@ -1510,24 +1501,13 @@ bool ChatHandler::HandleDebugRetroactiveQuestAchievements(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleModifyFactionCommand(const char *args)
+bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_session)
 {
 	Player* player = m_session->GetPlayer();
 	if(player == NULL)
 		return true;
 
-	Unit* unit = NULL;
-	uint64 guid = player->GetSelection();
-	if(guid == player->GetGUID())
-		unit = player;
-	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PET)
-		unit = player->GetMapMgr()->GetPet( GET_LOWGUID_PART(guid) );
-	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE)
-		unit = player->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
-	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_VEHICLE)
-		unit = player->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );
-	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
-		unit = objmgr.GetPlayer(GET_LOWGUID_PART(guid));
+	Unit* unit = getSelectedUnit(m_session, false);
 
 	if(unit == NULL)
 		unit = player;
@@ -1542,32 +1522,13 @@ bool ChatHandler::HandleModifyFactionCommand(const char *args)
 	return true;
 }
 
-bool ChatHandler::HandleModifyScaleCommand(const char *args)
+bool ChatHandler::HandleModifyScaleCommand(const char *args, WorldSession *m_session)
 {
 	Player* player = m_session->GetPlayer();
 	if(player == NULL)
 		return true;
 
-	Unit* unit = NULL;
-	uint64 guid = player->GetSelection();
-	if(guid == player->GetGUID())
-		unit = player;
-
-	switch(GET_TYPE_FROM_GUID(guid))
-	{
-	case HIGHGUID_TYPE_PET:
-		unit = player->GetMapMgr()->GetPet( GET_LOWGUID_PART(guid) );
-		break;
-	case HIGHGUID_TYPE_CREATURE:
-		unit = player->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
-		break;
-	case HIGHGUID_TYPE_VEHICLE:
-		unit = player->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );
-		break;
-	case HIGHGUID_TYPE_PLAYER:
-		unit = objmgr.GetPlayer(GET_LOWGUID_PART(guid));
-		break;
-	}
+	Unit* unit = getSelectedUnit(m_session, false);
 
 	if(unit == NULL)
 		unit = player;

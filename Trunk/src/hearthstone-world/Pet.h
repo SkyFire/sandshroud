@@ -222,7 +222,7 @@ public:
 
 	void __fastcall SetAutoCastSpell(AI_Spell*sp);
 	void Rename(string NewName);
-	HEARTHSTONE_INLINE string& GetName() { return m_name; }
+	HEARTHSTONE_INLINE string& GetPetName() { return m_name; }
 	void AddPetSpellToOwner(uint32 spellId);
 
 	void HandleAutoCastEvent(uint32 Type);
@@ -232,7 +232,7 @@ public:
 	void SetHappiness(float amount) { SetPower(POWER_TYPE_HAPPINESS, amount); };
 	void IncreaseHappiness(float amount) { SetHappiness(amount + GetHappiness()); };
 	float GetHappinessDmgMod() { return 0.25f * GetHappinessState() + 0.5f; };
-	const char* GetPetName() { return m_name.c_str(); }
+	const char* GetName() { return m_name.c_str(); }
 
 	/* Pet Talents! */
 	HEARTHSTONE_INLINE uint8 GetUnspentPetTalentPoints() { return GetByte( UNIT_FIELD_BYTES_1, 1); }

@@ -10497,6 +10497,10 @@ void Player::Possess(Unit* pTarget)
 	/* update target faction set */
 	pTarget->_setFaction();
 
+	/* build + send pet_spells packet */
+	if(pTarget->m_temp_summon)
+		return;
+
 	list<uint32> avail_spells;
 	for(list<AI_Spell*>::iterator itr = pTarget->GetAIInterface()->m_spells.begin(); itr != pTarget->GetAIInterface()->m_spells.end(); itr++)
 	{
@@ -10504,10 +10508,6 @@ void Player::Possess(Unit* pTarget)
 			avail_spells.push_back((*itr)->spell->Id);
 	}
 	list<uint32>::iterator itr = avail_spells.begin();
-
-	/* build + send pet_spells packet */
-	if(pTarget->m_temp_summon)
-		return;
 
 	WorldPacket data(SMSG_PET_SPELLS, pTarget->GetAIInterface()->m_spells.size() * 4 + 18);
 	data << pTarget->GetGUID();

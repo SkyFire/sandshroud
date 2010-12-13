@@ -1341,24 +1341,10 @@ int Unit_GetName(gmThread * a_thread)
 {
 	GM_CHECK_NUM_PARAMS(0);
 	Object * obj = GetThisPointer<Object>(a_thread);
-	if(!obj) return GM_EXCEPTION;
-
-	switch(obj->GetTypeId())
-	{
-	case TYPEID_PLAYER:
-		a_thread->PushNewString(((Player*)obj)->GetName());
-		break;
-
-	case TYPEID_UNIT:
-		{
-			//todo check for pet
-			a_thread->PushNewString(((Creature*)obj)->GetCreatureName() ? ((Creature*)obj)->GetCreatureName()->Name : "Unknown Entity");
-		}break;
-
-	default:
-		GM_EXCEPTION_MSG("Unknown typeid.");
+	if(!obj || !obj->IsUnit()) 
 		return GM_EXCEPTION;
-	}
+
+	a_thread->PushNewString(TO_UNIT(obj)->GetName());
 
 	return GM_OK;
 }

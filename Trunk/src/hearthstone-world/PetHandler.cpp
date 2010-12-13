@@ -224,9 +224,9 @@ void WorldSession::HandlePetNameQuery(WorldPacket & recv_data)
 	if(!pPet)
 		return;
 
-	WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE, 9 + pPet->GetName().size());
+	WorldPacket data(SMSG_PET_NAME_QUERY_RESPONSE, 9 + pPet->GetPetName().size());
 	data << reqNumber;
-	data << pPet->GetName().c_str();
+	data << pPet->GetPetName().c_str();
 	data << pPet->GetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP);		// stops packet flood
 	data << uint8(0);		// unk
 	SendPacket(&data);

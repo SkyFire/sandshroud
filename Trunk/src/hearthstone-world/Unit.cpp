@@ -4948,7 +4948,7 @@ void Unit::SendChatMessageAlternateEntry(uint32 entry, uint8 type, uint32 lang, 
 void Unit::SendChatMessage(uint8 type, uint32 lang, const char *msg)
 {
 	size_t UnitNameLength = 0, MessageLength = 0;
-	CreatureInfo *ci = (m_objectTypeId == TYPEID_UNIT) ? TO_CREATURE(this)->GetCreatureInfo() : NULL;
+	CreatureInfo *ci = IsCreature() ? TO_CREATURE(this)->GetCreatureInfo() : NULL;
 	if(ci == NULL)
 		return;
 
