@@ -672,4 +672,5 @@ private:
 };
 
 #define sChatHandler ChatHandler::getSingleton()
+#define sComTableStore CommandTableStorage::getSingleton()
 #endif

@@ -491,7 +491,7 @@ bool World::SetInitialWorldSettings()
 	tl.wait();
 	sLocalizationMgr.Reload(false);
 
-	CommandTableStorage::getSingleton().Load();
+	sComTableStore.Load();
 	Log.Notice("WordFilter", "Loading...");
 
 	g_characterNameFilter = new WordFilter();
