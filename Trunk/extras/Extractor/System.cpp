@@ -127,6 +127,13 @@ void ExtractMapsFromMpq()
         Estimated_Size += 4124.0f * TilesToExtract;
         Estimated_Size /= 1024.0f;
         Estimated_Size /= 1024.0f;
+		if(Estimated_Size == 1.0000f)
+		{
+			CleanCache();
+			fclose(out_file);
+			printf("  Skipping extraction for map %s no useable information available only the header would exist in the file.\n\n", map->name);
+			continue;
+		}
         printf("  %u of %u tiles are available. Estimated file size will be %.4fMB.\n", AvailableTiles, TotalTiles, Estimated_Size);
         printf("  %u passes in total have to be performed, it may take a while.\n", TilesToExtract);
         printf("  Extracting data...\n");
