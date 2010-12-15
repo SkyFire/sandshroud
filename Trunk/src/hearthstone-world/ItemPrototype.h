@@ -727,6 +727,8 @@ struct ItemPrototype
 	int32 DisenchantReqSkill;
 	int32 Lootgold;
 	uint32 ArmorDamageModifier;
+	uint32 ItemLimitCategory;
+	uint32 HolidayId;
 
 	string lowercase_name;	// used in auctions
 	uint32 FoodType;		//pet food type

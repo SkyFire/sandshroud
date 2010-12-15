@@ -744,8 +744,8 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->DisenchantReqSkill;
 	data << float(itemProto->ArmorDamageModifier);	// should be a float?
 	data << uint32(0);								// 2.4.2 Item duration in seconds
-	data << uint32(0);								// ItemLimitCategory
-	data << uint32(0);								// HolidayId.
+	data << itemProto->ItemLimitCategory;
+	data << itemProto->HolidayId;
 	/* Crow: Holiday Id. Been thinking about the use for this. Maybe used with currency items,
 	if the item is from the holiday, then it would look in the DBC for a event, and remove it if
 	its not within that events time? Also removes it from the currency list.
@@ -1944,6 +1944,16 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 					if( ip->RequiredSkillRank > _player->_GetSkillLineCurrent( ip->RequiredSkill, true ) )
 					{
 						itemi->BuildInventoryChangeError( it, TargetItem, INV_ERR_SKILL_ISNT_HIGH_ENOUGH );
+						continue;
+					}
+				}
+
+				if( ip->ItemLimitCategory )
+				{
+					ItemLimitCategoryEntry * il = dbcItemLimitCategory.LookupEntryForced( ip->ItemLimitCategory );
+					if( il != NULL && itemi->GetSocketedGemCountWithLimitId( ip->ItemLimitCategory ) >= il->MaxAmount )
+					{
+						itemi->BuildInventoryChangeError(it, TargetItem, INV_ERR_ITEM_MAX_COUNT_EQUIPPED_SOCKETED);
 						continue;
 					}
 				}

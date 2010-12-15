@@ -1291,6 +1291,12 @@ struct DestructibleModelDataEntry
 	}
 };
 
+struct ItemLimitCategoryEntry
+{
+	uint32 Id;					// 0
+	uint32 MaxAmount;			// 18
+};
+
 #pragma pack(pop)
 
 HEARTHSTONE_INLINE float GetScale(CreatureDisplayInfo *Scale)
@@ -1800,6 +1806,7 @@ extern SERVER_DECL DBCStorage<ScalingStatDistributionEntry> dbcScalingStatDistri
 extern SERVER_DECL DBCStorage<ScalingStatValuesEntry> dbcScalingStatValues;
 extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
 extern SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
+extern SERVER_DECL DBCStorage<ItemLimitCategoryEntry> dbcItemLimitCategory;
 
 bool LoadRSDBCs(const char* datapath);
 bool LoadDBCs(const char* datapath);

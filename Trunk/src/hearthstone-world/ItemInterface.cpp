@@ -1714,6 +1714,13 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 	{
 		if (!ignore_combat && m_pOwner->CombatStatus.IsInCombat() && (slot < EQUIPMENT_SLOT_MAINHAND || slot > EQUIPMENT_SLOT_RANGED))
 			return INV_ERR_CANT_DO_IN_COMBAT;
+	
+		if( proto->ItemLimitCategory )
+		{
+			ItemLimitCategoryEntry * il = dbcItemLimitCategory.LookupEntryForced( proto->ItemLimitCategory );
+			if( il != NULL && GetEquippedItemCountWithLimitId( proto->ItemLimitCategory ) >= il->MaxAmount )
+				return INV_ERR_ITEM_MAX_LIMIT_CATEGORY_COUNT_EXCEEDED;
+		}
 
 		if(IsEquipped(proto->ItemId))
 		{
@@ -3466,4 +3473,44 @@ void ItemInterface::RebuildItemInfoForOwner()
 		if(m_pBuyBack[i])
 			m_session->SendItemInfo(m_pBuyBack[i]->GetEntry());
 
+}
+
+uint32 ItemInterface::GetEquippedItemCountWithLimitId(uint32 Id)
+{
+	uint32 count = 0;
+	for( uint32 x = EQUIPMENT_SLOT_START; x < EQUIPMENT_SLOT_END; ++x )
+	{
+		Item* it = m_pItems[x];
+		if( it != NULL )
+		{
+			ItemPrototype * ip = it->GetProto();
+			if( ip && ip->ItemLimitCategory == Id )
+				count++;
+		}
+	}
+	return count;
+}
+
+uint32 ItemInterface::GetSocketedGemCountWithLimitId(uint32 Id)
+{
+	uint32 count = 0;
+	for( uint32 x = EQUIPMENT_SLOT_START; x < EQUIPMENT_SLOT_END; ++x )
+	{
+		Item* it = m_pItems[x];
+
+		if( it != NULL )
+		{
+			for( uint32 socketcount = 0; socketcount < it->GetSocketsCount(); socketcount++ )
+			{
+				EnchantmentInstance *e = it->GetEnchantment( 2 + socketcount );
+				if (e && e->Enchantment)
+				{
+					ItemPrototype * ip = ItemPrototypeStorage.LookupEntry(e->Enchantment->GemEntry);
+					if( ip && ip->ItemLimitCategory == Id )
+						count++;
+				}
+			}
+		}
+	}
+	return count;
 }

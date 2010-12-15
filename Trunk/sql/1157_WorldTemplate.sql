@@ -1,22 +1,37 @@
-SET FOREIGN_KEY_CHECKS=0;
--- ----------------------------
--- Table structure for achievement_rewards
--- ----------------------------
-CREATE TABLE `achievement_rewards` (
+# --------------------------------------------------------
+# Host:                         127.0.0.1
+# Server version:               5.1.53-community
+# Server OS:                    Win64
+# HeidiSQL version:             6.0.0.3603
+# Date/time:                    2010-12-15 16:42:25
+# --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+# Dumping structure for table worldtemplate.achievement_rewards
+CREATE TABLE IF NOT EXISTS `achievement_rewards` (
   `achievementid` smallint(5) unsigned NOT NULL,
   `title_alliance` smallint(5) unsigned NOT NULL,
   `title_horde` smallint(5) unsigned NOT NULL,
   `itemid` mediumint(8) unsigned NOT NULL,
+  `SendMessage` int(3) NOT NULL DEFAULT '0',
+  `SenderEntry` int(10) NOT NULL DEFAULT '0',
+  `messageheader` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+  `messagebody` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci,
   PRIMARY KEY (`achievementid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Table structure for ai_agents
--- ----------------------------
-CREATE TABLE `ai_agents` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.ai_agents
+CREATE TABLE IF NOT EXISTS `ai_agents` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `difficulty` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `type` enum('MELEE','RANGED','FLEE','SPELL','CALLFORHELP') NOT NULL DEFAULT 'SPELL',
+  `type` enum('MELEE','RANGED','SPELL') NOT NULL DEFAULT 'SPELL',
   `chance` float unsigned NOT NULL DEFAULT '0',
   `maxcount` smallint(5) unsigned NOT NULL DEFAULT '0',
   `spell` int(10) unsigned NOT NULL DEFAULT '0',
@@ -29,19 +44,21 @@ CREATE TABLE `ai_agents` (
   UNIQUE KEY `a` (`entry`,`spell`,`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='AI System';
 
--- ----------------------------
--- Table structure for ai_threattospellid
--- ----------------------------
-CREATE TABLE `ai_threattospellid` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.ai_threattospellid
+CREATE TABLE IF NOT EXISTS `ai_threattospellid` (
   `spell` int(10) unsigned NOT NULL DEFAULT '0',
   `mod` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`spell`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='AI System';
 
--- ----------------------------
--- Table structure for areatriggers
--- ----------------------------
-CREATE TABLE `areatriggers` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.areatriggers
+CREATE TABLE IF NOT EXISTS `areatriggers` (
   `entry` smallint(5) unsigned NOT NULL DEFAULT '0',
   `type` tinyint(3) unsigned DEFAULT '0',
   `map` smallint(5) unsigned DEFAULT NULL,
@@ -56,21 +73,23 @@ CREATE TABLE `areatriggers` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Trigger System';
 
--- ----------------------------
--- Table structure for auctionhouse
--- ----------------------------
-CREATE TABLE `auctionhouse` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.auctionhouse
+CREATE TABLE IF NOT EXISTS `auctionhouse` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `creature_entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `group` tinyint(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `a` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='Auction House';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Auction House';
 
--- ----------------------------
--- Table structure for clientaddons
--- ----------------------------
-CREATE TABLE `clientaddons` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.clientaddons
+CREATE TABLE IF NOT EXISTS `clientaddons` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `crc` bigint(20) unsigned DEFAULT NULL,
@@ -78,22 +97,59 @@ CREATE TABLE `clientaddons` (
   `showinlist` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `index` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Client Addons';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Client Addons';
 
--- ----------------------------
--- Table structure for command_overrides
--- ----------------------------
-CREATE TABLE `command_overrides` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.command_overrides
+CREATE TABLE IF NOT EXISTS `command_overrides` (
   `command_name` varchar(100) NOT NULL,
   `access_level` varchar(10) NOT NULL,
   PRIMARY KEY (`command_name`),
   UNIQUE KEY `a` (`command_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Commands System';
 
--- ----------------------------
--- Table structure for creature_formations
--- ----------------------------
-CREATE TABLE `creature_formations` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creatureloot
+CREATE TABLE IF NOT EXISTS `creatureloot` (
+  `entryid` mediumint(8) NOT NULL DEFAULT '0',
+  `itemid` mediumint(8) NOT NULL DEFAULT '0',
+  `difficulty0percentchance` float DEFAULT NULL,
+  `difficulty1percentchance` float DEFAULT NULL,
+  `difficulty2percentchance` float NOT NULL DEFAULT '0',
+  `difficulty3percentchance` float NOT NULL DEFAULT '0',
+  `mincount` smallint(5) NOT NULL DEFAULT '1',
+  `maxcount` smallint(5) NOT NULL DEFAULT '1',
+  `ffa_loot` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`entryid`,`itemid`),
+  UNIQUE KEY `UNIQUE` (`entryid`,`itemid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creatureloot_gathering
+CREATE TABLE IF NOT EXISTS `creatureloot_gathering` (
+  `entryid` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `itemid` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  `difficulty0percentchance` float DEFAULT NULL,
+  `difficulty1percentchance` float DEFAULT NULL,
+  `difficulty2percentchance` float NOT NULL DEFAULT '0',
+  `difficulty3percentchance` float NOT NULL DEFAULT '0',
+  `mincount` smallint(5) DEFAULT '1',
+  `maxcount` smallint(5) DEFAULT '1',
+  `ffa_loot` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`entryid`,`itemid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Loot System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_formations
+CREATE TABLE IF NOT EXISTS `creature_formations` (
   `spawn_id` int(10) unsigned NOT NULL DEFAULT '0',
   `target_spawn_id` int(10) unsigned NOT NULL DEFAULT '0',
   `follow_angle` float NOT NULL DEFAULT '0',
@@ -102,22 +158,34 @@ CREATE TABLE `creature_formations` (
   UNIQUE KEY `a` (`spawn_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for creature_info
--- ----------------------------
-CREATE TABLE `creature_info` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_info
+CREATE TABLE IF NOT EXISTS `creature_info` (
   `entry` mediumint(8) NOT NULL DEFAULT '0',
   `default_emote_state` int(10) NOT NULL DEFAULT '0',
   `default_spawn_flags` int(10) NOT NULL DEFAULT '0',
   `default_stand_state` int(10) NOT NULL DEFAULT '0',
   `default_mount_displayid` int(10) NOT NULL DEFAULT '0',
+  `CanRange` tinyint(3) NOT NULL DEFAULT '0',
+  `CanCallForHelp` tinyint(3) NOT NULL DEFAULT '0',
+  `CallForHelpHPPercent` float(8,4) NOT NULL DEFAULT '10.0000',
+  `CanFlee` tinyint(3) NOT NULL DEFAULT '0',
+  `FleeHealthPercent` float(8,4) NOT NULL DEFAULT '10.0000',
+  `FleeMSDuration` int(10) NOT NULL DEFAULT '5000',
+  `SendFleeMessage` int(10) NOT NULL DEFAULT '0',
+  `FleeMessage` varchar(255) NOT NULL DEFAULT '' COMMENT 'DON''T KILL MEH!',
+  `GivesNoSkill` tinyint(3) NOT NULL DEFAULT '0',
+  `GivesNoXP` tinyint(3) DEFAULT '0',
   PRIMARY KEY (`entry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for creature_names
--- ----------------------------
-CREATE TABLE `creature_names` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_names
+CREATE TABLE IF NOT EXISTS `creature_names` (
   `entry` mediumint(8) NOT NULL DEFAULT '0',
   `name` varchar(100) NOT NULL DEFAULT '',
   `subname` varchar(100) NOT NULL DEFAULT '',
@@ -140,10 +208,11 @@ CREATE TABLE `creature_names` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for creature_names_localized
--- ----------------------------
-CREATE TABLE `creature_names_localized` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_names_localized
+CREATE TABLE IF NOT EXISTS `creature_names_localized` (
   `id` mediumint(8) unsigned NOT NULL,
   `language_code` varchar(5) CHARACTER SET utf8 NOT NULL,
   `name` varchar(100) CHARACTER SET utf8 NOT NULL,
@@ -151,10 +220,11 @@ CREATE TABLE `creature_names_localized` (
   PRIMARY KEY (`id`,`language_code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for creature_proto
--- ----------------------------
-CREATE TABLE `creature_proto` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_proto
+CREATE TABLE IF NOT EXISTS `creature_proto` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `minlevel` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `maxlevel` tinyint(3) unsigned NOT NULL DEFAULT '1',
@@ -188,7 +258,6 @@ CREATE TABLE `creature_proto` (
   `auras` varchar(255) NOT NULL DEFAULT '',
   `boss` int(11) unsigned NOT NULL DEFAULT '0',
   `money` int(10) NOT NULL DEFAULT '0',
-  `no_XP` int(11) NOT NULL DEFAULT '0',
   `invisibility_type` int(10) unsigned NOT NULL DEFAULT '0',
   `death_state` int(10) unsigned NOT NULL DEFAULT '0',
   `walk_speed` float NOT NULL DEFAULT '2.5',
@@ -202,10 +271,11 @@ CREATE TABLE `creature_proto` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for creature_proto_mode
--- ----------------------------
-CREATE TABLE `creature_proto_mode` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_proto_mode
+CREATE TABLE IF NOT EXISTS `creature_proto_mode` (
   `entry` mediumint(8) NOT NULL,
   `mode` tinyint(3) NOT NULL DEFAULT '-1',
   `minlevel` tinyint(8) unsigned NOT NULL DEFAULT '1',
@@ -228,10 +298,11 @@ CREATE TABLE `creature_proto_mode` (
   UNIQUE KEY `Index` (`entry`,`mode`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for creature_proto_vehicle
--- ----------------------------
-CREATE TABLE `creature_proto_vehicle` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_proto_vehicle
+CREATE TABLE IF NOT EXISTS `creature_proto_vehicle` (
   `vehiclecreatureid` mediumint(8) NOT NULL DEFAULT '0',
   `increasehealthbydriver` tinyint(3) NOT NULL DEFAULT '0',
   `healthforitemlevel` mediumint(8) NOT NULL DEFAULT '0',
@@ -270,28 +341,31 @@ CREATE TABLE `creature_proto_vehicle` (
   UNIQUE KEY `Vehicle` (`vehiclecreatureid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for creature_quest_finisher
--- ----------------------------
-CREATE TABLE `creature_quest_finisher` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_quest_finisher
+CREATE TABLE IF NOT EXISTS `creature_quest_finisher` (
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `quest` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`quest`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for creature_quest_starter
--- ----------------------------
-CREATE TABLE `creature_quest_starter` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_quest_starter
+CREATE TABLE IF NOT EXISTS `creature_quest_starter` (
   `id` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `quest` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`quest`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for creature_spawns
--- ----------------------------
-CREATE TABLE `creature_spawns` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_spawns
+CREATE TABLE IF NOT EXISTS `creature_spawns` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `entry` mediumint(8) NOT NULL,
   `map` smallint(5) NOT NULL,
@@ -320,12 +394,13 @@ CREATE TABLE `creature_spawns` (
   `CanMove` int(8) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `b` (`map`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='Spawn System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Spawn System';
 
--- ----------------------------
--- Table structure for creature_staticspawns
--- ----------------------------
-CREATE TABLE `creature_staticspawns` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_staticspawns
+CREATE TABLE IF NOT EXISTS `creature_staticspawns` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `entry` mediumint(8) NOT NULL,
   `Map` smallint(5) NOT NULL,
@@ -351,10 +426,11 @@ CREATE TABLE `creature_staticspawns` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Spawn System';
 
--- ----------------------------
--- Table structure for creature_teleport_info
--- ----------------------------
-CREATE TABLE `creature_teleport_info` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_teleport_info
+CREATE TABLE IF NOT EXISTS `creature_teleport_info` (
   `entry` mediumint(10) NOT NULL DEFAULT '0',
   `intid` mediumint(10) NOT NULL DEFAULT '0',
   `iconid` mediumint(10) NOT NULL DEFAULT '0',
@@ -373,10 +449,11 @@ CREATE TABLE `creature_teleport_info` (
   UNIQUE KEY `Index` (`entry`,`intid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for creature_waypoints
--- ----------------------------
-CREATE TABLE `creature_waypoints` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.creature_waypoints
+CREATE TABLE IF NOT EXISTS `creature_waypoints` (
   `spawnid` int(10) unsigned NOT NULL DEFAULT '0',
   `waypointid` mediumint(5) NOT NULL DEFAULT '0',
   `position_x` float NOT NULL DEFAULT '0',
@@ -401,43 +478,11 @@ CREATE TABLE `creature_waypoints` (
   UNIQUE KEY `a` (`waypointid`,`spawnid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for creatureloot
--- ----------------------------
-CREATE TABLE `creatureloot` (
-  `entryid` mediumint(8) NOT NULL DEFAULT '0',
-  `itemid` mediumint(8) NOT NULL DEFAULT '0',
-  `difficulty0percentchance` float DEFAULT NULL,
-  `difficulty1percentchance` float DEFAULT NULL,
-  `difficulty2percentchance` float NOT NULL DEFAULT '0',
-  `difficulty3percentchance` float NOT NULL DEFAULT '0',
-  `mincount` smallint(5) NOT NULL DEFAULT '1',
-  `maxcount` smallint(5) NOT NULL DEFAULT '1',
-  `ffa_loot` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`entryid`,`itemid`),
-  UNIQUE KEY `UNIQUE` (`entryid`,`itemid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+# Data exporting was unselected.
 
--- ----------------------------
--- Table structure for creatureloot_gathering
--- ----------------------------
-CREATE TABLE `creatureloot_gathering` (
-  `entryid` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `itemid` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  `difficulty0percentchance` float DEFAULT NULL,
-  `difficulty1percentchance` float DEFAULT NULL,
-  `difficulty2percentchance` float NOT NULL DEFAULT '0',
-  `difficulty3percentchance` float NOT NULL DEFAULT '0',
-  `mincount` smallint(5) DEFAULT '1',
-  `maxcount` smallint(5) DEFAULT '1',
-  `ffa_loot` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`entryid`,`itemid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Loot System';
 
--- ----------------------------
--- Table structure for db_version
--- ----------------------------
-CREATE TABLE `db_version` (
+# Dumping structure for table worldtemplate.db_version
+CREATE TABLE IF NOT EXISTS `db_version` (
   `info` char(4) COLLATE utf8_unicode_ci NOT NULL,
   `revision` smallint(5) unsigned NOT NULL DEFAULT '0',
   `changeset` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -445,10 +490,11 @@ CREATE TABLE `db_version` (
   PRIMARY KEY (`info`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for fishing
--- ----------------------------
-CREATE TABLE `fishing` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.fishing
+CREATE TABLE IF NOT EXISTS `fishing` (
   `Zone` mediumint(10) unsigned NOT NULL DEFAULT '0',
   `MinSkill` smallint(5) unsigned DEFAULT NULL,
   `MaxSkill` smallint(5) unsigned DEFAULT NULL,
@@ -456,10 +502,11 @@ CREATE TABLE `fishing` (
   UNIQUE KEY `Zone` (`Zone`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Fishing System';
 
--- ----------------------------
--- Table structure for fishingloot
--- ----------------------------
-CREATE TABLE `fishingloot` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.fishingloot
+CREATE TABLE IF NOT EXISTS `fishingloot` (
   `entryid` smallint(5) unsigned NOT NULL DEFAULT '0',
   `itemid` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `percentchance` float NOT NULL DEFAULT '0',
@@ -469,14 +516,17 @@ CREATE TABLE `fishingloot` (
   PRIMARY KEY (`entryid`,`itemid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Loot System';
 
--- ----------------------------
--- Table structure for gameobject_names
--- ----------------------------
-CREATE TABLE `gameobject_names` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_names
+CREATE TABLE IF NOT EXISTS `gameobject_names` (
   `entry` int(10) unsigned NOT NULL DEFAULT '0',
   `Type` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `DisplayID` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `Name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `IconName` varchar(100) NOT NULL,
+  `CastBarText` varchar(100) NOT NULL,
   `spellfocus` int(10) NOT NULL DEFAULT '0',
   `sound1` int(10) unsigned NOT NULL DEFAULT '0',
   `sound2` int(10) NOT NULL DEFAULT '0',
@@ -504,10 +554,11 @@ CREATE TABLE `gameobject_names` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Gameobject System';
 
--- ----------------------------
--- Table structure for gameobject_names_localized
--- ----------------------------
-CREATE TABLE `gameobject_names_localized` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_names_localized
+CREATE TABLE IF NOT EXISTS `gameobject_names_localized` (
   `entry` int(30) NOT NULL,
   `language_code` char(5) COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
@@ -515,47 +566,52 @@ CREATE TABLE `gameobject_names_localized` (
   KEY `lol` (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for gameobject_quest_finisher
--- ----------------------------
-CREATE TABLE `gameobject_quest_finisher` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_quest_finisher
+CREATE TABLE IF NOT EXISTS `gameobject_quest_finisher` (
   `id` int(10) unsigned NOT NULL DEFAULT '0',
   `quest` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`quest`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quest System';
 
--- ----------------------------
--- Table structure for gameobject_quest_item_binding
--- ----------------------------
-CREATE TABLE `gameobject_quest_item_binding` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_quest_item_binding
+CREATE TABLE IF NOT EXISTS `gameobject_quest_item_binding` (
   `entry` int(10) NOT NULL DEFAULT '0',
   `quest` mediumint(8) NOT NULL DEFAULT '0',
   `item` mediumint(8) NOT NULL DEFAULT '0',
   `item_count` smallint(5) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quest System';
 
--- ----------------------------
--- Table structure for gameobject_quest_pickup_binding
--- ----------------------------
-CREATE TABLE `gameobject_quest_pickup_binding` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_quest_pickup_binding
+CREATE TABLE IF NOT EXISTS `gameobject_quest_pickup_binding` (
   `entry` int(10) NOT NULL DEFAULT '0',
   `quest` mediumint(8) NOT NULL DEFAULT '0',
   `required_count` tinyint(3) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quest System';
 
--- ----------------------------
--- Table structure for gameobject_quest_starter
--- ----------------------------
-CREATE TABLE `gameobject_quest_starter` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_quest_starter
+CREATE TABLE IF NOT EXISTS `gameobject_quest_starter` (
   `id` int(10) unsigned NOT NULL DEFAULT '0',
   `quest` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`quest`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quest System';
 
--- ----------------------------
--- Table structure for gameobject_spawns
--- ----------------------------
-CREATE TABLE `gameobject_spawns` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_spawns
+CREATE TABLE IF NOT EXISTS `gameobject_spawns` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Entry` int(10) unsigned NOT NULL DEFAULT '0',
   `Map` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -574,12 +630,13 @@ CREATE TABLE `gameobject_spawns` (
   `phase` tinyint(3) NOT NULL DEFAULT '1',
   PRIMARY KEY (`ID`),
   KEY `Map` (`Map`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0 ROW_FORMAT=FIXED COMMENT='Spawn System';
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251 COLLATE=cp1251_general_cs PACK_KEYS=0 ROW_FORMAT=FIXED COMMENT='Spawn System';
 
--- ----------------------------
--- Table structure for gameobject_staticspawns
--- ----------------------------
-CREATE TABLE `gameobject_staticspawns` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.gameobject_staticspawns
+CREATE TABLE IF NOT EXISTS `gameobject_staticspawns` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `entry` int(10) NOT NULL,
   `map` smallint(5) NOT NULL DEFAULT '0',
@@ -602,10 +659,11 @@ CREATE TABLE `gameobject_staticspawns` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Spawn System';
 
--- ----------------------------
--- Table structure for graveyards
--- ----------------------------
-CREATE TABLE `graveyards` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.graveyards
+CREATE TABLE IF NOT EXISTS `graveyards` (
   `entry` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `position_x` float NOT NULL DEFAULT '0',
   `position_y` float NOT NULL DEFAULT '0',
@@ -617,42 +675,13 @@ CREATE TABLE `graveyards` (
   `faction` smallint(5) unsigned NOT NULL DEFAULT '0',
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`entry`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COMMENT='Graveyard System';
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Graveyard System';
 
--- ----------------------------
--- Table structure for item_quest_association
--- ----------------------------
-CREATE TABLE `item_quest_association` (
-  `item` mediumint(8) NOT NULL DEFAULT '0',
-  `quest` mediumint(8) NOT NULL DEFAULT '0',
-  `item_count` tinyint(3) NOT NULL DEFAULT '0',
-  UNIQUE KEY `item` (`item`,`quest`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quest System';
+# Data exporting was unselected.
 
--- ----------------------------
--- Table structure for item_randomprop_groups
--- ----------------------------
-CREATE TABLE `item_randomprop_groups` (
-  `entry_id` mediumint(8) NOT NULL,
-  `randomprops_entryid` mediumint(8) NOT NULL,
-  `chance` float NOT NULL,
-  PRIMARY KEY (`entry_id`,`randomprops_entryid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item System';
 
--- ----------------------------
--- Table structure for item_randomsuffix_groups
--- ----------------------------
-CREATE TABLE `item_randomsuffix_groups` (
-  `entry_id` mediumint(8) NOT NULL,
-  `randomsuffix_entryid` mediumint(8) NOT NULL,
-  `chance` float NOT NULL,
-  PRIMARY KEY (`entry_id`,`randomsuffix_entryid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Item System';
-
--- ----------------------------
--- Table structure for itemloot
--- ----------------------------
-CREATE TABLE `itemloot` (
+# Dumping structure for table worldtemplate.itemloot
+CREATE TABLE IF NOT EXISTS `itemloot` (
   `entryid` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `itemid` mediumint(8) unsigned NOT NULL DEFAULT '25',
   `percentchance` float NOT NULL DEFAULT '0',
@@ -662,39 +691,43 @@ CREATE TABLE `itemloot` (
   KEY `i_gameobj_loot_entry` (`entryid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Loot System';
 
--- ----------------------------
--- Table structure for itempages
--- ----------------------------
-CREATE TABLE `itempages` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.itempages
+CREATE TABLE IF NOT EXISTS `itempages` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `text` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `next_page` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Item System';
 
--- ----------------------------
--- Table structure for itempages_localized
--- ----------------------------
-CREATE TABLE `itempages_localized` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.itempages_localized
+CREATE TABLE IF NOT EXISTS `itempages_localized` (
   `entry` mediumint(8) NOT NULL,
   `language_code` char(3) COLLATE utf8_unicode_ci NOT NULL,
   `text` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`entry`,`language_code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for itempetfood
--- ----------------------------
-CREATE TABLE `itempetfood` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.itempetfood
+CREATE TABLE IF NOT EXISTS `itempetfood` (
   `entry` mediumint(8) NOT NULL,
   `food_type` tinyint(3) NOT NULL,
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Table structure for items
--- ----------------------------
-CREATE TABLE `items` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.items
+CREATE TABLE IF NOT EXISTS `items` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `class` int(10) NOT NULL DEFAULT '0',
   `subclass` int(10) NOT NULL DEFAULT '0',
@@ -820,13 +853,16 @@ CREATE TABLE `items` (
   `ReqDisenchantSkill` int(10) NOT NULL DEFAULT '-1',
   `Lootgold` int(10) NOT NULL DEFAULT '0',
   `ArmorDamageModifier` int(10) NOT NULL DEFAULT '0',
+  `ItemLimitCategory` int(10) DEFAULT '0',
+  `HolidayId` int(10) DEFAULT '0',
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Item System';
 
--- ----------------------------
--- Table structure for items_localized
--- ----------------------------
-CREATE TABLE `items_localized` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.items_localized
+CREATE TABLE IF NOT EXISTS `items_localized` (
   `entry` mediumint(8) NOT NULL,
   `language_code` char(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
@@ -835,10 +871,44 @@ CREATE TABLE `items_localized` (
   PRIMARY KEY (`entry`,`language_code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for map_checkpoint
--- ----------------------------
-CREATE TABLE `map_checkpoint` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.item_quest_association
+CREATE TABLE IF NOT EXISTS `item_quest_association` (
+  `item` mediumint(8) NOT NULL DEFAULT '0',
+  `quest` mediumint(8) NOT NULL DEFAULT '0',
+  `item_count` tinyint(3) NOT NULL DEFAULT '0',
+  UNIQUE KEY `item` (`item`,`quest`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quest System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.item_randomprop_groups
+CREATE TABLE IF NOT EXISTS `item_randomprop_groups` (
+  `entry_id` mediumint(8) NOT NULL,
+  `randomprops_entryid` mediumint(8) NOT NULL,
+  `chance` float NOT NULL,
+  PRIMARY KEY (`entry_id`,`randomprops_entryid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Item System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.item_randomsuffix_groups
+CREATE TABLE IF NOT EXISTS `item_randomsuffix_groups` (
+  `entry_id` mediumint(8) NOT NULL,
+  `randomsuffix_entryid` mediumint(8) NOT NULL,
+  `chance` float NOT NULL,
+  PRIMARY KEY (`entry_id`,`randomsuffix_entryid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Item System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.map_checkpoint
+CREATE TABLE IF NOT EXISTS `map_checkpoint` (
   `entry` smallint(5) NOT NULL,
   `prereq_checkpoint_id` smallint(5) NOT NULL,
   `creature_id` int(10) NOT NULL,
@@ -846,10 +916,11 @@ CREATE TABLE `map_checkpoint` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Map System';
 
--- ----------------------------
--- Table structure for news_announcements
--- ----------------------------
-CREATE TABLE `news_announcements` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.news_announcements
+CREATE TABLE IF NOT EXISTS `news_announcements` (
   `id` int(30) unsigned NOT NULL AUTO_INCREMENT,
   `faction_mask` int(30) NOT NULL,
   `lastTime` int(30) NOT NULL,
@@ -857,19 +928,21 @@ CREATE TABLE `news_announcements` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for npc_gossip_textid
--- ----------------------------
-CREATE TABLE `npc_gossip_textid` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.npc_gossip_textid
+CREATE TABLE IF NOT EXISTS `npc_gossip_textid` (
   `creatureid` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `textid` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`creatureid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='NPC System';
 
--- ----------------------------
--- Table structure for npc_monstersay
--- ----------------------------
-CREATE TABLE `npc_monstersay` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.npc_monstersay
+CREATE TABLE IF NOT EXISTS `npc_monstersay` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `event` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `chance` float NOT NULL DEFAULT '0',
@@ -884,10 +957,11 @@ CREATE TABLE `npc_monstersay` (
   PRIMARY KEY (`entry`,`event`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='NPC System';
 
--- ----------------------------
--- Table structure for npc_text
--- ----------------------------
-CREATE TABLE `npc_text` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.npc_text
+CREATE TABLE IF NOT EXISTS `npc_text` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `prob0` float NOT NULL DEFAULT '0',
   `text0_0` longtext NOT NULL,
@@ -972,10 +1046,11 @@ CREATE TABLE `npc_text` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='NPC System';
 
--- ----------------------------
--- Table structure for npc_text_localized
--- ----------------------------
-CREATE TABLE `npc_text_localized` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.npc_text_localized
+CREATE TABLE IF NOT EXISTS `npc_text_localized` (
   `entry` mediumint(8) NOT NULL,
   `language_code` char(5) COLLATE utf8_unicode_ci NOT NULL,
   `text0` text COLLATE utf8_unicode_ci NOT NULL,
@@ -998,10 +1073,11 @@ CREATE TABLE `npc_text_localized` (
   KEY `lol` (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for objectloot
--- ----------------------------
-CREATE TABLE `objectloot` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.objectloot
+CREATE TABLE IF NOT EXISTS `objectloot` (
   `entryid` int(10) unsigned NOT NULL DEFAULT '0',
   `itemid` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `difficulty0percentchance` float DEFAULT NULL,
@@ -1014,18 +1090,20 @@ CREATE TABLE `objectloot` (
   PRIMARY KEY (`entryid`,`itemid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Loot System';
 
--- ----------------------------
--- Table structure for petdefaultspells
--- ----------------------------
-CREATE TABLE `petdefaultspells` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.petdefaultspells
+CREATE TABLE IF NOT EXISTS `petdefaultspells` (
   `entry` int(10) NOT NULL DEFAULT '0',
   `spell` int(10) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Pet System';
 
--- ----------------------------
--- Table structure for pickpocketingloot
--- ----------------------------
-CREATE TABLE `pickpocketingloot` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.pickpocketingloot
+CREATE TABLE IF NOT EXISTS `pickpocketingloot` (
   `entryid` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `itemid` mediumint(8) unsigned NOT NULL DEFAULT '25',
   `percentchance` float NOT NULL DEFAULT '100',
@@ -1034,10 +1112,11 @@ CREATE TABLE `pickpocketingloot` (
   `ffa_loot` int(10) unsigned NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Loot System';
 
--- ----------------------------
--- Table structure for playercreateinfo
--- ----------------------------
-CREATE TABLE `playercreateinfo` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.playercreateinfo
+CREATE TABLE IF NOT EXISTS `playercreateinfo` (
   `Index` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
   `race` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `factiontemplate` smallint(5) NOT NULL DEFAULT '0',
@@ -1064,12 +1143,13 @@ CREATE TABLE `playercreateinfo` (
   `mindmg` float NOT NULL DEFAULT '0',
   `maxdmg` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`Index`,`race`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Player System';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Player System';
 
--- ----------------------------
--- Table structure for playercreateinfo_bars
--- ----------------------------
-CREATE TABLE `playercreateinfo_bars` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.playercreateinfo_bars
+CREATE TABLE IF NOT EXISTS `playercreateinfo_bars` (
   `race` tinyint(3) unsigned DEFAULT NULL,
   `class` tinyint(3) unsigned DEFAULT NULL,
   `button` int(10) unsigned DEFAULT NULL,
@@ -1078,10 +1158,11 @@ CREATE TABLE `playercreateinfo_bars` (
   `misc` int(10) unsigned DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Player System';
 
--- ----------------------------
--- Table structure for playercreateinfo_items
--- ----------------------------
-CREATE TABLE `playercreateinfo_items` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.playercreateinfo_items
+CREATE TABLE IF NOT EXISTS `playercreateinfo_items` (
   `indexid` tinyint(3) NOT NULL DEFAULT '0',
   `protoid` mediumint(8) NOT NULL DEFAULT '0',
   `slotid` tinyint(3) NOT NULL DEFAULT '0',
@@ -1089,10 +1170,11 @@ CREATE TABLE `playercreateinfo_items` (
   PRIMARY KEY (`indexid`,`protoid`,`slotid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Player System';
 
--- ----------------------------
--- Table structure for playercreateinfo_skills
--- ----------------------------
-CREATE TABLE `playercreateinfo_skills` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.playercreateinfo_skills
+CREATE TABLE IF NOT EXISTS `playercreateinfo_skills` (
   `indexid` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `skillid` smallint(5) unsigned NOT NULL DEFAULT '0',
   `level` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -1100,29 +1182,32 @@ CREATE TABLE `playercreateinfo_skills` (
   PRIMARY KEY (`indexid`,`skillid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Player System';
 
--- ----------------------------
--- Table structure for playercreateinfo_spells
--- ----------------------------
-CREATE TABLE `playercreateinfo_spells` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.playercreateinfo_spells
+CREATE TABLE IF NOT EXISTS `playercreateinfo_spells` (
   `indexid` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `spellid` smallint(5) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`indexid`,`spellid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Player System';
 
--- ----------------------------
--- Table structure for prestartqueries
--- ----------------------------
-CREATE TABLE `prestartqueries` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.prestartqueries
+CREATE TABLE IF NOT EXISTS `prestartqueries` (
   `Query` varchar(1024) NOT NULL,
   `SingleShot` int(10) unsigned NOT NULL DEFAULT '1',
   `Seq` int(10) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`Seq`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for professiondiscoveries
--- ----------------------------
-CREATE TABLE `professiondiscoveries` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.professiondiscoveries
+CREATE TABLE IF NOT EXISTS `professiondiscoveries` (
   `SpellId` int(10) unsigned NOT NULL DEFAULT '0',
   `SpellToDiscover` int(10) unsigned NOT NULL DEFAULT '0',
   `SkillValue` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -1130,39 +1215,11 @@ CREATE TABLE `professiondiscoveries` (
   PRIMARY KEY (`SpellId`,`SpellToDiscover`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for quest_poi
--- ----------------------------
-CREATE TABLE `quest_poi` (
-  `questId` int(10) unsigned NOT NULL DEFAULT '0',
-  `id` int(10) unsigned NOT NULL DEFAULT '0',
-  `objIndex` int(10) NOT NULL DEFAULT '0',
-  `mapid` int(10) unsigned NOT NULL DEFAULT '0',
-  `WorldMapAreaId` int(10) unsigned NOT NULL DEFAULT '0',
-  `FloorId` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk3` int(10) unsigned NOT NULL DEFAULT '0',
-  `unk4` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`questId`,`id`),
-  KEY `questId` (`questId`,`id`),
-  KEY `id` (`id`,`questId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+# Data exporting was unselected.
 
--- ----------------------------
--- Table structure for quest_poi_points
--- ----------------------------
-CREATE TABLE `quest_poi_points` (
-  `questId` int(10) unsigned NOT NULL DEFAULT '0',
-  `id` int(10) unsigned NOT NULL DEFAULT '0',
-  `x` int(10) NOT NULL DEFAULT '0',
-  `y` int(10) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`questId`,`id`,`x`,`y`),
-  KEY `questId_id` (`questId`,`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- ----------------------------
--- Table structure for quests
--- ----------------------------
-CREATE TABLE `quests` (
+# Dumping structure for table worldtemplate.quests
+CREATE TABLE IF NOT EXISTS `quests` (
   `entry` mediumint(8) unsigned NOT NULL,
   `ZoneId` smallint(5) NOT NULL DEFAULT '0',
   `sort` int(10) NOT NULL DEFAULT '0',
@@ -1285,10 +1342,11 @@ CREATE TABLE `quests` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Quests System';
 
--- ----------------------------
--- Table structure for quests_localized
--- ----------------------------
-CREATE TABLE `quests_localized` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.quests_localized
+CREATE TABLE IF NOT EXISTS `quests_localized` (
   `entry` mediumint(10) NOT NULL,
   `language_code` char(5) COLLATE utf8_unicode_ci NOT NULL,
   `Title` text COLLATE utf8_unicode_ci NOT NULL,
@@ -1305,10 +1363,42 @@ CREATE TABLE `quests_localized` (
   KEY `lol` (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for randomcardcreation
--- ----------------------------
-CREATE TABLE `randomcardcreation` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.quest_poi
+CREATE TABLE IF NOT EXISTS `quest_poi` (
+  `questId` int(10) unsigned NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL DEFAULT '0',
+  `objIndex` int(10) NOT NULL DEFAULT '0',
+  `mapid` int(10) unsigned NOT NULL DEFAULT '0',
+  `WorldMapAreaId` int(10) unsigned NOT NULL DEFAULT '0',
+  `FloorId` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk3` int(10) unsigned NOT NULL DEFAULT '0',
+  `unk4` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`questId`,`id`),
+  KEY `questId` (`questId`,`id`),
+  KEY `id` (`id`,`questId`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.quest_poi_points
+CREATE TABLE IF NOT EXISTS `quest_poi_points` (
+  `questId` int(10) unsigned NOT NULL DEFAULT '0',
+  `id` int(10) unsigned NOT NULL DEFAULT '0',
+  `x` int(10) NOT NULL DEFAULT '0',
+  `y` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`questId`,`id`,`x`,`y`),
+  KEY `questId_id` (`questId`,`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.randomcardcreation
+CREATE TABLE IF NOT EXISTS `randomcardcreation` (
   `SpellId` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemId0` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `ItemId1` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -1346,10 +1436,11 @@ CREATE TABLE `randomcardcreation` (
   PRIMARY KEY (`SpellId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for randomitemcreation
--- ----------------------------
-CREATE TABLE `randomitemcreation` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.randomitemcreation
+CREATE TABLE IF NOT EXISTS `randomitemcreation` (
   `SpellId` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemToCreate` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `Skill` int(10) unsigned NOT NULL DEFAULT '0',
@@ -1357,10 +1448,11 @@ CREATE TABLE `randomitemcreation` (
   PRIMARY KEY (`ItemToCreate`,`SpellId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for recall
--- ----------------------------
-CREATE TABLE `recall` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.recall
+CREATE TABLE IF NOT EXISTS `recall` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `MapId` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -1368,12 +1460,13 @@ CREATE TABLE `recall` (
   `positionY` float NOT NULL DEFAULT '0',
   `positionZ` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='Tele Command';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Tele Command';
 
--- ----------------------------
--- Table structure for reputation_creature_onkill
--- ----------------------------
-CREATE TABLE `reputation_creature_onkill` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.reputation_creature_onkill
+CREATE TABLE IF NOT EXISTS `reputation_creature_onkill` (
   `creature_id` mediumint(8) NOT NULL,
   `faction_change_alliance` smallint(5) NOT NULL,
   `faction_change_horde` smallint(5) NOT NULL,
@@ -1382,10 +1475,11 @@ CREATE TABLE `reputation_creature_onkill` (
   KEY `index` (`creature_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for reputation_faction_onkill
--- ----------------------------
-CREATE TABLE `reputation_faction_onkill` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.reputation_faction_onkill
+CREATE TABLE IF NOT EXISTS `reputation_faction_onkill` (
   `faction_id` smallint(5) NOT NULL,
   `change_factionid_alliance` smallint(5) NOT NULL,
   `change_deltamin_alliance` smallint(5) NOT NULL,
@@ -1396,10 +1490,11 @@ CREATE TABLE `reputation_faction_onkill` (
   KEY `factindex` (`faction_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for reputation_instance_onkill
--- ----------------------------
-CREATE TABLE `reputation_instance_onkill` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.reputation_instance_onkill
+CREATE TABLE IF NOT EXISTS `reputation_instance_onkill` (
   `mapid` smallint(5) NOT NULL,
   `mob_rep_reward` smallint(5) NOT NULL,
   `mob_rep_reward_heroic` smallint(5) NOT NULL,
@@ -1413,82 +1508,21 @@ CREATE TABLE `reputation_instance_onkill` (
   `faction_change_horde` smallint(5) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Creature System';
 
--- ----------------------------
--- Table structure for scrollcreation
--- ----------------------------
-CREATE TABLE `scrollcreation` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.scrollcreation
+CREATE TABLE IF NOT EXISTS `scrollcreation` (
   `SpellId` int(10) unsigned NOT NULL DEFAULT '0',
   `ItemId` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`SpellId`,`ItemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Table structure for spell_coef_override
--- ----------------------------
-CREATE TABLE `spell_coef_override` (
-  `id` int(10) NOT NULL DEFAULT '0',
-  `spell_coef_override` float NOT NULL DEFAULT '0',
-  `AP_coef_override` float NOT NULL DEFAULT '0',
-  `RAP_coef_override` float NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+# Data exporting was unselected.
 
--- ----------------------------
--- Table structure for spell_disable
--- ----------------------------
-CREATE TABLE `spell_disable` (
-  `spellid` int(10) NOT NULL,
-  `replacement_spellid` int(10) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Spell System';
 
--- ----------------------------
--- Table structure for spell_disable_trainers
--- ----------------------------
-CREATE TABLE `spell_disable_trainers` (
-  `spellid` int(10) NOT NULL,
-  `replacement_spellid` int(10) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Trainer System';
-
--- ----------------------------
--- Table structure for spell_effects_override
--- ----------------------------
-CREATE TABLE `spell_effects_override` (
-  `spellId` int(10) NOT NULL DEFAULT '0',
-  `EffectID` int(10) NOT NULL,
-  `Disable` int(10) NOT NULL,
-  `Effect` int(10) NOT NULL DEFAULT '0',
-  `BasePoints` int(10) NOT NULL DEFAULT '0',
-  `ApplyAuraName` int(10) NOT NULL DEFAULT '0',
-  `SpellGroupRelation` int(10) NOT NULL DEFAULT '0',
-  `MiscValue` int(10) NOT NULL DEFAULT '0',
-  `TriggerSpell` int(10) NOT NULL DEFAULT '0',
-  `ImplicitTargetA` int(10) NOT NULL DEFAULT '0',
-  `ImplicitTargetB` int(10) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`spellId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Table structure for spell_forced_targets
--- ----------------------------
-CREATE TABLE `spell_forced_targets` (
-  `spellid` int(10) unsigned NOT NULL,
-  `target` mediumint(8) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`spellid`,`target`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Spell System';
-
--- ----------------------------
--- Table structure for spell_proc
--- ----------------------------
-CREATE TABLE `spell_proc` (
-  `spellID` int(30) NOT NULL DEFAULT '0',
-  `ProcOnNameHash` int(30) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`spellID`,`ProcOnNameHash`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Table structure for spellfixes
--- ----------------------------
-CREATE TABLE `spellfixes` (
+# Dumping structure for table worldtemplate.spellfixes
+CREATE TABLE IF NOT EXISTS `spellfixes` (
   `spellId` int(10) NOT NULL DEFAULT '0',
   `procFlags` int(10) NOT NULL DEFAULT '0',
   `procChance` int(10) NOT NULL DEFAULT '0',
@@ -1505,19 +1539,90 @@ CREATE TABLE `spellfixes` (
   PRIMARY KEY (`spellId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- ----------------------------
--- Table structure for spelloverride
--- ----------------------------
-CREATE TABLE `spelloverride` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.spelloverride
+CREATE TABLE IF NOT EXISTS `spelloverride` (
   `overrideId` int(30) unsigned NOT NULL DEFAULT '0',
   `spellId` int(30) unsigned NOT NULL DEFAULT '0',
   UNIQUE KEY `overrideId` (`overrideId`,`spellId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Spell System';
 
--- ----------------------------
--- Table structure for teleport_coords
--- ----------------------------
-CREATE TABLE `teleport_coords` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.spell_coef_override
+CREATE TABLE IF NOT EXISTS `spell_coef_override` (
+  `id` int(10) NOT NULL DEFAULT '0',
+  `spell_coef_override` float NOT NULL DEFAULT '0',
+  `AP_coef_override` float NOT NULL DEFAULT '0',
+  `RAP_coef_override` float NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.spell_disable
+CREATE TABLE IF NOT EXISTS `spell_disable` (
+  `spellid` int(10) NOT NULL,
+  `replacement_spellid` int(10) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Spell System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.spell_disable_trainers
+CREATE TABLE IF NOT EXISTS `spell_disable_trainers` (
+  `spellid` int(10) NOT NULL,
+  `replacement_spellid` int(10) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Trainer System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.spell_effects_override
+CREATE TABLE IF NOT EXISTS `spell_effects_override` (
+  `spellId` int(10) NOT NULL DEFAULT '0',
+  `EffectID` int(10) NOT NULL,
+  `Disable` int(10) NOT NULL,
+  `Effect` int(10) NOT NULL DEFAULT '0',
+  `BasePoints` int(10) NOT NULL DEFAULT '0',
+  `ApplyAuraName` int(10) NOT NULL DEFAULT '0',
+  `SpellGroupRelation` int(10) NOT NULL DEFAULT '0',
+  `MiscValue` int(10) NOT NULL DEFAULT '0',
+  `TriggerSpell` int(10) NOT NULL DEFAULT '0',
+  `ImplicitTargetA` int(10) NOT NULL DEFAULT '0',
+  `ImplicitTargetB` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`spellId`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.spell_forced_targets
+CREATE TABLE IF NOT EXISTS `spell_forced_targets` (
+  `spellid` int(10) unsigned NOT NULL,
+  `target` mediumint(8) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`spellid`,`target`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Spell System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.spell_proc
+CREATE TABLE IF NOT EXISTS `spell_proc` (
+  `spellID` int(30) NOT NULL DEFAULT '0',
+  `ProcOnNameHash` int(30) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`spellID`,`ProcOnNameHash`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.teleport_coords
+CREATE TABLE IF NOT EXISTS `teleport_coords` (
   `entry` int(10) NOT NULL,
   `name` char(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `mapId` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -1528,10 +1633,11 @@ CREATE TABLE `teleport_coords` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='World System';
 
--- ----------------------------
--- Table structure for totemspells
--- ----------------------------
-CREATE TABLE `totemspells` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.totemspells
+CREATE TABLE IF NOT EXISTS `totemspells` (
   `spell` int(10) unsigned NOT NULL DEFAULT '0',
   `castspell1` int(10) unsigned NOT NULL DEFAULT '0',
   `castspell2` int(10) unsigned NOT NULL DEFAULT '0',
@@ -1539,10 +1645,27 @@ CREATE TABLE `totemspells` (
   PRIMARY KEY (`spell`,`castspell1`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Spell System';
 
--- ----------------------------
--- Table structure for trainer_defs
--- ----------------------------
-CREATE TABLE `trainer_defs` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.trainerspelloverride
+CREATE TABLE IF NOT EXISTS `trainerspelloverride` (
+  `spellid` int(10) unsigned NOT NULL DEFAULT '0',
+  `cost` int(10) unsigned NOT NULL DEFAULT '0',
+  `requiredspell` int(10) unsigned NOT NULL DEFAULT '0',
+  `deletespell` int(10) unsigned NOT NULL DEFAULT '0',
+  `requiredskill` int(10) unsigned NOT NULL DEFAULT '0',
+  `requiredskillvalue` int(10) unsigned NOT NULL DEFAULT '0',
+  `reqlevel` int(10) unsigned NOT NULL DEFAULT '0',
+  `requiredclass` int(10) unsigned NOT NULL DEFAULT '0',
+  UNIQUE KEY `spellid` (`spellid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Trainer System';
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.trainer_defs
+CREATE TABLE IF NOT EXISTS `trainer_defs` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `required_skill` int(10) unsigned NOT NULL DEFAULT '0',
   `required_skillvalue` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -1554,10 +1677,11 @@ CREATE TABLE `trainer_defs` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trainer System';
 
--- ----------------------------
--- Table structure for trainer_spells
--- ----------------------------
-CREATE TABLE `trainer_spells` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.trainer_spells
+CREATE TABLE IF NOT EXISTS `trainer_spells` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `cast_spell` int(10) unsigned NOT NULL DEFAULT '0',
   `learn_spell` int(10) unsigned NOT NULL,
@@ -1571,25 +1695,11 @@ CREATE TABLE `trainer_spells` (
   PRIMARY KEY (`entry`,`cast_spell`,`learn_spell`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Trainer System';
 
--- ----------------------------
--- Table structure for trainerspelloverride
--- ----------------------------
-CREATE TABLE `trainerspelloverride` (
-  `spellid` int(10) unsigned NOT NULL DEFAULT '0',
-  `cost` int(10) unsigned NOT NULL DEFAULT '0',
-  `requiredspell` int(10) unsigned NOT NULL DEFAULT '0',
-  `deletespell` int(10) unsigned NOT NULL DEFAULT '0',
-  `requiredskill` int(10) unsigned NOT NULL DEFAULT '0',
-  `requiredskillvalue` int(10) unsigned NOT NULL DEFAULT '0',
-  `reqlevel` int(10) unsigned NOT NULL DEFAULT '0',
-  `requiredclass` int(10) unsigned NOT NULL DEFAULT '0',
-  UNIQUE KEY `spellid` (`spellid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Trainer System';
+# Data exporting was unselected.
 
--- ----------------------------
--- Table structure for transport_creatures
--- ----------------------------
-CREATE TABLE `transport_creatures` (
+
+# Dumping structure for table worldtemplate.transport_creatures
+CREATE TABLE IF NOT EXISTS `transport_creatures` (
   `transport_entry` int(10) unsigned NOT NULL,
   `creature_entry` int(10) unsigned NOT NULL,
   `position_x` float NOT NULL,
@@ -1599,10 +1709,11 @@ CREATE TABLE `transport_creatures` (
   PRIMARY KEY (`transport_entry`,`creature_entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Table structure for vendors
--- ----------------------------
-CREATE TABLE `vendors` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.vendors
+CREATE TABLE IF NOT EXISTS `vendors` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `item` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `amount` int(11) NOT NULL DEFAULT '0',
@@ -1613,10 +1724,11 @@ CREATE TABLE `vendors` (
   PRIMARY KEY (`entry`,`item`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='NPC System';
 
--- ----------------------------
--- Table structure for weather
--- ----------------------------
-CREATE TABLE `weather` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.weather
+CREATE TABLE IF NOT EXISTS `weather` (
   `zoneId` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `high_chance` float unsigned NOT NULL DEFAULT '0',
   `high_type` tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -1627,26 +1739,29 @@ CREATE TABLE `weather` (
   PRIMARY KEY (`zoneId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='Weather System';
 
--- ----------------------------
--- Table structure for wordfilter_character_names
--- ----------------------------
-CREATE TABLE `wordfilter_character_names` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.wordfilter_character_names
+CREATE TABLE IF NOT EXISTS `wordfilter_character_names` (
   `regex_match` varchar(255) NOT NULL,
   `regex_ignore_if_matched` varchar(255) DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Table structure for wordfilter_chat
--- ----------------------------
-CREATE TABLE `wordfilter_chat` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.wordfilter_chat
+CREATE TABLE IF NOT EXISTS `wordfilter_chat` (
   `regex_match` varchar(500) NOT NULL,
   `regex_ignore_if_matched` varchar(500) NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Table structure for worldmap_info
--- ----------------------------
-CREATE TABLE `worldmap_info` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.worldmap_info
+CREATE TABLE IF NOT EXISTS `worldmap_info` (
   `entry` smallint(5) unsigned NOT NULL DEFAULT '0',
   `name` varchar(100) DEFAULT '',
   `load` int(3) unsigned NOT NULL DEFAULT '1',
@@ -1671,10 +1786,11 @@ CREATE TABLE `worldmap_info` (
   PRIMARY KEY (`entry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='World System';
 
--- ----------------------------
--- Table structure for worldstate_template
--- ----------------------------
-CREATE TABLE `worldstate_template` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.worldstate_template
+CREATE TABLE IF NOT EXISTS `worldstate_template` (
   `mapid` int(10) NOT NULL,
   `zone_mask` int(10) NOT NULL,
   `faction_mask` int(10) NOT NULL,
@@ -1684,11 +1800,17 @@ CREATE TABLE `worldstate_template` (
   PRIMARY KEY (`field_number`,`mapid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for zoneguards
--- ----------------------------
-CREATE TABLE `zoneguards` (
+# Data exporting was unselected.
+
+
+# Dumping structure for table worldtemplate.zoneguards
+CREATE TABLE IF NOT EXISTS `zoneguards` (
   `zone` smallint(5) unsigned NOT NULL,
   `horde_entry` mediumint(8) unsigned DEFAULT NULL,
   `alliance_entry` mediumint(8) unsigned DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='World System';
+
+# Data exporting was unselected.
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

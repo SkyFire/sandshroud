@@ -85,6 +85,8 @@ public:
 	AddItemResult AddItemToFreeSlot(Item* item);
 	AddItemResult AddItemToFreeBankSlot(Item* item);
 	void RebuildItemInfoForOwner();
+	uint32 GetEquippedItemCountWithLimitId(uint32 Id);
+	uint32 GetSocketedGemCountWithLimitId(uint32 Id);
 
 	/** Finds a stack that didn't reach max capacity
 	\param itemid The entry of the item to search for

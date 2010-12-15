@@ -62,6 +62,7 @@ SERVER_DECL DBCStorage<MapEntry> dbcMap;
 SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 SERVER_DECL DBCStorage<ItemExtendedCostEntry> dbcItemExtendedCost;
 SERVER_DECL DBCStorage<ItemRandomSuffixEntry> dbcItemRandomSuffix;
+SERVER_DECL DBCStorage<ItemLimitCategoryEntry> dbcItemLimitCategory;
 SERVER_DECL DBCStorage<CombatRatingDBC> dbcCombatRating;
 SERVER_DECL DBCStorage<ChatChannelDBC> dbcChatChannels;
 SERVER_DECL DBCStorage<DurabilityQualityEntry> dbcDurabilityQuality;
@@ -288,6 +289,7 @@ const char* scalingstatvaluesformat =
 	"uuuu"; // Armor Type[level]
 
 const char* DestructibleModelDataFormat = "uxxuxxxuxxxuxxxuxxx";
+const char* itemlimitcategoryformat = "uxxxxxxxxxxxxxxxxxux";
 
 template<class T>
 bool loader_stub(const char * filename, const char * format, bool ind, T& l, bool loadstrs)
