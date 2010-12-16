@@ -156,15 +156,22 @@ typedef HM_NAMESPACE::hash_map<uint32, exp_create_gameobject_ai> GameObjectCreat
 typedef HM_NAMESPACE::hash_map<uint32, exp_handle_dummy_aura> HandleDummyAuraMap;
 typedef HM_NAMESPACE::hash_map<uint32, exp_handle_dummy_spell> HandleDummySpellMap;
 typedef HM_NAMESPACE::hash_map< uint32, exp_create_instance_ai > InstanceCreateMap;
+typedef map<uint8, map<uint32, GossipScript*> > MultiTypeGossipMap;
 typedef set<GossipScript*> CustomGossipScripts;
 typedef set<QuestScript*> QuestScripts;
 typedef list<void*> ServerHookList;
 typedef list<SCRIPT_MODULE> LibraryHandleMap;
 
+enum GOSSIPTYPEID
+{
+	GTYPEID_CTR			= 0,
+	GTYPEID_ITEM		= 1,
+	GTYPEID_GAMEOBJECT	= 2,
+};
+
 class SERVER_DECL ScriptMgr : public Singleton<ScriptMgr>
 {
 public:
-
 	ScriptMgr();
 	~ScriptMgr();
 
@@ -193,7 +200,7 @@ public:
 	void register_quest_script(uint32 entry, QuestScript * qs);
 	void register_instance_script( uint32 pMapId, exp_create_instance_ai pCallback );
 
-	HEARTHSTONE_INLINE GossipScript * GetDefaultGossipScript() { return DefaultGossipScript; }
+	HEARTHSTONE_INLINE GossipScript* GetRegisteredGossipScript(uint8 type, uint32 entry) { return GossipMaps[type][entry]; };
 
 protected:
 
@@ -204,9 +211,9 @@ protected:
 	HandleDummySpellMap _spells;
 	LibraryHandleMap _handles;
 	ServerHookList _hooks[NUM_SERVER_HOOKS];
-	GossipScript * DefaultGossipScript;
 	CustomGossipScripts _customgossipscripts;
 	QuestScripts _questscripts;
+	MultiTypeGossipMap GossipMaps;
 };
 
 class SERVER_DECL CreatureAIScript

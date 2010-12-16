@@ -29,7 +29,7 @@ initialiseSingleton(HookInterface);
 
 ScriptMgr::ScriptMgr()
 {
-	DefaultGossipScript = new GossipScript();
+
 }
 
 ScriptMgr::~ScriptMgr()
@@ -366,11 +366,11 @@ void ScriptMgr::UnloadScripts()
 	if(HookInterface::getSingletonPtr())
 		delete HookInterface::getSingletonPtr();
 
+	for(uint8 type = 0; type < 3; type++)
+		GossipMaps[type].clear(); // Do not delete, just clean em out, they will be deleted by customgossip map
 	for(CustomGossipScripts::iterator itr = _customgossipscripts.begin(); itr != _customgossipscripts.end(); itr++)
 		(*itr)->Destroy();
 	_customgossipscripts.clear();
-	delete DefaultGossipScript;
-	DefaultGossipScript = NULL;
 
 	LibraryHandleMap::iterator itr = _handles.begin();
 	for(; itr != _handles.end(); itr++)
@@ -427,22 +427,35 @@ void ScriptMgr::register_dummy_spell(uint32 entry, exp_handle_dummy_spell callba
 void ScriptMgr::register_gossip_script(uint32 entry, GossipScript * gs)
 {
 	CreatureInfo * ci = CreatureNameStorage.LookupEntry(entry);
-	if(ci)
-		ci->gossip_script = gs;
+	if(ci == NULL)
+		return;
 
 	CreatureProto * cp = CreatureProtoStorage.LookupEntry(entry);
-	if(cp)
-		cp->TeleportInfoList.clear();
+	if(cp == NULL)
+		return;
 
+	cp->TeleportInfoList.clear();
+	GossipMaps[GTYPEID_CTR][entry] = gs;
+	_customgossipscripts.insert(gs);
+}
+
+void ScriptMgr::register_item_gossip_script(uint32 entry, GossipScript * gs)
+{
+	ItemPrototype * proto = ItemPrototypeStorage.LookupEntry(entry);
+	if(proto == NULL)
+		return;
+
+	GossipMaps[GTYPEID_ITEM][entry] = gs;
 	_customgossipscripts.insert(gs);
 }
 
 void ScriptMgr::register_go_gossip_script(uint32 entry, GossipScript * gs)
 {
 	GameObjectInfo * gi = GameObjectNameStorage.LookupEntry(entry);
-	if(gi)
-		gi->gossip_script = gs;
+	if(gi == NULL)
+		return;
 
+	GossipMaps[GTYPEID_GAMEOBJECT][entry] = gs;
 	_customgossipscripts.insert(gs);
 }
 
@@ -512,22 +525,14 @@ bool ScriptMgr::CallScriptedDummyAura(uint32 uSpellId, uint32 i, Aura* pAura, bo
 
 bool ScriptMgr::CallScriptedItem(Item* pItem, Player* pPlayer)
 {
-	if(pItem->GetProto() && pItem->GetProto()->gossip_script != NULL)
+	GossipScript* script = NULL;
+	if((script = GetRegisteredGossipScript(GTYPEID_ITEM, pItem->GetEntry())) != NULL)
 	{
-		pItem->GetProto()->gossip_script->GossipHello(pItem,pPlayer,true);
+		script->GossipHello(pItem,pPlayer,true);
 		return true;
 	}
 
 	return false;
-}
-
-void ScriptMgr::register_item_gossip_script(uint32 entry, GossipScript * gs)
-{
-	ItemPrototype * proto = ItemPrototypeStorage.LookupEntry(entry);
-	if(proto)
-		proto->gossip_script = gs;
-
-	_customgossipscripts.insert(gs);
 }
 
 /* CreatureAI Stuff */

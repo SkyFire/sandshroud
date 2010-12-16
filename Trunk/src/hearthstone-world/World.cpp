@@ -2673,6 +2673,7 @@ void World::SetAnniversary(uint32 anniversarynumber)
 			AnniversaryAchievement = 5512;
 		}break;
 	}
+
 	if(AnniversaryAchievement)
 		RealAchievement = (dbcAchievement.LookupEntryForced(AnniversaryAchievement) != NULL);
 }

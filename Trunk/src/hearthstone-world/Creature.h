@@ -66,7 +66,6 @@ struct CreatureInfo
 	uint8  Leader;
 
 	std::string lowercase_name;
-	GossipScript * gossip_script;
 
 	uint32 GenerateModelId(uint32 * dest)
 	{

@@ -102,10 +102,8 @@ void ObjectMgr::LoadExtraGameObjectStuff()
 	while(!gOIitr->AtEnd())
 	{
 		gInfo = gOIitr->Get();
-		gInfo->gossip_script = sScriptMgr.GetDefaultGossipScript();
 		gInfo->InvolvedQuestCount = 0;
 		gInfo->InvolvedQuestIds = NULL;
-
 		if(!gOIitr->Inc())
 			break;
 
@@ -159,8 +157,6 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		ci->lowercase_name = string(ci->Name);
 		for(uint32 j = 0; j < ci->lowercase_name.length(); ++j)
 			ci->lowercase_name[j] = tolower(ci->lowercase_name[j]); // Darvaleo 2008/08/15 - Copied lowercase conversion logic from ItemPrototype task
-
-		ci->gossip_script = sScriptMgr.GetDefaultGossipScript();
 
 		if(!ciitr->Inc())
 			break;
@@ -550,7 +546,6 @@ void ObjectMgr::LoadExtraItemStuff()
 			ft = iter->second;
 
 		pItemPrototype->FoodType = ft;
-		pItemPrototype->gossip_script = NULL;
 
 		if(pItemPrototype->ScalingStatsEntry > 0 && pItemPrototype->Class == ITEM_CLASS_ARMOR)
 		{

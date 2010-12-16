@@ -2253,8 +2253,9 @@ void WorldSession::HandleGameobjReportUseOpCode( WorldPacket& recv_data )
 	if(gameobj != NULLGOB && gameobj->GetInfo())
 	{
 		// Gossip Script
-		if(gameobj->GetInfo()->gossip_script)
-			gameobj->GetInfo()->gossip_script->GossipHello(gameobj, _player, true);
+		GossipScript* goscript = NULL;
+		if((goscript = sScriptMgr.GetRegisteredGossipScript(GTYPEID_GAMEOBJECT, gameobj->GetEntry())))
+			goscript->GossipHello(gameobj, _player, true);
 
 		if(gameobj->CanActivate())
 			sQuestMgr.OnGameObjectActivate(_player, gameobj);

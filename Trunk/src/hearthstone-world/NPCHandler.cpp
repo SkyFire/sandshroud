@@ -469,7 +469,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 
 	DEBUG_LOG( "WORLD"," Received CMSG_GOSSIP_HELLO from %u",GUID_LOPART(guid) );
 
-	GossipScript * Script = TalkingWith->GetCreatureInfo() ? TalkingWith->GetCreatureInfo()->gossip_script : NULL;
+	GossipScript * Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_CTR, TalkingWith->GetEntry());
 	if(!Script)
 		return;
 
@@ -558,7 +558,7 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 			return;
 
 		qst_giver = crt;
-		Script = crt->GetCreatureInfo() ? crt->GetCreatureInfo()->gossip_script : NULL;
+		Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_CTR, crt->GetEntry());
 	}
 	else if(guidtype == HIGHGUID_TYPE_ITEM)
 	{
@@ -567,7 +567,7 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 			return;
 
 		qst_giver = pitem;
-		Script = pitem->GetProto()->gossip_script;
+		Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_ITEM, pitem->GetEntry());
 	}
 	else if(guidtype == HIGHGUID_TYPE_GAMEOBJECT)
 	{
@@ -576,10 +576,10 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 			return;
 
 		qst_giver = gobj;
-		Script = gobj->GetInfo()->gossip_script;
+		Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_GAMEOBJECT, gobj->GetEntry());
 	}
 
-	if(!Script||!qst_giver)
+	if(!Script || !qst_giver)
 		return;
 
 	uint32 IntId = 1;

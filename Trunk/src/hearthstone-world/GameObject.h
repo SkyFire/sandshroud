@@ -60,7 +60,6 @@ struct GameObjectInfo
 
 	uint32 *InvolvedQuestIds;
 	uint32 InvolvedQuestCount;
-	GossipScript* gossip_script;
 };
 #pragma pack(pop)
 
