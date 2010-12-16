@@ -1716,6 +1716,7 @@ public:
 
 	T * LookupEntry(uint32 i)
 	{
+		return LookupEntryForced(i);
 		if(m_entries)
 		{
 			if(i > m_max)

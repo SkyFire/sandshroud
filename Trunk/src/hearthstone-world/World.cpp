@@ -2676,3 +2676,15 @@ void World::SetAnniversary(uint32 anniversarynumber)
 	if(AnniversaryAchievement)
 		RealAchievement = (dbcAchievement.LookupEntryForced(AnniversaryAchievement) != NULL);
 }
+
+void World::OnHolidayChange(uint32 IgnoreHolidayId)
+{
+	m_sessionlock.AcquireReadLock();
+	SessionMap::iterator itr;
+	for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+	{
+		if(itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld())
+			itr->second->GetPlayer()->GetItemInterface()->RemoveItemsWithHolidayId(IgnoreHolidayId);
+	}
+	m_sessionlock.ReleaseReadLock();
+}

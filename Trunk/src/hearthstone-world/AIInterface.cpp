@@ -1466,6 +1466,7 @@ Unit* AIInterface::FindTargetForSpell(AI_Spell *sp)
 				m_Unit->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 				return m_Unit;
 			}
+
 			for(AssistTargetSet::iterator i = m_assistTargets.begin(); i != m_assistTargets.end(); i++)
 			{
 				if(!(*i)->isAlive())

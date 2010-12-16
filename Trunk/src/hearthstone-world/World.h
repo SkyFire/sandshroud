@@ -852,17 +852,8 @@ public: // Events! :D
 
 	void SpawnWintersVeil(bool apply) { WintersVeil = apply; OnHolidayChange(14);};
 	bool WintersVeil;
-	void OnHolidayChange(uint32 IgnoreHolidayId)
-	{
-		m_sessionlock.AcquireReadLock();
-		SessionMap::iterator itr;
-		for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
-		{
-			if(itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld())
-				itr->second->GetPlayer()->GetItemInterface()->RemoveItemsWithHolidayId(IgnoreHolidayId);
-		}
-		m_sessionlock.ReleaseReadLock();
-	}
+
+	void OnHolidayChange(uint32 IgnoreHolidayId);
 };
 
 #define sCLT CharacterLoaderThread::getSingleton()
