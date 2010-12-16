@@ -1148,6 +1148,8 @@ public:
 			pVehicle = TO_PLAYER(v);
 	}
 
+	bool CanEnterVehicle(Player * requester);
+
 	//Pet
 	HEARTHSTONE_INLINE void SetIsPet(bool chck) { m_isPet = chck; }
 

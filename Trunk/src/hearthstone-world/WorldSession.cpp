@@ -165,10 +165,7 @@ int WorldSession::Update(uint32 InstanceID)
 				{
 					// Valid Packet :>
 					if(Handler->handler == 0)
-					{
-						Log.Warning("WorldSession", "Received unhandled packet with opcode %s (0x%.4X)",
-							LookupOpcodeName(packet->GetOpcode()), packet->GetOpcode());
-					}
+						Log.Warning("WorldSession", "Received unhandled packet with opcode %s (0x%.4X)", LookupOpcodeName(packet->GetOpcode()), packet->GetOpcode());
 					else
 					{
 						packet->opcodename = LookupOpcodeName(packet->GetOpcode()); // Needed for ByteBuffer
@@ -190,22 +187,14 @@ int WorldSession::Update(uint32 InstanceID)
 		g_bufferPool.Deallocate(packet);
 
 		if(InstanceID != instanceId)
-		{
-			// If we hit this -> means a packet has changed our map.
-			return 2;
-		}
+			return 2; // If we hit this it means that an opcode has changed our map.
 
 		if( bDeleted )
-		{
 			return 1;
-		}
 	}
 
 	if(InstanceID != instanceId)
-	{
-		// If we hit this -> means a packet has changed our map.
-		return 2;
-	}
+		return 2; // If we hit this it means that an opcode has changed our map.
 
 	if( _logoutTime && (m_currMsTime >= _logoutTime) && instanceId == InstanceID)
 	{
@@ -239,11 +228,8 @@ int WorldSession::Update(uint32 InstanceID)
 	{
 		// Check if the player is in the process of being moved. We can't delete him
 		// if we are.
-		if(_player && _player->m_beingPushed)
-		{
-			// Abort
-			return 0;
-		}
+		if(_player && _player->m_beingPushed)		
+			return 0; // Abort
 
 		// ping timeout!
 		if( _socket != NULL )
@@ -366,8 +352,6 @@ void WorldSession::LogoutPlayer(bool Save)
 		if( _player->GetSummon() != NULL )
 			_player->GetSummon()->Remove( false, true, false );
 
-		//_player->SaveAuras();
-
 		if( Save )
 			_player->SaveToDB(false);
 
@@ -392,9 +376,6 @@ void WorldSession::LogoutPlayer(bool Save)
 
 		// Remove the "player locked" flag, to allow movement on next login
 		GetPlayer()->RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER );
-
-		// Save Honor Points
-		//_player->SaveHonorFields();
 
 		// Update Tracker status
 		sTracker.CheckPlayerForTracker(_player, false);
@@ -445,16 +426,14 @@ void WorldSession::LogoutPlayer(bool Save)
 
 void WorldSession::SendBuyFailed(uint64 guid, uint32 itemid, uint8 error)
 {
-	WorldPacket data(13);
-	data.SetOpcode(SMSG_BUY_FAILED);
+	WorldPacket data(SMSG_BUY_FAILED, 13);
 	data << guid << itemid << error;
 	SendPacket(&data);
 }
 
 void WorldSession::SendSellItem(uint64 vendorguid, uint64 itemid, uint8 error)
 {
-	WorldPacket data(17);
-	data.SetOpcode(SMSG_SELL_ITEM);
+	WorldPacket data(SMSG_SELL_ITEM, 17);
 	data << vendorguid << itemid << error;
 	SendPacket(&data);
 }
@@ -494,7 +473,7 @@ void WorldSession::LoadSecurity(std::string securitystring)
 	if(permissions[tmp.size()] != 0)
 		permissions[tmp.size()] = 0;
 
-	DEBUG_LOG("WorldSession","Loaded permissions for %u. (%u) : [%s]", this->GetAccountId(), permissioncount, securitystring.c_str());
+	DEBUG_LOG("WorldSession","Loaded permissions for %u. (%u) : [%s]", GetAccountId(), permissioncount, securitystring.c_str());
 }
 
 void WorldSession::SetSecurity(std::string securitystring)
@@ -831,11 +810,9 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[MSG_QUERY_NEXT_MAIL_TIME].handler					= &WorldSession::HandleMailTime;
 	WorldPacketHandlers[CMSG_MAIL_CREATE_TEXT_ITEM].handler					= &WorldSession::HandleMailCreateTextItem;
 
-	// Guild Query (called when not logged in sometimes)
+	// Guild System
 	WorldPacketHandlers[CMSG_GUILD_QUERY].handler							= &WorldSession::HandleGuildQuery;
 	WorldPacketHandlers[CMSG_GUILD_QUERY].status							= STATUS_AUTHED;
-
-	// Guild System
 	WorldPacketHandlers[CMSG_GUILD_INVITE].handler							= &WorldSession::HandleInviteToGuild;
 	WorldPacketHandlers[CMSG_GUILD_ACCEPT].handler							= &WorldSession::HandleGuildAccept;
 	WorldPacketHandlers[CMSG_GUILD_DECLINE].handler							= &WorldSession::HandleGuildDecline;
@@ -864,7 +841,6 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_GUILD_INFO_TEXT].handler						= &WorldSession::HandleSetGuildInformation;
 	WorldPacketHandlers[MSG_GUILD_PERMISSIONS].handler						= &WorldSession::HandleGuildGetFullPermissions;
 	WorldPacketHandlers[MSG_GUILD_EVENT_LOG_QUERY].handler					= &WorldSession::HandleGuildLog;
-
 	WorldPacketHandlers[MSG_QUERY_GUILD_BANK_TEXT].handler					= &WorldSession::HandleGuildBankQueryText;
 	WorldPacketHandlers[CMSG_SET_GUILD_BANK_TEXT].handler					= &WorldSession::HandleSetGuildBankText;
 	WorldPacketHandlers[CMSG_GUILD_BANKER_ACTIVATE].handler					= &WorldSession::HandleGuildBankOpenVault;

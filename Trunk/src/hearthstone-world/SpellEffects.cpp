@@ -1831,7 +1831,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 		{
 			if( u_caster == NULL || !u_caster->isAlive() || unitTarget == NULL || !unitTarget->isAlive())
 				return;
-			uint32 pet_dmg = this->forced_basepoints[0]*20/100;
+			uint32 pet_dmg = forced_basepoints[0]*20/100;
 			unitTarget->ModUnsigned32Value(UNIT_FIELD_HEALTH,pet_dmg);
 			unitTarget->DealDamage(u_caster,pet_dmg,0,0,25228);
 		}break;
@@ -3499,7 +3499,7 @@ void Spell::SpellEffectWeapon(uint32 i)
 	uint32 skill = 0;
 	uint32 spell = 0;
 
-	switch( this->GetSpellProto()->Id )
+	switch( GetSpellProto()->Id )
 	{
 	case 201:	// one-handed swords
 		{
@@ -3579,19 +3579,12 @@ void Spell::SpellEffectWeapon(uint32 i)
 		{
 			skill = SKILL_BLOCK;
 		}break;
-	case 3386:  // spears
-		skill = SKILL_SPEARS;
-		break;
 	default:
 		{
 			skill = 0;
-			Log.Warning("Spell","Could not determine skill for spell id %d (SPELL_EFFECT_WEAPON)", this->GetSpellProto()->Id);
+			Log.Warning("Spell","Could not determine skill for spell id %d (SPELL_EFFECT_WEAPON)", GetSpellProto()->Id);
 		}break;
 	}
-
-	// Don't add skills to players logging in.
-	/*if((GetSpellProto()->Attributes & ATTRIBUTES_PASSIVE) && playerTarget->m_TeleportState == 1)
-		return;*/
 
 	if(skill)
 	{

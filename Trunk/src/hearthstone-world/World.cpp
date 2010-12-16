@@ -580,7 +580,6 @@ bool World::SetInitialWorldSettings()
 
 	Log.Notice("World", "Starting CharacterLoaderThread...");
 	ThreadPool.ExecuteTask(new CharacterLoaderThread());
-	ThreadPool.ExecuteTask(new NewsAnnouncer());
 
 	if(GuildsLoading)
 	{
@@ -2486,157 +2485,6 @@ void World::LogChat(WorldSession* session, string message, ...)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-// News Announcer
-//////////////////////////////////////////////////////////////////////////
-
-bool NewsAnnouncer::run()
-{
-	SetThreadName("News Announcer");
-
-	map<uint32, NewsAnnouncement>::iterator itr;
-	uint32 last_load_time = 0;
-
-	// init
-	_Init();
-	last_load_time = (uint32)UNIXTIME;
-
-	while(m_threadRunning)
-	{
-		// loop through messages
-		for( itr = m_announcements.begin(); itr != m_announcements.end(); itr++ )
-		{
-			// it can be send time pl0x?
-			if( ((uint32)UNIXTIME - itr->second.m_lastTime) >= itr->second.m_timePeriod )
-				_SendMessage(&itr->second);
-		}
-
-		if( ((uint32)UNIXTIME - last_load_time) > 120 )			// reload every 2 minutes
-			_ReloadMessages();
-
-		// sleep
-		Sleep(10000);
-	}
-
-	// delete us :P
-	return true;
-}
-
-void NewsAnnouncer::_SendMessage(NewsAnnouncement *ann)
-{
-	char buf[10000];
-
-	// fill out the message buffer
-	buf[0] = 0;
-	strcat(buf, MSG_COLOR_WHITE"Server News:|r ");
-	strcat(buf, ann->m_message.c_str());
-
-	// build the packet
-	WorldPacket *data_to_send = sChatHandler.FillSystemMessageData(buf);
-
-	// send to sessions
-	if( ann->m_factionMask < 0 )
-	{
-		// send to all
-		sWorld.SendGlobalMessage(data_to_send, NULL);
-	}
-	else
-	{
-		// send to team
-		sWorld.SendFactionMessage(data_to_send, ann->m_factionMask);
-	}
-
-	// update last time
-	ann->m_lastTime = (uint32)UNIXTIME;
-	CharacterDatabase.Execute("REPLACE INTO news_timers VALUES(%u, %u)", ann->m_id, ann->m_lastTime);
-
-	// send it to the console too
-	puts(buf);
-
-	delete data_to_send;
-}
-
-void NewsAnnouncer::_ReloadMessages()
-{
-	QueryResult *res;
-	NewsAnnouncement ann;
-	map<uint32, NewsAnnouncement>::iterator itr, itr2;
-	set<uint32> db_msgs;
-	Field *f;
-	uint32 id;
-
-	// query db
-	res = WorldDatabase.Query("SELECT * FROM news_announcements");
-
-	if( res != NULL )
-	{
-		do
-		{
-			f = res->Fetch();
-			id = f[0].GetUInt32();
-
-			// create structure/update structure
-			db_msgs.insert(id);
-			itr = m_announcements.find(id);
-			if( itr == m_announcements.end() )
-			{
-				ann.m_id = id;
-				ann.m_factionMask = f[1].GetInt32();
-				ann.m_timePeriod = f[2].GetUInt32();
-				ann.m_lastTime = (uint32)UNIXTIME;
-				ann.m_message = f[3].GetString();
-				m_announcements.insert(make_pair(ann.m_id, ann));
-			}
-			else
-			{
-				// update
-				itr->second.m_factionMask = f[1].GetInt32();
-				itr->second.m_timePeriod = f[2].GetUInt32();
-				itr->second.m_message = f[3].GetString();
-			}
-
-		} while (res->NextRow());
-		delete res;
-	}
-
-	for(itr = m_announcements.begin(); itr != m_announcements.end();)
-	{
-		itr2 = itr++;
-		if( db_msgs.find(itr2->second.m_id) == db_msgs.end() )
-		{
-			// message no longer exists
-			CharacterDatabase.Execute("DELETE FROM news_timers WHERE id = %u", itr2->second.m_id);
-			m_announcements.erase(itr2);
-		}
-	}
-}
-
-void NewsAnnouncer::_Init()
-{
-	// load messages
-	_ReloadMessages();
-
-	// get initial last timestamps
-	QueryResult *res = CharacterDatabase.Query("SELECT * FROM news_timers");
-	if( res != NULL )
-	{
-		do
-		{
-			uint32 id = res->Fetch()[0].GetUInt32();
-			uint32 t = res->Fetch()[1].GetUInt32();
-
-			// update "last" timestamp
-			map<uint32, NewsAnnouncement>::iterator itr = m_announcements.find(id);
-			if( itr == m_announcements.end() )
-				CharacterDatabase.Execute("DELETE FROM news_timers WHERE id = %u", id);
-			else
-				itr->second.m_lastTime = t;
-
-		} while (res->NextRow());
-		delete res;
-	}
-}
-
 void World::UpdatePlayerItemInfos()
 {
 	Player* plr = NULL;
@@ -2688,4 +2536,7 @@ void World::OnHolidayChange(uint32 IgnoreHolidayId)
 			itr->second->GetPlayer()->GetItemInterface()->RemoveItemsWithHolidayId(IgnoreHolidayId);
 	}
 	m_sessionlock.ReleaseReadLock();
+	string database; 
+	Config.MainConfig.GetString( "WorldDatabase", "Name", &database );
+	CharacterDatabase.Execute("DELETE FROM `playeritems` WHERE `entry` = ANY(Select `entry` from `%s`.items where `%s`.items.HolidayId !='0' and `%s`.items.HolidayId != '%u'", database, database, database, IgnoreHolidayId);
 }

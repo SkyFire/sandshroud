@@ -552,7 +552,7 @@ bool ChatHandler::HandleMonsterSayCommand(const char* args, WorldSession *m_sess
 
 	if(crt->IsPlayer())
 	{
-		WorldPacket * data = this->FillMessageData(CHAT_MSG_SAY, LANG_UNIVERSAL, args, crt->GetGUID(), 0);
+		WorldPacket * data = FillMessageData(CHAT_MSG_SAY, LANG_UNIVERSAL, args, crt->GetGUID(), 0);
 		crt->SendMessageToSet(data, true);
 		delete data;
 	}
@@ -570,7 +570,7 @@ bool ChatHandler::HandleMonsterYellCommand(const char* args, WorldSession *m_ses
 
 	if(crt->IsPlayer())
 	{
-		WorldPacket * data = this->FillMessageData(CHAT_MSG_YELL, LANG_UNIVERSAL, args, crt->GetGUID(), 0);
+		WorldPacket * data = FillMessageData(CHAT_MSG_YELL, LANG_UNIVERSAL, args, crt->GetGUID(), 0);
 		crt->SendMessageToSet(data, true);
 		delete data;
 	}

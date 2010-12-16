@@ -517,7 +517,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 	{
 		/* set the map cell correctly */
 		if(!(obj->GetPositionX() >= _maxX || obj->GetPositionX() <= _minY || obj->GetPositionY() >= _maxY || obj->GetPositionY() <= _minY))
-			obj->SetMapCell(this->GetCellByCoords(obj->GetPositionX(), obj->GetPositionY()));
+			obj->SetMapCell(GetCellByCoords(obj->GetPositionX(), obj->GetPositionY()));
 	}
 
 	if(obj->GetMapCell())
@@ -1242,7 +1242,7 @@ bool MapMgr::Do()
 	threadid=GetCurrentThreadId();
 #endif
 	thread_running = true;
-	SetThreadName("Map mgr - M%u|I%u",this->_mapId ,this->m_instanceID);
+	SetThreadName("Map mgr - M%u|I%u",_mapId,m_instanceID);
 	ObjectSet::iterator i;
 	uint32 last_exec=getMSTime();
 

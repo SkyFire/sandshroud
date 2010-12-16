@@ -659,7 +659,7 @@ bool ChatHandler::HandleIncreaseWeaponSkill(const char *args, WorldSession *m_se
 
 bool ChatHandler::HandleResetTalentsCommand(const char* args, WorldSession *m_session)
 {
-	Player* plr = this->getSelectedChar(m_session);
+	Player* plr = getSelectedChar(m_session);
 	if(plr == NULL)
 		return true;
 
@@ -673,7 +673,7 @@ bool ChatHandler::HandleResetTalentsCommand(const char* args, WorldSession *m_se
 
 bool ChatHandler::HandleResetSpellsCommand(const char* args, WorldSession *m_session)
 {
-	Player* plr = this->getSelectedChar(m_session);
+	Player* plr = getSelectedChar(m_session);
 	if(plr == NULL)
 		return true;
 

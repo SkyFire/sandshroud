@@ -3554,7 +3554,7 @@ else
 
 						// UGLY GOUGE HAX
 						// too lazy to fix this properly...
-						if( this && this->IsPlayer() && TO_PLAYER(this)->HasDummyAura(SPELL_HASH_SEAL_FATE) && ability && ( ability->NameHash == SPELL_HASH_GOUGE || ability->NameHash == SPELL_HASH_MUTILATE ) )
+						if( this && IsPlayer() && TO_PLAYER(this)->HasDummyAura(SPELL_HASH_SEAL_FATE) && ability && ( ability->NameHash == SPELL_HASH_GOUGE || ability->NameHash == SPELL_HASH_MUTILATE ) )
 						{
 							if( Rand( TO_PLAYER(this)->GetDummyAura(SPELL_HASH_SEAL_FATE)->RankNumber * 20.0f ) )
 								TO_PLAYER(this)->AddComboPoints(pVictim->GetGUID(), 1);
@@ -5124,7 +5124,7 @@ uint32 Unit::ManaShieldAbsorb(uint32 dmg, SpellEntry* sp)
 			Spell* sp = NULLSPELL;
 			sp = (new Spell(TO_UNIT(this),spInfo,true,NULLAURA));
 			SpellCastTargets tgt;
-			int spamount = std::min(float2int32(this->GetUInt32Value(UNIT_FIELD_HEALTH) * 0.05f), float2int32((potential * m_incanterAbsorption) / 100));
+			int spamount = std::min(float2int32(GetUInt32Value(UNIT_FIELD_HEALTH) * 0.05f), float2int32((potential * m_incanterAbsorption) / 100));
 			sp->forced_basepoints[0] = spamount;
 			tgt.m_unitTarget=GetGUID();
 			sp->prepare(&tgt);
@@ -5218,7 +5218,7 @@ uint32 Unit::AbsorbDamage( Object* Attacker, uint32 School, uint32* dmg, SpellEn
 				SpellCastTargets tgt;
 				int spamount = std::min(float2int32(GetUInt32Value(UNIT_FIELD_HEALTH) * 0.05f), float2int32((abs * m_incanterAbsorption) / 100));
 				sp->forced_basepoints[0] = spamount;
-				tgt.m_unitTarget=this->GetGUID();
+				tgt.m_unitTarget=GetGUID();
 				sp->prepare(&tgt);
 			}
 		}
@@ -7614,4 +7614,70 @@ void Unit::DeletePassengerData(Unit* pPassenger)
 	uint8 slot = pPassenger->GetSeatID();
 	pPassenger->SetSeatID(NULL);
 	m_passengers[slot] = NULL;
+}
+
+bool Unit::CanEnterVehicle(Player * requester)
+{
+	if(requester == NULL || !requester->IsInWorld())
+		return false;
+
+	if(GetInstanceID() != requester->GetInstanceID())
+		return false;
+
+	if(!isAlive() || !requester->isAlive())
+		return false;
+
+	if(requester->GetDistance2dSq(this) > 10.0f)
+		return false;
+
+	if(isHostile(this, requester))
+		return false;
+
+	if(requester->m_CurrentCharm)
+		return false;
+
+	if(requester->m_isGmInvisible)
+	{
+		sChatHandler.GreenSystemMessage(requester->GetSession(), "Please turn off invis before entering vehicle.");
+		return false;
+	}
+
+	if(IsVehicle())
+	{
+		Vehicle *v = TO_VEHICLE(this);
+		if(!v->GetMaxPassengerCount())
+			return false;
+
+		if(!v->GetMaxSeat())
+			return false;
+
+		if(v->IsFull())
+			return false;
+
+		if( sEventMgr.HasEvent( v, EVENT_VEHICLE_SAFE_DELETE ) )
+			return false;
+
+		if(GetControllingPlayer())
+		{
+			Player * p = GetControllingPlayer();
+			if(p->GetGroup() == NULL)
+				return false;
+			if(!p->GetGroup()->HasMember(requester))
+				return false;
+		}
+	}
+
+	if(IsPlayer())
+	{
+		Player * p = TO_PLAYER(this);
+
+		if(p->GetVehicleEntry() == 0)
+			return false;
+
+		if(p->GetGroup() == NULL)
+			return false;
+		if(!p->GetGroup()->HasMember(requester))
+			return false;
+	}
+	return true;
 }

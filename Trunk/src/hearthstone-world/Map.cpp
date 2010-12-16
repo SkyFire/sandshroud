@@ -55,7 +55,7 @@ Map::Map(uint32 mapid, MapInfo * inf)
 
 Map::~Map()
 {
-	Log.Notice("Map", "~Map %u", this->_mapId);
+	Log.Notice("Map", "~Map %u", _mapId);
 	delete _terrain;
 
 	for(uint32 x=0;x<_sizeX;x++)
@@ -219,7 +219,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 
 	for(tableiterator = ExtraMapGameObjectTables.begin(); tableiterator != ExtraMapGameObjectTables.end(); ++tableiterator)
 	{
-		result = WorldDatabase.Query("SELECT * FROM %s WHERE map = %u", (*tableiterator).c_str(), this->_mapId);
+		result = WorldDatabase.Query("SELECT * FROM %s WHERE map = %u", (*tableiterator).c_str(), _mapId);
 		if(result)
 		{
 			if( CheckResultLengthGameObject(result) )
@@ -262,7 +262,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 		}
 	}
 
-	result = WorldDatabase.Query("SELECT * FROM creature_staticspawns WHERE Map = %u",this->_mapId);
+	result = WorldDatabase.Query("SELECT * FROM creature_staticspawns WHERE Map = %u",_mapId);
 	if(result)
 	{
 		if( CheckResultLengthCreatures(result) )
@@ -305,7 +305,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 		delete result;
 	}
 
-	result = WorldDatabase.Query("SELECT * FROM gameobject_staticspawns WHERE Map = %u",this->_mapId);
+	result = WorldDatabase.Query("SELECT * FROM gameobject_staticspawns WHERE Map = %u",_mapId);
 	if(result)
 	{
 		if( CheckResultLengthGameObject(result) )

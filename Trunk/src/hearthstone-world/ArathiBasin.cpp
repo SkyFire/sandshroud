@@ -846,16 +846,16 @@ void ArathiBasin::AssaultControlPoint(Player* pPlayer, uint32 Id)
 
 		// modify the resource update time period
 		if(m_capturedBases[Owner]==0)
-			this->event_RemoveEvents(EVENT_AB_RESOURCES_UPDATE_TEAM_0+Owner);
+			event_RemoveEvents(EVENT_AB_RESOURCES_UPDATE_TEAM_0+Owner);
 		else
-			this->event_ModifyTime(EVENT_AB_RESOURCES_UPDATE_TEAM_0 + Owner, ResourceUpdateIntervals[m_capturedBases[Owner]]);
+			event_ModifyTime(EVENT_AB_RESOURCES_UPDATE_TEAM_0 + Owner, ResourceUpdateIntervals[m_capturedBases[Owner]]);
 	}
 
 	// Contested Flag, not ours, and is not virgin
 	if( !isVirgin && m_basesLastOwnedBy[Id] == int32(Team) && m_basesOwnedBy[Id] == -1 )
 	{
 		m_mapMgr->GetStateManager().UpdateWorldState(AssaultFields[Id][Team ? 0 : 1], 0);
-		this->event_RemoveEvents(EVENT_AB_CAPTURE_CP_1 + Id);
+		event_RemoveEvents(EVENT_AB_CAPTURE_CP_1 + Id);
 		SendChatMessage(Team ? CHAT_MSG_BG_SYSTEM_HORDE : CHAT_MSG_BG_SYSTEM_ALLIANCE, pPlayer->GetGUID(), "$N has defended the %s!", ControlPointNames[Id]);
 		m_basesAssaultedBy[Id] = Team;
 		CaptureControlPoint( Id, Team );

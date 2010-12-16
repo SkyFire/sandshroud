@@ -928,16 +928,8 @@ void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 
 	pVehicle = TO_VEHICLE(unit);
 
-	if(!pVehicle->GetMaxPassengerCount())
+	if(!pVehicle->CanEnterVehicle(_player))
 		return;
-
-	if(!pVehicle->GetMaxSeat())
-		return;
-
-	// just in case.
-	if( sEventMgr.HasEvent( pVehicle, EVENT_VEHICLE_SAFE_DELETE ) )
-		return;
-
 	pVehicle->AddPassenger(_player);
 }
 
@@ -1072,10 +1064,7 @@ void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
 		if(plr == NULL)
 			return;
 
-		if(plr->GetVehicleEntry() == 0)
-			return;
-
-		if(plr->GetGroup() == NULL || plr->GetGroup() != _player->GetGroup())
+		if(!plr->CanEnterVehicle(_player))
 			return;
 
 		plr->AddPassenger(_player,-1);

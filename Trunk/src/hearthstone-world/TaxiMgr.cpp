@@ -335,7 +335,7 @@ void TaxiMgr::_LoadTaxiNodes()
 			n->y = node->y;
 			n->z = node->z;
 
-			this->m_taxiNodes.insert(std::map<uint32, TaxiNode*>::value_type(n->id, n));
+			m_taxiNodes.insert(std::map<uint32, TaxiNode*>::value_type(n->id, n));
 		}
 	}
 
@@ -378,7 +378,7 @@ void TaxiMgr::_LoadTaxiPaths()
 			}
 
 			p->ComputeLen();
-			this->m_taxiPaths.insert(std::map<uint32, TaxiPath*>::value_type(p->id, p));
+			m_taxiPaths.insert(std::map<uint32, TaxiPath*>::value_type(p->id, p));
 		}
 	}
 }
@@ -387,7 +387,7 @@ TaxiPath* TaxiMgr::GetTaxiPath(uint32 path)
 {
 	HM_NAMESPACE::hash_map<uint32, TaxiPath*>::iterator itr;
 
-	itr = this->m_taxiPaths.find(path);
+	itr = m_taxiPaths.find(path);
 
 	if (itr == m_taxiPaths.end())
 		return NULL;
@@ -410,7 +410,7 @@ TaxiNode* TaxiMgr::GetTaxiNode(uint32 node)
 {
 	HM_NAMESPACE::hash_map<uint32, TaxiNode*>::iterator itr;
 
-	itr = this->m_taxiNodes.find(node);
+	itr = m_taxiNodes.find(node);
 
 	if (itr == m_taxiNodes.end())
 		return NULL;

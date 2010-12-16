@@ -201,7 +201,7 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 
 	if( slot < 0 )
 	{
-		result = this->FindFreeInventorySlot(item->GetProto());
+		result = FindFreeInventorySlot(item->GetProto());
 		if( result.Result )
 		{
 			slot = result.Slot;
@@ -261,7 +261,7 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 			if(GetInventoryItem(slot) != NULL /*|| (slot == EQUIPMENT_SLOT_OFFHAND && !m_pOwner->HasSkillLine(118))*/)
 			{
 				//sLog.outError("bugged inventory: %u %u", m_pOwner->GetName(), item->GetGUID());
-				result = this->FindFreeInventorySlot(item->GetProto());
+				result = FindFreeInventorySlot(item->GetProto());
 
 				// send message to player
 				sChatHandler.BlueSystemMessageToPlr(m_pOwner, "A duplicated item, `%s` was found in your inventory. We've attempted to add it to a free slot in your inventory, if there is none this will fail. It will be attempted again the next time you log on.",
@@ -455,7 +455,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -464,7 +464,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -474,7 +474,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -483,7 +483,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 		Item* item = GetInventoryItem(i);
 		if(item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 		else
 		{
@@ -506,7 +506,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -515,7 +515,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 		else
 		{
@@ -546,7 +546,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		if (item && item->GetGUID() == guid)
 		{
 			m_pOwner->ApplyItemMods(item, i, false, false);
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -555,7 +555,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -565,7 +565,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -575,7 +575,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		if(item && item->GetGUID() == guid)
 		{
 			m_pOwner->ApplyItemMods(item, i, false, false);
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 		else
 		{
@@ -598,7 +598,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -607,7 +607,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 		else
 		{
@@ -704,7 +704,7 @@ bool ItemInterface::SafeFullRemoveItemByGuid(uint64 guid)
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
+			return SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
 		}
 	}
 
@@ -713,7 +713,7 @@ bool ItemInterface::SafeFullRemoveItemByGuid(uint64 guid)
 		Item* item = GetInventoryItem(i);
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
+			return SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
 		}
 	}
 
@@ -723,7 +723,7 @@ bool ItemInterface::SafeFullRemoveItemByGuid(uint64 guid)
 
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
+			return SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
 		}
 	}
 
@@ -732,7 +732,7 @@ bool ItemInterface::SafeFullRemoveItemByGuid(uint64 guid)
 		Item* item = GetInventoryItem(i);
 		if(item && item->GetGUID() == guid)
 		{
-			return this->SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
+			return SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
 		}
 		else
 		{
@@ -756,7 +756,7 @@ bool ItemInterface::SafeFullRemoveItemByGuid(uint64 guid)
 
 		if (item && item->GetGUID() == guid)
 		{
-			return this->SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
+			return SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
 		}
 	}
 
@@ -765,7 +765,7 @@ bool ItemInterface::SafeFullRemoveItemByGuid(uint64 guid)
 		Item* item = GetInventoryItem(i);
 		if(item && item->GetGUID() == guid)
 		{
-			return this->SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
+			return SafeFullRemoveItemFromSlot(INVENTORY_SLOT_NOT_SET, i);
 		}
 		else
 		{
@@ -3245,7 +3245,7 @@ void ItemInterface::ReduceItemDurability()
 				//check final durabiity
 				if( !pItem->GetUInt32Value( ITEM_FIELD_DURABILITY ) ) //no dur left
 				{
-					this->GetOwner()->ApplyItemMods( pItem, slot, false, true );
+					GetOwner()->ApplyItemMods( pItem, slot, false, true );
 				}
 			}
 		}
@@ -3517,7 +3517,7 @@ uint32 ItemInterface::GetSocketedGemCountWithLimitId(uint32 Id)
 
 void ItemInterface::RemoveItemsWithHolidayId(uint32 IgnoreHolidayId)
 {
-	for(uint32 i = INVENTORY_SLOT_ITEM_START; i < MAX_INVENTORY_SLOT; i++)
+	for(uint32 i = EQUIPMENT_SLOT_START; i < MAX_INVENTORY_SLOT; i++)
 	{
 		Item* item = GetInventoryItem(i);
 		if (item)

@@ -4305,7 +4305,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 					{
 						if( Set->itemscount == set->itemscount[x] )
 						{
-							this->RemoveAura( set->SpellID[x], GetGUID() );
+							RemoveAura( set->SpellID[x], GetGUID() );
 						}
 					}
 
@@ -4490,7 +4490,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 				Spell* spell = NULLSPELL;
 				spell = (new Spell( TO_PLAYER(this), spells ,true, NULLAURA ));
 				SpellCastTargets targets;
-				targets.m_unitTarget = this->GetGUID();
+				targets.m_unitTarget = GetGUID();
 				spell->castedItemId = item->GetEntry();
 				spell->prepare( &targets );
 
@@ -4502,7 +4502,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 				ts.origId = 0;
 				ts.spellId = item->GetProto()->Spells[k].Id;
 				ts.procChance = 5;
-				ts.caster = this->GetGUID();
+				ts.caster = GetGUID();
 				ts.procFlags = PROC_ON_MELEE_ATTACK;
 				if(slot == EQUIPMENT_SLOT_MAINHAND)
 					ts.weapon_damage_type = 1; // Proc only on main hand attacks
@@ -4885,9 +4885,9 @@ void Player::KillPlayer()
 
 	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED); //player death animation, also can be used with DYNAMIC_FLAGS <- huh???
 	SetUInt32Value( UNIT_DYNAMIC_FLAGS, 0x00 );
-	if(this->getClass() == WARRIOR) //rage resets on death
+	if(getClass() == WARRIOR) //rage resets on death
 		SetUInt32Value(UNIT_FIELD_POWER2, 0);
-	if(this->getClass() == DEATHKNIGHT)
+	if(getClass() == DEATHKNIGHT)
 		SetUInt32Value(UNIT_FIELD_POWER7, 0);
 
 	// combo points reset upon death
@@ -5333,7 +5333,7 @@ void Player::UpdateHit(int32 hit)
 			if ((mod.GetType() == SPELL_AURA_MOD_HIT_CHANCE))
 			{
 				SpellEntry *spellInfo = sSpellStore.LookupEntry(aff->GetSpellId());
-				if (this->canCast(spellInfo))
+				if (canCast(spellInfo))
 					in += mod.GetAmount();
 			}
 		}
@@ -6141,7 +6141,7 @@ void Player::OnRemoveInRangeObject(Object* pObj)
 		if(pObj == GetVehicle())
 			GetVehicle()->RemovePassenger(TO_PLAYER(this));
 		else
-			this->UnPossess();
+			UnPossess();
 		if(m_currentSpell)
 			m_currentSpell->cancel();	   // cancel the spell
 		m_CurrentCharm=NULLUNIT;
@@ -6585,8 +6585,8 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 
 	if( spellinfo->SpellGroupType )
 	{
-		SM_FFValue( this->SM[SMT_RANGE][0], &maxr, spellinfo->SpellGroupType );
-		SM_PFValue( this->SM[SMT_RANGE][1], &maxr, spellinfo->SpellGroupType );
+		SM_FFValue( SM[SMT_RANGE][0], &maxr, spellinfo->SpellGroupType );
+		SM_PFValue( SM[SMT_RANGE][1], &maxr, spellinfo->SpellGroupType );
 	}
 
 	maxr += 4.0f; // Matches client range
@@ -8945,12 +8945,12 @@ void Player::EndDuel(uint8 WinCondition)
 	DuelingWith->EventAttackStop();
 
 	// Call off pet
-	if( this->GetSummon() != NULL )
+	if( GetSummon() != NULL )
 	{
-		this->GetSummon()->CombatStatus.Vanished();
-		this->GetSummon()->GetAIInterface()->SetUnitToFollow( TO_PLAYER(this) );
-		this->GetSummon()->GetAIInterface()->HandleEvent( EVENT_FOLLOWOWNER, GetSummon(), 0 );
-		this->GetSummon()->GetAIInterface()->WipeTargetList();
+		GetSummon()->CombatStatus.Vanished();
+		GetSummon()->GetAIInterface()->SetUnitToFollow( TO_PLAYER(this) );
+		GetSummon()->GetAIInterface()->HandleEvent( EVENT_FOLLOWOWNER, GetSummon(), 0 );
+		GetSummon()->GetAIInterface()->WipeTargetList();
 	}
 
 	// removing auras that kills players after if low HP
@@ -10362,8 +10362,8 @@ void Player::removeSoulStone()
 			sSoulStone = 47883;
 		}break;
 	}
-	this->RemoveAura(sSoulStone);
-	this->SoulStone = this->SoulStoneReceiver = 0; //just incase
+	RemoveAura(sSoulStone);
+	SoulStone = SoulStoneReceiver = 0; //just incase
 }
 
 void Player::SoftDisconnect()
@@ -11605,7 +11605,7 @@ void Player::EventSummonPet( Pet* new_pet )
 		if( spellInfo->c_is_flags & SPELL_FLAG_IS_CASTED_ON_PET_SUMMON_PET_OWNER )
 		{
 			RemoveAllAuras( SpellID, GetGUID() ); //this is required since unit::addaura does not check for talent stacking
-			SpellCastTargets targets( this->GetGUID() );
+			SpellCastTargets targets( GetGUID() );
 			Spell* spell = NULLSPELL;
 			spell = (new Spell(TO_PLAYER(this), spellInfo ,true, NULLAURA));	//we cast it as a proc spell, maybe we should not !
 			spell->prepare(&targets);
@@ -11769,7 +11769,7 @@ void Player::AddShapeShiftSpell(uint32 id)
 	{
 		Spell* spe = NULLSPELL;
 		spe = (new Spell( TO_PLAYER(this), sp, true, NULLAURA ));
-		SpellCastTargets t(this->GetGUID());
+		SpellCastTargets t(GetGUID());
 		spe->prepare( &t );
 	}
 }
@@ -13787,7 +13787,7 @@ void Player::InitAsVehicle()
 	SendMessageToSet(&data, true);
 	m_passengers[0] = this;
 	SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
-
+	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
 	InstallExtras();
 }
 
@@ -13817,9 +13817,8 @@ void Player::DeInitAsVehicle()
 	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
 	data << GetNewGUID() << uint32(0);
 	SendMessageToSet(&data, true);
-
-	if(HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK))
-		RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+	RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
+	RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
 }
 
 void Player::AddPassenger(Unit* unit, int8 slot)
@@ -13841,15 +13840,6 @@ void Player::AddPassenger(Unit* unit, int8 slot)
 
 	if(m_vehicleSeats[slot] == NULL)
 		return;
-
-	if(unit->IsPlayer() && TO_PLAYER(unit)->m_CurrentCharm)
-		return;
-
-	if(unit->IsPlayer() && TO_PLAYER(unit)->m_isGmInvisible)
-	{
-		sChatHandler.GreenSystemMessage(TO_PLAYER(unit)->GetSession(), "Please turn off invis before entering vehicle.");
-		return;
-	}
 
 	m_passengers[slot] = unit;
 	LocationVector v;

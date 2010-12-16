@@ -932,7 +932,7 @@ void Aura::AddMod( uint32 t, int32 a, uint32 miscValue, uint32 i )
 
 	if( m_modcount >= 3 || m_target == NULL || m_target->MechanicsDispels[GetMechanicOfEffect(i)])
 	{
-		//sLog.outString("Tried to add >3 (%u) mods to spellid %u [%u:%u, %u:%u, %u:%u]", m_modcount+1, this->m_spellProto->Id, m_modList[0].m_type, m_modList[0].m_amount, m_modList[1].m_type, m_modList[1].m_amount, m_modList[2].m_type, m_modList[2].m_amount);
+		//sLog.outString("Tried to add >3 (%u) mods to spellid %u [%u:%u, %u:%u, %u:%u]", m_modcount+1, m_spellProto->Id, m_modList[0].m_type, m_modList[0].m_amount, m_modList[1].m_type, m_modList[1].m_amount, m_modList[2].m_type, m_modList[2].m_amount);
 		return;
 	}
 
@@ -4345,7 +4345,7 @@ void Aura::SpellAuraModResistance(bool apply)
 	else
 		amt = -mod->m_amount;
 
-	if( m_spellProto && ( this->m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE || this->m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE__FERAL_ ) )
+	if( m_spellProto && ( m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE || m_spellProto->NameHash == SPELL_HASH_FAERIE_FIRE__FERAL_ ) )
 		m_target->m_can_stealth = !apply;
 
 	if( m_target->IsPlayer() )
@@ -7166,7 +7166,7 @@ void Aura::SpellAuraModRegen(bool apply)
 	if(apply)//seems like only positive
 	{
 		SetPositive ();
-		sEventMgr.AddEvent(this, &Aura::EventPeriodicHeal1,(uint32)((this->m_spellProto->EffectBasePoints[mod->i]+1)/5)*3,
+		sEventMgr.AddEvent(this, &Aura::EventPeriodicHeal1,(uint32)((m_spellProto->EffectBasePoints[mod->i]+1)/5)*3,
 			EVENT_AURA_PERIODIC_REGEN,3000,0,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
 }
@@ -7262,7 +7262,7 @@ void Aura::EventPeriodicSpeedModify(int32 modifier)
 
 	if( m_spellProto->NameHash == SPELL_HASH_CHAINS_OF_ICE )
 	{
-		this->mod->fixed_amount[0] += modifier;
+		mod->fixed_amount[0] += modifier;
 	}
 }
 

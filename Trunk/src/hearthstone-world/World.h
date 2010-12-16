@@ -423,27 +423,6 @@ public:
 	bool run();
 };
 
-class NewsAnnouncer : public ThreadContext
-{
-	struct NewsAnnouncement
-	{
-		uint32 m_id;
-		uint32 m_lastTime;
-		uint32 m_timePeriod;
-		int32 m_factionMask;
-		string m_message;
-	};
-
-	map<uint32, NewsAnnouncement> m_announcements;
-
-	void _UpdateMessages();
-	void _ReloadMessages();
-	void _SendMessage(NewsAnnouncement *ann);
-	void _Init();
-public:
-	bool run();
-};
-
 class WorldSocket;
 
 // Slow for remove in middle, oh well, wont get done much.
@@ -631,7 +610,7 @@ public:
 	bool SendStatsOnJoin;
 	bool SendMovieOnJoin;
 	int32 FunServerMall;
-	uint32 LogoutDelay;
+	int LogoutDelay;
 	SessionSet gmList;
 	RWLock gmList_lock;
 

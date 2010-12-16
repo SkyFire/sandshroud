@@ -128,20 +128,20 @@ ObjectMgr::~ObjectMgr()
 	}
 
 	Log.Notice("ObjectMgr", "Deleting Reputation Tables...");
-	for(ReputationModMap::iterator itr = this->m_reputation_creature.begin(); itr != m_reputation_creature.end(); itr++)
+	for(ReputationModMap::iterator itr = m_reputation_creature.begin(); itr != m_reputation_creature.end(); itr++)
 	{
 		ReputationModifier * mod = itr->second;
 		mod->mods.clear();
 		delete mod;
 	}
-	for(ReputationModMap::iterator itr = this->m_reputation_faction.begin(); itr != m_reputation_faction.end(); itr++)
+	for(ReputationModMap::iterator itr = m_reputation_faction.begin(); itr != m_reputation_faction.end(); itr++)
 	{
 		ReputationModifier * mod = itr->second;
 		mod->mods.clear();
 		delete mod;
 	}
 
-	for(HM_NAMESPACE::hash_map<uint32,InstanceReputationModifier*>::iterator itr = this->m_reputation_instance.begin(); itr != this->m_reputation_instance.end(); itr++)
+	for(HM_NAMESPACE::hash_map<uint32,InstanceReputationModifier*>::iterator itr = m_reputation_instance.begin(); itr != m_reputation_instance.end(); itr++)
 	{
 		InstanceReputationModifier * mod = itr->second;
 		mod->mods.clear();
@@ -2857,7 +2857,7 @@ void ObjectMgr::LoadGroups()
 		delete result;
 	}
 
-	Log.Notice("ObjectMgr", "%u groups loaded.", this->m_groups.size());
+	Log.Notice("ObjectMgr", "%u groups loaded.", m_groups.size());
 }
 
 void ObjectMgr::LoadArenaTeams()
