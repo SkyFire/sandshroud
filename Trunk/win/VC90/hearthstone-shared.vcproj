@@ -1343,6 +1343,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\hearthstone-shared\PerfCounters.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\hearthstone-shared\SharedStdAfx.cpp"
 			>
 			<FileConfiguration

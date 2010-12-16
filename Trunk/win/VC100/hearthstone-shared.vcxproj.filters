@@ -726,5 +726,6 @@
     <ClInclude Include="..\..\src\hearthstone-shared\int24.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\PerfCounters.h" />
   </ItemGroup>
 </Project>

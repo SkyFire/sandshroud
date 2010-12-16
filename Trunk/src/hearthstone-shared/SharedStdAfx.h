@@ -53,4 +53,6 @@
 #pragma warning(disable:4826)
 #endif
 
+#include "PerfCounters.h"
+
 #endif // SHARED_STDAFX

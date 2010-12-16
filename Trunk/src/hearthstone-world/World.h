@@ -821,6 +821,16 @@ public:
 	}
 	bool QueryLog;
 
+public: // Crow: CPU and RAM shit. TODO: LINUX support
+	float GetCPUUsage(bool external = false);
+	float GetRAMUsage(bool external = false);
+
+private:
+	bool m_bFirstTime;
+	LONGLONG m_lnOldValue;
+	LARGE_INTEGER m_OldPerfTime100nSec;
+	uint32 number_of_cpus;
+
 public: // Events! :D
 	void SetAnniversary(uint32 anniversarynumber);
 	uint32 AnniversaryAchievement;

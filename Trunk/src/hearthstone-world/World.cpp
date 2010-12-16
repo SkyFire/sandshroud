@@ -61,6 +61,13 @@ World::World()
 	m_speedHackLatencyMultiplier = 0.0f;
 	m_speedHackResetInterval = 5000;
 	m_CEThreshold = 10000;
+	m_bFirstTime = true;
+	m_lnOldValue = 0;
+
+	memset( &m_OldPerfTime100nSec, 0, sizeof( m_OldPerfTime100nSec ) );
+	SYSTEM_INFO si;
+	GetSystemInfo( &si );
+	number_of_cpus = si.dwNumberOfProcessors;
 }
 
 uint32 World::GetMaxLevel(Player* plr)
@@ -1042,6 +1049,60 @@ void World::SaveAllPlayers()
 	}
 	objmgr._playerslock.ReleaseReadLock();
 	sLog.outString("Saved %u players.", count);
+}
+
+float World::GetCPUUsage(bool external)
+{
+#ifdef WIN32
+	CPerfCounters<LONGLONG> PerfCounters;
+	DWORD dwObjectIndex = PROCESS_OBJECT_INDEX;
+	DWORD dwCpuUsageIndex = PROCESSOR_TIME_COUNTER_INDEX;
+
+	int CpuUsage = 0;
+	LONGLONG lnNewValue = 0;
+	PPERF_DATA_BLOCK pPerfData = NULL;
+	LARGE_INTEGER NewPerfTime100nSec = {0};
+
+	lnNewValue = PerfCounters.GetCounterValueForProcessID(&pPerfData, dwObjectIndex, dwCpuUsageIndex, GetCurrentProcessId());
+	NewPerfTime100nSec = pPerfData->PerfTime100nSec;
+	if (external && m_bFirstTime)
+	{
+		m_bFirstTime = false;
+		m_lnOldValue = lnNewValue;
+		m_OldPerfTime100nSec = NewPerfTime100nSec;
+		return 0.0f;
+	}
+
+	LONGLONG lnValueDelta = lnNewValue - m_lnOldValue;
+	double DeltaPerfTime100nSec = (double)NewPerfTime100nSec.QuadPart - (double)m_OldPerfTime100nSec.QuadPart;
+
+	m_lnOldValue = lnNewValue;
+	m_OldPerfTime100nSec = NewPerfTime100nSec;
+
+	double a = (double)lnValueDelta / DeltaPerfTime100nSec;
+	a /= double(number_of_cpus);
+	return float(a * 100.0);
+#else
+
+	return 0.0f;
+
+#endif
+}
+
+float World::GetRAMUsage(bool external)
+{
+#ifdef WIN32
+	PROCESS_MEMORY_COUNTERS pmc;
+	GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
+	float ram = (float)pmc.PagefileUsage;
+	ram /= 1024.0f;
+	ram /= 1024.0f;
+	return ram;
+#else
+
+	return 0.0f;
+
+#endif
 }
 
 WorldSession* World::FindSessionByName(const char * Name)//case insensetive

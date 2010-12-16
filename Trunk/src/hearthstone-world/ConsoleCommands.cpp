@@ -21,8 +21,6 @@
 
 bool HandleInfoCommand(BaseConsole * pConsole, int argc, const char * argv[])
 {
-	uint32 clientsNum = (uint32)sWorld.GetSessionCount();
-
 	int gm = 0;
 	int count = 0;
 	int avg = 0;
@@ -45,18 +43,14 @@ bool HandleInfoCommand(BaseConsole * pConsole, int argc, const char * argv[])
 	pConsole->Write("======================================================================\r\n");
 	pConsole->Write("Server Revision: Hearthstone r%u/%s-%s-%s\r\n", BUILD_REVISION, CONFIG, PLATFORM_TEXT, ARCH);
 	pConsole->Write("Server Uptime: %s\r\n", sWorld.GetUptimeString().c_str());
-	pConsole->Write("Current Players: %u (%d GMs, %d queued)\r\n", clientsNum, gm,  0);
-	pConsole->Write("Alliance Online: %u\r\n",sWorld.AlliancePlayers);
-	pConsole->Write("Horde Online: %u\r\n",sWorld.HordePlayers);
-	pConsole->Write("Connection Peak: %u\r\n", sWorld.PeakSessionCount);
-	pConsole->Write("Accepted Connections: %u\r\n", sWorld.mAcceptedConnections);
-	pConsole->Write("Active Thread Count: %u\r\n", ThreadPool.GetActiveThreadCount());
-	pConsole->Write("Free Thread Count: %u\r\n", ThreadPool.GetFreeThreadCount());
+	pConsole->Write("Useage(Win only): RAM:(%f), CPU:(%f)\r\n", sWorld.GetRAMUsage(), sWorld.GetCPUUsage());
+	pConsole->Write("SQL Query Cache Size: (W: %u/C: %u) queries delayed\r\n", WorldDatabase.GetQueueSize(), CharacterDatabase.GetQueueSize());
+	pConsole->Write("Active/Free Thread Count: (%u/%u)\r\n", ThreadPool.GetActiveThreadCount(), ThreadPool.GetFreeThreadCount());
+	pConsole->Write("Players Online: (%u Alliance/%u Horde/%u GMs)\r\n",sWorld.AlliancePlayers, sWorld.HordePlayers, gm);
 	pConsole->Write("Average Latency: %.3fms\r\n", count ?  ((float)((float)avg / (float)count)) : 0.0f);
-	pConsole->Write("SQL Query Cache Size (World): %u queries delayed\r\n", WorldDatabase.GetQueueSize());
-	pConsole->Write("SQL Query Cache Size (Character): %u queries delayed\r\n", CharacterDatabase.GetQueueSize());
+	pConsole->Write("Accepted Connections: %u\r\n", sWorld.mAcceptedConnections);
+	pConsole->Write("Connection Peak: %u\r\n", sWorld.PeakSessionCount);
 	pConsole->Write("======================================================================\r\n\r\n");
-
 	return true;
 }
 
