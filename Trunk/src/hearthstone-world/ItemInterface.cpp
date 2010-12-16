@@ -3514,3 +3514,17 @@ uint32 ItemInterface::GetSocketedGemCountWithLimitId(uint32 Id)
 	}
 	return count;
 }
+
+void ItemInterface::RemoveItemsWithHolidayId(uint32 IgnoreHolidayId)
+{
+	for(uint32 i = INVENTORY_SLOT_ITEM_START; i < MAX_INVENTORY_SLOT; i++)
+	{
+		Item* item = GetInventoryItem(i);
+		if (item)
+		{
+			if(item->GetProto()->HolidayId && item->GetProto()->HolidayId != IgnoreHolidayId)
+				SafeFullRemoveItemByGuid(item->GetGUID());
+		}
+	}
+
+}

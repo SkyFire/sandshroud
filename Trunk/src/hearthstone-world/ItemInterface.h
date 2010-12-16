@@ -189,6 +189,7 @@ public:
 
 		return true;
 	}
+	void RemoveItemsWithHolidayId(uint32 IgnoreHolidayId = 0);
 };
 
 class ItemIterator

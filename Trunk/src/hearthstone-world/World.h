@@ -847,11 +847,22 @@ public: // Events! :D
 	uint32 AnniversaryAchievement;
 	bool RealAchievement;
 
-	void SpawnHallowsEnd(bool apply) { HallowsEnd = apply; };
+	void SpawnHallowsEnd(bool apply) { HallowsEnd = apply; OnHolidayChange(16);};
 	bool HallowsEnd;
 
-	void SpawnWintersVeil(bool apply) { WintersVeil = apply; };
+	void SpawnWintersVeil(bool apply) { WintersVeil = apply; OnHolidayChange(14);};
 	bool WintersVeil;
+	void OnHolidayChange(uint32 IgnoreHolidayId)
+	{
+		m_sessionlock.AcquireReadLock();
+		SessionMap::iterator itr;
+		for (itr = m_sessions.begin(); itr != m_sessions.end(); itr++)
+		{
+			if(itr->second->GetPlayer() && itr->second->GetPlayer()->IsInWorld())
+				itr->second->GetPlayer()->GetItemInterface()->RemoveItemsWithHolidayId(IgnoreHolidayId);
+		}
+		m_sessionlock.ReleaseReadLock();
+	}
 };
 
 #define sCLT CharacterLoaderThread::getSingleton()
