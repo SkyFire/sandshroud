@@ -1099,11 +1099,27 @@
 			Name="Dependencies"
 			>
 			<File
+				RelativePath="..\..\Source\Dependencies\Base.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\Dependencies\Base.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\Dependencies\Functions.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Source\Dependencies\Functions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\Dependencies\Instance_Base.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\Dependencies\Instance_Base.h"
 				>
 			</File>
 		</Filter>

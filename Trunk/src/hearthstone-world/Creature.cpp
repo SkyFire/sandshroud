@@ -690,9 +690,9 @@ void Creature::RegenerateHealth(bool isinterrupted)
 	if(m_limbostate || !m_canRegenerateHP || isinterrupted)
 		return;
 
-	uint32 cur=GetUInt32Value(UNIT_FIELD_HEALTH);
-	uint32 mh=GetUInt32Value(UNIT_FIELD_MAXHEALTH);
-	if(cur>=mh)
+	uint32 cur = GetUInt32Value(UNIT_FIELD_HEALTH);
+	uint32 mh = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+	if(cur >= mh)
 		return;
 
 	//though creatures have their stats we use some wierd formula for amt
@@ -701,16 +701,16 @@ void Creature::RegenerateHealth(bool isinterrupted)
 
 	amt = lvl*2.0f;
 	if (PctRegenModifier)
-		amt+= (amt * PctRegenModifier) / 100;
+		amt += (amt * PctRegenModifier) / 100;
 
 	//Apply shit from conf file
-	amt*=sWorld.getRate(RATE_HEALTH);
+	amt *= sWorld.getRate(RATE_HEALTH);
 
-	if(amt<=1.0f)//this fixes regen like 0.98
+	if(amt <= 1.0f)//this fixes regen like 0.98
 		cur++;
 	else
-		cur+=(uint32)amt;
-	SetUInt32Value(UNIT_FIELD_HEALTH,(cur>=mh)?mh:cur);
+		cur += (uint32)amt;
+	SetUInt32Value(UNIT_FIELD_HEALTH, (cur >= mh) ? mh : cur);
 }
 
 void Creature::RegenerateMana(bool isinterrupted)

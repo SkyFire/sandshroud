@@ -21,5 +21,7 @@
 #include "../Lacrimi.h"
 #include "../Setup/Setup.h"
 #include "../Dependencies/Functions.h"
+#include "../Dependencies/Base.h"
+#include "../Dependencies/Instance_Base.h"
 
 #endif // LACRIMI_PCH

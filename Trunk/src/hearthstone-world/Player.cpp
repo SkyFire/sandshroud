@@ -411,11 +411,6 @@ void Player::Init()
 	Unit::Init();
 }
 
-void Player::OnLogin()
-{
-
-}
-
 Player::~Player ( )
 {
 	sEventMgr.RemoveEvents(TO_PLAYER(this));
@@ -547,8 +542,8 @@ Player::~Player ( )
 
 	for(std::map<uint32, PlayerPet*>::iterator itr = m_Pets.begin(); itr != m_Pets.end(); itr++)
 		delete itr->second;
-	m_Pets.clear();
 
+	m_Pets.clear();
 	m_itemsets.clear();
 	m_channels.clear();
 	mSpells.clear();

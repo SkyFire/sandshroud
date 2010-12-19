@@ -1012,10 +1012,9 @@ void InstanceMgr::CheckForExpiredInstances()
 				++itr;
 
 				// use a "soft" delete here.
-				if(!in->m_dbcMap->israid() && HasInstanceExpired(in))
+				if(HasInstanceExpired(in))
 					_DeleteInstance(in, false);
 			}
-
 		}
 	}
 	m_mapLock.Release();
