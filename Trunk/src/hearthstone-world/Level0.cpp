@@ -220,15 +220,11 @@ bool ChatHandler::HandleStartCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleInfoCommand(const char* args, WorldSession *m_session)
 {
-	WorldPacket data;
-
-
-	uint32 clientsNum = (uint32)sWorld.GetSessionCount();
-
 	int gm = 0;
-	int count = 0;
 	int avg = 0;
+	int count = 0;
 	PlayerStorageMap::const_iterator itr;
+
 	objmgr._playerslock.AcquireReadLock();
 	for (itr = objmgr._players.begin(); itr != objmgr._players.end(); itr++)
 	{
@@ -241,8 +237,12 @@ bool ChatHandler::HandleInfoCommand(const char* args, WorldSession *m_session)
 		}
 	}
 	objmgr._playerslock.ReleaseReadLock();
+
+	GreenSystemMessage(m_session, "Server Revision: SS Hearthstone r%u/%s-%s-%s", BUILD_REVISION, CONFIG, PLATFORM_TEXT, ARCH);
 	GreenSystemMessage(m_session, "Server Uptime: |r%s", sWorld.GetUptimeString().c_str());
-	GreenSystemMessage(m_session, "Current Players: |r%d (%d GMs, %d queued)", clientsNum, gm,  0);
+	if(m_session->CanUseCommand('z'))
+		GreenSystemMessage(m_session, "Useage(Win only): RAM:(%f), CPU:(%f)", sWorld.GetRAMUsage(), sWorld.GetCPUUsage());
+	GreenSystemMessage(m_session, "Players: (%u Alliance/%u Horde/%u GMs)",sWorld.AlliancePlayers, sWorld.HordePlayers, gm);
 	GreenSystemMessage(m_session, "Average Latency: |r%.3fms", (float)((float)avg / (float)count));
 	return true;
 }
