@@ -1230,3 +1230,150 @@ void WorldSession::HandleTimeSyncResp( WorldPacket & recv_data )
 
 	// This is just a response, no need to do anything... Yet.
 }
+
+bool WorldSession::ValidateText(std::string text)
+{
+	size_t stringpos;
+
+	// Idiots spamming giant pictures through the chat system
+	if( text.find("|TInterface") != string::npos)
+		return false;
+	if( text.find("\n") != string::npos )
+		return false;
+
+	/* Crow
+	Crow: Die color text! You don't belong in this world!
+	ColorTxt: It was not by my hand that I am once again given flesh.
+	ColorTxt: I was called here by, Humans, who wish to pay me Tribute.
+	Crow: Tribute? You steal mens souls! And make them your slaves!
+	ColorTxt: Perhaps the same could be said of all Religions...
+	Crow: Your words are as empty as your soul...
+	Crow: Mankind ill needs a savor such as you!
+	~ColorTxt breaks wine glass~
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	|cffa335ee|Hitem:812:0:0:0:0:0:0:0:70|h[Glowing Brightwood Staff]|h|r
+	|cff808080|Hquest:2278:47|h[The Platinum Discs]|h|r
+	|cffffd000|Htrade:4037:1:150:1:6AAAAAAAAAAAAAAAAAAAAAAOAADAAAAAAAAAAAAAAAAIAAAAAAAAA|h[Engineering]|h|r
+	|cff4e96f7|Htalent:2232:-1|h[Taste for Blood]|h|r
+	|cff71d5ff|Hspell:21563|h[Command]|h|r
+	|cffffd000|Henchant:3919|h[Engineering: Rough Dynamite]|h|r
+	|cffffff00|Hachievement:546:0000000000000001:0:0:0:-1:0:0:0:0|h[Safe Deposit]|h|r
+	|cff66bbff|Hglyph:21:762|h[Glyph of Bladestorm]|h|r
+	*/
+
+	// Quests
+	if((stringpos = text.find("|Hquest:")) != string::npos)
+		return true;
+
+	// Professions
+	if((stringpos = text.find("|Htrade:")) != string::npos)
+		return true;
+
+	// Talents
+	if((stringpos = text.find("|Htalent:")) != string::npos)
+		return true;
+
+	// Enchants
+	if((stringpos = text.find("|Henchant:")) != string::npos)
+		return true;
+
+	// Achievements
+	if((stringpos = text.find("|Hachievement:")) != string::npos)
+		return true;
+
+	// Glyphs
+	if((stringpos = text.find("|Hglyph:")) != string::npos)
+		return true;
+
+	// Spells
+	if((stringpos = text.find("|Hspell:")) != string::npos)
+	{
+		string newstring = text.substr(stringpos+8, text.size());
+		char *scannedtext = (char*)newstring.c_str();
+		char* cspellid = strtok(scannedtext, "|");
+		if(!cspellid)
+			return false;
+
+		uint32 spellid = atol(cspellid);
+		if(!spellid)
+			return false;
+
+		newstring = newstring.substr(3+strlen(cspellid), newstring.size());
+		scannedtext = (char*)newstring.c_str();
+		char* spellname = strtok(scannedtext, "]");
+		if(!spellname)
+			return false;
+
+		SpellEntry* sp = dbcSpell.LookupEntryForced(spellid);
+		if(sp == NULL)
+			return false;
+		if(strlen(sp->Name) != strlen(spellname))
+			return false;
+		// Return true here, no need to continue.
+		return true;
+	}
+
+	// Spells
+	if((stringpos = text.find("Hitem:")) != string::npos)
+	{ //Hitem:19854:0:0:0:0:0:0:0:80|h[Zin`rokh, Destroyer of Worlds]|h|r
+		string newstring = text.substr(stringpos+6, text.size());
+		char *scannedtext = (char*)newstring.c_str();
+		char* citemid = strtok(scannedtext, ":");
+		if(!citemid)
+			return false;
+
+		uint32 itemid = atol(citemid);
+		if(!itemid)
+			return false;
+
+		char* end = ":";
+		char* buffer[8]; // Random suffix and shit, also last one is level.
+		uint8 visuals[8];
+		newstring = newstring.substr(strlen(citemid), newstring.size());
+		scannedtext = (char*)newstring.c_str();
+		for(uint8 i = 0; i < 8; i++)
+		{
+			if(i == 7)
+				end = "|";
+
+			newstring = newstring.substr(1, newstring.size());
+			scannedtext = (char*)newstring.c_str();
+			buffer[i] = strtok(scannedtext, end);
+			visuals[i] = buffer[i] ? atol(buffer[i]) : 0;
+			if(buffer[i])
+				newstring = newstring.substr(strlen(buffer[i]), newstring.size());
+			else
+				newstring = newstring.substr(1, newstring.size());
+		}
+
+		newstring = newstring.substr(3, newstring.size());
+		scannedtext = (char*)newstring.c_str();
+		char* itemname = strtok(scannedtext, "]");
+		if(!itemname)
+			return false;
+		ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(itemid);
+		if(proto == NULL)
+			return false;
+		if(strlen(proto->Name1) != strlen(itemname))
+		{
+			if(string(itemname).find("of") != string::npos)
+			{
+				newstring = string(itemname).substr(strlen(proto->Name1), strlen(itemname));
+				scannedtext = (char*)newstring.c_str();
+				if(string(scannedtext).find("of") != string::npos)
+					return true; // We have a suffix
+			}
+			return false;
+		}
+		// Return true here, no need to continue.
+		return true;
+	}
+
+	// Safe to search, since we're done with items
+	if(text.find("|c") != string::npos && text.find("|r") != string::npos)
+		return false;
+	if(text.find("|c") != string::npos && text.find("|h") != string::npos)
+		return false;
+
+	return true;
+}

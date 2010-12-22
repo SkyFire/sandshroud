@@ -808,6 +808,7 @@ private:
 	uint8 _updatecount;
 
 public:
+	bool ValidateText(std::string text);
 	uint8 CheckTeleportPrerequisites(AreaTrigger * pAreaTrigger, WorldSession * pSession, Player* pPlayer, uint32 mapid);
 	static void InitPacketHandlerTable();
 	uint32 floodLines;

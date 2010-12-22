@@ -99,59 +99,18 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 	if(!sHookInterface.OnChat(_player, type, lang, msg, misc) && !(m_muted && m_muted >= (uint32)UNIXTIME))
 		return;
 
-	// Idiots spamming giant pictures through the chat system
-	if( msg.find("|TInterface") != string::npos || msg.find("\n") != string::npos)
-	{
-		GetPlayer()->BroadcastMessage("Your message has been blocked.");
+	if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
 		return;
-	}
-	//Disabled This due to players not able to link items.
-	//if(msg.find("|c") != string::npos && msg.find("|H") != string::npos && !HasGMPermissions()) // Allow GM's to Color Speak.
-		//return;
 
-	/* Crow
-	Crow: Die color text! You don't belong in this world!
-	ColorTxt: It was not by my hand that I am once again given flesh.
-	ColorTxt: I was called here by, Humans, who wish to pay me Tribute.
-	Crow: Tribute? You steal mens souls! And make them your slaves!
-	ColorTxt: Perhaps the same could be said of all Religions...
-	Crow: Your words are as empty as your soul...
-	Crow: Mankind ill needs a savor such as you!
-	~ColorTxt breaks wine glass~
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	This is what we need to do, in fewer lines. http://pastebin.com/QH7Sk9t4 it might expire.
-	Yea...
-	const char* message;
-	message = strchr(msg.c_str(), 'tem:'); // Only does item but meh.
-	if(message)
+	if(!_player->bGMTagOn)
 	{
-		std::istringstream reader(message);
-		std::string itemid = "";
-		int i = 0;
-		while(!reader.eof()) // Your genericness knows no bounds.
+		if(!ValidateText(msg))
 		{
-			char commandChar;
-			reader >> commandChar;
-			if(commandChar != ':')
-				itemid[i] = commandChar;
-			else
-				break;
-			++i;
+			// Blizzard disconnects, so what the hell :D
+			Disconnect();
+			return;
 		}
-
-		uint32 iitemid = 0;
-		sscanf(itemid.c_str(), "%u", &iitemid);
-
-		if(iitemid)
-		{
-			ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(iitemid);
-			if(!proto)
-			{
-				Disconnect();
-				return;
-			}
-		}
-	}*/
+	}
 
 	//arghhh STFU. I'm not giving you gold or items NOOB
 	switch(type)
@@ -272,9 +231,6 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		}break;
 	case CHAT_MSG_SAY:
 		{
-			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
-				break;
-
 			if(GetPlayer()->m_modlanguage >=0)
 			{
 				data = sChatHandler.FillMessageData( CHAT_MSG_SAY, GetPlayer()->m_modlanguage,  msg.c_str(), _player->GetGUID(), _player->GetChatTag());
@@ -307,9 +263,6 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 	case CHAT_MSG_RAID_WARNING:
 	case CHAT_MSG_BATTLEGROUND:
 		{
-			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
-				break;
-
 			Group *pGroup = _player->GetGroup();
 			if(pGroup == NULL)
 				break;
@@ -356,9 +309,6 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		} break;
 	case CHAT_MSG_GUILD:
 		{
-			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
-				break;
-
 			if(_player->m_playerInfo == NULL || _player->m_playerInfo->guild == NULL)
 				break;
 
@@ -368,9 +318,6 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		} break;
 	case CHAT_MSG_OFFICER:
 		{
-			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
-				break;
-
 			if(_player->m_playerInfo == NULL || _player->m_playerInfo->guild == NULL)
 				break;
 
@@ -475,9 +422,6 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		} break;
 	case CHAT_MSG_CHANNEL:
 		{
-			if (sChatHandler.ParseCommands(msg.c_str(), this) > 0)
-				break;
-
 			Channel *chn = channelmgr.GetChannel(misc.c_str(),GetPlayer());
 			if(sWorld.trade_world_chat && chn != NULL && chn->m_general == true && chn->pDBC && chn->pDBC->id == 2 && chn->pDBC->flags == 59)
 			{
