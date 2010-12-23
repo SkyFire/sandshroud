@@ -37,7 +37,7 @@ public:
 	void Delay(uint32 time);
 	bool _StartDB();
 	void _StopDB();
-	string GetConfigString(char* configfamily, char* configoption, char* cdefault = "");
+	char* GetConfigString(char* configfamily, char* configoption, char* cdefault = "");
 	float GetConfigfloat(char* configfamily, char* configoption, float fdefault = 0.0f);
 	bool GetConfigBool(char* configfamily, char* configoption, bool bdefault = false);
 	int GetConfigInt(char* configfamily, char* configoption, int intdefault = 0);

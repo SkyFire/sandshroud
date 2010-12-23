@@ -120,15 +120,10 @@ bool Lacrimi::run()
 
 	dumpstats = GetConfigBool("StatDumper", "DumpStats", false);
 	if(dumpstats)
-		Log.Success("Lacrimi", "Lacrimi Stat Dumper Initialized");
-
-	if(config)
 	{
-		if( !LacrimiConfig.GetString( "StatDumper", Filename, "Filename", "stats.xml", MAX_PATH ) )
-			strcpy( Filename, "stats.xml" );
+		Log.Success("Lacrimi", "Lacrimi Stat Dumper Initialized");
+		strcpy(Filename, GetConfigString("StatDumper", "Filename", "stats.xml"));
 	}
-	else
-		strcpy( Filename, "stats.xml" );
 
 	SetupScripts();
 	while(m_threadRunning)
@@ -203,11 +198,11 @@ void Lacrimi::_StopDB()
 	LacrimiDB = NULL;
 }
 
-string Lacrimi::GetConfigString(char* configfamily, char* configoption, char* cdefault)
+char* Lacrimi::GetConfigString(char* configfamily, char* configoption, char* cdefault)
 {
-	string creturn = cdefault;
-	if(config)
-		if(!LacrimiConfig.GetString(configfamily, configoption, &creturn))
+	char* creturn = cdefault;
+	if(config) // Crow: Lets just use MAX_PATH for this, it's a reasonable number...
+		if( !LacrimiConfig.GetString( configfamily, Filename, configoption, cdefault, MAX_PATH ) )
 			creturn = cdefault;
 	return creturn;
 }
@@ -248,11 +243,16 @@ void Lacrimi::SetupScripts()
 
 void Lacrimi::SetupZoneScripts()
 {
-	SetupOutlandScripts();
-	SetupKalimdorScripts();
-	SetupEbonHoldScripts();
-	SetupNorthrendScripts();
-	SetupEasternKingdomScripts();
+	if(GetConfigBool("ZoneScripts", "EnableOutlandScripts", true))
+		SetupOutlandScripts();
+	if(GetConfigBool("ZoneScripts", "EnableKalimdorScripts", true))
+		SetupKalimdorScripts();
+	if(GetConfigBool("ZoneScripts", "EnableEbonHoldScripts", true))
+		SetupEbonHoldScripts();
+	if(GetConfigBool("ZoneScripts", "EnableNorthrendScripts", true))
+		SetupNorthrendScripts();
+	if(GetConfigBool("ZoneScripts", "EnableEasternKingdomScripts", true))
+		SetupEasternKingdomScripts();
 }
 
 void Lacrimi::SetupEasternKingdomScripts()
