@@ -1330,6 +1330,9 @@ bool WorldSession::ValidateText(std::string text)
 		char* buffer[8]; // Random suffix and shit, also last one is level.
 		uint8 visuals[8];
 		newstring = newstring.substr(strlen(citemid), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
 		scannedtext = (char*)newstring.c_str();
 		for(uint8 i = 0; i < 8; i++)
 		{
@@ -1337,16 +1340,29 @@ bool WorldSession::ValidateText(std::string text)
 				end = "|";
 
 			newstring = newstring.substr(1, newstring.size());
+			if(!newstring.size())
+				return true; // Our fault
+
 			scannedtext = (char*)newstring.c_str();
 			buffer[i] = strtok(scannedtext, end);
 			visuals[i] = buffer[i] ? atol(buffer[i]) : 0;
 			if(buffer[i])
+			{
 				newstring = newstring.substr(strlen(buffer[i]), newstring.size());
+				if(!newstring.size())
+					return true; // Our fault
+			}
 			else
+			{
 				newstring = newstring.substr(1, newstring.size());
+				if(!newstring.size())
+					return true; // Our fault
+			}
 		}
 
 		newstring = newstring.substr(3, newstring.size());
+		if(!newstring.size())
+			return true; // Our fault
 		scannedtext = (char*)newstring.c_str();
 		char* itemname = strtok(scannedtext, "]");
 		if(!itemname)
@@ -1359,6 +1375,9 @@ bool WorldSession::ValidateText(std::string text)
 			if(string(itemname).find("of") != string::npos)
 			{
 				newstring = string(itemname).substr(strlen(proto->Name1), strlen(itemname));
+				if(!newstring.size())
+					return false; // Their fault
+
 				scannedtext = (char*)newstring.c_str();
 				if(string(scannedtext).find("of") != string::npos)
 					return true; // We have a suffix
