@@ -23,8 +23,10 @@ private:
 	ConfigFile LacrimiConfig;
 	Database* LacrimiDB;
 	ScriptMgr* sMgr;
+	bool dumpstats;
 	bool database;
 	bool config;
+	bool first;
 
 public:
 	Lacrimi(ScriptMgr* mgr);
@@ -35,6 +37,10 @@ public:
 	void Delay(uint32 time);
 	bool _StartDB();
 	void _StopDB();
+	string GetConfigString(char* configfamily, char* configoption, char* cdefault = "");
+	float GetConfigfloat(char* configfamily, char* configoption, float fdefault = 0.0f);
+	bool GetConfigBool(char* configfamily, char* configoption, bool bdefault = false);
+	int GetConfigInt(char* configfamily, char* configoption, int intdefault = 0);
 	Database* GetLDB() { if(database == true) return LacrimiDB; return NULL; };
 
 public: // Script Related
@@ -137,6 +143,13 @@ public: // Script Related
 	// Northrend
 	void SetupDalaran();
 
+
+public: // Stat Dumper
+	void DumpStats();
+	void GenerateUptimeString(char * Dest);
+	void FillOnlineTime(uint32 Time, char * Dest);
+
+	char Filename[MAX_PATH];
 };
 
 #define LacrimiDatabase (*(sWorld.LacrimiPtr->GetLDB()))

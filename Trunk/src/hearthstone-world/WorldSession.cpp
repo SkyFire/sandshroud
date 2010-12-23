@@ -1231,6 +1231,10 @@ void WorldSession::HandleTimeSyncResp( WorldPacket & recv_data )
 	// This is just a response, no need to do anything... Yet.
 }
 
+/* Crow: This will verify text that is able to be said ingame.
+	Note that spaces are handled differently in DBC and storage
+	than they are ingame, so we use string length.
+*/
 bool WorldSession::ValidateText(std::string text)
 {
 	size_t stringpos;
@@ -1242,6 +1246,7 @@ bool WorldSession::ValidateText(std::string text)
 		return false;
 
 	/* Crow
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	Crow: Die color text! You don't belong in this world!
 	ColorTxt: It was not by my hand that I am once again given flesh.
 	ColorTxt: I was called here by, Humans, who wish to pay me Tribute.
@@ -1251,44 +1256,208 @@ bool WorldSession::ValidateText(std::string text)
 	Crow: Mankind ill needs a savor such as you!
 	~ColorTxt breaks wine glass~
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	|cffa335ee|Hitem:812:0:0:0:0:0:0:0:70|h[Glowing Brightwood Staff]|h|r
-	|cff808080|Hquest:2278:47|h[The Platinum Discs]|h|r
-	|cffffd000|Htrade:4037:1:150:1:6AAAAAAAAAAAAAAAAAAAAAAOAADAAAAAAAAAAAAAAAAIAAAAAAAAA|h[Engineering]|h|r
-	|cff4e96f7|Htalent:2232:-1|h[Taste for Blood]|h|r
-	|cff71d5ff|Hspell:21563|h[Command]|h|r
-	|cffffd000|Henchant:3919|h[Engineering: Rough Dynamite]|h|r
-	|cffffff00|Hachievement:546:0000000000000001:0:0:0:-1:0:0:0:0|h[Safe Deposit]|h|r
-	|cff66bbff|Hglyph:21:762|h[Glyph of Bladestorm]|h|r
 	*/
 
 	// Quests
 	if((stringpos = text.find("|Hquest:")) != string::npos)
+	{ //Hquest:2278:47|h[The Platinum Discs]|h|r
+		///////////////////////////////////////////////////////////////////
+		string newstring = text.substr(stringpos+8, text.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		char *scannedtext = (char*)newstring.c_str();
+		char* cquestid = strtok(scannedtext, ":");
+		if(!cquestid)
+			return false;
+		uint32 questid = atol(cquestid);
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(1+strlen(cquestid), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* clevel = strtok(scannedtext, "|");
+		if(!clevel)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(3+strlen(clevel), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* questname = strtok(scannedtext, "]");
+		if(!questname)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		Quest* qst = QuestStorage.LookupEntry(questid);
+		if(qst == NULL)
+			return false;
+		if(strlen(qst->title) != strlen(questname))
+			return false;
+
+		// Return true here, no need to continue.
 		return true;
+	}
 
 	// Professions
 	if((stringpos = text.find("|Htrade:")) != string::npos)
+	{ //|Htrade:4037:1:150:1:6AAAAAAAAAAAAAAAAAAAAAAOAADAAAAAAAAAAAAAAAAIAAAAAAAAA|h[Engineering]|h|r
+		///////////////////////////////////////////////////////////////////
+		string newstring = text.substr(stringpos+8, text.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		char *scannedtext = (char*)newstring.c_str();
+		char* tSpellId = strtok(scannedtext, ":");
+		if(!tSpellId)
+			return false;
+		uint32 SpellId = atol(tSpellId);
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(1+strlen(tSpellId), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* cminimum = strtok(scannedtext, ":");
+		if(!cminimum)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(1+strlen(tSpellId), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* cmaximum = strtok(scannedtext, ":");
+		if(!cmaximum)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(1+strlen(tSpellId), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* cunk = strtok(scannedtext, ":");
+		if(!cunk)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(1+strlen(cmaximum), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* cguid = strtok(scannedtext, "|");
+		if(!cguid)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(3+strlen(scannedtext), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* tradename = strtok(scannedtext, "]");
+		if(!tradename)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		SpellEntry* sp = dbcSpell.LookupEntryForced(SpellId);
+		if(sp == NULL)
+			return false;
+		if(strlen(sp->Name) != strlen(tradename))
+			return false;
+
+		// Return true here, no need to continue.
 		return true;
+	}
 
 	// Talents
 	if((stringpos = text.find("|Htalent:")) != string::npos)
-		return true;
+	{ //Htalent:2232:-1|h[Taste for Blood]|h|r
+		///////////////////////////////////////////////////////////////////
+		string newstring = text.substr(stringpos+9, text.size());
+		if(!newstring.size())
+			return false; // Their fault
 
-	// Enchants
-	if((stringpos = text.find("|Henchant:")) != string::npos)
+		char *scannedtext = (char*)newstring.c_str();
+		char* ctalentid = strtok(scannedtext, ":");
+		if(!ctalentid)
+			return false;
+
+		uint32 talentid = atol(ctalentid);
+		if(!talentid)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(1+strlen(ctalentid), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* cTalentPoints = strtok(scannedtext, "|");
+		if(!cTalentPoints) // Apparently, we can have -1, but not 0
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		///////////////////////////////////////////////////////////////////
+		newstring = newstring.substr(3+strlen(cTalentPoints), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
+		scannedtext = (char*)newstring.c_str();
+		char* TalentName = strtok(scannedtext, "]");
+		if(!TalentName)
+			return false;
+		///////////////////////////////////////////////////////////////////
+
+		TalentEntry* TE = dbcTalent.LookupEntry(talentid);
+		if(TE == NULL)
+			return false;
+
 		return true;
+	}
 
 	// Achievements
 	if((stringpos = text.find("|Hachievement:")) != string::npos)
+	{ //Hachievement:546:0000000000000001:0:0:0:-1:0:0:0:0|h[Safe Deposit]|h|r
 		return true;
+	}
 
 	// Glyphs
 	if((stringpos = text.find("|Hglyph:")) != string::npos)
+	{ //Hglyph:21:762|h[Glyph of Bladestorm]|h|r
 		return true;
+	}
+
+	// Enchants
+	if((stringpos = text.find("|Henchant:")) != string::npos)
+	{ //Henchant:3919|h[Engineering: Rough Dynamite]|h|r
+		return true;
+	}
 
 	// Spells
 	if((stringpos = text.find("|Hspell:")) != string::npos)
-	{
+	{ //|cff71d5ff|Hspell:21563|h[Command]|h|r
+		///////////////////////////////////////////////////////////////////
 		string newstring = text.substr(stringpos+8, text.size());
+		if(!newstring.size())
+			return false; // Their fault
+
 		char *scannedtext = (char*)newstring.c_str();
 		char* cspellid = strtok(scannedtext, "|");
 		if(!cspellid)
@@ -1297,12 +1466,18 @@ bool WorldSession::ValidateText(std::string text)
 		uint32 spellid = atol(cspellid);
 		if(!spellid)
 			return false;
+		///////////////////////////////////////////////////////////////////
 
+		///////////////////////////////////////////////////////////////////
 		newstring = newstring.substr(3+strlen(cspellid), newstring.size());
+		if(!newstring.size())
+			return false; // Their fault
+
 		scannedtext = (char*)newstring.c_str();
 		char* spellname = strtok(scannedtext, "]");
 		if(!spellname)
 			return false;
+		///////////////////////////////////////////////////////////////////
 
 		SpellEntry* sp = dbcSpell.LookupEntryForced(spellid);
 		if(sp == NULL)
@@ -1313,10 +1488,14 @@ bool WorldSession::ValidateText(std::string text)
 		return true;
 	}
 
-	// Spells
+	// Items
 	if((stringpos = text.find("Hitem:")) != string::npos)
-	{ //Hitem:19854:0:0:0:0:0:0:0:80|h[Zin`rokh, Destroyer of Worlds]|h|r
+	{ //|cffa335ee|Hitem:812:0:0:0:0:0:0:0:70|h[Glowing Brightwood Staff]|h|r
+		///////////////////////////////////////////////////////////////////
 		string newstring = text.substr(stringpos+6, text.size());
+		if(!newstring.size())
+			return false; // Their fault
+
 		char *scannedtext = (char*)newstring.c_str();
 		char* citemid = strtok(scannedtext, ":");
 		if(!citemid)
@@ -1325,7 +1504,9 @@ bool WorldSession::ValidateText(std::string text)
 		uint32 itemid = atol(citemid);
 		if(!itemid)
 			return false;
+		///////////////////////////////////////////////////////////////////
 
+		///////////////////////////////////////////////////////////////////
 		char* end = ":";
 		char* buffer[8]; // Random suffix and shit, also last one is level.
 		uint8 visuals[8];
@@ -1359,7 +1540,9 @@ bool WorldSession::ValidateText(std::string text)
 					return true; // Our fault
 			}
 		}
+		///////////////////////////////////////////////////////////////////
 
+		///////////////////////////////////////////////////////////////////
 		newstring = newstring.substr(3, newstring.size());
 		if(!newstring.size())
 			return true; // Our fault
@@ -1367,6 +1550,8 @@ bool WorldSession::ValidateText(std::string text)
 		char* itemname = strtok(scannedtext, "]");
 		if(!itemname)
 			return false;
+		///////////////////////////////////////////////////////////////////
+
 		ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(itemid);
 		if(proto == NULL)
 			return false;
