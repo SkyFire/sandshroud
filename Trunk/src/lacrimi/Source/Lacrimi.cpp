@@ -102,6 +102,16 @@ bool Lacrimi::run()
 {
 	SetThreadName("Lacrimi");
 	Log.Success("Lacrimi", "Lacrimi Engine Started");
+	Log.Success("","############################################################");
+	Log.Success("","# ##            #       ####### ####### ##    #    #    ## #");
+	Log.Success("","# ##           ###      ##      ##   ## ##   ###  ###   ## #");
+	Log.Success("","# ##          ## ##     ##      ##   ## ##   ###  ###   ## #");
+	Log.Success("","# ##         #######    ##      ####### ##  ## #### ##  ## #");
+	Log.Success("","# ##        ##     ##   ##      #####   ##  ## #### ##  ## #");
+	Log.Success("","# ##       ##       ##  ##      ##  ##  ## ##   ##   ## ## #");
+	Log.Success("","# ####### ##         ## ####### ##   ## ## ##   ##   ## ## #");
+	Log.Success("","# :::::::.::.........::.:::::::.::...::.::.::...::...::.:: #");
+	Log.Success("","############################################################");
 
 	// Load our configs
 #ifdef WIN32
@@ -109,10 +119,7 @@ bool Lacrimi::run()
 #else
 	if(LacrimiConfig.SetSource((char*)CONFDIR "/Lacrimi.conf", true))
 #endif
-	{
 		config = true;
-		Log.Success("Lacrimi", "Config successfully set");
-	}
 
 	// Load our DBs
 	if(_StartDB())
@@ -121,19 +128,25 @@ bool Lacrimi::run()
 	dumpstats = GetConfigBool("StatDumper", "DumpStats", false);
 	if(dumpstats)
 	{
-		Log.Success("Lacrimi", "Lacrimi Stat Dumper Initialized");
+		Log.Success("Lacrimi", "Stat Dumper Initialized");
 		strcpy(Filename, GetConfigString("StatDumper", "Filename", "stats.xml"));
 	}
 
+	uint32 counter = 0;
 	SetupScripts();
 	while(m_threadRunning)
 	{
-		if(dumpstats)
-			DumpStats();
-
 		Delay(15000);
 		if(!m_threadRunning)
 			break;
+
+		if(counter == 0 || ++counter == 6)
+		{
+			counter = 1;
+			if(dumpstats)
+				DumpStats();
+		}
+
 		Delay(15000);
 		if(!m_threadRunning)
 			break;

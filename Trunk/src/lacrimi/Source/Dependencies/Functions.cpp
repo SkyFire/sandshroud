@@ -35,11 +35,14 @@ Creature* CreateAndLoadCreature(MapMgr* mgr, uint32 entry, uint32 instancemode, 
 	if(cp == NULL)
 		return NULL;
 
-	if(instancemode > 4)
+	if(instancemode > 3)
 		instancemode = 0;
 
 	Creature* ctr = mgr->CreateCreature(entry);
 	ctr->Load(cp, instancemode, x, y, z, o);
+
+	if(phase == 0)
+		phase = 1;
 	ctr->SetPhase(phase);
 	if(push == true)
 		ctr->PushToWorld(mgr);
@@ -64,6 +67,9 @@ GameObject* CreateAndLoadGameObject( MapMgr* mgr, uint32 entry, float x, float y
 		return NULL;
 
 	GO->SetRotation(o);
+
+	if(phase == 0)
+		phase = 1;
 	GO->SetPhase(phase);
 	if(push)
 		GO->PushToWorld(mgr);
