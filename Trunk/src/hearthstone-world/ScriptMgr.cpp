@@ -29,7 +29,7 @@ initialiseSingleton(HookInterface);
 
 ScriptMgr::ScriptMgr()
 {
-
+	DefaultGossipScript = new GossipScript();
 }
 
 ScriptMgr::~ScriptMgr()
@@ -290,7 +290,7 @@ char *ext;
 	HMODULE mod = LoadLibrary("Lacrimi.dll");
 	if( mod != 0 )
 	{
-		Log.Notice("ScriptMgr","Starting Lacrimi load...");
+		Log.Notice("ScriptMgr","Initializing Lacrimi...");
 		// find version import
 		exp_get_version vcall = (exp_get_version)GetProcAddress(mod, "_exp_get_version");
 		exp_script_register rcall = (exp_script_register)GetProcAddress(mod, "_exp_script_register");
@@ -306,12 +306,8 @@ char *ext;
 			uint32 stype = scall();
 			if(SCRIPTLIB_LOPART(version) == SCRIPTLIB_VERSION_MINOR && SCRIPTLIB_HIPART(version) == SCRIPTLIB_VERSION_MAJOR)
 			{
-				std::stringstream cmsg;
-				cmsg << "Loading Lacrimi, crc:0x" << reinterpret_cast< uint32* >( mod );
 				_handles.push_back(((SCRIPT_MODULE)mod));
-				cmsg << ", Version:" << SCRIPTLIB_HIPART(version) << SCRIPTLIB_LOPART(version);
 				rcall(this);
-				Log.Success("ScriptMgr",cmsg.str().c_str());
 			}
 			else
 			{
@@ -361,7 +357,7 @@ char *ext;
 #endif // Win/Nux
 }
 
-void ScriptMgr::UnloadScripts()
+void ScriptMgr::UnloadScripts(bool safe)
 {
 	if(HookInterface::getSingletonPtr())
 		delete HookInterface::getSingletonPtr();
@@ -371,6 +367,11 @@ void ScriptMgr::UnloadScripts()
 	for(CustomGossipScripts::iterator itr = _customgossipscripts.begin(); itr != _customgossipscripts.end(); itr++)
 		(*itr)->Destroy();
 	_customgossipscripts.clear();
+	if(safe == false)
+	{
+		delete DefaultGossipScript;
+		DefaultGossipScript = NULL;
+	}
 
 	LibraryHandleMap::iterator itr = _handles.begin();
 	for(; itr != _handles.end(); itr++)
@@ -386,7 +387,7 @@ void ScriptMgr::UnloadScripts()
 
 void ScriptMgr::ReloadScripts()
 {
-	UnloadScripts();
+	UnloadScripts(true);
 	LoadScripts();
 }
 

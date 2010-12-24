@@ -178,7 +178,7 @@ public:
 	friend class HookInterface;
 
 	void LoadScripts();
-	void UnloadScripts();
+	void UnloadScripts(bool safe = false);
 	void ReloadScripts();
 
 	CreatureAIScript * CreateAIScriptClassForEntry(Creature* pCreature);
@@ -200,7 +200,12 @@ public:
 	void register_quest_script(uint32 entry, QuestScript * qs);
 	void register_instance_script( uint32 pMapId, exp_create_instance_ai pCallback );
 
-	HEARTHSTONE_INLINE GossipScript* GetRegisteredGossipScript(uint8 type, uint32 entry) { return GossipMaps[type][entry]; };
+	HEARTHSTONE_INLINE GossipScript* GetRegisteredGossipScript(uint8 type, uint32 entry)
+	{
+		if(GossipMaps[type][entry] != NULL)
+			return GossipMaps[type][entry];
+		return DefaultGossipScript;
+	};
 
 protected:
 
@@ -210,6 +215,7 @@ protected:
 	HandleDummyAuraMap _auras;
 	HandleDummySpellMap _spells;
 	LibraryHandleMap _handles;
+	GossipScript * DefaultGossipScript;
 	ServerHookList _hooks[NUM_SERVER_HOOKS];
 	CustomGossipScripts _customgossipscripts;
 	QuestScripts _questscripts;
