@@ -163,6 +163,7 @@ class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 	ChatCommand * _NPCCommandTable;
 	ChatCommand * _gamemasterCommandTable;
 	ChatCommand * _trackerCommandTable;
+	ChatCommand * _warnCommandTable;
 	ChatCommand * _administratorCommandTable;
 	ChatCommand * _accountCommandTable;
 	ChatCommand * _CheatCommandTable;
@@ -659,10 +660,17 @@ protected:
 	bool HandleFactionSetStanding(const char *args, WorldSession *m_session);
 	bool HandleFactionModStanding(const char *args, WorldSession *m_session);
 
+	// Warn System
+	bool HandleWarnPlayerCommand(const char* args, WorldSession *m_session);
+	bool HandleWarnListCommand(const char* args, WorldSession *m_session);
+	bool HandleWarnClearCommand(const char* args, WorldSession *m_session);
+	bool HandleWarnSingleDelCommand(const char* args, WorldSession *m_session);
+
 	// GM Tracker related commands.
 	bool HandleTrackerListCommand(const char * args, WorldSession * m_session);
 	bool HandleAddTrackerCommand(const char * args, WorldSession * m_session);
 	bool HandleDelTrackerCommand(const char * args, WorldSession * m_session);
+
 	//Id from links
 	uint16 GetItemIDFromLink(const char* link, uint32* itemid);
 	int32 GetSpellIDFromLink(const char* link);

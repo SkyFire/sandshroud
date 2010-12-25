@@ -179,6 +179,7 @@
 #include "LocalizationMgr.h"
 #include "Vehicle.h"
 #include "Tracker.h"
+#include "WarnSystem.h"
 #include "AchievementInterface.h"
 #include "ChainAggroEntity.h"
 #include "StrandOfTheAncients.h"

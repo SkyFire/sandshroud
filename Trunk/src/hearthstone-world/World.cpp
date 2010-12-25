@@ -108,6 +108,9 @@ World::~World()
 	Log.Notice("Tracker", "~Tracker()");
 	delete Tracker::getSingletonPtr();
 
+	Log.Notice("WarnSys", "~WarnSystem()");
+	delete WarnSystem::getSingletonPtr();
+
 	Log.Notice("LocalizationMgr", "~LocalizationMgr()");
 	sLocalizationMgr.Shutdown();
 
@@ -437,6 +440,7 @@ bool World::SetInitialWorldSettings()
 	new TaxiMgr;
 	new AddonMgr;
 	new ChatHandler;
+	new WarnSystem;
 	new Tracker;
 
 	// Fill the task list with jobs to do.

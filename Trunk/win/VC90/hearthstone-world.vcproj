@@ -1340,6 +1340,18 @@
 				RelativePath="..\..\src\hearthstone-world\Tracker.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WarnSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WarnSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\hearthstone-world\WarnSystem_Punishments.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Brains"

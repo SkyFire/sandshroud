@@ -1399,6 +1399,7 @@ public:
 	uint32 m_SwimmingTime;
 	uint32 m_BreathDamageTimer;
 	bool m_BeastMaster;
+	uint32 m_lastWarnCounter;
 
 	// Collision crap.
 	bool IsOutdoors;

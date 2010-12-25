@@ -48,6 +48,8 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _gamemasterCommandTable;
 	else if(!stricmp(name, "tracker"))
 		return _trackerCommandTable;
+	else if(!stricmp(name, "warn"))
+		return _warnCommandTable;
 	else if(!stricmp(name, "admin"))
 		return _administratorCommandTable;
 	else if(!stricmp(name, "cheat"))
@@ -199,6 +201,7 @@ void CommandTableStorage::Dealloc()
 	free( _NPCCommandTable );
 	free( _gamemasterCommandTable );
 	free( _trackerCommandTable );
+	free( _warnCommandTable );
 	free( _administratorCommandTable );
 	free( _CheatCommandTable );
 	free( _accountCommandTable );
@@ -252,6 +255,16 @@ void CommandTableStorage::Init()
 		{ NULL,					'0', NULL,											"",							NULL, 0,							0,						0 }
 	};
 	dupe_command_table(modifyCommandTable, _modifyCommandTable);
+
+	static ChatCommand warnCommandTable[] =
+	{
+		{ "add",				'a', &ChatHandler::HandleWarnPlayerCommand,		"Warns a player, Syntax: !warn add <playername> <reason>",						NULL, 0, 0, 0 },
+		{ "list",				'0', &ChatHandler::HandleWarnListCommand,		"Warns a player, Syntax: !warn list <playername>",								NULL, 0, 0, 0 },
+		{ "clearall",			'z', &ChatHandler::HandleWarnClearCommand,		"Clears warns from a player, Syntax: !warn clear <playername>",					NULL, 0, 0, 0 },
+		{ "delete",				'a', &ChatHandler::HandleWarnSingleDelCommand,	"Deletes a warn from a player, Syntax: !warn delete <playername> <WarnID>",		NULL, 0, 0, 0 },
+		{ NULL,					'0', NULL,										"",																				NULL, 0, 0, 0 }
+	};
+	dupe_command_table(warnCommandTable, _warnCommandTable);
 
 	static ChatCommand debugCommandTable[] =
 	{
@@ -697,33 +710,34 @@ void CommandTableStorage::Init()
 		{ "increaseweaponskill",	'm', &ChatHandler::HandleIncreaseWeaponSkill,						".increaseweaponskill <count> - Increase eqipped weapon skill x times (defaults to 1).", NULL, 0, 0, 0 },
 		{ "playerinfo",				'm', &ChatHandler::HandlePlayerInfo,								".playerinfo - Displays informations about the selected character (account...)", NULL, 0, 0, 0 },
 
-		{ "modify",					'm', NULL,															"",				modifyCommandTable, 0, 0, 0 },
-		{ "waypoint",				'w', NULL,															"",				waypointCommandTable, 0, 0, 0 },
+		{ "modify",					'm', NULL,															"",					modifyCommandTable, 0, 0, 0 },
+		{ "waypoint",				'w', NULL,															"",					waypointCommandTable, 0, 0, 0 },
 		{ "debug",					'd', NULL,															"",					debugCommandTable, 0, 0, 0 },
 		{ "database",				'z', NULL,															"",					DatabaseCommandTable, 0, 0, 0 },
-		{ "gobject",				'o', NULL,															"",			GameObjectCommandTable, 0, 0, 0 },
-		{ "battleground",			'e', NULL,															"",			BattlegroundCommandTable, 0, 0, 0 },
+		{ "gobject",				'o', NULL,															"",					GameObjectCommandTable, 0, 0, 0 },
+		{ "battleground",			'e', NULL,															"",					BattlegroundCommandTable, 0, 0, 0 },
 		{ "npc",					'n', NULL,															"",					NPCCommandTable, 0, 0, 0 },
 		{ "gm",						'n', NULL,															"",					GMCommandTable, 0, 0, 0 },
 		{ "tracker",				'n', NULL,															"",					trackerCommandTable, 0, 0, 0 },
+		{ "warn",					'0', NULL,															"",					warnCommandTable, 0, 0, 0 },
 		{ "admin",					'z', NULL,															"",					AdminCommandTable, 0, 0, 0 },
 		{ "cheat",					'm', NULL,															"",					CheatCommandTable, 0, 0, 0 },
 		{ "account",				'a', NULL,															"",					accountCommandTable, 0, 0, 0 },
 		{ "honor",					'm', NULL,															"",					honorCommandTable, 0, 0, 0 },
-		{ "quest",					'q', NULL,															"",				questCommandTable, 0, 0, 0 },
+		{ "quest",					'q', NULL,															"",					questCommandTable, 0, 0, 0 },
 		{ "pet",					'm', NULL,															"",					petCommandTable, 0, 0, 0 },
-		{ "recall",					'q', NULL,															"",				recallCommandTable, 0, 0, 0 },
-		{ "guild",					'm', NULL,															"",				GuildCommandTable, 0, 0, 0 },
-		{ "title",					'm', NULL,															"",				TitleCommandTable, 0, 0, 0 },
-		{ "lookup",					'0', NULL,															"",				lookupCommandTable, 0, 0, 0 },
-		{ "wintergrasp",			'0', NULL,															"",				wintergraspCommandTable, 0, 0, 0 },
-		{ "faction",				'0', NULL,															"",				FactionCommandTable, 0, 0, 0 },
-		{ "getpos",					'd', &ChatHandler::HandleGetPosCommand,								"",								NULL, 0, 0, 0 },
+		{ "recall",					'q', NULL,															"",					recallCommandTable, 0, 0, 0 },
+		{ "guild",					'm', NULL,															"",					GuildCommandTable, 0, 0, 0 },
+		{ "title",					'm', NULL,															"",					TitleCommandTable, 0, 0, 0 },
+		{ "lookup",					'0', NULL,															"",					lookupCommandTable, 0, 0, 0 },
+		{ "wintergrasp",			'0', NULL,															"",					wintergraspCommandTable, 0, 0, 0 },
+		{ "faction",				'0', NULL,															"",					FactionCommandTable, 0, 0, 0 },
+		{ "getpos",					'd', &ChatHandler::HandleGetPosCommand,								"",					NULL, 0, 0, 0 },
 		{ "clearcooldowns",			'm', &ChatHandler::HandleClearCooldownsCommand,						"Clears all cooldowns for your class.", NULL, 0, 0, 0 },
 		{ "removeauras",			'm', &ChatHandler::HandleRemoveAurasCommand,						"Removes all auras from target",	NULL, 0, 0, 0 },
 		{ "paralyze",				'b', &ChatHandler::HandleParalyzeCommand,							"Roots/Paralyzes the target.",	NULL, 0, 0, 0 },
 		{ "unparalyze",				'b', &ChatHandler::HandleUnParalyzeCommand,							"Unroots/Unparalyzes the target.",NULL, 0, 0, 0 },
-		{ "setmotd",				'm', &ChatHandler::HandleSetMotdCommand,							"Sets MOTD",						NULL, 0, 0, 0 },
+		{ "setmotd",				'm', &ChatHandler::HandleSetMotdCommand,							"Sets MOTD",		NULL, 0, 0, 0 },
 		{ "additemset",				'm', &ChatHandler::HandleAddItemSetCommand,							"Adds item set to inv.",			NULL, 0, 0, 0 },
 		{ "gotrig",					'v', &ChatHandler::HandleTriggerCommand,							"Warps to areatrigger <id>",		NULL, 0, 0, 0 },
 		{ "exitinstance",			'm', &ChatHandler::HandleExitInstanceCommand,						"Exits current instance, return to entry point.", NULL, 0, 0, 0 },
@@ -755,16 +769,16 @@ void CommandTableStorage::Init()
 		{ "getheight",				'm', &ChatHandler::HandleCollisionGetHeight,						"Gets height", NULL, 0, 0, 0 },
 		{ "renameallinvalidchars",	'z', &ChatHandler::HandleRenameAllCharacter,						"Renames all invalid character names", NULL, 0,0, 0 },
 		{ "removesickness",			'm', &ChatHandler::HandleRemoveRessurectionSickessAuraCommand,		"Removes ressurrection sickness from the target", NULL, 0, 0, 0 },
-		{ "fixscale",				'm', &ChatHandler::HandleFixScaleCommand,							"", NULL, 0, 0, 0 },
-		{ "addtrainerspell",		'm', &ChatHandler::HandleAddTrainerSpellCommand,					"", NULL, 0, 0, 0 },
-		{ "clearcorpses",			'm', &ChatHandler::HandleClearCorpsesCommand,						"", NULL, 0, 0, 0 },
-		{ "clearbones",				'm', &ChatHandler::HandleClearBonesCommand,							"", NULL, 0, 0, 0 },
+		{ "fixscale",				'm', &ChatHandler::HandleFixScaleCommand,							"",					NULL, 0, 0, 0 },
+		{ "addtrainerspell",		'm', &ChatHandler::HandleAddTrainerSpellCommand,					"",					NULL, 0, 0, 0 },
+		{ "clearcorpses",			'm', &ChatHandler::HandleClearCorpsesCommand,						"",					NULL, 0, 0, 0 },
+		{ "clearbones",				'm', &ChatHandler::HandleClearBonesCommand,							"",					NULL, 0, 0, 0 },
 
 		{ "multimute",				'b', &ChatHandler::HandleMultiMuteCommand,							"mutes multiple , .multimute <reason> <player1> <player2> ...",			NULL, 0, 0, 0 },
 		{ "multiban",				'b', &ChatHandler::HandleMultiBanCommand,							"bans multiple , .multimute <reason> <player1> <player2> ...",			NULL, 0, 0, 0 },
 		{ "multiaccountban",		'b', &ChatHandler::HandleMultiAccountBanCommand,					"account bans multiple , .multimute <reason> <player1> <player2> ...",	NULL, 0, 0, 0 },
 		{ "multikick",				'b', &ChatHandler::HandleMultiKickCommand,							"kicks multiple , .multimute <reason> <player1> <player2> ...",			NULL, 0, 0, 0 },
-		{ NULL,						'0', NULL,															"",																		NULL, 0, 0, 0 }
+		{ NULL,						'0', NULL,															"",					NULL, 0, 0, 0 }
 	};
 	dupe_command_table(commandTable, _commandTable);
 

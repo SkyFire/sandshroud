@@ -109,7 +109,8 @@ void Player::Init()
 	m_wallhackCheckTimer			= 0;
 	m_wallhackChances				= 5;
 	m_WaterWalkTimer				= 0;
-	for(int i=0; i < 3; i++)
+	m_lastWarnCounter				= 0;
+	for(int i = 0; i < 3; i++)
 	{
 		LfgType[i]		= 0;
 		LfgDungeonId[i] = 0;
@@ -118,10 +119,8 @@ void Player::Init()
 	m_AutoAddMem				= false;
 	LfmDungeonId				= 0;
 	LfmType						= 0;
-	for(int32 i=0;i<NUM_MECHANIC;++i)
-	{
+	for(int32 i = 0; i < NUM_MECHANIC; i++)
 		MechanicDurationPctMod[i] = 1.0f;
-	}
 	m_invitersGuid					= 0;
 	m_currentMovement				= MOVE_UNROOT;
 	m_isGmInvisible					= false;
