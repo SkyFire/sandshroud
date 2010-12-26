@@ -1198,7 +1198,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 
 	switch (type)
 	{
-		case GAMEOBJECT_TYPE_CHAIR:
+	case GAMEOBJECT_TYPE_CHAIR:
 		{
 			/// if players are mounted they are not able to sit on a chair
 			if( _player->IsMounted() )
@@ -1207,7 +1207,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			_player->SafeTeleport( _player->GetMapId(), _player->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
 			_player->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
 		}break;
-		case GAMEOBJECT_TYPE_CHEST://cast da spell
+	case GAMEOBJECT_TYPE_CHEST://cast da spell
 		{
 			spellInfo = dbcSpell.LookupEntry( OPEN_CHEST );
 			spell = (new Spell(_player, spellInfo, true, NULLAURA));
@@ -1215,11 +1215,11 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			targets.m_unitTarget = obj->GetGUID();
 			spell->prepare(&targets);
 		}break;
-		case GAMEOBJECT_TYPE_FISHINGNODE:
+	case GAMEOBJECT_TYPE_FISHINGNODE:
 		{
 			obj->UseFishingNode(_player);
 		}break;
-		case GAMEOBJECT_TYPE_DOOR:
+	case GAMEOBJECT_TYPE_DOOR:
 		{
 			// door
 			if((obj->GetState() == 1) && (obj->GetFlags() == 33))
@@ -1231,7 +1231,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				sEventMgr.AddEvent(obj,&GameObject::EventCloseDoor,EVENT_GAMEOBJECT_DOOR_CLOSE,20000,1,0);
 			}
 		}break;
-		case GAMEOBJECT_TYPE_FLAGSTAND:
+	case GAMEOBJECT_TYPE_FLAGSTAND:
 		{
 			// battleground/warsong gulch flag
 			if(_player->m_bg)
@@ -1251,7 +1251,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			else
 				sLog.outError("Gameobject Type FlagStand activated while the player is not in a battleground, entry %u", goinfo->ID);
 		}break;
-		case GAMEOBJECT_TYPE_FLAGDROP:
+	case GAMEOBJECT_TYPE_FLAGDROP:
 		{
 			// Dropped flag
 			if(_player->m_bg)
@@ -1270,7 +1270,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			else
 				sLog.outError("Gameobject Type Flag Drop activated while the player is not in a battleground, entry %u", goinfo->ID);
 		}break;
-		case GAMEOBJECT_TYPE_QUESTGIVER:
+	case GAMEOBJECT_TYPE_QUESTGIVER:
 		{
 			// Questgiver
 			if(obj->HasQuests())
@@ -1278,7 +1278,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			else
 				sLog.outError("Gameobject Type Questgiver doesn't have any quests entry %u", goinfo->ID);
 		}break;
-		case GAMEOBJECT_TYPE_SPELLCASTER:
+	case GAMEOBJECT_TYPE_SPELLCASTER:
 		{
 			SpellEntry *info = dbcSpell.LookupEntry(goinfo->SpellFocus);
 			if(!info)
@@ -1293,7 +1293,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			if(obj->charges > 0 && !--obj->charges)
 				obj->ExpireAndDelete();
 		}break;
-		case GAMEOBJECT_TYPE_RITUAL:
+	case GAMEOBJECT_TYPE_RITUAL:
 		{
 			// store the members in the ritual, cast sacrifice spell, and summon.
 			uint32 i = 0;
@@ -1439,7 +1439,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				}
 			}
 		}break;
-		case GAMEOBJECT_TYPE_GOOBER:
+	case GAMEOBJECT_TYPE_GOOBER:
 		{
 			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->Unknown1);
 			if(sp != NULL)
@@ -1447,7 +1447,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			else
 				sLog.outError("Gameobject Type Goober doesn't have a spell to cast entry %u", goinfo->ID);
 		}break;
-		case GAMEOBJECT_TYPE_CAMERA://eye of azora
+	case GAMEOBJECT_TYPE_CAMERA://eye of azora
 		{
 			if(goinfo->sound1)
 			{
@@ -1458,7 +1458,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			else
 				sLog.outError("Gameobject Type Camera doesn't have a cinematic to play id, entry %u", goinfo->ID);
 		}break;
-		case GAMEOBJECT_TYPE_MEETINGSTONE:	// Meeting Stone
+	case GAMEOBJECT_TYPE_MEETINGSTONE:	// Meeting Stone
 		{
 			/* Use selection */
 			Player* pPlayer = objmgr.GetPlayer((uint32)_player->GetSelection());
@@ -1492,7 +1492,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 			/* expire after 2mins*/
 			sEventMgr.AddEvent(pGo, &GameObject::_Expire, EVENT_GAMEOBJECT_EXPIRE, 120000, 1,0);
 		}break;
-		case GAMEOBJECT_TYPE_BARBER_CHAIR:
+	case GAMEOBJECT_TYPE_BARBER_CHAIR:
 		{
 			_player->SafeTeleport( _player->GetMapId(), _player->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
 			_player->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
@@ -2254,7 +2254,7 @@ void WorldSession::HandleGameobjReportUseOpCode( WorldPacket& recv_data )
 	{
 		// Gossip Script
 		GossipScript* goscript = NULL;
-		if((goscript = sScriptMgr.GetRegisteredGossipScript(GTYPEID_GAMEOBJECT, gameobj->GetEntry())))
+		if((goscript = sScriptMgr.GetRegisteredGossipScript(GTYPEID_GAMEOBJECT, gameobj->GetEntry(), false)))
 			goscript->GossipHello(gameobj, _player, true);
 
 		if(gameobj->CanActivate())

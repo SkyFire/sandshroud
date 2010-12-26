@@ -200,11 +200,13 @@ public:
 	void register_quest_script(uint32 entry, QuestScript * qs);
 	void register_instance_script( uint32 pMapId, exp_create_instance_ai pCallback );
 
-	HEARTHSTONE_INLINE GossipScript* GetRegisteredGossipScript(uint8 type, uint32 entry)
+	HEARTHSTONE_INLINE GossipScript* GetRegisteredGossipScript(uint8 type, uint32 entry, bool rdefault = true)
 	{
 		if(GossipMaps[type][entry] != NULL)
 			return GossipMaps[type][entry];
-		return DefaultGossipScript;
+		if(rdefault)
+			return DefaultGossipScript;
+		return NULL;
 	};
 
 protected:
