@@ -64,10 +64,14 @@ World::World()
 	m_bFirstTime = true;
 	m_lnOldValue = 0;
 
+#ifdef WIN32
+
 	memset( &m_OldPerfTime100nSec, 0, sizeof( m_OldPerfTime100nSec ) );
 	SYSTEM_INFO si;
 	GetSystemInfo( &si );
 	number_of_cpus = si.dwNumberOfProcessors;
+
+#endif // WIN32
 }
 
 uint32 World::GetMaxLevel(Player* plr)

@@ -825,11 +825,15 @@ public: // Crow: CPU and RAM shit. TODO: LINUX support
 	float GetCPUUsage(bool external = false);
 	float GetRAMUsage(bool external = false);
 
+#ifdef WIN32
+
 private:
 	bool m_bFirstTime;
-	LONGLONG m_lnOldValue;
+	__int64 m_lnOldValue;
 	LARGE_INTEGER m_OldPerfTime100nSec;
 	uint32 number_of_cpus;
+
+#endif // WIN32
 
 public: // Events! :D
 	void SetAnniversary(uint32 anniversarynumber);
