@@ -34,9 +34,6 @@ SERVER_DECL uint32 RandomUInt();
 SERVER_DECL uint32 RandomUInt(uint32 n);
 
 #ifdef WIN32
-/* CamelPowered, we thank you for bringing this to our attention.
-However, next time leave the fucking smartass comment at the end out.
-Many thanks, your father in law. */
 
 SERVER_DECL int expon(_In_ int _X, _In_ int _Y);
 SERVER_DECL long expon(_In_ long _X, _In_ int _Y);
