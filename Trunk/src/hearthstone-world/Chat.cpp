@@ -1014,8 +1014,12 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 			else if(table[i].ValueType == 3)
 			{
 				result = true;
-				if( m_session->GetPlayer()->m_GM_SelectedGO != NULL )
-					m_session->GetPlayer()->m_GM_SelectedGO->SetUInt32Value(table[i].NormalValueField, atoi(text));
+				GameObject* go = NULL;
+				if((go = m_session->GetPlayer()->m_GM_SelectedGO) != NULL)
+				{
+					go->SetUInt32Value(table[i].NormalValueField, atoi(text));
+					go->SaveToDB();
+				}
 				else
 					result = false;
 			}
