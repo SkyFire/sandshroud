@@ -332,6 +332,8 @@ double FDerive(double number, int times)
 	return number;
 }
 
+#ifdef WIN32
+
 HEARTHSTONE_INLINE int expon(_In_ int _X, _In_ int _Y)
 		{return (LDerive(_X, _Y)); }
 HEARTHSTONE_INLINE long expon(_In_ long _X, _In_ int _Y)
@@ -339,3 +341,4 @@ HEARTHSTONE_INLINE long expon(_In_ long _X, _In_ int _Y)
 HEARTHSTONE_INLINE double expon(_In_ double _X, _In_ int _Y)
 		{return (FDerive(_X, _Y)); }
 
+#endif

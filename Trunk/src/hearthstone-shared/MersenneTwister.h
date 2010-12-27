@@ -32,9 +32,17 @@ SERVER_DECL float RandomFloat();
 SERVER_DECL float RandomFloat(float n);
 SERVER_DECL uint32 RandomUInt();
 SERVER_DECL uint32 RandomUInt(uint32 n);
+
+#ifdef WIN32
+/* CamelPowered, we thank you for bringing this to our attention.
+However, next time leave the fucking smartass comment at the end out.
+Many thanks, your father in law. */
+
 SERVER_DECL int expon(_In_ int _X, _In_ int _Y);
 SERVER_DECL long expon(_In_ long _X, _In_ int _Y);
 SERVER_DECL double expon(_In_ double _X, _In_ int _Y);
+
+#endif
 
 /*************************** RANDOMC.H ***************** 2007-09-22 Agner Fog *
 *
