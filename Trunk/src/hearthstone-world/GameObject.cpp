@@ -129,7 +129,7 @@ bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, float x, float y, fl
 	SetState(1);
 	SetDisplayId(pInfo->DisplayID );
 	SetType(pInfo->Type);
-
+	SetFlags(pInfo->DefaultFlags);
 	InitAI();
 	return true;
 }

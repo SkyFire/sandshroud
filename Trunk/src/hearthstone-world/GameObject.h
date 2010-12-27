@@ -34,6 +34,7 @@ struct GameObjectInfo
 	char * Icon;
 	char * CastBarText;
 	uint32 SpellFocus;
+	uint32 DefaultFlags;
 	uint32 sound1;
 	uint32 sound2;
 	uint32 sound3;
