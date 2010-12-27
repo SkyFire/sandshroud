@@ -1179,10 +1179,7 @@ bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_ses
 {
 	Unit* u = getSelectedUnit(m_session, false);
 	if(u == NULL)
-	{
 		u = m_session->GetPlayer();
-		return true;
-	}
 
 	uint32 Level = args ? atol(args) : 0;
 	if(Level == 0 || u->IsPlayer() && Level > sWorld.GetMaxLevel(TO_PLAYER(u)))
