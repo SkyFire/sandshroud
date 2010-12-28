@@ -49,8 +49,8 @@ WintergraspInternal::~WintergraspInternal()
 #ifdef WIN32
 	CloseHandle(m_abortEventWGI);
 #else
-	pthread_cond_destroy(&cond);
-	pthread_mutex_destroy(&mutex);
+	pthread_cond_destroy(&abortcondWGI);
+	pthread_mutex_destroy(&abortmutex);
 #endif
 }
 

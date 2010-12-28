@@ -61,8 +61,10 @@ World::World()
 	m_speedHackLatencyMultiplier = 0.0f;
 	m_speedHackResetInterval = 5000;
 	m_CEThreshold = 10000;
+#ifdef WIN32
 	m_bFirstTime = true;
 	m_lnOldValue = 0;
+#endif // WIN32
 
 #ifdef WIN32
 
@@ -2607,5 +2609,5 @@ void World::OnHolidayChange(uint32 IgnoreHolidayId)
 	m_sessionlock.ReleaseReadLock();
 	string database; 
 	Config.MainConfig.GetString( "WorldDatabase", "Name", &database );
-	CharacterDatabase.Execute("DELETE FROM `playeritems` WHERE `entry` = ANY(Select `entry` from `%s`.items where `%s`.items.HolidayId !='0' and `%s`.items.HolidayId != '%u'", database, database, database, IgnoreHolidayId);
+	CharacterDatabase.Execute("DELETE FROM `playeritems` WHERE `entry` = ANY(Select `entry` from `%s`.items where `%s`.items.HolidayId !='0' and `%s`.items.HolidayId != '%u'", database.c_str(), database.c_str(), database.c_str(), IgnoreHolidayId);
 }

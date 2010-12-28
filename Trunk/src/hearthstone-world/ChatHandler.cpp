@@ -380,18 +380,18 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			if(!sWorld.cross_faction_world && lang == 0 && !CanUseCommand('c'))
 				return;
 
-			if( player->Social_IsIgnoring( _player->GetLowGUID() ) )
+			if( player->Social_IsIgnoring( _player->GetLowGUID() ) && !_player->GetSession()->HasGMPermissions() )
 			{
-				data = sChatHandler.FillMessageData( CHAT_MSG_IGNORED, LANG_UNIVERSAL,  msg.c_str(), _player->GetGUID(), _player->bGMTagOn ? 4 : 0 );
+				data = sChatHandler.FillMessageData( CHAT_MSG_IGNORED, LANG_UNIVERSAL,  msg.c_str(), _player->GetGUID(), _player->GetChatTag() );
 				SendPacket(data);
 				delete data;
 			}
 			else
 			{
 				if(GetPlayer()->m_modlanguage >=0)
-					data = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, GetPlayer()->m_modlanguage,  msg.c_str(), _player->GetGUID(), _player->bGMTagOn ? 4 : 0 );
+					data = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, GetPlayer()->m_modlanguage,  msg.c_str(), _player->GetGUID(), _player->GetChatTag() );
 				else
-					data = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, ((CanUseCommand('c') || player->GetSession()->CanUseCommand('c')) && lang != -1) ? LANG_UNIVERSAL : lang,  msg.c_str(), _player->GetGUID(), _player->bGMTagOn ? 4 : 0 );
+					data = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, ((CanUseCommand('c') || player->GetSession()->CanUseCommand('c')) && lang != -1) ? LANG_UNIVERSAL : lang,  msg.c_str(), _player->GetGUID(), _player->GetChatTag() );
 
 				player->GetSession()->SendPacket(data);
 				delete data;
@@ -399,21 +399,21 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 
 			//Sent the to Users id as the channel, this should be fine as it's not used for wisper
 
-			data = sChatHandler.FillMessageData(CHAT_MSG_WHISPER_INFORM, LANG_UNIVERSAL,msg.c_str(), player->GetGUID(), player->bGMTagOn ? 4 : 0  );
+			data = sChatHandler.FillMessageData(CHAT_MSG_WHISPER_INFORM, LANG_UNIVERSAL,msg.c_str(), player->GetGUID(), player->GetChatTag()  );
 			SendPacket(data);
 			delete data;
 
 			if(player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK))
 			{
 				// Has AFK flag, autorespond.
-				data = sChatHandler.FillMessageData(CHAT_MSG_AFK, LANG_UNIVERSAL,  player->m_afk_reason.c_str(),player->GetGUID(), _player->bGMTagOn ? 4 : 0);
+				data = sChatHandler.FillMessageData(CHAT_MSG_AFK, LANG_UNIVERSAL,  player->m_afk_reason.c_str(),player->GetGUID(), _player->GetChatTag());
 				SendPacket(data);
 				delete data;
 			}
 			else if(player->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_DND))
 			{
 				// Has AFK flag, autorespond.
-				data = sChatHandler.FillMessageData(CHAT_MSG_DND, LANG_UNIVERSAL, player->m_afk_reason.c_str(),player->GetGUID(), _player->bGMTagOn ? 4 : 0);
+				data = sChatHandler.FillMessageData(CHAT_MSG_DND, LANG_UNIVERSAL, player->m_afk_reason.c_str(),player->GetGUID(), _player->GetChatTag());
 				SendPacket(data);
 				delete data;
 			}
