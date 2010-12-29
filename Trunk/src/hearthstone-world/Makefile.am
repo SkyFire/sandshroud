@@ -182,8 +182,8 @@ hearthstone_world_SOURCES = \
     UpdateMask.h \
     Vehicle.h \
     Vehicle.cpp \
-    WarnSystem.cpp \
     WarnSystem.h \
+    WarnSystem.cpp \
     WarnSystem_Punishments.cpp \
     WarsongGulch.cpp \
     WarsongGulch.h \

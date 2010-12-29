@@ -239,7 +239,7 @@ void Tracker::CreateTracker(WorldSession * adder, const char * args)
 		AddTracker(user, false);
 
 		char msg[128];
-		sprintf(msg, "%sTracker:|r User [%s] is now being tracked (Tracker ID: %u)", MSG_COLOR_CYAN, toAddSession->GetAccountName().c_str(), user->Id);
+		sprintf(msg, "%sTracker:|r User [%s] is now being tracked (Tracker ID: %u)", MSG_COLOR_CYAN, toAddSession->GetAccountName().c_str(), (uint32)user->Id);
 		sWorld.SendGMWorldText( msg );
 	}
 	else

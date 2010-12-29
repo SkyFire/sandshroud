@@ -61,13 +61,10 @@ World::World()
 	m_speedHackLatencyMultiplier = 0.0f;
 	m_speedHackResetInterval = 5000;
 	m_CEThreshold = 10000;
+
 #ifdef WIN32
 	m_bFirstTime = true;
 	m_lnOldValue = 0;
-#endif // WIN32
-
-#ifdef WIN32
-
 	memset( &m_OldPerfTime100nSec, 0, sizeof( m_OldPerfTime100nSec ) );
 	SYSTEM_INFO si;
 	GetSystemInfo( &si );

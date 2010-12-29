@@ -164,9 +164,6 @@ typedef struct Cords {
 #define NOTIFICATION_MESSAGE_FAILURE "The requested action could not be performed."
 //#define CHECK_PACKET_SIZE(x, y) if(y > 0 && x.size() < y) { _socket->Disconnect(); return; }
 
-void EncodeHex(const char* source, char* dest, uint32 size);
-void DecodeHex(const char* source, char* dest, uint32 size);
-
 extern OpcodeHandler WorldPacketHandlers[NUM_MSG_TYPES];
 void CapitalizeString(string& arg);
 
