@@ -653,7 +653,8 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 	StackPacket data(SMSG_NPC_TEXT_UPDATE, bdata, 50000);
 	uint32 textID;
 	uint64 targetGuid;
-	GossipText *pGossip;
+	GossipText *pGossip = NULL;
+	LocalizedNpcText * lnc = NULL;
 
 	recv_data >> textID;
 	DEBUG_LOG("WORLD","CMSG_NPC_TEXT_QUERY ID '%u'", textID );
@@ -661,8 +662,12 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 	recv_data >> targetGuid;
 	GetPlayer()->SetUInt64Value(UNIT_FIELD_TARGET, targetGuid);
 
-	pGossip = NpcTextStorage.LookupEntry(textID);
-	LocalizedNpcText * lnc = (language>0) ? sLocalizationMgr.GetLocalizedNpcText(textID,language) : NULL;
+	if(textID != 68)
+	{
+		pGossip = NpcTextStorage.LookupEntry(textID);
+		if(language > 0)
+			lnc = sLocalizationMgr.GetLocalizedNpcText(textID, language);
+	}
 
 	data << textID;
 
@@ -673,10 +678,7 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 		for(uint32 i = 0; i < 8; i++)
 		{
 			if(pGossip->Texts[i].Prob)
-			{
-				data << (lnc ? lnc->Texts[i][0] : pGossip->Texts[i].Text[0]);
-				data << (lnc ? lnc->Texts[i][1] : pGossip->Texts[i].Text[1]);
-			}
+				data << (lnc ? lnc->Texts[i][0] : pGossip->Texts[i].Text[0]) << (lnc ? lnc->Texts[i][1] : pGossip->Texts[i].Text[1]);
 			else
 				data << uint8(0x00) << uint8(0x00);
 
@@ -689,10 +691,9 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 	else
 	{
 		data << float(1.0f);	// Prob
-		data << "Hello, $N. What can I do for you?"; // Team
-		data << "Hello, $N. What can I do for you?"; // Team
+		data << (textID != 68 ? "Hello, $N. What can I do for you?" : "Hi there, how can I help you $N"); // Team
+		data << (textID != 68 ? "Hello, $N. What can I do for you?" : "Greetings, $N"); // Team
 		data << uint32(0x00);	// Lang: Universal
-		data << uint32(0x00);	// ?
 		for(e = 0; e < 6; e++)	// Emotes
 			data << uint32(0x00);
 

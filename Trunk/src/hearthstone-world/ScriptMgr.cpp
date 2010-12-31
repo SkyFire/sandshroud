@@ -607,8 +607,6 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 		if(text != NULL)
 			TextID = Text;
 	}
-	else
-		TextID = 1;
 
 	objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), TextID, Plr);
 	std::set<TeleportInfo*> Telelist = pCreature->GetProto()->TeleportInfoList;
