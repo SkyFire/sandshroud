@@ -448,87 +448,24 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
 	uint64 guid;
-	list<QuestRelation *>::iterator it;
-	std::set<uint32> ql;
-
 	recv_data >> guid;
-	Creature* TalkingWith = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	if(!TalkingWith)
-		return;
 
-	//stop when talked to for 3 min
-	if(TalkingWith->GetAIInterface())
-		TalkingWith->GetAIInterface()->StopMovement(180000);
-
-	// unstealth meh
-	if( _player->InStealth() )
-		_player->RemoveAllAurasOfType( SPELL_AURA_MOD_STEALTH );
-
-	// reputation
-	_player->Reputation_OnTalk(TalkingWith->m_factionDBC);
-
-	DEBUG_LOG( "WORLD"," Received CMSG_GOSSIP_HELLO from %u",GUID_LOPART(guid) );
-
-	GossipScript * Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_CTR, TalkingWith->GetEntry());
-	if(!Script)
-		return;
-
-	if (TalkingWith->isQuestGiver() && TalkingWith->HasQuests())
+	Object* obj = NULL;
+	switch(GET_TYPE_FROM_GUID(guid)) // Crow: Could possibly do GetObject because I don't think we need items...
 	{
-		WorldPacket data;
-		data.SetOpcode(SMSG_GOSSIP_MESSAGE);
-		Script->GossipHello(TalkingWith, _player, false);
-		if(!_player->CurrentGossipMenu)
-			return;
-
-		_player->CurrentGossipMenu->BuildPacket(data);
-		uint32 count = 0;//sQuestMgr.ActiveQuestsCount(TalkingWith, GetPlayer());
-		size_t pos = data.wpos();
-		data << uint32(count);
-		for (it = TalkingWith->QuestsBegin(); it != TalkingWith->QuestsEnd(); it++)
-		{
-			uint32 status = sQuestMgr.CalcQuestStatus(GetPlayer(), *it);
-			if (status >= QMGR_QUEST_CHAT)
-			{
-				if (!ql.count((*it)->qst->id) )
-				{
-					ql.insert((*it)->qst->id);
-					count++;
-					data << (*it)->qst->id;
-					switch(status)
-					{
-					case QMGR_QUEST_NOT_FINISHED:
-						data << uint32(4) << uint32(0);
-						break;
-
-					case QMGR_QUEST_FINISHED:
-						data << uint32(4) << uint32(1);
-						break;
-
-					case QMGR_QUEST_CHAT:
-						data << QMGR_QUEST_AVAILABLE << uint32(0);
-						break;
-
-					default:
-						data << status << uint32(0);
-						break;
-					}
-
-					data << uint32(0);	// 3.3.3
-					data << (*it)->qst->is_repeatable;
-					LocalizedQuest * lq = (language > 0) ? sLocalizationMgr.GetLocalizedQuest((*it)->qst->id, language) : NULL;
-					data << (lq ? lq->Title : (*it)->qst->title);
-				}
-			}
-		}
-		data.put(pos, count);
-		SendPacket(&data);
-		DEBUG_LOG( "WORLD"," Sent SMSG_GOSSIP_MESSAGE" );
+	case HIGHGUID_TYPE_CREATURE:
+		obj = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
+		break;
+	case HIGHGUID_TYPE_GAMEOBJECT:
+		obj = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
+		break;
+	case HIGHGUID_TYPE_ITEM:
+		obj = _player->GetItemInterface()->GetItemByGUID(guid);
+		break;
 	}
-	else
-	{
-		Script->GossipHello(TalkingWith, _player, true);
-	}
+	if(obj == NULL)
+		return;
+	SendGossipForObject(obj);
 }
 
 //////////////////////////////////////////////////////////////

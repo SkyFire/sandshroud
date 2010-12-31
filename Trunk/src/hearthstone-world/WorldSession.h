@@ -817,6 +817,7 @@ public:
 	uint32 m_lastWhoTime;
 	bool m_asyncQuery;
 
+	void SendGossipForObject(Object* pObject);
 	void SendItemInfo(uint32 entry)
 	{
 		WorldPacket data(CMSG_ITEM_QUERY_SINGLE, 4);

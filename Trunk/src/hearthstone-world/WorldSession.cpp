@@ -1581,3 +1581,114 @@ bool WorldSession::ValidateText(std::string text)
 
 	return true;
 }
+
+void WorldSession::SendGossipForObject(Object* pObject)
+{
+	list<QuestRelation *>::iterator it;
+	std::set<uint32> ql;
+
+	switch(pObject->GetTypeId())
+	{
+	case TYPEID_GAMEOBJECT:
+		{
+			GameObject* Go = TO_GAMEOBJECT(pObject);
+			GossipScript* Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_GAMEOBJECT, Go->GetEntry());
+			if(!Script)
+				return;
+
+			Script->GossipHello(Go, _player, true);
+		}break;
+	case TYPEID_ITEM:
+		{
+			Item* pItem = TO_ITEM(pObject);
+			GossipScript* Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_ITEM, pItem->GetEntry());
+			if(!Script)
+				return;
+
+			Script->GossipHello(pItem, _player, true);
+		}break;
+	case TYPEID_UNIT:
+		{
+			Creature* TalkingWith = TO_CREATURE(pObject);
+			if(!TalkingWith)
+				return; // TODO: GAMEOBJECTS
+
+			//stop when talked to for 3 min
+			if(TalkingWith->GetAIInterface())
+				TalkingWith->GetAIInterface()->StopMovement(180000);
+
+			// unstealth meh
+			if( _player->InStealth() )
+				_player->RemoveAllAurasOfType( SPELL_AURA_MOD_STEALTH );
+
+			// reputation
+			_player->Reputation_OnTalk(TalkingWith->m_factionDBC);
+
+			DEBUG_LOG( "WORLD"," Received CMSG_GOSSIP_HELLO from %u", TalkingWith->GetLowGUID());
+
+			GossipScript* Script = sScriptMgr.GetRegisteredGossipScript(GTYPEID_CTR, TalkingWith->GetEntry());
+			if(!Script)
+				return;
+
+			if (TalkingWith->isQuestGiver() && TalkingWith->HasQuests())
+			{
+				WorldPacket data;
+				data.SetOpcode(SMSG_GOSSIP_MESSAGE);
+				Script->GossipHello(TalkingWith, _player, false);
+				if(!_player->CurrentGossipMenu)
+					return;
+
+				_player->CurrentGossipMenu->BuildPacket(data);
+				uint32 count = 0;
+				size_t pos = data.wpos();
+				data << uint32(count);
+				for (it = TalkingWith->QuestsBegin(); it != TalkingWith->QuestsEnd(); it++)
+				{
+					uint32 status = sQuestMgr.CalcQuestStatus(GetPlayer(), *it);
+					if (status >= QMGR_QUEST_CHAT)
+					{
+						if (!ql.count((*it)->qst->id) )
+						{
+							ql.insert((*it)->qst->id);
+							count++;
+
+							uint32 questid = (*it)->qst->id;
+							uint32 icon;
+							switch(status)
+							{
+							case QMGR_QUEST_FINISHED:
+							case QMGR_QUEST_NOT_FINISHED:
+								icon = 4;
+								break;
+
+							case QMGR_QUEST_CHAT:
+								icon = QMGR_QUEST_AVAILABLE;
+								break;
+
+							default:
+								icon = status;
+								break;
+							}
+
+							data << uint32( questid );
+							data << uint32( icon );
+							data << int32( (*it)->qst->min_level );
+							data << uint32( (*it)->qst->quest_flags );
+							data << uint8( (*it)->qst->is_repeatable );
+
+							LocalizedQuest * lq = (language > 0) ? sLocalizationMgr.GetLocalizedQuest((*it)->qst->id, language) : NULL;
+							data << (lq ? lq->Title : (*it)->qst->title);
+						}
+					}
+				}
+				data.put<uint32>(pos, count);
+				SendPacket(&data);
+				DEBUG_LOG( "WORLD"," Sent SMSG_GOSSIP_MESSAGE" );
+			}
+			else
+			{
+				Script->GossipHello(TalkingWith, _player, true);
+			}
+		}break;
+	}
+}

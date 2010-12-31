@@ -592,181 +592,190 @@ bool CanTrainAt(Player* plr, Trainer * trn);
 
 void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 {
-	GossipMenu *Menu;
+	GossipMenu *Menu = NULL;
 	uint32 TextID = 68; //Hi there how can I help you $N	Greetings $N
 
-	Creature* pCreature = (pObject->GetTypeId()==TYPEID_UNIT)?TO_CREATURE( pObject ):NULLCREATURE;
-	if(!pCreature)
-		return;
-
-	Trainer *pTrainer = pCreature->GetTrainer();
-	uint32 Text = objmgr.GetGossipTextForNpc(pCreature->GetEntry());
-	if(Text != 0)
+	switch(pObject->GetTypeId())
 	{
-		GossipText* text = NpcTextStorage.LookupEntry(Text);
-		if(text != NULL)
-			TextID = Text;
-	}
-
-	objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), TextID, Plr);
-	std::set<TeleportInfo*> Telelist = pCreature->GetProto()->TeleportInfoList;
-
-	if(Telelist.begin() != Telelist.end())
-	{
-		std::set<TeleportInfo*>::iterator itr;
-		for(itr = Telelist.begin(); itr != Telelist.end(); itr++)
-			Menu->AddItem((*itr)->iconid, (*itr)->textinfo.c_str(), (*itr)->intid);
-	}
-	else // Use normal gossip functions
-	{
-		uint32 flags = pCreature->GetUInt32Value(UNIT_NPC_FLAGS);
-
-		if( flags & UNIT_NPC_FLAG_VENDOR && !pCreature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE))
+	case TYPEID_UNIT:
 		{
-			if(pTrainer != NULL)
+			Creature* pCreature = TO_CREATURE(pObject);
+			if(!pCreature)
+				return;
+
+			Trainer *pTrainer = pCreature->GetTrainer();
+			uint32 Text = objmgr.GetGossipTextForNpc(pCreature->GetEntry());
+			if(Text != 0)
 			{
-				if(CanTrainAt(Plr, pTrainer) || Plr->bGMTagOn)
-					Menu->AddItem(GOSSIP_ICON_GOSSIP_VENDOR, "I would like to browse your goods", 1);
+				GossipText* text = NpcTextStorage.LookupEntry(Text);
+				if(text != NULL)
+					TextID = Text;
 			}
-			else
-				Menu->AddItem(GOSSIP_ICON_GOSSIP_VENDOR, "I would like to browse your goods", 1);
-		}
 
-		if(pTrainer != NULL && (flags & UNIT_NPC_FLAG_TRAINER || flags & UNIT_NPC_FLAG_TRAINER_PROF))
-		{
-			string name = pCreature->GetCreatureInfo()->Name;
-			string::size_type pos = name.find(" ");	  // only take first name
-			if(pos != string::npos)
-				name = name.substr(0, pos);
-
-			if(!CanTrainAt(Plr, pTrainer))
+			objmgr.CreateGossipMenuForPlayer(&Menu, pCreature->GetGUID(), TextID, Plr);
+			std::set<TeleportInfo*> Telelist = pCreature->GetProto()->TeleportInfoList;
+			if(Telelist.size())
 			{
-				if(pTrainer->Cannot_Train_GossipTextId)
-				{
-					//replace normal gossipid by Cannot_Train_GossipTextId.
-					Menu->SetTextID(pTrainer->Cannot_Train_GossipTextId);
-				}
+				std::set<TeleportInfo*>::iterator itr;
+				for(itr = Telelist.begin(); itr != Telelist.end(); itr++)
+					Menu->AddItem((*itr)->iconid, (*itr)->textinfo.c_str(), (*itr)->intid);
 			}
-			else
+			else // Use normal gossip functions
 			{
-				if(pTrainer->Can_Train_Gossip_TextId)
+				uint32 flags = pCreature->GetUInt32Value(UNIT_NPC_FLAGS);
+				if( flags & UNIT_NPC_FLAG_VENDOR && !pCreature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE))
 				{
-					//replace normal gossipid by Can_Train_GossipTextId.
-					Menu->SetTextID(pTrainer->Can_Train_Gossip_TextId);
-				}
-
-				string msg = "I seek ";
-				if(pTrainer->RequiredClass)
-				{
-					switch(Plr->getClass())
+					if(pTrainer != NULL)
 					{
-					case WARRIOR:
-						msg += "warrior";
-						break;
-					case PALADIN:
-						msg += "paladin";
-						break;
-					case HUNTER:
-						msg += "hunter";
-						break;
-					case ROGUE:
-						msg += "rogue";
-						break;
-					case PRIEST:
-						msg += "priest";
-						break;
-					case DEATHKNIGHT:
-						msg += "death knight";
-						break;
-					case SHAMAN:
-						msg += "shaman";
-						break;
-					case MAGE:
-						msg += "mage";
-						break;
-					case WARLOCK:
-						msg += "warlock";
-						break;
-					case DRUID:
-						msg += "druid";
-						break;
+						if(CanTrainAt(Plr, pTrainer) || Plr->bGMTagOn)
+							Menu->AddItem(GOSSIP_ICON_GOSSIP_VENDOR, "I would like to browse your goods", 1);
+					}
+					else
+						Menu->AddItem(GOSSIP_ICON_GOSSIP_VENDOR, "I would like to browse your goods", 1);
+				}
+
+				if(pTrainer != NULL && (flags & UNIT_NPC_FLAG_TRAINER || flags & UNIT_NPC_FLAG_TRAINER_PROF))
+				{
+					string name = pCreature->GetCreatureInfo()->Name;
+					string::size_type pos = name.find(" ");	  // only take first name
+					if(pos != string::npos)
+						name = name.substr(0, pos);
+
+					if(!CanTrainAt(Plr, pTrainer))
+					{
+						if(pTrainer->Cannot_Train_GossipTextId)
+						{
+							//replace normal gossipid by Cannot_Train_GossipTextId.
+							Menu->SetTextID(pTrainer->Cannot_Train_GossipTextId);
+						}
+					}
+					else
+					{
+						if(pTrainer->Can_Train_Gossip_TextId)
+						{
+							//replace normal gossipid by Can_Train_GossipTextId.
+							Menu->SetTextID(pTrainer->Can_Train_Gossip_TextId);
+						}
+
+						string msg = "I seek ";
+						if(pTrainer->RequiredClass)
+						{
+							switch(Plr->getClass())
+							{
+							case WARRIOR:
+								msg += "warrior";
+								break;
+							case PALADIN:
+								msg += "paladin";
+								break;
+							case HUNTER:
+								msg += "hunter";
+								break;
+							case ROGUE:
+								msg += "rogue";
+								break;
+							case PRIEST:
+								msg += "priest";
+								break;
+							case DEATHKNIGHT:
+								msg += "death knight";
+								break;
+							case SHAMAN:
+								msg += "shaman";
+								break;
+							case MAGE:
+								msg += "mage";
+								break;
+							case WARLOCK:
+								msg += "warlock";
+								break;
+							case DRUID:
+								msg += "druid";
+								break;
+							}
+						}
+						msg += " training, ";
+						msg += name;
+						msg += ".";
+
+						Menu->AddItem(GOSSIP_ICON_GOSSIP_TRAINER, msg.c_str(), 2);
 					}
 				}
-				msg += " training, ";
-				msg += name;
-				msg += ".";
 
-				Menu->AddItem(GOSSIP_ICON_GOSSIP_TRAINER, msg.c_str(), 2);
-			}
-		}
+				if(flags & UNIT_NPC_FLAG_TAXIVENDOR)
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_FLIGHT, "Give me a ride.", 3);
 
-		if(flags & UNIT_NPC_FLAG_TAXIVENDOR)
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_FLIGHT, "Give me a ride.", 3);
+				if(flags & UNIT_NPC_FLAG_AUCTIONEER)
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_AUCTION, "I would like to make a bid.", 4);
 
-		if(flags & UNIT_NPC_FLAG_AUCTIONEER)
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_AUCTION, "I would like to make a bid.", 4);
-
-		if(flags & UNIT_NPC_FLAG_INNKEEPER)
-		{
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_ENGINEER2, "Make this inn your home.", 5);
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "What can I do at an Inn.", 15);
-			if(sWorld.HallowsEnd)
-			{
-				if(!Plr->HasAura(24755)) // Trick or Treat
-					Menu->AddItem(0, "Trick or Treat!", 19);
-			}
-		}
-
-		if(flags & UNIT_NPC_FLAG_BANKER)
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_COIN, "I would like to check my deposit box.", 6);
-
-		if(flags & UNIT_NPC_FLAG_SPIRITHEALER || (pCreature->GetEntry() == 6491 || pCreature->GetEntry() == 32537))
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Bring me back to life.", 7);
-
-		if(flags & UNIT_NPC_FLAG_ARENACHARTER)
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_ARENA, "How do I create a guild/arena team?", 8);
-
-		if(flags & UNIT_NPC_FLAG_TABARDCHANGER)
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_TABARD, "I want to create a guild crest.", 9);
-
-		if(flags & UNIT_NPC_FLAG_BATTLEFIELDPERSON)
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_ARENA, "I would like to go to the battleground.", 10);
-
-		if( pTrainer && pTrainer->RequiredClass )
-		{
-			if( pTrainer->RequiredClass == Plr->getClass() && pCreature->getLevel() > 10 && Plr->getLevel() > 11 )
-			{
-				Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I would like to reset my talents.", 11);
-				if( Plr->getLevel() >= 40 && Plr->m_talentSpecsCount < 2)
-					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Learn about Dual Talent Specialization.", 16);
-			}
-		}
-
-		if( pTrainer &&
-				pTrainer->TrainerType == TRAINER_TYPE_PET &&	// pet trainer type
-				Plr->getClass() == HUNTER &&					// hunter class
-				Plr->GetSummon() != NULL )						// have pet
-			Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I would like to untrain my pet.", 13);
-
-		if( pCreature->GetEntry() == 35364 || pCreature->GetEntry() == 35365 )
-		{
-			if(Plr->getLevel() > 9 && Plr->getLevel() < sWorld.GetMaxLevel(Plr))
-			{
-				if(Plr->m_XPoff)
+				if(flags & UNIT_NPC_FLAG_INNKEEPER)
 				{
-					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I wish to start gaining experience again.",
-						18, false, 100000, "Are you certain you wish to start gaining experience?" );
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_ENGINEER2, "Make this inn your home.", 5);
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "What can I do at an Inn.", 15);
+					if(sWorld.HallowsEnd)
+					{
+						if(!Plr->HasAura(24755)) // Trick or Treat
+							Menu->AddItem(0, "Trick or Treat!", 19);
+					}
 				}
-				else
+
+				if(flags & UNIT_NPC_FLAG_BANKER)
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_COIN, "I would like to check my deposit box.", 6);
+
+				if(flags & UNIT_NPC_FLAG_SPIRITHEALER || (pCreature->GetEntry() == 6491 || pCreature->GetEntry() == 32537))
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Bring me back to life.", 7);
+
+				if(flags & UNIT_NPC_FLAG_ARENACHARTER)
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_ARENA, "How do I create a guild/arena team?", 8);
+
+				if(flags & UNIT_NPC_FLAG_TABARDCHANGER)
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_TABARD, "I want to create a guild crest.", 9);
+
+				if(flags & UNIT_NPC_FLAG_BATTLEFIELDPERSON)
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_ARENA, "I would like to go to the battleground.", 10);
+
+				if( pTrainer && pTrainer->RequiredClass )
 				{
-					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I no longer wish to gain experience.", 18,
-						false, 100000, "Are you certain you wish to stop gaining experience?" );
+					if( pTrainer->RequiredClass == Plr->getClass() && pCreature->getLevel() > 10 && Plr->getLevel() > 11 )
+					{
+						Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I would like to reset my talents.", 11);
+						if( Plr->getLevel() >= 40 && Plr->m_talentSpecsCount < 2)
+							Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "Learn about Dual Talent Specialization.", 16);
+					}
+				}
+
+				if( pTrainer &&
+						pTrainer->TrainerType == TRAINER_TYPE_PET &&	// pet trainer type
+						Plr->getClass() == HUNTER &&					// hunter class
+						Plr->GetSummon() != NULL )						// have pet
+					Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I would like to untrain my pet.", 13);
+
+				if( pCreature->GetEntry() == 35364 || pCreature->GetEntry() == 35365 )
+				{
+					if(Plr->getLevel() > 9 && Plr->getLevel() < sWorld.GetMaxLevel(Plr))
+					{
+						if(Plr->m_XPoff)
+						{
+							Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I wish to start gaining experience again.",
+								18, false, 100000, "Are you certain you wish to start gaining experience?" );
+						}
+						else
+						{
+							Menu->AddItem(GOSSIP_ICON_GOSSIP_NORMAL, "I no longer wish to gain experience.", 18,
+								false, 100000, "Are you certain you wish to stop gaining experience?" );
+						}
+					}
 				}
 			}
-		}
+		}break;
+	case TYPEID_ITEM:
+	case TYPEID_GAMEOBJECT:
+		{
+			objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), TextID, Plr);
+		}break;
 	}
 
-	if(AutoSend)
+	if(Menu != NULL && AutoSend)
 		Menu->SendTo(Plr);
 }
 
