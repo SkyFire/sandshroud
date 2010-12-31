@@ -669,12 +669,19 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 	uint32 e = 0;
 	if(pGossip)
 	{
+		data << float(1.0f);	// Prob
 		for(uint32 i = 0; i < 8; i++)
 		{
-			data << pGossip->Texts[i].Prob;	// Prob
-			data << (lnc ? lnc->Texts[i][0] : pGossip->Texts[i].Text[0]);
-			data << (lnc ? lnc->Texts[i][1] : pGossip->Texts[i].Text[1]);
+			if(pGossip->Texts[i].Prob)
+			{
+				data << (lnc ? lnc->Texts[i][0] : pGossip->Texts[i].Text[0]);
+				data << (lnc ? lnc->Texts[i][1] : pGossip->Texts[i].Text[1]);
+			}
+			else
+				data << uint8(0x00) << uint8(0x00);
+
 			data << pGossip->Texts[i].Lang;
+			data << uint32(0x00);		// Was prob.. but if you set it to 0 emotes work ;)
 			for(e = 0; e < 6; e++)
 				data << uint32(pGossip->Texts[i].Emote[e]);
 		}
@@ -684,15 +691,17 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 		data << float(1.0f);	// Prob
 		data << "Hello, $N. What can I do for you?"; // Team
 		data << "Hello, $N. What can I do for you?"; // Team
-		data << uint32(0);		// Lang: Universal
+		data << uint32(0x00);	// Lang: Universal
+		data << uint32(0x00);	// ?
 		for(e = 0; e < 6; e++)	// Emotes
 			data << uint32(0x00);
 
 		for(int i = 0; i < 7; i++)
 		{
-			data << float(0.0f);
+			data << uint32(0x00);
 			data << uint8(0x00) << uint8(0x00);
 			data << uint32(0x00);	// lang
+			data << uint32(0x00);	// ?
 			for(e = 0; e < 6; e++)	// emotes
 				data << uint32(0x00);
 		}
