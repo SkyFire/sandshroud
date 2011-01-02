@@ -20,11 +20,12 @@
 
 #include "../hearthstone-shared/Singleton.h"
 
-extern bool mrunning;
 class AuthSocket;
-extern set<AuthSocket*> _authSockets;
+
+extern bool mrunning;
 extern Mutex _authSocketLock;
 extern bool m_encryptedPasswords;
+extern set<AuthSocket*> _authSockets;
 
 struct AllowedIP
 {

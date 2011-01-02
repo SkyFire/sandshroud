@@ -26,8 +26,6 @@
 #endif
 #include "../hearthstone-shared/hearthstone_getopt.h"
 
-#define BANNER "Hearthstone r%u/%s-%s (%s) :: Logon Server\n"
-
 #ifndef WIN32
 #include <sched.h>
 #endif
@@ -311,8 +309,8 @@ void LogonServer::Run(int argc, char ** argv)
 	{
 		sLog.m_screenLogLevel = 3;
 	}
-	
-	sLog.outString(BANNER, BUILD_REVISION, CONFIG, PLATFORM_TEXT, ARCH);
+
+	sLog.outString("Hearthstone r%u/%s-%s(%s)::Logon Server\n", BUILD_REVISION, CONFIG, PLATFORM_TEXT, ARCH);
 	printf("Built at %s on %s by %s@%s\n", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
 
 	sLog.outString("==============================================================================");
