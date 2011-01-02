@@ -77,9 +77,11 @@ void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 
 	if( pRider != NULL)
 		AddPassenger( pRider );
+
 	CreatureProtoVehicle* veh = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
-	if(veh->MovementFlags)
+	if(veh != NULL && veh->MovementFlags)
 		m_movementflags = (uint16)veh->MovementFlags;
+
 	SetSpeed(TURN,ve->m_turnSpeed);
 	SetSpeed(PITCH_RATE,ve->m_pitchSpeed);
 
