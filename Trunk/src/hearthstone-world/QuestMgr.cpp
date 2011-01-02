@@ -631,7 +631,7 @@ bool QuestMgr::OnGameObjectActivate(Player* plr, GameObject* go)
 					// (auto-dirtys it)
 					qle->SetMobCount( j, qle->m_mobcount[j] + 1 );
 					qle->SendUpdateAddKill( j );
-					CALL_QUESTSCRIPT_EVENT( qle, OnGameObjectActivate )( entry, plr, qle );
+					CALL_QUESTSCRIPT_EVENT( qle->GetQuest()->id, OnGameObjectActivate )( entry, plr, qle );
 
 					if( qle->CanBeFinished() )
 						qle->SendQuestComplete();
@@ -684,7 +684,7 @@ void QuestMgr::_OnPlayerKill(Player* plr, uint32 creature_entry)
 						// add another kill.(auto-dirtys it)
 						qle->SetMobCount( j, qle->m_mobcount[j] + 1 );
 						qle->SendUpdateAddKill( j );
-						CALL_QUESTSCRIPT_EVENT( qle, OnCreatureKill)( creature_entry, plr, qle );
+						CALL_QUESTSCRIPT_EVENT( qle->GetQuest()->id, OnCreatureKill)( creature_entry, plr, qle );
 						qle->UpdatePlayerFields();
 						qle->SaveToDB(NULL);
 						break;
@@ -737,7 +737,7 @@ void QuestMgr::_OnPlayerKill(Player* plr, uint32 creature_entry)
 										// (auto-dirtys it)
 										qle->SetMobCount(j, qle->m_mobcount[j] + 1);
 										qle->SendUpdateAddKill( j );
-										CALL_QUESTSCRIPT_EVENT( qle, OnCreatureKill )( creature_entry, plr, qle );
+										CALL_QUESTSCRIPT_EVENT( qle->GetQuest()->id, OnCreatureKill )( creature_entry, plr, qle );
 										qle->UpdatePlayerFields();
 
 										if( qle->CanBeFinished() )
@@ -885,7 +885,7 @@ void QuestMgr::OnPlayerItemPickup(Player* plr, Item* item)
 				if( qle->GetQuest()->required_item[j] == entry )
 				{
 					pcount = plr->GetItemInterface()->GetItemCount(entry, true);
-					CALL_QUESTSCRIPT_EVENT(qle, OnPlayerItemPickup)(entry, pcount, plr, qle);
+					CALL_QUESTSCRIPT_EVENT(qle->GetQuest()->id, OnPlayerItemPickup)(entry, pcount, plr, qle);
 					if(pcount < qle->GetQuest()->required_itemcount[j])
 					{
 						WorldPacket data(8);
@@ -923,7 +923,7 @@ void QuestMgr::OnPlayerExploreArea(Player* plr, uint32 AreaID)
 					!qle->m_explored_areas[j])
 				{
 					qle->SetTrigger(j);
-					CALL_QUESTSCRIPT_EVENT(qle, OnExploreArea)(qle->m_explored_areas[j], plr, qle);
+					CALL_QUESTSCRIPT_EVENT(qle->GetQuest()->id, OnExploreArea)(qle->m_explored_areas[j], plr, qle);
 					qle->UpdatePlayerFields();
 					if(qle->CanBeFinished())
 					{
@@ -988,7 +988,7 @@ void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object* qst_giver, uint3
 	if(!qle)
 		return;
 	BuildQuestComplete(plr, qst);
-	CALL_QUESTSCRIPT_EVENT(qle, OnQuestComplete)(plr, qle);
+	CALL_QUESTSCRIPT_EVENT(qst->id, OnQuestComplete)(plr, qle);
 
 	for (uint32 x=0;x<4;x++)
 	{

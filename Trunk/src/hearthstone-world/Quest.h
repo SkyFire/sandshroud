@@ -201,8 +201,6 @@ struct Quest
 	uint32 count_reward_facts;
 	uint32 required_mobtype[4];
 	uint32 count_reward_item;
-
-	QuestScript* pQuestScript;
 };
 #pragma pack(pop)
 
@@ -212,8 +210,8 @@ enum QUEST_MOB_TYPES
 	QUEST_MOB_TYPE_GAMEOBJECT = 2,
 };
 
-class QuestScript;
-#define CALL_QUESTSCRIPT_EVENT(obj, func) if(static_cast<QuestLogEntry*>(obj)->GetQuest()->pQuestScript != NULL) static_cast<QuestLogEntry*>(obj)->GetQuest()->pQuestScript->func
+#define CALL_QUESTSCRIPT_EVENT(id, func) if(sScriptMgr.GetQuestScript(id) != NULL)\
+	sScriptMgr.GetQuestScript(id)->func
 
 class SERVER_DECL QuestLogEntry : public EventableObject
 {

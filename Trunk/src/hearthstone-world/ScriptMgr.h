@@ -157,6 +157,7 @@ typedef HM_NAMESPACE::hash_map<uint32, exp_handle_dummy_aura> HandleDummyAuraMap
 typedef HM_NAMESPACE::hash_map<uint32, exp_handle_dummy_spell> HandleDummySpellMap;
 typedef HM_NAMESPACE::hash_map< uint32, exp_create_instance_ai > InstanceCreateMap;
 typedef map<uint8, map<uint32, GossipScript*> > MultiTypeGossipMap;
+typedef map<uint32, QuestScript* > QuestScriptMap;
 typedef set<GossipScript*> CustomGossipScripts;
 typedef set<QuestScript*> QuestScripts;
 typedef list<void*> ServerHookList;
@@ -200,6 +201,7 @@ public:
 	void register_quest_script(uint32 entry, QuestScript * qs);
 	void register_instance_script( uint32 pMapId, exp_create_instance_ai pCallback );
 
+	HEARTHSTONE_INLINE QuestScript* GetQuestScript(uint32 entry) { return EntryQuestScriptMap[entry]; };
 	HEARTHSTONE_INLINE GossipScript* GetRegisteredGossipScript(uint8 type, uint32 entry, bool rdefault = true)
 	{
 		if(GossipMaps[type][entry] != NULL)
@@ -222,6 +224,7 @@ protected:
 	CustomGossipScripts _customgossipscripts;
 	QuestScripts _questscripts;
 	MultiTypeGossipMap GossipMaps;
+	QuestScriptMap EntryQuestScriptMap;
 };
 
 class SERVER_DECL CreatureAIScript

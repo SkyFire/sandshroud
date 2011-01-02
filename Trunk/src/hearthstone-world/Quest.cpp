@@ -253,7 +253,7 @@ bool QuestLogEntry::LoadFromDB(Field *fields)
 	{
 		m_explored_areas[i] = fields[f].GetUInt32();
 		f++;
-		CALL_QUESTSCRIPT_EVENT(this, OnExploreArea)(m_explored_areas[i], m_plr, this);
+		CALL_QUESTSCRIPT_EVENT(m_quest->id, OnExploreArea)(m_explored_areas[i], m_plr, this);
 	}
 
 	for(int i = 0; i < 4; i++)
@@ -261,9 +261,9 @@ bool QuestLogEntry::LoadFromDB(Field *fields)
 		m_mobcount[i] = fields[f].GetUInt32();
 		f++;
 		if(GetQuest()->required_mobtype[i] == QUEST_MOB_TYPE_CREATURE)
-			CALL_QUESTSCRIPT_EVENT(this, OnCreatureKill)(GetQuest()->required_mob[i], m_plr, this);
+			CALL_QUESTSCRIPT_EVENT(m_quest->id, OnCreatureKill)(GetQuest()->required_mob[i], m_plr, this);
 		else
-			CALL_QUESTSCRIPT_EVENT(this, OnGameObjectActivate)(GetQuest()->required_mob[i], m_plr, this);
+			CALL_QUESTSCRIPT_EVENT(m_quest->id, OnGameObjectActivate)(GetQuest()->required_mob[i], m_plr, this);
 	}
 	m_player_slain = fields[f].GetUInt32();
 	mDirty = false;
@@ -427,7 +427,7 @@ void QuestLogEntry::SendQuestComplete()
 	data.SetOpcode(SMSG_QUESTUPDATE_COMPLETE);
 	data << m_quest->id;
 	m_plr->GetSession()->SendPacket(&data);
-	CALL_QUESTSCRIPT_EVENT(this, OnQuestComplete)(m_plr, this);
+	CALL_QUESTSCRIPT_EVENT(m_quest->id, OnQuestComplete)(m_plr, this);
 }
 
 void QuestLogEntry::SendUpdateAddKill(uint32 i)

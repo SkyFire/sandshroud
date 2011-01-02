@@ -6742,7 +6742,7 @@ void Player::EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_sl
 		sQuestMgr.BuildQuestFailed(&fail, qst->id);
 		GetSession()->SendPacket(&fail);
 		sHookInterface.OnQuestCancelled(TO_PLAYER(this), qst);
-		CALL_QUESTSCRIPT_EVENT(qle, OnQuestCancel)(TO_PLAYER(this));
+		CALL_QUESTSCRIPT_EVENT(qst->id, OnQuestCancel)(TO_PLAYER(this));
 //		qle->Finish();
 	}
 	else
@@ -13724,7 +13724,7 @@ void Player::StartQuest(uint32 Id)
 			}
 		}
 	}
-	CALL_QUESTSCRIPT_EVENT(qle, OnQuestStart)(this, qle);
+	CALL_QUESTSCRIPT_EVENT(Id, OnQuestStart)(this, qle);
 
 	sQuestMgr.OnQuestAccepted(this,qst,NULL);
 

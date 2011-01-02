@@ -65,7 +65,7 @@ string RemoveQuestFromPlayer(Player* plr, Quest *qst)
 		QuestLogEntry * qLogEntry = plr->GetQuestLogForEntry(qst->id);
 		if (qLogEntry)
 		{
-			CALL_QUESTSCRIPT_EVENT(qLogEntry, OnQuestCancel)(plr);
+			CALL_QUESTSCRIPT_EVENT(qst->id, OnQuestCancel)(plr);
 			qLogEntry->Finish();
 
 			// Remove all items given by the questgiver at the beginning
@@ -233,7 +233,7 @@ bool ChatHandler::HandleQuestStartCommand(const char * args, WorldSession * m_se
 					qle->Init(qst, plr, (uint32)open_slot);
 					qle->UpdatePlayerFields();
 
-					CALL_QUESTSCRIPT_EVENT(qle, OnQuestStart)(plr, qle);
+					CALL_QUESTSCRIPT_EVENT(quest_id, OnQuestStart)(plr, qle);
 
 					// If the quest should give any items on begin, give them the items.
 					for(uint32 i = 0; i < 4; i++)

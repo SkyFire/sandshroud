@@ -373,7 +373,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 	if(qst->count_required_item || qst_giver->GetTypeId() == TYPEID_GAMEOBJECT)	// gameobject quests deactivate
 		_player->UpdateNearbyGameObjects();
 
-	CALL_QUESTSCRIPT_EVENT(qle, OnQuestStart)(_player, qle);
+	CALL_QUESTSCRIPT_EVENT(qst->id, OnQuestStart)(_player, qle);
 
 	sQuestMgr.OnQuestAccepted(_player,qst,qst_giver);
 
@@ -417,7 +417,7 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	CALL_QUESTSCRIPT_EVENT(qEntry, OnQuestCancel)(_player);
+	CALL_QUESTSCRIPT_EVENT(qPtr->id, OnQuestCancel)(_player);
 
 	qEntry->Finish();
 

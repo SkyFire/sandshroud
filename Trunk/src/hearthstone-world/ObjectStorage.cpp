@@ -163,16 +163,6 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 	}
 	ciitr->Destruct();
 
-	StorageContainerIterator<Quest> * qitr = QuestStorage.MakeIterator();
-	while(!qitr->AtEnd())
-	{
-		qitr->Get()->pQuestScript = NULL;
-
-		if( !qitr->Inc() )
-			break;
-	}
-	qitr->Destruct();
-
 	cn = NULL;
 	// Load AI Agents
 	if(Config.OptionalConfig.GetBoolDefault("Server", "LoadAIAgents", true))
