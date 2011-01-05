@@ -1205,7 +1205,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 				_player->RemoveAura( _player->m_MountSpellId );
 
 			_player->SafeTeleport( _player->GetMapId(), _player->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
-			_player->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
+			_player->SetStandState(STANDSTATE_SIT_HIGH_CHAIR);
 		}break;
 	case GAMEOBJECT_TYPE_CHEST://cast da spell
 		{
@@ -1495,7 +1495,7 @@ void WorldSession::HandleGameObjectUse(WorldPacket & recv_data)
 	case GAMEOBJECT_TYPE_BARBER_CHAIR:
 		{
 			_player->SafeTeleport( _player->GetMapId(), _player->GetInstanceID(), obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), obj->GetOrientation() );
-			_player->SetStandState(STANDSTATE_SIT_MEDIUM_CHAIR);
+			_player->SetStandState(STANDSTATE_SIT_HIGH_CHAIR);
 			_player->m_lastRunSpeed = 0; //counteract mount-bug; reset speed to zero to force update SetPlayerSpeed in next line.
 			_player->SetPlayerSpeed(RUN,_player->m_base_runSpeed);
 			WorldPacket data(SMSG_ENABLE_BARBER_SHOP, 0);

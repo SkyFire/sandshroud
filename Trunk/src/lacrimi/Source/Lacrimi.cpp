@@ -207,6 +207,8 @@ bool Lacrimi::_StartDB()
 
 void Lacrimi::_StopDB()
 {
+	LacrimiDB->EndThreads();
+	LacrimiDB->Shutdown();
 	delete LacrimiDB;
 	LacrimiDB = NULL;
 }
