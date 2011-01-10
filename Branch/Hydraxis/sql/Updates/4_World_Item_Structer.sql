@@ -1,1 +1,0 @@
-ALTER TABLE `Items` ADD `faction` INT(11) DEFAULT 0 NOT NULL AFTER `flags`;
