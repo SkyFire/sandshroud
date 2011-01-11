@@ -57,6 +57,8 @@ public:
 	bool Run(int argc, char ** argv);
 
 	static volatile bool m_stopEvent;
+	ListenSocket<WorldSocket> *LWSS;
+	bool listnersockcreate;
 	bool wintergrasp;
 	void KillIt();
 

@@ -28,9 +28,8 @@ class MasterServer
 
 public:
 	static void InitHandlers();
-	MasterServer(MasterServerSocket * s, uint32 port);
+	MasterServer(MasterServerSocket * s);
 	~MasterServer();
-	uint32 allocport;
 
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket * data)
 	{

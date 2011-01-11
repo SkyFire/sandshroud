@@ -645,7 +645,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_GAMEOBJ_USE].handler							= &WorldSession::HandleGameObjectUse;
 	WorldPacketHandlers[CMSG_PLAYED_TIME].handler							= &WorldSession::HandlePlayedTimeOpcode;
 	WorldPacketHandlers[CMSG_SETSHEATHED].handler							= &WorldSession::HandleSetSheathedOpcode;
-	WorldPacketHandlers[CMSG_MESSAGECHAT].handler							= &WorldSession::HandleMessagechatOpcode;
+//	WorldPacketHandlers[CMSG_MESSAGECHAT].handler							= &WorldSession::HandleMessagechatOpcode;
 	WorldPacketHandlers[CMSG_TEXT_EMOTE].handler							= &WorldSession::HandleTextEmoteOpcode;
 	WorldPacketHandlers[CMSG_INSPECT].handler								= &WorldSession::HandleInspectOpcode;
 	WorldPacketHandlers[CMSG_TIME_SYNC_RESP].handler						= &WorldSession::HandleTimeSyncResp;
@@ -722,7 +722,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_AUTOEQUIP_ITEM].handler						= &WorldSession::HandleAutoEquipItemOpcode;
 	WorldPacketHandlers[CMSG_ITEM_QUERY_SINGLE].handler						= &WorldSession::HandleItemQuerySingleOpcode;
 	WorldPacketHandlers[CMSG_SELL_ITEM].handler								= &WorldSession::HandleSellItemOpcode;
-	WorldPacketHandlers[CMSG_BUY_ITEM_IN_SLOT].handler						= &WorldSession::HandleBuyItemInSlotOpcode;
+//	WorldPacketHandlers[CMSG_BUY_ITEM_IN_SLOT].handler						= &WorldSession::HandleBuyItemInSlotOpcode;
 	WorldPacketHandlers[CMSG_BUY_ITEM].handler								= &WorldSession::HandleBuyItemOpcode;
 	WorldPacketHandlers[CMSG_LIST_INVENTORY].handler						= &WorldSession::HandleListInventoryOpcode;
 	WorldPacketHandlers[CMSG_AUTOSTORE_BAG_ITEM].handler					= &WorldSession::HandleAutoStoreBagItemOpcode;
@@ -858,10 +858,10 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_PET_ACTION].handler							= &WorldSession::HandlePetAction;
 	WorldPacketHandlers[CMSG_REQUEST_PET_INFO].handler						= &WorldSession::HandlePetInfo;
 	WorldPacketHandlers[CMSG_PET_NAME_QUERY].handler						= &WorldSession::HandlePetNameQuery;
-	WorldPacketHandlers[CMSG_BUY_STABLE_SLOT].handler						= &WorldSession::HandleBuyStableSlot;
-	WorldPacketHandlers[CMSG_STABLE_PET].handler							= &WorldSession::HandleStablePet;
-	WorldPacketHandlers[CMSG_UNSTABLE_PET].handler							= &WorldSession::HandleUnstablePet;
-	WorldPacketHandlers[CMSG_STABLE_SWAP_PET].handler						= &WorldSession::HandleStableSwapPet;
+//	WorldPacketHandlers[CMSG_BUY_STABLE_SLOT].handler						= &WorldSession::HandleBuyStableSlot;
+//	WorldPacketHandlers[CMSG_STABLE_PET].handler							= &WorldSession::HandleStablePet;
+//	WorldPacketHandlers[CMSG_UNSTABLE_PET].handler							= &WorldSession::HandleUnstablePet;
+//	WorldPacketHandlers[CMSG_STABLE_SWAP_PET].handler						= &WorldSession::HandleStableSwapPet;
 	WorldPacketHandlers[MSG_LIST_STABLED_PETS].handler						= &WorldSession::HandleStabledPetList;
 	WorldPacketHandlers[CMSG_PET_SET_ACTION].handler						= &WorldSession::HandlePetSetActionOpcode;
 	WorldPacketHandlers[CMSG_PET_RENAME].handler							= &WorldSession::HandlePetRename;
@@ -911,8 +911,8 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_OPEN_ITEM].handler								= &WorldSession::HandleOpenItemOpcode;
 	WorldPacketHandlers[CMSG_COMPLETE_CINEMATIC].handler					= &WorldSession::HandleCompleteCinematic;
 	WorldPacketHandlers[CMSG_MOUNTSPECIAL_ANIM].handler						= &WorldSession::HandleMountSpecialAnimOpcode;
-	WorldPacketHandlers[CMSG_TOGGLE_CLOAK].handler							= &WorldSession::HandleToggleCloakOpcode;
-	WorldPacketHandlers[CMSG_TOGGLE_HELM].handler							= &WorldSession::HandleToggleHelmOpcode;
+//	WorldPacketHandlers[CMSG_TOGGLE_CLOAK].handler							= &WorldSession::HandleToggleCloakOpcode;
+//	WorldPacketHandlers[CMSG_TOGGLE_HELM].handler							= &WorldSession::HandleToggleHelmOpcode;
 	WorldPacketHandlers[CMSG_SET_TITLE].handler								= &WorldSession::HandleSetVisibleRankOpcode;
 	WorldPacketHandlers[CMSG_COMPLAIN].handler								= &WorldSession::HandleReportSpamOpcode;
 	WorldPacketHandlers[CMSG_WORLD_STATE_UI_TIMER_UPDATE].handler			= &WorldSession::HandleWorldStateUITimerUpdate;

@@ -117,6 +117,19 @@ void ClusterInterface::HandleRegisterResult(WorldPacket & pck)
 		_clientSocket = 0;
 		return;
 	}
+	else
+	{
+		string host = Config.RealmConfig.GetStringDefault( "Listen", "Host", DEFAULT_HOST );
+		int wsport = Config.RealmConfig.GetIntDefault( "Listen", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
+
+		sMaster.LWSS = new ListenSocket<WorldSocket>(host.c_str(), wsport+1);
+		sMaster.listnersockcreate = sMaster.LWSS->IsOpen();
+
+#ifdef WIN32
+		if( sMaster.listnersockcreate )
+			ThreadPool.ExecuteTask(sMaster.LWSS);
+#endif
+	}
 }
 
 void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void * data, uint32 sessionid)

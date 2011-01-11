@@ -332,13 +332,24 @@ double FDerive(double number, int times)
 	return number;
 }
 
-#ifdef WIN32
+HEARTHSTONE_INLINE bool isPrime(uint32 n)
+{
+	bool b = true;
+	for(uint32 i = 2; i < n; i++)
+	{
+		if(n%i == 0)
+		{
+			b = false;
+			break;
+		}
+	}
+	return b;
+}
 
-HEARTHSTONE_INLINE int expon(_In_ int _X, _In_ int _Y)
+HEARTHSTONE_INLINE int expon(int _X, int _Y)
 		{return (LDerive(_X, _Y)); }
-HEARTHSTONE_INLINE long expon(_In_ long _X, _In_ int _Y)
+HEARTHSTONE_INLINE long expon(long _X, int _Y)
 		{return (LDerive(_X, _Y)); }
-HEARTHSTONE_INLINE double expon(_In_ double _X, _In_ int _Y)
+HEARTHSTONE_INLINE double expon(double _X, int _Y)
 		{return (FDerive(_X, _Y)); }
 
-#endif

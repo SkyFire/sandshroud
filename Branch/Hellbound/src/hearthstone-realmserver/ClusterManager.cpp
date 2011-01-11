@@ -36,9 +36,8 @@ MasterServer* ClusterMgr::CreateMasterServer(MasterServerSocket * s)
 	if(MasterControlServer != NULL)
 		return NULL;
 
-	uint32 port = s->GetRemotePort();
 	Log.Notice("ClusterMgr", "Allocating Master Server to %s:%u", s->GetRemoteIP().c_str(), s->GetRemotePort());
-	MasterControlServer = new MasterServer(s, port);
+	MasterControlServer = new MasterServer(s);
 	return MasterControlServer;
 }
 

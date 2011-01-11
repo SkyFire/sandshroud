@@ -61,7 +61,7 @@ void Master::_OnSignal(int s)
 
 Master::Master()
 {
-
+	LWSS = NULL;
 }
 
 Master::~Master()
@@ -275,9 +275,6 @@ bool Master::Run(int argc, char ** argv)
 	// Initialize Opcode Table
 	WorldSession::InitPacketHandlerTable();
 
-	string host = Config.RealmConfig.GetStringDefault( "Listen", "Host", DEFAULT_HOST );
-	int wsport = Config.RealmConfig.GetIntDefault( "Listen", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
-
 	new ScriptMgr;
 
 	if( !sWorld.SetInitialWorldSettings() )
@@ -353,12 +350,7 @@ bool Master::Run(int argc, char ** argv)
 //	sLogonCommHandler.Startup();
 
 	// Create listener
-	ListenSocket<WorldSocket> * ls = new ListenSocket<WorldSocket>(host.c_str(), wsport);
-    bool listnersockcreate = ls->IsOpen();
-#ifdef WIN32
-	if( listnersockcreate )
-		ThreadPool.ExecuteTask(ls);
-#endif
+	listnersockcreate = true;
 	while( !m_stopEvent && listnersockcreate )
 	{
 		start = now();
@@ -378,13 +370,7 @@ bool Master::Run(int argc, char ** argv)
 			g_localTime = *localtime(&curTime);
 		}
 
-#ifndef CLUSTERING
-#ifdef VOICE_CHAT
-		sVoiceChatHandler.Update();
-#endif
-#else
 		sClusterInterface.Update();
-#endif
 		sSocketGarbageCollector.Update();
 
 		/* UPDATE */
@@ -451,7 +437,7 @@ bool Master::Run(int argc, char ** argv)
 
 	Log.Notice( "DayWatcherThread", "Exiting..." );
 	sDayWatcher.terminate();
-	ls->Close();
+	LWSS->Close();
 
 	Log.Notice( "Network", "Shutting down network subsystem." );
 #ifdef WIN32
@@ -471,7 +457,7 @@ bool Master::Run(int argc, char ** argv)
 
 	ThreadPool.Shutdown();
 
-	delete ls;
+	delete LWSS;
 
 	Log.Notice("CharacterLoaderThread", "~CharacterLoaderThread()");
 	delete CharacterLoaderThread::getSingletonPtr();
@@ -482,8 +468,8 @@ bool Master::Run(int argc, char ** argv)
 		delete WintergraspInternal::getSingletonPtr();
 	}
 
-	Log.Notice("LogonComm", "~LogonCommHandler()");
-	delete LogonCommHandler::getSingletonPtr();
+	Log.Notice("Cluster", "~ClusterInterface()");
+	delete ClusterInterface::getSingletonPtr();
 
 	Log.Notice( "World", "~World()" );
 	delete World::getSingletonPtr();

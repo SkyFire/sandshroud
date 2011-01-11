@@ -21,6 +21,7 @@
 #include "../hearthstone-shared/AuthCodes.h"
 
 #pragma pack(push, 1)
+
 struct ClientPktHeader
 {
 	uint16 size;
@@ -30,8 +31,9 @@ struct ClientPktHeader
 struct ServerPktHeader
 {
 	uint16 size;
-	uint16 cmd;
+	uint32 cmd;
 };
+
 #pragma pack(pop)
 
 ClientSocket::ClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SIZE, CLIENTSOCKET_RECVBUF_SIZE)
@@ -88,20 +90,37 @@ void ClientSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 
 void ClientSocket::OnConnect()
 {
+	MasterServer* ms = sClusterMgr.GetMasterServer();
+	if(ms == NULL)
+	{
+		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
+		return;
+	}
+
 	_latency = getMSTime();
-	WorldPacket data (SMSG_AUTH_CHALLENGE, 25);
+	// Crow: This is the general shit we need, but it definitely won't work this way.
+	WorldPacket data(SMSG_REDIRECT_CLIENT, 130);
+	string adress = string(Config.ClusterConfig.GetStringDefault("Realm", "Address", "127.0.0.1")+format(":%u", Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129)+1));
+	for(uint8 i = 0; i < 30; i++)
+	{
+		if(RandomUInt(30-i) == RandomUInt(30-i))
+			data << adress;
+		else
+			data << uint32(RandomUInt(0x82FE26F4));
+	}
+	SendPacket(&data);
+
+	data.Initialize(SMSG_AUTH_CHALLENGE);
+	data << uint32(1);			// 4
 	data << uint32(1);			// Unk
 	data << mSeed;
+	data << uint32(0);			// 4
+	data << uint8(1);			// 4
 	data << uint32(0xF3539DA3);	// Generated Random.
 	data << uint32(0x6E8547B9);	// 3.2.2
 	data << uint32(0x9A6AA2F8);	// 3.2.2
 	data << uint32(0xA4F170F4);	// 3.2.2
-#ifdef CATACLYSM
 	data << uint32(0xF3632DA3);	// 4
-	data << uint32(0x278BB343);	// 4
-	data << uint32(0x97EEF2F8);	// 4
-	data << uint32(0x82FE26F4);	// 4
-#endif
 	SendPacket(&data);
 }
 
@@ -258,7 +277,7 @@ void ClientSocket::_HandlePing(WorldPacket* recvPacket)
 	uint32 ping;
 	if(recvPacket->size() < 4)
 	{
-		sLog.outString("Socket closed due to incomplete ping packet.");
+		Log.Notice("", "Socket closed due to incomplete ping packet.");
 		Disconnect();
 		return;
 	}

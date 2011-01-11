@@ -35,7 +35,7 @@ struct ClientPktHeader
 struct ServerPktHeader
 {
 	uint16 size;
-	uint16 cmd;
+	uint32 cmd;
 };
 
 #pragma pack(pop)
@@ -114,7 +114,7 @@ void WorldSocket::OnDisconnect()
 	queueLock.Release();
 }
 
-void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
+void WorldSocket::OutPacket(uint32 opcode, size_t len, const void* data)
 {
 /*	if(opcode != SMSG_UPDATE_OBJECT && opcode != SMSG_PONG && opcode != SMSG_WORLD_STATE_UI_TIMER_UPDATE && opcode != SMSG_WEATHER)
 		printf("Sent packet %s (0x%03X)\n", LookupOpcodeName(opcode), uint(opcode), uint(opcode));
@@ -137,7 +137,8 @@ void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 		//WorldPacket * pck = new WorldPacket(opcode, len);
 		WorldPacket * pck = g_bufferPool.Allocate(len);
 		pck->SetOpcode(opcode);
-		if(len) pck->append((const uint8*)data, len);
+		if(len)
+			pck->append((const uint8*)data, len);
 		_queue.Push(pck);
 		queueLock.Release();
 	}
@@ -188,7 +189,7 @@ void WorldSocket::UpdateQueuedPackets()
 	queueLock.Release();
 }
 
-OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* data)
+OUTPACKET_RESULT WorldSocket::_OutPacket(uint32 opcode, size_t len, const void* data)
 {
 	bool rv;
 	if(!IsConnected())
@@ -224,16 +225,23 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 
 void WorldSocket::OnConnect()
 {
+	Log.Notice("", "Recieved connection");
 	sWorld.mAcceptedConnections++;
 	_latency = getMSTime();
-	WorldPacket data (SMSG_AUTH_CHALLENGE, 25);
+
+/* Crow: Do we need to send this when we connect with redirect?
+	WorldPacket data (SMSG_AUTH_CHALLENGE, 37);
+	data << uint32(1);			// 4
 	data << uint32(1);			// Unk
 	data << mSeed;
+	data << uint32(0);			// 4
+	data << uint8(1);			// 4
 	data << uint32(0xF3539DA3);	// Generated Random.
 	data << uint32(0x6E8547B9);	// 3.2.2
 	data << uint32(0x9A6AA2F8);	// 3.2.2
 	data << uint32(0xA4F170F4);	// 3.2.2
-	SendPacket(&data);
+	data << uint32(0xF3632DA3);	// 4
+	SendPacket(&data);*/
 }
 
 void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)

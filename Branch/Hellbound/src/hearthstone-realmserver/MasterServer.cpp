@@ -30,9 +30,8 @@ void MasterServer::InitHandlers()
 	PHandlers[IMSG_PLAYER_TRANSFER]		= &MasterServer::HandlePlayerLoginResponse;
 }
 
-MasterServer::MasterServer(MasterServerSocket * s, uint32 port) : m_socket(s)
+MasterServer::MasterServer(MasterServerSocket * s) : m_socket(s)
 {
-	allocport = port;
 	last_ping = 0;
 	removed = false;
 }

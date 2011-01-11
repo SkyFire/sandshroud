@@ -116,6 +116,7 @@ bool Master::Run(int argc, char ** argv)
 	Config.RealmConfig.SetSource(default_realm_config_file);
 	Config.MainConfig.SetSource(default_world_config_file);
 
+	InitRandomNumberGenerators();
 	ThreadPool.Startup();
 
 	if(!_StartDB())

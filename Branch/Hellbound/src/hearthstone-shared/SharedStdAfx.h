@@ -38,6 +38,8 @@
 #include "Config/ConfigEnv.h"
 #include "ByteBuffer.h"
 #include "Auth/BigNumber.h"
+#include "Auth/RSA1.h"
+#include "Auth/RSA2.h"
 #include "../../dependencies/VC/include/openssl/bn.h"
 #include "crc32.h"
 #include "hashmap.h"

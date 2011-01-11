@@ -179,7 +179,7 @@ void LogonCommClientSocket::SendPing()
 	WorldPacket data(RCMSG_PING, 4);
 	SendPacket(&data);
 
-	last_ping = uint32(time(NULL));
+	last_ping = UNIXTIME;
 }
 
 void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
