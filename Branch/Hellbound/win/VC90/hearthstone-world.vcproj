@@ -848,10 +848,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\hearthstone-world\WorkdSocketCluster.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\hearthstone-world\WorkerServerClient.cpp"
 					>
 				</File>

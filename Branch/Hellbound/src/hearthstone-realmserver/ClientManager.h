@@ -26,80 +26,18 @@ typedef HM_NAMESPACE::hash_map<uint32, PlayerCreateInfo*> PlayerCreateInfoMap;
 class ClientMgr : public Singleton<ClientMgr>
 {
 public:
-	typedef HM_NAMESPACE::hash_map<uint32, RPlayerInfo*> ClientMap;
-	ClientMap m_clients;
 	RWLock m_lock;
 
 protected:
-	uint32 m_hiPlayerGuid;
-	uint32 m_hiItemGuid;
 	uint32 m_maxSessionId;
 
 	Session * m_sessions[MAX_SESSIONS];
-	HM_NAMESPACE::hash_map<RPlayerInfo*, Session*> m_sessionsbyinfo;
 	std::vector<uint32> m_reusablesessions;
 	std::vector<uint32> m_pendingdeletesessionids;
 
 public:
 	ClientMgr();
 	~ClientMgr();
-	
-	/* create rplayerinfo struct */
-	RPlayerInfo * CreateRPlayer(uint32 guid);
-
-	/* destroy rplayerinfo struct */
-	void DestroyRPlayerInfo(uint32 guid);
-
-	HEARTHSTONE_INLINE Session* GetSessionByRPInfo(RPlayerInfo* p)
-	{
-		m_lock.AcquireReadLock();
-		HM_NAMESPACE::hash_map<RPlayerInfo*, Session*>::iterator itr = m_sessionsbyinfo.find(p);
-		if (itr == m_sessionsbyinfo.end())
-		{
-			m_lock.ReleaseReadLock();
-			return NULL;
-		}
-		Session* s = itr->second;
-		m_lock.ReleaseReadLock();
-		return s;
-	}
-
-	HEARTHSTONE_INLINE void AddSessionRPInfo(Session* s, RPlayerInfo* p)
-	{
-		m_lock.AcquireWriteLock();
-		m_sessionsbyinfo.insert(std::make_pair<RPlayerInfo*, Session*>(p, s));
-		m_lock.ReleaseWriteLock();
-	}
-
-	/* get rplayer */
-	HEARTHSTONE_INLINE RPlayerInfo * GetRPlayer(uint32 guid)
-	{
-		ClientMap::iterator itr = m_clients.find(guid);
-		return (itr != m_clients.end()) ? itr->second : 0;
-	}
-
-	/* get rplayer */
-	HEARTHSTONE_INLINE RPlayerInfo * GetRPlayerByName(const char* name)
-	{
-		string lpn = HEARTHSTONE_TOLOWER_RETURN(string(name));
-		ClientMap::iterator i;
-		RPlayerInfo *rv = NULL;
-
-		i = m_clients.begin();
-		while(i != m_clients.end())
-		{
-			if(HEARTHSTONE_TOLOWER_RETURN(i->second->Name) == lpn)
-			{
-				rv = i->second;
-				break;
-			}
-		}
-
-		return rv;
-	};
-
-	/* send "mini" client data to all servers */
-	void SendPackedClientInfo(WServer * server);
 
 	/* get session by id */
 	HEARTHSTONE_INLINE Session * GetSession(uint32 Id)
@@ -127,14 +65,10 @@ public:
 	/* updates sessions */
 	void Update();
 
-public: // PlayerCreateInfo
-	void LoadPlayerCreateInfo();
-	PlayerCreateInfoMap mPlayerCreateInfo;
-	PlayerCreateInfo* GetPlayerCreateInfo(uint8 race, uint8 class_) const;
-
 public: // Player Creation and deletion/rename shit
-	uint32 GeneratePlayerGuid() { return ++m_hiPlayerGuid; };
+	int DeleteCharacter(Session* session, WorldPacket& data);
 	int CreateNewPlayer(Session* session, WorldPacket& data);
+	int RenameCharacter(Session* session, WorldPacket& data);
 };
 
 #define sClientMgr ClientMgr::getSingleton()

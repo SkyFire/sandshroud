@@ -20,11 +20,17 @@
 #ifndef _R_SESSION_H
 #define _R_SESSION_H
 
-typedef void(Session::*SessionPacketHandler)(WorldPacket&);
+struct OpcodeHandler
+{
+	uint16 status;
+	void (Session::*handler)(WorldPacket&);
+};
 
 #ifndef _GAME
 
 #define SKIP_READ_PACKET(pckt) pckt.rpos(pckt.wpos())
+
+extern OpcodeHandler Handlers[NUM_MSG_TYPES];
 
 struct AccountDataEntry
 {
@@ -39,20 +45,17 @@ struct AccountDataEntry
 class Session
 {
 public:
-	friend class WorldSocket;
+	friend class ClientSocket;
 	friend class CharacterStorage;
 	Session(uint32 id);
 	~Session();
 
 protected:
 	FastQueue<WorldPacket*, Mutex> m_readQueue;
-	WorldSocket * m_socket;
-	WServer * m_server;
-	WServer * m_nextServer;
+	ClientSocket * m_socket;
 	uint32 m_sessionId;
 	uint32 m_accountId;
 	uint32 m_ClientBuild;
-	RPlayerInfo * m_currentPlayer;
 	uint32 m_latency;
 	uint32 m_accountFlags;
 	string m_GMPermissions;
@@ -61,24 +64,18 @@ protected:
 	uint32 m_muted;
 	bool m_hasDeathKnight;
 	uint8 m_highestLevel;
-	static SessionPacketHandler Handlers[NUM_MSG_TYPES];
 	bool m_loadedPlayerData;
 	AccountDataEntry sAccountData[8];
 
 public:
+	bool OnMasterServer;
 	bool deleted;
 	static void InitHandlers();
 	void Update();
 
 	HEARTHSTONE_INLINE void QueuePacket(WorldPacket* packet) { m_readQueue.Push(packet); }
-	HEARTHSTONE_INLINE RPlayerInfo * GetPlayer() { return m_currentPlayer; }
-	HEARTHSTONE_INLINE void ClearCurrentPlayer() { m_currentPlayer = 0; }
-	HEARTHSTONE_INLINE void ClearServers() { m_nextServer = m_server = 0; }
-	HEARTHSTONE_INLINE void SetNextServer() { m_server = m_nextServer; }
-	HEARTHSTONE_INLINE void SetNextServer(WServer* s) { m_nextServer = s; };
-	HEARTHSTONE_INLINE void SetServer(WServer * s) { m_server = s; }
-	HEARTHSTONE_INLINE WServer * GetServer() { return m_server; }
-	HEARTHSTONE_INLINE WorldSocket * GetSocket() { return m_socket; }
+	HEARTHSTONE_INLINE ClientSocket* GetSocket() { return m_socket; }
+	HEARTHSTONE_INLINE void SetSocket(ClientSocket* s) { m_socket = s; }
 	HEARTHSTONE_INLINE uint32 GetAccountId() { return m_accountId; }
 	HEARTHSTONE_INLINE uint32 GetSessionId() { return m_sessionId; }
 	HEARTHSTONE_INLINE std::string GetAccountPermissions() { return m_GMPermissions; }
@@ -161,10 +158,11 @@ public:
 		if(m_socket && m_socket->IsConnected())
 			m_socket->Disconnect();
 	}
-	void SendChars();
 
+	void SendChars();
 	void HandleNameQueryOpcode(WorldPacket & pck);
 	void HandlePlayerLogin(WorldPacket & pck);
+	void HandlePlayerLogoutRequest(WorldPacket & pck);
 	void HandleCharacterEnum(WorldPacket & pck);
 	void HandleCharacterCreate(WorldPacket & pck);
 	void HandleCharacterDelete(WorldPacket & pck);

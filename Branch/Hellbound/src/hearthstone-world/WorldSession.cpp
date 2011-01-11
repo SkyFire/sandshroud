@@ -86,10 +86,8 @@ WorldSession::~WorldSession()
 			delete [] sAccountData[x].data;
 	}
 
-#ifndef CLUSTERING
 	if(_socket)
 		_socket->SetSession(0);
-#endif
 
 	if(m_loggingInPlayer)
 	{
@@ -104,10 +102,8 @@ int WorldSession::Update(uint32 InstanceID)
 {
 	m_currMsTime = getMSTime();
 
-#ifndef CLUSTERING
 	if(!((++_updatecount) % 2) && _socket)
 		_socket->UpdateQueuedPackets();
-#endif
 
 	WorldPacket *packet;
 	OpcodeHandler * Handler;
@@ -936,10 +932,7 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_ARENA_TEAM_DISBAND].handler					= &WorldSession::HandleArenaTeamDisbandOpcode;
 	WorldPacketHandlers[CMSG_ARENA_TEAM_LEADER].handler						= &WorldSession::HandleArenaTeamPromoteOpcode;
 	WorldPacketHandlers[MSG_INSPECT_ARENA_TEAMS].handler					= &WorldSession::HandleInspectArenaStatsOpcode;
-
-#ifdef CLUSTERING
 	WorldPacketHandlers[CMSG_PING].handler									= &WorldSession::HandlePingOpcode;
-#endif
 
 	// cheat/gm commands?
 	WorldPacketHandlers[MSG_MOVE_TELEPORT_CHEAT].handler					= &WorldSession::HandleTeleportCheatOpcode;
@@ -1018,9 +1011,6 @@ void WorldSession::LogUnprocessedTail(WorldPacket *packet)
 	packet->print_storage();
 }
 
-
-#ifdef CLUSTERING
-
 void WorldSession::HandlePingOpcode(WorldPacket& recvPacket)
 {
 	uint32 pong;
@@ -1029,8 +1019,6 @@ void WorldSession::HandlePingOpcode(WorldPacket& recvPacket)
 	data << pong;
 	SendPacket(&data);
 }
-
-#endif
 
 void WorldSession::SystemMessage(const char * format, ...)
 {

@@ -346,16 +346,11 @@ bool Master::Run(int argc, char ** argv)
 	uint32 loopcounter = 0;
 	//ThreadPool.Gobble();
 
-#ifndef CLUSTERING
 	/* Connect to realmlist servers / logon servers */
-	new LogonCommHandler();
-	sLogonCommHandler.Startup();
-
-	/* voicechat */
-#ifdef VOICE_CHAT
-	new VoiceChatHandler();
-	sVoiceChatHandler.Startup();
-#endif
+	new ClusterInterface;
+	sClusterInterface.ConnectToRealmServer();
+//	new LogonCommHandler();
+//	sLogonCommHandler.Startup();
 
 	// Create listener
 	ListenSocket<WorldSocket> * ls = new ListenSocket<WorldSocket>(host.c_str(), wsport);
@@ -365,11 +360,6 @@ bool Master::Run(int argc, char ** argv)
 		ThreadPool.ExecuteTask(ls);
 #endif
 	while( !m_stopEvent && listnersockcreate )
-#else
-	new ClusterInterface;
-	sClusterInterface.ConnectToRealmServer();
-	while(!m_stopEvent)
-#endif
 	{
 		start = now();
 		diff = start - last_time;
@@ -461,10 +451,7 @@ bool Master::Run(int argc, char ** argv)
 
 	Log.Notice( "DayWatcherThread", "Exiting..." );
 	sDayWatcher.terminate();
-
-#ifndef CLUSTERING
 	ls->Close();
-#endif
 
 	Log.Notice( "Network", "Shutting down network subsystem." );
 #ifdef WIN32
@@ -484,9 +471,7 @@ bool Master::Run(int argc, char ** argv)
 
 	ThreadPool.Shutdown();
 
-#ifndef CLUSTERING
 	delete ls;
-#endif
 
 	Log.Notice("CharacterLoaderThread", "~CharacterLoaderThread()");
 	delete CharacterLoaderThread::getSingletonPtr();

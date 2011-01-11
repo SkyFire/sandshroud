@@ -7831,7 +7831,7 @@ void Player::RemovePlayerPet(uint32 pet_number)
 		EventDismissPet();
 	}
 }
-#ifndef CLUSTERING
+
 void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id)
 {
 	//Send transfer pending only when switching between differnt mapids!
@@ -7898,7 +7898,6 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 
 	z_axisposition = 0.0f;
 }
-#endif
 
 // Player::AddItemsToWorld
 // Adds all items to world, applies any modifiers for them.
@@ -9101,70 +9100,12 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 		MapID = GetBindMapId();
 	}
 
-#ifdef CLUSTERING
-
 	if(GetShapeShift())
 	{
 		// Extra Check
 		SetShapeShift(GetShapeShift());
 	}
 
-	/* Clustering Version */
-	MapInfo * mi = WorldMapInfoStorage.LookupEntry(MapID);
-
-	// Lookup map info
-	if(mi && mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01))
-	{
-		WorldPacket msg(SMSG_MOTD, 50);
-		msg << uint32(3) << "You must have The Burning Crusade Expansion to access this content." << uint8(0);
-		m_session->SendPacket(&msg);
-		return false;
-	}
-
-	uint32 instance_id;
-	bool map_change = false;
-	if(mi && mi->type == 0)
-	{
-		// single instance map
-		if(MapID != m_mapId)
-		{
-			map_change = true;
-			instance_id = 0;
-		}
-	}
-	else
-	{
-		// instanced map
-		if(InstanceID != GetInstanceID())
-			map_change = true;
-
-		instance_id = InstanceID;
-	}
-
-	if(map_change)
-	{
-		WorldPacket data(SMSG_TRANSFER_PENDING, 4);
-		data << uint32(MapID);
-		GetSession()->SendPacket(&data);
-		sClusterInterface.RequestTransfer(TO_PLAYER(this), MapID, instance_id, vec);
-		return true;
-	}
-
-	m_sentTeleportPosition = vec;
-	SetPosition(vec);
-	ResetHeartbeatCoords();
-
-	WorldPacket * data = BuildTeleportAckMsg(vec);
-	m_session->SendPacket(data);
-	delete data;
-#else
-	if(GetShapeShift())
-	{
-		// Extra Check
-		SetShapeShift(GetShapeShift());
-	}
-
-	/* Normal Version */
 	bool force_new_world = false;
 
 	// Lookup map info
@@ -9223,7 +9164,6 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 
 	//all set...relocate
 	_Relocate(MapID, vec, true, force_new_world, InstanceID);
-#endif
 	DelaySpeedHack(5000);
 	return true;
 }
@@ -10609,80 +10549,6 @@ void Player::RemoveFromBattlegroundQueue(uint32 queueSlot, bool forced)
 	if(forced)
 		sChatHandler.SystemMessage(m_session, "You were removed from the queue for the battleground for not joining after 2 minutes.");
 }
-
-#ifdef CLUSTERING
-
-void Player::EventRemoveAndDelete()
-{
-	sEventMgr.RemoveEvents(this);
-	if( DuelingWith != NULL )
-		EndDuel( DUEL_WINNER_RETREAT );
-
-	if( m_currentLoot && IsInWorld() )
-	{
-		Object* obj = GetMapMgr()->_GetObject( m_currentLoot );
-		if( obj != NULL )
-			obj->m_loot.looters.erase(GetLowGUID());
-		obj = NULLOBJ;
-	}
-
-	// part channels
-	CleanupChannels();
-
-	// Remove from vehicle for now.
-	if(GetVehicle())
-		GetVehicle()->RemovePassenger(this);
-
-	if( m_CurrentTransporter != NULL )
-	{
-		m_CurrentTransporter->RemovePlayer( this );
-		m_CurrentTransporter = NULLTRANSPORT;
-		m_TransporterGUID = 0;
-	}
-
-	// cancel current spell
-	if( m_currentSpell != NULL )
-		m_currentSpell->cancel();
-
-	if( GetTeam() == 1 )
-	{
-		if( sWorld.HordePlayers )
-			sWorld.HordePlayers--;
-	}
-	else
-	{
-		if( sWorld.AlliancePlayers )
-			sWorld.AlliancePlayers--;
-	}
-
-	if( m_bg )
-		m_bg->RemovePlayer( this, true );
-
-	// Save HP/Mana
-	load_health = GetUInt32Value( UNIT_FIELD_HEALTH );
-	load_mana = GetUInt32Value( UNIT_FIELD_POWER1 );
-
-	objmgr.RemovePlayer( this );
-	ok_to_remove = true;
-
-	if( GetSummon() != NULL )
-		GetSummon()->Remove( false, true, false );
-
-	RemoveAllAuras();
-	if( IsInWorld() )
-		RemoveFromWorld();
-
-	// Remove the "player locked" flag, to allow movement on next login
-	RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER );
-
-	// Update Tracker status
-	sTracker.CheckPlayerForTracker(this, false);
-	ObjUnlock();
-
-	delete this;
-}
-
-#endif
 
 void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)
 {

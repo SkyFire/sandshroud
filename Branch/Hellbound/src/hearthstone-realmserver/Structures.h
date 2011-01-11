@@ -20,54 +20,6 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
-struct RPlayerInfo
-{
-	uint32 Guid;
-	uint32 AccountId;
-	string Name;
-	uint32 Level;
-	uint32 GuildId;
-	float PositionX;
-	float PositionY;
-	uint32 ZoneId;
-	uint8 Race;
-	uint8 Class;
-	uint8 Gender;
-	uint32 Latency;
-	string GMPermissions;
-	uint32 Account_Flags;
-	uint32 InstanceId;
-	uint32 MapId;
-	uint32 iInstanceType;
-	uint32 references;
-	uint32 ClientBuild;
-	uint32 Team;
-
-	void Pack(ByteBuffer& buf)
-	{
-		buf << Guid << AccountId << Name << PositionX << PositionY << ZoneId << Race << Class << Gender << Latency << GMPermissions
-			<< Account_Flags << InstanceId << Level << GuildId << MapId << iInstanceType << ClientBuild << Team;
-	}
-
-	size_t Unpack(ByteBuffer & buf)
-	{
-		buf >> Guid >> AccountId >> Name >> PositionX >> PositionY >> ZoneId >> Race >> Class >> Gender >> Latency >> GMPermissions
-			>> Account_Flags >> InstanceId >> Level >> GuildId >> MapId >> iInstanceType >> ClientBuild >> Team;
-		return buf.rpos();
-	}
-
-	uint32 getClassMask() { return 1 << (Class - 1); }
-	uint32 getRaceMask() { return 1 << (Race - 1); }
-
-#ifndef _GAME
-	/* This stuff is used only by the realm server */
-	Session * session;
-	Session * GetSession() { return session; }
-	uint32 RecoveryMapId;
-	LocationVector RecoveryPosition;
-#endif //_GAME
-};
-
 #ifndef _GAME
 
 // This way we can grab enums and defines

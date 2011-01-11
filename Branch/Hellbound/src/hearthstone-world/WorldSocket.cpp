@@ -24,7 +24,6 @@
 /* echo send/received packets to console */
 //#define ECHO_PACKET_LOG_TO_CONSOLE 1
 
-#ifndef CLUSTERING
 #pragma pack(push, 1)
 
 struct ClientPktHeader
@@ -621,8 +620,6 @@ void WorldSocket::OnRead()
 		}
 	}
 }
-
-#endif
 
 void FastGUIDPack(ByteBuffer & buf, const uint64 & oldguid)
 {

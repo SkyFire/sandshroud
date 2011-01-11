@@ -17,33 +17,28 @@
  *
  */
 
-#include "StdAfx.h"
+class Session;
+class MasterServer;
 
-#ifdef CLUSTERING
-
-WorldSocket::WorldSocket(uint32 sessionid) : m_sessionId(sessionid)
+class MasterServerSocket : public Socket
 {
+	bool _authenticated;
+	uint32 _remaining;
+	uint16 _cmd;
+	MasterServer* Master;
+public:
+	uint32 m_id;
 
-}
+	MasterServerSocket(SOCKET fd);
+	~MasterServerSocket();
 
-WorldSocket::~WorldSocket()
-{
+	void SendPacket(WorldPacket * pck);
+	void SendPacket(uint16 opcode, uint32 size, const void* data);
+	void SendWoWPacket(Session * from, WorldPacket * pck);
+	void OnRead();
 
-}
+	void HandleAuthRequest(WorldPacket & pck);
+	void HandleRegisterMaster(WorldPacket & pck);
+	void OnConnect();
 
-void WorldSocket::Disconnect()
-{
-
-}
-
-bool WorldSocket::IsConnected()
-{
-	return true;
-}
-
-void WorldSocket::OutPacket(uint16 opcode, uint16 len, const void* data)
-{
-	sClusterInterface.ForwardWoWPacket(opcode, len, data, m_sessionId);
-}
-
-#endif
+};

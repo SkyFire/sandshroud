@@ -34,7 +34,7 @@ struct ServerPktHeader
 };
 #pragma pack(pop)
 
-WorldSocket::WorldSocket(SOCKET fd) : Socket(fd, WORLDSOCKET_SENDBUF_SIZE, WORLDSOCKET_RECVBUF_SIZE)
+ClientSocket::ClientSocket(SOCKET fd) : Socket(fd, CLIENTSOCKET_SENDBUF_SIZE, CLIENTSOCKET_RECVBUF_SIZE)
 {
 	mSize = mOpcode = mRemaining = 0;
 	_latency = 0;
@@ -44,12 +44,12 @@ WorldSocket::WorldSocket(SOCKET fd) : Socket(fd, WORLDSOCKET_SENDBUF_SIZE, WORLD
 	Authed = false;
 }
 
-WorldSocket::~WorldSocket()
+ClientSocket::~ClientSocket()
 {
 
 }
 
-void WorldSocket::OnDisconnect()
+void ClientSocket::OnDisconnect()
 {
 	if(mRequestID != 0)
 	{
@@ -58,7 +58,7 @@ void WorldSocket::OnDisconnect()
 	}
 }
 
-void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
+void ClientSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 {
 	bool rv;
 	if(opcode == 0 || !IsConnected())
@@ -86,7 +86,7 @@ void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 	BurstEnd();
 }
 
-void WorldSocket::OnConnect()
+void ClientSocket::OnConnect()
 {
 	_latency = getMSTime();
 	WorldPacket data (SMSG_AUTH_CHALLENGE, 25);
@@ -105,7 +105,7 @@ void WorldSocket::OnConnect()
 	SendPacket(&data);
 }
 
-void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
+void ClientSocket::_HandleAuthSession(WorldPacket* recvPacket)
 {
 	std::string account;
 	uint32 unk;
@@ -140,7 +140,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
-
 	if(mRequestID == 0xFFFFFFFF)
 	{
 		Disconnect();
@@ -152,7 +151,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 	m_fullAccountName = new string(account);
 }
 
-void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
+void ClientSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
 {
 	if(requestid != mRequestID)
 		return;
@@ -176,7 +175,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 	recvData >> AccountID >> AccountName >> GMFlags >> AccountFlags;
 
-	DEBUG_LOG( "WorldSocket","Received information packet from logon: `%s` ID %u (request %u)", AccountName.c_str(), AccountID, mRequestID);
+	DEBUG_LOG( "ClientSocket","Received information packet from logon: `%s` ID %u (request %u)", AccountName.c_str(), AccountID, mRequestID);
 //	sLog.outColor(TNORMAL, "\n");
 
 	mRequestID = 0;
@@ -241,10 +240,10 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	Authenticate();
 }
 
-void WorldSocket::Authenticate()
+void ClientSocket::Authenticate()
 {
 	delete pAuthenticationPacket;
-	pAuthenticationPacket = 0;
+	pAuthenticationPacket = NULL;
 
 	if(m_session->m_accountFlags & 16)
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
@@ -254,7 +253,7 @@ void WorldSocket::Authenticate()
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x00");
 }
 
-void WorldSocket::_HandlePing(WorldPacket* recvPacket)
+void ClientSocket::_HandlePing(WorldPacket* recvPacket)
 {
 	uint32 ping;
 	if(recvPacket->size() < 4)
@@ -269,7 +268,7 @@ void WorldSocket::_HandlePing(WorldPacket* recvPacket)
 	OutPacket(SMSG_PONG, 4, &ping);
 }
 
-void WorldSocket::OnRead()
+void ClientSocket::OnRead()
 {
 	for(;;)
 	{
@@ -305,11 +304,10 @@ void WorldSocket::OnRead()
 		}
 
 		Packet = new WorldPacket(mOpcode, mSize);
-		Packet->resize(mSize);
-
 		if(mRemaining > 0)
 		{
 			// Copy from packet buffer into our actual buffer.
+			Packet->resize(mSize);
 			readBuffer.Read((uint8*)Packet->contents(), mRemaining);
 		}
 
@@ -317,16 +315,13 @@ void WorldSocket::OnRead()
 		mRemaining = mSize = mOpcode = 0;
 
 		// Check for packets that we handle
-		DEBUG_LOG("WorldSocket","Received Opcode: %u", Packet->GetOpcode());
+		DEBUG_LOG("ClientSocket","Received Opcode: %u", Packet->GetOpcode());
 		switch(Packet->GetOpcode())
 		{
 		case CMSG_PING:
 			{
-				if(!m_session->m_currentPlayer)
-				{
+				if(!m_session->OnMasterServer)
 					_HandlePing(Packet);
-					delete Packet;
-				}
 				else
 					m_session->QueuePacket(Packet);
 			}break;

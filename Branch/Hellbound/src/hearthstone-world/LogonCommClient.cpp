@@ -26,8 +26,6 @@ typedef struct
 }logonpacket;
 #pragma pack(pop)
 
-#ifndef CLUSTERING
-
 HEARTHSTONE_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
 
 LogonCommClientSocket::LogonCommClientSocket(SOCKET fd) : Socket(fd, 524288, 65536)
@@ -426,64 +424,3 @@ void LogonCommClientSocket::HandlePopulationRequest(WorldPacket & recvData)
 	data << realmId << sLogonCommHandler.GetPopulation();
 	SendPacket(&data, false);
 }
-
-#else
-
-void LogonCommHandler::Account_SetBanned(const char * account, uint32 banned, const char* reason)
-{
-
-}
-
-void LogonCommHandler::Account_SetGM(const char * account, const char * flags)
-{
-
-}
-
-void LogonCommHandler::Account_SetMute(const char * account, uint32 muted)
-{
-
-}
-
-void LogonCommHandler::IPBan_Add(const char * ip, uint32 duration, const char* reason)
-{
-
-}
-
-void LogonCommHandler::IPBan_Remove(const char *ip)
-{
-
-}
-void LogonCommHandler::TestConsoleLogon(std::string &username, std::string &password, uint32 requestnum)
-{
-
-}
-
-void LogonCommHandler::Startup()
-{
-
-}
-
-void LogonCommHandler::UpdateAccountCount(uint32 account_id, int8 add)
-{
-
-}
-
-void LogonCommHandler::UpdateSockets()
-{
-
-}
-
-LogonCommHandler::LogonCommHandler()
-{
-
-}
-
-LogonCommHandler::~LogonCommHandler()
-{
-
-}
-
-#endif
-
-
-

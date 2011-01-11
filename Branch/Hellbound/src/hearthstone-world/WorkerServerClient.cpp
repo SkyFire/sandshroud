@@ -18,7 +18,6 @@
  */
 
 #include "StdAfx.h"
-#ifdef CLUSTERING
 
 WSClient::WSClient(SOCKET fd) : Socket(fd, 1024576, 1024576)
 {
@@ -35,19 +34,20 @@ void WSClient::OnRead()
 {
 	for(;;)
 	{
+		_size = (uint32)readBuffer.GetSize();
 		if(!_cmd)
 		{
-			if(readBuffer.GetSize() < 6)
+			if(_size < 6)
 				break;
 
 			readBuffer.Read((uint8*)&_cmd, 2);
 			readBuffer.Read((uint8*)&_remaining, 4);
 		}
 
-		if(_remaining && readBuffer.GetSize() < _remaining)
+		if(_remaining && _size < _remaining)
 			break;
 
-		if(_cmd == ISMSG_WOW_PACKET)
+		if(_cmd == IWSMSG_WOW_PACKET)
 		{
 			uint32 sid = 0;
 			uint16 op = 0;
@@ -56,9 +56,11 @@ void WSClient::OnRead()
 			readBuffer.Read(&op, 2);
 			readBuffer.Read(&sz, 4);
 
-			WorldSession * session = sClusterInterface.GetSession(sid);
+			Log.Debug("WorkerServer", "Recieved Opcode %u", op);
+			WorldSession* session = sWorld.FindSession(sid);
 			if(session != NULL)
 			{
+				Log.Debug("WorkerServer", "Found session for Session ID %u", sid);
 				WorldPacket * pck = new WorldPacket(op, sz);
 				if (sz > 0)
 				{
@@ -66,30 +68,23 @@ void WSClient::OnRead()
 					readBuffer.Read((void*)pck->contents(), sz);
 				}
 
-				if(session)
-					session->QueuePacket(pck);
-				else
-					delete pck;
+				session->QueuePacket(pck);
 			}
-			_cmd = 0;
+			_remaining = _size = _cmd = 0;
 			continue;
 		}
 
 		WorldPacket * pck = new WorldPacket(_cmd, _remaining);
-		_cmd = 0;
-		pck->resize(_remaining);
-		readBuffer.Read((uint8*)pck->contents(), _remaining);
+		Log.Notice("PacketHandler", "Recieved Packet %u with size %u\n", _cmd, _remaining);
+		if(_remaining > 0)
+		{
+			pck->resize(_remaining);
+			readBuffer.Read((uint8*)pck->contents(), _remaining);
+		}
+		_remaining = _size = _cmd = 0;
 
 		/* we could handle auth here */
-		switch(_cmd)
-		{
-		case ISMSG_AUTH_REQUEST:
-			sClusterInterface.HandleAuthRequest(*pck);
-			delete pck;
-			break;
-		default:
-			sClusterInterface.QueuePacket(pck);
-		}
+		sClusterInterface.QueuePacket(pck);
 	}
 }
 
@@ -125,5 +120,3 @@ void WSClient::SendPacket(WorldPacket * data)
 	if(rv) BurstPush();
 	BurstEnd();
 }
-
-#endif

@@ -151,7 +151,7 @@ void LogonCommClientSocket::HandleSessionInfo(WorldPacket & recvData)
 	m.Acquire();
 
 	// find the socket with this request
-	WorldSocket * sock = sLogonCommHandler.GetSocketByRequest(request_id);
+	ClientSocket * sock = sLogonCommHandler.GetSocketByRequest(request_id);
 	if(sock == 0 || sock->Authed || !sock->IsConnected())	   // Expired/Client disconnected
 	{
 		m.Release();

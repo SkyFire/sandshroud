@@ -20,8 +20,6 @@
 #include "StdAfx.h"
 initialiseSingleton(LogonCommHandler);
 
-#ifndef CLUSTERING
-
 extern bool bServerShutdown;
 
 LogonCommHandler::LogonCommHandler()
@@ -642,5 +640,3 @@ void LogonCommHandler::RefreshRealmPop()
 	// Calc pop: 0 >= low, 1 >= med, 2 >= hig, 3 >= full
 	server_population = (sWorld.HordePlayers+sWorld.AlliancePlayers) * 3.0f / plrLimit;
 }
-
-#endif

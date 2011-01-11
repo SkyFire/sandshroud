@@ -50,10 +50,8 @@ World::World()
 
 	show_gm_in_who_list = true;
 	map_unload_time=0;
-#ifndef CLUSTERING
 	SocketSendBufSize = WORLDSOCKET_SENDBUF_SIZE;
 	SocketRecvBufSize = WORLDSOCKET_RECVBUF_SIZE;
-#endif
 	m_limitedNames=false;
 	m_banTable = NULL;
 	m_lfgForNonLfg = false;
@@ -523,14 +521,8 @@ bool World::SetInitialWorldSettings()
 
 	sScriptMgr.LoadScripts();
 
-#ifndef CLUSTERING
 	// calling this puts all maps into our task list.
 	sInstanceMgr.Load(&tl);
-#else
-	new FormationMgr;
-	new WorldStateTemplateManager;
-	sInstanceMgr._LoadInstances();
-#endif
 
 	// wait for the events to complete.
 	tl.wait();
@@ -979,7 +971,6 @@ uint32 World::GetQueuePos(WorldSocket* Socket)
 
 void World::UpdateQueuedSessions(uint32 diff)
 {
-#ifndef CLUSTERING
 	if(diff >= m_queueUpdateTimer)
 	{
 		m_queueUpdateTimer = mQueueUpdateInterval;
@@ -1030,7 +1021,6 @@ void World::UpdateQueuedSessions(uint32 diff)
 	{
 		m_queueUpdateTimer -= diff;
 	}
-#endif
 }
 
 void World::SaveAllPlayers()
@@ -1417,10 +1407,8 @@ void World::Rehash(bool load)
 	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.OptionalConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
 	setRate(RATE_EOTS_CAPTURERATE, Config.OptionalConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));
 
-#ifndef CLUSTERING
 	SocketRecvBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "RecvBufSize", WORLDSOCKET_RECVBUF_SIZE);
 	SocketSendBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "SendBufSize", WORLDSOCKET_SENDBUF_SIZE);
-#endif
 
 #ifdef WIN32
 	DWORD current_priority_class = GetPriorityClass( GetCurrentProcess() );

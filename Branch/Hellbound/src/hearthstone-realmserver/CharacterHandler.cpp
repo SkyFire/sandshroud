@@ -21,102 +21,31 @@
 
 void Session::HandlePlayerLogin(WorldPacket & pck)
 {
-	WorldPacket data(SMSG_CHARACTER_LOGIN_FAILED, 30);
-	LocationVector LoginCoord;
-	Instance * dest;
-	ASSERT(!m_currentPlayer);
+	WorldPacket data(SMSG_CHARACTER_LOGIN_FAILED, 1);
+	MasterServer* MasterControl = sClusterMgr.GetMasterServer();
+	if(MasterControl == NULL)
+	{
+		data << uint8(CHAR_LOGIN_NO_WORLD);
+		SendPacket(&data);
+		return;
+	}
+
 	uint64 guid;
 	pck >> guid;
 
-	if(sClientMgr.GetRPlayer((uint32)guid) != NULL)
-	{
-		data << uint8(CHAR_LOGIN_DUPLICATE_CHARACTER);
-		SendPacket(&data);
-		return;
-	}
-
-	m_currentPlayer = sClientMgr.CreateRPlayer((uint32)guid);
-
-	/* Load player data */
-	QueryResult * result = CharacterDatabase.Query("SELECT acct, name, level, guild_data.guildid, \
-			positionX, positionY, zoneId, mapId, race, class, gender, \
-			instance_id, entrypointmap, entrypointx, entrypointy, entrypointz, \
-			entrypointo FROM characters LEFT JOIN guild_data ON characters.guid = guild_data.playerid WHERE guid = %u", guid);
-	if(!result)
+	if(guid == NULL)
 	{
 		data << uint8(CHAR_LOGIN_NO_CHARACTER);
 		SendPacket(&data);
-		sClientMgr.DestroyRPlayerInfo((uint32)guid);
-		m_currentPlayer = NULL;
 		return;
 	}
 
-	Field * f = result->Fetch();
-	m_currentPlayer->AccountId = f[0].GetUInt32();
-	m_currentPlayer->Name = f[1].GetString();
-	m_currentPlayer->Level = f[2].GetUInt32();
-	m_currentPlayer->GuildId = f[3].GetUInt32();
-	m_currentPlayer->PositionX = f[4].GetFloat();
-	m_currentPlayer->PositionY = f[5].GetFloat();
-	m_currentPlayer->ZoneId = f[6].GetUInt32();
-	m_currentPlayer->MapId = f[7].GetUInt32();
-	m_currentPlayer->Race = f[8].GetUInt8();
-	m_currentPlayer->Class = f[9].GetUInt8();
-	m_currentPlayer->Gender = f[10].GetUInt8();
-	m_currentPlayer->Latency = m_latency;
-	m_currentPlayer->GMPermissions = m_GMPermissions;
-	m_currentPlayer->Account_Flags = m_accountFlags;
-	m_currentPlayer->InstanceId = f[11].GetUInt32();
-	m_currentPlayer->RecoveryMapId = f[12].GetUInt32();
-	m_currentPlayer->RecoveryPosition.ChangeCoords(f[13].GetFloat(), f[14].GetFloat(), f[15].GetFloat(), f[16].GetFloat());
-	delete result;
-
-	if(IS_MAIN_MAP(m_currentPlayer->MapId))
-	{
-		/* we're on a continent, try to find the world server we're going to */
-		dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);		
-	}
-	else
-	{
-		/* we're in an instanced map, try to find the world server we're going to */
-		dest = sClusterMgr.GetInstanceByInstanceId(m_currentPlayer->InstanceId);
-
-		if(!dest)
-		{
-			/* our instance has been deleted or no longer valid */
-			m_currentPlayer->MapId = m_currentPlayer->RecoveryMapId;
-			LoginCoord = m_currentPlayer->RecoveryPosition;
-
-			/* obtain instance */
-			dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);
-			if(dest)
-			{
-				data.SetOpcode(SMSG_NEW_WORLD);
-				data << m_currentPlayer->MapId << m_currentPlayer->RecoveryPosition << float(0);
-				SendPacket(&data);
-				data.clear();
-			}
-		}
-	}
-
-	if(!dest ||	!dest->Server)
-	{
-		/* world server is down */
-		data << uint8(CHAR_LOGIN_NO_WORLD);
-		SendPacket(&data);
-		sClientMgr.DestroyRPlayerInfo((uint32)guid);
-		m_currentPlayer = NULL;
-		return;
-	}
-
-	/* log the player into that WS */
-	data.SetOpcode(ISMSG_PLAYER_LOGIN);
+	uint32 playerguid = guid;
+	Log.Notice("", "Building player login packet for %u/%u", guid, playerguid);
+	data.Initialize(IMSG_PLAYER_TRANSFER);
 
 	/* append info */
-	data << uint32(guid) << uint32(dest->MapId) << uint32(dest->InstanceId);
-
-	/* append the account information */
-	data << uint32(m_accountId) << uint32(m_accountFlags) << uint32(m_sessionId)
+	data << playerguid << uint32(m_accountId) << uint32(m_accountFlags) << uint32(m_sessionId)
 		<< m_GMPermissions << m_accountName << m_ClientBuild;
 
 	AccountDataEntry* acd = NULL;
@@ -129,8 +58,12 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 			data << uint32(0);
 	}
 
-	dest->Server->SendPacket(&data);
-	m_nextServer = dest->Server;
+	MasterControl->SendPacket(&data);
+}
+
+void Session::HandlePlayerLogoutRequest(WorldPacket & pck)
+{
+
 }
 
 void Session::HandleCharacterEnum(WorldPacket & pck)
@@ -141,7 +74,7 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 void Session::SendChars()
 {
 	uint32 start_time = getMSTime();
-	OUT_DEBUG("CharacterHandler", "Enum Build started at %u.", start_time);
+	OUT_DEBUG("Enum Build started at %u.", start_time);
 
 	// loading characters
 	QueryResult* result = CharacterDatabase.Query("SELECT guid, level, race, class, gender, \
@@ -297,85 +230,17 @@ void Session::SendChars()
 			num++;
 		}
 		while( result->NextRow() );
-
 		delete result;
 	}
 
 	data.put<uint8>(0, num);
-
-	OUT_DEBUG("CharacterHandler", "Enum Built in %u ms.", getMSTime() - start_time);
+	OUT_DEBUG("Enum Built in %u ms.", getMSTime() - start_time);
 	SendPacket( &data );
 }
 
 void Session::HandleCharacterCreate(WorldPacket & pck)
 {
-	std::string name;
-	uint8 race, class_;
-
-	pck >> name >> race >> class_;
-	pck.rpos(0);
-
 	WorldPacket data(SMSG_CHAR_CREATE, 1);
-	if(!VerifyName(name.c_str(), name.length()))
-	{
-		data << uint8(CHAR_CREATE_NAME_IN_USE);
-		SendPacket(&data);
-		return;
-	}
-
-	if(CharacterDatabase.Query("SELECT name FROM characters WHERE name = '%s'", name.c_str()) != NULL)
-	{
-		data << uint8(CHAR_CREATE_NAME_IN_USE);
-		SendPacket(&data);
-		return;
-	}
-
-	//reserved for console whisper
-	if(HEARTHSTONE_TOLOWER_RETURN(name) == "console")
-	{
-		data << uint8(CHAR_CREATE_NAME_IN_USE);
-		SendPacket(&data);
-		return;
-	}
-
-	if(sClientMgr.GetRPlayerByName(name.c_str()) != NULL)
-	{
-		data << uint8(CHAR_CREATE_NAME_IN_USE);
-		SendPacket(&data);
-		return;
-	}
-
-	if( class_ == DEATHKNIGHT && (!HasFlag(0x10) || !CanCreateDeathKnight() ) )
-	{
-		if(CanCreateDeathKnight())
-			data << uint8(CHAR_CREATE_EXPANSION);
-		else
-			data << uint8(CHAR_CREATE_LEVEL_REQUIREMENT);
-		SendPacket(&data);
-		return;
-	}
-
-	if( (race == RACE_GOBLIN || race == RACE_WORGEN) && !HasFlag(0x20) )
-	{
-		data << uint8(CHAR_CREATE_EXPANSION);
-		SendPacket(&data);
-		return;
-	}
-
-	QueryResult * result = CharacterDatabase.Query("SELECT COUNT(*) FROM banned_names WHERE name = '%s'", CharacterDatabase.EscapeString(name).c_str());
-	if(result)
-	{
-		if(result->Fetch()[0].GetUInt32() > 0)
-		{
-			// That name is banned!
-			data << uint8(CHAR_NAME_PROFANE);
-			SendPacket(&data);
-			delete result;
-			return;
-		}
-		delete result;
-	}
-
 	int error = sClientMgr.CreateNewPlayer(this, pck);
 	if(error > 0)
 	{
@@ -398,16 +263,18 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 		SendPacket(&data);
 		return;
 	}
-
-	// CHAR_CREATE_SUCCESS
-	data << uint8(CHAR_CREATE_SUCCESS);
-	SendPacket(&data);
-
-	sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
 }
 
 void Session::HandleCharacterDelete(WorldPacket & pck)
 {
+	WorldPacket data(SMSG_CHAR_DELETE, 1);
+	int error = sClientMgr.DeleteCharacter(this, pck);
+	if(error)
+	{
+		data << uint8(CHAR_DELETE_FAILED);
+		SendPacket(&data);
+		return;
+	}
 
 	sLogonCommHandler.UpdateAccountCount(GetAccountId(), -1);
 }
@@ -417,73 +284,16 @@ void Session::HandleCharacterRename(WorldPacket & pck)
 	uint64 guid;
 	string name;
 	pck >> guid >> name;
+	pck.rpos(0);
 
-	QueryResult * result = CharacterDatabase.Query("SELECT forced_rename_pending FROM characters WHERE guid = %u AND acct = %u", (uint32)guid, GetAccountId());
-	if(result == NULL)
-		return;
-
-	WorldPacket data(SMSG_CHAR_RENAME, pck.size() + 1);
-
-	// Check name for rule violation.
-	const char * szName=name.c_str();
-	for(uint32 x = 0; x < strlen(szName); x++)
+	int error = sClientMgr.RenameCharacter(this, pck);
+	if(error)
 	{
-		if((int)szName[x] < 65 || ((int)szName[x] > 90 && (int)szName[x] < 97) || (int)szName[x] > 122)
-		{
-			if((int)szName[x] < 65)
-			{
-				data << uint8(CHAR_NAME_TOO_SHORT); // Name is too short.
-			}
-			else if((int)szName[x] > 122) // Name is too long.
-			{
-				data << uint8(CHAR_NAME_TOO_LONG);
-			}
-			else
-			{
-				data << uint8(CHAR_NAME_FAILURE); // No clue.
-			}
-			data << guid << name;
-			SendPacket(&data);
-			return;
-		}
-	}
-
-	QueryResult * result2 = CharacterDatabase.Query("SELECT COUNT(*) FROM banned_names WHERE name = '%s'", CharacterDatabase.EscapeString(name).c_str());
-	if(result2)
-	{
-		if(result2->Fetch()[0].GetUInt32() > 0)
-		{
-			// That name is banned!
-			data << uint8(CHAR_NAME_PROFANE);
-			data << guid << name;
-			SendPacket(&data);
-			delete result2;
-			return;
-		}
-		delete result2;
-	}
-
-	// Check if name is in use.
-	if(sClientMgr.GetRPlayerByName(name.c_str()) != NULL)
-	{
+		WorldPacket data(SMSG_CHAR_RENAME, pck.size() + 1);
 		data << uint8(CHAR_NAME_FAILURE);
 		data << guid << name;
 		SendPacket(&data);
-		return;
 	}
-
-	// correct capitalization
-	CapitalizeString(name);
-
-	CharacterDatabase.Query("UPDATE characters SET name = \'%s\', forced_rename_pending \
-		= 0 WHERE guid = %u AND acct = %u", name.c_str(), (uint32)guid, GetAccountId());
-
-	RPlayerInfo* pi = sClientMgr.GetRPlayer(uint32(guid));
-	if(pi != NULL)
-		pi->Name = name;
-
-	data << uint8(0) << guid << name;
-	SendPacket(&data);
 }
 
 void Session::HandleCharacterCustomize(WorldPacket & pck)
@@ -600,9 +410,9 @@ void Session::HandleRequestAccountData(WorldPacket & pck)
 
 	WorldPacket data;
 	data.SetOpcode(SMSG_UPDATE_ACCOUNT_DATA);
-	data << uint64(GetPlayer() ? GetPlayer()->Guid : 0);
+	data << uint64(0);
 	data << id;
-	// if red does not exists if ID == 7 and if there is no data send 0
+	// if res does not exists if ID == 7 and if there is no data send 0
 	if(!res || !res->data) // if error, send a NOTHING packet
 	{
 		data << (uint32)0;
@@ -613,6 +423,7 @@ void Session::HandleRequestAccountData(WorldPacket & pck)
 		data << uint32(res->Time);
 		data << res->sz;
 	}
+
 	data.append(bbuff);
 	SendPacket(&data);
 }
@@ -636,46 +447,12 @@ void Session::HandleReadyForAccountDataTimes(WorldPacket & pck)
 
 void Session::HandleEnableMicrophoneOpcode(WorldPacket & pck)
 {
-#ifdef VOICE_CHAT
-	OUT_DEBUG("WORLD: Received CMSG_VOICE_SESSION_ENABLE with VOICE CHAT");
-	uint8 voice, mic;
-	pck >> voice >> mic;
-
-	WorldPacket data(SMSG_VOICE_SESSION_ENABLE, 2);
-	data << voice;
-	data << mic;
-	SendPacket(&data);
-#else
 	SKIP_READ_PACKET(pck);
-#endif
 }
 
 void Session::HandleVoiceChatQueryOpcode(WorldPacket & pck)
 {
-#ifdef VOICE_CHAT
-	uint8 type;
-	uint32 id; // I think this is channel crap, 5 is custom,
-
-	pck >> type >> id;
-
-/*	if(type == 5)
-	{
-		// custom channel
-		Channel * chn = channelmgr.GetChannel(id);
-
-		if(chn == NULL)
-			return;
-
-		if(chn->m_general || !chn->voice_enabled)
-			return;
-
-		chn->JoinVoiceChannel(_player);
-		chn->List(_player);
-		_player->watchedchannel = chn;
-	}*/
-#else
 	SKIP_READ_PACKET(pck);
-#endif
 }
 
 void Session::HandleRealmSplitQuery(WorldPacket & pck)

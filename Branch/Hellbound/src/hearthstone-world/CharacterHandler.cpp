@@ -865,7 +865,6 @@ void WorldSession::FullLogin(Player* plr)
 	CharacterDatabase.Execute ("UPDATE characters SET online = 1 WHERE guid = %u" , plr->GetLowGUID());
 
 	bool enter_world = true;
-#ifndef CLUSTERING
 	// Find our transporter and add us if we're on one.
 	if(plr->m_TransporterGUID != 0)
 	{
@@ -897,7 +896,6 @@ void WorldSession::FullLogin(Player* plr)
 			pTrans->AddPlayer(plr);
 		}
 	}
-#endif
 
 	if(plr->GetVehicle())
 		plr->GetVehicle()->RemovePassenger(plr);

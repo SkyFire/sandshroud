@@ -20,207 +20,42 @@
 #include "RStdAfx.h"
 
 initialiseSingleton(ClusterMgr);
+
 ClusterMgr::ClusterMgr()
 {
-	memset(SingleInstanceMaps, 0, sizeof(WServer*) * MAX_SINGLE_MAPID);
-	memset(WorkerServers, 0, sizeof(WServer*) * MAX_WORKER_SERVERS);
+	MasterControlServer = NULL;
 	m_maxInstanceId = 0;
 	m_maxWorkerServer = 0;
 	Log.Success("ClusterMgr", "Interface Created");
 
-	WServer::InitHandlers();
+	MasterServer::InitHandlers();
 }
 
-WServer * ClusterMgr::GetServerByInstanceId(uint32 InstanceId)
+MasterServer* ClusterMgr::CreateMasterServer(MasterServerSocket * s)
 {
-	InstanceMap::iterator itr = Instances.find(InstanceId);
-	return (itr == Instances.end()) ? 0 : itr->second->Server;
-}
-
-WServer * ClusterMgr::GetServerByMapId(uint32 MapId)
-{
-	ASSERT(IS_MAIN_MAP(MapId));
-	return SingleInstanceMaps[MapId]->Server;
-}
-
-Instance * ClusterMgr::GetInstanceByInstanceId(uint32 InstanceId)
-{
-	InstanceMap::iterator itr = Instances.find(InstanceId);
-	return (itr == Instances.end()) ? 0 : itr->second;
-}
-
-Instance * ClusterMgr::GetInstanceByMapId(uint32 MapId)
-{
-	ASSERT(IS_MAIN_MAP(MapId));
-	return SingleInstanceMaps[MapId];
-}
-
-Instance* ClusterMgr::GetAnyInstance()
-{
-	//
-	m_lock.AcquireReadLock();
-	for (uint32 i=0; i<MAX_SINGLE_MAPID; ++i)
-	{
-		if (SingleInstanceMaps[i] != NULL)
-		{
-			m_lock.ReleaseReadLock();
-			return SingleInstanceMaps[i];
-		}
-	}
-	m_lock.ReleaseReadLock();
-	return NULL;
-
-}
-
-Instance * ClusterMgr::GetPrototypeInstanceByMapId(uint32 MapId)
-{
-	m_lock.AcquireReadLock();
-	//lets go through all the instances of this map and find the one with the least instances :P
-	std::multimap<uint32, Instance*>::iterator itr = InstancedMaps.find(MapId);
-
-	if (itr == InstancedMaps.end())
-	{
-		m_lock.ReleaseReadLock();
+	if(MasterControlServer != NULL)
 		return NULL;
-	}
 
-	Instance* i = NULL;
-	uint32 min = 500000;
-	for (; itr != InstancedMaps.upper_bound(MapId); ++itr)
-	{
-		if (itr->second->MapCount < min)
-		{
-			min = itr->second->MapCount;
-			i = itr->second;
-		}
-	}
-
-	m_lock.ReleaseReadLock();
-	return i;
+	uint32 port = s->GetRemotePort();
+	Log.Notice("ClusterMgr", "Allocating Master Server to %s:%u", s->GetRemoteIP().c_str(), s->GetRemotePort());
+	MasterControlServer = new MasterServer(s, port);
+	return MasterControlServer;
 }
 
-WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
+void ClusterMgr::OnMasterServerDisconnect()
 {
-	/* find an id */
-	uint32 i;
-	for(i = 1; i < MAX_WORKER_SERVERS; ++i)
-	{
-		if(WorkerServers[i] == 0)
-			break;
-	}
-
-	if(i == MAX_WORKER_SERVERS)
-		return 0;		// No spaces
-
-	Log.Notice("ClusterMgr", "Allocating worker server %u to %s:%u", i, s->GetRemoteIP().c_str(), s->GetRemotePort());
-	WorkerServers[i] = new WServer(i, s);
-	if(m_maxWorkerServer <= i)
-		m_maxWorkerServer = i+1;
-	return WorkerServers[i];
-}
-
-void ClusterMgr::AllocateInitialInstances(WServer * server, vector<uint32>& preferred)
-{
-	vector<uint32> result;
-	result.reserve(10);
-
-	for(vector<uint32>::iterator itr = preferred.begin(); itr != preferred.end(); ++itr)
-	{
-		if(SingleInstanceMaps[*itr] == 0)
-		{
-			result.push_back(*itr);
-		}
-	}
-
-	for(vector<uint32>::iterator itr = result.begin(); itr != result.end(); ++itr)
-	{
-		CreateInstance(*itr, server);
-		if(IS_MAIN_MAP(*itr))
-			break; // Only make main map.
-	}
-}
-
-Instance * ClusterMgr::CreateInstance(uint32 MapId, WServer * server)
-{
-	Instance * pInstance = new Instance;
-	pInstance->InstanceId = ++m_maxInstanceId;
-	pInstance->MapId = MapId;
-	pInstance->Server = server;
-
-	Instances.insert( make_pair( pInstance->InstanceId, pInstance ) );
-
-	if(IS_MAIN_MAP(MapId))
-		SingleInstanceMaps[MapId] = pInstance;
-
-	/* tell the actual server to create the instance */
-	WorldPacket data(ISMSG_CREATE_INSTANCE, 8);
-	data << MapId << pInstance->InstanceId;
-	server->SendPacket(&data);
-	server->AddInstance(pInstance);
-	DEBUG_LOG("ClusterMgr", "Allocating instance %u on map %u to server %u", pInstance->InstanceId, pInstance->MapId, server->GetID());
-	return pInstance;
-}
-
-WServer * ClusterMgr::GetWorkerServerForNewInstance()
-{
-    WServer * lowest = 0;
-	int32 lowest_load = -1;
-
-	/* for now we'll just work with the instance count. in the future we might want to change this to
-	   use cpu load instead. */
-
-	for(uint32 i = 0; i < MAX_WORKER_SERVERS; ++i) {
-		if(WorkerServers[i] != 0) {
-			if((int32)WorkerServers[i]->GetInstanceCount() < lowest_load)
-			{
-				lowest = WorkerServers[i];
-				lowest_load = int32(WorkerServers[i]->GetInstanceCount());
-			}
-		}
-	}
-
-	return lowest;
-}
-
-/* create new instance based on template, or a saved instance */
-Instance * ClusterMgr::CreateInstance(uint32 InstanceId, uint32 MapId)
-{
-	/* pick a server for us :) */
-	WServer * server = GetWorkerServerForNewInstance();
-	if(!server) return 0;
-
-	ASSERT(GetInstance(InstanceId) == NULL);
-
-	/* bump up the max id if necessary */
-	if(m_maxInstanceId <= InstanceId)
-		m_maxInstanceId = InstanceId + 1;
-
-    Instance * pInstance = new Instance;
-	pInstance->InstanceId = InstanceId;
-	pInstance->MapId = MapId;
-	pInstance->Server = server;
-
-	Instances.insert( make_pair( InstanceId, pInstance ) );
-
-	/* tell the actual server to create the instance */
-	WorldPacket data(ISMSG_CREATE_INSTANCE, 8);
-	data << MapId << InstanceId;
-	server->SendPacket(&data);
-	server->AddInstance(pInstance);
-	DEBUG_LOG("ClusterMgr", "Allocating instance %u on map %u to server %u", pInstance->InstanceId, pInstance->MapId, server->GetID());
-	return pInstance;
+	delete MasterControlServer;
+	MasterControlServer = NULL;
 }
 
 void ClusterMgr::Update()
 {
-	for(uint32 i = 1; i < m_maxWorkerServer; i++)
-		if(WorkerServers[i])
-			WorkerServers[i]->Update();
+	if(MasterControlServer != NULL)
+		MasterControlServer->Update();
 }
 
-void ClusterMgr::DistributePacketToAll(WorldPacket * data, WServer * exclude)
+void ClusterMgr::SendPacketToMasterControl(WorldPacket * data)
 {
-	for(uint32 i = 0; i < m_maxWorkerServer; i++)
-		if(WorkerServers[i] && WorkerServers[i] != exclude)
-			WorkerServers[i]->SendPacket(data);
+	if(MasterControlServer != NULL)
+		MasterControlServer->SendPacket(data);
 }

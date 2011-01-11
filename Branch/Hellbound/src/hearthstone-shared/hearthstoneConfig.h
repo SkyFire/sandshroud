@@ -27,14 +27,6 @@
 #ifndef __HEARTHSTONECONFIG_H
 #define __HEARTHSTONECONFIG_H
 
-/** Enable/disable hearthstone world server debugging.
- * Enabling this will cause massive spam in the world server window, but will list
- * packets recieved and certian player information.
- * Default: Disabled
- */
-
-//#define _DEBUG 1
-
 /** Enable/disable hearthstone world server optimized player saving.
  * It is not yet complete, things have to be updated, and player account data needs to be fixed.
  * Player guilds need to be updated as well, not saving correctly :|
@@ -43,36 +35,7 @@
 
 //#define OPTIMIZED_PLAYER_SAVING 1
 
-/** Enable/disable Hearthstone world server cluster support.
- * Warning: Hearthstone will no longer function independantly when built in cluster mode.
- * It will require a realmserver to function.
- * As of last update, it is nowhere near complete, only enable for dev use.
- * Default: Disabled
- */
-//#define CLUSTERING 1
-
-#ifndef ENABLE_IMPROVED_TICKETSYSTEM
 #define GM_TICKET_MY_MASTER_COMPATIBLE
-#endif
-//#undef GM_TICKET_MY_MASTER_COMPATIBLE
-
-/** Use memory mapping for map files for faster access (let OS take care of caching)
- * (currently only available under windows)
- * Only recommended under X64 builds, X86 builds will most likely run out of address space.
- * Default: Disabled
- */
-
-//#define USE_MEMORY_MAPPING_FOR_MAPS
-
-/** Enable/disable Hearthstone's Voice Chat support.
- * While not completely finished (but close!) you can link your Hearthstone server to a voice chat
- * server (also compiled by default) and use the client's ingame voice chat function.
- * At the moment it is only good for joining, you can't leave a voice channel yet :P
- * Also, it only works for parties. Custom chat channels are not fully supported yet.
- * However, if you want to play around with it, feel free to enable this define.
- */
-
-//#define VOICE_CHAT 1
 
 /** Enable/disable movement compression.
  * This allows the server to compress long-range creatures movement into a buffer and then flush
@@ -87,14 +50,14 @@
 #define ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES 1
 
 /* Crow: Buffer saving.
- * Default: disabled
+ * Default: enabled
  */
 #define BUFFER_SAVING 1
 
 // Crow: This will nerf all Enchantments, making all of them pretty much unique internally.
 //#define NERF_ENCHANTS
 
-// Crow: Yea no, don't even try.
+// Crow: This is for Linux, not entirely suggested.
 //#define LOAD_LACRIMI
 
 #endif		// __HEARTHSTONECONFIG_H

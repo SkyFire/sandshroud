@@ -39,8 +39,13 @@
 #include <search.h>
 #include <fcntl.h>
 #include <signal.h>
+
 #include "../hearthstone-shared/Common.h"
 #include "../hearthstone-shared/svn_revision.h"
+
+#include "../hearthstone-dependencies/LogonOpcodes.h"
+#include "../hearthstone-dependencies/MasterOpcodes.h"
+
 #include "../hearthstone-shared/MersenneTwister.h"
 #include "../hearthstone-shared/WorldPacket.h"
 #include "../hearthstone-shared/Log.h"
@@ -85,20 +90,12 @@
 #include "../hearthstone-shared/BufferPool.h"
 #include "../hearthstone-shared/CallBack.h"
 #include "../hearthstone-shared/Storage.h"
-#include "../hearthstone-logonserver/LogonOpcodes.h"
-#include "../hearthstone-voicechat/hearthstone_opcodes.h"
 
 #include "NameTables.h"
 #include "UpdateFields.h"
 #include "UpdateMask.h"
 #include "Opcodes.h"
 #include "WorldStates.h"
-
-#ifdef CLUSTERING
-#include "../hearthstone-realmserver/Structures.h"
-#include "../hearthstone-realmserver/WorkerOpcodes.h"
-#endif
-
 #include "Packets.h"
 #include "CallScripting.h"
 #include "WordFilter.h"
@@ -185,11 +182,8 @@
 #include "StrandOfTheAncients.h"
 #include "IsleOfConquest.h"
 #include "filelog.h"
-#ifdef CLUSTERING
-	#include "WorkerServerClient.h"
-	#include "ClusterInterface.h"
-#endif
-
+#include "WorkerServerClient.h"
+#include "ClusterInterface.h"
 #include "CollideInterface.h"
 #include "NavMeshInterface.h"
 

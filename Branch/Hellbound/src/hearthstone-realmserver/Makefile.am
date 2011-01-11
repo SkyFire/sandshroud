@@ -15,7 +15,7 @@ Structures.h \
 WorkerOpcodes.h \
 WorkerServer.h \
 WorkerServerSocket.h \
-WorldSocket.h \
+ClientSocket.h \
 CharacterHandler.cpp \
 ClientManager.cpp \
 ClusterManager.cpp \
@@ -31,7 +31,7 @@ RStdAfx.cpp \
 Session.cpp \
 WorkerServer.cpp \
 WorkerServerSocket.cpp \
-WorldSocket.cpp 
+ClientSocket.cpp 
 	
 hearthstone_realmserver_LDADD = -lshared -lz
 
