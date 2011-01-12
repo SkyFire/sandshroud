@@ -623,14 +623,10 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 
 void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 {
-	CHECK_INWORLD_RETURN;
 	CHECK_PACKET_SIZE(recv_data, 4);
 
-	int i;
-	int32 statcount = 0;
 	uint32 itemid = 0;
 	recv_data >> itemid;
-
 	ItemPrototype *itemProto = ItemPrototypeStorage.LookupEntry(itemid);
 	if(!itemProto)
 	{
@@ -638,15 +634,16 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 		return;
 	}
 
+	int i;
+	int32 statcount = 0;
+	uint32 statcount2 = 0;
 	WorldPacket data(SMSG_ITEM_QUERY_SINGLE_RESPONSE, 100000);
 
 	LocalizedItem* li = (language>0) ? sLocalizationMgr.GetLocalizedItem(itemid, language) : NULL;
 
 	for(int i = 0; i < 10; i++)
-	{
 		if(itemProto->Stats[i].Type)
-			statcount = i + 1; // Crow Classic.
-	}
+			statcount++;
 
 	data << itemProto->ItemId;
 	data << itemProto->Class;
@@ -681,11 +678,19 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->MaxCount;
 	data << itemProto->ContainerSlots;
 	data << uint32(statcount);
-	for(i = 0; i < statcount; i++)
+	for(i = 0; i < 10; i++)
 	{
-		data << itemProto->Stats[i].Type;
-		data << itemProto->Stats[i].Value;
+		if(itemProto->Stats[i].Type)
+		{
+			data << itemProto->Stats[i].Type;
+			data << itemProto->Stats[i].Value;
+			statcount2++;
+		}
+
+		if(statcount2 == statcount)
+			break;
 	}
+
 	data << uint32(itemProto->ScalingStatsEntry);
 	data << uint32(itemProto->ScalingStatsFlag);
 	for(i = 0; i < 2; i++)

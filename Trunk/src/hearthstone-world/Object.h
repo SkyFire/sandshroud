@@ -116,10 +116,11 @@ typedef struct
 
 enum PHASEMODE
 {
-	ALL_PHASES = -1,
-	PHASE_1,
-	PHASE_2,
-	PHASE_3, // should be enough for the emulator to know about, but we can have more :P
+	ALL_PHASES	= -1,
+	PHASE_1		= 0x01,
+	PHASE_2		= 0x02,
+	PHASE_3		= 0x04,
+	PHASE_4		= 0x08 // should be enough for the emulator to know about, but we can have more :P
 };
 
 class WorldPacket;
@@ -524,12 +525,13 @@ public:
 	void EventSpellHit(Spell* pSpell);
 
 	bool PhasedCanInteract(Object* pObj);
-	bool HasPhase() { return m_phaseMode != 0; }
-	int32 GetPhase() { return m_phaseMode; }
-	bool IsInPhase(int32 phaseMode) { return ((m_phaseMode & phaseMode) != 0); };
+	int32 GetPhase() { return m_phaseMask; }
+	bool IsInPhase(int32 phaseMode) { return ((m_phaseMask & phaseMode) != 0); };
 	void EnablePhase(int32 phaseMode);
 	void DisablePhase(int32 phaseMode);
-	void SetPhase(int32 phase); // Don't fucking use this.
+
+	// Don't fucking use this.
+	void SetPhase(int32 phase);
 
 	Aura* m_phaseAura;
 
@@ -550,8 +552,7 @@ protected:
 	/* Main Function called by isInFront(); */
 	bool inArc(float Position1X, float Position1Y, float FOV, float Orientation, float Position2X, float Position2Y );
 
-	int32 m_phaseMode;
-	int32 m_phaseMapId; // -1 = Disregard?
+	int32 m_phaseMask;
 	LocationVector m_phaseLocation;
 	uint32 m_phaseDistanceLimit;
 

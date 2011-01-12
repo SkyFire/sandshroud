@@ -432,7 +432,7 @@ void Lacrimi::DumpStats()
 	if( !f )
 		return;
 
-	Log.Notice("Lacrimi", "Dumping stats...");
+	Log.Debug("Lacrimi", "Dumping stats...");
 
 	// Dump Header
 	fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -440,9 +440,9 @@ void Lacrimi::DumpStats()
 	fprintf(f, "<serverpage>\n");
 	fprintf(f, "  <status>\n");
 
-	uint32 races[RACE_TROLL+1];
+	uint32 races[RACE_DRAENEI+1];
 	uint32 classes[DRUID+1];
-	memset(&races[0], 0, sizeof(uint32)*(RACE_TROLL+1));
+	memset(&races[0], 0, sizeof(uint32)*(RACE_DRAENEI+1));
 	memset(&classes[0], 0, sizeof(uint32)*(DRUID+1));
 	std::deque<Player*> gms;
 	{
@@ -486,6 +486,7 @@ void Lacrimi::DumpStats()
 		AvgLat = count ? (float)((float)avg / (float)count) : 0;
 		GMCount = gm;
 
+		fprintf(f, "    <servername>%s</servername>\n", Config.RealmConfig.GetStringDefault("Realm1", "Name", "Test Realm").c_str());
 		fprintf(f, "    <uptime>%s</uptime>\n", uptime);
 		fprintf(f, "    <oplayers>%u</oplayers>\n", (unsigned int)sWorld.GetSessionCount());
 		fprintf(f, "    <cpu>%2.2f</cpu>\n", sWorld.GetCPUUsage(true));
@@ -504,7 +505,7 @@ void Lacrimi::DumpStats()
 	}
 
 	fprintf(f, "  </status>\n");
-	static const char * race_names[RACE_TROLL+1] = {
+	static const char * race_names[RACE_DRAENEI+1] = {
 		NULL,
 		"human",
 		"orc",
@@ -514,6 +515,9 @@ void Lacrimi::DumpStats()
 		"tauren",
 		"gnome",
 		"troll",
+		NULL,
+		"bloodelf",
+		"draenei",
 	};
 
 	static const char * class_names[DRUID+1] = {
@@ -533,7 +537,7 @@ void Lacrimi::DumpStats()
 	
 	fprintf(f, "  <statsummary>\n");
 	uint32 i;
-	for(i = 0; i <= RACE_TROLL; ++i)
+	for(i = 0; i <= RACE_DRAENEI; ++i)
 	{
 		if( race_names[i] != NULL )
 			fprintf(f, "    <%s>%u</%s>\n", race_names[i], races[i], race_names[i]);

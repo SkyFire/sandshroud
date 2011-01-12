@@ -3516,14 +3516,6 @@ bool Object::IsInLineOfSight(float x, float y, float z)
 
 bool Object::PhasedCanInteract(Object* pObj)
 {
-	bool ret = false;
-
-	if( m_phaseMode == ALL_PHASES || pObj->m_phaseMode == ALL_PHASES ) // -1: All phases. But perhaps this should be limited to GameObjects?
-		ret = true;
-
-	if( pObj->m_phaseMode & m_phaseMode || pObj->m_phaseMode == m_phaseMode )
-		ret = true;
-
 	Player* pObjI = IsPlayer() ? TO_PLAYER(this) : NULLPLR;
 	Player* pObjII = pObj->IsPlayer() ? TO_PLAYER(pObj) : NULLPLR;
 	if( IsPet() )
@@ -3535,7 +3527,13 @@ bool Object::PhasedCanInteract(Object* pObj)
 	if( pObjI && pObjII && GetMapId() == 609 && pObjI->GetTeam() != pObjII->GetTeam() )
 		return false;
 
-	return ret;
+	if( m_phaseMask == ALL_PHASES || pObj->m_phaseMask == ALL_PHASES ) // -1: All phases. But perhaps this should be limited to GameObjects?
+		return true;
+
+	if( pObj->m_phaseMask == m_phaseMask || pObj->m_phaseMask & m_phaseMask || m_phaseMask & pObj->m_phaseMask )
+		return true;
+
+	return false;
 }
 
 // Returns the base cost of a spell
