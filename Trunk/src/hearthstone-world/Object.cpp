@@ -3497,7 +3497,7 @@ bool Object::IsInLineOfSight(Object* pObj)
 		Tnoselevel = TO_PLAYER(pObj)->m_noseLevel;
 
 	if (GetMapMgr() && GetMapMgr()->CanUseCollision(this) && GetMapMgr()->CanUseCollision(pObj))
-		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + Onoselevel, pObj->GetPositionX(), pObj->GetPositionY(), pObj->GetPositionZ() + Tnoselevel) );
+		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + Onoselevel + GetFloatValue(UNIT_FIELD_HOVERHEIGHT), pObj->GetPositionX(), pObj->GetPositionY(), pObj->GetPositionZ() + Tnoselevel + pObj->GetFloatValue(UNIT_FIELD_HOVERHEIGHT)) );
 	else
 		return true;
 }
@@ -3509,7 +3509,7 @@ bool Object::IsInLineOfSight(float x, float y, float z)
 		Onoselevel = TO_PLAYER(this)->m_noseLevel;
 
 	if (GetMapMgr() && GetMapMgr()->CanUseCollision(this))
-		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + Onoselevel, x, y, z) );
+		return (CollideInterface.CheckLOS( GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ() + Onoselevel + GetFloatValue(UNIT_FIELD_HOVERHEIGHT), x, y, z) );
 	else
 		return true;
 }
