@@ -6883,7 +6883,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	pTotem->SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, displayID); //blizzlike :P
 	pTotem->SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 	pTotem->SetUInt32Value(UNIT_CREATED_BY_SPELL, GetSpellProto()->Id);
-	pTotem->SetPhase(p_caster->GetPhase());
+	pTotem->SetPhaseMask(p_caster->GetPhaseMask());
 	if( p_caster->IsPvPFlagged() )
 		pTotem->SetPvPFlag();
 
@@ -7298,7 +7298,7 @@ void Spell::SummonNonCombatPet(uint32 i)
 	pCreature->GetAIInterface()->disable_melee = true;
 	pCreature->bInvincible = true;
 	pCreature->PushToWorld(u_caster->GetMapMgr());
-	pCreature->SetPhase(u_caster->GetPhase());
+	pCreature->SetPhaseMask(u_caster->GetPhaseMask());
 	if( m_summonProperties->slot < 7 )
 	{
 		pCreature->SetSummonOwnerSlot(u_caster->GetGUID(), m_summonProperties->slot);
@@ -7489,7 +7489,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 	}
 	GoSummon->PushToWorld(m_caster->GetMapMgr());
 	GoSummon->SetSummoned(u_caster);
-	GoSummon->SetPhase(u_caster->GetPhase());
+	GoSummon->SetPhaseMask(u_caster->GetPhaseMask());
 	u_caster->m_ObjectSlots[slot] = GoSummon->GetUIdFromGUID();
 }
 
@@ -8339,7 +8339,7 @@ void Spell::SpellEffectTeleportToCaster(uint32 i)
 	float x = u_caster->GetPositionX();
 	float y = u_caster->GetPositionY();
 	float z = u_caster->GetPositionZ();
-	unitTarget->Teleport(x,y,z,u_caster->GetOrientation(),u_caster->GetPhase());
+	unitTarget->Teleport(x,y,z,u_caster->GetOrientation(),u_caster->GetPhaseMask());
 }
 
 void Spell::SpellEffectMilling(uint32 i)
@@ -8525,7 +8525,7 @@ void Spell::SummonTotemCopy(uint32 i)
 	pTotem->SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, displayID);
 	pTotem->SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0f);
 	pTotem->SetUInt32Value(UNIT_CREATED_BY_SPELL, GetSpellProto()->Id);
-	pTotem->SetPhase(u_caster->GetPhase());
+	pTotem->SetPhaseMask(u_caster->GetPhaseMask());
 	pTotem->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
 	if( u_caster->IsPvPFlagged() )
 		pTotem->SetPvPFlag();

@@ -761,7 +761,7 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		gs->y = y;
 		gs->z = z;
 		gs->state = go->GetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE);
-		gs->phase = chr->GetPhase();
+		gs->phase = chr->GetPhaseMask();
 		go->Load(gs);
 		go->SaveToDB();
 
@@ -770,7 +770,7 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
 	}
 
-	go->SetPhase(chr->GetPhase());
+	go->SetPhaseMask(chr->GetPhaseMask());
 	go->SetInstanceID(chr->GetInstanceID());
 	go->PushToWorld(m_session->GetPlayer()->GetMapMgr());
 	sWorld.LogGM(m_session, "Spawned gameobject %u at %f %f %f (%s)", EntryID, x, y, z, Save ? "Saved" : "Not Saved");
@@ -844,7 +844,7 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	GreenSystemMessage(m_session, "Size: %s%f|r", MSG_COLOR_LIGHTBLUE, GObj->GetFloatValue(OBJECT_FIELD_SCALE_X));
 	if(GObj->GetInfo())
 		GreenSystemMessage(m_session, "Name: %s%s|r", MSG_COLOR_LIGHTBLUE, GObj->GetInfo()->Name);
-	GreenSystemMessage(m_session, "Phase: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetPhase());
+	GreenSystemMessage(m_session, "Phase: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetPhaseMask());
 	SystemMessage(m_session, sstext.str().c_str());
 	return true;
 }

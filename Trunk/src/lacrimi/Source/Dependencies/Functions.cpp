@@ -43,7 +43,7 @@ Creature* CreateAndLoadCreature(MapMgr* mgr, uint32 entry, uint32 instancemode, 
 
 	if(phase == 0)
 		phase = 1;
-	ctr->SetPhase(phase);
+	ctr->SetPhaseMask(phase);
 	if(push == true)
 		ctr->PushToWorld(mgr);
 
@@ -70,7 +70,7 @@ GameObject* CreateAndLoadGameObject( MapMgr* mgr, uint32 entry, float x, float y
 
 	if(phase == 0)
 		phase = 1;
-	GO->SetPhase(phase);
+	GO->SetPhaseMask(phase);
 	if(push)
 		GO->PushToWorld(mgr);
 

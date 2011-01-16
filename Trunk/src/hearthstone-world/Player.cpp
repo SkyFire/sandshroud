@@ -1340,7 +1340,7 @@ void Player::_EventExploration()
 
 	if(AreaId != m_AreaID)
 	{
-		SetPhase(GetPhaseForArea(AreaId));
+		SetPhaseMask(GetPhaseForArea(AreaId));
 		m_AreaID = AreaId;
 		m_areaDBC = dbcArea.LookupEntryForced(m_AreaID);
 		if (m_areaDBC && m_areaDBC->ZoneId != 0)
@@ -3944,16 +3944,16 @@ void Player::OnPushToWorld()
 		if(info != NULL && (info->phasehorde != 0 && info->phasealliance != 0 ))
 		{
 			if(GetSession()->HasGMPermissions())
-				SetPhase(info->phasehorde | info->phasealliance, false);
+				SetPhaseMask(info->phasehorde | info->phasealliance, false);
 			else if(GetTeam())
-				SetPhase(info->phasehorde, false);
+				SetPhaseMask(info->phasehorde, false);
 			else
-				SetPhase(info->phasealliance, false);
+				SetPhaseMask(info->phasealliance, false);
 		}
 
 		if(info != NULL && (info->phasehorde == 0 && info->phasealliance == 0 ))
-			if(GetPhase() == 1)
-				SetPhase(GetPhaseForArea(GetAreaID()), false);
+			if(GetPhaseMask() == 1)
+				SetPhaseMask(GetPhaseForArea(GetAreaID()), false);
 	}
 
 	if(!sWorld.m_blockgmachievements || !GetSession()->HasGMPermissions())
@@ -9219,7 +9219,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 	int32 phase2 = GetPhaseForArea(GetAreaID(vec.x, vec.y, vec.z, MapID));
 	if(phase2 != 1)
 		phase = phase2;
-	SetPhase(phase, false);
+	SetPhaseMask(phase, false);
 
 	//all set...relocate
 	_Relocate(MapID, vec, true, force_new_world, InstanceID);
@@ -9251,7 +9251,7 @@ void Player::SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase)
 	int32 phase2 = GetPhaseForArea(GetAreaID());
 	if(phase2 != 1 && phase == 1)
 		phase = phase2;
-	SetPhase(phase, false);
+	SetPhaseMask(phase, false);
 
 	if(GetShapeShift())
 	{
@@ -9632,15 +9632,15 @@ void Player::OnWorldPortAck()
 		if(pPMapinfo->phasehorde != 0 && pPMapinfo->phasealliance !=0)
 		{
 			if(GetSession()->HasGMPermissions())
-				SetPhase(pPMapinfo->phasehorde | pPMapinfo->phasealliance);
+				SetPhaseMask(pPMapinfo->phasehorde | pPMapinfo->phasealliance);
 			else if(GetTeam())
-				SetPhase(pPMapinfo->phasehorde);
+				SetPhaseMask(pPMapinfo->phasehorde);
 			else
-				SetPhase(pPMapinfo->phasealliance);
+				SetPhaseMask(pPMapinfo->phasealliance);
 		}
 		if(info != NULL && (pPMapinfo->phasehorde == 0 && pPMapinfo->phasealliance == 0 ))
-			if(GetPhase() == 1)
-				SetPhase(GetPhaseForArea(GetAreaID()), false);
+			if(GetPhaseMask() == 1)
+				SetPhaseMask(GetPhaseForArea(GetAreaID()), false);
 
 		if(pPMapinfo->HasFlag(WMI_INSTANCE_WELCOME) && GetMapMgr())
 		{
@@ -13365,11 +13365,11 @@ void Player::_SaveAreaPhaseInfo(QueryBuffer* buff)
 	}
 }
 
-void Player::SetPhase(int32 phase, bool save)
+void Player::SetPhaseMask(int32 phase, bool save)
 {
-	LastPhase = GetPhase();
+	LastPhase = GetPhaseMask();
 
-	Object::SetPhase(phase);
+	Object::SetPhaseMask(phase);
 
 	if(IS_INSTANCE(GetMapId()))
 		return; // Don't save instance phases.
@@ -13400,7 +13400,7 @@ void Player::EnablePhase(int32 phaseMode, bool save)
 	if(IS_INSTANCE(GetMapId()))
 		return; // Don't save instance phases.
 
-	int32 phase = GetPhase();
+	int32 phase = GetPhaseMask();
 	if(areaphases[GetAreaID()] != NULL)
 		areaphases[GetAreaID()]->phase = phase;
 	else if(save && phase != 1)
@@ -13427,13 +13427,13 @@ void Player::DisablePhase(int32 phaseMode, bool save)
 	if(IS_INSTANCE(GetMapId()))
 		return; // Don't save instance phases.
 
-	int32 phase = GetPhase();
+	int32 phase = GetPhaseMask();
 	if(areaphases[GetAreaID()] != NULL)
 		areaphases[GetAreaID()]->phase = phase;
 	else if(save && phase != 1)
 	{
 		AreaPhaseData* APD = new AreaPhaseData();
-		APD->phase = GetPhase();
+		APD->phase = GetPhaseMask();
 		areaphases[GetAreaID()] = APD;
 	}
 
@@ -13729,7 +13729,7 @@ void Player::StartQuest(uint32 Id)
 	sQuestMgr.OnQuestAccepted(this,qst,NULL);
 
 	if(qst->start_phase != 0 )
-		SetPhase(qst->start_phase, true);
+		SetPhaseMask(qst->start_phase, true);
 
 	sHookInterface.OnQuestAccept(this, qst, NULL);
 }

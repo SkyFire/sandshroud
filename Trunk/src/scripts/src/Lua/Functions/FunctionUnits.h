@@ -3662,7 +3662,7 @@ int LuaUnit_SpawnVehicle(lua_State * L, Unit * ptr)
 	float o = CHECK_FLOAT(L,5);
 	uint32 faction = (uint32)luaL_checknumber(L,6);
 	uint32 duration = (uint32)luaL_checknumber(L,7);
-	uint32 phase = luaL_optint(L, 8, ptr->GetPhase());
+	uint32 phase = luaL_optint(L, 8, ptr->GetPhaseMask());
 	uint32 mode = ptr->GetMapMgr()->iInstanceMode;
 
 	CreatureProto * proto = CreatureProtoStorage.LookupEntry(entry);
@@ -3672,7 +3672,7 @@ int LuaUnit_SpawnVehicle(lua_State * L, Unit * ptr)
 		Vehicle * p = ptr->GetMapMgr()->CreateVehicle(entry);
 		ASSERT(p);
 		p->Load(proto, mode, x, y, z, o);
-		p->SetPhase(phase);
+		p->SetPhaseMask(phase);
 		p->PushToWorld(ptr->GetMapMgr());
 		Lunar<Unit>::push(L,p);
 	}
@@ -5304,7 +5304,7 @@ int LuaUnit_PhaseSet(lua_State * L, Unit * ptr)
 	case TYPEID_UNIT:
 		{
 			Creature* crt = TO_CREATURE(ptr);
-			crt->SetPhase(newphase);
+			crt->SetPhaseMask(newphase);
 			if (crt->m_spawn)
 				crt->m_spawn->phase = newphase;
 
@@ -5317,7 +5317,7 @@ int LuaUnit_PhaseSet(lua_State * L, Unit * ptr)
 
 	case TYPEID_PLAYER:
 		{
-			TO_PLAYER(ptr)->SetPhase(newphase);
+			TO_PLAYER(ptr)->SetPhaseMask(newphase);
 		}break;
 
 	default:
@@ -5372,7 +5372,7 @@ int LuaUnit_PhaseDelete(lua_State * L, Unit * ptr)
 			Creature* crt = TO_CREATURE(ptr);
 			crt->DisablePhase(newphase);
 			if (crt->m_spawn)
-				crt->m_spawn->phase |= newphase;
+				crt->m_spawn->phase &= newphase;
 
 			if(Save)
 			{
@@ -5393,10 +5393,18 @@ int LuaUnit_PhaseDelete(lua_State * L, Unit * ptr)
 	return 1;
 }
 
+int LuaUnit_GetPhaseMask(lua_State * L, Unit * ptr);
+
 int LuaUnit_GetPhase(lua_State * L, Unit * ptr)
 {	// GetPhase
+	printf("Use of GetPhase. Use GetPhaseMask in the future.");
+	return LuaUnit_GetPhaseMask(L, ptr);
+}
+
+int LuaUnit_GetPhaseMask(lua_State * L, Unit * ptr)
+{	// GetPhaseMask
 	TEST_UNITPLAYER();
-	lua_pushnumber(L, ptr->GetPhase());
+	lua_pushnumber(L, ptr->GetPhaseMask());
 	return 1;
 }
 

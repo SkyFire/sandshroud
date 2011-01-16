@@ -182,15 +182,15 @@ bool ChatHandler::HandleDebugSetPhase(const char* args, WorldSession *m_session)
 	}
 	if(phaseId == 0)
 	{
-		pUnit->SetPhase(1);
+		pUnit->SetPhaseMask(1);
 		m_session->GetPlayer()->BroadcastMessage("Resetting Phase.");
 		return true;
 	}
 
 	if(pUnit->IsPlayer())
-		TO_PLAYER(pUnit)->SetPhase( phaseId, (save ? true : false) );
+		TO_PLAYER(pUnit)->SetPhaseMask( phaseId, (save ? true : false) );
 	else
-		pUnit->SetPhase( phaseId );
+		pUnit->SetPhaseMask( phaseId );
 	m_session->GetPlayer()->BroadcastMessage("Target's phase altered successfully.");
 	return true;
 }

@@ -331,7 +331,7 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ", "
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+1] << ", "
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ", "
-		<< m_phaseMode << ", "
+		<< m_phaseMask << ", "
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0) << ", "
 		<< (uint32)GetCanMove() << " )";
 
@@ -376,7 +376,7 @@ void Creature::SaveToFile(bool saveposition)
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+1] << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ","
-		<< m_phaseMode << ","
+		<< m_phaseMask << ","
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
 		<< (uint8)CanMove << ")";
 		log->WriteToLog(logreplace.str().c_str());
@@ -415,7 +415,7 @@ void Creature::SaveToFile(bool saveposition)
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+1] << ","
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ","
-		<< m_phaseMode << ","
+		<< m_phaseMask << ","
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
 		<< (uint8)CanMove << ")";
 		logupdate << "Where id = ";
@@ -907,7 +907,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	m_flySpeed = proto->fly_speed;
 
 	CanMove = spawn->CanMove; // Set movement info
-	m_phaseMode = spawn->phase;
+	m_phaseMask = spawn->phase;
 
 	original_emotestate = spawn->emote_state;
 	original_MountedDisplayID = spawn->MountedDisplayID;

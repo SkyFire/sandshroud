@@ -525,15 +525,16 @@ public:
 	void EventSpellHit(Spell* pSpell);
 
 	bool PhasedCanInteract(Object* pObj);
-	int32 GetPhase() { return m_phaseMask; }
+	int32 GetPhaseMask() { return m_phaseMask; }
 	bool IsInPhase(int32 phaseMode) { return ((m_phaseMask & phaseMode) != 0); };
 	void EnablePhase(int32 phaseMode);
 	void DisablePhase(int32 phaseMode);
 
 	// Don't fucking use this.
-	void SetPhase(int32 phase);
+	void SetPhaseMask(int32 phase);
 
 	Aura* m_phaseAura;
+	bool OwnPhase; // Players only really.
 
 protected:
 	Object (  );

@@ -531,7 +531,8 @@ bool ChatHandler::HandleNpcInfoCommand(const char *args, WorldSession *m_session
 
 	ColorSystemMessage(m_session, MSG_COLOR_RED, "Entry ID: %u", crt->GetUInt32Value(OBJECT_FIELD_ENTRY));
 	ColorSystemMessage(m_session, MSG_COLOR_RED, "SQL Entry ID: %u", crt->GetSQL_id());
-	ColorSystemMessage(m_session, MSG_COLOR_RED, "Phase: %u", crt->GetPhase());
+	ColorSystemMessage(m_session, MSG_COLOR_RED, "Phase: %u", crt->GetPhaseMask());
+
 	// show byte
 	std::stringstream sstext;
 	uint32 theBytes = crt->GetUInt32Value(UNIT_FIELD_BYTES_0);
@@ -2152,14 +2153,14 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 			p->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f);
 	}
 
-	p->SetPhase(plr->GetPhase());
+	p->SetPhaseMask(plr->GetPhaseMask());
 	p->PushToWorld(plr->GetMapMgr());
 	
 	if(spVehicle)
 		TO_VEHICLE(p)->ChangePowerType();//Hate to do this but it is needed...
 
 	BlueSystemMessage(m_session, "Spawned a creature `%s` with entry %u at %f %f %f on map %u in phase %u", info->Name,
-		entry, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetMapId(), plr->GetPhase());
+		entry, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetMapId(), plr->GetPhaseMask());
 
 	// Save it to the database.
 	if( save )

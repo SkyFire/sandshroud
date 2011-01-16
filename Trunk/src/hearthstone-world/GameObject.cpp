@@ -276,7 +276,7 @@ void GameObject::SaveToDB()
 		<< GetUInt32Value(GAMEOBJECT_FLAGS) << ","
 		<< GetUInt32Value(GAMEOBJECT_FACTION) << ","
 		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
-		<< m_phaseMode << ")";
+		<< m_phaseMask << ")";
 
 	if(sWorld.QueryLog)
 		SaveToFile(ss);
@@ -309,7 +309,7 @@ void GameObject::Export(std::stringstream & name)
 		<< GetUInt32Value(GAMEOBJECT_FLAGS) << ","
 		<< GetUInt32Value(GAMEOBJECT_FACTION) << ","
 		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
-		<< m_phaseMode << ")";
+		<< m_phaseMask << ")";
 	FILE * OutFile;
 
 	OutFile = fopen(name.str().c_str(), "wb");
@@ -431,7 +431,7 @@ bool GameObject::Load(GOSpawn *spawn)
 	if(!CreateFromProto(spawn->entry,0,spawn->x,spawn->y,spawn->z,spawn->facing,spawn->orientation1,spawn->orientation2,spawn->orientation3,spawn->orientation4))
 		return false;
 
-	m_phaseMode = spawn->phase;
+	m_phaseMask = spawn->phase;
 	m_spawn = spawn;
 	SetFlags(spawn->flags);
 	SetState(spawn->state);

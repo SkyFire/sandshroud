@@ -81,7 +81,7 @@ GameObject* MapScriptInterface::SpawnGameObject(uint32 Entry, float cX, float cY
 		return NULLGOB;
 
 	pGameObject->SetInstanceID(mapMgr->GetInstanceID());
-	pGameObject->SetPhase(1);
+	pGameObject->SetPhaseMask(1);
 
 	if(AddToWorld)
 		pGameObject->PushToWorld(mapMgr);

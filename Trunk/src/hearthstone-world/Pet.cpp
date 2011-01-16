@@ -241,7 +241,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	//maybe we should use speed from the template we created the creature ?
 	m_base_runSpeed = m_runSpeed = owner->m_base_runSpeed; //should we be able to keep up with master ?
 	m_base_walkSpeed = m_walkSpeed = owner->m_base_walkSpeed; //should we be able to keep up with master ?
-	SetPhase(owner->GetPhase());
+	SetPhaseMask(owner->GetPhaseMask());
 	InitializeMe();
 }
 

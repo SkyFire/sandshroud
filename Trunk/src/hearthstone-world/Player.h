@@ -1645,7 +1645,7 @@ public:
 	void _SaveAreaPhaseInfo(QueryBuffer* buff);
 	void EnablePhase(int32 phaseMode, bool save = false);
 	void DisablePhase(int32 phaseMode, bool save = false);
-	void SetPhase(int32 phase, bool save = false);
+	void SetPhaseMask(int32 phase, bool save = false);
 	int32 GetPhaseForArea(uint32 areaid);
 	map<uint32, AreaPhaseData*> areaphases; // Map<Areaid, AreaPhaseData>
 

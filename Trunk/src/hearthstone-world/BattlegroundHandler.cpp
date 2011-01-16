@@ -47,7 +47,7 @@ void WorldSession::HandleBattlefieldPortOpcode(WorldPacket &recv_data)
 				}
 
 				GetPlayer()->m_pendingBattleground[i]->PortPlayer(GetPlayer(),false);
-				GetPlayer()->SetPhase(1);
+				GetPlayer()->SetPhaseMask(1);
 				return;
 			}
 		}

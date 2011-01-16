@@ -9946,9 +9946,9 @@ void Aura::SpellAuraSetPhase(bool apply)
 	else
 	{
 		if(m_target->IsPlayer())
-			m_target->SetPhase(1);
+			m_target->SetPhaseMask(1);
 		else
-			m_target->SetPhase(1);
+			m_target->SetPhaseMask(1);
 
 		m_target->m_phaseAura = NULLAURA;
 	}
