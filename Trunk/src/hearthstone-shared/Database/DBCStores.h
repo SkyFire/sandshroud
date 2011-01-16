@@ -500,6 +500,27 @@ struct Lock
 	//uint32 unk[8]; //unknown
 };
 
+struct LookingForGroup
+{
+	uint32 ID;			// 0
+//	char* name[16];		// 1-17 Name lang
+	uint32 minlevel;	// 18
+	uint32 maxlevel;	// 19
+	uint32 reclevel;	// 20
+	uint32 recminlevel;	// 21
+	uint32 recmaxlevel;	// 22
+	int32 map;			// 23
+	uint32 difficulty;	// 24
+//	uint32 unk;			// 25
+	uint32 type;		// 26
+//	int32 unk2;			// 27
+//	char* unk3;			// 28
+	uint32 expansion;	// 29
+//	uint32 unk4;		// 30
+	uint32 grouptype;	// 31
+//	char* desc[16];		// 32-47 Description
+};
+
 struct emoteentry
 {
 	uint32 Id;
@@ -1752,6 +1773,7 @@ extern SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
 extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 extern SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
 extern SERVER_DECL DBCStorage<Lock> dbcLock;
+extern SERVER_DECL DBCStorage<LookingForGroup> dbcLookingForGroup;
 extern SERVER_DECL DBCStorage<SpellEntry> dbcSpell;
 extern SERVER_DECL DBCStorage<SpellDuration> dbcSpellDuration;
 extern SERVER_DECL DBCStorage<SpellRange> dbcSpellRange;

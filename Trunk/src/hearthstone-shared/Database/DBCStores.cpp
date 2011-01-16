@@ -32,6 +32,7 @@ SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
 SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
 SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
 SERVER_DECL DBCStorage<Lock> dbcLock;
+SERVER_DECL DBCStorage<LookingForGroup> dbcLookingForGroup;
 SERVER_DECL DBCStorage<SpellEntry> dbcSpell;
 SERVER_DECL DBCStorage<SpellDuration> dbcSpellDuration;
 SERVER_DECL DBCStorage<SpellRange> dbcSpellRange;
@@ -94,6 +95,7 @@ const char* AreaGroupFormat="niiiiiii";
 const char* CurrencyTypesEntryFormat = "xnxu";
 const char* ItemSetFormat = "uxxxxxxxxxxxxxxxxxuuuuuuuuuuxxxxxxxuuuuuuuuuuuuuuuuuu";
 const char* LockFormat = "uuuuuuuuuuuuuuuuuuuuuuuuuxxxxxxxx";
+const char* LFGDungeonsFormat = "uxxxxxxxxxxxxxxxxxuuuuuiuxuxxuxuxxxxxxxxxxxxxxxxx";
 const char* EmoteEntryFormat = "uxuxxxxxxxxxxxxxxxx";
 const char* skilllinespellFormat = "uuuuuxxuuuuuxx";
 const char* EnchantEntrYFormat = "uxuuuuuuuuuuuusxxxxxxxxxxxxxxxxuuuuxxx";
@@ -190,6 +192,7 @@ const char* spellentryFormat =
 	"u" // PowerDisplayId
 	"xxxx"// Unk
 	"u"; // SpellDifficultyID
+
 const char* spelldifficultyFormat = "uuuuu";
 const char* itemFormat = "uuuiiuuu";
 const char* itemextendedcostFormat = "uuuuuuuuuuuuuuux";
@@ -390,6 +393,8 @@ bool LoadDBCs(const char* datapath)
 	LOAD_DBC(format("%s/ItemRandomSuffix.dbc", datapath).c_str(), itemrandomsuffixformat, true, dbcItemRandomSuffix, false);
 	/* Needed for: */
 	LOAD_DBC(format("%s/Lock.dbc", datapath).c_str(), LockFormat, true, dbcLock, false);
+	/* Needed for: LFG and Random dungeon calculations */
+	LOAD_DBC(format("%s/LFGDungeons.dbc", datapath).c_str(), LFGDungeonsFormat, true, dbcLookingForGroup, false);
 	/* Needed for: */
 	LOAD_DBC(format("%s/Map.dbc", datapath).c_str(), mapentryFormat, true, dbcMap, true);
 	/* Needed for: */

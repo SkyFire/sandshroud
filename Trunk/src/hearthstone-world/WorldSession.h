@@ -210,6 +210,14 @@ public:
 	/* Acct flags */
 	void SetAccountFlags(uint32 flags) { _accountFlags = flags; }
 	bool HasFlag(uint32 flag) { return (_accountFlags & flag) != 0; }
+	uint32 GetHighestExpansion() 
+	{
+		if(HasFlag(ACCOUNT_FLAG_XPACK_02))
+			return 2;
+		if(HasFlag(ACCOUNT_FLAG_XPACK_01))
+			return 1;
+		return 0;
+	};
 
 	/* GM Permission System */
 	void LoadSecurity(std::string securitystring);

@@ -438,7 +438,8 @@ bool World::SetInitialWorldSettings()
 	new ObjectMgr;
 	new QuestMgr;
 	new LootMgr;
-	new LfgMgr;
+	LfgMgr* LFGMGR = new LfgMgr;
+	LFGMGR->LoadRandomDungeonRewards();
 	new WeatherMgr;
 	new TaxiMgr;
 	new AddonMgr;
