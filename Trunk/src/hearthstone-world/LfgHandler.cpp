@@ -29,14 +29,14 @@ void WorldSession::HandleLFDPlrLockOpcode( WorldPacket& recv_data )
 	uint32 level = _player->getLevel();
 	DungeonSet LevelDungeonSet = sLfgMgr.GetLevelSet(level);
 	for (itr = LevelDungeonSet.begin(); itr != LevelDungeonSet.end(); itr++)
-    {
+	{
 		dungeon = dbcLookingForGroup.LookupEntry(*itr);
 		if (dungeon != NULL && dungeon->type == LFG_RANDOM
 			&& dungeon->expansion <= GetHighestExpansion()
 			&& dungeon->minlevel <= level && level <= dungeon->maxlevel)
 			randomDungeonSet.insert(dungeon->ID);
 		dungeon = NULL;
-    }
+	}
 
 	// Crow: Confirmed structure below
 	WorldPacket data(SMSG_LFD_PLAYER_LOCK_INFO_RESPONSE, 400);
@@ -44,15 +44,16 @@ void WorldSession::HandleLFDPlrLockOpcode( WorldPacket& recv_data )
 	data << randomsize;
 	for(itr = randomDungeonSet.begin(); itr != randomDungeonSet.end(); itr++)
 	{
-		data << uint32(*itr);
+		dungeon = dbcLookingForGroup.LookupEntry(*itr);
+		data << uint32(dungeon->GetEntry());
 
 		LfgReward* reward = sLfgMgr.GetLFGReward(*itr);
 		Quest* QuestReward = NULL;
 		uint8 done = 0;
-		if (reward)
+		if(reward)
 		{
 			QuestReward = QuestStorage.LookupEntry(reward->reward[0].QuestId);
-			if (QuestReward)
+			if(QuestReward)
 			{
 				done = _player->HasFinishedQuest(reward->reward[0].QuestId);
 				if(!done)
@@ -61,6 +62,7 @@ void WorldSession::HandleLFDPlrLockOpcode( WorldPacket& recv_data )
 					QuestReward = QuestStorage.LookupEntry(reward->reward[1].QuestId);
 			}
 		}
+
 		if (QuestReward)
 		{
 			data << uint8(done);

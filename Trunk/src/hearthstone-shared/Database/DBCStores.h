@@ -519,6 +519,8 @@ struct LookingForGroup
 //	uint32 unk4;		// 30
 	uint32 grouptype;	// 31
 //	char* desc[16];		// 32-47 Description
+
+	uint32 GetEntry() const { return ID + (type << 24); };
 };
 
 struct emoteentry
