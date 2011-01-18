@@ -1611,7 +1611,7 @@ void WorldSession::SendGossipForObject(Object* pObject)
 		{
 			Creature* TalkingWith = TO_CREATURE(pObject);
 			if(!TalkingWith)
-				return; // TODO: GAMEOBJECTS
+				return;
 
 			//stop when talked to for 3 min
 			if(TalkingWith->GetAIInterface())

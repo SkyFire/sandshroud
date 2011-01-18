@@ -7395,10 +7395,10 @@ void Unit::knockback(int32 basepoint, uint32 miscvalue, bool disengage )
 	}
 }
 
-void Unit::Teleport(float x, float y, float z, float O, uint32 phase)
+void Unit::Teleport(float x, float y, float z, float o, uint32 phase)
 {
 	if(IsPlayer())
-		TO_PLAYER(this)->SafeTeleport(GetMapId(), GetInstanceID(), x,y,z,O,phase);
+		TO_PLAYER(this)->SafeTeleport(GetMapId(), GetInstanceID(), x,y,z, o,phase);
 	else
 	{
 		WorldPacket data(SMSG_MONSTER_MOVE, 50);
@@ -7414,7 +7414,7 @@ void Unit::Teleport(float x, float y, float z, float O, uint32 phase)
 		data << uint32(1);
 		data << x << y << z;
 		SendMessageToSet(&data, true);
-		SetPosition( x, y, z, O );
+		SetPosition( x, y, z, o );
 	}
 }
 
@@ -7680,4 +7680,13 @@ bool Unit::CanEnterVehicle(Player * requester)
 			return false;
 	}
 	return true;
+}
+
+bool Unit::IsSitting()
+{
+	uint8 s = getStandState();
+	return
+	s == STANDSTATE_SIT_CHAIR || s == STANDSTATE_SIT_LOW_CHAIR  ||
+	s == STANDSTATE_SIT_MEDIUM_CHAIR || s == STANDSTATE_SIT_HIGH_CHAIR ||
+	s == STANDSTATE_SIT;
 }

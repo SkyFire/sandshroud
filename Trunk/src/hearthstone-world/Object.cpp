@@ -371,7 +371,7 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 	return vmapheight+0.00321f; // We have a direct offset*/
 }
 
-void Object::SetPhaseMask(int32 phase)
+void Object::SetPhaseMask(uint32 phase)
 {
 	m_phaseMask = phase;
 
@@ -380,7 +380,7 @@ void Object::SetPhaseMask(int32 phase)
 	SendMessageToSet(&data, (IsPlayer() ? true : false));
 }
 
-void Object::EnablePhase(int32 phaseMode)
+void Object::EnablePhase(uint32 phaseMode)
 {
 	m_phaseMask |= phaseMode;
 
@@ -389,7 +389,7 @@ void Object::EnablePhase(int32 phaseMode)
 	SendMessageToSet(&data, (IsPlayer() ? true : false));
 }
 
-void Object::DisablePhase(int32 phaseMode)
+void Object::DisablePhase(uint32 phaseMode)
 {
 	m_phaseMask &= ~phaseMode;
 

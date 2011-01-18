@@ -293,6 +293,8 @@ public:
 			m_Go_Uint32Values[id] = value;
 	};
 
+	void Use(Player *p);
+
 protected:
 	bool m_summonedGo;
 	bool m_deleted;
@@ -300,6 +302,8 @@ protected:
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
 	uint32 m_Go_Uint32Values[GO_UINT32_MAX]; // Crow: We could probably get away with using doubles...
+	typedef std::map<uint32,uint64> ChairSlotAndUser;
+	ChairSlotAndUser ChairListSlots;
 };
 
 #endif

@@ -52,6 +52,7 @@ GameObject::GameObject(uint64 guid)
 	initiated = false;
 	memset(m_Go_Uint32Values, 0, sizeof(uint32)*GO_UINT32_MAX);
 	m_Go_Uint32Values[GO_UINT32_MINES_REMAINING] = 1;
+	ChairListSlots.clear();
 }
 
 GameObject::~GameObject()
@@ -926,4 +927,388 @@ void GameObject::Destroy()
 	else
 		SetDisplayId(pInfo->Unknown1);
 }
+#define OPEN_CHEST 11437
+void GameObject::Use(Player *p)
+{
+	Spell* spell = NULLSPELL;
+	SpellEntry *spellInfo = NULL;
+	SpellCastTargets targets;
+	GameObjectInfo *goinfo= GetInfo();
+	if (!goinfo)
+		return;
 
+	uint32 type = GetType();
+
+	CALL_GO_SCRIPT_EVENT(this, OnActivate)(p);
+	CALL_INSTANCE_SCRIPT_EVENT( p->GetMapMgr(), OnGameObjectActivate )( this, p );
+
+	switch (type)
+	{
+	case GAMEOBJECT_TYPE_CHAIR:
+		{
+			if( p->IsMounted() )
+				p->RemoveAura( p->m_MountSpellId );
+			else
+			{
+				p->SetLastRunSpeed(0.0f);
+				p->UpdateSpeed();
+			}
+
+			if (!ChairListSlots.size())
+				if (goinfo->SpellFocus > 0)
+					for (uint32 i = 0; i < goinfo->SpellFocus; ++i)
+						ChairListSlots[i] = 0;
+				else
+					ChairListSlots[0] = 0;
+
+			float lowestDist = 90.0f;
+			
+			uint32 nearest_slot = 0;
+			float x_lowest = GetPositionX();
+			float y_lowest = GetPositionY();
+
+			float orthogonalOrientation = GetOrientation()+M_PI*0.5f;
+			bool found_free_slot = false;
+			for (ChairSlotAndUser::iterator itr = ChairListSlots.begin(); itr != ChairListSlots.end(); ++itr)
+			{
+				float size = GetFloatValue(OBJECT_FIELD_SCALE_X);
+				float relativeDistance = (size*itr->first)-(size*(goinfo->SpellFocus-1)/2.0f);
+
+				float x_i = GetPositionX() + relativeDistance * cos(orthogonalOrientation);
+				float y_i = GetPositionY() + relativeDistance * sin(orthogonalOrientation);
+
+				if (itr->second)
+					if (Player* ChairUser = objmgr.GetPlayer(itr->second))
+						if (ChairUser->IsSitting() && sqrt(ChairUser->GetDistance2dSq(x_i, y_i)) < 0.1f)
+							continue;
+						else
+							itr->second = 0;
+					else
+						itr->second = 0;
+
+				found_free_slot = true;
+
+				float thisDistance = p->GetDistance2dSq(x_i, y_i);
+
+				if (thisDistance <= lowestDist)
+				{
+					nearest_slot = itr->first;
+					lowestDist = thisDistance;
+					x_lowest = x_i;
+					y_lowest = y_i;
+				}
+			}
+
+			if (found_free_slot)
+			{
+				ChairSlotAndUser::iterator itr = ChairListSlots.find(nearest_slot);
+				if (itr != ChairListSlots.end())
+				{
+					itr->second = p->GetGUID();
+					p->Teleport( x_lowest, y_lowest, GetPositionZ(), GetOrientation(), GetPhaseMask());
+					p->SetStandState(STANDSTATE_SIT_LOW_CHAIR+goinfo->sound1);
+					return;
+				}
+			}
+		}break;
+	case GAMEOBJECT_TYPE_CHEST://cast da spell
+		{
+			spellInfo = dbcSpell.LookupEntry( OPEN_CHEST );
+			spell = (new Spell(p, spellInfo, true, NULLAURA));
+			p->SetCurrentSpell(spell);
+			targets.m_unitTarget = GetGUID();
+			spell->prepare(&targets);
+		}break;
+	case GAMEOBJECT_TYPE_FISHINGNODE:
+		{
+			UseFishingNode(p);
+		}break;
+	case GAMEOBJECT_TYPE_DOOR:
+		{
+			// door
+			if((GetState() == 1) && (GetFlags() == 33))
+				EventCloseDoor();
+			else
+			{
+				SetFlags(33);
+				SetState(0);
+				sEventMgr.AddEvent(this,&GameObject::EventCloseDoor,EVENT_GAMEOBJECT_DOOR_CLOSE,20000,1,0);
+			}
+		}break;
+	case GAMEOBJECT_TYPE_FLAGSTAND:
+		{
+			// battleground/warsong gulch flag
+			if(p->m_bg)
+			{
+				if( p->m_stealth )
+					p->RemoveAura( p->m_stealth );
+
+				if( p->m_MountSpellId )
+					p->RemoveAura( p->m_MountSpellId );
+
+				if( p->GetVehicle() )
+					p->GetVehicle()->RemovePassenger( p );
+
+				if(!p->m_bgFlagIneligible)
+					p->m_bg->HookFlagStand(p, this);
+			}
+			else
+				sLog.outError("Gameobject Type FlagStand activated while the player is not in a battleground, entry %u", goinfo->ID);
+		}break;
+	case GAMEOBJECT_TYPE_FLAGDROP:
+		{
+			// Dropped flag
+			if(p->m_bg)
+			{
+				if( p->m_stealth )
+					p->RemoveAura( p->m_stealth );
+
+				if( p->m_MountSpellId )
+					p->RemoveAura( p->m_MountSpellId );
+
+				if( p->GetVehicle() )
+					p->GetVehicle()->RemovePassenger( p );
+
+				p->m_bg->HookFlagDrop(p, this);
+			}
+			else
+				sLog.outError("Gameobject Type Flag Drop activated while the player is not in a battleground, entry %u", goinfo->ID);
+		}break;
+	case GAMEOBJECT_TYPE_QUESTGIVER:
+		{
+			// Questgiver
+			if(HasQuests())
+				sQuestMgr.OnActivateQuestGiver(this, p);
+			else
+				sLog.outError("Gameobject Type Questgiver doesn't have any quests entry %u (May be false positive if object has a script)", goinfo->ID);
+		}break;
+	case GAMEOBJECT_TYPE_SPELLCASTER:
+		{
+			SpellEntry *info = dbcSpell.LookupEntry(goinfo->SpellFocus);
+			if(!info)
+			{
+				sLog.outError("Gameobject Type Spellcaster doesn't have a spell to cast entry %u", goinfo->ID);
+				return;
+			}
+			Spell* spell(new Spell(p, info, false, NULLAURA));
+			SpellCastTargets targets;
+			targets.m_unitTarget = p->GetGUID();
+			spell->prepare(&targets);
+			if(charges > 0 && !--charges)
+				ExpireAndDelete();
+		}break;
+	case GAMEOBJECT_TYPE_RITUAL:
+		{
+			// store the members in the ritual, cast sacrifice spell, and summon.
+			uint32 i = 0;
+			if(!m_ritualmembers || !GetGOui32Value(GO_UINT32_RIT_SPELL) || !GetGOui32Value(GO_UINT32_M_RIT_CASTER))
+				return;
+
+			for(i=0;i<goinfo->SpellFocus;++i)
+			{
+				if(!m_ritualmembers[i])
+				{
+					m_ritualmembers[i] = p->GetLowGUID();
+					p->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, GetGUID());
+					p->SetUInt32Value(UNIT_CHANNEL_SPELL, GetGOui32Value(GO_UINT32_RIT_SPELL));
+					break;
+				}else if(m_ritualmembers[i] == p->GetLowGUID())
+				{
+					// we're deselecting :(
+					m_ritualmembers[i] = 0;
+					p->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
+					p->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
+					return;
+				}
+			}
+
+			if(i == goinfo->SpellFocus - 1)
+			{
+				SetGOui32Value(GO_UINT32_RIT_SPELL, 0);
+				Player* plr;
+				for(i=0;i<goinfo->SpellFocus;++i)
+				{
+					plr = p->GetMapMgr()->GetPlayer(m_ritualmembers[i]);
+					if(plr!=NULL)
+					{
+						plr->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
+						plr->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
+					}
+				}
+
+				SpellEntry *info = NULL;
+				switch( goinfo->ID )
+				{
+				case 36727:// summon portal
+					{
+						if(!GetGOui32Value(GO_UINT32_M_RIT_TARGET))
+							return;
+
+						info = dbcSpell.LookupEntry(goinfo->sound1);
+						if(!info)
+							break;
+						Player* target = p->GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_TARGET));
+						if(!target)
+							return;
+
+						spell = (new Spell(this,info,true,NULLAURA));
+						SpellCastTargets targets;
+						targets.m_unitTarget = target->GetGUID();
+						spell->prepare(&targets);
+					}break;
+				case 177193:// doom portal
+					{
+						Player* psacrifice = NULLPLR;
+						Spell* spell = NULLSPELL;
+
+						// kill the sacrifice player
+						psacrifice = p->GetMapMgr()->GetPlayer(m_ritualmembers[(int)(RandomUInt(goinfo->SpellFocus-1))]);
+						Player* pCaster = GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_CASTER));
+						if(!psacrifice || !pCaster)
+							return;
+
+						info = dbcSpell.LookupEntry(goinfo->sound4);
+						if(!info)
+							break;
+						spell = (new Spell(psacrifice, info, true, NULLAURA));
+						targets.m_unitTarget = psacrifice->GetGUID();
+						spell->prepare(&targets);
+
+						// summons demon
+						info = dbcSpell.LookupEntry(goinfo->sound1);
+						spell = (new Spell(pCaster, info, true, NULLAURA));
+						SpellCastTargets targets;
+						targets.m_unitTarget = pCaster->GetGUID();
+						spell->prepare(&targets);
+					}break;
+				case 179944:// Summoning portal for meeting stones
+					{
+						Player* plr = p->GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_TARGET));
+						if(!plr)
+							return;
+
+						Player* pleader = p->GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_CASTER));
+						if(!pleader)
+							return;
+
+						info = dbcSpell.LookupEntry(goinfo->sound1);
+						Spell* spell(new Spell(pleader, info, true, NULLAURA));
+						SpellCastTargets targets(plr->GetGUID());
+						spell->prepare(&targets);
+
+						/* expire the GameObject* */
+						ExpireAndDelete();
+					}break;
+				case 194108:// Ritual of Summoning portal for warlocks
+					{
+						Player* pleader = p->GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_CASTER));
+						if(!pleader)
+							return;
+
+						info = dbcSpell.LookupEntry(goinfo->sound1);
+						Spell* spell(new Spell(pleader, info, true, NULLAURA));
+						SpellCastTargets targets(pleader->GetGUID());
+						spell->prepare(&targets);
+
+						ExpireAndDelete();
+						pleader->InterruptCurrentSpell();
+					}break;
+				case 186811://Ritual of Refreshment
+				case 193062:
+					{
+						Player* pleader = p->GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_CASTER));
+						if(!pleader)
+							return;
+
+						info = dbcSpell.LookupEntry(goinfo->sound1);
+						Spell* spell(new Spell(pleader, info, true, NULLAURA));
+						SpellCastTargets targets(pleader->GetGUID());
+						spell->prepare(&targets);
+
+						ExpireAndDelete();
+						pleader->InterruptCurrentSpell();
+					}break;
+				case 181622://Ritual of Souls
+				case 193168:
+					{
+						Player* pleader = p->GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_CASTER));
+						if(!pleader)
+							return;
+
+						info = dbcSpell.LookupEntry(goinfo->sound1);
+						Spell* spell(new Spell(pleader, info, true, NULLAURA));
+						SpellCastTargets targets(pleader->GetGUID());
+						spell->prepare(&targets);
+					}break;
+				}
+			}
+		}break;
+	case GAMEOBJECT_TYPE_GOOBER:
+		{
+			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->Unknown1);
+			if(sp != NULL)
+				p->CastSpell(p,sp,true);
+			else
+				sLog.outError("Gameobject Type Goober doesn't have a spell to cast or page to read entry %u (May be false positive if object has a script)", goinfo->ID);
+		}break;
+	case GAMEOBJECT_TYPE_CAMERA://eye of azora
+		{
+			if(goinfo->sound1)
+			{
+				WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
+				data << uint32(goinfo->sound1);
+				p->GetSession()->SendPacket(&data);
+			}
+			else
+				sLog.outError("Gameobject Type Camera doesn't have a cinematic to play id, entry %u", goinfo->ID);
+		}break;
+	case GAMEOBJECT_TYPE_MEETINGSTONE:	// Meeting Stone
+		{
+			/* Use selection */
+			Player* pPlayer = objmgr.GetPlayer((uint32)p->GetSelection());
+			if(!pPlayer || p->GetGroup() != pPlayer->GetGroup() || !p->GetGroup())
+				return;
+
+			GameObjectInfo * info = GameObjectNameStorage.LookupEntry(179944);
+			if(!info)
+				return;
+
+			/* Create the summoning portal */
+			GameObject* pGo = p->GetMapMgr()->CreateGameObject(179944);
+			if( pGo == NULL || !pGo->CreateFromProto(179944, p->GetMapId(), p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f))
+				return;
+
+			// dont allow to spam them
+			GameObject* gobj = p->GetMapMgr()->GetInterface()->GetGameObjectNearestCoords(p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(), 179944);
+			if( gobj )
+				ExpireAndDelete();
+
+			pGo->SetGOui32Value(GO_UINT32_M_RIT_CASTER, p->GetLowGUID());
+			pGo->SetGOui32Value(GO_UINT32_M_RIT_TARGET, pPlayer->GetLowGUID());
+			pGo->SetGOui32Value(GO_UINT32_RIT_SPELL, 61994);
+			pGo->PushToWorld(p->GetMapMgr());
+
+			/* member one: the (w00t) caster */
+			pGo->m_ritualmembers[0] = p->GetLowGUID();
+			p->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, pGo->GetGUID());
+			p->SetUInt32Value(UNIT_CHANNEL_SPELL, pGo->GetGOui32Value(GO_UINT32_RIT_SPELL));
+
+			/* expire after 2mins*/
+			sEventMgr.AddEvent(pGo, &GameObject::_Expire, EVENT_GAMEOBJECT_EXPIRE, 120000, 1,0);
+		}break;
+	case GAMEOBJECT_TYPE_BARBER_CHAIR:
+		{
+			p->SafeTeleport( p->GetMapId(), p->GetInstanceID(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation() );
+			p->SetStandState(STANDSTATE_SIT_HIGH_CHAIR);
+			if( p->IsMounted() )
+				p->RemoveAura( p->m_MountSpellId );
+			else
+			{
+				p->SetLastRunSpeed(0.0f);
+				p->UpdateSpeed();
+			}
+			WorldPacket data(SMSG_ENABLE_BARBER_SHOP, 0);
+			p->GetSession()->SendPacket(&data);
+		}break;
+	}
+}

@@ -435,7 +435,8 @@ enum StandState
 	STANDSTATE_SIT_MEDIUM_CHAIR = 5,
 	STANDSTATE_SIT_HIGH_CHAIR   = 6,
 	STANDSTATE_DEAD				= 7,
-	STANDSTATE_KNEEL			= 8
+	STANDSTATE_KNEEL			= 8,
+	STANDSTATE_SUBMERGED		= 9
 };
 
 enum UnitSpecialStates
@@ -1460,7 +1461,7 @@ public: // Virtual Script Callers
 
 public:
 	void knockback(int32 basepoint, uint32 miscvalue, bool disengage = false );
-	void Teleport(float x, float y, float z, float O, uint32 phase = 1);
+	void Teleport(float x, float y, float z, float o, uint32 phase = 1);
 	void SetRedirectThreat(Unit * target, float amount, uint32 Duaration);
 	void EventResetRedirectThreat();
 	void SetSpeed(uint8 SpeedType, float value);
@@ -1469,6 +1470,7 @@ public:
 	bool HasAuraWithFlags4(uint32 Flags);
 	bool HasAuraWithFlags5(uint32 Flags);
 	virtual const char* GetName() = 0;
+	bool IsSitting();
 private:
 	uint8 m_inVehicleSeatId;
 	Vehicle* m_CurrentVehicle;
