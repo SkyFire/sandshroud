@@ -1435,9 +1435,6 @@ void Player::EventDeath()
 
 	if(!IS_INSTANCE(GetMapId()) && !sEventMgr.HasEvent(TO_PLAYER(this),EVENT_PLAYER_FORCED_RESURECT)) //Should never be true
 		sEventMgr.AddEvent(TO_PLAYER(this),&Player::EventRepopRequestedPlayer,EVENT_PLAYER_FORCED_RESURECT,PLAYER_FORCED_RESURECT_INTERVAL,1,0); //in case he forgets to release spirit (afk or something)
-
-	//remove any summoned totems/summons/go's created by this player
-	SummonExpireAll(false);
 }
 
 ///  This function sends the message displaying the purple XP gain for the char

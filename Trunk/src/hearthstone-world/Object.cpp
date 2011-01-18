@@ -2429,6 +2429,8 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
 		}
 
+		TO_UNIT(this)->SummonExpireAll(false);
+
 		if( pVictim->IsPlayer() && (!IsPlayer() || pVictim == TO_UNIT(this) ) )
 		{
 			TO_PLAYER( pVictim )->DeathDurabilityLoss(0.10);
