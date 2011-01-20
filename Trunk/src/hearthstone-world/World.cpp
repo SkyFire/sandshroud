@@ -69,6 +69,7 @@ World::World()
 	SYSTEM_INFO si;
 	GetSystemInfo( &si );
 	number_of_cpus = si.dwNumberOfProcessors;
+	m_current_holiday_mask = 0;
 
 #endif // WIN32
 }
@@ -1359,6 +1360,7 @@ void World::Rehash(bool load)
 	LogoutDelay = Config.OptionalConfig.GetIntDefault("Server", "Logout_Delay", 20);
 	if(LogoutDelay <= 0)
 		LogoutDelay = 1;
+	ApplyHolidayConfigMaskOverride();
 
 	// Battlegrounds
 	// Wintergrasp

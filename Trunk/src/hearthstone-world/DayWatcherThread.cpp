@@ -362,26 +362,26 @@ void DayWatcherThread::CheckSpecialTimes(tm*time)
 {
 	switch(time->tm_mon)
 	{
+	case 0:
+		{
+			if(time->tm_mday == 2)
+				sWorld.SpawnWintersVeil(false);
+		}break;
 	case 9:
 		{
 			if(!sWorld.HallowsEnd)
-				if(time->tm_mday == 31)
+				if(time->tm_mday == 18)
 					sWorld.SpawnHallowsEnd(true);
 		}break;
 	case 10:
 		{
-			// No need for a date check.
-			if(sWorld.HallowsEnd)
+			if(time->tm_mday == 3)
 				sWorld.SpawnHallowsEnd(false);
 		}break;
 	case 11:
 		{
 			if(!sWorld.WintersVeil)
-				if(time->tm_mday == 25)
-					sWorld.SpawnWintersVeil(true);
-			if(time->tm_mday == 26)
-				if(sWorld.WintersVeil)
-					sWorld.SpawnWintersVeil(false);
+				sWorld.SpawnWintersVeil(true);
 		}break;
 	}
 

@@ -222,6 +222,27 @@ enum AccountFlags
 	ACCOUNT_FLAG_XPACK_02		= 0x10
 };
 
+enum HolidayMasks
+{
+	HOLIDAY_DARKMOON_FAIRE = 0x1,
+	HOLIDAY_BREWFEST	   = 0x2,
+	HOLIDAY_LOVE_IS_IN_AIR = 0x4,
+	HOLIDAY_MIDSUMMER	   = 0x8,
+	HOLIDAY_CHILD_WEEK	   = 0x10,
+	HOLIDAY_WINTER_VIEL	   = 0x20,
+	HOLIDAY_NOBLEGARDEN	   = 0x40,
+	HOLIDAY_HALLOWS_END	   = 0x80,
+	HOLIDAY_HARVEST_FEST   = 0x100,
+	HOLIDAY_LUNAR_FEST	   = 0x200,
+	HOLIDAY_DAY_OF_DEAD	   = 0x400,
+	HOLIDAY_PILGRIM_BOUNTY = 0x800,
+	HOLIDAY_ALL	= HOLIDAY_DARKMOON_FAIRE | HOLIDAY_BREWFEST | 
+	HOLIDAY_LOVE_IS_IN_AIR | HOLIDAY_MIDSUMMER | HOLIDAY_CHILD_WEEK |
+	HOLIDAY_WINTER_VIEL | HOLIDAY_NOBLEGARDEN | HOLIDAY_HALLOWS_END |
+	HOLIDAY_HARVEST_FEST | HOLIDAY_LUNAR_FEST | HOLIDAY_DAY_OF_DEAD |
+	HOLIDAY_PILGRIM_BOUNTY
+};
+
 #pragma pack(push,1)
 struct MapInfo
 {
@@ -832,6 +853,7 @@ private:
 	__int64 m_lnOldValue;
 	LARGE_INTEGER m_OldPerfTime100nSec;
 	uint32 number_of_cpus;
+	uint32 m_current_holiday_mask;
 
 #endif // WIN32
 
@@ -840,13 +862,106 @@ public: // Events! :D
 	uint32 AnniversaryAchievement;
 	bool RealAchievement;
 
-	void SpawnHallowsEnd(bool apply) { HallowsEnd = apply; OnHolidayChange(16);};
+	void SpawnHallowsEnd(bool apply) 
+	{ 
+		HallowsEnd = apply;
+		if(apply)
+			AddHolidayMask(HOLIDAY_HALLOWS_END);
+		else
+			RemoveHolidayMask(HOLIDAY_HALLOWS_END);
+		OnHolidayChange(16);
+	};
+
 	bool HallowsEnd;
 
-	void SpawnWintersVeil(bool apply) { WintersVeil = apply; OnHolidayChange(14);};
+	void SpawnWintersVeil(bool apply) 
+	{ 
+		WintersVeil = apply; 
+		if(apply)
+			AddHolidayMask(HOLIDAY_WINTER_VIEL);
+		else
+			RemoveHolidayMask(HOLIDAY_WINTER_VIEL);
+		OnHolidayChange(14);
+	};
+
 	bool WintersVeil;
 
 	void OnHolidayChange(uint32 IgnoreHolidayId);
+	uint32 GetCurrentHolidayMask() { return m_current_holiday_mask; };
+	void AddHolidayMask(uint32 mask) 
+	{
+		if(GetCurrentHolidayMask() & mask)
+			return;
+		m_current_holiday_mask &= mask;
+		ApplyHolidayConfigMaskOverride();
+	};
+	void RemoveHolidayMask(uint32 mask) 
+	{
+		if((GetCurrentHolidayMask() & mask) == 0)
+			return;
+		m_current_holiday_mask &= ~mask;
+		ApplyHolidayConfigMaskOverride();
+	};
+	void ApplyHolidayConfigMaskOverride()
+	{
+		uint32 config_holiday_mask = Config.OptionalConfig.GetIntDefault("Server", "HolidayMaskOverride", 4095);
+		if(config_holiday_mask > 0)
+			m_current_holiday_mask = config_holiday_mask;
+	};
+
+	uint32 ConverHolidayIdToMask(uint32 id)
+	{
+		switch(id)
+		{
+			case 1:
+			{
+				return HOLIDAY_DARKMOON_FAIRE;
+			}break;
+			case 7:
+			case 19:
+			{
+				return HOLIDAY_BREWFEST;
+			}break;
+			case 9:
+			{
+				return HOLIDAY_LOVE_IS_IN_AIR;
+			}break;
+			case 11:
+			{
+				return HOLIDAY_MIDSUMMER;
+			}break;
+			case 13:
+			{
+				return HOLIDAY_CHILD_WEEK;
+			}break;
+			case 14:
+			{
+				return HOLIDAY_WINTER_VIEL;
+			}break;
+			case 15:
+			{
+				return HOLIDAY_NOBLEGARDEN;
+			}break;
+			case 16:
+			{
+				return HOLIDAY_LUNAR_FEST;
+			}break;
+			case 17:
+			{
+				return HOLIDAY_HARVEST_FEST;
+			}break;
+			case 81:
+			{
+				return HOLIDAY_DAY_OF_DEAD;
+			}break;
+			case 101:
+			{
+				return HOLIDAY_PILGRIM_BOUNTY;
+			}break;
+		}
+		return 0;
+	};
+
 };
 
 #define sCLT CharacterLoaderThread::getSingleton()

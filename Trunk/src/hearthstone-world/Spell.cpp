@@ -3469,7 +3469,7 @@ uint8 Spell::CanCast(bool tolerate)
 			for(Object::InRangeSet::iterator i = p_caster->GetInRangeSetBegin(); i != p_caster->GetInRangeSetEnd(); i++)
 			{
 				if(p_caster->GetDistance2dSq((*i)) <= 25)
-					if((*i)->GetTypeId() == TYPEID_UNIT || (*i)->GetTypeId() == TYPEID_PLAYER )
+					if((*i)->GetTypeId() == TYPEID_UNIT || (*i)->IsPlayer() )
 						if( TO_UNIT(*i)->isDead() )
 							check = true;
 			}

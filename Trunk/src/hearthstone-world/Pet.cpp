@@ -1059,7 +1059,7 @@ void Pet::LearnSpell(uint32 spellid)
 
 	AddSpell(sp, true);
 
-	if(m_Owner && m_Owner->GetTypeId() == TYPEID_PLAYER)
+	if(m_Owner && m_Owner->IsPlayer())
 	{
 		WorldPacket data(2);
 		data.SetOpcode(SMSG_PET_LEARNED_SPELL);

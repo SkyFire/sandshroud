@@ -925,7 +925,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 			if(m_canRangedAttack)
 			{
 				float dist = m_Unit->GetDistanceSq(m_nextTarget);
-				if(m_nextTarget->GetTypeId() == TYPEID_PLAYER)
+				if(m_nextTarget->IsPlayer())
 				{
 					if( TO_PLAYER( m_nextTarget )->m_currentMovement == MOVE_ROOT || dist >= 32.0f )
 						agent = AGENT_RANGED;
@@ -1288,7 +1288,7 @@ bool AIInterface::HealReaction(Unit* caster, Unit* victim, uint32 amount, SpellE
 	{
 		modThreatByPtr(caster, amount);
 		// both are players so they might be in the same group
-		if( caster->GetTypeId() == TYPEID_PLAYER && victim->GetTypeId() == TYPEID_PLAYER )
+		if( caster->IsPlayer() && victim->IsPlayer() )
 		{
 			if( TO_PLAYER( caster )->GetGroup() == TO_PLAYER( victim )->GetGroup() )
 			{
@@ -1311,7 +1311,7 @@ void AIInterface::OnDeath(Object* pKiller)
 {
 	ASSERT(m_Unit != NULL);
 
-	if(pKiller != NULL && (pKiller->GetTypeId() == TYPEID_PLAYER || pKiller->GetTypeId() == TYPEID_UNIT))
+	if(pKiller != NULL && (pKiller->IsPlayer() || pKiller->GetTypeId() == TYPEID_UNIT))
 		HandleEvent(EVENT_UNITDIED, TO_UNIT(pKiller), 0);
 	else
 		HandleEvent(EVENT_UNITDIED, m_Unit, 0);
@@ -1354,7 +1354,7 @@ Unit* AIInterface::FindTarget()
 		it2 = itr++;
 		pObj = (*it2);
 
-		if( pObj->GetTypeId() == TYPEID_PLAYER )
+		if( pObj->IsPlayer() )
 		{
 			if(TO_PLAYER( pObj )->GetTaxiState() )	  // skip players on taxi
 				continue;
@@ -1689,7 +1689,7 @@ void AIInterface::_CalcDestinationAndMove(Unit* target, float dist)
 		return;
 	}
 
-	if(target && (target->GetTypeId() == TYPEID_UNIT || target->GetTypeId() == TYPEID_PLAYER))
+	if(target && (target->GetTypeId() == TYPEID_UNIT || target->IsPlayer()))
 	{
 		float ResX = target->GetPositionX();
 		float ResY = target->GetPositionY();
@@ -1699,7 +1699,7 @@ void AIInterface::_CalcDestinationAndMove(Unit* target, float dist)
 		float x = dist * cosf(angle);
 		float y = dist * sinf(angle);
 
-		if(target->GetTypeId() == TYPEID_PLAYER && TO_PLAYER( target )->m_isMoving )
+		if(target->IsPlayer() && TO_PLAYER( target )->m_isMoving )
 		{
 			// cater for moving player vector based on orientation
 			x -= cosf(target->GetOrientation());
@@ -1821,10 +1821,10 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	data << toX << toY << toZ;
 
 #ifndef ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES
-	bool self = m_Unit->GetTypeId() == TYPEID_PLAYER;
+	bool self = m_Unit->IsPlayer();
 	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
 #else
-	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
+	if( m_Unit->IsPlayer() )
 		TO_PLAYER(m_Unit)->GetSession()->SendPacket(&data);
 
 	for(unordered_set<Player*>::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); itr++)
@@ -1889,7 +1889,7 @@ bool AIInterface::IsFlying()
 	if(m_moveFly)
 		return true;
 
-	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
+	if( m_Unit->IsPlayer() )
 		return TO_PLAYER( m_Unit )->FlyCheat;
 
 	return false;

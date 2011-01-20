@@ -703,7 +703,7 @@ Aura::Aura( SpellEntry* proto, int32 duration, Object* caster, Unit* target )
 	SetDuration(duration);
 	timeleft = (uint32)UNIXTIME;
 	DurationPctMod(GetMechanic());
-	/*if( caster->GetTypeId() == TYPEID_PLAYER && target->GetTypeId() == TYPEID_PLAYER )
+	/*if( caster->IsPlayer() && target->IsPlayer() )
 	{
 		if( ( ( Player* )caster )->DuelingWith == ( ( Player* )target ) )
 		{
@@ -1337,7 +1337,7 @@ void Aura::EventUpdatePlayerAA(float r)
 
 	Player* plr = NULLPLR;
 
-	if(m_caster->GetTypeId() == TYPEID_PLAYER)
+	if(m_caster->IsPlayer())
 		plr = TO_PLAYER(m_caster);
 	else if(m_caster->GetTypeId() == TYPEID_UNIT)
 	{
@@ -4832,7 +4832,7 @@ void Aura::SpellAuraModIncreaseMountedSpeed(bool apply)
 		return;
 
 	// deal with those scaling mounts that don't have other spell IDs - the ones with multiple spell IDs are handled in scripts
-	if((GetSpellId() == 68768 || GetSpellId() == 68769) && m_target->GetTypeId() == TYPEID_PLAYER)
+	if((GetSpellId() == 68768 || GetSpellId() == 68769) && m_target->IsPlayer())
 	{
 		if (Player *pPlayer = TO_PLAYER(m_target))
 		{

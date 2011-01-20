@@ -380,7 +380,7 @@ public:
 
 		m_objectsInRange.insert( pObj );
 
-		if( pObj->GetTypeId() == TYPEID_PLAYER )
+		if( pObj->IsPlayer() )
 			m_inRangePlayers.insert( TO_PLAYER(pObj) );
 	}
 
@@ -400,7 +400,7 @@ public:
 
 	virtual void OnRemoveInRangeObject( Object* pObj )
 	{
-		if( pObj->GetTypeId() == TYPEID_PLAYER )
+		if( pObj->IsPlayer() )
 			m_inRangePlayers.erase( TO_PLAYER(pObj) );
 	}
 
@@ -426,7 +426,7 @@ public:
 	HEARTHSTONE_INLINE bool RemoveIfInRange( Object* obj )
 	{
 		InRangeSet::iterator itr = m_objectsInRange.find(obj);
-		if( obj->GetTypeId() == TYPEID_PLAYER )
+		if( obj->IsPlayer() )
 			m_inRangePlayers.erase( TO_PLAYER(obj) );
 
 		if( itr == m_objectsInRange.end() )

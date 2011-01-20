@@ -6043,7 +6043,7 @@ bool Player::CanSee(Object* obj) // * Invisibility & Stealth Detection - Partha 
 void Player::AddInRangeObject(Object* pObj)
 {
 	//Send taxi move if we're on a taxi
-	if (m_CurrentTaxiPath && (pObj->GetTypeId() == TYPEID_PLAYER))
+	if (m_CurrentTaxiPath && (pObj->IsPlayer()))
 	{
 		uint32 ntime = getMSTime();
 
@@ -10547,7 +10547,7 @@ void Player::UnPossess()
 
 	ResetHeartbeatCoords();
 	DelaySpeedHack(5000);
-	if( pTarget->GetTypeId() == TYPEID_PLAYER )
+	if( pTarget->IsPlayer() )
 		TO_PLAYER(pTarget)->DelaySpeedHack(5000);
 
 	m_noInterrupt--;

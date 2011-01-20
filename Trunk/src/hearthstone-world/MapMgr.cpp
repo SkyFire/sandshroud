@@ -232,7 +232,7 @@ void MapMgr::PushObject(Object* obj)
 
 	Player* plObj = NULLPLR;
 
-	if(obj->GetTypeId() == TYPEID_PLAYER)
+	if(obj->IsPlayer())
 	{
 		plObj = TO_PLAYER( obj );
 		if(plObj == NULL)
@@ -447,7 +447,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 
 	_updates.erase(obj);
 	obj->ClearUpdateMask();
-	Player* plObj = (obj->GetTypeId() == TYPEID_PLAYER) ? TO_PLAYER( obj ) : NULLPLR;
+	Player* plObj = (obj->IsPlayer()) ? TO_PLAYER( obj ) : NULLPLR;
 
 	///////////////////////////////////////
 	// Remove object from all needed places
@@ -532,7 +532,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 	}
 
 	// Clear any updates pending
-	if(obj->GetTypeId() == TYPEID_PLAYER)
+	if(obj->IsPlayer())
 	{
 		_processQueue.erase(TO_PLAYER(obj));
 		TO_PLAYER( obj )->ClearAllPendingUpdates();
@@ -543,7 +543,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 	{
 		if( (*iter) )
 		{
-			if( (*iter)->GetTypeId() == TYPEID_PLAYER )
+			if( (*iter)->IsPlayer() )
 			{
 				if( TO_PLAYER( *iter )->IsVisible( obj ) && TO_PLAYER( *iter )->m_TransporterGUID != obj->GetGUID())
 					TO_PLAYER( *iter )->PushOutOfRange(obj->GetNewGUID());
@@ -596,7 +596,7 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 
 	Player* plObj;
 
-	if( obj->GetTypeId() == TYPEID_PLAYER )
+	if( obj->IsPlayer() )
 		plObj = TO_PLAYER( obj );
 	else
 		plObj = NULLPLR;
@@ -717,7 +717,7 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 		// if player we need to update cell activity
 		// radius = 2 is used in order to update both
 		// old and new cells
-		if(obj->GetTypeId() == TYPEID_PLAYER)
+		if(obj->IsPlayer())
 		{
 			// have to unlock/lock here to avoid a deadlock situation.
 			UpdateCellActivity(cellX, cellY, 2);
@@ -917,7 +917,7 @@ void MapMgr::_UpdateObjects()
 			if( pObj->IsInWorld() )
 			{
 				// players have to receive their own updates ;)
-				if( pObj->GetTypeId() == TYPEID_PLAYER )
+				if( pObj->IsPlayer() )
 				{
 					// need to be different! ;)
 					count = pObj->BuildValuesUpdateBlockForPlayer( &m_updateBuffer, TO_PLAYER( pObj ) );
@@ -943,7 +943,7 @@ void MapMgr::_UpdateObjects()
 						lplr = *itr;
 						++itr;
 						// Make sure that the target player can see us.
-						if( lplr != NULL && lplr->GetTypeId() == TYPEID_PLAYER && lplr->IsVisible( pObj ) )
+						if( lplr != NULL && lplr->IsPlayer() && lplr->IsVisible( pObj ) )
 							lplr->PushUpdateData( &m_updateBuffer, count );
 					}
 					m_updateBuffer.clear();

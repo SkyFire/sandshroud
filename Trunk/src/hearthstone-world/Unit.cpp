@@ -3664,7 +3664,7 @@ else
 //==========================================================================================
 //--------------------------special states processing---------------------------------------
 
-	if(pVictim->GetTypeId() == TYPEID_PLAYER && TO_PLAYER(pVictim)->GodModeCheat == true)
+	if(pVictim->IsPlayer() && TO_PLAYER(pVictim)->GodModeCheat == true)
 	{
 		dmg.resisted_damage = dmg.full_damage; //godmode
 	}
@@ -4971,7 +4971,7 @@ void Unit::SendChatMessage(uint8 type, uint32 lang, const char *msg)
 
 void Unit::AddInRangeObject(Object* pObj)
 {
-	if((pObj->GetTypeId() == TYPEID_UNIT) || (pObj->GetTypeId() == TYPEID_PLAYER))
+	if((pObj->GetTypeId() == TYPEID_UNIT) || (pObj->IsPlayer()))
 	{
 		if( isHostile( TO_OBJECT(this), pObj ) )
 			m_oppFactsInRange.insert(pObj);
@@ -4984,7 +4984,7 @@ void Unit::OnRemoveInRangeObject(Object* pObj)
 {
 	m_oppFactsInRange.erase(pObj);
 
-	if(pObj->GetTypeId() == TYPEID_UNIT || pObj->GetTypeId() == TYPEID_PLAYER)
+	if(pObj->GetTypeId() == TYPEID_UNIT || pObj->IsPlayer())
 	{
 		/*if(m_useAI)*/
 
@@ -6069,7 +6069,7 @@ void Unit::UpdateVisibility()
 				}
 			}
 
-			if( pObj->GetTypeId() == TYPEID_PLAYER )
+			if( pObj->IsPlayer() )
 			{
 				pl = TO_PLAYER( pObj );
 				can_see = pl->CanSee( plr );
@@ -7021,7 +7021,7 @@ void Unit::SendPowerUpdate()
 	FastGUIDPack(data, GetGUID());
 	data << uint8(GetPowerType());
 	data << GetUInt32Value(UNIT_FIELD_POWER1 + GetPowerType());
-	SendMessageToSet(&data, GetTypeId() == TYPEID_PLAYER ? true : false);
+	SendMessageToSet(&data, IsPlayer() ? true : false);
 }
 
 uint32 Unit::DoDamageSplitTarget(uint32 res, uint32 school_type, bool melee_dmg)

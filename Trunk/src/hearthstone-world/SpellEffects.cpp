@@ -2881,7 +2881,7 @@ void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
 		return;
 	}
 
-	if(unitTarget->GetTypeId() == TYPEID_PLAYER)
+	if(unitTarget->IsPlayer())
 		HandleTeleport(spellId, unitTarget);
 }
 
@@ -5623,7 +5623,7 @@ void Spell::SpellEffectHealMaxHealth(uint32 i)   // Heal Max Health
 		return;
 	}
 
-	if( unitTarget->GetTypeId() == TYPEID_PLAYER)
+	if( unitTarget->IsPlayer())
 	{
 		 SendHealSpellOnPlayer( TO_PLAYER( m_caster ), playerTarget, dif, false, 0, pSpellId ? pSpellId : GetSpellProto()->Id );
 	}

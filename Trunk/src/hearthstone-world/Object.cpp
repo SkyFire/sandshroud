@@ -2037,7 +2037,7 @@ void Object::_setFaction()
 
 	FactionTemplateDBC* factT = NULL;
 
-	if(GetTypeId() == TYPEID_UNIT || GetTypeId() == TYPEID_PLAYER)
+	if(GetTypeId() == TYPEID_UNIT || IsPlayer())
 		factT = dbcFactionTemplate.LookupEntry(GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
 	else if(GetTypeId() == TYPEID_GAMEOBJECT)
 		factT = dbcFactionTemplate.LookupEntry(GetUInt32Value(GAMEOBJECT_FACTION));
@@ -2056,7 +2056,7 @@ void Object::UpdateOppFactionSet()
 	m_oppFactsInRange.clear();
 	for(Object::InRangeSet::iterator i = GetInRangeSetBegin(); i != GetInRangeSetEnd(); i++)
 	{
-		if (((*i)->GetTypeId() == TYPEID_UNIT) || ((*i)->GetTypeId() == TYPEID_PLAYER) || ((*i)->GetTypeId() == TYPEID_GAMEOBJECT))
+		if (((*i)->GetTypeId() == TYPEID_UNIT) || ((*i)->IsPlayer()) || ((*i)->GetTypeId() == TYPEID_GAMEOBJECT))
 		{
 			if (isHostile(this, (*i)))
 			{
@@ -2087,7 +2087,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 
 	if( !pVictim || !pVictim->isAlive() || !pVictim->IsInWorld() || !IsInWorld() )
 		return;
-	if( pVictim->GetTypeId() == TYPEID_PLAYER && TO_PLAYER( pVictim )->GodModeCheat == true )
+	if( pVictim->IsPlayer() && TO_PLAYER( pVictim )->GodModeCheat == true )
 		return;
 	if( pVictim->IsSpiritHealer() )
 		return;
@@ -2190,7 +2190,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		else if(IsPlayer())
 			plr = TO_PLAYER(this);
 
-		if(plr != NULL && plr->GetTypeId() == TYPEID_PLAYER && pVictim->GetTypeId() == TYPEID_UNIT) // Units can't tag..
+		if(plr != NULL && plr->IsPlayer() && pVictim->GetTypeId() == TYPEID_UNIT) // Units can't tag..
 			TO_CREATURE(pVictim)->Tag(plr);
 
 		// Pepsi1x1: is this correct this
@@ -2613,7 +2613,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		}
 
 		// player loot for battlegrounds
-		if( pVictim->GetTypeId() == TYPEID_PLAYER )
+		if( pVictim->IsPlayer() )
 		{
 			// set skinning flag, this is the "remove insignia"
 			if( TO_PLAYER(pVictim)->m_bg != NULL && TO_PLAYER(pVictim)->m_bg->SupportsPlayerLoot() )
@@ -2641,7 +2641,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			if(pVictim->IsCreature() && pVictim->GetAIInterface())
 				pVictim->GetAIInterface()->OnDeath( this );
 
-			if(GetTypeId() == TYPEID_PLAYER)
+			if(IsPlayer())
 			{
 				WorldPacket data(SMSG_PARTYKILLLOG, 16);
 				data << GetGUID() << pVictim->GetGUID();
@@ -2653,7 +2653,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 
 			//---------------------------------looot-----------------------------------------
 
-			if( !pVictim->IsPet() && GetTypeId() == TYPEID_PLAYER &&
+			if( !pVictim->IsPet() && IsPlayer() &&
 				pVictim->GetUInt64Value( UNIT_FIELD_CREATEDBY ) == 0 &&
 				pVictim->GetUInt64Value( OBJECT_FIELD_CREATED_BY ) == 0 )
 			{
@@ -2710,7 +2710,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				if( owner_participe && IsPet() && !pVictim->IsPet() )
 				{
 					Player* petOwner = TO_PET(this)->GetPetOwner();
-					if( petOwner != NULL && petOwner->GetTypeId() == TYPEID_PLAYER )
+					if( petOwner != NULL && petOwner->IsPlayer() )
 					{
 						if( petOwner->InGroup() )
 						{
@@ -2767,7 +2767,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				}
 			}
 		}
-		else if( pVictim->GetTypeId() == TYPEID_PLAYER )
+		else if( pVictim->IsPlayer() )
 		{
 
 			/* -------------------- RESET BREATH STATE ON DEATH -------------- */
@@ -3094,7 +3094,7 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 			res = float(dmg.full_damage - dmg.resisted_damage);
 	}
 	//------------------------------special states----------------------------------------------
-	if(pVictim->GetTypeId() == TYPEID_PLAYER && TO_PLAYER(pVictim)->GodModeCheat == true)
+	if(pVictim->IsPlayer() && TO_PLAYER(pVictim)->GodModeCheat == true)
 	{
 		res = 0;
 		dmg.resisted_damage = dmg.full_damage;
