@@ -578,8 +578,9 @@ void Unit::GiveGroupXP(Unit* pVictim, Player* PlayerInGroup)
 
 uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* CastingSpell, uint32 dmg, uint32 abs, uint32 weapon_damage_type )
 {
-	if(HasAuraWithFlags4(FLAGS4_DISABLE_PROC) || victim == this && HasAuraWithFlags5(FLAGS5_CANT_PROC_FROM_SELFCAST) )
-		return 0;
+/*	if(HasAuraWithFlags4(FLAGS4_DISABLE_PROC) || (victim == this && HasAuraWithFlags5(FLAGS5_CANT_PROC_FROM_SELFCAST)))
+		return 0;*/
+
 	uint32 resisted_dmg = 0;
 	++m_procCounter;
 	bool can_delete = !bProcInUse; //if this is a nested proc then we should have this set to TRUE by the father proc
