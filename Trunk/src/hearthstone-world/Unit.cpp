@@ -2293,10 +2293,15 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 					case 71487:
 					case 71491:
 					case 71492:
+					case 71556:
+					case 71558:
+					case 71559:
+					case 71560:
+					case 71561:
 						{
 							bool hasaura = false;
-							uint32 auras[6] = { 71484, 71485, 71486, 71487, 71491, 71492 };
-							for(int i = 0; i < 6; i++)
+							uint32 auras[11] = { 71484, 71485, 71486, 71487, 71491, 71492, 71556, 71558, 71559, 71560, 71561 };
+							for(int i = 0; i < 11; i++)
 							{
 								if(HasAura(auras[i]))
 								{
