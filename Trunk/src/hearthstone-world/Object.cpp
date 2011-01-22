@@ -3211,20 +3211,28 @@ void Object::SendSpellNonMeleeDamageLog( Object* Caster, Unit* Target, uint32 Sp
 	SpellID = sp->logsId ? sp->logsId : sp->Id;
 	uint32 overkill = Target->computeOverkill(Damage);
 
-	WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG,48);
+	WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG, sizeof(Target->GetNewGUID())+sizeof(Caster->GetNewGUID())+4+4+4+1+4+4+1+1+4+1+4);
 	data << Target->GetNewGUID();
 	data << Caster->GetNewGUID();
 	data << uint32(SpellID);				// SpellID / AbilityID
 	data << uint32(Damage);					// All Damage
 	data << uint32(overkill);				// Overkill
 	data << uint8(SchoolMask(School));		// School
-	data << uint32(AbsorbedDamage);      	// Absorbed Damage
-	data << uint32(ResistedDamage);      	// Resisted Damage
-	data << uint8(PhysicalDamage);      	// Physical Damage (true/false)
-	data << uint8(0);                   	// unknown or it binds with Physical Damage
-	data << uint32(BlockedDamage);      	// Physical Damage (true/false)
-	data << uint32((CriticalHit ? 7 : 5));	// Size
-	data << uint8(0);
+	data << uint32(AbsorbedDamage);			// Absorbed Damage
+	data << uint32(ResistedDamage);			// Resisted Damage
+	data << uint8(PhysicalDamage);			// Physical Damage (true/false)
+	data << uint8(0);						// unknown or it binds with Physical Damage
+	data << uint32(BlockedDamage);			// Physical Damage (true/false)
+	if( CriticalHit )
+	{
+		data << uint8(7);
+		data << uint32(0);
+	}
+	else
+	{
+		data << uint32(5);
+		data << uint8(0);
+	}
 
 	Caster->SendMessageToSet( &data, bToset );
 }
