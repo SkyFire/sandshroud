@@ -268,6 +268,7 @@ void Lacrimi::SetupScripts()
 {
 	SetupZoneScripts();
 	SetupCityScripts();
+	SetupInstanceScripts();
 }
 
 void Lacrimi::SetupZoneScripts()
@@ -366,6 +367,12 @@ void Lacrimi::SetupCityScripts()
 	SetupThunderbluff();
 	SetupShattrath();
 	SetupDalaran();
+}
+
+void Lacrimi::SetupInstanceScripts()
+{
+	// Level 2: Classic Instance Scripts
+	SetupBlackfathomDeeps();
 }
 
 void Lacrimi::GenerateUptimeString(char * Dest)

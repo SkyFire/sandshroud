@@ -40,4 +40,7 @@
 #include "../Dependencies/Base.h"
 #include "../Dependencies/Instance_Base.h"
 
+// Scripts
+#include "../Scripts/ScriptHeaders.h"
+
 #endif // LACRIMI_PCH

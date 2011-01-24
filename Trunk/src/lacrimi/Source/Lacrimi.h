@@ -53,7 +53,7 @@ public: // Script Related
 	void SetupCityScripts();
 
 ///////////////////
-////// Zone Setups.
+////// Zone Setups. // Level 0
 ///////////////////
 
 	// Eastern Kingdom
@@ -147,6 +147,13 @@ public: // Script Related
 	// Northrend
 	void SetupDalaran();
 
+public: // Instance Scripts
+	void SetupInstanceScripts();
+
+///////////////////
+////// Classic Scripts // Level 2
+///////////////////
+	void SetupBlackfathomDeeps();
 
 public: // Stat Dumper
 	void DumpStats();

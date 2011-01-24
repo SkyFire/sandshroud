@@ -868,6 +868,14 @@
 				<Filter
 					Name="Blackfathom Deeps"
 					>
+					<File
+						RelativePath="..\..\Source\Scripts\Level 2\Blackfathom Deeps\Blackfathom_Deeps.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Source\Scripts\Level 2\Blackfathom Deeps\Blackfathom_Deeps.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Uldaman"

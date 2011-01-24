@@ -184,7 +184,7 @@ typedef std::pair< RangeStatus, float > RangeStatusPair;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Class TargetType
-class TargetType
+class SCRIPT_DECL TargetType
 {
 public:
 	TargetType( uint32 pTargetGen = TargetGen_Self, TargetFilter pTargetFilter = TargetFilter_None, uint32 pMinTargetNumber = 0, uint32 pMaxTargetNumber = 0 );
@@ -224,7 +224,7 @@ public:
 #define Target_ManaClass TargetType(TargetGen_ManaClass, TargetFilter_ManaClass)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Class SpellDesc
-class SpellDesc
+class SCRIPT_DECL SpellDesc
 {
 public:
 	SpellDesc(SpellEntry* pInfo, SpellFunc pFnc, TargetType pTargetType, float pChance, float pCastTime, int32 pCooldown, float pMinRange, float pMaxRange, bool pStrictRange, const char* pText, TextType pTextType, uint32 pSoundId, EmoteType pEmoteType);
@@ -252,7 +252,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Class MoonScriptCreatureAI
-class MoonScriptCreatureAI : public CreatureAIScript
+class SCRIPT_DECL MoonScriptCreatureAI : public CreatureAIScript
 {
 public:
 	MoonScriptCreatureAI(Creature *pCreature);
@@ -321,13 +321,13 @@ public:
 	bool					IsHeroic();
 	uint32					GetInstanceMode();
 	
-	Player *			GetNearestPlayer();
-	GameObject *		GetNearestGameObject(uint32 pGameObjectId=0);
+	Player *				GetNearestPlayer();
+	GameObject *			GetNearestGameObject(uint32 pGameObjectId=0);
 	MoonScriptCreatureAI*	GetNearestCreature(uint32 pCreatureId=0);
 	MoonScriptCreatureAI*	SpawnCreature(uint32 pCreatureId, bool pForceSameFaction=false, Unit* pTarget=NULLUNIT);
 	MoonScriptCreatureAI*	SpawnCreature(uint32 pCreatureId, float pX, float pY, float pZ, float pO=0, bool pForceSameFaction=false, Unit* pTarget=NULLUNIT);
-	Unit *				ForceCreatureFind( uint32 pCreatureId );
-	Unit *				ForceCreatureFind( uint32 pCreatureId, float pX, float pY, float pZ );
+	Unit *					ForceCreatureFind( uint32 pCreatureId );
+	Unit *					ForceCreatureFind( uint32 pCreatureId, float pX, float pY, float pZ );
 	void					Despawn(uint32 pDelay=0, uint32 pRespawnTime=0);
 
 
@@ -440,7 +440,7 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Class MoonScriptBossAI
-class MoonScriptBossAI : public MoonScriptCreatureAI
+class SCRIPT_DECL MoonScriptBossAI : public MoonScriptCreatureAI
 {
 public:
 	MoonScriptBossAI(Creature *pCreature);
