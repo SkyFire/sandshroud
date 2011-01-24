@@ -522,12 +522,7 @@ void ObjectMgr::LoadExtraItemStuff()
 		if(pItemPrototype->Damage[0].Max < pItemPrototype->Damage[0].Min)
 			pItemPrototype->Damage[0].Max = pItemPrototype->Damage[0].Min;
 		if(pItemPrototype->Damage[1].Max < pItemPrototype->Damage[1].Min)
-			pItemPrototype->Damage[1].Max = pItemPrototype->Damage[1].Min;
-
-		// lowercase name, used for searches
-		pItemPrototype->lowercase_name = itr->Get()->Name1;
-		for(uint32 j = 0; j < pItemPrototype->lowercase_name.length(); ++j)
-			pItemPrototype->lowercase_name[j] = tolower(pItemPrototype->lowercase_name[j]);
+			pItemPrototype->Damage[1].Max = pItemPrototype->Damage[1].Min+1;
 
 		//load item_pet_food_type from extra table
 		uint32 ft = 0;
@@ -930,12 +925,7 @@ bool Storage_ReloadTable(const char * TableName)
 {
 	// bur: mah god this is ugly :P
 	if(!stricmp(TableName, "items"))					// Items
-	{
 		ItemPrototypeStorage.Reload();
-#ifdef RECACHE_CLIENT_ON_RELOAD
-		sEventMgr.AddEvent(World::getSingletonPtr(), &World::UpdatePlayerItemInfos, EVENT_WORLD_UPDATESESSIONS, 10, 0, 0);
-#endif
-	}
 	else if(!stricmp(TableName, "creature_proto"))		// Creature Proto
 		CreatureProtoStorage.Reload();
 	else if(!stricmp(TableName, "creature_proto_vehicle"))	// Creature Vehicle Proto

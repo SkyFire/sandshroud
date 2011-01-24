@@ -355,12 +355,25 @@ char *ext;
 #endif // LOAD_LACRIMI
 
 #endif // Win/Nux
+
+	while(sWorld.LacrimiLoading)
+		Sleep(100);
 }
 
 void ScriptMgr::UnloadScripts(bool safe)
 {
 	if(HookInterface::getSingletonPtr())
 		delete HookInterface::getSingletonPtr();
+
+	QuestScript* script = NULL;
+	for(QuestScriptMap::iterator qitr = EntryQuestScriptMap.begin(); qitr != EntryQuestScriptMap.end(); qitr++)
+	{
+		script = qitr->second;
+		EntryQuestScriptMap.erase(qitr->first);
+		delete script;
+		script = NULL;
+	}
+	EntryQuestScriptMap.clear();
 
 	for(uint8 type = 0; type < 3; type++)
 		GossipMaps[type].clear(); // Do not delete, just clean em out, they will be deleted by customgossip map

@@ -770,6 +770,7 @@ protected:
 	uint32	m_KickAFKPlayers;//don't lag the server if you are useless anyway :P
 
 public:
+	bool LacrimiLoading;
 	Lacrimi* LacrimiPtr;
 	std::string GmClientChannel;
 	bool m_reqGmForCommands;

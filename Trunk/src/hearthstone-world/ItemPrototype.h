@@ -730,7 +730,6 @@ struct ItemPrototype
 	uint32 ItemLimitCategory;
 	uint32 HolidayId;
 
-	string lowercase_name;	// used in auctions
 	uint32 FoodType;		//pet food type
 	int32 ForcedPetId;
 	uint32 DummySubClass;

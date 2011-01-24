@@ -31,6 +31,7 @@ Lacrimi::Lacrimi(ScriptMgr* mgr)
 	database = false;
 	dumpstats = false;
 	m_threadRunning = true;
+	LuaEngineIsStarting = false;
 	sMgr = mgr;
 }
 
@@ -100,6 +101,7 @@ void Lacrimi::Delay(uint32 time)
 
 bool Lacrimi::run()
 {
+	sWorld.LacrimiLoading = true;
 	SetThreadName("Lacrimi");
 	Log.Success("Lacrimi", "Lacrimi Engine Started");
 	Log.Success("","############################################################");
@@ -125,15 +127,27 @@ bool Lacrimi::run()
 	if(_StartDB())
 		database = true;
 
-	dumpstats = GetConfigBool("StatDumper", "DumpStats", false);
+	dumpstats = GetConfigBool("Features", "DumpStats", false);
 	if(dumpstats)
 	{
 		Log.Success("Lacrimi", "Stat Dumper Initialized");
 		strcpy(Filename, GetConfigString("StatDumper", "Filename", "stats.xml"));
 	}
 
+	if(GetConfigBool("Features", "LuaEngine", true))
+	{
+		L_LuaEngineMgr = new LuaEngineMgr();
+		L_LuaEngineMgr->Startup();
+		Sleep(100);
+		while(LuaEngineIsStarting)
+			Sleep(100);
+	}
+
+
 	uint32 counter = 0;
 	SetupScripts();
+
+	sWorld.LacrimiLoading = false;
 	while(m_threadRunning)
 	{
 		Delay(15000);

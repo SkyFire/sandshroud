@@ -204,8 +204,9 @@ public:
 	HEARTHSTONE_INLINE QuestScript* GetQuestScript(uint32 entry) { return EntryQuestScriptMap[entry]; };
 	HEARTHSTONE_INLINE GossipScript* GetRegisteredGossipScript(uint8 type, uint32 entry, bool rdefault = true)
 	{
-		if(GossipMaps[type][entry] != NULL)
-			return GossipMaps[type][entry];
+		if(GossipMaps[type].size())
+			if(GossipMaps[type][entry] != NULL)
+				return GossipMaps[type][entry];
 		if(rdefault)
 			return DefaultGossipScript;
 		return NULL;

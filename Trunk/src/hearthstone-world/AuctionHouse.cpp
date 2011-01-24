@@ -622,7 +622,7 @@ void AuctionHouse::SendAuctionList(Player* plr, WorldPacket * packet)
 			continue;
 
 		// this is going to hurt. - name
-		if(auctionString.length() > 0 && !FindXinYString(auctionString, proto->lowercase_name))
+		if(auctionString.length() > 0 && !FindXinYString(auctionString, HEARTHSTONE_TOLOWER_RETURN(proto->Name1)))
 			continue;
 
 		// rarity

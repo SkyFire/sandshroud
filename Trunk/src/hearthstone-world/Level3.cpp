@@ -2376,7 +2376,7 @@ bool ChatHandler::HandleLookupItemCommand(const char * args, WorldSession * m_se
 	while(!itr->AtEnd())
 	{
 		it = itr->Get();
-		if(FindXinYString(x, it->lowercase_name))
+		if(FindXinYString(x, HEARTHSTONE_TOLOWER_RETURN(it->Name1)))
 		{
 			// Print out the name in a cool highlighted fashion
 			char messagetext[500];

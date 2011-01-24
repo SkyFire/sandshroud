@@ -17,6 +17,9 @@
 #ifndef LACRIMI_H
 #define LACRIMI_H
 
+class LuaEngine;
+class LuaEngineMgr;
+
 class SCRIPT_DECL Lacrimi : public ThreadContext
 {
 private:
@@ -37,6 +40,7 @@ public:
 	void Delay(uint32 time);
 	bool _StartDB();
 	void _StopDB();
+	ScriptMgr* GetScriptMgr() { return sMgr; };
 	char* GetConfigString(char* configfamily, char* configoption, char* cdefault = "");
 	float GetConfigfloat(char* configfamily, char* configoption, float fdefault = 0.0f);
 	bool GetConfigBool(char* configfamily, char* configoption, bool bdefault = false);
@@ -150,8 +154,19 @@ public: // Stat Dumper
 	void FillOnlineTime(uint32 Time, char * Dest);
 
 	char Filename[MAX_PATH];
+
+public: // LuaEngine
+	LuaEngine* L_LuaEngine;
+	LuaEngineMgr* L_LuaEngineMgr;
+	bool LuaEngineIsStarting;
 };
 
+#define sLacrimi (*sWorld.LacrimiPtr)
+
 #define LacrimiDatabase (*(sWorld.LacrimiPtr->GetLDB()))
+
+#define g_engine (sLacrimi.L_LuaEngine)
+#define g_luaMgr (*sLacrimi.L_LuaEngineMgr)
+#define LuaEvent (g_luaMgr.LuaEventMgr)
 
 #endif
