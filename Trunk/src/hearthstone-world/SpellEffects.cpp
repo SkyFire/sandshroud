@@ -605,8 +605,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					if( p_caster->HasAura(34258) )
 						p_caster->CastSpell(p_caster, 34260, true);
 
-					if((p_caster->HasAura(53696) || p_caster->HasAura(53695)))
-						p_caster->CastSpell(p_caster, 68055, true);
+					if(unitTarget && (p_caster->HasAura(53696) || p_caster->HasAura(53695)))
+						p_caster->CastSpell(unitTarget, 68055, true);
 
 					if( p_caster->HasAura(37186) )
 						dmg += 33;
