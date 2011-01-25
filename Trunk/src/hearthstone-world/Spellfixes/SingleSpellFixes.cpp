@@ -816,10 +816,8 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		//Paladin: Seal	of Wisdom
 	case 20166:
 		{
-			sp->procChance = 47;
-			sp->procFlags = PROC_ON_MELEE_ATTACK;
-			sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
-			sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
+			sp->Effect[0] = sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
+			sp->EffectApplyAuraName[0] = sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
 		}break;
 
 		//paladin	-	seal of	blood
@@ -1909,13 +1907,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 31895:
 		{
 			sp->procChance = 20;
-			sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
-			sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
-		}break;
-
-		// Seal of Wisdom - dummy effect
-	case 20165:
-		{
 			sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
 			sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
 		}break;

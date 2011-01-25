@@ -3219,6 +3219,7 @@ void Aura::SpellAuraDummy(bool apply)
 		}break;
 
 	case 31801: // Seal of Vengeance
+	case 20166: // Seal of Wisdom
 	case 53736: // Seal of Corruption
 	case 21084: // Seal of Righteousness
 	case 53720: // Seal of the Martyr
@@ -3232,6 +3233,7 @@ void Aura::SpellAuraDummy(bool apply)
 				{
 					uint32 spellid = 0;
 					uint32 procchance = 100;
+					uint32 judspell = mod->m_amount;
 					switch(GetSpellId())
 					{
 					case 31801:
@@ -3251,10 +3253,15 @@ void Aura::SpellAuraDummy(bool apply)
 						procchance = 40;
 						spellid = 20424;
 						break;
+					case 20166:
+						procchance = 47;
+						spellid = 20168;
+						judspell = 20186;
+						break;
 					}
 
 					if(mod->i == 2)
-						plr->JudgementSpell = mod->m_amount;
+						plr->JudgementSpell = judspell;
 					else if(spellid)
 						CreateProcTriggerSpell(plr, plr->GetGUID(), GetSpellId(), spellid, procchance, PROC_ON_MELEE_ATTACK, NULL);
 				}

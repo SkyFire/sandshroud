@@ -197,6 +197,8 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		_player->Cooldown_AddItem( itemProto, x );
 }
 
+bool IsException(Player* plr, uint32 spellid);
+
 void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 {
 	CHECK_INWORLD_RETURN;
@@ -244,7 +246,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 	// this could fuck up things but meh it's needed ALOT of the newbs are using WPE now
 	// WPE allows them to mod the outgoing packet and basicly choose what ever spell they want :(
 
-	if( !GetPlayer()->HasSpell(spellId) || spellInfo->Attributes & ATTRIBUTES_PASSIVE )
+	if((!GetPlayer()->HasSpell(spellId) || spellInfo->Attributes & ATTRIBUTES_PASSIVE) && !IsException(_player, spellId))
 	{
 		// Some spells the player doesn't actually know, but are given to him by his current shapeshift.
 		// These spells should be allowed to be cast.
@@ -451,4 +453,20 @@ void WorldSession::HandleCharmForceCastSpell(WorldPacket & recvPacket)
 	Spell* pSpell = new Spell(caster, sp, false, NULLAURA);
 	pSpell->extra_cast_number = castnumber;
 	pSpell->prepare(&targets);
+}
+
+bool IsException(Player* plr, uint32 spellid)
+{
+	switch(spellid)
+	{
+	case 63644:
+	case 63645:
+		{
+			if(plr->m_talentSpecsCount > 1)
+				return true;
+			else
+				return false;
+		}break;
+	}
+	return false;
 }

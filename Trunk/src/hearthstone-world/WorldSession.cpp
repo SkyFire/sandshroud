@@ -183,9 +183,8 @@ int WorldSession::Update(uint32 InstanceID)
 			}
 		}
 
-		//delete packet;
-		g_bufferPool.Deallocate(packet);
-
+		delete packet;
+		packet = NULL;
 		if(InstanceID != instanceId)
 			return 2; // If we hit this it means that an opcode has changed our map.
 

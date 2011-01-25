@@ -273,12 +273,6 @@ bool HandleRehashCommand(BaseConsole * pConsole, int argc, const char * argv[])
 	return true;
 }
 
-bool HandleBPStatsCommand(BaseConsole * pConsole, int argc, const char * argv[])
-{
-	g_bufferPool.Stats();
-	return true;
-}
-
 bool HandleBackupDBCommand(BaseConsole * pConsole, int argc, const char * argv[])
 {
 	sWorld.BackupDB();

@@ -335,7 +335,6 @@ void HandleConsoleInput(BaseConsole * pConsole, const char * szInput)
 		{ &HandleBanAccountCommand, "ban", "<account> <timeperiod>", "Bans account x for time y." },
 		{ &HandleBanAccountCommand, "banaccount", "<account> <timeperiod>", "Bans account x for time y." },
 		{ &HandleBackupDBCommand, "backupdb", "none", "Backups Character Database" },
-		{ &HandleBPStatsCommand, "bpstats", "none", "Shows buffer pool stats" },
 		{ &HandleCancelCommand, "cancel", "none", "Cancels a pending shutdown." },
 		{ &HandleCreateAccountCommand, "createaccount", "<name> <pass> <email> <flags>", "Creates an account." },
 		{ &HandleInfoCommand, "info", "none", "Gives server runtime information." },

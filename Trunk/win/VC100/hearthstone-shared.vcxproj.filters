@@ -273,7 +273,6 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp">
       <Filter>Collision\G3D\Matrix</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\BufferPool.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\SharedStdAfx.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp">
       <Filter>Pathfinding\Detour</Filter>
@@ -680,7 +679,6 @@
       <Filter>Collision\G3D\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\AuthCodes.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\BufferPool.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Common.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\FastQueue.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\format.h" />

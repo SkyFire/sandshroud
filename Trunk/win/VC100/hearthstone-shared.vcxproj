@@ -335,7 +335,6 @@ RevisionExtractor.exe
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix3.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\BufferPool.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\SharedStdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -475,7 +474,6 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix3.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\AuthCodes.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\BufferPool.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Common.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\FastQueue.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\format.h" />

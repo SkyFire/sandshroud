@@ -38,7 +38,6 @@ bool HandleOnlinePlayersCommand(BaseConsole * pConsole, int argc, const char * a
 bool HandlePlayerInfoCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleCreateAccountCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleRehashCommand(BaseConsole * pConsole, int argc, const char * argv[]);
-bool HandleBPStatsCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleBackupDBCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleSaveAllCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleWhisperCommand(BaseConsole * pConsole, int argc, const char * argv[]);

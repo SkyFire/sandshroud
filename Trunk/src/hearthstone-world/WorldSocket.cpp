@@ -62,17 +62,11 @@ WorldSocket::~WorldSocket()
 	WorldPacket * pck;
 	queueLock.Acquire();
 	while((pck = _queue.Pop()))
-	{
-		//delete pck;
-		g_bufferPool.Deallocate(pck);
-	}
+		delete pck;
 	queueLock.Release();
 
 	if(pAuthenticationPacket)
-	{
-		g_bufferPool.Deallocate(pAuthenticationPacket);
-		//delete pAuthenticationPacket;
-	}
+		delete pAuthenticationPacket;
 
 	if(mSession)
 	{
@@ -92,7 +86,7 @@ void WorldSocket::OnDisconnect()
 	if(mSession)
 	{
 		mSession->SetSocket(0);
-		mSession=NULL;
+		mSession = NULL;
 	}
 
 	if(mRequestID != 0)
@@ -104,14 +98,14 @@ void WorldSocket::OnDisconnect()
 	if(mQueued)
 	{
 		sWorld.RemoveQueuedSocket(this);	// Remove from queued sockets.
-		mQueued=false;
+		mQueued = false;
 	}
 
 	// clear buffer
 	queueLock.Acquire();
 	WorldPacket *pck;
 	while((pck = _queue.Pop()))
-		g_bufferPool.Deallocate(pck);
+		delete pck;
 	queueLock.Release();
 }
 
@@ -135,10 +129,10 @@ void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 	{
 		/* queue the packet */
 		queueLock.Acquire();
-		//WorldPacket * pck = new WorldPacket(opcode, len);
-		WorldPacket * pck = g_bufferPool.Allocate(len);
+		WorldPacket * pck = new WorldPacket(opcode, len);
 		pck->SetOpcode(opcode);
-		if(len) pck->append((const uint8*)data, len);
+		if(len)
+			pck->append((const uint8*)data, len);
 		_queue.Push(pck);
 		queueLock.Release();
 	}
@@ -161,8 +155,7 @@ void WorldSocket::UpdateQueuedPackets()
 		{
 		case OUTPACKET_RESULT_SUCCESS:
 			{
-				//delete pck;
-				g_bufferPool.Deallocate(pck);
+				delete pck;
 				_queue.pop_front();
 			}break;
 
@@ -176,11 +169,8 @@ void WorldSocket::UpdateQueuedPackets()
 		default:
 			{
 				/* kill everything in the buffer */
-				while((pck == _queue.Pop()))
-				{
-					g_bufferPool.Deallocate(pck);
-					//delete pck;
-				}
+				while((pck = _queue.Pop()))
+					delete pck;
 				queueLock.Release();
 				return;
 			}break;
@@ -496,7 +486,7 @@ void WorldSocket::Authenticate()
 	sAddonMgr.SendAddonInfoPacket(pAuthenticationPacket, (uint32)pAuthenticationPacket->rpos(), pSession);
 	pSession->_latency = _latency;
 
-	g_bufferPool.Deallocate(pAuthenticationPacket);
+	delete pAuthenticationPacket;
 	pAuthenticationPacket = NULL;
 
 	sWorld.AddSession(pSession);
@@ -576,8 +566,6 @@ void WorldSocket::OnRead()
 			mOpcode = Header.cmd;
 		}
 
-		WorldPacket * Packet;
-
 		if(mRemaining > 0)
 		{
 			if( readBuffer.GetSize() < mRemaining )
@@ -587,9 +575,7 @@ void WorldSocket::OnRead()
 			}
 		}
 
-		//Packet = new WorldPacket(mOpcode, mSize);
-		Packet = g_bufferPool.Allocate(mSize);
-		Packet->SetOpcode(mOpcode);
+		WorldPacket *Packet = new WorldPacket(mOpcode, mSize);
 		Packet->resize(mSize);
 
 		if(mRemaining > 0)
@@ -606,8 +592,7 @@ void WorldSocket::OnRead()
 		case CMSG_PING:
 			{
 				_HandlePing(Packet);
-				//delete Packet;
-				g_bufferPool.Deallocate(Packet);
+				delete Packet;
 			}break;
 		case CMSG_AUTH_SESSION:
 			{
@@ -615,8 +600,13 @@ void WorldSocket::OnRead()
 			}break;
 		default:
 			{
-				if(mSession) mSession->QueuePacket(Packet);
-				else g_bufferPool.Deallocate(Packet);
+				if(mSession)
+					mSession->QueuePacket(Packet);
+				else
+				{
+					delete Packet;
+					Packet = NULL;
+				}
 			}break;
 		}
 	}

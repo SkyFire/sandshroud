@@ -82,7 +82,6 @@
 #include "../hearthstone-shared/Threading/RWLock.h"
 #include "../hearthstone-shared/Threading/Condition.h"
 #include "../hearthstone-shared/hearthstone_getopt.h"
-#include "../hearthstone-shared/BufferPool.h"
 #include "../hearthstone-shared/CallBack.h"
 #include "../hearthstone-shared/Storage.h"
 #include "../hearthstone-logonserver/LogonOpcodes.h"

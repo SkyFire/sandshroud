@@ -1319,14 +1319,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-shared\BufferPool.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\hearthstone-shared\BufferPool.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\hearthstone-shared\Common.h"
 			>
 		</File>

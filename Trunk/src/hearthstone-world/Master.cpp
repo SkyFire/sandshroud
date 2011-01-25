@@ -287,7 +287,6 @@ bool Master::Run(int argc, char ** argv)
 		return false;
 	}
 
-	g_bufferPool.Init();
 	sWorld.SetStartTime(uint32(UNIXTIME));
 
 	WorldRunnable * wr = new WorldRunnable();
@@ -377,7 +376,6 @@ bool Master::Run(int argc, char ** argv)
 		{
 			ThreadPool.ShowStats();
 			ThreadPool.IntegrityCheck();//Checks if THREAD_RESERVE is met
-			g_bufferPool.Optimize();
 		}
 
 		/* since time() is an expensive system call, we only update it once per server loop */
@@ -528,7 +526,6 @@ bool Master::Run(int argc, char ** argv)
 
 	// remove pid
 	remove( "hearthstone-world.pid" );
-	g_bufferPool.Destroy();
 
 #ifdef WIN32
 	WSACleanup();

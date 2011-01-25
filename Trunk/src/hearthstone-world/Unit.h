@@ -107,9 +107,9 @@ typedef struct
 
 enum DeathState
 {
-	ALIVE = 0,  // Unit is alive and well
-	JUST_DIED,  // Unit has JUST died
-	CORPSE,	 // Unit has died but remains in the world as a corpse
+	ALIVE = 0,	// Unit is alive and well
+	JUST_DIED,	// Unit has JUST died
+	CORPSE,		// Unit has died but remains in the world as a corpse
 	DEAD		// Unit is dead and his corpse is gone from the world
 };
 
