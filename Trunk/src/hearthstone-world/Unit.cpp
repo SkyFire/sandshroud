@@ -7401,7 +7401,7 @@ void Unit::knockback(int32 basepoint, uint32 miscvalue, bool disengage )
 	}
 }
 
-void Unit::Teleport(float x, float y, float z, float o, uint32 phase)
+void Unit::Teleport(float x, float y, float z, float o, int32 phasemask)
 {
 	if(IsPlayer())
 		TO_PLAYER(this)->SafeTeleport(GetMapId(), GetInstanceID(), x,y,z, o,phase);
@@ -7421,6 +7421,8 @@ void Unit::Teleport(float x, float y, float z, float o, uint32 phase)
 		data << x << y << z;
 		SendMessageToSet(&data, true);
 		SetPosition( x, y, z, o );
+		if(phase != GetPhaseMask())
+			SetPhaseMask(phase);
 	}
 }
 

@@ -371,28 +371,26 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 	return vmapheight+0.00321f; // We have a direct offset*/
 }
 
-void Object::SetPhaseMask(uint32 phase)
+void Object::SetPhaseMask(int32 phase)
 {
 	m_phaseMask = phase;
-
-	WorldPacket data(SMSG_SET_PHASE_SHIFT, 9);
-	data << GetNewGUID() << uint8(m_phaseMask);
-	SendMessageToSet(&data, (IsPlayer() ? true : false));
+	SendPhaseShift(uint8(m_phaseMask));
 }
 
-void Object::EnablePhase(uint32 phaseMode)
+void Object::EnablePhase(int32 phaseMode)
 {
 	m_phaseMask |= phaseMode;
-
-	WorldPacket data(SMSG_SET_PHASE_SHIFT, 9);
-	data << GetNewGUID() << uint8(m_phaseMask);
-	SendMessageToSet(&data, (IsPlayer() ? true : false));
+	SendPhaseShift(uint8(m_phaseMask));
 }
 
-void Object::DisablePhase(uint32 phaseMode)
+void Object::DisablePhase(int32 phaseMode)
 {
 	m_phaseMask &= ~phaseMode;
+	SendPhaseShift(uint8(m_phaseMask));
+}
 
+void Object::SendPhaseShift(uint8 phaseMode)
+{
 	WorldPacket data(SMSG_SET_PHASE_SHIFT, 9);
 	data << GetNewGUID() << uint8(m_phaseMask);
 	SendMessageToSet(&data, (IsPlayer() ? true : false));

@@ -1709,9 +1709,9 @@ public:
 	Unit* linkTarget;
 	bool stack_cheat;
 	bool triggerpass_cheat;
-	bool SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, uint32 phase = 1);
-	bool SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, uint32 phase = 1);
-	void SafeTeleport(MapMgr* mgr, LocationVector vec, uint32 phase = 1);
+	bool SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, int32 phase = 1);
+	bool SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1);
+	void SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase = 1);
 	void EjectFromInstance();
 	bool raidgrouponlysent;
 

@@ -525,13 +525,14 @@ public:
 	void EventSpellHit(Spell* pSpell);
 
 	bool PhasedCanInteract(Object* pObj);
-	uint32 GetPhaseMask() { return m_phaseMask; }
-	bool IsInPhase(uint32 phaseMode) { return ((m_phaseMask & phaseMode) != 0); };
-	void EnablePhase(uint32 phaseMode);
-	void DisablePhase(uint32 phaseMode);
+	int32 GetPhaseMask() { return m_phaseMask; }
+	bool IsInPhase(int32 phaseMode) { return ((m_phaseMask & phaseMode) != 0); };
+	void EnablePhase(int32 phaseMode);
+	void DisablePhase(int32 phaseMode);
+	void SendPhaseShift(uint8 phaseMode);
 
 	// Don't fucking use this.
-	void SetPhaseMask(uint32 phase);
+	void SetPhaseMask(int32 phase);
 
 	Aura* m_phaseAura;
 	bool OwnPhase; // Players only really.
@@ -553,7 +554,7 @@ protected:
 	/* Main Function called by isInFront(); */
 	bool inArc(float Position1X, float Position1Y, float FOV, float Orientation, float Position2X, float Position2Y );
 
-	uint32 m_phaseMask;
+	int32 m_phaseMask;
 	LocationVector m_phaseLocation;
 	uint32 m_phaseDistanceLimit;
 

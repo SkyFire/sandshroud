@@ -368,10 +368,8 @@ void WorldSession::HandleCancelCastOpcode(WorldPacket& recvPacket)
 {
 	uint32 spellId;
 	recvPacket >> spellId;
-	if(GetPlayer()->m_currentSpell && !_player->GetVehicle())
+	if(GetPlayer()->m_currentSpell)
 		GetPlayer()->m_currentSpell->cancel();
-	if(_player->GetVehicle())
-		_player->GetVehicle()->GetCurrentSpell()->cancel();
 }
 
 void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)

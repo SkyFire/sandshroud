@@ -9078,12 +9078,12 @@ float Player::CalcPercentForRating( uint32 index, uint32 rating )
 		return (rating / pDBCEntry->val);
 }
 
-bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, uint32 phase)
+bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, int32 phase)
 {
 	return SafeTeleport(MapID, InstanceID, LocationVector(X, Y, Z, O), phase);
 }
 
-bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, uint32 phase)
+bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase)
 {
 	//abort duel if other map or new distance becomes bigger then 1600
 	if(DuelingWith && (MapID != GetMapId() || m_position.Distance2DSq(vec) >= 1600) )		// 40
@@ -9225,7 +9225,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, u
 	return true;
 }
 
-void Player::SafeTeleport(MapMgr* mgr, LocationVector vec, uint32 phase)
+void Player::SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase)
 {
 	if(IsInWorld())
 		RemoveFromWorld();

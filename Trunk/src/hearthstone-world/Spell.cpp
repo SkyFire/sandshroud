@@ -1099,10 +1099,15 @@ uint8 Spell::prepare( SpellCastTargets * targets )
 		targets->m_unitTarget = 0;
 		GenerateTargets( targets );
 	}
-	if(UseMissileDelay())
+	if(UseMissileDelay() && !m_triggeredSpell)
 	{
 		m_missileTravelTime = (uint32)m_targets.traveltime;
 		m_missilePitch = m_targets.missilepitch;
+	}
+	else
+	{
+		m_missileTravelTime = 0;
+		m_missilePitch = 0.0f;
 	}
 	m_targets = *targets;
 
@@ -1590,8 +1595,8 @@ void Spell::cast(bool check)
 				{
 					if( u_caster != NULL && u_caster->IsInWorld() )
 					{
-							u_caster->HandleProc(PROC_ON_CAST_SPECIFIC_SPELL | PROC_ON_CAST_SPELL, NULL, unitTarget, m_spellInfo);
-							u_caster->m_procCounter = 0; //this is required for to be able to count the depth of procs (though i have no idea where/why we use proc on proc)
+						u_caster->HandleProc(PROC_ON_CAST_SPECIFIC_SPELL | PROC_ON_CAST_SPELL, NULL, unitTarget, m_spellInfo);
+						u_caster->m_procCounter = 0; //this is required for to be able to count the depth of procs (though i have no idea where/why we use proc on proc)
 					}
 				}
 				if( unitTarget != NULL && unitTarget->IsInWorld() )
