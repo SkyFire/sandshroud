@@ -1454,7 +1454,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\TableFunctions.cpp"
+					RelativePath="..\..\Source\LuaHandler\Functions\TableFunctions.cpp"
 					>
 				</File>
 				<File
