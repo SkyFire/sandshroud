@@ -314,14 +314,14 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 		float range=GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));//this is probably wrong
 		range*=range;
 		unordered_set<Object* >::iterator itr;
-		for( itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
+		for( itr = pTarget->GetInRangeSetBegin(); itr != pTarget->GetInRangeSetEnd(); itr++ )
 		{
 			if((*itr)->GetGUID()==m_targets.m_unitTarget)
 				continue;
 			if( !((*itr)->IsUnit()) || !TO_UNIT(*itr)->isAlive())
 				continue;
 
-			if(IsInrange(m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),(*itr),range))
+			if(IsInrange(pTarget->GetPositionX(),pTarget->GetPositionY(),pTarget->GetPositionZ(),(*itr),range))
 			{
 				if(isAttackable(u_caster,TO_UNIT(*itr)))
 				{
@@ -792,7 +792,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 			{
 				if(!(*itr)->m_loggedInPlayer || (*itr)->m_loggedInPlayer==u_caster || (*itr)->m_loggedInPlayer->GetUInt32Value(UNIT_FIELD_HEALTH) == (*itr)->m_loggedInPlayer->GetUInt32Value(UNIT_FIELD_MAXHEALTH))
 					continue;
-				if(IsInrange(u_caster->GetPositionX(),u_caster->GetPositionY(),u_caster->GetPositionZ(),(*itr)->m_loggedInPlayer, range))
+				if(IsInrange(firstTarget->GetPositionX(),firstTarget->GetPositionY(),firstTarget->GetPositionZ(),(*itr)->m_loggedInPlayer, range))
 				{
 					_AddTargetForced((*itr)->m_loggedInPlayer->GetGUID(), i);
 					if(!--jumps)
