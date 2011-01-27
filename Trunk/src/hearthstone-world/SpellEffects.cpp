@@ -6779,12 +6779,10 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 	}
 
 	// Obtain the spell we will be casting.
-	SpellEntry * TotemSpell = ObjectMgr::getSingleton().GetTotemSpell(GetSpellProto()->Id);
-	if(TotemSpell == 0)
-	{
-		OUT_DEBUG("Totem %u does not have any spells to cast, exiting\n",entry);
-		return;
-	}
+	bool hastotemspell = true;
+	SpellEntry * TotemSpell = objmgr.GetTotemSpell(GetSpellProto()->Id);
+	if(TotemSpell == NULL)
+		hastotemspell = false;
 
 	Creature* pTotem = NULLCREATURE;
 	pTotem = p_caster->GetMapMgr()->CreateCreature(entry);
@@ -6905,88 +6903,96 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 		pTotem->HealDoneMod = p_caster->HealDoneMod;
 	}
 
-	// Set up AI, depending on our spells.
 	uint32 j;
-	for( j = 0; j < 3; ++j )
+	// Set up AI, depending on our spells.
+	if(hastotemspell)
 	{
-		if( TotemSpell->Effect[j] == SPELL_EFFECT_APPLY_AREA_AURA || TotemSpell->Effect[j] == SPELL_EFFECT_PERSISTENT_AREA_AURA || TotemSpell->EffectApplyAuraName[j] == SPELL_AURA_PERIODIC_TRIGGER_SPELL )
+		for( j = 0; j < 3; ++j )
 		{
-			break;
+			if( TotemSpell->Effect[j] == SPELL_EFFECT_APPLY_AREA_AURA || TotemSpell->Effect[j] == SPELL_EFFECT_PERSISTENT_AREA_AURA || TotemSpell->EffectApplyAuraName[j] == SPELL_AURA_PERIODIC_TRIGGER_SPELL )
+			{
+				break;
+			}
 		}
 	}
+
 	// Setup complete. Add us to the world.
 	pTotem->PushToWorld(m_caster->GetMapMgr());
 	sEventMgr.AddEvent( pTotem, &Creature::SafeDelete, EVENT_CREATURE_SAFE_DELETE, GetDuration(), 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT );
 
-	if(j != 3)
+	if(hastotemspell)
 	{
-		// We're an area aura. Simple. Disable AI and cast the spell.
-		pTotem->DisableAI();
-		pTotem->GetAIInterface()->totemspell = GetSpellProto();
-
-		Spell* pSpell(new Spell(pTotem, TotemSpell, true, NULLAURA));
-
-		SpellCastTargets targets;
-		targets.m_destX = pTotem->GetPositionX();
-		targets.m_destY = pTotem->GetPositionY();
-		targets.m_destZ = pTotem->GetPositionZ();
-		targets.m_targetMask = TARGET_FLAG_DEST_LOCATION;
-
-		pSpell->prepare(&targets);
-
-		if( TotemSpell->NameHash == SPELL_HASH_TOTEM_OF_WRATH )
-			pTotem->CastSpell(pTotem, dbcSpell.LookupEntry(30708), true);
-	}
-	else
-	{
-		// We're a casting totem. Switch AI on, and tell it to cast this spell.
-		pTotem->EnableAI();
-		pTotem->GetAIInterface()->Init(pTotem, AITYPE_TOTEM, MOVEMENTTYPE_NONE, p_caster);
-		pTotem->GetAIInterface()->totemspell = TotemSpell;
-		int32 totemspelltimer = 3000, totemspelltime = 3000;	// need a proper resource for this.
-
-		switch(TotemSpell->Id)
+		if(j != 3)
 		{
-		case 51975: //Poison Cleansing Totem
-		case 52025: //Disease Cleansing Totem
-			{
-				totemspelltime =  5000;
-				totemspelltimer = 0; //First tick done immediately
-				break;
-			}
-		case 8146: //Tremor Totem
-			{
-				totemspelltime = 1000;	// not sure about correctness, but spell amplitude = 1000
-				totemspelltimer = 0; //First tick done immediately
-				break;
-			}
-		default:break;
-		}
-		switch(GetSpellProto()->NameHash)
-		{
-		case SPELL_HASH_STONECLAW_TOTEM:
-			{
-				totemspelltime = 30000; // Should be casted only once
-				totemspelltimer = 0; // Casted immediately
-				break;
-			}
-		case SPELL_HASH_MAGMA_TOTEM:
-		case SPELL_HASH_MANA_SPRING_TOTEM:
-		case SPELL_HASH_HEALING_STREAM_TOTEM:
-			{
-				totemspelltimer = totemspelltime = 2000;
-				break;
-			}
-		case SPELL_HASH_SEARING_TOTEM:
-			{
-				totemspelltimer = totemspelltime = 2200;
-				break;
-			}
-		default:break;
-		}
+			// We're an area aura. Simple. Disable AI and cast the spell.
+			pTotem->DisableAI();
+			pTotem->GetAIInterface()->totemspell = GetSpellProto();
 
-		pTotem->GetAIInterface()->m_totemspelltimer = totemspelltimer;
-		pTotem->GetAIInterface()->m_totemspelltime = totemspelltime;
+			Spell* pSpell(new Spell(pTotem, TotemSpell, true, NULLAURA));
+
+			SpellCastTargets targets;
+			targets.m_destX = pTotem->GetPositionX();
+			targets.m_destY = pTotem->GetPositionY();
+			targets.m_destZ = pTotem->GetPositionZ();
+			targets.m_targetMask = TARGET_FLAG_DEST_LOCATION;
+
+			pSpell->prepare(&targets);
+
+			if( TotemSpell->NameHash == SPELL_HASH_TOTEM_OF_WRATH )
+				pTotem->CastSpell(pTotem, dbcSpell.LookupEntry(30708), true);
+		}
+		else
+		{
+			// We're a casting totem. Switch AI on, and tell it to cast this spell.
+			pTotem->EnableAI();
+			pTotem->GetAIInterface()->Init(pTotem, AITYPE_TOTEM, MOVEMENTTYPE_NONE, p_caster);
+			pTotem->GetAIInterface()->totemspell = TotemSpell;
+			int32 totemspelltimer = 3000, totemspelltime = 3000;	// need a proper resource for this.
+
+			switch(TotemSpell->Id)
+			{
+			case 51975: //Poison Cleansing Totem
+			case 52025: //Disease Cleansing Totem
+				{
+					totemspelltime =  5000;
+					totemspelltimer = 0; //First tick done immediately
+					break;
+				}
+			case 8146: //Tremor Totem
+				{
+					totemspelltime = 1000;	// not sure about correctness, but spell amplitude = 1000
+					totemspelltimer = 0; //First tick done immediately
+					break;
+				}
+			default:break;
+			}
+			switch(GetSpellProto()->NameHash)
+			{
+			case SPELL_HASH_STONECLAW_TOTEM:
+				{
+					totemspelltime = 30000; // Should be casted only once
+					totemspelltimer = 0; // Casted immediately
+					break;
+				}
+			case SPELL_HASH_MAGMA_TOTEM:
+			case SPELL_HASH_MANA_SPRING_TOTEM:
+			case SPELL_HASH_HEALING_STREAM_TOTEM:
+				{
+					totemspelltimer = totemspelltime = 2000;
+					break;
+				}
+			case SPELL_HASH_SEARING_TOTEM:
+				{
+					totemspelltimer = totemspelltime = 2200;
+					break;
+				}
+			default:
+				break;
+			}
+
+			pTotem->GetAIInterface()->m_totemspelltimer = totemspelltimer;
+			pTotem->GetAIInterface()->m_totemspelltime = totemspelltime;
+		}
 	}
 
 	//in case these are our elemental totems then we should set them up
