@@ -7404,7 +7404,7 @@ void Unit::knockback(int32 basepoint, uint32 miscvalue, bool disengage )
 void Unit::Teleport(float x, float y, float z, float o, int32 phasemask)
 {
 	if(IsPlayer())
-		TO_PLAYER(this)->SafeTeleport(GetMapId(), GetInstanceID(), x,y,z, o,phase);
+		TO_PLAYER(this)->SafeTeleport(GetMapId(), GetInstanceID(), x, y, z, o, phasemask);
 	else
 	{
 		WorldPacket data(SMSG_MONSTER_MOVE, 50);
@@ -7421,8 +7421,8 @@ void Unit::Teleport(float x, float y, float z, float o, int32 phasemask)
 		data << x << y << z;
 		SendMessageToSet(&data, true);
 		SetPosition( x, y, z, o );
-		if(phase != GetPhaseMask())
-			SetPhaseMask(phase);
+		if(phasemask != GetPhaseMask())
+			SetPhaseMask(phasemask);
 	}
 }
 

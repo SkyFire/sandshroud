@@ -1461,7 +1461,7 @@ public: // Virtual Script Callers
 
 public:
 	void knockback(int32 basepoint, uint32 miscvalue, bool disengage = false );
-	void Teleport(float x, float y, float z, float o, int32 phasemask);
+	void Teleport(float x, float y, float z, float o, int32 phasemask = 1);
 	void SetRedirectThreat(Unit * target, float amount, uint32 Duaration);
 	void EventResetRedirectThreat();
 	void SetSpeed(uint8 SpeedType, float value);
