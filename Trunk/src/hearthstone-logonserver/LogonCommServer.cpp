@@ -50,7 +50,7 @@ void LogonCommServerSocket::OnConnect()
 {
 	if( !IsServerAllowed(GetRemoteAddress().s_addr) )
 	{
-		printf("Server connection from %s:%u DENIED, not an allowed IP.\n", GetIP(), GetPort());
+		printf("Server connection from %u(%s:%u) DENIED, not an allowed IP.\n", GetRemoteAddress().s_addr, GetIP(), GetPort());
 		Disconnect();
 		return;
 	}
@@ -343,7 +343,7 @@ void LogonCommServerSocket::SendPacket(WorldPacket * data)
 	if(use_crypto)
 		sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
 
-	rv = Write((uint8*)&header, 6);
+	rv = WriteButHold((uint8*)&header, 6);
 
 	if(data->size() > 0 && rv)
 	{
@@ -352,6 +352,8 @@ void LogonCommServerSocket::SendPacket(WorldPacket * data)
 
 		rv = Write(data->contents(), (uint32)data->size());
 	}
+	else if(rv)
+		ForceSend();
 
 	UnlockWriteBuffer();
 }

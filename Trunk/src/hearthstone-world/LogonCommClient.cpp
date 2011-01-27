@@ -195,7 +195,7 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 	if(use_crypto && !no_crypto)
 		_sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
 
-	rv = Write((const uint8*)&header, 6);
+	rv = WriteButHold((const uint8*)&header, 6);
 
 	if(data->size() > 0 && rv)
 	{
@@ -204,6 +204,8 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 
 		rv = Write((const uint8*)data->contents(), (uint32)data->size());
 	}
+	else if(rv)
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 }

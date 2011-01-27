@@ -153,6 +153,25 @@ void TcpSocket::Finalize()
 	OnConnect();
 }
 
+bool TcpSocket::ForceSend()
+{
+	if(!m_connected)
+		return false;
+
+#ifdef NETLIB_IOCP
+	/* On windows since you have multiple threads this has to be guarded. */
+	if(InterlockedCompareExchange(&m_writeLock, 1, 0) == 0)
+		sSocketEngine.WantWrite(this);
+#else
+	if(!m_writeLock)
+	{
+		++m_writeLock;
+		sSocketEngine.WantWrite(this);
+	}
+#endif
+	return true;
+}
+
 bool TcpSocket::Write(const void * data, size_t bytes)
 {
 	if(!m_connected)

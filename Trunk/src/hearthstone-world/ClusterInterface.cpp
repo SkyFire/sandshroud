@@ -83,13 +83,15 @@ void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void *
 	DEBUG_LOG("ForwardWoWPacket", "Forwarding %s to server", LookupName(opcode, g_worldOpcodeNames));
 
 	_clientSocket->LockWriteBuffer();
-	_clientSocket->Write((const uint8*)&id, 2);
-	_clientSocket->Write((const uint8*)&size2, 4);
-	_clientSocket->Write((const uint8*)&sessionid, 4);
-	_clientSocket->Write((const uint8*)&opcode, 2);
-	rv = _clientSocket->Write((const uint8*)&size, 4);
+	_clientSocket->WriteButHold((const uint8*)&id, 2);
+	_clientSocket->WriteButHold((const uint8*)&size2, 4);
+	_clientSocket->WriteButHold((const uint8*)&sessionid, 4);
+	_clientSocket->WriteButHold((const uint8*)&opcode, 2);
+	rv = _clientSocket->WriteButHold((const uint8*)&size, 4);
 	if(size && rv)
 		rv =_clientSocket->Write((const uint8*)data, size);
+	else if(rv)
+		ForceSend();
 
 	_clientSocket->UnlockWriteBuffer();
 }

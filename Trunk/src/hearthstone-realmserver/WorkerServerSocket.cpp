@@ -164,12 +164,14 @@ void WSSocket::SendPacket(WorldPacket * pck)
 	LockWriteBuffer();
 
 	// Pass the header to our send buffer
-	rv = Write((const uint8*)&opcode, 2);
-	rv = Write((const uint8*)&size, 4);
+	rv = WriteButHold((const uint8*)&opcode, 2);
+	rv = WriteButHold((const uint8*)&size, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(size > 0 && rv)
 		rv = Write((const uint8*)pck->contents(), uint32(size));
+	else if(rv)
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 }
@@ -188,15 +190,17 @@ void WSSocket::SendWoWPacket(Session * from, WorldPacket * pck)
 	LockWriteBuffer();
 
 	// Pass the header to our send buffer
-	Write((const uint8*)&opcode2, 2);
-	Write((const uint8*)&size2, 4);
-	Write((const uint8*)&id, 4);
-	Write((const uint8*)&opcode1, 2);
-	rv=Write((const uint8*)&size1, 4);	
+	WriteButHold((const uint8*)&opcode2, 2);
+	WriteButHold((const uint8*)&size2, 4);
+	WriteButHold((const uint8*)&id, 4);
+	WriteButHold((const uint8*)&opcode1, 2);
+	rv = WriteButHold((const uint8*)&size1, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(size1 > 0 && rv)
 		rv = Write(pck->contents(), uint32(size1));
+	else if(rv)
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 }

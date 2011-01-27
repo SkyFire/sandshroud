@@ -316,11 +316,11 @@ bool PatchJob::Update()
 	TransferDataPacket header;
 	bool result;
 	header.cmd = 0x31;
-	header.chunk_size = (m_bytesLeft>1500)?1500:m_bytesLeft;
+	header.chunk_size = (m_bytesLeft > 1500) ? 1500 : m_bytesLeft;
 	//DEBUG_LOG("PatchJob", "Sending %u byte chunk", header.chunk_size);
 
-	result = m_client->Write((const uint8*)&header,sizeof(TransferDataPacket));
-	if(result)
+	result = m_client->WriteButHold((const uint8*)&header,sizeof(TransferDataPacket));
+	if(header.chunk_size && result)
 	{
 		result = m_client->Write(m_dataPointer, header.chunk_size);
 		if(result)
@@ -330,6 +330,8 @@ bool PatchJob::Update()
 			m_bytesLeft -= header.chunk_size;
 		}
 	}
+	else if(result)
+		m_client->ForceSend();
 
 	m_client->UnlockWriteBuffer();
 

@@ -185,13 +185,10 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 	if(!IsConnected())
 		return OUTPACKET_RESULT_NOT_CONNECTED;
 
-	LockWriteBuffer();
 	if( GetWriteBuffer()->GetSpace() < (len+4) )
-	{
-		UnlockWriteBuffer();
 		return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
-	}
 
+	LockWriteBuffer();
 	// Encrypt the packet
 	// First, create the header.
 	ServerPktHeader Header;
@@ -200,11 +197,13 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 	_crypt.EncryptSend((uint8*)&Header, sizeof (ServerPktHeader));
 
 	// Pass the header to our send buffer
-	rv = Write((const uint8*)&Header, 4);
+	rv = WriteButHold((const uint8*)&Header, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(len > 0 && rv)
 		rv = Write((const uint8*)data, (uint32)len);
+	else
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 	return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;

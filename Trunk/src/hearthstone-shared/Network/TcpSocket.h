@@ -40,6 +40,14 @@ public:
 	 */
 	inline void UnlockWriteBuffer() { m_writeMutex.Release(); }
 
+	/** Writes the specified data to the end of the socket's write buffer without sending
+	 */
+	bool WriteButHold(const void * data, size_t bytes) { return m_writeBuffer->Write(data, bytes); };
+
+	/** Sends the write buffer by force, regardless of data.
+	 * DO NOT USE UNLESS YOU KNOW WHAT YOUR DOING! */
+	bool ForceSend();
+
 	/** Writes the specified data to the end of the socket's write buffer
 	 */
 	bool Write(const void * data, size_t bytes);
@@ -130,6 +138,7 @@ T* ConnectTCPSocket(const char * hostname, u_short port)
 
 	/* copy into our address struct */
 	memcpy(&conn.sin_addr, host->h_addr_list[0], sizeof(in_addr));
+	memcpy(&conn.sin_addr.s_addr, host->h_addr_list[0], host->h_length);
 	conn.sin_family = AF_INET;
 	conn.sin_port = ntohs(port);
 
@@ -142,7 +151,6 @@ T* ConnectTCPSocket(const char * hostname, u_short port)
 
 	/* try to connect */
 	int result = connect(fd, (const sockaddr*)&conn, sizeof(sockaddr_in));
-
 	if(result < 0)
 	{
 		/*printf("connect() failed - %u\n", errno);*/

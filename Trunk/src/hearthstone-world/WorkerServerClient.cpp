@@ -118,12 +118,14 @@ void WSClient::SendPacket(WorldPacket * data)
 	LockWriteBuffer();
 
 	// Pass the header to our send buffer
-	rv = Write((const uint8*)&opcode, 2);
-	rv = Write((const uint8*)&size, 4);
+	rv = WriteButHold((const uint8*)&opcode, 2);
+	rv = WriteButHold((const uint8*)&size, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(size > 0 && rv)
 		rv = Write((const uint8*)data->contents(), size);
+	else if(rv)
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 }

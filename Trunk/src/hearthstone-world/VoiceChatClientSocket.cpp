@@ -68,31 +68,30 @@ void VoiceChatClientSocket::OnRead()
 
 void VoiceChatClientSocket::SendPacket(WorldPacket* data)
 {
-	if( 4 + data->size() > writeBuffer.GetSpace() )
+	if( 4 + data->size() > GetWriteBuffer()->GetSpace() )
 	{
 		printf("!!! VOICE CHAT CLIENT SOCKET OVERLOAD !!!\n");
 		return;
 	}
+
 	uint16 opcode = data->GetOpcode();
-	uint32 sz = uint32(data->size());
+	uint16 sz = uint16(data->size());
 	bool rv;
 
-	BurstBegin();
-	rv = BurstSend((const uint8*)&opcode, 2);
+	LockWriteBuffer();
+	rv = WriteButHold((const uint8*)&opcode, 2);
 	if(rv)
-		BurstSend((const uint8*)&sz, 2);
+		WriteButHold((const uint8*)&sz, 2);
 
 	if( sz > 0 && rv )
 	{
-		rv = BurstSend((const uint8*)data->contents(), uint32(data->size()));
+		rv = Write((const uint8*)data->contents(), uint32(data->size()));
 	}
+	else if(rv)
+		rv = ForceSend();
 
-	OUT_DEBUG("sent packet of %u bytes with op %u, buffer len is now %u\n", data->size(), data->GetOpcode(), writeBuffer.GetSize());
-	if( rv )
-		BurstPush();
-
-
-	BurstEnd();
+	OUT_DEBUG("sent packet of %u bytes with op %u, buffer len is now %u\n", data->size(), data->GetOpcode(), GetWriteBuffer()->GetSize());
+	UnlockWriteBuffer();
 }
 
 #endif		// VOICE_CHAT
