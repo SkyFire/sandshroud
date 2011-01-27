@@ -54,5 +54,6 @@
 #endif
 
 #include "PerfCounters.h"
+#include "Network/Network.h"
 
 #endif // SHARED_STDAFX

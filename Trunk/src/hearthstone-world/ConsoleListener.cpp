@@ -30,7 +30,7 @@ enum STATES
 	STATE_WAITING	= 4,
 };
 
-class ConsoleSocket : public Socket
+class ConsoleSocket : public TcpSocket
 {
 	RemoteConsole * m_pConsole;
 	char * m_pBuffer;
@@ -42,10 +42,10 @@ class ConsoleSocket : public Socket
 	uint32 m_requestNo;
 
 public:
-	ConsoleSocket(SOCKET iFd);
+	ConsoleSocket(SOCKET iFd, const sockaddr_in * peer);
 	~ConsoleSocket();
 
-	void OnRead();
+	void OnRecvData();
 	void OnDisconnect();
 	void OnConnect();
 	void TryAuthenticate();
@@ -106,7 +106,7 @@ void ConsoleAuthCallback(uint32 request, uint32 result)
 	if(pSocket == NULL || !pSocket->IsConnected())
 		return;
 
-    if(result)
+	if(result)
 		pSocket->AuthCallback(true);
 	else
 		pSocket->AuthCallback(false);
@@ -115,7 +115,7 @@ void ConsoleAuthCallback(uint32 request, uint32 result)
 void CloseConsoleListener()
 {
 	if(g_pListenSocket != NULL)
-		g_pListenSocket->Close();
+		g_pListenSocket->Disconnect();
 }
 
 bool StartConsoleListener( )
@@ -130,13 +130,13 @@ bool StartConsoleListener( )
 	if( !enabled )
 		return false;
 
-	g_pListenSocket = new ListenSocket<ConsoleSocket>( lhost.c_str(), lport );
+	g_pListenSocket = new ListenSocket<ConsoleSocket>();
 	if( g_pListenSocket == NULL )
 		return false;
 
-	if( !g_pListenSocket->IsOpen( ) )
+	if(!g_pListenSocket->Open(lhost.c_str(), lport))
 	{
-		g_pListenSocket->Close( );
+		g_pListenSocket->Disconnect();
 		delete g_pListenSocket;
 		g_pListenSocket = NULL;
 		return false;
@@ -152,7 +152,7 @@ ThreadContext * GetConsoleListener()
 	return (ThreadContext*)g_pListenSocket;
 }
 
-ConsoleSocket::ConsoleSocket( SOCKET iFd ) : Socket(iFd, 10000, 1000)
+ConsoleSocket::ConsoleSocket( SOCKET iFd, const sockaddr_in * peer ) : TcpSocket(iFd, 10000, 1000, false, peer)
 {
 	m_pBufferLen = LOCAL_BUFFER_SIZE;
 	m_pBufferPos = 0;
@@ -178,10 +178,10 @@ ConsoleSocket::~ConsoleSocket( )
 
 void TestConsoleLogin(string& username, string& password, uint32 requestid);
 
-void ConsoleSocket::OnRead()
+void ConsoleSocket::OnRecvData()
 {
-	uint32 readlen = (uint32)readBuffer.GetSize();
-	uint32 len;
+	uint32 readlen = (uint32)GetReadBuffer()->GetSize();
+	uint32 rlen;
 	char * p;
 	if( ( readlen + m_pBufferPos ) >= m_pBufferLen )
 	{
@@ -189,7 +189,7 @@ void ConsoleSocket::OnRead()
 		return;
 	}
 
-	readBuffer.Read((uint8*)&m_pBuffer[m_pBufferPos], readlen);
+	Read((uint8*)&m_pBuffer[m_pBufferPos], readlen);
 	m_pBufferPos += readlen;
 
 	// let's look for any newline bytes.
@@ -197,7 +197,7 @@ void ConsoleSocket::OnRead()
 	while( p != NULL )
 	{
 		// windows is stupid. :P
-		len = (uint32)((p+1) - m_pBuffer);
+		rlen = (uint32)((p+1) - m_pBuffer);
 		if( *(p-1) == '\r' )
 			*(p-1) = '\0';
 
@@ -222,7 +222,7 @@ void ConsoleSocket::OnRead()
 				m_requestNo = ConsoleAuthMgr::getSingleton().GenerateRequestId();
 				ConsoleAuthMgr::getSingleton().SetRequest(m_requestNo, this);
 
-                TestConsoleLogin(m_username, m_password, m_requestNo);
+				TestConsoleLogin(m_username, m_password, m_requestNo);
 				break;
 
 			case STATE_LOGGED:
@@ -232,21 +232,21 @@ void ConsoleSocket::OnRead()
 					break;
 				}
 
-                HandleConsoleInput(m_pConsole, m_pBuffer);
+				HandleConsoleInput(m_pConsole, m_pBuffer);
 				break;
 			}
 		}
 
 		// move the bytes back
-		if( len == m_pBufferPos )
+		if( rlen == m_pBufferPos )
 		{
 			m_pBuffer[0] = '\0';
 			m_pBufferPos = 0;
 		}
 		else
 		{
-			memcpy(m_pBuffer, &m_pBuffer[len], m_pBufferPos - len);
-			m_pBufferPos -= len;
+			memcpy(m_pBuffer, &m_pBuffer[rlen], m_pBufferPos - rlen);
+			m_pBufferPos -= rlen;
 		}
 
 		p = strchr(m_pBuffer, '\n');
@@ -272,7 +272,7 @@ void ConsoleSocket::OnDisconnect()
 void ConsoleSocket::AuthCallback(bool result)
 {
 	ConsoleAuthMgr::getSingleton().SetRequest(m_requestNo, NULL);
-	m_requestNo=0;
+	m_requestNo = 0;
 
 	if( !result )
 	{
@@ -300,14 +300,16 @@ void RemoteConsole::Write(const char * Format, ...)
 	char obuf[65536];
 	va_list ap;
 
-    va_start(ap, Format);
+	va_start(ap, Format);
 	vsnprintf(obuf, 65536, Format, ap);
 	va_end(ap);
 
 	if( *obuf == '\0' )
 		return;
 
-	m_pSocket->Send((const uint8*)obuf, (uint32)strlen(obuf));
+	m_pSocket->LockWriteBuffer();
+	m_pSocket->Write((const uint8*)obuf, (uint32)strlen(obuf));
+	m_pSocket->UnlockWriteBuffer();
 }
 
 void RemoteConsole::WriteNA(const char * Format)
@@ -315,9 +317,10 @@ void RemoteConsole::WriteNA(const char * Format)
 	if( *Format == '\0' )
 		return;
 
-	m_pSocket->Send((const uint8*)Format, (uint32)strlen(Format));
+	m_pSocket->LockWriteBuffer();
+	m_pSocket->Write((const uint8*)Format, (uint32)strlen(Format));
+	m_pSocket->UnlockWriteBuffer();
 }
-
 
 struct ConsoleCommand
 {

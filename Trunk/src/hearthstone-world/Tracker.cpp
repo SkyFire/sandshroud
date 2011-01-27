@@ -39,7 +39,7 @@ void Tracker::CheckPlayerForTracker(Player * plr, bool online)
 
 	char text[1024];
 
-	TrackedPlr * tracker = GetTrackerByIP(plr->GetSession()->GetSocket()->GetRemoteIP());
+	TrackedPlr * tracker = GetTrackerByIP(plr->GetSession()->GetSocket()->GetIP());
 	if ( !tracker )
 		return;	// No tracker found on user!
 
@@ -69,7 +69,7 @@ bool Tracker::IsBeingTracked(Player *plr)
 	if( !IsValidPlayer(plr) )	// No tracker found on user!
 		return false;
 
-	TrackedPlr * tracker = GetTrackerByIP(plr->GetSession()->GetSocket()->GetRemoteIP());
+	TrackedPlr * tracker = GetTrackerByIP(plr->GetSession()->GetSocket()->GetIP());
 	return ( tracker != NULL );	// No tracker found on user!
 }
 
@@ -234,7 +234,7 @@ void Tracker::CreateTracker(WorldSession * adder, const char * args)
 		user->Id					= sTracker.GenerateID();
 		user->AcctId				= toAddSession->GetAccountId();
 		user->Name					= toAddSession->GetAccountName();
-		user->IP_Address			= toAddSession->GetSocket()->GetRemoteIP();
+		user->IP_Address			= toAddSession->GetSocket()->GetIP();
 
 		AddTracker(user, false);
 
@@ -289,7 +289,7 @@ void Tracker::List(WorldSession *m_session, uint32 listStart)
 		{
 			if(pItr->second->GetSession() && pItr->second->GetSession()->GetSocket())
 			{
-				string RemoteIP = pItr->second->GetSession()->GetSocket()->GetRemoteIP();
+				string RemoteIP = pItr->second->GetSession()->GetSocket()->GetIP();
 				if( strcmp( RemoteIP.c_str(), IP_Address.c_str() ) == 0 )
 				{
 					isOnline = true;

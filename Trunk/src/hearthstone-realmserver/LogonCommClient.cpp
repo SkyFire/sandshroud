@@ -28,7 +28,7 @@ typedef struct
 
 HEARTHSTONE_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
 
-LogonCommClientSocket::LogonCommClientSocket(SOCKET fd) : Socket(fd, 524288, 65536)
+LogonCommClientSocket::LogonCommClientSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 524288, 65536, false, peer)
 {
 	// do nothing
 	last_ping = last_pong = uint32(time(NULL));
@@ -45,12 +45,12 @@ void LogonCommClientSocket::OnRead()
 	{
 		if(!remaining)
 		{
-			if(readBuffer.GetSize() < 6)
+			if(GetReadBuffer()->GetSize() < 6)
 				return;	 // no header
 
 			// read header
-			readBuffer.Read(&opcode, 2);
-			readBuffer.Read(&remaining, 4);
+			Read(&opcode, 2);
+			Read(&remaining, 4);
 
 			if(use_crypto)
 			{
@@ -64,7 +64,7 @@ void LogonCommClientSocket::OnRead()
 		}
 
 		// do we have a full packet?
-		if(readBuffer.GetSize() < remaining)
+		if(GetReadBuffer()->GetSize() < remaining)
 			return;
 
 		// create the buffer
@@ -72,7 +72,7 @@ void LogonCommClientSocket::OnRead()
 		if(remaining)
 		{
 			buff.resize(remaining);
-			readBuffer.Read((uint8*)buff.contents(), remaining);
+			Read((uint8*)buff.contents(), remaining);
 		}
 
 		if(use_crypto && remaining)
@@ -189,7 +189,7 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 	if(!m_connected || m_deleted)
 		return;
 
-	BurstBegin();
+	LockWriteBuffer();
 
 	header.opcode = data->GetOpcode();
 	header.size = (uint32)data->size();
@@ -198,18 +198,17 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 	if(use_crypto && !no_crypto)
 		_sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
 
-	rv = BurstSend((const uint8*)&header, 6);
+	rv = Write((const uint8*)&header, 6);
 
 	if(data->size() > 0 && rv)
 	{
 		if(use_crypto && !no_crypto)
 			_sendCrypto.Process((unsigned char*)data->contents(), (unsigned char*)data->contents(), (unsigned int)data->size());
 
-		rv = BurstSend((const uint8*)data->contents(), (uint32)data->size());
+		rv = Write((const uint8*)data->contents(), (uint32)data->size());
 	}
 
-	if(rv) BurstPush();
-	BurstEnd();
+	UnlockWriteBuffer();
 }
 
 void LogonCommClientSocket::OnDisconnect()

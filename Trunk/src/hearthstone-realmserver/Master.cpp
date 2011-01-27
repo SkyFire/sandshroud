@@ -137,26 +137,24 @@ bool Master::Run(int argc, char ** argv)
 	Log.Success("Storage", "DBC Files Loaded...");
 	Storage_Load();
 
-	new SocketMgr;
-	new SocketGarbageCollector;
-	sSocketMgr.SpawnWorkerThreads();
+	new iocpEngine;
+	new SocketEngineThread(&sSocketEngine);
+	sSocketEngine.SpawnThreads();
 
 	Log.Notice("Network", "Opening Client Port...");
-	ListenSocket<WorldSocket> * wsl = new ListenSocket<WorldSocket>(Config.ClusterConfig.GetStringDefault("Listen", "Host", "0.0.0.0").c_str(), Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129));
-	bool lsc = wsl->IsOpen();
+	ListenSocket<WorldSocket> * wsl = new ListenSocket<WorldSocket>();
+	bool lsc = wsl->Open(Config.ClusterConfig.GetStringDefault("Listen", "Host", "0.0.0.0").c_str(),
+		Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129));
 
 	Log.Notice("Network", "Opening Server Port...");
-	ListenSocket<WSSocket> * isl = new ListenSocket<WSSocket>("0.0.0.0", 11010);
-	bool ssc = isl->IsOpen();
+	ListenSocket<WSSocket> * isl = new ListenSocket<WSSocket>();
+	bool ssc = isl->Open("0.0.0.0", 11010);
 
 	if(!lsc || !ssc)
 	{
 		Log.Error("Network", "Could not open one of the sockets.");
 		return 1;
 	}
-
-	ThreadPool.ExecuteTask( isl );
-	ThreadPool.ExecuteTask( wsl );
 
 	/* connect to LS */
 	new LogonCommHandler;

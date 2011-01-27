@@ -43,7 +43,7 @@ struct ServerPktHeader
 
 bool BuildCallBackForMangos(WorldPacket & data, string name);
 
-WorldSocket::WorldSocket(SOCKET fd) : Socket(fd, sWorld.SocketSendBufSize, sWorld.SocketRecvBufSize)
+WorldSocket::WorldSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, sWorld.SocketSendBufSize, sWorld.SocketRecvBufSize, false, peer)
 {
 	Authed = false;
 	mSize = mOpcode = mRemaining = 0;
@@ -185,10 +185,10 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 	if(!IsConnected())
 		return OUTPACKET_RESULT_NOT_CONNECTED;
 
-	BurstBegin();
-	if( writeBuffer.GetSpace() < (len+4) )
+	LockWriteBuffer();
+	if( GetWriteBuffer()->GetSpace() < (len+4) )
 	{
-		BurstEnd();
+		UnlockWriteBuffer();
 		return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
 	}
 
@@ -200,16 +200,13 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 	_crypt.EncryptSend((uint8*)&Header, sizeof (ServerPktHeader));
 
 	// Pass the header to our send buffer
-	rv = BurstSend((const uint8*)&Header, 4);
+	rv = Write((const uint8*)&Header, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(len > 0 && rv)
-	{
-		rv = BurstSend((const uint8*)data, (uint32)len);
-	}
+		rv = Write((const uint8*)data, (uint32)len);
 
-	if(rv) BurstPush();
-	BurstEnd();
+	UnlockWriteBuffer();
 	return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
 }
 
@@ -446,7 +443,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 		}
 	}
 
-	DEBUG_LOG("Auth", "%s from %s:%u [%ums]", AccountName.c_str(), GetRemoteIP().c_str(), GetRemotePort(), _latency);
+	DEBUG_LOG("Auth", "%s from %s:%u [%ums]", AccountName.c_str(), GetIP(), GetPort(), _latency);
 
 	// Check for queue.
 	if( (sWorld.GetSessionCount() < sWorld.GetPlayerLimit()) || pSession->HasGMPermissions() ) {
@@ -543,14 +540,14 @@ void WorldSocket::_HandlePing(WorldPacket* recvPacket)
 #endif
 }
 
-void WorldSocket::OnRead()
+void WorldSocket::OnRecvData()
 {
 	for(;;)
 	{
 		// Check for the header if we don't have any bytes to wait for.
 		if(mRemaining == 0)
 		{
-			if(readBuffer.GetSize() < 6)
+			if(GetReadBuffer()->GetSize() < 6)
 			{
 				// No header in the packet, let's wait.
 				return;
@@ -558,7 +555,7 @@ void WorldSocket::OnRead()
 
 			// Copy from packet buffer into header local var
 			ClientPktHeader Header;
-			readBuffer.Read(&Header, 6);
+			Read(&Header, 6);
 
 			// Decrypt the header
 			_crypt.DecryptRecv((uint8*)&Header, sizeof (ClientPktHeader));
@@ -568,7 +565,7 @@ void WorldSocket::OnRead()
 
 		if(mRemaining > 0)
 		{
-			if( readBuffer.GetSize() < mRemaining )
+			if( GetReadBuffer()->GetSize() < mRemaining )
 			{
 				// We have a fragmented packet. Wait for the complete one before proceeding.
 				return;
@@ -576,13 +573,11 @@ void WorldSocket::OnRead()
 		}
 
 		WorldPacket *Packet = new WorldPacket(mOpcode, mSize);
-		Packet->resize(mSize);
 
 		if(mRemaining > 0)
 		{
-			// Copy from packet buffer into our actual buffer.
-			//Read(mRemaining, (uint8*)Packet->contents());
-			readBuffer.Read((uint8*)Packet->contents(), mRemaining);
+			Packet->resize(mRemaining);
+			Read((uint8*)Packet->contents(), mRemaining);
 		}
 		mRemaining = mSize = mOpcode = 0;
 

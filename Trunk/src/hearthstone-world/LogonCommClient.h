@@ -20,17 +20,17 @@
 #ifndef __LOGON_COMM_CLIENT_H
 #define __LOGON_COMM_CLIENT_H
 
-class LogonCommClientSocket : public Socket
+class LogonCommClientSocket : public TcpSocket
 {
 	uint32 remaining;
 	uint16 opcode;
 	RC4Engine _sendCrypto;
 	RC4Engine _recvCrypto;
 public:
-	LogonCommClientSocket(SOCKET fd);
+	LogonCommClientSocket(SOCKET fd, const sockaddr_in * peer);
 	~LogonCommClientSocket();
 
-	void OnRead();
+	void OnRecvData();
 	void SendPacket(WorldPacket * data, bool no_crypto = false);
 	void HandlePacket(WorldPacket & recvData);
 	void SendPing();

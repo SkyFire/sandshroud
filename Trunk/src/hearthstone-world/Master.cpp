@@ -308,9 +308,9 @@ bool Master::Run(int argc, char ** argv)
 
 	// Start Network Subsystem
 	DEBUG_LOG("Server","Starting network subsystem..." );
-	new SocketMgr;
-	new SocketGarbageCollector;
-	sSocketMgr.SpawnWorkerThreads();
+	new iocpEngine;
+	new SocketEngineThread(&sSocketEngine);
+	sSocketEngine.SpawnThreads();
 
 	if( StartConsoleListener() )
 	{
@@ -356,13 +356,9 @@ bool Master::Run(int argc, char ** argv)
 	sVoiceChatHandler.Startup();
 #endif
 
-	// Create listener
-	ListenSocket<WorldSocket> * ls = new ListenSocket<WorldSocket>(host.c_str(), wsport);
-    bool listnersockcreate = ls->IsOpen();
-#ifdef WIN32
-	if( listnersockcreate )
-		ThreadPool.ExecuteTask(ls);
-#endif
+	ListenSocket<WorldSocket> * ls = new ListenSocket<WorldSocket>();
+	bool listnersockcreate = ls->Open(host.c_str(), wsport);
+
 	while( !m_stopEvent && listnersockcreate )
 #else
 	new ClusterInterface;
@@ -393,7 +389,7 @@ bool Master::Run(int argc, char ** argv)
 #else
 		sClusterInterface.Update();
 #endif
-		sSocketGarbageCollector.Update();
+		sSocketDeleter.Update();
 
 		/* UPDATE */
 		last_time = now();
@@ -461,14 +457,11 @@ bool Master::Run(int argc, char ** argv)
 	sDayWatcher.terminate();
 
 #ifndef CLUSTERING
-	ls->Close();
+	ls->Disconnect();
 #endif
 
 	Log.Notice( "Network", "Shutting down network subsystem." );
-#ifdef WIN32
-	sSocketMgr.ShutdownThreads();
-#endif
-	sSocketMgr.CloseAll();
+	sSocketEngine.Shutdown();
 
 	sAddonMgr.SaveToDB();
 	Log.Notice("AddonMgr", "~AddonMgr()");
@@ -483,7 +476,7 @@ bool Master::Run(int argc, char ** argv)
 	ThreadPool.Shutdown();
 
 #ifndef CLUSTERING
-	delete ls;
+	ls = NULL;
 #endif
 
 	Log.Notice("CharacterLoaderThread", "~CharacterLoaderThread()");
@@ -512,8 +505,9 @@ bool Master::Run(int argc, char ** argv)
 	_StopDB();
 
 	Log.Notice( "Network", "Deleting Network Subsystem..." );
-	delete SocketMgr::getSingletonPtr();
-	delete SocketGarbageCollector::getSingletonPtr();
+	delete SocketEngine::getSingletonPtr();
+	delete SocketDeleter::getSingletonPtr();
+
 #ifdef VOICE_CHAT
 	Log.Notice( "VoiceChatHandler", "~VoiceChatHandler()" );
 	delete VoiceChatHandler::getSingletonPtr();

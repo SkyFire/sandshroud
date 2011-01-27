@@ -96,7 +96,7 @@ void HonorHandler::OnPlayerKilledUnit( Player* pPlayer, Unit* pVictim )
 			if( pPlayer->GetTeam() == TO_PLAYER( pVictim )->GetTeam() )
 				return;
 			if(pPlayer->GetSession() && TO_PLAYER( pVictim )->GetSession() && pPlayer->GetSession()->GetSocket() && TO_PLAYER( pVictim )->GetSession()->GetSocket())
-				if(pPlayer->GetSession()->GetSocket()->GetRemoteIP() == TO_PLAYER( pVictim )->GetSession()->GetSocket()->GetRemoteIP())
+				if(pPlayer->GetSession()->GetSocket()->GetIP() == TO_PLAYER( pVictim )->GetSession()->GetSocket()->GetIP())
 					return;
 		}
 	}

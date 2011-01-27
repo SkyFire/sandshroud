@@ -19,7 +19,7 @@
 
 class WServer;
 class Session;
-class WSSocket : public Socket
+class WSSocket : public TcpSocket
 {
 	bool _authenticated;
 	uint32 _remaining;
@@ -28,7 +28,7 @@ class WSSocket : public Socket
 public:
 	uint32 m_id;
 
-	WSSocket(SOCKET fd);
+	WSSocket(SOCKET fd, const sockaddr_in * peer);
 	~WSSocket();
 
 	void SendPacket(WorldPacket * pck);

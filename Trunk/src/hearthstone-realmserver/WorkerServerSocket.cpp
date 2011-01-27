@@ -20,7 +20,7 @@
 #include "RStdAfx.h"
 #include "svn_revision.h"
 
-WSSocket::WSSocket(SOCKET fd) : Socket(fd, 100000, 100000)
+WSSocket::WSSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 100000, 100000, false, peer)
 {
 	_authenticated = false;
 	_remaining = 0;
@@ -57,16 +57,16 @@ void WSSocket::OnRead()
 	{
 		if(!_cmd)
 		{
-			if(readBuffer.GetSize() < 6)
+			if(GetReadBuffer()->GetSize() < 6)
 				break;
 
-			readBuffer.Read(&_cmd, 2);
-			readBuffer.Read(&_remaining, 4);
+			Read(&_cmd, 2);
+			Read(&_remaining, 4);
 			//_remaining = ntohl(_remaining);
 		}
 
-		if(_remaining && readBuffer.GetSize() < _remaining)
-			break;
+		if(_remaining && GetReadBuffer()->GetSize() < _remaining)
+			return;
 
 		if(_cmd == ICMSG_WOW_PACKET)
 		{
@@ -74,12 +74,15 @@ void WSSocket::OnRead()
 			uint32 sid;
 			uint16 op;
 			uint32 sz;
-			readBuffer.Read(&sid, 4);
-			readBuffer.Read(&op, 2);
-			readBuffer.Read(&sz, 4);
+			Read(&sid, 4);
+			Read(&op, 2);
+			Read(&sz, 4);
 			WorldPacket * pck = new WorldPacket(op, sz);
-			pck->resize(sz);
-			readBuffer.Read((uint8*)pck->contents(), sz);
+			if(sz)
+			{
+				pck->resize(sz);
+				Read((uint8*)pck->contents(), sz);
+			}
 
 			Session * session = sClientMgr.GetSession(sid);
 			if(session != NULL)
@@ -91,8 +94,11 @@ void WSSocket::OnRead()
 
 		WorldPacket * pck = new WorldPacket(_cmd, _remaining);
 		_cmd = 0;
-		pck->resize(_remaining);
-		readBuffer.Read((uint8*)pck->contents(), _remaining);
+		if(_remaining)
+		{
+			pck->resize(_remaining);
+			Read((uint8*)pck->contents(), _remaining);
+		}
 
 		if(_authenticated)
 		{
@@ -155,18 +161,17 @@ void WSSocket::SendPacket(WorldPacket * pck)
 	if(!IsConnected())
 		return;
 
-	BurstBegin();
+	LockWriteBuffer();
 
 	// Pass the header to our send buffer
-	rv = BurstSend((const uint8*)&opcode, 2);
-	rv = BurstSend((const uint8*)&size, 4);
+	rv = Write((const uint8*)&opcode, 2);
+	rv = Write((const uint8*)&size, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(size > 0 && rv)
-		rv = BurstSend((const uint8*)pck->contents(), uint32(size));
+		rv = Write((const uint8*)pck->contents(), uint32(size));
 
-	if(rv) BurstPush();
-	BurstEnd();
+	UnlockWriteBuffer();
 }
 
 void WSSocket::SendWoWPacket(Session * from, WorldPacket * pck)
@@ -180,21 +185,20 @@ void WSSocket::SendWoWPacket(Session * from, WorldPacket * pck)
 	if(!IsConnected())
 		return;
 
-	BurstBegin();
+	LockWriteBuffer();
 
 	// Pass the header to our send buffer
-	BurstSend((const uint8*)&opcode2, 2);
-	BurstSend((const uint8*)&size2, 4);
-	BurstSend((const uint8*)&id, 4);
-	BurstSend((const uint8*)&opcode1, 2);
-	rv=BurstSend((const uint8*)&size1, 4);	
+	Write((const uint8*)&opcode2, 2);
+	Write((const uint8*)&size2, 4);
+	Write((const uint8*)&id, 4);
+	Write((const uint8*)&opcode1, 2);
+	rv=Write((const uint8*)&size1, 4);	
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(size1 > 0 && rv)
-		rv = BurstSend(pck->contents(), uint32(size1));
+		rv = Write(pck->contents(), uint32(size1));
 
-	if(rv) BurstPush();
-	BurstEnd();
+	UnlockWriteBuffer();
 }
 
 void WSSocket::OnConnect()

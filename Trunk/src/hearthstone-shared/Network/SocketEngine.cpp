@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * Multiplatform High-Performance Async Network Library
- * Circular Buffer Class
+ * Base Socket Engine Interface Class
  * Copyright (c) 2007 Burlex
  *
  * This file may be distributed under the terms of the Q Public License
@@ -13,8 +13,8 @@
  *
  */
 
-#ifndef _NETLIB_CIRCULARBUFFER_H
-#define _NETLIB_CIRCUALRBUFFER_H
+#include "SharedStdAfx.h"
 
-#endif		// _NETLIB_CIRCULARBUFFER_H
+initialiseSingleton(SocketEngine);
+initialiseSingleton(SocketDeleter);
 

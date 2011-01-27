@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				OutputFile="$(OutDir)/hearthstone-logonserver.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/"
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				OutputFile="$(OutDir)/hearthstone-logonserver.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/amd64/"
@@ -258,7 +258,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				OutputFile="$(OutDir)/hearthstone-logonserver.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/"
@@ -352,7 +352,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				OutputFile="$(OutDir)/hearthstone-logonserver.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/amd64/"

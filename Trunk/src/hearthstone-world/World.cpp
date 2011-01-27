@@ -2215,7 +2215,7 @@ void World::DisconnectUsersWithAccount(const char * account, WorldSession * m_se
 		if(!stricmp(account, worldsession->GetAccountNameS()))
 		{
 			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(),
-				worldsession->GetSocket() ? worldsession->GetSocket()->GetRemoteIP().c_str() : "noip", worldsession->GetPlayer() ? worldsession->GetPlayer()->GetName() : "noplayer");
+				worldsession->GetSocket() ? worldsession->GetSocket()->GetIP() : "noip", worldsession->GetPlayer() ? worldsession->GetPlayer()->GetName() : "noplayer");
 
 			worldsession->Disconnect();
 		}
@@ -2236,7 +2236,7 @@ void World::DisconnectUsersWithIP(const char * ip, WorldSession * m_session)
 		if(!worldsession->GetSocket())
 			continue;
 
-		string ip2 = worldsession->GetSocket()->GetRemoteIP().c_str();
+		string ip2 = worldsession->GetSocket()->GetIP();
 		if(!stricmp(ip, ip2.c_str()))
 		{
 			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(),
@@ -2264,7 +2264,7 @@ void World::DisconnectUsersWithPlayerName(const char * plr, WorldSession * m_ses
 		if(!stricmp(plr, worldsession->GetPlayer()->GetName()))
 		{
 			m_session->SystemMessage("Disconnecting user with account `%s` IP `%s` Player `%s`.", worldsession->GetAccountNameS(),
-				worldsession->GetSocket() ? worldsession->GetSocket()->GetRemoteIP().c_str() : "noip", worldsession->GetPlayer() ? worldsession->GetPlayer()->GetName() : "noplayer");
+				worldsession->GetSocket() ? worldsession->GetSocket()->GetIP() : "noip", worldsession->GetPlayer() ? worldsession->GetPlayer()->GetName() : "noplayer");
 
 			worldsession->Disconnect();
 		}
@@ -2448,7 +2448,7 @@ void World::LogGM(WorldSession* session, string message, ...)
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
 		const char* execute = format("INSERT INTO gmlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
@@ -2482,7 +2482,7 @@ void World::LogCheater(WorldSession* session, string message, ...)
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
 		const char* execute = format("INSERT INTO cheaterlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
@@ -2516,7 +2516,7 @@ void World::LogPlayer(WorldSession* session, string message, ...)
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
 		const char* execute = format("INSERT INTO playerlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
@@ -2550,7 +2550,7 @@ void World::LogChat(WorldSession* session, string message, ...)
 
 		stringstream ss;
 		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetRemoteIP().c_str() : "NOIP") << ", Player "
+			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
 			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
 
 		const char* execute = format("INSERT INTO chatlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();

@@ -41,10 +41,10 @@ enum OUTPACKET_RESULT
 	OUTPACKET_RESULT_SOCKET_ERROR = 4,
 };
 
-class SERVER_DECL WorldSocket : public Socket
+class SERVER_DECL WorldSocket : public TcpSocket
 {
 public:
-	WorldSocket(SOCKET fd);
+	WorldSocket(SOCKET fd, const sockaddr_in * peer);
 	~WorldSocket();
 
 	// vs8 fix - send null on empty buffer
@@ -61,7 +61,7 @@ public:
 
 	void __fastcall UpdateQueuePosition(uint32 Position);
 
-	void OnRead();
+	void OnRecvData();
 	void OnConnect();
 	void OnDisconnect();
 
@@ -117,8 +117,8 @@ public:
 
 	void Disconnect();
 	bool IsConnected();
-	HEARTHSTONE_INLINE string GetRemoteIP() { return string(inet_ntoa(m_address.sin_addr)); }
-	HEARTHSTONE_INLINE uint32 GetRemotePort() { return ntohs(m_address.sin_port); }
+	HEARTHSTONE_INLINE string GetIP() { return string(inet_ntoa(m_address.sin_addr)); }
+	HEARTHSTONE_INLINE uint32 GetPort() { return ntohs(m_address.sin_port); }
 
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket* packet) { if(!packet) return; OutPacket(packet->GetOpcode(), (uint16)packet->size(), (packet->size() ? (const void*)packet->contents() : NULL)); }
 	HEARTHSTONE_INLINE void SendPacket(StackPacket * packet) { if(!packet) return; OutPacket(packet->GetOpcode(), (uint16)packet->GetSize(), (packet->GetSize() ? (const void*)packet->GetBufferPointer() : NULL)); }

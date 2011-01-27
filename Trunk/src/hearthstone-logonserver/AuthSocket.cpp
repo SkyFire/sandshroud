@@ -36,7 +36,7 @@ enum _errors
 	CE_ACCOUNT_PARENTAL		= 0x0f, // Access to this account has been blocked by parental controls. Your settings may be changed in your account preferences at <site>
 };
 
-AuthSocket::AuthSocket(SOCKET fd) : Socket(fd, 32768, 4096)
+AuthSocket::AuthSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 32768, 4096, false, peer)
 {
 	N.SetHexStr("894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7");
 	g.SetDword(7);
@@ -76,7 +76,7 @@ void AuthSocket::OnDisconnect()
 void AuthSocket::HandleChallenge()
 {
 	// No header
-	if(GetReadBuffer().GetContiguiousBytes() < 4)
+	if(GetReadBuffer()->GetSize() < 4)
 		return;
 
 	if(sInfoCore.GetRealmMap().empty())
@@ -86,12 +86,12 @@ void AuthSocket::HandleChallenge()
 	}
 
 	// Check the rest of the packet is complete.
-	uint8 * ReceiveBuffer = (uint8*)GetReadBuffer().GetBufferStart();
+	uint8 * ReceiveBuffer = (uint8*)GetReadBuffer()->GetBufferOffset();
 	uint16 full_size = *(uint16*)&ReceiveBuffer[2];
 
 	DEBUG_LOG("AuthChallenge","got header, body is 0x%02X bytes", full_size);
 
-	if(GetReadBuffer().GetSize() < uint32(full_size+4))
+	if(GetReadBuffer()->GetSize() < uint32(full_size+4))
 		return;
 
 	// Copy the data into our cached challenge structure
@@ -103,7 +103,7 @@ void AuthSocket::HandleChallenge()
 
 	DEBUG_LOG("AuthChallenge","got full packet.");
 
-	GetReadBuffer().Read(&m_challenge, full_size + 4);
+	GetReadBuffer()->Read(&m_challenge, full_size + 4);
 
 	// Check client build.
 	if(GetBuild() > LogonServer::getSingleton().max_build)
@@ -252,14 +252,14 @@ void AuthSocket::HandleChallenge()
 
 void AuthSocket::HandleProof()
 {
-	if(GetReadBuffer().GetSize() < sizeof(sAuthLogonProof_C))
+	if(GetReadBuffer()->GetSize() < sizeof(sAuthLogonProof_C))
 		return;
 
 	// patch
 	if(m_patch&&!m_account)
 	{
 		//RemoveReadBufferBytes(75,false);
-		GetReadBuffer().Remove(75);
+		GetReadBuffer()->Remove(75);
 		DEBUG_LOG("AuthLogonProof","Intitiating PatchJob");
 		uint8 bytes[2] = {0x01,0x0a};
 		Send(bytes,2);
@@ -273,7 +273,7 @@ void AuthSocket::HandleProof()
 	DEBUG_LOG("AuthLogonProof","Interleaving and checking proof...");
 
 	sAuthLogonProof_C lp;
-	GetReadBuffer().Read(&lp, sizeof(sAuthLogonProof_C));
+	GetReadBuffer()->Read(&lp, sizeof(sAuthLogonProof_C));
 
 	BigNumber A;
 	A.SetBinary(lp.A, 32);
@@ -386,7 +386,7 @@ void AuthSocket::HandleProof()
 
 	// Don't update when IP banned, but update anyway if it's an account ban
 	const char* m_sessionkey_hex = m_sessionkey.AsHexStr();
-	sLogonSQL->Execute("UPDATE accounts SET lastlogin=NOW(), SessionKey = '%s', lastip='%s' WHERE acct=%u;", m_sessionkey_hex, GetRemoteIP().c_str(), m_account->AccountId);
+	sLogonSQL->Execute("UPDATE accounts SET lastlogin=NOW(), SessionKey = '%s', lastip='%s' WHERE acct=%u;", m_sessionkey_hex, GetIP(), m_account->AccountId);
 }
 
 void AuthSocket::SendChallengeError(uint8 Error)
@@ -494,12 +494,12 @@ void AuthSocket::HandleCMD19()
 	// Its actually sending a packet to the patcher, just ignore it
 }
 
-void AuthSocket::OnRead()
+void AuthSocket::OnRecvData()
 {
-	if(GetReadBuffer().GetContiguiousBytes() < 1)
+	if(GetReadBuffer()->GetSize() < 1)
 		return;
 
-	uint8 Command = *(uint8*)GetReadBuffer().GetBufferStart();
+	uint8 Command = *(uint8*)GetReadBuffer()->GetBufferOffset();
 	last_recv = UNIXTIME;
 	if(Command < MAX_AUTH_CMD && Handlers[Command] != NULL)
 		(this->*Handlers[Command])();
@@ -516,15 +516,15 @@ void AuthSocket::HandleRealmlist()
 void AuthSocket::HandleReconnectChallenge()
 {
 	// No header
-	if(GetReadBuffer().GetContiguiousBytes() < 4)
+	if(GetReadBuffer()->GetSize() < 4)
 		return;	
 
 	// Check the rest of the packet is complete.
-	uint8 * ReceiveBuffer = (uint8*)GetReadBuffer().GetBufferStart();
+	uint8 * ReceiveBuffer = (uint8*)GetReadBuffer()->GetBufferOffset();
 	uint16 full_size = *(uint16*)&ReceiveBuffer[2];
 	DEBUG_LOG("ReconnectChallenge","got header, body is 0x%02X bytes", full_size);
 
-	if(GetReadBuffer().GetSize() < (uint32)full_size+4)
+	if(GetReadBuffer()->GetSize() < (uint32)full_size+4)
 		return;
 
 	// Copy the data into our cached challenge structure
@@ -537,7 +537,7 @@ void AuthSocket::HandleReconnectChallenge()
 	DEBUG_LOG("ReconnectChallenge", "got full packet.");
 
 	memcpy(&m_challenge, ReceiveBuffer, full_size + 4);
-	GetReadBuffer().Read(&m_challenge, full_size + 4);
+	GetReadBuffer()->Read(&m_challenge, full_size + 4);
 
 	// Check client build.
 	if(m_challenge.build > LogonServer::getSingleton().max_build ||
@@ -663,7 +663,7 @@ void AuthSocket::HandleReconnectProof()
 
 	if(GetBuild() <= 6005)
 	{
-		GetReadBuffer().Remove(GetWriteBuffer().GetSize());
+		GetReadBuffer()->Remove(GetWriteBuffer()->GetSize());
 
 		if(!m_account->SessionKey)
 		{
@@ -682,11 +682,11 @@ void AuthSocket::HandleReconnectProof()
 		return;
 	}
 
-	if(GetReadBuffer().GetSize() < sizeof(sAuthLogonProofKey_C))
+	if(GetReadBuffer()->GetSize() < sizeof(sAuthLogonProofKey_C))
 		return;
 
 	sAuthLogonProofKey_C lp;
-	GetReadBuffer().Read(&lp, sizeof(sAuthLogonProofKey_C));
+	GetReadBuffer()->Read(&lp, sizeof(sAuthLogonProofKey_C));
 
 	BigNumber A;
 	A.SetBinary(lp.R1, 16);
@@ -722,7 +722,7 @@ void AuthSocket::HandleTransferAccept()
 	if(!m_patch)
 		return;
 
-	GetReadBuffer().Remove(1);
+	GetReadBuffer()->Remove(1);
 	PatchMgr::getSingleton().BeginPatchJob(m_patch,this,0);
 }
 
@@ -732,9 +732,9 @@ void AuthSocket::HandleTransferResume()
 	if(!m_patch)
 		return;
 
-	GetReadBuffer().Remove(1);
+	GetReadBuffer()->Remove(1);
 	uint64 size;
-	GetReadBuffer().Read(&size, 8);
+	GetReadBuffer()->Read(&size, 8);
 	if(size>=m_patch->FileSize)
 		return;
 
@@ -743,6 +743,6 @@ void AuthSocket::HandleTransferResume()
 
 void AuthSocket::HandleTransferCancel()
 {
-	GetReadBuffer().Remove(1);
+	GetReadBuffer()->Remove(1);
 	Disconnect();
 }

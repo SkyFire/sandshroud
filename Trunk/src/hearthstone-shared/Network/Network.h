@@ -1,49 +1,68 @@
-/*
- * Sandshroud Hearthstone
- * Copyright (C) 2004 - 2005 Antrix Team
- * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
- * Copyright (C) 2008 - 2009 AspireDev <http://www.aspiredev.org/>
- * Copyright (C) 2009 - 2010 Sandshroud <http://www.sandshroud.org/>
- * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
+/****************************************************************************
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * Multiplatform High-Performance Async Network Library
+ * Include File For Ascent
+ * Copyright (c) 2007 Burlex
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ * This file may be distributed under the terms of the Q Public License
+ * as defined by Trolltech ASA of Norway and appearing in the file
+ * COPYING included in the packaging of this file.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  */
 
-#ifndef NETWORK_H_
-#define NETWORK_H_
+#include "../Common.h"
+using namespace std;
 
-#include "../Log.h"
-#include "../NGLog.h"
+/* windows sucks dick! */
+#ifdef WIN32
+#define USE_IOCP
+#endif
+
+/* Define these on non-windows systems */
+#ifndef WIN32
+#define ioctlsocket ioctl
+#define closesocket close
+#define TCP_NODELAY 0x6
+#define SD_BOTH SHUT_RDWR
+#define SOCKET int
+#endif
+
+#include "BaseSocket.h"
+#include "BaseBuffer.h"
+#include "StraightBuffer.h"
 #include "CircularBuffer.h"
-#include "SocketDefines.h"
-#include "SocketOps.h"
-#include "Socket.h"
+#include "SocketEngine.h"
+#include "TcpSocket.h"
 
-#ifdef CONFIG_USE_IOCP
-#include "SocketMgrWin32.h"
-#include "ListenSocketWin32.h"
+#ifdef USE_POLL
+#include <sys/poll.h>
+#define NETLIB_POLL
+#include "SocketEngine_poll.h"
 #endif
 
-#ifdef CONFIG_USE_EPOLL
-#include "SocketMgrLinux.h"
-#include "ListenSocketLinux.h"
+#ifdef USE_EPOLL
+#include <sys/epoll.h>
+#define NETLIB_EPOLL
+#include "SocketEngine_epoll.h"
 #endif
 
-#ifdef CONFIG_USE_KQUEUE
-#include "SocketMgrFreeBSD.h"
-#include "ListenSocketFreeBSD.h"
+#ifdef USE_IOCP
+#define NETLIB_IOCP
+#include "SocketEngine_iocp.h"
 #endif
 
+#ifdef USE_SELECT
+#define NETLIB_SELECT
+#include "SocketEngine_Select.h"
 #endif
+
+#ifdef USE_KQUEUE
+#include <sys/event.h>
+#define NETLIB_KQUEUE
+#include "SocketEngine_kqueue.h"
+#endif
+
+#include "ListenSocket.h"

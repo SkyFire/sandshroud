@@ -23,7 +23,7 @@
 
 #include <RC4Engine.h>
 
-class LogonCommServerSocket : public Socket
+class LogonCommServerSocket : public TcpSocket
 {
 	uint32 remaining;
 	uint16 opcode;
@@ -34,10 +34,10 @@ public:
 	uint32 authenticated;
 	bool use_crypto;
 
-	LogonCommServerSocket(SOCKET fd);
+	LogonCommServerSocket(SOCKET fd, const sockaddr_in * peer);
 	~LogonCommServerSocket();
 
-	void OnRead();
+	void OnRecvData();
 	void OnDisconnect();
 	void OnConnect();
 	void SendPacket(WorldPacket * data);

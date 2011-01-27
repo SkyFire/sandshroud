@@ -28,38 +28,38 @@
     <Filter Include="Util\Log">
       <UniqueIdentifier>{9c430c2a-7436-4c34-83e3-ae32481ddce8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Collision">
-      <UniqueIdentifier>{f2593f44-2bf3-422e-bff0-53e8e6ad9666}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Collision\vmap">
-      <UniqueIdentifier>{33a4fbb5-af7b-4953-837e-0853320bbcd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Collision\G3D">
-      <UniqueIdentifier>{7a13fef9-c433-4ef6-b902-bde36396b957}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Collision\G3D\Source Files">
-      <UniqueIdentifier>{43564665-7027-49c9-90ac-4c55ee0ec6ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Collision\G3D\Header Files">
-      <UniqueIdentifier>{0b8644e0-d2f9-49cc-8c0c-653e1879f1ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Collision\G3D\Vectors">
-      <UniqueIdentifier>{8f614dea-bf53-4d5d-a7aa-de0febeb1e0d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Collision\G3D\Matrix">
-      <UniqueIdentifier>{6cb7487c-d877-4592-9f52-bec2f52f2346}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Pathfinding">
-      <UniqueIdentifier>{668c4257-8b8a-497d-8aaa-edbcff61e056}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Pathfinding\Recast">
-      <UniqueIdentifier>{ce61c283-ba5e-474d-84ea-f68ed6b81b08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Pathfinding\Detour">
-      <UniqueIdentifier>{c2554b65-03d4-4fed-9c89-3672e2045f66}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Console">
       <UniqueIdentifier>{940655e0-9365-44f0-bf59-90ad4fca466f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Pathfinding">
+      <UniqueIdentifier>{668c4257-8b8a-497d-8aaa-edbcff61e056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Pathfinding\Recast">
+      <UniqueIdentifier>{ce61c283-ba5e-474d-84ea-f68ed6b81b08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Pathfinding\Detour">
+      <UniqueIdentifier>{c2554b65-03d4-4fed-9c89-3672e2045f66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Collision">
+      <UniqueIdentifier>{f2593f44-2bf3-422e-bff0-53e8e6ad9666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Collision\vmap">
+      <UniqueIdentifier>{33a4fbb5-af7b-4953-837e-0853320bbcd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Collision\G3D">
+      <UniqueIdentifier>{7a13fef9-c433-4ef6-b902-bde36396b957}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Collision\G3D\Source Files">
+      <UniqueIdentifier>{43564665-7027-49c9-90ac-4c55ee0ec6ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Collision\G3D\Header Files">
+      <UniqueIdentifier>{0b8644e0-d2f9-49cc-8c0c-653e1879f1ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Collision\G3D\Vectors">
+      <UniqueIdentifier>{8f614dea-bf53-4d5d-a7aa-de0febeb1e0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Collision\G3D\Matrix">
+      <UniqueIdentifier>{6cb7487c-d877-4592-9f52-bec2f52f2346}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -99,21 +99,6 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Auth\WowCrypt.cpp">
       <Filter>Auth</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\CircularBuffer.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\Socket.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketMgrWin32.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketOpsWin32.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketWin32.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Threading\Mutex.cpp">
       <Filter>Threading</Filter>
     </ClCompile>
@@ -145,188 +130,209 @@
       <Filter>Util\Log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\Interface.cpp">
-      <Filter>Collision</Filter>
+      <Filter>Util\Collision</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\vmap\BIH.cpp">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\vmap\MapTree.cpp">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\vmap\ModelInstance.cpp">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\vmap\TileAssembler.cpp">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\vmap\VMapFactory.cpp">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\vmap\VMapManager2.cpp">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\vmap\WorldModel.cpp">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dfnmatch.cpp">
-      <Filter>Collision\G3D</Filter>
+      <Filter>Util\Collision\G3D</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dmath.cpp">
-      <Filter>Collision\G3D</Filter>
+      <Filter>Util\Collision\G3D</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\AABox.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Box.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Capsule.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\CollisionDetection.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\CoordinateFrame.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Crypto.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Cylinder.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\fileutils.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Line.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\LineSegment.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\MemoryManager.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Plane.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Quat.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Random.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Ray.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\ReferenceCount.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\RegistryUtil.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Sphere.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\stringutils.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\System.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Triangle.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\uint128.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\UprightFrame.cpp">
-      <Filter>Collision\G3D\Source Files</Filter>
+      <Filter>Util\Collision\G3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector2.cpp">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector2int16.cpp">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3.cpp">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3int16.cpp">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3int32.cpp">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector4.cpp">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector4int8.cpp">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix.cpp">
-      <Filter>Collision\G3D\Matrix</Filter>
+      <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix3.cpp">
-      <Filter>Collision\G3D\Matrix</Filter>
+      <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp">
-      <Filter>Collision\G3D\Matrix</Filter>
+      <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\SharedStdAfx.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMesh.cpp">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.cpp">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.cpp">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastArea.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastContour.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastFilter.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastMesh.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastMeshDetail.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRasterization.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRegion.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.cpp">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.cpp">
-      <Filter>Pathfinding</Filter>
+      <Filter>Util\Pathfinding</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\InputGeom.cpp">
-      <Filter>Pathfinding</Filter>
+      <Filter>Util\Pathfinding</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.cpp">
-      <Filter>Pathfinding</Filter>
+      <Filter>Util\Pathfinding</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Console\CConsole.cpp">
       <Filter>Console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\TcpSocket.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -380,27 +386,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Auth\WowCrypt.h">
       <Filter>Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\CircularBuffer.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\ListenSocketWin32.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\Network.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\Socket.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketDefines.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketMgrWin32.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketOps.h">
-      <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Threading\Condition.h">
       <Filter>Threading</Filter>
@@ -487,196 +472,196 @@
       <Filter>Util\Log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\LocationVector.h">
-      <Filter>Collision</Filter>
+      <Filter>Util\Collision</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\BIH.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\IVMapManager.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\MapTree.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\ModelInstance.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\TileAssembler.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\VMapDefinitions.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\VMapFactory.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\VMapManager2.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\VMapTools.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\vmap\WorldModel.h">
-      <Filter>Collision\vmap</Filter>
+      <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\G3D.h">
-      <Filter>Collision\G3D</Filter>
+      <Filter>Util\Collision\G3D</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\G3DAll.h">
-      <Filter>Collision\G3D</Filter>
+      <Filter>Util\Collision\G3D</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dfnmatch.h">
-      <Filter>Collision\G3D</Filter>
+      <Filter>Util\Collision\G3D</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\G3DGameUnits.h">
-      <Filter>Collision\G3D</Filter>
+      <Filter>Util\Collision\G3D</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\g3dmath.h">
-      <Filter>Collision\G3D</Filter>
+      <Filter>Util\Collision\G3D</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\AABox.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Array.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\AtomicInt32.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\BoundsTrait.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Box.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Capsule.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\CollisionDetection.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\CoordinateFrame.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Crypto.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Cylinder.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\EqualsTrait.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\fileutils.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\GCamera.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\HashTrait.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Line.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\LineSegment.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\MemoryManager.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Plane.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\platform.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\PositionTrait.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Quat.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Random.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Ray.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Rect2D.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\ReferenceCount.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\RegistryUtil.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Set.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Sphere.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Spline.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\stringutils.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\System.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Table.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Triangle.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\uint128.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\units.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\UprightFrame.h">
-      <Filter>Collision\G3D\Header Files</Filter>
+      <Filter>Util\Collision\G3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector2.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector2int16.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3int16.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector3int32.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector4.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Vector4int8.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\vectorMath.h">
-      <Filter>Collision\G3D\Vectors</Filter>
+      <Filter>Util\Collision\G3D\Vectors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix.h">
-      <Filter>Collision\G3D\Matrix</Filter>
+      <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix2.h">
-      <Filter>Collision\G3D\Matrix</Filter>
+      <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix3.h">
-      <Filter>Collision\G3D\Matrix</Filter>
+      <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.h">
-      <Filter>Collision\G3D\Matrix</Filter>
+      <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\AuthCodes.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Common.h" />
@@ -686,34 +671,34 @@
     <ClInclude Include="..\..\src\hearthstone-shared\SharedStdAfx.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Storage.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.h">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMesh.h">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.h">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.h">
-      <Filter>Pathfinding\Detour</Filter>
+      <Filter>Util\Pathfinding\Detour</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.h">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.h">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.h">
-      <Filter>Pathfinding\Recast</Filter>
+      <Filter>Util\Pathfinding\Recast</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.h">
-      <Filter>Pathfinding</Filter>
+      <Filter>Util\Pathfinding</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\InputGeom.h">
-      <Filter>Pathfinding</Filter>
+      <Filter>Util\Pathfinding</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\MeshLoaderObj.h">
-      <Filter>Pathfinding</Filter>
+      <Filter>Util\Pathfinding</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Console\BaseConsole.h">
       <Filter>Console</Filter>
@@ -725,5 +710,44 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\PerfCounters.h" />
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\BaseBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\BaseSocket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\CircularBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\ListenSocket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\Network.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\StraightBuffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\TcpSocket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

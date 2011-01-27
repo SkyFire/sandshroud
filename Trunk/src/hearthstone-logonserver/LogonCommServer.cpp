@@ -29,7 +29,7 @@ typedef struct
 
 HEARTHSTONE_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
 
-LogonCommServerSocket::LogonCommServerSocket(SOCKET fd) : Socket(fd, 65536, 524288)
+LogonCommServerSocket::LogonCommServerSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 65536, 524288, false, peer)
 {
 	// do nothing
 	last_ping = (uint32)UNIXTIME;
@@ -50,7 +50,7 @@ void LogonCommServerSocket::OnConnect()
 {
 	if( !IsServerAllowed(GetRemoteAddress().s_addr) )
 	{
-		printf("Server connection from %s:%u DENIED, not an allowed IP.\n", GetRemoteIP().c_str(), GetRemotePort());
+		printf("Server connection from %s:%u DENIED, not an allowed IP.\n", GetIP(), GetPort());
 		Disconnect();
 		return;
 	}
@@ -72,18 +72,18 @@ void LogonCommServerSocket::OnDisconnect()
 	}
 }
 
-void LogonCommServerSocket::OnRead()
+void LogonCommServerSocket::OnRecvData()
 {
 	while(true)
 	{
 		if(!remaining)
 		{
-			if(GetReadBuffer().GetSize() < 6)
+			if(GetReadBuffer()->GetSize() < 6)
 				return;	 // no header
 
 			// read header
-			GetReadBuffer().Read((uint8*)&opcode, 2);
-			GetReadBuffer().Read((uint8*)&remaining, 4);
+			Read((uint8*)&opcode, 2);
+			Read((uint8*)&remaining, 4);
 
 			if(use_crypto)
 			{
@@ -101,7 +101,7 @@ void LogonCommServerSocket::OnRead()
 		}
 
 		// do we have a full packet?
-		if(GetReadBuffer().GetSize() < remaining)
+		if(GetReadBuffer()->GetSize() < remaining)
 			return;
 
 		// create the buffer
@@ -109,7 +109,7 @@ void LogonCommServerSocket::OnRead()
 		if(remaining)
 		{
 			buff.resize(remaining);
-			GetReadBuffer().Read((uint8*)buff.contents(), remaining);
+			Read((uint8*)buff.contents(), remaining);
 		}
 
 		if(use_crypto && remaining)
@@ -327,7 +327,7 @@ void LogonCommServerSocket::HandlePing(WorldPacket & recvData)
 void LogonCommServerSocket::SendPacket(WorldPacket * data)
 {
 	bool rv;
-	BurstBegin();
+	LockWriteBuffer();
 
 	logonpacket header;
 #ifndef USING_BIG_ENDIAN
@@ -343,18 +343,17 @@ void LogonCommServerSocket::SendPacket(WorldPacket * data)
 	if(use_crypto)
 		sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
 
-	rv=BurstSend((uint8*)&header, 6);
+	rv = Write((uint8*)&header, 6);
 
 	if(data->size() > 0 && rv)
 	{
 		if(use_crypto)
 			sendCrypto.Process((unsigned char*)data->contents(), (unsigned char*)data->contents(), (uint32)data->size());
 
-		rv=BurstSend(data->contents(), (uint32)data->size());
+		rv = Write(data->contents(), (uint32)data->size());
 	}
 
-	if(rv) BurstPush();
-	BurstEnd();
+	UnlockWriteBuffer();
 }
 
 void LogonCommServerSocket::HandleSQLExecute(WorldPacket & recvData)
@@ -362,14 +361,14 @@ void LogonCommServerSocket::HandleSQLExecute(WorldPacket & recvData)
 	/*string Query;
 	recvData >> Query;
 	sLogonSQL->Execute(Query.c_str());*/
-	printf("!! WORLD SERVER IS REQUESTING US TO EXECUTE SQL. THIS IS DEPRECATED AND IS BEING IGNORED. THE SERVER WAS: %s, PLEASE UPDATE IT.\n", GetRemoteIP().c_str());
+	printf("!! WORLD SERVER IS REQUESTING US TO EXECUTE SQL. THIS IS DEPRECATED AND IS BEING IGNORED. THE SERVER WAS: %s, PLEASE UPDATE IT.\n", GetIP());
 }
 
 void LogonCommServerSocket::HandleReloadAccounts(WorldPacket & recvData)
 {
 	if( !IsServerAllowedMod( GetRemoteAddress().s_addr ) )
 	{
-		Log.Notice("WORLD", "We received a reload request from %s, but access was denied.", GetRemoteIP().c_str());
+		Log.Notice("WORLD", "We received a reload request from %s, but access was denied.", GetIP());
 		return;
 	}
 
@@ -378,12 +377,12 @@ void LogonCommServerSocket::HandleReloadAccounts(WorldPacket & recvData)
 
 	if(	num1 == 3 )
 	{
-		Log.Notice("WORLD", "World Server at %s is forcing us to reload accounts.", GetRemoteIP().c_str());
+		Log.Notice("WORLD", "World Server at %s is forcing us to reload accounts.", GetIP());
 		sAccountMgr.ReloadAccounts(false);
 	}
 	else
 	{
-		Log.Notice("WORLD", "We received a reload request from %s, but bad packet received.", GetRemoteIP().c_str());
+		Log.Notice("WORLD", "We received a reload request from %s, but bad packet received.", GetIP());
 	}
 }
 
@@ -397,7 +396,7 @@ void LogonCommServerSocket::HandleAuthChallenge(WorldPacket & recvData)
 	if(memcmp(key, LogonServer::getSingleton().sql_hash, 20))
 		result = 0;
 
-	Log.Notice("LogonCommServer","Authentication request from %s, result %s.", GetRemoteIP().c_str(), result ? "OK" : "FAIL");
+	Log.Notice("LogonCommServer","Authentication request from %s, result %s.", GetIP(), result ? "OK" : "FAIL");
 
 	printf("Key: ");
 	for(int i = 0; i < 20; ++i)
@@ -539,7 +538,7 @@ void LogonCommServerSocket::HandleDatabaseModify(WorldPacket& recvData)
 
 	if( !IsServerAllowedMod(GetRemoteAddress().s_addr) )
 	{
-		Log.Error("LogonCommServerSocket","Database modify request %u denied for %s.\n", method, GetRemoteIP().c_str());
+		Log.Error("LogonCommServerSocket","Database modify request %u denied for %s.\n", method, GetIP());
 		return;
 	}
 

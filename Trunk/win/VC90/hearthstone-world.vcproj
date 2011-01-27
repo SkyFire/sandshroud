@@ -80,7 +80,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:MSVCRT /LTCG"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
@@ -176,7 +176,7 @@
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
 				AdditionalOptions="/NODEFAULTLIB:MSVCRT"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/amd64/"
 				IgnoreAllDefaultLibraries="false"
@@ -276,7 +276,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
@@ -371,7 +371,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib"
+				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../dependencies/VC/libVC90/amd64/"
 				GenerateDebugInformation="true"

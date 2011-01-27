@@ -116,7 +116,7 @@ void WarnSystem::AddWarn(Player * Warner, Player * Warned, const char  *reason)
 	std::string WarnedChar = Warned->GetName();
 	std::string GMAcct = Warner->GetSession()->GetAccountName();
 	std::string WarnedAcct = Warned->GetSession()->GetAccountName();
-	std::string WarnedIP = Warned->GetSession()->GetSocket()->GetRemoteIP();
+	std::string WarnedIP = Warned->GetSession()->GetSocket()->GetIP();
 
 	uint32 newWarnID = GetWarnCountForAccount( WarnedAcct ) + 1;
 
@@ -154,7 +154,7 @@ void WarnSystem::AddWarn_Internal(std::string Warner, Player * Warned, const cha
 
 	std::string WarnedChar = Warned->GetName();
 	std::string WarnedAcct = Warned->GetSession()->GetAccountName();
-	std::string WarnedIP = Warned->GetSession()->GetSocket()->GetRemoteIP();
+	std::string WarnedIP = Warned->GetSession()->GetSocket()->GetIP();
 
 	uint32 newWarnID = GetWarnCountForAccount( WarnedAcct ) + 1;
 
@@ -275,7 +275,7 @@ void WarnSystem::ClearWarns(Player * Warner, Player *  Warned)
 	std::string WarnedChar = Warned->GetName();
 	std::string WarnedAcct = Warned->GetSession()->GetAccountName();
 	std::string GMAcct = gm_session->GetAccountName();
-	std::string GM_IP = gm_session->GetSocket()->GetRemoteIP();
+	std::string GM_IP = gm_session->GetSocket()->GetIP();
 
 	/* MySql Query Building */
 	std::stringstream mySql;

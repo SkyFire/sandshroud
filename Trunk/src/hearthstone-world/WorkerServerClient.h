@@ -21,13 +21,13 @@
 #ifndef _WORKERSERVER_CLIENT_H
 #define _WORKERSERVER_CLIENT_H
 
-class WSClient : public Socket
+class WSClient : public TcpSocket
 {
 	bool _authenticated;
 	uint32 _remaining;
 	uint16 _cmd;
 public:
-	WSClient(SOCKET fd);
+	WSClient(SOCKET fd, const sockaddr_in * peer);
 	~WSClient();
 
 	void SendPacket(WorldPacket * data);

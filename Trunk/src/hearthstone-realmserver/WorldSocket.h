@@ -26,11 +26,11 @@
 class WorldPacket;
 class Session;
 
-class WorldSocket : public Socket
+class WorldSocket : public TcpSocket
 {
 public:
 	bool Authed;
-	WorldSocket(SOCKET fd);
+	WorldSocket(SOCKET fd, const sockaddr_in * peer);
 	~WorldSocket();
 
 	// vs8 fix - send null on empty buffer

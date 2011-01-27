@@ -683,7 +683,7 @@ void InformationCore::CheckServers()
 
 		if(!IsServerAllowed(s->GetRemoteAddress().s_addr))
 		{
-			DEBUG_LOG("LogonServer","Disconnecting socket: %s due to it no longer being on an allowed IP.\n", s->GetRemoteIP().c_str());
+			DEBUG_LOG("LogonServer","Disconnecting socket: %s due to it no longer being on an allowed IP.\n", s->GetIP());
 			s->Disconnect();
 		}
 	}

@@ -255,7 +255,7 @@ bool HandlePlayerInfoCommand(BaseConsole * pConsole, int argc, const char * argv
 	pConsole->Write("Player: %s\r\n", plr->GetName());
 	pConsole->Write("Race: %s\r\n", plr->myRace->name1);
 	pConsole->Write("Class: %s\r\n", plr->myClass->name);
-	pConsole->Write("IP: %s\r\n", plr->GetSession()->GetSocket() ? plr->GetSession()->GetSocket()->GetRemoteIP().c_str() : "disconnected");
+	pConsole->Write("IP: %s\r\n", plr->GetSession()->GetSocket() ? plr->GetSession()->GetSocket()->GetIP() : "disconnected");
 	pConsole->Write("Level: %u\r\n", plr->getLevel());
 	pConsole->Write("Account: %s\r\n", plr->GetSession()->GetAccountNameS());
 	return true;

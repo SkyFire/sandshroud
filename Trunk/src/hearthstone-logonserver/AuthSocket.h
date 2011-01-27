@@ -29,7 +29,7 @@ class LogonCommServerSocket;
 struct Patch;
 class PatchJob;
 
-class AuthSocket : public Socket
+class AuthSocket : public TcpSocket
 {
 	friend class LogonCommServerSocket;
 public:
@@ -37,10 +37,10 @@ public:
 	///////////////////////////////////////////////////
 	// Netcore shit
 	//////////////////////////
-	AuthSocket(SOCKET fd);
+	AuthSocket(SOCKET fd, const sockaddr_in * peer);
 	~AuthSocket();
 
-	void OnRead();
+	void OnRecvData();
 
 	///////////////////////////////////////////////////
 	// Client Packet Handlers
@@ -63,7 +63,14 @@ public:
 	void SendChallengeError(uint8 Error);
 	void SendProofError(uint8 Error, uint8 * M2);
 	HEARTHSTONE_INLINE sAuthLogonChallenge_C * GetChallenge() { return &m_challenge; }
-	HEARTHSTONE_INLINE void SendPacket(const uint8* data, const uint16 len) { Send(data, len); }
+	HEARTHSTONE_INLINE void Send(const uint8* data, const uint16 len) { SendPacket(data, len); };
+	HEARTHSTONE_INLINE void SendPacket(const uint8* data, const uint16 len)
+	{
+		LockWriteBuffer();
+		Write(data, len);
+		UnlockWriteBuffer();
+	}
+
 	void OnDisconnect();
 	HEARTHSTONE_INLINE time_t GetLastRecv() { return last_recv; }
 	bool removedFromSet;

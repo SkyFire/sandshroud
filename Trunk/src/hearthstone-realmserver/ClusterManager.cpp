@@ -112,7 +112,7 @@ WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
 	if(i == MAX_WORKER_SERVERS)
 		return 0;		// No spaces
 
-	Log.Notice("ClusterMgr", "Allocating worker server %u to %s:%u", i, s->GetRemoteIP().c_str(), s->GetRemotePort());
+	Log.Notice("ClusterMgr", "Allocating worker server %u to %s:%u", i, s->GetIP(), s->GetPort());
 	WorkerServers[i] = new WServer(i, s);
 	if(m_maxWorkerServer <= i)
 		m_maxWorkerServer = i+1;

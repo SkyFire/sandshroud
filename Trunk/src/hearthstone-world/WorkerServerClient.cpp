@@ -20,7 +20,7 @@
 #include "StdAfx.h"
 #ifdef CLUSTERING
 
-WSClient::WSClient(SOCKET fd) : Socket(fd, 1024576, 1024576)
+WSClient::WSClient(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 1024576, 1024576, false, peer)
 {
 	_remaining = 0;
 	_cmd = 0;
@@ -37,24 +37,24 @@ void WSClient::OnRead()
 	{
 		if(!_cmd)
 		{
-			if(readBuffer.GetSize() < 6)
+			if(GetReadBuffer()->GetSize() < 6)
 				break;
 
-			readBuffer.Read((uint8*)&_cmd, 2);
-			readBuffer.Read((uint8*)&_remaining, 4);
+			Read((uint8*)&_cmd, 2);
+			Read((uint8*)&_remaining, 4);
 		}
 
-		if(_remaining && readBuffer.GetSize() < _remaining)
-			break;
+		if(_remaining && GetReadBuffer()->GetSize() < _remaining)
+			return;
 
 		if(_cmd == ISMSG_WOW_PACKET)
 		{
 			uint32 sid = 0;
 			uint16 op = 0;
 			uint32 sz = 0;
-			readBuffer.Read(&sid, 4);
-			readBuffer.Read(&op, 2);
-			readBuffer.Read(&sz, 4);
+			Read(&sid, 4);
+			Read(&op, 2);
+			Read(&sz, 4);
 
 			WorldSession * session = sClusterInterface.GetSession(sid);
 			if(session != NULL)
@@ -63,7 +63,7 @@ void WSClient::OnRead()
 				if (sz > 0)
 				{
 					pck->resize(sz);
-					readBuffer.Read((void*)pck->contents(), sz);
+					Read((void*)pck->contents(), sz);
 				}
 
 				if(session)
@@ -77,8 +77,11 @@ void WSClient::OnRead()
 
 		WorldPacket * pck = new WorldPacket(_cmd, _remaining);
 		_cmd = 0;
-		pck->resize(_remaining);
-		readBuffer.Read((uint8*)pck->contents(), _remaining);
+		if(_remaining)
+		{
+			pck->resize(_remaining);
+			Read((uint8*)pck->contents(), _remaining);
+		}
 
 		/* we could handle auth here */
 		switch(_cmd)
@@ -101,7 +104,7 @@ void WSClient::OnConnect()
 void WSClient::OnDisconnect()
 {
 	sClusterInterface.ConnectionDropped();
-	sSocketGarbageCollector.QueueSocket(this);
+	sSocketDeleter.Add(this);
 }
 
 void WSClient::SendPacket(WorldPacket * data)
@@ -112,18 +115,17 @@ void WSClient::SendPacket(WorldPacket * data)
 	if(!IsConnected())
 		return;
 
-	BurstBegin();
+	LockWriteBuffer();
 
 	// Pass the header to our send buffer
-	rv = BurstSend((const uint8*)&opcode, 2);
-	rv = BurstSend((const uint8*)&size, 4);
+	rv = Write((const uint8*)&opcode, 2);
+	rv = Write((const uint8*)&size, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(size > 0 && rv)
-		rv = BurstSend((const uint8*)data->contents(), size);
+		rv = Write((const uint8*)data->contents(), size);
 
-	if(rv) BurstPush();
-	BurstEnd();
+	UnlockWriteBuffer();
 }
 
 #endif

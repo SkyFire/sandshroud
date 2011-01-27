@@ -82,18 +82,16 @@ void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void *
 		return;			// Shouldn't happen
 	DEBUG_LOG("ForwardWoWPacket", "Forwarding %s to server", LookupName(opcode, g_worldOpcodeNames));
 
-	_clientSocket->BurstBegin();
-	_clientSocket->BurstSend((const uint8*)&id, 2);
-	_clientSocket->BurstSend((const uint8*)&size2, 4);
-	_clientSocket->BurstSend((const uint8*)&sessionid, 4);
-	_clientSocket->BurstSend((const uint8*)&opcode, 2);
-	rv = _clientSocket->BurstSend((const uint8*)&size, 4);
+	_clientSocket->LockWriteBuffer();
+	_clientSocket->Write((const uint8*)&id, 2);
+	_clientSocket->Write((const uint8*)&size2, 4);
+	_clientSocket->Write((const uint8*)&sessionid, 4);
+	_clientSocket->Write((const uint8*)&opcode, 2);
+	rv = _clientSocket->Write((const uint8*)&size, 4);
 	if(size && rv)
-		rv =_clientSocket->BurstSend((const uint8*)data, size);
+		rv =_clientSocket->Write((const uint8*)data, size);
 
-	if(rv)
-		_clientSocket->BurstPush();
-	_clientSocket->BurstEnd();
+	_clientSocket->UnlockWriteBuffer();
 }
 
 void ClusterInterface::ConnectToRealmServer()
@@ -133,7 +131,7 @@ void ClusterInterface::HandleAuthRequest(WorldPacket & pck)
 {
 	uint32 x;
 	pck >> x;
-	OUT_DEBUG("ClusterInterface", "Incoming auth request from %s (RS build %u)", _clientSocket->GetRemoteIP().c_str(), x);
+	OUT_DEBUG("ClusterInterface", "Incoming auth request from %s (RS build %u)", _clientSocket->GetIP(), x);
 
 	WorldPacket data(ICMSG_AUTH_REPLY, 50);
 	data.append(key, 20);

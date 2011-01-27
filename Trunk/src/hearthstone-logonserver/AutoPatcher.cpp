@@ -300,13 +300,15 @@ struct TransferDataPacket
 
 #pragma pack(pop)
 
+// Crow: We could use Send or SendPacket.
+
 bool PatchJob::Update()
 {
 	// don't update unless the write buffer is empty
-	m_client->BurstBegin();
-	if( m_client->GetWriteBuffer().GetSize() != 0 )
+	m_client->LockWriteBuffer();
+	if( m_client->GetWriteBuffer()->GetSize() != 0 )
 	{
-		m_client->BurstEnd();
+		m_client->UnlockWriteBuffer();
 		return true;
 	}
 
@@ -317,10 +319,10 @@ bool PatchJob::Update()
 	header.chunk_size = (m_bytesLeft>1500)?1500:m_bytesLeft;
 	//DEBUG_LOG("PatchJob", "Sending %u byte chunk", header.chunk_size);
 
-	result = m_client->BurstSend((const uint8*)&header,sizeof(TransferDataPacket));
+	result = m_client->Write((const uint8*)&header,sizeof(TransferDataPacket));
 	if(result)
 	{
-		result = m_client->BurstSend(m_dataPointer, header.chunk_size);
+		result = m_client->Write(m_dataPointer, header.chunk_size);
 		if(result)
 		{
 			m_dataPointer += header.chunk_size;
@@ -329,10 +331,7 @@ bool PatchJob::Update()
 		}
 	}
 
-	if(result)
-		m_client->BurstPush();
-
-	m_client->BurstEnd();
+	m_client->UnlockWriteBuffer();
 
 	// no need to check the result here, could just be a full buffer and not necessarily a fatal error.
 	return (m_bytesLeft>0)?true:false;
@@ -351,10 +350,8 @@ bool PatchMgr::InitiatePatch(Patch * pPatch, AuthSocket * pClient)
 	memcpy(init.md5hash, pPatch->MD5, MD5_DIGEST_LENGTH);
 
 	// send it to the client
-	pClient->BurstBegin();
-	result = pClient->BurstSend((const uint8*)&init,sizeof(TransferInitiatePacket));
-	if(result)
-		pClient->BurstPush();
-	pClient->BurstEnd();
+	pClient->LockWriteBuffer();
+	result = pClient->Write((const uint8*)&init,sizeof(TransferInitiatePacket));
+	pClient->UnlockWriteBuffer();
 	return result;
 }

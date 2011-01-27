@@ -384,23 +384,18 @@ void LogonServer::Run(int argc, char ** argv)
 	
 	ThreadPool.ExecuteTask(new LogonConsoleThread);
 
-	new SocketMgr;
-	new SocketGarbageCollector;
-	sSocketMgr.SpawnWorkerThreads();
+	new iocpEngine;
+	new SocketEngineThread(&sSocketEngine);
+	sSocketEngine.SpawnThreads();
 
-	ListenSocket<AuthSocket> * cl = new ListenSocket<AuthSocket>(host.c_str(), cport);
-	ListenSocket<LogonCommServerSocket> * sl = new ListenSocket<LogonCommServerSocket>(shost.c_str(), sport);
+	ListenSocket<AuthSocket> * cl = new ListenSocket<AuthSocket>();
+	ListenSocket<LogonCommServerSocket> * sl = new ListenSocket<LogonCommServerSocket>();
 
 	// Spawn auth listener
 	// Spawn interserver listener
-	bool authsockcreated = cl->IsOpen();
-	bool intersockcreated = sl->IsOpen();
-#ifdef WIN32
-	if(authsockcreated)
-		ThreadPool.ExecuteTask(cl);
-	if(intersockcreated)
-		ThreadPool.ExecuteTask(sl);
-#endif
+	bool authsockcreated = cl->Open(host.c_str(), cport);
+	bool intersockcreated = sl->Open(shost.c_str(), sport);
+
 	// hook signals
 	Log.Notice("LogonServer","Hooking signals...");
 	signal(SIGINT, _OnSignal);
@@ -439,7 +434,7 @@ void LogonServer::Run(int argc, char ** argv)
 		if(!(loop_counter%100))  //100 loop ~ 1seconds
 		{
 			sInfoCore.TimeoutSockets();
-			sSocketGarbageCollector.Update();
+			sSocketDeleter.Update();
 			CheckForDeadSockets();				// Flood Protection
 			UNIXTIME = time(NULL);
 			g_localTime = *localtime(&UNIXTIME);
@@ -461,12 +456,10 @@ void LogonServer::Run(int argc, char ** argv)
 #endif
 	pfc->kill();
 
-	cl->Close();
-	sl->Close();
-	sSocketMgr.CloseAll();
-#ifdef WIN32
-	sSocketMgr.ShutdownThreads();
-#endif
+	cl->Disconnect();
+	sl->Disconnect();
+
+	sSocketEngine.Shutdown();
 	sLogonConsole.Kill();
 	delete LogonConsole::getSingletonPtr();
 
@@ -484,8 +477,8 @@ void LogonServer::Run(int argc, char ** argv)
 	delete AccountMgr::getSingletonPtr();
 	delete InformationCore::getSingletonPtr();
 	delete IPBanner::getSingletonPtr();
-	delete SocketMgr::getSingletonPtr();
-	delete SocketGarbageCollector::getSingletonPtr();
+	delete SocketEngine::getSingletonPtr();
+	delete SocketDeleter::getSingletonPtr();
 	delete pfc;
 	delete cl;
 	delete sl;
