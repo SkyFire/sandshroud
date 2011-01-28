@@ -218,7 +218,8 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 	if(!spellInfo || !sHookInterface.OnCastSpell(_player, spellInfo))
 	{
 		SKIP_READ_PACKET(recvPacket);
-		OUT_DEBUG("WORLD: unknown spell id %i\n", spellId);
+		if(spellInfo == NULL)
+			OUT_DEBUG("WORLD: unknown spell id %i\n", spellId);
 		return;
 	}
 

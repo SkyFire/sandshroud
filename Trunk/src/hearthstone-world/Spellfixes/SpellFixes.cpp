@@ -269,7 +269,7 @@ void ApplyNormalFixes()
 				type |= SPELL_TYPE_ASPECT;
 			else if( strstr( sp->Name, "Sting") || strstr( sp->Name, "sting"))
 				type |= SPELL_TYPE_STING;
-			else if( strstr( sp->Name, "Judgement"))
+			else if( strstr( sp->Name, "Judgement of") && !(strstr( sp->Name, "Increased") || strstr( sp->Name, "Improved")))
 				type |= SPELL_TYPE_JUDGEMENT;
 			// don't break armor items!
 			else if(strcmp(sp->Name, "Armor") && strstr( sp->Name, "Armor") || strstr( sp->Name, "Demon Skin"))

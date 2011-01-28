@@ -615,7 +615,10 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					switch(GetSpellProto()->Id)
 					{
 					case 20187: // Righteousness
-						dmg += 1+((0.2 * p_caster->GetAP())+(0.32 * p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						dmg = (1+(0.20*p_caster->GetAP())+(0.32*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						break;
+					case 20268: // Wisdom
+						dmg = (1+(0.16*p_caster->GetAP())+(0.25*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					}
 				}
@@ -6148,35 +6151,17 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 			else
 				spellid = 20186;
 
-			switch(p_caster->Seal)
-			{
-			case 20164: //justice
-				{
-					p_caster->CastSpell(unitTarget, 53733, true); // bleh corruption spell
-				}break;
-			case 20166: //wisdom (no info about dmg... ill use same as justice)
-				{
-					p_caster->CastSpell(unitTarget, 53733, true);
-				}break;
-			case 20165: //light (same dmg as seal of justice)
-				{
-					p_caster->CastSpell(unitTarget, 53733, true);
-				}break;
-			default:
-				{
-					if(p_caster->JudgementSpell)
-						p_caster->CastSpell(unitTarget, p_caster->JudgementSpell, true);
-				}break;
-			}
+			if(p_caster->JudgementSpell)
+				p_caster->CastSpell(unitTarget, p_caster->JudgementSpell, true);
 
-			SpellEntry *en = NULL;
-			en = dbcSpell.LookupEntry(spellid);
+			SpellEntry *en = dbcSpell.LookupEntry(spellid);
 			if(en == NULL)
 				return;
+
 			Spell* sp(new Spell(p_caster, en, true, NULLAURA));
 			SpellCastTargets tgt;
-			tgt.m_unitTarget=unitTarget->GetGUID();
-			tgt.m_targetMask=TARGET_FLAG_UNIT;
+			tgt.m_unitTarget = unitTarget->GetGUID();
+			tgt.m_targetMask = TARGET_FLAG_UNIT;
 			sp->prepare(&tgt);
 
 			if( p_caster->HasDummyAura(SPELL_HASH_JUDGEMENTS_OF_THE_WISE) )
@@ -6203,7 +6188,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 										continue;
 
 									SpellEntry* Replinishment = dbcSpell.LookupEntryForced( 57669 );
-									Spell* pSpell=new Spell(p_caster, Replinishment, true, NULLAURA);
+									Spell* pSpell = new Spell(p_caster, Replinishment, true, NULLAURA);
 									SpellCastTargets tgt;
 									tgt.m_unitTarget = p_target->GetGUID();
 									pSpell->prepare(&tgt);
@@ -6216,7 +6201,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 					else
 					{
 						SpellEntry* Replinishment = dbcSpell.LookupEntryForced( 57669 );
-						Spell* pSpell=new Spell(p_caster, Replinishment, true, NULLAURA);
+						Spell* pSpell = new Spell(p_caster, Replinishment, true, NULLAURA);
 						SpellCastTargets tgt;
 						tgt.m_unitTarget = p_caster->GetGUID();
 						pSpell->prepare(&tgt);

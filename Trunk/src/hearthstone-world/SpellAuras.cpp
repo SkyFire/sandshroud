@@ -3256,7 +3256,7 @@ void Aura::SpellAuraDummy(bool apply)
 					case 20166:
 						procchance = 47;
 						spellid = 20168;
-						judspell = 20186;
+						judspell = 20268;
 						break;
 					}
 
@@ -9879,35 +9879,16 @@ void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntr
 
 	WorldPacket data(SMSG_PERIODICAURALOG, 46);
 	data << Target->GetNewGUID();		// target guid
-	FastGUIDPack(data, CasterGuid);		// caster guid
+	data << WoWGuid(CasterGuid);		// caster guid
 	data << spellId;					// spellid
-	data << (uint32)1;					// count of logs going next
-	data << uint32(Flags);				// Log type
-	if(Flags == FLAG_PERIODIC_HEAL)
-	{
-		data << (uint32) Amount;		// Healing done
-		data << (uint32) abs_dmg;		// overheal. just passed the value inside abs_dmg
-		data << uint32(0);				// UNK - Absorbed Heal?
-		data << uint8(isCritical);		// critical tick.
-	}
-	else if(Flags == FLAG_PERIODIC_LEECH)
-	{
-		data << (uint32) abs_dmg;			// power type. just passed the value inside abs_dmg
-		data << (uint32) Amount;			// amount drained
-		data << (float) resisted_damage;	// percent gained from what is drained
-	}
-	else if(Flags == FLAG_PERIODIC_ENERGIZE)
-		data << (uint32) Amount;
-	else if(Flags == FLAG_PERIODIC_DAMAGE)
-	{
-		data << (uint32) Amount;							// damage dealt
-		data << (uint32) Target->computeOverkill(Amount);	// overkill
-		data << (uint32) SchoolMask(sp->School);			// spell school
-		data << uint32(abs_dmg);
-		data << uint32(resisted_damage);
-		data << uint8(isCritical);							// critical tick.
-	}
-
+	data << uint32(1);					// count of logs going next
+	data << uint32(Flags | 0x1);		// Log type
+	data << uint32(Amount);
+	data << uint32(0);
+	data << uint32(SchoolMask(sp->School));
+	data << uint32(abs_dmg);
+	data << uint32(resisted_damage);
+	data << uint8(crit);
 	Target->SendMessageToSet(&data, true);
 }
 

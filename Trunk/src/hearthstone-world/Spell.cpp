@@ -2199,12 +2199,11 @@ void Spell::SendSpellStart()
 	if( GetType() == SPELL_DMG_TYPE_RANGED )
 		cast_flags |= SPELL_START_FLAG_RANGED;
 
-
+	if (m_missileTravelTime)
+		cast_flags = 0x6000E;
 	// hacky yeaaaa
 	if( GetSpellProto()->Id == 8326 ) // death
 		cast_flags = 0x0F;
-	if (m_missileTravelTime)
-		cast_flags = 0x6000E;
 
 	if( i_caster != NULL )
 		data << i_caster->GetNewGUID() << u_caster->GetNewGUID();
@@ -2218,24 +2217,6 @@ void Spell::SendSpellStart()
 
 	m_targets.write( data );
 
-	if(cast_flags & SPELL_START_FLAGS_POWER_UPDATE) //send new mana
-		data << uint32( u_caster ? u_caster->GetUInt32Value(UNIT_FIELD_POWER1 + u_caster->GetPowerType()) : 0);
-	if( (p_caster != NULL) && cast_flags & SPELL_START_FLAGS_RUNE_UPDATE && dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID) != NULL) //send new runes
-	{
-		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
-		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
-		data << p_caster->m_runemask << theoretical;
-
-		for (uint8 i=0; i<6; i++)
-		{
-			if ((1 << i) & p_caster->m_runemask)
-				if (!((1 << i) & theoretical))
-					data << uint8(0); // I love you, Andy--in a gay way.
-		}
-	}
-
-	if (cast_flags & 0x20000)
-		data << m_missilePitch << m_missileTravelTime;
 	if( GetType() == SPELL_DMG_TYPE_RANGED )
 	{
 		ItemPrototype* ip = NULL;
@@ -2277,8 +2258,28 @@ void Spell::SendSpellStart()
 
 		if( ip != NULL )
 			data << ip->DisplayInfoID << ip->InventoryType;
+		else
+			data << uint32(0) << uint32(0);
 	}
 
+	if(cast_flags & SPELL_START_FLAGS_POWER_UPDATE) //send new mana
+		data << uint32( u_caster ? u_caster->GetUInt32Value(UNIT_FIELD_POWER1 + u_caster->GetPowerType()) : 0);
+	if( (p_caster != NULL) && cast_flags & SPELL_START_FLAGS_RUNE_UPDATE && dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID) != NULL) //send new runes
+	{
+		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
+		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
+		data << p_caster->m_runemask << theoretical;
+
+		for (uint8 i=0; i<6; i++)
+		{
+			if ((1 << i) & p_caster->m_runemask)
+				if (!((1 << i) & theoretical))
+					data << uint8(0); // I love you, Andy--in a gay way.
+		}
+	}
+
+	if (cast_flags & 0x20000)
+		data << m_missilePitch << m_missileTravelTime;
 	m_caster->SendMessageToSet( &data, true );
 }
 
@@ -2372,12 +2373,9 @@ void Spell::SendSpellGo()
 		}
 	}
 
-	// stack-based solution
-	// this has room for every type of spell target type,
-	// as well as 100 missed and 100 hit targets.
-	// if you're doing that, you're NUTS.
-	WorldPacket data(SMSG_SPELL_GO, 3764);
+	WorldPacket data(200);
 
+	data.SetOpcode(SMSG_SPELL_GO);
 	if( i_caster != NULL && u_caster != NULL ) // this is needed for correct cooldown on items
 		data << i_caster->GetNewGUID() << u_caster->GetNewGUID();
 	else
@@ -2418,15 +2416,17 @@ void Spell::SendSpellGo()
 			{
 				data << itr->Guid;
 				data << itr->HitResult;
-				if( itr->HitResult == SPELL_DID_HIT_REFLECT )
-					data << uint8(SPELL_DID_HIT_SUCCESS);
-
 				++counter;
 			}
 		}
 	}
 
 	m_targets.write( data ); // this write is included the target flag
+
+	if( ip != NULL)
+		data << ip->DisplayInfoID << ip->InventoryType;
+	else
+		data << uint32(0) << uint32(0);
 
 	if (cast_flags & SPELL_GO_FLAGS_POWER_UPDATE) //send new power
 		data << uint32( u_caster ? u_caster->GetUInt32Value(UNIT_FIELD_POWER1 + u_caster->GetPowerType()) : 0);
@@ -2445,15 +2445,9 @@ void Spell::SendSpellGo()
 		}
 	}
 
-	if( ip != NULL)
-		data << ip->DisplayInfoID << ip->InventoryType;
-
-	m_caster->SendMessageToSet( &data, (m_caster->IsPlayer() ? true : false) );
-	// spell log execute is still send 2.08
-	// as I see with this combination, need to test it more
-	//if (flags != 0x120 && GetSpellProto()->Attributes & 16) // not ranged and flag 5
-	  //  SendLogExecute(0,m_targets.m_unitTarget);
+	m_caster->SendMessageToSet( &data, true);
 }
+
 void Spell::writeSpellGoTargets( WorldPacket * data )
 {
 	SpellTargetList::iterator itr;
@@ -2497,8 +2491,8 @@ void Spell::SendLogExecute(uint32 damage, uint64 & targetGuid)
 	data << m_caster->GetNewGUID();
 	data << GetSpellProto()->Id;
 	data << uint32(1);
-//	data << GetSpellProto()->SpellVisual[0];
-//	data << uint32(1);
+	data << GetSpellProto()->SpellVisual[0];
+	data << uint32(1);
 	if (m_caster->GetGUID() != targetGuid)
 		data << targetGuid;
 	if (damage)
@@ -2571,17 +2565,17 @@ void Spell::SendChannelUpdate(uint32 time)
 		u_caster->SetUInt32Value(UNIT_CHANNEL_SPELL,0);
 	}
 
-	WorldPacket data(MSG_CHANNEL_UPDATE, 40);
+	WorldPacket data(MSG_CHANNEL_UPDATE, 12);
 	data << m_caster->GetNewGUID();
 	data << time;
-	m_caster->SendMessageToSet(&data, (m_caster->IsPlayer() ? true : false));
+	m_caster->SendMessageToSet(&data, true);
 }
 
 void Spell::SendChannelStart(int32 duration)
 {
 	if (m_caster->GetTypeId() != TYPEID_GAMEOBJECT)
 	{
-		WorldPacket data(MSG_CHANNEL_START, 60);
+		WorldPacket data(MSG_CHANNEL_START, 16);
 		data << m_caster->GetNewGUID();
 		data << GetSpellProto()->Id;
 		data << duration;

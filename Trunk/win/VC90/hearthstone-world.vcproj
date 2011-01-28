@@ -641,18 +641,6 @@
 				>
 			</File>
 			<Filter
-				Name="Auras"
-				>
-				<File
-					RelativePath="..\..\src\hearthstone-world\SpellAuras.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\hearthstone-world\SpellAuras.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="Units"
 				>
 				<File
@@ -1185,6 +1173,18 @@
 				</File>
 				<File
 					RelativePath="..\..\src\hearthstone-world\Spellfixes\SpellFixes.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Auras"
+				>
+				<File
+					RelativePath="..\..\src\hearthstone-world\SpellAuras.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\hearthstone-world\SpellAuras.h"
 					>
 				</File>
 			</Filter>

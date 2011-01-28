@@ -1504,9 +1504,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 						case 37196:
 						case 43838:
 							{
-								if( CastingSpell->NameHash != SPELL_HASH_JUDGEMENT_OF_JUSTICE &&
-									CastingSpell->NameHash != SPELL_HASH_JUDGEMENT_OF_LIGHT &&
-									CastingSpell->NameHash != SPELL_HASH_JUDGEMENT_OF_WISDOM )
+								if( CastingSpell->buffIndexType != SPELL_TYPE_INDEX_JUDGEMENT )
 									continue;
 							}break;
 

@@ -3382,12 +3382,6 @@ void Object::SendAttackerStateUpdate( Unit* Target, dealdamage *dmg, uint32 real
 		return;
 
 	WorldPacket data(SMSG_ATTACKERSTATEUPDATE, 70);
-
-	if (hit_status & HITSTATUS_BLOCK)
-	{
-		hit_status|= 0x800000;
-	}
-
 	uint32 overkill = Target->computeOverkill(realdamage);
 	uint32 schooldam = SchoolMask(dmg->school_type);
 
@@ -3423,14 +3417,6 @@ void Object::SendAttackerStateUpdate( Unit* Target, dealdamage *dmg, uint32 real
 	if(hit_status & HITSTATUS_unk)
 	{
 		data << uint32(0);
-		data << float(0);
-		data << float(0);
-		data << float(0);
-		data << float(0);
-		data << float(0);
-		data << float(0);
-		data << float(0);
-		data << float(0);
 		for(uint8 i = 0; i < 5; ++i)
 		{
 			data << float(0);
