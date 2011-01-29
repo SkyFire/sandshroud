@@ -1302,7 +1302,7 @@ void WorldSession::HandleInspectOpcode( WorldPacket & recv_data )
 			data << uint32(0);	// unk
 		}
 	}
-	*(uint16*)&data.contents()[maskPos] = slotUsedMask;
+	*(uint32*)&data.contents()[maskPos] = slotUsedMask;
 	SendPacket( &data );
 }
 
