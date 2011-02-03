@@ -207,19 +207,20 @@ void WorldSession::HandleBattlegroundPlayerPositionsOpcode(WorldPacket &recv_dat
 	if(!_player->IsInWorld() || !bg)
 		return;
 
-	uint8 buf[100];
-	StackPacket data( MSG_BATTLEGROUND_PLAYER_POSITIONS, buf, 100 );
-
 	if(bg->GetType() == BATTLEGROUND_WARSONG_GULCH)
 	{
 		uint32 count1 = 0;
 		uint32 count2 = 0;
 
 		Player* ap = objmgr.GetPlayer((CAST(WarsongGulch, bg))->GetAllianceFlagHolderGUID());
-		if(ap) ++count2;
+		if(ap) 
+			++count2;
 
 		Player* hp = objmgr.GetPlayer((CAST(WarsongGulch, bg))->GetHordeFlagHolderGUID());
-		if(hp) ++count2;
+		if(hp)
+			++count2;
+
+		WorldPacket data(MSG_BATTLEGROUND_PLAYER_POSITIONS, (4+4+16*count1+16*count2));
 
 		data << count1;
 		data << count2;
@@ -245,7 +246,7 @@ void WorldSession::HandleBattlegroundPlayerPositionsOpcode(WorldPacket &recv_dat
 
 		Player* ap = objmgr.GetPlayer((CAST(EyeOfTheStorm, bg))->GetFlagHolderGUID());
 		if(ap) ++count2;
-
+		 WorldPacket data(MSG_BATTLEGROUND_PLAYER_POSITIONS, (4+4));
 		data << count1;
 		data << count2;
 		if(ap)

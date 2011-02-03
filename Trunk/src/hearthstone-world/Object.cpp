@@ -713,7 +713,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 			else if (IsUnit() && TO_UNIT(this)->GetVehicle(true) != NULL)
 			{
 				Unit* pUnit = TO_UNIT(this);
-				Vehicle* vehicle = TO_VEHICLE(TO_UNIT(this)->GetVehicle());
+				Vehicle* vehicle = TO_VEHICLE(pUnit->GetVehicle(true));
 
 				if (pUnit->GetSeatID() != 0xFF && vehicle->m_vehicleSeats[pUnit->GetSeatID()] != NULL)
 				{
@@ -1041,7 +1041,7 @@ bool Object::SetPosition( float newX, float newY, float newZ, float newOrientati
 
 		if( m_objectTypeId == TYPEID_PLAYER && TO_PLAYER(this)->GetGroup() && TO_PLAYER(this)->m_last_group_position.Distance2DSq(m_position) > 25.0f ) // distance of 5.0
 		{
-            TO_PLAYER(this)->GetGroup()->HandlePartialChange( PARTY_UPDATE_FLAG_POSITION, TO_PLAYER(this) );
+		    TO_PLAYER(this)->GetGroup()->HandlePartialChange( PARTY_UPDATE_FLAG_POSITION, TO_PLAYER(this) );
 		}
 	}
 
@@ -2847,11 +2847,7 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 
 	SpellEntry *spellInfo = dbcSpell.LookupEntry( spellID );
 	if(!spellInfo)
-        return;
-
-	if(pVictim == TO_UNIT(this))
-		if(pVictim->IsVehicle())
-			return;
+		return;
 
 	if (IsPlayer() && !TO_PLAYER(this)->canCast(spellInfo))
 		return;
@@ -3189,7 +3185,7 @@ void Object::SendSpellLog(Object* Caster, Object* Target, uint32 Ability, uint8 
 	WorldPacket data(SMSG_SPELLLOGMISS,26);
 	data << uint32(Ability);			// spellid
 	data << Caster->GetGUID();			// caster / player
-	data << uint8(1);					// unknown but I think they are const
+	data << uint8(0);					// unknown but I think they are const
 	data << uint32(1);					// unknown but I think they are const
 	data << Target->GetGUID();			// target
 	data << uint8(SpellLogType);		// spelllogtype
@@ -3381,7 +3377,7 @@ void Object::SendAttackerStateUpdate( Unit* Target, dealdamage *dmg, uint32 real
 	if (!Target || !dmg)
 		return;
 
-	WorldPacket data(SMSG_ATTACKERSTATEUPDATE, 70);
+	WorldPacket data(SMSG_ATTACKERSTATEUPDATE, 108);
 	uint32 overkill = Target->computeOverkill(realdamage);
 	uint32 schooldam = SchoolMask(dmg->school_type);
 
@@ -3417,11 +3413,16 @@ void Object::SendAttackerStateUpdate( Unit* Target, dealdamage *dmg, uint32 real
 	if(hit_status & HITSTATUS_unk)
 	{
 		data << uint32(0);
-		for(uint8 i = 0; i < 5; ++i)
-		{
-			data << float(0);
-			data << float(0);
-		}
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
+		data << float(0);
 		data << uint32(0);
 	}
 

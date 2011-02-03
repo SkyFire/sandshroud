@@ -2186,7 +2186,7 @@ void Spell::SendSpellStart()
 	if( !m_caster->IsInWorld() || GetSpellProto()->Attributes & 64 || m_triggeredSpell )
 		return;
 
-	WorldPacket data(SMSG_SPELL_START, 2000);
+	WorldPacket data(SMSG_SPELL_START, 26);
 
 	uint32 cast_flags = SPELL_START_FLAG_DEFAULT;
 
@@ -2373,9 +2373,7 @@ void Spell::SendSpellGo()
 		}
 	}
 
-	WorldPacket data(200);
-
-	data.SetOpcode(SMSG_SPELL_GO);
+	WorldPacket data(SMSG_SPELL_GO, 50);
 	if( i_caster != NULL && u_caster != NULL ) // this is needed for correct cooldown on items
 		data << i_caster->GetNewGUID() << u_caster->GetNewGUID();
 	else
@@ -2487,7 +2485,7 @@ void Spell::writeSpellGoTargets( WorldPacket * data )
 
 void Spell::SendLogExecute(uint32 damage, uint64 & targetGuid)
 {
-	WorldPacket data(SMSG_SPELLLOGEXECUTE, 37);
+	WorldPacket data(SMSG_SPELLLOGEXECUTE, 32);
 	data << m_caster->GetNewGUID();
 	data << GetSpellProto()->Id;
 	data << uint32(1);
@@ -2507,30 +2505,18 @@ void Spell::SendInterrupted(uint8 result)
 	if(!m_caster->IsInWorld()) 
 		return;
 
-	WorldPacket data(SMSG_SPELL_FAILURE, 100);
-
-	// send the failure to pet owner if we're a pet
-	Player* plr = p_caster;
-	if(!plr && m_caster->IsPet())
-		plr = TO_PET(m_caster)->GetPetOwner();
-	if(!plr && u_caster)
-		plr = u_caster->m_redirectSpellPackets;
-
-	if(plr && plr->IsPlayer())
-	{
-		data << m_caster->GetNewGUID();
-		data << uint8(extra_cast_number);
-		data << uint32(GetSpellProto()->Id);
-		data << uint8(result);
-		plr->GetSession()->SendPacket(&data);
-	}
-
-	data.Initialize(SMSG_SPELL_FAILED_OTHER);
+	WorldPacket data(SMSG_SPELL_FAILURE, 13);
 	data << m_caster->GetNewGUID();
 	data << uint8(extra_cast_number);
 	data << uint32(GetSpellProto()->Id);
 	data << uint8(result);
-	m_caster->SendMessageToSet(&data, false);
+	m_caster->SendMessageToSet(&data, true);
+	WorldPacket data2(SMSG_SPELL_FAILED_OTHER, 12);
+	data2 << m_caster->GetNewGUID();
+	data2 << uint8(extra_cast_number);
+	data2 << uint32(GetSpellProto()->Id);
+	data2 << uint8(result);
+	m_caster->SendMessageToSet(&data2, false);
 }
 
 void Spell::SendChannelUpdate(uint32 time)
@@ -4521,7 +4507,7 @@ void Spell::SendHealSpellOnPlayer( Object* caster, Object* target, uint32 dmg, b
 	if( caster == NULL || target == NULL || !target->IsPlayer())
 		return;
 
-	WorldPacket data(SMSG_SPELLHEALLOG, 25);
+	WorldPacket data(SMSG_SPELLHEALLOG, 34);
 	data << target->GetNewGUID();
 	data << caster->GetNewGUID();
 	data << uint32(spellid);
@@ -4529,12 +4515,13 @@ void Spell::SendHealSpellOnPlayer( Object* caster, Object* target, uint32 dmg, b
 	data << uint32(overheal);
 	data << uint32(0);
 	data << uint8(critical);
+	data << uint8(0);
 	caster->SendMessageToSet(&data, true);
 }
 
 void Spell::SendHealManaSpellOnPlayer(Object* caster, Object* target, uint32 dmg, uint32 powertype, uint32 spellid)
 {
-	if( caster == NULL || target == NULL || !target->IsPlayer())
+	if( caster == NULL || target == NULL)
 		return;
 
 	WorldPacket data(SMSG_SPELLENERGIZELOG, 29);
