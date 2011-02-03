@@ -2505,18 +2505,15 @@ void Spell::SendInterrupted(uint8 result)
 	if(!m_caster->IsInWorld()) 
 		return;
 
-	WorldPacket data(SMSG_SPELL_FAILURE, 13);
+	WorldPacket data(SMSG_SPELL_FAILURE, 14);
 	data << m_caster->GetNewGUID();
 	data << uint8(extra_cast_number);
 	data << uint32(GetSpellProto()->Id);
 	data << uint8(result);
 	m_caster->SendMessageToSet(&data, true);
-	WorldPacket data2(SMSG_SPELL_FAILED_OTHER, 12);
-	data2 << m_caster->GetNewGUID();
-	data2 << uint8(extra_cast_number);
-	data2 << uint32(GetSpellProto()->Id);
-	data2 << uint8(result);
-	m_caster->SendMessageToSet(&data2, false);
+
+	data.SetOpcode(SMSG_SPELL_FAILED_OTHER);
+	m_caster->SendMessageToSet(&data, false);
 }
 
 void Spell::SendChannelUpdate(uint32 time)
