@@ -606,14 +606,7 @@ bool World::SetInitialWorldSettings()
 			Sleep( 100 );
 	}
 
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	Log.Notice("World", "Starting MovementCompressorThread...");
-	MovementCompressor = new CMovementCompressorThread();
-	ThreadPool.ExecuteTask( MovementCompressor );
-#endif
-
 	// Preload and compile talent and talent tab data to speed up talent inspect
-
 	uint32 talent_max_rank;
 	uint32 talent_pos;
 	uint32 talent_class;

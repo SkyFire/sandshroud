@@ -1820,21 +1820,7 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	data << uint32(1);	// 1 waypoint
 	data << toX << toY << toZ;
 
-#ifndef ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES
-	bool self = m_Unit->IsPlayer();
 	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
-#else
-	if( m_Unit->IsPlayer() )
-		TO_PLAYER(m_Unit)->GetSession()->SendPacket(&data);
-
-	for(unordered_set<Player*>::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); itr++)
-	{
-		if( (*itr)->GetPositionNC().Distance2DSq( m_Unit->GetPosition() ) >= sWorld.m_movementCompressThresholdCreatures )
-			(*itr)->AppendMovementData( SMSG_MONSTER_MOVE, uint32(data.size()), data.contents() );
-		else
-			(*itr)->GetSession()->SendPacket(&data);
-	}
-#endif
 }
 
 void AIInterface::StopMovement(uint32 time, bool stopatcurrent)

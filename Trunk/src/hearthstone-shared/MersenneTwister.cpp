@@ -286,59 +286,107 @@ int CRandomMersenne::IRandomX(int min, int max) {
 	return (int32)iran + min;
 }
 
-long LDerive(long number, int times)
+void IDerive(int &number, int times)
 {
 	if(times == 0)
-		return 1;
+	{
+		number = 1;
+		return;
+	}
 
 	uint32 realtimes = abs(times);
 	if(times > 0) // Positive
 	{
-		for(uint32 i = 0; i < realtimes; i++)
+		for(uint32 i = 1; i < realtimes; i++)
 		{
 			number *= number;
 		}
 	}
 	else // Negative
 	{
-		for(uint32 i = 0; i < realtimes; i++)
+		for(uint32 i = 1; i < realtimes; i++)
 		{
 			number /= number;
 		}
 	}
-	return number;
 }
 
-double FDerive(double number, int times)
+void LDerive(long &number, int times)
 {
 	if(times == 0)
-		return 1;
+	{
+		number = 1;
+		return;
+	}
 
 	uint32 realtimes = abs(times);
 	if(times > 0) // Positive
 	{
-		for(uint32 i = 0; i < realtimes; i++)
+		for(uint32 i = 1; i < realtimes; i++)
 		{
 			number *= number;
 		}
 	}
 	else // Negative
 	{
-		for(uint32 i = 0; i < realtimes; i++)
+		for(uint32 i = 1; i < realtimes; i++)
 		{
 			number /= number;
 		}
 	}
-	return number;
 }
 
-#ifdef WIN32
+void FDerive(float &number, int times)
+{
+	if(times == 0)
+	{
+		number = 1;
+		return;
+	}
 
-HEARTHSTONE_INLINE int expon(_In_ int _X, _In_ int _Y)
-		{return (LDerive(_X, _Y)); }
-HEARTHSTONE_INLINE long expon(_In_ long _X, _In_ int _Y)
-		{return (LDerive(_X, _Y)); }
-HEARTHSTONE_INLINE double expon(_In_ double _X, _In_ int _Y)
-		{return (FDerive(_X, _Y)); }
+	uint32 realtimes = abs(times);
+	if(times > 0) // Positive
+	{
+		for(uint32 i = 1; i < realtimes; i++)
+		{
+			number *= number;
+		}
+	}
+	else // Negative
+	{
+		for(uint32 i = 1; i < realtimes; i++)
+		{
+			number /= number;
+		}
+	}
+}
 
-#endif
+void DDerive(double &number, int times)
+{
+	if(times == 0)
+	{
+		number = 1;
+		return;
+	}
+
+	uint32 realtimes = abs(times);
+	if(times > 0) // Positive
+	{
+		for(uint32 i = 1; i < realtimes; i++)
+		{
+			number *= number;
+		}
+	}
+	else // Negative
+	{
+		for(uint32 i = 1; i < realtimes; i++)
+		{
+			number /= number;
+		}
+	}
+}
+
+HEARTHSTONE_INLINE void expon(int &variable, int count) { IDerive(variable, count); }
+HEARTHSTONE_INLINE void expon(long &variable, int count) { LDerive(variable, count); }
+HEARTHSTONE_INLINE void expon(float &variable, int count) { FDerive(variable, count); }
+HEARTHSTONE_INLINE void expon(double &variable, int count) { DDerive(variable, count); }

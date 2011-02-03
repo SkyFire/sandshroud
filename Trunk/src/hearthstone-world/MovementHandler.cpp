@@ -476,14 +476,7 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 			if( (*itr)->GetSession() && (*itr)->IsInWorld() )
 			{
 				*(uint32*)&_player->movement_packet[pos+6] = uint32(move_time + (*itr)->GetSession()->m_moveDelayTime);
-#if defined(ENABLE_COMPRESSED_MOVEMENT) && defined(ENABLE_COMPRESSED_MOVEMENT_FOR_PLAYERS)
-				if( _player->GetPositionNC().Distance2DSq((*itr)->GetPosition()) >= sWorld.m_movementCompressThreshold )
-					(*itr)->AppendMovementData( recv_data.GetOpcode(), uint16(recv_data.size() + pos), _player->movement_packet );
-				else
-					(*itr)->GetSession()->OutPacket(recv_data.GetOpcode(), uint16(recv_data.size() + pos), _player->movement_packet);
-#else
 				(*itr)->GetSession()->OutPacket(recv_data.GetOpcode(), uint16(recv_data.size() + pos), _player->movement_packet);
-#endif
 			}
 		}
 	}

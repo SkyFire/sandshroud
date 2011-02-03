@@ -347,9 +347,6 @@ void Player::Init()
 	m_mountCheckTimer				= 0;
 	m_taxiMapChangeNode				= 0;
 	m_startMoveTime					= 0;
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-		m_movementBuffer.reserve(5000);
-#endif
 	m_heartbeatDisable			= 0;
 	m_safeFall					= 0;
 	safefall					= false;
@@ -3916,11 +3913,6 @@ void Player::OnPushToWorld()
 	if( !GetSession()->HasGMPermissions() )
 		GetItemInterface()->CheckAreaItems();
 
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	//sEventMgr.AddEvent(TO_PLAYER(this), &Player::EventDumpCompressedMovement, EVENT_PLAYER_FLUSH_MOVEMENT, World::m_movementCompressInterval, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	MovementCompressor->AddPlayer(TO_PLAYER(this));
-#endif
-
 	if( m_mapMgr != NULL && m_mapMgr->m_battleground != NULL && m_bg != m_mapMgr->m_battleground )
 	{
 		m_bg = m_mapMgr->m_battleground;
@@ -4065,14 +4057,6 @@ void Player::RemoveFromWorld()
 	}
 
 	sWorld.mInWorldPlayerCount--;
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	MovementCompressor->RemovePlayer(TO_PLAYER(this));
-	m_movementBufferLock.Acquire();
-	m_movementBuffer.clear();
-	m_movementBufferLock.Release();
-	//sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_FLUSH_MOVEMENT);
-
-#endif
 
 	if(GetTaxiState())
 		event_RemoveEvents( EVENT_PLAYER_TAXI_INTERPOLATE );
@@ -11626,130 +11610,6 @@ void Player::EventDismissPet()
 		if(m_auras[x]!= NULL && m_auras[x]->GetSpellProto()->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET)
 			RemoveAuraBySlot(x);
 }
-
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-
-CMovementCompressorThread *MovementCompressor;
-
-void Player::AppendMovementData(uint32 op, uint32 sz, const uint8* data)
-{
-	//printf("AppendMovementData(%u, %u, 0x%.8X)\n", op, sz, data);
-	m_movementBufferLock.Acquire();
-	m_movementBuffer << uint8(sz + 2);
-	m_movementBuffer << uint16(op);
-	m_movementBuffer.append( data, sz );
-	m_movementBufferLock.Release();
-}
-
-bool CMovementCompressorThread::run()
-{
-	SetThreadName("Compr Movement");
-	set<Player*  >::iterator itr;
-	while(running)
-	{
-		m_listLock.Acquire();
-		for(itr = m_players.begin(); itr != m_players.end(); itr++)
-		{
-			(*itr)->EventDumpCompressedMovement();
-		}
-		m_listLock.Release();
-		Sleep(sWorld.m_movementCompressInterval);
-	}
-
-	return true;
-}
-
-void CMovementCompressorThread::AddPlayer(Player* pPlayer)
-{
-	m_listLock.Acquire();
-	m_players.insert(pPlayer);
-	m_listLock.Release();
-}
-
-void CMovementCompressorThread::RemovePlayer(Player* pPlayer)
-{
-	m_listLock.Acquire();
-	m_players.erase(pPlayer);
-	m_listLock.Release();
-}
-
-void Player::EventDumpCompressedMovement()
-{
-	if( m_movementBuffer.size() == 0 )
-		return;
-
-	m_movementBufferLock.Acquire();
-	uint32 size = (uint32)m_movementBuffer.size();
-	uint32 destsize = size + size/10 + 16;
-	int rate = sWorld.m_movementCompressRate;
-	if(size >= 40000 && rate < 6)
-		rate = 6;
-	if(size <= 100)
-		rate = 0;			// don't bother compressing packet smaller than this, zlib doesn't really handle them well
-
-	// set up stream
-	z_stream stream;
-	stream.zalloc = 0;
-	stream.zfree  = 0;
-	stream.opaque = 0;
-
-	if(deflateInit(&stream, rate) != Z_OK)
-	{
-		sLog.outError("deflateInit failed.");
-		m_movementBufferLock.Release();
-		return;
-	}
-
-	uint8 *buffer = new uint8[destsize];
-
-	// set up stream pointers
-	stream.next_out  = (Bytef*)buffer+4;
-	stream.avail_out = destsize;
-	stream.next_in   = (Bytef*)m_movementBuffer.contents();
-	stream.avail_in  = size;
-
-	// call the actual process
-	if(deflate(&stream, Z_NO_FLUSH) != Z_OK ||
-		stream.avail_in != 0)
-	{
-		sLog.outError("deflate failed.");
-		delete [] buffer;
-		m_movementBufferLock.Release();
-		return;
-	}
-
-	// finish the deflate
-	if(deflate(&stream, Z_FINISH) != Z_STREAM_END)
-	{
-		sLog.outError("deflate failed: did not end stream");
-		delete [] buffer;
-		m_movementBufferLock.Release();
-		return;
-	}
-
-	// finish up
-	if(deflateEnd(&stream) != Z_OK)
-	{
-		sLog.outError("deflateEnd failed.");
-		delete [] buffer;
-		m_movementBufferLock.Release();
-		return;
-	}
-
-	// fill in the full size of the compressed stream
-
-	*(uint32*)&buffer[0] = size;
-
-	// send it
-	m_session->OutPacket(763, (uint16)stream.total_out + 4, buffer);
-	//printf("Compressed move compressed from %u bytes to %u bytes.\n", m_movementBuffer.size(), stream.total_out + 4);
-
-	// cleanup memory
-	delete [] buffer;
-	m_movementBuffer.clear();
-	m_movementBufferLock.Release();
-}
-#endif
 
 void Player::AddShapeShiftSpell(uint32 id)
 {
