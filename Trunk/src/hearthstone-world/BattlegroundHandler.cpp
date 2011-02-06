@@ -327,8 +327,7 @@ void WorldSession::HandleInspectHonorStatsOpcode( WorldPacket &recv_data )
 	if( player == NULL )
 		return;
 
-	uint8 buf[100];
-	StackPacket data( MSG_INSPECT_HONOR_STATS, buf, 100 );
+	WorldPacket data( MSG_INSPECT_HONOR_STATS, 25 );
 
 	data << player->GetGUID() << (uint8)player->GetUInt32Value( PLAYER_FIELD_HONOR_CURRENCY );
 	data << player->GetUInt32Value( PLAYER_FIELD_KILLS );
@@ -359,8 +358,7 @@ void WorldSession::HandleInspectArenaStatsOpcode( WorldPacket & recv_data )
 		if( team != NULL )
 		{
 			ArenaTeamMember * tp = team->GetMember(player->m_playerInfo);
-			uint8 buf[100];
-			StackPacket data( MSG_INSPECT_ARENA_TEAMS, buf, 100 );
+			WorldPacket data( MSG_INSPECT_ARENA_TEAMS, 33 );
 			data << player->GetGUID();
 			data << uint8(team->m_type);
 			data << team->m_id;

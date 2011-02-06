@@ -13633,11 +13633,12 @@ void Player::InitAsVehicle()
 		}
 	}
 	SetVehicle(this);
-	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
+	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, sizeof(GetNewGUID())+4);
 	data << GetNewGUID() << uint32(GetVehicleEntry());
 	SendMessageToSet(&data, true);
+	data.Initialize(SMSG_ON_CANCEL_EXPECTED_RIDE_VEHICLE_AURA, 0);
+	GetSession()->SendPacket(&data);
 	m_passengers[0] = this;
-	SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
 	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
 	InstallExtras();
 }
@@ -13669,7 +13670,6 @@ void Player::DeInitAsVehicle()
 	data << GetNewGUID() << uint32(0);
 	SendMessageToSet(&data, true);
 	RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
-	RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
 }
 
 void Player::AddPassenger(Unit* unit, int8 slot)

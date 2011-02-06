@@ -21,6 +21,13 @@ public:
 		m_opcode = opcode;
 	}
 
+	__inline void Initialize(uint16 opcode, size_t newres )
+	{
+		clear();
+		ByteBuffer(res);
+		m_opcode = opcode;
+	}
+
 	__inline uint16 GetOpcode() const { return m_opcode; }
 	__inline void SetOpcode(uint16 opcode) { m_opcode = opcode; }
 
