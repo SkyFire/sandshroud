@@ -324,6 +324,7 @@ void GameObject::InitAI()
 		return;
 
 	initiated = true; // Initiate after check, so we do not spam if we return without a point.
+	myScript = sScriptMgr.CreateAIScriptClassForGameObject(GetEntry(), this);
 
 	uint32 spellid = 0;
 	switch(pInfo->Type)
@@ -332,7 +333,6 @@ void GameObject::InitAI()
 		{
 			spellid = pInfo->sound3;
 		}break;
-
 	case GAMEOBJECT_TYPE_SPELL_FOCUS://redirect to properties of another go
 		{
 			if( pInfo->sound2 == 0 )
@@ -375,14 +375,12 @@ void GameObject::InitAI()
 			}
 			return;
 		}break;
-
 	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
 		{
 			m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->SpellFocus + pInfo->sound5;
 			SetAnimProgress(255);
 			return;
 		}break;
-
 	case GAMEOBJECT_TYPE_AURA_GENERATOR:
 		{
 			spellid = GetInfo()->sound2;
@@ -393,8 +391,6 @@ void GameObject::InitAI()
 
 	if(!spellid)
 		return;
-
-	myScript = sScriptMgr.CreateAIScriptClassForGameObject(GetEntry(), this);
 
 	SpellEntry *sp = dbcSpell.LookupEntry(spellid);
 	if(!sp)
@@ -410,7 +406,7 @@ void GameObject::InitAI()
 	//get the range for that
 	float r = 0;
 
-	for(uint32 i=0;i<3;++i)
+	for(uint32 i = 0; i < 3; ++i)
 	{
 		if(sp->Effect[i])
 		{

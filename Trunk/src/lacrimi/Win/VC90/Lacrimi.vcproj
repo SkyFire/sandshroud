@@ -425,6 +425,10 @@
 			<Filter
 				Name="Level 0"
 				>
+				<File
+					RelativePath="..\..\Source\Scripts\Level 0\LevelZeroHeaders.h"
+					>
+				</File>
 				<Filter
 					Name="Eastern Kingdoms"
 					>
@@ -441,6 +445,10 @@
 						</File>
 						<File
 							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Cities\Stormwind.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Cities\Stormwind.h"
 							>
 						</File>
 						<File
@@ -741,6 +749,10 @@
 			<Filter
 				Name="Level 1"
 				>
+				<File
+					RelativePath="..\..\Source\Scripts\Level 1\LevelOneHeaders.h"
+					>
+				</File>
 				<Filter
 					Name="Set 2"
 					>
@@ -845,6 +857,10 @@
 			<Filter
 				Name="Level 2"
 				>
+				<File
+					RelativePath="..\..\Source\Scripts\Level 2\LevelTwoHeaders.h"
+					>
+				</File>
 				<Filter
 					Name="Shadowfang Keep"
 					>
@@ -933,6 +949,10 @@
 			<Filter
 				Name="Level 3"
 				>
+				<File
+					RelativePath="..\..\Source\Scripts\Level 3\LevelThreeHeaders.h"
+					>
+				</File>
 				<Filter
 					Name="Alterac Valley"
 					>
@@ -961,6 +981,10 @@
 			<Filter
 				Name="Level 4"
 				>
+				<File
+					RelativePath="..\..\Source\Scripts\Level 4\LevelFourHeaders.h"
+					>
+				</File>
 				<Filter
 					Name="Set 1"
 					>
@@ -1101,6 +1125,10 @@
 			<Filter
 				Name="Level -1"
 				>
+				<File
+					RelativePath="..\..\Source\Scripts\Level(-1)\UnderLevelHeaders.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
