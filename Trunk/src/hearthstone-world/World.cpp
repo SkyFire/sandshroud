@@ -45,12 +45,14 @@ World::World()
 	AHEnabled = true;
 	HallowsEnd = false;
 	WintersVeil = false;
+	IsPvPRealm = true;
+	map_unload_time = 0;
 
-	map_unload_time=0;
 #ifndef CLUSTERING
 	SocketSendBufSize = WORLDSOCKET_SENDBUF_SIZE;
 	SocketRecvBufSize = WORLDSOCKET_RECVBUF_SIZE;
 #endif
+
 	m_banTable = NULL;
 	m_speedHackThreshold = -500.0f;
 	m_speedHackLatencyMultiplier = 0.0f;
@@ -67,7 +69,6 @@ World::World()
 	GetSystemInfo( &si );
 	number_of_cpus = si.dwNumberOfProcessors;
 	m_current_holiday_mask = 0;
-
 #endif // WIN32
 }
 

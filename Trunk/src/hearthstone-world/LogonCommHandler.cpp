@@ -454,40 +454,42 @@ void LogonCommHandler::LoadRealmConfiguration()
 		ls->Port = Config.RealmConfig.GetIntDefault("LogonServer", "Port", 8093);
 		servers.insert(ls);
 
-		uint32 realmcount = Config.RealmConfig.GetIntDefault("LogonServer", "RealmCount", 1);
-		if(realmcount == 0)
-		{
-			Log.Error("LogonCommHandler","No realms found. this server will not be online anywhere!");
-		}
+		Realm * realm = NULL;
+		realm = new Realm;
+		realm->Name = Config.RealmConfig.GetStringDefault("Realm", "Name", "SomeRealm");
+		realm->Address = Config.RealmConfig.GetStringDefault("Realm", "Address", "127.0.0.1:8129");
+		realm->WorldRegion = Config.RealmConfig.GetIntDefault("Realm", "WorldRegion", 1);
+		realm->Population = Config.RealmConfig.GetFloatDefault("Realm", "Population", 0);
+		string rt = Config.RealmConfig.GetStringDefault("Realm", "Icon", "Normal");
+		uint32 type;
+
+		// process realm type
+		if( stricmp(rt.c_str(), "rppvp") == 0 )
+			type = REALMTYPE_RPPVP;
+		else if( stricmp(rt.c_str(), "rp") == 0 )
+			type = REALMTYPE_RP;
+		else if( stricmp(rt.c_str(), "pvp") == 0 )
+			type = REALMTYPE_PVP;
 		else
-		{
-			for(uint32 i = 1; i < realmcount+1; i++)
-			{
-				Realm * realm = NULL;
-				realm = new Realm;
-				realm->Name = Config.RealmConfig.GetStringVA("Name", "SomeRealm", "Realm%u", i);
-				realm->Address = Config.RealmConfig.GetStringVA("Address", "127.0.0.1:8129", "Realm%u", i);
-				realm->WorldRegion = Config.RealmConfig.GetIntVA("WorldRegion", 1, "Realm%u", i);
-				realm->Population = Config.RealmConfig.GetFloatVA("Population", 0, "Realm%u", i);
-				string rt = Config.RealmConfig.GetStringVA("Icon", "Normal", "Realm%u", i);
-				uint32 type;
+			type = REALMTYPE_NORMAL;
 
-				// process realm type
-				if( stricmp(rt.c_str(), "pvp")==0 )
-					type = REALMTYPE_PVP;
-				else if( stricmp(rt.c_str(), "rp")==0 )
-					type = REALMTYPE_RP;
-				else if( stricmp(rt.c_str(), "rppvp")==0 )
-					type = REALMTYPE_RPPVP;
-				else
-					type = REALMTYPE_NORMAL;
+		sWorld.IsPvPRealm = ((type == REALMTYPE_RPPVP || type == REALMTYPE_PVP) ? true : false);
+		realm->Icon = type;
+		realms.insert(realm);
+	}
+	else
+	{
+		string rt = Config.RealmConfig.GetStringDefault("Realm", "Icon", "Normal");
 
-				_realmType = type;
-
-				realm->Icon = type;
-				realms.insert(realm);
-			}
-		}
+		// process realm type
+		if( stricmp(rt.c_str(), "rppvp") == 0 )
+			sWorld.IsPvPRealm = true;
+		else if( stricmp(rt.c_str(), "rp") == 0 )
+			sWorld.IsPvPRealm = false;
+		else if( stricmp(rt.c_str(), "pvp") == 0 )
+			sWorld.IsPvPRealm = true;
+		else
+			sWorld.IsPvPRealm = false;
 	}
 }
 

@@ -600,6 +600,7 @@ public:
 	uint32 HordePlayers;
 	uint32 AlliancePlayers;
 	uint32 PeakSessionCount;
+	bool IsPvPRealm;
 	bool SendMovieOnJoin;
 	int32 FunServerMall;
 	int LogoutDelay;

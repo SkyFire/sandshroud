@@ -89,7 +89,6 @@ class LogonCommHandler : public Singleton<LogonCommHandler>
 	Mutex pendingLock;
 	bool pings;
 	int8 ReConCounter;
-	uint32 _realmType;
 	uint32 plrLimit;
 	float server_population;
 
@@ -123,8 +122,6 @@ public:
 	void AddServer(string Name, string Address, uint32 Port);
 
 	float GetPopulation() { return server_population; }
-	HEARTHSTONE_INLINE uint32 GetRealmType() { return _realmType; }
-	void SetRealmType(uint32 type) { _realmType = type; }
 
 	/////////////////////////////
 	// Worldsocket stuff

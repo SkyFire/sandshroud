@@ -9324,14 +9324,14 @@ void Player::UpdatePvPArea()
 		else
 		{
 			//contested territory
-			if(true)
+			if(sWorld.IsPvPRealm)
 			{
 				//automaticaly sets pvp flag on contested territorys.
 				if(!IsPvPFlagged())
 					SetPvPFlag();
 				StopPvPTimer();
 			}
-			else if(false)
+			else
 			{
 				if(HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE))
 				{
@@ -9395,7 +9395,7 @@ void Player::PvPToggle()
 	if( sWorld.FunServerMall != -1 && GetAreaID() == (uint32)sWorld.FunServerMall )
 		return;
 
-	if(false)
+	if(!sWorld.IsPvPRealm)
 	{
 		if(m_pvpTimer > 0)
 		{
@@ -9436,7 +9436,7 @@ void Player::PvPToggle()
 			}
 		}
 	}
-	else if(true)
+	else
 	{
 		ForceAreaUpdate();
 		if(m_areaDBC == NULL)
