@@ -126,7 +126,7 @@ namespace VMAP
 	VMAPLoadResult VMapManager2::loadMap(const char* pBasePath, unsigned int pMapId, int x, int y)
 	{
 		VMAPLoadResult result = VMAP_LOAD_RESULT_IGNORED;
-		if (isMapLoadingEnabled() && !iIgnoreMapIds.count(pMapId))
+		if (!iIgnoreMapIds.count(pMapId))
 		{
 			if (_loadMap(pMapId, pBasePath, x, y))
 				result = VMAP_LOAD_RESULT_OK;
@@ -190,9 +190,6 @@ namespace VMAP
 
 	bool VMapManager2::isInLineOfSight(unsigned int pMapId, float x1, float y1, float z1, float x2, float y2, float z2)
 	{
-		if (!isLineOfSightCalcEnabled())
-			return true;
-
 		bool result = true;
 		InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
 		if (instanceTree != iInstanceMapTrees.end())
@@ -230,20 +227,18 @@ namespace VMAP
 		rx = x2;
 		ry = y2;
 		rz = z2;
-		if (isLineOfSightCalcEnabled())
+
+		InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+		if (instanceTree != iInstanceMapTrees.end())
 		{
-			InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
-			if (instanceTree != iInstanceMapTrees.end())
-			{
-				Vector3 pos1 = convertPositionToInternalRep(x1,y1,z1);
-				Vector3 pos2 = convertPositionToInternalRep(x2,y2,z2);
-				Vector3 resultPos;
-				result = instanceTree->second->getObjectHitPos(pos1, pos2, resultPos, pModifyDist);
-				resultPos = convertPositionToMangosRep(resultPos.x,resultPos.y,resultPos.z);
-				rx = resultPos.x;
-				ry = resultPos.y;
-				rz = resultPos.z;
-			}
+			Vector3 pos1 = convertPositionToInternalRep(x1,y1,z1);
+			Vector3 pos2 = convertPositionToInternalRep(x2,y2,z2);
+			Vector3 resultPos;
+			result = instanceTree->second->getObjectHitPos(pos1, pos2, resultPos, pModifyDist);
+			resultPos = convertPositionToMangosRep(resultPos.x,resultPos.y,resultPos.z);
+			rx = resultPos.x;
+			ry = resultPos.y;
+			rz = resultPos.z;
 		}
 		return result;
 	}
@@ -256,17 +251,14 @@ namespace VMAP
 	float VMapManager2::getHeight(unsigned int pMapId, float x, float y, float z, float maxSearchDist)
 	{
 		float height = VMAP_INVALID_HEIGHT;			//no height
-		if (isHeightCalcEnabled())
+		InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
+		if (instanceTree != iInstanceMapTrees.end())
 		{
-			InstanceTreeMap::iterator instanceTree = iInstanceMapTrees.find(pMapId);
-			if (instanceTree != iInstanceMapTrees.end())
+			Vector3 pos = convertPositionToInternalRep(x,y,z);
+			height = instanceTree->second->getHeight(pos, maxSearchDist);
+			if (!(height < G3D::inf()))
 			{
-				Vector3 pos = convertPositionToInternalRep(x,y,z);
-				height = instanceTree->second->getHeight(pos, maxSearchDist);
-				if (!(height < G3D::inf()))
-				{
-					height = VMAP_INVALID_HEIGHT;		//no height
-				}
+				height = VMAP_INVALID_HEIGHT;		//no height
 			}
 		}
 		return height;

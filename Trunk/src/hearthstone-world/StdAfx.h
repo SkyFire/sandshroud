@@ -29,6 +29,7 @@
 
 #define _GAME // You just lost the game
 
+
 #include <list>
 #include <vector>
 #include <map>
@@ -39,6 +40,8 @@
 #include <search.h>
 #include <fcntl.h>
 #include <signal.h>
+
+#include "../../dependencies/VC/include/zlib.h"
 #include "../hearthstone-shared/Common.h"
 #include "../hearthstone-shared/svn_revision.h"
 #include "../hearthstone-shared/MersenneTwister.h"
@@ -52,25 +55,17 @@
 #include "../hearthstone-shared/LocationVector.h"
 #include "../hearthstone-shared/hashmap.h"
 #include "../hearthstone-shared/hearthstoneConfig.h"
-
-#include "../hearthstone-shared/Collision/vmap/IVMapManager.h"
 #include "../hearthstone-shared/Collision/vmap/VMapManager2.h"
 #include "../hearthstone-shared/Collision/vmap/MapTree.h"
-
 #include "../hearthstone-shared/Pathfinding/InputGeom.h"
 #include "../hearthstone-shared/Pathfinding/Recast/Recast.h"
 #include "../hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h"
 #include "../hearthstone-shared/Pathfinding/Detour/DetourNavMeshBuilder.h"
-
-#include "../../dependencies/VC/include/zlib.h"
-#include "Const.h"
-
 #include "../hearthstone-shared/RC4Engine.h"
 #include "../hearthstone-shared/Database/DatabaseEnv.h"
 #include "../hearthstone-shared/Database/DBCStores.h"
 #include "../hearthstone-shared/Database/dbcfile.h"
 #include "../hearthstone-shared/Network/Network.h"
-
 #include "../hearthstone-shared/AuthCodes.h"
 #include "../hearthstone-shared/Auth/MD5.h"
 #include "../hearthstone-shared/Auth/BigNumber.h"
@@ -83,6 +78,7 @@
 #include "../hearthstone-shared/Threading/Condition.h"
 #include "../hearthstone-shared/hearthstone_getopt.h"
 #include "../hearthstone-shared/CallBack.h"
+#include "../hearthstone-world/Const.h"
 #include "../hearthstone-shared/Storage.h"
 #include "../hearthstone-logonserver/LogonOpcodes.h"
 #include "../hearthstone-voicechat/hearthstone_opcodes.h"

@@ -477,9 +477,6 @@
     <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\BIH.h">
       <Filter>Util\Collision\vmap</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\IVMapManager.h">
-      <Filter>Util\Collision\vmap</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\MapTree.h">
       <Filter>Util\Collision\vmap</Filter>
     </ClInclude>

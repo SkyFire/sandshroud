@@ -55,7 +55,7 @@ namespace VMAP
 		}
 	}
 
-	IVMapManager *gVMapManager = 0;
+	VMapManager2 *gVMapManager = 0;
 	Table<unsigned int , bool>* iIgnoreSpellIds=0;
 
 	//===============================================
@@ -114,10 +114,10 @@ namespace VMAP
 
 	//===============================================
 	// just return the instance
-	IVMapManager* VMapFactory::createOrGetVMapManager()
+	VMapManager2* VMapFactory::createOrGetVMapManager()
 	{
 		if(gVMapManager == 0)
-			gVMapManager= new VMapManager2();				// should be taken from config ... Please change if you like :-)
+			gVMapManager = new VMapManager2();				// should be taken from config ... Please change if you like :-)
 		return gVMapManager;
 	}
 

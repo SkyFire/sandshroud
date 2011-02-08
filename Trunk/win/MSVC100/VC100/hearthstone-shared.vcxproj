@@ -419,7 +419,6 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\..\src\hearthstone-shared\NGLog.h" />
     <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\LocationVector.h" />
     <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\BIH.h" />
-    <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\IVMapManager.h" />
     <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\MapTree.h" />
     <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\ModelInstance.h" />
     <ClInclude Include="..\..\..\src\hearthstone-shared\Collision\vmap\TileAssembler.h" />

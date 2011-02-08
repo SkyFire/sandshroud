@@ -21,7 +21,6 @@
 #ifndef _VMAPMANAGER2_H
 #define _VMAPMANAGER2_H
 
-#include "IVMapManager.h"
 #include "../../Common.h"
 #include "../g3dlite/Vector3.h"
 
@@ -43,6 +42,16 @@ Additionally a table to match map ids and map names is used.
 
 namespace VMAP
 {
+	enum VMAPLoadResult
+	{
+		VMAP_LOAD_RESULT_ERROR,
+		VMAP_LOAD_RESULT_OK,
+		VMAP_LOAD_RESULT_IGNORED,
+	};
+
+	#define VMAP_INVALID_HEIGHT		-100000.0f			// for check
+	#define VMAP_MAX_HEIGHT			 100000.0f			// for other checks
+
 	class StaticMapTree;
 	class WorldModel;
 
@@ -62,7 +71,7 @@ namespace VMAP
 	typedef UNORDERED_MAP<uint32 , StaticMapTree *> InstanceTreeMap;
 	typedef UNORDERED_MAP<std::string, ManagedModel> ModelFileMap;
 
-	class VMapManager2 : public IVMapManager
+	class VMapManager2
 	{
 		protected:
 			// Tree to check collision

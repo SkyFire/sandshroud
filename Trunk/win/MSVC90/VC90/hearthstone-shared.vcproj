@@ -899,10 +899,6 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\hearthstone-shared\Collision\vmap\IVMapManager.h"
-							>
-						</File>
-						<File
 							RelativePath="..\..\..\src\hearthstone-shared\Collision\vmap\MapTree.cpp"
 							>
 						</File>
