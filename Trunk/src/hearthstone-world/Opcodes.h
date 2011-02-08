@@ -1428,7 +1428,8 @@ enum NPCFlags {
 	UNIT_NPC_FLAG_VEHICLE_MOUNT		= 0x02000000,	//33554432,		25
 };
 
-enum GossipIcons {
+enum GossipIcons 
+{
 	GOSSIP_ICON_GOSSIP_NORMAL		= 0,
 	GOSSIP_ICON_GOSSIP_VENDOR		= 1,
 	GOSSIP_ICON_GOSSIP_FLIGHT		= 2,
@@ -1440,6 +1441,61 @@ enum GossipIcons {
 	GOSSIP_ICON_GOSSIP_TABARD		= 8,
 	GOSSIP_ICON_GOSSIP_ARENA		= 9,
 	GOSSIP_ICON_GOSSIP_COIN			= 10,
+    GOSSIP_ICON_GOSSIP_NORMAL_11    = 11,
+    GOSSIP_ICON_GOSSIP_NORMAL_12    = 12,
+    GOSSIP_ICON_GOSSIP_NORMAL_13    = 13,
+    GOSSIP_ICON_DONT_USE            = 14, // Reported to crash client?
+    GOSSIP_ICON_DONT_USE2           = 15, // Reported to crash client?
+    GOSSIP_ICON_GOSSIP_NORMAL_16    = 16,
+    GOSSIP_ICON_GOSSIP_NORMAL_17    = 17,
+    GOSSIP_ICON_GOSSIP_NORMAL_18    = 18,
+    GOSSIP_ICON_GOSSIP_NORMAL_19    = 19,
+    GOSSIP_ICON_GOSSIP_NORMAL_20    = 20,
+};
+
+enum Poi_Icon
+{
+    ICON_POI_BLANK              =   0,
+    ICON_POI_GREY_AV_MINE       =   1,
+    ICON_POI_RED_AV_MINE        =   2,
+    ICON_POI_BLUE_AV_MINE       =   3,
+    ICON_POI_BWTOMB             =   4,
+    ICON_POI_SMALL_HOUSE        =   5,
+    ICON_POI_GREYTOWER          =   6,
+    ICON_POI_REDFLAG            =   7,
+    ICON_POI_TOMBSTONE          =   8,
+    ICON_POI_BWTOWER            =   9,
+    ICON_POI_REDTOWER           =   10,
+    ICON_POI_BLUETOWER          =   11,
+    ICON_POI_RWTOWER            =   12,
+    ICON_POI_REDTOMB            =   13,
+    ICON_POI_RWTOMB             =   14,
+    ICON_POI_BLUETOMB           =   15,
+    ICON_POI_16                 =   16,
+    ICON_POI_17                 =   17,
+    ICON_POI_18                 =   18,
+    ICON_POI_19                 =   19,
+    ICON_POI_20                 =   20,
+    ICON_POI_GREYLOGS           =   21,
+    ICON_POI_BWLOGS             =   22,
+    ICON_POI_BLUELOGS           =   23,
+    ICON_POI_RWLOGS             =   24,
+    ICON_POI_REDLOGS            =   25,
+    ICON_POI_26                 =   26,
+    ICON_POI_27                 =   27,
+    ICON_POI_28                 =   28,
+    ICON_POI_29                 =   29,
+    ICON_POI_30                 =   30,
+    ICON_POI_GREYHOUSE          =   31,
+    ICON_POI_BWHOUSE            =   32,
+    ICON_POI_BLUEHOUSE          =   33,
+    ICON_POI_RWHOUSE            =   34,
+    ICON_POI_REDHOUSE           =   35,
+    ICON_POI_GREYHORSE          =   36,
+    ICON_POI_BWHORSE            =   37,
+    ICON_POI_BLUEHORSE          =   38,
+    ICON_POI_RWHORSE            =   39,
+    ICON_POI_REDHORSE           =   40
 };
 
 //enum FieldFlags {
