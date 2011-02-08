@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\ClusterBin\Debug"
+			OutputDirectory=".\..\..\..\bin\Debug"
 			IntermediateDirectory=".\hearthstone-world___Win32_Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -48,7 +48,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;CLUSTERING"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -112,7 +112,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\..\ClusterBin\Debug_x64"
+			OutputDirectory=".\..\..\..\bin\Debug_x64"
 			IntermediateDirectory=".\hearthstone-world___x64_Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -137,11 +137,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm250 /bigobj"
+				UseUnicodeResponseFiles="false"
+				AdditionalOptions="/Zm256 /bigobj "
 				Optimization="0"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
-				PreprocessorDefinitions="WIN32,_DEBUG,_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;X64;CLUSTERING"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;X64"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -153,11 +154,12 @@
 				ObjectFile="$(IntDir)/"
 				ProgramDataBaseFileName="$(IntDir)/"
 				BrowseInformation="0"
-				WarningLevel="3"
+				WarningLevel="4"
 				SuppressStartupBanner="true"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="0"
+				DisableSpecificWarnings="4127;4100;4121;4714;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -172,11 +174,17 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				UseUnicodeResponseFiles="false"
+				AdditionalOptions="/NODEFAULTLIB:MSVCRT"
 				AdditionalDependencies="ws2_32.lib libmysql.lib libeay32.lib dbghelp.lib zlib.lib pcre.lib Mswsock.lib"
+				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/amd64/"
+				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
+				TargetMachine="17"
+				ErrorReporting="2"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -203,7 +211,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\ClusterBin\Release"
+			OutputDirectory=".\..\..\..\bin\Release"
 			IntermediateDirectory=".\hearthstone-world___Win32_Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -236,7 +244,7 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
-				PreprocessorDefinitions="_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;CLUSTERING"
+				PreprocessorDefinitions="_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -299,7 +307,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\..\ClusterBin\Release_x64"
+			OutputDirectory=".\..\..\..\bin\Release_x64"
 			IntermediateDirectory=".\hearthstone-world___x64_Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -331,7 +339,7 @@
 				FavorSizeOrSpeed="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
-				PreprocessorDefinitions="_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;X64;CLUSTERING"
+				PreprocessorDefinitions="_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;X64"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -632,18 +640,6 @@
 				RelativePath="..\..\..\src\hearthstone-world\Object.h"
 				>
 			</File>
-			<Filter
-				Name="Auras"
-				>
-				<File
-					RelativePath="..\..\..\src\hearthstone-world\SpellAuras.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\hearthstone-world\SpellAuras.h"
-					>
-				</File>
-			</Filter>
 			<Filter
 				Name="Units"
 				>
@@ -1177,6 +1173,18 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\hearthstone-world\Spellfixes\SpellFixes.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Auras"
+				>
+				<File
+					RelativePath="..\..\..\src\hearthstone-world\SpellAuras.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\hearthstone-world\SpellAuras.h"
 					>
 				</File>
 			</Filter>

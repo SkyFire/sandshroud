@@ -52,7 +52,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;CLUSTERING"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -91,7 +91,7 @@
 				OutputFile=".\..\ClusterBin\Release/hearthstone-realmserver.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/"
+				AdditionalLibraryDirectories="../../../../dependencies/VC/libVC90/"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\ClusterBin\Release/hearthstone-realmserver.pdb"
 				SubSystem="1"
@@ -155,7 +155,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;X64;CLUSTERING"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -193,7 +193,7 @@
 				OutputFile=".\..\ClusterBin\Release_x64/hearthstone-realmserver.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/amd64/"
+				AdditionalLibraryDirectories="../../../../dependencies/VC/libVC90/amd64/"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\ClusterBin\Release_x64/hearthstone-realmserver.pdb"
 				SubSystem="1"
@@ -254,7 +254,7 @@
 				AdditionalOptions="/Zm150 /MP5"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;CLUSTERING"
 				IgnoreStandardIncludePath="false"
 				MinimalRebuild="false"
@@ -290,7 +290,7 @@
 				OutputFile=".\..\ClusterBin\Debug\hearthstone-realmserver.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/"
+				AdditionalLibraryDirectories="../../../../dependencies/VC/libVC90/"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\ClusterBin\Debug\hearthstone-realmserver.pdb"
@@ -353,7 +353,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;X64;CLUSTERING"
 				IgnoreStandardIncludePath="false"
 				MinimalRebuild="true"
@@ -388,7 +388,7 @@
 				OutputFile=".\..\ClusterBin\Debug_x64\hearthstone-realmserver.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="../../../dependencies/VC/libVC90/amd64/"
+				AdditionalLibraryDirectories="../../../../dependencies/VC/libVC90/amd64/"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\ClusterBin\Debug_x64\hearthstone-realmserver.pdb"
@@ -430,19 +430,19 @@
 			Name="LogonComm"
 			>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\LogonCommClient.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\LogonCommClient.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\LogonCommClient.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\LogonCommClient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\LogonCommHandler.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\LogonCommHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\LogonCommHandler.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\LogonCommHandler.h"
 				>
 			</File>
 		</Filter>
@@ -450,35 +450,35 @@
 			Name="Client"
 			>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\CharacterHandler.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\CharacterHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\Player.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\Player.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\Player.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\Player.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\QueryHandler.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\QueryHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\Session.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\Session.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\Session.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\Session.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\WorldSocket.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\WorldSocket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\WorldSocket.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\WorldSocket.h"
 				>
 			</File>
 		</Filter>
@@ -486,19 +486,19 @@
 			Name="Manager"
 			>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\ClientManager.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\ClientManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\ClientManager.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\ClientManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\ClusterManager.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\ClusterManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\ClusterManager.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\ClusterManager.h"
 				>
 			</File>
 		</Filter>
@@ -506,23 +506,23 @@
 			Name="Worker Server"
 			>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\WorkerOpcodes.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\WorkerOpcodes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\WorkerServer.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\WorkerServer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\WorkerServer.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\WorkerServer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\WorkerServerSocket.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\WorkerServerSocket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\WorkerServerSocket.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\WorkerServerSocket.h"
 				>
 			</File>
 		</Filter>
@@ -530,7 +530,7 @@
 			Name="Defines"
 			>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\Structures.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\Structures.h"
 				>
 			</File>
 		</Filter>
@@ -538,36 +538,36 @@
 			Name="Storage"
 			>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\ObjectStorage.cpp"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\ObjectStorage.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-realmserver\ObjectStorage.h"
+				RelativePath="..\..\..\..\src\hearthstone-realmserver\ObjectStorage.h"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\..\src\hearthstone-shared\Icon.ico"
+			RelativePath="..\..\..\..\src\hearthstone-shared\Icon.ico"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\src\hearthstone-realmserver\Main.cpp"
+			RelativePath="..\..\..\..\src\hearthstone-realmserver\Main.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\src\hearthstone-realmserver\Master.cpp"
+			RelativePath="..\..\..\..\src\hearthstone-realmserver\Master.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\src\hearthstone-realmserver\Master.h"
+			RelativePath="..\..\..\..\src\hearthstone-realmserver\Master.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\src\hearthstone-shared\resources.rc"
+			RelativePath="..\..\..\..\src\hearthstone-shared\resources.rc"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\src\hearthstone-realmserver\RStdAfx.cpp"
+			RelativePath="..\..\..\..\src\hearthstone-realmserver\RStdAfx.cpp"
 			>
 			<FileConfiguration
 				Name="Release|Win32"
@@ -603,7 +603,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\..\src\hearthstone-realmserver\RStdAfx.h"
+			RelativePath="..\..\..\..\src\hearthstone-realmserver\RStdAfx.h"
 			>
 		</File>
 	</Files>

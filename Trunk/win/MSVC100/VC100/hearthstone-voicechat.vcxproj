@@ -62,16 +62,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\..\..\bin\Debug_100\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\..\..\..\bin\Debug_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hearthstone-voicechat__2008_debug\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\..\..\bin\Debug_100_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\..\..\..\bin\Debug_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">hearthstone-voicechat__2008_debug_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\..\..\bin\Release_100\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\..\..\..\bin\Release_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">hearthstone-voicechat__2008_release\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\bin\Release_100_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\..\..\bin\Release_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">hearthstone-voicechat__2008_release_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -91,7 +91,7 @@
     <ClCompile>
       <AdditionalOptions>/Zm150 /MP5 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -125,7 +125,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -153,7 +153,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -183,7 +183,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -209,34 +209,34 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\configfile.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\hearthstone_socket.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\network_handlers.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\network_unixselect.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\network_win32.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\voice_channel.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\voice_socket.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\log.c" />
-    <ClCompile Include="..\..\src\hearthstone-voicechat\launcher.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\configfile.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\hearthstone_socket.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\network_handlers.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\network_unixselect.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\network_win32.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\voice_channel.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\voice_socket.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\log.c" />
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\launcher.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\configfile.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\hearthstone_opcodes.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\hearthstone_packet.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\network.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\network_handlers.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\voice_channel.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\voice_channelmgr.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\log.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\common.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\linkedlist.h" />
-    <ClInclude Include="..\..\src\hearthstone-voicechat\mutex.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\configfile.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\hearthstone_opcodes.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\hearthstone_packet.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\network.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\network_handlers.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\voice_channel.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\voice_channelmgr.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\log.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\common.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\linkedlist.h" />
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\mutex.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\src\hearthstone-shared\resources.rc" />
+    <ResourceCompile Include="..\..\..\src\hearthstone-shared\resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\hearthstone-shared\Icon.ico" />
+    <None Include="..\..\..\src\hearthstone-shared\Icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

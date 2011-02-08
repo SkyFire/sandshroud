@@ -21,7 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\bin\Debug"
+			OutputDirectory=".\..\..\..\bin\Debug"
 			IntermediateDirectory="hearthstone-voicechat__Win32_debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm150 /MP5"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -104,7 +104,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\..\..\bin\Debug_x64"
+			OutputDirectory=".\..\..\..\bin\Debug_x64"
 			IntermediateDirectory="hearthstone-voicechat___x64_debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -129,7 +129,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -185,7 +185,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\bin\Release"
+			OutputDirectory=".\..\..\..\bin\Release"
 			IntermediateDirectory="hearthstone-voicechat__Win32_release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -208,7 +208,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -263,7 +263,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\..\..\bin\Release_x64"
+			OutputDirectory=".\..\..\..\bin\Release_x64"
 			IntermediateDirectory="hearthstone-voicechat___x64_release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -287,7 +287,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src\hearthstone-shared"
+				AdditionalIncludeDirectories="..\..\..\src\hearthstone-shared"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -350,11 +350,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\configfile.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\configfile.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\configfile.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\configfile.h"
 				>
 			</File>
 		</Filter>
@@ -364,15 +364,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_opcodes.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\hearthstone_opcodes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_packet.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\hearthstone_packet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\hearthstone_socket.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\hearthstone_socket.c"
 				>
 			</File>
 		</Filter>
@@ -380,39 +380,39 @@
 			Name="Voice/Network"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\network.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\network.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\network_handlers.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\network_handlers.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\network_handlers.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\network_handlers.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\network_unixselect.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\network_unixselect.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\network_win32.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\network_win32.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\voice_channel.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\voice_channel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\voice_channel.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\voice_channel.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\voice_channelmgr.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\voice_channelmgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\voice_socket.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\voice_socket.c"
 				>
 			</File>
 		</Filter>
@@ -420,36 +420,36 @@
 			Name="Log"
 			>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\log.c"
+				RelativePath="..\..\..\src\hearthstone-voicechat\log.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\hearthstone-voicechat\log.h"
+				RelativePath="..\..\..\src\hearthstone-voicechat\log.h"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\src\hearthstone-voicechat\common.h"
+			RelativePath="..\..\..\src\hearthstone-voicechat\common.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-shared\Icon.ico"
+			RelativePath="..\..\..\src\hearthstone-shared\Icon.ico"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-voicechat\launcher.c"
+			RelativePath="..\..\..\src\hearthstone-voicechat\launcher.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-voicechat\linkedlist.h"
+			RelativePath="..\..\..\src\hearthstone-voicechat\linkedlist.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-voicechat\mutex.h"
+			RelativePath="..\..\..\src\hearthstone-voicechat\mutex.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\hearthstone-shared\resources.rc"
+			RelativePath="..\..\..\src\hearthstone-shared\resources.rc"
 			>
 		</File>
 	</Files>

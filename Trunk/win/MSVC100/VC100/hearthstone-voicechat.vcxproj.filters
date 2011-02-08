@@ -17,73 +17,73 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\configfile.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\configfile.c">
       <Filter>Config</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\hearthstone_socket.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\hearthstone_socket.c">
       <Filter>Opcode/Socket/Packet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\network_handlers.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\network_handlers.c">
       <Filter>Voice/Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\network_unixselect.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\network_unixselect.c">
       <Filter>Voice/Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\network_win32.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\network_win32.c">
       <Filter>Voice/Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\voice_channel.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\voice_channel.c">
       <Filter>Voice/Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\voice_socket.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\voice_socket.c">
       <Filter>Voice/Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\log.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\log.c">
       <Filter>Log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-voicechat\launcher.c">
+    <ClCompile Include="..\..\..\src\hearthstone-voicechat\launcher.c">
       <Filter>Config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\configfile.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\configfile.h">
       <Filter>Config</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\hearthstone_opcodes.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\hearthstone_opcodes.h">
       <Filter>Opcode/Socket/Packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\hearthstone_packet.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\hearthstone_packet.h">
       <Filter>Opcode/Socket/Packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\network.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\network.h">
       <Filter>Voice/Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\network_handlers.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\network_handlers.h">
       <Filter>Voice/Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\voice_channel.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\voice_channel.h">
       <Filter>Voice/Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\voice_channelmgr.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\voice_channelmgr.h">
       <Filter>Voice/Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\log.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\log.h">
       <Filter>Log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\common.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\common.h">
       <Filter>Opcode/Socket/Packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\linkedlist.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\linkedlist.h">
       <Filter>Opcode/Socket/Packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-voicechat\mutex.h">
+    <ClInclude Include="..\..\..\src\hearthstone-voicechat\mutex.h">
       <Filter>Opcode/Socket/Packet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\src\hearthstone-shared\resources.rc" />
+    <ResourceCompile Include="..\..\..\src\hearthstone-shared\resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\hearthstone-shared\Icon.ico" />
+    <None Include="..\..\..\src\hearthstone-shared\Icon.ico" />
   </ItemGroup>
 </Project>

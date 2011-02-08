@@ -1,43 +1,56 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-world", "VC90\hearthstone-world.vcproj", "{1DC6C4DA-A028-41F3-877D-D5400C594F88}"
-	ProjectSection(ProjectDependencies) = postProject
-		{90297C34-F231-4DF4-848E-A74BCC0E40ED} = {90297C34-F231-4DF4-848E-A74BCC0E40ED}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-world", "VC100\hearthstone-world.vcxproj", "{1DC6C4DA-A028-41F3-877D-D5400C594F88}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-shared", "VC90\hearthstone-shared.vcproj", "{90297C34-F231-4DF4-848E-A74BCC0E40ED}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-shared", "VC100\hearthstone-shared.vcxproj", "{90297C34-F231-4DF4-848E-A74BCC0E40ED}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-logonserver", "VC90\hearthstone-logonserver.vcproj", "{6E15F06D-5546-474D-BB42-39848DEF77E0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{90297C34-F231-4DF4-848E-A74BCC0E40ED} = {90297C34-F231-4DF4-848E-A74BCC0E40ED}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-logonserver", "VC100\hearthstone-logonserver.vcxproj", "{6E15F06D-5546-474D-BB42-39848DEF77E0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "..\src\scripts\Win\VC90\LUA2008.vcproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-realmserver", "VC100\hearthstone-realmserver.vcxproj", "{B6F51344-229B-4E72-AD84-DB1271C5CFA2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-voicechat", "VC100\hearthstone-voicechat.vcxproj", "{C36E06CE-9CBF-4B13-AA03-DA3F886F6B59}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandshroudLua", "..\..\src\scripts\Win\VC100\LUA2010.vcxproj", "{AEFCEECF-6839-4F1B-9317-70BF3EE09247}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomScripts", "..\src\scripts\Win\VC90\CustomScripts.vcproj", "{C57C8C12-E283-4C2E-8A74-1285587F5934}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomScripts", "..\..\src\scripts\Win\VC100\CustomScripts.vcxproj", "{C57C8C12-E283-4C2E-8A74-1285587F5934}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "..\src\scripts\Win\VC90\InstanceScripts2008.vcproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunInstanceScripts", "..\..\src\scripts\Win\VC100\InstanceScripts2010.vcxproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunQuestScripts", "..\src\scripts\Win\VC90\Quest2008.vcproj", "{1A080CA7-D19A-4129-972C-89E816E6DEC0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunQuestScripts", "..\..\src\scripts\Win\VC100\Quest2010.vcxproj", "{1A080CA7-D19A-4129-972C-89E816E6DEC0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerStatusPlugin", "..\src\scripts\Win\VC90\ServerStatusPlugin2008.vcproj", "{FF551ECC-D127-4997-8C5B-85D2CE3E7A53}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerStatusPlugin", "..\..\src\scripts\Win\VC100\ServerStatusPlugin2010.vcxproj", "{FF551ECC-D127-4997-8C5B-85D2CE3E7A53}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunOtherScripts", "..\src\scripts\Win\VC90\SunOther2008.vcproj", "{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunOtherScripts", "..\..\src\scripts\Win\VC100\SunOther2010.vcxproj", "{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunWorldPvPScripts", "..\..\src\scripts\Win\VC100\WorldPvPScripts.vcxproj", "{4C1370F8-583C-49EC-842C-6074F78892BF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameMonkey", "..\..\src\scripts\Win\VC100\GMEngine.vcxproj", "{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SunGossipScripts", "..\..\src\scripts\Win\VC100\GossipScripts.vcxproj", "{5E86E53F-6261-4372-A4FF-6D8B37156A29}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection
@@ -72,6 +85,14 @@ Global
 		{6E15F06D-5546-474D-BB42-39848DEF77E0}.Release|Win32.Build.0 = Release|Win32
 		{6E15F06D-5546-474D-BB42-39848DEF77E0}.Release|x64.ActiveCfg = Release|x64
 		{6E15F06D-5546-474D-BB42-39848DEF77E0}.Release|x64.Build.0 = Release|x64
+		{B6F51344-229B-4E72-AD84-DB1271C5CFA2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B6F51344-229B-4E72-AD84-DB1271C5CFA2}.Debug|x64.ActiveCfg = Debug|x64
+		{B6F51344-229B-4E72-AD84-DB1271C5CFA2}.Release|Win32.ActiveCfg = Release|Win32
+		{B6F51344-229B-4E72-AD84-DB1271C5CFA2}.Release|x64.ActiveCfg = Release|x64
+		{C36E06CE-9CBF-4B13-AA03-DA3F886F6B59}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C36E06CE-9CBF-4B13-AA03-DA3F886F6B59}.Debug|x64.ActiveCfg = Debug|x64
+		{C36E06CE-9CBF-4B13-AA03-DA3F886F6B59}.Release|Win32.ActiveCfg = Release|Win32
+		{C36E06CE-9CBF-4B13-AA03-DA3F886F6B59}.Release|x64.ActiveCfg = Release|x64
 		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|Win32.ActiveCfg = Debug|Win32
 		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|Win32.Build.0 = Debug|Win32
 		{AEFCEECF-6839-4F1B-9317-70BF3EE09247}.Debug|x64.ActiveCfg = Debug|x64
@@ -120,6 +141,30 @@ Global
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|Win32.Build.0 = Release|Win32
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|x64.ActiveCfg = Release|x64
 		{495CDEBE-E216-485B-B2F1-2FC0BD9DAE7D}.Release|x64.Build.0 = Release|x64
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Debug|Win32.Build.0 = Debug|Win32
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Debug|x64.ActiveCfg = Debug|x64
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Debug|x64.Build.0 = Debug|x64
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Release|Win32.ActiveCfg = Release|Win32
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Release|Win32.Build.0 = Release|Win32
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Release|x64.ActiveCfg = Release|x64
+		{4C1370F8-583C-49EC-842C-6074F78892BF}.Release|x64.Build.0 = Release|x64
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Debug|Win32.Build.0 = Debug|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Debug|x64.ActiveCfg = Debug|x64
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Debug|x64.Build.0 = Debug|x64
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Release|Win32.ActiveCfg = Release|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Release|Win32.Build.0 = Release|Win32
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Release|x64.ActiveCfg = Release|x64
+		{7CC3A0FC-85C1-40B3-B2CA-5A1CAE6875AB}.Release|x64.Build.0 = Release|x64
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Debug|Win32.Build.0 = Debug|Win32
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Debug|x64.ActiveCfg = Debug|x64
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Debug|x64.Build.0 = Debug|x64
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Release|Win32.ActiveCfg = Release|Win32
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Release|Win32.Build.0 = Release|Win32
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Release|x64.ActiveCfg = Release|x64
+		{5E86E53F-6261-4372-A4FF-6D8B37156A29}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
