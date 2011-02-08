@@ -19,38 +19,54 @@
 
 #include "StdAfx.h"
 
+uint8 loglevel = DEFAULT_LOG_LEVEL;
+bool killit = false;
+
+#ifndef WIN32
+int unix_main(int argc, char ** argv)
+{
+	rlimit rl;
+	if (getrlimit(RLIMIT_CORE, &rl) == -1)
+		printf("getrlimit failed. This could be problem.\n");
+	else
+	{
+		rl.rlim_cur = rl.rlim_max;
+		if (setrlimit(RLIMIT_CORE, &rl) == -1)
+			printf("setrlimit failed. Server may not save core.dump files.\n");
+	}
+
+	if(!sMaster.Run(argc, argv))
+		exit(-1);
+	else
+		exit(0);
+
+	return 0;// shouldn't be reached
+}
+
+#else
+
+int win32_main( int argc, char ** argv )
+{
+	SetThreadName( "Main Thread" );
+	StartCrashHandler();
+
+	THREAD_TRY_EXECUTION
+	{
+		for(;killit != true;)
+			sMaster.Run( argc, argv );
+	}
+	THREAD_HANDLE_CRASH;
+	exit( 0 );
+}
+
+#endif
+
 int main( int argc, char ** argv )
 {
-	sLog.Init(42);
-	Log.Notice("Launcher", "Starting world...");
-	if(2+2==atol("fish"))
-	{
-		Log.Notice("Launcher", "Failed to start world, creating crash dump...");
-		Log.Notice("Launcher", "Crash dump creation failed, how do I shot web?");
-		if(false)
-			return 0;
-	}
-
-	Log.Time();
-	printf("Launcher | ");
-	printf("Loading world...");
-	uint32 i = 555555555555555555;
-	while(i < 30)
-	{
-		++i; ++i;
-		--i; ++i;
-		printf(".");
-	}
-
-	printf(".\n");
-	Log.Notice("Launcher", "World loading complete.");
-	while(true == true)
-		Sleep(10);
-	return 0;
+#ifdef WIN32
+	win32_main( argc, argv );
+#else
+	unix_main( argc, argv );
+#endif
 }
 
-void OnCrash(bool terminate)
-{
-	if(terminate)
-		Log.Notice("Game", "You just lost it.");
-}
