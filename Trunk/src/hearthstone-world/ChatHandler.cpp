@@ -467,20 +467,15 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 			if(GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK))
 			{
 				GetPlayer()->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK);
-				if(sWorld.GetKickAFKPlayerTime())
-					sEventMgr.RemoveEvents(GetPlayer(), EVENT_PLAYER_FORCE_LOGOUT);
+				sEventMgr.RemoveEvents(GetPlayer(), EVENT_PLAYER_FORCE_LOGOUT);
 			}
 			else
 			{
 				GetPlayer()->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK);
-				if(sWorld.GetKickAFKPlayerTime())
-					sEventMgr.AddEvent(GetPlayer(), &Player::ForceLogout, true, EVENT_PLAYER_FORCE_LOGOUT, sWorld.GetKickAFKPlayerTime(), 1, 0);
-
-				if( GetPlayer()->m_bg )
-				{
-					GetPlayer()->m_bg->RemovePlayer( GetPlayer(), false );
-					//GetPlayer()->BroadcastMessage("You have been kicked from %s for inactivity.", GetPlayer()->m_bg->GetName());
-				}
+				if(GetPlayer()->m_bg)
+					sEventMgr.AddEvent(GetPlayer(), &Player::BattlegroundKick, EVENT_PLAYER_BG_KICK, 30000, 1, 0);
+				else
+					sEventMgr.AddEvent(GetPlayer(), &Player::ForceLogout, true, EVENT_PLAYER_FORCE_LOGOUT, 240000, 1, 0);
 			}
 		} break;
 	case CHAT_MSG_DND:

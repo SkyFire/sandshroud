@@ -568,8 +568,11 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 		static uint32 item_ids[] = {ARENA_TEAM_CHARTER_2v2, ARENA_TEAM_CHARTER_3v3, ARENA_TEAM_CHARTER_5v5};
 		static uint32 costs[] = {ARENA_TEAM_CHARTER_2v2_COST,ARENA_TEAM_CHARTER_3v3_COST,ARENA_TEAM_CHARTER_5v5_COST};
 
-		if(_player->GetUInt32Value(PLAYER_FIELD_COINAGE) < costs[arena_type] && !sWorld.free_arena_teams)
+		if(_player->GetUInt32Value(PLAYER_FIELD_COINAGE) < costs[arena_type])
+		{
+			sChatHandler.SystemMessage(this,"You don't have enough money!");
 			return;			// error message needed here
+		}
 
 		ItemPrototype * ip = ItemPrototypeStorage.LookupEntry(item_ids[arena_type]);
 		ASSERT(ip);
@@ -608,17 +611,14 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 
 			c->SaveToDB();
 			SendItemPushResult(i, false, true, false, true, _player->GetItemInterface()->LastSearchItemBagSlot(), _player->GetItemInterface()->LastSearchItemSlot(), 1);
-
-			if(!sWorld.free_arena_teams)
-				_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32)costs[arena_type]);
-
+			_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32)costs[arena_type]);
 			_player->m_playerInfo->charterId[arena_index] = c->GetID();
 			_player->SaveToDB(false);
 		}
 	}
 	else
 	{
-		if( _player->GetUInt32Value(PLAYER_FIELD_COINAGE) < 1000 && !sWorld.free_guild_charters )
+		if( _player->GetUInt32Value(PLAYER_FIELD_COINAGE) < 1000)
 		{
 			SendNotification("You don't have enough money.");
 			return;
@@ -692,8 +692,7 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 			_player->m_playerInfo->charterId[CHARTER_TYPE_GUILD] = c->GetID();
 
 			// 10 silver
-			if(!sWorld.free_guild_charters)
-				_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -1000);
+			_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -1000);
 			_player->SaveToDB(false);
 		}
 	}
@@ -893,7 +892,7 @@ void WorldSession::HandleCharterTurnInCharter(WorldPacket & recv_data)
 		if( gc->GetLeader() != _player->GetLowGUID() )
 			return;
 
-		if(gc->SignatureCount < 9 && Config.OptionalConfig.GetBoolDefault("Server", "RequireAllSignatures", false))
+		if(gc->SignatureCount < 9)
 		{
 			Guild::SendTurnInPetitionResult( this, ERR_PETITION_NOT_ENOUGH_SIGNATURES );
 			return;
@@ -949,7 +948,7 @@ void WorldSession::HandleCharterTurnInCharter(WorldPacket & recv_data)
 			return;
 		}
 
-		if(pCharter->SignatureCount < pCharter->GetNumberOfSlotsByType() && Config.OptionalConfig.GetBoolDefault("Server", "RequireAllSignatures", false))
+		if(pCharter->SignatureCount < pCharter->GetNumberOfSlotsByType())
 		{
 			Guild::SendTurnInPetitionResult( this, ERR_PETITION_NOT_ENOUGH_SIGNATURES );
 			return;

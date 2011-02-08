@@ -1374,7 +1374,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 					if(itr->IsDependent && (curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace)))
 						continue;
 
-					if(!sWorld.display_free_items && curItem->BuyPrice == 0 && itr->extended_cost == NULL && curItem->SellPrice > 0 )
+					if(itr->extended_cost == NULL && curItem->SellPrice > curItem->BuyPrice )
 						continue;
 				}
 

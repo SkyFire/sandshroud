@@ -99,7 +99,7 @@ void Player::Init()
 	m_healthfromitems				= 0;
 	m_manafromitems					= 0;
 	m_talentresettimes				= 0;
-	m_nextSave						= getMSTime() + sWorld.getIntRate(INTRATE_SAVE);
+	m_nextSave						= getMSTime()+300000;
 	m_currentSpell					= NULLSPELL;
 	m_resurrectHealth				= 0;
 	m_resurrectMana					= 0;
@@ -2516,7 +2516,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	GetAchievementInterface()->SaveToDB( buf );
 #endif // BUFFER_SAVING
 
-	m_nextSave = getMSTime() + sWorld.getIntRate(INTRATE_SAVE);
+	m_nextSave = getMSTime()+300000;
 
 	if(buf)
 		CharacterDatabase.AddQueryBuffer(buf);
@@ -5186,7 +5186,7 @@ void Player::_LoadSkills(QueryResult * result)
 			if(!sk.Reset(v1))
 				continue; // Just skip it, it'll be wiped when we save.
 
-			if ( sWorld.CheckProfessions && fields[2].GetUInt32() == SKILL_TYPE_PROFESSION )
+			if (fields[2].GetUInt32() == SKILL_TYPE_PROFESSION )
 			{
 				proff_counter--;
 				if( proff_counter < 0 )
@@ -8275,7 +8275,7 @@ void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompre
 
 		// compress update packet
 		// while we said 350 before, I'm gonna make it 500 :D
-		if(c < (size_t)sWorld.compression_threshold || !CompressAndSendUpdateBuffer((uint32)c, update_buffer, pCompressionBuffer))
+		if(c < size_t(1000) || !CompressAndSendUpdateBuffer((uint32)c, update_buffer, pCompressionBuffer))
 		{
 			// send uncompressed packet -> because we failed
 			m_session->OutPacket(SMSG_UPDATE_OBJECT, (uint16)c, update_buffer);
@@ -8295,7 +8295,7 @@ void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompre
 
 		// compress update packet
 		// while we said 350 before, I'm gonna make it 500 :D
-		if(c < (size_t)sWorld.compression_threshold || !CompressAndSendUpdateBuffer((uint32)c, update_buffer, pCompressionBuffer))
+		if(c < size_t(1000) || !CompressAndSendUpdateBuffer((uint32)c, update_buffer, pCompressionBuffer))
 		{
 			// send uncompressed packet -> because we failed
 			m_session->OutPacket(SMSG_UPDATE_OBJECT, (uint16)c, update_buffer);
@@ -8335,7 +8335,7 @@ void Player::ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompre
 bool Player::CompressAndSendUpdateBuffer(uint32 size, const uint8* update_buffer, ByteBuffer *pCompressionBuffer)
 {
 	uint32 destsize = size + size/10 + 16;
-	int rate = sWorld.getIntRate(INTRATE_COMPRESSION);
+	int rate = 1;
 	if(size >= 40000 && rate < 6)
 		rate = 6;
 
@@ -9324,15 +9324,14 @@ void Player::UpdatePvPArea()
 		else
 		{
 			//contested territory
-			if(sWorld.GetRealmType() == REALM_PVP)
+			if(true)
 			{
 				//automaticaly sets pvp flag on contested territorys.
 				if(!IsPvPFlagged())
 					SetPvPFlag();
 				StopPvPTimer();
 			}
-
-			if(sWorld.GetRealmType() == REALM_PVE)
+			else if(false)
 			{
 				if(HasFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TOGGLE))
 				{
@@ -9396,7 +9395,7 @@ void Player::PvPToggle()
 	if( sWorld.FunServerMall != -1 && GetAreaID() == (uint32)sWorld.FunServerMall )
 		return;
 
-	if(sWorld.GetRealmType() == REALM_PVE)
+	if(false)
 	{
 		if(m_pvpTimer > 0)
 		{
@@ -9437,7 +9436,7 @@ void Player::PvPToggle()
 			}
 		}
 	}
-	else if(sWorld.GetRealmType() == REALM_PVP)
+	else if(true)
 	{
 		ForceAreaUpdate();
 		if(m_areaDBC == NULL)
@@ -9488,7 +9487,7 @@ void Player::PvPToggle()
 void Player::ResetPvPTimer()
 {
 	SetFlag(PLAYER_FLAGS, PLAYER_FLAG_PVP_TIMER);
-	m_pvpTimer = sWorld.getIntRate(INTRATE_PVPTIMER);
+	m_pvpTimer = 300000;
 }
 
 void Player::CalculateBaseStats()

@@ -35,28 +35,23 @@ World::World()
 	m_holder = eventholder;
 	m_event_Instanceid = eventholder->GetInstanceID();
 
-	mQueueUpdateInterval = 10000;
+	mQueueUpdateInterval = 180000;
 	PeakSessionCount = 0;
 	mInWorldPlayerCount = 0;
 	mAcceptedConnections = 0;
 	HordePlayers = 0;
 	AlliancePlayers = 0;
-	gm_skip_attunement = false;
 	gm_force_robes = false;
-	CheckProfessions = false;
 	AHEnabled = true;
 	HallowsEnd = false;
 	WintersVeil = false;
 
-	show_gm_in_who_list = true;
 	map_unload_time=0;
 #ifndef CLUSTERING
 	SocketSendBufSize = WORLDSOCKET_SENDBUF_SIZE;
 	SocketRecvBufSize = WORLDSOCKET_RECVBUF_SIZE;
 #endif
-	m_limitedNames=false;
 	m_banTable = NULL;
-	m_lfgForNonLfg = false;
 	m_speedHackThreshold = -500.0f;
 	m_speedHackLatencyMultiplier = 0.0f;
 	m_speedHackResetInterval = 5000;
@@ -574,7 +569,6 @@ bool World::SetInitialWorldSettings()
 		ThreadPool.ExecuteTask( new WintergraspInternal() );
 	}
 
-	m_queueUpdateTimer = mQueueUpdateInterval;
 	if(Config.MainConfig.GetBoolDefault("Startup", "BackgroundLootLoading", true))
 	{
 		Log.Notice("World", "Background loot loading...");
@@ -979,7 +973,7 @@ void World::UpdateQueuedSessions(uint32 diff)
 #ifndef CLUSTERING
 	if(diff >= m_queueUpdateTimer)
 	{
-		m_queueUpdateTimer = mQueueUpdateInterval;
+		m_queueUpdateTimer = 180000;
 		queueMutex.Acquire();
 
 		if(mQueuedSessions.size() == 0)
@@ -1327,28 +1321,17 @@ void World::Rehash(bool load)
 	// Server Configs
 	StartGold = Config.OptionalConfig.GetIntDefault("Server", "StartGold", 1);
 	StartLevel = Config.OptionalConfig.GetIntDefault("Server", "StartLevel", 1);
-	m_limitedNames = Config.OptionalConfig.GetBoolDefault("Server", "LimitedNames", true);
 	m_useAccountData = Config.OptionalConfig.GetBoolDefault("Server", "UseAccountData", false);
 	SetMotd(Config.OptionalConfig.GetStringDefault("Server", "Motd", "Hearthstone Default MOTD").c_str());
 	cross_faction_world = Config.OptionalConfig.GetBoolDefault("Server", "CrossFactionInteraction", false);
 	SetMotd2(Config.OptionalConfig.GetStringDefault("Server", "Motd2", "").c_str());
 	Collision = Config.OptionalConfig.GetBoolDefault("Server", "Collision", false);
 	PathFinding = Config.OptionalConfig.GetBoolDefault("Server", "Pathfinding", false);
-	SendStatsOnJoin = Config.OptionalConfig.GetBoolDefault("Server", "SendStatsOnJoin", true);
 	SendMovieOnJoin = Config.OptionalConfig.GetBoolDefault("Server", "SendMovieOnJoin", true);
-	BreathingEnabled = Config.OptionalConfig.GetBoolDefault("Server", "EnableBreathing", true);
-	compression_threshold = Config.OptionalConfig.GetIntDefault("Server", "CompressionThreshold", 1000);
 	m_blockgmachievements = Config.OptionalConfig.GetBoolDefault("Server", "DisableAchievementsForGM", true);
 	channelmgr.seperatechannels = Config.OptionalConfig.GetBoolDefault("Server", "SeperateChatChannels", true);
-	display_free_items = Config.OptionalConfig.GetBoolDefault("Server", "DisplayFreeItems", false);
-	mQueueUpdateInterval = Config.OptionalConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
-	SetKickAFKPlayerTime(Config.OptionalConfig.GetIntDefault("Server", "KickAFKPlayersTimer", 0));
-	gm_skip_attunement = Config.OptionalConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);
 	gm_force_robes = Config.OptionalConfig.GetBoolDefault("Server", "ForceRobesForGM", false);
-	CheckProfessions = Config.OptionalConfig.GetBoolDefault("Server", "CheckProfessions", false);
 	CalculatedHeightChecks = Config.OptionalConfig.GetBoolDefault("Server", "CHeightChecks", false);
-	free_arena_teams = Config.OptionalConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
-	free_guild_charters = Config.OptionalConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
 	trade_world_chat = Config.OptionalConfig.GetBoolDefault("Server", "TradeWorldChat", false);
 	SetPlayerLimit(Config.OptionalConfig.GetIntDefault("Server", "PlayerLimit", 1000));
 	FunServerMall = Config.OptionalConfig.GetIntDefault("Server", "MallAreaID", -1);
@@ -1400,7 +1383,6 @@ void World::Rehash(bool load)
 	setRate(RATE_XP,Config.OptionalConfig.GetFloatDefault("Rates", "XP",1));
 	setRate(RATE_RESTXP,Config.OptionalConfig.GetFloatDefault("Rates", "RestXP", 1));
 	setRate(RATE_QUESTXP,Config.OptionalConfig.GetFloatDefault("Rates", "QuestXP", 1));
-	setIntRate(INTRATE_SAVE, Config.OptionalConfig.GetIntDefault("Rates", "Save", 1));
 	setRate(RATE_MONEY, Config.OptionalConfig.GetFloatDefault("Rates", "DropMoney", 1.0f));
 	setRate(RATE_QUEST_MONEY, Config.OptionalConfig.GetFloatDefault("Rates", "QuestMoney", 1.0f));
 	setRate(RATE_QUESTREPUTATION, Config.OptionalConfig.GetFloatDefault("Rates", "QuestReputation", 1.0f));
@@ -1408,8 +1390,6 @@ void World::Rehash(bool load)
 	setRate(RATE_HONOR, Config.OptionalConfig.GetFloatDefault("Rates", "Honor", 1.0f));
 	setRate(RATE_SKILLCHANCE, Config.OptionalConfig.GetFloatDefault("Rates", "SkillChance", 1.0f));
 	setRate(RATE_SKILLRATE, Config.OptionalConfig.GetFloatDefault("Rates", "SkillRate", 1.0f));
-	setIntRate(INTRATE_COMPRESSION, Config.OptionalConfig.GetIntDefault("Rates", "Compression", 1));
-	setIntRate(INTRATE_PVPTIMER, Config.OptionalConfig.GetIntDefault("Rates", "PvPTimer", 300000));
 	setRate(RATE_ARENAPOINTMULTIPLIER2X, Config.OptionalConfig.GetFloatDefault("Rates", "ArenaMultiplier2x", 1.0f));
 	setRate(RATE_ARENAPOINTMULTIPLIER3X, Config.OptionalConfig.GetFloatDefault("Rates", "ArenaMultiplier3x", 1.0f));
 	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.OptionalConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
@@ -1442,10 +1422,6 @@ void World::Rehash(bool load)
 	}
 
 	m_reqGmForCommands = !Config.OptionalConfig.GetBoolDefault("Server", "AllowPlayerCommands", false);
-	m_lfgForNonLfg = Config.OptionalConfig.GetBoolDefault("Server", "EnableLFGJoin", false);
-
-	realmtype = Config.OptionalConfig.GetBoolDefault("Server", "RealmType", false);
-	TimeOut= uint32(1000* Config.OptionalConfig.GetIntDefault("Server", "ConnectionTimeout", 180) );
 
 	uint32 config_flags = 0;
 	if(Config.MainConfig.GetBoolDefault("Mail", "DisablePostageCostsForGM", true))
@@ -1474,7 +1450,6 @@ void World::Rehash(bool load)
 	flood_mute_after_flood = Config.OptionalConfig.GetIntDefault("FloodProtection", "MuteAfterFlood", 0);
 	flood_caps_min_len = Config.OptionalConfig.GetIntDefault("FloodProtection", "CapsMinLen", 0);
 	flood_caps_pct = Config.OptionalConfig.GetFloatDefault("FloodProtection", "CapsPct", 0.0f);
-	show_gm_in_who_list = Config.OptionalConfig.GetBoolDefault("Server", "ShowGMInWhoList", true);
 
 	if(!flood_lines || !flood_seconds)
 		flood_lines = flood_seconds = 0;
@@ -1510,11 +1485,6 @@ void World::Rehash(bool load)
 	LevelCap_Custom_All = Config.OptionalConfig.GetIntDefault("Server", "LevelCap_Custom_All", 80);
 	if(LevelCap_Custom_All < 1)
 		LevelCap_Custom_All = 80;
-
-	// Dual Talent Specialization costs
-	dualTalentTrainCost = Config.OptionalConfig.GetIntDefault("Server", "DualTalentPrice", 1000);
-	if(dualTalentTrainCost)
-		dualTalentTrainCost *= 10000;   // Convert to gold
 
 	if( m_banTable != NULL )
 		free( m_banTable );

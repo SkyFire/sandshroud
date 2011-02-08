@@ -947,14 +947,11 @@ void WorldSession::FullLogin(Player* plr)
 	plr->BroadcastMessage("%sServer:|r%s Sandshroud Hearthstone|r %s r%u-%s-%s", MSG_COLOR_GOLD,
 		MSG_COLOR_ORANGEY, MSG_COLOR_TORQUISEBLUE, BUILD_REVISION, ARCH, CONFIG);
 	plr->BroadcastMessage("%sPlease report all bugs to |r%shttp://mantis.sandshroud.org|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE);
-	if(sWorld.SendStatsOnJoin || HasGMPermissions()) // Send to GMs regardless
-	{
-		plr->BroadcastMessage("%sOnline Players:|r%s %u |r%sPeak:|r%s %u |r%sAccepted Connections:|r%s %u |r", MSG_COLOR_GOLD,
-			MSG_COLOR_TORQUISEBLUE, sWorld.GetSessionCount(), MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE,
-			sWorld.PeakSessionCount, MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.mAcceptedConnections);
+	plr->BroadcastMessage("%sOnline Players:|r%s %u |r%sPeak:|r%s %u |r%sAccepted Connections:|r%s %u |r", MSG_COLOR_GOLD,
+		MSG_COLOR_TORQUISEBLUE, sWorld.GetSessionCount(), MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE,
+		sWorld.PeakSessionCount, MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.mAcceptedConnections);
 
-		plr->BroadcastMessage("%sServer Uptime:|r%s %s|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.GetUptimeString().c_str());
-	}
+	plr->BroadcastMessage("%sServer Uptime:|r%s %s|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.GetUptimeString().c_str());
 
 	// send to gms
 	if(HasGMPermissions())

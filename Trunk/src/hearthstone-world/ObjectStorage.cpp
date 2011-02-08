@@ -165,170 +165,167 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 
 	cn = NULL;
 	// Load AI Agents
-	if(Config.OptionalConfig.GetBoolDefault("Server", "LoadAIAgents", true))
+	QueryResult* AIresult = WorldDatabase.Query( "SELECT Entry,difficulty,Type+0,Chance,MaxCount,Spell,SpellType+0,TargetType+0,CoolDown,floatMisc1,Misc2 FROM ai_agents" );
+	if( AIresult != NULL )
 	{
-		QueryResult* result = WorldDatabase.Query( "SELECT Entry,difficulty,Type+0,Chance,MaxCount,Spell,SpellType+0,TargetType+0,CoolDown,floatMisc1,Misc2 FROM ai_agents" );
-
-		if( result != NULL )
+		AI_Spell *sp = NULL;
+		SpellEntry * spe = NULL;
+		entry = 0;
+		uint32 spellID = 0;
+		int8 difficulty = 0;
+		uint16 agent = 0;
+		uint32 counter = 0;
 		{
-			AI_Spell *sp = NULL;
-			SpellEntry * spe = NULL;
-			entry = 0;
-			uint32 spellID = 0;
-			int8 difficulty = 0;
-			uint16 agent = 0;
-			uint32 counter = 0;
+			do
 			{
-				do
+				sp = NULL;
+				spe = NULL;
+				entry = 0;
+				spellID = 0;
+				difficulty = 0;
+				agent = 0;
+				Field *fields = AIresult->Fetch();
+				entry = fields[0].GetUInt32();
+				difficulty = fields[1].GetInt8();
+				agent = fields[2].GetUInt16();
+				spellID = fields[5].GetUInt32();
+				int32 tcd = fields[8].GetInt32();
+
+				cn = CreatureProtoStorage.LookupEntry(entry);
+				cix = CreatureInfoExtraStorage.LookupEntry(entry);
+				if( cn == NULL )
 				{
-					sp = NULL;
-					spe = NULL;
-					entry = 0;
-					spellID = 0;
-					difficulty = 0;
-					agent = 0;
-					Field *fields = result->Fetch();
-					entry = fields[0].GetUInt32();
-					difficulty = fields[1].GetInt8();
-					agent = fields[2].GetUInt16();
-					spellID = fields[5].GetUInt32();
-					int32 tcd = fields[8].GetInt32();
+					Log.Warning("AIAgent", "Agent skipped, NPC %u does not exist.", fields[0].GetUInt32());
 
-					cn = CreatureProtoStorage.LookupEntry(entry);
-					cix = CreatureInfoExtraStorage.LookupEntry(entry);
-					if( cn == NULL )
+					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
+						WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u'", entry);
+					continue;
+				}
+
+				spe = dbcSpell.LookupEntryForced(spellID);
+				if( spe == NULL )
+				{
+					WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u' AND spell = '%u'", entry, spellID);
+					Log.Warning("AIAgent", "Agent skipped, NPC %u tried to add non-existing Spell %u.", entry, spellID);
+					continue;
+				}
+
+				if(difficulty > 3 || difficulty < -1)
+				{
+					Log.Warning("AIAgent", "Agent skipped, wrong difficulty type %i in npc %u", difficulty, entry);
+
+					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
+						WorldDatabase.Execute("UPDATE ai_agents SET `difficulty` = '-1' where entry = '%u' AND difficulty = '%i'", entry, difficulty);
+					difficulty = -1;
+				}
+
+				sp = new AI_Spell;
+				sp->entryId = entry;
+				sp->agent = agent;
+				sp->procChance = fields[3].GetFloat();
+				sp->procCount = fields[4].GetUInt32();
+				sp->spell = spe;
+				sp->spellType = fields[6].GetUInt8();
+				sp->spelltargetType = fields[7].GetUInt8();
+				if( spe->c_is_flags & SPELL_FLAG_CASTED_ON_FRIENDS && !(sp->spelltargetType == TTYPE_OWNER))//just to make sure ;)
+					sp->spelltargetType = TTYPE_CASTER;
+				sp->cooldown = (tcd <0 ? 0 : tcd);
+				sp->floatMisc1 = fields[9].GetFloat();
+				sp->Misc2 = fields[10].GetUInt32();
+				sp->autocast_type = (uint32)-1;
+				sp->custom_pointer = false;
+				sp->procCounter = 0;
+
+				//Set cooldowntimer
+				sp->cooldowntime = getMSTime();
+
+				switch(sp->agent)
+				{
+
+				case AGENT_RANGED:
+				case AGENT_SPELL:
 					{
-						Log.Warning("AIAgent", "Agent skipped, NPC %u does not exist.", fields[0].GetUInt32());
-
-						if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
-							WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u'", entry);
-						continue;
-					}
-
-					spe = dbcSpell.LookupEntryForced(spellID);
-					if( spe == NULL )
-					{
-						WorldDatabase.Execute("DELETE FROM ai_agents where entry = '%u' AND spell = '%u'", entry, spellID);
-						Log.Warning("AIAgent", "Agent skipped, NPC %u tried to add non-existing Spell %u.", entry, spellID);
-						continue;
-					}
-
-					if(difficulty > 3 || difficulty < -1)
-					{
-						Log.Warning("AIAgent", "Agent skipped, wrong difficulty type %i in npc %u", difficulty, entry);
-
-						if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
-							WorldDatabase.Execute("UPDATE ai_agents SET `difficulty` = '-1' where entry = '%u' AND difficulty = '%i'", entry, difficulty);
-						difficulty = -1;
-					}
-
-					sp = new AI_Spell;
-					sp->entryId = entry;
-					sp->agent = agent;
-					sp->procChance = fields[3].GetFloat();
-					sp->procCount = fields[4].GetUInt32();
-					sp->spell = spe;
-					sp->spellType = fields[6].GetUInt8();
-					sp->spelltargetType = fields[7].GetUInt8();
-					if( spe->c_is_flags & SPELL_FLAG_CASTED_ON_FRIENDS && !(sp->spelltargetType == TTYPE_OWNER))//just to make sure ;)
-						sp->spelltargetType = TTYPE_CASTER;
-					sp->cooldown = (tcd <0 ? 0 : tcd);
-					sp->floatMisc1 = fields[9].GetFloat();
-					sp->Misc2 = fields[10].GetUInt32();
-					sp->autocast_type = (uint32)-1;
-					sp->custom_pointer = false;
-					sp->procCounter = 0;
-
-					//Set cooldowntimer
-					sp->cooldowntime = getMSTime();
-
-					switch(sp->agent)
-					{
-
-					case AGENT_RANGED:
-					case AGENT_SPELL:
+						if(sp->agent == AGENT_RANGED)
 						{
-							if(sp->agent == AGENT_RANGED)
+							if(cix == NULL || !cix->m_canRangedAttack)
 							{
-								if(cix == NULL || !cix->m_canRangedAttack)
-								{
-									Log.Warning("AIAgent","SpellId %u skipped in ai_agent because NPC %u cannot attack from a range.", spellID, sp->entryId);
-									delete sp;
-									sp = NULL;
-									continue;
-								}
-							}
-
-							if(sp->spell->Effect[0] == SPELL_EFFECT_LEARN_SPELL || sp->spell->Effect[1] == SPELL_EFFECT_LEARN_SPELL ||
-								sp->spell->Effect[2] == SPELL_EFFECT_LEARN_SPELL)
-							{
-								Log.Warning("AIAgent","SpellId %u skipped in ai_agent for NPC %u, it is a teaching spell", spellID, sp->entryId);
+								Log.Warning("AIAgent","SpellId %u skipped in ai_agent because NPC %u cannot attack from a range.", spellID, sp->entryId);
 								delete sp;
 								sp = NULL;
 								continue;
 							}
-							if(sp->spell->Effect[0] == SPELL_EFFECT_SCRIPT_EFFECT || sp->spell->Effect[1] == SPELL_EFFECT_SCRIPT_EFFECT || sp->spell->Effect[2] == SPELL_EFFECT_SCRIPT_EFFECT)
-								DEBUG_LOG("AIAgent","Spell %u for NPC %u is a scripted_effect, can result in unwanted side effects", spellID, sp->entryId);
+						}
 
-							sp->minrange = GetMinRange(dbcSpellRange.LookupEntry(sp->spell->rangeIndex));
-							sp->maxrange = GetMaxRange(dbcSpellRange.LookupEntry(sp->spell->rangeIndex));
-
-							if( tcd < 0 ) // -1 will force dbc lookup
-							{
-								//now this will not be exact cooldown but maybe a bigger one to not make him spam spells to often
-								uint32 cooldown = 0;
-
-								if (sp->spell->Attributes & ATTRIBUTES_PASSIVE) //passive skills
-								{
-									cooldown = 1000*60*60*4; //once per 4 hours :P
-								}else{
-									if( sp->spell->CastingTimeIndex )
-										cooldown = GetCastTime( dbcSpellCastTime.LookupEntry( sp->spell->CastingTimeIndex ));
-
-									uint32 maxRT = std::max(sp->spell->RecoveryTime, sp->spell->CategoryRecoveryTime);
-									if (maxRT>cooldown)
-										cooldown = maxRT;
-								}
-
-								if(cooldown <= 0)
-								{
-									Log.Warning("AIAgent","SpellId %u has no CoolDownTime in DBC. Forced to GCD.", spellID );
-									sp->cooldown=1500;
-								}else{
-									sp->cooldown=cooldown;
-								}
-							}
-							counter += 1;
-						}break;
-
-						//Unsupported Agent type, don't add to list
-					default:
+						if(sp->spell->Effect[0] == SPELL_EFFECT_LEARN_SPELL || sp->spell->Effect[1] == SPELL_EFFECT_LEARN_SPELL ||
+							sp->spell->Effect[2] == SPELL_EFFECT_LEARN_SPELL)
 						{
-							Log.Warning("AIAgent","Skipping in-valid  entry %u for ai_type %u.", sp->entryId, sp->agent );
+							Log.Warning("AIAgent","SpellId %u skipped in ai_agent for NPC %u, it is a teaching spell", spellID, sp->entryId);
 							delete sp;
 							sp = NULL;
-						}break;
-					}
+							continue;
+						}
+						if(sp->spell->Effect[0] == SPELL_EFFECT_SCRIPT_EFFECT || sp->spell->Effect[1] == SPELL_EFFECT_SCRIPT_EFFECT || sp->spell->Effect[2] == SPELL_EFFECT_SCRIPT_EFFECT)
+							DEBUG_LOG("AIAgent","Spell %u for NPC %u is a scripted_effect, can result in unwanted side effects", spellID, sp->entryId);
 
-					//Valid; add to list
-					if(sp != NULL)
+						sp->minrange = GetMinRange(dbcSpellRange.LookupEntry(sp->spell->rangeIndex));
+						sp->maxrange = GetMaxRange(dbcSpellRange.LookupEntry(sp->spell->rangeIndex));
+
+						if( tcd < 0 ) // -1 will force dbc lookup
+						{
+							//now this will not be exact cooldown but maybe a bigger one to not make him spam spells to often
+							uint32 cooldown = 0;
+
+							if (sp->spell->Attributes & ATTRIBUTES_PASSIVE) //passive skills
+							{
+								cooldown = 1000*60*60*4; //once per 4 hours :P
+							}else{
+								if( sp->spell->CastingTimeIndex )
+									cooldown = GetCastTime( dbcSpellCastTime.LookupEntry( sp->spell->CastingTimeIndex ));
+
+								uint32 maxRT = std::max(sp->spell->RecoveryTime, sp->spell->CategoryRecoveryTime);
+								if (maxRT>cooldown)
+									cooldown = maxRT;
+							}
+
+							if(cooldown <= 0)
+							{
+								Log.Warning("AIAgent","SpellId %u has no CoolDownTime in DBC. Forced to GCD.", spellID );
+								sp->cooldown=1500;
+							}else{
+								sp->cooldown=cooldown;
+							}
+						}
+						counter += 1;
+					}break;
+
+					//Unsupported Agent type, don't add to list
+				default:
 					{
-						if(difficulty == -1) // -1 means difficulty doesn't matter.
-							for(uint8 i = 0; i < 4; i++)
-								cn->spells[i].push_back(sp);
-						else
-							cn->spells[difficulty].push_back(sp);
-					}
-					sp = NULL;
-				}while( result->NextRow() );
-			}
-			if(counter)
-				Log.Notice("AIAgent","Loaded %u ai_agents from database",counter);
-			else
-				Log.Warning("AIAgent","No ai_agents found in database");
+						Log.Warning("AIAgent","Skipping in-valid  entry %u for ai_type %u.", sp->entryId, sp->agent );
+						delete sp;
+						sp = NULL;
+					}break;
+				}
+
+				//Valid; add to list
+				if(sp != NULL)
+				{
+					if(difficulty == -1) // -1 means difficulty doesn't matter.
+						for(uint8 i = 0; i < 4; i++)
+							cn->spells[i].push_back(sp);
+					else
+						cn->spells[difficulty].push_back(sp);
+				}
+				sp = NULL;
+			}while( AIresult->NextRow() );
 		}
-		if(result)
-			delete result;
+
+		if(counter)
+			Log.Notice("AIAgent","Loaded %u ai_agents from database",counter);
+		else
+			Log.Warning("AIAgent","No ai_agents loaded from database");
+
+		delete AIresult;
 	}
 
 	uint32 modecount = 0;

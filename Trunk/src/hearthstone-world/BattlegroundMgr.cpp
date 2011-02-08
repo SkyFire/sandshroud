@@ -1572,8 +1572,10 @@ void CBattlegroundManager::SendBattlegroundQueueStatus(Player* plr, uint32 queue
 
 void CBattleground::RemovePlayer(Player* plr, bool logout)
 {
-	if(!plr->IsPlayer())
-		return;
+	sEventMgr.RemoveEvents(plr, EVENT_PLAYER_BG_KICK);
+
+	if(plr->HasFlag(PLAYER_FLAGS, PLAYER_FLAG_AFK))
+		sEventMgr.AddEvent(plr, &Player::ForceLogout, true, EVENT_PLAYER_FORCE_LOGOUT, 210000, 1, 0);
 
 	WorldPacket data(SMSG_BATTLEGROUND_PLAYER_LEFT, 30);
 	data << plr->GetGUID();

@@ -564,11 +564,9 @@ void WorldSession::HandleWhoOpcode( WorldPacket & recv_data )
 		if(!plr->GetSession() || !plr->IsInWorld())
 			continue;
 
-		if(!sWorld.show_gm_in_who_list && !HasGMPermissions())
-		{
+		if(!HasGMPermissions())
 			if(plr->GetSession()->HasGMPermissions())
 				continue;
-		}
 
 		// Team check
 		if(!sWorld.cross_faction_world)

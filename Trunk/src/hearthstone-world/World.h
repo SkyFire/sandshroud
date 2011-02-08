@@ -74,14 +74,6 @@ enum Rates
 	MAX_RATES
 };
 
-enum IntRates
-{
-	INTRATE_SAVE=0,
-	INTRATE_COMPRESSION,
-	INTRATE_PVPTIMER,
-	MAX_INTRATES
-};
-
 enum EventIdFlags
 {
 	EVENTID_FLAG_NONE = 0,
@@ -275,11 +267,6 @@ struct MapInfo
 
 #pragma pack(pop)
 
-enum REALM_TYPE
-{
-    REALM_PVE = 0,
-    REALM_PVP = 1,
-};
 struct AreaTable;
 
 struct insert_playeritem
@@ -538,16 +525,6 @@ public:
 		return regen_values[index];
 	}
 
-	HEARTHSTONE_INLINE uint32 getIntRate(int index)
-	{
-		return int_rates[index];
-	}
-
-	HEARTHSTONE_INLINE void setIntRate(int index, uint32 value)
-	{
-		int_rates[index] = value;
-	}
-
 	// talent inspection lookup tables
 	std::map< uint32, uint32 > InspectTalentTabPos;
 	std::map< uint32, uint32 > InspectTalentTabSize;
@@ -557,8 +534,6 @@ public:
 	// map text emote to spell prices
 	typedef std::map< uint32, uint32> SpellPricesMap;
 	SpellPricesMap mPrices;
-
-	HEARTHSTONE_INLINE uint32 GetTimeOut(){return TimeOut;}
 
 	struct NameGenData
 	{
@@ -589,9 +564,7 @@ public:
 	Mutex queueMutex;
 
 	uint32 mQueueUpdateInterval;
-
 	bool cross_faction_world;
-	bool free_guild_charters;
 	bool trade_world_chat;
 	bool m_useIrc;
 	uint32 m_deathKnightReqLevel;
@@ -612,7 +585,6 @@ public:
 	string vMapPath;
 	string MMapPath;
 	bool UnloadMapFiles;
-	bool BreathingEnabled;
 	bool SpeedhackProtection;
 	bool Collision;
 	bool PathFinding;
@@ -628,7 +600,6 @@ public:
 	uint32 HordePlayers;
 	uint32 AlliancePlayers;
 	uint32 PeakSessionCount;
-	bool SendStatsOnJoin;
 	bool SendMovieOnJoin;
 	int32 FunServerMall;
 	int LogoutDelay;
@@ -639,16 +610,9 @@ public:
 
 	void DeleteObject(Object* obj);
 
-	uint32 compression_threshold;
 	bool GuildsLoading;
-
 	uint8 StartLevel;
 	uint32 StartGold;
-
-	void	SetKickAFKPlayerTime(uint32 idletimer) { m_KickAFKPlayers = idletimer; }
-	uint32	GetKickAFKPlayerTime() { return m_KickAFKPlayers; }
-
-	uint32 GetRealmType() { return realmtype; }
 
 	uint32 flood_lines;
 	uint32 flood_seconds;
@@ -657,11 +621,8 @@ public:
 	uint32 flood_caps_min_len;
 	float flood_caps_pct;
 	bool flood_message;
-	bool gm_skip_attunement;
 	bool gm_force_robes;
-	bool CheckProfessions;
 
-	bool show_gm_in_who_list;
 	uint32 map_unload_time;
 
 	bool antihack_teleport;
@@ -669,10 +630,6 @@ public:
 	bool antihack_flight;
 	bool antihack_cheatengine;
 	bool no_antihack_on_gm;
-
-	bool free_arena_teams;
-
-	bool display_free_items;
 
 	//Enable/Disable specific battlegrounds/arenas
 	bool wg_enabled;
@@ -692,9 +649,6 @@ public:
 
 	// Level Caps
 	uint32 LevelCap_Custom_All;
-
-	// Duel Talent cost
-	uint32 dualTalentTrainCost;
 
 	// could add configs for every expansion..
 
@@ -748,7 +702,6 @@ protected:
 	SessionSet GlobalSessions;
 
 	float regen_values[MAX_RATES];
-	uint32 int_rates[MAX_INTRATES];
 
 	uint32 m_playerLimit;
 	bool m_allowMovement;
@@ -756,25 +709,19 @@ protected:
 	std::string m_motd;
 	std::string m_motd2;
 
-	uint32 realmtype;
-
 	time_t m_gameTime;
 	time_t m_lastTick;
-	uint32 TimeOut;
 
 	uint32 m_StartTime;
 	uint32 m_queueUpdateTimer;
 
 	QueueSet mQueuedSessions;
 
-	uint32	m_KickAFKPlayers;//don't lag the server if you are useless anyway :P
-
 public:
 	bool LacrimiLoading;
 	Lacrimi* LacrimiPtr;
 	std::string GmClientChannel;
 	bool m_reqGmForCommands;
-	bool m_lfgForNonLfg;
 	list<SpellEntry*> dummyspells;
 	bool m_limitedNames;
 	bool m_useAccountData;
@@ -808,35 +755,14 @@ public:
 		size_t i;
 
 		static const char * bannedCharacters = "\t\v\b\f\a\n\r\\\"\'\?<>[](){}_=+-|/!@#$%^&*~`.,0123456789\0";
-		static const char * allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		if(m_limitedNames)
+		for(i = 0; i < nlen; i++)
 		{
-			for(i = 0; i < nlen; i++)
-			{
-				p = allowedCharacters;
-				bool Continue = false;
-				for(; *p != 0; ++p)
-				{
-					if(name[i] == *p)
-						Continue = true;
-				}
-				if(Continue)
-					continue;
+			p = bannedCharacters;
+			while(*p != 0 && name[i] != *p && name[i] != 0)
+				++p;
 
+			if(*p != 0)
 				return false;
-			}
-		}
-		else
-		{
-			for(i = 0; i < nlen; i++)
-			{
-				p = bannedCharacters;
-				while(*p != 0 && name[i] != *p && name[i] != 0)
-					++p;
-
-				if(*p != 0)
-					return false;
-			}
 		}
 
 		return true;

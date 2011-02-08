@@ -1536,6 +1536,7 @@ public:
 	void LoseRage(int32 value);
 	void LooseRunic(int32 value);
 	void LoosePower(uint32 powerField, int32 value);
+	void BattlegroundKick() { if(m_bg) m_bg->RemovePlayer(this, false); };
 	void ForceLogout(bool save) { GetSession()->LogoutPlayer(save); };
 
 	uint32 SoulStone;
