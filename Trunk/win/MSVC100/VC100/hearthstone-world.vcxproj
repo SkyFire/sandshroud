@@ -421,7 +421,6 @@
     <ClInclude Include="..\..\..\src\hearthstone-world\BattlegroundMgr.h" />
     <ClInclude Include="..\..\..\src\hearthstone-world\EyeOfTheStorm.h" />
     <ClInclude Include="..\..\..\src\hearthstone-world\NavMeshInterface.h" />
-    <ClInclude Include="..\..\..\src\hearthstone-world\Path.h" />
     <ClInclude Include="..\..\..\src\hearthstone-world\StrandOfTheAncients.h" />
     <ClInclude Include="..\..\..\src\hearthstone-world\Tracker.h" />
     <ClInclude Include="..\..\..\src\hearthstone-world\WarnSystem.h" />
