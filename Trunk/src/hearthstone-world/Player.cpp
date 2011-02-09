@@ -5434,17 +5434,17 @@ void Player::UpdateChanceFields()
 		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, DamageDoneNegMod[i] );
 	}
 
-	int32 healingdone = HealDoneMod;
+	HealDoneModPos = HealDoneMod;
 	for(stat = 0; stat < 5; stat++)
 	{
 		if(SpellDmgDoneByAttribute[stat] && GetStat(stat) > 0)
 		{
-			healingdone += ((SpellHealDoneByAttribute[stat]*GetStat(stat))/100);
+			HealDoneModPos += ((SpellHealDoneByAttribute[stat]*GetStat(stat))/100);
 		}
 	}
-	healingdone += (SpellHealFromAP*GetAP())/100;
+	HealDoneModPos += (SpellHealFromAP*GetAP())/100;
 
-	SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS, healingdone);
+	SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS, HealDoneModPos);
 	SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_PCT, HealDonePctMod);
 }
 

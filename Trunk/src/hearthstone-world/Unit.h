@@ -1033,6 +1033,8 @@ public:
 	float MechanicDurationPctMod[NUM_MECHANIC];
 	int32 GetDamageDoneMod(uint32 school) { return DamageDonePosMod[school] - DamageDoneNegMod[school]; };
 	float GetDamageDonePctMod(uint32 school) { return DamageDonePctMod[school]; };
+	int32 GetHealingDoneMod() { return HealDoneModPos; };
+	int32 GetHealingTakenMod() { return HealTakenMod; };
 	int32 DamageTakenMod[7];
 	float DamageTakenPctMod[7];
 	//float DamageTakenPctModOnHP35; DEPRECATED, YAY!
@@ -1177,6 +1179,7 @@ public:
 	int32 SpellDmgDoneByAttribute[5][7];
 	int32 SpellDamageFromAP;
 
+	int32 HealDoneModPos;
 	int32 HealDoneMod;
 	float HealDonePctMod;
 	int32 HealTakenMod;

@@ -454,8 +454,7 @@ void LogonCommHandler::LoadRealmConfiguration()
 		ls->Port = Config.RealmConfig.GetIntDefault("LogonServer", "Port", 8093);
 		servers.insert(ls);
 
-		Realm * realm = NULL;
-		realm = new Realm;
+		Realm * realm = new Realm;
 		realm->Name = Config.RealmConfig.GetStringDefault("Realm", "Name", "SomeRealm");
 		realm->Address = Config.RealmConfig.GetStringDefault("Realm", "Address", "127.0.0.1:8129");
 		realm->WorldRegion = Config.RealmConfig.GetIntDefault("Realm", "WorldRegion", 1);

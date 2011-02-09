@@ -4743,8 +4743,8 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	else
 	{
 		if(coefficient) // Saves us some time.
-			bonus_damage += caster->GetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS) * coefficient;
-		bonus_damage += pVictim->GetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS);
+			bonus_damage += caster->GetHealingDoneMod() * coefficient;
+		bonus_damage += pVictim->GetHealingTakenMod();
 	}
 
 	if( spellInfo->AP_coef_override > 0 )
@@ -4787,7 +4787,7 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 		if( plrCaster->IsInFeralForm() )
 		{
 			if( plrCaster->GetShapeShift() == FORM_TREE && plrCaster->HasDummyAura(SPELL_HASH_IMPROVED_TREE_OF_LIFE) )
-				bonus_damage += float2int32( (plrCaster->GetDummyAura(SPELL_HASH_IMPROVED_TREE_OF_LIFE)->RankNumber * 0.05f) * plrCaster->GetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS) );
+				bonus_damage += float2int32( (plrCaster->GetDummyAura(SPELL_HASH_IMPROVED_TREE_OF_LIFE)->RankNumber * 0.05f) * plrCaster->GetHealingDoneMod() );
 			else if( pVictim->IsPlayer() && TO_PLAYER( pVictim )->GetShapeShift() == FORM_CAT )
 			{
 				if( pVictim->HasDummyAura(SPELL_HASH_NURTURING_INSTINCT) && healing )
