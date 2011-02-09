@@ -258,13 +258,13 @@ public:
 	uint32 GetAreaID(float x, float y, float z = 0.0f, int32 mapid = -1, MapMgr* mgr = NULL);
 
 	//! Get uint32 property
-	HEARTHSTONE_INLINE const uint32& GetUInt32Value( uint32 index ) const { ASSERT(index > m_valuesCount); return m_uint32Values[ index ]; }
+	HEARTHSTONE_INLINE const uint32& GetUInt32Value( uint32 index ) const { ASSERT(index < m_valuesCount); return m_uint32Values[ index ]; }
 
 	//! Get uint64 property
-	HEARTHSTONE_INLINE const uint64& GetUInt64Value( uint32 index ) const { ASSERT(index > m_valuesCount); return *((uint64*)&(m_uint32Values[ index ])); }
+	HEARTHSTONE_INLINE const uint64& GetUInt64Value( uint32 index ) const { ASSERT(index < m_valuesCount); return *((uint64*)&(m_uint32Values[ index ])); }
 
 	//! Get float property
-	HEARTHSTONE_INLINE const float& GetFloatValue( uint32 index ) const { ASSERT(index > m_valuesCount); return m_floatValues[ index ]; }
+	HEARTHSTONE_INLINE const float& GetFloatValue( uint32 index ) const { ASSERT(index < m_valuesCount); return m_floatValues[ index ]; }
 
 	void __fastcall ModFloatValue(const uint32 index, const float value );
 	void ModSignedInt32Value(uint32 index, int32 value);
