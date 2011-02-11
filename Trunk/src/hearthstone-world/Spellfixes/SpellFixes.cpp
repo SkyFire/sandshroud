@@ -847,8 +847,6 @@ void SetProcFlags(SpellEntry *sp)
 					if(sp->EffectTriggerSpell[j])
 						procspellid = sp->EffectTriggerSpell[j];
 
-				pr = 0;
-				pr2 = 0;
 				char desc[4096];
 				strcpy(desc, sp->Description);
 				uint32 len = (uint32)strlen(desc);
@@ -858,7 +856,7 @@ void SetProcFlags(SpellEntry *sp)
 				//dirty code for procs, if any1 got any better idea-> u are welcome
 				//139944 --- some magic number, it will trigger on all hits etc
 				// Crow: All of the below should be in lower case, but its late.
-				if(strstr( desc,"chance on hit") || strstr( desc,"your auto attacks") || strstr( desc,"character strikes an enemy")
+				if((pr & PROC_ON_MELEE_ATTACK) == 0 && (strstr( desc,"chance on hit") || strstr( desc,"your auto attacks") || strstr( desc,"character strikes an enemy")
 					|| strstr( desc,"when it hits") || strstr( desc,"when successfully hit") || strstr( desc,"an enemy on hit")
 					|| strstr( desc,"when the caster is using melee attacks") || strstr( desc,"successful melee attack")
 					|| strstr( desc,"chance per hit") || strstr( desc,"you deal melee damage") || strstr( desc,"your melee attacks")
@@ -872,10 +870,10 @@ void SetProcFlags(SpellEntry *sp)
 					|| strstr( desc,"each strike has") || strstr( desc,"chance on hit") || strstr( desc,"with a melee weapon")
 					|| strstr( desc,"damage to melee attackers") || strstr( desc,"into flame, causing an additional")
 					|| strstr( desc,"damage on every attack") || strstr( desc,"your melee and ranged attacks")
-					|| strstr( desc, "gives your melee") || strstr( desc, "granting each melee"))
+					|| strstr( desc, "gives your melee") || strstr( desc, "granting each melee")))
 					pr |= PROC_ON_MELEE_ATTACK;
 
-				if(strstr( desc,"attackers when hit") || strstr( desc,"strike you with a melee attack")
+				if((pr & PROC_ON_MELEE_ATTACK_VICTIM) == 0 && (strstr( desc,"attackers when hit") || strstr( desc,"strike you with a melee attack")
 					|| strstr( desc,"enemy strikes the caster") || strstr( desc,"strikes you with a melee attack")
 					|| strstr( desc,"enemy that strikes you in melee") || strstr( desc,"the next melee attack on the caster")
 					|| strstr( desc,"when struck in melee combat") ||  strstr( desc,"the next melee attack against the caster")
@@ -886,10 +884,10 @@ void SetProcFlags(SpellEntry *sp)
 					|| strstr( desc,"that strikes a party member") || strstr( desc,"when hit by a melee attack")
 					|| strstr( desc,"ranged and melee attacks to deal") || strstr( desc,"striking melee or ranged attackers")
 					|| strstr( desc,"damage to attackers when hit") || strstr( desc,"striking melee attackers")
-					|| strstr( desc,"striking melee attackers"))
+					|| strstr( desc,"striking melee attackers")))
 					pr |= PROC_ON_MELEE_ATTACK_VICTIM;
 
-				if( strstr( desc,"target casts a spell") || strstr( desc,"your harmful spells land")
+				if((pr & PROC_ON_CAST_SPELL) == 0 && (strstr( desc,"target casts a spell") || strstr( desc,"your harmful spells land")
 					|| strstr( desc, "any damage spell hits a target") || strstr( desc,"gives your finishing moves")
 					|| strstr( desc,"gives your sinister strike, backstab, gouge and shiv") || strstr( desc,"chance on spell hit")
 					|| strstr( desc,"your shadow word: pain, mind flay and vampiric touch spells also cause the target")
@@ -898,80 +896,82 @@ void SetProcFlags(SpellEntry *sp)
 					|| strstr( desc,"your spell casts have") || strstr( desc,"your Fire damage spell hits")
 					|| strstr( desc,"pain, mind flay and vampiric touch spells also cause")
 					|| strstr( desc,"next offensive ability") || strstr( desc,"on successful spellcast")
-					|| strstr( desc,"shadow damage spells have") || strstr( desc,"your next offensive ability"))
+					|| strstr( desc,"shadow damage spells have") || strstr( desc,"your next offensive ability")))
 					pr |= PROC_ON_CAST_SPELL;
 
-				if( strstr( desc,"any damage caused") || strstr( desc,"when caster takes damage") || strstr( desc,"damage on hit")
+				if((pr & PROC_ON_ANY_DAMAGE_VICTIM) == 0 && (strstr( desc,"any damage caused") || strstr( desc,"when caster takes damage") || strstr( desc,"damage on hit")
 					|| strstr( desc,"after being hit by any damaging attack") || strstr( desc,"whenever the caster takes damage")
 					|| strstr( desc, "damaging attack is taken") || strstr( desc,"a spell, melee or ranged attack hits the caster")
-					|| strstr( desc,"whenever damage is dealt to you") || strstr( desc, "damage when hit"))
+					|| strstr( desc,"whenever damage is dealt to you") || strstr( desc, "damage when hit")))
 					pr |= PROC_ON_ANY_DAMAGE_VICTIM;
 
-				if(strstr( desc,"each melee or ranged damage hit against the priest")
+				if((pr & PROC_ON_RANGED_ATTACK_VICTIM) == 0 && (strstr( desc,"each melee or ranged damage hit against the priest")
 					|| strstr( desc,"melee and ranged attacks against you") || strstr( desc,"striking melee or ranged attackers")
 					|| strstr( desc,"hit by a melee or ranged attack") || strstr( desc,"striking melee or ranged attackers")
-					|| strstr( desc,"ranged and melee attacks to deal"))
+					|| strstr( desc,"ranged and melee attacks to deal")))
 					pr |= PROC_ON_RANGED_ATTACK_VICTIM;
 
-				if( strstr( desc,"landing a melee critical strike") || strstr( desc,"your critical strikes") || strstr( desc,"critical hit")
+				if((pr & PROC_ON_CRIT_ATTACK) == 0 && (strstr( desc,"landing a melee critical strike") || strstr( desc,"your critical strikes") || strstr( desc,"critical hit")
 					|| strstr( desc, "melee critical strike") || strstr( desc,"after dealing a critical strike")
 					|| strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability")
-					|| strstr( desc,"after getting a critical strike"))
+					|| strstr( desc,"after getting a critical strike")))
 					pr |= PROC_ON_CRIT_ATTACK;
 
-				if(strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
+				if((pr & PROC_ON_RANGED_ATTACK) == 0 && (strstr( desc,"on successful melee or ranged attack") ||  strstr( desc,"when ranged or melee damage is dealt")
 					|| strstr( desc,"on melee or ranged attack") || strstr( desc,"damage on every attack")
-					|| strstr( desc,"your melee and ranged attacks") || strstr( desc,"whenever you deal ranged damage"))
+					|| strstr( desc,"your melee and ranged attacks") || strstr( desc,"whenever you deal ranged damage")))
 					pr |= PROC_ON_RANGED_ATTACK;
 
-				if( strstr( desc,"any successful spell cast against the priest") || strstr( desc,"chance to reflect Fire spells")
-					|| strstr( desc, "struck by a Stun or Immobilize"))
+				if((pr & PROC_ON_SPELL_HIT_VICTIM) == 0 && (strstr( desc,"any successful spell cast against the priest") || strstr( desc,"chance to reflect Fire spells")
+					|| strstr( desc, "struck by a Stun or Immobilize")))
 					pr |= PROC_ON_SPELL_HIT_VICTIM;
 
-				if( strstr( desc,"your spell criticals have") || strstr( desc, "getting a critical effect from")
-					|| strstr( desc,"spell criticals against you"))
+				if((pr & PROC_ON_SPELL_CRIT_HIT_VICTIM) == 0 && (strstr( desc,"your spell criticals have") || strstr( desc, "getting a critical effect from")
+					|| strstr( desc,"spell criticals against you")))
 					pr |= PROC_ON_SPELL_CRIT_HIT_VICTIM;
 
-				if( strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability")
+				if(strstr( desc,"dealing a critical strike from a weapon swing, spell, or ability")
 					|| strstr( desc,"your spell criticals have"))
 					pr2 |= PROC_ON_SPELL_CRIT_HIT;
 
 				if( strstr( desc,"hunter takes on the aspects of a hawk") || strstr( desc,"hunter takes on the aspects of a dragonhawk"))
 				{
-					pr |= PROC_ON_RANGED_ATTACK;
+					if((pr & PROC_ON_RANGED_ATTACK) == 0)
+						pr |= PROC_ON_RANGED_ATTACK;
 					pr2 |= PROC_TARGET_SELF;
 				}
 
-				if( strstr( desc,"victim of a critical strike") || strstr( desc,"after being struck by a melee or ranged critical hit")
-					|| strstr( desc, "victim of a melee or ranged critical strike") || strstr( desc,"victim of a critical melee strike"))
+				if((pr & PROC_ON_CRIT_HIT_VICTIM) == 0 && (strstr( desc,"victim of a critical strike") || strstr( desc,"after being struck by a melee or ranged critical hit")
+					|| strstr( desc, "victim of a melee or ranged critical strike") || strstr( desc,"victim of a critical melee strike")))
 					pr |= PROC_ON_CRIT_HIT_VICTIM;
 
-				if(strstr( desc,"your ranged criticals"))
+				if((pr & PROC_ON_RANGED_CRIT_ATTACK) == 0 && (strstr( desc,"your ranged criticals")))
 					pr |= PROC_ON_RANGED_CRIT_ATTACK;
 
-				if( strstr( desc, "experience or honor"))
+				if((pr & PROC_ON_GAIN_EXPIERIENCE) == 0 && (strstr( desc, "experience or honor")))
 					pr |= PROC_ON_GAIN_EXPIERIENCE;
 
-				if( strstr( desc,"after being hit with a shadow or fire spell"))
+				if((pr & PROC_ON_SPELL_LAND_VICTIM) == 0 && (strstr( desc,"after being hit with a shadow or fire spell")))
 					pr |= PROC_ON_SPELL_LAND_VICTIM;
 
-				if( strstr( desc,"successful auto shot attacks"))
+				if((pr & PROC_ON_AUTO_SHOT_HIT) == 0 && (strstr( desc,"successful auto shot attacks")))
 					pr |= PROC_ON_AUTO_SHOT_HIT;
 
 				if( strstr( desc, "gives your"))
 				{
-					if( strstr( desc,"chance to daze the target"))
+					if(strstr( desc,"chance to daze the target") && (pr & PROC_ON_CAST_SPELL) == 0)
 						pr |= PROC_ON_CAST_SPELL;
 					else // We should find that specific spell (or group) on what we will trigger
-						pr |= PROC_ON_CAST_SPECIFIC_SPELL;
+						if((pr & PROC_ON_CAST_SPECIFIC_SPELL) == 0)
+							pr |= PROC_ON_CAST_SPECIFIC_SPELL;
 				}
 
-				if( strstr( desc, "chance to add an additional combo") && strstr(desc, "critical") )
+				if((pr & PROC_ON_CRIT_ATTACK) == 0 && (strstr( desc, "chance to add an additional combo") && strstr(desc, "critical")))
 					pr |= PROC_ON_CRIT_ATTACK;
-				else if( strstr( desc, "chance to add an additional combo"))
+				else if((pr & PROC_ON_CAST_SPELL) == 0 && (strstr( desc, "chance to add an additional combo")))
 					pr |= PROC_ON_CAST_SPELL;
 
-				if( strstr( desc,"being able to resurrect"))
+				if(strstr( desc,"being able to resurrect"))
 					pr2 |= PROC_ON_DIE;
 
 				if( strstr( desc,"after dodging their attack"))
@@ -987,14 +987,14 @@ void SetProcFlags(SpellEntry *sp)
 					pr2 |= PROC_TARGET_SELF;
 				}
 
-				if( strstr( desc,"fully resisting") || strstr( desc,"fully resist"))
+				if(strstr( desc,"fully resisting") || strstr( desc,"fully resist"))
 					pr2 |= PROC_ON_FULL_RESIST;
 
-				if( strstr( desc,"each attack blocked") || strstr( desc,"target blocks a melee attack")
+				if(strstr( desc,"each attack blocked") || strstr( desc,"target blocks a melee attack")
 					|| strstr( desc,"when a block occurs"))
 					pr2 |= PROC_ON_BLOCK_VICTIM;
 
-				if( strstr( desc,"shadow bolt critical strikes increase shadow damage")
+				if(strstr( desc,"shadow bolt critical strikes increase shadow damage")
 					|| strstr( desc,"after getting a critical effect from your")
 					|| strstr( desc,"on spell critical hit") || strstr( desc,"spell critical strikes"))
 					pr2 |= PROC_ON_SPELL_CRIT_HIT;
