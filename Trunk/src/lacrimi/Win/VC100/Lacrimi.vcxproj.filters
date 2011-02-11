@@ -1,0 +1,824 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Precompiled Headers">
+      <UniqueIdentifier>{65f87f7f-b5ec-4f2b-acad-75d670342687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{9a19f9e4-41ae-4ff4-8d1f-ff59d97736ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0">
+      <UniqueIdentifier>{1b545408-d46f-4429-b040-f60dfbbcc8db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Eastern Kingdoms">
+      <UniqueIdentifier>{6cb9e86b-0c5e-4cfd-9795-c2233b5eeb72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Eastern Kingdoms\Cities">
+      <UniqueIdentifier>{3088695a-bc29-40a4-a2f3-6b87704a9f0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Eastern Kingdoms\Zones">
+      <UniqueIdentifier>{4bc2a09f-5990-487e-91c9-bd2c25bbf3d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Kalimdor">
+      <UniqueIdentifier>{796bf5f6-979e-4ad4-92cd-b5782cff8b78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Kalimdor\Cities">
+      <UniqueIdentifier>{6dc9df9e-95f2-4a59-8183-7bd55eb2064c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Kalimdor\Zones">
+      <UniqueIdentifier>{ecd739a0-8fb7-4237-a6f5-8ef293ec4937}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Outlands">
+      <UniqueIdentifier>{56f06f7f-7424-49ce-988f-4ac70caea547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Outlands\Zones">
+      <UniqueIdentifier>{97788e1e-82b8-4727-8e9c-12b441294057}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Outlands\Cities">
+      <UniqueIdentifier>{377bfcf6-c1e7-455b-859c-f8b26ff3ca29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Ebon Hold">
+      <UniqueIdentifier>{3abfaadc-b3da-473d-936f-85c1a666830f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Northrend">
+      <UniqueIdentifier>{e2e16d34-d8d9-4eda-9c14-2445ab340b2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Northrend\Cities">
+      <UniqueIdentifier>{98c94559-427a-47b2-a1ad-ed2be2fdeabe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 0\Northrend\Zones">
+      <UniqueIdentifier>{ce3a637c-b986-466f-b592-87a17785d1b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1">
+      <UniqueIdentifier>{2e6297cb-9ae9-494b-86b6-de3d2ef6a45a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2">
+      <UniqueIdentifier>{4bb41ffd-6cfb-44fe-a074-8c5e5d764fcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2\Naxxramas">
+      <UniqueIdentifier>{556e342f-b637-43aa-b7dc-c5d0973bef37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2\Ulduar">
+      <UniqueIdentifier>{3ee1a8fa-9598-4306-aa30-b2b175fd8ad5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2\Obsidian Sanctum">
+      <UniqueIdentifier>{aeb2d838-0981-4403-81e9-21a32202f19e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2\Eye of Eternity">
+      <UniqueIdentifier>{e5224c3f-5a20-4e51-96cc-51788283bb2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2\TOC">
+      <UniqueIdentifier>{028e4736-4885-41f4-a69c-687cbbd484b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2\Icecrown Citadel">
+      <UniqueIdentifier>{2b001e18-6c3c-4df2-afc3-07e8d5ddd262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 2\Ruby Sanctum">
+      <UniqueIdentifier>{881e031f-12a5-4b37-afc7-70480d9ea166}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1">
+      <UniqueIdentifier>{9aeb7c56-29c3-4e9f-9eb0-6119cbf20ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\Karazhan">
+      <UniqueIdentifier>{3bb508cd-86f7-4d13-9539-699bce152956}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\Mount Hyjal">
+      <UniqueIdentifier>{ec0eed8b-db81-44b0-ad12-1ee6aac037cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\Magtheridon%27s Lair">
+      <UniqueIdentifier>{49fdca54-0fef-4c45-b20a-1298e059cb2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\Serpentshrine Cavern">
+      <UniqueIdentifier>{b019b7bd-34c9-4f68-b6d6-9e42f7695a93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\The Eye">
+      <UniqueIdentifier>{38d96dca-3f91-4f05-8027-fdadbe16be3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\Black Temple">
+      <UniqueIdentifier>{ae91841a-529b-4823-8b1e-5a1f2ec52b13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\Gruul%27s Lair">
+      <UniqueIdentifier>{a1efb69c-f0c3-4255-91d4-f7bd4d8b6e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\Zul%27Aman">
+      <UniqueIdentifier>{e1aa641e-4f66-4e17-ae0f-3420b5c19f79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 1\The Sunwell">
+      <UniqueIdentifier>{efd1809f-840c-46db-938f-565bfb9a68a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 0">
+      <UniqueIdentifier>{9a09e2ad-c0e3-430c-b11d-0768bfe3d27b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 0\Onyxia%27s Lair">
+      <UniqueIdentifier>{b4408675-849d-4f8c-ac5e-bf03d67cccff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 0\Zul%27Gurub">
+      <UniqueIdentifier>{0fb9d25d-a97d-449e-a7ee-93847357ff6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 0\Molten Core">
+      <UniqueIdentifier>{3050c544-8560-4643-914c-093736407cbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 0\Blackwing Lair">
+      <UniqueIdentifier>{2c12a29e-33cf-4774-be8d-8284e9e7893e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 0\Ruins of Ahn%27Qiraj">
+      <UniqueIdentifier>{b7e846ea-eb47-4e46-87d7-f23fcb9741df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 1\Set 0\Ahn%27Qiraj Temple">
+      <UniqueIdentifier>{ef3cf128-bf43-4679-a2de-47e8cc5da1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2">
+      <UniqueIdentifier>{641c21a3-3dd0-4120-bda8-14aa61980781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Shadowfang Keep">
+      <UniqueIdentifier>{486c71fe-a24e-4cd6-916f-eca30a597a10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\The Stockades">
+      <UniqueIdentifier>{01e6a14a-956a-4756-a76a-8f0849772208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Deadmines">
+      <UniqueIdentifier>{4bb95330-8a4b-4705-b1a0-d19b034d8050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Wailing Caverns">
+      <UniqueIdentifier>{a4ea7709-b068-493c-878a-5046d0985b0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Razorfen Kraul">
+      <UniqueIdentifier>{49d79ac7-c459-4754-ae10-357511dd4010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Blackfathom Deeps">
+      <UniqueIdentifier>{9c75eb65-3de6-409c-a73c-1f55e523fa76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Uldaman">
+      <UniqueIdentifier>{a3ff0e0d-0cd1-46a1-aeb4-f490858f69f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Gnomeregan">
+      <UniqueIdentifier>{876b8c47-2607-410d-804f-e7bf60ed6289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Sunken Temple">
+      <UniqueIdentifier>{eb228880-c498-4898-9a82-b34632d5f17b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Razorfen Downs">
+      <UniqueIdentifier>{5f657c79-d13f-475a-b079-071cbfd9ee34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Scarlet Monastery">
+      <UniqueIdentifier>{c74183b4-18cb-4703-abc0-7c124e451114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Zul%27Farrak">
+      <UniqueIdentifier>{9b895a2e-3d87-40a6-9945-62e075890f0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Blackrock Spire">
+      <UniqueIdentifier>{ac1d394b-dd46-49c6-992b-95e7cc4e3c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Blackrock Depths">
+      <UniqueIdentifier>{5de10082-82b3-4d6c-9803-0803da207983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Scholomance">
+      <UniqueIdentifier>{50f519d5-8a6c-4993-bdbf-41aefcb5ce64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Stratholme">
+      <UniqueIdentifier>{68d61e20-aba3-4b34-981f-4026d3e8761b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Maraudon">
+      <UniqueIdentifier>{436be315-0692-40af-9b32-cf31591c6c5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Ragefire Chasm">
+      <UniqueIdentifier>{66ab2178-159f-456c-94b5-3fd52074d7f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 2\Dire Maul">
+      <UniqueIdentifier>{bc1193ae-73d7-46a8-beb1-20619367a2fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 3">
+      <UniqueIdentifier>{783bb5b9-1641-443d-bc23-c40a6583951a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 3\Alterac Valley">
+      <UniqueIdentifier>{52b6284e-16e7-4cd9-a166-bafc06931d0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 3\Warsong Gulch">
+      <UniqueIdentifier>{7c7aefb0-b702-4282-92dd-a02c9be5058c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 3\Arathi Basin">
+      <UniqueIdentifier>{cd041445-a7d6-4a82-b38e-fe5a0f81996b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 3\Eye of the Storm">
+      <UniqueIdentifier>{9607ec21-0eba-4cae-a7be-9748b3b6407c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 3\Strand of the Ancients">
+      <UniqueIdentifier>{94413d37-718b-474a-bd48-ba86eac31fd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 3\The Isle of Conquest">
+      <UniqueIdentifier>{19f6e4c8-d527-4ffa-aac5-a2348d0b06d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4">
+      <UniqueIdentifier>{c85ca037-0f42-491b-8e2f-c658313cdbb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1">
+      <UniqueIdentifier>{16d955ec-7953-4199-8f5c-92950b84e399}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Black Morass">
+      <UniqueIdentifier>{182eb7bc-4f90-4939-b247-d6acb48a72e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Shattered Halls">
+      <UniqueIdentifier>{0652ca08-390e-43c3-bc5f-6a0a2e66a176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Blood Furnace">
+      <UniqueIdentifier>{4c591fde-94c3-4535-9280-8882f68f1841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\Hellfire Ramparts">
+      <UniqueIdentifier>{76b7d02c-0325-41bc-b5b1-328be17db6e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Steamvault">
+      <UniqueIdentifier>{26ad7221-f785-4119-a1d3-ed22762f57f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Underbog">
+      <UniqueIdentifier>{3497c733-82c6-4179-93c7-8f5dd311ffe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Slave Pens">
+      <UniqueIdentifier>{10c8d342-45d6-42ff-acd8-4a1e50ec88f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Arcatraz">
+      <UniqueIdentifier>{ee69ddd3-7183-48a4-8010-77feb869fbf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Botanica">
+      <UniqueIdentifier>{296d42d7-1da0-4136-920c-85d5bbaf8935}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\The Mechanar">
+      <UniqueIdentifier>{b4f62d49-c6c0-4f80-8261-eb1f8aad1ce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\Shadow Labyrinth">
+      <UniqueIdentifier>{f9784cb0-f67c-49f2-8f2a-75c4b2b1b8cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\Sethekk Halls">
+      <UniqueIdentifier>{4836d62e-0eae-469f-b691-53f9f459ad3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\Mana-Tombs">
+      <UniqueIdentifier>{33ded8dc-db0e-4ef8-89e4-a174abfebb90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\Auchenai Crypts">
+      <UniqueIdentifier>{8b725641-9a24-4c40-a143-c9d9b663f5f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\Hillsbrad Foothills">
+      <UniqueIdentifier>{825f76e2-0f30-48bf-90dc-ebc38d2651a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 1\Magisters%27 Terrace">
+      <UniqueIdentifier>{f5c81fe4-a427-4adc-b226-023234d268ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2">
+      <UniqueIdentifier>{7d1d04cb-c0af-462b-a2bf-f158c8f7f7d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Utgarde Keep">
+      <UniqueIdentifier>{a3e1296c-8c31-4675-9ec4-f0314991ef82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Utgarde Pinnacle">
+      <UniqueIdentifier>{571bc521-5752-4270-8d7d-8c489496610c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\The Nexus">
+      <UniqueIdentifier>{9d18b9d6-0c1f-41b1-8eda-0bfcbde02a9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\The Oculus">
+      <UniqueIdentifier>{f5f6de33-6e11-4c5c-8dd5-9097f123e349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Culling of Stratholme">
+      <UniqueIdentifier>{f0879c73-5882-4ba6-84ae-511c4444b5f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Halls of Stone">
+      <UniqueIdentifier>{f3ce0797-40f6-4656-a878-09c4014a18a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Drak%27Tharon Keep">
+      <UniqueIdentifier>{204e0248-bccb-4ddb-bce0-3ec1cb1f2ee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Azjol-Nerub">
+      <UniqueIdentifier>{fb60d730-80ea-4750-b717-fd334b4d0e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Halls of Lightning">
+      <UniqueIdentifier>{7f9da2b0-dd4e-4aa7-ba9d-03b7c2b3fd0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Gundrak">
+      <UniqueIdentifier>{47445794-e4b9-4faf-adb1-d9a61e1d1855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Violet Hold">
+      <UniqueIdentifier>{31940ac2-6504-457a-a04f-5a10d6a4512c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Ahn%27kahet">
+      <UniqueIdentifier>{d4d89a33-1b89-4404-9180-37d1b6bac6f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Forge of Souls">
+      <UniqueIdentifier>{efb7d97b-fc2d-451e-83fd-4903bba056df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\TOC">
+      <UniqueIdentifier>{c09c8c09-e832-483d-82d0-9136bc5726a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Pit of Saron">
+      <UniqueIdentifier>{a5df63a1-670e-40fb-9f05-cafeb78b5f62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level 4\Set 2\Halls of Reflection">
+      <UniqueIdentifier>{15a8987e-3fae-467b-afbf-a5d5ce04b497}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts\Level -1">
+      <UniqueIdentifier>{1d286b5f-df16-458c-b202-05cf27e29cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{470f918f-9c14-46a1-8000-b101e91f190b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Setup">
+      <UniqueIdentifier>{33889b64-be52-4a24-9a35-ab1c581c7ca6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaHandler">
+      <UniqueIdentifier>{6e901f93-72a5-4b20-98f9-b76f4484125b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaHandler\Lua">
+      <UniqueIdentifier>{2bec6126-400e-4912-8597-7e4fc8eb6b8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaHandler\Lua\Source">
+      <UniqueIdentifier>{435e3157-72ea-4d9f-b63a-07371bfe07b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaHandler\Lua\Header">
+      <UniqueIdentifier>{1e27037f-d308-44ac-8228-fd489f715ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaHandler\Functions">
+      <UniqueIdentifier>{35fd7bbb-f06f-4268-a235-2f2f9495f1a2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\PrecompiledHeaders\LacrimiStdAfx.cpp">
+      <Filter>Precompiled Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Cities\Ironforge.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Cities\Silvermoon.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Cities\Stormwind.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Cities\Undercity.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Alterac_Mountains.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Arathi_Highlands.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Blasted_Lands.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Burning_Steppes.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Dun_Morogh.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Duskwood.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Eastern_Plaguelands.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Elwynn_Forest.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Eversong_Woods.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Ghostlands.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Hinterlands.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Isle_Of_Quel__Danas.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Loch_Modan.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Searing_Gorge.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Silverpine_Forest.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Stranglethorn_Vale.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Trisfal_Glades.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Western_Plaguelands.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Westfall.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Wetlands.cpp">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Cities\Darnassus.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Cities\Exodar.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Cities\Orgrimmar.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Cities\Thunderbluff.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Ashenvale.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Azshara.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Azuremyst_Isle.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Bloodmyst_Isle.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Darkshore.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Desolace.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Dustwallow_Marsh.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Felwood.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Feralas.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Moonglade.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Mulgore.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Silithus.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Stonetalon_Mountains.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Tanaris.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Teldrassil.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\The_Barrens.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Thousand_Needles.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Ungoro_Crater.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Kalimdor\Winterspring.cpp">
+      <Filter>Scripts\Level 0\Kalimdor\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Blades_Edge_Mountains.cpp">
+      <Filter>Scripts\Level 0\Outlands\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Hellfire_Peninsula.cpp">
+      <Filter>Scripts\Level 0\Outlands\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Nagrand.cpp">
+      <Filter>Scripts\Level 0\Outlands\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Netherstorm.cpp">
+      <Filter>Scripts\Level 0\Outlands\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Shadowmoon_Valley.cpp">
+      <Filter>Scripts\Level 0\Outlands\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Terrokar_Forest.cpp">
+      <Filter>Scripts\Level 0\Outlands\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Zangarmarsh.cpp">
+      <Filter>Scripts\Level 0\Outlands\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Outlands\Cities\Shattrath.cpp">
+      <Filter>Scripts\Level 0\Outlands\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Ebon Hold\Ebon_Hold.cpp">
+      <Filter>Scripts\Level 0\Ebon Hold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Cities\Dalaran.cpp">
+      <Filter>Scripts\Level 0\Northrend\Cities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Borean_Tundra.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Dragonblight.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Grizzly_Hills.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Howling_Fjord.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Icecrown.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Sholazar_Basin.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Storm_Peaks.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 0\Northrend\Zul_Drak.cpp">
+      <Filter>Scripts\Level 0\Northrend\Zones</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Scripts\Level 2\Blackfathom Deeps\Blackfathom_Deeps.cpp">
+      <Filter>Scripts\Level 2\Blackfathom Deeps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Dependencies\Base.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Dependencies\Functions.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Dependencies\Instance_Base.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Setup\Setup.cpp">
+      <Filter>Setup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\LUAEngine.cpp">
+      <Filter>LuaHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lapi.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lauxlib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lbaselib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lcode.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\ldblib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\ldebug.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\ldo.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\ldump.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lfunc.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lgc.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\linit.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\liolib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\llex.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lmathlib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lmem.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\loadlib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lobject.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lopcodes.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\loslib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lparser.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lstate.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lstring.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lstrlib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\ltable.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\ltablib.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\ltm.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lundump.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lvm.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\lzio.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\lua\print.cpp">
+      <Filter>LuaHandler\Lua\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionAura.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionGameObjects.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionGlobal.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionItems.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionPacket.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionSpell.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionTaxi.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\FunctionUnits.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\LuaSqlApi.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\LuaHandler\Functions\TableFunctions.cpp">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Lacrimi.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\PrecompiledHeaders\LacrimiStdAfx.h">
+      <Filter>Precompiled Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level 0\LevelZeroHeaders.h">
+      <Filter>Scripts\Level 0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Cities\Stormwind.h">
+      <Filter>Scripts\Level 0\Eastern Kingdoms\Cities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level 1\LevelOneHeaders.h">
+      <Filter>Scripts\Level 1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level 2\LevelTwoHeaders.h">
+      <Filter>Scripts\Level 2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level 2\Blackfathom Deeps\Blackfathom_Deeps.h">
+      <Filter>Scripts\Level 2\Blackfathom Deeps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level 3\LevelThreeHeaders.h">
+      <Filter>Scripts\Level 3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level 4\LevelFourHeaders.h">
+      <Filter>Scripts\Level 4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Scripts\Level(-1)\UnderLevelHeaders.h">
+      <Filter>Scripts\Level -1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Dependencies\Base.h">
+      <Filter>Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Dependencies\Functions.h">
+      <Filter>Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Dependencies\Instance_Base.h">
+      <Filter>Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Setup\Setup.h">
+      <Filter>Setup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\LUAEngine.h">
+      <Filter>LuaHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lapi.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lauxlib.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lcode.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\ldebug.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\ldo.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lfunc.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lgc.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\llex.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\llimits.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lmem.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lobject.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lopcodes.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lparser.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lstate.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lstring.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\ltable.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\ltm.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lua.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\luaconf.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lualib.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lundump.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lvm.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\lua\lzio.h">
+      <Filter>LuaHandler\Lua\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionAura.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionGameObjects.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionGlobal.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionItems.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionPacket.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionSpell.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionTaxi.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\FunctionUnits.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\LuaSqlApi.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\LuaHandler\Functions\TableFunctions.h">
+      <Filter>LuaHandler\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Lacrimi.h" />
+  </ItemGroup>
+</Project>
