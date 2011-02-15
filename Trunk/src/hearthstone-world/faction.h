@@ -23,8 +23,9 @@
 #define NUM_SANCTUARIES 2
 static const uint32 SANCTUARY_AREAS[NUM_SANCTUARIES] = { 3703, 4395 }; // Shatrath city, Dalaran
 
+SERVER_DECL int intisAttackable(Object* objA, Object* objB, bool CheckStealth = true); // A can attack B?
 SERVER_DECL bool isHostile(Object* objA, Object* objB); // B is hostile for A?
-SERVER_DECL bool isAttackable(Object* objA, Object* objB, bool CheckStealth = true); // A can attack B?
+SERVER_DECL bool isAttackable(Object* objA, Object* objB, bool CheckStealth = true);
 SERVER_DECL bool isCombatSupport(Object* objA, Object* objB); // B combat supports A?;
 SERVER_DECL bool isAlliance(Object* objA); // A is alliance?
 

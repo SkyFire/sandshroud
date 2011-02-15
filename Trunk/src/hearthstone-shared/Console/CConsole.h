@@ -24,9 +24,6 @@
 #ifndef __CConsole_LIB
 #define __CConsole_LIB
 
-#include "Common.h"
-#include "BaseConsole.h"
-
 class ConsoleThread : public ThreadContext
 {
 protected:

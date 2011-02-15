@@ -9443,7 +9443,7 @@ void Player::PvPToggle()
 			return;
 
 		// This is where all the magic happens :P
-		if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == 1))
+		if((m_areaDBC->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == ALLIANCE) || (m_areaDBC->category == AREAC_HORDE_TERRITORY && GetTeam() == HORDE))
 		{
 			if(m_pvpTimer > 0)
 			{

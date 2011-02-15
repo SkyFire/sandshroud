@@ -102,7 +102,6 @@ bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 			gm->SetFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);				// <GM>
 		}
 
-		gm->SetFaction(35);
 		BlueSystemMessage(m_session, "Permission flags set. It will appear above your name and in chat messages until you use .gm off.");
 	}
 	return true;
@@ -118,7 +117,6 @@ bool ChatHandler::HandleGMOffCommand(const char* args, WorldSession *m_session)
 		gm->bGMTagOn = false;
 		gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_GM);			// <GM>
 		gm->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_DEVELOPER);	// <Dev>
-		gm->SetFaction( m_session->GetPlayer()->GetInitialFactionId() );
 		BlueSystemMessage(m_session, "Permission flags removed. Tags will no longer show in chat messages or above your name.");
 	}
 	return true;
