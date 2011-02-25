@@ -3527,7 +3527,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 45182:	// Cheating	Death	buff
 		{
 			sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN;
-			sp->EffectMiscValue[0] = -91;
+			sp->EffectMiscValue[0] = uint32(-91);
 		}break;
 
 		// Wound Poison	Stuff

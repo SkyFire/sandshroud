@@ -1740,7 +1740,7 @@ public:
 	T * LookupEntry(uint32 i)
 	{
 		return LookupEntryForced(i);
-		if(m_entries)
+/*		if(m_entries)
 		{
 			if(i > m_max)
 //				return NULL;
@@ -1755,7 +1755,7 @@ public:
 				return &m_heapBlock[0];
 			else
 				return &m_heapBlock[i];
-		}
+		}*/
 	}
 
 	T * LookupRow(uint32 i)

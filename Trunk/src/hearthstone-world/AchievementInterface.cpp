@@ -234,7 +234,6 @@ void AchievementInterface::GiveRewardsForAchievement(AchievementEntry * ae)
 	else
 	{
 		uint32 Sender = ar->SenderEntry;
-		uint32 language = m_player->GetSession()->language;
 		char* messageheader = ar->MessageHeader;
 		char* messagebody = ar->MessageBody;
 		// Crow: TODO: Localization

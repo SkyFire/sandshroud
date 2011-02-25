@@ -9511,7 +9511,7 @@ void Aura::SendPeriodicAuraLog(const uint64& CasterGuid, Unit* Target, SpellEntr
 	data << uint32(SchoolMask(sp->School));
 	data << uint32(abs_dmg);
 	data << uint32(resisted_damage);
-	data << uint8(crit);
+	data << uint8(isCritical);
 	Target->SendMessageToSet(&data, true);
 }
 

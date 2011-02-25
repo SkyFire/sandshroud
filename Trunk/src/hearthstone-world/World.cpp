@@ -1057,7 +1057,6 @@ float World::GetCPUUsage(bool external)
 	DWORD dwObjectIndex = PROCESS_OBJECT_INDEX;
 	DWORD dwCpuUsageIndex = PROCESSOR_TIME_COUNTER_INDEX;
 
-	int CpuUsage = 0;
 	LONGLONG lnNewValue = 0;
 	PPERF_DATA_BLOCK pPerfData = NULL;
 	LARGE_INTEGER NewPerfTime100nSec = {0};

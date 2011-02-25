@@ -51,11 +51,7 @@ void WarnSystem::Punishment_PermBanAccount(Player * Warner, Player * Warned, uin
 
 void WarnSystem::Punishment_BanCharacter(Player * Warner, Player * Warned, uint32 NewWarnCnt, std::string reason)
 {
-	PlayerInfo * pInfo = Warned->getPlayerInfo();
-	int32 BanTime = 0;
-
-	BanTime = ((NewWarnCnt % 4) * 4) * TIME_HOUR;
-
+	int32 BanTime = ((NewWarnCnt % 4) * 4) * TIME_HOUR;
 	if( Warner && Warner->GetSession() )
 	{
 		sChatHandler.SystemMessage(Warner->GetSession(), "[WarnSystem] Banning character '%s' ingame for '%s'.", Warned->GetName(), reason.c_str());

@@ -635,8 +635,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	}
 
 	int i;
-	int32 statcount = 0;
-	uint32 statcount2 = 0;
+	uint32 statcount = 0, statcount2 = 0;
 	WorldPacket data(SMSG_ITEM_QUERY_SINGLE_RESPONSE, 100000);
 
 	LocalizedItem* li = (language>0) ? sLocalizationMgr.GetLocalizedItem(itemid, language) : NULL;

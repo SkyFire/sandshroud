@@ -29,6 +29,15 @@
 
 #define _GAME // You just lost the game
 
+#ifdef _DEBUG
+#ifdef WIN32
+#pragma warning(disable:4201)
+#endif
+#pragma warning(disable:4510)
+#pragma warning(disable:4512)
+#pragma warning(disable:4610)
+#pragma warning(disable:4706)
+#endif
 
 #include <list>
 #include <vector>

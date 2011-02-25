@@ -1934,8 +1934,6 @@ void ObjectMgr::GenerateLevelUpInfo()
 				uint32 BaseMana = 0;
 				if(Level <= MAX_PREDEFINED_NEXTLEVELXP)
 				{
-					float coefficient = 0;
-
 					// Description: We're calculating the Base Mana and HP that we get per level. These are based off of
 					// the total value at level 80 and are probably incorrect at lower levels.
 					// At a future date, we should attempt to correct them for those levels by decreasing the amount at

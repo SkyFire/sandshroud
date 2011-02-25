@@ -322,7 +322,6 @@ uint32 WarnSystem::GetWarnCountForAccount(std::string WarnedAcct)
 	GetWarnCount << "SELECT `WarnID` FROM warnsystem WHERE `WarnedAcct` = \"" << CharacterDatabase.EscapeString(WarnedAcct.c_str()) << "\"";
 	sLog.outString(GetWarnCount.str().c_str());
 	QueryResult * GWCresult = CharacterDatabase.Query( GetWarnCount.str().c_str() );
-	int WarnCount = 0;
 	if( GWCresult )
 	{
 		do{

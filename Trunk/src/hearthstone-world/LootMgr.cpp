@@ -255,8 +255,8 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 	}
 
 	bool multidifficulty = false;
-	if(szTableName == CREATURE_LOOT || szTableName == OBJECT_LOOT
-		|| szTableName == CREATURE_LOOT_GATHERING) // We have multiple difficulties.
+	if((char*)szTableName == (char*)CREATURE_LOOT || (char*)szTableName == (char*)OBJECT_LOOT
+		|| (char*)szTableName == (char*)CREATURE_LOOT_GATHERING) // We have multiple difficulties.
 	{
 		multidifficulty = true;
 		if(result->GetFieldCount() != 9)

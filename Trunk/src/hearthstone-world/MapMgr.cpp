@@ -133,7 +133,10 @@ MapMgr::~MapMgr()
 	}
 
 	if(ObjectPusherThread != NULL)
+	{
+		delete ObjectPusherThread;
 		ObjectPusherThread = NULL;
+	}
 
 	// Remove objects
 	if(_cells)
@@ -2181,10 +2184,12 @@ bool ObjectUpdateThread::run()
 {
 	SetThreadName("OUT%u", Manager->GetMapId());
 	m_threadRunning = true;
+	PushMap.clear();
 
 	uint8 i;
 	uint64 guid;
 	uint32 cellinfo[4];
+	set<PushInfoContainer*> infoset;
 	HANDLE hThread = INVALID_HANDLE_VALUE;
 	set<PushInfoContainer*>::iterator Citr;
 	PushInfoContainer* infocontainer = NULL;
@@ -2193,12 +2198,13 @@ bool ObjectUpdateThread::run()
 	{
 		if(PushMap.size())
 		{
-			for(itr = PushMap.begin(); itr != PushMap.end(); itr++)
+			for(itr = PushMap.begin(); itr != PushMap.end();)
 			{
 				guid = (*itr).first;
-				if((*itr).second.size())
+				infoset = (*itr).second;
+				if(infoset.size())
 				{
-					for(Citr = (*itr).second.begin(); Citr != (*itr).second.end(); Citr++)
+					for(Citr = infoset.begin(); Citr != infoset.end(); Citr++)
 					{
 						infocontainer = (*Citr);
 						if(infocontainer == NULL)
@@ -2207,13 +2213,14 @@ bool ObjectUpdateThread::run()
 							cellinfo[i] = infocontainer->info[i];
 						Manager->UpdateInrangeSetOnCells(guid, cellinfo[0], cellinfo[1], cellinfo[2], cellinfo[3]);
 
-						(*itr).second.erase(infocontainer);
+						infoset.erase(infocontainer);
 						delete infocontainer;
 						infocontainer = NULL;
 					}
 					(*itr).second.clear();
 				}
 				PushMap.erase(guid);
+				++itr;
 			}
 		}
 

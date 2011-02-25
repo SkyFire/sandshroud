@@ -103,12 +103,15 @@ void WorldSession::HandleGroupPromote(WorldPacket& recv_data)
 	recv_data >> promotetype >> on;
 	recv_data >> guid;
 
-	void(Group::*function_to_call)(PlayerInfo*);
+	void(Group::*function_to_call)(PlayerInfo*) = NULL;
 
 	if(promotetype == 0)
 		function_to_call = &Group::SetMainTank;
 	else if(promotetype==1)
 		function_to_call = &Group::SetMainAssist;
+
+	if(function_to_call == NULL)
+		return;
 
 	if(on == 0)
 		(_player->GetGroup()->*function_to_call)(NULL);

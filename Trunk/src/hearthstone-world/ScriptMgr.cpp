@@ -303,7 +303,6 @@ char *ext;
 		else
 		{
 			uint32 version = vcall();
-			uint32 stype = scall();
 			if(SCRIPTLIB_LOPART(version) == SCRIPTLIB_VERSION_MINOR && SCRIPTLIB_HIPART(version) == SCRIPTLIB_VERSION_MAJOR)
 			{
 				_handles.push_back(((SCRIPT_MODULE)mod));

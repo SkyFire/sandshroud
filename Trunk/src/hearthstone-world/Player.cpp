@@ -3017,7 +3017,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 		Counter = 0;
 		start = (char*)get_next_field.GetString();//buff old system;
 
-		if(!(start == "0"))
+		if(!(start == ((char*)("0"))))
 		{
 			const ItemProf * prof;
 			if(!strchr(start, ' ') && !strchr(start,';'))

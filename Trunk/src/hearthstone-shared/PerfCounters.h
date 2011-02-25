@@ -267,7 +267,7 @@ protected:
 
 		for( DWORD j=0; j < pPerfObj->NumCounters; j++ )
 		{
-			if (pPerfCntr->CounterNameTitleIndex == PROC_ID_COUNTER)
+			if (int(pPerfCntr->CounterNameTitleIndex) == PROC_ID_COUNTER)
 			{
 				pProcIDPerfCntr = pPerfCntr;
 				if (pTheRequestedPerfCntr)
@@ -301,7 +301,7 @@ protected:
 				{
 					int processID  = 0;
 					processID = *(T*)((LPBYTE) pCounterBlock + pProcIDPerfCntr->CounterOffset);
-					if (processID == dwProcessID)
+					if (processID == int(dwProcessID))
 					{
 						bProcessIDExist = TRUE;
 						break;

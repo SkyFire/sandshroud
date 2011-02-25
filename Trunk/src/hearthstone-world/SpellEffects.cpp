@@ -6888,11 +6888,11 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 		pTotem->HealDoneMod = p_caster->HealDoneMod;
 	}
 
-	uint32 j;
+	uint32 j = 0;
 	// Set up AI, depending on our spells.
 	if(hastotemspell)
 	{
-		for( j = 0; j < 3; ++j )
+		for(; j < 3; ++j )
 		{
 			if( TotemSpell->Effect[j] == SPELL_EFFECT_APPLY_AREA_AURA || TotemSpell->Effect[j] == SPELL_EFFECT_PERSISTENT_AREA_AURA || TotemSpell->EffectApplyAuraName[j] == SPELL_AURA_PERIODIC_TRIGGER_SPELL )
 			{

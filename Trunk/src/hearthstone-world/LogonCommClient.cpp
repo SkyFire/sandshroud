@@ -189,8 +189,9 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 	LockWriteBuffer();
 
 	header.opcode = data->GetOpcode();
-	header.size = (uint32)data->size();
-	swap32(&header.size);
+	uint32 size = (uint32)data->size();
+	swap32(&size);
+	header.size = size;
 
 	if(use_crypto && !no_crypto)
 		_sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
