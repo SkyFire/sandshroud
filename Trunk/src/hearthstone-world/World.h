@@ -21,6 +21,7 @@
 #define __WORLD_H
 
 #define IS_INSTANCE(a) (a > 1 && a != 530 && a != 571 && a != 609)
+#define IS_MAIN_MAP(a) (a == 0 || a == 1 || a == 530 || a == 571 || a == 609)
 
 class Object;
 class WorldPacket;

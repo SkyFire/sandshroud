@@ -89,6 +89,7 @@ MapMgr::MapMgr(Map *map, uint32 mapId, uint32 instanceid) : CellHandler<MapCell>
 		SetCollision(false);
 
 	mInstanceScript = NULL;
+	ObjectPusherThread = NULL;
 }
 
 void MapMgr::Init()
@@ -96,8 +97,13 @@ void MapMgr::Init()
 	m_stateManager = new WorldStateManager(this);
 	// Create script interface
 	ScriptInterface = new MapScriptInterface(this);
-	ObjectPusherThread = new ObjectUpdateThread(this);
-	ThreadPool.ExecuteTask(ObjectPusherThread);
+
+	if(IS_MAIN_MAP(GetMapId()))
+	{
+		ObjectPusherThread = new ObjectUpdateThread(this);
+		ThreadPool.ExecuteTask(ObjectPusherThread);
+	}
+
 	sHookInterface.OnContinentCreate(this);
 }
 
@@ -403,7 +409,10 @@ void MapMgr::PushObject(Object* obj)
 	//////////////////////
 	// Build in-range data
 	//////////////////////
-	ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
+	if(ObjectPusherThread != NULL)
+		ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
+	else
+		UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
 }
 
 void MapMgr::PushStaticObject(Object* obj)
@@ -739,7 +748,10 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	uint32 startY = cellY > 0 ? cellY - 1 : 0;
 	MapCell::ObjectSet::iterator iter;
 
-	ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
+	if(ObjectPusherThread != NULL)
+		ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
+	else
+		UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
 	if(obj->IsUnit())
 	{
 		Unit* pobj = TO_UNIT(obj);
