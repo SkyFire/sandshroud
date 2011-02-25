@@ -96,6 +96,8 @@ void MapMgr::Init()
 	m_stateManager = new WorldStateManager(this);
 	// Create script interface
 	ScriptInterface = new MapScriptInterface(this);
+	ObjectPusherThread = new ObjectUpdateThread(this);
+	ThreadPool.ExecuteTask(ObjectPusherThread);
 	sHookInterface.OnContinentCreate(this);
 }
 
@@ -123,6 +125,9 @@ MapMgr::~MapMgr()
 		mInstanceScript->Destroy();
 		mInstanceScript = NULL;
 	}
+
+	if(ObjectPusherThread != NULL)
+		ObjectPusherThread = NULL;
 
 	// Remove objects
 	if(_cells)
@@ -306,8 +311,6 @@ void MapMgr::PushObject(Object* obj)
 	uint32 endY = (cy <= _sizeY) ? cy + 1 : (_sizeY-1);
 	uint32 startX = cx > 0 ? cx - 1 : 0;
 	uint32 startY = cy > 0 ? cy - 1 : 0;
-	uint32 posX, posY;
-	MapCell *cell;
 	uint32 count;
 
 	if(plObj)
@@ -400,15 +403,7 @@ void MapMgr::PushObject(Object* obj)
 	//////////////////////
 	// Build in-range data
 	//////////////////////
-	for (posX = startX; posX <= endX; posX++ )
-	{
-		for (posY = startY; posY <= endY; posY++ )
-		{
-			cell = GetCell(posX, posY);
-			if (cell)
-				UpdateInRangeSet(obj, plObj, cell);
-		}
-	}
+	ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
 }
 
 void MapMgr::PushStaticObject(Object* obj)
@@ -742,24 +737,28 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	uint32 endY = cellY <= _sizeY ? cellY + 1 : (_sizeY-1);
 	uint32 startX = cellX > 0 ? cellX - 1 : 0;
 	uint32 startY = cellY > 0 ? cellY - 1 : 0;
-	uint32 posX, posY;
-	MapCell *cell;
 	MapCell::ObjectSet::iterator iter;
 
-	for (posX = startX; posX <= endX; ++posX )
-	{
-		for (posY = startY; posY <= endY; ++posY )
-		{
-			cell = GetCell(posX, posY);
-			if (cell)
-				UpdateInRangeSet(obj, plObj, cell);
-		}
-	}
-
+	ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
 	if(obj->IsUnit())
 	{
 		Unit* pobj = TO_UNIT(obj);
 		pobj->OnPositionChange();
+	}
+}
+
+void MapMgr::UpdateInrangeSetOnCells(uint64 guid, uint32 startX, uint32 endX, uint32 startY, uint32 endY)
+{
+	MapCell* cell;
+	uint32 posX, posY;
+	for (posX = startX; posX <= endX; posX++ )
+	{
+		for (posY = startY; posY <= endY; posY++ )
+		{
+			cell = GetCell(posX, posY);
+			if (cell)
+				UpdateInRangeSet(guid, cell);
+		}
 	}
 }
 
@@ -878,10 +877,133 @@ void MapMgr::UpdateInRangeSet( Object* obj, Player* plObj, MapCell* cell )
 	}
 }
 
+void MapMgr::UpdateInRangeSet(uint64 guid, MapCell* cell )
+{
+	if( cell == NULL )
+		return;
+
+	int count;
+	float fRange;
+	Object* obj = NULL;
+	Player* plObj = NULL;
+	Object* curObj = NULL;
+	Player* plObj2 = NULL;
+	bool cansee, isvisible;
+	ObjectSet::iterator itr;
+	ObjectSet::iterator iter = cell->Begin();
+	obj = _GetObject(guid);
+	if(obj == NULL)
+		return;
+	if(obj->IsPlayer())
+		plObj = TO_PLAYER(obj);
+
+	while( iter != cell->End() )
+	{
+		curObj = *iter;
+		++iter;
+
+		if( curObj == NULL )
+			continue;
+
+		if( curObj->IsPlayer() && obj->IsPlayer() && plObj && plObj->m_TransporterGUID && plObj->m_TransporterGUID == TO_PLAYER( curObj )->m_TransporterGUID )
+			fRange = 0.0f; // unlimited distance for people on same boat
+		else if( curObj->IsPlayer() && obj->IsPlayer() && plObj && plObj->GetVehicle() && plObj->GetVehicle() == TO_PLAYER( curObj )->GetVehicle() )
+			fRange = 0.0f; // unlimited distance for people on same vehicle
+		else if( curObj->GetTypeFromGUID() == HIGHGUID_TYPE_TRANSPORTER)
+			fRange = 0.0f; // unlimited distance for transporters (only up to 2 cells +/- anyway.)
+		else if( curObj->IsGameObject() && TO_GAMEOBJECT(curObj)->GetInfo() )
+		{	// Crow: Arc, previous changes were only supporting Destructible.
+			uint32 type = TO_GAMEOBJECT(curObj)->GetInfo()->Type;
+			if( type == GAMEOBJECT_TYPE_TRANSPORT || type == GAMEOBJECT_TYPE_MAP_OBJECT || type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING )
+				fRange = 0.0f;
+			else
+				fRange = m_UpdateDistance; // normal distance
+		}
+		else
+			fRange = m_UpdateDistance; // normal distance
+
+		// Add if we are not ourself and range == 0 or distance is withing range.
+		if ( curObj != obj && (fRange == 0.0f || IsInRange(fRange, obj, curObj)))
+		{
+			if( !obj->IsInRangeSet( curObj ) )
+			{
+				// Object in range, add to set
+				obj->AddInRangeObject( curObj );
+				curObj->AddInRangeObject( obj );
+
+				if( curObj->IsPlayer() )
+				{
+					plObj2 = TO_PLAYER( curObj );
+
+					if( plObj2->CanSee( obj ) && !plObj2->IsVisible( obj ) )
+					{
+						count = obj->BuildCreateUpdateBlockForPlayer(&m_createBuffer, plObj2);
+						plObj2->PushCreationData(&m_createBuffer, count);
+						plObj2->AddVisibleObject(obj);
+						m_createBuffer.clear();
+					}
+				}
+
+				if( plObj != NULL )
+				{
+					if( plObj->CanSee( curObj ) && !plObj->IsVisible( curObj ) )
+					{
+						count = curObj->BuildCreateUpdateBlockForPlayer( &m_createBuffer, plObj );
+						plObj->PushCreationData( &m_createBuffer, count );
+						plObj->AddVisibleObject( curObj );
+						m_createBuffer.clear();
+					}
+				}
+			}
+			else
+			{
+				// Check visiblility
+				if( curObj->IsPlayer() )
+				{
+					plObj2 = TO_PLAYER( curObj );
+					cansee = plObj2->CanSee(obj);
+					isvisible = plObj2->GetVisibility(obj, &itr);
+					if(!cansee && isvisible)
+					{
+						plObj2->PushOutOfRange(obj->GetNewGUID());
+						plObj2->RemoveVisibleObject(itr);
+					}
+					else if(cansee && !isvisible)
+					{
+						count = obj->BuildCreateUpdateBlockForPlayer(&m_createBuffer, plObj2);
+						plObj2->PushCreationData(&m_createBuffer, count);
+						plObj2->AddVisibleObject(obj);
+						m_createBuffer.clear();
+					}
+				}
+
+				if( plObj )
+				{
+					cansee = plObj->CanSee( curObj );
+					isvisible = plObj->GetVisibility( curObj, &itr );
+					if(!cansee && isvisible)
+					{
+						plObj->PushOutOfRange( curObj->GetNewGUID() );
+						plObj->RemoveVisibleObject( itr );
+					}
+					else if(cansee && !isvisible)
+					{
+						count = curObj->BuildCreateUpdateBlockForPlayer( &m_createBuffer, plObj );
+						plObj->PushCreationData( &m_createBuffer, count );
+						plObj->AddVisibleObject( curObj );
+						m_createBuffer.clear();
+					}
+				}
+			}
+		}
+	}
+}
+
 void MapMgr::_UpdateObjects()
 {
 	if(!_updates.size() && !_processQueue.size())
 		return;
+
 	Object* pObj;
 	Player* pOwner;
 	unordered_set<Player*  >::iterator it_start, it_end, itr;
@@ -2041,4 +2163,55 @@ void MapMgr::CallScriptUpdate()
 {
 	ASSERT( mInstanceScript );
 	mInstanceScript->UpdateEvent();
+}
+
+bool ObjectUpdateThread::run()
+{
+	SetThreadName("OUT%u", Manager->GetMapId());
+	m_threadRunning = true;
+
+	uint8 i;
+	uint64 guid;
+	uint32 cellinfo[4];
+	HANDLE hThread = INVALID_HANDLE_VALUE;
+	set<PushInfoContainer*>::iterator Citr;
+	PushInfoContainer* infocontainer = NULL;
+	map<uint64, set<PushInfoContainer*> >::iterator itr;
+	while(m_threadRunning)
+	{
+		if(PushMap.size())
+		{
+			for(itr = PushMap.begin(); itr != PushMap.end(); itr++)
+			{
+				guid = (*itr).first;
+				if((*itr).second.size())
+				{
+					for(Citr = (*itr).second.begin(); Citr != (*itr).second.end(); Citr++)
+					{
+						infocontainer = (*Citr);
+						if(infocontainer == NULL)
+							continue;
+						for(i = 0; i < 4; i++)
+							cellinfo[i] = infocontainer->info[i];
+						Manager->UpdateInrangeSetOnCells(guid, cellinfo[0], cellinfo[1], cellinfo[2], cellinfo[3]);
+
+						(*itr).second.erase(infocontainer);
+						delete infocontainer;
+						infocontainer = NULL;
+					}
+					(*itr).second.clear();
+				}
+				PushMap.erase(guid);
+			}
+		}
+
+		WaitForSingleObject(hThread, 100);
+	}
+	return true;
+}
+
+void ObjectUpdateThread::PushDataToObject(uint64 guid, uint32 startx, uint32 endx, uint32 starty, uint32 endy)
+{
+	PushInfoContainer* infocontainer = new PushInfoContainer(startx, endx, starty, endy);
+	PushMap[guid].insert(infocontainer);
 }

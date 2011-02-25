@@ -27,6 +27,7 @@
 class MapCell;
 class Map;
 class Object;
+class ObjectUpdateThread;
 class MapScriptInterface;
 class WorldSession;
 class GameObject;
@@ -78,7 +79,7 @@ class Transporter;
 
 #define CALL_INSTANCE_SCRIPT_EVENT( Mgr, Func ) if ( Mgr != NULL && Mgr->GetScript() != NULL ) Mgr->GetScript()->Func
 
-class SERVER_DECL MapMgr : public CellHandler <MapCell>, public EventableObject,public ThreadContext
+class SERVER_DECL MapMgr : public CellHandler <MapCell>, public EventableObject, public ThreadContext
 {
 	friend class UpdateObjectThread;
 	friend class ObjectUpdaterThread;
@@ -205,6 +206,7 @@ public:
 	bool run();
 	bool Do();
 
+	ObjectUpdateThread* ObjectPusherThread;
 	MapMgr(Map *map, uint32 mapid, uint32 instanceid);
 	~MapMgr();
 	void Init();
@@ -332,8 +334,11 @@ private:
 
 	bool _CellActive(uint32 x, uint32 y);
 	void UpdateInRangeSet(Object* obj, Player* plObj, MapCell* cell);
+	void UpdateInRangeSet(uint64 guid, MapCell* cell);
 
 public:
+	void UpdateInrangeSetOnCells(uint64 guid, uint32 startX, uint32 endX, uint32 startY, uint32 endY);
+
 	// Distance a Player can "see" other objects and receive updates from them (!! ALREADY dist*dist !!)
 	float m_UpdateDistance;
 
@@ -424,6 +429,35 @@ public:
 protected:
 
 	InstanceScript* mInstanceScript;
+};
+
+class PushInfoContainer
+{
+public:
+	PushInfoContainer(uint32 i1, uint32 i2, uint32 i3, uint32 i4)
+	{ info[0] = i1; info[1] = i2; info[2] = i3; info[3] = i4; };
+
+	~PushInfoContainer() {};
+	uint32 info[4];
+};
+
+class SERVER_DECL ObjectUpdateThread :  public ThreadContext
+{
+public:
+	ObjectUpdateThread(MapMgr* mgr) { Manager = mgr; PushMap.clear(); };
+	~ObjectUpdateThread() { Manager = NULL; m_threadRunning = false; };
+	void PushDataToObject(uint64 guid, uint32 startx, uint32 endx, uint32 starty, uint32 endy);
+	bool m_threadRunning;
+
+	bool run();
+	void terminate()
+	{
+		PushMap.clear();
+	};
+
+private:
+	MapMgr* Manager;
+	std::map<uint64, set<PushInfoContainer*> > PushMap;
 };
 
 #endif
