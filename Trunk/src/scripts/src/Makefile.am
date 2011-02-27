@@ -1,1 +1,0 @@
-SUBDIRS = CustomScripts GossipScripts InstanceScripts Lua OtherScripts QuestScripts ServerStatusPlugin WorldPvPScripts
