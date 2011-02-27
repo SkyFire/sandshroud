@@ -215,11 +215,11 @@ public:
 	}
 
 private:
-	MapInfo *	   _mapInfo;
-	TerrainMgr*	 _terrain;
+	MapInfo* _mapInfo;
+	TerrainMgr* _terrain;
 	uint32 _mapId;
 	string name;
-	MapEntry * me;
+	MapEntry* me;
 
 	//new stuff
 	CellSpawns **spawns[_sizeX];

@@ -27,7 +27,9 @@
 class MapCell;
 class Map;
 class Object;
+#ifdef MULTI_THREADED_CELLS
 class ObjectUpdateThread;
+#endif
 class MapScriptInterface;
 class WorldSession;
 class GameObject;
@@ -206,7 +208,9 @@ public:
 	bool run();
 	bool Do();
 
+#ifdef MULTI_THREADED_CELLS
 	ObjectUpdateThread* ObjectPusherThread;
+#endif
 	MapMgr(Map *map, uint32 mapid, uint32 instanceid);
 	~MapMgr();
 	void Init();
@@ -441,6 +445,8 @@ public:
 	uint32 info[4];
 };
 
+#ifdef MULTI_THREADED_CELLS
+
 class SERVER_DECL ObjectUpdateThread :  public ThreadContext
 {
 public:
@@ -459,5 +465,7 @@ private:
 	MapMgr* Manager;
 	std::map<uint64, set<PushInfoContainer*> > PushMap;
 };
+
+#endif
 
 #endif

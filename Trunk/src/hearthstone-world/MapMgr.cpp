@@ -89,7 +89,9 @@ MapMgr::MapMgr(Map *map, uint32 mapId, uint32 instanceid) : CellHandler<MapCell>
 		SetCollision(false);
 
 	mInstanceScript = NULL;
+#ifdef MULTI_THREADED_CELLS
 	ObjectPusherThread = NULL;
+#endif
 }
 
 void MapMgr::Init()
@@ -98,11 +100,13 @@ void MapMgr::Init()
 	// Create script interface
 	ScriptInterface = new MapScriptInterface(this);
 
+#ifdef MULTI_THREADED_CELLS
 	if(IS_MAIN_MAP(GetMapId()))
 	{
 		ObjectPusherThread = new ObjectUpdateThread(this);
 		ThreadPool.ExecuteTask(ObjectPusherThread);
 	}
+#endif
 
 	sHookInterface.OnContinentCreate(this);
 }
@@ -132,11 +136,13 @@ MapMgr::~MapMgr()
 		mInstanceScript = NULL;
 	}
 
+#ifdef MULTI_THREADED_CELLS
 	if(ObjectPusherThread != NULL)
 	{
 		delete ObjectPusherThread;
 		ObjectPusherThread = NULL;
 	}
+#endif
 
 	// Remove objects
 	if(_cells)
@@ -412,10 +418,14 @@ void MapMgr::PushObject(Object* obj)
 	//////////////////////
 	// Build in-range data
 	//////////////////////
+#ifdef MULTI_THREADED_CELLS
 	if(ObjectPusherThread != NULL)
 		ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
 	else
 		UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
+#else
+	UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
+#endif
 }
 
 void MapMgr::PushStaticObject(Object* obj)
@@ -751,10 +761,15 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	uint32 startY = cellY > 0 ? cellY - 1 : 0;
 	MapCell::ObjectSet::iterator iter;
 
+#ifdef MULTI_THREADED_CELLS
 	if(ObjectPusherThread != NULL)
 		ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
 	else
 		UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
+#else
+	UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
+#endif
+
 	if(obj->IsUnit())
 	{
 		Unit* pobj = TO_UNIT(obj);
@@ -2180,6 +2195,8 @@ void MapMgr::CallScriptUpdate()
 	mInstanceScript->UpdateEvent();
 }
 
+#ifdef MULTI_THREADED_CELLS
+
 bool ObjectUpdateThread::run()
 {
 	SetThreadName("OUT%u", Manager->GetMapId());
@@ -2234,3 +2251,5 @@ void ObjectUpdateThread::PushDataToObject(uint64 guid, uint32 startx, uint32 end
 	PushInfoContainer* infocontainer = new PushInfoContainer(startx, endx, starty, endy);
 	PushMap[guid].insert(infocontainer);
 }
+
+#endif
