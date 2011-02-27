@@ -951,11 +951,6 @@ public:
 	bool m_damgeShieldsInUse;
 	std::list<struct DamageProc> m_damageShields;
 	std::list<struct ReflectSpellSchool*> m_reflectSpellSchool;
-
-#ifdef NERF_ENCHANTS
-	std::map<uint32, int32> m_procSpellCounter;
-#endif
-
 	std::list<struct ProcTriggerSpell> m_procSpells;
 	bool HasProcSpell(uint32 spellid);
 

@@ -585,18 +585,16 @@ public:
 	string MapPath;
 	string vMapPath;
 	string MMapPath;
-	bool UnloadMapFiles;
-	bool SpeedhackProtection;
 	bool Collision;
 	bool PathFinding;
-	bool CalculatedHeightChecks;
+
 	bool AHEnabled;
 	int LogonServerType;
-
+	bool DisableBufferSaving;
+	bool SpeedhackProtection;
 	uint32 mInWorldPlayerCount;
+	bool CalculatedHeightChecks;
 	uint32 mAcceptedConnections;
-	uint32 SocketSendBufSize;
-	uint32 SocketRecvBufSize;
 
 	uint32 HordePlayers;
 	uint32 AlliancePlayers;
@@ -624,8 +622,6 @@ public:
 	float flood_caps_pct;
 	bool flood_message;
 	bool gm_force_robes;
-
-	uint32 map_unload_time;
 
 	bool antihack_teleport;
 	bool antihack_speed;

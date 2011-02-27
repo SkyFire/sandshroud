@@ -1428,19 +1428,6 @@ void Object::SetUInt32Value( const uint32 index, const uint32 value )
 				pGroup->HandleUpdateFieldChange( index, TO_PLAYER(this) );
 		}
 
-#ifdef OPTIMIZED_PLAYER_SAVING
-		switch(index)
-		{
-		case UNIT_FIELD_LEVEL:
-		case PLAYER_XP:
-			TO_PLAYER(this)->save_LevelXP();
-			break;
-
-		case PLAYER_FIELD_COINAGE:
-			TO_PLAYER(this)->save_Gold();
-			break;
-		}
-#endif
 		switch (index)
 		{
 			case UNIT_FIELD_POWER1:
@@ -1528,20 +1515,6 @@ void Object::ModUnsigned32Value(uint32 index, int32 mod)
 		// mana and energy regen
 		if( index == UNIT_FIELD_POWER1 || index == UNIT_FIELD_POWER4 )
 			TO_PLAYER( this )->SendPowerUpdate();
-
-#ifdef OPTIMIZED_PLAYER_SAVING
-		switch(index)
-		{
-		case UNIT_FIELD_LEVEL:
-		case PLAYER_XP:
-			TO_PLAYER(this)->save_LevelXP();
-			break;
-
-		case PLAYER_FIELD_COINAGE:
-			TO_PLAYER(this)->save_Gold();
-			break;
-		}
-#endif
 	}
 }
 
@@ -1561,23 +1534,6 @@ void Object::ModSignedInt32Value(uint32 index, int32 value )
 			m_mapMgr->ObjectUpdated(this);
 			m_objectUpdated = true;
 		}
-	}
-
-	if(m_objectTypeId == TYPEID_PLAYER)
-	{
-#ifdef OPTIMIZED_PLAYER_SAVING
-		switch(index)
-		{
-		case UNIT_FIELD_LEVEL:
-		case PLAYER_XP:
-			TO_PLAYER(this)->save_LevelXP();
-			break;
-
-		case PLAYER_FIELD_COINAGE:
-			TO_PLAYER(this)->save_Gold();
-			break;
-		}
-#endif
 	}
 }
 

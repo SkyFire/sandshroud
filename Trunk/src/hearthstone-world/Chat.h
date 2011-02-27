@@ -355,17 +355,6 @@ protected:
 	bool HandleAddGraveCommand(const char* args, WorldSession *m_session);
 	bool HandleAddSHCommand(const char* args, WorldSession *m_session);
 	bool HandleExploreCheatCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketListCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketGetByIdCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketRemoveByIdCommand(const char* args, WorldSession *m_session);
-#ifndef GM_TICKET_MY_MASTER_COMPATIBLE
-	void SendGMSurvey();
-	bool HandleGMTicketAssignToCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketReleaseCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketCommentCommand(const char* args, WorldSession *m_session);
-	bool HandleGMTicketDeletePermanentCommand(const char* args, WorldSession *m_session);
-#endif
-	bool HandleGMTicketToggleTicketSystemStatusCommand(const char* args, WorldSession *m_session);
 	bool HandleAddSkillCommand(const char* args, WorldSession *m_session);
 	bool HandleAddInvItemCommand(const char* args, WorldSession *m_session);
 	bool HandleResetReputationCommand(const char* args, WorldSession *m_session);
@@ -402,9 +391,24 @@ protected:
 	bool HandleNullFollowCommand(const char* args, WorldSession * m_session);
 	bool HandleFormationClearCommand(const char* args, WorldSession * m_session);
 	bool HandleResetSkillsCommand(const char* args, WorldSession * m_session);
-    bool HandleGetSkillLevelCommand(const char* args, WorldSession * m_session);
-    bool HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session);
-    bool HandlePlayerInfo(const char* args, WorldSession * m_session);
+	bool HandleGetSkillLevelCommand(const char* args, WorldSession * m_session);
+	bool HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session);
+	bool HandlePlayerInfo(const char* args, WorldSession * m_session);
+
+	// Tickets
+#ifndef GM_TICKET_MY_MASTER_COMPATIBLE
+	void SendGMSurvey();
+#endif
+	bool HandleGMTicketListCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketGetByIdCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketRemoveByIdCommand(const char* args, WorldSession *m_session);
+#ifndef GM_TICKET_MY_MASTER_COMPATIBLE
+	bool HandleGMTicketAssignToCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketReleaseCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketCommentCommand(const char* args, WorldSession *m_session);
+	bool HandleGMTicketDeletePermanentCommand(const char* args, WorldSession *m_session);
+#endif
+	bool HandleGMTicketToggleTicketSystemStatusCommand(const char* args, WorldSession *m_session);
 
 	//Ban
 	bool HandleBanCharacterCommand(const char* args, WorldSession *m_session);

@@ -46,13 +46,6 @@ World::World()
 	HallowsEnd = false;
 	WintersVeil = false;
 	IsPvPRealm = true;
-	map_unload_time = 0;
-
-#ifndef CLUSTERING
-	SocketSendBufSize = WORLDSOCKET_SENDBUF_SIZE;
-	SocketRecvBufSize = WORLDSOCKET_RECVBUF_SIZE;
-#endif
-
 	m_banTable = NULL;
 	m_speedHackThreshold = -500.0f;
 	m_speedHackLatencyMultiplier = 0.0f;
@@ -1315,8 +1308,6 @@ void World::Rehash(bool load)
 	MapPath = Config.MainConfig.GetStringDefault("Data", "MapPath", "maps");
 	vMapPath = Config.MainConfig.GetStringDefault("Data", "vMapPath", "vmaps");
 	MMapPath = Config.MainConfig.GetStringDefault("Data", "MMapPath", "mmaps");
-	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Data", "UnloadMapFiles", true);
-	map_unload_time = Config.MainConfig.GetIntDefault("Data", "MapUnloadTime", 0);
 
 	// Server Configs
 	StartGold = Config.OptionalConfig.GetIntDefault("Server", "StartGold", 1);
@@ -1394,11 +1385,6 @@ void World::Rehash(bool load)
 	setRate(RATE_ARENAPOINTMULTIPLIER3X, Config.OptionalConfig.GetFloatDefault("Rates", "ArenaMultiplier3x", 1.0f));
 	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.OptionalConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
 	setRate(RATE_EOTS_CAPTURERATE, Config.OptionalConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));
-
-#ifndef CLUSTERING
-	SocketRecvBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "RecvBufSize", WORLDSOCKET_RECVBUF_SIZE);
-	SocketSendBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "SendBufSize", WORLDSOCKET_SENDBUF_SIZE);
-#endif
 
 #ifdef WIN32
 	DWORD current_priority_class = GetPriorityClass( GetCurrentProcess() );

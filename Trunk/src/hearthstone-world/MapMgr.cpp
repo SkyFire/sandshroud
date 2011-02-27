@@ -89,7 +89,7 @@ MapMgr::MapMgr(Map *map, uint32 mapId, uint32 instanceid) : CellHandler<MapCell>
 		SetCollision(false);
 
 	mInstanceScript = NULL;
-#ifdef MULTI_THREADED_CELLS
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 	ObjectPusherThread = NULL;
 #endif
 }
@@ -100,7 +100,7 @@ void MapMgr::Init()
 	// Create script interface
 	ScriptInterface = new MapScriptInterface(this);
 
-#ifdef MULTI_THREADED_CELLS
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 	if(IS_MAIN_MAP(GetMapId()))
 	{
 		ObjectPusherThread = new ObjectUpdateThread(this);
@@ -136,7 +136,7 @@ MapMgr::~MapMgr()
 		mInstanceScript = NULL;
 	}
 
-#ifdef MULTI_THREADED_CELLS
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 	if(ObjectPusherThread != NULL)
 	{
 		delete ObjectPusherThread;
@@ -315,18 +315,16 @@ void MapMgr::PushObject(Object* obj)
 	}
 
 	MapCell *objCell = GetCell(cx,cy);
-	if (!objCell)
-	{
-		objCell = Create(cx,cy);
-		objCell->Init(cx, cy, _mapId, this);
-	}
+	if (!objCell) // Should never fail to create but...
+		if((objCell = Create(cx,cy)) != NULL)
+			objCell->Init(cx, cy, _mapId, this);
 	ASSERT(objCell);
 
+	uint32 count;
 	uint32 endX = (cx <= _sizeX) ? cx + 1 : (_sizeX-1);
 	uint32 endY = (cy <= _sizeY) ? cy + 1 : (_sizeY-1);
 	uint32 startX = cx > 0 ? cx - 1 : 0;
 	uint32 startY = cy > 0 ? cy - 1 : 0;
-	uint32 count;
 
 	if(plObj)
 	{
@@ -418,8 +416,8 @@ void MapMgr::PushObject(Object* obj)
 	//////////////////////
 	// Build in-range data
 	//////////////////////
-#ifdef MULTI_THREADED_CELLS
-	if(ObjectPusherThread != NULL)
+#ifdef MULTI_THREADED_OBJECT_PUSHING
+	if(ObjectPusherThread != NULL && obj->IsPlayer())
 		ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
 	else
 		UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
@@ -754,15 +752,13 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	//////////////////////////////////////
 	// Update in-range set for new objects
 	//////////////////////////////////////
-
-	uint32 endX = cellX <= _sizeX ? cellX + 1 : (_sizeX-1);
-	uint32 endY = cellY <= _sizeY ? cellY + 1 : (_sizeY-1);
 	uint32 startX = cellX > 0 ? cellX - 1 : 0;
 	uint32 startY = cellY > 0 ? cellY - 1 : 0;
-	MapCell::ObjectSet::iterator iter;
+	uint32 endX = cellX <= _sizeX ? cellX + 1 : (_sizeX-1);
+	uint32 endY = cellY <= _sizeY ? cellY + 1 : (_sizeY-1);
 
-#ifdef MULTI_THREADED_CELLS
-	if(ObjectPusherThread != NULL)
+#ifdef MULTI_THREADED_OBJECT_PUSHING
+	if(ObjectPusherThread != NULL && obj->IsPlayer())
 		ObjectPusherThread->PushDataToObject(obj->GetGUID(), startX, endX, startY, endY);
 	else
 		UpdateInrangeSetOnCells(obj->GetGUID(), startX, endX, startY, endY);
@@ -2195,7 +2191,7 @@ void MapMgr::CallScriptUpdate()
 	mInstanceScript->UpdateEvent();
 }
 
-#ifdef MULTI_THREADED_CELLS
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 
 bool ObjectUpdateThread::run()
 {

@@ -27,22 +27,6 @@
 #ifndef __HEARTHSTONECONFIG_H
 #define __HEARTHSTONECONFIG_H
 
-/** Enable/disable hearthstone world server debugging.
- * Enabling this will cause massive spam in the world server window, but will list
- * packets recieved and certian player information.
- * Default: Disabled
- */
-
-//#define _DEBUG 1
-
-/** Enable/disable hearthstone world server optimized player saving.
- * It is not yet complete, things have to be updated, and player account data needs to be fixed.
- * Player guilds need to be updated as well, not saving correctly :|
- * Default: Disabled
- */
-
-//#define OPTIMIZED_PLAYER_SAVING 1
-
 /** Enable/disable Hearthstone world server cluster support.
  * Warning: Hearthstone will no longer function independantly when built in cluster mode.
  * It will require a realmserver to function.
@@ -51,19 +35,6 @@
  */
 //#define CLUSTERING 1
 
-#ifndef ENABLE_IMPROVED_TICKETSYSTEM
-#define GM_TICKET_MY_MASTER_COMPATIBLE
-#endif
-//#undef GM_TICKET_MY_MASTER_COMPATIBLE
-
-/** Use memory mapping for map files for faster access (let OS take care of caching)
- * (currently only available under windows)
- * Only recommended under X64 builds, X86 builds will most likely run out of address space.
- * Default: Disabled
- */
-
-//#define USE_MEMORY_MAPPING_FOR_MAPS
-
 /** Enable/disable Hearthstone's Voice Chat support.
  * While not completely finished (but close!) you can link your Hearthstone server to a voice chat
  * server (also compiled by default) and use the client's ingame voice chat function.
@@ -71,18 +42,15 @@
  * Also, it only works for parties. Custom chat channels are not fully supported yet.
  * However, if you want to play around with it, feel free to enable this define.
  */
-
 //#define VOICE_CHAT 1
 
-/* Crow: Buffer saving.
- * Default: disabled
- */
-#define BUFFER_SAVING 1
-
-// Crow: This will nerf all Enchantments, making all of them pretty much unique internally.
-//#define NERF_ENCHANTS
-
-// Crow: Yea no, don't even try.
+// For Linux, disabled for compile reasons.
 //#define LOAD_LACRIMI
+
+/* This makes it so that object pushing for players is handled in a different
+ * thread than the map manager, so if a player enters a heavily populated area,
+ * he doesn't get a hang up, and information is sent after the player enters world.
+ */
+//#define MULTI_THREADED_OBJECT_PUSHING
 
 #endif		// __HEARTHSTONECONFIG_H

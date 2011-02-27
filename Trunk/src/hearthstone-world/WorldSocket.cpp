@@ -43,7 +43,7 @@ struct ServerPktHeader
 
 bool BuildCallBackForMangos(WorldPacket & data, string name);
 
-WorldSocket::WorldSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, sWorld.SocketSendBufSize, sWorld.SocketRecvBufSize, false, peer)
+WorldSocket::WorldSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, WORLDSOCKET_SENDBUF_SIZE, WORLDSOCKET_RECVBUF_SIZE, false, peer)
 {
 	Authed = false;
 	mSize = mOpcode = mRemaining = 0;

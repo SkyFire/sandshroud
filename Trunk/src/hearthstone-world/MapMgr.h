@@ -27,7 +27,7 @@
 class MapCell;
 class Map;
 class Object;
-#ifdef MULTI_THREADED_CELLS
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 class ObjectUpdateThread;
 #endif
 class MapScriptInterface;
@@ -208,7 +208,7 @@ public:
 	bool run();
 	bool Do();
 
-#ifdef MULTI_THREADED_CELLS
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 	ObjectUpdateThread* ObjectPusherThread;
 #endif
 	MapMgr(Map *map, uint32 mapid, uint32 instanceid);
@@ -445,7 +445,7 @@ public:
 	uint32 info[4];
 };
 
-#ifdef MULTI_THREADED_CELLS
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 
 class SERVER_DECL ObjectUpdateThread :  public ThreadContext
 {

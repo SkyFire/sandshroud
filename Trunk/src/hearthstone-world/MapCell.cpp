@@ -93,7 +93,7 @@ void MapCell::SetActivity(bool state)
 				(*itr)->Deactivate(_mapmgr);
 		}
 
-		if(sWorld.map_unload_time && !_unloadpending)
+		if(!_unloadpending)
 			QueueUnloadPending();
 
 		if (_mapmgr->IsCollisionEnabled())
@@ -302,7 +302,7 @@ void MapCell::QueueUnloadPending()
 
 	_unloadpending = true;
 	DEBUG_LOG("MapCell", "Queueing pending unload of cell %u %u", _x, _y);
-	sEventMgr.AddEvent(_mapmgr, &MapMgr::UnloadCell,(uint32)_x,(uint32)_y,MAKE_CELL_EVENT(_x,_y),sWorld.map_unload_time * 1000,1,0);
+	sEventMgr.AddEvent(_mapmgr, &MapMgr::UnloadCell,(uint32)_x,(uint32)_y,MAKE_CELL_EVENT(_x,_y), 60000,1,0);
 }
 
 void MapCell::CancelPendingUnload()

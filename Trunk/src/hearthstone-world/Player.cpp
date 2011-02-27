@@ -2423,67 +2423,58 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	sHookInterface.OnPlayerSaveToDB(this, buf);
 
 	// Skills
-#ifndef BUFFER_SAVING
-	_SaveSkillsToDB(NULL);
-#else
-	_SaveSkillsToDB(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveSkillsToDB(NULL);
+	else
+		_SaveSkillsToDB(buf);
 
 	// Talents
-#ifndef BUFFER_SAVING
-	_SaveTalentsToDB(NULL);
-#else
-	_SaveTalentsToDB(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveTalentsToDB(NULL);
+	else
+		_SaveTalentsToDB(buf);
 
 	// Spells
-#ifndef BUFFER_SAVING
-	_SaveSpellsToDB(NULL);
-#else
-	_SaveSpellsToDB(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveSpellsToDB(NULL);
+	else
+		_SaveSpellsToDB(buf);
 
 	// Equipment Sets
-#ifndef BUFFER_SAVING
-	_SaveEquipmentSets(NULL);
-#else
-	_SaveEquipmentSets(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveEquipmentSets(NULL);
+	else
+		_SaveEquipmentSets(buf);
 
 	// Area Phase Info
-#ifndef BUFFER_SAVING
-	_SaveAreaPhaseInfo(NULL);
-#else
-	_SaveAreaPhaseInfo(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveAreaPhaseInfo(NULL);
+	else
+		_SaveAreaPhaseInfo(buf);
 
 	// Glyphs
-#ifndef BUFFER_SAVING
-	_SaveGlyphsToDB(NULL);
-#else
-	_SaveGlyphsToDB(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveGlyphsToDB(NULL);
+	else
+		_SaveGlyphsToDB(buf);
 
 	// Inventory
-#ifndef BUFFER_SAVING
-	 GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, NULL);
-#else
-	GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, NULL);
+	else
+		GetItemInterface()->mSaveItemsToDatabase(bNewCharacter, buf);
 
 	// save quest progress
-#ifndef BUFFER_SAVING
-	_SaveQuestLogEntry(NULL);
-#else
-	_SaveQuestLogEntry(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveQuestLogEntry(NULL);
+	else
+		_SaveQuestLogEntry(buf);
 
 	// Tutorials
-#ifndef BUFFER_SAVING
-	_SaveTutorials(NULL);
-#else
-	_SaveTutorials(buf);
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SaveTutorials(NULL);
+	else
+		_SaveTutorials(buf);
 
 	// GM Ticket
 	GM_Ticket* ticket = objmgr.GetGMTicketByPlayer(GetGUID());
@@ -2491,33 +2482,33 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 		objmgr.SaveGMTicket(ticket, buf);
 
 	// Cooldown Items
-#ifndef BUFFER_SAVING
-	_SavePlayerCooldowns( NULL );
-#else
-	_SavePlayerCooldowns( buf );
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		_SavePlayerCooldowns( NULL );
+	else
+		_SavePlayerCooldowns( buf );
 
 	// Pets
 	if(getClass() == HUNTER || getClass() == WARLOCK)
 	{
-#ifndef BUFFER_SAVING
-		_SavePet(NULL);
-		_SavePetSpells(NULL);
-#else
-		_SavePet(buf);
-		_SavePetSpells(buf);
-#endif // BUFFER_SAVING
+		if(sWorld.DisableBufferSaving)
+		{
+			_SavePet(NULL);
+			_SavePetSpells(NULL);
+		}
+		else
+		{
+			_SavePet(buf);
+			_SavePetSpells(buf);
+		}
 	}
 
 	// Achievements
-#ifndef BUFFER_SAVING
-	GetAchievementInterface()->SaveToDB( NULL );
-#else
-	GetAchievementInterface()->SaveToDB( buf );
-#endif // BUFFER_SAVING
+	if(sWorld.DisableBufferSaving)
+		GetAchievementInterface()->SaveToDB( NULL );
+	else
+		GetAchievementInterface()->SaveToDB( buf );
 
 	m_nextSave = getMSTime()+300000;
-
 	if(buf)
 		CharacterDatabase.AddQueryBuffer(buf);
 }
@@ -8595,10 +8586,6 @@ void Player::ZoneUpdate(uint32 ZoneId)
 		}
 	}
 
-#ifdef OPTIMIZED_PLAYER_SAVING
-	save_Zone();
-#endif
-
 	// send new world states
 	ForceAreaUpdate();
 
@@ -11212,266 +11199,6 @@ void Player::EventTalentHeartOfWildChange(bool apply)
 		UpdateStats();
 	}
 }
-
-/************************************************************************/
-/* New Save System														*/
-/************************************************************************/
-#ifdef OPTIMIZED_PLAYER_SAVING
-
-void Player::save_LevelXP()
-{
-	CharacterDatabase.Execute("UPDATE characters SET level = %u, xp = %u WHERE guid = %u", m_uint32Values[UNIT_FIELD_LEVEL], m_uint32Values[PLAYER_XP], m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_PositionHP()
-{
-	CharacterDatabase.Execute("UPDATE characters SET current_hp = %u, current_power = %u, positionX = '%f', positionY = '%f', positionZ = '%f', orientation = '%f', mapId = %u, instance_id = %u WHERE guid = %u",
-		m_uint32Values[UNIT_FIELD_HEALTH], m_uint32Values[UNIT_FIELD_POWER1+GetPowerType()], m_position.x, m_position.y, m_position.z, m_position.o, m_mapId, m_instanceId, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Gold()
-{
-	CharacterDatabase.Execute("UPDATE characters SET gold = %u WHERE guid = %u", m_uint32Values[PLAYER_FIELD_COINAGE], m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_GuildData()
-{
-	if(myGuild)
-	{
-		string escaped_note = m_playerInfo->publicNote ? CharacterDatabase.EscapeString(m_playerInfo->publicNote) : "";
-		string escaped_note2 = m_playerInfo->officerNote ?  CharacterDatabase.EscapeString(m_playerInfo->officerNote) : "";
-		CharacterDatabase.Execute("UPDATE characters SET guildid=%u, guildRank=%u, publicNote='%s', officerNote='%s' WHERE guid = %u",
-			GetGuildId(), GetGuildRank(), escaped_note.c_str(), escaped_note2.c_str(), m_uint32Values[OBJECT_FIELD_GUID]);
-	}
-	else
-	{
-		CharacterDatabase.Execute("UPDATE characters SET guildid = 0, guildRank = 0, publicNote = '', officerNote = '' WHERE guid = %u",
-			m_uint32Values[OBJECT_FIELD_GUID]);
-	}
-}
-
-void Player::save_ExploreData()
-{
-	char buffer[2048] = {0};
-	int p = 0;
-	for(uint32 i = 0; i < 64; i++)
-	{
-		p += sprintf(&buffer[p], "%u,", m_uint32Values[PLAYER_EXPLORED_ZONES_1 + i]);
-	}
-
-	ASSERT(p < 2048);
-	CharacterDatabase.Execute("UPDATE characters SET exploration_data = '%s' WHERE guid = %u", buffer, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Honor()
-{
-	CharacterDatabase.Execute("UPDATE characters SET honorPointsToAdd = %u, killsToday = %u, killsYesterday = %u, killsLifeTime = %u, honorToday = %u, honorYesterday = %u, honorPoints = %u, arenaPoints = %u WHERE guid = %u",
-		m_honorPointsToAdd, m_killsToday, m_killsYesterday, m_killsLifetime, m_honorToday, m_honorYesterday, m_honorPoints, m_arenaPoints, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Skills()
-{
-	char buffer[6000] = {0};
-	int p = 0;
-
-	for(SkillMap::iterator itr = m_skills.begin(); itr != m_skills.end(); itr++)
-	{
-		if(itr->first && itr->second.Skill->type != SKILL_TYPE_LANGUAGE)
-			p += sprintf(&buffer[p], "%u;%u;%u;", itr->first, itr->second.CurrentValue, itr->second.MaximumValue);
-	}
-
-	ASSERT(p < 6000);
-	CharacterDatabase.Execute("UPDATE characters SET skills = '%s' WHERE guid = %u", buffer, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Reputation()
-{
-	char buffer[10000] = {0};
-	int p = 0;
-
-	ReputationMap::iterator iter = m_reputation.begin();
-	for(; iter != m_reputation.end(); iter++)
-	{
-		p += sprintf(&buffer[p], "%d,%d,%d,%d,",
-			iter->first, iter->second->flag, iter->second->baseStanding, iter->second->standing);
-	}
-
-	ASSERT(p < 10000);
-	CharacterDatabase.Execute("UPDATE characters SET reputation = '%s' WHERE guid = %u", buffer, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Actions()
-{
-	char buffer[2048] = {0};
-	int p = 0;
-
-	for(uint32 i = 0; i < 120; i++)
-	{
-		p += sprintf(&buffer[p], "%u,%u,%u,", mActions[i].Action, mActions[i].Misc, mActions[i].Type);
-	}
-
-	ASSERT(p < 2048);
-	CharacterDatabase.Execute("UPDATE characters SET actions = '%s' WHERE guid = %u", buffer, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_BindPosition()
-{
-	CharacterDatabase.Execute("UPDATE characters SET bindpositionX = '%f', bindpositionY = '%f', bindpositionZ = '%f', bindmapId = %u, bindzoneId = %u WHERE guid = %u",
-		m_bind_pos_x, m_bind_pos_y, m_bind_pos_z, m_bind_mapid, m_bind_zoneid, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_EntryPoint()
-{
-	CharacterDatabase.Execute("UPDATE characters SET entrypointmap = %u, entrypointx = '%f', entrypointy = '%f', entrypointz = '%f', entrypointo = '%f', entrypointinstance = %u WHERE guid = %u",
-		m_bgEntryPointMap, m_bgEntryPointX, m_bgEntryPointY, m_bgEntryPointZ, m_bgEntryPointO, m_bgEntryPointInstance, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Taxi()
-{
-	char buffer[1024] = {0};
-	int p = 0;
-	for(uint32 i = 0; i < 12; i++)
-		p += sprintf(&buffer[p], "%u ", m_taximask[i]);
-
-	if(m_onTaxi) {
-		CharacterDatabase.Execute("UPDATE characters SET taximask = '%s', taxi_path = %u, taxi_lastnode = %u, taxi_mountid = %u WHERE guid = %u",
-			buffer, m_CurrentTaxiPath->GetID(), lastNode, m_uint32Values[UNIT_FIELD_MOUNTDISPLAYID], m_uint32Values[OBJECT_FIELD_GUID]);
-	}
-	else
-	{
-		CharacterDatabase.Execute("UPDATE characters SET taximask = '%s', taxi_path = 0, taxi_lastnode = 0, taxi_mountid = 0 WHERE guid = %u",
-			buffer, m_uint32Values[OBJECT_FIELD_GUID]);
-	}
-}
-
-void Player::save_Zone()
-{
-	CharacterDatabase.Execute("UPDATE characters SET zoneId = %u WHERE guid = %u", m_zoneId, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Spells()
-{
-	char buffer[10000] = {0};
-	char buffer2[10000] = {0};
-	uint32 p= 0,q= 0;
-
-	SpellSet::iterator itr = mSpells.begin();
-	for(; itr != mSpells.end(); itr++)
-	{
-		p += sprintf(&buffer[p], "%u,", *itr);
-	}
-
-	CharacterDatabase.Execute("UPDATE characters SET spells = '%s', deleted_spells = '%s' WHERE guid = %u",
-		buffer, buffer2, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_InstanceType()
-{
-	CharacterDatabase.Execute("UPDATE characters SET instancetype = %u WHERE guid = %u", iInstanceType, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Misc()
-{
-	uint32 playedt = UNIXTIME - m_playedtime[2];
-	m_playedtime[0] += playedt;
-	m_playedtime[1] += playedt;
-	m_playedtime[2] += playedt;
-
-	uint32 player_flags = m_uint32Values[PLAYER_FLAGS];
-	{
-		// Remove un-needed and problematic player flags from being saved :p
-		if(player_flags & PLAYER_FLAG_PARTY_LEADER)
-			player_flags &= ~PLAYER_FLAG_PARTY_LEADER;
-		if(player_flags & PLAYER_FLAG_AFK)
-			player_flags &= ~PLAYER_FLAG_AFK;
-		if(player_flags & PLAYER_FLAG_DND)
-			player_flags &= ~PLAYER_FLAG_DND;
-		if(player_flags & PLAYER_FLAG_GM)
-			player_flags &= ~PLAYER_FLAG_GM;
-		if(player_flags & PLAYER_FLAG_PVP_TOGGLE)
-			player_flags &= ~PLAYER_FLAG_PVP_TOGGLE;
-		if(player_flags & PLAYER_FLAG_FREE_FOR_ALL_PVP)
-			player_flags &= ~PLAYER_FLAG_FREE_FOR_ALL_PVP;
-	}
-
-	CharacterDatabase.Execute("UPDATE characters SET totalstableslots = %u, first_login = 0, TalentResetTimes = %u, playedTime = '%u %u %u ', isResting = %u, restState = %u, restTime = %u, timestamp = %u, watched_faction_index = %u, ammo_id = %u, available_prof_points = %u, available_talent_points = %u, bytes = %u, bytes2 = %u, player_flags = %u, player_bytes = %u",
-		GetStableSlotCount(), GetTalentResetTimes(), m_playedtime[0], m_playedtime[1], playedt, uint32(m_isResting), uint32(m_restState), m_restAmount, UNIXTIME,
-		m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX], m_uint32Values[PLAYER_AMMO_ID], m_uint32Values[PLAYER_CHARACTER_POINTS+1],
-		m_uint32Values[PLAYER_CHARACTER_POINTS], m_uint32Values[PLAYER_BYTES], m_uint32Values[PLAYER_BYTES_2], player_flags,
-		m_uint32Values[PLAYER_FIELD_BYTES],
-		m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_PVP()
-{
-	CharacterDatabase.Execute("UPDATE characters SET pvprank = %u, selected_pvp_title = %u, available_pvp_title = %u WHERE guid = %u",
-		uint32(GetPVPRank()), m_uint32Values[PLAYER_CHOSEN_TITLE], m_uint32Values[PLAYER__FIELD_KNOWN_TITLES], m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-void Player::save_Auras()
-{
-	char buffer[10000];
-	uint32 p = 0;
-
-	for(uint32 x= 0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
-	{
-		if( m_auras[x] != NULL )
-		{
-			Aura* aur=m_auras[x];
-			bool skip = false;
-			for(uint32 i = 0; i < 3; i++)
-			{
-				if(aur->m_spellProto->Effect[i] == SPELL_EFFECT_APPLY_AREA_AURA ||
-					aur->m_spellProto->Effect[i] == SPELL_EFFECT_ADD_FARSIGHT)
-				{
-					skip = true;
-					break;
-				}
-			}
-
-			// skipped spells due to bugs
-			switch(aur->m_spellProto->Id)
-			{
-			case 12043: // Presence of mind
-			case 11129: // Combustion
-			case 28682: // Combustion proc
-			case 16188: // Natures Swiftness
-			case 17116: // Natures Swiftness
-			case 34936: // Backlash
-			case 35076: // Blessing of A'dal
-			case 23333:	// WSG
-			case 23335:	// WSG
-				skip = true;
-				break;
-			}
-
-			//disabled proc spells until proper loading is fixed. Some spells tend to block or not remove when restored
-			if(aur->GetSpellProto()->procFlags)
-			{
-				//				OUT_DEBUG("skipping aura %d because has flags %d",aur->GetSpellId(),aur->GetSpellProto()->procFlags);
-				skip = true;
-			}
-			//disabled proc spells until proper loading is fixed. We cannot recover the charges that were used up. Will implement later
-			if(aur->GetSpellProto()->procCharges)
-			{
-				//				OUT_DEBUG("skipping aura %d because has proccharges %d",aur->GetSpellId(),aur->GetSpellProto()->procCharges);
-				skip = true;
-			}
-			//we are going to cast passive spells anyway on login so no need to save auras for them
-			if(aur->IsPassive())
-				skip = true;
-
-			if(skip)continue;
-			uint32 d=aur->GetTimeLeft();
-			if(d>3000)
-				p += sprintf(buffer, "%u,%u,", aur->GetSpellId(), d);
-		}
-	}
-
-	CharacterDatabase.Execute("UPDATE characters SET auras = '%s' WHERE guid = %u", buffer, m_uint32Values[OBJECT_FIELD_GUID]);
-}
-
-#endif
 
 void Player::EventGroupFullUpdate()
 {

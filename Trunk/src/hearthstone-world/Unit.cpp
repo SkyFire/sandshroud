@@ -250,9 +250,6 @@ Unit::Unit()
 
 	m_damageShields.clear();
 	m_reflectSpellSchool.clear();
-#ifdef NERF_ENCHANTS
-	m_procSpellCounter.clear();
-#endif
 	m_procSpells.clear();
 	m_chargeSpells.clear();
 	m_chargeSpellRemoveQueue.clear();
@@ -346,10 +343,6 @@ Unit::~Unit()
 	for (std::list<ReflectSpellSchool*>::iterator itr=m_reflectSpellSchool.begin(); itr!=m_reflectSpellSchool.end(); itr++)
 		delete (*itr);
 	m_reflectSpellSchool.clear();
-
-#ifdef NERF_ENCHANTS
-	m_procSpellCounter.clear();
-#endif
 	m_procSpells.clear();
 
 	DamageTakenPctModPerCaster.clear();

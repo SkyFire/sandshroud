@@ -105,26 +105,11 @@ private:
 	/// We don't want to be reading from a file from more than one thread at once
 	Mutex mutex;
 
-#ifndef USE_MEMORY_MAPPING_FOR_MAPS
-
 	/// Our main file descriptor for accessing the binary terrain file.
 	FILE * FileDescriptor;
 
 	/// This holds the offsets of the cell information for each cell.
 	uint32 CellOffsets[_sizeX][_sizeY];
-
-#else
-
-	/// Mapped file handle
-	HANDLE hMappedFile;
-	HANDLE hMap;
-	uint32 mFileSize;
-
-	/// This holds the offsets of the cell information for each cell.
-	uint32 CellOffsets[_sizeX][_sizeY];
-	uint8 * m_Memory;
-
-#endif
 
 	/// Our storage array. This contains pointers to all allocated CellInfo's.
 	CellTerrainInformation *** CellInformation;

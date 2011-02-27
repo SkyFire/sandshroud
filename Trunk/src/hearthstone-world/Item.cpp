@@ -637,88 +637,71 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 				{
 					if( Apply && Entry->spell[c] != 0 )
 					{
+						// Create a proc trigger spell
+						ProcTriggerSpell TS;
+						memset(&TS, 0, sizeof(ProcTriggerSpell));
+						TS.caster = m_owner->GetGUID();
+						TS.procFlags = PROC_ON_MELEE_ATTACK;
+						TS.origId = 0;
+						TS.procflags2 = 0;
+						TS.SpellClassMask[0] = 0;
+						TS.SpellClassMask[1] = 0;
+						TS.SpellClassMask[2] = 0;
+						TS.ProcType = 0;
+						TS.LastTrigger = 0;
+						TS.procValue = 0;
+						TS.procCharges = 0;
+						TS.procChance = 10;
 
-#ifdef NERF_ENCHANTS
-						if(!m_owner->HasProcSpell(Entry->spell[c]))
+						if(ItemSlot == EQUIPMENT_SLOT_MAINHAND)
+							TS.weapon_damage_type = 1; // Proc only on main hand attacks
+						else if(ItemSlot == EQUIPMENT_SLOT_OFFHAND)
+							TS.weapon_damage_type = 2; // Proc only on off hand attacks
+						else
+							TS.weapon_damage_type = 0; // Doesn't depend on weapon
+
+						/* This needs to be modified based on the attack speed of the weapon.
+						 * Secondly, need to assign some static chance for instant attacks (ss,
+						 * gouge, etc.) */
+						if( GetProto()->Class == ITEM_CLASS_WEAPON )
 						{
-#endif
-
-//							m_owner->m_procSpellCounter[Entry->spell[c]] = 0;
-							// Create a proc trigger spell
-							ProcTriggerSpell TS;
-							memset(&TS, 0, sizeof(ProcTriggerSpell));
-							TS.caster = m_owner->GetGUID();
-							TS.procFlags = PROC_ON_MELEE_ATTACK;
-							TS.origId = 0;
-							TS.procflags2 = 0;
-							TS.SpellClassMask[0] = 0;
-							TS.SpellClassMask[1] = 0;
-							TS.SpellClassMask[2] = 0;
-							TS.ProcType = 0;
-							TS.LastTrigger = 0;
-							TS.procValue = 0;
-							TS.procCharges = 0;
-							TS.procChance = 10;
-
-							if(ItemSlot == EQUIPMENT_SLOT_MAINHAND)
-								TS.weapon_damage_type = 1; // Proc only on main hand attacks
-							else if(ItemSlot == EQUIPMENT_SLOT_OFFHAND)
-								TS.weapon_damage_type = 2; // Proc only on off hand attacks
-							else
-								TS.weapon_damage_type = 0; // Doesn't depend on weapon
-
-							/* This needs to be modified based on the attack speed of the weapon.
-							 * Secondly, need to assign some static chance for instant attacks (ss,
-							 * gouge, etc.) */
-							if( GetProto()->Class == ITEM_CLASS_WEAPON )
+							if( !Entry->min[c] )
 							{
-								if( !Entry->min[c] )
-								{
-									float speed = (float)GetProto()->Delay;
+								float speed = (float)GetProto()->Delay;
 
-									/////// procChance calc ///////
-									float ppm = 0;
-									SpellEntry* sp = dbcSpell.LookupEntry( Entry->spell[c] );
-									if( sp )
+								/////// procChance calc ///////
+								float ppm = 0;
+								SpellEntry* sp = dbcSpell.LookupEntry( Entry->spell[c] );
+								if( sp )
+								{
+									switch( sp->NameHash )
 									{
-										switch( sp->NameHash )
-										{
-										case SPELL_HASH_FROSTBRAND_ATTACK:
-											ppm = 9;
-											break;
-										}
+									case SPELL_HASH_FROSTBRAND_ATTACK:
+										ppm = 9;
+										break;
 									}
-									if( ppm != 0 )
-									{
-										float pcount = 60/ppm;
-										float chance = (speed/10) / pcount;
-										TS.procChance = (uint32)chance;
-									}
-									else
-										TS.procChance = (uint32)( speed / 600.0f );
-									///////////////////////////////
+								}
+								if( ppm != 0 )
+								{
+									float pcount = 60/ppm;
+									float chance = (speed/10) / pcount;
+									TS.procChance = (uint32)chance;
 								}
 								else
-									TS.procChance = Entry->min[c];
+									TS.procChance = (uint32)( speed / 600.0f );
+								///////////////////////////////
 							}
-
-							DEBUG_LOG( "Enchant", "Setting procChance to %u%%.", TS.procChance );
-							TS.deleted = false;
-							TS.spellId = Entry->spell[c];
-							m_owner->m_procSpells.push_back( TS );
-#ifdef NERF_ENCHANTS
+							else
+								TS.procChance = Entry->min[c];
 						}
-						m_owner->m_procSpellCounter[Entry->spell[c]]++;
-#endif
+
+						DEBUG_LOG( "Enchant", "Setting procChance to %u%%.", TS.procChance );
+						TS.deleted = false;
+						TS.spellId = Entry->spell[c];
+						m_owner->m_procSpells.push_back( TS );
 					}
 					else
 					{
-#ifdef NERF_ENCHANTS
-						m_owner->m_procSpellCounter[Entry->spell[c]]--;
-						if(m_owner->m_procSpellCounter[Entry->spell[c]] > 0)
-							return;
-#endif
-
 						// Remove the proctriggerspell
 						uint32 SpellId;
 						list< struct ProcTriggerSpell >::iterator itr/*, itr2*/;
