@@ -187,15 +187,7 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	uint32 LevelGroup = GetLevelGrouping(m_session->GetPlayer()->getLevel());
 
 	WorldPacket data(SMSG_BATTLEFIELD_LIST, 18);
-	if(random)
-		data << uint64(0);
-	else
-	{
-		if( requestguid == 0 )
-			data << uint64( m_session->GetPlayer()->GetGUID() );
-		else
-			data << uint64( requestguid );
-	}
+	data << uint64(requestguid);
 	data << uint8(requestguid ? 0 : 1);				// Joining from Player Screen?
 	data << BattlegroundType;						// BG ID
 	data << uint8(IS_ARENA(BattlegroundType));		// unk 3.3

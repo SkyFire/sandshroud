@@ -66,7 +66,7 @@ void WorldSession::HandleBattlefieldListOpcode(WorldPacket &recv_data)
 	uint32 battlegroundType;
 	uint16 unkinfo;
 	recv_data >> battlegroundType >> unkinfo;
-	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, 0);
+	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, ((battlegroundType == 32) ? 0 : _player->GetGUID()));
 }
 
 void WorldSession::SendBattlegroundList(Creature* pCreature, uint32 type)
