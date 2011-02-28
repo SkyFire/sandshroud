@@ -767,7 +767,7 @@ public:
 	void SendCharterRequest(Creature* pCreature);
 	void SendTaxiList(Creature* pCreature);
 	void SendInnkeeperBind(Creature* pCreature);
-	void SendBattlegroundList(Creature* pCreature, uint32 mapid);
+	void SendBattlegroundList(Creature* pCreature, uint32 type);
 	void SendBankerList(Creature* pCreature);
 	void SendTabardHelp(Creature* pCreature);
 	void SendAuctionList(Creature* pCreature);

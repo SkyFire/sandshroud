@@ -218,7 +218,8 @@ const char* randompropsFormat = "usuuuxxxxxxxxxxxxxxxxxxx";
 const char* areatableFormat = "uuuuuxxxxxusxxxxxxxxxxxxxxxxuxxxxxxx";
 const char* factiontemplatedbcFormat = "uuuuuuuuuuuuuu";
 const char* auctionhousedbcFormat = "uuuuxxxxxxxxxxxxxxxxx";
-const char* factiondbcFormat = "uiuuuuuuuuuuuuuuuuuxxxxssssssssssssssssxxxxxxxxxxxxxxxxxx";
+const char* BattleMasterEntryFormat = "uiiiiiiiiuusxxxxxxxxxxxxxxxuuxuu";
+const char* factiondbcFormat = "uiuuuuuuuuuuuuuuuuxxxxxssssssssssssssssxxxxxxxxxxxxxxxxxx";
 const char* dbctaxinodeFormat = "uufffxxxxxxxxxxxxxxxxxuu";
 const char* dbctaxipathFormat = "uuuu";
 const char* dbctaxipathnodeFormat = "uuuufffuuxx";
@@ -330,6 +331,8 @@ bool LoadDBCs(const char* datapath)
 	LOAD_DBC(format("%s/AreaTable.dbc", datapath).c_str(), areatableFormat, true, dbcArea, true);
 	/* Needed for: */
 	LOAD_DBC(format("%s/AuctionHouse.dbc", datapath).c_str(), auctionhousedbcFormat, true, dbcAuctionHouse, false);
+	/* Needed for: */
+	LOAD_DBC(format("%s/BattlemasterList.dbc", datapath).c_str(), BattleMasterEntryFormat, true, dbcBattleMasterList, true);
 	/* Needed for: */
 	LOAD_DBC(format("%s/BankBagSlotPrices.dbc", datapath).c_str(), bankslotpriceformat, true, dbcBankSlotPrices, false);
 	/* Needed for: */

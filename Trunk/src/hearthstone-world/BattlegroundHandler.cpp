@@ -64,86 +64,20 @@ void WorldSession::HandleBattlefieldListOpcode(WorldPacket &recv_data)
 {
 	CHECK_INWORLD_RETURN;
 	uint32 battlegroundType;
-	uint8 requestType, unk1; // 0 = ShowBattlefieldList, 1 = RequestBattlegroundInstanceInfo
-	recv_data >> battlegroundType >> requestType >> unk1;
-	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, requestType);
+	uint16 unkinfo;
+	recv_data >> battlegroundType >> unkinfo;
+	BattlegroundManager.HandleBattlegroundListPacket(this, battlegroundType, 0);
 }
 
-// Returns -1 if indeterminable.
-int32 GetBattlegroundTypeFromCreature(Creature* pCreature)
-{
-	switch (pCreature->m_factionDBC->ID)
-	{
-		case 509: // League of Arathor
-		case 510: // The Defilers
-		{
-			return BATTLEGROUND_ARATHI_BASIN;
-		}break;
-
-		case 729: // The Frostwolf
-		case 730: // Stormpike Guard
-		{
-			return BATTLEGROUND_ALTERAC_VALLEY;
-		}break;
-
-		case 889: // Warsong Outriders
-		case 890: // Silverwing Sentinels
-		{
-			return BATTLEGROUND_WARSONG_GULCH;
-		}break;
-	}
-
-	// Arathi Basin
-	if( string(pCreature->GetCreatureInfo()->Name).find("Arathi Basin") != string::npos )
-		return BATTLEGROUND_ARATHI_BASIN;
-	else if( string(pCreature->GetCreatureInfo()->SubName).find("Arathi Basin") != string::npos )
-		return BATTLEGROUND_ARATHI_BASIN;
-
-	//Arena
-	if( string(pCreature->GetCreatureInfo()->Name).find("Arena") != string::npos )
-		return BATTLEGROUND_ARENA_2V2;
-	else if( string(pCreature->GetCreatureInfo()->SubName).find("Arena") != string::npos )
-		return BATTLEGROUND_ARENA_2V2;
-
-	//Alterac Valley
-	if( string(pCreature->GetCreatureInfo()->Name).find("Alterac Valley") != string::npos )
-		return BATTLEGROUND_ALTERAC_VALLEY;
-	else if( string(pCreature->GetCreatureInfo()->SubName).find("Alterac Valley") != string::npos )
-		return BATTLEGROUND_ALTERAC_VALLEY;
-
-	//Eye of the Storm
-	if( string(pCreature->GetCreatureInfo()->Name).find("Eye of the Storm") != string::npos )
-		return BATTLEGROUND_EYE_OF_THE_STORM;
-	else if( string(pCreature->GetCreatureInfo()->SubName).find("Eye of the Storm") != string::npos )
-		return BATTLEGROUND_EYE_OF_THE_STORM;
-
-	//Strand of the Ancients
-	if( string(pCreature->GetCreatureInfo()->SubName).find("Strand of the Ancients") != string::npos )
-		return BATTLEGROUND_STRAND_OF_THE_ANCIENTS;
-
-	else if( string(pCreature->GetCreatureInfo()->Name).find("Strand of the Ancients") != string::npos )
-		return BATTLEGROUND_STRAND_OF_THE_ANCIENTS;
-
-	//Warsong Gulch
-	if( string(pCreature->GetCreatureInfo()->Name).find("Warsong Gulch") != string::npos )
-		return BATTLEGROUND_WARSONG_GULCH;
-	else if( string(pCreature->GetCreatureInfo()->SubName).find("Warsong Gulch") != string::npos )
-		return BATTLEGROUND_WARSONG_GULCH;
-
-	return -1;
-}
-
-void WorldSession::SendBattlegroundList(Creature* pCreature, uint32 mapid)
+void WorldSession::SendBattlegroundList(Creature* pCreature, uint32 type)
 {
 	if(!pCreature)
 		return;
 
-	int32 type = GetBattlegroundTypeFromCreature( pCreature );
-
-	if( type == -1 )
+	if( type == BATTLEGROUND_NULL || type >= BATTLEGROUND_NUM_TYPES )
 		SystemMessage("Sorry, invalid battlemaster.");
 	else
-		BattlegroundManager.HandleBattlegroundListPacket(this, type, true);
+		BattlegroundManager.HandleBattlegroundListPacket(this, type, pCreature->GetGUID());
 }
 
 void WorldSession::HandleBattleMasterHelloOpcode(WorldPacket &recv_data)
@@ -153,10 +87,10 @@ void WorldSession::HandleBattleMasterHelloOpcode(WorldPacket &recv_data)
 
 	CHECK_INWORLD_RETURN;
 	Creature* pCreature = _player->GetMapMgr()->GetCreature( GET_LOWGUID_PART(guid) );
-	if( pCreature == NULL )
+	if( pCreature == NULL || !pCreature->GetProto() )
 		return;
 
-	SendBattlegroundList( pCreature, pCreature->GetMapId() );
+	SendBattlegroundList( pCreature, pCreature->GetProto()->BattleMasterType );
 }
 
 void WorldSession::HandleLeaveBattlefieldOpcode(WorldPacket &recv_data)

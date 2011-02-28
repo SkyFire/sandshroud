@@ -174,23 +174,29 @@ void CBattlegroundManager::AddAverageQueueTime(uint32 BgType, uint32 queueTime)
 	m_averageQueueTimes[BgType][0] = queueTime;
 }
 
-void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session, uint32 BattlegroundType, uint8 requestType)
+void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session, uint32 BattlegroundType, uint64 requestguid)
 {
 	if( !IsValidBG(BattlegroundType))
 		return;
+
+	uint32 Count = 0;
+	bool random = (BattlegroundType == 32);
 	uint32 ArenaP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),25);
 	uint32 HonorP = m_session->GetPlayer()->randombgwinner ? m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),15) : m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),30);
 	uint32 LoseHonorP = m_session->GetPlayer()->GenerateRBGReward(m_session->GetPlayer()->getLevel(),5);
-	WorldPacket data;
 	uint32 LevelGroup = GetLevelGrouping(m_session->GetPlayer()->getLevel());
-	uint32 Count = 0;
 
-	data.Initialize(SMSG_BATTLEFIELD_LIST);
-	if( requestType == 0 )
-		data << uint64( m_session->GetPlayer()->GetGUID() );
+	WorldPacket data(SMSG_BATTLEFIELD_LIST, 18);
+	if(random)
+		data << uint64(0);
 	else
-		data << uint64( 0 );
-	data << uint8(requestType);					// Joining from Player Screen?
+	{
+		if( requestguid == 0 )
+			data << uint64( m_session->GetPlayer()->GetGUID() );
+		else
+			data << uint64( requestguid );
+	}
+	data << uint8(requestguid ? 0 : 1);				// Joining from Player Screen?
 	data << BattlegroundType;						// BG ID
 	data << uint8(IS_ARENA(BattlegroundType));		// unk 3.3
 	data << uint8(0);								// unk 3.3
@@ -198,7 +204,6 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 	data << ArenaP;	// Arena points
 	data << HonorP;	// Honor points
 	data << LoseHonorP;	// Lose honor
-	bool random = BattlegroundType == 32;
 	data << uint8(random);
 	if(random)
 	{
@@ -219,7 +224,7 @@ void CBattlegroundManager::HandleBattlegroundListPacket(WorldSession * m_session
 		{
 			if( itr->second->GetLevelGroup() == LevelGroup  && !itr->second->HasEnded() )
 			{
-				data << itr->first;
+				data << uint32(itr->first);
 				++Count;
 			}
 		}

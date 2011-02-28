@@ -505,12 +505,12 @@ struct BattleMasterListEntry
 	uint32 entry;		// 0
 	int32 mapids[8];	// 1-8 Map ids
 	uint32 maptype;		// 9 Map flags
-	uint32 unk1;		// 10
+//	uint32 unk1;		// 10
 	char *name;			// 11 name
 	char* shit[15];		// 12-26 shitty shit.
 	uint32 shitflags;	// 27
 	uint32 maxMembers;	// 28 Maximum members allowed to queue.
-	uint32 unk2;		// 29
+//	uint32 unk2;		// 29
 	uint32 minLevel;	// 30
 	uint32 maxLevel;	// 31
 };
