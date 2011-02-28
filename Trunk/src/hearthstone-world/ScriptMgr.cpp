@@ -741,7 +741,17 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 					Menu->AddItem(GOSSIP_ICON_GOSSIP_TABARD, "I want to create a guild crest.", 9);
 
 				if(flags & UNIT_NPC_FLAG_BATTLEFIELDPERSON)
-					Menu->AddItem(GOSSIP_ICON_GOSSIP_ARENA, "I would like to go to the battleground.", 10);
+				{
+					if(pCreature->GetProto() && pCreature->GetProto()->BattleMasterType)
+					{
+						BattleMasterListEntry* Battlemaster = dbcBattleMasterList.LookupEntry(pCreature->GetProto()->BattleMasterType);
+						if(Battlemaster != NULL)
+						{	// Do people even use battlemasters anymore?
+							if(Plr->getLevel() >= Battlemaster->minLevel)
+								Menu->AddItem(GOSSIP_ICON_GOSSIP_ARENA, "I would like to enter the battleground.", 10);
+						}
+					}
+				}
 
 				if( pTrainer && pTrainer->RequiredClass )
 				{

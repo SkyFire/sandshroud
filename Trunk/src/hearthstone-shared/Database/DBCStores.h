@@ -500,6 +500,21 @@ struct Lock
 	//uint32 unk[8]; //unknown
 };
 
+struct BattleMasterListEntry
+{
+	uint32 entry;		// 0
+	int32 mapids[8];	// 1-8 Map ids
+	uint32 maptype;		// 9 Map flags
+	uint32 unk1;		// 10
+	char *name;			// 11 name
+	char* shit[15];		// 12-26 shitty shit.
+	uint32 shitflags;	// 27
+	uint32 maxMembers;	// 28 Maximum members allowed to queue.
+	uint32 unk2;		// 29
+	uint32 minLevel;	// 30
+	uint32 maxLevel;	// 31
+};
+
 struct LookingForGroup
 {
 	uint32 ID;			// 0
@@ -1769,8 +1784,9 @@ public:
 
 extern SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
 extern SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
+extern SERVER_DECL DBCStorage<BattleMasterListEntry> dbcBattleMasterList;
 extern SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
-extern SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypesStore;
+extern SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypes;
 extern SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
 extern SERVER_DECL DBCStorage<ItemEntry> dbcItem;
 extern SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;

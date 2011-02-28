@@ -176,17 +176,18 @@ struct CreatureProto
 	uint32 Resistances[7];
 	float CombatReach;
 	float BoundingRadius;
-	char * aura_string;
+	char* aura_string;
 	uint32 boss;
 	int32 money;
 	uint32 invisibility_type;
 	uint32 death_state;
-	float	walk_speed;//base movement
-	float	run_speed;//most of the time mobs use this
+	float walk_speed;//base movement
+	float run_speed;//most of the time mobs use this
 	float fly_speed;
 	uint32 extra_a9_flags;
-	uint32	auraimmune_flag;
+	uint32 auraimmune_flag;
 	int32 vehicle_entry;
+	uint32 BattleMasterType;
 	uint32 SpellClickid;
 	uint8 CanMove;
 

@@ -492,7 +492,8 @@ public:
 
 	//object faction
 	void _setFaction();
-	uint32 _getFaction(){return m_faction->Faction;}
+	uint32 _getFaction() { return m_faction ? m_faction->Faction : 0; }
+	uint32 GetFaction() { return _getFaction(); }
 
 	FactionTemplateDBC *m_faction;
 	FactionDBC *m_factionDBC;

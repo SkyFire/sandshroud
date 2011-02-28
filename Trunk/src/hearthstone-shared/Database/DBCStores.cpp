@@ -27,7 +27,8 @@
 SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
 SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
-SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypesStore;
+SERVER_DECL DBCStorage<BattleMasterListEntry> dbcBattleMasterList;
+SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypes;
 SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
 SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
 SERVER_DECL DBCStorage<ItemSetEntry> dbcItemSet;
@@ -336,7 +337,7 @@ bool LoadDBCs(const char* datapath)
 	/* Needed for: */
 	LOAD_DBC(format("%s/ChatChannels.dbc", datapath).c_str(), chatchannelformat, true, dbcChatChannels, true);
 	/* Needed for: */
-	LOAD_DBC(format("%s/CurrencyTypes.dbc", datapath).c_str(), CurrencyTypesEntryFormat, true, dbcCurrencyTypesStore, true);
+	LOAD_DBC(format("%s/CurrencyTypes.dbc", datapath).c_str(), CurrencyTypesEntryFormat, true, dbcCurrencyTypes, true);
 	/* Needed for: */
 	LOAD_DBC(format("%s/ChrClasses.dbc", datapath).c_str(), charclassFormat, true, dbcCharClass, true);
 	/* Needed for: */

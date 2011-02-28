@@ -1331,7 +1331,7 @@ int16 ItemInterface::GetInventorySlotById(uint32 ID)
 	ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(ID);
 	if(proto->BagFamily & ITEM_TYPE_CURRENCY)
 	{
-		CurrencyTypesEntry* store = dbcCurrencyTypesStore.LookupEntry(ID);
+		CurrencyTypesEntry* store = dbcCurrencyTypes.LookupEntry(ID);
 		if(store)
 		{
 			return (CURRENCYTOKEN_SLOT_START + (store->BitIndex - 1));
@@ -1370,7 +1370,7 @@ int16 ItemInterface::GetInventorySlotByGuid(uint64 guid)
 	ItemPrototype* proto = GetItemByGUID(guid) ? GetItemByGUID(guid)->GetProto() : NULL;
 	if(proto && proto->BagFamily & ITEM_TYPE_CURRENCY)
 	{
-		CurrencyTypesEntry* store = dbcCurrencyTypesStore.LookupEntry(proto->ItemId);
+		CurrencyTypesEntry* store = dbcCurrencyTypes.LookupEntry(proto->ItemId);
 		if(store)
 		{
 			return (CURRENCYTOKEN_SLOT_START + (store->BitIndex - 1));
@@ -1457,7 +1457,7 @@ AddItemResult ItemInterface::AddItemToFreeSlot(Item* item)
 		}
 		else if( item->GetProto()->BagFamily & ITEM_TYPE_CURRENCY )
 		{
-			CurrencyTypesEntry* currency = dbcCurrencyTypesStore.LookupEntry(item->GetProto()->ItemId);
+			CurrencyTypesEntry* currency = dbcCurrencyTypes.LookupEntry(item->GetProto()->ItemId);
 			if(currency)
 			{
 				uint16 currencyslot = ((CURRENCYTOKEN_SLOT_START-1) + currency->BitIndex);
@@ -3071,7 +3071,7 @@ SlotResult ItemInterface::FindFreeInventorySlot(ItemPrototype *proto)
 			}
 			else if( proto->BagFamily & ITEM_TYPE_CURRENCY )
 			{
-				CurrencyTypesEntry* store = dbcCurrencyTypesStore.LookupEntry(proto->ItemId);
+				CurrencyTypesEntry* store = dbcCurrencyTypes.LookupEntry(proto->ItemId);
 				if(store)
 				{
 					result.ContainerSlot = ITEM_NO_SLOT_AVAILABLE;

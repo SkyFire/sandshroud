@@ -12747,7 +12747,7 @@ uint16 Player::FindQuestSlot( uint32 questid )
 
 void Player::UpdateKnownCurrencies(uint32 itemId, bool apply)
 {
-	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypesStore.LookupEntry(itemId))
+	if(CurrencyTypesEntry const* ctEntry = dbcCurrencyTypes.LookupEntry(itemId))
 	{
 		if(ctEntry)
 		{
