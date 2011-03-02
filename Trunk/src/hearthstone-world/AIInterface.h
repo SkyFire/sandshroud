@@ -358,6 +358,7 @@ public:
 			return 0;
 	}
 
+	uint32 GetWeaponEmoteType(bool ranged);
 	bool m_canCallForHelp;
 	float m_CallForHelpHealth;
 	bool m_canRangedAttack;

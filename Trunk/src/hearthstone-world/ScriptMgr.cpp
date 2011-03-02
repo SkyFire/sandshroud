@@ -449,7 +449,8 @@ void ScriptMgr::register_gossip_script(uint32 entry, GossipScript * gs)
 
 	cp->TeleportInfoList.clear();
 	GossipMaps[GTYPEID_CTR][entry] = gs;
-	_customgossipscripts.insert(gs);
+	if(_customgossipscripts.find(gs) == _customgossipscripts.end())
+		_customgossipscripts.insert(gs);
 }
 
 void ScriptMgr::register_item_gossip_script(uint32 entry, GossipScript * gs)
@@ -459,7 +460,8 @@ void ScriptMgr::register_item_gossip_script(uint32 entry, GossipScript * gs)
 		return;
 
 	GossipMaps[GTYPEID_ITEM][entry] = gs;
-	_customgossipscripts.insert(gs);
+	if(_customgossipscripts.find(gs) == _customgossipscripts.end())
+		_customgossipscripts.insert(gs);
 }
 
 void ScriptMgr::register_go_gossip_script(uint32 entry, GossipScript * gs)
@@ -469,7 +471,8 @@ void ScriptMgr::register_go_gossip_script(uint32 entry, GossipScript * gs)
 		return;
 
 	GossipMaps[GTYPEID_GAMEOBJECT][entry] = gs;
-	_customgossipscripts.insert(gs);
+	if(_customgossipscripts.find(gs) == _customgossipscripts.end())
+		_customgossipscripts.insert(gs);
 }
 
 void ScriptMgr::register_quest_script(uint32 entry, QuestScript * qs)
