@@ -70,24 +70,25 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 	if (lootSlot >= pLootObj->m_loot.items.size())
 		return;
 
-	amt = pLootObj->m_loot.items.at(lootSlot).iItemsCount;
 	if( pLootObj->m_loot.items.at(lootSlot).roll != NULL )
 		return;
 
-	if (!pLootObj->m_loot.items.at(lootSlot).ffa_loot)
+	uint32 ffatype = pLootObj->m_loot.items.at(lootSlot).ffa_loot;
+	if (ffatype == 0 || ffatype == 1)
 	{
-		if (!amt)//Test for party loot
+		//make sure this player can still loot it in case of ffa_loot
+		if(pLootObj->m_loot.items.at(lootSlot).has_looted.size())
 		{
 			GetPlayer()->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_ALREADY_LOOTED);
 			return;
 		}
 	}
-	else
+	else if(ffatype == 2)
 	{
 		//make sure this player can still loot it in case of ffa_loot
 		LooterSet::iterator itr = pLootObj->m_loot.items.at(lootSlot).has_looted.find(_player->GetLowGUID());
 
-		if (pLootObj->m_loot.items.at(lootSlot).has_looted.end() != itr)
+		if(itr != pLootObj->m_loot.items.at(lootSlot).has_looted.end())
 		{
 			GetPlayer()->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_ALREADY_LOOTED);
 			return;
@@ -140,7 +141,7 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 		if( GetPlayer()->GetItemInterface()->SafeAddItem(item,slotresult.ContainerSlot, slotresult.Slot) )
 		{
 			sQuestMgr.OnPlayerItemPickup(GetPlayer(),item);
-			_player->GetSession()->SendItemPushResult(item,false,true,true,true,slotresult.ContainerSlot,slotresult.Slot,1);
+			SendItemPushResult(item,false,true,true,true,slotresult.ContainerSlot,slotresult.Slot,1);
 		}
 		else
 		{
@@ -154,13 +155,13 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 		add->m_isDirty = true;
 
 		sQuestMgr.OnPlayerItemPickup(GetPlayer(),add);
-		_player->GetSession()->SendItemPushResult(add, false, true, true, false, _player->GetItemInterface()->GetBagSlotByGuid(add->GetGUID()), 0xFFFFFFFF, amt);
+		SendItemPushResult(add, false, true, true, false, _player->GetItemInterface()->GetBagSlotByGuid(add->GetGUID()), 0xFFFFFFFF, amt);
 	}
 
 	//in case of ffa_loot update only the player who recives it.
 	if (!pLootObj->m_loot.items.at(lootSlot).ffa_loot)
 	{
-		pLootObj->m_loot.items.at(lootSlot).iItemsCount = 0;
+		pLootObj->m_loot.items.at(lootSlot).has_looted.insert(_player->GetLowGUID());
 
 		// this gets sent to all looters
 		WorldPacket data(1);
@@ -177,8 +178,7 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 	else
 	{
 		pLootObj->m_loot.items.at(lootSlot).has_looted.insert(_player->GetLowGUID());
-		WorldPacket data(1);
-		data.SetOpcode(SMSG_LOOT_REMOVED);
+		WorldPacket data(SMSG_LOOT_REMOVED, 1);
 		data << lootSlot;
 		_player->GetSession()->SendPacket(&data);
 	}
@@ -188,7 +188,7 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 	{
 		for(vector<__LootItem>::iterator itr = pLootObj->m_loot.items.begin(); itr != pLootObj->m_loot.items.end(); itr++)
 		{
-			if( itr->iItemsCount > 0 )
+			if(!itr->has_looted.size())
 				return;
 		}
 
@@ -352,9 +352,8 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 		case GAMEOBJECT_TYPE_FISHINGNODE:
 			{
 				if(pGO->IsInWorld())
-				{
 					pGO->RemoveFromWorld(true);
-				}
+
 				delete pGO;
 				pGO = NULLGOB;
 			}break;
@@ -1389,7 +1388,8 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		pLoot=&pCreature->m_loot;
 	}
 
-	if(!pLoot) return;
+	if(!pLoot)
+		return;
 
 	if (slotid >= pLoot->items.size())
 	{
@@ -1398,11 +1398,10 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		return;
 	}
 
-	amt = pLoot->items.at(slotid).iItemsCount;
-
-	if (!pLoot->items.at(slotid).ffa_loot)
+	uint32 ffatype = pLoot->items.at(slotid).ffa_loot;
+	if (ffatype != 2)
 	{
-		if (!amt)//Test for party loot
+		if (pLoot->items.at(slotid).has_looted.size())
 		{
 			GetPlayer()->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_ALREADY_LOOTED);
 			return;
@@ -1413,7 +1412,7 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		//make sure this player can still loot it in case of ffa_loot
 		LooterSet::iterator itr = pLoot->items.at(slotid).has_looted.find(player->GetLowGUID());
 
-		if (pLoot->items.at(slotid).has_looted.end() != itr)
+		if (itr != pLoot->items.at(slotid).has_looted.end())
 		{
 			GetPlayer()->GetItemInterface()->BuildInventoryChangeError(NULLITEM, NULLITEM,INV_ERR_ALREADY_LOOTED);
 			return;
@@ -1464,13 +1463,11 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 		item = NULLITEM;
 	}
 
-	pLoot->items.at(slotid).iItemsCount=0;
+	pLoot->items.at(slotid).has_looted.insert(player->GetLowGUID());
 
 	// this gets sent to all looters
-	if (!pLoot->items.at(slotid).ffa_loot)
+	if(ffatype == 0)
 	{
-		pLoot->items.at(slotid).iItemsCount=0;
-
 		// this gets sent to all looters
 		WorldPacket data(1);
 		data.SetOpcode(SMSG_LOOT_REMOVED);
@@ -1481,10 +1478,6 @@ void WorldSession::HandleLootMasterGiveOpcode(WorldPacket& recv_data)
 			if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
 				plr->GetSession()->SendPacket(&data);
 		}
-	}
-	else
-	{
-		pLoot->items.at(slotid).has_looted.insert(player->GetLowGUID());
 	}
 }
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 #dirty script, for FreeBSD autotool 
-aclocal -I ./m4
+aclocal -I ./dependencies/m4
 libtoolize --force
 autoconf
 autoheader

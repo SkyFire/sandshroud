@@ -73,7 +73,7 @@ typedef std::set<uint32> LooterSet;
 typedef struct __LootItem
 {
 	_LootItem item;
-	uint32 iItemsCount;
+	uint32 StackSize;
 	RandomProps * iRandomProperty;
 	ItemRandomSuffixEntry * iRandomSuffix;
 	LootRoll* roll;

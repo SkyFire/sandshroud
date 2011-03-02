@@ -1182,9 +1182,9 @@ void AlteracValley::HookGenerateLoot(Player* plr, Corpse* pCorpse)
 					li.item.displayid = pProto->DisplayInfoID;
 					li.item.itemproto = pProto;
 					if( loot_ptr->MinCount != loot_ptr->MaxCount )
-						li.iItemsCount = RandomUInt(loot_ptr->MaxCount - loot_ptr->MinCount) + loot_ptr->MinCount;
+						li.StackSize = RandomUInt(loot_ptr->MaxCount - loot_ptr->MinCount) + loot_ptr->MinCount;
 					else
-						li.iItemsCount = loot_ptr->MinCount;
+						li.StackSize = loot_ptr->MinCount;
 
 					li.iRandomProperty = NULL;
 					li.iRandomSuffix = NULL;

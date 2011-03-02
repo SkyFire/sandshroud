@@ -437,16 +437,16 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 				for( i = 0; i < loot->items.size(); i++ )
 				{
 					//itemid rand match a already placed item, if item is stackable and unique(stack), increment it, otherwise skips
-					if((loot->items[i].item.itemproto == list->items[x].item.itemproto) && itemproto->MaxCount && ((loot->items[i].iItemsCount + count) < itemproto->MaxCount))
+					if((loot->items[i].item.itemproto == list->items[x].item.itemproto) && itemproto->MaxCount && ((loot->items[i].StackSize + count) < itemproto->MaxCount))
 					{
-						if(itemproto->Unique && ((loot->items[i].iItemsCount+count) < itemproto->Unique))
+						if(itemproto->Unique && ((loot->items[i].StackSize+count) < itemproto->Unique))
 						{
-							loot->items[i].iItemsCount += count;
+							loot->items[i].StackSize += count;
 							break;
 						}
 						else if (!itemproto->Unique)
 						{
-							loot->items[i].iItemsCount += count;
+							loot->items[i].StackSize += count;
 							break;
 						}
 					}
@@ -457,7 +457,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 
 				__LootItem itm;
 				itm.item =list->items[x].item;
-				itm.iItemsCount = count;
+				itm.StackSize = count;
 				itm.roll = NULLROLL;
 				itm.passed = false;
 				itm.ffa_loot = list->items[x].ffa_loot;
@@ -479,6 +479,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 			}
 		}
 	}
+
 	if( loot->items.size() > 16 )
 	{
 		std::vector<__LootItem>::iterator item_to_remove;
@@ -632,16 +633,16 @@ void LootMgr::AddLoot(Loot* loot, uint32 itemid, uint32 mincount, uint32 maxcoun
 		for( i = 0; i < loot->items.size(); i++ )
 		{
 			//itemid rand match a already placed item, if item is stackable and unique(stack), increment it, otherwise skips
-			if((loot->items[i].item.itemproto == itemproto) && itemproto->MaxCount && ((loot->items[i].iItemsCount + count <= itemproto->MaxCount)))
+			if((loot->items[i].item.itemproto == itemproto) && itemproto->MaxCount && ((loot->items[i].StackSize + count <= itemproto->MaxCount)))
 			{
-				if(itemproto->Unique && ((loot->items[i].iItemsCount+count) < itemproto->Unique))
+				if(itemproto->Unique && ((loot->items[i].StackSize+count) < itemproto->Unique))
 				{
-					loot->items[i].iItemsCount += count;
+					loot->items[i].StackSize += count;
 					break;
 				}
 				else if (!itemproto->Unique)
 				{
-					loot->items[i].iItemsCount += count;
+					loot->items[i].StackSize += count;
 					break;
 				}
 			}
@@ -656,7 +657,7 @@ void LootMgr::AddLoot(Loot* loot, uint32 itemid, uint32 mincount, uint32 maxcoun
 
 		__LootItem itm;
 		itm.item = item;
-		itm.iItemsCount = count;
+		itm.StackSize = count;
 		itm.roll = NULLROLL;
 		itm.passed = false;
 		itm.ffa_loot = ffa_loot;
@@ -782,7 +783,7 @@ void LootRoll::Finalize()
 	pLoot->items.at(_slotid).roll = NULLROLL;
 
 	uint32 itemid = pLoot->items.at(_slotid).item.itemproto->ItemId;
-	uint32 amt = pLoot->items.at(_slotid).iItemsCount;
+	uint32 amt = pLoot->items.at(_slotid).StackSize;
 	if(!amt)
 	{
 		delete this;
@@ -850,7 +851,8 @@ void LootRoll::Finalize()
 		pItem->DeleteMe();
 		pItem = NULLITEM;
 
-		pLoot->items.at(_slotid).iItemsCount=0;
+		// Set a looter, doesn't matter who.
+		pLoot->items.at(_slotid).has_looted.insert(_player->GetLowGUID());
 
 		//Send "finish" packet
 		data.Initialize(SMSG_LOOT_REMOVED);
@@ -931,7 +933,9 @@ void LootRoll::Finalize()
 		_player->GetSession()->SendItemPushResult(add, false, true, true, false, _player->GetItemInterface()->GetBagSlotByGuid(add->GetGUID()), 0xFFFFFFFF, 1);
 	}
 
-	pLoot->items.at(_slotid).iItemsCount=0;
+	// Set a looter, doesn't matter who.
+	pLoot->items.at(_slotid).has_looted.insert(_player->GetLowGUID());
+
 	// this gets sent to all looters
 	data.Initialize(SMSG_LOOT_REMOVED);
 	data << uint8(_slotid);
@@ -1040,21 +1044,68 @@ bool Loot::HasLoot(Player* Looter)
 
 	return HasItems(Looter);
 }
+
 bool Loot::HasItems(Player* Looter)
 {
 	// check items
 	for(vector<__LootItem>::iterator itr = items.begin(); itr != items.end(); itr++)
 	{
-		ItemPrototype * proto = itr->item.itemproto;
-		if( proto->Bonding == ITEM_BIND_QUEST || proto->Bonding == ITEM_BIND_QUEST2 || proto->Class == ITEM_CLASS_QUEST)
+		// FFA CHECKS!
+		if(itr->ffa_loot == 2)
 		{
-			if( Looter->HasQuestForItem( proto->ItemId ) )
-				return true;
+			// This is assuming that creatures with items like these are not minable/skinnable, so players can't fuck each other over.
+			if(itr->has_looted.find(Looter->GetLowGUID()) != itr->has_looted.end())
+				continue;
 		}
-		else if( itr->iItemsCount > 0 )
-			return true;
-	}
+		else if(itr->has_looted.size())
+			continue;
 
+		ItemPrototype * proto = itr->item.itemproto;
+		if(proto == NULL)
+			continue;
+		//quest items check. type 4/5
+		//quest items that dont start quests.
+		if((proto->Bonding == ITEM_BIND_QUEST) && !(proto->QuestId) && !Looter->HasQuestForItem(proto->ItemId))
+			continue;
+		if((proto->Bonding == ITEM_BIND_QUEST2) && !(proto->QuestId) && !Looter->HasQuestForItem(proto->ItemId))
+			continue;
+
+		//quest items that start quests need special check to avoid drops all the time.
+		if((proto->Bonding == ITEM_BIND_QUEST) && (proto->QuestId) && Looter->GetQuestLogForEntry(proto->QuestId))
+			continue;
+		if((proto->Bonding == ITEM_BIND_QUEST2) && (proto->QuestId) && Looter->GetQuestLogForEntry(proto->QuestId))
+			continue;
+		if((proto->Bonding == ITEM_BIND_QUEST) && (proto->QuestId) && Looter->HasFinishedQuest(proto->QuestId))
+			continue;
+		if((proto->Bonding == ITEM_BIND_QUEST2) && (proto->QuestId) && Looter->HasFinishedQuest(proto->QuestId))
+			continue;
+
+		//check for starting item quests that need questlines.
+		if((proto->QuestId && proto->Bonding != ITEM_BIND_QUEST && proto->Bonding != ITEM_BIND_QUEST2))
+		{
+			bool HasRequiredQuests = true;
+			Quest * pQuest = QuestStorage.LookupEntry(proto->QuestId);
+			if(pQuest == NULL)
+				continue;
+
+			//check if its a questline.
+			for(uint32 i = 0; i < pQuest->count_requiredquests; i++)
+			{
+				if(pQuest->required_quests[i])
+				{
+					if(Looter->HasFinishedQuest(pQuest->required_quests[i]) || !Looter->GetQuestLogForEntry(pQuest->required_quests[i]))
+					{
+						HasRequiredQuests = false;
+						break;
+					}
+				}
+			}
+
+			if(!HasRequiredQuests)
+				continue;
+		}
+		return true;
+	}
 	return false;
 }
 
