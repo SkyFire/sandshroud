@@ -20,6 +20,10 @@
 class LuaEngine;
 class LuaEngineMgr;
 
+#define SendQuickMenu(textid) objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), textid, Plr); \
+	Menu->AddItem(0, "I was looking for something else.", 0); \
+	Menu->SendTo(Plr);
+
 class SCRIPT_DECL Lacrimi : public ThreadContext
 {
 private:

@@ -16,9 +16,6 @@
 
 #include "LacrimiStdAfx.h"
 
-#define SendQuickMenu(textid) objmgr.CreateGossipMenuForPlayer(&Menu, pObject->GetGUID(), textid, Plr); \
-	Menu->SendTo(Plr);
-
 /*****************************************/
 /* Dalaran Guards - Created by Saerothan */
 /*****************************************/
@@ -588,22 +585,22 @@ void Lacrimi::SetupDalaran()
 	GossipScript * DalaranGossip = (GossipScript*) new DalaranGuard();
 
 	/* Guard List */
-	sMgr->register_gossip_script(32675,DalaranGossip);
-	sMgr->register_gossip_script(32676,DalaranGossip);
-	sMgr->register_gossip_script(32677,DalaranGossip);
-	sMgr->register_gossip_script(32678,DalaranGossip);
-	sMgr->register_gossip_script(32679,DalaranGossip);
-	sMgr->register_gossip_script(32680,DalaranGossip);
-	sMgr->register_gossip_script(32681,DalaranGossip);
-	sMgr->register_gossip_script(32683,DalaranGossip);
-	sMgr->register_gossip_script(32684,DalaranGossip);
-	sMgr->register_gossip_script(32685,DalaranGossip);
-	sMgr->register_gossip_script(32686,DalaranGossip);
-	sMgr->register_gossip_script(32687,DalaranGossip);
-	sMgr->register_gossip_script(32688,DalaranGossip);
-	sMgr->register_gossip_script(32689,DalaranGossip);
-	sMgr->register_gossip_script(32690,DalaranGossip);
-	sMgr->register_gossip_script(32691,DalaranGossip);
-	sMgr->register_gossip_script(32692,DalaranGossip);
-	sMgr->register_gossip_script(32693,DalaranGossip);
+	sMgr->register_gossip_script(32675, DalaranGossip);
+	sMgr->register_gossip_script(32676, DalaranGossip);
+	sMgr->register_gossip_script(32677, DalaranGossip);
+	sMgr->register_gossip_script(32678, DalaranGossip);
+	sMgr->register_gossip_script(32679, DalaranGossip);
+	sMgr->register_gossip_script(32680, DalaranGossip);
+	sMgr->register_gossip_script(32681, DalaranGossip);
+	sMgr->register_gossip_script(32683, DalaranGossip);
+	sMgr->register_gossip_script(32684, DalaranGossip);
+	sMgr->register_gossip_script(32685, DalaranGossip);
+	sMgr->register_gossip_script(32686, DalaranGossip);
+	sMgr->register_gossip_script(32687, DalaranGossip);
+	sMgr->register_gossip_script(32688, DalaranGossip);
+	sMgr->register_gossip_script(32689, DalaranGossip);
+	sMgr->register_gossip_script(32690, DalaranGossip);
+	sMgr->register_gossip_script(32691, DalaranGossip);
+	sMgr->register_gossip_script(32692, DalaranGossip);
+	sMgr->register_gossip_script(32693, DalaranGossip);
 }
