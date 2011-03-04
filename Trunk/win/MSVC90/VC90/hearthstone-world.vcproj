@@ -588,19 +588,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\hearthstone-world\WintergraspGOAI.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\src\hearthstone-world\WintergraspInternal.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\..\src\hearthstone-world\WintergraspInternal.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\hearthstone-world\WintergraspNPCAI.cpp"
 					>
 				</File>
 			</Filter>

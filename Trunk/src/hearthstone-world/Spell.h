@@ -1259,7 +1259,6 @@ class SpellCastTargets
 public:
 	void read ( WorldPacket & data,uint64 caster, uint8 castFlags = 0 );
 	void write ( WorldPacket & data);
-	void write ( StackPacket & data);
 
 	SpellCastTargets() : m_targetMask(0), m_unitTarget(0), m_itemTarget(0), m_srcX(0), m_srcY(0), m_srcZ(0),
 		m_destX(0), m_destY(0), m_destZ(0) {}

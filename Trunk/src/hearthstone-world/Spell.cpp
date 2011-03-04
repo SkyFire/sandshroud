@@ -136,31 +136,6 @@ void SpellCastTargets::write( WorldPacket& data )
         data << m_strTarget;
 }
 
-void SpellCastTargets::write( StackPacket& data )
-{
-	data << m_targetMask;
-
-	if( m_targetMask & (TARGET_FLAG_UNIT | TARGET_FLAG_CORPSE | TARGET_FLAG_CORPSE2 | TARGET_FLAG_OBJECT | TARGET_FLAG_GLYPH) )
-		FastGUIDPack( data, m_unitTarget );
-
-	if( m_targetMask & ( TARGET_FLAG_ITEM | TARGET_FLAG_TRADE_ITEM ) )
-		FastGUIDPack( data, m_itemTarget );
-
-	if( m_targetMask & TARGET_FLAG_SOURCE_LOCATION )
-		data << m_srcX << m_srcY << m_srcZ;
-
-	if( m_targetMask & TARGET_FLAG_DEST_LOCATION )
-	{
-		if(m_unitTarget)
-			FastGUIDPack( data, m_unitTarget );
-		else
-			data << uint8(0);
-		data << m_destX << m_destY << m_destZ;
-	}
-    if (m_targetMask & TARGET_FLAG_STRING)
-        data << m_strTarget;
-}
-
 Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 {
 	ASSERT( Caster != NULL && info != NULL );

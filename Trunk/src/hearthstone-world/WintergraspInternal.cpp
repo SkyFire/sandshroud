@@ -40,8 +40,6 @@ WintergraspInternal::WintergraspInternal()
 	winnerteam = 2;
 	forcestart_WG = false;
 	WGCounter = 0;
-	WintergraspNPCAIRegister();
-	WintergraspGOAIRegister();
 }
 
 WintergraspInternal::~WintergraspInternal()

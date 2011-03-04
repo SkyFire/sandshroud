@@ -63,16 +63,13 @@ void WorldSession::HandleQueryTimeOpcode( WorldPacket & recv_data )
 void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 {
 	CHECK_PACKET_SIZE(recv_data, 12);
-	//WorldPacket data(SMSG_CREATURE_QUERY_RESPONSE, 150);
-	uint8 databuffer[10000];
-	StackPacket data(SMSG_CREATURE_QUERY_RESPONSE, databuffer, 10000);
 	uint32 entry;
 	uint64 guid;
-	CreatureInfo *ci;
 
 	recv_data >> entry;
 	recv_data >> guid;
 
+	WorldPacket data(SMSG_CREATURE_QUERY_RESPONSE, 150);
 	if(entry == 300000)
 	{
 		data << (uint32)entry;
@@ -86,7 +83,7 @@ void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	ci = CreatureNameStorage.LookupEntry(entry);
+	CreatureInfo* ci = CreatureNameStorage.LookupEntry(entry);
 	if(ci == NULL)
 		return;
 
@@ -193,9 +190,7 @@ void WorldSession::HandleCorpseQueryOpcode(WorldPacket &recv_data)
 	DEBUG_LOG("WORLD","HandleCorpseQueryOpcode Received MSG_CORPSE_QUERY");
 
 	Corpse* pCorpse;
-	//WorldPacket data(MSG_CORPSE_QUERY, 21);
-	uint8 databuffer[100];
-	StackPacket data(MSG_CORPSE_QUERY, databuffer, 100);
+	WorldPacket data(MSG_CORPSE_QUERY, 18);
 
 	if(_player->isDead())
 		_player->BuildPlayerRepop();
@@ -235,25 +230,24 @@ void WorldSession::HandlePageTextQueryOpcode( WorldPacket & recv_data )
 	CHECK_PACKET_SIZE(recv_data, 4);
 	uint32 pageid = 0;
 	uint64 itemguid;
-	uint8 buffer[10000];
-	StackPacket data(SMSG_PAGE_TEXT_QUERY_RESPONSE,buffer, 10000);
 	recv_data >> pageid;
 	recv_data >> itemguid;
 
+	WorldPacket data(SMSG_PAGE_TEXT_QUERY_RESPONSE, 300);
 	while(pageid)
 	{
+		data.clear();
 		ItemPage * page = ItemPageStorage.LookupEntry(pageid);
 		if(page == NULL)
 			return;
 
 		LocalizedItemPage * lpi = (language>0) ? sLocalizationMgr.GetLocalizedItemPage(pageid,language):NULL;
-		data.Clear();
-		data << pageid;
-		if(lpi)
-			data.Write((uint8*)lpi->Text, strlen(lpi->Text) + 1);
-		else
-			data.Write((uint8*)page->text, strlen(page->text) + 1);
+		char* text = (lpi ? lpi->Text : page->text);
+		if(text == NULL || *text == NULL)
+			return;
 
+		data << pageid;
+		data << text;
 		data << page->next_page;
 		pageid = page->next_page;
 		SendPacket(&data);
@@ -266,17 +260,15 @@ void WorldSession::HandlePageTextQueryOpcode( WorldPacket & recv_data )
 void WorldSession::HandleItemNameQueryOpcode( WorldPacket & recv_data )
 {
 	CHECK_PACKET_SIZE(recv_data, 4);
-	uint8 databuffer[1000];
-	StackPacket reply(SMSG_ITEM_NAME_QUERY_RESPONSE, databuffer, 1000);
-
 	uint32 itemid;
 	uint64 guid;
 	recv_data >> itemid;
 	recv_data >> guid;
 
 	ItemEntry* itemE = dbcItem.LookupEntry(itemid);
-	LocalizedItem* li = sLocalizationMgr.GetLocalizedItem(itemid, language);
+	WorldPacket reply(SMSG_ITEM_NAME_QUERY_RESPONSE, 1000);
 	ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(itemid);
+	LocalizedItem* li = sLocalizationMgr.GetLocalizedItem(itemid, language);
 
 	reply << itemid;
 	if(proto)
@@ -297,19 +289,11 @@ void WorldSession::HandleInrangeQuestgiverQuery(WorldPacket & recv_data)
 {
 	CHECK_INWORLD_RETURN;
 
-	//WorldPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, 1000);
-	uint8 databuffer[10000];
-	StackPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, databuffer, 10000);
+	WorldPacket data(SMSG_QUESTGIVER_STATUS_MULTIPLE, 1000);
 	Object::InRangeSet::iterator itr;
 	Creature* pCreature;
 	uint32 count = 0;
 	data << count;
-
-	// 32 count
-	// <foreach count>
-	//    64 guid
-	//    8 status
-
 	for( itr = _player->m_objectsInRange.begin(); itr != _player->m_objectsInRange.end(); itr++ )
 	{
 		pCreature = TO_CREATURE(*itr);
@@ -324,6 +308,6 @@ void WorldSession::HandleInrangeQuestgiverQuery(WorldPacket & recv_data)
 		}
 	}
 
-	*(uint32*)(data.GetBufferPointer()) = count;
+	data.put<uint32>(0, count);
 	SendPacket(&data);
 }

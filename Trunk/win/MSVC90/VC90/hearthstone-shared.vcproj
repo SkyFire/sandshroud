@@ -694,10 +694,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\hearthstone-shared\StackBuffer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\hearthstone-shared\StackWalker.cpp"
 				>
 			</File>

@@ -455,7 +455,6 @@ public:
 	HEARTHSTONE_INLINE unordered_set<Player*  > * GetInRangePlayerSet() { return &m_inRangePlayers; };
 
 	void __fastcall SendMessageToSet(WorldPacket *data, bool self,bool myteam_only=false);
-	HEARTHSTONE_INLINE void SendMessageToSet(StackPacket * data, bool self) { OutPacketToSet(data->GetOpcode(), (uint16)data->GetSize(), data->GetBufferPointer(), self); }
 	void OutPacketToSet(uint16 Opcode, uint16 Len, const void * Data, bool self);
 
 	//! Fill values with data from a space seperated string of uint32s.

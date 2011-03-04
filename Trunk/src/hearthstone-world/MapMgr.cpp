@@ -2044,30 +2044,6 @@ DynamicObject* MapMgr::CreateDynamicObject()
 	return dyn;
 }
 
-void MapMgr::SendPacketToPlayers(int32 iZoneMask, int32 iFactionMask, StackPacket *pData)
-{
-	// Update all players on map.
-	Player* ptr = NULL;
-	PlayerStorageMap::iterator itr1 = m_PlayerStorage.begin();
-	for(itr1 = m_PlayerStorage.begin(); itr1 != m_PlayerStorage.end();)
-	{
-		ptr = itr1->second;
-		itr1++;
-		if(ptr->GetSession())
-		{
-			//Are we in the right zone?
-			if( iZoneMask != ZONE_MASK_ALL && ptr->GetZoneId() != (uint32)iZoneMask )
-				continue;
-
-			//Are we the right faction?
-			if( iFactionMask != FACTION_MASK_ALL && ptr->GetTeam() != (uint32)iFactionMask )
-				continue;
-
-			ptr->GetSession()->SendPacket(pData);
-		}
-	}
-}
-
 void MapMgr::SendPacketToPlayers(int32 iZoneMask, int32 iFactionMask, WorldPacket *pData)
 {
 	// Update all players on map.

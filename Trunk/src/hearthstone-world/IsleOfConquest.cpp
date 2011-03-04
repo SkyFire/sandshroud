@@ -867,10 +867,9 @@ void IsleOfConquest::HookOnUnitKill(Player* plr, Unit* pVictim)
 void IsleOfConquest::Herald(const char *format, ...)
 {
 	char msgbuf[200];
-	uint8 databuf[500];
 	va_list ap;
 	size_t msglen;
-	StackPacket data(SMSG_MESSAGECHAT, databuf, 500);
+	WorldPacket data(SMSG_MESSAGECHAT, 500);
 
 	va_start(ap, format);
 	vsnprintf(msgbuf, 100, format, ap);

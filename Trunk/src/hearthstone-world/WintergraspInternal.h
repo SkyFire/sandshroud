@@ -47,8 +47,6 @@ public:
 
 // Actual Wintergrasp Internal stuff.
 public:
-	void WintergraspGOAIRegister();
-	void WintergraspNPCAIRegister();
 	void SendInitWorldStates(Player* plr = NULL);
 	void UpdateClock();
 	void UpdateClockDigit(uint32 timer, uint32 digit, uint32 mod);

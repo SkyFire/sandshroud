@@ -640,23 +640,6 @@ void Group::SendPacketToAllButOne(WorldPacket *packet, Player* pSkipTarget)
 	m_groupLock.Release();
 }
 
-void Group::SendPacketToAllButOne(StackPacket *packet, Player* pSkipTarget)
-{
-	GroupMembersSet::iterator itr;
-	uint32 i = 0;
-	m_groupLock.Acquire();
-	for(; i < m_SubGroupCount; i++)
-	{
-		for(itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++)
-		{
-			if((*itr)->m_loggedInPlayer != NULL && (*itr)->m_loggedInPlayer->GetSession() && (*itr)->m_loggedInPlayer != pSkipTarget)
-				(*itr)->m_loggedInPlayer->GetSession()->SendPacket(packet);
-		}
-	}
-
-	m_groupLock.Release();
-}
-
 void Group::OutPacketToAllButOne(uint16 op, uint16 len, const void* data, Player* pSkipTarget)
 {
 	GroupMembersSet::iterator itr;

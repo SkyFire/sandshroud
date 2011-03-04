@@ -4524,10 +4524,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 
 void Player::SetMovement(uint8 pType, uint32 flag)
 {
-	//WorldPacket data(13);
-	uint8 buf[20];
-	StackPacket data(SMSG_FORCE_MOVE_ROOT, buf, 20);
-
+	WorldPacket data(12);
 	switch(pType)
 	{
 	case MOVE_ROOT:
@@ -4562,7 +4559,7 @@ void Player::SetMovement(uint8 pType, uint32 flag)
 	default:break;
 	}
 
-	if(data.GetSize() > 0)
+	if(data.size() > 0)
 		SendMessageToSet(&data, true);
 }
 
@@ -4571,9 +4568,7 @@ void Player::SetPlayerSpeed(uint8 SpeedType, float value)
 	if( value < 0.1f )
 		value = 0.1f;
 
-	uint8 buf[200];
-	StackPacket data(SMSG_FORCE_RUN_SPEED_CHANGE, buf, 200);
-
+	WorldPacket data(SMSG_FORCE_RUN_SPEED_CHANGE, 200);
 	if( SpeedType != SWIMBACK )
 	{
 		data << GetNewGUID();
@@ -4675,7 +4670,7 @@ void Player::SetPlayerSpeed(uint8 SpeedType, float value)
 		return;
 	}
 
-	SendMessageToSet(&data , true);
+	SendMessageToSet(&data, true);
 
 	// dont mess up on these
 	m_speedChangeInProgress = true;
@@ -5087,12 +5082,10 @@ void Player::CleanupChannels()
 
 void Player::SendInitialActions()
 {
-	uint8 buffer[PLAYER_ACTION_BUTTON_SIZE + 1];
-	StackPacket data(SMSG_ACTION_BUTTONS, buffer, PLAYER_ACTION_BUTTON_SIZE + 1);
+	WorldPacket data(SMSG_ACTION_BUTTONS, PLAYER_ACTION_BUTTON_SIZE + 1);
 	data << uint8(1);	// some bool - 0 or 1. seems to work both ways
-	data.Write((uint8*)&mActions, PLAYER_ACTION_BUTTON_SIZE);
+	data.append((uint8*)&mActions, PLAYER_ACTION_BUTTON_SIZE);
 	m_session->SendPacket(&data);
-	//m_session->OutPacket(SMSG_ACTION_BUTTONS, PLAYER_ACTION_BUTTON_SIZE, &mActions);
 }
 
 void Player::setAction(uint8 button, uint16 action, uint8 type, uint8 misc)
@@ -8141,36 +8134,6 @@ void Player::PushUpdateData(ByteBuffer *data, uint32 updatecount)
 
 	mUpdateCount += updatecount;
 	bUpdateBuffer.append(*data);
-
-	// add to process queue
-	if(m_mapMgr && !bProcessPending)
-	{
-		bProcessPending = true;
-		m_mapMgr->PushToProcessed(TO_PLAYER(this));
-	}
-
-	_bufferS.Release();
-}
-
-void Player::PushUpdateData(StackBuffer *data, uint32 updatecount)
-{
-	// imagine the bytebuffer getting appended from 2 threads at once! :D
-	_bufferS.Acquire();
-
-	// unfortunately there is no guarantee that all data will be compressed at a ratio
-	// that will fit into 2^16 bytes ( stupid client limitation on server packets )
-	// so if we get more than 63KB of update data, force an update and then append it
-	// to the clean buffer.
-	if( (data->GetSize() + bUpdateBuffer.size() ) >= 63000 )
-	{
-		if( IsInWorld() )
-			ProcessPendingUpdates(&m_mapMgr->m_updateBuildBuffer, &m_mapMgr->m_compressionBuffer);
-		else
-			bUpdateBuffer.clear();
-	}
-
-	mUpdateCount += updatecount;
-	bUpdateBuffer.append((const uint8*)data->GetBufferPointer(), data->GetSize());
 
 	// add to process queue
 	if(m_mapMgr && !bProcessPending)

@@ -142,9 +142,6 @@ public:
 	HEARTHSTONE_INLINE void SendPacketToAll(WorldPacket *packet) { SendPacketToAllButOne(packet, NULLPLR); }
 	void SendPacketToAllButOne(WorldPacket *packet, Player* pSkipTarget);
 
-	HEARTHSTONE_INLINE void SendPacketToAll(StackPacket *packet) { SendPacketToAllButOne(packet, NULLPLR); }
-	void SendPacketToAllButOne(StackPacket *packet, Player* pSkipTarget);
-
 	HEARTHSTONE_INLINE void OutPacketToAll(uint16 op, uint16 len, const void* data) { OutPacketToAllButOne(op, len, data, NULLPLR); }
 	void OutPacketToAllButOne(uint16 op, uint16 len, const void* data, Player* pSkipTarget);
 

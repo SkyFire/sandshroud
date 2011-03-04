@@ -404,7 +404,6 @@ public:
 
 	// send packet functions for state manager
 	void SendPacketToPlayers(int32 iZoneMask, int32 iFactionMask, WorldPacket *pData);
-	void SendPacketToPlayers(int32 iZoneMask, int32 iFactionMask, StackPacket *pData);
 	void SendPvPCaptureMessage(int32 iZoneMask, uint32 ZoneId, const char * Format, ...);
 
 	// auras :< (world pvp)

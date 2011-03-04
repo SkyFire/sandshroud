@@ -1596,7 +1596,6 @@ public:
 	bool bProcessPending;
 	Mutex _bufferS;
 	void PushUpdateData(ByteBuffer *data, uint32 updatecount);
-	void PushUpdateData(StackBuffer *data, uint32 updatecount);
 	void PushCreationData(ByteBuffer *data, uint32 updatecount);
 	void PushOutOfRange(const WoWGuid & guid);
 	void ProcessPendingUpdates(ByteBuffer *pBuildBuffer, ByteBuffer *pCompressionBuffer);

@@ -1225,10 +1225,9 @@ void AlteracValley::EventAssaultControlPoint(uint32 x)
 void AlteracValley::Herald(const char *format, ...)
 {
 	char msgbuf[100];
-	uint8 databuf[200];
 	va_list ap;
 	size_t msglen;
-	StackPacket data(SMSG_MESSAGECHAT, databuf, 500);
+	WorldPacket data(SMSG_MESSAGECHAT, 500);
 
 	va_start(ap, format);
 	vsnprintf(msgbuf, 100, format, ap);

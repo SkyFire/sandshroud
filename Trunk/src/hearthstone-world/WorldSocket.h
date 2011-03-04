@@ -49,7 +49,6 @@ public:
 
 	// vs8 fix - send null on empty buffer
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket* packet) { if(!packet) return; OutPacket(packet->GetOpcode(), packet->size(), (packet->size() ? (const void*)packet->contents() : NULL)); }
-	HEARTHSTONE_INLINE void SendPacket(StackPacket * packet) { if(!packet) return; OutPacket(packet->GetOpcode(), packet->GetSize(), (packet->GetSize() ? (const void*)packet->GetBufferPointer() : NULL)); }
 
 	void __fastcall OutPacket(uint16 opcode, size_t len, const void* data);
 	OUTPACKET_RESULT __fastcall _OutPacket(uint16 opcode, size_t len, const void* data);
@@ -100,7 +99,6 @@ private:
 #endif
 
 void FastGUIDPack(ByteBuffer & buf, const uint64 & oldguid);
-void FastGUIDPack(StackBuffer & buf, const uint64 & oldguid);
 
 //!!! warning. This presumes that all guids can be compressed at least 1 byte
 //make sure you choose highguids acordingly

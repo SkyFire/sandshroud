@@ -293,14 +293,12 @@ void WorldSession::HandleLootOpcode( WorldPacket & recv_data )
 		{
 			if(party->GetMethod() == PARTY_LOOT_MASTER)
 			{
-				uint8 databuf[1000];
-				StackPacket data(SMSG_LOOT_MASTER_LIST, databuf, 1000);
-
-				data << (uint8)party->MemberCount();
+				WorldPacket data(SMSG_LOOT_MASTER_LIST, 324);
 				uint32 real_count = 0;
 				SubGroup *s;
 				GroupMembersSet::iterator itr;
 				party->Lock();
+				data << (uint8)party->MemberCount();
 				for(uint32 i = 0; i < party->GetSubGroupCount(); i++)
 				{
 					s = party->GetSubGroup(i);
@@ -314,8 +312,7 @@ void WorldSession::HandleLootOpcode( WorldPacket & recv_data )
 					}
 				}
 				party->Unlock();
-				data.GetBufferPointer()[0] = real_count;
-
+				data.put<uint32>(0, real_count);
 				party->SendPacketToAll(&data);
 			}
 		}

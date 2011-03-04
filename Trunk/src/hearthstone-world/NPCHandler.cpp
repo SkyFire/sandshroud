@@ -573,8 +573,7 @@ void WorldSession::HandleSpiritHealerActivateOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 {
-	uint8 bdata[50000];
-	StackPacket data(SMSG_NPC_TEXT_UPDATE, bdata, 50000);
+	uint32 e = 0, i = 0;
 	uint32 textID;
 	uint64 targetGuid;
 	GossipText *pGossip = NULL;
@@ -593,16 +592,28 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 			lnc = sLocalizationMgr.GetLocalizedNpcText(textID, language);
 	}
 
+	WorldPacket data(SMSG_NPC_TEXT_UPDATE, 50000);
 	data << textID;
-
-	uint32 e = 0;
 	if(pGossip)
 	{
 		data << float(1.0f);	// Prob
-		for(uint32 i = 0; i < 8; i++)
+		for(i = 0; i < 8; i++)
 		{
 			if(pGossip->Texts[i].Prob)
-				data << (lnc ? lnc->Texts[i][0] : pGossip->Texts[i].Text[0]) << (lnc ? lnc->Texts[i][1] : pGossip->Texts[i].Text[1]);
+			{
+				char* text[2];
+				text[0] = lnc ? lnc->Texts[i][0] : pGossip->Texts[i].Text[0];
+				text[1] = lnc ? lnc->Texts[i][1] : pGossip->Texts[i].Text[1];
+				if(text[0] == NULL || *text[0] == NULL)
+					data << "Hello, $N. What can I do for you?";
+				else
+					data << text[0];
+
+				if(text[1] == NULL || *text[1] == NULL)
+					data << "Hello, $N. What can I do for you?";
+				else
+					data << text[1];
+			}
 			else
 				data << uint8(0x00) << uint8(0x00);
 
@@ -621,7 +632,7 @@ void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 		for(e = 0; e < 6; e++)	// Emotes
 			data << uint32(0x00);
 
-		for(int i = 0; i < 7; i++)
+		for(i = 0; i < 7; i++)
 		{
 			data << uint32(0x00);
 			data << uint8(0x00) << uint8(0x00);
