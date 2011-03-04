@@ -16,7 +16,7 @@
 
 #include "LacrimiStdAfx.h"
 
-void Lacrimi::SetupPhaseOne()
+void Lacrimi::SetupEHPhaseOne()
 {
 
 }

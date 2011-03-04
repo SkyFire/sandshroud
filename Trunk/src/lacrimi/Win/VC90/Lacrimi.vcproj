@@ -459,86 +459,170 @@
 					<Filter
 						Name="Zones"
 						>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Alterac_Mountains.cpp"
+						<Filter
+							Name="Arathi Highlands"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Arathi_Highlands.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Arathi_Highlands.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Arathi_Highlands.h"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Alterac Mountains"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Blasted_Lands.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Alterac_Mountains.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Blasted Lands"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Burning_Steppes.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Blasted_Lands.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Burning Steppes"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Dun_Morogh.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Burning_Steppes.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Dun Morogh"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Duskwood.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Dun_Morogh.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Duskwood"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Eastern_Plaguelands.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Duskwood.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Eastern Plaguelands"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Elwynn_Forest.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Eastern_Plaguelands.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Elwynn Forest"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Eversong_Woods.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Elwynn_Forest.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Eversong Woods"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Ghostlands.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Eversong_Woods.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Ghostlands"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Hinterlands.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Ghostlands.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Hinterlands"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Isle_Of_Quel__Danas.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Hinterlands.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Isle of Quel Danas"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Loch_Modan.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Isle_Of_Quel__Danas.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Loch Modan"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Searing_Gorge.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Loch_Modan.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Wetlands"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Silverpine_Forest.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Wetlands.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Westfall"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Stranglethorn_Vale.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Westfall.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Western Plaguelands"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Trisfal_Glades.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Western_Plaguelands.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Trisfal Glades"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Western_Plaguelands.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Trisfal_Glades.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Stranglethorn Vale"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Westfall.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Stranglethorn_Vale.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Silverpine Forest"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Wetlands.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Silverpine_Forest.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Searing Gorge"
 							>
-						</File>
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Eastern Kingdoms\Searing_Gorge.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 				<Filter
@@ -567,82 +651,158 @@
 					<Filter
 						Name="Zones"
 						>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Ashenvale.cpp"
+						<Filter
+							Name="Ashenvale"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Azshara.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Ashenvale.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Azshara"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Azuremyst_Isle.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Azshara.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Azuremyst Isle"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Bloodmyst_Isle.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Azuremyst_Isle.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Bloodmyst Isle"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Darkshore.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Bloodmyst_Isle.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Darkshore"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Desolace.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Darkshore.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Desolace"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Dustwallow_Marsh.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Desolace.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Dustwallow Marsh"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Felwood.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Dustwallow_Marsh.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Felwood"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Feralas.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Felwood.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Feralas"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Moonglade.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Feralas.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Moonglade"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Mulgore.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Moonglade.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Mulgore"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Silithus.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Mulgore.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Silithus"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Stonetalon_Mountains.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Silithus.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Winterspring"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Tanaris.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Winterspring.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Ungoro Crater"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Teldrassil.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Ungoro_Crater.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Thousand Needles"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\The_Barrens.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Thousand_Needles.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="The Barrens"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Thousand_Needles.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\The_Barrens.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Teldrassil"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Ungoro_Crater.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Teldrassil.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Tanaris"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Winterspring.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Tanaris.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Stonetalon Mountains"
 							>
-						</File>
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Kalimdor\Stonetalon_Mountains.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 				<Filter
@@ -651,34 +811,62 @@
 					<Filter
 						Name="Zones"
 						>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Outlands\Blades_Edge_Mountains.cpp"
+						<Filter
+							Name="Blade&apos;s Edge Mountains"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Outlands\Hellfire_Peninsula.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Outlands\Blades_Edge_Mountains.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Hellfire Peninsula"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Outlands\Nagrand.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Outlands\Hellfire_Peninsula.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Nagrand"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Outlands\Netherstorm.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Outlands\Nagrand.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Zangarmarsh"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Outlands\Shadowmoon_Valley.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Outlands\Zangarmarsh.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Terrokar Forest"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Outlands\Terrokar_Forest.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Outlands\Terrokar_Forest.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Shadowmoon Valley"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Outlands\Zangarmarsh.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Outlands\Shadowmoon_Valley.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Netherstorm"
 							>
-						</File>
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Outlands\Netherstorm.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 					<Filter
 						Name="Cities"
@@ -696,6 +884,22 @@
 						RelativePath="..\..\Source\Scripts\Level 0\Ebon Hold\Ebon_Hold.cpp"
 						>
 					</File>
+					<File
+						RelativePath="..\..\Source\Scripts\Level 0\Ebon Hold\Ebon_Hold.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Source\Scripts\Level 0\Ebon Hold\PhaseOne.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Source\Scripts\Level 0\Ebon Hold\PhaseThree.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Source\Scripts\Level 0\Ebon Hold\PhaseTwo.cpp"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Northrend"
@@ -711,38 +915,70 @@
 					<Filter
 						Name="Zones"
 						>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Borean_Tundra.cpp"
+						<Filter
+							Name="Borean Tundra"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Dragonblight.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Borean_Tundra.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Dragonblight"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Grizzly_Hills.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Dragonblight.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Grizzly Hills"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Howling_Fjord.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Grizzly_Hills.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Howling Fjord"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Icecrown.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Howling_Fjord.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Icecrown"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Sholazar_Basin.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Icecrown.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Zul&apos;Drak"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Storm_Peaks.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Zul_Drak.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Storm Peaks"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Source\Scripts\Level 0\Northrend\Zul_Drak.cpp"
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Storm_Peaks.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Sholazar Basin"
 							>
-						</File>
+							<File
+								RelativePath="..\..\Source\Scripts\Level 0\Northrend\Sholazar_Basin.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

@@ -128,6 +128,9 @@ public: // Script Related
 
 	// Ebon Hold
 	void SetupEbonHoldScripts();
+	void SetupEHPhaseOne();
+	void SetupEHPhaseTwo();
+	void SetupEHPhaseThree();
 
 ///////////////////
 ////// City Setups.

@@ -1027,6 +1027,11 @@ void GossipScript::GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, u
 				}
 				Plr->Gossip_Complete();
 			}break;
+		case 98:		// Resend original gossip.
+			{
+				Plr->Gossip_Complete(); // This should be used instead of GossipHello for quest givers.
+				Plr->GetSession()->SendGossipForObject(pCreature);
+			}break;
 		case 99:		// Aborting current action
 			{
 				Plr->Gossip_Complete();
