@@ -27,11 +27,9 @@ bool bLogChat;
 bool crashed = false;
 
 volatile bool Master::m_stopEvent;
-extern bool killit;
 
 // Database defines.
 SERVER_DECL Database* Database_Character;
-SERVER_DECL Database* Database_Account;
 SERVER_DECL Database* Database_World;
 SERVER_DECL Database* Database_Log;
 
@@ -50,7 +48,6 @@ void Master::_OnSignal(int s)
 #ifdef _WIN32
 	case SIGBREAK:
 #endif
-		killit = true;
 		remove( "hearthstone-world.pid" );
 		Master::m_stopEvent = true;
 		break;
@@ -145,7 +142,6 @@ bool Master::Run(int argc, char ** argv)
 		default:
 			sLog.m_screenLogLevel = 3;
 			printf("Usage: %s [--checkconf] [--conf <filename>] [--realmconf <filename>] [--version]\n", argv[0]);
-			killit = true;
 			return true;
 		}
 	}
@@ -180,13 +176,6 @@ bool Master::Run(int argc, char ** argv)
 			Log.Success( "Config", "Passed without errors.\n" );
 		else
 			Log.Warning( "Config", "Encountered one or more errors.\n" );
-
-		/* test for die variables */
-		string die;
-		if( Config.MainConfig.GetString( "die", "msg", &die) || Config.MainConfig.GetString("die2", "msg", &die ) )
-			Log.Warning( "Config", "Die directive received: %s", die.c_str() );
-
-		killit = true;
 		return true;
 	}
 
@@ -216,16 +205,7 @@ bool Master::Run(int argc, char ** argv)
 		Log.Success( "Config", ">> hearthstone-world.conf" );
 	else
 	{
-		killit = true;
 		Log.Error( "Config", ">> hearthstone-world.conf" );
-		return false;
-	}
-
-	string die;
-	if( Config.MainConfig.GetString( "die", "msg", &die) || Config.MainConfig.GetString( "die2", "msg", &die ) )
-	{
-		killit = true;
-		Log.Error( "Config", "Die directive received: %s", die.c_str() );
 		return false;
 	}
 
@@ -233,7 +213,6 @@ bool Master::Run(int argc, char ** argv)
 		Log.Success( "Config", ">> hearthstone-realms.conf" );
 	else
 	{
-		killit = true;
 		Log.Error( "Config", ">> hearthstone-realms.conf" );
 		return false;
 	}
@@ -242,14 +221,12 @@ bool Master::Run(int argc, char ** argv)
 		Log.Success( "Config", ">> hearthstone-options.conf" );
 	else
 	{
-		killit = true;
 		Log.Error( "Config", ">> hearthstone-options.conf" );
 		return false;
 	}
 
 	if(!_StartDB())
 	{
-		killit = true;
 		Database::CleanupLibs();
 		return false;
 	}
@@ -276,13 +253,12 @@ bool Master::Run(int argc, char ** argv)
 	WorldSession::InitPacketHandlerTable();
 
 	string host = Config.RealmConfig.GetStringDefault( "Listen", "Host", DEFAULT_HOST );
-	int wsport = Config.RealmConfig.GetIntDefault( "Listen", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
+	int wsport = Config.RealmConfig.GetIntDefault( "ServerSettings", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
 
 	new ScriptMgr;
 
 	if( !sWorld.SetInitialWorldSettings() )
 	{
-		killit = true;
 		Log.Error( "Server", "SetInitialWorldSettings() failed. Something went wrong? Exiting." );
 		return false;
 	}
@@ -439,10 +415,6 @@ bool Master::Run(int argc, char ** argv)
 	if(Config.MainConfig.GetBoolDefault("Log", "Cheaters", false) || Config.MainConfig.GetBoolDefault("Log", "GMCommands", false)
 		|| Config.MainConfig.GetBoolDefault("Log", "Player", false) || Config.MainConfig.GetBoolDefault("Log", "Chat", false))
 		LogDatabase.EndThreads();
-
-	if(sWorld.LogonServerType & LOGON_MANGOS)
-		if(Database_Account != NULL)
-			AccountDatabase.EndThreads();
 
 	Log.Notice("Server", "Shutting down random generator.");
 	CleanupRandomNumberGenerators();
@@ -733,12 +705,6 @@ void Master::_UnhookSignals()
 #else
 	signal( SIGHUP, 0 );
 #endif
-
-}
-
-void Master::KillIt()
-{
-	killit = true;
 }
 
 #ifdef WIN32
@@ -766,9 +732,6 @@ void OnCrash( bool Terminate )
 				|| Config.MainConfig.GetBoolDefault("Log", "Player", false) || Config.MainConfig.GetBoolDefault("Log", "Chat", false))
 				LogDatabase.EndThreads();
 
-			if(sWorld.LogonServerType & LOGON_MANGOS)
-				if(Database_Account != NULL)
-					AccountDatabase.EndThreads();
 			sLog.outString( "All pending database operations cleared.\n" );
 			sLog.outString( "Data saved." );
 		}

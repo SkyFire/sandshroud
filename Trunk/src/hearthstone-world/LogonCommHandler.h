@@ -79,10 +79,10 @@ class LogonCommHandler : public Singleton<LogonCommHandler>
 #endif
 
 	ForcedPermissionMap forced_permissions;
-	map<LogonServer*, LogonCommClientSocket*> logons;
 	map<uint32, WorldSocket*> pending_logons;
-	set<Realm*> realms;
-	set<LogonServer*> servers;
+	LogonCommClientSocket* logon;
+	LogonServer* server;
+	Realm* realm;
 	uint32 idhigh;
 	uint32 next_request;
 	Mutex mapLock;
@@ -101,13 +101,12 @@ public:
 	LogonCommClientSocket * ConnectToLogon(string Address, uint32 Port);
 	void UpdateAccountCount(uint32 account_id, int8 add);
 	void RequestAddition(LogonCommClientSocket * Socket);
+	void ConnectionDropped();
+	void AdditionAck(uint32 ServID);
 	void CheckAllServers();
-	void Startup();
-	void ConnectionDropped(uint32 ID);
-	void AdditionAck(uint32 ID, uint32 ServID);
 	void UpdateSockets();
-	void Connect(LogonServer * server);
-	void ConnectAll();
+	void Startup();
+	void Connect();
 	//void LogonDatabaseSQLExecute(const char* str, ...);
 	//void LogonDatabaseReloadAccounts();
 	void RefreshRealmPop();
@@ -159,13 +158,10 @@ class LogonCommWatcherThread : public ThreadContext
 public:
 	LogonCommWatcherThread()
 	{
-		if(!(sWorld.LogonServerType & LOGON_MANGOS))
-		{
 #ifdef WIN32
-			hEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
+		hEvent = CreateEvent( NULL, TRUE, FALSE, NULL );
 #endif
-			running = true;
-		}
+		running = true;
 	}
 
 	~LogonCommWatcherThread()
@@ -175,29 +171,23 @@ public:
 
 	void OnShutdown()
 	{
-		if(!(sWorld.LogonServerType & LOGON_MANGOS))
-		{
-			m_threadRunning = false;
+		m_threadRunning = false;
 #ifdef WIN32
-			SetEvent( hEvent );
+		SetEvent( hEvent );
 #endif
-		}
 	}
 
 	bool run()
 	{
-		if(!(sWorld.LogonServerType & LOGON_MANGOS))
+		sLogonCommHandler.Connect();
+		while( m_threadRunning )
 		{
-			sLogonCommHandler.ConnectAll();
-			while( m_threadRunning )
-			{
-				sLogonCommHandler.UpdateSockets();
+			sLogonCommHandler.UpdateSockets();
 #ifdef WIN32
-				WaitForSingleObject( hEvent, 10 );
+			WaitForSingleObject( hEvent, 10 );
 #else
-				Sleep( 10 );
+			Sleep( 10 );
 #endif
-			}
 		}
 		return true;
 	}

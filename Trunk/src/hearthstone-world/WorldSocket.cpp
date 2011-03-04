@@ -41,8 +41,6 @@ struct ServerPktHeader
 
 #pragma pack(pop)
 
-bool BuildCallBackForMangos(WorldPacket & data, string name);
-
 WorldSocket::WorldSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, WORLDSOCKET_SENDBUF_SIZE, WORLDSOCKET_RECVBUF_SIZE, false, peer)
 {
 	Authed = false;
@@ -270,22 +268,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// Set the authentication packet
 	pAuthenticationPacket = recvPacket;
-
-	if(sWorld.LogonServerType & LOGON_MANGOS)
-	{
-		OUT_DEBUG("Recieving socket info.");
-
-		// find the socket with this request
-		WorldSocket * sock = sLogonCommHandler.GetSocketByRequest(mRequestID);
-		if(sock == 0 || sock->Authed || !sock->IsConnected())		// Expired/Client disconnected
-			return;
-
-		sock->Authed = true;
-		sLogonCommHandler.RemoveUnauthedSocket(mRequestID);
-		WorldPacket data(RSMSG_SESSION_RESULT);
-		if(BuildCallBackForMangos(data, account))
-			sock->InformationRetreiveCallback(data, mRequestID);
-	}
 }
 
 void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
@@ -324,14 +306,9 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	//Pull the session key.
 
 	BigNumber BNK;
-	if(!(sWorld.LogonServerType&LOGON_MANGOS))
-	{
-		recvData.read(K, 40);
-
-		_crypt.Init(K);
-
-		BNK.SetBinary(K, 40);
-	}
+	recvData.read(K, 40);
+	_crypt.Init(K);
+	BNK.SetBinary(K, 40);
 
 	//checking if player is already connected
 	//disconnect current player and login this one(blizzlike)
@@ -380,20 +357,17 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 		m_fullAccountName = NULL;
 	}
 
-	if(!(sWorld.LogonServerType&LOGON_MANGOS))
-	{
-		sha.UpdateData((uint8 *)&t, 4);
-		sha.UpdateData((uint8 *)&mClientSeed, 4);
-		sha.UpdateData((uint8 *)&mSeed, 4);
-		sha.UpdateBigNumbers(&BNK, NULL);
-		sha.Finalize();
+	sha.UpdateData((uint8 *)&t, 4);
+	sha.UpdateData((uint8 *)&mClientSeed, 4);
+	sha.UpdateData((uint8 *)&mSeed, 4);
+	sha.UpdateBigNumbers(&BNK, NULL);
+	sha.Finalize();
 
-		if (memcmp(sha.GetDigest(), digest, 20))
-		{
-			// AUTH_UNKNOWN_ACCOUNT = 21
-			OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
-			return;
-		}
+	if (memcmp(sha.GetDigest(), digest, 20))
+	{
+		// AUTH_UNKNOWN_ACCOUNT = 21
+		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x15");
+		return;
 	}
 
 	// Allocate session
@@ -793,59 +767,4 @@ unsigned int FastGUIDPack(const uint64 & oldguid, unsigned char * buffer, uint32
 	}
 	buffer[pos] = guidmask;
 	return (j - pos);
-}
-
-bool BuildCallBackForMangos(WorldPacket & data, string name)
-{
-	string GMFlags;
-	uint32 AccountID;
-	uint8 AccountFlags = 0;
-
-	QueryResult * result = AccountDatabase.Query("SELECT id,gmlevel,expansion,locale,mutetime FROM `account` WHERE `username` = \"%s\"", HEARTHSTONE_TOLOWER_RETURN(name).c_str());
-	if(result)
-	{
-		Field* fields = result->Fetch();
-		AccountID = fields[0].GetUInt32();
-		uint8 GMflags = fields[1].GetUInt8();
-		switch(GMflags)
-		{
-		case 1:
-			GMFlags = "gm";
-			break;
-
-		case 2:
-			GMFlags = "am";
-			break;
-
-		case 3:
-			GMFlags = "az";
-			break;
-
-		default:
-			GMFlags = "";
-			break;
-		}
-
-		uint8 expansion = fields[2].GetUInt8();
-		switch(expansion)
-		{
-		case 1:
-			AccountFlags = ACCOUNT_FLAG_XPACK_01;
-			break;
-
-		case 2:
-			AccountFlags = ACCOUNT_FLAG_XPACK_01|ACCOUNT_FLAG_XPACK_02;
-			break;
-		}
-
-		std::string local = fields[3].GetString();
-		uint32 muted = fields[4].GetUInt32();
-
-		data << uint32(0) << AccountID << name.c_str() << GMFlags.c_str() << AccountFlags;
-		data.append(local.c_str(), 4);
-		data << muted;
-		return true;
-	}
-	data << uint32(1);
-	return false;
 }

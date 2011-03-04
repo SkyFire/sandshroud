@@ -1284,9 +1284,6 @@ void World::Rehash(bool load)
 #else
 		Config.MainConfig.SetSource((char*)CONFDIR "/hearthstone-world.conf", true);
 #endif
-
-		if(!Config.MainConfig.GetBoolDefault("Internal", "UseInternalRestarter", false))
-			sMaster.KillIt();
 	}
 
 	if(!ChannelMgr::getSingletonPtr())
@@ -1295,7 +1292,6 @@ void World::Rehash(bool load)
 	if(!MailSystem::getSingletonPtr())
 		new MailSystem;
 
-	LogonServerType = Config.RealmConfig.GetIntDefault("LogonServer", "LogonType", LOGON_HEARTHSTONE);
 	sLog.Init(Config.MainConfig.GetIntDefault("LogLevel", "Screen", 1));
 	QueryLog = Config.MainConfig.GetBoolDefault("LogLevel", "Query", false);
 
@@ -2319,8 +2315,6 @@ void World::QueueShutdown(uint32 delay, uint32 type)
 	char buf[1000];
 	snprintf(buf, 1000, "Server %s initiated. Server will save and shut down in approx. %u seconds.", type == SERVER_SHUTDOWN_TYPE_RESTART ? "restart" : "shutdown", delay);
 	SendWorldText(buf, NULL);
-	if(type == SERVER_SHUTDOWN_TYPE_SHUTDOWN)
-		sMaster.KillIt();
 }
 
 void World::BackupDB()

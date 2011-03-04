@@ -58,7 +58,6 @@ public:
 
 	static volatile bool m_stopEvent;
 	bool wintergrasp;
-	void KillIt();
 
 private:
 	bool _StartDB();

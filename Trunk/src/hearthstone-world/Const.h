@@ -54,7 +54,6 @@ class World;
 class StrandOfTheAncients;
 
 #define CharacterDatabase (*Database_Character)
-#define AccountDatabase (*Database_Account)
 #define WorldDatabase (*Database_World)
 #define LogDatabase (*Database_Log)
 

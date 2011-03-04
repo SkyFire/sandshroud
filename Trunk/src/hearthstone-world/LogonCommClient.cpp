@@ -129,7 +129,6 @@ void LogonCommClientSocket::HandleRegister(WorldPacket & recvData)
 	uint32 realmlid;
 	string realmname;
 	recvData >> error >> realmlid >> realmname;
-
 	if(error || realmlid == 0) // Adress already used, or realm is active on our slot/name
 	{
 		// FUUUUU
@@ -137,7 +136,7 @@ void LogonCommClientSocket::HandleRegister(WorldPacket & recvData)
 	}
 
 	Log.Notice("LogonCommClient", "Realm `%s` registered as realm %u.", realmname.c_str(), realmlid);
-	LogonCommHandler::getSingleton().AdditionAck(_id, realmlid);
+	sLogonCommHandler.AdditionAck(realmlid);
 	realm_ids.insert(realmlid);
 }
 
@@ -216,7 +215,7 @@ void LogonCommClientSocket::OnDisconnect()
 	if(_id != 0)
 	{
 		DEBUG_LOG("LogonCommClientSocket","Calling ConnectionDropped() due to OnDisconnect().");
-		sLogonCommHandler.ConnectionDropped(_id);
+		sLogonCommHandler.ConnectionDropped();
 	}
 }
 

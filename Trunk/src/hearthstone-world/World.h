@@ -589,7 +589,6 @@ public:
 	bool PathFinding;
 
 	bool AHEnabled;
-	int LogonServerType;
 	bool DisableBufferSaving;
 	bool SpeedhackProtection;
 	uint32 mInWorldPlayerCount;
