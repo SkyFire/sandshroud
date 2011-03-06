@@ -144,12 +144,6 @@ public:
 			m_socket->SendPacket(data);
 	}
 
-	HEARTHSTONE_INLINE void SendPacket(StackPacket * packet)
-	{
-		if(m_socket && m_socket->IsConnected())
-			m_socket->SendPacket(packet);
-	}
-
 	HEARTHSTONE_INLINE void OutPacket(uint16 opcode, uint16 len, const void* data)
 	{
 		if(m_socket && m_socket->IsConnected())

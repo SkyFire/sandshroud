@@ -37,7 +37,6 @@
 #include "../hearthstone-shared/Log.h"
 #include "../hearthstone-shared/NGLog.h"
 #include "../hearthstone-shared/ByteBuffer.h"
-#include "../hearthstone-shared/StackBuffer.h"
 #include "../hearthstone-shared/Config/ConfigEnv.h"
 #include "../hearthstone-shared/crc32.h"
 #include "../hearthstone-shared/LocationVector.h"

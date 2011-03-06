@@ -300,8 +300,7 @@ void Session::HandleNameQueryOpcode( WorldPacket & recv_data )
 		return;
 
 	DEBUG_LOG("WorldSession","Received CMSG_NAME_QUERY for: %s", pn->Name );
-	uint8 databuffer[5000];
-	StackPacket data(SMSG_NAME_QUERY_RESPONSE, databuffer, 5000);
+	WorldPacket data(SMSG_NAME_QUERY_RESPONSE, 5000);
 	data << WoWGuid(guid);
 	data << uint8(0);
 	data << pn->Name;
