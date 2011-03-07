@@ -784,7 +784,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 					uint32 maxhealth = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
 					uint32 healthdiff = maxhealth - health;
 
-					SetUInt32Value(UNIT_FIELD_MAXHEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))));
+					SetUInt32Value(UNIT_FIELD_MAXHEALTH, (maxhealth+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))));
 					SetUInt32Value(UNIT_FIELD_HEALTH, (health+((pPlayer->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev))) - healthdiff);
 				}
 

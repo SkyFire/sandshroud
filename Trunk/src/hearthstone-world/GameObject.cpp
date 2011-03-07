@@ -441,7 +441,7 @@ bool GameObject::Load(GOSpawn *spawn)
 	}
 	SetFloatValue(OBJECT_FIELD_SCALE_X,spawn->scale);
 
-	if( spawn->flags & GO_FLAG_IN_USE || spawn->flags & GO_FLAG_LOCKED )
+	if( GetFlags() & GO_FLAG_IN_USE || GetFlags() & GO_FLAG_LOCKED )
 		SetAnimProgress(100);
 
 	CALL_GO_SCRIPT_EVENT(TO_GAMEOBJECT(this), OnCreate)();
@@ -617,7 +617,7 @@ void GameObject::_LoadQuests()
 	sQuestMgr.LoadGOQuests(TO_GAMEOBJECT(this));
 
 	// set state for involved quest objects
-	if( pInfo && pInfo->InvolvedQuestIds )
+	if( pInfo && pInfo->InvolvedQuestCount )
 	{
 		SetUInt32Value(GAMEOBJECT_DYNAMIC, 0);
 		SetState(0);

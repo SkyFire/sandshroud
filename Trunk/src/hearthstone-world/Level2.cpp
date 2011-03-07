@@ -790,6 +790,8 @@ bool ChatHandler::HandleGOInfo(const char *args, WorldSession *m_session)
 	}
 
 	WhiteSystemMessage(m_session, "Information:");
+	if(GObj->m_spawn)
+		GreenSystemMessage(m_session, "SpawnID: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->m_spawn->id);
 	GreenSystemMessage(m_session, "Entry: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetEntry());
 	GreenSystemMessage(m_session, "Model: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetDisplayId());
 	GreenSystemMessage(m_session, "State: %s%u|r", MSG_COLOR_LIGHTBLUE, GObj->GetState());
