@@ -307,7 +307,7 @@ void LogonCommHandler::LoadRealmConfiguration()
 	std::string adress = string(Config.RealmConfig.GetStringDefault( "ServerSettings", "Adress", "SomeRealm" ).c_str())
 		+ ":" + string(port);
 	realm = new Realm();
-	realm->Population = 0;
+	realm->Population = 1;
 	realm->Address = adress;
 	realm->Icon = Config.RealmConfig.GetIntDefault("ServerSettings", "RealmType", 1);
 	realm->WorldRegion = Config.RealmConfig.GetIntDefault("ServerSettings", "WorldRegion", 1);

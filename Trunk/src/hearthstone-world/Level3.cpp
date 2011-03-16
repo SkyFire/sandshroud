@@ -2524,16 +2524,19 @@ bool ChatHandler::HandleLookupCreatureCommand(const char * args, WorldSession * 
 	while(!itr->AtEnd())
 	{
 		i = itr->Get();
-		if(FindXinYString(x, i->lowercase_name))
+		if(CreatureProtoStorage.LookupEntry(i->Id))
 		{
-			// Print out the name in a cool highlighted fashion
-			SendHighlightedName(m_session, i->Name, i->lowercase_name, x, i->Id, false);
-
-			++count;
-			if(count == 25)
+			if(FindXinYString(x, i->lowercase_name))
 			{
-				RedSystemMessage(m_session, "More than 25 results returned. aborting.");
-				break;
+				// Print out the name in a cool highlighted fashion
+				SendHighlightedName(m_session, i->Name, i->lowercase_name, x, i->Id, false);
+
+				++count;
+				if(count == 25)
+				{
+					RedSystemMessage(m_session, "More than 25 results returned. aborting.");
+					break;
+				}
 			}
 		}
 		if(!itr->Inc())
