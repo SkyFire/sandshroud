@@ -2389,12 +2389,10 @@ void World::LogGM(WorldSession* session, string message, ...)
 				msg1[j++] = msg0[i];
 		}
 
-		stringstream ss;
-		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
-			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+		const char* execute = format("INSERT INTO gmlog VALUES( %u, %u, \"%s\", \"%s\", \"%s\", \"%s\")", uint32(UNIXTIME),
+			session->GetAccountId(), session->GetAccountName().c_str(), (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP"),
+			(session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin"), ((char*)(msg1))).c_str();
 
-		const char* execute = format("INSERT INTO gmlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
 		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
@@ -2423,12 +2421,10 @@ void World::LogCheater(WorldSession* session, string message, ...)
 				msg1[j++] = msg0[i];
 		}
 
-		stringstream ss;
-		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
-			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+		const char* execute = format("INSERT INTO cheaterlog VALUES( %u, %u, \"%s\", \"%s\", \"%s\", \"%s\")", uint32(UNIXTIME),
+			session->GetAccountId(), session->GetAccountName().c_str(), (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP"),
+			(session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin"), ((char*)(msg1))).c_str();
 
-		const char* execute = format("INSERT INTO cheaterlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
 		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
@@ -2457,12 +2453,10 @@ void World::LogPlayer(WorldSession* session, string message, ...)
 				msg1[j++] = msg0[i];
 		}
 
-		stringstream ss;
-		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
-			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+		const char* execute = format("INSERT INTO playerlog VALUES( %u, %u, \"%s\", \"%s\", \"%s\", \"%s\")", uint32(UNIXTIME),
+			session->GetAccountId(), session->GetAccountName().c_str(), (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP"),
+			(session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin"), ((char*)(msg1))).c_str();
 
-		const char* execute = format("INSERT INTO playerlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
 		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
@@ -2491,12 +2485,10 @@ void World::LogChat(WorldSession* session, string message, ...)
 				msg1[j++] = msg0[i];
 		}
 
-		stringstream ss;
-		ss << "Account " << session->GetAccountId() << " " << session->GetAccountName().c_str() << ", IP "
-			<< (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP") << ", Player "
-			<< (session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin") << ":: " << msg1;
+		const char* execute = format("INSERT INTO chatlog VALUES( %u, %u, \"%s\", \"%s\", \"%s\", \"%s\")", uint32(UNIXTIME),
+			session->GetAccountId(), session->GetAccountName().c_str(), (session->GetSocket() ? session->GetSocket()->GetIP() : "NOIP"),
+			(session->GetPlayer() ? session->GetPlayer()->GetName() : "nologin"), ((char*)(msg1))).c_str();
 
-		const char* execute = format("INSERT INTO chatlog VALUES( %u,\"%s\")", uint32(UNIXTIME), ss.str().c_str()).c_str();
 		LogDatabase.Execute(LogDatabase.EscapeString(execute).c_str());
 	}
 }
