@@ -507,13 +507,7 @@ bool World::SetInitialWorldSettings()
 	ThreadPool.ExecuteTask( new CharacterLoaderThread() );
 	ThreadPool.ExecuteTask( new NewsAnnouncer() );
 
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	MovementCompressor = new CMovementCompressorThread();
-	ThreadPool.ExecuteTask( MovementCompressor );
-#endif
-
 	// Preload and compile talent and talent tab data to speed up talent inspect
-
 	uint32 talent_max_rank;
 	uint32 talent_pos;
 	uint32 talent_class;
@@ -1625,9 +1619,6 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			PlayerInfo * inf = new PlayerInfo();
 			memset(inf, 0, sizeof(PlayerInfo));
 			inf->acct = f[1].GetUInt32();
-#ifdef VOICE_CHAT
-			inf->groupVoiceId = -1;
-#endif
 
 			while(*p != 0)
 			{

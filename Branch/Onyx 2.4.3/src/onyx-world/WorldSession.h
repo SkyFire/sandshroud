@@ -658,13 +658,7 @@ protected:
 	void HandleTeleportToUnitOpcode(WorldPacket & recv_data);
 	void HandleWorldportOpcode(WorldPacket & recv_data);
 	void HandleWrapItemOpcode(WorldPacket& recv_data);
-
-	// VOICECHAT
-	void HandleEnableMicrophoneOpcode(WorldPacket & recv_data);
-	void HandleVoiceChatQueryOpcode(WorldPacket & recv_data);
-	void HandleChannelVoiceQueryOpcode(WorldPacket & recv_data);
 	void HandleSetAutoLootPassOpcode(WorldPacket & recv_data);
-
 	void HandleSetFriendNote(WorldPacket & recv_data);
 	void Handle38C(WorldPacket & recv_data);
 	void HandleInrangeQuestgiverQuery(WorldPacket & recv_data);

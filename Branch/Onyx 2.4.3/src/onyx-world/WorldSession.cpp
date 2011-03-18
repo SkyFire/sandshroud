@@ -871,15 +871,9 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_TELEPORT_TO_UNIT].handler							= &WorldSession::HandleTeleportToUnitOpcode;
 	WorldPacketHandlers[CMSG_WORLD_TELEPORT].handler							= &WorldSession::HandleWorldportOpcode;
 
-	// voicechat
-	WorldPacketHandlers[CMSG_VOICE_SESSION_ENABLE].handler						= &WorldSession::HandleEnableMicrophoneOpcode;
-	WorldPacketHandlers[CMSG_SET_ACTIVE_VOICE_CHANNEL].handler					= &WorldSession::HandleVoiceChatQueryOpcode;
-	//WorldPacketHandlers[CMSG_CHANNEL_VOICE_QUERY].handler						= &WorldSession::HandleChannelVoiceQueryOpcode;	// couldnt find new opcode
 	WorldPacketHandlers[CMSG_OPT_OUT_OF_LOOT].handler							= &WorldSession::HandleSetAutoLootPassOpcode;
-
 	WorldPacketHandlers[CMSG_REALM_SPLIT].handler								= &WorldSession::Handle38C;
 	WorldPacketHandlers[CMSG_REALM_SPLIT].status								= STATUS_AUTHED;
-
 	WorldPacketHandlers[CMSG_QUESTGIVER_STATUS_MULTIPLE_QUERY].handler			= &WorldSession::HandleInrangeQuestgiverQuery;
 }
 

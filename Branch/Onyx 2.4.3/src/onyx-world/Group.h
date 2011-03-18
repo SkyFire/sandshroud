@@ -201,27 +201,6 @@ public:
 	ONYX_INLINE PlayerInfo * GetMainAssist() { return m_mainAssist; }
 
 	void SetDifficulty(uint8 difficulty);
-	
-	/************************************************************************/
-	/* Voicechat															*/
-	/************************************************************************/
-#ifdef VOICE_CHAT
-	void AddVoiceMember(PlayerInfo * pPlayer);
-	void RemoveVoiceMember(PlayerInfo * pPlayer);
-	void SendVoiceUpdate();
-	void CreateVoiceSession();
-	void VoiceChannelCreated(uint16 id);
-	void VoiceSessionDropped();
-	void VoiceSessionReconnected();
-
-public:
-	bool m_voiceChannelRequested;
-	int16 m_voiceChannelId;
-	uint32 m_voiceMemberCount;
-protected:
-	PlayerInfo* m_voiceMembersList[41];
-#endif	// VOICE_CHAT
-
 	ONYX_INLINE void SetFlag(uint8 groupflag) { m_groupFlags |= groupflag; }
 	ONYX_INLINE void RemoveFlag(uint8 groupflag) { m_groupFlags &= ~groupflag; }
 	ONYX_INLINE bool HasFlag(uint8 groupflag) { return (m_groupFlags & groupflag) > 0 ? true : false; }

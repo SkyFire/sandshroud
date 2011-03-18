@@ -421,9 +421,6 @@ struct PlayerInfo
 	uint32 lastLevel;
 	Group * m_Group;
 	int8 subGroup;
-#ifdef VOICE_CHAT
-	int8 groupVoiceId;
-#endif
 
 	Player * m_loggedInPlayer;
 	Guild * guild;
@@ -1840,13 +1837,6 @@ protected:
 	uint32 m_mountCheckTimer;
 	void RemovePendingPlayer();
 public:
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	void EventDumpCompressedMovement();
-	void AppendMovementData(uint32 op, uint32 sz, const uint8* data);
-	Mutex m_movementBufferLock;
-	ByteBuffer m_movementBuffer;
-#endif
-
 	void addDeletedSpell(uint32 id) { mDeletedSpells.insert( id ); }
 
 	map<uint32, uint32> m_forcedReactions;
@@ -1983,26 +1973,5 @@ public:
 	ONYX_INLINE PlayerSkill* Grab() { return &m_itr->second; }
 	ONYX_INLINE bool End() { return (m_itr==m_endItr)?true:false; }
 };
-
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-
-class CMovementCompressorThread : public ThreadContext
-{
-	bool running;
-	Mutex m_listLock;
-	set<Player*> m_players;
-public:
-	CMovementCompressorThread() { running = true; }
-
-	void AddPlayer(Player * pPlayer);
-	void RemovePlayer(Player * pPlayer);
-
-	void OnShutdown() { running = false; }
-	bool run();
-};
-
-extern CMovementCompressorThread * MovementCompressor;
-
-#endif
 
 #endif

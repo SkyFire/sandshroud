@@ -5,10 +5,6 @@ bin_PROGRAMS = ascent-world
 ascent_world_SOURCES = \
     CollideInterface.cpp \
     CollideInterface.h \
-    VoiceChatClientSocket.cpp \
-    VoiceChatClientSocket.h \
-    VoiceChatHandler.cpp \
-    VoiceChatHandler.h \
     DayWatcherThread.cpp \
     DayWatcherThread.h \
     ArenaTeam.cpp \

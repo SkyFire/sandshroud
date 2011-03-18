@@ -150,7 +150,6 @@
 #include "../onyx-shared/Storage.h"
 #include "ObjectStorage.h"
 #include "DayWatcherThread.h"
-#include "VoiceChatHandler.h"
 #include "LocalizationMgr.h"
 
 #ifdef COLLISION

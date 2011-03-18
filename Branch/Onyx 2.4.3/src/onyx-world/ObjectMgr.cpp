@@ -347,10 +347,6 @@ void ObjectMgr::LoadPlayersInfo()
 			pn->lastZone=fields[6].GetUInt32();
 			pn->lastOnline=fields[7].GetUInt32();
 			pn->acct = fields[8].GetUInt32();
-#ifdef VOICE_CHAT
-			pn->groupVoiceId = -1;
-#endif
-
 			if(pn->race==RACE_HUMAN||pn->race==RACE_DWARF||pn->race==RACE_GNOME||pn->race==RACE_NIGHTELF||pn->race==RACE_DRAENEI)
 				pn->team = 0;
 			else 
@@ -2542,13 +2538,3 @@ void ObjectMgr::UpdateArenaTeamWeekly()
 	}
 	m_arenaTeamLock.Release();
 }
-
-#ifdef VOICE_CHAT
-void ObjectMgr::GroupVoiceReconnected()
-{
-	m_groupLock.AcquireReadLock();
-	for(GroupMap::iterator itr = m_groups.begin(); itr != m_groups.end(); ++itr)
-		itr->second->VoiceSessionReconnected();
-	m_groupLock.ReleaseReadLock();
-}
-#endif

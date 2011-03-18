@@ -28,9 +28,6 @@ public:
 	Channel *GetChannel(const char *name, Player * p);
 	Channel * GetChannel(const char * name, uint32 team);
 	Channel *GetChannel(uint32 id);
-#ifdef VOICE_CHAT
-	void VoiceDied();
-#endif
 	void RemoveChannel(Channel * chn);
 	bool seperatechannels;
 

@@ -425,11 +425,6 @@ Player::Player( uint32 guid ) : m_mailBox(guid)
 	m_startMoveTime = 0;
 	m_canCastSpellsWhileDead = false;
 	this->OnLogin();
-
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	m_movementBuffer.reserve(5000);
-#endif
-
 	m_heartbeatDisable = 0;
 	m_safeFall = 0;
 	m_noFallDamage = false;
@@ -3183,11 +3178,6 @@ void Player::OnPushToWorld()
 	if( !GetSession()->HasGMPermissions() )
 		GetItemInterface()->CheckAreaItems(); 
 
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	//sEventMgr.AddEvent(this, &Player::EventDumpCompressedMovement, EVENT_PLAYER_FLUSH_MOVEMENT, World::m_movementCompressInterval, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
-	MovementCompressor->AddPlayer(this);
-#endif
-
 	if( m_mapMgr && m_mapMgr->m_battleground != NULL && m_bg != m_mapMgr->m_battleground )
 	{
 		m_bg = m_mapMgr->m_battleground;
@@ -3318,14 +3308,6 @@ void Player::RemoveFromWorld()
 	}
 
 	sWorld.mInWorldPlayerCount--;
-#ifdef ENABLE_COMPRESSED_MOVEMENT
-	MovementCompressor->RemovePlayer(this);
-	m_movementBufferLock.Acquire();
-	m_movementBuffer.clear();
-	m_movementBufferLock.Release();
-	//sEventMgr.RemoveEvents(this, EVENT_PLAYER_FLUSH_MOVEMENT);
-	
-#endif
 
 	if(GetTaxiState())
 		event_RemoveEvents( EVENT_PLAYER_TAXI_INTERPOLATE );

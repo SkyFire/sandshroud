@@ -1897,21 +1897,8 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	data << uint32(1);	  // 1 waypoint
 	data << toX << toY << toZ;
 
-#ifndef ENABLE_COMPRESSED_MOVEMENT_FOR_CREATURES
 	bool self = m_Unit->GetTypeId() == TYPEID_PLAYER;
 	m_Unit->SendMessageToSet( &data, self );
-#else
-	if( m_Unit->GetTypeId() == TYPEID_PLAYER )
-		static_cast<Player*>(m_Unit)->GetSession()->SendPacket(&data);
-
-	for(set<Player*>::iterator itr = m_Unit->GetInRangePlayerSetBegin(); itr != m_Unit->GetInRangePlayerSetEnd(); ++itr)
-	{
-		if( (*itr)->GetPositionNC().Distance2DSq( m_Unit->GetPosition() ) >= World::m_movementCompressThresholdCreatures )
-			(*itr)->AppendMovementData( SMSG_MONSTER_MOVE, (uint32)data.GetSize(), (const uint8*)data.GetBufferPointer() );
-		else
-			(*itr)->GetSession()->SendPacket(&data);
-	}
-#endif
 }
 
 /*

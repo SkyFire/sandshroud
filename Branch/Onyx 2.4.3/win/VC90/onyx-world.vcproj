@@ -1140,22 +1140,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\onyx-world\VoiceChatClientSocket.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\onyx-world\VoiceChatClientSocket.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\onyx-world\VoiceChatHandler.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\onyx-world\VoiceChatHandler.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\src\onyx-world\WarsongGulch.cpp"
 			>
 		</File>
