@@ -443,9 +443,6 @@ bool World::SetInitialWorldSettings()
 	Log.Notice("World", "Database loaded in %ums.", getMSTime() - start_time);
 	sLog.outString("");
 
-#ifdef COLLISION
-	CollideInterface.Init();
-#endif
 	sScriptMgr.LoadScripts();
 
 	// calling this puts all maps into our task list.

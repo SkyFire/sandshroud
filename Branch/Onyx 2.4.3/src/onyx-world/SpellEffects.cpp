@@ -1533,14 +1533,6 @@ void Spell::SpellEffectTeleportUnits( uint32 i )  // Teleport Units
 		float new_x = pTarget->GetPositionX() - (shadowstep_distance * cosf(ang));
 		float new_y = pTarget->GetPositionY() - (shadowstep_distance * sinf(ang));
 		float new_z = pTarget->GetPositionZ() + 0.1f;
-#ifdef COLLISION
-		float z2 = CollideInterface.GetHeight(pTarget->GetMapId(), pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ());
-		if( z2 == NO_WMO_HEIGHT )
-			z2 = p_caster->GetMapMgr()->GetLandHeight(new_x, new_y);
-
-		if( fabs( new_z - z2 ) < 10.0f )
-			new_z = z2 + 0.2f;
-#endif
 		
 		/* Send a movement packet to "charge" at this target. Similar to warrior charge. */
 		p_caster->z_axisposition = 0.0f;
@@ -2346,7 +2338,6 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 		}
 	}
 
-#ifndef COLLISION
 	p_caster->blinked = true;
 
 	WorldPacket data(SMSG_MOVE_KNOCK_BACK, 50);
@@ -2362,58 +2353,6 @@ void Spell::SpellEffectLeap(uint32 i) // Leap
 	p_caster->DelaySpeedHack( 10000 );
 	++p_caster->m_heartbeatDisable;
 	p_caster->z_axisposition = 0.0f;
-
-#else
-	if(!p_caster)
-		return;
-
-	float ori = m_caster->GetOrientation();				
-	float posX = m_caster->GetPositionX()+(radius*(cosf(ori)));
-	float posY = m_caster->GetPositionY()+(radius*(sinf(ori)));
-	float posZ;
-	/*float posZ = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, m_caster->GetPositionZ());
-	if(posZ == NO_WMO_HEIGHT)		// not found height, or on adt
-		posZ = m_caster->GetMapMgr()->GetLandHeight(posX,posY);
-
-	if( fabs( posZ - m_caster->GetPositionZ() ) >= 10.0f )
-		return;*/
-
-	if( CollideInterface.GetFirstPoint(m_caster->GetMapId(), m_caster->GetPositionX(), m_caster->GetPositionY(), m_caster->GetPositionZ(), 
-			posX, posY, m_caster->GetPositionZ() + 2.0f, posX, posY, posZ, -1.5f) )
-	{
-		float fz2 = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, posZ);
-		if( fz2 != NO_WMO_HEIGHT )
-			posZ = fz2;
-
-		p_caster->blinked = true;
-		p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
-
-		// reset heartbeat for a little while, 5 seconds maybe?
-		p_caster->DelaySpeedHack( 5000 );
-		++p_caster->m_heartbeatDisable;
-		p_caster->z_axisposition = 0.0f;
-	}
-	else
-	{
-		// either no objects in the way, or no wmo height
-		posZ = CollideInterface.GetHeight(m_caster->GetMapId(), posX, posY, m_caster->GetPositionZ());
-		if(posZ == NO_WMO_HEIGHT)		// not found height, or on adt
-			posZ = m_caster->GetMapMgr()->GetLandHeight(posX,posY);
-
-		if( fabs( posZ - m_caster->GetPositionZ() ) >= 10.0f )
-			return;
-
-		p_caster->blinked = true;
-		p_caster->SafeTeleport( p_caster->GetMapId(), p_caster->GetInstanceID(), posX, posY, posZ, m_caster->GetOrientation() );
-
-		// reset heartbeat for a little while, 5 seconds maybe?
-		p_caster->DelaySpeedHack( 5000 );
-		++p_caster->m_heartbeatDisable;
-		p_caster->z_axisposition = 0.0f;
-	}
-
-
-#endif
 }
 
 void Spell::SpellEffectEnergize(uint32 i) // Energize
@@ -4738,14 +4677,7 @@ void Spell::SpellEffectSummonTotem(uint32 i) // Summon Totem
 	pTotem->SetTotemOwner(p_caster);
 	pTotem->SetTotemSlot(slot);
 
-#ifdef COLLISION
-	float landh = CollideInterface.GetHeight(p_caster->GetMapId(), x, y, p_caster->GetPositionZ());
-	if(landh == NO_WMO_HEIGHT)
-		landh = p_caster->GetMapMgr()->GetLandHeight(x,y);
-#else
 	float landh = p_caster->GetMapMgr()->GetLandHeight(x,y);
-#endif
-
 	if(landh == 0.0f)
 	{
 		x = p_caster->GetPositionX();

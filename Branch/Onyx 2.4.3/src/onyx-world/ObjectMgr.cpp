@@ -954,12 +954,11 @@ void ObjectMgr::LoadVendors()
 		if( result->GetFieldCount() < 7 )
 		{
 			Log.Notice("ObjectMgr", "Invalid format in vendors (%u/7) columns, not enough data to proceed.\n", result->GetFieldCount() );
+			delete result;
 			return;
 		}
 		else if( result->GetFieldCount() > 7 )
-		{
 			Log.Notice("ObjectMgr", "Invalid format in vendors (%u/7) columns, loading anyway because we have enough data\n", result->GetFieldCount() );
-		}
 
 		do
 		{
@@ -999,7 +998,6 @@ void ObjectMgr::LoadVendors()
 			items->push_back( itm );
 		}
 		while( result->NextRow() );
-
 		delete result;
 	}
 	Log.Notice("ObjectMgr", "%u vendors loaded.", mVendors.size());

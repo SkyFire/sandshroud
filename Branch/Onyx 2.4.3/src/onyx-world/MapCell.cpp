@@ -67,12 +67,8 @@ void MapCell::SetActivity(bool state)
 
 		if(_unloadpending)
 			CancelPendingUnload();
-
-#ifdef COLLISION
-		CollideInterface.ActivateTile(_mapmgr->GetMapId(), _x/8, _y/8);
-#endif
-
-	} else if(_active && !state)
+	}
+	else if(_active && !state)
 	{
 		// Move all objects from active set.
 		for(ObjectSet::iterator itr = _objects.begin(); itr != _objects.end(); ++itr)
@@ -83,10 +79,6 @@ void MapCell::SetActivity(bool state)
 
 		if(sWorld.map_unload_time && !_unloadpending)
 			QueueUnloadPending();
-
-#ifdef COLLISION
-		CollideInterface.DeactivateTile(_mapmgr->GetMapId(), _x/8, _y/8);
-#endif
 	}
 
 	_active = state; 

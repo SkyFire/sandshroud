@@ -19,7 +19,6 @@
 
 #include "StdAfx.h"
 UpdateMask Player::m_visibleUpdateMask;
-#define COLLISION_MOUNT_CHECK_INTERVAL 1000
 
 const uint32 Player::PvPRanks[] = { 
 	PVPTITLE_NONE,			// 0
@@ -932,25 +931,6 @@ void Player::Update( uint32 p_time )
 		else
 			m_pvpTimer -= p_time;
 	}
-
-#ifdef COLLISION
-	if(m_MountSpellId != 0)
-	{
-		if( mstime >= m_mountCheckTimer )
-		{
-			//if( CollideInterface.IsIndoor( m_mapId, m_position ) )
-			if( CollideInterface.IsIndoor( m_mapId, m_position.x, m_position.y, m_position.z ) )
-			{
-				RemoveAura( m_MountSpellId );
-				m_MountSpellId = 0;
-			}
-			else
-			{
-				m_mountCheckTimer = mstime + COLLISION_MOUNT_CHECK_INTERVAL;
-			}
-		}
-	}
-#endif
 
 	if( mstime >= m_speedhackCheckTimer )
 	{
@@ -5454,21 +5434,7 @@ int32 Player::CanShootRangedWeapon( uint32 spellid, Unit* target, bool autoshot 
 				if( GetItemInterface()->GetItemCount( itm->GetProto()->ItemId ) == 0 )
 					fail = SPELL_FAILED_NO_AMMO;
 	} 
-/*  else
-	{
-		if(GetUInt32Value(PLAYER_AMMO_ID))//for wand
-			if(this->GetItemInterface()->GetItemCount(GetUInt32Value(PLAYER_AMMO_ID)) == 0)
-				fail = SPELL_FAILED_NO_AMMO;
-	}
-*/
 
-#ifdef COLLISION
-	if( !CollideInterface.CheckLOS(m_mapId, GetPositionX(), GetPositionY(), GetPositionZ(), 
-		target->GetPositionX(), target->GetPositionY(), target->GetPositionZ()) )
-	{
-		fail = SPELL_FAILED_LINE_OF_SIGHT;
-	}
-#endif
 	if( fail > 0 )// && fail != SPELL_FAILED_OUT_OF_RANGE)
 	{
 		//SendCastResult( autoshot ? 75 : spellid, fail, 0, 0 );
@@ -10562,33 +10528,7 @@ void Player::VampiricSpell(uint32 dmg, Unit* pTarget)
 
 void Player::_FlyhackCheck()
 {
-#ifdef COLLISION
-	if(!IsFlyHackEligible())
-		return;
 
-	// Get the current terrain height at this position
-	float height = CollideInterface.GetHeight(GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ());
-	if(height == NO_WMO_HEIGHT)
-	{
-		height = GetMapMgr()->GetLandHeight(GetPositionX(), GetPositionY());
-		if(height == 0.0f) // At this point, we just can't get a valid height.
-			return;
-	}
-
-	float diff = GetPositionZ() - height;
-	if(diff < 0)
-		diff = -diff;
-
-	if(diff <= 8.0f) // Relatively small threshold maybe?
-		return;
-
-	if(m_flyHackChances--)
-		return;
-
-	// Something's afoot!
-	EventTeleport(GetMapId(), GetPositionX(), GetPositionY(), height); // Return us to valid coordinates for the next logon.
-	GetSession()->Disconnect();
-#endif
 }
 
 bool Player::IsFlyHackEligible()

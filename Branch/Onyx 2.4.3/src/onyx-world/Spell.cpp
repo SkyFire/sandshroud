@@ -2737,18 +2737,6 @@ uint8 Spell::CanCast(bool tolerate)
 				return SPELL_FAILED_CASTER_DEAD;
 		}
 
-#ifdef COLLISION
-		if (m_spellInfo->MechanicsType == MECHANIC_MOUNTED)
-		{
-			if (CollideInterface.IsIndoor( p_caster->GetMapId(), p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() ))
-				return SPELL_FAILED_NO_MOUNTS_ALLOWED;
-		}
-		else if( m_spellInfo->Attributes & ATTRIBUTES_ONLY_OUTDOORS )
-		{
-			if( !CollideInterface.IsOutdoor( p_caster->GetMapId(),p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ() ) )
-				return SPELL_FAILED_ONLY_OUTDOORS;
-		}
-#endif
 		//are we in an arena and the spell cooldown is longer then 15mins?
 		if ( p_caster->m_bg && ( p_caster->m_bg->GetType() >= BATTLEGROUND_ARENA_2V2 && p_caster->m_bg->GetType() <= BATTLEGROUND_ARENA_5V5 ) )
 		{
@@ -3231,17 +3219,6 @@ uint8 Spell::CanCast(bool tolerate)
 					if(!itm || itm->GetDurability() == 0)
 						return SPELL_FAILED_NO_AMMO;
 				}
-#ifdef COLLISION
-				if( target != m_caster )
-				{
-					if ( p_caster->GetMapId() == target->GetMapId() &&
-						!CollideInterface.CheckLOS(p_caster->GetMapId(),p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), 
-						target->GetPositionX(), target->GetPositionY(), target->GetPositionZ()) )
-					{
-						return SPELL_FAILED_LINE_OF_SIGHT;
-					}
-				}
-#endif
 
 				// check aurastate
 				if( m_spellInfo->TargetAuraState )

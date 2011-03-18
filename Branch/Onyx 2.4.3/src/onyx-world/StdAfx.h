@@ -151,11 +151,6 @@
 #include "ObjectStorage.h"
 #include "DayWatcherThread.h"
 #include "LocalizationMgr.h"
-
-#ifdef COLLISION
-#include "CollideInterface.h"
-#endif
-
 #include "Master.h"
 #include "BaseConsole.h"
 #include "CConsole.h"

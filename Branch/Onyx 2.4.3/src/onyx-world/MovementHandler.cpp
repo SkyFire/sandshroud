@@ -626,10 +626,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 		_player->m_startMoveTime = _player->m_lastMoveTime;
 		_player->m_cheatEngineChances = 2;
 	}
-
-#if defined(_DEBUG) && defined(COLLISION)
-	//CollideInterface.setDebugPoint(movement_info.x, movement_info.y, movement_info.z, movement_info.orientation);
-#endif
 }
 
 void WorldSession::HandleMoveTimeSkippedOpcode( WorldPacket & recv_data )
