@@ -1755,7 +1755,11 @@ bool Object::canSwim()
 
 bool Object::canFly()
 {
-	if(IsCreature())
+	if(IsVehicle())
+	{
+		return false;
+	}
+	else if(IsCreature())
 	{
 		Creature* ctr = TO_CREATURE(this);
 		if(ctr->CanMove & LIMIT_ANYWHERE)
@@ -2374,13 +2378,23 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaKilledByPlayer();
 			}
 		}
-		else
+		else if(IsVehicle())
 		{
-			pVictim->setDeathState( JUST_DIED );
+			Vehicle* vVictim = TO_VEHICLE(pVictim);
+			vVictim->setDeathState( JUST_DIED );
 			/* Remove all Auras */
-			pVictim->EventDeathAuraRemoval();
+			vVictim->EventDeathAuraRemoval();
 			/* Set victim health to 0 */
-			pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
+			vVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
+		}
+		else if(IsCreature())
+		{
+			Creature* cVictim = TO_CREATURE(pVictim);
+			cVictim->setDeathState( JUST_DIED );
+			/* Remove all Auras */
+			cVictim->EventDeathAuraRemoval();
+			/* Set victim health to 0 */
+			cVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
 		}
 
 		TO_UNIT(this)->SummonExpireAll(false);
@@ -2477,7 +2491,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		// Wipe our attacker set on death
 		pVictim->CombatStatus.Vanished();
 
-
 		/* Stop Units from attacking */
 		if( plr && plr->IsInWorld() )
 			plr->EventAttackStop();
@@ -2488,7 +2501,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 
 			/* Tell Unit that it's target has Died */
 			TO_UNIT(this)->addStateFlag( UF_TARGET_DIED );
-
 		}
 
 		if( pVictim->IsPlayer() )
