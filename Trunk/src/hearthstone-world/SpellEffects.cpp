@@ -3350,11 +3350,11 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 	if(!playerTarget)
 		return;
 
-	SlotResult slotresult;
-	skilllinespell* skill = objmgr.GetSpellSkill(GetSpellProto()->Id);
+	if(GetSpellProto()->EffectItemType[i] == 0)
+		return;
 
-	ItemPrototype *m_itemProto;
-	m_itemProto = ItemPrototypeStorage.LookupEntry( GetSpellProto()->EffectItemType[i] );
+	SlotResult slotresult;
+	ItemPrototype *m_itemProto = ItemPrototypeStorage.LookupEntry( GetSpellProto()->EffectItemType[i] );
 	if (!m_itemProto)
 		return;
 
@@ -3382,14 +3382,16 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 		return;
 	}
 
-	if(GetSpellProto()->EffectItemType[i] == 0)
-		return;
-
 	uint32 item_count = 0;
 	if (m_itemProto->Class != ITEM_CLASS_CONSUMABLE || GetSpellProto()->SpellFamilyName != SPELLFAMILY_MAGE)
 		item_count = damage;
 	else if(playerTarget->getLevel() >= GetSpellProto()->spellLevel)
+	{
 		item_count = ((playerTarget->getLevel() - (GetSpellProto()->spellLevel-1))*damage);
+		// These spells can only create one stack!
+		if((m_itemProto->MaxCount > 0) && (item_count > m_itemProto->MaxCount))
+			item_count = m_itemProto->MaxCount;
+	}
 
 	if(!item_count)
 		item_count = damage;
@@ -3404,16 +3406,20 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 			item_count += 8;
 			break;
 		case 36686: //Shadowcloth
-			if(playerTarget->HasSpell(26801)) item_count += 1;
+			if(playerTarget->HasSpell(26801))
+				item_count += 1;
 			break;
 		case 26751: // Primal Mooncloth
-			if(playerTarget->HasSpell(26798)) item_count += 1;
+			if(playerTarget->HasSpell(26798))
+				item_count += 1;
 			break;
 		case 31373: //Spellcloth
-			if(playerTarget->HasSpell(26797)) item_count += 1;
+			if(playerTarget->HasSpell(26797))
+				item_count += 1;
 			break;
 	}
 
+	skilllinespell* skill = objmgr.GetSpellSkill(GetSpellProto()->Id);
 	if(skill)
 	{
 		// Alchemy Specializations
@@ -3476,7 +3482,7 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 	}
 
 	// item count cannot be more than item unique value
-	if(m_itemProto->Unique && item_count > m_itemProto->Unique)
+	if(m_itemProto->Unique > 0 && item_count > m_itemProto->Unique)
 		item_count = m_itemProto->Unique;
 
 	if(playerTarget->GetItemInterface()->CanReceiveItem(m_itemProto, item_count, NULL)) //reversed since it sends >1 as invalid and 0 as valid
