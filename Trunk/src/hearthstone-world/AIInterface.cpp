@@ -130,7 +130,7 @@ void AIInterface::Init(Unit* un, AIType at, MovementType mt)
 	}
 
 	if(un->IsCreature())
-		if(TO_CREATURE(un)->GetProto() && TO_CREATURE(un)->GetProto()->CanMove & 4)
+		if(TO_CREATURE(un)->CanMove & 4)
 			m_moveFly = true;
 
 	m_walkSpeed = m_Unit->m_walkSpeed*0.001f;//move distance per ms time

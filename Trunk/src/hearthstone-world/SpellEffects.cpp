@@ -3378,8 +3378,7 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 					item = NULLITEM;
 				}
 			}
-		}
-		return;
+		}return;
 	}
 
 	uint32 item_count = 0;
@@ -3403,8 +3402,10 @@ void Spell::SpellEffectCreateItem(uint32 i) // Create item
 		case 27389: //Conjure Food 7
 		case 10140: //Conjure Water 7
 		case 37420: //Conjure Water 8
-			item_count += 8;
-			break;
+			{
+				if(item_count <= 12)
+					item_count += 8;
+			}break;
 		case 36686: //Shadowcloth
 			if(playerTarget->HasSpell(26801))
 				item_count += 1;
