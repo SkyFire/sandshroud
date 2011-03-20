@@ -692,8 +692,6 @@ void World::SendWorldText(const char* text, WorldSession *self)
 	data << uint8(0);
 
 	SendGlobalMessage(&data, self);
-
-	sLog.outString("> %s", text);
 }
 
 void World::SendWorldWideScreenText(const char *text, WorldSession *self)

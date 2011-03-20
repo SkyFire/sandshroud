@@ -32,8 +32,6 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 {
 	if(!strcmp(name, "modify"))
 		return _modifyCommandTable;
-	else if(!strcmp(name, "debug"))
-		return _debugCommandTable;
 	else if(!strcmp(name, "waypoint"))
 		return _waypointCommandTable;
 	else if(!strcmp(name, "gmTicket"))
@@ -169,7 +167,6 @@ void CommandTableStorage::Override(const char * command, const char * level)
 void CommandTableStorage::Dealloc()
 {
 	free( _modifyCommandTable );
-	free( _debugCommandTable );
 	free( _waypointCommandTable );
 	free( _GMTicketCommandTable );
 	free( _GameObjectCommandTable );
@@ -220,43 +217,6 @@ void CommandTableStorage::Init()
 		{ NULL,		  0, NULL,	 "",					NULL, 0, 0  }
 	};
 	dupe_command_table(modifyCommandTable, _modifyCommandTable);
-
-	static ChatCommand debugCommandTable[] =
-	{
-		{ "infront",	 'd', &ChatHandler::HandleDebugInFrontCommand,  "",							   NULL, 0, 0, 0},
-		{ "showreact",   'd', &ChatHandler::HandleShowReactionCommand,  "",							   NULL, 0, 0, 0},
-		{ "aimove",	  'd', &ChatHandler::HandleAIMoveCommand,		"",							   NULL, 0, 0, 0},
-		{ "dist",		'd', &ChatHandler::HandleDistanceCommand,	  "",							   NULL, 0, 0, 0},
-		{ "face",		'd', &ChatHandler::HandleFaceCommand,		  "",							   NULL, 0, 0, 0},
-		{ "moveinfo",	'd', &ChatHandler::HandleMoveInfoCommand,	  "",							   NULL, 0, 0, 0},
-		{ "setbytes",	'd', &ChatHandler::HandleSetBytesCommand,	  "",							   NULL, 0, 0, 0},
-		{ "getbytes",	'd', &ChatHandler::HandleGetBytesCommand,	  "",							   NULL, 0, 0, 0},
-		{ "unroot",	  'd', &ChatHandler::HandleDebugUnroot,		  "",							   NULL, 0, 0, 0},
-		{ "root",		'd', &ChatHandler::HandleDebugRoot,			"",							   NULL, 0, 0, 0},
-		{ "landwalk",	'd', &ChatHandler::HandleDebugLandWalk,		"",							   NULL, 0, 0, 0},
-		{ "waterwalk",   'd', &ChatHandler::HandleDebugWaterWalk,	   "",							   NULL, 0, 0, 0},
-		{ "castspellne", 'd', &ChatHandler::HandleCastSpellNECommand,   ".castspellne <spellid> - Casts spell on target (only plays animations, doesnt handle effects or range/facing/etc.", NULL, 0, 0, 0 },
-		{ "aggrorange",  'd', &ChatHandler::HandleAggroRangeCommand,	".aggrorange - Shows aggro Range of the selected Creature.", NULL, 0, 0, 0 },
-		{ "knockback ",  'd', &ChatHandler::HandleKnockBackCommand,	 ".knockback <value> - Knocks you back.", NULL, 0, 0, 0 },
-		{ "fade ",	   'd', &ChatHandler::HandleFadeCommand,		  ".fade <value> - calls ModThreatModifyer().", NULL, 0, 0, 0 },
-		{ "threatMod ",  'd', &ChatHandler::HandleThreatModCommand,	 ".threatMod <value> - calls ModGeneratedThreatModifyer().", NULL, 0, 0, 0 },
-		{ "calcThreat ", 'd', &ChatHandler::HandleCalcThreatCommand,	".calcThreat <dmg> <spellId> - calculates threat.", NULL, 0, 0, 0 },
-		{ "threatList ", 'd', &ChatHandler::HandleThreatListCommand,	".threatList  - returns all AI_Targets of the selected Creature.", NULL, 0, 0, 0 },
-		{ "gettptime",   'd', &ChatHandler::HandleGetTransporterTime,   "grabs transporter travel time",NULL, 0, 0, 0 },
-		{ "itempushresult",'d',&ChatHandler::HandleSendItemPushResult,  "sends item push result", NULL, 0, 0, 0 },
-		{ "setbit",	  'd',  &ChatHandler::HandleModifyBitCommand,	"",							   NULL, 0, 0, 0},
-		{ "setvalue",	'd', &ChatHandler::HandleModifyValueCommand,   "",							   NULL, 0, 0, 0},
-		{ "aispelltestbegin", 'd', &ChatHandler::HandleAIAgentDebugBegin, "", NULL, 0, 0, 0 },
-		{ "aispelltestcontinue", 'd', &ChatHandler::HandleAIAgentDebugContinue, "", NULL, 0, 0, 0 },
-		{ "aispelltestskip", 'd', &ChatHandler::HandleAIAgentDebugSkip, "", NULL, 0, 0, 0 },
-		{ "dumpcoords", 'd', &ChatHandler::HandleDebugDumpCoordsCommmand, "", NULL, 0, 0, 0 },
-		{ "sendpacket", 'd', &ChatHandler::HandleSendpacket, "<opcode ID>, <data>", NULL, 0, 0, 0 },
-		{ "sqlquery", 'd', &ChatHandler::HandleSQLQueryCommand, "<sql query>", NULL, 0, 0, 0 },
-		{ "rangecheck", 'd', &ChatHandler::HandleRangeCheckCommand, "Checks the 'yard' range and internal range between the player and the target.", NULL, 0, 0, 0 },
-		{ "setallratings", 'd', &ChatHandler::HandleRatingsCommand, "Sets rating values to incremental numbers based on their index.", NULL, 0, 0, 0 },
-		{ NULL,		   0, NULL,									  "",							   NULL, 0, 0  }
-	};
-	dupe_command_table(debugCommandTable, _debugCommandTable);
 
 	static ChatCommand waypointCommandTable[] =
 	{
@@ -351,7 +311,6 @@ void CommandTableStorage::Init()
 		{ "come",		'n', &ChatHandler::HandleNpcComeCommand,	   ".npc come - Makes npc move to your position", NULL, 0, 0, 0 },
 		{ "return",	  'n', &ChatHandler::HandleNpcReturnCommand,	 ".npc return - Returns ncp to spawnpoint.", NULL, 0, 0, 0 },
 		{ "spawn", 'n', &ChatHandler::HandleCreatureSpawnCommand, ".npc spawn - Spawns npc of entry <id>", NULL, 0, 0, 0 },
-		{ "spawnlink", 'n', &ChatHandler::HandleNpcSpawnLinkCommand, ".spawnlink sqlentry", NULL, 0, 0, 0 },
 		{ "possess", 'n', &ChatHandler::HandleNpcPossessCommand, ".npc possess - Possess an npc (mind control)", NULL, 0, 0, 0 },
 		{ "unpossess", 'n', &ChatHandler::HandleNpcUnPossessCommand, ".npc unpossess - Unposses any currently possessed npc.", NULL, 0, 0, 0 },
 		{ "select", 'n', &ChatHandler::HandleNpcSelectCommand, ".npc select - selects npc closest", NULL, 0, 0, 0 },
@@ -446,12 +405,10 @@ void CommandTableStorage::Init()
 	dupe_command_table(questCommandTable, _questCommandTable);
 
 	static ChatCommand commandTable[] = {
-		//{ "renameguild", 'a', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.", NULL, 0, 0, 0 },
 		{ "masssummon", 'z', &ChatHandler::HandleMassSummonCommand, ".masssummon - Summons all players.", NULL, 0, 0, 0},
 		{ "commands",	'0', &ChatHandler::HandleCommandsCommand,		"Shows Commands",				 NULL, 0, 0, 0},
 		{ "help",		'0', &ChatHandler::HandleHelpCommand,			"Shows help for command",		 NULL, 0, 0, 0},
 		{ "announce",	'u', &ChatHandler::HandleAnnounceCommand,	  "Sends Msg To All",			   NULL, 0, 0, 0},
-		{ "wannounce",   'u', &ChatHandler::HandleWAnnounceCommand,	 "Sends Widescreen Msg To All",	NULL, 0, 0, 0},
 		{ "appear",	  'v', &ChatHandler::HandleAppearCommand,		"Teleports to x's position.",	 NULL, 0, 0, 0},
 		{ "summon",	  'v', &ChatHandler::HandleSummonCommand,		"Summons x to your position",	 NULL, 0, 0, 0},
 		{ "banchar",	 'b', &ChatHandler::HandleBanCharacterCommand,  "Bans character x with or without reason",			  NULL, 0, 0, 0},
@@ -475,6 +432,8 @@ void CommandTableStorage::Init()
 		{ "start",	   'm', &ChatHandler::HandleStartCommand,		 "Teleport's you to a starting location",							   NULL, 0, 0, 0},
 		{ "additem",	 'm', &ChatHandler::HandleAddInvItemCommand,	"",							   NULL, 0, 0, 0},
 		{ "removeitem",  'm', &ChatHandler::HandleRemoveItemCommand,	"Removes item %u count %u.", NULL, 0, 0, 0 },
+		{ "shutdown", 'z', &ChatHandler::HandleShutdownCommand, "Initiates server shutdown in <x> seconds.", NULL, 0, 0, 0 },
+		{ "restart", 'z', &ChatHandler::HandleShutdownRestartCommand, "Initiates server restart in <x> seconds.", NULL, 0, 0, 0 },
 		{ "invincible",  'j', &ChatHandler::HandleInvincibleCommand,	".invincible - Toggles INVINCIBILITY (mobs won't attack you)", NULL, 0, 0, 0},
 		{ "invisible",   'i', &ChatHandler::HandleInvisibleCommand,	 ".invisible - Toggles INVINCIBILITY and INVISIBILITY (mobs won't attack you and nobody can see you, but they can see your chat messages)", NULL, 0, 0, 0},
 		{ "resetreputation", 'n',&ChatHandler::HandleResetReputationCommand, ".resetreputation - Resets reputation to start levels. (use on characters that were made before reputation fixes.)", NULL, 0, 0, 0},
@@ -493,7 +452,6 @@ void CommandTableStorage::Init()
 
 		{ "modify",		'm', NULL,									 "",				 modifyCommandTable, 0, 0, 0},
 		{ "waypoint",	  'w', NULL,									 "",			   waypointCommandTable, 0, 0, 0},
-		{ "debug",		 'd', NULL,									 "",				  debugCommandTable, 0, 0, 0},
 		{ "gmTicket",	  'c', NULL,									 "",			   GMTicketCommandTable, 0, 0, 0},
 		{ "gobject",	   'o', NULL,									 "",			 GameObjectCommandTable, 0, 0, 0},
 		{ "battleground",  'e', NULL,									 "",		   BattlegroundCommandTable, 0, 0, 0},
@@ -508,6 +466,7 @@ void CommandTableStorage::Init()
 		{ "getpos"	  ,  'd', &ChatHandler::HandleGetPosCommand,		"",							   NULL, 0, 0, 0},
 		{ "clearcooldowns", 'm', &ChatHandler::HandleClearCooldownsCommand, "Clears all cooldowns for your class.", NULL, 0, 0, 0 },
 		{ "removeauras",   'm', &ChatHandler::HandleRemoveAurasCommand,   "Removes all auras from target",  NULL, 0, 0, 0},
+		{ "waterwalk",   'd', &ChatHandler::HandleWaterWalk,	   "",							   NULL, 0, 0, 0},
 		{ "paralyze",	  'b', &ChatHandler::HandleParalyzeCommand,	  "Roots/Paralyzes the target.",	NULL, 0, 0, 0 },
 		{ "unparalyze",	'b', &ChatHandler::HandleUnParalyzeCommand,	"Unroots/Unparalyzes the target.",NULL, 0, 0, 0 },
 		{ "setmotd",	   'm', &ChatHandler::HandleSetMotdCommand,	   "Sets MOTD",					  NULL, 0, 0, 0 },
@@ -515,8 +474,6 @@ void CommandTableStorage::Init()
 		{ "gotrig",		'v', &ChatHandler::HandleTriggerCommand,	   "Warps to areatrigger <id>",	  NULL, 0, 0, 0 },
 		{ "exitinstance",  'm', &ChatHandler::HandleExitInstanceCommand,  "Exits current instance, return to entry point.", NULL, 0, 0, 0 },
 		{ "reloadtable",	  'm', &ChatHandler::HandleDBReloadCommand,	  "Reloads some of the database tables", NULL, 0, 0, 0 },
-		{ "servershutdown", 'z', &ChatHandler::HandleShutdownCommand, "Initiates server shutdown in <x> seconds.", NULL, 0, 0, 0 },
-		{ "serverrestart", 'z', &ChatHandler::HandleShutdownRestartCommand, "Initiates server restart in <x> seconds.", NULL, 0, 0, 0 },
 		{ "allowwhispers", 'c', &ChatHandler::HandleAllowWhispersCommand, "Allows whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "blockwhispers", 'c', &ChatHandler::HandleBlockWhispersCommand, "Blocks whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "advanceallskills", 'm', &ChatHandler::HandleAdvanceAllSkillsCommand, "Advances all skills <x> points.", NULL, 0, 0, 0 },
@@ -541,7 +498,6 @@ void CommandTableStorage::Init()
 		{ "lookupitem", 'l', &ChatHandler::HandleLookupItemCommand, "Looks up item string x.", NULL, 0, 0, 0 },
 		{ "lookupquest", 'l', &ChatHandler::HandleQuestLookupCommand, "Looks up quest string x.", NULL, 0, 0, 0 },
 		{ "lookupcreature", 'l', &ChatHandler::HandleLookupCreatureCommand, "Looks up item string x.", NULL, 0, 0, 0 },
-		//{ "reloadscripts", 'w', &ChatHandler::HandleReloadScriptsCommand, "Reloads GM Scripts", NULL, 0, 0, 0 },
 		{ "rehash", 'z', &ChatHandler::HandleRehashCommand, "Reloads config file.", NULL, 0, 0, 0 },
 		{ "createarenateam", 'g', &ChatHandler::HandleCreateArenaTeamCommands, "Creates arena team", NULL, 0, 0, 0 },
 		{ "whisperblock", 'g', &ChatHandler::HandleWhisperBlockCommand, "Blocks like .gmon except without the <GM> tag", NULL, 0, 0, 0 },

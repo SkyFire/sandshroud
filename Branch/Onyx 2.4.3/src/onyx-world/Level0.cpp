@@ -280,13 +280,6 @@ bool ChatHandler::HandleInfoCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-
-bool ChatHandler::HandleNYICommand(const char* args, WorldSession *m_session)
-{
-	RedSystemMessage(m_session, "Not yet implemented.");
-	return true;
-}
-
 bool ChatHandler::HandleDismountCommand(const char* args, WorldSession *m_session)
 {
 	Unit *m_target = NULL;
@@ -369,33 +362,6 @@ bool ChatHandler::HandleGMListCommand(const char* args, WorldSession *m_session)
 	return true;
 }
 
-bool ChatHandler::HandleRangeCheckCommand( const char *args , WorldSession *m_session )
-{
-	WorldPacket data;
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	m_session->SystemMessage( "=== RANGE CHECK ===" );
-	if (guid == 0)
-	{
-		m_session->SystemMessage("No selection imo.");
-		return true;
-	}
-
-	Unit *unit = m_session->GetPlayer()->GetMapMgr()->GetUnit( guid );
-	if(!unit)
-	{
-		m_session->SystemMessage("Invalid selection imo.");
-		return true;
-	}
-	float DistSq = unit->GetDistanceSq( static_cast<Object*>(m_session->GetPlayer()) );
-	m_session->SystemMessage( "GetDistanceSq  :   %u" , FL2UINT( DistSq ) );
-	LocationVector locvec( m_session->GetPlayer()->GetPositionX() , m_session->GetPlayer()->GetPositionY() , m_session->GetPlayer()->GetPositionZ() );
-	float DistReal = unit->CalcDistance( locvec );
-	m_session->SystemMessage( "CalcDistance   :   %u" , FL2UINT( DistReal ) );
-	float Dist2DSq = unit->GetDistance2dSq( static_cast<Object*>(m_session->GetPlayer()) );
-	m_session->SystemMessage( "GetDistance2dSq:   %u" , FL2UINT( Dist2DSq ) );
-	return true;
-}
-
 bool ChatHandler::HandleGmLogCommentCommand( const char *args , WorldSession *m_session )
 {
 	if(!args || !strlen(args)) return false;
@@ -403,17 +369,3 @@ bool ChatHandler::HandleGmLogCommentCommand( const char *args , WorldSession *m_
 	sGMLog.writefromsession(m_session,"Logcomment: %s", args);
 	return true;
 }
-
-bool ChatHandler::HandleRatingsCommand( const char *args , WorldSession *m_session )
-{
-	m_session->SystemMessage("Ratings!!!");
-	Player* m_plyr = getSelectedChar(m_session, false);
-	for( uint32 i = 0; i < 24; i++ )
-	{
-		m_plyr->ModUnsigned32Value( PLAYER_FIELD_COMBAT_RATING_1 + i, i );
-	}
-	m_plyr->UpdateStats();
-	return true;
-}
-
-

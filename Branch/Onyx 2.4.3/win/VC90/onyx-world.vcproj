@@ -646,10 +646,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\onyx-world\debugcmds.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\onyx-world\GMTicket.cpp"
 					>
 				</File>

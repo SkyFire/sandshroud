@@ -38,30 +38,6 @@ bool ChatHandler::HandleAnnounceCommand(const char* args, WorldSession *m_sessio
 	return true;
 }
 
-
-bool ChatHandler::HandleWAnnounceCommand(const char* args, WorldSession *m_session)
-{
-	if(!*args)
-		return false;
-
-	char pAnnounce[1024];
-	string input2;
-
-	input2 = "|cffff6060<";
-	if(m_session->CanUseCommand('z')) input2+="Admin";
-	else if(m_session->GetPermissionCount()) input2+="GM";
-	input2+=">|r|c1f40af20";
-	input2+=m_session->GetPlayer()->GetName();
-	input2+=":|r ";
-	snprintf((char*)pAnnounce, 1024, "%s%s", input2.c_str(), args);
-
-	sWorld.SendWorldWideScreenText(pAnnounce); // send message
-	sGMLog.writefromsession(m_session, "used wannounce command [%s]", args);
-	//sWorld.SendForcedIRCMessage(pAnnounce);
-	return true;
-}
-
-
 bool ChatHandler::HandleGMOnCommand(const char* args, WorldSession *m_session)
 {
 	/*uint32 newbytes = m_session->GetPlayer( )->GetUInt32Value(PLAYER_BYTES_2) | 0x8;
@@ -364,43 +340,35 @@ bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_sessi
 	if (chr == NULL) return true;
 	
 	char buf[256];
-
-	// send message to user
-	if (flag != 0)
+	if(flag)
 	{
+		// send message to user
 		snprintf((char*)buf,256, "%s has all taxi nodes now.", chr->GetName());
+		GreenSystemMessage(m_session, buf);
+		// send message to player
+		snprintf((char*)buf,256, "%s has given you all taxi nodes.", m_session->GetPlayer()->GetName());
+		SystemMessage(m_session, buf);
 	}
 	else
 	{
+		// send message to user
 		snprintf((char*)buf,256, "%s has no more taxi nodes now.", chr->GetName());
+		GreenSystemMessage(m_session, buf);
+		// send message to player
+		snprintf((char*)buf,256, "%s has deleted all your taxi nodes.", m_session->GetPlayer()->GetName());
+		SystemMessage(m_session, buf);
 	}
-	GreenSystemMessage(m_session, buf);
-	
-	// send message to player
-	if (flag != 0)
+
+	if (flag)
 	{
-		snprintf((char*)buf,256, "%s has given you all taxi nodes.",
-			m_session->GetPlayer()->GetName());
+		for (uint8 i=0; i<8; i++)
+			m_session->GetPlayer()->SetTaximask(i, 0xFFFFFFFF);
 	}
 	else
 	{
-		snprintf((char*)buf,256, "%s has deleted all your taxi nodes.",
-			m_session->GetPlayer()->GetName());
-	}
-	SystemMessage(m_session, buf);
-
-	for (uint8 i=0; i<8; i++)
-	{
-		if (flag != 0)
-		{
-			m_session->GetPlayer()->SetTaximask(i, 0xFFFFFFFF);
-		}
-		else
-		{
+		for (uint8 i=0; i<8; i++)
 			m_session->GetPlayer()->SetTaximask(i, 0);
-		}
 	}
-
 	return true;
 }
 
@@ -726,29 +694,6 @@ bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_sessio
 	return true;
 }
 
-bool ChatHandler::HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_session)
-{
-	uint32 id;
-	char sql[512];
-	Creature* target = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
-	if (!target)
-		return false;
-
-	int valcount = sscanf(args, "%u", (unsigned int*)&id);
-	if(valcount && target->m_spawn != NULL)
-	{
-		snprintf(sql, 512, "UPDATE creature_spawns SET respawnlink = '%u' WHERE id = '%u'", (unsigned int)id, (unsigned int)target->m_spawn->id);
-		WorldDatabase.Execute( sql );
-		BlueSystemMessage(m_session, "Spawn linking for this NPC has been updated: %u", id);
-	}
-	else
-	{
-		RedSystemMessage(m_session, "Sql entry invalid %u", id);
-	}
-
-	return true;
-}
-
 bool ChatHandler::HandleGuildSetLeaderCommand(const char *args, WorldSession *m_session)
 {
 	Player *plr = getSelectedChar(m_session);
@@ -771,5 +716,21 @@ bool ChatHandler::HandleGuildSetLeaderCommand(const char *args, WorldSession *m_
 	Guild *pGuild = plr->m_playerInfo->guild;
 	pGuild->ChangeGuildMaster(new_leader, NULL);
 	SystemMessage(m_session, "Guild leader changed.");
+	return true;
+}
+
+bool ChatHandler::HandleWaterWalk(const char* args, WorldSession *m_session)
+{
+	Player *chr = getSelectedChar(m_session);
+	char buf[256];
+
+	if (chr == NULL) // Ignatich: what should NOT happen but just in case...
+	{
+		SystemMessage(m_session, "No character selected.");
+		return false;
+	}
+	chr->SetMovement(MOVE_WATER_WALK, 4);
+	snprintf((char*)buf,256, "Enabling Water Walk");
+	SystemMessage(m_session,  buf);
 	return true;
 }
