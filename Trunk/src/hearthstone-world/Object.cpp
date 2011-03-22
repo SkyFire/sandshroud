@@ -676,7 +676,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 					break;
 				}
 			}
-			else if( cThis->CanMove & LIMIT_ON_OBJ )
+			else if( cThis->GetCanMove() & LIMIT_ON_OBJ )
 				flyflags |= (MOVEFLAG_LEVITATE | MOVEFLAG_FLYING); // Keep us in the same spot.
 
 			if(flyflags)
@@ -1212,15 +1212,6 @@ void Object::AddToWorld()
 		if( !p->triggerpass_cheat && p->GetGroup()== NULL && (mapMgr->GetdbcMap()->israid() || mapMgr->GetMapInfo()->type == INSTANCE_MULTIMODE))
 			return;
 	}
-	else if(IsCreature())
-	{
-		uint32 areaid = GetAreaID(mapMgr);
-		if(areaid == 4395 || areaid == 4560 || areaid == 4619)
-		{	// Set us on objects, since it's dalaran.
-			// This isn't really needed, but it's probably a good idea.
-			TO_CREATURE(this)->CanMove |= LIMIT_ON_OBJ;
-		}
-	}
 
 	m_mapMgr = mapMgr;
 	m_inQueue = true;
@@ -1726,9 +1717,9 @@ bool Object::canWalk()
 	if(IsCreature())
 	{
 		Creature* ctr = TO_CREATURE(this);
-		if(ctr->CanMove & LIMIT_ANYWHERE)
+		if(ctr->GetCanMove() & LIMIT_ANYWHERE)
 			return true;
-		if(ctr->CanMove & LIMIT_GROUND)
+		if(ctr->GetCanMove() & LIMIT_GROUND)
 			return true;
 	}
 	else if(IsPlayer())
@@ -1742,9 +1733,9 @@ bool Object::canSwim()
 	if(IsCreature())
 	{
 		Creature* ctr = TO_CREATURE(this);
-		if(ctr->CanMove & LIMIT_ANYWHERE)
+		if(ctr->GetCanMove() & LIMIT_ANYWHERE)
 			return true;
-		if(ctr->CanMove & LIMIT_WATER)
+		if(ctr->GetCanMove() & LIMIT_WATER)
 			return true;
 	}
 	else if(IsPlayer())
@@ -1762,9 +1753,9 @@ bool Object::canFly()
 	else if(IsCreature())
 	{
 		Creature* ctr = TO_CREATURE(this);
-		if(ctr->CanMove & LIMIT_ANYWHERE)
+		if(ctr->GetCanMove() & LIMIT_ANYWHERE)
 			return true;
-		if(ctr->CanMove & LIMIT_AIR)
+		if(ctr->GetCanMove() & LIMIT_AIR)
 			return true;
 	}
 	else if(IsPlayer())

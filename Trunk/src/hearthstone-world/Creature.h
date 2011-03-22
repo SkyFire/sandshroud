@@ -624,7 +624,15 @@ public:
 	void RemoveLimboState(Unit* healer);
 	void SetGuardWaypoints();
 	MapCell * m_respawnCell;
-	uint8 GetCanMove() { return CanMove; };
+	uint8 GetCanMove()
+	{
+		if(m_spawn)
+			return m_spawn->CanMove;
+		else if(proto)
+			return proto->CanMove;
+
+		return 1;
+	};
 
 	bool HasNpcFlag(uint32 Flag)
 	{
@@ -699,7 +707,6 @@ public: // values
 	uint32 original_MountedDisplayID;
 	int8 BaseAttackType;
 	int8 m_lootMethod;
-	int8 CanMove;
 	int32 FlatResistanceMod[7];
 	int32 BaseResistanceModPct[7];
 	int32 ResistanceModPct[7];

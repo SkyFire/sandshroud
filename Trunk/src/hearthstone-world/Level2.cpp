@@ -492,12 +492,17 @@ bool ChatHandler::HandleNPCSetOnObjectCommand(const char * args, WorldSession * 
 		return true;
 	}
 
-	crt->CanMove |= LIMIT_ON_OBJ;
-	if(crt->m_spawn)
-		crt->SaveToDB();
+	if(crt->m_spawn == NULL)
+	{
+		RedSystemMessage(m_session, "Creature must be a valid spawn.");
+		return true;
+	}
 
-	BlueSystemMessage(m_session, "Setting creature on Object(%u)", crt->CanMove);
-	sWorld.LogGM(m_session, "Set npc %s, spawn id %u on object", crt->GetName(), crt->m_spawn ? crt->m_spawn->id : 0);
+	crt->m_spawn->CanMove |= LIMIT_ON_OBJ;
+	crt->SaveToDB();
+
+	BlueSystemMessage(m_session, "Setting creature on Object(%u)", crt->GetCanMove());
+	sWorld.LogGM(m_session, "Set npc %s, spawn id %u on object", crt->GetName(), crt->m_spawn->id);
 	return true;
 }
 

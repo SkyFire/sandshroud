@@ -87,7 +87,6 @@ Creature::Creature(uint64 guid)
 	m_noRespawn=false;
 	m_canRegenerateHP = true;
 	BaseAttackType = SCHOOL_NORMAL;
-	CanMove = 0;
 	m_taggingPlayer = m_taggingGroup = 0;
 	m_lootMethod = -1;
 	m_noDeleteAfterDespawn = false;
@@ -378,7 +377,7 @@ void Creature::SaveToFile(bool saveposition)
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ","
 		<< m_phaseMask << ","
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
-		<< (uint8)CanMove << ")";
+		<< (uint32)GetCanMove() << ")";
 		log->WriteToLog(logreplace.str().c_str());
 	}
 	else
@@ -417,7 +416,7 @@ void Creature::SaveToFile(bool saveposition)
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+2] << ","
 		<< m_phaseMask << ","
 		<< (IsVehicle() ? TO_VEHICLE(this)->GetVehicleEntry() : 0)
-		<< (uint8)CanMove << ")";
+		<< (uint32)GetCanMove() << ")";
 		logupdate << "Where id = ";
 		logupdate << spawnid << "and entry = ";
 		logupdate << GetEntry() << ";";
@@ -905,8 +904,6 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	m_walkSpeed = m_base_walkSpeed = proto->walk_speed; //set speeds
 	m_runSpeed = m_base_runSpeed = proto->run_speed; //set speeds
 	m_flySpeed = proto->fly_speed;
-
-	CanMove = spawn->CanMove; // Set movement info
 	m_phaseMask = spawn->phase;
 
 	original_emotestate = spawn->emote_state;
@@ -1209,7 +1206,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	m_aiInterface->getMoveFlags();
 	//CanMove (overrules AI)
-	if(!CanMove)
+	if(!GetCanMove())
 		Root();
 
 	/* creature death state */
@@ -1277,7 +1274,6 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 
 	m_walkSpeed = m_base_walkSpeed = proto->walk_speed; //set speeds
 	m_runSpeed = m_base_runSpeed = proto->run_speed; //set speeds
-	CanMove = proto->CanMove; // Set movement info
 
 	//Set fields
 	SetUInt32Value(OBJECT_FIELD_ENTRY,proto->Id);
@@ -1554,7 +1550,7 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 
 	m_aiInterface->getMoveFlags();
 	//CanMove (overrules AI)
-	if(!CanMove)
+	if(!GetCanMove())
 		Root();
 
 	/* creature death state */
