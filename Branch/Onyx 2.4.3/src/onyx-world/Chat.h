@@ -103,27 +103,33 @@ enum Languages
 	NUM_LANGUAGES							   = 0x24
 };
 
-/*#define MSG_COLOR_YELLOW	"|r"
-#define MSG_COLOR_RED	   "|cffff2020"
-#define MSG_COLOR_GREEN	 "|c1f40af20"
-#define MSG_COLOR_LIGHTRED  "|cffff6060"*/
-
-#define MSG_COLOR_LIGHTRED	  "|cffff6060"
-#define MSG_COLOR_LIGHTBLUE	 "|cff00ccff"
-#define MSG_COLOR_BLUE		  "|cff0000ff"
-#define MSG_COLOR_GREEN		 "|cff00ff00"
-#define MSG_COLOR_RED		   "|cffff0000"
-#define MSG_COLOR_GOLD		  "|cffffcc00"
-#define MSG_COLOR_GREY		  "|cff888888"
-#define MSG_COLOR_WHITE		 "|cffffffff"
-#define MSG_COLOR_SUBWHITE	  "|cffbbbbbb"
-#define MSG_COLOR_MAGENTA	   "|cffff00ff"
+#define MSG_COLOR_LIGHTRED		"|cffff6060"
+#define MSG_COLOR_LIGHTBLUE		"|cff00ccff"
+#define MSG_COLOR_BLUE			"|cff0000ff"
+#define MSG_COLOR_GREEN			"|cff00ff00"
+#define MSG_COLOR_RED			"|cffff0000"
+#define MSG_COLOR_GOLD			"|cffffcc00"
+#define MSG_COLOR_GREY			"|cff888888"
+#define MSG_COLOR_WHITE			"|cffffffff"
+#define MSG_COLOR_SUBWHITE		"|cffbbbbbb"
+#define MSG_COLOR_MAGENTA		"|cffff00ff"
 #define MSG_COLOR_YELLOW		"|cffffff00"
-#define MSG_COLOR_CYAN		  "|cff00ffff"
+#define MSG_COLOR_CYAN			"|cff00ffff"
+#define MSG_COLOR_TORQUISEBLUE	"|cff00C78C"
+#define MSG_COLOR_GREENYELLOW	"|cffADFF2F"
+#define MSG_COLOR_PURPLE		"|cffDA70D6"
+#define MSG_COLOR_ORANGEY		"|cffFF4500"
+#define MSG_COLOR_CHOCOLATE		"|cffCD661D"
+#define MSG_COLOR_IVORY			"|cff8B8B83"
+#define MSG_COLOR_LIGHTYELLOW	"|cffFFFFE0"
+#define MSG_COLOR_SEXGREEN		"|cff71C671"
+#define MSG_COLOR_SEXTEAL		"|cff388E8E"
+#define MSG_COLOR_SEXPINK		"|cffC67171"
+#define MSG_COLOR_SEXBLUE		"|cff00E5EE"
+#define MSG_COLOR_SEXHOTPINK	"|cffFF6EB4"
 
 #define CHECKSESSION if(m_session == NULL) return NULL; \
 	if(m_session->GetPlayer() == NULL) return NULL;
-
 
 class ChatCommand
 {
@@ -140,20 +146,25 @@ public:
 
 class SERVER_DECL CommandTableStorage : public Singleton<CommandTableStorage>
 {
-	ChatCommand * _modifyCommandTable;
-	ChatCommand * _waypointCommandTable;
+	ChatCommand * _ModifyCommandTable;
+	ChatCommand * _WaypointCommandTable;
 	ChatCommand * _GMTicketCommandTable;
 	ChatCommand * _GameObjectCommandTable;
 	ChatCommand * _BattlegroundCommandTable;
 	ChatCommand * _NPCCommandTable;
-	ChatCommand * _accountCommandTable;
+	ChatCommand * _GameMasterCommandTable;
+	ChatCommand * _AdministratorCommandTable;
+	ChatCommand * _AccountCommandTable;
 	ChatCommand * _CheatCommandTable;
-	ChatCommand * _honorCommandTable;
-	ChatCommand * _questCommandTable;
-	ChatCommand * _petCommandTable;
-	ChatCommand * _recallCommandTable;
-	ChatCommand * _commandTable;
+	ChatCommand * _HonorCommandTable;
+	ChatCommand * _QuestCommandTable;
+	ChatCommand * _LookupCommandTable;
+	ChatCommand * _PetCommandTable;
+	ChatCommand * _RecallCommandTable;
 	ChatCommand * _GuildCommandTable;
+	ChatCommand * _TitleCommandTable;
+
+	ChatCommand * _CommandTable;
 
 	ChatCommand * GetSubCommandTable(const char * name);
 public:
@@ -161,7 +172,7 @@ public:
 	void Dealloc();
 	void Load();
 	void Override(const char * command, const char * level);
-	ONYX_INLINE ChatCommand * Get() { return _commandTable; }
+	ONYX_INLINE ChatCommand * Get() { return _CommandTable; }
 };
 
 class SERVER_DECL ChatHandler : public Singleton<ChatHandler>
@@ -204,6 +215,7 @@ protected:
 	bool HandleStartCommand(const char* args, WorldSession *m_session);
 	bool HandleInfoCommand(const char* args, WorldSession *m_session);
 	bool HandleDismountCommand(const char* args, WorldSession *m_session);
+	bool HandleFullDismountCommand(const char * args, WorldSession *m_session);
 	bool HandleSaveCommand(const char* args, WorldSession *m_session);
 	bool HandleGMListCommand(const char* args, WorldSession *m_session);
 	bool HandleGmLogCommentCommand( const char *args , WorldSession *m_session);
@@ -314,11 +326,6 @@ protected:
 	bool HandleAccountLevelCommand(const char * args, WorldSession * m_session);
 	bool HandleResetTalentsCommand(const char* args, WorldSession *m_session);
 	bool HandleResetSpellsCommand(const char* args, WorldSession *m_session);
-	bool HandleNpcFollowCommand(const char* args, WorldSession * m_session);
-	bool HandleFormationLink1Command(const char* args, WorldSession * m_session);
-	bool HandleFormationLink2Command(const char* args, WorldSession * m_session);
-	bool HandleNullFollowCommand(const char* args, WorldSession * m_session);
-	bool HandleFormationClearCommand(const char* args, WorldSession * m_session);
 	bool HandleResetSkillsCommand(const char* args, WorldSession * m_session);
 	bool HandleGetSkillLevelCommand(const char* args, WorldSession * m_session);
 	bool HandleGetSkillsInfoCommand(const char *args, WorldSession *m_session);
@@ -370,6 +377,11 @@ protected:
 	bool HandleGlobalHonorDailyMaintenanceCommand(const char* args, WorldSession* m_session);
 	bool HandleNextDayCommand(const char* args, WorldSession* m_session);
 	bool HandlePVPCreditCommand(const char* args, WorldSession* m_session);
+
+	bool HandleAddTitleCommand(const char* args, WorldSession* m_session);
+	bool HandleRemoveTitleCommand(const char* args, WorldSession* m_session);
+	bool HandleGetKnownTitlesCommand(const char* args, WorldSession* m_session);
+	bool HandleSetChosenTitleCommand(const char* args, WorldSession* m_session);
 	
 	bool HandleUnlearnCommand(const char* args, WorldSession * m_session);
 	bool HandleModifyLevelCommand(const char* args, WorldSession* m_session);
@@ -406,7 +418,6 @@ protected:
 	bool HandleRecallGoCommand(const char* args, WorldSession *m_session);
 	bool HandleRecallAddCommand(const char* args, WorldSession *m_session);
 	bool HandleRecallDelCommand(const char* args, WorldSession *m_session);
-	bool HandleModPeriodCommand(const char* args, WorldSession * m_session);
 	bool HandleGlobalPlaySoundCommand(const char* args, WorldSession * m_session);
 	bool HandleRecallPortPlayerCommand(const char* args, WorldSession * m_session);
 

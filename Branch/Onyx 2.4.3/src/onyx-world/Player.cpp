@@ -20,39 +20,6 @@
 #include "StdAfx.h"
 UpdateMask Player::m_visibleUpdateMask;
 
-const uint32 Player::PvPRanks[] = { 
-	PVPTITLE_NONE,			// 0
-	PVPTITLE_PRIVATE,		// 1
-	PVPTITLE_CORPORAL,		// 2
-	PVPTITLE_SERGEANT,		// 3
-	PVPTITLE_MASTER_SERGEANT, // 4
-	PVPTITLE_SERGEANT_MAJOR,	// 5
-	PVPTITLE_KNIGHT,			// 6
-	PVPTITLE_KNIGHT_LIEUTENANT, // 7
-	PVPTITLE_KNIGHT_CAPTAIN,	// 8
-	PVPTITLE_KNIGHT_CHAMPION,	// 9
-	PVPTITLE_LIEUTENANT_COMMANDER,	// 10
-	PVPTITLE_COMMANDER,				// 11
-	PVPTITLE_MARSHAL,				// 12
-	PVPTITLE_FIELD_MARSHAL,			// 13
-	PVPTITLE_GRAND_MARSHAL,			// 14
-	PVPTITLE_NONE,					// 15
-	PVPTITLE_SCOUT, 
-	PVPTITLE_GRUNT, 
-	PVPTITLE_HSERGEANT, 
-	PVPTITLE_SENIOR_SERGEANT, 
-	PVPTITLE_FIRST_SERGEANT, 
-	PVPTITLE_STONE_GUARD, 
-	PVPTITLE_BLOOD_GUARD, 
-	PVPTITLE_LEGIONNAIRE, 
-	PVPTITLE_CENTURION, 
-	PVPTITLE_CHAMPION, 
-	PVPTITLE_LIEUTENANT_GENERAL, 
-	PVPTITLE_GENERAL, 
-	PVPTITLE_WARLORD, 
-	PVPTITLE_HIGH_WARLORD 
-};
-
 Player::Player( uint32 guid ) : m_mailBox(guid)
 {
 	m_objectTypeId = TYPEID_PLAYER;
@@ -2476,8 +2443,8 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 
 	// set the rest of the shit
 	m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX]  = get_next_field.GetUInt32();
-	m_uint32Values[PLAYER_CHOSEN_TITLE]				 = get_next_field.GetUInt32();
-	field_index++;
+	m_uint32Values[PLAYER_CHOSEN_TITLE]					= get_next_field.GetUInt32();
+	m_uint32Values[PLAYER__FIELD_KNOWN_TITLES]			= get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_FIELD_COINAGE]				= get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_AMMO_ID]					  = get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_CHARACTER_POINTS2]			= get_next_field.GetUInt32();
@@ -2489,8 +2456,6 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetUInt32Value(PLAYER_BYTES, get_next_field.GetUInt32());
 	SetUInt32Value(PLAYER_BYTES_2, get_next_field.GetUInt32());
 	SetUInt32Value(PLAYER_BYTES_3, getGender() | (pvprank << 24));
-	uint32 offset = 15 * GetTeam();
-	SetUInt32Value(PLAYER__FIELD_KNOWN_TITLES, PvPRanks[GetPVPRank() + offset]);
 	SetUInt32Value(PLAYER_FLAGS, get_next_field.GetUInt32());
 	SetUInt32Value(PLAYER_FIELD_BYTES, get_next_field.GetUInt32());
 	//m_uint32Values[0x22]=(m_uint32Values[0x22]>0x46)?0x46:m_uint32Values[0x22];
@@ -10646,4 +10611,25 @@ void Player::GenerateLoot(Corpse *pCorpse)
 		
 	if( m_bg != NULL )
 		m_bg->HookGenerateLoot(this, pCorpse);
+}
+
+void Player::SetKnownTitle( int32 title, bool add )
+{
+	if( (HasKnownTitle( title ) && !add) ||
+		title < 1 || title >= TITLE_END)
+		return;
+
+	if(title == GetUInt32Value(PLAYER_CHOSEN_TITLE))
+		SetChosenTitle(0);
+
+	uint32 title2 = title;
+	uint64 current = GetUInt64Value( PLAYER__FIELD_KNOWN_TITLES );
+	if( add )
+		SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES, current | uint64(1) << title2 );
+	else
+		SetUInt64Value( PLAYER__FIELD_KNOWN_TITLES, current & ~uint64(1) << title2 );
+
+	WorldPacket data( SMSG_TITLE_EARNED, 8 );
+	data << uint32( title ) << uint32( add ? 1 : 0 );
+	m_session->SendPacket( &data );
 }

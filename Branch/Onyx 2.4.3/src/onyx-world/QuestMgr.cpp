@@ -889,46 +889,10 @@ void QuestMgr::GiveQuestRankReward(Player * plr, Quest* qst)
 		return;
 
 	// For the idiots.
-	if(qst->reward_rank > 14)
+	if(qst->reward_rank > TITLE_END)
 		return;
 
-	const uint32 PvPRanks[] = { 
-		PVPTITLE_NONE,			// 0
-		PVPTITLE_PRIVATE,		// 1
-		PVPTITLE_CORPORAL,		// 2
-		PVPTITLE_SERGEANT,		// 3
-		PVPTITLE_MASTER_SERGEANT, // 4
-		PVPTITLE_SERGEANT_MAJOR,	// 5
-		PVPTITLE_KNIGHT,			// 6
-		PVPTITLE_KNIGHT_LIEUTENANT, // 7
-		PVPTITLE_KNIGHT_CAPTAIN,	// 8
-		PVPTITLE_KNIGHT_CHAMPION,	// 9
-		PVPTITLE_LIEUTENANT_COMMANDER,	// 10
-		PVPTITLE_COMMANDER,				// 11
-		PVPTITLE_MARSHAL,				// 12
-		PVPTITLE_FIELD_MARSHAL,			// 13
-		PVPTITLE_GRAND_MARSHAL,			// 14
-		PVPTITLE_NONE,					// 15
-		PVPTITLE_SCOUT, 
-		PVPTITLE_GRUNT, 
-		PVPTITLE_HSERGEANT, 
-		PVPTITLE_SENIOR_SERGEANT, 
-		PVPTITLE_FIRST_SERGEANT, 
-		PVPTITLE_STONE_GUARD, 
-		PVPTITLE_BLOOD_GUARD, 
-		PVPTITLE_LEGIONNAIRE, 
-		PVPTITLE_CENTURION, 
-		PVPTITLE_CHAMPION, 
-		PVPTITLE_LIEUTENANT_GENERAL, 
-		PVPTITLE_GENERAL, 
-		PVPTITLE_WARLORD, 
-		PVPTITLE_HIGH_WARLORD 
-	};
-
-	uint32 offset = 15 * plr->GetTeam();
-
-	plr->SetPVPRank(qst->reward_rank);
-	plr->SetUInt32Value(PLAYER__FIELD_KNOWN_TITLES, PvPRanks[plr->GetPVPRank()] + offset);
+	plr->SetKnownTitle(qst->reward_rank, true);
 }
 
 void QuestMgr::OnQuestFinished(Player* plr, Quest* qst, Object *qst_giver, uint32 reward_slot)

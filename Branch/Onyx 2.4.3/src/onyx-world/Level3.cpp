@@ -1250,6 +1250,81 @@ bool ChatHandler::HandleModifyLevelCommand(const char* args, WorldSession* m_ses
 	return true;
 }
 
+bool ChatHandler::HandleAddTitleCommand(const char* args, WorldSession* m_session)
+{
+	Player* plr = getSelectedChar(m_session);
+	if(!plr)
+		return true;
+
+	uint32 title = args ? atoi(args) : 0;
+	if(title == 0 || title > TITLE_END)
+	{
+		RedSystemMessage(m_session, "A title number (numeric) is required to be specified after this command.");
+		return true;
+	}
+	BlueSystemMessage(m_session, "Adding title number %u to %s.", title, plr->GetName());
+	GreenSystemMessageToPlr(plr, "%s added title number %u to you.", m_session->GetPlayer()->GetName(), title);
+	plr->SetKnownTitle(title, true);
+	return true;
+}
+bool ChatHandler::HandleRemoveTitleCommand(const char* args, WorldSession* m_session)
+{
+	Player* plr = getSelectedChar(m_session);
+	if(!plr)
+		return true;
+
+	uint32 title = args ? atoi(args) : 0;
+	if(title == 0 || title > TITLE_END)
+	{
+		RedSystemMessage(m_session, "A title number (numeric) is required to be specified after this command.");
+		return true;
+	}
+	BlueSystemMessage(m_session, "Removing title number %u from %s.", title, plr->GetName());
+	GreenSystemMessageToPlr(plr, "%s removed title number %u from you.", m_session->GetPlayer()->GetName(), title);
+	plr->SetKnownTitle(title, false);
+	return true;
+}
+
+bool ChatHandler::HandleGetKnownTitlesCommand(const char* args, WorldSession* m_session)
+{
+	Player* plr = getSelectedChar(m_session, true);
+	if(!plr)
+		return true;
+	std::stringstream ss;
+	for(uint32 i=1;i<=TITLE_END;++i)
+	{
+		if(plr->HasKnownTitle(i))
+		{
+			ss << i << " ";
+		}
+	}
+	BlueSystemMessage(m_session, ss.str().c_str());
+	return true;
+}
+
+bool ChatHandler::HandleSetChosenTitleCommand(const char* args, WorldSession* m_session)
+{
+	Player* plr = getSelectedChar(m_session, true);
+	if(!plr)
+		return true;
+
+	uint32 title = args ? atoi(args) : 0;
+	if(title == 0 || title > TITLE_END)
+	{
+		RedSystemMessage(m_session, "A title number (numeric) is required to be specified after this command.");
+		return true;
+	}
+	BlueSystemMessage(m_session, "Setting title number %u for %s.", title, plr->GetName());
+	GreenSystemMessageToPlr(plr, "%s set title number %u for you.", m_session->GetPlayer()->GetName(), title);
+	if(!plr->HasKnownTitle(title))
+	{
+		RedSystemMessage(m_session, "Selected player doesn't know this title.");
+		return true;
+	}
+	plr->SetUInt32Value(PLAYER_CHOSEN_TITLE,title);
+	return true;
+}
+
 bool ChatHandler::HandleCreatePetCommand(const char* args, WorldSession* m_session)
 {
 /*	if(!args || strlen(args) < 2)
@@ -1679,111 +1754,6 @@ bool ChatHandler::HandleNpcReturnCommand(const char* args, WorldSession* m_sessi
 	creature->GetAIInterface()->WipeTargetList();
 	creature->GetAIInterface()->MoveTo(x, y, z, o);
 
-	return true;
-}
-
-bool ChatHandler::HandleModPeriodCommand(const char* args, WorldSession * m_session)
-{
-	Transporter * trans = m_session->GetPlayer()->m_CurrentTransporter;
-	if(trans == 0)
-	{
-		RedSystemMessage(m_session, "You must be on a transporter.");
-		return true;
-	}
-
-	uint32 np = args ? atol(args) : 0;
-	if(np == 0)
-	{
-		RedSystemMessage(m_session, "A time in ms must be specified.");
-		return true;
-	}
-
-	trans->SetPeriod(np);
-	BlueSystemMessage(m_session, "Period of %s set to %u.", trans->GetInfo()->Name, np);
-	return true;
-}
-
-bool ChatHandler::HandleFormationLink1Command(const char* args, WorldSession * m_session)
-{
-	// set formation "master"
-	Creature * pCreature = getSelectedCreature(m_session, true);
-	if(pCreature == 0) return true;
-
-	m_session->GetPlayer()->linkTarget = pCreature;
-	BlueSystemMessage(m_session, "Linkup \"master\" set to %s.", pCreature->GetCreatureName()->Name);
-	return true;
-}
-
-bool ChatHandler::HandleFormationLink2Command(const char* args, WorldSession * m_session)
-{
-	// set formation "slave" with distance and angle
-	float ang, dist;
-	if(*args == 0 || sscanf(args, "%f %f", &dist, &ang) != 2)
-	{
-		RedSystemMessage(m_session, "You must specify a distance and angle.");
-		return true;
-	}
-
-	if(m_session->GetPlayer()->linkTarget == 0 || m_session->GetPlayer()->linkTarget->GetTypeId() != TYPEID_UNIT)
-	{
-		RedSystemMessage(m_session, "Master not selected. select the master, and use formationlink1.");
-		return true;
-	}
-
-	Creature * slave = getSelectedCreature(m_session, true);
-	if(slave == 0) return true;
-
-	if( slave->GetAIInterface()->m_formationLinkTarget->m_spawn == NULL || slave->m_spawn == NULL )
-		return false;
-
-	slave->GetAIInterface()->m_formationFollowDistance = dist;
-	slave->GetAIInterface()->m_formationFollowAngle = ang;
-	slave->GetAIInterface()->m_formationLinkTarget = static_cast< Creature* >( m_session->GetPlayer()->linkTarget );
-	slave->GetAIInterface()->m_formationLinkSqlId = slave->GetAIInterface()->m_formationLinkTarget->m_spawn->id;
-	slave->GetAIInterface()->SetUnitToFollowAngle(ang);
-	
-	// add to db
-	WorldDatabase.Execute("INSERT INTO creature_formations VALUES(%u, %u, '%f', '%f')", 
-		slave->m_spawn->id, slave->GetAIInterface()->m_formationLinkSqlId, ang, dist);
-
-	BlueSystemMessage(m_session, "%s linked up to %s with a distance of %f at %f radians.", slave->GetCreatureName()->Name, 
-		static_cast< Creature* >( m_session->GetPlayer()->linkTarget )->GetCreatureName()->Name, dist, ang );
-
-	return true;
-}
-
-bool ChatHandler::HandleNpcFollowCommand(const char* args, WorldSession * m_session)
-{
-	Creature * creature = getSelectedCreature(m_session, true);
-	if(!creature) return true;
-
-	creature->GetAIInterface()->SetUnitToFollow(m_session->GetPlayer());
-	return true;
-}
-
-bool ChatHandler::HandleFormationClearCommand(const char* args, WorldSession * m_session)
-{
-	Creature * c = getSelectedCreature(m_session, true);
-	if(!c || c->m_spawn == NULL) return true;
-
-	c->GetAIInterface()->m_formationLinkSqlId = 0;
-	c->GetAIInterface()->m_formationLinkTarget = 0;
-	c->GetAIInterface()->m_formationFollowAngle = 0.0f;
-	c->GetAIInterface()->m_formationFollowDistance = 0.0f;
-	c->GetAIInterface()->SetUnitToFollow(0);
-	
-	WorldDatabase.Execute("DELETE FROM creature_formations WHERE spawn_id=%u", c->m_spawn->id);
-	return true;
-}
-
-bool ChatHandler::HandleNullFollowCommand(const char* args, WorldSession * m_session)
-{
-	Creature * c = getSelectedCreature(m_session, true);
-	if(!c) return true;
-
-	// restart movement
-	c->GetAIInterface()->SetAIState(STATE_IDLE);
-	c->GetAIInterface()->SetUnitToFollow(0);
 	return true;
 }
 

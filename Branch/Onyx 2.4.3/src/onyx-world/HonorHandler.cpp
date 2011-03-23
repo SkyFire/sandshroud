@@ -23,24 +23,11 @@ void WorldSession::HandleSetVisibleRankOpcode(WorldPacket& recv_data)
 {
 	CHECK_PACKET_SIZE(recv_data, 4);
 	uint32 ChosenRank;
-	recv_data >> ChosenRank; 
-
-	if(ChosenRank == 0xFFFFFFFF)
-		_player->SetUInt32Value(PLAYER_CHOSEN_TITLE, 0);
-	else
-	{
-		if( ChosenRank >= 30 )
-			return;
-
-		uint32 bit = Player::PvPRanks[ChosenRank];
-		if( !(_player->GetUInt32Value(PLAYER__FIELD_KNOWN_TITLES) & bit ) )
-		{
-			Disconnect();
-			return;
-		}
-
-		_player->SetUInt32Value(PLAYER_CHOSEN_TITLE, ChosenRank);
-	}
+	recv_data >> ChosenRank;
+	if( ChosenRank == 0xFFFFFFFF )
+		_player->SetUInt32Value( PLAYER_CHOSEN_TITLE, 0 );
+	else if( _player->HasKnownTitle( static_cast< RankTitles >( ChosenRank ) ) )
+		_player->SetChosenTitle(ChosenRank);
 }
 
 void HonorHandler::AddHonorPointsToPlayer(Player *pPlayer, uint32 uAmount)

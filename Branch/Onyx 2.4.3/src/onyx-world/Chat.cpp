@@ -31,9 +31,9 @@ ChatCommand * ChatHandler::getCommandTable()
 ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 {
 	if(!strcmp(name, "modify"))
-		return _modifyCommandTable;
+		return _ModifyCommandTable;
 	else if(!strcmp(name, "waypoint"))
-		return _waypointCommandTable;
+		return _WaypointCommandTable;
 	else if(!strcmp(name, "gmTicket"))
 		return _GMTicketCommandTable;
 	else if(!strcmp(name, "gobject"))
@@ -42,20 +42,28 @@ ChatCommand * CommandTableStorage::GetSubCommandTable(const char * name)
 		return _BattlegroundCommandTable;
 	else if(!strcmp(name, "npc"))
 		return _NPCCommandTable;
+	else if(!stricmp(name, "gm"))
+		return _GameMasterCommandTable;
+	else if(!stricmp(name, "admin"))
+		return _AdministratorCommandTable;
+	else if(!strcmp(name, "account"))
+		return _AccountCommandTable;
 	else if(!strcmp(name, "cheat"))
 		return _CheatCommandTable;
-	else if(!strcmp(name, "account"))
-		return _accountCommandTable;
-	else if(!strcmp(name, "pet"))
-		return _petCommandTable;
-	else if(!strcmp(name, "recall"))
-		return _recallCommandTable;
 	else if(!strcmp(name, "honor"))
-		return _honorCommandTable;
+		return _HonorCommandTable;
+	else if(!strcmp(name, "quest"))
+		return _QuestCommandTable;
+	else if(!stricmp(name, "lookup"))
+		return _LookupCommandTable;
+	else if(!strcmp(name, "pet"))
+		return _PetCommandTable;
+	else if(!strcmp(name, "recall"))
+		return _RecallCommandTable;
 	else if(!strcmp(name, "guild"))
 		return _GuildCommandTable;
-	else if(!strcmp(name, "quest"))
-		return _questCommandTable;
+	else if(!stricmp(name, "title"))
+		return _TitleCommandTable;
 	return 0;
 }
 
@@ -102,7 +110,7 @@ void CommandTableStorage::Override(const char * command, const char * level)
 	size_t len2 = subcommand_name ? strlen(subcommand_name) : 0;
 
 	// look for the command.
-	ChatCommand * p = &_commandTable[0];
+	ChatCommand * p = &_CommandTable[0];
 	while(p->Name != 0)
 	{
 		if(!strnicmp(p->Name, command_name, len1))
@@ -166,20 +174,24 @@ void CommandTableStorage::Override(const char * command, const char * level)
 
 void CommandTableStorage::Dealloc()
 {
-	free( _modifyCommandTable );
-	free( _waypointCommandTable );
+	free( _ModifyCommandTable );
+	free( _WaypointCommandTable );
 	free( _GMTicketCommandTable );
 	free( _GameObjectCommandTable );
 	free( _BattlegroundCommandTable );
 	free( _NPCCommandTable );
+	free( _GameMasterCommandTable );
+	free( _AdministratorCommandTable );
+	free( _AccountCommandTable );
 	free( _CheatCommandTable );
-	free( _accountCommandTable );
-	free( _petCommandTable );
-	free( _recallCommandTable );
-	free( _honorCommandTable );
+	free( _HonorCommandTable );
+	free( _QuestCommandTable );
+	free( _LookupCommandTable );
+	free( _PetCommandTable );
+	free( _RecallCommandTable );
 	free( _GuildCommandTable);
-	free( _questCommandTable );
-	free( _commandTable );
+	free( _TitleCommandTable );
+	free( _CommandTable );
 }
 
 void CommandTableStorage::Init()
@@ -216,7 +228,7 @@ void CommandTableStorage::Init()
 		{ "bytes",'m',NULL,"Bytes",NULL,UNIT_FIELD_BYTES_0,0,1},
 		{ NULL,		  0, NULL,	 "",					NULL, 0, 0  }
 	};
-	dupe_command_table(modifyCommandTable, _modifyCommandTable);
+	dupe_command_table(modifyCommandTable, _ModifyCommandTable);
 
 	static ChatCommand waypointCommandTable[] =
 	{
@@ -238,7 +250,7 @@ void CommandTableStorage::Init()
 		{ "addfly", 'w', &ChatHandler::HandleWaypointAddFlyCommand, "Adds a flying waypoint", NULL, 0, 0, 0 },
 		{ NULL,			0, NULL,									 "",							   NULL, 0, 0  }
 	};
-	dupe_command_table(waypointCommandTable, _waypointCommandTable);
+	dupe_command_table(waypointCommandTable, _WaypointCommandTable);
 
 	static ChatCommand GMTicketCommandTable[] =
 	{
@@ -249,18 +261,6 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(GMTicketCommandTable, _GMTicketCommandTable);
 
-	static ChatCommand GuildCommandTable[] =
-	{
-		{ "create",		 'm', &ChatHandler::CreateGuildCommand,  "Creates a guild.",			   NULL, 0, 0, 0},
-		{ "rename",	   'm', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.",		 NULL, 0, 0, 0},
-		{ "members",	   'm', &ChatHandler::HandleGuildMembersCommand, "Lists guildmembers and their ranks.",	  NULL, 0, 0, 0},
-		{ "removeplayer",	   'm', &ChatHandler::HandleGuildRemovePlayerCommand, "Removes a player from a guild.",		 NULL, 0, 0, 0},
-		{ "disband",	   'm', &ChatHandler::HandleGuildDisbandCommand, "Disbands the guild of your target.",		 NULL, 0, 0, 0},
-		{ "setleader", 'm', &ChatHandler::HandleGuildSetLeaderCommand, "Sets the guild leader of the target's guild to <player>", NULL, 0, 0, 0 },
-		{ NULL,			0, NULL,									   "",							 NULL, 0, 0  }
-	};
-	dupe_command_table(GuildCommandTable, _GuildCommandTable);
-
 	static ChatCommand GameObjectCommandTable[] =
 	{
 		{ "select",	  'o', &ChatHandler::HandleGOSelect,   "Selects the nearest GameObject to you",	NULL, 0, 0, 0},
@@ -270,8 +270,6 @@ void CommandTableStorage::Init()
 		{ "activate",	'o', &ChatHandler::HandleGOActivate, "Activates/Opens the selected GO.",		 NULL, 0, 0, 0},
 		{ "enable",	  'o', &ChatHandler::HandleGOEnable,   "Enables the selected GO for use.",		 NULL, 0, 0, 0},
 		{ "scale",	   'o', &ChatHandler::HandleGOScale,	"Sets scale of selected GO",				NULL, 0, 0, 0},
-		/*{ "animprogress",'o', &ChatHandler::HandleGOAnimProgress, "Sets anim progress",				   NULL, 0, 0, 0 },
-		{ "export",	  'o', &ChatHandler::HandleGOExport,   "Exports the current GO selected",		  NULL, 0, 0, 0 },*/
 		{ "move", 'g', &ChatHandler::HandleGOMove, "Moves gameobject to player xyz", NULL, 0, 0, 0 },
 		{ "rotate", 'g', &ChatHandler::HandleGORotate, "Rotates gameobject x degrees", NULL, 0, 0, 0 },
 		{ "f_flags", 'g', NULL, "Flags", NULL, GAMEOBJECT_FLAGS, 0, 3 },
@@ -318,6 +316,47 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(NPCCommandTable, _NPCCommandTable);
 
+	static ChatCommand GMCommandTable[] =
+	{
+		{ "whisperblock",	'g', &ChatHandler::HandleWhisperBlockCommand,	"Blocks like .gmon except without the <GM> tag",		NULL,					0, 0, 0 },
+		{ "list",			'1', &ChatHandler::HandleGMListCommand,			"Shows active GM's",									NULL,					0, 0, 0 },
+		{ "off",			't', &ChatHandler::HandleGMOffCommand,			"Sets GM tag off",										NULL,					0, 0, 0 },
+		{ "on",				't', &ChatHandler::HandleGMOnCommand,			"Sets GM tag on",										NULL,					0, 0, 0 },
+//		{ "disabledev",		'z', &ChatHandler::HandleToggleDevCommand,		"Toggles <Dev> Tag",									NULL,					0, 0, 0 },
+//		{ "announce",		'u', &ChatHandler::HandleGMAnnounceCommand,		"Announce to GM's and Admin's",							NULL,					0, 0, 0 },
+		{ "allowwhispers",	'c', &ChatHandler::HandleAllowWhispersCommand,	"Allows whispers from player <s> while in gmon mode.",	NULL,					0, 0, 0 },
+		{ "blockwhispers",	'c', &ChatHandler::HandleBlockWhispersCommand,	"Blocks whispers from player <s> while in gmon mode.",	NULL,					0, 0, 0 },
+		{ "ticket",			'c', NULL,										"",														GMTicketCommandTable,	0, 0, 0 },
+		{ NULL,				'0', NULL,										"",														NULL,					0, 0, 0 }
+	};
+	dupe_command_table(GMCommandTable, _GameMasterCommandTable);
+
+	static ChatCommand AdminCommandTable[] =
+	{
+//		{ "announce",				'z', &ChatHandler::HandleAdminAnnounceCommand,		"Command to Announce to Admin's",				NULL, 0, 0, 0 },
+		{ "castall",				'z', &ChatHandler::HandleCastAllCommand,			"Makes all players online cast spell <x>.",		NULL, 0, 0, 0 },
+		{ "playall",				'z', &ChatHandler::HandleGlobalPlaySoundCommand,	"Plays a sound to the entire server.",			NULL, 0, 0, 0 },
+		{ "saveall",				'z', &ChatHandler::HandleSaveAllCommand,			"Save's all playing characters",				NULL, 0, 0, 0 },
+		{ "rehash",					'z', &ChatHandler::HandleRehashCommand,				"Reloads config file.",							NULL, 0, 0, 0 },
+		{ "masssummon",				'z', &ChatHandler::HandleMassSummonCommand,			"Summons all players.",							NULL, 0, 0, 0 },
+		{ "restart",				'z', &ChatHandler::HandleShutdownRestartCommand,	"Initiates server restart in <x> seconds.",		NULL, 0, 0, 0 },
+		{ "shutdown",				'z', &ChatHandler::HandleShutdownCommand,			"Initiates server shutdown in <x> seconds.",	NULL, 0, 0, 0 },
+		{ NULL,						'0', NULL,											"",												NULL, 0, 0, 0 }
+	};
+	dupe_command_table(AdminCommandTable, _AdministratorCommandTable);
+
+	static ChatCommand accountCommandTable[] =
+	{
+		{ "ban",	  'a', &ChatHandler::HandleAccountBannedCommand,   "Ban account. .account ban name timeperiod", NULL, 0, 0, 0 },
+		{ "unban",	  'z', &ChatHandler::HandleAccountUnbanCommand,		"Unbans account x.", NULL, 0, 0, 0 },
+		{ "level",	  'z', &ChatHandler::HandleAccountLevelCommand,	"Sets gm level on account. Pass it username and 0,1,2,3,az, etc.", NULL, 0, 0, 0 },
+		{ "mute",	  'a', &ChatHandler::HandleAccountMuteCommand,		"Mutes account for <timeperiod>.", NULL, 0, 0, 0 },
+		{ "unmute",	  'a', &ChatHandler::HandleAccountUnmuteCommand,	"Unmutes account <x>", NULL, 0, 0, 0 },
+
+		{ NULL, 0, NULL, "", NULL, 0, 0, 0},
+	};
+	dupe_command_table(accountCommandTable, _AccountCommandTable);
+
 	static ChatCommand CheatCommandTable[] =
 	{
 		{ "status",	 'm', &ChatHandler::HandleShowCheatsCommand, "Shows active cheats.",			 NULL, 0, 0, 0 },
@@ -336,18 +375,6 @@ void CommandTableStorage::Init()
 	};
 	dupe_command_table(CheatCommandTable, _CheatCommandTable);
 
-	static ChatCommand accountCommandTable[] =
-	{
-		{ "ban",	  'a', &ChatHandler::HandleAccountBannedCommand,   "Ban account. .account ban name timeperiod", NULL, 0, 0, 0 },
-		{ "unban",	  'z', &ChatHandler::HandleAccountUnbanCommand,		"Unbans account x.", NULL, 0, 0, 0 },
-		{ "level",	  'z', &ChatHandler::HandleAccountLevelCommand,	"Sets gm level on account. Pass it username and 0,1,2,3,az, etc.", NULL, 0, 0, 0 },
-		{ "mute",	  'a', &ChatHandler::HandleAccountMuteCommand,		"Mutes account for <timeperiod>.", NULL, 0, 0, 0 },
-		{ "unmute",	  'a', &ChatHandler::HandleAccountUnmuteCommand,	"Unmutes account <x>", NULL, 0, 0, 0 },
-
-		{ NULL, 0, NULL, "", NULL, 0, 0, 0},
-	};
-	dupe_command_table(accountCommandTable, _accountCommandTable);
-
 	static ChatCommand honorCommandTable[] =
 	{
 		{ "addpoints",   'm', &ChatHandler::HandleAddHonorCommand,	  "Adds x amount of honor points/currency",NULL,0,0,0},
@@ -357,28 +384,7 @@ void CommandTableStorage::Init()
 		{ "pvpcredit", 'm', &ChatHandler::HandlePVPCreditCommand, "Sends PVP credit packet, with specified rank and points", NULL,0,0,0},
 		{ NULL,0,NULL,"",NULL,0,0,0},
 	};
-	dupe_command_table(honorCommandTable, _honorCommandTable);
-
-	static ChatCommand petCommandTable[] = 
-	{
-		{ "createpet",'m',&ChatHandler::HandleCreatePetCommand, "Creates a pet with <entry>.", NULL, 0, 0, 0 },
-		{ "renamepet",'m',&ChatHandler::HandleRenamePetCommand, "Renames a pet to <name>.", NULL, 0, 0, 0 },
-		{ "addspell",'m',&ChatHandler::HandleAddPetSpellCommand, "Teaches pet <spell>.", NULL, 0, 0, 0 },
-		{ "removespell",'m',&ChatHandler::HandleRemovePetSpellCommand, "Removes pet spell <spell>.", NULL, 0, 0, 0 },
-		{ NULL,0,NULL,"",NULL,0,0,0},
-	};
-	dupe_command_table(petCommandTable, _petCommandTable);
-
-	static ChatCommand recallCommandTable[] =
-	{
-		{ "list",		'q', &ChatHandler::HandleRecallListCommand,	   "List recall locations",		  NULL, 0, 0, 0},
-		{ "port",		'q', &ChatHandler::HandleRecallGoCommand,		 "Port to recalled location",	  NULL, 0, 0, 0},
-		{ "add",		 'q', &ChatHandler::HandleRecallAddCommand,		"Add recall location",			NULL, 0, 0, 0},
-		{ "del",		 'q', &ChatHandler::HandleRecallDelCommand,		"Remove a recall location",	   NULL, 0, 0, 0},
-		{ "portplayer", 'm', &ChatHandler::HandleRecallPortPlayerCommand, "recall ports player", NULL, 0, 0, 0 },
-		{ NULL,		   0,  NULL,										"",							   NULL, 0, 0, 0},
-	};
-	dupe_command_table(recallCommandTable, _recallCommandTable);
+	dupe_command_table(honorCommandTable, _HonorCommandTable);
 
 	static ChatCommand questCommandTable[] =
 	{
@@ -402,10 +408,64 @@ void CommandTableStorage::Init()
 		{ "start",	   '2', &ChatHandler::HandleQuestStartCommand,		"Starts quest <id>",									NULL, 0, 0, 0},
 		{ NULL,			0,  NULL,										"",														NULL, 0, 0, 0},
 	};
-	dupe_command_table(questCommandTable, _questCommandTable);
+	dupe_command_table(questCommandTable, _QuestCommandTable);
+
+	static ChatCommand lookupCommandTable[] =
+	{
+		{ "item",		'l', &ChatHandler::HandleLookupItemCommand,			"Looks up item string x.",					NULL, 0, 0, 0 },
+		{ "quest",		'l', &ChatHandler::HandleQuestLookupCommand,		"Looks up quest string x.",					NULL, 0, 0, 0 },
+		{ "creature",	'l', &ChatHandler::HandleLookupCreatureCommand,		"Looks up item string x.",					NULL, 0, 0, 0 },
+//		{ "object",		'l', &ChatHandler::HandleLookupObjectCommand,		"Looks up object string x.",				NULL, 0, 0, 0 },
+//		{ "spell",		'l', &ChatHandler::HandleLookupSpellCommand,		"Looks up spell string x.",					NULL, 0, 0, 0 },
+//		{ "title",		'l', &ChatHandler::HandleLookupTitleCommand,		"Looks up title based on inputted name.",	NULL, 0, 0, 0 },
+		{ NULL,			'0', NULL,											"",											NULL, 0, 0, 0 },
+	};
+	dupe_command_table(lookupCommandTable, _LookupCommandTable);
+
+	static ChatCommand petCommandTable[] = 
+	{
+		{ "createpet",'m',&ChatHandler::HandleCreatePetCommand, "Creates a pet with <entry>.", NULL, 0, 0, 0 },
+		{ "renamepet",'m',&ChatHandler::HandleRenamePetCommand, "Renames a pet to <name>.", NULL, 0, 0, 0 },
+		{ "addspell",'m',&ChatHandler::HandleAddPetSpellCommand, "Teaches pet <spell>.", NULL, 0, 0, 0 },
+		{ "removespell",'m',&ChatHandler::HandleRemovePetSpellCommand, "Removes pet spell <spell>.", NULL, 0, 0, 0 },
+		{ NULL,0,NULL,"",NULL,0,0,0},
+	};
+	dupe_command_table(petCommandTable, _PetCommandTable);
+
+	static ChatCommand recallCommandTable[] =
+	{
+		{ "list",		'q', &ChatHandler::HandleRecallListCommand,	   "List recall locations",		  NULL, 0, 0, 0},
+		{ "port",		'q', &ChatHandler::HandleRecallGoCommand,		 "Port to recalled location",	  NULL, 0, 0, 0},
+		{ "add",		 'q', &ChatHandler::HandleRecallAddCommand,		"Add recall location",			NULL, 0, 0, 0},
+		{ "del",		 'q', &ChatHandler::HandleRecallDelCommand,		"Remove a recall location",	   NULL, 0, 0, 0},
+		{ "portplayer", 'm', &ChatHandler::HandleRecallPortPlayerCommand, "recall ports player", NULL, 0, 0, 0 },
+		{ NULL,		   0,  NULL,										"",							   NULL, 0, 0, 0},
+	};
+	dupe_command_table(recallCommandTable, _RecallCommandTable);
+
+	static ChatCommand GuildCommandTable[] =
+	{
+		{ "create",		 'm', &ChatHandler::CreateGuildCommand,  "Creates a guild.",			   NULL, 0, 0, 0},
+		{ "rename",	   'm', &ChatHandler::HandleRenameGuildCommand, "Renames a guild.",		 NULL, 0, 0, 0},
+		{ "members",	   'm', &ChatHandler::HandleGuildMembersCommand, "Lists guildmembers and their ranks.",	  NULL, 0, 0, 0},
+		{ "removeplayer",	   'm', &ChatHandler::HandleGuildRemovePlayerCommand, "Removes a player from a guild.",		 NULL, 0, 0, 0},
+		{ "disband",	   'm', &ChatHandler::HandleGuildDisbandCommand, "Disbands the guild of your target.",		 NULL, 0, 0, 0},
+		{ "setleader", 'm', &ChatHandler::HandleGuildSetLeaderCommand, "Sets the guild leader of the target's guild to <player>", NULL, 0, 0, 0 },
+		{ NULL,			0, NULL,									   "",							 NULL, 0, 0  }
+	};
+	dupe_command_table(GuildCommandTable, _GuildCommandTable);
+
+	static ChatCommand TitleCommandTable[] =
+	{
+		{ "add",		'm', &ChatHandler::HandleAddTitleCommand,			"<TitleNumber> - Adds known title to the selected player",			NULL, 0, 0, 0 },
+		{ "remove",		'm', &ChatHandler::HandleRemoveTitleCommand,		"<TitleNumber> - Removes known title from the selected player",		NULL, 0, 0, 0 },
+		{ "known",		'm', &ChatHandler::HandleGetKnownTitlesCommand,		"Shows all titles known by the player",								NULL, 0, 0, 0 },
+		{ "setchosen",	'm', &ChatHandler::HandleSetChosenTitleCommand,		"<TitleNumber> - Sets chosen title for the selected player",		NULL, 0, 0, 0 },
+		{ NULL,			'0', NULL,											"",																	NULL, 0, 0, 0 }
+	};
+	dupe_command_table(TitleCommandTable, _TitleCommandTable);
 
 	static ChatCommand commandTable[] = {
-		{ "masssummon", 'z', &ChatHandler::HandleMassSummonCommand, ".masssummon - Summons all players.", NULL, 0, 0, 0},
 		{ "commands",	'0', &ChatHandler::HandleCommandsCommand,		"Shows Commands",				 NULL, 0, 0, 0},
 		{ "help",		'0', &ChatHandler::HandleHelpCommand,			"Shows help for command",		 NULL, 0, 0, 0},
 		{ "announce",	'u', &ChatHandler::HandleAnnounceCommand,	  "Sends Msg To All",			   NULL, 0, 0, 0},
@@ -421,19 +481,14 @@ void CommandTableStorage::Init()
 		{ "demorph",	 'm', &ChatHandler::HandleDeMorphCommand,	   "Demorphs from morphed model.",   NULL, 0, 0, 0},
 		{ "mount",	   'm', &ChatHandler::HandleMountCommand,		 "Mounts into modelid x.",		 NULL, 0, 0, 0},
 		{ "dismount",	  'h', &ChatHandler::HandleDismountCommand,	  "Dismounts.",					 NULL, 0, 0, 0},
-		{ "gm",		  '0', &ChatHandler::HandleGMListCommand,		"Shows active GM's",			  NULL, 0, 0, 0},
-		{ "gmoff",	   't', &ChatHandler::HandleGMOffCommand,		 "Sets GM tag off",				NULL, 0, 0, 0},
-		{ "gmon",		't', &ChatHandler::HandleGMOnCommand,		  "Sets GM tag on",				 NULL, 0, 0, 0},
+		{ "fulldismount", 'm', &ChatHandler::HandleFullDismountCommand, "Force a player to full dismount (taxi)",	NULL, 0, 0, 0 },
 		{ "gps",		 '0', &ChatHandler::HandleGPSCommand,		   "Shows Position",				 NULL, 0, 0, 0},
 		{ "info",		'0', &ChatHandler::HandleInfoCommand,		  "Server info",					NULL, 0, 0, 0},
 		{ "worldport",   'v', &ChatHandler::HandleWorldPortCommand,	 "",							   NULL, 0, 0, 0},
 		{ "save",		's', &ChatHandler::HandleSaveCommand,		  "Save's your character",		  NULL, 0, 0, 0},
-		{ "saveall",	 'z', &ChatHandler::HandleSaveAllCommand,	   "Save's all playing characters",  NULL, 0, 0, 0},
 		{ "start",	   'm', &ChatHandler::HandleStartCommand,		 "Teleport's you to a starting location",							   NULL, 0, 0, 0},
 		{ "additem",	 'm', &ChatHandler::HandleAddInvItemCommand,	"",							   NULL, 0, 0, 0},
 		{ "removeitem",  'm', &ChatHandler::HandleRemoveItemCommand,	"Removes item %u count %u.", NULL, 0, 0, 0 },
-		{ "shutdown", 'z', &ChatHandler::HandleShutdownCommand, "Initiates server shutdown in <x> seconds.", NULL, 0, 0, 0 },
-		{ "restart", 'z', &ChatHandler::HandleShutdownRestartCommand, "Initiates server restart in <x> seconds.", NULL, 0, 0, 0 },
 		{ "invincible",  'j', &ChatHandler::HandleInvincibleCommand,	".invincible - Toggles INVINCIBILITY (mobs won't attack you)", NULL, 0, 0, 0},
 		{ "invisible",   'i', &ChatHandler::HandleInvisibleCommand,	 ".invisible - Toggles INVINCIBILITY and INVISIBILITY (mobs won't attack you and nobody can see you, but they can see your chat messages)", NULL, 0, 0, 0},
 		{ "resetreputation", 'n',&ChatHandler::HandleResetReputationCommand, ".resetreputation - Resets reputation to start levels. (use on characters that were made before reputation fixes.)", NULL, 0, 0, 0},
@@ -450,20 +505,24 @@ void CommandTableStorage::Init()
 		{ "increaseweaponskill", 'm', &ChatHandler::HandleIncreaseWeaponSkill, ".increaseweaponskill <count> - Increase eqipped weapon skill x times (defaults to 1).", NULL, 0, 0, 0},
 		{ "playerinfo",  'm', &ChatHandler::HandlePlayerInfo,		   ".playerinfo - Displays informations about the selected character (account...)", NULL, 0, 0, 0 },
 
-		{ "modify",		'm', NULL,									 "",				 modifyCommandTable, 0, 0, 0},
-		{ "waypoint",	  'w', NULL,									 "",			   waypointCommandTable, 0, 0, 0},
-		{ "gmTicket",	  'c', NULL,									 "",			   GMTicketCommandTable, 0, 0, 0},
-		{ "gobject",	   'o', NULL,									 "",			 GameObjectCommandTable, 0, 0, 0},
-		{ "battleground",  'e', NULL,									 "",		   BattlegroundCommandTable, 0, 0, 0},
-		{ "npc"		 ,  'n', NULL,									 "",					NPCCommandTable, 0, 0, 0},
-		{ "cheat"	   ,  'm', NULL,									 "",				  CheatCommandTable, 0, 0, 0},
-		{ "account"	   ,  'a', NULL,									 "",				  accountCommandTable, 0, 0, 0},
-		{ "honor"	   ,  'm', NULL,									 "",				  honorCommandTable, 0, 0, 0},
-		{ "quest",		'q', NULL,									 "",				 questCommandTable, 0, 0, 0},
-		{ "pet",		   'm', NULL,									 "",					petCommandTable, 0, 0, 0},
-		{ "recall",		'q', NULL,									 "",				 recallCommandTable, 0, 0, 0},
-		{ "guild",		'm', NULL,									 "",				 GuildCommandTable, 0, 0, 0},
-		{ "getpos"	  ,  'd', &ChatHandler::HandleGetPosCommand,		"",							   NULL, 0, 0, 0},
+		{ "modify",			'm', NULL,									"",					modifyCommandTable, 0, 0, 0},
+		{ "waypoint",		'w', NULL,									"",					waypointCommandTable, 0, 0, 0},
+		{ "gmTicket",		'c', NULL,									"",					GMTicketCommandTable, 0, 0, 0},
+		{ "gobject",		'o', NULL,									"",					GameObjectCommandTable, 0, 0, 0},
+		{ "battleground",	'e', NULL,									"",					BattlegroundCommandTable, 0, 0, 0},
+		{ "npc",			'n', NULL,									"",					NPCCommandTable, 0, 0, 0},
+		{ "gm",				'0', NULL,									"",					GMCommandTable, 0, 0, 0},
+		{ "admin",			'z', NULL,									"",					AdminCommandTable, 0, 0, 0 },
+		{ "account",		'a', NULL,									"",					accountCommandTable, 0, 0, 0},
+		{ "cheat",			'm', NULL,									"",					CheatCommandTable, 0, 0, 0},
+		{ "honor",			'm', NULL,									"",					honorCommandTable, 0, 0, 0},
+		{ "quest",			'q', NULL,									"",					questCommandTable, 0, 0, 0},
+		{ "lookup",			'0', NULL,									"",					lookupCommandTable, 0, 0, 0 },
+		{ "pet",			'm', NULL,									"",					petCommandTable, 0, 0, 0},
+		{ "recall",			'q', NULL,									"",					recallCommandTable, 0, 0, 0},
+		{ "guild",			'm', NULL,									"",					GuildCommandTable, 0, 0, 0},
+		{ "title",			'm', NULL,									"",					TitleCommandTable, 0, 0, 0 },
+		{ "getpos",			'd', &ChatHandler::HandleGetPosCommand,		"",					NULL, 0, 0, 0},
 		{ "clearcooldowns", 'm', &ChatHandler::HandleClearCooldownsCommand, "Clears all cooldowns for your class.", NULL, 0, 0, 0 },
 		{ "removeauras",   'm', &ChatHandler::HandleRemoveAurasCommand,   "Removes all auras from target",  NULL, 0, 0, 0},
 		{ "waterwalk",   'd', &ChatHandler::HandleWaterWalk,	   "",							   NULL, 0, 0, 0},
@@ -474,33 +533,18 @@ void CommandTableStorage::Init()
 		{ "gotrig",		'v', &ChatHandler::HandleTriggerCommand,	   "Warps to areatrigger <id>",	  NULL, 0, 0, 0 },
 		{ "exitinstance",  'm', &ChatHandler::HandleExitInstanceCommand,  "Exits current instance, return to entry point.", NULL, 0, 0, 0 },
 		{ "reloadtable",	  'm', &ChatHandler::HandleDBReloadCommand,	  "Reloads some of the database tables", NULL, 0, 0, 0 },
-		{ "allowwhispers", 'c', &ChatHandler::HandleAllowWhispersCommand, "Allows whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
-		{ "blockwhispers", 'c', &ChatHandler::HandleBlockWhispersCommand, "Blocks whispers from player <s> while in gmon mode.", NULL, 0, 0, 0 },
 		{ "advanceallskills", 'm', &ChatHandler::HandleAdvanceAllSkillsCommand, "Advances all skills <x> points.", NULL, 0, 0, 0 },
 		{ "killbyplayer", 'f', &ChatHandler::HandleKillByPlayerCommand, "Disconnects the player with name <s>.", NULL, 0, 0, 0 },
 		{ "killbyaccount", 'f', &ChatHandler::HandleKillBySessionCommand, "Disconnects the session with account name <s>.", NULL, 0, 0, 0 },
-		{ "castall", 'z', &ChatHandler::HandleCastAllCommand, "Makes all players online cast spell <x>.", NULL, 0, 0, 0},
 		{ "dispelall", 'z', &ChatHandler::HandleDispelAllCommand, "Dispels all negative (or positive w/ 1) auras on all players.",NULL,0,0,0},
 		{ "castspell",   'd', &ChatHandler::HandleCastSpellCommand,	 ".castspell <spellid> - Casts spell on target.",  NULL, 0, 0, 0 },
-		{ "modperiod" , 'm', &ChatHandler::HandleModPeriodCommand, "Changes period of current transporter.", NULL, 0, 0, 0 },
-		{ "npcfollow", 'm', &ChatHandler::HandleNpcFollowCommand, "Sets npc to follow you", NULL, 0, 0, 0 },
-		{ "nullfollow", 'm', &ChatHandler::HandleNullFollowCommand, "Sets npc to not follow anything", NULL, 0, 0, 0 },
-		{ "formationlink1", 'm', &ChatHandler::HandleFormationLink1Command, "Sets formation master.", NULL, 0, 0, 0 },
-		{ "formationlink2", 'm', &ChatHandler::HandleFormationLink2Command, "Sets formation slave with distance and angle", NULL, 0, 0, 0 },
-		{ "formationclear", 'm', &ChatHandler::HandleFormationClearCommand, "Removes formation from creature", NULL, 0, 0, 0 },
-		{ "playall", 'z', &ChatHandler::HandleGlobalPlaySoundCommand, "Plays a sound to the entire server.", NULL, 0, 0, 0 },
 		{ "addipban", 'm', &ChatHandler::HandleIPBanCommand, "Adds an address to the IP ban table: <address> [duration]\nDuration must be a number optionally followed by a character representing the calendar subdivision to use (h>hours, d>days, w>weeks, m>months, y>years, default minutes)\nLack of duration results in a permanent ban.", NULL, 0, 0, 0 },
 		{ "delipban", 'm', &ChatHandler::HandleIPUnBanCommand, "Deletes an address from the IP ban table: <address>", NULL, 0, 0, 0},
 		{ "renamechar", 'm', &ChatHandler::HandleRenameCommand, "Renames character x to y.", NULL, 0, 0, 0 },
 		{ "forcerenamechar", 'm', &ChatHandler::HandleForceRenameCommand, "Forces character x to rename his char next login", NULL, 0, 0, 0 },
 		{ "getstanding", 'm', &ChatHandler::HandleGetStandingCommand, "Gets standing of faction %u.", NULL, 0, 0, 0 },
 		{ "setstanding", 'm', &ChatHandler::HandleSetStandingCommand, "Sets stanging of faction %u.", NULL, 0, 0, 0 },
-		{ "lookupitem", 'l', &ChatHandler::HandleLookupItemCommand, "Looks up item string x.", NULL, 0, 0, 0 },
-		{ "lookupquest", 'l', &ChatHandler::HandleQuestLookupCommand, "Looks up quest string x.", NULL, 0, 0, 0 },
-		{ "lookupcreature", 'l', &ChatHandler::HandleLookupCreatureCommand, "Looks up item string x.", NULL, 0, 0, 0 },
-		{ "rehash", 'z', &ChatHandler::HandleRehashCommand, "Reloads config file.", NULL, 0, 0, 0 },
 		{ "createarenateam", 'g', &ChatHandler::HandleCreateArenaTeamCommands, "Creates arena team", NULL, 0, 0, 0 },
-		{ "whisperblock", 'g', &ChatHandler::HandleWhisperBlockCommand, "Blocks like .gmon except without the <GM> tag", NULL, 0, 0, 0 },
 		{ "logcomment" , '1' , &ChatHandler::HandleGmLogCommentCommand, "Adds a comment to the GM log for the admins to read." , NULL , 0 , 0 , 0 },
 		{ "showitems", 'm', &ChatHandler::HandleShowItems, "test for ItemIterator", NULL, 0, 0, 0 },
 		{ "renameallinvalidchars", 'z', &ChatHandler::HandleRenameAllCharacter, "Renames all invalid character names", NULL, 0,0, 0 },
@@ -517,10 +561,10 @@ void CommandTableStorage::Init()
 	
 		{ NULL,		  0, NULL,										 "",							   NULL, 0, 0  }
 	};
-	dupe_command_table(commandTable, _commandTable);
+	dupe_command_table(commandTable, _CommandTable);
 
 	/* set the correct pointers */
-	ChatCommand * p = &_commandTable[0];
+	ChatCommand * p = &_CommandTable[0];
 	while(p->Name != 0)
 	{
 		if(p->ChildCommands != 0)
