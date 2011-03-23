@@ -1916,7 +1916,7 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	ss << "', "
 	<< m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX] << ","
 	<< m_uint32Values[PLAYER_CHOSEN_TITLE] << ","
-	<< m_uint32Values[PLAYER__FIELD_KNOWN_TITLES] << ","
+	<< GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES) << ","
 	<< m_uint32Values[PLAYER_FIELD_COINAGE] << ","
 	<< m_uint32Values[PLAYER_AMMO_ID] << ","
 	<< m_uint32Values[PLAYER_CHARACTER_POINTS2] << ","
@@ -2444,7 +2444,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	// set the rest of the shit
 	m_uint32Values[PLAYER_FIELD_WATCHED_FACTION_INDEX]  = get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_CHOSEN_TITLE]					= get_next_field.GetUInt32();
-	m_uint32Values[PLAYER__FIELD_KNOWN_TITLES]			= get_next_field.GetUInt32();
+	SetUInt64Value(PLAYER__FIELD_KNOWN_TITLES,			get_next_field.GetUInt64());
 	m_uint32Values[PLAYER_FIELD_COINAGE]				= get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_AMMO_ID]					  = get_next_field.GetUInt32();
 	m_uint32Values[PLAYER_CHARACTER_POINTS2]			= get_next_field.GetUInt32();
@@ -9345,7 +9345,7 @@ void Player::save_Misc()
 void Player::save_PVP()
 {
 	CharacterDatabase.Execute("UPDATE characters SET pvprank = %u, selected_pvp_title = %u, available_pvp_title = %u WHERE guid = %u",
-		uint32(GetPVPRank()), m_uint32Values[PLAYER_CHOSEN_TITLE], m_uint32Values[PLAYER__FIELD_KNOWN_TITLES], m_uint32Values[OBJECT_FIELD_GUID]);
+		uint32(GetPVPRank()), m_uint32Values[PLAYER_CHOSEN_TITLE], GetUInt64Value(PLAYER__FIELD_KNOWN_TITLES), m_uint32Values[OBJECT_FIELD_GUID]);
 }
 
 void Player::save_Auras()
