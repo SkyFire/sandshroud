@@ -2320,12 +2320,15 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			SpellEntry *killerspell;
 			if( spellId )
 				killerspell = dbcSpell.LookupEntry( spellId );
-			else killerspell = NULL;
+			else
+				killerspell = NULL;
+
 			pVictim->HandleProc( NULL, PROC_ON_DIE, TO_UNIT(this), killerspell );
 			pVictim->m_procCounter = 0;
 			TO_UNIT(this)->HandleProc( PROC_ON_TARGET_DIE, NULL, pVictim, killerspell );
 			TO_UNIT(this)->m_procCounter = 0;
 		}
+
 		// check if pets owner is combat participant
 		bool owner_participe = false;
 		if( IsPet() )
@@ -2334,6 +2337,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			if( owner != NULL && pVictim->GetAIInterface()->getThreatByPtr( owner ) > 0 )
 				owner_participe = true;
 		}
+
 		/* victim died! */
 		Unit* pKiller = pVictim->CombatStatus.GetKiller();
 		if( pVictim->IsPlayer() )
@@ -2548,7 +2552,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		if(IsUnit())
 		{
 			Unit* SUnit = TO_UNIT(this);
-
 			if( SUnit->CallOnKillUnit != NULL )
 				SUnit->CallOnKillUnit->UnitOnKillUnit(SUnit, pVictim);
 
@@ -2726,7 +2729,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		}
 		else if( pVictim->IsPlayer() )
 		{
-
 			/* -------------------- RESET BREATH STATE ON DEATH -------------- */
 			TO_PLAYER( pVictim )->m_UnderwaterTime = 0;
 			TO_PLAYER( pVictim )->m_UnderwaterState = 0;
@@ -2743,7 +2745,8 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			}
 			/* -------------------- REMOVE PET WHEN PLAYER DIES END---------------*/
 		}
-		else OUT_DEBUG("DealDamage for Unknown Object.");
+		else
+			OUT_DEBUG("DealDamage for Unknown Object.");
 	}
 	else /* ---------- NOT DEAD YET --------- */
 	{
@@ -2788,6 +2791,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				}
 			}
 		}
+
 		if(pVictim == TO_UNIT(this))
 			if(pVictim->IsVehicle())
 				return;
@@ -3128,8 +3132,6 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 				caster->m_lastHauntInitialDamage = res;
 		}
 	}
-
-
 }
 
 //*****************************************************************************************
