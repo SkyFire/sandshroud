@@ -4447,19 +4447,21 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			if( item->GetProto()->Spells[k].Trigger == 1 )
 			{
 				SpellEntry* spells = dbcSpell.LookupEntry( item->GetProto()->Spells[k].Id );
-				if( spells->RequiredShapeShift )
+				if(spells != NULL)
 				{
-					AddShapeShiftSpell( spells->Id );
-					continue;
+					if( spells->RequiredShapeShift )
+					{
+						AddShapeShiftSpell( spells->Id );
+						continue;
+					}
+
+					Spell* spell = NULLSPELL;
+					spell = (new Spell( TO_PLAYER(this), spells ,true, NULLAURA ));
+					SpellCastTargets targets;
+					targets.m_unitTarget = GetGUID();
+					spell->castedItemId = item->GetEntry();
+					spell->prepare( &targets );
 				}
-
-				Spell* spell = NULLSPELL;
-				spell = (new Spell( TO_PLAYER(this), spells ,true, NULLAURA ));
-				SpellCastTargets targets;
-				targets.m_unitTarget = GetGUID();
-				spell->castedItemId = item->GetEntry();
-				spell->prepare( &targets );
-
 			}
 			else if( item->GetProto()->Spells[k].Trigger == 2 )
 			{
@@ -4490,12 +4492,13 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 			if( item->GetProto()->Spells[k].Trigger == 1 )
 			{
 				SpellEntry* spells = dbcSpell.LookupEntry( item->GetProto()->Spells[k].Id );
-				if(!spells)
-					return;
-				if( spells->RequiredShapeShift )
-					RemoveShapeShiftSpell( spells->Id );
-				else
-					RemoveAura( item->GetProto()->Spells[k].Id );
+				if(spells)
+				{
+					if( spells->RequiredShapeShift )
+						RemoveShapeShiftSpell( spells->Id );
+					else
+						RemoveAura( item->GetProto()->Spells[k].Id );
+				}
 			}
 			else if( item->GetProto()->Spells[k].Trigger == 2 )
 			{

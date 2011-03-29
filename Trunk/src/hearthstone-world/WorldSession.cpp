@@ -1234,7 +1234,7 @@ void WorldSession::HandleTimeSyncResp( WorldPacket & recv_data )
 	Note that spaces are handled differently in DBC and storage
 	than they are ingame, so we use string length.
 */
-bool WorldSession::ValidateText(std::string text)
+bool WorldSession::ValidateText2(std::string text)
 {
 	size_t stringpos;
 

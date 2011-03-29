@@ -103,14 +103,7 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
 		return;
 
 	if(!_player->bGMTagOn)
-	{
-		if(!ValidateText(msg))
-		{
-			// Blizzard disconnects, so what the hell :D
-			Disconnect();
-			return;
-		}
-	}
+		ValidateText1(msg);
 
 	//arghhh STFU. I'm not giving you gold or items NOOB
 	switch(type)

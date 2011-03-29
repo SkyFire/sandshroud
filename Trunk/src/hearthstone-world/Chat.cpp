@@ -1551,6 +1551,9 @@ bool ChatHandler::HandleModifyScaleCommand(const char *args, WorldSession *m_ses
 		unit = player;
 
 	float scale = atof(args);
+	if(scale > 255 || scale < 0)
+		return false;
+
 	if(!scale && unit->IsCreature())
 		scale = TO_CREATURE(unit)->GetProto() ? TO_CREATURE(unit)->GetProto()->Scale : 0.0f;
 
