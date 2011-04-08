@@ -262,40 +262,45 @@ enum MsTimeVariables
 #endif
 
 #if COMPILER == COMPILER_INTEL
+
 #include <ext/hash_map>
+
 #elif COMPILER == COMPILER_GNU && __GNUC__ >= 4
+
 #include <tr1/memory>
 #include <tr1/unordered_map>
 #include <tr1/unordered_set>
+
 #elif COMPILER == COMPILER_GNU && __GNUC__ >= 3
+
 #include <ext/hash_map>
 #include <ext/hash_set>
-#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1500 && _HAS_TR1   // VC9.0 SP1 and later
+
+#elif COMPILER == COMPILER_MICROSOFT && (_MSC_VER < 1600 || !_HAS_TR1)
+
+#pragma message ("FATAL ERROR: Please install a newer version of visual studio, VS2010 or above.")
+
+#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1600
+
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
-#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1500 && !_HAS_TR1
-#pragma message ("FATAL ERROR: Please install Service Pack 1 for Visual Studio 2008")
-#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER < 1500
-#pragma message ("FATAL ERROR: Please install a newer version of visual studio, VS2008 or above.")
+
 #else
+
 #include <memory>
 #include <hash_map>
 #include <hash_set>
 #endif
 
 #ifdef _STLPORT_VERSION
+
 #define HM_NAMESPACE std
 using std::hash_map;
 using std::hash_set;
-#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1500 && _HAS_TR1
-using namespace std::tr1;
-using std::tr1::shared_ptr;
-#undef HM_NAMESPACE
-#define HM_NAMESPACE tr1
-#define hash_map unordered_map
-#define TRHAX 1
-#elif COMPILER == COMPILER_MICROSOFT && (_MSC_VER < 1500 || !_HAS_TR1)
+
+#elif COMPILER == COMPILER_MICROSOFT && (_MSC_VER < 1600 || !_HAS_TR1)
+
 using namespace std::tr1;
 using std::tr1::shared_ptr;
 #undef HM_NAMESPACE
@@ -306,11 +311,24 @@ using std::tr1::shared_ptr;
 // hacky stuff for vc++
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
+
+#elif COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1600 && _HAS_TR1
+
+using namespace std::tr1;
+using std::tr1::shared_ptr;
+#undef HM_NAMESPACE
+#define HM_NAMESPACE tr1
+#define hash_map unordered_map
+#define TRHAX 1
+
 #elif COMPILER == COMPILER_INTEL
+
 #define HM_NAMESPACE std
 using std::hash_map;
 using std::hash_set;
+
 #elif COMPILER == COMPILER_GNU && __GNUC__ >= 4
+
 using namespace std::tr1;
 using std::tr1::shared_ptr;
 #undef HM_NAMESPACE
@@ -338,7 +356,9 @@ namespace std
 		};
 	}
 }
+
 #elif COMPILER == COMPILER_GNU && __GNUC__ >= 3
+
 #define HM_NAMESPACE __gnu_cxx
 using __gnu_cxx::hash_map;
 using __gnu_cxx::hash_set;
@@ -356,9 +376,12 @@ namespace __gnu_cxx
 
 };
 #else
+
 #define HM_NAMESPACE std
 using std::hash_map;
+
 #endif
+
 #if COMPILER == COMPILER_GNU && __GNUC__ >=4 && __GNUC_MINOR__ == 1 && __GNUC_PATCHLEVEL__ == 2
 //GCC I HATE YOU!
 namespace std
@@ -483,9 +506,11 @@ Scripting system exports/imports
 // fix buggy MSVC's for variable scoping to be reliable =S
 #define for if(true) for
 
-#if COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1400
+#if COMPILER == COMPILER_MICROSOFT
+
 #pragma float_control(push)
 #pragma float_control(precise, on)
+
 #endif
 
 // fast int abs
@@ -537,12 +562,14 @@ static inline int long2int32(const double value)
 #endif
 }
 
-#if COMPILER == COMPILER_MICROSOFT && _MSC_VER >= 1400
+#if COMPILER == COMPILER_MICROSOFT
+
 #pragma float_control(pop)
 #endif
 
 #ifndef WIN32
 #include <sys/timeb.h>
+
 #endif
 
 HEARTHSTONE_INLINE uint32 now()
@@ -636,7 +663,6 @@ HEARTHSTONE_INLINE std::string HEARTHSTONE_TOLOWER_RETURN(std::string str)
 bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits);
 unsigned int MakeIP(const char * str);
 
-//#include "Collision/g3dlite/G3DAll.h"
 #include "Log.h"
 #include "NGLog.h"
 #include "Console/CConsole.h"
