@@ -6,7 +6,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-shared", "VC100
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hearthstone-logonserver", "VC100\hearthstone-logonserver.vcxproj", "{6E15F06D-5546-474D-BB42-39848DEF77E0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lacrimi", "..\..\src\lacrimi\Win\VC100\Lacrimi.vcxproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lacrimi", "..\src\lacrimi\Win\VC100\Lacrimi.vcxproj", "{EE39B48B-C598-4AAF-9EF0-199402933EE5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1DC6C4DA-A028-41F3-877D-D5400C594F88} = {1DC6C4DA-A028-41F3-877D-D5400C594F88}
 	EndProjectSection

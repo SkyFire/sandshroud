@@ -18,7 +18,5 @@
 
 void Lacrimi::SetupEbonHoldScripts()
 {
-	SetupEHPhaseOne();
-	SetupEHPhaseTwo();
-	SetupEHPhaseThree();
+
 }

@@ -65,13 +65,13 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\bin\debug_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug_lacrimi_scripts\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\bin\debug_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\..\bin\debug_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">debug_lacrimi_scripts_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\bin\release_100\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release_lacrimi_scripts\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\bin\release_x64\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\bin\release_100_x64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">release_lacrimi_scripts_x64\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -105,9 +105,9 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\..\..\bin\Debug_100\hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\..\bin\debug_100\hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/debug_100/Lacrimi.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\debug_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/debug_100/Lacrimi.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -141,7 +141,7 @@
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/debug_100_x64/Lacrimi.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\debug_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\debug_100_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/debug_100_x64/Lacrimi.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -211,7 +211,7 @@
     <Link>
       <AdditionalDependencies>hearthstone-world.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../../../bin/release_100_x64/Lacrimi.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\bin\release_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\bin\release_100_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../bin/release_100_x64/Lacrimi.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
