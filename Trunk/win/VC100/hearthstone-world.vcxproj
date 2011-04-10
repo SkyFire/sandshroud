@@ -408,6 +408,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\hearthstone-world\CallScripting.h" />
     <ClInclude Include="..\..\src\hearthstone-world\filelog.h" />
     <ClInclude Include="..\..\src\hearthstone-world\IsleOfConquest.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Master.h" />
