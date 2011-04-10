@@ -2373,7 +2373,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaKilledByPlayer();
 			}
 		}
-		else if(IsVehicle())
+		else if(pVictim->IsVehicle())
 		{
 			Vehicle* vVictim = TO_VEHICLE(pVictim);
 			vVictim->setDeathState( JUST_DIED );
@@ -2382,7 +2382,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			/* Set victim health to 0 */
 			vVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
 		}
-		else if(IsCreature())
+		else if(pVictim->IsCreature())
 		{
 			Creature* cVictim = TO_CREATURE(pVictim);
 			cVictim->setDeathState( JUST_DIED );
