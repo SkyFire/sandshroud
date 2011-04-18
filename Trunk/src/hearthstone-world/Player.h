@@ -980,9 +980,11 @@ public:
 	void BuildPetTalentsInfo(WorldPacket *data);
 	void addSpell(uint32 spell_idy);
 	void removeSpellByHashName(uint32 hash);
-	bool removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpell, uint32 SupercededSpellID);
+	bool removeSpell(uint32 SpellID);
 	uint32 FindSpellWithNamehash(uint32 namehash);
 	bool CanFlyInCurrentZoneOrMap();
+	SpellEntry* FindLowerRankSpell(SpellEntry* sp, int32 rankdiff);
+	uint32 forget;
 
 	// PLEASE DO NOT INLINE!
 	void AddOnStrikeSpell(SpellEntry* sp, uint32 delay)
@@ -1570,9 +1572,13 @@ public:
 
 	HEARTHSTONE_INLINE bool IsMounted() {return (m_MountSpellId!=0 ? true : false); }
 
-	bool bHasBindDialogOpen;
 	bool bGMTagOn;
+	bool stack_cheat;
 	bool DisableDevTag;
+	bool vendorpass_cheat;
+	bool triggerpass_cheat;
+
+	bool bHasBindDialogOpen;
 	uint32 TrackingSpell;
 	void _EventCharmAttack();
 	void _Warn(const char *message);
@@ -1701,12 +1707,12 @@ public:
 	uint16 m_speedhackChances;
 	uint16 m_cheatEngineChances;
 	uint32 m_explorationTimer;
+
 	// DBC stuff
 	CharRaceEntry * myRace;
 	CharClassEntry * myClass;
+
 	Unit* linkTarget;
-	bool stack_cheat;
-	bool triggerpass_cheat;
 	bool SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, int32 phase = 1);
 	bool SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1);
 	void SafeTeleport(MapMgr* mgr, LocationVector vec, int32 phase = 1);

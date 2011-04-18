@@ -122,6 +122,7 @@ void Player::Init()
 	for(int32 i = 0; i < NUM_MECHANIC; i++)
 		MechanicDurationPctMod[i] = 1.0f;
 	m_invitersGuid					= 0;
+	forget							= 0;
 	m_currentMovement				= MOVE_UNROOT;
 	m_isGmInvisible					= false;
 	m_invitersGuid					= 0;
@@ -167,6 +168,7 @@ void Player::Init()
 	m_bgHasFlag						= false;
 	m_bgEntryPointInstance			= 0;
 	bGMTagOn						= false;
+	vendorpass_cheat				= false;
 	DisableDevTag					= false;
 	CooldownCheat					= false;
 	CastTimeCheat					= false;
@@ -1982,6 +1984,25 @@ void Player::_LoadPetSpells(QueryResult * result)
 	}
 }
 
+SpellEntry* Player::FindLowerRankSpell(SpellEntry* sp, int32 rankdiff)
+{
+	SpellSet::iterator itr;
+	SpellEntry* spell = NULL;
+	for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
+	{
+		spell = NULL;
+		if((spell = dbcSpell.LookupEntry(*itr)) != NULL)
+		{
+			if(spell->NameHash == sp->NameHash && sp->RankNumber)
+				if(sp->RankNumber + rankdiff == spell->RankNumber)
+					return spell;
+		}
+		spell = NULL;
+	}
+
+	return spell;
+}
+
 void Player::addSpell(uint32 spell_id)
 {
 	SpellSet::iterator iter = mSpells.find(spell_id);
@@ -1990,25 +2011,22 @@ void Player::addSpell(uint32 spell_id)
 	if(spell_id == 3018 && (getClass() == DEATHKNIGHT || getClass() == WARLOCK 
 		|| getClass() == PRIEST || getClass() == MAGE || getClass() == PALADIN))
 		return;
+	SpellEntry* spell = dbcSpell.LookupEntry(spell_id);
+	if(spell == NULL)
+		return;
 
 	mSpells.insert(spell_id);
-	if(IsInWorld())
-	{
-		WorldPacket data(SMSG_LEARNED_SPELL, 6);
-		data << spell_id << uint16(0);
-		m_session->SendPacket(&data);
-	}
 
 	// Check if we're logging in.
 	if(!IsInWorld())
 		return;
+
 
 	// Add the skill line for this spell if we don't already have it.
 	skilllinespell * sk = objmgr.GetSpellSkill(spell_id);
 	if(sk && !_HasSkillLine(sk->skilline))
 	{
 		skilllineentry * skill = dbcSkillLine.LookupEntry(sk->skilline);
-		SpellEntry * spell = dbcSpell.LookupEntry(spell_id);
 		uint32 max = 1;
 		switch(skill->type)
 		{
@@ -2034,6 +2052,28 @@ void Player::addSpell(uint32 spell_id)
 		else
 			_AddSkillLine(sk->skilline, 1, max);
 		_UpdateMaxSkillCounts();
+	}
+
+	SpellEntry* sp2 = FindLowerRankSpell(spell, -1);
+	if(sp2 != NULL)
+	{
+		WorldPacket data(SMSG_SUPERCEDED_SPELL, 8);
+		data << sp2->Id << spell_id;
+		m_session->SendPacket(&data);
+
+		// Relearn our old spell client side.
+		if(sp2->Id != forget)
+		{
+			data.Initialize(SMSG_LEARNED_SPELL);
+			data << sp2->Id << uint32(0);
+			m_session->SendPacket(&data);
+		}
+	}
+	else
+	{
+		WorldPacket data(SMSG_LEARNED_SPELL, 6);
+		data << spell_id << uint16(0);
+		m_session->SendPacket(&data);
 	}
 }
 
@@ -6677,7 +6717,7 @@ void Player::removeSpellByHashName(uint32 hash)
 	}
 }
 
-bool Player::removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpell, uint32 SupercededSpellID)
+bool Player::removeSpell(uint32 SpellID)
 {
 	SpellSet::iterator iter = mSpells.find(SpellID);
 	if(iter != mSpells.end())
@@ -6686,22 +6726,12 @@ bool Player::removeSpell(uint32 SpellID, bool MoveToDeleted, bool SupercededSpel
 		RemoveAura(SpellID,GetGUID());
 	}
 	else
-	{
 		return false;
-	}
 
 	if(!IsInWorld())
 		return true;
 
-	if(SupercededSpell)
-	{
-		WorldPacket data(SMSG_SUPERCEDED_SPELL, 8);
-		data << SpellID << SupercededSpellID;
-		m_session->SendPacket(&data);
-	}
-	else
-		m_session->OutPacket(SMSG_REMOVED_SPELL, 4, &SpellID);
-
+	m_session->OutPacket(SMSG_REMOVED_SPELL, 4, &SpellID);
 	return true;
 }
 
@@ -6888,9 +6918,7 @@ void Player::Reset_Spells()
 	}
 
 	for(itr = spelllist.begin(); itr != spelllist.end(); itr++)
-	{
-		removeSpell((*itr), false, false, 0);
-	}
+		removeSpell((*itr));
 
 	for(itr = info->spell_list.begin(); itr != info->spell_list.end(); itr++)
 	{
@@ -7620,7 +7648,7 @@ void Player::RemoveSpellsFromLine(uint32 skill_line)
 			if(sp->skilline == skill_line)
 			{
 				// Check ourselves for this spell, and remove it..
-					removeSpell(sp->spell, 0, 0, 0);
+					removeSpell(sp->spell);
 			}
 		}
 	}
@@ -10719,27 +10747,27 @@ void Player::_UpdateSkillFields()
 				uint32 skill_base = getRace() == RACE_TAUREN ? 90 : 75;
 				if( itr->second.CurrentValue >= skill_base + 375 && !HasSpell( 55503 ) )
 				{
-					removeSpell(55502,false,false,0);//can't use name_hash
+					removeSpell(55502);//can't use name_hash
 					addSpell( 55503 );												// Lifeblood Rank 6
 				}
 				else if( itr->second.CurrentValue >= skill_base + 300 && !HasSpell( 55502 ) )
 				{
-					removeSpell(55501,false,false,0);
+					removeSpell(55501);
 					addSpell( 55502 );												// Lifeblood Rank 5
 				}
 				else if( itr->second.CurrentValue >= skill_base + 225 && !HasSpell( 55501 ) )
 				{
-					removeSpell(55500,false,false,0);
+					removeSpell(55500);
 					addSpell( 55501 );												// Lifeblood Rank 4
 				}
 				else if( itr->second.CurrentValue >= skill_base + 150 && !HasSpell( 55500 ) )
 				{
-					removeSpell(55480,false,false,0);
+					removeSpell(55480);
 					addSpell( 55500 );												// Lifeblood Rank 3
 				}
 				else if( itr->second.CurrentValue >= skill_base + 75 && !HasSpell( 55480 ) )
 				{
-					removeSpell(55428,false,false,0);
+					removeSpell(55428);
 					addSpell( 55480 );												// Lifeblood Rank 2
 				}
 			}break;
@@ -10747,27 +10775,27 @@ void Player::_UpdateSkillFields()
 			{
 				if( itr->second.CurrentValue >= 450 && !HasSpell( 53666 ) )
 				{
-					removeSpell(53665,false,false,0);//can't use namehash here either
+					removeSpell(53665);//can't use namehash here either
 					addSpell( 53666 );												// Master of Anatomy Rank 6
 				}
 				else if( itr->second.CurrentValue >= 375 && !HasSpell( 53665 ) )
 				{
-					removeSpell(53664,false,false,0);
+					removeSpell(53664);
 					addSpell( 53665 );												// Master of Anatomy Rank 5
 				}
 				else if( itr->second.CurrentValue >= 300 && !HasSpell( 53664 ) )
 				{
-					removeSpell(53663,false,false,0);
+					removeSpell(53663);
 					addSpell( 53664 );												// Master of Anatomy Rank 4
 				}
 				else if( itr->second.CurrentValue >= 225 && !HasSpell( 53663 ) )
 				{
-					removeSpell(53662,false,false,0);
+					removeSpell(53662);
 					addSpell( 53663 );												// Master of Anatomy Rank 3
 				}
 				else if( itr->second.CurrentValue >= 150 && !HasSpell( 53662 ) )
 				{
-					removeSpell(53125,false,false,0);
+					removeSpell(53125);
 					addSpell( 53662 );												// Master of Anatomy Rank 2
 				}
 				else if( itr->second.CurrentValue >= 75 && !HasSpell( 53125 ) )
@@ -10779,27 +10807,27 @@ void Player::_UpdateSkillFields()
 			{
 				if( itr->second.CurrentValue >= 450 && !HasSpell( 53040 ) )
 				{
-					removeSpell(53124,false,false,0);//can't use namehash here either
+					removeSpell(53124);//can't use namehash here either
 					addSpell( 53040 );												// Toughness Rank 6
 				}
 				else if( itr->second.CurrentValue >= 375 && !HasSpell( 53124 ) )
 				{
-					removeSpell(53123,false,false,0);
+					removeSpell(53123);
 					addSpell( 53124 );												// Toughness Rank 5
 				}
 				else if( itr->second.CurrentValue >= 300 && !HasSpell( 53123 ) )
 				{
-					removeSpell(53122,false,false,0);
+					removeSpell(53122);
 					addSpell( 53123 );												// Toughness Rank 4
 				}
 				else if( itr->second.CurrentValue >= 225 && !HasSpell( 53122 ) )
 				{
-					removeSpell(53121,false,false,0);
+					removeSpell(53121);
 					addSpell( 53122 );												// Toughness Rank 3
 				}
 				else if( itr->second.CurrentValue >= 150 && !HasSpell( 53121 ) )
 				{
-					removeSpell(53120,false,false,0);
+					removeSpell(53120);
 					addSpell( 53121 );												// Toughness Rank 2
 				}
 				else if( itr->second.CurrentValue >= 75 && !HasSpell( 53120 ) )

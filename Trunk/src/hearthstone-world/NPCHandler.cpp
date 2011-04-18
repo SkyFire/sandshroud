@@ -206,12 +206,6 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 
 	_player->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32)pSpell->Cost);
 
-	if( pSpell->pCastSpell)
-	{
-		// Cast teaching spell on player
-		pCreature->CastSpell(_player, pSpell->pCastSpell, true);
-	}
-
 	if( pSpell->pLearnSpell )
 	{
 		packetSMSG_PLAY_SPELL_VISUAL pck;
@@ -223,19 +217,19 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 		pck.visualid = 0x16a;
 		_player->OutPacketToSet( SMSG_PLAY_SPELL_IMPACT, sizeof(packetSMSG_PLAY_SPELL_VISUAL), &pck, true );
 
-		// add the spell
-		_player->addSpell( pSpell->pLearnSpell->Id );
-
 		uint32 i;
+		_player->forget = pSpell->DeleteSpell;
 		for( i = 0; i < 3; i++)
 		{
 			if(pSpell->pLearnSpell->Effect[i] == SPELL_EFFECT_PROFICIENCY || pSpell->pLearnSpell->Effect[i] == SPELL_EFFECT_LEARN_SPELL ||
 				pSpell->pLearnSpell->Effect[i] == SPELL_EFFECT_WEAPON)
 			{
 				_player->CastSpell(_player, pSpell->pLearnSpell, true);
-				break;
 			}
 		}
+
+		_player->addSpell( pSpell->pLearnSpell->Id );
+		_player->forget = 0;
 
 		for( i = 0; i < 3; i++)
 		{
@@ -264,17 +258,14 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 			}
 		}
 	}
+	else if( pSpell->pCastSpell)
+	{
+		// Cast teaching spell on player
+		pCreature->CastSpell(_player, pSpell->pCastSpell, true);
+	}
 
 	if(pSpell->DeleteSpell)
-	{
-		// Remove old spell.
-		if( pSpell->pLearnSpell )
-			_player->removeSpell(pSpell->DeleteSpell, true, true, pSpell->pLearnSpell->Id);
-		else if(pSpell->pCastSpell)
-			_player->removeSpell(pSpell->DeleteSpell, true, true, pSpell->pCastRealSpell->Id);
-		else
-			_player->removeSpell(pSpell->DeleteSpell,true,false,0);
-	}
+		_player->removeSpell(pSpell->DeleteSpell);
 }
 
 uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)

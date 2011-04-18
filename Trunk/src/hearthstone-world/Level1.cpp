@@ -797,7 +797,7 @@ bool ChatHandler::HandleUnlearnCommand(const char* args, WorldSession * m_sessio
 	if(plr->HasSpell(SpellId))
 	{
 		GreenSystemMessageToPlr(plr, "Removed spell %u.", SpellId);
-		plr->removeSpell(SpellId, false, false, 0);
+		plr->removeSpell(SpellId);
 	}
 	else
 		RedSystemMessage(m_session, "That player does not have spell %u learnt.", SpellId);

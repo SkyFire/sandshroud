@@ -189,7 +189,7 @@ struct CreatureProto
 	int32 vehicle_entry;
 	uint32 BattleMasterType;
 	uint32 SpellClickid;
-	uint8 CanMove;
+	uint32 CanMove;
 
 	set<uint32> start_auras;
 	list<AI_Spell*> spells[4];
@@ -624,7 +624,7 @@ public:
 	void RemoveLimboState(Unit* healer);
 	void SetGuardWaypoints();
 	MapCell * m_respawnCell;
-	uint8 GetCanMove()
+	uint32 GetCanMove()
 	{
 		if(m_spawn)
 			return m_spawn->CanMove;

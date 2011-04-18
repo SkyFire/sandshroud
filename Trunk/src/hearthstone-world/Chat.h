@@ -446,6 +446,7 @@ protected:
 	bool HandleFlySpeedCheatCommand(const char* args, WorldSession * m_session);
 	bool HandleStackCheatCommand(const char* args, WorldSession * m_session);
 	bool HandleTriggerpassCheatCommand(const char* args, WorldSession * m_session);
+	bool HandleVendorPassCheatCommand(const char* args, WorldSession * m_session);
 	bool HandleFlyCommand(const char* args, WorldSession* m_session);
 	bool HandleRemoveRessurectionSickessAuraCommand(const char *args, WorldSession *m_session);
 	bool HandleDBReloadCommand(const char* args, WorldSession* m_session);

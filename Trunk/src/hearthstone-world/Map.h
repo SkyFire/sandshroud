@@ -70,7 +70,7 @@ typedef struct CreatureSpawn
 	uint32	ItemSlot3;
 	int32	phase;
 	int32	vehicle;
-	uint8	CanMove;
+	uint32	CanMove;
 }CreatureSpawn;
 
 typedef struct GOSpawn

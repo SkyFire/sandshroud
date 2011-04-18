@@ -1112,7 +1112,7 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 	if(strcmp(args, "on") == 0)
 	{
 		chr->EnableFlight();
-		BlueSystemMessage(m_session, "activated the fly cheat on %s.", chr->GetName());
+		BlueSystemMessage(m_session, "Activated the fly cheat on %s.", chr->GetName());
 		if(chr != m_session->GetPlayer())
 			sWorld.LogGM(m_session, "enabled flying mode for %s", chr->GetName());
 		return true;
@@ -1120,7 +1120,7 @@ bool ChatHandler::HandleFlyCommand(const char* args, WorldSession* m_session)
 	else if(strcmp(args, "off") == 0)
 	{
 		chr->DisableFlight();
-		BlueSystemMessage(m_session, "deactivated the fly cheat on %s.", chr->GetName());
+		BlueSystemMessage(m_session, "Deactivated the fly cheat on %s.", chr->GetName());
 		if( chr != m_session->GetPlayer() )
 			sWorld.LogGM( m_session, "disabled flying mode for %s", chr->GetName() );
 		return true;
@@ -1794,6 +1794,16 @@ bool ChatHandler::HandleTriggerpassCheatCommand(const char* args, WorldSession *
 
 	plr->triggerpass_cheat = !val;
 	sWorld.LogGM(m_session, "used areatrigger cheat on %s", plr->GetName());
+	return true;
+}
+
+bool ChatHandler::HandleVendorPassCheatCommand(const char* args, WorldSession * m_session)
+{
+	Player* plr = m_session->GetPlayer();
+	bool val = plr->vendorpass_cheat;
+	plr->vendorpass_cheat = !val;
+	GreenSystemMessage(m_session, "%s vendor requirement cheat.", val ? "Deactivated" : "Activated");
+	sWorld.LogGM(m_session, "used vendor requirement cheat.");
 	return true;
 }
 
