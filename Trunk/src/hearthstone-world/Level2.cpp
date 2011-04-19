@@ -1313,6 +1313,7 @@ bool ChatHandler::HandleTrainerAddLearnSpell(const char* args, WorldSession *m_s
 	ts.DeleteSpell = deletespell;
 	ts.IsProfession = (isprofession > 0);
 	trainer->Spells.push_back(ts);
+	WorldDatabase.Execute("INSERT INTO trainer_spells VALUES('%u', '0', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')", pCreature->GetEntry(), spellid, spellcost, requiredspell, requiredskill, requiredskillvalue, requiredlevel, deletespell, isprofession);
 	SystemMessage(m_session, "Learn spell added successfully.");
 	return true;
 }
@@ -1368,6 +1369,7 @@ bool ChatHandler::HandleTrainerAddCastSpell(const char* args, WorldSession *m_se
 	ts.DeleteSpell = deletespell;
 	ts.IsProfession = (isprofession > 0);
 	trainer->Spells.push_back(ts);
+	WorldDatabase.Execute("INSERT INTO trainer_spells VALUES('%u', '%u', '0', '%u', '%u', '%u', '%u', '%u', '%u', '%u')", pCreature->GetEntry(), spellid, spellcost, requiredspell, requiredskill, requiredskillvalue, requiredlevel, deletespell, isprofession);
 	SystemMessage(m_session, "Cast spell added successfully.");
 	return true;
 }
