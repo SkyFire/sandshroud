@@ -151,7 +151,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	if( !_player->ignoreitemreq_cheat && (itemProto->Faction && (itemProto->Faction != (_player->GetTeam()+1))))
+	if( !_player->ignoreitemreq_cheat && !CheckItemFaction(itemProto->Faction, _player->GetTeam()))
 	{
 		_player->GetItemInterface()->BuildInventoryChangeError(tmpItem,NULLITEM,INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM);
 		return;

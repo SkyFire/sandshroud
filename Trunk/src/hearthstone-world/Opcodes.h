@@ -1498,6 +1498,26 @@ enum Poi_Icon
     ICON_POI_REDHORSE           =   40
 };
 
+HEARTHSTONE_INLINE bool CheckItemFaction(uint32 ItemFaction, uint32 PlayerTeam)
+{
+	// Client sets alliance = 2 since 0 = NULL
+	// So reverse our checks, this is fucking bullshit.
+	if(ItemFaction == 0)
+		return true;
+	else if(ItemFaction == 1)
+	{
+		if(PlayerTeam == 1)
+			return true;
+	}
+	else if(ItemFaction == 2)
+	{
+		if(PlayerTeam == 0)
+			return true;
+	}
+
+	return false;
+};
+
 //enum FieldFlags {
 //	0x00000008	== can't climb slopes too steep
 //	0x40000000	== sheathed

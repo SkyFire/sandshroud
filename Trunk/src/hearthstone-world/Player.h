@@ -471,11 +471,11 @@ struct AreaPhaseData
 };
 
 // Dodge ( class base ) - UNUSED, Warrior, Paladin, Hunter, Rogue,   Priest, Death Knight, Shaman, Mage, Warlock, UNUSED, Druid
-const float baseDodge[12] = { 0.0f, 3.4636f, 3.2685f, -5.45f, -0.5900f, 3.1830f, 3.4636f, 1.6750f, 3.4575f, 2.0350f, 0.0f, 4.951f };
+const float baseDodge[12] = { 0.0f, 3.664f, 3.4943f, -4.0873f, 2.0957f, 3.4178f, 3.66400f, 2.108f, 3.66f, 2.4211f, 0.0f, 5.6097f };
 
-// Crow: TODO: I only know the cap for paladins >.> 75 for the rest,
-// Dodge ( class Cap )		UNUSED  War		Paladin	  hunter rogue	priest	 DK	  Shaman  Mage   Lock  UNUSED  Druid
-const float DodgeCap[12] = { 75.0f, 75.0f, 88.129021f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f, 75.0f };
+// Dodge ( class Cap )		UNUSED	War	Paladin	hunter	rogue	priest	DK	Shaman	Mage	Lock UNUSED	Druid
+const float DodgeCap[12] = { 0.0f, 84.8f, 59.9f, 86.2f, 47.8f, 59.9f, 84.7f, 59.9f, 58.8f, 59.9f, 0.0f, 47.8f };
+
 enum RuneTypes
 {
 	RUNE_TYPE_BLOOD			= 0,
@@ -484,7 +484,8 @@ enum RuneTypes
 	RUNE_TYPE_DEATH			= 3,
 	RUNE_TYPE_RECHARGING	= 4
 };
-static const uint8 baseRunes[6] = {0,0,1,1,2,2};
+static const uint8 baseRunes[6] = {RUNE_TYPE_BLOOD,RUNE_TYPE_BLOOD,RUNE_TYPE_FROST,RUNE_TYPE_FROST,RUNE_TYPE_UNHOLY,RUNE_TYPE_UNHOLY};
+
 struct FactionReputation
 {
 	int32 standing;

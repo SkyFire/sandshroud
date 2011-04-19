@@ -5352,7 +5352,6 @@ void Player::UpdateChances()
 
 	float tmp = 0;
 	float defence_contribution = 0;
-	float dodge_from_spell = 0;
 
 	// defence contribution estimate
 	defence_contribution = ( float( _GetSkillLineCurrent( SKILL_DEFENSE, true ) ) - ( float( pLevel ) * 5.0f ) ) * 0.04f;
@@ -5360,16 +5359,14 @@ void Player::UpdateChances()
 	if( defence_contribution < 0.0f )
 		defence_contribution = 0.0f;
 
-	dodge_from_spell = CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + GetDodgeFromSpell();
-	if( dodge_from_spell < 0.0f )
-		dodge_from_spell = 0.0f;
-
 	// dodge
 	float class_multiplier = (pClass == WARRIOR ? 1.1f : pClass == HUNTER ? 1.6f : pClass == ROGUE ? 2.0f : pClass == DRUID ? 1.7f : 1.0f);
-	tmp = baseDodge[pClass] + (float( (GetUInt32Value( UNIT_FIELD_AGILITY )*class_multiplier)*(dbcMeleeCrit.LookupEntry((pLevel-1)+(pClass-1)*100)->val*100)));
-	tmp += dodge_from_spell + defence_contribution;
+	tmp = (baseDodge[pClass] + (float( (GetUInt32Value( UNIT_FIELD_AGILITY )*class_multiplier)*(dbcMeleeCrit.LookupEntry((pLevel-1)+(pClass-1)*100)->val*100)))) + CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + defence_contribution;
+	tmp = min( max( baseDodge[pClass], tmp), DodgeCap[pClass] );
 
-	SetFloatValue( PLAYER_DODGE_PERCENTAGE, min( max( baseDodge[pClass], tmp), DodgeCap[pClass] ) );
+	// Add dodge from spell after checking cap and base.
+	tmp += GetDodgeFromSpell();
+	SetFloatValue( PLAYER_DODGE_PERCENTAGE, tmp);
 
 	// Block
 	Item* it = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_OFFHAND );

@@ -1373,7 +1373,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 					if(itr->IsDependent && (curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace)))
 						continue;
 
-					if(itr->IsDependent && (curItem->Faction && !(curItem->Faction == (_player->GetTeam()+1) )))
+					if(itr->IsDependent && !CheckItemFaction(curItem->Faction, _player->GetTeam()))
 						continue;
 
 					if(itr->extended_cost == NULL && curItem->SellPrice > curItem->BuyPrice )

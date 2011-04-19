@@ -1738,7 +1738,7 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		if( !m_pOwner->ignoreitemreq_cheat && proto->AllowableClass && !(proto->AllowableClass & m_pOwner->getClassMask()))
 			return INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM2;
 
-		if( !m_pOwner->ignoreitemreq_cheat && proto->Faction && (proto->Faction != (m_pOwner->GetTeam()+1)))
+		if( !m_pOwner->ignoreitemreq_cheat && !CheckItemFaction(proto->Faction, m_pOwner->GetTeam()))
 			return INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM2;
 
 		// Check to see if we have the reqs for that reputation

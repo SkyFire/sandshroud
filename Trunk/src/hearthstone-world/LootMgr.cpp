@@ -417,7 +417,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, uint8 
 				continue;
 
 			ItemPrototype *itemproto = list->items[x].item.itemproto;
-			if(itemproto->Faction && (itemproto->Faction != team))
+			if(!CheckItemFaction(itemproto->Faction, team))
 				continue;
 
 			int lucky;
@@ -833,7 +833,7 @@ void LootRoll::Finalize()
 	{
 		//generate Disenchantingloot
 		Item * pItem = objmgr.CreateItem( itemid, _player);
-		lootmgr.FillItemLoot(&pItem->m_loot, pItem->GetEntry(), _player->GetTeam()+1);
+		lootmgr.FillItemLoot(&pItem->m_loot, pItem->GetEntry(), _player->GetTeam());
 
 		//add loot
 		for(std::vector<__LootItem>::iterator iter=pItem->m_loot.items.begin();iter != pItem->m_loot.items.end();iter++)

@@ -260,7 +260,7 @@ void Creature::GenerateLoot()
 	uint8 team = 0;
 	uint8 difficulty = (m_mapMgr ? (m_mapMgr->iInstanceMode) : 0);
 	if(CombatStatus.GetKiller() && CombatStatus.GetKiller()->IsPlayer())
-		team = TO_PLAYER(CombatStatus.GetKiller())->GetTeam()+1;
+		team = TO_PLAYER(CombatStatus.GetKiller())->GetTeam();
 
 	lootmgr.FillCreatureLoot(&m_loot, GetEntry(), difficulty, team);
 
