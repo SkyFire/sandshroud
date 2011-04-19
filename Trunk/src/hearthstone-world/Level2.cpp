@@ -1294,7 +1294,7 @@ bool ChatHandler::HandleTrainerAddLearnSpell(const char* args, WorldSession *m_s
 	}
 
 	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredlevel = 0, deletespell = 0, isprofession = 0;
-	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) != 1)
+	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) == 0)
 		return false;
 
 	SpellEntry* spellinfo = dbcSpell.LookupEntry(spellid);
@@ -1313,6 +1313,7 @@ bool ChatHandler::HandleTrainerAddLearnSpell(const char* args, WorldSession *m_s
 	ts.DeleteSpell = deletespell;
 	ts.IsProfession = (isprofession > 0);
 	trainer->Spells.push_back(ts);
+	SystemMessage(m_session, "Learn spell added successfully.");
 	return true;
 }
 
@@ -1340,7 +1341,7 @@ bool ChatHandler::HandleTrainerAddCastSpell(const char* args, WorldSession *m_se
 	}
 
 	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredlevel = 0, deletespell = 0, isprofession = 0;
-	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) != 1)
+	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) == 0)
 		return false;
 
 	SpellEntry* spellinfo = dbcSpell.LookupEntry(spellid);
@@ -1367,5 +1368,6 @@ bool ChatHandler::HandleTrainerAddCastSpell(const char* args, WorldSession *m_se
 	ts.DeleteSpell = deletespell;
 	ts.IsProfession = (isprofession > 0);
 	trainer->Spells.push_back(ts);
+	SystemMessage(m_session, "Cast spell added successfully.");
 	return true;
 }
