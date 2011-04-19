@@ -1350,6 +1350,7 @@ bool ChatHandler::HandleTrainerAddCastSpell(const char* args, WorldSession *m_se
 		return false;
 
 	TrainerSpell ts;
+	ts.pCastRealSpell = NULL;
 	ts.pCastSpell = spellinfo;
 	for( int k = 0; k < 3; ++k )
 	{

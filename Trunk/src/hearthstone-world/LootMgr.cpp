@@ -394,7 +394,7 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 	delete result;
 }
 
-void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool disenchant)
+void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, uint8 team, bool disenchant)
 {
 	uint32 i;
 	uint32 count;
@@ -417,8 +417,10 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 				continue;
 
 			ItemPrototype *itemproto = list->items[x].item.itemproto;
-			int lucky;
+			if(itemproto->Faction && (itemproto->Faction != team))
+				continue;
 
+			int lucky;
 			if (disenchant)
 			{
 				lucky = nrand >= ncount && nrand <= (ncount+chance);
@@ -506,7 +508,7 @@ void LootMgr::PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool d
 
 }
 
-void LootMgr::FillCreatureLoot(Loot * loot,uint32 loot_id, uint8 difficulty)
+void LootMgr::FillCreatureLoot(Loot * loot,uint32 loot_id, uint8 difficulty, uint8 team)
 {
 	loot->items.clear();
 	loot->gold = 0;
@@ -515,10 +517,10 @@ void LootMgr::FillCreatureLoot(Loot * loot,uint32 loot_id, uint8 difficulty)
 	if( CreatureLoot.end() == tab)
 		return;
 	else
-		PushLoot(&tab->second, loot, difficulty, false);
+		PushLoot(&tab->second, loot, difficulty, team, false);
 }
 
-void LootMgr::FillGOLoot(Loot * loot,uint32 loot_id, uint8 difficulty)
+void LootMgr::FillGOLoot(Loot * loot,uint32 loot_id, uint8 difficulty, uint8 team)
 {
 	loot->items.clear ();
 	loot->gold = 0;
@@ -527,7 +529,7 @@ void LootMgr::FillGOLoot(Loot * loot,uint32 loot_id, uint8 difficulty)
 	if( GOLoot.end() == tab)
 		return;
 	else
-		PushLoot(&tab->second, loot, difficulty, false);
+		PushLoot(&tab->second, loot, difficulty, team, false);
 }
 
 void LootMgr::FillFishingLoot(Loot * loot,uint32 loot_id)
@@ -539,7 +541,7 @@ void LootMgr::FillFishingLoot(Loot * loot,uint32 loot_id)
 	if( FishingLoot.end() == tab)
 		return;
 	else
-		PushLoot(&tab->second, loot, 0, false);
+		PushLoot(&tab->second, loot, 0, 0, false);
 }
 
 void LootMgr::FillGatheringLoot(Loot * loot,uint32 loot_id)
@@ -549,7 +551,7 @@ void LootMgr::FillGatheringLoot(Loot * loot,uint32 loot_id)
 
 	LootStore::iterator tab = GatheringLoot.find(loot_id);
 	if(tab != GatheringLoot.end())
-		PushLoot(&tab->second, loot, 0, false);
+		PushLoot(&tab->second, loot, 0, 0, false);
 }
 
 void LootMgr::FillPickpocketingLoot(Loot * loot,uint32 loot_id)
@@ -561,10 +563,10 @@ void LootMgr::FillPickpocketingLoot(Loot * loot,uint32 loot_id)
 	if( PickpocketingLoot.end() == tab)
 		return;
 	else
-		PushLoot(&tab->second, loot, 0, false);
+		PushLoot(&tab->second, loot, 0, 0, false);
 }
 
-void LootMgr::FillItemLoot(Loot *loot, uint32 loot_id)
+void LootMgr::FillItemLoot(Loot *loot, uint32 loot_id, uint8 team)
 {
 	loot->items.clear();
 	loot->gold = 0;
@@ -573,7 +575,7 @@ void LootMgr::FillItemLoot(Loot *loot, uint32 loot_id)
 	if( ItemLoot.end()==tab)
 		return;
 	else
-		PushLoot(&tab->second, loot, false, false);
+		PushLoot(&tab->second, loot, 0, team, false);
 }
 
 bool LootMgr::CanGODrop(uint32 LootId,uint32 itemid)
@@ -831,7 +833,7 @@ void LootRoll::Finalize()
 	{
 		//generate Disenchantingloot
 		Item * pItem = objmgr.CreateItem( itemid, _player);
-		lootmgr.FillItemLoot(&pItem->m_loot, pItem->GetEntry());
+		lootmgr.FillItemLoot(&pItem->m_loot, pItem->GetEntry(), _player->GetTeam()+1);
 
 		//add loot
 		for(std::vector<__LootItem>::iterator iter=pItem->m_loot.items.begin();iter != pItem->m_loot.items.end();iter++)

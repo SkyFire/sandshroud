@@ -1807,6 +1807,16 @@ bool ChatHandler::HandleVendorPassCheatCommand(const char* args, WorldSession * 
 	return true;
 }
 
+bool ChatHandler::HandleItemReqCheatCommand(const char* args, WorldSession * m_session)
+{
+	Player* plr = m_session->GetPlayer();
+	bool val = plr->ignoreitemreq_cheat;
+	plr->ignoreitemreq_cheat = !val;
+	GreenSystemMessage(m_session, "%s item requirement cheat.", val ? "Deactivated" : "Activated");
+	sWorld.LogGM(m_session, "used item requirement cheat.");
+	return true;
+}
+
 bool ChatHandler::HandleResetSkillsCommand(const char* args, WorldSession * m_session)
 {
 	skilllineentry * se;

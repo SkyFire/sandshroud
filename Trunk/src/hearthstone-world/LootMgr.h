@@ -146,9 +146,9 @@ public:
 	~LootMgr();
 
 	void AddLoot(Loot * loot, uint32 itemid, uint32 mincount, uint32 maxcount, uint32 ffa_loot);
-	void FillCreatureLoot(Loot * loot,uint32 loot_id, uint8 difficulty);
-	void FillGOLoot(Loot * loot,uint32 loot_id, uint8 difficulty);
-	void FillItemLoot(Loot *loot, uint32 loot_id);
+	void FillCreatureLoot(Loot * loot,uint32 loot_id, uint8 difficulty, uint8 team);
+	void FillGOLoot(Loot * loot,uint32 loot_id, uint8 difficulty, uint8 team);
+	void FillItemLoot(Loot *loot, uint32 loot_id, uint8 team);
 	void FillFishingLoot(Loot * loot,uint32 loot_id);
 	void FillGatheringLoot(Loot * loot,uint32 loot_id);
 	void FillPickpocketingLoot(Loot *loot, uint32 loot_id);
@@ -179,7 +179,7 @@ public:
 
 private:
 	void LoadLootTables(const char * szTableName,LootStore * LootTable);
-	void PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool disenchant);
+	void PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, uint8 team, bool disenchant);
 
 	map<uint32, RandomPropertyVector> _randomprops;
 	map<uint32, RandomSuffixVector> _randomsuffix;

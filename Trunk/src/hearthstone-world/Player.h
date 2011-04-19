@@ -1577,6 +1577,7 @@ public:
 	bool DisableDevTag;
 	bool vendorpass_cheat;
 	bool triggerpass_cheat;
+	bool ignoreitemreq_cheat; // Crow: Gonna do so much with this. HEHEHEHEHAHAHAHAHAHAHAHA!!!
 
 	bool bHasBindDialogOpen;
 	uint32 TrackingSpell;

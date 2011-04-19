@@ -4124,7 +4124,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 						v = lock->minlockskill[i];
 						gameObjTarget->SetFlags(0);
 						gameObjTarget->SetState(1);
-						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
+						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0), p_caster->GetTeam()+1);
 						loottype = LOOT_CORPSE;
 						DetermineSkillUp(SKILL_LOCKPICKING,v/5);
 						break;
@@ -4150,7 +4150,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				{
 					if( gameObjTarget->m_loot.items.size() == 0 )
 					{
-						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
+						lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0), p_caster->GetTeam()+1);
 					}
 					else
 						bAlreadyUsed = true;
@@ -4180,7 +4180,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				}
 				else if( gameObjTarget->m_loot.items.size() == 0 )
 				{
-					lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
+					lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0), p_caster->GetTeam()+1);
 				}
 				else
 					bAlreadyUsed = true;
@@ -4244,7 +4244,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 
 			if(gameObjTarget->m_loot.items.size() == 0)
 			{
-				lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
+				lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0), p_caster->GetTeam()+1);
 			}
 			loottype = LOOT_CORPSE;
 		}break;
@@ -4271,7 +4271,7 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 
 	if( gameObjTarget->GetType() == GAMEOBJECT_TYPE_CHEST)
 	{
-		lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
+		lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0), p_caster->GetTeam()+1);
 		if(gameObjTarget->m_loot.items.size() > 0)
 		{
 			TO_PLAYER(caster)->SendLoot(gameObjTarget->GetGUID(), gameObjTarget->GetMapId(), LOOT_CORPSE);
@@ -7317,12 +7317,10 @@ void Spell::SpellEffectKnockBack(uint32 i)
 
 void Spell::SpellEffectDisenchant(uint32 i)
 {
-	if(m_caster == NULL)
+	if(p_caster == NULL)
 		return;
 
-	Player* caster = TO_PLAYER( m_caster );
-	Item* it = NULL;
-	it= caster->GetItemInterface()->GetItemByGUID(m_targets.m_itemTarget);
+	Item* it = p_caster->GetItemInterface()->GetItemByGUID(m_targets.m_itemTarget);
 	if( it == NULL )
 	{
 		SendCastResult(SPELL_FAILED_CANT_BE_DISENCHANTED);
@@ -7331,16 +7329,16 @@ void Spell::SpellEffectDisenchant(uint32 i)
 
 	if( !it->m_looted )
 	{
-		lootmgr.FillItemLoot(&it->m_loot, it->GetEntry());
+		lootmgr.FillItemLoot(&it->m_loot, it->GetEntry(), p_caster->GetTeam()+1);
 
 		if( it->m_loot.items.size() > 0 )
 		{
 			//Check for skill, we can increase it upto 75
-			uint32 skill=caster->_GetSkillLineCurrent( SKILL_ENCHANTING );
+			uint32 skill=p_caster->_GetSkillLineCurrent( SKILL_ENCHANTING );
 			if(skill < 75)//can up skill
 			{
 				if(Rand(float(100-skill*100.0/75.0)))
-					caster->_AdvanceSkillLine(SKILL_ENCHANTING, float2int32( 1.0f * sWorld.getRate(RATE_SKILLRATE)));
+					p_caster->_AdvanceSkillLine(SKILL_ENCHANTING, float2int32( 1.0f * sWorld.getRate(RATE_SKILLRATE)));
 			}
 			OUT_DEBUG("SpellEffect","Succesfully disenchanted item %d", uint32(itemTarget->GetEntry()));
 			p_caster->SendLoot( itemTarget->GetGUID(), itemTarget->GetMapId(), LOOT_GATHERING );
@@ -7355,8 +7353,8 @@ void Spell::SpellEffectDisenchant(uint32 i)
 		it->DeleteFromDB();
 		it->m_looted = true;
 	}
-	if(it==i_caster)
-		i_caster=NULLITEM;
+	if(it == i_caster)
+		i_caster = NULLITEM;
 }
 void Spell::SpellEffectInebriate(uint32 i) // lets get drunk!
 {
@@ -8002,7 +8000,7 @@ void Spell::SpellEffectProspecting(uint32 i)
 	if(p_caster->GetItemInterface()->RemoveItemAmt(entry, 5))
 	{
 		p_caster->SetLootGUID(p_caster->GetGUID());
-		lootmgr.FillItemLoot(&p_caster->m_loot, entry);
+		lootmgr.FillItemLoot(&p_caster->m_loot, entry, p_caster->GetTeam()+1);
 		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
 	}
 	else // this should never happen either
@@ -8356,7 +8354,7 @@ void Spell::SpellEffectMilling(uint32 i)
 	if(p_caster->GetItemInterface()->RemoveItemAmt(entry, 5))
 	{
 		p_caster->SetLootGUID(p_caster->GetGUID());
-		lootmgr.FillItemLoot(&p_caster->m_loot, entry);
+		lootmgr.FillItemLoot(&p_caster->m_loot, entry, p_caster->GetTeam()+1);
 		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
 	}
 	else

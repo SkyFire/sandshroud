@@ -665,12 +665,10 @@ struct ItemPrototype
 	uint32 SubClass;
 	int32 unknown_bc;
 	char * Name1;
-//	char * Name2;
-//	char * Name3;
-//	char * Name4;
 	uint32 DisplayInfoID;
 	uint32 Quality;
 	uint32 Flags;
+	uint32 Faction;
 	uint32 BuyPrice;
 	uint32 SellPrice;
 	uint32 InventoryType;

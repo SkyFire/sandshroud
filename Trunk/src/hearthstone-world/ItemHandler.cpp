@@ -658,7 +658,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->DisplayInfoID;
 	data << itemProto->Quality;
 	data << itemProto->Flags;
-	data << uint32(0);
+	data << itemProto->Faction;
 	data << itemProto->BuyPrice;
 	data << itemProto->SellPrice;
 	data << itemProto->InventoryType;
@@ -1365,12 +1365,15 @@ void WorldSession::SendInventoryList(Creature* unit)
 		{
 			if((curItem = ItemPrototypeStorage.LookupEntry(itr->itemid)))
 			{
-				if(!_player->bGMTagOn)
+				if(!_player->ignoreitemreq_cheat)
 				{
 					if(itr->IsDependent && (curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass)))
 						continue;
 
 					if(itr->IsDependent && (curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace)))
+						continue;
+
+					if(itr->IsDependent && (curItem->Faction && !(curItem->Faction == (_player->GetTeam()+1) )))
 						continue;
 
 					if(itr->extended_cost == NULL && curItem->SellPrice > curItem->BuyPrice )

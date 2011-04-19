@@ -257,8 +257,12 @@ void Creature::GenerateLoot()
 		return;
 	}
 
+	uint8 team = 0;
 	uint8 difficulty = (m_mapMgr ? (m_mapMgr->iInstanceMode) : 0);
-	lootmgr.FillCreatureLoot(&m_loot, GetEntry(), difficulty);
+	if(CombatStatus.GetKiller() && CombatStatus.GetKiller()->IsPlayer())
+		team = TO_PLAYER(CombatStatus.GetKiller())->GetTeam()+1;
+
+	lootmgr.FillCreatureLoot(&m_loot, GetEntry(), difficulty, team);
 
 	// -1 , no gold; 0 calculated according level; >0 coppercoins
 	if( proto->money == -1)

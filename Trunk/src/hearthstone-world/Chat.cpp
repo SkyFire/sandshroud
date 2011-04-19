@@ -570,6 +570,7 @@ void CommandTableStorage::Init()
 		{ "stack",			'm', &ChatHandler::HandleStackCheatCommand,				"Enables aura stacking cheat.",						NULL, 0, 0, 0 },
 		{ "triggerpass",	'm', &ChatHandler::HandleTriggerpassCheatCommand,		"Ignores area trigger prerequisites.",				NULL, 0, 0, 0 },
 		{ "vendorpass",		'm', &ChatHandler::HandleVendorPassCheatCommand,		"Ignores npc vendor prerequisites.",				NULL, 0, 0, 0 },
+		{ "itempass",		'm', &ChatHandler::HandleItemReqCheatCommand,			"Ignores item requirements(incomplete).",			NULL, 0, 0, 0 },
 		{ NULL,				'0', NULL,												"",													NULL, 0, 0, 0 },
 	};
 	dupe_command_table(CheatCommandTable, _CheatCommandTable);

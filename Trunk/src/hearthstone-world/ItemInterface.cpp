@@ -1731,11 +1731,14 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 				return INV_ERR_CANT_CARRY_MORE_OF_THIS;
 		}
 
-		if( proto->AllowableRace && !(proto->AllowableRace & m_pOwner->getRaceMask()))
+		if( !m_pOwner->ignoreitemreq_cheat && proto->AllowableRace && !(proto->AllowableRace & m_pOwner->getRaceMask()))
 			return INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM;
 
 		// Check to see if we have the correct class
-		if( proto->AllowableClass && !(proto->AllowableClass & m_pOwner->getClassMask()))
+		if( !m_pOwner->ignoreitemreq_cheat && proto->AllowableClass && !(proto->AllowableClass & m_pOwner->getClassMask()))
+			return INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM2;
+
+		if( !m_pOwner->ignoreitemreq_cheat && proto->Faction && (proto->Faction != (m_pOwner->GetTeam()+1)))
 			return INV_ERR_YOU_CAN_NEVER_USE_THAT_ITEM2;
 
 		// Check to see if we have the reqs for that reputation
@@ -1747,10 +1750,10 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		}
 
 		// Check to see if we have the correct level.
-		if(proto->RequiredLevel>m_pOwner->GetUInt32Value(UNIT_FIELD_LEVEL))
+		if(!m_pOwner->ignoreitemreq_cheat && proto->RequiredLevel>m_pOwner->GetUInt32Value(UNIT_FIELD_LEVEL))
 			return INV_ERR_YOU_MUST_REACH_LEVEL_N;
 
-		if(proto->Class == ITEM_CLASS_ARMOR)
+		if(!m_pOwner->ignoreitemreq_cheat && proto->Class == ITEM_CLASS_ARMOR)
 		{
 			uint32 fakeclass = (proto->DummySubClass ? ((GetOwner() && GetOwner()->getLevel() < 40) ?
 				proto->DummySubClass : proto->SubClass) : proto->SubClass);
@@ -1759,17 +1762,17 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 				return INV_ERR_NO_REQUIRED_PROFICIENCY;
 
 		}
-		else if(proto->Class == ITEM_CLASS_WEAPON)
+		else if(!m_pOwner->ignoreitemreq_cheat && proto->Class == ITEM_CLASS_WEAPON)
 		{
 			if(!(m_pOwner->GetWeaponProficiency()&(((uint32)(1))<<proto->SubClass)))
 				return INV_ERR_NO_REQUIRED_PROFICIENCY;
 		}
 
-		if(proto->RequiredSkill)
+		if(!m_pOwner->ignoreitemreq_cheat && proto->RequiredSkill)
 			if (proto->RequiredSkillRank > m_pOwner->_GetSkillLineCurrent(proto->RequiredSkill,true))
 				return INV_ERR_SKILL_ISNT_HIGH_ENOUGH;
 
-		if(proto->RequiredSpell)
+		if(!m_pOwner->ignoreitemreq_cheat && proto->RequiredSpell)
 			if (!m_pOwner->HasSpell(proto->RequiredSpell))
 				return INV_ERR_NO_REQUIRED_PROFICIENCY;
 

@@ -169,6 +169,7 @@ void Player::Init()
 	m_bgEntryPointInstance			= 0;
 	bGMTagOn						= false;
 	vendorpass_cheat				= false;
+	ignoreitemreq_cheat				= false;
 	DisableDevTag					= false;
 	CooldownCheat					= false;
 	CastTimeCheat					= false;
@@ -3614,6 +3615,7 @@ SpellEntry* Player::GetSpellWithNamehash(uint32 namehash)
 			if(sp->NameHash == namehash)
 				return sp;
 		}
+		sp = NULL;
 	}
 	return NULL;
 }
