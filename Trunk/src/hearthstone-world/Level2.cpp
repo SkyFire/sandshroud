@@ -1219,3 +1219,153 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 
 	return true;
 }
+
+bool ChatHandler::HandleItemSetRemoveCommand(const char* args, WorldSession *m_session)
+{
+	char* pitemset = strtok((char*)args, " ");
+	if(!pitemset)
+		return false;
+
+	uint32 itemset = atoi(pitemset);
+	uint64 guid = m_session->GetPlayer()->GetSelection();
+	if(guid == 0)
+	{
+		SystemMessage(m_session, "No selection.");
+		return true;
+	}
+
+	Creature* pCreature = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
+	if(!pCreature)
+	{
+		SystemMessage(m_session, "You should select a creature.");
+		return true;
+	}
+
+	ItemSetEntry* tmpItem = dbcItemSet.LookupEntry(itemset);
+	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(itemset);
+	if(!tmpItem || !l)
+	{
+		RedSystemMessage(m_session, "Invalid item set.");
+		return true;
+	}
+
+	std::stringstream ss;
+	ss << "DELETE FROM vendors WHERE entry = '" << pCreature->GetEntry() << "' AND item IS IN(";
+	bool first = true;
+	for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
+	{
+		if(!first)
+			ss << ", ";
+		else
+			first = false;
+
+		ss << (*itr)->ItemId;
+		pCreature->RemoveVendorItem((*itr)->ItemId);
+
+	}
+	ss << ");";
+	WorldDatabase.Execute( ss.str().c_str() );
+
+	sWorld.LogGM(m_session, "removed item set %u from vendor %u", itemset, pCreature->GetEntry());
+	return true;
+}
+
+bool ChatHandler::HandleTrainerAddLearnSpell(const char* args, WorldSession *m_session)
+{
+	uint64 guid = m_session->GetPlayer()->GetSelection();
+	if(guid == 0)
+	{
+		SystemMessage(m_session, "No selection.");
+		return true;
+	}
+
+	Creature* pCreature = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
+	if(!pCreature)
+	{
+		SystemMessage(m_session, "You should select a creature.");
+		return true;
+	}
+
+	Trainer* trainer = pCreature->GetTrainer();
+	if(!trainer)
+	{
+		SystemMessage(m_session, "You should select a trainer.");
+		return true;
+	}
+
+	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredlevel = 0, deletespell = 0, isprofession = 0;
+	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) != 1)
+		return false;
+
+	SpellEntry* spellinfo = dbcSpell.LookupEntry(spellid);
+	if(spellinfo == NULL)
+		return false;
+
+	TrainerSpell ts;
+	ts.pCastSpell = NULL;
+	ts.pCastRealSpell = NULL;
+	ts.pLearnSpell = spellinfo;
+	ts.Cost = spellcost;
+	ts.RequiredSpell = requiredspell;
+	ts.RequiredSkillLine = requiredskill;
+	ts.RequiredSkillLineValue = requiredskillvalue;
+	ts.RequiredLevel = requiredlevel;
+	ts.DeleteSpell = deletespell;
+	ts.IsProfession = (isprofession > 0);
+	trainer->Spells.push_back(ts);
+	return true;
+}
+
+bool ChatHandler::HandleTrainerAddCastSpell(const char* args, WorldSession *m_session)
+{
+	uint64 guid = m_session->GetPlayer()->GetSelection();
+	if(guid == 0)
+	{
+		SystemMessage(m_session, "No selection.");
+		return true;
+	}
+
+	Creature* pCreature = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
+	if(!pCreature)
+	{
+		SystemMessage(m_session, "You should select a creature.");
+		return true;
+	}
+
+	Trainer* trainer = pCreature->GetTrainer();
+	if(!trainer)
+	{
+		SystemMessage(m_session, "You should select a trainer.");
+		return true;
+	}
+
+	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredlevel = 0, deletespell = 0, isprofession = 0;
+	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) != 1)
+		return false;
+
+	SpellEntry* spellinfo = dbcSpell.LookupEntry(spellid);
+	if(spellinfo == NULL)
+		return false;
+
+	TrainerSpell ts;
+	ts.pCastSpell = spellinfo;
+	for( int k = 0; k < 3; ++k )
+	{
+		if( spellinfo->Effect[k] == SPELL_EFFECT_LEARN_SPELL )
+		{
+			ts.pCastRealSpell = dbcSpell.LookupEntry(spellinfo->EffectTriggerSpell[k]);
+			break;
+		}
+	}
+
+	ts.pLearnSpell = NULL;
+	ts.Cost = spellcost;
+	ts.RequiredSpell = requiredspell;
+	ts.RequiredSkillLine = requiredskill;
+	ts.RequiredSkillLineValue = requiredskillvalue;
+	ts.RequiredLevel = requiredlevel;
+	ts.DeleteSpell = deletespell;
+	ts.IsProfession = (isprofession > 0);
+	trainer->Spells.push_back(ts);
+	return true;
+}

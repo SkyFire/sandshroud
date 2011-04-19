@@ -451,6 +451,9 @@ protected:
 	bool HandleRemoveRessurectionSickessAuraCommand(const char *args, WorldSession *m_session);
 	bool HandleDBReloadCommand(const char* args, WorldSession* m_session);
 	bool HandleItemSetCommand(const char* args, WorldSession* m_session);
+	bool HandleItemSetRemoveCommand(const char* args, WorldSession* m_session);
+	bool HandleTrainerAddLearnSpell(const char* args, WorldSession* m_session);
+	bool HandleTrainerAddCastSpell(const char* args, WorldSession* m_session);
 
 	// Database
 	bool HandleDBItemCreateCommand(const char* args, WorldSession* m_session);

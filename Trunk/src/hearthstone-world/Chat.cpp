@@ -488,8 +488,11 @@ void CommandTableStorage::Init()
 	static ChatCommand NPCCommandTable[] =
 	{
 		{ "vendorsetadd",		'z', &ChatHandler::HandleItemSetCommand,			"Adds item set to vendor",																														NULL, 0, 0, 0 },
+		{ "vendorsetremove",	'z', &ChatHandler::HandleItemSetRemoveCommand,		"Removes item set from vendor",																													NULL, 0, 0, 0 },
 		{ "vendoradditem",		'z', &ChatHandler::HandleItemCommand,				"Adds to vendor",																																NULL, 0, 0, 0 },
 		{ "vendorremoveitem",	'z', &ChatHandler::HandleItemRemoveCommand,			"Removes from vendor.",																															NULL, 0, 0, 0 },
+		{ "traineraddlearn",	'z', &ChatHandler::HandleTrainerAddLearnSpell,		"Adds a spell that is learned to the player.",																									NULL, 0, 0, 0 },
+		{ "traineraddcast",		'z', &ChatHandler::HandleTrainerAddCastSpell,		"Adds a spell that is cast on the player.",																										NULL, 0, 0, 0 },
 		{ "flags",				'n', &ChatHandler::HandleNPCFlagCommand,			"Changes NPC flags",																															NULL, 0, 0, 0 },
 		{ "emote",				'n', &ChatHandler::HandleEmoteCommand,				".emote - Sets emote state",																													NULL, 0, 0, 0 },
 		{ "delete",				'n', &ChatHandler::HandleDeleteCommand,				"Deletes mobs from db and world.",																												NULL, 0, 0, 0 },
