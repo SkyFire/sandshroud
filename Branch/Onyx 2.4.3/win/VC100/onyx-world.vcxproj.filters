@@ -1,0 +1,632 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Launcher">
+      <UniqueIdentifier>{5f16d1c5-63fd-45f6-8e33-341431d90892}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Launcher\Console">
+      <UniqueIdentifier>{849cf959-47ce-4868-83d1-615e1feb5b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Launcher\Additionals">
+      <UniqueIdentifier>{1ccfb4cc-95b6-4999-a0df-2508611700fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Battlegrounds">
+      <UniqueIdentifier>{a13d881f-c908-4302-a8c2-d4abdd370378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Battlegrounds\2">
+      <UniqueIdentifier>{4c0d425f-b2a5-4147-b18e-e1f5f8520eeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Battlegrounds\1">
+      <UniqueIdentifier>{f94f84e9-6246-4018-87ab-dc641faa23c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Brains">
+      <UniqueIdentifier>{0faf4ef5-d964-43e7-aa95-94be8eb4db86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Brains\AI">
+      <UniqueIdentifier>{67dba8b4-473e-43b8-ae5c-f8d4c864fe7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chat">
+      <UniqueIdentifier>{7f16546f-5957-42b6-bae9-ba5d03ff8f59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chat\Commands">
+      <UniqueIdentifier>{0c260bca-5a92-480c-8346-9c32e3989449}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client Communication">
+      <UniqueIdentifier>{cb9a87c0-8d2a-4db4-a130-8cc4dc818636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Environment">
+      <UniqueIdentifier>{7de2b7c7-a469-4ccf-816a-bcda97b68ecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interserver">
+      <UniqueIdentifier>{e7ef1460-b9b6-4f6a-8aa2-ac2918bf5143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interserver\Logon">
+      <UniqueIdentifier>{e38db1bd-4051-4ba4-9bfa-dc5dbbfcf3e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map System">
+      <UniqueIdentifier>{4608fe27-cf8f-4e24-bf20-3f059b85418c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map System\Map Interface">
+      <UniqueIdentifier>{c72e8294-d017-4fc5-b56f-d830cc52227d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map System\Map Managers">
+      <UniqueIdentifier>{826ef50c-b768-43c8-b8e3-e397439734c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{09720496-67ae-4783-b039-e6e683a5a5d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Items">
+      <UniqueIdentifier>{3e450fcb-3384-4659-b5e3-7baf7865eaaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Units">
+      <UniqueIdentifier>{307b22af-6d6b-4358-9d82-0e09cc2b48b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packet Handlers">
+      <UniqueIdentifier>{1d8748c2-c716-43eb-b956-d69a0fb785f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player Systems">
+      <UniqueIdentifier>{10201f7a-f98b-4aec-8be2-34612685af92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Spell">
+      <UniqueIdentifier>{a5475c0d-f56b-4bbf-816a-f2103b8ea8cc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\onyx-world\ConsoleCommands.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ConsoleListener.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-shared\CoreMemoryAllocator_Core.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Main.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Master.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\CConsole.cpp">
+      <Filter>Launcher\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Arenas.cpp">
+      <Filter>Battlegrounds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ArenaTeam.cpp">
+      <Filter>Battlegrounds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\BattlegroundCommands.cpp">
+      <Filter>Battlegrounds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\BattlegroundHandler.cpp">
+      <Filter>Battlegrounds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\BattlegroundMgr.cpp">
+      <Filter>Battlegrounds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\EyeOfTheStorm.cpp">
+      <Filter>Battlegrounds\2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\AlteracValley.cpp">
+      <Filter>Battlegrounds\1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ArathiBasin.cpp">
+      <Filter>Battlegrounds\1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WarsongGulch.cpp">
+      <Filter>Battlegrounds\1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\faction.cpp">
+      <Filter>Brains</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ScriptMgr.cpp">
+      <Filter>Brains</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\AIInterface.cpp">
+      <Filter>Brains\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WayPoints.cpp">
+      <Filter>Brains\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Channel.cpp">
+      <Filter>Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ChannelHandler.cpp">
+      <Filter>Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ChatHandler.cpp">
+      <Filter>Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WordFilter.cpp">
+      <Filter>Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Chat.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\GMTicket.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Level0.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Level1.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Level2.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Level3.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\QuestCommands.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\RecallCommands.cpp">
+      <Filter>Chat\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\LocalizationMgr.cpp">
+      <Filter>Client Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Opcodes.cpp">
+      <Filter>Client Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WorldSession.cpp">
+      <Filter>Client Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WorldSocket.cpp">
+      <Filter>Client Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\AreaTrigger.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\TerrainMgr.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WeatherMgr.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WorldStateManager.cpp">
+      <Filter>Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\EventMgr.cpp">
+      <Filter>Interserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ObjectMgr.cpp">
+      <Filter>Interserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ObjectStorage.cpp">
+      <Filter>Interserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\LogonCommClient.cpp">
+      <Filter>Interserver\Logon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\LogonCommHandler.cpp">
+      <Filter>Interserver\Logon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\World.cpp">
+      <Filter>Map System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WorldRunnable.cpp">
+      <Filter>Map System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Map.cpp">
+      <Filter>Map System\Map Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\MapCell.cpp">
+      <Filter>Map System\Map Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\MapMgr.cpp">
+      <Filter>Map System\Map Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\MapScriptInterface.cpp">
+      <Filter>Map System\Map Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\WorldCreator.cpp">
+      <Filter>Map System\Map Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\DynamicObject.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\EventableObject.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\GameObject.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Object.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Container.cpp">
+      <Filter>Objects\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Item.cpp">
+      <Filter>Objects\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Corpse.cpp">
+      <Filter>Objects\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Creature.cpp">
+      <Filter>Objects\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Pet.cpp">
+      <Filter>Objects\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Player.cpp">
+      <Filter>Objects\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Unit.cpp">
+      <Filter>Objects\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\CharacterHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\CombatHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\DuelHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\GroupHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\GuildHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\HonorHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ItemHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\LfgHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\MiscHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\MovementHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\NPCHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\PetHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\PlayerPacketWrapper.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\QueryHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\QuestHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\RaidHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ReputationHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\SkillHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\SocialHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\TaxiHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\TradeHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\TransporterHandler.cpp">
+      <Filter>Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\AddonMgr.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\AuctionHouse.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\AuctionMgr.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\DayWatcherThread.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Group.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Guild.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\ItemInterface.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\LfgMgr.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\LootMgr.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\MailSystem.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Quest.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\QuestMgr.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Stats.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\TaxiMgr.cpp">
+      <Filter>Player Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\Spell.cpp">
+      <Filter>Spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\SpellAuras.cpp">
+      <Filter>Spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\SpellEffects.cpp">
+      <Filter>Spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\SpellFixes.cpp">
+      <Filter>Spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\SpellHandler.cpp">
+      <Filter>Spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\SpellTarget.cpp">
+      <Filter>Spell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\onyx-world\StdAfx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\onyx-world\ConsoleCommands.h">
+      <Filter>Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Master.h">
+      <Filter>Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\BaseConsole.h">
+      <Filter>Launcher\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\CConsole.h">
+      <Filter>Launcher\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Arenas.h">
+      <Filter>Battlegrounds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ArenaTeam.h">
+      <Filter>Battlegrounds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\BattlegroundMgr.h">
+      <Filter>Battlegrounds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\EyeOfTheStorm.h">
+      <Filter>Battlegrounds\2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\AlteracValley.h">
+      <Filter>Battlegrounds\1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ArathiBasin.h">
+      <Filter>Battlegrounds\1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WarsongGulch.h">
+      <Filter>Battlegrounds\1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\faction.h">
+      <Filter>Brains</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ScriptMgr.h">
+      <Filter>Brains</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ScriptSetup.h">
+      <Filter>Brains</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\AIInterface.h">
+      <Filter>Brains\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Channel.h">
+      <Filter>Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ChannelMgr.h">
+      <Filter>Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WordFilter.h">
+      <Filter>Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Chat.h">
+      <Filter>Chat\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\LocalizationMgr.h">
+      <Filter>Client Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\NameTables.h">
+      <Filter>Client Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Opcodes.h">
+      <Filter>Client Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WorldSession.h">
+      <Filter>Client Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WorldSocket.h">
+      <Filter>Client Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\AreaTrigger.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\TerrainMgr.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WeatherMgr.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WorldStateManager.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WorldStates.h">
+      <Filter>Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\EventMgr.h">
+      <Filter>Interserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ObjectMgr.h">
+      <Filter>Interserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ObjectStorage.h">
+      <Filter>Interserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\LogonCommClient.h">
+      <Filter>Interserver\Logon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\LogonCommHandler.h">
+      <Filter>Interserver\Logon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\World.h">
+      <Filter>Map System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WorldRunnable.h">
+      <Filter>Map System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\CellHandler.h">
+      <Filter>Map System\Map Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Map.h">
+      <Filter>Map System\Map Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\MapCell.h">
+      <Filter>Map System\Map Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\MapMgr.h">
+      <Filter>Map System\Map Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\MapScriptInterface.h">
+      <Filter>Map System\Map Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\WorldCreator.h">
+      <Filter>Map System\Map Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\DynamicObject.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\EventableObject.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\GameObject.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Object.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Container.h">
+      <Filter>Objects\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Item.h">
+      <Filter>Objects\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Corpse.h">
+      <Filter>Objects\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Creature.h">
+      <Filter>Objects\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Pet.h">
+      <Filter>Objects\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Player.h">
+      <Filter>Objects\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Unit.h">
+      <Filter>Objects\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\HonorHandler.h">
+      <Filter>Packet Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\NPCHandler.h">
+      <Filter>Packet Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Packets.h">
+      <Filter>Packet Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\TransporterHandler.h">
+      <Filter>Packet Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\AddonMgr.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\AuctionHouse.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\AuctionMgr.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\DayWatcherThread.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Group.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Guild.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ItemInterface.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\ItemPrototype.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\LfgMgr.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\LootMgr.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\MailSystem.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Quest.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\QuestMgr.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\SkillNameMgr.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Stats.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\TaxiMgr.h">
+      <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\Spell.h">
+      <Filter>Spell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\SpellAuras.h">
+      <Filter>Spell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\SpellFailure.h">
+      <Filter>Spell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\onyx-world\StdAfx.h" />
+    <ClInclude Include="..\..\src\onyx-world\UpdateFields.h" />
+    <ClInclude Include="..\..\src\onyx-world\UpdateMask.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\onyx-world\icon.ico">
+      <Filter>Launcher\Additionals</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\src\onyx-world\resources.rc">
+      <Filter>Launcher\Additionals</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
