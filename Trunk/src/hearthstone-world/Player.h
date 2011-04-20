@@ -1873,14 +1873,15 @@ public:
 		m_lastFlySpeed = m_flySpeed;
 	}
 
-	void RemoteRevive()
+	void RemoteRevive(bool hp = true)
 	{
 		ResurrectPlayer();
 		SetMovement(MOVE_UNROOT, 5);
 		SetPlayerSpeed(RUN, (float)7);
 		SetPlayerSpeed(SWIM, (float)4.9);
 		SetMovement(MOVE_LAND_WALK, 8);
-		SetUInt32Value(UNIT_FIELD_HEALTH, GetUInt32Value(UNIT_FIELD_MAXHEALTH) );
+		if(hp)
+			SetUInt32Value(UNIT_FIELD_HEALTH, GetUInt32Value(UNIT_FIELD_MAXHEALTH) );
 	}
 
 	void ResetSpeedHack();

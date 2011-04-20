@@ -20,6 +20,8 @@
 #ifndef LOGONCOMMHANDLER_H
 #define LOGONCOMMHANDLER_H
 
+extern bool bServerShutdown;
+
 typedef struct
 {
 	uint32 ID;
@@ -180,7 +182,7 @@ public:
 	bool run()
 	{
 		sLogonCommHandler.Connect();
-		while( m_threadRunning )
+		while( !bServerShutdown && m_threadRunning )
 		{
 			sLogonCommHandler.UpdateSockets();
 #ifdef WIN32

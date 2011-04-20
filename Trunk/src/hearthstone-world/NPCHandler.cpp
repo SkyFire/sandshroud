@@ -147,7 +147,9 @@ void WorldSession::SendTrainerList(Creature* pCreature)
 	{
 		pSpell = &(*itr);
 		Status = TrainerGetSpellStatus(pSpell);
-		if( pSpell->pCastRealSpell != NULL )
+		if(Status == TRAINER_STATUS_NOT_AVAILABLE)
+			continue; // Don't bother sending shit.
+		else if( pSpell->pCastRealSpell != NULL )
 			data << pSpell->pCastRealSpell->Id;
 		else if( pSpell->pLearnSpell )
 			data << pSpell->pLearnSpell->Id;
@@ -156,7 +158,7 @@ void WorldSession::SendTrainerList(Creature* pCreature)
 
 		data << Status;
 		data << pSpell->Cost;
-		data << Spacer;
+		data << uint32((pSpell->IsProfession && Status == TRAINER_STATUS_LEARNABLE) ? 1 : 0);
 		data << uint32(pSpell->IsProfession);
 		data << uint8(pSpell->RequiredLevel);
 		data << pSpell->RequiredSkillLine;
@@ -271,20 +273,26 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 {
 	if(!pSpell->pCastSpell && !pSpell->pLearnSpell)
-		return TRAINER_STATUS_NOT_LEARNABLE;
+		return TRAINER_STATUS_NOT_AVAILABLE;
 
 	// Spells with the same names
 	SpellEntry* namehashSP = NULL;
-	if( pSpell->pCastRealSpell && ( _player->HasSpell(pSpell->pCastRealSpell->Id)
-		|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pCastRealSpell->NameHash))
-		&& (namehashSP->RankNumber ? namehashSP->RankNumber > pSpell->pCastRealSpell->RankNumber : false)) ) )
-		return TRAINER_STATUS_ALREADY_HAVE;
+	if( pSpell->pCastRealSpell )
+	{
+		if( _player->HasSpell(pSpell->pCastRealSpell->Id)
+			|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pCastRealSpell->NameHash))
+			&& (namehashSP->RankNumber ? namehashSP->RankNumber > pSpell->pCastRealSpell->RankNumber : false)) )
+			return TRAINER_STATUS_ALREADY_HAVE;
+	}
 
 	namehashSP = NULL;
-	if( pSpell->pLearnSpell && (_player->HasSpell(pSpell->pLearnSpell->Id)
-		|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pLearnSpell->NameHash))
-		&& (namehashSP->RankNumber ? namehashSP->RankNumber > pSpell->pLearnSpell->RankNumber : false)) ) )
-		return TRAINER_STATUS_ALREADY_HAVE;
+	if( pSpell->pLearnSpell)
+	{
+		if( _player->HasSpell(pSpell->pLearnSpell->Id)
+			|| ((namehashSP = _player->GetSpellWithNamehash(pSpell->pLearnSpell->NameHash))
+			&& (namehashSP->RankNumber ? namehashSP->RankNumber > pSpell->pLearnSpell->RankNumber : false)) )
+			return TRAINER_STATUS_ALREADY_HAVE;
+	}
 
 	// Spells with different names
 	if((pSpell->pLearnSpell && _player->HasHigherSpellForSkillLine(pSpell->pLearnSpell))

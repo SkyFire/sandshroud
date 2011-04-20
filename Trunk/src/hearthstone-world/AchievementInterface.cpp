@@ -442,6 +442,7 @@ bool AchievementInterface::IsHardCoded(AchievementEntry * ae)
 	case 16: // Skill shit, it's broken, so disable it.
 	case 2398: // 4th Anniversary
 	case 2716: // Dual Talent Specialization
+	case 2772: // Tilted!
 	case 4400: // 5th Anniversary
 	case 4402: // More Dots! (10 player)
 	case 4403: // Many Whelps! Handle It! (10 player)

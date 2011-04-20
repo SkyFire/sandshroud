@@ -568,8 +568,8 @@ struct skilllinespell //SkillLineAbility.dbc
 	uint32 spell;				//3
 	uint32 racemask;			// 4 m_raceMask
 	uint32 classmask;			// 5 m_classMask
-//	uint32 racemaskNot;			// 6 m_excludeRace
-//	uint32 classmaskNot;		// 7 m_excludeClass
+	uint32 racemaskNot;			// 6 m_excludeRace
+	uint32 classmaskNot;		// 7 m_excludeClass
 	uint32 req_skill_value;		// 8 m_minSkillLineRank
 	uint32 next;				//9
 	uint32 minrank;				//10

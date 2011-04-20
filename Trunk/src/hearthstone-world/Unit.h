@@ -709,6 +709,8 @@ public:
 
 	void OnRemoveFromWorld();											// called when we are removed from world, kills all references to us.
 
+	void Vanish(uint32 guidLow);
+
 	HEARTHSTONE_INLINE void Vanished()
 	{
 		ClearAttackers();

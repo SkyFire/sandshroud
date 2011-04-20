@@ -2196,8 +2196,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	}
 
 	uint32 health = pVictim->GetUInt32Value(UNIT_FIELD_HEALTH );
-
-	if(health <= damage && pVictim->IsPlayer() && pVictim->getClass() == ROGUE && pVictim->m_CustomTimers[CUSTOM_TIMER_CHEATDEATH] <= getMSTime() )
+	if(pVictim->getClass() == ROGUE && health <= damage && pVictim->IsPlayer() && pVictim->m_CustomTimers[CUSTOM_TIMER_CHEATDEATH] <= getMSTime() )
 	{
 		Player* plrVictim = TO_PLAYER(pVictim);
 		uint32 rank = plrVictim->m_cheatDeathRank;
@@ -2231,17 +2230,13 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel();
 
 			// surrender emote
-			pVictim->Emote(EMOTE_ONESHOT_BEG);			// Animation
+			TO_PLAYER(pVictim)->Emote(EMOTE_ONESHOT_BEG);			// Animation
 
 			// Player in Duel and Player Victim has lost
-			uint32 NewHP = pVictim->GetUInt32Value(UNIT_FIELD_MAXHEALTH)/100;
+			TO_PLAYER(pVictim)->CombatStatus.Vanish(GetLowGUID());
+			TO_PLAYER(this)->CombatStatus.Vanish(pVictim->GetLowGUID());
 
-			if(NewHP < 5)
-				NewHP = 5;
-
-			//Set there health to 1% or 5 if 1% is lower then 5
-			pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, NewHP);
-			return;
+			damage = health-5;
 		}
 		else if(pVictim->IsPlayer() && (health <= damage) && TO_PLAYER(pVictim)->DuelingWith != NULL && TO_PLAYER(pVictim)->DuelingWith != TO_PLAYER(this))
 		{
@@ -2754,9 +2749,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		{
 			// Send AI Reaction UNIT vs UNIT
 			if( GetTypeId() == TYPEID_UNIT )
-			{
 				TO_UNIT(this)->GetAIInterface()->AttackReaction( pVictim, damage, spellId );
-			}
 
 			// Send AI Victim Reaction
 			if( IsPlayer() || GetTypeId() == TYPEID_UNIT )

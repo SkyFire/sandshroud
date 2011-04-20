@@ -6600,6 +6600,18 @@ Unit* CombatStatusHandler::GetKiller()
 	return (m_Unit->IsInWorld()) ? m_Unit->GetMapMgr()->GetUnit(killer_guid) : NULLUNIT;
 }
 
+void CombatStatusHandler::Vanish(uint32 guidLow)
+{
+	Unit* pt = m_Unit->GetMapMgr()->GetUnit(guidLow);
+	if(pt)
+	{
+		pt->CombatStatus.m_attackTargets.erase(m_Unit->GetGUID());
+		pt->CombatStatus.m_attackers.erase(m_Unit->GetGUID());
+		pt->CombatStatus.UpdateFlag();
+	}
+	DamageMap.erase(guidLow);
+}
+
 void CombatStatusHandler::ClearAttackers()
 {
 	// this is a FORCED function, only use when the reference will be destroyed.
