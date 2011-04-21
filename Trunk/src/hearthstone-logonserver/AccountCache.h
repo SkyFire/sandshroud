@@ -193,6 +193,7 @@ typedef struct Realm
 	float Population;
 	uint8 Lock;
 	bool staticrealm;
+	uint32 RequiredClient;
 	Mutex m_charMapLock;
 	HM_NAMESPACE::hash_map<uint32, uint8> CharacterMap;
 	LogonCommServerSocket *ServerSocket;

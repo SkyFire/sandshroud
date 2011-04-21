@@ -65,6 +65,7 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 	data << realm->Icon;
 	data << realm->WorldRegion;
 	data << realm->Population;
+	data << uint32(CL_BUILD_SUPPORT);
 	data << realm->Lock;
 	Socket->SendPacket(&data);
 }

@@ -508,6 +508,9 @@ void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
 
 void InformationCore::SendRealms(AuthSocket * Socket)
 {
+	Realm* realm = NULL;
+	HM_NAMESPACE::hash_map<uint32, uint8>::iterator it;
+	map<uint32, Realm*>::iterator itr = m_realms.begin();
 	if(Socket->GetBuild() <= 6005) // PreBC
 	{
 		// packet header
@@ -520,20 +523,24 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 
 		// loop realms :/
 		data << uint8(m_realms.size());
-		map<uint32, Realm*>::iterator itr = m_realms.begin();
 		for(; itr != m_realms.end(); ++itr)
 		{
-			data << uint32(itr->second->Icon);
-			data << uint8(itr->second->Colour);		
+			realm = itr->second;
+			if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
+				continue;
+
+			data << uint32(realm->Icon);
+			data << uint8(realm->Colour);		
 
 			// This part is the same for all.
-			data << itr->second->Name;
-			data << itr->second->Address;
-			data << itr->second->Population;
+			data << realm->Name;
+			data << realm->Address;
+			data << realm->Population;
 
 			/* Get our character count */
-			data << uint8(0); //We can fix this later, character count. 
-			data << uint8(itr->second->WorldRegion);
+			it = realm->CharacterMap.find(Socket->GetAccountID());
+			data << uint8( (it == realm->CharacterMap.end()) ? 0 : it->second ); //We can fix this later, character count. 
+			data << uint8(realm->WorldRegion);
 			data << uint8(0);	// Online/Offline?
 		}
 		realmLock.Release();
@@ -565,10 +572,6 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 
 	// dunno what this is..
 	data << uint32(0);
-
-	map<uint32, Realm*>::iterator itr = m_realms.begin();
-	HM_NAMESPACE::hash_map<uint32, uint8>::iterator it;
-	Realm* realm = NULL;
 	size_t count_pos = data.wpos();
 	uint16 count = uint16(m_realms.size());
 	data << uint16(count);
@@ -577,7 +580,10 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	for(; itr != m_realms.end(); ++itr)
 	{
 		realm = itr->second;
-		if( !isGM && itr->second->Population == 0 ) // Crow: Thanks Egari.
+		if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
+			continue;
+
+		if( !isGM && realm->Population == 0 ) // Crow: Thanks Egari.
 		{
 			count -= 1;
 			realm = NULL;

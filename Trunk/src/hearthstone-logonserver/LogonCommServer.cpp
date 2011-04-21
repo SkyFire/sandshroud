@@ -205,15 +205,19 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	}
 
 	Realm * realm = new Realm;
-
 	realm->Name = Name;
 	realm->Colour = 0;
+	realm->RequiredClient = 0;
 	realm->ServerSocket = this;
 	recvData >> realm->Address;
 	uint16 tester = 0;
 	recvData >> tester;
 	if(tester == 0x042) // Sandshroud :D
+	{
 		recvData >> realm->Icon >> realm->WorldRegion >> realm->Population;
+		if(recvData.rpos() + 2 < recvData.size())
+			recvData >> realm->RequiredClient;
+	}
 	else if(tester == 0) // ArcEmu's Colour
 	{
 		uint32 icon32 = 0;
