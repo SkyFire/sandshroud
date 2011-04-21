@@ -267,6 +267,8 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 	pendingLock.Acquire();
 
 	WorldPacket data(RCMSG_REQUEST_SESSION, 100);
+	data << int32(-42);
+	data << server->ID;
 	data << request_id;
 
 	// strip the shitty hash from it

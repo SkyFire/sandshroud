@@ -526,11 +526,12 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		for(; itr != m_realms.end(); ++itr)
 		{
 			realm = itr->second;
-			if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
-				continue;
 
 			data << uint32(realm->Icon);
-			data << uint8(realm->Colour);		
+			if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
+				data << uint8(REALMCOLOUR_OFFLINE);
+			else
+				data << uint8(realm->Colour);
 
 			// This part is the same for all.
 			data << realm->Name;
@@ -541,7 +542,10 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 			it = realm->CharacterMap.find(Socket->GetAccountID());
 			data << uint8( (it == realm->CharacterMap.end()) ? 0 : it->second ); //We can fix this later, character count. 
 			data << uint8(realm->WorldRegion);
-			data << uint8(0);	// Online/Offline?
+			if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
+				data << uint8(1);
+			else
+				data << uint8(0);
 		}
 		realmLock.Release();
 
@@ -580,9 +584,6 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	for(; itr != m_realms.end(); ++itr)
 	{
 		realm = itr->second;
-		if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
-			continue;
-
 		if( !isGM && realm->Population == 0 ) // Crow: Thanks Egari.
 		{
 			count -= 1;
@@ -591,8 +592,17 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		}
 
 		data << realm->Icon;
-		data << uint8(0);
-		data << realm->Colour;
+		if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
+		{
+			data << uint8(1);
+			data << uint8(REALMCOLOUR_OFFLINE);
+		}
+		else
+		{
+			data << realm->Lock;
+			data << realm->Colour;
+		}
+
 		data << realm->Name;
 		data << realm->Address;
 		data << realm->Population-1.0f;

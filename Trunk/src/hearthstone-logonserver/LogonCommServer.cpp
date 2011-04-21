@@ -287,9 +287,17 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 
 void LogonCommServerSocket::HandleSessionRequest(WorldPacket & recvData)
 {
-	uint32 request_id;
 	string account_name;
-	recvData >> request_id;
+	int32 identifier = 0;
+	uint32 serverid = 0, request_id = 0;
+	recvData >> identifier;
+	if(identifier != -42)
+		request_id = identifier;
+	else
+	{
+		recvData >> serverid;
+		recvData >> request_id;
+	}
 	recvData >> account_name;
 
 	// get sessionkey!
@@ -297,6 +305,13 @@ void LogonCommServerSocket::HandleSessionRequest(WorldPacket & recvData)
 	Account * acct = sAccountMgr.GetAccount(account_name);
 	if(acct == NULL || acct->SessionKey == NULL || acct == NULL )
 		error = 1;		  // Unauthorized user.
+
+	if(serverid)
+	{
+		Realm* realm = sInfoCore.GetRealm(serverid);
+		if(realm != NULL && realm->Lock)
+			error = 1; // Unauthorized user.
+	}
 
 	// build response packet
 	WorldPacket data(RSMSG_SESSION_RESULT, 150);
