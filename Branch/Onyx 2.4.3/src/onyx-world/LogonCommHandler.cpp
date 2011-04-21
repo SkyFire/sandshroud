@@ -51,6 +51,7 @@ LogonCommClientSocket * LogonCommHandler::ConnectToLogon(string Address, uint32 
 
 void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 {
+	Realm * realm = NULL;
 	set<Realm*>::iterator itr = realms.begin();
 	WorldPacket data(RCMSG_REGISTER_REALM, 100);
 	for(; itr != realms.end(); ++itr)
@@ -58,14 +59,15 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 		data.clear();
 
 		// Add realm to the packet
-		Realm * realm = *itr;
+		realm = *itr;
 		data << realm->Name;
 		data << realm->Address;
+		data << uint16(0x042); // Six by nine. Forty two.
 		data << realm->Icon;
 		data << realm->WorldRegion;
 		data << realm->Population;
+		data << CL_BUILD_SUPPORT;
 		data << realm->Lock;
-
 		Socket->SendPacket(&data,false);
 	}
 }

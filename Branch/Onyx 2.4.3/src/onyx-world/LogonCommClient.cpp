@@ -114,7 +114,7 @@ void LogonCommClientSocket::HandlePacket(WorldPacket & recvData)
 
 	if(recvData.GetOpcode() >= RMSG_COUNT || Handlers[recvData.GetOpcode()] == 0)
 	{
-		printf("Got unknwon packet from logoncomm: %u\n", recvData.GetOpcode());
+		printf("Got unknown packet from logoncomm: %u\n", recvData.GetOpcode());
 		return;
 	}
 
@@ -123,13 +123,18 @@ void LogonCommClientSocket::HandlePacket(WorldPacket & recvData)
 
 void LogonCommClientSocket::HandleRegister(WorldPacket & recvData)
 {
-	uint32 realmlid;
 	uint32 error;
+	uint32 realmlid;
 	string realmname;
 	recvData >> error >> realmlid >> realmname;
+	if(error || realmlid == 0) // Adress already used, or realm is active on our slot/name
+	{
+		// FUUUUU
+		return;
+	}
 
 	Log.Notice("LogonCommClient", "Realm `%s` registered as realm %u.", realmname.c_str(), realmlid);
-	LogonCommHandler::getSingleton().AdditionAck(_id, realmlid);
+	sLogonCommHandler.AdditionAck(_id, realmlid);
 	realm_ids.insert(realmlid);
 }
 

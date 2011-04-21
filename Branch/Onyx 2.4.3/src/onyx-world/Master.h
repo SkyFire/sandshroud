@@ -27,8 +27,10 @@
 #include "MainServerDefines.h"
 
 #ifndef _VERSION
-# define _VERSION "2.0.x"
+# define _VERSION "2.4.3"
 #endif
+
+#define CL_BUILD_SUPPORT 8606
 
 #if PLATFORM == PLATFORM_WIN32
 # define _FULLVERSION _VERSION "-SVN (Win32)"
