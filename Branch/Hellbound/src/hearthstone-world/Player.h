@@ -517,9 +517,6 @@ struct PlayerInfo
 	uint32 lastLevel;
 	Group * m_Group;
 	int8 subGroup;
-#ifdef VOICE_CHAT
-	int8 groupVoiceId;
-#endif
 
 	Player* m_loggedInPlayer;
 	Guild * guild;

@@ -636,46 +636,12 @@ void Session::HandleReadyForAccountDataTimes(WorldPacket & pck)
 
 void Session::HandleEnableMicrophoneOpcode(WorldPacket & pck)
 {
-#ifdef VOICE_CHAT
-	OUT_DEBUG("WORLD: Received CMSG_VOICE_SESSION_ENABLE with VOICE CHAT");
-	uint8 voice, mic;
-	pck >> voice >> mic;
-
-	WorldPacket data(SMSG_VOICE_SESSION_ENABLE, 2);
-	data << voice;
-	data << mic;
-	SendPacket(&data);
-#else
 	SKIP_READ_PACKET(pck);
-#endif
 }
 
 void Session::HandleVoiceChatQueryOpcode(WorldPacket & pck)
 {
-#ifdef VOICE_CHAT
-	uint8 type;
-	uint32 id; // I think this is channel crap, 5 is custom,
-
-	pck >> type >> id;
-
-/*	if(type == 5)
-	{
-		// custom channel
-		Channel * chn = channelmgr.GetChannel(id);
-
-		if(chn == NULL)
-			return;
-
-		if(chn->m_general || !chn->voice_enabled)
-			return;
-
-		chn->JoinVoiceChannel(_player);
-		chn->List(_player);
-		_player->watchedchannel = chn;
-	}*/
-#else
 	SKIP_READ_PACKET(pck);
-#endif
 }
 
 void Session::HandleRealmSplitQuery(WorldPacket & pck)
