@@ -1,0 +1,1 @@
+ALTER TABLE `items`  ADD COLUMN `ItemLimitCategory` INT(10) NULL DEFAULT '0' AFTER `ArmorDamageModifier`,  ADD COLUMN `HolidayId` INT(10) NULL DEFAULT '0' AFTER `ItemLimitCategory`;

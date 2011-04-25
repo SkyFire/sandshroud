@@ -1,0 +1,1 @@
+ALTER TABLE `vendors`  ADD COLUMN `isdependent` INT(3) UNSIGNED NOT NULL DEFAULT '1';

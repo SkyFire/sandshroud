@@ -1,0 +1,1 @@
+ALTER TABLE `quests`  ADD COLUMN `reward_arenapoints` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `IsRepeatable`,  ADD COLUMN `start_phase` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `reward_arenapoints`,  ADD COLUMN `complete_phase` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `start_phase`;

@@ -1,0 +1,1 @@
+ALTER TABLE `gameobject_names`  ADD COLUMN `IconName` VARCHAR(100) NOT NULL AFTER `Name`,  ADD COLUMN `CastBarText` VARCHAR(100) NOT NULL AFTER `IconName`;
