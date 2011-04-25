@@ -21,6 +21,7 @@
 #include "../hearthstone-shared/AuthCodes.h"
 
 #pragma pack(push, 1)
+
 struct ClientPktHeader
 {
 	uint16 size;
@@ -30,11 +31,12 @@ struct ClientPktHeader
 struct ServerPktHeader
 {
 	uint16 size;
-	uint16 cmd;
+	uint32 cmd;
 };
+
 #pragma pack(pop)
 
-WorldSocket::WorldSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, WORLDSOCKET_SENDBUF_SIZE, WORLDSOCKET_RECVBUF_SIZE, false, peer)
+ClientSocket::ClientSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, CLIENTSOCKET_SENDBUF_SIZE, CLIENTSOCKET_RECVBUF_SIZE, false, peer)
 {
 	mSize = mOpcode = mRemaining = 0;
 	_latency = 0;
@@ -44,12 +46,12 @@ WorldSocket::WorldSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, WO
 	Authed = false;
 }
 
-WorldSocket::~WorldSocket()
+ClientSocket::~ClientSocket()
 {
 
 }
 
-void WorldSocket::OnDisconnect()
+void ClientSocket::OnDisconnect()
 {
 	if(mRequestID != 0)
 	{
@@ -58,7 +60,7 @@ void WorldSocket::OnDisconnect()
 	}
 }
 
-void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
+void ClientSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 {
 	bool rv;
 	if(opcode == 0 || !IsConnected())
@@ -74,37 +76,62 @@ void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
     _crypt.EncryptSend((uint8*)&Header, sizeof (ServerPktHeader));
 
 	// Pass the header to our send buffer
-	rv = Write((const uint8*)&Header, 4);
+	rv = WriteButHold((const uint8*)&Header, 4);
 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(len > 0 && rv)
 	{
 		rv = Write((const uint8*)data, (uint32)len);
 	}
+	else if(rv)
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 }
 
-void WorldSocket::OnConnect()
+void ClientSocket::OnConnect()
 {
+	MasterServer* ms = sClusterMgr.GetMasterServer();
+	if(ms == NULL)
+	{
+		OutPacket(SMSG_AUTH_RESPONSE, 1, "\x0D");
+		return;
+	}
+
 	_latency = getMSTime();
-	WorldPacket data (SMSG_AUTH_CHALLENGE, 25);
+	// Crow: This is the general shit we need, but it definitely won't work this way.
+	WorldPacket data(SMSG_REDIRECT_CLIENT, 30);
+
+	uint32 ip2 = inet_addr(Config.ClusterConfig.GetStringDefault("Realm", "Address", "127.0.0.1").c_str());
+	uint32 port = Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129);
+    WorldPacket pkt(SMSG_REDIRECT_CLIENT, 4 + 2 + 4 + 20);
+
+    pkt << uint32(ip2);                                     // inet_addr(ipstr)
+    pkt << uint16(port);                                    // port
+
+    pkt << uint32(GetLatency());                            // latency-related?
+
+	Sha1Hash sha1;
+    sha1.UpdateData((uint8*)&ip2, 4);
+    sha1.UpdateData((uint8*)&port, 2);
+    sha1.Finalize();
+    data.append(sha1.GetDigest(), 20);                       // hmacsha1(ip+port) w/ sessionkey as seed
+
+	data.Initialize(SMSG_AUTH_CHALLENGE);
+	data << uint32(1);			// 4
 	data << uint32(1);			// Unk
 	data << mSeed;
+	data << uint32(0);			// 4
+	data << uint8(1);			// 4
 	data << uint32(0xF3539DA3);	// Generated Random.
 	data << uint32(0x6E8547B9);	// 3.2.2
 	data << uint32(0x9A6AA2F8);	// 3.2.2
 	data << uint32(0xA4F170F4);	// 3.2.2
-#ifdef CATACLYSM
 	data << uint32(0xF3632DA3);	// 4
-	data << uint32(0x278BB343);	// 4
-	data << uint32(0x97EEF2F8);	// 4
-	data << uint32(0x82FE26F4);	// 4
-#endif
 	SendPacket(&data);
 }
 
-void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
+void ClientSocket::_HandleAuthSession(WorldPacket* recvPacket)
 {
 	std::string account;
 	uint32 unk;
@@ -139,7 +166,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
-
 	if(mRequestID == 0xFFFFFFFF)
 	{
 		Disconnect();
@@ -151,7 +177,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 	m_fullAccountName = new string(account);
 }
 
-void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
+void ClientSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 requestid)
 {
 	if(requestid != mRequestID)
 		return;
@@ -175,7 +201,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 	recvData >> AccountID >> AccountName >> GMFlags >> AccountFlags;
 
-	DEBUG_LOG( "WorldSocket","Received information packet from logon: `%s` ID %u (request %u)", AccountName.c_str(), AccountID, mRequestID);
+	DEBUG_LOG( "ClientSocket","Received information packet from logon: `%s` ID %u (request %u)", AccountName.c_str(), AccountID, mRequestID);
 //	sLog.outColor(TNORMAL, "\n");
 
 	mRequestID = 0;
@@ -240,10 +266,10 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	Authenticate();
 }
 
-void WorldSocket::Authenticate()
+void ClientSocket::Authenticate()
 {
 	delete pAuthenticationPacket;
-	pAuthenticationPacket = 0;
+	pAuthenticationPacket = NULL;
 
 	if(m_session->m_accountFlags & 16)
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x02");
@@ -253,12 +279,12 @@ void WorldSocket::Authenticate()
 		OutPacket(SMSG_AUTH_RESPONSE, 11, "\x0C\x30\x78\x00\x00\x00\x00\x00\x00\x00\x00");
 }
 
-void WorldSocket::_HandlePing(WorldPacket* recvPacket)
+void ClientSocket::_HandlePing(WorldPacket* recvPacket)
 {
 	uint32 ping;
 	if(recvPacket->size() < 4)
 	{
-		sLog.outString("Socket closed due to incomplete ping packet.");
+		Log.Notice("", "Socket closed due to incomplete ping packet.");
 		Disconnect();
 		return;
 	}
@@ -268,7 +294,7 @@ void WorldSocket::_HandlePing(WorldPacket* recvPacket)
 	OutPacket(SMSG_PONG, 4, &ping);
 }
 
-void WorldSocket::OnRead()
+void ClientSocket::OnRead()
 {
 	for(;;)
 	{
@@ -283,7 +309,7 @@ void WorldSocket::OnRead()
 
 			// Copy from packet buffer into header local var
 			ClientPktHeader Header;
-			Read(&Header, 6);
+			GetReadBuffer()->Read(&Header, 6);
 
 			// Decrypt the header
 			_crypt.DecryptRecv((uint8*)&Header, sizeof (ClientPktHeader));
@@ -306,24 +332,22 @@ void WorldSocket::OnRead()
 		Packet = new WorldPacket(mOpcode, mSize);
 		if(mRemaining > 0)
 		{
-			Packet->resize(mRemaining);
-			Read((uint8*)Packet->contents(), mRemaining);
+			// Copy from packet buffer into our actual buffer.
+			Packet->resize(mSize);
+			GetReadBuffer()->Read((uint8*)Packet->contents(), mRemaining);
 		}
 
 		/*sWorldLog.LogPacket(mSize, mOpcode, mSize ? Packet->contents() : NULL, 0);*/
 		mRemaining = mSize = mOpcode = 0;
 
 		// Check for packets that we handle
-		DEBUG_LOG("WorldSocket","Received Opcode: %u", Packet->GetOpcode());
+		DEBUG_LOG("ClientSocket","Received Opcode: %u", Packet->GetOpcode());
 		switch(Packet->GetOpcode())
 		{
 		case CMSG_PING:
 			{
-				if(!m_session->m_currentPlayer)
-				{
+				if(!m_session->OnMasterServer)
 					_HandlePing(Packet);
-					delete Packet;
-				}
 				else
 					m_session->QueuePacket(Packet);
 			}break;

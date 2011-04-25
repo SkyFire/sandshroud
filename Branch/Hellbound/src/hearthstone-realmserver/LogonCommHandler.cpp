@@ -184,7 +184,8 @@ void LogonCommHandler::UpdateSockets()
 		cs = itr->second;
 		if(cs != 0)
 		{
-			if(!pings) continue;
+			if(!pings)
+				continue;
 
 			if(cs->last_pong < t && ((t - cs->last_pong) > 60))
 			{
@@ -231,7 +232,7 @@ void LogonCommHandler::ConnectionDropped(uint32 ID)
 	mapLock.Release();
 }
 
-uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socket)
+uint32 LogonCommHandler::ClientConnected(string AccountName, ClientSocket * Socket)
 {
 	uint32 request_id = next_request++;
 	printf( " >> sending request for account information: `%s` (request %u).", AccountName.c_str(), request_id);

@@ -17,26 +17,29 @@
  *
  */
 
-class WServer;
-class Session;
-class WSSocket : public TcpSocket
+#ifndef _WORKER_OPCODES_H
+#define _WORKER_OPCODES_H
+
+enum WorkerServerOpcodes
 {
-	bool _authenticated;
-	uint32 _remaining;
-	uint16 _cmd;
-	WServer * _ws;
-public:
-	uint32 m_id;
+	IWSMSG_SERVER_PING		= 1,
+	IMSMSG_SERVER_PONG		= 2,
 
-	WSSocket(SOCKET fd, const sockaddr_in * peer);
-	~WSSocket();
+	IMSG_PLAYER_TRANSFER	= 3,
 
-	void SendPacket(WorldPacket * pck);
-	void SendWoWPacket(Session * from, WorldPacket * pck);
-	void OnRead();
+	IWSMSG_AUTH_REQUEST		= 4,
+	IMSMSG_AUTH_REPLY		= 5,
+	IWSMSG_AUTH_RESULT		= 6,
 
-	void HandleAuthRequest(WorldPacket & pck);
-	void HandleRegisterWorker(WorldPacket & pck);
-	void OnConnect();
+	IMSMSG_REGISTER_MASTER	= 7,
+	IWSMSG_REGISTER_RESULT	= 8,
 
+	IMSMSG_WOW_PACKET		= 9,
+	IWSMSG_WOW_PACKET		= 10,
+
+	IMSG_NUM_TYPES
 };
+
+#endif		// _WORKER_OPCODES_H
+
+

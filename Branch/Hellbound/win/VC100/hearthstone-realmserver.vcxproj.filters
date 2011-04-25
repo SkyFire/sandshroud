@@ -10,14 +10,11 @@
     <Filter Include="Manager">
       <UniqueIdentifier>{1b1f50be-a52e-4831-b437-8cb10b424d77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Worker Server">
-      <UniqueIdentifier>{a5301485-bcf5-4ae4-93d9-429576a1639b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Defines">
-      <UniqueIdentifier>{abbd1487-3c34-48b8-9c0e-efeabb5683a8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Storage">
       <UniqueIdentifier>{a7021509-7700-4f02-a9ff-176011a2f838}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MasterServer">
+      <UniqueIdentifier>{69f18727-14f9-4987-accc-2740b2ec037a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,13 +27,7 @@
     <ClCompile Include="..\..\src\hearthstone-realmserver\CharacterHandler.cpp">
       <Filter>Client</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\QueryHandler.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\Session.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\WorldSocket.cpp">
       <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\ClientManager.cpp">
@@ -45,19 +36,19 @@
     <ClCompile Include="..\..\src\hearthstone-realmserver\ClusterManager.cpp">
       <Filter>Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\WorkerServer.cpp">
-      <Filter>Worker Server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\WorkerServerSocket.cpp">
-      <Filter>Worker Server</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\ObjectStorage.cpp">
       <Filter>Storage</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\Master.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\RStdAfx.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\Main.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-realmserver\Player.cpp">
+    <ClCompile Include="..\..\src\hearthstone-realmserver\MasterServer.cpp">
+      <Filter>MasterServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\MasterServerSocket.cpp">
+      <Filter>MasterServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\ClientSocket.cpp">
       <Filter>Client</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,33 +62,28 @@
     <ClInclude Include="..\..\src\hearthstone-realmserver\Session.h">
       <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-realmserver\WorldSocket.h">
-      <Filter>Client</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\ClientManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\ClusterManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-realmserver\WorkerOpcodes.h">
-      <Filter>Worker Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-realmserver\WorkerServer.h">
-      <Filter>Worker Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-realmserver\WorkerServerSocket.h">
-      <Filter>Worker Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-realmserver\Structures.h">
-      <Filter>Defines</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\ObjectStorage.h">
       <Filter>Storage</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\Master.h" />
     <ClInclude Include="..\..\src\hearthstone-realmserver\RStdAfx.h" />
-    <ClInclude Include="..\..\src\hearthstone-realmserver\Player.h">
+    <ClInclude Include="..\..\src\hearthstone-realmserver\MasterOpcodes.h">
+      <Filter>MasterServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-realmserver\MasterServer.h">
+      <Filter>MasterServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-realmserver\MasterServerSocket.h">
+      <Filter>MasterServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-realmserver\Structures.h" />
+    <ClInclude Include="..\..\src\hearthstone-realmserver\ClientSocket.h">
       <Filter>Client</Filter>
     </ClInclude>
   </ItemGroup>

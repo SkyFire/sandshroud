@@ -89,7 +89,6 @@
 #include "../hearthstone-world/Const.h"
 #include "../hearthstone-shared/Storage.h"
 #include "../hearthstone-logonserver/LogonOpcodes.h"
-#include "../hearthstone-voicechat/hearthstone_opcodes.h"
 
 #include "NameTables.h"
 #include "UpdateFields.h"

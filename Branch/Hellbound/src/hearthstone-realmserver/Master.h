@@ -37,10 +37,12 @@ extern Database * Database_Character;
 
 #ifdef WIN32
 	static const char* default_cluster_config_file = "configs/hearthstone-realmserver.conf";
+	static const char* default_optional_config_file = "configs/hearthstone-options.conf";
 	static const char* default_world_config_file = "configs/hearthstone-world.conf";
 	static const char* default_realm_config_file = "configs/hearthstone-realms.conf";
 #else
 	static const char* default_cluster_config_file = CONFDIR "/hearthstone-realmserver.conf";
+	static const char* default_optional_config_file = CONFDIR "/hearthstone-options.conf";
 	static const char* default_world_config_file = CONFDIR "/hearthstone-world.conf";
 	static const char* default_realm_config_file = CONFDIR "/hearthstone-realms.conf";
 #endif

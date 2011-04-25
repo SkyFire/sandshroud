@@ -49,8 +49,8 @@ void LogonCommClientSocket::OnRead()
 				return;	 // no header
 
 			// read header
-			Read(&opcode, 2);
-			Read(&remaining, 4);
+			GetReadBuffer()->Read(&opcode, 2);
+			GetReadBuffer()->Read(&remaining, 4);
 
 			if(use_crypto)
 			{
@@ -72,7 +72,7 @@ void LogonCommClientSocket::OnRead()
 		if(remaining)
 		{
 			buff.resize(remaining);
-			Read((uint8*)buff.contents(), remaining);
+			GetReadBuffer()->Read((uint8*)buff.contents(), remaining);
 		}
 
 		if(use_crypto && remaining)
@@ -151,7 +151,7 @@ void LogonCommClientSocket::HandleSessionInfo(WorldPacket & recvData)
 	m.Acquire();
 
 	// find the socket with this request
-	WorldSocket * sock = sLogonCommHandler.GetSocketByRequest(request_id);
+	ClientSocket * sock = sLogonCommHandler.GetSocketByRequest(request_id);
 	if(sock == 0 || sock->Authed || !sock->IsConnected())	   // Expired/Client disconnected
 	{
 		m.Release();
@@ -179,7 +179,7 @@ void LogonCommClientSocket::SendPing()
 	WorldPacket data(RCMSG_PING, 4);
 	SendPacket(&data);
 
-	last_ping = uint32(time(NULL));
+	last_ping = UNIXTIME;
 }
 
 void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
@@ -192,13 +192,14 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 	LockWriteBuffer();
 
 	header.opcode = data->GetOpcode();
-	header.size = (uint32)data->size();
-	swap32(&header.size);
+	uint32 size = (uint32)data->size();
+	swap32(&size);
+	header.size = size;
 
 	if(use_crypto && !no_crypto)
 		_sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
 
-	rv = Write((const uint8*)&header, 6);
+	rv = WriteButHold((const uint8*)&header, 6);
 
 	if(data->size() > 0 && rv)
 	{
@@ -207,6 +208,8 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 
 		rv = Write((const uint8*)data->contents(), (uint32)data->size());
 	}
+	else if(rv)
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 }

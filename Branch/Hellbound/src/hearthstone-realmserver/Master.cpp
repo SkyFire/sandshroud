@@ -92,11 +92,17 @@ bool Master::_StartDB()
 
 bool Master::Run(int argc, char ** argv)
 {
-	//sLog.outString("TexT");
+	time_t curTime;
+
 	/* Initialize global timestamp */
 	UNIXTIME = time(NULL);
+	g_localTime = *localtime(&UNIXTIME);
 
-	ThreadPool.Startup();
+	/* Print Banner */
+	sLog.outString("Hearthstone r%u/%s-%s(%s)::Realm Server\n", BUILD_REVISION, CONFIG, PLATFORM_TEXT, ARCH);
+	printf("Built at %s on %s by %s@%s\n", BUILD_TIME, BUILD_DATE, BUILD_USER, BUILD_HOST);
+	sLog.outString("==============================================================================");
+	Log.Line();
 
 	//use these log_level until we are fully started up.
 #ifdef _DEBUG
@@ -105,15 +111,13 @@ bool Master::Run(int argc, char ** argv)
 	sLog.Init(1);
 #endif // _DEBUG
 
-	/* Print Banner */
-	Log.Notice("Server", "==============================================================");
-	Log.Notice("Server", "| Hearthstone - Realm Server                     |");
-	Log.Notice("Server", "| Revision %04u                                 |", BUILD_REVISION);
-	Log.Notice("Server", "==============================================================");
-	Log.Line();
 	Config.ClusterConfig.SetSource(default_cluster_config_file);
+	Config.OptionalConfig.SetSource(default_optional_config_file);
 	Config.RealmConfig.SetSource(default_realm_config_file);
 	Config.MainConfig.SetSource(default_world_config_file);
+
+	InitRandomNumberGenerators();
+	ThreadPool.Startup();
 
 	if(!_StartDB())
 	{
@@ -141,18 +145,21 @@ bool Master::Run(int argc, char ** argv)
 	new SocketEngineThread(&sSocketEngine);
 	sSocketEngine.SpawnThreads();
 
+	uint32 port = Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129);
+	const char* host = Config.RealmConfig.GetStringDefault("Listen", "Host", DEFAULT_HOST).c_str();
+
 	Log.Notice("Network", "Opening Client Port...");
-	ListenSocket<WorldSocket> * wsl = new ListenSocket<WorldSocket>();
-	bool lsc = wsl->Open(Config.ClusterConfig.GetStringDefault("Listen", "Host", "0.0.0.0").c_str(),
-		Config.RealmConfig.GetIntDefault("Listen", "WorldServerPort", 8129));
+	ListenSocket<ClientSocket> * wsl = new ListenSocket<ClientSocket>();
+	bool lsc = wsl->Open(host, port);
 
 	Log.Notice("Network", "Opening Server Port...");
-	ListenSocket<WSSocket> * isl = new ListenSocket<WSSocket>();
-	bool ssc = isl->Open("0.0.0.0", 11010);
+	ListenSocket<MasterServerSocket> * isl = new ListenSocket<MasterServerSocket>();
+	bool ssc = isl->Open(DEFAULT_HOST, 11010);
 
 	if(!lsc || !ssc)
 	{
-		Log.Error("Network", "Could not open one of the sockets.");
+		Log.Error("Network", "Could not open %s socket.", lsc ? "Server" : "Client");
+		Sleep(3000);
 		return 1;
 	}
 
@@ -170,13 +177,20 @@ bool Master::Run(int argc, char ** argv)
 	/* main loop */
 	while(!m_stopEvent)
 	{
+		curTime = time(NULL);
+		if( UNIXTIME != curTime )
+		{
+			UNIXTIME = time(NULL);
+			g_localTime = *localtime(&curTime);
+		}
+
 		sLogonCommHandler.UpdateSockets();
 		sClientMgr.Update();
 		sClusterMgr.Update();
 #ifdef WIN32
-			WaitForSingleObject( hThread, 10);
+		WaitForSingleObject(hThread, 50);
 #else
-			Sleep(10);
+		Sleep(50);
 #endif
 	}
 

@@ -17,21 +17,21 @@
  *
  */
 
-#ifndef REALMSERVER_WORLDSOCKET_H
-#define REALMSERVER_WORLDSOCKET_H
+#ifndef REALMSERVER_CLIENTSOCKET_H
+#define REALMSERVER_CLIENTSOCKET_H
 
-#define WORLDSOCKET_SENDBUF_SIZE 131078
-#define WORLDSOCKET_RECVBUF_SIZE 16384
+#define CLIENTSOCKET_SENDBUF_SIZE 131078
+#define CLIENTSOCKET_RECVBUF_SIZE 16384
 
 class WorldPacket;
 class Session;
 
-class WorldSocket : public TcpSocket
+class ClientSocket : public TcpSocket
 {
 public:
 	bool Authed;
-	WorldSocket(SOCKET fd, const sockaddr_in * peer);
-	~WorldSocket();
+	ClientSocket(SOCKET fd, const sockaddr_in * peer);
+	~ClientSocket();
 
 	// vs8 fix - send null on empty buffer
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket* packet) { if(!packet) return; OutPacket(packet->GetOpcode(), packet->size(), (packet->size() ? (const void*)packet->contents() : NULL)); }

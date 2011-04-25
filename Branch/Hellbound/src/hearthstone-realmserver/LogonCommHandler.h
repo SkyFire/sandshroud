@@ -54,7 +54,7 @@ class SocketLoadBalancer;
 class LogonCommHandler : public Singleton<LogonCommHandler>
 {
 	map<LogonServer*, LogonCommClientSocket*> logons;
-	map<uint32, WorldSocket*> pending_logons;
+	map<uint32, ClientSocket*> pending_logons;
 	set<Realm*> realms;
 	set<LogonServer*> servers;
 	uint32 idhigh;
@@ -89,18 +89,18 @@ public:
 	void SetRealmType(uint32 type) { _realmType = type; }
 
 	/////////////////////////////
-	// Worldsocket stuff
+	// ClientSocket stuff
 	///////
 
-	uint32 ClientConnected(string AccountName, WorldSocket * Socket);
+	uint32 ClientConnected(string AccountName, ClientSocket * Socket);
 	void UnauthedSocketClose(uint32 id);
 	void RemoveUnauthedSocket(uint32 id);
-	HEARTHSTONE_INLINE WorldSocket* GetSocketByRequest(uint32 id)
+	HEARTHSTONE_INLINE ClientSocket* GetSocketByRequest(uint32 id)
 	{
 		pendingLock.Acquire();
 
-		WorldSocket * sock;
-		map<uint32, WorldSocket*>::iterator itr = pending_logons.find(id);
+		ClientSocket * sock;
+		map<uint32, ClientSocket*>::iterator itr = pending_logons.find(id);
 		sock = (itr == pending_logons.end()) ? 0 : itr->second;
 
 		pendingLock.Release();

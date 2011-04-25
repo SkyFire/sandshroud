@@ -29,8 +29,10 @@
 #include <signal.h>
 //#include <fstream>
 
-#include "../hearthstone-shared/AuthCodes.h"
+#include "MasterOpcodes.h"
+
 #include "../hearthstone-shared/svn_revision.h"
+#include "../hearthstone-shared/AuthCodes.h"
 #include "../hearthstone-shared/Common.h"
 #include "../hearthstone-shared/MersenneTwister.h"
 #include "../hearthstone-shared/WorldPacket.h"
@@ -60,20 +62,19 @@
 #include "../hearthstone-world/NameTables.h"
 #include "../hearthstone-world/Opcodes.h"
 #include "../hearthstone-shared/CallBack.h"
+#include "../hearthstone-logonserver/LogonOpcodes.h"
 
-#include "Master.h"
-#include "WorkerOpcodes.h"
-#include "WorkerServerSocket.h"
 #include "Structures.h"
-#include "WorldSocket.h"
+#include "Master.h"
+#include "MasterServerSocket.h"
+#include "ClientSocket.h"
 #include "Session.h"
-#include "WorkerServer.h"
+#include "MasterServer.h"
 #include "ClusterManager.h"
 #include "ClientManager.h"
 #include "LogonCommClient.h"
 #include "LogonCommHandler.h"
 #include "../hearthstone-shared/Storage.h"
 #include "ObjectStorage.h"
-#include "Player.h"
 
 #endif

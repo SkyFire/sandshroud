@@ -17,23 +17,28 @@
  *
  */
 
-class ClusterMgr : public Singleton<ClusterMgr>
+class Session;
+class MasterServer;
+
+class MasterServerSocket : public TcpSocket
 {
-	MasterServer* MasterControlServer; // Crow: Tron Reference.
-	uint32 m_maxInstanceId;
-	uint32 m_maxWorkerServer;
-
+	bool _authenticated;
+	uint32 _remaining;
+	uint16 _cmd;
+	MasterServer* Master;
 public:
-	ClusterMgr();
-	void OnMasterServerDisconnect();
+	uint32 m_id;
 
-	MasterServer* CreateMasterServer(MasterServerSocket * s);
-	MasterServer* GetMasterServer() { return MasterControlServer; }
-	void SendPacketToMasterControl(WorldPacket * data);
+	MasterServerSocket(SOCKET fd, const sockaddr_in * peer);
+	~MasterServerSocket();
 
-	/* loop */
-	void Update();
+	void SendPacket(WorldPacket * pck);
+	void SendPacket(uint16 opcode, uint32 size, const void* data);
+	void SendWoWPacket(Session * from, WorldPacket * pck);
+	void OnRead();
+
+	void HandleAuthRequest(WorldPacket & pck);
+	void HandleRegisterMaster(WorldPacket & pck);
+	void OnConnect();
 
 };
-
-#define sClusterMgr ClusterMgr::getSingleton()

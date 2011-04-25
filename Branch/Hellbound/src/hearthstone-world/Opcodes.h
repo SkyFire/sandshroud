@@ -1319,7 +1319,7 @@ enum Opcodes
 	SMSG_SPELL_EFFECT_CAMERA_SHAKE				= 0x50A, // uint32 SpellEffectCameraShakes.dbc uint32, camera shake?
 	SMSG_UNKNOWN_1291							= 0x50B, // some item update packet?
 	UMSG_UNKNOWN_1292							= 0x50C, // not found
-	SMSG_UNKNOWN_1293							= 0x50D, //
+	SMSG_REDIRECT_CLIENT						= 0x50D, //
 	CMSG_UNKNOWN_1294							= 0x50E, // something with networking
 	SMSG_UNKNOWN_1295							= 0x50F, //
 	CMSG_UNKNOWN_1296							= 0x510, // something with networking
