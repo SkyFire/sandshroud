@@ -209,26 +209,6 @@ public:
 	HEARTHSTONE_INLINE PlayerInfo * GetMainTank() { return m_mainTank; }
 	HEARTHSTONE_INLINE PlayerInfo * GetMainAssist() { return m_mainAssist; }
 
-	/************************************************************************/
-	/* Voicechat                                                            */
-	/************************************************************************/
-#ifdef VOICE_CHAT
-	void AddVoiceMember(PlayerInfo * pPlayer);
-	void RemoveVoiceMember(PlayerInfo * pPlayer);
-	void SendVoiceUpdate();
-	void CreateVoiceSession();
-	void VoiceChannelCreated(uint16 id);
-	void VoiceSessionDropped();
-	void VoiceSessionReconnected();
-
-public:
-	bool m_voiceChannelRequested;
-	int16 m_voiceChannelId;
-	uint32 m_voiceMemberCount;
-protected:
-	PlayerInfo* m_voiceMembersList[41];
-#endif	// VOICE_CHAT
-
 public:
 	HEARTHSTONE_INLINE void SetFlag(uint8 groupflag) { m_groupFlags |= groupflag; }
 	HEARTHSTONE_INLINE void RemoveFlag(uint8 groupflag) { m_groupFlags &= ~groupflag; }

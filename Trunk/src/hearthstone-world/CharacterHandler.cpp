@@ -373,9 +373,6 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	pn->lastOnline = UNIXTIME;
 	pn->team = pNewChar->GetTeam();
 	pn->acct = GetAccountId();
-#ifdef VOICE_CHAT
-	pn->groupVoiceId = -1;
-#endif
 	objmgr.AddPlayerInfo(pn);
 
 	pNewChar->ok_to_remove = true;
@@ -750,14 +747,10 @@ void WorldSession::FullLogin(Player* plr)
 	*/
 
 	WorldPacket datab;
-#ifdef VOICE_CHAT
-	datab.Initialize(SMSG_FEATURE_SYSTEM_STATUS);
-	datab << uint8(2) << uint8(sVoiceChatHandler.CanUseVoiceChat() ? 1 : 0);
-	SendPacket(&datab);
-#else
+
 	datab.Initialize(SMSG_FEATURE_SYSTEM_STATUS);
 	datab << uint8(2) << uint8(0);
-#endif
+	SendPacket(&datab);
 
 	datab.Initialize(SMSG_LEARNED_DANCE_MOVES);
 	datab << uint32(0);

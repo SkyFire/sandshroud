@@ -416,9 +416,6 @@ void ObjectMgr::LoadPlayersInfo()
 			pn->lastpositiony = fields[12].GetFloat();
 			pn->lastpositionz = fields[13].GetFloat();
 			pn->lastorientation = fields[14].GetFloat();
-#ifdef VOICE_CHAT
-			pn->groupVoiceId = -1;
-#endif
 			CharRaceEntry * race = dbcCharRace.LookupEntryForced(pn->race);
 			pn->team = race->team_id;
 
@@ -2995,15 +2992,6 @@ void ObjectMgr::ResetDailies()
 	_playerslock.ReleaseReadLock();
 }
 
-#ifdef VOICE_CHAT
-void ObjectMgr::GroupVoiceReconnected()
-{
-	m_groupLock.AcquireReadLock();
-	for(GroupMap::iterator itr = m_groups.begin(); itr != m_groups.end(); itr++)
-		itr->second->VoiceSessionReconnected();
-	m_groupLock.ReleaseReadLock();
-}
-#endif
 void ObjectMgr::LoadPetLevelupSpellMap()
 {
 	CreatureFamilyEntry	* creatureFamily;

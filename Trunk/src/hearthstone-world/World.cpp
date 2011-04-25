@@ -1906,9 +1906,6 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			memset(inf, 0, sizeof(PlayerInfo));
 			inf->guid = new_guid;
 			inf->acct = f[1].GetUInt32();
-#ifdef VOICE_CHAT
-			inf->groupVoiceId = -1;
-#endif
 			inf->cl = f[4].GetUInt32();
 			inf->race=f[3].GetUInt32();
 			inf->gender = f[5].GetUInt32();
