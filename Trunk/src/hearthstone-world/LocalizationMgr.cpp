@@ -34,13 +34,13 @@ void LocalizationMgr::Shutdown()
 	vector<pair<uint32,uint32> >::iterator xtr = m_languages.begin();
 	for(; xtr != m_languages.end(); ++xtr)
 		if(xtr->second>maxid)
-			maxid=xtr->second;
+			maxid = xtr->second;
 
 	maxid++;
-	Log.Notice("LocalizationMgr", "Beginning pointer cleanup...");
+	Log.Notice("LocalizationMgr", "Beginning pointer cleanup of %u section(s)...", maxid);
 	uint32 t = getMSTime();
 
-    for(i = 0; i < maxid; i++)
+	for(i = 0; i < maxid; i++)
 	{
 		for(HM_NAMESPACE::hash_map<uint32, LocalizedQuest>::iterator itr = m_Quests[i].begin(); itr != m_Quests[i].end(); itr++)
 		{

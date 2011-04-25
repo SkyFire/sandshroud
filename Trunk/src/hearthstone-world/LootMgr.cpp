@@ -261,13 +261,13 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 		multidifficulty = true;
 		if(result->GetFieldCount() != 9)
 		{
-			Log.Error("LootMgr", "Incorrect structure in table %s, loot loading has been cancled to prevent a crash.", szTableName);
+			Log.Error("LootMgr", "Incorrect structure in table %s(%u/9), loot loading has been cancled to prevent a crash.", szTableName, result->GetFieldCount());
 			return;
 		}
 	}
 	else if(result->GetFieldCount() != 6)
 	{
-		Log.Error("LootMgr", "Incorrect structure in table %s, loot loading has been cancled to prevent a crash.", szTableName);
+		Log.Error("LootMgr", "Incorrect structure in table %s(%u/6), loot loading has been cancled to prevent a crash.", szTableName, result->GetFieldCount());
 		return;
 	}
 

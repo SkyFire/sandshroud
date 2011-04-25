@@ -67,7 +67,7 @@ void ScriptMgr::LoadScripts()
 	uint32 count = 0;
 	HANDLE find_handle = FindFirstFile( search_path.c_str(), &data );
 	if(find_handle == INVALID_HANDLE_VALUE)
-		Log.Warning("ScriptMgr","No external scripts found! Server will start up with limited functionality." );
+		Log.Notice("ScriptMgr","No external scripts found." );
 	else
 	{
 		do
@@ -179,7 +179,7 @@ void ScriptMgr::LoadScripts()
 	uint32 count = 0;
 
 	if(!filecount || !list || filecount < 0)
-		printf("  No external scripts found! Server will continue to function with limited functionality.");
+		printf("  No external scripts found.");
 	else
 	{
 char *ext;
