@@ -532,7 +532,6 @@ public:
 
 	// Serialization
 	void SaveToDB(bool saveposition = false);
-	void SaveToFile(bool saveposition = false);
 	void LoadAIAgents(CreatureTemplate * t);
 	void LoadAIAgents();
 	void DeleteFromDB();

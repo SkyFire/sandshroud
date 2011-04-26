@@ -165,7 +165,6 @@ public:
 
 	// Serialization
 	void SaveToDB();
-	void SaveToFile(std::stringstream & ss);
 	void Export(std::stringstream & name);
 	void DeleteFromDB();
 	void EventCloseDoor();

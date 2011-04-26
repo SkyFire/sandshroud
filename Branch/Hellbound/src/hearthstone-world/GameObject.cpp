@@ -279,16 +279,7 @@ void GameObject::SaveToDB()
 		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
 		<< m_phaseMask << ")";
 
-	if(sWorld.QueryLog)
-		SaveToFile(ss);
-
 	WorldDatabase.Execute(ss.str().c_str());
-}
-
-void GameObject::SaveToFile(std::stringstream & ss)
-{
-	FileLog * log = new FileLog("gameobjects.sql");
-	log->WriteToLog(ss.str().c_str());
 }
 
 void GameObject::Export(std::stringstream & name)

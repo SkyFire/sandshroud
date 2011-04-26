@@ -383,7 +383,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	data << uint8(CHAR_CREATE_SUCCESS);
 	SendPacket(&data);
 
-	sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
+//	sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
 }
 
 /* Last Checked at patch 3.0.2 Specfic SMSG_CHAR_CREATE Error Codes:
@@ -498,8 +498,8 @@ void WorldSession::HandleCharDeleteOpcode( WorldPacket & recv_data )
 		fail = DeleteCharacter((uint32)guid);
 	}
 	OutPacket(SMSG_CHAR_DELETE, 1, &fail);
-	if(fail == CHAR_DELETE_SUCCESS)
-		sLogonCommHandler.UpdateAccountCount(GetAccountId(), -1);
+//	if(fail == CHAR_DELETE_SUCCESS)
+//		sLogonCommHandler.UpdateAccountCount(GetAccountId(), -1);
 }
 
 uint8 WorldSession::DeleteCharacter(uint32 guid)

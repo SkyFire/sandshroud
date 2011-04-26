@@ -321,20 +321,9 @@ bool Master::Run(int argc, char ** argv)
 	uint32 loopcounter = 0;
 	//ThreadPool.Gobble();
 
-#ifndef CLUSTERING
-	/* Connect to realmlist servers / logon servers */
-	new LogonCommHandler();
-	sLogonCommHandler.Startup();
-
-	ListenSocket<WorldSocket> * ls = new ListenSocket<WorldSocket>();
-	bool listnersockcreate = ls->Open(host.c_str(), wsport);
-
-	while( !m_stopEvent && listnersockcreate )
-#else
-	new ClusterInterface;
-	sClusterInterface.ConnectToRealmServer();
+//	new MasterControlInterface;
+//	sClusterInterface.ConnectToRealmServer();
 	while(!m_stopEvent)
-#endif
 	{
 		start = now();
 		diff = start - last_time;
@@ -352,9 +341,6 @@ bool Master::Run(int argc, char ** argv)
 			g_localTime = *localtime(&curTime);
 		}
 
-#ifdef CLUSTERING
-		sClusterInterface.Update();
-#endif
 		sSocketDeleter.Update();
 
 		/* UPDATE */
@@ -418,10 +404,6 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice( "DayWatcherThread", "Exiting..." );
 	sDayWatcher.terminate();
 
-#ifndef CLUSTERING
-	ls->Disconnect();
-#endif
-
 	Log.Notice( "Network", "Shutting down network subsystem." );
 	sSocketEngine.Shutdown();
 
@@ -437,10 +419,6 @@ bool Master::Run(int argc, char ** argv)
 
 	ThreadPool.Shutdown();
 
-#ifndef CLUSTERING
-	ls = NULL;
-#endif
-
 	Log.Notice("CharacterLoaderThread", "~CharacterLoaderThread()");
 	delete CharacterLoaderThread::getSingletonPtr();
 
@@ -449,9 +427,6 @@ bool Master::Run(int argc, char ** argv)
 		Log.Notice("WintergraspInternal", "~WintergraspInternal()");
 		delete WintergraspInternal::getSingletonPtr();
 	}
-
-	Log.Notice("LogonComm", "~LogonCommHandler()");
-	delete LogonCommHandler::getSingletonPtr();
 
 	Log.Notice( "World", "~World()" );
 	delete World::getSingletonPtr();

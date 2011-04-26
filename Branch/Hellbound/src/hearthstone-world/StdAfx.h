@@ -96,11 +96,6 @@
 #include "Opcodes.h"
 #include "WorldStates.h"
 
-#ifdef CLUSTERING
-#include "../hearthstone-realmserver/Structures.h"
-#include "../hearthstone-realmserver/WorkerOpcodes.h"
-#endif
-
 #include "Packets.h"
 #include "CallScripting.h"
 #include "WordFilter.h"
@@ -172,12 +167,8 @@
 #include "Channel.h"
 #include "ChannelMgr.h"
 #include "ArenaTeam.h"
-#include "LogonCommClient.h"
-#include "LogonCommHandler.h"
 #include "WorldRunnable.h"
 #include "ObjectStorage.h"
-#include "VoiceChatClientSocket.h"
-#include "VoiceChatHandler.h"
 #include "LocalizationMgr.h"
 #include "Vehicle.h"
 #include "Tracker.h"
@@ -186,15 +177,8 @@
 #include "ChainAggroEntity.h"
 #include "StrandOfTheAncients.h"
 #include "IsleOfConquest.h"
-#include "filelog.h"
-#ifdef CLUSTERING
-	#include "WorkerServerClient.h"
-	#include "ClusterInterface.h"
-#endif
-
 #include "CollideInterface.h"
 #include "NavMeshInterface.h"
-
 #include "Master.h"
 #include "ConsoleCommands.h"
 

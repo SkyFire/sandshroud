@@ -1555,11 +1555,7 @@ public:
 	// GameObject commands
 	GameObject* m_GM_SelectedGO;
 
-#ifndef CLUSTERING
 	void _Relocate(uint32 mapid,const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id);
-#else
-	void RelocateCallback(uint32 instance_were_going_to);
-#endif
 	void AddItemsToWorld();
 	void RemoveItemsFromWorld();
 	void UpdateKnownCurrencies(uint32 itemId, bool apply);
@@ -1718,34 +1714,6 @@ public:
 	void EjectFromInstance();
 	bool raidgrouponlysent;
 
-#ifdef CLUSTERING
-	RPlayerInfo * UpdateRPlayerInfo(RPlayerInfo * pRPlayer, bool newRplr = false)
-	{
-		pRPlayer->Guid = GetLowGUID();
-		pRPlayer->AccountId = GetSession()->GetAccountId();
-		pRPlayer->Name = GetName();
-		pRPlayer->Level= getLevel() ;
-		pRPlayer->GuildId = GetGuildId();
-		pRPlayer->PositionX = GetPositionX();
-		pRPlayer->PositionY = GetPositionY();
-		pRPlayer->ZoneId = m_zoneId;
-		pRPlayer->Race = getRace();
-		pRPlayer->Class = getClass();
-		pRPlayer->Gender = getGender();
-		pRPlayer->Latency = GetSession()->GetLatency();
-		pRPlayer->GMPermissions = GetSession()->GetPermissions();
-		pRPlayer->Account_Flags = GetSession()->GetAccountFlags();
-		pRPlayer->InstanceId = GetInstanceID();
-		pRPlayer->MapId = GetMapId();
-		pRPlayer->iInstanceType = iInstanceType;
-		pRPlayer->ClientBuild = GetSession()->GetClientBuild();
-		pRPlayer->Team = m_team;
-		if(newRplr)
-			pRPlayer->references = 1;
-		return pRPlayer;
-	}
-#endif
-
 	void EventSafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1)
 	{
 		SafeTeleport(MapID, InstanceID, vec, phase);
@@ -1890,12 +1858,6 @@ public:
 	int32 m_rap_mod_pct;
 	void SummonRequest(Object* Requestor, uint32 ZoneID, uint32 MapID, uint32 InstanceID, const LocationVector & Position);
 	uint8 m_lastMoveType;
-
-#ifdef CLUSTERING
-	void EventRemoveAndDelete();
-	void PackPlayerData(ByteBuffer & data);
-	bool UnpackPlayerData(ByteBuffer & data);
-#endif
 
 	Creature* m_tempSummon;
 	bool m_deathVision;
@@ -2274,10 +2236,6 @@ public:
 	uint32 m_drunkTimer;
 	static DrunkenState GetDrunkenstateByValue(uint16 value);
 	void EventDrunkenVomit();
-#ifdef CLUSTERING
-	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
-	void HandleClusterRemove();
-#endif
 
 	// Player Vehicles
 public:

@@ -696,7 +696,7 @@ bool ChatHandler::HandleAccountLevelCommand(const char * args, WorldSession * m_
 	if(argc != 2)
 		return false;
 
-	sLogonCommHandler.Account_SetGM( account, gmlevel );
+//	sLogonCommHandler.Account_SetGM( account, gmlevel );
 
 	GreenSystemMessage(m_session, "Account '%s' level has been updated to '%s'. The change will be effective immediately.", account, gmlevel);
 	sWorld.LogGM(m_session, "set account %s flags to %s", account, gmlevel);
@@ -709,7 +709,7 @@ bool ChatHandler::HandleAccountUnbanCommand(const char * args, WorldSession * m_
 	if(!*args) return false;
 	char * pAccount = (char*)args;
 
-	sLogonCommHandler.Account_SetBanned( pAccount, 0, "" );
+//	sLogonCommHandler.Account_SetBanned( pAccount, 0, "" );
 	GreenSystemMessage(m_session, "Account '%s' has been unbanned. This change will be effective immediately.", pAccount);
 
 	sWorld.LogGM(m_session, "unbanned account %s", pAccount);
@@ -741,7 +741,7 @@ bool ChatHandler::HandleAccountBannedCommand(const char * args, WorldSession * m
 
 	uint32 banned = (timeperiod ? (uint32)UNIXTIME+timeperiod : 1);
 
-	sLogonCommHandler.Account_SetBanned(pAccount, banned, pReason);
+//	sLogonCommHandler.Account_SetBanned(pAccount, banned, pReason);
 
 	GreenSystemMessage(m_session, "Account '%s' has been banned %s%s. The change will be effective immediately.", pAccount,
 		timeperiod ? "until " : "forever", timeperiod ? ConvertTimeStampToDataTime(timeperiod+(uint32)UNIXTIME).c_str() : "");
@@ -768,7 +768,7 @@ bool ChatHandler::HandleAccountMuteCommand(const char * args, WorldSession * m_s
 
 	uint32 banned = (uint32)UNIXTIME+timeperiod;
 
-	sLogonCommHandler.Account_SetMute( pAccount, banned );
+//	sLogonCommHandler.Account_SetMute( pAccount, banned );
 
 	string tsstr = ConvertTimeStampToDataTime(timeperiod+(uint32)UNIXTIME);
 	GreenSystemMessage(m_session, "Account '%s' has been muted until %s. The change will be effective immediately.", pAccount,
@@ -788,7 +788,7 @@ bool ChatHandler::HandleAccountMuteCommand(const char * args, WorldSession * m_s
 
 bool ChatHandler::HandleAccountUnmuteCommand(const char * args, WorldSession * m_session)
 {
-	sLogonCommHandler.Account_SetMute( args, 0 );
+//	sLogonCommHandler.Account_SetMute( args, 0 );
 
 	GreenSystemMessage(m_session, "Account '%s' has been unmuted.", args);
 	WorldSession * pSession = sWorld.FindSessionByName(args);
@@ -2024,7 +2024,7 @@ bool ChatHandler::HandleIPBanCommand(const char * args, WorldSession * m_session
 		expire_time = UNIXTIME + (time_t)timeperiod;
 
 	SystemMessage(m_session, "Adding [%s] to IP ban table, expires %s", pIp, (expire_time == 0)? "Never" : ctime( &expire_time ));
-	sLogonCommHandler.IPBan_Add( pIp, (uint32)expire_time, pReason );
+//	sLogonCommHandler.IPBan_Add( pIp, (uint32)expire_time, pReason );
 	sWorld.DisconnectUsersWithIP(pIp, m_session);
 	sWorld.LogGM(m_session, "banned ip address %s, expires %s", pIp, (expire_time == 0)? "Never" : ctime( &expire_time ));
 	return true;
@@ -2046,7 +2046,7 @@ bool ChatHandler::HandleIPUnBanCommand(const char * args, WorldSession * m_sessi
 	 */
 
 	SystemMessage(m_session, "Removing [%s] from IP ban table if it exists", ip);
-	sLogonCommHandler.IPBan_Remove( ip );
+//	sLogonCommHandler.IPBan_Remove( ip );
 	sWorld.LogGM(m_session, "unbanned ip address %s", ip);
 	return true;
 }
@@ -3331,7 +3331,7 @@ bool ChatHandler::HandleMultiMuteCommand(const char *args, WorldSession *m_sessi
 		}
 
 		pPlayer->GetSession()->SystemMessage("Your voice has been muted until %s by a GM. Until this time, you will not be able to speak in any form. Reason: %s", tsstr.c_str(), reason);
-		sLogonCommHandler.Account_SetMute(pPlayer->GetSession()->GetAccountNameS(), (uint32)timespan + (uint32)UNIXTIME);
+//		sLogonCommHandler.Account_SetMute(pPlayer->GetSession()->GetAccountNameS(), (uint32)timespan + (uint32)UNIXTIME);
 		sWorld.LogGM(m_session, "muted account %s until %s", pPlayer->GetSession()->GetAccountNameS(), ConvertTimeStampToDataTime((uint32)timespan+(uint32)UNIXTIME).c_str());
 
 		snprintf(msg, 200, "%s%s was muted by %s (%s)", MSG_COLOR_WHITE, pPlayer->GetName(), m_session->GetPlayer()->GetName(), reason);
@@ -3429,7 +3429,7 @@ bool ChatHandler::HandleMultiAccountBanCommand(const char *args, WorldSession *m
 		}
 
 		pPlayer->GetSession()->SystemMessage("Your have been account banned until %s by a GM. Until this time, you will not be able to log in on this account. Reason: %s", tsstr.c_str(), reason);
-		sLogonCommHandler.Account_SetBanned(pPlayer->GetSession()->GetAccountNameS(), (uint32)timespan + (uint32)UNIXTIME, reason);
+//		sLogonCommHandler.Account_SetBanned(pPlayer->GetSession()->GetAccountNameS(), (uint32)timespan + (uint32)UNIXTIME, reason);
 		sWorld.LogGM(m_session, "banned account %s until %s", pPlayer->GetSession()->GetAccountNameS(), ConvertTimeStampToDataTime((uint32)timespan+(uint32)UNIXTIME).c_str());
 
 		snprintf(msg, 200, "%s%s was account banned by %s (%s)", MSG_COLOR_WHITE, pPlayer->GetName(), m_session->GetPlayer()->GetName(), reason);

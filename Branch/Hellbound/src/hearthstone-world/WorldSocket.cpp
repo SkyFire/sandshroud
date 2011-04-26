@@ -24,7 +24,6 @@
 /* echo send/received packets to console */
 //#define ECHO_PACKET_LOG_TO_CONSOLE 1
 
-#ifndef CLUSTERING
 #pragma pack(push, 1)
 
 struct ClientPktHeader
@@ -89,7 +88,7 @@ void WorldSocket::OnDisconnect()
 
 	if(mRequestID != 0)
 	{
-		sLogonCommHandler.UnauthedSocketClose(mRequestID);
+//		sLogonCommHandler.UnauthedSocketClose(mRequestID);
 		mRequestID = 0;
 	}
 
@@ -255,7 +254,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 	}
 
 	// Send out a request for this account.
-	mRequestID = sLogonCommHandler.ClientConnected(account, this);
+//	mRequestID = sLogonCommHandler.ClientConnected(account, this);
 
 	if(mRequestID == 0xFFFFFFFF)
 	{
@@ -287,7 +286,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 
 	// Extract account information from the packet.
 	string AccountName;
-	const string * ForcedPermissions;
+	const string * ForcedPermissions = NULL;
 	uint32 AccountID;
 	string GMFlags;
 	uint8 AccountFlags;
@@ -295,7 +294,7 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	uint32 i;
 
 	recvData >> AccountID >> AccountName >> GMFlags >> AccountFlags;
-	ForcedPermissions = sLogonCommHandler.GetForcedPermissions(AccountName);
+//	ForcedPermissions = sLogonCommHandler.GetForcedPermissions(AccountName);
 	if( ForcedPermissions != NULL )
 		GMFlags.assign(ForcedPermissions->c_str());
 
@@ -579,8 +578,6 @@ void WorldSocket::OnRecvData()
 		}
 	}
 }
-
-#endif
 
 void FastGUIDPack(ByteBuffer & buf, const uint64 & oldguid)
 {

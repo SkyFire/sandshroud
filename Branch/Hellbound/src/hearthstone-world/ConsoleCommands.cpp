@@ -189,7 +189,7 @@ bool HandleBanAccountCommand(BaseConsole * pConsole, int argc, const char * argv
 	uint32 banned = (timeperiod ? (uint32)UNIXTIME+timeperiod : 1);
 
 	/// apply instantly in db
-	sLogonCommHandler.Account_SetBanned(argv[1], banned, argv[3]);
+//	sLogonCommHandler.Account_SetBanned(argv[1], banned, argv[3]);
 
 	pConsole->Write("Account '%s' has been banned %s%s. The change will be effective with the next reload cycle.\r\n", argv[1],
 		timeperiod ? "until " : "forever", timeperiod ? ConvertTimeStampToDataTime(timeperiod+(uint32)UNIXTIME).c_str() : "");
@@ -202,7 +202,7 @@ bool HandleUnbanAccountCommand(BaseConsole * pConsole, int argc, const char * ar
 	if(argc < 2)
 		return false;
 
-	sLogonCommHandler.Account_SetBanned(argv[1], 0, "");
+//	sLogonCommHandler.Account_SetBanned(argv[1], 0, "");
 
 	pConsole->Write("Account '%s' has been unbanned.\r\n", argv[1]);
 	return true;
@@ -263,7 +263,7 @@ bool HandlePlayerInfoCommand(BaseConsole * pConsole, int argc, const char * argv
 
 void TestConsoleLogin(string& username, string& password, uint32 requestno)
 {
-	sLogonCommHandler.TestConsoleLogon(username, password, requestno);
+//	sLogonCommHandler.TestConsoleLogon(username, password, requestno);
 }
 
 bool HandleRehashCommand(BaseConsole * pConsole, int argc, const char * argv[])

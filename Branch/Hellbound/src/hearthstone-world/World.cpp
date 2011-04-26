@@ -516,14 +516,8 @@ bool World::SetInitialWorldSettings()
 
 	sScriptMgr.LoadScripts();
 
-#ifndef CLUSTERING
 	// calling this puts all maps into our task list.
 	sInstanceMgr.Load(&tl);
-#else
-	new FormationMgr;
-	new WorldStateTemplateManager;
-	sInstanceMgr._LoadInstances();
-#endif
 
 	// wait for the events to complete.
 	tl.wait();
@@ -964,7 +958,6 @@ uint32 World::GetQueuePos(WorldSocket* Socket)
 
 void World::UpdateQueuedSessions(uint32 diff)
 {
-#ifndef CLUSTERING
 	if(diff >= m_queueUpdateTimer)
 	{
 		m_queueUpdateTimer = 180000;
@@ -1015,7 +1008,6 @@ void World::UpdateQueuedSessions(uint32 diff)
 	{
 		m_queueUpdateTimer -= diff;
 	}
-#endif
 }
 
 void World::SaveAllPlayers()
