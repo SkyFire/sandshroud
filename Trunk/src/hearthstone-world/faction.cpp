@@ -62,13 +62,17 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 		if(TO_VEHICLE(objA)->GetPassengerSlot(TO_UNIT(objB)) != -1)
 			return 0;
 
-	// Allow GM's to attack any creatures, but players are a no.
+	// Disable GM attacking.
 	if(player_objA && player_objB && player_objA->bGMTagOn)
-		return -1;
+		return 0;
+
+	// Disable GM attacking.
+	if(player_objA && !player_objB && player_objA->bGMTagOn)
+		return 0;
 
 	// Don't allow players to attack GMs
 	if(player_objA && player_objB && player_objB->bGMTagOn)
-		return -1;
+		return 0;
 
 	// Creatures cannot attack a GM with tag on.
 	if(!player_objA && player_objB && player_objB->bGMTagOn)
