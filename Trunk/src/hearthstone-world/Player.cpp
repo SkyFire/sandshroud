@@ -8567,8 +8567,7 @@ void Player::ZoneUpdate(uint32 ZoneId)
 	sHookInterface.OnZone(TO_PLAYER(this), ZoneId, oldzone);
 	CALL_INSTANCE_SCRIPT_EVENT( m_mapMgr, OnZoneChange )( TO_PLAYER(this), ZoneId, oldzone );
 
-	AreaTable *at = dbcArea.LookupEntry(GetAreaID());
-	if(at && ( at->category == AREAC_SANCTUARY || at->AreaFlags & AREA_SANCTUARY ) )
+	if(GetAreaID() && sWorld.IsSanctuaryArea(GetAreaID()))
 	{
 		Unit* pUnit = (GetSelection() == 0) ? NULLUNIT : (m_mapMgr ? m_mapMgr->GetUnit(GetSelection()) : NULLUNIT);
 		if(pUnit && DuelingWith != pUnit)
@@ -8588,7 +8587,7 @@ void Player::ZoneUpdate(uint32 ZoneId)
 	// send new world states
 	ForceAreaUpdate();
 
-	at = dbcArea.LookupEntryForced(m_zoneId);
+	AreaTable *at = dbcArea.LookupEntryForced(m_zoneId);
 	if( m_session->HasGMPermissions() && m_zoneId != 0 )
 	{
 		if( at != NULL )
@@ -9299,9 +9298,10 @@ void Player::UpdatePvPArea()
 
 		// I just walked into either an enemies town, or a contested zone.
 		// Force flag me if i'm not already.
-		if(m_areaDBC->category == AREAC_SANCTUARY || m_areaDBC->AreaFlags & AREA_SANCTUARY)
+		if(sWorld.IsSanctuaryArea(m_areaDBC->AreaId))
 		{
-			if(IsPvPFlagged()) RemovePvPFlag();
+			if(IsPvPFlagged())
+				RemovePvPFlag();
 
 			RemoveFlag(PLAYER_FLAGS, PLAYER_FLAG_FREE_FOR_ALL_PVP);
 

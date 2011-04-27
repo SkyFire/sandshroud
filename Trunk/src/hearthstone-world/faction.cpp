@@ -96,9 +96,8 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 	{
 		// Do not let units attack each other in sanctuary
 		// We know they aren't dueling
-		AreaTable *atA = dbcArea.LookupEntry(objA->GetAreaID());
-		AreaTable *atB = dbcArea.LookupEntry(objB->GetAreaID());
-		if( atA && atB && (atA->AreaFlags & AREA_SANCTUARY || atB->AreaFlags & AREA_SANCTUARY) )
+		if( (objA->GetAreaID() && sWorld.IsSanctuaryArea(objA->GetAreaID()))
+			|| objB->GetAreaID() && sWorld.IsSanctuaryArea(objB->GetAreaID()))
 			return 0;
 
 		if(sWorld.FunServerMall != -1 && (objA->GetAreaID() == (uint32)sWorld.FunServerMall
@@ -161,11 +160,8 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 			return 0;
 
 		//These area's are sanctuaries
-		for(uint32 i = 0; i < NUM_SANCTUARIES ; i++)
-		{
-			if( player_objA->GetPlayerAreaID() == SANCTUARY_AREAS[i] || player_objB->GetPlayerAreaID() == SANCTUARY_AREAS[i])
-				return 0;
-		}
+		if( sWorld.IsSanctuaryArea(player_objA->GetPlayerAreaID()) || sWorld.IsSanctuaryArea(player_objB->GetPlayerAreaID()) )
+			return 0;
 
 		// Players with feign death flags can't be attacked
 		// But they can be attacked by another players. -- Dvlpr

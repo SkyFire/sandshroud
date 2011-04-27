@@ -594,6 +594,10 @@ public:
 	uint32 mInWorldPlayerCount;
 	bool CalculatedHeightChecks;
 	uint32 mAcceptedConnections;
+	std::set<uint32> Sanctuaries;
+	void SetSanctuaryArea(uint32 areaid) { Sanctuaries.insert(areaid); }
+	void RemoveSanctuaryArea(uint32 areaid) { Sanctuaries.erase(areaid); }
+	bool IsSanctuaryArea(uint32 areaid) { return Sanctuaries.find(areaid) != Sanctuaries.end(); }
 
 	uint32 HordePlayers;
 	uint32 AlliancePlayers;

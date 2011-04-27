@@ -589,7 +589,7 @@ bool World::SetInitialWorldSettings()
 
 	if(GuildsLoading)
 	{
-		Log.Notice( "Shutdown", "Waiting for groups and players to finish loading..." );
+		Log.Notice( "World", "Waiting for groups and players to finish loading..." );
 		while(GuildsLoading)
 			Sleep( 100 );
 	}
@@ -601,9 +601,11 @@ bool World::SetInitialWorldSettings()
 
 	TalentEntry const* talent_info = NULL;
 	TalentTabEntry const* tab_info = NULL;
-	for( uint32 i = 0; i < dbcTalent.GetNumRows(); i++ )
+	DBCStorage<TalentEntry>::iterator talent_itr;
+	DBCStorage<TalentTabEntry>::iterator tab_itr;
+	for( talent_itr = dbcTalent.begin(); talent_itr != dbcTalent.end(); ++talent_itr )
 	{
-		talent_info = dbcTalent.LookupRow( i );
+		talent_info = (*talent_itr);
 		if(!talent_info)
 			continue;
 
@@ -626,9 +628,9 @@ bool World::SetInitialWorldSettings()
 		InspectTalentTabSize[talent_info->TalentTree] += talent_max_rank;
 	}
 
-	for( uint32 i = 0; i < dbcTalentTab.GetNumRows(); i++ )
+	for( tab_itr = dbcTalentTab.begin(); tab_itr != dbcTalentTab.end(); ++tab_itr )
 	{
-		tab_info = dbcTalentTab.LookupRow(i);
+		tab_info = (*tab_itr);
 		if( tab_info == NULL )
 			continue;
 
@@ -656,6 +658,22 @@ bool World::SetInitialWorldSettings()
 			talent_pos += itr->second;
 		}
 	}
+
+	AreaTable *areaentry = NULL;
+	DBCStorage<AreaTable>::iterator area_itr;
+	for( area_itr = dbcArea.begin(); area_itr != dbcArea.end(); ++area_itr )
+	{
+		areaentry = (*area_itr);
+		if(areaentry == NULL)
+			continue;
+		if(IsSanctuaryArea(areaentry->AreaId))
+			continue;
+
+		if(areaentry->category == AREAC_SANCTUARY || areaentry->AreaFlags & AREA_SANCTUARY)
+			Sanctuaries.insert(areaentry->AreaId);
+		areaentry = NULL;
+	}
+	Log.Notice("World", "Hashed %u sanctuaries", Sanctuaries.size());
 
 	sEventMgr.AddEvent(CAST(World,this), &World::CheckForExpiredInstances, EVENT_WORLD_UPDATEAUCTIONS, 120000, 0, 0);
 	return true;

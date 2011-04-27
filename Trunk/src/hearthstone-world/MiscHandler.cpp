@@ -1079,9 +1079,9 @@ void WorldSession::HandleTogglePVPOpcode(WorldPacket& recv_data)
 	if(sWorld.FunServerMall != -1 && areaId == (uint32)sWorld.FunServerMall)
 	{
 		if(at != NULL)
-			sChatHandler.ColorSystemMessage(this, MSG_COLOR_WHITE, "You cannot flag for PvP while in the area: %s", at->name);
+			sChatHandler.ColorSystemMessage(this, MSG_COLOR_WHITE, "You cannot flag for PvP while in the area: %s.", at->name);
 		else
-			sChatHandler.ColorSystemMessage(this, MSG_COLOR_WHITE, "You cannot do that here");
+			sChatHandler.ColorSystemMessage(this, MSG_COLOR_WHITE, "You cannot do that here.");
 
 		if( _player->IsFFAPvPFlagged() || _player->IsPvPFlagged() )
 		{
@@ -1095,8 +1095,10 @@ void WorldSession::HandleTogglePVPOpcode(WorldPacket& recv_data)
 
 	if( at == NULL)
 		_player->PvPToggle(); // Crow: Should be a delayed pvp flag
-	else if(!(at->category == AREAC_SANCTUARY || at->AreaFlags & AREA_SANCTUARY))
+	else if(_player->GetAreaID() && !sWorld.IsSanctuaryArea(_player->GetAreaID()))
 		_player->PvPToggle();
+	else
+		sChatHandler.ColorSystemMessage(this, MSG_COLOR_WHITE, "You cannot do that here.");
 }
 
 void WorldSession::HandleAmmoSetOpcode(WorldPacket & recv_data)

@@ -6618,13 +6618,10 @@ void Spell::SpellEffectDuel(uint32 i) // Duel
 		return;
 	}
 
-	for(uint32 i = 0; i < NUM_SANCTUARIES ; i++)
+	if(p_caster->GetAreaID() && sWorld.IsSanctuaryArea(p_caster->GetAreaID()))
 	{
-		if( p_caster->GetAreaID() == SANCTUARY_AREAS[i] )
-		{
-			SendCastResult(SPELL_FAILED_NO_DUELING);
-			return;
-		}
+		SendCastResult(SPELL_FAILED_NO_DUELING);
+		return;
 	}
 
 	if(p_caster->m_bg)
