@@ -431,7 +431,7 @@ public:
 	void AddMod(uint32 t, int32 a,uint32 miscValue,uint32 i);
 
 	HEARTHSTONE_INLINE SpellEntry* GetSpellProto() const { return m_spellProto; }
-	HEARTHSTONE_INLINE uint32 GetSpellId() const {return m_spellProto->Id; }
+	HEARTHSTONE_INLINE uint32 GetSpellId() const { return m_spellProto ? m_spellProto->Id : 0; }
 	HEARTHSTONE_INLINE bool IsPassive(){ if(!m_spellProto) return false; return (m_spellProto->Attributes & ATTRIBUTES_PASSIVE && !m_areaAura);}
 
 	HEARTHSTONE_INLINE int32 GetDuration() const { return m_duration; }
