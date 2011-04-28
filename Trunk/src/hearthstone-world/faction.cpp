@@ -64,19 +64,19 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 
 	// Disable GM attacking.
 	if(player_objA && player_objB && player_objA->bGMTagOn)
-		return 0;
+		return -1;
 
 	// Disable GM attacking.
 	if(player_objA && !player_objB && player_objA->bGMTagOn)
-		return 0;
+		return -1;
 
 	// Don't allow players to attack GMs
 	if(player_objA && player_objB && player_objB->bGMTagOn)
-		return 0;
+		return -1;
 
 	// Creatures cannot attack a GM with tag on.
 	if(!player_objA && player_objB && player_objB->bGMTagOn)
-		return 0;
+		return -1;
 
 	if(objA->IsCreature() && isTargetDummy(objA->GetEntry()))
 		return 0; // Bwahahaha
