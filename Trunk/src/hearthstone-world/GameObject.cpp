@@ -279,45 +279,9 @@ void GameObject::SaveToDB()
 		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
 		<< m_phaseMask << ")";
 
-	if(sWorld.QueryLog)
-		SaveToFile(ss);
-
 	WorldDatabase.Execute(ss.str().c_str());
 }
 
-void GameObject::SaveToFile(std::stringstream & ss)
-{
-	FileLog * log = new FileLog("gameobjects.sql");
-	log->WriteToLog(ss.str().c_str());
-}
-
-void GameObject::Export(std::stringstream & name)
-{
-	std::stringstream ss;
-	ss << "REPLACE INTO gameobject_spawns VALUES("
-		<< "NULL,"
-		<< GetEntry() << ","
-		<< GetMapId() << ","
-		<< GetPositionX() << ","
-		<< GetPositionY() << ","
-		<< GetPositionZ() << ","
-		<< GetOrientation() << ","
-		<< GetUInt64Value(GAMEOBJECT_ROTATION) << ","
-		<< GetFloatValue(GAMEOBJECT_PARENTROTATION) << ","
-		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_2) << ","
-		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_3) << ","
-		<< ( GetByte(GAMEOBJECT_BYTES_1, 0)? 1 : 0 ) << ","
-		<< GetUInt32Value(GAMEOBJECT_FLAGS) << ","
-		<< GetUInt32Value(GAMEOBJECT_FACTION) << ","
-		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
-		<< m_phaseMask << ")";
-	FILE * OutFile;
-
-	OutFile = fopen(name.str().c_str(), "wb");
-	if (!OutFile) return;
-	fwrite(ss.str().c_str(),1,ss.str().size(),OutFile);
-	fclose(OutFile);
-}
 void GameObject::InitAI()
 {
 	if(pInfo == NULL || initiated)

@@ -548,9 +548,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\EventMgr.h">
       <Filter>Interserver</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\filelog.h">
-      <Filter>Interserver</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\ObjectStorage.h">
       <Filter>Interserver</Filter>
     </ClInclude>

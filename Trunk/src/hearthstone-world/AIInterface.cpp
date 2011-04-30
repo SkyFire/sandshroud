@@ -2311,11 +2311,7 @@ bool AIInterface::hideWayPoints(Player* pPlayer)
 bool AIInterface::saveWayPoints()
 {
 	ASSERT(m_Unit != NULL);
-
 	if(!m_waypoints)
-		return false;
-
-	if(!GetUnit())
 		return false;
 	if(GetUnit()->GetTypeId() != TYPEID_UNIT ||
 		TO_CREATURE(GetUnit())->m_spawn == NULL )
@@ -2355,11 +2351,6 @@ bool AIInterface::saveWayPoints()
 		ss << WorldDatabase.EscapeString(wp->forwardSayText) << "','";
 		ss << WorldDatabase.EscapeString(wp->backwardSayText) << "')\0";
 		WorldDatabase.Query( ss.str().c_str() );
-		if(sWorld.QueryLog)
-		{
-			FileLog * log = new FileLog("Waypoints.sql");
-			log->WriteToLog(ss.str().c_str());
-		}
 	}
 	return true;
 }

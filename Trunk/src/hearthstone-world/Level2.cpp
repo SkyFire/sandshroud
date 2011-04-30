@@ -1110,27 +1110,6 @@ bool ChatHandler::HandleGOAnimProgress(const char * args, WorldSession * m_sessi
 	return true;
 }
 
-bool ChatHandler::HandleGOExport(const char * args, WorldSession * m_session)
-{
-	if(!m_session->GetPlayer()->m_GM_SelectedGO)
-		return false;
-
-	std::stringstream name;
-	if (*args)
-	{
-		name << "GO_" << args << ".sql";
-	}
-	else
-	{
-		name << "GO_" << m_session->GetPlayer()->m_GM_SelectedGO->GetEntry() << ".sql";
-	}
-
-	m_session->GetPlayer()->m_GM_SelectedGO->Export(name);
-
-	BlueSystemMessage(m_session, "Go saved to: %s", name.str().c_str());
-	return true;
-}
-
 bool ChatHandler::HandleNpcComeCommand(const char* args, WorldSession* m_session)
 {
 	// moves npc to players location

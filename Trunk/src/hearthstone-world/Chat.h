@@ -426,7 +426,6 @@ protected:
 	bool HandleGetTransporterTime(const char* args, WorldSession* m_session);
 	bool HandleSendItemPushResult(const char* args, WorldSession* m_session);
 	bool HandleGOAnimProgress(const char * args, WorldSession * m_session);
-	bool HandleGOExport(const char * args, WorldSession * m_session);
 	bool HandleRemoveAurasCommand(const char *args, WorldSession *m_session);
 	bool HandleParalyzeCommand(const char* args, WorldSession *m_session);
 	bool HandleUnParalyzeCommand(const char* args, WorldSession *m_session);
