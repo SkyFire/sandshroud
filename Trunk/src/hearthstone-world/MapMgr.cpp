@@ -1863,50 +1863,49 @@ void MapMgr::EventRespawnGameObject(GameObject* o, MapCell * c)
 	}
 }
 
+bool IsSpecialAreaID(uint32 area)
+{
+	switch(area)
+	{
+	case 4395:
+	case 4560:
+		return true;
+		break;
+	}
+
+	return false;
+}
+
+bool CompatibleAreaIDs(uint32 area1, uint32 area2)
+{
+	if(IsSpecialAreaID(area1) || IsSpecialAreaID(area2))
+		if(area1 != area2)
+			return false;
+	return true;
+}
+
 bool MapMgr::IsInRange(float fRange, Object* obj, Object* currentobj)
 {
 	// First distance check, are we in range?
 	uint32 objareaid = obj->GetAreaID();
 	uint32 careaid = currentobj->GetAreaID();
-	if(objareaid != careaid)
+	if(IsSpecialAreaID(objareaid) || IsSpecialAreaID(careaid))
+		fRange = (fRange/4)*3;
+
+	if(objareaid == careaid)
 	{
 		if(currentobj->GetDistance2dSq( obj ) > fRange )
 			return false;
 	}
 	else
 	{
-		if(currentobj->GetDistance2dSq( obj ) > (fRange/4) )
+		if(currentobj->GetDistanceSq( obj ) > (fRange/4) )
 			return false;
 	}
 
 	if(!CompatibleAreaIDs(objareaid, careaid))
-	{
-		if(currentobj->GetDistance2dSq( obj ) > 1750)
+		if(fabs(fabs(obj->GetPositionZ()) - fabs(currentobj->GetPositionZ())) > 15.0f)
 			return false;
-	}
-	return true;
-}
-
-bool CompatibleAreaIDs(uint32 area1, uint32 area2)
-{
-	switch(area1)
-	{
-	case 4395:
-	case 4560:
-		{
-			if(area1 != area2)
-				return false;
-		}break;
-	}
-	switch(area2)
-	{
-	case 4395:
-	case 4560:
-		{
-			if(area1 != area2)
-				return false;
-		}break;
-	}
 	return true;
 }
 

@@ -61,8 +61,6 @@ enum ObjectActiveState
 	OBJECT_STATE_ACTIVE   = 2,
 };
 
-bool CompatibleAreaIDs(uint32 area1, uint32 area2);
-
 typedef unordered_set<Object* > ObjectSet;
 typedef unordered_set<Object* > UpdateQueue;
 typedef unordered_set<Player*  > PUpdateQueue;

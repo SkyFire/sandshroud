@@ -334,10 +334,9 @@ public:
 	/* converts to 360 > x > 0 */
 	float getEasyAngle( float angle );
 
-	HEARTHSTONE_INLINE const float GetDistanceSq(Object* obj)
+	HEARTHSTONE_INLINE float CalcDistance(LocationVector & comp)
 	{
-		if(obj->GetMapId() != m_mapId) return 40000.0f; //enough for out of range
-		return m_position.DistanceSq(obj->GetPosition());
+		return comp.Distance(m_position);
 	}
 
 	HEARTHSTONE_INLINE float GetDistanceSq(LocationVector & comp)
@@ -345,9 +344,11 @@ public:
 		return comp.DistanceSq(m_position);
 	}
 
-	HEARTHSTONE_INLINE float CalcDistance(LocationVector & comp)
+	HEARTHSTONE_INLINE const float GetDistanceSq(Object* obj)
 	{
-		return comp.Distance(m_position);
+		if(obj->GetMapId() != m_mapId)
+			return 40000.0f; //enough for out of range
+		return m_position.DistanceSq(obj->GetPosition());
 	}
 
 	HEARTHSTONE_INLINE const float GetDistanceSq(float x, float y, float z)
