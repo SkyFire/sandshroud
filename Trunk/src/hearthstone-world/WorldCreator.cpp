@@ -64,7 +64,7 @@ void InstanceMgr::Load(TaskList * l)
 		if(m_maps[mapinfo->mapid] == NULL)
 			l->AddTask(new Task(new CallbackP1<InstanceMgr,uint32>(this, &InstanceMgr::_CreateMap, mapinfo->mapid)));
 
-		if( mapinfo->flags != 1 && mapinfo->cooldown == 0 && mapinfo->update_distance != 0) //Transport maps have 0 update_distance since you don't load into them ;)
+		if( mapinfo->flags != 1 && mapinfo->cooldown == 0) //Transport maps have 0 update_distance since you don't load into them ;)
 		{
 			Log.Warning("InstanceMgr", "Your worldmap_info has no cooldown for map %u.", itr->Get()->mapid);
 			itr->Get()->cooldown = TIME_MINUTE * 30;

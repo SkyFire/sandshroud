@@ -31,7 +31,7 @@ MapMgr::MapMgr(Map *map, uint32 mapId, uint32 instanceid) : CellHandler<MapCell>
 	m_instanceID = instanceid;
 	pMapInfo = WorldMapInfoStorage.LookupEntry(mapId);
 	pdbcMap = dbcMap.LookupEntry(mapId);
-	m_UpdateDistance = pMapInfo->update_distance * pMapInfo->update_distance;
+	m_UpdateDistance = MAX_VIEW_DISTANCE;
 	iInstanceMode = 0;
 
 	// Set up storage arrays
@@ -609,13 +609,10 @@ void MapMgr::ChangeObjectLocation( Object* obj )
 	if( obj->GetTypeId() == TYPEID_ITEM || obj->GetTypeId() == TYPEID_CONTAINER || obj->GetMapMgr() != this )
 		return;
 
-	Player* plObj;
+	Player* plObj = NULLPLR;
 
 	if( obj->IsPlayer() )
 		plObj = TO_PLAYER( obj );
-	else
-		plObj = NULLPLR;
-
 	Object* curObj = NULL;
 	float fRange;
 
@@ -1864,6 +1861,53 @@ void MapMgr::EventRespawnGameObject(GameObject* o, MapCell * c)
 		c->_respawnObjects.erase(itr);
 		o->Spawn(this);
 	}
+}
+
+bool MapMgr::IsInRange(float fRange, Object* obj, Object* currentobj)
+{
+	// First distance check, are we in range?
+	uint32 objareaid = obj->GetAreaID();
+	uint32 careaid = currentobj->GetAreaID();
+	if(objareaid != careaid)
+	{
+		if(currentobj->GetDistance2dSq( obj ) > fRange )
+			return false;
+	}
+	else
+	{
+		if(currentobj->GetDistance2dSq( obj ) > (fRange/4) )
+			return false;
+	}
+
+	if(!CompatibleAreaIDs(objareaid, careaid))
+	{
+		if(currentobj->GetDistance2dSq( obj ) > 1750)
+			return false;
+	}
+	return true;
+}
+
+bool CompatibleAreaIDs(uint32 area1, uint32 area2)
+{
+	switch(area1)
+	{
+	case 4395:
+	case 4560:
+		{
+			if(area1 != area2)
+				return false;
+		}break;
+	}
+	switch(area2)
+	{
+	case 4395:
+	case 4560:
+		{
+			if(area1 != area2)
+				return false;
+		}break;
+	}
+	return true;
 }
 
 void MapMgr::SendMessageToCellPlayers(Object* obj, WorldPacket * packet, uint32 cell_radius /* = 2 */)

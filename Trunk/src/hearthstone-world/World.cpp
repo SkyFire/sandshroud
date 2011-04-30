@@ -148,17 +148,12 @@ World::~World()
 	Log.Notice("InstanceMgr", "~InstanceMgr()");
 	sInstanceMgr.Shutdown();
 
-	//sLog.outString("Deleting Thread Manager..");
-	//delete ThreadMgr::getSingletonPtr();
-
 	Log.Notice("WordFilter", "~WordFilter()");
 	delete g_chatFilter;
 	delete g_characterNameFilter;
 
-	for( AreaTriggerMap::iterator i = m_AreaTrigger.begin( ); i != m_AreaTrigger.end( ); ++ i )
-	{
+	for( AreaTriggerMap::iterator i = m_AreaTrigger.begin( ); i != m_AreaTrigger.end( ); i++ )
 		delete i->second;
-	}
 
 	//eventholder = 0;
 	delete eventholder;

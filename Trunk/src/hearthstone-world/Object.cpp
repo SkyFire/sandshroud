@@ -1776,14 +1776,17 @@ float Object::CalcDistance(Object* Ob)
 {
 	return CalcDistance(GetPositionX(), GetPositionY(), GetPositionZ(), Ob->GetPositionX(), Ob->GetPositionY(), Ob->GetPositionZ());
 }
+
 float Object::CalcDistance(float ObX, float ObY, float ObZ)
 {
 	return CalcDistance(GetPositionX(), GetPositionY(), GetPositionZ(), ObX, ObY, ObZ);
 }
+
 float Object::CalcDistance(Object* Oa, Object* Ob)
 {
 	return CalcDistance(Oa->GetPositionX(), Oa->GetPositionY(), Oa->GetPositionZ(), Ob->GetPositionX(), Ob->GetPositionY(), Ob->GetPositionZ());
 }
+
 float Object::CalcDistance(Object* Oa, float ObX, float ObY, float ObZ)
 {
 	return CalcDistance(Oa->GetPositionX(), Oa->GetPositionY(), Oa->GetPositionZ(), ObX, ObY, ObZ);
@@ -1791,9 +1794,9 @@ float Object::CalcDistance(Object* Oa, float ObX, float ObY, float ObZ)
 
 float Object::CalcDistance(float OaX, float OaY, float OaZ, float ObX, float ObY, float ObZ)
 {
-	float xdest = OaX - ObX;
-	float ydest = OaY - ObY;
-	float zdest = OaZ - ObZ;
+	float xdest = fabs(ObX - OaX);
+	float ydest = fabs(ObY - OaY);
+	float zdest = fabs(ObZ - OaZ);
 	return sqrtf((zdest*zdest) + (ydest*ydest) + (xdest*xdest));
 }
 

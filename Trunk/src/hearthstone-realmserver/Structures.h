@@ -327,7 +327,6 @@ struct MapInfo
  	uint32 required_quest;
 	uint32 required_item;
 	uint32 heroic_key[2];
-	float update_distance;
 	uint32 checkpoint_id;
 	uint32 phasehorde;
 	uint32 phasealliance;

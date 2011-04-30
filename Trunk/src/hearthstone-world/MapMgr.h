@@ -42,7 +42,7 @@ class Corpse;
 class CBattleground;
 class Instance;
 class InstanceScript;
-
+class Transporter;
 
 enum MapMgrTimers
 {
@@ -61,6 +61,8 @@ enum ObjectActiveState
 	OBJECT_STATE_ACTIVE   = 2,
 };
 
+bool CompatibleAreaIDs(uint32 area1, uint32 area2);
+
 typedef unordered_set<Object* > ObjectSet;
 typedef unordered_set<Object* > UpdateQueue;
 typedef unordered_set<Player*  > PUpdateQueue;
@@ -74,11 +76,9 @@ typedef HM_NAMESPACE::hash_map<uint32, Vehicle*> VehicleSqlIdMap;
 typedef HM_NAMESPACE::hash_map<uint32, Creature*> CreatureSqlIdMap;
 typedef HM_NAMESPACE::hash_map<uint32, GameObject* > GameObjectSqlIdMap;
 
+#define MAX_VIEW_DISTANCE 17500 // Client side it's about 17743, but lets just use this.
 #define MAX_TRANSPORTERS_PER_MAP 25
-
-class Transporter;
 #define RESERVE_EXPAND_SIZE 1024
-
 #define CALL_INSTANCE_SCRIPT_EVENT( Mgr, Func ) if ( Mgr != NULL && Mgr->GetScript() != NULL ) Mgr->GetScript()->Func
 
 class SERVER_DECL MapMgr : public CellHandler <MapCell>, public EventableObject, public ThreadContext
@@ -90,7 +90,6 @@ class SERVER_DECL MapMgr : public CellHandler <MapCell>, public EventableObject,
 public:
 
 	//This will be done in regular way soon
-
 	Mutex m_objectinsertlock;
 	ObjectSet m_objectinsertpool;
 	void AddObject(Object*);
@@ -168,10 +167,7 @@ public:
 //////////////////////////////////////////////////////////
 // Local (mapmgr) storage of players for faster lookup
 ////////////////////////////////
-
-    // double typedef lolz// a compile breaker..
 	typedef HM_NAMESPACE::hash_map<const uint32, Player*> PlayerStorageMap;
-
 	PlayerStorageMap m_PlayerStorage;
 	__inline Player* GetPlayer(const uint32 guid)
 	{
@@ -221,20 +217,7 @@ public:
 	void ChangeObjectLocation(Object* obj); // update inrange lists
 	void ChangeFarsightLocation(Player* plr, Unit* farsight, bool apply);
 	void ChangeFarsightLocation(Player* plr, float X, float Y, bool apply);
-	bool IsInRange(float fRange, Object* obj, Object* currentobj)
-	{
-		// First distance check, are we in range?
-		if(currentobj->GetDistance2dSq( obj ) > fRange )
-			return false;
-
-		// Second distance Check, we are in range, but are we in distance?
-		if(currentobj->CalcDistance(obj) > fRange)
-		{	// We aren't in distance, but since we are in range, check if we are in the same Area.
-			if(currentobj->GetAreaID() != obj->GetAreaID())
-				return false;	// We are not in the same area, fuck it.
-		}
-		return true;
-	}
+	bool IsInRange(float fRange, Object* obj, Object* currentobj);
 
 	//! Mark object as updated
 	void ObjectUpdated(Object* obj);

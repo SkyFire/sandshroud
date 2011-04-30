@@ -108,7 +108,7 @@ void iocpEngine::MessageLoop()
 		if(!GetQueuedCompletionStatus(m_completionPort, &len, (PULONG_PTR)&s, &ov, 5000))
 			continue;
 
-        myov = CONTAINING_RECORD(ov, Overlapped, m_ov);
+		myov = CONTAINING_RECORD(ov, Overlapped, m_ov);
 		if(myov->m_op == IO_SHUTDOWN)
 		{
 			delete myov;
@@ -119,6 +119,7 @@ void iocpEngine::MessageLoop()
 			Handlers[myov->m_op](myov, s, len);
 
 		delete myov;
+		myov = NULL;
 	}
 }
 
@@ -135,7 +136,7 @@ void iocpEngine::SpawnThreads()
 void iocpEngine::Shutdown()
 {
 	/* post messages to all threads to shut 'em down */
-	for(int i = 0; i < thread_count; ++i)
+	for(int i = 0; i < thread_count; i++)
 	{
 		Overlapped * ov = new Overlapped;
 		memset(ov, 0, sizeof(Overlapped));
@@ -157,6 +158,8 @@ void iocpEngine::Shutdown()
 
 	m_socketLock.Release();
 
+	Log.Notice( "Network", "Deleting Network Subsystem..." );
+
 	/* shutdown the socket deleter */
 	sSocketDeleter.Kill();
 
@@ -164,7 +167,7 @@ void iocpEngine::Shutdown()
 	delete SocketDeleter::getSingletonPtr();
 
 	/* delete us */
-	delete this;
+	delete SocketEngine::getSingletonPtr();
 }
 
 #endif		// NETLIB_IOCP

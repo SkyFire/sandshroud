@@ -284,8 +284,7 @@ bool Master::Run(int argc, char ** argv)
 
 	// Start Network Subsystem
 	DEBUG_LOG("Server","Starting network subsystem..." );
-	new iocpEngine;
-	new SocketEngineThread(&sSocketEngine);
+	CreateSocketEngine();
 	sSocketEngine.SpawnThreads();
 
 	if( StartConsoleListener() )
@@ -465,15 +464,6 @@ bool Master::Run(int argc, char ** argv)
 
 	Log.Notice( "Database", "Closing Connections..." );
 	_StopDB();
-
-	Log.Notice( "Network", "Deleting Network Subsystem..." );
-	delete SocketEngine::getSingletonPtr();
-	delete SocketDeleter::getSingletonPtr();
-
-#ifdef ENABLE_LUA_SCRIPTING
-	sLog.outString("Deleting Script Engine...");
-	LuaEngineMgr::getSingleton().Unload();
-#endif
 
 	// remove pid
 	remove( "hearthstone-world.pid" );

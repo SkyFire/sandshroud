@@ -40,18 +40,18 @@ public:
 	// (dx * dx + dy * dy + dz * dz)
 	float DistanceSq(const LocationVector & comp)
 	{
-		float delta_x = comp.x - x;
-		float delta_y = comp.y - y;
-		float delta_z = comp.z - z;
+		float delta_x = fabs(comp.x - x);
+		float delta_y = fabs(comp.y - y);
+		float delta_z = fabs(comp.z - z);
 
 		return (delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
 	}
 
 	float DistanceSq(const float &X, const float &Y, const float &Z)
 	{
-		float delta_x = X - x;
-		float delta_y = Y - y;
-		float delta_z = Z - z;
+		float delta_x = fabs(X - x);
+		float delta_y = fabs(Y - y);
+		float delta_z = fabs(Z - z);
 
 		return (delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
 	}
@@ -59,55 +59,55 @@ public:
 	// sqrt(dx * dx + dy * dy + dz * dz)
 	float Distance(const LocationVector & comp)
 	{
-		float delta_x = comp.x - x;
-		float delta_y = comp.y - y;
-		float delta_z = comp.z - z;
+		float delta_x = fabs(comp.x - x);
+		float delta_y = fabs(comp.y - y);
+		float delta_z = fabs(comp.z - z);
 
 		return sqrtf(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
 	}
 
 	float Distance(const float &X, const float &Y, const float &Z)
 	{
-		float delta_x = X - x;
-		float delta_y = Y - y;
-		float delta_z = Z - z;
+		float delta_x = fabs(X - x);
+		float delta_y = fabs(Y - y);
+		float delta_z = fabs(Z - z);
 
 		return sqrtf(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
 	}
 
 	float Distance2DSq(const LocationVector & comp)
 	{
-		float delta_x = comp.x - x;
-		float delta_y = comp.y - y;
+		float delta_x = fabs(comp.x - x);
+		float delta_y = fabs(comp.y - y);
 		return (delta_x*delta_x + delta_y*delta_y);
 	}
 
 	float Distance2DSq(const float & X, const float & Y)
 	{
-		float delta_x = X - x;
-		float delta_y = Y - y;
+		float delta_x = fabs(X - x);
+		float delta_y = fabs(Y - y);
 		return (delta_x*delta_x + delta_y*delta_y);
 	}
 
 	float Distance2D(LocationVector & comp)
 	{
-		float delta_x = comp.x - x;
-		float delta_y = comp.y - y;
+		float delta_x = fabs(comp.x - x);
+		float delta_y = fabs(comp.y - y);
 		return sqrtf(delta_x*delta_x + delta_y*delta_y);
 	}
 
 	float Distance2D(const float & X, const float & Y)
 	{
-		float delta_x = X - x;
-		float delta_y = Y - y;
+		float delta_x = fabs(X - x);
+		float delta_y = fabs(Y - y);
 		return sqrtf(delta_x*delta_x + delta_y*delta_y);
 	}
 
 	// atan2(dx / dy)
 	float CalcAngTo(const LocationVector & dest)
 	{
-		float dx = dest.x - x;
-		float dy = dest.y - y;
+		float dx = fabs(dest.x - x);
+		float dy = fabs(dest.y - y);
 		if(dy != 0.0f)
 			return atan2(dy, dx);
 		else
@@ -116,8 +116,8 @@ public:
 
 	float CalcAngFrom(const LocationVector & src)
 	{
-		float dx = x - src.x;
-		float dy = y - src.y;
+		float dx = fabs(x - src.x);
+		float dy = fabs(y - src.y);
 		if(dy != 0.0f)
 			return atan2(dy, dx);
 		else
