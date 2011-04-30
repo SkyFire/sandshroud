@@ -957,7 +957,8 @@ public:
 		if( s <= 0 )
 			return false;
 
-		//Fight forms that do not use player's weapon
+		// Fight forms that do not use player's weapon
+		//			Cat		  Bear		Dire Bear
 		return ( s == 1 || s == 5 || s == 8 );
 	}
 	void CalcDamage();

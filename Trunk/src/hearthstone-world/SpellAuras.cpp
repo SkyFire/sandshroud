@@ -4838,9 +4838,6 @@ void Aura::SpellAuraModShapeshift(bool apply)
 		}break;
 	}
 
-	if( mod->m_miscValue == FORM_CAT || mod->m_miscValue == FORM_BEAR || mod->m_miscValue == FORM_DIREBEAR || mod->m_miscValue == FORM_MOONKIN )
-		m_target->ModUnsigned32Value(UNIT_FIELD_ATTACK_POWER_MODS, apply ? p->m_feralAP : -p->m_feralAP);
-
 	if( apply )
 	{
 		if( m_target->getClass() == WARRIOR )

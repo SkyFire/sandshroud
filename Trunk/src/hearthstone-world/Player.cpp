@@ -5362,7 +5362,7 @@ void Player::UpdateChances()
 	// dodge
 	float class_multiplier = (pClass == WARRIOR ? 1.1f : pClass == HUNTER ? 1.6f : pClass == ROGUE ? 2.0f : pClass == DRUID ? 1.7f : 1.0f);
 	tmp = (baseDodge[pClass] + (float( (GetUInt32Value( UNIT_FIELD_AGILITY )*class_multiplier)*(dbcMeleeCrit.LookupEntry((pLevel-1)+(pClass-1)*100)->val*100)))) + CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + defence_contribution;
-	tmp = min( max( baseDodge[pClass], tmp), DodgeCap[pClass] );
+	tmp = min( max( 5.0f, tmp), DodgeCap[pClass] );
 
 	// Add dodge from spell after checking cap and base.
 	tmp += GetDodgeFromSpell();
@@ -5567,8 +5567,10 @@ void Player::UpdateStats()
 				AP += 30;
 			}
 
-			if( GetShapeShift() == FORM_MOONKIN || GetShapeShift() == FORM_CAT|| GetShapeShift() == FORM_BEAR || GetShapeShift() == FORM_DIREBEAR )
+			if( IsInFeralForm() )
 			{
+				AP += m_feralAP;
+
 				// counting and adding AP from weapon to total AP.
 				Item* it = GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
 				float dps = 0;
@@ -9827,7 +9829,7 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 		}break;
 	case FERAL_ATTACK_POWER:
 		{
-			// todo
+			m_feralAP += val;
 		}break;
 	case SPELL_HEALING_DONE:
 		{
@@ -9849,9 +9851,7 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 	case SPELL_POWER:
 		{
 			for( uint8 school = 1; school < 7; ++school )
-			{
 				DamageDonePosMod[ school ] += val;
-			}
 			HealDoneMod += val;
 		}break;
 	}
