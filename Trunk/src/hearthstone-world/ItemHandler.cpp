@@ -1367,14 +1367,21 @@ void WorldSession::SendInventoryList(Creature* unit)
 			{
 				if(!_player->ignoreitemreq_cheat)
 				{
-					if(itr->IsDependent && (curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass)))
-						continue;
+					if(itr->IsDependent)
+					{
+						if(curItem->AllowableClass && !(_player->getClassMask() & curItem->AllowableClass))
+							continue;
 
-					if(itr->IsDependent && (curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace)))
-						continue;
+						if(curItem->AllowableRace && !(_player->getRaceMask() & curItem->AllowableRace))
+							continue;
 
-					if(itr->IsDependent && !CheckItemFaction(curItem->Faction, _player->GetTeam()))
-						continue;
+						if(!CheckItemFaction(curItem->Faction, _player->GetTeam()))
+							continue;
+
+						if(curItem->Class == ITEM_CLASS_ARMOR && curItem->SubClass >= ITEM_SUBCLASS_ARMOR_LIBRAM && curItem->SubClass <= ITEM_SUBCLASS_ARMOR_SIGIL)
+							if(!(_player->GetArmorProficiency() & (uint32(1)<<curItem->SubClass)))
+								continue; // Do not show relics to classes that can't use them.
+					}
 
 					if(itr->extended_cost == NULL && curItem->SellPrice > curItem->BuyPrice )
 						continue;
