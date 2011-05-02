@@ -601,7 +601,7 @@ public:
 
 	struct RestedAreaInfo { RestedAreaInfo(int8 team){ReqTeam = team;}; int8 ReqTeam; };
 	std::map<uint32, RestedAreaInfo*> RestedAreas;
-	void SetRestedArea(uint32 areaid, int8 reqteam) { if(RestedAreas[areaid] == NULL) RestedAreas[areaid] = new RestedAreaInfo(reqteam); }
+	void SetRestedArea(uint32 areaid, int8 reqteam = -1) { if(RestedAreas[areaid] == NULL) RestedAreas[areaid] = new RestedAreaInfo(reqteam); }
 	void RemoveRestedArea(uint32 areaid)
 	{
 		RestedAreaInfo* info = RestedAreas[areaid];
