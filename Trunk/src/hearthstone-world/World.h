@@ -593,10 +593,26 @@ public:
 	uint32 mInWorldPlayerCount;
 	bool CalculatedHeightChecks;
 	uint32 mAcceptedConnections;
+
 	std::set<uint32> Sanctuaries;
 	void SetSanctuaryArea(uint32 areaid) { Sanctuaries.insert(areaid); }
 	void RemoveSanctuaryArea(uint32 areaid) { Sanctuaries.erase(areaid); }
 	bool IsSanctuaryArea(uint32 areaid) { return Sanctuaries.find(areaid) != Sanctuaries.end(); }
+
+	struct RestedAreaInfo { RestedAreaInfo(int8 team){ReqTeam = team;}; int8 ReqTeam; };
+	std::map<uint32, RestedAreaInfo*> RestedAreas;
+	void SetRestedArea(uint32 areaid, int8 reqteam) { if(RestedAreas[areaid] == NULL) RestedAreas[areaid] = new RestedAreaInfo(reqteam); }
+	void RemoveRestedArea(uint32 areaid)
+	{
+		RestedAreaInfo* info = RestedAreas[areaid];
+		if(info != NULL)
+		{
+			RestedAreas.erase(areaid);
+			delete info;
+			info = NULL;
+		}
+	}
+	RestedAreaInfo* GetRestedAreaInfo(uint32 areaid) { return RestedAreas[areaid]; }
 
 	uint32 HordePlayers;
 	uint32 AlliancePlayers;

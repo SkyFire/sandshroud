@@ -654,6 +654,7 @@ bool World::SetInitialWorldSettings()
 		}
 	}
 
+	int8 team = -1;
 	AreaTable *areaentry = NULL;
 	DBCStorage<AreaTable>::iterator area_itr;
 	for( area_itr = dbcArea.begin(); area_itr != dbcArea.end(); ++area_itr )
@@ -661,11 +662,25 @@ bool World::SetInitialWorldSettings()
 		areaentry = (*area_itr);
 		if(areaentry == NULL)
 			continue;
-		if(IsSanctuaryArea(areaentry->AreaId))
-			continue;
+		if(!IsSanctuaryArea(areaentry->AreaId))
+		{
+			if(areaentry->category == AREAC_SANCTUARY || areaentry->AreaFlags & AREA_SANCTUARY)
+				Sanctuaries.insert(areaentry->AreaId);
+		}
 
-		if(areaentry->category == AREAC_SANCTUARY || areaentry->AreaFlags & AREA_SANCTUARY)
-			Sanctuaries.insert(areaentry->AreaId);
+		if(RestedAreas.find(areaentry->AreaId) == RestedAreas.end())
+		{
+			if(areaentry->AreaFlags & AREA_CITY_AREA || areaentry->AreaFlags & AREA_CITY || areaentry->AreaFlags & AREA_CAPITAL_SUB || areaentry->AreaFlags & AREA_CAPITAL)
+			{
+				team = -1;
+				if(areaentry->category == AREAC_ALLIANCE_TERRITORY)
+					team = ALLIANCE;
+				if(areaentry->category == AREAC_HORDE_TERRITORY)
+					team = HORDE;
+				SetRestedArea(areaentry->AreaId, team);
+			}
+
+		}
 		areaentry = NULL;
 	}
 	Log.Notice("World", "Hashed %u sanctuaries", Sanctuaries.size());

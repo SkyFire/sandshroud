@@ -1358,37 +1358,26 @@ void Player::_EventExploration()
 	else if( m_zoneId != at->AreaId )
 		ZoneUpdate(at->AreaId);
 
-	bool rest_on = false; // Crow: Should be put in Update somehow.
-	LocationVector loc = GetPosition();
 	// Check for a restable area
-	if(at->AreaFlags & AREA_CITY_AREA || at->AreaFlags & AREA_CITY || at->AreaFlags & AREA_CAPITAL_SUB || at->AreaFlags & AREA_CAPITAL)
+	bool rest_on = false;
+	World::RestedAreaInfo* restinfo = sWorld.GetRestedAreaInfo(at->AreaId);
+	if(restinfo)
 	{
-		// check faction
-		if((at->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == ALLIANCE) || (at->category == AREAC_HORDE_TERRITORY && GetTeam() == HORDE) )
-		{
+		if(restinfo->ReqTeam == -1 || restinfo->ReqTeam == GetTeam())
 			rest_on = true;
-		}
-		else if(at->category != AREAC_ALLIANCE_TERRITORY && at->category != AREAC_HORDE_TERRITORY)
-		{
-			rest_on = true;
-		}
 	}
-	else
+	else if(at->ZoneId) // Crow: Shouldn't have to do this.
 	{
 		//second AT check for subzones.
-		if(at->ZoneId)
+		restinfo = sWorld.GetRestedAreaInfo(at->ZoneId);
+		if(restinfo)
 		{
-			AreaTable * at2 = dbcArea.LookupEntry(at->ZoneId);
-			if(at2 && (at2->AreaFlags & AREA_CITY_AREA || at2->AreaFlags & AREA_CITY ) )
-			{
-				if((at2->category == AREAC_ALLIANCE_TERRITORY && GetTeam() == 0) || (at2->category == AREAC_HORDE_TERRITORY && GetTeam() == 1) )
-					rest_on = true;
-				else if(at2->category != AREAC_ALLIANCE_TERRITORY && at2->category != AREAC_HORDE_TERRITORY)
-					rest_on = true;
-			}
+			if(restinfo->ReqTeam == -1 || restinfo->ReqTeam == GetTeam())
+				rest_on = true;
 		}
 	}
 
+	LocationVector loc = GetPosition();
 	if (rest_on)
 	{
 		if(!m_isResting)
