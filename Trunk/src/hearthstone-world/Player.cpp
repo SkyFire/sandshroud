@@ -5468,11 +5468,13 @@ void Player::UpdateAttackSpeed()
 	uint32 speed = 2000;
 	uint32 calspeed;
 	Item* weap;
-	if( GetShapeShift() )
+	if( GetShapeShift() == FORM_CAT )
 	{
-		SpellShapeshiftForm* ssf = dbcSpellShapeshiftForm.LookupEntry(GetShapeShift());
-		if(ssf && ssf->attackSpeed)
-			speed = ssf->attackSpeed;
+		speed = 1000;
+	}
+	else if( GetShapeShift() == FORM_BEAR || GetShapeShift() == FORM_DIREBEAR )
+	{
+		speed = 2500;
 	}
 	else if( !disarmed )
 	{
@@ -5480,9 +5482,10 @@ void Player::UpdateAttackSpeed()
 		if( weap != NULL )
 			speed = weap->GetProto()->Delay;
 	}
+
 	calspeed = uint32((speed*m_meleeattackspeedmod)*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_MELEE_HASTE))/100.0f));
-	if(calspeed < 800)
-		calspeed = 800;
+	if(calspeed < 500)
+		calspeed = 500;
 	if(calspeed > 8000)
 		calspeed = 8000;
 
@@ -5493,8 +5496,8 @@ void Player::UpdateAttackSpeed()
 	{
 		speed = weap->GetProto()->Delay;
 		calspeed = uint32((speed*m_meleeattackspeedmod )*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_MELEE_HASTE))/100.0f));
-		if(calspeed < 800)
-			calspeed = 800;
+		if(calspeed < 500)
+			calspeed = 500;
 		if(calspeed > 8000)
 			calspeed = 8000;
 
@@ -5506,8 +5509,8 @@ void Player::UpdateAttackSpeed()
 	{
 		speed = weap->GetProto()->Delay;
 		calspeed = uint32((speed*m_rangedattackspeedmod)*((100.0f-CalcRating(PLAYER_RATING_MODIFIER_RANGED_HASTE))/100.0f));
-		if(calspeed < 800)
-			calspeed = 800;
+		if(calspeed < 500)
+			calspeed = 500;
 		if(calspeed > 8000)
 			calspeed = 8000;
 
@@ -9027,9 +9030,6 @@ float Player::CalcPercentForRating( uint32 index, uint32 rating )
 	uint32 level = m_uint32Values[UNIT_FIELD_LEVEL];
 	if( level > 100 )
 		level = 100;
-
-	if(level < 34 && (index == PLAYER_RATING_MODIFIER_BLOCK || index == PLAYER_RATING_MODIFIER_PARRY || index == PLAYER_RATING_MODIFIER_DEFENCE))
-		level = 34;
 
 	CombatRatingDBC * pDBCEntry = dbcCombatRating.LookupEntryForced( relative_index * 100 + level - 1 );
 	if( pDBCEntry == NULL )
