@@ -138,7 +138,6 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 
 	LocalizedGameObjectName * lgn = (language>0) ? sLocalizationMgr.GetLocalizedGameObjectName(entryID, language) : NULL;
 
-	printf("ID: %u\n", entryID);
 	data << entryID;
 	data << goinfo->Type;
 	data << goinfo->DisplayID;
