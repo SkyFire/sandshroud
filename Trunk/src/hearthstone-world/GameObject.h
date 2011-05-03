@@ -24,46 +24,6 @@ class Player;
 class GameObjectAIScript;
 class GameObjectTemplate;
 
-#pragma pack(push,1)
-struct GameObjectInfo
-{
-	uint32 ID;
-	uint32 Type;
-	uint32 DisplayID;
-	char * Name;
-	char * Icon;
-	char * CastBarText;
-	uint32 SpellFocus;
-	uint32 DefaultFlags;
-	uint32 sound1;
-	uint32 sound2;
-	uint32 sound3;
-	uint32 sound4;
-	uint32 sound5;
-	uint32 sound6;
-	uint32 sound7;
-	uint32 sound8;
-	uint32 sound9;
-	uint32 Unknown1;
-	uint32 Unknown2;
-	uint32 Unknown3;
-	uint32 Unknown4;
-	uint32 Unknown5;
-	uint32 Unknown6;
-	uint32 Unknown7;
-	uint32 Unknown8;
-	uint32 Unknown9;
-	uint32 Unknown10;
-	uint32 Unknown11;
-	uint32 Unknown12;
-	uint32 Unknown13;
-	uint32 Unknown14;
-
-	uint32 *InvolvedQuestIds;
-	uint32 InvolvedQuestCount;
-};
-#pragma pack(pop)
-
 enum GAMEOBJECT_BYTES
 {
 	GAMEOBJECT_BYTES_STATE			= 0,
@@ -114,15 +74,15 @@ enum GAMEOBJECT_TYPES
 
 enum GameObjectFlags
 {
-	GO_FLAG_IN_USE			= 0x001,						//disables interaction while animated
-	GO_FLAG_LOCKED			= 0x002,						//require key, spell, event, etc to be opened. Makes "Locked" appear in tooltip
-	GO_FLAG_INTERACT_COND	= 0x004,						//cannot interact (condition to interact)
-	GO_FLAG_TRANSPORT		= 0x008,						//any kind of transport? Object can transport (elevator, boat, car)
+	GO_FLAG_IN_USE			= 0x001,		// Disables interaction while animated
+	GO_FLAG_LOCKED			= 0x002,		// Require key, spell, event, etc to be opened. Makes "Locked" appear in tooltip
+	GO_FLAG_INTERACT_COND	= 0x004,		// Cannot interact (condition to interact)
+	GO_FLAG_TRANSPORT		= 0x008,		// Any kind of transport? Object can transport (elevator, boat, car)
 	GO_FLAG_UNK1			= 0x010,
-	GO_FLAG_NODESPAWN		= 0x020,						//never despawn, typically for doors, they just change state
-	GO_FLAG_TRIGGERED		= 0x040,						//typically, summoned objects. Triggered by spell or other events
+	GO_FLAG_NODESPAWN		= 0x020,		// Never despawn, typically for doors, they just change state
+	GO_FLAG_TRIGGERED		= 0x040,		// Typically, summoned objects. Triggered by spell or other events
 	GO_FLAG_DAMAGED			= 0x200,
-	GO_FLAG_DESTROYED		= 0x400,
+	GO_FLAG_DESTROYED		= 0x400
 };
 
 enum GameObjectDynFlags
@@ -139,6 +99,259 @@ enum GoUInt32Types
 	GO_UINT32_RIT_SPELL			= 4,
 	GO_UINT32_MAX
 };
+
+#pragma pack(push,1)
+struct GameObjectInfo
+{
+	uint32 ID;
+	uint32 Type;
+	uint32 DisplayID;
+	char * Name;
+	char * Icon;
+	char * CastBarText;
+	uint32 DefaultFlags;
+
+	/* Crow: Time for some ugly unions, thanks for the section meanings Tom.
+	** Note that all slot ones replace Spell Focus, the rest are sound and unks
+	*/
+	union
+	{
+		// GAMEOBJECT_TYPE_DOOR
+		struct
+		{
+			uint32 StartOpen; /* 1 */
+			uint32 LockId; uint32 AutoCloseTime; uint32 NoDamageImmune;
+			uint32 OpenTextID; uint32 CloseTextID; uint32 IgnoredByPathing;
+		} Door;
+
+		// GAMEOBJECT_TYPE_BUTTON
+		struct
+		{
+			uint32 StartOpen; /* 1 */
+			uint32 LockId; uint32 AutoCloseTime; uint32 LinkedTrap;
+			uint32 NoDamageImmune; uint32 Large; uint32 OpenTextID; uint32 CloseTextID; uint32 LosOK;
+		} Button;
+
+		// GAMEOBJECT_TYPE_QUESTGIVER
+		struct
+		{
+			uint32 LockId; /* 1 */
+			uint32 QuestList; uint32 PageMaterial; uint32 GossipID; uint32 CustomAnim;
+			uint32 NoDamageImmune; uint32 OpenTextID; uint32 LosOK; uint32 AllowMounted; uint32 Large;
+		} QuestGiver;
+
+		// GAMEOBJECT_TYPE_CHEST
+		struct
+		{
+			uint32 LockId; /* 1 */
+			uint32 LootId; uint32 ChestRestockTime; uint32 Consumable; uint32 MinSuccessOpens; uint32 MaxSuccessOpens; uint32 EventId; uint32 LinkedTrapId;
+			uint32 QuestId;	uint32 Level; uint32 LosOK; uint32 LeaveLoot; uint32 NotInCombat; uint32 LogLoot; uint32 OpenTextID; uint32 GroupLootRules; uint32 FloatingTooltip;
+		} Chest;
+
+		// GAMEOBJECT_TYPE_BINDER - GAMEOBJECT_TYPE_GENERIC
+		struct
+		{
+			uint32 FloatingTooltip; /* 1 */
+			uint32 Highlight; uint32 ServerOnly;
+			uint32 Large; uint32 FloatOnWater; int32 QuestID;
+		} Generic;
+
+		// GAMEOBJECT_TYPE_TRAP
+		struct
+		{
+			uint32 LockId; /* 1 */
+			uint32 Level; uint32 Radius; uint32 SpellId; uint32 Charges; uint32 Cooldown; int32 AutoCloseTime; uint32 StartDelay;
+			uint32 ServerOnly; uint32 Stealthed; uint32 Large; uint32 Invisible; uint32 OpenTextID; uint32 CloseTextID; uint32 IgnoreTotems;
+		} Trap;
+
+		// GAMEOBJECT_TYPE_CHAIR
+		struct { uint32 Slots; /* 1 */ uint32 Height; uint32 OnlyCreatorUse; uint32 TriggeredEvent; } Chair;
+
+		// GAMEOBJECT_TYPE_SPELL_FOCUS
+		struct
+		{
+			uint32 FocusId; /* 1 */
+			uint32 Dist/* sound1 */; uint32 LinkedTrapId/* sound2 */; uint32 ServerOnly/* sound3 */;
+			uint32 QuestID/* sound4 */; uint32 Large/* sound5 */; uint32 FloatingTooltip/* sound6 */;
+		} TypeSpellFocus;
+
+		// GAMEOBJECT_TYPE_TEXT
+		struct { uint32 PageID; /* 1 */ uint32 Language; uint32 PageMaterial; uint32 AllowMounted; } Text;
+
+		// GAMEOBJECT_TYPE_GOOBER
+		struct
+		{
+			uint32 LockId; /* 1 */
+			int32 QuestId; uint32 EventId; uint32 AutoCloseTime; uint32 CustomAnim; uint32 Consumable; uint32 Cooldown; uint32 PageId;
+			uint32 Language; uint32 PageMaterial; uint32 SpellId; uint32 NoDamageImmune; uint32 LinkedTrapId; uint32 Large; uint32 OpenTextID;
+			uint32 CloseTextID; uint32 LosOK; uint32 AllowMounted; uint32 FloatingTooltip; uint32 GossipID; uint32 WorldStateSetsState;
+		} Goober;
+
+		// GAMEOBJECT_TYPE_TRANSPORT
+		struct { uint32 Pause; /* 1 */ uint32 StartOpen; uint32 AutoCloseTime; uint32 Pause1EventID; uint32 Pause2EventID; } Transport;
+
+		// GAMEOBJECT_TYPE_AREADAMAGE
+		struct
+		{
+			uint32 LockId; /* 1 */
+			uint32 Radius; uint32 DamageMin; uint32 DamageMax;
+			uint32 DamageSchool; uint32 AutoCloseTime; uint32 OpenTextID; uint32 CloseTextID;
+		} AreaDamage;
+
+		// GAMEOBJECT_TYPE_CAMERA
+		struct { uint32 LockId; /* 1 */ uint32 CinematicId; uint32 EventID; uint32 OpenTextID; } Camera;
+
+		// GAMEOBJECT_TYPE_MAPOBJECT - GAMEOBJECT_TYPE_MO_TRANSPORT
+		struct
+		{
+			uint32 TaxiPathId; /* 1 */
+			uint32 MoveSpeed; uint32 AccelRate; uint32 StartEventID;
+			uint32 StopEventID; uint32 TransportPhysics; uint32 MapID; uint32 WorldState1;
+		} MoTransport;
+
+		// GAMEOBJECT_TYPE_DUEL_ARBITER - GAMEOBJECT_TYPE_FISHINGNODE - GAMEOBJECT_TYPE_RITUAL
+		struct
+		{
+			uint32 ReqParticipants; /* 1 */
+			uint32 SpellId; uint32 AnimSpell; uint32 RitualPersistent; uint32 CasterTargetSpell;
+			uint32 CasterTargetSpellTargets; uint32 CastersGrouped; uint32 RitualNoTargetCheck;
+		} Arbiter;
+
+		// GAMEOBJECT_TYPE_MAILBOX - GAMEOBJECT_TYPE_DONOTUSE - GAMEOBJECT_TYPE_GUARDPOST
+		struct { uint32 CreatureID; /* 1 */ uint32 Charges; } GuardPost;
+
+		// GAMEOBJECT_TYPE_SPELLCASTER
+		struct { uint32 SpellId; /* 1 */ uint32 Charges; uint32 PartyOnly; uint32 AllowMounted; uint32 Large; } SpellCaster;
+
+		// GAMEOBJECT_TYPE_MEETINGSTONE
+		struct { uint32 MinLevel; /* 1 */ uint32 MaxLevel; uint32 AreaID; } MeetingStone;
+
+		// GAMEOBJECT_TYPE_FLAGSTAND
+		struct
+		{
+			uint32 LockId; /* 1 */
+			uint32 PickupSpell; uint32 Radius; uint32 ReturnAura;
+			uint32 ReturnSpell; uint32 NoDamageImmune; uint32 OpenTextID; uint32 LosOK;
+		} Flagstand;
+
+		// GAMEOBJECT_TYPE_FISHINGHOLE
+		struct { uint32 Radius; /* 1 */ uint32 LootId; uint32 MinSuccessOpens; uint32 MaxSuccessOpens; uint32 LockId; } FishingHole;
+
+		// GAMEOBJECT_TYPE_FLAGDROP
+		struct { uint32 LockId; /* 1 */ uint32 EventID; uint32 PickupSpell; uint32 NoDamageImmune; uint32 OpenTextID;} FlagDrop;
+
+		// GAMEOBJECT_TYPE_MINI_GAME
+		struct { uint32 GameType; /* 1 */ } Minigame;
+
+		// GAMEOBJECT_TYPE_CAPTURE_POINT
+		struct
+		{
+			uint32 Radius; /* 1 */
+			uint32 Spell; uint32 WorldState1; uint32 Worldstate2; uint32 WinEventID1; uint32 WinEventID2;
+			uint32 ContestedEventID1; uint32 ContestedEventID2; uint32 ProgressEventID1; uint32 ProgressEventID2;
+			uint32 NeutralEventID1; uint32 NeutralEventID2; uint32 NeutralPercent; uint32 Worldstate3;
+			uint32 MinSuperiority; uint32 MaxSuperiority; uint32 MinTime; uint32 MaxTime;
+			uint32 Large; uint32 Highlight; uint32 StartingValue; uint32 Unidirectional;
+		} CapturePoint;
+
+		// GAMEOBJECT_TYPE_AURA_GENERATOR
+		struct { uint32 StartOpen; /* 1 */ uint32 Radius; uint32 AuraID1; uint32 ConditionID1; uint32 AuraID2; uint32 ConditionID2; uint32 ServerOnly; } AuraGenerator;
+
+		// GAMEOBJECT_TYPE_DUNGEON_DIFFICULTY
+		struct { uint32 MapID; /* 1 */ uint32 Difficulty; } DungeonDifficulty;
+
+		// GAMEOBJECT_TYPE_BARBER_CHAIR
+		struct { uint32 Chairheight; /* 1 */ uint32 HeightOffset; } BarberChair;
+
+		// GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING
+		struct
+		{
+			uint32 IntactNumHits; /* 1 */
+			uint32 CreditProxyCreature; uint32 State1Name; uint32 IntactEvent; uint32 DamagedDisplayId; uint32 DamagedNumHits;
+			uint32 Empty3; uint32 Empty4; uint32 Empty5; uint32 DamagedEvent; uint32 DestroyedDisplayId; uint32 Empty7; uint32 Empty8; uint32 Empty9;
+			uint32 DestroyedEvent; uint32 Empty10; uint32 RebuildingTimeSecs; uint32 Empty11; uint32 DestructibleData; uint32 RebuildingEvent;
+			uint32 Empty12; uint32 Empty13; uint32 DamageEvent;
+		} DestructableBuilding;
+
+		// GAMEOBJECT_TYPE_GUILDBANK - GAMEOBJECT_TYPE_TRAPDOOR
+		struct { uint32 WhenToPause; /* 1 */ uint32 StartOpen; uint32 AutoClose; } TrapDoor;
+
+		// not use for specific field access (only for output with loop by all filed), also this determinate max union size
+		struct { uint32 ListedData[24]; } RawData;
+	};
+
+	uint32 GetSpellID()
+	{
+		uint32 spellid = 0;
+		switch(Type)
+		{
+		case GAMEOBJECT_TYPE_TRAP:
+			spellid = Trap.SpellId;
+			break;
+		case GAMEOBJECT_TYPE_GOOBER:
+			spellid = Goober.SpellId;
+			break;
+		case GAMEOBJECT_TYPE_DUEL_ARBITER:
+		case GAMEOBJECT_TYPE_FISHINGNODE:
+		case GAMEOBJECT_TYPE_RITUAL:
+			spellid = Arbiter.SpellId;
+			break;
+		case GAMEOBJECT_TYPE_SPELLCASTER:
+			spellid = SpellCaster.SpellId;
+			break;
+		case GAMEOBJECT_TYPE_CAPTURE_POINT:
+			spellid = CapturePoint.Spell;
+			break;
+		}
+		return spellid;
+	}
+
+	uint32 GetLockID()
+	{
+		uint32 lockid = 0;
+		switch(Type)
+		{
+		case GAMEOBJECT_TYPE_DOOR:
+			lockid = Door.LockId;
+			break;
+		case GAMEOBJECT_TYPE_BUTTON:
+			lockid = Button.LockId;
+			break;
+		case GAMEOBJECT_TYPE_QUESTGIVER:
+			lockid = QuestGiver.LockId;
+			break;
+		case GAMEOBJECT_TYPE_CHEST:
+			lockid = Chest.LockId;
+			break;
+		case GAMEOBJECT_TYPE_TRAP:
+			lockid = Trap.LockId;
+			break;
+		case GAMEOBJECT_TYPE_GOOBER:
+			lockid = Goober.LockId;
+			break;
+		case GAMEOBJECT_TYPE_AREADAMAGE:
+			lockid = AreaDamage.LockId;
+			break;
+		case GAMEOBJECT_TYPE_CAMERA:
+			lockid = Camera.LockId;
+			break;
+		case GAMEOBJECT_TYPE_FLAGSTAND:
+			lockid = Flagstand.LockId;
+			break;
+		case GAMEOBJECT_TYPE_FISHINGHOLE:
+			lockid = FishingHole.LockId;
+			break;
+		case GAMEOBJECT_TYPE_FLAGDROP:
+			lockid = FlagDrop.LockId;
+			break;
+		}
+		return lockid;
+	}
+
+	uint32 *InvolvedQuestIds;
+	uint32 InvolvedQuestCount;
+};
+#pragma pack(pop)
 
 #define CALL_GO_SCRIPT_EVENT(obj, func) if(obj->GetTypeId() == TYPEID_GAMEOBJECT && obj->GetScript() != NULL) obj->GetScript()->func
 

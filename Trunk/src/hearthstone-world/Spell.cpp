@@ -3468,8 +3468,8 @@ uint8 Spell::CanCast(bool tolerate)
 					continue;
 				}
 
-				// lets read the distance from database (sound 1)
-				focusRange = (float)info->sound1;
+				// lets read the distance from database
+				focusRange = (float)info->TypeSpellFocus.Dist;
 
 				// is that possible?
 				if( !focusRange )
@@ -3478,7 +3478,7 @@ uint8 Spell::CanCast(bool tolerate)
 				if(!IsInrange(p_caster->GetPositionX(), p_caster->GetPositionY(), p_caster->GetPositionZ(), (*itr), (focusRange * focusRange)))
 					continue;
 
-				if(info->SpellFocus == GetSpellProto()->RequiresSpellFocus)
+				if(info->TypeSpellFocus.FocusId == GetSpellProto()->RequiresSpellFocus)
 				{
 					found = true;
 					break;

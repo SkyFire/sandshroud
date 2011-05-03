@@ -315,8 +315,7 @@ void IsleOfConquest::SpawnControlPoint(uint32 Id, uint32 Type)
 	if(gi == NULL)
 		return;
 
-	gi_aura = gi->sound3 ? GameObjectNameStorage.LookupEntry(gi->sound3) : NULL;
-
+	gi_aura = gi->Button.LinkedTrap ? GameObjectNameStorage.LookupEntry(gi->Button.LinkedTrap) : NULL;
 	if(m_ioccontrolPoints[Id] == NULL)
 	{
 		m_ioccontrolPoints[Id] = SpawnGameObject(gi->ID, ControlPointCoordinates[Id][0], ControlPointCoordinates[Id][1],
@@ -380,7 +379,7 @@ void IsleOfConquest::SpawnControlPoint(uint32 Id, uint32 Type)
 		m_ioccontrolPoints[Id]->PushToWorld(m_mapMgr);
 	}
 
-	if(gi_aura==NULL)
+	if(gi_aura == NULL)
 	{
 		// remove it if it exists
 		if(m_ioccontrolPointAuras[Id]!=NULL && m_ioccontrolPointAuras[Id]->IsInWorld())

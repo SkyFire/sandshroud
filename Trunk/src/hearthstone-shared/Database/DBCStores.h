@@ -46,18 +46,18 @@ struct AchievementEntry
 
 //	Used for counting criteria.
 //	Example: http://www.wowhead.com/achievement=1872
-//	uint32 count;				// 12
-//	uint32 refAchievement;		// 13
+//	uint32 count;					// 12
+//	uint32 refAchievement;			// 13
 
-	uint32 AssociatedCriteria[32]; // Custom stuff
+	uint32 AssociatedCriteria[32];	// Custom stuff
 	uint32 AssociatedCriteriaCount;
 };
 
 struct AchievementCriteriaEntry
 {
-	uint32 ID;											// 0
-	uint32 referredAchievement;						// 1
-	uint32 requiredType;								// 2
+	uint32 ID;						// 0
+	uint32 referredAchievement;		// 1
+	uint32 requiredType;			// 2
 	union
 	{
 		// ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE = 0

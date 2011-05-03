@@ -109,9 +109,6 @@ void WorldSocket::OnDisconnect()
 
 void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 {
-/*	if(opcode != SMSG_UPDATE_OBJECT && opcode != SMSG_PONG && opcode != SMSG_WORLD_STATE_UI_TIMER_UPDATE && opcode != SMSG_WEATHER)
-		printf("Sent packet %s (0x%03X)\n", LookupOpcodeName(opcode), uint(opcode), uint(opcode));
-*/
 	OUTPACKET_RESULT res;
 	if( (len + 10) > WORLDSOCKET_SENDBUF_SIZE )
 	{
@@ -185,6 +182,9 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 
 	if( GetWriteBuffer()->GetSpace() < (len+4) )
 		return OUTPACKET_RESULT_NO_ROOM_IN_BUFFER;
+
+//	if(opcode != SMSG_UPDATE_OBJECT && opcode != SMSG_PONG && opcode != SMSG_WORLD_STATE_UI_TIMER_UPDATE && opcode != SMSG_WEATHER)
+//		printf("Sent packet %s (0x%03X)\n", LookupOpcodeName(opcode), uint(opcode), uint(opcode));
 
 	LockWriteBuffer();
 	// Encrypt the packet

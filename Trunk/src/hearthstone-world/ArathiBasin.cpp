@@ -183,8 +183,7 @@ void ArathiBasin::SpawnControlPoint(uint32 Id, uint32 Type)
 	if(gi == NULL)
 		return;
 
-	gi_aura = gi->sound3 ? GameObjectNameStorage.LookupEntry(gi->sound3) : NULL;
-
+	gi_aura = gi->Button.LinkedTrap ? GameObjectNameStorage.LookupEntry(gi->Button.LinkedTrap) : NULL;
 	if(m_controlPoints[Id] == NULL)
 	{
 		m_controlPoints[Id] = SpawnGameObject(gi->ID, ControlPointCoordinates[Id][0], ControlPointCoordinates[Id][1],
@@ -248,7 +247,7 @@ void ArathiBasin::SpawnControlPoint(uint32 Id, uint32 Type)
 		m_controlPoints[Id]->PushToWorld(m_mapMgr);
 	}
 
-	if(gi_aura==NULL)
+	if(gi_aura == NULL)
 	{
 		// remove it if it exists
 		if(m_controlPointAuras[Id]!=NULL && m_controlPointAuras[Id]->IsInWorld())
@@ -639,28 +638,28 @@ LocationVector ArathiBasin::GetStartingCoords(uint32 Team)
 
 void ArathiBasin::HookOnAreaTrigger(Player* plr, uint32 id)
 {
-	uint32 spellid=0;
+	uint32 spellid = 0;
 	int32 buffslot = -1;
 	switch(id)
 	{
 	case 3866:			// stables
-		buffslot=AB_BUFF_STABLES;
+		buffslot = AB_BUFF_STABLES;
 		break;
 
 	case 3867:			// farm
-		buffslot=AB_BUFF_FARM;
+		buffslot = AB_BUFF_FARM;
 		break;
 
 	case 3870:			// blacksmith
-		buffslot=AB_BUFF_BLACKSMITH;
+		buffslot = AB_BUFF_BLACKSMITH;
 		break;
 
 	case 3869:			// mine
-		buffslot=AB_BUFF_MINE;
+		buffslot = AB_BUFF_MINE;
 		break;
 
 	case 3868:			// lumbermill
-		buffslot=AB_BUFF_LUMBERMILL;
+		buffslot = AB_BUFF_LUMBERMILL;
 		break;
 
 	case 3948:			// alliance/horde exits
@@ -683,7 +682,7 @@ void ArathiBasin::HookOnAreaTrigger(Player* plr, uint32 id)
 	if(m_buffs[x] && m_buffs[x]->IsInWorld())
 	{
 		// apply the spell
-		spellid = m_buffs[x]->GetInfo()->sound3;
+		spellid = m_buffs[x]->GetInfo()->GetSpellID();
 		m_buffs[x]->RemoveFromWorld(false);
 
 		// respawn it in buffrespawntime

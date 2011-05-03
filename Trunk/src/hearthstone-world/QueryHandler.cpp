@@ -123,24 +123,22 @@ void WorldSession::HandleCreatureQueryOpcode( WorldPacket & recv_data )
 void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 {
 	CHECK_PACKET_SIZE(recv_data, 12);
-	WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 20000);
+	WorldPacket data(SMSG_GAMEOBJECT_QUERY_RESPONSE, 150);
 
 	uint32 entryID;
 	uint64 guid;
-	GameObjectInfo *goinfo;
-
-
 	recv_data >> entryID;
 	recv_data >> guid;
 
 	DEBUG_LOG("WORLD","HandleGameObjectQueryOpcode CMSG_GAMEOBJECT_QUERY '%u'", entryID);
 
-	goinfo = GameObjectNameStorage.LookupEntry(entryID);
+	GameObjectInfo* goinfo = GameObjectNameStorage.LookupEntry(entryID);
 	if(goinfo == NULL)
 		return;
 
 	LocalizedGameObjectName * lgn = (language>0) ? sLocalizationMgr.GetLocalizedGameObjectName(entryID, language) : NULL;
 
+	printf("ID: %u\n", entryID);
 	data << entryID;
 	data << goinfo->Type;
 	data << goinfo->DisplayID;
@@ -151,30 +149,8 @@ void WorldSession::HandleGameObjectQueryOpcode( WorldPacket & recv_data )
 	data << goinfo->Icon;
 	data << goinfo->CastBarText;
 	data << uint8(0);
-	data << goinfo->SpellFocus;
-	data << goinfo->sound1;
-	data << goinfo->sound2;
-	data << goinfo->sound3;
-	data << goinfo->sound4;
-	data << goinfo->sound5;
-	data << goinfo->sound6;
-	data << goinfo->sound7;
-	data << goinfo->sound8;
-	data << goinfo->sound9;
-	data << goinfo->Unknown1;
-	data << goinfo->Unknown2;
-	data << goinfo->Unknown3;
-	data << goinfo->Unknown4;
-	data << goinfo->Unknown5;
-	data << goinfo->Unknown6;
-	data << goinfo->Unknown7;
-	data << goinfo->Unknown8;
-	data << goinfo->Unknown9;
-	data << goinfo->Unknown10;
-	data << goinfo->Unknown11;
-	data << goinfo->Unknown12;
-	data << goinfo->Unknown13;
-	data << goinfo->Unknown14;
+	for(uint32 d = 0; d < 24; d++)
+		data << goinfo->RawData.ListedData[d];
 	data << float(1);
 	for(uint32 i = 0; i < 6; i++)
 		data << uint32(0);			// itemId[6], quest drop

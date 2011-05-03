@@ -4113,7 +4113,7 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				if(gameObjTarget->GetState() == 0)
 					return;
 
-				Lock *lock = dbcLock.LookupEntryForced(gameObjTarget->GetInfo()->SpellFocus);
+				Lock *lock = dbcLock.LookupEntryForced(gameObjTarget->GetInfo()->GetLockID());
 				if( lock == NULL )
 					return;
 
@@ -4208,11 +4208,14 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 
 			sHookInterface.OnSlowLockOpen(gameObjTarget,p_caster);
 
-			uint32 spellid = !gameObjTarget->GetInfo()->Unknown1 ? 23932 : gameObjTarget->GetInfo()->Unknown1;
-			SpellEntry*en=dbcSpell.LookupEntry(spellid);
+			uint32 spellid = 23932;
+			if(gameObjTarget->GetInfo()->RawData.ListedData[10])
+				spellid = gameObjTarget->GetInfo()->RawData.ListedData[10];
+
+			SpellEntry*en = dbcSpell.LookupEntry(spellid);
 			Spell* sp = CREATESPELL(p_caster,en,true,NULLAURA);
 			SpellCastTargets tgt;
-			tgt.m_unitTarget=gameObjTarget->GetGUID();
+			tgt.m_unitTarget = gameObjTarget->GetGUID();
 			sp->prepare(&tgt);
 		}break;
 	case LOCKTYPE_QUICK_CLOSE:

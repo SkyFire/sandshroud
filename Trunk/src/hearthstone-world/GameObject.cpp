@@ -48,6 +48,7 @@ GameObject::GameObject(uint64 guid)
 	m_deleted = false;
 	m_created = false;
 	m_respawnCell = NULL;
+	m_loadedFromDB = false;
 	m_battleground = NULLBATTLEGROUND;
 	initiated = false;
 	memset(m_Go_Uint32Values, 0, sizeof(uint32)*GO_UINT32_MAX);
@@ -274,7 +275,7 @@ void GameObject::SaveToDB()
 		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_2) << ","
 		<< GetFloatValue(GAMEOBJECT_PARENTROTATION_3) << ","
 		<< ( GetByte(GAMEOBJECT_BYTES_1, 0)? 1 : 0 ) << ","
-		<< GetUInt32Value(GAMEOBJECT_FLAGS) << ","
+		<< GetFlags() << ","
 		<< GetUInt32Value(GAMEOBJECT_FACTION) << ","
 		<< GetFloatValue(OBJECT_FIELD_SCALE_X) << ","
 		<< m_phaseMask << ")";
@@ -295,14 +296,14 @@ void GameObject::InitAI()
 	{
 	case GAMEOBJECT_TYPE_TRAP:
 		{
-			spellid = pInfo->sound3;
+			spellid = pInfo->GetSpellID();
 		}break;
 	case GAMEOBJECT_TYPE_SPELL_FOCUS://redirect to properties of another go
 		{
-			if( pInfo->sound2 == 0 )
+			if( pInfo->TypeSpellFocus.LinkedTrapId == 0 )
 				return;
 
-			uint32 objectid = pInfo->sound2;
+			uint32 objectid = pInfo->TypeSpellFocus.LinkedTrapId;
 			GameObjectInfo* gopInfo = GameObjectNameStorage.LookupEntry( objectid );
 			if(gopInfo == NULL)
 			{
@@ -310,18 +311,18 @@ void GameObject::InitAI()
 				return;
 			}
 
-			if(gopInfo->sound3)
-				spellid = gopInfo->sound3;
+			if(gopInfo->RawData.ListedData[4])
+				spellid = gopInfo->RawData.ListedData[4];
 		}break;
 	case GAMEOBJECT_TYPE_RITUAL:
 		{
-			m_ritualmembers = new uint32[pInfo->SpellFocus];
-			memset(m_ritualmembers,0,sizeof(uint32)*pInfo->SpellFocus);
+			m_ritualmembers = new uint32[pInfo->Arbiter.ReqParticipants];
+			memset(m_ritualmembers, 0, (sizeof(uint32)*(pInfo->Arbiter.ReqParticipants)));
 			return;
 		}break;
 	case GAMEOBJECT_TYPE_CHEST:
- 		{
-			Lock *pLock = dbcLock.LookupEntry(GetInfo()->SpellFocus);
+		{
+			Lock *pLock = dbcLock.LookupEntry(pInfo->GetLockID());
 			if(pLock)
 			{
 				for(uint32 i=0; i < 8; i++)
@@ -341,13 +342,13 @@ void GameObject::InitAI()
 		}break;
 	case GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING:
 		{
-			m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->SpellFocus + pInfo->sound5;
+			m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->DestructableBuilding.IntactNumHits+pInfo->DestructableBuilding.DamagedNumHits;
 			SetAnimProgress(255);
 			return;
 		}break;
 	case GAMEOBJECT_TYPE_AURA_GENERATOR:
 		{
-			spellid = GetInfo()->sound2;
+			spellid = GetInfo()->AuraGenerator.AuraID1;
 			sEventMgr.AddEvent(this, &GameObject::AuraGenSearchTarget, EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 1000, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 			return;
 		}break;
@@ -389,6 +390,9 @@ void GameObject::InitAI()
 
 bool GameObject::Load(GOSpawn *spawn)
 {
+	if(m_loadedFromDB)
+		return true;
+
 	if(!CreateFromProto(spawn->entry,0,spawn->x,spawn->y,spawn->z,spawn->facing,spawn->orientation1,spawn->orientation2,spawn->orientation3,spawn->orientation4))
 		return false;
 
@@ -718,7 +722,7 @@ uint32 GameObject::GetGOReqSkill()
 	if(GetInfo() == NULL)
 		return 0;
 
-	Lock *lock = dbcLock.LookupEntry( GetInfo()->SpellFocus );
+	Lock *lock = dbcLock.LookupEntry( GetInfo()->GetLockID() );
 	if(!lock)
 		return 0;
 	for(uint32 i=0; i < 8; ++i)
@@ -769,8 +773,8 @@ void GameObject::TakeDamage(uint32 amount, Object* mcaster, Player* pcaster, uin
 	if(HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED)) // Already destroyed
 		return;
 
-	uint32 IntactHealth = pInfo->SpellFocus;
-	uint32 DamagedHealth = pInfo->sound5;
+	uint32 IntactHealth = pInfo->DestructableBuilding.IntactNumHits;
+	uint32 DamagedHealth = pInfo->DestructableBuilding.DamagedNumHits;
 
 	if(m_Go_Uint32Values[GO_UINT32_HEALTH] > amount)
 		m_Go_Uint32Values[GO_UINT32_HEALTH] -= amount;
@@ -834,11 +838,9 @@ void GameObject::Rebuild()
 {
 	RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_DESTROYED);
 	SetDisplayId(pInfo->DisplayID);
-	uint32 IntactHealth = pInfo->SpellFocus;
-	uint32 DamagedHealth = pInfo->sound5;
-	if(IntactHealth != 0 && DamagedHealth != 0)
-		SetAnimProgress(m_Go_Uint32Values[GO_UINT32_HEALTH]*255/(IntactHealth + DamagedHealth));
-	m_Go_Uint32Values[GO_UINT32_HEALTH] = pInfo->SpellFocus + pInfo->sound5;
+	uint32 IntactHealth = pInfo->DestructableBuilding.IntactNumHits;
+	uint32 DamagedHealth = pInfo->DestructableBuilding.DamagedNumHits;
+	m_Go_Uint32Values[GO_UINT32_HEALTH] = IntactHealth + DamagedHealth;
 }
 
 void GameObject::AuraGenSearchTarget()
@@ -855,39 +857,42 @@ void GameObject::AuraGenSearchTarget()
 	for( it2 = GetInRangeSetBegin(); it2 != GetInRangeSetEnd(); it2++)
 	{
 		itr = it2;
-		Unit* thing = NULL;
-		if( (*itr)->IsUnit() && GetDistanceSq((*itr)) <= pInfo->sound1 && ((*itr)->IsPlayer() || (*itr)->IsVehicle()) && !(TO_UNIT((*itr))->HasAura(spell->Id)))
+		Unit* thing = NULL; // Crow: Shouldn't radius be sq?
+		if( (*itr)->IsUnit() && GetDistanceSq((*itr)) <= pInfo->AuraGenerator.Radius && ((*itr)->IsPlayer() || (*itr)->IsVehicle()) && !(TO_UNIT((*itr))->HasAura(spell->Id)))
 		{
 			thing = TO_UNIT((*itr));
 			thing->AddAura(new Aura(spell,-1,thing,thing));
 		}
 	}
 }
+
 void GameObject::Damage()
 {
 	SetFlags(GO_FLAG_DAMAGED);
-	if(pInfo->Unknown9!=0)
+	if(pInfo->DestructableBuilding.DestructibleData != 0)
 	{
-		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
+		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->DestructableBuilding.DestructibleData );
 		SetDisplayId(display->GetDisplayId(1));
 	}
 	else
-		SetDisplayId(pInfo->sound4);
+		SetDisplayId(pInfo->DestructableBuilding.DamagedDisplayId);
 }
 
 void GameObject::Destroy()
 {
 	RemoveFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED);
 	SetFlags(GO_FLAG_DESTROYED);
-	if(pInfo->Unknown9!=0)
+	if(pInfo->DestructableBuilding.DestructibleData != 0)
 	{
-		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->Unknown9 );
+		DestructibleModelDataEntry * display = dbcDestructibleModelDataEntry.LookupEntry( pInfo->DestructableBuilding.DestructibleData );
 		SetDisplayId(display->GetDisplayId(3));
 	}
 	else
-		SetDisplayId(pInfo->Unknown1);
+		SetDisplayId(pInfo->DestructableBuilding.DestroyedDisplayId);
 }
+
 #define OPEN_CHEST 11437
+
 void GameObject::Use(Player *p)
 {
 	Spell* spell = NULLSPELL;
@@ -906,6 +911,12 @@ void GameObject::Use(Player *p)
 	{
 	case GAMEOBJECT_TYPE_CHAIR:
 		{
+			if(goinfo->Chair.OnlyCreatorUse)
+			{
+				if(p->GetGUID() != GetUInt64Value(OBJECT_FIELD_CREATED_BY))
+					return;
+			}
+
 			if( p->IsMounted() )
 				p->RemoveAura( p->m_MountSpellId );
 			else
@@ -915,24 +926,26 @@ void GameObject::Use(Player *p)
 			}
 
 			if (!ChairListSlots.size())
-				if (goinfo->SpellFocus > 0)
-					for (uint32 i = 0; i < goinfo->SpellFocus; ++i)
+			{
+				if (goinfo->Chair.Slots > 0)
+				{
+					for (uint32 i = 0; i < goinfo->Chair.Slots; ++i)
 						ChairListSlots[i] = 0;
+				}
 				else
 					ChairListSlots[0] = 0;
+			}
 
-			float lowestDist = 90.0f;
-			
 			uint32 nearest_slot = 0;
+			float lowestDist = 90.0f;
+			bool found_free_slot = false;
 			float x_lowest = GetPositionX();
 			float y_lowest = GetPositionY();
-
 			float orthogonalOrientation = GetOrientation()+M_PI*0.5f;
-			bool found_free_slot = false;
 			for (ChairSlotAndUser::iterator itr = ChairListSlots.begin(); itr != ChairListSlots.end(); ++itr)
 			{
 				float size = GetFloatValue(OBJECT_FIELD_SCALE_X);
-				float relativeDistance = (size*itr->first)-(size*(goinfo->SpellFocus-1)/2.0f);
+				float relativeDistance = (size*itr->first)-(size*(goinfo->Chair.Slots-1)/2.0f);
 
 				float x_i = GetPositionX() + relativeDistance * cos(orthogonalOrientation);
 				float y_i = GetPositionY() + relativeDistance * sin(orthogonalOrientation);
@@ -966,7 +979,7 @@ void GameObject::Use(Player *p)
 				{
 					itr->second = p->GetGUID();
 					p->Teleport( x_lowest, y_lowest, GetPositionZ(), GetOrientation(), GetPhaseMask());
-					p->SetStandState(STANDSTATE_SIT_LOW_CHAIR+goinfo->sound1);
+					p->SetStandState(STANDSTATE_SIT_LOW_CHAIR+goinfo->Chair.Height);
 					return;
 				}
 			}
@@ -1044,7 +1057,7 @@ void GameObject::Use(Player *p)
 		}break;
 	case GAMEOBJECT_TYPE_SPELLCASTER:
 		{
-			SpellEntry *info = dbcSpell.LookupEntry(goinfo->SpellFocus);
+			SpellEntry *info = dbcSpell.LookupEntry(goinfo->GetSpellID());
 			if(!info)
 			{
 				sLog.outError("Gameobject Type Spellcaster doesn't have a spell to cast entry %u", goinfo->ID);
@@ -1064,7 +1077,7 @@ void GameObject::Use(Player *p)
 			if(!m_ritualmembers || !GetGOui32Value(GO_UINT32_RIT_SPELL) || !GetGOui32Value(GO_UINT32_M_RIT_CASTER))
 				return;
 
-			for(i=0;i<goinfo->SpellFocus;++i)
+			for(i = 0; i < goinfo->Arbiter.ReqParticipants; i++)
 			{
 				if(!m_ritualmembers[i])
 				{
@@ -1072,7 +1085,8 @@ void GameObject::Use(Player *p)
 					p->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, GetGUID());
 					p->SetUInt32Value(UNIT_CHANNEL_SPELL, GetGOui32Value(GO_UINT32_RIT_SPELL));
 					break;
-				}else if(m_ritualmembers[i] == p->GetLowGUID())
+				}
+				else if(m_ritualmembers[i] == p->GetLowGUID())
 				{
 					// we're deselecting :(
 					m_ritualmembers[i] = 0;
@@ -1082,14 +1096,14 @@ void GameObject::Use(Player *p)
 				}
 			}
 
-			if(i == goinfo->SpellFocus - 1)
+			if(i == goinfo->Arbiter.ReqParticipants - 1)
 			{
 				SetGOui32Value(GO_UINT32_RIT_SPELL, 0);
 				Player* plr;
-				for(i=0;i<goinfo->SpellFocus;++i)
+				for(i = 0; i < goinfo->Arbiter.ReqParticipants; i++)
 				{
 					plr = p->GetMapMgr()->GetPlayer(m_ritualmembers[i]);
-					if(plr!=NULL)
+					if(plr != NULL)
 					{
 						plr->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, 0);
 						plr->SetUInt32Value(UNIT_CHANNEL_SPELL, 0);
@@ -1104,7 +1118,7 @@ void GameObject::Use(Player *p)
 						if(!GetGOui32Value(GO_UINT32_M_RIT_TARGET))
 							return;
 
-						info = dbcSpell.LookupEntry(goinfo->sound1);
+						info = dbcSpell.LookupEntry(goinfo->GetSpellID());
 						if(!info)
 							break;
 						Player* target = p->GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_TARGET));
@@ -1122,12 +1136,12 @@ void GameObject::Use(Player *p)
 						Spell* spell = NULLSPELL;
 
 						// kill the sacrifice player
-						psacrifice = p->GetMapMgr()->GetPlayer(m_ritualmembers[(int)(RandomUInt(goinfo->SpellFocus-1))]);
+						psacrifice = p->GetMapMgr()->GetPlayer(m_ritualmembers[(int)(RandomUInt(goinfo->Arbiter.ReqParticipants-1))]);
 						Player* pCaster = GetMapMgr()->GetPlayer(GetGOui32Value(GO_UINT32_M_RIT_CASTER));
 						if(!psacrifice || !pCaster)
 							return;
 
-						info = dbcSpell.LookupEntry(goinfo->sound4);
+						info = dbcSpell.LookupEntry(goinfo->Arbiter.CasterTargetSpell);
 						if(!info)
 							break;
 						spell = (new Spell(psacrifice, info, true, NULLAURA));
@@ -1135,7 +1149,7 @@ void GameObject::Use(Player *p)
 						spell->prepare(&targets);
 
 						// summons demon
-						info = dbcSpell.LookupEntry(goinfo->sound1);
+						info = dbcSpell.LookupEntry(goinfo->Arbiter.SpellId);
 						spell = (new Spell(pCaster, info, true, NULLAURA));
 						SpellCastTargets targets;
 						targets.m_unitTarget = pCaster->GetGUID();
@@ -1151,7 +1165,7 @@ void GameObject::Use(Player *p)
 						if(!pleader)
 							return;
 
-						info = dbcSpell.LookupEntry(goinfo->sound1);
+						info = dbcSpell.LookupEntry(goinfo->GetSpellID());
 						Spell* spell(new Spell(pleader, info, true, NULLAURA));
 						SpellCastTargets targets(plr->GetGUID());
 						spell->prepare(&targets);
@@ -1165,7 +1179,7 @@ void GameObject::Use(Player *p)
 						if(!pleader)
 							return;
 
-						info = dbcSpell.LookupEntry(goinfo->sound1);
+						info = dbcSpell.LookupEntry(goinfo->GetSpellID());
 						Spell* spell(new Spell(pleader, info, true, NULLAURA));
 						SpellCastTargets targets(pleader->GetGUID());
 						spell->prepare(&targets);
@@ -1180,7 +1194,7 @@ void GameObject::Use(Player *p)
 						if(!pleader)
 							return;
 
-						info = dbcSpell.LookupEntry(goinfo->sound1);
+						info = dbcSpell.LookupEntry(goinfo->GetSpellID());
 						Spell* spell(new Spell(pleader, info, true, NULLAURA));
 						SpellCastTargets targets(pleader->GetGUID());
 						spell->prepare(&targets);
@@ -1195,7 +1209,7 @@ void GameObject::Use(Player *p)
 						if(!pleader)
 							return;
 
-						info = dbcSpell.LookupEntry(goinfo->sound1);
+						info = dbcSpell.LookupEntry(goinfo->GetSpellID());
 						Spell* spell(new Spell(pleader, info, true, NULLAURA));
 						SpellCastTargets targets(pleader->GetGUID());
 						spell->prepare(&targets);
@@ -1205,7 +1219,7 @@ void GameObject::Use(Player *p)
 		}break;
 	case GAMEOBJECT_TYPE_GOOBER:
 		{
-			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->Unknown1);
+			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->GetSpellID());
 			if(sp != NULL)
 				p->CastSpell(p,sp,true);
 			else
@@ -1213,10 +1227,10 @@ void GameObject::Use(Player *p)
 		}break;
 	case GAMEOBJECT_TYPE_CAMERA://eye of azora
 		{
-			if(goinfo->sound1)
+			if(goinfo->Camera.CinematicId)
 			{
 				WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
-				data << uint32(goinfo->sound1);
+				data << uint32(goinfo->Camera.CinematicId);
 				p->GetSession()->SendPacket(&data);
 			}
 			else

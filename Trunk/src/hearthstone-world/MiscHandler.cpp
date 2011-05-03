@@ -359,7 +359,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 				pGO->m_loot.looters.erase( _player->GetLowGUID() );
 				//check for locktypes
 
-				Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->SpellFocus );
+				Lock* pLock = dbcLock.LookupEntry( pGO->GetInfo()->GetLockID() );
 				if( pLock )
 				{
 					for( uint32 i=0; i < 8; i++ )

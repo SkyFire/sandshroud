@@ -686,7 +686,7 @@ void Arena::HookOnAreaTrigger(Player* plr, uint32 id)
 		if(m_buffs[buffslot] != NULL && m_buffs[buffslot]->IsInWorld())
 		{
 			/* apply the buff */
-			plr->CastSpell(plr, m_buffs[buffslot]->GetInfo()->sound3, true);
+			plr->CastSpell(plr, m_buffs[buffslot]->GetInfo()->GetSpellID(), true);
 
 			/* despawn the gameobject (not delete!) */
 			m_buffs[buffslot]->Despawn(0, BUFF_RESPAWN_TIME);
