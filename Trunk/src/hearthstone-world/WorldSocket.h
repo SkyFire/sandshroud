@@ -60,9 +60,9 @@ public:
 
 	void __fastcall UpdateQueuePosition(uint32 Position);
 
-	void OnRecvData();
-	void OnConnect();
-	void OnDisconnect();
+	void __fastcall OnRecvData();
+	void __fastcall OnConnect();
+	void __fastcall OnDisconnect();
 
 	HEARTHSTONE_INLINE void SetSession(WorldSession * session) { mSession = session; }
 	HEARTHSTONE_INLINE WorldSession * GetSession() { return mSession; }

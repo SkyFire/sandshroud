@@ -200,7 +200,7 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 	// Pass the rest of the packet to our send buffer (if there is any)
 	if(len > 0 && rv)
 		rv = Write((const uint8*)data, (uint32)len);
-	else
+	else if(rv)
 		rv = ForceSend();
 
 	UnlockWriteBuffer();
@@ -256,7 +256,6 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 
 	// Send out a request for this account.
 	mRequestID = sLogonCommHandler.ClientConnected(account, this);
-
 	if(mRequestID == 0xFFFFFFFF)
 	{
 		Disconnect();
@@ -397,9 +396,9 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 			CharacterDatabase.Execute("INSERT INTO account_data VALUES(%u, '', '', '', '', '', '', '', '', '')", AccountID);
 		else
 		{
+			char * d;
 			size_t len;
 			const char * data;
-			char * d;
 			for(i = 0; i < 8; i++)
 			{
 				data = pResult->Fetch()[1+i].GetString();
@@ -419,9 +418,10 @@ void WorldSocket::InformationRetreiveCallback(WorldPacket & recvData, uint32 req
 	DEBUG_LOG("Auth", "%s from %s:%u [%ums]", AccountName.c_str(), GetIP(), GetPort(), _latency);
 
 	// Check for queue.
-	if( (sWorld.GetSessionCount() < sWorld.GetPlayerLimit()) || pSession->HasGMPermissions() ) {
+	if( (sWorld.GetSessionCount() < sWorld.GetPlayerLimit()) || pSession->HasGMPermissions() )
 		Authenticate();
-	} else {
+	else
+	{
 		// Queued, sucker.
 		uint32 Position = sWorld.AddQueuedSocket(this);
 		mQueued = true;

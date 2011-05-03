@@ -48,6 +48,7 @@ LogonCommHandler::~LogonCommHandler()
 	server = NULL;
 
 	delete realm;
+	realm = NULL;
 }
 
 LogonCommClientSocket * LogonCommHandler::ConnectToLogon(string Address, uint32 Port)
@@ -198,6 +199,9 @@ void LogonCommHandler::AdditionAck(uint32 ServID)
 
 void LogonCommHandler::UpdateSockets()
 {
+	if(bServerShutdown)
+		return;
+
 	mapLock.Acquire();
 	uint32 t = (uint32)UNIXTIME;
 	if(logon != NULL)
@@ -206,6 +210,7 @@ void LogonCommHandler::UpdateSockets()
 		{
 			Log.Error("LogonCommClient","Realm id %u lost connection.", (unsigned int)server->ID);
 			logon->_id = 0;
+			mapLock.Release();
 			return;
 		}
 
@@ -217,6 +222,7 @@ void LogonCommHandler::UpdateSockets()
 				Log.Error("LogonCommClient","Realm id %u connection dropped due to pong timeout.", (unsigned int)server->ID);
 				logon->_id = 0;
 				logon->Disconnect();
+				mapLock.Release();
 				return;
 			}
 			if( (t - logon->last_ping) > 15 )//ping every 15 seconds when connected
@@ -227,9 +233,8 @@ void LogonCommHandler::UpdateSockets()
 	{
 		// Try to reconnect
 		if(t >= server->RetryTime && !bServerShutdown)
-		{
 			Connect();
-		}
+
 		mapLock.Release();
 	}
 }

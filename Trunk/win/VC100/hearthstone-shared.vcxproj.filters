@@ -61,6 +61,15 @@
     <Filter Include="Util\Collision\G3D\Matrix">
       <UniqueIdentifier>{6cb7487c-d877-4592-9f52-bec2f52f2346}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network\Engines">
+      <UniqueIdentifier>{951e5a71-599c-49c2-ad41-d21cf7c8dc81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Engines\Win">
+      <UniqueIdentifier>{130b3846-f641-46c9-b06c-c5de75528db9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Engines\Unix">
+      <UniqueIdentifier>{7c86f31c-adc2-4e12-b1a9-2f067ba5bd22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\hearthstone-shared\Database\Database.cpp">
@@ -316,23 +325,23 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.cpp">
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\TcpSocket.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.cpp">
-      <Filter>Network</Filter>
+      <Filter>Network\Engines\Win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.cpp">
+      <Filter>Network\Engines\Unix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.cpp">
-      <Filter>Network</Filter>
+      <Filter>Network\Engines\Unix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.cpp">
-      <Filter>Network</Filter>
+      <Filter>Network\Engines\Unix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\TcpSocket.cpp">
-      <Filter>Network</Filter>
+      <Filter>Network\Engines\Unix</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -725,26 +734,26 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Network\StraightBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Network\TcpSocket.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.h">
+      <Filter>Network\Engines\Win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.h">
+      <Filter>Network\Engines\Unix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.h">
+      <Filter>Network\Engines\Unix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.h">
+      <Filter>Network\Engines\Unix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.h">
+      <Filter>Network\Engines\Unix</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
