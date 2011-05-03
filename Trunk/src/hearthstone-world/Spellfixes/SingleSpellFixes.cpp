@@ -835,6 +835,15 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectTriggerSpell[0] = 53719;
 		}break;
 
+	case 20154: // Seal of Righteousness
+		{
+			sp->School = SCHOOL_HOLY;
+			sp->procFlags = PROC_ON_MELEE_ATTACK; // Overwrite the other procflag
+			sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
+			sp->Effect[0] = sp->Effect[2] = SPELL_EFFECT_APPLY_AURA;
+			sp->EffectApplyAuraName[0] = sp->EffectApplyAuraName[2] = SPELL_AURA_DUMMY;
+		}break;
+
 		// Seal of Blood/Martyr holy dmg
 	case 31893:
 	case 53719:

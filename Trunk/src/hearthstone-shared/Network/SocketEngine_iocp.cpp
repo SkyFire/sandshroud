@@ -128,7 +128,7 @@ void iocpEngine::SpawnThreads()
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 
-	thread_count = si.dwNumberOfProcessors*2;
+	thread_count = si.dwNumberOfProcessors;
 	for(int i = 0; i < thread_count; ++i)
 		ThreadPool.ExecuteTask(new SocketEngineThread(this));
 }

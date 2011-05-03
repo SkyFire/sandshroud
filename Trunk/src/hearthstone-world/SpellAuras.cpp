@@ -1669,37 +1669,14 @@ void Aura::SpellAuraDummy(bool apply)
 	if(sScriptMgr.CallScriptedDummyAura(GetSpellId(), mod->i, this, apply))
 		return;
 
+	bool dummy_aura = false;
 	uint32 TamingSpellid = 0;
 	Unit * m_caster = GetUnitCaster();
-	// for seal -> set judgement crap
-	if( m_spellProto->buffType & SPELL_TYPE_SEAL && mod->i == 2 )
-	{
-		Player* c = TO_PLAYER( m_caster );
-
-		if( c == NULL )
-			return;
-
-		if( apply )
-		{
-			c->SetFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_JUDGEMENT );
-			if( !c->Seal )
-				c->Seal = m_spellProto->Id;
-		}
-		else
-		{
-			c->RemoveFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_JUDGEMENT );
-			if( c->Seal )
-				c->Seal = 0;
-		}
-	}
-
-	bool dummy_aura = false;
-
 	Player* _ptarget = TO_PLAYER( m_target );
 
 	switch(GetSpellId())
 	{
-		case 53563:
+	case 53563:
 		{
 			if( apply )
 			{
@@ -2844,7 +2821,7 @@ void Aura::SpellAuraDummy(bool apply)
 	case 31801: // Seal of Vengeance
 	case 20166: // Seal of Wisdom
 	case 53736: // Seal of Corruption
-	case 21084: // Seal of Righteousness
+	case 20154: // Seal of Righteousness
 	case 53720: // Seal of the Martyr
 	case 31892: // Seal of Blood
 	case 20375: // Seal of Command
@@ -2865,8 +2842,9 @@ void Aura::SpellAuraDummy(bool apply)
 					case 53736:
 						spellid = 53742;
 						break;
-					case 21084:
+					case 20154:
 						spellid = 25742;
+						judspell = 20187;
 						break;
 					case 53720:
 						procchance = 40;
@@ -2884,19 +2862,29 @@ void Aura::SpellAuraDummy(bool apply)
 					}
 
 					if(mod->i == 2)
+					{
+						plr->SetFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_JUDGEMENT );
 						plr->JudgementSpell = judspell;
+					}
 					else if(spellid)
 						CreateProcTriggerSpell(plr, plr->GetGUID(), GetSpellId(), spellid, procchance, PROC_ON_MELEE_ATTACK, NULL);
 				}
 				else
 				{
-					plr->JudgementSpell = 0;
-					for(std::list<struct ProcTriggerSpell>::iterator itr = plr->m_procSpells.begin();itr != plr->m_procSpells.end();itr++)
+					if(mod->i == 2)
 					{
-						if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+						plr->JudgementSpell = 0;
+						plr->RemoveFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_JUDGEMENT );
+					}
+					else
+					{
+						for(std::list<struct ProcTriggerSpell>::iterator itr = plr->m_procSpells.begin();itr != plr->m_procSpells.end();itr++)
 						{
-							itr->deleted = true;
-							break;
+							if(itr->origId == GetSpellId() && itr->caster == m_casterGuid && !itr->deleted)
+							{
+								itr->deleted = true;
+								break;
+							}
 						}
 					}
 				}

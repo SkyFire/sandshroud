@@ -695,6 +695,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 //			WorldPacket* wpdata = ((WorldPacket*)data);
 //			moveinfo->flags = moveflags;
 //			moveinfo->write(*wpdata);
+//			return;
 //		}
 
 		*data << uint32(moveflags);
