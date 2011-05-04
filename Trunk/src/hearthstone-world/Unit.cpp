@@ -169,6 +169,7 @@ Unit::Unit()
 		m_SummonSlots[x] = NULLCREATURE;
 		SchoolImmunityList[x] = 0;
 		BaseResistance[x] = 0;
+		DamageDoneMod[x] = 0;
 		DamageDonePosMod[x] = 0;
 		DamageDoneNegMod[x] = 0;
 		DamageDonePctMod[x] = 1.0f;
@@ -6181,7 +6182,7 @@ int32 Unit::GetAP()
 {
     int32 baseap = GetUInt32Value(UNIT_FIELD_ATTACK_POWER) + GetUInt32Value(UNIT_FIELD_ATTACK_POWER_MODS);
     float totalap = float(baseap)*(GetFloatValue(UNIT_FIELD_ATTACK_POWER_MULTIPLIER)+1);
-	if(totalap>=0)
+	if(totalap >= 0)
 		return float2int32(totalap);
 	return	0;
 }
@@ -6190,7 +6191,7 @@ int32 Unit::GetRAP()
 {
     int32 baseap = GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER) + GetUInt32Value(UNIT_FIELD_RANGED_ATTACK_POWER_MODS);
     float totalap = float(baseap)*(GetFloatValue(UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER)+1);
-	if(totalap>=0)
+	if(totalap >= 0)
 		return float2int32(totalap);
 	return	0;
 }

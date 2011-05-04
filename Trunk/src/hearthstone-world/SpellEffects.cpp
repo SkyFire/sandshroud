@@ -590,15 +590,11 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			/************************
 			*		PALADIN			*
 			************************/
-		case 31898: // Blood
-		case 31804: // Vengeance
 		case 20187: // Righteousness
+		case 20425: // Command
+		case 31804: // Vengeance
 		case 53733: // Corruption
-		case 20425: // Command1
-		case 20467: // Command2
-		case 57774: // Light
-		case 20268: // Wisdom
-		case 53726: // Martyr
+		case 54158: // Light/Wisdom/Justice
 			{
 				if(p_caster != NULL)
 				{
@@ -608,19 +604,48 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					if(unitTarget && (p_caster->HasAura(53696) || p_caster->HasAura(53695)))
 						p_caster->CastSpell(unitTarget, 68055, true);
 
-					if( p_caster->HasAura(37186) )
-						dmg += 33;
-
 					// Damage Calculations:
 					switch(GetSpellProto()->Id)
 					{
+					case 31804:
+						{
+							p_caster->CastSpell(unitTarget, 31803, true);
+							dmg = (1+uint32(uint32(0.22f*p_caster->GetDamageDoneMod(SCHOOL_HOLY))+uint32(0.14f*p_caster->GetAP())));
+							if(unitTarget && unitTarget->HasActiveAura(31803))
+							{
+								uint8 stacksize = 1;
+								Aura* curse = unitTarget->FindActiveAura(31803);
+								if(curse != NULL)
+									stacksize = curse->stackSize;
+								dmg += (dmg*(0.1f * stacksize));
+							}
+						}break;
+					case 53733:
+						{
+							p_caster->CastSpell(unitTarget, 53742, true);
+							dmg = (1+uint32(uint32(0.22f*p_caster->GetDamageDoneMod(SCHOOL_HOLY))+uint32(0.14f*p_caster->GetAP())));
+							if(unitTarget && unitTarget->HasAura(31803))
+							{
+								uint8 stacksize = 1;
+								Aura* curse = unitTarget->FindActiveAura(31803);
+								if(curse != NULL)
+									stacksize = curse->stackSize;
+								dmg += (dmg*(0.1f * stacksize));
+							}
+						}break;
 					case 20187: // Righteousness
-						dmg = (1+(0.20*p_caster->GetAP())+(0.32*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						dmg = (1+uint32(0.22f*p_caster->GetAP())+uint32(0.32f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
-					case 20268: // Wisdom
-						dmg = (1+(0.16*p_caster->GetAP())+(0.25*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+					case 20425: // Command
+						dmg = (1+uint32(0.27f*p_caster->GetAP())+uint32(0.21f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						break;
+					case 54158: // Light/Wisdom/Justice
+						dmg = (1+uint32(0.16f*p_caster->GetAP())+uint32(0.25f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					}
+
+					if( p_caster->HasAura(37186) )
+						dmg += 33;
 				}
 			}break;
 
@@ -640,7 +665,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if( p_caster != NULL )
 				{
-					dmg += p_caster->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME)/1000 * ((0.022 * (p_caster->GetAP()) + (0.044 * (p_caster->GetDamageDoneMod(1))))) + GetSpellProto()->EffectBasePoints[i];
+					dmg += (0.022 * (p_caster->GetAP())) + (0.044 * p_caster->GetDamageDoneMod(SCHOOL_HOLY) * (p_caster->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME)/1000));
 					if(p_caster->HasAura(56414))
 						dmg += uint32((float)dmg*0.1f);
 				}

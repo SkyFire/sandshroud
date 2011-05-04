@@ -5445,6 +5445,7 @@ void Player::UpdateChanceFields()
 		}
 		damagedonepos += (SpellDamageFromAP*GetAP())/100;
 
+		DamageDoneMod[i] = damagedonepos;
 		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + i, damagedonepos );
 		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, DamageDoneNegMod[i] );
 	}

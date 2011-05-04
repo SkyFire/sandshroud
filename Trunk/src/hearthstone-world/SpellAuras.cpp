@@ -549,13 +549,6 @@ void Aura::Remove()
 		m_target->RemoveAura( 53523 );
 		m_target->RemoveAura( 53524 );
 	}
-
-	uint32 flag = 0;
-	if( m_spellProto->buffType & SPELL_TYPE_SEAL )
-        flag |= AURASTATE_FLAG_JUDGEMENT;
-
-	m_target->RemoveFlag( UNIT_FIELD_AURASTATE, flag );
-
 	delete this;
 }
 
@@ -2818,13 +2811,13 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
-	case 31801: // Seal of Vengeance
-	case 20166: // Seal of Wisdom
-	case 53736: // Seal of Corruption
 	case 20154: // Seal of Righteousness
-	case 53720: // Seal of the Martyr
-	case 31892: // Seal of Blood
+	case 20164: // Seal of Justice
+	case 20165: // Seal of Light
+	case 20166: // Seal of Wisdom
 	case 20375: // Seal of Command
+	case 31801: // Seal of Vengeance
+	case 53736: // Seal of Corruption
 		{
 			if(m_caster != NULL && m_caster->IsPlayer())
 			{
@@ -2836,34 +2829,45 @@ void Aura::SpellAuraDummy(bool apply)
 					uint32 judspell = mod->m_amount;
 					switch(GetSpellId())
 					{
-					case 31801:
-						spellid = 31803;
-						break;
-					case 53736:
-						spellid = 53742;
-						break;
-					case 20154:
+					case 20154: // Seal of Righteousness
 						spellid = 25742;
 						judspell = 20187;
 						break;
-					case 53720:
-						procchance = 40;
-						spellid = 53718;
+					case 20164: // Seal of Justice
+						procchance = 47;
+						spellid = 20170;
+						judspell = 54158;
 						break;
-					case 31892:
+					case 20165: // Seal of Light
+						procchance = 47;
+						spellid = 20168;
+						judspell = 54158;
+						break;
+					case 20166: // Seal of Wisdom
+						procchance = 47;
+						spellid = 20168;
+						judspell = 54158;
+						break;
+					case 20375: // Seal of Command
 						procchance = 40;
 						spellid = 20424;
 						break;
-					case 20166:
-						procchance = 47;
-						spellid = 20168;
-						judspell = 20268;
+					case 31801: // Seal of Vengeance
+						// Just send our spell to refresh this shit.
+						spellid = 31803;
+						judspell = 31804;
+						break;
+					case 53736: // Seal of Corruption
+						// Just send our spell to refresh this shit.
+						spellid = 53742;
+						judspell = 53733;
 						break;
 					}
 
 					if(mod->i == 2)
 					{
-						plr->SetFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_JUDGEMENT );
+						if(judspell)
+							plr->SetFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_JUDGEMENT );
 						plr->JudgementSpell = judspell;
 					}
 					else if(spellid)

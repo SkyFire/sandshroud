@@ -1028,7 +1028,7 @@ public:
 
 	uint32 SchoolCastPrevent[7];
 	float MechanicDurationPctMod[NUM_MECHANIC];
-	int32 GetDamageDoneMod(uint32 school) { return DamageDonePosMod[school] - DamageDoneNegMod[school]; };
+	int32 GetDamageDoneMod(uint32 school) { if(DamageDoneMod[school]) return DamageDoneMod[school]; return DamageDonePosMod[school] - DamageDoneNegMod[school]; };
 	float GetDamageDonePctMod(uint32 school) { return DamageDonePctMod[school]; };
 	int32 GetHealingDoneMod() { return HealDoneModPos; };
 	int32 GetHealingTakenMod() { return HealTakenMod; };
@@ -1170,6 +1170,7 @@ public:
 	uint32 BaseResistance[7]; //there are resistances for silence, fear, mechanics ....
 	uint32 BaseStats[5];
 
+	int32 DamageDoneMod[7];
 	int32 DamageDonePosMod[7];
 	int32 DamageDoneNegMod[7];
 	float DamageDonePctMod[7];
