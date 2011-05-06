@@ -3792,75 +3792,78 @@ void AIInterface::JumpTo(float toX, float toY, float toZ, uint32 moveTime, float
 
 uint32 AIInterface::GetWeaponEmoteType(bool ranged)
 {
-	ASSERT(m_Unit != NULL && m_Unit->IsCreature());
-	Creature* ctr = TO_CREATURE(m_Unit);
-
 	uint32 emotetype = EMOTE_STATE_READYUNARMED;
-	if(ctr->GetProto())
+	if(ranged)
+		emotetype = EMOTE_STATE_READYBOW;
+
+	if(m_Unit != NULL && m_Unit->IsCreature())
 	{
-		ItemEntry* ItemE = NULL;
-		if(!ranged)
+		Creature* ctr = TO_CREATURE(m_Unit);
+		if(ctr->GetProto())
 		{
-			uint32 weaponids[2] = { ctr->GetProto()->Item1, ctr->GetProto()->Item2 };
-			if(weaponids[0])
+			ItemEntry* ItemE = NULL;
+			if(!ranged)
 			{
-				ItemE = dbcItem.LookupEntry(weaponids[0]);
-				if(ItemE != NULL)
+				uint32 weaponids[2] = { ctr->GetProto()->Item1, ctr->GetProto()->Item2 };
+				if(weaponids[0])
 				{
-					switch(ItemE->InventoryType)
+					ItemE = dbcItem.LookupEntry(weaponids[0]);
+					if(ItemE != NULL)
 					{
-					case INVTYPE_WEAPON:
-					case INVTYPE_WEAPONMAINHAND:
-					case INVTYPE_WEAPONOFFHAND:
+						switch(ItemE->InventoryType)
 						{
-							emotetype = EMOTE_STATE_READY1H;
-						}break;
-					case INVTYPE_2HWEAPON:
-						{
-							emotetype = EMOTE_STATE_READY2H;
-						}break;
-					}
-				}
-				ItemE = NULL;
-			}
-			if(weaponids[1])
-			{
-				ItemE = dbcItem.LookupEntry(weaponids[1]);
-				if(ItemE != NULL)
-				{
-					switch(ItemE->InventoryType)
-					{
-					case INVTYPE_WEAPON:
-					case INVTYPE_WEAPONMAINHAND:
-					case INVTYPE_WEAPONOFFHAND:
-						{
-							emotetype = EMOTE_STATE_READY1H;
-						}break;
-					case INVTYPE_2HWEAPON:
-						{
-							if(!weaponids[0])
-								emotetype = EMOTE_STATE_READY2H;
-							else
+						case INVTYPE_WEAPON:
+						case INVTYPE_WEAPONMAINHAND:
+						case INVTYPE_WEAPONOFFHAND:
+							{
 								emotetype = EMOTE_STATE_READY1H;
-						}break;
-					case INVTYPE_SHIELD:
-						{
-							emotetype = EMOTE_STATE_READY1H;
-						}break;
+							}break;
+						case INVTYPE_2HWEAPON:
+							{
+								emotetype = EMOTE_STATE_READY2H;
+							}break;
+						}
 					}
+					ItemE = NULL;
 				}
-				ItemE = NULL;
-			}
-		}
-		else
-		{
-			emotetype = EMOTE_STATE_READYBOW;
-			if(ctr->GetProto()->Item3)
-			{
-				ItemE = dbcItem.LookupEntry(ctr->GetProto()->Item3);
-				if(ItemE != NULL && (ItemE->SubClass == ITEM_SUBCLASS_WEAPON_GUN || ItemE->SubClass == ITEM_SUBCLASS_WEAPON_CROSSBOW))
+				if(weaponids[1])
 				{
-					emotetype = EMOTE_STATE_READYRIFLE;
+					ItemE = dbcItem.LookupEntry(weaponids[1]);
+					if(ItemE != NULL)
+					{
+						switch(ItemE->InventoryType)
+						{
+						case INVTYPE_WEAPON:
+						case INVTYPE_WEAPONMAINHAND:
+						case INVTYPE_WEAPONOFFHAND:
+							{
+								emotetype = EMOTE_STATE_READY1H;
+							}break;
+						case INVTYPE_2HWEAPON:
+							{
+								if(!weaponids[0])
+									emotetype = EMOTE_STATE_READY2H;
+								else
+									emotetype = EMOTE_STATE_READY1H;
+							}break;
+						case INVTYPE_SHIELD:
+							{
+								emotetype = EMOTE_STATE_READY1H;
+							}break;
+						}
+					}
+					ItemE = NULL;
+				}
+			}
+			else
+			{
+				if(ctr->GetProto()->Item3)
+				{
+					ItemE = dbcItem.LookupEntry(ctr->GetProto()->Item3);
+					if(ItemE != NULL && (ItemE->SubClass == ITEM_SUBCLASS_WEAPON_GUN || ItemE->SubClass == ITEM_SUBCLASS_WEAPON_CROSSBOW))
+					{
+						emotetype = EMOTE_STATE_READYRIFLE;
+					}
 				}
 			}
 		}
