@@ -1327,6 +1327,13 @@ void HookInterface::OnPlayerSaveToDB(Player* pPlayer, QueryBuffer* buf)
 	OUTER_LOOP_END;
 }
 
+void HookInterface::OnPlayerChangeArea(Player* pPlayer, uint32 ZoneID, uint32 NewAreaID, uint32 OldAreaID)
+{
+	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_PLAYER_CHANGE_AREA, tOnPlayerChangeArea)
+		(call)(pPlayer, ZoneID, NewAreaID, OldAreaID);
+	OUTER_LOOP_END;
+}
+
 void HookInterface::OnAuraRemove(Player* pPlayer, uint32 spellID)
 {
 	OUTER_LOOP_BEGIN(SERVER_HOOK_EVENT_ON_AURA_REMOVE, tOnAuraRemove)

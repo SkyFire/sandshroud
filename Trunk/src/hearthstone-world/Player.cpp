@@ -8509,9 +8509,12 @@ void Player::ForceAreaUpdate()
 			m_zoneId = m_areaDBC->ZoneId;
 	}
 
+	sHookInterface.OnPlayerChangeArea(this, m_zoneId, m_AreaID, oldareaid);
+
 	if(!sWorld.wg_enabled)
 		return;
 
+	// Todo: Move to Lacrimi
 	if(m_AreaID == WINTERGRASP || (m_areaDBC != NULL && m_areaDBC->ZoneId == WINTERGRASP))
 	{
 		if(WinterGrasp == NULL)
