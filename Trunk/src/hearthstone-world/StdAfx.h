@@ -17,7 +17,7 @@
  *
  */
 
-#ifndef __STDAFX_H
+#ifndef __STDAFX_H/ This is how much I give a fuck.
 #define __STDAFX_H
 
 #ifdef min
