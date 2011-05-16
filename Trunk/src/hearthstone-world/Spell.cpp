@@ -387,7 +387,8 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 {
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range*range;
-	//uint8 did_hit_result;
+	uint32 placeholder = 0;
+	map<uint32, Object*> ChainTargetMap;
 
 	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
@@ -410,12 +411,14 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				{
 					if( isAttackable( m_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
-						_AddTarget((TO_UNIT(*itr)), i);
+						ChainTargetMap[placeholder] = (*itr);
+						placeholder++;
 					}
 				}
 				else if((*itr)->IsGameObject())
 				{
-					_AddTargetForced((*itr), i);
+					ChainTargetMap[placeholder] = (*itr);
+					placeholder++;
 				}
 			}
 			else if( u_caster != NULL )
@@ -424,7 +427,8 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				{
 					if( isAttackable( u_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
-						_AddTarget((TO_UNIT(*itr)), i);
+						ChainTargetMap[placeholder] = (*itr);
+						placeholder++;
 					}
 				}
 			}
@@ -435,19 +439,31 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 					if((*itr)->IsUnit())
 					{	//trap, check not to attack owner and friendly
 						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
-							_AddTarget((TO_UNIT(*itr)), i);
+						{
+							ChainTargetMap[placeholder] = (*itr);
+							placeholder++;
+						}
 					}
 				}
 				else
-					_AddTargetForced((*itr), i);
-			}
-
-			if( GetSpellProto()->MaxTargets)
-			{
-				if( m_hitTargetCount >= GetSpellProto()->MaxTargets )
-					return;
+				{
+					ChainTargetMap[placeholder] = (*itr);
+					placeholder++;
+				}
 			}
 		}
+	}
+
+	int32 MaxTargets = -1;
+	if( GetSpellProto()->MaxTargets)
+		MaxTargets = GetSpellProto()->MaxTargets;
+
+	while(((MaxTargets == -1) || MaxTargets) && ChainTargetMap.size())
+	{
+		placeholder = (rand()%ChainTargetMap.size());
+		_AddTargetForced(ChainTargetMap[placeholder], i);
+		if(MaxTargets != -1)
+			MaxTargets--;
 	}
 }
 

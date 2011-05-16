@@ -455,5 +455,3 @@ bool isAlliance(Object* objA)// A is alliance?
 	//We're not hostile towards SW, so we are allied
 	return true;
 }
-
-

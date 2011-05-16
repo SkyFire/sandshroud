@@ -266,6 +266,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 {
 	if(!m_caster->IsInWorld())
 		return;
+
 	Unit* pTarget = m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget);
 	if(!pTarget)
 		return;
@@ -310,13 +311,16 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 
 	if(GetSpellProto()->EffectChainTarget[i])
 	{
-		uint32 jumps=GetSpellProto()->EffectChainTarget[i]-1;
-		float range=GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));//this is probably wrong
-		range*=range;
-		unordered_set<Object* >::iterator itr;
+		uint32 jumps = GetSpellProto()->EffectChainTarget[i]-1;
+		float range = GetMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));//this is probably wrong
+		range *= range;
+
+		uint32 placeholder = 0;
+		map<uint32, Object*> ChainTargetMap;
+		unordered_set<Object*>::iterator itr;
 		for( itr = pTarget->GetInRangeSetBegin(); itr != pTarget->GetInRangeSetEnd(); itr++ )
 		{
-			if((*itr)->GetGUID()==m_targets.m_unitTarget)
+			if((*itr)->GetGUID() == m_targets.m_unitTarget)
 				continue;
 			if( !((*itr)->IsUnit()) || !TO_UNIT(*itr)->isAlive())
 				continue;
@@ -325,11 +329,17 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 			{
 				if(isAttackable(u_caster,TO_UNIT(*itr)))
 				{
-					_AddTarget(TO_UNIT(*itr), i);
-					if(!--jumps)
-						return;
+					ChainTargetMap[placeholder] = (*itr);
+					++placeholder;
 				}
 			}
+		}
+
+		while(jumps && ChainTargetMap.size())
+		{
+			placeholder = (rand()%ChainTargetMap.size());
+			_AddTarget(TO_UNIT(ChainTargetMap[placeholder]), i);
+			jumps--;
 		}
 	}
 }
@@ -759,7 +769,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 	{
 		if( p_caster->InGroup() )
 			if( p_caster->GetSubGroup() == TO_PLAYER( firstTarget )->GetSubGroup() )
-				PartyOnly=true;
+				PartyOnly = true;
 	}
 	else
 	{
@@ -768,14 +778,12 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 			return;
 	}
 
-	uint32 jumps=GetSpellProto()->EffectChainTarget[i];
+	uint32 jumps = GetSpellProto()->EffectChainTarget[i];
 	if(GetSpellProto()->SpellGroupType && u_caster)
-	{
 		SM_FIValue(u_caster->SM[SMT_ADDITIONAL_TARGET][0],(int32*)&jumps,GetSpellProto()->SpellGroupType);
-	}
 
 	_AddTargetForced(firstTarget->GetGUID(), i);
-	if(!jumps)
+	if(jumps == NULL)
 		return;
 	jumps--;
 	if(PartyOnly)
@@ -787,8 +795,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 		if(pGroup)
 		{
 			p_caster->GetGroup()->Lock();
-			for(itr = pGroup->GetGroupMembersBegin();
-				itr != pGroup->GetGroupMembersEnd(); itr++)
+			for(itr = pGroup->GetGroupMembersBegin(); itr != pGroup->GetGroupMembersEnd(); itr++)
 			{
 				if(!(*itr)->m_loggedInPlayer || (*itr)->m_loggedInPlayer==u_caster || (*itr)->m_loggedInPlayer->GetUInt32Value(UNIT_FIELD_HEALTH) == (*itr)->m_loggedInPlayer->GetUInt32Value(UNIT_FIELD_MAXHEALTH))
 					continue;
@@ -807,6 +814,8 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 	}//find nearby friendly target
 	else
 	{
+		uint32 placeholder = 0;
+		map<uint32, Object*> ChainTargetMap;
 		unordered_set<Object* >::iterator itr;
 		for( itr = firstTarget->GetInRangeSetBegin(); itr != firstTarget->GetInRangeSetEnd(); itr++ )
 		{
@@ -817,11 +826,17 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 			{
 				if(!isAttackable(u_caster,TO_UNIT(*itr)) && (*itr)->GetUInt32Value(UNIT_FIELD_HEALTH) != (*itr)->GetUInt32Value(UNIT_FIELD_MAXHEALTH))
 				{
-					_AddTargetForced((*itr)->GetGUID(), i);
-					if(!--jumps)
-						return;
+					ChainTargetMap[placeholder] = (*itr);
+					++placeholder;
 				}
 			}
+		}
+
+		while(jumps && ChainTargetMap.size())
+		{
+			placeholder = (rand()%ChainTargetMap.size());
+			_AddTargetForced(ChainTargetMap[placeholder], i);
+			jumps--;
 		}
 	}
 }
@@ -960,7 +975,6 @@ void Spell::SpellTargetSameGroupSameClass(uint32 i, uint32 j)
 // returns Guid of lowest percentage health friendly party or raid target within sqrt('dist') yards
 uint64 Spell::FindLowestHealthRaidMember(Player* Target, uint32 dist)
 {
-
 	if(!Target || !Target->IsInWorld())
 		return 0;
 
