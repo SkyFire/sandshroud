@@ -221,9 +221,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\Master.cpp">
       <Filter>Launcher</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\World.cpp">
-      <Filter>Map System</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\WorldRunnable.cpp">
       <Filter>Map System</Filter>
     </ClCompile>
@@ -376,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SpellFixes.cpp">
       <Filter>Spell\Spell Fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\World.cpp">
+      <Filter>Launcher</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -560,9 +560,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\Master.h">
       <Filter>Launcher</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\World.h">
-      <Filter>Map System</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\WorldRunnable.h">
       <Filter>Map System</Filter>
     </ClInclude>
@@ -664,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\WarnSystem.h">
       <Filter>Player Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-world\World.h">
+      <Filter>Launcher</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

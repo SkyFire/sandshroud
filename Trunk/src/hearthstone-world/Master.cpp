@@ -465,15 +465,15 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice( "Database", "Closing Connections..." );
 	_StopDB();
 
-	// remove pid
-	remove( "hearthstone-world.pid" );
-
 #ifdef WIN32
 	WSACleanup();
 #endif
 
+	// remove pid
+	remove( "hearthstone-world.pid" );
+
 	Log.Notice( "Shutdown", "Shutdown complete." );
-	Sleep(5000);
+	Sleep(1000);
 	return true;
 }
 

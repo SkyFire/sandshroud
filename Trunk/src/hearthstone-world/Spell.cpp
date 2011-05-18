@@ -316,7 +316,6 @@ void Spell::FillSpecifiedTargetsInArea(uint32 i,float srcx,float srcy,float srcz
 		if( (*itr)->IsUnit() && !(TO_UNIT( *itr )->isAlive()))
 			continue;
 
-
 		//TO_UNIT(*itr)->InStealth()
 		if( GetSpellProto()->TargetCreatureType && (*itr)->IsUnit())
 		{
@@ -465,6 +464,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 		if(MaxTargets != -1)
 			MaxTargets--;
 	}
+	ChainTargetMap.clear();
 }
 
 // We fill all the targets in the area, including the stealthed one's

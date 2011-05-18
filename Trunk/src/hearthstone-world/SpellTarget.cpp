@@ -341,6 +341,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 			_AddTarget(TO_UNIT(ChainTargetMap[placeholder]), i);
 			jumps--;
 		}
+		ChainTargetMap.clear();
 	}
 }
 
@@ -838,6 +839,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 			_AddTargetForced(ChainTargetMap[placeholder], i);
 			jumps--;
 		}
+		ChainTargetMap.clear();
 	}
 }
 
