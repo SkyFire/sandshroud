@@ -95,7 +95,7 @@ Map::~Map()
 bool first_table_warning = true;
 bool CheckResultLengthCreatures(QueryResult * res)
 {
-	if( res->GetFieldCount() != 26 )
+	if( res->GetFieldCount() != 27 )
 	{
 		if( first_table_warning )
 		{
@@ -187,13 +187,14 @@ void Map::LoadSpawns(bool reload /* = false */)
 					cspawn->channel_target_go = fields[16].GetUInt32();
 					cspawn->channel_target_creature = fields[17].GetUInt32();
 					cspawn->stand_state = fields[18].GetUInt16();
-					cspawn->MountedDisplayID = fields[19].GetUInt32();
-					cspawn->ItemSlot1 = fields[20].GetUInt32();
-					cspawn->ItemSlot2 = fields[21].GetUInt32();
-					cspawn->ItemSlot3 = fields[22].GetUInt32();
-					cspawn->phase = fields[23].GetInt32();
-					cspawn->vehicle = fields[24].GetInt32();
-					cspawn->CanMove = fields[25].GetUInt32();
+					cspawn->scale = fields[19].GetFloat();
+					cspawn->MountedDisplayID = fields[20].GetUInt32();
+					cspawn->ItemSlot1 = fields[21].GetUInt32();
+					cspawn->ItemSlot2 = fields[22].GetUInt32();
+					cspawn->ItemSlot3 = fields[23].GetUInt32();
+					cspawn->phase = fields[24].GetInt32();
+					cspawn->vehicle = fields[25].GetInt32();
+					cspawn->CanMove = fields[26].GetUInt32();
 					uint32 cellx = CellHandler<MapMgr>::GetPosX(cspawn->x);
 					uint32 celly = CellHandler<MapMgr>::GetPosY(cspawn->y);
 

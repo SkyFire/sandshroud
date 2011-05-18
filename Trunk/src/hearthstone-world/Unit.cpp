@@ -7312,14 +7312,16 @@ void Unit::RemoveBeacons()
 	BeaconTarget = NULLUNIT;
 }
 
-void Unit::SetFaction(uint32 faction)
+void Unit::SetFaction(uint32 faction, bool save)
 {
 	SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, faction);
 	_setFaction();
 
+	if(save == false)
+		return;
+
 	if(IsCreature() && TO_CREATURE(this)->m_spawn)
 		TO_CREATURE(this)->SaveToDB();
-//		WorldDatabase.Execute("UPDATE creature_spawns SET faction = %u WHERE id = %u;", faction, TO_CREATURE(this)->m_spawn->id);
 }
 
 void Unit::ResetFaction()

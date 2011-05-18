@@ -64,6 +64,7 @@ typedef struct CreatureSpawn
 	uint32	channel_target_go;
 	uint32	channel_target_creature;
 	uint16	stand_state;
+	uint32	scale;
 	uint32	MountedDisplayID;
 	uint32	ItemSlot1;
 	uint32	ItemSlot2;

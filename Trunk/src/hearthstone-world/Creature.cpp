@@ -327,6 +327,7 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 		ss << "0,0,0,";
 
 	ss << uint32(GetStandState()) << ", "
+		<< uint32(m_floatValues[OBJECT_FIELD_SCALE_X]) << ", "
 		<< (m_spawn ? m_spawn->MountedDisplayID : original_MountedDisplayID) << ", "
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID] << ", "
 		<< m_uint32Values[UNIT_VIRTUAL_ITEM_SLOT_ID+1] << ", "
@@ -895,8 +896,8 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 	SetUInt32Value(UNIT_FIELD_BYTES_2, spawn->bytes2);
 
 	//Use proto displayid (random + gender generator), unless there is an id  specified in spawn->displayid
-	uint32 model = 0;
-	if(!spawn->displayid)
+	uint32 model = spawn->displayid;
+	if(!model)
 	{
 		uint32 gender = creature_info->GenerateModelId(&model);
 		SetByte(UNIT_FIELD_BYTES_0,2,gender);
@@ -905,10 +906,10 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	SetUInt32Value(UNIT_FIELD_DISPLAYID,spawn->displayid);
 	SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID,spawn->displayid);
-	SetFloatValue(OBJECT_FIELD_SCALE_X,( proto->Scale ? proto->Scale : GetScale( dbcCreatureDisplayInfo.LookupEntry( model ))));
-
-	SetFloatValue( OBJECT_FIELD_SCALE_X,( proto->Scale ? proto->Scale : GetScale( dbcCreatureDisplayInfo.LookupEntry( spawn->displayid ))));
-	DEBUG_LOG("Creatures","NPC %u (model %u) got scale %f, found in DBC %f", proto->Id, spawn->displayid, GetFloatValue(OBJECT_FIELD_SCALE_X), GetScale( dbcCreatureDisplayInfo.LookupEntry( spawn->displayid )));
+	float dbcscale = GetScale( dbcCreatureDisplayInfo.LookupEntry( model ));
+	float realscale = (m_spawn->scale ? m_spawn->scale : dbcscale);
+	SetFloatValue(OBJECT_FIELD_SCALE_X, realscale);
+	DEBUG_LOG("Creatures","NPC %u (model %u) got scale %f, found in DBC %f", proto->Id, model, realscale, dbcscale);
 
 	SetUInt32Value(UNIT_NPC_EMOTESTATE, original_emotestate);
 	SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID,original_MountedDisplayID);
@@ -1262,12 +1263,14 @@ void Creature::Load(CreatureProto * proto_, uint32 mode, float x, float y, float
 	SetUInt32Value(UNIT_FIELD_MAXHEALTH, health);
 	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, health);
 
-	uint32 model;
+	uint32 model = 0;
 	uint32 gender = creature_info->GenerateModelId(&model);
 	setGender(gender);
 
-	SetFloatValue(OBJECT_FIELD_SCALE_X,( proto->Scale ? proto->Scale : GetScale( dbcCreatureDisplayInfo.LookupEntry( model ))));
-	DEBUG_LOG("Creature","NPC %u (model %u) got scale %f, found in DBC %f", proto->Id, model, GetFloatValue(OBJECT_FIELD_SCALE_X), GetScale( dbcCreatureDisplayInfo.LookupEntry( model )));
+	float dbcscale = GetScale( dbcCreatureDisplayInfo.LookupEntry( model ));
+	float realscale = (proto->Scale ? proto->Scale : dbcscale);
+	SetFloatValue(OBJECT_FIELD_SCALE_X, realscale);
+	DEBUG_LOG("Creature","NPC %u (model %u) got scale %f, found in DBC %f", proto->Id, model, realscale, dbcscale);
 
 	SetUInt32Value(UNIT_FIELD_DISPLAYID,model);
 	SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID,model);

@@ -505,7 +505,7 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 	if(!Script || !qst_giver)
 		return;
 
-	uint32 IntId = 1;
+	uint32 IntId = 0;
 	if(_player->CurrentGossipMenu)
 	{
 		GossipMenuItem item = _player->CurrentGossipMenu->GetItem(option);

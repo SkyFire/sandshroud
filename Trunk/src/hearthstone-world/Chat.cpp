@@ -511,7 +511,8 @@ void CommandTableStorage::Init()
 		{ "select",				'n', &ChatHandler::HandleNpcSelectCommand,			".npc select - selects npc closest",																											NULL, 0, 0, 0 },
 		{ "cast",				'd', &ChatHandler::HandleMonsterCastCommand,		".npc cast <spellId> - Makes selected mob cast the specified spell on you.",																	NULL, 0, 0, 0 },
 		{ "equip",				'a', &ChatHandler::HandleNPCEquipCommand,			"Use: .npc equip <slot> <itemid> - use .npc equip <slot> 0 to remove the item",																	NULL, 0, 0, 0 },
-		{ "setongameobject",	'a', &ChatHandler::HandleNPCSetOnObjectCommand,		"",																																				NULL, 0, 0, 0 },
+		{ "setongameobject",	'a', &ChatHandler::HandleNPCSetOnObjectCommand,		"Updates spawn information so that the creature does not fall through objects when spawning into world.",										NULL, 0, 0, 0 },
+		{ "save",				'z', NULL,											"",																																				NULL, 0, 0, 0 },
 		{ NULL,					'0', NULL,											"",																																				NULL, 0, 0, 0 }
 	};
 	dupe_command_table(NPCCommandTable, _NPCCommandTable);
@@ -1411,7 +1412,8 @@ bool ChatHandler::CmdSetValueField(WorldSession *m_session, uint32 field, uint32
 			else
 				BlueSystemMessage(m_session, "Setting %s of %s to %u.", fieldname, creaturename.c_str(), av);
 
-			cr->SaveToDB();
+			if(m_session->CanUseCommand('z'))
+				cr->SaveToDB();
 		}
 		else
 		{
@@ -1539,7 +1541,7 @@ bool ChatHandler::HandleModifyFactionCommand(const char *args, WorldSession *m_s
 
 	BlueSystemMessage(m_session, "Set target's faction to %u", faction);
 
-	unit->SetFaction(faction);
+	unit->SetFaction(faction, m_session->CanUseCommand('z'));
 	return true;
 }
 
@@ -1550,21 +1552,24 @@ bool ChatHandler::HandleModifyScaleCommand(const char *args, WorldSession *m_ses
 		return true;
 
 	Unit* unit = getSelectedUnit(m_session, false);
-
 	if(unit == NULL)
 		unit = player;
 
 	float scale = atof(args);
+	int save = m_session->CanUseCommand('z') ? 1 : 0;
+	if(sscanf(args, "%f %i", &scale, &save) < 1)
+		return false;
+
 	if(scale > 255 || scale < 0)
 		return false;
 
 	if(!scale && unit->IsCreature())
-		scale = TO_CREATURE(unit)->GetProto() ? TO_CREATURE(unit)->GetProto()->Scale : 0.0f;
+		scale = TO_CREATURE(unit)->GetProto() ? TO_CREATURE(unit)->GetProto()->Scale : 1.0f;
 
 	BlueSystemMessage(m_session, "Set target's scale to %f", scale);
 	unit->SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
-	if(unit->IsCreature())
-		WorldDatabase.Execute("UPDATE creature_proto SET scale = '%f' WHERE entry = '%u';", scale, unit->GetEntry());
+	if(unit->IsCreature() && (save > 0))
+		TO_CREATURE(unit)->SaveToDB();
 
 	return true;
 }
