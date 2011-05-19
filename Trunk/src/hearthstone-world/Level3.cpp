@@ -2138,11 +2138,13 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		sp->bytes2 = 0;
 		sp->channel_spell = sp->channel_target_creature = sp->channel_target_go = 0;
 		sp->phase = 1;
+		sp->scale = proto->Scale;
 		sp->vehicle = proto->vehicle_entry;
 		sp->ItemSlot1 = proto->Item1;
 		sp->ItemSlot2 = proto->Item2;
 		sp->ItemSlot3 = proto->Item3;
 		sp->CanMove = proto->CanMove;
+		sp->vendormask = 1;
 
 		CreatureInfoExtra* extrainfo = CreatureInfoExtraStorage.LookupEntry(entry);
 		if(extrainfo != NULL)

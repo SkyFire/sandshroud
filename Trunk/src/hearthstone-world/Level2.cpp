@@ -247,7 +247,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	if(tmpItem)
 	{
 		std::stringstream ss;
-		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << item << "', '" << amount << "', 0, 0, 0, 1 )" << '\0';
+		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << item << "', '" << amount << "', 0, 0, 0, 1, 1 )" << '\0';
 		WorldDatabase.Execute( ss.str().c_str() );
 
 		pCreature->AddVendorItem(item, amount);
@@ -261,7 +261,6 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 
 	sWorld.LogGM(m_session, "added item %u to vendor %u", item, pCreature->GetEntry());
 	SystemMessage(m_session,  sstext.str().c_str());
-
 	return true;
 }
 
