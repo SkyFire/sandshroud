@@ -72,6 +72,7 @@ typedef struct CreatureSpawn
 	int32	phase;
 	int32	vehicle;
 	uint32	CanMove;
+	int32	vendormask;
 }CreatureSpawn;
 
 typedef struct GOSpawn

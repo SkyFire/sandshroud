@@ -35,6 +35,7 @@ struct CreatureItem
 	uint32 available_amount;
 	uint32 max_amount;
 	uint32 incrtime;
+	uint32 vendormask;
 	ItemExtendedCostEntry *extended_cost;
 	bool IsDependent;
 };

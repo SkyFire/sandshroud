@@ -498,6 +498,8 @@ public:
 	FactionTemplateDBC *m_faction;
 	FactionDBC *m_factionDBC;
 
+	uint32 VendorMask;
+
 	HEARTHSTONE_INLINE void SetInstanceID(int32 instance) { m_instanceId = instance; }
 	HEARTHSTONE_INLINE int32 GetInstanceID() { return m_instanceId; }
 

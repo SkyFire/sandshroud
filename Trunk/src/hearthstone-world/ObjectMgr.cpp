@@ -1238,13 +1238,13 @@ void ObjectMgr::LoadVendors()
 	QueryResult *result = WorldDatabase.Query("SELECT * FROM vendors");
 	if( result != NULL )
 	{
-		if( result->GetFieldCount() < 7 )
+		if( result->GetFieldCount() < 8 )
 		{
 			Log.Notice("ObjectMgr", "Invalid format in vendors (%u/7) columns, not enough data to proceed.\n", result->GetFieldCount() );
 			delete result;
 			return;
 		}
-		else if( result->GetFieldCount() > 7 )
+		else if( result->GetFieldCount() > 8 )
 			Log.Notice("ObjectMgr", "Invalid format in vendors (%u/7) columns, loading anyway because we have enough data\n", result->GetFieldCount() );
 
 		do
@@ -1267,6 +1267,7 @@ void ObjectMgr::LoadVendors()
 			itm.incrtime			= fields[4].GetUInt32();
 			itm.extended_cost		= NULL;
 			itm.IsDependent			= fields[6].GetBool();
+			itm.vendormask			= fields[7].GetUInt32();
 
 			uint32 ec = fields[5].GetUInt32();
 			if( ec != 0 )
@@ -1275,9 +1276,7 @@ void ObjectMgr::LoadVendors()
 				if( itm.extended_cost == NULL )
 				{
 					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
-					{
 						WorldDatabase.Execute("UPDATE vendors set extendedcost = '0' where item = '%u' AND entry = '%u'", itm.itemid, fields[0].GetUInt32());
-					}
 					Log.Warning("ObjectMgr","Item %u at vendor %u has extended cost %u which is invalid. Skipping.", itm.itemid, fields[0].GetUInt32(), ec);
 					continue;
 				}

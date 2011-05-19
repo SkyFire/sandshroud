@@ -1365,6 +1365,9 @@ void WorldSession::SendInventoryList(Creature* unit)
 		{
 			if((curItem = ItemPrototypeStorage.LookupEntry(itr->itemid)))
 			{
+				if(!(itr->vendormask & unit->VendorMask))
+					continue;
+
 				if(!_player->ignoreitemreq_cheat)
 				{
 					if(itr->IsDependent)
