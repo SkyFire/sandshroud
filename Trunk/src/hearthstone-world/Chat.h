@@ -638,7 +638,6 @@ protected:
 	SkillNameMgr *SkillNameManager;
 
 	bool HandleFixScaleCommand(const char * args, WorldSession * m_session);
-	bool HandleAddTrainerSpellCommand( const char * args, WorldSession * m_session );
 	bool HandleClearCorpsesCommand(const char *args, WorldSession *m_session);
 	bool HandleClearBonesCommand(const char *args, WorldSession *m_session);
 

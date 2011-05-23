@@ -1660,22 +1660,19 @@ void ObjectMgr::LoadTrainers()
 	if(result2 == NULL)
 		return;
 
-	Field* fields2;
-	hash_map< uint32, hash_map< uint32, TrainerSpell > > TSMap;
-	hash_map< uint32, uint32 > TSCounterMap;
-	TSMap.clear();
-	TSCounterMap.clear();
-
-	if(result2->GetFieldCount() != 10)
+	if(result2->GetFieldCount() != 11)
 	{
 		Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Trainers table format is invalid. Please update your database.");
 		delete result;
 		return;
 	}
 
+	Field* fields2;
 	uint32 entry = NULL;
 	uint32 CastSpellID = NULL;
 	uint32 LearnSpellID = NULL;
+	hash_map< uint32, uint32 > TSCounterMap;
+	hash_map< uint32, hash_map< uint32, TrainerSpell > > TSMap;
 	do
 	{
 		bool abrt = false;
@@ -1736,9 +1733,10 @@ void ObjectMgr::LoadTrainers()
 		ts.RequiredSpell = fields2[4].GetUInt32();
 		ts.RequiredSkillLine = fields2[5].GetUInt32();
 		ts.RequiredSkillLineValue = fields2[6].GetUInt32();
-		ts.RequiredLevel = fields2[7].GetUInt32();
-		ts.DeleteSpell = fields2[8].GetUInt32();
-		ts.IsProfession = (fields2[9].GetUInt32() != 0) ? true : false;
+		ts.RequiredClassMask = fields2[7].GetUInt32();
+		ts.RequiredLevel = fields2[8].GetUInt32();
+		ts.DeleteSpell = fields2[9].GetUInt32();
+		ts.IsProfession = (fields2[10].GetUInt32() != 0) ? true : false;
 		TSMap[entry][TSCounterMap[entry]++] = ts;
 	}while(result2->NextRow());
 	delete result2;

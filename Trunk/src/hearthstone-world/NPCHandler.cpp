@@ -279,6 +279,9 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 		|| (pSpell->pLearnSpell && objmgr.IsSpellDisabled(pSpell->pLearnSpell->Id)))
 		return TRAINER_STATUS_NOT_AVAILABLE;
 
+	if(pSpell->RequiredClassMask && !(pSpell->RequiredClassMask &_player->getClassMask()))
+		return TRAINER_STATUS_NOT_AVAILABLE;
+
 	// Spells with the same names
 	SpellEntry* namehashSP = NULL;
 	if( pSpell->pCastRealSpell )

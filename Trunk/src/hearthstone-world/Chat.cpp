@@ -774,7 +774,6 @@ void CommandTableStorage::Init()
 		{ "renameallinvalidchars",	'z', &ChatHandler::HandleRenameAllCharacter,						"Renames all invalid character names", NULL, 0,0, 0 },
 		{ "removesickness",			'm', &ChatHandler::HandleRemoveRessurectionSickessAuraCommand,		"Removes ressurrection sickness from the target", NULL, 0, 0, 0 },
 		{ "fixscale",				'm', &ChatHandler::HandleFixScaleCommand,							"",					NULL, 0, 0, 0 },
-		{ "addtrainerspell",		'm', &ChatHandler::HandleAddTrainerSpellCommand,					"",					NULL, 0, 0, 0 },
 		{ "clearcorpses",			'm', &ChatHandler::HandleClearCorpsesCommand,						"",					NULL, 0, 0, 0 },
 		{ "clearbones",				'm', &ChatHandler::HandleClearBonesCommand,							"",					NULL, 0, 0, 0 },
 

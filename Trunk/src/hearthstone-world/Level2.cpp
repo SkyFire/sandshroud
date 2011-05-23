@@ -1268,8 +1268,9 @@ bool ChatHandler::HandleTrainerAddLearnSpell(const char* args, WorldSession *m_s
 		return true;
 	}
 
-	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredlevel = 0, deletespell = 0, isprofession = 0;
-	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) == 0)
+	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredclassmask = 0, requiredlevel = 0, deletespell = 0, isprofession = 0;
+	if(sscanf(args, "%u %u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue,
+		&requiredclassmask, &requiredlevel, &deletespell, &isprofession) == 0)
 		return false;
 
 	SpellEntry* spellinfo = dbcSpell.LookupEntry(spellid);
@@ -1284,11 +1285,12 @@ bool ChatHandler::HandleTrainerAddLearnSpell(const char* args, WorldSession *m_s
 	ts.RequiredSpell = requiredspell;
 	ts.RequiredSkillLine = requiredskill;
 	ts.RequiredSkillLineValue = requiredskillvalue;
+	ts.RequiredClassMask = requiredclassmask;
 	ts.RequiredLevel = requiredlevel;
 	ts.DeleteSpell = deletespell;
 	ts.IsProfession = (isprofession > 0);
 	trainer->Spells.push_back(ts);
-	WorldDatabase.Execute("INSERT INTO trainer_spells VALUES('%u', '0', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')", pCreature->GetEntry(), spellid, spellcost, requiredspell, requiredskill, requiredskillvalue, requiredlevel, deletespell, isprofession);
+	WorldDatabase.Execute("INSERT INTO trainer_spells VALUES('%u', '0', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')", pCreature->GetEntry(), spellid, spellcost, requiredspell, requiredskill, requiredskillvalue, requiredclassmask, requiredlevel, deletespell, isprofession);
 	SystemMessage(m_session, "Learn spell added successfully.");
 	return true;
 }
@@ -1316,8 +1318,9 @@ bool ChatHandler::HandleTrainerAddCastSpell(const char* args, WorldSession *m_se
 		return true;
 	}
 
-	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredlevel = 0, deletespell = 0, isprofession = 0;
-	if(sscanf(args, "%u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue, &requiredlevel, &deletespell, &isprofession) == 0)
+	uint32 spellid = 0, spellcost = 0, requiredspell = 0, requiredskill = 0, requiredskillvalue = 0, requiredclassmask, requiredlevel = 0, deletespell = 0, isprofession = 0;
+	if(sscanf(args, "%u %u %u %u %u %u %u %u", &spellid, &spellcost, &requiredspell, &requiredskill, &requiredskillvalue,
+		&requiredclassmask, &requiredlevel, &deletespell, &isprofession) == 0)
 		return false;
 
 	SpellEntry* spellinfo = dbcSpell.LookupEntry(spellid);
@@ -1341,11 +1344,12 @@ bool ChatHandler::HandleTrainerAddCastSpell(const char* args, WorldSession *m_se
 	ts.RequiredSpell = requiredspell;
 	ts.RequiredSkillLine = requiredskill;
 	ts.RequiredSkillLineValue = requiredskillvalue;
+	ts.RequiredClassMask = requiredclassmask;
 	ts.RequiredLevel = requiredlevel;
 	ts.DeleteSpell = deletespell;
 	ts.IsProfession = (isprofession > 0);
 	trainer->Spells.push_back(ts);
-	WorldDatabase.Execute("INSERT INTO trainer_spells VALUES('%u', '%u', '0', '%u', '%u', '%u', '%u', '%u', '%u', '%u')", pCreature->GetEntry(), spellid, spellcost, requiredspell, requiredskill, requiredskillvalue, requiredlevel, deletespell, isprofession);
+	WorldDatabase.Execute("INSERT INTO trainer_spells VALUES('%u', '%u', '0', '%u', '%u', '%u', '%u', '%u', '%u', '%u', '%u')", pCreature->GetEntry(), spellid, spellcost, requiredspell, requiredskill, requiredskillvalue, requiredclassmask, requiredlevel, deletespell, isprofession);
 	SystemMessage(m_session, "Cast spell added successfully.");
 	return true;
 }
