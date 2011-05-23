@@ -234,9 +234,8 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 		return true;
 	}
 
-	uint32 item = atoi(pitem);
 	int amount = 1;
-
+	uint32 item = atoi(pitem);
 	char* pamount = strtok(NULL, " ");
 	if (pamount)
 		amount = atoi(pamount);
@@ -255,9 +254,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 		sstext << "Item '" << item << "' '" << tmpItem->Name1 << "' Added to list" << '\0';
 	}
 	else
-	{
 		sstext << "Item '" << item << "' Not Found in Database." << '\0';
-	}
 
 	sWorld.LogGM(m_session, "added item %u to vendor %u", item, pCreature->GetEntry());
 	SystemMessage(m_session,  sstext.str().c_str());

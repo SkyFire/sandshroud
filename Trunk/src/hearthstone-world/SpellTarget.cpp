@@ -316,7 +316,7 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 		range *= range;
 
 		uint32 placeholder = 0;
-		map<uint32, Object*> ChainTargetMap;
+		vector<Object*> ChainTargetContainer;
 		unordered_set<Object*>::iterator itr;
 		for( itr = pTarget->GetInRangeSetBegin(); itr != pTarget->GetInRangeSetEnd(); itr++ )
 		{
@@ -329,19 +329,25 @@ void Spell::SpellTargetSingleTargetEnemy(uint32 i, uint32 j)
 			{
 				if(isAttackable(u_caster,TO_UNIT(*itr)))
 				{
-					ChainTargetMap[placeholder] = (*itr);
+					ChainTargetContainer.push_back(*itr);
 					++placeholder;
 				}
 			}
 		}
 
-		while(jumps && ChainTargetMap.size())
+		Object *chaintarget = NULL;
+		while(jumps && ChainTargetContainer.size())
 		{
-			placeholder = (rand()%ChainTargetMap.size());
-			_AddTarget(TO_UNIT(ChainTargetMap[placeholder]), i);
+			placeholder = (rand()%ChainTargetContainer.size());
+			chaintarget = ChainTargetContainer.at(placeholder);
+			if(chaintarget == NULL)
+				continue;
+
+			_AddTarget(TO_UNIT(chaintarget), i);
+			ChainTargetContainer.erase(ChainTargetContainer.begin()+placeholder);
 			jumps--;
 		}
-		ChainTargetMap.clear();
+		ChainTargetContainer.clear();
 	}
 }
 
@@ -816,7 +822,7 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 	else
 	{
 		uint32 placeholder = 0;
-		map<uint32, Object*> ChainTargetMap;
+		vector<Object*> ChainTargetContainer;
 		unordered_set<Object* >::iterator itr;
 		for( itr = firstTarget->GetInRangeSetBegin(); itr != firstTarget->GetInRangeSetEnd(); itr++ )
 		{
@@ -827,19 +833,25 @@ void Spell::SpellTargetChainTargeting(uint32 i, uint32 j)
 			{
 				if(!isAttackable(u_caster,TO_UNIT(*itr)) && (*itr)->GetUInt32Value(UNIT_FIELD_HEALTH) != (*itr)->GetUInt32Value(UNIT_FIELD_MAXHEALTH))
 				{
-					ChainTargetMap[placeholder] = (*itr);
+					ChainTargetContainer.push_back(*itr);
 					++placeholder;
 				}
 			}
 		}
 
-		while(jumps && ChainTargetMap.size())
+		Object *chaintarget = NULL;
+		while(jumps && ChainTargetContainer.size())
 		{
-			placeholder = (rand()%ChainTargetMap.size());
-			_AddTargetForced(ChainTargetMap[placeholder], i);
+			placeholder = (rand()%ChainTargetContainer.size());
+			chaintarget = ChainTargetContainer.at(placeholder);
+			if(chaintarget == NULL)
+				continue;
+
+			_AddTarget(TO_UNIT(chaintarget), i);
+			ChainTargetContainer.erase(ChainTargetContainer.begin()+placeholder);
 			jumps--;
 		}
-		ChainTargetMap.clear();
+		ChainTargetContainer.clear();
 	}
 }
 

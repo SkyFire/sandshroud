@@ -272,7 +272,11 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 
 uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell* pSpell)
 {
-	if(!pSpell->pCastSpell && !pSpell->pLearnSpell)
+	if(!pSpell->pCastRealSpell && !pSpell->pLearnSpell)
+		return TRAINER_STATUS_NOT_AVAILABLE;
+
+	if((pSpell->pCastRealSpell && objmgr.IsSpellDisabled(pSpell->pCastRealSpell->Id))
+		|| (pSpell->pLearnSpell && objmgr.IsSpellDisabled(pSpell->pLearnSpell->Id)))
 		return TRAINER_STATUS_NOT_AVAILABLE;
 
 	// Spells with the same names

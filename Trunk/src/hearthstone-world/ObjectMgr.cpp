@@ -1704,8 +1704,7 @@ void ObjectMgr::LoadTrainers()
 						{
 							Log.Warning("Trainers", "Trainer %u contains cast spell %u that is non-teaching", entry, CastSpellID);
 							abrt = true;
-						}
-						break;
+						}break;
 					}
 				}
 			}
@@ -1715,9 +1714,7 @@ void ObjectMgr::LoadTrainers()
 		}
 
 		if( LearnSpellID != 0 )
-		{
 			ts.pLearnSpell = dbcSpell.LookupEntryForced( LearnSpellID );
-		}
 
 		if( ts.pCastSpell == NULL && ts.pLearnSpell == NULL )
 		{

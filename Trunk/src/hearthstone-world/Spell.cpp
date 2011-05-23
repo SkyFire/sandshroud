@@ -387,7 +387,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 	//TargetsList *tmpMap=&m_targetUnits[i];
 	float r = range*range;
 	uint32 placeholder = 0;
-	map<uint32, Object*> ChainTargetMap;
+	vector<Object*> ChainTargetContainer;
 
 	for(unordered_set<Object* >::iterator itr = m_caster->GetInRangeSetBegin(); itr != m_caster->GetInRangeSetEnd(); itr++ )
 	{
@@ -410,13 +410,13 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				{
 					if( isAttackable( m_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
-						ChainTargetMap[placeholder] = (*itr);
+						ChainTargetContainer.push_back(*itr);
 						placeholder++;
 					}
 				}
 				else if((*itr)->IsGameObject())
 				{
-					ChainTargetMap[placeholder] = (*itr);
+					ChainTargetContainer.push_back(*itr);
 					placeholder++;
 				}
 			}
@@ -426,7 +426,7 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 				{
 					if( isAttackable( u_caster, TO_UNIT( *itr ),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 					{
-						ChainTargetMap[placeholder] = (*itr);
+						ChainTargetContainer.push_back(*itr);
 						placeholder++;
 					}
 				}
@@ -439,14 +439,14 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 					{	//trap, check not to attack owner and friendly
 						if(isAttackable(g_caster->m_summoner,TO_UNIT(*itr),!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
 						{
-							ChainTargetMap[placeholder] = (*itr);
+							ChainTargetContainer.push_back(*itr);
 							placeholder++;
 						}
 					}
 				}
 				else
 				{
-					ChainTargetMap[placeholder] = (*itr);
+					ChainTargetContainer.push_back(*itr);
 					placeholder++;
 				}
 			}
@@ -455,16 +455,29 @@ void Spell::FillAllTargetsInArea(uint32 i,float srcx,float srcy,float srcz, floa
 
 	int32 MaxTargets = -1;
 	if( GetSpellProto()->MaxTargets)
-		MaxTargets = GetSpellProto()->MaxTargets;
+		MaxTargets = GetSpellProto()->MaxTargets-1;
 
-	while(((MaxTargets == -1) || MaxTargets) && ChainTargetMap.size())
+	if(MaxTargets != -1)
 	{
-		placeholder = (rand()%ChainTargetMap.size());
-		_AddTargetForced(ChainTargetMap[placeholder], i);
-		if(MaxTargets != -1)
+		Object* chaintarget = NULL;
+		while(MaxTargets && ChainTargetContainer.size())
+		{
+			placeholder = (rand()%ChainTargetContainer.size());
+			chaintarget = ChainTargetContainer.at(placeholder);
+			if(chaintarget == NULL)
+				continue;
+
+			_AddTargetForced(chaintarget, i);
+			ChainTargetContainer.erase(ChainTargetContainer.begin()+placeholder);
 			MaxTargets--;
+		}
 	}
-	ChainTargetMap.clear();
+	else
+	{
+		for(vector<Object*>::iterator itr = ChainTargetContainer.begin(); itr != ChainTargetContainer.end(); itr++)
+			_AddTargetForced((*itr), i);
+	}
+	ChainTargetContainer.clear();
 }
 
 // We fill all the targets in the area, including the stealthed one's
