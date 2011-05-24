@@ -75,6 +75,9 @@ void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
 
 	Initialised = true;
 
+	if(!m_maxPassengers || !m_seatSlotMax)
+		return;
+
 	if( pRider != NULL)
 		AddPassenger( pRider );
 
@@ -443,11 +446,8 @@ void Vehicle::DeleteMe()
 
 void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool force /*= false*/)
 {
-	if(!m_maxPassengers || !m_seatSlotMax) //how is this happening?
-	{
-		sLog.outColor(TRED, "Vehicle was not correctly initialised, retrying|r\n");
-		InitSeats(m_vehicleEntry);
-	}
+	if(!m_maxPassengers || !m_seatSlotMax)
+		return; // Slave vehicle.
 
 	if(pPassenger->GetVehicle())
 		pPassenger->GetVehicle()->RemovePassenger(pPassenger);
@@ -488,7 +488,7 @@ void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool f
 				if(!m_passengers[i] && m_vehicleSeats[i] && (seatisusable[i] == true)) // Found a slot
 				{
 					_AddToSlot(pPassenger, i );
-					break;
+					return;
 				}
 			}
 			else
@@ -496,7 +496,7 @@ void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool f
 				if(!m_passengers[i] && m_vehicleSeats[i])
 				{
 					_AddToSlot(pPassenger, i );
-					break;
+					return;
 				}
 			}
 		}

@@ -1764,7 +1764,7 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		}
 		else if(!m_pOwner->ignoreitemreq_cheat && proto->Class == ITEM_CLASS_WEAPON)
 		{
-			if(!(m_pOwner->GetWeaponProficiency()&(((uint32)(1))<<proto->SubClass)))
+			if(!(m_pOwner->GetWeaponProficiency()&((uint32(1))<<proto->SubClass)))
 				return INV_ERR_NO_REQUIRED_PROFICIENCY;
 		}
 

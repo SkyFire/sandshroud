@@ -318,7 +318,7 @@ void Player::UpdateInrangeSetsBasedOnReputation()
 void Player::Reputation_OnKilledUnit(Unit* pUnit, bool InnerLoop)
 {
 	// add rep for on kill
-	if ( pUnit->GetTypeId() != TYPEID_UNIT || pUnit->IsPet() )
+	if ( pUnit->GetTypeId() != TYPEID_UNIT || pUnit->IsPet() || !pUnit->m_factionDBC )
 		return;
 
 	Group * m_Group = GetGroup();

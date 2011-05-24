@@ -1227,9 +1227,12 @@ void Group::SetAssistantLeader(PlayerInfo * pMember)
 	Update();
 }
 
-bool Group::HasDisenchanters()
+bool Group::HasAcceptableDisenchanters(int32 requiredskill)
 {
-	bool allowed = false;
+	if(requiredskill < 0)
+		return false;
+
+	Player* plr = NULL;
 	GroupMembersSet::iterator itr;
 	m_groupLock.Acquire();
 
@@ -1239,17 +1242,18 @@ bool Group::HasDisenchanters()
 		{
 			for( itr = m_SubGroups[i]->GetGroupMembersBegin(); itr != m_SubGroups[i]->GetGroupMembersEnd(); itr++ )
 			{
-				if( (*itr) != NULL )
+				if( (*itr) != NULL && (*itr)->m_loggedInPlayer)
 				{
-					if((*itr)->m_loggedInPlayer->HasSpell(13262))
-						allowed = true;
+					plr = (*itr)->m_loggedInPlayer;
+					if(plr->_HasSkillLine(333) && (plr->_GetSkillLineCurrent(333, true) > uint32(requiredskill)))
+						return true;
 				}
 			}
 		}
 	}
 
 	m_groupLock.Release();
-	return allowed;
+	return false;
 }
 
 void Group::AddBeaconOfLightTarget(Player* Target)

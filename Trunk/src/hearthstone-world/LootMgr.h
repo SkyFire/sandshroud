@@ -131,6 +131,16 @@ enum PARTY_LOOT
 	PARTY_LOOT_GROUP	= 3,
 	PARTY_LOOT_NBG		= 4,
 };
+
+// Thanks to mangos for mask values.
+enum ROLL_ENABLE_MASK
+{
+	ROLLMASK_PASS		= 0x01,
+	ROLLMASK_NEED		= 0x02,
+	ROLLMASK_GREED		= 0x04,
+	ROLLMASK_DISENCHANT	= 0x08
+};
+
 enum PARTY_ROLL
 {
 	NEED		= 1,

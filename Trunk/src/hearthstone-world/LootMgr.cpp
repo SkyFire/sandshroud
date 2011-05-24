@@ -301,9 +301,9 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 			t.itemid = fields[1].GetUInt32();
 			for(int i = 0; i < 4; i++)
 				t.chance[i] = fields[2+i].GetFloat();
-			t.mincount = fields[5].GetUInt32();
-			t.maxcount = fields[6].GetUInt32();
-			t.ffa_loot = fields[7].GetUInt32();
+			t.mincount = fields[6].GetUInt32();
+			t.maxcount = fields[7].GetUInt32();
+			t.ffa_loot = fields[8].GetUInt32();
 		}
 		else // We have one chance, regardless of difficulty.
 		{
@@ -321,7 +321,6 @@ void LootMgr::LoadLootTables(const char * szTableName,LootStore * LootTable)
 				t.chance[i] = RandomFloat(100);
 
 		ttab.push_back( t );
-
 		last_entry = entry_id;
 	} while( result->NextRow() );
 
@@ -828,8 +827,7 @@ void LootRoll::Finalize()
 	else
 		_player->GetSession()->SendPacket(&data);
 
-	//Fluffy: This is working but may not be perfect... Improve, if you want!
-	if(hightype == DISENCHANT && _player->AllowDisenchantLoot())	// We need one enchanter in our Group
+	if(hightype == DISENCHANT)
 	{
 		//generate Disenchantingloot
 		Item * pItem = objmgr.CreateItem( itemid, _player);
@@ -956,6 +954,10 @@ void LootRoll::PlayerRolled(PlayerInfo* pInfo, uint8 choice)
 	if(m_NeedRolls.find(pInfo->guid) != m_NeedRolls.end() || m_GreedRolls.find(pInfo->guid) != m_GreedRolls.end() || m_DisenchantRolls.find(pInfo->guid) != m_DisenchantRolls.end())
 		return; // dont allow cheaters
 
+	ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(_itemid);
+	if(proto == NULL)
+		return; // Shouldn't happen.
+
 	mLootLock.Acquire();
 
 	int roll = RandomUInt(99)+1;
@@ -964,12 +966,23 @@ void LootRoll::PlayerRolled(PlayerInfo* pInfo, uint8 choice)
 	data << _guid << _slotid << uint64(pInfo->guid);
 	data << _itemid << _randomsuffixid << _randompropertyid;
 
+	if(!pInfo->m_loggedInPlayer)
+		choice = PASS;
+	bool acceptableroll = true;
 	switch(choice)
  	{
 	case NEED:
 		{
-			m_NeedRolls.insert( std::make_pair(pInfo->guid, roll) );
-			data << uint8(roll) << uint8(NEED);
+			if(pInfo->m_loggedInPlayer->CanNeedItem(proto))
+			{
+				m_NeedRolls.insert( std::make_pair(pInfo->guid, roll) );
+				data << uint8(roll) << uint8(NEED);
+			}
+			else
+			{
+				m_passRolls.insert( pInfo->guid );
+				data << uint8(128) << uint8(128);
+			}
 		}break;
 	case GREED:
 		{
@@ -978,8 +991,26 @@ void LootRoll::PlayerRolled(PlayerInfo* pInfo, uint8 choice)
 		}break;
 	case DISENCHANT:
 		{
-			m_DisenchantRolls.insert( std::make_pair(pInfo->guid, roll) );
-			data << uint8(roll) << uint8(DISENCHANT);
+			if(acceptableroll)
+			{
+				if(proto->DisenchantReqSkill < 0)
+					acceptableroll = false;
+				else if(pInfo->m_Group)
+					acceptableroll = pInfo->m_Group->HasAcceptableDisenchanters(proto->DisenchantReqSkill);
+				else
+					acceptableroll = (pInfo->m_loggedInPlayer->_HasSkillLine(333) && (pInfo->m_loggedInPlayer->_GetSkillLineCurrent(333) > uint32(proto->DisenchantReqSkill)));
+			}
+
+			if(acceptableroll)
+			{
+				m_DisenchantRolls.insert( std::make_pair(pInfo->guid, roll) );
+				data << uint8(roll) << uint8(DISENCHANT);
+			}
+			else
+			{
+				m_passRolls.insert( pInfo->guid );
+				data << uint8(128) << uint8(128);
+			}
 		}break;
 	default: //pass
 		{

@@ -6250,6 +6250,24 @@ bool Player::HasQuestForItem(uint32 itemid)
 	return false;
 }
 
+bool Player::CanNeedItem(ItemPrototype* proto)
+{
+	if(proto->Class == ITEM_CLASS_WEAPON)
+		if(!(GetWeaponProficiency() & (uint32(1) << proto->SubClass)))
+			return false;
+	else if(proto->Class == ITEM_CLASS_ARMOR)
+		if(!(GetArmorProficiency() & (uint32(1) << proto->SubClass)))
+			return false;
+	if(proto->AllowableClass)
+		if(!(proto->AllowableClass & getClassMask()))
+			return false;
+	if(proto->AllowableRace)
+		if(!(proto->AllowableRace & getRaceMask()))
+			return false;
+	// Crow: Should be all we need for now.
+	return true;
+}
+
 /*Loot type MUST be
 1-corpse, go
 2-skinning/herbalism/minning
@@ -6260,8 +6278,8 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 	Group * m_Group = m_playerInfo->m_Group;
 	if(!IsInWorld())
 		return;
-	Object* lootObj;
 
+	Object* lootObj;
 	// handle items
 	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_ITEM)
 		lootObj = m_ItemInterface->GetItemByGUID(guid);
@@ -6296,7 +6314,7 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 	lootObj->m_loot.looters.insert(GetLowGUID());
 
 	WorldPacket data(32), data2(32);
-	data.SetOpcode (SMSG_LOOT_RESPONSE);
+	data.SetOpcode(SMSG_LOOT_RESPONSE);
 
 	m_lootGuid = guid;
 
@@ -6305,9 +6323,9 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 	data << uint32(lootObj->m_loot.gold);
 	data << uint8(0);//loot size reserve
 
-	uint32 count=0;
+	uint32 count = 0;
 	uint8 slottype = 0;
-	std::vector<__LootItem>::iterator iter=lootObj->m_loot.items.begin();
+	std::vector<__LootItem>::iterator iter = lootObj->m_loot.items.begin();
 	for(uint32 x = 0; iter != lootObj->m_loot.items.end(); iter++, x++)
 	{
 		if(iter->ffa_loot != 2)
@@ -6322,9 +6340,10 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 				continue;
 		}
 
-		ItemPrototype* itemProto =iter->item.itemproto;
+		ItemPrototype* itemProto = iter->item.itemproto;
 		if (!itemProto)
 			continue;
+
 		//quest items check. type 4/5
 		//quest items that dont start quests.
 		if((itemProto->Bonding == ITEM_BIND_QUEST) && !(itemProto->QuestId) && !HasQuestForItem(itemProto->ItemId))
@@ -6388,11 +6407,10 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 				slottype = 0;
 				break;
 			}
+
 			// only quality items are distributed
 			if(itemProto->Quality < m_Group->GetThreshold())
-			{
 				slottype = 0;
-			}
 
 			/* if all people passed anyone can loot it? :P */
 			if(iter->passed)
@@ -6403,31 +6421,25 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 				slottype = 0;
 		}
 
+		uint32 filldata[2] = {0, 0};
+		if(iter->iRandomSuffix)
+		{
+			filldata[0] = Item::GenerateRandomSuffixFactor(itemProto);
+			filldata[1] = uint32(-int32(iter->iRandomSuffix->id));
+		}
+		else if(iter->iRandomProperty)
+			filldata[1] = uint32(iter->iRandomProperty->ID);
+
 		data << uint8(x);
 		data << uint32(itemProto->ItemId);
 		data << uint32(iter->StackSize);//nr of items of this type
 		data << uint32(iter->item.displayid);
-		if(iter->iRandomSuffix)
-		{
-			data << Item::GenerateRandomSuffixFactor(itemProto);
-			data << uint32(-int32(iter->iRandomSuffix->id));
-		}
-		else if(iter->iRandomProperty)
-		{
-			data << uint32(0);
-			data << uint32(iter->iRandomProperty->ID);
-		}
-		else
-		{
-			data << uint32(0);
-			data << uint32(0);
-		}
-
+		data << filldata[0] << filldata[1];
 		data << slottype;   // "still being rolled for" flag
 
 		if(slottype == 1)
 		{
-			if(iter->roll == NULL && !iter->passed)
+			if(iter->roll == NULL && !iter->passed && iter->item.itemproto)
 			{
 				uint32 ipid = 0;
 				uint32 factor = 0;
@@ -6439,37 +6451,47 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 					ipid = uint32(-int32(iter->iRandomSuffix->id));
 				}
 
-				if(iter->item.itemproto)
-				{
-					iter->roll = new LootRoll;
-					iter->roll->Init(60000, (m_Group != NULL ? m_Group->MemberCount() : 1),  guid, x, iter->item.itemproto->ItemId, factor, uint32(ipid), GetMapMgr());
+				iter->roll = new LootRoll;
+				iter->roll->Init(60000, (m_Group != NULL ? m_Group->MemberCount() : 1),  guid, x, iter->item.itemproto->ItemId, factor, uint32(ipid), GetMapMgr());
 
-					data2.Initialize(SMSG_LOOT_START_ROLL);
-					data2 << uint64(guid);
-					data2 << uint32(mapid);
-					data2 << uint32(x);
-					data2 << uint32(iter->item.itemproto->ItemId);
-					data2 << uint32(factor);
-					data2 << uint32(ipid);
-					data2 << uint32(iter->StackSize);
-					data2 << uint32(60000); // countdown
-					data2 << uint8(7);
-				}
+				data2.Initialize(SMSG_LOOT_START_ROLL);
+				data2 << uint64(guid);
+				data2 << uint32(mapid);
+				data2 << uint32(x);
+				data2 << uint32(iter->item.itemproto->ItemId);
+				data2 << uint32(factor);
+				data2 << uint32(ipid);
+				data2 << uint32(iter->StackSize);
+				data2 << uint32(60000); // countdown
 
-				Group * pGroup = m_playerInfo->m_Group;
+				Group* pGroup = m_playerInfo->m_Group;
 				if(pGroup)
 				{
+					size_t maskpos = data2.wpos();
+					data2 << uint8(0);
+
 					pGroup->Lock();
+					Player* plr = NULL;
 					for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++)
 					{
 						for(GroupMembersSet::iterator itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 						{
-							if((*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetItemInterface()->CanReceiveItem(itemProto, iter->StackSize, NULL) == 0)
-							{
-								if( (*itr)->m_loggedInPlayer->m_passOnLoot )
+							plr = (*itr)->m_loggedInPlayer;
+							if(plr && plr->GetItemInterface()->CanReceiveItem(itemProto, iter->StackSize, NULL) == 0)
+							{	// If we have pass on, or if we're not in range, we have to pass.
+								if( plr->m_passOnLoot || ( !lootObj->IsInRangeSet(plr) ) )
 									iter->roll->PlayerRolled( (*itr), PASS );		// passed
 								else
-									(*itr)->m_loggedInPlayer->GetSession()->SendPacket(&data2);
+								{
+									uint8 canusemask = ROLLMASK_PASS|ROLLMASK_GREED;
+									if(plr->CanNeedItem(itemProto))
+										canusemask |= ROLLMASK_NEED;
+									if(pGroup->HasAcceptableDisenchanters(itemProto->DisenchantReqSkill))
+										canusemask |= ROLLMASK_DISENCHANT;
+
+									data2.put<uint8>(maskpos, canusemask);
+									plr->GetSession()->SendPacket(&data2);
+								}
 							}
 							else
 								iter->roll->PlayerRolled( (*itr), PASS );		// passed
@@ -6479,6 +6501,14 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 				}
 				else
 				{
+					uint8 canusemask = ROLLMASK_PASS|ROLLMASK_GREED;
+					if(CanNeedItem(itemProto))
+						canusemask |= ROLLMASK_NEED;
+					if(itemProto->DisenchantReqSkill > -1)
+						if(_HasSkillLine(333) && (_GetSkillLineCurrent(333, true) > uint32(itemProto->DisenchantReqSkill)))
+							canusemask |= ROLLMASK_DISENCHANT;
+
+					data2 << canusemask;
 					GetSession()->SendPacket(&data2);
 				}
 			}
@@ -12821,19 +12851,6 @@ void Player::DeleteEquipmentSet(uint64 setGuid)
 void Player::_SaveEquipmentSets(QueryBuffer* buff)
 {
 
-}
-
-bool Player::AllowDisenchantLoot()
-{
-	Group * pGroup = GetGroup();
-	if(pGroup != NULL)
-	{
-		if(pGroup->HasDisenchanters())
-			return true;
-	}
-
-	BroadcastMessage(MSG_COLOR_RED"You need at least one enchanter in your group. You will just receive the item.");
-	return false;
 }
 
 // Crow: Spellcheck explanation: Some spells have the required part, but they don't really need it.

@@ -74,7 +74,7 @@ protected:
 	uint64 vehicleguid;
 	uint8 m_ppassengerCount;
 	uint8 m_maxPassengers;
-	int8 m_seatSlotMax;
+	uint8 m_seatSlotMax;
 };
 
 #endif
