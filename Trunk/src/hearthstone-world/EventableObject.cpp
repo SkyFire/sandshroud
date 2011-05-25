@@ -19,10 +19,21 @@
 
 #include "StdAfx.h"
 
+EventableObject::EventableObject()
+{
+	m_holder = 0;
+	m_event_Instanceid = -1;
+	m_events.clear();
+}
+
 EventableObject::~EventableObject()
 {
-	/* decrement event count on all events */
 
+}
+
+void EventableObject::Destruct()
+{
+	/* decrement event count on all events */
 	EventMap::iterator itr = m_events.begin();
 	for(; itr != m_events.end(); itr++)
 	{
@@ -38,13 +49,7 @@ EventableObject::~EventableObject()
 	}
 
 	m_events.clear();
-}
-
-EventableObject::EventableObject()
-{
-	m_holder = 0;
-	m_event_Instanceid = -1;
-	m_events.clear();
+	delete this;
 }
 
 void EventableObject::event_AddEvent(TimedEvent * ptr)

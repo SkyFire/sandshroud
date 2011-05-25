@@ -358,6 +358,7 @@ public:
 	Creature(uint64 guid);
 	virtual ~Creature();
 	virtual void Init();
+	virtual void Destruct();
 
 	bool Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info);
 	void Load(CreatureProto * proto_, uint32 mode, float x, float y, float z, float o = 0.0f);

@@ -96,7 +96,7 @@ WarsongGulch::~WarsongGulch()
 		// buffs may not be spawned, so delete them if they're not
 		if(m_buffs[i] && !m_buffs[i]->IsInWorld())
 		{
-			delete m_buffs[i];
+			m_buffs[i]->Destruct();
 			m_buffs[i] = NULL;
 		}
 	}

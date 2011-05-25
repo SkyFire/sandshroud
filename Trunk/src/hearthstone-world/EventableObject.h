@@ -57,6 +57,7 @@ public:
 	// Public methods
 	EventableObject();
 	virtual ~EventableObject();
+	virtual void Destruct();
 
 	HEARTHSTONE_INLINE bool event_HasEvents() { return m_events.size() > 0 ? true : false; }
 	void event_AddEvent(TimedEvent * ptr);

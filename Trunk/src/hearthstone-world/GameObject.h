@@ -361,6 +361,7 @@ public:
 	GameObject(uint64 guid);
 	~GameObject( );
 	virtual void Init();
+	virtual void Destruct();
 
 	HEARTHSTONE_INLINE GameObjectInfo* GetInfo() { return pInfo; }
 	HEARTHSTONE_INLINE void SetInfo(GameObjectInfo * goi) { pInfo = goi; }

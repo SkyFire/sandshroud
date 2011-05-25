@@ -51,7 +51,7 @@ AuctionHouse::~AuctionHouse()
 {
 	for(HM_NAMESPACE::hash_map<uint32, Auction*>::iterator itr = auctions.begin(); itr != auctions.end(); itr++)
 	{
-		itr->second->pItem->Delete();
+		itr->second->pItem->Destruct();
 		delete itr->second;
 	}
 }

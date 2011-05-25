@@ -930,6 +930,7 @@ void World::DeleteGlobalSession(WorldSession *GlobalSession)
 	// delete us
 	GlobalSession->Delete();
 }
+
 uint32 World::AddQueuedSocket(WorldSocket* Socket)
 {
 	// Since we have multiple socket threads, better guard for this one,
@@ -1299,7 +1300,7 @@ void TaskList::waitForThreadsToExit()
 
 void World::DeleteObject(Object* obj)
 {
-	delete obj;
+	obj->Destruct();
 	obj = NULLOBJ;
 }
 

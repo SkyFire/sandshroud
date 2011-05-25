@@ -40,12 +40,17 @@ Container::Container(uint32 high,uint32 low) : Item()
 	random_suffix=random_prop=0;
 }
 
+Container::~Container( )
+{
+
+}
+
 void Container::Init()
 {
 	Item::Init();
 }
 
-Container::~Container( )
+void Container::Destruct()
 {
 	for(uint32 i = 0; i < m_itemProto->ContainerSlots; i++)
 	{
@@ -55,6 +60,7 @@ Container::~Container( )
 			m_Slot[i] = NULL;
 		}
 	}
+	Item::Destruct();
 }
 
 void Container::LoadFromDB( Field*fields )

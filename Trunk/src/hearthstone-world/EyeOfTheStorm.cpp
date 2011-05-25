@@ -190,7 +190,7 @@ EyeOfTheStorm::~EyeOfTheStorm()
 			m_EOTSbuffs[i]->m_battleground = NULLBATTLEGROUND;
 			if( !m_EOTSbuffs[i]->IsInWorld() )
 			{
-				delete m_EOTSbuffs[i];
+				m_EOTSbuffs[i]->Destruct();
 				m_EOTSbuffs[i] = NULL;
 			}
 		}
@@ -1137,7 +1137,7 @@ void EyeOfTheStorm::OnStart()
 	for( i = 0; i < 2; i++ )
 	{
 		m_bubbles[i]->RemoveFromWorld(false);
-		delete m_bubbles[i];
+		m_bubbles[i]->Destruct();
 		m_bubbles[i] = NULLGOB;
 	}
 

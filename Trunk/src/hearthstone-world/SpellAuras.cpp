@@ -549,7 +549,7 @@ void Aura::Remove()
 		m_target->RemoveAura( 53523 );
 		m_target->RemoveAura( 53524 );
 	}
-	delete this;
+	EventableObject::Destruct();
 }
 
 void Aura::AddMod( uint32 t, int32 a, uint32 miscValue, uint32 i )
@@ -1388,7 +1388,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						  //dmg +=parentsp->EffectBasePoints[i]*m_spellProto->EffectBasePoints[0];
 							dmg +=spelld->CalculateEffect(i,m_target->IsUnit()? TO_UNIT(m_target):NULLUNIT)*parentsp->EffectBasePoints[0]/100;
 						}
-						delete spelld;
+						spelld->Destruct();
 					}
 				}
 			}
@@ -2028,7 +2028,7 @@ void Aura::SpellAuraDummy(bool apply)
 				if(summon!= NULL)
 				{
 					summon->RemoveFromWorld(false,true);
-					delete summon;
+					summon->Destruct();
 				}
 				m_target->SetUInt64Value(PLAYER_FARSIGHT,0);
 #endif
@@ -2279,7 +2279,7 @@ void Aura::SpellAuraDummy(bool apply)
 			spell = new Spell(pCaster, m_spellProto, true, NULLAURA);
 			spell->SetUnitTarget( m_target );
 			spell->Heal( mod->m_baseAmount );
-			delete spell;
+			spell->Destruct();
 			//pCaster->Heal( m_target, m_spellProto->Id, mod->m_amount );
 
 			//

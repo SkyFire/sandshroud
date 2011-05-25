@@ -42,6 +42,16 @@ DynamicObject::DynamicObject(uint32 high, uint32 low)
 
 DynamicObject::~DynamicObject()
 {
+
+}
+
+void DynamicObject::Init()
+{
+	Object::Init();
+}
+
+void DynamicObject::Destruct()
+{
 	// remove aura from all targets
 	DynamicObjectList::iterator jtr  = targets.begin();
 	DynamicObjectList::iterator jend = targets.end();
@@ -64,12 +74,7 @@ DynamicObject::~DynamicObject()
 	p_caster = NULLPLR;
 	m_caster = NULLOBJ;
 	g_caster = NULLGOB;
-
-}
-
-void DynamicObject::Init()
-{
-	Object::Init();
+	Object::Destruct();
 }
 
 void DynamicObject::Create(Object* caster, Spell* pSpell, float x, float y, float z, uint32 duration, float radius)
@@ -259,7 +264,7 @@ void DynamicObject::Remove()
 {
     if( !IsInWorld() )
 	{
-        delete this;
+        Destruct();
         return;
     }
 
@@ -267,5 +272,5 @@ void DynamicObject::Remove()
 	data << GetGUID();
 	SendMessageToSet( &data, false );
 	RemoveFromWorld(true);
-	delete this;
+	Destruct();
 }

@@ -204,9 +204,9 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 	unit->RemoveFromWorld(false, true);
 
 	if(unit->IsVehicle())
-		delete TO_VEHICLE(unit);
+		TO_VEHICLE(unit)->Destruct();
 	else
-		delete unit;
+		unit->Destruct();
 
 	m_session->GetPlayer()->SetSelection(NULL);
 	return true;

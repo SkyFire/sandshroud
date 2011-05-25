@@ -31,6 +31,7 @@ public:
 	DynamicObject( uint32 high, uint32 low );
 	~DynamicObject( );
 	virtual void Init();
+	virtual void Destruct();
 
 	void Create(Object* caster, Spell* pSpell, float x, float y, float z, uint32 duration, float radius);
 	void UpdateTargets();

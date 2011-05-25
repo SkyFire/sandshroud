@@ -132,14 +132,14 @@ void MapCell::RemoveObjects()
 				{
 					_mapmgr->_reusable_guids_vehicle.push_back( pObject->GetUIdFromGUID() );
 					TO_VEHICLE(pObject)->m_respawnCell=NULL;
-					delete TO_VEHICLE(pObject);
+					TO_VEHICLE(pObject)->Destruct();
 					pObject = NULLOBJ;
 				}
 				else if( !pObject->IsPet() )
 				{
 					_mapmgr->_reusable_guids_creature.push_back( pObject->GetUIdFromGUID() );
 					TO_CREATURE(pObject)->m_respawnCell=NULL;
-					delete TO_CREATURE(pObject);
+					TO_CREATURE(pObject)->Destruct();
 					pObject = NULLOBJ;
 				}
 			}break;
@@ -147,11 +147,11 @@ void MapCell::RemoveObjects()
 		case TYPEID_GAMEOBJECT:
 			{
 				TO_GAMEOBJECT(pObject)->m_respawnCell = NULL;
-				delete TO_GAMEOBJECT(pObject);
+				TO_GAMEOBJECT(pObject)->Destruct();
 				pObject = NULLOBJ;
 			}break;
 		default:
-			delete pObject;
+			pObject->Destruct();
 			pObject = NULLOBJ;
 			break;
 
@@ -187,7 +187,7 @@ void MapCell::RemoveObjects()
 		if( obj->IsInWorld())
 			obj->RemoveFromWorld( true );
 
-		delete obj;
+		obj->Destruct();
 		obj = NULLOBJ;
 	}
 	_objects.clear();
@@ -228,7 +228,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 				{
 					if(!v->CanAddToWorld())
 					{
-						delete v;
+						v->Destruct();
 						v = NULLVEHICLE;
 						continue;
 					}
@@ -237,7 +237,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 				}
 				else
 				{
-					delete v;
+					v->Destruct();
 					v = NULLVEHICLE;
 				}
 			}
@@ -255,7 +255,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 				{
 					if(!c->CanAddToWorld())
 					{
-						delete c;
+						c->Destruct();
 						c = NULLCREATURE;
 						continue;
 					}
@@ -264,7 +264,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 				}
 				else
 				{
-					delete c;
+					c->Destruct();
 					c = NULLCREATURE;
 				}
 			}
@@ -287,7 +287,7 @@ void MapCell::LoadObjects(CellSpawns * sp)
 			}
 			else
 			{
-				delete go;
+				go->Destruct();
 				go = NULLOBJ;
 			}
 		}

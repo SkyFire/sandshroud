@@ -1591,6 +1591,8 @@ public:
 	friend class DummySpellHandler;
 	Spell( Object* Caster, SpellEntry *info, bool triggered, Aura* aur);
 	~Spell();
+	virtual void Destruct();
+
 	float m_missilePitch;
 	uint32 m_missileTravelTime;
 

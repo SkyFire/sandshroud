@@ -343,7 +343,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	{
 		// failed.
 		pNewChar->ok_to_remove = true;
-		delete pNewChar;
+		pNewChar->Destruct();
 		pNewChar = NULLPLR;
 		return;
 	}
@@ -376,7 +376,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 	objmgr.AddPlayerInfo(pn);
 
 	pNewChar->ok_to_remove = true;
-	delete pNewChar;
+	pNewChar->Destruct();
 	pNewChar = NULLPLR;
 
 	// CHAR_CREATE_SUCCESS

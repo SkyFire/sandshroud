@@ -27,6 +27,7 @@ public:
 	Container(uint32 high, uint32 low);
 	~Container();
 	virtual void Init();
+	virtual void Destruct();
 
 	void Create( uint32 itemid, Player* owner );
 	void LoadFromDB( Field*fields);

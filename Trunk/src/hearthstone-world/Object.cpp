@@ -88,6 +88,16 @@ Object::Object() : m_position(0,0,0,0), m_spawnLocation(0,0,0,0)
 
 Object::~Object( )
 {
+
+}
+
+void Object::Init()
+{
+
+}
+
+void Object::Destruct()
+{
 	if(m_phaseAura)
 	{
 		m_phaseAura->Remove();
@@ -98,9 +108,7 @@ Object::~Object( )
 		ASSERT(!m_inQueue);
 
 	if(IsInWorld() && m_objectTypeId != TYPEID_ITEM && m_objectTypeId != TYPEID_CONTAINER)
-	{
 		RemoveFromWorld(false);
-	}
 
 	ClearInRangeSet();
 
@@ -112,11 +120,7 @@ Object::~Object( )
 		delete m_extensions;
 
 	sEventMgr.RemoveEvents(this);
-}
-
-void Object::Init()
-{
-
+	delete this;
 }
 
 /* Crow:
@@ -2449,7 +2453,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 						data << dObj->GetGUID();
 						dObj->SendMessageToSet(&data, false);
 						dObj->RemoveFromWorld(true);
-						delete dObj;
+						dObj->Destruct();
 						dObj = NULL;
 					}
 				}
@@ -3195,7 +3199,7 @@ void Object::EventSpellHit(Spell* pSpell)
 	if( IsInWorld() && pSpell->m_caster != NULL )
 		pSpell->cast(false);
 	else
-		delete pSpell;
+		pSpell->Destruct();
 }
 
 

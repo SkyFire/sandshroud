@@ -256,6 +256,11 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 
 Spell::~Spell()
 {
+
+}
+
+void Spell::Destruct()
+{
 	if( u_caster != NULL && u_caster->GetCurrentSpell() == this )
 		u_caster->SetCurrentSpell(NULLSPELL);
 
@@ -274,6 +279,7 @@ Spell::~Spell()
 	corpseTarget = NULLCORPSE;
 	m_magnetTarget = NULLUNIT;
 	m_reflectedParent = NULLSPELL;
+	EventableObject::Destruct();
 }
 
 //i might forget conditions here. Feel free to add them
@@ -1273,7 +1279,7 @@ void Spell::cancel()
 					if(dynObj)
 					{
 						dynObj->RemoveFromWorld(true);
-						delete dynObj;
+						dynObj->Destruct();
 						dynObj = NULLOBJ;
 					}
 				}
@@ -1284,7 +1290,7 @@ void Spell::cancel()
 						p_caster->GetSummonedObject()->RemoveFromWorld(true);
 					// for now..
 					ASSERT(p_caster->GetSummonedObject()->GetTypeId() == TYPEID_GAMEOBJECT);
-					delete TO_GAMEOBJECT(p_caster->GetSummonedObject());
+					TO_GAMEOBJECT(p_caster->GetSummonedObject())->Destruct();
 					p_caster->SetSummonedObject(NULL);
 				}
 				if (p_caster &&  m_timer > 0)
@@ -2079,7 +2085,7 @@ void Spell::finish()
 		if( m_ForceConsumption || ( cancastresult == SPELL_CANCAST_OK && !GetSpellFailed() ) )
 			RemoveItems();
 	}
-	delete this;
+	Destruct();
 }
 
 void Spell::SendCastResult(uint8 result)
@@ -2530,7 +2536,7 @@ void Spell::SendChannelUpdate(uint32 time)
 			if(dynObj)
 			{
 				dynObj->RemoveFromWorld(true);
-				delete dynObj;
+				dynObj->Destruct();
 				dynObj = NULLGOB;
 			}
 		}
@@ -2540,7 +2546,7 @@ void Spell::SendChannelUpdate(uint32 time)
 			if( dynObj )
 			{
 				dynObj->RemoveFromWorld(true);
-				delete dynObj;
+				dynObj->Destruct();
 				dynObj = NULLGOB;
 				p_caster->SetUInt32Value(PLAYER_FARSIGHT, 0);
 			}
@@ -4484,7 +4490,7 @@ void Spell::CreateItem(uint32 itemId)
 		AddItemResult result = pUnit->GetItemInterface()->SafeAddItem(newItem, slotresult.ContainerSlot, slotresult.Slot);
 		if(!result)
 		{
-			delete newItem;
+			newItem->Destruct();
 			newItem = NULLITEM;
 			return;
 		}

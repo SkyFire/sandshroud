@@ -142,6 +142,7 @@ public:
 
 	virtual ~Object ( );
 	virtual void Init();
+	virtual void Destruct();
 
 	virtual void Update ( uint32 time ) { }
 	//! True if object exists in world
@@ -511,16 +512,6 @@ public:
 	void Deactivate(MapMgr* mgr);
 	bool m_inQueue;
 	HEARTHSTONE_INLINE void SetMapMgr(MapMgr* mgr) { m_mapMgr = mgr; }
-
-	void Delete(bool remove = true)
-	{
-		if(remove)
-			if(IsInWorld())
-				RemoveFromWorld(true);
-
-		// this is a suicidal maniac o.o
-		delete this;
-	}
 
 	HEARTHSTONE_INLINE size_t GetInRangeOppFactCount() { return m_oppFactsInRange.size(); }
 	void PlaySoundToPlayer( Player* plr, uint32 sound_entry );

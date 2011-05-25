@@ -41,6 +41,11 @@ Player::Player( uint32 guid )
 	m_deathRuneMasteryChance = 0;
 }
 
+Player::~Player ( )
+{
+
+}
+
 void Player::Init()
 {
 	m_mailBox						= new Mailbox( GetUInt32Value(OBJECT_FIELD_GUID) );
@@ -410,7 +415,7 @@ void Player::Init()
 	Unit::Init();
 }
 
-Player::~Player ( )
+void Player::Destruct()
 {
 	sEventMgr.RemoveEvents(TO_PLAYER(this));
 
@@ -456,7 +461,7 @@ Player::~Player ( )
 
 	if (m_SummonedObject)
 	{
-		m_SummonedObject->Delete();
+		m_SummonedObject->Destruct();
 		m_SummonedObject = NULLOBJ;
 	}
 
@@ -546,6 +551,7 @@ Player::~Player ( )
 	m_itemsets.clear();
 	m_channels.clear();
 	mSpells.clear();
+	Unit::Destruct();
 }
 
 HEARTHSTONE_INLINE uint32 GetSpellForLanguage(uint32 SkillID)
@@ -2856,7 +2862,7 @@ void Player::RemovePendingPlayer()
 	}
 
 	ok_to_remove = true;
-	delete this;
+	Destruct();
 }
 
 bool Player::LoadFromDB(uint32 guid)
@@ -4056,7 +4062,7 @@ void Player::RemoveFromWorld()
 	{
 		if(m_SummonedObject->GetInstanceID() != GetInstanceID())
 		{
-			sEventMgr.AddEvent(m_SummonedObject, &Object::Delete, true, EVENT_GAMEOBJECT_EXPIRE, 100, 1,0);
+			sEventMgr.AddEvent(m_SummonedObject, &Object::Destruct, EVENT_GAMEOBJECT_EXPIRE, 100, 1,0);
 		}
 		else
 		{
@@ -8919,7 +8925,7 @@ void Player::EndDuel(uint8 WinCondition)
 	if( arbiter != NULL )
 	{
 		arbiter->RemoveFromWorld( true );
-		delete arbiter;
+		arbiter->Destruct();
 		arbiter = NULL;
 	}
 
@@ -10668,7 +10674,7 @@ void Player::EventRemoveAndDelete()
 	sTracker.CheckPlayerForTracker(this, false);
 	ObjUnlock();
 
-	delete this;
+	Destruct();
 }
 
 #endif
@@ -12795,7 +12801,7 @@ uint32 Player::GetTotalItemLevel()
 
 	uint32 playertotalitemlevel = 0;
 
-	for(int8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
+	for(int8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_TABARD; i++)
 	{
 		uint32 previoustil = playertotalitemlevel;
 		Item* item = Ii->GetInventoryItem(i);
@@ -12806,6 +12812,33 @@ uint32 Player::GetTotalItemLevel()
 		playertotalitemlevel = previoustil + item->GetProto()->ItemLevel;
 	}
 	return playertotalitemlevel;
+}
+
+uint32 Player::GetAverageItemLevel(bool skipmissing)
+{
+	ItemInterface *Ii = GetItemInterface();
+
+	uint8 itemcount = 0;
+	uint32 playertotalitemlevel = 0;
+
+	for(int8 i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_TABARD; i++)
+	{
+		if(i == EQUIPMENT_SLOT_BODY)
+			continue;
+
+		uint32 previoustil = playertotalitemlevel;
+		Item* item = Ii->GetInventoryItem(i);
+		if(!skipmissing)
+			itemcount++;
+
+		if(!item || !item->GetProto())
+			continue;
+
+		if(skipmissing)
+			itemcount++;
+		playertotalitemlevel = previoustil + item->GetProto()->ItemLevel;
+	}
+	return playertotalitemlevel/itemcount;
 }
 
 void Player::_LoadEquipmentSets(QueryResult *result)

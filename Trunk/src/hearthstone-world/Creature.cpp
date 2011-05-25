@@ -93,12 +93,17 @@ Creature::Creature(uint64 guid)
 	spawnid = 0;
 }
 
+Creature::~Creature()
+{
+
+}
+
 void Creature::Init()
 {
 	Unit::Init();
 }
 
-Creature::~Creature()
+void Creature::Destruct()
 {
 	sEventMgr.RemoveEvents(this);
 
@@ -116,6 +121,7 @@ Creature::~Creature()
 	}
 	if(m_respawnCell!=NULL)
 		m_respawnCell->_respawnObjects.erase(this);
+	Unit::Destruct();
 }
 
 void Creature::Update( uint32 p_time )
@@ -154,7 +160,7 @@ void Creature::DeleteMe()
 	if(IsInWorld())
 		RemoveFromWorld(false, true);
 
-	delete this;
+	Destruct();
 }
 
 void Creature::OnRemoveCorpse()

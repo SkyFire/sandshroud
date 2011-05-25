@@ -628,7 +628,7 @@ Corpse* ObjectMgr::LoadCorpse(uint32 guid)
 		if(pCorpse->GetUInt32Value(CORPSE_FIELD_DISPLAY_ID) == 0)
 		{
 			RemoveCorpse(pCorpse);
-			delete pCorpse;
+			pCorpse->Destruct();
 			pCorpse = NULL;
 			continue;
 		}
@@ -1522,7 +1522,7 @@ void ObjectMgr::CorpseAddEventDespawn(Corpse* pCorpse)
 	if(!pCorpse->IsInWorld())
 	{
 		RemoveCorpse(pCorpse);
-		delete pCorpse;
+		pCorpse->Destruct();
 		pCorpse = NULLCORPSE;
 	}
 	else
@@ -1556,7 +1556,7 @@ void ObjectMgr::CorpseCollectorUnload()
 			{
 				if(c->IsInWorld())
 					c->RemoveFromWorld(false);
-				delete c;
+				c->Destruct();
 				c = NULLCORPSE;
 			}
 		}
@@ -2478,6 +2478,7 @@ void Charter::Destroy()
 	}
 
 	// click, click, boom!
+	// Crow: A Saliva reference?
 	delete this;
 }
 

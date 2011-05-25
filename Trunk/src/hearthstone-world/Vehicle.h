@@ -25,8 +25,9 @@ class SERVER_DECL Vehicle : public Creature
 public:
 	Vehicle(uint64 guid);
 	~Vehicle();
+	virtual void Init();
+	virtual void Destruct();
 
-	void Init();
 	void InitSeats(uint32 vehicleEntry, Player* pRider = NULLPLR);
 	virtual void Update(uint32 time);
 	bool Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info);

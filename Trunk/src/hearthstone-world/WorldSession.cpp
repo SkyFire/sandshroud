@@ -410,7 +410,7 @@ void WorldSession::LogoutPlayer(bool Save)
 		}
 		_player->ObjUnlock();
 
-		delete _player;
+		_player->Destruct();
 		_player = NULLPLR;
 
 		OutPacket(SMSG_LOGOUT_COMPLETE, 0, NULL);

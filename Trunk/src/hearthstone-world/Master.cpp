@@ -63,6 +63,7 @@ Master::Master()
 
 Master::~Master()
 {
+
 }
 
 struct Addr

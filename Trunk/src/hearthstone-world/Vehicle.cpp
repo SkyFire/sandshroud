@@ -32,14 +32,20 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 
 Vehicle::~Vehicle()
 {
-	m_ppassengerCount = NULL;
-	if( IsInWorld() )
-		RemoveFromWorld(false, true);
+
 }
 
 void Vehicle::Init()
 {
 	Creature::Init();
+}
+
+void Vehicle::Destruct()
+{
+	m_ppassengerCount = NULL;
+	if( IsInWorld() )
+		RemoveFromWorld(false, true);
+	Creature::Destruct();
 }
 
 void Vehicle::InitSeats(uint32 vehicleEntry, Player* pRider)
@@ -389,7 +395,7 @@ void Vehicle::Despawn(uint32 delay, uint32 respawntime)
 					// Remove any passengers
 					RemovePassenger(m_passengers[i]);
 				else
-					delete m_passengers[i];
+					m_passengers[i]->Destruct();
 			}
 		}
 
@@ -428,7 +434,7 @@ void Vehicle::SafeDelete()
 				// Remove any passengers
 				RemovePassenger(m_passengers[i]);
 			else
-				delete m_passengers[i];
+				m_passengers[i]->Destruct();
 		}
 	}
 
@@ -441,7 +447,7 @@ void Vehicle::DeleteMe()
 	if(IsInWorld())
 		RemoveFromWorld(false, true);
 
-	delete this;
+	Destruct();
 }
 
 void Vehicle::AddPassenger(Unit* pPassenger, int8 requestedseat /*= -1*/, bool force /*= false*/)

@@ -415,6 +415,16 @@ Transporter::Transporter(uint64 guid) : GameObject(guid)
 
 Transporter::~Transporter()
 {
+
+}
+
+void Transporter::Init()
+{
+	GameObject::Init();
+}
+
+void Transporter::Destruct()
+{
 	sEventMgr.RemoveEvents(this);
 	for(TransportNPCMap::iterator itr = m_npcs.begin(); itr != m_npcs.end(); itr++)
 	{
@@ -425,6 +435,7 @@ Transporter::~Transporter()
 		}
 		delete itr->second;
 	}
+	GameObject::Destruct();
 }
 
 void ObjectMgr::LoadTransporters()
@@ -446,10 +457,11 @@ void ObjectMgr::LoadTransporters()
 		entry = QR->Fetch()[0].GetUInt32();
 
 		pTransporter = new Transporter((uint64)HIGHGUID_TYPE_TRANSPORTER<<32 | entry);
+		pTransporter->Init();
 		if(!pTransporter->CreateAsTransporter(entry, ""))
 		{
 			Log.Warning("ObjectMgr","Skipped invalid transporterid %d.", entry);
-			delete pTransporter;
+			pTransporter->Destruct();
 			pTransporter = NULL;
 		}
 		else

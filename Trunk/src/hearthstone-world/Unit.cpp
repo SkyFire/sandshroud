@@ -283,6 +283,22 @@ Unit::Unit()
 
 Unit::~Unit()
 {
+
+}
+
+void Unit::Init()
+{
+	m_aiInterface = new AIInterface();
+	m_aiInterface->Init(TO_UNIT(this), AITYPE_AGRO, MOVEMENTTYPE_NONE);
+
+	CombatStatus.SetUnit(TO_UNIT(this));
+	SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_REGENERATE_POWER );
+
+	Object::Init();
+}
+
+void Unit::Destruct()
+{
 	sEventMgr.RemoveEvents(this);
 
 	RemoveAllAuras();
@@ -350,17 +366,7 @@ Unit::~Unit()
 
 	m_chargeSpells.clear();
 	m_chargeSpellRemoveQueue.clear();
-}
-
-void Unit::Init()
-{
-	m_aiInterface = new AIInterface();
-	m_aiInterface->Init(TO_UNIT(this), AITYPE_AGRO, MOVEMENTTYPE_NONE);
-
-	CombatStatus.SetUnit(TO_UNIT(this));
-	SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_REGENERATE_POWER );
-
-	Object::Init();
+	Object::Destruct();
 }
 
 void Unit::SetDiminishTimer(uint32 index)
@@ -5450,7 +5456,7 @@ void Unit::EventSummonPetExpire()
 		else
 		{
 			summonPet->RemoveFromWorld(false, true);
-			delete summonPet;
+			summonPet->Destruct();
 			summonPet = NULL;
 		}
 	}*/

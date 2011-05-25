@@ -448,7 +448,7 @@ ArathiBasin::~ArathiBasin()
 			m_buffs[i]->m_battleground = NULLBATTLEGROUND;
 			if( !m_buffs[i]->IsInWorld() )
 			{
-				delete m_buffs[i];
+				m_buffs[i]->Destruct();
 				m_buffs[i] = NULLGOB;
 			}
 		}
@@ -458,7 +458,7 @@ ArathiBasin::~ArathiBasin()
 			m_controlPoints[i]->m_battleground = NULLBATTLEGROUND;
 			if( !m_controlPoints[i]->IsInWorld() )
 			{
-				delete m_controlPoints[i];
+				m_controlPoints[i]->Destruct();
 				m_controlPoints[i] = NULLGOB;
 			}
 		}
@@ -468,7 +468,7 @@ ArathiBasin::~ArathiBasin()
 			m_controlPointAuras[i]->m_battleground = NULLBATTLEGROUND;
 			if( !m_controlPointAuras[i]->IsInWorld() )
 			{
-				delete m_controlPointAuras[i];
+				m_controlPointAuras[i]->Destruct();
 				m_controlPointAuras[i] = NULLGOB;
 			}
 		}

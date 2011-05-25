@@ -40,14 +40,21 @@ Corpse::Corpse(uint32 high, uint32 low)
 
 Corpse::~Corpse()
 {
-	if(objmgr.GetCorpse(GetLowGUID()))
-		objmgr.RemoveCorpse(this);
+
 }
 
 void Corpse::Init()
 {
 	if(GetUInt32Value(OBJECT_FIELD_GUID+1) != 0)
 		objmgr.AddCorpse(TO_CORPSE(this));
+	Object::Init();
+}
+
+void Corpse::Destruct()
+{
+	if(objmgr.GetCorpse(GetLowGUID()))
+		objmgr.RemoveCorpse(this);
+	Object::Destruct();
 }
 
 void Corpse::Create( Player* owner, uint32 mapid, float x, float y, float z, float ang )

@@ -3188,7 +3188,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 					//our hapiness is that we did not store the aura mod amount so we have to recalc it
 					Spell* spell = new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA );
 					uint32 healamount = spell->CalculateEffect( 1, unitTarget );
-					delete spell;
+					spell->Destruct();
 					spell = NULLSPELL;
 					new_dmg = healamount * 18 / amplitude;
 
@@ -3214,7 +3214,7 @@ void Spell::SpellEffectHeal(uint32 i) // Heal
 						//our hapiness is that we did not store the aura mod amount so we have to recalc it
 						Spell* spell = new Spell( m_caster, taura->GetSpellProto(), false, NULLAURA );
 						uint32 healamount = spell->CalculateEffect( 0, unitTarget );
-						delete spell;
+						spell->Destruct();
 						spell = NULLSPELL;
 						new_dmg = healamount * 12 / amplitude;
 
@@ -7478,7 +7478,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 				GoSummon->RemoveFromWorld(true);
 
 			GoSummon = NULLGOB;
-			delete GoSummon;
+			GoSummon->Destruct();
 		}
 	}
 	//create a new GoSummon
@@ -8423,7 +8423,7 @@ void Spell::SpellEffectCreatePet(uint32 i)
 			pPet->CreateAsSummon( GetSpellProto()->EffectMiscValue[i], ci, NULL, playerTarget, GetSpellProto(), 2, 0 );
 			if(!pPet->IsInWorld())
 			{
-				delete pPet;
+				pPet->Destruct();
 				pPet = NULL;
 			}
 		}

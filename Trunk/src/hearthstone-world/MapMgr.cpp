@@ -176,16 +176,16 @@ MapMgr::~MapMgr()
 		switch(pObject->GetTypeFromGUID())
 		{
 		case HIGHGUID_TYPE_VEHICLE:
-			delete TO_VEHICLE(pObject);
+			TO_VEHICLE(pObject)->Destruct();
 			break;
 		case HIGHGUID_TYPE_CREATURE:
-			delete TO_CREATURE(pObject);
+			TO_CREATURE(pObject)->Destruct();
 			break;
 		case HIGHGUID_TYPE_GAMEOBJECT:
-			delete TO_GAMEOBJECT(pObject);
+			TO_GAMEOBJECT(pObject)->Destruct();
 			break;
 		default:
-			delete pObject;
+			pObject->Destruct();
 		}
 		pObject = NULL;
 	}
@@ -201,7 +201,7 @@ MapMgr::~MapMgr()
 		if(pCorpse->IsInWorld())
 			pCorpse->RemoveFromWorld(false);
 
-		delete pCorpse;
+		pCorpse->Destruct();
 		pCorpse = NULLCORPSE;
 	}
 	m_corpses.clear();
@@ -1040,7 +1040,8 @@ void MapMgr::_UpdateObjects()
 	{
 		pObj = *iter;
 		++iter;
-		if(!pObj) continue;
+		if(!pObj)
+			continue;
 
 		if(pObj->GetTypeId() == TYPEID_ITEM || pObj->GetTypeId() == TYPEID_CONTAINER)
 		{
@@ -1097,6 +1098,7 @@ void MapMgr::_UpdateObjects()
 		}
 		pObj->ClearUpdateMask();
 	}
+
 	// generate pending a9packets and send to clients.
 	Player* plyr;
 	m_updateMutex.Acquire();
@@ -1809,7 +1811,7 @@ void MapMgr::TeleportPlayers()
 				ptr->GetSession()->LogoutPlayer(false);
 			else
 			{
-				delete ptr;
+				ptr->Destruct();
 				ptr = NULLPLR;
 				m_PlayerStorage.erase(__player_iterator);
 			}

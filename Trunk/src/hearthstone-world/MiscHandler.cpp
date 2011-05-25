@@ -351,7 +351,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 				if(pGO->IsInWorld())
 					pGO->RemoveFromWorld(true);
 
-				delete pGO;
+				pGO->Destruct();
 				pGO = NULLGOB;
 			}break;
 		case GAMEOBJECT_TYPE_CHEST:

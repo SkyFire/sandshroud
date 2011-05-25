@@ -686,7 +686,7 @@ void ClusterInterface::HandleCreatePlayer(WorldPacket & pck)
 	{
 		// failed.
 		pNewChar->ok_to_remove = true;
-		delete pNewChar;
+		pNewChar->Destruct();
 		return;
 	}
 
@@ -703,7 +703,7 @@ void ClusterInterface::HandleCreatePlayer(WorldPacket & pck)
 
 	pNewChar->SaveToDB(true);
 	pNewChar->ok_to_remove = true;
-	delete pNewChar;
+	pNewChar->Destruct();
 	delete s;
 
 	//now lets send the info back, send accountid, we have no sessionid

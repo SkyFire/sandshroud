@@ -227,7 +227,7 @@ IsleOfConquest::~IsleOfConquest()
 			m_ioccontrolPoints[i]->m_battleground = NULL;
 			if( !m_ioccontrolPoints[i]->IsInWorld() )
 			{
-				delete m_ioccontrolPoints[i];
+				m_ioccontrolPoints[i]->Destruct();
 			}
 		}
 
@@ -236,7 +236,7 @@ IsleOfConquest::~IsleOfConquest()
 			m_ioccontrolPointAuras[i]->m_battleground = NULL;
 			if( !m_ioccontrolPointAuras[i]->IsInWorld() )
 			{
-				delete m_ioccontrolPointAuras[i];
+				m_ioccontrolPointAuras[i]->Destruct();
 			}
 		}
 	}

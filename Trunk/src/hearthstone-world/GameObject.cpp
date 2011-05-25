@@ -58,6 +58,16 @@ GameObject::GameObject(uint64 guid)
 
 GameObject::~GameObject()
 {
+
+}
+
+void GameObject::Init()
+{
+	Object::Init();
+}
+
+void GameObject::Destruct()
+{
 	if(m_ritualmembers)
 		delete[] m_ritualmembers;
 
@@ -92,11 +102,7 @@ GameObject::~GameObject()
 		}
 		m_battleground = NULLBATTLEGROUND;
 	}
-}
-
-void GameObject::Init()
-{
-	Object::Init();
+	Object::Destruct();
 }
 
 bool GameObject::CreateFromProto(uint32 entry,uint32 mapid, const LocationVector vec, float orientation1, float orientation2, float orientation3, float orientation4)
@@ -657,7 +663,7 @@ void GameObject::_Expire()
 	if(IsInWorld())
 		RemoveFromWorld(true);
 
-	delete this;
+	Destruct();
 }
 
 void GameObject::ExpireAndDelete()

@@ -54,12 +54,17 @@ Item::Item( uint32 high, uint32 low )
 		OnUseSpells[i] = 0;
 }
 
+Item::~Item()
+{
+
+}
+
 void Item::Init()
 {
 	Object::Init();
 }
 
-Item::~Item()
+void Item::Destruct()
 {
 	sEventMgr.RemoveEvents( this );
 
@@ -77,14 +82,15 @@ Item::~Item()
 		RemoveFromWorld();
 
 	m_owner = NULLPLR;
+	Object::Destruct();
 }
 
 void Item::DeleteMe()
 {
 	if( IsContainer() )
-		delete TO_CONTAINER(this);
+		TO_CONTAINER(this)->Destruct();
 	else
-		delete this;
+		Destruct();
 }
 
 void Item::Create( uint32 itemid, Player* owner )

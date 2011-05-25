@@ -276,9 +276,9 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 				{
 					// don't leak memory!
 					/*if(item->IsContainer())
-						delete TO_CONTAINER(item);
+						TO_CONTAINER(item)->Destruct();
 					else
-						delete item;*/
+						item->Destruct();*/
 
 					return ADD_ITEM_RESULT_ERROR;
 				}
@@ -2530,14 +2530,14 @@ void ItemInterface::EmptyBuyBack()
 				if (TO_CONTAINER(m_pBuyBack[j])->IsInWorld())
 					TO_CONTAINER(m_pBuyBack[j])->RemoveFromWorld();
 
-				delete TO_CONTAINER(m_pBuyBack[j]);
+				TO_CONTAINER(m_pBuyBack[j])->Destruct();
 			}
 			else
 			{
 				if (m_pBuyBack[j]->IsInWorld())
 					m_pBuyBack[j]->RemoveFromWorld();
 
-				delete m_pBuyBack[j];
+				m_pBuyBack[j]->Destruct();
 			}
 
 			m_pOwner->SetUInt64Value(PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + (2*j),0);
@@ -2567,7 +2567,7 @@ void ItemInterface::AddBuyBackItem(Item* it,uint32 price)
 				if (TO_CONTAINER(m_pBuyBack[0])->IsInWorld())
 					TO_CONTAINER(m_pBuyBack[0])->RemoveFromWorld();
 
-				delete TO_CONTAINER(m_pBuyBack[0]);
+				TO_CONTAINER(m_pBuyBack[0])->Destruct();
 				m_pBuyBack[0] = NULL;
 			 }
 			 else
@@ -2575,7 +2575,7 @@ void ItemInterface::AddBuyBackItem(Item* it,uint32 price)
 				if (m_pBuyBack[0]->IsInWorld())
 					m_pBuyBack[0]->RemoveFromWorld();
 
-				delete m_pBuyBack[0];
+				m_pBuyBack[0]->Destruct();
 				m_pBuyBack[0] = NULL;
 			 }
 		}

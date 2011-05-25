@@ -757,6 +757,7 @@ public:
 
 	virtual ~Unit ( );
 	virtual void Init();
+	virtual void Destruct();
 
 	friend class AIInterface;
 	friend class Aura;

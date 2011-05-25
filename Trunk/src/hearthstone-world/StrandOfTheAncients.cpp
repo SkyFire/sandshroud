@@ -313,14 +313,14 @@ void StrandOfTheAncients::Respawn()
 	{
 		if(y == 0)
 			for(uint32 z = 0; z < 9; z++)
-				m_cannons[z]->Delete();
+				m_cannons[z]->Destruct();
 
-		m_gates[y]->Delete();
-		m_gateSigils[y]->Delete();
-		m_gateTransporters[y]->Delete();
+		m_gates[y]->Destruct();
+		m_gateSigils[y]->Destruct();
+		m_gateTransporters[y]->Destruct();
 	}
 
-	m_endgate->Delete();
+	m_endgate->Destruct();
 
 	CreatureProto* prto = CreatureProtoStorage.LookupEntry(27894);
 	if(prto != NULL)

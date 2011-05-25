@@ -274,6 +274,17 @@ Pet::Pet(uint64 guid) : Creature(guid)
 
 Pet::~Pet()
 {
+
+}
+
+void Pet::Init()
+{
+	SetUInt32Value(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + POWER_TYPE_FOCUS, 20);
+	Creature::Init();
+}
+
+void Pet::Destruct()
+{
 	mSpells.clear();
 
 	for(std::map<uint32, AI_Spell*>::iterator itr = m_AISpellStore.begin(); itr != m_AISpellStore.end(); itr++)
@@ -293,12 +304,7 @@ Pet::~Pet()
 	//add spent talents to player pet struct
 	//drop unused fields from the db
 	//m_talents.clear();
-}
-
-void Pet::Init()
-{
-	SetUInt32Value(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + POWER_TYPE_FOCUS, 20);
-	Creature::Init();
+	Creature::Destruct();
 }
 
 void Pet::Update(uint32 time)

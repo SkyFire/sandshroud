@@ -767,6 +767,7 @@ public:
 	Player ( uint32 guid );
 	~Player ( );
 	virtual void Init();
+	virtual void Destruct();
 
 	HEARTHSTONE_INLINE Guild * GetGuild() { return m_playerInfo->guild; }
 	HEARTHSTONE_INLINE GuildMember* GetGuildMember() { return m_playerInfo->guildMember; }
@@ -1565,6 +1566,7 @@ public:
 	void RemoveItemsFromWorld();
 	void UpdateKnownCurrencies(uint32 itemId, bool apply);
 	uint32 GetTotalItemLevel();
+	uint32 GetAverageItemLevel(bool skipmissing = false);
 
 	uint32 m_ShapeShifted;
 	uint32 m_MountSpellId;

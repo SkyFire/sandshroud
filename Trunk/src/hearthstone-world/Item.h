@@ -118,6 +118,7 @@ public:
 	Item( uint32 high, uint32 low );
 	virtual ~Item();
 	virtual void Init();
+	virtual void Destruct();
 
 	void Create( uint32 itemid, Player* owner );
 	void DeleteMe();
