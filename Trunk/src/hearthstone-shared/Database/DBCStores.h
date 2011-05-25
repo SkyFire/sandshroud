@@ -769,6 +769,8 @@ struct SpellEntry
 	bool is_melee_spell;				//!!! CUSTOM, Obvious.
 	bool is_ranged_spell;				//!!! CUSTOM, Obvious.
 	bool spell_can_crit;				//!!! CUSTOM, Obvious.
+	uint32 trnr_req_clsmsk;				//!!! CUSTOM, Required class mask to learn at a trainer.
+
 	/* Crow:
 	Custom: The amount of threat the spell will generate.
 	This is loaded from a DB table, and if it isn't there, threat is always damage. */

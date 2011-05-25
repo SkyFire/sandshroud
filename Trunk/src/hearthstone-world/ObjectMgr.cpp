@@ -1660,7 +1660,7 @@ void ObjectMgr::LoadTrainers()
 	if(result2 == NULL)
 		return;
 
-	if(result2->GetFieldCount() != 11)
+	if(result2->GetFieldCount() != 10)
 	{
 		Log.LargeErrorMessage(LARGERRORMESSAGE_WARNING, "Trainers table format is invalid. Please update your database.");
 		delete result;
@@ -1733,10 +1733,9 @@ void ObjectMgr::LoadTrainers()
 		ts.RequiredSpell = fields2[4].GetUInt32();
 		ts.RequiredSkillLine = fields2[5].GetUInt32();
 		ts.RequiredSkillLineValue = fields2[6].GetUInt32();
-		ts.RequiredClassMask = fields2[7].GetUInt32();
-		ts.RequiredLevel = fields2[8].GetUInt32();
-		ts.DeleteSpell = fields2[9].GetUInt32();
-		ts.IsProfession = (fields2[10].GetUInt32() != 0) ? true : false;
+		ts.RequiredLevel = fields2[7].GetUInt32();
+		ts.DeleteSpell = fields2[8].GetUInt32();
+		ts.IsProfession = (fields2[9].GetUInt32() != 0) ? true : false;
 		TSMap[entry][TSCounterMap[entry]++] = ts;
 	}while(result2->NextRow());
 	delete result2;

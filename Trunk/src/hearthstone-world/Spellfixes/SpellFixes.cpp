@@ -1258,6 +1258,7 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 	sp->procflags2 = 0.0f;
 	sp->cone_width = 0.0f;
 	sp->area_aura_update_interval = 2000;
+	sp->trnr_req_clsmsk = 0;
 
 	float radius = 0.0f;
 	if(sp->EffectRadiusIndex[0] != 0)

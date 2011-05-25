@@ -156,7 +156,6 @@ struct TrainerSpell
 	uint32	RequiredSpell;
 	uint32	RequiredSkillLine;
 	uint32	RequiredSkillLineValue;
-	uint32	RequiredClassMask;
 	bool	IsProfession;
 	uint32	Cost;
 	uint32	RequiredLevel;
