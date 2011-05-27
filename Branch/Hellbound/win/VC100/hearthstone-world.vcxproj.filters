@@ -170,9 +170,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\NavMeshInterface.cpp">
       <Filter>Environment</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\TerrainMgr.cpp">
-      <Filter>Environment</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\WeatherMgr.cpp">
       <Filter>Environment</Filter>
     </ClCompile>
@@ -377,6 +374,9 @@
     <ClCompile Include="..\..\src\hearthstone-world\World.cpp">
       <Filter>Launcher</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\TerrainMgr.cpp">
+      <Filter>Map System\Map Interface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\hearthstone-world\Const.h" />
@@ -516,9 +516,6 @@
       <Filter>Environment</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\NavMeshInterface.h">
-      <Filter>Environment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\TerrainMgr.h">
       <Filter>Environment</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\WeatherMgr.h">
@@ -664,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\World.h">
       <Filter>Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-world\TerrainMgr.h">
+      <Filter>Map System\Map Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
