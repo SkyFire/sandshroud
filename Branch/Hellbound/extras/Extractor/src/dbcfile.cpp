@@ -1,7 +1,23 @@
-#define _CRT_SECURE_NO_DEPRECATE
+/*
+ * Copyright (C) 2010-2011 CactusEMU <http://www.cactusemu.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 
-#include "dbcfile.h"
-#include "loadlib.h"
+#include "DBCFile.h"
+#include "headers.h"
 
 DBCFile::DBCFile(const std::string &filename):
     filename(filename),
@@ -9,74 +25,42 @@ DBCFile::DBCFile(const std::string &filename):
 {
 
 }
+
 bool DBCFile::open()
 {
-    HANDLE fileHandle = 0;
-
-    if (!OpenNewestFile(filename.c_str(), &fileHandle))
-        return false;
-
+    MPQFile f(filename.c_str(), localeMPQ[0]);
     char header[4];
     unsigned int na,nb,es,ss;
 
-    if (!SFileReadFile(fileHandle, header, 4))              // Magic header
-    {
-        SFileCloseFile(fileHandle);
+    if(f.read(header,4)!=4)                                 // Number of records
         return false;
-    }
 
-    if (header[0]!='W' || header[1]!='D' || header[2]!='B' || header[3]!='C')
-    {
-        SFileCloseFile(fileHandle);
+    if(header[0]!='W' || header[1]!='D' || header[2]!='B' || header[3]!='C')
         return false;
-    }
 
-    if (!SFileReadFile(fileHandle, &na, 4))                 // Number of records
-    {
-        SFileCloseFile(fileHandle);
+    if(f.read(&na,4)!=4)                                    // Number of records
         return false;
-    }
-
-    if (!SFileReadFile(fileHandle, &nb, 4))                 // Number of fields
-    {
-        SFileCloseFile(fileHandle);
+    if(f.read(&nb,4)!=4)                                    // Number of fields
         return false;
-    }
-
-    if (!SFileReadFile(fileHandle, &es, 4))                 // Size of a record
-    {
-        SFileCloseFile(fileHandle);
+    if(f.read(&es,4)!=4)                                    // Size of a record
         return false;
-    }
-
-    if (!SFileReadFile(fileHandle, &ss, 4))                 // String size
-    {
-        SFileCloseFile(fileHandle);
+    if(f.read(&ss,4)!=4)                                    // String size
         return false;
-    }
 
     recordSize = es;
     recordCount = na;
     fieldCount = nb;
     stringSize = ss;
-    if (fieldCount * 4 != recordSize)
-    {
-        SFileCloseFile(fileHandle);
+    if(fieldCount*4 != recordSize)
         return false;
-    }
 
     data = new unsigned char[recordSize*recordCount+stringSize];
     stringTable = data + recordSize*recordCount;
 
     size_t data_size = recordSize*recordCount+stringSize;
-
-    if (!SFileReadFile(fileHandle, data, data_size))
-    {
-        SFileCloseFile(fileHandle);
+    if(f.read(data,data_size)!=data_size)
         return false;
-    }
-
-    SFileCloseFile(fileHandle);
+    f.close();
     return true;
 }
 
@@ -114,3 +98,4 @@ DBCFile::Iterator DBCFile::end()
     assert(data);
     return Iterator(*this, stringTable);
 }
+

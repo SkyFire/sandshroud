@@ -12,15 +12,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\adt.h" />
-    <ClInclude Include="src\dbcfile.h" />
-    <ClInclude Include="src\loadlib.h" />
+    <ClInclude Include="src\dbc.h" />
+    <ClInclude Include="src\DBCFile.h" />
+    <ClInclude Include="src\FileLoader.h" />
+    <ClInclude Include="src\headers.h" />
+    <ClInclude Include="src\map.h" />
+    <ClInclude Include="src\misc.h" />
+    <ClInclude Include="src\MPQ.h" />
+    <ClInclude Include="src\MPQFile.h" />
+    <ClInclude Include="src\typedefs.h" />
     <ClInclude Include="src\wdt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\adt.cpp" />
-    <ClCompile Include="src\dbcfile.cpp" />
-    <ClCompile Include="src\loadlib.cpp" />
-    <ClCompile Include="src\System.cpp" />
+    <ClCompile Include="src\dbc.cpp" />
+    <ClCompile Include="src\DBCFile.cpp" />
+    <ClCompile Include="src\FileLoader.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\map.cpp" />
+    <ClCompile Include="src\misc.cpp" />
+    <ClCompile Include="src\MPQ.cpp" />
+    <ClCompile Include="src\MPQFile.cpp" />
     <ClCompile Include="src\wdt.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -167,6 +179,7 @@
       </LinkTimeCodeGeneration>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
+      <LinkStatus>false</LinkStatus>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

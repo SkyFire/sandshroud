@@ -1,7 +1,26 @@
+/*
+ * Copyright (C) 2010-2011 CactusEMU <http://www.cactusemu.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 #ifndef ADT_H
 #define ADT_H
 
-#include "loadlib.h"
+#include "headers.h"
+#include "FileLoader.h"
 
 #define TILESIZE (533.33333f)
 #define CHUNKSIZE ((TILESIZE) / 16.0f)
@@ -131,13 +150,15 @@ public:
 //
 class adt_MCIN
 {
-    union{
+    union
+    {
         uint32 fcc;
         char   fcc_txt[4];
     };
     uint32 size;
 public:
-    struct adt_CELLS{
+    struct adt_CELLS
+    {
         uint32 offsMCNK;
         uint32 size;
         uint32 flags;
@@ -157,7 +178,8 @@ public:
 #define ADT_LIQUID_HEADER_FULL_LIGHT   0x01
 #define ADT_LIQUID_HEADER_NO_HIGHT     0x02
 
-struct adt_liquid_header{
+struct adt_liquid_header
+{
     uint16 liquidType;             // Index from LiquidType.dbc
     uint16 formatFlags;
     float  heightLevel1;
@@ -176,7 +198,8 @@ struct adt_liquid_header{
 class adt_MH2O
 {
 public:
-    union{
+    union
+    {
         uint32 fcc;
         char   fcc_txt[4];
     };
@@ -239,7 +262,6 @@ public:
         else
             return 0xFFFFFFFFFFFFFFFFLL;
     }
-
 };
 
 //
@@ -247,43 +269,56 @@ public:
 //
 class adt_MHDR
 {
-    union{
+    union
+    {
         uint32 fcc;
         char   fcc_txt[4];
     };
     uint32 size;
 
-    uint32 pad;
-    uint32 offsMCIN;           // MCIN
-    uint32 offsTex;	           // MTEX
-    uint32 offsModels;	       // MMDX
-    uint32 offsModelsIds;	   // MMID
-    uint32 offsMapObejcts;	   // MWMO
-    uint32 offsMapObejctsIds;  // MWID
-    uint32 offsDoodsDef;       // MDDF
-    uint32 offsObjectsDef;     // MODF
-    uint32 offsMFBO;           // MFBO
-    uint32 offsMH2O;           // MH2O
-    uint32 data1;
-    uint32 data2;
-    uint32 data3;
-    uint32 data4;
-    uint32 data5;
+    uint32 pad;                //0x0000
+    uint32 offsMCIN;           //0x0004 MCIN
+    uint32 offsTex;            //0x0008 MTEX
+    uint32 offsModels;         //0x000C MMDX
+    uint32 offsModelsIds;      //0x0010 MMID
+    uint32 offsMapObejcts;     //0x0014 MWMO
+    uint32 offsMapObejctsIds;  //0x0018 MWID
+    uint32 offsDoodsDef;       //0x001C MDDF
+    uint32 offsObjectsDef;     //0x0020 MODF
+    uint32 offsMFBO;           //0x0024 MFBO
+    uint32 offsMH2O;           //0x0028 MH2O
+    uint32 data1;              //0x002C MTFX?
+    uint32 data2;              //0x0030
+    uint32 data3;              //0x0034
+    uint32 data4;              //0x0038
+    uint32 data5;              //0x003C
 public:
     bool prepareLoadedData();
-    adt_MCIN *getMCIN(){ return (adt_MCIN *)((uint8 *)&pad+offsMCIN);}
-    adt_MH2O *getMH2O(){ return offsMH2O ? (adt_MH2O *)((uint8 *)&pad+offsMH2O) : 0;}
+    adt_MH2O *getMH2O()
+    { 
+        if(offsMH2O)
+            return (adt_MH2O *)((uint8 *)&pad+offsMH2O);
+        return 0;
+    }
 
 };
 
-class ADT_file : public FileLoader{
+class ADT_file : public FileLoader
+{
 public:
     bool prepareLoadedData();
-    ADT_file();
+    ADT_file(const char * filename, HANDLE _handle);
     ~ADT_file();
-    void free();
 
-    adt_MHDR *a_grid;
+    adt_MCNK* getMCNK(uint8 y, uint8 x)
+    {
+        if (mcnk_offsets[y][x])
+            return mcnk_offsets[y][x];
+        return 0;
+    }
+    
+    adt_MHDR* a_grid;
+    adt_MCNK* mcnk_offsets[ADT_CELLS_PER_GRID][ADT_CELLS_PER_GRID];
 };
 
 #endif

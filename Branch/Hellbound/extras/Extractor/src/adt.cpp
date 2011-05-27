@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2010-2011 CactusEMU <http://www.cactusemu.com/>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 #define _CRT_SECURE_NO_DEPRECATE
 
 #include "adt.h"
@@ -18,20 +36,13 @@ bool isHole(int holes, int i, int j)
 //
 // Adt file loader class
 //
-ADT_file::ADT_file()
+ADT_file::ADT_file(const char * filename, HANDLE _handle) : FileLoader(filename, _handle)
 {
     a_grid = 0;
 }
 
 ADT_file::~ADT_file()
 {
-    free();
-}
-
-void ADT_file::free()
-{
-    a_grid = 0;
-    FileLoader::free();
 }
 
 //
@@ -44,10 +55,36 @@ bool ADT_file::prepareLoadedData()
         return false;
 
     // Check and prepare MHDR
-    a_grid = (adt_MHDR *)(GetData()+8+version->size);
+    a_grid = (adt_MHDR *)(buffer+8+version->size);
     if (!a_grid->prepareLoadedData())
         return false;
-
+    
+    //mcnk_offsets
+    int ptr = 0;
+    int found = 0;
+    while (ptr < size)
+    {
+        if((buffer + ptr)[0] == 'K' &&
+           (buffer + ptr)[1] == 'N' &&
+           (buffer + ptr)[2] == 'C' &&
+           (buffer + ptr)[3] == 'M')
+        {
+            adt_MCNK * mcnk = (adt_MCNK*)(buffer + ptr);
+            assert(mcnk->iy < ADT_CELLS_PER_GRID);
+            assert(mcnk->ix < ADT_CELLS_PER_GRID);
+            mcnk_offsets[mcnk->iy][mcnk->ix] = mcnk;
+            ptr += 4;//go to size
+            ptr += 4 + *((uint32*)(buffer + ptr));//skip all datas AND size.
+            found ++;
+            mcnk->prepareLoadedData();
+        }
+        else 
+        {
+            ptr += 4;//go to size
+            ptr += 4 + *((uint32*)(buffer + ptr)); //skip all datas AND size.
+        }
+    }
+    assert(found == 256);
     return true;
 }
 
@@ -57,10 +94,6 @@ bool adt_MHDR::prepareLoadedData()
         return false;
 
     if (size!=sizeof(adt_MHDR)-8)
-        return false;
-
-    // Check and prepare MCIN
-    if (offsMCIN && !getMCIN()->prepareLoadedData())
         return false;
 
     // Check and prepare MH2O
