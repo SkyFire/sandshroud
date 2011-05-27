@@ -1,0 +1,1 @@
+ALTER TABLE `trainer_spells` ADD COLUMN `reqclassmask` int(10) NOT NULL DEFAULT '0' AFTER `reqskillvalue`;

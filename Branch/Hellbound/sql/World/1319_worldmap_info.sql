@@ -1,0 +1,1 @@
+ALTER TABLE worldmap_info DROP viewingDistance;
