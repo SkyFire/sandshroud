@@ -5059,37 +5059,31 @@ void Player::RepopAtGraveyard(float ox, float oy, float oz, uint32 mapid)
 	float dist;
 
 	if(m_bg && m_bg->HookHandleRepop(TO_PLAYER(this)))
-	{
 		return;
-	}
-	else
-	{
-		itr = GraveyardStorage.MakeIterator();
-		while(!itr->AtEnd())
-		{
-			GraveyardTeleport *pGrave = itr->Get();
-			if(pGrave->MapId == mapid && (pGrave->FactionID == GetTeam() || pGrave->FactionID == 3))
-			{
-				temp.ChangeCoords(pGrave->X, pGrave->Y, pGrave->Z);
-				dist = src.DistanceSq(temp);
-				if( first || dist < closest_dist )
-				{
-					first = false;
-					closest_dist = dist;
-					dest = temp;
-				}
-			}
 
-			if(!itr->Inc())
-				break;
+	itr = GraveyardStorage.MakeIterator();
+	while(!itr->AtEnd())
+	{
+		GraveyardTeleport *pGrave = itr->Get();
+		if(pGrave->MapId == mapid && (pGrave->FactionID == GetTeam() || pGrave->FactionID == 3))
+		{
+			temp.ChangeCoords(pGrave->X, pGrave->Y, pGrave->Z, pGrave->O);
+			dist = src.DistanceSq(temp);
+			if( first || dist < closest_dist )
+			{
+				first = false;
+				closest_dist = dist;
+				dest = temp;
+			}
 		}
-		itr->Destruct();
+
+		if(!itr->Inc())
+			break;
 	}
+	itr->Destruct();
 
 	if(sHookInterface.OnRepop(TO_PLAYER(this)) && dest.x != 0 && dest.y != 0 && dest.z != 0)
-	{
 		SafeTeleport(mapid, 0, dest);
-	}
 }
 
 void Player::JoinedChannel(Channel *c)
