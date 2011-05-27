@@ -1,1 +1,0 @@
-ALTER TABLE `creature_proto` ADD COLUMN `no_skill_up` int(11) NOT NULL DEFAULT '0' AFTER `no_XP`;

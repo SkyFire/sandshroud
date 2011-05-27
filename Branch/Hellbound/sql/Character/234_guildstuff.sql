@@ -1,2 +1,0 @@
-ALTER TABLE `guild_banktabs` ADD COLUMN `tabInfo` VARCHAR(200) CHARSET utf8 COLLATE utf8_unicode_ci NOT NULL AFTER `tabIcon`;
-ALTER TABLE `guilds` DROP COLUMN `bankTabCount`,    CHANGE `guildName` `guildName` VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT '' NOT NULL,     CHANGE `guildInfo` `guildInfo` VARCHAR(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,     CHANGE `motd` `motd` VARCHAR(1024) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL, ENGINE=MYISAM AUTO_INCREMENT=24 COMMENT='' ROW_FORMAT=DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;

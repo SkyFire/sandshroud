@@ -1,1 +1,0 @@
-ALTER TABLE `characters` ADD `need_position_reset` int(3) NOT NULL DEFAULT '0' after `need_talent_reset`;

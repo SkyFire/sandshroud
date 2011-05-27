@@ -1,1 +1,0 @@
-ALTER TABLE `creature_proto` ADD COLUMN `battlemastertype` int(11) NOT NULL DEFAULT '0' AFTER `vehicle_entry`;

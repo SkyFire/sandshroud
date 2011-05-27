@@ -1,1 +1,0 @@
-ALTER TABLE `playeritems` CHANGE `charges` `charges` INT SIGNED NOT NULL DEFAULT '0';

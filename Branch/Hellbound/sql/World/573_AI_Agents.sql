@@ -1,8 +1,0 @@
-ALTER TABLE `ai_agents` CHANGE COLUMN `entry` `entry` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `ai_agents` CHANGE COLUMN `difficulty` `difficulty` INT(11) NOT NULL DEFAULT '-1';
-ALTER TABLE `ai_agents` CHANGE COLUMN `chance` `chance` FLOAT NOT NULL DEFAULT '0';
-ALTER TABLE `ai_agents` CHANGE COLUMN `maxcount` `maxcount` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `ai_agents` CHANGE COLUMN `spell` `spell` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `ai_agents` CHANGE COLUMN `cooldown` `cooldown` INT(11) NOT NULL DEFAULT '0';
-ALTER TABLE `ai_agents` CHANGE COLUMN `floatMisc1` `floatMisc1` FLOAT NOT NULL DEFAULT '0';
-ALTER TABLE `ai_agents` CHANGE COLUMN `Misc2` `Misc2` INT(11) UNSIGNED NOT NULL DEFAULT '0';

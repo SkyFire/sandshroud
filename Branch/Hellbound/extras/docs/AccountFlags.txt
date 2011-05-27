@@ -1,3 +1,0 @@
-Normal: 0
-TBC: 8
-TBC + WOTLK = 24
