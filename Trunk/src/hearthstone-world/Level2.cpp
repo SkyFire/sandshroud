@@ -226,7 +226,7 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 		return false;
 
 	Creature* pCreature = getSelectedCreature(m_session, false);
-	if(!pCreature || !(pCreature->HasNpcFlag(UNIT_NPC_FLAG_VENDOR) || pCreature->HasNpcFlag(UNIT_NPC_FLAG_ARMORER)))
+	if(!pCreature || !pCreature->m_spawn || !(pCreature->HasNpcFlag(UNIT_NPC_FLAG_VENDOR) || pCreature->HasNpcFlag(UNIT_NPC_FLAG_ARMORER)))
 	{
 		SystemMessage(m_session, "You should select a vendor.");
 		return true;
@@ -239,12 +239,11 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 		amount = atoi(pamount);
 
 	ItemPrototype* tmpItem = ItemPrototypeStorage.LookupEntry(item);
-
 	std::stringstream sstext;
 	if(tmpItem)
 	{
 		std::stringstream ss;
-		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << item << "', '" << amount << "', 0, 0, 0, 1, 1 )" << '\0';
+		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << item << "', '" << amount << "', 0, 0, 0, 1, " << pCreature->m_spawn->vendormask << " )" << '\0';
 		WorldDatabase.Execute( ss.str().c_str() );
 
 		pCreature->AddVendorItem(item, amount);
@@ -1150,6 +1149,12 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 		return true;
 	}
 
+	if(!pCreature->m_spawn)
+	{
+		SystemMessage(m_session, "You should select a saved creature.");
+		return true;
+	}
+
 	uint32 item = atoi(pitem);
 	int amount = 1;
 
@@ -1157,12 +1162,8 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 	if(pamount)
 		amount = atoi(pamount);
 
-//	For Regular additem, not set.
-//	ItemPrototype* tmpItem = ItemPrototypeStorage.LookupEntry(item);
 	ItemSetEntry* tmpItem = dbcItemSet.LookupEntry(item);
-
 	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(item);
-
 	if(!tmpItem || !l)
 	{
 		RedSystemMessage(m_session, "Invalid item set.");
@@ -1174,13 +1175,11 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 	{
 		for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
 		{
-		std::stringstream ss;
-		ss << "INSERT INTO vendors (entry,item,amount,max_amount,inctime) VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << (*itr)->ItemId << "', '" << amount << "', 0, 0 )" << '\0';
-		WorldDatabase.Execute( ss.str().c_str() );
-
-		pCreature->AddVendorItem((*itr)->ItemId, amount);
-
-		sstext <<"Item set '" << item << "' Added to vendor." << '\0';
+			std::stringstream ss;
+			ss << "INSERT INTO vendors (entry,item,amount,max_amount,inctime,vendormask) VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << (*itr)->ItemId << "', '" << amount << "', 0, 0, " << pCreature->m_spawn->vendormask << " )" << '\0';
+			WorldDatabase.Execute( ss.str().c_str() );
+			pCreature->AddVendorItem((*itr)->ItemId, amount);
+			sstext <<"Item set '" << item << "' Added to vendor." << '\0';
 		}
 	}
 	else

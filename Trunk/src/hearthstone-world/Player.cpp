@@ -51,6 +51,7 @@ Player::~Player ( )
 
 void Player::Init()
 {
+	Unit::Init();
 	m_mailBox						= new Mailbox( GetUInt32Value(OBJECT_FIELD_GUID) );
 	m_ItemInterface					= new ItemInterface(this);
 	m_achievementInterface			= new AchievementInterface(this);
@@ -415,7 +416,6 @@ void Player::Init()
 	randombgwinner			= false;
 	m_drunkTimer			= 0;
 	m_drunk					= 0;
-	Unit::Init();
 }
 
 void Player::Destruct()
@@ -2064,7 +2064,7 @@ void Player::addSpell(uint32 spell_id)
 		if(sp2->Id != forget)
 		{
 			data.Initialize(SMSG_LEARNED_SPELL);
-			data << sp2->Id << uint32(0);
+			data << sp2->Id << uint16(0);
 			m_session->SendPacket(&data);
 		}
 	}

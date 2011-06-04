@@ -45,9 +45,9 @@ Corpse::~Corpse()
 
 void Corpse::Init()
 {
+	Object::Init();
 	if(GetUInt32Value(OBJECT_FIELD_GUID+1) != 0)
 		objmgr.AddCorpse(TO_CORPSE(this));
-	Object::Init();
 }
 
 void Corpse::Destruct()

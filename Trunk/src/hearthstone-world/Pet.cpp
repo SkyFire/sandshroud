@@ -279,8 +279,8 @@ Pet::~Pet()
 
 void Pet::Init()
 {
-	SetUInt32Value(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + POWER_TYPE_FOCUS, 20);
 	Creature::Init();
+	SetUInt32Value(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + POWER_TYPE_FOCUS, 20);
 }
 
 void Pet::Destruct()

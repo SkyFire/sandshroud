@@ -373,8 +373,6 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice( "Shutdown", "Initiated at %s", ConvertTimeStampToDataTime( (uint32)UNIXTIME).c_str() );
 	bServerShutdown = true;
 
-	_UnhookSignals();
-
 	wr->Terminate();
 
 	/* Shut down console system */
@@ -465,6 +463,8 @@ bool Master::Run(int argc, char ** argv)
 
 	Log.Notice( "Database", "Closing Connections..." );
 	_StopDB();
+
+	_UnhookSignals();
 
 #ifdef WIN32
 	WSACleanup();
