@@ -419,8 +419,7 @@ Realm * InformationCore::AddRealm(uint32 realm_id, Realm * rlm)
 
 Realm * InformationCore::GetRealm(uint32 realm_id)
 {
-	Realm * ret = 0;
-
+	Realm * ret = NULL;
 	realmLock.Acquire();
 	map<uint32, Realm*>::iterator itr = m_realms.find(realm_id);
 	if(itr != m_realms.end())
@@ -485,9 +484,6 @@ void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
 	map<uint32, Realm*>::iterator itr = m_realms.find(realm_id);
 	if(itr != m_realms.end())
 	{
-		if(itr->second->Population == 0)
-			return;
-
 		uint8 temp;
 		if( pop >= 3 )
 			temp =  0x81; // Full
@@ -498,7 +494,7 @@ void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
 		else
 			temp = 0x20; // recommended
 
-		itr->second->Population = pop+1.0f;
+		itr->second->Population = pop;
 		itr->second->Colour = temp;
 		if(temp == 0x81)
 			itr->second->Lock = 1;
@@ -584,12 +580,6 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	for(; itr != m_realms.end(); ++itr)
 	{
 		realm = itr->second;
-		if( !isGM && realm->Population == 0 ) // Crow: Thanks Egari.
-		{
-			count -= 1;
-			realm = NULL;
-			continue;
-		}
 
 		data << realm->Icon;
 		if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
@@ -605,7 +595,7 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 
 		data << realm->Name;
 		data << realm->Address;
-		data << realm->Population-1.0f;
+		data << realm->Population;
 
 		/* Get our character count */
 		it = realm->CharacterMap.find(Socket->GetAccountID());

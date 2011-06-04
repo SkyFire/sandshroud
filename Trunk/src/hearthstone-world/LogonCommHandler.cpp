@@ -314,8 +314,9 @@ void LogonCommHandler::LoadRealmConfiguration()
 	itoa(Config.RealmConfig.GetIntDefault( "ServerSettings", "WorldServerPort", 8129), port, 10);
 	std::string adress = string(Config.RealmConfig.GetStringDefault( "ServerSettings", "Adress", "SomeRealm" ).c_str())
 		+ ":" + string(port);
+
 	realm = new Realm();
-	realm->Population = 1;
+	memset(realm, 0, sizeof(Realm*));
 	realm->Address = adress;
 	realm->Icon = Config.RealmConfig.GetIntDefault("ServerSettings", "RealmType", 1);
 	realm->WorldRegion = Config.RealmConfig.GetIntDefault("ServerSettings", "WorldRegion", 1);
@@ -422,7 +423,16 @@ void LogonCommHandler::IPBan_Remove(const char * ip)
 void LogonCommHandler::RefreshRealmPop()
 {
 	// Calc pop: 0 >= low, 1 >= med, 2 >= hig, 3 >= full
-	server_population = (sWorld.HordePlayers+sWorld.AlliancePlayers) * 3.0f / plrLimit;
+	uint32 Playernum = sWorld.HordePlayers+sWorld.AlliancePlayers;
+	if(Playernum == plrLimit)
+	{
+		server_population = 3;
+		return;
+	}
+
+	server_population = (((sWorld.HordePlayers+sWorld.AlliancePlayers)*3)/plrLimit)-1.0f;
+	if(server_population < 0)
+		server_population = 0;
 }
 
 #endif

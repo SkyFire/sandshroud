@@ -162,22 +162,13 @@
       <Filter>Client Communication</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\AreaTrigger.cpp">
-      <Filter>Environment</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\CollideInterface.cpp">
-      <Filter>Environment</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\NavMeshInterface.cpp">
-      <Filter>Environment</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\TerrainMgr.cpp">
-      <Filter>Environment</Filter>
+      <Filter>Map System\Environment</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\WeatherMgr.cpp">
-      <Filter>Environment</Filter>
+      <Filter>Map System\Environment</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\WorldStateManager.cpp">
-      <Filter>Environment</Filter>
+      <Filter>Map System\Environment</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\ClusterInterface.cpp">
       <Filter>Interserver\Clustering</Filter>
@@ -377,6 +368,15 @@
     <ClCompile Include="..\..\src\hearthstone-world\World.cpp">
       <Filter>Launcher</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\TerrainMgr.cpp">
+      <Filter>Map System\Map Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\CollideInterface.cpp">
+      <Filter>Map System\Map Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\NavMeshInterface.cpp">
+      <Filter>Map System\Map Tiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\hearthstone-world\Const.h" />
@@ -510,25 +510,16 @@
       <Filter>Client Communication</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\AreaTrigger.h">
-      <Filter>Environment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\CollideInterface.h">
-      <Filter>Environment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\NavMeshInterface.h">
-      <Filter>Environment</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\TerrainMgr.h">
-      <Filter>Environment</Filter>
+      <Filter>Map System\Environment</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\WeatherMgr.h">
-      <Filter>Environment</Filter>
+      <Filter>Map System\Environment</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\WorldStateManager.h">
-      <Filter>Environment</Filter>
+      <Filter>Map System\Environment</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\WorldStates.h">
-      <Filter>Environment</Filter>
+      <Filter>Map System\Environment</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\ClusterInterface.h">
       <Filter>Interserver\Clustering</Filter>
@@ -665,6 +656,15 @@
     <ClInclude Include="..\..\src\hearthstone-world\World.h">
       <Filter>Launcher</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-world\TerrainMgr.h">
+      <Filter>Map System\Map Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-world\NavMeshInterface.h">
+      <Filter>Map System\Map Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-world\CollideInterface.h">
+      <Filter>Map System\Map Tiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Brains">
@@ -721,9 +721,6 @@
     <Filter Include="Chat\Commands">
       <UniqueIdentifier>{17d6a16a-5263-47b1-9ec1-531f0b9bbceb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Environment">
-      <UniqueIdentifier>{67a54400-c257-4a1b-a3d4-3023bc4f646e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Interserver\Clustering">
       <UniqueIdentifier>{9a274e1b-9651-454a-8e1e-e18a2e3db191}</UniqueIdentifier>
     </Filter>
@@ -750,6 +747,12 @@
     </Filter>
     <Filter Include="Spell\Spell Fixes">
       <UniqueIdentifier>{6f7d039f-4c89-408c-b636-a150b1721031}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map System\Environment">
+      <UniqueIdentifier>{67a54400-c257-4a1b-a3d4-3023bc4f646e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map System\Map Tiles">
+      <UniqueIdentifier>{3bbf4881-65bd-4db0-bc03-ace66eb76dcb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
