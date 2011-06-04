@@ -67,6 +67,7 @@ AIInterface::AIInterface()
 	m_aiCurrentAgent = AGENT_NULL;
 	m_runSpeed = 0.0f;
 	m_flySpeed = 0.0f;
+	m_nextPosO = 0.0f;
 	UnitToFear = NULLUNIT;
 	firstLeaveCombat = true;
 	m_outOfCombatRange = 10000;
@@ -231,6 +232,7 @@ void AIInterface::HandleEvent(uint32 eevent, Unit* pUnit, uint32 misc1)
 				m_returnX = m_Unit->GetPositionX();
 				m_returnY = m_Unit->GetPositionY();
 				m_returnZ = m_Unit->GetPositionZ();
+				m_returnO = m_Unit->GetOrientation();
 
 				m_moveRun = true; //run to the target
 
@@ -338,13 +340,14 @@ void AIInterface::HandleEvent(uint32 eevent, Unit* pUnit, uint32 misc1)
 					if(m_Unit->isAlive())
 					{
 						if(m_returnX != 0.0f && m_returnY != 0.0f && m_returnZ != 0.0f)
-							MoveTo(m_returnX,m_returnY,m_returnZ);
+							MoveTo(m_returnX,m_returnY,m_returnZ,m_returnO);
 						else
 						{
-							MoveTo(m_Unit->GetSpawnX(),m_Unit->GetSpawnY(),m_Unit->GetSpawnZ());
-							m_returnX=m_Unit->GetSpawnX();
-							m_returnY=m_Unit->GetSpawnY();
-							m_returnZ=m_Unit->GetSpawnZ();
+							MoveTo(m_Unit->GetSpawnX(),m_Unit->GetSpawnY(),m_Unit->GetSpawnZ(), m_Unit->GetSpawnO());
+							m_returnX = m_Unit->GetSpawnX();
+							m_returnY = m_Unit->GetSpawnY();
+							m_returnZ = m_Unit->GetSpawnZ();
+							m_returnO = m_Unit->GetSpawnO();
 						}
 
 						// clear tagger
@@ -636,7 +639,7 @@ void AIInterface::Update(uint32 p_time)
 		if(tdist <= 4.0f/*2.0*/)
 		{
 			m_AIState = STATE_IDLE;
-			m_returnX = m_returnY = m_returnZ = 0.0f;
+			m_returnX = m_returnY = m_returnZ = m_returnO = 0.0f;
 			m_moveRun = false;
 			// Set health to full if they at there last location before attacking
 			if(m_AIType != AITYPE_PET&&!skip_reset_hp)
@@ -652,9 +655,10 @@ void AIInterface::Update(uint32 p_time)
 					m_returnX = m_Unit->GetSpawnX();
 					m_returnY = m_Unit->GetSpawnY();
 					m_returnZ = m_Unit->GetSpawnZ();
+					m_returnO = m_Unit->GetSpawnO();
 				}
 
-				MoveTo(m_returnX, m_returnY, m_returnZ);
+				MoveTo(m_returnX, m_returnY, m_returnZ, m_returnO);
 			}
 		}
 	}
@@ -1851,7 +1855,7 @@ void AIInterface::StopMovement(uint32 time, bool stopatcurrent)
 		SendMoveToPacket(m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), m_Unit->GetOrientation(), 0, getMoveFlags());
 }
 
-void AIInterface::MoveTo(float x, float y, float z)
+void AIInterface::MoveTo(float x, float y, float z, float o)
 {
 	ASSERT(m_Unit != NULL);
 	m_sourceX = m_Unit->GetPositionX();
@@ -1867,6 +1871,7 @@ void AIInterface::MoveTo(float x, float y, float z)
 	m_destinationX = x;
 	m_destinationY = y;
 	m_destinationZ = z;
+	m_destinationO = o;
 //	CheckHeight();
 
 	if(m_creatureState != MOVING)
@@ -1942,14 +1947,15 @@ void AIInterface::UpdateMove()
 		m_nextPosY = PathLocation.y;
 		m_nextPosZ = PathLocation.z;
 
-		// We can't find a path, so we use normal walking methods.
+		// Found a path!
 		if(m_nextPosX != m_sourceX && m_nextPosY != m_sourceY && m_nextPosX != 0.0f && m_nextPosY != 0.0f)
 		{
 			if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
 			{
+				m_nextPosO = m_destinationO;
 				jumptolocation = false;
 				pathfinding = false;
-				m_destinationX = m_destinationY = m_destinationZ = 0.0f; // Pathfinding requires we keep our destination.
+				m_destinationX = m_destinationY = m_destinationZ = m_destinationO = 0.0f; // Pathfinding requires we keep our destination.
 			}
 
 			float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
@@ -1960,9 +1966,8 @@ void AIInterface::UpdateMove()
 
 			if(m_Unit->GetTypeId() == TYPEID_UNIT)
 			{
-				Creature* creature = TO_CREATURE(m_Unit);
-
 				float angle = 0.0f;
+				Creature* creature = TO_CREATURE(m_Unit);
 				float c_reach = GetUnit()->GetFloatValue(UNIT_FIELD_COMBATREACH);
 
 				//We don't want little movements here and there; 
@@ -1991,7 +1996,10 @@ void AIInterface::UpdateMove()
 					}
 				}
 			}
-			SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
+
+			if(m_nextPosO == 0.0f)
+				m_nextPosO = m_Unit->GetOrientation();
+			SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO, moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
 
 			m_timeToMove = moveTime;
 			m_timeMoved = 0;
@@ -2008,7 +2016,8 @@ void AIInterface::UpdateMove()
 	m_nextPosX = m_destinationX;
 	m_nextPosY = m_destinationY;
 	m_nextPosZ = m_destinationZ;
-	m_destinationX = m_destinationY = m_destinationZ = 0;
+	m_nextPosO = m_destinationO;
+	m_destinationX = m_destinationY = m_destinationZ = m_destinationO = 0;
 
 	uint32 moveTime = GetMovementTime(distance);
 
@@ -2047,7 +2056,9 @@ void AIInterface::UpdateMove()
 			}
 		}
 	}
-	SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
+	if(m_nextPosO == 0.0f)
+		m_nextPosO = m_Unit->GetOrientation();
+	SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO, moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
 
 	jumptolocation = false;
 	m_timeToMove = moveTime;
@@ -2335,7 +2346,7 @@ bool AIInterface::saveWayPoints()
 		ss << wp->x << ", ";
 		ss << wp->y << ", ";
 		ss << wp->z << ", ";
-		ss << wp->o << ", ";
+		ss << wp->orientation << ", ";
 		ss << wp->waittime << ", ";
 		ss << wp->flags << ", ";
 		ss << wp->forwardemoteoneshot << ", ";
@@ -2439,7 +2450,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 							objmgr.HandleMonsterSayEvent(TO_CREATURE(m_Unit), MONSTER_SAY_EVENT_RANDOM_WAYPOINT);
 
 						//Lets face to correct orientation
-						wayO = wp->o;
+						wayO = wp->orientation;
 						m_moveTimer = wp->waittime; //wait before next move
 						if(!m_moveBackward)
 						{
@@ -2489,11 +2500,10 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				m_creatureState = STOPPED;
 				m_moveSprint = false;
 
-				if(m_MovementType == MOVEMENTTYPE_DONTMOVEWP)
+				if(wayO != 0.0f)
 					m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, wayO, true);
 				else
 					m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), true);
-
 				m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 				m_timeMoved = 0;
 				m_timeToMove = 0;
@@ -2637,7 +2647,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 						}
 						m_moveFly = (wp->flags == 768) ? true : false;
 						m_moveRun = (wp->flags == 256) ? 1 : 0;
-						MoveTo(wp->x, wp->y, wp->z);
+						MoveTo(wp->x, wp->y, wp->z, wp->orientation);
 					}
 				}
 			}

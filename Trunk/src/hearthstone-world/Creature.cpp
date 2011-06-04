@@ -1704,7 +1704,7 @@ void Creature::SetGuardWaypoints()
 		else
 			wp->z = GetCHeightForPosition(canSwim() ? false : true); // Check water heights
 
-		wp->o = 0;
+		wp->orientation = GetSpawnO();
 		wp->backwardemoteid = 0;
 		wp->backwardemoteoneshot = 0;
 		wp->forwardemoteid = 0;

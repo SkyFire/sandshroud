@@ -2167,7 +2167,7 @@ void ObjectMgr::LoadCreatureWaypoints()
 		wp->x = fields[2].GetFloat();
 		wp->y = fields[3].GetFloat();
 		wp->z = fields[4].GetFloat();
-		wp->o = fields[5].GetFloat();
+		wp->orientation = fields[5].GetFloat();
 		wp->waittime = fields[6].GetUInt32();
 		wp->flags = fields[7].GetUInt32();
 		wp->forwardemoteoneshot = fields[8].GetBool();

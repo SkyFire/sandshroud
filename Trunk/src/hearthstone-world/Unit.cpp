@@ -5063,7 +5063,7 @@ void Unit::MoveToWaypoint(uint32 wp_id)
 		ai->m_currentWaypoint = wp_id;
 		if(wp->flags!=0)
 			ai->m_moveRun = true;
-		ai->MoveTo(wp->x, wp->y, wp->z);
+		ai->MoveTo(wp->x, wp->y, wp->z, wp->orientation);
 	}
 }
 

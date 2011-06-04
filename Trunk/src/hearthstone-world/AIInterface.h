@@ -301,7 +301,7 @@ public:
 	void SendMoveToPacket(float toX, float toY, float toZ, float toO, uint32 time, uint32 MoveFlags);
 	void JumpTo(float toX, float toY, float toZ, uint32 moveTime, float arc , uint32 unk = 0);
 	//void SendMoveToSplinesPacket(std::list<Waypoint> wp, bool run);
-	void MoveTo(float x, float y, float z);
+	void MoveTo(float x, float y, float z, float o = 0.0f);
 	uint32 getMoveFlags();
 	void UpdateMove();
 	void SendCurrentMove(Player* plyr/*uint64 guid*/);
@@ -476,9 +476,9 @@ protected:
 	// Movement
 	float m_walkSpeed, m_runSpeed, m_flySpeed;
 	float m_sourceX, m_sourceY, m_sourceZ;
-	float m_destinationX, m_destinationY, m_destinationZ;
-	float m_nextPosX, m_nextPosY, m_nextPosZ;
-	float m_returnX, m_returnY, m_returnZ; //Return position after attacking a mob
+	float m_destinationX, m_destinationY, m_destinationZ, m_destinationO;
+	float m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO;
+	float m_returnX, m_returnY, m_returnZ, m_returnO; //Return position after attacking a mob
 	bool pathfinding;
 
 	float m_lastFollowX;

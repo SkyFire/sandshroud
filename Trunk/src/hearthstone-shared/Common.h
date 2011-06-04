@@ -595,15 +595,11 @@ HEARTHSTONE_INLINE uint32 now()
 #include "Util.h"
 struct WayPoint
 {
-	WayPoint()
-	{
-		o = 0.0f;
-	}
 	uint32 id;
 	float x;
 	float y;
 	float z;
-	float o;
+	float orientation;
 	uint32 waittime; //ms
 	uint32 flags;
 	bool forwardemoteoneshot;
