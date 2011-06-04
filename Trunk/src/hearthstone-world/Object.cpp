@@ -726,7 +726,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 					*data << vehicle->m_vehicleSeats[pUnit->GetSeatID()]->m_attachmentOffsetX;
 					*data << vehicle->m_vehicleSeats[pUnit->GetSeatID()]->m_attachmentOffsetY;
 					*data << vehicle->m_vehicleSeats[pUnit->GetSeatID()]->m_attachmentOffsetZ;
-					*data << vehicle->GetOrientation();
+					*data << vehicle->GetOrientation() - GetOrientation();
 					*data << uint32(0);
 					*data << pUnit->GetSeatID();
 				}
@@ -834,7 +834,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 		*data << float(m_position.o);
 	}
 
-	if(flags & 8)
+	if(flags & 0x0008)
 		*data << GetUInt32Value(OBJECT_FIELD_GUID);
 
 	if(flags & 0x0010)
@@ -843,17 +843,11 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 	if(flags & 0x0004)
 		FastGUIDPack(*data, GetUInt64Value(UNIT_FIELD_TARGET)); // Compressed target guid.
 
-	if(flags & 2)
+	if(flags & 0x0002)
 		*data << (uint32)getMSTime();
 
-	if (flags & 0x80) //if ((_BYTE)flags_ < 0)
-		*data << TO_VEHICLE(this)->GetVehicleEntry() << float(0.0f);
-	/* Facing adjustment
-	Crow: Maybe change orientation as the vehicle shifts to the side? Like, possibly
-	GetPositionO() + (m_veh->GetPositionO() - GetCurrentSeat()->GetOffsetO())
-	This would make the orientation shift based on the vehicles orientation changing, maybe the client would change
-	it automatically if we just put in the vehicle orientation minus the offset orientation.
-	*/
+	if(flags & 0x0080) //if ((_BYTE)flags_ < 0)
+		*data << TO_VEHICLE(this)->GetVehicleEntry() << float(TO_VEHICLE(this)->GetOrientation());
 
 	// 0x200
 	if(flags & 0x0200)
