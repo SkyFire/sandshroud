@@ -209,9 +209,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 						spawns[cellx][celly] = new CellSpawns;
 
 					spawns[cellx][celly]->CreatureSpawns.push_back(cspawn);
-
 					++CreatureSpawnCount;
-
 				}while(result->NextRow());
 			}
 

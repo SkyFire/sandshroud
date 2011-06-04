@@ -5679,7 +5679,6 @@ void Unit::RemoveFromWorld(bool free_guid)
 	}
 
 	// Delete AAura's from our targets (must be done before object is removed from world)
-
 	for(uint32 x = 0; x < TOTAL_AURAS; ++x)
 	{
 		if(m_auras[x] != NULL)

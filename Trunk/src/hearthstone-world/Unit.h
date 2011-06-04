@@ -755,6 +755,7 @@ class SERVER_DECL Unit : public Object
 public:
 	void CombatStatusHandler_UpdateTargets();
 
+	Unit();
 	virtual ~Unit ( );
 	virtual void Init();
 	virtual void Destruct();
@@ -1395,8 +1396,8 @@ public:
 	LocationVector* m_transportPosition;
 	float m_TransporterUnk;
 	bool m_lockTransportVariables;
-    uint32 GetMaxPower( uint32 index ){ return GetUInt32Value( UNIT_FIELD_MAXPOWER1 + index ); }
-    void SetMaxPower( uint32 index, uint32 value ){SetUInt32Value(UNIT_FIELD_MAXPOWER1+index,value );}
+	uint32 GetMaxPower( uint32 index ){ return GetUInt32Value( UNIT_FIELD_MAXPOWER1 + index ); }
+	void SetMaxPower( uint32 index, uint32 value ){SetUInt32Value(UNIT_FIELD_MAXPOWER1+index,value );}
 
 	// Movement Info.
 	MovementInfo* GetMovementInfo() { return new MovementInfo(movement_info); }
@@ -1406,7 +1407,6 @@ protected:
 	/* Preallocated buffers for movement handlers */
 	uint8 movement_packet[90];
 
-	Unit();
 	uint32 m_meleespell;
 	uint8 m_meleespell_cn;
 	void _UpdateSpells(uint32 time);

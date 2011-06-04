@@ -117,10 +117,12 @@ public:
 	{
 		ASSERT(cellx < _sizeX);
 		ASSERT(celly < _sizeY);
-		if(spawns[cellx]==NULL) return NULL;
+		if(spawns[cellx]==NULL)
+			return NULL;
 
 		return spawns[cellx][celly];
 	}
+
 	HEARTHSTONE_INLINE CellSpawns * GetSpawnsListAndCreate(uint32 cellx, uint32 celly)
 	{
 		ASSERT(cellx < _sizeX);

@@ -27,6 +27,9 @@
 
 Creature::Creature(uint64 guid)
 {
+#ifdef SHAREDPTR_DEBUGMODE
+	printf("Creature::Creature()\n");
+#endif
 	m_valuesCount = UNIT_END;
 	m_objectTypeId = TYPEID_UNIT;
 	m_uint32Values = _fields;
@@ -807,6 +810,9 @@ WayPoint * Creature::CreateWaypointStruct()
 
 bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 {
+	if(m_loadedFromDB)
+		return true;
+
 	m_spawn = spawn;
 	proto = CreatureProtoStorage.LookupEntry(spawn->entry);
 	if(!proto)
@@ -1000,9 +1006,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 
 	// kek
 	for(list<AI_Spell*>::iterator itr = proto->spells[mode].begin(); itr != proto->spells[mode].end(); itr++)
-	{
 		m_aiInterface->addSpellToList(*itr);
-	}
 
 	if(ExtraInfo != NULL)
 	{
@@ -1183,6 +1187,7 @@ bool Creature::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 		}
 	}
 
+	m_loadedFromDB = true;
 	return true;
 }
 

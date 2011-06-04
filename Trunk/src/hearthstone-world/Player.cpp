@@ -27,6 +27,9 @@ static const uint32 DKNodesMask[12] = {4294967295,4093640703,830406655,0,3357081
 
 Player::Player( uint32 guid )
 {
+#ifdef SHAREDPTR_DEBUGMODE
+	printf("Player::Player()\n");
+#endif
 	m_runemask = 0x3F;
 	m_bgRatedQueue = false;
 	m_massSummonEnabled = false;

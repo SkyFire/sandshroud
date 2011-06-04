@@ -277,6 +277,18 @@ public:
 	time_t InactiveMoveTime;
 	uint32 iInstanceMode;
 
+	HEARTHSTONE_INLINE void AddSpawn(uint32 x, uint32 y, CreatureSpawn * sp)
+	{
+		GetBaseMap()->GetSpawnsListAndCreate(x, y)->CreatureSpawns.push_back(sp);
+		GetBaseMap()->CreatureSpawnCount++;
+		m_CreatureArraySize++;
+	}
+
+	HEARTHSTONE_INLINE void AddGoSpawn(uint32 x, uint32 y, GOSpawn * gs)
+	{
+		GetBaseMap()->GetSpawnsListAndCreate(x, y)->GOSpawns.push_back(gs);
+	}
+
 	void UnloadCell(uint32 x,uint32 y);
 	void EventRespawnVehicle(Vehicle* v, MapCell * p);
 	void EventRespawnCreature(Creature* c, MapCell * p);

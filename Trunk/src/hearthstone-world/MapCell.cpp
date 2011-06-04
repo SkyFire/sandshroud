@@ -108,6 +108,7 @@ void MapCell::SetActivity(bool state)
 	_active = state;
 
 }
+
 void MapCell::RemoveObjects()
 {
 	if(_loaded == false)
@@ -154,7 +155,6 @@ void MapCell::RemoveObjects()
 			pObject->Destruct();
 			pObject = NULLOBJ;
 			break;
-
 		}
 	}
 	_respawnObjects.clear();
@@ -174,15 +174,12 @@ void MapCell::RemoveObjects()
 			if(obj->GetTypeFromGUID() == HIGHGUID_TYPE_TRANSPORTER)
 				continue;
 
-			if(obj->GetTypeId()==TYPEID_CORPSE && obj->GetUInt32Value(CORPSE_FIELD_OWNER) != 0)
+			if(obj->GetTypeId() == TYPEID_CORPSE && obj->GetUInt32Value(CORPSE_FIELD_OWNER) != 0)
 				continue;
 
 			if(!obj->m_loadedFromDB)
 				continue;
 		}
-
-		if( obj->Active )
-			obj->Deactivate( _mapmgr );
 
 		if( obj->IsInWorld())
 			obj->RemoveFromWorld( true );
@@ -222,7 +219,6 @@ void MapCell::LoadObjects(CellSpawns * sp)
 
 				v->SetMapId(_mapmgr->GetMapId());
 				v->SetInstanceID(_mapmgr->GetInstanceID());
-				v->m_loadedFromDB = true;
 
 				if(v->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
 				{
@@ -249,7 +245,6 @@ void MapCell::LoadObjects(CellSpawns * sp)
 
 				c->SetMapId(_mapmgr->GetMapId());
 				c->SetInstanceID(_mapmgr->GetInstanceID());
-				c->m_loadedFromDB = true;
 
 				if(c->Load(*i, _mapmgr->iInstanceMode, _mapmgr->GetMapInfo()))
 				{

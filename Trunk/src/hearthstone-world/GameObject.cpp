@@ -48,7 +48,6 @@ GameObject::GameObject(uint64 guid)
 	m_deleted = false;
 	m_created = false;
 	m_respawnCell = NULL;
-	m_loadedFromDB = false;
 	m_battleground = NULLBATTLEGROUND;
 	initiated = false;
 	memset(m_Go_Uint32Values, 0, sizeof(uint32)*GO_UINT32_MAX);

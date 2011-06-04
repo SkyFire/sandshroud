@@ -2117,6 +2117,11 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		return true;
 	}
 
+	if(spVehicle)
+		TO_VEHICLE(p)->Init();
+	else
+		p->Init();
+
 	uint32 mode = plr->GetMapMgr()->iInstanceMode;
 	CreatureSpawn * sp = NULL;
 	ASSERT(p);
@@ -2170,14 +2175,14 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	else
 	{
 		if(spVehicle)
-			TO_VEHICLE(p)->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f);
+			TO_VEHICLE(p)->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetOrientation());
 		else
-			p->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), 0.0f);
+			p->Load(proto, mode, plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetOrientation());
 	}
 
 	p->SetPhaseMask(plr->GetPhaseMask());
 	p->PushToWorld(plr->GetMapMgr());
-	
+
 	if(spVehicle)
 		TO_VEHICLE(p)->ChangePowerType();//Hate to do this but it is needed...
 
@@ -2191,7 +2196,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 		uint32 y = plr->GetMapMgr()->GetPosY(plr->GetPositionY());
 
 		// Add spawn to map
-		plr->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(x, y)->CreatureSpawns.push_back(sp);
+		plr->GetMapMgr()->AddSpawn(x, y, sp);
 		p->SaveToDB(true);
 	}
 

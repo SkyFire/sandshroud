@@ -1344,7 +1344,7 @@ void Object::RemoveFromWorld(bool free_guid)
 {
 	// clear loot
 	ClearLoot();
-	if(dynObj != 0)
+	if(dynObj != NULL)
 		dynObj->Remove();
 
 	ASSERT(m_mapMgr);
@@ -1982,7 +1982,6 @@ bool Object::IsPet()
 
 	if( TO_UNIT(this)->m_isPet && m_uint32Values[UNIT_FIELD_CREATEDBY] != 0 && m_uint32Values[UNIT_FIELD_SUMMONEDBY] != 0 )
 		return true;
-
 	return false;
 }
 
@@ -3247,31 +3246,33 @@ void Object::Deactivate(MapMgr* mgr)
 	switch(m_objectTypeId)
 	{
 	case TYPEID_UNIT:
-		if(IsVehicle())
 		{
-			// check iterator
-			if( mgr->__vehicle_iterator != mgr->activeVehicles.end() && (*mgr->__vehicle_iterator) == TO_VEHICLE(this) )
-				++mgr->__vehicle_iterator;
+			if(IsVehicle())
+			{
+				// check iterator
+				if( mgr->__vehicle_iterator != mgr->activeVehicles.end() && (*mgr->__vehicle_iterator) == TO_VEHICLE(this) )
+					++mgr->__vehicle_iterator;
 
-			mgr->activeVehicles.erase(TO_VEHICLE(this));
-		}
-		else
-		{
-			// check iterator
-			if( mgr->__creature_iterator != mgr->activeCreatures.end() && (*mgr->__creature_iterator) == TO_CREATURE(this) )
-				++mgr->__creature_iterator;
+				mgr->activeVehicles.erase(TO_VEHICLE(this));
+			}
+			else
+			{
+				// check iterator
+				if( mgr->__creature_iterator != mgr->activeCreatures.end() && (*mgr->__creature_iterator) == TO_CREATURE(this) )
+					++mgr->__creature_iterator;
 
-			mgr->activeCreatures.erase(TO_CREATURE(this));
-		}
-		break;
+				mgr->activeCreatures.erase(TO_CREATURE(this));
+			}
+		}break;
 
 	case TYPEID_GAMEOBJECT:
-		// check iterator
-		if( mgr->__gameobject_iterator != mgr->activeGameObjects.end() && (*mgr->__gameobject_iterator) == TO_GAMEOBJECT(this) )
-			++mgr->__gameobject_iterator;
+		{
+			// check iterator
+			if( mgr->__gameobject_iterator != mgr->activeGameObjects.end() && (*mgr->__gameobject_iterator) == TO_GAMEOBJECT(this) )
+				++mgr->__gameobject_iterator;
 
-		mgr->activeGameObjects.erase(TO_GAMEOBJECT(this));
-		break;
+			mgr->activeGameObjects.erase(TO_GAMEOBJECT(this));
+		}break;
 	}
 	Active = false;
 }

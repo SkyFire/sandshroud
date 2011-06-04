@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 
-Item::Item()//this is called when constructing as container
+Item::Item() //this is called when constructing as container
 {
 	m_itemProto = NULL;
 	m_owner = NULLPLR;

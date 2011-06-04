@@ -170,20 +170,18 @@ bool ChatHandler::HandleDeleteCommand(const char* args, WorldSession *m_session)
 
 	BlueSystemMessage(m_session, "Deleted creature ID %u", unit->spawnid);
 
-	MapMgr* unitMgr = unit->GetMapMgr();
-
 	unit->DeleteFromDB();
 
 	if(!unit->IsInWorld())
 		return true;
 
+	MapMgr* unitMgr = unit->GetMapMgr();
 	if(unit->m_spawn)
 	{
-		uint32 cellx = unit->GetMapMgr()->GetPosX(unit->m_spawn->x);
-		uint32 celly = unit->GetMapMgr()->GetPosX(unit->m_spawn->y);
-		if(cellx <= _sizeX && celly <= _sizeY && unitMgr != NULL )
+		uint32 cellx = unitMgr->GetPosX(unit->m_spawn->x);
+		uint32 celly = unitMgr->GetPosX(unit->m_spawn->y);
+		if(cellx <= _sizeX && celly <= _sizeY )
 		{
-			ASSERT(unitMgr->GetBaseMap() != NULL)
 			CellSpawns * c = unitMgr->GetBaseMap()->GetSpawnsList(cellx, celly);
 			if( c != NULL )
 			{
@@ -734,6 +732,7 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		RedSystemMessage(m_session, "Spawn of Gameobject(%u) failed.", EntryID);
 		return true;
 	}
+	go->Init();
 
 	Player* chr = m_session->GetPlayer();
 	uint32 mapid = chr->GetMapId();
@@ -765,15 +764,15 @@ bool ChatHandler::HandleGOSpawn(const char *args, WorldSession *m_session)
 		gs->phase = chr->GetPhaseMask();
 		go->Load(gs);
 		go->SaveToDB();
-
-		uint32 cx = m_session->GetPlayer()->GetMapMgr()->GetPosX(m_session->GetPlayer()->GetPositionX());
-		uint32 cy = m_session->GetPlayer()->GetMapMgr()->GetPosY(m_session->GetPlayer()->GetPositionY());
-		m_session->GetPlayer()->GetMapMgr()->GetBaseMap()->GetSpawnsListAndCreate(cx,cy)->GOSpawns.push_back(gs);
+		uint32 cx = chr->GetMapMgr()->GetPosX(x);
+		uint32 cy = chr->GetMapMgr()->GetPosY(y);
+		chr->GetMapMgr()->AddGoSpawn(cx, cy, gs);
 	}
 
 	go->SetPhaseMask(chr->GetPhaseMask());
 	go->SetInstanceID(chr->GetInstanceID());
 	go->PushToWorld(m_session->GetPlayer()->GetMapMgr());
+
 	sWorld.LogGM(m_session, "Spawned gameobject %u at %f %f %f (%s)", EntryID, x, y, z, Save ? "Saved" : "Not Saved");
 	return true;
 }
