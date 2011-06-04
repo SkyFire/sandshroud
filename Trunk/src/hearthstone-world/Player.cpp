@@ -1987,16 +1987,19 @@ SpellEntry* Player::FindLowerRankSpell(SpellEntry* sp, int32 rankdiff)
 {
 	SpellSet::iterator itr;
 	SpellEntry* spell = NULL;
-	for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
+	if(sp->RankNumber)
 	{
-		spell = NULL;
-		if((spell = dbcSpell.LookupEntry(*itr)) != NULL)
+		for(itr = mSpells.begin(); itr != mSpells.end(); itr++)
 		{
-			if(spell->NameHash == sp->NameHash && sp->RankNumber)
-				if(sp->RankNumber + rankdiff == spell->RankNumber)
-					return spell;
+			spell = NULL;
+			if((spell = dbcSpell.LookupEntry(*itr)) != NULL)
+			{
+				if(spell->NameHash == sp->NameHash)
+					if(sp->RankNumber + rankdiff == spell->RankNumber)
+						return spell;
+			}
+			spell = NULL;
 		}
-		spell = NULL;
 	}
 
 	return spell;
@@ -3622,6 +3625,12 @@ bool Player::HasHigherSpellForSkillLine(SpellEntry* sp)
 {
 	if(sp->NameHash == SPELL_HASH_COLD_WEATHER_FLYING)
 		return false;	// Cold Weather Hackfix
+	if(sp->NameHash == SPELL_HASH_FLIGHT_FORM)
+		if(HasSpell(40120))
+			return true; // We should only have 1 flight form.
+	if(sp->NameHash == SPELL_HASH_BEAR_FORM)
+		if(HasSpell(9634))
+			return true; // We should only have 1 bear form.
 
 	uint32 oskillline = sp->skilline;
 	if(oskillline == 0)
