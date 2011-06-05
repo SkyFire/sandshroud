@@ -1325,6 +1325,8 @@ public:
 	//Note:ModSkillLine -> value+=amt;ModSkillMax -->value=amt; --wierd
 	float GetSkillUpChance(uint32 id);
 	float SpellCrtiticalStrikeRatingBonus;
+	float CalculateCritFromAgilForClassAndLevel(uint32 _class, uint32 _level);
+	float CalculateDefenseFromAgilForClassAndLevel(uint32 _class, uint32 _level);
 	float SpellHasteRatingBonus;
 	void UpdateAttackSpeed();
 	void UpdateChances();

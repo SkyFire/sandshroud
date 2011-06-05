@@ -5346,6 +5346,64 @@ void Player::UpdateHit(int32 hit)
 	SetHitFromSpell(in);*/
 }
 
+float Player::CalculateCritFromAgilForClassAndLevel(uint32 _class, uint32 _level)
+{
+	gtFloat* baseCrit = dbcMeleeCritBase.LookupEntry(_class-1);
+	gtFloat* CritPerAgi = dbcMeleeCrit.LookupEntry((_class-1)*100+(_level - 1));
+	if(baseCrit == NULL || CritPerAgi == NULL)
+		return 0.0f;
+	uint32 agility = GetUInt32Value(UNIT_FIELD_STAT1);
+	float base = 100*baseCrit->val, ratio = 100*CritPerAgi->val, coeff = 0.0f;
+	if(_level > 80)
+	{
+		switch(_class)
+		{
+		case DRUID:
+			coeff = -0.0265f;
+			break;
+		case SHAMAN:
+			coeff = -0.0260f;
+			break;
+		case HUNTER:
+			coeff = -0.002f;
+			break;
+		}
+	}
+	ratio += coeff;
+	if(ratio < 0.0f)
+		ratio = 0.00001f;
+	return (base + float(agility*ratio));
+}
+
+float Player::CalculateDefenseFromAgilForClassAndLevel(uint32 _class, uint32 _level)
+{
+	gtFloat* CritPerAgi = dbcMeleeCrit.LookupEntry((_class-1)*100+(_level - 1));
+	if(CritPerAgi == NULL)
+		return 0.0f;
+	float class_multiplier = (_class == WARRIOR ? 1.1f : _class == HUNTER ? 1.6f : _class == ROGUE ? 2.0f : _class == DRUID ? 1.7f : 1.0f);
+	uint32 agility = GetUInt32Value(UNIT_FIELD_STAT1)*class_multiplier;
+	float base = baseDodge[_class], ratio = 100*CritPerAgi->val, coeff = 0.0f;
+	if(_level > 80)
+	{
+		switch(_class)
+		{
+		case DRUID:
+			coeff = -0.0265f;
+			break;
+		case SHAMAN:
+			coeff = -0.0260f;
+			break;
+		case HUNTER:
+			coeff = -0.002f;
+			break;
+		}
+	}
+	ratio += coeff;
+	if(ratio < 0.0f)
+		ratio = 0.00001f;
+	return (base + (agility*ratio));
+}
+
 void Player::UpdateChances()
 {
 	uint32 pClass = (uint32)getClass();
@@ -5356,13 +5414,16 @@ void Player::UpdateChances()
 
 	// defence contribution estimate
 	defence_contribution = ( float( _GetSkillLineCurrent( SKILL_DEFENSE, true ) ) - ( float( pLevel ) * 5.0f ) ) * 0.04f;
-	defence_contribution += CalcRating( PLAYER_RATING_MODIFIER_DEFENCE ) * 0.04f;
+	if( defence_contribution < 0.0f )
+		defence_contribution = 0.0f;
+
+	defence_contribution += (CalcRating(PLAYER_RATING_MODIFIER_DEFENCE) * 0.04f);
 	if( defence_contribution < 0.0f )
 		defence_contribution = 0.0f;
 
 	// dodge
-	float class_multiplier = (pClass == WARRIOR ? 1.1f : pClass == HUNTER ? 1.6f : pClass == ROGUE ? 2.0f : pClass == DRUID ? 1.7f : 1.0f);
-	tmp = (baseDodge[pClass] + (float( (GetUInt32Value( UNIT_FIELD_AGILITY )*class_multiplier)*(dbcMeleeCrit.LookupEntry((pLevel-1)+(pClass-1)*100)->val*100)))) + CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + defence_contribution;
+	tmp = CalculateDefenseFromAgilForClassAndLevel(pClass, pLevel);
+	tmp += CalcRating( PLAYER_RATING_MODIFIER_DODGE ) + defence_contribution;
 	tmp = min( max( 5.0f, tmp), DodgeCap[pClass] );
 
 	// Add dodge from spell after checking cap and base.
@@ -5384,42 +5445,29 @@ void Player::UpdateChances()
 	//parry
 	tmp = 5.0f + CalcRating( PLAYER_RATING_MODIFIER_PARRY ) + GetParryFromSpell();
 	if(pClass == DEATHKNIGHT) // DK gets 1/4 of strength as parry rating
-	{
 		tmp += CalcPercentForRating(PLAYER_RATING_MODIFIER_PARRY, GetUInt32Value(UNIT_FIELD_STAT0) / 4);
-	}
 	tmp += defence_contribution;
 
 	SetFloatValue( PLAYER_PARRY_PERCENTAGE, std::max( 5.0f, std::min( tmp, 95.0f ) ) ); //let us not use negative parry. Some spells decrease it
 
 	//critical
-	gtFloat* baseCrit = dbcMeleeCritBase.LookupEntry(pClass-1);
-	gtFloat* CritPerAgi = dbcMeleeCrit.LookupEntry(pLevel - 1 + (pClass-1)*100);
-
-	tmp = 100*(baseCrit->val + GetUInt32Value( UNIT_FIELD_STAT1 ) * CritPerAgi->val);
-
-	//std::list<WeaponModifier>::iterator i = tocritchance.begin();
 	map< uint32, WeaponModifier >::iterator itr = tocritchance.begin();
-
-	Item* tItemMelee = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
 	Item* tItemRanged = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_RANGED );
+	Item* tItemMelee = GetItemInterface()->GetInventoryItem( EQUIPMENT_SLOT_MAINHAND );
 
 	float melee_bonus = 0;
 	float ranged_bonus = 0;
 
 	//-1 = any weapon
-
 	for(; itr != tocritchance.end(); itr++ )
 	{
 		if( itr->second.wclass == ( uint32 )-1 || ( tItemMelee != NULL && ( 1 << tItemMelee->GetProto()->SubClass & itr->second.subclass ) ) )
-		{
 			melee_bonus += itr->second.value;
-		}
 		if( itr->second.wclass == ( uint32 )-1 || ( tItemRanged != NULL && ( 1 << tItemRanged->GetProto()->SubClass & itr->second.subclass ) ) )
-		{
 			ranged_bonus += itr->second.value;
-		}
 	}
 
+	tmp = CalculateCritFromAgilForClassAndLevel(pClass, pLevel);
 	float cr = tmp + CalcRating( PLAYER_RATING_MODIFIER_MELEE_CRIT ) + melee_bonus;
 	SetFloatValue( PLAYER_CRIT_PERCENTAGE, min( cr, 71.0f ) );
 
@@ -9072,16 +9120,14 @@ const double BaseRating []= {
 float Player::CalcPercentForRating( uint32 index, uint32 rating )
 {
 	uint32 relative_index = index - (PLAYER_FIELD_COMBAT_RATING_1);
-
-	uint32 level = m_uint32Values[UNIT_FIELD_LEVEL];
-	if( level > 100 )
-		level = 100;
-
+	uint32 reallevel = m_uint32Values[UNIT_FIELD_LEVEL];
+	uint32 level = reallevel > MAXIMUM_ATTAINABLE_LEVEL ? MAXIMUM_ATTAINABLE_LEVEL : reallevel;
 	CombatRatingDBC * pDBCEntry = dbcCombatRating.LookupEntryForced( relative_index * 100 + level - 1 );
-	if( pDBCEntry == NULL )
-		return (float) rating;
-	else
-		return float(rating / pDBCEntry->val);
+	float val = 1.0f;
+	if( pDBCEntry != NULL )
+		val = pDBCEntry->val;
+
+	return float(rating/val);
 }
 
 bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, int32 phase)
