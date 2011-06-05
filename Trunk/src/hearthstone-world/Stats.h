@@ -45,7 +45,7 @@ SERVER_DECL uint32 CalculateXpToGive(Unit* pVictim, Unit* pAttacker);
 SERVER_DECL uint32 CalculateStat(uint16 level, float inc);
 SERVER_DECL uint32 CalculateStat(uint16 level, double a3, double a2, double a1, double a0);
 SERVER_DECL uint32 CalculateDamage( Unit* pAttacker, Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability);
-SERVER_DECL uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat);
+SERVER_DECL uint32 CalcStatForLevel(uint16 level, uint8 playerrace, uint8 playerclass, uint8 Stat);
 SERVER_DECL bool isEven (int num);
 
 #endif

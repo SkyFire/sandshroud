@@ -1888,17 +1888,15 @@ void ObjectMgr::GenerateLevelUpInfo()
 				// Calculate Stats
 				for(uint32 s = 0; s < 5; ++s)
 				{
-					lvl->Stat[s] = CalcStatForLevel( Level, Class, s );
-					if( s == STAT_STRENGTH )
-						lvl->Stat[s] += PCI->strength;
-					if( s == STAT_INTELLECT )
-						lvl->Stat[s] += PCI->intellect;
-					if( s == STAT_STAMINA )
-						lvl->Stat[s] += PCI->stamina;
-					if( s == STAT_SPIRIT )
-						lvl->Stat[s] += PCI->spirit;
-					if( s == STAT_AGILITY )
-						lvl->Stat[s] += PCI->ability;
+					lvl->Stat[s] = CalcStatForLevel( Level, Race, Class, s );
+					switch(s)
+					{
+					case STAT_STRENGTH:		lvl->Stat[s] += PCI->strength; break;
+					case STAT_INTELLECT:	lvl->Stat[s] += PCI->intellect; break;
+					case STAT_STAMINA:		lvl->Stat[s] += PCI->stamina; break;
+					case STAT_SPIRIT:		lvl->Stat[s] += PCI->spirit; break;
+					case STAT_AGILITY:		lvl->Stat[s] += PCI->ability; break;
+					}
 				}
 
 				// Apply HP/Mana
@@ -1999,11 +1997,11 @@ void ObjectMgr::GenerateLevelUpInfo()
 				// Calculate next level XP
 				uint32 nextLvlXP = 0;
 
-				// This is a fixed table taken from 2.3.0 wow. This can't get more blizzlike with the "if" cases ;)
-				if( ( Level - 1 ) < MAX_PREDEFINED_NEXTLEVELXP )
-					nextLvlXP = NextLevelXp[( Level - 1 )];
-				else // Crow: 81: 2472670 82: 2504605 83: 2536680 84: 2568895 85: 2601250
-					nextLvlXP = uint32(((((255+(14*Level))*(5*55+Level))/100)+0.5)*500);
+				// This is a fixed table taken from 3.3.5 wow. This can't get more blizzlike with the "if" cases ;)
+				if( ( Level ) < MAX_PREDEFINED_NEXTLEVELXP )
+					nextLvlXP = NextLevelXp[(Level)];
+				else // Crow: (80-81: 1687591) (81-82: 1704273) (82-83: 1720846) (83-84: 1737310) (84-85: 1753665)
+					nextLvlXP = uint32(Level*(21149.3671f-((Level-(MAX_PREDEFINED_NEXTLEVELXP-1))*54.4791f)));
 
 				lvl->XPToNextLevel = nextLvlXP;
 

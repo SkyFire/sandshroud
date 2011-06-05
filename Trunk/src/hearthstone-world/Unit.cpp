@@ -158,6 +158,7 @@ Unit::Unit()
 	m_CombatUpdateTimer = 0;
 
 	HealDoneMod = 0;
+	HealDoneModPos = 0;
 	HealDonePctMod = 1.0f;
 	HealTakenMod = 0;
 	HealTakenPctMod = 1.0f;
@@ -2649,8 +2650,10 @@ double Unit::GetResistanceReducion(Unit* pVictim, uint32 school, float armorRedu
 		double RResist = resistance + float((pVictim->getLevel() > getLevel()) ? (pVictim->getLevel() - getLevel()) * 5 : 0) - PowerCostPctMod[school];
 		reduction = RResist / (double)(getLevel() * 5) * 0.75f;
 	}
-	if(reduction > 0.75) reduction = 0.75;
-	else if(reduction < 0) reduction = 0;
+	if(reduction > 0.75)
+		reduction = 0.75;
+	else if(reduction < 0)
+		reduction = 0;
 
 	return reduction;
 }

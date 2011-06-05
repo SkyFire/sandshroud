@@ -276,131 +276,337 @@ uint32 CalculateStat(uint16 level, float inc)
 	return (uint32)a; // truncate: working as intended.
 }
 
-//Partialy taken from WoWWoW Source
-uint32 CalcStatForLevel(uint16 level, uint8 playerclass,uint8 Stat)
+#define StatCalculationMacroAction(_stat, statfloat1, statfloat2, statfloat3, statfloat4, statfloat5)\
+	switch(_stat)\
+	{\
+	case STAT_STRENGTH:	{ gain = CalculateStat(level, statfloat1); } break;\
+	case STAT_AGILITY:	{ gain = CalculateStat(level, statfloat2); } break;\
+	case STAT_STAMINA:	{ gain = CalculateStat(level, statfloat3); } break;\
+	case STAT_INTELLECT:	{ gain = CalculateStat(level, statfloat4); } break;\
+	case STAT_SPIRIT:	{ gain = CalculateStat(level, statfloat5); } break;\
+	}
+
+uint32 CalcStatForLevel(uint16 level, uint8 playerrace, uint8 playerclass, uint8 Stat)
 {
 	uint32 gain = 0;
-	switch(playerclass)
+	switch(playerrace)
 	{
-	case DEATHKNIGHT:
+	case RACE_HUMAN:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 2.56f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 1.64f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 2.36f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.4f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.76f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.3142f, 1.4125f, 2.1013f, 0.4514f, 0.7523f);
+				}break;
+			case PALADIN:
+				{
+					StatCalculationMacroAction(Stat, 2.1625f, 1.1251f, 2.0000f, 1.2254f, 1.3517f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.4125f, 2.3625f, 1.3625f, 0.5375f, 0.8625f);
+				}break;
+			case PRIEST:
+				{
+					StatCalculationMacroAction(Stat, 0.5375f, 0.6375f, 0.8375f, 2.1753f, 2.3252f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.2516f, 1.4125f, 2.0013f, 0.4375f, 0.7518f);
+				}break;
+			case MAGE:
+				{
+					StatCalculationMacroAction(Stat, 0.4527f, 0.5375f, 0.7375f, 2.2625f, 2.2375f);
+				}break;
+			case WARLOCK:
+				{
+					StatCalculationMacroAction(Stat, 0.7375f, 0.8375f, 1.2125f, 1.9875f, 2.1257f);
+				}break;
 			}
-		}break;
+		}break; // Human End
+	case RACE_ORC:
+		{
+			switch(playerclass)
+			{
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.3375f, 1.3750f, 2.1250f, 0.4125f, 0.7751f);
+				}break;
+			case HUNTER:
+				{
+					StatCalculationMacroAction(Stat, 0.9625f, 2.2250f, 1.6250f, 1.0875f, 1.2512f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.4516f, 2.3250f, 1.3375f, 0.5174f, 0.8753f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.4250f, 1.3625f, 2.1375f, 0.4133f, 0.7753f);
+				}break;
+			case SHAMAN:
+				{
+					StatCalculationMacroAction(Stat, 1.5375f, 0.8875f, 1.7250f, 1.7125f, 1.8250f);
+				}break;
+			case WARLOCK:
+				{
+					StatCalculationMacroAction(Stat, 0.7751f, 0.8012f, 1.2375f, 1.9516f, 2.1125f);
+				}break;
+			}
+		}break; // Orc End
 
-	case PRIEST:
+	case RACE_DWARF:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.2875f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.3875f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.5875f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.9f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 2.0875f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.3253f, 1.3625f, 2.1375f, 0.4375f, 0.7250f);
+				}break;
+			case PALADIN:
+				{
+					StatCalculationMacroAction(Stat, 2.1875f, 1.0750f, 1.8250f, 1.2125f, 1.3000f);
+				}break;
+			case HUNTER:
+				{
+					StatCalculationMacroAction(Stat, 0.9516f, 2.2125f, 1.6375f, 1.1125f, 1.2163f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.4375f, 2.3125f, 1.3516f, 0.5251f, 0.8254f);
+				}break;
+			case PRIEST:
+				{
+					StatCalculationMacroAction(Stat, 0.5625f, 0.5875f, 0.8752f, 2.1625f, 2.3625f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.2750f, 1.3512f, 2.0375f, 0.4250f, 0.7250f);
+				}break;
 			}
-		}break;
+		}break; // Dwarf End
 
-	case WARRIOR:
+	case RACE_NIGHTELF:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 2.0125f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 1.1625f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.825f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.2f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.4875f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.2625f, 1.4750f, 2.0875f, 0.4502f, 0.7375f);
+				}break;
+			case HUNTER:
+				{
+					StatCalculationMacroAction(Stat, 0.8875f, 2.4125f, 1.5875f, 1.1625f, 1.2125f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.3750f, 2.4250f, 1.3016f, 0.5375f, 0.8375f);
+				}break;
+			case PRIEST:
+				{
+					StatCalculationMacroAction(Stat, 0.5023f, 0.7027f, 0.8250f, 2.5016f, 2.3875f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.2125f, 1.4625f, 1.9875f, 0.4375f, 0.7375f);
+				}break;
+			case DRUID:
+				{
+					StatCalculationMacroAction(Stat, 1.0750f, 1.0875f, 1.2125f, 1.7875f, 1.9875f);
+				}break;
 			}
-		}break;
+		}break; // Nightelf End
 
-	case WARLOCK:
+	case RACE_UNDEAD:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.4875f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.5875f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.95f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.7125f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.8f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.1625f, 1.3875f, 2.1362f, 0.4251f, 0.8016f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.4006f, 2.3375f, 1.3250f, 0.5125f, 0.9012f);
+				}break;
+			case PRIEST:
+				{
+					StatCalculationMacroAction(Stat, 0.5251f, 0.6125f, 0.8501f, 2.1514f, 2.3250f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.1750f, 1.3750f, 2.0125f, 0.4125f, 0.8111f);
+				}break;
+			case MAGE:
+				{
+					StatCalculationMacroAction(Stat, 0.4375f, 0.5125f, 0.7512f, 2.2375f, 2.2375f);
+				}break;
+			case WARLOCK:
+				{
+					StatCalculationMacroAction(Stat, 0.7251f, 0.8125f, 1.2375f, 1.9625f, 2.1375f);
+				}break;
 			}
-		}break;
+		}break; // Undead End
 
-	case DRUID:
+	case RACE_TAUREN:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.85f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.775f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.975f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.5125f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 2.0f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.2375f, 1.3512f, 2.1250f, 0.3875f, 0.7625f);
+				}break;
+			case HUNTER:
+				{
+					StatCalculationMacroAction(Stat, 0.9875f, 2.2875f, 1.6250f, 1.1103f, 1.2375f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.3125f, 1.3375f, 2.0250f, 0.3751f, 0.7625f);
+				}break;
+			case SHAMAN:
+				{
+					StatCalculationMacroAction(Stat, 1.5625f, 0.8625f, 1.7250f, 1.6875f, 1.8125f);
+				}break;
+			case DRUID:
+				{
+					StatCalculationMacroAction(Stat, 1.1750f, 0.9625f, 1.2512f, 1.7250f, 2.3125f);
+				}break;
 			}
-		}break;
+		}break; // Tauren End
 
-	case PALADIN:
+	case RACE_GNOME:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 1.8875f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.875f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.5125f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.975f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.05f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.1875f, 1.4516f, 2.0512f, 0.5163f, 0.7375f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.3504f, 2.4132f, 1.3516f, 0.6163f, 0.8375f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.1250f, 1.4375f, 2.1163f, 0.4875f, 0.7375f);
+				}break;
+			case MAGE:
+				{
+					StatCalculationMacroAction(Stat, 0.3875f, 0.5751f, 0.7254f, 2.4125f, 2.1750f);
+				}break;
+			case WARLOCK:
+				{
+					StatCalculationMacroAction(Stat, 0.6753f, 0.8750f, 1.2123f, 2.1250f, 2.0750f);
+				}break;
 			}
-		}break;
+		}break; // Gnome End
 
-	case HUNTER:
+	case RACE_TROLL:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.675f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 1.975f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.3375f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.875f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.95f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.3125f, 1.4375f, 2.1125f, 0.4163f, 0.7516f);
+				}break;
+			case HUNTER:
+				{
+					StatCalculationMacroAction(Stat, 0.9375f, 2.3750f, 1.6125f, 1.1125f, 1.2250f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.4250f, 2.3875f, 1.3750f, 0.4875f, 0.8516f);
+				}break;
+			case PRIEST:
+				{
+					StatCalculationMacroAction(Stat, 0.5516f, 0.6625f, 0.8516f, 2.1250f, 2.2750f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.2625f, 1.4250f, 2.0125f, 0.3875f, 0.7516f);
+				}break;
+			case SHAMAN:
+				{
+					StatCalculationMacroAction(Stat, 1.5125f, 0.9542f, 1.7125f, 1.7000f, 1.8012f);
+				}break;
+			case MAGE:
+				{
+					StatCalculationMacroAction(Stat, 0.4625f, 0.5625f, 0.7512f, 2.2125f, 2.1875f);
+				}break;
 			}
-		}break;
+		}break; // Troll End
 
-	case MAGE:
+	case RACE_BLOODELF:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 0.2f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.2875f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 0.4875f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.975f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.9625f); } break;
+			case PALADIN:
+				{
+					StatCalculationMacroAction(Stat, 1.8512f, 1.1512f, 1.7625f, 1.2750f, 1.3153f);
+				}break;
+			case HUNTER:
+				{
+					StatCalculationMacroAction(Stat, 0.8875f, 2.2875f, 1.5750f, 1.1750f, 1.2163f);
+				}break;
+			case ROGUE:
+				{
+					StatCalculationMacroAction(Stat, 1.3750f, 2.3875f, 1.3375f, 0.5875f, 0.8251f);
+				}break;
+			case PRIEST:
+				{
+					StatCalculationMacroAction(Stat, 0.5163f, 0.6625f, 0.8125f, 2.2250f, 2.2512f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.1516f, 1.4250f, 1.9750f, 0.4875f, 0.7251f);
+				}break;
+			case MAGE:
+				{
+					StatCalculationMacroAction(Stat, 0.4125f, 0.5625f, 0.7125f, 2.3125f, 2.1625f);
+				}break;
+			case WARLOCK:
+				{
+					StatCalculationMacroAction(Stat, 0.7135f, 0.8625f, 1.1875f, 2.0375f, 2.0625f);
+				}break;
 			}
-		}break;
+		}break; // Bloodelf End
 
-	case SHAMAN:
+	case RACE_DRAENEI:
 		{
-			switch(Stat)
+			switch(playerclass)
 			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 1.2375f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 0.675f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.4375f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 1.4875f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 1.5125f); } break;
+			case WARRIOR:
+				{
+					StatCalculationMacroAction(Stat, 2.3125f, 1.3750f, 2.0875f, 0.4625f, 0.7625f);
+				}break;
+			case PALADIN:
+				{
+					StatCalculationMacroAction(Stat, 1.9153f, 1.0875f, 1.7750f, 1.4125f, 1.3375f);
+				}break;
+			case HUNTER:
+				{
+					StatCalculationMacroAction(Stat, 0.9375f, 2.2250f, 1.5875f, 1.1375f, 1.2375f);
+				}break;
+			case PRIEST:
+				{
+					StatCalculationMacroAction(Stat, 0.5515f, 0.6000f, 0.8251f, 2.1875f, 2.2875f);
+				}break;
+			case DEATHKNIGHT:
+				{
+					StatCalculationMacroAction(Stat, 2.2123f, 1.3625f, 1.9875f, 0.4512f, 0.7625f);
+				}break;
+			case SHAMAN:
+				{
+					StatCalculationMacroAction(Stat, 1.5125f, 0.8875f, 1.6875f, 1.7625f, 1.8125f);
+				}break;
+			case MAGE:
+				{
+					StatCalculationMacroAction(Stat, 0.4625f, 0.5126f, 0.7251f, 2.2750f, 2.2132f);
+				}break;
 			}
-		}break;
-
-	case ROGUE:
-		{
-			switch(Stat)
-			{
-			case STAT_STRENGTH:	{ gain = CalculateStat(level, 1.15f); } break;
-			case STAT_AGILITY:	{ gain = CalculateStat(level, 2.075f); } break;
-			case STAT_STAMINA:	{ gain = CalculateStat(level, 1.1f); } break;
-			case STAT_INTELLECT:{ gain = CalculateStat(level, 0.2875f); } break;
-			case STAT_SPIRIT:	{ gain = CalculateStat(level, 0.6125f); } break;
-			}
-		}break;
+		}break; // Draenei End
 	}
 
 	return gain;

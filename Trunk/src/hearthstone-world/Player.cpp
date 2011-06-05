@@ -9081,7 +9081,7 @@ float Player::CalcPercentForRating( uint32 index, uint32 rating )
 	if( pDBCEntry == NULL )
 		return (float) rating;
 	else
-		return (rating / pDBCEntry->val);
+		return float(rating / pDBCEntry->val);
 }
 
 bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, float X, float Y, float Z, float O, int32 phase)
