@@ -1860,10 +1860,6 @@ void ObjectMgr::GenerateLevelUpInfo()
 				continue;   // Class not valid for this race.
 
 			// Generate each level's information
-			uint32 MaxLevel = MAXIMUM_ATTAINABLE_LEVEL + 1;
-			if(sWorld.LevelCap_Custom_All > 0 && sWorld.LevelCap_Custom_All != 80)
-				MaxLevel = sWorld.LevelCap_Custom_All+1;
-
 			lvl0 = new LevelInfo;
 			lvl0->HP = PCI->health;
 			lvl0->Mana = PCI->mana;
@@ -1880,7 +1876,7 @@ void ObjectMgr::GenerateLevelUpInfo()
 			// Insert into map
 			lMap->insert( LevelMap::value_type( 1, lvl0 ) );
 
-			for(uint32 Level = 2; Level < MaxLevel; Level++)
+			for(uint32 Level = 2; Level < MAXIMUM_ATTAINABLE_LEVEL+1; Level++)
 			{
 				lvl = new LevelInfo;
 				memset(lvl, 0, sizeof(LevelInfo));
@@ -2023,9 +2019,9 @@ void ObjectMgr::GenerateLevelUpInfo()
 
 LevelInfo* ObjectMgr::GetLevelInfo(uint32 Race, uint32 Class, uint32 Level)
 {
-	uint32 maxlevel = MAXIMUM_ATTAINABLE_LEVEL;
-	if(sWorld.LevelCap_Custom_All > 0 && sWorld.LevelCap_Custom_All != 80)
-		maxlevel = sWorld.LevelCap_Custom_All;
+	// Let's check that our level is valid first.
+	if( Level > MAXIMUM_ATTAINABLE_LEVEL ) // too far.
+		Level = MAXIMUM_ATTAINABLE_LEVEL;
 
 	// Iterate levelinfo map until we find the right class+race.
 	LevelInfoMap::iterator itr = mLevelInfo.begin();
@@ -2034,14 +2030,10 @@ LevelInfo* ObjectMgr::GetLevelInfo(uint32 Race, uint32 Class, uint32 Level)
 		if( itr->first.first == Race && itr->first.second == Class)
 		{
 			// We got a match.
-			// Let's check that our level is valid first.
-			if( Level > maxlevel ) // too far.
-				Level = maxlevel;
 
 			// Pull the level information from the second map.
 			LevelMap::iterator it2 = itr->second->find( Level );
 			ASSERT( it2 != itr->second->end() );
-
 			return it2->second;
 		}
 	}
