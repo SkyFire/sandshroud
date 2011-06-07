@@ -1,0 +1,1 @@
+ALTER TABLE `playeritems` ADD `gems` varchar(255) NOT NULL DEFAULT '';

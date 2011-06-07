@@ -721,7 +721,7 @@ struct ItemPrototype
 	uint32 TotemCategory;
 	SocketInfo Sockets[3];
 	uint32 SocketBonus;
-	uint32 GemProperties;
+	int32 GemProperties;
 	int32 DisenchantReqSkill;
 	int32 Lootgold;
 	uint32 ArmorDamageModifier;

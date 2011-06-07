@@ -29,6 +29,7 @@ struct EnchantmentInstance
 	uint32 Duration;
 	bool RemoveAtLogout;
 	uint32 RandomSuffix;
+	bool Dummy;
 };
 
 const static ItemProf prof[22] = { {4, 2}, {4, 4}, {4, 8}, {4, 16}, {4, 64},
@@ -175,8 +176,9 @@ public:
 	}
 
 	//! Adds an enchantment to the item.
-	int32 AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Perm = false, bool apply = true, bool RemoveAtLogout = false, uint32 Slot_ = 0, uint32 RandomSuffix = 0 );
-	uint32 GetSocketsCount();
+	int32 AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Perm = false, bool apply = true, bool RemoveAtLogout = false, uint32 Slot_ = 0, uint32 RandomSuffix = 0, bool dummy = false );
+	uint32 GetMaxSocketsCount();
+	uint32 Gems[3];
 
 	//! Removes an enchantment from the item.
 	void RemoveEnchantment( uint32 EnchantmentSlot );

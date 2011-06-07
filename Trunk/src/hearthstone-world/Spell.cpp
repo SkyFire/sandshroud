@@ -3618,7 +3618,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if(HasSpellEffect(SPELL_EFFECT_DISENCHANT))
 		{
 			// check if item can be disenchanted
-			if(proto->DisenchantReqSkill < 1)
+			if(proto->DisenchantReqSkill < 0)
 				return SPELL_FAILED_CANT_BE_DISENCHANTED;
 			// check if we have high enough skill
 			if((int32)p_caster->_GetSkillLineCurrent(SKILL_ENCHANTING) < proto->DisenchantReqSkill)

@@ -3503,7 +3503,7 @@ uint32 ItemInterface::GetSocketedGemCountWithLimitId(uint32 Id)
 
 		if( it != NULL )
 		{
-			for( uint32 socketcount = 0; socketcount < it->GetSocketsCount(); socketcount++ )
+			for( uint32 socketcount = 0; socketcount < it->GetMaxSocketsCount(); socketcount++ )
 			{
 				EnchantmentInstance *e = it->GetEnchantment( 2 + socketcount );
 				if (e && e->Enchantment)

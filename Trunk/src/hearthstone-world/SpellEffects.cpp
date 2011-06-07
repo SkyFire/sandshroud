@@ -5371,7 +5371,7 @@ void Spell::SpellEffectAddPrismaticSocket(uint32 i)
 	if(!item_owner)
 		return;
 
-	if(itemTarget->GetSocketsCount() >= 3)
+	if(itemTarget->GetMaxSocketsCount() >= 3)
 	{
 		SendCastResult(SPELL_FAILED_MAX_SOCKETS);
 		return;

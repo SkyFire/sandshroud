@@ -4128,9 +4128,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 
 	//fast check to skip mod applying if the item doesnt meat the requirements.
 	if( item->GetUInt32Value( ITEM_FIELD_DURABILITY ) == 0 && item->GetUInt32Value( ITEM_FIELD_MAXDURABILITY ) && justdrokedown == false )
-	{
 		return;
-	}
 
 	//check for rnd prop
 	item->ApplyRandomProperties( true );
@@ -4347,6 +4345,15 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 
 	// Resistances
 	//TODO: FIXME: can there be negative resistances from items?
+	if( proto->HolyRes )
+	{
+		if( apply )
+			FlatResistanceModifierPos[RESISTANCE_HOLY] += proto->HolyRes;
+		else
+			FlatResistanceModifierPos[RESISTANCE_HOLY] -= proto->HolyRes;
+		CalcResistance(RESISTANCE_HOLY);
+	}
+
 	if( proto->FireRes )
 	{
 		if( apply )
@@ -8000,14 +8007,10 @@ void Player::AddItemsToWorld()
 			pItem->PushToWorld(m_mapMgr);
 
 			if(i < INVENTORY_SLOT_BAG_END)	  // only equipment slots get mods.
-			{
 				_ApplyItemMods(pItem, i, true, false, true);
-			}
 
-			if(i >= CURRENCYTOKEN_SLOT_START && i < CURRENCYTOKEN_SLOT_END)
-			{
+			if(i >= CURRENCYTOKEN_SLOT_START)
 				UpdateKnownCurrencies(pItem->GetEntry(), true);
-			}
 
 			if(pItem->IsContainer() && GetItemInterface()->IsBagSlot(i))
 			{

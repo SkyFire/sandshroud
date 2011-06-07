@@ -25,7 +25,7 @@ Item::Item() //this is called when constructing as container
 	m_owner = NULLPLR;
 	locked = false;
 	wrapped_item_id = 0;
-
+	memset(Gems, 0, sizeof(uint32)*3);
 	Enchantments.clear();
 }
 
@@ -50,8 +50,8 @@ Item::Item( uint32 high, uint32 low )
 	random_prop = 0;
 	random_suffix = 0;
 	wrapped_item_id = 0;
-	for( uint32 i = 0; i < 3; ++i )
-		OnUseSpells[i] = 0;
+	memset(Gems, 0, sizeof(uint32)*3);
+	memset(OnUseSpells, 0, sizeof(uint32)*3);
 }
 
 Item::~Item()
@@ -122,6 +122,13 @@ void Item::Create( uint32 itemid, Player* owner )
 		locked = false;
 }
 
+char* GemReadFormat[3] =
+{
+	"0:%u;",
+	"1:%u;",
+	"2:%u;",
+};
+
 void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 {
 	uint32 itemid = fields[2].GetUInt32();
@@ -182,19 +189,24 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	EnchantEntry* entry;
 	uint32 time_left;
 	uint32 enchslot;
+	uint32 dummy = 0;
 
 	for( vector<string>::iterator itr = enchants.begin(); itr != enchants.end(); itr++ )
 	{
-		if( sscanf( (*itr).c_str(), "%u,%u,%u", (unsigned int*)&enchant_id, (unsigned int*)&time_left, (unsigned int*)&enchslot) == 3 )
+		if( sscanf( (*itr).c_str(), "%u,%u,%u,%u", (unsigned int*)&enchant_id, (unsigned int*)&time_left, (unsigned int*)&enchslot, (unsigned int*)&dummy) > 3 )
 		{
 			entry = dbcEnchant.LookupEntry( enchant_id );
 			if( entry && entry->Id == enchant_id )
 			{
-				AddEnchantment( entry, time_left, ( time_left == 0 ), false, false, enchslot );
+				AddEnchantment( entry, time_left, ( time_left == 0 ), false, false, enchslot, 0, ((dummy > 0) ? true : false) );
 				//(enchslot != 2) ? false : true, false);
 			}
 		}
 	}
+
+	string gem_field = fields[16].GetString();
+	for( uint8 k = 0; k < 3; k++ )
+		sscanf( gem_field.c_str(), GemReadFormat[k], &Gems[k]);
 
 	ApplyRandomProperties( false );
 
@@ -310,7 +322,7 @@ void Item::SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffe
 	ss << GetUInt32Value(ITEM_FIELD_STACK_COUNT) << ",";
 	ss << (int32)GetChargesLeft() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_FLAGS) << ",";
-	ss << random_prop << ", " << random_suffix << ", ";
+	ss << random_prop << "," << random_suffix << ",";
 	ss << GetTextID() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_DURABILITY) << ",";
 	ss << static_cast<int>(containerslot) << ",";
@@ -334,7 +346,22 @@ void Item::SaveToDB( int16 containerslot, int16 slot, bool firstsave, QueryBuffe
 			{
 				ss << itr->second.Enchantment->Id << ",";
 				ss << remaining_duration << ",";
-				ss << itr->second.Slot << ";";
+				ss << itr->second.Slot << ",";
+				ss << uint32(itr->second.Dummy ? 1 : 0) << ";";
+			}
+		}
+	}
+
+	ss << "','";
+	if(Gems[0] || Gems[1] || Gems[2])
+	{	// We get socket.
+		for(uint32 g = 0; g < 3; g++)
+		{
+			// Socket screen turn on.
+			if(Gems[g])
+			{
+				ss << g; // All your gem are belong to us.
+				ss << ":" << Gems[g] << ";";
 			}
 		}
 	}
@@ -509,8 +536,7 @@ void Item::SetOwner( Player* owner )
 	m_owner = owner;
 }
 
-
-int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Perm /* = false */, bool apply /* = true */, bool RemoveAtLogout /* = false */, uint32 Slot_, uint32 RandomSuffix )
+int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Perm /* = false */, bool apply /* = true */, bool RemoveAtLogout /* = false */, uint32 Slot_, uint32 RandomSuffix /* = 0 */, bool dummy /* = false */ )
 {
 	int32 Slot = Slot_;
 	m_isDirty = true;
@@ -524,6 +550,7 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 	Instance.Duration = Duration;
 	Instance.RemoveAtLogout = RemoveAtLogout;
 	Instance.RandomSuffix = RandomSuffix;
+	Instance.Dummy = dummy;
 
 	// Set the enchantment in the item fields.
 	uint32 EnchantBase = Slot * 3 + ITEM_FIELD_ENCHANTMENT_1_1;
@@ -541,9 +568,7 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 
 	// Add the removal event.
 	if( Duration )
-	{
 		sEventMgr.AddEvent( TO_ITEM(this), &Item::RemoveEnchantment, uint32(Slot), EVENT_REMOVE_ENCHANTMENT1 + Slot, Duration * 1000, 1, 0 );
-	}
 
 	// No need to send the log packet, if the owner isn't in world (we're still loading)
 	if( !owner->IsInWorld() )
@@ -560,14 +585,15 @@ int32 Item::AddEnchantment( EnchantEntry* Enchantment, uint32 Duration, bool Per
 		owner->GetSession()->SendPacket( &EnchantLog );
 
 		if( owner->GetTradeTarget() )
-		{
 			owner->SendTradeUpdate();
-		}
+
+		if(Instance.Dummy)
+			return Slot;
 
 		/* Only apply the enchantment bonus if we're equipped */
 		uint8 slot = m_owner->GetItemInterface()->GetInventorySlotByGuid( GetGUID() );
 		if( slot > EQUIPMENT_SLOT_START && slot < EQUIPMENT_SLOT_END )
-            ApplyEnchantmentBonus( Slot, APPLY );
+			ApplyEnchantmentBonus( Slot, APPLY );
 	}
 
 	owner->SaveToDB(false);
@@ -610,6 +636,9 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 
 	EnchantEntry* Entry = itr->second.Enchantment;
 	uint32 RandomSuffixAmount = itr->second.RandomSuffix;
+
+	if( itr->second.Dummy )
+		return;
 
 	if( itr->second.BonusApplied == Apply )
 		return;
@@ -768,7 +797,7 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 					else
 					{
 						if( Entry->spell[c] != 0 )
-								m_owner->RemoveAura( Entry->spell[c] );
+							m_owner->RemoveAura( Entry->spell[c] );
 					}
 
 				}break;
@@ -780,13 +809,9 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 						val = RANDOM_SUFFIX_MAGIC_CALCULATION( RandomSuffixAmount, GetItemRandomSuffixFactor() );
 
 					if( Apply )
-					{
 						m_owner->FlatResistanceModifierPos[Entry->spell[c]] += val;
-					}
 					else
-					{
 						m_owner->FlatResistanceModifierPos[Entry->spell[c]] -= val;
-					}
 					m_owner->CalcResistance( Entry->spell[c] );
 				}break;
 
@@ -828,17 +853,16 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 
 			case 7:
 				{
-				if( Apply )
-				{
-					for( uint32 i = 0; i < 3; ++i )
-						OnUseSpells[ i ] = Entry->spell[ i ];
-
-				}
-				else
-				{
-					for( uint32 i = 0; i < 3; ++i )
-						OnUseSpells[ i ] = 0;
-				}
+					if( Apply )
+					{
+						for( uint32 i = 0; i < 3; ++i )
+							OnUseSpells[ i ] = Entry->spell[ i ];
+					}
+					else
+					{
+						for( uint32 i = 0; i < 3; ++i )
+							OnUseSpells[ i ] = 0;
+					}
 				}break;
 
 			case 8:{}break;
@@ -858,7 +882,69 @@ void Item::ApplyEnchantmentBonuses()
 	for( itr = Enchantments.begin(); itr != Enchantments.end();  )
 	{
 		itr2 = itr++;
-		ApplyEnchantmentBonus( itr2->first, APPLY );
+		if(!itr2->second.Dummy)
+			ApplyEnchantmentBonus( itr2->first, APPLY );
+	}
+
+	uint32 value = 0;
+	ItemPrototype* proto = NULL;
+	for(uint32 gem = 0; gem < 3; gem++)
+	{
+		if(!Gems[gem])
+			continue;
+
+		proto = ItemPrototypeStorage.LookupEntry(Gems[gem]);
+		if(proto == NULL)
+			continue;
+
+		if(proto->Armor)
+		{
+			m_owner->BaseResistance[RESISTANCE_ARMOR] += proto->Armor;
+			m_owner->CalcResistance(RESISTANCE_ARMOR);
+		}
+
+		if( proto->HolyRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_HOLY] += proto->HolyRes;
+			m_owner->CalcResistance(RESISTANCE_HOLY);
+		}
+
+		if( proto->FireRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_FIRE] += proto->FireRes;
+			m_owner->CalcResistance(RESISTANCE_FIRE);
+		}
+
+		if( proto->NatureRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_NATURE] += proto->NatureRes;
+			m_owner->CalcResistance(RESISTANCE_NATURE);
+		}
+
+		if( proto->FrostRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_FROST] += proto->FrostRes;
+			m_owner->CalcResistance(RESISTANCE_FROST);
+		}
+
+		if( proto->ShadowRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_SHADOW] += proto->ShadowRes;
+			m_owner->CalcResistance(RESISTANCE_SHADOW);
+		}
+
+		if( proto->ArcaneRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_ARCANE] += proto->ArcaneRes;
+			m_owner->CalcResistance(RESISTANCE_ARCANE);
+		}
+
+		for(uint32 i = 0; i < 10; i++)
+		{
+			if(value = proto->Stats[i].Value)
+				m_owner->ModifyBonuses( proto->Stats[i].Type, value );
+		}
+		proto = NULL;
 	}
 }
 
@@ -868,7 +954,69 @@ void Item::RemoveEnchantmentBonuses()
 	for( itr = Enchantments.begin(); itr != Enchantments.end(); )
 	{
 		itr2 = itr++;
-		ApplyEnchantmentBonus( itr2->first, REMOVE );
+		if(!itr2->second.Dummy)
+			ApplyEnchantmentBonus( itr2->first, REMOVE );
+	}
+
+	int32 value = 0;
+	ItemPrototype* proto = NULL;
+	for(uint32 gem = 0; gem < 3; gem++)
+	{
+		if(!Gems[gem])
+			continue;
+
+		proto = ItemPrototypeStorage.LookupEntry(Gems[gem]);
+		if(proto == NULL)
+			continue;
+
+		if(proto->Armor)
+		{
+			m_owner->BaseResistance[RESISTANCE_ARMOR] -= proto->Armor;
+			m_owner->CalcResistance(RESISTANCE_ARMOR);
+		}
+
+		if( proto->HolyRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_HOLY] -= proto->HolyRes;
+			m_owner->CalcResistance(RESISTANCE_HOLY);
+		}
+
+		if( proto->FireRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_FIRE] -= proto->FireRes;
+			m_owner->CalcResistance(RESISTANCE_FIRE);
+		}
+
+		if( proto->NatureRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_NATURE] -= proto->NatureRes;
+			m_owner->CalcResistance(RESISTANCE_NATURE);
+		}
+
+		if( proto->FrostRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_FROST] -= proto->FrostRes;
+			m_owner->CalcResistance(RESISTANCE_FROST);
+		}
+
+		if( proto->ShadowRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_SHADOW] -= proto->ShadowRes;
+			m_owner->CalcResistance(RESISTANCE_SHADOW);
+		}
+
+		if( proto->ArcaneRes )
+		{
+			m_owner->FlatResistanceModifierPos[RESISTANCE_ARCANE] -= proto->ArcaneRes;
+			m_owner->CalcResistance(RESISTANCE_ARCANE);
+		}
+
+		for(uint32 i = 0; i < 10; i++)
+		{
+			if(value = proto->Stats[i].Value)
+				m_owner->ModifyBonuses( proto->Stats[i].Type, -value );
+		}
+		proto = NULL;
 	}
 }
 
@@ -880,7 +1028,7 @@ void Item::EventRemoveEnchantment( uint32 Slot )
 
 int32 Item::FindFreeEnchantSlot( EnchantEntry* Enchantment, uint32 random_type )
 {
-	uint32 GemSlotsReserve = GetSocketsCount();
+	uint32 GemSlotsReserve = GetMaxSocketsCount();
 	if( GetProto()->SocketBonus )
 		GemSlotsReserve++;
 
@@ -1033,7 +1181,7 @@ bool Item::IsGemRelated( EnchantEntry* Enchantment )
 	return( Enchantment->GemEntry != 0 );
 }
 
-uint32 Item::GetSocketsCount()
+uint32 Item::GetMaxSocketsCount()
 {
 	uint32 c = 0;
 	for( uint32 x = 0; x < 3; x++ )
