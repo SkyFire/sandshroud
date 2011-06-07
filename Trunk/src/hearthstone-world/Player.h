@@ -1703,7 +1703,7 @@ public:
 	{
 		EventTeleport(mapid, x, y, z, 0.0f, phase);
 	}
-	void ApplyLevelInfo(LevelInfo* Info, uint32 Level);
+	void ApplyLevelInfo(uint32 Level);
 	void BroadcastMessage(const char* Format, ...);
 	map<uint32, set<uint32> > SummonSpells;
 	map<uint32, PetSpellMap*> PetSpells;

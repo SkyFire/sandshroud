@@ -598,14 +598,14 @@ void Creature::CalcResistance(uint32 type)
 
 void Creature::CalcStat(uint32 type)
 {
-	int32 res=(BaseStats[type]*(100+StatModPct[type]))/100;
+	int32 res = (BaseStats[type]*(100+StatModPct[type]))/100;
 
-	res+=FlatStatMod[type];
-	if(res<0)
-		res=0;
+	res += FlatStatMod[type];
+	if(res < 0)
+		res = 0;
 
-	res+=(res*(TotalStatModPct[type]))/100;
-	SetUInt32Value(UNIT_FIELD_STAT0+type,res>0?res:0);
+	res += ((res*TotalStatModPct[type])/100);
+	SetUInt32Value(UNIT_FIELD_STAT0+type, ((res > 0) ? res : 0));
 }
 
 

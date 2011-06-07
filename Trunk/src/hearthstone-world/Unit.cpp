@@ -2675,6 +2675,15 @@ void Unit::CalculateResistanceReduction(Unit* pVictim,dealdamage * dmg, SpellEnt
 		(*dmg).resisted_damage = 0;
 }
 
+uint32 roll_results[5] =
+{
+	SPELL_DID_HIT_MISS,
+	SPELL_DID_HIT_DODGE,
+	SPELL_DID_HIT_PARRY,
+	SPELL_DID_HIT_BLOCK,
+	SPELL_DID_HIT_SUCCESS
+};
+
 uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability )
 {
 	Item* it = NULLITEM;
@@ -2835,9 +2844,8 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 
 	//--------------------------------by victim state-------------------------------------------
 	if(pVictim->IsPlayer()&&pVictim->GetStandState()) //every not standing state is >0
-	{
 		hitchance = 100.0f;
-	}
+
 	//--------------------------------by damage type and by weapon type-------------------------
 	if( weapon_damage_type == RANGED )
 	{
@@ -2905,11 +2913,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	float Roll = RandomFloat(100.0f);
 	uint32 r = 0;
 	while (r<4&&Roll>chances[r])
-	{
 		r++;
-	}
-
-	uint32 roll_results[5] = { SPELL_DID_HIT_MISS,SPELL_DID_HIT_DODGE,SPELL_DID_HIT_PARRY,SPELL_DID_HIT_BLOCK,SPELL_DID_HIT_SUCCESS };
 	return roll_results[r];
 }
 

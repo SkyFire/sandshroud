@@ -745,7 +745,7 @@ bool Player::Create(WorldPacket& data )
 	uint32 lvl = GetUInt32Value(UNIT_FIELD_LEVEL);
 	lvlinfo = objmgr.GetLevelInfo(getRace(), getClass(), lvl);
 	if(lvlinfo)
-		ApplyLevelInfo(lvlinfo, lvl);
+		ApplyLevelInfo(lvl);
 
 	//THIS IS NEEDED
 	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, info->health);
@@ -1488,7 +1488,7 @@ void Player::GiveXP(uint32 xp, const uint64 &guid, bool allowbonus)
 		LevelInfo * oldlevel = lvlinfo;
 		lvlinfo = objmgr.GetLevelInfo(getRace(), getClass(), level);
 
-		ApplyLevelInfo(lvlinfo, level);
+		ApplyLevelInfo(level);
 
 		// Generate Level Info Packet and Send to client
 		SendLevelupInfo(
@@ -9030,29 +9030,25 @@ void Player::EventTeleport(uint32 mapid, float x, float y, float z, float o = 0.
 	sEventMgr.RemoveEvents(this,EVENT_PLAYER_TELEPORT);
 }
 
-void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
+void Player::ApplyLevelInfo(uint32 Level)
 {
 	// Apply level
 	uint32 PreviousLevel = GetUInt32Value(UNIT_FIELD_LEVEL);
 	SetUInt32Value(UNIT_FIELD_LEVEL, Level);
 
-	// Set next level conditions
-	SetUInt32Value(PLAYER_NEXT_LEVEL_XP, Info->XPToNextLevel);
+	CalculateBaseStats();
 
 	// Set stats
 	for(uint32 i = 0; i < 5; i++)
 	{
-		BaseStats[i] = Info->Stat[i];
+		BaseStats[i] = lvlinfo->Stat[i];
 		CalcStat(i);
 	}
 
-	CalculateBaseStats();
-
-	// Set health / mana
-	SetUInt32Value(UNIT_FIELD_MAXHEALTH, Info->BaseHP+Info->HP);
-	SetUInt32Value(UNIT_FIELD_HEALTH, Info->BaseHP+Info->HP);
-	SetUInt32Value(UNIT_FIELD_MAXPOWER1, Info->BaseMana+Info->Mana);
-	SetUInt32Value(UNIT_FIELD_POWER1, Info->BaseMana+Info->Mana);
+	_UpdateMaxSkillCounts();
+	UpdateStats();
+	if (m_playerInfo)
+		m_playerInfo->lastLevel = Level;
 
 	int32 Talents = Level - PreviousLevel;
 	if(PreviousLevel < 9)
@@ -9062,14 +9058,8 @@ void Player::ApplyLevelInfo(LevelInfo* Info, uint32 Level)
 	else if(Level >= 10)
 		ModUnsigned32Value(PLAYER_CHARACTER_POINTS, Talents);
 
-	// Set base fields
-	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, Info->BaseHP);
-	SetUInt32Value(UNIT_FIELD_BASE_MANA, Info->BaseMana);
-
-	_UpdateMaxSkillCounts();
-	UpdateStats();
-	if (m_playerInfo)
-		m_playerInfo->lastLevel = Level;
+	SetUInt32Value(UNIT_FIELD_HEALTH, GetUInt32Value(UNIT_FIELD_MAXHEALTH));
+	SetUInt32Value(UNIT_FIELD_POWER1, GetUInt32Value(UNIT_FIELD_MAXPOWER1));
 
 	GetAchievementInterface()->HandleAchievementCriteriaLevelUp( getLevel() );
 	InitGlyphsForLevel();
@@ -9566,15 +9556,11 @@ void Player::CalculateBaseStats()
 
 	memcpy(BaseStats, lvlinfo->Stat, sizeof(uint32) * 5);
 
-	SetUInt32Value(UNIT_FIELD_MAXHEALTH, lvlinfo->HP);
-	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, lvlinfo->BaseHP);
 	SetUInt32Value(PLAYER_NEXT_LEVEL_XP, lvlinfo->XPToNextLevel);
-
-	if(GetPowerType() == POWER_TYPE_MANA)
-	{
-		SetUInt32Value(UNIT_FIELD_MAXPOWER1, lvlinfo->Mana);
-		SetUInt32Value(UNIT_FIELD_BASE_MANA, lvlinfo->BaseMana);
-	}
+	SetUInt32Value(UNIT_FIELD_BASE_HEALTH, lvlinfo->BaseHP);
+	SetUInt32Value(UNIT_FIELD_MAXHEALTH, lvlinfo->HP);
+	SetUInt32Value(UNIT_FIELD_BASE_MANA, lvlinfo->BaseMana);
+	SetUInt32Value(UNIT_FIELD_MAXPOWER1, lvlinfo->Mana);
 }
 
 void Player::CompleteLoading()
@@ -10999,18 +10985,18 @@ void Player::_UpdateMaxSkillCounts()
 			{
 				switch(itr->second.Skill->type)
 				{
-					case SKILL_TYPE_WEAPON:
+				case SKILL_TYPE_WEAPON:
 					{
 						new_max = 5 * getLevel();
 					}break;
 
-					case SKILL_TYPE_LANGUAGE:
+				case SKILL_TYPE_LANGUAGE:
 					{
 						new_max = 300;
 					}break;
 
-					case SKILL_TYPE_PROFESSION:
-					case SKILL_TYPE_SECONDARY:
+				case SKILL_TYPE_PROFESSION:
+				case SKILL_TYPE_SECONDARY:
 					{
 						new_max = itr->second.MaximumValue;
 						if(itr->second.Skill->id == SKILL_RIDING)
