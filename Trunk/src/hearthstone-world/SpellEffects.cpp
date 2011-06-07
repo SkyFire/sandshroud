@@ -601,7 +601,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					if( p_caster->HasAura(34258) )
 						p_caster->CastSpell(p_caster, 34260, true);
 
-					if(unitTarget && (p_caster->HasAura(53696) || p_caster->HasAura(53695)))
+					if(p_caster->HasAura(53696) || p_caster->HasAura(53695))
 						p_caster->CastSpell(unitTarget, 68055, true);
 
 					// Damage Calculations:
@@ -611,7 +611,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 						{
 							p_caster->CastSpell(unitTarget, 31803, true);
 							dmg = (1+uint32(uint32(0.22f*p_caster->GetDamageDoneMod(SCHOOL_HOLY))+uint32(0.14f*p_caster->GetAP())));
-							if(unitTarget && unitTarget->HasActiveAura(31803))
+							if(unitTarget->HasActiveAura(31803))
 							{
 								uint8 stacksize = 1;
 								Aura* curse = unitTarget->FindActiveAura(31803);
@@ -624,7 +624,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 						{
 							p_caster->CastSpell(unitTarget, 53742, true);
 							dmg = (1+uint32(uint32(0.22f*p_caster->GetDamageDoneMod(SCHOOL_HOLY))+uint32(0.14f*p_caster->GetAP())));
-							if(unitTarget && unitTarget->HasAura(31803))
+							if(unitTarget->HasAura(31803))
 							{
 								uint8 stacksize = 1;
 								Aura* curse = unitTarget->FindActiveAura(31803);
@@ -5620,8 +5620,7 @@ void Spell::SpellEffectTriggerSpell(uint32 i) // Trigger Spell
 	if(unitTarget == NULL || m_caster == NULL )
 		return;
 
-	SpellEntry *spe = NULL;
-	spe = dbcSpell.LookupEntryForced(GetSpellProto()->EffectTriggerSpell[i]);
+	SpellEntry *spe = dbcSpell.LookupEntryForced(GetSpellProto()->EffectTriggerSpell[i]);
 	if(spe == NULL )
 		return;
 
@@ -5629,6 +5628,7 @@ void Spell::SpellEffectTriggerSpell(uint32 i) // Trigger Spell
 		return;
 
 	Spell* sp = new Spell( m_caster,spe,true,NULLAURA);
+	memcpy(sp->forced_basepoints, GetSpellProto()->EffectBasePoints, sizeof(uint32)*3);
 	SpellCastTargets tgt((spe->procflags2 & PROC_TARGET_SELF) ? m_caster->GetGUID() : unitTarget->GetGUID());
 	sp->prepare(&tgt);
 }
@@ -7851,36 +7851,24 @@ void Spell::SpellEffectDummyMelee( uint32 i ) // Normalized Weapon damage +
 		return;
 
 	uint32 pct_dmg_mod = 100;
-	if( GetSpellProto()->NameHash == SPELL_HASH_OVERPOWER && p_caster != NULL ) //warrior : overpower - let us clear the event and the combopoint count
+	if( p_caster != NULL &&  GetSpellProto()->NameHash == SPELL_HASH_OVERPOWER) //warrior : overpower - let us clear the event and the combopoint count
 	{
 		p_caster->NullComboPoints(); //some say that we should only remove 1 point per dodge. Due to cooldown you can't cast it twice anyway..
 	}
 	else if( GetSpellProto()->NameHash == SPELL_HASH_DEVASTATE)
 	{
-		//count the number of sunder armors on target
-		uint32 sunder_count=0;
-		SpellEntry *spellInfo= NULL;
-		spellInfo = dbcSpell.LookupEntry(25225);
-		for(uint32 x = MAX_POSITIVE_AURAS; x < MAX_AURAS; ++x)
+		// Player can apply only 58567 Sunder Armor effect.
+		Aura* aura = u_caster->FindActiveAura(58567);
+		if(aura == NULL)
+			u_caster->CastSpell(unitTarget, 58567, true);
+		else
 		{
-			if(unitTarget->m_auras[x] != NULL && unitTarget->m_auras[x]->GetSpellProto()->NameHash==SPELL_HASH_SUNDER_ARMOR)
-			{
-				sunder_count++;
-				spellInfo=unitTarget->m_auras[x]->GetSpellProto();
-			}
+			if(u_caster->HasAura(58388))
+				aura->ModStackSize(2);
+			else
+				aura->ModStackSize(1);
+			damage *= aura->stackSize;
 		}
-		if( spellInfo == NULL )
-			return; //omg how did this happen ?
-
-		//we should also cast sunder armor effect on target with or without dmg
-		Spell* spell(new Spell(u_caster, spellInfo ,true, NULLAURA));
-		spell->ProcedOnSpell = GetSpellProto();
-		spell->pSpellId=GetSpellProto()->Id;
-		SpellCastTargets targets(unitTarget->GetGUID());
-		spell->prepare(&targets);
-		if(!sunder_count)
-			return; //no damage = no joy
-		damage = damage*sunder_count;
 	}
 	// rogue - mutilate ads dmg if target is poisoned
 	// pure hax (damage join)
@@ -7928,11 +7916,13 @@ void Spell::SpellEffectDummyMelee( uint32 i ) // Normalized Weapon damage +
 
 	// rogue ambush etc
 	for (uint32 x =0;x<3;x++)
+	{
 		if(GetSpellProto()->Effect[x] == SPELL_EFFECT_WEAPON_PERCENT_DAMAGE)
 		{
 			add_damage = damage * (GetSpellProto()->EffectBasePoints[x]+1) /100;
 			return;
 		}
+	}
 
 	uint32 _type;
 	if( GetType() == SPELL_DMG_TYPE_RANGED )
@@ -7975,35 +7965,36 @@ void Spell::SpellEffectSpellSteal( uint32 i )
 	else
 		return;
 
-
 	for(uint32 x=start;x<end;x++)
-	if(unitTarget->m_auras[x])
 	{
-		aur = unitTarget->m_auras[x];
-		if(aur != NULL && aur->GetSpellId() != 15007 && !aur->IsPassive() && aur->IsPositive() && !(aur->GetSpellProto()->Flags5 & FLAGS5_NOT_STEALABLE)) //Nothing can dispel resurrection sickness
+		if(unitTarget->m_auras[x])
 		{
-			if(aur->GetSpellProto()->DispelType == DISPEL_MAGIC && aur->GetDuration() > 0)
+			aur = unitTarget->m_auras[x];
+			if(aur != NULL && aur->GetSpellId() != 15007 && !aur->IsPassive() && aur->IsPositive() && !(aur->GetSpellProto()->Flags5 & FLAGS5_NOT_STEALABLE)) //Nothing can dispel resurrection sickness
 			{
-				WorldPacket data(SMSG_SPELLDISPELLOG, 16);
-				data << m_caster->GetNewGUID();
-				data << unitTarget->GetNewGUID();
-				data << (uint32)1;
-				data << aur->GetSpellId();
-				m_caster->SendMessageToSet(&data,true);
-				Aura* aura(new Aura(aur->GetSpellProto(), (aur->GetDuration()>120000) ? 120000 : aur->GetDuration(), u_caster, u_caster));
-				aura->stackSize = aur->stackSize;
-
-				// copy the mods across
-				for( m = 0; m < aur->GetModCount(); ++m )
+				if(aur->GetSpellProto()->DispelType == DISPEL_MAGIC && aur->GetDuration() > 0)
 				{
-					Modifier *mod = aur->GetMod(m);
-					aura->AddMod(mod->m_type, mod->m_baseAmount, mod->m_miscValue, mod->i);
-				}
+					WorldPacket data(SMSG_SPELLDISPELLOG, 16);
+					data << m_caster->GetNewGUID();
+					data << unitTarget->GetNewGUID();
+					data << (uint32)1;
+					data << aur->GetSpellId();
+					m_caster->SendMessageToSet(&data,true);
+					Aura* aura(new Aura(aur->GetSpellProto(), (aur->GetDuration()>120000) ? 120000 : aur->GetDuration(), u_caster, u_caster));
+					aura->stackSize = aur->stackSize;
 
-				u_caster->AddAura(aura);
-				unitTarget->RemoveAuraBySlot(x);
-				if( --spells_to_steal <= 0 )
-					break; //exit loop now
+					// copy the mods across
+					for( m = 0; m < aur->GetModCount(); ++m )
+					{
+						Modifier *mod = aur->GetMod(m);
+						aura->AddMod(mod->m_type, mod->m_baseAmount, mod->m_miscValue, mod->i);
+					}
+
+					u_caster->AddAura(aura);
+					unitTarget->RemoveAuraBySlot(x);
+					if( --spells_to_steal <= 0 )
+						break; //exit loop now
+				}
 			}
 		}
 	}

@@ -1895,25 +1895,6 @@ void ObjectMgr::GenerateLevelUpInfo()
 					}
 				}
 
-				// Apply HP/Mana
-				uint32 HP = 0;
-				if( lvl->Stat[STAT_STAMINA] > 20 )
-				{
-					HP = 20;
-					HP += ( (lvl->Stat[STAT_STAMINA]-20) * 10);
-				}
-				else
-					HP = lvl->Stat[STAT_STAMINA];
-
-				uint32 Mana = 0;
-				if( lvl->Stat[STAT_INTELLECT] > 20 )
-				{
-					Mana = 20;
-					Mana += ((lvl->Stat[STAT_INTELLECT]-20) * 10);
-				}
-				else
-					Mana = lvl->Stat[STAT_INTELLECT];
-
 				uint32 BaseHP = 0;
 				uint32 BaseMana = 0;
 				if(Level <= MAX_PREDEFINED_NEXTLEVELXP)
@@ -1975,7 +1956,6 @@ void ObjectMgr::GenerateLevelUpInfo()
 					}
 
 					float perlevmod = 4.0f + (Level / 16.0f);
-
 					BaseMana = uint32(BaseMana / (perlevmod - (Level / 10.0f)));
 					BaseHP = uint32(BaseHP / (perlevmod - (Level / 10.0f)));
 				}
@@ -1985,8 +1965,30 @@ void ObjectMgr::GenerateLevelUpInfo()
 					BaseMana = GetBaseManaForLevel(Level, Class);
 				}
 
-				lvl->HP = HP + BaseHP;
-				lvl->Mana = Mana + BaseMana;
+				// Apply HP/Mana
+				uint32 HP = BaseHP;
+				if( lvl->Stat[STAT_STAMINA] > 20 )
+				{
+					HP += 20;
+					HP += ( (lvl->Stat[STAT_STAMINA]-20) * 10);
+				}
+				else
+					HP += lvl->Stat[STAT_STAMINA];
+
+				uint32 Mana = BaseMana;
+				if(BaseMana)
+				{
+					if( lvl->Stat[STAT_INTELLECT] > 20 )
+					{
+						Mana += 20;
+						Mana += ((lvl->Stat[STAT_INTELLECT]-20) * 10);
+					}
+					else
+						Mana += lvl->Stat[STAT_INTELLECT];
+				}
+
+				lvl->HP = HP;
+				lvl->Mana = Mana;
 				lvl->BaseHP = BaseHP;
 				lvl->BaseMana = BaseMana;
 

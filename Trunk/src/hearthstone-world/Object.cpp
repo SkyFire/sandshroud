@@ -2034,8 +2034,9 @@ void Object::EventSetUInt32Value(uint32 index, uint32 value)
 void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32 unitEvent, uint32 spellId, bool no_remove_auras)
 {
 	Player* plr = NULLPLR;
-
-	if( !pVictim || !pVictim->isAlive() || !pVictim->IsInWorld() || !IsInWorld() )
+	if(!IsInWorld())
+		return;
+	if( !pVictim || !pVictim->isAlive() || !pVictim->IsInWorld())
 		return;
 	if( pVictim->IsPlayer() && TO_PLAYER( pVictim )->GodModeCheat == true )
 		return;
