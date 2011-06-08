@@ -505,6 +505,7 @@ void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
 void InformationCore::SendRealms(AuthSocket * Socket)
 {
 	Realm* realm = NULL;
+	realmLock.Acquire();
 	HM_NAMESPACE::hash_map<uint32, uint8>::iterator it;
 	map<uint32, Realm*>::iterator itr = m_realms.begin();
 	if(Socket->GetBuild() <= 6005) // PreBC
@@ -559,11 +560,6 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		Socket->Send((const uint8*)data.contents(), uint32(data.size()));
 		return;
 	}
-
-	Account * acct = sAccountMgr.GetAccount(Socket->GetAccountName());
-	bool isGM = ( acct ? (acct->GMFlags != NULL) : false );
-
-	realmLock.Acquire();
 
 	// packet header
 	ByteBuffer data(m_realms.size() * 150 + 20);
