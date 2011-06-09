@@ -205,9 +205,8 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	}
 
 	Realm * realm = new Realm;
+	memset(realm, 0, sizeof(Realm*));
 	realm->Name = Name;
-	realm->Colour = 0;
-	realm->RequiredClient = 0;
 	realm->ServerSocket = this;
 	recvData >> realm->Address;
 	uint16 tester = 0;
