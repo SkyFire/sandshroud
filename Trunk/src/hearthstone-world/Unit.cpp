@@ -3113,19 +3113,19 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 //==========================================================================================
 //==============================Special Chances Base Calculation============================
 //==========================================================================================
-//<THE SHIT> to avoid Linux bug.
-float diffVcapped = (float)self_skill;
-if(int32(pVictim->getLevel()*5)>victim_skill)
-	diffVcapped -=(float)victim_skill;
-else
-	diffVcapped -=(float)(pVictim->getLevel()*5);
+	//<THE SHIT> to avoid Linux bug.
+	float diffVcapped = (float)self_skill;
+	if(int32(pVictim->getLevel()*5)>victim_skill)
+		diffVcapped -=(float)victim_skill;
+	else
+		diffVcapped -=(float)(pVictim->getLevel()*5);
 
-float diffAcapped = (float)victim_skill;
-if(int32(getLevel()*5)>self_skill)
-	diffAcapped -=(float)self_skill;
-else
-	diffAcapped -=(float)(getLevel()*5);
-//<SHIT END>
+	float diffAcapped = (float)victim_skill;
+	if(int32(getLevel()*5)>self_skill)
+		diffAcapped -=(float)self_skill;
+	else
+		diffAcapped -=(float)(getLevel()*5);
+	//<SHIT END>
 
 //--------------------------------crushing blow chance--------------------------------------
 	if(pVictim->IsPlayer()&&!IsPlayer()&&!ability && !dmg.school_type)

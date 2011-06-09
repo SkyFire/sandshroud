@@ -50,7 +50,12 @@ void WorldSession::HandleAttackSwingOpcode( WorldPacket & recv_data )
 	}
 
 	if(pEnemy->isDead() || _player->isDead())		// haxors :(
+	{
+		if(sLog.IsOutProccess())
+			printf("Oh he dead.\n");
+		HandleAttackStopOpcode(recv_data);
 		return;
+	}
 
 	// Faction "Hack" by Deathshit
 	// Implemented Hackfix for quest 1640
