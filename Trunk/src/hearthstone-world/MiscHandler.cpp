@@ -223,25 +223,27 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 			plr->GetSession()->OutPacket(SMSG_LOOT_CLEAR_MONEY);
 	}
 
+	WorldPacket pkt(SMSG_LOOT_MONEY_NOTIFY, 100);
 	if(!_player->InGroup())
 	{
 		if((_player->GetUInt32Value(PLAYER_FIELD_COINAGE) + money) >= PLAYER_MAX_GOLD)
 			return;
 
+		pkt << money;
+		SendPacket(&pkt);
 		_player->ModUnsigned32Value( PLAYER_FIELD_COINAGE , money);
 		pLootObj->m_loot.gold = 0;
 	}
 	else
 	{
-		//this code is wrong mustbe party not raid!
 		Group* party = _player->GetGroup();
 		pLootObj->m_loot.gold = 0;
 
 		vector<Player*  > targets;
 		targets.reserve(party->MemberCount());
 
-		GroupMembersSet::iterator itr;
 		SubGroup * sgrp;
+		GroupMembersSet::iterator itr;
 		party->getLock().Acquire();
 		for(uint32 i = 0; i < party->GetSubGroupCount(); i++)
 		{
@@ -258,8 +260,6 @@ void WorldSession::HandleLootMoneyOpcode( WorldPacket & recv_data )
 			return;
 
 		uint32 share = money / uint32(targets.size());
-
-		WorldPacket pkt(SMSG_LOOT_MONEY_NOTIFY, 100);
 		pkt << share;
 
 		for(vector<Player*>::iterator itr = targets.begin(); itr != targets.end(); itr++)

@@ -7924,6 +7924,7 @@ void Player::RemovePlayerPet(uint32 pet_number)
 		EventDismissPet();
 	}
 }
+
 #ifndef CLUSTERING
 void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id)
 {
@@ -7986,6 +7987,7 @@ void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending,
 	m_sentTeleportPosition = v;
 	SetPosition(v);
 	ResetHeartbeatCoords();
+	ApplyPlayerRestState(false); // If we don't, and we teleport inside, we'll be rested regardless.
 	if(GetItemInterface())
 		GetItemInterface()->CheckAreaItems();
 
