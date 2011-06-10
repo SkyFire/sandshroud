@@ -2033,7 +2033,6 @@ void Object::EventSetUInt32Value(uint32 index, uint32 value)
 
 void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32 unitEvent, uint32 spellId, bool no_remove_auras)
 {
-	Player* plr = NULLPLR;
 	if(!IsInWorld())
 		return;
 	if( !pVictim || !pVictim->isAlive() || !pVictim->IsInWorld())
@@ -2045,6 +2044,12 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 
 	if( pVictim->GetStandState() )//not standing-> standup
 		pVictim->SetStandState( STANDSTATE_STAND );//probably mobs also must standup
+
+	Player* plr = NULLPLR;
+	if(IsPet())
+		plr = TO_PET(this)->GetPetOwner();
+	else if(IsPlayer())
+		plr = TO_PLAYER(this);
 
 	// Player we are attacking, or the owner of totem/pet/etc
 	Player *pOwner = pVictim->IsPlayer() ? TO_PLAYER(pVictim) : NULL;
@@ -2136,12 +2141,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		if(IsPlayer() && ! TO_PLAYER(this)->CombatStatus.IsInCombat())
 			sHookInterface.OnEnterCombat( TO_PLAYER(this), TO_PLAYER(this) );
 
-		if(IsPet())
-			plr = TO_PET(this)->GetPetOwner();
-		else if(IsPlayer())
-			plr = TO_PLAYER(this);
-
-		if(plr != NULL && plr->IsPlayer() && pVictim->GetTypeId() == TYPEID_UNIT) // Units can't tag..
+		if(plr != NULL && pVictim->IsCreature())
 			TO_CREATURE(pVictim)->Tag(plr);
 
 		// Pepsi1x1: is this correct this
@@ -2177,20 +2177,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	}
 
 	//* BATTLEGROUND DAMAGE COUNTER *//
-	if( pVictim != TO_UNIT(this) )
+	if( pVictim != TO_UNIT(this) && plr != NULL )
 	{
-		if( IsPlayer() )
-		{
-			plr = TO_PLAYER(this);
-		}
-		else if( IsPet() )
-		{
-			plr = TO_PET(this)->GetPetOwner();
-			if( plr != NULL && plr->GetMapMgr() == GetMapMgr() )
-				plr = NULLPLR;
-		}
-
-		if( plr != NULL && plr->m_bg != NULL && plr->GetMapMgr() == GetMapMgr() )
+		if(plr->m_bg != NULL)
 		{
 			plr->m_bgScore.DamageDone += damage;
 			plr->m_bg->UpdatePvPData();
@@ -2362,13 +2351,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			CALL_INSTANCE_SCRIPT_EVENT( m_mapMgr, OnPlayerDeath )( TO_PLAYER( pVictim ), pKiller );
 
 			if( IsCreature() )
-			{
 				TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaKilledByCreature( TO_CREATURE(this)->GetUInt32Value(OBJECT_FIELD_ENTRY) );
-			}
 			else if(IsPlayer())
-			{
 				TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaKilledByPlayer();
-			}
 		}
 		else if(pVictim->IsVehicle())
 		{
@@ -2392,9 +2377,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		TO_UNIT(this)->SummonExpireAll(false);
 
 		if( pVictim->IsPlayer() && (!IsPlayer() || pVictim == TO_UNIT(this) ) )
-		{
 			TO_PLAYER( pVictim )->DeathDurabilityLoss(0.10);
-		}
 
 		/* Zone Under Attack */
 		MapInfo * pZMapInfo = NULL;
@@ -2484,8 +2467,8 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		pVictim->CombatStatus.Vanished();
 
 		/* Stop Units from attacking */
-		if( plr && plr->IsInWorld() )
-			plr->EventAttackStop();
+		if( pAttacker && pAttacker->IsInWorld() )
+			pAttacker->EventAttackStop();
 
 		if( IsUnit() )
 		{
@@ -2511,12 +2494,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			}
 		}
 		/* -------------------------------- HONOR + BATTLEGROUND CHECKS ------------------------ */
-		plr = NULLPLR;
-		if( IsPlayer() )
-			plr = TO_PLAYER( this );
-		else if( IsPet())
-			plr = TO_PET( this )->GetPetOwner();
-
 		if( plr != NULL)
 		{
 			if( plr->m_bg != NULL )
@@ -2558,15 +2535,16 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		/* -------------------------------------- CALL SCRIPTING END ------------------------------- */
 
 		uint64 victimGuid = pVictim->GetGUID();
+		SetFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_DEAD );
 
 		// only execute loot code if we were tagged
-		if( pVictim->GetTypeId() == TYPEID_UNIT && TO_CREATURE(pVictim)->m_taggingPlayer != 0 )
+		if( pVictim->IsCreature() && TO_CREATURE(pVictim)->m_taggingPlayer != 0 )
 		{
 			// fill loot vector
 			TO_CREATURE(pVictim)->GenerateLoot();
 
 			// update visual.
-			TO_CREATURE(pVictim)->UpdateLootAnimation(plr);
+			TO_CREATURE(pVictim)->UpdateLootAnimation(pAttacker);
 		}
 
 		// player loot for battlegrounds
@@ -2584,11 +2562,11 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		{
 			//--------------------------------- POSSESSED CREATURES -----------------------------------------
 			if( pVictim->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE) )
-			{//remove possess aura from controller
+			{	//remove possess aura from controller
 				Player* vController = GetMapMgr()->GetPlayer( (uint32)pVictim->GetUInt64Value(UNIT_FIELD_CHARMEDBY) );
 				if( vController )
 				{
-					if( vController->GetUInt64Value( UNIT_FIELD_CHARM ) )//make sure he is target controller
+					if( vController->GetUInt64Value( UNIT_FIELD_CHARM ) == victimGuid )//make sure he is target controller
 					{
 						vController->UnPossess();
 					}
@@ -2601,7 +2579,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			if(IsPlayer())
 			{
 				WorldPacket data(SMSG_PARTYKILLLOG, 16);
-				data << GetGUID() << pVictim->GetGUID();
+				data << GetGUID() << victimGuid;
 				SendMessageToSet(&data, true);
 			}
 
