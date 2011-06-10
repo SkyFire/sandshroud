@@ -40,7 +40,7 @@ public:
 	void RemovePassenger(Unit* pPassenger);
 	bool HasPassenger(Unit* pPassenger);
 	void SendSpells(uint32 entry, Player* plr);
-	void setDeathState(DeathState s);
+	void VehicleSetDeathState(DeathState s);
 	void ChangeSeats(Unit* pPassenger, uint8 seatid);
 	void ChangePowerType();
 	//---------------------------------------

@@ -7279,6 +7279,15 @@ void Unit::SetPowerType(uint8 type)
 	}
 }
 
+void Unit::setDeathState(DeathState s)
+{
+	m_deathState = s;
+	if(IsCreature())
+		TO_CREATURE(this)->CreatureSetDeathState(s);
+	if(IsVehicle())
+		TO_VEHICLE(this)->VehicleSetDeathState(s);
+}
+
 //	custom functions for scripting
 void Unit::SetWeaponDisplayId(uint8 slot, uint32 ItemId)
 {

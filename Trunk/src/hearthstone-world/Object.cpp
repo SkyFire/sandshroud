@@ -2290,10 +2290,8 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	if ((isCritter || health <= damage) )
 	{
 		if( IsUnit() )
-		{
 			if( !sHookInterface.OnPreUnitDie( TO_UNIT(this), pVictim) )
 				return;
-		}
 
 		if( pVictim->HasDummyAura(SPELL_HASH_GUARDIAN_SPIRIT) )
 		{
@@ -2359,23 +2357,13 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			else if(IsPlayer())
 				TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaKilledByPlayer();
 		}
-		else if(pVictim->IsVehicle())
+		else
 		{
-			Vehicle* vVictim = TO_VEHICLE(pVictim);
-			vVictim->setDeathState( JUST_DIED );
+			pVictim->setDeathState( JUST_DIED );
 			/* Remove all Auras */
-			vVictim->EventDeathAuraRemoval();
+			pVictim->EventDeathAuraRemoval();
 			/* Set victim health to 0 */
-			vVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
-		}
-		else if(pVictim->IsCreature())
-		{
-			Creature* cVictim = TO_CREATURE(pVictim);
-			cVictim->setDeathState( JUST_DIED );
-			/* Remove all Auras */
-			cVictim->EventDeathAuraRemoval();
-			/* Set victim health to 0 */
-			cVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
+			pVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
 		}
 
 		pVictim->SummonExpireAll(false);

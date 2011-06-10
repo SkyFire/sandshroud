@@ -139,7 +139,7 @@ void Creature::Update( uint32 p_time )
 	if(m_corpseEvent)
 	{
 		sEventMgr.RemoveEvents(this);
-		if(proto==NULL)
+		if(proto == NULL)
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::OnRemoveCorpse, EVENT_CREATURE_REMOVE_CORPSE, 1000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 		else if (creature_info->Rank == ELITE_WORLDBOSS || creature_info->Flags1 & CREATURE_FLAGS1_BOSS)
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::OnRemoveCorpse, EVENT_CREATURE_REMOVE_CORPSE, TIME_CREATURE_REMOVE_BOSSCORPSE, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
@@ -148,7 +148,7 @@ void Creature::Update( uint32 p_time )
 		else
 			sEventMgr.AddEvent(TO_CREATURE(this), &Creature::OnRemoveCorpse, EVENT_CREATURE_REMOVE_CORPSE, TIME_CREATURE_REMOVE_CORPSE, 1,EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
-		m_corpseEvent=false;
+		m_corpseEvent = false;
 	}
 }
 
@@ -186,11 +186,7 @@ void Creature::OnRemoveCorpse()
 				RemoveFromWorld(false, true);
 		}
 
-		if(IsVehicle())
-			TO_VEHICLE(this)->setDeathState(DEAD);
-		else
-			setDeathState(DEAD);
-
+		setDeathState(DEAD);
 		SetPosition(m_spawnLocation, true);
 	}
 }
@@ -224,11 +220,7 @@ void Creature::OnRespawn( MapMgr* m)
 		SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_DEAD);
 	}
 
-	if(IsVehicle())
-		TO_VEHICLE(this)->setDeathState(ALIVE);
-	else
-		setDeathState(ALIVE);
-
+	setDeathState(ALIVE);
 	GetAIInterface()->StopMovement(0); // after respawn monster can move
 	m_PickPocketed = false;
 	PushToWorld(m);
@@ -425,11 +417,9 @@ void Creature::_LoadQuests()
 	sQuestMgr.LoadNPCQuests(TO_CREATURE(this));
 }
 
-void Creature::setDeathState(DeathState s)
+void Creature::CreatureSetDeathState(DeathState s)
 {
-	if(s != JUST_DIED)
-		m_deathState = s;
-	else
+	if(s == JUST_DIED)
 	{
 		GetAIInterface()->SetUnitToFollow(NULLUNIT);
 

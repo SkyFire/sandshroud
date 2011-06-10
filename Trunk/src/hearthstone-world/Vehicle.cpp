@@ -841,9 +841,8 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	_setFaction();
 }
 
-void Vehicle::setDeathState(DeathState s)
+void Vehicle::VehicleSetDeathState(DeathState s)
 {
-	Creature::setDeathState(s);
 	CreatureProtoVehicle* vehicleproto = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
 
 	for (uint8 i = 0; i < m_seatSlotMax; i++)

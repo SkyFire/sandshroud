@@ -7565,10 +7565,7 @@ void Spell::SpellEffectSummonDeadPet(uint32 i)
 	{
 		pPet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
 		pPet->SetUInt32Value(UNIT_FIELD_HEALTH, (uint32)((pPet->GetUInt32Value(UNIT_FIELD_MAXHEALTH) * damage) / 100));
-		if(pPet->IsVehicle())
-			TO_VEHICLE(pPet)->setDeathState(ALIVE);
-		else
-			pPet->setDeathState(ALIVE);
+		pPet->setDeathState(ALIVE);
 		pPet->GetAIInterface()->HandleEvent(EVENT_FOLLOWOWNER, pPet, 0);
 		sEventMgr.RemoveEvents(pPet, EVENT_PET_DELAYED_REMOVE);
 	}

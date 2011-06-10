@@ -528,7 +528,7 @@ public:
 	/// Misc
 	HEARTHSTONE_INLINE void setEmoteState(uint8 emote) { m_emoteState = emote; };
 
-	virtual void setDeathState(DeathState s);
+	void CreatureSetDeathState(DeathState s);
 
 	uint32 GetOldEmote() { return m_oldEmote; }
 
