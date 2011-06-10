@@ -907,7 +907,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		case 30455: // Ice Lance
 		case 42913: case 42914:
 			{
-				if( unitTarget->HasFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_FROZEN))
+				if( unitTarget->HasFlag( UNIT_FIELD_AURASTATE, AURASTATE_FLAG_FROZEN) || unitTarget->m_frozenTargetCharges > 0 )
 					dmg *= 3;
 			}break;
 

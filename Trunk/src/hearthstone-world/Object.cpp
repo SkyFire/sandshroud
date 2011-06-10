@@ -2951,14 +2951,6 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 //==============================Post Roll Calculations======================================
 //==========================================================================================
 	// Special cases
-
-	if( spellInfo->NameHash == SPELL_HASH_ICE_LANCE &&
-	    (( pVictim->HasFlag(UNIT_FIELD_AURASTATE, AURASTATE_FLAG_FROZEN)) ||
-		(caster && caster->m_frozenTargetCharges > 0)))
-	{
-		res *= 3; //Ice Lance deals 3x damage if target is frozen
-	}
-
 	if (caster)
 	{
 		if (caster->m_frozenTargetCharges > 0 && spellInfo->School == SCHOOL_FROST)
@@ -2989,7 +2981,7 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 	}
 
 //------------------------------absorption--------------------------------------------------
-	uint32 ress=(uint32)res;
+	uint32 ress = (uint32)res;
 	uint32 abs_dmg = pVictim->AbsorbDamage(this, school, &ress, dbcSpell.LookupEntryForced(spellID));
 	uint32 ms_abs_dmg= pVictim->ManaShieldAbsorb(ress, dbcSpell.LookupEntryForced(spellID));
 	if (ms_abs_dmg)
@@ -2997,14 +2989,15 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 		if(ms_abs_dmg > ress)
 			ress = 0;
 		else
-			ress-=ms_abs_dmg;
+			ress -= ms_abs_dmg;
 
 		abs_dmg += ms_abs_dmg;
 	}
 
-	if(ress < 0) ress = 0;
+	if(ress < 0)
+		ress = 0;
 
-	res=(float)ress;
+	res = (float)ress;
 	dealdamage dmg;
 	dmg.school_type = school;
 	dmg.full_damage = ress;
@@ -3038,17 +3031,12 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 //--------------------------split damage-----------------------------------------------
 	// Paladin: Blessing of Sacrifice, and Warlock: Soul Link
 	if( pVictim->m_damageSplitTarget.active)
-	{
 		ires = pVictim->DoDamageSplitTarget(ires, spellInfo->School, false);
-	}
 
 	SendSpellNonMeleeDamageLog(this, pVictim, spellID, ires, school, abs_dmg, dmg.resisted_damage, false, 0, critical, IsPlayer());
 
-	if( ires > 0 )
-	{
-		// only deal damage if its >0
+	if( ires > 0 ) // only deal damage if its >0
 		DealDamage( pVictim, float2int32( res ), 2, 0, spellID );
-	}
 	else
 	{
 		// we still have to tell the combat status handler we did damage so we're put in combat
@@ -3063,10 +3051,9 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 		TO_UNIT(this)->HandleProc( aproc, aproc2, pVictim, spellInfo, float2int32( res ) );
 		TO_UNIT(this)->m_procCounter = 0;
 	}
+
 	if( IsPlayer() )
-	{
 		TO_PLAYER(this)->m_casted_amount[school] = ( uint32 )res;
-	}
 
 	if( (dmg.full_damage == 0 && abs_dmg) == 0 )
 	{
