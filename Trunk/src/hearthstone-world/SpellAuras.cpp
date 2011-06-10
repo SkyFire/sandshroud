@@ -4579,25 +4579,26 @@ void Aura::SpellAuraModIncreaseHealth(bool apply)
 	if(apply)
 	{
 		SetPositive();
+		SpecialCases(); // Note: Very important this is only done on apply, and its done first.
 		amt = mod->m_amount;
 	}
 	else
-		amt =- mod->m_amount;
+		amt = -mod->m_amount;
 
 	if(apply)
 	{
 		m_target->ModUnsigned32Value(UNIT_FIELD_MAXHEALTH, amt);
-		SpecialCases();
 		m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH,amt);
 	}
 	else
 	{
-		if((int32)m_target->GetUInt32Value(UNIT_FIELD_HEALTH)>-amt)//watch it on remove value is negative
+		if((int32)m_target->GetUInt32Value(UNIT_FIELD_HEALTH) > -amt)//watch it on remove value is negative
 			m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH, amt);
 		else 
 			m_target->SetUInt32Value(UNIT_FIELD_HEALTH,1); //do not kill player but do strip him good
 		m_target->ModUnsigned32Value(UNIT_FIELD_MAXHEALTH, amt);
 	}
+
 	if(m_target->IsPlayer())
 	{
 		TO_PLAYER( m_target )->SetHealthFromSpell(TO_PLAYER( m_target )->GetHealthFromSpell() + amt);
@@ -9927,11 +9928,11 @@ void Aura::SpecialCases()
 		case 12976:// Last Stand
 		case 50322:// Survival Instincts
 		{
-			  mod->m_amount = (uint32)(m_target->GetUInt32Value(UNIT_FIELD_MAXHEALTH) * 0.3);
+			mod->m_amount = (uint32)(m_target->GetUInt32Value(UNIT_FIELD_MAXHEALTH) * 0.3);
 		}break;
 		case 23782:// Gift of Life
 		{
-			  mod->m_amount = 1500;
+			mod->m_amount = 1500;
 		}break;
 		case 48418:// Master Shapeshifter Physical Damage
 		case 48420:// Master Shapeshifter CritChance
