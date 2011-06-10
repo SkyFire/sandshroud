@@ -4438,12 +4438,55 @@ bool Unit::RemoveAura(uint32 spellId, uint64 guid )
 	}
 	return false;
 }
+
 bool Unit::RemoveAllAuras(uint32 spellId, uint64 guid)
 {
 	bool res = false;
 	for(uint32 x = 0; x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x] != NULL && m_auras[x]->GetSpellId()==spellId && (!guid || m_auras[x]->GetCasterGUID() == guid) )
+		{
+			RemoveAuraBySlot(x);
+			res = true;
+		}
+	}
+	return res;
+}
+
+bool Unit::RemoveAllAurasFromGUID(uint64 guid)
+{
+	bool res = false;
+	for(uint32 x = 0; x < MAX_AURAS; x++)
+	{
+		if(m_auras[x] != NULL && (m_auras[x]->GetCasterGUID() == guid) )
+		{
+			RemoveAuraBySlot(x);
+			res = true;
+		}
+	}
+	return res;
+}
+
+bool Unit::RemoveAllPosAurasFromGUID(uint64 guid)
+{
+	bool res = false;
+	for(uint32 x = 0; x < MAX_POSITIVE_AURAS; x++)
+	{
+		if(m_auras[x] != NULL && (m_auras[x]->GetCasterGUID() == guid) )
+		{
+			RemoveAuraBySlot(x);
+			res = true;
+		}
+	}
+	return res;
+}
+
+bool Unit::RemoveAllNegAurasFromGUID(uint64 guid)
+{
+	bool res = false;
+	for(uint32 x = MAX_POSITIVE_AURAS; x < MAX_AURAS; x++)
+	{
+		if(m_auras[x] != NULL && (m_auras[x]->GetCasterGUID() == guid) )
 		{
 			RemoveAuraBySlot(x);
 			res = true;

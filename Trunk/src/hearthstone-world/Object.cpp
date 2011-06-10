@@ -2158,8 +2158,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	}
 
 	///Rage
-	float val;
-
 	if( pVictim->GetPowerType() == POWER_TYPE_RAGE
 		&& pVictim != TO_UNIT(this)
 		&& pVictim->IsPlayer())
@@ -2167,7 +2165,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		float level = (float)pVictim->getLevel();
 		float c = 0.0091107836f * level * level + 3.225598133f * level + 4.2652911f;
 		uint32 rage = pVictim->GetUInt32Value( UNIT_FIELD_POWER2 );
-		val = 2.5f * damage / c;
+		float val = 2.5f * damage / c;
 		rage += float2int32(val) * 10;
 		if( rage > pVictim->GetUInt32Value(UNIT_FIELD_MAXPOWER2) )
 			rage = pVictim->GetUInt32Value(UNIT_FIELD_MAXPOWER2);
@@ -2211,30 +2209,36 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 	}
 
 	/*------------------------------------ DUEL HANDLERS --------------------------*/
-	if((pVictim->IsPlayer()) && (IsPlayer()) && TO_PLAYER(this)->DuelingWith != NULL) //Both Players
+	if(pVictim->IsPlayer() && TO_PLAYER(pVictim)->DuelingWith != NULL) //Both Players
 	{
-		if((health <= damage) && TO_PLAYER(pVictim)->DuelingWith == TO_PLAYER(this) )
+		if(health <= damage)
 		{
-			// End Duel
-			TO_PLAYER(this)->EndDuel(DUEL_WINNER_KNOCKOUT);
-			TO_PLAYER(this)->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
-			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel();
+			if(IsPlayer() && (TO_PLAYER(pVictim)->DuelingWith == TO_PLAYER(this)))
+			{
+				// End Duel
+				TO_PLAYER(this)->EndDuel(DUEL_WINNER_KNOCKOUT);
+				TO_PLAYER(this)->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
+				TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel();
 
-			// surrender emote
-			TO_PLAYER(pVictim)->Emote(EMOTE_ONESHOT_BEG);			// Animation
+				// surrender emote
+				TO_PLAYER(pVictim)->Emote(EMOTE_ONESHOT_BEG);			// Animation
 
-			// Player in Duel and Player Victim has lost
-			TO_PLAYER(pVictim)->CombatStatus.Vanish(GetLowGUID());
-			TO_PLAYER(this)->CombatStatus.Vanish(pVictim->GetLowGUID());
+				// Remove Negative Auras from duelist.
+				TO_PLAYER(pVictim)->RemoveAllNegAurasFromGUID(GetGUID());
 
-			damage = health-5;
-		}
-		else if(pVictim->IsPlayer() && (health <= damage) && TO_PLAYER(pVictim)->DuelingWith != NULL && TO_PLAYER(pVictim)->DuelingWith != TO_PLAYER(this))
-		{
-			// We have to call the achievement interface from the duelingwith before, otherwise we crash.
-			TO_PLAYER(pVictim)->DuelingWith->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
-			TO_PLAYER(pVictim)->DuelingWith->EndDuel(DUEL_WINNER_KNOCKOUT);
-//			TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel(); Disable because someone cheated!
+				// Player in Duel and Player Victim has lost
+				TO_PLAYER(pVictim)->CombatStatus.Vanish(GetLowGUID());
+				TO_PLAYER(this)->CombatStatus.Vanish(pVictim->GetLowGUID());
+
+				damage = health-5;
+			}
+			else if(TO_PLAYER(pVictim)->DuelingWith != NULL)
+			{
+				// We have to call the achievement interface from the duelingwith before, otherwise we crash.
+				TO_PLAYER(pVictim)->DuelingWith->GetAchievementInterface()->HandleAchievementCriteriaWinDuel();
+				TO_PLAYER(pVictim)->DuelingWith->EndDuel(DUEL_WINNER_KNOCKOUT);
+//				TO_PLAYER(pVictim)->GetAchievementInterface()->HandleAchievementCriteriaLoseDuel(); Disable because someone cheated!
+			}
 		}
 	}
 
@@ -2374,14 +2378,13 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			cVictim->SetUInt32Value(UNIT_FIELD_HEALTH, 0);
 		}
 
-		TO_UNIT(this)->SummonExpireAll(false);
+		pVictim->SummonExpireAll(false);
 
 		if( pVictim->IsPlayer() && (!IsPlayer() || pVictim == TO_UNIT(this) ) )
 			TO_PLAYER( pVictim )->DeathDurabilityLoss(0.10);
 
 		/* Zone Under Attack */
-		MapInfo * pZMapInfo = NULL;
-		pZMapInfo = LimitedMapInfoStorage.LookupEntry(GetMapId());
+		MapInfo * pZMapInfo = LimitedMapInfoStorage.LookupEntry(GetMapId());
 		if( pZMapInfo != NULL && pZMapInfo->type == INSTANCE_NULL && !pVictim->IsPlayer() && !pVictim->IsPet() && ( IsPlayer() || IsPet() ) )
 		{
 			// Only NPCs that bear the PvP flag can be truly representing their faction.
@@ -2537,16 +2540,6 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 		uint64 victimGuid = pVictim->GetGUID();
 		SetFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_DEAD );
 
-		// only execute loot code if we were tagged
-		if( pVictim->IsCreature() && TO_CREATURE(pVictim)->m_taggingPlayer != 0 )
-		{
-			// fill loot vector
-			TO_CREATURE(pVictim)->GenerateLoot();
-
-			// update visual.
-			TO_CREATURE(pVictim)->UpdateLootAnimation(pAttacker);
-		}
-
 		// player loot for battlegrounds
 		if( pVictim->IsPlayer() )
 		{
@@ -2557,8 +2550,16 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 				TO_PLAYER(pVictim)->m_insigniaTaken = false;
 			}
 		}
+		else if(TO_CREATURE(pVictim)->m_taggingPlayer != 0 )	// only execute loot code if we were tagged
+		{
+			// fill loot vector
+			TO_CREATURE(pVictim)->GenerateLoot();
 
-		if(pVictim->GetTypeId() == TYPEID_UNIT)
+			// update visual.
+			TO_CREATURE(pVictim)->UpdateLootAnimation(pAttacker);
+		}
+
+		if(pVictim->IsCreature())
 		{
 			//--------------------------------- POSSESSED CREATURES -----------------------------------------
 			if( pVictim->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED_CREATURE) )
@@ -2572,6 +2573,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 					}
 				}
 			}
+
 			//--------------------------------- PARTY LOG -----------------------------------------
 			if(pVictim->IsCreature() && pVictim->GetAIInterface())
 				pVictim->GetAIInterface()->OnDeath( this );
@@ -2587,8 +2589,7 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 			//bool isCritter = (pVictim->GetCreatureName() != NULL)? pVictim->GetCreatureName()->Type : 0;
 
 			//---------------------------------looot-----------------------------------------
-
-			if( !pVictim->IsPet() && IsPlayer() &&
+			if( IsPlayer() && !pVictim->IsPet() &&
 				pVictim->GetUInt64Value( UNIT_FIELD_CREATEDBY ) == 0 &&
 				pVictim->GetUInt64Value( OBJECT_FIELD_CREATED_BY ) == 0 )
 			{
@@ -2813,13 +2814,11 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 			aproc |= PROC_ON_RANGED_ATTACK;
 			vproc |= PROC_ON_RANGED_ATTACK_VICTIM;
 		}break;
-
 	case SPELL_DMG_TYPE_MELEE:
 		{
 			aproc |= PROC_ON_MELEE_ATTACK;
 			vproc |= PROC_ON_MELEE_ATTACK_VICTIM;
 		}break;
-
 	case SPELL_DMG_TYPE_MAGIC:
 		{
 			aproc |= PROC_ON_SPELL_LAND;
