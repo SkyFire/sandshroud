@@ -26,7 +26,6 @@
 #include "TerrainBuilder.h"
 #include "IntermediateValues.h"
 
-#include "IVMapManager.h"
 #include "WorldModel.h"
 
 #include "Recast.h"
@@ -44,11 +43,11 @@ namespace MMAP
         Tile() : chf(NULL), solid(NULL), cset(NULL), pmesh(NULL), dmesh(NULL) {}
         ~Tile()
         {
-            rcFreeCompactHeightfield(chf);
-            rcFreeContourSet(cset);
-            rcFreeHeightField(solid);
-            rcFreePolyMesh(pmesh);
-            rcFreePolyMeshDetail(dmesh);
+            freeCompactHeightfield(chf);
+            freeContourSet(cset);
+            freeHeightField(solid);
+            freePolyMesh(pmesh);
+            freePolyMeshDetail(dmesh);
         }
         rcCompactHeightfield* chf;
         rcHeightfield* solid;

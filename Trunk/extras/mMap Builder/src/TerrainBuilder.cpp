@@ -509,7 +509,7 @@ namespace MMAP
 
     bool TerrainBuilder::loadVMap(uint32 mapID, uint32 tileX, uint32 tileY, MeshData &meshData)
     {
-        IVMapManager* vmapManager = new VMapManager2();
+        VMapManager2* vmapManager = new VMapManager2();
         VMAPLoadResult result = vmapManager->loadMap("vmaps", mapID, tileX, tileY);
         bool retval = false;
 

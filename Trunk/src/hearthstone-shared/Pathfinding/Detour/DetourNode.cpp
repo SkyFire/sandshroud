@@ -1,31 +1,39 @@
-/*
- * Sandshroud Zeon
- * Copyright (c) 2009 Mikko Mononen memon@inside.org
- * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+//
+// Copyright (c) 2009-2010 Mikko Mononen memon@inside.org
+//
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+//
 
 #include "DetourNode.h"
+#include "../../Common.h"
+#include "DetourCommon.h"
 #include <string.h>
 
-static const unsigned short DT_NULL_IDX = 0xffff;
+inline unsigned int dtHashRef(dtPolyRef a)
+{
+    a = (~a) + (a << 18);
+    a = a ^ (a >> 31);
+    a = a * 21;
+    a = a ^ (a >> 11);
+    a = a + (a << 6);
+    a = a ^ (a >> 22);
+    return (unsigned int)a;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 dtNodePool::dtNodePool(int maxNodes, int hashSize) :
-
 	m_nodes(0),
 	m_first(0),
 	m_next(0),
@@ -33,18 +41,26 @@ dtNodePool::dtNodePool(int maxNodes, int hashSize) :
 	m_hashSize(hashSize),
 	m_nodeCount(0)
 {
-	m_nodes = new dtNode[m_maxNodes];
-	m_next = new unsigned short[m_maxNodes];
-	m_first = new unsigned short[hashSize];
+	ASSERT(dtNextPow2(m_hashSize) == (unsigned int)m_hashSize);
+	ASSERT(m_maxNodes > 0);
+
+	m_nodes = (dtNode*)malloc(sizeof(dtNode)*m_maxNodes);
+	m_next = (unsigned short*)malloc(sizeof(unsigned short)*m_maxNodes);
+	m_first = (unsigned short*)malloc(sizeof(unsigned short)*hashSize);
+
+	ASSERT(m_nodes);
+	ASSERT(m_next);
+	ASSERT(m_first);
+
 	memset(m_first, 0xff, sizeof(unsigned short)*m_hashSize);
 	memset(m_next, 0xff, sizeof(unsigned short)*m_maxNodes);
 }
 
 dtNodePool::~dtNodePool()
 {
-	delete [] m_nodes;
-	delete [] m_next;
-	delete [] m_first;
+	free(m_nodes);
+	free(m_next);
+	free(m_first);
 }
 
 void dtNodePool::clear()
@@ -53,9 +69,9 @@ void dtNodePool::clear()
 	m_nodeCount = 0;
 }
 
-const dtNode* dtNodePool::findNode(unsigned int id) const
+dtNode* dtNodePool::findNode(dtPolyRef id)
 {
-	unsigned int bucket = hashint(id) & (m_hashSize-1);
+	unsigned int bucket = dtHashRef(id) & (m_hashSize-1);
 	unsigned short i = m_first[bucket];
 	while (i != DT_NULL_IDX)
 	{
@@ -66,9 +82,9 @@ const dtNode* dtNodePool::findNode(unsigned int id) const
 	return 0;
 }
 
-dtNode* dtNodePool::getNode(unsigned int id)
+dtNode* dtNodePool::getNode(dtPolyRef id)
 {
-	unsigned int bucket = hashint(id) & (m_hashSize-1);
+	unsigned int bucket = dtHashRef(id) & (m_hashSize-1);
 	unsigned short i = m_first[bucket];
 	dtNode* node = 0;
 	while (i != DT_NULL_IDX)
@@ -105,12 +121,15 @@ dtNodeQueue::dtNodeQueue(int n) :
 	m_capacity(n),
 	m_size(0)
 {
-	m_heap = new dtNode*[m_capacity+1];
+	ASSERT(m_capacity > 0);
+	
+	m_heap = (dtNode**)malloc(sizeof(dtNode*)*(m_capacity+1));
+	ASSERT(m_heap);
 }
 
 dtNodeQueue::~dtNodeQueue()
 {
-	delete [] m_heap;
+	free(m_heap);
 }
 
 void dtNodeQueue::bubbleUp(int i, dtNode* node)

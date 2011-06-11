@@ -1,25 +1,25 @@
-/*
- * Sandshroud Zeon
- * Copyright (c) 2009 Mikko Mononen memon@inside.org
- * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+//
+// Copyright (c) 2009-2010 Mikko Mononen memon@inside.org
+//
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+//
 
 #ifndef DETOURNODE_H
 #define DETOURNODE_H
+
+#include "DetourNavMesh.h"
 
 enum dtNodeFlags
 {
@@ -27,13 +27,16 @@ enum dtNodeFlags
 	DT_NODE_CLOSED = 0x02,
 };
 
+static const unsigned short DT_NULL_IDX = 0xffff;
+
 struct dtNode
 {
-	float cost;
-	float total;
-	unsigned int id;
-	unsigned int pidx : 30;
-	unsigned int flags : 2;
+	float pos[3];				// Position of the node.
+	float cost;					// Cost from previous node to current node.
+	float total;				// Cost up to the node.
+	unsigned int pidx : 30;		// Index to parent node.
+	unsigned int flags : 2;		// Node flags 0/open/closed.
+	dtPolyRef id;				// Polygon ref the node corresponds to.
 };
 
 class dtNodePool
@@ -43,8 +46,8 @@ public:
 	~dtNodePool();
 	inline void operator=(const dtNodePool&) {}
 	void clear();
-	dtNode* getNode(unsigned int id);
-	const dtNode* findNode(unsigned int id) const;
+	dtNode* getNode(dtPolyRef id);
+	dtNode* findNode(dtPolyRef id);
 
 	inline unsigned int getNodeIdx(const dtNode* node) const
 	{
@@ -53,6 +56,12 @@ public:
 	}
 
 	inline dtNode* getNodeAtIdx(unsigned int idx)
+	{
+		if (!idx) return 0;
+		return &m_nodes[idx-1];
+	}
+
+	inline const dtNode* getNodeAtIdx(unsigned int idx) const
 	{
 		if (!idx) return 0;
 		return &m_nodes[idx-1];
@@ -66,17 +75,13 @@ public:
 		sizeof(unsigned short)*m_hashSize;
 	}
 	
+	inline int getMaxNodes() const { return m_maxNodes; }
+	
+	inline int getHashSize() const { return m_hashSize; }
+	inline unsigned short getFirst(int bucket) const { return m_first[bucket]; }
+	inline unsigned short getNext(int i) const { return m_next[i]; }
+	
 private:
-	inline unsigned int hashint(unsigned int a) const
-	{
-		a += ~(a<<15);
-		a ^=  (a>>10);
-		a +=  (a<<3);
-		a ^=  (a>>6);
-		a += ~(a<<11);
-		a ^=  (a>>16);
-		return a;
-	}
 	
 	dtNode* m_nodes;
 	unsigned short* m_first;
@@ -137,6 +142,7 @@ public:
 		sizeof(dtNode*)*(m_capacity+1);
 	}
 	
+	inline int getCapacity() const { return m_capacity; }
 	
 private:
 	void bubbleUp(int i, dtNode* node);

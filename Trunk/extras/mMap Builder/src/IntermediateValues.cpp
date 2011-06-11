@@ -22,11 +22,11 @@ namespace MMAP
 {
     IntermediateValues::~IntermediateValues()
     {
-        rcFreeCompactHeightfield(compactHeightfield);
-        rcFreeHeightField(heightfield);
-        rcFreeContourSet(contours);
-        rcFreePolyMesh(polyMesh);
-        rcFreePolyMeshDetail(polyMeshDetail);
+        freeCompactHeightfield(compactHeightfield);
+        freeHeightField(heightfield);
+        freeContourSet(contours);
+        freePolyMesh(polyMesh);
+        freePolyMeshDetail(polyMeshDetail);
     }
 
     void IntermediateValues::writeIV(uint32 mapID, uint32 tileX, uint32 tileY)

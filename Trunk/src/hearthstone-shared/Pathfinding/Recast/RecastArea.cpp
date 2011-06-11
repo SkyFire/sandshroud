@@ -1,44 +1,38 @@
-/*
- * Sandshroud Zeon
- * Copyright (c) 2009 Mikko Mononen memon@inside.org
- * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+//
+// Copyright (c) 2009-2010 Mikko Mononen memon@inside.org
+//
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+//
 
-#include <float.h>
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "Recast.h"
-#include "RecastLog.h"
-#include "RecastTimer.h"
+#include "../../Common.h"
 
-
-bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
+bool rcErodeWalkableArea(rcContext* ctx, int radius, rcCompactHeightfield& chf)
 {
+	ASSERT(ctx);
+	
 	const int w = chf.width;
 	const int h = chf.height;
 	
-	rcTimeVal startTime = rcGetPerformanceTimer();
+	ctx->startTimer(RC_TIMER_ERODE_AREA);
 	
-	unsigned char* dist = new unsigned char[chf.spanCount];
+	unsigned char* dist = (unsigned char*)malloc(sizeof(unsigned char)*chf.spanCount);
 	if (!dist)
+	{
+		ctx->log(RC_LOG_ERROR, "erodeWalkableArea: Out of memory 'dist' (%d).", chf.spanCount);
 		return false;
+	}
 	
 	// Init distance.
 	memset(dist, 0xff, sizeof(unsigned char)*chf.spanCount);
@@ -57,14 +51,8 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 					int nc = 0;
 					for (int dir = 0; dir < 4; ++dir)
 					{
-						if (rcGetCon(s, dir) != 0xf)
-						{
-							const int ax = x + rcGetDirOffsetX(dir);
-							const int ay = y + rcGetDirOffsetY(dir);
-							const int ai = (int)chf.cells[ax+ay*w].index + rcGetCon(s, dir);
-							if (chf.areas[ai] == areaId)
-								nc++;
-						}
+						if (rcGetCon(s, dir) != RC_NOT_CONNECTED)
+							nc++;
 					}
 					// At least one missing neighbour.
 					if (nc != 4)
@@ -86,7 +74,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 			{
 				const rcCompactSpan& s = chf.spans[i];
 				
-				if (rcGetCon(s, 0) != 0xf)
+				if (rcGetCon(s, 0) != RC_NOT_CONNECTED)
 				{
 					// (-1,0)
 					const int ax = x + rcGetDirOffsetX(0);
@@ -98,7 +86,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 						dist[i] = nd;
 					
 					// (-1,-1)
-					if (rcGetCon(as, 3) != 0xf)
+					if (rcGetCon(as, 3) != RC_NOT_CONNECTED)
 					{
 						const int aax = ax + rcGetDirOffsetX(3);
 						const int aay = ay + rcGetDirOffsetY(3);
@@ -108,7 +96,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 							dist[i] = nd;
 					}
 				}
-				if (rcGetCon(s, 3) != 0xf)
+				if (rcGetCon(s, 3) != RC_NOT_CONNECTED)
 				{
 					// (0,-1)
 					const int ax = x + rcGetDirOffsetX(3);
@@ -120,7 +108,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 						dist[i] = nd;
 					
 					// (1,-1)
-					if (rcGetCon(as, 2) != 0xf)
+					if (rcGetCon(as, 2) != RC_NOT_CONNECTED)
 					{
 						const int aax = ax + rcGetDirOffsetX(2);
 						const int aay = ay + rcGetDirOffsetY(2);
@@ -144,7 +132,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 			{
 				const rcCompactSpan& s = chf.spans[i];
 				
-				if (rcGetCon(s, 2) != 0xf)
+				if (rcGetCon(s, 2) != RC_NOT_CONNECTED)
 				{
 					// (1,0)
 					const int ax = x + rcGetDirOffsetX(2);
@@ -156,7 +144,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 						dist[i] = nd;
 					
 					// (1,1)
-					if (rcGetCon(as, 1) != 0xf)
+					if (rcGetCon(as, 1) != RC_NOT_CONNECTED)
 					{
 						const int aax = ax + rcGetDirOffsetX(1);
 						const int aay = ay + rcGetDirOffsetY(1);
@@ -166,7 +154,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 							dist[i] = nd;
 					}
 				}
-				if (rcGetCon(s, 1) != 0xf)
+				if (rcGetCon(s, 1) != RC_NOT_CONNECTED)
 				{
 					// (0,1)
 					const int ax = x + rcGetDirOffsetX(1);
@@ -178,7 +166,7 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 						dist[i] = nd;
 					
 					// (-1,1)
-					if (rcGetCon(as, 0) != 0xf)
+					if (rcGetCon(as, 0) != RC_NOT_CONNECTED)
 					{
 						const int aax = ax + rcGetDirOffsetX(0);
 						const int aay = ay + rcGetDirOffsetY(0);
@@ -195,23 +183,109 @@ bool rcErodeArea(unsigned char areaId, int radius, rcCompactHeightfield& chf)
 	const unsigned char thr = (unsigned char)(radius*2);
 	for (int i = 0; i < chf.spanCount; ++i)
 		if (dist[i] < thr)
-			chf.areas[i] = 0;
+			chf.areas[i] = RC_NULL_AREA;
 	
-	delete [] dist;
+	free(dist);
 	
-	rcTimeVal endTime = rcGetPerformanceTimer();
-	
-	if (rcGetBuildTimes())
-	{
-		rcGetBuildTimes()->erodeArea += rcGetDeltaTimeUsec(startTime, endTime);
-	}
+	ctx->stopTimer(RC_TIMER_ERODE_AREA);
 	
 	return true;
 }
 
-void rcMarkBoxArea(const float* bmin, const float* bmax, unsigned char areaId,
+static void insertSort(unsigned char* a, const int n)
+{
+	int i, j;
+	for (i = 1; i < n; i++)
+	{
+		const unsigned char value = a[i];
+		for (j = i - 1; j >= 0 && a[j] > value; j--)
+			a[j+1] = a[j];
+		a[j+1] = value;
+	}
+}
+
+
+bool rcMedianFilterWalkableArea(rcContext* ctx, rcCompactHeightfield& chf)
+{
+	ASSERT(ctx);
+	
+	const int w = chf.width;
+	const int h = chf.height;
+	
+	ctx->startTimer(RC_TIMER_MEDIAN_AREA);
+	
+	unsigned char* areas = (unsigned char*)malloc(sizeof(unsigned char)*chf.spanCount);
+	if (!areas)
+	{
+		ctx->log(RC_LOG_ERROR, "medianFilterWalkableArea: Out of memory 'areas' (%d).", chf.spanCount);
+		return false;
+	}
+	
+	// Init distance.
+	memset(areas, 0xff, sizeof(unsigned char)*chf.spanCount);
+	
+	for (int y = 0; y < h; ++y)
+	{
+		for (int x = 0; x < w; ++x)
+		{
+			const rcCompactCell& c = chf.cells[x+y*w];
+			for (int i = (int)c.index, ni = (int)(c.index+c.count); i < ni; ++i)
+			{
+				const rcCompactSpan& s = chf.spans[i];
+				if (chf.areas[i] == RC_NULL_AREA)
+				{
+					areas[i] = chf.areas[i];
+					continue;
+				}
+				
+				unsigned char nei[9];
+				for (int j = 0; j < 9; ++j)
+					nei[j] = chf.areas[i];
+				
+				for (int dir = 0; dir < 4; ++dir)
+				{
+					if (rcGetCon(s, dir) != RC_NOT_CONNECTED)
+					{
+						const int ax = x + rcGetDirOffsetX(dir);
+						const int ay = y + rcGetDirOffsetY(dir);
+						const int ai = (int)chf.cells[ax+ay*w].index + rcGetCon(s, dir);
+						if (chf.areas[ai] != RC_NULL_AREA)
+							nei[dir*2+0] = chf.areas[ai];
+						
+						const rcCompactSpan& as = chf.spans[ai];
+						const int dir2 = (dir+1) & 0x3;
+						if (rcGetCon(as, dir2) != RC_NOT_CONNECTED)
+						{
+							const int ax2 = ax + rcGetDirOffsetX(dir2);
+							const int ay2 = ay + rcGetDirOffsetY(dir2);
+							const int ai2 = (int)chf.cells[ax2+ay2*w].index + rcGetCon(as, dir2);
+							if (chf.areas[ai2] != RC_NULL_AREA)
+								nei[dir*2+1] = chf.areas[ai2];
+						}
+					}
+				}
+				insertSort(nei, 9);
+				areas[i] = nei[4];
+			}
+		}
+	}
+	
+	memcpy(chf.areas, areas, sizeof(unsigned char)*chf.spanCount);
+	
+	free(areas);
+
+	ctx->stopTimer(RC_TIMER_MEDIAN_AREA);
+	
+	return true;
+}
+
+void rcMarkBoxArea(rcContext* ctx, const float* bmin, const float* bmax, unsigned char areaId,
 				   rcCompactHeightfield& chf)
 {
+	ASSERT(ctx);
+	
+	ctx->startTimer(RC_TIMER_MARK_BOX_AREA);
+
 	int minx = (int)((bmin[0]-chf.bmin[0])/chf.cs);
 	int miny = (int)((bmin[1]-chf.bmin[1])/chf.ch);
 	int minz = (int)((bmin[2]-chf.bmin[2])/chf.cs);
@@ -239,12 +313,14 @@ void rcMarkBoxArea(const float* bmin, const float* bmax, unsigned char areaId,
 				rcCompactSpan& s = chf.spans[i];
 				if ((int)s.y >= miny && (int)s.y <= maxy)
 				{
-					if (areaId < chf.areas[i])
-						chf.areas[i] = areaId;
+					chf.areas[i] = areaId;
 				}
 			}
 		}
 	}
+
+	ctx->stopTimer(RC_TIMER_MARK_BOX_AREA);
+
 }
 
 
@@ -262,17 +338,21 @@ static int pointInPoly(int nvert, const float* verts, const float* p)
 	return c;
 }
 
-void rcMarkConvexPolyArea(const float* verts, const int nverts,
+void rcMarkConvexPolyArea(rcContext* ctx, const float* verts, const int nverts,
 						  const float hmin, const float hmax, unsigned char areaId,
 						  rcCompactHeightfield& chf)
 {
+	ASSERT(ctx);
+	
+	ctx->startTimer(RC_TIMER_MARK_CONVEXPOLY_AREA);
+
 	float bmin[3], bmax[3];
-	vcopy(bmin, verts);
-	vcopy(bmax, verts);
+	rcVcopy(bmin, verts);
+	rcVcopy(bmax, verts);
 	for (int i = 1; i < nverts; ++i)
 	{
-		vmin(bmin, &verts[i*3]);
-		vmax(bmax, &verts[i*3]);
+		rcVmin(bmin, &verts[i*3]);
+		rcVmax(bmax, &verts[i*3]);
 	}
 	bmin[1] = hmin;
 	bmax[1] = hmax;
@@ -306,23 +386,19 @@ void rcMarkConvexPolyArea(const float* verts, const int nverts,
 				rcCompactSpan& s = chf.spans[i];
 				if ((int)s.y >= miny && (int)s.y <= maxy)
 				{
-					if (areaId < chf.areas[i])
-					{
-						float p[3];
-						p[0] = chf.bmin[0] + (x+0.5f)*chf.cs; 
-						p[1] = 0;
-						p[2] = chf.bmin[2] + (z+0.5f)*chf.cs; 
+					float p[3];
+					p[0] = chf.bmin[0] + (x+0.5f)*chf.cs; 
+					p[1] = 0;
+					p[2] = chf.bmin[2] + (z+0.5f)*chf.cs; 
 
-						if (pointInPoly(nverts, verts, p))
-						{
-							chf.areas[i] = areaId;
-						}
+					if (pointInPoly(nverts, verts, p))
+					{
+						chf.areas[i] = areaId;
 					}
 				}
 			}
 		}
 	}
-	
 
+	ctx->stopTimer(RC_TIMER_MARK_CONVEXPOLY_AREA);
 }
-

@@ -266,7 +266,7 @@ namespace MMAP
             buildMoveMapTile(mapID, tileX, tileY, meshData, bmin, bmax, navMesh);
         }
 
-        dtFreeNavMesh(navMesh);
+        freeNavMesh(navMesh);
 
         printf("Complete!                               \n\n");
     }
@@ -370,7 +370,7 @@ namespace MMAP
         }
         while (0);
 
-        dtFreeNavMesh(navMesh);
+        freeNavMesh(navMesh);
 
         printf("%sComplete!                                      \n\n", tileString);
     }
@@ -425,7 +425,7 @@ namespace MMAP
         navMeshParams.maxTiles = maxTiles;
         navMeshParams.maxPolys = maxPolysPerTile;
 
-        navMesh = dtAllocNavMesh();
+        navMesh = mallocNavMesh();
         printf("Creating navMesh...                     \r");
         if (!navMesh->init(&navMeshParams))
         {
@@ -439,7 +439,7 @@ namespace MMAP
         FILE* file = fopen(fileName, "wb");
         if (!file)
         {
-            dtFreeNavMesh(navMesh);
+            freeNavMesh(navMesh);
             char message[1024];
             sprintf(message, "Failed to open %s for writing!\n", fileName);
             perror(message);
@@ -537,7 +537,7 @@ namespace MMAP
                 tbmax[1] = tileCfg.bmax[2];
 
                 // build heightfield
-                tile.solid = rcAllocHeightfield();
+                tile.solid = mallocHeightfield();
                 if (!tile.solid || !rcCreateHeightfield(m_rcContext, *tile.solid, tileCfg.width, tileCfg.height, tileCfg.bmin, tileCfg.bmax, tileCfg.cs, tileCfg.ch))
                 {
                     printf("%sFailed building heightfield!            \n", tileString);
@@ -558,7 +558,7 @@ namespace MMAP
                 rcRasterizeTriangles(m_rcContext, lVerts, lVertCount, lTris, lTriFlags, lTriCount, *tile.solid, config.walkableClimb);
 
                 // compact heightfield spans
-                tile.chf = rcAllocCompactHeightfield();
+                tile.chf = mallocCompactHeightfield();
                 if (!tile.chf || !rcBuildCompactHeightfield(m_rcContext, tileCfg.walkableHeight, tileCfg.walkableClimb, *tile.solid, *tile.chf))
                 {
                     printf("%sFailed compacting heightfield!            \n", tileString);
@@ -584,7 +584,7 @@ namespace MMAP
                     continue;
                 }
 
-                tile.cset = rcAllocContourSet();
+                tile.cset = mallocContourSet();
                 if (!tile.cset || !rcBuildContours(m_rcContext, *tile.chf, tileCfg.maxSimplificationError, tileCfg.maxEdgeLen, *tile.cset))
                 {
                     printf("%sFailed building contours!               \n", tileString);
@@ -592,14 +592,14 @@ namespace MMAP
                 }
 
                 // build polymesh
-                tile.pmesh = rcAllocPolyMesh();
+                tile.pmesh = mallocPolyMesh();
                 if (!tile.pmesh || !rcBuildPolyMesh(m_rcContext, *tile.cset, tileCfg.maxVertsPerPoly, *tile.pmesh))
                 {
                     printf("%sFailed building polymesh!               \n", tileString);
                     continue;
                 }
 
-                tile.dmesh = rcAllocPolyMeshDetail();
+                tile.dmesh = mallocPolyMeshDetail();
                 if (!tile.dmesh || !rcBuildPolyMeshDetail(m_rcContext, *tile.pmesh, *tile.chf, tileCfg.detailSampleDist, tileCfg    .detailSampleMaxError, *tile.dmesh))
                 {
                     printf("%sFailed building polymesh detail!        \n", tileString);
@@ -609,11 +609,11 @@ namespace MMAP
                 // free those up
                 // we may want to keep them in the future for debug
                 // but right now, we don't have the code to merge them
-                rcFreeHeightField(tile.solid);
+                freeHeightField(tile.solid);
                 tile.solid = NULL;
-                rcFreeCompactHeightfield(tile.chf);
+                freeCompactHeightfield(tile.chf);
                 tile.chf = NULL;
-                rcFreeContourSet(tile.cset);
+                freeContourSet(tile.cset);
                 tile.cset = NULL;
             }
         }
@@ -648,7 +648,7 @@ namespace MMAP
             }
         }
 
-        iv.polyMesh = rcAllocPolyMesh();
+        iv.polyMesh = mallocPolyMesh();
         if (!iv.polyMesh)
         {
             printf("%s alloc iv.polyMesh FIALED!          \r", tileString);
@@ -656,7 +656,7 @@ namespace MMAP
         }
         rcMergePolyMeshes(m_rcContext, pmmerge, nmerge, *iv.polyMesh);
 
-        iv.polyMeshDetail = rcAllocPolyMeshDetail();
+        iv.polyMeshDetail = mallocPolyMeshDetail();
         if (!iv.polyMeshDetail)
         {
             printf("%s alloc m_dmesh FIALED!          \r", tileString);

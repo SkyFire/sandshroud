@@ -1,40 +1,29 @@
-/*
- * Sandshroud Zeon
- * Copyright (c) 2009 Mikko Mononen memon@inside.org
- * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+//
+// Copyright (c) 2009-2010 Mikko Mononen memon@inside.org
+//
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+//
 
-#include <float.h>
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "Recast.h"
-#include "RecastLog.h"
-#include "RecastTimer.h"
-
+#include "../../Common.h"
 
 static const unsigned RC_UNSET_HEIGHT = 0xffff;
 
 struct rcHeightPatch
 {
-	inline rcHeightPatch() : data(0) {}
-	inline ~rcHeightPatch() { delete [] data; }
+	inline rcHeightPatch() : data(0), xmin(0), ymin(0), width(0), height(0) {}
+	inline ~rcHeightPatch() { free(data); }
 	unsigned short* data;
 	int xmin, ymin, width, height;
 };
@@ -92,9 +81,9 @@ static bool circumCircle(const float* p1, const float* p2, const float* p3,
 static float distPtTri(const float* p, const float* a, const float* b, const float* c)
 {
 	float v0[3], v1[3], v2[3];
-	vsub(v0, c,a);
-	vsub(v1, b,a);
-	vsub(v2, p,a);
+	rcVsub(v0, c,a);
+	rcVsub(v1, b,a);
+	rcVsub(v2, p,a);
 
 	const float dot00 = vdot2(v0, v0);
 	const float dot01 = vdot2(v0, v1);
@@ -103,15 +92,15 @@ static float distPtTri(const float* p, const float* a, const float* b, const flo
 	const float dot12 = vdot2(v1, v2);
 	
 	// Compute barycentric coordinates
-	float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
-	float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+	const float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
+	const float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
 	float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 	
 	// If point lies inside the triangle, return interpolated y-coord.
 	static const float EPS = 1e-4f;
 	if (u >= -EPS && v >= -EPS && (u+v) <= 1+EPS)
 	{
-		float y = a[1] + v0[1]*u + v1[1]*v;
+		const float y = a[1] + v0[1]*u + v1[1]*v;
 		return fabsf(y-p[1]);
 	}
 	return FLT_MAX;
@@ -162,7 +151,7 @@ static float distancePtSeg2d(const float* pt, const float* p, const float* q)
 	return dx*dx + dz*dz;
 }
 
-static float distToTriMesh(const float* p, const float* verts, int nverts, const int* tris, int ntris)
+static float distToTriMesh(const float* p, const float* verts, const int /*nverts*/, const int* tris, const int ntris)
 {
 	float dmin = FLT_MAX;
 	for (int i = 0; i < ntris; ++i)
@@ -196,7 +185,9 @@ static float distToPoly(int nvert, const float* verts, const float* p)
 }
 
 
-static unsigned short getHeight(const float fx, const float fy, const float fz, const float cs, const float ics, const float ch, const rcHeightPatch& hp)
+static unsigned short getHeight(const float fx, const float fy, const float fz,
+								const float /*cs*/, const float ics, const float ch,
+								const rcHeightPatch& hp)
 {
 	int ix = (int)floorf(fx*ics + 0.01f);
 	int iz = (int)floorf(fz*ics + 0.01f);
@@ -255,12 +246,11 @@ static int findEdge(const int* edges, int nedges, int s, int t)
 	return UNDEF;
 }
 
-static int addEdge(int* edges, int& nedges, const int maxEdges, int s, int t, int l, int r)
+static int addEdge(rcContext* ctx, int* edges, int& nedges, const int maxEdges, int s, int t, int l, int r)
 {
 	if (nedges >= maxEdges)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "addEdge: Too many edges (%d/%d).", nedges, maxEdges);
+		ctx->log(RC_LOG_ERROR, "addEdge: Too many edges (%d/%d).", nedges, maxEdges);
 		return UNDEF;
 	}
 	
@@ -318,7 +308,7 @@ static bool overlapEdges(const float* pts, const int* edges, int nedges, int s1,
 	return false;
 }
 
-static void completeFacet(const float* pts, int npts, int* edges, int& nedges, const int maxEdges, int& nfaces, int e)
+static void completeFacet(rcContext* ctx, const float* pts, int npts, int* edges, int& nedges, const int maxEdges, int& nfaces, int e)
 {
 	static const float EPS = 1e-5f;
 
@@ -395,14 +385,14 @@ static void completeFacet(const float* pts, int npts, int* edges, int& nedges, c
 		// Add new edge or update face info of old edge. 
 		e = findEdge(edges, nedges, pt, s);
 		if (e == UNDEF)
-		    addEdge(edges, nedges, maxEdges, pt, s, nfaces, UNDEF);
+		    addEdge(ctx, edges, nedges, maxEdges, pt, s, nfaces, UNDEF);
 		else
 		    updateLeftFace(&edges[e*4], pt, s, nfaces);
 		
 		// Add new edge or update face info of old edge. 
 		e = findEdge(edges, nedges, t, pt);
 		if (e == UNDEF)
-		    addEdge(edges, nedges, maxEdges, t, pt, nfaces, UNDEF);
+		    addEdge(ctx, edges, nedges, maxEdges, t, pt, nfaces, UNDEF);
 		else
 		    updateLeftFace(&edges[e*4], t, pt, nfaces);
 		
@@ -414,7 +404,7 @@ static void completeFacet(const float* pts, int npts, int* edges, int& nedges, c
 	}
 }
 
-static void delaunayHull(const int npts, const float* pts,
+static void delaunayHull(rcContext* ctx, const int npts, const float* pts,
 						 const int nhull, const int* hull,
 						 rcIntArray& tris, rcIntArray& edges)
 {
@@ -424,15 +414,15 @@ static void delaunayHull(const int npts, const float* pts,
 	edges.resize(maxEdges*4);
 	
 	for (int i = 0, j = nhull-1; i < nhull; j=i++)
-		addEdge(&edges[0], nedges, maxEdges, hull[j],hull[i], HULL, UNDEF);
+		addEdge(ctx, &edges[0], nedges, maxEdges, hull[j],hull[i], HULL, UNDEF);
 	
 	int currentEdge = 0;
 	while (currentEdge < nedges)
 	{
 		if (edges[currentEdge*4+2] == UNDEF)
-			completeFacet(pts, npts, &edges[0], nedges, maxEdges, nfaces, currentEdge);
+			completeFacet(ctx, pts, npts, &edges[0], nedges, maxEdges, nfaces, currentEdge);
 		if (edges[currentEdge*4+3] == UNDEF)
-			completeFacet(pts, npts, &edges[0], nedges, maxEdges, nfaces, currentEdge);
+			completeFacet(ctx, pts, npts, &edges[0], nedges, maxEdges, nfaces, currentEdge);
 		currentEdge++;
 	}
 
@@ -479,42 +469,51 @@ static void delaunayHull(const int npts, const float* pts,
 		int* t = &tris[i*4];
 		if (t[0] == -1 || t[1] == -1 || t[2] == -1)
 		{
-			if (rcGetLog())
-				rcGetLog()->log(RC_LOG_WARNING, "delaunayHull: Removing dangling face %d [%d,%d,%d].", i, t[0],t[1],t[2]);
+			ctx->log(RC_LOG_WARNING, "delaunayHull: Removing dangling face %d [%d,%d,%d].", i, t[0],t[1],t[2]);
 			t[0] = tris[tris.size()-4];
 			t[1] = tris[tris.size()-3];
 			t[2] = tris[tris.size()-2];
 			t[3] = tris[tris.size()-1];
 			tris.resize(tris.size()-4);
+			--i;
 		}
 	}
-
 }
 
 
+inline float getJitterX(const int i)
+{
+	return (((i * 0x8da6b343) & 0xffff) / 65535.0f * 2.0f) - 1.0f;
+}
 
-static bool buildPolyDetail(const float* in, const int nin,
+inline float getJitterY(const int i)
+{
+	return (((i * 0xd8163841) & 0xffff) / 65535.0f * 2.0f) - 1.0f;
+}
+
+static bool buildPolyDetail(rcContext* ctx, const float* in, const int nin,
 							const float sampleDist, const float sampleMaxError,
 							const rcCompactHeightfield& chf, const rcHeightPatch& hp,
 							float* verts, int& nverts, rcIntArray& tris,
 							rcIntArray& edges, rcIntArray& samples)
 {
-	static const int MAX_VERTS = 256;
-	static const int MAX_EDGE = 64;
-	float edge[(MAX_EDGE+1)*3];
+	static const int MAX_VERTS = 127;
+	static const int MAX_TRIS = 255;	// Max tris for delaunay is 2n-2-k (n=num verts, k=num hull verts).
+	static const int MAX_VERTS_PER_EDGE = 32;
+	float edge[(MAX_VERTS_PER_EDGE+1)*3];
 	int hull[MAX_VERTS];
 	int nhull = 0;
 
 	nverts = 0;
 
 	for (int i = 0; i < nin; ++i)
-		vcopy(&verts[i*3], &in[i*3]);
+		rcVcopy(&verts[i*3], &in[i*3]);
 	nverts = nin;
 	
 	const float cs = chf.cs;
 	const float ics = 1.0f/cs;
 	
-	// Tesselate outlines.
+	// Tessellate outlines.
 	// This is done in separate pass in order to ensure
 	// seamless height values across the ply boundaries.
 	if (sampleDist > 0)
@@ -548,9 +547,10 @@ static bool buildPolyDetail(const float* in, const int nin,
 			float dz = vi[2] - vj[2];
 			float d = sqrtf(dx*dx + dz*dz);
 			int nn = 1 + (int)floorf(d/sampleDist);
-			if (nn > MAX_EDGE) nn = MAX_EDGE;
+			if (nn >= MAX_VERTS_PER_EDGE) nn = MAX_VERTS_PER_EDGE-1;
 			if (nverts+nn >= MAX_VERTS)
 				nn = MAX_VERTS-1-nverts;
+			
 			for (int k = 0; k <= nn; ++k)
 			{
 				float u = (float)k/(float)nn;
@@ -561,7 +561,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 				pos[1] = getHeight(pos[0],pos[1],pos[2], cs, ics, chf.ch, hp)*chf.ch;
 			}
 			// Simplify samples.
-			int idx[MAX_EDGE] = {0,nn};
+			int idx[MAX_VERTS_PER_EDGE] = {0,nn};
 			int nidx = 2;
 			for (int k = 0; k < nidx-1; )
 			{
@@ -602,7 +602,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 			{
 				for (int k = nidx-2; k > 0; --k)
 				{
-					vcopy(&verts[nverts*3], &edge[idx[k]*3]);
+					rcVcopy(&verts[nverts*3], &edge[idx[k]*3]);
 					hull[nhull++] = nverts;
 					nverts++;
 				}
@@ -611,7 +611,7 @@ static bool buildPolyDetail(const float* in, const int nin,
 			{
 				for (int k = 1; k < nidx-1; ++k)
 				{
-					vcopy(&verts[nverts*3], &edge[idx[k]*3]);
+					rcVcopy(&verts[nverts*3], &edge[idx[k]*3]);
 					hull[nhull++] = nverts;
 					nverts++;
 				}
@@ -620,17 +620,16 @@ static bool buildPolyDetail(const float* in, const int nin,
 	}
 	
 
-	// Tesselate the base mesh.
+	// Tessellate the base mesh.
 	edges.resize(0);
 	tris.resize(0);
 
-	delaunayHull(nverts, verts, nhull, hull, tris, edges);
+	delaunayHull(ctx, nverts, verts, nhull, hull, tris, edges);
 	
 	if (tris.size() == 0)
 	{
 		// Could not triangulate the poly, make sure there is some valid data there.
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_WARNING, "buildPolyDetail: Could not triangulate polygon, adding default data.");
+		ctx->log(RC_LOG_WARNING, "buildPolyDetail: Could not triangulate polygon, adding default data.");
 		for (int i = 2; i < nverts; ++i)
 		{
 			tris.push(0);
@@ -645,12 +644,12 @@ static bool buildPolyDetail(const float* in, const int nin,
 	{
 		// Create sample locations in a grid.
 		float bmin[3], bmax[3];
-		vcopy(bmin, in);
-		vcopy(bmax, in);
+		rcVcopy(bmin, in);
+		rcVcopy(bmax, in);
 		for (int i = 1; i < nin; ++i)
 		{
-			vmin(bmin, &in[i*3]);
-			vmax(bmax, &in[i*3]);
+			rcVmin(bmin, &in[i*3]);
+			rcVmax(bmax, &in[i*3]);
 		}
 		int x0 = (int)floorf(bmin[0]/sampleDist);
 		int x1 = (int)ceilf(bmax[0]/sampleDist);
@@ -670,49 +669,64 @@ static bool buildPolyDetail(const float* in, const int nin,
 				samples.push(x);
 				samples.push(getHeight(pt[0], pt[1], pt[2], cs, ics, chf.ch, hp));
 				samples.push(z);
+				samples.push(0); // Not added
 			}
 		}
 				
 		// Add the samples starting from the one that has the most
 		// error. The procedure stops when all samples are added
 		// or when the max error is within treshold.
-		const int nsamples = samples.size()/3;
+		const int nsamples = samples.size()/4;
 		for (int iter = 0; iter < nsamples; ++iter)
 		{
+			if (nverts >= MAX_VERTS)
+				break;
+
 			// Find sample with most error.
 			float bestpt[3] = {0,0,0};
 			float bestd = 0;
+			int besti = -1;
 			for (int i = 0; i < nsamples; ++i)
 			{
+				const int* s = &samples[i*4];
+				if (s[3]) continue; // skip added.
 				float pt[3];
-				pt[0] = samples[i*3+0]*sampleDist;
-				pt[1] = samples[i*3+1]*chf.ch;
-				pt[2] = samples[i*3+2]*sampleDist;
+				// The sample location is jittered to get rid of some bad triangulations
+				// which are cause by symmetrical data from the grid structure.
+				pt[0] = s[0]*sampleDist + getJitterX(i)*cs*0.1f;
+				pt[1] = s[1]*chf.ch;
+				pt[2] = s[2]*sampleDist + getJitterY(i)*cs*0.1f;
 				float d = distToTriMesh(pt, verts, nverts, &tris[0], tris.size()/4);
 				if (d < 0) continue; // did not hit the mesh.
 				if (d > bestd)
 				{
 					bestd = d;
-					vcopy(bestpt,pt);
+					besti = i;
+					rcVcopy(bestpt,pt);
 				}
 			}
 			// If the max error is within accepted threshold, stop tesselating.
-			if (bestd <= sampleMaxError)
+			if (bestd <= sampleMaxError || besti == -1)
 				break;
-
+			// Mark sample as added.
+			samples[besti*4+3] = 1;
 			// Add the new sample point.
-			vcopy(&verts[nverts*3],bestpt);
+			rcVcopy(&verts[nverts*3],bestpt);
 			nverts++;
 			
 			// Create new triangulation.
 			// TODO: Incremental add instead of full rebuild.
 			edges.resize(0);
 			tris.resize(0);
-			delaunayHull(nverts, verts, nhull, hull, tris, edges);
+			delaunayHull(ctx, nverts, verts, nhull, hull, tris, edges);
+		}		
+	}
 
-			if (nverts >= MAX_VERTS)
-				break;
-		}
+	const int ntris = tris.size()/4;
+	if (ntris > MAX_TRIS)
+	{
+		tris.resize(MAX_TRIS*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Shrinking triangle count from %d to max %d.", ntris, MAX_TRIS);
 	}
 
 	return true;
@@ -772,15 +786,13 @@ static void getHeightData(const rcCompactHeightfield& chf,
 	}
 	
 	// Find center of the polygon using flood fill.
-	int pcx = 0, pcy = 0, pcz = 0;
+	int pcx = 0, pcz = 0;
 	for (int j = 0; j < npoly; ++j)
 	{
 		pcx += (int)verts[poly[j]*3+0];
-		pcy += (int)verts[poly[j]*3+1];
 		pcz += (int)verts[poly[j]*3+2];
 	}
 	pcx /= npoly;
-	pcy /= npoly;
 	pcz /= npoly;
 	
 	for (int i = 0; i < stack.size(); i += 3)
@@ -847,18 +859,22 @@ static void getHeightData(const rcCompactHeightfield& chf,
 		hp.data[idx] = cs.y;
 	}
 	
-	while (stack.size() > 0)
+	static const int RETRACT_SIZE = 256;
+	int head = 0;
+	
+	while (head*3 < stack.size())
 	{
-/*		int cx = stack[0];
-		int cy = stack[1];
-		int ci = stack[2];
-		if (stack.size() >= 3)
-			memmove(&stack[0], &stack[3], sizeof(int)*(stack.size()-3));
-		stack.resize(stack.size()-3);*/
-
-		int ci = stack.pop();
-		int cy = stack.pop();
-		int cx = stack.pop();
+		int cx = stack[head*3+0];
+		int cy = stack[head*3+1];
+		int ci = stack[head*3+2];
+		head++;
+		if (head >= RETRACT_SIZE)
+		{
+			head = 0;
+			if (stack.size() > RETRACT_SIZE*3)
+				memmove(&stack[0], &stack[RETRACT_SIZE*3], sizeof(int)*(stack.size()-RETRACT_SIZE*3));
+			stack.resize(stack.size()-RETRACT_SIZE*3);
+		}
 
 		const rcCompactSpan& cs = chf.spans[ci];
 		for (int dir = 0; dir < 4; ++dir)
@@ -915,12 +931,14 @@ static unsigned char getTriFlags(const float* va, const float* vb, const float* 
 
 
 
-bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& chf,
+bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompactHeightfield& chf,
 						   const float sampleDist, const float sampleMaxError,
 						   rcPolyMeshDetail& dmesh)
 {
-	rcTimeVal startTime = rcGetPerformanceTimer();
+	ASSERT(ctx);
 	
+	ctx->startTimer(RC_TIMER_BUILD_POLYMESHDETAIL);
+
 	if (mesh.nverts == 0 || mesh.npolys == 0)
 		return true;
 	
@@ -938,18 +956,16 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 	int nPolyVerts = 0;
 	int maxhw = 0, maxhh = 0;
 	
-	rcScopedDelete<int> bounds = new int[mesh.npolys*4];
+	rcScopedDelete<int> bounds = (int*)malloc(sizeof(int)*mesh.npolys*4);
 	if (!bounds)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'bounds' (%d).", mesh.npolys*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'bounds' (%d).", mesh.npolys*4);
 		return false;
 	}
-	rcScopedDelete<float> poly = new float[nvp*3];
+	rcScopedDelete<float> poly = (float*)malloc(sizeof(float)*nvp*3);
 	if (!poly)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'poly' (%d).", nvp*3);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'poly' (%d).", nvp*3);
 		return false;
 	}
 	
@@ -984,22 +1000,20 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 		maxhh = rcMax(maxhh, ymax-ymin);
 	}
 	
-	hp.data = new unsigned short[maxhw*maxhh];
+	hp.data = (unsigned short*)malloc(sizeof(unsigned short)*maxhw*maxhh);
 	if (!hp.data)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'hp.data' (%d).", maxhw*maxhh);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'hp.data' (%d).", maxhw*maxhh);
 		return false;
 	}
 	
 	dmesh.nmeshes = mesh.npolys;
 	dmesh.nverts = 0;
 	dmesh.ntris = 0;
-	dmesh.meshes = new unsigned short[dmesh.nmeshes*4];
+	dmesh.meshes = (unsigned int*)malloc(sizeof(unsigned int)*dmesh.nmeshes*4);
 	if (!dmesh.meshes)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.meshes' (%d).", dmesh.nmeshes*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.meshes' (%d).", dmesh.nmeshes*4);
 		return false;
 	}
 
@@ -1007,19 +1021,17 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 	int tcap = vcap*2;
 
 	dmesh.nverts = 0;
-	dmesh.verts = new float[vcap*3];
+	dmesh.verts = (float*)malloc(sizeof(float)*vcap*3);
 	if (!dmesh.verts)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.verts' (%d).", vcap*3);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.verts' (%d).", vcap*3);
 		return false;
 	}
 	dmesh.ntris = 0;
-	dmesh.tris = new unsigned char[tcap*4];
+	dmesh.tris = (unsigned char*)malloc(sizeof(unsigned char*)*tcap*4);
 	if (!dmesh.tris)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.tris' (%d).", tcap*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.tris' (%d).", tcap*4);
 		return false;
 	}
 	
@@ -1048,7 +1060,7 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 		
 		// Build detail mesh.
 		int nverts = 0;
-		if (!buildPolyDetail(poly, npoly,
+		if (!buildPolyDetail(ctx, poly, npoly,
 							 sampleDist, sampleMaxError,
 							 chf, hp, verts, nverts, tris,
 							 edges, samples))
@@ -1073,11 +1085,11 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 	
 		// Store detail submesh.
 		const int ntris = tris.size()/4;
-		
-		dmesh.meshes[i*4+0] = dmesh.nverts;
-		dmesh.meshes[i*4+1] = (unsigned short)nverts;
-		dmesh.meshes[i*4+2] = dmesh.ntris;
-		dmesh.meshes[i*4+3] = (unsigned short)ntris;
+
+		dmesh.meshes[i*4+0] = (unsigned int)dmesh.nverts;
+		dmesh.meshes[i*4+1] = (unsigned int)nverts;
+		dmesh.meshes[i*4+2] = (unsigned int)dmesh.ntris;
+		dmesh.meshes[i*4+3] = (unsigned int)ntris;		
 		
 		// Store vertices, allocate more memory if necessary.
 		if (dmesh.nverts+nverts > vcap)
@@ -1085,16 +1097,15 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 			while (dmesh.nverts+nverts > vcap)
 				vcap += 256;
 				
-			float* newv = new float[vcap*3];
+			float* newv = (float*)malloc(sizeof(float)*vcap*3);
 			if (!newv)
 			{
-				if (rcGetLog())
-					rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'newv' (%d).", vcap*3);
+				ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'newv' (%d).", vcap*3);
 				return false;
 			}
 			if (dmesh.nverts)
 				memcpy(newv, dmesh.verts, sizeof(float)*3*dmesh.nverts);
-			delete [] dmesh.verts;
+			free(dmesh.verts);
 			dmesh.verts = newv;
 		}
 		for (int j = 0; j < nverts; ++j)
@@ -1110,16 +1121,15 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 		{
 			while (dmesh.ntris+ntris > tcap)
 				tcap += 256;
-			unsigned char* newt = new unsigned char[tcap*4];
+			unsigned char* newt = (unsigned char*)malloc(sizeof(unsigned char)*tcap*4);
 			if (!newt)
 			{
-				if (rcGetLog())
-					rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'newt' (%d).", tcap*4);
+				ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'newt' (%d).", tcap*4);
 				return false;
 			}
 			if (dmesh.ntris)
 				memcpy(newt, dmesh.tris, sizeof(unsigned char)*4*dmesh.ntris);
-			delete [] dmesh.tris;
+			free(dmesh.tris);
 			dmesh.tris = newt;
 		}
 		for (int j = 0; j < ntris; ++j)
@@ -1132,19 +1142,18 @@ bool rcBuildPolyMeshDetail(const rcPolyMesh& mesh, const rcCompactHeightfield& c
 			dmesh.ntris++;
 		}
 	}
-	
-	rcTimeVal endTime = rcGetPerformanceTimer();
-	
-	if (rcGetBuildTimes())
-		rcGetBuildTimes()->buildDetailMesh += rcGetDeltaTimeUsec(startTime, endTime);
+		
+	ctx->stopTimer(RC_TIMER_BUILD_POLYMESHDETAIL);
 
 	return true;
 }
 
-bool rcMergePolyMeshDetails(rcPolyMeshDetail** meshes, const int nmeshes, rcPolyMeshDetail& mesh)
+bool rcMergePolyMeshDetails(rcContext* ctx, rcPolyMeshDetail** meshes, const int nmeshes, rcPolyMeshDetail& mesh)
 {
-	rcTimeVal startTime = rcGetPerformanceTimer();
+	ASSERT(ctx);
 	
+	ctx->startTimer(RC_TIMER_MERGE_POLYMESHDETAIL);
+
 	int maxVerts = 0;
 	int maxTris = 0;
 	int maxMeshes = 0;
@@ -1158,29 +1167,26 @@ bool rcMergePolyMeshDetails(rcPolyMeshDetail** meshes, const int nmeshes, rcPoly
 	}
 
 	mesh.nmeshes = 0;
-	mesh.meshes = new unsigned short[maxMeshes*4];
+	mesh.meshes = (unsigned int*)malloc(sizeof(unsigned int)*maxMeshes*4);
 	if (!mesh.meshes)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'pmdtl.meshes' (%d).", maxMeshes*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'pmdtl.meshes' (%d).", maxMeshes*4);
 		return false;
 	}
 
 	mesh.ntris = 0;
-	mesh.tris = new unsigned char[maxTris*4];
+	mesh.tris = (unsigned char*)malloc(sizeof(unsigned char)*maxTris*4);
 	if (!mesh.tris)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.tris' (%d).", maxTris*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.tris' (%d).", maxTris*4);
 		return false;
 	}
 
 	mesh.nverts = 0;
-	mesh.verts = new float[maxVerts*3];
+	mesh.verts = (float*)malloc(sizeof(float)*maxVerts*3);
 	if (!mesh.verts)
 	{
-		if (rcGetLog())
-			rcGetLog()->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.verts' (%d).", maxVerts*3);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.verts' (%d).", maxVerts*3);
 		return false;
 	}
 	
@@ -1191,18 +1197,18 @@ bool rcMergePolyMeshDetails(rcPolyMeshDetail** meshes, const int nmeshes, rcPoly
 		if (!dm) continue;
 		for (int j = 0; j < dm->nmeshes; ++j)
 		{
-			unsigned short* dst = &mesh.meshes[mesh.nmeshes*4];
-			unsigned short* src = &dm->meshes[j*4];
-			dst[0] = mesh.nverts+src[0];
+			unsigned int* dst = &mesh.meshes[mesh.nmeshes*4];
+			unsigned int* src = &dm->meshes[j*4];
+			dst[0] = (unsigned int)mesh.nverts+src[0];
 			dst[1] = src[1];
-			dst[2] = mesh.ntris+src[2];
+			dst[2] = (unsigned int)mesh.ntris+src[2];
 			dst[3] = src[3];
 			mesh.nmeshes++;
 		}
 			
 		for (int k = 0; k < dm->nverts; ++k)
 		{
-			vcopy(&mesh.verts[mesh.nverts*3], &dm->verts[k*3]);
+			rcVcopy(&mesh.verts[mesh.nverts*3], &dm->verts[k*3]);
 			mesh.nverts++;
 		}
 		for (int k = 0; k < dm->ntris; ++k)
@@ -1215,10 +1221,7 @@ bool rcMergePolyMeshDetails(rcPolyMeshDetail** meshes, const int nmeshes, rcPoly
 		}
 	}
 
-	rcTimeVal endTime = rcGetPerformanceTimer();
-	
-	if (rcGetBuildTimes())
-		rcGetBuildTimes()->mergePolyMeshDetail += rcGetDeltaTimeUsec(startTime, endTime);
+	ctx->stopTimer(RC_TIMER_MERGE_POLYMESHDETAIL);
 	
 	return true;
 }

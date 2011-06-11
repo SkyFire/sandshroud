@@ -667,9 +667,14 @@ HEARTHSTONE_INLINE std::string HEARTHSTONE_TOLOWER_RETURN(std::string str)
 bool ParseCIDRBan(unsigned int IP, unsigned int Mask, unsigned int MaskBits);
 unsigned int MakeIP(const char * str);
 
+#include "Pathfinding/Recast/Recast.h"
 #include "Log.h"
 #include "NGLog.h"
 #include "Console/CConsole.h"
+
+#elif defined(MMAP_GENERATOR)
+#include "Pathfinding/Recast/Recast.h"
+#include "Pathfinding/Detour/DetourNavMesh.h"
 #endif
 
 #endif
