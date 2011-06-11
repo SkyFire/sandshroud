@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include <math.h>
 #include "DetourCommon.h"
 

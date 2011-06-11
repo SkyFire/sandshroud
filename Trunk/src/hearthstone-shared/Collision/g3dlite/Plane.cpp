@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "platform.h"
 #include "Plane.h"
 #include "stringutils.h"

@@ -24,7 +24,7 @@
 #include "CoordinateFrame.h"
 #include "Vector3.h"
 #include "Plane.h"
-#include "ASSERT.h"
+#include <assert.h>
 
 namespace G3D {
 

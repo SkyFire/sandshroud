@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "../Common.h"
 #include "Mutex.h"
 #include "ThreadStarter.h"

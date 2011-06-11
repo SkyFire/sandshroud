@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "vmap/VMapManager2.h"
 #include "g3dlite/G3DAll.h"
 #include <math.h>

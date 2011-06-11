@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "MemoryManager.h"
 #include "System.h"
 

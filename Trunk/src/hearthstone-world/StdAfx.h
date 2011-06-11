@@ -88,6 +88,7 @@
 #include "../hearthstone-shared/CallBack.h"
 #include "../hearthstone-world/Const.h"
 #include "../hearthstone-shared/Storage.h"
+#include "../hearthstone-shared/PerfCounters.h"
 #include "../hearthstone-logonserver/LogonOpcodes.h"
 
 #include "NameTables.h"

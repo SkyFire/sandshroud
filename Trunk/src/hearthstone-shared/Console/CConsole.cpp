@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "CConsole.h"
 #include "BaseConsole.h"
 

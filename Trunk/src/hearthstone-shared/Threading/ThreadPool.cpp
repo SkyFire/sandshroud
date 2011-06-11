@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "ThreadPool.h"
 #include "../NGLog.h"
 #include "../Log.h"

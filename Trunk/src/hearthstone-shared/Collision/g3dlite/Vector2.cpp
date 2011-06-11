@@ -17,14 +17,13 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "platform.h"
 #include <stdlib.h>
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
 #include "g3dmath.h"
-#include "format.h"
+#include "../../format.h"
 
 namespace G3D {
 

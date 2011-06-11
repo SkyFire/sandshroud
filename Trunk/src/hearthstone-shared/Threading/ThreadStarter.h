@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "Util.h"
 
 #ifndef _THREADING_STARTER_H

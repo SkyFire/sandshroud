@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "g3dfnmatch.h"
 
 #ifdef G3D_WIN32

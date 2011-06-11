@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "WowCrypt.h"
 #include <algorithm>
 

@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "Matrix.h"
 
 static inline G3D::Matrix::T negate(G3D::Matrix::T x) {

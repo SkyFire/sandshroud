@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "DatabaseEnv.h"
 #include "../CrashHandler.h"
 #include "../NGLog.h"

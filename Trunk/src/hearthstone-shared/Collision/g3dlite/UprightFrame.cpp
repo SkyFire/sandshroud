@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "UprightFrame.h"
 
 namespace G3D {

@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "platform.h"
 #include "CoordinateFrame.h"
 #include "Quat.h"

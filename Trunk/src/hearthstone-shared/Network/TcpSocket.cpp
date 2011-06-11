@@ -13,7 +13,7 @@
  *
  */
 
-#include "SharedStdAfx.h"
+#include "Network.h"
 
 TcpSocket::TcpSocket(int fd, size_t readbuffersize, size_t writebuffersize, bool use_circular_buffer, const sockaddr_in * peer)
 {

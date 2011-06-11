@@ -29,6 +29,8 @@ void OutputCrashLogLine(const char* format, ...);
 
 #ifdef WIN32
 
+#define CRASHHANDLER_ENABLED
+
 #include "Common.h"
 #include <DbgHelp.h>
 #include "StackWalker.h"

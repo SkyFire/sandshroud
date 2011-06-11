@@ -27,6 +27,8 @@
 // We need assertions.
 #include "../Errors.h"
 
+#if defined(SHARED_LIB_BUILDER) || defined(_GAME) // Game the lost just you?
+
 // Platform Specific Lock Implementation
 #include "Mutex.h"
 
@@ -41,6 +43,8 @@
 
 // Thread Pool
 #include "ThreadPool.h"
+
+#endif
 
 #endif
 

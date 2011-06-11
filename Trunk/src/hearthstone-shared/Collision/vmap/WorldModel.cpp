@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "WorldModel.h"
 #include "VMapDefinitions.h"
 #include "MapTree.h"

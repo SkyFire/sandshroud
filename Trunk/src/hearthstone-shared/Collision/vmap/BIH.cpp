@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "BIH.h"
 
 void BIH::buildHierarchy(std::vector<uint32> &tempTree, buildData &dat, BuildStats &stats)

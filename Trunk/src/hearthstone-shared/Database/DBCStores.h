@@ -1359,12 +1359,12 @@ HEARTHSTONE_INLINE float GetRadius(SpellRadius *radius)
 
 	return 0.0f;
 }
+
 HEARTHSTONE_INLINE uint32 GetCastTime(SpellCastTime *time)
 {
 	if(time && time->CastTime)
 		return time->CastTime;
-
-	return 0.0f;
+	return 0;
 }
 
 HEARTHSTONE_INLINE float GetMaxRange(SpellRange *range)

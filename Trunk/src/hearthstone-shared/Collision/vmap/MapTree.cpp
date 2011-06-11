@@ -18,12 +18,11 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "MapTree.h"
 #include "ModelInstance.h"
 #include "VMapManager2.h"
 #include "VMapDefinitions.h"
-#include "Common.h"
+#include "../../Common.h"
 
 #include <string>
 #include <sstream>

@@ -13,7 +13,7 @@
  *
  */
 
-#include "SharedStdAfx.h"
+#include "Network.h"
 
 initialiseSingleton(SocketEngine);
 initialiseSingleton(SocketDeleter);

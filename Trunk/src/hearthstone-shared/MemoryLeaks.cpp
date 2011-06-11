@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "MemoryLeaks.h"
 
 //#include <vld.h>

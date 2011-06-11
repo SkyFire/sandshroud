@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "DetourNode.h"
 #include <string.h>
 

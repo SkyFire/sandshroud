@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "ChunkyTriMesh.h"
 #include <stdio.h>
 #include <stdlib.h>

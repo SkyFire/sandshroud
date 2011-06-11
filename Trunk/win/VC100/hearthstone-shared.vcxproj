@@ -86,7 +86,7 @@ RevisionExtractor.exe
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -106,7 +106,7 @@ RevisionExtractor.exe
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
@@ -133,7 +133,7 @@ RevisionExtractor.exe
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_HAS_ITERATOR_DEBUGGING=0;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;X64;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -141,9 +141,11 @@ RevisionExtractor.exe
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>SharedStdAfx.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>.\hearthstone-shared___x64_Release/shared.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(IntDir)</ProgramDataBaseFileName>
@@ -153,7 +155,7 @@ RevisionExtractor.exe
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
@@ -176,7 +178,7 @@ RevisionExtractor.exe
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -192,7 +194,7 @@ RevisionExtractor.exe
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
@@ -218,7 +220,7 @@ RevisionExtractor.exe
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>..\..\src\hearthstone-shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;X64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;X64;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -234,7 +236,7 @@ RevisionExtractor.exe
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;SHARED_LIB_BUILDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
@@ -261,11 +263,7 @@ RevisionExtractor.exe
     <ClCompile Include="..\..\src\hearthstone-shared\Auth\Sha1.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Auth\WowCrypt.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Network\TcpSocket.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp" />
@@ -337,12 +335,6 @@ RevisionExtractor.exe
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix3.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-shared\SharedStdAfx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\hearthstone-shared\Console\BaseConsole.h" />
@@ -371,11 +363,7 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\src\hearthstone-shared\Network\ListenSocket.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\Network.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\StraightBuffer.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Network\TcpSocket.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\ChunkyTriMesh.h" />
@@ -485,7 +473,6 @@ RevisionExtractor.exe
     <ClInclude Include="..\..\src\hearthstone-shared\FastQueue.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\format.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\hearthstoneConfig.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\SharedStdAfx.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Storage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

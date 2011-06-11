@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "MersenneTwister.h"
 #include "Timer.h"
 

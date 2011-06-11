@@ -65,11 +65,16 @@ enum MsTimeVariables
 # include <config.h>
 #endif
 
+#if defined(SHARED_LIB_BUILDER) || defined(_GAME) // Game the lost just you?
 #include "hearthstoneConfig.h"
+#endif
 #include "format.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
+#include <math.h>
 #include <errno.h>
 
 #if defined( __WIN32__ ) || defined( WIN32 ) || defined( _WIN32 )
@@ -460,11 +465,14 @@ Scripting system exports/imports
 	#define SCRIPT_DECL
 #endif
 
+
 // Include all threading files
 #include <assert.h>
 #include "Threading/Threading.h"
 
+#if defined(SHARED_LIB_BUILDER) || defined(_GAME) // Game the lost just you?
 #include "MersenneTwister.h"
+#endif
 
 #if COMPILER == COMPILER_MICROSOFT
 
@@ -592,6 +600,7 @@ HEARTHSTONE_INLINE uint32 now()
 #define Sleep(ms) usleep(1000*ms)
 #endif
 
+#if defined(SHARED_LIB_BUILDER) || defined(_GAME) // Game the lost just you?
 #include "Util.h"
 struct WayPoint
 {
@@ -615,7 +624,6 @@ struct WayPoint
 	std::string forwardSayText;
 	std::string backwardSayText;
 	uint16 count;
-
 };
 
 HEARTHSTONE_INLINE void reverse_array(uint8 * pointer, size_t count)
@@ -662,5 +670,6 @@ unsigned int MakeIP(const char * str);
 #include "Log.h"
 #include "NGLog.h"
 #include "Console/CConsole.h"
+#endif
 
 #endif

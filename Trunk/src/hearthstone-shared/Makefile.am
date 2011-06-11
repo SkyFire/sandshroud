@@ -29,8 +29,6 @@ libshared_a_SOURCES = \
     Storage.h \
     format.h \
     int24.h \
-    SharedStdAfx.cpp \
-    SharedStdAfx.h \
     Threading/Mutex.cpp \
     Threading/ThreadPool.cpp \
     hearthstone_getopt.h \

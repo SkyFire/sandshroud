@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
  *
  * StackWalker.cpp
  * http://stackwalker.codeplex.com/
@@ -74,7 +74,14 @@
  *
  **********************************************************************/
 
-#include "SharedStdAfx.h"
+#include <windows.h>
+#include <tchar.h>
+#include <stdio.h>
+#include <stdlib.h>
+#pragma comment(lib, "version.lib")  // for "VerQueryValue"
+#pragma warning(disable:4826)
+
+#include "StackWalker.h"
 
 // If VC7 and later, then use the shipped 'dbghelp.h'-file
 #pragma pack(push,8)
@@ -630,7 +637,7 @@ private:
 	pGMI = (tGMI) GetProcAddress( hPsapi, "GetModuleInformation" );
 	if ( (pEPM == NULL) || (pGMFNE == NULL) || (pGMBN == NULL) || (pGMI == NULL) )
 	{
-	  // we couldn�t find all functions
+	  // we couldn´t find all functions
 	  FreeLibrary(hPsapi);
 	  return FALSE;
 	}

@@ -24,11 +24,13 @@
 #ifndef WOWSERVER_ERRORS_H
 #define WOWSERVER_ERRORS_H
 
+#if defined(SHARED_LIB_BUILDER) || defined(_GAME) // Game the lost just you?
 #include "CrashHandler.h"
+#endif
 // TODO: handle errors better
 
 // An assert isn't necessarily fatal, although if compiled with asserts enabled it will be.
-#if defined(WIN32) && defined(_DEBUG)
+#if defined(WIN32) && defined(_DEBUG) && defined(CRASHHANDLER_ENABLED)
 #define WPAssert( assertion ) { if( !(assertion) ) { fprintf( stderr, "\n%s:%i ASSERTION FAILED:\n  %s\n", __FILE__, __LINE__, #assertion ); CStackWalker sw; sw.ShowCallstack(); assert(assertion); } }
 #else
 #define WPAssert( assertion ) { if( !(assertion) ) { fprintf( stderr, "\n%s:%i ASSERTION FAILED:\n  %s\n", __FILE__, __LINE__, #assertion ); assert(assertion); } }

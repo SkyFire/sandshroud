@@ -17,10 +17,9 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "platform.h"
 #include "System.h"
-#include "format.h"
+#include "../../format.h"
 
 #ifdef G3D_WIN32
 

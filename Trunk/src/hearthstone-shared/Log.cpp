@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "Common.h"
 #include "Config/ConfigEnv.h"
 #include "Log.h"

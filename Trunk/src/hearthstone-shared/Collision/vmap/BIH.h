@@ -21,8 +21,6 @@
 #ifndef _BIH_H
 #define _BIH_H
 
-#include "Common.h"
-
 #include "../g3dlite/Vector3.h"
 #include "../g3dlite/Ray.h"
 #include "../g3dlite/AABox.h"

@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "RecastTimer.h"
 
 #if defined(WIN32)

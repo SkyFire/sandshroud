@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "g3dmath.h"
 #include <cstdlib>
 #include <cstring>

@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "Box.h"
 #include "Plane.h"
 #include "AABox.h"

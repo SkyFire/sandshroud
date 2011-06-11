@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "Common.h"
 #include "hearthstone_getopt.h"
 

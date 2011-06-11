@@ -21,9 +21,13 @@
 #ifndef DETOURCOMMON_H
 #define DETOURCOMMON_H
 
+#include "Common.h"
+
 //////////////////////////////////////////////////////////////////////////////////////////
 
 template<class T> inline void swap(T& a, T& b) { T t = a; a = b; b = t; }
+template<class T> inline T min(T a, T b) { return a < b ? a : b; }
+template<class T> inline T max(T a, T b) { return a > b ? a : b; }
 template<class T> inline T abs(T a) { return a < 0 ? -a : a; }
 template<class T> inline T sqr(T a) { return a*a; }
 template<class T> inline T clamp(T v, T mn, T mx) { return v < mn ? mn : (v > mx ? mx : v); }

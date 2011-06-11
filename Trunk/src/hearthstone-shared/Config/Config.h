@@ -23,6 +23,7 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
+#include "../Common.h"
 
 #ifndef EOL
 #ifdef WIN32

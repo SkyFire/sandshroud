@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include <sys/types.h>
 #include "VMapFactory.h"
 #include "VMapManager2.h"

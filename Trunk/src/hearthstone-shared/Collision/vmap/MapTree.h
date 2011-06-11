@@ -21,7 +21,7 @@
 #ifndef _MAPTREE_H
 #define _MAPTREE_H
 
-#include "Common.h"
+#include "../../Common.h"
 #include "BIH.h"
 
 /*Flag	Meaning

@@ -21,7 +21,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "CallBack.h"
 
 void CallbackFP::operator()()

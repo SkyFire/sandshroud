@@ -21,7 +21,9 @@
  *
  */
 
-#include "SharedStdAfx.h"
+#include "dbcfile.h"
+#include <stdio.h>
+//#include "../Common.h"
 
 DBCFile::DBCFile()
 {

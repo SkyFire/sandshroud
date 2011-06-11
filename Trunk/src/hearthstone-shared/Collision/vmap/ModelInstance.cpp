@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "ModelInstance.h"
 #include "WorldModel.h"
 #include "MapTree.h"

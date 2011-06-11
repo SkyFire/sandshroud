@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include <limits>
 #include <stdlib.h>
 #include "Vector3.h"

@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "Capsule.h"
 #include "LineSegment.h"
 #include "Sphere.h"

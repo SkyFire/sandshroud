@@ -18,7 +18,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "WorldModel.h"
 #include "TileAssembler.h"
 #include "MapTree.h"

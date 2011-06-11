@@ -21,7 +21,9 @@
  *
  */
 
-#include "SharedStdAfx.h"
+#include "DBC.h"
+#include "../NGLog.h"
+#include <math.h>
 
 class DBC;
 

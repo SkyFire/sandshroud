@@ -13,8 +13,7 @@
  *
  */
 
-#include "SharedStdAfx.h"
-#include "SocketEngine_iocp.h"
+#include "Network.h"
 
 #ifdef NETLIB_IOCP
 

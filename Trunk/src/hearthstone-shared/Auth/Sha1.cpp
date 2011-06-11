@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include "Sha1.h"
 #include <stdarg.h>
 

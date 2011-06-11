@@ -17,7 +17,6 @@
  *
  */
 
-#include "SharedStdAfx.h"
 #include <cstring>
 #include <cstdio>
 #include "platform.h"

@@ -67,9 +67,6 @@
     <Filter Include="Network\Engines\Win">
       <UniqueIdentifier>{130b3846-f641-46c9-b06c-c5de75528db9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Network\Engines\Unix">
-      <UniqueIdentifier>{7c86f31c-adc2-4e12-b1a9-2f067ba5bd22}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\hearthstone-shared\Database\Database.cpp">
@@ -267,7 +264,6 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp">
       <Filter>Util\Collision\G3D\Matrix</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\SharedStdAfx.cpp" />
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp">
       <Filter>Util\Pathfinding\Detour</Filter>
     </ClCompile>
@@ -330,18 +326,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.cpp">
       <Filter>Network\Engines\Win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.cpp">
-      <Filter>Network\Engines\Unix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.cpp">
-      <Filter>Network\Engines\Unix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.cpp">
-      <Filter>Network\Engines\Unix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.cpp">
-      <Filter>Network\Engines\Unix</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -674,7 +658,6 @@
     <ClInclude Include="..\..\src\hearthstone-shared\FastQueue.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\format.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\hearthstoneConfig.h" />
-    <ClInclude Include="..\..\src\hearthstone-shared\SharedStdAfx.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Storage.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.h">
       <Filter>Util\Pathfinding\Detour</Filter>
@@ -742,18 +725,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_iocp.h">
       <Filter>Network\Engines\Win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_select.h">
-      <Filter>Network\Engines\Unix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_epoll.h">
-      <Filter>Network\Engines\Unix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_kqueue.h">
-      <Filter>Network\Engines\Unix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Network\SocketEngine_poll.h">
-      <Filter>Network\Engines\Unix</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

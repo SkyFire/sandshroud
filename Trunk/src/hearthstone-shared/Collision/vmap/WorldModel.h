@@ -28,9 +28,8 @@
 #include "../g3dlite/Vector3.h"
 #include "../g3dlite/AABox.h"
 #include "../g3dlite/Ray.h"
+#include "../../Common.h"
 #include "BIH.h"
-
-#include "Common.h"
 
 namespace VMAP
 {
