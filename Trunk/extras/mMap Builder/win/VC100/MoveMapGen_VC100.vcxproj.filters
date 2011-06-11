@@ -7,6 +7,12 @@
     <Filter Include="vmap">
       <UniqueIdentifier>{cd55fe3a-8e4d-47c3-a8b6-d198c903234e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Recast">
+      <UniqueIdentifier>{22229bad-c9b7-4e68-84e9-e27bfbd4868e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Detour">
+      <UniqueIdentifier>{899f04be-b5c4-41d3-9d79-9cb71dc0897e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\generator.cpp">
@@ -44,6 +50,48 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\WorldModel.cpp">
       <Filter>vmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp">
+      <Filter>Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMesh.cpp">
+      <Filter>Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.cpp">
+      <Filter>Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.cpp">
+      <Filter>Detour</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastArea.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastContour.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastFilter.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastMesh.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastMeshDetail.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRasterization.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRegion.cpp">
+      <Filter>Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.cpp">
+      <Filter>Recast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +139,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\WorldModel.h">
       <Filter>vmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.h">
+      <Filter>Detour</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMesh.h">
+      <Filter>Detour</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.h">
+      <Filter>Detour</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.h">
+      <Filter>Detour</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.h">
+      <Filter>Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.h">
+      <Filter>Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.h">
+      <Filter>Recast</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

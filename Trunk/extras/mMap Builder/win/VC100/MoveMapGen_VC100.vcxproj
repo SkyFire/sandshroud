@@ -54,7 +54,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src\;..\..\..\..\dep\recastnavigation\Detour\Include\;..\..\..\..\dep\recastnavigation\Recast\Include\;..\..\..\..\src\game\vmap;..\..\..\..\dep\include\g3dlite;..\..\..\..\src\framework\;..\..\..\..\dep\ACE_wrappers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\;..\..\..\..\src\hearthstone-shared;..\..\..\..\dependencies\VC\include;..\..\..\..\src\hearthstone-shared\Pathfinding\Recast;..\..\..\..\src\hearthstone-shared\Pathfinding\Detour;..\..\..\..\src\hearthstone-shared\Collision\vmap;..\..\..\..\src\hearthstone-shared\Collision\g3dlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;DEBUG;MMAP_GENERATOR;NO_CORE_FUNCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -65,6 +65,7 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalLibraryDirectories>..\..\..\..\dependencies\VC\libVC100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>msvcrtd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
@@ -79,7 +80,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\..\src\;..\..\..\..\dep\recastnavigation\Detour\Include\;..\..\..\..\dep\recastnavigation\Recast\Include\;..\..\..\..\src\game\vmap;..\..\..\..\dep\include\g3dlite;..\..\..\..\src\framework\;..\..\..\..\dep\ACE_wrappers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\;..\..\..\..\src\hearthstone-shared;..\..\..\..\dependencies\VC\include;..\..\..\..\src\hearthstone-shared\Pathfinding\Recast;..\..\..\..\src\hearthstone-shared\Pathfinding\Detour;..\..\..\..\src\hearthstone-shared\Collision\vmap;..\..\..\..\src\hearthstone-shared\Collision\g3dlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <PreprocessorDefinitions>WIN32;NDEBUG;MMAP_GENERATOR;_CRT_SECURE_NO_WARNINGS;NO_CORE_FUNCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -89,6 +90,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalLibraryDirectories>..\..\..\..\dependencies\VC\libVC100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>msvcrt.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -111,6 +113,20 @@
     <ClCompile Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\VMapFactory.cpp" />
     <ClCompile Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\VMapManager2.cpp" />
     <ClCompile Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\WorldModel.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMesh.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastArea.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastContour.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastFilter.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastMesh.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastMeshDetail.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRasterization.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRegion.cpp" />
+    <ClCompile Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.cpp" />
     <ClCompile Include="..\..\src\generator.cpp" />
     <ClCompile Include="..\..\src\MapBuilder.cpp" />
     <ClCompile Include="..\..\src\TerrainBuilder.cpp" />
@@ -128,25 +144,18 @@
     <ClInclude Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\VMapManager2.h" />
     <ClInclude Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\VMapTools.h" />
     <ClInclude Include="..\..\..\..\src\hearthstone-shared\Collision\vmap\WorldModel.h" />
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourCommon.h" />
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMesh.h" />
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNavMeshBuilder.h" />
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Detour\DetourNode.h" />
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.h" />
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastLog.h" />
+    <ClInclude Include="..\..\..\..\src\hearthstone-shared\Pathfinding\Recast\RecastTimer.h" />
     <ClInclude Include="..\..\src\MangosMap.h" />
     <ClInclude Include="..\..\src\MapBuilder.h" />
     <ClInclude Include="..\..\src\MMapCommon.h" />
     <ClInclude Include="..\..\src\TerrainBuilder.h" />
     <ClInclude Include="..\..\src\IntermediateValues.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\dep\recastnavigation\Detour\win\VC100\Detour.vcxproj">
-      <Project>{72bdf975-4d4a-42c7-b2c4-f9ed90a2abb6}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\dep\recastnavigation\Recast\win\VC100\Recast.vcxproj">
-      <Project>{00b9dc66-96a6-465d-a6c1-5dff94e48a64}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\win\VC100\g3dlite.vcxproj">
-      <Project>{8072769e-cf10-48bf-b9e1-12752a5dac6e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\win\VC100\zlib.vcxproj">
-      <Project>{8f1dea42-6a5b-4b62-839d-c141a7bfacf2}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

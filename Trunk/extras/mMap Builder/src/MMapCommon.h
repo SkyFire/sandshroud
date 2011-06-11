@@ -27,7 +27,7 @@
 #include <string>
 #include <vector>
 
-#include "Platform/Define.h"
+#include "Common.h"
 
 #ifndef WIN32
     #include <stddef.h>
