@@ -240,80 +240,215 @@ int main(int argc, char * arg[])
 	int locale = -1;
 	char tmp[100];
 
-	tf = fopen("Data/common-2.MPQ", "r");
-	if (!tf)
+	tf = fopen("Data/base.MPQ", "r");
+	if(tf)
 	{
-		printf("Could not find Data/common.MPQ-2\n");
-		return 1;
-	}
-	fclose(tf);
-	new MPQArchive("Data/common-2.MPQ");
+		new MPQArchive("Data/base.MPQ");
 
-	for( size_t i = 0; localeNames[i] != 0; i++ )
-	{
-		sprintf(tmp, "Data/%s/locale-%s.MPQ", localeNames[i], localeNames[i]);
-		tf = fopen(tmp, "r");
+		// DBC
+		tf = fopen("Data/dbc.MPQ", "r");
 		if (!tf)
-			continue;
-		fclose(tf);
-		locale = i;
-		new MPQArchive(tmp);
-	}
-
-	tf = fopen("Data/expansion.MPQ", "r");
-	if (tf)
-	{
-		fclose(tf);
-		new MPQArchive("Data/expansion.MPQ");
-		if ( -1 != locale )
 		{
-			sprintf(tmp, "Data/%s/expansion-locale-%s.MPQ", localeNames[locale], localeNames[locale]);
-			new MPQArchive(tmp);
+			printf("Could not find Data/dbc.MPQ\n");
+			return 1;
 		}
-	}
-
-	tf = fopen("Data/lichking.MPQ", "r");
-	if (tf)
-	{
 		fclose(tf);
-		new MPQArchive("Data/lichking.MPQ");
-		if ( -1 != locale )
-		{
-			sprintf(tmp, "Data/%s/lichking-locale-%s.MPQ", localeNames[locale], localeNames[locale]);
-			new MPQArchive(tmp);
-		}
-	}
+		new MPQArchive("Data/dbc.MPQ");
 
-	tf = fopen("Data/patch.MPQ", "r");
-	if (tf)
-	{
+		// Terrain
+		tf = fopen("Data/terrain.MPQ", "r");
+		if (!tf)
+		{
+			printf("Could not find Data/terrain.MPQ\n");
+			return 1;
+		}
+		fclose(tf);
+		new MPQArchive("Data/terrain.MPQ");
+
+		/* wmo
+		tf = fopen("Data/wmo.MPQ", "r");
+		if (!tf)
+		{
+			printf("Could not find Data/wmo.MPQ\n");
+			return 1;
+		}
+		fclose(tf);
+		new MPQArchive("Data/wmo.MPQ");*/
+
+		// patch
+		tf = fopen("Data/patch.MPQ", "r");
+		if (!tf)
+		{
+			printf("Could not find Data/patch.MPQ\n");
+			return 1;
+		}
 		fclose(tf);
 		new MPQArchive("Data/patch.MPQ");
-		for(int i = 2; i <= maxPatches; i++)
+
+		// patch-2
+		tf = fopen("Data/patch-2.MPQ", "r");
+		if (!tf)
 		{
-			sprintf(tmp, "Data/patch-%d.MPQ", i);
-			tf = fopen(tmp, "r");
-			if (!tf)
-				continue;
-			fclose(tf);
-			new MPQArchive(tmp);
+			printf("Could not find Data/patch-2.MPQ\n");
+			return 1;
 		}
-		if ( -1 != locale )
+		fclose(tf);
+		new MPQArchive("Data/patch-2.MPQ");
+	}
+	else
+	{
+		// 2.4.3 or 3.3.5
+		tf = fopen("Data/common-2.MPQ", "r");
+		if (!tf)
 		{
+			// 2.4.3 MPQs
+			for( size_t i = 0; localeNames[i] != 0; i++ )
+			{
+				sprintf(tmp, "Data/%s/locale-%s.MPQ", localeNames[i], localeNames[i]);
+				tf = fopen(tmp, "r");
+				if (tf == NULL)
+					continue;
+				fclose(tf);
+				locale = i;
+				new MPQArchive(tmp);
+			}
+
+			if(locale == -1)
+			{
+				printf("Could not find a locale\n");
+				return 1;
+			}
+
+			tf = fopen("Data/common.MPQ", "r");
+			if (!tf)
+			{
+				printf("Could not find Data/common.MPQ\n");
+				return 1;
+			}
+			fclose(tf);
+			new MPQArchive("Data/common.MPQ");
+
+			tf = fopen("Data/expansion.MPQ", "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive("Data/expansion.MPQ");
+			}
+
+			tf = fopen("Data/patch.MPQ", "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive("Data/patch.MPQ");
+			}
+
+			tf = fopen("Data/patch-2.MPQ", "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive("Data/patch-2.MPQ");
+			}
+
 			sprintf(tmp, "Data/%s/patch-%s.MPQ", localeNames[locale], localeNames[locale]);
 			tf = fopen(tmp, "r");
 			if (tf)
 			{
 				fclose(tf);
 				new MPQArchive(tmp);
+			}
+
+			sprintf(tmp, "Data/%s/patch-%s-2.MPQ", localeNames[locale], localeNames[locale]);
+			tf = fopen(tmp, "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive(tmp);
+			}
+		}
+		else
+		{
+			// 3.3.5 MPQs
+			fclose(tf);
+			new MPQArchive("Data/common-2.MPQ");
+
+			tf = fopen("Data/common.MPQ", "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive("Data/common.MPQ");
+			}
+
+			for( size_t i = 0; localeNames[i] != 0; i++ )
+			{
+				sprintf(tmp, "Data/%s/locale-%s.MPQ", localeNames[i], localeNames[i]);
+				tf = fopen(tmp, "r");
+				if (!tf)
+					continue;
+				fclose(tf);
+				locale = i;
+				new MPQArchive(tmp);
+			}
+
+			if(locale == -1)
+			{
+				printf("Could not find a locale\n");
+				return 1;
+			}
+
+			tf = fopen("Data/expansion.MPQ", "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive("Data/expansion.MPQ");
+				if ( -1 != locale )
+				{
+					sprintf(tmp, "Data/%s/expansion-locale-%s.MPQ", localeNames[locale], localeNames[locale]);
+					new MPQArchive(tmp);
+				}
+			}
+
+			tf = fopen("Data/lichking.MPQ", "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive("Data/lichking.MPQ");
+				if ( -1 != locale )
+				{
+					sprintf(tmp, "Data/%s/lichking-locale-%s.MPQ", localeNames[locale], localeNames[locale]);
+					new MPQArchive(tmp);
+				}
+			}
+
+			tf = fopen("Data/patch.MPQ", "r");
+			if (tf)
+			{
+				fclose(tf);
+				new MPQArchive("Data/patch.MPQ");
 				for(int i = 2; i <= maxPatches; i++)
 				{
-					sprintf(tmp, "Data/%s/patch-%s-%d.MPQ", localeNames[locale], localeNames[locale], i);
+					sprintf(tmp, "Data/patch-%d.MPQ", i);
 					tf = fopen(tmp, "r");
 					if (!tf)
 						continue;
 					fclose(tf);
 					new MPQArchive(tmp);
+				}
+
+				sprintf(tmp, "Data/%s/patch-%s.MPQ", localeNames[locale], localeNames[locale]);
+				tf = fopen(tmp, "r");
+				if (tf)
+				{
+					fclose(tf);
+					new MPQArchive(tmp);
+					for(int i = 2; i <= maxPatches; i++)
+					{
+						sprintf(tmp, "Data/%s/patch-%s-%d.MPQ", localeNames[locale], localeNames[locale], i);
+						tf = fopen(tmp, "r");
+						if (!tf)
+							continue;
+						fclose(tf);
+						new MPQArchive(tmp);
+					}
 				}
 			}
 		}

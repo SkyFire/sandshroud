@@ -66,8 +66,8 @@ public:
         char seps[] = "\n";
         char *token;
 
-        token = strtok( buffer, seps );
         uint32 counter = 0;
+        token = strtok( buffer, seps );
         while ((token != NULL) && (counter < size)) {
             //cout << token << endl;
             token[strlen(token) - 1] = 0;

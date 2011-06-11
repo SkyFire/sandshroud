@@ -595,9 +595,9 @@ bool ConvertADT(uint32 x, uint32 y, FILE * out_file, char* name)
 
     // For some odd reason, this stuff is reversed.. who knows why..
     char mpq_filename[256];
-    sprintf(mpq_filename, "World\\Maps\\%s\\%s_%u_%u.adt", name, name, tile_y, tile_x);
-    
-    // See if we have it cached first.
+    sprintf_s(mpq_filename, "World\\Maps\\%s\\%s_%u_%u.adt", name, name, tile_y, tile_x);
+
+	// See if we have it cached first.
     if(mcell_cache[tile_y][tile_x] == 0 && cell_cache[tile_y][tile_x] == 0)
     {
         if(!LoadADT(mpq_filename))
