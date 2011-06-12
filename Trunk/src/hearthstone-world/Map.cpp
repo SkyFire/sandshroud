@@ -52,7 +52,7 @@ Map::Map(uint32 mapid, MapInfo * inf)
 	if (sWorld.Collision && _mapInfo->collision)
 		CollideInterface.ActivateMap(_mapId);
 
-	if(sWorld.PathFinding)
+	if(sWorld.PathFinding /*&& _mapInfo->type != INSTANCE_PVP*/)
 		NavMeshInterface.LoadMap(_mapId);
 }
 

@@ -61,7 +61,7 @@ void CNavMeshInterface::LoadMap(uint32 mapid)
 	FILE* file = fopen(fileName, "rb");
 	if (!file)
 	{
-		Log.Error("NavMeshInterface", "Could not open mmap file '%s'", fileName);
+		Log.Notice("NavMeshInterface", "Could not load mmap %03i", mapid);
 		delete [] fileName;
 		return;
 	}
