@@ -346,7 +346,7 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 	const int dataSize = headerSize + vertsSize + polysSize + linksSize +
 						 detailMeshesSize + detailVertsSize + detailTrisSize +
 						 bvTreeSize + offMeshConsSize;
-						 
+
 	unsigned char* data = (unsigned char*)malloc(sizeof(unsigned char)*dataSize);
 	if (!data)
 	{
@@ -354,7 +354,7 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 		return false;
 	}
 	memset(data, 0, dataSize);
-	
+
 	unsigned char* d = data;
 	dtMeshHeader* header = (dtMeshHeader*)d; d += headerSize;
 	float* navVerts = (float*)d; d += vertsSize;
@@ -416,7 +416,7 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 			n++;
 		}
 	}
-	
+
 	// Store polygons
 	// Mesh polys
 	const unsigned short* src = params->polys;

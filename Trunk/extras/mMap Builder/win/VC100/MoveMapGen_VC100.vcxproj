@@ -167,7 +167,6 @@
     <ClCompile Include="..\..\src\IntermediateValues.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\src\game\MoveMapSharedDefines.h" />
     <ClInclude Include="..\..\..\..\src\hearthstone-shared\Collision\g3dlite\AABox.h" />
     <ClInclude Include="..\..\..\..\src\hearthstone-shared\Collision\g3dlite\Array.h" />
     <ClInclude Include="..\..\..\..\src\hearthstone-shared\Collision\g3dlite\AtomicInt32.h" />

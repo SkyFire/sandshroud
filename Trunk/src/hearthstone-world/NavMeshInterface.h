@@ -55,6 +55,8 @@ public: // Navmesh settings
 
 private:
 	dtNavMesh* m_navMesh[NUM_MAPS];
+	uint32 internalX[NUM_MAPS][64];
+	uint32 internalY[NUM_MAPS][64];
 	int64 m_navMeshLoadCount[NUM_MAPS][64][64];
 };
 

@@ -219,7 +219,7 @@ public:
 	
 	// Returns pointer to navmesh initialization params.
 	const dtNavMeshParams* getParams() const;
-	
+
 	// Adds new tile into the navmesh.
 	// The add will fail if the data is in wrong format,
 	// there is not enough tiles left, or if there is a tile already at the location.
@@ -231,7 +231,7 @@ public:
 	//            the reference (as well as poly references) will be the same. Default: 0.
 	//  result - (out,optional) tile ref if the tile was succesfully added.
 	dtStatus addTile(unsigned char* data, int dataSize, int flags, dtTileRef lastRef, dtTileRef* result);
-	
+
 	// Removes specified tile.
 	// Params:
 	//  ref - (in) Reference to the tile to remove.

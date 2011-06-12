@@ -24,6 +24,8 @@ SERVER_DECL CNavMeshInterface NavMeshInterface;
 void CNavMeshInterface::Init()
 {
 	Log.Notice("NavMeshInterface", "Init");
+	memset( internalX, 0, sizeof(uint32)*NUM_MAPS*64 );
+	memset( internalY, 0, sizeof(uint32)*NUM_MAPS*64 );
 	memset( m_navMesh, 0, sizeof(dtNavMesh*)*NUM_MAPS );
 	memset( m_navMeshLoadCount, 0, sizeof(int64)*NUM_MAPS*64*64 );
 }
@@ -100,7 +102,9 @@ bool CNavMeshInterface::IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y
 
 bool CNavMeshInterface::IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y)
 {
-	return (m_navMeshLoadCount[mapid][x][y] > 0 ? true : false);
+	if(!internalX[mapid][x] && !internalY[mapid][y])
+		return false;
+	return (m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]] > 0 ? true : false);
 }
 
 bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
@@ -108,7 +112,7 @@ bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 	if(m_navMesh[mapid] == NULL)
 		return false;
 
-	if(m_navMeshLoadCount[mapid][x][y] < 1)
+	if(!IsNavmeshLoaded(mapid, x, y))
 	{
 		ASSERT(m_navMesh[mapid]);
 
@@ -154,38 +158,48 @@ bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 		}
 		fclose(file);
 
-		dtTileRef tileRef = 0;
+		dtStatus dtresult;
 		dtMeshHeader* header = (dtMeshHeader*)data;
 
 		// memory allocated for data is now managed by detour, and will be deallocated when the tile is removed
-		if(m_navMesh[mapid]->addTile(data, fileHeader.size, DT_TILE_FREE_DATA, 0, &tileRef) != DT_SUCCESS)
-		{
-			Log.Error("NavMeshInterface", "Could not load %03u%02i%02i.mmtile into navmesh", mapid, x, y);
+		dtresult = m_navMesh[mapid]->addTile(data, fileHeader.size, DT_TILE_FREE_DATA, 0, 0);
+		if(dtresult == DT_IN_PROGRESS)
+		{	// We already have it loaded, oops.
+			internalX[mapid][x] = header->x;
+			internalY[mapid][y] = header->y;
 			free(data);
+		}
+		else if(dtresult != DT_SUCCESS)
+		{
+			free(data);
+			Log.Error("NavMeshInterface", "Could not load %03u%02i%02i.mmtile into navmesh", mapid, x, y);
 			return false;
 		}
-
-		Log.Notice("NavMeshInterface", "Loaded mmtile %03i[%02i,%02i] into %03i[%02i,%02i]", mapid, x, y, mapid, header->x, header->y);
+		else
+		{
+			internalX[mapid][x] = header->x;
+			internalY[mapid][y] = header->y;
+			Log.Debug("NavMeshInterface", "Loaded mmtile %03i[%02i,%02i] into %03i[%02i,%02i]", mapid, x, y, mapid, internalX[mapid][x], internalY[mapid][y]);
+		}
 	}
 
-	m_navMeshLoadCount[mapid][x][y]++;
+	m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]]++;
 	return true;
 }
 
 void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 {
-	if(m_navMeshLoadCount[mapid][x][y] == 1)
+	if(m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]] == 1)
 	{
-		dtStatus removestatus;
-		if((removestatus = m_navMesh[mapid]->removeTile(m_navMesh[mapid]->getTileRef(m_navMesh[mapid]->getTileAt(x, y)), NULL, NULL)) != DT_SUCCESS)
+		if(m_navMesh[mapid]->removeTile(m_navMesh[mapid]->getTileRefAt(internalX[mapid][x], internalY[mapid][y]), NULL, NULL) != DT_SUCCESS)
 		{
-			Log.Error("NavMeshInterface", "Failed to unload mmtile %03i[%02i,%02i]", mapid, x, y);
+			Log.Error("NavMeshInterface", "Failed to unload mmtile %03i[%02i,%02i] from %03i[%02i,%02i]", mapid, internalX[mapid][x], internalY[mapid][y], mapid, x, y);
 			return;
 		}
-		Log.Notice("NavMeshInterface", "Unloaded mmtile %03i[%02i,%02i]", mapid, x, y);
+		Log.Debug("NavMeshInterface", "Unloaded mmtile %03i[%02i,%02i] from %03i[%02i,%02i]", mapid, internalX[mapid][x], internalY[mapid][y], mapid, x, y);
 	}
 
-	m_navMeshLoadCount[mapid][x][y]--;
+	m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]]--;
 }
 
 LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
@@ -212,19 +226,29 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 	pos.x = endx;
 	pos.y = endy;
 	pos.z = endz;
-    dtStatus result;
+	dtStatus result;
 	dtQueryFilter* mPathFilter = new dtQueryFilter();
 	if(mPathFilter)
 	{
 		dtPolyRef mStartRef;
 		result = query->findNearestPoly(startPos, mPolyPickingExtents, mPathFilter, &mStartRef, closestPoint);
 		if(result != DT_SUCCESS || !mStartRef)
+		{
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
 			return pos;
+		}
 
 		dtPolyRef mEndRef;
 		result = query->findNearestPoly(endPos, mPolyPickingExtents, mPathFilter, &mEndRef, closestPoint);
 		if(result != DT_SUCCESS || !mEndRef)
+		{
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
 			return pos;
+		}
 
 		if (mStartRef != 0 && mEndRef != 0)
 		{
@@ -232,18 +256,31 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 			dtPolyRef mPathResults[50];
 			result = query->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter, mPathResults, &mNumPathResults, 50);
 			if(result != DT_SUCCESS || mNumPathResults <= 0)
+			{
+				freeNavMeshQuery(query);
+				delete mPathFilter;
+				mPathFilter = NULL;
 				return pos;
+			}
 
 			int mNumPathPoints;
 			float actualpath[3*20];
-			dtPolyRef* polyrefs = 0;
-			result = query->findStraightPath(startPos, endPos, mPathResults, mNumPathResults, actualpath, NULL, polyrefs, &mNumPathPoints, 20);
+			dtPolyRef polyrefs = 0;
+			result = query->findStraightPath(startPos, endPos, mPathResults, mNumPathResults, actualpath, NULL, &polyrefs, &mNumPathPoints, 20);
 			if (result != DT_SUCCESS || mNumPathPoints < 3)
+			{
+				freeNavMeshQuery(query);
+				delete mPathFilter;
+				mPathFilter = NULL;
 				return pos;
+			}
 
 			pos.x = actualpath[5]; //0 3 6
 			pos.y = actualpath[3]; //1 4 7
 			pos.z = actualpath[4]; //2 5 8
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
 			return pos;
 		}
 	}

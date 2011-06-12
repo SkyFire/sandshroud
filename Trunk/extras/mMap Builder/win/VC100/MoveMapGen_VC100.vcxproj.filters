@@ -221,9 +221,6 @@
     <ClInclude Include="..\..\src\MapBuilder.h">
       <Filter>generator</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\src\game\MoveMapSharedDefines.h">
-      <Filter>generator</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\TerrainBuilder.h">
       <Filter>generator</Filter>
     </ClInclude>

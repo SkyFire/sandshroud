@@ -704,7 +704,7 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 
 	// Make sure the location is free.
 	if (getTileAt(header->x, header->y))
-		return DT_FAILURE;
+		return DT_IN_PROGRESS;
 
 	// Allocate a tile.
 	dtMeshTile* tile = 0;
@@ -802,10 +802,9 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 			connectExtOffMeshLinks(nei, tile, dtOppositeTile(i));
 		}
 	}
-	
-	if (result)
-		*result = getTileRef(tile);
 
+	dtTileRef result2 = getTileRef(tile);
+	result = &result2;
 	return DT_SUCCESS;
 }
 
@@ -936,10 +935,11 @@ dtStatus dtNavMesh::removeTile(dtTileRef ref, unsigned char** data, int* dataSiz
 	unsigned int tileSalt = decodePolyIdSalt((dtPolyRef)ref);
 	if ((int)tileIndex >= m_maxTiles)
 		return DT_FAILURE;
+
 	dtMeshTile* tile = &m_tiles[tileIndex];
 	if (tile->salt != tileSalt)
 		return DT_FAILURE;
-	
+
 	// Remove tile from hash lookup.
 	int h = computeTileHash(tile->header->x,tile->header->y,m_tileLutMask);
 	dtMeshTile* prev = 0;

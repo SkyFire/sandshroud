@@ -84,7 +84,7 @@ public:
 				  const dtPolyRef curRef, const dtMeshTile* curTile, const dtPoly* curPoly,
 				  const dtPolyRef nextRef, const dtMeshTile* nextTile, const dtPoly* nextPoly) const;
 #endif
-	
+
 	// Getters and setters for the default implementation data.
 	inline float getAreaCost(const int i) const { return m_areaCost[i]; }
 	inline void setAreaCost(const int i, const float cost) { m_areaCost[i] = cost; } 
