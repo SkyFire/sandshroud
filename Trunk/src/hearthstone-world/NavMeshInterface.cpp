@@ -205,20 +205,17 @@ void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 LocationVector CNavMeshInterface::getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
 {
 	LocationVector pos(startx, starty, startz);
-	LocationVector pos2(0, 0, 0);
 	LocationVector nextpos(startx, starty, startz);
 	LocationVector returnpos(endx, endy, endz);
-	pos2 = getNextPositionOnPathToLocation(mapid, startx, starty, startz, endx, endy, endz);
-	float line = calcAngle(startx, starty, pos2.x, pos2.y);
+	pos = getNextPositionOnPathToLocation(mapid, startx, starty, startz, endx, endy, endz);
+	float line = calcAngle(startx, starty, pos.x, pos.y);
 	while(1)
 	{
 		nextpos = getNextPositionOnPathToLocation(mapid, pos.x, pos.y, pos.z, endx, endy, endz);
 		float angle = calcAngle( startx, starty, nextpos.x, nextpos.y );
-		if(angle == line)
-			pos = nextpos; // We're walking in a straight line, so go to the next position instead.
-		else
+		if(angle != line)
 		{	// We have to turn, so stop our line here.
-			returnpos = nextpos;
+			returnpos = pos;
 			break;
 		}
 		if(pos.x == nextpos.x || pos.y == nextpos.y)
