@@ -21,6 +21,8 @@
 #ifndef __RSTDAFX_H
 #define __RSTDAFX_H
 
+#define _REALM
+
 #include <list>
 #include <vector>
 #include <map>
