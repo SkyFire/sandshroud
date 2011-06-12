@@ -20,12 +20,28 @@
 #ifndef _NavMeshInterface_H
 #define _NavMeshInterface_H
 
+#define MMAP_MAGIC 0x4d4d4150	// 'MMAP'
+#define MMAP_VERSION 3
+
+struct MmapTileHeader
+{
+	uint32 mmapMagic;
+	uint32 dtVersion;
+	uint32 mmapVersion;
+	uint32 size;
+	bool usesLiquids : 1;
+
+	MmapTileHeader() : mmapMagic(MMAP_MAGIC), dtVersion(DT_NAVMESH_VERSION),
+		mmapVersion(MMAP_VERSION), size(0), usesLiquids(true) {}
+};
+
 // Crow: TODO: Integrate Cell Handler royalties.
 class SERVER_DECL CNavMeshInterface
 {
 public:
 	void Init();
 	void DeInit();
+	void LoadMap(uint32 mapid);
 
 public: // Navmesh settings
 	uint32 GetPosX(float x);
@@ -38,7 +54,7 @@ public: // Navmesh settings
 	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 
 private:
-	dtNavMesh *m_navMesh[NUM_MAPS][64][64];
+	dtNavMesh* m_navMesh[NUM_MAPS];
 	int64 m_navMeshLoadCount[NUM_MAPS][64][64];
 };
 

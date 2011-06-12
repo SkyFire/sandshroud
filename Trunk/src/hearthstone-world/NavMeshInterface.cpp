@@ -24,7 +24,7 @@ SERVER_DECL CNavMeshInterface NavMeshInterface;
 void CNavMeshInterface::Init()
 {
 	Log.Notice("NavMeshInterface", "Init");
-	memset( m_navMesh, 0, sizeof(dtNavMesh*)*NUM_MAPS*64*64 );
+	memset( m_navMesh, 0, sizeof(dtNavMesh*)*NUM_MAPS );
 	memset( m_navMeshLoadCount, 0, sizeof(int64)*NUM_MAPS*64*64 );
 }
 
@@ -46,9 +46,49 @@ uint32 CNavMeshInterface::GetPosY(float y)
 	return (uint32)((_maxY-y)/_cellSize);
 }
 
+void CNavMeshInterface::LoadMap(uint32 mapid)
+{
+	if(m_navMesh[mapid] != NULL)
+		return;
+
+	// load and init dtNavMesh - read parameters from file
+	uint32 pathLen = uint32(sWorld.MMapPath.length() + strlen("/000.mmap")+1);
+	char *fileName = new char[pathLen];
+	snprintf(fileName, pathLen, (sWorld.MMapPath+"/%03i.mmap").c_str(), mapid);
+
+	FILE* file = fopen(fileName, "rb");
+	if (!file)
+	{
+		Log.Error("NavMeshInterface", "Could not open mmap file '%s'", fileName);
+		delete [] fileName;
+		return;
+	}
+	
+	dtNavMeshParams params;
+	fread(&params, sizeof(dtNavMeshParams), 1, file);
+	fclose(file);
+
+	dtNavMesh* mesh = mallocNavMesh();
+	ASSERT(mesh);
+	if(mesh->init(&params) != DT_SUCCESS)
+	{
+		freeNavMesh(mesh);
+		Log.Error("NavMeshInterface", "Failed to initialize dtNavMesh for mmap %03u from file %s", mapid, fileName);
+		delete [] fileName;
+		return;
+	}
+
+	delete [] fileName;
+
+	Log.Notice("NavMeshInterface", "Loaded %03i.mmap", mapid);
+
+	// store inside our map list
+	m_navMesh[mapid] = mesh;
+}
+
 dtNavMesh* CNavMeshInterface::GetNavmesh(uint32 mapid)
 {
-	return m_navMesh[mapid][0][0];
+	return m_navMesh[mapid];
 }
 
 bool CNavMeshInterface::IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y)
@@ -65,9 +105,67 @@ bool CNavMeshInterface::IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y)
 
 bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 {
+	if(m_navMesh[mapid] == NULL)
+		return false;
+
 	if(m_navMeshLoadCount[mapid][x][y] < 1)
 	{
+		ASSERT(m_navMesh[mapid]);
 
+		// load this tile :: mmaps/MMMXXYY.mmtile
+		uint32 pathLen = uint32(sWorld.MMapPath.length() + strlen("/0000000.mmtile")+1);
+		char *fileName = new char[pathLen];
+		snprintf(fileName, pathLen, (sWorld.MMapPath+"/%03i%02i%02i.mmtile").c_str(), mapid, x, y);
+		FILE *file = fopen(fileName, "rb");
+		if (!file)
+		{
+			Log.Error("NavMeshInterface", "Could not open mmtile file '%s'", fileName);
+			delete [] fileName;
+			return false;
+		}
+		delete [] fileName;
+
+		// read header
+		MmapTileHeader fileHeader;
+		fread(&fileHeader, sizeof(MmapTileHeader), 1, file);
+		if (fileHeader.mmapMagic != MMAP_MAGIC)
+		{
+			Log.Error("NavMeshInterface", "Bad header in mmap %03u%02i%02i.mmtile", mapid, x, y);
+			fclose(file);
+			return false;
+		}
+
+		if (fileHeader.mmapVersion != MMAP_VERSION)
+		{
+			Log.Error("NavMeshInterface", "%03u%02i%02i.mmtile was built with generator v%i, expected v%i", mapid, x, y, fileHeader.mmapVersion, MMAP_VERSION);
+			fclose(file);
+			return false;
+		}
+
+		unsigned char* data = (unsigned char*)malloc(fileHeader.size);
+		ASSERT(data);
+
+		size_t result = fread(data, fileHeader.size, 1, file);
+		if(!result)
+		{
+			Log.Error("NavMeshInterface", "Bad header or data in mmap %03u%02i%02i.mmtile", mapid, x, y);
+			fclose(file);
+			return false;
+		}
+		fclose(file);
+
+		dtTileRef tileRef = 0;
+		dtMeshHeader* header = (dtMeshHeader*)data;
+
+		// memory allocated for data is now managed by detour, and will be deallocated when the tile is removed
+		if(m_navMesh[mapid]->addTile(data, fileHeader.size, DT_TILE_FREE_DATA, 0, &tileRef) != DT_SUCCESS)
+		{
+			Log.Error("NavMeshInterface", "Could not load %03u%02i%02i.mmtile into navmesh", mapid, x, y);
+			free(data);
+			return false;
+		}
+
+		Log.Notice("NavMeshInterface", "Loaded mmtile %03i[%02i,%02i] into %03i[%02i,%02i]", mapid, x, y, mapid, header->x, header->y);
 	}
 
 	m_navMeshLoadCount[mapid][x][y]++;
@@ -76,14 +174,78 @@ bool CNavMeshInterface::LoadNavMesh(uint32 mapid, uint32 x, uint32 y)
 
 void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 {
-	if((--m_navMeshLoadCount[mapid][x][y]) < 1)
+	if(m_navMeshLoadCount[mapid][x][y] == 1)
 	{
-		delete m_navMesh[mapid][x][y];
-		m_navMesh[mapid][x][y] = NULL;
+		dtStatus removestatus;
+		if((removestatus = m_navMesh[mapid]->removeTile(m_navMesh[mapid]->getTileRef(m_navMesh[mapid]->getTileAt(x, y)), NULL, NULL)) != DT_SUCCESS)
+		{
+			Log.Error("NavMeshInterface", "Failed to unload mmtile %03i[%02i,%02i]", mapid, x, y);
+			return;
+		}
+		Log.Notice("NavMeshInterface", "Unloaded mmtile %03i[%02i,%02i]", mapid, x, y);
 	}
+
+	m_navMeshLoadCount[mapid][x][y]--;
 }
 
 LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
 {
-	return LocationVector(endx, endy, endz);
+	if(m_navMesh[mapid] == NULL)
+		return LocationVector(endx, endy, endz);
+
+	dtNavMeshQuery* query = mallocNavMeshQuery();
+	if(query->init(m_navMesh[mapid], 1024) != DT_SUCCESS)
+	{
+		freeNavMeshQuery(query);
+		Log.Error("NavMeshInterface", "Failed to initialize dtNavMeshQuery for mapId %03u", mapid);
+		return LocationVector(endx, endy, endz);
+	}
+
+	//convert to nav coords.
+	float startPos[3] = { starty, startz, startx };
+	float endPos[3] = { endy, endz, endx };
+	float mPolyPickingExtents[3] = { 2.00f, 4.00f, 2.00f };
+	float closestPoint[3] = {0.0f, 0.0f, 0.0f};
+	int gx = GetPosX(startx)/8;
+	int gy = GetPosY(starty)/8;
+	LocationVector pos;
+	pos.x = endx;
+	pos.y = endy;
+	pos.z = endz;
+    dtStatus result;
+	dtQueryFilter* mPathFilter = new dtQueryFilter();
+	if(mPathFilter)
+	{
+		dtPolyRef mStartRef;
+		result = query->findNearestPoly(startPos, mPolyPickingExtents, mPathFilter, &mStartRef, closestPoint);
+		if(result != DT_SUCCESS || !mStartRef)
+			return pos;
+
+		dtPolyRef mEndRef;
+		result = query->findNearestPoly(endPos, mPolyPickingExtents, mPathFilter, &mEndRef, closestPoint);
+		if(result != DT_SUCCESS || !mEndRef)
+			return pos;
+
+		if (mStartRef != 0 && mEndRef != 0)
+		{
+			int mNumPathResults;
+			dtPolyRef mPathResults[50];
+			result = query->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter, mPathResults, &mNumPathResults, 50);
+			if(result != DT_SUCCESS || mNumPathResults <= 0)
+				return pos;
+
+			int mNumPathPoints;
+			float actualpath[3*20];
+			dtPolyRef* polyrefs = 0;
+			result = query->findStraightPath(startPos, endPos, mPathResults, mNumPathResults, actualpath, NULL, polyrefs, &mNumPathPoints, 20);
+			if (result != DT_SUCCESS || mNumPathPoints < 3)
+				return pos;
+
+			pos.x = actualpath[5]; //0 3 6
+			pos.y = actualpath[3]; //1 4 7
+			pos.z = actualpath[4]; //2 5 8
+			return pos;
+		}
+	}
+	return pos;
 }

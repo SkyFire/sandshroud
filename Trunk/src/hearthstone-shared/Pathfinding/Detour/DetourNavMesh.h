@@ -392,19 +392,17 @@ private:
 	// Removes external links at specified side.
 	void unconnectExtLinks(dtMeshTile* tile, int side);
 	
-
 	// TODO: These methods are duplicates from dtNavMeshQuery, but are needed for off-mesh connection finding.
-	
+
 	// Queries polygons within a tile.
-	int queryPolygonsInTile(const dtMeshTile* tile, const float* qmin, const float* qmax,
-							dtPolyRef* polys, const int maxPolys) const;
+	int queryPolygonsInTile(const dtMeshTile* tile, const float* qmin, const float* qmax, dtPolyRef* polys, const int maxPolys);
+
 	// Find nearest polygon within a tile.
-	dtPolyRef findNearestPolyInTile(const dtMeshTile* tile, const float* center,
-									const float* extents, float* nearestPt) const;
+	dtPolyRef findNearestPolyInTile(const dtMeshTile* tile, const float* center, const float* extents, float* nearestPt);
+
 	// Returns closest point on polygon.
-	dtStatus closestPointOnPolyInTile(const dtMeshTile* tile, unsigned int ip,
-									  const float* pos, float* closest) const;
-	
+	dtStatus closestPointOnPolyInTile(const dtMeshTile* tile, unsigned int ip, const float* pos, float* closest);
+
 	dtNavMeshParams m_params;			// Current initialization params. TODO: do not store this info twice.
 	float m_orig[3];					// Origin of the tile (0,0)
 	float m_tileWidth, m_tileHeight;	// Dimensions of each tile.
@@ -415,7 +413,7 @@ private:
 	dtMeshTile** m_posLookup;			// Tile hash lookup.
 	dtMeshTile* m_nextFree;				// Freelist of tiles.
 	dtMeshTile* m_tiles;				// List of tiles.
-		
+
 	unsigned int m_saltBits;			// Number of salt bits in the tile ID.
 	unsigned int m_tileBits;			// Number of tile bits in the tile ID.
 	unsigned int m_polyBits;			// Number of poly bits in the tile ID.

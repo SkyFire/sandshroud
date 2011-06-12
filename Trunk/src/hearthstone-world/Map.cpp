@@ -51,6 +51,9 @@ Map::Map(uint32 mapid, MapInfo * inf)
 	// collision
 	if (sWorld.Collision && _mapInfo->collision)
 		CollideInterface.ActivateMap(_mapId);
+
+	if(sWorld.PathFinding)
+		NavMeshInterface.LoadMap(_mapId);
 }
 
 Map::~Map()

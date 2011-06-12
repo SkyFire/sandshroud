@@ -549,8 +549,7 @@ void dtNavMesh::connectIntOffMeshLinks(dtMeshTile* tile)
 	}
 }
 
-dtStatus dtNavMesh::closestPointOnPolyInTile(const dtMeshTile* tile, unsigned int ip,
-											 const float* pos, float* closest) const
+dtStatus dtNavMesh::closestPointOnPolyInTile(const dtMeshTile* tile, unsigned int ip, const float* pos, float* closest)
 {
 	const dtPoly* poly = &tile->polys[ip];
 	
@@ -581,9 +580,7 @@ dtStatus dtNavMesh::closestPointOnPolyInTile(const dtMeshTile* tile, unsigned in
 	return DT_SUCCESS;
 }
 
-dtPolyRef dtNavMesh::findNearestPolyInTile(const dtMeshTile* tile,
-										   const float* center, const float* extents,
-										   float* nearestPt) const
+dtPolyRef dtNavMesh::findNearestPolyInTile(const dtMeshTile* tile, const float* center, const float* extents, float* nearestPt)
 {
 	float bmin[3], bmax[3];
 	dtVsub(bmin, center, extents);
@@ -615,8 +612,7 @@ dtPolyRef dtNavMesh::findNearestPolyInTile(const dtMeshTile* tile,
 	return nearest;
 }
 
-int dtNavMesh::queryPolygonsInTile(const dtMeshTile* tile, const float* qmin, const float* qmax,
-								   dtPolyRef* polys, const int maxPolys) const
+int dtNavMesh::queryPolygonsInTile(const dtMeshTile* tile, const float* qmin, const float* qmax, dtPolyRef* polys, const int maxPolys)
 {
 	if (tile->bvTree)
 	{
@@ -705,11 +701,11 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 		return DT_FAILURE_DATA_MAGIC;
 	if (header->version != DT_NAVMESH_VERSION)
 		return DT_FAILURE_DATA_VERSION;
-		
+
 	// Make sure the location is free.
 	if (getTileAt(header->x, header->y))
 		return DT_FAILURE;
-		
+
 	// Allocate a tile.
 	dtMeshTile* tile = 0;
 	if (!lastRef)
@@ -752,7 +748,7 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 	// Make sure we could allocate a tile.
 	if (!tile)
 		return DT_FAILURE_OUT_OF_MEMORY;
-	
+
 	// Insert tile into the position lut.
 	int h = computeTileHash(header->x, header->y, m_tileLutMask);
 	tile->next = m_posLookup[h];
@@ -809,7 +805,7 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 	
 	if (result)
 		*result = getTileRef(tile);
-	
+
 	return DT_SUCCESS;
 }
 
@@ -1013,7 +1009,8 @@ dtStatus dtNavMesh::removeTile(dtTileRef ref, unsigned char** data, int* dataSiz
 
 dtTileRef dtNavMesh::getTileRef(const dtMeshTile* tile) const
 {
-	if (!tile) return 0;
+	if (!tile)
+		return 0;
 	const unsigned int it = tile - m_tiles;
 	return (dtTileRef)encodePolyId(tile->salt, it, 0);
 }
