@@ -51,9 +51,13 @@ public: // Navmesh settings
 	bool IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y);
 	bool IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y);
 	void UnloadNavMesh(uint32 mapid, uint32 x, uint32 y);
+
+	LocationVector getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 
 private:
+	float calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y );
+
 	dtNavMesh* m_navMesh[NUM_MAPS];
 	uint32 internalX[NUM_MAPS][64];
 	uint32 internalY[NUM_MAPS][64];

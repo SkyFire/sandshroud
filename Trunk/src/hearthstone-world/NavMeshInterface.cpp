@@ -202,6 +202,36 @@ void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 	m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]]--;
 }
 
+LocationVector CNavMeshInterface::getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
+{
+	LocationVector pos(startx, starty, startz);
+	LocationVector pos2(0, 0, 0);
+	LocationVector nextpos(startx, starty, startz);
+	LocationVector returnpos(endx, endy, endz);
+	pos2 = getNextPositionOnPathToLocation(mapid, startx, starty, startz, endx, endy, endz);
+	float line = calcAngle(startx, starty, pos2.x, pos2.y);
+	while(1)
+	{
+		nextpos = getNextPositionOnPathToLocation(mapid, pos.x, pos.y, pos.z, endx, endy, endz);
+		float angle = calcAngle( startx, starty, nextpos.x, nextpos.y );
+		if(angle == line)
+			pos = nextpos; // We're walking in a straight line, so go to the next position instead.
+		else
+		{	// We have to turn, so stop our line here.
+			returnpos = nextpos;
+			break;
+		}
+		if(pos.x == nextpos.x || pos.y == nextpos.y)
+		{
+			returnpos = pos;
+			break;
+		}
+
+		pos = nextpos;
+	}
+	return returnpos;
+}
+
 LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
 {
 	if(m_navMesh[mapid] == NULL)
@@ -285,4 +315,44 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 		}
 	}
 	return pos;
+}
+
+float CNavMeshInterface::calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y )
+{
+	float dx = Position2X-Position1X;
+	float dy = Position2Y-Position1Y;
+	double angle=0.0f;
+
+	// Calculate angle
+	if (dx == 0.0)
+	{
+		if (dy == 0.0)
+			angle = 0.0;
+		else if (dy > 0.0)
+			angle = M_PI * 0.5 /* / 2 */;
+		else
+			angle = M_PI * 3.0 * 0.5/* / 2 */;
+	}
+	else if (dy == 0.0)
+	{
+		if (dx > 0.0)
+			angle = 0.0;
+		else
+			angle = M_PI;
+	}
+	else
+	{
+		if (dx < 0.0)
+			angle = atanf(dy/dx) + M_PI;
+		else if (dy < 0.0)
+			angle = atanf(dy/dx) + (2*M_PI);
+		else
+			angle = atanf(dy/dx);
+	}
+
+	// Convert to degrees
+	angle = angle * float(180 / M_PI);
+
+	// Return
+	return float(angle);
 }
