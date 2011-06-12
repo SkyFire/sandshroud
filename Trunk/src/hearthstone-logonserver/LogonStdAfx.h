@@ -20,6 +20,8 @@
 
 #pragma once
 
+#define _LOGON
+
 #include <list>
 #include <vector>
 #include <map>

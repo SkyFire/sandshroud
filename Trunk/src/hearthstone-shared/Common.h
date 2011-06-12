@@ -65,7 +65,7 @@ enum MsTimeVariables
 # include <config.h>
 #endif
 
-#if defined(SHARED_LIB_BUILDER) || defined(_REALM) || defined(_GAME) // Game the lost just you?
+#if defined(SHARED_LIB_BUILDER) || defined(_LOGON) || defined(_REALM) || defined(_GAME) // Game the lost just you?
 #include "hearthstoneConfig.h"
 #endif
 #include "format.h"
@@ -470,7 +470,7 @@ Scripting system exports/imports
 #include <assert.h>
 #include "Threading/Threading.h"
 
-#if defined(SHARED_LIB_BUILDER) || defined(_REALM) || defined(_GAME) // Game the lost just you?
+#if defined(SHARED_LIB_BUILDER) || defined(_LOGON) || defined(_REALM) || defined(_GAME) // Game the lost just you?
 #include "MersenneTwister.h"
 #endif
 
@@ -600,7 +600,7 @@ HEARTHSTONE_INLINE uint32 now()
 #define Sleep(ms) usleep(1000*ms)
 #endif
 
-#if defined(SHARED_LIB_BUILDER) || defined(_REALM) || defined(_GAME) // Game the lost just you?
+#if defined(SHARED_LIB_BUILDER) || defined(_LOGON) || defined(_REALM) || defined(_GAME) // Game the lost just you?
 #include "Util.h"
 struct WayPoint
 {

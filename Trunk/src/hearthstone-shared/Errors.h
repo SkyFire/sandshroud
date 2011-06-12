@@ -24,7 +24,7 @@
 #ifndef WOWSERVER_ERRORS_H
 #define WOWSERVER_ERRORS_H
 
-#if defined(SHARED_LIB_BUILDER) || defined(_REALM) || defined(_GAME) // Game the lost just you?
+#if defined(SHARED_LIB_BUILDER) || defined(_LOGON) || defined(_REALM) || defined(_GAME) // Game the lost just you?
 #include "CrashHandler.h"
 #endif
 // TODO: handle errors better
