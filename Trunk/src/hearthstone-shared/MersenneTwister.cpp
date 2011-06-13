@@ -385,7 +385,7 @@ void DDerive(double &number, int times)
 	}
 }
 
-HEARTHSTONE_INLINE void expon(int &variable, int count) { IDerive(variable, count); }
-HEARTHSTONE_INLINE void expon(long &variable, int count) { LDerive(variable, count); }
-HEARTHSTONE_INLINE void expon(float &variable, int count) { FDerive(variable, count); }
-HEARTHSTONE_INLINE void expon(double &variable, int count) { DDerive(variable, count); }
+void expon(int &variable, int count) { IDerive(variable, count); }
+void expon(long &variable, int count) { LDerive(variable, count); }
+void expon(float &variable, int count) { FDerive(variable, count); }
+void expon(double &variable, int count) { DDerive(variable, count); }

@@ -600,10 +600,21 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 			{
 				uint32 health = GetUInt32Value(UNIT_FIELD_HEALTH);
 				uint32 maxhealth = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+				uint32 protomaxhealth = GetProto()->MaxHealth;
 				uint32 healthdiff = maxhealth - health;
+				uint32 plritemlevel = plr->GetTotalItemLevel();
+				uint32 convrate = vehicleproto->healthunitfromitemlev;
 
-				SetUInt32Value(UNIT_FIELD_HEALTH, GetProto()->MaxHealth - (healthdiff/(((plr->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev)))));
-				SetUInt32Value(UNIT_FIELD_MAXHEALTH, GetProto()->MaxHealth);
+				if(plritemlevel != 0 && convrate != 0)
+				{
+					uint32 healthloss = healthdiff+plritemlevel*convrate;
+					SetUInt32Value(UNIT_FIELD_HEALTH, GetProto()->MaxHealth - healthloss);
+				}
+				else if(protomaxhealth > healthdiff)
+					SetUInt32Value(UNIT_FIELD_HEALTH, protomaxhealth-healthdiff);
+				else
+					SetUInt32Value(UNIT_FIELD_HEALTH, 1);
+				SetUInt32Value(UNIT_FIELD_MAXHEALTH, protomaxhealth);
 			}
 		}
 	}
