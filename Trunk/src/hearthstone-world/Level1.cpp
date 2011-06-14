@@ -679,16 +679,30 @@ bool ChatHandler::HandleRemoveSkillCommand(const char *args, WorldSession *m_ses
 	return true;
 }
 
-
 bool ChatHandler::HandleEmoteCommand(const char* args, WorldSession *m_session)
 {
 	uint32 emote = atoi((char*)args);
-	Unit* target = getSelectedCreature(m_session);
+	Creature* target = getSelectedCreature(m_session);
 	if(!target) 
 		return false;
-	if(target) 
-		target->SetUInt32Value(UNIT_NPC_EMOTESTATE,emote);
 
+	target->original_emotestate = emote;
+	target->SetUInt32Value(UNIT_NPC_EMOTESTATE, emote);
+	if(target->m_spawn && m_session->CanUseCommand('z'))
+		target->SaveToDB();
+	return true;
+}
+
+bool ChatHandler::HandleStandStateCommand(const char* args, WorldSession *m_session)
+{
+	uint32 state = atoi((char*)args);
+	Creature* target = getSelectedCreature(m_session);
+	if(!target) 
+		return false;
+
+	target->SetStandState(state);
+	if(target->m_spawn && m_session->CanUseCommand('z'))
+		target->SaveToDB();
 	return true;
 }
 

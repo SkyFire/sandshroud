@@ -320,7 +320,7 @@ void Creature::SaveToDB(bool saveposition /*= false*/)
 		<< m_uint32Values[UNIT_FIELD_BYTES_0] << ","
 		<< m_uint32Values[UNIT_FIELD_BYTES_1] << ","
 		<< m_uint32Values[UNIT_FIELD_BYTES_2] << ","
-		<< m_uint32Values[UNIT_NPC_EMOTESTATE] << ",";
+		<< uint32(original_emotestate) << ",";
 
 	if(m_spawn)
 		ss << m_spawn->channel_spell << "," << m_spawn->channel_target_go << "," << m_spawn->channel_target_creature << ",";
