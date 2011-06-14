@@ -606,7 +606,7 @@ void WorldSession::HandleTextEmoteOpcode( WorldPacket & recv_data )
 
 		data << (uint32)em->textid;
 		data << (uint64)GetPlayer()->GetGUID();
-		GetPlayer()->SendMessageToSet(&data, false); //If player receives his own emote, his animation stops.
+		GetPlayer()->SendMessageToSet(&data, true);
 
 		data.Initialize(SMSG_TEXT_EMOTE);
 		data << (uint64)GetPlayer()->GetGUID();
