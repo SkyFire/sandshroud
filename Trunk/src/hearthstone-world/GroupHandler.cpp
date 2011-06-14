@@ -100,14 +100,15 @@ void WorldSession::HandleGroupInviteOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	// 16/08/06 - change to guid to prevent very unlikely event of a crash in deny, etc
-	_player->SetInviter(_player->GetLowGUID());//bugfix if player invtied 2 people-> he can be in 2 parties
-
 	data.SetOpcode(SMSG_GROUP_INVITE);
 	data << uint8(1);
 	data << GetPlayer()->GetName();
-
+	data << uint32(0);
+	data << uint8(0);
+	data << uint32(0);
 	player->GetSession()->SendPacket(&data);
+
+	SendPartyCommandResult(GetPlayer(), 0, membername, ERR_PARTY_NO_ERROR);
 
 	// 16/08/06 - change to guid to prevent very unlikely event of a crash in deny, etc
 	player->SetInviter(_player->GetLowGUID());
@@ -390,15 +391,14 @@ void WorldSession::SendPartyCommandResult(Player* pPlayer, uint32 p1, std::strin
 	// if error message do not work, please sniff it and leave me a message
 	if(pPlayer)
 	{
-		WorldPacket data;
-		data.Initialize(SMSG_PARTY_COMMAND_RESULT);
-		data << p1;
+		WorldPacket data(SMSG_PARTY_COMMAND_RESULT, name.length()+4+4+4);
+		data << uint32(p1);
 		if(!name.length())
 			data << uint8(0);
 		else
 			data << name.c_str();
-
-		data << err;
+		data << uint32(err);
+		data << uint32(0);
 		pPlayer->GetSession()->SendPacket(&data);
 	}
 }

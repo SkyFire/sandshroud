@@ -12617,7 +12617,6 @@ void Player::ConvertRune(uint8 index, uint8 value)
 	m_runemask |= (1 << index);
 	SetRune(index, value);
 
-
 	WorldPacket data(SMSG_CONVERT_RUNE, 2);
 	data << (uint8)index;
 	data << (uint8)value;
