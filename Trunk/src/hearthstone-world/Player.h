@@ -1641,11 +1641,9 @@ public:
 	uint32								m_flyHackChances;
 
 	// Wallhack buster!
-	uint32 m_wallhackCheckTimer;
 	uint32 m_wallhackChances;
 	void _WallHackCheck();
 	bool IsWallHackEligible();
-	LocationVector LastWHPosition;
 
 	void AddSplinePacket(uint64 guid, ByteBuffer* packet);
 	ByteBuffer* GetAndRemoveSplinePacket(uint64 guid);

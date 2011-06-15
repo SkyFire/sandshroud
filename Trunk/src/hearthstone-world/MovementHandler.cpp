@@ -143,7 +143,7 @@ void WorldSession::HandleMoveTeleportAckOpcode( WorldPacket & recv_data )
 
 void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession * pSession)
 {
-
+	int change = 0;
 	// Very dirty way of fixing swim bug in serpent lake :(
 	// The waterlevel at the entrance is NOT the same as where you surface again.
 	// This keeps players in breathing mode until they drown.
@@ -162,6 +162,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 		// player is flagged as in water
 		if( _player->m_UnderwaterState & UNDERWATERSTATE_SWIMMING  )
 		{
+			change = 1;
 			_player->m_UnderwaterState &= ~UNDERWATERSTATE_SWIMMING;
 			if( _player->FlyCheat )
 			{
@@ -175,6 +176,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 			{
 				if(_player->m_lastMoveType != 1)
 				{
+					change = 2;
 					_player->m_lastMoveType = 1; // swimming
 					_player->ResetHeartbeatCoords();
 					_player->DelaySpeedHack(5000);
@@ -185,6 +187,8 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 		// player is flagged as under water
 		if( _player->m_UnderwaterState & UNDERWATERSTATE_UNDERWATER )
 		{
+			if(change != 2)
+				change = 1;
 			_player->m_UnderwaterState &= ~UNDERWATERSTATE_UNDERWATER;
 			WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
 			data << uint32(1) << _player->m_UnderwaterTime << _player->m_UnderwaterMaxTime << int32(-1) << uint32(0);
@@ -196,6 +200,8 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 			if( ( movement_info.z + _player->m_noseLevel ) > pSession->m_wLevel )
 				pSession->m_bIsWLevelSet = false; // unset swim session water level
 
+		if(change > 0)
+			_player->DelaySpeedHack(5000);
 		return;
 	}
 
@@ -230,6 +236,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 				_player->ResetHeartbeatCoords();
 			}
 		}
+		change = 1;
 		_player->m_UnderwaterState |= UNDERWATERSTATE_SWIMMING;
 	}
 
@@ -265,6 +272,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 					_player->ResetHeartbeatCoords();
 				}
 			}
+			change = 1;
 			_player->m_UnderwaterState &= ~UNDERWATERSTATE_SWIMMING;
 		}
 	}
@@ -275,6 +283,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 		//the player is in the water and has gone under water, requires breath bar.
 		if( ( movement_info.z + _player->m_noseLevel ) < pSession->m_wLevel )
 		{
+			change = 1;
 			_player->m_UnderwaterState |= UNDERWATERSTATE_UNDERWATER;
 			WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
 			data << uint32(1) << _player->m_UnderwaterTime << _player->m_UnderwaterMaxTime << int32(-1) << uint32(0);
@@ -288,6 +297,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 		//the player is in the water but their face is above water, no breath bar neeeded.
 		if( ( movement_info.z + _player->m_noseLevel ) > pSession->m_wLevel )
 		{
+			change = 1;
 			_player->m_UnderwaterState &= ~UNDERWATERSTATE_UNDERWATER;
 			WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
 			data << uint32(1) << _player->m_UnderwaterTime << _player->m_UnderwaterMaxTime << int32(10) << uint32(0);
@@ -301,6 +311,7 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 		//the player is out of the water, no breath bar neeeded.
 		if( ( movement_info.z + _player->m_noseLevel ) > pSession->m_wLevel )
 		{
+			change = 1;
 			_player->m_UnderwaterState &= ~UNDERWATERSTATE_UNDERWATER;
 			WorldPacket data(SMSG_START_MIRROR_TIMER, 20);
 			data << uint32(1) << _player->m_UnderwaterTime << _player->m_UnderwaterMaxTime << int32(10) << uint32(0);
@@ -308,6 +319,8 @@ void _HandleBreathing(MovementInfo &movement_info, Player* _player, WorldSession
 		}
 	}
 
+	if(change > 0)
+		_player->DelaySpeedHack(5000);
 }
 
 void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
@@ -415,10 +428,42 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	printf("Orientation: %.10f\n", _player->movement_info.orientation);
 #endif
 
+	if(sWorld.m_wallhackthreshold && (!HasGMPermissions() || !sWorld.no_antihack_on_gm))
+	{
+		if(recv_data.GetOpcode() != MSG_MOVE_JUMP && !m_isKnockedback)
+		{
+			if(_player->IsWallHackEligible())
+			{	// Make sure we aren't jumping or falling.
+				float newz = _player->movement_info.z;
+				float currentz = _player->GetPositionZ();
+
+				if(newz > currentz) // Our new height is greater than our old height
+				{
+					float deltaz = newz-currentz;
+					float run = _player->m_position.Distance2D(_player->movement_info.x, _player->movement_info.y);
+					if(run > 0.0f)
+					{
+						uint32 riseoverrun = uint32(deltaz/run);
+						if(riseoverrun > sWorld.m_wallhackthreshold)
+						{
+							sChatHandler.SystemMessageToPlr(_player, "Wall Hack Detected, if this is incorrect, please report it to an admin. %u", riseoverrun);
+							if(!--_player->m_wallhackChances)
+							{
+								_player->Root();
+								sChatHandler.SystemMessageToPlr(_player, "Wall Hack Detected, you will be disconnected shortly.");
+								sEventMgr.AddEvent(_player, &Player::SoftDisconnect, EVENT_PLAYER_SOFT_DISCONNECT, 3000, 0, 0);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/************************************************************************/
 	/* Anti-Hack Checks                                                     */
 	/************************************************************************/
-	if( !(HasGMPermissions() && sWorld.no_antihack_on_gm) && !_player->m_uint32Values[UNIT_FIELD_CHARM] && !_player->m_heartbeatDisable)
+	if((!HasGMPermissions() || !sWorld.no_antihack_on_gm) && !_player->m_uint32Values[UNIT_FIELD_CHARM] && !_player->m_heartbeatDisable)
 	{
 		/************************************************************************/
 		/* Anti-Teleport                                                        */
@@ -786,7 +831,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	if( _player->m_isMoving && (_player->m_lastMoveTime - _player->m_startMoveTime) >= 5000 )
 	{
 		_player->m_lastHeartbeatPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
-		_player->LastWHPosition.ChangeCoords(_player->movement_info.x, _player->movement_info.y, _player->movement_info.z);
 		_player->m_startMoveTime = _player->m_lastMoveTime;
 		_player->m_cheatEngineChances = 2;
 	}

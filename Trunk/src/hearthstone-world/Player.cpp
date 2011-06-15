@@ -115,7 +115,6 @@ void Player::Init()
 	m_GroupInviter					= 0;
 	Lfgcomment						= "";
 	m_flyHackChances				= 5;
-	m_wallhackCheckTimer			= 0;
 	m_wallhackChances				= 5;
 	m_WaterWalkTimer				= 0;
 	m_lastWarnCounter				= 0;
@@ -1082,11 +1081,6 @@ void Player::Update( uint32 p_time )
 		m_speedhackCheckTimer = mstime + 1000;
 	}
 
-	if( mstime >= m_wallhackCheckTimer )
-	{
-		_WallHackCheck();
-		m_wallhackCheckTimer = mstime + 500;
-	}
 	if (m_drunk)
 	{
 		m_drunkTimer += p_time;
@@ -3174,7 +3168,6 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	m_position.o										= get_next_field.GetFloat();
 	m_mapId												= get_next_field.GetUInt32();
 	m_zoneId											= get_next_field.GetUInt32();
-	LastWHPosition = m_position;
 
 	// Calculate the base stats now they're all loaded
 	for(uint32 i = 0; i < 5; i++)
@@ -11787,8 +11780,6 @@ bool Player::IsWallHackEligible()
 {
 	if(canFly())
 		return false;
-	if(!IsInWorld())
-		return false;
 	if(m_TransporterGUID)
 		return false;
 	if(m_heartbeatDisable)
@@ -11799,53 +11790,7 @@ bool Player::IsWallHackEligible()
 		return false;
 	if(GetTaxiState())
 		return false;
-
-	if(GetSession())
-	{
-		if(GetSession()->m_isJumping)
-			return false;
-		if(GetSession()->m_isFalling)
-			return false;
-		if(GetSession()->m_isKnockedback)
-			return false;
-	}
-
 	return true;
-}
-
-void Player::_WallHackCheck()
-{
-	if(!sWorld.m_wallhackthreshold || (GetSession()->HasGMPermissions() && sWorld.no_antihack_on_gm))
-		return;
-
-	if(IsWallHackEligible())
-	{	// Make sure we aren't jumping or falling.
-		float z1 = LastWHPosition.z;
-		float z2 = GetPositionZ();
-
-		if(z2 > z1) // Our new height is greater than our old height
-		{
-			double deltaz = z2-z1;
-			double run = CalcDistance(this, LastWHPosition.x, LastWHPosition.y, z2);
-
-			if(run > 0)
-			{
-				if(deltaz/run > sWorld.m_wallhackthreshold)
-				{
-					sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, if this is incorrect, please report it to an admin. %f", deltaz/run);
-					m_wallhackChances--;
-					if(!m_wallhackChances)
-					{
-						Root();
-						SetPosition(LastWHPosition, true);
-						sChatHandler.SystemMessageToPlr(this, "Wall Hack Detected, you will be disconnected shortly.");
-						sEventMgr.AddEvent(this, &Player::SoftDisconnect, EVENT_PLAYER_SOFT_DISCONNECT, 3000, 0, 0);
-					}
-				}
-			}
-		}
-	}
-	LastWHPosition = GetPositionNC();
 }
 
 void Player::_Disconnect()
