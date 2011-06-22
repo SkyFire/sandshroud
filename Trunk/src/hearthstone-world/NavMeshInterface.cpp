@@ -202,7 +202,7 @@ void CNavMeshInterface::UnloadNavMesh(uint32 mapid, uint32 x, uint32 y)
 	m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]]--;
 }
 
-LocationVector CNavMeshInterface::getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
+/*LocationVector CNavMeshInterface::getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
 {
 	LocationVector pos(startx, starty, startz);
 	LocationVector nextpos(startx, starty, startz);
@@ -227,7 +227,7 @@ LocationVector CNavMeshInterface::getBestPositionOnPathToLocation(uint32 mapid, 
 		pos = nextpos;
 	}
 	return returnpos;
-}
+}*/
 
 LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
 {

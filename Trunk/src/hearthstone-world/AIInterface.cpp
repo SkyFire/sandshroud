@@ -23,8 +23,8 @@ AIInterface::AIInterface()
 {
 	m_ChainAgroSet = NULL;
 	m_waypoints = NULL;
+	PathMap = NULL;
 	m_canMove = true;
-	pathfinding = false;
 	m_nextPosX = m_nextPosY = m_nextPosZ = 0;
 	m_destinationX = m_destinationY = m_destinationZ = 0;
 	UnitToFollow = NULLCREATURE;
@@ -1832,6 +1832,84 @@ void AIInterface::SendMoveToPacket(float toX, float toY, float toZ, float toO, u
 	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
 }
 
+void AIInterface::SendMoveToPacket(LocationVectorMap MovementMap, uint32 time, uint32 MoveFlags)
+{
+	ASSERT(m_Unit != NULL);
+	//this should NEVER be called directly !!!!!!
+	//use MoveTo()
+	uint32 end = 0;
+	LocationVectorMap::iterator itr = MovementMap.begin(), itrend;
+	while (itr != MovementMap.end())
+		itrend = itr++;
+	itr = MovementMap.begin();
+
+	// Crow: This shits so fucking shit fuck why shit dick ass.
+	float startx = m_Unit->GetPositionX(), starty = m_Unit->GetPositionY(), startz = m_Unit->GetPositionZ();
+	float mid_X = (startx + (*itrend).second->x) * 0.5f;
+	float mid_Y = (starty + (*itrend).second->y) * 0.5f;
+	float mid_Z = (startz + (*itrend).second->z) * 0.5f;
+
+	WorldPacket data(SMSG_MONSTER_MOVE, 8+1+4+4+4+4+1+4+4+4+MovementMap.size());
+	data << m_Unit->GetNewGUID();
+	data << uint8(0);
+	data << startx << starty << startz;
+	data << getMSTime();
+	data << uint8(0);
+	data << MoveFlags;
+	data << time;
+	data << uint32(MovementMap.size());	// waypoint count
+	data << (*itrend).second->x << (*itrend).second->y << (*itrend).second->z;
+//	uint32 count = 0;
+	uint32 packedlocationshit = 0; // I swear to fucking god this fucking shit DIDFASFJKAL
+	while(itr != itrend)
+	{	// Fucking client shiting on shit because the shit requires a middle radius.
+		/*count++;
+
+		PlayerInfo* Thecrow = objmgr.GetPlayerInfoByName("Thecrow");
+		if(Thecrow != NULL)
+		{
+			Player* pPlayer = objmgr.GetPlayer(Thecrow->guid);
+			//Create
+			Creature* pWayPoint = new Creature((uint64)HIGHGUID_TYPE_WAYPOINT << 32 | count);
+			pWayPoint->Init();
+			pWayPoint->CreateWayPoint(count, m_Unit->GetMapId(), (*itr).second->x, (*itr).second->y, (*itr).second->z, 0);
+			pWayPoint->SetUInt32Value(OBJECT_FIELD_ENTRY, 300000);
+			pWayPoint->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5f);
+			pWayPoint->SetUInt32Value(UNIT_FIELD_DISPLAYID, GetUnit()->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
+			pWayPoint->SetUInt32Value(UNIT_FIELD_LEVEL, count);
+			pWayPoint->SetUInt32Value(UNIT_NPC_FLAGS, 0);
+			pWayPoint->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE , pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
+			pWayPoint->SetUInt32Value(UNIT_FIELD_HEALTH, 1);
+			pWayPoint->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 1);
+			pWayPoint->SetUInt32Value(UNIT_FIELD_STAT0, 0);
+
+			//Create on client
+			ByteBuffer buf(2500);
+			uint32 count = pWayPoint->BuildCreateUpdateBlockForPlayer(&buf, pPlayer);
+			pPlayer->PushCreationData(&buf, count);
+
+			//root the object
+			WorldPacket data1;
+			data1.Initialize(SMSG_FORCE_MOVE_ROOT);
+			data1 << pWayPoint->GetNewGUID();
+			pPlayer->GetSession()->SendPacket( &data1 );
+
+			//Cleanup
+			delete pWayPoint;
+			pWayPoint = NULL;
+		}*/
+
+		packedlocationshit = 0;
+		packedlocationshit |= (((int)((mid_X - (*itr).second->x)/0.25f)) & 0x7FF);
+		packedlocationshit |= (((int)((mid_Y - (*itr).second->y)/0.25f)) & 0x7FF) << 11;
+		packedlocationshit |= (((int)((mid_Z - (*itr).second->z)/0.25f)) & 0x3FF) << 22;
+		data << packedlocationshit;
+		++itr;
+	}
+	printf("Fucking count %u\n", MovementMap.size());
+	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
+}
+
 void AIInterface::StopMovement(uint32 time, bool stopatcurrent)
 {
 	ASSERT(m_Unit != NULL);
@@ -1873,6 +1951,12 @@ void AIInterface::MoveTo(float x, float y, float z, float o)
 	m_destinationZ = z;
 	m_destinationO = o;
 //	CheckHeight();
+
+	if(PathMap != NULL)
+	{
+		delete PathMap;
+		PathMap = NULL;
+	}
 
 	if(m_creatureState != MOVING)
 		UpdateMove();
@@ -1925,43 +2009,42 @@ void AIInterface::UpdateMove()
 
 	//this should NEVER be called directly !!!!!!
 	//use MoveTo()
-	if(!pathfinding && sWorld.PathFinding)
+
+	if(sWorld.PathFinding && NavMeshInterface.IsNavmeshLoadedAtPosition(m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY()))
 	{
-		if(NavMeshInterface.IsNavmeshLoadedAtPosition(m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY()))
-		{
-			// Reset our source position
-			m_sourceX = m_Unit->GetPositionX();
-			m_sourceY = m_Unit->GetPositionY();
-			m_sourceZ = m_Unit->GetPositionZ();
-
-			pathfinding = true;
-		}
-	}
-
-	if(pathfinding)
-	{
-		LocationVector PathLocation = NavMeshInterface.getBestPositionOnPathToLocation(m_Unit->GetMapId(),
-			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
-
-		m_nextPosX = PathLocation.x;
-		m_nextPosY = PathLocation.y;
-		m_nextPosZ = PathLocation.z;
-
-		// Found a path!
-		if(m_nextPosX != m_sourceX && m_nextPosY != m_sourceY && m_nextPosX != 0.0f && m_nextPosY != 0.0f)
-		{
-			if(m_nextPosX == m_destinationX && m_nextPosY == m_destinationY && m_nextPosZ == m_destinationZ)
-			{
-				m_nextPosO = m_destinationO;
-				jumptolocation = false;
-				pathfinding = false;
-				m_destinationX = m_destinationY = m_destinationZ = m_destinationO = 0.0f; // Pathfinding requires we keep our destination.
+		bool use = true;
+		float distance = 0;
+		uint32 moveTime = UNIT_MOVEMENT_INTERPOLATE_INTERVAL;
+		m_nextPosX = m_sourceX;
+		m_nextPosY = m_sourceY;
+		m_nextPosZ = m_sourceZ;
+		PathMap = new LocationVectorMap();
+		LocationVector* PathLocation;
+		// For anyone confused, our next position is our destination, we just follow a path. This will set next position as destination, or use basic walking.
+		while(m_nextPosX != m_destinationX && m_nextPosY != m_destinationY && m_nextPosZ != m_destinationZ)
+		{	// Use next instead of best, because we want as many steps as we can get.
+			PathLocation = new LocationVector(NavMeshInterface.getNextPositionOnPathToLocation(m_Unit->GetMapId(), m_nextPosX, m_nextPosY, m_nextPosZ, m_destinationX, m_destinationY, m_destinationZ));
+			if((m_nextPosX == 0.0f && m_nextPosY == 0.0f) || (PathLocation->x == m_nextPosX && PathLocation->y == m_nextPosY && PathLocation->z == m_nextPosZ))
+			{	// We're stuck.
+				use = false;
+				break;
 			}
 
-			float distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ);
+			distance = m_Unit->CalcDistance(m_nextPosX, m_nextPosY, m_nextPosZ, PathLocation->x, PathLocation->y, PathLocation->z);
+			moveTime += GetMovementTime(distance)+1;
+			m_nextPosX = PathLocation->x;
+			m_nextPosY = PathLocation->y;
+			m_nextPosZ = PathLocation->z;
+			PathMap->insert(make_pair(moveTime, PathLocation));
+			PathLocation = NULL;
+		}
 
-			uint32 moveTime = GetMovementTime(distance);
+		if(!(PathMap->size()-1))
+			use = false;
 
+		// Found a path!
+		if(use)
+		{
 			m_totalMoveTime = moveTime;
 
 			if(m_Unit->GetTypeId() == TYPEID_UNIT)
@@ -1979,7 +2062,7 @@ void AIInterface::UpdateMove()
 
 				// check if we're returning to our respawn location. if so, reset back to default
 				// orientation
-				if(creature->GetSpawnX() == m_nextPosX && creature->GetSpawnY() == m_nextPosY)
+				if(creature->GetSpawnX() == m_destinationX && creature->GetSpawnY() == m_destinationY)
 				{
 					angle = creature->GetSpawnO();
 					creature->SetOrientation(angle);
@@ -1987,8 +2070,8 @@ void AIInterface::UpdateMove()
 				else
 				{
 					// Calculate the angle to our next position
-					float dx = (float)m_nextPosX - m_Unit->GetPositionX();
-					float dy = (float)m_nextPosY - m_Unit->GetPositionY();
+					float dx = (float)m_destinationX - m_Unit->GetPositionX();
+					float dy = (float)m_destinationY - m_Unit->GetPositionY();
 					if(dy != 0.0f)
 					{
 						angle = atan2(dy, dx);
@@ -1997,27 +2080,30 @@ void AIInterface::UpdateMove()
 				}
 			}
 
-			if(m_nextPosO == 0.0f)
-				m_nextPosO = m_Unit->GetOrientation();
-			SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO, moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
-
-			m_timeToMove = moveTime;
+			if(m_destinationO == 0.0f)
+				m_destinationO = m_Unit->GetOrientation();
+			SendMoveToPacket((*PathMap), moveTime, getMoveFlags());
 			m_timeMoved = 0;
-			if(m_moveTimer == 0)
-				m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
+			m_timeToMove = moveTime;
 			m_creatureState = MOVING;
+			m_moveTimer = UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2; // update every few msecs
+			m_destinationX = m_destinationY = m_destinationZ = m_destinationO = 0.0f;
+			jumptolocation = false;
 			return;
 		}
 	}
+	if(PathMap != NULL)
+	{
+		delete PathMap;
+		PathMap = NULL;
+	}
 
-	pathfinding = false;
 	float distance = m_Unit->CalcDistance(m_destinationX, m_destinationY, m_destinationZ);
-
 	m_nextPosX = m_destinationX;
 	m_nextPosY = m_destinationY;
 	m_nextPosZ = m_destinationZ;
 	m_nextPosO = m_destinationO;
-	m_destinationX = m_destinationY = m_destinationZ = m_destinationO = 0;
+	m_destinationX = m_destinationY = m_destinationZ = m_destinationO = 0.0f;
 
 	uint32 moveTime = GetMovementTime(distance);
 
@@ -2060,12 +2146,10 @@ void AIInterface::UpdateMove()
 		m_nextPosO = m_Unit->GetOrientation();
 	SendMoveToPacket(m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO, moveTime + UNIT_MOVEMENT_INTERPOLATE_INTERVAL, getMoveFlags());
 
+	m_timeMoved = 0;
 	jumptolocation = false;
 	m_timeToMove = moveTime;
-	m_timeMoved = 0;
-	if(m_moveTimer == 0)
-		m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
-
+	m_moveTimer = UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
 	m_creatureState = MOVING;
 }
 
@@ -2141,7 +2225,7 @@ bool AIInterface::addWayPoint(WayPoint* wp)
 	ASSERT(m_Unit != NULL);
 
 	if(m_waypoints == NULL)
-		m_waypoints = new WayPointMap ;
+		m_waypoints = new WayPointMap;
 
 	if(!wp)
 		return false;
@@ -2414,32 +2498,85 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 	}
 
 	if(m_timeToMove > 0)
-	{
 		m_timeMoved = m_timeToMove <= p_time + m_timeMoved ? m_timeToMove : p_time + m_timeMoved;
-	}
-
-	if(pathfinding)
-	{
-		if(m_destinationX != 0.0f && m_destinationY != 0.0f)
-		{
-			if(m_Unit->GetPositionX() == m_nextPosX && m_Unit->GetPositionY() == m_nextPosY && m_Unit->GetPositionZ() == m_nextPosZ)
-			{
-				MoveTo(m_destinationX, m_destinationY, m_destinationZ);
-			}
-		}
-	}
 
 	if(m_creatureState == MOVING)
 	{
-		if(!m_moveTimer)
+		if(PathMap != NULL)
+		{
+			if(!m_moveTimer)
+			{	// This works, but maybe a 200ms update time would be better for pathfinding.
+				if(m_timeMoved == m_timeToMove)
+				{
+					delete PathMap;
+					PathMap = NULL;
+
+					m_creatureState = STOPPED;
+					m_moveSprint = false;
+
+					if(m_nextPosO != 0.0f)
+						m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO, true);
+					else
+						m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), true);
+					m_nextPosX = m_nextPosY = m_nextPosZ = m_nextPosO = 0;
+					m_timeMoved = 0;
+					m_timeToMove = 0;
+				}
+				else
+				{
+					//Move Server Side Update
+					bool positionchanged = false;
+					uint32 sexyteim[2] = {1, 2};
+					float x1 = m_Unit->GetPositionX(), y1 = m_Unit->GetPositionY(), z1 = m_Unit->GetPositionZ(),
+						x2 = m_nextPosX, y2 = m_nextPosY, z2 = m_nextPosZ;
+					for(LocationVectorMap::iterator itr = PathMap->begin(); itr != PathMap->end(); itr++)
+					{
+						if(m_timeMoved < (*itr).first)
+						{
+							sexyteim[0] = (*itr).first;
+							x1 = (*itr).second->x;
+							y1 = (*itr).second->y;
+							z1 = (*itr).second->z;
+						}
+						else if(m_timeMoved != (*itr).first)
+						{
+							sexyteim[1] = (*itr).first;
+							x2 = (*itr).second->x;
+							y2 = (*itr).second->y;
+							z2 = (*itr).second->z;
+							break;
+						}
+						else
+						{
+							positionchanged = true;
+							m_Unit->SetPosition((*itr).second->x, (*itr).second->y, (*itr).second->z, m_Unit->GetOrientation());
+							break;
+						}
+					}
+
+					if(!positionchanged)
+					{
+						float q = ((float)(m_timeMoved-sexyteim[0])) / ((float)(sexyteim[1]-sexyteim[0]));
+						float x = x1 + ((x1 - x2) * q);
+						float y = y1 + ((y1 - y2) * q);
+						float z = z1 + ((z1 - z2) * q);
+						m_Unit->SetPosition(x, y, z, m_Unit->GetOrientation());
+					}
+					m_moveTimer = (UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2 < m_timeToMove) ? UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2 : m_timeToMove;
+				}
+
+				if(m_destinationX != 0.0f && m_destinationY != 0.0f)
+					UpdateMove();
+			}
+		}
+		else if(!m_moveTimer)
 		{
 			if(m_timeMoved == m_timeToMove) //reached destination
 			{
 				if(m_moveType == MOVEMENTTYPE_WANTEDWP)//We reached wanted wp stop now
 					m_moveType = MOVEMENTTYPE_DONTMOVEWP;
 
-				float wayO = 0.0f;
-
+				float wayO = m_nextPosO;
 				if((GetWayPointsCount() != 0) && (m_AIState == STATE_IDLE || m_AIState == STATE_SCRIPTMOVE)) //if we attacking don't use wps
 				{
 					WayPoint* wp = getWayPoint(getCurrentWaypoint());
@@ -2504,7 +2641,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 					m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, wayO, true);
 				else
 					m_Unit->SetPosition(m_nextPosX, m_nextPosY, m_nextPosZ, m_Unit->GetOrientation(), true);
-				m_nextPosX = m_nextPosY = m_nextPosZ = 0;
+				m_nextPosX = m_nextPosY = m_nextPosZ = m_nextPosO = 0.0f;
 				m_timeMoved = 0;
 				m_timeToMove = 0;
 			}

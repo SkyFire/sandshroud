@@ -194,6 +194,7 @@ bool isGuard(uint32 id);
 uint32 getGuardId(uint32 id);
 bool isTargetDummy(uint32 id);
 typedef std::tr1::unordered_map< Unit*, int32> TargetMap;
+typedef map<uint32, LocationVector*> LocationVectorMap;
 
 #ifdef WIN32
 
@@ -299,6 +300,7 @@ public:
 
 	// Movement
 	void SendMoveToPacket(float toX, float toY, float toZ, float toO, uint32 time, uint32 MoveFlags);
+	void SendMoveToPacket(LocationVectorMap MovementMap, uint32 time, uint32 MoveFlags);
 	void JumpTo(float toX, float toY, float toZ, uint32 moveTime, float arc , uint32 unk = 0);
 	//void SendMoveToSplinesPacket(std::list<Waypoint> wp, bool run);
 	void MoveTo(float x, float y, float z, float o = 0.0f);
@@ -479,7 +481,7 @@ protected:
 	float m_destinationX, m_destinationY, m_destinationZ, m_destinationO;
 	float m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO;
 	float m_returnX, m_returnY, m_returnZ, m_returnO; //Return position after attacking a mob
-	bool pathfinding;
+	LocationVectorMap* PathMap;
 
 	float m_lastFollowX;
 	float m_lastFollowY;

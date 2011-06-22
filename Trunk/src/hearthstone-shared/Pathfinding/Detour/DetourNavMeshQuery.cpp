@@ -1117,7 +1117,7 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 	float closestEndPos[3];
 	if (closestPointOnPolyBoundary(path[pathSize-1], endPos, closestEndPos) != DT_SUCCESS)
 		return DT_FAILURE;
-	
+
 	if (pathSize > 1)
 	{
 		float portalApex[3], portalLeft[3], portalRight[3];
@@ -1127,18 +1127,18 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 		int apexIndex = 0;
 		int leftIndex = 0;
 		int rightIndex = 0;
-		
+
 		unsigned char leftPolyType = 0;
 		unsigned char rightPolyType = 0;
-		
+
 		dtPolyRef leftPolyRef = path[0];
 		dtPolyRef rightPolyRef = path[0];
-		
+
 		for (int i = 0; i < pathSize; ++i)
 		{
 			float left[3], right[3];
 			unsigned char fromType, toType;
-			
+
 			if (i+1 < pathSize)
 			{
 				// Next portal.
@@ -1146,17 +1146,17 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 				{
 					if (closestPointOnPolyBoundary(path[i], endPos, closestEndPos) != DT_SUCCESS)
 						return DT_FAILURE;
-					
+
 					dtVcopy(&straightPath[n*3], closestEndPos);
 					if (straightPathFlags)
 						straightPathFlags[n] = 0;
 					if (straightPathRefs)
 						straightPathRefs[n] = path[i];
 					n++;
-					
+
 					return DT_SUCCESS;
 				}
-				
+
 				// If starting really close the portal, advance.
 				if (i == 0)
 				{
@@ -1170,10 +1170,10 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 				// End of the path.
 				dtVcopy(left, closestEndPos);
 				dtVcopy(right, closestEndPos);
-				
+
 				fromType = toType = DT_POLYTYPE_GROUND;
 			}
-			
+
 			// Right vertex.
 			if (dtTriArea2D(portalApex, portalRight, right) <= 0.0f)
 			{
@@ -1188,14 +1188,14 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 				{
 					dtVcopy(portalApex, portalLeft);
 					apexIndex = leftIndex;
-					
+
 					unsigned char flags = 0;
 					if (!leftPolyRef)
 						flags = DT_STRAIGHTPATH_END;
 					else if (leftPolyType == DT_POLYTYPE_OFFMESH_CONNECTION)
 						flags = DT_STRAIGHTPATH_OFFMESH_CONNECTION;
 					dtPolyRef ref = leftPolyRef;
-					
+
 					if (!dtVequal(&straightPath[(n-1)*3], portalApex))
 					{
 						// Append new vertex.
@@ -1220,19 +1220,19 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 						if (straightPathRefs)
 							straightPathRefs[n-1] = ref;
 					}
-					
+
 					dtVcopy(portalLeft, portalApex);
 					dtVcopy(portalRight, portalApex);
 					leftIndex = apexIndex;
 					rightIndex = apexIndex;
-					
+
 					// Restart
 					i = apexIndex;
-					
+
 					continue;
 				}
 			}
-			
+
 			// Left vertex.
 			if (dtTriArea2D(portalApex, portalLeft, left) >= 0.0f)
 			{
@@ -1247,14 +1247,14 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 				{
 					dtVcopy(portalApex, portalRight);
 					apexIndex = rightIndex;
-					
+
 					unsigned char flags = 0;
 					if (!rightPolyRef)
 						flags = DT_STRAIGHTPATH_END;
 					else if (rightPolyType == DT_POLYTYPE_OFFMESH_CONNECTION)
 						flags = DT_STRAIGHTPATH_OFFMESH_CONNECTION;
 					dtPolyRef ref = rightPolyRef;
-					
+
 					if (!dtVequal(&straightPath[(n-1)*3], portalApex))
 					{
 						// Append new vertex.
@@ -1279,25 +1279,24 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 						if (straightPathRefs)
 							straightPathRefs[n-1] = ref;
 					}
-					
+
 					dtVcopy(portalLeft, portalApex);
 					dtVcopy(portalRight, portalApex);
 					leftIndex = apexIndex;
 					rightIndex = apexIndex;
-					
+
 					// Restart
 					i = apexIndex;
-					
 					continue;
 				}
 			}
 		}
 	}
-	
+
 	// If the point already exists, remove it and add reappend the actual end location.  
 	if (n > 0 && dtVequal(&straightPath[(n-1)*3], closestEndPos))
 		n--;
-	
+
 	// Add end point.
 	if (n < maxStraightPath)
 	{
@@ -1308,7 +1307,7 @@ dtStatus dtNavMeshQuery::findStraightPath(const float* startPos, const float* en
 			straightPathRefs[n] = 0;
 		n++;
 	}
-	
+
 	*straightPathCount = n;
 	return DT_SUCCESS;
 }
