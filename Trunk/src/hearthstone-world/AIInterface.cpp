@@ -1843,7 +1843,6 @@ void AIInterface::SendMoveToPacket(LocationVectorMap MovementMap, uint32 time, u
 		itrend = itr++;
 	itr = MovementMap.begin();
 
-	// Crow: This shits so fucking shit fuck why shit dick ass.
 	float startx = m_Unit->GetPositionX(), starty = m_Unit->GetPositionY(), startz = m_Unit->GetPositionZ();
 	float mid_X = (startx + (*itrend).second->x) * 0.5f;
 	float mid_Y = (starty + (*itrend).second->y) * 0.5f;
@@ -1859,46 +1858,9 @@ void AIInterface::SendMoveToPacket(LocationVectorMap MovementMap, uint32 time, u
 	data << time;
 	data << uint32(MovementMap.size());	// waypoint count
 	data << (*itrend).second->x << (*itrend).second->y << (*itrend).second->z;
-//	uint32 count = 0;
-	uint32 packedlocationshit = 0; // I swear to fucking god this fucking shit DIDFASFJKAL
+	uint32 packedlocationshit = 0;
 	while(itr != itrend)
-	{	// Fucking client shiting on shit because the shit requires a middle radius.
-		/*count++;
-
-		PlayerInfo* Thecrow = objmgr.GetPlayerInfoByName("Thecrow");
-		if(Thecrow != NULL)
-		{
-			Player* pPlayer = objmgr.GetPlayer(Thecrow->guid);
-			//Create
-			Creature* pWayPoint = new Creature((uint64)HIGHGUID_TYPE_WAYPOINT << 32 | count);
-			pWayPoint->Init();
-			pWayPoint->CreateWayPoint(count, m_Unit->GetMapId(), (*itr).second->x, (*itr).second->y, (*itr).second->z, 0);
-			pWayPoint->SetUInt32Value(OBJECT_FIELD_ENTRY, 300000);
-			pWayPoint->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5f);
-			pWayPoint->SetUInt32Value(UNIT_FIELD_DISPLAYID, GetUnit()->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
-			pWayPoint->SetUInt32Value(UNIT_FIELD_LEVEL, count);
-			pWayPoint->SetUInt32Value(UNIT_NPC_FLAGS, 0);
-			pWayPoint->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE , pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
-			pWayPoint->SetUInt32Value(UNIT_FIELD_HEALTH, 1);
-			pWayPoint->SetUInt32Value(UNIT_FIELD_MAXHEALTH, 1);
-			pWayPoint->SetUInt32Value(UNIT_FIELD_STAT0, 0);
-
-			//Create on client
-			ByteBuffer buf(2500);
-			uint32 count = pWayPoint->BuildCreateUpdateBlockForPlayer(&buf, pPlayer);
-			pPlayer->PushCreationData(&buf, count);
-
-			//root the object
-			WorldPacket data1;
-			data1.Initialize(SMSG_FORCE_MOVE_ROOT);
-			data1 << pWayPoint->GetNewGUID();
-			pPlayer->GetSession()->SendPacket( &data1 );
-
-			//Cleanup
-			delete pWayPoint;
-			pWayPoint = NULL;
-		}*/
-
+	{
 		packedlocationshit = 0;
 		packedlocationshit |= (((int)((mid_X - (*itr).second->x)/0.25f)) & 0x7FF);
 		packedlocationshit |= (((int)((mid_Y - (*itr).second->y)/0.25f)) & 0x7FF) << 11;
@@ -1906,7 +1868,6 @@ void AIInterface::SendMoveToPacket(LocationVectorMap MovementMap, uint32 time, u
 		data << packedlocationshit;
 		++itr;
 	}
-	printf("Fucking count %u\n", MovementMap.size());
 	m_Unit->SendMessageToSet( &data, m_Unit->IsPlayer() ? true : false );
 }
 
