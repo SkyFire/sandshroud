@@ -52,7 +52,7 @@ public: // Navmesh settings
 	bool IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y);
 	void UnloadNavMesh(uint32 mapid, uint32 x, uint32 y);
 
-//	LocationVector getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
+	LocationVector getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 
 private:
