@@ -1590,7 +1590,7 @@ void Player::smsg_InitialSpells()
 	GetSession()->SendPacket(&data);
 
 	uint32 v = 0;
-	GetSession()->OutPacket(0x041d, 4, &v);
+	GetSession()->OutPacket(SMSG_SERVER_BUCK_DATA, 4, &v);
 }
 
 void Player::BuildPlayerTalentsInfo(WorldPacket *data)

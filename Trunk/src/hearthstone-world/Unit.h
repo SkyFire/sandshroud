@@ -793,6 +793,35 @@ public:
 	HEARTHSTONE_INLINE uint8 getGender() { return GetByte(UNIT_FIELD_BYTES_0,2); }
 	HEARTHSTONE_INLINE void setGender(uint8 gender) { SetByte(UNIT_FIELD_BYTES_0,2,gender); }
 	HEARTHSTONE_INLINE uint8 getStandState() { return ((uint8)m_uint32Values[UNIT_FIELD_BYTES_1]); }
+	HEARTHSTONE_INLINE char* GetClassNamec(bool FullCaps = false)
+	{
+		char* _class = "UNKNOWN";
+		switch(getClass()) {
+		case 1: { _class = "Warrior"; }break; case 2: { _class = "Paladin"; }break;
+		case 3: { _class = "Hunter"; }break; case 4: { _class = "Rogue"; }break;
+		case 5: { _class = "Priest"; }break; case 6: { _class = "Deathknight"; }break;
+		case 7: { _class = "Shaman"; }break; case 8: { _class = "Mage"; }break;
+		case 9: { _class = "Warlock"; }break; case 11: { _class = "Druid"; }break; }
+		if(FullCaps)
+			for(size_t i = 0; i < strlen(_class); ++i)
+				_class[i] = (char)toupper(_class[i]);
+		return _class;
+	};
+
+	HEARTHSTONE_INLINE string GetClassNames(bool FullCaps = false)
+	{
+		std::string _class = "UNKNOWN";
+		switch(getClass()) {
+		case 1: { _class = "Warrior"; }break; case 2: { _class = "Paladin"; }break;
+		case 3: { _class = "Hunter"; }break; case 4: { _class = "Rogue"; }break;
+		case 5: { _class = "Priest"; }break; case 6: { _class = "Deathknight"; }break;
+		case 7: { _class = "Shaman"; }break; case 8: { _class = "Mage"; }break;
+		case 9: { _class = "Warlock"; }break; case 11: { _class = "Druid"; }break; }
+		if(FullCaps)
+			HEARTHSTONE_TOUPPER(_class);
+		return _class;
+	};
+
 
 	uint32 GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability );
 	void Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability, int32 add_damage, int32 pct_dmg_mod, uint32 exclusive_damage, bool disable_proc, bool skip_hit_check, bool proc_extrastrike = false );
