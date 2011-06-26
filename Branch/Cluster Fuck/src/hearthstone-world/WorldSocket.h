@@ -35,7 +35,6 @@ public:
 	HEARTHSTONE_INLINE uint32 GetPort() { return ntohs(m_address.sin_port); }
 
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket* packet) { if(!packet) return; OutPacket(packet->GetOpcode(), (uint16)packet->size(), (packet->size() ? (const void*)packet->contents() : NULL)); }
-	HEARTHSTONE_INLINE void SendPacket(StackPacket * packet) { if(!packet) return; OutPacket(packet->GetOpcode(), (uint16)packet->GetSize(), (packet->GetSize() ? (const void*)packet->GetBufferPointer() : NULL)); }
 	void __fastcall OutPacket(uint16 opcode, uint16 len, const void* data);
 	HEARTHSTONE_INLINE uint32 GetSessionId() { return m_sessionId; }
 
@@ -43,5 +42,11 @@ protected:
 	uint32 m_sessionId;
 	sockaddr_in m_address;
 };
+
+void FastGUIDPack(ByteBuffer & buf, const uint64 & oldguid);
+
+//!!! warning. This presumes that all guids can be compressed at least 1 byte
+//make sure you choose highguids acordingly
+unsigned int FastGUIDPack(const uint64 & oldguid, unsigned char * buffer, uint32 pos);
 
 #endif

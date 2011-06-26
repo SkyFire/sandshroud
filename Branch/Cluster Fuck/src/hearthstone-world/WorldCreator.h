@@ -298,7 +298,6 @@ public:
 		return instance == map->end() ? NULL : instance->second;
 	}
 
-private:
 	void _LoadInstances();
 	void _CreateMap(uint32 mapid);
 	MapMgr* _CreateInstance(Instance* in);

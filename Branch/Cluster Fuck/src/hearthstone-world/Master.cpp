@@ -427,9 +427,6 @@ bool Master::Run(int argc, char ** argv)
 		delete WintergraspInternal::getSingletonPtr();
 	}
 
-	Log.Notice("LogonComm", "~LogonCommHandler()");
-	delete LogonCommHandler::getSingletonPtr();
-
 	Log.Notice( "World", "~World()" );
 	delete World::getSingletonPtr();
 

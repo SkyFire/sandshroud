@@ -173,20 +173,8 @@
     <ClCompile Include="..\..\src\hearthstone-world\ClusterInterface.cpp">
       <Filter>Interserver\Clustering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\WorkdSocketCluster.cpp">
-      <Filter>Interserver\Clustering</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\WorkerServerClient.cpp">
       <Filter>Interserver\Clustering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\LogonCommClient.cpp">
-      <Filter>Interserver\Logon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\LogonCommHandler.cpp">
-      <Filter>Interserver\Logon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\VoiceChatClientSocket.cpp">
-      <Filter>Interserver\Voice Chat</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\EventMgr.cpp">
       <Filter>Interserver</Filter>
@@ -294,9 +282,6 @@
       <Filter>Packet Handlers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\TransporterHandler.cpp">
-      <Filter>Packet Handlers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\VoiceChatHandler.cpp">
       <Filter>Packet Handlers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\AchievementInterface.cpp">
@@ -527,15 +512,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\WorkerServerClient.h">
       <Filter>Interserver\Clustering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\LogonCommHandler.h">
-      <Filter>Interserver\Logon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\LogonCommClient.h">
-      <Filter>Interserver\Logon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\VoiceChatClientSocket.h">
-      <Filter>Interserver\Voice Chat</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\EventMgr.h">
       <Filter>Interserver</Filter>
     </ClInclude>
@@ -585,9 +561,6 @@
       <Filter>Packet Handlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\TransporterHandler.h">
-      <Filter>Packet Handlers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\VoiceChatHandler.h">
       <Filter>Packet Handlers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\AchievementInterface.h">
@@ -723,12 +696,6 @@
     </Filter>
     <Filter Include="Interserver\Clustering">
       <UniqueIdentifier>{9a274e1b-9651-454a-8e1e-e18a2e3db191}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Interserver\Logon">
-      <UniqueIdentifier>{4d806c80-5634-4f9f-808e-9d13aa92fe5b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Interserver\Voice Chat">
-      <UniqueIdentifier>{dc9f46a8-82e2-4696-9342-78077e2aa16f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Launcher\Additions">
       <UniqueIdentifier>{0a43f92f-b713-4847-9d6a-bd69fde9814b}</UniqueIdentifier>

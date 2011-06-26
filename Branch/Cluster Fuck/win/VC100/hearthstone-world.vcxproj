@@ -21,6 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1DC6C4DA-A028-41F3-877D-D5400C594F88}</ProjectGuid>
     <RootNamespace>game</RootNamespace>
+    <ProjectName>hearthstone-world</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -327,10 +328,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\WintergraspInternal.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WordFilter.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\ClusterInterface.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\LogonCommClient.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\LogonCommHandler.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\VoiceChatClientSocket.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\WorkdSocketCluster.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WorkerServerClient.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Map.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\MapCell.cpp" />
@@ -366,7 +363,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\TaxiHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\TradeHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\TransporterHandler.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\VoiceChatHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WorldSession.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Spell.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\SpellAuras.cpp" />
@@ -442,9 +438,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\WintergraspInternal.h" />
     <ClInclude Include="..\..\src\hearthstone-world\WordFilter.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ClusterInterface.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\LogonCommClient.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\LogonCommHandler.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\VoiceChatClientSocket.h" />
     <ClInclude Include="..\..\src\hearthstone-world\WorkerServerClient.h" />
     <ClInclude Include="..\..\src\hearthstone-world\CellHandler.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Map.h" />
@@ -464,7 +457,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\NPCHandler.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Packets.h" />
     <ClInclude Include="..\..\src\hearthstone-world\TransporterHandler.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\VoiceChatHandler.h" />
     <ClInclude Include="..\..\src\hearthstone-world\WorldSession.h" />
     <ClInclude Include="..\..\src\hearthstone-world\ClassSpells.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Spell.h" />

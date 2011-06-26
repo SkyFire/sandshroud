@@ -932,14 +932,6 @@ void WorldSession::InitPacketHandlerTable()
 	WorldPacketHandlers[CMSG_TELEPORT_TO_UNIT].handler						= &WorldSession::HandleTeleportToUnitOpcode;
 	WorldPacketHandlers[CMSG_WORLD_TELEPORT].handler						= &WorldSession::HandleWorldportOpcode;
 
-	// voicechat
-	WorldPacketHandlers[CMSG_VOICE_SESSION_ENABLE].handler					= &WorldSession::HandleEnableMicrophoneOpcode;
-	WorldPacketHandlers[CMSG_VOICE_SESSION_ENABLE].status					= STATUS_AUTHED;
-	WorldPacketHandlers[CMSG_CHANNEL_VOICE_ON].handler						= &WorldSession::HandleChannelVoiceOnOpcode;
-	WorldPacketHandlers[CMSG_SET_CHANNEL_WATCH].handler						= &WorldSession::HandleChannelWatchOpcode;
-	WorldPacketHandlers[CMSG_SET_ACTIVE_VOICE_CHANNEL].handler				= &WorldSession::HandleVoiceChatQueryOpcode;
-	WorldPacketHandlers[CMSG_SET_ACTIVE_VOICE_CHANNEL].status				= STATUS_AUTHED;
-
 	// Opt out of loot!
 	WorldPacketHandlers[CMSG_OPT_OUT_OF_LOOT].handler						= &WorldSession::HandleSetAutoLootPassOpcode;
 

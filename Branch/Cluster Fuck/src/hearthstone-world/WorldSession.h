@@ -700,12 +700,6 @@ protected:
 	void HandleWorldportOpcode(WorldPacket & recv_data);
 	void HandleWrapItemOpcode(WorldPacket& recv_data);
 
-	// VOICECHAT
-	void HandleEnableMicrophoneOpcode(WorldPacket & recv_data);
-	void HandleVoiceChatQueryOpcode(WorldPacket & recv_data);
-	void HandleChannelVoiceOnOpcode(WorldPacket & recv_data);
-	void HandleChannelWatchOpcode(WorldPacket & recv_data);
-
 	// Auto Loot Pass
 	void HandleSetAutoLootPassOpcode(WorldPacket & recv_data);
 

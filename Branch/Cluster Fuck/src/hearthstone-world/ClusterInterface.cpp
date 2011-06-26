@@ -89,7 +89,7 @@ void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void *
 	if(size && rv)
 		rv =_clientSocket->Write((const uint8*)data, size);
 	else if(rv)
-		ForceSend();
+		_clientSocket->ForceSend();
 
 	_clientSocket->UnlockWriteBuffer();
 }
@@ -567,7 +567,7 @@ void Player::HandleClusterRemove()
 	if (IsInWorld())
 		RemoveFromWorld();
 
-	sEventMgr.AddEvent(TO_OBJECT(this), &Object::Delete, false, EVENT_UNK, 30000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT);
+	sEventMgr.AddEvent(TO_OBJECT(this), &Object::Destruct, EVENT_UNK, 30000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT);
 
 	if (GetSession() != NULL)
 	{

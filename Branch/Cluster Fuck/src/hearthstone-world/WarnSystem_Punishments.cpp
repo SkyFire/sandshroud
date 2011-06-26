@@ -43,7 +43,7 @@ void WarnSystem::Punishment_PermBanAccount(Player * Warner, Player * Warned, uin
 	Warned->SaveToDB(false);
 
 	const char * pAccount = Warned->GetSession()->GetAccountName().c_str();
-	sLogonCommHandler.Account_SetBanned(pAccount, 1, reasonTagged.c_str());
+//	sLogonCommHandler.Account_SetBanned(pAccount, 1, reasonTagged.c_str());
 	sWorld.DisconnectUsersWithAccount(pAccount, Warner->GetSession());
 
 	BroadcastToWorld("%s's account will now be locked until the day hell freezes over.", Warned->GetName() );
