@@ -17,7 +17,6 @@
  *
  */
 
-#ifdef CLUSTERING
 #ifndef _WORKERSERVER_CLIENT_H
 #define _WORKERSERVER_CLIENT_H
 
@@ -36,5 +35,4 @@ public:
 	void OnDisconnect();
 };
 
-#endif
 #endif

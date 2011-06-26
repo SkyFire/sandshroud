@@ -97,10 +97,8 @@
 #include "Opcodes.h"
 #include "WorldStates.h"
 
-#ifdef CLUSTERING
 #include "../hearthstone-realmserver/Structures.h"
 #include "../hearthstone-realmserver/WorkerOpcodes.h"
-#endif
 
 #include "Packets.h"
 #include "CallScripting.h"
@@ -187,10 +185,8 @@
 #include "ChainAggroEntity.h"
 #include "StrandOfTheAncients.h"
 #include "IsleOfConquest.h"
-#ifdef CLUSTERING
-	#include "WorkerServerClient.h"
-	#include "ClusterInterface.h"
-#endif
+#include "WorkerServerClient.h"
+#include "ClusterInterface.h"
 
 #include "CollideInterface.h"
 #include "NavMeshInterface.h"

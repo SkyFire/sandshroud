@@ -857,40 +857,6 @@ void WorldSession::FullLogin(Player* plr)
 	CharacterDatabase.Execute ("UPDATE characters SET online = 1 WHERE guid = %u" , plr->GetLowGUID());
 
 	bool enter_world = true;
-#ifndef CLUSTERING
-	// Find our transporter and add us if we're on one.
-	if(plr->m_TransporterGUID != 0)
-	{
-		Transporter* pTrans = objmgr.GetTransporter(GUID_LOPART(plr->m_TransporterGUID));
-		if(pTrans)
-		{
-			if(plr->isDead())
-			{
-				plr->RemoteRevive();
-			}
-
-			float c_tposx = pTrans->GetPositionX() + plr->m_transportPosition->x;
-			float c_tposy = pTrans->GetPositionY() + plr->m_transportPosition->y;
-			float c_tposz = pTrans->GetPositionZ() + plr->m_transportPosition->z;
-			if(plr->GetMapId() != pTrans->GetMapId())	// loaded wrong map
-			{
-				plr->SetMapId(pTrans->GetMapId());
-
-				WorldPacket dataw(SMSG_NEW_WORLD, 20);
-				dataw << pTrans->GetMapId() << c_tposx << c_tposy << c_tposz << plr->GetOrientation();
-				SendPacket(&dataw);
-
-				// shit is sent in worldport ack.
-				enter_world = false;
-			}
-
-			plr->SetPosition(c_tposx, c_tposy, c_tposz, plr->GetOrientation(), false);
-			plr->m_CurrentTransporter = pTrans;
-			pTrans->AddPlayer(plr);
-		}
-	}
-#endif
-
 	if(plr->GetVehicle())
 		plr->GetVehicle()->RemovePassenger(plr);
 

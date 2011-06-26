@@ -18,7 +18,6 @@
  */
 
 #include "StdAfx.h"
-#ifdef CLUSTERING
 
 WSClient::WSClient(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 1024576, 1024576, false, peer)
 {
@@ -129,5 +128,3 @@ void WSClient::SendPacket(WorldPacket * data)
 
 	UnlockWriteBuffer();
 }
-
-#endif

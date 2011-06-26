@@ -511,14 +511,9 @@ bool World::SetInitialWorldSettings()
 
 	sScriptMgr.LoadScripts();
 
-#ifndef CLUSTERING
-	// calling this puts all maps into our task list.
-	sInstanceMgr.Load(&tl);
-#else
 	new FormationMgr;
 	new WorldStateTemplateManager;
 	sInstanceMgr._LoadInstances();
-#endif
 
 	// wait for the events to complete.
 	tl.wait();
@@ -695,7 +690,6 @@ void World::Update(time_t diff)
 	sAuctionMgr.Update();
 	sMailSystem.UpdateMessages();
 	_UpdateGameTime();
-	UpdateQueuedSessions((uint32)diff);
 #ifdef SESSION_CAP
 	if( GetSessionCount() >= SESSION_CAP )
 		TerminateProcess(GetCurrentProcess(),0);
@@ -989,62 +983,6 @@ uint32 World::GetQueuePos(WorldSocket* Socket)
 	queueMutex.Release();
 	// We shouldn't get here..
 	return 1;
-}
-
-void World::UpdateQueuedSessions(uint32 diff)
-{
-#ifndef CLUSTERING
-	if(diff >= m_queueUpdateTimer)
-	{
-		m_queueUpdateTimer = 180000;
-		queueMutex.Acquire();
-
-		if(mQueuedSessions.size() == 0)
-		{
-			queueMutex.Release();
-			return;
-		}
-
-		while(m_sessions.size() < m_playerLimit && mQueuedSessions.size())
-		{
-			// Yay. We can let another player in now.
-			// Grab the first fucker from the queue, but guard of course, since
-			// this is in a different thread again.
-
-			QueueSet::iterator iter = mQueuedSessions.begin();
-			WorldSocket * QueuedSocket = *iter;
-			mQueuedSessions.erase(iter);
-
-			// Welcome, sucker.
-			if(QueuedSocket->GetSession())
-			{
-				QueuedSocket->GetSession()->deleteMutex.Acquire();
-				QueuedSocket->Authenticate();
-				QueuedSocket->GetSession()->deleteMutex.Release();
-			}
-		}
-
-		if(mQueuedSessions.size() == 0)
-		{
-			queueMutex.Release();
-			return;
-		}
-
-		// Update the remaining queue members.
-		QueueSet::iterator iter = mQueuedSessions.begin();
-		uint32 Position = 1;
-		while(iter != mQueuedSessions.end())
-		{
-			(*iter)->UpdateQueuePosition(Position++);
-			++iter;
-		}
-		queueMutex.Release();
-	}
-	else
-	{
-		m_queueUpdateTimer -= diff;
-	}
-#endif
 }
 
 void World::SaveAllPlayers()

@@ -19,8 +19,6 @@
 
 #include "StdAfx.h"
 
-#ifdef CLUSTERING
-
 initialiseSingleton(ClusterInterface);
 ClusterInterfaceHandler ClusterInterface::PHandlers[IMSG_NUM_TYPES];
 
@@ -803,5 +801,3 @@ void ClusterInterface::PlayerLoggedOut(uint32 sid, uint32 guid)
 	result << sid << guid;
 	SendPacket(&result);
 }
-
-#endif

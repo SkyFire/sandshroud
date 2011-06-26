@@ -17,8 +17,6 @@
  *
  */
 
-#ifdef CLUSTERING
-
 #ifndef _CLUSTERINTERFACE_H
 #define _CLUSTERINTERFACE_H
 
@@ -103,7 +101,5 @@ public:
 };
 
 #define sClusterInterface ClusterInterface::getSingleton()
-
-#endif
 
 #endif

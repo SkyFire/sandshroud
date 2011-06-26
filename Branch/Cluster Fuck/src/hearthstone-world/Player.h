@@ -1573,11 +1573,7 @@ public:
 	// GameObject commands
 	GameObject* m_GM_SelectedGO;
 
-#ifndef CLUSTERING
-	void _Relocate(uint32 mapid,const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id);
-#else
 	void RelocateCallback(uint32 instance_were_going_to);
-#endif
 	void AddItemsToWorld();
 	void RemoveItemsFromWorld();
 	void UpdateKnownCurrencies(uint32 itemId, bool apply);
@@ -1735,7 +1731,6 @@ public:
 	void EjectFromInstance();
 	bool raidgrouponlysent;
 
-#ifdef CLUSTERING
 	RPlayerInfo * UpdateRPlayerInfo(RPlayerInfo * pRPlayer, bool newRplr = false)
 	{
 		pRPlayer->Guid = GetLowGUID();
@@ -1761,7 +1756,6 @@ public:
 			pRPlayer->references = 1;
 		return pRPlayer;
 	}
-#endif
 
 	void EventSafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, int32 phase = 1)
 	{
@@ -1908,11 +1902,9 @@ public:
 	void SummonRequest(Object* Requestor, uint32 ZoneID, uint32 MapID, uint32 InstanceID, const LocationVector & Position);
 	uint8 m_lastMoveType;
 
-#ifdef CLUSTERING
 	void EventRemoveAndDelete();
 	void PackPlayerData(ByteBuffer & data);
 	bool UnpackPlayerData(ByteBuffer & data);
-#endif
 
 	Creature* m_tempSummon;
 	bool m_deathVision;
@@ -2291,10 +2283,9 @@ public:
 	uint32 m_drunkTimer;
 	static DrunkenState GetDrunkenstateByValue(uint16 value);
 	void EventDrunkenVomit();
-#ifdef CLUSTERING
+
 	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
 	void HandleClusterRemove();
-#endif
 
 	// Player Vehicles
 public:

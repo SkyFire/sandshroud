@@ -27,14 +27,6 @@
 #ifndef __HEARTHSTONECONFIG_H
 #define __HEARTHSTONECONFIG_H
 
-/** Enable/disable Hearthstone world server cluster support.
- * Warning: Hearthstone will no longer function independantly when built in cluster mode.
- * It will require a realmserver to function.
- * As of last update, it is nowhere near complete, only enable for dev use.
- * Default: Disabled
- */
-//#define CLUSTERING 1
-
 // For Linux, disabled for compile reasons.
 //#define LOAD_LACRIMI
 

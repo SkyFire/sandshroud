@@ -156,12 +156,8 @@ uint32 InstanceMgr::PreTeleport(uint32 mapid, Player* plr, uint32 instanceid)
 		return INSTANCE_ABORT_NOT_FOUND;
 
 	// main continent check.
-	if(inf->type == INSTANCE_NULL)
-	{
-		// this will be useful when clustering comes into play.
-		// we can check if the destination world server is online or not and then cancel them before they load.
+	if(inf->type == INSTANCE_NULL) // we can check if the destination world server is online or not and then cancel them before they load.
 		return (m_singleMaps[mapid] != NULL) ? INSTANCE_OK : INSTANCE_ABORT_NOT_FOUND;
-	}
 
 	// shouldn't happen
 	if(inf->type == INSTANCE_PVP)

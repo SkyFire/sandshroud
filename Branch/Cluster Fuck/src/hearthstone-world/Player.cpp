@@ -7918,76 +7918,6 @@ void Player::RemovePlayerPet(uint32 pet_number)
 	}
 }
 
-#ifndef CLUSTERING
-void Player::_Relocate(uint32 mapid, const LocationVector & v, bool sendpending, bool force_new_world, uint32 instance_id)
-{
-	//Send transfer pending only when switching between differnt mapids!
-	WorldPacket data(41);
-	if(sendpending && mapid != m_mapId && force_new_world)
-	{
-		data.SetOpcode(SMSG_TRANSFER_PENDING);
-		data << mapid;
-		GetSession()->SendPacket(&data);
-	}
-
-	//are we changing maps?
-	if(m_mapId != mapid || force_new_world)
-	{
-		//Preteleport will try to find an instance (saved or active), or create a new one if none found.
-		uint32 status = sInstanceMgr.PreTeleport(mapid, this, instance_id);
-		if(status != INSTANCE_OK)
-		{
-			data.Initialize(SMSG_TRANSFER_ABORTED);
-			data << mapid << status;
-			GetSession()->SendPacket(&data);
-			return;
-		}
-
-		//did we get a new instanceid?
-		if(instance_id)
-			m_instanceId = instance_id;
-
-		//remove us from this map
-		if(IsInWorld())
-			RemoveFromWorld();
-
-		//send new world
-		data.Initialize(SMSG_NEW_WORLD);
-		data << (uint32)mapid << v << v.o;
-		GetSession()->SendPacket( &data );
-		SetMapId(mapid);
-		SetPlayerStatus(TRANSFER_PENDING);
-	}
-	else
-	{
-
-		// we are on same map allready, no further checks needed,
-		// send teleport ack msg
-		WorldPacket * data = BuildTeleportAckMsg(v);
-		m_session->SendPacket(data);
-		delete data;
-
-		//reset transporter if we where on one.
-		if( m_CurrentTransporter && !m_lockTransportVariables )
-		{
-			m_CurrentTransporter->RemovePlayer(TO_PLAYER(this));
-			m_CurrentTransporter = NULLTRANSPORT;
-			m_TransporterGUID = 0;
-		}
-	}
-
-	//update position
-	m_sentTeleportPosition = v;
-	SetPosition(v);
-	ResetHeartbeatCoords();
-	ApplyPlayerRestState(false); // If we don't, and we teleport inside, we'll be rested regardless.
-	if(GetItemInterface())
-		GetItemInterface()->CheckAreaItems();
-
-	z_axisposition = 0.0f;
-}
-#endif
-
 // Player::AddItemsToWorld
 // Adds all items to world, applies any modifiers for them.
 
@@ -9138,15 +9068,12 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 		MapID = GetBindMapId();
 	}
 
-#ifdef CLUSTERING
-
 	if(GetShapeShift())
 	{
 		// Extra Check
 		SetShapeShift(GetShapeShift());
 	}
 
-	/* Clustering Version */
 	MapInfo * mi = WorldMapInfoStorage.LookupEntry(MapID);
 
 	// Lookup map info
@@ -9194,73 +9121,7 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 	WorldPacket * data = BuildTeleportAckMsg(vec);
 	m_session->SendPacket(data);
 	delete data;
-#else
-	if(GetShapeShift())
-	{
-		// Extra Check
-		SetShapeShift(GetShapeShift());
-	}
 
-	/* Normal Version */
-	bool force_new_world = false;
-
-	// Lookup map info
-	MapInfo * mi = LimitedMapInfoStorage.LookupEntry(MapID);
-	if(!mi)
-		return false;
-
-	//are we changing instance or map?
-	if(InstanceID && (uint32)m_instanceId != InstanceID)
-	{
-		force_new_world = true;
-		SetInstanceID(InstanceID);
-	}
-	else if(m_mapId != MapID)
-	{
-		force_new_world = true;
-	}
-
-	//We are going to another map
-	if( force_new_world )
-	{
-		//Do we need TBC expansion?
-		if(mi->flags & WMI_INSTANCE_XPACK_01 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_01) && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
-		{
-			WorldPacket msg(SMSG_MOTD, 50);
-			msg << uint32(3) << "You must have The Burning Crusade Expansion to access this content." << uint8(0);
-			m_session->SendPacket(&msg);
-			return false;
-		}
-
-		//Do we need WOTLK expansion?
-		if(mi->flags & WMI_INSTANCE_XPACK_02 && !m_session->HasFlag(ACCOUNT_FLAG_XPACK_02))
-		{
-			WorldPacket msg(SMSG_MOTD, 50);
-			msg << uint32(3) << "You must have Wrath of the Lich King Expansion to access this content." << uint8(0);
-			m_session->SendPacket(&msg);
-			return false;
-		}
-
-		// Dismount
-		TO_UNIT(this)->Dismount();
-	}
-
-	//no flying outside new continents
-	if((GetShapeShift() == FORM_FLIGHT || GetShapeShift() == FORM_SWIFT) && MapID != 530 && MapID != 571 )
-		RemoveShapeShiftSpell(m_ShapeShifted);
-
-	// make sure player does not drown when teleporting from under water
-	if (m_UnderwaterState & UNDERWATERSTATE_UNDERWATER)
-		m_UnderwaterState &= ~UNDERWATERSTATE_UNDERWATER;
-
-	int32 phase2 = GetPhaseForArea(GetAreaID(vec.x, vec.y, vec.z, MapID));
-	if(phase2 != 1)
-		phase = phase2;
-	SetPhaseMask(phase, false);
-
-	//all set...relocate
-	_Relocate(MapID, vec, true, force_new_world, InstanceID);
-#endif
 	DelaySpeedHack(5000);
 	return true;
 }
@@ -10641,8 +10502,6 @@ void Player::RemoveFromBattlegroundQueue(uint32 queueSlot, bool forced)
 		sChatHandler.SystemMessage(m_session, "You were removed from the queue for the battleground for not joining after 2 minutes.");
 }
 
-#ifdef CLUSTERING
-
 void Player::EventRemoveAndDelete()
 {
 	sEventMgr.RemoveEvents(this);
@@ -10712,8 +10571,6 @@ void Player::EventRemoveAndDelete()
 
 	Destruct();
 }
-
-#endif
 
 void Player::_AddSkillLine(uint32 SkillLine, uint32 Curr_sk, uint32 Max_sk)
 {

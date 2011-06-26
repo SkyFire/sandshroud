@@ -559,7 +559,6 @@ public:
 	uint32 AddQueuedSocket(WorldSocket* Socket);
 	void RemoveQueuedSocket(WorldSocket* Socket);
 	uint32 GetQueuePos(WorldSocket* Socket);
-	void UpdateQueuedSessions(uint32 diff);
 
 	Mutex queueMutex;
 
