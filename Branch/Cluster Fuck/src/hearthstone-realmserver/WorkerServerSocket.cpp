@@ -62,7 +62,7 @@ void WSSocket::HandleAuthRequest(WorldPacket & pck)
 	_authenticated = result ? true : false;
 }
 
-void WSSocket::OnRead()
+void WSSocket::OnRecvData()
 {
 	for(;;)
 	{

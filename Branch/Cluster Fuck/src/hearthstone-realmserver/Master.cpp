@@ -90,6 +90,10 @@ bool Master::_StartDB()
 	return true;
 }
 
+bool StartConsoleListener();
+void CloseConsoleListener();
+ThreadContext * GetConsoleListener();
+
 bool Master::Run(int argc, char ** argv)
 {
 	//sLog.outString("TexT");
@@ -133,6 +137,9 @@ bool Master::Run(int argc, char ** argv)
 
 	_HookSignals();
 
+	ConsoleThread* console = new ConsoleThread();
+	ThreadPool.ExecuteTask(console);
+
 	ThreadPool.ShowStats();
 
 	Log.Success("Storage", "DBC Files Loaded...");
@@ -141,6 +148,16 @@ bool Master::Run(int argc, char ** argv)
 	new iocpEngine;
 	sSocketEngine.SpawnThreads();
 	Log.Success("Network", "Network Subsystem Started.");
+
+	if( StartConsoleListener() )
+	{
+#ifdef WIN32
+		ThreadPool.ExecuteTask( GetConsoleListener() );
+#endif
+		Log.Success("RemoteConsole", "Started and listening on port %i",Config.MainConfig.GetIntDefault("RemoteConsole", "Port", 8092));
+	}
+	else
+		DEBUG_LOG("RemoteConsole", "Not enabled or failed listen.");
 
 	uint32 start;
 	uint32 diff;
@@ -209,6 +226,10 @@ bool Master::Run(int argc, char ** argv)
 		}
 	}
 
+	CloseConsoleListener();
+	console->terminate();
+	delete console;
+
 	_UnhookSignals();
 	return true;
 }
@@ -242,7 +263,42 @@ void Master::_UnhookSignals()
 
 }
 
-void OnCrash(bool Terminate)
-{
+#ifdef WIN32
 
+Mutex m_crashedMutex;
+
+// Crash Handler
+void OnCrash( bool Terminate )
+{
+	sLog.outString( "Advanced crash handler initialized." );
+
+	if( !m_crashedMutex.AttemptAcquire() )
+		TerminateThread( GetCurrentThread(), 0 );
+
+	try
+	{
+		sLogonCommHandler.ConnectionDropped();
+		sLog.outString( "Waiting for all database queries to finish..." );
+		WorldDatabase.EndThreads();
+		CharacterDatabase.EndThreads();
+
+		sLog.outString( "All pending database operations cleared.\n" );
+		sLog.outString( "Data saved." );
+	}
+	catch(...)
+	{
+		sLog.outString( "Threw an exception while attempting to save all data." );
+	}
+
+	sLog.outString( "Closing." );
+
+	// Terminate Entire Application
+	if( Terminate )
+	{
+		HANDLE pH = OpenProcess( PROCESS_TERMINATE, TRUE, GetCurrentProcessId() );
+		TerminateProcess( pH, 1 );
+		CloseHandle( pH );
+	}
 }
+
+#endif

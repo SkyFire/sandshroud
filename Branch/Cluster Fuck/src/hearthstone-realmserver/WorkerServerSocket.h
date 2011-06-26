@@ -37,7 +37,7 @@ public:
 
 	void SendPacket(WorldPacket * pck);
 	void SendWoWPacket(Session * from, WorldPacket * pck);
-	void OnRead();
+	void OnRecvData();
 
 	void HandleAuthRequest(WorldPacket & pck);
 	void HandleRegisterWorker(WorldPacket & pck);

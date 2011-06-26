@@ -30,7 +30,7 @@ public:
 	~WSClient();
 
 	void SendPacket(WorldPacket * data);
-	void OnRead();
+	void OnRecvData();
 	void OnConnect();
 	void OnDisconnect();
 };

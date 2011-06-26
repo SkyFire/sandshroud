@@ -30,7 +30,7 @@ WSClient::~WSClient()
 
 }
 
-void WSClient::OnRead()
+void WSClient::OnRecvData()
 {
 	for(;;)
 	{
