@@ -19,6 +19,9 @@
     <Filter Include="Storage">
       <UniqueIdentifier>{a7021509-7700-4f02-a9ff-176011a2f838}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Console">
+      <UniqueIdentifier>{494b2f64-59b8-4c56-a040-5c40e49fdfcb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\hearthstone-realmserver\LogonCommClient.cpp">
@@ -60,6 +63,12 @@
     <ClCompile Include="..\..\src\hearthstone-realmserver\Player.cpp">
       <Filter>Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\ConsoleCommands.cpp">
+      <Filter>Console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\ConsoleListener.cpp">
+      <Filter>Console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\hearthstone-realmserver\LogonCommClient.h">
@@ -99,6 +108,9 @@
     <ClInclude Include="..\..\src\hearthstone-realmserver\RStdAfx.h" />
     <ClInclude Include="..\..\src\hearthstone-realmserver\Player.h">
       <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-realmserver\ConsoleCommands.h">
+      <Filter>Console</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -62,6 +62,8 @@
 #include "../hearthstone-world/NameTables.h"
 #include "../hearthstone-world/Opcodes.h"
 #include "../hearthstone-shared/CallBack.h"
+#include "../hearthstone-shared/PerfCounters.h"
+#include "../hearthstone-logonserver/LogonOpcodes.h"
 
 #include "Master.h"
 #include "WorkerOpcodes.h"
@@ -77,5 +79,6 @@
 #include "../hearthstone-shared/Storage.h"
 #include "ObjectStorage.h"
 #include "Player.h"
+#include "ConsoleCommands.h"
 
 #endif

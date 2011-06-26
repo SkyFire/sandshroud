@@ -18,6 +18,7 @@
  */
 
 #include "RStdAfx.h"
+
 #pragma pack(push, 1)
 typedef struct
 {
@@ -33,13 +34,13 @@ LogonCommClientSocket::LogonCommClientSocket(SOCKET fd, const sockaddr_in * peer
 	// do nothing
 	last_ping = last_pong = uint32(time(NULL));
 	remaining = opcode = 0;
-	_id=0;
+	_id = 0;
 	latency = 0;
 	use_crypto = false;
 	authenticated = 0;
 }
 
-void LogonCommClientSocket::OnRead()
+void LogonCommClientSocket::OnRecvData()
 {
 	while(true)
 	{
@@ -54,7 +55,6 @@ void LogonCommClientSocket::OnRead()
 
 			if(use_crypto)
 			{
-				// decrypt the packet
 				_recvCrypto.Process((unsigned char*)&opcode, (unsigned char*)&opcode, 2);
 				_recvCrypto.Process((unsigned char*)&remaining, (unsigned char*)&remaining, 4);
 			}
@@ -103,14 +103,14 @@ void LogonCommClientSocket::HandlePacket(WorldPacket & recvData)
 		&LogonCommClientSocket::HandleRequestAccountMapping,// RSMSG_REQUEST_ACCOUNT_CHARACTER_MAPPING
 		NULL,												// RCMSG_ACCOUNT_CHARACTER_MAPPING_REPLY
 		NULL,												// RCMSG_UPDATE_CHARACTER_MAPPING_COUNT
-		NULL,												// RSMSG_DISCONNECT_ACCOUNT
+		&LogonCommClientSocket::HandleDisconnectAccount,	// RSMSG_DISCONNECT_ACCOUNT
 		NULL,												// RCMSG_TEST_CONSOLE_LOGIN
-		NULL,												// RSMSG_CONSOLE_LOGIN_RESULT
+		&LogonCommClientSocket::HandleConsoleAuthResult,	// RSMSG_CONSOLE_LOGIN_RESULT
 		NULL,												// RCMSG_MODIFY_DATABASE
-		NULL,												// RSMSG_REALM_POP_REQ
+		&LogonCommClientSocket::HandlePopulationRequest,	// RSMSG_REALM_POP_REQ
 		NULL,												// RCMSG_REALM_POP_RES
-		&LogonCommClientSocket::HandlePong,					// RCMSG_SERVER_PING
-		&LogonCommClientSocket::HandlePong,					// RSMSG_SERVER_PONG
+		&LogonCommClientSocket::HandleServerPing,			// RCMSG_SERVER_PING
+		NULL,												// RSMSG_SERVER_PONG
 	};
 
 	if(recvData.GetOpcode() >= RMSG_COUNT || Handlers[recvData.GetOpcode()] == 0)
@@ -128,17 +128,14 @@ void LogonCommClientSocket::HandleRegister(WorldPacket & recvData)
 	uint32 realmlid;
 	string realmname;
 	recvData >> error >> realmlid >> realmname;
-
 	if(error || realmlid == 0) // Adress already used, or realm is active on our slot/name
 	{
 		// FUUUUU
 		return;
 	}
 
-	sLog.outColor(TNORMAL, "\n        >> realm `%s` registered under id ", realmname.c_str());
-	sLog.outColor(TGREEN, "%u", realmlid);
-	
-	LogonCommHandler::getSingleton().AdditionAck(_id, realmlid);
+	Log.Notice("LogonCommClient", "Realm `%s` registered as realm %u.", realmname.c_str(), realmlid);
+	sLogonCommHandler.AdditionAck(realmlid);
 	realm_ids.insert(realmlid);
 }
 
@@ -167,8 +164,6 @@ void LogonCommClientSocket::HandleSessionInfo(WorldPacket & recvData)
 
 void LogonCommClientSocket::HandlePong(WorldPacket & recvData)
 {
-	if(latency)
-		OUT_DEBUG(">> logonserver latency: %ums", getMSTime() - pingtime);
 	latency = getMSTime() - pingtime;
 	last_pong = uint32(time(NULL));
 }
@@ -192,13 +187,14 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 	LockWriteBuffer();
 
 	header.opcode = data->GetOpcode();
-	header.size = (uint32)data->size();
-	swap32(&header.size);
+	uint32 size = (uint32)data->size();
+	swap32(&size);
+	header.size = size;
 
 	if(use_crypto && !no_crypto)
 		_sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);
 
-	rv = Write((const uint8*)&header, 6);
+	rv = WriteButHold((const uint8*)&header, 6);
 
 	if(data->size() > 0 && rv)
 	{
@@ -207,6 +203,8 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 
 		rv = Write((const uint8*)data->contents(), (uint32)data->size());
 	}
+	else if(rv)
+		rv = ForceSend();
 
 	UnlockWriteBuffer();
 }
@@ -215,8 +213,8 @@ void LogonCommClientSocket::OnDisconnect()
 {
 	if(_id != 0)
 	{
-		printf("Calling ConnectionDropped() due to OnDisconnect().\n");
-		sLogonCommHandler.ConnectionDropped(_id);	
+		DEBUG_LOG("LogonCommClientSocket","Calling ConnectionDropped() due to OnDisconnect().");
+		sLogonCommHandler.ConnectionDropped();
 	}
 }
 
@@ -260,7 +258,7 @@ void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, int8 add)
 	WorldPacket data(RCMSG_UPDATE_CHARACTER_MAPPING_COUNT, 9);
 	set<uint32>::iterator itr = realm_ids.begin();
 
-	for(; itr != realm_ids.end(); ++itr)
+	for(; itr != realm_ids.end(); itr++)
 	{
 		data.clear();
 		data << (*itr) << account_id << add;
@@ -270,8 +268,7 @@ void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, int8 add)
 
 void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 {
-	return;
-	uint32 t= getMSTime();
+	uint32 t = getMSTime();
 	uint32 realm_id;
 	uint32 account_id;
 	QueryResult * result;
@@ -286,7 +283,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 
 	if(result)
 	{
-		do 
+		do
 		{
 			account_id = result->Fetch()[0].GetUInt32();
 			itr = mapping_to_send.find(account_id);
@@ -306,7 +303,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 
 	ByteBuffer uncompressed(40000 * 5 + 8);
 	//uint32 Count = 0;
-	uint32 Remaining = int32(mapping_to_send.size());
+	uint32 Remaining = uint32(mapping_to_send.size());
 	itr = mapping_to_send.begin();
 	for(;;)
 	{
@@ -318,7 +315,7 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 		else
 			uncompressed << Remaining;
 
-		for(uint32 i = 0; i < 40000; ++i, ++itr)
+		for(uint32 i = 0; i < 40000; i++, itr++)
 		{
 			uncompressed << uint32(itr->first) << uint8(itr->second);
 			if(!--Remaining)
@@ -330,8 +327,8 @@ void LogonCommClientSocket::HandleRequestAccountMapping(WorldPacket & recvData)
 			break;
 
 		uncompressed.clear();
-	}	
-	sLog.outString("Took %u msec to build character mapping list for realm %u", getMSTime() - t, realm_id);
+	}
+	Log.Notice("LogonCommClient", "Build character mapping in %ums. (%u)", getMSTime()-t,mapping_to_send.size());
 }
 
 void LogonCommClientSocket::CompressAndSend(ByteBuffer & uncompressed)
@@ -350,7 +347,7 @@ void LogonCommClientSocket::CompressAndSend(ByteBuffer & uncompressed)
 
 	if(deflateInit(&stream, 1) != Z_OK)
 	{
-		printf("deflateInit failed.");
+		OUT_DEBUG("deflateInit failed.");
 		return;
 	}
 
@@ -364,21 +361,21 @@ void LogonCommClientSocket::CompressAndSend(ByteBuffer & uncompressed)
 	if(deflate(&stream, Z_NO_FLUSH) != Z_OK ||
 		stream.avail_in != 0)
 	{
-		printf("deflate failed.");
+		OUT_DEBUG("deflate failed.");
 		return;
 	}
 
 	// finish the deflate
 	if(deflate(&stream, Z_FINISH) != Z_STREAM_END)
 	{
-		printf("deflate failed: did not end stream");
+		OUT_DEBUG("deflate failed: did not end stream");
 		return;
 	}
 
 	// finish up
 	if(deflateEnd(&stream) != Z_OK)
 	{
-		printf("deflateEnd failed.");
+		OUT_DEBUG("deflateEnd failed.");
 		return;
 	}
 
@@ -386,3 +383,47 @@ void LogonCommClientSocket::CompressAndSend(ByteBuffer & uncompressed)
 	data.resize(stream.total_out + 4);
 	SendPacket(&data);
 }
+
+void LogonCommClientSocket::HandleDisconnectAccount(WorldPacket & recvData)
+{
+	uint32 id;
+	recvData >> id;
+
+	Session * sess = sClientMgr.GetSession(id);
+	if(sess != NULL)
+		sess->Disconnect();
+}
+
+void ConsoleAuthCallback(uint32 request, uint32 result);
+void LogonCommClientSocket::HandleConsoleAuthResult(WorldPacket & recvData)
+{
+	uint32 requestid, result;
+	recvData >> requestid >> result;
+
+	ConsoleAuthCallback(requestid, result);
+}
+
+void LogonCommClientSocket::HandleServerPing(WorldPacket &recvData)
+{
+	uint32 r;
+	recvData >> r;
+
+	WorldPacket data(RCMSG_SERVER_PONG, 4);
+	data << r;
+	SendPacket(&data, false);
+}
+
+void LogonCommClientSocket::HandlePopulationRequest(WorldPacket & recvData)
+{
+	uint32 realmId;
+	recvData >> realmId; // Grab the realm id
+
+	// Refresh the realm pop real quick.
+	sLogonCommHandler.RefreshRealmPop();
+
+	// Send the result
+	WorldPacket data(RCMSG_REALM_POP_RES, 16);
+	data << realmId << sLogonCommHandler.GetPopulation();
+	SendPacket(&data, false);
+}
+

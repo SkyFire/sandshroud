@@ -94,7 +94,9 @@ bool Master::Run(int argc, char ** argv)
 {
 	//sLog.outString("TexT");
 	/* Initialize global timestamp */
+	time_t curTime;
 	UNIXTIME = time(NULL);
+	g_localTime = *localtime(&UNIXTIME);
 
 	ThreadPool.Startup();
 
@@ -138,6 +140,16 @@ bool Master::Run(int argc, char ** argv)
 
 	new iocpEngine;
 	sSocketEngine.SpawnThreads();
+	Log.Success("Network", "Network Subsystem Started.");
+
+	uint32 start;
+	uint32 diff;
+	uint32 etime;
+	uint32 last_time = now();
+	uint32 loopcounter = 0;
+
+	/* connect to LS */
+	new LogonCommHandler();
 
 	Log.Notice("Network", "Opening Client Port...");
 	ListenSocket<WorldSocket> * wsl = new ListenSocket<WorldSocket>();
@@ -153,10 +165,7 @@ bool Master::Run(int argc, char ** argv)
 		return 1;
 	}
 
-	/* connect to LS */
-	new LogonCommHandler;
 	sLogonCommHandler.Startup();
-	Log.Success("Network", "Network Subsystem Started.");
 
 	//Update sLog to obey config setting
 	sLog.Init(Config.ClusterConfig.GetIntDefault("LogLevel", "Screen", 1));
@@ -167,14 +176,37 @@ bool Master::Run(int argc, char ** argv)
 	/* main loop */
 	while(!m_stopEvent)
 	{
-		sLogonCommHandler.UpdateSockets();
+		start = now();
+		diff = start - last_time;
+		if(! ((++loopcounter) % 10000) )		// 5mins
+		{
+			ThreadPool.ShowStats();
+			ThreadPool.IntegrityCheck();//Checks if THREAD_RESERVE is met
+		}
+
+		/* since time() is an expensive system call, we only update it once per server loop */
+		curTime = time(NULL);
+		if( UNIXTIME != curTime )
+		{
+			UNIXTIME = time(NULL);
+			g_localTime = *localtime(&curTime);
+		}
+
 		sClientMgr.Update();
 		sClusterMgr.Update();
+		sSocketDeleter.Update();
+
+		/* UPDATE */
+		last_time = now();
+		etime = last_time - start;
+		if( 50 > etime )
+		{
 #ifdef WIN32
-			WaitForSingleObject( hThread, 10);
+			WaitForSingleObject( hThread, 50 - etime );
 #else
-			Sleep(10);
+			Sleep( 50 - etime );
 #endif
+		}
 	}
 
 	_UnhookSignals();

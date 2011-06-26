@@ -296,6 +296,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\ConsoleCommands.cpp" />
+    <ClCompile Include="..\..\src\hearthstone-realmserver\ConsoleListener.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\LogonCommClient.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\LogonCommHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-realmserver\CharacterHandler.cpp" />
@@ -318,6 +320,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\hearthstone-realmserver\ConsoleCommands.h" />
     <ClInclude Include="..\..\src\hearthstone-realmserver\LogonCommClient.h" />
     <ClInclude Include="..\..\src\hearthstone-realmserver\LogonCommHandler.h" />
     <ClInclude Include="..\..\src\hearthstone-realmserver\Player.h" />

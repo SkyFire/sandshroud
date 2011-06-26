@@ -130,6 +130,8 @@ public:
 	/* updates sessions */
 	void Update();
 
+	uint32 GetSessionCount() { return uint32(m_clients.size()); };
+
 public: // PlayerCreateInfo
 	void LoadPlayerCreateInfo();
 	PlayerCreateInfoMap mPlayerCreateInfo;

@@ -17,11 +17,8 @@
  *
  */
 
-#ifndef _R_LOGON_COMM_CLIENT_H
-#define _R_LOGON_COMM_CLIENT_H
-
-#include "../hearthstone-logonserver/LogonOpcodes.h"
-#include <RC4Engine.h>
+#ifndef __LOGON_COMM_CLIENT_H
+#define __LOGON_COMM_CLIENT_H
 
 class LogonCommClientSocket : public TcpSocket
 {
@@ -32,8 +29,8 @@ class LogonCommClientSocket : public TcpSocket
 public:
 	LogonCommClientSocket(SOCKET fd, const sockaddr_in * peer);
 	~LogonCommClientSocket();
-	
-	void OnRead();
+
+	void OnRecvData();
 	void SendPacket(WorldPacket * data, bool no_crypto = false);
 	void HandlePacket(WorldPacket & recvData);
 	void SendPing();
@@ -42,9 +39,13 @@ public:
 
 	void HandleRegister(WorldPacket & recvData);
 	void HandlePong(WorldPacket & recvData);
+	void HandleServerPing(WorldPacket &recvData);
 	void HandleSessionInfo(WorldPacket & recvData);
 	void HandleRequestAccountMapping(WorldPacket & recvData);
 	void UpdateAccountCount(uint32 account_id, int8 add);
+	void HandleDisconnectAccount(WorldPacket & recvData);
+	void HandleConsoleAuthResult(WorldPacket & recvData);
+	void HandlePopulationRequest(WorldPacket & recvData);
 
 	void OnDisconnect();
 	void CompressAndSend(ByteBuffer & uncompressed);
