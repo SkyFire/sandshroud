@@ -1,0 +1,1 @@
+ALTER TABLE `trainer_spells` DROP `reqclassmask`;

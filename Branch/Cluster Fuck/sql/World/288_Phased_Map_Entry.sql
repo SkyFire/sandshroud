@@ -1,0 +1,1 @@
+ALTER TABLE `worldmap_info`  ADD COLUMN `hordephase` INT(30) UNSIGNED NOT NULL DEFAULT '0' AFTER `collision`,  ADD COLUMN `alliancephase` INT(30) UNSIGNED NOT NULL DEFAULT '0' AFTER `hordephase`;

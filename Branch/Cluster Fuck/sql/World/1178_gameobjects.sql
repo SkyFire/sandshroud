@@ -1,0 +1,1 @@
+ALTER TABLE `gameobject_names` ADD COLUMN `defaultflags` INT(10) NULL DEFAULT '0' AFTER `spellfocus`;

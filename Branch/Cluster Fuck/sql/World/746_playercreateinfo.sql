@@ -1,0 +1,1 @@
+ALTER TABLE `playercreateinfo`  ADD COLUMN `Orientation` FLOAT NOT NULL DEFAULT '0' AFTER `positionZ`;

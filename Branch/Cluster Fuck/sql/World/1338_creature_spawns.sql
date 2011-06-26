@@ -1,0 +1,2 @@
+ALTER TABLE `creature_spawns` ADD COLUMN `scale` float(0) NOT NULL DEFAULT '1.0' AFTER `standstate`;
+UPDATE `creature_spawns` JOIN creature_proto ON creature_spawns.entry = creature_proto.entry SET creature_spawns.scale = creature_proto.scale;
