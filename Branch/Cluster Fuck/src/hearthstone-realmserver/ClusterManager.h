@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef CLUSTER_MANAGER_H
+#define CLUSTER_MANAGER_H
+
 #define MAX_WORKER_SERVERS 100
 #define MAX_SINGLE_MAPID 750
 
@@ -33,11 +36,12 @@ struct Instance
 
 class ClusterMgr : public Singleton<ClusterMgr>
 {
+private:
 	typedef map<uint32, Instance*> InstanceMap;
 	RWLock m_lock;
 
-	WServer * WorkerServers[MAX_WORKER_SERVERS];
-	Instance * SingleInstanceMaps[MAX_SINGLE_MAPID];
+	WServer *WorkerServers[MAX_WORKER_SERVERS];
+	Instance *SingleInstanceMaps[MAX_SINGLE_MAPID];
 	
 	InstanceMap Instances;
 	uint32 m_maxInstanceId;
@@ -89,9 +93,9 @@ public:
 	/* loop */
 	void Update();
 
+	uint8 key[20];
 };
-
 
 #define sClusterMgr ClusterMgr::getSingleton()
 
-
+#endif // CLUSTER_MANAGER_H

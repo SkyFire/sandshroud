@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef WORKER_SERVER_H
+#define WORKER_SERVER_H
+
 #define MAX_SESSIONS_PER_SERVER 1000
 
 struct Instance;
@@ -62,3 +65,5 @@ protected:
 	void HandleChannelUpdate(WorldPacket & pck);
 	void HandleChannelLFGDungeonStatusReply(WorldPacket& pck);
 };
+
+#endif // WORKER_SERVER_H

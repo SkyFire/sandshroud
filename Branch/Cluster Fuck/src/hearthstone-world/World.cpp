@@ -1247,7 +1247,7 @@ void World::Rehash(bool load)
 	if(load)
 	{
 #ifdef WIN32
-		Config.MainConfig.SetSource("configs/hearthstone-world.conf", true);
+		Config.MainConfig.SetSource("hearthstone-world.conf", true);
 #else
 		Config.MainConfig.SetSource((char*)CONFDIR "/hearthstone-world.conf", true);
 #endif

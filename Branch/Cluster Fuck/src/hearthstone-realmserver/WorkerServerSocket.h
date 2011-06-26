@@ -17,8 +17,12 @@
  *
  */
 
+#ifndef WORKER_SERVER_S_H
+#define WORKER_SERVER_S_H
+
 class WServer;
 class Session;
+
 class WSSocket : public TcpSocket
 {
 	bool _authenticated;
@@ -38,5 +42,6 @@ public:
 	void HandleAuthRequest(WorldPacket & pck);
 	void HandleRegisterWorker(WorldPacket & pck);
 	void OnConnect();
-
 };
+
+#endif

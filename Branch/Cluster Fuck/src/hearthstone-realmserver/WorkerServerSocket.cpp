@@ -35,25 +35,36 @@ WSSocket::~WSSocket()
 
 void WSSocket::HandleAuthRequest(WorldPacket & pck)
 {
-	uint8 key[20];
-	uint32 build;
 	string ver;
+	uint32 build;
+	uint8 key[20];
+	uint32 result = 1;
 	pck.read(key, 20);
+
+	// check if we have the correct password
+	if(memcmp(key, sClusterMgr.key, 20)) // todo
+		result = 0;
 	pck >> build;
 	pck >> ver;
 
-	Log.Notice("WSSocket", "Auth reply, server is %s build %u", ver.c_str(), build);
+	Log.Notice("WSSocket", "Auth reply, server is %s build %u, result %s.", ver.c_str(), build, result ? "OK" : "FAIL");
+
+	printf("Key: ");
+	for(int i = 0; i < 20; ++i)
+		printf("%.2X", key[i]);
+	printf("\n");
 
 	// accept it
 	WorldPacket data(ISMSG_AUTH_RESULT, 4);
-	data << uint32(1);
+	data << uint32(result);
 	SendPacket(&data);
-	_authenticated = true;
+
+	_authenticated = result ? true : false;
 }
 
 void WSSocket::OnRead()
 {
-    for(;;)
+	for(;;)
 	{
 		if(!_cmd)
 		{

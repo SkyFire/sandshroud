@@ -113,7 +113,6 @@ bool Master::Run(int argc, char ** argv)
 	Log.Line();
 	Config.ClusterConfig.SetSource(default_cluster_config_file);
 	Config.RealmConfig.SetSource(default_realm_config_file);
-	Config.MainConfig.SetSource(default_world_config_file);
 
 	if(!_StartDB())
 	{
@@ -121,7 +120,7 @@ bool Master::Run(int argc, char ** argv)
 		return false;
 	}
 
-	if(!LoadRSDBCs(Config.MainConfig.GetStringDefault("Data", "DBCPath", "dbc").c_str()))
+	if(!LoadRSDBCs(Config.ClusterConfig.GetStringDefault("Data", "DBCPath", "dbc").c_str()))
 	{
 		Log.LargeErrorMessage(LARGERRORMESSAGE_ERROR, "One or more of the DBC files are missing.", "These are absolutely necessary for the server to function.", "The server will not start without them.", NULL);
 		return false;
@@ -138,7 +137,6 @@ bool Master::Run(int argc, char ** argv)
 	Storage_Load();
 
 	new iocpEngine;
-	new SocketEngineThread(&sSocketEngine);
 	sSocketEngine.SpawnThreads();
 
 	Log.Notice("Network", "Opening Client Port...");
@@ -149,8 +147,7 @@ bool Master::Run(int argc, char ** argv)
 	Log.Notice("Network", "Opening Server Port...");
 	ListenSocket<WSSocket> * isl = new ListenSocket<WSSocket>();
 	bool ssc = isl->Open("0.0.0.0", 11010);
-
-	if(!lsc || !ssc)
+	if(!ssc)
 	{
 		Log.Error("Network", "Could not open one of the sockets.");
 		return 1;

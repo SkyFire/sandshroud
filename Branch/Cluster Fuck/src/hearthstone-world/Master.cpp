@@ -79,12 +79,10 @@ struct Addr
 #define DEF_VALUE_NOT_SET 0xDEADBEEF
 
 #ifdef WIN32
-static const char* default_config_file = "configs/hearthstone-world.conf";
-static const char* default_realm_config_file = "configs/hearthstone-realms.conf";
-static const char* default_options_config_file = "configs/hearthstone-options.conf";
+static const char* default_config_file = "hearthstone-world.conf";
+static const char* default_options_config_file = "hearthstone-options.conf";
 #else
 static const char* default_config_file = CONFDIR "/hearthstone-world.conf";
-static const char* default_realm_config_file = CONFDIR "/hearthstone-realms.conf";
 static const char* default_options_config_file = CONFDIR "/hearthstone-options.conf";
 #endif
 
@@ -97,7 +95,6 @@ bool Master::Run(int argc, char ** argv)
 {
 	m_stopEvent = false;
 	char * config_file = (char*)default_config_file;
-	char * realm_config_file = (char*)default_realm_config_file;
 	char * options_config_file = (char*)default_options_config_file;
 	int screen_log_level = DEF_VALUE_NOT_SET;
 	int do_check_conf = 0;
@@ -126,11 +123,6 @@ bool Master::Run(int argc, char ** argv)
 		case 'c':
 			config_file = new char[strlen(hearthstone_optarg)];
 			strcpy(config_file, hearthstone_optarg);
-			break;
-
-		case 'r':
-			realm_config_file = new char[strlen(hearthstone_optarg)];
-			strcpy(realm_config_file, hearthstone_optarg);
 			break;
 
 		case 'o':
@@ -165,12 +157,6 @@ bool Master::Run(int argc, char ** argv)
 			Log.Success( "Config", "Passed without errors." );
 		else
 			Log.Warning( "Config", "Encountered one or more errors." );
-
-		Log.Notice( "Config", "Checking config file: %s\n", realm_config_file );
-		if( Config.RealmConfig.SetSource( realm_config_file, true ) )
-			Log.Success( "Config", "Passed without errors.\n" );
-		else
-			Log.Warning( "Config", "Encountered one or more errors.\n" );
 
 		Log.Notice( "Config", "Checking config file: %s\n", options_config_file );
 		if( Config.OptionalConfig.SetSource( options_config_file, true ) )
@@ -210,14 +196,6 @@ bool Master::Run(int argc, char ** argv)
 		return false;
 	}
 
-	if(Config.RealmConfig.SetSource(realm_config_file))
-		Log.Success( "Config", ">> hearthstone-realms.conf" );
-	else
-	{
-		Log.Error( "Config", ">> hearthstone-realms.conf" );
-		return false;
-	}
-
 	if(Config.OptionalConfig.SetSource(options_config_file))
 		Log.Success( "Config", ">> hearthstone-options.conf" );
 	else
@@ -252,9 +230,6 @@ bool Master::Run(int argc, char ** argv)
 
 	// Initialize Opcode Table
 	WorldSession::InitPacketHandlerTable();
-
-	string host = Config.RealmConfig.GetStringDefault( "Listen", "Host", DEFAULT_HOST );
-	int wsport = Config.RealmConfig.GetIntDefault( "ServerSettings", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
 
 	new ScriptMgr;
 

@@ -113,7 +113,7 @@ void ClusterInterface::ConnectToRealmServer()
 	memcpy(key, k.GetDigest(), 20);
 
 	Log.Notice("ClusterInterface", "Connecting to %s port %u", hostname.c_str(), port);
-	WSClient * s = ConnectTCPSocket<WSClient>(hostname.c_str(), port);
+	WSClient *s = ConnectTCPSocket<WSClient>(hostname.c_str(), port);
 	if(!s)
 	{
 		Log.Error("ClusterInterface", "Could not connect to %s:%u", hostname.c_str(), port);

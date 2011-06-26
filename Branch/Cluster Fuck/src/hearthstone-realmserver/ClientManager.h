@@ -17,6 +17,9 @@
  *
  */
 
+#ifndef CLIENT_MANAGER_H
+#define CLIENT_MANAGER_H
+
 // Crow: USE THIS AS OUR OBJECTMANAGER REPLACEMENT!
 
 #define MAX_SESSIONS 3000
@@ -138,3 +141,5 @@ public: // Player Creation and deletion/rename shit
 };
 
 #define sClientMgr ClientMgr::getSingleton()
+
+#endif // CLIENT_MANAGER_H

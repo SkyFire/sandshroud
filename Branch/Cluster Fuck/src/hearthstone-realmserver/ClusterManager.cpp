@@ -20,6 +20,7 @@
 #include "RStdAfx.h"
 
 initialiseSingleton(ClusterMgr);
+
 ClusterMgr::ClusterMgr()
 {
 	memset(SingleInstanceMaps, 0, sizeof(WServer*) * MAX_SINGLE_MAPID);
@@ -27,6 +28,14 @@ ClusterMgr::ClusterMgr()
 	m_maxInstanceId = 0;
 	m_maxWorkerServer = 0;
 	Log.Success("ClusterMgr", "Interface Created");
+
+	string strkey;
+	Config.ClusterConfig.GetString("RealmServer", "ConnectionPassword", &strkey);
+
+	Sha1Hash k;
+	k.UpdateData(strkey);
+	k.Finalize();
+	memcpy(key, k.GetDigest(), 20);
 
 	WServer::InitHandlers();
 }
