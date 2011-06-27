@@ -24,12 +24,15 @@
 
 #define MAX_SESSIONS 3000
 
+typedef HM_NAMESPACE::hash_map<uint32, RPlayerInfo*> ClientMap;
 typedef HM_NAMESPACE::hash_map<uint32, PlayerCreateInfo*> PlayerCreateInfoMap;
 
-class ClientMgr : public Singleton<ClientMgr>
+class ClientMgr : public Singleton<ClientMgr>, public ThreadContext
 {
 public:
-	typedef HM_NAMESPACE::hash_map<uint32, RPlayerInfo*> ClientMap;
+	ClientMgr();
+	~ClientMgr();
+
 	ClientMap m_clients;
 	RWLock m_lock;
 
@@ -44,9 +47,10 @@ protected:
 	std::vector<uint32> m_pendingdeletesessionids;
 
 public:
-	ClientMgr();
-	~ClientMgr();
-	
+	bool run();
+	void terminate();
+	bool m_threadRunning;
+
 	/* create rplayerinfo struct */
 	RPlayerInfo * CreateRPlayer(uint32 guid);
 
@@ -140,6 +144,9 @@ public: // PlayerCreateInfo
 public: // Player Creation and deletion/rename shit
 	uint32 GeneratePlayerGuid() { return ++m_hiPlayerGuid; };
 	int CreateNewPlayer(Session* session, WorldPacket& data);
+
+public:
+	uint32 GenerateItemGuid() { return ++m_hiItemGuid; };
 };
 
 #define sClientMgr ClientMgr::getSingleton()

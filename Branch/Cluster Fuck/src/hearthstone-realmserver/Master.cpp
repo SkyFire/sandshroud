@@ -131,18 +131,16 @@ bool Master::Run(int argc, char ** argv)
 		Log.LargeErrorMessage(LARGERRORMESSAGE_ERROR, "One or more of the DBC files are missing.", "These are absolutely necessary for the server to function.", "The server will not start without them.", NULL);
 		return false;
 	}
+	Log.Success("Storage", "DBC Files Loaded...");
 
-	new ClusterMgr;
-	new ClientMgr;
+	Log.Success("ClusterMgr", "Starting Cluster Manager.");
+	ThreadPool.ExecuteTask(new ClusterMgr);
+	Log.Success("ClientMgr", "Starting Client Manager.");
+	ThreadPool.ExecuteTask(new ClientMgr);
 
 	_HookSignals();
 
-	ConsoleThread* console = new ConsoleThread();
-	ThreadPool.ExecuteTask(console);
-
-	ThreadPool.ShowStats();
-
-	Log.Success("Storage", "DBC Files Loaded...");
+	Log.Success("Storage", "Loading Storage...");
 	Storage_Load();
 
 	new iocpEngine;
@@ -187,6 +185,10 @@ bool Master::Run(int argc, char ** argv)
 	//Update sLog to obey config setting
 	sLog.Init(Config.ClusterConfig.GetIntDefault("LogLevel", "Screen", 1));
 
+	Log.Success("Console", "Starting Console Thread.");
+	ConsoleThread* console = new ConsoleThread();
+	ThreadPool.ExecuteTask(console);
+
 #ifdef WIN32
 	HANDLE hThread = GetCurrentThread();
 #endif
@@ -209,8 +211,6 @@ bool Master::Run(int argc, char ** argv)
 			g_localTime = *localtime(&curTime);
 		}
 
-		sClientMgr.Update();
-		sClusterMgr.Update();
 		sSocketDeleter.Update();
 
 		/* UPDATE */

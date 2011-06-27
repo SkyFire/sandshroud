@@ -47,6 +47,8 @@ public:
 	void _AddSkillLine(uint32 SkillLine, uint32 Current, uint32 Max);
 	void setAction(uint8 button, uint16 action, uint8 type, uint8 misc);
 	void _SaveSpellsToDB(QueryBuffer * buf);
+	void _SaveSkillsToDB(QueryBuffer * buf);
+	void _SaveItemsToDB(QueryBuffer * buf);
 
 	Session* m_session;
 	uint32 pguid;
@@ -67,12 +69,15 @@ private:
 	LocationVector m_position;
 	std::set<uint32> mSpells;
 	std::map<uint32, PlayerSkill> m_skills;
+	std::map<uint32, CreateInfo_ItemStruct> mIteminfo;
 
 	//! Zone id.
 	uint32 m_zoneId;
 	//! Continent/map id.
 	uint32 m_mapId;
 	ActionButton mActions[132];
+
+	uint8 skin, face, hairStyle, hairColor, facialHair, outfitId;
 };
 
 #endif

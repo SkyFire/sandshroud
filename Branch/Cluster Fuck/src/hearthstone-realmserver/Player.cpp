@@ -43,8 +43,6 @@ Player::~Player ( )
 ///====================================================================
 int Player::Create(WorldPacket& data )
 {
-	uint8 skin, face, hairStyle, hairColor, facialHair, outfitId;
-
 	// unpack data into member variables
 	data >> m_name;
 
@@ -107,19 +105,21 @@ int Player::Create(WorldPacket& data )
 	//PLAYER_BYTES_2							   GM ON/OFF	 BANKBAGSLOTS   RESTEDSTATE
 	bytes2 = ((facialHair | (0x02 << 24)));//no bank slot by default!
 
+	// Add spells
 	for(std::set<uint32>::iterator sp = info->spell_list.begin();sp!=info->spell_list.end();sp++)
-	{
 		mSpells.insert((*sp));
-	}
 
+	// Add items
+	for(std::list<CreateInfo_ItemStruct>::iterator it = info->items.begin();it!=info->items.end();it++)
+		mIteminfo.insert(make_pair(sClientMgr.GenerateItemGuid(), (*it)));
+
+	// Add skilllines
 	for(std::list<CreateInfo_SkillStruct>::iterator ss = info->skills.begin(); ss!=info->skills.end(); ss++)
 		_AddSkillLine(ss->skillid, ss->currentval, ss->maxval);
 
 	// Add actionbars
 	for(std::list<CreateInfo_ActionBarStruct>::iterator itr = info->actionbars.begin();itr!=info->actionbars.end();itr++)
-	{
 		setAction(itr->button, itr->action, itr->type, itr->misc);
-	}
 	return 0;
 }
 
@@ -178,11 +178,10 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 
 	for(uint8 i = 0; i < 14; i++ )
 		ss << m_taximask[i] << " ";
-	ss << "', "
+	ss << "', ";
 
-	<< uint32(0) << ", '', "
-	<< (uint32)UNIXTIME << ",";
-	ss << "0,"
+	ss << uint32(0) << ", '', "
+	<< (uint32)UNIXTIME << "," << "0,"
 	<< m_bind_pos_x << ", "
 	<< m_bind_pos_y << ", "
 	<< m_bind_pos_z << ", "
@@ -195,7 +194,6 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< uint32(0) << " "
 	<< uint32(0) << " ', "
 	<< uint32(0) << ", "
-
 	<< uint32(0) << ", "
 	<< uint32(1) << ", " // First Login
 	<< uint32(0) << ","
@@ -209,12 +207,12 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 	<< float(0) << ", "
 	<< float(0) << ", "
 	<< float(0) << ", "
-	<< uint32(0) << ", ";
-	ss << "0, 0, 0";
-	ss << "," << uint32(0);
-	ss << ",'" << float(0) << "','" << float(0) << "','" << float(0) << "'";
-	ss << ",'";
-	ss << "','";
+	<< uint32(0) << ", "
+	<< "0, 0, 0"
+	<< "," << uint32(0)
+	<< ",'" << float(0) << "','" << float(0) << "','" << float(0) << "'"
+	<< ",'"
+	<< "','";
 
 	// Add player action bars
 	for(uint32 i = 0; i < 132; i++)
@@ -241,17 +239,21 @@ void Player::SaveToDB(bool bNewCharacter /* =false */)
 
 	buf->AddQueryStr(ss.str());
 	_SaveSpellsToDB(buf);
+	_SaveSkillsToDB(buf);
+	_SaveItemsToDB(buf);
 	CharacterDatabase.AddQueryBuffer(buf);
 }
 
 void Player::_SaveSpellsToDB(QueryBuffer * buf)
 {
+	if(!mSpells.size())
+		return;
+
 	// Dump spell data to stringstream
 	std::stringstream ss;
 	ss << "INSERT INTO playerspells VALUES ";
-	std::set<uint32>::iterator spellItr = mSpells.begin();
 	bool first = true;
-	for(; spellItr != mSpells.end(); ++spellItr)
+	for(std::set<uint32>::iterator spellItr = mSpells.begin(); spellItr != mSpells.end(); ++spellItr)
 	{
 		SpellEntry * sp = dbcSpell.LookupEntry( *spellItr );
 		if( !sp )
@@ -264,6 +266,73 @@ void Player::_SaveSpellsToDB(QueryBuffer * buf)
 
 		ss << "("<< pguid << "," << uint32(*spellItr) << ")";
 	}
+	if(buf == NULL)
+		CharacterDatabase.Execute(ss.str().c_str());
+	else
+		buf->AddQueryStr(ss.str());
+}
+
+void Player::_SaveSkillsToDB(QueryBuffer * buf)
+{
+	// if we have nothing to save why save?
+	if (!m_skills.size())
+		return;
+
+	if(buf == NULL)
+		CharacterDatabase.Execute("DELETE FROM playerskills WHERE Player_Guid = %u", pguid );
+	else
+		buf->AddQuery("DELETE FROM playerskills WHERE Player_Guid = %u", pguid );
+
+	std::stringstream ss;
+	ss << "INSERT INTO playerskills (Player_Guid, skill_id, type, currentlvl, maxlvl ) VALUES ";
+	uint32 iI = uint32(m_skills.size())-1;
+	for(std::map<uint32, PlayerSkill>::iterator itr = m_skills.begin(); itr != m_skills.end() ; itr++)
+	{
+		if(itr->first)
+		{
+			ss	<< "(" << pguid << ","
+				<< itr->first << ","
+				<< itr->second.Skill->type << ","
+				<< itr->second.CurrentValue << ","
+				<< itr->second.MaximumValue << ")";
+			if (iI)
+				ss << ",";
+		}
+		iI -= 1;
+	}
+
+	if(buf == NULL)
+		CharacterDatabase.Execute(ss.str().c_str());
+	else
+		buf->AddQueryStr(ss.str());
+}
+
+void Player::_SaveItemsToDB(QueryBuffer * buf)
+{
+	// if we have nothing to save why save?
+	if (!mIteminfo.size())
+		return;
+
+	if(buf == NULL)
+		CharacterDatabase.Execute("DELETE FROM playeritems WHERE ownerguid = %u", pguid );
+	else
+		buf->AddQuery("DELETE FROM playeritems WHERE ownerguid = %u", pguid );
+
+	std::stringstream ss;
+
+	ss << "REPLACE INTO playeritems (ownerguid, guid, entry, count, slot, enchantments) VALUES ";
+	uint32 iI = uint32(mIteminfo.size())-1;
+	for(std::map<uint32, CreateInfo_ItemStruct>::iterator itr = mIteminfo.begin(); itr != mIteminfo.end(); itr++)
+	{
+		ss	<< "(" << uint32(pguid) << ","
+			<< uint32(itr->first) << ","
+			<< uint32(itr->second.protoid) << ","
+			<< uint32(itr->second.amount) << ","
+			<< uint32(itr->second.slot) << ", '')";
+		if (iI--)
+			ss << ",";
+	}
+
 	if(buf == NULL)
 		CharacterDatabase.Execute(ss.str().c_str());
 	else

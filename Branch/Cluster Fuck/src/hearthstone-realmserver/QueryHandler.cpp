@@ -96,36 +96,8 @@ void Session::HandleGameObjectQueryOpcode(WorldPacket & pck)
 	data << goinfo->DisplayID;
 	data << goinfo->Name;
 	data << uint8(0) << uint8(0) << uint8(0) << uint8(0) << uint8(0) << uint8(0);   // new string in 1.12
-	data << goinfo->SpellFocus;
-	data << goinfo->sound1;
-	data << goinfo->sound2;
-	data << goinfo->sound3;
-	data << goinfo->sound4;
-	data << goinfo->sound5;
-	data << goinfo->sound6;
-	data << goinfo->sound7;
-	data << goinfo->sound8;
-	data << goinfo->sound9;
-	data << goinfo->Unknown1;
-	data << goinfo->Unknown2;
-	data << goinfo->Unknown3;
-	data << goinfo->Unknown4;
-	data << goinfo->Unknown5;
-	data << goinfo->Unknown6;
-	data << goinfo->Unknown7;
-	data << goinfo->Unknown8;
-	data << goinfo->Unknown9;
-	data << goinfo->Unknown10;
-	data << goinfo->Unknown11;
-	data << goinfo->Unknown12;
-	data << goinfo->Unknown13;
-	data << goinfo->Unknown14;
-	/*data << goinfo->UnknownFloat;
-	data << goinfo->Unknown15;
-	data << goinfo->Unknown16;
-	data << goinfo->Unknown17;
-	data << goinfo->Unknown18;*/
-
+	for(uint8 i = 0; i < 24; i++)
+		data << goinfo->ListedData[i];
 	SendPacket( &data );
 }
 

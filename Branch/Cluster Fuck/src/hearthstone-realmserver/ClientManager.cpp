@@ -21,9 +21,17 @@
 
 initialiseSingleton(ClientMgr);
 
+#ifdef WIN32
+static HANDLE m_abortEventClientMgr = INVALID_HANDLE_VALUE;
+#else
+static pthread_cond_t abortcondClientMgr;
+static pthread_mutex_t abortmutex;
+#endif
+
 ClientMgr::ClientMgr()
 {
 	Session::InitHandlers();
+	m_threadRunning = true;
 	m_maxSessionId = 0;
 	m_hiPlayerGuid = 0;
 	m_hiItemGuid = 0;
@@ -49,8 +57,38 @@ ClientMgr::ClientMgr()
 
 ClientMgr::~ClientMgr()
 {
-
+#ifdef WIN32
+	CloseHandle(m_abortEventClientMgr);
+#else
+	pthread_cond_destroy(&abortcondClientMgr);
+	pthread_mutex_destroy(&abortmutex);
+#endif
 };
+
+void ClientMgr::terminate()
+{
+	m_threadRunning = false;
+#ifdef WIN32
+	SetEvent(m_abortEventClientMgr);
+#else
+	pthread_cond_signal(&abortcondClientMgr);
+#endif
+}
+
+bool ClientMgr::run()
+{
+	m_threadRunning = true;
+	while(m_threadRunning)
+	{
+		Update();
+#ifdef WIN32
+		WaitForSingleObject(m_abortEventClientMgr, 10);
+#else
+		Sleep(10);
+#endif
+	}
+	return true;
+}
 
 void ClientMgr::SendPackedClientInfo(WServer * server)
 {

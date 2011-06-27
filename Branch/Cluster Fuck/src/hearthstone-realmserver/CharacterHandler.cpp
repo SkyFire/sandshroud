@@ -167,11 +167,10 @@ void Session::SendChars()
 		CreatureInfo *info = NULL;
 		player_item items[19];
 		ItemPrototype * proto;
-//		player_item bags[4];
+		int8 containerslot;
 		QueryResult * res;
 		Field *fields;
 		int8 slot;
-		int8 containerslot;
 		uint8 Class;
 		uint8 race;
 		uint32 i;
@@ -250,7 +249,7 @@ void Session::SendChars()
 
 			uint32 enchantid;
 			EnchantEntry * enc;
-			memset(items, 0, sizeof(player_item) * 19);
+			memset(items, 0, sizeof(player_item)* EQUIPMENT_SLOT_END);
 			if(res)
 			{
 				do
@@ -262,8 +261,8 @@ void Session::SendChars()
 						proto = ItemPrototypeStorage.LookupEntry(res->Fetch()[2].GetUInt32());
 						if(proto)
 						{
-							// slot0 = head, slot14 = cloak 0x400 = no helm, 0x800 = no cloak
-							if(!(slot == 0 && (flags & (uint32)0x400) != 0) && !(slot == 14 && (flags & (uint32)0x800) != 0))
+							// slot0 = head, slot14 = cloak
+							if(!(slot == 0 && (flags & (uint32)1024) != 0) && !(slot == 14 && (flags & (uint32)2048) != 0))
 							{
 								items[slot].displayid = proto->DisplayInfoID;
 								items[slot].invtype = proto->InventoryType;
@@ -277,7 +276,7 @@ void Session::SendChars()
 										if( enc != NULL )
 											items[slot].enchantment = enc->visual;
 										else
-											items[slot].enchantment = 0;;
+											items[slot].enchantment = 0;
 									}
 								}
 							}
@@ -303,7 +302,7 @@ void Session::SendChars()
 
 	data.put<uint8>(0, num);
 
-	OUT_DEBUG("CharacterHandler", "Enum Built in %u ms.", getMSTime() - start_time);
+	DEBUG_LOG("CharacterHandler", "Enum Built in %u ms.", getMSTime() - start_time);
 	SendPacket( &data );
 }
 

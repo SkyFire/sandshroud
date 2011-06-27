@@ -317,6 +317,8 @@ bool LoadRSDBCs(const char* datapath)
 	LOAD_DBC(format("%s/ChrClasses.dbc", datapath).c_str(), charclassFormat, true, dbcCharClass, true);
 	/* Needed for: */
 	LOAD_DBC(format("%s/ChrRaces.dbc", datapath).c_str(), charraceFormat, true, dbcCharRace, true);
+	/* Needed for: */
+	LOAD_DBC(format("%s/Spell.dbc", datapath).c_str(), spellentryFormat, true, dbcSpell, true);
 	return true;
 }
 

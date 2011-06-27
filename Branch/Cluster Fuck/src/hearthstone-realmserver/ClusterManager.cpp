@@ -21,6 +21,13 @@
 
 initialiseSingleton(ClusterMgr);
 
+#ifdef WIN32
+static HANDLE m_abortEventClusterMgr = INVALID_HANDLE_VALUE;
+#else
+static pthread_cond_t abortcondClusterMgr;
+static pthread_mutex_t abortmutex;
+#endif
+
 ClusterMgr::ClusterMgr()
 {
 	memset(SingleInstanceMaps, 0, sizeof(WServer*) * MAX_SINGLE_MAPID);
@@ -36,8 +43,34 @@ ClusterMgr::ClusterMgr()
 	k.UpdateData(strkey);
 	k.Finalize();
 	memcpy(key, k.GetDigest(), 20);
+	m_threadRunning = true;
 
 	WServer::InitHandlers();
+}
+
+void ClusterMgr::terminate()
+{
+	m_threadRunning = false;
+#ifdef WIN32
+	SetEvent(m_abortEventClusterMgr);
+#else
+	pthread_cond_signal(&abortcondClusterMgr);
+#endif
+}
+
+bool ClusterMgr::run()
+{
+	m_threadRunning = true;
+	while(m_threadRunning)
+	{
+		Update();
+#ifdef WIN32
+		WaitForSingleObject(m_abortEventClusterMgr, 10);
+#else
+		Sleep(10);
+#endif
+	}
+	return true;
 }
 
 WServer * ClusterMgr::GetServerByInstanceId(uint32 InstanceId)

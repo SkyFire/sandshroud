@@ -182,30 +182,10 @@ struct GameObjectInfo
 	uint32 Type;
 	uint32 DisplayID;
 	char * Name;
-	uint32 SpellFocus;
-	uint32 sound1;
-	uint32 sound2;
-	uint32 sound3;
-	uint32 sound4;
-	uint32 sound5;
-	uint32 sound6;
-	uint32 sound7;
-	uint32 sound8;
-	uint32 sound9;
-	uint32 Unknown1;
-	uint32 Unknown2;
-	uint32 Unknown3;
-	uint32 Unknown4;
-	uint32 Unknown5;
-	uint32 Unknown6;
-	uint32 Unknown7;
-	uint32 Unknown8;
-	uint32 Unknown9;
-	uint32 Unknown10;
-	uint32 Unknown11;
-	uint32 Unknown12;
-	uint32 Unknown13;
-	uint32 Unknown14;
+	char * Icon;
+	char * CastBarText;
+	uint32 DefaultFlags;
+	uint32 ListedData[24];
 };
 
 struct ItemPage

@@ -34,22 +34,26 @@ struct Instance
 #define IS_INSTANCE(a) (a > 1 && a != 530 && a != 571 && a != 609)
 #define IS_MAIN_MAP(a) (((a)<2)||((a)==530)||((a)==571)||((a)==609))
 
-class ClusterMgr : public Singleton<ClusterMgr>
+class ClusterMgr : public Singleton<ClusterMgr>, public ThreadContext
 {
+public:
+	ClusterMgr();
+	bool run();
+	void terminate();
+	bool m_threadRunning;
+
 private:
 	typedef map<uint32, Instance*> InstanceMap;
 	RWLock m_lock;
 
 	WServer *WorkerServers[MAX_WORKER_SERVERS];
 	Instance *SingleInstanceMaps[MAX_SINGLE_MAPID];
-	
+
 	InstanceMap Instances;
 	uint32 m_maxInstanceId;
 	uint32 m_maxWorkerServer;
 
 public:
-	ClusterMgr();
-
 	// This is the prototype for instanced maps that haven't been created yet
 	// Yes, its a multimap, you can have multiple servers per map (battleground servers)
 	std::multimap<uint32, Instance*> InstancedMaps;
