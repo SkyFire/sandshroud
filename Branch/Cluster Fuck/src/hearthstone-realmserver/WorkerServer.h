@@ -27,7 +27,7 @@ typedef void(WServer::*WServerHandler)(WorldPacket &);
 
 class WServer
 {
-	static WServerHandler PHandlers[IMSG_NUM_TYPES];
+	static WServerHandler PHandlers[MSGR_NUM_TYPES];
 	uint32 m_id;
 	WSSocket * m_socket;
 	FastQueue<WorldPacket*, Mutex> m_recvQueue;

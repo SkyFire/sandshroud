@@ -19,26 +19,26 @@
 
 #include "RStdAfx.h"
 
-WServerHandler WServer::PHandlers[IMSG_NUM_TYPES];
+WServerHandler WServer::PHandlers[MSGR_NUM_TYPES];
 
 void WServer::InitHandlers()
 {
-	memset(PHandlers, 0, sizeof(void*) * IMSG_NUM_TYPES);
-	PHandlers[ICMSG_REGISTER_WORKER]					= &WServer::HandleRegisterWorker;
-	PHandlers[ICMSG_WOW_PACKET]							= &WServer::HandleWoWPacket;
-	PHandlers[ICMSG_PLAYER_LOGIN_RESULT]				= &WServer::HandlePlayerLoginResult;
-	PHandlers[ICMSG_PLAYER_LOGOUT]						= &WServer::HandlePlayerLogout;
-	PHandlers[ICMSG_TELEPORT_REQUEST]					= &WServer::HandleTeleportRequest;
-	PHandlers[ICMSG_ERROR_HANDLER]						= &WServer::HandleError;
-	PHandlers[ICMSG_SWITCH_SERVER]						= &WServer::HandleSwitchServer;
-	PHandlers[ICMSG_SAVE_ALL_PLAYERS]					= &WServer::HandleSaveAllPlayers;
-	PHandlers[ICMSG_TRANSPORTER_MAP_CHANGE]				= &WServer::HandleTransporterMapChange;
-	PHandlers[ICMSG_PLAYER_TELEPORT]					= &WServer::HandlePlayerTeleport;
-	PHandlers[ICMSG_CREATE_PLAYER]						= &WServer::HandleCreatePlayerResult;
-	PHandlers[ICMSG_PLAYER_INFO]						= &WServer::HandlePlayerInfo;
-	PHandlers[ICMSG_CHANNEL_ACTION]						= &WServer::HandleChannelAction;
-	PHandlers[ICMSG_CHANNEL_UPDATE]						= &WServer::HandleChannelUpdate;
-	PHandlers[ICMSG_CHANNEL_LFG_DUNGEON_STATUS_REPLY]	= &WServer::HandleChannelLFGDungeonStatusReply;
+	memset(PHandlers, 0, sizeof(void*) * MSGR_NUM_TYPES);
+	PHandlers[CMSGR_REGISTER_WORKER]					= &WServer::HandleRegisterWorker;
+	PHandlers[CMSGR_WOW_PACKET]							= &WServer::HandleWoWPacket;
+	PHandlers[CMSGR_PLAYER_LOGIN_RESULT]				= &WServer::HandlePlayerLoginResult;
+	PHandlers[CMSGR_PLAYER_LOGOUT]						= &WServer::HandlePlayerLogout;
+	PHandlers[CMSGR_TELEPORT_REQUEST]					= &WServer::HandleTeleportRequest;
+	PHandlers[CMSGR_ERROR_HANDLER]						= &WServer::HandleError;
+	PHandlers[CMSGR_SWITCH_SERVER]						= &WServer::HandleSwitchServer;
+	PHandlers[CMSGR_SAVE_ALL_PLAYERS]					= &WServer::HandleSaveAllPlayers;
+	PHandlers[CMSGR_TRANSPORTER_MAP_CHANGE]				= &WServer::HandleTransporterMapChange;
+	PHandlers[CMSGR_PLAYER_TELEPORT]					= &WServer::HandlePlayerTeleport;
+	PHandlers[CMSGR_CREATE_PLAYER]						= &WServer::HandleCreatePlayerResult;
+	PHandlers[CMSGR_PLAYER_INFO]						= &WServer::HandlePlayerInfo;
+	PHandlers[CMSGR_CHANNEL_ACTION]						= &WServer::HandleChannelAction;
+	PHandlers[CMSGR_CHANNEL_UPDATE]						= &WServer::HandleChannelUpdate;
+	PHandlers[CMSGR_CHANNEL_LFG_DUNGEON_STATUS_REPLY]	= &WServer::HandleChannelLFGDungeonStatusReply;
 }
 
 WServer::WServer(uint32 id, WSSocket * s) : m_id(id), m_socket(s)
@@ -109,7 +109,7 @@ void WServer::HandlePlayerLoginResult(WorldPacket & pck)
 			/* pack together a player info packet and distribute it to all the other servers */
 			ASSERT(s->GetPlayer());
 			
-			WorldPacket data(ISMSG_PLAYER_INFO, 100);
+			WorldPacket data(SMSGR_PLAYER_INFO, 100);
 			s->GetPlayer()->Pack(data);
 			sClusterMgr.DistributePacketToAll(&data, this);
 		}
@@ -137,7 +137,7 @@ void WServer::HandlePlayerLogout(WorldPacket & pck)
 	if(pi && s)
 	{
 		/* tell all other servers this player has gone offline */
-		WorldPacket data(ISMSG_DESTROY_PLAYER_INFO, 4);
+		WorldPacket data(SMSGR_DESTROY_PLAYER_INFO, 4);
 		data << sessionid << guid;
 		sClusterMgr.DistributePacketToAll(&data, this);
 
@@ -152,7 +152,7 @@ void WServer::HandlePlayerLogout(WorldPacket & pck)
 
 void WServer::HandleTeleportRequest(WorldPacket & pck)
 {
-	WorldPacket data(ISMSG_TELEPORT_RESULT, 100);
+	WorldPacket data(SMSGR_TELEPORT_RESULT, 100);
 	RPlayerInfo * pi;
 	Session * s;
 	Instance * dest;
@@ -223,7 +223,7 @@ void WServer::HandleTeleportRequest(WorldPacket & pck)
 				SendPacket(&data);
 			}
 
-			data.Initialize(ISMSG_PLAYER_INFO);
+			data.Initialize(SMSGR_PLAYER_INFO);
 			pi->Pack(data);
 			sClusterMgr.DistributePacketToAll(&data, this);
 
@@ -265,7 +265,7 @@ void WServer::HandleSwitchServer(WorldPacket & pck)
 	s->SetNextServer();
 
 	WorldPacket data;
-	data.SetOpcode(ISMSG_PLAYER_LOGIN);
+	data.SetOpcode(SMSGR_PLAYER_LOGIN);
 	data << guid << mapid << instanceid;
 	data << s->GetAccountId() << s->GetAccountFlags() << s->GetSessionId();
 	data << s->GetAccountPermissions() << s->GetAccountName() << s->GetClientBuild();
@@ -285,14 +285,14 @@ void WServer::HandleSwitchServer(WorldPacket & pck)
 void WServer::HandleSaveAllPlayers(WorldPacket & pck)
 {
 	//relay this to all world servers
-	WorldPacket data(ISMSG_SAVE_ALL_PLAYERS, 1);
+	WorldPacket data(SMSGR_SAVE_ALL_PLAYERS, 1);
 	data << uint8(0);
 	sClusterMgr.DistributePacketToAll(&data);
 }
 
 void WServer::HandleTransporterMapChange(WorldPacket & pck)
 {
-	Log.Debug("WServer", "Recieved ICMSG_TRANSPORTER_MAP_CHANGE");
+	Log.Debug("WServer", "Recieved CMSGR_TRANSPORTER_MAP_CHANGE");
 	uint32 transporterentry, mapid, oldmapid;
 	float x, y, z;
 
@@ -303,8 +303,8 @@ void WServer::HandleTransporterMapChange(WorldPacket & pck)
 	if (dest == NULL)
 		return;
 
-	//ok so we need to send ISMSG_TRANSPORTER_MAP_CHANGE, then world server should SafeTeleport the player across :)
-	WorldPacket data(ISMSG_TRANSPORTER_MAP_CHANGE, 20);
+	//ok so we need to send SMSGR_TRANSPORTER_MAP_CHANGE, then world server should SafeTeleport the player across :)
+	WorldPacket data(SMSGR_TRANSPORTER_MAP_CHANGE, 20);
 	data << transporterentry << mapid << x << y << z;
 	dest->Server->SendPacket(&data);
 }
@@ -349,7 +349,7 @@ void WServer::HandlePlayerTeleport(WorldPacket & pck)
 		return;
 
 	//send the info to the target's server, target's server will either handle it, or send info back (for say an appear command)
-	WorldPacket data(ISMSG_PLAYER_TELEPORT);
+	WorldPacket data(SMSGR_PLAYER_TELEPORT);
 	data << uint8(2) << method << sessionid << mapid << instanceid << location << s2->GetSessionId();
 	s->GetServer()->SendPacket(&data);
 }
@@ -385,7 +385,7 @@ void WServer::Update()
 	while((pck = m_recvQueue.Pop()))
 	{
 		opcode = pck->GetOpcode();
-		if(opcode < IMSG_NUM_TYPES && WServer::PHandlers[opcode] != 0)
+		if(opcode < MSGR_NUM_TYPES && WServer::PHandlers[opcode] != 0)
 			(this->*WServer::PHandlers[opcode])(*pck);
 		else
 			Log.Error("WServer", "Unhandled packet %u\n", opcode);
@@ -484,13 +484,13 @@ void WServer::HandleChannelUpdate(WorldPacket & pck)
 /*	uint8 updatetype;
 	pck >> updatetype;
 
-	DEBUG_LOG("WServer", "Received ICMSG_CHANNEL_UPDATE opcode, update type %u", updatetype);
+	DEBUG_LOG("WServer", "Received CMSGR_CHANNEL_UPDATE opcode, update type %u", updatetype);
 
 	uint32 guid;
 	std::vector<uint32> channels;
 	RPlayerInfo * plr = NULL;
 	pck >> guid;
-	DEBUG_LOG("WServer", "Received ICMSG_CHANNEL_UPDATE opcode, from player guid %u", guid);
+	DEBUG_LOG("WServer", "Received CMSGR_CHANNEL_UPDATE opcode, from player guid %u", guid);
 	pck >> channels;
 	plr = sClientMgr.GetRPlayer(guid);
 	if(plr == NULL)

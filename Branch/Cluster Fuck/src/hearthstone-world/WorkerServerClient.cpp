@@ -46,7 +46,7 @@ void WSClient::OnRecvData()
 		if(_remaining && GetReadBuffer()->GetSize() < _remaining)
 			return;
 
-		if(_cmd == ISMSG_WOW_PACKET)
+		if(_cmd == SMSGR_WOW_PACKET)
 		{
 			uint32 sid = 0;
 			uint16 op = 0;
@@ -85,7 +85,7 @@ void WSClient::OnRecvData()
 		/* we could handle auth here */
 		switch(_cmd)
 		{
-		case ISMSG_AUTH_REQUEST:
+		case SMSGR_AUTH_REQUEST:
 			sClusterInterface.HandleAuthRequest(*pck);
 			delete pck;
 			break;

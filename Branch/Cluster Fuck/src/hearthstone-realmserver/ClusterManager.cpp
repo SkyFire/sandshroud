@@ -195,7 +195,7 @@ Instance * ClusterMgr::CreateInstance(uint32 MapId, WServer * server)
 		SingleInstanceMaps[MapId] = pInstance;
 
 	/* tell the actual server to create the instance */
-	WorldPacket data(ISMSG_CREATE_INSTANCE, 8);
+	WorldPacket data(SMSGR_CREATE_INSTANCE, 8);
 	data << MapId << pInstance->InstanceId;
 	server->SendPacket(&data);
 	server->AddInstance(pInstance);
@@ -245,7 +245,7 @@ Instance * ClusterMgr::CreateInstance(uint32 InstanceId, uint32 MapId)
 	Instances.insert( make_pair( InstanceId, pInstance ) );
 
 	/* tell the actual server to create the instance */
-	WorldPacket data(ISMSG_CREATE_INSTANCE, 8);
+	WorldPacket data(SMSGR_CREATE_INSTANCE, 8);
 	data << MapId << InstanceId;
 	server->SendPacket(&data);
 	server->AddInstance(pInstance);

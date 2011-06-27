@@ -43,7 +43,7 @@ public:
 
 	string GenerateVersionString();
 
-	static ClusterInterfaceHandler PHandlers[IMSG_NUM_TYPES];
+	static ClusterInterfaceHandler PHandlers[MSGR_NUM_TYPES];
 	static void InitHandlers();
 
 	ClusterInterface();

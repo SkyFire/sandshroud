@@ -7,9 +7,6 @@
     <Filter Include="Worker Server">
       <UniqueIdentifier>{a5301485-bcf5-4ae4-93d9-429576a1639b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Console">
-      <UniqueIdentifier>{494b2f64-59b8-4c56-a040-5c40e49fdfcb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Interserver">
       <UniqueIdentifier>{8588387b-818b-4ee2-922e-9e2c74870e97}</UniqueIdentifier>
     </Filter>
@@ -25,6 +22,15 @@
     <Filter Include="Interserver\Storage">
       <UniqueIdentifier>{a7021509-7700-4f02-a9ff-176011a2f838}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Client\Packet Handlers">
+      <UniqueIdentifier>{8340fd6a-b17b-4991-8a5d-0a6b941dee17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Communication">
+      <UniqueIdentifier>{725b0577-2166-4340-9983-d4ae3ef0a725}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interserver\Console">
+      <UniqueIdentifier>{494b2f64-59b8-4c56-a040-5c40e49fdfcb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\hearthstone-realmserver\LogonCommClient.cpp">
@@ -32,18 +38,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\LogonCommHandler.cpp">
       <Filter>Interserver\LogonComm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\CharacterHandler.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\QueryHandler.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\Session.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-realmserver\WorldSocket.cpp">
-      <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\ClientManager.cpp">
       <Filter>Interserver\Manager</Filter>
@@ -65,16 +59,28 @@
       <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\ConsoleCommands.cpp">
-      <Filter>Console</Filter>
+      <Filter>Interserver\Console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\ConsoleListener.cpp">
-      <Filter>Console</Filter>
+      <Filter>Interserver\Console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\Main.cpp">
       <Filter>Interserver</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-realmserver\Master.cpp">
       <Filter>Interserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\CharacterHandler.cpp">
+      <Filter>Client\Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\QueryHandler.cpp">
+      <Filter>Client\Packet Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\Session.cpp">
+      <Filter>Client\Communication</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-realmserver\WorldSocket.cpp">
+      <Filter>Client\Communication</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,12 +89,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\LogonCommHandler.h">
       <Filter>Interserver\LogonComm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-realmserver\Session.h">
-      <Filter>Client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-realmserver\WorldSocket.h">
-      <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\ClientManager.h">
       <Filter>Interserver\Manager</Filter>
@@ -116,10 +116,16 @@
       <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\ConsoleCommands.h">
-      <Filter>Console</Filter>
+      <Filter>Interserver\Console</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-realmserver\Master.h">
       <Filter>Interserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-realmserver\WorldSocket.h">
+      <Filter>Client\Communication</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-realmserver\Session.h">
+      <Filter>Client\Communication</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

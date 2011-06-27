@@ -110,7 +110,7 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 	}
 
 	/* log the player into that WS */
-	data.SetOpcode(ISMSG_PLAYER_LOGIN);
+	data.SetOpcode(SMSGR_PLAYER_LOGIN);
 
 	/* append info */
 	data << uint32(guid) << uint32(dest->MapId) << uint32(dest->InstanceId);

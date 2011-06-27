@@ -95,7 +95,7 @@ void ClientMgr::SendPackedClientInfo(WServer * server)
 	if(!m_clients.size())
 		return;
 
-	WorldPacket data(ISMSG_PACKED_PLAYER_INFO, sizeof(RPlayerInfo) * m_clients.size() + 4);
+	WorldPacket data(SMSGR_PACKED_PLAYER_INFO, sizeof(RPlayerInfo) * m_clients.size() + 4);
 	data << uint32(m_clients.size());
 
 	/* pack them all togther, w000t! */

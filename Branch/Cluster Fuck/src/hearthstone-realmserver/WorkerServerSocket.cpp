@@ -55,7 +55,7 @@ void WSSocket::HandleAuthRequest(WorldPacket & pck)
 	printf("\n");
 
 	// accept it
-	WorldPacket data(ISMSG_AUTH_RESULT, 4);
+	WorldPacket data(SMSGR_AUTH_RESULT, 4);
 	data << uint32(result);
 	SendPacket(&data);
 
@@ -79,7 +79,7 @@ void WSSocket::OnRecvData()
 		if(_remaining && GetReadBuffer()->GetSize() < _remaining)
 			return;
 
-		if(_cmd == ICMSG_WOW_PACKET)
+		if(_cmd == CMSGR_WOW_PACKET)
 		{
 			/* optimized version for packet passing, to reduce latency! ;) */
 			uint32 sid;
@@ -116,7 +116,7 @@ void WSSocket::OnRecvData()
 			// push to queue
 			if(!_ws)
 			{
-				if(pck->GetOpcode() == ICMSG_REGISTER_WORKER)
+				if(pck->GetOpcode() == CMSGR_REGISTER_WORKER)
 				{
 					// handle register worker
 					HandleRegisterWorker(*pck);
@@ -131,7 +131,7 @@ void WSSocket::OnRecvData()
 		}
 		else
 		{
-			if(pck->GetOpcode() != ICMSG_AUTH_REPLY)
+			if(pck->GetOpcode() != CMSGR_AUTH_REPLY)
 				Disconnect();
 			else
 				HandleAuthRequest(*pck);
@@ -149,7 +149,7 @@ void WSSocket::HandleRegisterWorker(WorldPacket & pck)
 	WServer * new_server = sClusterMgr.CreateWorkerServer(this);
 	if(new_server == 0)
 	{
-		WorldPacket data(ISMSG_REGISTER_RESULT, 10);
+		WorldPacket data(SMSGR_REGISTER_RESULT, 10);
 		data << uint32(0);
 		SendPacket(&data);
 		delete &pck;
@@ -193,7 +193,7 @@ void WSSocket::SendWoWPacket(Session * from, WorldPacket * pck)
 	size_t size1 = pck->size();
 	uint16 opcode1 = pck->GetOpcode();
 	size_t size2 = size1 + 10;
-	uint32 opcode2 = ISMSG_WOW_PACKET;
+	uint32 opcode2 = SMSGR_WOW_PACKET;
 	uint32 id = from->GetSessionId();
 	if(!IsConnected())
 		return;
@@ -218,7 +218,7 @@ void WSSocket::SendWoWPacket(Session * from, WorldPacket * pck)
 
 void WSSocket::OnConnect()
 {
-	WorldPacket data(ISMSG_AUTH_REQUEST, 4);
+	WorldPacket data(SMSGR_AUTH_REQUEST, 4);
 	data << uint32(BUILD_REVISION);
 	SendPacket(&data);
 }

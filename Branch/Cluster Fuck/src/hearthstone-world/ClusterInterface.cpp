@@ -20,28 +20,27 @@
 #include "StdAfx.h"
 
 initialiseSingleton(ClusterInterface);
-ClusterInterfaceHandler ClusterInterface::PHandlers[IMSG_NUM_TYPES];
+ClusterInterfaceHandler ClusterInterface::PHandlers[MSGR_NUM_TYPES];
 
 void ClusterInterface::InitHandlers()
 {
-	memset(PHandlers, 0, sizeof(void*) * IMSG_NUM_TYPES);
-	PHandlers[ISMSG_AUTH_REQUEST]							= &ClusterInterface::HandleAuthRequest;
-	PHandlers[ISMSG_AUTH_RESULT]							= &ClusterInterface::HandleAuthResult;
-	PHandlers[ISMSG_REGISTER_RESULT]						= &ClusterInterface::HandleRegisterResult;
-	PHandlers[ISMSG_CREATE_INSTANCE]						= &ClusterInterface::HandleCreateInstance;
-	PHandlers[ISMSG_PLAYER_LOGIN]							= &ClusterInterface::HandlePlayerLogin;
-	PHandlers[ISMSG_WOW_PACKET]								= &ClusterInterface::HandleWoWPacket;
-	PHandlers[ISMSG_TELEPORT_RESULT]						= &ClusterInterface::HandleTeleportResult;
-	PHandlers[ISMSG_SESSION_REMOVED]						= &ClusterInterface::HandleSessionRemoved;
-	PHandlers[ISMSG_SAVE_ALL_PLAYERS]						= &ClusterInterface::HandleSaveAllPlayers;
-	PHandlers[ISMSG_TRANSPORTER_MAP_CHANGE]					= &ClusterInterface::HandleTransporterMapChange;
-	PHandlers[ISMSG_PLAYER_TELEPORT]						= &ClusterInterface::HandlePlayerTeleport;
-	PHandlers[ISMSG_CREATE_PLAYER]							= &ClusterInterface::HandleCreatePlayer;
-	PHandlers[ISMSG_PACKED_PLAYER_INFO]						= &ClusterInterface::HandlePackedPlayerInfo;
-	PHandlers[ISMSG_DESTROY_PLAYER_INFO]					= &ClusterInterface::HandleDestroyPlayerInfo;
-	PHandlers[ISMSG_PLAYER_INFO]							= &ClusterInterface::HandlePlayerInfo;
-	PHandlers[ISMSG_CHANNEL_ACTION]							= &ClusterInterface::HandleChannelAction;
-	PHandlers[ISMSG_CHANNEL_LFG_DUNGEON_STATUS_REQUEST]		= &ClusterInterface::HandleChannelLFGDungeonStatusRequest;
+	memset(PHandlers, 0, sizeof(void*) * MSGR_NUM_TYPES);
+	PHandlers[SMSGR_AUTH_REQUEST]							= &ClusterInterface::HandleAuthRequest;
+	PHandlers[SMSGR_AUTH_RESULT]							= &ClusterInterface::HandleAuthResult;
+	PHandlers[SMSGR_REGISTER_RESULT]						= &ClusterInterface::HandleRegisterResult;
+	PHandlers[SMSGR_CREATE_INSTANCE]						= &ClusterInterface::HandleCreateInstance;
+	PHandlers[SMSGR_PLAYER_LOGIN]							= &ClusterInterface::HandlePlayerLogin;
+	PHandlers[SMSGR_WOW_PACKET]								= &ClusterInterface::HandleWoWPacket;
+	PHandlers[SMSGR_TELEPORT_RESULT]						= &ClusterInterface::HandleTeleportResult;
+	PHandlers[SMSGR_SESSION_REMOVED]						= &ClusterInterface::HandleSessionRemoved;
+	PHandlers[SMSGR_SAVE_ALL_PLAYERS]						= &ClusterInterface::HandleSaveAllPlayers;
+	PHandlers[SMSGR_TRANSPORTER_MAP_CHANGE]					= &ClusterInterface::HandleTransporterMapChange;
+	PHandlers[SMSGR_PLAYER_TELEPORT]						= &ClusterInterface::HandlePlayerTeleport;
+	PHandlers[SMSGR_PACKED_PLAYER_INFO]						= &ClusterInterface::HandlePackedPlayerInfo;
+	PHandlers[SMSGR_DESTROY_PLAYER_INFO]					= &ClusterInterface::HandleDestroyPlayerInfo;
+	PHandlers[SMSGR_PLAYER_INFO]							= &ClusterInterface::HandlePlayerInfo;
+	PHandlers[SMSGR_CHANNEL_ACTION]							= &ClusterInterface::HandleChannelAction;
+	PHandlers[SMSGR_CHANNEL_LFG_DUNGEON_STATUS_REQUEST]		= &ClusterInterface::HandleChannelLFGDungeonStatusRequest;
 }
 
 ClusterInterface::ClusterInterface()
@@ -73,7 +72,7 @@ void ClusterInterface::ConnectionDropped()
 void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void * data, uint32 sessionid)
 {
 	bool rv;
-	uint16 id = ICMSG_WOW_PACKET;
+	uint16 id = CMSGR_WOW_PACKET;
 	uint32 size2 = 10 + size;
 
 	if(!_clientSocket)
@@ -133,7 +132,7 @@ void ClusterInterface::HandleAuthRequest(WorldPacket & pck)
 	pck >> x;
 	OUT_DEBUG("ClusterInterface", "Incoming auth request from %s (RS build %u)", _clientSocket->GetIP(), x);
 
-	WorldPacket data(ICMSG_AUTH_REPLY, 50);
+	WorldPacket data(CMSGR_AUTH_REPLY, 50);
 	data.append(key, 20);
 	data << uint32(BUILD_REVISION);
 	data << GenerateVersionString();
@@ -184,7 +183,7 @@ void ClusterInterface::HandleAuthResult(WorldPacket & pck)
 		return; // IT'S OVER 8000!!!!
 
 	uint32 vectorsize = sizeof(std::vector<uint32>::size_type);
-	WorldPacket data(ICMSG_REGISTER_WORKER, 4 + (vectorsize * basemaps.size()) + (vectorsize * instancedmaps.size()));
+	WorldPacket data(CMSGR_REGISTER_WORKER, 4 + (vectorsize * basemaps.size()) + (vectorsize * instancedmaps.size()));
 	data << uint32(BUILD_REVISION);
 	data << basemaps;
 	data << instancedmaps;
@@ -261,14 +260,14 @@ void ClusterInterface::HandlePlayerLogin(WorldPacket & pck)
 	if(login_result)
 	{
 		/* login was ok. send a message to the realm server telling him to distribute our info to all other realm server */
-		WorldPacket data(ICMSG_PLAYER_LOGIN_RESULT, 5);
+		WorldPacket data(CMSGR_PLAYER_LOGIN_RESULT, 5);
 		data << Guid << sessionid <<  uint8(1);
 		SendPacket(&data);
 	}
 	else
 	{
 		/* for some reason the login failed */
-		WorldPacket data(ICMSG_PLAYER_LOGIN_RESULT, 5);
+		WorldPacket data(CMSGR_PLAYER_LOGIN_RESULT, 5);
 		data << Guid << sessionid << uint8(0);
 		SendPacket(&data);
 
@@ -331,7 +330,7 @@ void ClusterInterface::Update()
 	while((pck = _pckQueue.Pop()))
 	{
 		opcode = pck->GetOpcode();
-		if(opcode < IMSG_NUM_TYPES && ClusterInterface::PHandlers[opcode] != 0)
+		if(opcode < MSGR_NUM_TYPES && ClusterInterface::PHandlers[opcode] != 0)
 			(this->*ClusterInterface::PHandlers[opcode])(*pck);
 		else
 			Log.Error("ClusterInterface", "Unhandled packet %u\n", opcode);
@@ -377,7 +376,7 @@ void ClusterInterface::HandleWoWPacket(WorldPacket & pck)
 
 void ClusterInterface::RequestTransfer(Player* plr, uint32 MapId, uint32 InstanceId, LocationVector & vec)
 {
-	WorldPacket data(ICMSG_TELEPORT_REQUEST, 32);
+	WorldPacket data(CMSGR_TELEPORT_REQUEST, 32);
 	data << plr->GetSession()->GetSocket()->GetSessionId() << MapId << InstanceId << vec << vec.o;
 	SendPacket(&data);
 }
@@ -385,7 +384,7 @@ void ClusterInterface::RequestTransfer(Player* plr, uint32 MapId, uint32 Instanc
 /*
 void ClusterInterface::RequestWhisper(PlayerPointer plr, uint32 senderguid, uint32 recieveguid, int32 lang, string msg, string misc)
 {
-	WorldPacket data(ICMSG_WHISPER, 1000);
+	WorldPacket data(CMSGR_WHISPER, 1000);
 	data << plr->GetSession()->GetSocket()->GetSessionId() << senderguid << recieveguid << lang << msg << misc;
 	SendPacket(&data);
 }
@@ -427,7 +426,7 @@ void ClusterInterface::HandleTeleportResult(WorldPacket & pck)
 	if (!s)
 	{
 		//tell the realm-server we have no session
-		WorldPacket data(ICMSG_ERROR_HANDLER, 5);
+		WorldPacket data(CMSGR_ERROR_HANDLER, 5);
 		data << uint8(1); //1 = no session
 		data << sessionid;
 		sClusterInterface.SendPacket(&data);
@@ -462,7 +461,7 @@ void ClusterInterface::HandleTeleportResult(WorldPacket & pck)
 		s->GetPlayer()->SetMapId(oldmapid);
 		s->GetPlayer()->SetInstanceID(oldinstanceid);
 
-		WorldPacket data(ICMSG_SWITCH_SERVER, 100);
+		WorldPacket data(CMSGR_SWITCH_SERVER, 100);
 		data << sessionid << playerlowguid << mapid << instanceid << vec << o;
 		sClusterInterface.SendPacket(&data);
 
@@ -476,7 +475,7 @@ void ClusterInterface::HandleTeleportResult(WorldPacket & pck)
 		s->GetPlayer()->UpdateRPlayerInfo(pRPlayer, newRplr);
 		pRPlayer->MapId = mapid;
 		pRPlayer->InstanceId = instanceid;
-		data.Initialize(ICMSG_PLAYER_INFO);
+		data.Initialize(CMSGR_PLAYER_INFO);
 		pRPlayer->Pack(data);
 		sClusterInterface.SendPacket(&data);
 
@@ -656,7 +655,7 @@ void ClusterInterface::HandlePlayerTeleport(WorldPacket & pck)
 			return; //wtf
 		//change the method for 0, and fill it reversely, so the player is teleported to us :)
 		//result has to be 2 when sending back here, so it relays it to the original players server
-		WorldPacket data(ICMSG_PLAYER_TELEPORT);
+		WorldPacket data(CMSGR_PLAYER_TELEPORT);
 		data << uint8(2) << uint8(0) << sessionid2 << p->GetMapId() << p->GetInstanceID() << p->GetPosition() << sessionid;
 	}
 }
@@ -705,7 +704,7 @@ void ClusterInterface::HandleCreatePlayer(WorldPacket & pck)
 	delete s;
 
 	//now lets send the info back, send accountid, we have no sessionid
-	WorldPacket result(ICMSG_CREATE_PLAYER, 5);
+	WorldPacket result(CMSGR_CREATE_PLAYER, 5);
 	result << accountid << uint8(0x2F); //CHAR_CREATE_SUCCESS
 	SendPacket(&result);
 }
@@ -776,7 +775,7 @@ void ClusterInterface::HandleChannelLFGDungeonStatusRequest(WorldPacket & pck)
 	if(!pPlayer)
 		return;
 
-	WorldPacket data(ICMSG_CHANNEL_LFG_DUNGEON_STATUS_REPLY, 1+4+4+2+channelname.size()+pass.size());
+	WorldPacket data(CMSGR_CHANNEL_LFG_DUNGEON_STATUS_REPLY, 1+4+4+2+channelname.size()+pass.size());
 
 
 	//make sure we have lfg dungeons
@@ -797,7 +796,7 @@ void ClusterInterface::HandleChannelLFGDungeonStatusRequest(WorldPacket & pck)
 
 void ClusterInterface::PlayerLoggedOut(uint32 sid, uint32 guid)
 {
-	WorldPacket result(ICMSG_PLAYER_LOGOUT, 8);
+	WorldPacket result(CMSGR_PLAYER_LOGOUT, 8);
 	result << sid << guid;
 	SendPacket(&result);
 }
