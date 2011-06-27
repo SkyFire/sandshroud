@@ -29,11 +29,6 @@ bool HandleGMsCommand(BaseConsole * pConsole, int argc, const char * argv[])
 	return true;
 }
 
-void ConcatArgs(string & outstr, int argc, int startoffset, const char * argv[])
-{
-
-}
-
 bool HandleAnnounceCommand(BaseConsole * pConsole, int argc, const char * argv[])
 {
 	return true;
@@ -49,18 +44,9 @@ bool HandleKickCommand(BaseConsole * pConsole, int argc, const char * argv[])
 	return true;
 }
 
-bool HandleRestartCommand(BaseConsole * pConsole, int argc, const char * argv[])
-{
-	return true;
-}
-
 bool HandleQuitCommand(BaseConsole * pConsole, int argc, const char * argv[])
 {
-	return true;
-}
-
-bool HandleCancelCommand(BaseConsole * pConsole, int argc, const char * argv[])
-{
+	Master::m_stopEvent = true;
 	return true;
 }
 

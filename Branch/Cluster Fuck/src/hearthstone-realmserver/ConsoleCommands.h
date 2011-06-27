@@ -28,8 +28,6 @@ bool HandleAnnounceCommand(BaseConsole * pConsole, int argc, const char * argv[]
 bool HandleWAnnounceCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleKickCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleQuitCommand(BaseConsole * pConsole, int argc, const char * argv[]);
-bool HandleRestartCommand(BaseConsole * pConsole, int argc, const char * argv[]);
-bool HandleCancelCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleUptimeCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleBanAccountCommand(BaseConsole * pConsole, int argc, const char * argv[]);
 bool HandleUnbanAccountCommand(BaseConsole * pConsole, int argc, const char * argv[]);
