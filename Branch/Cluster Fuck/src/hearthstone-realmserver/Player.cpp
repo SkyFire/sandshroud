@@ -41,8 +41,10 @@ Player::~Player ( )
 ///  params: p_newChar
 ///  desc:   data from client to create a new character
 ///====================================================================
-int Player::Create(WorldPacket& data )
+int Player::Create(Session* session, WorldPacket& data )
 {
+	m_session = session;
+
 	// unpack data into member variables
 	data >> m_name;
 

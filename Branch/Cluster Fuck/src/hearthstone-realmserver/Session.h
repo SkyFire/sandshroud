@@ -156,6 +156,7 @@ public:
 			m_socket->Disconnect();
 	}
 	void SendChars();
+	uint8 DeleteCharacter(uint32 guid);
 
 	void HandleNameQueryOpcode(WorldPacket & pck);
 	void HandlePlayerLogin(WorldPacket & pck);

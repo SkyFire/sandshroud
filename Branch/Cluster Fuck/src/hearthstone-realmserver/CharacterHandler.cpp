@@ -141,7 +141,7 @@ void Session::HandleCharacterEnum(WorldPacket & pck)
 void Session::SendChars()
 {
 	uint32 start_time = getMSTime();
-	OUT_DEBUG("CharacterHandler", "Enum Build started at %u.", start_time);
+	DEBUG_LOG("CharacterHandler", "Enum Build started at %u.", start_time);
 
 	// loading characters
 	QueryResult* result = CharacterDatabase.Query("SELECT guid, level, race, class, gender, \
@@ -386,10 +386,6 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 		case 2:
 			data << uint8(CHAR_CREATE_FAILED);
 			break;
-		case 3: // Our char is being created via worldserver
-			sLogonCommHandler.UpdateAccountCount(GetAccountId(), 1);
-			return;
-			break;
 		default:
 			data << uint8(CHAR_CREATE_ERROR);
 			break;
@@ -407,8 +403,66 @@ void Session::HandleCharacterCreate(WorldPacket & pck)
 
 void Session::HandleCharacterDelete(WorldPacket & pck)
 {
+	uint8 fail = CHAR_DELETE_SUCCESS;
 
+	uint64 guid;
+	pck >> guid;
+
+	fail = DeleteCharacter((uint32)guid);
+
+	OutPacket(SMSG_CHAR_DELETE, 1, &fail);
 	sLogonCommHandler.UpdateAccountCount(GetAccountId(), -1);
+}
+
+uint8 Session::DeleteCharacter(uint32 guid)
+{
+	RPlayerInfo * inf = sClientMgr.GetRPlayer(guid);
+	if( inf == NULL )
+	{
+		QueryResult * result = CharacterDatabase.Query("SELECT name FROM characters WHERE guid = %u AND acct = %u", (uint32)guid, GetAccountId());
+		if(!result)
+			return CHAR_DELETE_FAILED;
+
+		string name = result->Fetch()[0].GetString();
+		delete result;
+
+/*		if ( sWorld.char_restore_enabled )
+		{
+			//insert data into "deleted" tables
+			CharacterDatabase.WaitExecute("INSERT INTO characters_deleted SELECT UNIX_TIMESTAMP(NOW()),characters.* FROM characters WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playerglyphs_deleted SELECT playerglyphs.* FROM playerglyphs WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playeritems_deleted SELECT playeritems.* FROM playeritems WHERE ownerguid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playerskills_deleted SELECT playerskills.* FROM playerskills WHERE player_guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playerspells_deleted SELECT playerspells.* FROM playerspells WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO playertalents_deleted SELECT playertalents.* FROM playertalents WHERE guid = %u", (uint32)guid);
+			CharacterDatabase.WaitExecute("INSERT INTO questlog_deleted SELECT questlog.* FROM questlog WHERE player_guid = %u", (uint32)guid);
+		}*/
+
+		CharacterDatabase.WaitExecute("DELETE FROM characters WHERE guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM achievements WHERE player = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM auctions WHERE owner = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM charters WHERE leaderGuid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM gm_tickets WHERE guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM guild_data WHERE playerid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM instances WHERE creator_guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM mailbox WHERE player_guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playercooldowns WHERE player_guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerglyphs WHERE guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playeritems WHERE ownerguid=%u",(uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerpets WHERE ownerguid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerpetspells WHERE ownerguid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerskills WHERE player_guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playerspells WHERE guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playersummonspells WHERE ownerguid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM playertalents WHERE guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM questlog WHERE player_guid = %u", (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM social_friends WHERE character_guid = %u OR friend_guid = %u", (uint32)guid, (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM social_ignores WHERE character_guid = %u OR ignore_guid = %u", (uint32)guid, (uint32)guid);
+		CharacterDatabase.Execute("DELETE FROM tutorials WHERE playerId = %u", (uint32)guid);
+		return CHAR_DELETE_SUCCESS;
+	}
+
+	return CHAR_DELETE_FAILED;
 }
 
 void Session::HandleCharacterRename(WorldPacket & pck)

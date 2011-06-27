@@ -30,7 +30,7 @@ public:
 	Player ( uint32 guid );
 	~Player ( );
 	virtual void Init();
-	int Create ( WorldPacket &data );
+	int Create ( Session* session, WorldPacket &data );
 	CharRaceEntry * myRace;
 	CharClassEntry * myClass;
 
