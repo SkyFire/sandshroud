@@ -28,7 +28,6 @@ const char * gItemPageFormat							= "usu";
 const char * gItemPrototypeFormat						= "uuuisuuuuuuuiiuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuffuuuuuuuuuufuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuusuuuuuuuuuuuuuuuuuuuuuuuiiiuuu";
 const char * gNpcTextFormat								= "ufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuu";
 const char * gQuestFormat								= "uuuuuuuuuuuuuuuuuuuussssssssssuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuffuuuuuuuuuuuuuuuuuuucuuu";
-const char * gWorldMapInfoFormat						= "usbuuufffuuuuuuuuuub";
 
 /** SQLStorage symbols
  */
@@ -38,16 +37,19 @@ SERVER_DECL SQLStorage<ItemPage, HashMapStorageContainer<ItemPage> >							ItemP
 SERVER_DECL SQLStorage<ItemPrototype, ArrayStorageContainer<ItemPrototype> >					ItemPrototypeStorage;
 SERVER_DECL SQLStorage<GossipText, HashMapStorageContainer<GossipText> >						NpcTextStorage;
 SERVER_DECL SQLStorage<Quest, HashMapStorageContainer<Quest> >									QuestStorage;
-SERVER_DECL SQLStorage<MapInfo, HashMapStorageContainer<MapInfo> >								WorldMapInfoStorage;
 
-void Storage_Load()
+#define make_task(storage, itype, storagetype, tablename, format) tl.AddTask( new Task( \
+	new CallbackP2< SQLStorage< itype, storagetype< itype > >, const char *, const char *> \
+	(&storage, &SQLStorage< itype, storagetype< itype > >::Load, tablename, format) ) )
+
+void Storage_FillTaskList(TaskList & tl)
 {
-	ItemPrototypeStorage.Load("items", gItemPrototypeFormat);
-	CreatureNameStorage.Load("creature_names", gCreatureNameFormat);
-	GameObjectNameStorage.Load("gameobject_names", gGameObjectNameFormat);
-	ItemPageStorage.Load("itempages", gItemPageFormat);
-	QuestStorage.Load("quests", gQuestFormat);
-	WorldMapInfoStorage.Load("worldmap_info", gWorldMapInfoFormat);
+	make_task(ItemPrototypeStorage, ItemPrototype, ArrayStorageContainer, "items", gItemPrototypeFormat);
+	make_task(CreatureNameStorage, CreatureInfo, HashMapStorageContainer, "creature_names", gCreatureNameFormat);
+	make_task(GameObjectNameStorage, GameObjectInfo, HashMapStorageContainer, "gameobject_names", gGameObjectNameFormat);
+	make_task(ItemPageStorage, ItemPage, HashMapStorageContainer, "itempages", gItemPageFormat);
+	make_task(QuestStorage, Quest, HashMapStorageContainer, "quests", gQuestFormat);
+	make_task(NpcTextStorage, GossipText, HashMapStorageContainer, "npc_text", gNpcTextFormat);
 }
 
 void Storage_Cleanup()
@@ -58,7 +60,6 @@ void Storage_Cleanup()
 	ItemPageStorage.Cleanup();
 	QuestStorage.Cleanup();
 	NpcTextStorage.Cleanup();
-	WorldMapInfoStorage.Cleanup();
 }
 
 bool Storage_ReloadTable(const char * TableName)
@@ -76,8 +77,6 @@ bool Storage_ReloadTable(const char * TableName)
 		QuestStorage.Reload();
 	else if(!stricmp(TableName, "npc_text"))			// NPC Text Storage
 		NpcTextStorage.Reload();
-	else if(!stricmp(TableName, "worldmap_info"))		// WorldMapInfo
-		WorldMapInfoStorage.Reload();
 	else
 		return false;
 	return true;

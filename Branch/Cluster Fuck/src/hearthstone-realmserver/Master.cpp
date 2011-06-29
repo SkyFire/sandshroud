@@ -141,7 +141,14 @@ bool Master::Run(int argc, char ** argv)
 	_HookSignals();
 
 	Log.Success("Storage", "Loading Storage...");
-	Storage_Load();
+	// Fill the task list with jobs to do.
+	TaskList tl;
+	Storage_FillTaskList(tl);
+
+	// spawn worker threads (2 * number of cpus)
+	tl.spawn();
+
+	tl.wait();
 
 	new iocpEngine;
 	sSocketEngine.SpawnThreads();
@@ -302,3 +309,135 @@ void OnCrash( bool Terminate )
 }
 
 #endif
+
+void TaskList::AddTask(Task * task)
+{
+	queueLock.Acquire();
+	tasks.insert(task);
+	queueLock.Release();
+}
+
+Task * TaskList::GetTask()
+{
+	queueLock.Acquire();
+
+	Task* t = 0;
+	for(set<Task*>::iterator itr = tasks.begin(); itr != tasks.end(); itr++)
+	{
+		if(!(*itr)->in_progress)
+		{
+			t = (*itr);
+			t->in_progress = true;
+			break;
+		}
+	}
+	queueLock.Release();
+	return t;
+}
+
+void TaskList::spawn()
+{
+	running = true;
+	thread_count = 0;
+
+	uint32 threadcount;
+	if(Config.MainConfig.GetBoolDefault("Startup", "EnableMultithreadedLoading", true))
+	{
+		// get processor count
+#ifndef WIN32
+#if UNIX_FLAVOUR == UNIX_FLAVOUR_LINUX
+#ifdef X64
+		threadcount = 2;
+#else
+		long affmask;
+		sched_getaffinity(0, 4, (cpu_set_t*)&affmask);
+		threadcount = (BitCount8(affmask)) * 2;
+		if(threadcount > 8) threadcount = 8;
+		else if(threadcount <= 0) threadcount = 1;
+#endif
+#else
+		threadcount = 2;
+#endif
+#else
+		SYSTEM_INFO s;
+		GetSystemInfo(&s);
+		threadcount = s.dwNumberOfProcessors * 2;
+		if(threadcount > 8)
+			threadcount = 8;
+#endif
+	}
+	else
+		threadcount = 1;
+
+	Log.Notice("World", "Beginning %s server startup with %u thread(s).", (threadcount == 1) ? "progressive" : "parallel", threadcount);
+
+	for(uint32 x = 0; x < threadcount; ++x)
+		ThreadPool.ExecuteTask(new TaskExecutor(this));
+}
+
+void TaskList::wait()
+{
+	bool has_tasks = true;
+	time_t t;
+	while(has_tasks)
+	{
+		queueLock.Acquire();
+		has_tasks = false;
+		for(set<Task*>::iterator itr = tasks.begin(); itr != tasks.end(); itr++)
+		{
+			if(!(*itr)->completed)
+			{
+				has_tasks = true;
+				break;
+			}
+		}
+		queueLock.Release();
+
+		// keep updating time lol
+		t = time(NULL);
+		if( UNIXTIME != t )
+		{
+			UNIXTIME = t;
+			g_localTime = *localtime(&t);
+		}
+
+		Sleep(20);
+	}
+}
+
+void TaskList::kill()
+{
+	running = false;
+}
+
+void Task::execute()
+{
+	_cb->execute();
+}
+
+bool TaskExecutor::run()
+{
+	Task * t;
+	while(starter->running)
+	{
+		t = starter->GetTask();
+		if(t)
+		{
+			t->execute();
+			t->completed = true;
+			starter->RemoveTask(t);
+			delete t;
+		}
+		else
+			Sleep(20);
+	}
+	return true;
+}
+
+void TaskList::waitForThreadsToExit()
+{
+	while(thread_count)
+	{
+		Sleep(20);
+	}
+}

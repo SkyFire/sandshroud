@@ -198,7 +198,8 @@ bool TcpSocket::Write(const void * data, size_t bytes)
 
 void TcpSocket::Disconnect()
 {
-	if(!m_connected) return;
+	if(!m_connected)
+		return;
 	m_connected = false;
 
 	OnDisconnect();

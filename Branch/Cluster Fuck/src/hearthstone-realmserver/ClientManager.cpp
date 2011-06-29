@@ -82,9 +82,9 @@ bool ClientMgr::run()
 	{
 		Update();
 #ifdef WIN32
-		WaitForSingleObject(m_abortEventClientMgr, 10);
+		WaitForSingleObject(m_abortEventClientMgr, 5);
 #else
-		Sleep(10);
+		Sleep(5);
 #endif
 	}
 	return true;

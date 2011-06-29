@@ -28,7 +28,7 @@ class WSSocket : public TcpSocket
 	bool _authenticated;
 	uint32 _remaining;
 	uint16 _cmd;
-	WServer * _ws;
+	WServer *_ws;
 public:
 	uint32 m_id;
 

@@ -48,29 +48,25 @@ WServer::WServer(uint32 id, WSSocket * s) : m_id(id), m_socket(s)
 
 void WServer::HandleRegisterWorker(WorldPacket & pck)
 {
-	std::vector<uint32> maps;
-	std::vector<uint32> instancedmaps;
 	uint32 build;
-	pck >> build >> maps >> instancedmaps;
+	map<uint32, uint32> mapset;
+	pck >> build >> mapset;
+
+	/* allocate initial instances for this worker */
+	if(!mapset.size() || !sClusterMgr.AllocateInitialInstances(this, mapset))
+	{
+		Log.Notice("SlaveManager", "Rejecting worker server %u", GetID());
+		WorldPacket data(SMSGR_ERROR_HANDLER, 20);
+		data << 1;
+		SendPacket(&data);
+
+		sClusterMgr.RemoveWServer(GetID());
+		m_socket->Disconnect();
+		return;
+	}
 
 	/* send a packed packet of all online players to this server */
 	sClientMgr.SendPackedClientInfo(this);
-
-	/* allocate initial instances for this worker */
-	sClusterMgr.AllocateInitialInstances(this, maps);
-
-	if(instancedmaps.size())
-	{
-		for (std::vector<uint32>::iterator itr = instancedmaps.begin(); itr != instancedmaps.end(); itr++)
-		{
-			if(!IS_MAIN_MAP((*itr)) && sClusterMgr.GetPrototypeInstanceByMapId(*itr) == NULL)
-			{
-				Instance* i = sClusterMgr.CreateInstance((*itr), this);
-				sClusterMgr.InstancedMaps.insert(std::pair<uint32, Instance*>((*itr), i));
-				Log.Debug("ClusterMgr", "Allocating instance prototype on map %u to worker %u", (*itr), GetID());
-			}
-		}
-	}
 }
 
 void WServer::HandleWoWPacket(WorldPacket & pck)
@@ -167,25 +163,7 @@ void WServer::HandleTeleportRequest(WorldPacket & pck)
 	{
 		pi = s->GetPlayer();
 		ASSERT(pi);
-
-		if(IS_MAIN_MAP(mapid) || instanceid == 0)
-		{
-			/* we're on a continent, try to find the world server we're going to */
-			dest = sClusterMgr.GetInstanceByMapId(mapid);		
-		}
-		else
-		{
-			/* we're in an instanced map, try to find the world server we're going to */
-			dest = sClusterMgr.GetInstanceByInstanceId(instanceid);
-		}
-
-		//try and find a prototype instance, and its server
-		if (dest == NULL)
-		{
-			DEBUG_LOG("TeleportRequest", "Could not find instance, will use prototype...");
-			dest = sClusterMgr.GetPrototypeInstanceByMapId(mapid);
-		}
-
+		dest = sClusterMgr.GetInstanceByMapId(mapid);
 
 		/* server up? */
 		if(!dest)
@@ -202,7 +180,7 @@ void WServer::HandleTeleportRequest(WorldPacket & pck)
 			pck >> vec >> vec.o;
 
 			pi->MapId = mapid;
-			pi->InstanceId = dest->InstanceId;
+			pi->InstanceId = instanceid;
 			pi->PositionX = vec.x;
 			pi->PositionY = vec.y;
 

@@ -88,7 +88,7 @@ void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 	}
 
 	res = _OutPacket(opcode, len, data);
-	Log.Notice("WorldSocket", "Outpacket result %s\n", (res == OUTPACKET_RESULT_SUCCESS ? "Success" : (res == OUTPACKET_RESULT_NO_ROOM_IN_BUFFER ? "No Room" : (res == OUTPACKET_RESULT_NOT_CONNECTED ? "Not Connected" : "Socket Error"))));
+	Log.Notice("WorldSocket", "Outpacket result %s", (res == OUTPACKET_RESULT_SUCCESS ? "Success" : (res == OUTPACKET_RESULT_NO_ROOM_IN_BUFFER ? "No Room" : (res == OUTPACKET_RESULT_NOT_CONNECTED ? "Not Connected" : "Socket Error"))));
 	if(res == OUTPACKET_RESULT_SUCCESS)
 		return;
 

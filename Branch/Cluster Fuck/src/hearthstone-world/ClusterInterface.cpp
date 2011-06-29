@@ -20,8 +20,10 @@
 #include "StdAfx.h"
 
 initialiseSingleton(ClusterInterface);
-ClusterInterfaceHandler ClusterInterface::PHandlers[MSGR_NUM_TYPES];
 
+extern bool bServerShutdown;
+
+ClusterInterfaceHandler ClusterInterface::PHandlers[MSGR_NUM_TYPES];
 void ClusterInterface::InitHandlers()
 {
 	memset(PHandlers, 0, sizeof(void*) * MSGR_NUM_TYPES);
@@ -32,6 +34,7 @@ void ClusterInterface::InitHandlers()
 	PHandlers[SMSGR_PLAYER_LOGIN]							= &ClusterInterface::HandlePlayerLogin;
 	PHandlers[SMSGR_WOW_PACKET]								= &ClusterInterface::HandleWoWPacket;
 	PHandlers[SMSGR_TELEPORT_RESULT]						= &ClusterInterface::HandleTeleportResult;
+	PHandlers[SMSGR_ERROR_HANDLER]							= &ClusterInterface::HandleServerError;
 	PHandlers[SMSGR_SESSION_REMOVED]						= &ClusterInterface::HandleSessionRemoved;
 	PHandlers[SMSGR_SAVE_ALL_PLAYERS]						= &ClusterInterface::HandleSaveAllPlayers;
 	PHandlers[SMSGR_TRANSPORTER_MAP_CHANGE]					= &ClusterInterface::HandleTransporterMapChange;
@@ -53,6 +56,17 @@ ClusterInterface::ClusterInterface()
 ClusterInterface::~ClusterInterface()
 {
 
+}
+
+void ClusterInterface::HandleServerError(WorldPacket & pck)
+{
+	uint32 reason;
+	pck >> reason;
+
+	Log.Warning("ClusterInterface", "Slave rejected, shutting down(%u).", reason);
+	m_connected = false;
+	_clientSocket = NULL;
+	sWorld.QueueShutdown(5, 0);
 }
 
 string ClusterInterface::GenerateVersionString()
@@ -155,41 +169,57 @@ void ClusterInterface::HandleAuthResult(WorldPacket & pck)
 		return;
 	}
 
-	std::vector<uint32> basemaps;
-	std::vector<uint32> instancedmaps;
-
-	//send info for all the maps we will handle
-	StorageContainerIterator<MapInfo>* itr = WorldMapInfoStorage.MakeIterator();
-	MapInfo* info = NULL;
-
 	Log.Notice("ClusterInterface", "Loading BaseMap and InstanceMap Info");
-	while(!itr->AtEnd())
+	uint32 servertype = Config.MainConfig.GetIntDefault("Cluster", "SlaveType", 0);
+	uint32 MaxMaps = Config.MainConfig.GetIntDefault("Cluster", "MapMax", 0);
+	bool mapcount = ((MaxMaps > 0) ? true : false);
+	std::map<uint32, uint32> maplist;
+	uint32 mapid = 0;
+	switch(servertype)
 	{
-		info = itr->Get();
-
-		if(info->load)
+	case 0:
 		{
-			if (info->type == INSTANCE_NULL)
-				basemaps.push_back(info->mapid);
-			else
-				instancedmaps.push_back(info->mapid);
-		}
-
-		if(!itr->Inc())
-			break;
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL)
+					maplist.insert(make_pair(mapid, info->type));
+			}
+		}break;
+	case 1:
+		{
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL && info->type == INSTANCE_NULL)
+					maplist.insert(make_pair(mapid, info->type));
+			}
+		}break;
+	case 2:
+		{
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL && info->type == INSTANCE_PVP)
+					maplist.insert(make_pair(mapid, info->type));
+			}
+		}break;
+	case 3:
+		{
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL && info->type && info->type != INSTANCE_PVP)
+					maplist.insert(make_pair(mapid, info->type));
+			}
+		}break;
 	}
 
-	if(basemaps.size() > 8000 || instancedmaps.size() > 8000)
-		return; // IT'S OVER 8000!!!!
-
-	uint32 vectorsize = sizeof(std::vector<uint32>::size_type);
-	WorldPacket data(CMSGR_REGISTER_WORKER, 4 + (vectorsize * basemaps.size()) + (vectorsize * instancedmaps.size()));
+	WorldPacket data(CMSGR_REGISTER_WORKER, 12);
 	data << uint32(BUILD_REVISION);
-	data << basemaps;
-	data << instancedmaps;
+	data << maplist;
 	SendPacket(&data);
 }
-
 
 void ClusterInterface::HandleRegisterResult(WorldPacket & pck)
 {
@@ -200,9 +230,9 @@ void ClusterInterface::HandleRegisterResult(WorldPacket & pck)
 
 void ClusterInterface::HandleCreateInstance(WorldPacket & pck)
 {
-	uint32 mapid, instanceid;
-	pck >> mapid >> instanceid;
-	DEBUG_LOG("ClusterInterface", "Creating Instance %u on Map %u", instanceid, mapid);
+	uint32 mapid;
+	pck >> mapid;
+	DEBUG_LOG("ClusterInterface", "Creating Map %u", mapid);
 	sInstanceMgr.Load(mapid);
 }
 
@@ -322,7 +352,15 @@ void ClusterInterface::HandlePackedPlayerInfo(WorldPacket & pck)
 
 void ClusterInterface::Update()
 {
-	if(!m_connected && UNIXTIME >= (_lastConnectTime + 3))
+	if(bServerShutdown)
+	{
+		WorldPacket * pck;
+		while((pck = _pckQueue.Pop()))
+			delete pck;
+		return;
+	}
+
+	if(bServerShutdown && !m_connected && UNIXTIME >= (_lastConnectTime + 3))
 		ConnectToRealmServer();
 
 	WorldPacket * pck;

@@ -71,34 +71,8 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 	m_currentPlayer->RecoveryPosition.ChangeCoords(f[13].GetFloat(), f[14].GetFloat(), f[15].GetFloat(), f[16].GetFloat());
 	delete result;
 
-	if(IS_MAIN_MAP(m_currentPlayer->MapId))
-	{
-		/* we're on a continent, try to find the world server we're going to */
-		dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);		
-	}
-	else
-	{
-		/* we're in an instanced map, try to find the world server we're going to */
-		dest = sClusterMgr.GetInstanceByInstanceId(m_currentPlayer->InstanceId);
-
-		if(!dest)
-		{
-			/* our instance has been deleted or no longer valid */
-			m_currentPlayer->MapId = m_currentPlayer->RecoveryMapId;
-			LoginCoord = m_currentPlayer->RecoveryPosition;
-
-			/* obtain instance */
-			dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);
-			if(dest)
-			{
-				data.SetOpcode(SMSG_NEW_WORLD);
-				data << m_currentPlayer->MapId << m_currentPlayer->RecoveryPosition << float(0);
-				SendPacket(&data);
-				data.clear();
-			}
-		}
-	}
-
+	/* we're on a continent, try to find the world server we're going to */
+	dest = sClusterMgr.GetInstanceByMapId(m_currentPlayer->MapId);
 	if(!dest ||	!dest->Server)
 	{
 		/* world server is down */
@@ -113,7 +87,7 @@ void Session::HandlePlayerLogin(WorldPacket & pck)
 	data.SetOpcode(SMSGR_PLAYER_LOGIN);
 
 	/* append info */
-	data << uint32(guid) << uint32(dest->MapId) << uint32(dest->InstanceId);
+	data << uint32(guid) << uint32(dest->MapId) << uint32(m_currentPlayer->InstanceId);
 
 	/* append the account information */
 	data << uint32(m_accountId) << uint32(m_accountFlags) << uint32(m_sessionId)

@@ -18,7 +18,6 @@
  */
 
 #include "RStdAfx.h"
-#include "svn_revision.h"
 
 WSSocket::WSSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 100000, 100000, false, peer)
 {
@@ -116,11 +115,8 @@ void WSSocket::OnRecvData()
 			// push to queue
 			if(!_ws)
 			{
-				if(pck->GetOpcode() == CMSGR_REGISTER_WORKER)
-				{
-					// handle register worker
+				if(pck->GetOpcode() == CMSGR_REGISTER_WORKER) // handle register worker
 					HandleRegisterWorker(*pck);
-				}
 
 				/* I deliberately don't delete pck here for a reason :P */
 			}

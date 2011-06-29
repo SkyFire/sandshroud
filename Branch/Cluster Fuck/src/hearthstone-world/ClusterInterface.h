@@ -68,6 +68,7 @@ public:
 		return NULL;
 	}
 
+	void HandleServerError(WorldPacket & pck);
 	void HandleSessionRemoved(WorldPacket & pck);
 	void HandleTeleportResult(WorldPacket & pck);
 	void HandleAuthRequest(WorldPacket & pck);

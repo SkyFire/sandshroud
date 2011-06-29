@@ -27,6 +27,7 @@ typedef void(WServer::*WServerHandler)(WorldPacket &);
 
 class WServer
 {
+public:
 	static WServerHandler PHandlers[MSGR_NUM_TYPES];
 	uint32 m_id;
 	WSSocket * m_socket;
@@ -34,9 +35,9 @@ class WServer
 	list<Instance*> m_instances;
 
 public:
-	static void InitHandlers();
 	WServer(uint32 id, WSSocket * s);
-	~WServer();
+	~WServer() { };
+	static void InitHandlers();
 
 	HEARTHSTONE_INLINE size_t GetInstanceCount() { return m_instances.size(); }
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket * data) { if(m_socket) m_socket->SendPacket(data); }
@@ -46,6 +47,7 @@ public:
 	HEARTHSTONE_INLINE uint32 GetID() { return m_id; }
 
 	void Update();
+	bool Destructable() { return m_socket == NULL; };
 
 protected:
 	/* packet handlers */

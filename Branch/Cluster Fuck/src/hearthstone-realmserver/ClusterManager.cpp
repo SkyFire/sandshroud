@@ -30,9 +30,8 @@ static pthread_mutex_t abortmutex;
 
 ClusterMgr::ClusterMgr()
 {
-	memset(SingleInstanceMaps, 0, sizeof(WServer*) * MAX_SINGLE_MAPID);
-	memset(WorkerServers, 0, sizeof(WServer*) * MAX_WORKER_SERVERS);
-	m_maxInstanceId = 0;
+	memset(SingleInstanceMaps, 0, sizeof(WServer*)*MAX_SINGLE_MAPID);
+	memset(WorkerServers, 0, sizeof(WServer*)*MAX_WORKER_SERVERS);
 	m_maxWorkerServer = 0;
 	Log.Success("ClusterMgr", "Interface Created");
 
@@ -73,27 +72,14 @@ bool ClusterMgr::run()
 	return true;
 }
 
-WServer * ClusterMgr::GetServerByInstanceId(uint32 InstanceId)
-{
-	InstanceMap::iterator itr = Instances.find(InstanceId);
-	return (itr == Instances.end()) ? 0 : itr->second->Server;
-}
-
 WServer * ClusterMgr::GetServerByMapId(uint32 MapId)
 {
-	ASSERT(IS_MAIN_MAP(MapId));
+	ASSERT(SingleInstanceMaps[MapId]);
 	return SingleInstanceMaps[MapId]->Server;
-}
-
-Instance * ClusterMgr::GetInstanceByInstanceId(uint32 InstanceId)
-{
-	InstanceMap::iterator itr = Instances.find(InstanceId);
-	return (itr == Instances.end()) ? 0 : itr->second;
 }
 
 Instance * ClusterMgr::GetInstanceByMapId(uint32 MapId)
 {
-	ASSERT(IS_MAIN_MAP(MapId));
 	return SingleInstanceMaps[MapId];
 }
 
@@ -114,92 +100,82 @@ Instance* ClusterMgr::GetAnyInstance()
 
 }
 
-Instance * ClusterMgr::GetPrototypeInstanceByMapId(uint32 MapId)
+void ClusterMgr::RemoveWServer(uint32 index)
 {
-	m_lock.AcquireReadLock();
-	//lets go through all the instances of this map and find the one with the least instances :P
-	std::multimap<uint32, Instance*>::iterator itr = InstancedMaps.find(MapId);
-
-	if (itr == InstancedMaps.end())
+	Slave_lock.Acquire();
+	if(WorkerServers[index])
 	{
-		m_lock.ReleaseReadLock();
-		return NULL;
-	}
-
-	Instance* i = NULL;
-	uint32 min = 500000;
-	for (; itr != InstancedMaps.upper_bound(MapId); ++itr)
-	{
-		if (itr->second->MapCount < min)
+		for(uint32 map = 0; map < MAX_SINGLE_MAPID; map++)
 		{
-			min = itr->second->MapCount;
-			i = itr->second;
+			if(SingleInstanceMaps[map])
+			{
+				if(SingleInstanceMaps[map]->Server == WorkerServers[index])
+				{
+					SingleInstanceMaps[map]->Server = NULL;
+					delete SingleInstanceMaps[map];
+					SingleInstanceMaps[map] = NULL;
+				}
+			}
 		}
-	}
 
-	m_lock.ReleaseReadLock();
-	return i;
+		JunkServers.insert(WorkerServers[index]);
+		WorkerServers[index] = NULL;
+	}
+	Slave_lock.Release();
 }
 
 WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
 {
-	/* find an id */
-	uint32 i;
-	for(i = 1; i < MAX_WORKER_SERVERS; ++i)
-	{
+	Slave_lock.Acquire();
+	uint32 i; /* find an id */
+	for(i = 1; i < MAX_WORKER_SERVERS; i++)
 		if(WorkerServers[i] == 0)
 			break;
-	}
 
 	if(i == MAX_WORKER_SERVERS)
+	{
+		Slave_lock.Release();
 		return 0;		// No spaces
+	}
 
 	Log.Notice("ClusterMgr", "Allocating worker server %u to %s:%u", i, s->GetIP(), s->GetPort());
 	WorkerServers[i] = new WServer(i, s);
 	if(m_maxWorkerServer <= i)
 		m_maxWorkerServer = i+1;
+
+	Slave_lock.Release();
 	return WorkerServers[i];
 }
 
-void ClusterMgr::AllocateInitialInstances(WServer * server, vector<uint32>& preferred)
+bool ClusterMgr::AllocateInitialInstances(WServer * server, map<uint32, uint32> maps)
 {
-	vector<uint32> result;
-	result.reserve(10);
-
-	for(vector<uint32>::iterator itr = preferred.begin(); itr != preferred.end(); ++itr)
+	bool made = false;
+	for(map<uint32, uint32>::iterator itr = maps.begin(); itr != maps.end(); itr++)
 	{
-		if(SingleInstanceMaps[*itr] == 0)
+		if(SingleInstanceMaps[itr->first] == NULL)
 		{
-			result.push_back(*itr);
+			made = true;
+			CreateInstance(itr->first, server);
+			if(!itr->second)
+				break;
 		}
 	}
-
-	for(vector<uint32>::iterator itr = result.begin(); itr != result.end(); ++itr)
-	{
-		CreateInstance(*itr, server);
-		if(IS_MAIN_MAP(*itr))
-			break; // Only make main map.
-	}
+	return made;
 }
 
 Instance * ClusterMgr::CreateInstance(uint32 MapId, WServer * server)
 {
 	Instance * pInstance = new Instance;
-	pInstance->InstanceId = ++m_maxInstanceId;
 	pInstance->MapId = MapId;
 	pInstance->Server = server;
-
-	Instances.insert( make_pair( pInstance->InstanceId, pInstance ) );
-
-	if(IS_MAIN_MAP(MapId))
-		SingleInstanceMaps[MapId] = pInstance;
+	SingleInstanceMaps[MapId] = pInstance;
 
 	/* tell the actual server to create the instance */
-	WorldPacket data(SMSGR_CREATE_INSTANCE, 8);
-	data << MapId << pInstance->InstanceId;
+	WorldPacket data(SMSGR_CREATE_INSTANCE, 4);
+	data << MapId;
 	server->SendPacket(&data);
 	server->AddInstance(pInstance);
-	DEBUG_LOG("ClusterMgr", "Allocating instance %u on map %u to server %u", pInstance->InstanceId, pInstance->MapId, server->GetID());
+	DEBUG_LOG("ClusterMgr", "Allocating map %u to server %u", MapId, server->GetID());
 	return pInstance;
 }
 
@@ -210,7 +186,7 @@ WServer * ClusterMgr::GetWorkerServerForNewInstance()
 
 	/* for now we'll just work with the instance count. in the future we might want to change this to
 	   use cpu load instead. */
-
+	Slave_lock.Acquire();
 	for(uint32 i = 0; i < MAX_WORKER_SERVERS; ++i) {
 		if(WorkerServers[i] != 0) {
 			if((int32)WorkerServers[i]->GetInstanceCount() < lowest_load)
@@ -220,49 +196,29 @@ WServer * ClusterMgr::GetWorkerServerForNewInstance()
 			}
 		}
 	}
+	Slave_lock.Release();
 
 	return lowest;
 }
 
-/* create new instance based on template, or a saved instance */
-Instance * ClusterMgr::CreateInstance(uint32 InstanceId, uint32 MapId)
-{
-	/* pick a server for us :) */
-	WServer * server = GetWorkerServerForNewInstance();
-	if(!server) return 0;
-
-	ASSERT(GetInstance(InstanceId) == NULL);
-
-	/* bump up the max id if necessary */
-	if(m_maxInstanceId <= InstanceId)
-		m_maxInstanceId = InstanceId + 1;
-
-    Instance * pInstance = new Instance;
-	pInstance->InstanceId = InstanceId;
-	pInstance->MapId = MapId;
-	pInstance->Server = server;
-
-	Instances.insert( make_pair( InstanceId, pInstance ) );
-
-	/* tell the actual server to create the instance */
-	WorldPacket data(SMSGR_CREATE_INSTANCE, 8);
-	data << MapId << InstanceId;
-	server->SendPacket(&data);
-	server->AddInstance(pInstance);
-	DEBUG_LOG("ClusterMgr", "Allocating instance %u on map %u to server %u", pInstance->InstanceId, pInstance->MapId, server->GetID());
-	return pInstance;
-}
-
 void ClusterMgr::Update()
 {
+	Slave_lock.Acquire();
 	for(uint32 i = 1; i < m_maxWorkerServer; i++)
 		if(WorkerServers[i])
 			WorkerServers[i]->Update();
+
+	for(std::set<WServer*>::iterator itr = JunkServers.begin(); itr != JunkServers.end(); itr++)
+		if((*itr)->Destructable())
+			delete (*itr);
+	Slave_lock.Release();
 }
 
 void ClusterMgr::DistributePacketToAll(WorldPacket * data, WServer * exclude)
 {
+	Slave_lock.Acquire();
 	for(uint32 i = 0; i < m_maxWorkerServer; i++)
 		if(WorkerServers[i] && WorkerServers[i] != exclude)
 			WorkerServers[i]->SendPacket(data);
+	Slave_lock.Release();
 }

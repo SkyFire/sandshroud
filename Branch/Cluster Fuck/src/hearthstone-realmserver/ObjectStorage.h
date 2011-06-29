@@ -26,10 +26,9 @@ extern SERVER_DECL SQLStorage<GameObjectInfo, HashMapStorageContainer<GameObject
 extern SERVER_DECL SQLStorage<ItemPage, HashMapStorageContainer<ItemPage> >						ItemPageStorage;
 extern SERVER_DECL SQLStorage<Quest, HashMapStorageContainer<Quest> >							QuestStorage;
 extern SERVER_DECL SQLStorage<GossipText, HashMapStorageContainer<GossipText> >					NpcTextStorage;
-extern SERVER_DECL SQLStorage<MapInfo, HashMapStorageContainer<MapInfo> >						WorldMapInfoStorage;
 
 void Storage_Cleanup();
-void Storage_Load();
+void Storage_FillTaskList(TaskList & tl);
 bool Storage_ReloadTable(const char * TableName);
 
 #endif

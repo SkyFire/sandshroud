@@ -25,14 +25,20 @@
 
 struct Instance
 {
-	uint32 InstanceId;
 	uint32 MapId;
 	uint32 MapCount; // Used for load balancing for things like battleground servers
-	WServer * Server;
+	WServer* Server;
 };
 
-#define IS_INSTANCE(a) (a > 1 && a != 530 && a != 571 && a != 609)
-#define IS_MAIN_MAP(a) (((a)<2)||((a)==530)||((a)==571)||((a)==609))
+#define IS_INSTANCE(a) (WorldMapInfoStorage.LookupEntry(a) != NULL && !IS_MAIN_MAP_CHECK(a) && !IS_BATTLEGROUND_CHECK(a))
+
+#define IS_MAIN_MAP_CHECK(a) (WorldMapInfoStorage.LookupEntry(a)->type == 0)
+#define IS_BATTLEGROUND_CHECK(a) (WorldMapInfoStorage.LookupEntry(a)->type == 3)
+
+#define IS_MAIN_MAP(a) (WorldMapInfoStorage.LookupEntry(a) != NULL && IS_MAIN_MAP_CHECK(a))
+#define IS_BATTLEGROUND(a) (WorldMapInfoStorage.LookupEntry(a) != NULL && IS_BATTLEGROUND_CHECK(a))
+
+typedef map<uint32, Instance*> InstanceMap;
 
 class ClusterMgr : public Singleton<ClusterMgr>, public ThreadContext
 {
@@ -43,50 +49,31 @@ public:
 	bool m_threadRunning;
 
 private:
-	typedef map<uint32, Instance*> InstanceMap;
 	RWLock m_lock;
 
+	Mutex Slave_lock;
+	std::set<WServer*> JunkServers;
 	WServer *WorkerServers[MAX_WORKER_SERVERS];
 	Instance *SingleInstanceMaps[MAX_SINGLE_MAPID];
 
-	InstanceMap Instances;
-	uint32 m_maxInstanceId;
 	uint32 m_maxWorkerServer;
 
 public:
-	// This is the prototype for instanced maps that haven't been created yet
-	// Yes, its a multimap, you can have multiple servers per map (battleground servers)
-	std::multimap<uint32, Instance*> InstancedMaps;
+	WServer *GetServerByMapId(uint32 MapId);
+	Instance *GetInstanceByMapId(uint32 MapId);
+	Instance *GetAnyInstance();
 
-	WServer * GetServerByInstanceId(uint32 InstanceId);
-	WServer * GetServerByMapId(uint32 MapId);
-
-	Instance * GetInstanceByInstanceId(uint32 InstanceId);
-	Instance * GetInstanceByMapId(uint32 MapId);
-	Instance * GetAnyInstance();
-	Instance * GetPrototypeInstanceByMapId(uint32 MapId);
-
-	void OnServerDisconnect(WServer* s);
+	void RemoveWServer(uint32 index);
 
 	WServer * CreateWorkerServer(WSSocket * s);
 	HEARTHSTONE_INLINE WServer * GetWorkerServer(uint32 Id) { return (Id < MAX_WORKER_SERVERS) ? WorkerServers[Id] : 0; }
-	void AllocateInitialInstances(WServer * server, vector<uint32>& preferred);
+	bool AllocateInitialInstances(WServer * server, map<uint32, uint32> maps);
 
 	// find the worker server with the least load for the new instance
 	WServer * GetWorkerServerForNewInstance();
 
 	/* create new instance, or a main map */
 	Instance * CreateInstance(uint32 MapId, WServer * server);
-
-	/* create new instance based on template, or a saved instance */
-	Instance * CreateInstance(uint32 InstanceId, uint32 MapId);
-
-	/* gets the instance struct by instance id */
-	Instance * GetInstance(uint32 InstanceId)
-	{
-		InstanceMap::iterator itr = Instances.find(InstanceId);
-		return (itr == Instances.end()) ? 0 : itr->second;
-	}
 
 	/* distribute packet to all worker servers */
 	HEARTHSTONE_INLINE void DistributePacketToAll(WorldPacket * data) { DistributePacketToAll(data, 0); }
