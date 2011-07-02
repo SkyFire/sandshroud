@@ -83,7 +83,6 @@ public:
 	void HandleSaveAllPlayers(WorldPacket & pck);
 	void HandleTransporterMapChange(WorldPacket & pck);
 	void HandlePlayerTeleport(WorldPacket & pck);
-	void HandleCreatePlayer(WorldPacket & pck);
 	void HandleDestroyPlayerInfo(WorldPacket & pck);
 	void HandleChannelAction(WorldPacket & pck);
 	void HandleChannelLFGDungeonStatusRequest(WorldPacket & pck);

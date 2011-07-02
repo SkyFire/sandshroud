@@ -34,7 +34,6 @@ void WServer::InitHandlers()
 	PHandlers[CMSGR_SAVE_ALL_PLAYERS]					= &WServer::HandleSaveAllPlayers;
 	PHandlers[CMSGR_TRANSPORTER_MAP_CHANGE]				= &WServer::HandleTransporterMapChange;
 	PHandlers[CMSGR_PLAYER_TELEPORT]					= &WServer::HandlePlayerTeleport;
-	PHandlers[CMSGR_CREATE_PLAYER]						= &WServer::HandleCreatePlayerResult;
 	PHandlers[CMSGR_PLAYER_INFO]						= &WServer::HandlePlayerInfo;
 	PHandlers[CMSGR_CHANNEL_ACTION]						= &WServer::HandleChannelAction;
 	PHandlers[CMSGR_CHANNEL_UPDATE]						= &WServer::HandleChannelUpdate;

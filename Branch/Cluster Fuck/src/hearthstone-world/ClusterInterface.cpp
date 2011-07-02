@@ -698,55 +698,6 @@ void ClusterInterface::HandlePlayerTeleport(WorldPacket & pck)
 	}
 }
 
-void ClusterInterface::HandleCreatePlayer(WorldPacket & pck)
-{
-	uint32 accountid, size;
-	uint16 opcode;
-
-	pck >> accountid >> opcode >> size;
-
-	if (_sessions[accountid] != NULL)
-		return;
-
-	WorldSession* s=new WorldSession(accountid, "", NULL);
-
-	//construct the cmsg_char_create
-	WorldPacket data(opcode, size);
-	data.resize(size);
-	memcpy((void*)data.contents(), pck.contents() + 10, size);
-
-	Player * pNewChar = objmgr.CreatePlayer();
-	pNewChar->SetSession(s);
-	if(!pNewChar->Create( data ))
-	{
-		// failed.
-		pNewChar->ok_to_remove = true;
-		pNewChar->Destruct();
-		return;
-	}
-
-	pNewChar->UnSetBanned();
-	pNewChar->addSpell(22027);	  // Remove Insignia
-
-	if(pNewChar->getClass() == WARLOCK)
-	{
-		pNewChar->AddSummonSpell(416, 3110);		// imp fireball
-		pNewChar->AddSummonSpell(417, 19505);
-		pNewChar->AddSummonSpell(1860, 3716);
-		pNewChar->AddSummonSpell(1863, 7814);
-	}
-
-	pNewChar->SaveToDB(true);
-	pNewChar->ok_to_remove = true;
-	pNewChar->Destruct();
-	delete s;
-
-	//now lets send the info back, send accountid, we have no sessionid
-	WorldPacket result(CMSGR_CREATE_PLAYER, 5);
-	result << accountid << uint8(0x2F); //CHAR_CREATE_SUCCESS
-	SendPacket(&result);
-}
-
 void ClusterInterface::HandleChannelAction(WorldPacket & pck)
 {
 /*	uint8 action;
