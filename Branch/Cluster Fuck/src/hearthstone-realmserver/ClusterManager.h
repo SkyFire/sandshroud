@@ -73,7 +73,7 @@ public:
 	WServer * GetWorkerServerForNewInstance();
 
 	/* create new instance, or a main map */
-	Instance * CreateInstance(uint32 MapId, WServer * server);
+	void CreateInstances(set<uint32> MapIds, WServer * server);
 
 	/* distribute packet to all worker servers */
 	HEARTHSTONE_INLINE void DistributePacketToAll(WorldPacket * data) { DistributePacketToAll(data, 0); }

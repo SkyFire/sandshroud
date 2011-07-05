@@ -105,6 +105,14 @@ void WorldSocket::OutPacket(uint16 opcode, size_t len, const void* data)
 	}
 }
 
+void WorldSocket::QueuePacket(WorldPacket* packet)
+{
+	/* queue the packet */
+	queueLock.Acquire();
+	_queue.Push(packet);
+	queueLock.Release();
+}
+
 void WorldSocket::UpdateQueuedPackets()
 {
 	queueLock.Acquire();

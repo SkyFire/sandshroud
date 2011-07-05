@@ -81,7 +81,7 @@ enum SocketEvents
 	IO_SHUTDOWN,
 };
 
-inline void CreateSocketEngine() { new iocpEngine; }
+inline void CreateSocketEngine() { new iocpEngine(); }
 
 #endif		// NETLIB_IOCP
 #endif		// _NETLIB_SOCKETENGINE_IOCP_H

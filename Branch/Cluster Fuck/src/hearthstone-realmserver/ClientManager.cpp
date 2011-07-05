@@ -32,26 +32,102 @@ ClientMgr::ClientMgr()
 {
 	Session::InitHandlers();
 	m_threadRunning = true;
-	m_maxSessionId = 0;
-	m_hiPlayerGuid = 0;
-	m_hiItemGuid = 0;
+	m_SessionCount = 0;
+	memset(&SNContainer, 0, SN_MAX * sizeof(uint32));
 	memset(m_sessions, 0, MAX_SESSIONS * sizeof(Session*));
 	Log.Success("ClientMgr", "Interface Created");
 
-	QueryResult *result = CharacterDatabase.Query( "SELECT MAX(guid) FROM characters" );
+	QueryResult *result = CharacterDatabase.Query( "SELECT MAX(guid) FROM playeritems" );
 	if( result )
 	{
-		m_hiPlayerGuid = result->Fetch()[0].GetUInt32();
+		SNContainer[SN_ITEM_GUID] = result->Fetch()[0].GetUInt32();
 		delete result;
+		result = NULL;
 	}
 
-	result = CharacterDatabase.Query( "SELECT MAX(guid) FROM playeritems" );
+	result = CharacterDatabase.Query( "SELECT MAX(guid) FROM characters" );
 	if( result )
 	{
-		m_hiItemGuid = result->Fetch()[0].GetUInt32();
+		SNContainer[SN_PLAYER_GUID] = result->Fetch()[0].GetUInt32();
 		delete result;
+		result = NULL;
 	}
 
+	result = CharacterDatabase.Query( "SELECT MAX(guid) FROM corpses" );
+	if( result )
+	{
+		SNContainer[SN_CORPSE_GUID] = result->Fetch()[0].GetUInt32();
+		delete result;
+		result = NULL;
+	}
+
+	result = WorldDatabase.Query("SELECT MAX(id) FROM creature_spawns");
+	if( result )
+	{
+		SNContainer[SN_CREATURE_SPAWNID] = result->Fetch()[0].GetUInt32();
+		delete result;
+		result = NULL;
+	}
+
+	result = WorldDatabase.Query("SELECT MAX(id) FROM gameobject_spawns");
+	if( result )
+	{
+		SNContainer[SN_GAMEOBJECT_SPAWNID] = result->Fetch()[0].GetUInt32();
+		delete result;
+		result = NULL;
+	}
+
+	result = CharacterDatabase.Query("SELECT MAX(group_id) FROM groups");
+	if( result )
+	{
+		SNContainer[SN_GROUP_ID] = result->Fetch()[0].GetUInt32();
+		delete result;
+		result = NULL;
+	}
+
+	result = CharacterDatabase.Query("SELECT MAX(guildId) FROM guilds");
+	if( result )
+	{
+		SNContainer[SN_GUILD_ID] = result->Fetch()[0].GetUInt32();
+		delete result;
+		result = NULL;
+	}
+
+	result = CharacterDatabase.Query("SELECT MAX(charterId) FROM charters");
+	if( result )
+	{
+		SNContainer[SN_CHARTER_ID] = result->Fetch()[0].GetUInt32();
+		delete result;
+		result = NULL;
+	}
+
+	result = CharacterDatabase.Query("SELECT MAX(guid) FROM gm_tickets");
+	if( result )
+	{
+		SNContainer[SN_TICKET_ID] = result->Fetch()[0].GetUInt64();
+		delete result;
+		result = NULL;
+	}
+
+	result = CharacterDatabase.Query( "SELECT MAX(guid) FROM characters" );
+	if( result )
+	{
+		SNContainer[SN_EQUIPMENTSET_ID] = result->Fetch()[0].GetUInt32();
+		delete result;
+		result = NULL;
+	}
+
+	Log.Notice("ObjectMgr", "HighGuid(ITEM) = %u", SNContainer[SN_ITEM_GUID]);
+	Log.Notice("ObjectMgr", "HighGuid(PLAYER) = %u", SNContainer[SN_PLAYER_GUID]);
+	Log.Notice("ObjectMgr", "HighGuid(CORPSE) = %u", SNContainer[SN_CORPSE_GUID]);
+	Log.Notice("ObjectMgr", "HighGuid(CONTAINER) = %u", SNContainer[SN_CONTAINER_GUID]);
+	Log.Notice("ObjectMgr", "HighGuid(UNIT) = %u", SNContainer[SN_CREATURE_SPAWNID]);
+	Log.Notice("ObjectMgr", "HighGuid(GAMEOBJ) = %u", SNContainer[SN_GAMEOBJECT_SPAWNID]);
+	Log.Notice("ObjectMgr", "HighGuid(GROUP) = %u", SNContainer[SN_GROUP_ID]);
+	Log.Notice("ObjectMgr", "HighGuid(GUILD) = %u", SNContainer[SN_GUILD_ID]);
+	Log.Notice("ObjectMgr", "HighGuid(CHARTER) = %u", SNContainer[SN_CHARTER_ID]);
+	Log.Notice("ObjectMgr", "HighGuid(TICKET) = %u", SNContainer[SN_TICKET_ID]);
+	Log.Notice("ObjectMgr", "HighGuid(EQSETS) = %u", SNContainer[SN_EQUIPMENTSET_ID]);
 	LoadPlayerCreateInfo();
 }
 
@@ -113,22 +189,20 @@ void ClientMgr::SendPackedClientInfo(WServer * server)
 
 void ClientMgr::DestroySession(uint32 sessionid)
 {
-	m_lock.AcquireWriteLock();
 	//session doesn't exist
 	Session* s = GetSession(sessionid);
 	if (s == NULL)
-	{
-		m_lock.ReleaseWriteLock();
 		return;
-	}
 
+	sessionLock.Acquire();
 	s->deleted = true;
 	m_pendingdeletesessionids.push_back(sessionid);
-	m_lock.ReleaseWriteLock();
+	sessionLock.Release();
 }
 
 Session * ClientMgr::CreateSession(uint32 AccountId)
 {
+	sessionLock.Acquire();
 	//lets generate a session id
 	//get from reusable
 	uint32 sessionid = 0;
@@ -139,7 +213,7 @@ Session * ClientMgr::CreateSession(uint32 AccountId)
 	}
 	else
 	{
-		sessionid = ++m_maxSessionId;
+		sessionid = ++m_SessionCount;
 		Log.Debug("Session", "New max session id: %u", sessionid);
 	}
 
@@ -149,20 +223,26 @@ Session * ClientMgr::CreateSession(uint32 AccountId)
 
 	//we couldn't generate an id for some reason
 	if(sessionid == 0)
+	{
+		sessionLock.Release();
 		return NULL;
+	}
 
 	Log.Debug("ClientMgr", "Allocating session %u for account id %u", sessionid, AccountId);
-	Session* s = new Session(sessionid);
+	Session *s = new Session(sessionid);
 
 	m_sessions[sessionid] = s;
+	sessionLock.Release();
 	return s;
 }
 
 void ClientMgr::Update()
 {
-	for(uint32 i = 0; i <= m_maxSessionId; ++i)
+	sessionLock.Acquire();
+	for(uint32 i = 0; i <= m_SessionCount; ++i)
 		if(m_sessions[i])
 			m_sessions[i]->Update();
+	sessionLock.Release();
 }
 
 RPlayerInfo * ClientMgr::CreateRPlayer(uint32 guid)
@@ -314,11 +394,17 @@ PlayerCreateInfo* ClientMgr::GetPlayerCreateInfo(uint8 race, uint8 class_) const
 
 int ClientMgr::CreateNewPlayer(Session* session, WorldPacket& data)
 {
-	if(m_hiPlayerGuid+1 == 0) // We've reset the count :O
+	SNLock[SN_PLAYER_GUID].Acquire();
+	if(SNContainer[SN_PLAYER_GUID]+1 == 0) // We've reset the count :O
+	{
+		SNLock[SN_PLAYER_GUID].Release();
 		return 1;
-	DEBUG_LOG("ClientMgr", "Account(%u) creating a player", session->GetAccountId());
+	}
 
-	Player* plr = new Player(GeneratePlayerGuid());
+	DEBUG_LOG("ClientMgr", "Account(%u) creating a player", session->GetAccountId());
+	Player* plr = new Player(++SNContainer[SN_PLAYER_GUID]);
+	SNLock[SN_PLAYER_GUID].Release();
+
 	uint8 error = plr->Create(session, data);
 	if(error)
 		return error;

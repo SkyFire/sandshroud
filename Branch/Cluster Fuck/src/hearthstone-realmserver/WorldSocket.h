@@ -43,7 +43,9 @@ public:
 
 	// vs8 fix - send null on empty buffer
 	HEARTHSTONE_INLINE void SendPacket(WorldPacket* packet) { if(!packet) return; OutPacket(packet->GetOpcode(), packet->size(), (packet->size() ? (const void*)packet->contents() : NULL)); }
+	HEARTHSTONE_INLINE void QueuePacket(uint16 opcode, size_t len, const void* data) { WorldPacket* pack = new WorldPacket(opcode, len); if(len) pack->append((uint8*)data, len); QueuePacket(pack); }
 
+	void QueuePacket(WorldPacket* packet);
 	void OutPacket(uint16 opcode, size_t len, const void* data);
 	OUTPACKET_RESULT __fastcall _OutPacket(uint16 opcode, size_t len, const void* data);
 

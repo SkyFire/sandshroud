@@ -585,6 +585,7 @@ public:
 	string MMapPath;
 	bool Collision;
 	bool PathFinding;
+	set<uint32> loadmaps;
 
 	bool AHEnabled;
 	bool DisableBufferSaving;

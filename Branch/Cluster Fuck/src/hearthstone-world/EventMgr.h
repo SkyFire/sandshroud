@@ -307,7 +307,6 @@ typedef map<int32, EventableObjectHolder*> HolderMap;
 
 class SERVER_DECL EventMgr : public Singleton < EventMgr >
 {
-	friend class MiniEventMgr;
 public:
 	template <class Class>
 		void AddEvent(Class* obj, void (Class::*method)(), uint32 type, uint32 time, uint32 repeats, uint32 flags)

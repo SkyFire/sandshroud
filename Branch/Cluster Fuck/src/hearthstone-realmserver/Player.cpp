@@ -113,7 +113,7 @@ int Player::Create(Session* session, WorldPacket& data )
 
 	// Add items
 	for(std::list<CreateInfo_ItemStruct>::iterator it = info->items.begin();it!=info->items.end();it++)
-		mIteminfo.insert(make_pair(sClientMgr.GenerateItemGuid(), (*it)));
+		mIteminfo.insert(make_pair(sClientMgr.GetSharedNumber(SN_ITEM_GUID), (*it)));
 
 	// Add skilllines
 	for(std::list<CreateInfo_SkillStruct>::iterator ss = info->skills.begin(); ss!=info->skills.end(); ss++)

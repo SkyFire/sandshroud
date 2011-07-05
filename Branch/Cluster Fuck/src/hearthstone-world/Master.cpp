@@ -241,7 +241,7 @@ bool Master::Run(int argc, char ** argv)
 
 	sWorld.SetStartTime(uint32(UNIXTIME));
 
-	WorldRunnable * wr = new WorldRunnable();
+	WorldRunnable *wr = new WorldRunnable();
 	ThreadPool.ExecuteTask(wr);
 
 	_HookSignals();

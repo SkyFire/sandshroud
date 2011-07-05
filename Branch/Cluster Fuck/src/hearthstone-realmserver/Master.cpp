@@ -20,6 +20,7 @@
 #include "RStdAfx.h"
 
 createFileSingleton( Master );
+
 Database * Database_Character;
 Database * Database_World;
 
@@ -134,9 +135,9 @@ bool Master::Run(int argc, char ** argv)
 	Log.Success("Storage", "DBC Files Loaded...");
 
 	Log.Success("ClusterMgr", "Starting Cluster Manager.");
-	ThreadPool.ExecuteTask(new ClusterMgr);
+	ThreadPool.ExecuteTask(new ClusterMgr());
 	Log.Success("ClientMgr", "Starting Client Manager.");
-	ThreadPool.ExecuteTask(new ClientMgr);
+	ThreadPool.ExecuteTask(new ClientMgr());
 
 	_HookSignals();
 

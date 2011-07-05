@@ -37,6 +37,7 @@ class ClusterInterface : public Singleton<ClusterInterface>
 	Mutex m_mapMutex;
 
 public:
+	bool initializing;
 	Mutex m_onlinePlayerMapMutex;
 	typedef HM_NAMESPACE::hash_map<uint32,RPlayerInfo*> OnlinePlayerStorageMap;
 	OnlinePlayerStorageMap _onlinePlayers;

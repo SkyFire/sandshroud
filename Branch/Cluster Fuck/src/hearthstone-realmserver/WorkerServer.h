@@ -53,6 +53,7 @@ protected:
 	/* packet handlers */
 	void HandleRegisterWorker(WorldPacket & pck);
 	void HandleWoWPacket(WorldPacket & pck);
+	void HandleNumberRequest(WorldPacket & pck);
 	void HandlePlayerLoginResult(WorldPacket & pck);
 	void HandlePlayerLogout(WorldPacket & pck);
 	void HandleTeleportRequest(WorldPacket & pck);

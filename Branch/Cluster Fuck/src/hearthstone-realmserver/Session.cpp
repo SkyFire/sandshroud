@@ -73,10 +73,14 @@ Session::Session(uint32 id) : m_sessionId(id)
 
 Session::~Session()
 {
+
 }
 
 void Session::Update()
 {
+	if(m_socket != NULL)
+		m_socket->UpdateQueuedPackets();
+
 	WorldPacket * pck;
 	uint16 opcode;
 	while((pck = m_readQueue.Pop()))

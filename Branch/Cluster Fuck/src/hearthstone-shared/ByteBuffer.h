@@ -285,6 +285,77 @@ public:
 		return read<uint8>(pos);
 	}
 
+	template <typename T> ByteBuffer &operator<<(std::vector<T> v)
+	{
+		append<uint32>((uint32)v.size());
+		for (typename std::vector<T>::iterator i = v.begin(); i != v.end(); i++)
+			append<T>(*i);
+		return *this;
+	}
+
+	template <typename T> ByteBuffer &operator>>(std::vector<T> &v)
+	{
+		v.clear();
+		uint32 vsize = read<uint32>();
+		while(vsize--)
+			v.push_back(read<T>());
+		return *this;
+	}
+
+	template <typename T> ByteBuffer &operator<<(std::set<T> v)
+	{
+		append<uint32>((uint32)v.size());
+		for (typename std::set<T>::iterator i = v.begin(); i != v.end(); i++)
+			append<T>(*i);
+		return *this;
+	}
+
+	template <typename T> ByteBuffer &operator>>(std::set<T> &v)
+	{
+		v.clear();
+		uint32 vsize = read<uint32>();
+		while(vsize--)
+			v.insert(read<T>());
+		return *this;
+	}
+
+	template <typename T> ByteBuffer &operator<<(std::list<T> v)
+	{
+		append<uint32>((uint32)v.size());
+		for (typename std::list<T>::iterator i = v.begin(); i != v.end(); i++)
+			append<T>(*i);
+		return *this;
+	}
+
+	template <typename T> ByteBuffer &operator>>(std::list<T> &v)
+	{
+		v.clear();
+		uint32 vsize = read<uint32>();
+		while(vsize--)
+			v.push_back(read<T>());
+		return *this;
+	}
+
+	template <typename K, typename V> ByteBuffer &operator<<(std::map<K, V> &m)
+	{
+		append<uint32>((uint32)m.size());
+		for (typename std::map<K, V>::iterator i = m.begin(); i != m.end(); i++)
+		{
+			append<K>(i->first);
+			append<V>(i->second);
+		}
+		return *this;
+	}
+
+	template <typename K, typename V> ByteBuffer &operator>>(std::map<K, V> &m)
+	{
+		m.clear();
+		uint32 msize = read<uint32>();
+		while(msize--)
+			m.insert(make_pair(read<K>(), read<V>()));
+		return *this;
+	}
+
 	size_t rpos()
 	{
 		return _rpos;
@@ -461,76 +532,5 @@ protected:
 	size_t _rpos, _wpos;
 	std::vector<uint8> _storage;
 };
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-template <typename T> ByteBuffer &operator<<(ByteBuffer &b, std::vector<T> v)
-{
-	b << (uint32)v.size();
-	for (typename std::vector<T>::iterator i = v.begin(); i != v.end(); i++) {
-		b << *i;
-	}
-	return b;
-}
-
-template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::vector<T> &v)
-{
-	uint32 vsize;
-	b >> vsize;
-	v.clear();
-	while(vsize--) {
-		T t;
-		b >> t;
-		v.push_back(t);
-	}
-	return b;
-}
-
-template <typename T> ByteBuffer &operator<<(ByteBuffer &b, std::list<T> v)
-{
-	b << (uint32)v.size();
-	for (typename std::list<T>::iterator i = v.begin(); i != v.end(); i++) {
-		b << *i;
-	}
-	return b;
-}
-
-template <typename T> ByteBuffer &operator>>(ByteBuffer &b, std::list<T> &v)
-{
-	uint32 vsize;
-	b >> vsize;
-	v.clear();
-	while(vsize--) {
-		T t;
-		b >> t;
-		v.push_back(t);
-	}
-	return b;
-}
-
-template <typename K, typename V> ByteBuffer &operator<<(ByteBuffer &b, std::map<K, V> &m)
-{
-	b << (uint32)m.size();
-	for (typename std::map<K, V>::iterator i = m.begin(); i != m.end(); i++) {
-		b << i->first << i->second;
-	}
-	return b;
-}
-
-template <typename K, typename V> ByteBuffer &operator>>(ByteBuffer &b, std::map<K, V> &m)
-{
-	uint32 msize;
-	b >> msize;
-	m.clear();
-	while(msize--) {
-		K k;
-		V v;
-		b >> k >> v;
-		m.insert(make_pair(k, v));
-	}
-	return b;
-}
 
 #endif

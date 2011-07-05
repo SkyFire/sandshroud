@@ -141,16 +141,20 @@ void WSSocket::HandleRegisterWorker(WorldPacket & pck)
 	uint32 build;
 	pck >> build;
 
-	// TODO: Check the build of the server
-	WServer * new_server = sClusterMgr.CreateWorkerServer(this);
-	if(new_server == 0)
+	WorldPacket data(SMSGR_REGISTER_RESULT, 10);
+	WServer *new_server = NULL;
+	if(build == BUILD_REVISION)
+		new_server = sClusterMgr.CreateWorkerServer(this);
+	if(new_server == NULL)
 	{
-		WorldPacket data(SMSGR_REGISTER_RESULT, 10);
 		data << uint32(0);
 		SendPacket(&data);
 		delete &pck;
 		return;
 	}
+
+	data << uint32(1);
+	SendPacket(&data);
 
 	/* because we don't have any locks in the managers, this has to execute
 	   in the other thread. this is why I haven't deleted the packet yet

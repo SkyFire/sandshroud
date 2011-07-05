@@ -30,7 +30,7 @@ void ClusterInterface::InitHandlers()
 	PHandlers[SMSGR_AUTH_REQUEST]							= &ClusterInterface::HandleAuthRequest;
 	PHandlers[SMSGR_AUTH_RESULT]							= &ClusterInterface::HandleAuthResult;
 	PHandlers[SMSGR_REGISTER_RESULT]						= &ClusterInterface::HandleRegisterResult;
-	PHandlers[SMSGR_CREATE_INSTANCE]						= &ClusterInterface::HandleCreateInstance;
+	PHandlers[SMSGR_CREATE_INSTANCES]						= &ClusterInterface::HandleCreateInstance;
 	PHandlers[SMSGR_PLAYER_LOGIN]							= &ClusterInterface::HandlePlayerLogin;
 	PHandlers[SMSGR_WOW_PACKET]								= &ClusterInterface::HandleWoWPacket;
 	PHandlers[SMSGR_TELEPORT_RESULT]						= &ClusterInterface::HandleTeleportResult;
@@ -110,9 +110,9 @@ void ClusterInterface::ForwardWoWPacket(uint16 opcode, uint32 size, const void *
 void ClusterInterface::ConnectToRealmServer()
 {
 	_lastConnectTime = UNIXTIME;
-	string hostname;
+
 	int port;
-	string strkey;
+	string strkey, hostname;
 	if(!Config.MainConfig.GetString("Cluster", "RSHostName", &hostname) || !Config.MainConfig.GetInt("Cluster", "RSPort", &port) || !Config.MainConfig.GetString("Cluster", "Key", &strkey))
 	{
 		Log.Error("ClusterInterface", "Could not get necessary fields from config file. Please fix and rehash.");
@@ -170,50 +170,9 @@ void ClusterInterface::HandleAuthResult(WorldPacket & pck)
 	}
 
 	Log.Notice("ClusterInterface", "Loading BaseMap and InstanceMap Info");
-	uint32 servertype = Config.MainConfig.GetIntDefault("Cluster", "SlaveType", 0);
-	uint32 MaxMaps = Config.MainConfig.GetIntDefault("Cluster", "MapMax", 0);
-	bool mapcount = ((MaxMaps > 0) ? true : false);
 	std::map<uint32, uint32> maplist;
-	uint32 mapid = 0;
-	switch(servertype)
-	{
-	case 0:
-		{
-			for(mapid = 0; mapid < 750; mapid++)
-			{
-				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
-				if(info != NULL)
-					maplist.insert(make_pair(mapid, info->type));
-			}
-		}break;
-	case 1:
-		{
-			for(mapid = 0; mapid < 750; mapid++)
-			{
-				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
-				if(info != NULL && info->type == INSTANCE_NULL)
-					maplist.insert(make_pair(mapid, info->type));
-			}
-		}break;
-	case 2:
-		{
-			for(mapid = 0; mapid < 750; mapid++)
-			{
-				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
-				if(info != NULL && info->type == INSTANCE_PVP)
-					maplist.insert(make_pair(mapid, info->type));
-			}
-		}break;
-	case 3:
-		{
-			for(mapid = 0; mapid < 750; mapid++)
-			{
-				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
-				if(info != NULL && info->type && info->type != INSTANCE_PVP)
-					maplist.insert(make_pair(mapid, info->type));
-			}
-		}break;
-	}
+	for(set<uint32>::iterator itr = sWorld.loadmaps.begin(); itr != sWorld.loadmaps.end(); itr++)
+		maplist.insert(make_pair(*itr, LimitedMapInfoStorage.LookupEntry(*itr)->type));
 
 	WorldPacket data(CMSGR_REGISTER_WORKER, 12);
 	data << uint32(BUILD_REVISION);
@@ -225,15 +184,25 @@ void ClusterInterface::HandleRegisterResult(WorldPacket & pck)
 {
 	uint32 res;
 	pck >> res;
-	DEBUG_LOG("ClusterInterface", "Register Result: %u", res);
+	if(!res)
+	{
+		_clientSocket->Disconnect();
+		_clientSocket = NULL;
+	}
+	DEBUG_LOG("ClusterInterface", "Register Result: %s.", ((res > 0) ? "true" : "false"));
 }
 
 void ClusterInterface::HandleCreateInstance(WorldPacket & pck)
 {
-	uint32 mapid;
-	pck >> mapid;
-	DEBUG_LOG("ClusterInterface", "Creating Map %u", mapid);
-	sInstanceMgr.Load(mapid);
+	set<uint32> mapids;
+	pck >> mapids;
+	if(!mapids.size())
+	{
+		_clientSocket->Disconnect();
+		_clientSocket = NULL;
+	}
+
+	sInstanceMgr.Load(mapids);
 }
 
 void ClusterInterface::HandleDestroyInstance(WorldPacket & pck)

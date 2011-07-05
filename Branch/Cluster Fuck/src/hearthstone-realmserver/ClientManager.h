@@ -27,6 +27,22 @@
 typedef HM_NAMESPACE::hash_map<uint32, RPlayerInfo*> ClientMap;
 typedef HM_NAMESPACE::hash_map<uint32, PlayerCreateInfo*> PlayerCreateInfoMap;
 
+enum SharedNumbers
+{
+	SN_ITEM_GUID			= 0,
+	SN_PLAYER_GUID,
+	SN_CORPSE_GUID,
+	SN_CONTAINER_GUID,
+	SN_CREATURE_SPAWNID,
+	SN_GAMEOBJECT_SPAWNID,
+	SN_GROUP_ID,
+	SN_GUILD_ID,
+	SN_CHARTER_ID,
+	SN_TICKET_ID,
+	SN_EQUIPMENTSET_ID,
+	SN_MAX
+};
+
 class ClientMgr : public Singleton<ClientMgr>, public ThreadContext
 {
 public:
@@ -34,14 +50,14 @@ public:
 	~ClientMgr();
 
 	ClientMap m_clients;
-	RWLock m_lock;
 
 protected:
-	uint32 m_hiPlayerGuid;
-	uint32 m_hiItemGuid;
-	uint32 m_maxSessionId;
+	Mutex SNLock[SN_MAX];
+	uint32 SNContainer[SN_MAX];
 
-	Session * m_sessions[MAX_SESSIONS];
+	Mutex sessionLock;
+	uint32 m_SessionCount;
+	Session *m_sessions[MAX_SESSIONS];
 	HM_NAMESPACE::hash_map<RPlayerInfo*, Session*> m_sessionsbyinfo;
 	std::vector<uint32> m_reusablesessions;
 	std::vector<uint32> m_pendingdeletesessionids;
@@ -51,6 +67,18 @@ public:
 	void terminate();
 	bool m_threadRunning;
 
+	HEARTHSTONE_INLINE uint32 GetSharedNumber(uint8 type)
+	{
+		uint32 number = 0;
+		if(type < SN_MAX)
+		{
+			SNLock[type].Acquire();
+			number = ++SNContainer[type];
+			SNLock[type].Release();
+		}
+		return number;
+	}
+
 	/* create rplayerinfo struct */
 	RPlayerInfo * CreateRPlayer(uint32 guid);
 
@@ -59,23 +87,24 @@ public:
 
 	HEARTHSTONE_INLINE Session* GetSessionByRPInfo(RPlayerInfo* p)
 	{
-		m_lock.AcquireReadLock();
+		sessionLock.Acquire();
 		HM_NAMESPACE::hash_map<RPlayerInfo*, Session*>::iterator itr = m_sessionsbyinfo.find(p);
 		if (itr == m_sessionsbyinfo.end())
 		{
-			m_lock.ReleaseReadLock();
+			sessionLock.Release();
 			return NULL;
 		}
-		Session* s = itr->second;
-		m_lock.ReleaseReadLock();
+		Session *s = itr->second;
+		sessionLock.Release();
 		return s;
 	}
 
 	HEARTHSTONE_INLINE void AddSessionRPInfo(Session* s, RPlayerInfo* p)
 	{
-		m_lock.AcquireWriteLock();
+		ASSERT(p && s);
+		sessionLock.Acquire();
 		m_sessionsbyinfo.insert(std::make_pair<RPlayerInfo*, Session*>(p, s));
-		m_lock.ReleaseWriteLock();
+		sessionLock.Release();
 	}
 
 	/* get rplayer */
@@ -111,23 +140,32 @@ public:
 	/* get session by id */
 	HEARTHSTONE_INLINE Session * GetSession(uint32 Id)
 	{
+		Session *s = NULL;
+		sessionLock.Acquire();
 		if(Id < MAX_SESSIONS)
-			return m_sessions[Id];
-		return NULL;
+			s = m_sessions[Id];
+		sessionLock.Release();
+		return s;
 	}
 
 	HEARTHSTONE_INLINE Session* GetSessionByAccountId(uint32 Id)
 	{
+		Session *s = NULL;
+		sessionLock.Acquire();
 		for(uint32 id = 0; id < MAX_SESSIONS; id++)
 		{
-			if(m_sessions[Id] && m_sessions[Id]->GetAccountId() == Id)
-				return m_sessions[Id];
+			if(m_sessions[id] && m_sessions[id]->GetAccountId() == Id)
+			{
+				s = m_sessions[id];
+				break;
+			}
 		}
-		return NULL;
+		sessionLock.Release();
+		return s;
 	}
 
 	/* create a new session, returns null if the player is already logged in */
-	Session * CreateSession(uint32 AccountId);
+	Session *CreateSession(uint32 AccountId);
 
 	void DestroySession(uint32 sessionid);
 
@@ -140,13 +178,7 @@ public: // PlayerCreateInfo
 	void LoadPlayerCreateInfo();
 	PlayerCreateInfoMap mPlayerCreateInfo;
 	PlayerCreateInfo* GetPlayerCreateInfo(uint8 race, uint8 class_) const;
-
-public: // Player Creation and deletion/rename shit
-	uint32 GeneratePlayerGuid() { return ++m_hiPlayerGuid; };
 	int CreateNewPlayer(Session* session, WorldPacket& data);
-
-public:
-	uint32 GenerateItemGuid() { return ++m_hiItemGuid; };
 };
 
 #define sClientMgr ClientMgr::getSingleton()

@@ -150,33 +150,39 @@ WServer * ClusterMgr::CreateWorkerServer(WSSocket * s)
 bool ClusterMgr::AllocateInitialInstances(WServer * server, map<uint32, uint32> maps)
 {
 	bool made = false;
+	m_lock.AcquireWriteLock();
+	set<uint32> instances;
 	for(map<uint32, uint32>::iterator itr = maps.begin(); itr != maps.end(); itr++)
 	{
 		if(SingleInstanceMaps[itr->first] == NULL)
 		{
 			made = true;
-			CreateInstance(itr->first, server);
+			instances.insert(itr->first);
 			if(!itr->second)
 				break;
 		}
 	}
+	CreateInstances(instances, server);
+	m_lock.ReleaseWriteLock();
 	return made;
 }
 
-Instance * ClusterMgr::CreateInstance(uint32 MapId, WServer * server)
+void ClusterMgr::CreateInstances(set<uint32> MapIds, WServer* server)
 {
-	Instance * pInstance = new Instance;
-	pInstance->MapId = MapId;
-	pInstance->Server = server;
-	SingleInstanceMaps[MapId] = pInstance;
+	for(set<uint32>::iterator itr = MapIds.begin(); itr != MapIds.end(); itr++)
+	{
+		Instance * pInstance = new Instance;
+		pInstance->MapId = (*itr);
+		pInstance->Server = server;
+		SingleInstanceMaps[(*itr)] = pInstance;
+		server->AddInstance(pInstance);
+		DEBUG_LOG("ClusterMgr", "Allocating map %u to server %u", (*itr), server->GetID());
+	}
 
 	/* tell the actual server to create the instance */
-	WorldPacket data(SMSGR_CREATE_INSTANCE, 4);
-	data << MapId;
+	WorldPacket data(SMSGR_CREATE_INSTANCES, MapIds.size()*4);
+	data << MapIds;
 	server->SendPacket(&data);
-	server->AddInstance(pInstance);
-	DEBUG_LOG("ClusterMgr", "Allocating map %u to server %u", MapId, server->GetID());
-	return pInstance;
 }
 
 WServer * ClusterMgr::GetWorkerServerForNewInstance()

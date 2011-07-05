@@ -26,6 +26,7 @@ void WServer::InitHandlers()
 	memset(PHandlers, 0, sizeof(void*) * MSGR_NUM_TYPES);
 	PHandlers[CMSGR_REGISTER_WORKER]					= &WServer::HandleRegisterWorker;
 	PHandlers[CMSGR_WOW_PACKET]							= &WServer::HandleWoWPacket;
+	PHandlers[CMSGR_NUMBER_REQUEST]						= &WServer::HandleNumberRequest;
 	PHandlers[CMSGR_PLAYER_LOGIN_RESULT]				= &WServer::HandlePlayerLoginResult;
 	PHandlers[CMSGR_PLAYER_LOGOUT]						= &WServer::HandlePlayerLogout;
 	PHandlers[CMSGR_TELEPORT_REQUEST]					= &WServer::HandleTeleportRequest;
@@ -56,7 +57,7 @@ void WServer::HandleRegisterWorker(WorldPacket & pck)
 	{
 		Log.Notice("SlaveManager", "Rejecting worker server %u", GetID());
 		WorldPacket data(SMSGR_ERROR_HANDLER, 20);
-		data << 1;
+		data << uint32(1);
 		SendPacket(&data);
 
 		sClusterMgr.RemoveWServer(GetID());
@@ -84,7 +85,24 @@ void WServer::HandleWoWPacket(WorldPacket & pck)
 	/* write it to that session's output buffer */
 	WorldSocket * s = session->GetSocket();
 	if(s)
-		s->OutPacket(opcode, size, size ? ((const void*)(pck.contents() + 10)) : 0);
+		s->QueuePacket(opcode, size, size ? ((const void*)(pck.contents() + 10)) : 0);
+}
+
+void WServer::HandleNumberRequest(WorldPacket & pck)
+{
+	if(pck.size() < 5)
+		return; // 1 byte for type, 4 for recall.
+
+	uint8 type;
+	pck >> type;
+	uint32 number = sClientMgr.GetSharedNumber(type);
+	if(number == 0)
+		return;
+
+	WorldPacket Response(SMSGR_NUMBER_RESPONSE, pck.size()+4);
+	Response << number;
+	Response.append(pck.contents(), pck.size());
+	SendPacket(&Response);
 }
 
 void WServer::HandlePlayerLoginResult(WorldPacket & pck)
@@ -233,8 +251,8 @@ void WServer::HandleSwitchServer(WorldPacket & pck)
 	float o;
 
 	pck >> sessionid >> guid >> mapid >> instanceid >> location >> o;
-	Session* s=sClientMgr.GetSession(sessionid);
 
+	Session *s = sClientMgr.GetSession(sessionid);
 	if (s == NULL)
 		return;
 

@@ -391,6 +391,50 @@ bool World::SetInitialWorldSettings()
 		return false;
 	}
 
+	uint32 servertype = Config.MainConfig.GetIntDefault("Cluster", "SlaveType", 0);
+	uint32 MaxMaps = Config.MainConfig.GetIntDefault("Cluster", "MapMax", 0);
+	bool mapcount = ((MaxMaps > 0) ? true : false);
+	uint32 mapid = 0;
+	switch(servertype)
+	{
+	case 0:
+		{
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL)
+					loadmaps.insert(mapid);
+			}
+		}break;
+	case 1:
+		{
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL && info->type == INSTANCE_NULL)
+					loadmaps.insert(mapid);
+			}
+		}break;
+	case 2:
+		{
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL && info->type == INSTANCE_PVP)
+					loadmaps.insert(mapid);
+			}
+		}break;
+	case 3:
+		{
+			for(mapid = 0; mapid < 750; mapid++)
+			{
+				MapInfo* info = LimitedMapInfoStorage.LookupEntry(mapid);
+				if(info != NULL && info->type && info->type != INSTANCE_PVP)
+					loadmaps.insert(mapid);
+			}
+		}break;
+	}
+
 	/* Convert area table ids/flags */
 	DBCFile area;
 	if( !area.open( format("%s/AreaTable.dbc", sWorld.DBCPath.c_str()).c_str() ) )
@@ -399,9 +443,13 @@ bool World::SetInitialWorldSettings()
 		return false;
 	}
 
-	uint32 flag_, area_, zone_;
+	uint32 flag_, map_, area_, zone_;
 	for(uint32 i = 0; i < area.getRecordCount(); i++)
 	{
+		map_ = area.getRecord(i).getUInt(1);
+		if(loadmaps.find(map_) == loadmaps.end())
+			continue;
+
 		area_ = area.getRecord(i).getUInt(0);
 		flag_ = area.getRecord(i).getUInt(3);
 		zone_ = area.getRecord(i).getUInt(2);
@@ -425,8 +473,7 @@ bool World::SetInitialWorldSettings()
 	new ObjectMgr;
 	new QuestMgr;
 	new LootMgr;
-	LfgMgr* LFGMGR = new LfgMgr;
-	LFGMGR->LoadRandomDungeonRewards();
+	new LfgMgr;
 	new WeatherMgr;
 	new TaxiMgr;
 	new AddonMgr;
@@ -451,6 +498,7 @@ bool World::SetInitialWorldSettings()
 	ThreadPool.ExecuteTask(new BasicTaskExecutor(new CallbackP0<ObjectMgr>(ObjectMgr::getSingletonPtr(),
 		&ObjectMgr::LoadPlayersInfo), BTE_PRIORITY_MED));
 
+	MAKE_TASK(LfgMgr, LoadRandomDungeonRewards);
 	MAKE_TASK(ObjectMgr, LoadGuilds);
 	MAKE_TASK(ObjectMgr, LoadPlayerCreateInfo);
 
@@ -511,9 +559,8 @@ bool World::SetInitialWorldSettings()
 
 	sScriptMgr.LoadScripts();
 
-	new FormationMgr;
-	new WorldStateTemplateManager;
-	sInstanceMgr._LoadInstances();
+	new FormationMgr();
+	new WorldStateTemplateManager();
 
 	// wait for the events to complete.
 	tl.wait();

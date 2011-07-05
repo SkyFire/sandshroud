@@ -78,13 +78,10 @@ void InstanceMgr::Load(TaskList * l)
 	_LoadInstances();
 }
 
-void InstanceMgr::Load(uint32 mapid)
+void InstanceMgr::Load(set<uint32> mapids)
 {
-	QueryResult *result;
-	sWorldStateTemplateManager.LoadFromDB(mapid);
-
 	// Create all non-instance type maps.
-	result = CharacterDatabase.Query( "SELECT MAX(id) FROM instances WHERE mapid = '%i'", mapid);
+	QueryResult *result = CharacterDatabase.Query( "SELECT MAX(id) FROM instances" );
 	if( result )
 	{
 		m_InstanceHigh = result->Fetch()[0].GetUInt32()+1;
@@ -93,7 +90,12 @@ void InstanceMgr::Load(uint32 mapid)
 	else
 		m_InstanceHigh = 1;
 
-	_CreateMap(mapid);
+	for(set<uint32>::iterator itr = mapids.begin(); itr != mapids.end(); itr++)
+	{
+		sWorld.loadmaps.insert(*itr);
+		sWorldStateTemplateManager.LoadFromDB(*itr);
+		_CreateMap(*itr);
+	}
 
 	// load saved instances
 	_LoadInstances();

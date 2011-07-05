@@ -27,7 +27,7 @@ class SERVER_DECL ByteBuffer
 #define DEFAULT_SIZE 0x1000
 #define DEFAULT_INCREASE_SIZE 200
 
-	uint8 * m_buffer;
+	uint8* m_buffer;
 	size_t m_readPos;
 	size_t m_writePos;
 	uint32 m_buffersize;
