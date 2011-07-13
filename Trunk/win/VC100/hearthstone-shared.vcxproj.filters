@@ -708,5 +708,8 @@
     <ClInclude Include="..\..\src\hearthstone-shared\Pathfinding\Recast\Recast.h">
       <Filter>Util\Pathfinding\Recast</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\ByteConverter.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

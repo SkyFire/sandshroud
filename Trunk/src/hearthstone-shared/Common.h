@@ -670,6 +670,7 @@ unsigned int MakeIP(const char * str);
 #include "Pathfinding/Recast/Recast.h"
 #include "Log.h"
 #include "NGLog.h"
+#include "ByteConverter.h"
 #include "Console/CConsole.h"
 
 #elif defined(MMAP_GENERATOR)

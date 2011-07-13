@@ -30,14 +30,31 @@
 #include "Log.h"
 #include "int24.h"
 
-class SERVER_DECL ByteBuffer {
+class ByteBufferException
+{
 public:
+	ByteBufferException(bool _add, size_t _pos, size_t _esize, size_t _size)
+		: add(_add), pos(_pos), esize(_esize), size(_size)
+	{
+		PrintPosError();
+	}
 
+	void PrintPosError() const
+	{
+		sLog.outError("Attempted to %s in ByteBuffer (pos: %u size: %u) value with size: %u",
+			(add ? "put" : "get"), (uint32)pos, (uint32)size, (uint32)esize);
+	}
+private:
+	bool add;
+	size_t pos;
+	size_t esize;
+	size_t size;
+};
+
+class SERVER_DECL ByteBuffer
+{
+public:
 	const char* opcodename;
-
-	class error {
-	};
-
 	const static size_t DEFAULT_SIZE = 0x1000;
 
 	ByteBuffer(): _rpos(0), _wpos(0)
@@ -65,11 +82,13 @@ public:
 	//}
 	template <typename T> void append(T value)
 	{
+		EndianConvert(value);
 		append((uint8 *)&value, sizeof(value));
 	}
 
 	template <typename T> void put(size_t pos,T value)
 	{
+		EndianConvert(value);
 		put(pos,(uint8 *)&value,sizeof(value));
 	}
 
@@ -296,6 +315,11 @@ public:
 		return _rpos;
 	}
 
+	void rfinish()
+	{
+		_rpos = wpos();
+	}
+
 	size_t wpos()
 	{
 		return _wpos;
@@ -307,8 +331,19 @@ public:
 		return _wpos;
 	}
 
+	template<typename T> void read_skip() { read_skip(sizeof(T)); }
+
+	void read_skip(size_t skip)
+	{
+		if(_rpos + skip > size())
+			throw ByteBufferException(false, _rpos, skip, size());
+		_rpos += skip;
+	}
+
 	template <typename T> T read()
 	{
+		if(_rpos + sizeof(T) > size())
+			throw ByteBufferException(false, _rpos, sizeof(T), size());
 		T r = read<T>(_rpos);
 		_rpos += sizeof(T);
 		return r;
@@ -316,29 +351,18 @@ public:
 
 	template <typename T> T read(size_t pos) const
 	{
-		//ASSERT(pos + sizeof(T) <= size());
 		if(pos + sizeof(T) > size())
-		{
-			sLog.outColor(TRED, "\nERROR: Packet size for opcode %s is smaller than what we are trying to read. Size is %u, readsize is %u\r\n", opcodename, size(), pos + sizeof(T));
-			return (T)0;
-		}
-		else
-		{
-			return *((T*)&_storage[pos]);
-		}
+			throw ByteBufferException(false, pos, sizeof(T), size());
+		T val = *((T const*)&_storage[pos]);
+		EndianConvert(&val);
+		return val;
 	}
 
 	void read(uint8 *dest, size_t len)
 	{
-		if (_rpos + len <= size())
-		{
-			memcpy(dest, &_storage[_rpos], len);
-		}
-		else
-		{
-			//throw error();
-			memset(dest, 0, len);
-		}
+		if(_rpos  + len > size())
+			throw ByteBufferException(false, _rpos, len, size());
+		memcpy(dest, &_storage[_rpos], len);
 		_rpos += len;
 	}
 
@@ -385,7 +409,8 @@ public:
 
 	void put(size_t pos, const uint8 *src, size_t cnt)
 	{
-		ASSERT(pos + cnt <= size());
+		if(pos + cnt > size())
+			throw ByteBufferException(true, pos, cnt, size());
 		memcpy(&_storage[pos], src, cnt);
 	}
 	//void insert(size_t pos, const uint8 *src, size_t cnt) {

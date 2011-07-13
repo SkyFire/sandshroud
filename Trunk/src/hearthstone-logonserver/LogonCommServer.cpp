@@ -27,8 +27,6 @@ typedef struct
 }logonpacket;
 #pragma pack(pop)
 
-HEARTHSTONE_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
-
 LogonCommServerSocket::LogonCommServerSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 65536, 524288, false, peer)
 {
 	// do nothing
@@ -92,12 +90,9 @@ void LogonCommServerSocket::OnRecvData()
 				recvCrypto.Process((unsigned char*)&remaining, (unsigned char*)&remaining, 4);
 			}
 
-#ifdef USING_BIG_ENDIAN
-			opcode = swap16(opcode);
-#else
+			EndianConvert(opcode);
 			/* reverse byte order */
-			swap32(&remaining);
-#endif
+			EndianConvertReverse(remaining);
 		}
 
 		// do we have a full packet?
@@ -348,15 +343,10 @@ void LogonCommServerSocket::SendPacket(WorldPacket * data)
 	LockWriteBuffer();
 
 	logonpacket header;
-#ifndef USING_BIG_ENDIAN
 	header.opcode = data->GetOpcode();
-	//header.size   = ntohl((u_long)data->size());
+	EndianConvert(header.opcode);
 	header.size = (uint32)data->size();
-	swap32(&header.size);
-#else
-	header.opcode = swap16(uint16(data->GetOpcode()));
-	header.size   = data->size();
-#endif
+	EndianConvertReverse(header.size);
 
 	if(use_crypto)
 		sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);

@@ -45,11 +45,23 @@ void DBC::Load(const char *filename)
 		return;
 	}
 
+	uint32 header;
 	fseek(f, 4, SEEK_SET);
+
+	fread(&header,4, 1, f);
+	EndianConvert(&header);
+
 	fread(&rows,4, 1, f);
+	EndianConvert(&rows);
+
 	fread(&cols, 4, 1, f);
+	EndianConvert(&cols);
+
 	fread(&weird2, 4, 1, f);
+	EndianConvert(&weird2);
+
 	fread(&dblength, 4, 1, f);
+	EndianConvert(&dblength);
 
 	tbl = new unsigned int[rows * cols];
 	db = new char[dblength];
@@ -63,7 +75,6 @@ void DBC::Load(const char *filename)
 
 	Log.Notice("DBC", "Loaded %s (%u rows)", name, rows);
 }
-
 
 void DBC::Lookup(char* out, int row,int col,char isstr,bool onlystr)
 {
@@ -167,6 +178,7 @@ void DBC::GuessFormat()
 	printf("Guessing format (%s): 0%%",name);
 	int percent= 0,npercent;
 	for(int i= 0;i<rows;i++)
+	{
 		for(int j= 0;j<cols;j++)
 		{
 			DBCFmat f = GuessFormat(i,j);
@@ -180,7 +192,8 @@ void DBC::GuessFormat()
 				percent = npercent;
 			}
 		}
-	
+	}
+
 	for(int j= 0;j<cols;j++)
 	{
 		if(strings[j] > ints[j])
@@ -219,6 +232,7 @@ DBCFmat DBC::GuessFormat(int row, int col)
 	if(fst > 100000000) return F_FLOAT;
 	return F_INT;
 }
+
 void DBC::LookupFormat(char *out, int row, int col)
 {
 	int fst = tbl[row*cols+col];

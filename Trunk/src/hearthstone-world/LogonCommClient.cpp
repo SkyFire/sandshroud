@@ -28,8 +28,6 @@ typedef struct
 
 #ifndef CLUSTERING
 
-HEARTHSTONE_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
-
 LogonCommClientSocket::LogonCommClientSocket(SOCKET fd, const sockaddr_in * peer) : TcpSocket(fd, 524288, 65536, false, peer)
 {
 	// do nothing
@@ -60,8 +58,9 @@ void LogonCommClientSocket::OnRecvData()
 				_recvCrypto.Process((unsigned char*)&remaining, (unsigned char*)&remaining, 4);
 			}
 
+			EndianConvert(opcode);
 			/* reverse byte order */
-			swap32(&remaining);
+			EndianConvertReverse(remaining);
 		}
 
 		// do we have a full packet?
@@ -188,9 +187,9 @@ void LogonCommClientSocket::SendPacket(WorldPacket * data, bool no_crypto)
 	LockWriteBuffer();
 
 	header.opcode = data->GetOpcode();
-	uint32 size = (uint32)data->size();
-	swap32(&size);
-	header.size = size;
+	EndianConvert(header.opcode);
+	header.size = (uint32)data->size();
+	EndianConvertReverse(header.size);
 
 	if(use_crypto && !no_crypto)
 		_sendCrypto.Process((unsigned char*)&header, (unsigned char*)&header, 6);

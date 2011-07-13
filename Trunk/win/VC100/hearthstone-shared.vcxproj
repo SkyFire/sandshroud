@@ -340,6 +340,7 @@ RevisionExtractor.exe
     <ClCompile Include="..\..\src\hearthstone-shared\Collision\g3dlite\Matrix4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\hearthstone-shared\ByteConverter.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Console\BaseConsole.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Console\CConsole.h" />
     <ClInclude Include="..\..\src\hearthstone-shared\Database\Database.h" />

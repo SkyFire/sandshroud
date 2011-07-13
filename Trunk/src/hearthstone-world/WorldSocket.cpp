@@ -242,7 +242,7 @@ void WorldSocket::_HandleAuthSession(WorldPacket* recvPacket)
 		*recvPacket >> unk;
 		*recvPacket >> unk;
 	}
-	catch(ByteBuffer::error &)
+	catch(ByteBufferException &)
 	{
 		OUT_DEBUG("Incomplete copy of AUTH_SESSION Received.");
 		return;

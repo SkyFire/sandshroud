@@ -1590,9 +1590,11 @@ public:
 		fread(&string_length, 4, 1, f);
 		pos = ftell(f);
 
-#ifdef USING_BIG_ENDIAN
-		swap32(&rows); swap32(&cols); swap32(&useless_shit); swap32(&string_length);
-#endif
+		EndianConvert(&header);
+		EndianConvert(&rows);
+		EndianConvert(&cols);
+		EndianConvert(&useless_shit);
+		EndianConvert(&string_length);
 
 		if( load_strings )
 		{
@@ -1685,9 +1687,7 @@ public:
 				++t;
 				continue;		// skip!
 			}
-#ifdef USING_BIG_ENDIAN
-			swap32(&val);
-#endif
+			EndianConvert(&val);
 			if(*t == 's')
 			{
 				char ** new_ptr = (char**)dest_ptr;
