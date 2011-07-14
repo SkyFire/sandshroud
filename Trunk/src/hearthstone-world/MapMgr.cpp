@@ -1865,23 +1865,31 @@ void MapMgr::EventRespawnGameObject(GameObject* o, MapCell * c)
 	}
 }
 
-bool IsSpecialAreaID(uint32 area)
+uint32 IsSpecialAreaID(uint32 area)
 {
 	switch(area)
 	{
 	case 4395:
+		return 1;
 	case 4560:
-		return true;
+	case 4619:
+		return 2;
+	case 2817:
+	case 4551:
+	case 4553:
+	case 4556:
+		return 3;
 		break;
 	}
 
-	return false;
+	return 0;
 }
 
 bool CompatibleAreaIDs(uint32 area1, uint32 area2)
 {
-	if(IsSpecialAreaID(area1) || IsSpecialAreaID(area2))
-		if(area1 != area2)
+	uint32 flag1 = 0, flag2 = 0;
+	if((flag1 = IsSpecialAreaID(area1)) && (flag2 = IsSpecialAreaID(area2)))
+		if(flag1 != flag2)
 			return false;
 	return true;
 }
@@ -1891,10 +1899,7 @@ bool MapMgr::IsInRange(float fRange, Object* obj, Object* currentobj)
 	// First distance check, are we in range?
 	uint32 objareaid = obj->GetAreaID();
 	uint32 careaid = currentobj->GetAreaID();
-	if(IsSpecialAreaID(objareaid) || IsSpecialAreaID(careaid))
-		fRange = (fRange/4)*3;
-
-	if(objareaid == careaid)
+	if(objareaid == careaid && !IsSpecialAreaID(objareaid))
 	{
 		if(currentobj->GetDistance2dSq( obj ) > fRange )
 			return false;
@@ -1903,11 +1908,11 @@ bool MapMgr::IsInRange(float fRange, Object* obj, Object* currentobj)
 	{
 		if(currentobj->GetDistanceSq( obj ) > (fRange/4) )
 			return false;
-	}
 
-	if(!CompatibleAreaIDs(objareaid, careaid))
-		if(fabs(fabs(obj->GetPositionZ()) - fabs(currentobj->GetPositionZ())) > 15.0f)
-			return false;
+		if(!CompatibleAreaIDs(objareaid, careaid))
+			if(fabs(fabs(obj->GetPositionZ()) - fabs(currentobj->GetPositionZ())) > 15.0f)
+				return false;
+	}
 	return true;
 }
 
@@ -1920,8 +1925,8 @@ void MapMgr::SendMessageToCellPlayers(Object* obj, WorldPacket * packet, uint32 
 	uint32 startX = (cellX-cell_radius) > 0 ? cellX - cell_radius : 0;
 	uint32 startY = (cellY-cell_radius) > 0 ? cellY - cell_radius : 0;
 
-	uint32 posX, posY;
 	MapCell *cell;
+	uint32 posX, posY;
 	MapCell::ObjectSet::iterator iter, iend;
 	for (posX = startX; posX <= endX; ++posX )
 	{
