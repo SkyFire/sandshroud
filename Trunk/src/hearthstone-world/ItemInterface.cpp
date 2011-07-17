@@ -1888,9 +1888,7 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		{
 			if( m_pOwner->titanGrip && ((type == INVTYPE_2HWEAPON && (proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
 				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_MACE || proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_SWORD)) ||
-				type == INVTYPE_WEAPON ||
-				type == INVTYPE_WEAPONOFFHAND ||
-				type == INVTYPE_SHIELD) )
+				type == INVTYPE_WEAPON || type == INVTYPE_WEAPONOFFHAND || type == INVTYPE_SHIELD) )
 				return 0;	// Titan's Grip
 
 			if(type == INVTYPE_WEAPON || type == INVTYPE_WEAPONOFFHAND)
@@ -2036,6 +2034,7 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 			{
 				//check if we already have an AB equiped
 				FindAmmoBag();
+
 				//we do have amo bag but we are not swaping them then we send error
 				if(result.Slot!=ITEM_NO_SLOT_AVAILABLE && result.Slot != slot)
 				{
@@ -2134,11 +2133,11 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		{
 			if(proto->BagFamily & ITEM_TYPE_KEYRING )
 			{
-					return 0;
+				return 0;
 			}
 			else
 			{
-					return INV_ERR_ITEM_DOESNT_GO_INTO_BAG;
+				return INV_ERR_ITEM_DOESNT_GO_INTO_BAG;
 			}
 		}
 	case CURRENCYTOKEN_SLOT_1:
@@ -2176,11 +2175,11 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		{
 			if( proto->BagFamily & ITEM_TYPE_CURRENCY )
 			{
-					return 0;
+				return 0;
 			}
 			else
 			{
-					return INV_ERR_ITEM_DOESNT_GO_INTO_BAG;
+				return INV_ERR_ITEM_DOESNT_GO_INTO_BAG;
 			}
 		}
 	default:
@@ -3217,6 +3216,7 @@ SlotResult ItemInterface::FindFreeBankSlot(ItemPrototype *proto)
 SlotResult ItemInterface::FindAmmoBag()
 {
 	for( uint32 i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++ )
+	{
 		if( m_pItems[i] != NULL && m_pItems[i]->IsAmmoBag())
 		{
 			result.ContainerSlot = ITEM_NO_SLOT_AVAILABLE;
@@ -3224,6 +3224,7 @@ SlotResult ItemInterface::FindAmmoBag()
 			result.Result = true;
 			return result;
 		}
+	}
 
 	result.ContainerSlot = ITEM_NO_SLOT_AVAILABLE;
 	result.Slot = ITEM_NO_SLOT_AVAILABLE;

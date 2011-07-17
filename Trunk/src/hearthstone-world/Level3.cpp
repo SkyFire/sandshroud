@@ -50,92 +50,12 @@ bool ChatHandler::HandleWorldPortCommand(const char* args, WorldSession *m_sessi
 
 bool ChatHandler::HandleClearCooldownsCommand(const char *args, WorldSession *m_session)
 {
-	uint32 guid = (uint32)m_session->GetPlayer()->GetSelection();
 	Player* plr = getSelectedChar(m_session, true);
-
 	if(plr == NULL)
 		return false;
 
-	if(plr->getClass()==WARRIOR)
-	{
-		plr->ClearCooldownsOnLine(26, guid);
-		plr->ClearCooldownsOnLine(256, guid);
-		plr->ClearCooldownsOnLine(257 , guid);
-		BlueSystemMessage(m_session, "Cleared all Warrior cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==PALADIN)
-	{
-		plr->ClearCooldownsOnLine(594, guid);
-		plr->ClearCooldownsOnLine(267, guid);
-		plr->ClearCooldownsOnLine(184, guid);
-		BlueSystemMessage(m_session, "Cleared all Paladin cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==HUNTER)
-	{
-		plr->ClearCooldownsOnLine(50, guid);
-		plr->ClearCooldownsOnLine(51, guid);
-		plr->ClearCooldownsOnLine(163, guid);
-		BlueSystemMessage(m_session, "Cleared all Hunter cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==ROGUE)
-	{
-		plr->ClearCooldownsOnLine(253, guid);
-		plr->ClearCooldownsOnLine(38, guid);
-		plr->ClearCooldownsOnLine(39, guid);
-		BlueSystemMessage(m_session, "Cleared all Rogue cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==PRIEST)
-	{
-		plr->ClearCooldownsOnLine(56, guid);
-		plr->ClearCooldownsOnLine(78, guid);
-		plr->ClearCooldownsOnLine(613, guid);
-		BlueSystemMessage(m_session, "Cleared all Priest cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==SHAMAN)
-	{
-		plr->ClearCooldownsOnLine(373, guid);
-		plr->ClearCooldownsOnLine(374, guid);
-		plr->ClearCooldownsOnLine(375, guid);
-		BlueSystemMessage(m_session, "Cleared all Shaman cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==DEATHKNIGHT)
-	{
-		plr->ClearCooldownsOnLine(770, guid);
-		plr->ClearCooldownsOnLine(771, guid);
-		plr->ClearCooldownsOnLine(772, guid);
-		BlueSystemMessage(m_session, "Cleared all Death Knight cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==MAGE)
-	{
-		plr->ClearCooldownsOnLine(6, guid);
-		plr->ClearCooldownsOnLine(8, guid);
-		plr->ClearCooldownsOnLine(237, guid);
-		BlueSystemMessage(m_session, "Cleared all Mage cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==WARLOCK)
-	{
-		plr->ClearCooldownsOnLine(355, guid);
-		plr->ClearCooldownsOnLine(354, guid);
-		plr->ClearCooldownsOnLine(593, guid);
-		BlueSystemMessage(m_session, "Cleared all Warlock cooldowns.");
-		return true;
-	}
-	else if(plr->getClass()==DRUID)
-	{
-		plr->ClearCooldownsOnLine(573, guid);
-		plr->ClearCooldownsOnLine(574, guid);
-		plr->ClearCooldownsOnLine(134, guid);
-		BlueSystemMessage(m_session, "Cleared all Druid cooldowns.");
-		return true;
-	}
+	plr->ResetAllCooldowns();
+	BlueSystemMessage(m_session, "Cleared all %s cooldowns.", plr->GetClassNamec());
 	return true;
 }
 

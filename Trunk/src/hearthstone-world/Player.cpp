@@ -8038,9 +8038,7 @@ void Player::RemoveItemsFromWorld()
 			if(pItem->IsInWorld())
 			{
 				if(i < INVENTORY_SLOT_BAG_END)	  // only equipment slots get mods.
-				{
 					_ApplyItemMods(pItem, i, false, false, true);
-				}
 				pItem->RemoveFromWorld();
 			}
 
@@ -8050,9 +8048,7 @@ void Player::RemoveItemsFromWorld()
 				{
 					Item* item = TO_CONTAINER(pItem)->GetItem(e);
 					if(item && item->IsInWorld())
-					{
 						item->RemoveFromWorld();
-					}
 				}
 			}
 		}
@@ -8064,11 +8060,9 @@ void Player::RemoveItemsFromWorld()
 uint32 Player::BuildCreateUpdateBlockForPlayer(ByteBuffer *data, Player* target )
 {
 	int count = 0;
-	if(target == TO_PLAYER(this))
-	{
-		// we need to send create objects for all items.
+	if(target == TO_PLAYER(this)) // we need to send create objects for all items.
 		count += GetItemInterface()->m_CreateForPlayer(data);
-	}
+
 	count += Unit::BuildCreateUpdateBlockForPlayer(data, target);
 	return count;
 }
@@ -8113,19 +8107,18 @@ void Player::ClearCooldownForSpell(uint32 spell_id)
 {
 	if( IsInWorld() )
 	{
-		WorldPacket data(12);
-		data.SetOpcode(SMSG_CLEAR_COOLDOWN);
+		WorldPacket data(SMSG_CLEAR_COOLDOWN, 12);
 		data << spell_id << GetGUID();
 		GetSession()->SendPacket(&data);
 	}
 
 	// remove cooldown data from Server side lists
-	uint32 i;
 	PlayerCooldownMap::iterator itr, itr2;
 	SpellEntry * spe = dbcSpell.LookupEntry(spell_id);
-	if(!spe) return;
+	if(spe == NULL)
+		return;
 
-	for(i = 0; i < NUM_COOLDOWN_TYPES; i++)
+	for(uint32 i = 0; i < NUM_COOLDOWN_TYPES; i++)
 	{
 		for( itr = m_cooldownMap[i].begin(); itr != m_cooldownMap[i].end(); )
 		{
@@ -8155,77 +8148,92 @@ void Player::ClearCooldownsOnLine(uint32 skill_line, uint32 called_from)
 	}
 }
 
+void Player::ClearCooldownsOnLines(set<uint32> skill_lines, uint32 called_from)
+{
+	SpellSet::const_iterator itr = mSpells.begin();
+	skilllinespell *sk;
+	for(; itr != mSpells.end(); itr++)
+	{
+		if((*itr) == called_from)	   // skip calling spell.. otherwise spammies! :D
+			continue;
+
+		sk = objmgr.GetSpellSkill((*itr));
+		if(sk && sk->skilline && (skill_lines.find(sk->skilline) != skill_lines.end()))
+			ClearCooldownForSpell((*itr));
+	}
+}
+
 void Player::ResetAllCooldowns()
 {
+	set<uint32> skilllines;
 	uint32 guid = (uint32)GetSelection();
-
 	switch(getClass())
 	{
-		case WARRIOR:
+	case WARRIOR:
 		{
-			ClearCooldownsOnLine(26, guid);
-			ClearCooldownsOnLine(256, guid);
-			ClearCooldownsOnLine(257 , guid);
+			skilllines.insert(26);
+			skilllines.insert(256);
+			skilllines.insert(257);
 		} break;
-		case PALADIN:
+	case PALADIN:
 		{
-			ClearCooldownsOnLine(594, guid);
-			ClearCooldownsOnLine(267, guid);
-			ClearCooldownsOnLine(184, guid);
+			skilllines.insert(184);
+			skilllines.insert(267);
+			skilllines.insert(594);
 		} break;
-		case HUNTER:
+	case HUNTER:
 		{
-			ClearCooldownsOnLine(50, guid);
-			ClearCooldownsOnLine(51, guid);
-			ClearCooldownsOnLine(163, guid);
+			skilllines.insert(50);
+			skilllines.insert(51);
+			skilllines.insert(163);
 		} break;
-		case ROGUE:
+	case ROGUE:
 		{
-			ClearCooldownsOnLine(253, guid);
-			ClearCooldownsOnLine(38, guid);
-			ClearCooldownsOnLine(39, guid);
+			skilllines.insert(38);
+			skilllines.insert(39);
+			skilllines.insert(253);
 		} break;
-		case PRIEST:
+	case PRIEST:
 		{
-			ClearCooldownsOnLine(56, guid);
-			ClearCooldownsOnLine(78, guid);
-			ClearCooldownsOnLine(613, guid);
+			skilllines.insert(56);
+			skilllines.insert(78);
+			skilllines.insert(613);
 		} break;
-
-		case DEATHKNIGHT:
+	case DEATHKNIGHT:
 		{
-			ClearCooldownsOnLine(770, guid);
-			ClearCooldownsOnLine(771, guid);
-			ClearCooldownsOnLine(772, guid);
+			skilllines.insert(770);
+			skilllines.insert(771);
+			skilllines.insert(772);
 		} break;
-
-		case SHAMAN:
+	case SHAMAN:
 		{
-			ClearCooldownsOnLine(373, guid);
-			ClearCooldownsOnLine(374, guid);
-			ClearCooldownsOnLine(375, guid);
+			skilllines.insert(373);
+			skilllines.insert(374);
+			skilllines.insert(375);
 		} break;
-		case MAGE:
+	case MAGE:
 		{
-			ClearCooldownsOnLine(6, guid);
-			ClearCooldownsOnLine(8, guid);
-			ClearCooldownsOnLine(237, guid);
+			skilllines.insert(6);
+			skilllines.insert(8);
+			skilllines.insert(237);
 		} break;
-		case WARLOCK:
+	case WARLOCK:
 		{
-			ClearCooldownsOnLine(355, guid);
-			ClearCooldownsOnLine(354, guid);
-			ClearCooldownsOnLine(593, guid);
+			skilllines.insert(355);
+			skilllines.insert(354);
+			skilllines.insert(593);
 		} break;
-		case DRUID:
+	case DRUID:
 		{
-			ClearCooldownsOnLine(573, guid);
-			ClearCooldownsOnLine(574, guid);
-			ClearCooldownsOnLine(134, guid);
+			skilllines.insert(573);
+			skilllines.insert(574);
+			skilllines.insert(134);
 		} break;
-
-		default: return; break;
+	default:
+		return;
+		break;
 	}
+	ClearCooldownsOnLines(skilllines, guid);
 }
 
 void Player::PushUpdateData(ByteBuffer *data, uint32 updatecount)
