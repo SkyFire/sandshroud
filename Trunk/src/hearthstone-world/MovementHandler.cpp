@@ -428,38 +428,6 @@ void WorldSession::HandleMovementOpcodes( WorldPacket & recv_data )
 	printf("Orientation: %.10f\n", _player->movement_info.orientation);
 #endif
 
-	if(sWorld.m_wallhackthreshold && (!HasGMPermissions() || !sWorld.no_antihack_on_gm))
-	{
-		if(recv_data.GetOpcode() != MSG_MOVE_JUMP && !m_isKnockedback)
-		{
-			if(_player->IsWallHackEligible())
-			{	// Make sure we aren't jumping or falling.
-				float newz = _player->movement_info.z;
-				float currentz = _player->GetPositionZ();
-
-				if(newz > currentz) // Our new height is greater than our old height
-				{
-					float deltaz = newz-currentz;
-					float run = _player->m_position.Distance2D(_player->movement_info.x, _player->movement_info.y);
-					if(run > 0.0f)
-					{
-						uint32 riseoverrun = uint32(deltaz/run);
-						if(riseoverrun > sWorld.m_wallhackthreshold)
-						{
-							sChatHandler.SystemMessageToPlr(_player, "Wall Hack Detected, if this is incorrect, please report it to an admin. %u", riseoverrun);
-							if(!--_player->m_wallhackChances)
-							{
-								_player->Root();
-								sChatHandler.SystemMessageToPlr(_player, "Wall Hack Detected, you will be disconnected shortly.");
-								sEventMgr.AddEvent(_player, &Player::SoftDisconnect, EVENT_PLAYER_SOFT_DISCONNECT, 3000, 0, 0);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
 	/************************************************************************/
 	/* Anti-Hack Checks                                                     */
 	/************************************************************************/

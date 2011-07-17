@@ -753,8 +753,6 @@ public:
 	float m_speedHackLatencyMultiplier;
 	uint32 m_speedHackResetInterval;
 	uint32 m_CEThreshold;
-	float m_wallhackrunthreshold;
-	float m_wallhackthreshold;
 
 	// shutdown
 	uint32 m_shutdownTime;

@@ -115,7 +115,6 @@ void Player::Init()
 	m_GroupInviter					= 0;
 	Lfgcomment						= "";
 	m_flyHackChances				= 5;
-	m_wallhackChances				= 5;
 	m_WaterWalkTimer				= 0;
 	m_lastWarnCounter				= 0;
 	for(int i = 0; i < 3; i++)
@@ -11782,23 +11781,6 @@ void Player::_SpeedhackCheck()
 				m_speedhackChances--;
 		}
 	}
-}
-
-bool Player::IsWallHackEligible()
-{
-	if(canFly())
-		return false;
-	if(m_TransporterGUID)
-		return false;
-	if(m_heartbeatDisable)
-		return false;
-	if(GetPlayerStatus() == TRANSFER_PENDING)
-		return false;
-	if(m_UnderwaterState & UNDERWATERSTATE_UNDERWATER)
-		return false;
-	if(GetTaxiState())
-		return false;
-	return true;
 }
 
 void Player::_Disconnect()

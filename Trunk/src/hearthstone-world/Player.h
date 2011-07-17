@@ -1641,11 +1641,6 @@ public:
 	bool 								m_speedChangeInProgress;
 	uint32								m_flyHackChances;
 
-	// Wallhack buster!
-	uint32 m_wallhackChances;
-	void _WallHackCheck();
-	bool IsWallHackEligible();
-
 	void AddSplinePacket(uint64 guid, ByteBuffer* packet);
 	ByteBuffer* GetAndRemoveSplinePacket(uint64 guid);
 	void ClearSplinePackets();

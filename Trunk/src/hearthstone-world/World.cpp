@@ -1486,7 +1486,6 @@ void World::Rehash(bool load)
 	m_speedHackResetInterval = Config.MainConfig.GetIntDefault("AntiHack", "SpeedResetPeriod", 5000);
 	antihack_cheatengine = Config.MainConfig.GetBoolDefault("AntiHack", "CheatEngine", false);
 	m_CEThreshold = Config.MainConfig.GetIntDefault("AntiHack", "CheatEngineTimeDiff", 10000);
-	m_wallhackthreshold = Config.MainConfig.GetFloatDefault("AntiHack", "WallHackThreshold", 4.0f);
 	// ======================================
 
 	m_deathKnightOnePerAccount = Config.OptionalConfig.GetBoolDefault("DeathKnight", "OnePerRealm", true);
