@@ -1899,7 +1899,7 @@ bool MapMgr::IsInRange(float fRange, Object* obj, Object* currentobj)
 	// First distance check, are we in range?
 	uint32 objareaid = obj->GetAreaID();
 	uint32 careaid = currentobj->GetAreaID();
-	if(objareaid == careaid && !IsSpecialAreaID(objareaid))
+	if(objareaid == careaid)
 	{
 		if(currentobj->GetDistance2dSq( obj ) > fRange )
 			return false;
