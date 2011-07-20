@@ -1122,6 +1122,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 
 void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 {
+	bool hashed = true;
 	uint32 spellId = GetSpellProto()->Id;
 
 	switch( GetSpellProto()->NameHash )
@@ -1188,7 +1189,6 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 						hostileSpell = 48823;
 						friendlySpell = 48821;
 					}break;
-
 				default:
 					{
 						hostileSpell = 48823;
@@ -1201,7 +1201,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				else if(isCombatSupport(p_caster, unitTarget))
 					p_caster->CastSpell(unitTarget, friendlySpell, true);
 				else
-					SendCastResult(SPELL_FAILED_BAD_TARGETS);
+					p_caster->CastSpell(p_caster, friendlySpell, true);
 			}
 		}break;
 
@@ -1274,8 +1274,14 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				return;
 
 			p_caster->NullComboPoints();
-		}
+		}break;
+	default:
+		hashed = false;
+		break;
 	}
+
+	if(hashed == true)
+		return;
 
 	switch(spellId)
 	{
@@ -2850,7 +2856,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	default:
 		{
 			if(sLog.IsOutDevelopement())
-				printf("Dummy spell not handled: %u\n", spellId);
+				printf("Dummy spell not handled: %u%s\n", spellId, ((ProcedOnSpell != NULL) ? (format(" proc'd on: %u", ProcedOnSpell->Id)) : ""));
 		}break;
 	}
 }

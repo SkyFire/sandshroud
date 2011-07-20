@@ -156,6 +156,7 @@ Unit::Unit()
 	BaseRangedDamage[1]=0;
 
 	m_CombatUpdateTimer = 0;
+	HealDoneBonusBySpell.clear();
 
 	HealDoneBase = 0;
 	HealDoneModPos = 0;

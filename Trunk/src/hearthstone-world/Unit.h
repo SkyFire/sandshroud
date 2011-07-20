@@ -1211,6 +1211,7 @@ public:
 	int32 SpellDmgDoneByAttribute[5][7];
 	int32 SpellDamageFromAP;
 
+	map<uint32, uint32> HealDoneBonusBySpell;
 	int32 HealDoneModPos;
 	int32 HealDoneBase;
 	float HealDonePctMod;

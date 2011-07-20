@@ -2993,8 +2993,21 @@ void Aura::SpellAuraDummy(bool apply)
 					TO_PLAYER(m_caster)->UnPossess();
 			}
 		}break;
-	case 59907:
+	case 59907: { }break;
+	case 60792:
 		{
+			m_caster->HealDoneBonusBySpell[635] += 141;
+			m_caster->HealDoneBonusBySpell[639] += 141;
+			m_caster->HealDoneBonusBySpell[1026] += 141;
+			m_caster->HealDoneBonusBySpell[1042] += 141;
+			m_caster->HealDoneBonusBySpell[3472] += 141;
+			m_caster->HealDoneBonusBySpell[10328] += 141;
+			m_caster->HealDoneBonusBySpell[10329] += 141;
+			m_caster->HealDoneBonusBySpell[25292] += 141;
+			m_caster->HealDoneBonusBySpell[27135] += 141;
+			m_caster->HealDoneBonusBySpell[27136] += 141;
+			m_caster->HealDoneBonusBySpell[48781] += 141;
+			m_caster->HealDoneBonusBySpell[48782] += 141;
 		}break;
 
 	default:
@@ -6226,17 +6239,21 @@ void Aura::SpellAuraSchoolAbsorb(bool apply)
 		if( m_caster != NULL && m_caster->IsPlayer() )
 		{
 			float coefmod0 = 0.0f;
-			float spcoefmod = m_spellProto->spell_coef_override;
-			SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][0], &coefmod0, m_spellProto->SpellGroupType );
-			SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][1], &coefmod0, m_spellProto->SpellGroupType );
-			spcoefmod += coefmod0/100.0f;
-
 			if(m_spellProto->spell_coef_override > 0)
 			{
+				float spcoefmod = m_spellProto->spell_coef_override;
+				SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][0], &coefmod0, m_spellProto->SpellGroupType );
+				SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][1], &coefmod0, m_spellProto->SpellGroupType );
+				spcoefmod += coefmod0/100.0f;
+				int32 spellpower = 0;
+
 				if(IsHealingSpell(m_spellProto))
-					val += float2int32( float( TO_PLAYER(m_caster)->HealDoneModPos) * spcoefmod );
+					spellpower = TO_PLAYER(m_caster)->HealDoneModPos;
 				else
-					val += float2int32( float( TO_PLAYER(m_caster)->GetDamageDoneMod( m_spellProto->School ) ) * spcoefmod );
+					spellpower = TO_PLAYER(m_caster)->GetDamageDoneMod( m_spellProto->School );
+
+				spellpower += TO_PLAYER(m_caster)->HealDoneBonusBySpell[m_spellProto->Id];
+				val += float2int32( float( spellpower) * spcoefmod );
 			}
 
 			if( m_spellProto->AP_coef_override > 0 )

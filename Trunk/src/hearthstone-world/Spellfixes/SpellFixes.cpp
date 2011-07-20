@@ -1268,18 +1268,21 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 	if( sp->EffectRadiusIndex[2] != 0 )
 		radius = std::max(::GetRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[2])),radius);
 	radius = std::max(GetMaxRange(dbcSpellRange.LookupEntry(sp->rangeIndex)), radius);
+
 	sp->base_range_or_radius = radius;
 	sp->base_range_or_radius_sqr = radius*radius;
-	float radius2 = 0.0f;
+
+	radius = 0.0f;
 	if(sp->EffectRadiusIndex[0] != 0)
-		radius2 = ::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[0]));
+		radius = ::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[0]));
 	if( sp->EffectRadiusIndex[1] != 0 )
-		radius2 = std::max(radius,::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[1])));
+		radius = std::max(radius, ::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[1])));
 	if( sp->EffectRadiusIndex[2] != 0 )
-		radius2 = std::max(::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[2])),radius);
-	radius2 = std::max(GetFriendlyMaxRange(dbcSpellRange.LookupEntry(sp->rangeIndex)), radius);
-	sp->base_range_or_radius_friendly = radius2;
-	sp->base_range_or_radius_sqr_friendly = radius2*radius2;
+		radius = std::max(::GetFriendlyRadius(dbcSpellRadius.LookupEntry(sp->EffectRadiusIndex[2])), radius);
+	radius = std::max(GetFriendlyMaxRange(dbcSpellRange.LookupEntry(sp->rangeIndex)), radius);
+
+	sp->base_range_or_radius_friendly = radius;
+	sp->base_range_or_radius_sqr_friendly = radius*radius;
 
 	// hash the name
 	//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)

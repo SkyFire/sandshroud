@@ -3674,10 +3674,10 @@ uint8 Spell::CanCast(bool tolerate)
 	}
 
 	// set up our max Range
-	//float maxRange = GetMaxRange( dbcSpellRange.LookupEntry( GetSpellProto()->rangeIndex ) );
 	float maxRange = GetSpellProto()->base_range_or_radius;
-	if(unitTarget && u_caster && !isAttackable( u_caster,unitTarget,!(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_TARGETINGSTEALTHED)))
-		maxRange = GetSpellProto()->base_range_or_radius_friendly;
+	if(m_targets.m_unitTarget && m_caster && m_caster->IsInWorld())
+		if(isCombatSupport(u_caster, m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget)))
+			maxRange = GetSpellProto()->base_range_or_radius_friendly;
 
 	if( GetSpellProto()->SpellGroupType && u_caster != NULL )
 	{
@@ -3691,6 +3691,7 @@ uint8 Spell::CanCast(bool tolerate)
 		if( !IsInrange( m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ, m_caster, ( maxRange * maxRange ) ) )
 			return SPELL_FAILED_OUT_OF_RANGE;
 	}
+
 	// Collision 2 broken for this :|
 	//if(m_targets.m_targetMask & TARGET_FLAG_DEST_LOCATION && !m_caster->IsInLineOfSight(m_targets.m_destX, m_targets.m_destY, m_targets.m_destZ))
 		//return SPELL_FAILED_LINE_OF_SIGHT;
@@ -3707,7 +3708,7 @@ uint8 Spell::CanCast(bool tolerate)
 		else
 			target = (m_caster->IsInWorld()) ? m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget) : NULLUNIT;
 
-		if(target!= NULL)
+		if(target != NULL)
 		{
 			if( g_caster != NULL )
 			{
@@ -3803,39 +3804,39 @@ uint8 Spell::CanCast(bool tolerate)
 			// scripted spell stuff
 			switch(GetSpellProto()->Id)
 			{
-				case 603: //curse of doom, can't be casted on players
-				case 30910:
-				case 47867:
+			case 603: //curse of doom, can't be casted on players
+			case 30910:
+			case 47867:
 				{
 					if(target->IsPlayer())
 						return SPELL_FAILED_TARGET_IS_PLAYER;
 				}break;
 
-				case 13907:
+			case 13907:
 				{
 					if (!target || target->IsPlayer() || target->GetCreatureType()!=TARGET_TYPE_DEMON )
 						return SPELL_FAILED_SPELL_UNAVAILABLE;
 				}break;
 
 				// disable spell
-				case 25997: // Eye for an Eye
-				case 38554: //Absorb Eye of Grillok
+			case 25997: // Eye for an Eye
+			case 38554: //Absorb Eye of Grillok
 				{
 					// do not allow spell to be cast
 					return SPELL_FAILED_SPELL_UNAVAILABLE;
 				}break;
 
 				//These spells are NPC only.
-				case 25166: //Call Glyphs of Warding
-				case 38892: //Shadow Bolt
-				case 40536: //Chain Lightning
-				case 41078: //Shadow Blast
+			case 25166: //Call Glyphs of Warding
+			case 38892: //Shadow Bolt
+			case 40536: //Chain Lightning
+			case 41078: //Shadow Blast
 				{
 					if(u_caster->IsPlayer())
 						return SPELL_FAILED_BAD_TARGETS;
 				}break;
 
-				case 982: //Revive Pet
+			case 982: //Revive Pet
 				{
 					Pet* pPet = p_caster->GetSummon();
 					if(pPet && !pPet->isDead())
@@ -4072,20 +4073,20 @@ uint8 Spell::CanCast(bool tolerate)
 			// HACK FIX
 			switch( GetSpellProto()->NameHash )
 			{
-				case SPELL_HASH_ICE_BLOCK: //Ice Block
-				case 0x9840A1A6: //Divine Shield
-				case 0x3DFA70E5: //Will of the Forsaken
+			case SPELL_HASH_ICE_BLOCK: //Ice Block
+			case 0x9840A1A6: //Divine Shield
+			case 0x3DFA70E5: //Will of the Forsaken
 				{
 					if( u_caster->m_special_state & (UNIT_STATE_FEAR | UNIT_STATE_CHARM | UNIT_STATE_SLEEP))
 						break;
 				}break;
-				case SPELL_HASH_PVP_TRINKET: // insignia of the alliance/horde 2.4.3
-				case SPELL_HASH_EVERY_MAN_FOR_HIMSELF:
-				case SPELL_HASH_DISPERSION:
-					break;
+			case SPELL_HASH_DISPERSION:
+			case SPELL_HASH_PVP_TRINKET: // insignia of the alliance/horde 2.4.3
+			case SPELL_HASH_EVERY_MAN_FOR_HIMSELF:
+				break;
 
-				default:
-					return SPELL_FAILED_PACIFIED;
+			default:
+				return SPELL_FAILED_PACIFIED;
 			}
 		}
 
@@ -4094,41 +4095,41 @@ uint8 Spell::CanCast(bool tolerate)
 			 //HACK FIX
 			switch( GetSpellProto()->NameHash )
 			{
-				case SPELL_HASH_HAND_OF_FREEDOM:
+			case SPELL_HASH_HAND_OF_FREEDOM:
 				{
 					if( !u_caster->HasDummyAura(SPELL_HASH_DIVINE_PURPOSE) )
 						return SPELL_FAILED_STUNNED;
 				}break;
-				case SPELL_HASH_ICE_BLOCK: //Ice Block
-				case SPELL_HASH_DIVINE_SHIELD: //Divine Shield
-				case SPELL_HASH_DIVINE_PROTECTION: //Divine Protection
-				case 0xCD4CDF55: //Barkskin
-					break;
+			case SPELL_HASH_ICE_BLOCK: //Ice Block
+			case SPELL_HASH_DIVINE_SHIELD: //Divine Shield
+			case SPELL_HASH_DIVINE_PROTECTION: //Divine Protection
+			case 0xCD4CDF55: //Barkskin
+				break;
 				/* -Supalosa- For some reason, being charmed or sleep'd is counted as 'Stunned'.
 				Check it: http://www.wowhead.com/?spell=700 */
 
-				case 0xC7C45478: /* Immune Movement Impairment and Loss of Control (PvP Trinkets) */
-					break;
+			case 0xC7C45478: /* Immune Movement Impairment and Loss of Control (PvP Trinkets) */
+				break;
 
-				case 0x3DFA70E5: /* Will of the Forsaken (Undead Racial) */
-					break;
+			case 0x3DFA70E5: /* Will of the Forsaken (Undead Racial) */
+				break;
 
-				case SPELL_HASH_PVP_TRINKET: // insignia of the alliance/horde 2.4.3*/
-				case SPELL_HASH_EVERY_MAN_FOR_HIMSELF:
-					break;
+			case SPELL_HASH_PVP_TRINKET: // insignia of the alliance/horde 2.4.3*/
+			case SPELL_HASH_EVERY_MAN_FOR_HIMSELF:
+				break;
 
-				case SPELL_HASH_BLINK:
-					break;
+			case SPELL_HASH_BLINK:
+				break;
 
-				case SPELL_HASH_DISPERSION:
-					break;
+			case SPELL_HASH_DISPERSION:
+				break;
 
-				default:
-					{
-						if(u_caster->IsStunned() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_STUNNED) || 
-							u_caster->IsFeared() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_FEARED))
-							return SPELL_FAILED_STUNNED;
-					}
+			default:
+				{
+					if(u_caster->IsStunned() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_STUNNED) ||
+						u_caster->IsFeared() && !(GetSpellProto()->Flags6 & FLAGS6_USABLE_WHILE_FEARED))
+						return SPELL_FAILED_STUNNED;
+				}
 			}
 		}
 
