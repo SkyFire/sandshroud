@@ -1212,7 +1212,7 @@ public:
 	int32 SpellDamageFromAP;
 
 	int32 HealDoneModPos;
-	int32 HealDoneMod;
+	int32 HealDoneBase;
 	float HealDonePctMod;
 	int32 HealTakenMod;
 	float HealTakenPctMod;

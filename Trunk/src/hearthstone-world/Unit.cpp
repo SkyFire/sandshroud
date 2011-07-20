@@ -157,7 +157,7 @@ Unit::Unit()
 
 	m_CombatUpdateTimer = 0;
 
-	HealDoneMod = 0;
+	HealDoneBase = 0;
 	HealDoneModPos = 0;
 	HealDonePctMod = 1.0f;
 	HealTakenMod = 0;

@@ -5509,7 +5509,7 @@ void Player::UpdateChanceFields()
 		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, DamageDoneNegMod[i] );
 	}
 
-	HealDoneModPos = HealDoneMod;
+	HealDoneModPos = HealDoneBase;
 	for(stat = 0; stat < 5; stat++)
 	{
 		if(SpellDmgDoneByAttribute[stat] && GetStat(stat) > 0)
@@ -9905,7 +9905,7 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 		}break;
 	case SPELL_HEALING_DONE:
 		{
-			HealDoneMod += val;
+			HealDoneBase += val;
 		}break;
 	case SPELL_DAMAGE_DONE:
 		{
@@ -9924,7 +9924,7 @@ void Player::ModifyBonuses(uint32 type,int32 val)
 		{
 			for( uint8 school = 1; school < 7; ++school )
 				DamageDonePosMod[ school ] += val;
-			HealDoneMod += val;
+			HealDoneBase += val;
 		}break;
 	}
 	UpdateStats();

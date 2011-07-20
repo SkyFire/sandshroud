@@ -6234,7 +6234,7 @@ void Aura::SpellAuraSchoolAbsorb(bool apply)
 			if(m_spellProto->spell_coef_override > 0)
 			{
 				if(IsHealingSpell(m_spellProto))
-					val += float2int32( float( TO_PLAYER(m_caster)->HealDoneMod) * spcoefmod );
+					val += float2int32( float( TO_PLAYER(m_caster)->HealDoneModPos) * spcoefmod );
 				else
 					val += float2int32( float( TO_PLAYER(m_caster)->GetDamageDoneMod( m_spellProto->School ) ) * spcoefmod );
 			}
@@ -8568,7 +8568,7 @@ void Aura::SpellAuraModHealingDone(bool apply)
 	else
 		val += -mod->m_amount;
 
-	m_target->HealDoneMod += val;
+	m_target->HealDoneBase += val;
 	if(m_target->IsPlayer())
 		TO_PLAYER( m_target )->UpdateChanceFields();
 }
@@ -9146,10 +9146,10 @@ void Aura::SpellAuraSpellHealingStatPCT(bool apply)
 	{
 		SetPositive();
 		mod->realamount = (mod->m_amount * m_target->GetUInt32Value(UNIT_FIELD_STAT0 + mod->m_miscValue))/100;
-		m_target->HealDoneMod += mod->realamount;
+		m_target->HealDoneBase += mod->realamount;
 	}
 	else
-		m_target->HealDoneMod -= mod->realamount;
+		m_target->HealDoneBase -= mod->realamount;
 }
 
 void Aura::SpellAuraFinishingMovesCannotBeDodged(bool apply)

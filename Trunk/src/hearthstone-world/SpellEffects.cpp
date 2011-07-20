@@ -6917,7 +6917,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 		pTotem->DamageDonePosMod[school] = p_caster->DamageDonePosMod[school];
 		pTotem->DamageDoneNegMod[school] = p_caster->DamageDoneNegMod[school];
 		pTotem->DamageDonePctMod[school] = p_caster->DamageDonePctMod[school];
-		pTotem->HealDoneMod = p_caster->HealDoneMod;
+		pTotem->HealDoneBase = p_caster->HealDoneBase;
 	}
 
 	uint32 j = 0;

@@ -1225,10 +1225,13 @@ void GameObject::Use(Player *p)
 	case GAMEOBJECT_TYPE_GOOBER:
 		{
 			SpellEntry * sp = dbcSpell.LookupEntryForced(goinfo->GetSpellID());
-			if(sp != NULL)
-				p->CastSpell(p,sp,true);
-			else
+			if(sp == NULL)
+			{
 				sLog.outError("Gameobject Type Goober doesn't have a spell to cast or page to read entry %u (May be false positive if object has a script)", goinfo->ID);
+				return;
+			}
+
+			p->CastSpell(p, sp, false);
 		}break;
 	case GAMEOBJECT_TYPE_CAMERA://eye of azora
 		{
