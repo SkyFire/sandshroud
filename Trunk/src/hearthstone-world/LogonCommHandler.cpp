@@ -31,9 +31,6 @@ LogonCommHandler::LogonCommHandler()
 	ReConCounter = 0;
 	pings = !Config.RealmConfig.GetBoolDefault("LogonServer", "DisablePings", false);
 	string logon_pass = Config.RealmConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
-	plrLimit = sWorld.GetPlayerLimit();
-	if(!plrLimit)
-		plrLimit = 1;
 
 	// sha1 hash it
 	Sha1Hash hash;
@@ -65,9 +62,9 @@ void LogonCommHandler::RequestAddition(LogonCommClientSocket * Socket)
 	data << uint16(0x042); // Six by nine. Forty two.
 	data << realm->Icon;
 	data << realm->WorldRegion;
-	data << realm->Population;
+	data << uint32(sWorld.GetPlayerLimit());
 	data << uint32(CL_BUILD_SUPPORT);
-	data << realm->Lock;
+	data << uint8(realm->Lock);
 	Socket->SendPacket(&data);
 }
 
@@ -285,7 +282,6 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 
 	pending_logons[request_id] = Socket;
 	pendingLock.Release();
-	RefreshRealmPop();
 
 	return request_id;
 }
@@ -316,7 +312,7 @@ void LogonCommHandler::LoadRealmConfiguration()
 		+ ":" + string(port);
 
 	realm = new Realm();
-	memset(realm, 0, sizeof(Realm*));
+	ZeroMemory(realm, sizeof(Realm*));
 	realm->Address = adress;
 	realm->Icon = Config.RealmConfig.GetIntDefault("ServerSettings", "RealmType", 1);
 	realm->WorldRegion = Config.RealmConfig.GetIntDefault("ServerSettings", "WorldRegion", 1);
@@ -418,21 +414,6 @@ void LogonCommHandler::IPBan_Remove(const char * ip)
 	data << uint32(5);		// 5 = ipban remove
 	data << ip;
 	logon->SendPacket(&data, false);
-}
-
-void LogonCommHandler::RefreshRealmPop()
-{
-	// Calc pop: 0 >= low, 1 >= med, 2 >= hig, 3 >= full
-	uint32 Playernum = sWorld.HordePlayers+sWorld.AlliancePlayers;
-	if(Playernum == plrLimit)
-	{
-		server_population = 3;
-		return;
-	}
-
-	server_population = (((sWorld.HordePlayers+sWorld.AlliancePlayers)*3)/plrLimit)-1.0f;
-	if(server_population < 0)
-		server_population = 0;
 }
 
 #endif

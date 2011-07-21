@@ -178,7 +178,7 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	{
 		sInfoCore.TimeoutSockets();
 		Realm* oldrealm = sInfoCore.GetRealm(tmp_RealmID);
-		if(oldrealm == NULL || oldrealm->Colour == REALMCOLOUR_OFFLINE) // The oldrealm should always exist.
+		if(oldrealm == NULL || oldrealm->Flag == REALM_FLAG_OFFLINE) // The oldrealm should always exist.
 		{
 			sInfoCore.RemoveRealm(tmp_RealmID);
 //			int new_tmp_RealmID = sInfoCore.GenerateRealmID(); //socket timout will DC old id after a while, make sure it's not the one we restarted
@@ -199,66 +199,42 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 		}
 	}
 
-	Realm * realm = new Realm;
-	memset(realm, 0, sizeof(Realm*));
-	realm->Name = Name;
-	realm->ServerSocket = this;
-	recvData >> realm->Address;
 	uint16 tester = 0;
-	recvData >> tester;
-	if(tester == 0x042) // Sandshroud :D
-	{
-		recvData >> realm->Icon >> realm->WorldRegion >> realm->Population;
-		if(recvData.rpos() + 2 < recvData.size())
-			recvData >> realm->RequiredClient;
-	}
-	else if(tester == 0) // ArcEmu's Colour
-	{
-		uint32 icon32 = 0;
-		uint32 region32 = 0;
-		// Take tester again, so we get the full uint32 of colour
-		recvData >> tester >> icon32 >> region32 >> realm->Population;
-		realm->Icon = icon32;
-		realm->WorldRegion = region32;
-	}
-	else if(recvData.size()-recvData.rpos() > 13) // Ascent
-	{
-		uint16 tester2;
-		recvData >> tester2;
-		uint32 colour = uint32(uint32(tester) << tester2);
-		uint32 icon32 = 0;
-		uint32 region32 = 0;
-		recvData >> icon32 >> region32 >> realm->Population;
-		realm->Colour = colour;
-		realm->Icon = icon32;
-		realm->WorldRegion = region32;
-	}
-	else // Original Aspire? Break the tester into two, and retrieve the rest of the data.
-	{
-		realm->Icon = uint8(tester & 0xff);
-		realm->WorldRegion = uint8(tester >> 8);
-		recvData >> realm->Population;
-	}
-
-	if(recvData.rpos() != recvData.wpos())
-		recvData >> realm->Lock;
-	else
-		realm->Lock = 0;
-
-	realm->staticrealm = false;
-
+	std::string adress;
+	recvData >> adress;
 	// Check if we have a conflicting realm that is using the same adress.
-	if(sInfoCore.FindRealmWithAdress(realm->Address))
+	if(sInfoCore.FindRealmWithAdress(adress))
 	{
 		WorldPacket data(RSMSG_REALM_REGISTERED, 4);
 		data << uint32(1); // Error
 		data << uint32(0); // Error
 		data << string("ERROR"); // Error
 		SendPacket(&data);
-		Log.Notice("LogonCommServer", "Realm(%s) addition denied, adress already used.", realm->Name.c_str());
+		Log.Notice("LogonCommServer", "Realm(%s) addition denied, adress already used.", Name.c_str());
 		Log.Line();
 		return;
 	}
+
+	recvData >> tester;
+	if(tester != 0x042)
+	{
+		WorldPacket data(RSMSG_REALM_REGISTERED, 4);
+		data << uint32(1); // Error
+		data << uint32(0);
+		data << string("ERROR");
+		SendPacket(&data);
+		Log.Notice("LogonCommServer", "Realm(%s) addition denied, incorrect world server type.", Name.c_str());
+		return;
+	}
+
+	Realm * realm = new Realm;
+	ZeroMemory(realm, sizeof(Realm*));
+	realm->Name = Name;
+	realm->Address = adress;
+	realm->Flag = REALM_FLAG_RECOMMENDED;
+	realm->Population = REALM_POP_NEW_PLAYERS;
+	realm->ServerSocket = this;
+	recvData >> realm->Icon >> realm->WorldRegion >> realm->RealmCap >> realm->RequiredClient >> realm->Lock;
 
 	// Add to the main realm list
 	sInfoCore.AddRealm(tmp_RealmID, realm);
@@ -655,8 +631,7 @@ void LogonCommServerSocket::HandleServerPong(WorldPacket &recvData)
 
 void LogonCommServerSocket::HandlePopulationRespond(WorldPacket & recvData)
 {
-	float population;
-	uint32 realmId;
+	uint32 realmId, population;
 	recvData >> realmId >> population;
 	sInfoCore.UpdateRealmPop(realmId, population);
 }

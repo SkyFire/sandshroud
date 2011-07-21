@@ -160,8 +160,9 @@ void LogonConsole::ListRealms(char *str)
 		sLog.outString("   Name:       %s", rlm->Name.c_str());
 		sLog.outString("   Address:    %s", rlm->Address.c_str());
 		sLog.outString("   Icon:       %u", rlm->Icon);
-		sLog.outString("   Colour:     %u", rlm->Colour);
-		sLog.outString("   Population: %f", rlm->Population);
+		sLog.outString("   Flag:       %u", rlm->Flag);
+		sLog.outString("   Lock:       %u", rlm->Lock);
+		sLog.outString("   Plr Cap:    %u", rlm->RealmCap);
 		sLog.outString("   TimeZone:   %u", rlm->WorldRegion);
 		sLog.outString("------------------------------------");
 	}

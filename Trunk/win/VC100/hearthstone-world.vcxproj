@@ -326,12 +326,9 @@
     <ClCompile Include="..\..\src\hearthstone-world\Wintergrasp.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WintergraspInternal.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\WordFilter.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\ClusterInterface.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\LogonCommClient.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\LogonCommHandler.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\VoiceChatClientSocket.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\WorkdSocketCluster.cpp" />
-    <ClCompile Include="..\..\src\hearthstone-world\WorkerServerClient.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\Map.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\MapCell.cpp" />
     <ClCompile Include="..\..\src\hearthstone-world\MapMgr.cpp" />
@@ -441,11 +438,9 @@
     <ClInclude Include="..\..\src\hearthstone-world\Wintergrasp.h" />
     <ClInclude Include="..\..\src\hearthstone-world\WintergraspInternal.h" />
     <ClInclude Include="..\..\src\hearthstone-world\WordFilter.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\ClusterInterface.h" />
     <ClInclude Include="..\..\src\hearthstone-world\LogonCommClient.h" />
     <ClInclude Include="..\..\src\hearthstone-world\LogonCommHandler.h" />
     <ClInclude Include="..\..\src\hearthstone-world\VoiceChatClientSocket.h" />
-    <ClInclude Include="..\..\src\hearthstone-world\WorkerServerClient.h" />
     <ClInclude Include="..\..\src\hearthstone-world\CellHandler.h" />
     <ClInclude Include="..\..\src\hearthstone-world\Map.h" />
     <ClInclude Include="..\..\src\hearthstone-world\MapCell.h" />

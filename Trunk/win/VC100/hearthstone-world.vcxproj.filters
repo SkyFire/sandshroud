@@ -170,15 +170,6 @@
     <ClCompile Include="..\..\src\hearthstone-world\WorldStateManager.cpp">
       <Filter>Map System\Environment</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\ClusterInterface.cpp">
-      <Filter>Interserver\Clustering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\WorkdSocketCluster.cpp">
-      <Filter>Interserver\Clustering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-world\WorkerServerClient.cpp">
-      <Filter>Interserver\Clustering</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-world\LogonCommClient.cpp">
       <Filter>Interserver\Logon</Filter>
     </ClCompile>
@@ -521,12 +512,6 @@
     <ClInclude Include="..\..\src\hearthstone-world\WorldStates.h">
       <Filter>Map System\Environment</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\ClusterInterface.h">
-      <Filter>Interserver\Clustering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-world\WorkerServerClient.h">
-      <Filter>Interserver\Clustering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-world\LogonCommHandler.h">
       <Filter>Interserver\Logon</Filter>
     </ClInclude>
@@ -720,9 +705,6 @@
     </Filter>
     <Filter Include="Chat\Commands">
       <UniqueIdentifier>{17d6a16a-5263-47b1-9ec1-531f0b9bbceb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Interserver\Clustering">
-      <UniqueIdentifier>{9a274e1b-9651-454a-8e1e-e18a2e3db191}</UniqueIdentifier>
     </Filter>
     <Filter Include="Interserver\Logon">
       <UniqueIdentifier>{4d806c80-5634-4f9f-808e-9d13aa92fe5b}</UniqueIdentifier>

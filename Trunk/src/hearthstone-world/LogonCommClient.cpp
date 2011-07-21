@@ -418,12 +418,9 @@ void LogonCommClientSocket::HandlePopulationRequest(WorldPacket & recvData)
 	uint32 realmId;
 	recvData >> realmId; // Grab the realm id
 
-	// Refresh the realm pop real quick.
-	sLogonCommHandler.RefreshRealmPop();
-
 	// Send the result
-	WorldPacket data(RCMSG_REALM_POP_RES, 16);
-	data << realmId << sLogonCommHandler.GetPopulation();
+	WorldPacket data(RCMSG_REALM_POP_RES, 8);
+	data << realmId << uint32(sWorld.AlliancePlayers*sWorld.HordePlayers);
 	SendPacket(&data, false);
 }
 

@@ -466,38 +466,38 @@ bool InformationCore::FindRealmWithAdress(string Address)
 	return false;
 }
 
-void InformationCore::UpdateRealmStatus(uint32 realm_id, uint8 Color)
-{
-	realmLock.Acquire();
-	map<uint32, Realm*>::iterator itr = m_realms.find(realm_id);
-	if(itr != m_realms.end())
-	{
-		DEBUG_LOG("Socket","Updating realm `%s`(id:%u) to status %u.", itr->second->Name.c_str(), realm_id, Color);
-		itr->second->Colour = Color;
-	}
-	realmLock.Release();
-}
-
-void InformationCore::UpdateRealmPop(uint32 realm_id, float pop)
+void InformationCore::UpdateRealmPop(uint32 realm_id, uint32 population)
 {
 	realmLock.Acquire();
 	map<uint32, Realm*>::iterator itr = m_realms.find(realm_id);
 	if(itr != m_realms.end())
 	{
 		uint8 temp;
-		if( pop >= 3 )
-			temp =  0x81; // Full
-		else if ( pop >= 2 )
-			temp = 0x01; // Red
-		else if ( pop >= 0.5 )
-			temp = 0x00; // Green
+		uint32 color;
+		float pop = population/itr->second->RealmCap;
+		if(pop == 1)
+		{
+			color = REALM_POP_FULL;
+			temp = REALM_FLAG_FULL|REALM_FLAG_INVALID;
+		}
+		else if ( pop >= 0.6 )
+		{
+			color = REALM_POP_MEDIUM;
+			temp = REALM_FLAG_NONE;
+		}
+		else if ( pop >= 0.2 )
+		{
+			color = REALM_POP_NEW;
+			temp = REALM_FLAG_NEW;
+		}
 		else
-			temp = 0x20; // recommended
+		{
+			color = REALM_POP_NEW_PLAYERS;
+			temp = REALM_FLAG_RECOMMENDED;
+		}
 
-		itr->second->Population = pop;
-		itr->second->Colour = temp;
-		if(temp == 0x81)
-			itr->second->Lock = 1;
+		itr->second->Population = color;
+		itr->second->Flag = temp;
 	}
 	realmLock.Release();
 }
@@ -526,9 +526,9 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 
 			data << uint32(realm->Icon);
 			if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
-				data << uint8(REALMCOLOUR_OFFLINE);
+				data << uint8(REALM_FLAG_SPECIFYBUILD);
 			else
-				data << uint8(realm->Colour);
+				data << uint8(realm->Flag);
 
 			// This part is the same for all.
 			data << realm->Name;
@@ -581,12 +581,12 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
 		{
 			data << uint8(1);
-			data << uint8(REALMCOLOUR_OFFLINE);
+			data << uint8(REALM_FLAG_SPECIFYBUILD);
 		}
 		else
 		{
 			data << realm->Lock;
-			data << realm->Colour;
+			data << realm->Flag;
 		}
 
 		data << realm->Name;
@@ -645,6 +645,7 @@ void InformationCore::TimeoutSockets()
 			s->Disconnect();
 			continue;;
 		}
+		s->RefreshRealmsPop();
 	}
 
 	serverSocketLock.Release();
@@ -656,10 +657,10 @@ void InformationCore::SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss
 	if( itr != m_realms.end() )
 	{
 		Realm * pr = itr->second;
-		if( pr->ServerSocket == ss && pr->staticrealm == false)
+		if( pr->ServerSocket == ss )
 		{
 			DEBUG_LOG("LogonServer","Realm: %s is now offline.\n", pr->Name.c_str());
-			pr->Colour = REALMCOLOUR_OFFLINE;
+			pr->Flag = REALM_FLAG_OFFLINE;
 
 			// clear the mapping, when its re-registered it will send it again
 			pr->m_charMapLock.Acquire();
@@ -691,28 +692,4 @@ void InformationCore::CheckServers()
 	}
 
 	serverSocketLock.Release();
-}
-
-void InformationCore::LoadStaticRealms()
-{
-	Realm* realm = NULL;
-	QueryResult* result = sLogonSQL->Query("SELECT * FROM static_realms");
-	if(result != NULL)
-	{
-		do
-		{
-			Field* field = result->Fetch();
-			realm = new Realm;
-
-			realm->Name = field[0].GetString();
-			realm->Address = format("%s:%u", field[1].GetString(), field[2].GetUInt32());
-			realm->Colour = 0;
-			realm->Icon = field[3].GetUInt8();
-			realm->WorldRegion = field[4].GetUInt16();
-			realm->Population = field[5].GetFloat();
-			realm->staticrealm = true;
-			AddRealm(GenerateRealmID(), realm);
-		}while(result->NextRow());
-		delete result;
-	}
 }

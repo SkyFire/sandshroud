@@ -26,10 +26,18 @@
 
 enum RealmColours
 {
-	REALMCOLOUR_GREEN			= 0,
-	REALMCOLOUR_RED				= 1,
-	REALMCOLOUR_OFFLINE			= 2,
-	REALMCOLOUR_BLUE			= 3,
+	REALM_POP_MEDIUM		= 0,
+	REALM_POP_NEW			= 200,
+	REALM_POP_FULL			= 400,
+	REALM_POP_NEW_PLAYERS	= 600,
+
+	REALM_FLAG_NONE			= 0x00, // Green?
+	REALM_FLAG_INVALID		= 0x01, // Red!
+	REALM_FLAG_OFFLINE		= 0x02, // Grey!
+	REALM_FLAG_SPECIFYBUILD	= 0x04, // Red!
+	REALM_FLAG_RECOMMENDED	= 0x20, // Green!
+	REALM_FLAG_NEW			= 0x40,
+	REALM_FLAG_FULL			= 0x80
 };
 
 struct Account
@@ -187,12 +195,12 @@ typedef struct Realm
 {
 	string Name;
 	string Address;
-	uint8 Colour;
+	uint8 Flag;
 	uint8 Icon;
 	uint8 WorldRegion;
-	float Population;
 	uint8 Lock;
-	bool staticrealm;
+	float Population;
+	uint32 RealmCap;
 	uint32 RequiredClient;
 	Mutex m_charMapLock;
 	HM_NAMESPACE::hash_map<uint32, uint8> CharacterMap;
@@ -231,15 +239,13 @@ public:
 		return ++realmhigh;
 	}
 
-	void		  LoadStaticRealms();
 	Realm*		  AddRealm(uint32 realm_id, Realm * rlm);
 	Realm*		  GetRealm(uint32 realm_id);
 	int32		  GetRealmIdByName(string Name);
 	map<uint32, Realm*> GetRealmMap() { return m_realms; }
 	void		  RemoveRealm(uint32 realm_id);
 	bool		  FindRealmWithAdress(string Address);
-	void		  UpdateRealmStatus(uint32 realm_id, uint8 Color);
-	void		  UpdateRealmPop(uint32 realm_id, float pop);
+	void		  UpdateRealmPop(uint32 realm_id, uint32 population);
 	void		  SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss);
 
 	HEARTHSTONE_INLINE void   AddServerSocket(LogonCommServerSocket * sock) { serverSocketLock.Acquire(); m_serverSockets.insert( sock ); serverSocketLock.Release(); }
