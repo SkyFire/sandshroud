@@ -1173,19 +1173,25 @@ HEARTHSTONE_INLINE bool IsHealingSpell(SpellEntry *sp)
 	{
 		switch( sp->Effect[i] )
 		{
-			case SPELL_EFFECT_HEAL:
-			case SPELL_EFFECT_HEALTH_FUNNEL:
-			case SPELL_EFFECT_HEAL_MAX_HEALTH:
-				return true;
+		case SPELL_EFFECT_SCHOOL_DAMAGE:
+			return false;
+			break;
 
-			case SPELL_EFFECT_APPLY_AURA:
-			case SPELL_EFFECT_APPLY_AREA_AURA:
+		case SPELL_EFFECT_HEAL:
+		case SPELL_EFFECT_HEALTH_FUNNEL:
+		case SPELL_EFFECT_HEAL_MAX_HEALTH:
+			return true;
+			break;
+
+		case SPELL_EFFECT_APPLY_AURA:
+		case SPELL_EFFECT_APPLY_AREA_AURA:
 			{
 				switch( sp->EffectApplyAuraName[i] )
 				{
 				case 8://SPELL_AURA_PERIODIC_HEAL:
 				case 62://SPELL_AURA_PERIODIC_HEALTH_FUNNEL:
 					return true;
+					break;
 
 				case 23://SPELL_AURA_PERIODIC_TRIGGER_SPELL:
 					{
@@ -1193,12 +1199,12 @@ HEARTHSTONE_INLINE bool IsHealingSpell(SpellEntry *sp)
 						if(triggered && triggered != sp && IsHealingSpell(triggered))
 							return true;
 					}break;
-				};
-			}
+				}
+			}break;
 		}
 	}
 
-	//flash of light, holy light uses scripted effect which is not neceserally heal spell
+	//flash of light, holy light uses a scripted effect which is not necessarily a heal spell
 	if( sp->NameHash == SPELL_HASH_HOLY_LIGHT || sp->NameHash == SPELL_HASH_FLASH_OF_LIGHT )
 		return true;
 

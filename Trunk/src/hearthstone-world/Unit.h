@@ -1031,11 +1031,6 @@ public:
 	//Custom timers
 	uint32 m_CustomTimers[NUM_CUSTOM_TIMERS];
 
-	//Beacon of Light
-	Unit* BeaconCaster;//if we receive heal from him
-	Unit* BeaconTarget;//heal him for this same value
-	void RemoveBeacons();
-
 	// AIInterface
 	AIInterface *GetAIInterface() { return m_aiInterface; }
 
@@ -1057,7 +1052,7 @@ public:
 	bool setDetectRangeMod(uint64 guid, int32 amount);
 	void unsetDetectRangeMod(uint64 guid);
 	int32 getDetectRangeMod(uint64 guid);
-	void Heal(Unit* target,uint32 SpellId, uint32 amount);
+	uint32 Heal(Unit* target,uint32 SpellId, uint32 amount);
 	void Energize(Unit* target,uint32 SpellId, uint32 amount, uint32 type);
 
 	uint32 SchoolCastPrevent[7];

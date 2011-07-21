@@ -1387,7 +1387,7 @@ void Spell::cast(bool check)
 
 			for(uint32 i=0;i<3;++i)
 			{
-				if( GetSpellProto()->Effect[i])
+				if(GetSpellProto()->Effect[i])
 					 FillTargetMap(i);
 			}
 
@@ -4738,46 +4738,44 @@ void Spell::Heal(int32 amount)
 	}
 
 	if( m_caster )
-	{
 		SendHealSpellOnPlayer( m_caster, unitTarget, amount, critical, overheal, GetSpellProto()->logsId ? GetSpellProto()->logsId : (pSpellId ? pSpellId : GetSpellProto()->Id) );
-	}
+
 	if( p_caster != NULL )
 	{
+		//Beacon of Light
+		Player *HealTarget;
+		uint32 beaconoverheal;
+		if(p_caster->GetGroup() && p_caster->IsInWorld())
+		{
+			std::map<uint32, uint32> beaconmap = p_caster->GetGroup()->m_BeaconOfLightTargets;
+			if(beaconmap.size())
+			{
+				for(std::map<uint32, uint32>::iterator itr = beaconmap.begin(); itr != beaconmap.end(); itr++)
+				{
+					if((HealTarget = p_caster->GetMapMgr()->GetPlayer(itr->first)) != NULL && HealTarget->IsInWorld())
+					{
+						if(p_caster->GetLowGUID() != itr->second)
+							continue;
+						if(HealTarget->GetGUID() == unitTarget->GetGUID())	// don't heal our target again.
+							continue;
+						if(p_caster->DuelingWith == HealTarget)
+							continue;
+
+						beaconoverheal = p_caster->Heal(HealTarget, GetSpellProto()->Id, amount);
+						p_caster->m_bgScore.HealingDone += amount - beaconoverheal;
+						HealTarget = NULL;
+					}
+					else
+						beaconmap.erase(itr->first);
+				}
+			}
+ 		}
+
 		p_caster->m_bgScore.HealingDone += amount - overheal;
 		if( p_caster->m_bg != NULL )
 			p_caster->m_bg->UpdatePvPData();
-	}
 
- 	//Beacon of Light
-	if(p_caster && p_caster->GetGroup())
- 	{
-		std::map<Player*,uint32> beaconmap = p_caster->GetGroup()->m_BeaconOfLightTargets;
-
-		if(beaconmap.size())
-		{
-			for(std::map<Player*, uint32>::iterator itr = beaconmap.begin(); itr != beaconmap.end(); itr++)
-			{
-				if(itr->first != NULL)
-				{
-					Player* HealTarget = itr->first;
-					if(HealTarget->GetGUID() == p_caster->GetGUID())	// don't heal ourself!
-						continue;
-
-					if((HealTarget->GetUInt32Value(UNIT_FIELD_HEALTH) + amount) >= HealTarget->GetUInt32Value(UNIT_FIELD_MAXHEALTH))
-						amount = (HealTarget->GetUInt32Value(UNIT_FIELD_MAXHEALTH) - HealTarget->GetUInt32Value(UNIT_FIELD_HEALTH));
-
-					HealTarget->ModUnsigned32Value(UNIT_FIELD_HEALTH, amount);
-					SendHealSpellOnPlayer( p_caster, HealTarget, amount, critical, overheal, GetSpellProto()->logsId ? GetSpellProto()->logsId : (pSpellId ? pSpellId : GetSpellProto()->Id) );
-				}
-				else
-					beaconmap.erase(itr);
-			}
-		}
- 	}
-
-	if (p_caster)
-	{
-		p_caster->m_casted_amount[GetSpellProto()->School]=amount;
+		p_caster->m_casted_amount[GetSpellProto()->School] = amount;
 	}
 
 	// add threat

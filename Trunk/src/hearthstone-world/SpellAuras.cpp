@@ -1664,40 +1664,27 @@ void Aura::SpellAuraDummy(bool apply)
 
 	bool dummy_aura = false;
 	uint32 TamingSpellid = 0;
-	Unit * m_caster = GetUnitCaster();
-	Player* _ptarget = TO_PLAYER( m_target );
+	Unit *m_caster = GetUnitCaster();
+	Player *p_caster = m_caster->IsPlayer() ? TO_PLAYER(m_caster) : NULLPLR;
+	Player *_ptarget = TO_PLAYER( m_target );
 
 	switch(GetSpellId())
 	{
 	case 53563:
 		{
-			if( apply )
+			if(p_caster != NULL && p_caster->GetGroup() != NULL)
 			{
-				if(_ptarget->GetGroup() != NULL)
-				{
-					_ptarget->GetGroup()->AddBeaconOfLightTarget(_ptarget);	//add me to the target list
-					//_ptarget->SetUInt32Value(UNIT_FIELD_DISPLAYID, 0);	// Set Flame DisplayID here!
-				}
-			}
-			else
-			{
-				if(_ptarget->GetGroup() != NULL)
-					_ptarget->GetGroup()->RemoveBeaconOfLightTarget(_ptarget);	//time's over
-					//SetUInt32Value(UNIT_FIELD_DISPLAYID,GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
+				if( apply )
+					p_caster->GetGroup()->AddBeaconOfLightTarget(_ptarget->GetLowGUID(), p_caster->GetLowGUID());
+				else
+					p_caster->GetGroup()->RemoveBeaconOfLightTarget(_ptarget->GetLowGUID(), p_caster->GetLowGUID());
 			}
 		}break;
 	case 13809: //Frost Traps
 		{
-
 			SpellEntry *spellentry = dbcSpell.LookupEntry( 13810 );
-			if(!spellentry)
-			{
+			if(spellentry == NULL || !m_spellProto->Effect[0])
 				return;
-			}
-			if (!m_spellProto->Effect[0])
-			{
-				return;
-			}
 
 			Spell* sp = NULLSPELL;
 			sp = new Spell(m_caster, spellentry, false, this);
@@ -3053,9 +3040,6 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 			else
 			{
-				if(sLog.IsOutDevelopement())
-					printf("Dummy aura not handled: %u\n", GetSpellId());
-
 				dummy_aura = true;
 			}
 		}break;
@@ -3114,7 +3098,12 @@ void Aura::SpellAuraDummy(bool apply)
 	if( dummy_aura )
 	{
 		if( apply )
+		{
 			m_target->AddDummyAura( m_spellProto );
+
+			if(sLog.IsOutDevelopement())
+				printf("Dummy aura not handled: %u%s\n", GetSpellId(), (pSpellId ? format(" %u", pSpellId).c_str() : ""));
+		}
 		else
 			m_target->RemoveDummyAura( m_spellProto->NameHash );
 	}

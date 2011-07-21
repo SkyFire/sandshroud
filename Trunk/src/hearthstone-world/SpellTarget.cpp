@@ -424,12 +424,12 @@ void Spell::SpellTargetSingleTargetFriend(uint32 i, uint32 j)
 	if(m_targets.m_unitTarget == m_caster->GetGUID())
 		Target = u_caster;
 	else
-		Target = m_caster->GetMapMgr() ? m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget) : NULLUNIT;
-	if(!Target)
+		Target = m_caster->IsInWorld() ? m_caster->GetMapMgr()->GetUnit(m_targets.m_unitTarget) : NULLUNIT;
+	if(Target == NULLUNIT)
 		return;
 
-	float r= GetFriendlyMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
-	if(IsInrange (m_caster->GetPositionX(),m_caster->GetPositionY(),m_caster->GetPositionZ(),Target, r*r))
+	float r = GetFriendlyMaxRange(dbcSpellRange.LookupEntry(GetSpellProto()->rangeIndex));
+	if(IsInrange(m_caster, Target, r*r))
 		_AddTargetForced(Target->GetGUID(), i);
 }
 

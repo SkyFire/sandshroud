@@ -799,7 +799,6 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 						if( Entry->spell[c] != 0 )
 							m_owner->RemoveAura( Entry->spell[c] );
 					}
-
 				}break;
 
 			case 4:		 // Modify physical resistance
@@ -824,7 +823,6 @@ void Item::ApplyEnchantmentBonus( uint32 Slot, bool Apply )
 						val = RANDOM_SUFFIX_MAGIC_CALCULATION( RandomSuffixAmount, GetItemRandomSuffixFactor() );
 
 					m_owner->ModifyBonuses( Entry->spell[c], Apply ? val : -val );
-					m_owner->UpdateStats();
 				}break;
 
 			case 6:	 // Rockbiter weapon (increase damage per second... how the hell do you calc that)

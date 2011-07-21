@@ -3345,6 +3345,14 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->AllowBackAttack = true;
 		}break;
 
+		// Beacon of the Light (Dummy Aura)
+	case 53563:
+		{
+			sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
+			sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
+			sp->c_is_flags = SPELL_FLAG_IS_FORCEDBUFF;
+		}break;
+
 		//////////////////////////////////////////
 		// HUNTER								//
 		//////////////////////////////////////////
@@ -4035,13 +4043,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		//////////////////////////////////////////
 
 		// Insert	warlock	spell	fixes	here
-		// Beacon of the Light (Dummy Aura)
-		case 53563:
-			{
-			sp->Effect[0] = SPELL_EFFECT_APPLY_AURA;
-			sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
-			sp->RecoveryTime = 60000;	// Hacky, but we add 1 Minute cd until we have another way of fixing this
-			}break;
 	// Demonic Knowledge
 	case 35691:
 	case 35692:
@@ -4975,6 +4976,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->procFlags = PROC_ON_CAST_SPELL;
 		}break;
 
+		// Glyph of hex
+	case 63291:
+		{
+			sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
+		}break;
 	}
 
 	switch( sp->NameHash )
@@ -5009,7 +5015,6 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		//Shaman
 	case SPELL_HASH_FIRE_RESISTANCE:
 	case SPELL_HASH_FROST_RESISTANCE:
-	case SPELL_HASH_FLAMETONGUE_TOTEM:
 	case SPELL_HASH_NATURE_RESISTANCE:
 	case SPELL_HASH_STONESKIN:
 	case SPELL_HASH_STRENGTH_OF_EARTH:
@@ -5104,280 +5109,258 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		{
 			sp->MaxTargets = 1;
 		}break;
-	default:
+	case SPELL_HASH_IMPROVED_DEVOTION_AURA:
 		{
-			if( sp->NameHash == SPELL_HASH_IMPROVED_DEVOTION_AURA )
-			{
 				sp->EffectApplyAuraName[1] = SPELL_AURA_MOD_HEALING_PCT;
 				sp->EffectBasePoints[1] = 6;
 				sp->EffectMiscValue[1] = 127;
-			}
-
-			if( sp->NameHash == SPELL_HASH_AVENGER_S_SHIELD )
-			{
-				sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
-			}
-
-			if( sp->NameHash == SPELL_HASH_SHIELD_OF_RIGHTEOUSNESS )
-			{
-				sp->EffectChainTarget[0] = 0;
-			}
-
-			////////////// HUNTER ///////////////////
-
-			// Insert hunter spell fixes here
-			if( sp->EquippedItemClass == 2 && sp->EquippedItemSubClass & 262156 ) // 4 + 8 + 262144 ( becomes item classes 2, 3 and 18 which correspond to bow, gun and crossbow respectively)
-				sp->is_ranged_spell = true;
-
-			if( sp->NameHash == SPELL_HASH_AIMED_SHOT)
-				sp->maxstack = 1; // Healing reduction shouldn't stack
-
-			if( sp->NameHash == SPELL_HASH_EXPLOSIVE_SHOT )
-				sp->EffectApplyAuraName[0] = SPELL_AURA_PERIODIC_DAMAGE;
-
-			if( sp->NameHash == SPELL_HASH_MORTAL_SHOTS )
-				sp->EffectSpellClassMask[0][0] += 1;
-
-			if( sp->NameHash == SPELL_HASH_MEND_PET )
-				sp->ChannelInterruptFlags = 0;
-
-			if( sp->NameHash == SPELL_HASH_EAGLE_EYE )
-				sp->Effect[1] = 0;
-
-			if( sp->NameHash == SPELL_HASH_ENTRAPMENT && sp->EffectApplyAuraName[0] == SPELL_AURA_MOD_ROOT )
+		}break;
+	case SPELL_HASH_AVENGER_S_SHIELD:
+		{
+			sp->Spell_Dmg_Type = SPELL_DMG_TYPE_MAGIC;
+		}break;
+	case SPELL_HASH_SHIELD_OF_RIGHTEOUSNESS:
+		{
+			sp->EffectChainTarget[0] = 0;
+		}break;
+	case SPELL_HASH_AIMED_SHOT:
+		{
+			sp->maxstack = 1; // Healing reduction shouldn't stack
+		}break;
+	case SPELL_HASH_EXPLOSIVE_SHOT:
+		{
+			sp->EffectApplyAuraName[0] = SPELL_AURA_PERIODIC_DAMAGE;
+		}break;
+	case SPELL_HASH_MORTAL_SHOTS:
+		{
+			sp->EffectSpellClassMask[0][0] += 1;
+		}break;
+	case SPELL_HASH_MEND_PET:
+		{
+			sp->ChannelInterruptFlags = 0;
+		}break;
+	case SPELL_HASH_EAGLE_EYE:
+		{
+			sp->Effect[1] = 0;
+		}break;
+	case SPELL_HASH_ENTRAPMENT:
+		{
+			if(sp->EffectApplyAuraName[0] == SPELL_AURA_MOD_ROOT)
 			{
 				sp->EffectImplicitTargetA[0] = 15;
 				sp->EffectRadiusIndex[0] = 13;
 			}
-			if(sp->NameHash == SPELL_HASH_WILD_QUIVER)
-				sp->EffectApplyAuraName[1] = 0;
-			//////////////////////////////////////////
-			// ROGUE								//
-			//////////////////////////////////////////
+		}break;
+	case SPELL_HASH_WILD_QUIVER:
+		{
+			sp->EffectApplyAuraName[1] = 0;
+		}break;
+	case SPELL_HASH_REMORSELESS_ATTACKS:
+		{
+			sp->procFlags = PROC_ON_GAIN_EXPIERIENCE;
+		}break;
+	case SPELL_HASH_UNFAIR_ADVANTAGE:
+		{
+			sp->procflags2 = PROC_ON_DODGE_VICTIM;
+		}break;
+	case SPELL_HASH_COMBAT_POTENCY:
+		{
+			sp->procFlags = PROC_ON_MELEE_ATTACK;
+		}break;
+	case SPELL_HASH_PAIN_AND_SUFFERING:
+		{
+			sp->procFlags = PROC_ON_CAST_SPELL;
+		}break;
+	case SPELL_HASH_FOCUSED_ATTACKS:
+		{
+			sp->procFlags = PROC_ON_CRIT_ATTACK;
+		}break;
+	case SPELL_HASH_SEAL_FATE:
+		{
+			sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
+			sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
+		}break;
+	case SPELL_HASH_VILE_POISONS:
+		{
+			sp->EffectSpellClassMask[0][0] = 8388608; // envenom
+			sp->EffectSpellClassMask[0][1] = 8;
+			sp->EffectSpellClassMask[1][0] = 8192 | 268435456 | 65536; //poisons
+			sp->EffectSpellClassMask[1][1] = 524288;
+		}break;
+	case SPELL_HASH_STEALTH:
+		{
+			if( !(sp->AuraInterruptFlags & AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN ) )
+				sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
 
-			// Insert rogue spell fixes here
-			if( sp->NameHash == SPELL_HASH_REMORSELESS_ATTACKS )
-				sp->procFlags = PROC_ON_GAIN_EXPIERIENCE;
-
-			if( sp->NameHash == SPELL_HASH_UNFAIR_ADVANTAGE )
-				sp->procflags2 = PROC_ON_DODGE_VICTIM;
-
-			if( sp->NameHash == SPELL_HASH_COMBAT_POTENCY )
-				sp->procFlags = PROC_ON_MELEE_ATTACK;
-
-			if( sp->NameHash == SPELL_HASH_PAIN_AND_SUFFERING )
-				sp->procFlags = PROC_ON_CAST_SPELL;
-
-			if( sp->NameHash == SPELL_HASH_FOCUSED_ATTACKS )
-				sp->procFlags = PROC_ON_CRIT_ATTACK;
-
-			if( sp->NameHash == SPELL_HASH_SEAL_FATE )
-			{
-				sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
-				sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
-			}
-
-			if( sp->NameHash == SPELL_HASH_VILE_POISONS )
-			{
-				sp->EffectSpellClassMask[0][0] = 8388608; // envenom
-				sp->EffectSpellClassMask[0][1] = 8;
-				sp->EffectSpellClassMask[1][0] = 8192 | 268435456 | 65536; //poisons
-				sp->EffectSpellClassMask[1][1] = 524288;
-			}
-
-			if( sp->NameHash == SPELL_HASH_STEALTH )
-			{
-				if( !(sp->AuraInterruptFlags & AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN ) )
-					sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
-
-				// fuck this
-				sp->EffectBasePoints[1] = 0;
-			}
-
-			if( sp->NameHash == SPELL_HASH_NERVES_OF_STEEL )
-			{
-				sp->CasterAuraState = 6;
-				sp->EffectBasePoints[0] = -31;
-				sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN;
-			}
-
-			if( sp->NameHash == SPELL_HASH_DISARM_TRAP )
-				sp->Effect[0] = SPELL_EFFECT_DUMMY;
-
-			//////////////////////////////////////////
-			// PRIEST								//
-			//////////////////////////////////////////
-
-			// Insert priest spell fixes here
-			if( sp->NameHash == SPELL_HASH_BORROWED_TIME )
-			{
-				sp->procFlags = PROC_ON_CAST_SPELL;
-				sp->EffectApplyAuraName[1] = SPELL_AURA_ADD_PCT_MODIFIER;
-			}
-
-			if( sp->NameHash == SPELL_HASH_IMPROVED_SPIRIT_TAP )
-				sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
-
-			if( sp->NameHash == SPELL_HASH_MISERY )
-				sp->procFlags = PROC_ON_CAST_SPELL;
-
-			if( sp->NameHash == SPELL_HASH_POWER_INFUSION )
-				sp->buffType = SPELL_TYPE_HASTE;
-
-			//////////////////////////////////////////
-			// SHAMAN								//
-			//////////////////////////////////////////
-
-			// Insert shaman spell fixes here
-			//Heroism/bloodlust/power infusion stack
-			if( sp->NameHash == SPELL_HASH_HEROISM || sp->NameHash == SPELL_HASH_BLOODLUST )
-				sp->buffType = SPELL_TYPE_HASTE;
-
-			//Hex hax
-			if( sp->NameHash == SPELL_HASH_HEX )
-				sp->AuraInterruptFlags = AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
-
-			// Glyph of hex
-			if( sp->Id == 63291 )
-				sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
-
-			// Lightning Shield - cannot crit
-			if( sp->NameHash == SPELL_HASH_LIGHTNING_SHIELD ) // not a mistake, the correct proc spell for lightning shield is also called lightning shield
-				sp->spell_can_crit = false;
-
-			if( sp->NameHash == SPELL_HASH_FROSTBRAND_WEAPON )
-				sp->ProcsPerMinute = 9.0f;
-
-			// Nature's Guardian
-			if( sp->NameHash == SPELL_HASH_NATURE_S_GUARDIAN )
-			{
-				sp->procFlags = PROC_ON_SPELL_HIT_VICTIM | PROC_ON_MELEE_ATTACK_VICTIM | PROC_ON_RANGED_ATTACK_VICTIM | PROC_ON_ANY_DAMAGE_VICTIM;
-				sp->proc_interval = 8000;
-				sp->EffectTriggerSpell[0] = 31616;
-			}
-
-			if(sp->NameHash == SPELL_HASH_WINDFURY_WEAPON || sp->NameHash == SPELL_HASH_FLAMETONGUE_WEAPON || sp->NameHash == SPELL_HASH_ROCKBITER_WEAPON ||
-				sp->NameHash == SPELL_HASH_FROSTBRAND_WEAPON ||	sp->NameHash == SPELL_HASH_EARTHLIVING_WEAPON)
-				sp->Flags3 |= FLAGS3_ENCHANT_OWN_ONLY;
-
-			// Stoneclaw Totem
-			if(sp->NameHash == SPELL_HASH_STONECLAW_TOTEM_PASSIVE)
-				sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-
-			// Flametongue Totem passive target fix
-			if(sp->NameHash == SPELL_HASH_FLAMETONGUE_TOTEM && sp->Attributes & ATTRIBUTES_PASSIVE)
+			// fuck this
+			sp->EffectBasePoints[1] = 0;
+		}break;
+	case SPELL_HASH_NERVES_OF_STEEL:
+		{
+			sp->CasterAuraState = 6;
+			sp->EffectBasePoints[0] = -31;
+			sp->EffectApplyAuraName[0] = SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN;
+		}break;
+	case SPELL_HASH_DISARM_TRAP:
+		{
+			sp->Effect[0] = SPELL_EFFECT_DUMMY;
+		}break;
+	case SPELL_HASH_BORROWED_TIME:
+		{
+			sp->procFlags = PROC_ON_CAST_SPELL;
+			sp->EffectApplyAuraName[1] = SPELL_AURA_ADD_PCT_MODIFIER;
+		}break;
+	case SPELL_HASH_IMPROVED_SPIRIT_TAP:
+		{
+			sp->procflags2 = PROC_ON_SPELL_CRIT_HIT;
+		}break;
+	case SPELL_HASH_MISERY:
+		{
+			sp->procFlags = PROC_ON_CAST_SPELL;
+		}break;
+	case SPELL_HASH_POWER_INFUSION:
+	case SPELL_HASH_HEROISM:
+	case SPELL_HASH_BLOODLUST:
+		{
+			sp->buffType = SPELL_TYPE_HASTE;
+		}break;
+	case SPELL_HASH_HEX:
+		{
+			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
+		}break;
+	case SPELL_HASH_LIGHTNING_SHIELD:
+		{
+			sp->spell_can_crit = false;
+		}break;
+	case SPELL_HASH_FROSTBRAND_WEAPON:
+		{
+			sp->ProcsPerMinute = 9.0f;
+			sp->Flags3 |= FLAGS3_ENCHANT_OWN_ONLY;
+		}break;
+	case SPELL_HASH_NATURE_S_GUARDIAN:
+		{
+			sp->procFlags = PROC_ON_SPELL_HIT_VICTIM | PROC_ON_MELEE_ATTACK_VICTIM | PROC_ON_RANGED_ATTACK_VICTIM | PROC_ON_ANY_DAMAGE_VICTIM;
+			sp->proc_interval = 8000;
+			sp->EffectTriggerSpell[0] = 31616;
+		}break;
+	case SPELL_HASH_WINDFURY_WEAPON:
+	case SPELL_HASH_FLAMETONGUE_WEAPON:
+	case SPELL_HASH_ROCKBITER_WEAPON:
+	case SPELL_HASH_EARTHLIVING_WEAPON:
+		{
+			sp->Flags3 |= FLAGS3_ENCHANT_OWN_ONLY;
+		}break;
+	case SPELL_HASH_STONECLAW_TOTEM_PASSIVE:
+		{
+			sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
+		}break;
+	case SPELL_HASH_FLAMETONGUE_TOTEM:
+		{
+			sp->AreaAuraTarget = AA_TARGET_PARTY;
+			if(sp->Attributes & ATTRIBUTES_PASSIVE)
 			{
 				sp->EffectImplicitTargetA[0] = EFF_TARGET_SELF;
 				sp->EffectImplicitTargetB[0] = 0;
 				sp->EffectImplicitTargetA[1] = EFF_TARGET_SELF;
 				sp->EffectImplicitTargetB[1] = 0;
 			}
-
-			// Unleashed Rage
-			if(sp->NameHash == SPELL_HASH_UNLEASHED_RAGE)
-				sp->procFlags = PROC_ON_CRIT_ATTACK;
-
-			// Healing Stream
-			if(sp->NameHash == SPELL_HASH_HEALING_STREAM_TOTEM && sp->Effect[0] == SPELL_EFFECT_DUMMY)
+		}break;
+	case SPELL_HASH_UNLEASHED_RAGE:
+		{
+			sp->procFlags = PROC_ON_CRIT_ATTACK;
+		}break;
+	case SPELL_HASH_HEALING_STREAM_TOTEM:
+		{
+			if(sp->Effect[0] == SPELL_EFFECT_DUMMY)
 			{
 				sp->EffectRadiusIndex[0] = 10; // 30 yards
 				sp->Effect[0] = SPELL_EFFECT_HEAL;
 				sp->logsId = 5394;
 			}
-
-			// Mana Spring
-			if(sp->NameHash == SPELL_HASH_MANA_SPRING_TOTEM && sp->Effect[0] == SPELL_EFFECT_DUMMY)
+		}break;
+	case SPELL_HASH_MANA_SPRING_TOTEM:
+		{
+			if(sp->Effect[0] == SPELL_EFFECT_DUMMY)
 			{
 				sp->Effect[0] = SPELL_EFFECT_ENERGIZE;
 				sp->EffectMiscValue[0] = POWER_TYPE_MANA;
 				sp->logsId = 5675;
 			}
-
-			if( sp->NameHash == SPELL_HASH_FAR_SIGHT )
-				sp->Effect[1] = 0;
-
-			//////////////////////////////////////////
-			// MAGE									//
-			//////////////////////////////////////////
-
-			// Insert mage spell fixes here
-			// Hypothermia: undispellable
-			if( sp->NameHash == SPELL_HASH_HYPOTHERMIA )
-				sp->c_is_flags |= SPELL_FLAG_IS_FORCEDDEBUFF;
-
-			if( sp->NameHash == SPELL_HASH_IMPROVED_COUNTERSPELL )
-			{
-				sp->procFlags = PROC_ON_CAST_SPELL;
-				sp->EffectSpellClassMask[0][0] = 0x00004000;	// Proc on counterspell only
-			}
-
-			//////////////////////////////////////////
-			// WARLOCK								//
-			//////////////////////////////////////////
-
-			// Insert warlock spell fixes here
-			if( sp->NameHash == SPELL_HASH_SHADOW_WEAVING )
-			{
-				sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
-				sp->procFlags = PROC_ON_CAST_SPELL;
-				sp->procChance = sp->EffectBasePoints[0] + 1;
-			}
-			if( sp->NameHash == SPELL_HASH_ERADICATION )
-				sp->procFlags = PROC_ON_SPELL_LAND;
-
-			if( sp->NameHash == SPELL_HASH_SHADOW_TRANCE )
-				sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
-
-			if( sp->NameHash == SPELL_HASH_NETHER_PROTECTION )
-			{
-				sp->EffectTriggerSpell[0] = 54370;
-				sp->procFlags = PROC_ON_SPELL_LAND;
-			}
-
-			//////////////////////////////////////////
-			// DRUID								//
-			//////////////////////////////////////////
-
-			// Insert druid spell fixes here
-			//infected wounds
-			if( sp->NameHash == SPELL_HASH_INFECTED_WOUNDS )
-				sp->procFlags = PROC_ON_CAST_SPELL;
-
-			if( sp->NameHash == SPELL_HASH_POUNCE )
-				sp->always_apply = true;
-
-			if( sp->NameHash == SPELL_HASH_OWLKIN_FRENZY )
-				sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
-
-			if( sp->NameHash == SPELL_HASH_EARTH_AND_MOON )
-				sp->procFlags = PROC_ON_CAST_SPELL;
-
-			if( sp->NameHash == SPELL_HASH_STARFALL && sp->Effect[1] == SPELL_EFFECT_TRIGGER_SPELL )
+		}break;
+	case SPELL_HASH_FAR_SIGHT:
+		{
+			sp->Effect[1] = 0;
+		}break;
+	case SPELL_HASH_HYPOTHERMIA:
+		{
+			sp->c_is_flags |= SPELL_FLAG_IS_FORCEDDEBUFF;
+		}break;
+	case SPELL_HASH_IMPROVED_COUNTERSPELL:
+		{
+			sp->procFlags = PROC_ON_CAST_SPELL;
+			sp->EffectSpellClassMask[0][0] = 0x00004000;	// Proc on counterspell only
+		}break;
+	case SPELL_HASH_SHADOW_WEAVING:
+		{
+			sp->EffectApplyAuraName[0] = SPELL_AURA_PROC_TRIGGER_SPELL;
+			sp->procFlags = PROC_ON_CAST_SPELL;
+			sp->procChance = sp->EffectBasePoints[0] + 1;
+		}break;
+	case SPELL_HASH_SHADOW_TRANCE:
+		{
+			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
+		}break;
+	case SPELL_HASH_ERADICATION:
+		{
+			sp->EffectTriggerSpell[0] = 54370;
+			sp->procFlags = PROC_ON_SPELL_LAND;
+		}break;
+	case SPELL_HASH_INFECTED_WOUNDS:
+		{
+			sp->procFlags = PROC_ON_CAST_SPELL;
+		}break;
+	case SPELL_HASH_POUNCE:
+		{
+			sp->always_apply = true;
+		}break;
+	case SPELL_HASH_OWLKIN_FRENZY:
+		{
+			sp->procFlags = PROC_ON_ANY_DAMAGE_VICTIM;
+		}break;
+	case SPELL_HASH_EARTH_AND_MOON:
+		{
+			sp->procFlags = PROC_ON_CAST_SPELL;
+		}break;
+	case SPELL_HASH_STARFALL:
+		{
+			if(sp->Effect[1] == SPELL_EFFECT_TRIGGER_SPELL )
 			{//we can only attack one target with main star
 				sp->MaxTargets = 1;
 			}
+		}break;
+	case SPELL_HASH_SHRED:
+		{
+			sp->MechanicsType = MECHANIC_BLEEDING;
+		}break;
+	case SPELL_HASH_NURTURING_INSTINCT:
+		{
+			sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
+			sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
+		}break;
+	case SPELL_HASH_PRIMAL_TENACITY:
+		{
+			sp->DurationIndex = 21;
+			sp->EffectBasePoints[1] = 0;
+			sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
+		}break;
+	case SPELL_HASH_PROWL:
+		{
+			sp->EffectBasePoints[0] = 0;
+		}break;
+	}
 
-			if( sp->NameHash == SPELL_HASH_SHRED )
-				sp->MechanicsType = MECHANIC_BLEEDING;
-
-			if( sp->NameHash == SPELL_HASH_NURTURING_INSTINCT )
-			{
-				sp->Effect[1] = SPELL_EFFECT_APPLY_AURA;
-				sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
-			}
-
-			if( sp->NameHash == SPELL_HASH_PRIMAL_TENACITY )
-			{
-				sp->DurationIndex = 21;
-				sp->EffectBasePoints[1] = 0;
-				sp->EffectApplyAuraName[1] = SPELL_AURA_DUMMY;
-			}
-
-			// fuck you too
-			if( sp->NameHash == SPELL_HASH_PROWL )
-				sp->EffectBasePoints[0] = 0;
-			}break;
-			}
+	if( sp->EquippedItemClass == 2 && sp->EquippedItemSubClass & 262156 ) // 4 + 8 + 262144 ( becomes item classes 2, 3 and 18 which correspond to bow, gun and crossbow respectively)
+		sp->is_ranged_spell = true;
 
 	//////////////////////////////////////////////////////////////////
 	//AREA AURA TARGETS - END

@@ -494,7 +494,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 	info->m_Group=NULL;
 	info->subGroup=-1;
 
-	if(sg==NULL)
+	if(sg == NULL)
 	{
 		m_groupLock.Release();
 		return;
@@ -505,6 +505,7 @@ void Group::RemovePlayer(PlayerInfo * info)
 	--m_MemberCount;
 
 	m_groupLock.Release();
+	RemoveBeaconOfLightTarget(info->guid, 0);
 
 	if( pPlayer != NULL )
 	{
@@ -1256,12 +1257,16 @@ bool Group::HasAcceptableDisenchanters(int32 requiredskill)
 	return false;
 }
 
-void Group::AddBeaconOfLightTarget(Player* Target)
+void Group::AddBeaconOfLightTarget(uint32 LowGUID, uint32 CasterLow)
 {
-	if(m_BeaconOfLightTargets.find(Target) == m_BeaconOfLightTargets.end())	//don't add somebody twice!
-		m_BeaconOfLightTargets.insert(std::make_pair(Target, 0));
+	if(m_BeaconOfLightTargets.find(LowGUID) != m_BeaconOfLightTargets.end())	//don't add somebody twice!
+		m_BeaconOfLightTargets[LowGUID] = CasterLow;
+	else
+		m_BeaconOfLightTargets.insert(make_pair(LowGUID, CasterLow));
 }
-void Group::RemoveBeaconOfLightTarget(Player* Target)
+
+void Group::RemoveBeaconOfLightTarget(uint32 LowGUID, uint32 CasterLow)
 {
-	m_BeaconOfLightTargets.erase(Target);
+	if(CasterLow == 0 || m_BeaconOfLightTargets[LowGUID] == CasterLow)
+		m_BeaconOfLightTargets.erase(LowGUID);
 }

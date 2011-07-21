@@ -1196,7 +1196,9 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 					}break;
 				}
 
-				if( isHostile(p_caster, unitTarget) ) // Do holy damage
+				if(p_caster->DuelingWith != NULL && p_caster->DuelingWith == unitTarget)
+					p_caster->CastSpell(unitTarget, hostileSpell, true);
+				else if( isHostile(p_caster, unitTarget) ) // Do holy damage
 					p_caster->CastSpell(unitTarget, hostileSpell, true);
 				else if(isCombatSupport(p_caster, unitTarget))
 					p_caster->CastSpell(unitTarget, friendlySpell, true);
@@ -2856,7 +2858,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	default:
 		{
 			if(sLog.IsOutDevelopement())
-				printf("Dummy spell not handled: %u%s\n", spellId, ((ProcedOnSpell != NULL) ? (format(" proc'd on: %u", ProcedOnSpell->Id)) : ""));
+				printf("Dummy spell not handled: %u%s\n", spellId, ((ProcedOnSpell != NULL) ? (format(" proc'd on: %u", ProcedOnSpell->Id).c_str()) : ""));
 		}break;
 	}
 }

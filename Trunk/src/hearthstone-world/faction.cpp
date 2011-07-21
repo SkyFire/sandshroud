@@ -390,21 +390,20 @@ bool isCombatSupport(Object* objA, Object* objB)// B combat supports A?
 
 	uint32 fSupport = objB->m_faction->FriendlyMask;
 	uint32 myFaction = objA->m_faction->Mask;
-
-	if(myFaction & fSupport)
+	if(fSupport & myFaction)
 		combatSupport = true;
 
 	// check friend/enemy list
 	for(uint32 i = 0; i < 4; i++)
 	{
-		if(objB->m_faction->EnemyFactions[i] == objA->m_faction->Faction)
-		{
-			combatSupport = false;
-			break;
-		}
 		if(objB->m_faction->FriendlyFactions[i] == objA->m_faction->Faction)
 		{
 			combatSupport = true;
+			break;
+		}
+		if(objB->m_faction->EnemyFactions[i] == objA->m_faction->Faction)
+		{
+			combatSupport = false;
 			break;
 		}
 	}
