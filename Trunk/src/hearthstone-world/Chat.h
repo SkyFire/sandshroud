@@ -591,6 +591,7 @@ protected:
 	bool HandleLookupCreatureCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupObjectCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupSpellCommand(const char * args, WorldSession * m_session);
+	bool HandleLookupSpellNameCommand(const char * args, WorldSession * m_session);
 	bool HandleLookupTitleCommand(const char * args, WorldSession * m_session);
 
 	//bool HandleReloadScriptsCommand(const char * args, WorldSession * m_session);

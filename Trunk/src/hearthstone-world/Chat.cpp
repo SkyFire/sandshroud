@@ -627,6 +627,7 @@ void CommandTableStorage::Init()
 		{ "creature",	'l', &ChatHandler::HandleLookupCreatureCommand,		"Looks up item string x.",					NULL, 0, 0, 0 },
 		{ "object",		'l', &ChatHandler::HandleLookupObjectCommand,		"Looks up object string x.",				NULL, 0, 0, 0 },
 		{ "spell",		'l', &ChatHandler::HandleLookupSpellCommand,		"Looks up spell string x.",					NULL, 0, 0, 0 },
+		{ "spellname",	'l', &ChatHandler::HandleLookupSpellNameCommand,	"Looks up spell id x.",						NULL, 0, 0, 0 },
 		{ "title",		'l', &ChatHandler::HandleLookupTitleCommand,		"Looks up title based on inputted name.",	NULL, 0, 0, 0 },
 		{ NULL,			'0', NULL,											"",											NULL, 0, 0, 0 },
 	};

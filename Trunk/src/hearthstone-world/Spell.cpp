@@ -1580,6 +1580,7 @@ void Spell::cast(bool check)
 			{
 				if(!CanHandleSpellEffect(x, m_spellInfo->NameHash))
 					continue;
+
 				//Don't handle effect now
 				if(GetSpellProto()->Effect[x] == SPELL_EFFECT_SUMMON)
 				{
@@ -2892,10 +2893,12 @@ void Spell::HandleEffects(uint32 i)
 	if( GetSpellProto()->Effect[i] < TOTAL_SPELL_EFFECTS)
 		(*this.*SpellEffectsHandler[GetSpellProto()->Effect[i]])(i);
 	else
+	{
 		if(sLog.IsOutDevelopement())
 			printf("Unknown spell effect %u in spell %u.\n",GetSpellProto()->Effect[i],GetSpellProto()->Id);
 		else
 			DEBUG_LOG("Spell","Unknown effect %u spellid %u",GetSpellProto()->Effect[i], GetSpellProto()->Id);
+	}
 }
 
 void Spell::HandleAddAura(uint64 guid)
@@ -4224,7 +4227,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 	}*/
 
 	if( GetSpellProto()->Id == 3018 )
-		m_spellInfo = dbcSpell.LookupEntry(75);
+		m_spellInfo_override = dbcSpell.LookupEntry(75);
 
 	int32 value = 0;
 
@@ -4243,6 +4246,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 			diff += GetSpellProto()->maxLevel;
 		else
 			diff += u_caster->getLevel();
+
 //		Crow:
 //		randomPoints += float2int32(diff * 1); // Wrong, we get random on spells without random figures, mounts, dual specs, etc.
 //		randomPoints += float2int32(diff); // Wrong, we get random on spells we shouldn't.
@@ -4305,6 +4309,7 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 					value += value*(0.125f*diseasecount);
 			}
 		}
+
 		SpellOverrideMap::iterator itr = p_caster->mSpellOverrideMap.find(GetSpellProto()->Id);
 		if(itr != p_caster->mSpellOverrideMap.end())
 		{

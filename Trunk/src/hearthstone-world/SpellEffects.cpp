@@ -411,7 +411,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 
 	if(GetSpellProto()->EffectChainTarget[i])//chain
 	{
-		if( GetSpellProto()->Id == 53595 )
+		if( GetSpellProto()->Id == 53595 ) // Hammer of the righteous
 		{
 			if( p_caster == NULL )
 				return;
@@ -2855,6 +2855,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			}
 		}break;
 
+	case 60103: { }break;
 	default:
 		{
 			if(sLog.IsOutDevelopement())

@@ -2461,6 +2461,23 @@ bool ChatHandler::HandleLookupSpellCommand(const char * args, WorldSession * m_s
 	return true;
 }
 
+bool ChatHandler::HandleLookupSpellNameCommand(const char * args, WorldSession * m_session)
+{
+	if(!*args)
+		return false;
+
+	uint32 id = atol(args);
+	if(!id)
+		return false;
+
+	SpellEntry* se = dbcSpell.LookupEntry(id);
+	if(se == NULL)
+		return false;
+
+	BlueSystemMessage(m_session, "|Spell name: %s||Description: %s|", se->Name, se->Description);
+	return true;
+}
+
 bool ChatHandler::HandleLookupCreatureCommand(const char * args, WorldSession * m_session)
 {
 	if(!*args) 
