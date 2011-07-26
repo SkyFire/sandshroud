@@ -4265,7 +4265,6 @@ int32 Spell::CalculateEffect(uint32 i,Unit* target)
 	if( p_caster != NULL )
 	{
 		int32 comboDamage = (int32)GetSpellProto()->EffectPointsPerComboPoint[i];
-
 		if(comboDamage)
 		{
 			value += ( comboDamage * p_caster->m_comboPoints );
