@@ -1214,6 +1214,7 @@ public:
 	float HealTakenPctMod;
 	int32 SpellHealDoneByAttribute[5];
 	int32 SpellHealFromAP;
+	int32 Expertise[2];
 
 	uint32 SchoolImmunityList[7];
 	float SpellCritChanceSchool[7];

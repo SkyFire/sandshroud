@@ -386,8 +386,10 @@ bool isCombatSupport(Object* objA, Object* objB)// B combat supports A?
 	if(!objA->PhasedCanInteract(objB))
 		return false;
 
-	bool combatSupport = false;
+	if(objB->IsCreature() && isTargetDummy(objB->GetEntry()))
+		return false;
 
+	bool combatSupport = false;
 	uint32 fSupport = objB->m_faction->FriendlyMask;
 	uint32 myFaction = objA->m_faction->Mask;
 	if(fSupport & myFaction)

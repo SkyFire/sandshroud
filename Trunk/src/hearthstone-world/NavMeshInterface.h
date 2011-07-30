@@ -20,6 +20,7 @@
 #ifndef _NavMeshInterface_H
 #define _NavMeshInterface_H
 
+#define MMAP_UNAVAILABLE 424242.42f // 'MMAP'
 #define MMAP_MAGIC 0x4d4d4150	// 'MMAP'
 #define MMAP_VERSION 3
 
@@ -54,6 +55,9 @@ public: // Navmesh settings
 
 	LocationVector getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
+	bool getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz, LocationVector& out);
+	bool GetWalkingHeightInternal(uint32 mapid, float startx, float starty, float startz, LocationVector& out);
+	float GetWalkingHeight(uint32 mapid, float positionx, float positiony, float positionz);
 
 private:
 	float calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y );

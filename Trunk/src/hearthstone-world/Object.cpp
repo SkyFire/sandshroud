@@ -148,16 +148,41 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 	if(!mgr->GetBaseMap() || !mgr->GetBaseMap()->GetMapTerrain())
 		return z;
 
+	float waterheight = mgr->GetWaterHeight(x, y);
 	float mapheight = mgr->GetLandHeight(x, y);
 	if(!mgr->CanUseCollision(this))
+	{
+		if(checkwater)
+			if(waterheight > mapheight)
+				return waterheight+offset;
 		return mapheight+offset;
+	}
+
+	float mmapheight = NavMeshInterface.GetWalkingHeight(GetMapId(), x, y, z);
+	if(mmapheight != MMAP_UNAVAILABLE)
+	{
+		if(checkwater)
+			if(waterheight > mmapheight)
+				return waterheight+offset;
+		return mmapheight+offset;
+	}
+	else if(!checkwater)
+		offset += 1.432f;
 
 	float vmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
 	if(IS_INSTANCE(mgr->GetMapId()) || !sWorld.CalculatedHeightChecks)
 	{
 		if(vmapheight != NO_WMO_HEIGHT)
+		{
+			if(checkwater)
+				if(waterheight > vmapheight)
+					return waterheight+offset;
 			return vmapheight+offset;
+		}
 
+		if(checkwater)
+			if(waterheight > mapheight)
+				return waterheight+offset;
 		return mapheight+offset;
 	}
 
@@ -173,10 +198,20 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		if(mapheight-2.0f < z)
 		{
 			if(mapheight+2.0f > z) // Accurate map height
+			{
+				if(checkwater)
+					if(waterheight > mapheight)
+						return waterheight+offset;
 				return mapheight+offset;
+			}
 
 			if(!CollideInterface.GetFirstPoint(GetMapId(), x, y, mapheight, x, y, z, phx, phy, phz, 0.0f))
+			{
+				if(checkwater)
+					if(waterheight > mapheight)
+						return waterheight+offset;
 				return mapheight+offset; // No breaks inbetween us, so its the right height, we're just a bunch of fuckers!
+			}
 
 			// TODO
 		}
@@ -192,10 +227,20 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		if(vmapheight-2.0f < z)
 		{
 			if(vmapheight+2.0f > z) // Accurate map height
+			{
+				if(checkwater)
+					if(waterheight > vmapheight)
+						return waterheight+offset;
 				return vmapheight+offset;
+			}
 
 			if(!CollideInterface.GetFirstPoint(GetMapId(), x, y, vmapheight, x, y, z, phx, phy, phz, 0.0f))
+			{
+				if(checkwater)
+					if(waterheight > vmapheight)
+						return waterheight+offset;
 				return vmapheight+offset; // No breaks inbetween us, so its the right height, we're just a bunch of fuckers!
+			}
 
 			// TODO
 		}
@@ -207,8 +252,15 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 
 	// I think it's safe to say, no one is ever perfect.
 	if((CMapHeight != z+50.0f) && (CMapHeight != z-50.0f))
+	{
+		if(checkwater)
+			if(waterheight > CMapHeight)
+				return waterheight+offset;
 		return CMapHeight+offset;
+	}
 
+	if(checkwater)
+		return waterheight;
 	return z;
 
 /*

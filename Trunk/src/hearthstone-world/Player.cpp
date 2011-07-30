@@ -5521,6 +5521,13 @@ void Player::UpdateChanceFields()
 
 	SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_POS, HealDoneModPos);
 	SetUInt32Value(PLAYER_FIELD_MOD_HEALING_DONE_PCT, HealDonePctMod);
+
+	uint32 expertise_base = TO_PLAYER(this)->CalcRating( PLAYER_RATING_MODIFIER_EXPERTISE );
+	if(expertise_base > 60)
+		expertise_base = 60; // 15% before spell additions.
+
+	SetUInt32Value(PLAYER_EXPERTISE, expertise_base+Expertise[0]);
+	SetUInt32Value(PLAYER_OFFHAND_EXPERTISE, expertise_base+Expertise[1]);
 }
 
 void Player::UpdateAttackSpeed()

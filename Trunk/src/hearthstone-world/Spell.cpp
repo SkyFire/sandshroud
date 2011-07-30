@@ -852,16 +852,16 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 							store_buff->m_unitTarget = p_caster->GetSummon()->GetGUID();
 					}break;
 				case EFF_TARGET_SINGLE_ENEMY:// Single Target Enemy
-				case 77:					// grep: i think this fits
-				case 8: // related to Chess Move (DND), Firecrackers, Spotlight, aedm, Spice Mortar
+				case EFF_TARGET_SELECTED_ENEMY_CHANNELED: // grep: i think this fits
+				case EFF_TARGET_ALL_TARGETABLE_AROUND_LOCATION_IN_RADIUS: // related to Chess Move (DND), Firecrackers, Spotlight, aedm, Spice Mortar
 				case EFF_TARGET_ALL_ENEMY_IN_AREA: // All Enemies in Area of Effect (TEST)
 				case EFF_TARGET_ALL_ENEMY_IN_AREA_INSTANT: // All Enemies in Area of Effect instant (e.g. Flamestrike)
 				case EFF_TARGET_ALL_ENEMIES_AROUND_CASTER:
 				case EFF_TARGET_IN_FRONT_OF_CASTER:
 				case EFF_TARGET_ALL_ENEMY_IN_AREA_CHANNELED:// All Enemies in Area of Effect(Blizzard/Rain of Fire/volley) channeled
-				case 31:// related to scripted effects
-				case 53:// Target Area by Players CurrentSelection()
-				case 54:// Targets in Front of the Caster
+				case EFF_TARGET_ALL_TARGETABLE_AROUND_LOCATION_IN_RADIUS_OVER_TIME:// related to scripted effects
+				case EFF_TARGET_CURRENT_SELECTION:// Target Area by Players CurrentSelection()
+				case EFF_TARGET_TARGET_AT_ORIENTATION_TO_CASTER:// Targets in Front of the Caster
 					{
 						if( p_caster != NULL )
 						{
@@ -903,12 +903,12 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 						}
 					}break;
 					// spells like 17278:Cannon Fire and 21117:Summon Son of Flame A
-				case 17: // A single target at a xyz location or the target is a possition xyz
-				case 18:// Land under caster.Maybe not correct
+				case EFF_TARGET_TELEPORT_LOCATION: // A single target at a xyz location or the target is a possition xyz
+				case EFF_TARGET_LOCATION_TO_SUMMON:// Land under caster.Maybe not correct
 					{
-						store_buff->m_srcX=m_caster->GetPositionX();
-						store_buff->m_srcY=m_caster->GetPositionY();
-						store_buff->m_srcZ=m_caster->GetPositionZ();
+						store_buff->m_srcX = m_caster->GetPositionX();
+						store_buff->m_srcY = m_caster->GetPositionY();
+						store_buff->m_srcZ = m_caster->GetPositionZ();
 						store_buff->m_targetMask |= TARGET_FLAG_SOURCE_LOCATION;
 					}break;
 				case EFF_TARGET_ALL_PARTY_AROUND_CASTER:
@@ -947,8 +947,8 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 						}
 					}break;
 				case EFF_TARGET_SINGLE_FRIEND:
-				case 45:// Chain,!!only for healing!! for chain lightning =6
-				case 57:// Targeted Party Member
+				case EFF_TARGET_CHAIN:// Chain,!!only for healing!! for chain lightning =6
+				case EFF_TARGET_PARTY_MEMBER:// Targeted Party Member
 					{// Single Target Friend
 						if( p_caster != NULL )
 						{
@@ -970,26 +970,28 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 							store_buff->m_unitTarget = p_caster->GetSelection();
 					}break;
 				case EFF_TARGET_DUEL:
-					{// Single Target Friend Used in Duel
+					{	// Single Target Friend Used in Duel
 						if(p_caster && p_caster->DuelingWith != NULL && p_caster->DuelingWith->isAlive() && IsInrange(p_caster,p_caster->DuelingWith,r))
 							store_buff->m_unitTarget = p_caster->GetSelection();
 					}break;
-				case EFF_TARGET_GAMEOBJECT_ITEM:{// Gameobject/Item Target
+				case EFF_TARGET_GAMEOBJECT_ITEM:
+					{	// Gameobject/Item Target
 						//shit
 					}break;
-				case 27:{ // target is owner of pet
-					// please correct this if not correct does the caster variablen need a Pet caster variable?
+				case EFF_TARGET_PET_MASTER:
+					{ // target is owner of pet
+						// please correct this if not correct does the caster variablen need a Pet caster variable?
 						if(u_caster && u_caster->IsPet())
 							store_buff->m_unitTarget = TO_PET( u_caster )->GetPetOwner()->GetGUID();
 					}break;
 				case EFF_TARGET_MINION:
-				case 73:
+				case EFF_TARGET_NETHETDRAKE_SUMMON_LOCATION:
 					{// Minion Target
 						if(m_caster->GetUInt64Value(UNIT_FIELD_SUMMON) == 0)
 							store_buff->m_unitTarget = m_caster->GetGUID();
 						else store_buff->m_unitTarget = m_caster->GetUInt64Value(UNIT_FIELD_SUMMON);
 					}break;
-				case 33://Party members of totem, inside given range
+				case EFF_TARGET_ALL_PARTY_IN_AREA://Party members of totem, inside given range
 				case EFF_TARGET_SINGLE_PARTY:// Single Target Party Member
 				case EFF_TARGET_ALL_PARTY: // all Members of the targets party
 					{
@@ -1026,17 +1028,18 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 							}
 						}
 					}break;
-				case 38:{//Dummy Target
-					//have no idea
+				case EFF_TARGET_SCRIPTED_OR_SINGLE_TARGET:
+					{	//Dummy Target
+						//have no idea
 					}break;
 				case EFF_TARGET_SELF_FISHING://Fishing
-				case 46://Unknown Summon Atal'ai Skeleton
-				case 47:// Portal
-				case 52:	// Lightwells, etc
+				case EFF_TARGET_SCIPTED_OBJECT_LOCATION://Unknown Summon Atal'ai Skeleton
+				case EFF_TARGET_DYNAMIC_OBJECT:// Portal
+				case EFF_TARGET_LOCATION_NEAR_CASTER:	// Lightwells, etc
 					{
 						store_buff->m_unitTarget = m_caster->GetGUID();
 					}break;
-				case 40://Activate Object target(probably based on focus)
+				case EFF_TARGET_SCRIPTED_GAMEOBJECT://Activate Object target(probably based on focus)
 				case EFF_TARGET_TOTEM_EARTH:
 				case EFF_TARGET_TOTEM_WATER:
 				case EFF_TARGET_TOTEM_AIR:
@@ -1047,13 +1050,14 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 							SummonPropertiesEntry* summonprop = dbcSummonProps.LookupEntryForced( GetSpellProto()->EffectMiscValueB[i] );
 							if(!summonprop)
 								return;
-							uint32 slot = summonprop->slot;
 
+							uint32 slot = summonprop->slot;
 							if(u_caster->m_SummonSlots[slot] != NULL )
 								store_buff->m_unitTarget = u_caster->m_SummonSlots[slot]->GetGUID();
 						}
 					}break;
-				case 61:{ // targets with the same group/raid and the same class
+				case EFF_TARGET_AREAEFFECT_PARTY_AND_CLASS:
+					{	// targets with the same group/raid and the same class
 						if( p_caster != NULL )
 						{
 							SubGroup * pGroup = p_caster->GetGroup() ?
@@ -1076,11 +1080,9 @@ void Spell::GenerateTargets(SpellCastTargets *store_buff)
 								p_caster->GetGroup()->Unlock();
 							}
 						}
-				}break;
-				case EFF_TARGET_ALL_FRIENDLY_IN_AREA:{
-
-				}break;
-
+					}break;
+				case EFF_TARGET_ALL_FRIENDLY_IN_AREA:
+					{ }break;
 			}//end switch
 		}//end for
 	if(store_buff->m_unitTarget)
@@ -4423,21 +4425,23 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 			}break;
 
 		default:
-			if(m_targets.m_destX && m_targets.m_destY)
 			{
-				mapid = pTarget->GetMapId();
-				x = m_targets.m_destX;
-				y = m_targets.m_destY;
-				z = m_targets.m_destZ;
-				o = pTarget->GetOrientation();
-			}
-			else
-			{
-				if(sLog.IsOutDevelopement())
-					printf("Unknown teleport spell: %u\n", id);
+				if(m_targets.m_destX && m_targets.m_destY)
+				{
+					mapid = pTarget->GetMapId();
+					x = m_targets.m_destX;
+					y = m_targets.m_destY;
+					z = m_targets.m_destZ;
+					o = pTarget->GetOrientation();
+				}
 				else
-					OUT_DEBUG("Unknown teleport spell: %u", id);
-				return;
+				{
+					if(sLog.IsOutDevelopement())
+						printf("Unknown teleport spell: %u\n", id);
+					else
+						OUT_DEBUG("Unknown teleport spell: %u", id);
+					return;
+				}
 			}break;
 		}
 	}

@@ -9419,9 +9419,10 @@ void Aura::SpellAuraExpertise(bool apply)
 		{
 			amt = - mod->m_amount;
 		}
+
 		// TODO: different weapon types expertise
-		m_target->ModUnsigned32Value( PLAYER_EXPERTISE, amt );
-		m_target->ModUnsigned32Value( PLAYER_OFFHAND_EXPERTISE, amt );
+		m_target->Expertise[0] += amt;
+		m_target->Expertise[1] += amt;
 		TO_PLAYER(m_target)->UpdateStats();
 	}
 }

@@ -302,9 +302,9 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 				return pos;
 			}
 
-			pos.x = actualpath[5]; //0 3 6
-			pos.y = actualpath[3]; //1 4 7
-			pos.z = actualpath[4]; //2 5 8
+			pos.y = actualpath[3]; //0 3 6
+			pos.z = actualpath[4]; //1 4 7
+			pos.x = actualpath[5]; //2 5 8
 			freeNavMeshQuery(query);
 			delete mPathFilter;
 			mPathFilter = NULL;
@@ -312,6 +312,179 @@ LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, 
 		}
 	}
 	return pos;
+}
+
+bool CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz, LocationVector& out)
+{
+	if(m_navMesh[mapid] == NULL)
+		return false;
+
+	dtNavMeshQuery* query = mallocNavMeshQuery();
+	if(query->init(m_navMesh[mapid], 1024) != DT_SUCCESS)
+	{
+		freeNavMeshQuery(query);
+		Log.Error("NavMeshInterface", "Failed to initialize dtNavMeshQuery for mapId %03u", mapid);
+		return false;
+	}
+
+	dtStatus result;
+	//convert to nav coords.
+	float startPos[3] = { starty, startz, startx };
+	float endPos[3] = { endy, endz, endx };
+	float mPolyPickingExtents[3] = { 2.00f, 4.00f, 2.00f };
+	float closestPoint[3] = {0.0f, 0.0f, 0.0f};
+	int gx = GetPosX(startx)/8;
+	int gy = GetPosY(starty)/8;
+	dtQueryFilter* mPathFilter = new dtQueryFilter();
+	if(mPathFilter)
+	{
+		dtPolyRef mStartRef;
+		result = query->findNearestPoly(startPos, mPolyPickingExtents, mPathFilter, &mStartRef, closestPoint);
+		if(result != DT_SUCCESS || !mStartRef)
+		{
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
+			return false;
+		}
+
+		dtPolyRef mEndRef;
+		result = query->findNearestPoly(endPos, mPolyPickingExtents, mPathFilter, &mEndRef, closestPoint);
+		if(result != DT_SUCCESS || !mEndRef)
+		{
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
+			return false;
+		}
+
+		if (mStartRef != 0 && mEndRef != 0)
+		{
+			int mNumPathResults;
+			dtPolyRef mPathResults[50];
+			result = query->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter, mPathResults, &mNumPathResults, 50);
+			if(result != DT_SUCCESS || mNumPathResults <= 0)
+			{
+				freeNavMeshQuery(query);
+				delete mPathFilter;
+				mPathFilter = NULL;
+				return false;
+			}
+
+			int mNumPathPoints;
+			float actualpath[3*20];
+			dtPolyRef polyrefs = 0;
+			result = query->findStraightPath(startPos, endPos, mPathResults, mNumPathResults, actualpath, NULL, &polyrefs, &mNumPathPoints, 20);
+			if (result != DT_SUCCESS || mNumPathPoints < 3)
+			{
+				freeNavMeshQuery(query);
+				delete mPathFilter;
+				mPathFilter = NULL;
+				return false;
+			}
+
+			out.y = actualpath[3]; //0 3 6
+			out.z = actualpath[4]; //1 4 7
+			out.x = actualpath[5]; //2 5 8
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CNavMeshInterface::GetWalkingHeightInternal(uint32 mapid, float positionx, float positiony, float positionz, LocationVector& out)
+{
+	if(m_navMesh[mapid] == NULL)
+		return false;
+
+	dtNavMeshQuery* query = mallocNavMeshQuery();
+	if(query->init(m_navMesh[mapid], 1024) != DT_SUCCESS)
+	{
+		freeNavMeshQuery(query);
+		Log.Error("NavMeshInterface", "Failed to initialize dtNavMeshQuery for mapId %03u", mapid);
+		return false;
+	}
+
+	dtStatus result;
+	//convert to nav coords.
+	float startPos[3] = { positiony, positionz-4.0f, positionx };
+	float endPos[3] = { positiony, positionz+4.0f, positionx };
+	float mPolyPickingExtents[3] = { 2.00f, 4.00f, 2.00f };
+	float closestPoint[3] = {0.0f, 0.0f, 0.0f};
+	int gx = GetPosX(positionx)/8;
+	int gy = GetPosY(positiony)/8;
+	dtQueryFilter* mPathFilter = new dtQueryFilter();
+	if(mPathFilter)
+	{
+		dtPolyRef mStartRef;
+		result = query->findNearestPoly(startPos, mPolyPickingExtents, mPathFilter, &mStartRef, closestPoint);
+		if(result != DT_SUCCESS || !mStartRef)
+		{
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
+			return false;
+		}
+
+		dtPolyRef mEndRef;
+		result = query->findNearestPoly(endPos, mPolyPickingExtents, mPathFilter, &mEndRef, closestPoint);
+		if(result != DT_SUCCESS || !mEndRef)
+		{
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
+			return false;
+		}
+
+		if (mStartRef != 0 && mEndRef != 0)
+		{
+			int mNumPathResults;
+			dtPolyRef mPathResults[50];
+			result = query->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter, mPathResults, &mNumPathResults, 50);
+			if(result != DT_SUCCESS || mNumPathResults <= 0)
+			{
+				printf("Path unsuccessful\n");
+				freeNavMeshQuery(query);
+				delete mPathFilter;
+				mPathFilter = NULL;
+				return false;
+			}
+
+			int mNumPathPoints;
+			float actualpath[3*2];
+			dtPolyRef polyrefs = 0;
+			result = query->findStraightPath(startPos, endPos, mPathResults, mNumPathResults, actualpath, NULL, &polyrefs, &mNumPathPoints, 2);
+			if (result != DT_SUCCESS)
+			{
+				printf("Path unsuccessful2\n");
+				freeNavMeshQuery(query);
+				delete mPathFilter;
+				mPathFilter = NULL;
+				return false;
+			}
+
+			out.y = positiony;
+			out.z = positionz;
+			out.x = positionx;
+			freeNavMeshQuery(query);
+			delete mPathFilter;
+			mPathFilter = NULL;
+			return true;
+		}
+	}
+	return false;
+}
+
+float CNavMeshInterface::GetWalkingHeight(uint32 mapid, float x, float y, float z)
+{
+	float height = MMAP_UNAVAILABLE;
+	LocationVector Step;
+	if(GetWalkingHeightInternal(mapid, x, y, z, Step))
+		height = Step.z;
+	return height;
 }
 
 float CNavMeshInterface::calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y )

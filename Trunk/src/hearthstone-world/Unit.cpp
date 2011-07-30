@@ -165,6 +165,7 @@ Unit::Unit()
 	HealTakenPctMod = 1.0f;
 	SpellHealFromAP = 0;
 	SpellDamageFromAP = 0;
+	Expertise[0] = Expertise[1] = 0;
 
 	for(uint32 x=0;x<7;x++)
 	{
@@ -3186,30 +3187,39 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 	}
 //--------------------------------by ratings------------------------------------------------
 	crit -= pVictim->IsPlayer() ? TO_PLAYER(pVictim)->CalcRating( PLAYER_RATING_MODIFIER_MELEE_CRIT_RESILIENCE ) : 0.0f;
-	if(crit<0) crit=0.0f;
+	if(crit < 0.0f)
+		crit = 0.0f;
+
 	if (IsPlayer())
 	{
-		hitmodifier += (weapon_damage_type == RANGED) ? TO_PLAYER(this)->CalcRating( PLAYER_RATING_MODIFIER_RANGED_HIT ) : TO_PLAYER(this)->CalcRating( PLAYER_RATING_MODIFIER_MELEE_HIT );
+		if(weapon_damage_type == RANGED)
+			hitmodifier += TO_PLAYER(this)->CalcRating( PLAYER_RATING_MODIFIER_RANGED_HIT );
+		else
+		{
+			hitmodifier += TO_PLAYER(this)->CalcRating( PLAYER_RATING_MODIFIER_MELEE_HIT );
 
-		float expertise_bonus = TO_PLAYER(this)->CalcRating( PLAYER_RATING_MODIFIER_EXPERTISE );
-		if(weapon_damage_type == MELEE)
-			expertise_bonus += TO_PLAYER(this)->GetUInt32Value(PLAYER_EXPERTISE);
-		else if(weapon_damage_type == OFFHAND)
-			expertise_bonus += TO_PLAYER(this)->GetUInt32Value(PLAYER_OFFHAND_EXPERTISE);
-		expertise_bonus *= 0.25f;
-		dodge -= expertise_bonus;
-		if(dodge<0) dodge=0.0f;
-		parry -= expertise_bonus;
-		if(parry<0) parry=0.0f;
+			float expertise_bonus = 0.0f;
+			if(weapon_damage_type == MELEE)
+				expertise_bonus += GetUInt32Value(PLAYER_EXPERTISE)*0.25f;
+			else if(weapon_damage_type == OFFHAND)
+				expertise_bonus += GetUInt32Value(PLAYER_OFFHAND_EXPERTISE)*0.25f;
+
+			if(dodge < expertise_bonus)
+				dodge = 0.0f;
+			else dodge -= expertise_bonus;
+
+			if(parry < expertise_bonus)
+				parry = 0.0f;
+			else parry -= expertise_bonus;
+		}
 	}
-
 
 //--------------------------------by damage type and by weapon type-------------------------
 	if( weapon_damage_type == RANGED )
 	{
-		dodge=0.0f;
-		parry=0.0f;
-		glanc=0.0f;
+		dodge = 0.0f;
+		parry = 0.0f;
+		glanc = 0.0f;
 	}
 	else if(IsPlayer())
 	{
