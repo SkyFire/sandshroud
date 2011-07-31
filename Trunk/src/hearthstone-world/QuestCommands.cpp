@@ -788,12 +788,16 @@ bool ChatHandler::HandleQuestAddStartCommand(const char * args, WorldSession * m
 
 	sQuestMgr.LoadExtraQuestStuff();
 
-	QuestRelation *qstrel = new QuestRelation;
-	qstrel->qst = qst;
-	qstrel->type = QUESTGIVER_QUEST_START;
-	uint8 qstrelid = (uint8)unit->GetQuestRelation(quest_id);
-	unit->FindQuest(quest_id, qstrelid);
-	unit->AddQuest(qstrel);
+	if ( unit->HasQuests() )
+	{
+		if(unit->GetQuestRelation(qst->id))
+		{
+			QuestRelation *qstrel = new QuestRelation();
+			qstrel->qst = qst;
+			qstrel->type = QUESTGIVER_QUEST_START;
+			unit->DeleteQuest(qstrel);
+		}
+	}
 	unit->_LoadQuests();
 
 	const char * qname = qst->title;
@@ -872,12 +876,16 @@ bool ChatHandler::HandleQuestAddFinishCommand(const char * args, WorldSession * 
 
 	sQuestMgr.LoadExtraQuestStuff();
 
-	QuestRelation *qstrel = new QuestRelation;
-	qstrel->qst = qst;
-	qstrel->type = QUESTGIVER_QUEST_END;
-	uint8 qstrelid = (uint8)unit->GetQuestRelation(quest_id);
-	unit->FindQuest(quest_id, qstrelid);
-	unit->AddQuest(qstrel);
+	if ( unit->HasQuests() )
+	{
+		if(unit->GetQuestRelation(qst->id))
+		{
+			QuestRelation *qstrel = new QuestRelation();
+			qstrel->qst = qst;
+			qstrel->type = QUESTGIVER_QUEST_END;
+			unit->DeleteQuest(qstrel);
+		}
+	}
 	unit->_LoadQuests();
 
 	const char * qname = qst->title;
@@ -931,7 +939,6 @@ bool ChatHandler::HandleQuestDelStartCommand(const char * args, WorldSession * m
 
 	uint32 quest_id = atol(args);
 	Quest * qst = QuestStorage.LookupEntry(quest_id);
-
 	if (qst == NULL)
 	{
 		SystemMessage(m_session, "Invalid Quest selected.");
@@ -968,13 +975,16 @@ bool ChatHandler::HandleQuestDelStartCommand(const char * args, WorldSession * m
 	}
 
 	sQuestMgr.LoadExtraQuestStuff();
-
-	QuestRelation *qstrel = new QuestRelation;
-	qstrel->qst = qst;
-	qstrel->type = QUESTGIVER_QUEST_START;
-	uint8 qstrelid = (uint8)unit->GetQuestRelation(quest_id);
-	unit->FindQuest(quest_id, qstrelid);
-	unit->DeleteQuest(qstrel);
+	if(unit->HasQuests())
+	{
+		if(unit->GetQuestRelation(quest_id))
+		{
+			QuestRelation *qstrel = new QuestRelation();
+			qstrel->qst = qst;
+			qstrel->type = QUESTGIVER_QUEST_START;
+			unit->DeleteQuest(qstrel);
+		}
+	}
 	unit->_LoadQuests();
 
 	const char * qname = qst->title;
@@ -1052,13 +1062,16 @@ bool ChatHandler::HandleQuestDelFinishCommand(const char * args, WorldSession * 
 	}
 
 	sQuestMgr.LoadExtraQuestStuff();
-
-	QuestRelation *qstrel = new QuestRelation;
-	qstrel->qst = qst;
-	qstrel->type = QUESTGIVER_QUEST_END;
-	uint8 qstrelid = (uint8)unit->GetQuestRelation(quest_id);
-	unit->FindQuest(quest_id, qstrelid);
-	unit->DeleteQuest(qstrel);
+	if(unit->HasQuests())
+	{
+		if(unit->GetQuestRelation(quest_id))
+		{
+			QuestRelation *qstrel = new QuestRelation();
+			qstrel->qst = qst;
+			qstrel->type = QUESTGIVER_QUEST_END;
+			unit->DeleteQuest(qstrel);
+		}
+	}
 	unit->_LoadQuests();
 
 	const char * qname = qst->title;

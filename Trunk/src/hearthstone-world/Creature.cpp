@@ -372,7 +372,6 @@ void Creature::DeleteQuest(QuestRelation *Q)
 		{
 			delete (*it);
 			m_quests->erase(it);
-			break;
 		}
 	}
 }

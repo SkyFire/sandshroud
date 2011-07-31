@@ -900,6 +900,7 @@ void GameObject::Destroy()
 
 void GameObject::Use(Player *p)
 {
+	m_scripted_use = false;
 	Spell* spell = NULLSPELL;
 	SpellEntry *spellInfo = NULL;
 	SpellCastTargets targets;
@@ -908,9 +909,12 @@ void GameObject::Use(Player *p)
 		return;
 
 	uint32 type = GetType();
-
+	if(myScript != NULL)
+		m_scripted_use = true;
 	CALL_GO_SCRIPT_EVENT(this, OnActivate)(p);
 	CALL_INSTANCE_SCRIPT_EVENT( p->GetMapMgr(), OnGameObjectActivate )( this, p );
+	if(m_scripted_use)
+		return;
 
 	switch (type)
 	{

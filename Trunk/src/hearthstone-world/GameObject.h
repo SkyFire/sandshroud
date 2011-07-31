@@ -431,6 +431,7 @@ public:
 
 	bool initiated;
 	bool m_created;
+	bool m_scripted_use;
 	float range;
 	uint8 checkrate;
 	uint16 counter;

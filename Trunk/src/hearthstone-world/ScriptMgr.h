@@ -192,15 +192,15 @@ public:
 	bool CallScriptedDummyAura( uint32 uSpellId, uint32 i, Aura*  pAura, bool apply);
 	bool CallScriptedItem(Item* pItem, Player* pPlayer);
 
-	void register_creature_script(uint32 entry, exp_create_creature_ai callback);
-	void register_gameobject_script(uint32 entry, exp_create_gameobject_ai callback);
+	void register_quest_script(uint32 entry, QuestScript * qs);
 	void register_gossip_script(uint32 entry, GossipScript * gs);
 	void register_go_gossip_script(uint32 entry, GossipScript * gs);
+	void register_item_gossip_script(uint32 entry, GossipScript * gs);
+	void register_hook(ServerHookEvents event, void * function_pointer);
 	void register_dummy_aura(uint32 entry, exp_handle_dummy_aura callback);
 	void register_dummy_spell(uint32 entry, exp_handle_dummy_spell callback);
-	void register_hook(ServerHookEvents event, void * function_pointer);
-	void register_item_gossip_script(uint32 entry, GossipScript * gs);
-	void register_quest_script(uint32 entry, QuestScript * qs);
+	void register_creature_script(uint32 entry, exp_create_creature_ai callback);
+	void register_gameobject_script(uint32 entry, exp_create_gameobject_ai callback);
 	void register_instance_script( uint32 pMapId, exp_create_instance_ai pCallback );
 
 	HEARTHSTONE_INLINE QuestScript* GetQuestScript(uint32 entry) { return EntryQuestScriptMap[entry]; };
@@ -283,7 +283,7 @@ public:
 	virtual void OnSpawn() {}
 	virtual void OnDespawn() {}
 	virtual void OnLootTaken(Player * pLooter, ItemPrototype *pItemInfo) {}
-	virtual void OnActivate(Player* pPlayer) {}
+	virtual void OnActivate(Player* pPlayer) { _gameobject->m_scripted_use = false; }
 	virtual void AIUpdate() {}
 	virtual void Destroy() { delete this; }
 
@@ -353,7 +353,7 @@ public:
 	// Creature / GameObject - part of it is simple reimplementation for easier use Creature / GO < --- > Script
 	virtual void				OnCreatureDeath( Creature* pVictim, Unit* pKiller ) {};
 	virtual void				OnCreaturePushToWorld( Creature* pCreature ) {};
-	virtual void				OnGameObjectActivate( GameObject* pGameObject, Player* pPlayer ) {};
+	virtual void				OnGameObjectActivate( GameObject* pGameObject, Player* pPlayer ) { pGameObject->m_scripted_use = false; };
 	virtual void				OnGameObjectPushToWorld( GameObject* pGameObject ) {};
 
 	// Standard virtual methods
