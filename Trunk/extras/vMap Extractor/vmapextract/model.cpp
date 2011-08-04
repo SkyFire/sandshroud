@@ -69,13 +69,15 @@ bool Model::open()
 
 bool Model::ConvertToVMAPModel(char * outfilename)
 {
+    FILE * output;
     int N[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
-    FILE * output=fopen(outfilename,"wb");
+	fopen_s(&output, outfilename,"wb");
     if(!output)
     {
         printf("Can't create the output file '%s'\n",outfilename);
         return false;
     }
+
     fwrite(szRawVMAPMagic,8,1,output);
     uint32 nVertices = 0;
     nVertices = header.nBoundingVertices;
@@ -86,9 +88,9 @@ bool Model::ConvertToVMAPModel(char * outfilename)
     fwrite(N,sizeof(float),3*2,output);//bbox, only needed for WMO currently
     fwrite(N,4,1,output);// liquidflags
     fwrite("GRP ",4,1,output);
+
     uint32 branches = 1;
-    int wsize;
-    wsize = sizeof(branches) + sizeof(uint32) * branches;
+    int wsize = sizeof(branches) + sizeof(uint32) * branches;
     fwrite(&wsize, sizeof(int), 1, output);
     fwrite(&branches,sizeof(branches), 1, output);
     uint32 nIndexes = 0;
@@ -152,10 +154,9 @@ ModelInstance::ModelInstance(MPQFile &f,const char* ModelInstName, uint32 mapID,
     sc = scale / 1024.0f;
 
     char tempname[512];
-    sprintf(tempname, "%s/%s", szWorkDirWmo, ModelInstName);
-    FILE *input;
-    input = fopen(tempname, "r+b");
-
+    sprintf_s(tempname, 512, "%s/%s", szWorkDirWmo, ModelInstName);
+    FILE *input = NULL;
+	fopen_s(&input, tempname, "r+b");
     if(!input)
     {
         //printf("ModelInstance::ModelInstance couldn't open %s\n", tempname);

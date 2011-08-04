@@ -476,7 +476,7 @@ int main(int argc, char ** argv)
 
     // extract data
     if(success)
-        success = ExtractWmo();
+        success = ((ExtractWmo() > 0) ? true : false);
 
     //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     //map.dbc

@@ -29,7 +29,7 @@ public:
     	libmpq__off_t size, transferred;
 		libmpq__file_unpacked_size(mpq_a, filenum, &size);
 
-        char *buffer = new char[size];
+        char *buffer = new char[(unsigned int)size];
 
 		libmpq__file_read(mpq_a, filenum, (unsigned char*)buffer, size, &transferred);
 
@@ -67,8 +67,8 @@ public:
     MPQFile(const char* filename);    // filenames are not case sensitive
     ~MPQFile() { close(); }
     size_t read(void* dest, size_t bytes);
-    size_t getSize() { return size; }
-    size_t getPos() { return pointer; }
+    size_t getSize() { return (size_t)size; }
+    size_t getPos() { return (size_t)pointer; }
     char* getBuffer() { return buffer; }
     char* getPointer() { return buffer + pointer; }
     bool isEof() { return eof; }

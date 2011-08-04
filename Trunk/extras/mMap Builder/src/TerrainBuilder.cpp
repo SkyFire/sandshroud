@@ -523,12 +523,10 @@ namespace MMAP
 
             InstanceTreeMap instanceTrees;
             ((VMapManager2*)vmapManager)->getInstanceMapTree(instanceTrees);
-
             if (!instanceTrees[mapID])
                 break;
 
             instanceTrees[mapID]->getModelInstances(models, count);
-
             if (!models || !count)
                 break;
 
@@ -552,7 +550,7 @@ namespace MMAP
 
                 // transform data
                 float scale = models[i].iScale;
-                G3D::Matrix3 rotation = G3D::Matrix3::fromEulerAnglesZYX(-1*G3D::pi()*instance.iRot.y/180.f, -1*G3D::pi()*instance.iRot.x/180.f, -1*G3D::pi()*instance.iRot.z/180.f);
+                G3D::Matrix3 rotation = G3D::Matrix3::fromEulerAnglesXYZ(G3D::pi()*instance.iRot.z/-180.f, G3D::pi()*instance.iRot.x/-180.f, G3D::pi()*instance.iRot.y/-180.f);
                 Vector3 position = instance.iPos;
                 position.x -= 32*GRID_SIZE;
                 position.y -= 32*GRID_SIZE;
@@ -591,17 +589,17 @@ namespace MMAP
                         // convert liquid type to NavTerrain
                         switch (liquid->GetType())
                         {
-                            case 0:
-                            case 1:
-                                type = NAV_WATER;
-                                break;
-                            case 2:
-                                type = NAV_MAGMA;
-                                break;
-                            case 3:
-                                type = NAV_SLIME;
-                                break;
-                        }
+						case 0:
+						case 1:
+							type = NAV_WATER;
+							break;
+						case 2:
+							type = NAV_MAGMA;
+							break;
+						case 3:
+							type = NAV_SLIME;
+							break;
+						}
 
                         // indexing is weird...
                         // after a lot of trial and error, this is what works:
@@ -611,6 +609,7 @@ namespace MMAP
 
                         Vector3 vert;
                         for (uint32 x = 0; x < vertsX; ++x)
+						{
                             for (uint32 y = 0; y < vertsY; ++y)
                             {
                                 vert = Vector3(corner.x + x * GRID_PART_SIZE, corner.y + y * GRID_PART_SIZE, data[y*vertsX + x]);
@@ -619,11 +618,14 @@ namespace MMAP
                                 vert.y *= -1.f;
                                 liqVerts.push_back(vert);
                             }
+						}
 
                         int idx1, idx2, idx3, idx4;
                         uint32 square;
                         for (uint32 x = 0; x < tilesX; ++x)
+						{
                             for (uint32 y = 0; y < tilesY; ++y)
+							{
                                 if ((flags[x+y*tilesX] & 0x0f) != 0x0f)
                                 {
                                     square = x * tilesY + y;
@@ -641,6 +643,8 @@ namespace MMAP
                                     liqTris.push_back(idx3);
                                     liqTris.push_back(idx1);
                                 }
+							}
+						}
 
                         uint32 liqOffset = meshData.liquidVerts.size() / 3;
                         for (uint32 i = 0; i < liqVerts.size(); ++i)

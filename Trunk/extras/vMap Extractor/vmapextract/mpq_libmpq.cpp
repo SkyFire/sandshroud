@@ -62,7 +62,7 @@ MPQFile::MPQFile(const char* filename):
             buffer = 0;
             return;
         }
-        buffer = new char[size];
+        buffer = new char[(unsigned int)size];
 
         //libmpq_file_getdata
         libmpq__file_read(mpq_a, filenum, (unsigned char*)buffer, size, &transferred);
@@ -78,9 +78,9 @@ size_t MPQFile::read(void* dest, size_t bytes)
 {
     if (eof) return 0;
 
-    size_t rpos = pointer + bytes;
+    size_t rpos = size_t(pointer + bytes);
     if (rpos > size) {
-        bytes = size - pointer;
+        bytes = size_t(size - pointer);
         eof = true;
     }
 

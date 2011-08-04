@@ -460,10 +460,9 @@ WMOInstance::WMOInstance(MPQFile &f,const char* WmoInstName, uint32 mapID, uint3
     //-----------add_in _dir_file----------------
 
     char tempname[512];
-    sprintf(tempname, "%s/%s", szWorkDirWmo, WmoInstName);
-    FILE *input;
-    input = fopen(tempname, "r+b");
-
+    sprintf_s(tempname, 512, "%s/%s", szWorkDirWmo, WmoInstName);
+    FILE *input = NULL;
+	fopen_s(&input, tempname, "r+b");
     if(!input)
     {
         printf("WMOInstance::WMOInstance: couldn't open %s\n", tempname);
