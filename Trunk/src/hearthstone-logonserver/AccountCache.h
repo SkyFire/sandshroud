@@ -199,6 +199,7 @@ typedef struct Realm
 	uint8 Icon;
 	uint8 WorldRegion;
 	uint8 Lock;
+	float RealPopulation;
 	float Population;
 	uint32 RealmCap;
 	uint32 RequiredClient;

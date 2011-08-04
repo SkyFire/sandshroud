@@ -496,6 +496,7 @@ void InformationCore::UpdateRealmPop(uint32 realm_id, uint32 population)
 			temp = REALM_FLAG_RECOMMENDED;
 		}
 
+		itr->second->RealPopulation = population;
 		itr->second->Population = color;
 		itr->second->Flag = temp;
 	}
@@ -643,7 +644,7 @@ void InformationCore::TimeoutSockets()
 			m_serverSockets.erase(it2);
 
 			s->Disconnect();
-			continue;;
+			continue;
 		}
 		s->RefreshRealmsPop();
 	}

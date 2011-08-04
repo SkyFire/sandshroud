@@ -145,7 +145,7 @@ void LogonConsole::ReloadAccts(char *str)
 void LogonConsole::ListRealms(char *str)
 {
 	Realm* rlm = NULL;
-	sLog.outString("Console:------Listing Realms--------");
+	sLog.outString("\nConsole:------Listing Realms--------");
 	sInfoCore.getRealmLock().Acquire();
 	map<uint32, Realm*> realms = sInfoCore.GetRealmMap();
 	map<uint32, Realm*>::iterator itr = realms.begin();
@@ -162,6 +162,7 @@ void LogonConsole::ListRealms(char *str)
 		sLog.outString("   Icon:       %u", rlm->Icon);
 		sLog.outString("   Flag:       %u", rlm->Flag);
 		sLog.outString("   Lock:       %u", rlm->Lock);
+		sLog.outString("   Plr Count:  %u", rlm->RealPopulation);
 		sLog.outString("   Plr Cap:    %u", rlm->RealmCap);
 		sLog.outString("   TimeZone:   %u", rlm->WorldRegion);
 		sLog.outString("------------------------------------");
