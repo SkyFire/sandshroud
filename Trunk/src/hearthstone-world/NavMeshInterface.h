@@ -56,8 +56,8 @@ public: // Navmesh settings
 	LocationVector getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
 	bool getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz, LocationVector& out);
-	bool GetWalkingHeightInternal(uint32 mapid, float startx, float starty, float startz, LocationVector& out);
-	float GetWalkingHeight(uint32 mapid, float positionx, float positiony, float positionz);
+	bool GetWalkingHeightInternal(uint32 mapid, float startx, float starty, float startz, float endz, LocationVector& out);
+	float GetWalkingHeight(uint32 mapid, float positionx, float positiony, float positionz, float positionz2);
 
 private:
 	float calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y );

@@ -3132,7 +3132,7 @@ bool ChatHandler::HandleCollisionGetHeight(const char * args, WorldSession * m_s
 	if(sWorld.CalculatedHeightChecks)
 	{
 		SystemMessage(m_session, "CHeightChecks: CHeight: %f; Water: %f; Navmesh: %f;", plr->GetCHeightForPosition(), plr->GetCHeightForPosition(true),
-			NavMeshInterface.GetWalkingHeight(plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ()));
+			NavMeshInterface.GetWalkingHeight(plr->GetMapId(), plr->GetPositionX(), plr->GetPositionY(), plr->GetPositionZ(), plr->GetPositionZ()-10.0f));
 	}
 	else
 	{

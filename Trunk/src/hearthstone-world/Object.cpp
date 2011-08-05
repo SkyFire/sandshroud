@@ -158,17 +158,6 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 		return mapheight+offset;
 	}
 
-	float mmapheight = NavMeshInterface.GetWalkingHeight(GetMapId(), x, y, z);
-	if(mmapheight != MMAP_UNAVAILABLE)
-	{
-		if(checkwater)
-			if(waterheight > mmapheight)
-				return waterheight+offset;
-		return mmapheight+offset;
-	}
-	else if(!checkwater)
-		offset += 1.432f;
-
 	float vmapheight = CollideInterface.GetHeight(GetMapId(), x, y, z);
 	if(IS_INSTANCE(mgr->GetMapId()) || !sWorld.CalculatedHeightChecks)
 	{
@@ -242,11 +231,42 @@ float Object::GetCHeightForPosition(bool checkwater, float x, float y, float z)
 				return vmapheight+offset; // No breaks inbetween us, so its the right height, we're just a bunch of fuckers!
 			}
 
-			// TODO
+			if(phz > z)
+			{
+				if(vmapheight < z)
+				{
+					float mmapheight = NavMeshInterface.GetWalkingHeight(GetMapId(), x, y, z, vmapheight);
+					if(mmapheight != MMAP_UNAVAILABLE)
+					{
+						if(checkwater)
+							if(waterheight > mmapheight)
+								return waterheight+offset;
+						return mmapheight+offset;
+					}
+				}
+			}
+			else
+			{
+				float mmapheight = NavMeshInterface.GetWalkingHeight(GetMapId(), x, y, z, phz);
+				if(mmapheight != MMAP_UNAVAILABLE)
+				{
+					if(checkwater)
+						if(waterheight > mmapheight)
+							return waterheight+offset;
+					return mmapheight+offset;
+				}
+			}
 		}
 		else
 		{
-			// TODO
+			float mmapheight = NavMeshInterface.GetWalkingHeight(GetMapId(), x, y, z, vmapheight);
+			if(mmapheight != MMAP_UNAVAILABLE)
+			{
+				if(checkwater)
+					if(waterheight > mmapheight)
+						return waterheight+offset;
+				return mmapheight+offset;
+			}
 		}
 	}
 

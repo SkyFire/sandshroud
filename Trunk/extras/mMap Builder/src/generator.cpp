@@ -230,7 +230,7 @@ int main(int argc, char** argv)
     bool skipLiquid = false,
          skipContinents = false,
          skipJunkMaps = true,
-         skipBattlegrounds = true,
+         skipBattlegrounds = false,
          debugOutput = false,
          silent = false,
          bigBaseUnit = false;
@@ -260,7 +260,6 @@ int main(int argc, char** argv)
         return silent ? -3 : finish("Press any key to close...", -3);
 
     MapBuilder builder(maxAngle, skipLiquid, skipContinents, skipJunkMaps, skipBattlegrounds, debugOutput, bigBaseUnit, offMeshInputPath);
-
     if (tileX > -1 && tileY > -1 && mapnum >= 0)
         builder.buildTile(mapnum, tileX, tileY);
     else if (mapnum >= 0)
@@ -268,8 +267,8 @@ int main(int argc, char** argv)
     else
         builder.buildAllMaps();
 
-	int done = silent ? 1 : finish("Movemap build is complete!", 1);
+    int done = silent ? 1 : finish("Movemap build is complete!", 1);
 
-	system("PAUSE");
+    system("PAUSE");
     return done;
 }

@@ -774,7 +774,7 @@ namespace MMAP
             dtStatus dtResult = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
             if (!tileRef || dtResult != DT_SUCCESS)
             {
-                printf("%s Failed adding tile to navmesh!           \n", tileString);
+                printf("%s Failed adding tile to navmesh!(%u)       \n", tileString, (uint)dtResult);
                 continue;
             }
 
@@ -794,9 +794,7 @@ namespace MMAP
             printf("%s Writing to file...                      \r", tileString);
 
             // write header
-            MmapTileHeader header;
-            header.usesLiquids = m_terrainBuilder->usesLiquids();
-            header.size = uint32(navDataSize);
+            MmapTileHeader header(uint32(navDataSize), m_terrainBuilder->usesLiquids());
             fwrite(&header, sizeof(MmapTileHeader), 1, file);
 
             // write data
@@ -844,51 +842,57 @@ namespace MMAP
     bool MapBuilder::shouldSkipMap(uint32 mapID)
     {
         if (m_skipContinents)
+        {
             switch (mapID)
             {
-                case 0:
-                case 1:
-                case 530:
-                case 571:
-                    return true;
-                default:
-                    break;
+            case 0:
+            case 1:
+            case 530:
+            case 571:
+                return true;
+            default:
+                break;
             }
+        }
 
         if (m_skipJunkMaps)
+        {
             switch (mapID)
             {
-                case 13:    // test.wdt
-                case 25:    // ScottTest.wdt
-                case 29:    // Test.wdt
-                case 42:    // Colin.wdt
-                case 169:   // EmeraldDream.wdt (unused, and very large)
-                case 451:   // development.wdt
-                case 573:   // ExteriorTest.wdt
-                case 597:   // CraigTest.wdt
-                case 605:   // development_nonweighted.wdt
-                case 606:   // QA_DVD.wdt
+            case 13:    // test.wdt
+            case 25:    // ScottTest.wdt
+            case 29:    // Test.wdt
+            case 42:    // Colin.wdt
+            case 169:   // EmeraldDream.wdt (unused, and very large)
+            case 451:   // development.wdt
+            case 573:   // ExteriorTest.wdt
+            case 597:   // CraigTest.wdt
+            case 605:   // development_nonweighted.wdt
+            case 606:   // QA_DVD.wdt
+                return true;
+            default:
+                if (isTransportMap(mapID))
                     return true;
-                default:
-                    if (isTransportMap(mapID))
-                        return true;
-                    break;
+                break;
             }
+        }
 
         if (m_skipBattlegrounds)
+        {
             switch (mapID)
             {
-                case 30:    // AV
-                case 37:    // ?
-                case 489:   // WSG
-                case 529:   // AB
-                case 566:   // EotS
-                case 607:   // SotA
-                case 628:   // IoC
-                    return true;
-                default:
-                    break;
+            case 30:    // AV
+            case 37:    // ?
+            case 489:   // WSG
+            case 529:   // AB
+            case 566:   // EotS
+            case 607:   // SotA
+            case 628:   // IoC
+                return true;
+            default:
+                break;
             }
+        }
 
         return false;
     }

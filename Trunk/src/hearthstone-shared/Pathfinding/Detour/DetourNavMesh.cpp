@@ -753,7 +753,7 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 	int h = computeTileHash(header->x, header->y, m_tileLutMask);
 	tile->next = m_posLookup[h];
 	m_posLookup[h] = tile;
-	
+
 	// Patch header pointers.
 	const int headerSize = dtAlign4(sizeof(dtMeshHeader));
 	const int vertsSize = dtAlign4(sizeof(float)*3*header->vertCount);
@@ -803,8 +803,9 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 		}
 	}
 
-	dtTileRef result2 = getTileRef(tile);
-	result = &result2;
+	if(result)
+		*result = getTileRef(tile);
+
 	return DT_SUCCESS;
 }
 

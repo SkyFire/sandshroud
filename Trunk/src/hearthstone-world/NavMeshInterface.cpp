@@ -65,7 +65,7 @@ void CNavMeshInterface::LoadMap(uint32 mapid)
 		delete [] fileName;
 		return;
 	}
-	
+
 	dtNavMeshParams params;
 	fread(&params, sizeof(dtNavMeshParams), 1, file);
 	fclose(file);
@@ -82,7 +82,7 @@ void CNavMeshInterface::LoadMap(uint32 mapid)
 
 	delete [] fileName;
 
-	Log.Notice("NavMeshInterface", "Loaded %03i.mmap", mapid);
+	Log.Debug("NavMeshInterface", "Loaded %03i.mmap", mapid);
 
 	// store inside our map list
 	m_navMesh[mapid] = mesh;
@@ -395,7 +395,7 @@ bool CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float star
 	return false;
 }
 
-bool CNavMeshInterface::GetWalkingHeightInternal(uint32 mapid, float positionx, float positiony, float positionz, LocationVector& out)
+bool CNavMeshInterface::GetWalkingHeightInternal(uint32 mapid, float positionx, float positiony, float positionz, float endz, LocationVector& out)
 {
 	if(m_navMesh[mapid] == NULL)
 		return false;
@@ -410,8 +410,8 @@ bool CNavMeshInterface::GetWalkingHeightInternal(uint32 mapid, float positionx, 
 
 	dtStatus result;
 	//convert to nav coords.
-	float startPos[3] = { positiony, positionz-4.0f, positionx };
-	float endPos[3] = { positiony, positionz+4.0f, positionx };
+	float startPos[3] = { positiony, positionz, positionx };
+	float endPos[3] = { positiony, endz, positionx };
 	float mPolyPickingExtents[3] = { 2.00f, 4.00f, 2.00f };
 	float closestPoint[3] = {0.0f, 0.0f, 0.0f};
 	int gx = GetPosX(positionx)/8;
@@ -446,7 +446,6 @@ bool CNavMeshInterface::GetWalkingHeightInternal(uint32 mapid, float positionx, 
 			result = query->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter, mPathResults, &mNumPathResults, 50);
 			if(result != DT_SUCCESS || mNumPathResults <= 0)
 			{
-				printf("Path unsuccessful\n");
 				freeNavMeshQuery(query);
 				delete mPathFilter;
 				mPathFilter = NULL;
@@ -459,16 +458,25 @@ bool CNavMeshInterface::GetWalkingHeightInternal(uint32 mapid, float positionx, 
 			result = query->findStraightPath(startPos, endPos, mPathResults, mNumPathResults, actualpath, NULL, &polyrefs, &mNumPathPoints, 2);
 			if (result != DT_SUCCESS)
 			{
-				printf("Path unsuccessful2\n");
 				freeNavMeshQuery(query);
 				delete mPathFilter;
 				mPathFilter = NULL;
 				return false;
 			}
+			if(mNumPathPoints < 3)
+			{
+				out.y = positiony;
+				out.z = positionz;
+				out.x = positionx;
+				freeNavMeshQuery(query);
+				delete mPathFilter;
+				mPathFilter = NULL;
+				return true;
+			}
 
-			out.y = positiony;
-			out.z = positionz;
-			out.x = positionx;
+			out.y = actualpath[3];
+			out.z = actualpath[4];
+			out.x = actualpath[5];
 			freeNavMeshQuery(query);
 			delete mPathFilter;
 			mPathFilter = NULL;
@@ -478,11 +486,11 @@ bool CNavMeshInterface::GetWalkingHeightInternal(uint32 mapid, float positionx, 
 	return false;
 }
 
-float CNavMeshInterface::GetWalkingHeight(uint32 mapid, float x, float y, float z)
+float CNavMeshInterface::GetWalkingHeight(uint32 mapid, float x, float y, float z, float z2)
 {
 	float height = MMAP_UNAVAILABLE;
 	LocationVector Step;
-	if(GetWalkingHeightInternal(mapid, x, y, z, Step))
+	if(GetWalkingHeightInternal(mapid, x, y, z, z2, Step))
 		height = Step.z;
 	return height;
 }
