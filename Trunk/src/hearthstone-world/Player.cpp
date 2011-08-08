@@ -3191,8 +3191,8 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	SetUInt32Value(UNIT_FIELD_MAXPOWER4, info->energy );
 	SetUInt32Value(UNIT_FIELD_MAXPOWER6, 8);
 	SetUInt32Value(UNIT_FIELD_MAXPOWER7, 1000 );
-	if(getClass() == WARRIOR)
-		SetShapeShift(FORM_BATTLESTANCE);
+	if(getClass() == WARRIOR && !HasAura(21156) && !HasAura(7376) && !HasAura(7381))
+		CastSpell(this, 2457, true); // We have no shapeshift aura, set our shapeshift.
 
 	// We're players!
 	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
@@ -9196,7 +9196,9 @@ bool Player::SafeTeleport(uint32 MapID, uint32 InstanceID, LocationVector vec, i
 	WorldPacket * data = BuildTeleportAckMsg(vec);
 	m_session->SendPacket(data);
 	delete data;
+
 #else
+
 	if(GetShapeShift())
 	{
 		// Extra Check

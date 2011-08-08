@@ -4902,7 +4902,6 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	// Last Calcs
 	//---------------------------------------------------------
-
 	if( caster->IsPlayer() )
 	{
 		if( spellInfo->Id == 31893 || spellInfo->Id == 53719 )
@@ -4926,7 +4925,6 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	int32 res = float2int32((bonus_damage) * summaryPCTmod) + bonus_damage;
 	if( res < 0 )
 		res = 0;
-
 	return res;
 }
 

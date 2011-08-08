@@ -206,7 +206,7 @@ Spell::Spell(Object* Caster, SpellEntry *info, bool triggered, Aura* aur)
 			if(sLog.IsOutDevelopement())
 				printf("[DEBUG][SPELL] Incompatible object type, please report this to the dev's\n");
 			else
-				OUT_DEBUG("[DEBUG][SPELL] Incompatible object type, please report this to the dev's");
+				sLog.outSpellDebug("[DEBUG][SPELL] Incompatible object type, please report this to the dev's");
 		}break;
 	}
 
@@ -1333,7 +1333,7 @@ void Spell::cast(bool check)
 		return;
 	}
 
-	DEBUG_LOG("Spell","Cast %u, Unit: %u", GetSpellProto()->Id, m_caster->GetLowGUID());
+	Log.DebugSpell("Spell","Cast %u, Unit: %u", GetSpellProto()->Id, m_caster->GetLowGUID());
 
 	if(u_caster != NULL )
 		if(u_caster->CallOnCastSpell != NULL)
@@ -2598,6 +2598,8 @@ void Spell::SendResurrectRequest(Player* target)
 
 bool Spell::HasPower()
 {
+	if(m_caster == NULL)
+		return true;
 	//trainers can always cast
 	if( u_caster != NULL && u_caster->HasFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_TRAINER) )
 		return true;
@@ -2628,29 +2630,23 @@ bool Spell::HasPower()
 			return true;
 		}
 	case POWER_TYPE_RUNIC:	{ powerField = UNIT_FIELD_POWER7; }break;
-	default:{
-		DEBUG_LOG("Spell","unknown power type %d", GetSpellProto()->powerType);
-		// we should'nt be here to return
-		return false;
-			}break;
+	default:
+		{
+			Log.DebugSpell("Spell","unknown power type %d", GetSpellProto()->powerType);
+			return false;
+		}break;
 	}
 
-	if(!m_caster)
-		return true;
-
-	int32 currentPower = m_caster->GetUInt32Value(powerField);
 	int32 cost = m_caster->GetSpellBaseCost(m_spellInfo);
-
-	if((int32)GetSpellProto()->powerType == POWER_TYPE_HEALTH)
-		cost -= GetSpellProto()->baseLevel;//FIX for life tap
-	else if( u_caster != NULL )
+	int32 currentPower = m_caster->GetUInt32Value(powerField);
+	if(u_caster != NULL && (int32)GetSpellProto()->powerType != POWER_TYPE_HEALTH )
 	{
 		if( GetSpellProto()->powerType == POWER_TYPE_MANA)
 			cost += u_caster->PowerCostMod[GetSpellProto()->School];//this is not percent!
 		else
 			cost += u_caster->PowerCostMod[0];
 
-		cost +=float2int32(cost*u_caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER+GetSpellProto()->School));
+		cost += float2int32(cost*u_caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER+GetSpellProto()->School));
 	}
 
 	//apply modifiers
@@ -2660,7 +2656,7 @@ bool Spell::HasPower()
 		SM_PIValue(u_caster->SM[SMT_COST][1],&cost,GetSpellProto()->SpellGroupType);
 	}
 
-	if (cost <=0)
+	if (cost <= 0)
 	{
 		m_usesMana = false; // no mana regen interruption for free spells
 		return true;
@@ -2675,24 +2671,15 @@ bool Spell::HasPower()
 			cost += Offhand->GetProto()->Delay / 100;
 	}
 
-	//FIXME:DK:if field value < cost what happens
-	if(powerField == UNIT_FIELD_HEALTH)
-	{
+	if(cost <= currentPower) // Unit has enough power (needed for creatures)
 		return true;
-	}
-	else
-	{
-		if(cost <= currentPower) // Unit has enough power (needed for creatures)
-		{
-			return true;
-		}
-		else
-			return false;
-	}
+	return false;
 }
 
 bool Spell::TakePower()
 {
+	if(m_caster == NULL)
+		return true;
 	//trainers can always cast
 	if( u_caster != NULL && u_caster->HasFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_TRAINER) )
 		return true;
@@ -2709,13 +2696,13 @@ bool Spell::TakePower()
 	int32 powerField = 0;
 	switch(GetSpellProto()->powerType)
 	{
-		case POWER_TYPE_HEALTH:	{ powerField = UNIT_FIELD_HEALTH; }break;
-		case POWER_TYPE_MANA:	{ powerField = UNIT_FIELD_POWER1; m_usesMana=true; }break;
-		case POWER_TYPE_RAGE:	{ powerField = UNIT_FIELD_POWER2; }break;
-		case POWER_TYPE_FOCUS:	{ powerField = UNIT_FIELD_POWER3; }break;
-		case POWER_TYPE_ENERGY:	{ powerField = UNIT_FIELD_POWER4; }break;
-		case POWER_TYPE_RUNIC:	{ powerField = UNIT_FIELD_POWER7; }break;
-		case POWER_TYPE_RUNE:
+	case POWER_TYPE_HEALTH:	{ powerField = UNIT_FIELD_HEALTH; }break;
+	case POWER_TYPE_MANA:	{ powerField = UNIT_FIELD_POWER1; m_usesMana=true; }break;
+	case POWER_TYPE_RAGE:	{ powerField = UNIT_FIELD_POWER2; }break;
+	case POWER_TYPE_FOCUS:	{ powerField = UNIT_FIELD_POWER3; }break;
+	case POWER_TYPE_ENERGY:	{ powerField = UNIT_FIELD_POWER4; }break;
+	case POWER_TYPE_RUNIC:	{ powerField = UNIT_FIELD_POWER7; }break;
+	case POWER_TYPE_RUNE:
 		{
 			if(GetSpellProto()->runeCostID && p_caster)
 			{
@@ -2729,22 +2716,16 @@ bool Spell::TakePower()
 			}
 			return true;
 		}break;
-		default:
+	default:
 		{
-			DEBUG_LOG("Spell","Unknown power type %u for spell %u", GetSpellProto()->powerType, GetSpellProto()->Id);
+			Log.DebugSpell("Spell","Unknown power type %u for spell %u", GetSpellProto()->powerType, GetSpellProto()->Id);
 			// we shouldn't be here to return
 			return false;
 		}break;
 	}
 
-	//FIXME: add handler for UNIT_FIELD_POWER_COST_MODIFIER
-	//UNIT_FIELD_POWER_COST_MULTIPLIER
-
-	int32 cost = 0;
+	int32 cost = m_caster->GetSpellBaseCost(m_spellInfo);
 	int32 currentPower = m_caster->GetUInt32Value(powerField);
-
-	cost = m_caster->GetSpellBaseCost(m_spellInfo);
-
 	if( u_caster != NULL )
 	{
 		if( GetSpellProto()->AttributesEx & ATTRIBUTESEX_DRAIN_WHOLE_MANA ) // Uses %100 mana
@@ -2756,16 +2737,6 @@ bool Spell::TakePower()
 		cost += float2int32(float(cost)* u_caster->GetFloatValue(UNIT_FIELD_POWER_COST_MULTIPLIER + GetSpellProto()->School));
 	}
 
-	if( powerField == UNIT_FIELD_HEALTH )
-		cost -= GetSpellProto()->baseLevel;//FIX for life tap
-
-	//apply modifiers
-	if( GetSpellProto()->SpellGroupType && u_caster)
-	{
-		SM_FIValue(u_caster->SM[SMT_COST][0],&cost,GetSpellProto()->SpellGroupType);
-		SM_PIValue(u_caster->SM[SMT_COST][1],&cost,GetSpellProto()->SpellGroupType);
-	}
-
 	//Stupid shiv
 	if( GetSpellProto()->NameHash == SPELL_HASH_SHIV )
 	{
@@ -2775,7 +2746,14 @@ bool Spell::TakePower()
 			cost += Offhand->GetProto()->Delay / 100;
 	}
 
-	if (cost <=0)
+	//apply modifiers
+	if( GetSpellProto()->SpellGroupType && u_caster)
+	{
+		SM_FIValue(u_caster->SM[SMT_COST][0],&cost,GetSpellProto()->SpellGroupType);
+		SM_PIValue(u_caster->SM[SMT_COST][1],&cost,GetSpellProto()->SpellGroupType);
+	}
+
+	if (cost <= 0)
 	{
 		m_usesMana = false; // no mana regen interruption for free spells
 		return true;
@@ -2787,8 +2765,11 @@ bool Spell::TakePower()
 	//FIXME:DK:if field value < cost what happens
 	if(powerField == UNIT_FIELD_HEALTH)
 	{
-		m_caster->DealDamage(u_caster, cost, 0, 0, 0,true);
-		return true;
+		if(cost <= currentPower) // Unit has enough power (needed for creatures)
+		{
+			m_caster->DealDamage(u_caster, cost, 0, 0, 0,true);
+			return true;
+		}
 	}
 	else
 	{
@@ -2886,11 +2867,11 @@ void Spell::HandleEffects(uint32 i)
 	// Try a dummy SpellHandler
 	if(sScriptMgr.CallScriptedDummySpell(GetSpellProto()->Id, i, this ))
 	{
-		DEBUG_LOG( "Spell","Redirecting Spell %u Effect id = %u to sScriptMgr", GetSpellProto()->Id, GetSpellProto()->Effect[i]);
+		Log.DebugSpell( "Spell","Redirecting Spell %u Effect id = %u to sScriptMgr", GetSpellProto()->Id, GetSpellProto()->Effect[i]);
 		return;
 	}
 	damage = CalculateEffect(i, unitTarget);
-	DEBUG_LOG( "Spell","Handling Effect id = %u, damage = %d", GetSpellProto()->Effect[i], damage);
+	Log.DebugSpell( "Spell","Handling Effect id = %u, damage = %d", GetSpellProto()->Effect[i], damage);
 
 	if( GetSpellProto()->Effect[i] < TOTAL_SPELL_EFFECTS)
 		(*this.*SpellEffectsHandler[GetSpellProto()->Effect[i]])(i);
@@ -2899,7 +2880,7 @@ void Spell::HandleEffects(uint32 i)
 		if(sLog.IsOutDevelopement())
 			printf("Unknown spell effect %u in spell %u.\n",GetSpellProto()->Effect[i],GetSpellProto()->Id);
 		else
-			DEBUG_LOG("Spell","Unknown effect %u spellid %u",GetSpellProto()->Effect[i], GetSpellProto()->Id);
+			Log.DebugSpell("Spell","Unknown effect %u spellid %u",GetSpellProto()->Effect[i], GetSpellProto()->Id);
 	}
 }
 
@@ -3087,7 +3068,7 @@ uint8 Spell::CanCast(bool tolerate)
 	/* Spells for the zombie event */
 	if( p_caster && p_caster->GetShapeShift() ==FORM_ZOMBIE && !( ((uint32)1 << (p_caster->GetShapeShift()-1)) & GetSpellProto()->RequiredShapeShift  ))
 	{
-		OUT_DEBUG("Invalid shapeshift: %u", GetSpellProto()->RequiredShapeShift);
+		sLog.outSpellDebug("Invalid shapeshift: %u", GetSpellProto()->RequiredShapeShift);
 		return SPELL_FAILED_SPELL_UNAVAILABLE;
 	}
 
@@ -3125,8 +3106,14 @@ uint8 Spell::CanCast(bool tolerate)
 	{
 		if( GetSpellProto()->Id == 51721 )
 		{
-			if( !(p_caster->GetPlayerAreaID() == 4281) )
+			if(p_caster->GetPlayerAreaID() != 4281)
 				return SPELL_FAILED_NOT_HERE;
+		}
+
+		if( GetSpellProto()->NameHash == SPELL_HASH_LIFE_TAP )
+		{
+			if(p_caster->GetManaPct() == 100)
+				return SPELL_FAILED_ALREADY_AT_FULL_POWER;
 		}
 
 		if(GetSpellProto()->Flags7 & FLAGS7_NOT_IN_RAID_INSTANCE && p_caster->GetMapMgr()->GetdbcMap()->israid())
@@ -3504,7 +3491,7 @@ uint8 Spell::CanCast(bool tolerate)
 				GameObjectInfo *info = TO_GAMEOBJECT(*itr)->GetInfo();
 				if(!info)
 				{
-					DEBUG_LOG("Spell","Warning: could not find info about game object %u", (*itr)->GetEntry());
+					Log.DebugSpell("Spell","Warning: could not find info about game object %u", (*itr)->GetEntry());
 					continue;
 				}
 
@@ -4439,7 +4426,7 @@ void Spell::HandleTeleport(uint32 id, Unit* Target)
 					if(sLog.IsOutDevelopement())
 						printf("Unknown teleport spell: %u\n", id);
 					else
-						OUT_DEBUG("Unknown teleport spell: %u", id);
+						sLog.outSpellDebug("Unknown teleport spell: %u", id);
 					return;
 				}
 			}break;

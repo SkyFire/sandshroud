@@ -224,6 +224,19 @@ public:
 		CNotice(TBLUE, source, msg0);
 	}
 
+	void DebugSpell(const char * source, const char * format, ...)
+	{
+		if(log_level != 3 && log_level != 7)
+			return;
+
+		va_list ap;
+		va_start(ap, format);
+		char msg0[1024];
+		vsnprintf(msg0, 1024, format, ap);
+		va_end(ap);
+		CNotice(TBLUE, source, msg0);
+	}
+
 #define LARGERRORMESSAGE_ERROR 1
 #define LARGERRORMESSAGE_WARNING 2
 

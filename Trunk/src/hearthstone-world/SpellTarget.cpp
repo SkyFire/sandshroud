@@ -155,7 +155,7 @@ void Spell::FillTargetMap(uint32 i)
 			if(sLog.IsOutDevelopement())
 				printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", TypeA, GetSpellProto()->Id);
 			else
-				OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", TypeA, GetSpellProto()->Id);
+				sLog.outSpellDebug("[SPELL][TARGET] Unknown Target Type  %u in spell %u", TypeA, GetSpellProto()->Id);
 		}
 
 		return;
@@ -171,7 +171,7 @@ void Spell::FillTargetMap(uint32 i)
 			if(sLog.IsOutDevelopement())
 				printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", TypeB, GetSpellProto()->Id);
 			else
-				OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", TypeB, GetSpellProto()->Id);
+				sLog.outSpellDebug("[SPELL][TARGET] Unknown Target Type  %u in spell %u", TypeB, GetSpellProto()->Id);
 		}
 
 		return;
@@ -188,7 +188,7 @@ void Spell::FillTargetMap(uint32 i)
 		if(sLog.IsOutDevelopement())
 			printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", cur, GetSpellProto()->Id);
 		else
-			OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", cur, GetSpellProto()->Id);
+			sLog.outSpellDebug("[SPELL][TARGET] Unknown Target Type  %u in spell %u", cur, GetSpellProto()->Id);
 	}
 
 	// j = 1
@@ -202,7 +202,7 @@ void Spell::FillTargetMap(uint32 i)
 		if(sLog.IsOutDevelopement())
 			printf("[SPELL][TARGET] Unknown Target Type  %u in spell %u\n", cur, GetSpellProto()->Id);
 		else
-			OUT_DEBUG("[SPELL][TARGET] Unknown Target Type  %u in spell %u", cur, GetSpellProto()->Id);
+			sLog.outSpellDebug("[SPELL][TARGET] Unknown Target Type  %u in spell %u", cur, GetSpellProto()->Id);
 	}
 }
 
@@ -213,7 +213,7 @@ void Spell::SpellTargetNULL(uint32 i, uint32 j)
 		if(sLog.IsOutDevelopement())
 			printf("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u\n", GetSpellProto()->EffectImplicitTargetA[j], GetSpellProto()->EffectImplicitTargetB[j]);
 		else
-			OUT_DEBUG("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u", GetSpellProto()->EffectImplicitTargetA[j], GetSpellProto()->EffectImplicitTargetB[j]);
+			sLog.outSpellDebug("[SPELL][TARGET] Unhandled target typeA: %u typeB: %u", GetSpellProto()->EffectImplicitTargetA[j], GetSpellProto()->EffectImplicitTargetB[j]);
 	}
 }
 

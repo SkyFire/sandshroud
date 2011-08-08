@@ -3509,10 +3509,10 @@ bool Object::PhasedCanInteract(Object* pObj)
 // Returns the base cost of a spell
 int32 Object::GetSpellBaseCost(SpellEntry *sp)
 {
-	float cost;
+	float cost = 0.0f;
 	if( sp->ManaCostPercentage && IsUnit() )//Percentage spells cost % of !!!BASE!!! mana
 	{
-		if( sp->powerType==POWER_TYPE_MANA)
+		if( sp->powerType == POWER_TYPE_MANA)
 			cost = GetUInt32Value(UNIT_FIELD_BASE_MANA) * (sp->ManaCostPercentage / 100.0f);
 		else
 			cost = GetUInt32Value(UNIT_FIELD_BASE_HEALTH) * (sp->ManaCostPercentage / 100.0f);
@@ -3520,6 +3520,14 @@ int32 Object::GetSpellBaseCost(SpellEntry *sp)
 	else
 	{
 		cost = (float)sp->manaCost;
+	}
+
+	switch(sp->NameHash)
+	{
+	case SPELL_HASH_LIFE_TAP:
+		{
+			cost = (sp->EffectBasePoints[0]+1)+(1.5f*GetUInt32Value(UNIT_FIELD_STAT4));
+		}break;
 	}
 
 	return float2int32(cost); // Truncate zeh decimals!

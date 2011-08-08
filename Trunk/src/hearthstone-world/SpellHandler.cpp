@@ -92,7 +92,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
 	if(!spellInfo)
 	{
-		OUT_DEBUG("WORLD: unknown spell id %i\n", spellId);
+		sLog.outSpellDebug("WORLD: unknown spell id %i\n", spellId);
 		return;
 	}
 
@@ -215,7 +215,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 
 	if(!spellId)
 	{
-		OUT_DEBUG("WORLD: unknown spell id %i\n", spellId);
+		sLog.outSpellDebug("WORLD: unknown spell id %i\n", spellId);
 		return;
 	}
 	// check for spell id
@@ -225,7 +225,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 	{
 		SKIP_READ_PACKET(recvPacket);
 		if(spellInfo == NULL)
-			OUT_DEBUG("WORLD: unknown spell id %i\n", spellId);
+			sLog.outSpellDebug("WORLD: unknown spell id %i\n", spellId);
 		return;
 	}
 
@@ -247,7 +247,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	DEBUG_LOG("WORLD","Received cast_spell packet, spellId - %i (%s), data length = %i", spellId, spellInfo->Name, recvPacket.size());
+	Log.DebugSpell("WORLD","Received cast_spell packet, spellId - %i (%s), data length = %i", spellId, spellInfo->Name, recvPacket.size());
 
 	// Cheat Detection only if player and not from an item
 	// this could fuck up things but meh it's needed ALOT of the newbs are using WPE now
@@ -396,7 +396,7 @@ void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
 		if(_player->m_auras[x] && _player->m_auras[x]->GetSpellId() == spellId && _player->m_auras[x]->IsPositive())
 			_player->RemoveAuraBySlot(x);
 	}
-	DEBUG_LOG("Aura","Removing aura %u",spellId);
+	Log.DebugSpell("Aura","Removing aura %u",spellId);
 }
 
 void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
@@ -407,7 +407,7 @@ void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)
 	if(_player->m_currentSpell)
 	{
 		if(_player->m_currentSpell->GetSpellProto()->Id != spellId)
-			DEBUG_LOG("Spell","Player cancelled spell that was not being channeled: %u", spellId);
+			Log.DebugSpell("Spell","Player cancelled spell that was not being channeled: %u", spellId);
 
 		_player->m_currentSpell->cancel();
 	}

@@ -425,7 +425,7 @@ Aura::Aura( SpellEntry* proto, int32 duration, Object* caster, Unit* target )
 	m_castedItemId = 0;
 	pSpellId = 0;
 	periodic_target = 0;
-	DEBUG_LOG("Aura","Constructor %u (%s) from %u.", m_spellProto->Id, m_spellProto->Name, m_target->GetLowGUID());
+	Log.DebugSpell("Aura","Constructor %u (%s) from %u.", m_spellProto->Id, m_spellProto->Name, m_target->GetLowGUID());
 	m_auraSlot = 0xffffffff;
 	m_interrupted = -1;
 }
@@ -603,13 +603,15 @@ void Aura::ApplyModifiers( bool apply )
 	{
 		mod = &m_modList[x];
 
-		if(mod->m_type<TOTAL_SPELL_AURAS)
+		if(mod->m_type >= TOTAL_SPELL_AURAS)
 		{
-			DEBUG_LOG( "Aura","Known Aura id %d, value %d", uint32(mod->m_type), uint32(mod->m_amount));
-			(*this.*SpellAuraHandler[mod->m_type])(apply);
+			Log.DebugSpell( "Aura","Unknown Aura id %d in spell %u", uint32(mod->m_type), GetSpellId());
+			continue;
 		}
-		else
-			DEBUG_LOG( "Aura","Unknown Aura id %d in spell %u", uint32(mod->m_type), GetSpellId());
+
+		Log.DebugSpell( "Aura","Known Aura id %d, value %d", uint32(mod->m_type), uint32(mod->m_amount));
+
+		(*this.*SpellAuraHandler[mod->m_type])(apply);
 	}
 }
 
@@ -621,7 +623,7 @@ void Aura::UpdateModifiers( )
 
 		if(mod->m_type<TOTAL_SPELL_AURAS)
 		{
-			DEBUG_LOG( "Aura","Updating Aura modifiers target = %u, slot = %u, Spell Aura id = %u, SpellId  = %u, i = %u, duration = %i, damage = %d",
+			Log.DebugSpell( "Aura","Updating Aura modifiers target = %u, slot = %u, Spell Aura id = %u, SpellId  = %u, i = %u, duration = %i, damage = %d",
 				m_target->GetLowGUID(), m_auraSlot, mod->m_type, m_spellProto->Id, mod->i, GetDuration(),mod->m_amount);
 			switch (mod->m_type)
 			{
@@ -630,7 +632,7 @@ void Aura::UpdateModifiers( )
 			}
 		}
 		else
-			DEBUG_LOG( "Aura","Unknown Aura id %d", (uint32)mod->m_type);
+			Log.DebugSpell( "Aura","Unknown Aura id %d", (uint32)mod->m_type);
 	}
 }
 
@@ -1288,7 +1290,7 @@ void Aura::SpellAuraNULL(bool apply)
 	if(sLog.IsOutDevelopement())
 		printf("Unknown Aura id %d in spell %u\n", uint32(mod->m_type), GetSpellId());
 	else
-		DEBUG_LOG( "Aura","Unknown Aura id %d in spell %u", uint32(mod->m_type), GetSpellId());
+		Log.DebugSpell( "Aura","Unknown Aura id %d in spell %u", uint32(mod->m_type), GetSpellId());
 }
 
 void Aura::SpellAuraBindSight(bool apply)
@@ -1349,21 +1351,21 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 			dmg = m_caster->GetSpellBonusDamage(m_target, m_spellProto, dmg, true, false);
 			switch(m_spellProto->Id)
 			{
-				case 703:
-				case 8631:
-				case 8632:
-				case 8633:
-				case 8818:
-				case 11289:
-				case 11290:
-						m_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_START_ATTACK, GetSpellId());	// remove stealth
-					break;
-				case 47855:
-					if(m_target->GetHealthPct() <= 25)
-						dmg *= 4;
-					break;
-				//mage talent ignite
-				case 12654:
+			case 703:
+			case 8631:
+			case 8632:
+			case 8633:
+			case 8818:
+			case 11289:
+			case 11290:
+					m_caster->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_START_ATTACK, GetSpellId());	// remove stealth
+				break;
+			case 47855:
+				if(m_target->GetHealthPct() <= 25)
+					dmg *= 4;
+				break;
+			//mage talent ignite
+			case 12654:
 				{
 					if(!pSpellId) //we need a parent spell and should always have one since it procs on it
 						break;
@@ -1385,12 +1387,12 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						dmg = 0;
 						for(int i=0;i<3;++i)
 						{
-						  //dmg +=parentsp->EffectBasePoints[i]*m_spellProto->EffectBasePoints[0];
+							//dmg +=parentsp->EffectBasePoints[i]*m_spellProto->EffectBasePoints[0];
 							dmg +=spelld->CalculateEffect(i,m_target->IsUnit()? TO_UNIT(m_target):NULLUNIT)*parentsp->EffectBasePoints[0]/100;
 						}
 						spelld->Destruct();
 					}
-				}
+				}break;
 			}
 
 			// Add exceptions here :P
@@ -1665,7 +1667,10 @@ void Aura::SpellAuraDummy(bool apply)
 	bool dummy_aura = false;
 	uint32 TamingSpellid = 0;
 	Unit *m_caster = GetUnitCaster();
-	Player *p_caster = m_caster->IsPlayer() ? TO_PLAYER(m_caster) : NULLPLR;
+	if(m_caster == NULL)
+		return;
+
+	Player *p_caster = m_caster ? (m_caster->IsPlayer() ? TO_PLAYER(m_caster) : NULLPLR) : NULLPLR;
 	Player *_ptarget = TO_PLAYER( m_target );
 
 	switch(GetSpellId())
@@ -4173,33 +4178,31 @@ void Aura::SpellAuraPeriodicEnergize(bool apply)
 	{
 		SetPositive();
 		uint32 time = 3000;
-
+		uint32 type = mod->m_miscValue;
+		uint32 energy = mod->m_amount+m_spellProto->EffectBasePoints[0];
 		if( m_spellProto->EffectAmplitude[mod->i] > 0 )
 			time = m_spellProto->EffectAmplitude[mod->i];
-		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
-			EventPeriodicEnergize((uint32)mod->m_amount, (uint32)mod->m_miscValue);
 
-		sEventMgr.AddEvent(this, &Aura::EventPeriodicEnergize, (uint32)mod->m_amount, (uint32)mod->m_miscValue,
+		switch(m_spellProto->Id)
+		{
+		case 29131:
+			energy /= 20;
+			break;
+		}
+
+		if(GetSpellProto()->Flags6 & FLAGS6_START_PERIODIC_AT_APPLY)
+			EventPeriodicEnergize(energy, type);
+		sEventMgr.AddEvent(this, &Aura::EventPeriodicEnergize, energy, type,
 			EVENT_AURA_PERIODIC_ENERGIZE, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 	}
 }
 
 void Aura::EventPeriodicEnergize(uint32 amount,uint32 type)
 {
-	uint32 curEnergy = m_target->GetUInt32Value(UNIT_FIELD_POWER1 + type);
-	uint32 maxEnergy = m_target->GetUInt32Value(UNIT_FIELD_MAXPOWER1 + type);
-	uint32 totalEnergy = curEnergy+amount;
-	if(totalEnergy > maxEnergy)
-		m_target->SetUInt32Value(UNIT_FIELD_POWER1 + type,maxEnergy);
-	else
-		m_target->SetUInt32Value(UNIT_FIELD_POWER1 + type,totalEnergy);
-
-	SendPeriodicAuraLog( m_casterGuid, m_target, m_spellProto, amount, 0, 0, FLAG_PERIODIC_ENERGIZE);
-
+	m_target->Energize(m_target, m_spellProto->Id, amount, type );
 	if((m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_ON_STAND_UP) && type == 0)
-	{
 		m_target->Emote(EMOTE_ONESHOT_EAT);
-	}
+
 	m_target->SendPowerUpdate();
 }
 
@@ -5236,7 +5239,7 @@ void Aura::SpellAuraProcTriggerDamage(bool apply)
 
 		ds.owner = (void*)this;
 		m_target->m_damageShields.push_back(ds);
-		OUT_DEBUG("registering dmg proc %u, school %u, flags %u, charges %u \n",ds.m_spellId,ds.m_school,ds.m_flags,m_spellProto->procCharges);
+		sLog.outSpellDebug("registering dmg proc %u, school %u, flags %u, charges %u \n",ds.m_spellId,ds.m_school,ds.m_flags,m_spellProto->procCharges);
 	}
 	else
 	{
@@ -5591,7 +5594,7 @@ void Aura::SpellAuraTransform(bool apply)
 	ci = CreatureNameStorage.LookupEntry(mod->m_miscValue);
 
 	if(ci == NULL)
-		DEBUG_LOG("Aura","SpellAuraTransform cannot find CreatureInfo for id %d",mod->m_miscValue);
+		Log.DebugSpell("Aura","SpellAuraTransform cannot find CreatureInfo for id %d",mod->m_miscValue);
 	else
 		displayId = ci->Male_DisplayID;
 
@@ -7354,22 +7357,22 @@ void Aura::SpellAuraAddPctMod( bool apply )
 		if(sLog.IsOutDevelopement())
 			printf("spell %u is missing affected groups.\n", m_spellProto->Id);
 		else
-			OUT_DEBUG("spell %u is missing affected groups.\n", m_spellProto->Id);
+			sLog.outSpellDebug("spell %u is missing affected groups.\n", m_spellProto->Id);
 		return;
 	}
 	//printf("!!! the AffectedGroups %u ,the smt type %u,\n",AffectedGroups,mod->m_miscValue);
 
 	int32 modifier = mod->m_miscValue;
-
 	if(modifier < 0 || modifier >= SPELL_MODIFIERS)
 	{
 		if(sLog.IsOutDevelopement())
 			printf("Unknown spell modifier type %u in spell %u.<<--report this line to the developer\n", modifier, GetSpellId());
 		else
-			OUT_DEBUG( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer", modifier, GetSpellId() );
+			sLog.outSpellDebug( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer", modifier, GetSpellId() );
 		return;
 	}
 
+	sLog.outSpellDebug("Known spell modifier %u in spell %u", modifier, GetSpellId());
 	SendModifierLog(&m_target->SM[modifier][1], val, AffectedGroups, modifier, true);
 }
 
@@ -7491,11 +7494,11 @@ void Aura::SpellAuraAddTargetTrigger(bool apply)
 			pts.spellId=m_spellProto->EffectTriggerSpell[mod->i];
 		else
 		{
-			OUT_DEBUG("Warning,trigger spell is null for spell %u",m_spellProto->Id);
+			sLog.outSpellDebug("Warning,trigger spell is null for spell %u",m_spellProto->Id);
 			return;
 		}
 		m_target->m_procSpells.push_front(pts);
-		DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u",pts.origId,pts.spellId,pts.procChance,m_spellProto->procflags2 & ~PROC_TARGET_SELF,m_spellProto->procCharges,m_spellProto->procFlags & PROC_TARGET_SELF,m_spellProto->proc_interval);
+		Log.DebugSpell("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %u interval %u",pts.origId,pts.spellId,pts.procChance,m_spellProto->procflags2 & ~PROC_TARGET_SELF,m_spellProto->procCharges,m_spellProto->procFlags & PROC_TARGET_SELF,m_spellProto->proc_interval);
 	}
 	else
 	{
@@ -7661,7 +7664,7 @@ void Aura::SpellAuraOverrideClassScripts(bool apply)
 		if(sLog.IsOutDevelopement())
 			printf("Unknown override %u in spell %u\n", mod->m_miscValue, GetSpellId());
 		else
-			OUT_DEBUG("Unknown override %u in spell %u", mod->m_miscValue, GetSpellId());
+			sLog.outSpellDebug("Unknown override %u in spell %u", mod->m_miscValue, GetSpellId());
 		break;
 	};
 }
@@ -8540,22 +8543,22 @@ void Aura::SpellAuraAddFlatModifier(bool apply)
 	uint32* AffectedGroups = m_spellProto->EffectSpellClassMask[mod->i];
 	if( AffectedGroups[0] == 0 && AffectedGroups[1] == 0 && AffectedGroups[2] == 0 )
 	{
-		OUT_DEBUG("spell %u is missing affected groups.\n", m_spellProto->Id);
+		sLog.outSpellDebug("spell %u is missing affected groups.\n", m_spellProto->Id);
 		return;
 	}
 	//printf("!!! the AffectedGroups %u ,the smt type %u,\n",AffectedGroups,mod->m_miscValue);
 
 	int32 modifier = mod->m_miscValue;
-
 	if(modifier < 0 || modifier >= SPELL_MODIFIERS)
 	{
 		if(sLog.IsOutDevelopement())
 			printf("Unknown spell modifier type %u in spell %u.<<--report this line to the developer\n", modifier, GetSpellId());
 		else
-			OUT_DEBUG( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer", modifier, GetSpellId() );
+			sLog.outSpellDebug( "Unknown spell modifier type %u in spell %u.<<--report this line to the developer", modifier, GetSpellId() );
 		return;
 	}
 
+	sLog.outSpellDebug("Known spell modifier %u in spell %u", modifier, GetSpellId());
 	SendModifierLog(&m_target->SM[modifier][0],val,AffectedGroups,modifier);
 }
 
@@ -10238,7 +10241,7 @@ uint32 SCM2, uint32 SCM3, int32 procValue)
 	Pts.deleted = false;
 	Pts.procValue = procValue;
 	target->m_procSpells.push_back(Pts);
-	DEBUG_LOG("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %s interval %u", Pts.origId, spellid, procChance, procFlags, procCharges, ((procFlags2 & PROC_TARGET_SELF) ? "true" : "false"), m_spellProto->proc_interval);
+	Log.DebugSpell("Aura","%u is registering %u chance %u flags %u charges %u triggeronself %s interval %u", Pts.origId, spellid, procChance, procFlags, procCharges, ((procFlags2 & PROC_TARGET_SELF) ? "true" : "false"), m_spellProto->proc_interval);
 }
 
 void Aura::SpellAuraHealAndJump(bool apply)

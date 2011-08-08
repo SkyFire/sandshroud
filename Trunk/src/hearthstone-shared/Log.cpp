@@ -170,6 +170,25 @@ void oLog::outDebugInLine(const char * str, ...)
 	}
 }
 
+void oLog::outSpellDebug( const char * str, ... )
+{
+	va_list ap;
+	char buf[32768];
+
+	if(m_screenLogLevel != 3 && m_screenLogLevel != 7)
+		return;
+
+	va_start(ap, str);
+	vsnprintf(buf, 32768, str, ap);
+	va_end(ap);
+
+	if(m_screenLogLevel == 3 || m_screenLogLevel == 7)
+	{
+		printf(buf);
+		putc('\n', stdout);
+	}
+}
+
 void oLog::Init(int32 screenLogLevel)
 {
 	m_screenLogLevel = screenLogLevel;

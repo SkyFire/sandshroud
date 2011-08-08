@@ -197,7 +197,7 @@ void Spell::SpellEffectNULL(uint32 i)
 	if(sLog.IsOutDevelopement())
 		printf("Unhandled spell effect %u in spell %u.\n",GetSpellProto()->Effect[i],GetSpellProto()->Id);
 	else
-		DEBUG_LOG("Spell","Unhandled spell effect %u in spell %u.",GetSpellProto()->Effect[i],GetSpellProto()->Id);
+		Log.DebugSpell("Spell","Unhandled spell effect %u in spell %u.",GetSpellProto()->Effect[i],GetSpellProto()->Id);
 }
 
 void Spell::SpellEffectInstantKill(uint32 i)
@@ -2117,23 +2117,14 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 	case 11689:
 	case 27222:
 	case 57946:
-		{//converts base+1+spirit*x points of health into mana
-			if(p_caster == NULL|| playerTarget== NULL )
+		{
+			if(p_caster == NULL || playerTarget== NULL )
 				return;
 
-			uint32 mod;	// spirit bonus coefficient multiplied by 2
-			if(GetSpellProto()->Id == 1454) mod = 2;
-			else if(GetSpellProto()->Id == 1455) mod = 3;
-			else if(GetSpellProto()->Id == 1456) mod = 4;
-			else if(GetSpellProto()->Id == 11687) mod = 5;
-			else mod = 6;
-
-			uint32 damage = GetSpellProto()->EffectBasePoints[i] + 1 + mod * playerTarget->GetUInt32Value(UNIT_FIELD_STAT4) / 2;
-			if (damage >= playerTarget->GetUInt32Value(UNIT_FIELD_HEALTH))
-				return;
-			p_caster->DealDamage(playerTarget,damage,0,0,spellId);
-			damage = damage * (100 + playerTarget->m_lifetapbonus) / 100;	// Apply improved life tap
-			p_caster->Energize(playerTarget, pSpellId ? pSpellId : GetSpellProto()->Id, damage, POWER_TYPE_MANA);
+			uint32 energy = (GetSpellProto()->EffectBasePoints[i] + 1)+(p_caster->GetDamageDoneMod(SCHOOL_SHADOW)/2);
+			if(playerTarget->m_lifetapbonus)
+				energy *= (100 + playerTarget->m_lifetapbonus) / 100;	// Apply improved life tap
+			p_caster->Energize(playerTarget, pSpellId ? pSpellId : GetSpellProto()->Id, energy, POWER_TYPE_MANA);
 		}break;
 	case 39610://Mana Tide
 		{
@@ -4030,7 +4021,7 @@ void Spell::SpellEffectEnergize(uint32 i) // Energize
 			{
 				if(p_caster->HasSpell(12818))
 					modEnergy += 60;
-				if(p_caster->HasSpell(12301))
+				else if(p_caster->HasSpell(12301))
 					modEnergy += 30;
 			}
 		}break;
@@ -4051,8 +4042,8 @@ void Spell::SpellEffectEnergize(uint32 i) // Energize
 		{
 			modEnergy = damage;
 		}break;
-
 	}
+
 	u_caster->Energize(unitTarget, GetSpellProto()->logsId ? GetSpellProto()->logsId : (pSpellId ? pSpellId : GetSpellProto()->Id), modEnergy, GetSpellProto()->EffectMiscValue[i]);
 }
 
@@ -6583,7 +6574,7 @@ void Spell::SpellEffectScriptEffect(uint32 i) // Script Effect
 			if(sLog.IsOutDevelopement())
 				printf("Unhandled Scripted Effect In Spell %u\n", spellId);
 			else
-				OUT_DEBUG("Unhandled Scripted Effect In Spell %u", spellId);
+				sLog.outSpellDebug("Unhandled Scripted Effect In Spell %u", spellId);
 		}break;
 	}
 }
@@ -6800,7 +6791,7 @@ void Spell::SummonTotem(uint32 i) // Summon Totem
 		if(sLog.IsOutDevelopement())
 			printf("Totem entry %u doesn't exist, exiting\n",entry);
 		else
-			OUT_DEBUG("Totem entry %u doesn't exist, exiting",entry);
+			sLog.outSpellDebug("Totem entry %u doesn't exist, exiting",entry);
 		return;
 	}
 
@@ -7374,12 +7365,12 @@ void Spell::SpellEffectDisenchant(uint32 i)
 				if(Rand(float(100-skill*100.0/75.0)))
 					p_caster->_AdvanceSkillLine(SKILL_ENCHANTING, float2int32( 1.0f * sWorld.getRate(RATE_SKILLRATE)));
 			}
-			OUT_DEBUG("SpellEffect","Succesfully disenchanted item %d", uint32(itemTarget->GetEntry()));
+			sLog.outSpellDebug("SpellEffect","Succesfully disenchanted item %d", uint32(itemTarget->GetEntry()));
 			p_caster->SendLoot( itemTarget->GetGUID(), itemTarget->GetMapId(), LOOT_GATHERING );
 		}
 		else
 		{
-			OUT_DEBUG("SpellEffect","Disenchanting failed, item %d has no loot", uint32(itemTarget->GetEntry()));
+			sLog.outSpellDebug("SpellEffect","Disenchanting failed, item %d has no loot", uint32(itemTarget->GetEntry()));
 			SendCastResult(SPELL_FAILED_CANT_BE_DISENCHANTED);
 			return;
 		}
@@ -8498,7 +8489,7 @@ void Spell::SummonTotemCopy(uint32 i)
 	SpellEntry * TotemSpell = ObjectMgr::getSingleton().GetTotemSpell(GetSpellProto()->Id);
 	if(TotemSpell == 0)
 	{
-		OUT_DEBUG("SummonTotemCopy has no spell to cast for summon spellid %u, Creature Id %u",GetSpellProto()->Id, entry);
+		sLog.outSpellDebug("SummonTotemCopy has no spell to cast for summon spellid %u, Creature Id %u",GetSpellProto()->Id, entry);
 		return;
 	}
 

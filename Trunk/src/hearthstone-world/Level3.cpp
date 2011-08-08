@@ -2318,6 +2318,24 @@ bool ChatHandler::HandleLookupItemCommand(const char * args, WorldSession * m_se
 	if(!*args)
 		return false;
 
+	uint32 t = getMSTime();
+	uint32 itemid = 0;
+	GetItemIDFromLink(args, &itemid);
+	if(itemid != NULL)
+	{
+		ItemPrototype* proto = ItemPrototypeStorage.LookupEntry(itemid);
+		if(proto == NULL)
+			return false;
+
+		BlueSystemMessage(m_session, "Starting search of item...");
+		char messagetext[500];
+		string itemlink = proto->ConstructItemLink(proto->RandomPropId, proto->RandomSuffixId, 1);
+		snprintf(messagetext, 500, "Item %u %s", proto->ItemId,itemlink.c_str());
+		SystemMessage(m_session, messagetext);	// This is for the luls.
+		BlueSystemMessage(m_session, "Search completed in %u ms.", getMSTime() - t);
+		return true;
+	}
+
 	string x = string(args);
 	HEARTHSTONE_TOLOWER(x);
 	if(x.length() < 4)
@@ -2327,9 +2345,8 @@ bool ChatHandler::HandleLookupItemCommand(const char * args, WorldSession * m_se
 	}
 
 	StorageContainerIterator<ItemPrototype> * itr = ItemPrototypeStorage.MakeIterator();
-
 	BlueSystemMessage(m_session, "Starting search of item `%s`...", x.c_str());
-	uint32 t = getMSTime();
+	t = getMSTime();
 	ItemPrototype * it;
 	uint32 count = 0;
 	while(!itr->AtEnd())

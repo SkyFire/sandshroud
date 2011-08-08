@@ -66,6 +66,7 @@ public:
 	void outDetail( const char * str, ... );
 	void outDebug( const char * str, ... );
 	void outDebugInLine( const char * str, ... );
+	void outSpellDebug( const char * str, ... );
 
 	void fLogText(const char *text);
 	void SetLogging(bool enabled);

@@ -221,8 +221,7 @@ bool ChatHandler::HandleDeMorphCommand(const char* args, WorldSession *m_session
 
 bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 {
-	char* pitem = strtok((char*)args, " ");
-	if (!pitem)
+	if(strlen(args) < 1)
 		return false;
 
 	Creature* pCreature = getSelectedCreature(m_session, false);
@@ -233,10 +232,16 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	}
 
 	int amount = 1;
-	uint32 item = atoi(pitem);
-	char* pamount = strtok(NULL, " ");
-	if (pamount)
-		amount = atoi(pamount);
+	uint32 item = 0;
+	if(sscanf(args, "%u %i", &item, &amount) < 1)
+	{
+		// check for item link
+		GetItemIDFromLink(args, &item);
+		if(item == 0)
+			return false;
+	}
+	if(item == 0)
+		return false;
 
 	ItemPrototype* tmpItem = ItemPrototypeStorage.LookupEntry(item);
 	std::stringstream sstext;
@@ -270,15 +275,18 @@ bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_sess
 		return true;
 	}
 
-
 	uint32 itemguid = 0;
-	if(sscanf(args, "%u", &itemguid) != 1)
+	if(sscanf(args, "%u", &itemguid) < 1)
 	{
-		SystemMessage(m_session, "Specify an invalid item id.");
-		return true;
+		// check for item link
+		GetItemIDFromLink(args, &itemguid);
+		if(itemguid == 0)
+			return false;
 	}
-	int slot = pCreature->GetSlotByItemId(itemguid);
+	if(itemguid == 0)
+		return false;
 
+	int slot = pCreature->GetSlotByItemId(itemguid);
 	std::stringstream sstext;
 	if(slot != -1)
 	{
@@ -305,7 +313,6 @@ bool ChatHandler::HandleItemRemoveCommand(const char* args, WorldSession *m_sess
 	}
 
 	SystemMessage(m_session, sstext.str().c_str());
-
 	return true;
 }
 

@@ -1576,13 +1576,13 @@ bool ChatHandler::HandleModifyScaleCommand(const char *args, WorldSession *m_ses
 
 uint16 ChatHandler::GetItemIDFromLink(const char* link, uint32* itemid)
 {
-	if(link== NULL)
+	if(link == NULL)
 	{
 		*itemid = 0;
 		return 0;
 	}
-	uint16 slen = (uint16)strlen(link);
 
+	uint16 slen = (uint16)strlen(link);
 	const char* ptr = strstr(link, "|Hitem:");
 	if(ptr == NULL)
 	{
