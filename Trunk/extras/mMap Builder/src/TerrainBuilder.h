@@ -33,8 +33,8 @@ struct MmapTileHeader
     uint32 size;
     bool usesLiquids : 1;
 
-    MmapTileHeader(uint32 _size = 0, bool _useliquids = true) : mmapMagic(MMAP_MAGIC), dtVersion(DT_NAVMESH_VERSION),
-                       mmapVersion(MMAP_VERSION), size(_size), usesLiquids(_useliquids) {}
+    MmapTileHeader() : mmapMagic(MMAP_MAGIC), dtVersion(DT_NAVMESH_VERSION),
+                       mmapVersion(MMAP_VERSION), size(0), usesLiquids(true) {}
 };
 
 enum NavTerrain
@@ -50,7 +50,6 @@ enum NavTerrain
     NAV_UNUSED4 = 0x80
     // we only have 8 bits
 };
-
 
 #include "WorldModel.h"
 
@@ -86,6 +85,7 @@ namespace MMAP
 
     // see contrib/extractor/system.cpp, CONF_use_minHeight
     static const float INVALID_MAP_LIQ_HEIGHT = -500.f;
+    static const float INVALID_MAP_LIQ_HEIGHT_MAX = 5000.0f;
 
     // see following files:
     // contrib/extractor/system.cpp
@@ -122,11 +122,11 @@ namespace MMAP
             bool usesLiquids() { return !m_skipLiquid; }
 
             // vert and triangle methods
-            static void transform(vector<G3D::Vector3> original, vector<G3D::Vector3> &transformed,
-                                    float scale, G3D::Matrix3 rotation, G3D::Vector3 position);
-            static void copyVertices(vector<G3D::Vector3> source, G3D::Array<float> &dest);
-            static void copyIndices(vector<VMAP::MeshTriangle> source, G3D::Array<int> &dest, int offest, bool flip);
-            static void copyIndices(G3D::Array<int> &dest, G3D::Array<int> src, int offset);
+            static void transform(vector<G3D::Vector3> &original, vector<G3D::Vector3> &transformed,
+                                    float scale, G3D::Matrix3 &rotation, G3D::Vector3 &position);
+            static void copyVertices(vector<G3D::Vector3> &source, G3D::Array<float> &dest);
+            static void copyIndices(vector<VMAP::MeshTriangle> &source, G3D::Array<int> &dest, int offest, bool flip);
+            static void copyIndices(G3D::Array<int> &src, G3D::Array<int> &dest, int offset);
             static void cleanVertices(G3D::Array<float> &verts, G3D::Array<int> &tris);
         private:
             /// Loads a portion of a map's terrain

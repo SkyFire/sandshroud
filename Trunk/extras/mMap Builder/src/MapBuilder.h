@@ -63,7 +63,7 @@ namespace MMAP
                        bool skipLiquid          = false,
                        bool skipContinents      = false,
                        bool skipJunkMaps        = true,
-                       bool skipBattlegrounds   = true,
+                       bool skipBattlegrounds   = false,
                        bool debugOutput         = false,
                        bool bigBaseUnit         = false,
                        const char* offMeshFilePath = NULL);
@@ -71,11 +71,10 @@ namespace MMAP
             ~MapBuilder();
 
             // builds all mmap tiles for the specified map id (ignores skip settings)
-            // TODO: it is pretty much the same code as buildTile()
             void buildMap(uint32 mapID);
 
-            // builds an mmap tile for the specified map tile (ignores skip settings)
-            void buildTile(uint32 mapID, uint32 tileX, uint32 tileY);
+            // builds an mmap tile for the specified map and its mesh
+            void buildSingleTile(uint32 mapID, uint32 tileX, uint32 tileY);
 
             // builds list of maps, then builds all of mmap tiles (based on the skip settings)
             void buildAllMaps();
@@ -85,12 +84,15 @@ namespace MMAP
             void discoverTiles();
             set<uint32>* getTileList(uint32 mapID);
 
-            // move map building
             void buildNavMesh(uint32 mapID, dtNavMesh* &navMesh);
+
+            void buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh);
+
+            // move map building
             void buildMoveMapTile(uint32 mapID,
                                   uint32 tileX,
                                   uint32 tileY,
-                                  MeshData meshData,
+                                  MeshData &meshData,
                                   float bmin[3],
                                   float bmax[3],
                                   dtNavMesh* navMesh);
@@ -98,6 +100,7 @@ namespace MMAP
             void getTileBounds(uint32 tileX, uint32 tileY,
                                float* verts, int vertCount,
                                float* bmin, float* bmax);
+            void getGridBounds(uint32 mapID, uint32 &minX, uint32 &minY, uint32 &maxX, uint32 &maxY);
 
             bool shouldSkipMap(uint32 mapID);
             bool isTransportMap(uint32 mapID);

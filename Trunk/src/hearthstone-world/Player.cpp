@@ -1127,12 +1127,15 @@ void Player::_EventAttack( bool offhand )
 {
 	if (m_currentSpell)
 	{
+		if(m_currentSpell->GetSpellProto()->ChannelInterruptFlags != 0) // this is a channeled spell - ignore the attack event
+			return;
+
 		m_currentSpell->cancel();
 		setAttackTimer(500, offhand);
 		return;
 	}
 
-	if( m_special_state & ( UNIT_STATE_FEAR | UNIT_STATE_CHARM | UNIT_STATE_SLEEP | UNIT_STATE_STUN | UNIT_STATE_CONFUSE ) || IsStunned() || IsFeared() )
+	if( IsFeared() || IsStunned() )
 		return;
 
 	Unit* pVictim = NULLUNIT;
@@ -1143,6 +1146,7 @@ void Player::_EventAttack( bool offhand )
 	if (!pVictim)
 	{
 		OUT_DEBUG("Player::Update:  No valid current selection to attack, stopping attack\n");
+		smsg_AttackStop(pVictim);
 		setHRegenTimer(5000); //prevent clicking off creature for a quick heal
 		EventAttackStop();
 		return;
@@ -1150,6 +1154,7 @@ void Player::_EventAttack( bool offhand )
 
 	if( !isAttackable( TO_PLAYER(this), pVictim, false ) )
 	{
+		smsg_AttackStop(pVictim);
 		setHRegenTimer(5000);
 		EventAttackStop();
 		return;
@@ -1190,7 +1195,6 @@ void Player::_EventAttack( bool offhand )
 		if (!GetOnMeleeSpell() || offhand)
 		{
 			Strike( pVictim, ( offhand ? OFFHAND : MELEE ), NULL, 0, 0, 0, false, false, true);
-
 		}
 		else
 		{
