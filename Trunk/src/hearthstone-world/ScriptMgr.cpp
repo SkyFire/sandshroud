@@ -1043,11 +1043,6 @@ void GossipScript::GossipSelectOption(Object* pObject, Player* Plr, uint32 Id, u
 	}
 }
 
-void GossipScript::Destroy()
-{
-	delete this;
-}
-
 /* InstanceAI Stuff */
 
 InstanceScript::InstanceScript( MapMgr* pMapMgr ) : mInstance( pMapMgr )

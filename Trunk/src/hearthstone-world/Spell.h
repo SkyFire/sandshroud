@@ -321,6 +321,46 @@ enum CastInterruptFlags
 	CAST_INTERRUPT_ON_DAMAGE_TAKEN		= 0x10
 };
 
+/************************************************************************/
+/* General Spell Go Flags, for documentation reasons					*/
+/************************************************************************/
+enum SpellGoFlags
+{
+	SPELL_CAST_FLAGS_NONE					= 0x00000000,
+	SPELL_CAST_FLAGS_LOCK_PLAYER_CAST_ANIM	= 0x00000001,				// may be pending spell cast
+	SPELL_CAST_FLAGS_CAST_DEFAULT			= 0x00000002,
+	SPELL_CAST_FLAGS_UNKNOWN2				= 0x00000004,
+	SPELL_CAST_FLAGS_UNKNOWN3				= 0x00000008,
+	SPELL_CAST_FLAGS_UNKNOWN4				= 0x00000010,
+	SPELL_CAST_FLAGS_RANGED					= 0x00000020,
+	SPELL_CAST_FLAGS_UNKNOWN6				= 0x00000040,
+	SPELL_CAST_FLAGS_UNKNOWN7				= 0x00000080,
+	SPELL_CAST_FLAGS_ITEM_CASTER			= 0x00000100,
+	SPELL_CAST_FLAGS_UNKNOWN9				= 0x00000200,
+	SPELL_CAST_FLAGS_EXTRA_MESSAGE			= 0x00000400, //TARGET MISSES AND OTHER MESSAGES LIKE "Resist"
+	SPELL_CAST_FLAGS_POWER_UPDATE			= 0x00000800,
+	SPELL_CAST_FLAGS_UNKNOWN12				= 0x00001000,
+	SPELL_CAST_FLAGS_UNKNOWN13				= 0x00002000,
+	SPELL_CAST_FLAGS_UNKNOWN14				= 0x00004000,
+	SPELL_CAST_FLAGS_UNKNOWN15				= 0x00008000,
+	SPELL_CAST_FLAGS_UNKNOWN16				= 0x00010000,
+	SPELL_CAST_FLAGS_UNKNOWN17				= 0x00020000,
+	SPELL_CAST_FLAGS_UNKNOWN18				= 0x00040000,
+	SPELL_CAST_FLAGS_UNKNOWN19				= 0x00080000,
+	SPELL_CAST_FLAGS_UNKNOWN20				= 0x00100000,
+	SPELL_CAST_FLAGS_RUNE_UPDATE			= 0x00200000,
+	SPELL_CAST_FLAGS_PROJECTILE				= 0x00400000,
+	SPELL_CAST_FLAGS_UNKNOWN24				= 0x00800000,
+	SPELL_CAST_FLAGS_UNKNOWN25				= 0x01000000,
+	SPELL_CAST_FLAGS_UNKNOWN26				= 0x02000000,
+	SPELL_CAST_FLAGS_UNKNOWN27				= 0x04000000,
+	SPELL_CAST_FLAGS_UNKNOWN28				= 0x08000000,
+	SPELL_CAST_FLAGS_UNKNOWN29				= 0x10000000,
+	SPELL_CAST_FLAGS_UNKNOWN30				= 0x20000000,
+	SPELL_CAST_FLAGS_UNKNOWN31				= 0x40000000,
+	SPELL_CAST_FLAGS_UNKNOWN32				= 0x80000000,
+};
+
 enum AuraInterruptFlags
 {
 	AURA_INTERRUPT_NULL							= 0x0,
@@ -2189,6 +2229,7 @@ private:
 		uint64 Guid;
 		uint8 HitResult;
 		uint8 EffectMask;
+		uint8 ReflectResult;
 	};
 
 	typedef vector<SpellTarget> SpellTargetList;
@@ -2202,7 +2243,7 @@ private:
 	void _AddTargetForced(Object * target, const uint32 effectid);
 
 	// didhit checker
-	uint8 _DidHit(const Unit* target);
+	uint8 _DidHit(const Unit* target, uint8 &reflectout);
 
 	// gets the pointer of an object (optimized for spell system)
 	Object* _LookupObject(const uint64& guid);
