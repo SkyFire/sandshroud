@@ -786,7 +786,7 @@ void InstanceMgr::_LoadInstances()
 
 			in = new Instance();
 			in->m_mapInfo = inf;
-			in->m_dbcMap = dbcMap.LookupEntry(in->m_mapId);
+			in->m_dbcMap = dbcMap.LookupEntry(inf->mapid);
 			in->LoadFromDB(result->Fetch());
 
 			if(m_instances[in->m_mapId] == NULL)
@@ -1211,6 +1211,9 @@ MapMgr* InstanceMgr::CreateBattlegroundInstance(uint32 mapid)
 	if( mapid >= NUM_MAPS )
 		return NULLMAPMGR;
 
+	if(dbcMap.LookupEntry(mapid) == NULL)
+		return NULLMAPMGR;
+
 	if(!m_maps[mapid])
 	{
 		_CreateMap(mapid);
@@ -1293,6 +1296,7 @@ MapMgr* InstanceMgr::ClusterCreateInstance( uint32 mapid, uint32 instanceid )
 	pInstance->m_instanceId = mgr->GetInstanceID();
 	pInstance->m_isBattleground = true;
 	pInstance->m_mapId = mapid;
+	pInstance->m_dbcMap = dbcMap.LookupEntry(mapid);
 	pInstance->m_mapInfo = info;
 	pInstance->m_mapMgr = mgr;
 	m_mapLock.Acquire();
