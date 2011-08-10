@@ -144,6 +144,7 @@ class ChatCommand
 public:
 	const char *		Name;
 	char				CommandGroup;
+	char				NumericCGroup;
 	bool (ChatHandler::*Handler)(const char* args, WorldSession *m_session) ;
 	std::string			Help;
 	ChatCommand *		ChildCommands;
@@ -686,6 +687,42 @@ private:
 	Mutex m_lock;
 };
 
+//#define USE_NUMERIC_COMMAND_LEVELS
+
+#define COMMAND_LEVEL_0 '0', '0'
+#define COMMAND_LEVEL_1 '1', '1'
+#define COMMAND_LEVEL_2 '2', '2'
+#define COMMAND_LEVEL_3 '3', '3'
+#define COMMAND_LEVEL_4 '4', '4'
+
+#define COMMAND_LEVEL_A 'a', '3'
+#define COMMAND_LEVEL_B 'b', '2'
+#define COMMAND_LEVEL_C 'c', '2'
+#define COMMAND_LEVEL_D 'd', '3'
+#define COMMAND_LEVEL_E 'e', '2'
+#define COMMAND_LEVEL_F 'f', '3'
+#define COMMAND_LEVEL_G 'g', '2'
+#define COMMAND_LEVEL_H 'h', '0'
+#define COMMAND_LEVEL_I 'i', '1'
+#define COMMAND_LEVEL_J 'j', '0'
+#define COMMAND_LEVEL_K 'k', '0'
+#define COMMAND_LEVEL_L 'l', '1'
+#define COMMAND_LEVEL_M 'm', '3'
+#define COMMAND_LEVEL_N 'n', '2'
+#define COMMAND_LEVEL_O 'o', '2'
+#define COMMAND_LEVEL_P 'p', '0'
+#define COMMAND_LEVEL_Q 'q', '2'
+#define COMMAND_LEVEL_R 'r', '2'
+#define COMMAND_LEVEL_S 's', '1'
+#define COMMAND_LEVEL_T 't', '2'
+#define COMMAND_LEVEL_U 'u', '2'
+#define COMMAND_LEVEL_V 'v', '2'
+#define COMMAND_LEVEL_W 'w', '3'
+#define COMMAND_LEVEL_X 'x', '0'
+#define COMMAND_LEVEL_Y 'y', '0'
+#define COMMAND_LEVEL_Z 'z', '4'
+
 #define sChatHandler ChatHandler::getSingleton()
 #define sComTableStore CommandTableStorage::getSingleton()
+
 #endif

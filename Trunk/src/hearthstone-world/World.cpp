@@ -1491,6 +1491,8 @@ void World::Rehash(bool load)
 	m_deathKnightOnePerAccount = Config.OptionalConfig.GetBoolDefault("DeathKnight", "OnePerRealm", true);
 	m_deathKnightReqLevel = Config.OptionalConfig.GetIntDefault("DeathKnight", "RequiredLevel", 55);
 
+	NumericCommandGroups = Config.MainConfig.GetBoolDefault("Server", "NumericCommandGroups", false);
+
 	// LevelCaps
 	LevelCap_Custom_All = Config.OptionalConfig.GetIntDefault("Server", "LevelCap_Custom_All", 80);
 	if(LevelCap_Custom_All < 1)

@@ -577,6 +577,8 @@ public:
 	bool LogPlayers;
 	bool LogChats;
 
+	bool NumericCommandGroups;
+
 	string LuaScriptPath;
 	string GameMonkeyScriptPath;
 
