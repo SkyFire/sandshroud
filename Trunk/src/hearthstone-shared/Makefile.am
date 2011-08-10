@@ -48,17 +48,17 @@ libshared_a_SOURCES = \
     Config/Config.cpp \
     Config/Config.h \
     Config/ConfigEnv.h \
-    Database/DBC.cpp \
-    Database/Database.cpp \
-    Database/DBC.h \
-    Database/Database.h \
-    Database/DBCStores.cpp \
-    Database/DatabaseEnv.h \
-    Database/DBCStores.h \
-    Database/Field.h \
-    Database/DataStore.h \
-    Database/dbcfile.cpp \
-    Database/dbcfile.h \
+    DataStorage/DBC/DBC.cpp \
+    DataStorage/Database.cpp \
+    DataStorage/DBC/DBC.h \
+    DataStorage/Database.h \
+    DataStorage/DBC/DBCStores.cpp \
+    DataStorage/DatabaseEnv.h \
+    DataStorage/DBC/DBCStores.h \
+    DataStorage/Field.h \
+    DataStorage/DBC/DataStore.h \
+    DataStorage/DBC/dbcfile.cpp \
+    DataStorage/DBC/dbcfile.h \
     Network/BaseBuffer.h \
     Network/BaseSocket.h \
     Network/CircularBuffer.h \
