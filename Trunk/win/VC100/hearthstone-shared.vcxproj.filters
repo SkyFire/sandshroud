@@ -69,18 +69,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\hearthstone-shared\Database\Database.cpp">
-      <Filter>Database</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Database\dbcfile.cpp">
-      <Filter>Database</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Database\DBC.cpp">
-      <Filter>Database\DataStores</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\hearthstone-shared\Database\DBCStores.cpp">
-      <Filter>Database\DataStores</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\hearthstone-shared\Config\Config.cpp">
       <Filter>Config</Filter>
     </ClCompile>
@@ -318,29 +306,20 @@
     <ClCompile Include="..\..\src\hearthstone-shared\Pathfinding\Recast\RecastRegion.cpp">
       <Filter>Util\Pathfinding\Recast</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\DataStorage\DBC\DBC.cpp">
+      <Filter>Database\DataStores</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\DataStorage\DBC\dbcfile.cpp">
+      <Filter>Database\DataStores</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\DataStorage\DBC\DBCStores.cpp">
+      <Filter>Database\DataStores</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-shared\DataStorage\Database.cpp">
+      <Filter>Database</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\hearthstone-shared\Database\Database.h">
-      <Filter>Database</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Database\DatabaseEnv.h">
-      <Filter>Database</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Database\dbcfile.h">
-      <Filter>Database</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Database\Field.h">
-      <Filter>Database</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Database\DataStore.h">
-      <Filter>Database\DataStores</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Database\DBC.h">
-      <Filter>Database\DataStores</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\hearthstone-shared\Database\DBCStores.h">
-      <Filter>Database\DataStores</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\Config\Config.h">
       <Filter>Config</Filter>
     </ClInclude>
@@ -710,6 +689,27 @@
     </ClInclude>
     <ClInclude Include="..\..\src\hearthstone-shared\ByteConverter.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\DataStorage\DBC\DataStore.h">
+      <Filter>Database\DataStores</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\DataStorage\DBC\DBC.h">
+      <Filter>Database\DataStores</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\DataStorage\DBC\dbcfile.h">
+      <Filter>Database\DataStores</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\DataStorage\DBC\DBCStores.h">
+      <Filter>Database\DataStores</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\DataStorage\Database.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\DataStorage\DatabaseEnv.h">
+      <Filter>Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\hearthstone-shared\DataStorage\Field.h">
+      <Filter>Database</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
