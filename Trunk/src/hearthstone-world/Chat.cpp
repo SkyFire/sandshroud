@@ -981,7 +981,7 @@ bool ChatHandler::ExecuteCommandInTable(ChatCommand *table, const char* text, Wo
 		if(!hasStringAbbr(table[i].Name, cmd.c_str()))
 			continue;
 
-		if(table[i].CommandGroup != COMMAND_LEVEL_0)
+		if(table[i].CommandGroup != '0' )
 		{
 			if(sWorld.NumericCommandGroups)
 			{
