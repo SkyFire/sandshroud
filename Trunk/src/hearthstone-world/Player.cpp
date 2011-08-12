@@ -12552,6 +12552,7 @@ void Player::ConvertRune(uint8 index, uint8 value)
 	ASSERT(index < 6);
 	m_runemask |= (1 << index);
 	SetRune(index, value);
+	SetRuneCooldown(index, 0);
 
 	WorldPacket data(SMSG_CONVERT_RUNE, 2);
 	data << (uint8)index;
@@ -12621,6 +12622,7 @@ void Player::UseRunes(uint8 blood, uint8 frost, uint8 unholy, SpellEntry* pSpell
 			unholy--;
 			m_runemask &= ~(1 << i);
 			m_runes[ i ] = RUNE_TYPE_RECHARGING;
+
 			if( pSpell && pSpell->NameHash == SPELL_HASH_DEATH_STRIKE || pSpell->NameHash == SPELL_HASH_OBLITERATE && Rand(pSpell->procChance) )
 				ScheduleRuneRefresh(i, true);
 			else
@@ -12659,16 +12661,19 @@ uint8 Player::TheoreticalUseRunes(uint8 blood, uint8 frost, uint8 unholy)
 		{
 			blood--;
 			runemask &= ~(1 << i);
+			SetRuneCooldown(i, 10000);
 		}
 		if( m_runes[ i ] == RUNE_TYPE_FROST && frost )
 		{
 			frost--;
 			runemask &= ~(1 << i);
+			SetRuneCooldown(i, 10000);
 		}
 		if( m_runes[ i ] == RUNE_TYPE_UNHOLY && unholy )
 		{
 			unholy--;
 			runemask &= ~(1 << i);
+			SetRuneCooldown(i, 10000);
 		}
 
 		if( m_runes[ i ] == RUNE_TYPE_DEATH )
@@ -12686,6 +12691,7 @@ uint8 Player::TheoreticalUseRunes(uint8 blood, uint8 frost, uint8 unholy)
 		{
 			res--;
 			runemask &= ~(1 << i);
+			SetRuneCooldown(i, 10000);
 		}
 	}
 

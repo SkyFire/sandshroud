@@ -637,7 +637,6 @@ void Spell::SpellTargetNearbyPartyMembers(uint32 i, uint32 j)
 				r *= r;
 
 				Player* p = TO_PLAYER( TO_CREATURE(u_caster)->GetSummonOwner());
-
 				if( p == NULL)
 					return;
 

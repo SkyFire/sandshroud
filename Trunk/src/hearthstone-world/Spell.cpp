@@ -2180,7 +2180,23 @@ void Spell::SendSpellStart()
 			cast_flags |= SPELL_CAST_FLAGS_POWER_UPDATE;
 
 	if(p_caster && p_caster->getClass() == DEATHKNIGHT && GetSpellProto()->runeCostID && GetSpellProto()->powerType == POWER_RUNE)
+	{
+		cast_flags |= SPELL_CAST_FLAGS_ITEM_CASTER;
+		cast_flags |= SPELL_CAST_FLAGS_RUNE_UPDATE;
 		cast_flags |= SPELL_CAST_FLAGS_UNKNOWN18;
+	}
+	else
+	{
+		for(uint8 i = 0; i < 3; i++)
+		{
+			if( GetSpellProto()->Effect[i] == SPELL_EFFECT_ACTIVATE_RUNE)
+			{
+				cast_flags |= SPELL_CAST_FLAGS_ITEM_CASTER;
+				cast_flags |= SPELL_CAST_FLAGS_RUNE_UPDATE;
+				cast_flags |= SPELL_CAST_FLAGS_UNKNOWN18;
+			}
+		}
+	}
 
 	if(m_missileTravelTime)
 		cast_flags |= SPELL_CAST_FLAGS_PROJECTILE;
@@ -2200,6 +2216,24 @@ void Spell::SendSpellStart()
 
 	if (cast_flags & SPELL_CAST_FLAGS_POWER_UPDATE)
 		data << uint32(u_caster->GetPower(GetSpellProto()->powerType));
+
+	if( cast_flags & SPELL_CAST_FLAGS_RUNE_UPDATE ) //send new runes
+	{
+		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
+		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
+		data << p_caster->m_runemask << theoretical;
+
+		for (uint8 i=0; i<6; i++)
+		{
+			uint8 mask = (1 << i);
+			if (mask & p_caster->m_runemask && !(mask & theoretical))
+			{
+				data << uint8(0);
+//				float runecooldown = p_caster->GetRuneCooldown(i);
+//				data << uint8((10000 - runecooldown) / 10000 * 255); // rune cooldown passed
+			}
+		}
+	}
 
 	if( cast_flags & SPELL_CAST_FLAGS_RANGED )
 	{
@@ -2267,19 +2301,6 @@ void Spell::SendSpellGo()
 	if(u_caster && GetSpellProto()->powerType != POWER_TYPE_HEALTH) // 0x
 		cast_flags |= SPELL_CAST_FLAGS_POWER_UPDATE;
 
-	if(p_caster && p_caster->getClass() == DEATHKNIGHT && m_spellInfo->runeCostID && m_spellInfo->powerType == POWER_RUNE)
-		cast_flags |= (SPELL_CAST_FLAGS_ITEM_CASTER | SPELL_CAST_FLAGS_RUNE_UPDATE | SPELL_CAST_FLAGS_UNKNOWN18);
-	else
-	{
-		for(uint8 i = 0; i < 3; i++)
-		{
-			if( GetSpellProto()->Effect[i] == SPELL_EFFECT_ACTIVATE_RUNE)
-			{
-				cast_flags |= (SPELL_CAST_FLAGS_RUNE_UPDATE | SPELL_CAST_FLAGS_UNKNOWN18);
-			}
-		}
-	}
-
 	if (m_missileTravelTime)
 		cast_flags |= SPELL_CAST_FLAGS_PROJECTILE;
 
@@ -2323,20 +2344,6 @@ void Spell::SendSpellGo()
 
 	if (cast_flags & SPELL_CAST_FLAGS_POWER_UPDATE) //send new power
 		data << uint32( u_caster->GetPower(GetSpellProto()->powerType));
-
-	if( cast_flags & SPELL_CAST_FLAGS_RUNE_UPDATE ) //send new runes
-	{
-		SpellRuneCostEntry * runecost = dbcSpellRuneCost.LookupEntry(GetSpellProto()->runeCostID);
-		uint8 theoretical = p_caster->TheoreticalUseRunes(runecost->bloodRuneCost, runecost->frostRuneCost, runecost->unholyRuneCost);
-		data << p_caster->m_runemask << theoretical;
-
-		for (uint8 i=0; i<6; i++)
-		{
-			if ((1 << i) & p_caster->m_runemask)
-				if (!((1 << i) & theoretical))
-					data << uint8(0);
-		}
-	}
 
 	if( cast_flags & SPELL_CAST_FLAGS_RANGED )
 	{

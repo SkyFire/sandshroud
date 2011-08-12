@@ -2237,6 +2237,8 @@ public:
 	// Runes
 	uint8 m_runes[6];
 	uint8 m_runemask;
+	uint32 m_runeCD[6];
+
 	uint8 GetRune(uint32 index)
 	{
 		return m_runes[index];
@@ -2248,6 +2250,15 @@ public:
 	void SetRune(uint8 index, uint8 value)
 	{
 		m_runes[index] = value;
+	}
+
+	uint32 GetRuneCooldown(uint32 index)
+	{
+		return m_runeCD[index];
+	}
+	void SetRuneCooldown(uint8 index, uint32 cooldown)
+	{
+		m_runeCD[index] = cooldown;
 	}
 	void ClearRuneCooldown(uint8 index);
 	void ConvertRune(uint8 index, uint8 value);
