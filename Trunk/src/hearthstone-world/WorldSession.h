@@ -314,10 +314,10 @@ public:
 		if( sWorld.m_deathKnightOnePerAccount && m_hasDeathKnight )
 			return false;
 
-		if( sWorld.m_deathKnightReqLevel <= m_highestLevel )
-			return true;
+		if( sWorld.m_deathKnightReqLevel > m_highestLevel )
+			return false;
 
-		return false;
+		return true;
 	}
 
 protected:
