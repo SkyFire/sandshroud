@@ -869,29 +869,38 @@ bool Player::Create(WorldPacket& data )
 
 void Player::EquipInit(PlayerCreateInfo *EquipInfo)
 {
+	ItemPrototype* proto = NULL;
 	for(std::list<CreateInfo_ItemStruct>::iterator is = EquipInfo->items.begin(); is!=EquipInfo->items.end(); is++)
 	{
 		if ( (*is).protoid != 0)
 		{
-			Item* item =objmgr.CreateItem((*is).protoid,TO_PLAYER(this));
-			if(item != NULL)
+			proto = ItemPrototypeStorage.LookupEntry((*is).protoid);
+			if(proto != NULL)
 			{
-				item->SetUInt32Value(ITEM_FIELD_STACK_COUNT,(*is).amount);
-				if((*is).slot<INVENTORY_SLOT_BAG_END)
+				Item* item = objmgr.CreateItem((*is).protoid,TO_PLAYER(this));
+				if(item != NULL)
 				{
-					if( !GetItemInterface()->SafeAddItem(item, INVENTORY_SLOT_NOT_SET, (*is).slot) )
+					item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, (*is).amount);
+					if((*is).slot < INVENTORY_SLOT_BAG_END)
 					{
-						item->DeleteMe();
-						item = NULLITEM;
+						if( !GetItemInterface()->SafeAddItem(item, INVENTORY_SLOT_NOT_SET, (*is).slot) )
+						{
+							item->DeleteMe();
+							item = NULLITEM;
+						}
 					}
-				}
-				else
-				{
-					if( !GetItemInterface()->AddItemToFreeSlot(item) )
+					else
 					{
-						item->DeleteMe();
-						item = NULLITEM;
+						if( !GetItemInterface()->AddItemToFreeSlot(item) )
+						{
+							item->DeleteMe();
+							item = NULLITEM;
+						}
 					}
+
+					if(item != NULL) // Item successfully added.
+						if(proto->InventoryType == INVTYPE_AMMO)
+							SetUInt32Value(PLAYER_AMMO_ID, proto->ItemId);
 				}
 			}
 		}
