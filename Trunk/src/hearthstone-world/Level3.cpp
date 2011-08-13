@@ -842,35 +842,32 @@ bool ChatHandler::HandleAddItemSetCommand(const char* args, WorldSession* m_sess
 	if (chr == NULL)
 		return true;
 
-	ItemSetEntry *entry = dbcItemSet.LookupEntry(setid);
 	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(setid);
-	if(!entry || !l)
+	if(l == NULL)
 	{
 		RedSystemMessage(m_session, "Invalid item set.");
 		return true;
 	}
-	//const char* setname = sItemSetStore.LookupString(entry->name);
-	BlueSystemMessage(m_session, "Searching item set %u...", setid);
+
 	uint32 start = getMSTime();
+	BlueSystemMessage(m_session, "Searching item set %u...", setid);
 	sWorld.LogGM(m_session, "used add item set command, set %u, target %s", setid, chr->GetName());
 	for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
 	{
-		Item* itm = objmgr.CreateItem((*itr)->ItemId, m_session->GetPlayer());
-		if(!itm) continue;
-		if(itm->GetProto()->Bonding == ITEM_BIND_ON_PICKUP)
-			itm->SoulBind();
-
-		if(!chr->GetItemInterface()->AddItemToFreeSlot(itm))
+		if(!chr->GetItemInterface()->AddItemById((*itr)->ItemId, 1, 0, false, m_session->GetPlayer()))
 		{
 			m_session->SendNotification("No free slots left!");
-			itm->DeleteMe();
-			itm = NULLITEM;
 			return true;
-		} else {
-			//SystemMessage(m_session, "Added item: %s [%u]", (*itr)->Name1, (*itr)->ItemId);
-			SlotResult * le = chr->GetItemInterface()->LastSearchResult();
-			chr->GetSession()->SendItemPushResult(itm,false,true,false,true,le->ContainerSlot,le->Slot,1);
 		}
+
+		string itemlink = (*itr)->ConstructItemLink(0, (*itr)->RandomSuffixId, 1);
+		if(chr->GetSession() != m_session) // Since we get that You Recieved Item bullcrap, we don't need this.
+		{
+			SystemMessage(m_session, "Adding item %u %s to %s's inventory.", (*itr)->ItemId, itemlink.c_str(), chr->GetName());
+			SystemMessageToPlr(chr, "%s added item %u %s to your inventory.", m_session->GetPlayer()->GetName(), (*itr)->ItemId, itemlink.c_str());
+		}
+		else
+			SystemMessage(m_session, "Adding item %u %s to your inventory.", (*itr)->ItemId, itemlink.c_str());
 	}
 	GreenSystemMessage(m_session, "Added set to inventory complete. Time: %u ms", getMSTime() - start);
 	return true;

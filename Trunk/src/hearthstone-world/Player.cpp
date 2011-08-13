@@ -668,7 +668,7 @@ bool Player::Create(WorldPacket& data )
 	m_restAmount = 0;
 	m_restState = 0;
 
-	memset(m_taximask, 0, sizeof(uint32)*14);
+	memset(m_taximask, 0, sizeof(uint32)*MAX_TAXI);
 
 	// set race dbc
 	myRace = dbcCharRace.LookupEntry(race);
@@ -687,9 +687,14 @@ bool Player::Create(WorldPacket& data )
 
 	// Automatically add the race's taxi hub to the character's taximask at creation time ( 1 << (taxi_node_id-1) )
 	memset(m_taximask,0,sizeof(m_taximask));
-	if(class_ == DEATHKNIGHT)
+	if(sWorld.Start_With_All_Taximasks)
 	{
-		for(uint8 i=0;i<14;++i)
+		for(uint8 i = 0; i < MAX_TAXI; i++)
+			m_taximask[i] = 0xFFFFFFFF;
+	}
+	else if(class_ == DEATHKNIGHT)
+	{
+		for(uint8 i = 0; i < MAX_TAXI; i++)
 			m_taximask[i] |= DKNodesMask[i];
 	}
 
@@ -4264,11 +4269,7 @@ void Player::_ApplyItemMods(Item* item, int16 slot, bool apply, bool justdrokedo
 	if( setid != 0 )
 	{
 		ItemSetEntry* set = dbcItemSet.LookupEntry( setid );
-		if( set == NULL)
-		{
-			sLog.outError("Item %u has wrong ItemSet %u\n", proto->ItemId, setid);
-		}
-		else
+		if( set != NULL)
 		{
 			ASSERT( set );
 			ItemSet* Set = NULL;
@@ -6280,7 +6281,7 @@ void Player::LoadTaxiMask(const char* data)
 	vector<string>::iterator iter;
 
 	for (iter = tokens.begin(), index = 0;
-		(index < 14) && (iter != tokens.end()); iter++, ++index)
+		(index < MAX_TAXI) && (iter != tokens.end()); iter++, ++index)
 	{
 		m_taximask[index] = atol((*iter).c_str());
 	}

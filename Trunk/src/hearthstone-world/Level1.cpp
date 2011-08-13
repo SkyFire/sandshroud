@@ -257,12 +257,14 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 
 		if(chr->GetSession() != m_session) // Since we get that You Recieved Item bullcrap, we don't need this.
 		{
-			char messagetext[500];
 			string itemlink = it->ConstructItemLink(randomprop, it->RandomSuffixId, count);
-			snprintf(messagetext, 500, "Adding item %d %s to %s's inventory.",(unsigned int)it->ItemId,itemlink.c_str(), chr->GetName());
-			SystemMessage(m_session, messagetext);
-			snprintf(messagetext, 500, "%s added item %d %s to your inventory.", m_session->GetPlayer()->GetName(), (unsigned int)itemid, itemlink.c_str());
-			SystemMessageToPlr(chr,  messagetext);
+			SystemMessage(m_session, "Adding item %u %s to %s's inventory.", it->ItemId, itemlink.c_str(), chr->GetName());
+			SystemMessageToPlr(chr, "%s added item %u %s to your inventory.", m_session->GetPlayer()->GetName(), itemid, itemlink.c_str());
+		}
+		else
+		{
+			string itemlink = it->ConstructItemLink(randomprop, it->RandomSuffixId, count);
+			SystemMessage(m_session, "Adding item %u %s to your inventory.", it->ItemId, itemlink.c_str());
 		}
 		return true;
 	}
@@ -386,52 +388,27 @@ bool ChatHandler::HandleAppearCommand(const char* args, WorldSession *m_session)
 bool ChatHandler::HandleTaxiCheatCommand(const char* args, WorldSession *m_session)
 {
 	if (!*args)
-		return false;
+	{
+		RedSystemMessage(m_session, "You must supply a flag");
+		return true;
+	}
 
 	int flag = atoi((char*)args);
-
 	Player* chr = getSelectedChar(m_session);
 	if (chr == NULL)
 		return true;
 
-	char buf[256];
-
-	// send message to user
-	if (flag != 0)
+	if(chr->GetSession() != m_session)
 	{
-		snprintf((char*)buf,256, "%s has all taxi nodes now.", chr->GetName());
+		GreenSystemMessage(m_session, "Unlocking all taxi nodes for %s.", chr->GetName());
+		GreenSystemMessageToPlr(chr, "%s Unlocked all taxi nodes for you.", m_session->GetPlayer()->GetName());
 	}
 	else
-	{
-		snprintf((char*)buf,256, "%s has no more taxi nodes now.", chr->GetName());
-	}
-	GreenSystemMessage(m_session, buf);
+		GreenSystemMessage(m_session, "Unlocking all taxi nodes.");
 
-	// send message to player
-	if (flag != 0)
-	{
-		snprintf((char*)buf,256, "%s has given you all taxi nodes.",
-			m_session->GetPlayer()->GetName());
-	}
-	else
-	{
-		snprintf((char*)buf,256, "%s has deleted all your taxi nodes.",
-			m_session->GetPlayer()->GetName());
-	}
-	SystemMessage(m_session, buf);
-
-	for (uint8 i=0; i<12; i++)
-	{
-		if (flag != 0)
-		{
-			m_session->GetPlayer()->SetTaximask(i, 0xFFFFFFFF);
-		}
-		else
-		{
-			m_session->GetPlayer()->SetTaximask(i, 0);
-		}
-	}
-
+	uint32 taximask = flag ? 0xFFFFFFFF : 0;
+	for (uint8 i = 0; i < MAX_TAXI; i++)
+		chr->SetTaximask(i, taximask);
 	return true;
 }
 

@@ -1169,34 +1169,25 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 	if(pamount)
 		amount = atoi(pamount);
 
-	ItemSetEntry* tmpItem = dbcItemSet.LookupEntry(item);
 	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(item);
-	if(!tmpItem || !l)
+	if(l == NULL)
 	{
 		RedSystemMessage(m_session, "Invalid item set.");
 		return true;
 	}
 
 	std::stringstream sstext;
-	if(tmpItem)
+	for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
 	{
-		for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
-		{
-			std::stringstream ss;
-			ss << "INSERT INTO vendors (entry,item,amount,max_amount,inctime,vendormask) VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << (*itr)->ItemId << "', '" << amount << "', 0, 0, " << pCreature->m_spawn->vendormask << " )" << '\0';
-			WorldDatabase.Execute( ss.str().c_str() );
-			pCreature->AddVendorItem((*itr)->ItemId, amount);
-			sstext <<"Item set '" << item << "' Added to vendor." << '\0';
-		}
-	}
-	else
-	{
-		sstext << "Item set '" << item << "' Not Found in DBC file." << '\0';
+		std::stringstream ss;
+		ss << "INSERT INTO vendors (entry,item,amount,max_amount,inctime,vendormask) VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << (*itr)->ItemId << "', '" << amount << "', 0, 0, " << pCreature->m_spawn->vendormask << " )" << '\0';
+		WorldDatabase.Execute( ss.str().c_str() );
+		pCreature->AddVendorItem((*itr)->ItemId, amount);
+		sstext <<"Item set '" << item << "' Added to vendor." << '\0';
 	}
 
 	sWorld.LogGM(m_session, "added item set %u to vendor %u", item, pCreature->GetEntry());
 	SystemMessage(m_session,  sstext.str().c_str());
-
 	return true;
 }
 
@@ -1221,9 +1212,8 @@ bool ChatHandler::HandleItemSetRemoveCommand(const char* args, WorldSession *m_s
 		return true;
 	}
 
-	ItemSetEntry* tmpItem = dbcItemSet.LookupEntry(itemset);
 	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(itemset);
-	if(!tmpItem || !l)
+	if(l == NULL)
 	{
 		RedSystemMessage(m_session, "Invalid item set.");
 		return true;

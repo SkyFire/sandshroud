@@ -52,6 +52,8 @@ struct LevelInfo;
 // gold cap
 #define PLAYER_MAX_GOLD 0x7FFFFFFF
 
+#define MAX_TAXI 12
+
 //====================================================================
 //  Inventory
 //  Holds the display id and item type id for objects in
@@ -893,7 +895,7 @@ public:
 	/************************************************************************/
 	HEARTHSTONE_INLINE TaxiPath*	GetTaxiPath() { return m_CurrentTaxiPath; }
 	HEARTHSTONE_INLINE bool			GetTaxiState() { return m_onTaxi; }
-	const uint32&		GetTaximask( uint8 index ) const { return m_taximask[index]; }
+	const uint32&		GetTaximask( uint8 index ) const { ASSERT(index < MAX_TAXI); return m_taximask[index]; }
 	void				LoadTaxiMask(const char* data);
 	void				TaxiStart(TaxiPath* path, uint32 modelid, uint32 start_node);
 	void				JumpToEndTaxiNode(TaxiPath * path);
@@ -901,7 +903,7 @@ public:
 	void				EventTaxiInterpolate();
 
 	HEARTHSTONE_INLINE void			SetTaxiState	(bool state) { m_onTaxi = state; }
-	HEARTHSTONE_INLINE void			SetTaximask		(uint8 index, uint32 value ) { m_taximask[index] = value; }
+	HEARTHSTONE_INLINE void			SetTaximask		(uint8 index, uint32 value ) { ASSERT(index < MAX_TAXI); m_taximask[index] = value; }
 	HEARTHSTONE_INLINE void			SetTaxiPath		(TaxiPath *path) { m_CurrentTaxiPath = path; }
 	HEARTHSTONE_INLINE void			SetTaxiPos()	{m_taxi_pos_x = m_position.x; m_taxi_pos_y = m_position.y; m_taxi_pos_z = m_position.z;}
 	HEARTHSTONE_INLINE void			UnSetTaxiPos()	{m_taxi_pos_x = 0; m_taxi_pos_y = 0; m_taxi_pos_z = 0; }
@@ -912,7 +914,7 @@ public:
 	uint32				taxi_model_id;
 	uint32				lastNode;
 	uint32				m_taxi_ride_time;
-	uint32				m_taximask[14];
+	uint32				m_taximask[MAX_TAXI];
 	float				m_taxi_pos_x;
 	float				m_taxi_pos_y;
 	float				m_taxi_pos_z;

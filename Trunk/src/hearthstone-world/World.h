@@ -667,6 +667,7 @@ public:
 
 	// Level Caps
 	uint32 LevelCap_Custom_All;
+	bool Start_With_All_Taximasks;
 
 	// could add configs for every expansion..
 

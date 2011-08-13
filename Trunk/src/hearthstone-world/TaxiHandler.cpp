@@ -42,13 +42,9 @@ void WorldSession::HandleTaxiNodeStatusQueryOpcode( WorldPacket & recv_data )
 
 	// Check for known nodes
 	if ( (GetPlayer( )->GetTaximask(field) & submask) != submask )
-	{
 		data << uint8( 0 );
-	}
 	else
-	{
 		data << uint8( 1 );
-	}
 
 	SendPacket( &data );
 	DEBUG_LOG( "WORLD"," Sent SMSG_TAXINODE_STATUS" );
@@ -71,7 +67,7 @@ void WorldSession::SendTaxiList(Creature* pCreature)
 {
 	uint32 curloc;
 	uint8 field;
-	uint32 TaxiMask[12];
+	uint32 TaxiMask[MAX_TAXI];
 	uint32 submask;
 	uint64 guid = pCreature->GetGUID();
 
@@ -97,24 +93,19 @@ void WorldSession::SendTaxiList(Creature* pCreature)
 	}
 
 	//Set Mask
-	memset(TaxiMask, 0, sizeof(uint32)*12);
+	memset(TaxiMask, 0, sizeof(uint32)*MAX_TAXI);
 	sTaxiMgr.GetGlobalTaxiNodeMask(curloc, TaxiMask);
 	TaxiMask[field] |= 1 << ((curloc-1)%32);
 
 	//Remove nodes unknown to player
-	for(int i = 0; i < 12; i++)
-	{
+	for(int8 i = 0; i < MAX_TAXI; i++)
 		TaxiMask[i] &= GetPlayer( )->GetTaximask(i);
-	}
 
-	WorldPacket data(48);
-	data.Initialize( SMSG_SHOWTAXINODES );
+	WorldPacket data(SMSG_SHOWTAXINODES, 56);
 	data << uint32( 1 ) << guid;
 	data << uint32( curloc );
-	for(int i = 0; i < 12; i++)
-	{
+	for(int8 i = 0; i < MAX_TAXI; i++)
 		data << TaxiMask[i];
-	}
 	SendPacket( &data );
 
 	DEBUG_LOG( "WORLD"," Sent SMSG_SHOWTAXINODES" );
