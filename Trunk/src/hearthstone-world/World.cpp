@@ -1492,7 +1492,7 @@ void World::Rehash(bool load)
 	m_deathKnightReqLevel = Config.OptionalConfig.GetIntDefault("DeathKnight", "RequiredLevel", 55);
 
 	NumericCommandGroups = Config.MainConfig.GetBoolDefault("Server", "NumericCommandGroups", false);
-	Start_With_All_Taximasks = Config.OptionalConfig.GetIntDefault("Server", "StartWithAll_Taximasks", 80);
+	Start_With_All_Taximasks = Config.OptionalConfig.GetBoolDefault("Server", "StartWithAll_Taximasks", false);
 
 	// LevelCaps
 	LevelCap_Custom_All = Config.OptionalConfig.GetIntDefault("Server", "LevelCap_Custom_All", 80);

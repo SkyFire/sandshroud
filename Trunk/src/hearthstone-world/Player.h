@@ -1013,6 +1013,8 @@ public:
 	void removeSpellByHashName(uint32 hash);
 	bool removeSpell(uint32 SpellID);
 	uint32 FindSpellWithNamehash(uint32 namehash);
+	uint32 FindHigherRankingSpellWithNamehash(uint32 namehash, uint32 minimumrank);
+	uint32 FindHighestRankingSpellWithNamehash(uint32 namehash);
 	bool CanFlyInCurrentZoneOrMap();
 	SpellEntry* FindLowerRankSpell(SpellEntry* sp, int32 rankdiff);
 	uint32 forget;

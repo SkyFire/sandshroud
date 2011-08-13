@@ -3690,6 +3690,39 @@ uint32 Player::FindSpellWithNamehash(uint32 namehash)
 	return 0;
 }
 
+uint32 Player::FindHigherRankingSpellWithNamehash(uint32 namehash, uint32 minimumrank)
+{
+	SpellEntry* sp = NULL;
+	SpellSet::iterator itr = mSpells.begin();
+	if(itr != mSpells.end())
+	{
+		for(itr; itr != mSpells.end(); itr++)
+		{
+			sp = dbcSpell.LookupEntry(*itr);
+			if(sp && sp->NameHash == namehash && sp->RankNumber > minimumrank)
+				return (*itr);
+		}
+	}
+	return 0;
+}
+
+uint32 Player::FindHighestRankingSpellWithNamehash(uint32 namehash)
+{
+	uint32 rank = 0;
+	uint32 spellid = 0;
+	SpellSet::iterator itr = mSpells.begin();
+	if(itr != mSpells.end())
+	{
+		for(itr; itr != mSpells.end(); itr++)
+		{
+			SpellEntry* sp = dbcSpell.LookupEntry(*itr);
+			if(sp && sp->RankNumber && sp->NameHash == namehash && sp->RankNumber > rank)
+				spellid = (*itr);
+		}
+	}
+	return spellid;
+}
+
 // Use instead of cold weather flying
 bool Player::CanFlyInCurrentZoneOrMap()
 {
@@ -7263,12 +7296,20 @@ void Player::ApplySpec(uint8 spec, bool init)
 
 void Player::ApplyTalent(uint32 spellid)
 {
-	SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellid );
+	SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellid ), *spellInfo2 = NULL;
 	if(!spellInfo)
 		return;	// not found
 
 	if(!(spellInfo->Attributes & ATTRIBUTES_PASSIVE))
-		addSpell(spellid);	// in this case we need to learn the spell itself
+	{
+		if(spellInfo->RankNumber)
+		{
+			if(!FindHigherRankingSpellWithNamehash(spellInfo->NameHash, spellInfo->RankNumber))
+				addSpell(spellid);	// in this case we need to learn the spell itself
+		}
+		else
+			addSpell(spellid);	// in this case we need to learn the spell itself
+	}
 
 	if( (spellInfo->Attributes & ATTRIBUTES_PASSIVE || (spellInfo->Effect[0] == SPELL_EFFECT_LEARN_SPELL ||
 		spellInfo->Effect[1] == SPELL_EFFECT_LEARN_SPELL ||
@@ -7276,11 +7317,26 @@ void Player::ApplyTalent(uint32 spellid)
 		&& ( (spellInfo->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET) == 0 || ( (spellInfo->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET) && GetSummon() ) ) )
 		)
 	{
+		for(uint8 i = 0; i < 3; i++)
+		{
+			if(spellInfo->Effect[i] == SPELL_EFFECT_LEARN_SPELL)
+			{
+				if((spellInfo2 = dbcSpell.LookupEntryForced(spellInfo->EffectTriggerSpell[i])) != NULL)
+				{
+					if(spellInfo2->RankNumber)
+					{
+						if(FindHigherRankingSpellWithNamehash(spellInfo2->NameHash, spellInfo2->RankNumber))
+							return;
+					}
+				}
+			}
+		}
+
 		if( !(spellInfo->RequiredShapeShift && !( (uint32)1 << (GetShapeShift()-1) & spellInfo->RequiredShapeShift ) ) )
 		{
 			Spell* sp = new Spell(this,spellInfo,true,NULLAURA);
 			SpellCastTargets tgt;
-			tgt.m_unitTarget=GetGUID();
+			tgt.m_unitTarget = GetGUID();
 			sp->prepare(&tgt);
 		}
 	}
