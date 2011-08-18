@@ -596,6 +596,9 @@ public:
 	bool CalculatedHeightChecks;
 	uint32 mAcceptedConnections;
 
+	float NetworkStressIn;
+	float NetworkStressOut;
+
 	std::set<uint32> Sanctuaries;
 	void SetSanctuaryArea(uint32 areaid) { Sanctuaries.insert(areaid); }
 	void RemoveSanctuaryArea(uint32 areaid) { Sanctuaries.erase(areaid); }

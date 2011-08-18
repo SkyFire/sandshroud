@@ -24,6 +24,8 @@
 /* echo send/received packets to console */
 //#define ECHO_PACKET_LOG_TO_CONSOLE 1
 
+extern bool bServerShutdown;
+
 #ifndef CLUSTERING
 #pragma pack(push, 1)
 
@@ -204,6 +206,8 @@ OUTPACKET_RESULT WorldSocket::_OutPacket(uint16 opcode, size_t len, const void* 
 		rv = ForceSend();
 
 	UnlockWriteBuffer();
+	if(len > 0 && rv && !bServerShutdown)
+		sWorld.NetworkStressOut += float(float(len+4)/1024);
 	return rv ? OUTPACKET_RESULT_SUCCESS : OUTPACKET_RESULT_SOCKET_ERROR;
 }
 
@@ -546,11 +550,13 @@ void WorldSocket::OnRecvData()
 		}
 
 		WorldPacket *Packet = new WorldPacket(mOpcode, mSize);
-
 		if(mRemaining > 0)
 		{
 			Packet->resize(mRemaining);
 			Read((uint8*)Packet->contents(), mRemaining);
+
+			if(!bServerShutdown)
+				sWorld.NetworkStressIn += float(float(mSize+6)/1024);
 		}
 		mRemaining = mSize = mOpcode = 0;
 

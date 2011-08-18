@@ -35,6 +35,8 @@ World::World()
 	m_holder = eventholder;
 	m_event_Instanceid = eventholder->GetInstanceID();
 
+	NetworkStressIn = 0;
+	NetworkStressOut = 0;
 	mQueueUpdateInterval = 180000;
 	PeakSessionCount = 0;
 	mInWorldPlayerCount = 0;

@@ -676,7 +676,6 @@ void Object::DestroyForPlayer(Player* target) const
 	target->GetSession()->SendPacket( &data );
 }
 
-
 ///////////////////////////////////////////////////////////////
 /// Build the Movement Data portion of the update packet
 /// Fills the data with this object's movement/speed info
@@ -716,7 +715,7 @@ void Object::_BuildMovementUpdate(ByteBuffer * data, uint32 flags, uint32 movefl
 
 		if(splinebuf)
 		{
-			moveflags |= (MOVEFLAG_IMMOBILIZED | MOVEFLAG_MOVE_FORWARD);
+			moveflags |= (MOVEFLAG_SPLINE_ENABLED | MOVEFLAG_MOVE_FORWARD);
 			if(GetTypeId() == TYPEID_UNIT)
 			{
 				if( TO_UNIT(this)->GetAIInterface()->m_moveRun == false)

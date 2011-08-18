@@ -50,6 +50,7 @@ bool HandleInfoCommand(BaseConsole * pConsole, int argc, const char * argv[])
 	pConsole->Write("Average Latency: %.3fms\r\n", count ?  ((float)((float)avg / (float)count)) : 0.0f);
 	pConsole->Write("Accepted Connections: %u\r\n", sWorld.mAcceptedConnections);
 	pConsole->Write("Connection Peak: %u\r\n", sWorld.PeakSessionCount);
+	pConsole->Write("Network Stress(In/Out): %fkb/%fkb\r\n", sWorld.NetworkStressIn, sWorld.NetworkStressOut);
 	pConsole->Write("======================================================================\r\n\r\n");
 	return true;
 }

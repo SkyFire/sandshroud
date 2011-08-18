@@ -2998,9 +2998,11 @@ uint8 Spell::CanCast(bool tolerate)
 	if(m_caster->IsInWorld())
 	{
 		Unit *target = m_caster->GetMapMgr()->GetUnit( m_targets.m_unitTarget );
-
 		if( target )
 		{
+			if( GetSpellProto()->Id == 48788 && target->GetHealthPct() == 100)
+				return SPELL_FAILED_ALREADY_AT_FULL_HEALTH;
+
 			// GM flagged players should be immune to other players' casts, but not their own.
 			if(target->IsPlayer() && (m_caster->GetTypeId() == TYPEID_ITEM ? TO_ITEM(m_caster)->GetOwner() != target : m_caster != target) && TO_PLAYER(target)->bGMTagOn)
 				return SPELL_FAILED_BM_OR_INVISGOD;

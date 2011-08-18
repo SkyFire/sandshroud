@@ -74,7 +74,7 @@ enum MovementFlags
 	MOVEFLAG_AIR_SUSPENSION				= 0x1000000,	// confirmed allow body air suspension(good name? lol).
 	MOVEFLAG_AIR_SWIMMING				= 0x2000000,	// confirmed while flying.
 	MOVEFLAG_SPLINE_MOVER				= 0x4000000,	// Unconfirmed
-	MOVEFLAG_IMMOBILIZED				= 0x8000000,
+	MOVEFLAG_SPLINE_ENABLED				= 0x8000000,
 	MOVEFLAG_WATER_WALK					= 0x10000000,
 	MOVEFLAG_FEATHER_FALL				= 0x20000000,	// Does not negate fall damage.
 	MOVEFLAG_LEVITATE					= 0x40000000,
