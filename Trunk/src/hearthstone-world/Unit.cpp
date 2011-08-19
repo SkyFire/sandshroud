@@ -71,7 +71,6 @@ Unit::Unit()
 		m_ObjectSlots[x] = 0;
 		PctPowerRegenModifier[x] = 1;
 	}
-	m_toRegen = 0;
 	m_speedModifier = 0;
 	m_slowdown = 0;
 	m_mountedspeedModifier=0;
@@ -386,24 +385,23 @@ void Unit::Update( uint32 p_time )
 	{
 		CombatStatus.UpdateTargets();
 
-		//-----------------------POWER & HP REGENERATION-----------------
-/* Please dont do temp fixes. Better report to me. Thx. Shady */
-        if( p_time >= m_H_regenTimer )
-		    RegenerateHealth();
-	    else
-		    m_H_regenTimer -= p_time;
+		/*-----------------------POWER & HP REGENERATION-----------------*/
+		if( p_time >= m_H_regenTimer )
+			RegenerateHealth();
+		else
+			m_H_regenTimer -= p_time;
 
 		if( p_time >= m_P_regenTimer )
 		{
 			RegeneratePower( false );
-			m_interruptedRegenTime=0;
+			m_interruptedRegenTime = 0;
 		}
 		else
 		{
 			m_P_regenTimer -= p_time;
 			if (m_interruptedRegenTime)
 			{
-				if(p_time>=m_interruptedRegenTime)
+				if(p_time >= m_interruptedRegenTime)
 					RegeneratePower( true );
 				else
 					m_interruptedRegenTime -= p_time;
@@ -2520,17 +2518,59 @@ void Unit::RegenerateHealth()
 	// player regen
 	if(IsPlayer())
 	{
+		m_H_regenTimer = 1000;//set next regen time to 1 for players.
 		TO_PLAYER(this)->RegenerateHealth(CombatStatus.IsInCombat());
-	}else{
-		TO_CREATURE(this)->RegenerateHealth(CombatStatus.IsInCombat());
 	}
+	else
+		TO_CREATURE(this)->RegenerateHealth(CombatStatus.IsInCombat());
+}
+
+void Unit::RegenerateEnergy()
+{
+	if( m_interruptRegen > 0 )
+		return;
+
+	uint32 cur = GetUInt32Value(UNIT_FIELD_POWER4);
+	uint32 mp = GetUInt32Value(UNIT_FIELD_MAXPOWER4);
+	if( cur >= mp )
+		return;
+
+	cur += float2int32(floor(float(2.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY] * sWorld.getRate(RATE_POWER3))));
+	SetUInt32Value(UNIT_FIELD_POWER4, (cur >= mp) ? mp : cur);
+}
+
+void Unit::RegenerateFocus()
+{
+	if (m_interruptRegen)
+		return;
+
+	uint32 cur = GetUInt32Value(UNIT_FIELD_POWER3);
+	uint32 mp = GetUInt32Value(UNIT_FIELD_MAXPOWER3);
+	if( cur >= mp )
+		return;
+
+	cur += float2int32(floor(float(1.0f * PctPowerRegenModifier[POWER_TYPE_FOCUS])));
+	SetUInt32Value(UNIT_FIELD_POWER3, (cur >= mp)? mp : cur);
+}
+
+void Unit::LosePower(uint32 powerField, int32 decayValue)
+{
+	if( m_interruptRegen > 0 )
+		return;
+
+	uint32 cur = GetUInt32Value(powerField);
+	uint32 newpower = ((int)cur <= decayValue) ? 0 : cur-decayValue;
+	if (newpower > 1000 )
+		newpower = 1000;
+
+	SetUInt32Value(powerField,newpower);
 }
 
 void Unit::RegeneratePower(bool isinterrupted)
 {
     // This is only 200 IF the power is not rage
 	if (isinterrupted)
-		m_interruptedRegenTime =200;
+		m_interruptedRegenTime = 200;
 	else
 		m_P_regenTimer = 200;//set next regen time
 
@@ -2548,30 +2588,37 @@ void Unit::RegeneratePower(bool isinterrupted)
 			TO_PLAYER(this)->RegenerateMana(isinterrupted);
 			break;
 		case POWER_TYPE_ENERGY:
-			TO_PLAYER(this)->RegenerateEnergy();
+			RegenerateEnergy();
 			break;
-
+		case POWER_TYPE_FOCUS:
+			RegenerateFocus();
+			break;
 		case POWER_TYPE_RAGE:
 			{
+				int32 rage = 0;
 				m_P_regenTimer = 3000;
 				// These only NOT in combat
 				if(!CombatStatus.IsInCombat())
 				{
 					if (TO_PLAYER(this)->mAngerManagement)
-					{
-						TO_PLAYER(this)->LoseRage(20*sWorld.getRate(RATE_POWER2));
-					}else{
-						TO_PLAYER(this)->LoseRage(30*sWorld.getRate(RATE_POWER2));
-					}
-				}else{
-					if (TO_PLAYER(this)->mAngerManagement)
-					{
-						TO_PLAYER(this)->LoseRage(-10*sWorld.getRate(RATE_POWER2));
-					}
+						rage = 20;
+					else
+						rage = 30;
 				}
+				else if (TO_PLAYER(this)->mAngerManagement)
+					rage = -10;
 
+				if(rage)
+					TO_PLAYER(this)->LosePower(UNIT_FIELD_POWER2, rage*sWorld.getRate(RATE_POWER2));
 			}break;
-
+		case POWER_TYPE_RUNE:
+			{
+				m_P_regenTimer = 3000;
+				if(!CombatStatus.IsInCombat())
+					LosePower(UNIT_FIELD_POWER6, 50);
+				else
+					LosePower(UNIT_FIELD_POWER6, -100);
+			}break;
 		case POWER_TYPE_RUNIC:
 			{
 				if(!CombatStatus.IsInCombat())
@@ -2579,7 +2626,7 @@ void Unit::RegeneratePower(bool isinterrupted)
 					// These only NOT in combat
 					// DK loses 50 runic power in 40 secs
 					m_P_regenTimer = 800;
-					TO_PLAYER(this)->LooseRunic(10);
+					TO_PLAYER(this)->LosePower(UNIT_FIELD_POWER7, 10);
 				}
 			}break;
 		}
@@ -2614,11 +2661,33 @@ void Unit::RegeneratePower(bool isinterrupted)
 			TO_CREATURE(this)->RegenerateMana(isinterrupted);
 			break;
 		case POWER_TYPE_ENERGY:
-			TO_CREATURE(this)->RegenerateEnergy();
+			RegenerateEnergy();
 			break;
 		case POWER_TYPE_FOCUS:
-			TO_CREATURE(this)->RegenerateFocus();
+			RegenerateFocus();
 			break;
+		case POWER_TYPE_RAGE:
+			{
+				m_P_regenTimer = 3000;
+				if(!CombatStatus.IsInCombat())
+					LosePower(UNIT_FIELD_POWER2, 30*sWorld.getRate(RATE_POWER2));
+			}break;
+		case POWER_TYPE_RUNE:
+			{
+				m_P_regenTimer = 3000;
+				if(!CombatStatus.IsInCombat())
+					LosePower(UNIT_FIELD_POWER6, 50);
+				else
+					LosePower(UNIT_FIELD_POWER6, -100);
+			}break;
+		case POWER_TYPE_RUNIC:
+			{
+				if(!CombatStatus.IsInCombat())
+				{
+					m_P_regenTimer = 800;
+					LosePower(UNIT_FIELD_POWER7, 10);
+				}
+			}break;
 		}
 	}
 }

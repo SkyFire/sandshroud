@@ -848,9 +848,12 @@ public:
 	bool isCasting();
 	bool IsInInstance();
 	double GetResistanceReducion(Unit* pVictim, uint32 type, float armorReducePct);
-    void CalculateResistanceReduction(Unit* pVictim,dealdamage *dmg,SpellEntry* ability, float armorreducepct) ;
+	void CalculateResistanceReduction(Unit* pVictim,dealdamage *dmg,SpellEntry* ability, float armorreducepct) ;
 	void RegenerateHealth();
+	void RegenerateEnergy();
+	void RegenerateFocus();
 	void RegeneratePower(bool isinterrupted);
+	void LosePower(uint32 powerField, int32 value);
 	void SendPowerUpdate();
 	HEARTHSTONE_INLINE void setHRegenTimer(uint32 time) {m_H_regenTimer = time; }
 	HEARTHSTONE_INLINE void setPRegenTimer(uint32 time) {m_P_regenTimer = time; }
@@ -1227,7 +1230,6 @@ public:
 	float AOEDmgMod;
 
 	int32 PctRegenModifier;
-	float m_toRegen;
 	float PctPowerRegenModifier[4];
 	void RemoveSoloAura(uint32 type);
 

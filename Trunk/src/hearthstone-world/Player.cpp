@@ -7861,46 +7861,21 @@ void Player::RegenerateHealth( bool inCombat )
 		return;
 
 	float Spirit = (float) GetUInt32Value(UNIT_FIELD_STAT4);
-	uint8 Class = getClass();
-	float amt = 0;
-	switch (Class)
-	{
-	case DRUID:
-		amt = (Spirit * 0.09 + 6.5);
-		break;
-	case HUNTER:
-		amt = (Spirit * 0.25 + 6);
-		break;
-	case MAGE:
-		amt = (Spirit * 0.10);
-		break;
-	case PALADIN:
-		amt = (Spirit * 0.25);
-		break;
-	case PRIEST:
-		amt = (Spirit * 0.10);
-		break;
-	case ROGUE:
-		amt = (Spirit * 0.50 + 2);
-		break;
-	case SHAMAN:
-		amt = (Spirit * 0.11 + 7);
-		break;
-	case WARLOCK:
-		amt = (Spirit * 0.07 + 6);
-		break;
-	case WARRIOR:
-		amt = (Spirit * 0.80 + 6);
-		break;
-	case DEATHKNIGHT:
-		amt = (Spirit * 0.80 + 6);
-		break;
-    }
+	uint8 Class = getClass(), level = ((getLevel() > MAXIMUM_ATTAINABLE_LEVEL) ? MAXIMUM_ATTAINABLE_LEVEL : getLevel());
+	gtFloat *HPRegen = dbcHPRegen.LookupEntry((Class-1)*MAXIMUM_ATTAINABLE_LEVEL + (level-1)), *HPRegenBase = dbcHPRegenBase.LookupEntry((Class-1)*MAXIMUM_ATTAINABLE_LEVEL + (level-1));
+	if(HPRegen == NULL && HPRegenBase == NULL)
+		return;
 
-	amt *= sWorld.getRate(RATE_HEALTH);//Apply shit from conf file
+	// This has some bad naming. HPRegen* is actually out of combat base, while HPRegenBase* is mana per spirit.
+	float basespirit = ((Spirit > 50) ? 50 : Spirit);
+	float basespiritdiff = Spirit - basespirit;
+	float amt = ((basespirit *HPRegen->val) + (basespiritdiff*HPRegenBase->val))*sWorld.getRate(RATE_HEALTH);//Apply shit from conf file
 
 	if(PctRegenModifier)
 		amt += (amt * PctRegenModifier) / 100;
+
+	if(IsSitting())
+		amt *= 1.5f;
 
 	if(inCombat)
 		amt *= PctIgnoreRegenModifier;
@@ -7910,55 +7885,9 @@ void Player::RegenerateHealth( bool inCombat )
 		if(amt <= 1.0f)//this fixes regen like 0.98
 			cur++;
 		else
-			cur += float2int32(amt);
+			cur += float2int32(floor(amt)); // Crow: client always rounds down
 		SetUInt32Value(UNIT_FIELD_HEALTH,(cur>=mh) ? mh : cur);
 	}
-}
-
-void Player::LoosePower(uint32 powerField, int32 decayValue)
-{
-	if( m_interruptRegen > 0 )
-		return;
-
-	uint32 cur = GetUInt32Value(powerField);
-	uint32 newpower = ((int)cur <= decayValue) ? 0 : cur-decayValue;
-	if (newpower > 1000 )
-		newpower = 1000;
-
-	SetUInt32Value(powerField,newpower);
-}
-
-void Player::LoseRage(int32 decayValue)
-{
-	//Rage is lost at a rate of 3 rage every 3 seconds.
-	//The Anger Management talent changes this to 2 rage every 3 seconds.
-	LoosePower(UNIT_FIELD_POWER2, decayValue);
-}
-
-void Player::LooseRunic(int32 decayValue)
-{
-	LoosePower(UNIT_FIELD_POWER7, decayValue);
-}
-
-void Player::RegenerateEnergy()
-{
-	uint32 cur = GetUInt32Value(UNIT_FIELD_POWER4);
-	uint32 mh = GetUInt32Value(UNIT_FIELD_MAXPOWER4);
-	if( cur >= mh )
-		return;
-
-	float amt = 2.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY];
-	amt*= sWorld.getRate(RATE_POWER3);
-
-	cur += float2int32(amt);
-	m_toRegen += (amt - cur);
-	if( m_toRegen > 1 )
-	{
-		cur++;
-		m_toRegen--;
-	}
-
-	SetUInt32Value(UNIT_FIELD_POWER4,(cur >= mh) ? mh : cur);
 }
 
 uint32 Player::GeneratePetNumber()

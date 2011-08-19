@@ -450,11 +450,10 @@ public:
 	typedef std::map<uint32, AchievementCriteriaSet*>					AchievementCriteriaMap;
 
 	// object holders
-	GmTicketList        GM_TicketList;
-	TotemSpellMap       m_totemSpells;
-	OverrideIdMap       mOverrideIdMap;
+	GmTicketList		GM_TicketList;
+	TotemSpellMap		m_totemSpells;
+	OverrideIdMap		mOverrideIdMap;
 	QuestPOIMap			mQuestPOIMap;
-
 
 	Player* GetPlayer(const char* name, bool caseSensitive = true);
 	Player* GetPlayer(uint32 guid);

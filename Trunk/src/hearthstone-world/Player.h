@@ -1567,10 +1567,6 @@ public:
 	void RecalcAllRatings();
 	void RegenerateMana(bool is_interrupted);
 	void RegenerateHealth(bool inCombat);
-	void RegenerateEnergy();
-	void LoseRage(int32 value);
-	void LooseRunic(int32 value);
-	void LoosePower(uint32 powerField, int32 value);
 	void BattlegroundKick() { if(m_bg) m_bg->RemovePlayer(this, false); };
 	void ForceLogout(bool save) { GetSession()->LogoutPlayer(save); };
 

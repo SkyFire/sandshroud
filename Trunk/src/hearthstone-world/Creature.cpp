@@ -631,50 +631,20 @@ void Creature::RegenerateMana(bool isinterrupted)
 	if (m_interruptRegen || isinterrupted)
 		return;
 
-	uint32 cur=GetUInt32Value(UNIT_FIELD_POWER1);
-	uint32 mm=GetUInt32Value(UNIT_FIELD_MAXPOWER1);
-	if(cur>=mm)
-		return;
-
-	float amt=(getLevel()+10)*PctPowerRegenModifier[POWER_TYPE_MANA]/10;
-
-	//Apply shit from conf file
-	amt*=sWorld.getRate(RATE_POWER1);
-	if(amt<=1.0)//this fixes regen like 0.98
-		cur++;
-	else
-		cur+=(uint32)amt;
-	SetUInt32Value(UNIT_FIELD_POWER1,(cur>=mm)?mm:cur);
-}
-
-void Creature::RegenerateFocus()
-{
-	if (m_interruptRegen)
-		return;
-
-	uint32 cur=GetUInt32Value(UNIT_FIELD_POWER3);
-	uint32 mm=GetUInt32Value(UNIT_FIELD_MAXPOWER3);
-	if(cur>=mm)return;
-	float amt = 1.0f * PctPowerRegenModifier[POWER_TYPE_FOCUS];
-	cur+=(uint32)amt;
-	SetUInt32Value(UNIT_FIELD_POWER3,(cur>=mm)?mm:cur);
-}
-
-void Creature::RegenerateEnergy()
-{
-	if(m_interruptRegen)
-		return;
-
-	uint32 cur = GetUInt32Value(UNIT_FIELD_POWER4);
-	uint32 mm = GetUInt32Value(UNIT_FIELD_MAXPOWER4);
-
+	uint32 cur = GetUInt32Value(UNIT_FIELD_POWER1);
+	uint32 mm = GetUInt32Value(UNIT_FIELD_MAXPOWER1);
 	if(cur >= mm)
 		return;
-	
-	float amt = 2.0f * PctPowerRegenModifier[POWER_TYPE_ENERGY];
-	amt*= sWorld.getRate(RATE_POWER3);
-	cur += (uint32)amt;
-	SetUInt32Value(UNIT_FIELD_POWER4,(cur >= mm) ? mm : cur);
+
+	float amt = (getLevel()+10)*PctPowerRegenModifier[POWER_TYPE_MANA]/10;
+
+	//Apply shit from conf file
+	amt *= sWorld.getRate(RATE_POWER1);
+	if(amt <= 1.0)//this fixes regen like 0.98
+		cur++;
+	else
+		cur += (uint32)amt;
+	SetUInt32Value(UNIT_FIELD_POWER1,(cur>=mm)?mm:cur);
 }
 
 void Creature::CallScriptUpdate()
