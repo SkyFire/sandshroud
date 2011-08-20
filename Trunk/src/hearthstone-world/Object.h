@@ -168,6 +168,7 @@ public:
 	HEARTHSTONE_INLINE const uint32 GetEntryFromGUID() const	{ return uint32( (*(uint64*)m_uint32Values >> 24) & 0xFFFFFFFF ); }
 	HEARTHSTONE_INLINE const uint32 GetTypeFromGUID() const { return (m_uint32Values[1] & HIGHGUID_TYPE_MASK); }
 	HEARTHSTONE_INLINE const uint32 GetUIdFromGUID() const { return (m_uint32Values[0] & LOWGUID_ENTRY_MASK); }
+	HEARTHSTONE_INLINE const uint32 GetHighGUID() const { return (m_uint32Values[1]); } /// Sooooooooooooooooooooooooooooooooooo high
 	HEARTHSTONE_INLINE const uint32 GetLowGUID() const { return (m_uint32Values[0]); }
 
 	// type

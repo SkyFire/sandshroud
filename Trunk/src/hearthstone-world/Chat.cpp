@@ -275,7 +275,7 @@ void CommandTableStorage::Init()
 		{ "dist",						COMMAND_LEVEL_D, &ChatHandler::HandleDistanceCommand,						"",																														NULL, 0, 0, 0 },
 		{ "face",						COMMAND_LEVEL_D, &ChatHandler::HandleFaceCommand,							"",																														NULL, 0, 0, 0 },
 		{ "moveinfo",					COMMAND_LEVEL_D, &ChatHandler::HandleMoveInfoCommand,						"",																														NULL, 0, 0, 0 },
-		{ "setbytes",					COMMAND_LEVEL_D, &ChatHandler::HandleSetBytesCommand,						"",																														NULL, 0, 0, 0 },
+		{ "setbytes",					COMMAND_LEVEL_Z, &ChatHandler::HandleSetBytesCommand,						"",																														NULL, 0, 0, 0 },
 		{ "getbytes",					COMMAND_LEVEL_D, &ChatHandler::HandleGetBytesCommand,						"",																														NULL, 0, 0, 0 },
 		{ "unroot",						COMMAND_LEVEL_D, &ChatHandler::HandleDebugUnroot,							"",																														NULL, 0, 0, 0 },
 		{ "root",						COMMAND_LEVEL_D, &ChatHandler::HandleDebugRoot,								"",																														NULL, 0, 0, 0 },
@@ -1133,37 +1133,29 @@ WorldPacket* ChatHandler::FillSystemMessageData(const char *message) const
 
 Player* ChatHandler::getSelectedChar(WorldSession *m_session, bool showerror)
 {
-	uint64 guid;
-	Player* chr;
-
-	guid = m_session->GetPlayer()->GetSelection();
-
+	Player* chr = NULLPLR;
+	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid == 0)
 	{
 		if(showerror)
 			GreenSystemMessage(m_session, "Auto-targeting self.");
-
 		chr = m_session->GetPlayer(); // autoselect
 	}
 	else
 		chr = m_session->GetPlayer()->GetMapMgr()->GetPlayer(GET_LOWGUID_PART(guid));
 
-	if(chr == NULL)
-	{
-		if(showerror)
-			RedSystemMessage(m_session, "This command requires that you select a player.");
-		return NULLPLR;
-	}
-
+	if(chr == NULL && showerror)
+		RedSystemMessage(m_session, "This command requires that you select a player.");
 	return chr;
 }
 
 Creature* ChatHandler::getSelectedCreature(WorldSession *m_session, bool showerror)
 {
-	uint64 guid;
-	Creature* creature = NULLCREATURE;
+	if(!m_session->GetPlayer()->IsInWorld())
+		return NULLCREATURE;
 
-	guid = m_session->GetPlayer()->GetSelection();
+	Creature* creature = NULLCREATURE;
+	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PET)
 		creature = m_session->GetPlayer()->GetMapMgr()->GetPet( GET_LOWGUID_PART(guid) );
 	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_CREATURE)
@@ -1171,29 +1163,21 @@ Creature* ChatHandler::getSelectedCreature(WorldSession *m_session, bool showerr
 	else if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_VEHICLE)
 		creature = m_session->GetPlayer()->GetMapMgr()->GetVehicle( GET_LOWGUID_PART(guid) );
 
-	if(creature != NULL)
-		return creature;
-	else
-	{
-		if(showerror)
-			RedSystemMessage(m_session, "This command requires that you select a creature.");
-		return NULLCREATURE;
-	}
+	if(creature == NULLCREATURE && showerror)
+		RedSystemMessage(m_session, "This command requires that you select a creature.");
+	return creature;
 }
 
 Unit* ChatHandler::getSelectedUnit(WorldSession *m_session, bool showerror)
 {
-	uint64 guid;
-	guid = m_session->GetPlayer()->GetSelection();
-	Unit * unit = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid);
-	if(unit != NULL)
-		return unit;
-	else
-	{
-		if(showerror)
-			RedSystemMessage(m_session, "This command requires that you select a unit.");
+	if(!m_session->GetPlayer()->IsInWorld())
 		return NULLUNIT;
-	}
+
+	uint64 guid = m_session->GetPlayer()->GetSelection();
+	Unit* unit = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid);
+	if(unit == NULLUNIT && showerror)
+		RedSystemMessage(m_session, "This command requires that you select a unit.");
+	return unit;
 }
 
 void ChatHandler::SystemMessage(WorldSession *m_session, const char* message, ...)

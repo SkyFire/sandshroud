@@ -654,7 +654,7 @@ dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
 			// Calculate cost and heuristic.
 			float cost = 0;
 			float heuristic = 0;
-			
+
 			// Special case for last node.
 			if (neighbourRef == endRef)
 			{
@@ -667,7 +667,7 @@ dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
 													  bestRef, bestTile, bestPoly,
 													  neighbourRef, neighbourTile, neighbourPoly,
 													  0, 0, 0);
-				
+
 				cost = bestNode->cost + curCost + endCost;
 				heuristic = 0;
 			}
@@ -683,21 +683,16 @@ dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
 			}
 
 			const float total = cost + heuristic;
-			
-			// The node is already in open list and the new result is worse, skip.
-			if ((neighbourNode->flags & DT_NODE_OPEN) && total >= neighbourNode->total)
-				continue;
-			// The node is already visited and process, and the new result is worse, skip.
-			if ((neighbourNode->flags & DT_NODE_CLOSED))// && total >= neighbourNode->total)
-				continue;
-			
+			if(total >= neighbourNode->total) // The new result is worse!
+				if (neighbourNode->flags & DT_NODE_OPEN || neighbourNode->flags & DT_NODE_CLOSED)
+					continue; // The node is already in open list or visited and processed, skip.
+
 			// Add or update the node.
 			neighbourNode->pidx = m_nodePool->getNodeIdx(bestNode);
 			neighbourNode->id = neighbourRef;
 			neighbourNode->flags &= ~DT_NODE_CLOSED;
 			neighbourNode->cost = cost;
 			neighbourNode->total = total;
-			
 			if (neighbourNode->flags & DT_NODE_OPEN)
 			{
 				// Already in open, update node location.
@@ -709,7 +704,7 @@ dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
 				neighbourNode->flags |= DT_NODE_OPEN;
 				m_openList->push(neighbourNode);
 			}
-			
+
 			// Update nearest node to target so far.
 			if (heuristic < lastBestNodeCost)
 			{
@@ -718,7 +713,7 @@ dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
 			}
 		}
 	}
-	
+
 	// Reverse the path.
 	dtNode* prev = 0;
 	dtNode* node = lastBestNode;

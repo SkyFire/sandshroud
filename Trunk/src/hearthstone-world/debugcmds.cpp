@@ -25,135 +25,73 @@
 
 bool ChatHandler::HandleDebugInFrontCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj;
+	Unit* unit = getSelectedUnit(m_session, true);
+	if(unit == NULL)
+		return false;
 
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
-	{
-		if(!(obj = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid)))
-		{
-			SystemMessage(m_session, "You should select a character or a creature.");
-			return true;
-		}
-	}
-	else
-		obj = TO_OBJECT(m_session->GetPlayer());
-
-	char buf[256];
-	snprintf((char*)buf, 256, "%d", m_session->GetPlayer()->isInFront(obj));
-
-	SystemMessage(m_session, buf);
-
+	SystemMessage(m_session, format("Target is %s you.", (m_session->GetPlayer()->isInFront(unit) ? "infront of" : "behind")).c_str());
 	return true;
 }
 
 bool ChatHandler::HandleShowReactionCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj = NULLOBJ;
-
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
-	{
-		obj = TO_OBJECT(m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid)));
-	}
-
-	if(!obj)
-	{
-		SystemMessage(m_session, "You should select a creature.");
-		return true;
-	}
-
-
-	char* pReaction = strtok((char*)args, " ");
-	if (!pReaction)
+	if(args == NULL)
 		return false;
 
-	uint32 Reaction  = atoi(pReaction);
+	Creature* creature = getSelectedCreature(m_session, true);
+	if(creature == NULL)
+		return false;
+
+	uint32 Reaction = atol(args);
+	if(!Reaction)
+		return false;
 
 	WorldPacket data(SMSG_AI_REACTION, 12);
-	data << obj->GetGUID() << uint32(Reaction);
+	data << creature->GetGUID() << uint32(Reaction);
 	m_session->SendPacket( &data );
 
-	std::stringstream sstext;
-	sstext << "Sent Reaction of " << Reaction << " to " << obj->GetUIdFromGUID() << '\0';
-
-	SystemMessage(m_session,  sstext.str().c_str());
+	SystemMessage(m_session,  format("Sent forced reaction %u from %s.", Reaction, creature->GetName()).c_str());
 	return true;
 }
 
 bool ChatHandler::HandleDistanceCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj;
-
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
+	Unit* pUnit = getSelectedChar(m_session, false);
+	if(!pUnit)
 	{
-		if(!(obj = TO_OBJECT(m_session->GetPlayer()->GetMapMgr()->GetUnit(guid))))
+		pUnit = getSelectedCreature(m_session, false);
+		if(!pUnit)
 		{
-			SystemMessage(m_session, "You should select a character or a creature.");
-			return true;
+			m_session->GetPlayer()->BroadcastMessage("You must select a Unit.");
+			return false;
 		}
 	}
-	else
-		obj = TO_OBJECT(m_session->GetPlayer());
 
-	float dist = m_session->GetPlayer()->CalcDistance(obj);
-	std::stringstream sstext;
-	sstext << "Distance is: " << dist <<'\0';
-
-	SystemMessage(m_session, sstext.str().c_str());
+	SystemMessage(m_session, format("Distance: %f", m_session->GetPlayer()->CalcDistance(pUnit)).c_str());
 	return true;
 }
 
 bool ChatHandler::HandleMoveInfoCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj;
+	Player* plr = m_session->GetPlayer();
+	Creature* creature = getSelectedCreature(m_session, true);
+	if(creature == NULL)
+		return false;
 
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if(!(obj = TO_OBJECT(m_session->GetPlayer())->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid))))
-	{
-		SystemMessage(m_session, "You should select a character or a creature.");
-		return true;
-	}
-
-	float dist = m_session->GetPlayer()->CalcDistance(obj);
-	bool minfront = obj->isInFront(m_session->GetPlayer());
-	bool pinfront = m_session->GetPlayer()->isInFront(obj);
-	uint32 movetype = TO_CREATURE(obj)->GetAIInterface()->getMoveType();
-	bool run = TO_CREATURE(obj)->GetAIInterface()->getMoveRunFlag();
-	uint32 attackerscount = (uint32)TO_CREATURE(obj)->GetAIInterface()->getAITargetsCount();
-	uint32 creatureState = TO_CREATURE(obj)->GetAIInterface()->m_creatureState;
-	uint32 curwp = TO_CREATURE(obj)->GetAIInterface()->getCurrentWaypoint();
-	//Unit unitToFollow = TO_CREATURE(obj)->GetAIInterface()->getUnitToFollow();
-	uint32 aistate = TO_CREATURE(obj)->GetAIInterface()->getAIState();
-	uint32 aitype = TO_CREATURE(obj)->GetAIInterface()->getAIType();
-	uint32 aiagent = TO_CREATURE(obj)->GetAIInterface()->getCurrentAgent();
-	uint32 lowfollow = 0;
-	uint32 highfollow = 0;
-	/*if(unitToFollow == NULL)
-	{
-		lowfollow = 0;
-		highfollow = 0;
-	}
-	else
-	{
-		lowfollow = unitToFollow->GetGUIDLow();
-		highfollow = unitToFollow->GetGUIDHigh();;
-	}*/
-
-	std::stringstream sstext;
-	sstext << "Following Unit: Low: " << lowfollow << " High: " << highfollow << "\n";
-	sstext << "Distance is: " << dist << "\n";
-	sstext << "Mob Facing Player: " << minfront << " Player Facing Mob: " << pinfront << "\n";
-	sstext << "Attackers Count: " << attackerscount << "\n";
-	sstext << "Creature State: " << creatureState << " Run: " << run << "\n";
-	sstext << "AIState: " << aistate << " AIType: " << aitype << " AIAgent: " << aiagent << "\n";
-	sstext << "MoveType: " << movetype << " Current Waypoint: " << curwp << "\n";
-
-	SendMultilineMessage(m_session, sstext.str().c_str());
-	//FillSystemMessageData(&data, sstext.str().c_str());
-	//m_session->SendPacket( &data );
-
+	Unit *unitToFollow = creature->GetAIInterface()->getUnitToFollow();
+	SystemMessage(m_session, "Move Info:");
+	if(unitToFollow != NULL)
+		GreenSystemMessage(m_session, format("Following Unit: Low: %u; High: %u;", unitToFollow->GetLowGUID(), unitToFollow->GetHighGUID()).c_str());
+	GreenSystemMessage(m_session, format("Distance is: %f;", plr->CalcDistance(creature)).c_str());
+	GreenSystemMessage(m_session, format("Mob Facing Player: %s; Player Facing Mob %s;", (creature->isInFront(plr) ? "true" : "false"),
+		(plr->isInFront(creature) ? "true" : "false")).c_str());
+	GreenSystemMessage(m_session, format("Attackers Count: %u;", uint32(creature->GetAIInterface()->getAITargetsCount())).c_str());
+	GreenSystemMessage(m_session, format("Creature State: %u; Run: %s;", creature->GetAIInterface()->m_creatureState,
+		(creature->GetAIInterface()->getMoveRunFlag() ? "true" : "false")).c_str());
+	GreenSystemMessage(m_session, format("AIState: %u; AIType: %u; AIAgent: %u;", creature->GetAIInterface()->getAIState(), creature->GetAIInterface()->getAIType(),
+		creature->GetAIInterface()->getCurrentAgent()).c_str());
+	GreenSystemMessage(m_session, format("Movetype: %u; Current Waypoint: %u", creature->GetAIInterface()->getMoveType(),
+		creature->GetAIInterface()->getCurrentWaypoint()).c_str());
 	return true;
 }
 
@@ -197,21 +135,12 @@ bool ChatHandler::HandleDebugSetPhase(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj = NULLOBJ;
-
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
-	{
-		obj = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	}
-
+	Creature* obj = getSelectedCreature(m_session, false);
 	if(obj == NULL)
 	{
 		SystemMessage(m_session, "You should select a creature.");
 		return true;
 	}
-
-	//m_session->GetPlayer()->GetOrientation();
 
 	uint32 Move  = 1;
 	uint32 Run  = 0;
@@ -333,15 +262,7 @@ bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleFaceCommand(const char* args, WorldSession *m_session)
 {
-
-	Object* obj = NULLOBJ;
-
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
-	{
-		obj = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
-	}
-
+	Creature* obj = getSelectedCreature(m_session, false);
 	if(obj == NULL)
 	{
 		SystemMessage(m_session,  "You should select a creature.");
@@ -357,143 +278,10 @@ bool ChatHandler::HandleFaceCommand(const char* args, WorldSession *m_session)
 	float theOrientation = Orentation/(360/float(6.28));
 
 	obj->SetPosition(obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), theOrientation, false);
-
-	/*
-	data.Initialize( SMSG_MONSTER_MOVE );
-	data << obj->GetGUID();
-	data << obj->GetPositionX() << obj->GetPositionY() << obj->GetPositionZ() << obj->GetOrientation();
-	data << uint8(1);
-
-	data << uint32(0x100); //run
-	data << uint32(0); //time
-	data << uint32(2);
-	data << obj->GetPositionX() << obj->GetPositionY() << obj->GetPositionZ() << theOrientation;
-	*/
-	//UpdateData upd;
-
-	// update movment for others
-	//obj->BuildMovementUpdateBlock(&upd,0);
-	//upd.BuildPacket( &data );
-	//GetSession()->SendPacket( &packet );
-	//obj->BuildMovementUpdateBlock(data,0)
-	//obj->SendMessageToSet(&data,false);
 	OUT_DEBUG("facing sent");
 	return true;
-	//TO_CREATURE(obj)->AI_MoveTo(obj->GetPositionX()+0.1,obj->GetPositionY()+0.1,obj->GetPositionZ()+0.1,theOrientation);
-}
-/*
-
-bool ChatHandler::HandleAIMoveCommand(const char* args)
-{
-WorldPacket data;
-Object* obj = NULL;
-
-uint64 guid = m_session->GetPlayer()->GetSelection();
-if (guid != 0)
-{
-obj = TO_OBJECT(objmgr.GetCreature(guid));
 }
 
-if(obj == NULL)
-{
-FillSystemMessageData(&data, "You should select a creature.");
-m_session->SendPacket( &data );
-return true;
-}
-
-uint8 Value1  = 0;
-bool Run  = 0;
-uint32 Value2 = 1;
-uint32 Value3 = 0;
-bool ToFrom = 0;
-
-char* pValue1 = strtok((char*)args, " ");
-if (pValue1)
-Value1  = static_cast<uint8>(atol(pValue1));
-
-char* pRun = strtok(NULL, " ");
-if (pRun)
-Run  = atoi(pRun);
-
-char* pValue2 = strtok(NULL, " ");
-if (pValue2)
-Value2  = atoi(pValue2);
-
-char* pValue3 = strtok(NULL, " ");
-if (pValue3)
-Value3  = atoi(pValue3);
-
-char* pToFrom = strtok(NULL, " ");
-if (pToFrom)
-ToFrom  = atoi(pToFrom);
-
-float fromX = TO_CREATURE(obj)->GetPositionX();
-float fromY = TO_CREATURE(obj)->GetPositionY();
-float fromZ = TO_CREATURE(obj)->GetPositionZ();
-float fromO = TO_CREATURE(obj)->GetOrientation();
-float toX = m_session->GetPlayer()->GetPositionX();
-float toY = m_session->GetPlayer()->GetPositionY();
-float toZ = m_session->GetPlayer()->GetPositionZ();
-float toO = m_session->GetPlayer()->GetOrientation();
-
-float distance = TO_CREATURE(obj)->CalcDistance(TO_OBJECT(m_session->GetPlayer()));
-uint32 moveSpeed = 0;
-if(!Run)
-{
-moveSpeed = 2.5f*0.001f;
-}
-else
-{
-moveSpeed = 7.0f*0.001f;
-}
-uint32 moveTime = (uint32) (distance / moveSpeed);
-
-data.Initialize( SMSG_MONSTER_MOVE );
-data << guid;
-if(ToFrom)
-{
-data << toX << toY << toZ << toO;
-}
-else
-{
-data << fromX << fromY << fromZ << fromO;
-}
-data << uint8(Value1);
-if(Value1 != 1)
-{
-data << uint32(Run ? 0x00000100 : 0x00000000);
-data << moveTime;
-data << Value2;
-if(ToFrom)
-{
-data << fromX << fromY << fromZ;
-if(Value2 > 1)
-{
-data << fromO;
-}
-}
-else
-{
-data << toX << toY << toZ;
-if(Value2 > 1)
-{
-data << toO;
-}
-
-}
-if(Value2 > 2)
-{
-data << Value3;
-}
-}
-//TO_CREATURE(obj)->m_m_timeToMove = moveTime;
-//m_moveTimer =  UNIT_MOVEMENT_INTERPOLATE_INTERVAL; // update every few msecs
-
-//	m_creatureState = MOVING;
-TO_CREATURE(obj)->SendMessageToSet( &data, false );
-return true;
-}
-*/
 bool ChatHandler::HandleSetBytesCommand(const char* args, WorldSession *m_session)
 {
 	Object* obj;
@@ -609,13 +397,13 @@ bool ChatHandler::HandleDebugLandWalk(const char* args, WorldSession *m_session)
 bool ChatHandler::HandleDebugWaterWalk(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
-	char buf[256];
-
 	if (chr == NULL) // Ignatich: what should NOT happen but just in case...
 	{
 		SystemMessage(m_session, "No character selected.");
 		return false;
 	}
+
+	char buf[256];
 	chr->SetMovement(MOVE_WATER_WALK, 4);
 	snprintf((char*)buf,256, "Water Walk Test Ran.");
 	SystemMessage(m_session,  buf);
@@ -625,8 +413,6 @@ bool ChatHandler::HandleDebugWaterWalk(const char* args, WorldSession *m_session
 bool ChatHandler::HandleDebugUnroot(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
-	char buf[256];
-
 	if (chr == NULL) // Ignatich: what should NOT happen but just in case...
 	{
 		SystemMessage(m_session,  "No character selected.");
@@ -635,6 +421,7 @@ bool ChatHandler::HandleDebugUnroot(const char* args, WorldSession *m_session)
 
 	chr->SetMovement(MOVE_UNROOT,5);
 
+	char buf[256];
 	snprintf((char*)buf,256, "UnRoot Test Ran.");
 	SystemMessage(m_session, buf);
 	return true;
@@ -643,14 +430,14 @@ bool ChatHandler::HandleDebugUnroot(const char* args, WorldSession *m_session)
 bool ChatHandler::HandleDebugRoot(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
-	char buf[256];
-
 	if (chr == NULL) // Ignatich: what should NOT happen but just in case...
 	{
 		SystemMessage(m_session, "No character selected.");
 		return true;
 	}
 	chr->SetMovement(MOVE_ROOT,1);
+
+	char buf[256];
 	snprintf((char*)buf,256, "Root Test Ran.");
 	SystemMessage(m_session, buf);
 	return true;

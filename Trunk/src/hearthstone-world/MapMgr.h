@@ -423,9 +423,10 @@ public:
 	void CallScriptUpdate();
 
 protected:
-
 	InstanceScript* mInstanceScript;
 };
+
+#ifdef MULTI_THREADED_OBJECT_PUSHING
 
 class PushInfoContainer
 {
@@ -437,8 +438,6 @@ public:
 	uint32 info[4];
 };
 
-#ifdef MULTI_THREADED_OBJECT_PUSHING
-
 class SERVER_DECL ObjectUpdateThread :  public ThreadContext
 {
 public:
@@ -448,11 +447,6 @@ public:
 	bool m_threadRunning;
 
 	bool run();
-	void terminate()
-	{
-		PushMap.clear();
-	};
-
 private:
 	MapMgr* Manager;
 	std::map<uint64, set<PushInfoContainer*> > PushMap;
