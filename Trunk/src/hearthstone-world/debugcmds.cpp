@@ -142,26 +142,8 @@ bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 		return true;
 	}
 
-	uint32 Move  = 1;
-	uint32 Run  = 0;
-	uint32 Time = 0;
-	uint32 Meth = 0;
-
-	char* pMove = strtok((char*)args, " ");
-	if (pMove)
-		Move  = atoi(pMove);
-
-	char* pRun = strtok(NULL, " ");
-	if (pRun)
-		Run  = atoi(pRun);
-
-	char* pTime = strtok(NULL, " ");
-	if (pTime)
-		Time  = atoi(pTime);
-
-	char* pMeth = strtok(NULL, " ");
-	if (pMeth)
-		Meth  = atoi(pMeth);
+	uint32 Meth = 0, Time = 0, Run = 0;
+	sscanf(args, "%u %u %u", &Meth, &Time, &Run);
 
 	float x = m_session->GetPlayer()->GetPositionX();
 	float y = m_session->GetPlayer()->GetPositionY();
@@ -169,57 +151,12 @@ bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 	float o = m_session->GetPlayer()->GetOrientation();
 	TO_CREATURE(obj)->GetAIInterface()->setMoveRunFlag((Run>0?true:false));
 	float distance = TO_CREATURE(obj)->CalcDistance(x,y,z);
-	if(Move == 1)
+	if(Meth != 0)
 	{
-		if(Meth == 1)
-		{
-			float q = distance-0.5f;
-			x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
-			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
-			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
-		}
-		else if(Meth == 2)
-		{
-			float q = distance-1;
-			x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
-			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
-			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
-		}
-		else if(Meth == 3)
-		{
-			float q = distance-2;
-			x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
-			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
-			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
-		}
-		else if(Meth == 4)
-		{
-			float q = distance-2.5f;
-			x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
-			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
-			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
-		}
-		else if(Meth == 5)
-		{
-			float q = distance-3;
-			x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
-			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
-			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
-		}
-		else if(Meth == 6)
-		{
-			float q = distance-3.5f;
-			x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
-			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
-			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
-		}
-		else
-		{
-			float q = distance-4;
-			x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
-			y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
-			z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
-		}
+		float q = distance-(0.5f*Meth);
+		x = (TO_CREATURE(obj)->GetPositionX()+x*q)/(1+q);
+		y = (TO_CREATURE(obj)->GetPositionY()+y*q)/(1+q);
+		z = (TO_CREATURE(obj)->GetPositionZ()+z*q)/(1+q);
 		TO_CREATURE(obj)->GetAIInterface()->MoveTo(x,y,z);
 	}
 	else
@@ -227,11 +164,6 @@ bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 		uint32 moveTime = 0;
 		if(!Time)
 		{
-			//float dx = x - TO_CREATURE(obj)->GetPositionX();
-			//float dy = y - TO_CREATURE(obj)->GetPositionY();
-			//float dz = z - TO_CREATURE(obj)->GetPositionZ();
-
-			//float distance = sqrt((dx*dx) + (dy*dy) + (dz*dz));
 			if(!distance)
 			{
 				SystemMessage(m_session, "The Creature is already there.");
@@ -240,20 +172,15 @@ bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 
 			float moveSpeed = 1.0f;
 			if(!Run)
-			{
 				moveSpeed = 2.5f*0.001f;
-			}
 			else
-			{
 				moveSpeed = 7.0f*0.001f;
-			}
 
 			moveTime = uint32(distance / moveSpeed);
 		}
 		else
-		{
 			moveTime = Time;
-		}
+
 		//TO_CREATURE(obj)->setMovementState(MOVING);
 		TO_CREATURE(obj)->GetAIInterface()->SendMoveToPacket(x,y,z,o,moveTime,Run);
 	}
@@ -275,7 +202,7 @@ bool ChatHandler::HandleFaceCommand(const char* args, WorldSession *m_session)
 		Orentation  = atoi(pOrentation);
 
 	/* Convert to Blizzards Format */
-	float theOrientation = Orentation/(360/float(6.28));
+	float theOrientation = Orentation ? Orentation/(360/float(6.28)) : 0.0f;
 
 	obj->SetPosition(obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), theOrientation, false);
 	SystemMessage(m_session, "Facing sent.");

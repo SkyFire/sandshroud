@@ -954,6 +954,20 @@ struct AreaTable
 //	uint32 unk2[7];
 };
 
+struct AreaTriggerEntry
+{
+	uint32 id;		// 0 m_ID
+	uint32 mapid;	// 1 m_ContinentID
+	float x;		// 2 m_x
+	float y;		// 3 m_y
+	float z;		// 4 m_z
+	float radius;	// 5 m_radius
+	float box_x;	// 6 m_box_length
+	float box_y;	// 7 m_box_width
+	float box_z;	// 8 m_box_heigh
+	float box_o;	// 9 m_box_yaw
+};
+
 struct FactionTemplateDBC
 {
 	uint32 ID;
@@ -1803,6 +1817,7 @@ extern SERVER_DECL DBCStorage<SpellRadius> dbcSpellRadius;
 extern SERVER_DECL DBCStorage<SpellCastTime> dbcSpellCastTime;
 extern SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
 extern SERVER_DECL DBCStorage<AreaTable> dbcArea;
+extern SERVER_DECL DBCStorage<AreaTriggerEntry> dbcAreaTrigger;
 extern SERVER_DECL DBCStorage<FactionTemplateDBC> dbcFactionTemplate;
 extern SERVER_DECL DBCStorage<FactionDBC> dbcFaction;
 extern SERVER_DECL DBCStorage<EnchantEntry> dbcEnchant;

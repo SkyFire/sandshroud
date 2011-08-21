@@ -184,6 +184,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->procChance = 2;
 		break;
 
+		// Spell 27498 Crusader's Wrath
+	case 27498:
+			sp->procChance = 7;
+		break;
+
 		//Martyrdom
 	case 14531:
 	case 14774:

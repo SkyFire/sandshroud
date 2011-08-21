@@ -5177,7 +5177,7 @@ bool Spell::CanHandleSpellEffect(uint32 i, uint32 namehash)
 		return false;
 	switch(i)
 	{
-		case 1:
+	case 1:
 		{
 			switch(namehash)
 			{
@@ -5188,7 +5188,7 @@ bool Spell::CanHandleSpellEffect(uint32 i, uint32 namehash)
 				}break;
 			}break;
 		}break;
-		case 2:
+	case 2:
 		{
 			switch(namehash)
 			{
@@ -5199,7 +5199,7 @@ bool Spell::CanHandleSpellEffect(uint32 i, uint32 namehash)
 				}break;
 			}break;
 		}break;
-		case 3:
+	case 3:
 		{
 			switch(namehash)
 			{

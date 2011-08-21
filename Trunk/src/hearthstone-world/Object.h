@@ -235,6 +235,8 @@ public:
 	HEARTHSTONE_INLINE LocationVector * GetPositionV() { return &m_position; }
 	HEARTHSTONE_INLINE void GetPosition(float &x, float &y, float &z) { x = m_position.x; y = m_position.y; z = m_position.z; }
 
+	bool IsInBox(float centerX, float centerY, float centerZ, float BLength, float BWidth, float BHeight, float BOrientation, float delta);
+
 	//Distance Calculation
 	float CalcDistance(Object* Ob);
 	float CalcDistance(float ObX, float ObY, float ObZ);

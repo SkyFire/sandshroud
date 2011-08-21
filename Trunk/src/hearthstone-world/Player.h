@@ -1416,6 +1416,7 @@ public:
 	uint32 SubtractRestXP(uint32 amount);
 	void AddCalculatedRestXP(uint32 seconds);
 	void ApplyPlayerRestState(bool apply);
+	void SetLastAreaTrigger(AreaTrigger*trigger) { LastAreaTrigger = trigger; };
 	void UpdateRestState();
 	float z_axisposition;
 	int32 m_safeFall;
@@ -2073,6 +2074,7 @@ protected:
 	uint8 m_isResting;
 	uint8 m_restState;
 	uint32 m_restAmount;
+	AreaTrigger* LastAreaTrigger;
 	//combat mods
 	float m_blockfromspell;
 	float m_blockfromspellPCT;

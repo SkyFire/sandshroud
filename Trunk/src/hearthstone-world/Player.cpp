@@ -153,6 +153,7 @@ void Player::Init()
 	m_isResting						= 0;
 	m_restState						= 0;
 	m_restAmount					= 0;
+	LastAreaTrigger					= NULL;
 	m_afk_reason					= "";
 	m_playedtime[0]					= 0;
 	m_playedtime[1]					= 0;
@@ -1345,9 +1346,9 @@ void Player::_EventExploration()
 		return;
 
 	uint16 AreaId = GetAreaID();
-
 	if(!AreaId || AreaId == 0xFFFF)
 		return;
+
 	AreaTable * at = dbcArea.LookupEntry(AreaId);
 	if(at == 0)
 		return;
@@ -1403,19 +1404,43 @@ void Player::_EventExploration()
 		if(!m_isResting)
 			ApplyPlayerRestState(true);
 	}
-	else
+	else if(GetMapMgr()->CanUseCollision(this))
 	{
-		if(m_isResting)
+		if(LastAreaTrigger != NULL && LastAreaTrigger->Type == ATTYPE_INN)
 		{
-			if(GetMapMgr()->CanUseCollision(this))
+			if(m_isResting)
 			{
 				if(!CollideInterface.IsIndoor(GetMapId(), loc.x, loc.y, loc.z + 2.0f))
 					ApplyPlayerRestState(false);
 			}
-			else
-				ApplyPlayerRestState(false);
+			else if(CollideInterface.IsIndoor(GetMapId(), loc.x, loc.y, loc.z + 2.0f))
+			{
+				float delta = 3.2f;
+				AreaTriggerEntry* ATE = dbcAreaTrigger.LookupEntry(LastAreaTrigger->AreaTriggerID);
+				if(ATE != NULL)
+				{
+					if(ATE->radius) // If there is a radius, check our distance with the middle.
+					{
+						if(CalcDistance(ATE->x, ATE->y, ATE->z) < ATE->radius+delta)
+							ApplyPlayerRestState(true);
+					}
+					else
+					{
+						if(IsInBox(ATE->x, ATE->y, ATE->z, ATE->box_x, ATE->box_y, ATE->box_z, ATE->box_o, delta))
+							ApplyPlayerRestState(true);
+					}
+				}
+				else
+				{	// Clear our trigger, since it's wrong anyway.
+					LastAreaTrigger = NULL;
+					ApplyPlayerRestState(false);
+				}
+			}
 		}
+		else if(m_isResting)
+			ApplyPlayerRestState(false);
 	}
+	else ApplyPlayerRestState(false);
 
 	if( !(currFields & val) && !GetTaxiState() && !m_TransporterGUID)//Unexplored Area		// bur: we dont want to explore new areas when on taxi
 	{

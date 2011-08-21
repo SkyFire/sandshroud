@@ -33,20 +33,20 @@ enum AreaTriggerType
 };
 
 #pragma pack(push,1)
+
 typedef struct AreaTrigger
 {
 	uint32 AreaTriggerID;
 	uint8 Type;
+	int32 RequiredTeam;
 	uint32 Mapid;
-	uint32 PendingScreen;
 	char * Name;
-	float x;
-	float y;
-	float z;
-	float o;
+	float x; float y;
+	float z; float o;
 	uint32 required_honor_rank;
 	uint32 required_level;
 }AreaTrigger;
+
 #pragma pack(pop)
 
 #endif

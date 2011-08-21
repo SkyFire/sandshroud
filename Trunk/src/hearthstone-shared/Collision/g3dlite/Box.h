@@ -59,7 +59,7 @@ private:
 	 Unit axes.
 	 */
 	Vector3 _axis[3];
-   
+
 	Vector3 _center;
 
 	/**
@@ -146,7 +146,6 @@ public:
 		Vector3&			v1,
 		Vector3&			v2,
 		Vector3&			v3) const;
-
 
 	/**
 	  See AABox::culledBy

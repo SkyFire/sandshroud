@@ -84,7 +84,11 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 		OUT_DEBUG("Missing AreaTrigger: %u", id);
 		return;
 	}
+	if(pAreaTrigger->RequiredTeam != -1)
+		if(pAreaTrigger->RequiredTeam != _player->GetTeam())
+			return;
 
+	_player->SetLastAreaTrigger(pAreaTrigger);
 	switch(pAreaTrigger->Type)
 	{
 	case ATTYPE_INSTANCE:
@@ -168,14 +172,13 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 					TO_UNIT(_player)->Dismount();
 
 				uint32 InstanceID = 0;
+
 				// Try to find a saved instance and
 				// do not handle Hyjal Inn (trigger 4319), since we need a unique mapid when generating our instance_id.
-
 				if( id != 4319 && pMi && ( map->israid() || _player->iRaidType >= MODE_25PLAYER_NORMAL && pMi->type == INSTANCE_MULTIMODE ) )
 				{
 					//Do we have a saved instance we should use?
-					Instance * in = NULL;
-					in = sInstanceMgr.GetSavedInstance( pMi->mapid,_player->GetLowGUID(), _player->iRaidType );
+					Instance * in = sInstanceMgr.GetSavedInstance( pMi->mapid,_player->GetLowGUID(), _player->iRaidType );
 					if( in != NULL  && in->m_instanceId )
 					{
 						//If we are the first to enter this instance, also set our current group id.
@@ -196,12 +199,7 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 		}break;
 	case ATTYPE_INN:
 		{
-			if( _player->IsMounted())
-				TO_UNIT(_player)->Dismount();
 
-			// Inn
-			if (!_player->m_isResting)
-				_player->ApplyPlayerRestState(true);
 		}break;
 	case ATTYPE_TELEPORT:
 		{
@@ -214,6 +212,7 @@ void WorldSession::_HandleAreaTriggerOpcode(uint32 id)
 				_player->SafeTeleport(pAreaTrigger->Mapid, 0, LocationVector(pAreaTrigger->x, pAreaTrigger->y, pAreaTrigger->z, pAreaTrigger->o));
 			}
 		}break;
-	default:break;
+	default:
+		break;
 	}
 }

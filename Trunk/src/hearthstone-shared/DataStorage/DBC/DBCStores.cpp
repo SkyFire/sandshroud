@@ -45,6 +45,7 @@ SERVER_DECL DBCStorage<SpellRadius> dbcSpellRadius;
 SERVER_DECL DBCStorage<SpellCastTime> dbcSpellCastTime;
 SERVER_DECL DBCStorage<SpellDifficultyEntry> dbcSpellDifficulty;
 SERVER_DECL DBCStorage<AreaTable> dbcArea;
+SERVER_DECL DBCStorage<AreaTriggerEntry> dbcAreaTrigger;
 SERVER_DECL DBCStorage<FactionTemplateDBC> dbcFactionTemplate;
 SERVER_DECL DBCStorage<FactionDBC> dbcFaction;
 SERVER_DECL DBCStorage<EnchantEntry> dbcEnchant;
@@ -218,6 +219,7 @@ const char* SpellRuneCostfmt="uuuuu";
 const char* spelldurationFormat = "uiii";
 const char* randompropsFormat = "usuuuxxxxxxxxxxxxxxxxxxx";
 const char* areatableFormat = "uuuuuxxxxxusxxxxxxxxxxxxxxxxuxxxxxxx";
+const char* areatriggerFormat = "uuffffffff"; // ffffffffuu
 const char* factiontemplatedbcFormat = "uuuuuuuuuuuuuu";
 const char* auctionhousedbcFormat = "uuuuxxxxxxxxxxxxxxxxx";
 const char* BattleMasterEntryFormat = "uiiiiiiiiuusxxxxxxxxxxxxxxxuuxuu";
@@ -331,6 +333,8 @@ bool LoadDBCs(const char* datapath)
 	LOAD_DBC(format("%s/AreaGroup.dbc", datapath).c_str(), AreaGroupFormat, true, dbcAreaGroup, true);
 	/* Needed for: */
 	LOAD_DBC(format("%s/AreaTable.dbc", datapath).c_str(), areatableFormat, true, dbcArea, true);
+	/* Needed for: */
+	LOAD_DBC(format("%s/AreaTrigger.dbc", datapath).c_str(), areatriggerFormat, true, dbcAreaTrigger, true);
 	/* Needed for: */
 	LOAD_DBC(format("%s/AuctionHouse.dbc", datapath).c_str(), auctionhousedbcFormat, true, dbcAuctionHouse, false);
 	/* Needed for: */
