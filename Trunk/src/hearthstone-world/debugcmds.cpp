@@ -57,10 +57,10 @@ bool ChatHandler::HandleShowReactionCommand(const char* args, WorldSession *m_se
 bool ChatHandler::HandleDistanceCommand(const char* args, WorldSession *m_session)
 {
 	Unit* pUnit = getSelectedChar(m_session, false);
-	if(!pUnit)
+	if(pUnit == NULL)
 	{
 		pUnit = getSelectedCreature(m_session, false);
-		if(!pUnit)
+		if(pUnit == NULL)
 		{
 			m_session->GetPlayer()->BroadcastMessage("You must select a Unit.");
 			return false;
@@ -278,119 +278,100 @@ bool ChatHandler::HandleFaceCommand(const char* args, WorldSession *m_session)
 	float theOrientation = Orentation/(360/float(6.28));
 
 	obj->SetPosition(obj->GetPositionX(), obj->GetPositionY(), obj->GetPositionZ(), theOrientation, false);
-	OUT_DEBUG("facing sent");
+	SystemMessage(m_session, "Facing sent.");
 	return true;
 }
 
 bool ChatHandler::HandleSetBytesCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj;
+	Object* obj = getSelectedUnit(m_session, false);
+	if(obj == NULL)
+		obj = m_session->GetPlayer();
 
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if(guid != 0)
+	uint32 BytesIndex, RealBytesIndex = 0;
+	uint8 byte1, byte2, byte3, byte4;
+	if(sscanf(args, "%u %u %u %u %u", &BytesIndex, &byte1, &byte2, &byte3, &byte4) < 5)
+		return false;
+	uint32 bytevalue = uint32(uint32(byte1)|uint32(byte2 << 8)|uint32(byte3 << 16)|uint32(byte4 << 24));
+
+	switch(BytesIndex)
 	{
-		if(!(obj = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid)))
+	case 0:
+		RealBytesIndex = UNIT_FIELD_BYTES_0;
+		break;
+	case 1:
+		RealBytesIndex = UNIT_FIELD_BYTES_1;
+		break;
+	case 2:
+		RealBytesIndex = UNIT_FIELD_BYTES_2;
+		break;
+	case UNIT_FIELD_BYTES_0:
+	case UNIT_FIELD_BYTES_1:
+	case UNIT_FIELD_BYTES_2:
+		RealBytesIndex = BytesIndex;
+		break;
+	default:
 		{
-			SystemMessage(m_session, "You should select a character or a creature.");
-			return true;
-		}
+			RedSystemMessage(m_session, "You must supply either a simple byte field value(0, 1, 2) or a valid byte field.");
+			return false;
+		}break;
 	}
-	else
-		obj = TO_OBJECT(m_session->GetPlayer());
 
-	char* pBytesIndex = strtok((char*)args, " ");
-	if (!pBytesIndex)
-		return false;
-
-	uint32 BytesIndex  = atoi(pBytesIndex);
-
-	char* pValue1 = strtok(NULL, " ");
-	if (!pValue1)
-		return false;
-
-	uint8 Value1  = static_cast<uint8>(atol(pValue1));
-
-	char* pValue2 = strtok(NULL, " ");
-	if (!pValue2)
-		return false;
-
-	uint8 Value2  = static_cast<uint8>(atol(pValue2));
-
-	char* pValue3 = strtok(NULL, " ");
-	if (!pValue3)
-		return false;
-
-	uint8 Value3  = static_cast<uint8>(atol(pValue3));
-
-	char* pValue4 = strtok(NULL, " ");
-	if (!pValue4)
-		return false;
-
-	uint8 Value4  = static_cast<uint8>(atol(pValue4));
-
-	std::stringstream sstext;
-	sstext << "Set Field " << BytesIndex << " bytes to " << uint16((uint8)Value1) << " " << uint16((uint8)Value2) << " " << uint16((uint8)Value3) << " " << uint16((uint8)Value4) << '\0';
-	obj->SetUInt32Value(BytesIndex, ( ( Value1 ) | ( Value2 << 8 ) | ( Value3 << 16 ) | ( Value4 << 24 ) ) );
-	SystemMessage(m_session, sstext.str().c_str());
+	obj->SetUInt32Value(RealBytesIndex, bytevalue);
+	SystemMessage(m_session, format("Set Field %u bytes to %u(%u %u %u %u)", BytesIndex, bytevalue, byte1, byte2, byte3, byte4).c_str());
 	return true;
 }
 
 bool ChatHandler::HandleGetBytesCommand(const char* args, WorldSession *m_session)
 {
-	Object* obj;
+	Object* obj = getSelectedUnit(m_session, false);
+	if(obj == NULL)
+		obj = m_session->GetPlayer();
 
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
-	{
-		if(!(obj = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid)))
-		{
-			SystemMessage(m_session, "You should select a character or a creature.");
-			return true;
-		}
-	}
-	else
-		obj = TO_OBJECT(m_session->GetPlayer());
-
-	char* pBytesIndex = strtok((char*)args, " ");
-	if (!pBytesIndex)
+	uint32 BytesIndex, RealBytesIndex = 0;
+	if(sscanf(args, "%u", &BytesIndex) < 1)
 		return false;
 
-	uint32 BytesIndex  = atoi(pBytesIndex);
-	uint32 theBytes = obj->GetUInt32Value(BytesIndex);
-	/*
-	switch (Bytes)
+	switch(BytesIndex)
 	{
 	case 0:
-	theBytes = obj->GetUInt32Value(UNIT_FIELD_BYTES_0);
-	break;
+		RealBytesIndex = UNIT_FIELD_BYTES_0;
+		break;
 	case 1:
-	theBytes = obj->GetUInt32Value(UNIT_FIELD_BYTES_1);
-	break;
+		RealBytesIndex = UNIT_FIELD_BYTES_1;
+		break;
 	case 2:
-	theBytes = obj->GetUInt32Value(UNIT_FIELD_BYTES_2);
-	break;
+		RealBytesIndex = UNIT_FIELD_BYTES_2;
+		break;
+	case UNIT_FIELD_BYTES_0:
+	case UNIT_FIELD_BYTES_1:
+	case UNIT_FIELD_BYTES_2:
+		RealBytesIndex = BytesIndex;
+		break;
+	default:
+		{
+			RedSystemMessage(m_session, "You must supply either a simple byte field value(0, 1, 2) or a valid byte field.");
+			return false;
+		}break;
 	}
-	*/
-	std::stringstream sstext;
-	sstext << "bytes for Field " << BytesIndex << " are " << uint16((uint8)theBytes & 0xFF) << " " << uint16((uint8)(theBytes >> 8) & 0xFF) << " ";
-	sstext << uint16((uint8)(theBytes >> 16) & 0xFF) << " " << uint16((uint8)(theBytes >> 24) & 0xFF) << '\0';
 
-	SystemMessage(m_session, sstext.str().c_str());
+	uint32 byteValue = obj->GetUInt32Value(RealBytesIndex);
+	SystemMessage(m_session, format("Bytes for Field %u are %u(%u %u %u %u)", BytesIndex, byteValue,
+		uint8(byteValue & 0xFF), uint8((byteValue >> 8) & 0xFF), uint8((byteValue >> 16) & 0xFF), uint8((byteValue >> 24) & 0xFF)).c_str());
 	return true;
 }
+
 bool ChatHandler::HandleDebugLandWalk(const char* args, WorldSession *m_session)
 {
 	Player* chr = getSelectedChar(m_session);
-	char buf[256];
-
 	if (chr == NULL) // Ignatich: what should NOT happen but just in case...
 	{
 		SystemMessage(m_session, "No character selected.");
 		return false;
 	}
+
 	chr->SetMovement(MOVE_LAND_WALK,8);
-	snprintf((char*)buf,256, "Land Walk Test Ran.");
-	SystemMessage(m_session, buf);
+	SystemMessage(m_session, "Land Walk Test Ran.");
 	return true;
 }
 
@@ -403,10 +384,8 @@ bool ChatHandler::HandleDebugWaterWalk(const char* args, WorldSession *m_session
 		return false;
 	}
 
-	char buf[256];
 	chr->SetMovement(MOVE_WATER_WALK, 4);
-	snprintf((char*)buf,256, "Water Walk Test Ran.");
-	SystemMessage(m_session,  buf);
+	SystemMessage(m_session,  "Water Walk Test Ran.");
 	return true;
 }
 
@@ -420,10 +399,7 @@ bool ChatHandler::HandleDebugUnroot(const char* args, WorldSession *m_session)
 	}
 
 	chr->SetMovement(MOVE_UNROOT,5);
-
-	char buf[256];
-	snprintf((char*)buf,256, "UnRoot Test Ran.");
-	SystemMessage(m_session, buf);
+	SystemMessage(m_session, "UnRoot Test Ran.");
 	return true;
 }
 
@@ -435,39 +411,24 @@ bool ChatHandler::HandleDebugRoot(const char* args, WorldSession *m_session)
 		SystemMessage(m_session, "No character selected.");
 		return true;
 	}
-	chr->SetMovement(MOVE_ROOT,1);
 
-	char buf[256];
-	snprintf((char*)buf,256, "Root Test Ran.");
-	SystemMessage(m_session, buf);
+	chr->SetMovement(MOVE_ROOT,1);
+	SystemMessage(m_session, "Root Test Ran.");
 	return true;
 }
 
 bool ChatHandler::HandleAggroRangeCommand(const char* args, WorldSession *m_session)
 {
-	Unit* obj = NULLUNIT;
-
-	uint64 guid = m_session->GetPlayer()->GetSelection();
-	if (guid != 0)
+	Player* plr = m_session->GetPlayer();
+	Unit* obj = getSelectedCreature(m_session, false);
+	if(obj == NULL)
 	{
-		if(!(obj = m_session->GetPlayer()->GetMapMgr()->GetUnit(guid)))
-		{
-			SystemMessage(m_session,  "You should select a character or a creature.");
-			return true;
-		}
-	}
-	else
-	{
-		SystemMessage(m_session, "You should select a character or a creature.");
+		SystemMessage(m_session, "You should select a creature.");
 		return true;
 	}
 
-	float aggroRange = obj->GetAIInterface()->_CalcAggroRange(m_session->GetPlayer());
-	std::stringstream sstext;
-	sstext << "Aggrorange is: " << sqrtf(aggroRange) <<'\0';
-
-	SystemMessage(m_session, sstext.str().c_str());
-
+	float aggroRange = obj->GetAIInterface()->_CalcAggroRange(plr);
+	SystemMessage(m_session, "Aggrorange is %f", sqrtf(aggroRange));
 	return true;
 }
 
@@ -484,61 +445,53 @@ bool ChatHandler::HandleKnockBackCommand(const char* args, WorldSession *m_sessi
 
 bool ChatHandler::HandleFadeCommand(const char* args, WorldSession *m_session)
 {
-	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
-	if(!target)
-		target = m_session->GetPlayer();
-	char* v = strtok((char*)args, " ");
-	if(!v)
+	if(!args)
 		return false;
 
-	target->ModThreatModifier(atoi(v));
+	Unit* target = getSelectedUnit(m_session, true);
+	if(target == NULL)
+		return true;
 
-	std::stringstream sstext;
-	sstext << "threat is now reduced by: " << target->GetThreatModifier() <<'\0';
-
-	SystemMessage(m_session, sstext.str().c_str());
+	target->ModThreatModifier(atoi(args));
+	SystemMessage(m_session, "Threat is now reduced by: %i%", target->GetThreatModifier());
 	return true;
 }
 
 bool ChatHandler::HandleThreatModCommand(const char* args, WorldSession *m_session)
 {
-	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
-	if(!target)
-		target = m_session->GetPlayer();
-	char* v = strtok((char*)args, " ");
-	if(!v)
+	if(!args)
 		return false;
 
-	target->ModGeneratedThreatModifier(atoi(v));
+	Unit* target = getSelectedUnit(m_session, true);
+	if(target == NULL)
+		return true;
 
-	std::stringstream sstext;
-	sstext << "new threat caused is now reduced by: " << target->GetGeneratedThreatModifier() << "%" <<'\0';
-
-	SystemMessage(m_session, sstext.str().c_str());
+	target->ModGeneratedThreatModifier(atoi(args));
+	SystemMessage(m_session, "New threat caused is now reduced by: i%", target->GetGeneratedThreatModifier());
 	return true;
 }
 
 bool ChatHandler::HandleCalcThreatCommand(const char* args, WorldSession *m_session)
 {
-	Unit* target = m_session->GetPlayer()->GetMapMgr()->GetUnit(m_session->GetPlayer()->GetSelection());
+	Unit* target = getSelectedCreature(m_session, false);
 	if(!target)
 	{
 		SystemMessage(m_session, "You should select a creature.");
 		return true;
 	}
+
 	char* dmg = strtok((char*)args, " ");
 	if(!dmg)
 		return false;
 	char* spellId = strtok(NULL, " ");
 	if(!spellId)
 		return false;
+	SpellEntry* sp = dbcSpell.LookupEntry( atoi( spellId ) );
+	if(!sp)
+		return false;
 
-	uint32 threat = target->GetAIInterface()->_CalcThreat(atol(dmg), dbcSpell.LookupEntry( atoi( spellId ) ), m_session->GetPlayer());
-
-	std::stringstream sstext;
-	sstext << "generated threat is: " << threat <<'\0';
-
-	SystemMessage(m_session, sstext.str().c_str());
+	uint32 threat = target->GetAIInterface()->_CalcThreat(atol(dmg), sp, m_session->GetPlayer());
+	SystemMessage(m_session, "Generated threat is: %u", threat);
 	return true;
 }
 
@@ -569,43 +522,12 @@ bool ChatHandler::HandleThreatListCommand(const char* args, WorldSession *m_sess
 	SendMultilineMessage(m_session, sstext.str().c_str());
 	return true;
 }
-bool ChatHandler::HandleSendItemPushResult(const char* args, WorldSession* m_session)
-{
-	uint32 itemid, count, type, unk1, unk2, unk3, unk4;
-	char* arg = const_cast<char*>(args);
-	itemid = atol(strtok(arg, " "));
-	if(!itemid) return false;
-	count = atol(strtok(NULL, " "));
-	type = atol(strtok(NULL, " "));
-	unk1 = atol(strtok(NULL, " "));
-	unk2 = atol(strtok(NULL, " "));
-	unk3 = atol(strtok(NULL, " "));
-	unk4 = atol(strtok(NULL, " "));
-
-	// lookup item
-//	ItemPrototype *proto = ItemPrototypeStorage.LookupEntry(itemid);
-
-	WorldPacket data;
-	data.SetOpcode(SMSG_ITEM_PUSH_RESULT);
-
-	data << m_session->GetPlayer()->GetGUID();			   // recivee_guid
-	data << type << uint32(1);  // unk
-	data << count;			  // count
-	data << uint8(0xFF);				// uint8 unk const 0xFF
-	data << unk1;	   // unk
-	data << itemid;
-	data << unk2;		  // unk
-	data << unk3;		 // random prop
-	data << unk4;
-	m_session->SendPacket(&data);
-	return true;
-	//data << ((proto != NULL) ? proto->Quality : uint32(0)); // quality
-}
 
 bool ChatHandler::HandleModifyBitCommand(const char* args, WorldSession* m_session)
 {
+	return false;
 
-	Object* obj;
+/*	Object* obj;
 
 	uint64 guid = m_session->GetPlayer()->GetSelection();
 	if (guid != 0)
@@ -656,11 +578,13 @@ bool ChatHandler::HandleModifyBitCommand(const char* args, WorldSession* m_sessi
 	}
 
 	SystemMessage(m_session, buf);
-	return true;
+	return true;*/
 }
 
 bool ChatHandler::HandleModifyValueCommand(const char* args,  WorldSession* m_session)
 {
+	return false;
+/*
 	Object* obj;
 
 	uint64 guid = m_session->GetPlayer()->GetSelection();
@@ -691,14 +615,7 @@ bool ChatHandler::HandleModifyValueCommand(const char* args,  WorldSession* m_se
 		SystemMessage(m_session, "Incorrect Field.");
 		return true;
 	}
-/*
-	if (value > sizeof(uint32))
-	{
-		FillSystemMessageData(&data, m_session, "Incorrect Value.");
-		m_session->SendPacket( &data );
-		return true;
-	}
-*/
+
 	char buf[256];
 	uint32 oldValue = obj->GetUInt32Value(field);
 	obj->SetUInt32Value(field,value);
@@ -710,126 +627,18 @@ bool ChatHandler::HandleModifyValueCommand(const char* args,  WorldSession* m_se
 
 	SystemMessage(m_session, buf);
 
-	return true;
+	return true;*/
 }
 
-bool ChatHandler::HandleDebugDumpCoordsCommmand(const char * args, WorldSession * m_session)
-{
-	Player* p = m_session->GetPlayer();
-	//char buffer[200] = {0};
-	FILE * f = fopen("C:\\script_dump.txt", "a");
-	if(!f) return true;
-
-	fprintf(f, "{ %f, %f, %f, %f },\n", p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(),
-		p->GetOrientation());
-	fclose(f);
-	return true;
-}
-
-//As requested by WaRxHeAd for database development.
-//This should really only be available in special cases and NEVER on real servers... -DGM
-bool ChatHandler::HandleSQLQueryCommand(const char* args, WorldSession *m_session)
-{
-	#ifdef _ONLY_FOOLS_TRY_THIS_
-	if(!*args)
-	{
-		RedSystemMessage(m_session, "No query given.");
-		return false;
-	}
-
-	bool isok = WorldDatabase.Execute(args);
-
-	if(isok)
-		GreenSystemMessage(m_session, "Query was executed successfully.");
-	else
-		RedSystemMessage(m_session, "Query failed to execute.");
-
-	#endif
-
-	return true;
-}
-
-//#define _ONLY_FOOLS_TRY_THIS_
-
-bool ChatHandler::HandleSendpacket(const char * args, WorldSession * m_session)
-{
-#ifdef _ONLY_FOOLS_TRY_THIS_
-
-	uint32 arg_len = strlen(args);
-	char * xstring = new char [arg_len];
-	memcpy(xstring, args,arg_len);
-
-	for (uint32 i = 0; i < arg_len; i++)
-	{
-		if (xstring[i] == ' ')
-		{
-			xstring[i] = '\0';
-		}
-	}
-
-	// we receive our packet as hex, that means we get it like ff ff ff ff
-	// the opcode consists of 2 bytes
-
-	if (!xstring)
-	{
-		OUT_DEBUG("[Debug][Sendpacket] Packet is invalid");
-		return false;
-	}
-
-	WorldPacket data(arg_len);
-
-	uint32 loop = 0;
-	uint16 opcodex = 0;
-	uint16 opcodez = 0;
-
-	// get the opcode
-	sscanf(xstring , "%x", &opcodex);
-
-	// should be around here
-	sscanf(&xstring[3] , "%x", &opcodez);
-
-	opcodex =  opcodex << 8;
-	opcodex |= opcodez;
-	data.Initialize(opcodex);
-
-
-	int j = 3;
-	int x = 0;
-	do
-	{
-		if (xstring[j] == '\0')
-		{
-			uint32 HexValue;
-			sscanf(&xstring[j+1], "%x", &HexValue);
-			if (HexValue > 0xFF)
-			{
-				OUT_DEBUG("[Debug][Sendpacket] Packet is invalid");
-				return false;
-			}
-			data << uint8(HexValue);
-			//++j;
-		}
-		++j;
-	} while(j < arg_len);
-
-	data.hexlike();
-
-	m_session->SendPacket(&data);
-
-	OUT_DEBUG("[Debug][Sendpacket] Packet was send");
-#endif
-	return true;
-}
 bool ChatHandler::HandleDebugGoDamage(const char* args, WorldSession *m_session)
 {
-	GameObject* GObj = NULLGOB;
-
-	GObj = m_session->GetPlayer()->m_GM_SelectedGO;
+	GameObject* GObj = m_session->GetPlayer()->m_GM_SelectedGO;
 	if( !GObj )
 	{
 		RedSystemMessage(m_session, "No selected GameObject...");
 		return true;
 	}
+
 	uint32 damage = (float)atof(args);
 	GObj->TakeDamage(uint32(damage),  m_session->GetPlayer(), m_session->GetPlayer(), 5555);
 	BlueSystemMessage(m_session, "Gameobject Has Taken %u", damage);
@@ -838,16 +647,14 @@ bool ChatHandler::HandleDebugGoDamage(const char* args, WorldSession *m_session)
 
 bool ChatHandler::HandleDebugGoRepair(const char* args, WorldSession *m_session)
 {
-	GameObject* GObj = NULLGOB;
-
-	GObj = m_session->GetPlayer()->m_GM_SelectedGO;
+	GameObject* GObj = m_session->GetPlayer()->m_GM_SelectedGO;
 	if( !GObj )
 	{
 		RedSystemMessage(m_session, "No selected GameObject...");
 		return true;
 	}
-	GObj->Rebuild();
 
+	GObj->Rebuild();
 	BlueSystemMessage(m_session, "Gameobject rebuilt.");
 	return true;
 

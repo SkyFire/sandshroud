@@ -281,9 +281,6 @@ protected:
 	bool HandleCalcThreatCommand(const char* args, WorldSession *m_session);
 	bool HandleThreatListCommand(const char* args, WorldSession *m_session);
 	bool HandleNpcSpawnLinkCommand(const char* args, WorldSession *m_session);
-	bool HandleDebugDumpCoordsCommmand(const char * args, WorldSession * m_session);
-    bool HandleSendpacket(const char * args, WorldSession * m_session);
-	bool HandleSQLQueryCommand(const char* args, WorldSession *m_session);
 	bool HandleRangeCheckCommand( const char * args , WorldSession * m_session );
 
 	// WayPoint Commands
@@ -426,7 +423,6 @@ protected:
 	bool HandleMountCommand(const char* args, WorldSession* m_session);
 	bool HandleGetPosCommand(const char* args, WorldSession* m_session);
 	bool HandleGetTransporterTime(const char* args, WorldSession* m_session);
-	bool HandleSendItemPushResult(const char* args, WorldSession* m_session);
 	bool HandleGOAnimProgress(const char * args, WorldSession * m_session);
 	bool HandleRemoveAurasCommand(const char *args, WorldSession *m_session);
 	bool HandleParalyzeCommand(const char* args, WorldSession *m_session);
