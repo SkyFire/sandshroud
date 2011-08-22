@@ -170,7 +170,7 @@ void Map::LoadSpawns(bool reload /* = false */)
 				do
 				{
 					Field * fields = result->Fetch();
-					CreatureSpawn * cspawn = new CreatureSpawn;
+					CreatureSpawn * cspawn = new CreatureSpawn();
 					cspawn->id = fields[0].GetUInt32();
 					cspawn->form = FormationMgr::getSingleton().GetFormation(cspawn->id);
 					cspawn->entry = fields[1].GetUInt32();

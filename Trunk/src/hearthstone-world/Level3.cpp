@@ -2046,7 +2046,7 @@ bool ChatHandler::HandleCreatureSpawnCommand(const char *args, WorldSession *m_s
 	ASSERT(p);
 	if( save )
 	{
-		sp = new CreatureSpawn;
+		sp = new CreatureSpawn();
 		info->GenerateModelId(&sp->displayid);
 		sp->entry = entry;
 		sp->form = 0;
