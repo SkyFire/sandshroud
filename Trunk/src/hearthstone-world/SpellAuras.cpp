@@ -2803,7 +2803,7 @@ void Aura::SpellAuraDummy(bool apply)
 			}
 		}break;
 
-	case 20154: // Seal of Righteousness
+	case 21084: // Seal of Righteousness
 	case 20164: // Seal of Justice
 	case 20165: // Seal of Light
 	case 20166: // Seal of Wisdom
@@ -2821,7 +2821,7 @@ void Aura::SpellAuraDummy(bool apply)
 					uint32 judspell = mod->m_amount;
 					switch(GetSpellId())
 					{
-					case 20154: // Seal of Righteousness
+					case 21084: // Seal of Righteousness
 						spellid = 25742;
 						judspell = 20187;
 						break;

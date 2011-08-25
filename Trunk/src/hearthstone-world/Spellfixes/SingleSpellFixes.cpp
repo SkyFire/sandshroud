@@ -891,7 +891,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectTriggerSpell[0] = 53719;
 		}break;
 
-	case 20154: // Seal of Righteousness
+	case 21084: // Seal of Righteousness
 		{
 			sp->School = SCHOOL_HOLY;
 			sp->procFlags = PROC_ON_MELEE_ATTACK; // Overwrite the other procflag
