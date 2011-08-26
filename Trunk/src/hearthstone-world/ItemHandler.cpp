@@ -1954,9 +1954,9 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 
 		if(gemguid[i])//add or replace gem
 		{
-			ItemInterface * itemi = _player->GetItemInterface();
-			Item * it = itemi->GetItemByGUID(gemguid[i]);
-			ItemPrototype * ip = it->GetProto();
+			ItemInterface *itemi = _player->GetItemInterface();
+			Item *it = itemi ? itemi->GetItemByGUID(gemguid[i]) : NULL;
+			ItemPrototype * ip = it ? it->GetProto() : NULL;
 			if( it == NULL || ip == NULL)
 				continue;
 
