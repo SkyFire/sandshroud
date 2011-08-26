@@ -565,7 +565,7 @@ void Pet::InitializeMe()
 	GetAIInterface()->SetFollowDistance(3.0f);
 
 	SetCreatureName(CreatureNameStorage.LookupEntry(GetEntry()));
-	proto=CreatureProtoStorage.LookupEntry(GetEntry());
+	proto = CreatureProtoStorage.LookupEntry(GetEntry());
 	m_Owner->SetUInt64Value(UNIT_FIELD_SUMMON, GetGUID());
 	SetUInt32Value(UNIT_FIELD_PETNUMBER, GetUIdFromGUID());
 	SetUInt32Value(UNIT_FIELD_PET_NAME_TIMESTAMP, (uint32)UNIXTIME);

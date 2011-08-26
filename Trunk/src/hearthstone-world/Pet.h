@@ -146,7 +146,7 @@ public:
 	HEARTHSTONE_INLINE uint32 GetPetState(void) { return m_State; }
 
 	HEARTHSTONE_INLINE void SetPetDiet(uint32 diet) { m_Diet = diet; }
-	HEARTHSTONE_INLINE void SetPetDiet() { m_Diet = myFamily->petdietflags; }
+	HEARTHSTONE_INLINE void SetPetDiet() { m_Diet = myFamily ? myFamily->petdietflags : 0; }
 
 	HEARTHSTONE_INLINE uint32 GetPetDiet(void) { return m_Diet; }
 

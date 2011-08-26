@@ -1199,7 +1199,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				// Do holy damage
 				if(p_caster->DuelingWith != NULL && p_caster->DuelingWith == unitTarget)
 					p_caster->CastSpell(unitTarget, hostileSpell, true);
-				if(p_caster->DuelingWith != NULL && unitTarget->IsPet() && (p_caster->DuelingWith == (TO_PET(unitTarget)->GetOwner())))
+				else if(p_caster->DuelingWith != NULL && unitTarget->IsPet() && (p_caster->DuelingWith == (TO_PET(unitTarget)->GetOwner())))
 					p_caster->CastSpell(unitTarget, hostileSpell, true);
 				else if(isHostile(p_caster, unitTarget))
 					p_caster->CastSpell(unitTarget, hostileSpell, true);
