@@ -801,9 +801,7 @@ bool Player::Create(WorldPacket& data )
 	m_StableSlotCount = 0;
 
 	for(std::set<uint32>::iterator sp = info->spell_list.begin();sp!=info->spell_list.end();sp++)
-	{
 		mSpells.insert((*sp));
-	}
 
 	m_FirstLogin = true;
 
@@ -811,12 +809,13 @@ bool Player::Create(WorldPacket& data )
 	for(std::list<CreateInfo_SkillStruct>::iterator ss = info->skills.begin(); ss!=info->skills.end(); ss++)
 	{
 		se = dbcSkillLine.LookupEntry(ss->skillid);
+		if(se == NULL)
+			continue;
+
 		if(se->type != SKILL_TYPE_LANGUAGE)
 		{
 			if( sWorld.StartLevel > 1 )
-			{
 				_AddSkillLine(se->id, sWorld.StartLevel * 5, sWorld.StartLevel * 5 );
-			}
 			else
 				_AddSkillLine(se->id, ss->currentval, ss->maxval);
 		}
@@ -827,9 +826,8 @@ bool Player::Create(WorldPacket& data )
 
 	// Add actionbars
 	for(std::list<CreateInfo_ActionBarStruct>::iterator itr = info->actionbars.begin();itr!=info->actionbars.end();itr++)
-	{
 		setAction(itr->button, itr->action, itr->type, itr->misc);
-	}
+
 	if( GetSession()->HasGMPermissions() && sWorld.gm_force_robes )
 	{
 		// Force GM robes on GM's except 'az' status (if set to 1 in world.conf)
@@ -1744,7 +1742,7 @@ void Player::_SavePet(QueryBuffer * buf)
 					else
 						ss << ",";
 
-					ss << "(" << GetLowGUID() << ", " << pn << ", " << itr->first->Id << ", " <<  itr->second<< ")";
+					ss << "(" << uint32(GetLowGUID()) << ", " << uint32(pn) << ", " << uint32(itr->first->Id) << ", " <<  uint32(itr->second) << ")";
 				}
 				ss << ";";
 
@@ -1752,7 +1750,6 @@ void Player::_SavePet(QueryBuffer * buf)
 					CharacterDatabase.Execute(ss.str().c_str());
 				else // Execute or add our bulk inserts
 					buf->AddQuery(ss.str().c_str());
-				printf("Inserting %s", ss.str().c_str());
 			}
 
 			// Start our talent queries
@@ -1775,7 +1772,7 @@ void Player::_SavePet(QueryBuffer * buf)
 					else
 						ss << ",";
 
-					ss << "(" << GetLowGUID() << ", " << pn << ", " << itr2->first << ", " <<  itr2->second << ")";
+					ss << "(" << uint32(GetLowGUID()) << ", " << uint32(pn) << ", " << uint32(itr2->first) << ", " <<  uint32(itr2->second) << ")";
 				}
 				ss << ";";
 
@@ -1783,7 +1780,6 @@ void Player::_SavePet(QueryBuffer * buf)
 					CharacterDatabase.Execute(ss.str().c_str());
 				else // Execute or add our bulk inserts
 					buf->AddQuery(ss.str().c_str());
-				printf("Inserting %s", ss.str().c_str());
 			}
 		}
 	}
@@ -1794,15 +1790,15 @@ void Player::_SavePet(QueryBuffer * buf)
 		ss << "REPLACE INTO playerpets VALUES('"
 			<< GetLowGUID() << "','"
 			<< itr->second->number << "','"
-			<< CharacterDatabase.EscapeString(itr->second->name) << "','"
+			<< CharacterDatabase.EscapeString(itr->second->name).c_str() << "','"
 			<< itr->second->entry << "','"
-			<< itr->second->fields << "','"
+			<< itr->second->fields.c_str() << "','"
 			<< itr->second->xp << "','"
-			<< (itr->second->active ?  1 : 0) + itr->second->stablestate * 10 << "','"
+			<< uint32((itr->second->active ?  1 : 0) + itr->second->stablestate * 10) << "','"
 			<< itr->second->level << "','"
 			<< itr->second->happiness << "','" //happiness/loyalty xp
 			<< itr->second->happinessupdate << "','"
-			<< (itr->second->summon ?  1 : 0) << "')";
+			<< uint32(itr->second->summon ?  1 : 0) << "')";
 
 		if(buf == NULL)
 			CharacterDatabase.ExecuteNA(ss.str().c_str());
@@ -1993,6 +1989,7 @@ void Player::SpawnPet(uint32 pet_number)
 
 	// Crow: Should be that it recasts summon spell, but without cost.
 	Pet* pPet = objmgr.CreatePet();
+	pPet->Init();
 	pPet->SetInstanceID(GetInstanceID());
 	pPet->LoadFromDB(TO_PLAYER(this), itr->second);
 	if( IsPvPFlagged() )

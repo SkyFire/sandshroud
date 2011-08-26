@@ -105,7 +105,6 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 		return;
 
 	SetIsPet(true);
-
 	m_OwnerGuid = owner->GetGUID();
 	m_Owner = TO_PLAYER(owner);
 	m_OwnerGuid = m_Owner->GetGUID();
@@ -228,13 +227,19 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	m_ExpireTime = expiretime;
 	bExpires = m_ExpireTime > 0 ? true : false;
 
-	if(!bExpires)
+	if(owner->IsPlayer())
 	{
-		// Create PlayerPet struct (Rest done by UpdatePetInfo)
-		PlayerPet *pp = new PlayerPet;
-		pp->number = m_PetNumber;
-		pp->stablestate = STABLE_STATE_ACTIVE;
-		TO_PLAYER(owner)->AddPlayerPet(pp, pp->number);
+		if(TO_PLAYER(owner)->IsPvPFlagged())
+			SetPvPFlag();
+
+		if(!bExpires)
+		{
+			// Create PlayerPet struct (Rest done by UpdatePetInfo)
+			PlayerPet *pp = new PlayerPet;
+			pp->number = m_PetNumber;
+			pp->stablestate = STABLE_STATE_ACTIVE;
+			TO_PLAYER(owner)->AddPlayerPet(pp, pp->number);
+		}
 	}
 
 	//maybe we should use speed from the template we created the creature ?
@@ -1706,21 +1711,20 @@ void Pet::InitTalentsForLevel(bool creating)
 uint8 Pet::GetPetTalentPointsAtLevel()
 {
 	uint16 level = getLevel();
-	uint8 points = 0;
-	if (level > 19)
-	{
-		points = uint8(level - 16) / 4;
-	}
-	else
+	if(level < 19)
 		return 0;
+
+	uint8 points = ((level-19)/4);
 
 	// take into account any points we have gained
 	// from SPELL_AURA_MOD_PET_TALENT_POINTS
-	points += m_Owner->m_PetTalentPointModifier;
+	if(m_Owner)
+		points += m_Owner->m_PetTalentPointModifier;
 
 	// calculations are done return total points
 	return points;
 }
+
 void Pet::InitializeTalents()
 {
 	uint32 talentid = 0;

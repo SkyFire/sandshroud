@@ -2181,6 +2181,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->maxstack = 1;
 		}break;
 
+	case 31687:
+		{
+			sp->EffectMiscValue[0] = 510;
+		}break;
+
 		// Mark of Conquest
 	case 33510:
 		{
