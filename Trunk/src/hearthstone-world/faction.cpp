@@ -412,7 +412,6 @@ bool isCombatSupport(Object* objA, Object* objB)// B combat supports A?
 	return combatSupport;
 }
 
-
 bool isAlliance(Object* objA)// A is alliance?
 {
 	if(!objA || objA->m_factionDBC == NULL || objA->m_faction == NULL)

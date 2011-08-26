@@ -691,6 +691,7 @@ public:
 	ItemPrototype* IP_shield;
 
 public: // values
+	bool m_isGuard;
 	bool b_has_shield;
 	bool m_corpseEvent;
 	bool m_noRespawn;

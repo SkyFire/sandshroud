@@ -87,7 +87,8 @@ Creature::Creature(uint64 guid)
 	m_runSpeed = MONSTER_NORMAL_RUN_SPEED;
 	m_base_runSpeed = m_runSpeed;
 	m_base_walkSpeed = m_walkSpeed;
-	m_noRespawn=false;
+	m_noRespawn = false;
+	m_isGuard = false;
 	m_canRegenerateHP = true;
 	BaseAttackType = SCHOOL_NORMAL;
 	m_taggingPlayer = m_taggingGroup = 0;
