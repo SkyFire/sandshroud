@@ -111,8 +111,7 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	m_OwnerGuid = m_Owner->GetGUID();
 	creature_info = ci;
 	myFamily = dbcCreatureFamily.LookupEntry(creature_info->Family);
-	//m_name = objmgr.GetCreatureFamilyName(myFamily->ID);
-	if( myFamily->name == NULL )
+	if( myFamily == NULL || myFamily->name == NULL )
 		m_name = "Pet";
 	else
 		m_name.assign( myFamily->name );
@@ -490,8 +489,8 @@ void Pet::LoadFromDB(Player* owner, PlayerPet * playerPetInfo)
 	creature_info = CreatureNameStorage.LookupEntry(m_PlayerPetInfo->entry);
 	if( creature_info == NULL )
 		return;
-	myFamily = dbcCreatureFamily.LookupEntry(creature_info->Family);
 
+	myFamily = dbcCreatureFamily.LookupEntry(creature_info->Family);
 	Create(playerPetInfo->name.c_str(), owner->GetMapId(), owner->GetPositionX() + 2 , owner->GetPositionY() +2, owner->GetPositionZ(), owner->GetOrientation());
 
 	LoadValues(m_PlayerPetInfo->fields.c_str());
@@ -1076,7 +1075,7 @@ void Pet::LearnSpell(uint32 spellid)
 
 void Pet::LearnLevelupSpells()
 {
-	uint32 family_id = Summon ? m_uint32Values[OBJECT_FIELD_ENTRY] : myFamily->ID;
+	uint32 family_id = Summon ? m_uint32Values[OBJECT_FIELD_ENTRY] : myFamily ? myFamily->ID : 0;
 
 	PetLevelupSpellSet const *levelupSpells = objmgr.GetPetLevelupSpellList(family_id);
 	if(levelupSpells)
@@ -1383,10 +1382,10 @@ void Pet::ApplyStatsForLevel()
 	float pet_level = float(m_uint32Values[UNIT_FIELD_LEVEL]);
 
 	// Apply scale for this family.
-	float level_diff = float(myFamily->maxlevel - myFamily->minlevel);
-	float scale_diff = float(myFamily->maxsize - myFamily->minsize);
+	float level_diff = myFamily ? float(myFamily->maxlevel - myFamily->minlevel) : 0;
+	float scale_diff = myFamily ? float(myFamily->maxsize - myFamily->minsize) : 0;
 	float factor = scale_diff / level_diff;
-	float scale = factor * pet_level + myFamily->minsize;
+	float scale = factor * pet_level + (myFamily ? myFamily->minsize : 0);
 	SetFloatValue(OBJECT_FIELD_SCALE_X, scale);
 
 	// Apply health fields.

@@ -1216,29 +1216,28 @@ bool ChatHandler::HandleSetChosenTitleCommand(const char* args, WorldSession* m_
 bool ChatHandler::HandleCreatePetCommand(const char* args, WorldSession* m_session)
 {
 	if(!args || strlen(args) < 2)
-	return false;
+		return false;
 
 	uint32 Entry = atol(args);
 	if(!Entry)
-	return false;
+		return false;
 
 	Player * player = m_session->GetPlayer();
-	if(!player)
-	return false;
+	if(player == NULL)
+		return false;
 
 	CreatureProto * pTemplate = CreatureProtoStorage.LookupEntry(Entry);
 	CreatureInfo * pCreatureInfo = CreatureNameStorage.LookupEntry(Entry);
-	if(!pTemplate || !pCreatureInfo)
+	if(!pTemplate || !pCreatureInfo || !pCreatureInfo->Family)
 	{
-		RedSystemMessage(m_session, "Invalid creature spawn template: %u", Entry);
+		RedSystemMessage(m_session, "Invalid creature for pet: %u", Entry);
 		return true;
 	}
 
 	if(player->GeneratePetNumber() == 0)
-	return false;
-
+		return false;
 	else if(player->GetSummon() || player->GetUnstabledPetNumber())
-	return false;
+		return false;
 
 	CreatureFamilyEntry *cf = dbcCreatureFamily.LookupEntry(pCreatureInfo->Family);
 	if(cf && !cf->tameable)
