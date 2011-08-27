@@ -1934,8 +1934,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			unitTarget->setDeathState(DEAD);
  			CreatureInfo *ci = CreatureNameStorage.LookupEntry(30230);
 			Pet *summon = objmgr.CreatePet();
-			summon->Init();
-			summon->CreateAsSummon(30230, ci, NULL, unitTarget, GetSpellProto(), 1, (uint32)320000); //Give it an extra seconds for being unpossesed.
+			summon->CreateAsSummon(30230, ci, TO_CREATURE(summon), u_caster, GetSpellProto(), 1, (uint32)320000); //Give it an extra seconds for being unpossesed.
 			playerTarget->SetSummon(summon);
 
 			summon->SetUInt32Value(UNIT_FIELD_LEVEL, unitTarget->getLevel());
@@ -4816,20 +4815,18 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 		{
 			CreatureInfo *ci = CreatureNameStorage.LookupEntry(GetSpellProto()->EffectMiscValue[i]);
 			Pet *summon = objmgr.CreatePet();
-			summon->Init();
 			summon->SetInstanceID(p_caster->GetInstanceID());
 			summon->SetPosition(p_caster->GetPosition(), true);
-			summon->CreateAsSummon(cr_entry, ci, NULL, p_caster, GetSpellProto(), 4, GetDuration());
+			summon->CreateAsSummon(cr_entry, ci, TO_CREATURE(summon), p_caster, GetSpellProto(), 4, GetDuration());
 			summon->AddSpell(dbcSpell.LookupEntry(58877), true); // Spirit Hunt
 			summon->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
 			summon->AddSpell(dbcSpell.LookupEntry(58857), true); // Twin Howl
 			summon->AddSpell(dbcSpell.LookupEntry(58861), true); // Spirit Bash
 
 			Pet *summon2 = objmgr.CreatePet();
-			summon2->Init();
 			summon2->SetInstanceID(p_caster->GetInstanceID());
 			summon2->SetPosition(p_caster->GetPosition(), true);
-			summon2->CreateAsSummon(cr_entry, ci, NULL, p_caster, GetSpellProto(), 4, GetDuration());
+			summon2->CreateAsSummon(cr_entry, ci, TO_CREATURE(summon2), p_caster, GetSpellProto(), 4, GetDuration());
 			summon2->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
 			summon2->AddSpell(dbcSpell.LookupEntry(58877), true); // Spirit Hunt
 			summon2->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
@@ -4842,10 +4839,9 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 		{
 			CreatureInfo *ci = CreatureNameStorage.LookupEntry(cr_entry);
 			Pet *summon = objmgr.CreatePet();
-			summon->Init();
 			summon->SetInstanceID(p_caster->GetInstanceID());
 			summon->SetPosition(p_caster->GetPosition(), true);
-			summon->CreateAsSummon(cr_entry, ci, NULL, p_caster, GetSpellProto(), 4, GetDuration());
+			summon->CreateAsSummon(cr_entry, ci, TO_CREATURE(summon), p_caster, GetSpellProto(), 4, GetDuration());
 			summon->GetAIInterface()->SetUnitToFollowAngle(float(-(M_PI/2)));
 			summon->AddSpell(dbcSpell.LookupEntry(58877), true); // Spirit Hunt
 			summon->AddSpell(dbcSpell.LookupEntry(58875), true); // Spirit walk
@@ -5430,7 +5426,6 @@ void Spell::SpellEffectTameCreature(uint32 i)
 	tame->GetAIInterface()->HandleEvent(EVENT_LEAVECOMBAT, p_caster, 0);
 
 	Pet* pPet = objmgr.CreatePet();
-	pPet->Init();
 	pPet->SetInstanceID(p_caster->GetInstanceID());
 	pPet->SetPosition(p_caster->GetPosition(), true);
 	pPet->CreateAsSummon(tame->GetEntry(), tame->GetCreatureInfo(), tame, p_caster, NULL, 2, 0);
@@ -5498,9 +5493,9 @@ void Spell::SpellEffectSummonPet(uint32 i) //summon - pet
 		Pet* summon = objmgr.CreatePet();
 		if(summon == NULL)
 			return;
-		summon->Init();
 		summon->SetInstanceID(m_caster->GetInstanceID());
-		summon->CreateAsSummon(GetSpellProto()->EffectMiscValue[i], ci, NULLCREATURE, p_caster, GetSpellProto(), 1, 0);
+		summon->SetPosition(m_caster->GetPosition(), true);
+		summon->CreateAsSummon(GetSpellProto()->EffectMiscValue[i], ci, TO_CREATURE(summon), p_caster, GetSpellProto(), 1, 0);
 		if( u_caster->IsPvPFlagged() )
 			summon->SetPvPFlag();
 	}
@@ -5771,8 +5766,8 @@ void Spell::SummonPossessed(uint32 i)
 		return;
 
 	Pet *summon = objmgr.CreatePet();
-	summon->Init();
-	summon->CreateAsSummon(GetSpellProto()->EffectMiscValue[i], ci, NULL, unitTarget, GetSpellProto(), 1, GetDuration()+2000); //Give it an extra seconds for being unpossesed.
+	summon->SetPosition(p_caster->GetPosition(), true);
+	summon->CreateAsSummon(GetSpellProto()->EffectMiscValue[i], ci, TO_CREATURE(summon), p_caster, GetSpellProto(), 1, GetDuration()+2000); //Give it an extra seconds for being unpossesed.
 	p_caster->SetSummon(summon);
 	summon->DisableAI();
 	summon->SetUInt32Value(UNIT_FIELD_LEVEL,m_caster->GetUInt32Value(UNIT_FIELD_LEVEL));
@@ -7642,9 +7637,8 @@ void Spell::SpellEffectSummonDemonOld(uint32 i)
 	if(ci)
 	{
 		pPet = objmgr.CreatePet();
-		pPet->Init();
 		pPet->SetInstanceID(p_caster->GetInstanceID());
-		pPet->CreateAsSummon(GetSpellProto()->EffectMiscValue[i], ci, NULLCREATURE, p_caster, GetSpellProto(), 1, 300000);
+		pPet->CreateAsSummon(GetSpellProto()->EffectMiscValue[i], ci, TO_CREATURE(pPet), p_caster, GetSpellProto(), 1, 300000);
 	}
 
 	//Create Enslave Aura if its inferno spell
@@ -8407,8 +8401,7 @@ void Spell::SpellEffectCreatePet(uint32 i)
 		Pet *pPet = objmgr.CreatePet();
 		if(pPet != NULL)
 		{
-			pPet->Init();
-			pPet->CreateAsSummon( GetSpellProto()->EffectMiscValue[i], ci, NULL, playerTarget, GetSpellProto(), 2, 0 );
+			pPet->CreateAsSummon( GetSpellProto()->EffectMiscValue[i], ci, TO_CREATURE(pPet), playerTarget, GetSpellProto(), 2, 0 );
 			if(!pPet->IsInWorld())
 			{
 				pPet->Destruct();

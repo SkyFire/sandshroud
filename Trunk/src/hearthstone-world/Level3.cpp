@@ -1244,7 +1244,6 @@ bool ChatHandler::HandleCreatePetCommand(const char* args, WorldSession* m_sessi
 		return false;
 
 	Pet* pPet = objmgr.CreatePet();
-	pPet->Init();
 	pPet->SetInstanceID(player->GetInstanceID());
 	pPet->CreateAsSummon(Entry, pCreatureInfo, ((Creature*)pPet), TO_UNIT(player), NULL, 2, 0);
 	sWorld.LogGM(m_session, "used create pet entry %u", Entry);

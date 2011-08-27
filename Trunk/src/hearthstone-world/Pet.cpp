@@ -27,7 +27,6 @@ uint32 GetAutoCastTypeForSpell(SpellEntry * ent)
 {
 	switch(ent->NameHash)
 	{
-
 	/************************************************************************/
 	/* Warlock Pet Spells													*/
 	/************************************************************************/
@@ -42,7 +41,6 @@ uint32 GetAutoCastTypeForSpell(SpellEntry * ent)
 	case SPELL_HASH_INTERCEPT:
 	case SPELL_HASH_DEVOUR_MAGIC:
 	case SPELL_HASH_SPELL_LOCK:
-
 		return AUTOCAST_EVENT_ATTACK;
 		break;
 
@@ -99,6 +97,67 @@ uint32 GetAutoCastTypeForSpell(SpellEntry * ent)
 	return AUTOCAST_EVENT_NONE;
 }
 
+Pet::Pet(uint64 guid) : Creature(guid)
+{
+	m_PetXP = 0;
+	Summon = false;
+	std::fill(&ActionBar[0], &ActionBar[10], 0);
+	//memset(ActionBar, 0, sizeof(uint32)*10);
+
+	m_AutoCombatSpell = 0;
+
+	m_PartySpellsUpdateTimer = 0;
+	m_HappinessTimer = PET_HAPPINESS_UPDATE_TIMER;
+	m_PetNumber = 0;
+
+	m_State = PET_STATE_DEFENSIVE;
+	m_Action = PET_ACTION_FOLLOW;
+	m_ExpireTime = 0;
+	bExpires = false;
+	m_Diet = 0;
+	m_Action = PET_ACTION_FOLLOW;
+	m_State = PET_STATE_DEFENSIVE;
+	m_dismissed = false;
+	m_AISpellStore.clear();
+	mSpells.clear();
+	m_talents.clear();
+}
+
+Pet::~Pet()
+{
+
+}
+
+void Pet::Init()
+{
+	Creature::Init();
+	SetUInt32Value(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + POWER_TYPE_FOCUS, 20);
+}
+
+void Pet::Destruct()
+{
+	mSpells.clear();
+
+	for(std::map<uint32, AI_Spell*>::iterator itr = m_AISpellStore.begin(); itr != m_AISpellStore.end(); itr++)
+		delete itr->second;
+	m_AISpellStore.clear();
+
+	if(IsInWorld())
+		Remove(false, true, true);
+
+	if( m_Owner )
+	{
+		m_Owner->SetSummon(NULLPET);
+		ClearPetOwner();
+	}
+
+	//TODO: clean this up in _SavePet ->  m_talents.clear();
+	//add spent talents to player pet struct
+	//drop unused fields from the db
+	//m_talents.clear();
+	Creature::Destruct();
+}
+
 void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_creature, Unit* owner, SpellEntry* created_by_spell, uint32 type, uint32 expiretime)
 {
 	if(ci == NULL)
@@ -130,7 +189,6 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	}
 
 	SetUInt32Value(UNIT_FIELD_LEVEL, level);
-
 	SetUInt32Value(UNIT_FIELD_DISPLAYID,  ci->Male_DisplayID);
 	SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, ci->Male_DisplayID);
 	SetUInt64Value(UNIT_FIELD_SUMMONEDBY, owner->GetGUID());
@@ -247,68 +305,6 @@ void Pet::CreateAsSummon(uint32 entry, CreatureInfo *ci, Creature* created_from_
 	m_base_walkSpeed = m_walkSpeed = owner->m_base_walkSpeed; //should we be able to keep up with master ?
 	SetPhaseMask(owner->GetPhaseMask());
 	InitializeMe();
-}
-
-
-Pet::Pet(uint64 guid) : Creature(guid)
-{
-	m_PetXP = 0;
-	Summon = false;
-	std::fill(&ActionBar[0], &ActionBar[10], 0);
-	//memset(ActionBar, 0, sizeof(uint32)*10);
-
-	m_AutoCombatSpell = 0;
-
-	m_PartySpellsUpdateTimer = 0;
-	m_HappinessTimer = PET_HAPPINESS_UPDATE_TIMER;
-	m_PetNumber = 0;
-
-	m_State = PET_STATE_DEFENSIVE;
-	m_Action = PET_ACTION_FOLLOW;
-	m_ExpireTime = 0;
-	bExpires = false;
-	m_Diet = 0;
-	m_Action = PET_ACTION_FOLLOW;
-	m_State = PET_STATE_DEFENSIVE;
-	m_dismissed = false;
-	m_AISpellStore.clear();
-	mSpells.clear();
-	m_talents.clear();
-}
-
-Pet::~Pet()
-{
-
-}
-
-void Pet::Init()
-{
-	Creature::Init();
-	SetUInt32Value(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER + POWER_TYPE_FOCUS, 20);
-}
-
-void Pet::Destruct()
-{
-	mSpells.clear();
-
-	for(std::map<uint32, AI_Spell*>::iterator itr = m_AISpellStore.begin(); itr != m_AISpellStore.end(); itr++)
-		delete itr->second;
-	m_AISpellStore.clear();
-
-	if(IsInWorld())
-		Remove(false, true, true);
-
-	if( m_Owner )
-	{
-		m_Owner->SetSummon(NULLPET);
-		ClearPetOwner();
-	}
-
-	//TODO: clean this up in _SavePet ->  m_talents.clear();
-	//add spent talents to player pet struct
-	//drop unused fields from the db
-	//m_talents.clear();
-	Creature::Destruct();
 }
 
 void Pet::Update(uint32 time)

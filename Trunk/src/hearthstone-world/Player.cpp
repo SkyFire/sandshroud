@@ -1989,7 +1989,6 @@ void Player::SpawnPet(uint32 pet_number)
 
 	// Crow: Should be that it recasts summon spell, but without cost.
 	Pet* pPet = objmgr.CreatePet();
-	pPet->Init();
 	pPet->SetInstanceID(GetInstanceID());
 	pPet->LoadFromDB(TO_PLAYER(this), itr->second);
 	if( IsPvPFlagged() )
