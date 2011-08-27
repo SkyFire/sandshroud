@@ -171,8 +171,7 @@ bool ChatHandler::HandleRecallListCommand(const char* args, WorldSession *m_sess
 
 bool ChatHandler::HandleRecallPortPlayerCommand(const char* args, WorldSession * m_session)
 {
-	char* player;
-	char* location;
+	char player[255], location[255];
 	if(sscanf(args, "%s %s", &player, &location) != 2)
 		return false;
 

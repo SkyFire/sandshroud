@@ -93,6 +93,8 @@ Creature::Creature(uint64 guid)
 	BaseAttackType = SCHOOL_NORMAL;
 	m_taggingPlayer = m_taggingGroup = 0;
 	m_lootMethod = -1;
+	IP_shield = NULL;
+	b_has_shield = false;
 	m_noDeleteAfterDespawn = false;
 	spawnid = 0;
 }
