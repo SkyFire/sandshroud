@@ -3776,10 +3776,10 @@ uint8 Spell::CanCast(bool tolerate)
 				/* burlex: units are always facing the target! */
 				if(p_caster && GetSpellProto()->FacingCasterFlags)
 				{
-					if(!p_caster->isInFront(target))
+					if(!p_caster->isTargetInFront(target))
 						return SPELL_FAILED_UNIT_NOT_INFRONT;
 					if((GetSpellProto()->Flags3 & FLAGS3_REQ_BEHIND_TARGET) && (GetSpellProto()->Id != SPELL_RANGED_THROW) &&
-						target->isInFront(p_caster))
+						!p_caster->isInBackOfTarget(target))
 						return SPELL_FAILED_NOT_BEHIND;
 				}
 			}
@@ -3825,7 +3825,7 @@ uint8 Spell::CanCast(bool tolerate)
 			if( p_caster != NULL )
 			{
 				if( GetSpellProto()->NameHash == SPELL_HASH_GOUGE )// Gouge
-					if(!target->isInFront(p_caster))
+					if(!target->isTargetInFront(p_caster))
 						return SPELL_FAILED_NOT_INFRONT;
 
 				if( GetSpellProto()->Category==1131)//Hammer of wrath, requires target to have 20- % of hp
@@ -4834,7 +4834,7 @@ bool Spell::Reflect(Unit* refunit)
 				}
 				else if( (*i)->infront )
 				{
-					if( m_caster->isInFront(refunit) )
+					if( m_caster->isInFrontOfTarget(refunit) )
 					{
 						canreflect = true;
 					}

@@ -496,7 +496,7 @@ public:
 
 		if(obj->InStealth()) // Stealth Detection (  I Hate Rogues :P  )
 		{
-			if(isInFront(obj)) // stealthed player is in front of creature
+			if(isTargetInFront(obj)) // stealthed player is in front of creature
 			{
 				int32 hide_level = (getLevel() * 5 + GetStealthDetectBonus()) - obj->GetStealthLevel();
 				detectRange = (hide_level * 0.15f) + 5;
@@ -506,8 +506,10 @@ public:
 			}
 			else // stealthed player is behind creature
 			{
-				if(GetStealthDetectBonus() > 500) return true; // immune to stealth
-				else detectRange = 0.0f;
+				if(GetStealthDetectBonus() > 500)
+					return true; // immune to stealth
+				else
+					detectRange = 0.0f;
 			}
 
 			detectRange += GetFloatValue(UNIT_FIELD_BOUNDINGRADIUS); // adjust range for size of creature

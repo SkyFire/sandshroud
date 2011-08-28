@@ -2315,7 +2315,7 @@ uint32 Unit::HandleProc( uint32 flag, uint32 flag2, Unit* victim, SpellEntry* Ca
 				if(spellId == 17364 || spellId == 32175 || spellId == 32176) // Stormstrike fix
 					continue;
 
-				if(spellId == 22858 && isInBack(victim)) //retatliation needs target to be not in front. Can be casted by creatures too
+				if(spellId == 22858 && isTargetInBack(victim)) //retatliation needs target to be not in front. Can be casted by creatures too
 					continue;
 
 				if( CastingSpell && spellId == 54370 )
@@ -2767,7 +2767,7 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	int32 victim_skill		= 0;
 	uint32 SubClassSkill	= SKILL_UNARMED;
 
-	bool backAttack			= !isInFront( pVictim );
+	bool backAttack			= isInBackOfTarget(pVictim);
 	uint32 vskill			= 0;
 
 	//==========================================================================================
@@ -2918,8 +2918,8 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	//--------------------------------by damage type and by weapon type-------------------------
 	if( weapon_damage_type == RANGED )
 	{
-		dodge=0.0f;
-		parry=0.0f;
+		dodge = 0.0f;
+		parry = 0.0f;
 	}
 	else if(IsPlayer())
 	{
@@ -2933,7 +2933,8 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 
 	//--------------------------------by skill difference---------------------------------------
 	float vsk = (float)self_skill - (float)victim_skill;
-	dodge = std::max( 0.0f, dodge - vsk * 0.04f );
+	if( dodge )
+		dodge = std::max( 0.0f, dodge - vsk * 0.04f );
 	if( parry )
 		parry = std::max( 0.0f, parry - vsk * 0.04f );
 	if( block )
@@ -2945,7 +2946,8 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 			hitchance = std::max( hitchance, 95.0f + vsk * 0.02f);
 		else
 			hitchance = std::max( hitchance, 95.0f + vsk * 0.04f);
-	} else
+	}
+	else
 	{
 		if(vsk >= -10 && vsk <= 10)
 			hitchance = std::max( hitchance, 95.0f + vsk * 0.1f);
@@ -2972,16 +2974,21 @@ uint32 Unit::GetSpellDidHitResult( Unit* pVictim, uint32 weapon_damage_type, Spe
 	//==============================One Roll Processing=========================================
 	//==========================================================================================
 	//--------------------------------cummulative chances generation----------------------------
-	float chances[4];
-	chances[0]=std::max(0.0f,100.0f-hitchance);
-	chances[1]=chances[0]+dodge;
-	chances[2]=chances[1]+parry;
-	chances[3]=chances[2]+block;
+	uint32 r = 0;
+	float chances[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	chances[0] = std::max(0.0f, 100.0f-hitchance);
+	if(!backAttack)
+	{
+		chances[1] = chances[0]+dodge;
+		chances[2] = chances[1]+parry;
+		chances[3] = chances[2]+block;
+	}
+	else if(pVictim->IsCreature())
+		chances[1] = chances[0]+dodge;
 
 	//--------------------------------roll------------------------------------------------------
 	float Roll = RandomFloat(100.0f);
-	uint32 r = 0;
-	while (r<4&&Roll>chances[r])
+	while (r < 4 && Roll > chances[r])
 		r++;
 	return roll_results[r];
 }
@@ -2994,7 +3001,7 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 	if(!pVictim->isAlive() || !isAlive()  || IsStunned() || IsPacified() || IsFeared())
 		return;
 
-	if(!isInFront(pVictim))
+	if(!isTargetInFront(pVictim))
 	{
 		if(IsPlayer())
 		{
@@ -3039,7 +3046,7 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 	int32 victim_skill;
 	uint32 SubClassSkill	= SKILL_UNARMED;
 
-	bool backAttack			= !pVictim->isInFront( TO_UNIT(this) );
+	bool backAttack			= isInBackOfTarget(pVictim);
 	uint32 vskill			= 0;
 	bool disable_dR			= false;
 
@@ -3076,21 +3083,13 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 					parry = pVictim->GetFloatValue( PLAYER_PARRY_PERCENTAGE );
 				}
 			}
-			else if( IsPlayer() )
-			{			// you can dodge if anal attacked
-//--------------------------------dodge chance----------------------------------------------
-				if(pVictim->m_stunned<=0)
-				{
-					dodge = pVictim->GetFloatValue( PLAYER_DODGE_PERCENTAGE );
-				}
-			}
 		}
 		victim_skill = float2int32( vskill + TO_PLAYER( pVictim )->CalcRating( 1 ) );
 	}
 //--------------------------------mob defensive chances-------------------------------------
 	else
 	{
-		if( weapon_damage_type != RANGED && !backAttack )
+		if( weapon_damage_type != RANGED )
 			dodge = pVictim->GetUInt32Value( UNIT_FIELD_STAT1 ) / 14.5f; // what is this value? (Agility)
 
 		victim_skill = pVictim->getLevel() * 5;
@@ -4061,7 +4060,7 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 				if (!(*itr) || (*itr) == pVictim || !(*itr)->IsUnit())
 					continue;
 
-				if(CalcDistance(*itr) < 5.0f && isAttackable(TO_UNIT(this), (*itr)) && (*itr)->isInFront(TO_UNIT(this)) && !TO_UNIT(*itr)->IsPacified())
+				if(CalcDistance(*itr) < 5.0f && isAttackable(TO_UNIT(this), (*itr)) && isTargetInFront(*itr) && !TO_UNIT(*itr)->IsPacified())
 				{
 					// Sweeping Strikes hits cannot be dodged, missed or parried (from wowhead)
 					bool skip_hit_check = ex->spell_info->Id == 12328 ? true : false;

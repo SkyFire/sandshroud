@@ -1182,7 +1182,7 @@ void Player::_EventAttack( bool offhand )
 		}
 		setAttackTimer(300, offhand);
 	}
-	else if(!isInFront(pVictim))
+	else if(!isTargetInFront(pVictim))
 	{
 		// We still have to do this one.
 		if(m_AttackMsgTimer != 2)
@@ -1266,7 +1266,7 @@ void Player::_EventCharmAttack()
 			// Shorten, so there isnt a delay when the client IS in the right position.
 			sEventMgr.ModifyEventTimeLeft(TO_PLAYER(this), EVENT_PLAYER_CHARM_ATTACK, 100);
 		}
-		else if(!m_CurrentCharm->isInFront(pVictim))
+		else if(!m_CurrentCharm->isTargetInFront(pVictim))
 		{
 			if(m_AttackMsgTimer == 0)
 			{
@@ -6101,7 +6101,7 @@ bool Player::CanSee(Object* obj) // * Invisibility & Stealth Detection - Partha 
 					int32 hide_level = (getLevel() * 5 + GetStealthDetectBonus()) - pObj->GetStealthLevel();
 					modDistance += hide_level * 0.2f;
 
-					if(pObj->isInBack(TO_PLAYER(this)))
+					if(isInBackOfTarget(pObj))
 						base_range /= 2.0f;
 
 					if( base_range + modDistance <= 0 )

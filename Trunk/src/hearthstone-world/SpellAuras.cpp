@@ -9151,6 +9151,9 @@ void Aura::SpellAuraRegenManaStatPCT(bool apply)
 
 void Aura::SpellAuraSpellHealingStatPCT(bool apply)
 {
+	if(!m_target)
+		return;
+
 	if(apply)
 	{
 		SetPositive();

@@ -1991,7 +1991,7 @@ bool Object::inArc(float Position1X, float Position1Y, float FOV, float Orientat
 	}
 }
 
-bool Object::isInFront(Object* target)
+bool Object::isTargetInFront(Object* target)
 {
 	// check if we facing something ( is the object within a 180 degree slice of our positive y axis )
 
@@ -2014,36 +2014,6 @@ bool Object::isInFront(Object* target)
 	double right = ( M_PI / 2.0 );
 
 	return( ( angle >= left ) && ( angle <= right ) );
-}
-
-bool Object::isInBack(Object* target)
-{
-	return !isInFront(target);
-/*	// Crow: Tried to fix, did not test.
-	if(CalcDistance(target) < 0.5f)
-		return false;
-
-	// check if we are behind something ( is the object within a 180 degree slice of our negative y axis )
-
-	double x = target->GetPositionX() - m_position.x;
-	double y = target->GetPositionY() - m_position.y;
-
-	double angle = atan2( y, x );
-	angle = ( angle >= 0.0 ) ? angle : 2.0 * M_PI + angle;
-	angle += m_position.o;
-
-	while( angle > M_PI)
-		angle -= 2.0 * M_PI;
-
-	while(angle < -M_PI)
-		angle += 2.0 * M_PI;
-
-	// replace M_H_PI in the two lines below to reduce or increase angle
-
-	double left = -1.0 * ( M_H_PI / 2.0 );
-	double right = ( M_H_PI / 2.0 );
-
-	return( ( angle >= left ) && ( angle <= right ) );*/
 }
 
 bool Object::isInArc(Object* target , float angle) // angle in degrees

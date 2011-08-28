@@ -978,8 +978,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 					if(m_Unit->isAttackReady(false) && !m_fleeTimer && m_AllowedToEnterCombat)
 					{
 						m_creatureState = ATTACKING;
-						bool infront = m_Unit->isInFront(m_nextTarget);
-
+						bool infront = m_Unit->isTargetInFront(m_nextTarget);
 						if(!infront) // set InFront
 						{
 							//prevent mob from rotating while stunned
@@ -989,8 +988,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 								infront = true;
 							}
 						}
-
-						if(infront)
+						else
 						{
 							m_Unit->setAttackTimer(0, false);
 							//we require to know if strike was succesfull. If there was no dmg then target cannot be dazed by it
@@ -1062,7 +1060,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 					if(m_Unit->isAttackReady(false) && !m_fleeTimer && m_AllowedToEnterCombat)
 					{
 						m_creatureState = ATTACKING;
-						bool infront = m_Unit->isInFront(m_nextTarget);
+						bool infront = m_Unit->isTargetInFront(m_nextTarget);
 
 						if(!infront) // set InFront
 						{
@@ -1073,8 +1071,7 @@ void AIInterface::_UpdateCombat(uint32 p_time)
 								infront = true;
 							}
 						}
-
-						if(infront)
+						else
 						{
 							m_Unit->setAttackTimer(0, false);
 							SpellEntry *info = dbcSpell.LookupEntry(3018);
@@ -2133,7 +2130,7 @@ bool AIInterface::setInFront(Unit* target) // not the best way to do it, though
 	//Update Orentation Server Side
 	m_Unit->SetPosition(m_Unit->GetPositionX(), m_Unit->GetPositionY(), m_Unit->GetPositionZ(), orientation);
 
-	return m_Unit->isInFront(target);
+	return m_Unit->isTargetInFront(target);
 }
 
 bool AIInterface::addWayPoint(WayPoint* wp)

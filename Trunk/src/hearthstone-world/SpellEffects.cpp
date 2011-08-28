@@ -449,18 +449,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			/************************
 			*		WARRIOR			*
 			************************/
-		case 23881:	// Bloodthirst
-			{	// Half of Attack Power
-				dmg += (u_caster->GetAP() * 0.5);
-			}break;
-
-		case 5308: case 20658: case 20660: case 20661:
-		case 20662: case 25234: case 25236: case 47470:
-		case 47471:// Execute
-			{
-				dmg += u_caster->GetAP() * ((GetSpellProto()->EffectBasePoints[0]+1) / 100);
-			}break;
-
 		case 23922: case 23923: // Shield Slam - damage is increased by block value
 		case 23924: case 23925: case 25258:
 		case 30356: case 47487: case 47488:
@@ -479,24 +467,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if(u_caster->HasFlag(UNIT_FIELD_AURASTATE, AURASTATE_FLAG_VICTORIOUS))
 					u_caster->RemoveFlag(UNIT_FIELD_AURASTATE, AURASTATE_FLAG_VICTORIOUS);
-				dmg += (u_caster->GetAP()*(GetSpellProto()->EffectBasePoints[i]+1)) / 100;
-			}break;
-
-		case 6572: // Revenge, Deals damage plus AP boost.
-		case 6574: case 7379: case 11600: case 11601:
-		case 25288: case 25269: case 30357: case 57823:
-			{
-				dmg = (u_caster->GetAP() * 0.207);
-			}break;
-
-		case 57755: // Heroic Throw, Deals damage plus AP boost
-			{
-				dmg = (u_caster->GetAP() * 0.5);
-			}break;
-
-		case 64382: // Shattering Throw
-			{
-				dmg = (u_caster->GetAP() * 0.5);
 			}break;
 
 			// Heroic Strike, commented ones don't have bonus.
@@ -559,17 +529,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					if(itm != NULL)
 						dmg = ((itm->GetProto()->Damage[0].Min + itm->GetProto()->Damage[0].Max) * 0.2f) + GetSpellProto()->EffectBasePoints[i];
 				}
-			}break;
-
-			// Intercept
-		case 20252:
-			{
-				dmg += u_caster->GetAP() * 0.12;
-			}break;
-
-		case 46968:	// Shockwave
-			{
-				dmg += 0.75 * u_caster->GetAP();
 			}break;
 
 		case 59653: // Damage Shield
@@ -665,7 +624,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if( p_caster != NULL )
 				{
-					dmg += (0.022 * (p_caster->GetAP())) + (0.044 * p_caster->GetDamageDoneMod(SCHOOL_HOLY) * (p_caster->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME)/1000));
+					dmg *= (p_caster->GetUInt32Value(UNIT_FIELD_BASEATTACKTIME)/1000);
 					if(p_caster->HasAura(56414))
 						dmg += uint32((float)dmg*0.1f);
 				}
@@ -689,8 +648,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if( p_caster != NULL )
 				{
-					dmg = (p_caster->GetRAP() * 0.15) + GetSpellProto()->EffectBasePoints[i];
-
 					if(p_caster->HasAurasOfNameHashWithCaster(SPELL_HASH_RAPID_KILLING, p_caster))
 						dmg += float2int32(dmg * (GetSpellProto()->RankNumber * 0.1f));
 				}
@@ -738,9 +695,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 						stundmg = p_caster->GetRAP()/10 + GetSpellProto()->EffectBasePoints[i] + GetSpellProto()->EffectBasePoints[i + 1];
 					}
 					else
-					{
 						stundmg = p_caster->GetRAP()/10 + GetSpellProto()->EffectBasePoints[i];
-					}
+
 					// Bow Damage
 					if(it)
 						bowdmg = (it->GetProto()->Damage[0].Min + it->GetProto()->Damage[0].Max) * 0.2f; //+unmodified weapon damage
@@ -839,47 +795,47 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		case 8680: // Instant Poison 1
 			{
 				if(u_caster != NULL)
-					dmg = (13+RandomUInt(4))+(0.1*u_caster->GetAP());
+					dmg = (13+RandomUInt(4));
 			}break;
 		case 8685: // Instant Poison 2
 			{
 				if(u_caster != NULL)
-					dmg = (21+RandomUInt(4))+(0.1*u_caster->GetAP());
+					dmg = (21+RandomUInt(4));
 			}break;
 		case 8689: // Instant Poison 3
 			{
 				if(u_caster != NULL)
-					dmg = (30+RandomUInt(8))+(0.1*u_caster->GetAP());
+					dmg = (30+RandomUInt(8));
 			}break;
 		case 11335: // Instant Poison 4
 			{
 				if(u_caster != NULL)
-					dmg = (45+RandomUInt(12))+(0.1*u_caster->GetAP());
+					dmg = (45+RandomUInt(12));
 			}break;
 		case 11336: // Instant Poison 5
 			{
 				if(u_caster != NULL)
-					dmg = (62+RandomUInt(18))+(0.1*u_caster->GetAP());
+					dmg = (62+RandomUInt(18));
 			}break;
 		case 11337: // Instant Poison 6
 			{
 				if(u_caster != NULL)
-					dmg = (76+RandomUInt(24))+(0.1*u_caster->GetAP());
+					dmg = (76+RandomUInt(24));
 			}break;
 		case 26890: // Instant Poison 7
 			{
 				if(u_caster != NULL)
-					dmg = (161+RandomUInt(54))+(0.1*u_caster->GetAP());
+					dmg = (161+RandomUInt(54));
 			}break;
 		case 57964: // Instant Poison 8
 			{
 				if(u_caster != NULL)
-					dmg = (245+RandomUInt(82))+(0.1*u_caster->GetAP());
+					dmg = (245+RandomUInt(82));
 			}break;
 		case 57965: // Instant Poison 9
 			{
 				if(u_caster != NULL)
-					dmg = (300+RandomUInt(100))+(0.1*u_caster->GetAP());
+					dmg = (300+RandomUInt(100));
 			}break;
 
 			/************************
@@ -2745,7 +2701,7 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 				if(obj->IsGameObject() && obj->GetEntry() == 179561)
 				{
 					GameObject* gobj = TO_GAMEOBJECT(obj);
-					if(m_caster->isInFront(gobj))
+					if(m_caster->isTargetInFront(gobj))
 					{
 						MapMgr* mgr = gobj->GetMapMgr();
 						GameObject* newobj = NULL;
@@ -7455,8 +7411,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 	}
 
 	GameObject* GoSummon = NULLGOB;
-
-	uint32 slot=GetSpellProto()->Effect[i] - SPELL_EFFECT_SUMMON_OBJECT_SLOT1;
+	uint32 slot = GetSpellProto()->Effect[i] - SPELL_EFFECT_SUMMON_OBJECT_SLOT1;
 	GoSummon = u_caster->m_ObjectSlots[slot] ? u_caster->GetMapMgr()->GetGameObject(u_caster->m_ObjectSlots[slot]) : NULLGOB;
 	u_caster->m_ObjectSlots[slot] = 0;
 
@@ -7470,10 +7425,11 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 			if( GoSummon->IsInWorld() )
 				GoSummon->RemoveFromWorld(true);
 
-			GoSummon = NULLGOB;
 			GoSummon->Destruct();
+			GoSummon = NULLGOB;
 		}
 	}
+
 	//create a new GoSummon
 	GoSummon = u_caster->GetMapMgr()->CreateGameObject( goi->ID );
 	if(GoSummon == NULL)
@@ -7487,7 +7443,6 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 	GoSummon->SetRotation( m_caster->GetOrientation() );
 	GoSummon->SetUInt32Value(GAMEOBJECT_LEVEL, u_caster->getLevel());
 
-
 	if(GoSummon->GetType() == GAMEOBJECT_TYPE_TRAP)
 	{
 		GoSummon->SetUInt64Value(OBJECT_FIELD_CREATED_BY, u_caster->GetGUID());
@@ -7498,9 +7453,8 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 		sEventMgr.AddEvent(GoSummon, &GameObject::TrapSearchTarget, EVENT_GAMEOBJECT_TRAP_SEARCH_TARGET, 100, 0,0);
 	}
 	else
-	{
 		GoSummon->ExpireAndDelete(GetDuration());
-	}
+
 	GoSummon->PushToWorld(m_caster->GetMapMgr());
 	GoSummon->SetSummoned(u_caster);
 	GoSummon->SetPhaseMask(u_caster->GetPhaseMask());

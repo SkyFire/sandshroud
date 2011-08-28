@@ -464,7 +464,7 @@ void Spell::SpellTargetInFrontOfCaster(uint32 i, uint32 j)
 			//is Creature in range
 			if(m_caster->isInRange((*itr2),GetRadius(i)))
 			{
-				if(m_caster->isInFront(*itr2))
+				if(m_caster->isTargetInFront(*itr2))
 				{
 					if((*itr2)->IsUnit())
 					{
@@ -488,7 +488,7 @@ void Spell::SpellTargetInFrontOfCaster(uint32 i, uint32 j)
 			//is Creature in range
 			if(m_caster->isInArc(*itr2, GetSpellProto()->cone_width))
 			{
-				if(m_caster->isInFront((*itr2)))
+				if(m_caster->isTargetInFront((*itr2)))
 				{
 					if((*itr2)->IsUnit())
 					{
@@ -916,7 +916,7 @@ void Spell::SpellTargetInFrontOfCaster2(uint32 i, uint32 j)
 		//is Creature in range
 		if(m_caster->isInRange(TO_UNIT(*itr),GetRadius(i)))
 		{
-			if(m_caster->isInFront(TO_UNIT(*itr)))
+			if(m_caster->isTargetInFront(TO_UNIT(*itr)))
 			{
 				if(isAttackable(u_caster, TO_UNIT(*itr)))
 					_AddTarget(TO_UNIT(*itr), i);

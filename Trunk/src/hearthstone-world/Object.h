@@ -325,8 +325,11 @@ public:
 	bool isInRange(Object* target, float range);
 
 	// Use it to Check if a object is in front of another one
-	bool isInFront(Object* target);
-	bool isInBack(Object* target);
+	bool isTargetInFront(Object* target);
+	bool isTargetInBack(Object* target) { return !isTargetInFront(target); };
+
+	bool isInFrontOfTarget(Object* target) { return target->isTargetInFront(this); };
+	bool isInBackOfTarget(Object* target) { return target->isTargetInBack(this); };
 
 	// Check to see if an object is in front of a target in a specified arc (in degrees)
 	bool isInArc(Object* target , float degrees);

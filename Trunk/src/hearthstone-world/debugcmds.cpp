@@ -29,7 +29,14 @@ bool ChatHandler::HandleDebugInFrontCommand(const char* args, WorldSession *m_se
 	if(unit == NULL)
 		return false;
 
-	SystemMessage(m_session, format("Target is %s you.", (m_session->GetPlayer()->isInFront(unit) ? "infront of" : "behind")).c_str());
+	Player* plr = m_session->GetPlayer();
+	BlueSystemMessage(m_session, "Test1 should equal Test2");
+	SystemMessage(m_session, format("Test1: Target is %s you.", (plr->isTargetInFront(unit) ? "infront of" : "behind")).c_str());
+	SystemMessage(m_session, format("Test2: You are %s the target.", (plr->isInFrontOfTarget(unit) ? "infront of" : "behind")).c_str());
+
+	BlueSystemMessage(m_session, "Test3 should equal Test4");
+	SystemMessage(m_session, format("Test3: Target is %s you.", (plr->isTargetInBack(unit) ?  "behind" : "infront of")).c_str());
+	SystemMessage(m_session, format("Test4: You are %s the target.", (plr->isInBackOfTarget(unit) ?  "behind" : "infront of")).c_str());
 	return true;
 }
 
@@ -83,8 +90,8 @@ bool ChatHandler::HandleMoveInfoCommand(const char* args, WorldSession *m_sessio
 	if(unitToFollow != NULL)
 		GreenSystemMessage(m_session, format("Following Unit: Low: %u; High: %u;", unitToFollow->GetLowGUID(), unitToFollow->GetHighGUID()).c_str());
 	GreenSystemMessage(m_session, format("Distance is: %f;", plr->CalcDistance(creature)).c_str());
-	GreenSystemMessage(m_session, format("Mob Facing Player: %s; Player Facing Mob %s;", (creature->isInFront(plr) ? "true" : "false"),
-		(plr->isInFront(creature) ? "true" : "false")).c_str());
+	GreenSystemMessage(m_session, format("Mob Facing Player: %s; Player Facing Mob %s;", (creature->isTargetInFront(plr) ? "true" : "false"),
+		(plr->isTargetInFront(creature) ? "true" : "false")).c_str());
 	GreenSystemMessage(m_session, format("Attackers Count: %u;", uint32(creature->GetAIInterface()->getAITargetsCount())).c_str());
 	GreenSystemMessage(m_session, format("Creature State: %u; Run: %s;", creature->GetAIInterface()->m_creatureState,
 		(creature->GetAIInterface()->getMoveRunFlag() ? "true" : "false")).c_str());
