@@ -677,7 +677,7 @@ protected:
 	void HandleRaidDifficultyOpcode(WorldPacket& recv_data);
 
 	uint8 TrainerGetSpellStatus(TrainerSpell* pSpell);
-	void SendMailError(uint32 error);
+	void SendMailError(uint32 error, uint32 extra=0);
 
 	void HandleCharRenameOpcode(WorldPacket & recv_data);
 	void HandlePartyMemberStatsOpcode(WorldPacket & recv_data);

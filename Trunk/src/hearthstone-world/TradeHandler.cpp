@@ -241,6 +241,12 @@ void WorldSession::HandleSetTradeItem(WorldPacket & recv_data)
 		}
 	}
 
+	if(pItem->IsAccountbound())
+	{
+		_player->GetItemInterface()->BuildInventoryChangeError( pItem, NULLITEM, INV_ERR_ACCOUNT_BOUND);
+		return;
+	}
+
 	for(uint32 i = 0; i < 7; i++)
 	{
 		// duping little shits
@@ -295,7 +301,6 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 		return;
 
 	uint32 TradeStatus = TRADE_STATUS_ACCEPTED;
-
 	Player* pTarget = _player->GetTradeTarget();
 	if(pTarget == NULL || !pTarget->IsInWorld())
 		TradeStatus = TRADE_STATUS_PLAYER_NOT_FOUND;
@@ -330,6 +335,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 				else
 					++ItemCount;
 			}
+
 			if(pTarget->mTradeItems[Index] != NULL)
 			{
 				pItem = pTarget->mTradeItems[Index];
@@ -344,6 +350,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 					++TargetItemCount;
 			}
 		}
+
 		//Do we have something to trade?
 		if( ItemCount == 0 && TargetItemCount == 0 && _player->mTradeGold == 0 && pTarget->mTradeGold == 0 )
 			TradeStatus = TRADE_STATUS_CANCELLED;
@@ -361,7 +368,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 				Guid = _player->mTradeItems[Index] ? _player->mTradeItems[Index]->GetGUID() : 0;
 				if(Guid != 0)
 				{
-					if( _player->mTradeItems[Index]->IsSoulbound())
+					if( _player->mTradeItems[Index]->IsSoulbound() || _player->mTradeItems[Index]->IsAccountbound())
 						_player->GetItemInterface()->BuildInventoryChangeError(	_player->mTradeItems[Index], NULLITEM, INV_ERR_CANNOT_TRADE_THAT);
 					else
 					{
@@ -387,7 +394,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 				Guid = pTarget->mTradeItems[Index] ? pTarget->mTradeItems[Index]->GetGUID() : 0;
 				if(Guid != 0)
 				{
-					if( pTarget->mTradeItems[Index]->IsSoulbound())
+					if( pTarget->mTradeItems[Index]->IsSoulbound() || pTarget->mTradeItems[Index]->IsAccountbound())
 						pTarget->GetItemInterface()->BuildInventoryChangeError(	pTarget->mTradeItems[Index], NULLITEM, INV_ERR_CANNOT_TRADE_THAT);
 					else
 					{
@@ -403,7 +410,6 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 								pItem->DeleteMe();
 								pItem = NULL;
 							}
-
 						}
 
 						if(GetPermissionCount()>0 || pTarget->GetSession()->GetPermissionCount()>0)
@@ -411,7 +417,6 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 					}
 				}
 			}
-
 
 			// Trade Gold
 			if(_player->mTradeGold)
@@ -425,18 +430,20 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 				pTarget->ModUnsigned32Value(PLAYER_FIELD_COINAGE, -(int32)pTarget->mTradeGold);
 			}
 
-			pTarget->SaveToDB(false);
-			_player->SaveToDB(false);
-
 			TradeStatus = TRADE_STATUS_COMPLETE;
 		}
 
 		SendTradeStatus(TradeStatus);
-		if(pTarget->m_session && pTarget->m_session->GetSocket())
-			pTarget->m_session->SendTradeStatus(TradeStatus);
+		pTarget->m_session->SendTradeStatus(TradeStatus);
+
+		_player->mTradeStatus = TRADE_STATUS_COMPLETE;
+		pTarget->mTradeStatus = TRADE_STATUS_COMPLETE;
 
 		// Reset Trade Vars
 		_player->ResetTradeVariables();
 		pTarget->ResetTradeVariables();
+
+		pTarget->SaveToDB(false);
+		_player->SaveToDB(false);
 	}
 }

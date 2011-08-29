@@ -25,14 +25,8 @@ ItemInterface::ItemInterface( Player* pPlayer )
 {
 	m_pOwner = pPlayer;
 
-	for(uint8 i = 0; i < MAX_INVENTORY_SLOT; i++ )
-	{
-		m_pItems[i] = NULL;
-	}
-	for(uint8 i = 0; i < MAX_BUYBACK_SLOT; i++ )
-	{
-		m_pBuyBack[i] = NULL;
-	}
+	memset(m_pItems, 0, sizeof(Item*)*MAX_INVENTORY_SLOT);
+	memset(m_pBuyBack, 0, sizeof(Item*)*MAX_BUYBACK_SLOT);
 }
 
 //-------------------------------------------------------------------//
@@ -538,7 +532,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuid(uint64 guid, bool destroy)
 
 Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, bool destroy)
 {
-	int8 i = 0;
+	int16 i = 0;
 
 	for(i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
 	{
@@ -546,25 +540,6 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		if (item && item->GetGUID() == guid)
 		{
 			m_pOwner->ApplyItemMods(item, i, false, false);
-			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
-		}
-	}
-
-	for(i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
-	{
-		Item* item = GetInventoryItem(i);
-		if (item && item->GetGUID() == guid)
-		{
-			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
-		}
-	}
-
-	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
-	{
-		Item* item = GetInventoryItem(i);
-
-		if (item && item->GetGUID() == guid)
-		{
 			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
@@ -581,7 +556,7 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 		{
 			if(item && item->IsContainer() && item->GetProto())
 			{
-				for (uint32 j =0; j < item->GetProto()->ContainerSlots; j++)
+				for (uint32 j = 0; j < item->GetProto()->ContainerSlots; j++)
 				{
 					Item* item2 = TO_CONTAINER(item)->GetItem(j);
 					if (item2 && item2->GetGUID() == guid)
@@ -590,6 +565,15 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 					}
 				}
 			}
+		}
+	}
+
+	for(i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; i++)
+	{
+		Item* item = GetInventoryItem(i);
+		if (item && item->GetGUID() == guid)
+		{
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 
@@ -622,6 +606,16 @@ Item* ItemInterface::SafeRemoveAndRetreiveItemByGuidRemoveStats(uint64 guid, boo
 					}
 				}
 			}
+		}
+	}
+
+	for(i = INVENTORY_KEYRING_START; i < CURRENCYTOKEN_SLOT_END; i++)
+	{
+		Item* item = GetInventoryItem(i);
+
+		if (item && item->GetGUID() == guid)
+		{
+			return SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, i, destroy);
 		}
 	}
 

@@ -496,7 +496,7 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 		recv_data >> itemslot;
 		recv_data >> itemguid;
 
-        pItem = _player->GetItemInterface()->GetItemByGUID( itemguid );
+		pItem = _player->GetItemInterface()->GetItemByGUID( itemguid );
 		real_item_slot = _player->GetItemInterface()->GetInventorySlotByGuid( itemguid );
 		if( pItem == NULL || pItem->IsSoulbound() || pItem->HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) ||
 			( pItem->IsContainer() && (TO_CONTAINER( pItem ))->HasItems() ) || real_item_slot >= 0 && real_item_slot < INVENTORY_SLOT_ITEM_START )
@@ -504,6 +504,13 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 			SendMailError(MAIL_ERR_INTERNAL_ERROR);
 			return;
 		}
+
+		if(pItem->IsAccountbound() && GetAccountId() != player->acct) // don't mail account-bound items to another account
+		{
+			SendMailError(MAIL_ERR_BAG_FULL, INV_ERR_ACCOUNT_BOUND);
+			return;
+		}
+
 		items.push_back( pItem );
 	}
 	if( items.size() > 12 || msg.body.find("%") != string::npos || msg.subject.find("%") != string::npos)
@@ -940,19 +947,20 @@ void WorldSession::HandleMailTime(WorldPacket & recv_data)
 	delete data;
 }
 
-void WorldSession::SendMailError(uint32 error)
+void WorldSession::SendMailError(uint32 error, uint32 extra)
 {
-	WorldPacket data(SMSG_SEND_MAIL_RESULT, 12);
+	WorldPacket data(SMSG_SEND_MAIL_RESULT, 16);
 	data << uint32(0);
 	data << uint32(MAIL_RES_MAIL_SENT);
 	data << error;
+	data << extra;
 	SendPacket(&data);
 }
 
 void WorldSession::HandleGetMail(WorldPacket & recv_data )
 {
-    uint64 mailbox;
-    recv_data >> mailbox;
+	uint64 mailbox;
+	recv_data >> mailbox;
 	WorldPacket * data = _player->m_mailBox->MailboxListingPacket();
 	SendPacket(data);
 	delete data;
