@@ -11145,7 +11145,7 @@ void Player::_AddLanguages(bool All)
 		{
 			en = dbcSkillLine.LookupEntry(itr->skillid);
 			if(en == NULL)
-				info->skills.erase(itr);
+				continue;
 
 			if(en->type == SKILL_TYPE_LANGUAGE)
 			{
