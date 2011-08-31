@@ -784,6 +784,7 @@ void ApplyNormalFixes()
 	}
 
 //	GenerateNameHashesFile();
+//	GenerateSpellCoeffFile();
 
 	sp = dbcSpell.LookupEntryForced( 26659 );
 	SpellEntry* sp2 = sp;
@@ -1256,4 +1257,40 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 	// hash the name
 	//!!!!!!! representing all strings on 32 bits is dangerous. There is a chance to get same hash for a lot of strings ;)
 	sp->NameHash = crc32((const unsigned char*)sp->Name, (unsigned int)strlen(sp->Name)); //need these set before we start processing spells
+}
+
+void GenerateSpellCoeffFile()
+{
+	FILE *file = fopen("SpellPowerCoeff.cpp", "w");
+	fprintf(file, "	{\n");
+
+	QueryResult* resultx = WorldDatabase.Query("SELECT * FROM spell_coef_override");
+	if(resultx != NULL)
+	{
+		do
+		{
+			Field* f = resultx->Fetch();
+			uint32 spellid = f[0].GetUInt32();
+			float spcoef = f[1].GetFloat();
+			float apcoef = f[2].GetFloat();
+			float rapcoef = f[3].GetFloat();
+			if(!spcoef && !apcoef && !rapcoef)
+				continue;
+
+			fprintf(file,  "	case %u:\n", spellid);
+			fprintf(file,  "		{\n");
+			if(spcoef)
+				fprintf(file,  "			sp->AP_coef_override = float(%04ff);\n", spcoef);
+			if(apcoef)
+				fprintf(file,  "			sp->AP_coef_override = float(%04ff);\n", apcoef);
+			if(rapcoef)
+				fprintf(file,  "			sp->RAP_coef_override = float(%04ff);\n", rapcoef);
+			fprintf(file,  "		}break;\n");
+
+		}
+		while(resultx->NextRow());
+		delete resultx;
+	}
+	fprintf(file, "}\n");
+	fclose(file);
 }

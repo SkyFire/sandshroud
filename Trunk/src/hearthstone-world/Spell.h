@@ -2272,6 +2272,7 @@ SpellEntry* CreateDummySpell(uint32 id);
 uint32 GetSpellClass(SpellEntry *sp);
 uint32 fill( uint32* arr, ... );
 void GenerateNameHashesFile();
+void GenerateSpellCoeffFile();
 void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, uint8 toEffect);
 void ApplySingleSpellFixes(SpellEntry *sp);
 void ApplyCoeffSpellFixes(SpellEntry *sp);
