@@ -368,6 +368,9 @@
     <ClCompile Include="..\..\src\hearthstone-world\NavMeshInterface.cpp">
       <Filter>Map System\Map Tiles</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\hearthstone-world\Spellfixes\SingleCoefFixes.cpp">
+      <Filter>Spell\Spell Fixes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\hearthstone-world\Const.h" />

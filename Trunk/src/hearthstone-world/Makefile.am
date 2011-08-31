@@ -159,6 +159,7 @@ hearthstone_world_SOURCES = \
     SpellEffects.cpp \
     SpellHandler.cpp \
     Spellfixes/SpellFixes.cpp \
+    Spellfixes/SingleCoefFixes.cpp \
     Spellfixes/SingleSpellFixes.cpp \
     Stats.h \
     Stats.cpp \

@@ -1261,8 +1261,9 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 
 void GenerateSpellCoeffFile()
 {
+	SpellEntry *sp;
 	FILE *file = fopen("SpellPowerCoeff.cpp", "w");
-	fprintf(file, "	{\n");
+	fprintf(file,  "	{\n");
 
 	QueryResult* resultx = WorldDatabase.Query("SELECT * FROM spell_coef_override");
 	if(resultx != NULL)
@@ -1271,16 +1272,25 @@ void GenerateSpellCoeffFile()
 		{
 			Field* f = resultx->Fetch();
 			uint32 spellid = f[0].GetUInt32();
+			sp = dbcSpell.LookupEntry(spellid);
+			if(!spellid || !sp)
+				continue;
+
 			float spcoef = f[1].GetFloat();
 			float apcoef = f[2].GetFloat();
 			float rapcoef = f[3].GetFloat();
 			if(!spcoef && !apcoef && !rapcoef)
 				continue;
 
-			fprintf(file,  "	case %u:\n", spellid);
+			fprintf(file,  "	case %u: // %s", spellid, sp->Name);
+			if(sp->RankNumber)
+				fprintf(file,  " - %s\n", sp->Rank);
+			else
+				fprintf(file,  "\n");
+
 			fprintf(file,  "		{\n");
 			if(spcoef)
-				fprintf(file,  "			sp->AP_coef_override = float(%04ff);\n", spcoef);
+				fprintf(file,  "			sp->SP_coef_override = float(%04ff);\n", spcoef);
 			if(apcoef)
 				fprintf(file,  "			sp->AP_coef_override = float(%04ff);\n", apcoef);
 			if(rapcoef)
@@ -1291,6 +1301,6 @@ void GenerateSpellCoeffFile()
 		while(resultx->NextRow());
 		delete resultx;
 	}
-	fprintf(file, "}\n");
+	fprintf(file,  "	}\n");
 	fclose(file);
 }
