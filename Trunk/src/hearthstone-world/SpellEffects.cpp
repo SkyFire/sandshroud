@@ -426,6 +426,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				WMAX = it->GetProto()->Damage[0].Max;
 				MWS = it->GetProto()->Delay / 1000.0f;
 			}	// Crow: Do not randomize 0, it will crash.
+
 			dmg = float2int32(((WMIN + RandomUInt(WMAX-WMIN)) / (2 * MWS)) * 4 + (u_caster->GetStrength() / 5.5f) * 4 + (u_caster->GetAP() / 14) * 4);
 		}
 		else
@@ -435,9 +436,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			if(reduce && chaindamage)
 			{
 				if(GetSpellProto()->SpellGroupType && u_caster)
-				{
-					SM_FIValue(u_caster->SM[SMT_JUMP_REDUCE][1],&reduce,GetSpellProto()->SpellGroupType);
-				}
+					SM_FIValue(u_caster->SM[SMT_JUMP_REDUCE][1], &reduce, GetSpellProto()->SpellGroupType);
 				chaindamage = chaindamage * reduce / 100;
 			}
 		}
@@ -593,10 +592,10 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 							}
 						}break;
 					case 20187: // Righteousness
-						dmg = (1+uint32(0.22f*p_caster->GetAP())+uint32(0.32f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						dmg += (1+uint32(0.2f*p_caster->GetAP())+uint32(0.32f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					case 20425: // Command
-						dmg = (1+uint32(0.27f*p_caster->GetAP())+uint32(0.21f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						dmg += (1+uint32(0.08f*p_caster->GetAP())+uint32(0.13f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					case 54158: // Light/Wisdom/Justice
 						dmg = (1+uint32(0.16f*p_caster->GetAP())+uint32(0.25f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
@@ -794,46 +793,55 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			/***********************/
 		case 8680: // Instant Poison 1
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (13+RandomUInt(4));
 			}break;
 		case 8685: // Instant Poison 2
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (21+RandomUInt(4));
 			}break;
 		case 8689: // Instant Poison 3
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (30+RandomUInt(8));
 			}break;
 		case 11335: // Instant Poison 4
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (45+RandomUInt(12));
 			}break;
 		case 11336: // Instant Poison 5
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (62+RandomUInt(18));
 			}break;
 		case 11337: // Instant Poison 6
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (76+RandomUInt(24));
 			}break;
 		case 26890: // Instant Poison 7
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (161+RandomUInt(54));
 			}break;
 		case 57964: // Instant Poison 8
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (245+RandomUInt(82));
 			}break;
 		case 57965: // Instant Poison 9
 			{
+				static_damage = true;
 				if(u_caster != NULL)
 					dmg = (300+RandomUInt(100));
 			}break;
@@ -2891,10 +2899,12 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 			//maybe add some resist messege to client here ?
 			return;
 		}
+
 		if(g_caster && g_caster->GetUInt32Value(OBJECT_FIELD_CREATED_BY) && g_caster->m_summoner)
 			pAura = new Aura(GetSpellProto(), Duration, g_caster->m_summoner, unitTarget);
 		else
 			pAura = new Aura(GetSpellProto(), Duration, m_caster, unitTarget);
+
 		if(pAura == NULL)
 			return;
 
@@ -2915,7 +2925,7 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 	uint32 spellID = GetSpellProto()->Id;
 	switch(spellID)
 	{
-		case 27907:
+	case 27907:
 		{
 			if(unitTarget->GetEntry() == 15941)
 			{
@@ -2933,10 +2943,10 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 				return;
 			}
 		}break;
-		case 28880:
+	case 28880:
 		{
 			if(!p_caster)
-			break;
+				break;
 
 			if(unitTarget->GetEntry() == 16483)
 			{
@@ -2952,10 +2962,10 @@ void Spell::SpellEffectApplyAura(uint32 i)  // Apply Aura
 			}
 		}break;
 
-		case 38177: //Blackwhelp Net
+	case 38177: //Blackwhelp Net
 		{
 			if(!p_caster)
-			break;
+				break;
 
 			if(unitTarget->GetEntry() == 21387)
 			{
@@ -2979,7 +2989,7 @@ void Spell::SpellEffectPowerDrain(uint32 i)  // Power Drain
 
 	uint32 powerField = UNIT_FIELD_POWER1+GetSpellProto()->EffectMiscValue[i];
 	uint32 curPower = unitTarget->GetUInt32Value(powerField);
-	uint32 amt = u_caster->GetSpellBonusDamage(unitTarget, GetSpellProto(), damage, false, false);
+	uint32 amt = u_caster->GetSpellBonusDamage(unitTarget, GetSpellProto(), damage, false);
 
 	if( GetPlayerTarget() )
 		amt *= float2int32( 1 - ( ( TO_PLAYER(GetPlayerTarget())->CalcRating( PLAYER_RATING_MODIFIER_SPELL_CRIT_RESILIENCE ) * 2 ) / 100.0f ) );

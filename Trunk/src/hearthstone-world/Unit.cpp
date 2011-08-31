@@ -163,7 +163,6 @@ Unit::Unit()
 	HealTakenMod = 0;
 	HealTakenPctMod = 1.0f;
 	SpellHealFromAP = 0;
-	SpellDamageFromAP = 0;
 	Expertise[0] = Expertise[1] = 0;
 
 	for(uint32 x=0;x<7;x++)
@@ -179,6 +178,7 @@ Unit::Unit()
 		SchoolCastPrevent[x] = 0;
 		DamageTakenPctMod[x] = 1;
 		SpellCritChanceSchool[x] = 0;
+		SpellDamageFromAP[x] = 0;
 		PowerCostMod[x] = 0;
 		PowerCostPctMod[x] = 0; // armor penetration & spell penetration
 		AttackerCritChanceMod[x] = 0;
@@ -3520,7 +3520,7 @@ void Unit::Strike( Unit* pVictim, uint32 weapon_damage_type, SpellEntry* ability
 
 			// Bonus damage
 			if( ability )
-				dmg.full_damage = GetSpellBonusDamage(pVictim, ability, dmg.full_damage, false, false);
+				dmg.full_damage = GetSpellBonusDamage(pVictim, ability, dmg.full_damage, false);
 			else
 			{
 				dmg.full_damage += GetDamageDoneMod(SCHOOL_NORMAL);
@@ -4790,7 +4790,7 @@ void Unit::CastSpell( Spell* pSpell )
 	pLastSpell = pSpell->m_spellInfo;
 }
 
-int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_dmg, bool isdot, bool healing)
+int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_dmg, bool healing)
 {
 	int32 bonus_damage = base_dmg;
 	Unit* caster = TO_UNIT(this);
@@ -4829,7 +4829,7 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 		if(IsCreature())
 			coefficient = 1.0f;
 		else
-			coefficient = spellInfo->spell_coef_override;
+			coefficient = spellInfo->SP_coef_override;
 
 		float modifier = 0;
 		if( caster->HasDummyAura( SPELL_HASH_ARCANE_EMPOWERMENT ) )
@@ -4844,8 +4844,8 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 			}
 		}
 
-		SM_FFValue( caster->SM[SMT_SPD_BONUS][0], &modifier, spellInfo->SpellGroupType );
-		SM_FFValue( caster->SM[SMT_SPD_BONUS][1], &modifier, spellInfo->SpellGroupType );
+		SM_FFValue( caster->SM[SMT_SP_BONUS][0], &modifier, spellInfo->SpellGroupType );
+		SM_FFValue( caster->SM[SMT_SP_BONUS][1], &modifier, spellInfo->SpellGroupType );
 		coefficient += modifier / 100.0f;
 	}
 
@@ -6836,7 +6836,7 @@ void Unit::Energize(Unit* target, uint32 SpellId, uint32 amount, uint32 type)
 	uint32 mm=target->GetUInt32Value(UNIT_FIELD_MAXPOWER1+type);
 	if(mm != cm)
 	{
-		amount = GetSpellBonusDamage(target, dbcSpell.LookupEntry(SpellId), amount, false, false);
+		amount = GetSpellBonusDamage(target, dbcSpell.LookupEntry(SpellId), amount, false);
 		if( !amount )
 			return;
 

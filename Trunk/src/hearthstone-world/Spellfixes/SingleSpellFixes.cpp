@@ -5391,3 +5391,30 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	if(sp->Flags3 & FLAGS3_CANT_CRIT) //I can haz hacky? :O
 		sp->spell_can_crit = false;
 }
+
+void ApplyCoeffSpellFixes(SpellEntry *sp)
+{
+	switch(sp->Id)
+	{
+	case 5308: case 20658: case 20660: case 20661:
+	case 20662: case 25234: case 25236: case 47470:
+	case 47471: // Execute
+		{
+			sp->AP_coef_override = ((sp->EffectBasePoints[0]+1) / 100);
+		}break;
+
+	case 23881: // Bloodthirst
+	case 57755: // Heroic Throw
+	case 64382: // Shattering Throw
+		{
+			sp->AP_coef_override = 0.5f;
+		}break;
+
+	default:
+		{
+			sp->SP_coef_override = 0.0f;
+			sp->AP_coef_override = 0.0f;
+			sp->RAP_coef_override = 0.0f;
+		}break;
+	}
+}

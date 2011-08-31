@@ -142,7 +142,7 @@ enum SPELL_MODIFIER_TYPE
 	//!!! most spells have both SMT_DAMAGE_DONE and this value. Be carefull case there is no need to apply both !
 	SMT_SPELL_VALUE_PCT			= 22,// damage done by ability by x% : SELECT id,name,description FROM dbc_spell where (EffectApplyAuraName_1=108 and EffectMiscValue_1=22) or (EffectApplyAuraName_2=108 and EffectMiscValue_2=22) or (EffectApplyAuraName_3=108 and EffectMiscValue_3=22)	its DoT actually
 	SMT_LAST_EFFECT_BONUS		= 23,// increases points of last effect in affected spells	// GOOD
-	SMT_SPD_BONUS				= 24,// This is a modifer for the amount of +spell damage applied to the spell group from spell bonuses
+	SMT_SP_BONUS				= 24,// This is a modifer for the amount of +spell damage applied to the spell group from spell bonuses
 	// 25 dont exist spells with it
 	// 26 is obsolete stuff
 	SMT_MULTIPLE_VALUE			= 27,// mana lost cost per point of damage taken for mana shield,Health or Mana gained from Drain Life and Drain Mana increased by x%.
@@ -2274,6 +2274,7 @@ uint32 fill( uint32* arr, ... );
 void GenerateNameHashesFile();
 void CopyEffect(SpellEntry *fromSpell, uint8 fromEffect, SpellEntry *toSpell, uint8 toEffect);
 void ApplySingleSpellFixes(SpellEntry *sp);
+void ApplyCoeffSpellFixes(SpellEntry *sp);
 void SetProcFlags(SpellEntry *sp);
 
 #endif

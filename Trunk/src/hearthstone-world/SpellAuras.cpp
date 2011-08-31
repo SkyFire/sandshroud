@@ -1348,7 +1348,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 		Unit * m_caster = GetUnitCaster();
 		if( m_caster != NULL )
 		{
-			dmg = m_caster->GetSpellBonusDamage(m_target, m_spellProto, dmg, true, false);
+			dmg = m_caster->GetSpellBonusDamage(m_target, m_spellProto, dmg, false);
 			switch(m_spellProto->Id)
 			{
 			case 703:
@@ -1464,8 +1464,8 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						dmg = int32((base + uint32(modif*float(ap)))*(3+cp)/(float(timer[cp])/3));
 					}
 				}
-				case SPELL_HASH_BLOOD_PLAGUE:
-				case SPELL_HASH_FROST_FEVER:
+			case SPELL_HASH_BLOOD_PLAGUE:
+			case SPELL_HASH_FROST_FEVER:
 				{
 					if( m_caster != NULL )
 						dmg += float2int32(TO_PLAYER(m_caster)->GetAP() * 0.055f*1.15); //If this is wrong fuck you spell description!
@@ -1482,6 +1482,7 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 
 		if( m_spellProto->EffectAmplitude[mod->i] > 0 )
 			time = m_spellProto->EffectAmplitude[mod->i];
+
 		sEventMgr.AddEvent(this, &Aura::EventPeriodicDamage, (uint32)dmg,
 			EVENT_AURA_PERIODIC_DAMAGE, time, 0, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT);
 
@@ -1538,7 +1539,6 @@ void Aura::EventPeriodicDamage(uint32 amount)
 
 			if(res < 0)
 				res = 0;
-
 			else
 			{
 				float summaryPCTmod = 1.0f;
@@ -3365,7 +3365,7 @@ void Aura::SpellAuraPeriodicHeal( bool apply )
 
 		Unit * m_caster = GetUnitCaster();
 		if( m_caster != NULL)
-			amount = m_caster->GetSpellBonusDamage(m_target, m_spellProto, amount, true, true);
+			amount = m_caster->GetSpellBonusDamage(m_target, m_spellProto, amount, true);
 
 		if (amount <= 0) return;
 
@@ -3423,7 +3423,7 @@ void Aura::EventPeriodicHeal( uint32 amount )
 	Unit * m_caster = GetUnitCaster();
 	if( m_caster != NULL )
 	{
-		add = m_caster->GetSpellBonusDamage(m_target, m_spellProto, add, true, true);
+		add = m_caster->GetSpellBonusDamage(m_target, m_spellProto, add, true);
 		if (m_spellProto->NameHash == SPELL_HASH_HEALTH_FUNNEL && add > 0)
 		{
 			dealdamage sdmg;
@@ -5449,7 +5449,7 @@ void Aura::SpellAuraPeriodicLeech(bool apply)
 
 		Unit * m_caster = GetUnitCaster();
 		if( m_caster != NULL )
-			amt = m_caster->GetSpellBonusDamage(m_target, m_spellProto, amt, true, false);
+			amt = m_caster->GetSpellBonusDamage(m_target, m_spellProto, amt, false);
 
 		if( amt < 0 )
 			amt = 0;
@@ -5473,7 +5473,7 @@ void Aura::EventPeriodicLeech(uint32 amount)
 	if( m_spellProto->NameHash == SPELL_HASH_DRAIN_LIFE && m_caster->HasDummyAura(SPELL_HASH_DEATH_S_EMBRACE) && m_caster->GetHealthPct() <= 20 )
 		amount *= 1.3f;
 
-	amount = m_caster->GetSpellBonusDamage(m_target, m_spellProto, amount, true, false);
+	amount = m_caster->GetSpellBonusDamage(m_target, m_spellProto, amount, false);
 
 	uint32 Amount = (uint32)min(amount, m_target->GetUInt32Value( UNIT_FIELD_HEALTH ));
 
@@ -6231,11 +6231,11 @@ void Aura::SpellAuraSchoolAbsorb(bool apply)
 		if( m_caster != NULL && m_caster->IsPlayer() )
 		{
 			float coefmod0 = 0.0f;
-			if(m_spellProto->spell_coef_override > 0)
+			if(m_spellProto->SP_coef_override > 0)
 			{
-				float spcoefmod = m_spellProto->spell_coef_override;
-				SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][0], &coefmod0, m_spellProto->SpellGroupType );
-				SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SPD_BONUS][1], &coefmod0, m_spellProto->SpellGroupType );
+				float spcoefmod = m_spellProto->SP_coef_override;
+				SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SP_BONUS][0], &coefmod0, m_spellProto->SpellGroupType );
+				SM_FFValue( TO_PLAYER(m_caster)->SM[SMT_SP_BONUS][1], &coefmod0, m_spellProto->SpellGroupType );
 				spcoefmod += coefmod0/100.0f;
 				int32 spellpower = 0;
 
@@ -9600,14 +9600,18 @@ void Aura::SpellAuraIncreaseAPByAttribute(bool apply)
 
 void Aura::SpellAuraModSpellDamageFromAP(bool apply)
 {
+	int32 val = 0;
 	if(apply)
 	{
 		SetPositive();
-		m_target->SpellDamageFromAP += mod->m_amount;
+		val = mod->m_amount;
 	}
 	else
-		m_target->SpellDamageFromAP -= mod->m_amount;
+		val = -mod->m_amount;
 
+	for(uint32 x = 1; x < 7; x++) //melee damage != spell damage.
+		if(mod->m_miscValue & (((uint32)1) << x))
+			m_target->SpellDamageFromAP[x] += val;
 	if(m_target->IsPlayer())
 		TO_PLAYER( m_target )->UpdateChanceFields();
 }
@@ -9768,7 +9772,7 @@ void Aura::UpdateModAmounts()
 		if( m_modList[i].m_baseAmount == 0 && m_caster != NULL && m_target != NULL )
 		{
 			bool heal = (m_spellProto->c_is_flags & SPELL_FLAG_IS_HEALING) ? true : false;
-			m_modList[i].m_amount = m_caster->GetSpellBonusDamage(m_target, m_spellProto, 0, true, heal) * (stackSize - 1);
+			m_modList[i].m_amount = m_caster->GetSpellBonusDamage(m_target, m_spellProto, 0, heal) * (stackSize - 1);
 		}
 		else
 			m_modList[i].m_amount = m_modList[i].m_baseAmount * stackSize;

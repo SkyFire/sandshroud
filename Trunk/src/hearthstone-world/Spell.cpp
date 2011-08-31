@@ -4490,7 +4490,7 @@ void Spell::Heal(int32 amount)
 	if( u_caster != NULL )
 	{
 		// All calculations are done in getspellbonusdamage
-		amount = u_caster->GetSpellBonusDamage(unitTarget, m_spellInfo, amount, false, true); // 3.0.2 Spellpower change: In order to keep the effective amount healed for a given spell the same, we’d expect the original coefficients to be multiplied by 1/0.532 or 1.88.
+		amount = u_caster->GetSpellBonusDamage(unitTarget, m_spellInfo, amount, true); // 3.0.2 Spellpower change: In order to keep the effective amount healed for a given spell the same, we’d expect the original coefficients to be multiplied by 1/0.532 or 1.88.
 
 		// Healing Way fix
  		if(GetSpellProto()->NameHash == SPELL_HASH_HEALING_WAVE)

@@ -347,7 +347,10 @@ void ApplyNormalFixes()
 					SpellEntry *spellInfo;
 					spellInfo = dbcSpell.LookupEntryForced(teachspell);
 					if(spellInfo == NULL)
+					{
 						ApplySingleSpellFixes(spellInfo = CreateDummySpell(teachspell));
+						ApplyCoeffSpellFixes(spellInfo);
+					}
 
 					spellInfo->spellLevel = new_level;
 					sp->spellLevel = new_level;
@@ -746,15 +749,18 @@ void ApplyNormalFixes()
 		// Crow: We should put this at the front some time in the future.
 		// Apply spell fixes.
 		ApplySingleSpellFixes(sp);
+		ApplyCoeffSpellFixes(sp);
 	}
 
 	Log.Notice("World", "Processing %u dummy spells...", DummySpells.size());
 	set<uint32>::iterator itr = DummySpells.begin();
 	if(itr != DummySpells.end())
 	{
+		SpellEntry* Sp;
 		for(; itr != DummySpells.end(); itr++)
 		{	// Crow: Create the dummy spell, and apply fixs :D
-			ApplySingleSpellFixes(CreateDummySpell(*itr));
+			ApplySingleSpellFixes((Sp = CreateDummySpell(*itr)));
+			ApplyCoeffSpellFixes(Sp);
 		}
 	}
 
@@ -775,43 +781,6 @@ void ApplyNormalFixes()
 
 		}while( resultfcst->NextRow() );
 		delete resultfcst;
-	}
-
-	//Settings for special cases
-	QueryResult * resultx = WorldDatabase.Query("SELECT * FROM spell_coef_override");
-	if( resultx != NULL )
-	{
-		if(resultx->GetFieldCount() == 4)
-		{
-			Log.Notice("World", "Loading %u spell coefficient overrides...", resultx->GetRowCount());
-			uint32 spellid;
-			do
-			{
-				Field* fields = resultx->Fetch();
-				spellid = fields[0].GetUInt32();
-				SpellEntry * sp = dbcSpell.LookupEntryForced( spellid );
-				if( sp != NULL )
-				{
-					sp->spell_coef_override = fields[1].GetFloat();
-					sp->AP_coef_override = fields[2].GetFloat();
-					sp->RAP_coef_override = fields[3].GetFloat();
-				}
-				else
-				{
-					if(Config.OptionalConfig.GetBoolDefault("Server", "CleanDatabase", false))
-					{
-						WorldDatabase.Query("DELETE FROM spell_coef_override where id = '%u'", spellid);
-					}
-					Log.Warning("SpellCoefOverride", "Has nonexistant spell %u.", spellid);
-				}
-				spellid = 0;
-			}while( resultx->NextRow() );
-		}
-		else
-		{
-			Log.Warning("SpellCoefOverride", "Incorrect structure in spell_coef_override (%u/3)", resultx->GetFieldCount());
-		}
-		delete resultx;
 	}
 
 //	GenerateNameHashesFile();
@@ -1250,7 +1219,7 @@ void SetSingleSpellDefaults(SpellEntry *sp)
 	sp->ProcsPerMinute = 0;
 	sp->c_is_flags = 0;
 	sp->isAOE = false;
-	sp->spell_coef_override = 0;
+	sp->SP_coef_override = 0;
 	sp->AP_coef_override = 0;
 	sp->RAP_coef_override = 0;
 	sp->auraimmune_flag = 0;

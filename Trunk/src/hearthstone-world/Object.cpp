@@ -2880,7 +2880,7 @@ void Object::SpellNonMeleeDamageLog(Unit* pVictim, uint32 spellID, uint32 damage
 	{
 		caster->RemoveAurasByInterruptFlag( AURA_INTERRUPT_ON_START_ATTACK );
 
-		res = caster->GetSpellBonusDamage( pVictim, spellInfo, ( int )res, false, false );
+		res = caster->GetSpellBonusDamage( pVictim, spellInfo, ( int )res, false );
 
 		// Aura 271 - Mods Damage for particular casters spells
 		Unit::DamageTakenPctModPerCasterType::iterator it =

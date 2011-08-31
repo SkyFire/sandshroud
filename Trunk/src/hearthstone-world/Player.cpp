@@ -5560,9 +5560,9 @@ void Player::UpdateChanceFields()
 	for(uint32 i = 0; i < 7; i++)
 	{
 		SetFloatValue(PLAYER_SPELL_CRIT_PERCENTAGE1 + i, SpellCritChanceSchool[i]+spellcritperc);
-		SetFloatValue( PLAYER_FIELD_MOD_DAMAGE_DONE_PCT + i, DamageDonePctMod[i] );
+		SetFloatValue(PLAYER_FIELD_MOD_DAMAGE_DONE_PCT + i, DamageDonePctMod[i] );
 
-		int32 damagedonepos = DamageDonePosMod[i];
+		int32 damagedonepos = DamageDonePosMod[i], damagedoneneg = DamageDoneNegMod[i];
 		for(stat = 0; stat < 5; stat++)
 		{
 			if(SpellDmgDoneByAttribute[stat][i] && GetStat(stat) > 0)
@@ -5570,17 +5570,18 @@ void Player::UpdateChanceFields()
 				damagedonepos += ((SpellDmgDoneByAttribute[stat][i]*GetStat(stat))/100);
 			}
 		}
-		damagedonepos += (SpellDamageFromAP*GetAP())/100;
+		if(SpellDamageFromAP[i])
+			damagedonepos += (SpellDamageFromAP[i]*GetAP())/100;
 
-		DamageDoneMod[i] = damagedonepos;
+		DamageDoneMod[i] = damagedonepos-damagedoneneg;
 		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_POS + i, damagedonepos );
-		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, DamageDoneNegMod[i] );
+		SetUInt32Value( PLAYER_FIELD_MOD_DAMAGE_DONE_NEG + i, damagedoneneg );
 	}
 
 	HealDoneModPos = HealDoneBase;
 	for(stat = 0; stat < 5; stat++)
 	{
-		if(SpellDmgDoneByAttribute[stat] && GetStat(stat) > 0)
+		if(SpellHealDoneByAttribute[stat] && GetStat(stat) > 0)
 		{
 			HealDoneModPos += ((SpellHealDoneByAttribute[stat]*GetStat(stat))/100);
 		}

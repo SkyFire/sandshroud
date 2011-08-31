@@ -968,7 +968,7 @@ public:
 	void InterruptCurrentSpell();
 
 	//caller is the caster
-	int32 GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_dmg, bool isdot, bool healing);
+	int32 GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_dmg, bool healing);
 
 	//guardians are temporary spawn that will inherit master faction and will folow them. Apart from that they have their own mind
 	Unit* CreateTemporaryGuardian(uint32 guardian_entry,uint32 duration,float angle, uint32 lvl, uint8 Slot);
@@ -1207,7 +1207,7 @@ public:
 	int32 DamageDoneNegMod[7];
 	float DamageDonePctMod[7];
 	int32 SpellDmgDoneByAttribute[5][7];
-	int32 SpellDamageFromAP;
+	int32 SpellDamageFromAP[7];
 
 	map<uint32, uint32> HealDoneBonusBySpell;
 	int32 HealDoneModPos;

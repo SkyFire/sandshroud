@@ -32,7 +32,7 @@ _logoutTime(0), permissions(NULL), permissioncount(0), _loggingOut(false), insta
 {
 	_player = NULLPLR;
 	m_hasDeathKnight = false;
-	m_highestLevel = 0;
+	m_highestLevel = sWorld.StartLevel;
 	m_asyncQuery = false;
 	m_currMsTime = getMSTime();
 	bDeleted = false;

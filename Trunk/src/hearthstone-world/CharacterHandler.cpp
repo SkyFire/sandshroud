@@ -310,14 +310,23 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	if( class_ == DEATHKNIGHT && (!HasFlag(ACCOUNT_FLAG_XPACK_02) || !CanCreateDeathKnight() ) )
+	if( class_ == DEATHKNIGHT )
 	{
-		if(CanCreateDeathKnight())
+		if(!HasFlag(ACCOUNT_FLAG_XPACK_02))
+		{
 			data << uint8(CHAR_CREATE_EXPANSION);
-		else
-			data << uint8(CHAR_CREATE_LEVEL_REQUIREMENT);
-		SendPacket(&data);
-		return;
+			SendPacket(&data);
+			return;
+		}
+		else if(!CanCreateDeathKnight())
+		{
+			if(sWorld.m_deathKnightReqLevel > m_highestLevel)
+				data << uint8(CHAR_CREATE_LEVEL_REQUIREMENT);
+			else
+				data << uint8(CHAR_CREATE_UNIQUE_CLASS_LIMIT);
+			SendPacket(&data);
+			return;
+		}
 	}
 
 	QueryResult * result = CharacterDatabase.Query("SELECT COUNT(*) FROM banned_names WHERE name = '%s'", CharacterDatabase.EscapeString(name).c_str());
