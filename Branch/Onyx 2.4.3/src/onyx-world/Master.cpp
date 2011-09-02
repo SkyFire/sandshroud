@@ -232,7 +232,7 @@ bool Master::Run(int argc, char ** argv)
 		return false;
 	}
 
-	if(Config.RealmConfig.SetSource(options_config_file))
+	if(Config.OptionsConfig.SetSource(options_config_file))
 		Log.Success( "Config", ">> onyx-options.conf" );
 	else
 	{

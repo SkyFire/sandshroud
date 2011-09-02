@@ -29,7 +29,7 @@ LogonCommHandler::LogonCommHandler()
 	idhigh = 1;
 	next_request = 1;
 	pings = !Config.RealmConfig.GetBoolDefault("LogonServer", "DisablePings", false);
-	string logon_pass = Config.RealmConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
+	logon_pass = Config.RealmConfig.GetStringDefault("LogonServer", "RemotePassword", "r3m0t3");
 
 	// sha1 hash it
 	Sha1Hash hash;
@@ -62,8 +62,8 @@ void LogonCommHandler::RequestAddition()
 	data << realm->Icon;
 	data << realm->WorldRegion;
 	data << uint32(sWorld.GetPlayerLimit());
-	data << CL_BUILD_SUPPORT;
-	data << realm->Lock;
+	data << uint32(CL_BUILD_SUPPORT);
+	data << uint8(realm->Lock);
 	logon->SendPacket(&data,false);
 }
 
@@ -306,10 +306,12 @@ uint32 LogonCommHandler::ClientConnected(string AccountName, WorldSocket * Socke
 	pendingLock.Acquire();
 
 	WorldPacket data(RCMSG_REQUEST_SESSION, 100);
+	data << int32(-42);
+	data << server->ID;
 	data << request_id;
 
 	// strip the shitty hash from it
-	for(; acct[i] != '#' && acct[i] != '\0'; ++i )
+	for(; acct[i] != '#' && acct[i] != '\0'; i++ )
 		data.append( &acct[i], 1 );
 	
 	data.append( "\0", 1 );

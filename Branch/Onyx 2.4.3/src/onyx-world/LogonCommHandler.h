@@ -73,6 +73,7 @@ class LogonCommHandler : public Singleton<LogonCommHandler>
 	float server_population;
 
 public:
+	string logon_pass;
 	uint8 sql_passhash[20];
 
 	LogonCommHandler();

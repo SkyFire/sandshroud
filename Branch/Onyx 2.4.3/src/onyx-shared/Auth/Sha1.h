@@ -21,9 +21,9 @@
 #define _AUTH_SHA1_H
 
 #include <stdlib.h>
-#include "Common.h"
-#include "../../dependencies/VC/include/openssl/sha.h"
-#include "Auth/BigNumber.h"
+#include "../Common.h"
+#include "../../../dependencies/VC/include/openssl/sha.h"
+#include "BigNumber.h"
 
 class Sha1Hash
 {

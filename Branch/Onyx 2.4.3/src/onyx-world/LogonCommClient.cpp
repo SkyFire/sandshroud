@@ -28,12 +28,12 @@ typedef struct
 
 ONYX_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
 
-LogonCommClientSocket::LogonCommClientSocket(SOCKET fd) : Socket(fd, 724288, 262444)
+LogonCommClientSocket::LogonCommClientSocket(SOCKET fd) : Socket(fd, 524288, 65536)
 {
 	// do nothing
 	last_ping = last_pong = (uint32)UNIXTIME;
 	remaining = opcode = 0;
-	_id=0;
+	_id = 0;
 	latency = 0;
 	use_crypto = false;
 	authenticated = 0;
@@ -242,13 +242,9 @@ void LogonCommClientSocket::HandleAuthResponse(WorldPacket & recvData)
 	uint8 result;
 	recvData >> result;
 	if(result != 1)
-	{
 		authenticated = 0xFFFFFFFF;
-	}
 	else
-	{
 		authenticated = 1;
-	}
 }
 
 void LogonCommClientSocket::UpdateAccountCount(uint32 account_id, uint8 add)
