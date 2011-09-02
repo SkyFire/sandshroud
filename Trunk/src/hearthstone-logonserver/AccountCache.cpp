@@ -526,12 +526,16 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 			realm = itr->second;
 
 			data << uint32(realm->Icon);
-			if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
-				data << uint8(REALM_FLAG_SPECIFYBUILD);
-			else
-				data << uint8(realm->Flag);
+			uint8 realmflags = realm->Flag;
+			if(realm->RequiredBuild)
+			{
+				if(realm->RequiredBuild != Socket->GetBuild()
+					|| realm->RequiredCV != Socket->GetClientVersion())
+					realmflags = REALM_FLAG_OFFLINE;
+			}
 
 			// This part is the same for all.
+			data << realmflags;
 			data << realm->Name;
 			data << realm->Address;
 			data << realm->Population;
@@ -539,11 +543,8 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 			/* Get our character count */
 			it = realm->CharacterMap.find(Socket->GetAccountID());
 			data << uint8( (it == realm->CharacterMap.end()) ? 0 : it->second ); //We can fix this later, character count. 
-			data << uint8(realm->WorldRegion);
-			if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
-				data << uint8(1);
-			else
-				data << uint8(0);
+			data << uint8(1);
+			data << uint8(0);
 		}
 		realmLock.Release();
 
@@ -579,17 +580,16 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		realm = itr->second;
 
 		data << realm->Icon;
-		if(realm->RequiredClient && realm->RequiredClient != Socket->GetBuild())
+		uint8 flag = realm->Flag;
+		uint8 realmlock = realm->Lock;
+		if(realm->RequiredBuild && realm->RequiredBuild != Socket->GetBuild())
 		{
-			data << uint8(1);
-			data << uint8(REALM_FLAG_SPECIFYBUILD);
-		}
-		else
-		{
-			data << realm->Lock;
-			data << realm->Flag;
+			realmlock = 1;
+			flag |= REALM_FLAG_SPECIFYBUILD;
 		}
 
+		data << realmlock;
+		data << flag;
 		data << realm->Name;
 		data << realm->Address;
 		data << realm->Population;
@@ -599,6 +599,13 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 		data << uint8( (it == realm->CharacterMap.end()) ? 0 : it->second );
 		data << realm->WorldRegion;
 		data << uint8(GetRealmIdByName(realm->Name));		//Realm ID
+		if(flag & REALM_FLAG_SPECIFYBUILD)
+		{
+			data << uint8(realm->RequiredCV[0]);
+			data << uint8(realm->RequiredCV[1]);
+			data << uint8(realm->RequiredCV[2]);
+			data << uint16(realm->RequiredBuild);
+		}
 		realm = NULL;
 	}
 	realmLock.Release();

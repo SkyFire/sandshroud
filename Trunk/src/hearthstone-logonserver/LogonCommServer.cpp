@@ -234,7 +234,7 @@ void LogonCommServerSocket::HandleRegister(WorldPacket & recvData)
 	realm->Flag = REALM_FLAG_RECOMMENDED;
 	realm->Population = REALM_POP_NEW_PLAYERS;
 	realm->ServerSocket = this;
-	recvData >> realm->Icon >> realm->WorldRegion >> realm->RealmCap >> realm->RequiredClient >> realm->Lock;
+	recvData >> realm->Icon >> realm->WorldRegion >> realm->RealmCap >> realm->RequiredCV[0] >> realm->RequiredCV[1] >> realm->RequiredCV[2] >> realm->RequiredBuild >> realm->Lock;
 
 	// Add to the main realm list
 	sInfoCore.AddRealm(tmp_RealmID, realm);

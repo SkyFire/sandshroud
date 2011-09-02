@@ -202,7 +202,10 @@ typedef struct Realm
 	float RealPopulation;
 	float Population;
 	uint32 RealmCap;
-	uint32 RequiredClient;
+
+	uint8 RequiredCV[3];
+	uint16 RequiredBuild;
+
 	Mutex m_charMapLock;
 	HM_NAMESPACE::hash_map<uint32, uint8> CharacterMap;
 	LogonCommServerSocket *ServerSocket;
