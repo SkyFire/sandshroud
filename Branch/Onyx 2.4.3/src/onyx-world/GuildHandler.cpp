@@ -930,7 +930,7 @@ void WorldSession::HandleCharterTurnInCharter(WorldPacket & recv_data)
 		if( gc->GetLeader() != _player->GetLowGUID() )
 			return;
 
-		if(gc->SignatureCount < 9 && Config.MainConfig.GetBoolDefault("Server", "RequireAllSignatures", false))
+		if(gc->SignatureCount < 9 && sWorld.RequireAllSignatures)
 		{
 			SendNotification("You don't have the required amount of signatures to turn in this petition.");
 			return;
@@ -986,7 +986,7 @@ void WorldSession::HandleCharterTurnInCharter(WorldPacket & recv_data)
 			return;
 		}
 
-		if(pCharter->SignatureCount < pCharter->GetNumberOfSlotsByType() && Config.MainConfig.GetBoolDefault("Server", "RequireAllSignatures", false))
+		if(pCharter->SignatureCount < pCharter->GetNumberOfSlotsByType() && sWorld.RequireAllSignatures)
 		{
 			sChatHandler.SystemMessage(this, "You don't have the required amount of signatures to turn in this petition.");
 			return;

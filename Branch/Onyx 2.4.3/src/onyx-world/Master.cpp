@@ -92,9 +92,11 @@ struct Addr
 #ifdef WIN32
 		static const char* default_config_file = "onyx-world.conf";
 		static const char* default_realm_config_file = "onyx-realms.conf";
+		static const char* default_options_config_file = "onyx-options.conf";
 #else
 		static const char* default_config_file = CONFDIR "/onyx-world.conf";
 		static const char* default_realm_config_file = CONFDIR "/onyx-realms.conf";
+		static const char* default_options_config_file = CONFDIR "/onyx-options.conf";
 #endif
 
 bool bServerShutdown = false;
@@ -106,6 +108,7 @@ bool Master::Run(int argc, char ** argv)
 {
 	char * config_file = (char*)default_config_file;
 	char * realm_config_file = (char*)default_realm_config_file;
+	char * options_config_file = (char*)default_options_config_file;
 
 	int file_log_level = DEF_VALUE_NOT_SET;
 	int screen_log_level = DEF_VALUE_NOT_SET;
@@ -139,6 +142,11 @@ bool Master::Run(int argc, char ** argv)
 			strcpy(realm_config_file, onyx_optarg);
 			break;
 
+		case 'o':
+			options_config_file = new char[strlen(onyx_optarg)];
+			strcpy(options_config_file, onyx_optarg);
+			break;
+
 		case 0:
 			break;
 		default:
@@ -168,6 +176,12 @@ bool Master::Run(int argc, char ** argv)
 
 		Log.Notice( "Config", "Checking config file: %s\n", realm_config_file );
 		if( Config.RealmConfig.SetSource( realm_config_file, true ) )
+			Log.Success( "Config", "Passed without errors.\n" );
+		else
+			Log.Warning( "Config", "Encountered one or more errors.\n" );
+
+		Log.Notice( "Config", "Checking config file: %s\n", options_config_file );
+		if( Config.OptionsConfig.SetSource( options_config_file, true ) )
 			Log.Success( "Config", "Passed without errors.\n" );
 		else
 			Log.Warning( "Config", "Encountered one or more errors.\n" );
@@ -208,7 +222,7 @@ bool Master::Run(int argc, char ** argv)
 	{
 		Log.Warning( "Config", "Die directive received: %s", die.c_str() );
 		return false;
-	}	
+	}
 
 	if(Config.RealmConfig.SetSource(realm_config_file))
 		Log.Success( "Config", ">> onyx-realms.conf" );
@@ -218,13 +232,16 @@ bool Master::Run(int argc, char ** argv)
 		return false;
 	}
 
-	if( !_StartDB() )
+	if(Config.RealmConfig.SetSource(options_config_file))
+		Log.Success( "Config", ">> onyx-options.conf" );
+	else
 	{
+		Log.Error( "Config", ">> onyx-options.conf" );
 		return false;
 	}
 
-	//ScriptSystem = new ScriptEngine;
-	//ScriptSystem->Reload();
+	if( !_StartDB() )
+		return false;
 
 	new EventMgr;
 	new World;
@@ -240,8 +257,8 @@ bool Master::Run(int argc, char ** argv)
 	// Initialize Opcode Table
 	WorldSession::InitPacketHandlerTable();
 
-	string host = Config.MainConfig.GetStringDefault( "Listen", "Host", DEFAULT_HOST );
-	int wsport = Config.MainConfig.GetIntDefault( "Listen", "WorldServerPort", DEFAULT_WORLDSERVER_PORT );
+	string host = Config.RealmConfig.GetStringDefault( "Realm", "Address", DEFAULT_HOST );
+	int wsport = Config.RealmConfig.GetIntDefault( "Realm", "Port", DEFAULT_WORLDSERVER_PORT );
 
 	new ScriptMgr;
 
@@ -250,9 +267,6 @@ bool Master::Run(int argc, char ** argv)
 		Log.Error( "Server", "SetInitialWorldSettings() failed. Something went wrong? Exiting." );
 		return false;
 	}
-
-	if( do_cheater_check )
-		sWorld.CleanupCheaters();
 
 	g_bufferPool.Init();
 	sWorld.SetStartTime((uint32)UNIXTIME);
@@ -295,8 +309,7 @@ bool Master::Run(int argc, char ** argv)
 	{
 		Log.Warning("RemoteConsole", "Not enabled or failed listen.");
 	}
-	
- 
+
 	/* write pid file */
 	FILE * fPid = fopen( "onyx.pid", "w" );
 	if( fPid )
@@ -315,7 +328,7 @@ bool Master::Run(int argc, char ** argv)
 #endif
 
 	uint32 loopcounter = 0;
-	//ThreadPool.Gobble();
+	ThreadPool.Gobble();
 
 	/* Connect to realmlist servers / logon servers */
 	new LogonCommHandler();
@@ -365,6 +378,7 @@ bool Master::Run(int argc, char ** argv)
 
 	wr->Terminate();
 	ThreadPool.ShowStats();
+
 	/* Shut down console system */
 	console->terminate();
 	delete console;
@@ -444,12 +458,6 @@ bool Master::Run(int argc, char ** argv)
 
 #ifdef WIN32
 	WSACleanup();
-
-	// Terminate Entire Application
-	//HANDLE pH = OpenProcess(PROCESS_TERMINATE, TRUE, GetCurrentProcessId());
-	//TerminateProcess(pH, 0);
-	//CloseHandle(pH);
-
 #endif
 
 	return true;

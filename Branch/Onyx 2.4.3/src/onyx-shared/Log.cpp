@@ -170,7 +170,7 @@ WorldLog::WorldLog()
 	bEnabled = false;
 	m_file=NULL;
 
-	if (Config.MainConfig.GetBoolDefault("LogLevel", "World", false))
+	if (Config.MainConfig.GetBoolDefault("Log", "World", false))
 	{
 		Log.Notice("WorldLog", "Enabling packetlog output to \"world.log\"");
 		Enable();

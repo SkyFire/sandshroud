@@ -367,7 +367,6 @@ public:
 	 */
 	void Rehash(bool load);
 
-	void CleanupCheaters();
 	WorldSession* FindSession(uint32 id);
 	WorldSession* FindSessionByName(const char *);
 	void AddSession(WorldSession *s);
@@ -498,10 +497,13 @@ public:
 	uint32 mAcceptedConnections;
 	uint32 SocketSendBufSize;
 	uint32 SocketRecvBufSize;
+	bool RequireAllSignatures;
 
 	uint32 HordePlayers;
 	uint32 AlliancePlayers;
 	uint32 PeakSessionCount;
+	bool IsPvPRealm;
+	bool SendMovieOnJoin;
 	bool SendStatsOnJoin;
 	SessionSet gmList;
 

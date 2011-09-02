@@ -68,6 +68,7 @@ class SERVER_DECL ConfigMgr
 public:
 	ConfigFile MainConfig;
 	ConfigFile RealmConfig;
+	ConfigFile OptionsConfig;
 };
 
 extern SERVER_DECL ConfigMgr Config;

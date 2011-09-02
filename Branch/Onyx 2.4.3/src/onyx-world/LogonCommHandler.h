@@ -37,16 +37,15 @@ typedef struct
 	string Address;
 	uint8 Icon;
 	uint8 WorldRegion;
-	float Population;
 	uint8 Lock;
 }Realm;
 
 enum RealmType
 {
-	REALMTYPE_NORMAL = 0,
-	REALMTYPE_PVP	= 4,
-	REALMTYPE_RP	 = 6,
-	REALMTYPE_RPPVP  = 8,
+	REALMTYPE_NORMAL	= 0,
+	REALMTYPE_PVP		= 3,
+	REALMTYPE_RP		= 6,
+	REALMTYPE_RPPVP		= 8,
 };
 
 class SocketLoadBalancer;
@@ -60,16 +59,18 @@ class LogonCommHandler : public Singleton<LogonCommHandler>
 #endif
 
 	ForcedPermissionMap forced_permissions;
-	map<LogonServer*, LogonCommClientSocket*> logons;
 	map<uint32, WorldSocket*> pending_logons;
-	set<Realm*> realms;
-	set<LogonServer*> servers;
+
+	LogonCommClientSocket* logon;
+	LogonServer* server;
+	Realm* realm;
+
 	uint32 idhigh;
 	uint32 next_request;
-	Mutex mapLock;
 	Mutex pendingLock;
 	bool pings;
 	uint32 _realmType;
+	float server_population;
 
 public:
 	uint8 sql_passhash[20];
@@ -79,13 +80,13 @@ public:
 
 	LogonCommClientSocket * ConnectToLogon(string Address, uint32 Port);
 	void UpdateAccountCount(uint32 account_id, uint8 add);
-	void RequestAddition(LogonCommClientSocket * Socket);
+	void RequestAddition();
 	void CheckAllServers();
 	void Startup();
 	void ConnectionDropped(uint32 ID);
 	void AdditionAck(uint32 ID, uint32 ServID);
 	void UpdateSockets();
-	void Connect(LogonServer * server);
+	void Connect();
 	void ConnectAll();
 	//void LogonDatabaseSQLExecute(const char* str, ...);
 	//void LogonDatabaseReloadAccounts();

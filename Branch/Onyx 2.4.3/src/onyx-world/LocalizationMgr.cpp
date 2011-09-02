@@ -153,35 +153,6 @@ void LocalizationMgr::Reload(bool first)
 	GetDistinctLanguages(languages, "itempages_localized");
 
 	/************************************************************************/
-	/* Read Language Bindings From Config								   */
-	/************************************************************************/
-	string ls = Config.MainConfig.GetStringDefault("Localization", "LocaleBindings", "");
-	vector<string> tbindings = StrSplit(ls, " ");
-	for(vector<string>::iterator ztr = tbindings.begin(); ztr != tbindings.end(); ++ztr)
-	{
-		char lb[200];
-		string ll1,ll2;
-		strcpy(lb,(*ztr).c_str());
-
-		char * lbp = strchr(lb,'=');
-		if(lbp==NULL)
-			continue;
-		*lbp=0;
-		lbp++;
-
-		ll1 = string(lb);
-		ll2 = string(lbp);
-		Lower(ll1);
-		Lower(ll2);
-
-		if(languages.find(ll1) == languages.end())
-		{
-			bound_languages[ll1] = ll2;
-			languages.insert(ll1);
-		}
-	}
-
-	/************************************************************************/
 	/* Generate Language IDs												*/
 	/************************************************************************/
 

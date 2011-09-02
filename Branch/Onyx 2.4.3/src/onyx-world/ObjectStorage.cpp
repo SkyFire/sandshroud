@@ -139,7 +139,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 		SpellEntry * spe;
 		uint32 entry;
 
-		if(Config.MainConfig.GetBoolDefault("Server", "LoadAIAgents", true))
+		if(Config.OptionsConfig.GetBoolDefault("Server", "LoadAIAgents", true))
 		{
 			do
 			{

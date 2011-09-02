@@ -54,6 +54,7 @@ World::World()
 	AlliancePlayers = 0;
 	gm_skip_attunement = false;
 	show_gm_in_who_list = true;
+	RequireAllSignatures = true;
 	map_unload_time=0;
 	SocketSendBufSize = WORLDSOCKET_SENDBUF_SIZE;
 	SocketRecvBufSize = WORLDSOCKET_RECVBUF_SIZE;
@@ -1123,51 +1124,51 @@ void World::Rehash(bool load)
 	if(!MailSystem::getSingletonPtr())
 		new MailSystem;
 
-	channelmgr.seperatechannels = Config.MainConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
-	MapPath = Config.MainConfig.GetStringDefault("Terrain", "MapPath", "maps");
-	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Terrain", "UnloadMapFiles", true);
-	BreathingEnabled = Config.MainConfig.GetBoolDefault("Server", "EnableBreathing", true);
-	SendStatsOnJoin = Config.MainConfig.GetBoolDefault("Server", "SendStatsOnJoin", true);
-	compression_threshold = Config.MainConfig.GetIntDefault("Server", "CompressionThreshold", 1000);
+	MapPath = Config.MainConfig.GetStringDefault("Data", "MapPath", "maps");
+	UnloadMapFiles = Config.MainConfig.GetBoolDefault("Data", "UnloadMapFiles", true);
+	map_unload_time = Config.MainConfig.GetIntDefault("Data", "MapUnloadTime", 0);
+	SendStatsOnJoin = Config.OptionsConfig.GetBoolDefault("Server", "SendStatsOnJoin", true);
+	BreathingEnabled = Config.OptionsConfig.GetBoolDefault("Server", "EnableBreathing", true);
+	compression_threshold = Config.OptionsConfig.GetIntDefault("Server", "CompressionThreshold", 1000);
+	channelmgr.seperatechannels = Config.OptionsConfig.GetBoolDefault("Server", "SeperateChatChannels", false);
 
 	// load regeneration rates.
-	setRate(RATE_HEALTH,Config.MainConfig.GetFloatDefault("Rates", "Health",1));
-	setRate(RATE_POWER1,Config.MainConfig.GetFloatDefault("Rates", "Power1",1));
-	setRate(RATE_POWER2,Config.MainConfig.GetFloatDefault("Rates", "Power2",1));
-	setRate(RATE_POWER3,Config.MainConfig.GetFloatDefault("Rates", "Power4",1));
-	setRate(RATE_DROP0,Config.MainConfig.GetFloatDefault("Rates", "DropGrey",1));
-	setRate(RATE_DROP1,Config.MainConfig.GetFloatDefault("Rates", "DropWhite",1));
-	setRate(RATE_DROP2,Config.MainConfig.GetFloatDefault("Rates", "DropGreen",1));
-	setRate(RATE_DROP3,Config.MainConfig.GetFloatDefault("Rates", "DropBlue",1));
-	setRate(RATE_DROP4,Config.MainConfig.GetFloatDefault("Rates", "DropPurple",1));
-	setRate(RATE_DROP5,Config.MainConfig.GetFloatDefault("Rates", "DropOrange",1));
-	setRate(RATE_DROP6,Config.MainConfig.GetFloatDefault("Rates", "DropArtifact",1));
-	setRate(RATE_XP,Config.MainConfig.GetFloatDefault("Rates", "XP",1));
-	setRate(RATE_RESTXP,Config.MainConfig.GetFloatDefault("Rates", "RestXP", 1));
-	setRate(RATE_QUESTXP,Config.MainConfig.GetFloatDefault("Rates", "QuestXP", 1));
-	setIntRate(INTRATE_SAVE, Config.MainConfig.GetIntDefault("Rates", "Save", 1));
-	setRate(RATE_MONEY, Config.MainConfig.GetFloatDefault("Rates", "DropMoney", 1.0f));
-	setRate(RATE_QUESTREPUTATION, Config.MainConfig.GetFloatDefault("Rates", "QuestReputation", 1.0f));
-	setRate(RATE_KILLREPUTATION, Config.MainConfig.GetFloatDefault("Rates", "KillReputation", 1.0f));
-	setRate(RATE_HONOR, Config.MainConfig.GetFloatDefault("Rates", "Honor", 1.0f));
-	setRate(RATE_SKILLCHANCE, Config.MainConfig.GetFloatDefault("Rates", "SkillChance", 1.0f));
-	setRate(RATE_SKILLRATE, Config.MainConfig.GetFloatDefault("Rates", "SkillRate", 1.0f));
-	setIntRate(INTRATE_COMPRESSION, Config.MainConfig.GetIntDefault("Rates", "Compression", 1));
-	setIntRate(INTRATE_PVPTIMER, Config.MainConfig.GetIntDefault("Rates", "PvPTimer", 300000));
-	setRate(RATE_ARENAPOINTMULTIPLIER2X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier2x", 1.0f));
-	setRate(RATE_ARENAPOINTMULTIPLIER3X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier3x", 1.0f));
-	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.MainConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
-	free_arena_teams = Config.MainConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
-	free_guild_charters = Config.MainConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
-	setRate(RATE_EOTS_CAPTURERATE, Config.MainConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));
-	SetPlayerLimit(Config.MainConfig.GetIntDefault("Server", "PlayerLimit", 1000));
+	setRate(RATE_HEALTH,Config.OptionsConfig.GetFloatDefault("Rates", "Health",1));
+	setRate(RATE_POWER1,Config.OptionsConfig.GetFloatDefault("Rates", "Power1",1));
+	setRate(RATE_POWER2,Config.OptionsConfig.GetFloatDefault("Rates", "Power2",1));
+	setRate(RATE_POWER3,Config.OptionsConfig.GetFloatDefault("Rates", "Power4",1));
+	setRate(RATE_DROP0,Config.OptionsConfig.GetFloatDefault("Rates", "DropGrey",1));
+	setRate(RATE_DROP1,Config.OptionsConfig.GetFloatDefault("Rates", "DropWhite",1));
+	setRate(RATE_DROP2,Config.OptionsConfig.GetFloatDefault("Rates", "DropGreen",1));
+	setRate(RATE_DROP3,Config.OptionsConfig.GetFloatDefault("Rates", "DropBlue",1));
+	setRate(RATE_DROP4,Config.OptionsConfig.GetFloatDefault("Rates", "DropPurple",1));
+	setRate(RATE_DROP5,Config.OptionsConfig.GetFloatDefault("Rates", "DropOrange",1));
+	setRate(RATE_DROP6,Config.OptionsConfig.GetFloatDefault("Rates", "DropArtifact",1));
+	setRate(RATE_XP,Config.OptionsConfig.GetFloatDefault("Rates", "XP",1));
+	setRate(RATE_RESTXP,Config.OptionsConfig.GetFloatDefault("Rates", "RestXP", 1));
+	setRate(RATE_QUESTXP,Config.OptionsConfig.GetFloatDefault("Rates", "QuestXP", 1));
+	setIntRate(INTRATE_SAVE, Config.OptionsConfig.GetIntDefault("Rates", "Save", 1));
+	setRate(RATE_MONEY, Config.OptionsConfig.GetFloatDefault("Rates", "DropMoney", 1.0f));
+	setRate(RATE_QUESTREPUTATION, Config.OptionsConfig.GetFloatDefault("Rates", "QuestReputation", 1.0f));
+	setRate(RATE_KILLREPUTATION, Config.OptionsConfig.GetFloatDefault("Rates", "KillReputation", 1.0f));
+	setRate(RATE_HONOR, Config.OptionsConfig.GetFloatDefault("Rates", "Honor", 1.0f));
+	setRate(RATE_SKILLCHANCE, Config.OptionsConfig.GetFloatDefault("Rates", "SkillChance", 1.0f));
+	setRate(RATE_SKILLRATE, Config.OptionsConfig.GetFloatDefault("Rates", "SkillRate", 1.0f));
+	setIntRate(INTRATE_COMPRESSION, Config.OptionsConfig.GetIntDefault("Rates", "Compression", 1));
+	setIntRate(INTRATE_PVPTIMER, Config.OptionsConfig.GetIntDefault("Rates", "PvPTimer", 300000));
+	setRate(RATE_ARENAPOINTMULTIPLIER2X, Config.OptionsConfig.GetFloatDefault("Rates", "ArenaMultiplier2x", 1.0f));
+	setRate(RATE_ARENAPOINTMULTIPLIER3X, Config.OptionsConfig.GetFloatDefault("Rates", "ArenaMultiplier3x", 1.0f));
+	setRate(RATE_ARENAPOINTMULTIPLIER5X, Config.OptionsConfig.GetFloatDefault("Rates", "ArenaMultiplier5x", 1.0f));
+	setRate(RATE_EOTS_CAPTURERATE, Config.OptionsConfig.GetFloatDefault("Rates", "EOTSCaptureRate", 1.0f));
 
-	SetMotd(Config.MainConfig.GetStringDefault("Server", "Motd", "onyx Default MOTD").c_str());
-	mQueueUpdateInterval = Config.MainConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
-	SetKickAFKPlayerTime(Config.MainConfig.GetIntDefault("Server", "KickAFKPlayers", 0));
-	gm_skip_attunement = Config.MainConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);
-	SocketRecvBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "RecvBufSize", WORLDSOCKET_RECVBUF_SIZE);
-	SocketSendBufSize = Config.MainConfig.GetIntDefault("WorldSocket", "SendBufSize", WORLDSOCKET_SENDBUF_SIZE);
+	free_arena_teams = Config.OptionsConfig.GetBoolDefault("Server", "FreeArenaTeams", false);
+	free_guild_charters = Config.OptionsConfig.GetBoolDefault("Server", "FreeGuildCharters", false);
+	SetPlayerLimit(Config.OptionsConfig.GetIntDefault("Server", "PlayerLimit", 1000));
+
+	SetMotd(Config.OptionsConfig.GetStringDefault("Server", "Motd", "onyx Default MOTD").c_str());
+	mQueueUpdateInterval = Config.OptionsConfig.GetIntDefault("Server", "QueueUpdateInterval", 5000);
+	SetKickAFKPlayerTime(Config.OptionsConfig.GetIntDefault("Server", "KickAFKPlayers", 0));
+	gm_skip_attunement = Config.OptionsConfig.GetBoolDefault("Server", "SkipAttunementsForGM", true);
 
 	bool log_enabled = Config.MainConfig.GetBoolDefault("Log", "Cheaters", false);
 	if(Anticheat_Log->IsOpen())
@@ -1176,8 +1177,10 @@ void World::Rehash(bool load)
 			Anticheat_Log->Close();
 	}
 	else
+	{
 		if(log_enabled)
 			Anticheat_Log->Open();
+	}
 
 	log_enabled = Config.MainConfig.GetBoolDefault("Log", "GMCommands", false);
 	if(GMCommand_Log->IsOpen())
@@ -1186,8 +1189,10 @@ void World::Rehash(bool load)
 			GMCommand_Log->Close();
 	}
 	else
+	{
 		if(log_enabled)
 			GMCommand_Log->Open();
+	}
 
 	log_enabled = Config.MainConfig.GetBoolDefault("Log", "Player", false);
 	if(Player_Log->IsOpen())
@@ -1203,7 +1208,7 @@ void World::Rehash(bool load)
 
 #ifdef WIN32
 	DWORD current_priority_class = GetPriorityClass( GetCurrentProcess() );
-	bool high = Config.MainConfig.GetBoolDefault( "Server", "AdjustPriority", false );
+	bool high = Config.OptionsConfig.GetBoolDefault( "Server", "AdjustPriority", false );
 
 	if( high )
 	{
@@ -1217,60 +1222,59 @@ void World::Rehash(bool load)
 	}
 #endif
 
-	if(!Config.MainConfig.GetString("GMClient", "GmClientChannel", &GmClientChannel))
+	if(!Config.OptionsConfig.GetString("GMClient", "GmClientChannel", &GmClientChannel))
 	{
 		GmClientChannel = "";
 	}
 
-	m_reqGmForCommands = !Config.MainConfig.GetBoolDefault("Server", "AllowPlayerCommands", false);
-	m_lfgForNonLfg = Config.MainConfig.GetBoolDefault("Server", "EnableLFGJoin", false);
+	m_reqGmForCommands = !Config.OptionsConfig.GetBoolDefault("Server", "AllowPlayerCommands", false);
+	m_lfgForNonLfg = Config.OptionsConfig.GetBoolDefault("Server", "EnableLFGJoin", false);
 
-	realmtype = Config.MainConfig.GetBoolDefault("Server", "RealmType", false);
-	TimeOut= uint32(1000* Config.MainConfig.GetIntDefault("Server", "ConnectionTimeout", 180) );
+	realmtype = Config.OptionsConfig.GetBoolDefault("Server", "RealmType", false);
+	TimeOut= uint32(1000* Config.OptionsConfig.GetIntDefault("Server", "ConnectionTimeout", 180) );
 
 	uint32 config_flags = 0;
-	if(Config.MainConfig.GetBoolDefault("Mail", "DisablePostageCostsForGM", true))
+	if(Config.OptionsConfig.GetBoolDefault("Mail", "DisablePostageCostsForGM", true))
 		config_flags |= MAIL_FLAG_NO_COST_FOR_GM;
 
-	if(Config.MainConfig.GetBoolDefault("Mail", "DisablePostageCosts", false))
+	if(Config.OptionsConfig.GetBoolDefault("Mail", "DisablePostageCosts", false))
 		config_flags |= MAIL_FLAG_DISABLE_POSTAGE_COSTS;
 
-	if(Config.MainConfig.GetBoolDefault("Mail", "DisablePostageDelayItems", true))
+	if(Config.OptionsConfig.GetBoolDefault("Mail", "DisablePostageDelayItems", true))
 		config_flags |= MAIL_FLAG_DISABLE_HOUR_DELAY_FOR_ITEMS;
 
-	if(Config.MainConfig.GetBoolDefault("Mail", "DisableMessageExpiry", false))
+	if(Config.OptionsConfig.GetBoolDefault("Mail", "DisableMessageExpiry", false))
 		config_flags |= MAIL_FLAG_NO_EXPIRY;
 
-	if(Config.MainConfig.GetBoolDefault("Mail", "EnableInterfactionMail", true))
+	if(Config.OptionsConfig.GetBoolDefault("Mail", "EnableInterfactionMail", true))
 		config_flags |= MAIL_FLAG_CAN_SEND_TO_OPPOSITE_FACTION;
 
-	if(Config.MainConfig.GetBoolDefault("Mail", "EnableInterfactionForGM", true))
+	if(Config.OptionsConfig.GetBoolDefault("Mail", "EnableInterfactionForGM", true))
 		config_flags |= MAIL_FLAG_CAN_SEND_TO_OPPOSITE_FACTION_GM;
-
 	sMailSystem.config_flags = config_flags;
-	flood_lines = Config.MainConfig.GetIntDefault("FloodProtection", "Lines", 0);
-	flood_seconds = Config.MainConfig.GetIntDefault("FloodProtection", "Seconds", 0);
-	flood_message = Config.MainConfig.GetBoolDefault("FloodProtection", "SendMessage", false);
-	flood_message_time = Config.MainConfig.GetIntDefault("FloodProtection", "FloodMessageTime", 0);
-	flood_mute_after_flood = Config.MainConfig.GetIntDefault("FloodProtection", "MuteAfterFlood", 0);
-	flood_caps_min_len = Config.MainConfig.GetIntDefault("FloodProtection", "CapsMinLen", 0);
-	flood_caps_pct = Config.MainConfig.GetFloatDefault("FloodProtection", "CapsPct", 0.0f);
-	show_gm_in_who_list = Config.MainConfig.GetBoolDefault("Server", "ShowGMInWhoList", true);
 
+	flood_lines = Config.OptionsConfig.GetIntDefault("FloodProtection", "Lines", 0);
+	flood_seconds = Config.OptionsConfig.GetIntDefault("FloodProtection", "Seconds", 0);
+	flood_message = Config.OptionsConfig.GetBoolDefault("FloodProtection", "SendMessage", false);
+	flood_message_time = Config.OptionsConfig.GetIntDefault("FloodProtection", "FloodMessageTime", 0);
+	flood_mute_after_flood = Config.OptionsConfig.GetIntDefault("FloodProtection", "MuteAfterFlood", 0);
+	flood_caps_min_len = Config.OptionsConfig.GetIntDefault("FloodProtection", "CapsMinLen", 0);
+	flood_caps_pct = Config.OptionsConfig.GetFloatDefault("FloodProtection", "CapsPct", 0.0f);
 	if(!flood_lines || !flood_seconds)
 		flood_lines = flood_seconds = 0;
-
-	map_unload_time=Config.MainConfig.GetIntDefault("Server", "MapUnloadTime", 0);
 
 	antihack_teleport = Config.MainConfig.GetBoolDefault("AntiHack", "Teleport", true);
 	antihack_speed = Config.MainConfig.GetBoolDefault("AntiHack", "Speed", true);
 	antihack_flight = Config.MainConfig.GetBoolDefault("AntiHack", "Flight", true);
 	no_antihack_on_gm = Config.MainConfig.GetBoolDefault("AntiHack", "DisableOnGM", false);
 	SpeedhackProtection = antihack_speed;
-	m_levelCap = Config.MainConfig.GetIntDefault("Server", "LevelCap", 70);
-	m_genLevelCap = Config.MainConfig.GetIntDefault("Server", "GenLevelCap", 70);
-	m_limitedNames = Config.MainConfig.GetBoolDefault("Server", "LimitedNames", true);
-	m_useAccountData = Config.MainConfig.GetBoolDefault("Server", "UseAccountData", false);
+
+	m_levelCap = Config.OptionsConfig.GetIntDefault("Server", "LevelCap", 70);
+	m_genLevelCap = Config.OptionsConfig.GetIntDefault("Server", "GenLevelCap", 70);
+	m_limitedNames = Config.OptionsConfig.GetBoolDefault("Server", "LimitedNames", true);
+	m_useAccountData = Config.OptionsConfig.GetBoolDefault("Server", "UseAccountData", false);
+	show_gm_in_who_list = Config.OptionsConfig.GetBoolDefault("Server", "ShowGMInWhoList", true);
+	RequireAllSignatures = Config.OptionsConfig.GetBoolDefault("Server", "RequireAllSignatures", true);
 
 	// ======================================
 	m_movementCompressInterval = Config.MainConfig.GetIntDefault("Movement", "FlushInterval", 1000);
@@ -1294,7 +1298,7 @@ void World::Rehash(bool load)
 		free( m_banTable );
 
 	m_banTable = NULL;
-	string s = Config.MainConfig.GetStringDefault( "Server", "BanTable", "" );
+	string s = Config.OptionsConfig.GetStringDefault( "Server", "BanTable", "" );
 	if( !s.empty() )
 		m_banTable = strdup( s.c_str() );
 
@@ -1340,53 +1344,6 @@ void World::LoadAccountDataProc(QueryResultVector& results, uint32 AccountId)
 		return;
 
 	s->LoadAccountDataProc(results[0].result);
-}
-
-void World::CleanupCheaters()
-{
-	/*uint32 guid;
-	string name;
-	uint32 cl;
-	uint32 level;
-	uint32 talentpts;
-	char * start, *end;
-	Field * f;
-	uint32 should_talents;
-	uint32 used_talents;
-	SpellEntry * sp;
-
-	QueryResult * result = CharacterDatabase.Query("SELECT guid, name, class, level, available_talent_points, spells FROM characters");
-	if(result == NULL)
-		return;
-
-	do 
-	{
-		f = result->Fetch();
-		guid = f[0].GetUInt32();
-		name = string(f[1].GetString());
-		cl = f[2].GetUInt32();
-		level = f[3].GetUInt32();
-		talentpts = f[4].GetUInt32();
-		start = f[5].GetString();
-		should_talents = (level<10 ? 0 : level - 9);
-		used_talents -= 
-				
-
-		start = (char*)get_next_field.GetString();//buff;
-		while(true) 
-		{
-			end = strchr(start,',');
-			if(!end)break;
-			*end=0;
-			sp = dbcSpell.LookupEntry(atol(start));
-			start = end +1;
-
-			if(sp->talent_tree)
-
-		}
-
-	} while(result->NextRow());*/
-
 }
 
 void World::CheckForExpiredInstances()

@@ -57,12 +57,16 @@ enum RealmListOpcodes
 	// DB modifying
 	RCMSG_MODIFY_DATABASE						= 17,
 
+	// Realm population
+	RSMSG_REALM_POP_REQ							= 18,
+	RCMSG_REALM_POP_RES							= 19,
+
 	// S->C ping
-	RSMSG_SERVER_PING							= 18,
-	RCMSG_SERVER_PONG							= 19,
+	RSMSG_SERVER_PING							= 20,
+	RCMSG_SERVER_PONG							= 21,
 
 	// count
-	RMSG_COUNT									= 20,
+	RMSG_COUNT									= 22,
 };
 
 #endif

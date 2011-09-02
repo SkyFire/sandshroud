@@ -147,30 +147,9 @@ void ScriptMgr::LoadScripts()
 		{
 			if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_LUA )
 			{
-				// lua :O
-				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "LUA", false) )
-				{
-					sLog.outString("   Initializing LUA script engine...");
-					itr->InitializeCall(this);
-					_handles.push_back( (SCRIPT_MODULE)itr->Handle );
-				}
-				else
-				{
-					FreeLibrary( itr->Handle );
-				}
-			}
-			else if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_AS )
-			{
-				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "AS", false) )
-				{
-					sLog.outString("   Initializing AngelScript script engine...");
-					itr->InitializeCall(this);
-					_handles.push_back( (SCRIPT_MODULE)itr->Handle );
-				}
-				else
-				{
-					FreeLibrary( (*itr).Handle );
-				}
+				sLog.outString("   Initializing LUA script engine...");
+				itr->InitializeCall(this);
+				_handles.push_back( (SCRIPT_MODULE)itr->Handle );
 			}
 			else
 			{
@@ -264,29 +243,9 @@ char *ext;
 			if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_LUA )
 			{
 				// lua :O
-				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "LUA", false) )
-				{
-					sLog.outString("   Initializing LUA script engine...");
-					itr->InitializeCall(this);
-					_handles.push_back( (SCRIPT_MODULE)itr->Handle );
-				}
-				else
-				{
-					dlclose( itr->Handle );
-				}
-			}
-			else if( itr->Type & SCRIPT_TYPE_SCRIPT_ENGINE_AS )
-			{
-				if( Config.MainConfig.GetBoolDefault("ScriptBackends", "AS", false) )
-				{
-					sLog.outString("   Initializing AngelScript script engine...");
-					itr->InitializeCall(this);
-					_handles.push_back( (SCRIPT_MODULE)itr->Handle );
-				}
-				else
-				{
-					dlclose( (*itr).Handle );
-				}
+				sLog.outString("   Initializing LUA script engine...");
+				itr->InitializeCall(this);
+				_handles.push_back( (SCRIPT_MODULE)itr->Handle );
 			}
 			else
 			{

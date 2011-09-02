@@ -110,7 +110,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)shared.lib</OutputFile>
+      <OutputFile>$(IntDir)onyx-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>
@@ -157,7 +157,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)shared.lib</OutputFile>
+      <OutputFile>$(IntDir)onyx-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>
@@ -197,7 +197,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)shared.lib</OutputFile>
+      <OutputFile>$(IntDir)onyx-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>
@@ -239,7 +239,7 @@ RevisionExtractor.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Lib>
-      <OutputFile>$(IntDir)shared.lib</OutputFile>
+      <OutputFile>$(IntDir)onyx-shared.lib</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Lib>
     <PostBuildEvent>

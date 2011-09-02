@@ -37,12 +37,6 @@
     <Filter Include="Environment">
       <UniqueIdentifier>{7de2b7c7-a469-4ccf-816a-bcda97b68ecf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Interserver">
-      <UniqueIdentifier>{e7ef1460-b9b6-4f6a-8aa2-ac2918bf5143}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Interserver\Logon">
-      <UniqueIdentifier>{e38db1bd-4051-4ba4-9bfa-dc5dbbfcf3e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Map System">
       <UniqueIdentifier>{4608fe27-cf8f-4e24-bf20-3f059b85418c}</UniqueIdentifier>
     </Filter>
@@ -69,6 +63,12 @@
     </Filter>
     <Filter Include="Spell">
       <UniqueIdentifier>{a5475c0d-f56b-4bbf-816a-f2103b8ea8cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interserver">
+      <UniqueIdentifier>{e7ef1460-b9b6-4f6a-8aa2-ac2918bf5143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interserver\Logon">
+      <UniqueIdentifier>{e38db1bd-4051-4ba4-9bfa-dc5dbbfcf3e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -203,9 +203,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\onyx-world\LogonCommHandler.cpp">
       <Filter>Interserver\Logon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\onyx-world\World.cpp">
-      <Filter>Map System</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\onyx-world\WorldRunnable.cpp">
       <Filter>Map System</Filter>
@@ -385,6 +382,9 @@
       <Filter>Spell</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\onyx-world\StdAfx.cpp" />
+    <ClCompile Include="..\..\src\onyx-world\World.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\onyx-world\ConsoleCommands.h">
@@ -488,9 +488,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\onyx-world\LogonCommHandler.h">
       <Filter>Interserver\Logon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\onyx-world\World.h">
-      <Filter>Map System</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\onyx-world\WorldRunnable.h">
       <Filter>Map System</Filter>
@@ -618,6 +615,9 @@
     <ClInclude Include="..\..\src\onyx-world\StdAfx.h" />
     <ClInclude Include="..\..\src\onyx-world\UpdateFields.h" />
     <ClInclude Include="..\..\src\onyx-world\UpdateMask.h" />
+    <ClInclude Include="..\..\src\onyx-world\World.h">
+      <Filter>Launcher</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\onyx-world\icon.ico">
