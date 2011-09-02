@@ -529,8 +529,7 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 			uint8 realmflags = realm->Flag;
 			if(realm->RequiredBuild)
 			{
-				if(realm->RequiredBuild != Socket->GetBuild()
-					|| realm->RequiredCV != Socket->GetClientVersion())
+				if(realm->RequiredBuild != Socket->GetBuild())
 					realmflags = REALM_FLAG_OFFLINE;
 			}
 
@@ -581,14 +580,10 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 
 		data << realm->Icon;
 		uint8 flag = realm->Flag;
-		uint8 realmlock = realm->Lock;
 		if(realm->RequiredBuild && realm->RequiredBuild != Socket->GetBuild())
-		{
-			realmlock = 1;
-			flag |= REALM_FLAG_SPECIFYBUILD;
-		}
+			flag = (REALM_FLAG_SPECIFYBUILD|REALM_FLAG_OFFLINE);
 
-		data << realmlock;
+		data << realm->Lock;
 		data << flag;
 		data << realm->Name;
 		data << realm->Address;
