@@ -498,21 +498,35 @@ void WorldSession::HandleSendMail(WorldPacket & recv_data )
 
 		pItem = _player->GetItemInterface()->GetItemByGUID( itemguid );
 		real_item_slot = _player->GetItemInterface()->GetInventorySlotByGuid( itemguid );
-		if( pItem == NULL || pItem->IsSoulbound() || pItem->HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) ||
-			( pItem->IsContainer() && (TO_CONTAINER( pItem ))->HasItems() ) || real_item_slot >= 0 && real_item_slot < INVENTORY_SLOT_ITEM_START )
+		if( pItem == NULL || pItem->HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) )
 		{
-			SendMailError(MAIL_ERR_INTERNAL_ERROR);
+			SendMailError(MAIL_ERR_BAG_FULL, INV_ERR_CANNOT_TRADE_THAT);
 			return;
 		}
 
-		if(pItem->IsAccountbound() && GetAccountId() != player->acct) // don't mail account-bound items to another account
+		if( ( pItem->IsContainer() && (TO_CONTAINER( pItem ))->HasItems() ) || real_item_slot >= 0 && real_item_slot < INVENTORY_SLOT_ITEM_START )
 		{
-			SendMailError(MAIL_ERR_BAG_FULL, INV_ERR_ACCOUNT_BOUND);
+			SendMailError(MAIL_ERR_BAG_FULL, INV_ERR_CANT_TRADE_EQUIP_BAGS);
+			return;
+		}
+
+		if(pItem->IsAccountbound()) // don't mail account-bound items to another account
+		{
+			if(GetAccountId() != player->acct)
+			{
+				SendMailError(MAIL_ERR_BAG_FULL, INV_ERR_ACCOUNT_BOUND);
+				return;
+			}
+		}
+		else if(pItem->IsSoulbound())
+		{
+			SendMailError(MAIL_ERR_BAG_FULL, INV_ERR_CANNOT_TRADE_THAT);
 			return;
 		}
 
 		items.push_back( pItem );
 	}
+
 	if( items.size() > 12 || msg.body.find("%") != string::npos || msg.subject.find("%") != string::npos)
 	{
 		SendMailError(MAIL_ERR_INTERNAL_ERROR);

@@ -596,8 +596,8 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 			c->GuildName = name;
 			c->ItemGuid = i->GetGUID();
 
+			i->Bind(ITEM_BIND_ON_PICKUP);
 			i->SetUInt32Value(ITEM_FIELD_STACK_COUNT, 1);
-			i->SetUInt32Value(ITEM_FIELD_FLAGS, 1);
 			i->SetUInt32Value(ITEM_FIELD_ENCHANTMENT_1_1, c->GetID());
 			i->SetUInt32Value(ITEM_FIELD_PROPERTY_SEED, 57813883);
 			if( !_player->GetItemInterface()->AddItemToFreeSlot(i) )
@@ -671,9 +671,8 @@ void WorldSession::HandleCharterBuy(WorldPacket & recv_data)
 			c->GuildName = name;
 			c->ItemGuid = i->GetGUID();
 
-
+			i->Bind(ITEM_BIND_ON_PICKUP);
 			i->SetUInt32Value(ITEM_FIELD_STACK_COUNT, 1);
-			i->SetUInt32Value(ITEM_FIELD_FLAGS, 1);
 			i->SetUInt32Value(ITEM_FIELD_ENCHANTMENT_1_1, c->GetID());
 			i->SetUInt32Value(ITEM_FIELD_PROPERTY_SEED, 57813883);
 			if( !_player->GetItemInterface()->AddItemToFreeSlot(i) )

@@ -4175,36 +4175,36 @@ void Unit::AddAura(Aura* aur)
 								bool ispair = false;
 								switch( info->NameHash )
 								{
-									case SPELL_HASH_BLESSING_OF_MIGHT:
-									case SPELL_HASH_GREATER_BLESSING_OF_MIGHT:
+								case SPELL_HASH_BLESSING_OF_MIGHT:
+								case SPELL_HASH_GREATER_BLESSING_OF_MIGHT:
 									{
 										if( m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_BLESSING_OF_MIGHT ||
 											m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_GREATER_BLESSING_OF_MIGHT )
 											ispair = true;
 									}break;
-									case SPELL_HASH_BLESSING_OF_WISDOM:
-									case SPELL_HASH_GREATER_BLESSING_OF_WISDOM:
+								case SPELL_HASH_BLESSING_OF_WISDOM:
+								case SPELL_HASH_GREATER_BLESSING_OF_WISDOM:
 									{
 										if( m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_BLESSING_OF_WISDOM ||
 											m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_GREATER_BLESSING_OF_WISDOM )
 											ispair = true;
 									}break;
-									case SPELL_HASH_BLESSING_OF_KINGS:
-									case SPELL_HASH_GREATER_BLESSING_OF_KINGS:
+								case SPELL_HASH_BLESSING_OF_KINGS:
+								case SPELL_HASH_GREATER_BLESSING_OF_KINGS:
 									{
 										if( m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_BLESSING_OF_KINGS ||
 											m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_GREATER_BLESSING_OF_KINGS )
 											ispair = true;
 									}break;
-									case SPELL_HASH_BLESSING_OF_SANCTUARY:
-									case SPELL_HASH_GREATER_BLESSING_OF_SANCTUARY:
+								case SPELL_HASH_BLESSING_OF_SANCTUARY:
+								case SPELL_HASH_GREATER_BLESSING_OF_SANCTUARY:
 									{
 										if( m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_BLESSING_OF_SANCTUARY ||
 											m_auras[x]->GetSpellProto()->NameHash == SPELL_HASH_GREATER_BLESSING_OF_SANCTUARY )
 											ispair = true;
 									}break;
-
 								}
+
 								if( m_auras[x]->GetUnitCaster() == aur->GetUnitCaster() || ispair )
 								{
 									RemoveAuraBySlot(x);
@@ -4288,7 +4288,7 @@ void Unit::AddAura(Aura* aur)
 
 	////////////////////////////////////////////////////////
 
-	if( aur->m_auraSlot != 0xffffffff && aur->m_auraSlot < TOTAL_AURAS)
+	if( aur->m_auraSlot != 255 && aur->m_auraSlot < TOTAL_AURAS)
 	{
 		if( m_auras[aur->m_auraSlot] != NULL )
 			RemoveAuraBySlot(aur->m_auraSlot);
@@ -4301,14 +4301,14 @@ void Unit::AddAura(Aura* aur)
 		return; // Should never happen.
 
 	aur->SetAuraFlags(AFLAG_VISIBLE | AFLAG_EFF_INDEX_1 | AFLAG_EFF_INDEX_2 | AFLAG_NOT_GUID | (aur->GetDuration() ? AFLAG_HAS_DURATION : AFLAG_NONE)
-		| (aur->IsPositive() ? (AFLAG_POSITIVE | ((aur->GetSpellProto()->Attributes & ATTRIBUTES_CANT_CANCEL) ? AFLAG_NONE : AFLAG_CANCELLABLE)) : (AFLAG_NEGATIVE | AFLAG_NONE)));
+		| (aur->IsPositive() ? (AFLAG_POSITIVE) : (AFLAG_NEGATIVE)));
 
 	aur->SetAuraLevel(aur->GetUnitCaster() != NULL ? aur->GetUnitCaster()->getLevel() : MAXIMUM_ATTAINABLE_LEVEL);
 
 	if(!aur->IsPassive())
 	{
 		aur->AddAuraVisual();
-		if(aur->m_auraSlot==255)
+		if(aur->m_auraSlot == 255)
 		{
 			//add to invisible slot
 			for(x = MAX_AURAS; x < TOTAL_AURAS; x++)
@@ -4329,7 +4329,7 @@ void Unit::AddAura(Aura* aur)
 		}
 		else
 		{
-			m_auras[aur->m_auraSlot]=aur;
+			m_auras[aur->m_auraSlot] = aur;
 		}
 	}
 	else
@@ -4341,8 +4341,8 @@ void Unit::AddAura(Aura* aur)
 		{
 			if(!m_auras[x])
 			{
-				m_auras[x]=aur;
-				aur->m_auraSlot=x;
+				m_auras[x] = aur;
+				aur->m_auraSlot = x;
 				break;
 			}
 		}
@@ -4354,6 +4354,7 @@ void Unit::AddAura(Aura* aur)
 			return;
 		}
 	}
+
 	if(aur->GetSpellId() == 15007) //Resurrection sickness
 	{
 		aur->SetNegative(100); //we're negative
@@ -4375,6 +4376,7 @@ void Unit::AddAura(Aura* aur)
 				aur->GetSpellProto()->EffectApplyAuraName[spx] == SPELL_AURA_MOD_CHARM )
 				addTime = 50;
 		}
+
 		sEventMgr.AddAuraEvent(this, &Unit::RemoveAuraBySlot, uint16(aur->m_auraSlot), aur->GetDuration() + addTime, 1,
 			EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT,aur->GetSpellId());
 	}
@@ -4819,18 +4821,16 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	//---------------------------------------------------------
 	// coefficient
 	//---------------------------------------------------------
-	float coefficient = 0.0f;
+	float coefficient = IsCreature() ? 1.0f : 0.0f;
+
+	if(spellInfo->SP_coef_override > 0.0f)
+		coefficient = spellInfo->SP_coef_override;
 
 	//---------------------------------------------------------
 	// modifiers (increase spell dmg by spell power)
 	//---------------------------------------------------------
 	if( spellInfo->SpellGroupType )
 	{
-		if(IsCreature())
-			coefficient = 1.0f;
-		else
-			coefficient = spellInfo->SP_coef_override;
-
 		float modifier = 0;
 		if( caster->HasDummyAura( SPELL_HASH_ARCANE_EMPOWERMENT ) )
 		{
@@ -4856,7 +4856,7 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 		coefficient += ( (GetDummyAura(SPELL_HASH_FIRE_AND_BRIMSTONE)->RankNumber * 3) / 100.0f );
 
 	//---------------------------------------------------------
-	// Apply coefficient, AP coefficient
+	// Apply coefficient
 	//---------------------------------------------------------
 	if( !healing )
 	{
@@ -4871,6 +4871,9 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 		bonus_damage += pVictim->GetHealingTakenMod();
 	}
 
+	//---------------------------------------------------------
+	// AP coefficient
+	//---------------------------------------------------------
 	if( spellInfo->AP_coef_override > 0 )
 		bonus_damage += float2int32(caster->GetAP() * spellInfo->AP_coef_override);
 
@@ -6912,7 +6915,7 @@ bool Unit::RemoveAllAurasByMechanic( uint32 MechanicType , int32 MaxDispel = -1 
 {
 	//sLog.outString( "Unit::MechanicImmunityMassDispel called, mechanic: %u" , MechanicType );
 	uint32 DispelCount = 0;
-	for(uint32 x = ( HostileOnly ? MAX_POSITIVE_AURAS : 0 ) ; x < MAX_AURAS ; x++ ) // If HostileOnly = 1, then we use aura slots 40-56 (hostile). Otherwise, we use 0-56 (all)
+	for(uint32 x = ( HostileOnly ? MAX_POSITIVE_AURAS : 0 ) ; x < MAX_AURAS ; x++ ) // If HostileOnly = 1, then we use aura slots 40-86 (hostile). Otherwise, we use 0-86 (all)
 	{
 		if(MaxDispel > 0)
 			if(DispelCount >= (uint32)MaxDispel)

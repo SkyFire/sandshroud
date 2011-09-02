@@ -3176,7 +3176,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 			UpdateStats();
 			UpdateChances();
 			_UpdateMaxSkillCounts();
-			_AddLanguages(false);
+			_AddLanguages(sWorld.cross_faction_world);
 		}
 	}
 
@@ -3526,7 +3526,7 @@ void Player::LoadFromDBProc(QueryResultVector & results)
 	if(m_session->CanUseCommand('c'))
 		_AddLanguages(true);
 	else
-		_AddLanguages(false);
+		_AddLanguages(sWorld.cross_faction_world);
 
 	OnlineTime	= (uint32)UNIXTIME;
 	if(GetGuildId())
@@ -7385,7 +7385,7 @@ void Player::RemoveTalent(uint32 spellid)
 		removeSpellByHashName(sp->NameHash);
 	}
 
-	for(uint32 x=0;x < MAX_AURAS + MAX_PASSIVE_AURAS; x++)
+	for(uint32 x=0;x < TOTAL_AURAS; x++)
 	{
 		if(m_auras[x] && m_auras[x]->GetSpellProto()->NameHash == sp->NameHash)
 		{
@@ -8952,7 +8952,7 @@ void Player::EndDuel(uint8 WinCondition)
 	sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_DUEL_COUNTDOWN );
 	sEventMgr.RemoveEvents(TO_PLAYER(this), EVENT_PLAYER_DUEL_BOUNDARY_CHECK );
 
-	for( uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; ++x )
+	for( uint32 x = 0; x < TOTAL_AURAS; ++x )
 	{
 		if( m_auras[x] != NULL && m_auras[x]->WasCastInDuel() )
 			RemoveAuraBySlot(x);
@@ -10037,7 +10037,7 @@ void Player::SetShapeShift(uint8 ss)
 	SetByte( UNIT_FIELD_BYTES_2, 3, ss );
 
 	//remove auras that we should not have
-	for( uint32 x = 0; x < MAX_AURAS + MAX_PASSIVE_AURAS; x++ )
+	for( uint32 x = 0; x < TOTAL_AURAS; x++ )
 	{
 		if( m_auras[x] != NULL )
 		{
@@ -10090,7 +10090,7 @@ void Player::SetShapeShift(uint8 ss)
 		sp = dbcSpell.LookupEntryForced( *itr );
 		if( sp == NULL)
 			continue;
-		if( sp->apply_on_shapeshift_change || sp->Attributes & 64 )		// passive/talent
+		if( sp->apply_on_shapeshift_change || sp->Attributes & ATTRIBUTES_PASSIVE )		// passive/talent
 		{
 			if( sp->RequiredShapeShift && ((uint32)1 << (ss-1)) & sp->RequiredShapeShift )
 			{
@@ -11410,7 +11410,7 @@ void Player::EventSummonPet( Pet* new_pet )
 		}
 	}
 	//there are talents that stop working after you gain pet
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x=0;x<TOTAL_AURAS;x++)
 		if(m_auras[x] != NULL && m_auras[x]->GetSpellProto()->c_is_flags & SPELL_FLAG_IS_EXPIREING_ON_PET)
 			RemoveAuraBySlot(x);
 	//pet should inherit some of the talents from caster
@@ -11421,7 +11421,7 @@ void Player::EventSummonPet( Pet* new_pet )
 //!! note function might get called multiple times :P
 void Player::EventDismissPet()
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x=0;x<TOTAL_AURAS;x++)
 		if(m_auras[x]!= NULL && m_auras[x]->GetSpellProto()->c_is_flags & SPELL_FLAG_IS_EXPIREING_WITH_PET)
 			RemoveAuraBySlot(x);
 }

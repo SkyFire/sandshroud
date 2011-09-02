@@ -487,7 +487,7 @@ void WorldSession::HandleAuctionSellItem( WorldPacket & recv_data )
 
 	// Get item
 	Item* pItem = _player->GetItemInterface()->GetItemByGUID(item);
-	if( !pItem || pItem->IsSoulbound() || pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) )
+	if( !pItem || pItem->IsSoulbound() || pItem->IsAccountbound() || pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FLAG_CONJURED ) )
 	{
 		WorldPacket data(SMSG_AUCTION_COMMAND_RESULT, 8);
 		data << uint32(0);

@@ -241,10 +241,7 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 	}
 
 	if( DstSlot < INVENTORY_SLOT_BAG_START && DstInvSlot == INVENTORY_SLOT_NOT_SET ) //equip
-	{
-		if( SrcItem->GetProto()->Bonding == ITEM_BIND_ON_EQUIP )
-			SrcItem->SoulBind();
-	}
+		SrcItem->Bind(ITEM_BIND_ON_EQUIP);
 
 	_player->GetItemInterface()->SwapItems(SrcInvSlot, DstInvSlot, SrcSlot, DstSlot);
 }
@@ -362,10 +359,7 @@ void WorldSession::HandleSwapInvItemOpcode( WorldPacket & recv_data )
 
 		//dst is bag inventory
 		if(dstslot < INVENTORY_SLOT_BAG_END)
-		{
-			if(srcitem->GetProto()->Bonding==ITEM_BIND_ON_EQUIP)
-				srcitem->SoulBind();
-		}
+			srcitem->Bind(ITEM_BIND_ON_EQUIP);
 	}
 
 	// swap items
@@ -497,7 +491,7 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 	}
 
 	// handle equipping of 2h when we have two items equipped! :) special case.
-	if((Slot == EQUIPMENT_SLOT_MAINHAND || Slot == EQUIPMENT_SLOT_OFFHAND) && !_player->titanGrip)
+	if((Slot == EQUIPMENT_SLOT_MAINHAND || Slot == EQUIPMENT_SLOT_OFFHAND) && !_player->titanGrip && !_player->ignoreitemreq_cheat)
 	{
 		Item* mainhandweapon = _player->GetItemInterface()->GetInventoryItem(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_MAINHAND);
 		if( mainhandweapon != NULL && mainhandweapon->GetProto()->InventoryType == INVTYPE_2HWEAPON )
@@ -617,8 +611,8 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 
 	}
 
-	if(eitem && eitem->GetProto()->Bonding==ITEM_BIND_ON_EQUIP)
-		eitem->SoulBind();
+	if(eitem)
+		eitem->Bind(ITEM_BIND_ON_EQUIP);
 }
 
 void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
@@ -2117,7 +2111,7 @@ void WorldSession::HandleWrapItemOpcode( WorldPacket& recv_data )
 		return;
 	}
 
-	if( dst->IsSoulbound() || dst->GetProto()->Bonding != 0)
+	if( dst->IsAccountbound() || dst->IsSoulbound() || dst->GetProto()->Bonding != 0)
 	{
 		_player->GetItemInterface()->BuildInventoryChangeError( src, dst, INV_ERR_BOUND_CANT_BE_WRAPPED );
 		return;

@@ -408,7 +408,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 	uint32 dmg = damage;
 	bool static_damage = false;
 	uint32 AdditionalCritChance = 0;
-
 	if(GetSpellProto()->EffectChainTarget[i])//chain
 	{
 		if( GetSpellProto()->Id == 53595 ) // Hammer of the righteous
@@ -416,6 +415,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			if( p_caster == NULL )
 				return;
 
+			static_damage = true;
 			float WMIN = 1.0f;
 			float WMAX = 2.0f;
 			float MWS = 2.0f;
@@ -556,6 +556,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if(p_caster != NULL)
 				{
+					static_damage = true;
 					if( p_caster->HasAura(34258) )
 						p_caster->CastSpell(p_caster, 34260, true);
 
@@ -565,40 +566,41 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					// Damage Calculations:
 					switch(GetSpellProto()->Id)
 					{
-					case 31804:
-						{
-							p_caster->CastSpell(unitTarget, 31803, true);
-							dmg = (1+uint32(uint32(0.22f*p_caster->GetDamageDoneMod(SCHOOL_HOLY))+uint32(0.14f*p_caster->GetAP())));
-							if(unitTarget->HasActiveAura(31803))
-							{
-								uint8 stacksize = 1;
-								Aura* curse = unitTarget->FindActiveAura(31803);
-								if(curse != NULL)
-									stacksize = curse->stackSize;
-								dmg += (dmg*(0.1f * stacksize));
-							}
-						}break;
-					case 53733:
-						{
-							p_caster->CastSpell(unitTarget, 53742, true);
-							dmg = (1+uint32(uint32(0.22f*p_caster->GetDamageDoneMod(SCHOOL_HOLY))+uint32(0.14f*p_caster->GetAP())));
-							if(unitTarget->HasAura(31803))
-							{
-								uint8 stacksize = 1;
-								Aura* curse = unitTarget->FindActiveAura(31803);
-								if(curse != NULL)
-									stacksize = curse->stackSize;
-								dmg += (dmg*(0.1f * stacksize));
-							}
-						}break;
 					case 20187: // Righteousness
-						dmg += (1+uint32(0.2f*p_caster->GetAP())+uint32(0.32f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						dmg = (2+uint32(0.2f*p_caster->GetAP())+uint32(0.32f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					case 20425: // Command
-						dmg += (1+uint32(0.08f*p_caster->GetAP())+uint32(0.13f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
-						break;
+						{
+							float WMIN = 1.0f;
+							float WMAX = 2.0f;
+							float MWS = 2.0f;
+							Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_MAINHAND);
+							if( it && it->GetProto() )
+							{
+								WMIN = it->GetProto()->Damage[0].Min;
+								WMAX = it->GetProto()->Damage[0].Max;
+								MWS = it->GetProto()->Delay / 1000.0f;
+							}	// Crow: Do not randomize 0, it will crash.
+
+							dmg += (1+uint32(((WMIN + RandomUInt(WMAX-WMIN))) * 0.19f)+uint32(0.08f*p_caster->GetAP())+uint32(0.13f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						}break;
+					case 31804: // Seal of Vengeance
+					case 53733: // Seal of Corruption
+						{
+							uint32 auraid = ((GetSpellProto()->Id == 53733) ? 53742 : 31803);
+							p_caster->CastSpell(unitTarget, auraid, true);
+							dmg = (1+uint32(uint32(0.22f*p_caster->GetDamageDoneMod(SCHOOL_HOLY))+uint32(0.14f*p_caster->GetAP())));
+							if(unitTarget->HasAura(auraid))
+							{
+								uint8 stacksize = 1;
+								Aura* curse = unitTarget->FindActiveAura(auraid);
+								if(curse != NULL)
+									stacksize = curse->stackSize;
+								dmg += (dmg*(0.1f * stacksize));
+							}
+						}break;
 					case 54158: // Light/Wisdom/Justice
-						dmg = (1+uint32(0.16f*p_caster->GetAP())+uint32(0.25f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						dmg = (1+uint32(40.0f*p_caster->GetAP())+uint32(0.25f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					}
 
@@ -683,6 +685,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if( p_caster != NULL )
 				{
+					static_damage = true;
+
 					Item* it = p_caster->GetItemInterface()->GetInventoryItem(EQUIPMENT_SLOT_RANGED);
 					ItemPrototype* ip = ItemPrototypeStorage.LookupEntry(p_caster->GetUInt32Value(PLAYER_AMMO_ID));
 					float ammodmg;
@@ -740,6 +744,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if( p_caster != NULL )
 				{
+					static_damage = true;
+
 					uint32 perc = p_caster->m_comboPoints * 3;
 					perc += (RandomUInt(5) * p_caster->m_comboPoints);
 					dmg += float2int32(p_caster->GetAP() * ( perc * 0.01f ));//UINT =+ INT + FLOAT = 0 LOL
@@ -760,6 +766,8 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if( p_caster != NULL )
 				{
+					static_damage = true;
+
 					// Lets find all deadly poisons...
 					uint32 dosestoate = 0;
 					uint32 doses = unitTarget->GetPoisonDosesCount( POISON_TYPE_DEADLY );
@@ -940,28 +948,11 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 			{
 				if( p_caster != NULL )
 				{
+					static_damage = true;
 					int32 usedpower = std::max(p_caster->GetUInt32Value(UNIT_FIELD_POWER4), (uint32)30);
 					dmg += float2int32( ( p_caster->m_comboPoints * p_caster->GetAP() * 0.07f ) + ( (usedpower * GetSpellProto()->dmg_multiplier[1] + p_caster->GetAP()) / 410.0f ) );
 
 					p_caster->ModUnsigned32Value(UNIT_FIELD_POWER4, -usedpower);
-				}
-			}break;
-
-		case 1822: case 1823: case 1824: // Bear Rake
-		case 9904: case 27003: case 48573: case 48574:
-			{
-				if( p_caster != NULL )
-				{
-					dmg += uint32(float(p_caster->GetAP())/100);
-				}
-			}break;
-
-		case 779: case 780: case 769: case 9754: case 9908: // Bear Swipe
-		case 26997: case 48561: case 48562: // Bear Swipe
-			{
-				if( p_caster != NULL )
-				{
-					dmg = (p_caster->GetAP() * 0.07f);
 				}
 			}break;
 
@@ -981,14 +972,6 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 					dmg = wpdmg * 2.5;
 				}
 			}break;
-
-		case 16857: // Faerie Fire(Feral)
-			{
-				if( p_caster != NULL )
-				{
-					dmg = (p_caster->GetAP() * 0.15) + 1;
-				}
-			}break;
 			/************************
 			*		NON-CLASS		*
 			************************/
@@ -1006,8 +989,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 		case 38441:
 			{
 				dmg = unitTarget->GetMaxHealth() / 2;
-				break;
-			}
+			}break;
 
 			// Thundercrash
 		case 25599:
@@ -1015,8 +997,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 				dmg = unitTarget->GetHealth() / 2;
 				if(dmg < 200)
 					dmg = 200;
-				break;
-			}
+			}break;
 
 			// Fatal Attraction
 		case 41001:
@@ -1055,7 +1036,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 
 	if(GetSpellProto()->speed > 0)
 	{
-		m_caster->SpellNonMeleeDamageLog(unitTarget,GetSpellProto()->Id, dmg, pSpellId==0, false, false, AdditionalCritChance);
+		m_caster->SpellNonMeleeDamageLog(unitTarget,GetSpellProto()->Id, dmg, pSpellId == 0, false, false, AdditionalCritChance);
 	}
 	else
 	{
@@ -4062,14 +4043,16 @@ void Spell::SpellEffectOpenLock(uint32 i) // Open Lock
 				Lock *lock = dbcLock.LookupEntry( itemTarget->GetProto()->LockId );
 				if(!lock) return;
 				for(int i=0; i < 8; ++i)
+				{
 					if(lock->locktype[i] == 2 && lock->minlockskill[i] && lockskill >= lock->minlockskill[i])
 					{
 						v = lock->minlockskill[i];
 						itemTarget->locked = false;
-						itemTarget->SetFlag(ITEM_FIELD_FLAGS,4); // unlock
+						itemTarget->SetFlag(ITEM_FIELD_FLAGS, 4); // unlock
 						DetermineSkillUp(SKILL_LOCKPICKING,v/5);
 						break;
 					}
+				}
 			}
 			else if(gameObjTarget)
 			{

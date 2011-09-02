@@ -139,9 +139,25 @@ public:
 	void DeleteFromDB();
 	bool IsEligibleForRefund();
 
+	HEARTHSTONE_INLINE void Bind(uint32 bondtype)
+	{
+		if(GetProto())
+		{
+			if(bondtype != ITEM_BIND_NONE && GetProto()->Bonding == bondtype)
+				SoulBind();
+			if(GetProto()->Flags & ITEM_FLAG_BINDONACC)
+				AccountBind();
+		}
+	}
+
 	HEARTHSTONE_INLINE void SoulBind()
 	{
 		SetFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_SOULBOUND );
+	}
+
+	HEARTHSTONE_INLINE void AccountBind()
+	{
+		SetFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_BINDONACC );
 	}
 
 	HEARTHSTONE_INLINE bool IsSoulbound()
@@ -152,8 +168,6 @@ public:
 	HEARTHSTONE_INLINE bool IsAccountbound()
 	{
 		if(HasFlag( ITEM_FIELD_FLAGS, ITEM_FLAG_BINDONACC ))
-			return true;
-		if(GetProto()->ScalingStatsEntry || GetProto()->ScalingStatsFlag)
 			return true;
 		return false;
 	}

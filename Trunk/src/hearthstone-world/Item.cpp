@@ -167,6 +167,8 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	}
 
 	SetUInt32Value( ITEM_FIELD_FLAGS, fields[8].GetUInt32() );
+	Bind(ITEM_BIND_ON_PICKUP); // Check if we need to bind our shit.
+
 	random_prop = fields[9].GetUInt32();
 	random_suffix = fields[10].GetUInt32();
 
@@ -213,7 +215,6 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	// Charter stuff
 	if(m_uint32Values[OBJECT_FIELD_ENTRY] == ITEM_ENTRY_GUILD_CHARTER)
 	{
-		SetUInt32Value( ITEM_FIELD_FLAGS, 1 );
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_playerInfo->charterId[CHARTER_TYPE_GUILD] )
@@ -222,7 +223,6 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 
 	if( m_uint32Values[OBJECT_FIELD_ENTRY] == ARENA_TEAM_CHARTER_2v2 )
 	{
-		SetUInt32Value( ITEM_FIELD_FLAGS, 1 );
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_playerInfo->charterId[CHARTER_TYPE_ARENA_2V2] )
@@ -231,7 +231,6 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 
 	if( m_uint32Values[OBJECT_FIELD_ENTRY] == ARENA_TEAM_CHARTER_3v3 )
 	{
-		SetUInt32Value( ITEM_FIELD_FLAGS, 1 );
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_playerInfo->charterId[CHARTER_TYPE_ARENA_3V3] )
@@ -240,7 +239,6 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 
 	if( m_uint32Values[OBJECT_FIELD_ENTRY] == ARENA_TEAM_CHARTER_5v5 )
 	{
-		SetUInt32Value( ITEM_FIELD_FLAGS, 1 );
 		SetUInt32Value( ITEM_FIELD_STACK_COUNT, 1 );
 		SetUInt32Value( ITEM_FIELD_PROPERTY_SEED, 57813883 );
 		if( plr->m_playerInfo->charterId[CHARTER_TYPE_ARENA_5V5] )

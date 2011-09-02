@@ -426,7 +426,7 @@ Aura::Aura( SpellEntry* proto, int32 duration, Object* caster, Unit* target )
 	pSpellId = 0;
 	periodic_target = 0;
 	Log.DebugSpell("Aura","Constructor %u (%s) from %u.", m_spellProto->Id, m_spellProto->Name, m_target->GetLowGUID());
-	m_auraSlot = 0xffffffff;
+	m_auraSlot = 255;
 	m_interrupted = -1;
 }
 
@@ -462,7 +462,7 @@ void Aura::Remove()
 	if( !IsPassive() || m_spellProto->AttributesEx & ATTRIBUTESEX_UNK12 )
 		BuildAuraUpdate();
 
-	if( m_auraSlot < MAX_AURAS+MAX_PASSIVE_AURAS && m_target->m_auras[m_auraSlot] == this )
+	if( m_auraSlot < TOTAL_AURAS && m_target->m_auras[m_auraSlot] == this )
 		m_target->m_auras[m_auraSlot] = NULL;
 
 	ApplyModifiers( false );
@@ -627,8 +627,7 @@ void Aura::UpdateModifiers( )
 				m_target->GetLowGUID(), m_auraSlot, mod->m_type, m_spellProto->Id, mod->i, GetDuration(),mod->m_amount);
 			switch (mod->m_type)
 			{
-				case 33: UpdateAuraModDecreaseSpeed(); break;
-
+			case 33: UpdateAuraModDecreaseSpeed(); break;
 			}
 		}
 		else
@@ -924,7 +923,7 @@ void Aura::EventRelocateRandomTarget()
 
 void Aura::EventUpdatePlayerAA(float r)
 {
-	if(m_auraSlot > MAX_AURAS+MAX_PASSIVE_AURAS)
+	if(m_auraSlot > TOTAL_AURAS)
 	{
 		//this event is no longer valid, remove it.
 		sEventMgr.RemoveEvents(this);
@@ -3738,7 +3737,7 @@ void Aura::SpellAuraDamageShield(bool apply)
 	{
 		for(std::list<struct DamageProc>::iterator i = m_target->m_damageShields.begin();i != m_target->m_damageShields.end();++i)
 		{
-			if(i->owner==this)
+			if(i->owner == this)
 			{
 				 m_target->m_damageShields.erase(i);
 				 return;
@@ -3765,51 +3764,119 @@ void Aura::SpellAuraModStealth(bool apply)
 		}
 
 		SetPositive();
-		m_target->SetStealth(GetSpellId());
+		if(m_spellProto->NameHash != SPELL_HASH_VANISH)
+			m_target->SetStealth(GetSpellId());
 
 		// Stealth level (not for normal stealth... ;p)
 		if( m_spellProto->NameHash == SPELL_HASH_STEALTH )
-			m_target->SetFlag(UNIT_FIELD_BYTES_2,0x1E000000);//sneak anim
+			m_target->SetFlag(UNIT_FIELD_BYTES_2, 0x1E000000);//sneak anim
 
 		m_target->SetFlag(UNIT_FIELD_BYTES_1, 0x020000);
-
 		if( m_target->IsPlayer() )
 			m_target->SetFlag(PLAYER_FIELD_BYTES2, 0x2000);
 
 		m_target->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_STEALTH, GetSpellId());
+		m_target->m_stealthLevel += mod->m_amount;
 
-		if( m_target->HasDummyAura(SPELL_HASH_OVERKILL) )
+		if( !m_target->InStealth() && m_target->HasDummyAura(SPELL_HASH_OVERKILL) )
 			m_target->CastSpell(m_target, 58427, true);
+
+		// hack fix for vanish stuff
+		if(m_spellProto->NameHash == SPELL_HASH_VANISH && m_target->IsPlayer())		// Vanish
+		{
+			for(Object::InRangeSet::iterator iter = m_target->GetInRangeSetBegin(); iter != m_target->GetInRangeSetEnd(); ++iter)
+			{
+				if((*iter) == NULL || !(*iter)->IsUnit())
+					continue;
+
+				Unit* _unit = TO_UNIT(*iter);
+				if(!_unit || !_unit->isAlive())
+					continue;
+
+				if(_unit->GetCurrentSpell() && _unit->GetCurrentSpell()->GetUnitTarget() == m_target)
+					_unit->GetCurrentSpell()->cancel();
+
+				if(_unit->GetAIInterface() != NULL)
+					_unit->GetAIInterface()->RemoveThreatByPtr(m_target);
+			}
+
+			for(uint32 x = 0; x < MAX_POSITIVE_AURAS; x++)
+			{
+				if(m_target->m_auras[x] != NULL)
+				{
+					if(m_target->m_auras[x]->GetSpellProto()->MechanicsType == MECHANIC_ROOTED || m_target->m_auras[x]->GetSpellProto()->MechanicsType == MECHANIC_ENSNARED)   // Remove roots and slow spells
+					{
+						m_target->m_auras[x]->Remove();
+					}
+					else // if got immunity for slow, remove some that are not in the mechanics
+					{
+						for(int i = 0; i < 3; i++)
+						{
+							uint32 AuraEntry = m_target->m_auras[x]->GetSpellProto()->EffectApplyAuraName[i];
+							if(AuraEntry == SPELL_AURA_MOD_DECREASE_SPEED || AuraEntry == SPELL_AURA_MOD_ROOT || AuraEntry == SPELL_AURA_MOD_STALKED)
+							{
+								m_target->m_auras[x]->Remove();
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			// check for stealth spells
+			if(p_target != NULL)
+			{
+				uint32 stealth_id = 0;
+				SpellSet::iterator itr = p_target->mSpells.begin();
+				SpellSet::iterator end = p_target->mSpells.end();
+				for(; itr != end; ++itr)
+				{
+					if(((*itr) == 1787 || (*itr) == 1786 || (*itr) == 1785 || (*itr) == 1784) && stealth_id < (*itr))
+					{
+						stealth_id = *itr;
+					}
+				}
+
+				if(stealth_id != 0)
+					p_target->CastSpell(p_target, dbcSpell.LookupEntry(stealth_id), true);
+
+				p_target->Dismount();
+			}
+		}
 	}
 	else
 	{
-		m_target->SetStealth(0);
-		m_target->RemoveFlag(UNIT_FIELD_BYTES_2,0x1E000000);
-		m_target->RemoveFlag(UNIT_FIELD_BYTES_1, 0x020000);
+		m_target->m_stealthLevel -= mod->m_amount;
 
-		if( m_target->IsPlayer() )
+		if(m_spellProto->NameHash != SPELL_HASH_VANISH)
 		{
-			m_target->RemoveFlag(PLAYER_FIELD_BYTES2, 0x2000);
+			m_target->SetStealth(0);
+			m_target->RemoveFlag(UNIT_FIELD_BYTES_2, 0x1E000000);
+			m_target->RemoveFlag(UNIT_FIELD_BYTES_1, 0x020000);
 
-			packetSMSG_COOLDOWN_EVENT cd;
-			cd.guid = m_target->GetGUID();
-			cd.spellid = m_spellProto->Id;
-			TO_PLAYER(m_target)->GetSession()->OutPacket( SMSG_COOLDOWN_EVENT, sizeof(packetSMSG_COOLDOWN_EVENT), &cd);
+			if( m_target->IsPlayer() )
+			{
+				m_target->RemoveFlag(PLAYER_FIELD_BYTES2, 0x2000);
+
+				packetSMSG_COOLDOWN_EVENT cd;
+				cd.guid = m_target->GetGUID();
+				cd.spellid = m_spellProto->Id;
+				TO_PLAYER(m_target)->GetSession()->OutPacket( SMSG_COOLDOWN_EVENT, sizeof(packetSMSG_COOLDOWN_EVENT), &cd);
+			}
 		}
 
 		if( (m_target->HasDummyAura(SPELL_HASH_MASTER_OF_SUBTLETY) || m_target->HasDummyAura(SPELL_HASH_OVERKILL)) && m_spellProto->NameHash == SPELL_HASH_STEALTH )
 		{
 			for( uint32 x=0 ; x<MAX_POSITIVE_AURAS; x++ )
 			{
-				if( m_target->m_auras[x] != NULL&&
+				if( m_target->m_auras[x] != NULL &&
 						(m_target->m_auras[x]->m_spellProto->NameHash == SPELL_HASH_MASTER_OF_SUBTLETY ||
 						 m_target->m_auras[x]->m_spellProto->NameHash == SPELL_HASH_OVERKILL) &&
 						m_target->m_auras[x]->m_spellProto->EffectApplyAuraName[0] != SPELL_AURA_DUMMY )
 				{
 						m_target->m_auras[x]->SetDuration(6000);
 
-						sEventMgr.AddAuraEvent(m_target, &Unit::RemoveAuraBySlot, uint16(x), 6000, 1,
-							EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT,GetSpellId());
+						sEventMgr.AddAuraEvent(m_target, &Unit::RemoveAuraBySlot, uint16(x), 6000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT, GetSpellId());
 				}
 			}
 		}

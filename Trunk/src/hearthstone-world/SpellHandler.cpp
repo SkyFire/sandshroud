@@ -46,12 +46,10 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 	if(!itemProto)
 		return;
 
-	if(itemProto->Bonding == ITEM_BIND_ON_USE)
-		tmpItem->SoulBind();
-
 	if(sScriptMgr.CallScriptedItem(tmpItem,_player))
 		return;
 
+	tmpItem->Bind(ITEM_BIND_ON_USE);
 	if(itemProto->QuestId)
 	{
 		// Item Starter
@@ -384,19 +382,14 @@ void WorldSession::HandleCancelAuraOpcode( WorldPacket& recvPacket)
 	uint32 spellId;
 	recvPacket >> spellId;
 
-	SpellEntry *spellInfo = dbcSpell.LookupEntryForced( spellId );
-	if(spellInfo == NULL)
-		return;
-
-	if(spellInfo->Attributes & ATTRIBUTES_CANT_CANCEL || spellInfo->Attributes & ATTRIBUTES_PASSIVE)
-		return;
-
-	for(uint32 x = 0; x < MAX_AURAS+MAX_POSITIVE_AURAS; x++)
+	if(_player->m_currentSpell && _player->m_currentSpell->GetSpellProto()->Id == spellId)
+		_player->m_currentSpell->cancel();
+	else
 	{
-		if(_player->m_auras[x] && _player->m_auras[x]->GetSpellId() == spellId && _player->m_auras[x]->IsPositive())
-			_player->RemoveAuraBySlot(x);
+		SpellEntry* info = dbcSpell.LookupEntryForced(spellId);
+		_player->RemoveAllPosAuraByNameHash(info->NameHash);
+		Log.DebugSpell("Aura","Removing aura with names %s", info->Name);
 	}
-	Log.DebugSpell("Aura","Removing aura %u",spellId);
 }
 
 void WorldSession::HandleCancelChannellingOpcode( WorldPacket& recvPacket)

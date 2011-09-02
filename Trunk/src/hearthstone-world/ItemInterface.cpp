@@ -283,10 +283,7 @@ AddItemResult ItemInterface::m_AddItem( Item* item, int16 ContainerSlot, int16 s
 				item->SetOwner( m_pOwner );
 				item->SetUInt64Value(ITEM_FIELD_CONTAINED, m_pOwner->GetGUID());
 				m_pItems[slot] = item;
-
-				if (item->GetProto()->Bonding == ITEM_BIND_ON_PICKUP)
-					item->SoulBind();
-
+				item->Bind(ITEM_BIND_ON_PICKUP);
 				if( m_pOwner->IsInWorld() && !item->IsInWorld())
 				{
 					//item->AddToWorld();
@@ -1873,14 +1870,14 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 	case EQUIPMENT_SLOT_MAINHAND:
 		{
 			if(type == INVTYPE_WEAPON || type == INVTYPE_WEAPONMAINHAND ||
-				(type == INVTYPE_2HWEAPON && (!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND) || skip_2h_check || m_pOwner->titanGrip)))
+				(type == INVTYPE_2HWEAPON && (!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND) || skip_2h_check || m_pOwner->titanGrip || m_pOwner->ignoreitemreq_cheat)))
 				return 0;
 			else
 				return INV_ERR_ITEM_DOESNT_GO_TO_SLOT;
 		}
 	case EQUIPMENT_SLOT_OFFHAND:
 		{
-			if( m_pOwner->titanGrip && ((type == INVTYPE_2HWEAPON && (proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
+			if( (m_pOwner->titanGrip || m_pOwner->ignoreitemreq_cheat) && ((type == INVTYPE_2HWEAPON && (proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
 				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_MACE || proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_SWORD)) ||
 				type == INVTYPE_WEAPON || type == INVTYPE_WEAPONOFFHAND || type == INVTYPE_SHIELD) )
 				return 0;	// Titan's Grip
@@ -2360,7 +2357,7 @@ int8 ItemInterface::GetItemSlotByType(ItemPrototype* proto)
 			return EQUIPMENT_SLOT_RANGED;
 	case INVTYPE_2HWEAPON:
 		{
-			if (!GetInventoryItem(EQUIPMENT_SLOT_MAINHAND) || !m_pOwner->titanGrip)
+			if (!GetInventoryItem(EQUIPMENT_SLOT_MAINHAND) || !m_pOwner->titanGrip || !m_pOwner->ignoreitemreq_cheat)
 				return EQUIPMENT_SLOT_MAINHAND;
 			else if(!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND) && (proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
 				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_MACE || proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_SWORD))
@@ -2815,8 +2812,7 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 			}
 
 			// handle bind on equip
-			if( m_pItems[srcslot]->GetProto()->Bonding == ITEM_BIND_ON_EQUIP )
-				m_pItems[srcslot]->SoulBind();
+			m_pItems[srcslot]->Bind(ITEM_BIND_ON_EQUIP);
 
 			// 2.4.3: Casting a spell is cancelled when you equip
 			if( GetOwner() && GetOwner()->GetCurrentSpell() )
@@ -2849,13 +2845,10 @@ bool ItemInterface::SwapItemSlots(int16 srcslot, int16 dstslot)
 			}
 
 			// handle bind on equip
-			if( m_pItems[dstslot]->GetProto()->Bonding == ITEM_BIND_ON_EQUIP )
-				m_pItems[dstslot]->SoulBind();
-
+			m_pItems[dstslot]->Bind(ITEM_BIND_ON_EQUIP);
 		}
 		else
 		{
-
 			// bags aren't considered visible
 			if( dstslot < EQUIPMENT_SLOT_END )
 			{
@@ -3332,9 +3325,7 @@ bool ItemInterface::AddItemById( uint32 itemid, uint32 count, int32 randomprop, 
 		if(creator != NULL)
 			item->SetUInt64Value(ITEM_FIELD_CREATOR, creator->GetGUID());
 
-		if( it->Bonding == ITEM_BIND_ON_PICKUP )
-			item->SoulBind();
-
+		item->Bind(ITEM_BIND_ON_PICKUP);
 		if( randomprop != 0 )
 		{
 			if( randomprop < 0 )

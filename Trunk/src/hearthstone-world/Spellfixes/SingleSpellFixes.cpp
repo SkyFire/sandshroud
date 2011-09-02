@@ -331,6 +331,11 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectTriggerSpell[1]	=	19823;
 		}break;
 
+	case 64395:
+		{
+			sp->School = SCHOOL_ARCANE;
+		}break;
+
 		// Flurry
 	case 12319:
 	case 12971:
@@ -739,8 +744,13 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->rangeIndex = 4;
 		}break;
 
-		//rogue - overkill stealth break
-	case 58427:
+	case 1856: // Vanish r1
+	case 1857: // Vanish r2
+	case 26889: // Vanish r3
+	case 31665: // Master of Sub
+	case 36554: // Shadow Step
+	case 46784: // Shadowsong Panther
+	case 58427: // Overkill
 		{
 			sp->AttributesEx |= ATTRIBUTESEX_NOT_BREAK_STEALTH;
 		}break;
@@ -787,12 +797,14 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->EffectMiscValue[1] = SMT_MISC_EFFECT;
 			sp->procFlags	=	0;
 			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
+			sp->AttributesEx |= ATTRIBUTESEX_NOT_BREAK_STEALTH;
 		}break;
 
 	case 44373:
 		{
 			sp->procFlags	=	0;
 			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_CAST_SPELL;
+			sp->AttributesEx |= ATTRIBUTESEX_NOT_BREAK_STEALTH;
 		}break;
 
 		//Rogue  - Ruthlessness
@@ -3625,7 +3637,9 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 			sp->Effect[1]	=	0;
 			sp->Effect[2]	=	0;
 			sp->EffectApplyAuraName[0] = SPELL_AURA_DUMMY;
+			sp->AttributesEx |= ATTRIBUTESEX_NOT_BREAK_STEALTH;
 		}break;
+
 		// Focused Attacks
 	case 51634:
 	case 51635:

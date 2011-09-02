@@ -1427,12 +1427,9 @@ void Spell::cast(bool check)
 			if(!m_triggeredSpell)
 				AddCooldown();
 
-			if( u_caster )
-			{
-				if (u_caster->InStealth() && !(GetSpellProto()->AttributesEx & ATTRIBUTESEX_NOT_BREAK_STEALTH) && !m_triggeredSpell)
-					u_caster->RemoveStealth();
-			}
-
+			if (u_caster && u_caster->InStealth() && !(GetSpellProto()->Attributes & ATTRIBUTES_PASSIVE)
+				&& !(GetSpellProto()->AttributesEx & ATTRIBUTESEX_NOT_BREAK_STEALTH) && !(GetSpellProto()->Attributes&ATTRIBUTES_PASSIVE) && !m_triggeredSpell)
+				u_caster->RemoveStealth();
 
 			if( p_caster != NULL )
 			{
@@ -1927,9 +1924,7 @@ void Spell::update(uint32 difftime)
 {
 	// ffs stealth capping
 	if( p_caster && GetGameObjectTarget() && p_caster->InStealth() )
-	{
 		p_caster->RemoveAura( p_caster->m_stealth );
-	}
 
 	// skip cast if we're more than 2/3 of the way through
 	if(

@@ -1556,14 +1556,9 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recv_data)
 
 		pItem->SetUInt32Value(ITEM_FIELD_GIFTCREATOR,0);
 		pItem->SetUInt32Value(OBJECT_FIELD_ENTRY,pItem->wrapped_item_id);
-		pItem->wrapped_item_id=0;
+		pItem->wrapped_item_id = 0;
 		pItem->SetProto(it);
-
-		if(it->Bonding==ITEM_BIND_ON_PICKUP)
-			pItem->SetUInt32Value(ITEM_FIELD_FLAGS,1);
-		else
-			pItem->SetUInt32Value(ITEM_FIELD_FLAGS,0);
-
+		pItem->Bind(ITEM_BIND_ON_PICKUP);
 		if(it->MaxDurability)
 		{
 			pItem->SetUInt32Value(ITEM_FIELD_DURABILITY,it->MaxDurability);

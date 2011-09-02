@@ -1686,7 +1686,7 @@ void Object::SetFlag( const uint32 index, uint32 newFlag )
 		Unit* u = TO_UNIT(this);
 		if( newFlag == AURASTATE_FLAG_STUNNED && u->IsPlayer() && u->HasDummyAura(SPELL_HASH_PRIMAL_TENACITY) && TO_PLAYER(u)->GetShapeShift() == FORM_CAT )
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
+			for(uint32 i = 0; i < TOTAL_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && u->m_auras[i]->GetSpellProto()->NameHash == SPELL_HASH_PRIMAL_TENACITY )
 				{
@@ -1708,7 +1708,7 @@ void Object::SetFlag( const uint32 index, uint32 newFlag )
 		}
 		else
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
+			for(uint32 i = 0; i < TOTAL_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && !u->m_auras[i]->m_applied) // try to apply
 					u->m_auras[i]->ApplyModifiers(true);
@@ -1748,7 +1748,7 @@ void Object::RemoveFlag( const uint32 index, uint32 oldFlag )
 		Unit* u = TO_UNIT(this);
 		if( oldFlag == AURASTATE_FLAG_STUNNED && u->IsPlayer() && u->HasDummyAura(SPELL_HASH_PRIMAL_TENACITY) && TO_PLAYER(u)->GetShapeShift() == FORM_CAT )
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
+			for(uint32 i = 0; i < TOTAL_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && u->m_auras[i]->GetSpellProto()->NameHash == SPELL_HASH_PRIMAL_TENACITY )
 				{
@@ -1770,7 +1770,7 @@ void Object::RemoveFlag( const uint32 index, uint32 oldFlag )
 		}
 		else
 		{
-			for(uint32 i = 0; i < MAX_AURAS+MAX_POSITIVE_AURAS; i++)
+			for(uint32 i = 0; i < TOTAL_AURAS; i++)
 			{
 				if( u->m_auras[i] != NULL && !u->m_auras[i]->m_applied) // try to apply
 					u->m_auras[i]->ApplyModifiers(true);

@@ -2016,11 +2016,6 @@ void ApplyCoeffSpellFixes(SpellEntry *sp)
 		{
 			sp->SP_coef_override = float(0.250000f);
 		}break;
-	case 20187: // Judgement of Righteousness - Rank 1
-		{
-			sp->SP_coef_override = float(0.400000f);
-			sp->AP_coef_override = float(0.250000f);
-		}break;
 	case 20252: // Intercept
 		{
 			sp->AP_coef_override = float(0.120000f);
@@ -2826,11 +2821,6 @@ void ApplyCoeffSpellFixes(SpellEntry *sp)
 		{
 			sp->SP_coef_override = float(0.025000f);
 			sp->AP_coef_override = float(0.050000f);
-		}break;
-	case 31804: // Judgement of Vengeance - Rank 1
-		{
-			sp->SP_coef_override = float(0.220000f);
-			sp->AP_coef_override = float(0.140000f);
 		}break;
 	case 31893: // Seal of Blood
 		{
@@ -4011,16 +4001,6 @@ void ApplyCoeffSpellFixes(SpellEntry *sp)
 		{
 			sp->SP_coef_override = float(0.250000f);
 			sp->AP_coef_override = float(0.160000f);
-		}break;
-	case 53733: // Judgement of Corruption - Rank 1
-		{
-			sp->SP_coef_override = float(0.250000f);
-			sp->AP_coef_override = float(0.160000f);
-		}break;
-	case 53742: // Blood Corruption - Rank 1
-		{
-			sp->SP_coef_override = float(0.025000f);
-			sp->AP_coef_override = float(0.050000f);
 		}break;
 	case 55359: // Living Bomb - Rank 2
 		{
