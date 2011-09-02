@@ -19,6 +19,7 @@
 
 #include "ConfigEnv.h"
 #include "NGLog.h"
+
 ConfigMgr Config;
 
 //#define _CONFIG_DEBUG
@@ -35,7 +36,7 @@ ConfigFile::~ConfigFile()
 
 void remove_spaces(string& str)
 {
-	while(str.size() && *str.begin() == ' ')
+	while(str.size() && (*str.begin() == ' ' || *str.begin() == '\t'))
 		str.erase(str.begin());
 }
 
@@ -46,6 +47,13 @@ void remove_all_spaces(string& str)
 	{
 		str.erase(off, 1);
 		off = str.find(" ");
+	}
+
+	off = str.find("\t");
+	while(off != string::npos)
+	{
+		str.erase(off, 1);
+		off = str.find("\t");
 	}
 }
 
@@ -127,7 +135,13 @@ bool ConfigFile::SetSource(const char *file, bool ignorecase)
 	/* open the file */
 	if(file != 0)
 	{
+		//the right mode in Windows is "rb" since '\n' is saved as 0x0D,0x0A but fopen(file,"r") reads these 2 chars
+		//as only 1 char, so ftell(f) returns a higher value than the required by fread() to the file to buf.
+#ifdef WIN32
+		FILE * f = fopen(file, "rb");
+#else 
 		FILE * f = fopen(file, "r");
+#endif
 		char * buf;
 		int length;
 		if(!f)
@@ -169,12 +183,12 @@ bool ConfigFile::SetSource(const char *file, bool ignorecase)
 		for(;;)
 		{
 			/* grab a line. */
-			end = buffer.find("\n");
+			end = buffer.find(EOL);
 			if(end == string::npos)
 				break;
 
 			line = buffer.substr(0, end);
-			buffer.erase(0, end+1);
+			buffer.erase(0, end+EOL_SIZE);
 			goto parse;
 
 parse:
@@ -206,7 +220,7 @@ parse:
 				line.erase(0, offset + 2);
 				in_multiline_comment = false;
 			}
-		
+
 			if(in_block)
 			{
 				/* handle settings across multiple lines */
@@ -222,7 +236,7 @@ parse:
 						current_setting += "\n";
 						continue;
 					}
-	                
+
 					/* only append part of the line to the setting. */
 					current_setting.append(line.c_str(), offset+1);
 					line.erase(0, offset + 1);
@@ -238,14 +252,14 @@ parse:
 					apply_setting(current_setting, current_setting_struct);
 
 					/* the setting is done, append it to the current block. */
-                    current_block_map[ahash(current_variable)] = current_setting_struct;
+					current_block_map[ahash(current_variable)] = current_setting_struct;
 #ifdef _CONFIG_DEBUG
 					printf("Block: '%s', Setting: '%s', Value: '%s'\n", current_block.c_str(), current_variable.c_str(), current_setting_struct.AsString.c_str());
 #endif
 					/* no longer doing this setting, or in a quote. */
 					current_setting = "";
 					current_variable = "";
-                    in_multiline_quote = false;					
+					in_multiline_quote = false;
 				}
 
 				/* remove any leading spaces */
@@ -255,7 +269,7 @@ parse:
 					continue;
 
 				/* our target is a *setting*. look for an '=' sign, this is our seperator. */
-                offset = line.find("=");
+				offset = line.find("=");
 				if(offset != string::npos)
 				{
 					ASSERT(current_variable == "");
@@ -524,7 +538,7 @@ bool ConfigFile::GetString(const char * block, char * buffer, const char * name,
 
 	memcpy(buffer, val.c_str(), blen);
 	buffer[blen] = 0;
-    
+
 	return true;
 }
 

@@ -1,6 +1,10 @@
 /*
- * onyx MMORPG Server
- * Copyright (C) 2005-2008 onyx Team <http://www.onyxemu.com/>
+ * Sandshroud Hearthstone
+ * Copyright (C) 2004 - 2005 Antrix Team
+ * Copyright (C) 2005 - 2007 Ascent Team <http://www.ascentemu.com/>
+ * Copyright (C) 2008 - 2009 AspireDev <http://www.aspiredev.org/>
+ * Copyright (C) 2009 - 2010 Sandshroud <http://www.sandshroud.org/>
+ * Copyright (C) 2010 - 2011 Sandshroud <http://www.sandshroud.org/>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,9 +21,25 @@
  *
  */
 
-#if !defined (CONFIG_H)
+#ifndef CONFIG_H
 #define CONFIG_H
-#include "Common.h"
+#include "../Common.h"
+
+#ifndef EOL
+#ifdef WIN32
+#define EOL "\r\n"
+#else
+#define EOL "\n"
+#endif
+#endif
+
+#ifndef EOL_SIZE
+#ifdef WIN32
+#define EOL_SIZE 2
+#else
+#define EOL_SIZE 1
+#endif
+#endif
 
 using namespace std;
 struct SERVER_DECL ConfigSetting

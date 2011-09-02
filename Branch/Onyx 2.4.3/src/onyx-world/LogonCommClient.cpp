@@ -227,7 +227,7 @@ void LogonCommClientSocket::SendChallenge()
 	uint8 * key = sLogonCommHandler.sql_passhash;
 
 	_recvCrypto.Setup(key, 20);
-	_sendCrypto.Setup(key, 20);	
+	_sendCrypto.Setup(key, 20);
 
 	/* packets are encrypted from now on */
 	use_crypto = true;

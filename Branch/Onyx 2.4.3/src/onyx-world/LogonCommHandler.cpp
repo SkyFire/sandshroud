@@ -18,6 +18,7 @@
  */
 
 #include "StdAfx.h"
+
 initialiseSingleton(LogonCommHandler);
 
 LogonCommHandler::LogonCommHandler()
@@ -96,7 +97,7 @@ public:
 
 	bool run()
 	{
-		sLogonCommHandler.ConnectAll();
+		sLogonCommHandler.Connect();
 		while( m_threadRunning )
 		{
 			sLogonCommHandler.UpdateSockets();
@@ -135,12 +136,6 @@ void LogonCommHandler::Startup()
 	ThreadPool.ExecuteTask( new LogonCommWatcherThread() );
 }
 
-void LogonCommHandler::ConnectAll()
-{
-	Log.Notice("LogonCommClient", "Attempting to connect to logon server...");
-	Connect();
-}
-
 const string* LogonCommHandler::GetForcedPermissions(string& username)
 {
 	ForcedPermissionMap::iterator itr = forced_permissions.find(username);
@@ -152,6 +147,7 @@ const string* LogonCommHandler::GetForcedPermissions(string& username)
 
 void LogonCommHandler::Connect()
 {
+	Log.Notice("LogonCommClient", "Attempting to connect to logon server...");
 	if(server == NULL)
 		return;
 
@@ -351,16 +347,16 @@ void LogonCommHandler::LoadRealmConfiguration()
 	server->Port = Config.RealmConfig.GetIntDefault("LogonServer", "Port", 8093);
 
 	char* port = new char[10];
-	itoa(Config.RealmConfig.GetIntDefault( "Realm", "Port", 8129), port, 10);
-	std::string adress = string(Config.RealmConfig.GetStringDefault( "Realm", "Adress", "Localhost" ).c_str())
+	itoa(Config.RealmConfig.GetIntDefault( "Listen", "Port", 8129), port, 10);
+	std::string adress = string(Config.RealmConfig.GetStringDefault( "ServerSettings", "Adress", "Localhost" ).c_str())
 		+ ":" + string(port);
 
 	realm = new Realm();
 	ZeroMemory(realm, sizeof(Realm*));
 	realm->Address = adress;
-	realm->Icon = Config.RealmConfig.GetIntDefault("Realm", "RealmType", 1);
-	realm->Name = Config.RealmConfig.GetStringDefault("Realm", "Name", "SomeRealm");
-	realm->WorldRegion = Config.RealmConfig.GetIntDefault("Realm", "WorldRegion", 1);
+	realm->Icon = Config.RealmConfig.GetIntDefault("ServerSettings", "RealmType", 1);
+	realm->Name = Config.RealmConfig.GetStringDefault("ServerSettings", "Name", "SomeRealm");
+	realm->WorldRegion = Config.RealmConfig.GetIntDefault("ServerSettings", "WorldRegion", 1);
 	sWorld.IsPvPRealm = ((realm->Icon == REALMTYPE_RPPVP || realm->Icon == REALMTYPE_PVP) ? true : false);
 }
 
