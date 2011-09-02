@@ -63,6 +63,7 @@ void LogonCommHandler::RequestAddition()
 	data << realm->Icon;
 	data << realm->WorldRegion;
 	data << uint32(sWorld.GetPlayerLimit());
+	data << uint8(2) << uint8(4) << uint8(3);
 	data << uint32(CL_BUILD_SUPPORT);
 	data << uint8(realm->Lock);
 	logon->SendPacket(&data,false);
