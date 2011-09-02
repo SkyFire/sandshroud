@@ -2240,87 +2240,87 @@ void Spell::SpellEffectDummy(uint32 i) // Dummy(Scripted events)
 			{
 			case 1:
 				{
-						data << uint32(8906) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "I... was... pure... once.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8906) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "I... was... pure... once.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 2:
 				{
-						data << uint32(8907) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Fought... for... righteousness.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8907) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Fought... for... righteousness.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 3:
 				{
-						data << uint32(8908) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "I... was... once... called... Ashbringer.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8908) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "I... was... once... called... Ashbringer.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 4:
 				{
-						data << uint32(8920) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Betrayed... by... my... order.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8920) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Betrayed... by... my... order.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 5:
 				{
-						data << uint32(8921) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Destroyed... by... Kel'Thuzad.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8921) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Destroyed... by... Kel'Thuzad.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 6:
 				{
-						data << uint32(8922) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Made... to serve.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8922) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Made... to serve.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 7:
 				{
-						data << uint32(8923) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "My... son... watched... me... die.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8923) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "My... son... watched... me... die.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 8:
 				{
-						data << uint32(8924) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Crusades... fed his rage.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8924) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Crusades... fed his rage.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 9:
 				{
-						data << uint32(8925) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Truth... is... unknown... to him.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8925) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Truth... is... unknown... to him.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 10:
 				{
-						data << uint32(8926) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Scarlet... Crusade... is pure... no longer.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8926) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Scarlet... Crusade... is pure... no longer.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 11:
 				{
-						data << uint32(8927) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Balnazzar's... crusade... corrupted... my son.";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8927) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Balnazzar's... crusade... corrupted... my son.";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			case 12:
 				{
-						data << uint32(8928) << unitTarget->GetGUID();
-						p_caster->SendMessageToSet(&data, true);
-						Reply << "Kill... them... all!";
-						crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
+					data << uint32(8928) << unitTarget->GetGUID();
+					p_caster->SendMessageToSet(&data, true);
+					Reply << "Kill... them... all!";
+					crap = sChatHandler.FillMessageData( CHAT_MSG_WHISPER, LANG_UNIVERSAL, Reply.str().c_str(), p_caster->GetGUID(), 0);
 				}break;
 			}
 			p_caster->GetSession()->SendPacket(crap);

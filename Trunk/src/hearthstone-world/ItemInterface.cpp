@@ -1869,8 +1869,8 @@ int16 ItemInterface::CanEquipItemInSlot(int16 DstInvSlot, int16 slot, ItemProtot
 		}
 	case EQUIPMENT_SLOT_MAINHAND:
 		{
-			if(type == INVTYPE_WEAPON || type == INVTYPE_WEAPONMAINHAND ||
-				(type == INVTYPE_2HWEAPON && (!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND) || skip_2h_check || m_pOwner->titanGrip || m_pOwner->ignoreitemreq_cheat)))
+			if(proto->SubClass != ITEM_SUBCLASS_WEAPON_POLEARM && (type == INVTYPE_WEAPON || type == INVTYPE_WEAPONMAINHAND ||
+				(type == INVTYPE_2HWEAPON && (!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND) || skip_2h_check || m_pOwner->titanGrip || m_pOwner->ignoreitemreq_cheat))))
 				return 0;
 			else
 				return INV_ERR_ITEM_DOESNT_GO_TO_SLOT;
@@ -2357,7 +2357,7 @@ int8 ItemInterface::GetItemSlotByType(ItemPrototype* proto)
 			return EQUIPMENT_SLOT_RANGED;
 	case INVTYPE_2HWEAPON:
 		{
-			if (!GetInventoryItem(EQUIPMENT_SLOT_MAINHAND) || !m_pOwner->titanGrip || !m_pOwner->ignoreitemreq_cheat)
+			if (!GetInventoryItem(EQUIPMENT_SLOT_MAINHAND) || !(m_pOwner->titanGrip && m_pOwner->ignoreitemreq_cheat))
 				return EQUIPMENT_SLOT_MAINHAND;
 			else if(!GetInventoryItem(EQUIPMENT_SLOT_OFFHAND) && (proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_AXE ||
 				proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_MACE || proto->SubClass == ITEM_SUBCLASS_WEAPON_TWOHAND_SWORD))
