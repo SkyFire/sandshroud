@@ -22,7 +22,7 @@
 #define __ACCOUNTCACHE_H
 
 #include "Common.h"
-#include "../hearthstone-shared/Database/DatabaseEnv.h"
+#include "../hearthstone-shared/DataStorage/DatabaseEnv.h"
 
 enum RealmColours
 {

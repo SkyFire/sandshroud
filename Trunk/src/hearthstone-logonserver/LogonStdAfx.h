@@ -38,9 +38,9 @@
 #include "../hearthstone-shared/Config/ConfigEnv.h"
 #include "../../dependencies/VC/include/zlib.h"
 
-#include "../hearthstone-shared/Database/DatabaseEnv.h"
-#include "../hearthstone-shared/Database/DBCStores.h"
-#include "../hearthstone-shared/Database/dbcfile.h"
+#include "../hearthstone-shared/DataStorage/DatabaseEnv.h"
+#include "../hearthstone-shared/DataStorage/DBC/DBCStores.h"
+#include "../hearthstone-shared/DataStorage/DBC/dbcfile.h"
 
 #include "../hearthstone-shared/Auth/BigNumber.h"
 #include "../hearthstone-shared/Auth/Sha1.h"

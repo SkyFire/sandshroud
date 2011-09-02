@@ -378,7 +378,7 @@ void LogonServer::Run(int argc, char ** argv)
 	hash.UpdateData(logon_pass);
 	hash.Finalize();
 	memcpy(sql_hash, hash.GetDigest(), 20);
-	
+
 	ThreadPool.ExecuteTask(new LogonConsoleThread);
 
 	new iocpEngine;
