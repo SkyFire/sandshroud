@@ -746,10 +746,14 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 
 	case 1856: // Vanish r1
 	case 1857: // Vanish r2
+	case 11305: // Sprint
+	case 14183: // Premeditation
+	case 14185: // Preparation
 	case 26889: // Vanish r3
 	case 31665: // Master of Sub
 	case 36554: // Shadow Step
 	case 46784: // Shadowsong Panther
+	case 51724: // Sap
 	case 58427: // Overkill
 		{
 			sp->AttributesEx |= ATTRIBUTESEX_NOT_BREAK_STEALTH;

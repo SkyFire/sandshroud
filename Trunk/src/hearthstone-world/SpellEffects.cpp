@@ -600,7 +600,7 @@ void Spell::SpellEffectSchoolDMG(uint32 i) // dmg school
 							}
 						}break;
 					case 54158: // Light/Wisdom/Justice
-						dmg = (1+uint32(40.0f*p_caster->GetAP())+uint32(0.25f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
+						dmg = (1+uint32(0.16f*p_caster->GetAP())+uint32(0.25f*p_caster->GetDamageDoneMod(SCHOOL_HOLY)));
 						break;
 					}
 
