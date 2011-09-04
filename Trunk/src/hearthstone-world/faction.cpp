@@ -167,28 +167,6 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 		if( sWorld.IsSanctuaryArea(player_objA->GetPlayerAreaID()) || sWorld.IsSanctuaryArea(player_objB->GetPlayerAreaID()) )
 			return 0;
 
-		// Players with feign death flags can't be attacked
-		// But they can be attacked by another players. -- Dvlpr
-		// WARNING: This presumes, that objA attacks objb!!!
-		if( (objA->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH) || objB->HasFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH)) && !objA->IsPlayer() )
-			return 0;
-
-		//Handle BG's
-		if( player_objA->m_bg != NULL)
-		{
-			//Handle ffa_PVP
-			if( player_objA->HasFlag(PLAYER_FLAGS,PLAYER_FLAG_FREE_FOR_ALL_PVP) && player_objA->HasFlag(PLAYER_FLAGS,PLAYER_FLAG_FREE_FOR_ALL_PVP))
-			{
-				if( player_objA->GetGroup() == player_objB->GetGroup() )
-					return 0;
-				else
-					return 1;
-			}
-			//Handle Arenas
-			if( player_objA->GetTeam() != player_objB->GetTeam() )
-				return 1;
-		}
-
 		if(player_objA->IsFFAPvPFlagged() && player_objB->IsFFAPvPFlagged())
 		{
 			if( player_objA->GetGroup() && player_objA->GetGroup() == player_objB->GetGroup() )
@@ -200,11 +178,17 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 			return 1;		// can hurt each other in FFA pvp
 		}
 
-		if( player_objA->GetAreaDBC() != NULL )
+		//Handle BG's
+		if( player_objA->m_bg != NULL)
 		{
-			if( player_objA->GetAreaDBC()->AreaFlags & 0x800 )
-				return 0;
+			//Handle Arenas
+			if( player_objA->GetTeam() != player_objB->GetTeam() )
+				return 1;
 		}
+
+		// same faction can't kill each other.
+		if(player_objA->m_faction == player_objB->m_faction)
+			return 0;
 
 		return 1; // Skip the rest of this, it's all faction shit.
 	}
@@ -233,7 +217,7 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 	}
 
 	// Reputation System Checks
-	if(player_objA)
+	if(player_objA && !player_objB)
 	{
 		if(objB->m_factionDBC->RepListId >= 0)
 			hostile = player_objA->IsHostileBasedOnReputation( objB->m_factionDBC );
@@ -247,7 +231,7 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 				hostile = true;
 		}
 	}
-	else if(player_objB)
+	else if(player_objB && !player_objA)
 	{
 		if(objA->m_factionDBC->RepListId >= 0)
 			hostile = player_objB->IsHostileBasedOnReputation( objA->m_factionDBC );
