@@ -615,7 +615,6 @@ Corpse* ObjectMgr::LoadCorpse(uint32 guid)
 
 	if( result == NULL )
 		return NULLCORPSE;
-
 	do
 	{
 		Field *fields = result->Fetch();

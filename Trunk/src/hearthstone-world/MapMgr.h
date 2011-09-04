@@ -208,6 +208,7 @@ public:
 	MapMgr(Map *map, uint32 mapid, uint32 instanceid);
 	~MapMgr();
 	void Init();
+	void Destruct();
 
 	void PushObject(Object* obj);
 	void PushStaticObject(Object* obj);
@@ -310,7 +311,7 @@ public:
 	// kill the worker thread only
 	void KillThread()
 	{
-		pInstance=NULL;
+		pInstance = NULL;
 		thread_kill_only = true;
 		Terminate();
 		while(thread_running)
@@ -391,6 +392,7 @@ public:
 	ByteBuffer m_compressionBuffer;
 
 public:
+	void ClearCorpse(Corpse* remove) { unordered_set<Corpse* >::iterator itr; if((itr = m_corpses.find(remove)) != m_corpses.end()) m_corpses.erase(itr); };
 
 	// get!
 	HEARTHSTONE_INLINE WorldStateManager& GetStateManager() { return *m_stateManager; }

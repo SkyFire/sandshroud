@@ -446,6 +446,8 @@ public:
 	World();
 	~World();
 
+	void Destruct();
+
 	uint32 GetMaxLevel(Player* plr);
 
 	/** Reloads the config and sets all of the setting variables

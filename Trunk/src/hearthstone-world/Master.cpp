@@ -452,7 +452,7 @@ bool Master::Run(int argc, char ** argv)
 	delete LogonCommHandler::getSingletonPtr();
 
 	Log.Notice( "World", "~World()" );
-	delete World::getSingletonPtr();
+	sWorld.Destruct();
 
 	Log.Notice( "ScriptMgr", "~ScriptMgr()" );
 	sScriptMgr.UnloadScripts();

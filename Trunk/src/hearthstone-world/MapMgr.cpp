@@ -111,7 +111,7 @@ void MapMgr::Init()
 	sHookInterface.OnContinentCreate(this);
 }
 
-MapMgr::~MapMgr()
+void MapMgr::Destruct()
 {
 	SetThreadName("thread_proc");//free the name
 
@@ -192,19 +192,21 @@ MapMgr::~MapMgr()
 	_mapWideStaticObjects.clear();
 
 	Corpse* pCorpse;
-	for(unordered_set<Corpse* >::iterator itr = m_corpses.begin(); itr != m_corpses.end(); itr++)
+	if(m_corpses.size())
 	{
-		pCorpse = *itr;
-		if(!pCorpse)
-			continue;
+		for(unordered_set<Corpse* >::iterator itr = m_corpses.begin(); itr != m_corpses.end();)
+		{
+			pCorpse = *itr;
+			++itr;
 
-		if(pCorpse->IsInWorld())
-			pCorpse->RemoveFromWorld(false);
+			if(pCorpse->IsInWorld())
+				pCorpse->RemoveFromWorld(false);
 
-		pCorpse->Destruct();
-		pCorpse = NULLCORPSE;
+			pCorpse->Destruct();
+			pCorpse = NULLCORPSE;
+		}
+		m_corpses.clear();
 	}
-	m_corpses.clear();
 
 	//Clear our remaining containers
 	m_PlayerStorage.clear();
@@ -232,6 +234,11 @@ MapMgr::~MapMgr()
 	m_battleground = NULLBATTLEGROUND;
 
 	Log.Notice("MapMgr", "Instance %u shut down. (%s)" , m_instanceID, GetBaseMap()->GetName());
+}
+
+MapMgr::~MapMgr()
+{
+
 }
 
 void MapMgr::PushObject(Object* obj)
@@ -460,6 +467,9 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 	ASSERT(obj->GetMapId() == _mapId);
 	ASSERT(_cells);
 
+	if(obj->Active)
+		obj->Deactivate(this);
+
 	_updates.erase(obj);
 	obj->ClearUpdateMask();
 	Player* plObj = (obj->IsPlayer()) ? TO_PLAYER( obj ) : NULLPLR;
@@ -518,11 +528,8 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 		}break;
 	}
 
-	if(obj->Active)
-		obj->Deactivate(this);
-
 	// That object types are not map objects. TODO: add AI groups here?
-	if(obj->GetTypeId() == TYPEID_ITEM || obj->GetTypeId() == TYPEID_CONTAINER || obj->GetTypeId()==TYPEID_UNUSED)
+	if(obj->GetTypeId() == TYPEID_ITEM || obj->GetTypeId() == TYPEID_CONTAINER || obj->GetTypeId() == TYPEID_UNUSED)
 		return;
 
 	if(obj->GetTypeId() == TYPEID_CORPSE)
@@ -1526,11 +1533,10 @@ bool MapMgr::Do()
 	if(thread_kill_only)
 		return false;
 
-	// Commit suicideeee :3
-	delete this;
+	Destruct();
 
-	// already deleted, so the threadpool doesn't have to.
-	return false;
+	// Sign us up for deletion
+	return true;
 }
 
 void MapMgr::BeginInstanceExpireCountdown()

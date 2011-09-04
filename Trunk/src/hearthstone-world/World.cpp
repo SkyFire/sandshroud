@@ -102,6 +102,13 @@ void World::LogoutPlayers()
 
 World::~World()
 {
+
+}
+
+void World::Destruct()
+{
+	dummyspells.clear();
+
 	Log.Notice("Tracker", "~Tracker()");
 	delete Tracker::getSingletonPtr();
 
@@ -161,8 +168,8 @@ World::~World()
 	delete eventholder;
 
 	Storage_Cleanup();
-	for(list<SpellEntry*>::iterator itr = dummyspells.begin(); itr != dummyspells.end(); itr++)
-		delete *itr;
+
+//	delete getSingletonPtr();
 }
 
 WorldSession* World::FindSession(uint32 id)
