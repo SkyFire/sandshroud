@@ -146,11 +146,11 @@ int intisAttackable(Object* objA, Object* objB, bool CheckStealth)// A can attac
 	}
 
 	// We do need all factiondata for this
-	if( objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL
-		|| (((objA->IsPlayer() && !TO_PLAYER(objA)->IsFFAPvPFlagged()) ? true : false)
-		&&  ((objB->IsPlayer() && !TO_PLAYER(objB)->IsFFAPvPFlagged()) ? true : false)
-		&& (objB->m_factionDBC == objA->m_factionDBC || objB->m_faction == objA->m_faction)))
-		return 0;
+	if( (objB->m_factionDBC == NULL || objA->m_factionDBC == NULL || objB->m_faction == NULL || objA->m_faction == NULL) || (
+		((objA->IsPlayer() && !TO_PLAYER(objA)->IsFFAPvPFlagged()) ? true : false) && 
+		((objB->IsPlayer() && !TO_PLAYER(objB)->IsFFAPvPFlagged()) ? true : false) &&
+		(objB->m_factionDBC == objA->m_factionDBC || objB->m_faction == objA->m_faction)))
+		return 0; // Arenas?
 
 	if( player_objA && player_objB )
 	{
