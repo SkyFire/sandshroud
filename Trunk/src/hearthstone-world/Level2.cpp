@@ -232,8 +232,8 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	}
 
 	int amount = 1;
-	uint32 item = 0;
-	if(sscanf(args, "%u %i", &item, &amount) < 1)
+	uint32 item = 0, extendedcost = 0, vendormask = 0;
+	if(sscanf(args, "%u %u %u %u", &item, &amount, &extendedcost, &vendormask) < 1)
 	{
 		// check for item link
 		GetItemIDFromLink(args, &item);
@@ -243,15 +243,18 @@ bool ChatHandler::HandleItemCommand(const char* args, WorldSession *m_session)
 	if(item == 0)
 		return false;
 
+	if(vendormask == 0)
+		vendormask = pCreature->m_spawn->vendormask;
+
 	ItemPrototype* tmpItem = ItemPrototypeStorage.LookupEntry(item);
 	std::stringstream sstext;
 	if(tmpItem)
 	{
 		std::stringstream ss;
-		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << item << "', '" << amount << "', 0, 0, 0, 1, " << pCreature->m_spawn->vendormask << " )" << '\0';
+		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << item << "', '" << amount << "', 0, 0, " << extendedcost << ", 1, " << vendormask << " )" << '\0';
 		WorldDatabase.Execute( ss.str().c_str() );
 
-		pCreature->AddVendorItem(item, amount);
+		pCreature->AddVendorItem(item, amount, vendormask, extendedcost);
 
 		sstext << "Item '" << item << "' '" << tmpItem->Name1 << "' Added to list" << '\0';
 	}
@@ -1162,12 +1165,7 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 		return true;
 	}
 
-	uint32 item = atoi(pitem);
-	int amount = 1;
-
-	char* pamount = strtok(NULL, " ");
-	if(pamount)
-		amount = atoi(pamount);
+	uint32 item = atoi(pitem), extendedcost = 0, vendormask = 0;
 
 	std::list<ItemPrototype*>* l = objmgr.GetListForItemSet(item);
 	if(l == NULL)
@@ -1176,16 +1174,36 @@ bool ChatHandler::HandleItemSetCommand(const char* args, WorldSession *m_session
 		return true;
 	}
 
+	int amount = 1;
+	char* pamount = strtok(NULL, " ");
+	if(pamount)
+	{
+		amount = atoi(pamount);
+
+		char* pextendedcost = strtok(NULL, " ");
+		if(pextendedcost)
+		{
+			extendedcost = atol(pextendedcost);
+
+			char* pvendormask = strtok(NULL, " ");
+			if(pvendormask)
+				vendormask = atol(pvendormask);
+		}
+	}
+
+	if(vendormask == 0)
+		vendormask = pCreature->m_spawn->vendormask;
+
 	std::stringstream sstext;
 	for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
 	{
 		std::stringstream ss;
-		ss << "INSERT INTO vendors (entry,item,amount,max_amount,inctime,vendormask) VALUES ('" << pCreature->GetUInt32Value(OBJECT_FIELD_ENTRY) << "', '" << (*itr)->ItemId << "', '" << amount << "', 0, 0, " << pCreature->m_spawn->vendormask << " )" << '\0';
+		ss << "INSERT INTO vendors VALUES ('" << pCreature->GetEntry() << "', '" << (*itr)->ItemId << "', '" << amount << "', '0', '0', '" << extendedcost << "', '1', '" << vendormask << "');";
 		WorldDatabase.Execute( ss.str().c_str() );
-		pCreature->AddVendorItem((*itr)->ItemId, amount);
-		sstext <<"Item set '" << item << "' Added to vendor." << '\0';
+		pCreature->AddVendorItem((*itr)->ItemId, amount, vendormask, extendedcost);
 	}
 
+	sstext << "Item set '" << item << "' Added to vendor." << '\0';
 	sWorld.LogGM(m_session, "added item set %u to vendor %u", item, pCreature->GetEntry());
 	SystemMessage(m_session,  sstext.str().c_str());
 	return true;

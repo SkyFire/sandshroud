@@ -445,7 +445,7 @@ public:
 		}
 	}
 
-	void AddVendorItem(uint32 itemid, uint32 amount, uint32 ec = 0);
+	void AddVendorItem(uint32 itemid, uint32 amount, uint32 vendormask, uint32 ec = 0);
 	void ModAvItemAmount(uint32 itemid, uint32 value);
 	void UpdateItemAmount(uint32 itemid);
 
