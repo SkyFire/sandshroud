@@ -230,7 +230,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 51514:
 		{
 				// Damage	caused may interrupt the effect.
-			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
+			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
 		}break;
 
 	case 52752:
@@ -2369,7 +2369,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 
 	case 5106:
 		{
-			sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
+			sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
 		}break;
 
 	/**********************************************************
@@ -4189,7 +4189,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 	case 22570:
 	case 49802:	// Maim
 		{
-			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
+			sp->AuraInterruptFlags |=	AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
 			sp->Attributes |=	ATTRIBUTES_STOP_ATTACK;
 		}break;
 
@@ -5254,7 +5254,7 @@ void ApplySingleSpellFixes(SpellEntry *sp)
 		}break;
 	case SPELL_HASH_HEX:
 		{
-			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
+			sp->AuraInterruptFlags = AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
 		}break;
 	case SPELL_HASH_LIGHTNING_SHIELD:
 		{

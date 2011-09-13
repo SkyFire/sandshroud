@@ -208,6 +208,8 @@ void LogonCommHandler::UpdateSockets()
 		{
 			Log.Error("LogonCommClient","Realm id %u lost connection.", (unsigned int)server->ID);
 			logon->_id = 0;
+			logon->Disconnect();
+			logon = NULL;
 			mapLock.Release();
 			return;
 		}
@@ -220,6 +222,7 @@ void LogonCommHandler::UpdateSockets()
 				Log.Error("LogonCommClient","Realm id %u connection dropped due to pong timeout.", (unsigned int)server->ID);
 				logon->_id = 0;
 				logon->Disconnect();
+				logon = NULL;
 				mapLock.Release();
 				return;
 			}

@@ -2150,17 +2150,9 @@ void Object::DealDamage(Unit* pVictim, uint32 damage, uint32 targetEvent, uint32
 
 		//zack 2007 04 24 : root should not remove self (and also other unknown spells)
 		if(spellId)
-		{
 			pVictim->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN, spellId);
-			if(Rand(breakchance))
-				pVictim->RemoveAurasByInterruptFlagButSkip(AURA_INTERRUPT_ON_WEAPON_UNSHEATH, spellId);
-		}
 		else
-		{
 			pVictim->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN);
-			if(Rand(breakchance))
-				pVictim->RemoveAurasByInterruptFlag(AURA_INTERRUPT_ON_WEAPON_UNSHEATH);
-		}
 	}
 
 	// Paladin: Blessing of Sacrifice, and Warlock: Soul Link

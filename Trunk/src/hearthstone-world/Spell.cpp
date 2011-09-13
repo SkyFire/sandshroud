@@ -696,20 +696,14 @@ uint8 Spell::_DidHit(const Unit* target, uint8 &reflectout)
 	/* Check if the target is immune to this mechanic						*/
 	/*************************************************************************/
 	if(u_victim->MechanicsDispels[GetSpellProto()->MechanicsType])
-	{
 		return SPELL_DID_HIT_IMMUNE; // Moved here from Spell::CanCast
-	}
 
 	/************************************************************************/
 	/* Check if the target has a % resistance to this mechanic			  */
 	/************************************************************************/
 	if( GetSpellProto()->MechanicsType < MECHANIC_COUNT)
 	{
-		float res;
-		if(p_victim)
-			res = p_victim->MechanicsResistancesPCT[Spell::GetMechanic(m_spellInfo)];
-		else
-			res = u_victim->MechanicsResistancesPCT[Spell::GetMechanic(m_spellInfo)];
+		float res = u_victim->MechanicsResistancesPCT[Spell::GetMechanic(m_spellInfo)];
 		if( !(GetSpellProto()->c_is_flags & SPELL_FLAG_IS_NOT_RESISTABLE) && Rand(res))
 			return SPELL_DID_HIT_RESIST;
 	}
@@ -749,7 +743,7 @@ uint8 Spell::_DidHit(const Unit* target, uint8 &reflectout)
 	else
 		lvldiff = u_victim->getLevel() - u_caster->getLevel();
 	if (lvldiff < 0)
-		resistchance = baseresist[0] +lvldiff;
+		resistchance = baseresist[0]+lvldiff;
 	else
 	{
 		if(lvldiff < 3)
@@ -1356,7 +1350,7 @@ void Spell::cast(bool check)
 		}
 
 		// trigger on next attack
-		if( GetSpellProto()->Attributes & ATTRIBUTE_ON_NEXT_ATTACK && !m_triggeredSpell )
+		if( GetSpellProto()->Attributes & ATTRIBUTES_ON_NEXT_ATTACK && !m_triggeredSpell )
 		{
 			// check power
 			if(!HasPower())
@@ -2171,14 +2165,14 @@ void Spell::SendSpellStart()
 		cast_flags |= SPELL_CAST_FLAGS_RANGED;
 
 	if(GetSpellProto()->powerType > 0)
-		if(GetSpellProto()->powerType != POWER_HEALTH && !m_triggeredSpell && !(GetSpellProto()->AttributesEx & ATTRIBUTESEX_AREA_OF_EFFECT))
+		if(GetSpellProto()->powerType != POWER_HEALTH && !m_triggeredSpell)
 			cast_flags |= SPELL_CAST_FLAGS_POWER_UPDATE;
 
 	if(p_caster && p_caster->getClass() == DEATHKNIGHT && GetSpellProto()->runeCostID && GetSpellProto()->powerType == POWER_RUNE)
 	{
 		cast_flags |= SPELL_CAST_FLAGS_ITEM_CASTER;
 		cast_flags |= SPELL_CAST_FLAGS_RUNE_UPDATE;
-		cast_flags |= SPELL_CAST_FLAGS_UNKNOWN18;
+		cast_flags |= 0x00040000;
 	}
 	else
 	{
@@ -2188,7 +2182,7 @@ void Spell::SendSpellStart()
 			{
 				cast_flags |= SPELL_CAST_FLAGS_ITEM_CASTER;
 				cast_flags |= SPELL_CAST_FLAGS_RUNE_UPDATE;
-				cast_flags |= SPELL_CAST_FLAGS_UNKNOWN18;
+				cast_flags |= 0x00040000;
 			}
 		}
 	}
@@ -3006,9 +3000,6 @@ uint8 Spell::CanCast(bool tolerate)
 			if (GetSpellProto()->NameHash == SPELL_HASH_MIND_CONTROL && target->GetAuraSpellIDWithNameHash(SPELL_HASH_MIND_CONTROL))
 				return SPELL_FAILED_CANT_BE_CHARMED;
 
-			if(target == m_caster && GetSpellProto()->AttributesEx & ATTRIBUTESEX_CANT_TARGET_SELF)
-				return SPELL_FAILED_BAD_TARGETS;
-
 			//these spells can be cast only on certain objects. Otherwise cool exploit
 			//Most of this things goes to spell_forced_target table
 			switch (GetSpellProto()->Id)
@@ -3035,9 +3026,6 @@ uint8 Spell::CanCast(bool tolerate)
 			if(p_caster->GetManaPct() == 100)
 				return SPELL_FAILED_ALREADY_AT_FULL_POWER;
 		}
-
-		if(GetSpellProto()->Flags7 & FLAGS7_NOT_IN_RAID_INSTANCE && p_caster->GetMapMgr()->GetdbcMap()->israid())
-			return SPELL_FAILED_NOT_HERE;
 
 		// flying auras
 		if( GetSpellProto()->c_is_flags & SPELL_FLAG_IS_FLYING )
@@ -3848,7 +3836,7 @@ uint8 Spell::CanCast(bool tolerate)
 			}
 
 			// if we're replacing a higher rank, deny it
-			if( GetSpellProto()->buffType > 0 && target != m_caster && !(GetSpellProto()->Flags5 & FLAGS5_IGNORE_AURA_RANK_CHECK))
+			if( GetSpellProto()->buffType > 0 && target != m_caster)
 			{
 				AuraCheckResponse acr = target->AuraCheck(m_spellInfo);
 				if( acr.Error == AURA_CHECK_RESULT_HIGHER_BUFF_PRESENT )
@@ -4697,9 +4685,7 @@ void Spell::Heal(int32 amount)
 	// add threat
 	if( u_caster != NULL )
 	{
-		if(GetSpellProto()->AttributesEx & ATTRIBUTESEX_NO_THREAT)
-			return;
-		uint32 base_threat= GetBaseThreat(amount);
+		uint32 base_threat = GetBaseThreat(amount);
 		int count = 0;
 		Unit* unit;
 		std::vector<Unit* > target_threat;

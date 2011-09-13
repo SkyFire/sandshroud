@@ -205,34 +205,7 @@ void Spell::SpellEffectInstantKill(uint32 i)
 	if( unitTarget == NULL || !unitTarget->isAlive() || u_caster == NULL)
 		return;
 
-	//Sacrifice: if spell caster has "void walker" pet, pet dies and spell caster gets a
-	/*Sacrifices the Voidwalker, giving its owner a shield that will absorb
-	305 damage for 30 sec. While the shield holds, spellcasting will not be \
-	interrupted by damage.*/
-
-	/*
-	Demonic Sacrifice
-
-	When activated, sacrifices your summoned demon to grant you an effect that lasts
-	30 minutes. The effect is canceled if any Demon is summoned.
-	Imp: Increases your Fire damage by 15%.
-	Voidwalker: Restores 3% of total Health every 4 sec.
-	Succubus: Increases your Shadow damage by 15%.
-	Felhunter: Restores 2% of total Mana every 4 sec.
-
-	When activated, sacrifices your summoned demon to grant you an effect that lasts $18789d.  The effect is canceled if any Demon is summoned.
-
-	Imp: Increases your Fire damage by $18789s1%.
-
-	Voidwalker: Restores $18790s1% of total Health every $18790t1 sec.
-
-	Succubus: Increases your Shadow damage by $18791s1%.
-
-	Felhunter: Restores $18792s1% of total Mana every $18792t1 sec.
-
-	*/
 	uint32 spellId = GetSpellProto()->Id;
-
 	switch(spellId)
 	{
 	case 7814:
@@ -263,23 +236,23 @@ void Spell::SpellEffectInstantKill(uint32 i)
 				uint32 spellid1 = 0;
 				switch(unitTarget->GetEntry())
 				{
-					case 416: //Imp
+				case 416: //Imp
 					{
 						spellid1 = 18789;
 					}break;
-					case 417: //Felhunter
+				case 417: //Felhunter
 					{
 						spellid1 = 18792;
 					}break;
-					case 1860: //VoidWalker
+				case 1860: //VoidWalker
 					{
 						spellid1 = 18790;
 					}break;
-					case 1863: //Succubus
+				case 1863: //Succubus
 					{
 						spellid1 = 18791;
 					}break;
-					case 17252: //felguard
+				case 17252: //felguard
 					{
 						spellid1 = 35701;
 					}break;
@@ -7907,7 +7880,7 @@ void Spell::SpellEffectSpellSteal( uint32 i )
 		if(unitTarget->m_auras[x])
 		{
 			aur = unitTarget->m_auras[x];
-			if(aur != NULL && aur->GetSpellId() != 15007 && !aur->IsPassive() && aur->IsPositive() && !(aur->GetSpellProto()->Flags5 & FLAGS5_NOT_STEALABLE)) //Nothing can dispel resurrection sickness
+			if(aur != NULL && aur->GetSpellId() != 15007 && !aur->IsPassive() && aur->IsPositive()) //Nothing can dispel resurrection sickness
 			{
 				if(aur->GetSpellProto()->DispelType == DISPEL_MAGIC && aur->GetDuration() > 0)
 				{

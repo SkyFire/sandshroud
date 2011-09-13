@@ -1565,7 +1565,7 @@ void World::CheckForExpiredInstances()
 	sInstanceMgr.CheckForExpiredInstances();
 }
 
-#define LOAD_THREAD_SLEEP 180
+#define LOAD_THREAD_SLEEP 60
 
 void CharacterLoaderThread::OnShutdown()
 {
@@ -1591,6 +1591,7 @@ CharacterLoaderThread::~CharacterLoaderThread()
 	pthread_mutex_destroy(&mutex);
 #endif
 }
+
 bool CharacterLoaderThread::run()
 {
 	SetThreadName("Char Loader");
@@ -1649,7 +1650,7 @@ void World::PollMailboxInsertQueue(DatabaseConnection * con)
 	result = CharacterDatabase.FQuery("SELECT * FROM mailbox_insert_queue", con);
 	if( result != NULL )
 	{
-		Log.Notice("MailboxQueue", "Sending queued messages....");
+		Log.Debug("MailboxQueue", "Sending queued messages....");
 		do
 		{
 			f = result->Fetch();
@@ -1668,7 +1669,7 @@ void World::PollMailboxInsertQueue(DatabaseConnection * con)
 			else
 				pItem = NULLITEM;
 
-			Log.Notice("MailboxQueue", "Sending message to %u (item: %u)...", f[1].GetUInt32(), itemid);
+			Log.Debug("MailboxQueue", "Sending message to %u (item: %u)...", f[1].GetUInt32(), itemid);
 			sMailSystem.DeliverMessage( 0, f[0].GetUInt64(), f[1].GetUInt64(), f[2].GetString(), f[3].GetString(), f[5].GetUInt32(),
 				0, pItem ? pItem->GetGUID() : 0, f[4].GetUInt32(), true );
 
@@ -1679,7 +1680,7 @@ void World::PollMailboxInsertQueue(DatabaseConnection * con)
 
 		} while ( result->NextRow() );
 		delete result;
-		Log.Notice("MailboxQueue", "Done.");
+		Log.Debug("MailboxQueue", "Done.");
 		CharacterDatabase.FWaitExecute("DELETE FROM mailbox_insert_queue", con);
 	}
 }
@@ -2167,7 +2168,7 @@ void World::PollCharacterInsertQueue(DatabaseConnection * con)
 			ss.rdbuf()->str("");
 		} while(result->NextRow());
 		has_results = true;
-		Log.Notice("CharacterLoader","Imported %u character(s) from external queue",queuesize);
+		Log.Debug("CharacterLoader","Imported %u character(s) from external queue",queuesize);
 		delete result;
 	}
 

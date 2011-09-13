@@ -7532,20 +7532,17 @@ void Player::Reset_ToLevel1()
 
 void Player::CalcResistance(uint32 type)
 {
-	int32 res;
-	int32 pos;
-	int32 neg;
 	ASSERT(type < 7);
-	pos = float2int32( BaseResistance[type] * (float)( BaseResistanceModPctPos[ type ] / 100.0f ) );
-	neg = float2int32( BaseResistance[type] * (float)( BaseResistanceModPctNeg[ type ] / 100.0f ) );
 
-	pos += FlatResistanceModifierPos[type];
-	neg += FlatResistanceModifierNeg[type];
-	res = BaseResistance[type] + pos - neg;
+	int32 pos = FlatResistanceModifierPos[type]+float2int32( BaseResistance[type] * (float)( BaseResistanceModPctPos[ type ] / 100.0f ) );
+	int32 neg = FlatResistanceModifierNeg[type]+float2int32( BaseResistance[type] * (float)( BaseResistanceModPctNeg[ type ] / 100.0f ) );
+
+	int32 res = BaseResistance[type] + pos - neg;
 	if( type == 0 )
 		res += m_uint32Values[UNIT_FIELD_STAT1] * 2;//fix armor from agi
 	if( res < 0 )
 		res = 0;
+
 	pos += float2int32( res * (float)( ResistanceModPctPos[type] / 100.0f ) );
 	neg += float2int32( res * (float)( ResistanceModPctNeg[type] / 100.0f ) );
 	res = pos - neg + BaseResistance[type];

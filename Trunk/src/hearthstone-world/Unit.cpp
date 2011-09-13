@@ -2719,6 +2719,7 @@ double Unit::GetResistanceReducion(Unit* pVictim, uint32 school, float armorRedu
 		double RResist = resistance + float((pVictim->getLevel() > getLevel()) ? (pVictim->getLevel() - getLevel()) * 5 : 0) - PowerCostPctMod[school];
 		reduction = RResist / (double)(getLevel() * 5) * 0.75f;
 	}
+
 	if(reduction > 0.75)
 		reduction = 0.75;
 	else if(reduction < 0)
@@ -4798,8 +4799,6 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 	Unit* caster = TO_UNIT(this);
 	uint32 school = spellInfo->School;
 	float summaryPCTmod = 0.0f;
-	if(spellInfo->Flags5 & FLAGS5_STATIC_DAMAGE)
-		return bonus_damage;
 
 	if( caster->IsPet() )
 		caster = TO_UNIT(TO_PET(caster)->GetPetOwner());

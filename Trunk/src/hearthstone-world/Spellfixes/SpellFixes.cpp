@@ -423,7 +423,7 @@ void ApplyNormalFixes()
 				if(sp->EffectApplyAuraName[z] == SPELL_AURA_MOD_FEAR ||
 					sp->EffectApplyAuraName[z] == SPELL_AURA_MOD_ROOT)
 				{
-					sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_WEAPON_UNSHEATH;
+					sp->AuraInterruptFlags |= AURA_INTERRUPT_ON_ANY_DAMAGE_TAKEN;
 					break;
 				}
 			}
