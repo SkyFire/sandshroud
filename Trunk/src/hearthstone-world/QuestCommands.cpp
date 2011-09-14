@@ -72,7 +72,7 @@ string RemoveQuestFromPlayer(Player* plr, Quest *qst)
 			for(uint32 i = 0; i < 4; i++)
 			{
 				if(qst->receive_items[i])
-					plr->GetItemInterface()->RemoveItemAmt(qst->receive_items[i], 1 );
+					plr->GetItemInterface()->RemoveItemAmt(qst->receive_items[i], qst->receive_itemcount[i] );
 			}
 			plr->UpdateNearbyGameObjects();
 		}

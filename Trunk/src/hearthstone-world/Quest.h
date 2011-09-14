@@ -145,7 +145,6 @@ struct Quest
 	char * completiontext;
 	char * incompletetext;
 	char * endtext;
-
 	char * objectivetexts[4];
 
 	uint32 required_item[6];

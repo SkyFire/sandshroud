@@ -7863,19 +7863,13 @@ void Spell::SpellEffectSpellSteal( uint32 i )
 		}
 	}
 
-	Aura* aur = NULL;
-	uint32 start,end;
-	int32 spells_to_steal = damage;
 	uint32 m;
-	if(isAttackable(u_caster,unitTarget))
-	{
-		start=0;
-		end=MAX_POSITIVE_AURAS;
-	}
-	else
+	Aura* aur = NULL;
+	int32 spells_to_steal = damage;
+	if(!isAttackable(u_caster,unitTarget))
 		return;
 
-	for(uint32 x=start;x<end;x++)
+	for(uint32 x = 0; x < MAX_POSITIVE_AURAS; x++)
 	{
 		if(unitTarget->m_auras[x])
 		{

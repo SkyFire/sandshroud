@@ -6899,6 +6899,7 @@ void Player::EventTimedQuestExpire(Quest *qst, QuestLogEntry *qle, uint32 log_sl
 	else
 		sEventMgr.AddEvent(TO_PLAYER(this), &Player::EventTimedQuestExpire, qst, qle, log_slot, interval, EVENT_TIMED_QUEST_EXPIRE, interval, 1, 0);
 }
+
 void Player::RemoveQuestsFromLine(uint32 skill_line)
 {
 	for(int i = 0; i < 25; i++)
@@ -6913,7 +6914,7 @@ void Player::RemoveQuestsFromLine(uint32 skill_line)
 				// Remove all items given by the questgiver at the beginning
 				for(uint32 j = 0; j < 4; j++)
 					if(qst->receive_items[j])
-						GetItemInterface()->RemoveItemAmt(qst->receive_items[j], 1 );
+						GetItemInterface()->RemoveItemAmt(qst->receive_items[j], qst->receive_itemcount[i] );
 				delete qst;
 			}
 		}
@@ -10566,7 +10567,7 @@ void Player::Possess(Unit* pTarget)
 	data << uint32(PET_SPELL_ATTACK);
 
 	// Send the actionbar
-	for(uint32 i = 1; i < 9; i++)
+	for(uint32 i = 1; i < 10; i++)
 	{
 		if(itr != avail_spells.end())
 		{
@@ -10582,7 +10583,16 @@ void Player::Possess(Unit* pTarget)
 	for(itr = avail_spells.begin(); itr != avail_spells.end(); itr++)
 		data << uint16(*itr) << uint16(DEFAULT_SPELL_STATE);
 
-	data << uint8(0);
+	SpellEntry* sp = NULL;
+	data << uint8(avail_spells.size());
+	for(itr = avail_spells.begin(); itr != avail_spells.end(); itr++)
+	{
+		data << uint32((sp = dbcSpell.LookupEntry(*itr))->Id);
+		data << uint16(sp->Category);
+		data << uint32(sp->RecoveryTime);
+		data << uint32(sp->CategoryRecoveryTime);
+	}
+
 	m_session->SendPacket(&data);
 }
 
@@ -13323,6 +13333,7 @@ void Player::StartQuest(uint32 Id)
 			Item* item = objmgr.CreateItem( qst->receive_items[i], this);
 			if(item)
 			{
+				item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, qst->receive_itemcount[i]);
 				if(!GetItemInterface()->AddItemToFreeSlot(item))
 				{
 					item->DeleteMe();

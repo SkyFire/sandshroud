@@ -923,7 +923,7 @@ void Aura::EventRelocateRandomTarget()
 
 void Aura::EventUpdatePlayerAA(float r)
 {
-	if(m_auraSlot > TOTAL_AURAS)
+	if(m_auraSlot >= TOTAL_AURAS)
 	{
 		//this event is no longer valid, remove it.
 		sEventMgr.RemoveEvents(this);
@@ -3260,9 +3260,11 @@ void Aura::SpellAuraModCharm(bool apply)
 			data << uint32(PET_SPELL_STAY);
 			for(int i = 0; i < 4; i++)
 				data << uint32(0);
+
 			data << uint32(PET_SPELL_AGRESSIVE);
 			data << uint32(PET_SPELL_DEFENSIVE);
 			data << uint32(PET_SPELL_PASSIVE);
+			data << uint16(0);
 			TO_PLAYER(m_caster)->GetSession()->SendPacket(&data);
 			target->SetEnslaveSpell(m_spellProto->Id);
 		}
@@ -3870,7 +3872,7 @@ void Aura::SpellAuraModStealth(bool apply)
 				{
 						m_target->m_auras[x]->SetDuration(6000);
 
-						sEventMgr.AddAuraEvent(m_target, &Unit::RemoveAuraBySlot, uint16(x), 6000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT, GetSpellId());
+						sEventMgr.AddAuraEvent(m_target, &Unit::RemoveAuraBySlot, uint8(x), 6000, 1, EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT, GetSpellId());
 				}
 			}
 		}
@@ -9862,7 +9864,7 @@ void Aura::ModStackSize(int32 mod)
 				m_spellProto->EffectApplyAuraName[spx] == SPELL_AURA_MOD_CHARM )
 				addTime = 50;
 
-		sEventMgr.AddAuraEvent(m_target, &Unit::RemoveAuraBySlot, uint16(m_auraSlot), GetTimeLeft() + addTime, 1,
+		sEventMgr.AddAuraEvent(m_target, &Unit::RemoveAuraBySlot, uint8(m_auraSlot), GetTimeLeft() + addTime, 1,
 			EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT, GetSpellId());
 	}
 	ApplyModifiers(true);

@@ -58,10 +58,12 @@ uint32 QuestMgr::PlayerMeetsReqs(Player* plr, Quest* qst, bool skiplevelcheck)
 			return QMGR_QUEST_NOT_AVAILABLE;
 
 	if(qst->required_races)
-	{
 		if(!(qst->required_races & plr->getRaceMask()))
 			return QMGR_QUEST_NOT_AVAILABLE;
-	}
+
+	if(qst->previous_quest_id)
+		if(!(plr->HasFinishedQuest(qst->previous_quest_id)))
+			return QMGR_QUEST_NOT_AVAILABLE;
 
 	if(qst->required_tradeskill)
 	{

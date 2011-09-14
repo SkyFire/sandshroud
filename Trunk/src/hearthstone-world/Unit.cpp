@@ -197,9 +197,7 @@ Unit::Unit()
 
 	m_threatModifyer = 0;
 	m_generatedThreatModifyer = 0;
-	for(uint32 i = 0; i < TOTAL_AURAS; i++)
-		m_auras[i] = NULLAURA;
-
+	m_auras.clear();
 
 	// diminishing return stuff
 	memset(m_diminishAuraCount, 0, DIMINISH_GROUPS);
@@ -4288,7 +4286,6 @@ void Unit::AddAura(Aura* aur)
 	}
 
 	////////////////////////////////////////////////////////
-
 	if( aur->m_auraSlot != 255 && aur->m_auraSlot < TOTAL_AURAS)
 	{
 		if( m_auras[aur->m_auraSlot] != NULL )
@@ -4321,10 +4318,11 @@ void Unit::AddAura(Aura* aur)
 					break;
 				}
 			}
+
 			if(aur->m_auraSlot == 255)
 			{
 				DEBUG_LOG("Unit","AddAura error in active aura. removing. SpellId: %u", aur->GetSpellProto()->Id);
-				RemoveAuraBySlot(aur->m_auraSlot);
+				RemoveAura(aur);
 				return;
 			}
 		}
@@ -4351,7 +4349,7 @@ void Unit::AddAura(Aura* aur)
 		if(aur->m_auraSlot == 255)
 		{
 			DEBUG_LOG("Unit","AddAura error in passive aura. removing. SpellId: %u", aur->GetSpellProto()->Id);
-			RemoveAuraBySlot(aur->m_auraSlot);
+			RemoveAura(aur);
 			return;
 		}
 	}
@@ -4378,7 +4376,7 @@ void Unit::AddAura(Aura* aur)
 				addTime = 50;
 		}
 
-		sEventMgr.AddAuraEvent(this, &Unit::RemoveAuraBySlot, uint16(aur->m_auraSlot), aur->GetDuration() + addTime, 1,
+		sEventMgr.AddAuraEvent(this, &Unit::RemoveAuraBySlot, uint8(aur->m_auraSlot), aur->GetDuration() + addTime, 1,
 			EVENT_FLAG_DO_NOT_EXECUTE_IN_WORLD_CONTEXT | EVENT_FLAG_DELETES_OBJECT,aur->GetSpellId());
 	}
 
@@ -4434,22 +4432,22 @@ void Unit::RemoveAura(Aura* aur)
 {
 	if(aur == NULL)
 		return;
+
 	for(uint32 x = 0; x < TOTAL_AURAS; x++)
-	{
 		if(m_auras[x] != NULL && m_auras[x] == aur)
-			RemoveAuraBySlot(x);
-	}
+			m_auras[x] = NULL; // Null it every time we find it.
+	aur->Remove(); // Call remove once.
 }
 
 bool Unit::RemovePositiveAura(uint32 spellId)
 {
 	for(uint32 x=0;x<MAX_POSITIVE_AURAS;x++)
 	{
-			if( m_auras[x] !=NULL && m_auras[x]->GetSpellId() == spellId )
-			{
-				RemoveAuraBySlot(x);
-				return true;
-			}
+		if( m_auras[x] != NULL && m_auras[x]->GetSpellId() == spellId )
+		{
+			RemoveAuraBySlot(x);
+			return true;
+		}
 	}
 	return false;
 }
@@ -4458,11 +4456,11 @@ bool Unit::RemoveNegativeAura(uint32 spellId)
 {
 	for(uint32 x=MAX_POSITIVE_AURAS;x<MAX_AURAS;x++)
 	{
-			if( m_auras[x] !=NULL && m_auras[x]->GetSpellId()==spellId )
-			{
-				RemoveAuraBySlot(x);
-				return true;
-			}
+		if( m_auras[x] !=NULL && m_auras[x]->GetSpellId()==spellId )
+		{
+			RemoveAuraBySlot(x);
+			return true;
+		}
 	}
 	return false;
 }
@@ -7417,7 +7415,7 @@ void Unit::Dismount()
 	RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER );
 }
 
-void Unit::RemoveAuraBySlot(uint16 Slot)
+void Unit::RemoveAuraBySlot(uint8 Slot)
 {
 	if(m_auras[Slot] != NULL)
 	{
@@ -7426,7 +7424,7 @@ void Unit::RemoveAuraBySlot(uint16 Slot)
 	}
 }
 
-void Unit::RemoveAuraBySlotOrRemoveStack(uint16 Slot)
+void Unit::RemoveAuraBySlotOrRemoveStack(uint8 Slot)
 {
 	if(m_auras[Slot]!=NULL)
 	{

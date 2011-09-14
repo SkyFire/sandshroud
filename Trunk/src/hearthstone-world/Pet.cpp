@@ -363,14 +363,11 @@ void Pet::SendSpellsToOwner()
 	if(m_Owner == NULL)
 		return;
 
-	int packetsize = (m_uint32Values[OBJECT_FIELD_ENTRY] != WATER_ELEMENTAL) ? ((int)mSpells.size() * 4 + 68) : 68;
-	WorldPacket * data = new WorldPacket(SMSG_PET_SPELLS, packetsize);
+	WorldPacket * data = new WorldPacket(SMSG_PET_SPELLS, 60);
 	*data << GetGUID();
 	*data << uint16(GetCreatureInfo()->Family);// Pet family to display talent tree
-	*data << uint32(0x00000101);//unk2
-	*data << uint8(m_State);
-	*data << uint8(m_Action);
-	*data << uint16(0x0000);//unk3
+	*data << uint32(0);//unk2
+	*data << uint8(m_State) << uint8(m_Action) << uint16(0);//unk3
 
 	// Send the actionbar
 	for(uint32 i = 0; i < 10; i++)
@@ -386,11 +383,16 @@ void Pet::SendSpellsToOwner()
 		}
 	}
 
-	// we don't send spells for the water elemental so it doesn't show up in the spellbook
-	if(m_uint32Values[OBJECT_FIELD_ENTRY] != WATER_ELEMENTAL)
+	if(bExpires)
+	{
+		*data << uint8(0);
+		*data << uint8(0);
+	}
+	else
 	{
 		// Send the rest of the spells.
 		*data << uint8(mSpells.size());
+
 		// I don't know how pet ability spamming is on Sandshroud, wether it's there or not
 		// This did however fix issues with it on my core.
 		for(PetSpellMap::iterator itr = mSpells.begin(); itr != mSpells.end(); ++itr)
@@ -1067,8 +1069,7 @@ void Pet::LearnSpell(uint32 spellid)
 
 	if(m_Owner && m_Owner->IsPlayer())
 	{
-		WorldPacket data(2);
-		data.SetOpcode(SMSG_PET_LEARNED_SPELL);
+		WorldPacket data(SMSG_PET_LEARNED_SPELL, 2);
 		data << uint16(spellid);
 		m_Owner->GetSession()->SendPacket(&data);
 	}

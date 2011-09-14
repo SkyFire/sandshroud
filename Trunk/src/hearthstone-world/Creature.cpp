@@ -371,12 +371,14 @@ void Creature::DeleteQuest(QuestRelation *Q)
 	list<QuestRelation *>::iterator it;
 	for ( it = m_quests->begin(); it != m_quests->end(); it++ )
 	{
-		if (((*it)->type == Q->type) && ((*it)->qst == Q->qst ))
+		if((*it) != NULL)
 		{
-			delete (*it);
-			m_quests->erase(it);
+			if (((*it)->type == Q->type) && ((*it)->qst == Q->qst ))
+				delete (*it);
 		}
 	}
+
+	m_quests->clear();
 }
 
 Quest* Creature::FindQuest(uint32 quest_id, uint8 quest_relation)
@@ -530,6 +532,7 @@ void Creature::EnslaveExpire()
 		data << uint64(0);
 		caster->GetSession()->SendPacket(&data);
 	}
+
 	SetUInt64Value(UNIT_FIELD_CHARMEDBY, 0);
 	SetUInt64Value(UNIT_FIELD_SUMMONEDBY, 0);
 	SetIsPet(false);

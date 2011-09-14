@@ -925,8 +925,8 @@ public:
 	void AddAura(Aura* aur);
 	//! Remove aura from unit
 	void RemoveAura(Aura* aur);
-	void RemoveAuraBySlot(uint16 Slot);
-	void RemoveAuraBySlotOrRemoveStack(uint16 Slot);
+	void RemoveAuraBySlot(uint8 Slot);
+	void RemoveAuraBySlotOrRemoveStack(uint8 Slot);
 	void RemoveAuraNoReturn(uint32 spellId);
 	bool RemovePositiveAura(uint32 spellId);
 	bool RemoveNegativeAura(uint32 spellId);
@@ -1278,7 +1278,7 @@ public:
 	uint32 m_stealth;
 	bool m_can_stealth;
 
-	Aura* m_auras[TOTAL_AURAS];
+	map<uint32, Aura*> m_auras;
 
 	int32 m_modlanguage;
 

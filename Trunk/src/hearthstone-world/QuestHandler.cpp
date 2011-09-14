@@ -343,6 +343,7 @@ void WorldSession::HandleQuestgiverAcceptQuestOpcode( WorldPacket & recv_data )
 			Item* item = objmgr.CreateItem( qst->receive_items[i], GetPlayer());
 			if(item)
 			{
+				item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, qst->receive_itemcount[i]);
 				if(!_player->GetItemInterface()->AddItemToFreeSlot(item))
 				{
 					item->DeleteMe();
@@ -425,7 +426,7 @@ void WorldSession::HandleQuestlogRemoveQuestOpcode(WorldPacket& recvPacket)
 	for(uint32 i = 0; i < 4; i++)
 	{
 		if(qPtr->receive_items[i])
-			_player->GetItemInterface()->RemoveItemAmt( qPtr->receive_items[i], 1 );
+			_player->GetItemInterface()->RemoveItemAmt( qPtr->receive_items[i], qPtr->receive_itemcount[i] );
 	}
 
 	// Remove source item
