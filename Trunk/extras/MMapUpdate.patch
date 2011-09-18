@@ -1,3 +1,336 @@
+Index: extras/mMap Builder/src/MapBuilder.cpp
+===================================================================
+--- extras/mMap Builder/src/MapBuilder.cpp	(revision 1490)
++++ extras/mMap Builder/src/MapBuilder.cpp	(working copy)
+@@ -201,7 +201,7 @@
+             return;
+         }
+ 
+-        buildTile(mapID, tileX, tileY, navMesh);
++        buildTile(mapID, tileX, tileY, navMesh, 0);
+         freeNavMesh(navMesh);
+     }
+ 
+@@ -211,8 +211,8 @@
+         printf("Building map %03u:\n", mapID);
+ 
+         set<uint32>* tiles = getTileList(mapID);
+-        
+-        // make sure we process maps which don't have tiles
++
++		// make sure we process maps which don't have tiles
+         if (!tiles->size())
+         {
+             // convert coord bounds to grid bounds
+@@ -237,6 +237,7 @@
+             return;
+         }
+ 
++		uint32 TileCount = 0;
+         // now start building mmtiles for each tile
+         printf("We have %u tiles.                          \n", (unsigned int)tiles->size());
+         for (set<uint32>::iterator it = tiles->begin(); it != tiles->end(); ++it)
+@@ -249,7 +250,7 @@
+             if (shouldSkipTile(mapID, tileX, tileY))
+                 continue;
+ 
+-            buildTile(mapID, tileX, tileY, navMesh);
++            buildTile(mapID, tileX, tileY, navMesh, TileCount++);
+         }
+ 
+         freeNavMesh(navMesh);
+@@ -258,9 +259,9 @@
+     }
+ 
+     /**************************************************************************/
+-    void MapBuilder::buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh)
++    void MapBuilder::buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh, uint32 index)
+     {
+-        printf("Building map %03u, tile [%02u,%02u]\n", mapID, tileX, tileY);
++        printf("Building map %03u[%02u,%02u] #:%04u     \r", mapID, tileX, tileY, index);
+ 
+         MeshData meshData;
+ 
+@@ -293,7 +294,7 @@
+         m_terrainBuilder->loadOffMeshConnections(mapID, tileX, tileY, meshData, m_offMeshFilePath);
+ 
+         // build navmesh tile
+-        buildMoveMapTile(mapID, tileX, tileY, meshData, bmin, bmax, navMesh);
++        buildMoveMapTile(mapID, tileX, tileY, meshData, bmin, bmax, navMesh, index);
+     }
+ 
+     /**************************************************************************/
+@@ -375,12 +376,12 @@
+     /**************************************************************************/
+     void MapBuilder::buildMoveMapTile(uint32 mapID, uint32 tileX, uint32 tileY,
+                                       MeshData &meshData, float bmin[3], float bmax[3],
+-                                      dtNavMesh* navMesh)
++                                      dtNavMesh* navMesh, uint32 index)
+     {
+         // console output
+         char tileString[10];
+         sprintf(tileString, "[%02i,%02i]: ", tileX, tileY);
+-        printf("%s Building movemap tiles...                        \r", tileString);
++        printf("%s Building movemap tiles... #:%04u                 \r", tileString, index);
+ 
+         IntermediateValues iv;
+ 
+@@ -462,7 +463,7 @@
+                 tile.solid = mallocHeightfield();
+                 if (!tile.solid || !rcCreateHeightfield(m_rcContext, *tile.solid, tileCfg.width, tileCfg.height, tileCfg.bmin, tileCfg.bmax, tileCfg.cs, tileCfg.ch))
+                 {
+-                    printf("%sFailed building heightfield!            \n", tileString);
++                    printf("%sFailed building heightfield! #:%04u     \n", tileString, index);
+                     continue;
+                 }
+ 
+@@ -483,33 +484,33 @@
+                 tile.chf = mallocCompactHeightfield();
+                 if (!tile.chf || !rcBuildCompactHeightfield(m_rcContext, tileCfg.walkableHeight, tileCfg.walkableClimb, *tile.solid, *tile.chf))
+                 {
+-                    printf("%sFailed compacting heightfield!            \n", tileString);
++                    printf("%sFailed compacting heightfield! #:%04u     \n", tileString, index);
+                     continue;
+                 }
+ 
+                 // build polymesh intermediates
+                 if (!rcErodeWalkableArea(m_rcContext, config.walkableRadius, *tile.chf))
+                 {
+-                    printf("%sFailed eroding area!                    \n", tileString);
++                    printf("%sFailed eroding area! #:%04u             \n", tileString, index);
+                     continue;
+                 }
+ 
+                 if (!rcBuildDistanceField(m_rcContext, *tile.chf))
+                 {
+-                    printf("%sFailed building distance field!         \n", tileString);
++                    printf("%sFailed building distance field! #:%04u  \n", tileString, index);
+                     continue;
+                 }
+ 
+                 if (!rcBuildRegions(m_rcContext, *tile.chf, tileCfg.borderSize, tileCfg.minRegionArea, tileCfg.mergeRegionArea))
+                 {
+-                    printf("%sFailed building regions!                \n", tileString);
++                    printf("%sFailed building regions! #:%04u         \n", tileString, index);
+                     continue;
+                 }
+ 
+                 tile.cset = mallocContourSet();
+                 if (!tile.cset || !rcBuildContours(m_rcContext, *tile.chf, tileCfg.maxSimplificationError, tileCfg.maxEdgeLen, *tile.cset))
+                 {
+-                    printf("%sFailed building contours!               \n", tileString);
++                    printf("%sFailed building contours! #:%04u        \n", tileString, index);
+                     continue;
+                 }
+ 
+@@ -517,14 +518,14 @@
+                 tile.pmesh = mallocPolyMesh();
+                 if (!tile.pmesh || !rcBuildPolyMesh(m_rcContext, *tile.cset, tileCfg.maxVertsPerPoly, *tile.pmesh))
+                 {
+-                    printf("%sFailed building polymesh!               \n", tileString);
++                    printf("%sFailed building polymesh! #:%04u        \n", tileString, index);
+                     continue;
+                 }
+ 
+                 tile.dmesh = mallocPolyMeshDetail();
+                 if (!tile.dmesh || !rcBuildPolyMeshDetail(m_rcContext, *tile.pmesh, *tile.chf, tileCfg.detailSampleDist, tileCfg    .detailSampleMaxError, *tile.dmesh))
+                 {
+-                    printf("%sFailed building polymesh detail!        \n", tileString);
++					printf("%sFailed building polymesh detail! #:%04u \n", tileString, index);
+                     continue;
+                 }
+ 
+@@ -544,14 +545,14 @@
+         rcPolyMesh** pmmerge = new rcPolyMesh*[TILES_PER_MAP * TILES_PER_MAP];
+         if (!pmmerge)
+         {
+-            printf("%s alloc pmmerge FIALED!          \r", tileString);
++            printf("%s alloc pmmerge FAILED! #:%04u   \r", tileString, index);
+             return;
+         }
+ 
+         rcPolyMeshDetail** dmmerge = new rcPolyMeshDetail*[TILES_PER_MAP * TILES_PER_MAP];
+         if (!dmmerge)
+         {
+-            printf("%s alloc dmmerge FIALED!          \r", tileString);
++            printf("%s alloc dmmerge FAILED! #:%04u   \r", tileString, index);
+             return;
+         }
+ 
+@@ -573,7 +574,7 @@
+         iv.polyMesh = mallocPolyMesh();
+         if (!iv.polyMesh)
+         {
+-            printf("%s alloc iv.polyMesh FIALED!          \r", tileString);
++            printf("%s alloc iv.polyMesh FAILED! #:%04u   \r", tileString, index);
+             return;
+         }
+         rcMergePolyMeshes(m_rcContext, pmmerge, nmerge, *iv.polyMesh);
+@@ -581,7 +582,7 @@
+         iv.polyMeshDetail = mallocPolyMeshDetail();
+         if (!iv.polyMeshDetail)
+         {
+-            printf("%s alloc m_dmesh FIALED!          \r", tileString);
++            printf("%s alloc m_dmesh FAILED! #:%04u   \r", tileString, index);
+             return;
+         }
+         rcMergePolyMeshDetails(m_rcContext, dmmerge, nmerge, *iv.polyMeshDetail);
+@@ -609,19 +610,26 @@
+         // setup mesh parameters
+         dtNavMeshCreateParams params;
+         memset(&params, 0, sizeof(params));
++
++		/// Initialize our vertices
+         params.verts = iv.polyMesh->verts;
+         params.vertCount = iv.polyMesh->nverts;
++
++		/// Initialize our Polygons
+         params.polys = iv.polyMesh->polys;
+         params.polyAreas = iv.polyMesh->areas;
+         params.polyFlags = iv.polyMesh->flags;
+         params.polyCount = iv.polyMesh->npolys;
+         params.nvp = iv.polyMesh->nvp;
++
++		/// Initialize our detail :D
+         params.detailMeshes = iv.polyMeshDetail->meshes;
+         params.detailVerts = iv.polyMeshDetail->verts;
+         params.detailVertsCount = iv.polyMeshDetail->nverts;
+         params.detailTris = iv.polyMeshDetail->tris;
+         params.detailTriCount = iv.polyMeshDetail->ntris;
+ 
++		/// Offmesh connections
+         params.offMeshConVerts = meshData.offMeshConnections.getCArray();
+         params.offMeshConCount = meshData.offMeshConnections.size()/6;
+         params.offMeshConRad = meshData.offMeshConnectionRads.getCArray();
+@@ -629,16 +637,19 @@
+         params.offMeshConAreas = meshData.offMeshConnectionsAreas.getCArray();
+         params.offMeshConFlags = meshData.offMeshConnectionsFlags.getCArray();
+ 
++		/// Bah
++        params.tileX = (((bmin[0] + bmax[0]) / 2) - navMesh->getParams()->orig[0]) / GRID_SIZE; // X
++        params.tileY = (((bmin[2] + bmax[2]) / 2) - navMesh->getParams()->orig[2]) / GRID_SIZE; // Y
++        params.tileLayer = (((bmin[1] + bmax[1]) / 2) - navMesh->getParams()->orig[1]) / GRID_SIZE; // Z
++        rcVcopy(params.bmin, bmin);
++        rcVcopy(params.bmax, bmax);
++
+         params.walkableHeight = BASE_UNIT_DIM*config.walkableHeight;    // agent height
+         params.walkableRadius = BASE_UNIT_DIM*config.walkableRadius;    // agent radius
+         params.walkableClimb = BASE_UNIT_DIM*config.walkableClimb;      // keep less that walkableHeight (aka agent height)!
+-        params.tileX = (((bmin[0] + bmax[0]) / 2) - navMesh->getParams()->orig[0]) / GRID_SIZE;
+-        params.tileY = (((bmin[2] + bmax[2]) / 2) - navMesh->getParams()->orig[2]) / GRID_SIZE;
+-        rcVcopy(params.bmin, bmin);
+-        rcVcopy(params.bmax, bmax);
+         params.cs = config.cs;
+         params.ch = config.ch;
+-        params.tileSize = VERTEX_PER_MAP;
++        params.buildBvTree = true; // TODO
+ 
+         // will hold final navmesh
+         unsigned char* navData = NULL;
+@@ -650,12 +661,12 @@
+             // so we have a clear error message
+             if (params.nvp > DT_VERTS_PER_POLYGON)
+             {
+-                printf("%s Invalid verts-per-polygon value!        \n", tileString);
++                printf("%s Invalid verts-per-polygon value! #:%04u \n", tileString, index);
+                 continue;
+             }
+             if (params.vertCount >= 0xffff)
+             {
+-                printf("%s Too many vertices!                      \n", tileString);
++                printf("%s Too many vertices! #:%04u               \n", tileString, index);
+                 continue;
+             }
+             if (!params.vertCount || !params.verts)
+@@ -673,30 +684,30 @@
+                 // we have flat tiles with no actual geometry - don't build those, its useless
+                 // keep in mind that we do output those into debug info
+                 // drop tiles with only exact count - some tiles may have geometry while having less tiles
+-                printf("%s No polygons to build on tile!              \n", tileString);
++                printf("%s No polygons to build on tile! #:%04u       \n", tileString, index);
+                 continue;
+             }
+             if (!params.detailMeshes || !params.detailVerts || !params.detailTris)
+             {
+-                printf("%s No detail mesh to build tile!           \n", tileString);
++                printf("%s No detail mesh to build tile! #:%04u    \n", tileString, index);
+                 continue;
+             }
+ 
+-            printf("%s Building navmesh tile...                \r", tileString);
++            printf("%s Building navmesh tile... #:%04u         \r", tileString, index);
+             if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+             {
+-                printf("%s Failed building navmesh tile!           \n", tileString);
++                printf("%s Failed building navmesh tile! #:%04u    \n", tileString, index);
+                 continue;
+             }
+ 
+             dtTileRef tileRef = 0;
+-            printf("%s Adding tile to navmesh...                \r", tileString);
++            printf("%s Adding tile to navmesh... #:%04u         \r", tileString, index);
+             // DT_TILE_FREE_DATA tells detour to unallocate memory when the tile
+             // is removed via removeTile()
+             dtStatus dtResult = navMesh->addTile(navData, navDataSize, DT_TILE_FREE_DATA, 0, &tileRef);
+             if (!tileRef || dtResult != DT_SUCCESS)
+             {
+-                printf("%s Failed adding tile to navmesh!(%u)       \n", tileString, (uint)dtResult);
++                printf("%s Failed adding tile to navmesh!(%u) #:%04u\n", tileString, (uint)dtResult, index);
+                 continue;
+             }
+ 
+@@ -707,13 +718,13 @@
+             if (!file)
+             {
+                 char message[1024];
+-                sprintf(message, "Failed to open %s for writing!\n", fileName);
++                sprintf(message, "Failed to open %s for writing! #:%04u\n", fileName, index);
+                 perror(message);
+                 navMesh->removeTile(tileRef, NULL, NULL);
+                 continue;
+             }
+ 
+-            printf("%s Writing to file...                      \r", tileString);
++            printf("%s Writing to file... #:%04u               \r", tileString, index);
+ 
+             // write header
+             MmapTileHeader header;
+Index: extras/mMap Builder/src/MapBuilder.h
+===================================================================
+--- extras/mMap Builder/src/MapBuilder.h	(revision 1490)
++++ extras/mMap Builder/src/MapBuilder.h	(working copy)
+@@ -86,7 +86,7 @@
+ 
+             void buildNavMesh(uint32 mapID, dtNavMesh* &navMesh);
+ 
+-            void buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh);
++            void buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh, uint32 index);
+ 
+             // move map building
+             void buildMoveMapTile(uint32 mapID,
+@@ -95,7 +95,8 @@
+                                   MeshData &meshData,
+                                   float bmin[3],
+                                   float bmax[3],
+-                                  dtNavMesh* navMesh);
++                                  dtNavMesh* navMesh,
++								  uint32 index);
+ 
+             void getTileBounds(uint32 tileX, uint32 tileY,
+                                float* verts, int vertCount,
+Index: extras/mMap Builder/src/TerrainBuilder.cpp
+===================================================================
+--- extras/mMap Builder/src/TerrainBuilder.cpp	(revision 1490)
++++ extras/mMap Builder/src/TerrainBuilder.cpp	(working copy)
+@@ -594,7 +594,7 @@
+ 
+                 // transform data
+                 float scale = instance.iScale;
+-                G3D::Matrix3 rotation = G3D::Matrix3::fromEulerAnglesXYZ(G3D::pi()*instance.iRot.z/-180.f, G3D::pi()*instance.iRot.x/-180.f, G3D::pi()*instance.iRot.y/-180.f);
++                G3D::Matrix3 rotation = G3D::Matrix3::fromEulerAnglesZXY(G3D::pi()*instance.iRot.z/-180.f, G3D::pi()*instance.iRot.x/-180.f, G3D::pi()*instance.iRot.y/-180.f);
+                 Vector3 position = instance.iPos;
+                 position.x -= 32*GRID_SIZE;
+                 position.y -= 32*GRID_SIZE;
 Index: extras/mMap Builder/win/VC100/MoveMapGen_VC100.vcxproj
 ===================================================================
 --- extras/mMap Builder/win/VC100/MoveMapGen_VC100.vcxproj	(revision 1490)
@@ -344,10 +677,14 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
 ===================================================================
 --- src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h	(revision 1490)
 +++ src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h	(working copy)
-@@ -19,27 +19,87 @@
+@@ -19,27 +19,91 @@
  #ifndef DETOURCOMMON_H
  #define DETOURCOMMON_H
  
++#if defined(SHARED_LIB_BUILDER) || defined(_GAME)
++#define PRINTF printf
++#endif
++
 +/**
 +@defgroup detour Detour
 +
@@ -433,7 +770,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVmad(float* dest, const float* v1, const float* v2, const float s)
  {
  	dest[0] = v1[0]+v2[0]*s;
-@@ -47,6 +107,11 @@
+@@ -47,6 +111,11 @@
  	dest[2] = v1[2]+v2[2]*s;
  }
  
@@ -445,7 +782,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVlerp(float* dest, const float* v1, const float* v2, const float t)
  {
  	dest[0] = v1[0]+(v2[0]-v1[0])*t;
-@@ -54,6 +119,10 @@
+@@ -54,6 +123,10 @@
  	dest[2] = v1[2]+(v2[2]-v1[2])*t;
  }
  
@@ -456,7 +793,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVadd(float* dest, const float* v1, const float* v2)
  {
  	dest[0] = v1[0]+v2[0];
-@@ -61,6 +130,10 @@
+@@ -61,6 +134,10 @@
  	dest[2] = v1[2]+v2[2];
  }
  
@@ -467,7 +804,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVsub(float* dest, const float* v1, const float* v2)
  {
  	dest[0] = v1[0]-v2[0];
-@@ -68,6 +141,10 @@
+@@ -68,6 +145,10 @@
  	dest[2] = v1[2]-v2[2];
  }
  
@@ -478,7 +815,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVscale(float* dest, const float* v, const float t)
  {
  	dest[0] = v[0]*t;
-@@ -75,6 +152,9 @@
+@@ -75,6 +156,9 @@
  	dest[2] = v[2]*t;
  }
  
@@ -488,7 +825,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVmin(float* mn, const float* v)
  {
  	mn[0] = dtMin(mn[0], v[0]);
-@@ -82,6 +162,9 @@
+@@ -82,6 +166,9 @@
  	mn[2] = dtMin(mn[2], v[2]);
  }
  
@@ -498,7 +835,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVmax(float* mx, const float* v)
  {
  	mx[0] = dtMax(mx[0], v[0]);
-@@ -89,11 +172,19 @@
+@@ -89,11 +176,19 @@
  	mx[2] = dtMax(mx[2], v[2]);
  }
  
@@ -518,7 +855,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVcopy(float* dest, const float* a)
  {
  	dest[0] = a[0];
-@@ -101,16 +192,26 @@
+@@ -101,16 +196,26 @@
  	dest[2] = a[2];
  }
  
@@ -545,7 +882,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline float dtVdist(const float* v1, const float* v2)
  {
  	const float dx = v2[0] - v1[0];
-@@ -119,6 +220,10 @@
+@@ -119,6 +224,10 @@
  	return dtSqrt(dx*dx + dy*dy + dz*dz);
  }
  
@@ -556,7 +893,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline float dtVdistSqr(const float* v1, const float* v2)
  {
  	const float dx = v2[0] - v1[0];
-@@ -127,6 +232,12 @@
+@@ -127,6 +236,12 @@
  	return dx*dx + dy*dy + dz*dz;
  }
  
@@ -569,7 +906,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline float dtVdist2D(const float* v1, const float* v2)
  {
  	const float dx = v2[0] - v1[0];
-@@ -134,6 +245,10 @@
+@@ -134,6 +249,10 @@
  	return dtSqrt(dx*dx + dz*dz);
  }
  
@@ -580,7 +917,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline float dtVdist2DSqr(const float* v1, const float* v2)
  {
  	const float dx = v2[0] - v1[0];
-@@ -141,6 +256,8 @@
+@@ -141,6 +260,8 @@
  	return dx*dx + dz*dz;
  }
  
@@ -589,7 +926,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline void dtVnormalize(float* v)
  {
  	float d = 1.0f / dtSqrt(dtSqr(v[0]) + dtSqr(v[1]) + dtSqr(v[2]));
-@@ -149,6 +266,13 @@
+@@ -149,6 +270,13 @@
  	v[2] *= d;
  }
  
@@ -603,7 +940,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline bool dtVequal(const float* p0, const float* p1)
  {
  	static const float thr = dtSqr(1.0f/16384.0f);
-@@ -156,44 +280,37 @@
+@@ -156,44 +284,37 @@
  	return d < thr;
  }
  
@@ -669,7 +1006,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline float dtTriArea2D(const float* a, const float* b, const float* c)
  {
  	const float abx = b[0] - a[0];
-@@ -203,6 +320,13 @@
+@@ -203,6 +324,13 @@
  	return acx*abz - abx*acz;
  }
  
@@ -683,7 +1020,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline bool dtOverlapQuantBounds(const unsigned short amin[3], const unsigned short amax[3],
  								 const unsigned short bmin[3], const unsigned short bmax[3])
  {
-@@ -213,6 +337,13 @@
+@@ -213,6 +341,13 @@
  	return overlap;
  }
  
@@ -697,7 +1034,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  inline bool dtOverlapBounds(const float* amin, const float* amax,
  							const float* bmin, const float* bmax)
  {
-@@ -223,9 +354,21 @@
+@@ -223,9 +358,21 @@
  	return overlap;
  }
  
@@ -719,7 +1056,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  bool dtClosestHeightPointTriangle(const float* p, const float* a, const float* b, const float* c, float& h);
  
  bool dtIntersectSegmentPoly2D(const float* p0, const float* p1,
-@@ -233,6 +376,11 @@
+@@ -233,6 +380,11 @@
  							  float& tmin, float& tmax,
  							  int& segMin, int& segMax);
  
@@ -731,7 +1068,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourCommon.h
  bool dtPointInPolygon(const float* pt, const float* verts, const int nverts);
  
  bool dtDistancePtPolyEdgesSqr(const float* pt, const float* verts, const int nverts,
-@@ -240,9 +388,99 @@
+@@ -240,9 +392,99 @@
  
  float dtDistancePtSegSqr2D(const float* pt, const float* p, const float* q, float& t);
  
@@ -835,14 +1172,16 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
 ===================================================================
 --- src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp	(revision 1490)
 +++ src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp	(working copy)
-@@ -21,7 +21,6 @@
+@@ -21,8 +21,7 @@
  #include "DetourCommon.h"
  #include "../../Common.h"
  
 -
- inline bool overlapSlabs(const float* amin, const float* amax,
+-inline bool overlapSlabs(const float* amin, const float* amax,
++bool overlapSlabs(const float* amin, const float* amax,
  						 const float* bmin, const float* bmax,
  						 const float px, const float py)
+ {
 @@ -33,7 +32,7 @@
  	const float maxx = dtMin(amax[0]-px,bmax[0]-px);
  	if (minx > maxx)
@@ -884,6 +1223,33 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  static void calcSlabEndPoints(const float* va, const float* vb, float* bmin, float* bmax, const int side)
  {
  	if (side == 0 || side == 4)
+@@ -96,7 +104,7 @@
+ 	}
+ }
+ 
+-inline int computeTileHash(int x, int y, const int mask)
++int computeTileHash(int x, int y, const int mask)
+ {
+ 	const unsigned int h1 = 0x8da6b343; // Large multiplicative constants;
+ 	const unsigned int h2 = 0xd8163841; // here arbitrarily chosen primes
+@@ -104,7 +112,7 @@
+ 	return (int)(n & mask);
+ }
+ 
+-inline unsigned int allocLink(dtMeshTile* tile)
++unsigned int allocLink(dtMeshTile* tile)
+ {
+ 	if (tile->linksFreeList == DT_NULL_LINK)
+ 		return DT_NULL_LINK;
+@@ -113,7 +121,7 @@
+ 	return link;
+ }
+ 
+-inline void freeLink(dtMeshTile* tile, unsigned int link)
++void freeLink(dtMeshTile* tile, unsigned int link)
+ {
+ 	tile->links[link].next = tile->linksFreeList;
+ 	tile->linksFreeList = link;
 @@ -127,6 +135,10 @@
  	return new(mem) dtNavMesh;
  }
@@ -947,11 +1313,19 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  	memset(m_tiles, 0, sizeof(dtMeshTile)*m_maxTiles);
  	memset(m_posLookup, 0, sizeof(dtMeshTile*)*m_tileLutSize);
  	m_nextFree = 0;
-@@ -196,14 +221,15 @@
+@@ -196,14 +221,19 @@
  		m_tiles[i].next = m_nextFree;
  		m_nextFree = &m_tiles[i];
  	}
 -	
++
++	/* Init ID generator values.
++	m_tileBits = dtIlog2(dtNextPow2((unsigned int)params->maxTiles));
++	m_polyBits = dtIlog2(dtNextPow2((unsigned int)params->maxPolys));
++	// Only allow 31 salt bits, since the salt mask is calculated using 32bit uint and it will overflow.
++	m_saltBits = dtMin((unsigned int)31, 32 - m_tileBits - m_polyBits);
++	if (m_saltBits < 10)
++		return DT_FAILURE | DT_INVALID_PARAM;*/
 +
  	// Init ID generator values.
 -	m_tileBits = STATIC_TILE_BITS;    //dtIlog2(dtNextPow2((unsigned int)params->maxTiles));
@@ -960,17 +1334,13 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
 -	//if (m_saltBits < SALT_MIN_BITS)
 -		//return DT_FAILURE;
 -	
-+	m_tileBits = dtIlog2(dtNextPow2((unsigned int)params->maxTiles));
-+	m_polyBits = dtIlog2(dtNextPow2((unsigned int)params->maxPolys));
-+	// Only allow 31 salt bits, since the salt mask is calculated using 32bit uint and it will overflow.
-+	m_saltBits = dtMin((unsigned int)31, 32 - m_tileBits - m_polyBits);
-+	if (m_saltBits < 10)
-+		return DT_FAILURE | DT_INVALID_PARAM;
-+
++	m_tileBits = STATIC_TILE_BITS;
++	m_polyBits = STATIC_POLY_BITS;
++	m_saltBits = STATIC_SALT_BITS;
  	return DT_SUCCESS;
  }
  
-@@ -212,9 +238,9 @@
+@@ -212,9 +242,9 @@
  	// Make sure the data is in right format.
  	dtMeshHeader* header = (dtMeshHeader*)data;
  	if (header->magic != DT_NAVMESH_MAGIC)
@@ -982,7 +1352,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  
  	dtNavMeshParams params;
  	dtVcopy(params.orig, header->bmin);
-@@ -222,14 +248,18 @@
+@@ -222,14 +252,18 @@
  	params.tileHeight = header->bmax[2] - header->bmin[2];
  	params.maxTiles = 1;
  	params.maxPolys = header->polyCount;
@@ -1005,7 +1375,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  const dtNavMeshParams* dtNavMesh::getParams() const
  {
  	return &m_params;
-@@ -241,17 +271,18 @@
+@@ -241,17 +275,18 @@
  								   dtPolyRef* con, float* conarea, int maxcon) const
  {
  	if (!tile) return 0;
@@ -1027,7 +1397,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  	for (int i = 0; i < tile->header->polyCount; ++i)
  	{
  		dtPoly* poly = &tile->polys[i];
-@@ -260,13 +291,20 @@
+@@ -260,13 +295,20 @@
  		{
  			// Skip edges which do not point to the right side.
  			if (poly->neis[j] != m) continue;
@@ -1050,7 +1420,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  			// Add return value.
  			if (n < maxcon)
  			{
-@@ -281,10 +319,12 @@
+@@ -281,10 +323,12 @@
  	return n;
  }
  
@@ -1065,7 +1435,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  	for (int i = 0; i < tile->header->polyCount; ++i)
  	{
  		dtPoly* poly = &tile->polys[i];
-@@ -292,7 +332,8 @@
+@@ -292,7 +336,8 @@
  		unsigned int pj = DT_NULL_LINK;
  		while (j != DT_NULL_LINK)
  		{
@@ -1075,7 +1445,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  			{
  				// Revove link.
  				unsigned int nj = tile->links[j].next;
-@@ -316,26 +357,32 @@
+@@ -316,26 +361,32 @@
  void dtNavMesh::connectExtLinks(dtMeshTile* tile, dtMeshTile* target, int side)
  {
  	if (!tile) return;
@@ -1114,7 +1484,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  			for (int k = 0; k < nnei; ++k)
  			{
  				unsigned int idx = allocLink(tile);
-@@ -344,13 +391,13 @@
+@@ -344,13 +395,13 @@
  					dtLink* link = &tile->links[idx];
  					link->ref = nei[k];
  					link->edge = (unsigned char)j;
@@ -1131,7 +1501,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  					{
  						float tmin = (neia[k*2+0]-va[2]) / (vb[2]-va[2]);
  						float tmax = (neia[k*2+1]-va[2]) / (vb[2]-va[2]);
-@@ -359,7 +406,7 @@
+@@ -359,7 +410,7 @@
  						link->bmin = (unsigned char)(dtClamp(tmin, 0.0f, 1.0f)*255.0f);
  						link->bmax = (unsigned char)(dtClamp(tmax, 0.0f, 1.0f)*255.0f);
  					}
@@ -1140,7 +1510,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  					{
  						float tmin = (neia[k*2+0]-va[0]) / (vb[0]-va[0]);
  						float tmax = (neia[k*2+1]-va[0]) / (vb[0]-va[0]);
-@@ -377,21 +424,21 @@
+@@ -377,21 +428,21 @@
  void dtNavMesh::connectExtOffMeshLinks(dtMeshTile* tile, dtMeshTile* target, int side)
  {
  	if (!tile) return;
@@ -1167,7 +1537,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		// Find polygon to connect to.
  		const float* p = &targetCon->pos[3];
  		float nearestPt[3];
-@@ -403,7 +450,7 @@
+@@ -403,7 +454,7 @@
  		// Make sure the location is on current mesh.
  		float* v = &target->verts[targetPoly->verts[1]*3];
  		dtVcopy(v, nearestPt);
@@ -1176,7 +1546,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		// Link off-mesh connection to target poly.
  		unsigned int idx = allocLink(target);
  		if (idx != DT_NULL_LINK)
-@@ -417,7 +464,7 @@
+@@ -417,7 +468,7 @@
  			link->next = targetPoly->firstLink;
  			targetPoly->firstLink = idx;
  		}
@@ -1185,7 +1555,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		// Link target poly to off-mesh connection.
  		if (targetCon->flags & DT_OFFMESH_CON_BIDIR)
  		{
-@@ -453,7 +500,7 @@
+@@ -453,7 +504,7 @@
  
  		if (poly->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)
  			continue;
@@ -1194,7 +1564,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		// Build edge links backwards so that the links will be
  		// in the linked list from lowest index to highest.
  		for (int j = poly->vertCount-1; j >= 0; --j)
-@@ -473,24 +520,24 @@
+@@ -473,24 +524,24 @@
  				link->next = poly->firstLink;
  				poly->firstLink = idx;
  			}
@@ -1224,7 +1594,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		for (int j = 0; j < 2; ++j)
  		{
  			unsigned char side = j == 0 ? 0xff : con->side;
-@@ -543,19 +590,20 @@
+@@ -543,19 +594,20 @@
  						landPoly->firstLink = idx;
  					}
  				}
@@ -1249,7 +1619,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  	for (int j = 0; j < pd->triCount; ++j)
  	{
  		const unsigned char* t = &tile->detailTris[(pd->triBase+j)*4];
-@@ -576,20 +624,20 @@
+@@ -576,20 +628,20 @@
  			closestDistSqr = d;
  		}
  	}
@@ -1275,7 +1645,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  	// Find nearest polygon amongst the nearby polygons.
  	dtPolyRef nearest = 0;
  	float nearestDistanceSqr = FLT_MAX;
-@@ -597,8 +645,7 @@
+@@ -597,8 +649,7 @@
  	{
  		dtPolyRef ref = polys[i];
  		float closestPtPoly[3];
@@ -1285,7 +1655,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		float d = dtVdistSqr(center, closestPtPoly);
  		if (d < nearestDistanceSqr)
  		{
-@@ -608,11 +655,12 @@
+@@ -608,11 +659,12 @@
  			nearest = ref;
  		}
  	}
@@ -1300,7 +1670,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  {
  	if (tile->bvTree)
  	{
-@@ -621,7 +669,7 @@
+@@ -621,7 +673,7 @@
  		const float* tbmin = tile->header->bmin;
  		const float* tbmax = tile->header->bmax;
  		const float qfac = tile->header->bvQuantFactor;
@@ -1309,7 +1679,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		// Calculate quantized box
  		unsigned short bmin[3], bmax[3];
  		// dtClamp query box to world box.
-@@ -638,7 +686,7 @@
+@@ -638,7 +690,7 @@
  		bmax[0] = (unsigned short)(qfac * maxx + 1) | 1;
  		bmax[1] = (unsigned short)(qfac * maxy + 1) | 1;
  		bmax[2] = (unsigned short)(qfac * maxz + 1) | 1;
@@ -1318,7 +1688,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		// Traverse tree
  		dtPolyRef base = getPolyRefBase(tile);
  		int n = 0;
-@@ -646,13 +694,13 @@
+@@ -646,13 +698,13 @@
  		{
  			const bool overlap = dtOverlapQuantBounds(bmin, bmax, node->bmin, node->bmax);
  			const bool isLeafNode = node->i >= 0;
@@ -1334,7 +1704,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  			if (overlap || isLeafNode)
  				node++;
  			else
-@@ -661,7 +709,7 @@
+@@ -661,7 +713,7 @@
  				node += escapeIndex;
  			}
  		}
@@ -1343,7 +1713,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  		return n;
  	}
  	else
-@@ -692,19 +740,34 @@
+@@ -692,19 +744,30 @@
  	}
  }
  
@@ -1373,12 +1743,8 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.cpp
  	// Make sure the location is free.
 -	if (getTileAt(header->x, header->y))
 -		return DT_IN_PROGRESS;
-+	const dtMeshTile* existingMesh = getTileAt(header->x, header->y, header->layer);
-+	if (existingMesh)
-+	{
-+		*result = getTileRef(existingMesh);
++	if((*result) = getTileRefAt(header->x, header->y, header->layer))
 +		return DT_FAILURE | DT_IN_PROGRESS;
-+	}
  
  	// Allocate a tile.
  	dtMeshTile* tile = 0;
@@ -1967,7 +2333,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h
 ===================================================================
 --- src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h	(revision 1490)
 +++ src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h	(working copy)
-@@ -20,322 +20,461 @@
+@@ -20,322 +20,468 @@
  #define DETOURNAVMESH_H
  
  #include "../../Common.h"
@@ -2046,12 +2412,15 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h
 +/// @ingroup detour
  static const int DT_MAX_AREAS = 64;
  
--static const int STATIC_SALT_BITS = 12;
--static const int STATIC_TILE_BITS = 21;
--static const int STATIC_POLY_BITS = 31;
++/// Static settings used by generator and tiles.
+ static const int STATIC_SALT_BITS = 12;
+ static const int STATIC_TILE_BITS = 21;
+ static const int STATIC_POLY_BITS = 31;
 -// we cannot have over 31 bits for either tile nor poly
 -// without changing polyCount to use 64bits too.
--
++/// we cannot have over 31 bits for either tile nor poly
++/// without changing polyCount to use 64bits too.
+ 
 -// Flags for addTile
 +/// Tile flags used for various functions and fields.
 +/// For an example, see dtNavMesh::addTile().
@@ -2631,7 +3000,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMesh.h
  	inline void decodePolyId(dtPolyRef ref, unsigned int& salt, unsigned int& it, unsigned int& ip) const
  	{
  		const dtPolyRef saltMask = ((dtPolyRef)1<<m_saltBits)-1;
-@@ -346,81 +485,201 @@
+@@ -346,81 +492,201 @@
  		ip = (unsigned int)(ref & polyMask);
  	}
  
@@ -3838,7 +4207,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::findNearestPoly(const float* center, const float* extents,
  										 const dtQueryFilter* filter,
  										 dtPolyRef* nearestRef, float* nearestPt) const
-@@ -353,13 +444,13 @@
+@@ -353,13 +444,16 @@
  	ASSERT(m_nav);
  
  	*nearestRef = 0;
@@ -3851,12 +4220,15 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
 -		return DT_FAILURE;
 -	
 +	if (dtStatusFailed(queryPolygons(center, extents, filter, polys, &polyCount, 128)))
++	{
++		PRINTF("dtNavMeshQuery:: queryPolygons failed in findNearestPoly()\n");
 +		return DT_FAILURE | DT_INVALID_PARAM;
++	}
 +
  	// Find nearest polygon amongst the nearby polygons.
  	dtPolyRef nearest = 0;
  	float nearestDistanceSqr = FLT_MAX;
-@@ -367,8 +458,7 @@
+@@ -367,8 +461,7 @@
  	{
  		dtPolyRef ref = polys[i];
  		float closestPtPoly[3];
@@ -3866,20 +4238,31 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		float d = dtVdistSqr(center, closestPtPoly);
  		if (d < nearestDistanceSqr)
  		{
-@@ -378,10 +468,10 @@
+@@ -378,26 +471,34 @@
  			nearest = ref;
  		}
  	}
 -	
-+
- 	if (nearestRef)
- 		*nearestRef = nearest;
+-	if (nearestRef)
+-		*nearestRef = nearest;
 -	
+-	return DT_SUCCESS;
 +
- 	return DT_SUCCESS;
++	if(nearest != 0)
++	{
++		if (nearestRef)
++		{
++			PRINTF("dtNavMeshQuery:: queryPolygons success in findNearestPoly() return %u\n", nearest);
++			*nearestRef = nearest;
++			return DT_SUCCESS;
++		}
++	}
++
++	PRINTF("dtNavMeshQuery:: queryPolygons failure in findNearestPoly()\n");
++	return DT_FAILURE;
  }
  
-@@ -389,15 +479,15 @@
+ dtPolyRef dtNavMeshQuery::findNearestPolyInTile(const dtMeshTile* tile, const float* center, const float* extents,
  												const dtQueryFilter* filter, float* nearestPt) const
  {
  	ASSERT(m_nav);
@@ -3898,7 +4281,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	// Find nearest polygon amongst the nearby polygons.
  	dtPolyRef nearest = 0;
  	float nearestDistanceSqr = FLT_MAX;
-@@ -406,9 +496,8 @@
+@@ -406,9 +507,8 @@
  		dtPolyRef ref = polys[i];
  		const dtPoly* poly = &tile->polys[m_nav->decodePolyIdPoly(ref)];
  		float closestPtPoly[3];
@@ -3910,7 +4293,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		float d = dtVdistSqr(center, closestPtPoly);
  		if (d < nearestDistanceSqr)
  		{
-@@ -418,7 +507,7 @@
+@@ -418,7 +518,7 @@
  			nearest = ref;
  		}
  	}
@@ -3919,7 +4302,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	return nearest;
  }
  
-@@ -435,7 +524,7 @@
+@@ -435,7 +535,7 @@
  		const float* tbmin = tile->header->bmin;
  		const float* tbmax = tile->header->bmax;
  		const float qfac = tile->header->bvQuantFactor;
@@ -3928,7 +4311,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Calculate quantized box
  		unsigned short bmin[3], bmax[3];
  		// dtClamp query box to world box.
-@@ -452,7 +541,7 @@
+@@ -452,7 +552,7 @@
  		bmax[0] = (unsigned short)(qfac * maxx + 1) | 1;
  		bmax[1] = (unsigned short)(qfac * maxy + 1) | 1;
  		bmax[2] = (unsigned short)(qfac * maxz + 1) | 1;
@@ -3937,7 +4320,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Traverse tree
  		const dtPolyRef base = m_nav->getPolyRefBase(tile);
  		int n = 0;
-@@ -460,7 +549,7 @@
+@@ -460,7 +560,7 @@
  		{
  			const bool overlap = dtOverlapQuantBounds(bmin, bmax, node->bmin, node->bmax);
  			const bool isLeafNode = node->i >= 0;
@@ -3946,7 +4329,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (isLeafNode && overlap)
  			{
  				dtPolyRef ref = base | (dtPolyRef)node->i;
-@@ -470,7 +559,7 @@
+@@ -470,7 +570,7 @@
  						polys[n++] = ref;
  				}
  			}
@@ -3955,7 +4338,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (overlap || isLeafNode)
  				node++;
  			else
-@@ -479,7 +568,7 @@
+@@ -479,7 +579,7 @@
  				node += escapeIndex;
  			}
  		}
@@ -3964,7 +4347,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		return n;
  	}
  	else
-@@ -489,8 +578,12 @@
+@@ -489,8 +589,12 @@
  		const dtPolyRef base = m_nav->getPolyRefBase(tile);
  		for (int i = 0; i < tile->header->polyCount; ++i)
  		{
@@ -3978,7 +4361,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			const float* v = &tile->verts[p->verts[0]*3];
  			dtVcopy(bmin, v);
  			dtVcopy(bmax, v);
-@@ -502,53 +595,74 @@
+@@ -502,53 +606,85 @@
  			}
  			if (dtOverlapBounds(qmin,qmax, bmin,bmax))
  			{
@@ -4043,15 +4426,28 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
 +				if (n >= maxPolys)
 +				{
 +					*polyCount = n;
++					PRINTF("dtNavMeshQuery:: queryPolygons() failure return %u\n", n);
 +					return DT_SUCCESS | DT_BUFFER_TOO_SMALL;
 +				}
  			}
  		}
  	}
- 	*polyCount = n;
+-	*polyCount = n;
 -	
+-	return DT_SUCCESS;
 +
- 	return DT_SUCCESS;
++	if(n != 0)
++	{
++		if (polyCount)
++		{
++			PRINTF("dtNavMeshQuery:: success in queryPolygons() return %u\n", n);
++			*polyCount = n;
++			return DT_SUCCESS;
++		}
++	}
++
++	PRINTF("dtNavMeshQuery:: queryPolygons() failure return %u\n", n);
++	return DT_FAILURE;
  }
  
 +/// @par
@@ -4068,7 +4464,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
  								  const float* startPos, const float* endPos,
  								  const dtQueryFilter* filter,
-@@ -557,29 +671,29 @@
+@@ -557,29 +693,29 @@
  	ASSERT(m_nav);
  	ASSERT(m_nodePool);
  	ASSERT(m_openList);
@@ -4108,7 +4504,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	dtNode* startNode = m_nodePool->getNode(startRef);
  	dtVcopy(startNode->pos, startPos);
  	startNode->pidx = 0;
-@@ -588,31 +702,33 @@
+@@ -588,31 +724,33 @@
  	startNode->id = startRef;
  	startNode->flags = DT_NODE_OPEN;
  	m_openList->push(startNode);
@@ -4147,7 +4543,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Get parent poly and tile.
  		dtPolyRef parentRef = 0;
  		const dtMeshTile* parentTile = 0;
-@@ -621,28 +737,31 @@
+@@ -621,28 +759,31 @@
  			parentRef = m_nodePool->getNodeAtIdx(bestNode->pidx)->id;
  		if (parentRef)
  			m_nav->getTileAndPolyByRefUnsafe(parentRef, &parentTile, &parentPoly);
@@ -4185,7 +4581,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// If the node is visited the first time, calculate node position.
  			if (neighbourNode->flags == 0)
  			{
-@@ -683,16 +802,21 @@
+@@ -683,16 +824,21 @@
  			}
  
  			const float total = cost + heuristic;
@@ -4210,7 +4606,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (neighbourNode->flags & DT_NODE_OPEN)
  			{
  				// Already in open, update node location.
-@@ -714,6 +838,9 @@
+@@ -714,6 +860,9 @@
  		}
  	}
  
@@ -4220,7 +4616,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	// Reverse the path.
  	dtNode* prev = 0;
  	dtNode* node = lastBestNode;
-@@ -725,22 +852,35 @@
+@@ -725,22 +874,35 @@
  		node = next;
  	}
  	while (node);
@@ -4261,7 +4657,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
  											const float* startPos, const float* endPos,
  											const dtQueryFilter* filter)
-@@ -757,23 +897,23 @@
+@@ -757,23 +919,23 @@
  	dtVcopy(m_query.startPos, startPos);
  	dtVcopy(m_query.endPos, endPos);
  	m_query.filter = filter;
@@ -4291,7 +4687,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	dtNode* startNode = m_nodePool->getNode(startRef);
  	dtVcopy(startNode->pos, startPos);
  	startNode->pidx = 0;
-@@ -782,17 +922,17 @@
+@@ -782,17 +944,17 @@
  	startNode->id = startRef;
  	startNode->flags = DT_NODE_OPEN;
  	m_openList->push(startNode);
@@ -4314,7 +4710,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		return m_query.status;
  
  	// Make sure the request is still valid.
-@@ -801,37 +941,42 @@
+@@ -801,37 +963,42 @@
  		m_query.status = DT_FAILURE;
  		return DT_FAILURE;
  	}
@@ -4364,7 +4760,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Get parent poly and tile.
  		dtPolyRef parentRef = 0;
  		const dtMeshTile* parentTile = 0;
-@@ -840,35 +985,40 @@
+@@ -840,35 +1007,40 @@
  			parentRef = m_nodePool->getNodeAtIdx(bestNode->pidx)->id;
  		if (parentRef)
  		{
@@ -4413,7 +4809,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// If the node is visited the first time, calculate node position.
  			if (neighbourNode->flags == 0)
  			{
-@@ -876,11 +1026,11 @@
+@@ -876,11 +1048,11 @@
  								neighbourRef, neighbourPoly, neighbourTile,
  								neighbourNode->pos);
  			}
@@ -4427,7 +4823,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// Special case for last node.
  			if (neighbourRef == m_query.endRef)
  			{
-@@ -893,7 +1043,7 @@
+@@ -893,7 +1065,7 @@
  															  bestRef, bestTile, bestPoly,
  															  neighbourRef, neighbourTile, neighbourPoly,
  															  0, 0, 0);
@@ -4436,7 +4832,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  				cost = bestNode->cost + curCost + endCost;
  				heuristic = 0;
  			}
-@@ -907,23 +1057,23 @@
+@@ -907,23 +1079,23 @@
  				cost = bestNode->cost + curCost;
  				heuristic = dtVdist(neighbourNode->pos, m_query.endPos)*H_SCALE;
  			}
@@ -4464,7 +4860,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (neighbourNode->flags & DT_NODE_OPEN)
  			{
  				// Already in open, update node location.
-@@ -935,7 +1085,7 @@
+@@ -935,7 +1107,7 @@
  				neighbourNode->flags |= DT_NODE_OPEN;
  				m_openList->push(neighbourNode);
  			}
@@ -4473,7 +4869,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// Update nearest node to target so far.
  			if (heuristic < m_query.lastBestNodeCost)
  			{
-@@ -944,19 +1094,25 @@
+@@ -944,19 +1116,25 @@
  			}
  		}
  	}
@@ -4503,7 +4899,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	{
  		// Reset query.
  		memset(&m_query, 0, sizeof(dtQueryData));
-@@ -974,6 +1130,10 @@
+@@ -974,6 +1152,10 @@
  	{
  		// Reverse the path.
  		ASSERT(m_query.lastBestNode);
@@ -4514,7 +4910,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		dtNode* prev = 0;
  		dtNode* node = m_query.lastBestNode;
  		do
-@@ -984,44 +1144,51 @@
+@@ -984,44 +1166,51 @@
  			node = next;
  		}
  		while (node);
@@ -4577,7 +4973,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	if (m_query.startRef == m_query.endRef)
  	{
  		// Special case: the search starts and ends at same poly.
-@@ -1038,12 +1205,12 @@
+@@ -1038,12 +1227,12 @@
  			if (node)
  				break;
  		}
@@ -4592,7 +4988,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Reverse the path.
  		do
  		{
-@@ -1053,48 +1220,71 @@
+@@ -1053,48 +1242,71 @@
  			node = next;
  		}
  		while (node);
@@ -4681,7 +5077,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	// Add start point.
  	dtVcopy(&straightPath[n*3], closestStartPos);
  	if (straightPathFlags)
-@@ -1105,12 +1295,12 @@
+@@ -1105,12 +1317,12 @@
  	if (n >= maxStraightPath)
  	{
  		*straightPathCount = n;
@@ -4698,7 +5094,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  
  	if (pathSize > 1)
  	{
-@@ -1136,11 +1326,17 @@
+@@ -1136,11 +1348,17 @@
  			if (i+1 < pathSize)
  			{
  				// Next portal.
@@ -4719,7 +5115,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  					dtVcopy(&straightPath[n*3], closestEndPos);
  					if (straightPathFlags)
  						straightPathFlags[n] = 0;
-@@ -1148,7 +1344,9 @@
+@@ -1148,7 +1366,9 @@
  						straightPathRefs[n] = path[i];
  					n++;
  
@@ -4730,7 +5126,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  				}
  
  				// If starting really close the portal, advance.
-@@ -1203,7 +1401,7 @@
+@@ -1203,7 +1423,7 @@
  						if (flags == DT_STRAIGHTPATH_END || n >= maxStraightPath)
  						{
  							*straightPathCount = n;
@@ -4739,7 +5135,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  						}
  					}
  					else
-@@ -1262,7 +1460,7 @@
+@@ -1262,7 +1482,7 @@
  						if (flags == DT_STRAIGHTPATH_END || n >= maxStraightPath)
  						{
  							*straightPathCount = n;
@@ -4748,7 +5144,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  						}
  					}
  					else
-@@ -1281,6 +1479,7 @@
+@@ -1281,6 +1501,7 @@
  
  					// Restart
  					i = apexIndex;
@@ -4756,7 +5152,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  					continue;
  				}
  			}
-@@ -1303,9 +1502,30 @@
+@@ -1303,9 +1524,30 @@
  	}
  
  	*straightPathCount = n;
@@ -4788,7 +5184,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::moveAlongSurface(dtPolyRef startRef, const float* startPos, const float* endPos,
  										  const dtQueryFilter* filter,
  										  float* resultPos, dtPolyRef* visited, int* visitedCount, const int maxVisitedSize) const
-@@ -1314,17 +1534,21 @@
+@@ -1314,17 +1556,21 @@
  	ASSERT(m_tinyNodePool);
  
  	*visitedCount = 0;
@@ -4816,7 +5212,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	dtNode* startNode = m_tinyNodePool->getNode(startRef);
  	startNode->pidx = 0;
  	startNode->cost = 0;
-@@ -1332,19 +1556,19 @@
+@@ -1332,19 +1578,19 @@
  	startNode->id = startRef;
  	startNode->flags = DT_NODE_CLOSED;
  	stack[nstack++] = startNode;
@@ -4840,7 +5236,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	while (nstack)
  	{
  		// Pop front.
-@@ -1352,19 +1576,19 @@
+@@ -1352,19 +1598,19 @@
  		for (int i = 0; i < nstack-1; ++i)
  			stack[i] = stack[i+1];
  		nstack--;
@@ -4864,7 +5260,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// If target is inside the poly, stop search.
  		if (dtPointInPolygon(endPos, verts, nverts))
  		{
-@@ -1372,7 +1596,7 @@
+@@ -1372,7 +1618,7 @@
  			dtVcopy(bestPos, endPos);
  			break;
  		}
@@ -4873,7 +5269,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Find wall edges and find nearest point inside the walls.
  		for (int i = 0, j = (int)curPoly->vertCount-1; i < (int)curPoly->vertCount; j = i++)
  		{
-@@ -1380,7 +1604,7 @@
+@@ -1380,7 +1626,7 @@
  			static const int MAX_NEIS = 8;
  			int nneis = 0;
  			dtPolyRef neis[MAX_NEIS];
@@ -4882,7 +5278,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (curPoly->neis[j] & DT_EXT_LINK)
  			{
  				// Tile border.
-@@ -1413,7 +1637,7 @@
+@@ -1413,7 +1659,7 @@
  					neis[nneis++] = ref;
  				}
  			}
@@ -4891,7 +5287,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (!nneis)
  			{
  				// Wall edge, calc distance.
-@@ -1440,7 +1664,7 @@
+@@ -1440,7 +1686,7 @@
  					// Skip if already visited.
  					if (neighbourNode->flags & DT_NODE_CLOSED)
  						continue;
@@ -4900,7 +5296,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  					// Skip the link if it is too far from search constraint.
  					// TODO: Maybe should use getPortalPoints(), but this one is way faster.
  					const float* vj = &verts[j*3];
-@@ -1449,7 +1673,7 @@
+@@ -1449,7 +1695,7 @@
  					float distSqr = dtDistancePtSegSqr2D(searchPos, vj, vi, tseg);
  					if (distSqr > searchRadSqr)
  						continue;
@@ -4909,7 +5305,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  					// Mark as the node as visited and push to queue.
  					if (nstack < MAX_STACK)
  					{
-@@ -1461,7 +1685,7 @@
+@@ -1461,7 +1707,7 @@
  			}
  		}
  	}
@@ -4918,7 +5314,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	int n = 0;
  	if (bestNode)
  	{
-@@ -1476,22 +1700,27 @@
+@@ -1476,22 +1722,27 @@
  			node = next;
  		}
  		while (node);
@@ -4952,7 +5348,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  }
  
  
-@@ -1499,19 +1728,19 @@
+@@ -1499,19 +1750,19 @@
  										 unsigned char& fromType, unsigned char& toType) const
  {
  	ASSERT(m_nav);
@@ -4978,7 +5374,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	return getPortalPoints(from, fromPoly, fromTile, to, toPoly, toTile, left, right);
  }
  
-@@ -1531,8 +1760,8 @@
+@@ -1531,8 +1782,8 @@
  		}
  	}
  	if (!link)
@@ -4989,7 +5385,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	// Handle off-mesh connections.
  	if (fromPoly->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)
  	{
-@@ -1547,9 +1776,9 @@
+@@ -1547,9 +1798,9 @@
  				return DT_SUCCESS;
  			}
  		}
@@ -5001,7 +5397,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	if (toPoly->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)
  	{
  		for (unsigned int i = toPoly->firstLink; i != DT_NULL_LINK; i = toTile->links[i].next)
-@@ -1562,15 +1791,15 @@
+@@ -1562,15 +1813,15 @@
  				return DT_SUCCESS;
  			}
  		}
@@ -5020,7 +5416,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	// If the link is at tile boundary, dtClamp the vertices to
  	// the link width.
  	if (link->side != 0xff)
-@@ -1585,7 +1814,7 @@
+@@ -1585,7 +1836,7 @@
  			dtVlerp(right, &fromTile->verts[v0*3], &fromTile->verts[v1*3], tmax);
  		}
  	}
@@ -5029,7 +5425,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	return DT_SUCCESS;
  }
  
-@@ -1594,7 +1823,8 @@
+@@ -1594,7 +1845,8 @@
  {
  	float left[3], right[3];
  	unsigned char fromType, toType;
@@ -5039,7 +5435,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	mid[0] = (left[0]+right[0])*0.5f;
  	mid[1] = (left[1]+right[1])*0.5f;
  	mid[2] = (left[2]+right[2])*0.5f;
-@@ -1606,53 +1836,93 @@
+@@ -1606,53 +1858,93 @@
  										 float* mid) const
  {
  	float left[3], right[3];
@@ -5146,7 +5542,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		float tmin, tmax;
  		int segMin, segMax;
  		if (!dtIntersectSegmentPoly2D(startPos, endPos, verts, nv, tmin, tmax, segMin, segMax))
-@@ -1660,71 +1930,73 @@
+@@ -1660,71 +1952,73 @@
  			// Could not hit the polygon, keep the old t and report hit.
  			if (pathCount)
  				*pathCount = n;
@@ -5235,7 +5631,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// Check that the intersection lies inside the link portal.
  			if (link->side == 0 || link->side == 4)
  			{
-@@ -1733,7 +2005,7 @@
+@@ -1733,7 +2027,7 @@
  				float lmin = left[2] + (right[2] - left[2])*(link->bmin*s);
  				float lmax = left[2] + (right[2] - left[2])*(link->bmax*s);
  				if (lmin > lmax) dtSwap(lmin, lmax);
@@ -5244,7 +5640,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  				// Find Z intersection.
  				float z = startPos[2] + (endPos[2]-startPos[2])*tmax;
  				if (z >= lmin && z <= lmax)
-@@ -1749,7 +2021,7 @@
+@@ -1749,7 +2043,7 @@
  				float lmin = left[0] + (right[0] - left[0])*(link->bmin*s);
  				float lmax = left[0] + (right[0] - left[0])*(link->bmax*s);
  				if (lmin > lmax) dtSwap(lmin, lmax);
@@ -5253,7 +5649,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  				// Find X intersection.
  				float x = startPos[0] + (endPos[0]-startPos[0])*tmax;
  				if (x >= lmin && x <= lmax)
-@@ -1759,11 +2031,11 @@
+@@ -1759,11 +2053,11 @@
  				}
  			}
  		}
@@ -5267,7 +5663,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// Calculate hit normal.
  			const int a = segMax;
  			const int b = segMax+1 < nv ? segMax+1 : 0;
-@@ -1775,22 +2047,51 @@
+@@ -1775,22 +2069,51 @@
  			hitNormal[1] = 0;
  			hitNormal[2] = -dx;
  			dtVnormalize(hitNormal);
@@ -5325,7 +5721,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::findPolysAroundCircle(dtPolyRef startRef, const float* centerPos, const float radius,
  											   const dtQueryFilter* filter,
  											   dtPolyRef* resultRef, dtPolyRef* resultParent, float* resultCost,
-@@ -1801,14 +2102,14 @@
+@@ -1801,14 +2124,14 @@
  	ASSERT(m_openList);
  
  	*resultCount = 0;
@@ -5345,7 +5741,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	dtNode* startNode = m_nodePool->getNode(startRef);
  	dtVcopy(startNode->pos, centerPos);
  	startNode->pidx = 0;
-@@ -1817,7 +2118,9 @@
+@@ -1817,7 +2140,9 @@
  	startNode->id = startRef;
  	startNode->flags = DT_NODE_OPEN;
  	m_openList->push(startNode);
@@ -5356,7 +5752,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	int n = 0;
  	if (n < maxResult)
  	{
-@@ -1829,22 +2132,26 @@
+@@ -1829,22 +2154,26 @@
  			resultCost[n] = 0;
  		++n;
  	}
@@ -5387,7 +5783,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Get parent poly and tile.
  		dtPolyRef parentRef = 0;
  		const dtMeshTile* parentTile = 0;
-@@ -1853,7 +2160,7 @@
+@@ -1853,7 +2182,7 @@
  			parentRef = m_nodePool->getNodeAtIdx(bestNode->pidx)->id;
  		if (parentRef)
  			m_nav->getTileAndPolyByRefUnsafe(parentRef, &parentTile, &parentPoly);
@@ -5396,7 +5792,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		for (unsigned int i = bestPoly->firstLink; i != DT_NULL_LINK; i = bestTile->links[i].next)
  		{
  			const dtLink* link = &bestTile->links[i];
-@@ -1861,49 +2168,52 @@
+@@ -1861,49 +2190,52 @@
  			// Skip invalid neighbours and do not follow back to parent.
  			if (!neighbourRef || neighbourRef == parentRef)
  				continue;
@@ -5460,7 +5856,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (neighbourNode->flags & DT_NODE_OPEN)
  			{
  				m_openList->modify(neighbourNode);
-@@ -1920,17 +2230,43 @@
+@@ -1920,17 +2252,43 @@
  						resultCost[n] = neighbourNode->total;
  					++n;
  				}
@@ -5507,7 +5903,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::findPolysAroundShape(dtPolyRef startRef, const float* verts, const int nverts,
  											  const dtQueryFilter* filter,
  											  dtPolyRef* resultRef, dtPolyRef* resultParent, float* resultCost,
-@@ -1939,16 +2275,16 @@
+@@ -1939,16 +2297,16 @@
  	ASSERT(m_nav);
  	ASSERT(m_nodePool);
  	ASSERT(m_openList);
@@ -5530,7 +5926,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	float centerPos[3] = {0,0,0};
  	for (int i = 0; i < nverts; ++i)
  		dtVadd(centerPos,centerPos,&verts[i*3]);
-@@ -1962,7 +2298,9 @@
+@@ -1962,7 +2320,9 @@
  	startNode->id = startRef;
  	startNode->flags = DT_NODE_OPEN;
  	m_openList->push(startNode);
@@ -5541,7 +5937,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	int n = 0;
  	if (n < maxResult)
  	{
-@@ -1974,20 +2312,24 @@
+@@ -1974,20 +2334,24 @@
  			resultCost[n] = 0;
  		++n;
  	}
@@ -5569,7 +5965,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Get parent poly and tile.
  		dtPolyRef parentRef = 0;
  		const dtMeshTile* parentTile = 0;
-@@ -1996,7 +2338,7 @@
+@@ -1996,7 +2360,7 @@
  			parentRef = m_nodePool->getNodeAtIdx(bestNode->pidx)->id;
  		if (parentRef)
  			m_nav->getTileAndPolyByRefUnsafe(parentRef, &parentTile, &parentPoly);
@@ -5578,7 +5974,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		for (unsigned int i = bestPoly->firstLink; i != DT_NULL_LINK; i = bestTile->links[i].next)
  		{
  			const dtLink* link = &bestTile->links[i];
-@@ -2004,21 +2346,21 @@
+@@ -2004,21 +2368,21 @@
  			// Skip invalid neighbours and do not follow back to parent.
  			if (!neighbourRef || neighbourRef == parentRef)
  				continue;
@@ -5604,7 +6000,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// If the poly is not touching the edge to the next polygon, skip the connection it.
  			float tmin, tmax;
  			int segMin, segMax;
-@@ -2026,29 +2368,32 @@
+@@ -2026,29 +2390,32 @@
  				continue;
  			if (tmin > 1.0f || tmax < 0.0f)
  				continue;
@@ -5644,7 +6040,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (neighbourNode->flags & DT_NODE_OPEN)
  			{
  				m_openList->modify(neighbourNode);
-@@ -2065,17 +2410,43 @@
+@@ -2065,17 +2432,43 @@
  						resultCost[n] = neighbourNode->total;
  					++n;
  				}
@@ -5691,7 +6087,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::findLocalNeighbourhood(dtPolyRef startRef, const float* centerPos, const float radius,
  												const dtQueryFilter* filter,
  												dtPolyRef* resultRef, dtPolyRef* resultParent,
-@@ -2083,30 +2454,32 @@
+@@ -2083,30 +2476,32 @@
  {
  	ASSERT(m_nav);
  	ASSERT(m_tinyNodePool);
@@ -5733,7 +6129,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	int n = 0;
  	if (n < maxResult)
  	{
-@@ -2115,7 +2488,11 @@
+@@ -2115,7 +2510,11 @@
  			resultParent[n] = 0;
  		++n;
  	}
@@ -5746,7 +6142,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	while (nstack)
  	{
  		// Pop front.
-@@ -2123,14 +2500,14 @@
+@@ -2123,14 +2522,14 @@
  		for (int i = 0; i < nstack-1; ++i)
  			stack[i] = stack[i+1];
  		nstack--;
@@ -5763,7 +6159,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		for (unsigned int i = curPoly->firstLink; i != DT_NULL_LINK; i = curTile->links[i].next)
  		{
  			const dtLink* link = &curTile->links[i];
-@@ -2138,7 +2515,7 @@
+@@ -2138,7 +2537,7 @@
  			// Skip invalid neighbours.
  			if (!neighbourRef)
  				continue;
@@ -5772,7 +6168,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// Skip if cannot alloca more nodes.
  			dtNode* neighbourNode = m_tinyNodePool->getNode(neighbourRef);
  			if (!neighbourNode)
-@@ -2146,48 +2523,48 @@
+@@ -2146,48 +2545,48 @@
  			// Skip visited.
  			if (neighbourNode->flags & DT_NODE_CLOSED)
  				continue;
@@ -5831,7 +6227,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  				// Connected polys do not overlap.
  				bool connected = false;
  				for (unsigned int k = curPoly->firstLink; k != DT_NULL_LINK; k = curTile->links[k].next)
-@@ -2200,17 +2577,17 @@
+@@ -2200,17 +2599,17 @@
  				}
  				if (connected)
  					continue;
@@ -5852,7 +6248,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  				if (dtOverlapPolyPoly2D(pa,npa, pb,npb))
  				{
  					overlap = true;
-@@ -2219,7 +2596,7 @@
+@@ -2219,7 +2618,7 @@
  			}
  			if (overlap)
  				continue;
@@ -5861,7 +6257,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// This poly is fine, store and advance to the poly.
  			if (n < maxResult)
  			{
-@@ -2228,27 +2605,32 @@
+@@ -2228,27 +2627,32 @@
  					resultParent[n] = curRef;
  				++n;
  			}
@@ -5899,7 +6295,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  {
  	if (nints+1 > maxInts) return;
  	// Find insertion point.
-@@ -2263,28 +2645,45 @@
+@@ -2263,28 +2667,45 @@
  	if (nints-idx)
  		memmove(ints+idx+1, ints+idx, sizeof(dtSegInterval)*(nints-idx));
  	// Store
@@ -5952,7 +6348,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	for (int i = 0, j = (int)poly->vertCount-1; i < (int)poly->vertCount; j = i++)
  	{
  		// Skip non-solid edges.
-@@ -2304,64 +2703,115 @@
+@@ -2304,64 +2725,115 @@
  						m_nav->getTileAndPolyByRefUnsafe(link->ref, &neiTile, &neiPoly);
  						if (filter->passFilter(link->ref, neiTile, neiPoly))
  						{
@@ -6092,7 +6488,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  dtStatus dtNavMeshQuery::findDistanceToWall(dtPolyRef startRef, const float* centerPos, const float maxRadius,
  											const dtQueryFilter* filter,
  											float* hitDist, float* hitPos, float* hitNormal) const
-@@ -2369,14 +2819,14 @@
+@@ -2369,14 +2841,14 @@
  	ASSERT(m_nav);
  	ASSERT(m_nodePool);
  	ASSERT(m_openList);
@@ -6112,7 +6508,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  	dtNode* startNode = m_nodePool->getNode(startRef);
  	dtVcopy(startNode->pos, centerPos);
  	startNode->pidx = 0;
-@@ -2385,22 +2835,24 @@
+@@ -2385,22 +2857,24 @@
  	startNode->id = startRef;
  	startNode->flags = DT_NODE_OPEN;
  	m_openList->push(startNode);
@@ -6141,7 +6537,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Get parent poly and tile.
  		dtPolyRef parentRef = 0;
  		const dtMeshTile* parentTile = 0;
-@@ -2409,7 +2861,7 @@
+@@ -2409,7 +2883,7 @@
  			parentRef = m_nodePool->getNodeAtIdx(bestNode->pidx)->id;
  		if (parentRef)
  			m_nav->getTileAndPolyByRefUnsafe(parentRef, &parentTile, &parentPoly);
@@ -6150,7 +6546,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		// Hit test walls.
  		for (int i = 0, j = (int)bestPoly->vertCount-1; i < (int)bestPoly->vertCount; j = i++)
  		{
-@@ -2444,17 +2896,17 @@
+@@ -2444,17 +2918,17 @@
  				if (filter->passFilter(ref, bestTile, &bestTile->polys[idx]))
  					continue;
  			}
@@ -6171,7 +6567,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			// Hit wall, update radius.
  			radiusSqr = distSqr;
  			// Calculate hit pos.
-@@ -2462,7 +2914,7 @@
+@@ -2462,7 +2936,7 @@
  			hitPos[1] = vj[1] + (vi[1] - vj[1])*tseg;
  			hitPos[2] = vj[2] + (vi[2] - vj[2])*tseg;
  		}
@@ -6180,7 +6576,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  		for (unsigned int i = bestPoly->firstLink; i != DT_NULL_LINK; i = bestTile->links[i].next)
  		{
  			const dtLink* link = &bestTile->links[i];
-@@ -2470,54 +2922,57 @@
+@@ -2470,54 +2944,57 @@
  			// Skip invalid neighbours and do not follow back to parent.
  			if (!neighbourRef || neighbourRef == parentRef)
  				continue;
@@ -6249,7 +6645,7 @@ Index: src/hearthstone-shared/Pathfinding/Detour/DetourNavMeshQuery.cpp
  			if (neighbourNode->flags & DT_NODE_OPEN)
  			{
  				m_openList->modify(neighbourNode);
-@@ -2529,16 +2984,35 @@
+@@ -2529,16 +3006,35 @@
  			}
  		}
  	}
@@ -7455,12 +7851,11 @@ Index: src/hearthstone-shared/Pathfinding/Recast/Recast.cpp
  					// Iterate over all neighbour spans and check if any of the is
  					// accessible from current cell.
  					const rcCompactCell& nc = chf.cells[nx+ny*w];
-@@ -383,20 +454,20 @@
+@@ -383,20 +454,19 @@
  							break;
  						}
  					}
 -					
-+
  				}
  			}
  		}
@@ -7480,7 +7875,7 @@ Index: src/hearthstone-shared/Pathfinding/Recast/Recast.cpp
  	return true;
  }
  
-@@ -406,7 +477,7 @@
+@@ -406,7 +476,7 @@
  	int size = 0;
  	size += sizeof(hf);
  	size += hf.width * hf.height * sizeof(rcSpan*);
@@ -12799,6 +13194,58 @@ Index: src/hearthstone-world/CharacterHandler.cpp
  	// send to gms
  	if(HasGMPermissions())
  		sWorld.SendMessageToGMs(this, "%s%s %s (%s) is now online.|r", MSG_COLOR_GOLD, CanUseCommand('z') ? "Admin" : "GameMaster", plr->GetName(), GetAccountNameS(), GetPermissions());
+Index: src/hearthstone-world/CollideInterface.cpp
+===================================================================
+--- src/hearthstone-world/CollideInterface.cpp	(revision 1490)
++++ src/hearthstone-world/CollideInterface.cpp	(working copy)
+@@ -74,24 +74,32 @@
+ 	m_mapCreateLock.Release();
+ }
+ 
+-void CCollideInterface::ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
++bool CCollideInterface::ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
+ {
+ 	ASSERT(m_mapLocks[mapId] != NULL);
+ 	if( !CollisionMgr )
+-		return;
++		return false;
++
+ 	// acquire write lock
+ 	m_mapLocks[mapId]->m_lock.AcquireWriteLock();
+ 	if( m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY] == 0 )
++	{
+ 		if(CollisionMgr->loadMap(sWorld.vMapPath.c_str(), mapId, tileX, tileY))
+ 			OUT_DEBUG("Loading VMap [%u/%u] successful", tileX, tileY);
+ 		else
++		{
+ 			OUT_DEBUG("Loading VMap [%u/%u] unsuccessful", tileX, tileY);
++			m_mapLocks[mapId]->m_lock.ReleaseWriteLock();
++			return false;
++		}
++	}
+ 
+ 	// increment count
+ 	m_mapLocks[mapId]->m_tileLoadCount[tileX][tileY]++;
+ 
+ 	// release lock
+ 	m_mapLocks[mapId]->m_lock.ReleaseWriteLock();
++	return true;
+ }
+ 
+ void CCollideInterface::DeactivateTile(uint32 mapId, uint32 tileX, uint32 tileY)
+Index: src/hearthstone-world/CollideInterface.h
+===================================================================
+--- src/hearthstone-world/CollideInterface.h	(revision 1490)
++++ src/hearthstone-world/CollideInterface.h	(working copy)
+@@ -32,7 +32,7 @@
+ 	void Init();
+ 	void DeInit();
+ 
+-	void ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY);
++	bool ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY);
+ 	void DeactivateTile(uint32 mapId, uint32 tileX, uint32 tileY);
+ 	bool IsActiveTile(uint32 mapId, uint32 tileX, uint32 tileY);
+ 	void ActivateMap(uint32 mapId);
 Index: src/hearthstone-world/Guild.cpp
 ===================================================================
 --- src/hearthstone-world/Guild.cpp	(revision 1490)
@@ -13000,11 +13447,29 @@ Index: src/hearthstone-world/Map.cpp
  }
  
  Map::~Map()
+Index: src/hearthstone-world/MapCell.cpp
+===================================================================
+--- src/hearthstone-world/MapCell.cpp	(revision 1490)
++++ src/hearthstone-world/MapCell.cpp	(working copy)
+@@ -78,10 +78,9 @@
+ 
+ 		if (_mapmgr->IsCollisionEnabled())
+ 		{
+-			CollideInterface.ActivateTile(_mapmgr->GetMapId(), x, y);
+-
+-			if(sWorld.PathFinding)
+-				NavMeshInterface.LoadNavMesh(_mapmgr->GetMapId(), x, y);
++			if(CollideInterface.ActivateTile(_mapmgr->GetMapId(), x, y))
++				if(sWorld.PathFinding)
++					NavMeshInterface.LoadNavMesh(_mapmgr->GetMapId(), x, y);
+ 		}
+ 	}
+ 	else if(_active && !state)
 Index: src/hearthstone-world/NavMeshInterface.cpp
 ===================================================================
 --- src/hearthstone-world/NavMeshInterface.cpp	(revision 1490)
 +++ src/hearthstone-world/NavMeshInterface.cpp	(working copy)
-@@ -24,44 +24,79 @@
+@@ -24,44 +24,80 @@
  void CNavMeshInterface::Init()
  {
  	Log.Notice("NavMeshInterface", "Init");
@@ -13085,6 +13550,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
 +MMapManager::MMapManager(uint32 mapid)
 +{
 +	lastTileRef = 0;
++	m_navMesh = NULL;
 +	ManagerMapId = mapid;
 +
  	// load and init dtNavMesh - read parameters from file
@@ -13101,7 +13567,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
  		delete [] fileName;
  		return;
  	}
-@@ -75,51 +110,75 @@
+@@ -75,51 +111,79 @@
  	if(mesh->init(&params) != DT_SUCCESS)
  	{
  		freeNavMesh(mesh);
@@ -13182,15 +13648,18 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
 +bool MMapManager::LoadNavMesh(uint32 x, uint32 y)
  {
 -	if(m_navMesh[mapid] == NULL)
--		return false;
--
++	if(m_navMesh == NULL)
+ 		return false;
+ 
 -	if(!IsNavmeshLoaded(mapid, x, y))
 +	uint32 PackedTileID = packTileID(x, y);
-+	if(!IsNavmeshLoaded(x, y))
++	dtTileRef reference = 0;
++
++	ReferenceMap::iterator itr = TileReferences.find(PackedTileID);
++	if(itr == TileReferences.end())
  	{
 -		ASSERT(m_navMesh[mapid]);
-+		ASSERT(m_navMesh);
- 
+-
  		// load this tile :: mmaps/MMMXXYY.mmtile
  		uint32 pathLen = uint32(sWorld.MMapPath.length() + strlen("/0000000.mmtile")+1);
  		char *fileName = new char[pathLen];
@@ -13199,7 +13668,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
  		FILE *file = fopen(fileName, "rb");
  		if (!file)
  		{
-@@ -134,14 +193,14 @@
+@@ -134,14 +198,14 @@
  		fread(&fileHeader, sizeof(MmapTileHeader), 1, file);
  		if (fileHeader.mmapMagic != MMAP_MAGIC)
  		{
@@ -13216,7 +13685,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
  			fclose(file);
  			return false;
  		}
-@@ -152,93 +211,71 @@
+@@ -152,7 +216,7 @@
  		size_t result = fread(data, fileHeader.size, 1, file);
  		if(!result)
  		{
@@ -13225,10 +13694,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
  			fclose(file);
  			return false;
  		}
- 		fclose(file);
- 
- 		dtStatus dtresult;
-+		dtTileRef thistileref;
+@@ -162,83 +226,74 @@
  		dtMeshHeader* header = (dtMeshHeader*)data;
  
  		// memory allocated for data is now managed by detour, and will be deallocated when the tile is removed
@@ -13237,7 +13703,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
 -		{	// We already have it loaded, oops.
 -			internalX[mapid][x] = header->x;
 -			internalY[mapid][y] = header->y;
-+		dtresult = m_navMesh->addTile(data, fileHeader.size, DT_TILE_FREE_DATA, lastTileRef, &thistileref);
++		dtresult = m_navMesh->addTile(data, fileHeader.size, DT_TILE_FREE_DATA, 0, &reference);
 +		if(dtresult & DT_IN_PROGRESS) // We already have it loaded, oops.
  			free(data);
 -		}
@@ -13255,13 +13721,14 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
 -			internalY[mapid][y] = header->y;
 -			Log.Debug("NavMeshInterface", "Loaded mmtile %03i[%02i,%02i] into %03i[%02i,%02i]", mapid, x, y, mapid, internalX[mapid][x], internalY[mapid][y]);
 -		}
-+		else Log.Debug("NavMeshInterface", "Loaded mmtile %03u[%04u] into %03u[%02u,%02u]", ManagerMapId, thistileref, ManagerMapId, x, y);
++		else Log.Debug("NavMeshInterface", "Loaded mmtile %03u[%04u] into %03u[%02u,%02u]", ManagerMapId, reference, ManagerMapId, x, y);
 +
-+		TileReferences.insert(make_pair(PackedTileID, thistileref));
++		TileReferences.insert(make_pair(PackedTileID, new TileReferenceC(reference)));
  	}
++	else reference = itr->second->ID;
  
 -	m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]]++;
-+	TileLoadCount[PackedTileID]++;
++	TileLoadCount[reference]++;
  	return true;
  }
  
@@ -13269,27 +13736,36 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
 +void MMapManager::UnloadNavMesh(uint32 x, uint32 y)
  {
 -	if(m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]] == 1)
++	if(m_navMesh == NULL)
++		return;
++
 +	uint32 PackedTileID = packTileID(x, y);
-+	if(TileLoadCount[PackedTileID] == 1)
++	ReferenceMap::iterator itr = TileReferences.find(PackedTileID);
++	if(itr == TileReferences.end())
++		return; // We aren't loaded, so why continue?
++
++	dtTileRef reference = itr->second->ID;
++	if(TileLoadCount[reference] == 1)
  	{
 -		if(m_navMesh[mapid]->removeTile(m_navMesh[mapid]->getTileRefAt(internalX[mapid][x], internalY[mapid][y]), NULL, NULL) != DT_SUCCESS)
-+		dtTileRef Reference = TileReferences.at(PackedTileID);
-+		dtStatus status = m_navMesh->removeTile(Reference, NULL, NULL);
++		dtStatus status = m_navMesh->removeTile(reference, NULL, NULL);
 +		if(status & DT_FAILURE)
  		{
 -			Log.Error("NavMeshInterface", "Failed to unload mmtile %03i[%02i,%02i] from %03i[%02i,%02i]", mapid, internalX[mapid][x], internalY[mapid][y], mapid, x, y);
 +			if(status & DT_INVALID_PARAM)
-+				Log.Error("NavMeshInterface", "Invalid reference for mmtile %03u[%04u] from %03u[%02u,%02u]", ManagerMapId, Reference, ManagerMapId, x, y);
++				Log.Error("NavMeshInterface", "Invalid reference for mmtile %03u[%04u] from %03u[%02u,%02u]", ManagerMapId, reference, ManagerMapId, x, y);
 +			else
-+				Log.Error("NavMeshInterface", "Failed to unload mmtile %03u[%04u] from %03u[%02u,%02u]", ManagerMapId, Reference, ManagerMapId, x, y);
++				Log.Error("NavMeshInterface", "Failed to unload mmtile %03u[%04u] from %03u[%02u,%02u]", ManagerMapId, reference, ManagerMapId, x, y);
  			return;
  		}
 -		Log.Debug("NavMeshInterface", "Unloaded mmtile %03i[%02i,%02i] from %03i[%02i,%02i]", mapid, internalX[mapid][x], internalY[mapid][y], mapid, x, y);
-+		Log.Debug("NavMeshInterface", "Unloaded mmtile %03u[%04i] from %03u[%02u,%02u]", ManagerMapId, Reference, ManagerMapId, x, y);
++		delete itr->second;
++		TileReferences.erase(itr);
++		Log.Debug("NavMeshInterface", "Unloaded mmtile %03u[%04i] from %03u[%02u,%02u]", ManagerMapId, reference, ManagerMapId, x, y);
  	}
  
 -	m_navMeshLoadCount[mapid][internalX[mapid][x]][internalY[mapid][y]]--;
-+	TileLoadCount[PackedTileID]--;
++	TileLoadCount[reference]--;
  }
  
 -LocationVector CNavMeshInterface::getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
@@ -13318,7 +13794,11 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
 -		pos = nextpos;
 -	}
 -	return returnpos;
-+	return (TileLoadCount[packTileID(x, y)] > 0 ? true : false);
++	uint32 PackedTileID = packTileID(x, y);
++	ReferenceMap::iterator itr = TileReferences.find(PackedTileID);
++	if(itr == TileReferences.end())
++		return false;
++	return true;
  }
  
 -LocationVector CNavMeshInterface::getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz)
@@ -13338,7 +13818,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
  		return LocationVector(endx, endy, endz);
  	}
  
-@@ -314,16 +351,16 @@
+@@ -314,16 +369,16 @@
  	return pos;
  }
  
@@ -13359,7 +13839,7 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
  		return false;
  	}
  
-@@ -395,16 +432,43 @@
+@@ -395,24 +450,51 @@
  	return false;
  }
  
@@ -13407,7 +13887,76 @@ Index: src/hearthstone-world/NavMeshInterface.cpp
  		return false;
  	}
  
-@@ -485,52 +549,3 @@
+ 	dtStatus result;
+ 	//convert to nav coords.
+-	float startPos[3] = { positiony, positionz, positionx };
+-	float endPos[3] = { positiony, endz, positionx };
+-	float mPolyPickingExtents[3] = { 2.00f, 4.00f, 2.00f };
++	float startPos[3] = { positionx, positiony, positionz };
++	float endPos[3] = { positionx, positiony, endz };
++	float mPolyPickingExtents[3] = { 2.00f, 2.00f, 4.00f };
+ 	float closestPoint[3] = {0.0f, 0.0f, 0.0f};
+ 	int gx = GetPosX(positionx)/8;
+ 	int gy = GetPosY(positiony)/8;
+@@ -421,8 +503,9 @@
+ 	{
+ 		dtPolyRef mStartRef;
+ 		result = query->findNearestPoly(startPos, mPolyPickingExtents, mPathFilter, &mStartRef, closestPoint);
+-		if(result != DT_SUCCESS || !mStartRef)
++		if(dtStatusFailed(result) || !mStartRef)
+ 		{
++			printf("Pieflavor1(%u|%u)\n", (dtStatusFailed(result) ? 1 : 0), uint32(mStartRef));
+ 			freeNavMeshQuery(query);
+ 			delete mPathFilter;
+ 			mPathFilter = NULL;
+@@ -431,8 +514,9 @@
+ 
+ 		dtPolyRef mEndRef;
+ 		result = query->findNearestPoly(endPos, mPolyPickingExtents, mPathFilter, &mEndRef, closestPoint);
+-		if(result != DT_SUCCESS || !mEndRef)
++		if(dtStatusFailed(result) || !mEndRef)
+ 		{
++			printf("Pieflavor2\n");
+ 			freeNavMeshQuery(query);
+ 			delete mPathFilter;
+ 			mPathFilter = NULL;
+@@ -444,8 +528,9 @@
+ 			int mNumPathResults;
+ 			dtPolyRef mPathResults[50];
+ 			result = query->findPath(mStartRef, mEndRef,startPos, endPos, mPathFilter, mPathResults, &mNumPathResults, 50);
+-			if(result != DT_SUCCESS || mNumPathResults <= 0)
++			if(dtStatusFailed(result) || mNumPathResults <= 0)
+ 			{
++				printf("Pieflavor3\n");
+ 				freeNavMeshQuery(query);
+ 				delete mPathFilter;
+ 				mPathFilter = NULL;
+@@ -458,13 +543,16 @@
+ 			result = query->findStraightPath(startPos, endPos, mPathResults, mNumPathResults, actualpath, NULL, &polyrefs, &mNumPathPoints, 2);
+ 			if (result != DT_SUCCESS)
+ 			{
++				printf("Pieflavor4\n");
+ 				freeNavMeshQuery(query);
+ 				delete mPathFilter;
+ 				mPathFilter = NULL;
+ 				return false;
+ 			}
++
+ 			if(mNumPathPoints < 3)
+ 			{
++				printf("Pieflavor5\n");
+ 				out.y = positiony;
+ 				out.z = positionz;
+ 				out.x = positionx;
+@@ -474,6 +562,7 @@
+ 				return true;
+ 			}
+ 
++			printf("Pieflavor6\n");
+ 			out.y = actualpath[3];
+ 			out.z = actualpath[4];
+ 			out.x = actualpath[5];
+@@ -485,52 +574,3 @@
  	}
  	return false;
  }
@@ -13464,12 +14013,20 @@ Index: src/hearthstone-world/NavMeshInterface.h
 ===================================================================
 --- src/hearthstone-world/NavMeshInterface.h	(revision 1490)
 +++ src/hearthstone-world/NavMeshInterface.h	(working copy)
-@@ -36,36 +36,86 @@
+@@ -36,36 +36,94 @@
  		mmapVersion(MMAP_VERSION), size(0), usesLiquids(true) {}
  };
  
 -// Crow: TODO: Integrate Cell Handler royalties.
-+typedef map<uint32, dtTileRef> ReferenceMap;
++struct TileReferenceC
++{
++	TileReferenceC(dtTileRef refid) { ID = refid; };
++	~TileReferenceC() {};
++
++	dtTileRef ID;
++};
++
++typedef map<uint32, TileReferenceC*> ReferenceMap;
 +typedef map<dtTileRef, uint32> ReverseReferenceMap;
 +
 +class MMapManager
