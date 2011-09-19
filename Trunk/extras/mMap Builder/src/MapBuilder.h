@@ -86,7 +86,7 @@ namespace MMAP
 
             void buildNavMesh(uint32 mapID, dtNavMesh* &navMesh);
 
-            void buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh);
+            void buildTile(uint32 mapID, uint32 tileX, uint32 tileY, dtNavMesh* navMesh, uint32 index);
 
             // move map building
             void buildMoveMapTile(uint32 mapID,
@@ -95,7 +95,8 @@ namespace MMAP
                                   MeshData &meshData,
                                   float bmin[3],
                                   float bmax[3],
-                                  dtNavMesh* navMesh);
+                                  dtNavMesh* navMesh,
+								  uint32 index);
 
             void getTileBounds(uint32 tileX, uint32 tileY,
                                float* verts, int vertCount,
