@@ -33,6 +33,8 @@
 #define CREATURE_SPELL_TO_DAZE 1604
 #define CREATURE_DAZE_TRIGGER_ANGLE M_PI/2 //for the beginners this means 45 degrees
 
+//#define USE_PACKED_MOVEMENT
+
 class Object;
 class Creature;
 class Unit;
@@ -194,6 +196,9 @@ bool isGuard(uint32 id);
 uint32 getGuardId(uint32 id);
 bool isTargetDummy(uint32 id);
 typedef std::tr1::unordered_map< Unit*, int32> TargetMap;
+#ifdef USE_PACKED_MOVEMENT
+typedef map<uint32, LocationVector*> LocationVectorMap;
+#endif
 
 #ifdef WIN32
 
@@ -299,6 +304,9 @@ public:
 
 	// Movement
 	void SendMoveToPacket(float toX, float toY, float toZ, float toO, uint32 time, uint32 MoveFlags);
+#ifdef USE_PACKED_MOVEMENT
+	void SendMoveToPacket(LocationVectorMap MovementMap, uint32 time, uint32 MoveFlags);
+#endif
 	void JumpTo(float toX, float toY, float toZ, uint32 moveTime, float arc , uint32 unk = 0);
 	//void SendMoveToSplinesPacket(std::list<Waypoint> wp, bool run);
 	void MoveTo(float x, float y, float z, float o = 0.0f);
@@ -479,7 +487,11 @@ protected:
 	float m_destinationX, m_destinationY, m_destinationZ, m_destinationO;
 	float m_nextPosX, m_nextPosY, m_nextPosZ, m_nextPosO;
 	float m_returnX, m_returnY, m_returnZ, m_returnO; //Return position after attacking a mob
+#ifdef USE_PACKED_MOVEMENT
+	LocationVectorMap* PathMap;
+#else
 	bool pathfinding;
+#endif
 
 	float m_lastFollowX;
 	float m_lastFollowY;
