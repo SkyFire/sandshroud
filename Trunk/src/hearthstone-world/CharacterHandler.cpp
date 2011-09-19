@@ -918,21 +918,23 @@ void WorldSession::FullLogin(Player* plr)
 	// Login time, will be used for played time calc
 	plr->m_playedtime[2] = (uint32)UNIXTIME;
 
+	// Send revision
+//	plr->BroadcastMessage("%sServer:|r%s Sandshroud Hearthstone|r %s r%u-%s-%s", MSG_COLOR_GOLD,
+//		MSG_COLOR_ORANGEY, MSG_COLOR_TORQUISEBLUE, BUILD_REVISION, ARCH, CONFIG);
+//	plr->BroadcastMessage("%sPlease report all bugs to |r%shttp://mantis.sandshroud.org|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE);
+//	plr->BroadcastMessage("%sOnline Players:|r%s %u |r%sPeak:|r%s %u |r%sAccepted Connections:|r%s %u |r", MSG_COLOR_GOLD,
+//		MSG_COLOR_TORQUISEBLUE, sWorld.GetSessionCount(), MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE,
+//		sWorld.PeakSessionCount, MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.mAcceptedConnections);
+
+//	plr->BroadcastMessage("%sServer Uptime:|r%s %s|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.GetUptimeString().c_str());
+
 	//Issue a message telling all guild members that this player has signed on
 	if(plr->IsInGuild())
 	{
 		Guild *pGuild = plr->m_playerInfo->guild;
 		if(pGuild)
 		{
-			WorldPacket data(SMSG_GUILD_EVENT, 50);
-			data << uint8(GUILD_EVENT_MOTD);
-			data << uint8(0x01);
-			if(pGuild->GetMOTD())
-				data << pGuild->GetMOTD();
-			else
-				data << uint8(0);
-			SendPacket(&data);
-
+			pGuild->LogGuildEventToPlr(plr, GUILD_EVENT_MOTD, 1, pGuild->GetMOTD());
 			pGuild->LogGuildEvent(GUILD_EVENT_HASCOMEONLINE, 1, plr->GetName());
 		}
 	}
@@ -943,16 +945,6 @@ void WorldSession::FullLogin(Player* plr)
 
 	// send friend list (for ignores)
 	plr->Social_SendFriendList(7);
-
-	// Send revision
-	plr->BroadcastMessage("%sServer:|r%s Sandshroud Hearthstone|r %s r%u-%s-%s", MSG_COLOR_GOLD,
-		MSG_COLOR_ORANGEY, MSG_COLOR_TORQUISEBLUE, BUILD_REVISION, ARCH, CONFIG);
-	plr->BroadcastMessage("%sPlease report all bugs to |r%shttp://mantis.sandshroud.org|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE);
-	plr->BroadcastMessage("%sOnline Players:|r%s %u |r%sPeak:|r%s %u |r%sAccepted Connections:|r%s %u |r", MSG_COLOR_GOLD,
-		MSG_COLOR_TORQUISEBLUE, sWorld.GetSessionCount(), MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE,
-		sWorld.PeakSessionCount, MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.mAcceptedConnections);
-
-	plr->BroadcastMessage("%sServer Uptime:|r%s %s|r", MSG_COLOR_GOLD, MSG_COLOR_TORQUISEBLUE, sWorld.GetUptimeString().c_str());
 
 	// send to gms
 	if(HasGMPermissions())

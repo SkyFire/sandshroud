@@ -78,10 +78,9 @@ void MapCell::SetActivity(bool state)
 
 		if (_mapmgr->IsCollisionEnabled())
 		{
-			CollideInterface.ActivateTile(_mapmgr->GetMapId(), x, y);
-
-			if(sWorld.PathFinding)
-				NavMeshInterface.LoadNavMesh(_mapmgr->GetMapId(), x, y);
+			if(CollideInterface.ActivateTile(_mapmgr->GetMapId(), x, y))
+				if(sWorld.PathFinding)
+					NavMeshInterface.LoadNavMesh(_mapmgr->GetMapId(), x, y);
 		}
 	}
 	else if(_active && !state)

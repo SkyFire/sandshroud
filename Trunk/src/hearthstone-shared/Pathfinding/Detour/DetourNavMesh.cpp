@@ -703,8 +703,14 @@ dtStatus dtNavMesh::addTile(unsigned char* data, int dataSize, int flags,
 		return DT_FAILURE_DATA_VERSION;
 
 	// Make sure the location is free.
-	if (getTileAt(header->x, header->y))
+	const dtMeshTile* prevTile = 0;
+	if (prevTile = getTileAt(header->x, header->y))
+	{
+		if(result)
+			*result = getTileRef(prevTile);
+
 		return DT_IN_PROGRESS;
+	}
 
 	// Allocate a tile.
 	dtMeshTile* tile = 0;

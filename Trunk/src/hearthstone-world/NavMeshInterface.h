@@ -36,36 +36,94 @@ struct MmapTileHeader
 		mmapVersion(MMAP_VERSION), size(0), usesLiquids(true) {}
 };
 
-// Crow: TODO: Integrate Cell Handler royalties.
+struct TileReferenceC
+{
+	TileReferenceC(dtTileRef refid) { ID = refid; };
+	~TileReferenceC() {};
+
+	dtTileRef ID;
+};
+
+typedef map<uint32, TileReferenceC*> ReferenceMap;
+typedef map<dtTileRef, uint32> ReverseReferenceMap;
+
+class MMapManager
+{
+	uint32 GetPosX(float x)
+	{
+		ASSERT((x >= _minX) && (x <= _maxX));
+		return (uint32)((_maxX-x)/_cellSize);
+	};
+
+	uint32 GetPosY(float y)
+	{
+		ASSERT((y >= _minY) && (y <= _maxY));
+		return (uint32)((_maxY-y)/_cellSize);
+	};
+public:
+	MMapManager(uint32 mapid);
+	~MMapManager();
+
+private:
+	uint32 ManagerMapId;
+	dtNavMesh* m_navMesh;
+	dtTileRef lastTileRef;
+	ReferenceMap TileReferences;
+	ReverseReferenceMap TileLoadCount;
+	uint32 packTileID(int32 x, int32 y) { return uint32(x << 16 | y); };
+	float calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y );
+
+public:
+	bool LoadNavMesh(uint32 x, uint32 y);
+	void UnloadNavMesh(uint32 x, uint32 y);
+	bool IsNavmeshLoaded(uint32 x, uint32 y);
+
+	LocationVector getNextPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz);
+	LocationVector getBestPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz);
+
+	bool GetWalkingHeightInternal(float startx, float starty, float startz, float endz, LocationVector& out);
+	bool getNextPositionOnPathToLocation(float startx, float starty, float startz, float endx, float endy, float endz, LocationVector& out);
+};
+
 class SERVER_DECL CNavMeshInterface
 {
 public:
 	void Init();
 	void DeInit();
-	void LoadMap(uint32 mapid);
+	MMapManager* GetOrCreateMMapManager(uint32 mapid);
 
 public: // Navmesh settings
-	uint32 GetPosX(float x);
-	uint32 GetPosY(float y);
-	dtNavMesh* GetNavmesh(uint32 mapid);
 	bool LoadNavMesh(uint32 mapid, uint32 x, uint32 y);
-	bool IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y);
-	bool IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y);
 	void UnloadNavMesh(uint32 mapid, uint32 x, uint32 y);
+	bool IsNavmeshLoaded(uint32 mapid, uint32 x, uint32 y);
+	bool IsNavmeshLoadedAtPosition(uint32 mapid, float x, float y) { return IsNavmeshLoaded(mapid, (GetPosX(x)/8), (GetPosY(y)/8)); };
 
-	LocationVector getBestPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
-	LocationVector getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz);
-	bool getNextPositionOnPathToLocation(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz, LocationVector& out);
-	bool GetWalkingHeightInternal(uint32 mapid, float startx, float starty, float startz, float endz, LocationVector& out);
 	float GetWalkingHeight(uint32 mapid, float positionx, float positiony, float positionz, float positionz2);
+	bool BuildPath(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz, LocationVector& out);
+	LocationVector BuildPath(uint32 mapid, float startx, float starty, float startz, float endx, float endy, float endz, bool best = false);
 
 private:
-	float calcAngle( float Position1X, float Position1Y, float Position2X, float Position2Y );
+	uint32 GetPosX(float x)
+	{
+		ASSERT((x >= _minX) && (x <= _maxX));
+		return (uint32)((_maxX-x)/_cellSize);
+	};
 
-	dtNavMesh* m_navMesh[NUM_MAPS];
-	uint32 internalX[NUM_MAPS][64];
-	uint32 internalY[NUM_MAPS][64];
-	int64 m_navMeshLoadCount[NUM_MAPS][64][64];
+	uint32 GetPosY(float y)
+	{
+		ASSERT((y >= _minY) && (y <= _maxY));
+		return (uint32)((_maxY-y)/_cellSize);
+	};
+
+	MMapManager* GetMMap(uint32 mapid)
+	{
+		MMapManager* mmapreturn = NULL;
+		if(mapid < NUM_MAPS)
+			mmapreturn = MMaps[mapid];
+		return mmapreturn;
+	};
+
+	MMapManager* MMaps[NUM_MAPS];
 };
 
 extern SERVER_DECL CNavMeshInterface NavMeshInterface;

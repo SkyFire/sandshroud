@@ -360,6 +360,10 @@ public:
 	 */
 	void LogGuildEvent(uint8 iEvent, uint8 iStringCount, ...);
 
+	/** Logs a guild event and sends it to all online players.
+	 */
+	void LogGuildEventToPlr(Player* plr, uint8 iEvent, uint8 iStringCount, ...);
+
 	/** Guild event logging.
 	 */
 	void AddGuildLogEntry(uint8 iEvent, uint8 iParamCount, ...);

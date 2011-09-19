@@ -109,9 +109,7 @@ void WorldSession::HandleGuildAccept(WorldPacket & recv_data)
 	plyr->UnSetGuildInvitersGuid();
 
 	if(!inviter)
-	{
 		return;
-	}
 
 	Guild *pGuild = inviter->m_playerInfo->guild;
 	if(!pGuild)

@@ -150,18 +150,41 @@ void Guild::LogGuildEvent(uint8 iEvent, uint8 iStringCount, ...)
 	ASSERT(iStringCount <= 4);
 
 	WorldPacket data(SMSG_GUILD_EVENT, 100);
-	uint32 i;
 	data << iEvent;
 	data << iStringCount;
 
-	for(i = 0; i < iStringCount; i++)
+	for(uint32 i = 0; i < iStringCount; i++)
 	{
 		strs[i] = va_arg(ap, char*);
 		data << strs[i];
 	}
 
 	va_end(ap);
-	SendPacket(&data);
+}
+
+void Guild::LogGuildEventToPlr(Player* plr, uint8 iEvent, uint8 iStringCount, ...)
+{
+	if(!m_commandLogging || plr == NULL)
+		return;
+
+	va_list ap;
+	char * strs[4] = {NULL,NULL,NULL,NULL};
+
+	va_start(ap, iStringCount);
+	ASSERT(iStringCount <= 4);
+
+	WorldPacket data(SMSG_GUILD_EVENT, 100);
+	data << iEvent;
+	data << iStringCount;
+
+	for(uint32 i = 0; i < iStringCount; i++)
+	{
+		strs[i] = va_arg(ap, char*);
+		data << strs[i];
+	}
+
+	va_end(ap);
+	plr->GetSession()->SendPacket(&data);
 }
 
 void Guild::AddGuildLogEntry(uint8 iEvent, uint8 iParamCount, ...)
@@ -759,10 +782,10 @@ void Guild::AddGuildMember(PlayerInfo * pMember, WorldSession * pClient, int32 F
 	else
 		r = (ForcedRank<0) ? FindLowestRank() : m_ranks[ForcedRank];
 
-	if(r== NULL)
-		r=FindLowestRank();
+	if(r == NULL)
+		r = FindLowestRank();
 
-	if(r== NULL)
+	if(r == NULL)
 	{
 		// shouldn't happen
 		m_lock.Release();
@@ -776,14 +799,15 @@ void Guild::AddGuildMember(PlayerInfo * pMember, WorldSession * pClient, int32 F
 	pm->szOfficerNote = pm->szPublicNote = NULL;
 	m_members.insert(make_pair(pMember, pm));
 
-	pMember->guild=this;
-	pMember->guildRank=r;
-	pMember->guildMember=pm;
+	pMember->guild = this;
+	pMember->guildRank = r;
+	pMember->guildMember = pm;
 
 	if(pMember->m_loggedInPlayer)
 	{
 		pMember->m_loggedInPlayer->SetGuildId(m_guildId);
 		pMember->m_loggedInPlayer->SetGuildRank(r->iId);
+		LogGuildEventToPlr(pMember->m_loggedInPlayer, GUILD_EVENT_MOTD, 1, GetMOTD());
 	}
 
 	CharacterDatabase.Execute("REPLACE INTO guild_data VALUES(%u, %u, %u, '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", m_guildId, pMember->guid, r->iId);

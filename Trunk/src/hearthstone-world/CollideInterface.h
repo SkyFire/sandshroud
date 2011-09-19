@@ -32,7 +32,7 @@ public:
 	void Init();
 	void DeInit();
 
-	void ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY);
+	bool ActivateTile(uint32 mapId, uint32 tileX, uint32 tileY);
 	void DeactivateTile(uint32 mapId, uint32 tileX, uint32 tileY);
 	bool IsActiveTile(uint32 mapId, uint32 tileX, uint32 tileY);
 	void ActivateMap(uint32 mapId);

@@ -1937,9 +1937,7 @@ void AIInterface::UpdateMove()
 
 	if(pathfinding)
 	{
-		LocationVector PathLocation = NavMeshInterface.getBestPositionOnPathToLocation(m_Unit->GetMapId(),
-			m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
-
+		LocationVector PathLocation = NavMeshInterface.BuildPath(m_Unit->GetMapId(), m_sourceX, m_sourceY, m_sourceZ, m_destinationX, m_destinationY, m_destinationZ);
 		m_nextPosX = PathLocation.x;
 		m_nextPosY = PathLocation.y;
 		m_nextPosZ = PathLocation.z;

@@ -1877,8 +1877,8 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
  	BlueSystemMessage(m_session, "%s uses %s (build %u)", (plr->getGender()?"She":"He"),
 		client, sess->GetClientBuild());
 
-	BlueSystemMessage(m_session, "%s IP is '%s', and has a latency of %ums", (plr->getGender()?"Her":"His"),
-		sess->GetSocket()->GetIP(), sess->GetLatency());
+	BlueSystemMessage(m_session, "%s IP is '%s:%u', and has a latency of %ums", (plr->getGender()?"Her":"His"),
+		sess->GetSocket()->GetIP(), sess->GetSocket()->GetPort(), sess->GetLatency());
 
 	return true;
 }
@@ -2809,22 +2809,20 @@ bool ChatHandler::HandleAIAgentDebugSkip(const char * args, WorldSession * m_ses
 
 bool ChatHandler::HandleRenameGuildCommand(const char* args, WorldSession *m_session)
 {
-	Player* ptarget = getSelectedChar(m_session);
-
-	if(!*args || !ptarget)
+	Player* plr = getSelectedChar(m_session);
+	if(!plr || !plr->GetGuildId() || !plr->GetGuild() || !args || !strlen(args))
 		return false;
 
-	char* newname = (char*)args;
-
-	Guild* guild = ptarget->GetGuild();
-	if(guild == NULL)
+	Guild* pGuild = objmgr.GetGuildByGuildName(string(args));
+	if(pGuild)
 	{
-		RedSystemMessage(m_session, "Target is not in a guild.");
-		return true;
+		RedSystemMessage(m_session, "Guild name %s is already taken.", args);
+		return false;
 	}
 
-	guild->ChangeGuildName(newname);
-	BlueSystemMessage(ptarget->GetSession(), "The Name of your Guild has been changed to %s, please relog.", newname);
+	GreenSystemMessage(m_session, "Changed guild name of %s to %s. This will take effect next restart.", plr->GetGuild()->GetGuildName(), args);
+	CharacterDatabase.Execute("UPDATE guilds SET `guildName` = \'%s\' WHERE `guildId` = '%u'", CharacterDatabase.EscapeString(string(args)).c_str(), plr->GetGuild()->GetGuildId());
+	sWorld.LogGM(m_session, "Changed guild name of '%s' to '%s'", plr->GetGuild()->GetGuildName(), args);
 	return true;
 }
 
@@ -2832,7 +2830,7 @@ bool ChatHandler::HandleRenameGuildCommand(const char* args, WorldSession *m_ses
 bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || (plr && plr->GetGuild() == NULL))
+	if(plr == NULL || plr->GetGuild() == NULL)
 		return false;
 
 	plr->GetGuild()->RemoveGuildMember(plr->m_playerInfo,m_session);
@@ -2844,7 +2842,7 @@ bool ChatHandler::HandleGuildRemovePlayerCommand(const char* args, WorldSession 
 bool ChatHandler::HandleGuildDisbandCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || (plr && (plr->GetGuild() == NULL)))
+	if(plr == NULL || plr->GetGuild() == NULL)
 		return false;
 
 	plr->GetGuild()->Disband();
@@ -2856,7 +2854,7 @@ bool ChatHandler::HandleGuildDisbandCommand(const char* args, WorldSession *m_se
 bool ChatHandler::HandleGuildMembersCommand(const char* args, WorldSession *m_session)
 {
 	Player* plr = getSelectedChar(m_session);
-	if(!plr || (plr && (plr->GetGuild() == NULL)))
+	if(plr == NULL || plr->GetGuild() == NULL)
 		return false;
 
 	plr->GetGuild()->ListGuildMembers(m_session);

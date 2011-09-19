@@ -161,10 +161,9 @@ public:
 	void OnAccept(void * pointer)
 	{
 		int fd = *(int*)pointer;
-
-		/* no idea if this will work on x64 :P */
+		char* cpointer = ((char*)pointer);
 #ifndef X64
-		sockaddr_in * addr = (sockaddr_in*)&((char*)pointer)[42];
+		sockaddr_in * addr = (sockaddr_in*)&cpointer[42];
 #else
 		// Crow: This will work for x64, at least with what I've tested.
 		// Unsure about external IPs, as when scanning data, I saw the IP appear twice, once at 4, and once at somewhere around 12
