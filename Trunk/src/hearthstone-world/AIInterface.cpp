@@ -2124,7 +2124,7 @@ void AIInterface::UpdateMove()
 	m_creatureState = MOVING;
 #else
 
-	if(sWorld.PathFinding && NavMeshInterface.IsNavmeshLoadedAtPosition(m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY()))
+	if(!jumptolocation && sWorld.PathFinding && NavMeshInterface.IsNavmeshLoadedAtPosition(m_Unit->GetMapId(), m_Unit->GetPositionX(), m_Unit->GetPositionY()))
 	{
 		bool use = true;
 		float distance = 0;
@@ -2658,8 +2658,8 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 				{
 					//Move Server Side Update
 					bool positionchanged = false;
-					int32 sexyteim[2] = { 0, 200 };
-					float x1 = m_Unit->GetPositionX(), y1 = m_Unit->GetPositionY(), z1 = m_Unit->GetPositionZ(),
+					int32 sexyteim[2] = { 0, m_timeMoved };
+					float x1 = m_sourceX, y1 = m_sourceY, z1 = m_sourceZ,
 						x2 = m_nextPosX, y2 = m_nextPosY, z2 = m_nextPosZ;
 					for(LocationVectorMap::iterator itr = PathMap->begin(), lastitr = PathMap->begin(); itr != PathMap->end();)
 					{
@@ -2670,7 +2670,7 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 							break;
 						}
 
-						if(m_timeMoved > (*itr).first)
+						if(m_timeMoved < (*itr).first)
 						{
 							if(itr != PathMap->begin())
 							{	// If we're not the first itr, grab info, if we are, use starting position.
@@ -2688,23 +2688,21 @@ void AIInterface::_UpdateMovement(uint32 p_time)
 						}
 						lastitr = itr++;
 					}
-					if(sexyteim[0] < 0)
-						sexyteim[0] = 1;
-					if(sexyteim[1] < 0)
-						sexyteim[1] = 2;
-					if(sexyteim[1] < sexyteim[0])
-						sexyteim[1] = sexyteim[0]+1;
 
+					uint32 timeleft = UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2;
 					if(!positionchanged)
 					{
-						float q = (float(sexyteim[1]-sexyteim[0])/sexyteim[1]);
-						// Crow: Does this fuck up if the destination is negative? I guess it's based on if the source is negative too.... :|
+						timeleft = (sexyteim[1]-sexyteim[0])-(m_timeMoved-sexyteim[0]);
+						float q = float(float(m_timeMoved)-float(sexyteim[0]))/float(float(sexyteim[1])-float(sexyteim[0]));
+
 						float x = x1 - ((x1 - x2) * q);
 						float y = y1 - ((y1 - y2) * q);
 						float z = z1 - ((z1 - z2) * q);
 						m_Unit->SetPosition(x, y, z, m_Unit->GetOrientation());
 					}
-					m_moveTimer = (UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2 > m_timeToMove ? m_timeToMove : UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2);
+					if(!timeleft || timeleft > UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2)
+						timeleft = UNIT_MOVEMENT_INTERPOLATE_INTERVAL/2;
+					m_moveTimer = timeleft;
 				}
 			}
 		}
