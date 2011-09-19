@@ -1947,13 +1947,13 @@ bool AIInterface::IsFlying()
 	return false;
 }
 
-uint32 AIInterface::getMoveFlags()
+uint32 AIInterface::getMoveFlags(bool ignorejump)
 {
 	ASSERT(m_Unit != NULL);
 
 //	CheckHeight();
 	uint32 MoveFlags = MONSTER_MOVE_FLAG_WALK;
-	if(jumptolocation == true)
+	if(!ignorejump && jumptolocation == true)
 	{
 		m_flySpeed = m_Unit->m_flySpeed*0.001f;
 		MoveFlags = MONSTER_MOVE_FLAG_JUMP;

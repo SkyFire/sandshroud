@@ -310,7 +310,7 @@ public:
 	void JumpTo(float toX, float toY, float toZ, uint32 moveTime, float arc , uint32 unk = 0);
 	//void SendMoveToSplinesPacket(std::list<Waypoint> wp, bool run);
 	void MoveTo(float x, float y, float z, float o = 0.0f);
-	uint32 getMoveFlags();
+	uint32 getMoveFlags(bool ignorejump = false);
 	void UpdateMove();
 	void SendCurrentMove(Player* plyr/*uint64 guid*/);
 	void StopMovement(uint32 time, bool stopatcurrent = true);

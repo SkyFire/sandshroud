@@ -22,6 +22,7 @@
 //
 
 #include "StdAfx.h"
+
 #define MAP_MGR_UPDATE_PERIOD 100
 #define MAPMGR_INACTIVE_MOVE_TIME 10
 extern bool bServerShutdown;
